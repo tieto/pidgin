@@ -2507,13 +2507,13 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 		gtkim->add = gaim_gtk_change_text(_("Add"), gtkim->add,
 										  GTK_STOCK_ADD, type);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->add,
-							 _("Add buddy"), NULL);
+			_("Add the user to your buddy list"), NULL);
 	}
 	else {
 		gtkim->add = gaim_gtk_change_text(_("Remove"), gtkim->add,
 										  GTK_STOCK_REMOVE, type);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->add,
-							 _("Remove buddy"), NULL);
+			_("Remove the user from your buddy list"), NULL);
 	}
 
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->add,
@@ -2523,20 +2523,22 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 	gtkim->warn = gaim_gtk_change_text(_("Warn"), gtkim->warn,
 									   GAIM_STOCK_WARN, type);
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->warn, FALSE, FALSE, 0);
+	gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->warn,
+						 _("Warn the user"), NULL);
 
 	/* Info button */
 	gtkconv->info = gaim_gtk_change_text(_("Info"), gtkconv->info,
 										 GAIM_STOCK_INFO, type);
 	gtk_box_pack_start(GTK_BOX(parent), gtkconv->info, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->info,
-						 _("Get user information"), NULL);
+						 _("Get the user's information"), NULL);
 
 	/* Block button */
 	gtkim->block = gaim_gtk_change_text(_("Block"), gtkim->block,
 										GAIM_STOCK_BLOCK, type);
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->block, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->block,
-						 _("Block user"), NULL);
+						 _("Block the user"), NULL);
 
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->info), GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(gtkim->add),    GTK_RELIEF_NONE);
@@ -2552,6 +2554,7 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 
 	gtk_box_reorder_child(GTK_BOX(parent), gtkim->warn,   1);
 	gtk_box_reorder_child(GTK_BOX(parent), gtkim->block,  2);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkim->add,    3);
 	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->info, 4);
 
 	gaim_gtkconv_update_buttons_by_protocol(conv);
@@ -2917,7 +2920,7 @@ setup_chat_pane(struct gaim_conversation *conv)
 										   GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("IM"), NULL);
+	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("IM the user"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(im_cb), conv);
 
@@ -2928,7 +2931,8 @@ setup_chat_pane(struct gaim_conversation *conv)
 										   GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Ignore user"), NULL);
+	gtk_tooltips_set_tip(gtkconv->tooltips, button,
+						 _("Ignore the user"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(ignore_cb), conv);
 	gtk_widget_show(button);
@@ -2939,7 +2943,7 @@ setup_chat_pane(struct gaim_conversation *conv)
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Get user information"), NULL);
+						 _("Get the user's information"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(info_cb), conv);
 
@@ -3495,6 +3499,8 @@ update_convo_add_button(struct gaim_conversation *conv)
 			gtkconv->u.im->add =
 				gaim_gtk_change_text(_("Remove"), gtkconv->u.im->add,
 									 GTK_STOCK_REMOVE, type);
+			gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
+				_("Remove the user from your buddy list"), NULL);
 
 			rebuild = TRUE;
 		}
@@ -3509,6 +3515,8 @@ update_convo_add_button(struct gaim_conversation *conv)
 			gtkconv->u.im->add =
 				gaim_gtk_change_text(_("Add"), gtkconv->u.im->add,
 									 GTK_STOCK_ADD, type);
+			gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
+				_("Add the user to your buddy list"), NULL);
 
 			rebuild = TRUE;
 		}
