@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003-2004 Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,11 +98,11 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 	msg->msnslp_header.ack_id     = GUINT32_FROM_LE(header.ack_id);
 	msg->msnslp_header.ack_sub_id = GUINT32_FROM_LE(header.ack_sub_id);
 	msg->msnslp_header.ack_size   = GUINT64_FROM_LE(header.ack_size);
-	
+
 	/* Import the body. */
 	/* msg->body_len = msg->msnslp_header.length; */
 	msg->body_len = len - (tmp - body);
-	
+
 	if (msg->body_len > 0)
 		msg->body = g_memdup(tmp, msg->body_len);
 
@@ -196,7 +198,7 @@ msn_message_parse_payload(MsnMessage *msg,
 
 		/* Import the body. */
 		msg->body_len = payload_len - (tmp - tmp_base) - sizeof(footer);
-		
+
 		if (msg->body_len > 0)
 			msg->body = g_memdup(tmp, msg->body_len);
 
@@ -283,7 +285,7 @@ msn_message_unref(MsnMessage *msg)
 
 	msg->ref_count--;
 
-	if (msg->ref_count == 0) 
+	if (msg->ref_count == 0)
 	{
 		msn_message_destroy(msg);
 
@@ -331,7 +333,7 @@ msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 
 	if (ret_size != NULL)
 		*ret_size = tmp - base;
-	
+
 	return base;
 }
 
@@ -651,7 +653,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 	}
 
 	g_string_append(str, "\r\n");
-	
+
 	body = msn_message_get_bin_data(msg, &body_len);
 
 	if (msg->msnslp_message)
@@ -694,7 +696,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 				g_string_append(str, "\r\n");
 			}
 		}
-		
+
 		g_string_append_printf(str, "%u ", msg->msnslp_footer.value);
 		g_string_append(str, "\r\n");
 	}
@@ -708,6 +710,6 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 	}
 
 	gaim_debug_info("msn", "Message %s:\n{%s}\n", info, str->str);
-	
+
 	g_string_free(str, TRUE);
 }

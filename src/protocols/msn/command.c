@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +50,7 @@ msn_command_from_string(const char *string)
 
 	cmd = g_new0(MsnCommand, 1);
 	cmd->command = tmp;
-	
+
 	if (param_start)
 	{
 		char *param;
@@ -59,16 +61,16 @@ msn_command_from_string(const char *string)
 
 		for (c = 0; cmd->params[c]; c++);
 		cmd->param_count = c;
-	
+
 		param = cmd->params[0];
 
 		cmd->trId = is_num(param) ? atoi(param) : 0;
 	}
 	else
 		cmd->trId = 0;
-	
+
 	msn_command_ref(cmd);
-	
+
 	return cmd;
 }
 
@@ -76,7 +78,7 @@ void
 msn_command_destroy(MsnCommand *cmd)
 {
 	g_return_if_fail(cmd != NULL);
-	
+
 	if (cmd->ref_count > 0)
 	{
 		msn_command_unref(cmd);

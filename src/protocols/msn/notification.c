@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003-2004 Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -421,7 +423,7 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->old_group_name);
 			g_free(data->old_group_name);
 		}
-	
+
 		msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, group_name);
 		g_free(data->who);
 
@@ -1110,7 +1112,7 @@ connect_cb(MsnServConn *servconn)
 
 	for (i = session->protocol_ver; i >= 8; i--)
 		*c++ = g_strdup_printf("MSNP%d", i);
-	
+
 	*c++ = g_strdup("CVR0");
 
 	vers = g_strjoinv(" ", a);
@@ -1119,7 +1121,7 @@ connect_cb(MsnServConn *servconn)
 
 	g_strfreev(a);
 	g_free(vers);
-	
+
 	if (cmdproc->error)
 		return;
 

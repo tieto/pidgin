@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +98,7 @@ msn_object_destroy(MsnObject *obj)
 
 	if (obj->sha1c != NULL)
 		g_free(obj->sha1c);
-	
+
 	if (obj->local)
 		local_objs = g_list_remove(local_objs, obj);
 
@@ -255,7 +257,7 @@ MsnObject *
 msn_object_find_local(const char *sha1c)
 {
 	GList *l;
-	
+
 	g_return_val_if_fail(sha1c != NULL, NULL);
 
 	for (l = local_objs; l != NULL; l = l->next)
@@ -284,7 +286,7 @@ void
 msn_object_set_real_location(MsnObject *obj, const char *real_location)
 {
 	g_return_if_fail(obj != NULL);
-	
+
 	/* obj->local = TRUE; */
 
 	if (obj->real_location != NULL)
@@ -298,13 +300,13 @@ const char *
 msn_object_get_real_location(const MsnObject *obj)
 {
 	MsnObject *local_obj;
-	
+
 	g_return_val_if_fail(obj != NULL, NULL);
 
 	local_obj = msn_object_find_local(msn_object_get_sha1c(obj));
 
 	if (local_obj != NULL)
 		return local_obj->real_location;
-	
+
 	return NULL;
 }

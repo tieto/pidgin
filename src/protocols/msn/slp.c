@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +58,7 @@ get_token(const char *str, const char *start, const char *end)
 	{
 		if ((c2 = strstr(c, end)) == NULL)
 			return NULL;
-		
+
 		return g_strndup(c, c2 - c);
 	}
 	else
@@ -127,7 +129,7 @@ msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize o
 {
 	GaimXfer *xfer;
 
-	xfer = slpcall->xfer;	
+	xfer = slpcall->xfer;
 
 	xfer->bytes_sent = offset;
 	xfer->bytes_remaining = total_length - offset;
@@ -257,19 +259,19 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		type = msn_object_get_type(obj);
 		sha1c = msn_object_get_sha1c(obj);
 		g_free(msnobj_data);
-		
+
 		if (!(type == MSN_OBJECT_USERTILE))
 		{
 			gaim_debug_error("msn", "Wrong object?\n");
 			msn_object_destroy(obj);
 			g_return_if_reached();
 		}
-		
+
 		file_name = msn_object_get_real_location(obj);
 
 		slpsession = msn_slplink_find_slp_session(slplink,
 												   slpcall->session_id);
-		
+
 		/* DATA PREP */
 		slpmsg = msn_slpmsg_new(slplink);
 		slpmsg->slpsession = slpsession;
@@ -282,7 +284,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		/* DATA */
 		slpmsg = msn_slpmsg_new(slplink);
-		slpmsg->slpsession = slpsession;		
+		slpmsg->slpsession = slpsession;
 		slpmsg->flags = 0x20;
 #ifdef DEBUG_SLP
 		slpmsg->info = "SLP DATA";
@@ -381,11 +383,11 @@ got_invite(MsnSlpCall *slpcall,
 		if (temp != NULL)
 			slpcall->app_id = atoi(temp);
 		g_free(temp);
-		
+
 		context = get_token(content, "Context: ", "\r\n");
 
 		got_sessionreq(slpcall, branch, euf_guid, context);
-		
+
 		g_free(context);
 		g_free(euf_guid);
 	}
@@ -395,7 +397,7 @@ got_invite(MsnSlpCall *slpcall,
 
 		char *listening, *nonce;
 		char *content;
-		
+
 		if (FALSE)
 		{
 #if 0
@@ -434,7 +436,7 @@ got_invite(MsnSlpCall *slpcall,
 		{
 			listening = "false";
 			nonce = g_strdup("00000000-0000-0000-0000-000000000000");
-			
+
 			content = g_strdup_printf(
 				"Bridge: TCPv1\r\n"
 				"Listening: %s\r\n"
@@ -457,7 +459,7 @@ got_invite(MsnSlpCall *slpcall,
 		char *temp;
 		char *nonce;
 		int port;
-		
+
 		nonce = get_token(content, "Nonce: {", "}\r\n");
 		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
 
@@ -486,7 +488,7 @@ got_ok(MsnSlpCall *slpcall,
 {
 	g_return_if_fail(slpcall != NULL);
 	g_return_if_fail(type    != NULL);
-			
+
 	if (!strcmp(type, "application/x-msnmsgr-sessionreqbody"))
 	{
 #if 0
@@ -527,7 +529,7 @@ got_ok(MsnSlpCall *slpcall,
 
 			g_free(header);
 			g_free(content);
-			
+
 			g_free(branch);
 		}
 		else
@@ -550,7 +552,7 @@ got_ok(MsnSlpCall *slpcall,
 		char *temp;
 		char *nonce;
 		int port;
-		
+
 		nonce = get_token(content, "Nonce: {", "}\r\n");
 		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
 
@@ -637,7 +639,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body, gsize len)
 				strncpy(temp, status, c - status);
 				temp[c - status] = '\0';
 			}
-			
+
 			gaim_debug_error("msn", "Received non-OK result: %s\n", temp);
 
 			slpcall->wasted = TRUE;
@@ -741,7 +743,7 @@ got_user_display(MsnSlpCall *slpcall,
 	gaim_debug_info("msn", "Got User Display: %s\n", info);
 
 	account = slpcall->slplink->session->account;
-	
+
 	/* TODO: I think we need better buddy icon core functions. */
 	gaim_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
 								  (void *)data, size);
@@ -777,7 +779,7 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 	}
 
 	buddy = (GaimBuddy *)sl->data;
-	
+
 	old = gaim_blist_node_get_string((GaimBlistNode *)buddy, "icon_checksum");
 	new = msn_object_get_sha1c(obj);
 

@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003-2004 Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +36,7 @@ show_error(MsnServConn *servconn)
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
-	
+
 	gc = gaim_account_get_connection(servconn->session->account);
 	name = names[servconn->type];
 
@@ -170,7 +172,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	{
 		if (servconn->http_data->gateway_host != NULL)
 			g_free(servconn->http_data->gateway_host);
-			
+
 		servconn->http_data->gateway_host = g_strdup(host);
 	}
 
@@ -466,10 +468,10 @@ create_listener(int port)
 		gaim_debug_error("msn", "Could not get address info: %s.\n",
 						 port_str);
 		return -1;
-	} 
+	}
 
 	for (c = res; c != NULL; c = c->ai_next)
-	{ 
+	{
 		fd = socket(c->ai_family, c->ai_socktype, c->ai_protocol);
 
 		if (fd < 0)

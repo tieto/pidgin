@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +28,9 @@ MsnHistory *
 msn_history_new(void)
 {
 	MsnHistory *history = g_new0(MsnHistory, 1);
-	
+
 	history->trId = 1;
-	
+
 	history->queue = g_queue_new();
 
 	return history;
@@ -68,9 +70,9 @@ msn_history_add(MsnHistory *history, MsnTransaction *trans)
 	GQueue *queue = history->queue;
 
 	trans->trId = history->trId++;
-	
+
 	g_queue_push_tail(queue, trans);
-	
+
 	if (queue->length > MSN_HIST_ELEMS)
 	{
 		trans = g_queue_pop_head(queue);

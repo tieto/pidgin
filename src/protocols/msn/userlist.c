@@ -1,3 +1,26 @@
+/**
+ * @file userlist.c MSN user list support
+ *
+ * gaim
+ *
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 #include "msn.h"
 #include "userlist.h"
 
@@ -343,7 +366,7 @@ MsnUserList*
 msn_userlist_new(MsnSession *session)
 {
 	MsnUserList *userlist;
-	
+
 	userlist = g_new0(MsnUserList, 1);
 
 	userlist->session = session;
@@ -457,7 +480,7 @@ int
 msn_userlist_find_group_id(MsnUserList *userlist, const char *group_name)
 {
 	MsnGroup *group;
-	
+
 	group = msn_userlist_find_group_with_name(userlist, group_name);
 
 	if (group != NULL)
@@ -470,7 +493,7 @@ const char *
 msn_userlist_find_group_name(MsnUserList *userlist, int group_id)
 {
 	MsnGroup *group;
-	
+
 	group = msn_userlist_find_group_with_id(userlist, group_id);
 
 	if (group != NULL)

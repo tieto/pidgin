@@ -1,3 +1,26 @@
+/**
+ * @file slplink.c MSNSLP Link support
+ *
+ * gaim
+ *
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 #include "msn.h"
 #include "slplink.h"
 
@@ -286,7 +309,7 @@ msn_slplink_release_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	MsnMessage *msg;
 
 	slpmsg->msg = msg = msn_message_new_msnslp();
-	
+
 	if (slpmsg->flags == 0x0)
 	{
 		msg->msnslp_header.session_id = slpmsg->session_id;
@@ -301,7 +324,7 @@ msn_slplink_release_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
 		MsnSlpSession *slpsession;
-		slpsession = slpmsg->slpsession;	
+		slpsession = slpmsg->slpsession;
 
 		g_return_if_fail(slpsession != NULL);
 		msg->msnslp_header.session_id = slpsession->id;
@@ -539,7 +562,7 @@ msn_slplink_message_find(MsnSlpLink *slplink, long id)
 	return NULL;
 }
 
-typedef struct 
+typedef struct
 {
 	guint32 length;
 	guint32 unk1;
@@ -638,7 +661,7 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(obj      != NULL);
-	
+
 	msnobj_data = msn_object_to_string(obj);
 	msnobj_base64 = gaim_base64_encode(msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);

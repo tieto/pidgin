@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003-2004 Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +279,7 @@ show_send_to_mobile_cb(GaimBlistNode *node, gpointer ignored)
 	MsnUser *user;
 	MsnSession *session;
 	MsnMobileData *data;
-	
+
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (GaimBuddy *) node;
@@ -787,7 +789,7 @@ msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 		return;
 	}
 #endif
-	
+
 	msn_userlist_add_buddy(userlist, who, MSN_LIST_FL,
 						   group ? group->name : NULL);
 }
@@ -797,7 +799,7 @@ msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
 {
 	MsnSession *session;
 	MsnUserList *userlist;
-	
+
 	session = gc->proto_data;
 	userlist = session->userlist;
 
@@ -817,7 +819,7 @@ msn_add_permit(GaimConnection *gc, const char *who)
 
 	if (user->list_op & MSN_LIST_BL_OP)
 		msn_userlist_rem_buddy(userlist, who, MSN_LIST_BL, NULL);
-	
+
 	msn_userlist_add_buddy(userlist, who, MSN_LIST_AL, NULL);
 }
 
@@ -827,7 +829,7 @@ msn_add_deny(GaimConnection *gc, const char *who)
 	MsnSession *session;
 	MsnUserList *userlist;
 	MsnUser *user;
-	
+
 	session = gc->proto_data;
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
@@ -844,12 +846,12 @@ msn_rem_permit(GaimConnection *gc, const char *who)
 	MsnSession *session;
 	MsnUserList *userlist;
 	MsnUser *user;
-	
+
 	session = gc->proto_data;
 	userlist = session->userlist;
 
 	user = msn_userlist_find_user(userlist, who);
-	
+
 	msn_userlist_rem_buddy(userlist, who, MSN_LIST_AL, NULL);
 
 	if (user->list_op & MSN_LIST_RL_OP)
@@ -862,7 +864,7 @@ msn_rem_deny(GaimConnection *gc, const char *who)
 	MsnSession *session;
 	MsnUserList *userlist;
 	MsnUser *user;
-	
+
 	session = gc->proto_data;
 	userlist = session->userlist;
 
@@ -989,7 +991,7 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 {
 	MsnSession *session;
 	MsnUserList *userlist;
-	
+
 	session = gc->proto_data;
 	userlist = session->userlist;
 

@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +54,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 {
 	MsnCmdProc *cmdproc;
 	GaimAccount *account;
-	
+
 	g_return_if_fail(swboard != NULL);
 
 	cmdproc = swboard->servconn->cmdproc;
@@ -148,7 +150,7 @@ ans_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (session->protocol_ver >= 9)
 	{
-		GList *l;	
+		GList *l;
 
 		/* But we already know the switchboard... */
 		/* What if there is more than one user? */
@@ -261,7 +263,7 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	/* msn_cmdproc_process_queue(cmdproc); */
 
 	msn_switchboard_process_queue(swboard);
-	
+
 	send_clientcaps(swboard);
 
 #if 1
@@ -596,7 +598,7 @@ msn_switchboard_init(void)
 #endif
 
 	msn_table_add_error(cbs_table, "MSG", NULL);
-	
+
 	/* Register the message type callbacks. */
 	msn_table_add_msg_type(cbs_table, "text/plain",
 						   plain_msg);

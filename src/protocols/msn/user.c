@@ -3,7 +3,9 @@
  *
  * gaim
  *
- * Copyright (C) 2003-2004 Christian Hammond <chipx86@gnupdate.org>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +147,7 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 			msn_user_set_object(user, msnobj);
 		}
-		
+
 		msn_object_set_real_location(msnobj, filename);
 
 		buf = g_malloc(st.st_size);
@@ -213,7 +215,7 @@ msn_user_add_group_id(MsnUser *user, int id)
 	userlist = user->userlist;
 	account = userlist->session->account;
 	passport = msn_user_get_passport(user);
-	
+
 	group_name = msn_userlist_find_group_name(userlist, id);
 
 	g = gaim_find_group(group_name);

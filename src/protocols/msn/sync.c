@@ -1,3 +1,26 @@
+/**
+ * @file sync.c MSN list synchronization functions
+ *
+ * gaim
+ *
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 #include "msn.h"
 #include "sync.h"
 #include "state.h"
@@ -97,7 +120,7 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	passport   = cmd->params[0];
 	friend     = gaim_url_decode(cmd->params[1]);
 	list_op    = atoi(cmd->params[2]);
-	
+
 	user = msn_user_new(session->userlist, passport, friend);
 
 	msn_userlist_add_user(session->userlist, user);
@@ -105,7 +128,7 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	session->sync->last_user = user;
 
 	/* TODO: This can be improved */
-	
+
 	if (list_op & MSN_LIST_FL_OP)
 	{
 		char **c;
@@ -126,7 +149,7 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			id = atoi(*c);
 			group_ids = g_slist_append(group_ids, GINT_TO_POINTER(id));
 		}
-		
+
 		g_strfreev(tokens);
 
 		msn_got_lst_user(session, user, list_op, group_ids);
