@@ -2524,6 +2524,9 @@ void make_buddy_list()
 	gaim_new_item_from_stock(menu, _("_Preferences..."), GTK_STOCK_PREFERENCES,
 				  G_CALLBACK(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
 
+	gaim_new_item_from_stock(menu, _("_File Transfers..."), GTK_STOCK_REVERT_TO_SAVED,
+				G_CALLBACK(gaim_gtkxfer_dialog_show), NULL, 0, 0, NULL);
+
 	gaim_separator(menu);
 
 	protomenu = gtk_menu_new();

@@ -49,6 +49,7 @@ struct buddy;
 
 #include "multi.h"
 #include "conversation.h"
+#include "ft.h"
 
 /* Really user states are controlled by the PRPLs now. We just use this for event_away */
 #define UC_UNAVAILABLE  1

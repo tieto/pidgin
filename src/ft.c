@@ -1,7 +1,9 @@
-/*
- * gaim - file transfer functions
+/**
+ * @file ft.c The file transfer interface.
  *
- * Copyright (C) 2002, Wil Mahan <wtm2@duke.edu>
+ * gaim
+ *
+ * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,666 +30,627 @@
 #include <errno.h>
 #include <string.h>
 
-#define FT_BUFFER_SIZE (4096)
-
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "proxy.h"
-#include "prpl.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+static struct gaim_xfer_ui_ops *xfer_ui_ops = NULL;
 
-/* Completely describes a file transfer.  Opaque to callers. */
-struct file_transfer {
-	enum { FILE_TRANSFER_TYPE_SEND, FILE_TRANSFER_TYPE_RECEIVE } type;
-
-	enum {
-		FILE_TRANSFER_STATE_ASK, /* waiting for confirmation */
-		FILE_TRANSFER_STATE_CHOOSEFILE, /* waiting for file dialog */
-		FILE_TRANSFER_STATE_TRANSFERRING, /* in actual transfer */
-		FILE_TRANSFER_STATE_INTERRUPTED, /* other user canceled */
-		FILE_TRANSFER_STATE_CANCELED, /* we canceled */
-		FILE_TRANSFER_STATE_DONE, /* transfer complete */
-		FILE_TRANSFER_STATE_CLEANUP /* freeing memory */
-	} state;
-
-	char *who;
-
-	/* file selection dialog */
-	GtkWidget *w;
-	char **names;
-	int *sizes;
-	char *dir;
-	char *initname;
-	FILE *file;
-
-	/* connection info */
-	struct gaim_connection *gc;
-	int fd;
-	int watcher;
-
-	/* state */
-	int totfiles;
-	int filesdone;
-	int totsize;
-	int bytessent;
-	int bytesleft;
-};
-
-
-
-static int ft_choose_file(struct file_transfer *xfer);
-static void ft_cancel(struct file_transfer *xfer);
-static void ft_delete(struct file_transfer *xfer);
-static void ft_callback(gpointer data, gint source, GaimInputCondition condition);
-static void ft_nextfile(struct file_transfer *xfer);
-static int ft_mkdir(const char *name);
-static int ft_mkdir_help(char *dir);
-static gboolean ft_choose_file_close(GtkWidget *widget, GdkEvent *event,
-									 gpointer user_data);
-
-static struct file_transfer *ft_new(int type, struct gaim_connection *gc,
-		const char *who)
+struct gaim_xfer *
+gaim_xfer_new(struct gaim_account *account, GaimXferType type,
+			  const char *who)
 {
-	struct file_transfer *xfer = g_new0(struct file_transfer, 1);
-	xfer->type = type;
-	xfer->state = FILE_TRANSFER_STATE_ASK;
-	xfer->gc = gc;
-	xfer->who = g_strdup(who);
-	xfer->filesdone = 0;
-	xfer->w = NULL;
+	struct gaim_xfer *xfer;
+
+	if (account == NULL || type == GAIM_XFER_UNKNOWN || who == NULL)
+		return NULL;
+
+	xfer = g_malloc0(sizeof(struct gaim_xfer));
+
+	xfer->type    = type;
+	xfer->account = account;
+	xfer->who     = g_strdup(who);
+	xfer->ui_ops  = gaim_get_xfer_ui_ops();
 
 	return xfer;
 }
 
-struct file_transfer *transfer_in_add(struct gaim_connection *gc,
-		const char *who, const char *initname, int totsize,
-		int totfiles, const char *msg)
+void
+gaim_xfer_destroy(struct gaim_xfer *xfer)
 {
-	struct file_transfer *xfer = ft_new(FILE_TRANSFER_TYPE_RECEIVE, gc,
-			who);
-	char *buf;
-	char *sizebuf;
-	static const char *sizestr[4] = { "bytes", "KB", "MB", "GB" };
-	float sizemag = (float)totsize;
-	int szindex = 0;
+	struct gaim_xfer_ui_ops *ui_ops;
 
-	xfer->initname = g_strdup(initname);
-	xfer->totsize = totsize;
-	xfer->totfiles = totfiles;
-	xfer->filesdone = 0;
+	if (xfer == NULL)
+		return;
 
-	/* Ask the user whether he or she accepts the transfer. */
-	while ((szindex < 4) && (sizemag > 1024)) {
-		sizemag /= 1024;
-		szindex++;
-	}
-
-	if (totsize == -1)
-		sizebuf = g_strdup_printf(_("Unkown"));
-	else
-		sizebuf = g_strdup_printf("%.3g %s", sizemag, sizestr[szindex]);
-
-	if (xfer->totfiles == 1) {
-		buf = g_strdup_printf(_("%s requests that %s accept a file: %s (%s)"),
-		who, xfer->gc->username, initname, sizebuf);
-	} else {
-		buf = g_strdup_printf(_("%s requests that %s accept %d files: %s (%s)"),
-		who, xfer->gc->username, xfer->totfiles,
-		initname, sizebuf);
-	}
-
-	g_free(sizebuf);
-
-	if (msg) {
-		char *newmsg = g_strconcat(buf, ": ", msg, NULL);
-		g_free(buf);
-		buf = newmsg;
-	}
-
-	do_ask_dialog(buf, NULL, xfer, _("Accept"), ft_choose_file, _("Cancel"), ft_cancel, NULL, FALSE);
-	g_free(buf);
-
-	return xfer;
-}
-
-struct file_transfer *transfer_out_add(struct gaim_connection *gc,
-		const char *who)
-{
-	struct file_transfer *xfer = ft_new(FILE_TRANSFER_TYPE_SEND, gc,
-			who);
-
-	ft_choose_file(xfer);
-
-	return xfer;
-}
-
-/* We canceled the transfer, either by declining the initial
- * confirmation dialog or canceling the file dialog.
- */
-static void ft_cancel(struct file_transfer *xfer)
-{
-	debug_printf("** ft_cancel\n");
-
-	/* Make sure we weren't aborted while waiting for
-	 * confirmation from the user.
-	 */
-	if (xfer->state == FILE_TRANSFER_STATE_INTERRUPTED) {
-		xfer->state = FILE_TRANSFER_STATE_CLEANUP;
-		transfer_abort(xfer, NULL);
+	if (xfer->bytes_remaining > 0) {
+		gaim_xfer_cancel(xfer);
 		return;
 	}
 
-	xfer->state = FILE_TRANSFER_STATE_CANCELED;
-	if (xfer->w) {
-		gtk_widget_destroy(xfer->w);
-		xfer->w = NULL;
-	}
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
-	if (xfer->gc->prpl->file_transfer_cancel)
-		xfer->gc->prpl->file_transfer_cancel(xfer->gc, xfer);
+	if (ui_ops != NULL && ui_ops->destroy != NULL)
+		ui_ops->destroy(xfer);
 
-	ft_delete(xfer);
-}
+	g_free(xfer->who);
+	g_free(xfer->filename);
 
-/* This is called when the other user aborts the transfer,
- * possibly in the middle of a transfer.
- */
-int transfer_abort(struct file_transfer *xfer, const char *why)
-{
-	if (xfer->state == FILE_TRANSFER_STATE_INTERRUPTED) {
-		/* If for some reason we have already been
-		 * here and are waiting on some event before
-		 * cleaning up, but we get another abort request,
-		 * we don't need to do anything else.
-		 */
-		return 1;
-	}
-	else if (xfer->state == FILE_TRANSFER_STATE_ASK) {
-		/* Kludge:  since there is no way to kill a
-		 * do_ask_dialog() window, we just note the
-		 * status here and clean up after the user
-		 * makes a selection.
-		 */
-		xfer->state = FILE_TRANSFER_STATE_INTERRUPTED;
-		return 1;
-	}
-	else if (xfer->state == FILE_TRANSFER_STATE_TRANSFERRING) {
-		if (xfer->watcher) {
-			gaim_input_remove(xfer->watcher);
-			xfer->watcher = 0;
-		}
-		if (xfer->file) {
-			fclose(xfer->file);
-			xfer->file = NULL;
-		}
-		/* XXX theoretically, there is a race condition here,
-		 * because we could be inside ft_callback() when we
-		 * free xfer below, with undefined results.  Since
-		 * we use non-blocking IO, this doesn't seem to be
-		 * a problem, but it still makes me nervous--I don't
-		 * know how to fix it other than using locks, though.
-		 * -- wtm
-		 */
-	}
-	else if (xfer->state == FILE_TRANSFER_STATE_CHOOSEFILE) {
-		/* It's safe to clean up now.  Just make sure we
-		 * destroy the dialog window first.
-		 */
-		if (xfer->w) {
-			g_signal_handlers_disconnect_by_func(G_OBJECT(xfer->w),
-					G_CALLBACK(ft_choose_file_close), xfer);
-			gtk_widget_destroy(xfer->w);
-			xfer->w = NULL;
-		}
-	}
+	if (xfer->remote_ip != NULL) g_free(xfer->remote_ip);
+	if (xfer->local_ip  != NULL) g_free(xfer->local_ip);
 
-	/* Let the user know that we were aborted, unless we already
-	 * finished or the user aborted first.
-	 */
-	/* if ((xfer->state != FILE_TRANSFER_STATE_DONE) &&
-			(xfer->state != FILE_TRANSFER_STATE_CANCELED)) { */
-	if (why) {
-		char *msg;
+	if (xfer->dest_filename != NULL)
+		g_free(xfer->dest_filename);
 
-		if (xfer->type == FILE_TRANSFER_TYPE_SEND)
-			msg = g_strdup_printf(_("File transfer to %s aborted."), xfer->who);
-		else
-			msg = g_strdup_printf(_("File transfer from %s aborted."), xfer->who);
-		do_error_dialog(msg, why, GAIM_ERROR);
-		g_free(msg);
-	}
-
-	ft_delete(xfer);
-
-	return 0;
-}
-
-
-static void ft_delete(struct file_transfer *xfer)
-{
-	if (xfer->names)
-		g_strfreev(xfer->names);
-	if (xfer->initname)
-		g_free(xfer->initname);
-	if (xfer->who)
-		g_free(xfer->who);
-	if (xfer->sizes)
-		g_free(xfer->sizes);
 	g_free(xfer);
 }
 
-static void ft_choose_ok(gpointer a, struct file_transfer *xfer) {
-	gboolean exists, is_dir;
-	struct stat st;
-	const char *err = NULL;
-	
-	xfer->names = gtk_file_selection_get_selections(GTK_FILE_SELECTION(xfer->w));
-	exists = !stat(*xfer->names, &st);
-	is_dir = (exists) ? S_ISDIR(st.st_mode) : 0;
-
-	if (exists) {
-		if (xfer->type == FILE_TRANSFER_TYPE_RECEIVE)
-			/* XXX overwrite/append/cancel prompt */
-			err = _("That file already exists; please choose another name.");
-		else { /* (xfer->type == FILE_TRANSFER_TYPE_SEND) */
-			char **cur;
-			/* First find the total number of files,
-			 * so we know how much space to allocate.
-			 */
-			xfer->totfiles = 0;
-			for (cur = xfer->names; *cur; cur++) {
-				xfer->totfiles++;
-			}
-
-			/* Now get sizes for each file. */
-			xfer->totsize = st.st_size;
-			xfer->sizes = g_malloc(xfer->totfiles
-					* sizeof(*xfer->sizes));
-			xfer->sizes[0] = st.st_size;
-			for (cur = xfer->names + 1; *cur; cur++) {
-				exists = !stat(*cur, &st);
-				if (!exists) {
-					err = _("File not found.");
-					break;
-				}
-				xfer->sizes[cur - xfer->names] =
-					st.st_size;
-				xfer->totsize += st.st_size;
-			}
-		}
-	}
-	else { /* doesn't exist */
-		if (xfer->type == FILE_TRANSFER_TYPE_SEND)
-			err = _("File not found.");
-		else if (xfer->totfiles > 1) {
-			if (!xfer->names[0] || xfer->names[1]) {
-				err = _("You may only choose one new directory.");
-			}
-			else {
-				if (ft_mkdir(*xfer->names))
-					err = _("Unable to create directory.");
-				else
-					xfer->dir = g_strconcat(xfer->names[0],
-						"/", NULL);
-			}
-		}
-	}
-
-	if (err)
-		do_error_dialog(err, NULL, GAIM_ERROR);
-	else {
-		/* File name looks valid */
-		gtk_widget_destroy(xfer->w);
-		xfer->w = NULL;
-
-		if (xfer->type == FILE_TRANSFER_TYPE_SEND) {
-			char *desc;
-			if (xfer->totfiles == 1)
-				desc = *xfer->names;
-			else
-				/* XXX what else? */
-				desc = "*";
-				/* desc = g_path_get_basename(g_path_get_dirname(*xfer->names)); */
-			xfer->gc->prpl->file_transfer_out(xfer->gc, xfer,
-					desc, xfer->totfiles,
-					xfer->totsize);
-		}
-		else
-			xfer->gc->prpl->file_transfer_in(xfer->gc, xfer,
-					0); /* XXX */
-	}
-}
-
-/* Called on outgoing transfers to get information about the
- * current file.
- */
-int transfer_get_file_info(struct file_transfer *xfer, int *size,
-		char **name)
+void
+gaim_xfer_request(struct gaim_xfer *xfer)
 {
-	*size = xfer->sizes[xfer->filesdone];
-	*name = xfer->names[xfer->filesdone];
-	return 0;
+	struct gaim_xfer_ui_ops *ui_ops;
+
+	if (xfer == NULL || xfer->ops.init == NULL)
+		return;
+
+	ui_ops = gaim_get_xfer_ui_ops();
+
+	if (ui_ops == NULL || ui_ops->request_file == NULL)
+		return;
+
+	ui_ops->request_file(xfer);
 }
 
-static gboolean
-ft_choose_file_close(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+void
+gaim_xfer_request_accepted(struct gaim_xfer *xfer, char *filename)
 {
-	ft_cancel((struct file_transfer *)user_data);
+	GaimXferType type;
 
-	return FALSE;
-}
+	if (xfer == NULL || filename == NULL) {
 
-static void
-ft_cancel_button_cb(GtkButton *button, gpointer user_data)
-{
-	ft_cancel((struct file_transfer *)user_data);
-}
-
-static int ft_choose_file(struct file_transfer *xfer)
-{
-	char *curdir = g_get_current_dir(); /* should be freed */
-	char *initstr;
-
-	/* If the connection is interrupted while we are waiting
-	 * for do_ask_dialog(), then we can't clean up until we
-	 * get here, after the user makes a selection.
-	 */
-	if (xfer->state == FILE_TRANSFER_STATE_INTERRUPTED) {
-		xfer->state = FILE_TRANSFER_STATE_CLEANUP;
-		transfer_abort(xfer, NULL);
-		return 1;
-	}
-
-	xfer->state = FILE_TRANSFER_STATE_CHOOSEFILE;
-	if (xfer->type == FILE_TRANSFER_TYPE_RECEIVE)
-		xfer->w = gtk_file_selection_new(_("Gaim - Save As..."));
-	else /* (xfer->type == FILE_TRANSFER_TYPE_SEND) */ {
-		xfer->w = gtk_file_selection_new(_("Gaim - Open..."));
-		gtk_file_selection_set_select_multiple(GTK_FILE_SELECTION(xfer->w),
-				1);
-	}
-
-	if (xfer->initname) {
-		initstr = g_strdup_printf("%s/%s", curdir, xfer->initname);
-	} else 
-		initstr = g_strconcat(curdir, "/", NULL);
-	g_free(curdir);
-
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(xfer->w),
-			initstr);
-	g_free(initstr);
-
-	g_signal_connect(G_OBJECT(xfer->w), "delete_event",
-					 G_CALLBACK(ft_choose_file_close), xfer);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(xfer->w)->cancel_button), "clicked",
-					 G_CALLBACK(ft_cancel_button_cb), xfer);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(xfer->w)->ok_button), "clicked",
-					 G_CALLBACK(ft_choose_ok), xfer);
-
-	gtk_widget_show(xfer->w);
-
-	return 0;
-}
-
-static int ft_open_file(struct file_transfer *xfer, const char *filename,
-		int offset)
-{
-	char *err = NULL;
-
-	if (xfer->type == FILE_TRANSFER_TYPE_RECEIVE) {
-		xfer->file = fopen(filename,
-				(offset > 0) ? "a" : "w");
-
-		if (!xfer->file)
-			err = g_strdup_printf(_("Could not open %s for writing: %s"),
-					filename, g_strerror(errno));
-
-	}
-	else /* (xfer->type == FILE_TRANSFER_TYPE_SEND) */ {
-		xfer->file = fopen(filename, "r");
-		if (!xfer->file)
-			err = g_strdup_printf(_("Could not open %s for reading: %s"),
-					filename, g_strerror(errno));
-	}
-
-	if (err) {
-		do_error_dialog(err, NULL, GAIM_ERROR);
-		g_free(err);
-		return -1;
-	}
-
-	fseek(xfer->file, offset, SEEK_SET);
-
-	return 0;
-}
-
-/* Takes a full file name, and creates any directories above it
- * that don't exist already.
- */
-static int ft_mkdir(const char *name) {
-	int ret = 0;
-	struct stat st;
-	mode_t m = umask(0077);
-	char *dir;
-
-	dir = g_path_get_dirname(name);
-	if (stat(dir, &st))
-		ret = ft_mkdir_help(dir);
-
-	g_free(dir);
-	umask(m);
-	return ret;
-}
-
-/* Two functions, one recursive, just to make a directory.  Yuck. */
-static int ft_mkdir_help(char *dir) {
-	int ret;
-
-	ret = mkdir(dir, 0775);
-
-	if (ret) {
-		char *index = strrchr(dir, G_DIR_SEPARATOR);
-		if (!index)
-			return -1;
-		*index = '\0';
-		ret = ft_mkdir_help(dir);
-		*index = G_DIR_SEPARATOR;
-		if (!ret)
-			ret = mkdir(dir, 0775);
-	}
-
-	return ret;
-}
- 
-int transfer_in_do(struct file_transfer *xfer, int fd,
-		const char *filename, int size)
-{
-	char *fullname;
-
-	xfer->state = FILE_TRANSFER_STATE_TRANSFERRING;
-	xfer->fd = fd;
-	xfer->bytesleft = size;
-
-	/* XXX implement resuming incoming transfers */
-#if 0
-	if (xfer->sizes)
-		xfer->bytesleft -= xfer->sizes[0];
-#endif
-
-	/* Security check */
-	if (g_strrstr(filename, "..")) {
-		xfer->state = FILE_TRANSFER_STATE_CLEANUP;
-		transfer_abort(xfer, _("Invalid incoming filename component"));
-		return -1;
-	}
-
-	if (xfer->totfiles > 1)
-		fullname = g_strconcat(xfer->dir, filename, NULL);
-	else
-		/* Careful:  filename is the name on the *other*
-		 * end; don't use it here. */
-		fullname = g_strdup(xfer->names[xfer->filesdone]);
-
-	
-	if (ft_mkdir(fullname)) {
-		xfer->state = FILE_TRANSFER_STATE_CLEANUP;
-		transfer_abort(xfer, _("Invalid incoming filename"));
-		return -1;
-	}
-
-	if (!ft_open_file(xfer, fullname, 0)) {
-		/* Special case:  if we are receiving an empty file,
-		 * we would never enter the callback.  Just avoid the
-		 * callback altogether.
-		 */
-		if (xfer->bytesleft == 0)
-			ft_nextfile(xfer);
-		else
-			xfer->watcher = gaim_input_add(fd,
-					GAIM_INPUT_READ,
-					ft_callback, xfer);
-	} else {
-		/* Error opening file */
-		xfer->state = FILE_TRANSFER_STATE_CLEANUP;
-		transfer_abort(xfer, NULL);
-		g_free(fullname);
-		return -1;
-	}
-
-	g_free(fullname);
-	return 0;
-}
-
-int transfer_out_do(struct file_transfer *xfer, int fd, int offset) {
-	xfer->state = FILE_TRANSFER_STATE_TRANSFERRING;
-	xfer->fd = fd;
-	xfer->bytesleft = xfer->sizes[xfer->filesdone] - offset;
-
-	if (!ft_open_file(xfer, xfer->names[xfer->filesdone], offset)) {
-		/* Special case:  see transfer_in_do().
-		 */
-		if (xfer->bytesleft == 0)
-			ft_nextfile(xfer);
-		else
-			xfer->watcher = gaim_input_add(fd,
-					GAIM_INPUT_WRITE, ft_callback,
-					xfer);
-	}
-	else {
-		/* Error opening file */
-		xfer->state = FILE_TRANSFER_STATE_CLEANUP;
-		transfer_abort(xfer, NULL);
-		return -1;
-	}
-
-	return 0;
-}
-
-static void ft_callback(gpointer data, gint source,
-		GaimInputCondition condition)
-{
-	struct file_transfer *xfer = (struct file_transfer *)data;
-	int rt;
-	char *buf = NULL;
-
-	if (condition & GAIM_INPUT_READ) {
-		if (xfer->gc->prpl->file_transfer_read)
-			rt = xfer->gc->prpl->file_transfer_read(xfer->gc, xfer,
-													xfer->fd, &buf);
-		else {
-			buf = g_new0(char, MIN(xfer->bytesleft, FT_BUFFER_SIZE));
-			rt = read(xfer->fd, buf, MIN(xfer->bytesleft, FT_BUFFER_SIZE));
-		}
-
-		/* XXX What if the transfer is interrupted while we
-		 * are inside read()?  How can this be handled safely?
-		 * -- wtm
-		 */
-		if (rt > 0) {
-			xfer->bytesleft -= rt;
-			fwrite(buf, 1, rt, xfer->file);
-		}
-
-	}
-	else /* (condition & GAIM_INPUT_WRITE) */ {
-		int remain = MIN(xfer->bytesleft, FT_BUFFER_SIZE);
-
-		buf = g_new0(char, remain);
-
-		fread(buf, 1, remain, xfer->file);
-
-		if (xfer->gc->prpl->file_transfer_write)
-			rt = xfer->gc->prpl->file_transfer_write(xfer->gc, xfer, xfer->fd,
-													 buf, remain);
-		else
-			rt = write(xfer->fd, buf, remain);
-
-		if (rt > 0)
-			xfer->bytesleft -= rt;
-	}
-
-	if (rt < 0) {
-		if (buf != NULL)
-			g_free(buf);
+		if (filename != NULL)
+			g_free(filename);
 
 		return;
 	}
 
-	xfer->bytessent += rt;
+	type = gaim_xfer_get_type(xfer);
 
-	if (xfer->gc->prpl->file_transfer_data_chunk)
-		xfer->gc->prpl->file_transfer_data_chunk(xfer->gc, xfer, buf, rt);
+	if (type == GAIM_XFER_SEND) {
+		struct stat sb;
 
-	if (rt > 0 && xfer->bytesleft == 0) {
-		/* We are done with this file! */
-		gaim_input_remove(xfer->watcher);
-		xfer->watcher = 0;
-		fclose(xfer->file);
-		xfer->file = 0;
-		ft_nextfile(xfer);
-	}
+		/* Check the filename. */
+		if (g_strrstr(filename, "..")) {
+			char *msg;
 
-	if (buf != NULL)
-		g_free(buf);
-}
+			msg = g_strdup_printf(_("%s is not a valid filename.\n"),
+								  filename);
 
-static void ft_nextfile(struct file_transfer *xfer)
-{
-	debug_printf("file transfer %d of %d done\n",
-			xfer->filesdone + 1, xfer->totfiles);
+			gaim_xfer_error(type, xfer->who, msg);
 
-	if (++xfer->filesdone == xfer->totfiles) {
-		char *msg;
-		char *msg2;
+			g_free(msg);
+			g_free(filename);
 
-		xfer->gc->prpl->file_transfer_done(xfer->gc, xfer);
+			return;
+		}
 
-		if (xfer->type == FILE_TRANSFER_TYPE_RECEIVE)
-			msg = g_strdup_printf(_("File transfer from %s to %s completed successfully."),
-					xfer->who, xfer->gc->username);
-		else 
-			msg = g_strdup_printf(_("File transfer from %s to %s completed successfully."),
-					xfer->gc->username, xfer->who);
-		xfer->state = FILE_TRANSFER_STATE_DONE;
+		if (stat(filename, &sb) == -1) {
+			char *msg;
 
-		if (xfer->totfiles > 1)
-			msg2 = g_strdup_printf(_("%d files transferred."), 
-						xfer->totfiles);
-		else
-			msg2 = NULL;
+			msg = g_strdup_printf(_("%s was not found.\n"), filename);
 
-		do_error_dialog(msg, msg2, GAIM_INFO);
-		g_free(msg);
-		if (msg2)
-			g_free(msg2);
+			gaim_xfer_error(type, xfer->who, msg);
 
-		ft_delete(xfer);
+			g_free(msg);
+			g_free(filename);
+
+			return;
+		}
+
+		gaim_xfer_set_size(xfer, sb.st_size);
 	}
 	else {
-		xfer->gc->prpl->file_transfer_nextfile(xfer->gc, xfer);
+		/* TODO: Sanity checks and file overwrite checks. */
+
+		gaim_xfer_set_dest_filename(xfer, filename);
 	}
+
+	g_free(filename);
+
+	xfer->ops.init(xfer);
+}
+
+void
+gaim_xfer_request_denied(struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return;
+
+	/* TODO */
+}
+
+GaimXferType
+gaim_xfer_get_type(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return GAIM_XFER_UNKNOWN;
+
+	return xfer->type;
+}
+
+struct gaim_account *
+gaim_xfer_get_account(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return NULL;
+
+	return xfer->account;
+}
+
+const char *
+gaim_xfer_get_filename(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return NULL;
+
+	return xfer->filename;
+}
+
+const char *
+gaim_xfer_get_dest_filename(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return NULL;
+
+	return xfer->dest_filename;
+}
+
+size_t
+gaim_xfer_get_bytes_sent(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return 0;
+
+	return xfer->bytes_sent;
+}
+
+size_t
+gaim_xfer_get_bytes_remaining(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return 0;
+
+	return xfer->bytes_remaining;
+}
+
+size_t
+gaim_xfer_get_size(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return 0;
+
+	return xfer->size;
+}
+
+double
+gaim_xfer_get_progress(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return 0.0;
+
+	return ((double)gaim_xfer_get_bytes_sent(xfer) /
+			(double)gaim_xfer_get_size(xfer));
+}
+
+const char *
+gaim_xfer_get_local_ip(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return NULL;
+
+	return xfer->local_ip;
+}
+
+unsigned int
+gaim_xfer_get_local_port(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return -1;
+
+	return xfer->local_port;
+}
+
+const char *
+gaim_xfer_get_remote_ip(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return NULL;
+
+	return xfer->remote_ip;
+}
+
+unsigned int
+gaim_xfer_get_remote_port(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return -1;
+
+	return xfer->remote_port;
+}
+
+void
+gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename)
+{
+	if (xfer == NULL)
+		return;
+
+	if (xfer->filename != NULL)
+		g_free(xfer->filename);
+
+	xfer->filename = (filename == NULL ? NULL : g_strdup(filename));
+}
+
+void
+gaim_xfer_set_dest_filename(struct gaim_xfer *xfer, const char *filename)
+{
+	if (xfer == NULL)
+		return;
+
+	if (xfer->dest_filename != NULL)
+		g_free(xfer->dest_filename);
+
+	xfer->dest_filename = (filename == NULL ? NULL : g_strdup(filename));
+}
+
+void
+gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size)
+{
+	if (xfer == NULL || size == 0)
+		return;
+
+	xfer->size = size;
+}
+
+struct gaim_xfer_ui_ops *
+gaim_xfer_get_ui_ops(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return NULL;
+
+	return xfer->ui_ops;
+}
+
+void
+gaim_xfer_set_init_fnc(struct gaim_xfer *xfer,
+					   void (*fnc)(struct gaim_xfer *))
+{
+	if (xfer == NULL)
+		return;
+
+	xfer->ops.init = fnc;
+}
+
+
+void
+gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
+					   size_t (*fnc)(char **, const struct gaim_xfer *))
+{
+	if (xfer == NULL)
+		return;
+
+	xfer->ops.read = fnc;
+}
+
+void
+gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
+						size_t (*fnc)(const char *, size_t,
+									  const struct gaim_xfer *))
+{
+	if (xfer == NULL)
+		return;
+
+	xfer->ops.write = fnc;
+}
+
+void
+gaim_xfer_set_ack_fnc(struct gaim_xfer *xfer,
+					  void (*fnc)(struct gaim_xfer *))
+{
+	if (xfer == NULL)
+		return;
+
+	xfer->ops.ack = fnc;
+}
+
+void
+gaim_xfer_set_start_fnc(struct gaim_xfer *xfer,
+						void (*fnc)(struct gaim_xfer *))
+{
+	if (xfer == NULL)
+		return;
+
+	xfer->ops.start = fnc;
+}
+
+void
+gaim_xfer_set_end_fnc(struct gaim_xfer *xfer,
+					  void (*fnc)(struct gaim_xfer *))
+{
+	if (xfer == NULL)
+		return;
+
+	xfer->ops.end = fnc;
+}
+
+void
+gaim_xfer_set_cancel_fnc(struct gaim_xfer *xfer,
+						 void (*fnc)(struct gaim_xfer *))
+{
+	if (xfer == NULL)
+		return;
+
+	xfer->ops.cancel = fnc;
+}
+
+size_t
+gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
+{
+	size_t s, r;
+
+	if (xfer == NULL || buffer == NULL)
+		return 0;
+
+	s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
+
+	if (xfer->ops.read != NULL)
+		r = xfer->ops.read(buffer, xfer);
+	else {
+		*buffer = g_malloc0(s);
+
+		r = read(xfer->fd, *buffer, s);
+	}
+
+	return r;
+}
+
+size_t
+gaim_xfer_write(struct gaim_xfer *xfer, const char *buffer, size_t size)
+{
+	size_t r, s;
+
+	if (xfer == NULL || buffer == NULL || size == 0)
+		return 0;
+
+	s = MIN(gaim_xfer_get_bytes_remaining(xfer), size);
+
+	if (xfer->ops.write != NULL)
+		r = xfer->ops.write(buffer, s, xfer);
+	else
+		r = write(xfer->fd, buffer, s);
+
+	return r;
+}
+
+static void
+transfer_cb(gpointer data, gint source, GaimInputCondition condition)
+{
+	struct gaim_xfer_ui_ops *ui_ops;
+	struct gaim_xfer *xfer = (struct gaim_xfer *)data;
+	char *buffer = NULL;
+	size_t r;
+
+	if (condition & GAIM_INPUT_READ) {
+		r = gaim_xfer_read(xfer, &buffer);
+
+		if (r > 0)
+			fwrite(buffer, 1, r, xfer->dest_fp);
+	}
+	else {
+		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
+
+		buffer = g_malloc0(s);
+
+		fread(buffer, 1, s, xfer->dest_fp);
+
+		/* Write as much as we're allowed to. */
+		r = gaim_xfer_write(xfer, buffer, s);
+
+		if (r < s) {
+			/* We have to seek back in the file now. */
+			fseek(xfer->dest_fp, r - s, SEEK_CUR);
+		}
+	}
+
+	g_free(buffer);
+
+	if (r < 0)
+		return;
+
+	xfer->bytes_remaining -= r;
+	xfer->bytes_sent += r;
+
+	if (xfer->ops.ack != NULL)
+		xfer->ops.ack(xfer);
+
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
+
+	if (ui_ops != NULL && ui_ops->update_progress != NULL)
+		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
+
+	if (xfer->bytes_remaining == 0)
+		gaim_xfer_end(xfer);
+}
+
+static void
+begin_transfer(struct gaim_xfer *xfer, GaimInputCondition cond)
+{
+	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXferType type = gaim_xfer_get_type(xfer);
+
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
+
+	/*
+	 * We'll have already tried to open this earlier to make sure we can
+	 * read/write here. Should be safe.
+	 */
+	xfer->dest_fp = fopen(gaim_xfer_get_dest_filename(xfer),
+						  type == GAIM_XFER_RECEIVE ? "wb" : "rb");
+
+	/* Just in case, though. */
+	if (xfer->dest_fp == NULL) {
+		gaim_xfer_cancel(xfer); /* ? */
+		return;
+	}
+
+	xfer->watcher = gaim_input_add(xfer->fd, cond, transfer_cb, xfer);
+
+	if (ui_ops != NULL && ui_ops->add_xfer != NULL)
+		ui_ops->add_xfer(xfer);
+
+	if (xfer->ops.start != NULL)
+		xfer->ops.start(xfer);
+}
+
+static void
+connect_cb(gpointer data, gint source, GaimInputCondition condition)
+{
+	struct gaim_xfer *xfer = (struct gaim_xfer *)data;
+
+	xfer->fd = source;
+
+	begin_transfer(xfer, condition);
+}
+
+void
+gaim_xfer_start(struct gaim_xfer *xfer, int fd, const char *ip,
+				unsigned int port)
+{
+	GaimInputCondition cond;
+	GaimXferType type;
+
+	if (xfer == NULL || gaim_xfer_get_type(xfer) == GAIM_XFER_UNKNOWN)
+		return;
+
+	type = gaim_xfer_get_type(xfer);
+
+	xfer->bytes_remaining = gaim_xfer_get_size(xfer);
+	xfer->bytes_sent      = 0;
+
+	if (type == GAIM_XFER_RECEIVE) {
+		cond = GAIM_INPUT_READ;
+
+		if (ip != NULL) {
+			xfer->remote_ip   = g_strdup(ip);
+			xfer->remote_port = port;
+
+			/* Establish a file descriptor. */
+			proxy_connect(xfer->remote_ip, xfer->remote_port,
+						  connect_cb, xfer);
+
+			return;
+		}
+		else {
+			xfer->fd = fd;
+		}
+	}
+	else {
+		cond = GAIM_INPUT_WRITE;
+
+		xfer->fd = fd;
+	}
+
+	begin_transfer(xfer, cond);
+}
+
+void
+gaim_xfer_end(struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return;
+
+	/* See if we are actually trying to cancel this. */
+	if (gaim_xfer_get_bytes_remaining(xfer) > 0) {
+		gaim_xfer_cancel(xfer);
+		return;
+	}
+
+	if (xfer->ops.end != NULL)
+		xfer->ops.end(xfer);
+
+	gaim_input_remove(xfer->watcher);
+	xfer->watcher = 0;
+
+	close(xfer->fd);
+
+	if (xfer->dest_fp != NULL) {
+		fclose(xfer->dest_fp);
+		xfer->dest_fp = NULL;
+	}
+
+	/* Delete the transfer. */
+	gaim_xfer_destroy(xfer);
+}
+
+void
+gaim_xfer_cancel(struct gaim_xfer *xfer)
+{
+	struct gaim_xfer_ui_ops *ui_ops;
+
+	if (xfer == NULL)
+		return;
+
+	if (xfer->ops.cancel != NULL)
+		xfer->ops.cancel(xfer);
+
+	gaim_input_remove(xfer->watcher);
+	xfer->watcher = 0;
+
+	close(xfer->fd);
+
+	if (xfer->dest_fp != NULL) {
+		fclose(xfer->dest_fp);
+		xfer->dest_fp = NULL;
+	}
+
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
+
+	if (ui_ops != NULL && ui_ops->cancel != NULL)
+		ui_ops->cancel(xfer);
+
+	/* Delete the transfer. */
+	gaim_xfer_destroy(xfer);
+}
+
+void
+gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
+{
+	char *title;
+
+	if (xfer == NULL || msg == NULL || type == GAIM_XFER_UNKNOWN)
+		return;
+
+	if (type == GAIM_XFER_SEND)
+		title = g_strdup_printf(_("File transfer to %s aborted.\n"), who);
+	else
+		title = g_strdup_printf(_("File transfer from %s aborted.\n"), who);
+
+	do_error_dialog(title, msg, GAIM_ERROR);
+
+	g_free(title);
+}
+
+void
+gaim_set_xfer_ui_ops(struct gaim_xfer_ui_ops *ops)
+{
+	if (ops == NULL)
+		return;
+
+	xfer_ui_ops = ops;
+}
+
+struct gaim_xfer_ui_ops *
+gaim_get_xfer_ui_ops(void)
+{
+	return xfer_ui_ops;
 }
 

@@ -30,6 +30,7 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include "gtkconv.h"
+#include "gtkft.h"
 #include "gtkutils.h"
 #include "stock.h"
 

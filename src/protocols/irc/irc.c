@@ -80,19 +80,12 @@ struct dcc_chat
 	char nick[80];		
 };
 
-struct irc_file_transfer {
-	enum { IFT_SENDFILE_IN, IFT_SENDFILE_OUT } type;
-	struct file_transfer *xfer;
-	char *sn;
-	char *name;
-	int len;
-	int watcher;
-	int awatcher;
-	char ip[12];
+struct irc_xfer_data
+{
+	char *ip;
 	int port;
-	int fd;
-	int cur;
-	struct gaim_connection *gc;
+
+	struct irc_data *idata;
 };
 
 struct irc_data {
@@ -513,16 +506,6 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	}
 }
 
-static void 
-irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_transfer *ift) {
-	/* Ok, we better be receiving some crap here boyeee */
-	if (transfer_in_do(ift->xfer, ift->fd, ift->name, ift->len)) {
-		gaim_input_remove(ift->watcher);
-		ift->watcher = 0;
-	}
-}
-
-
 void 
 irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition) {
 	/* Read ACK Here */
@@ -531,6 +514,7 @@ irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition) {
 
 void 
 dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
+#if 0
 	struct irc_file_transfer *ift = data;
 	struct sockaddr_in addr;
 	int len = sizeof(addr);
@@ -552,14 +536,7 @@ dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
 		gaim_input_remove(ift->watcher);
 		ift->watcher = 0;
 	}
-}
-
-void 
-dcc_recv_callback (gpointer data, gint source, GaimInputCondition condition) {
-	struct irc_file_transfer *ift = data;
-	
-	ift->fd = source;
-	irc_file_transfer_do(ift->gc, ift);
+#endif
 }
 
 void 
@@ -1247,6 +1224,48 @@ irc_convo_closed(struct gaim_connection *gc, char *who)
 	dcc_chat_cancel(dchat);
 }
 
+static void
+irc_xfer_init(struct gaim_xfer *xfer)
+{
+	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
+
+	gaim_xfer_start(xfer, -1, data->ip, data->port);
+}
+
+static void
+irc_xfer_end(struct gaim_xfer *xfer)
+{
+	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
+
+	data->idata->file_transfers = g_slist_remove(data->idata->file_transfers,
+												 xfer);
+
+	g_free(data);
+	xfer->data = NULL;
+}
+
+static void
+irc_xfer_cancel(struct gaim_xfer *xfer)
+{
+	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
+
+	data->idata->file_transfers = g_slist_remove(data->idata->file_transfers,
+												 xfer);
+
+	g_free(data);
+	xfer->data = NULL;
+}
+
+static void
+irc_xfer_ack(struct gaim_xfer *xfer)
+{
+	guint32 pos;
+
+	pos = htonl(gaim_xfer_get_bytes_sent(xfer));
+
+	gaim_xfer_write(xfer, (char *)&pos, 4);
+}
+
 static void 
 handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 			char *msg, char *word[], char *word_eol[])
@@ -1302,22 +1321,76 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 
 
 	if (!g_strncasecmp(msg, "DCC SEND", 8)) {
-		struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
-		char **send_args = g_strsplit(msg, " ", 6);
+		struct gaim_xfer *xfer;
+		char **send_args;
+		char *ip, *filename;
+		struct irc_xfer_data *xfer_data;
+		size_t size;
+		int port;
+
+		send_args = g_strsplit(msg, " ", 6);
 		send_args[5][strlen(send_args[5])-1] = 0;
 
-		ift->type = IFT_SENDFILE_IN;
-		ift->sn = g_strdup(nick);
-		ift->gc = gc;
-		g_snprintf(ift->ip, sizeof(ift->ip), send_args[3]);	
-		ift->port = atoi(send_args[4]);
-		ift->len = atoi(send_args[5]);
-		ift->name = g_strdup(send_args[2]);
-		ift->cur = 0;
+		/* Give these better names. */
+		ip       = send_args[3];
+		filename = send_args[2];
+		size     = atoi(send_args[5]);
+		port     = atoi(send_args[4]);
 
-		id->file_transfers = g_slist_append(id->file_transfers, ift);
+		/* Setup the IRC-specific transfer data. */
+		xfer_data = g_malloc0(sizeof(struct irc_xfer_data));
+		xfer_data->ip    = ip;
+		xfer_data->port  = port;
+		xfer_data->idata = id;
 
-		ift->xfer = transfer_in_add(gc, nick, ift->name, ift->len, 1, NULL);
+		/* Build the file transfer handle. */
+		xfer = gaim_xfer_new(gc->account, GAIM_XFER_RECEIVE, nick);
+		xfer->data = xfer_data;
+
+		/* Set the info about the incoming file. */
+		gaim_xfer_set_filename(xfer, filename);
+		gaim_xfer_set_size(xfer, size);
+
+		g_free(filename);
+
+		/* Setup our I/O op functions. */
+		gaim_xfer_set_init_fnc(xfer,   irc_xfer_init);
+		gaim_xfer_set_end_fnc(xfer,    irc_xfer_end);
+		gaim_xfer_set_cancel_fnc(xfer, irc_xfer_cancel);
+		gaim_xfer_set_ack_fnc(xfer,    irc_xfer_ack);
+
+		/* Keep track of this transfer for later. */
+		id->file_transfers = g_slist_append(id->file_transfers, xfer);
+
+		/* Now perform the request! */
+		gaim_xfer_request(xfer);
+
+#if 0
+		if (xfer != NULL) {
+			struct irc_file_transfer *ift;
+			gaim_xfer_set_read_fnc(xfer,   irc_xfer_read);
+			gaim_xfer_set_cancel_fnc(xfer, irc_xfer_cancel);
+
+			gaim_xfer_set_ack_fnc(xfer, irc_xfer_ack);
+
+			ift = g_new0(struct irc_file_transfer, 1);
+
+			strncpy(ift->ip, send_args[3], sizeof(ift->ip));
+			ift->type = IFT_SENDFILE_IN;
+			ift->sn   = g_strdup(nick);
+			ift->gc   = gc;
+			ift->port = atoi(send_args[4]);
+			ift->len  = atoi(send_args[5]);
+			ift->name = g_strdup(send_args[2]);
+			ift->cur  = 0;
+			ift->xfer = xfer;
+
+			xfer->data = ift;
+
+
+			gaim_xfer_start(xfer, -1, send_args[3], atoi(send_args[4]));
+		}
+#endif
 	}
 
 	/*write_to_conv(c, out, WFLAG_SYSTEM, NULL, time(NULL), -1);*/
@@ -1779,13 +1852,12 @@ irc_close(struct gaim_connection *gc)
 
 	/* Kill any existing transfers */
 	while (idata->file_transfers) {
-		struct irc_file_transfer *ift = (struct irc_file_transfer *)idata->file_transfers->data;
+		struct gaim_xfer *xfer;
 
-		g_free(ift->sn);
-		g_free(ift->name);
-		gaim_input_remove(ift->watcher);
+		xfer = (struct gaim_xfer *)idata->file_transfers->data;
 
-		close(ift->fd);
+		gaim_xfer_end(xfer);
+		gaim_xfer_destroy(xfer);
 
 		idata->file_transfers = idata->file_transfers->next;
 	}
@@ -2423,10 +2495,10 @@ irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
 
 	ift->xfer = transfer_out_add(gc, ift->sn);
 }
-#endif
+
 static struct 
-irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc, 
-						  struct file_transfer *xfer) {
+irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc,
+									struct file_transfer *xfer) {
 		
 	GSList *g = ((struct irc_data *)gc->proto_data)->file_transfers;
 	struct irc_file_transfer *f = NULL;
@@ -2535,6 +2607,7 @@ irc_file_transfer_in(struct gaim_connection *gc,
 	ift->xfer = xfer;
 	proxy_connect(ift->ip, ift->port, dcc_recv_callback, ift);
 }
+#endif
 
 static void 
 irc_ctcp_clientinfo(struct gaim_connection *gc, char *who)
@@ -2746,11 +2819,13 @@ irc_init(struct prpl *ret)
 	ret->buddy_menu = irc_buddy_menu;
 	ret->chat_invite = irc_chat_invite;
 	ret->convo_closed = irc_convo_closed;
+#if 0
 	ret->file_transfer_out = irc_file_transfer_out; 
 	ret->file_transfer_in = irc_file_transfer_in;
 	ret->file_transfer_data_chunk = irc_file_transfer_data_chunk;
 	ret->file_transfer_done = irc_file_transfer_done;
 	ret->file_transfer_cancel =irc_file_transfer_cancel;
+#endif
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Server:"));

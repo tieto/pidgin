@@ -47,6 +47,7 @@ static void gtk_cell_renderer_progress_render     (GtkCellRenderer            *c
 						   GdkRectangle               *cell_area,
 						   GdkRectangle               *expose_area,
 						   guint                       flags);
+#if 0
 static gboolean gtk_cell_renderer_progress_activate  (GtkCellRenderer            *cell,
 						      GdkEvent                   *event,
 						      GtkWidget                  *widget,
@@ -54,6 +55,7 @@ static gboolean gtk_cell_renderer_progress_activate  (GtkCellRenderer           
 						      GdkRectangle               *background_area,
 						      GdkRectangle               *cell_area,
 						      guint                       flags);
+#endif
 static void  gtk_cell_renderer_progress_finalize (GObject *gobject);
 
 enum {
@@ -69,7 +71,7 @@ enum {
 };
      
 static gpointer parent_class;
-static guint progress_cell_renderer_signals [LAST_SIGNAL];
+/* static guint progress_cell_renderer_signals [LAST_SIGNAL]; */
 
 GType  gtk_cell_renderer_progress_get_type (void)
 {
@@ -148,7 +150,9 @@ static void gtk_cell_renderer_progress_class_init (GtkCellRendererProgressClass 
 
 static void gtk_cell_renderer_progress_finalize (GObject *object)
 {
+/*
 	GtkCellRendererProgress *cellprogress = GTK_CELL_RENDERER_PROGRESS(object);
+*/
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }

@@ -19,11 +19,16 @@ gaim_SOURCES =	about.c \
 		dnd-hints.c \
 		dnd-hints.h \
 		ft.c \
+		ft.h \
 		gaim.h \
 		gaim-socket.h \
 		gaimrc.c \
+		gtkcellrendererprogress.c \
+		gtkcellrendererprogress.h \
 		gtkconv.c \
 		gtkconv.h \
+		gtkft.c \
+		gtkft.h \
 		gtkimhtml.c \
 		gtkimhtml.h \
 		gtkutils.c \

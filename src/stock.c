@@ -39,7 +39,10 @@ static struct StockIcon
 {
 	{ GAIM_STOCK_BGCOLOR,       "buttons", "change-bgcolor-small.png" },
 	{ GAIM_STOCK_BLOCK,         NULL,      GTK_STOCK_STOP             },
+	{ GAIM_STOCK_DOWNLOAD,      NULL,      GTK_STOCK_GO_DOWN          },
 	{ GAIM_STOCK_FGCOLOR,       "buttons", "change-fgcolor-small.png" },
+	{ GAIM_STOCK_FILE_CANCELED, NULL,      GTK_STOCK_CANCEL           },
+	{ GAIM_STOCK_FILE_DONE,     NULL,      GTK_STOCK_APPLY            },
 	{ GAIM_STOCK_IGNORE,        NULL,      GTK_STOCK_DIALOG_ERROR     },
 	{ GAIM_STOCK_IMAGE,         "menus",   "insert-image-small.png"   },
 	{ GAIM_STOCK_INFO,          NULL,      GTK_STOCK_FIND             },
@@ -50,6 +53,7 @@ static struct StockIcon
 	{ GAIM_STOCK_TEXT_BIGGER,   "buttons", "text_bigger.png"          },
 	{ GAIM_STOCK_TEXT_NORMAL,   "buttons", "text_normal.png"          },
 	{ GAIM_STOCK_TEXT_SMALLER,  "buttons", "text_smaller.png"         },
+	{ GAIM_STOCK_UPLOAD,        NULL,      GTK_STOCK_GO_UP            },
 	{ GAIM_STOCK_WARN,          NULL,      GTK_STOCK_DIALOG_WARNING   }
 };
 

@@ -85,8 +85,6 @@
 
 typedef void (*proto_init)(struct prpl *);
 
-struct file_transfer;
-
 struct prpl {
 	int protocol;
 	int options;
@@ -179,16 +177,6 @@ struct prpl {
 	void (* convo_closed)   (struct gaim_connection *, char *who);
 
 	char *(* normalize)(const char *);
-
-	/* transfer files */
-	void (* file_transfer_cancel)	 (struct gaim_connection *, struct file_transfer *);
-	void (* file_transfer_in)	 (struct gaim_connection *, struct file_transfer *, int);
-	void (* file_transfer_out)	 (struct gaim_connection *, struct file_transfer *, const char *, int, int);
-	void (* file_transfer_nextfile)	 (struct gaim_connection *, struct file_transfer *);
-	void (* file_transfer_data_chunk)(struct gaim_connection *, struct file_transfer *, const char *, int);
-	void (* file_transfer_done)	 (struct gaim_connection *, struct file_transfer *);
-	size_t (* file_transfer_read) (struct gaim_connection *, struct file_transfer *, int fd, char **buf);
-	size_t (* file_transfer_write) (struct gaim_connection *, struct file_transfer *, int fd, const char *buf, size_t size);
 };
 
 extern GSList *protocols;
@@ -217,20 +205,6 @@ extern void connection_has_mail(struct gaim_connection *, int, const char *, con
 
 extern void set_icon_data(struct gaim_connection *, char *, void *, int);
 extern void *get_icon_data(struct gaim_connection *, char *, int *);
-
-/* file transfer stuff */
-extern struct file_transfer *transfer_in_add(struct gaim_connection *gc,
-		const char *who, const char *filename, int totsize,
-		int totfiles, const char *msg);
-extern struct file_transfer *transfer_out_add(struct gaim_connection *gc,
-		const char *who);
-extern int transfer_abort(struct file_transfer *xfer, const char *why);
-extern int transfer_out_do(struct file_transfer *xfer, int fd,
-		int offset);
-extern int transfer_in_do(struct file_transfer *xfer, int fd,
-		const char *filename, int size);
-int transfer_get_file_info(struct file_transfer *xfer, int *size,
-		char **name);
 
 /* stuff to load/unload PRPLs as necessary */
 extern gboolean ref_protocol(struct prpl *p);

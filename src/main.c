@@ -520,7 +520,9 @@ static int ui_main()
 		}
 	}
 
+	/* Set the UI operation structures. */
 	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
+	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
 
 	setup_stock();
 

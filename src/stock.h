@@ -29,7 +29,10 @@
 /*@{*/
 #define GAIM_STOCK_BGCOLOR        "gaim-bgcolor"
 #define GAIM_STOCK_BLOCK          "gaim-block"
+#define GAIM_STOCK_DOWNLOAD       "gaim-download"
 #define GAIM_STOCK_FGCOLOR        "gaim-fgcolor"
+#define GAIM_STOCK_FILE_CANCELED  "gaim-file-canceled"
+#define GAIM_STOCK_FILE_DONE      "gaim-file-done"
 #define GAIM_STOCK_IGNORE         "gaim-ignore"
 #define GAIM_STOCK_IMAGE          "gaim-image"
 #define GAIM_STOCK_INFO           "gaim-info"
@@ -40,6 +43,7 @@
 #define GAIM_STOCK_TEXT_BIGGER    "gaim-text-bigger"
 #define GAIM_STOCK_TEXT_NORMAL    "gaim-text-normal"
 #define GAIM_STOCK_TEXT_SMALLER   "gaim-text-smaller"
+#define GAIM_STOCK_UPLOAD         "gaim-upload"
 #define GAIM_STOCK_WARN           "gaim-warn"
 /*@}*/
 
