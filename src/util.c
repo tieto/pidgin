@@ -768,6 +768,20 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 
 	q = strstr(p, end_token);
 
+	/* Trim leading blanks */
+	while (*p != '\n' && g_ascii_isspace(*p)) {
+		p += 1;
+	}
+
+	/* Trim trailing blanks */
+	while (q > p && g_ascii_isspace(*(q - 1))) {
+		q -= 1;
+	}
+
+	/* Don't bother with null strings */
+	if (p == q)
+		return FALSE;
+
 	if (q != NULL && (!no_value_token ||
 					  (no_value_token && strncmp(p, no_value_token,
 												 strlen(no_value_token)))))
@@ -1208,11 +1222,20 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 	g_string_free(plain, TRUE);
 }
 
+/* The following are probably reasonable changes:
+ * - \n should be converted to a normal space
+ * - in addition to <br>, <p> and <div> etc. should also be converted into \n
+ * - We want to turn </td>#whitespace<td> sequences into a single blank
+ * - We want to turn </tr>#whitespace<tr> sequences into a single \n
+ * We should remove all <script>...</script> etc. This should be fixed some time
+ */
+
 char *
 gaim_markup_strip_html(const char *str)
 {
 	int i, j, k;
 	gboolean visible = TRUE;
+	gboolean closing_td_p = FALSE;
 	gchar *str2;
 
 	if(!str)
@@ -1224,11 +1247,20 @@ gaim_markup_strip_html(const char *str)
 	{
 		if (str2[i] == '<')
 		{
-			if (strncasecmp(str2 + i, "<br>", 4) == 0)
+			if (strncasecmp(str2 + i, "<td", 3) == 0 && closing_td_p)
 			{
-				str2[j++] = '\n';
-				i = i + 3;
-				continue;
+				str2[j++] = ' ';
+				visible = TRUE;
+			}
+			else if (strncasecmp(str2 + i, "</td>", 5) == 0)
+			{
+				closing_td_p = TRUE;
+				visible = FALSE;
+			}
+			else
+			{
+				closing_td_p = FALSE;
+				visible = TRUE;
 			}
 
 			k = i + 1;
@@ -1237,28 +1269,32 @@ gaim_markup_strip_html(const char *str)
 				visible = TRUE;
 			else
 			{
-				while (str2[k])
+				/* Scan until we end the tag either implicitly (closed start
+				 * tag) or explicitly, using a sloppy method (i.e., < or >
+				 * inside quoted attributes will screw us up)
+				 */
+				while (str2[k] && str2[k] != '<' && str2[k] != '>')
 				{
-					if (str2[k] == '<')
-					{
-						visible = TRUE;
-						break;
-					}
-
-					if (str2[k] == '>')
-					{
-						visible = FALSE;
-						break;
-					}
-
 					k++;
 				}
+				/* Check for tags which should be mapped to newline */
+				if (strncasecmp(str2 + i, "<p>", 3) == 0
+				 || strncasecmp(str2 + i, "<tr", 3) == 0
+				 || strncasecmp(str2 + i, "<br", 3) == 0
+				 || strncasecmp(str2 + i, "<li", 3) == 0
+				 || strncasecmp(str2 + i, "<div", 4) == 0
+				 || strncasecmp(str2 + i, "</table>", 8) == 0)
+				{
+					str2[j++] = '\n';
+				}
+				/* Update the index and continue checking after the tag */
+				i = (str2[k] == '<')? k - 1: k;
+				continue;
 			}
 		}
-		else if (str2[i] == '>' && !visible)
+		else if (!g_ascii_isspace(str2[i]))
 		{
 			visible = TRUE;
-			continue;
 		}
 
 		if (str2[i] == '&' && strncasecmp(str2 + i, "&quot;", 6) == 0)
@@ -1290,7 +1326,7 @@ gaim_markup_strip_html(const char *str)
 		}
 
 		if (visible)
-			str2[j++] = str2[i];
+			str2[j++] = g_ascii_isspace(str2[i])? ' ': str2[i];
 	}
 
 	str2[j] = '\0';
@@ -2669,6 +2705,37 @@ gaim_utf8_try_convert(const char *str)
 	}
 
 	return(NULL);
+}
+
+char *
+gaim_utf8_ncr_decode(const char *in)
+{
+	GString *out = g_string_new("");
+	int i;
+
+	g_return_val_if_fail(in != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(in, -1, NULL), NULL);
+
+	for (i = 0; in[i]; i += 1) {
+		gboolean ncr_found_p = FALSE;
+		if (in[i] == '&' && in[i + 1] == '#' && isdigit(in[i + 2])) {
+			gunichar wc;
+			int j;
+			for (wc = 0, j = i + 2; isdigit(in[j]); j += 1) {
+				wc *= 10;
+				wc += in[j] - '0';
+			}
+			if (in[j] == ';') { /* Technically not completely correct */
+				g_string_append_unichar(out, wc);
+				i = j;
+				ncr_found_p = TRUE;
+			}
+		}
+		if (!ncr_found_p) {
+			g_string_append_c(out, in[i]);
+		}
+	}
+	return g_string_free(out, FALSE);
 }
 
 int

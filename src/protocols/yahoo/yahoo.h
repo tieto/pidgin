@@ -225,4 +225,7 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8);
  */
 char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8);
 
+/* yahoo_profile.c */
+void yahoo_get_info(GaimConnection *gc, const char *name);
+
 #endif /* _YAHOO_H_ */
