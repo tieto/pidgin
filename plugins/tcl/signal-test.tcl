@@ -75,7 +75,7 @@ gaim::signal connect [gaim::conversation handle] sent-im-msg { account who what 
 }
 
 gaim::signal connect [gaim::connection handle] signed-on { gc } {
-	gaim::debug -info "tcl signal" "signed-on [gaim::account username [gaim::connection account $gc]"
+	gaim::debug -info "tcl signal" "signed-on [gaim::account username [gaim::connection account $gc]]"
 }
 
 gaim::signal connect [gaim::connection handle] signed-off { gc } {
