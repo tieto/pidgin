@@ -1,6 +1,8 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.9.17:
+	* Automagic feature to check for new versions has been removed
+	* Infinite loop bug fixed
 
 version 0.9.16: (05/31/2000)
 	* Paned buddy chat window (Thanks Syd)
