@@ -1318,9 +1318,9 @@ GtkWidget *logging_page() {
 
 	vbox = gaim_gtk_make_frame (ret, _("Message Logs"));
 	prefs_checkbox(_("_Log all instant messages"),
-				  "/gaim/gtk/logging/log_chats", vbox);
-	prefs_checkbox(_("Log all c_hats"),
 				  "/gaim/gtk/logging/log_ims", vbox);
+	prefs_checkbox(_("Log all c_hats"),
+				  "/gaim/gtk/logging/log_chats", vbox);
 	prefs_checkbox(_("Strip _HTML from logs"),
 				  "/gaim/gtk/logging/strip_html", vbox);
 
