@@ -1368,9 +1368,25 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 
 void gtk_imhtml_page_up (GtkIMHtml *imhtml)
 {
+	GdkRectangle rect;
+	GtkTextIter iter;
 
+	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(imhtml), &iter, rect.x,
+									   rect.y - rect.height);
+	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(imhtml), &iter, 0, TRUE, 0, 0);
+	
 }
-void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml){}
+void gtk_imhtml_page_down (GtkIMHtml *imhtml)
+{
+	GdkRectangle rect;
+	GtkTextIter iter;
+
+	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(imhtml), &iter, rect.x,
+									   rect.y + rect.height);
+	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(imhtml), &iter, 0, TRUE, 0, 0);
+}
 
 static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
