@@ -3,6 +3,7 @@ plugins/chkmail.c
 plugins/contact_priority.c
 plugins/docklet/docklet-win32.c
 plugins/docklet/docklet.c
+plugins/extplacement.c
 plugins/filectl.c
 plugins/gaim-remote/remote.c
 plugins/gaiminc.c
