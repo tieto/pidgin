@@ -49,7 +49,7 @@ static int goodbye()
 
 static void send_it(GtkEntry *entry)
 {
-	char *txt;
+	const char *txt;
 	if (!gc) return;
 	txt = gtk_entry_get_text(entry);
 	switch (gc->protocol) {
@@ -108,11 +108,11 @@ static void redo_optmenu(struct gaim_connection *arg, gpointer x)
 			continue;
 		if (!gc)
 			gc = c;
-		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, (*c->prpl->name)());
+		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(set_gc), c);
 		gtk_widget_show(opt);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 	}
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));

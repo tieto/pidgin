@@ -25,11 +25,9 @@ static gint check_mail()
 	struct stat s;
 	gint ret = 0;
 
-	filename = g_getenv("MAIL");
+	filename = g_strdup(g_getenv("MAIL"));
 	if (!filename)
 		filename = g_strconcat("/var/spool/mail/", g_get_user_name(), NULL);
-	else
-		filename = g_strdup(filename);
 
 	if (stat(filename, &s) < 0) {
 		g_free(filename);
@@ -64,7 +62,7 @@ static gboolean check_timeout(gpointer data)
 
 	if (!mail) {
 		/* guess we better build it then :P */
-		GList *tmp = gtk_container_children(GTK_CONTAINER(blist));
+		GList *tmp = gtk_container_get_children(GTK_CONTAINER(blist));
 		GtkWidget *vbox2 = (GtkWidget *)tmp->data;
 
 		mail = gtk_label_new("No mail messages.");
