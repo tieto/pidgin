@@ -708,7 +708,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	GaimConversation *convo;
 	char *nick, *msg;
 
-	if (!args || !args[0] || !args[1] || !gc)
+	if (!args || !args[0] || !gc)
 		return;
 
 	convo = gaim_find_conversation_with_account(args[0], irc->account);
@@ -719,7 +719,8 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 
 	nick = irc_mask_nick(from);
 	if (!gaim_utf8_strcasecmp(nick, gaim_connection_get_display_name(gc))) {
-		msg = g_strdup_printf(_("You have parted the channel%s%s"), *args[1] ? ": " : "", args[1]);
+		msg = g_strdup_printf(_("You have parted the channel%s%s"),
+                                      (args[1] && *args[1]) ? ": " : "", args[1]);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	} else {
