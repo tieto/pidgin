@@ -55,6 +55,9 @@ typedef struct _JabberSIXfer {
 
 	GList *streamhosts;
 	GaimProxyInfo *gpi;
+
+	char *rxqueue;
+	size_t rxlen;
 } JabberSIXfer;
 
 static GaimXfer*
@@ -68,7 +71,8 @@ jabber_si_xfer_find(JabberStream *js, const char *sid, const char *from)
 	for(xfers = js->file_transfers; xfers; xfers = xfers->next) {
 		GaimXfer *xfer = xfers->data;
 		JabberSIXfer *jsx = xfer->data;
-		if(!strcmp(jsx->stream_id, sid) && !strcmp(xfer->who, from))
+		if(jsx->stream_id && xfer->who &&
+				!strcmp(jsx->stream_id, sid) && !strcmp(xfer->who, from))
 			return xfer;
 	}
 
@@ -204,41 +208,200 @@ void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet)
 }
 
 static void
-jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
+jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		GaimInputCondition cond)
 {
 	GaimXfer *xfer = data;
-	char ver, len, method;
+	JabberSIXfer *jsx = xfer->data;
 	int i;
-	char buf[2];
+	char buffer[256];
+	int len;
+	char *dstaddr, *p;
+	unsigned char hashval[20];
+	const char *host;
 
-	xfer->fd = source;
+	gaim_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_read_again_cb\n");
 
-	read(source, &ver, 1);
+	if(jsx->rxlen < 5) {
+		gaim_debug_info("jabber", "reading the first 5 bytes\n");
+		if((len = read(source, buffer, 5 - jsx->rxlen)) <= 0) {
+			gaim_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			close(source);
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
+		jsx->rxqueue = g_realloc(jsx->rxqueue, len + jsx->rxlen);
+		memcpy(jsx->rxqueue + jsx->rxlen, buffer, len);
+		jsx->rxlen += len;
+		return;
+	} else if(jsx->rxqueue[0] != 0x05 || jsx->rxqueue[1] != 0x01 ||
+			jsx->rxqueue[3] != 0x03) {
+		gaim_debug_info("jabber", "invalid socks5 stuff\n");
+		gaim_input_remove(xfer->watcher);
+		xfer->watcher = 0;
+		close(source);
+		gaim_xfer_cancel_remote(xfer);
+		return;
+	} else if(jsx->rxlen - 5 <  jsx->rxqueue[4] + 2) {
+		gaim_debug_info("jabber", "reading umpteen more bytes\n");
+		if((len = read(source, buffer, jsx->rxqueue[4] + 5 + 2 - jsx->rxlen)) <= 0) {
+			gaim_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			close(source);
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
+		jsx->rxqueue = g_realloc(jsx->rxqueue, len + jsx->rxlen);
+		memcpy(jsx->rxqueue + jsx->rxlen, buffer, len);
+		jsx->rxlen += len;
+	}
 
-	if(ver != 0x05) {
+	if(jsx->rxlen - 5 < jsx->rxqueue[4] + 2)
+		return;
+
+	gaim_input_remove(xfer->watcher);
+	xfer->watcher = 0;
+
+	dstaddr = g_strdup_printf("%s%s@%s/%s%s", jsx->stream_id,
+			jsx->js->user->node, jsx->js->user->domain,
+			jsx->js->user->resource, xfer->who);
+	shaBlock((unsigned char *)dstaddr, strlen(dstaddr), hashval);
+	g_free(dstaddr);
+	dstaddr = g_malloc(41);
+	p = dstaddr;
+	for(i=0; i<20; i++, p+=2)
+		snprintf(p, 3, "%02x", hashval[i]);
+
+	if(jsx->rxqueue[4] != 40 || strncmp(dstaddr, jsx->rxqueue+5, 40) ||
+			jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00) {
+		gaim_debug_error("jabber", "someone connected with the wrong info!\n");
 		close(source);
 		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
 
-	read(source, &len, 1);
-	for(i=0; i<len; i++) {
-		read(source, &method, 1);
-		if(method == 0x00) {
-			buf[0] = 0x05;
-			buf[1] = 0x00;
-			write(source, buf, 2);
-			gaim_xfer_start(xfer, source, NULL, 0);
+	host = gaim_network_get_ip_for_account(jsx->js->gc->account, jsx->js->fd);
+
+	buffer[0] = 0x05;
+	buffer[1] = 0x00;
+	buffer[2] = 0x00;
+	buffer[3] = 0x03;
+	buffer[4] = strlen(host);
+	memcpy(buffer + 5, host, strlen(host));
+	buffer[5+strlen(host)] = 0x00;
+	buffer[6+strlen(host)] = 0x00;
+
+	write(source, buffer, strlen(host)+7);
+
+	gaim_xfer_start(xfer, source, NULL, -1);
+}
+
+static void
+jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
+		GaimInputCondition cond)
+{
+	GaimXfer *xfer = data;
+	JabberSIXfer *jsx = xfer->data;
+	int i;
+	int len;
+	char buffer[256];
+
+	gaim_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_read_cb\n");
+
+	xfer->fd = source;
+
+	if(jsx->rxlen < 2) {
+		gaim_debug_info("jabber", "reading those first two bytes\n");
+		if((len = read(source, buffer, 2 - jsx->rxlen)) <= 0) {
+			gaim_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			close(source);
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
+		jsx->rxqueue = g_realloc(jsx->rxqueue, len + jsx->rxlen);
+		memcpy(jsx->rxqueue + jsx->rxlen, buffer, len);
+		jsx->rxlen += len;
+		return;
+	} else if(jsx->rxlen - 2 <  jsx->rxqueue[1]) {
+		gaim_debug_info("jabber", "reading the next umpteen bytes\n");
+		if((len = read(source, buffer, jsx->rxqueue[1] + 2 - jsx->rxlen)) <= 0) {
+			gaim_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			close(source);
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
+		jsx->rxqueue = g_realloc(jsx->rxqueue, len + jsx->rxlen);
+		memcpy(jsx->rxqueue + jsx->rxlen, buffer, len);
+		jsx->rxlen += len;
+	}
+
+	if(jsx->rxlen -2 < jsx->rxqueue[1])
+		return;
+
+	gaim_input_remove(xfer->watcher);
+	xfer->watcher = 0;
+
+
+	gaim_debug_info("jabber", "checking to make sure we're socks FIVE\n");
+
+	if(jsx->rxqueue[0] != 0x05) {
+		close(source);
+		gaim_xfer_cancel_remote(xfer);
+		return;
+	}
+
+	gaim_debug_info("jabber", "going to test %hhu different methods\n", jsx->rxqueue[1]);
+
+	for(i=0; i<jsx->rxqueue[1]; i++) {
+
+		gaim_debug_info("jabber", "testing %hhu\n", jsx->rxqueue[i+2]);
+		if(jsx->rxqueue[i+2] == 0x00) {
+			buffer[0] = 0x05;
+			buffer[1] = 0x00;
+			write(source, buffer, 2);
+			xfer->watcher = gaim_input_add(source, GAIM_INPUT_READ,
+					jabber_si_xfer_bytestreams_send_read_again_cb, xfer);
+			g_free(jsx->rxqueue);
+			jsx->rxqueue = NULL;
+			jsx->rxlen = 0;
 			return;
 		}
 	}
 
-	buf[0] = 0x05;
-	buf[1] = 0xFF;
-	write(source, buf, 2);
+	buffer[0] = 0x05;
+	buffer[1] = 0xFF;
+	write(source, buffer, 2);
+	close(source);
+	g_free(jsx->rxqueue);
+	jsx->rxqueue = NULL;
+	jsx->rxlen = 0;
 	gaim_xfer_cancel_remote(xfer);
 }
+
+static void
+jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
+		GaimInputCondition cond)
+{
+	GaimXfer *xfer = data;
+	int acceptfd;
+
+	gaim_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_connected_cb\n");
+
+	if((acceptfd = accept(source, NULL, 0)) == -1) {
+		gaim_debug_warning("jabber", "accept: %s\n", strerror(errno));
+		return;
+	}
+
+	gaim_input_remove(xfer->watcher);
+	close(source);
+
+	xfer->watcher = gaim_input_add(acceptfd, GAIM_INPUT_READ,
+			jabber_si_xfer_bytestreams_send_read_cb, xfer);
+}
+
 
 static void
 jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
@@ -266,9 +429,9 @@ jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
 		return;
 	}
 
-	xmlnode_set_attrib(streamhost, "host",  gaim_network_get_ip_for_account(jsx->js->gc->account, fd));
+	xmlnode_set_attrib(streamhost, "host",  gaim_network_get_ip_for_account(jsx->js->gc->account, jsx->js->fd));
 	xfer->local_port = gaim_network_get_port_from_fd(fd);
-	port = g_strdup_printf("%d", xfer->local_port);
+	port = g_strdup_printf("%hu", xfer->local_port);
 	xmlnode_set_attrib(streamhost, "port", port);
 	g_free(port);
 
@@ -371,15 +534,37 @@ static void jabber_si_xfer_send_request(GaimXfer *xfer)
 	jabber_iq_send(iq);
 }
 
-void jabber_si_xfer_cancel_send(GaimXfer *xfer)
+static void jabber_si_xfer_free(GaimXfer *xfer)
 {
+	JabberSIXfer *jsx = xfer->data;
+	JabberStream *js = jsx->js;
+
+	js->file_transfers = g_list_remove(js->file_transfers, xfer);
+
+	g_free(jsx->stream_id);
+	g_free(jsx->iq_id);
+	/* XXX: free other stuff */
+	g_free(jsx);
+	xfer->data = NULL;
+}
+
+static void jabber_si_xfer_cancel_send(GaimXfer *xfer)
+{
+	jabber_si_xfer_free(xfer);
 	gaim_debug(GAIM_DEBUG_INFO, "jabber", "in jabber_si_xfer_cancel_send\n");
 }
 
 
-void jabber_si_xfer_cancel_recv(GaimXfer *xfer)
+static void jabber_si_xfer_cancel_recv(GaimXfer *xfer)
 {
+	jabber_si_xfer_free(xfer);
 	gaim_debug(GAIM_DEBUG_INFO, "jabber", "in jabber_si_xfer_cancel_recv\n");
+}
+
+
+static void jabber_si_xfer_end(GaimXfer *xfer)
+{
+	jabber_si_xfer_free(xfer);
 }
 
 
@@ -414,7 +599,7 @@ static void jabber_si_xfer_init(GaimXfer *xfer)
 		/* XXX: for now, send to the first resource available */
 		if(g_list_length(jb->resources) >= 1) {
 			char *who;
-			jbr = jb->resources->data;
+			jbr = jabber_buddy_find_resource(jb, NULL);
 			who = g_strdup_printf("%s/%s", xfer->who, jbr->name);
 			g_free(xfer->who);
 			xfer->who = who;
@@ -472,6 +657,7 @@ void jabber_si_xfer_ask_send(GaimConnection *gc, const char *name)
 
 	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
 	gaim_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
+	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
@@ -553,6 +739,8 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 		gaim_xfer_set_size(xfer, filesize);
 
 	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
+	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
+	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 

@@ -463,6 +463,8 @@ gaim_xfer_read(GaimXfer *xfer, char **buffer)
 		if ((gaim_xfer_get_size(xfer) > 0) &&
 			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer)))
 			gaim_xfer_set_completed(xfer, TRUE);
+		else if(r <= 0)
+			r = -1;
 	}
 
 	return r;
@@ -496,12 +498,16 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	GaimXferUiOps *ui_ops;
 	GaimXfer *xfer = (GaimXfer *)data;
 	char *buffer = NULL;
-	size_t r;
+	ssize_t r;
 
 	if (condition & GAIM_INPUT_READ) {
 		r = gaim_xfer_read(xfer, &buffer);
-		if (r > 0)
+		if (r > 0) {
 			fwrite(buffer, 1, r, xfer->dest_fp);
+		} else if(r < 0) {
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
 	}
 	else {
 		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
