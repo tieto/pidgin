@@ -584,7 +584,6 @@ void open_url(GtkWidget *w, char *url)
 		if (pid == 0) {
 			char **args;
 			char command[1024];
-			char *quoted = NULL;
 
 			if (web_browser == BROWSER_OPERA) {
 				args[0] = "opera";
@@ -619,8 +618,6 @@ void open_url(GtkWidget *w, char *url)
 			}
 
 			execvp(args[0], args);
-			if (quoted)
-				g_free(quoted);
 			_exit(0);
 		}
 	}
