@@ -14,7 +14,7 @@ Now that you've put that there, make sure gaim.h is in your include path.
 
 Ok, now you're ready to write the plugin.
 
-The only function that is required is gaim_plugin_init(void *). This gets
+The only function that is required is gaim_plugin_init(GModule *). This gets
 called as soon as it gets loaded (sort of - man dlopen for more details). If
 your function never returns, it will crash gaim! If your plugin uses up all
 the memory in the system, it will crash gaim! Once your plugin gets loaded,
@@ -23,21 +23,21 @@ like it is a problem with gaim itself. I write bugfree code! :) Therefore, it
 is your problem, not mine. (I'm usually nice and willing to help you with your
 problems though.)
 
-The void * that gets passed to gaim_plugin_init is the handle for the plugin.
+The GModule* that gets passed to gaim_plugin_init is the handle for the plugin.
 DO NOT CHANGE THIS POINTER! Bad things will happen. You've been warned. It's
 needed for connecting to signals and things. It's a good idea to remember it
 somehow.
 
-gaim_plugin_init should return an int. If the int returned is less than 0, it
-is interpreted as an error, and gaim_plugin_error is called. See the ChangeLog
-file in this directory for more details, and error.c for an example.
+gaim_plugin_init should return a char*. If the char* returned is not NULL, it
+is interpreted as an error, and used as an error message. See the ChangeLog
+file in this directory for more details.
 
 You can basically do anything you want in the plugin. You can make function
 calls, change public widgets, display new widgets, things like that. But the
 really neat thing is you can do things at events. For example, when one of
 your buddies signs on, you can instantly send them a message. You can modify
 the incoming and outgoing text. You can do all kinds of crazy things. Whatever
-you want. Check out SIGNALS and CRAZY for more information and ideas.
+you want. Check out SIGNALS for more information.
 
 Plugins can share globals with gaim, but will not share with other plugins.
 This is so if you have a global variable GtkWidget *window in your plugin and
@@ -46,7 +46,7 @@ constantly overwriting each others' variables. Unfortunately, this also means
 that plugins will have difficulty working together. But then again, that's
 what shared memory is for.
 
-Plugins can be configured. This makes is so they don't have to be recompiled
+Plugins can be configured. This makes it so they don't have to be recompiled
 in order to change things internal to them, and it's also just a cool feature
 to have :). It's optional; to allow your plugin to be configured, add a
 function called gaim_plugin_config(). The advised course of action is to have
@@ -57,8 +57,8 @@ doesn't have to be there, but it's nice if, say, you create a window, and when
 the plugin gets unloaded, it removes the window. Also, all the callbacks you
 have attached to gaim signals will be removed.
 
-Plugins can also unload themselves. To do this, call gaim_plugin_unload(void *)
-(the void* is the handle passed to gaim_plugin_init). When your plugin gets
+Plugins can also unload themselves. To do this, call gaim_plugin_unload(GModule *)
+(the GModule* is the handle passed to gaim_plugin_init). When your plugin gets
 unloaded, gaim will remove all of your callbacks. It will not call your
 gaim_plugin_remove function, however, since it will assume you have already
 done the necessary cleanup.

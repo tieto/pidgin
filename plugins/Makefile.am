@@ -29,6 +29,5 @@ plugin_DATA =
 endif
 
 
-EXTRA_DIST = ChangeLog PERL-HOWTO CRAZY HOWTO SIGNALS autorecon.c error.c filectl.c \
-	gaiminc.c iconaway.c lagmeter.c notify.c simple.c spellchk.c \
-	toc_commands.c events.c gaim.pl mailchk.c chatlist.c
+EXTRA_DIST = ChangeLog PERL-HOWTO HOWTO SIGNALS autorecon.c filectl.c iconaway.c \
+		lagmeter.c notify.c spellchk.c gaim.pl mailchk.c chatlist.c
