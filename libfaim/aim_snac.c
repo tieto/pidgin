@@ -13,51 +13,60 @@
  */
 
 #include <aim.h>
-#include <assert.h>
 
-struct aim_snac_t	*aim_outstanding_snacs = NULL;
-u_long	aim_snac_nextid = 0x00000001;
-
-u_long	aim_newsnac(struct aim_snac_t *newsnac) {
-	struct aim_snac_t	*snac = NULL, *cur = aim_outstanding_snacs;
+u_long aim_newsnac(struct aim_session_t *sess,
+		   struct aim_snac_t *newsnac) 
+{
+  struct aim_snac_t *snac = NULL, *cur = NULL;
   
-	assert(newsnac != NULL);
-	snac = calloc(1, sizeof(struct aim_snac_t));
-	assert(snac != NULL);
-	memcpy(snac, newsnac, sizeof(struct aim_snac_t));
-	snac->issuetime = time(&snac->issuetime);
-	snac->next = NULL;
+  if (!newsnac)
+    return 0;
 
-	if (cur == NULL) {
-		aim_outstanding_snacs = snac;
-		return(snac->id);
-	}
-	while (cur->next != NULL)
-		cur = cur->next;
-	cur->next = snac;
-	return(snac->id);
+  cur = sess->outstanding_snacs;
+
+  snac = calloc(1, sizeof(struct aim_snac_t));
+  if (!snac)
+    return 0;
+  memcpy(snac, newsnac, sizeof(struct aim_snac_t));
+  snac->issuetime = time(&snac->issuetime);
+  snac->next = NULL;
+  
+  if (cur == NULL) {
+    sess->outstanding_snacs = snac;
+    return(snac->id);
+  }
+  while (cur->next != NULL)
+    cur = cur->next;
+  cur->next = snac;
+
+  return(snac->id);
 }
 
-struct aim_snac_t	*aim_remsnac(u_long id) {
-	struct aim_snac_t	*cur = aim_outstanding_snacs;
+struct aim_snac_t *aim_remsnac(struct aim_session_t *sess, 
+			       u_long id) 
+{
+  struct aim_snac_t *cur;
 
-	if (cur == NULL)
-		return(NULL);
-	if (cur->id == id) {
-		aim_outstanding_snacs = cur->next;
-		return(cur);
-	}
-	while (cur->next != NULL) {
-		if (cur->next->id == id) {
-			struct aim_snac_t	*tmp = NULL;
+  cur = sess->outstanding_snacs;
 
-			tmp = cur->next;
-			cur->next = cur->next->next;
-			return(tmp);
-		}
-		cur = cur->next;
-	}
-	return(NULL);
+  if (cur == NULL)
+    return(NULL);
+
+  if (cur->id == id) {
+    sess->outstanding_snacs = cur->next;
+    return(cur);
+  }
+  while (cur->next != NULL) {
+    if (cur->next->id == id) {
+      struct aim_snac_t	*tmp = NULL;
+      
+      tmp = cur->next;
+      cur->next = cur->next->next;
+      return(tmp);
+    }
+    cur = cur->next;
+  }
+  return(NULL);
 }
 
 /*
@@ -68,22 +77,25 @@ struct aim_snac_t	*aim_remsnac(u_long id) {
  * why its called _max_age).
  *
  */
-int aim_cleansnacs(int maxage)
+int aim_cleansnacs(struct aim_session_t *sess,
+		   int maxage)
 {
-  struct aim_snac_t *cur = aim_outstanding_snacs;
+  struct aim_snac_t *cur;
   struct aim_snac_t *remed = NULL;
   time_t curtime;
+ 
+  cur = sess->outstanding_snacs;
   
   curtime = time(&curtime);
-
+ 
   while (cur)
     {
       if ( (cur) && (((cur->issuetime) + maxage) < curtime))
 	{
 #if DEBUG > 1
-	  printf("aimsnac: WARNING purged obsolete snac %ul\n", cur->id);
+	  printf("aimsnac: WARNING purged obsolete snac %08lx\n", cur->id);
 #endif
-	  remed = aim_remsnac(cur->id);
+	  remed = aim_remsnac(sess, cur->id);
 	  if (remed)
 	    {
 	      if (remed->data)
@@ -93,16 +105,16 @@ int aim_cleansnacs(int maxage)
 	}
       cur = cur->next;
     }
-
+  
   return 0;
 }
 
 int aim_putsnac(u_char *buf, int family, int subtype, int flags, u_long snacid)
 {
   int curbyte = 0;
-  curbyte += aimutil_put16(buf+curbyte,family&0xffff);
-  curbyte += aimutil_put16(buf+curbyte,subtype&0xffff);
-  curbyte += aimutil_put16(buf+curbyte,flags&0xffff);
-  curbyte += aimutil_put32(buf+curbyte,snacid);
+  curbyte += aimutil_put16(buf+curbyte, (u_short)(family&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (u_short)(subtype&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (u_short)(flags&0xffff));
+  curbyte += aimutil_put32(buf+curbyte, snacid);
   return curbyte;
 }

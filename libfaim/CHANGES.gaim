@@ -1,0 +1,10 @@
+Sat May 20 00:16:25 UTC 2000 EWarmenhoven
+	- First log entry! Yay!
+	- Updated the libfaim code to the latest in CVS
+	- Rewrote much of oscar.c (if not all).
+	- Current supported features:
+		Signing On
+		Receiving IMs
+		Sending IMs
+	- There is a 2 second delay between GTK updates. Please, someone
+	  fix this before I go insane.

@@ -1,6 +1,183 @@
 
 No release numbers
 ------------------
+ - Sun Apr  2 07:29:11 UTC 2000
+   - Redid much of the tx path to remove the superfluous copy.  But
+       it touches every function that transmits.  Its been a long 
+       time in coming.
+   - Added caps parameter to aim_bos_setprofile().  You can now
+       control what capabilties you show up as others to
+   - Added ->capabilities to userinfo.  It should be nonzero when
+       its coming off buddy oncoming information, but NOT requested
+       user info.
+
+ - Sun Apr  2 01:45:15 UTC 2000
+   - Increased AIM_CONN_MAX from 5 to 7.  Precausionary only
+   - Removed deprecated TIS_TELNET_PROXY from faim/faimconfig.h
+   - Added macros for the simple integer functions in aim_util.c
+   - Removed usage of aim_failsaferead() 
+      - Still not sure why I had it to begin with.  I think it 
+        was a remament from when we used non-blocking sockets
+        (which I don't know why I did either)
+   - Removed some of the oddities in aim_get_command()
+      - gprof showed this taking 20kns on my k6-300.  Should be faster now.
+      - Added conn parameter.  This should prevent aim_select() from
+        getting called too many times in a row.
+
+ - Thu Mar 23 08:45:40 UTC 2000
+   - Removed aim_countconn() > 0 check in aim_select(), its logically redundent
+   - Added aim_putuserinfo() (inverse of aim_extractuserinfo())
+   - Added aim_sendbuddyoncoming/offgoing() 
+   - Rearranged loop in rxdispatch()
+   - Remove aim_conn_close() if connections dead in aim_get_command()
+
+ - Thu Mar 23 00:44:32 UTC 2000
+   - Added a check to purge_rxqueue to skip handled commands
+
+ - Mon Mar 20 05:30:59 UTC 2000
+   - Added some server-only functions for login
+   - Added aim_counttlvchain()
+   - Added aim_sncmp() and aim_snlen()
+
+ - Sun Mar 19 06:07:52 UTC 2000
+   - Added a parameter to aim_select to return event type 
+     - REQUIRES CLIENT CHANGES.
+   - For the most part rewrote the tx and rx queuing code 
+     - Should fix many, many outstanding problems in and related
+         to that code, including one that keeps memory from freeing 
+   - Fixed several bugs in various places
+   - Reformated a lot of code, and did general cleanups
+   - Should have a generally more robust lib now.
+
+ - Sun Mar 12 00:07:40 UTC 2000
+   - Fixed a robustness problem in aim_handleredirect_middle()
+   - Added TLV chain creation routines (yes, aimd is progressing)
+
+ - Mon Jan  3 04:07:55 UTC 2000
+   - Fixed bug in aim_snac.c
+   - Fixed condition where commands read from connections that have 
+       been closed were still left in the queue.  Now cancelled.
+   - Added some printfs to aim_info to get more informative crahes
+   - Fixed a bug in aim_rxqueue::purge
+
+ - Sun Jan  2 10:31:19 UTC 2000
+   - Cleanups in aim_info.c
+   - Can compile with -Ddebug=100 again
+   - Implemented chat: Joining/Leaving, info parsing, IM parsing/sending
+   - Implemented some chatnav: rights req/parsing, room creation
+
+ - Thu Dec 30 10:08:42 UTC 1999
+   - Fixed bug in aim_im.c when (encoding == NULL) || (lang == NULL)
+   - Added detection of voice chat requests
+   - Added AIM_CLASS_* defines, including new Away flag
+   - Added awaymsg parameter to bos_setprofile.
+     - If awaymsg is nonnull, you will be advertised as being away (your
+         class will be ORed with AIM_CLASS_AWAY), otherwise you'll show 
+         up normal.
+
+ - Wed Dec 29 10:06:35 UTC 1999
+   - Fixed small bug in IM parser
+   - Added stubs for the capability TLVs in userinfo.
+
+ - Wed Dec 29 09:14:45 UTC 1999
+   - Added a capability block to aim_bos_setprofile.  Can now get chat 
+       invites again.
+   - Extended ICBM parser to support channel 2 messages (chat invites)
+     - A channel parameter has been prepended to the varargs -- REQUIRES 
+         CLIENT CHANGES.
+     - Extended faimtest to support chat invites.
+   - Changed faimtest to get sn/password from environment
+
+ - Wed Dec 29 04:17:03 UTC 1999
+   - Added -g to CFLAGS
+   - Added aim_sendconnack() to aim_login.c (needed for newer login)
+   - Added code for the new SNAC-based login/auth procedure. (see SNACLOGIN
+       in faim/faimconfig.h for why its not enabled)
+   - Reimplemented aim_authparse(), aim_handleredirect() using TLVlists
+       - The old auth_failed callback is now integrated into the
+           success one.  If there was an error, logininfo->errorcode is nonzero
+   - Fiddled with version information.  Added aim_setversions()
+   - Added table of SNAC names for showing unknown snacs (jbm)
+   - Added a middle handler for MOTD
+   - Added new authorization SNACs to faim/aim_cbtypes.h   
+
+ - Sun Dec 26 22:59:10 UTC 1999
+   - Renamed login_phase1_struct to aim_login_struct
+   - Changed cookie and sn to be static arrays in aim_login_struct
+   - Integrated the Jabber-faim changes.  (temas)  [BIG CLIENT CHANGES]
+     - Added aim_session_t, removed all global variables
+     - Changed all functions to accept a session pointer
+     - Removed aim_global.c
+     - Updated faimtest to use an aim_session_t.
+     - Removed all cases where logininfo was passed as vararg to client
+   - Fixed small bug in aim_newconn's 'fixing' of host:port addresses
+   - Added an install rule to the makefile (installs headers+so only!)
+   - Enabled USE_SNAC_FOR_IMS by default, assuming it got fixed
+       by n's new aim_snac.c from ages ago
+   - Implemented a middle handler for 0004/0001 message errors, added
+       snacid lookup to get illfated destination SN and pass to client
+   - Implemented a short middle handler for offgoing buddy.
+
+ - Fri Dec 24 21:30:06 UTC 1999
+   - Added an error-counting Read() that has been sitting in my inbox
+   - Cleaned up header files, created aim_cbtypes.h.
+   - Added void * to aim_conn_t for private client use if they want. (Orb)
+   - Removed all stderr output.  All output is important, and goes to stdout.
+   - Renamed isautoresponse in IM parser to icbmflags.
+   - Added Orb's fix for the new login code, deleted old (see Orb, I do read
+       your mail....eventually).
+   - Added mailing lists to README.
+
+ - Fri Dec 24 11:12:34 UTC 1999
+   - Cleaned up both outgoing and incoming ICBM handling.  Anything
+       that crashes around there is no longer libfaims fault!
+       - The encoding flags are now passed up to the client.
+   - Added several TLV routines to parse large blocks of continuous
+       TLV triplets.  Not terribly effecient, but quite elegent in usage.
+   - Added icbm_setparams() back in from way-back-long-ago.  It hasn't
+       been implemented in a long time, but I think we should still send it.
+
+ - Fri Dec 24 01:23:06 UTC 1999
+   - Fixed a very minor bug in aim_newconn().
+   - Added aimutil_get{16,32}()
+   - Added aim_extractuserinfo() for extracting  user data
+       blocks and putting them into struct aim_userinfo_s's.
+         - Added a loop to print out info on extraneous TLVs.
+         - Put in lots of comments.
+   - Added parse_oncoming_middle() to parse the user data
+       block of that packet.  Now passes struct aim_userinfo_s
+       to client.
+   - Rearranged parse_userinfo_middle().  Now passes an entire
+       userinfo struct to client instead of individual variables.
+   - Convered the version of parse_im_middle() thats actually getting
+       used to pass up a userinfo struct.  
+   - Updated faimtest to accept new structs.
+
+ - Tue Dec 21 06:18:50 UTC 1999
+   - Fixed a Win32 header problem
+ - Tue Dec 21 03:44:13 UTC 1999
+   - Latency timers now update on rx as well as tx.  Gets rid of even more
+       of the rate problems that most clients are having.  
+   - Renamed lasttx and settxlatency to lastactivity and setlatency, respec.
+   - Integrated fixes needed for Win32 -- should compile cleanly now (DMP)
+   - Cleaned up some places, use aim_putsnac everywhere now.
+
+ - Sun Sep 26 20:04:20 MST 1999
+   - Reduced the IM parsing to look for 3 zeros instead of 4 -- NEEDS WORK
+       - This was needed to work with MacAIM3 and some WinAIM3s.
+   - Added aim_conn_settxlatency() for throttling outgoing frames -- NEEDS WORK
+   - Added an int to the userinfo and incoming IM user callbacks for new
+       TLV that AOL put it in -- its the number of seconds elapsed since
+       the user logged in
+   - Worked more on the callbacks (more internal rearrangements)
+   - Fixed bug in aim_select() (returning negative fds)
+   - Clear out logininfo struct before putting more data into it
+   - Other bugfixes that I can't particularly remember.
+
+ - Tue Aug 24 03:13:12 UTC 1999   --- TRANSITION RELEASE!!
+   - Added jbm's new aim_rxqueue.c, which should crash less
+   - Started the overhaul on the callback system.  No where near complete yet.
+
  - Sun Aug  1 03:02:17 UTC 1999
    - Added aimutil_*()s in aim_util.c for raw byte placement
    - Cleaned up aim_im.c, aim_auth.c, and aim_login.c using aimutil_*
@@ -11,6 +188,7 @@ No release numbers
        changes left to do)
    - Some Chat stuff changed, still no where near functional
    - Finally remembered to switch the license to LGPL (from GPL)
+   - Permit/Deny (blocking) list support added
    - Released a snapshot
 
  - Sat Jul 31 05:28:38 UTC 1999

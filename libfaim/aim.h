@@ -1,46 +1,88 @@
+/* 
+ * Main libfaim header.  Must be included in client for prototypes/macros.
+ *
+ */
+
 #ifndef __AIM_H__
 #define __AIM_H__
 
 #include <faimconfig.h>
+#include <aim_cbtypes.h>
 
-/* some global includes */
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-#include <netdb.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <sys/time.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <errno.h>
 
-#define CONNECT_SIG_LEN 10 /* not used anymore, hopefully */
-#define LOGIN_RESP_LEN 512 /* should only be 334b but no segfault for us! */
+#ifdef _WIN32
+#include <windows.h>
+#include <time.h>
+#include <io.h>
+#else
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/time.h>
+#include <unistd.h>
+#endif
 
+/* Portability stuff (DMP) */
+
+#ifdef _WIN32
+#define sleep Sleep
+#define strlen(x) (int)strlen(x)  /* win32 has a unsigned size_t */
+#endif
+
+#if defined(_WIN32) || (defined(mach) && defined(__APPLE__)) 
+#define gethostbyname2(x,y) gethostbyname(x) /* revert to IPv4 */
+#endif 
+
+/* 
+ * Current Maximum Length for Screen Names (not including NULL) 
+ */
+#define MAXSNLEN 16
 
 /*
- * Error codes
+ * Standard size of an AIM authorization cookie
  */
-#define AIM_CONNECT_ERROR	-0x1
-#define AIM_SIGNON_TOO_SOON	-0x4
-#define AIM_SERVICE_FULL	-0x6f
+#define AIM_COOKIELEN            0x100
 
+#if debug > 0
+#define faimdprintf(l, x...) {if (l >= debug) printf(x); }
+#else
+#define faimdprintf(l, x...)
+#endif
 
-struct login_phase1_struct {
-  char *screen_name;
+/*
+ * Login info.  Passes information from the Authorization
+ * stage of login to the service (BOS, etc) connection
+ * phase.
+ *
+ */
+struct aim_login_struct {
+  char screen_name[MAXSNLEN+1];
   char *BOSIP;
-  char *cookie;
+  char cookie[AIM_COOKIELEN];
   char *email;
-  ushort regstatus;
+  u_short regstatus;
+  char *errorurl;
+  u_short errorcode;
 };
 
-extern struct login_phase1_struct aim_logininfo;
-
+/*
+ * Client info.  Filled in by the client and passed
+ * in to aim_login().  The information ends up
+ * getting passed to OSCAR through the initial
+ * login command.
+ *
+ * XXX: Should this be per-session? -mid
+ *
+ */
 struct client_info_s {
-  char clientstring[100]; /* arbitrary number */
+  char clientstring[100]; /* arbitrary size */
   int major;
   int minor;
   int build;
@@ -48,55 +90,49 @@ struct client_info_s {
   char lang[3];
 };
 
-struct connection_info_struct {
-  unsigned int local_seq_num_origin; /* our first seq num */
-  int local_command_count;
-
-  unsigned int remote_seq_num_origin; /* oscar's first seqnum */
-  int remote_command_count; /* command_count + seq_num_origin = cur_seq_num */
-
-  char *sn; /* our screen name */
-
-  int fd;                   /* socket descriptor */
-};
-
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
 #endif
 
-#define AIM_CONN_MAX 5 
-/* these could be arbitrary, but its easier to use the actual AIM values */
-#define AIM_CONN_TYPE_AUTH 0x0007
-#define AIM_CONN_TYPE_ADS 0x0005
-#define AIM_CONN_TYPE_BOS 2
-#define AIM_CONN_TYPE_CHAT 0x000e
-#define AIM_CONN_TYPE_CHATNAV 0x000d
+/* 
+ * These could be arbitrary, but its easier to use the actual AIM values 
+ */
+#define AIM_CONN_TYPE_AUTH          0x0007
+#define AIM_CONN_TYPE_ADS           0x0005
+#define AIM_CONN_TYPE_BOS           0x0002
+#define AIM_CONN_TYPE_CHAT          0x000e
+#define AIM_CONN_TYPE_CHATNAV       0x000d
 
-#define AIM_CONN_STATUS_READY 0x0001
+/*
+ * Status values returned from aim_conn_new().  ORed together.
+ */
+#define AIM_CONN_STATUS_READY       0x0001
 #define AIM_CONN_STATUS_INTERNALERR 0x0002
-#define AIM_CONN_STATUS_RESOLVERR 0x80
-#define AIM_CONN_STATUS_CONNERR 0x40
-
+#define AIM_CONN_STATUS_RESOLVERR   0x0080
+#define AIM_CONN_STATUS_CONNERR     0x0040
 
 struct aim_conn_t {
   int fd;
   int type;
   int seqnum;
   int status;
+  void *priv; /* misc data the client may want to store */
+  time_t lastactivity; /* time of last transmit */
+  int forcedlatency; 
+  struct aim_rxcblist_t *handlerlist;
 };
-struct aim_conn_t aim_conns[AIM_CONN_MAX];
-
 
 /* struct for incoming commands */
 struct command_rx_struct {
                             /* byte 1 assumed to always be 0x2a */
   char type;                /* type code (byte 2) */
-  unsigned int seqnum;      /* sequence number (bytes 3 and 4) */
-  unsigned int commandlen;  /* total packet len - 6 (bytes 5 and 6) */
-  char *data;               /* packet data (from 7 byte on) */
-  unsigned int lock;        /* 1 = locked, 0 = open */
-  unsigned int handled;     /* 1 = been handled, 0 = new */
+  u_int seqnum;             /* sequence number (bytes 3 and 4) */
+  u_int commandlen;         /* total packet len - 6 (bytes 5 and 6) */
+  u_char *data;             /* packet data (from 7 byte on) */
+  u_int lock;               /* 0 = open, !0 = locked */
+  u_int handled;            /* 0 = new, !0 = been handled */
+  u_int nofree;		    /* 0 = free data on purge, 1 = only unlink */
   struct aim_conn_t *conn;  /* the connection it came in on... */
   struct command_rx_struct *next; /* ptr to next struct in list */
 };
@@ -105,103 +141,189 @@ struct command_rx_struct {
 struct command_tx_struct {
                             /* byte 1 assumed to be 0x2a */
   char type;                /* type/family code */
-  unsigned int seqnum;      /* seqnum dynamically assigned on tx */
-  unsigned int commandlen;  /* SNAC length */
-  char *data;               /* packet data */
-  unsigned int lock;        /* 1 = locked, 0 = open */
-  unsigned int sent;        /* 1 = has been sent, 0 = new */
+  u_int seqnum;             /* seqnum dynamically assigned on tx */
+  u_int commandlen;         /* SNAC length */
+  u_char *data;             /* packet data */
+  u_int lock;               /* 0 = open, !0 = locked */
+  u_int sent;               /* 0 = pending, !0 = has been sent */
   struct aim_conn_t *conn; 
   struct command_tx_struct *next; /* ptr to next struct in list */
 };
 
-/* TLV-related tidbits */
+
+/*
+ * AIM Session: The main client-data interface.  
+ *
+ */
+struct aim_session_t {
+
+  /* ---- Client Accessible ------------------------ */
+  /* 
+   * Login information.  See definition above.
+   *
+   */
+  struct aim_login_struct logininfo;
+  
+  /*
+   * Pointer to anything the client wants to 
+   * explicitly associate with this session.
+   */
+  void *aux_data;
+
+
+  /* ---- Internal Use Only ------------------------ */
+  /* 
+   * Connection information
+   */
+  struct aim_conn_t conns[AIM_CONN_MAX];
+  
+  /* 
+   * TX/RX queues 
+   */
+  struct command_tx_struct *queue_outgoing; 
+  struct command_rx_struct *queue_incoming; 
+  
+  /*
+   * This is a dreadful solution to the what-room-are-we-joining
+   * problem.  (There's no connection between the service
+   * request and the resulting redirect.)
+   */ 
+  char *pendingjoin;
+
+  /*
+   * Outstanding snac handling 
+   *
+   * XXX: Should these be per-connection? -mid
+   **/
+  struct aim_snac_t *outstanding_snacs;
+  u_long snac_nextid;
+};
+
+
+/*
+ * AIM User Info, Standard Form.
+ */
+struct aim_userinfo_s {
+  char sn[MAXSNLEN+1];
+  u_short warnlevel;
+  u_short idletime;
+  u_short class;
+  u_long membersince;
+  u_long onlinesince;
+  u_long sessionlen;  
+  u_short capabilities;
+};
+
+#define AIM_CLASS_TRIAL 	0x0001
+#define AIM_CLASS_UNKNOWN2	0x0002
+#define AIM_CLASS_AOL		0x0004
+#define AIM_CLASS_UNKNOWN4	0x0008
+#define AIM_CLASS_FREE 		0x0010
+#define AIM_CLASS_AWAY		0x0020
+#define AIM_CLASS_UNKNOWN40	0x0040
+#define AIM_CLASS_UNKNOWN80	0x0080
+
+/*
+ * TLV handling
+ */
+
+/* Generic TLV structure. */
 struct aim_tlv_t {
   u_short type;
   u_short length;
   u_char *value;
 };
 
+/* List of above. */
+struct aim_tlvlist_t {
+  struct aim_tlv_t *tlv;
+  struct aim_tlvlist_t *next;
+};
+
+/* TLV-handling functions */
+struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen);
+void aim_freetlvchain(struct aim_tlvlist_t **list);
 struct aim_tlv_t *aim_grabtlv(u_char *src);
 struct aim_tlv_t *aim_grabtlvstr(u_char *src);
+struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *, u_short, int);
+char *aim_gettlv_str(struct aim_tlvlist_t *, u_short, int);
 int aim_puttlv (u_char *dest, struct aim_tlv_t *newtlv);
 struct aim_tlv_t *aim_createtlv(void);
 int aim_freetlv(struct aim_tlv_t **oldtlv);
 int aim_puttlv_16(u_char *, u_short, u_short);
+int aim_puttlv_32(u_char *, u_short, u_long);
+int aim_puttlv_str(u_char *buf, u_short t, u_short l, u_char *v);
+int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list);
+int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val);
+int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val);
+int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len);
+int aim_counttlvchain(struct aim_tlvlist_t **list);
 
-/* some prototypes... */
+/*
+ * Get command from connections / Dispatch commands
+ * already in queue.
+ */
+int aim_get_command(struct aim_session_t *, struct aim_conn_t *);
+int aim_rxdispatch(struct aim_session_t *);
 
-/*   implicitly or explicitly called */
-int aim_get_command(void);
-int aim_rxdispatch(void);
-int aim_logoff(void);
+int aim_logoff(struct aim_session_t *);
 
-typedef int (*rxcallback_t)(struct command_rx_struct *, ...);
+
+typedef int (*rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_register_callbacks(rxcallback_t *);
 
-u_long aim_genericreq_n(struct aim_conn_t *conn, u_short family, u_short subtype);
-u_long aim_genericreq_l(struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
-u_long aim_genericreq_s(struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
+u_long aim_genericreq_n(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype);
+u_long aim_genericreq_l(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
+u_long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
 
 /* aim_login.c */
-int aim_send_login (struct aim_conn_t *, char *, char *, struct client_info_s *);
-int aim_encode_password(const char *, char *);
+int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
+int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
+int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *);
+int aim_encode_password(const char *, u_char *);
+unsigned long aim_sendauthresp(struct aim_session_t *sess, 
+			       struct aim_conn_t *conn, 
+			       char *sn, char *bosip, 
+			       char *cookie, char *email, 
+			       int regstatus);
+int aim_gencookie(unsigned char *buf);
+int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn);
+unsigned long aim_sendredirect(struct aim_session_t *sess, 
+			       struct aim_conn_t *conn, 
+			       unsigned short servid, 
+			       char *ip,
+			       char *cookie);
+void aim_purge_rxqueue(struct aim_session_t *);
 
 
-struct command_rx_struct *aim_purge_rxqueue(struct command_rx_struct *queue);
+int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *command, ...);
+int aim_parse_missed_im(struct aim_session_t *, struct command_rx_struct *, ...);
+int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
 
+struct command_tx_struct *aim_tx_new(int, struct aim_conn_t *, int);
+int aim_tx_enqueue(struct aim_session_t *, struct command_tx_struct *);
+u_int aim_get_next_txseqnum(struct aim_conn_t *);
+int aim_tx_flushqueue(struct aim_session_t *);
+int aim_tx_printqueue(struct aim_session_t *);
+void aim_tx_purgequeue(struct aim_session_t *);
 
-int aim_parse_unknown(struct command_rx_struct *command, ...);
-int aim_parse_missed_im(struct command_rx_struct *, ...);
-int aim_parse_last_bad(struct command_rx_struct *, ...);
+struct aim_rxcblist_t {
+  u_short family;
+  u_short type;
+  rxcallback_t handler;
+  u_short flags;
+  struct aim_rxcblist_t *next;
+};
 
-int aim_tx_enqueue(struct command_tx_struct *);
-unsigned int aim_get_next_txseqnum(struct aim_conn_t *);
-int aim_tx_flushqueue(void);
-int aim_tx_printqueue(void);
-int aim_tx_purgequeue(void);
+int aim_conn_setlatency(struct aim_conn_t *conn, int newval);
 
-/* queue (linked list) pointers */
-extern struct command_tx_struct *aim_queue_outgoing; /* incoming commands */
-extern struct command_rx_struct *aim_queue_incoming; /* outgoing commands */
+int aim_conn_addhandler(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short type, rxcallback_t newhandler, u_short flags);
+rxcallback_t aim_callhandler(struct aim_conn_t *conn, u_short family, u_short type);
+int aim_clearhandlers(struct aim_conn_t *conn);
 
-/* The default callback handler array */
-extern rxcallback_t aim_callbacks[];
-
-extern struct aim_snac_t *aim_outstanding_snacs;
-extern u_long aim_snac_nextid;
-
-#define AIM_CB_INCOMING_IM 0
-#define AIM_CB_ONCOMING_BUDDY 1
-#define AIM_CB_OFFGOING_BUDDY 2
-#define AIM_CB_MISSED_IM 3
-#define AIM_CB_MISSED_CALL 4
-#define AIM_CB_LOGIN_P4_C1 5
-#define AIM_CB_LOGIN_P4_C2 6
-#define AIM_CB_LOGIN_P2_1 7
-#define AIM_CB_LOGIN_P2_2 8
-#define AIM_CB_LOGIN_P3_B 9
-#define AIM_CB_LOGIN_P3D_A 10
-#define AIM_CB_LOGIN_P3D_B 11
-#define AIM_CB_LOGIN_P3D_C 12
-#define AIM_CB_LOGIN_P3D_D 13
-#define AIM_CB_LOGIN_P3D_E 14
-#define AIM_CB_LOGIN_P3D_F 15
-#define AIM_CB_RATECHANGE 16
-#define AIM_CB_USERERROR 17
-#define AIM_CB_UNKNOWN 18
-#define AIM_CB_USERINFO 19
-#define AIM_CB_SEARCH_ADDRESS 20
-#define AIM_CB_SEARCH_NAME 21
-#define AIM_CB_SEARCH_FAIL 22
-#define AIM_CB_AUTH_ERROR 23
-#define AIM_CB_AUTH_SUCCESS 24
-#define AIM_CB_AUTH_SVRREADY 25
-#define AIM_CB_AUTH_OTHER 26
-#define AIM_CB_AUTH_INFOCHNG_REPLY 27
-#define AIM_CB_CHATNAV_SVRREADY 28
-
-int Read(int, u_char *, int);
-
+/*
+ * Generic SNAC structure.  Rarely if ever used.
+ */
 struct aim_snac_t {
   u_long id;
   u_short family;
@@ -211,87 +333,170 @@ struct aim_snac_t {
   time_t issuetime;
   struct aim_snac_t *next;
 };
-u_long aim_newsnac(struct aim_snac_t *newsnac);
-struct aim_snac_t *aim_remsnac(u_long id);
-int aim_cleansnacs(int maxage);
+u_long aim_newsnac(struct aim_session_t *, struct aim_snac_t *newsnac);
+struct aim_snac_t *aim_remsnac(struct aim_session_t *, u_long id);
+int aim_cleansnacs(struct aim_session_t *, int maxage);
 int aim_putsnac(u_char *, int, int, int, u_long);
 
-void aim_connrst(void);
-struct aim_conn_t *aim_conn_getnext(void);
+
+void aim_connrst(struct aim_session_t *);
+struct aim_conn_t *aim_conn_getnext(struct aim_session_t *);
 void aim_conn_close(struct aim_conn_t *deadconn);
-struct aim_conn_t *aim_getconn_type(int type);
-struct aim_conn_t *aim_newconn(int type, char *dest);
-int aim_conngetmaxfd(void);
-struct aim_conn_t *aim_select(struct timeval *);
+struct aim_conn_t *aim_getconn_type(struct aim_session_t *, int type);
+struct aim_conn_t *aim_newconn(struct aim_session_t *, int type, char *dest);
+int aim_conngetmaxfd(struct aim_session_t *);
+struct aim_conn_t *aim_select(struct aim_session_t *, struct timeval *, int *);
 int aim_conn_isready(struct aim_conn_t *);
 int aim_conn_setstatus(struct aim_conn_t *, int);
+void aim_session_init(struct aim_session_t *);
 
 /* aim_misc.c */
 
-#define AIM_VISIBILITYCHANGE_PERMITADD 0x05
+#define AIM_VISIBILITYCHANGE_PERMITADD    0x05
 #define AIM_VISIBILITYCHANGE_PERMITREMOVE 0x06
-#define AIM_VISIBILITYCHANGE_DENYADD 0x07
-#define AIM_VISIBILITYCHANGE_DENYREMOVE 0x08
+#define AIM_VISIBILITYCHANGE_DENYADD      0x07
+#define AIM_VISIBILITYCHANGE_DENYREMOVE   0x08
 
-u_long aim_bos_setidle(struct aim_conn_t *, u_long);
-u_long aim_bos_changevisibility(struct aim_conn_t *, int, char *);
-u_long aim_bos_setbuddylist(struct aim_conn_t *, char *);
-u_long aim_bos_setprofile(struct aim_conn_t *, char *);
-u_long aim_bos_setgroupperm(struct aim_conn_t *, u_long);
-u_long aim_bos_clientready(struct aim_conn_t *);
-u_long aim_bos_reqrate(struct aim_conn_t *);
-u_long aim_bos_ackrateresp(struct aim_conn_t *);
-u_long aim_bos_setprivacyflags(struct aim_conn_t *, u_long);
-u_long aim_bos_reqpersonalinfo(struct aim_conn_t *);
-u_long aim_bos_reqservice(struct aim_conn_t *, u_short);
-u_long aim_bos_reqrights(struct aim_conn_t *);
-u_long aim_bos_reqbuddyrights(struct aim_conn_t *);
-u_long aim_bos_reqlocaterights(struct aim_conn_t *);
-u_long aim_bos_reqicbmparaminfo(struct aim_conn_t *);
+u_long aim_bos_setidle(struct aim_session_t *, struct aim_conn_t *, u_long);
+u_long aim_bos_changevisibility(struct aim_session_t *, struct aim_conn_t *, int, char *);
+u_long aim_bos_setbuddylist(struct aim_session_t *, struct aim_conn_t *, char *);
+u_long aim_bos_setprofile(struct aim_session_t *, struct aim_conn_t *, char *, char *, unsigned int);
+u_long aim_bos_setgroupperm(struct aim_session_t *, struct aim_conn_t *, u_long);
+u_long aim_bos_clientready(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_bos_reqrate(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_bos_ackrateresp(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_bos_setprivacyflags(struct aim_session_t *, struct aim_conn_t *, u_long);
+u_long aim_bos_reqpersonalinfo(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_bos_reqservice(struct aim_session_t *, struct aim_conn_t *, u_short);
+u_long aim_bos_reqrights(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_bos_reqbuddyrights(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_bos_reqlocaterights(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 /* aim_rxhandlers.c */
-int aim_register_callbacks(rxcallback_t *);
-int aim_rxdispatch(void);
-int aim_authparse(struct command_rx_struct *);
-int aim_handleredirect_middle(struct command_rx_struct *, ...);
-int aim_parse_unknown(struct command_rx_struct *, ...);
-int aim_parse_missed_im(struct command_rx_struct *, ...);
-int aim_parse_last_bad(struct command_rx_struct *, ...);
-int aim_parse_generalerrs(struct command_rx_struct *command, ...);
+int aim_rxdispatch(struct aim_session_t *);
+int aim_authparse(struct aim_session_t *, struct command_rx_struct *);
+int aim_handleredirect_middle(struct aim_session_t *, struct command_rx_struct *, ...);
+int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *, ...);
+int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
+int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *command, ...);
+int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
 
 /* aim_im.c */
 #define AIM_IMFLAGS_AWAY 0x01 /* mark as an autoreply */
-#define AIM_IMFLAGS_ACK 0x02 /* request a receipt notice */
-u_long aim_send_im(struct aim_conn_t *, char *, int, char *);
-int aim_parse_incoming_im_middle(struct command_rx_struct *);
+#define AIM_IMFLAGS_ACK  0x02 /* request a receipt notice */
+
+u_long aim_send_im(struct aim_session_t *, struct aim_conn_t *, char *, u_int, char *);
+int aim_parse_incoming_im_middle(struct aim_session_t *, struct command_rx_struct *);
+u_long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
+int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
 
 /* aim_info.c */
-u_long aim_getinfo(struct aim_conn_t *, const char *);
-int aim_parse_userinfo_middle(struct command_rx_struct *);
+#define AIM_CAPS_BUDDYICON 0x01
+#define AIM_CAPS_VOICE 0x02
+#define AIM_CAPS_IMIMAGE 0x04
+#define AIM_CAPS_CHAT 0x08
+#define AIM_CAPS_GETFILE 0x10
+#define AIM_CAPS_SENDFILE 0x20
+extern u_char aim_caps[6][16];
+u_long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *);
+int aim_extractuserinfo(u_char *, struct aim_userinfo_s *);
+int aim_parse_userinfo_middle(struct aim_session_t *, struct command_rx_struct *);
+int aim_parse_oncoming_middle(struct aim_session_t *, struct command_rx_struct *);
+int aim_parse_offgoing_middle(struct aim_session_t *, struct command_rx_struct *);
+int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info);
+int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info);
+int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
+
 
 /* aim_auth.c */
-int aim_auth_sendcookie(struct aim_conn_t *, char *);
-u_long aim_auth_clientready(struct aim_conn_t *);
-u_long aim_auth_changepasswd(struct aim_conn_t *, char *, char *);
+int aim_auth_sendcookie(struct aim_session_t *, struct aim_conn_t *, u_char *);
+u_long aim_auth_clientready(struct aim_session_t *, struct aim_conn_t *);
+u_long aim_auth_changepasswd(struct aim_session_t *, struct aim_conn_t *, char *, char *);
 
 /* aim_buddylist.c */
-u_long aim_add_buddy(struct aim_conn_t *, char *);
-u_long aim_remove_buddy(struct aim_conn_t *, char *);
+u_long aim_add_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
+u_long aim_remove_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
 
 /* aim_search.c */
-u_long aim_usersearch_address(struct aim_conn_t *, char *);
-/* u_long aim_usersearch_name(struct aim_conn_t *, char *); */
+u_long aim_usersearch_address(struct aim_session_t *, struct aim_conn_t *, char *);
+/* u_long aim_usersearch_name(struct aim_session_t *, struct aim_conn_t *, char *); */
+
+
+struct aim_chat_roominfo {
+  u_short exchange;
+  char *name;
+  u_short instance;
+};
+int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo);
+int aim_chat_parse_infoupdate(struct aim_session_t *sess, struct command_rx_struct *command);
+int aim_chat_parse_joined(struct aim_session_t *sess, struct command_rx_struct *command);
+int aim_chat_parse_leave(struct aim_session_t *sess, struct command_rx_struct *command);
+int aim_chat_parse_incoming(struct aim_session_t *sess, struct command_rx_struct *command);
+u_long aim_chat_send_im(struct aim_session_t *sess, struct aim_conn_t *conn, char *msg);
+u_long aim_chat_join(struct aim_session_t *sess, struct aim_conn_t *conn, u_short exchange, const char *roomname);
+u_long aim_chat_clientready(struct aim_session_t *sess, struct aim_conn_t *conn);
+int aim_chat_attachname(struct aim_conn_t *conn, char *roomname);
+char *aim_chat_getname(struct aim_conn_t *conn);
+struct aim_conn_t *aim_chat_getconn(struct aim_session_t *, char *name);
+
+u_long aim_chatnav_reqrights(struct aim_session_t *sess, struct aim_conn_t *conn);
+u_long aim_chatnav_clientready(struct aim_session_t *sess, struct aim_conn_t *conn);
+
+u_long aim_chat_invite(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *msg, u_short exchange, char *roomname, u_short instance);
+
+struct aim_chat_exchangeinfo {
+  u_short number;
+  char *name;
+  char *charset1;
+  char *lang1;
+  char *charset2;
+  char *lang2;
+};
+int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct *command);
+u_long aim_chatnav_createroom(struct aim_session_t *sess, struct aim_conn_t *conn, char *name, u_short exchange);
+int aim_chat_leaveroom(struct aim_session_t *sess, char *name);
 
 /* aim_util.c */
-int aimutil_put8(u_char *, u_short);
+#ifdef AIMUTIL_USEMACROS
+/*
+ * These are really ugly.  You'd think this was LISP.  I wish it was.
+ */
+#define aimutil_put8(buf, data) ((*(buf) = (u_char)(data)&0xff),1)
+#define aimutil_get8(buf) ((*(buf))&0xff)
+#define aimutil_put16(buf, data) ( \
+                                  (*(buf) = (u_char)((data)>>8)&0xff), \
+				  (*((buf)+1) = (u_char)(data)&0xff),  \
+				  2)
+#define aimutil_get16(buf) ((((*(buf))<<8)&0xff00) + ((*((buf)+1)) & 0xff))
+#define aimutil_put32(buf, data) ( \
+                                  (*((buf)) = (u_char)((data)>>24)&0xff), \
+				  (*((buf)+1) = (u_char)((data)>>16)&0xff), \
+				  (*((buf)+2) = (u_char)((data)>>8)&0xff), \
+				  (*((buf)+3) = (u_char)(data)&0xff), \
+                                  4)
+#define aimutil_get32(buf) ((((*(buf))<<24)&0xff000000) + \
+                            (((*((buf)+1))<<16)&0x00ff0000) + \
+                            (((*((buf)+2))<< 8)&0x0000ff00) + \
+                            (((*((buf)+3)    )&0x000000ff)))
+#else
+#warning Not using aimutil macros.  May have performance problems.
+int aimutil_put8(u_char *, u_char);
+u_char aimutil_get8(u_char *buf);
 int aimutil_put16(u_char *, u_short);
+u_short aimutil_get16(u_char *);
 int aimutil_put32(u_char *, u_long);
-int aimutil_putstr(u_char *, u_char *, int);
-
-/* proxy support */
-#ifdef ENABLE_PROXY_SUPPORT
-#include "proxy.h"
+u_long aimutil_get32(u_char *);
 #endif
+
+int aimutil_putstr(u_char *, const u_char *, int);
+int aimutil_tokslen(char *toSearch, int index, char dl);
+int aimutil_itemcnt(char *toSearch, char dl);
+char *aimutil_itemidx(char *toSearch, int index, char dl);
+
+int aim_snlen(const char *sn);
+int aim_sncmp(const char *sn1, const char *sn2);
 
 #endif /* __AIM_H__ */
 

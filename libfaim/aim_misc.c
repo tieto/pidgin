@@ -11,7 +11,7 @@
  *
  */
 
-#include "aim.h"
+#include <aim.h> 
 
 /*
  * aim_bos_setidle()
@@ -21,9 +21,11 @@
  *  time.  
  *
  */
-u_long aim_bos_setidle(struct aim_conn_t *conn, u_long idletime)
+u_long aim_bos_setidle(struct aim_session_t *sess,
+		       struct aim_conn_t *conn, 
+		       u_long idletime)
 {
-  return aim_genericreq_l(conn, 0x0001, 0x0011, &idletime);
+  return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
 }
 
 
@@ -55,91 +57,66 @@ u_long aim_bos_setidle(struct aim_conn_t *conn, u_long idletime)
  *
  *
  */
-u_long aim_bos_changevisibility(struct aim_conn_t *conn, int changetype, char *denylist)
+u_long aim_bos_changevisibility(struct aim_session_t *sess,
+				struct aim_conn_t *conn, 
+				int changetype, char *denylist)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
+  int packlen = 0;
+  u_short subtype;
 
   char *localcpy = NULL;
   char *tmpptr = NULL;
-  char *tmpptr2 = NULL;
   int i,j;
+  int listcount;
 
   if (!denylist)
     return 0;
 
-  newpacket.lock = 1;
-
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-
-  newpacket.type = 0x02;
-  newpacket.commandlen = 10;
-
   localcpy = (char *) malloc(strlen(denylist)+1);
   memcpy(localcpy, denylist, strlen(denylist)+1);
-  tmpptr2 = localcpy; /* save this for the free() */
+  
+  listcount = aimutil_itemcnt(localcpy, '&');
+  packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
 
-  i = 0;
-  tmpptr = strsep(&localcpy, "&");
-  while (strlen(tmpptr) && (i < 100))
-    {
-      newpacket.commandlen += strlen(tmpptr)+1;
-      i++;
-      tmpptr = strsep(&localcpy, "&");
-    }
-  free(tmpptr2);
-  tmpptr2 = NULL;
+  if (!(newpacket = aim_tx_new(0x0002, conn, packlen)))
+    return -1;
 
-  newpacket.data = (char *) malloc(newpacket.commandlen);
-  memset(newpacket.data, 0x00, newpacket.commandlen);
+  newpacket->lock = 1;
 
-  newpacket.data[0] = 0x00;
-  newpacket.data[1] = 0x09;
-  newpacket.data[2] = 0x00;
   switch(changetype)
     {
-    case AIM_VISIBILITYCHANGE_PERMITADD:
-      newpacket.data[3] = 0x05; break;
-    case AIM_VISIBILITYCHANGE_PERMITREMOVE:
-      newpacket.data[3] = 0x06; break;
-    case AIM_VISIBILITYCHANGE_DENYADD:
-      newpacket.data[3] = 0x07; break;
-    case AIM_VISIBILITYCHANGE_DENYREMOVE:
-      newpacket.data[4] = 0x08; break;
+    case AIM_VISIBILITYCHANGE_PERMITADD:    subtype = 0x05; break;
+    case AIM_VISIBILITYCHANGE_PERMITREMOVE: subtype = 0x06; break;
+    case AIM_VISIBILITYCHANGE_DENYADD:      subtype = 0x07; break;
+    case AIM_VISIBILITYCHANGE_DENYREMOVE:   subtype = 0x08; break;
     default:
+      free(newpacket->data);
+      free(newpacket);
       return 0;
     }
-  /* SNAC reqid -- we actually DO NOT send a SNAC ID with this one! */
-  newpacket.data[6] = 0;
-  newpacket.data[7] = 0;
-  newpacket.data[8] = 0;
-  newpacket.data[9] = 0;
+
+  /* We actually DO NOT send a SNAC ID with this one! */
+  aim_putsnac(newpacket->data, 0x0009, subtype, 0x00, 0);
  
   j = 10;  /* the next byte */
-
-  localcpy = (char *) malloc(strlen(denylist)+1);
-  memcpy(localcpy, denylist, strlen(denylist)+1);
-  tmpptr2 = localcpy; /* save this for the free() */
-
-  i = 0;
-  tmpptr = strsep(&localcpy, "&");
-  while (strlen(tmpptr) && (i < 100))
+  
+  for (i=0; (i < (listcount - 1)) && (i < 99); i++)
     {
-      newpacket.data[j] = strlen(tmpptr);
-      memcpy(&(newpacket.data[j+1]), tmpptr, strlen(tmpptr));
+      tmpptr = aimutil_itemidx(localcpy, i, '&');
+
+      newpacket->data[j] = strlen(tmpptr);
+      memcpy(&(newpacket->data[j+1]), tmpptr, strlen(tmpptr));
       j += strlen(tmpptr)+1;
-      i++;
-      tmpptr = strsep(&localcpy, "&");
+      free(tmpptr);
     }
-  free(tmpptr2);
+  free(localcpy);
 
-  newpacket.lock = 0;
+  newpacket->lock = 0;
 
-  aim_tx_enqueue(&newpacket);
+  aim_tx_enqueue(sess, newpacket);
 
-  return (aim_snac_nextid); /* dont increment */
+  return (sess->snac_nextid); /* dont increment */
 
 }
 
@@ -152,14 +129,18 @@ u_long aim_bos_changevisibility(struct aim_conn_t *conn, int changetype, char *d
  *
  * buddy_list = "Screen Name One&ScreenNameTwo&";
  *
- * TODO: Clean this up.
+ * TODO: Clean this up.  
+ *
+ * XXX: I can't stress the TODO enough.
  *
  */
-u_long aim_bos_setbuddylist(struct aim_conn_t *conn, char *buddy_list)
+u_long aim_bos_setbuddylist(struct aim_session_t *sess,
+			    struct aim_conn_t *conn, 
+			    char *buddy_list)
 {
   int i, j;
 
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
 
   int packet_login_phase3c_hi_b_len = 0;
 
@@ -169,15 +150,9 @@ u_long aim_bos_setbuddylist(struct aim_conn_t *conn, char *buddy_list)
   packet_login_phase3c_hi_b_len = 16; /* 16b for FLAP and SNAC headers */
 
   /* bail out if we can't make the packet */
-  if (buddy_list == NULL)
-    {
-      printf("\nNO BUDDIES!  ARE YOU THAT LONELY???\n");
-      return 0;
-    }
-#if debug > 0
-  printf("****buddy list: %s\n", buddy_list);
-  printf("****buddy list len: %d (%x)\n", strlen(buddy_list), strlen(buddy_list));
-#endif
+  if (!buddy_list) {
+    return -1;
+  }
 
   localcpy = (char *) malloc(strlen(buddy_list)+1);
   memcpy(localcpy, buddy_list, strlen(buddy_list)+1);
@@ -198,27 +173,12 @@ u_long aim_bos_setbuddylist(struct aim_conn_t *conn, char *buddy_list)
 #endif
   free(localcpy);
 
-  newpacket.type = 0x02;
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.commandlen = packet_login_phase3c_hi_b_len - 6;
-  newpacket.lock = 1;
-  
-  newpacket.data = (char *) malloc(newpacket.commandlen);
+  if (!(newpacket = aim_tx_new(0x0002, conn, packet_login_phase3c_hi_b_len - 6)))
+    return -1;
 
-  newpacket.data[0] = 0x00;
-  newpacket.data[1] = 0x03;
-  newpacket.data[2] = 0x00;
-  newpacket.data[3] = 0x04;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x00;
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
+  newpacket->lock = 1;
+  
+  aim_putsnac(newpacket->data, 0x0003, 0x0004, 0x0000, sess->snac_nextid);
 
   j = 10;  /* the next byte */
 
@@ -229,18 +189,18 @@ u_long aim_bos_setbuddylist(struct aim_conn_t *conn, char *buddy_list)
 #if debug > 0
       printf("---adding %s (%d)\n", tmpptr, strlen(tmpptr));
 #endif
-      newpacket.data[j] = strlen(tmpptr);
-      memcpy(&(newpacket.data[j+1]), tmpptr, strlen(tmpptr));
+      newpacket->data[j] = strlen(tmpptr);
+      memcpy(&(newpacket->data[j+1]), tmpptr, strlen(tmpptr));
       j += strlen(tmpptr)+1;
       i++;
       tmpptr = strtok(NULL, "&");
     }
 
-  newpacket.lock = 0;
+  newpacket->lock = 0;
 
-  aim_tx_enqueue(&newpacket);
+  aim_tx_enqueue(sess, newpacket);
 
-  return (aim_snac_nextid++);
+  return (sess->snac_nextid++);
 }
 
 /* 
@@ -248,70 +208,70 @@ u_long aim_bos_setbuddylist(struct aim_conn_t *conn, char *buddy_list)
  *
  * Gives BOS your profile.
  *
+ * 
+ * The large data chunk given here is of unknown decoding.
+ * What I do know is that each 0x20 byte repetition 
+ * represents a capability.  People with only the 
+ * first two reptitions can support normal messaging
+ * and chat (client version 2.0 or 3.0).  People with 
+ * the third as well can also support voice chat (client
+ * version 3.5 or higher).  IOW, if we don't send this,
+ * we won't get chat invitations (get "software doesn't
+ * support chat" error).
+ *
+ * This data is broadcast along with your oncoming
+ * buddy command to everyone who has you on their
+ * buddy list, as a type 0x0002 TLV.
+ * 
  */
-u_long aim_bos_setprofile(struct aim_conn_t *conn, char *profile)
+u_long aim_bos_setprofile(struct aim_session_t *sess,
+			  struct aim_conn_t *conn, 
+			  char *profile,
+			  char *awaymsg,
+			  unsigned int caps)
 {
-  int packet_profile_len = 0;
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
   int i = 0;
 
-  /* len: SNAC */
-  packet_profile_len = 10;
-  /* len: T+L (where t(0001)) */
-  packet_profile_len += 2 + 2;
-  /* len: V (where t(0001)) */
-  packet_profile_len += strlen("text/x-aolrtf");
-  /* len: T+L (where t(0002)) */
-  packet_profile_len += 2 + 2;
-  /* len: V (where t(0002)) */
-  packet_profile_len += strlen(profile);
+  if (!(newpacket = aim_tx_new(0x0002, conn, 1152+strlen(profile)+1+(awaymsg?strlen(awaymsg):0))))
+    return -1;
 
-  newpacket.type = 0x02;
-  if (conn)
-    newpacket.conn = conn;
+  i += aim_putsnac(newpacket->data, 0x0002, 0x004, 0x0000, sess->snac_nextid);
+  i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen("text/x-aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
+  i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(profile), profile);
+  /* why do we send this twice?  */
+  i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen("text/x-aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
+  
+  /* Away message -- we send this no matter what, even if its blank */
+  if (awaymsg)
+    i += aim_puttlv_str(newpacket->data+i, 0x0004, strlen(awaymsg), awaymsg);
   else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.commandlen = packet_profile_len;
-  newpacket.data = (char *) malloc(packet_profile_len);
+    i += aim_puttlv_str(newpacket->data+i, 0x0004, 0x0000, NULL);
 
-  i = 0;
-  /* SNAC: family */
-  newpacket.data[i++] = 0x00;
-  newpacket.data[i++] = 0x02;
-  /* SNAC: subtype */
-  newpacket.data[i++] = 0x00;
-  newpacket.data[i++] = 0x04;
-  /* SNAC: flags */
-  newpacket.data[i++] = 0x00;
-  newpacket.data[i++] = 0x00;
-  /* SNAC: id */
-  /* SNAC reqid */
-  newpacket.data[i++] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[i++] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[i++] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[i++] = (aim_snac_nextid) & 0xFF;
-  /* TLV t(0001) */
-  newpacket.data[i++] = 0x00;
-  newpacket.data[i++] = 0x01;
-  /* TLV l(000d) */
-  newpacket.data[i++] = 0x00;
-  newpacket.data[i++] = 0x0d;
-  /* TLV v(text/x-aolrtf) */
-  memcpy(&(newpacket.data[i]), "text/x-aolrtf", 0x000d);
-  i += 0x000d;
+  /* Capability information. */
+  {
+    int isave;
+    i += aimutil_put16(newpacket->data+i, 0x0005);
+    isave = i;
+    i += aimutil_put16(newpacket->data+i, 0);
+    if (caps & AIM_CAPS_BUDDYICON)
+      i += aimutil_putstr(newpacket->data+i, aim_caps[0], 0x10);
+    if (caps & AIM_CAPS_VOICE)
+      i += aimutil_putstr(newpacket->data+i, aim_caps[1], 0x10);
+    if (caps & AIM_CAPS_IMIMAGE)
+      i += aimutil_putstr(newpacket->data+i, aim_caps[2], 0x10);
+    if (caps & AIM_CAPS_CHAT)
+      i += aimutil_putstr(newpacket->data+i, aim_caps[3], 0x10);
+    if (caps & AIM_CAPS_GETFILE)
+      i += aimutil_putstr(newpacket->data+i, aim_caps[4], 0x10);
+    if (caps & AIM_CAPS_SENDFILE)
+      i += aimutil_putstr(newpacket->data+i, aim_caps[5], 0x10);
+    aimutil_put16(newpacket->data+isave, i-isave-2);
+  }
+  newpacket->commandlen = i;
+  aim_tx_enqueue(sess, newpacket);
   
-  /* TLV t(0002) */
-  newpacket.data[i++] = 0x00;
-  newpacket.data[i++] = 0x02;
-  /* TLV l() */
-  newpacket.data[i++] = (strlen(profile) >> 8) & 0xFF;
-  newpacket.data[i++] = (strlen(profile) & 0xFF);
-  /* TLV v(profile) */
-  memcpy(&(newpacket.data[i]), profile, strlen(profile));
-
-  aim_tx_enqueue(&newpacket);
-  
-  return (aim_snac_nextid++);
+  return (sess->snac_nextid++);
 }
 
 /* 
@@ -320,9 +280,11 @@ u_long aim_bos_setprofile(struct aim_conn_t *conn, char *profile)
  * Set group permisson mask.  Normally 0x1f.
  *
  */
-u_long aim_bos_setgroupperm(struct aim_conn_t *conn, u_long mask)
+u_long aim_bos_setgroupperm(struct aim_session_t *sess,
+			    struct aim_conn_t *conn, 
+			    u_long mask)
 {
-  return aim_genericreq_l(conn, 0x0009, 0x0004, &mask);
+  return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
 }
 
 /*
@@ -333,43 +295,71 @@ u_long aim_bos_setgroupperm(struct aim_conn_t *conn, u_long mask)
  * TODO: Dynamisize.
  *
  */
-u_long aim_bos_clientready(struct aim_conn_t *conn)
+u_long aim_bos_clientready(struct aim_session_t *sess,
+			   struct aim_conn_t *conn)
 {
-  char command_2[] = {
-     0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x7a, 0x8c,
-     0x11, 0xab, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01,
-     0x00, 0x13, 0x00, 0x09, 0x00, 0x01, 0x00, 0x01,
-     0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x01,
-     0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x01,
-     0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01,
-     0x00, 0x01, 0x00, 0x08, 0x00, 0x01, 0x00, 0x01,
-     0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x01,
-     0x00, 0x01, 0x00, 0x0a, 0x00, 0x01, 0x00, 0x01,
-     0x00, 0x01, 0x00, 0x0b, 0x00, 0x01, 0x00, 0x01,
+  u_char command_2[] = {
+     /* placeholders for dynamic data */
+     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+     0xff, 0xff, 
+     /* real data */
+     0x00, 0x01,   
+     0x00, 0x03, 
+     0x00, 0x04, 
+     0x06, 0x86,  
+     0x00, 0x02, 
+     0x00, 0x01,  
+     0x00, 0x04, 
+     0x00, 0x01, 
+ 
+     0x00, 0x03, 
+     0x00, 0x01,  
+     0x00, 0x04, 
+     0x00, 0x01, 
+     0x00, 0x04, 
+     0x00, 0x01, 
+     0x00, 0x04,
+     0x00, 0x01,
+ 
+     0x00, 0x06, 
+     0x00, 0x01, 
+     0x00, 0x04,  
+     0x00, 0x01, 
+     0x00, 0x08, 
+     0x00, 0x01, 
+     0x00, 0x04,
+     0x00, 0x01,
+ 
+     0x00, 0x09, 
+     0x00, 0x01, 
+     0x00, 0x04,
+     0x00, 0x01, 
+     0x00, 0x0a, 
+     0x00, 0x01, 
+     0x00, 0x04,
+     0x00, 0x01,
+ 
+     0x00, 0x0b,
+     0x00, 0x01, 
+     0x00, 0x04,
      0x00, 0x01
   };
   int command_2_len = 0x52;
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
   
-  newpacket.lock = 1;
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.type = 0x02;
-  newpacket.commandlen = command_2_len;
-  newpacket.data = (char *) malloc (newpacket.commandlen);
-  memcpy(newpacket.data, command_2, newpacket.commandlen);
+  if (!(newpacket = aim_tx_new(0x0002, conn, command_2_len)))
+    return -1;
+
+  newpacket->lock = 1;
+
+  memcpy(newpacket->data, command_2, command_2_len);
   
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
+  /* This write over the dynamic parts of the byte block */
+  aim_putsnac(newpacket->data, 0x0001, 0x0002, 0x0000, sess->snac_nextid);
 
-  aim_tx_enqueue(&newpacket);
+  aim_tx_enqueue(sess, newpacket);
 
-  return (aim_snac_nextid++);
+  return (sess->snac_nextid++);
 }
 
 /* 
@@ -380,9 +370,10 @@ u_long aim_bos_clientready(struct aim_conn_t *conn)
  *  TODO: Move to aim_conn.
  *  TODO: Move to SNAC interface.
  */
-u_long aim_bos_reqrate(struct aim_conn_t *conn)
+u_long aim_bos_reqrate(struct aim_session_t *sess,
+		       struct aim_conn_t *conn)
 {
-  return aim_genericreq_n(conn, 0x0001, 0x0006);
+  return aim_genericreq_n(sess, conn, 0x0001, 0x0006);
 }
 
 /* 
@@ -391,43 +382,32 @@ u_long aim_bos_reqrate(struct aim_conn_t *conn)
  *  Rate Information Response Acknowledge.
  *
  */
-u_long aim_bos_ackrateresp(struct aim_conn_t *conn)
+u_long aim_bos_ackrateresp(struct aim_session_t *sess,
+			   struct aim_conn_t *conn)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
+  int packlen = 18, i=0;
 
-  newpacket.lock = 1;
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.type = 0x02;
-  newpacket.commandlen = 18;
+  if (conn->type != AIM_CONN_TYPE_BOS)
+    packlen += 2;
 
-  newpacket.data = (char *) malloc(newpacket.commandlen);
-  newpacket.data[0] = 0x00;
-  newpacket.data[1] = 0x01;
-  newpacket.data[2] = 0x00;
-  newpacket.data[3] = 0x08;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x00;
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
+  if(!(newpacket = aim_tx_new(0x0002, conn, packlen)));
+  
+  newpacket->lock = 1;
 
-  newpacket.data[10] = 0x00;
-  newpacket.data[11] = 0x01;
-  newpacket.data[12] = 0x00;
-  newpacket.data[13] = 0x02;
-  newpacket.data[14] = 0x00;
-  newpacket.data[15] = 0x03;
-  newpacket.data[16] = 0x00;
-  newpacket.data[17] = 0x04;
+  i = aim_putsnac(newpacket->data, 0x0001, 0x0008, 0x0000, sess->snac_nextid);
+  i += aimutil_put16(newpacket->data+i, 0x0001); 
+  i += aimutil_put16(newpacket->data+i, 0x0002);
+  i += aimutil_put16(newpacket->data+i, 0x0003);
+  i += aimutil_put16(newpacket->data+i, 0x0004);
+  
+  if (conn->type != AIM_CONN_TYPE_BOS) {
+    i += aimutil_put16(newpacket->data+i, 0x0005);
+  }
 
-  aim_tx_enqueue(&newpacket);
+  aim_tx_enqueue(sess, newpacket);
 
-  return (aim_snac_nextid++);
+  return (sess->snac_nextid++);
 }
 
 /* 
@@ -439,9 +419,11 @@ u_long aim_bos_ackrateresp(struct aim_conn_t *conn)
  *
  *
  */
-u_long aim_bos_setprivacyflags(struct aim_conn_t *conn, u_long flags)
+u_long aim_bos_setprivacyflags(struct aim_session_t *sess,
+			       struct aim_conn_t *conn, 
+			       u_long flags)
 {
-  return aim_genericreq_l(conn, 0x0001, 0x0014, &flags);
+  return aim_genericreq_l(sess, conn, 0x0001, 0x0014, &flags);
 }
 
 /*
@@ -451,40 +433,85 @@ u_long aim_bos_setprivacyflags(struct aim_conn_t *conn, u_long flags)
  * because aparently it uses SNAC flags.
  *
  */
-u_long aim_bos_reqpersonalinfo(struct aim_conn_t *conn)
+u_long aim_bos_reqpersonalinfo(struct aim_session_t *sess,
+			       struct aim_conn_t *conn)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
   
-  newpacket.lock = 1;
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.type = 0x02;
-  newpacket.commandlen = 12;
+  if (!(newpacket = aim_tx_new(0x0002, conn, 12)))
+    return -1;
 
-  newpacket.data = (char *) malloc(newpacket.commandlen);
+  newpacket->lock = 1;
+
+  aim_putsnac(newpacket->data, 0x000a, 0x0001, 0x000e /* huh? */, sess->snac_nextid);
   
-  newpacket.data[0] = 0x00;
-  newpacket.data[1] = 0x0a;
-  newpacket.data[2] = 0x00;
-  newpacket.data[3] = 0x01;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x0e; /* huh? */
+  newpacket->data[10] = 0x0d;
+  newpacket->data[11] = 0xda;
 
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
+  newpacket->lock = 0;
+  aim_tx_enqueue(sess, newpacket);
 
-  newpacket.data[10] = 0x0d;
-  newpacket.data[11] = 0xda;
-
-  aim_tx_enqueue(&newpacket);
-
-  return (aim_snac_nextid++);
+  return (sess->snac_nextid++);
 }
+
+u_long aim_setversions(struct aim_session_t *sess,
+                               struct aim_conn_t *conn)
+{
+  struct command_tx_struct *newpacket;
+  int i;
+
+  if (!(newpacket = aim_tx_new(0x0002, conn, 10 + (4*11))))
+    return -1;
+
+  newpacket->lock = 1;
+
+  i = aim_putsnac(newpacket->data, 0x0001, 0x0017, 0x0000, sess->snac_nextid);
+
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+  i += aimutil_put16(newpacket->data+i, 0x0003);
+
+  i += aimutil_put16(newpacket->data+i, 0x0002);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0003);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0004);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0006);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0008);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0009);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x000a);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x000b);
+  i += aimutil_put16(newpacket->data+i, 0x0002);
+
+  i += aimutil_put16(newpacket->data+i, 0x000c);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0015);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+#if 0
+  for (j = 0; j < 0x10; j++) {
+    i += aimutil_put16(newpacket->data+i, j); /* family */
+    i += aimutil_put16(newpacket->data+i, 0x0003); /* version */
+  }
+#endif
+  newpacket->lock = 0;
+  aim_tx_enqueue(sess, newpacket);
+
+  return (sess->snac_nextid++);
+}
+
 
 /*
  * aim_bos_reqservice(serviceid)
@@ -492,9 +519,11 @@ u_long aim_bos_reqpersonalinfo(struct aim_conn_t *conn)
  * Service request. 
  *
  */
-u_long aim_bos_reqservice(struct aim_conn_t *conn, u_short serviceid)
+u_long aim_bos_reqservice(struct aim_session_t *sess,
+			  struct aim_conn_t *conn, 
+			  u_short serviceid)
 {
-  return aim_genericreq_s(conn, 0x0001, 0x0004, &serviceid);
+  return aim_genericreq_s(sess, conn, 0x0001, 0x0004, &serviceid);
 }
 
 /*
@@ -503,9 +532,10 @@ u_long aim_bos_reqservice(struct aim_conn_t *conn, u_short serviceid)
  * Request BOS rights.
  *
  */
-u_long aim_bos_reqrights(struct aim_conn_t *conn)
+u_long aim_bos_reqrights(struct aim_session_t *sess,
+			 struct aim_conn_t *conn)
 {
-  return aim_genericreq_n(conn, 0x0009, 0x0002);
+  return aim_genericreq_n(sess, conn, 0x0009, 0x0002);
 }
 
 /*
@@ -514,9 +544,10 @@ u_long aim_bos_reqrights(struct aim_conn_t *conn)
  * Request Buddy List rights.
  *
  */
-u_long aim_bos_reqbuddyrights(struct aim_conn_t *conn)
+u_long aim_bos_reqbuddyrights(struct aim_session_t *sess,
+			      struct aim_conn_t *conn)
 {
-  return aim_genericreq_n(conn, 0x0003, 0x0002);
+  return aim_genericreq_n(sess, conn, 0x0003, 0x0002);
 }
 
 /*
@@ -531,124 +562,77 @@ u_long aim_bos_reqbuddyrights(struct aim_conn_t *conn)
  * back to the single.  I don't see any advantage to doing it either way.
  *
  */
-u_long aim_genericreq_n(struct aim_conn_t *conn, u_short family, u_short subtype)
+u_long aim_genericreq_n(struct aim_session_t *sess,
+			struct aim_conn_t *conn, 
+			u_short family, u_short subtype)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
 
-  newpacket.lock = 1;
+  if (!(newpacket = aim_tx_new(0x0002, conn, 10)))
+    return 0;
 
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.type = 0x02;
+  newpacket->lock = 1;
 
-  newpacket.commandlen = 10;
-
-  newpacket.data = (char *) malloc(newpacket.commandlen);
-  memset(newpacket.data, 0x00, newpacket.commandlen);
-  newpacket.data[0] = (family & 0xff00)>>8;
-  newpacket.data[1] = family & 0xff;
-  newpacket.data[2] = (subtype & 0xff00)>>8;
-  newpacket.data[3] = subtype & 0xff;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x00;
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
-
-  aim_tx_enqueue(&newpacket);
-  return (aim_snac_nextid++);
+  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
+ 
+  aim_tx_enqueue(sess, newpacket);
+  return (sess->snac_nextid++);
 }
 
 /*
  *
  *
  */
-u_long aim_genericreq_l(struct aim_conn_t *conn, u_short family, u_short subtype, u_long *longdata)
+u_long aim_genericreq_l(struct aim_session_t *sess,
+			struct aim_conn_t *conn, 
+			u_short family, u_short subtype, u_long *longdata)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
   u_long newlong;
 
   /* If we don't have data, there's no reason to use this function */
   if (!longdata)
-    return aim_genericreq_n(conn, family, subtype);
+    return aim_genericreq_n(sess, conn, family, subtype);
 
-  newpacket.lock = 1;
+  if (!(newpacket = aim_tx_new(0x0002, conn, 10+sizeof(u_long))))
+    return -1;
 
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.type = 0x02;
+  newpacket->lock = 1;
 
-  newpacket.commandlen = 10+sizeof(u_long);
-
-  newpacket.data = (char *) malloc(newpacket.commandlen);
-  memset(newpacket.data, 0x00, newpacket.commandlen);
-
-  newpacket.data[0] = (family & 0xff00)>>8;
-  newpacket.data[1] = family & 0xff;
-  newpacket.data[2] = (subtype & 0xff00)>>8;
-  newpacket.data[3] = subtype & 0xff;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x00;
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
+  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
 
   /* copy in data */
   newlong = htonl(*longdata);
-  memcpy(&(newpacket.data[10]), &newlong, sizeof(u_long));
+  memcpy(&(newpacket->data[10]), &newlong, sizeof(u_long));
 
-  aim_tx_enqueue(&newpacket);
-  return (aim_snac_nextid++);
+  aim_tx_enqueue(sess, newpacket);
+  return (sess->snac_nextid++);
 }
 
-u_long aim_genericreq_s(struct aim_conn_t *conn, u_short family, u_short subtype, u_short *shortdata)
+u_long aim_genericreq_s(struct aim_session_t *sess,
+			struct aim_conn_t *conn, 
+			u_short family, u_short subtype, u_short *shortdata)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
   u_short newshort;
 
   /* If we don't have data, there's no reason to use this function */
   if (!shortdata)
-    return aim_genericreq_n(conn, family, subtype);
+    return aim_genericreq_n(sess, conn, family, subtype);
 
-  newpacket.lock = 1;
+  if (!(newpacket = aim_tx_new(0x0002, conn, 10+sizeof(u_short))))
+    return -1;
 
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-  newpacket.type = 0x02;
+  newpacket->lock = 1;
 
-  newpacket.commandlen = 10+sizeof(u_short);
-
-  newpacket.data = (char *) malloc(newpacket.commandlen);
-  memset(newpacket.data, 0x00, newpacket.commandlen);
-
-  newpacket.data[0] = (family & 0xff00)>>8;
-  newpacket.data[1] = family & 0xff;
-  newpacket.data[2] = (subtype & 0xff00)>>8;
-  newpacket.data[3] = subtype & 0xff;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x00;
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
+  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
 
   /* copy in data */
   newshort = htons(*shortdata);
-  memcpy(&(newpacket.data[10]), &newshort, sizeof(u_short));
+  memcpy(&(newpacket->data[10]), &newshort, sizeof(u_short));
 
-  aim_tx_enqueue(&newpacket);
-  return (aim_snac_nextid++);
+  aim_tx_enqueue(sess, newpacket);
+  return (sess->snac_nextid++);
 }
 
 /*
@@ -657,9 +641,10 @@ u_long aim_genericreq_s(struct aim_conn_t *conn, u_short family, u_short subtype
  * Request Location services rights.
  *
  */
-u_long aim_bos_reqlocaterights(struct aim_conn_t *conn)
+u_long aim_bos_reqlocaterights(struct aim_session_t *sess,
+			       struct aim_conn_t *conn)
 {
-  return aim_genericreq_n(conn, 0x0002, 0x0002);
+  return aim_genericreq_n(sess, conn, 0x0002, 0x0002);
 }
 
 /*
@@ -668,7 +653,8 @@ u_long aim_bos_reqlocaterights(struct aim_conn_t *conn)
  * Request ICBM parameter information.
  *
  */
-u_long aim_bos_reqicbmparaminfo(struct aim_conn_t *conn)
+u_long aim_bos_reqicbmparaminfo(struct aim_session_t *sess,
+				struct aim_conn_t *conn)
 {
-  return aim_genericreq_n(conn, 0x0004, 0x0004);
+  return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
 }

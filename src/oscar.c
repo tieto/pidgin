@@ -35,367 +35,382 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include "gaim.h"
-#include <aim.h>
+#include "aim.h"
 #include "gnome_applet_mgr.h"
 
-struct aim_conn_t *gaim_conn = NULL;
 static int inpa = -1;
+static struct aim_session_t *gaim_sess;
+static struct aim_conn_t    *gaim_conn;
 
-int gaim_auth_failure(struct command_rx_struct *command, ...);
-int gaim_auth_success(struct command_rx_struct *command, ...);
-int gaim_serverready_handle(struct command_rx_struct *command, ...);
-int gaim_redirect_handle(struct command_rx_struct *command, ...);
-int gaim_im_handle(struct command_rx_struct *command, ...);
+static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_auth_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_server_ready     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_handle_redirect  (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_oncoming   (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_offgoing   (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_incoming_im(struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_misses     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_user_info  (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_unknown    (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_motd       (struct aim_session_t *, struct command_rx_struct *, ...);
 
-rxcallback_t gaim_callbacks[] = {
-        gaim_im_handle,                 /* incoming IM */
-        NULL,/*gaim_buddy_coming,               oncoming buddy */
-        NULL,/*gaim_buddy_going,                offgoing buddy */
-        NULL,                           /* last IM was missed 1 */
-        NULL,                           /* last IM was missed 2 */
-        NULL,                   /* UNUSED */
-        NULL,                   /* UNUSED */
-        NULL,                   /* UNUSED */
-        gaim_serverready_handle,        /* server ready */
-        NULL,                   /* UNUSED */
-        NULL,                   /* UNUSED */
-        NULL,                   /* UNUSED */
-        NULL,                   /* UNUSED */
-        NULL,                   /* UNUSED */
-        NULL,                   /* UNUSED */
-        gaim_redirect_handle,           /* redirect */
-        NULL,                           /* last command bad */
-        NULL,                           /* missed some messages */
-        NULL,                           /* completely unknown command */
-        NULL, /*gaim_userinfo_handler,           User Info Response */
-        NULL,                           /* Address search response */
-        NULL,                           /* Name search response */
-        NULL,                           /* User Search fail */
-        gaim_auth_failure,              /* auth error */
-        gaim_auth_success,              /* auth success */
-        NULL,                           /* auth server ready */
-        NULL,                           /* ? */
-        NULL,                           /* password change done */
-        gaim_serverready_handle,        /* server ready */
-        0x00
-};
+static void oscar_callback(gpointer data, gint source,
+				GdkInputCondition condition) {
+	struct aim_session_t *sess = (struct aim_session_t *)data;
+	struct aim_conn_t *conn = NULL;
+	struct timeval tv;
+	int selstat;
 
-struct client_info_s cinfo;
+	/* FIXME : There's gotta be a better way of getting this to not
+	 * either hang until a message is received or only update every
+	 * 2 seconds. If someone can tell me what it is, let me know. */
+	tv.tv_sec = 2;
+	tv.tv_usec = 0;
+	conn = aim_select(sess, &tv, &selstat);
 
-
-void oscar_close()
-{
-#ifdef USE_APPLET
-	setUserState(offline);
-#endif /* USE_APPLET */
-        set_state(STATE_OFFLINE);
-        aim_conn_close(gaim_conn);
-        if (inpa > 0)
-                gdk_input_remove(inpa);
-	inpa=-1;
+	switch(selstat) {
+		case -1: /* error */
+			signoff();
+			hide_login_progress("Disconnected.");
+			aim_logoff(sess);
+			gdk_input_remove(inpa);
+			break;
+		case 0: /* this should never happen because of the gdk_input */
+			gdk_input_remove(inpa);
+			while (gtk_events_pending())
+				gtk_main_iteration();
+			inpa = gdk_input_add(gaim_conn->fd,
+					GDK_INPUT_READ | GDK_INPUT_WRITE |
+					GDK_INPUT_EXCEPTION,
+					oscar_callback, sess);
+			break;
+		case 1: /* outgoing data pending */
+			aim_tx_flushqueue(sess);
+			break;
+		case 2: /* incoming data pending */
+			if (aim_get_command(sess, conn) < 0)
+				debug_print("connection error!\n");
+			else
+				aim_rxdispatch(sess);
+			break;
+	}
 }
 
+int oscar_login(char *username, char *password) {
+	struct aim_session_t *sess;
+	struct aim_conn_t *conn;
+	struct client_info_s info = {"Gaim/Faim", 3, 5, 1670, "us", "en"};
+	char buf[256];
 
-void oscar_callback(gpointer data, gint source, GdkInputCondition condition)
-{
-        if (aim_get_command() < 0) {
-                signoff();
-                hide_login_progress("Connection Closed");
-                return;
-        } else
-                aim_rxdispatch();
+	sess = g_new0(struct aim_session_t, 1);
+	aim_session_init(sess);
 
-}
+	sprintf(buf, "Looking up %s", FAIM_LOGIN_SERVER);
+	set_login_progress(1, buf);
+	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, FAIM_LOGIN_SERVER);
 
-int oscar_login(char *username, char *password)
-{
-        char buf[256];
-        struct timeval timeout;
-        time_t lastcycle=0;
-        
-        aim_connrst();
-        aim_register_callbacks(gaim_callbacks);
-
-        aim_conn_getnext()->fd = STDIN_FILENO;
-
-	spintf(buf, "Looking up %s", login_host);
-        set_login_progress(1, buf);
-
-        gaim_conn = aim_newconn(AIM_CONN_TYPE_AUTH, login_host);
-
-        if (!gaim_conn) {
+	if (conn == NULL) {
+		debug_print("internal connection error\n");
 #ifdef USE_APPLET
-                setUserState(offline);
-#endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
-                hide_login_progress("Unable to login to AIM");
-                return -1;
-        } else if (gaim_conn->fd == -1) {
+		setUserState(offline);
+#endif
+		set_state(STATE_OFFLINE);
+		hide_login_progress("Unable to login to AIM");
+		return -1;
+	} else if (conn->fd == -1) {
 #ifdef USE_APPLET
-                setUserState(offline);
-#endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
-                
-                if (gaim_conn->status & AIM_CONN_STATUS_RESOLVERR) {
-			sprintf(buf, "Unable to lookup %s", login_host);
-                        hide_login_progress(buf);
-                } else if (gaim_conn->status & AIM_CONN_STATUS_CONNERR) {
-			sprintf(buf, "Unable to connect to %s", login_host);
-                        hide_login_progress(buf);
-                }
-                return -1;
-        }
-
-        g_snprintf(buf, sizeof(buf), "Signon: %s",username);
-	
-        set_login_progress(2, buf);
-
-        strcpy(cinfo.clientstring, "libfaim/GAIM, jimduchek@ou.edu, see at http://www.marko.net/gaim");
-        cinfo.major = 0;
-        cinfo.minor = 9;
-        cinfo.build = 7;
-        strcpy(cinfo.country, "us");
-        strcpy(cinfo.lang, "en");
-
-        aim_send_login(gaim_conn, username, password, &cinfo);
-
-        if (!current_user) {
-                current_user = g_new0(struct aim_user, 1);
-                g_snprintf(current_user->username, sizeof(current_user->username), DEFAULT_INFO);
-                aim_users = g_list_append(aim_users, current_user);
-        }
-
-        g_snprintf(current_user->username, sizeof(current_user->username), "%s", username);
-        g_snprintf(current_user->password, sizeof(current_user->password), "%s", password);
-
-        save_prefs();
-
-        inpa = gdk_input_add(gaim_conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, NULL);
-
-        return 0;
-}
-
-int gaim_auth_success(struct command_rx_struct *command, ...)
-{
-        va_list ap;
-        struct login_phase1_struct *logininfo;
-        struct aim_conn_t *bosconn = NULL;
-        char buf[128];
-
-        va_start(ap, command);
-        logininfo = va_arg(ap, struct login_phase1_struct *);
-        va_end(ap);
-
-        g_snprintf(buf, sizeof(buf), "Auth successful, logging in to %s:", logininfo->BOSIP);
-        set_login_progress(3, buf);
-        
-        printf("          Screen name: %s\n", logininfo->screen_name);
-        printf("       Email addresss: %s\n", logininfo->email);
-        printf("  Registration status: %02i\n", logininfo->regstatus);
-        printf("Connecting to %s, closing auth connection.\n",
-                logininfo->BOSIP);
-
-        aim_conn_close(command->conn);
-
-        gdk_input_remove(inpa);
-
-        if ((bosconn = aim_newconn(AIM_CONN_TYPE_BOS, logininfo->BOSIP))
-            == NULL) {
-#ifdef USE_APPLET
-                setUserState(offline);
-#endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
-
-                hide_login_progress("Could not connect to BOS: internal error");
-                return(-1);
-        } else if (bosconn->status != 0) {
-#ifdef USE_APPLET
-                setUserState(offline);
-#endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
-
-                hide_login_progress("Could not connect to BOS");
-                return(-1);
-        } else {
-                aim_auth_sendcookie(bosconn, logininfo->cookie);
-                inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, NULL);
-                set_login_progress(4, "BOS connection established, cookie sent.");
-                return(1);
-        }
-}
-
-int gaim_auth_failure(struct command_rx_struct *command, ...)
-{
-        va_list ap;
-        struct login_phase1_struct      *logininfo;
-        char    *errorurl;
-        short   errorcode;
-
-        va_start(ap, command);
-        logininfo = va_arg(ap, struct login_phase1_struct *);
-        printf("Screen name: %s\n", logininfo->screen_name);
-        errorurl = va_arg(ap, char *);
-        printf("Error URL: %s\n", errorurl);
-        errorcode = va_arg(ap, short);
-        printf("Error code: 0x%02x\n", errorcode);
-        va_end(ap);
-#ifdef USE_APPLET
-        setUserState(offline);
-#endif /* USE_APPLET */
-        set_state(STATE_OFFLINE);
-        hide_login_progress("Authentication Failed");
-
-        aim_conn_close(aim_getconn_type(AIM_CONN_TYPE_AUTH));
-
-        return 1;
-}
-
-int gaim_serverready_handle(struct command_rx_struct *command, ...)
-{
-        switch (command->conn->type) {
-        case AIM_CONN_TYPE_BOS:
-                aim_bos_reqrate(command->conn);
-                aim_bos_ackrateresp(command->conn);
-                aim_bos_setprivacyflags(command->conn, 0x00000003);
-                aim_bos_reqservice(command->conn, AIM_CONN_TYPE_ADS);
-                aim_bos_setgroupperm(NULL, 0x1f);
-                break;
-        case AIM_CONN_TYPE_CHATNAV:
-		break;
-        default:
-		printf("Unknown connection type on serverready\n");
-		break;
-        }
-        return(1);
-
-}
-
-int gaim_redirect_handle(struct command_rx_struct *command, ...)
-{
-        va_list ap;
-        int     serviceid;
-        char    *ip, *cookie;
-
-        va_start(ap, command);
-        serviceid = va_arg(ap, int);
-        ip = va_arg(ap, char *);
-        cookie = va_arg(ap, char *);
-        va_end(ap);
-
-        switch(serviceid) {
-        case 0x0005: {
-                char *buf;
-                char *buf2;
-                char file[1024];
-                FILE *f;
-
-                g_snprintf(file, sizeof(file), "%s/.gaimbuddy", getenv("HOME"));
-        
-                if (!(f = fopen(file,"r"))) {
-                } else {
-                        buf = g_malloc(BUF_LONG);
-                        fread(buf, BUF_LONG, 1, f);
-
-                        parse_toc_buddy_list(buf);
-
-                        build_edit_tree();
-                        build_permit_tree();
-        
-
-                        g_free(buf);
-                }
-                
-
-
-                aim_bos_clientready(command->conn);
-
-		set_login_progress(5, "Logged in.\n");
-#ifdef USE_APPLET
-		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-			show_buddy_list();
-			refresh_buddy_window();
-		} else {
+		setUserState(offline);
+#endif
+		set_state(STATE_OFFLINE);
+		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
+			sprintf(debug_buff, "couldn't resolve host\n");
+			debug_print(debug_buff);
+			hide_login_progress(debug_buff);
+		} else if (conn->status & AIM_CONN_STATUS_CONNERR) {
+			sprintf(debug_buff, "couldn't connect to host\n");
+			debug_print(debug_buff);
+			hide_login_progress(debug_buff);
 		}
+		return -1;
+	}
+	g_snprintf(buf, sizeof(buf), "Signon: %s", username);
+	set_login_progress(2, buf);
 
-		set_applet_draw_closed();
+	aim_conn_addhandler(sess, conn, AIM_CB_FAM_SPECIAL,
+				AIM_CB_SPECIAL_AUTHSUCCESS,
+				gaim_parse_auth_resp, 0);
+	aim_conn_addhandler(sess, conn, AIM_CB_FAM_GEN,
+				AIM_CB_GEN_SERVERREADY,
+				gaim_auth_server_ready, 0);
+	aim_send_login(sess, conn, username, password, &info);
+
+	inpa = gdk_input_add(conn->fd,
+				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+				oscar_callback, sess);
+
+	if (!current_user) {
+		current_user = g_new0(struct aim_user, 1);
+		g_snprintf(current_user->username, sizeof(current_user->username),
+				DEFAULT_INFO);
+		aim_users = g_list_append(aim_users, current_user);
+	}
+	g_snprintf(current_user->username, sizeof(current_user->username),
+				"%s", username);
+	g_snprintf(current_user->password, sizeof(current_user->password),
+				"%s", password);
+	save_prefs();
+
+	return 0;
+}
+
+int oscar_send_im(char *name, char *msg, int away) {
+	if (away)
+		aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, msg);
+	else
+		aim_send_im(gaim_sess, gaim_conn, name, 0, msg);
+}
+
+int gaim_parse_auth_resp(struct aim_session_t *sess,
+			 struct command_rx_struct *command, ...) {
+	struct aim_conn_t *bosconn = NULL;
+	sprintf(debug_buff, "inside auth_resp (Screen name: %s)\n",
+			sess->logininfo.screen_name);
+	debug_print(debug_buff);
+
+	if (sess->logininfo.errorcode) {
+		sprintf(debug_buff, "Login Error Code 0x%04x\n",
+				sess->logininfo.errorcode);
+		debug_print(debug_buff);
+		sprintf(debug_buff, "Error URL: %s\n",
+				sess->logininfo.errorurl);
+		debug_print(debug_buff);
+#ifdef USE_APPLET
+		setUserState(offline);
+#endif
+		set_state(STATE_OFFLINE);
+		hide_login_progress("Authentication Failed");
+		gdk_input_remove(inpa);
+		aim_conn_close(command->conn);
+		return 0;
+	}
+
+
+	sprintf(debug_buff, "Email: %s\n", sess->logininfo.email);
+	debug_print(debug_buff);
+	sprintf(debug_buff, "Closing auth connection...\n");
+	debug_print(debug_buff);
+	gdk_input_remove(inpa);
+	aim_conn_close(command->conn);
+
+	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, sess->logininfo.BOSIP);
+	if (bosconn == NULL) {
+#ifdef USE_APPLET
+		setUserState(offline);
+#endif
+		set_state(STATE_OFFLINE);
+		hide_login_progress("Internal Error");
+		return -1;
+	} else if (bosconn->status != 0) {
+#ifdef USE_APPLET
+		setUserState(offline);
+#endif
+		set_state(STATE_OFFLINE);
+		hide_login_progress("Could Not Connect");
+		return -1;
+	}
+
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ACK, AIM_CB_ACK_ACK, NULL, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, gaim_server_ready, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATEINFO, NULL, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_REDIRECT, gaim_handle_redirect, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_STS, AIM_CB_STS_SETREPORTINTERVAL, NULL, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING, gaim_parse_oncoming, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING, gaim_parse_offgoing, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_INCOMING, gaim_parse_incoming_im, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_ERROR, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MISSEDCALL, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATECHANGE, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_CTN, AIM_CB_CTN_DEFAULT, gaim_parse_unknown, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEFAULT, gaim_parse_unknown, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
+
+	aim_auth_sendcookie(sess, bosconn, sess->logininfo.cookie);
+	inpa = gdk_input_add(bosconn->fd,
+			GDK_INPUT_READ | GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
+			oscar_callback, sess);
+	set_login_progress(4, "Connection established, cookie sent");
+	return 1;
+}
+
+int gaim_auth_server_ready(struct aim_session_t *sess,
+			   struct command_rx_struct *command, ...) {
+	aim_auth_clientready(sess, command->conn);
+	return 1;
+}
+
+int gaim_server_ready(struct aim_session_t *sess,
+		      struct command_rx_struct *command, ...) {
+	switch (command->conn->type) {
+	case AIM_CONN_TYPE_BOS:
+		aim_bos_reqrate(sess, command->conn);
+		aim_bos_ackrateresp(sess, command->conn);
+		aim_bos_setprivacyflags(sess, command->conn, 0x00000003);
+		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_ADS);
+		aim_setversions(sess, command->conn);
+		aim_bos_setgroupperm(sess, command->conn, 0x1f);
+		debug_print("done with BOS ServerReady\n");
+		break;
+	case AIM_CONN_TYPE_CHATNAV:
+		break;
+	case AIM_CONN_TYPE_CHAT:
+		break;
+	default: /* huh? */
+		break;
+	}
+	return 1;
+}
+
+int gaim_handle_redirect(struct aim_session_t *sess,
+			 struct command_rx_struct *command, ...) {
+	va_list ap;
+	int serviceid;
+	char *ip;
+	char *cookie;
+
+	/* FIXME */
+	char buddies[] = "EWarmenhoven&RobFlynn&Zilding&FlynOrange&";
+	char profile[] = "Hello";
+
+	va_start(ap, command);
+	serviceid = va_arg(ap, int);
+	ip        = va_arg(ap, char *);
+	cookie    = va_arg(ap, char *);
+
+	switch(serviceid) {
+	case 0x0005: /* Ads */
+		aim_bos_setbuddylist(sess, command->conn, buddies);
+		aim_bos_setprofile(sess, command->conn, profile, NULL, AIM_CAPS_CHAT);
+
+		aim_bos_clientready(sess, command->conn);
+
+		gaim_sess = sess;
+		gaim_conn = command->conn;
+
+		debug_print("Roger that, all systems go\n");
+#ifdef USE_APPLET
+		make_buddy();
+		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
+			gnome_buddy_show();
+			createOnlinePopup();
+			set_applet_draw_open();
+		} else {
+			gnome_buddy_hide();
+			set_applet_draw_closed();
+		}
 		setUserState(online);
+		gtk_widget_hide(mainwindow);
 #else
 		gtk_widget_hide(mainwindow);
 		show_buddy_list();
 		refresh_buddy_window();
 #endif
-		serv_finish_login();
-		gaim_conn = command->conn;
-
-                break;
-        }
-	case 0x0007: {
-		struct aim_conn_t       *tstconn;
-
-		tstconn = aim_newconn(AIM_CONN_TYPE_AUTH, ip);
-		if ((tstconn == NULL) ||
-		    (tstconn->status >= AIM_CONN_STATUS_RESOLVERR)) {
-#ifdef USE_APPLET
-			setUserState(offline);
-#endif /* USE_APPLET */
-			set_state(STATE_OFFLINE);
-			hide_login_progress("Unable to reconnect to authorizer");
-		} else
-			aim_auth_sendcookie(tstconn, cookie);
 		break;
-	}
-	case 0x000d: {
-		struct aim_conn_t       *tstconn;
-
-		tstconn = aim_newconn(AIM_CONN_TYPE_CHATNAV, ip);
-		if ((tstconn == NULL) ||
-		    (tstconn->status >= AIM_CONN_STATUS_RESOLVERR))
-			printf("Unable to connect to chatnav server\n");
+	case 0x7: /* Authorizer */
+		{
+		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, ip);
+		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR)
+			debug_print("unable to reconnect with authorizer\n");
 		else
-			aim_auth_sendcookie(
-					    aim_getconn_type(AIM_CONN_TYPE_CHATNAV),
-					    cookie);
+			aim_auth_sendcookie(sess, tstconn, cookie);
+		}
+		break;
+	case 0xd: /* ChatNav */
+		break;
+	case 0xe: /* Chat */
+		break;
+	default: /* huh? */
+		sprintf(debug_buff, "got redirect for unknown service 0x%04x\n",
+				serviceid);
+		debug_print(debug_buff);
 		break;
 	}
-	case 0x000e:
-		printf("CHAT is not yet supported :(\n");
-		break;
-	default:
-		printf("Unknown redirect %#04X\n", serviceid);
-		break;
-	}
-	return(1);
-		
+
+	va_end(ap);
+
+	return 1;
 }
 
+int gaim_parse_oncoming(struct aim_session_t *sess,
+			struct command_rx_struct *command, ...) {
+	return 1;
+}
 
+int gaim_parse_offgoing(struct aim_session_t *sess,
+			struct command_rx_struct *command, ...) {
+	return 1;
+}
 
-int gaim_im_handle(struct command_rx_struct *command, ...)
-{
-        time_t  t = 0;
-        char    *screenname, *msg;
-        int     warninglevel, class, idletime, isautoreply;
-        ulong   membersince, onsince;
-        va_list ap;
+int gaim_parse_incoming_im(struct aim_session_t *sess,
+			   struct command_rx_struct *command, ...) {
+	int channel;
+	va_list ap;
 
-        va_start(ap, command);
-	screenname = va_arg(ap, char *);
+	va_start(ap, command);
+	channel = va_arg(ap, int);
+
+	/* channel 1: standard message */
+	if (channel == 1) {
+		struct aim_userinfo_s *userinfo;
+		char *msg = NULL;
+		u_int icbmflags = 0;
+		char *tmpstr = NULL;
+		u_short flag1, flag2;
+
+		userinfo  = va_arg(ap, struct aim_userinfo_s *);
+		msg       = va_arg(ap, char *);
+		icbmflags = va_arg(ap, u_int);
+		flag1     = va_arg(ap, u_short);
+		flag2     = va_arg(ap, u_short);
+		va_end(ap);
+
+		serv_got_im(userinfo->sn, msg, icbmflags & AIM_IMFLAGS_AWAY);
+	}
+
+	return 1;
+}
+
+int gaim_parse_misses(struct aim_session_t *sess,
+		      struct command_rx_struct *command, ...) {
+	return 1;
+}
+
+int gaim_parse_user_info(struct aim_session_t *sess,
+			 struct command_rx_struct *command, ...) {
+	return 1;
+}
+
+int gaim_parse_unknown(struct aim_session_t *sess,
+		       struct command_rx_struct *command, ...) {
+	return 1;
+}
+
+int gaim_parse_motd(struct aim_session_t *sess,
+		    struct command_rx_struct *command, ...) {
+	char *msg;
+	u_short id;
+	va_list ap;
+
+	va_start(ap, command);
+	id  = va_arg(ap, u_short);
 	msg = va_arg(ap, char *);
-	warninglevel = va_arg(ap, int);
-	class = va_arg(ap, int);
-        membersince = va_arg(ap, ulong);
-        onsince = va_arg(ap, ulong);
-        idletime = va_arg(ap, int);
-        isautoreply = va_arg(ap, int);
-        va_end(ap);
+	va_end(ap);
 
-        printf("'%s'\n", msg);
-        
-        serv_got_im(screenname, msg, isautoreply);
+	sprintf(debug_buff, "MOTD: %s\n", msg);
+	debug_print(debug_buff);
 
-        return(1);
-
-
+	return 1;
 }
 
-#endif
+#endif /* USE_OSCAR */

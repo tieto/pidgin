@@ -35,6 +35,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
+#ifndef USE_OSCAR
 
 
 /* descriptor for talking to TOC */
@@ -842,6 +843,8 @@ void toc_build_config(char *s, int len)
                 dlist=dlist->next;
         }
 }
+
+#endif /* USE_OSCAR */
 
 void parse_toc_buddy_list(char *config)
 {

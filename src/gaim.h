@@ -337,7 +337,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 244 $"
+#define REVISION "gaim:$Revision: 247 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -357,7 +357,10 @@ extern GtkWidget *applet;
 #endif /* USE_APPLET */
 
 /* Globals in oscar.c */
-extern struct aim_conn_t *gaim_conn;
+#ifdef USE_OSCAR
+extern struct aim_session_t *gaim_sess;
+extern struct aim_conn_t    *gaim_conn;
+#endif
 
 /* Globals in server.c */
 extern int correction_time;
@@ -505,12 +508,14 @@ extern void serv_get_dir(char *);
 extern void serv_set_idle(int);
 extern void serv_set_info(char *);
 extern void serv_set_away(char *);
+extern void serv_change_passwd(char *, char *);
 extern void serv_add_buddy(char *);
 extern void serv_add_buddies(GList *);
 extern void serv_remove_buddy(char *);
 extern void serv_add_permit(char *);
 extern void serv_add_deny(char *);
 extern void serv_set_permit_deny();
+extern void serv_build_config(char *, int);
 extern void serv_save_config();
 extern void serv_warn(char *, int);
 extern void serv_set_dir(char *, char *, char *, char *, char *, char *, char *, int);
@@ -553,8 +558,8 @@ extern unsigned int *get_address(char *);
 extern int connect_address(unsigned int, unsigned short);
 
 /* Functions in oscar.c */
-extern void oscar_close();
 extern int oscar_login(char *, char *);
+extern int oscar_send_im(char *, char *, int);
 
 /* Functions in toc.c */
 extern void toc_close();

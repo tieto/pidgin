@@ -1085,10 +1085,7 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 		return;
 	}
 
-	buf = g_malloc(BUF_LONG);
-	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new1);
-	sflap_send(buf, strlen(buf), TYPE_DATA);
-	g_free(buf);
+	serv_change_passwd(orig, new1);
 	
 	destroy_dialog(NULL, b->window);
 	g_free(b);
@@ -2098,7 +2095,7 @@ void do_export(GtkWidget *w, void *dummy)
 			return;
 	}
         if ((f = fopen(path,"w"))) {
-                toc_build_config(buf, 8192 - 1);
+                serv_build_config(buf, 8192 - 1);
                 fprintf(f, "%s\n", buf);
                 fclose(f);
                 chmod(buf, S_IRUSR | S_IWUSR);

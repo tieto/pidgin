@@ -8,46 +8,30 @@
 
 #include <aim.h>
 
-u_long aim_usersearch_address(struct aim_conn_t *conn, char *address)
+u_long aim_usersearch_address(struct aim_session_t *sess,
+			      struct aim_conn_t *conn, 
+			      char *address)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
   
   if (!address)
     return -1;
 
-  newpacket.lock = 1;
+  if (!(newpacket = aim_tx_new(0x0002, conn, 10+strlen(address))))
+    return -1;
 
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
+  newpacket->lock = 1;
 
-  newpacket.type = 0x0002;
-  
-  newpacket.commandlen = 10 + strlen(address);
-  newpacket.data = (char *) malloc(newpacket.commandlen);
+  aim_putsnac(newpacket->data, 0x000a, 0x0002, 0x0000, sess->snac_nextid);
 
-  newpacket.data[0] = 0x00;
-  newpacket.data[1] = 0x0a;
-  newpacket.data[2] = 0x00;
-  newpacket.data[3] = 0x02;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x00;
+  aimutil_putstr(newpacket->data+10, address, strlen(address));
 
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
-
-  memcpy(&(newpacket.data[10]), address, strlen(address));
-
-  aim_tx_enqueue(&newpacket);
+  aim_tx_enqueue(sess, newpacket);
 
   {
     struct aim_snac_t snac;
     
-    snac.id = aim_snac_nextid;
+    snac.id = sess->snac_nextid;
     snac.family = 0x000a;
     snac.type = 0x0002;
     snac.flags = 0x0000;
@@ -55,9 +39,9 @@ u_long aim_usersearch_address(struct aim_conn_t *conn, char *address)
     snac.data = malloc(strlen(address)+1);
     memcpy(snac.data, address, strlen(address)+1);
 
-    aim_newsnac(&snac);
+    aim_newsnac(sess, &snac);
   }
 
-  return (aim_snac_nextid++);
+  return (sess->snac_nextid++);
 }
 

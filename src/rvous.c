@@ -19,6 +19,8 @@
  *
  */
 
+#ifndef USE_OSCAR
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -699,3 +701,5 @@ void accept_file_dialog(struct file_transfer *ft)
 		*/
 	}
 }
+
+#endif /* USE_OSCAR */

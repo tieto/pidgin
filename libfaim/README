@@ -4,7 +4,7 @@ libfaim pre-0.90 or so
 
 This is libfaim, the purpose of which is to implement as much as the
 AOL AIM/OSCAR protocol as possible (which should be all of it).  After
-nearly a year of development, its still nowhere close.  
+over a year of development, its still nowhere close.  
 
 This is not a full client and never will be.  libfaim only implements
 the routines to implement a client (ie, there's no user interface).  
@@ -14,7 +14,9 @@ Status
 
 I would not recommend using this version of libfaim in any form yet.  It's
 beta-quality and I know it leaks memory quite badly.  It seems fairly
-stable, however.  YMMV, YAYOR, etc.
+stable, however.  YMMV, YAYOR, etc.  I suppose I should say regardless of
+that warning, that several clients use it and people use those clients
+on a daily basis (in particular, me).
 
 
 Building
@@ -22,8 +24,8 @@ Building
 
 Everything in this libfaim dist should build cleanly on any UNIX(-like)
 operating system.  Originally developed on Linux+glibc.  Past versions 
-known to work on Linux+libc5, FreeBSD, HP/UX, Solaris, Mac OS X Server,
-and others.
+known to work on Linux+libc5, FreeBSD, HP/UX, Solaris, Mac OS X Server, 
+Win32 using VC++ 98/6 and others.
 
 libfaim builds as both libfaim.a and libfaim.so.  If your platform for
 some reason does not support dynamic libraries (eg, you get errors when
@@ -63,15 +65,21 @@ Unfortunatly, there is not currently any documentation on the libfaim API.
 Use the source and utils/faimtest/faimtest.c as a reference when coding
 front-ends.  
 
+Mailing Lists
+-------------
+
+Thanks to Sourceforge, we have our mailing lists back. See:
+http://www.sourceforge.org/mail/?group_id=920  for instructions
+on subscribing to the lists:
+
+  libfaim-devel: Discussion of libfaim and its developement.
+  libfaim-aim-protocol: Discussion of the finer points of OSCAR hacking
+ 
 
 Contact Info
 ------------
 
-The author (Adam Fritzler), can be reached at afritz@iname.com or mid@auk.cx.
-
-I did have mailing lists available for faim-related discussion, but they
-have dwindled and eventually broke and to my knowledge have yet to fix 
-themselves.
+The author (Adam Fritzler), can be reached at mid@auk.cx.
 
 Front-end information:
   http://www.auk.cx/faim/

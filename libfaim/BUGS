@@ -27,3 +27,11 @@ aim_search.c
 aim_snac.c
 ----------
   - Should implement better SNAC handling
+
+aim_tlv.c
+---------
+  - Newer TLV bulk-read routines most likely have leakage somewhere.
+
+aim_rxhandlers.c
+----------------
+  - Need a better solution than sleep()

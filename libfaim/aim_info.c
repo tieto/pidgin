@@ -1,68 +1,350 @@
 /*
-  aim_info.c
-
-  The functions here are responsible for requesting and parsing information-
-  gathering SNACs.  
-  
+ * aim_info.c
+ *
+ * The functions here are responsible for requesting and parsing information-
+ * gathering SNACs.  
+ *
  */
 
 
-#include "aim.h" /* for most everything */
+#include <aim.h>
 
-u_long aim_getinfo(struct aim_conn_t *conn, const char *sn)
+u_long aim_getinfo(struct aim_session_t *sess,
+		   struct aim_conn_t *conn, 
+		   const char *sn)
 {
-  struct command_tx_struct newpacket;
+  struct command_tx_struct *newpacket;
+  int i = 0;
 
-  if (conn)
-    newpacket.conn = conn;
-  else
-    newpacket.conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
+  if (!sess || !conn || !sn)
+    return 0;
 
-  newpacket.lock = 1;
-  newpacket.type = 0x0002;
+  if (!(newpacket = aim_tx_new(0x0002, conn, 12+1+strlen(sn))))
+    return -1;
 
-  newpacket.commandlen = 12 + 1 + strlen(sn);
-  newpacket.data = (char *) malloc(newpacket.commandlen);
+  newpacket->lock = 1;
 
-  newpacket.data[0] = 0x00;
-  newpacket.data[1] = 0x02;
-  newpacket.data[2] = 0x00;
-  newpacket.data[3] = 0x05;
-  newpacket.data[4] = 0x00;
-  newpacket.data[5] = 0x00;
+  i = aim_putsnac(newpacket->data, 0x0002, 0x0005, 0x0000, sess->snac_nextid);
 
-  /* SNAC reqid */
-  newpacket.data[6] = (aim_snac_nextid >> 24) & 0xFF;
-  newpacket.data[7] = (aim_snac_nextid >> 16) & 0xFF;
-  newpacket.data[8] = (aim_snac_nextid >>  8) & 0xFF;
-  newpacket.data[9] = (aim_snac_nextid) & 0xFF;
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+  i += aimutil_put8(newpacket->data+i, strlen(sn));
+  i += aimutil_putstr(newpacket->data+i, sn, strlen(sn));
 
-  /* TLV: Screen Name */
-  /* t(0x0001) */
-  newpacket.data[10] = 0x00;
-  newpacket.data[11] = 0x01; 
-  /* l() */
-  newpacket.data[12] = strlen(sn);
-  /* v() */
-  memcpy(&(newpacket.data[13]), sn, strlen(sn));
-
-  aim_tx_enqueue(&newpacket);
+  newpacket->lock = 0;
+  aim_tx_enqueue(sess, newpacket);
 
   {
     struct aim_snac_t snac;
     
-    snac.id = aim_snac_nextid;
+    snac.id = sess->snac_nextid;
     snac.family = 0x0002;
     snac.type = 0x0005;
     snac.flags = 0x0000;
 
     snac.data = malloc(strlen(sn)+1);
-    memcpy(snac.data, sn, strlen(sn)+1);
+    strcpy(snac.data, sn);
 
-    aim_newsnac(&snac);
+    aim_newsnac(sess, &snac);
   }
 
-  return (aim_snac_nextid++);
+  return (sess->snac_nextid++);
+}
+
+
+/*
+ * Capability blocks.  
+ */
+u_char aim_caps[6][16] = {
+  
+  /* Buddy icon */
+  {0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1, 
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  
+  /* Voice */
+  {0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1, 
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  
+  /* IM image */
+  {0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1, 
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  
+  /* Chat */
+  {0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1, 
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  
+  /* Get file */
+  {0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  
+  /* Send file */
+  {0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1, 
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}
+};
+
+/*
+ * AIM is fairly regular about providing user info.  This
+ * is a generic routine to extract it in its standard form.
+ */
+int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinfo)
+{
+  int i = 0;
+  int tlvcnt = 0;
+  int curtlv = 0;
+  int tlv1 = 0;
+  u_short curtype;
+
+
+  if (!buf || !outinfo)
+    return -1;
+
+  /* Clear out old data first */
+  memset(outinfo, 0x00, sizeof(struct aim_userinfo_s));
+
+  /*
+   * Screen name.    Stored as an unterminated string prepended
+   *                 with an unsigned byte containing its length.
+   */
+  memcpy(outinfo->sn, &(buf[i+1]), buf[i]);
+  outinfo->sn[(int)buf[i]] = '\0';
+  i = 1 + (int)buf[i];
+
+  /*
+   * Warning Level.  Stored as an unsigned short.
+   */
+  outinfo->warnlevel = aimutil_get16(&buf[i]);
+  i += 2;
+
+  /*
+   * TLV Count.      Unsigned short representing the number of 
+   *                 Type-Length-Value triples that follow.
+   */
+  tlvcnt = aimutil_get16(&buf[i]);
+  i += 2;
+
+  /* 
+   * Parse out the Type-Length-Value triples as they're found.
+   */
+  while (curtlv < tlvcnt)
+    {
+      curtype = aimutil_get16(&buf[i]);
+      switch (curtype)
+	{
+	  /*
+	   * Type = 0x0001: Member Class.   
+	   * 
+	   * Specified as any of the following bitwise ORed together:
+	   *      0x0001  Trial (user less than 60days)
+	   *      0x0002  Unknown bit 2
+	   *      0x0004  AOL Main Service user
+	   *      0x0008  Unknown bit 4
+	   *      0x0010  Free (AIM) user 
+	   *      0x0020  Away
+	   *
+	   * In some odd cases, we can end up with more
+	   * than one of these.  We only want the first,
+	   * as the others may not be something we want.
+	   *
+	   */
+	case 0x0001:
+	  if (tlv1) /* use only the first */
+	    break;
+	  outinfo->class = aimutil_get16(&buf[i+4]);
+	  tlv1++;
+	  break;
+	  
+	  /*
+	   * Type = 0x0002: Member-Since date. 
+	   *
+	   * The time/date that the user originally
+	   * registered for the service, stored in 
+	   * time_t format
+	   */
+	case 0x0002: 
+	  outinfo->membersince = aimutil_get32(&buf[i+4]);
+	  break;
+	  
+	  /*
+	   * Type = 0x0003: On-Since date.
+	   *
+	   * The time/date that the user started 
+	   * their current session, stored in time_t
+	   * format.
+	   */
+	case 0x0003:
+	  outinfo->onlinesince = aimutil_get32(&buf[i+4]);
+	  break;
+
+	  /*
+	   * Type = 0x0004: Idle time.
+	   *
+	   * Number of seconds since the user
+	   * actively used the service.
+	   */
+	case 0x0004:
+	  outinfo->idletime = aimutil_get16(&buf[i+4]);
+	  break;
+
+	  /*
+	   * Type = 0x000d
+	   *
+	   * Capability information.  Not real sure of
+	   * actual decoding.  See comment on aim_bos_setprofile()
+	   * in aim_misc.c about the capability block, its the same.
+	   *
+	   * Ignore.
+	   *
+	   */
+	case 0x000d:
+	  {
+	    int z,y; 
+	    int len;
+	    len = aimutil_get16(buf+i+2);
+	    if (!len)
+	      break;
+
+	    for (z = 0; z < len; z+=0x10) {
+	      for(y=0; y < 6; y++) {
+		if (memcmp(&aim_caps[y], buf+i+4+z, 0x10) == 0) {
+		  switch(y) {
+		  case 0: outinfo->capabilities |= AIM_CAPS_BUDDYICON; break;
+		  case 1: outinfo->capabilities |= AIM_CAPS_VOICE; break;
+		  case 2: outinfo->capabilities |= AIM_CAPS_IMIMAGE; break;
+		  case 3: outinfo->capabilities |= AIM_CAPS_CHAT; break;
+		  case 4: outinfo->capabilities |= AIM_CAPS_GETFILE; break;
+		  case 5: outinfo->capabilities |= AIM_CAPS_SENDFILE; break;
+		  default: outinfo->capabilities |= 0xff00; break;
+		  }
+		}
+	      }
+	    }
+	  }
+	  break;
+
+	  /*
+	   * Type = 0x000e
+	   *
+	   * Unknown.  Always of zero length, and always only
+	   * on AOL users.
+	   *
+	   * Ignore.
+	   *
+	   */
+	case 0x000e:
+	  break;
+	  
+	  /*
+	   * Type = 0x000f: Session Length. (AIM)
+	   * Type = 0x0010: Session Length. (AOL)
+	   *
+	   * The duration, in seconds, of the user's
+	   * current session.
+	   *
+	   * Which TLV type this comes in depends
+	   * on the service the user is using (AIM or AOL).
+	   *
+	   */
+	case 0x000f:
+	case 0x0010:
+	  outinfo->sessionlen = aimutil_get32(&buf[i+4]);
+	  break;
+
+	  /*
+	   * Reaching here indicates that either AOL has
+	   * added yet another TLV for us to deal with, 
+	   * or the parsing has gone Terribly Wrong.
+	   *
+	   * Either way, inform the owner and attempt
+	   * recovery.
+	   *
+	   */
+	default:
+	  {
+	    int len,z = 0, y = 0, x = 0;
+	    char tmpstr[80];
+	    printf("faim: userinfo: **warning: unexpected TLV:\n");
+	    printf("faim: userinfo:   sn    =%s\n", outinfo->sn);
+	    printf("faim: userinfo:   curtlv=0x%04x\n", curtlv);
+	    printf("faim: userinfo:   type  =0x%04x\n",aimutil_get16(&buf[i]));
+	    printf("faim: userinfo:   length=0x%04x\n", len = aimutil_get16(&buf[i+2]));
+	    printf("faim: userinfo:   data: \n");
+	    while (z<len)
+	      {
+		x = sprintf(tmpstr, "faim: userinfo:      ");
+		for (y = 0; y < 8; y++)
+		  {
+		    if (z<len)
+		      {
+			sprintf(tmpstr+x, "%02x ", buf[i+4+z]);
+			z++;
+			x += 3;
+		      }
+		    else
+		      break;
+		  }
+		printf("%s\n", tmpstr);
+	      }
+	  }
+	  break;
+	}  
+      /*
+       * No matter what, TLV triplets should always look like this:
+       *
+       *   u_short type;
+       *   u_short length;
+       *   u_char  data[length];
+       *
+       */
+      i += (2 + 2 + aimutil_get16(&buf[i+2]));
+      
+      curtlv++;
+    }
+  
+  return i;
+}
+
+/*
+ * Oncoming Buddy notifications contain a subset of the
+ * user information structure.  Its close enough to run
+ * through aim_extractuserinfo() however.
+ *
+ */
+int aim_parse_oncoming_middle(struct aim_session_t *sess,
+			      struct command_rx_struct *command)
+{
+  struct aim_userinfo_s userinfo;
+  u_int i = 0;
+  rxcallback_t userfunc=NULL;
+
+  i = 10;
+  i += aim_extractuserinfo(command->data+i, &userinfo);
+
+  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING);
+  if (userfunc)
+    i = userfunc(sess, command, &userinfo);
+
+  return 1;
+}
+
+/*
+ * Offgoing Buddy notifications contain no useful
+ * information other than the name it applies to.
+ *
+ */
+int aim_parse_offgoing_middle(struct aim_session_t *sess,
+			      struct command_rx_struct *command)
+{
+  char sn[MAXSNLEN+1];
+  u_int i = 0;
+  rxcallback_t userfunc=NULL;
+
+  strncpy(sn, command->data+11, (int)command->data[10]);
+  sn[(int)command->data[10]] = '\0';
+
+  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING);
+  if (userfunc)
+    i = userfunc(sess, command, sn);
+
+  return 1;
 }
 
 /*
@@ -70,151 +352,150 @@ u_long aim_getinfo(struct aim_conn_t *conn, const char *sn)
  * the higher-level callback (in the user app).
  *
  */
-
-int aim_parse_userinfo_middle(struct command_rx_struct *command)
+int aim_parse_userinfo_middle(struct aim_session_t *sess,
+			      struct command_rx_struct *command)
 {
-  char *sn = NULL;
+  struct aim_userinfo_s userinfo;
   char *prof_encoding = NULL;
   char *prof = NULL;
-  u_short warnlevel = 0x0000;
-  u_short idletime = 0x0000;
-  u_short class = 0x0000;
-  u_long membersince = 0x00000000;
-  u_long onlinesince = 0x00000000;
-  int tlvcnt = 0;
-  int i = 0;
+  u_int i = 0;
+  rxcallback_t userfunc=NULL;
+  struct aim_tlvlist_t *tlvlist;
 
   {
     u_long snacid = 0x000000000;
     struct aim_snac_t *snac = NULL;
 
-    snacid = (command->data[6] << 24) & 0xFF000000;
-    snacid+= (command->data[7] << 16) & 0x00FF0000;
-    snacid+= (command->data[8] <<  8) & 0x0000FF00;
-    snacid+= (command->data[9])       & 0x000000FF;
+    snacid = aimutil_get32(&command->data[6]);
+    snac = aim_remsnac(sess, snacid);
 
-    snac = aim_remsnac(snacid);
-
-    free(snac->data);
-    free(snac);
-
-  }
-
-  sn = (char *) malloc(command->data[10]+1);
-  memcpy(sn, &(command->data[11]), command->data[10]);
-  sn[(int)command->data[10]] = '\0';
-  
-  i = 11 + command->data[10];
-  warnlevel = ((command->data[i++]) << 8) & 0xFF00;
-  warnlevel += (command->data[i++]) & 0x00FF;
-
-  tlvcnt = ((command->data[i++]) << 8) & 0xFF00;
-  tlvcnt += (command->data[i++]) & 0x00FF;
-
-  /* a mini TLV parser */
-  {
-    int curtlv = 0;
-    int tlv1 = 0;
-
-    while (curtlv < tlvcnt)
+    if (snac)
       {
-	if ((command->data[i] == 0x00) &&
-	    (command->data[i+1] == 0x01) )
-	  {
-	    if (tlv1)
-	      break;
-	    /* t(0001) = class */
-	    class = ((command->data[i+4]) << 8) & 0xFF00;
-	    class += (command->data[i+5]) & 0x00FF;
-	    i += (2 + 2 + command->data[i+3]);
-	    tlv1++;
-	  }
-	else if ((command->data[i] == 0x00) &&
-		 (command->data[i+1] == 0x02))
-	  {
-	    /* t(0002) = member since date  */
-	    if (command->data[i+3] != 0x04)
-	      printf("faim: userinfo: **warning: strange v(%x) for t(2)\n", command->data[i+3]);
-
-	    membersince = ((command->data[i+4]) << 24) &  0xFF000000;
-	    membersince += ((command->data[i+5]) << 16) & 0x00FF0000;
-	    membersince += ((command->data[i+6]) << 8) &  0x0000FF00;
-	    membersince += ((command->data[i+7]) ) &      0x000000FF;
-	    i += (2 + 2 + command->data[i+3]);
-	  }
-	else if ((command->data[i] == 0x00) &&
-		 (command->data[i+1] == 0x03))
-	  {
-	    /* t(0003) = on since date  */
-	    if (command->data[i+3] != 0x04)
-	      printf("faim: userinfo: **warning: strange v(%x) for t(3)\n", command->data[i+3]);
-
-	    onlinesince = ((command->data[i+4]) << 24) &  0xFF000000;
-	    onlinesince += ((command->data[i+5]) << 16) & 0x00FF0000;
-	    onlinesince += ((command->data[i+6]) << 8) &  0x0000FF00;
-	    onlinesince += ((command->data[i+7]) ) &      0x000000FF;
-	    i += (2 + 2 + command->data[i+3]);
-	  }
-	else if ((command->data[i] == 0x00) &&
-		 (command->data[i+1] == 0x04) )
-	  {
-	    /* t(0004) = idle time */
-	    if (command->data[i+3] != 0x02)
-	      printf("faim: userinfo: **warning: strange v(%x) for t(4)\n", command->data[i+3]);
-	    idletime = ((command->data[i+4]) << 8) & 0xFF00;
-	    idletime += (command->data[i+5]) & 0x00FF;
-	    i += (2 + 2 + command->data[i+3]);
-	  }  
+	if (snac->data)
+	  free(snac->data);
 	else
-	  {
-	    printf("faim: userinfo: **warning: unexpected TLV t(%02x%02x) l(%02x%02x)\n", command->data[i], command->data[i+1], command->data[i+2], command->data[i+3]);
-	    i += (2 + 2 + command->data[i+3]);
-	  }
-	curtlv++;
+	  printf("faim: parse_userinfo_middle: warning: no ->data in cached SNAC\n");
+	free(snac);
       }
+    else
+      printf("faim: parseuserinfo_middle: warning: no SNAC cached with for this response (%08lx)\n", snacid);
+
   }
-  if (i < command->commandlen)
+  
+  i = 10;
+
+  /*
+   * extractuserinfo will give us the basic metaTLV information
+   */
+  i += aim_extractuserinfo(command->data+i, &userinfo);
+  
+  /*
+   * However, in this command, there's usually more TLVs following...
+   */ 
+  tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i);
+  prof_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
+  prof = aim_gettlv_str(tlvlist, 0x0002, 1);
+
+  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO);
+  if (userfunc)
     {
-      if ( (command->data[i] == 0x00) &&
-	   (command->data[i+1] == 0x01) )
-	{
-	  int len = 0;
-	  
-	  len = ((command->data[i+2] << 8) & 0xFF00);
-	  len += (command->data[i+3]) & 0x00FF;
-	  
-	  prof_encoding = (char *) malloc(len+1);
-	  memcpy(prof_encoding, &(command->data[i+4]), len);
-	  prof_encoding[len] = '\0';
-	  
-	  i += (2+2+len);
-	}
-      else
-	{
-	  printf("faim: userinfo: **warning: unexpected TLV after TLVblock t(%02x%02x) l(%02x%02x)\n", command->data[i], command->data[i+1], command->data[i+2], command->data[i+3]);
-	  i += 2 + 2 + command->data[i+3];
-	}
+      i = userfunc(sess,
+		   command, 
+		   &userinfo, 
+		   prof_encoding, 
+		   prof); 
     }
-
-  if (i < command->commandlen)
-    {
-      int len = 0;
-
-      len = ((command->data[i+2]) << 8) & 0xFF00;
-      len += (command->data[i+3]) & 0x00FF;
-
-      prof = (char *) malloc(len+1);
-      memcpy(prof, &(command->data[i+4]), len);
-      prof[len] = '\0';
-    }
-  else
-    printf("faim: userinfo: **early parse abort...no profile?\n");
-
-  i = (aim_callbacks[AIM_CB_USERINFO])(command, sn, prof_encoding, prof, warnlevel, idletime, class, membersince, onlinesince);
-
-  free(sn);
+  
   free(prof_encoding);
   free(prof);
+  aim_freetlvchain(&tlvlist);
 
+  return 1;
+}
+
+/*
+ * Inverse of aim_extractuserinfo()
+ */
+int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info)
+{
+  int i = 0;
+  struct aim_tlvlist_t *tlvlist = NULL;
+
+  if (!buf || !info)
+    return 0;
+
+  i += aimutil_put8(buf+i, strlen(info->sn));
+  i += aimutil_putstr(buf+i, info->sn, strlen(info->sn));
+
+  i += aimutil_put16(buf+i, info->warnlevel);
+
+  /* XXX: we only put down five */
+  i += aimutil_put16(buf+i, 5);
+  aim_addtlvtochain16(&tlvlist, 0x0001, info->class);
+  aim_addtlvtochain32(&tlvlist, 0x0002, info->membersince);
+  aim_addtlvtochain32(&tlvlist, 0x0003, info->onlinesince);
+  aim_addtlvtochain16(&tlvlist, 0x0004, info->idletime);
+  /* XXX: should put caps here */
+  aim_addtlvtochain32(&tlvlist, (info->class)&AIM_CLASS_AOL?0x0010:0x000f, info->sessionlen);
+  
+  i += aim_writetlvchain(buf+i, buflen-i, &tlvlist);
+  aim_freetlvchain(&tlvlist);
+  
   return i;
+}
+
+int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info)
+{
+  struct command_tx_struct *tx;
+  int i = 0;
+
+  if (!sess || !conn || !info)
+    return 0;
+
+  if (!(tx = aim_tx_new(0x0002, conn, 1152)))
+    return -1;
+
+  tx->lock = 1;
+
+  i += aimutil_put16(tx->data+i, 0x0003);
+  i += aimutil_put16(tx->data+i, 0x000b);
+  i += aimutil_put16(tx->data+i, 0x0000);
+  i += aimutil_put16(tx->data+i, 0x0000);
+  i += aimutil_put16(tx->data+i, 0x0000);
+
+  i += aim_putuserinfo(tx->data+i, tx->commandlen-i, info);
+
+  tx->commandlen = i;
+  tx->lock = 0;
+  aim_tx_enqueue(sess, tx);
+
+  return 0;
+}
+
+int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn)
+{
+  struct command_tx_struct *tx;
+  int i = 0;
+
+  if (!sess || !conn || !sn)
+    return 0;
+
+  if (!(tx = aim_tx_new(0x0002, conn, 10+1+strlen(sn))))
+    return -1;
+
+  tx->lock = 1;
+
+  i += aimutil_put16(tx->data+i, 0x0003);
+  i += aimutil_put16(tx->data+i, 0x000c);
+  i += aimutil_put16(tx->data+i, 0x0000);
+  i += aimutil_put16(tx->data+i, 0x0000);
+  i += aimutil_put16(tx->data+i, 0x0000);
+
+  i += aimutil_put8(tx->data+i, strlen(sn));
+  i += aimutil_putstr(tx->data+i, sn, strlen(sn));
+  
+  tx->lock = 0;
+  aim_tx_enqueue(sess, tx);
+
+  return 0;
 }

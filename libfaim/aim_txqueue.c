@@ -1,307 +1,290 @@
 /*
-  aim_txqueue.c
-
-  Herein lies all the mangement routines for the transmit (Tx) queue.
-
+ *  aim_txqueue.c
+ *
+ * Herein lies all the mangement routines for the transmit (Tx) queue.
+ *
  */
 
-#include "aim.h"
+#include <aim.h>
 
 /*
-  aim_tx_enqeue()
-
-  The overall purpose here is to enqueue the passed in command struct
-  into the outgoing (tx) queue.  Basically...
-    1) Make a scope-irrelevent copy of the struct
-    2) Lock the struct
-    3) Mark as not-sent-yet
-    4) Enqueue the struct into the list
-    5) Unlock the struct once it's linked in
-    6) Return
-
+ * Allocate a new tx frame.
+ *
+ * This is more for looks than anything else.
+ *
+ * Right now, that is.  If/when we implement a pool of transmit
+ * frames, this will become the request-an-unused-frame part.
  */
-
-int aim_tx_enqueue(struct command_tx_struct *newpacket)
+struct command_tx_struct *aim_tx_new(int chan, struct aim_conn_t *conn, int datalen)
 {
-  struct command_tx_struct *workingPtr = NULL;
-  struct command_tx_struct *newpacket_copy = NULL;
+  struct command_tx_struct *new;
 
-  if (newpacket->conn == NULL)
-    {
-      printf("aim_tx_enqueue: WARNING: enqueueing packet with no connecetion,  defaulting to BOS\n");
-      newpacket->conn = aim_getconn_type(AIM_CONN_TYPE_BOS);
-    }
+  if (!conn)
+    return NULL;
+
+  new = (struct command_tx_struct *)malloc(sizeof(struct command_tx_struct));
+  if (!new)
+    return NULL;
+  memset(new, 0, sizeof(struct command_tx_struct));
+
+  new->conn = conn; 
+  new->type = chan;
+
+  if(datalen) {
+    new->data = (u_char *)malloc(datalen);
+    new->commandlen = datalen;
+  }
+
+  return new;
+}
+
+/*
+ * aim_tx_enqeue()
+ *
+ * The overall purpose here is to enqueue the passed in command struct
+ * into the outgoing (tx) queue.  Basically...
+ *   1) Make a scope-irrelevent copy of the struct
+ *   2) Lock the struct
+ *   3) Mark as not-sent-yet
+ *   4) Enqueue the struct into the list
+ *   5) Unlock the struct once it's linked in
+ *   6) Return
+ *
+ */
+int aim_tx_enqueue(struct aim_session_t *sess,
+		   struct command_tx_struct *newpacket)
+{
+  struct command_tx_struct *cur;
+
+  if (newpacket->conn == NULL) {
+      faimdprintf(1, "aim_tx_enqueue: WARNING: enqueueing packet with no connecetion\n");
+      newpacket->conn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
+  }
  
-  newpacket_copy = (struct command_tx_struct *) malloc (sizeof(struct command_tx_struct));
-  memcpy(newpacket_copy, newpacket, sizeof(struct command_tx_struct));
-
   /* assign seqnum */
-  newpacket_copy->seqnum = aim_get_next_txseqnum(newpacket_copy->conn);
+  newpacket->seqnum = aim_get_next_txseqnum(newpacket->conn);
   /* set some more fields */
-  newpacket_copy->lock = 1; /* lock */
-  newpacket_copy->sent = 0; /* not sent yet */
-  newpacket_copy->next = NULL; /* always last */
+  newpacket->lock = 1; /* lock */
+  newpacket->sent = 0; /* not sent yet */
+  newpacket->next = NULL; /* always last */
 
-  if (aim_queue_outgoing == NULL)
-    {
-      aim_queue_outgoing = newpacket_copy;
-    }
-  else
-    {
-      workingPtr = aim_queue_outgoing;
-      while (workingPtr->next != NULL)
-	workingPtr = workingPtr->next;
-      workingPtr->next = newpacket_copy;
-    }
+  /* see overhead note in aim_rxqueue counterpart */
+  if (sess->queue_outgoing == NULL) {
+    sess->queue_outgoing = newpacket;
+  } else {
+    for (cur = sess->queue_outgoing;
+	 cur->next;
+	 cur = cur->next)
+      ;
+    cur->next = newpacket;
+  }
 
-  newpacket_copy->lock = 0; /* unlock so it can be sent */
+  newpacket->lock = 0; /* unlock so it can be sent */
 
-#if debug > 2
-  printf("calling aim_tx_printqueue()\n");
-  aim_tx_printqueue();
-  printf("back from aim_tx_printqueue()\n");
-#endif
-
-  /* we'll force a flush for now -- this behavior probably will change */
-#if debug > 1
-  printf("calling aim_tx_flushqueue()\n");
-#endif
-  aim_tx_flushqueue();
-#if debug > 1
-  printf("back from aim_tx_flushqueue()\n");
+#if debug == 2
+  faimdprintf(2, "calling aim_tx_printqueue()\n");
+  aim_tx_printqueue(sess);
+  faimdprintf(2, "back from aim_tx_printqueue()\n");
 #endif
 
   return 0;
 }
 
 /* 
-   aim_get_next_txseqnum()
-
-   This increments the tx command count, and returns the seqnum
-   that should be stamped on the next FLAP packet sent.  This is
-   normally called during the final step of packet preparation
-   before enqueuement (in aim_tx_enqueue()).
-
+ *  aim_get_next_txseqnum()
+ *
+ *   This increments the tx command count, and returns the seqnum
+ *   that should be stamped on the next FLAP packet sent.  This is
+ *   normally called during the final step of packet preparation
+ *   before enqueuement (in aim_tx_enqueue()).
+ *
  */
-unsigned int aim_get_next_txseqnum(struct aim_conn_t *conn)
+u_int aim_get_next_txseqnum(struct aim_conn_t *conn)
 {
   return ( ++conn->seqnum );
 }
 
 /*
-  aim_tx_printqueue()
-
-  This is basically for debuging purposes only.  It dumps all the
-  records in the tx queue and their current status.  Very helpful
-  if the queue isn't working quite right.
-
+ *  aim_tx_printqueue()
+ *
+ *  This is basically for debuging purposes only.  It dumps all the
+ *  records in the tx queue and their current status.  Very helpful
+ *  if the queue isn't working quite right.
+ *
  */
-#if debug > 2
-int aim_tx_printqueue(void)
+#if debug == 2
+int aim_tx_printqueue(struct aim_session_t *sess)
 {
-  struct command_tx_struct *workingPtr = NULL;
+  struct command_tx_struct *cur;
 
-  workingPtr = aim_queue_outgoing;
-#if debug > 2
-  printf("\ncurrent aim_queue_outgoing...\n");
-  printf("\ttype seqnum  len  lock sent\n");  
-#endif
-  if (workingPtr == NULL)
-    printf("aim_tx_flushqueue(): queue empty");
-  else
-    {
-      while (workingPtr != NULL)
-	{
-	  printf("\t  %2x   %4x %4x   %1d    %1d\n", workingPtr->type, workingPtr->seqnum, workingPtr->commandlen, workingPtr->lock, workingPtr->sent);
-	  
-	  workingPtr = workingPtr->next;
-	}
-    }
+  faimdprintf(2, "\ncurrent aim_queue_outgoing...\n");
+  faimdprintf(2, "\ttype seqnum  len  lock sent\n");  
 
-  printf("\n(done printing queue)\n");
+  if (sess->queue_outgoing == NULL)
+    faimdprintf(2, "aim_tx_flushqueue(): queue empty");
+  else {
+      for (cur = sess->queue_outgoing; cur; cur = cur->next) {
+	  faimdprintf(2, "\t  %2x   %4x %4x   %1d    %1d\n", 
+		      cur->type, cur->seqnum, 
+		      cur->commandlen, cur->lock, 
+		      cur->sent);
+      }
+  }
+
+  faimdprintf(2, "\n(done printing queue)\n");
   
   return 0;
 }
 #endif
 
 /*
-  aim_tx_flushqueue()
-
-  This the function is responsable for putting the queued commands
-  onto the wire.  This function is critical to the operation of 
-  the queue and therefore is the most prone to brokenness.  It
-  seems to be working quite well at this point.
-
-  Procedure:
-    1) Traverse the list, only operate on commands that are unlocked
-       and haven't been sent yet.
-    2) Lock the struct
-    3) Allocate a temporary buffer to store the finished, fully
-       processed packet in.
-    4) Build the packet from the command_tx_struct data.
-    5) Write the packet to the socket.
-    6) If success, mark the packet sent, if fail report failure, do NOT
-       mark the packet sent (so it will not get purged and therefore
-       be attempted again on next call).
-    7) Unlock the struct.
-    8) Free the temp buffer
-    9) Step to next struct in list and go back to 1.
-
+ *  aim_tx_flushqueue()
+ *
+ *  This the function is responsable for putting the queued commands
+ *  onto the wire.  This function is critical to the operation of 
+ *  the queue and therefore is the most prone to brokenness.  It
+ *  seems to be working quite well at this point.
+ *
+ *  Procedure:
+ *    1) Traverse the list, only operate on commands that are unlocked
+ *       and haven't been sent yet.
+ *    2) Lock the struct
+ *    3) Allocate a temporary buffer to store the finished, fully
+ *       processed packet in.
+ *    4) Build the packet from the command_tx_struct data.
+ *    5) Write the packet to the socket.
+ *    6) If success, mark the packet sent, if fail report failure, do NOT
+ *       mark the packet sent (so it will not get purged and therefore
+ *       be attempted again on next call).
+ *    7) Unlock the struct.
+ *    8) Free the temp buffer
+ *    9) Step to next struct in list and go back to 1.
+ *
  */
-int aim_tx_flushqueue(void)
+int aim_tx_flushqueue(struct aim_session_t *sess)
 {
-  struct command_tx_struct *workingPtr = NULL;
-  unsigned char *curPacket = NULL;
+  struct command_tx_struct *cur;
+  u_char *curPacket = NULL;
 #if debug > 1
   int i = 0;
 #endif
 
-  workingPtr = aim_queue_outgoing;
-#if debug > 1
-  printf("beginning txflush...\n");
-#endif
-  while (workingPtr != NULL)
-    {
-      /* only process if its unlocked and unsent */
-      if ( (workingPtr->lock == 0) &&
-	   (workingPtr->sent == 0) )
-	{
-	  workingPtr->lock = 1; /* lock the struct */
-	  
-	  /* allocate full-packet buffer */
-	  curPacket = (char *) malloc(workingPtr->commandlen + 6);
-	  
-	  /* command byte */
-	  curPacket[0] = 0x2a;
-	  /* type/family byte */
-	  curPacket[1] = workingPtr->type;
-	  /* bytes 3+4: word: FLAP sequence number */
-	  curPacket[2] = (char) ( (workingPtr->seqnum) >> 8);
-	  curPacket[3] = (char) ( (workingPtr->seqnum) & 0xFF);
-	  /* bytes 5+6: word: SNAC len */
-	  curPacket[4] = (char) ( (workingPtr->commandlen) >> 8);
-	  curPacket[5] = (char) ( (workingPtr->commandlen) & 0xFF);
-	  /* bytes 7 and on: raw: SNAC data */
-	  memcpy(&(curPacket[6]), workingPtr->data, workingPtr->commandlen);
-	  
-	  /* full image of raw packet data now in curPacket */
+  if (sess->queue_outgoing == NULL)
+    return 0;
 
-	  if ( write(workingPtr->conn->fd, curPacket, (workingPtr->commandlen + 6)) != (workingPtr->commandlen + 6))
-	    {
-	      perror("write");
-	      printf("\nWARNING: Error in sending packet 0x%4x -- will try again next time\n\n", workingPtr->seqnum);
-	      workingPtr->sent = 0; /* mark it unsent */
-	      return -1;  /* bail out */
-	    }
-	  else
-	    {
+  faimdprintf(2, "beginning txflush...\n");
+  for (cur = sess->queue_outgoing; cur; cur = cur->next) {
+    /* only process if its unlocked and unsent */
+    if (!cur->lock && !cur->sent) {
+
+      /*
+       * And now for the meager attempt to force transmit
+       * latency and avoid missed messages.
+       */
+      if ((cur->conn->lastactivity + cur->conn->forcedlatency) >= time(NULL)) {
+	/* FIXME FIXME -- should be a break! we dont want to block the upper layers */
+	sleep((cur->conn->lastactivity + cur->conn->forcedlatency) - time(NULL));
+      }
+      
+      cur->lock = 1; /* lock the struct */
+      
+      /* allocate full-packet buffer */
+      curPacket = (char *) malloc(cur->commandlen + 6);
+      
+      /* command byte */
+      curPacket[0] = 0x2a;
+      
+      /* type/family byte */
+      curPacket[1] = cur->type;
+      
+      /* bytes 3+4: word: FLAP sequence number */
+      aimutil_put16(curPacket+2, cur->seqnum);
+
+      /* bytes 5+6: word: SNAC len */
+      aimutil_put16(curPacket+4, cur->commandlen);
+      
+      /* bytes 7 and on: raw: SNAC data */
+      memcpy(&(curPacket[6]), cur->data, cur->commandlen);
+      
+      /* full image of raw packet data now in curPacket */
+      if ( (u_int)write(cur->conn->fd, curPacket, (cur->commandlen + 6)) != (cur->commandlen + 6)) {
+	printf("\nWARNING: Error in sending packet 0x%4x -- will try again next time\n\n", cur->seqnum);
+	cur->sent = 0; /* mark it unsent */
+	continue; /* bail out */
+      } else {
+	faimdprintf(2, "\nSENT 0x%4x\n\n", cur->seqnum);
+
+	cur->sent = 1; /* mark the struct as sent */
+	cur->conn->lastactivity = time(NULL);
+      }
 #if debug > 2
-	      printf("\nSENT 0x%4x\n\n", workingPtr->seqnum);
-#endif
-	      workingPtr->sent = 1; /* mark the struct as sent */
-	    }
-#if debug > 2
-	  printf("\nPacket:");
-	  for (i = 0; i < (workingPtr->commandlen + 6); i++)
-	    {
-	      if ((i % 8) == 0)
-		printf("\n\t");
-	      if (curPacket[i] >= ' ' && curPacket[i]<127)
-		 printf("%c=%02x ",curPacket[i], curPacket[i]);
-	      else
-		 printf("0x%2x ", curPacket[i]);
-	    }
-	  printf("\n");
-#endif
-	  workingPtr->lock = 0; /* unlock the struct */
-	  free(curPacket); /* free up full-packet buffer */
+      faimdprintf(2, "\nPacket:");
+      for (i = 0; i < (cur->commandlen + 6); i++) {
+	if ((i % 8) == 0) {
+	  faimdprintf(2, "\n\t");
 	}
-      workingPtr = workingPtr->next;
+	if (curPacket[i] >= ' ' && curPacket[i]<127) {
+	  faimdprintf(2, "%c=%02x ", curPacket[i], curPacket[i]);
+	} else {
+	  faimdprintf(2, "0x%2x ", curPacket[i]);
+	}
+      }
+      faimdprintf(2, "\n");
+#endif
+      cur->lock = 0; /* unlock the struct */
+      free(curPacket); /* free up full-packet buffer */
     }
+  }
 
   /* purge sent commands from queue */
-  /*   this may not always occur explicitly--i may put this on a timer later */
-#if debug > 1
-  printf("calling aim_tx_purgequeue()\n");
-#endif
-  aim_tx_purgequeue();
-#if debug > 1
-  printf("back from aim_tx_purgequeu() [you must be a lucky one]\n");
-#endif
+  aim_tx_purgequeue(sess);
 
   return 0;
 }
 
 /*
-  aim_tx_purgequeue()
-  
-  This is responsable for removing sent commands from the transmit 
-  queue. This is not a required operation, but it of course helps
-  reduce memory footprint at run time!  
-
+ *  aim_tx_purgequeue()
+ *  
+ *  This is responsable for removing sent commands from the transmit 
+ *  queue. This is not a required operation, but it of course helps
+ *  reduce memory footprint at run time!  
+ *
  */
-int aim_tx_purgequeue(void)
+void aim_tx_purgequeue(struct aim_session_t *sess)
 {
-  struct command_tx_struct *workingPtr = NULL;
-  struct command_tx_struct *workingPtr2 = NULL;
-#if debug > 1
-  printf("purgequeue(): starting purge\n");
-#endif
-  /* Empty queue: nothing to do */
-  if (aim_queue_outgoing == NULL)
-    {
-#if debug > 1
-      printf("purgequeue(): purge done (len=0)\n");
-#endif
-      return 0;
-    }
-  /* One Node queue: free node and return */
-  else if (aim_queue_outgoing->next == NULL)
-    {
-#if debug > 1
-      printf("purgequeue(): entered case len=1\n");
-#endif
-      /* only free if sent AND unlocked -- dont assume sent structs are done */
-      if ( (aim_queue_outgoing->lock == 0) &&
-	   (aim_queue_outgoing->sent == 1) )
-	{
-#if debug > 1
-	  printf("purgequeue(): purging seqnum 0x%04x\n", aim_queue_outgoing->seqnum);
-#endif
-	  workingPtr2 = aim_queue_outgoing;
-	  aim_queue_outgoing = NULL;
-	  free(workingPtr2->data);
-	  free(workingPtr2);
-	}
-#if debug > 1
-      printf("purgequeue(): purge done (len=1)\n");
-#endif
-      return 0;
-    }
-  else
-    {
-#if debug > 1
-      printf("purgequeue(): entering case len>1\n");
-#endif
-      while(workingPtr->next != NULL)
-	{
-	  if ( (workingPtr->next->lock == 0) &&
-	       (workingPtr->next->sent == 1) )
-	    {
-#if debug > 1
-	      printf("purgequeue(): purging seqnum 0x%04x\n", workingPtr->next->seqnum);
-#endif
-	      workingPtr2 = workingPtr->next;
-	      workingPtr->next = workingPtr2->next;
-	      free(workingPtr2->data);
-	      free(workingPtr2);
-	    }
-	}
-#if debug > 1
-      printf("purgequeue(): purge done (len>1)\n");
-#endif
-      return 0;
-    }
+  struct command_tx_struct *cur = NULL;
+  struct command_tx_struct *tmp;
 
-  /* no reach */
+  if (sess->queue_outgoing == NULL)
+    return;
+  
+  if (sess->queue_outgoing->next == NULL) {
+    if (!sess->queue_outgoing->lock && sess->queue_outgoing->sent) {
+      tmp = sess->queue_outgoing;
+      sess->queue_outgoing = NULL;
+      free(tmp->data);
+      free(tmp);
+    }
+    return;
+  }
+
+  for(cur = sess->queue_outgoing; cur->next != NULL; ) {
+    if (!cur->next->lock && cur->next->sent) {
+      tmp = cur->next;
+      cur->next = tmp->next;
+      free(tmp->data);
+      free(tmp);
+    }	
+    cur = cur->next;
+
+    /* 
+     * Be careful here.  Because of the way we just
+     * manipulated the pointer, cur may be NULL and 
+     * the for() will segfault doing the check unless
+     * we find this case first.
+     */
+    if (cur == NULL)	
+      break;
+  }
+  return;
 }
