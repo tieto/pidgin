@@ -576,9 +576,6 @@ gaim_account_set_bool(GaimAccount *account, const char *name, gboolean value)
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "account", "Setting bool: %s, %d\n",
-			   name, value);
-
 	setting = g_new0(GaimAccountSetting, 1);
 
 	setting->type       = GAIM_PREF_BOOLEAN;
@@ -838,16 +835,10 @@ gaim_account_get_bool(const GaimAccount *account, const char *name,
 	g_return_val_if_fail(account != NULL, default_value);
 	g_return_val_if_fail(name    != NULL, default_value);
 
-	gaim_debug(GAIM_DEBUG_INFO, "account", "looking for bool setting: %s\n",
-			   name);
-
 	setting = g_hash_table_lookup(account->settings, name);
 
 	if (setting == NULL)
 		return default_value;
-
-	gaim_debug(GAIM_DEBUG_INFO, "account", "bool setting found: %s, %d\n",
-			   name, setting->value.bool);
 
 	g_return_val_if_fail(setting->type == GAIM_PREF_BOOLEAN, default_value);
 
