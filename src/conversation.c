@@ -604,14 +604,14 @@ static void do_small(GtkWidget *small, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
-	surround(entry, "<FONT SIZE=\"+1\">","</FONT>");
+	surround(entry, "<FONT SIZE=\"-2\">","</FONT>");
 }
 
 static void do_normal(GtkWidget *normal, GtkWidget *entry)
 {
 	if (state_lock)
                  return;
-	surround(entry, "<FONT SIZE=\"+3\">","</FONT>");
+	surround(entry, "<FONT SIZE=\"3\">","</FONT>");
 }
 
 static void do_big(GtkWidget *big, GtkWidget *entry)
