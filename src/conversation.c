@@ -1434,8 +1434,9 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			}
 		}
 	}
-
-	gaim_log_write(conv->log, flags, who, mtime, message);
+	
+	if (gaim_conversation_is_logging(conv))
+		gaim_log_write(conv->log, flags, who, mtime, message);
 	ops->write_conv(conv, who, message, flags, mtime);
 
 	win = gaim_conversation_get_window(conv);
