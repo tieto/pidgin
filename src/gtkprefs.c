@@ -983,11 +983,13 @@ GtkWidget *conv_page() {
 	names = g_list_append(names, _("Right"));
 	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_RIGHT));
 
-	label = prefs_dropdown_from_list(vbox, _("_Tab Placement:"), GAIM_PREF_INT,
+	label = prefs_dropdown(vbox, _("_Tab Placement:"), GAIM_PREF_INT,
 									 "/gaim/gtk/conversations/tab_side",
-									 names);
-
-	g_list_free(names);
+									 _("Top"), GTK_POS_TOP,
+									 _("Bottom"), GTK_POS_BOTTOM,
+									 _("Left"), GTK_POS_LEFT,
+									 _("Right"), GTK_POS_RIGHT,
+									 NULL);
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
