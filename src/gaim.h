@@ -405,7 +405,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 609 $"
+#define REVISION "gaim:$Revision: 612 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -622,6 +622,7 @@ extern void serv_rvous_accept(char *, char *, char *);
 extern void serv_rvous_cancel(char *, char *, char *);
 
 /* Functions in conversation.c */
+extern void write_html_with_smileys(GtkWidget *, GtkWidget *, char *);
 extern void make_direct(struct conversation *, gboolean, struct aim_conn_t *, gint);
 extern void write_to_conv(struct conversation *, char *, int, char *);
 extern void show_conv(struct conversation *);
