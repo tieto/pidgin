@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: eventhandle.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: eventhandle.c 2509 2001-10-13 00:06:18Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -95,7 +95,6 @@ void icq_HandleURLEvent(icq_Event *pbase, icq_Link *icqlink)
 
 void icq_HandleChatRequestEvent(icq_Event *pbase, icq_Link *icqlink)
 {
-  icq_ChatRequestEvent *pevent=(icq_ChatRequestEvent *)pbase;
   icq_MessageEvent *pmsgevent=(icq_MessageEvent *)pmsgevent;
 
   struct tm *ptime=localtime(&(pbase->time));

@@ -5,6 +5,7 @@ version 0.46:
 	* ICQ works on big-endian platforms, e.g. sparc and ppc
 	  (thanks to Nathan Walp and Ben Miller)
 	* Better applet icon drawing (thanks to Ari Pollak)
+	* An extraordinary number of bug fixes
 
 version 0.45 (10/04/2001):
 	* New plugin event: event_chat_send_invite

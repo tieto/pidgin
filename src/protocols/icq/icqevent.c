@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: icqevent.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: icqevent.c 2509 2001-10-13 00:06:18Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -382,7 +382,6 @@ icq_Packet *icq_FileRequestCreatePacket(icq_Event *pbase,
 void icq_FileParsePacket(icq_Event *pbase, icq_Packet *p)
 {
   icq_FileRequestEvent *pevent=(icq_FileRequestEvent *)pbase;
-  int port;
 
   /* parse header and message data */
   icq_MessageParsePacket(pbase, p);

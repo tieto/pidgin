@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: tcplink.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: tcplink.c 2509 2001-10-13 00:06:18Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -47,6 +47,7 @@
 #include "chatsession.h"
 #include "filesession.h"
 #include "contacts.h"
+#include "socketmanager.h"
 
 icq_TCPLink *icq_TCPLinkNew(icq_Link *icqlink)
 {
@@ -453,7 +454,7 @@ int icq_TCPLinkConnect(icq_TCPLink *plink, DWORD uin, int port)
 #endif /* TCP_PACKET_TRACE */
 
   icq_SocketSetHandler(plink->socket, ICQ_SOCKET_WRITE,
-    icq_TCPLinkOnConnect, plink);
+    (icq_SocketHandler)icq_TCPLinkOnConnect, plink);
   plink->connect_timeout=icq_TimeoutNew(TCP_LINK_CONNECT_TIMEOUT,
     (icq_TimeoutHandler)icq_TCPLinkClose, plink);
   
@@ -492,7 +493,7 @@ icq_TCPLink *icq_TCPLinkAccept(icq_TCPLink *plink)
 
     /* install socket handler for new socket */
     icq_SocketSetHandler(socket_fd, ICQ_SOCKET_READ, 
-      icq_TCPLinkOnDataReceived, pnewlink);
+      (icq_SocketHandler)icq_TCPLinkOnDataReceived, pnewlink);
   }
 
   /* set the socket to non-blocking */
@@ -542,7 +543,7 @@ int icq_TCPLinkListen(icq_TCPLink *plink)
 
   plink->mode|=TCP_LINK_MODE_LISTEN;
 
-  icq_SocketSetHandler(plink->socket, ICQ_SOCKET_READ, icq_TCPLinkAccept,
+  icq_SocketSetHandler(plink->socket, ICQ_SOCKET_READ, (icq_SocketHandler)icq_TCPLinkAccept,
     plink);
 
   return 0;
@@ -758,7 +759,7 @@ void icq_TCPLinkOnConnect(icq_TCPLink *plink)
   {
     icq_SocketSetHandler(plink->socket, ICQ_SOCKET_WRITE, NULL, NULL);
     icq_SocketSetHandler(plink->socket, ICQ_SOCKET_READ, 
-      icq_TCPLinkOnConnect, plink);
+      (icq_SocketHandler)icq_TCPLinkOnConnect, plink);
     return;
   }
 
@@ -776,7 +777,7 @@ void icq_TCPLinkOnConnect(icq_TCPLink *plink)
   plink->mode&= ~TCP_LINK_MODE_CONNECTING;
 
   icq_SocketSetHandler(plink->socket, ICQ_SOCKET_READ, 
-    icq_TCPLinkOnDataReceived, plink);
+    (icq_SocketHandler)icq_TCPLinkOnDataReceived, plink);
   icq_SocketSetHandler(plink->socket, ICQ_SOCKET_WRITE, NULL, NULL);
 
   /* socket is now connected, notify each request that connection

@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: filesession.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: filesession.c 2509 2001-10-13 00:06:18Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -37,6 +37,7 @@
 #include "icqlib.h"
 #include "filesession.h"
 #include "stdpackets.h"
+#include "socketmanager.h"
 
 icq_FileSession *icq_FileSessionNew(icq_Link *icqlink)
 {
@@ -115,7 +116,7 @@ void icq_FileSessionSetStatus(icq_FileSession *p, int status)
         status, NULL);
     if (status == FILE_STATUS_SENDING)
       icq_SocketSetHandler(p->tcplink->socket, ICQ_SOCKET_WRITE,
-        icq_FileSessionSendData, p);
+        (icq_SocketHandler)icq_FileSessionSendData, p);
     else
       icq_SocketSetHandler(p->tcplink->socket, ICQ_SOCKET_WRITE, NULL, NULL);
   }
