@@ -34,6 +34,7 @@
 
 #include "gaim.h"
 #include "debug.h"
+#include "notify.h"
 
 #include "stdafx.h"
 #include "resource.h"
@@ -43,6 +44,8 @@
 #include "zlib.h"
 #include "untar.h"
 
+#  include <libintl.h>
+#  define _(x) gettext(x)
 
 /*
  *  DEFINES & MACROS
@@ -466,6 +469,13 @@ void wgaim_pre_plugin_init(void) {
                         dir_old = g_dir_open(old_home, 0, NULL);
                         dir_new = g_dir_open(new_home, 0, NULL);
                         if(dir_old && !dir_new) {
+                                gaim_notify_message(NULL, 
+                                                    GAIM_NOTIFY_MSG_INFO,
+                                                    _("Notification"), 
+                                                    _("Moving Gaim user settings directory to:"),
+                                                    new_home,
+                                                    NULL,
+                                                    NULL);
                                 if(MoveFile(old_home, new_home) != 0)
                                         gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Success moving '.gaim' directory\n");
                         }
