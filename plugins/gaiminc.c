@@ -1,21 +1,25 @@
-//#include <gtk/gtk.h>
-#include <time.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <string.h>
-#include "gaim.h"
+#include "internal.h"
+#include "plugin.h"
+
+#include "account.h"
+#include "connection.h"
+#include "conversation.h"
+
+/* include UI for show_about() */
+#include "gtkplugin.h"
+#include "ui.h"
 
 #define GAIMINC_PLUGIN_ID "core-gaiminc"
 
 static void
-echo_hi(void *m)
+echo_hi(GaimConnection *gc)
 {
 	/* this doesn't do much, just lets you know who we are :) */
 	show_about(NULL, NULL);
 }
 
-static void
-reverse(struct gaim_connection *gc, char **who, char **message, void *m)
+static gboolean
+reverse(GaimAccount *account, char **who, char **message, int *flags)
 {
 	/* this will drive you insane. whenever you receive a message,
 	 * the text of the message (HTML and all) will be reversed. */
@@ -24,26 +28,28 @@ reverse(struct gaim_connection *gc, char **who, char **message, void *m)
 
 	/* this check is necessary in case bad plugins do bad things */
 	if (message == NULL || *message == NULL)
-		return;
+		return FALSE;
 
 	l = strlen(*message);
 
-	if (!strcmp(*who, gc->username))
-		return;
+	if (!strcmp(*who, gaim_account_get_username(account)))
+		return FALSE;
 
 	for (i = 0; i < l/2; i++) {
 		tmp = (*message)[i];
 		(*message)[i] = (*message)[l - i - 1];
 		(*message)[l - i - 1] = tmp;
 	}
+	return FALSE;
 }
 
 static void
-bud(struct gaim_connection *gc, char *who, void *m)
+bud(GaimBuddy *who)
 {
-	/* whenever someone comes online, it sends them a message. if i
-	 * cared more, i'd make it so it popped up on your screen too */
-	serv_send_im(gc, who, "Hello!", 0);
+	GaimAccount *acct = who->account;
+	GaimConversation *conv = gaim_conversation_new(GAIM_CONV_IM, acct, who->name);
+
+	gaim_conv_im_send(GAIM_CONV_IM(conv), "Hello!");
 }
 
 /*
@@ -58,7 +64,7 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(echo_hi), NULL);
 
 	/* this is for doing something fun when we get a message */
-	gaim_signal_connect(gaim_conversations_get_handle(), "received-im",
+	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg",
 						plugin, GAIM_CALLBACK(reverse), NULL);
 
 	/* this is for doing something fun when a buddy comes online */

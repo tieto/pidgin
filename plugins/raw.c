@@ -73,7 +73,7 @@ text_sent_cb(GtkEntry *entry)
 			break;
 
 		case GAIM_PROTO_JABBER:
-			jab_send_raw(*(jconn *)gc->proto_data, txt);
+			jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
 			break;
 
 		default:
