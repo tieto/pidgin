@@ -647,6 +647,51 @@ static void irc_change_name(struct gaim_connection *gc, char *old, char *new)
 	}
 }
 
+static void handle_privmsg(struct gaim_connection *gc, char *to, char *nick, char *msg)
+{
+	if (is_channel(gc, to)) {
+		struct conversation *c = irc_find_chat(gc, to);
+		if (!c)
+			return;
+		irc_got_chat_in(gc, c->id, nick, 0, msg, time(NULL));
+	} else {
+		char *tmp = g_malloc(strlen(nick) + 2);
+		g_snprintf(tmp, strlen(nick) + 2, "@%s", nick);
+		if (find_conversation(tmp))
+			irc_got_im(gc, tmp, msg, 0, time(NULL));
+		else {
+			*tmp = '+';
+			if (find_conversation(tmp))
+				irc_got_im(gc, tmp, msg, 0, time(NULL));
+			else
+				irc_got_im(gc, nick, msg, 0, time(NULL));
+		}
+		g_free(tmp);
+	}
+}
+
+static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
+			char *msg, char *word[], char *word_eol[])
+{
+	struct irc_data *id = gc->proto_data;
+	char buf[IRC_BUF_LEN];
+
+	if (!g_strncasecmp(msg, "VERSION", 7)) {
+		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001VERSION GAIM " VERSION ": The Pimpin "
+					     "Penguin AIM Clone: " WEBSITE "\001\r\n", nick);
+		irc_write(id->fd, buf, strlen(buf));
+	}
+	if (!g_strncasecmp(msg, "ACTION", 6)) {
+		char *po = strchr(msg + 6, 1);
+		char *tmp;
+		if (po) *po = 0;
+		tmp = g_strconcat("/me", msg + 6, NULL);
+		handle_privmsg(gc, to, nick, tmp);
+		g_free(tmp);
+	}
+	/* XXX should probably write_to_conv or something here */
+}
+
 static void irc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
@@ -797,54 +842,11 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		to = word[3];
 		msg = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
 		if (msg[0] == 1 && msg[strlen (msg) - 1] == 1) { /* ctcp */
-			if (!g_strncasecmp(msg + 1, "ACTION", 6)) {
-				char *po = strchr(msg + 7, 1);
-				char *tmp;
-				if (po) *po = 0;
-				if (is_channel(gc, to)) {
-					struct conversation *c = irc_find_chat(gc, to);
-					if (!c)
-						return;
-					tmp = g_strconcat("/me", msg + 7, NULL);
-					irc_got_chat_in(gc, c->id, nick, 0, tmp, time(NULL));
-					g_free(tmp);
-				} else {
-					tmp = g_strconcat("/me", msg + 7, NULL);
-					to = g_malloc(strlen(nick) + 2);
-					g_snprintf(to, strlen(nick) + 2, "@%s", nick);
-					if (find_conversation(to))
-						irc_got_im(gc, to, tmp, 0, time(NULL));
-					else {
-						*to = '+';
-						if (find_conversation(to))
-							irc_got_im(gc, to, tmp, 0, time(NULL));
-						else
-							irc_got_im(gc, nick, tmp, 0, time(NULL));
-					}
-					g_free(to);
-					g_free(tmp);
-				}
-			}
+			if (!g_strncasecmp(msg + 1, "DCC ", 4))
+				process_data_init(pdibuf, buf, word, word_eol, TRUE);
+			handle_ctcp(gc, to, nick, msg + 1, word, word_eol);
 		} else {
-			if (is_channel(gc, to)) {
-				struct conversation *c = irc_find_chat(gc, to);
-				if (!c)
-					return;
-				irc_got_chat_in(gc, c->id, nick, 0, msg, time(NULL));
-			} else {
-				to = g_malloc(strlen(nick) + 2);
-				g_snprintf(to, strlen(nick) + 2, "@%s", nick);
-				if (find_conversation(to))
-					irc_got_im(gc, to, msg, 0, time(NULL));
-				else {
-					*to = '+';
-					if (find_conversation(to))
-						irc_got_im(gc, to, msg, 0, time(NULL));
-					else
-						irc_got_im(gc, nick, msg, 0, time(NULL));
-				}
-				g_free(to);
-			}
+			handle_privmsg(gc, to, nick, msg);
 		}
 	} else if (!strcmp(cmd, "PONG")) { /* */
 	} else if (!strcmp(cmd, "QUIT")) {
