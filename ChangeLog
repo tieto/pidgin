@@ -23,20 +23,14 @@ version 2.0.0
 	* Custom smileys for MSN (Irving Cordova)
 	* Entries in the text replacement plugin are now sorted alphabetically
 	  (Richard Laager)
-	* CHAP authentication support for SOCKS5 proxies (Malcolm Smith)
 	* Ability to set ICQ "require authorization" and "web aware"
 	  setting (Ettore Simone)
 
 	Bug fixes:
-	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)
 	* People using input methods can now use Enter again.
 	* Many problems related to having an IM conversation and a chat open
 	  with the same name (Andrew Hart)
 	* Improved buddy list searching with CTRL+F
-	* Correctly show the time when incoming Gadu-Gadu messages were sent
-	* Limit animated buddy icon frame rates to 10 frames per second
-	  (Nathan Conrad)
-
 
 	Preference changes:
 	* Removed "Dim idle buddies" buddy list preference, default to "Yes."
@@ -66,6 +60,93 @@ version 2.0.0
 	* Removed protocol options.
 	* Consolidated three ignore formatting options into a single one.
 	* Removed "Escape closes windows," defaulted to Ctrl-W.
+
+version 1.1.5:
+	* Yahoo file receiving and buddy icon receiving work again.
+	* Limit animated buddy icon frame rates to 10 frames per second
+	  (Nathan Conrad)
+	* Fix a bug where portions of your account configuration would
+	  fail to be read correctly if you set a proxy user name or
+	  password containing invalid XML characters such as < and >
+	  (Bastien Durel)
+
+version 1.1.4 (2/24/2005):
+	* Fixed a bug where Yahoo! would lose messages (and any other packet
+	  really)
+	* Correctly show the time when incoming Gadu-Gadu messages were sent
+	  (Carl-Daniel Hailfinger)
+	* Fixed crashes with glib 2.6
+	* Fixed MSN crash when conversations time out after the conversation
+	  window was closed
+	* Fixed an html parsing bug, CAN-2005-0208
+
+version 1.1.3 (2/17/2005):
+	* CHAP authentication support for SOCKS5 proxies (Malcolm Smith)
+	* ICQ offline messages are sent using your specified character
+	  set instead of Unicode (Magnus Hult)
+	* MSN HTTP method works with proxies using authentication (Bastien Durel)
+	* Really fix the bug where buddies show as logged in for 49 thousand days
+	* Buddy pounces containing '&' are saved correctly
+	* Improved MSN error handling when the servers are unavailable
+	* More MSN bug fixes
+	* Fix some leaks
+	* Fix "Find" in the log viewer so that it finds in all logs
+	* Smileys not appearing at the end of lines has been fixed
+	* Closing conversation windows no longer cancels active file transfers on
+	  MSN (Felipe Contreras)
+
+version 1.1.2 (1/20/2005):
+	* MSN 'HTTP Method' fixed (Felipe Contreras)
+	* Better handling of MSN's Individuals group and buddy status updates
+	  (Felipe Contreras)
+	* Fix a crash inviting MSN user to a chat when they're already there
+	* AIM SecurID login support
+	* Fix configuration of Jabber chat rooms on some servers
+	* More MSN bug fixes (Felipe Contreras)
+	* Fix queue messages to Docklet when not globally away (Robert McQueen)
+	* Fix some leaks
+	* The Autopackage now builds both the mozilla-nss and the gnutls
+	  ssl plugins, and requires at least one of those libraries.
+
+version 1.1.1 (12/28/2004):
+	* Allow SILC authentication via public key if your key is password
+	  protected (Michele Baldessari)
+	* More MSN bug fixes (Felipe Contreras)
+	* Drag-and-drop to conversation window file transfers work again
+	* Disable the delete button on pounces that aren't saved yet anyway
+	  (Kevin Stange)
+
+version 1.1.0 (12/02/2004):
+	New Features:
+	* Binary relocable. Gaim will find its files even if it's installed
+	  in a location other than the --prefix it was ./configured with.
+	  Pass --disable-binreloc to ./configure to disable.
+	* IRC now has fallback encodings, and tries harder to display
+	  something useful during an encoding error.
+	* New MSN protocol icon (Felipe Contreras)
+
+	Bug Fixes:
+	* Fix some leaks (Miah Gregory, Felipe Contreras)
+	* Fix crashes when removing buddies in certain situations (Andrew Hart)
+	* Eliminate MSN switchboard errors (Felipe Contreras)
+	* Fix MSN buddy icon synchronization (Felipe Contreras)
+	* Correctly display file transfer dialogs for filenames containing &, < or >
+	* Correctly display MSN authorization dialogs for friendly names containing
+	  &, < or >
+	* Properly align the right-click docklet menu with the docklet icon in
+	  *nix.
+	* Fix a crash if the MSN buddy list is not available
+	* Fix a bug in the request api (Gary Kramlich)
+
+version 1.0.3 (11/11/2004):
+	Bug Fixes:
+	* Jabber authentication fixes (Michael Plump)
+	* Yahoo buddy idle reporting is more accurate (Evan Schoenberg)
+	* "Allow All" privacy setting works on Yahoo (Peter Lawler)
+	* Fix a crash when dragging a buddy to the conversation entry area
+	* Fix a crash removing chats from the buddy list
+	* Correctly display buddy pounces for aliases with &, < or > in them
+	* Correctly follow the per-conversation logging option
 
 version 1.0.2 (10/19/2004):
 	Bug Fixes:
