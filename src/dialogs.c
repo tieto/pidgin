@@ -263,6 +263,19 @@ struct view_log {
 	GtkWidget *layout;
 };
 
+/* Wrapper to get all the text from a GtkTextView */
+gchar* gtk_text_view_get_text(GtkTextView *text, gboolean include_hidden_chars)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter start, end;
+
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
+	gtk_text_buffer_get_start_iter(buffer, &start);
+	gtk_text_buffer_get_end_iter(buffer, &end);
+
+	return gtk_text_buffer_get_text(buffer, &start, &end, include_hidden_chars);
+}
+
 /*------------------------------------------------------------------------*/
 /*  Destroys                                                              */
 /*------------------------------------------------------------------------*/
@@ -1896,7 +1909,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 	gchar *junk;
 	struct gaim_connection *gc;
 
-	junk = gtk_editable_get_chars(GTK_EDITABLE(b->text), 0, -1);
+	junk = gtk_text_view_get_text(GTK_TEXT_VIEW(b->text), FALSE);
 
 	if (b->user) {
 		strncpy_withhtml(b->user->user_info, junk, sizeof b->user->user_info);
@@ -2217,6 +2230,8 @@ void show_set_info(struct gaim_connection *gc)
 	GtkWidget *buttons;
 	GtkWidget *label;
 	GtkWidget *vbox;
+	GtkTextBuffer *buffer;
+	GtkWidget *frame;
 	gchar *buf;
 	struct aim_user *tmp;
 
@@ -2242,16 +2257,21 @@ void show_set_info(struct gaim_connection *gc)
 	g_free(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
+	
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
 
-	b->text = gtk_text_new(NULL, NULL);
-	gtk_text_set_word_wrap(GTK_TEXT(b->text), TRUE);
-	gtk_text_set_editable(GTK_TEXT(b->text), TRUE);
-	gtk_widget_set_usize(b->text, 300, 200);
+	b->text = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD);
+	gtk_widget_set_size_request(b->text, 300, 200);
 	buf = g_malloc(strlen(tmp->user_info) + 1);
 	strncpy_nohtml(buf, tmp->user_info, strlen(tmp->user_info) + 1);
-	gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, buf, -1);
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(b->text));
+	gtk_text_buffer_set_text(buffer, buf, -1);
 	g_free(buf);
-	gtk_box_pack_start(GTK_BOX(vbox), b->text, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), b->text);
 	gtk_widget_show(b->text);
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->text);
 
@@ -3357,7 +3377,6 @@ void show_import_dialog()
 static struct away_message *save_away_message(struct create_away *ca)
 {
 	struct away_message *am;
-	guint text_len;
 	gchar *away_message;
 
 	if (!ca->mess)
@@ -3366,9 +3385,9 @@ static struct away_message *save_away_message(struct create_away *ca)
 		am = ca->mess;
 	}
 
+	
 	g_snprintf(am->name, sizeof(am->name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
-	text_len = gtk_text_get_length(GTK_TEXT(ca->text));
-	away_message = gtk_editable_get_chars(GTK_EDITABLE(ca->text), 0, text_len);
+	away_message = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
 
 	g_snprintf(am->message, sizeof(am->message), "%s", away_message);
 	g_free(away_message);
@@ -3395,7 +3414,7 @@ int check_away_mess(struct create_away *ca, int type)
 		return 0;
 	}
 
-	if ((gtk_text_get_length(GTK_TEXT(ca->text)) == 0) && (type <= 1)) {
+	if (!gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE) && (type <= 1)) {
 		/* We shouldn't allow a blank message */
 		do_error_dialog(_("You cannot create an empty away message"), NULL, GAIM_ERROR);
 		return 0;
@@ -3417,17 +3436,13 @@ void save_away_mess(GtkWidget *widget, struct create_away *ca)
 void use_away_mess(GtkWidget *widget, struct create_away *ca)
 {
 	static struct away_message am;
-	guint text_len;
 	gchar *away_message;
 
 	if (!check_away_mess(ca, 0))
 		return;
 
 	g_snprintf(am.name, sizeof(am.name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
-	text_len = gtk_text_get_length(GTK_TEXT(ca->text));
-	if (text_len < 0)
-		return;
-	away_message = gtk_editable_get_chars(GTK_EDITABLE(ca->text), 0, text_len);
+	away_message = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
 
 	g_snprintf(am.message, sizeof(am.message), "%s", away_message);
 	g_free(away_message);
@@ -3458,6 +3473,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	GtkWidget *frame;
 	GtkWidget *fbox;
 	GtkWidget *button;
+	GtkTextBuffer *buffer;
 
 	struct create_away *ca = g_new0(struct create_away, 1);
 
@@ -3497,16 +3513,15 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_grab_focus(ca->entry);
 	gtk_widget_show(ca->entry);
 
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
-
-	ca->text = gtk_text_new(NULL, NULL);
-	gtk_text_set_word_wrap(GTK_TEXT(ca->text), TRUE);
-	gtk_text_set_editable(GTK_TEXT(ca->text), TRUE);
-	gtk_container_add(GTK_CONTAINER(sw), ca->text);
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(fbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+	
+	ca->text = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD);
+	
+	gtk_container_add(GTK_CONTAINER(frame), ca->text);
 	gtk_widget_show(ca->text);
 
        
@@ -3517,14 +3532,18 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 		GtkListStore *ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(dummy)));
 		GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(dummy));
 		GValue val = { 0, };
+		GtkTextIter start;
+		GtkTextBuffer *buffer;
 
 		if (! gtk_tree_selection_get_selected (sel, (GtkTreeModel**)&ls, &iter))
 			return;
 		gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
 		amt = g_value_get_pointer (&val);
 		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
-		gtk_editable_insert_text(GTK_EDITABLE(ca->text), amt->message,
-					 strlen(amt->message), &pos);
+		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ca->text));
+		gtk_text_buffer_get_iter_at_offset(buffer, &start, pos);
+		gtk_text_buffer_insert(buffer, &start, amt->message, strlen(amt->message));
+
 		ca->mess = amt;
 	}
 
