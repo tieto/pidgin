@@ -2535,7 +2535,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	GaimConnection *gc = sess->aux_data;
 	gchar **msg1, **msg2;
 	GError *err = NULL;
-	int i;
+	int i, numtoks;
 
 	if (!args->type || !args->msg || !args->uin)
 		return 1;
@@ -2545,7 +2545,8 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
 	msg1 = g_strsplit(args->msg, "\376", 0);
-	msg2 = (gchar **)g_malloc(10*sizeof(gchar *)); /* XXX - 10 is a guess */
+	for (numtoks=0; msg1[numtoks]; numtoks++);
+	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
 		strip_linefeed(msg1[i]);
 		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
