@@ -4959,13 +4959,13 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 
 	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
-		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
+		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus) &&
+		!(flags & GAIM_MESSAGE_DELAYED) &&
+		!(flags & GAIM_MESSAGE_SYSTEM)) {
+
 		if (!(flags & GAIM_MESSAGE_WHISPER) && (flags & GAIM_MESSAGE_SEND))
 			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
-		else if ((flags & GAIM_MESSAGE_RECV) &&
-			!(flags & GAIM_MESSAGE_DELAYED) && 
-			!(flags & GAIM_MESSAGE_SYSTEM)) {
-				
+		else if (flags & GAIM_MESSAGE_RECV) {
 			if ((flags & GAIM_MESSAGE_NICK) &&
 				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/nick_said")) {
 
