@@ -968,8 +968,6 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short show
 		gtk_box_pack_end(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
 	}
 
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	
 	gtk_widget_show(pixmap);
 	gtk_widget_show(button_box_2);
 	gtk_widget_show(button_box);
