@@ -8,6 +8,12 @@
 	contact support.  The Jabber goodies I promised will have to wait
 	for now.
 
+	Christian: I didn't really do anything except fix a couple of issues
+	loading protocol plugins that had plugin dependencies and getting perl
+	to install where we tell it to. I had hoped that 0.70 would include
+	a finished libgaim, but Yahoo kind of wrecked that dream. We'll see it
+	within the next few releases. Life has been busy in a good way :)
+
 0.69 (9/24/2003):
 	Sean: MSN and Yahoo! work.  That's good NEWS if I've ever heard it.
 
