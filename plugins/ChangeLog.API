@@ -19,6 +19,11 @@ version 0.82cvs:
 	* Renamed: show_confirm_del_group to gaim_gtkdialogs_remove_group
 	* Renamed: show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
 	* Renamed: show_confirm_del_contact to gaim_gtkdialogs_remove_contact
+	* Renamed: show_about to gaim_gtkdialogs_about
+	* Changed: gaim_blist_request_add_chat(), added name parameter
+
+	Protocol Plugin API: v7
+	* Added: chat_info_defaults to the GaimPluginProtocolInfo struct
 
 	Signals:
 	* Added: conversation-updated for any update to the data associated
