@@ -71,7 +71,7 @@ version 0.60:
 	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
 	* /topic with no argument displays the current topic (Thanks Mark 
 	  Doliner)
-	* i18n fixes (Thanks Matt Wilson, Ethan Blanton, A Lee)
+	* Lots of i18n fixes (Thanks Matt Wilson, Ethan Blanton, A Lee)
 	* Removed Ctrl-C binding for color
 	* Docklet plugin--replaces the old GNOME applet.  You'll need the
 	  Panel Notification Area applet for GNOME 2, or the kicker for

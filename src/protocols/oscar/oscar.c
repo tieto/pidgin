@@ -1709,7 +1709,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 }
 
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
-	char *tmp = g_malloc(BUF_LONG);
+	char *tmp;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 	int flags = 0;
@@ -1769,23 +1769,40 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	 * HTML entity.
 	 */
 	if (args->icbmflags & AIM_IMFLAGS_UNICODE) {
-		int i;
+		int i, j;
+		GError *err = NULL;
+		FILE *fp;
 		
-		for (i = 0, tmp[0] = '\0'; i < args->msglen; i += 2) {
-			unsigned short uni;
-			
-			uni = ((args->msg[i] & 0xff) << 8) | (args->msg[i+1] & 0xff);
-
-			if ((uni < 128) || ((uni >= 160) && (uni <= 255))) { /* ISO 8859-1 */
+		tmp = g_convert(args->msg, args->msglen, "UTF-8", "UCS-2BE", &j, &i, &err);
+		if (err)
+		  debug_printf("Unicode IM conversion: %s\n", err->message);
+		if (!tmp) {
+			/* Conversion to HTML entities isn't a bad fallback */
+			debug_printf ("AIM charset conversion failed!\n");
+			for (i = 0, tmp[0] = '\0'; i < args->msglen; i += 2) {
+				unsigned short uni;
 				
-				g_snprintf(tmp+strlen(tmp), BUF_LONG-strlen(tmp), "%c", uni);
+				uni = ((args->msg[i] & 0xff) << 8) | (args->msg[i+1] & 0xff);
 				
-			} else { /* something else, do UNICODE entity */
-				g_snprintf(tmp+strlen(tmp), BUF_LONG-strlen(tmp), "&#%04x;", uni);
+				if ((uni < 128) || ((uni >= 160) && (uni <= 255))) { /* ISO 8859-1 */
+					
+					g_snprintf(tmp+strlen(tmp), BUF_LONG-strlen(tmp), "%c", uni);
+					
+				} else { /* something else, do UNICODE entity */
+					g_snprintf(tmp+strlen(tmp), BUF_LONG-strlen(tmp), "&#%04x;", uni);
+				}
+				
 			}
 		}
-	} else
-		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
+	} else if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1) {
+		int i;
+		debug_printf("ISO-8859-1 IM");
+		tmp = g_convert(args->msg, args->msglen, "UTF-8", "ISO-8859-1", NULL, &i, NULL);
+	} else {
+		/* ASCII is valid UTF-8 */
+		debug_printf("ASCII IM\n");
+		tmp = g_strdup(args->msg);
+	}
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
 		char *who = normalize(userinfo->sn);
@@ -1793,7 +1810,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			g_hash_table_insert(od->supports_tn, who, who);
 	}
 
-	strip_linefeed(tmp);
+	//strip_linefeed(tmp);
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL), -1);
 	g_free(tmp);
 
@@ -3300,6 +3317,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		struct icon_req *ir = NULL;
 		char *who = normalize(name);
 		struct stat st;
+		int i, len;
 		
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
 		if (odata->icq)
@@ -3339,11 +3357,48 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		}
 		
 		args.destsn = name;
-		args.msg    = message;
-		args.msglen = strlen(message);
+		
+		/* Determine how we can send this message.  Per the
+		 * warnings elsewhere in this file, these little
+		 * checks determine the simplest encoding we can use
+		 * for a given message send using it. */
+		len = strlen(message);
+		i = 0;
+		while (message[i]) {
+			if ((unsigned char)message[i] > 0x7f) {
+				/* not ASCII! */
+				args.flags |= AIM_IMFLAGS_ISO_8859_1;
+				break;
+			}
+			i++;
+		}
+		while (message[i]) {
+			/* ISO-8859-1 is 0x00-0xbf in the first byte
+			 * followed by 0xc0-0xc3 in the second */
+			if ((unsigned char)message[i] > 0x80 && ((unsigned char)message[i] > 0xbf || 
+						  ((unsigned char)message[i + 1] < 0xc0 || (unsigned char)message[i + 1] > 0xc3))) {
+				args.flags ^= AIM_IMFLAGS_ISO_8859_1;
+				args.flags |= AIM_IMFLAGS_UNICODE;
+				break;
+			}
+			i++;
+		}
+		if (args.flags & AIM_IMFLAGS_UNICODE) {
+			args.msg = g_convert(message, len, "UCS-2BE", "UTF-8", NULL, &len, NULL);
+		} else if (args.flags & AIM_IMFLAGS_UNICODE) {
+			args.msg = g_convert(message, len, "ISO-8859-1", "UTF-8", NULL, &len, NULL);
+			if (!args.msg) {
+				debug_printf("Someone tell Ethan his 8859-1 detection is wrong\n");
+				args.flags ^= AIM_IMFLAGS_ISO_8859_1 | AIM_IMFLAGS_UNICODE;
+				len = strlen(message);
+				args.msg = g_convert(message, len, "UCS-2BE", "UTF8", NULL, &len, NULL);
+			}
+		} else {
+			args.msg = message;
+		}
+		args.msglen = len;
 		
 		ret = aim_send_im_ext(odata->sess, &args);
-		
 	}
 	if (ret >= 0)
 		return 1;

@@ -1173,51 +1173,6 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 	fclose(fd);
 }
 
-char *convert_string(char *str, const char *destset, const char *srcset)
-{
-#ifdef HAVE_ICONV
-	char *buf;
-	iconv_t cd;
-	size_t insize = 0;
-	size_t outsize = 0;
-	size_t nconv = 0;
-	char *inptr;
-	char *outptr;
-	char *ret;
-
-	if (!str) 
-		return NULL; 
-	buf = g_malloc(strlen(str)*4);
-	insize = strlen(str);
-	inptr = str;
-	outsize = strlen(str)*4;
-	outptr = buf;
-
-	cd = iconv_open(destset, srcset);
-	if (cd == (iconv_t) -1) {
-		g_free(buf);
-		debug_printf("iconv_open(%s, %s) Error\n",destset, srcset);
-		return g_strdup(str);
-	}
-
-	nconv = iconv(cd, &inptr, &insize, &outptr, &outsize);
-	if (nconv == (size_t) -1) {
-		debug_printf("iconv Error\n");
-		g_free(buf);
-		return g_strdup(str);
-	}
-	*outptr = '\0';
-	iconv_close(cd);
-
-	ret = g_strdup(buf);
-	g_free(buf);
-
-	return ret;
-#else
-	return g_strdup(str);
-#endif
-}
-
 void strip_linefeed(gchar *text)
 {
 	int i, j;
