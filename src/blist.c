@@ -2460,11 +2460,12 @@ gaim_blist_node_get_string(GaimBlistNode* node, const char *key)
 	return gaim_value_get_string(value);
 }
 
-GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n)
+GList *
+gaim_blist_node_get_extended_menu(GaimBlistNode *n)
 {
 	GList *menu = NULL;
 
-	g_return_val_if_fail(n, NULL);
+	g_return_val_if_fail(n != NULL, NULL);
 
 	gaim_signal_emit(gaim_blist_get_handle(),
 			"blist-node-extended-menu",
@@ -2474,13 +2475,14 @@ GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n)
 
 GaimBlistNodeAction *
 gaim_blist_node_action_new(char *label,
-			   void (*callback)(GaimBlistNode *, gpointer),
-			   gpointer data)
+                           void (*callback)(GaimBlistNode *, gpointer),
+                           gpointer data, GList *children)
 {
 	GaimBlistNodeAction *act = g_new0(GaimBlistNodeAction, 1);
 	act->label = label;
 	act->callback = callback;
 	act->data = data;
+	act->children = children;
 	return act;
 }
 

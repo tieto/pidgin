@@ -861,76 +861,90 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 		return NULL;
 
 	act = gaim_blist_node_action_new(_("Get Info"),
-			silcgaim_chat_getinfo_menu, NULL);
+	                                 silcgaim_chat_getinfo_menu,
+	                                 NULL, NULL);
 	m = g_list_append(m, act);
 
 #if 0   /* XXX For now these are not implemented.  We need better
 	   listview dialog from Gaim for these. */
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
 		act = gaim_blist_node_action_new(_("Invite List"),
-				silcgaim_chat_invitelist, NULL);
+		                                 silcgaim_chat_invitelist,
+		                                 NULL, NULL);
 		m = g_list_append(m, act);
 
 		act = gaim_blist_node_action_new(_("Ban List"),
-				silcgaim_chat_banlist, NULL);
+		                                 silcgaim_chat_banlist,
+		                                 NULL, NULL);
 		m = g_list_append(m, act);
 	}
 #endif
 
 	if (chu) {
 		act = gaim_blist_node_action_new(_("Add Private Group"),
-				silcgaim_chat_prv, NULL);
+		                                 silcgaim_chat_prv,
+		                                 NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANFO) {
 		act = gaim_blist_node_action_new(_("Channel Authentication"),
-				silcgaim_chat_chauth, NULL);
+		                                 silcgaim_chat_chauth,
+		                                 NULL, NULL);
 		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_FOUNDER_AUTH) {
 			act = gaim_blist_node_action_new(_("Reset Permanent"),
-					silcgaim_chat_permanent_reset, NULL);
+			                                 silcgaim_chat_permanent_reset,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
 			act = gaim_blist_node_action_new(_("Set Permanent"),
-					silcgaim_chat_permanent, NULL);
+			                                 silcgaim_chat_permanent,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
 		act = gaim_blist_node_action_new(_("Set User Limit"),
-				silcgaim_chat_ulimit, NULL);
+		                                 silcgaim_chat_ulimit,
+		                                 NULL, NULL);
 		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_TOPIC) {
 			act = gaim_blist_node_action_new(_("Reset Topic Restriction"),
-					silcgaim_chat_resettopic, NULL);
+			                                 silcgaim_chat_resettopic,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
 			act = gaim_blist_node_action_new(_("Set Topic Restriction"),
-					silcgaim_chat_settopic, NULL);
+			                                 silcgaim_chat_settopic,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_PRIVATE) {
 			act = gaim_blist_node_action_new(_("Reset Private Channel"),
-					silcgaim_chat_resetprivate, NULL);
+			                                 silcgaim_chat_resetprivate,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
 			act = gaim_blist_node_action_new(_("Set Private Channel"),
-					silcgaim_chat_setprivate, NULL);
+			                                 silcgaim_chat_setprivate,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_SECRET) {
 			act = gaim_blist_node_action_new(_("Reset Secret Channel"),
-					silcgaim_chat_resetsecret, NULL);
+			                                 silcgaim_chat_resetsecret,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
 			act = gaim_blist_node_action_new(_("Set Secret Channel"),
-					silcgaim_chat_setsecret, NULL);
+			                                 silcgaim_chat_setsecret,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}

@@ -474,7 +474,8 @@ trepia_blist_node_menu(GaimBlistNode *node)
 
 		if (trepia_profile_get_homepage(profile) != NULL) {
 			act = gaim_blist_node_action_new(_("Visit Homepage"),
-					trepia_visit_homepage, NULL);
+			                                 trepia_visit_homepage,
+			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}

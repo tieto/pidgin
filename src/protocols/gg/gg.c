@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12108 2005-02-23 04:21:50Z thekingant $
+ * $Id: gg.c 12199 2005-03-07 02:19:09Z deryni9 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -343,7 +343,7 @@ static GList *agg_buddy_menu(GaimBuddy *buddy)
 	/* um... this seems silly. since in this pass, I'm only converting
 	   over the menu building, I'm not going to mess with it though */
 	/* XXX: shouldn't this be in the tooltip instead? */
-	act = gaim_blist_node_action_new(buf, NULL, NULL);
+	act = gaim_blist_node_action_new(buf, NULL, NULL, NULL);
 	m = g_list_append(m, act);
 
 	return m;

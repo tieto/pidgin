@@ -7155,13 +7155,13 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 	GaimBlistNodeAction *act;
 
 	act = gaim_blist_node_action_new(_("Edit Buddy Comment"),
-			oscar_buddycb_edit_comment, NULL);
+			oscar_buddycb_edit_comment, NULL, NULL);
 	m = g_list_append(m, act);
 
 	if (od->icq) {
 #if 0
 		act = gaim_blist_node_action_new(_("Get Status Msg"),
-				oscar_get_icqstatusmsg, NULL);
+				oscar_get_icqstatusmsg, NULL, NULL);
 		m = g_list_append(m, act);
 #endif
 	} else {
@@ -7173,13 +7173,13 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 
 			if (userinfo->capabilities & AIM_CAPS_DIRECTIM) {
 				act = gaim_blist_node_action_new(_("Direct IM"),
-						oscar_ask_direct_im, NULL);
+						oscar_ask_direct_im, NULL, NULL);
 				m = g_list_append(m, act);
 			}
 #if 0
 			if (userinfo->capabilities & AIM_CAPS_GETFILE) {
 				act = gaim_blist_node_action_new(_("Get File"),
-						oscar_ask_getfile, NULL);
+						oscar_ask_getfile, NULL, NULL);
 				m = g_list_append(m, act);
 			}
 #endif
@@ -7190,7 +7190,7 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, buddy->name);
 		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, buddy->name)) {
 			act = gaim_blist_node_action_new(_("Re-request Authorization"),
-					gaim_auth_sendrequest_menu, NULL);
+					gaim_auth_sendrequest_menu, NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}

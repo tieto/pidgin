@@ -2599,7 +2599,7 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 
 	if (!f && !yd->wm) {
 		act = gaim_blist_node_action_new(_("Add Buddy"),
-				yahoo_addbuddyfrommenu_cb, NULL);
+				yahoo_addbuddyfrommenu_cb, NULL, NULL);
 		m = g_list_append(m, act);
 
 		return m;
@@ -2610,12 +2610,12 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 
 	if (!yd->wm) {
 		act = gaim_blist_node_action_new(_("Join in Chat"),
-				yahoo_chat_goto_menu, NULL);
+				yahoo_chat_goto_menu, NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	act = gaim_blist_node_action_new(_("Initiate Conference"),
-			yahoo_initiate_conference, NULL);
+			yahoo_initiate_conference, NULL, NULL);
 	m = g_list_append(m, act);
 
 	if (yahoo_friend_get_game(f)) {
@@ -2633,7 +2633,7 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 		*t = ' ';
 		g_snprintf(buf2, sizeof buf2, "%s", room);
 
-		act = gaim_blist_node_action_new(buf2, yahoo_game, NULL);
+		act = gaim_blist_node_action_new(buf2, yahoo_game, NULL, NULL);
 		m = g_list_append(m, act);
 	}
 

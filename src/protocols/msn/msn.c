@@ -616,7 +616,7 @@ msn_buddy_menu(GaimBuddy *buddy)
 		if (user->mobile)
 		{
 			act = gaim_blist_node_action_new(_("Send to Mobile"),
-											 show_send_to_mobile_cb, NULL);
+											 show_send_to_mobile_cb, NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}
@@ -625,7 +625,7 @@ msn_buddy_menu(GaimBuddy *buddy)
 						   gaim_account_get_username(buddy->account)))
 	{
 		act = gaim_blist_node_action_new(_("Initiate _Chat"),
-										 initiate_chat_cb, NULL);
+										 initiate_chat_cb, NULL, NULL);
 		m = g_list_append(m, act);
 	}
 

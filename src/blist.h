@@ -199,6 +199,7 @@ struct _GaimBlistNodeAction {
 	char *label;
 	void (*callback)(GaimBlistNode *, gpointer);
 	gpointer data;
+	GList *children;
 };
 
 
@@ -866,13 +867,17 @@ GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n);
 
 /**
  * Creates a new GaimBlistNodeAction.
- * @param label		The text label to display for this action.
- * @param callback	The function to be called when the action is used on
- *			a selected GaimBlistNode.
- * @param data		Additional data, to be passed to the callback
+ * @param label         The text label to display for this action.
+ * @param callback      The function to be called when the action is used on
+ *                      a selected GaimBlistNode.
+ * @param data          Additional data, to be passed to the callback
+ * @param children      A GList of GaimBlistNodeActions to be added as a
+ *                      submenu of the action.
+ * @return              The GaimBlistNodeAction.
  */
-GaimBlistNodeAction  *gaim_blist_node_action_new(char *label,
-		void (*callback)(GaimBlistNode *, gpointer), gpointer data);
+GaimBlistNodeAction *gaim_blist_node_action_new(char *label,
+		void (*callback)(GaimBlistNode *, gpointer), gpointer data,
+		GList *children);
 
 
 /**************************************************************************/

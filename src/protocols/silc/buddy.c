@@ -1541,33 +1541,35 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 
 	if (client_entry && client_entry->send_key) {
 		act = gaim_blist_node_action_new(_("Reset IM Key"),
-				silcgaim_buddy_resetkey, NULL);
+		                                 silcgaim_buddy_resetkey, NULL, NULL);
 		m = g_list_append(m, act);
 
 	} else {
 		act = gaim_blist_node_action_new(_("IM with Key Exchange"),
-				silcgaim_buddy_keyagr, NULL);
+		                                 silcgaim_buddy_keyagr, NULL, NULL);
 		m = g_list_append(m, act);
 
 		act = gaim_blist_node_action_new(_("IM with Password"),
-				silcgaim_buddy_privkey_menu, NULL);
+		                                 silcgaim_buddy_privkey_menu,
+		                                 NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (pkfile) {
 		act = gaim_blist_node_action_new(_("Show Public Key"),
-				silcgaim_buddy_showkey, NULL);
+		                                 silcgaim_buddy_showkey, NULL, NULL);
 		m = g_list_append(m, act);
 
 	} else {
 		act = gaim_blist_node_action_new(_("Get Public Key..."),
-				silcgaim_buddy_getkey_menu, NULL);
+		                                 silcgaim_buddy_getkey_menu,
+		                                 NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (conn && conn->local_entry->mode & SILC_UMODE_ROUTER_OPERATOR) {
 		act = gaim_blist_node_action_new(_("Kill User"),
-				silcgaim_buddy_kill, NULL);
+		                                 silcgaim_buddy_kill, NULL, NULL);
 		m = g_list_append(m, act);
 	}
 

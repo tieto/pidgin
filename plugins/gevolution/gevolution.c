@@ -219,7 +219,8 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 	if (gevo_prpl_is_supported(buddy->account, buddy))
 	{
 		act = gaim_blist_node_action_new(_("Add to Address Book"),
-										 menu_item_activate_cb, NULL);
+		                                 menu_item_activate_cb,
+		                                 NULL, NULL);
 		*menu = g_list_append(*menu, act);
 	}
 }

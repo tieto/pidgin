@@ -3378,7 +3378,7 @@ novell_blist_node_menu(GaimBlistNode *node)
 
 	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		act = gaim_blist_node_action_new(_("Initiate _Chat"),
-				_initiate_conference_cb, NULL);
+		                                _initiate_conference_cb, NULL, NULL);
 		list = g_list_append(list, act);
 	}
 

@@ -1077,7 +1077,7 @@ blist_node_menu_cb(GtkMenuItem *item, GaimBlistNode *node)
 
 
 static void
-append_blist_node_action (GtkWidget *menu, GaimBlistNodeAction *act,
+append_blist_node_action(GtkWidget *menu, GaimBlistNodeAction *act,
 		GaimBlistNode *node, gboolean *dup_separator)
 {
 	if(act == NULL) {
@@ -1088,19 +1088,41 @@ append_blist_node_action (GtkWidget *menu, GaimBlistNodeAction *act,
 	} else {
 		GtkWidget *menuitem;
 
-		*dup_separator = FALSE;
+		if (act->children == NULL) {
+			*dup_separator = FALSE;
 
-		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
-		g_object_set_data(G_OBJECT(menuitem), "gaimcallback", act);
-		g_signal_connect(G_OBJECT(menuitem), "activate",
-				G_CALLBACK(blist_node_menu_cb), node);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+			g_object_set_data(G_OBJECT(menuitem), "gaimcallback",
+			                  act);
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+			                 G_CALLBACK(blist_node_menu_cb), node);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		} else {
+			GtkWidget *submenu = NULL;
+			GList *l = NULL;
+
+			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+			submenu = gtk_menu_new();
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+
+			for (l = act->children; l; l = l->next) {
+				GaimBlistNodeAction *act = (GaimBlistNodeAction *) l->data;
+
+				append_blist_node_action(submenu, act, node, dup_separator);
+
+				g_list_free(act->children);
+				act->children = NULL;
+			}
+		}
 	}
 }
 
 
 void
-gaim_gtk_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node)
+gaim_gtk_append_blist_node_proto_menu(GtkWidget *menu, GaimConnection *gc,
+                                      GaimBlistNode *node)
 {
 	GList *l, *ll;
 	gboolean dup_separator = FALSE;
