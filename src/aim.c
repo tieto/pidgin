@@ -474,6 +474,9 @@ int main(int argc, char *argv[])
 	perl_autoload();
 #endif
 
+	static_proto_init();
+	auto_login();
+
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 					"prefs",
@@ -497,12 +500,8 @@ int main(int argc, char *argv[])
 	
 	applet_widget_gtk_main();
 #else
-        
-
-	static_proto_init();
 
         show_login();
-	auto_login();
         gtk_main();
         
 #endif /* USE_APPLET */
