@@ -55,6 +55,8 @@
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
+#define OSCAR_CONNECT_STEPS 6
+
 static GaimPlugin *my_protocol = NULL;
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE;
@@ -63,7 +65,8 @@ static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE
 static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static fu8_t features_icq[] = {0x01, 0x06};
 
-struct oscar_data {
+typedef struct _OscarData OscarData;
+struct _OscarData {
 	aim_session_t *sess;
 	aim_conn_t *conn;
 
@@ -376,7 +379,7 @@ gchar *oscar_encoding_to_utf8(const char *encoding, char *text, int textlen)
 	return utf8;
 }
 
-static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) {
+static struct direct_im *find_direct_im(OscarData *od, const char *who) {
 	GSList *d = od->direct_ims;
 	struct direct_im *m = NULL;
 
@@ -420,7 +423,7 @@ static char *extract_name(const char *name) {
 }
 
 static struct chat_connection *find_oscar_chat(GaimConnection *gc, int id) {
-	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
+	GSList *g = ((OscarData *)gc->proto_data)->oscar_chats;
 	struct chat_connection *c = NULL;
 
 	while (g) {
@@ -436,7 +439,7 @@ static struct chat_connection *find_oscar_chat(GaimConnection *gc, int id) {
 
 static struct chat_connection *find_oscar_chat_by_conn(GaimConnection *gc,
 							aim_conn_t *conn) {
-	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
+	GSList *g = ((OscarData *)gc->proto_data)->oscar_chats;
 	struct chat_connection *c = NULL;
 
 	while (g) {
@@ -452,7 +455,7 @@ static struct chat_connection *find_oscar_chat_by_conn(GaimConnection *gc,
 
 static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	GaimConversation *cnv;
 	struct direct_im *dim;
 	char *sn;
@@ -488,7 +491,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 	aim_conn_t *conn = (aim_conn_t *)data;
 	aim_session_t *sess = aim_conn_getsess(conn);
 	GaimConnection *gc = sess ? sess->aux_data : NULL;
-	struct oscar_data *od;
+	OscarData *od;
 
 	if (!gc) {
 		/* gc is null. we return, else we seg SIGSEG on next line. */
@@ -497,7 +500,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 		return;
 	}
       
-	od = (struct oscar_data *)gc->proto_data;
+	od = (OscarData *)gc->proto_data;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		/* oh boy. this is probably bad. i guess the only thing we 
@@ -615,7 +618,7 @@ static void oscar_debug(aim_session_t *sess, int level, const char *format, va_l
 static void oscar_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
-	struct oscar_data *od;
+	OscarData *od;
 	aim_session_t *sess;
 	aim_conn_t *conn;
 
@@ -640,14 +643,14 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "Screen name sent, waiting for response\n");
-	gaim_connection_update_progress(gc, _("Screen name sent"), 1, 6);
+	gaim_connection_update_progress(gc, _("Screen name sent"), 1, OSCAR_CONNECT_STEPS);
 }
 
 static void oscar_login(GaimAccount *account) {
 	aim_session_t *sess;
 	aim_conn_t *conn;
 	GaimConnection *gc = gaim_account_get_connection(account);
-	struct oscar_data *od = gc->proto_data = g_new0(struct oscar_data, 1);
+	OscarData *od = gc->proto_data = g_new0(OscarData, 1);
 
 	gaim_debug(GAIM_DEBUG_MISC, "oscar", "oscar_login: gc = %p\n", gc);
 
@@ -690,11 +693,11 @@ static void oscar_login(GaimAccount *account) {
 		return;
 	}
 
-	gaim_connection_update_progress(gc, _("Connecting"), 0, 6);
+	gaim_connection_update_progress(gc, _("Connecting"), 0, OSCAR_CONNECT_STEPS);
 }
 
 static void oscar_close(GaimConnection *gc) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	while (od->oscar_chats) {
 		struct chat_connection *n = od->oscar_chats->data;
@@ -760,7 +763,7 @@ static void oscar_close(GaimConnection *gc) {
 
 static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition cond) {
 	GaimConnection *gc = data;
-	struct oscar_data *od;
+	OscarData *od;
 	aim_session_t *sess;
 	aim_conn_t *bosconn;
 
@@ -781,8 +784,9 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 
 	aim_conn_completeconnect(sess, bosconn);
 	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ, oscar_callback, bosconn);
+
 	gaim_connection_update_progress(gc,
-			_("Connection established, cookie sent"), 4, 6);
+			_("Connection established, cookie sent"), 4, OSCAR_CONNECT_STEPS);
 }
 
 /* BBB */
@@ -821,7 +825,7 @@ static void oscar_xfer_init(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
 		int i;
@@ -887,7 +891,7 @@ static void oscar_xfer_end(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_end\n");
 
@@ -906,7 +910,7 @@ static void oscar_xfer_cancel_send(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "AAA - in oscar_xfer_cancel_send\n");
@@ -923,7 +927,7 @@ static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "AAA - in oscar_xfer_cancel_recv\n");
@@ -994,7 +998,7 @@ static GaimXfer *oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
 }
 
 static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 
@@ -1025,7 +1029,7 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GaimAccount *account = gc->account;
 	aim_conn_t *bosconn;
 	char *host; int port;
@@ -1150,7 +1154,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_ADDED, gaim_ssi_gotadded, 0);
 #endif
 
-	((struct oscar_data *)gc->proto_data)->conn = bosconn;
+	od->conn = bosconn;
 	for (i = 0; i < (int)strlen(info->bosip); i++) {
 		if (info->bosip[i] == ':') {
 			port = atoi(&(info->bosip[i+1]));
@@ -1169,7 +1173,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_sendcookie(sess, bosconn, info->cookielen, info->cookie);
 	gaim_input_remove(gc->inpa);
 
-	gaim_connection_update_progress(gc, _("Received authorization"), 4, 6);
+	gaim_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
 
 	return 1;
 }
@@ -1187,7 +1191,7 @@ struct pieceofcrap {
 static void damn_you(gpointer data, gint source, GaimInputCondition c)
 {
 	struct pieceofcrap *pos = data;
-	struct oscar_data *od = pos->gc->proto_data;
+	OscarData *od = pos->gc->proto_data;
 	char in = '\0';
 	int x = 0;
 	unsigned char m[17];
@@ -1333,7 +1337,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimAccount *ac = gaim_connection_get_account(gc);
 #if 0
@@ -1356,7 +1360,7 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 					   gaim_account_get_password(account), &info, key);
 	}
 
-	gaim_connection_update_progress(gc, _("Password sent"), 3, 6);
+	gaim_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
 
 	return 1;
 }
@@ -1407,7 +1411,7 @@ static int conninitdone_email(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int conninitdone_icon(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 	aim_conn_addhandler(sess, fr->conn, 0x0018, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ICO, AIM_CB_ICO_ERROR, gaim_icon_error, 0);
@@ -1426,7 +1430,7 @@ static int conninitdone_icon(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition cond) {
 	GaimConnection *gc = data;
-	struct oscar_data *od;
+	OscarData *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1455,7 +1459,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
-	struct oscar_data *od;
+	OscarData *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1485,7 +1489,7 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 {
 	struct chat_connection *ccon = data;
 	GaimConnection *gc = ccon->gc;
-	struct oscar_data *od;
+	OscarData *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1517,7 +1521,7 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 
 static void oscar_email_connect(gpointer data, gint source, GaimInputCondition cond) {
 	GaimConnection *gc = data;
-	struct oscar_data *od;
+	OscarData *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1546,7 +1550,7 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 
 static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition cond) {
 	GaimConnection *gc = data;
-	struct oscar_data *od;
+	OscarData *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1739,7 +1743,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
@@ -1859,7 +1863,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -1884,7 +1888,7 @@ static void cancel_direct_im(struct ask_direct *d) {
 static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition condition) {
 	struct direct_im *dim = data;
 	GaimConnection *gc = dim->gc;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GaimConversation *cnv;
 	char buf[256];
 	struct sockaddr name;
@@ -1923,7 +1927,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
  */
 static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	va_list ap;
@@ -1996,7 +2000,7 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
  */
 static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	va_list ap;
@@ -2041,7 +2045,7 @@ static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
  */
 static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GaimXfer *xfer;
 	va_list ap;
 	aim_conn_t *conn;
@@ -2073,7 +2077,7 @@ static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
  */
 static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GaimXfer *xfer;
 	va_list ap;
 	aim_conn_t *conn;
@@ -2098,7 +2102,7 @@ static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static void accept_direct_im(struct ask_direct *d) {
 	GaimConnection *gc = d->gc;
-	struct oscar_data *od;
+	OscarData *od;
 	struct direct_im *dim;
 	char *host; int port = 4443;
 	int i, rc;
@@ -2108,7 +2112,7 @@ static void accept_direct_im(struct ask_direct *d) {
 		return;
 	}
 
-	od = (struct oscar_data *)gc->proto_data;
+	od = (OscarData *)gc->proto_data;
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "Accepted DirectIM.\n");
 
 	dim = find_direct_im(od, d->sn);
@@ -2157,7 +2161,7 @@ static void accept_direct_im(struct ask_direct *d) {
 
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	char *tmp;
 	GaimConvImFlags flags = 0;
 	gsize convlen;
@@ -2271,7 +2275,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	const char *username = gaim_account_get_username(gaim_connection_get_account(gc));
 
 	if (!args)
@@ -2432,7 +2436,7 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 	GaimConnection *gc = data->gc;
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
-		struct oscar_data *od = gc->proto_data;
+		OscarData *od = gc->proto_data;
 		GaimBuddy *buddy = gaim_find_buddy(gc->account, data->name);
 		GaimGroup *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
@@ -2458,7 +2462,7 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
-		/* struct oscar_data *od = gc->proto_data; */
+		/* OscarData *od = gc->proto_data; */
 		/* XXX - Take the buddy out of our buddy list */
 	}
 
@@ -2496,7 +2500,7 @@ static void gaim_auth_grant(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
-		struct oscar_data *od = gc->proto_data;
+		OscarData *od = gc->proto_data;
 #ifdef NOSSI
 		GaimBuddy *buddy;
 		gchar message;
@@ -2517,7 +2521,7 @@ static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 	GaimConnection *gc = data->gc;
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
-		struct oscar_data *od = gc->proto_data;
+		OscarData *od = gc->proto_data;
 #ifdef NOSSI
 		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, msg ? msg : _("No reason given."));
 #else
@@ -2845,7 +2849,7 @@ static char *gaim_icq_status(int state) {
 
 static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_t reason, const char *cookie) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 /* BBB */
 	switch (reason) {
@@ -2949,7 +2953,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 #if 0
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GaimXfer *xfer;
 #endif
 	va_list ap;
@@ -3213,7 +3217,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t type;
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	va_start(ap, fr);
 	type = (fu16_t) va_arg(ap, unsigned int);
@@ -3410,7 +3414,7 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_icon_error(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	char *sn;
 
 	sn = od->requesticon->data;
@@ -3428,7 +3432,7 @@ static int gaim_icon_error(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GSList *cur;
 	va_list ap;
 	char *sn;
@@ -3476,7 +3480,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static gboolean gaim_icon_timerfunc(gpointer data) {
 	GaimConnection *gc = data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	aim_userinfo_t *userinfo;
 	aim_conn_t *conn;
 
@@ -3639,7 +3643,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	va_list ap;
 	fu16_t code;
 	char *msg;
@@ -3665,6 +3669,7 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
 
 	aim_reqpersonalinfo(sess, fr->conn);
 
@@ -3684,12 +3689,14 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_bos_setprivacyflags(sess, fr->conn, AIM_PRIVFLAGS_ALLOWIDLE | AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
 #endif
 
+	gaim_connection_update_progress(gc, _("Finalizing connection"), 5, OSCAR_CONNECT_STEPS);
+
 	return 1;
 }
 
 static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ADM, 0x0003, gaim_info_change, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ADM, 0x0005, gaim_info_change, 0);
@@ -3764,7 +3771,7 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	va_list ap;
 	fu16_t maxsiglen;
 
@@ -3789,7 +3796,7 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t maxbuddies, maxwatchers;
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	va_start(ap, fr);
 	maxbuddies = (fu16_t) va_arg(ap, unsigned int);
@@ -3809,7 +3816,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu16_t maxpermits, maxdenies;
 	va_list ap;
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	va_start(ap, fr);
 	maxpermits = (fu16_t) va_arg(ap, unsigned int);
@@ -4178,12 +4185,12 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static void oscar_keepalive(GaimConnection *gc) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	aim_flap_nop(od->sess, od->conn);
 }
 
 static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	if (dim)
 		if (typing == GAIM_TYPING)
@@ -4214,7 +4221,7 @@ static void oscar_ask_direct_im(GaimConnection *gc, const char *name);
 static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimConvImFlags);
 
 static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimConvImFlags imflags) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	int ret = 0;
 	GError *err = NULL;
@@ -4352,7 +4359,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 }
 
 static void oscar_get_info(GaimConnection *gc, const char *name) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->icq && isdigit(name[0]))
 		aim_icq_getallinfo(od->sess, name);
@@ -4361,7 +4368,7 @@ static void oscar_get_info(GaimConnection *gc, const char *name) {
 }
 
 static void oscar_get_away(GaimConnection *gc, const char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	if (od->icq) {
 		GaimBuddy *budlight = gaim_find_buddy(gc->account, who);
 		if (budlight)
@@ -4380,18 +4387,18 @@ static void oscar_get_away(GaimConnection *gc, const char *who) {
 static void oscar_set_dir(GaimConnection *gc, const char *first, const char *middle, const char *last,
 			  const char *maiden, const char *city, const char *state, const char *country, int web) {
 	/* XXX - some of these things are wrong, but i'm lazy */
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	aim_locate_setdirinfo(od->sess, first, middle, last,
 				maiden, NULL, NULL, city, state, NULL, 0, web);
 }
 
 static void oscar_set_idle(GaimConnection *gc, int time) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	aim_bos_setidle(od->sess, od->conn, time);
 }
 
 static void oscar_set_info(GaimConnection *gc, const char *text) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	fu32_t flags = 0;
 	char *text_html = NULL;
 	char *msg = NULL;
@@ -4445,7 +4452,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	return;
 }
 
-static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const char *text)
+static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *text)
 {
 	fu32_t flags = 0;
 	gchar *text_html = NULL;
@@ -4507,7 +4514,7 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 	return;
 }
 
-static void oscar_set_away_icq(GaimConnection *gc, struct oscar_data *od, const char *state, const char *message)
+static void oscar_set_away_icq(GaimConnection *gc, OscarData *od, const char *state, const char *message)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	if (gc->away) {
@@ -4559,7 +4566,7 @@ static void oscar_set_away_icq(GaimConnection *gc, struct oscar_data *od, const 
 
 static void oscar_set_away(GaimConnection *gc, const char *state, const char *message)
 {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->icq)
 		oscar_set_away_icq(gc, od, state, message);
@@ -4570,19 +4577,19 @@ static void oscar_set_away(GaimConnection *gc, const char *state, const char *me
 }
 
 static void oscar_warn(GaimConnection *gc, const char *name, int anon) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	aim_im_warn(od->sess, od->conn, name, anon ? AIM_WARN_ANON : 0);
 }
 
 static void oscar_dir_search(GaimConnection *gc, const char *first, const char *middle, const char *last,
 			     const char *maiden, const char *city, const char *state, const char *country, const char *email) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	if (strlen(email))
 		aim_search_address(od->sess, od->conn, email);
 }
 
 static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
 	aim_add_buddy(od->sess, od->conn, name);
 #else
@@ -4601,7 +4608,7 @@ static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) 
 }
 
 static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
 	char buf[MSG_LEN];
 	int n=0;
@@ -4631,7 +4638,7 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 }
 
 static void oscar_remove_buddy(GaimConnection *gc, const char *name, const char *group) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
 	aim_remove_buddy(od->sess, od->conn, name);
 #else
@@ -4644,7 +4651,7 @@ static void oscar_remove_buddy(GaimConnection *gc, const char *name, const char 
 }
 
 static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, const char *group) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
 	GList *cur;
 	for (cur=buddies; cur; cur=cur->next)
@@ -4663,7 +4670,7 @@ static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, const char 
 
 #ifndef NOSSI
 static void oscar_move_buddy(GaimConnection *gc, const char *name, const char *old_group, const char *new_group) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	if (od->sess->ssi.received_data && strcmp(old_group, new_group)) {
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
 				   "ssi: moving buddy %s from group %s to group %s\n", name, old_group, new_group);
@@ -4672,7 +4679,7 @@ static void oscar_move_buddy(GaimConnection *gc, const char *name, const char *o
 }
 
 static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *alias) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	if (od->sess->ssi.received_data) {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, name);
 		if (gname) {
@@ -4684,7 +4691,7 @@ static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *
 }
 
 static void oscar_rename_group(GaimConnection *g, const char *old_group, const char *new_group, GList *members) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	OscarData *od = (OscarData *)g->proto_data;
 
 	if (od->sess->ssi.received_data) {
 		if (aim_ssi_itemlist_finditem(od->sess->ssi.local, new_group, NULL, AIM_SSI_TYPE_GROUP)) {
@@ -4708,7 +4715,7 @@ static gboolean gaim_ssi_rerequestdata(gpointer data) {
 
 static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	va_list ap;
 	fu16_t reason;
 
@@ -4735,7 +4742,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	int numtypes, i;
 	fu16_t *maxitems;
 	va_list ap;
@@ -4768,7 +4775,7 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	struct aim_ssi_item *curitem;
 	int tmp;
 	gboolean export = FALSE;
@@ -5165,7 +5172,7 @@ static GList *oscar_chat_info(GaimConnection *gc) {
 }
 
 static void oscar_join_chat(GaimConnection *g, GHashTable *data) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	OscarData *od = (OscarData *)g->proto_data;
 	aim_conn_t *cur;
 	char *name, *exchange;
 
@@ -5191,7 +5198,7 @@ static void oscar_join_chat(GaimConnection *g, GHashTable *data) {
 }
 
 static void oscar_chat_invite(GaimConnection *g, int id, const char *message, const char *name) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	OscarData *od = (OscarData *)g->proto_data;
 	struct chat_connection *ccon = find_oscar_chat(g, id);
 	
 	if (!ccon)
@@ -5202,7 +5209,7 @@ static void oscar_chat_invite(GaimConnection *g, int id, const char *message, co
 }
 
 static void oscar_chat_leave(GaimConnection *g, int id) {
-	struct oscar_data *od = g ? (struct oscar_data *)g->proto_data : NULL;
+	OscarData *od = g ? (OscarData *)g->proto_data : NULL;
 	GSList *bcs = g->buddy_chats;
 	GaimConversation *b = NULL;
 	struct chat_connection *c = NULL;
@@ -5240,7 +5247,7 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 }
 
 static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	OscarData *od = (OscarData *)g->proto_data;
 	GSList *bcs = g->buddy_chats;
 	GaimConversation *b = NULL;
 	struct chat_connection *c = NULL;
@@ -5317,7 +5324,7 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 	if (!GAIM_BUDDY_IS_ONLINE(b)) {
 		GaimAccount *account;
 		GaimConnection *gc;
-		struct oscar_data *od;
+		OscarData *od;
 		char *gname;
 		if ((b->name) && (account = b->account) && (gc = account->gc) && 
 			(od = gc->proto_data) && (od->sess->ssi.received_data) && 
@@ -5367,7 +5374,7 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 
 static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od->sess, b->name);
 	gchar *tmp = NULL, *ret = g_strdup("");
@@ -5392,7 +5399,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 		}
 
 		if ((bi != NULL) && (bi->ipaddr)) {
-			char *tstr =  g_strdup_printf("%hhd.%hhd.%hhd.%hhd",
+			char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 							(bi->ipaddr & 0xff000000) >> 24,
 							(bi->ipaddr & 0x00ff0000) >> 16,
 							(bi->ipaddr & 0x0000ff00) >> 8,
@@ -5457,7 +5464,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 
 static char *oscar_status_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	gchar *ret = NULL;
 
 	if ((b->uc & UC_UNAVAILABLE) || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
@@ -5483,7 +5490,7 @@ static char *oscar_status_text(GaimBuddy *b) {
 
 static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	va_list ap;
 	fu16_t type;
 	fu8_t flags = 0, length = 0;
@@ -5545,7 +5552,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
  */
 static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	GaimConversation *cnv;
 	struct direct_im *dim;
 	char buf[256];
@@ -5593,7 +5600,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn;
 	double percent;
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	GaimConversation *c;
 	struct direct_im *dim;
 
@@ -5883,7 +5890,7 @@ static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
 
 static void oscar_direct_im(struct ask_do_dir_im *data) {
 	GaimConnection *gc = data->gc;
-	struct oscar_data *od;
+	OscarData *od;
 	struct direct_im *dim;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
@@ -5892,7 +5899,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 		return;
 	}
 
-	od = (struct oscar_data *)gc->proto_data;
+	od = (OscarData *)gc->proto_data;
 
 	dim = find_direct_im(od, data->who);
 	if (dim) {
@@ -5948,7 +5955,7 @@ static void oscar_ask_direct_im(GaimConnection *gc, const char *who) {
 
 static void oscar_set_permit_deny(GaimConnection *gc) {
 	GaimAccount *account = gaim_connection_get_account(gc);
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
 	GSList *list, *g = gaim_blist_groups(), *g1;
 	char buf[MAXMSGLEN];
@@ -6012,7 +6019,7 @@ static void oscar_add_permit(GaimConnection *gc, const char *who) {
 	if (gc->account->permdeny == 3)
 		oscar_set_permit_deny(gc);
 #else
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to add a permit\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_addpermit(od->sess, who);
@@ -6024,7 +6031,7 @@ static void oscar_add_deny(GaimConnection *gc, const char *who) {
 	if (gc->account->permdeny == 4)
 		oscar_set_permit_deny(gc);
 #else
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to add a deny\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_adddeny(od->sess, who);
@@ -6036,7 +6043,7 @@ static void oscar_rem_permit(GaimConnection *gc, const char *who) {
 	if (gc->account->permdeny == 3)
 		oscar_set_permit_deny(gc);
 #else
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to delete a permit\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_delpermit(od->sess, who);
@@ -6048,7 +6055,7 @@ static void oscar_rem_deny(GaimConnection *gc, const char *who) {
 	if (gc->account->permdeny == 4)
 		oscar_set_permit_deny(gc);
 #else
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to delete a deny\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_deldeny(od->sess, who);
@@ -6057,7 +6064,7 @@ static void oscar_rem_deny(GaimConnection *gc, const char *who) {
 
 static GList *oscar_away_states(GaimConnection *gc)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GList *m = NULL;
 
 	if (!od->icq)
@@ -6075,7 +6082,7 @@ static GList *oscar_away_states(GaimConnection *gc)
 }
 
 static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
-	struct oscar_data *od = data->gc->proto_data;
+	OscarData *od = data->gc->proto_data;
 	GaimBuddy *b;
 	GaimGroup *g;
 
@@ -6094,7 +6101,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 }
 
 static void oscar_buddycb_edit_comment(GaimConnection *gc, const char *name) {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	struct name_data *data = g_new(struct name_data, 1);
 	GaimBuddy *b;
 	GaimGroup *g;
@@ -6123,7 +6130,7 @@ static void oscar_buddycb_edit_comment(GaimConnection *gc, const char *name) {
 }
 
 static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 
@@ -6191,7 +6198,7 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 }
 
 static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	if (!aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), nick)) {
 		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
 			od->setnick = TRUE;
@@ -6217,7 +6224,7 @@ static void oscar_show_format_screenname(GaimConnection *gc)
 
 static void oscar_confirm_account(GaimConnection *gc)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
 
 	if (conn) {
@@ -6230,7 +6237,7 @@ static void oscar_confirm_account(GaimConnection *gc)
 
 static void oscar_show_email(GaimConnection *gc)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
 
 	if (conn) {
@@ -6243,7 +6250,7 @@ static void oscar_show_email(GaimConnection *gc)
 
 static void oscar_change_email(GaimConnection *gc, const char *email)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
 
 	if (conn) {
@@ -6266,7 +6273,7 @@ static void oscar_show_change_email(GaimConnection *gc)
 
 static void oscar_show_awaitingauth(GaimConnection *gc)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	gchar *nombre, *text, *tmp;
 	GaimBlistNode *gnode, *cnode, *bnode;
 	int num=0;
@@ -6330,7 +6337,7 @@ static void oscar_show_find_email(GaimConnection *gc)
 
 #if 0
 static void oscar_setavailmsg(GaimConnection *gc, char *text) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	aim_srv_setavailmsg(od->sess, text);
 }
@@ -6357,7 +6364,7 @@ static void oscar_change_pass(GaimConnection *gc)
 
 static void oscar_show_chpassurl(GaimConnection *gc)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	gchar *substituted = gaim_strreplace(od->sess->authinfo->chpassurl, "%s", gaim_account_get_username(gaim_connection_get_account(gc)));
 	gaim_notify_uri(gc, substituted);
 	g_free(substituted);
@@ -6370,7 +6377,7 @@ static void oscar_show_imforwardingurl(GaimConnection *gc)
 
 static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	aim_session_t *sess = od->sess;
 	FILE *file;
 	struct stat st;
@@ -6403,7 +6410,7 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 
 static GList *oscar_actions(GaimConnection *gc)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	struct proto_actions_menu *pam;
 	GList *m = NULL;
 
@@ -6499,7 +6506,7 @@ static GList *oscar_actions(GaimConnection *gc)
 
 static void oscar_change_passwd(GaimConnection *gc, const char *old, const char *new)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 
 	if (od->icq) {
 		aim_icq_changepasswd(od->sess, new);
@@ -6518,7 +6525,7 @@ static void oscar_change_passwd(GaimConnection *gc, const char *old, const char 
 
 static void oscar_convo_closed(GaimConnection *gc, const char *who)
 {
-	struct oscar_data *od = gc->proto_data;
+	OscarData *od = gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, who);
 
 	if (!dim)

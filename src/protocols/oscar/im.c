@@ -389,9 +389,8 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 
 	aim_tx_enqueue(sess, fr);
 
-	/* Move this to receive aim_flap_nop and send aim_flap_nop */
-	if (!(sess->flags & AIM_SESS_FLAGS_DONTTIMEOUTONICBM))
-		aim_cleansnacs(sess, 60); /* clean out SNACs over 60sec old */
+	/* clean out SNACs over 60sec old */
+	aim_cleansnacs(sess, 60);
 
 	return 0;
 }

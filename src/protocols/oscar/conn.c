@@ -1054,5 +1054,8 @@ faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn)
 
 	aim_tx_enqueue(sess, fr);
 
+	/* clean out SNACs over 60sec old */
+	aim_cleansnacs(sess, 60);
+
 	return 0;
 }
