@@ -1379,7 +1379,7 @@ gaim_str_sub_away_formatters(const char *msg, const char *name)
 					break;
 				case 't':
 					/* append time */
-					strftime(tmp, 20, "%r", tme);
+					strftime(tmp, 20, "%I:%M:%S %p", tme);
 					strcpy(cpy + cnt, tmp);
 					cnt += strlen(tmp);
 					c++;
