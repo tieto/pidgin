@@ -6071,10 +6071,64 @@ static GList *oscar_away_states(GaimConnection *gc)
 	return m;
 }
 
+static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
+	struct oscar_data *od = data->gc->proto_data;
+	GaimBuddy *b;
+	GaimGroup *g;
+
+	if (!(b = gaim_find_buddy(gaim_connection_get_account(data->gc), data->name))) {
+		oscar_free_name_data(data);
+		return;
+	}
+
+	if (!(g = gaim_find_buddys_group(b))) {
+		oscar_free_name_data(data);
+		return;
+	}
+
+	aim_ssi_editcomment(od->sess, g->name, data->name, text);
+	oscar_free_name_data(data);
+}
+
+static void oscar_buddycb_edit_comment(GaimConnection *gc, const char *name) {
+	struct oscar_data *od = gc->proto_data;
+	struct name_data *data = g_new(struct name_data, 1);
+	GaimBuddy *b;
+	GaimGroup *g;
+	char *comment;
+	gchar *comment_utf8;
+
+	if (!(b = gaim_find_buddy(gaim_connection_get_account(gc), name)))
+		return;
+	if (!(g = gaim_find_buddys_group(b)))
+		return;
+	comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, name);
+	comment_utf8 = comment ? gaim_utf8_try_convert(comment) : NULL;
+
+	data->gc = gc;
+	data->name = g_strdup(name);
+	data->nick = NULL;
+
+	gaim_request_input(gc, NULL, _("Buddy Comment:"), NULL,
+					   comment_utf8, TRUE, FALSE,
+					   _("OK"), G_CALLBACK(oscar_ssi_editcomment),
+					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
+					   data);
+
+	free(comment);
+	g_free(comment_utf8);
+}
+
 static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 	struct oscar_data *od = gc->proto_data;
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Edit Buddy Comment");
+	pbm->callback = oscar_buddycb_edit_comment;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
 	if (od->icq) {
 #if 0

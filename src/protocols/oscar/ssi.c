@@ -385,7 +385,7 @@ faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list)
  * @param list A pointer to the current list of items.
  * @param gn The group of the buddy.
  * @param sn The name of the buddy.
- * @return A pointer to a NULL terminated string that is the buddies 
+ * @return A pointer to a NULL terminated string that is the buddy's 
  *         alias, or NULL if the buddy has no alias.  You should free
  *         this returned value!
  */
@@ -394,6 +394,31 @@ faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, co
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x0131, 1);
+		if (tlv && tlv->length) {
+			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
+			strncpy(alias, tlv->value, tlv->length);
+			alias[tlv->length] = 0;
+			return alias;
+		}
+	}
+	return NULL;
+}
+
+/**
+ * Locally find the comment of the given buddy.
+ *
+ * @param list A pointer to the current list of items.
+ * @param gn The group of the buddy.
+ * @param sn The name of the buddy.
+ * @return A pointer to a NULL terminated string that is the buddy's 
+ *         comment, or NULL if the buddy has no comment.  You should free
+ *         this returned value!
+ */
+faim_export char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *sn)
+{
+	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
+	if (cur) {
+		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x013c, 1);
 		if (tlv && tlv->length) {
 			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
 			strncpy(alias, tlv->value, tlv->length);
@@ -882,7 +907,7 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const 
  * @param gn The group that the buddy is currently in.
  * @param sn The screen name of the buddy.
  * @param alias The new alias for the buddy, or NULL if you want to remove 
- *        a buddies alias.
+ *        a buddy's comment.
  * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const char *sn, const char *alias)
@@ -900,6 +925,38 @@ faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const ch
 		aim_tlvlist_replace_raw(&tmp->data, 0x0131, strlen(alias), alias);
 	else
 		aim_tlvlist_remove(&tmp->data, 0x0131);
+
+	/* Sync our local list with the server list */
+	aim_ssi_sync(sess);
+
+	return 0;
+}
+
+/**
+ * Change the comment stored on the server for a given buddy.
+ *
+ * @param sess The oscar session.
+ * @param gn The group that the buddy is currently in.
+ * @param sn The screen name of the buddy.
+ * @param alias The new comment for the buddy, or NULL if you want to remove 
+ *        a buddy's comment.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_ssi_editcomment(aim_session_t *sess, const char *gn, const char *sn, const char *comment)
+{
+	struct aim_ssi_item *tmp;
+
+	if (!sess || !gn || !sn)
+		return -EINVAL;
+
+	if (!(tmp = aim_ssi_itemlist_finditem(sess->ssi.local, gn, sn, AIM_SSI_TYPE_BUDDY)))
+		return -EINVAL;
+
+	/* Either add or remove the 0x0131 TLV from the TLV chain */
+	if ((comment != NULL) && (strlen(comment) > 0))
+		aim_tlvlist_replace_raw(&tmp->data, 0x013c, strlen(comment), comment);
+	else
+		aim_tlvlist_remove(&tmp->data, 0x013c);
 
 	/* Sync our local list with the server list */
 	aim_ssi_sync(sess);

@@ -1207,6 +1207,7 @@ faim_export char *aim_ssi_itemlist_findparentname(struct aim_ssi_item *list, con
 faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list);
 faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list);
 faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn);
+faim_export char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *sn);
 faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn);
 
 /* Client functions for changing SSI data */
@@ -1218,6 +1219,7 @@ faim_export int aim_ssi_delpermit(aim_session_t *sess, const char *name);
 faim_export int aim_ssi_deldeny(aim_session_t *sess, const char *name);
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const char *newgn, const char *sn);
 faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const char *sn, const char *alias);
+faim_export int aim_ssi_editcomment(aim_session_t *sess, const char *gn, const char *sn, const char *alias);
 faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, const char *newgn);
 faim_export int aim_ssi_cleanlist(aim_session_t *sess);
 faim_export int aim_ssi_deletelist(aim_session_t *sess);

@@ -71,6 +71,7 @@ static void
 input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 {
 	const char *value;
+	char *multiline_value;
 
 	if (data->u.input.multiline) {
 		GtkTextIter start_iter, end_iter;
@@ -80,8 +81,9 @@ input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 		gtk_text_buffer_get_start_iter(buffer, &start_iter);
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 
-		value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
+		multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
 										 FALSE);
+		value = multiline_value;
 	}
 	else
 		value = gtk_entry_get_text(GTK_ENTRY(data->u.input.entry));
@@ -90,6 +92,9 @@ input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 		((GaimRequestInputCb)data->cbs[id])(data->user_data, value);
 	else if (data->cbs[1] != NULL)
 		((GaimRequestInputCb)data->cbs[1])(data->user_data, value);
+
+	if (data->u.input.multiline)
+		g_free(multiline_value);
 
 	gaim_request_close(GAIM_REQUEST_INPUT, data);
 }
