@@ -8,6 +8,9 @@ version 0.76cvs:
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
 	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
 	* Non-ascii character support in AIM chats (Uli Luckas)
+	* Improved local IP address detection (Tim Ringenbach)
+	* Local IP address information can be changed in Preferences
+	  (Tim Ringenbach)
 	* Yet Another IRC channel user duplication bugfix (Tim Ringenbach)
 	* TCL Plugin API changed
 	* Tabs now stay green when they are supposed to (Etan Reisner)
