@@ -48,6 +48,7 @@ die "unable to get total: $!" unless (/(\d+) untranslated messages/);
 $total = $1;
 
 print "<html>\n";
+print "<head><title>$PACKAGE i18n statistics</title></head>\n";
 print "<body>\n";
 print "<table cellspacing='0' cellpadding='0' border='0' bgcolor='#888888' width='100%'><tr><td><table cellspacing='1' cellpadding='2' border='0' width='100%'>\n";
 
@@ -60,9 +61,9 @@ foreach $index (0 .. $#pos) {
 	system("msgmerge $po.po $PACKAGE.pot -o $po.new 2>/dev/null");
 	$_ = `msgfmt --statistics $po.new -o /dev/null 2>&1`;
 	chomp;
-	if(/(\d+) translated messages/) { $trans = $1; }
-	if(/(\d+) fuzzy translations/) { $fuzz = $1; }
-	if(/(\d+) untranslated messages/) { $untrans = $1; }
+	if(/(\d+) translated message/) { $trans = $1; }
+	if(/(\d+) fuzzy translation/) { $fuzz = $1; }
+	if(/(\d+) untranslated message/) { $untrans = $1; }
 	$transp = 100 * $trans / $total;
 	$fuzzp = 100 * $fuzz / $total;
 	$untransp = 100 * $untrans / $total;
