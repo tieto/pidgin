@@ -186,6 +186,137 @@ static zephyr_triple *find_sub_by_id(int id)
 #define IS_OPENER(c) ((c == '{') || (c == '[') || (c == '(') || (c == '<'))
 #define IS_CLOSER(c) ((c == '}') || (c == ']') || (c == ')') || (c == '>'))
 
+/* This parses HTML formatting (put out by one of the gtkimhtml widgets 
+   And converts it to zephyr formatting.
+   It currently deals properly with <b>, <br>, <i>, <font face=...>, <font color=...>,
+   It ignores <font back=...>
+   It does
+   <font size = "1 or 2" -> @small
+   3 or 4  @medium()
+   5,6, or 7 @large()
+   <a href is dealt with by ignoring the description and outputting the link
+*/
+
+static char *html_to_zephyr(const char *message)
+{
+        int len,cnt,retcount;
+        char *ret;
+        len = strlen(message);
+        ret = g_new0(char,len*3);
+        bzero(ret,len*3);
+        retcount=0;
+        cnt = 0;
+        while (cnt <= len) {
+                if (message[cnt] == '<') {
+                        if (!g_ascii_strncasecmp(message+cnt+1,"i>",2)) {
+                                strncpy(ret+retcount,"@i(",3);
+                                cnt+=3;
+                                retcount+=3;
+                        } 
+                        else if (!g_ascii_strncasecmp(message+cnt+1,"b>",2)) {
+                                strncpy(ret+retcount,"@b(",3);
+                                cnt+=3;
+                                retcount+=3;
+                        } 
+                        else if (!g_ascii_strncasecmp(message+cnt+1,"br>",3)) {
+                                strncpy(ret+retcount,"\n",1);
+                                cnt+=4;
+                                retcount+=1;
+                        }
+                        else if (!g_ascii_strncasecmp(message+cnt+1,"a href=\"",8)) {
+                                cnt+=9;
+                                while(g_ascii_strncasecmp(message+cnt,"\">",2) !=0) {
+                                        ret[retcount]=message[cnt];
+                                        retcount++; cnt++;
+                                }
+                                cnt+=2;
+                                /* ignore descriptive string */
+                                while(g_ascii_strncasecmp(message+cnt,"</a>",4) !=0) {
+                                        cnt++;
+                                }
+                                cnt+=4;
+                        }
+                        else if (!g_ascii_strncasecmp(message+cnt+1, "font",4)) {
+                                cnt+=5;
+                                while(!g_ascii_strncasecmp(message+cnt," ",1)) cnt++;
+                                if (!g_ascii_strncasecmp(message+cnt,"color=\"",7)) {
+                                        cnt+=7;
+                                        strncpy(ret+retcount,"@color(",7);
+                                        retcount+=7;
+                                        while(g_ascii_strncasecmp(message+cnt,"\">",2) !=0) {
+                                                ret[retcount] = message[cnt];
+                                                retcount++;
+                                                cnt++;
+                                        }
+                                        ret[retcount]=')';
+                                        retcount++;
+                                        cnt+=2;
+                                } 
+                                else if (!g_ascii_strncasecmp(message+cnt,"face=\"",6)) {
+                                        cnt+=6;
+                                        strncpy(ret+retcount,"@font(",6);
+                                        retcount+=6;
+                                        while(g_ascii_strncasecmp(message+cnt,"\">",2) !=0) {
+                                                ret[retcount] = message[cnt];
+                                                retcount++;
+                                                cnt++;
+                                        }
+                                        ret[retcount]=')';
+                                        retcount++;
+                                        cnt+=2;
+                                }
+                                else if (!g_ascii_strncasecmp(message+cnt,"size=\"",6)) {
+                                        cnt+=6;
+                                        if ( (message[cnt] == '1')|| (message[cnt] == '2')) {
+                                                strncpy(ret+retcount,"@small(",7);
+                                                retcount+=7;
+                                        } 
+                                        else if ( (message[cnt] == '3')|| (message[cnt] == '4')) {
+                                                strncpy(ret+retcount,"@medium(",8);
+                                                retcount+=8;
+                                        }
+                                        else if ( (message[cnt] == '5')|| (message[cnt] == '6') || (message[cnt] == '7')) {
+                                                strncpy(ret+retcount,"@large(",7);
+                                                retcount+=7;
+                                        }
+                                        cnt+=3;
+                                }
+                                else {
+                                        /* Drop all unrecognized/misparsed font tags */
+                                        while(g_ascii_strncasecmp(message+cnt,"\">",2) !=0) {
+                                                cnt++;
+                                        }
+                                        cnt+=2;
+                                }
+                        } 
+                        else if (!g_ascii_strncasecmp(message+cnt+1,"/i>",3) || !g_ascii_strncasecmp(message+cnt+1,"/b>",3)) {
+                                cnt+=4;
+                                ret[retcount]=')';
+                                retcount++;
+                        }
+                        else if (!g_ascii_strncasecmp(message+cnt+1,"/font>",6)) {
+                                cnt+=7;
+                                strncpy(ret+retcount,"@font(fixed)",12);
+                                retcount+=12;
+                        }
+                        else {
+                                /* Catch all for all unrecognized/misparsed <foo> tage */
+                                while(g_ascii_strncasecmp(message+cnt,">",1) != 0) {
+                                        ret[retcount]=message[cnt];
+                                        retcount++;
+                                        cnt++;
+                                }
+                        }
+                } else {
+                        /* Duh */
+                        ret[retcount]=message[cnt];
+                        retcount++;
+                        cnt++;
+                }
+        }
+        return ret;
+}
+
 /* this parses zephyr formatting and converts it to html. For example, if
  * you pass in "@{@color(blue)@i(hello)}" you should get out
  * "<font color=blue><i>hello</i></font>". */
@@ -230,7 +361,7 @@ static char *zephyr_to_html(char *message)
                                 new_f->closing ="</font>";
                                 frames = new_f;
                                 cnt+= end+1;
-                        } else if (!g_ascii_strcasecmp(buf,"normal")) {
+                        } else if (!g_ascii_strcasecmp(buf,"medium")) {
                                 new_f = g_new(zframe,1);
                                 new_f->enclosing = frames;
                                 new_f->text = g_string_new("<font size=\"3\">");
@@ -240,7 +371,7 @@ static char *zephyr_to_html(char *message)
                         } else if (!g_ascii_strcasecmp(buf,"large")) {
                                 new_f = g_new(zframe,1);
                                 new_f->enclosing = frames;
-                                new_f->text = g_string_new("<font size=\"5\">");
+                                new_f->text = g_string_new("<font size=\"7\">");
                                 new_f->closing ="</font>";
                                 frames = new_f;
                                 cnt+= end+1;
@@ -253,7 +384,21 @@ static char *zephyr_to_html(char *message)
 				new_f->has_closer = TRUE;
 				frames = new_f;
 				cnt += end+1;
-			} else if (!g_ascii_strcasecmp(buf, "color")) {
+			} else if (!g_ascii_strcasecmp(buf, "font")) { 
+				cnt += end+1;
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("<font face=");
+				for (; (cnt <= len) && !IS_CLOSER(message[cnt]); cnt++) {
+					g_string_append_c(new_f->text, message[cnt]);
+				}
+				cnt++; /* point to char after closer */
+				g_string_append_c(new_f->text, '>');
+				new_f->closing = "</font>";
+				new_f->has_closer = FALSE;
+				frames = new_f;
+                                
+                        } else if (!g_ascii_strcasecmp(buf, "color")) {
 				cnt += end+1;
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
@@ -680,7 +825,7 @@ static void zephyr_login(GaimAccount *account)
 	}
 
 	zgc = gaim_account_get_connection(account);
-
+       zgc->flags |= GAIM_CONNECTION_HTML; 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
 	z_call_s(ZOpenPort(NULL), "Couldn't open port");
 	z_call_s(ZSetLocation((char *)gaim_account_get_string(zgc->account,"exposure_level",EXPOSE_REALMVIS)), "Couldn't set location");
@@ -873,6 +1018,8 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
         GaimConversation * gconv1;
         GaimConvChat* gcc;
         char * inst;
+        char * html_buf;
+        char * html_buf2;
 
 	zt = find_sub_by_id(id);
 	if (!zt)
@@ -883,7 +1030,11 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 	if (!sig) {
 		sig = g_get_real_name();
 	}
-	buf = g_strdup_printf("%s%c%s", sig, '\0', im);
+
+       html_buf = html_to_zephyr(im);
+       html_buf2 = gaim_unescape_html(html_buf);
+
+	buf = g_strdup_printf("%s%c%s", sig, '\0', html_buf2);
 
         gconv1 = gaim_find_conversation_with_account(zt->name,zgc->account);
         gcc = gaim_conversation_get_chat_data(gconv1);
@@ -906,8 +1057,11 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 		"Class $class, Instance $instance:\n"
 		"To: @bold($recipient) at $time $date\n"
 		"From: @bold($1) <$sender>\n\n$2";
-	notice.z_message_len = strlen(im) + strlen(sig) + 2;
+	notice.z_message_len = strlen(html_buf2) + strlen(sig) + 2;
 	notice.z_message = buf;
+       g_free(html_buf);
+       g_free(html_buf2);
+
 	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
 	return 0;
@@ -917,7 +1071,8 @@ static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, G
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;
-
+       char *html_buf;
+       char *html_buf2;
 	if (flags & GAIM_CONV_IM_AUTO_RESP)
 		sig = "Automated reply:";
 	else {
@@ -926,8 +1081,11 @@ static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, G
 			sig = g_get_real_name();
 		}
 	}
-	buf = g_strdup_printf("%s%c%s", sig, '\0', im);
 
+       html_buf = html_to_zephyr(im);
+       html_buf2 = gaim_unescape_html(html_buf);
+
+	buf = g_strdup_printf("%s%c%s", sig, '\0', html_buf2);
 	bzero((char *)&notice, sizeof(notice));
 	notice.z_kind = ACKED;
 	notice.z_port = 0;
@@ -940,8 +1098,11 @@ static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, G
 		"Class $class, Instance $instance:\n"
 		"To: @bold($recipient) at $time $date\n"
 		"From: @bold($1) <$sender>\n\n$2";
-	notice.z_message_len = strlen(im) + strlen(sig) + 2;
+	notice.z_message_len = strlen(html_buf2) + strlen(sig) + 2;
 	notice.z_message = buf;
+       g_free(html_buf2);
+       g_free(html_buf);
+
 	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
 	return 1;
