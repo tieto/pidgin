@@ -414,6 +414,24 @@ do_remove_buddy(GaimBuddy *b)
 	g_free(name);
 }
 
+static void do_remove_contact(GaimContact *c)
+{
+	GaimBlistNode *bnode, *cnode;
+	GaimGroup *g;
+
+	if(!c)
+		return;
+
+	cnode = (GaimBlistNode *)c;
+	g = (GaimGroup*)cnode->parent;
+	for(bnode = cnode->child; bnode; bnode = bnode->next) {
+		GaimBuddy *b = (GaimBuddy*)bnode;
+		if(b->account->gc)
+			serv_remove_buddy(b->account->gc, b->name, g->name);
+	}
+	gaim_blist_remove_contact(c);
+}
+
 void do_remove_group(GaimGroup *g)
 {
 	GaimBlistNode *cnode, *bnode;
@@ -490,6 +508,28 @@ void show_confirm_del_group(GaimGroup *g)
 						_("Cancel"), NULL);
 
 	g_free(text);
+}
+
+void show_confirm_del_contact(GaimContact *c)
+{
+	GaimBuddy *b = gaim_contact_get_priority_buddy(c);
+
+	if(!b)
+		return;
+
+	if(((GaimBlistNode*)c)->child == (GaimBlistNode*)b &&
+			!((GaimBlistNode*)b)->next) {
+		show_confirm_del(b);
+	} else {
+		char *text = g_strdup_printf(_("You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"),
+			       b->name, c->totalsize - 1);
+
+		gaim_request_action(NULL, NULL, _("Remove Contact"), text, -1, c, 2,
+				_("Remove Contact"), G_CALLBACK(do_remove_contact),
+				_("Cancel"), NULL);
+
+		g_free(text);
+	}
 }
 
 /*------------------------------------------------------------------------*/

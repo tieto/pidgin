@@ -73,6 +73,12 @@ static guint _gaim_blist_hbuddy_equal (struct _gaim_hbuddy *hb1, struct _gaim_hb
 	return ((!strcmp(hb1->name, hb2->name)) && hb1->account == hb2->account && hb1->group == hb2->group);
 }
 
+static void _gaim_blist_hbuddy_free_key(struct _gaim_hbuddy *hb)
+{
+	g_free(hb->name);
+	g_free(hb);
+}
+
 static void blist_pref_cb(const char *name, GaimPrefType typ, gpointer value, gpointer data)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
@@ -108,8 +114,9 @@ struct gaim_buddy_list *gaim_blist_new()
 
 	gbl->ui_ops = gaim_get_blist_ui_ops();
 
-	gbl->buddies = g_hash_table_new ((GHashFunc)_gaim_blist_hbuddy_hash,
-					 (GEqualFunc)_gaim_blist_hbuddy_equal);
+	gbl->buddies = g_hash_table_new_full((GHashFunc)_gaim_blist_hbuddy_hash,
+					 (GEqualFunc)_gaim_blist_hbuddy_equal,
+					 (GDestroyNotify)_gaim_blist_hbuddy_free_key, NULL);
 
 	if (gbl->ui_ops != NULL && gbl->ui_ops->new_list != NULL)
 		gbl->ui_ops->new_list(gbl);
@@ -590,6 +597,15 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 		ops->remove(gaimbuddylist, bnode);
 
 		save = TRUE;
+
+		if(bnode->parent->parent != (GaimBlistNode*)g) {
+			hb = g_new(struct _gaim_hbuddy, 1);
+			hb->name = normalize(buddy->name);
+			hb->account = buddy->account;
+			hb->group = bnode->parent->parent;
+			g_hash_table_remove(gaimbuddylist->buddies, &hb);
+			g_free(hb);
+		}
 	}
 
 	if(node && GAIM_BLIST_NODE_IS_BUDDY(node)) {
@@ -621,18 +637,12 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 	((GaimContact*)bnode->parent)->totalsize++;
 
 
-	hb = g_malloc(sizeof(struct _gaim_hbuddy));
+	hb = g_new(struct _gaim_hbuddy, 1);
 	hb->name = g_strdup(normalize(buddy->name));
 	hb->account = buddy->account;
 	hb->group = ((GaimBlistNode*)buddy)->parent->parent;
 
-	if (g_hash_table_lookup(gaimbuddylist->buddies, (gpointer)hb)) {
-		/* This guy already exists */
-		g_free(hb->name);
-		g_free(hb);
-	} else {
-		g_hash_table_insert(gaimbuddylist->buddies, (gpointer)hb, (gpointer)buddy);
-	}
+	g_hash_table_replace(gaimbuddylist->buddies, hb, buddy);
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
@@ -683,7 +693,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimGroup *g;
-	GaimBlistNode *gnode, *cnode;
+	GaimBlistNode *gnode, *cnode, *bnode;
 	gboolean save = FALSE;
 
 	if(!contact)
@@ -721,6 +731,25 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 		ops->remove(gaimbuddylist, cnode);
 
 		save = TRUE;
+
+		if(cnode->parent != gnode) {
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b = (GaimBuddy*)bnode;
+
+				struct _gaim_hbuddy *hb = g_new(struct _gaim_hbuddy, 1);
+				hb->name = g_strdup(normalize(b->name));
+				hb->account = b->account;
+				hb->group = cnode->parent;
+
+				g_hash_table_remove(gaimbuddylist->buddies, &hb);
+
+				hb->group = gnode;
+				g_hash_table_replace(gaimbuddylist->buddies, hb, b);
+
+				if(b->account->gc)
+					serv_move_buddy(b, (GaimGroup*)cnode->parent, g);
+			}
+		}
 	}
 
 	if(node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
@@ -836,14 +865,13 @@ void gaim_blist_remove_contact(GaimContact* contact)
 	}
 }
 
-void  gaim_blist_remove_buddy (GaimBuddy *buddy)
+void gaim_blist_remove_buddy (GaimBuddy *buddy)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
 	GaimBlistNode *cnode, *node = (GaimBlistNode*)buddy;
 	GaimGroup *group;
-	struct _gaim_hbuddy hb, *key;
-	struct buddy *val;
+	struct _gaim_hbuddy hb;
 
 	cnode = node->parent;
 	group = (GaimGroup *)cnode->parent;
@@ -873,11 +901,7 @@ void  gaim_blist_remove_buddy (GaimBuddy *buddy)
 	hb.name = normalize(buddy->name);
 	hb.account = buddy->account;
 	hb.group = ((GaimBlistNode*)buddy)->parent->parent;
-	if (g_hash_table_lookup_extended(gaimbuddylist->buddies, &hb, (gpointer *)&key, (gpointer *)&val)) {
-		g_hash_table_remove(gaimbuddylist->buddies, &hb);
-		g_free(key->name);
-		g_free(key);
-	}
+	g_hash_table_remove(gaimbuddylist->buddies, &hb);
 
 	if(buddy->timer > 0)
 		g_source_remove(buddy->timer);

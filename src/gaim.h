@@ -46,6 +46,7 @@ extern void show_set_info(GaimConnection *);
 extern void show_confirm_del(GaimBuddy *);
 extern void show_confirm_del_group(GaimGroup *);
 extern void show_confirm_del_blist_chat(GaimBlistChat *);
+extern void show_confirm_del_contact(GaimContact *);
 
 /* Functions in gaimrc.c */
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
