@@ -1869,15 +1869,21 @@ void g_show_info_text(GaimConnection *gc, const char *who, int away, const char 
 	options ^= GTK_IMHTML_NO_NEWLINE;
 	options ^= GTK_IMHTML_NO_SCROLL;
 
-	linkifyinated = linkify_text(info);
-	gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, -1, options);
-	g_free(linkifyinated);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
+		linkifyinated = linkify_text(info);
+		gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, -1, options);
+		g_free(linkifyinated);
+	} else
+		gtk_imhtml_append_text(GTK_IMHTML(b->text), info, -1, options);
 
 	va_start(ap, info);
 	while ((more_info = va_arg(ap, char *)) != NULL) {
-		gchar *linkifyinated = linkify_text(more_info);
-		gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, -1, options);
-		g_free(linkifyinated);
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
+			linkifyinated = linkify_text(more_info);
+			gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, -1, options);
+			g_free(linkifyinated);
+		} else
+			gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, -1, options);
 	}
 	va_end(ap);
 
