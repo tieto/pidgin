@@ -2562,6 +2562,8 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 				str = g_string_append(str, "&amp;");
 			else if (c == '"')
 				str = g_string_append(str, "&quot;");
+			else if (c =="\n")
+				str = g_string_append(str, "<br>");
 			else
 				str = g_string_append_unichar(str, c);
 		}
