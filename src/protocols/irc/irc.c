@@ -1133,9 +1133,9 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 		if (!*word[2])
 			return;
 		if (*word_eol[3])
-			g_snprintf(buf, sizeof(buf), "KICK %s %s :%s", who, word[2], word_eol[3]);
+			g_snprintf(buf, sizeof(buf), "KICK %s %s :%s\r\n", who, word[2], word_eol[3]);
 		else
-			g_snprintf(buf, sizeof(buf), "KICK %s %s", who, word[2]);
+			g_snprintf(buf, sizeof(buf), "KICK %s %s\r\n", who, word[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "BAN")) {
 	} else if (!g_strcasecmp(pdibuf, "KICKBAN")) {
