@@ -30,6 +30,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "prpl.h"
+#include "request.h"
 #include "server.h"
 #include "sound.h"
 
@@ -110,58 +111,24 @@ cancel_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 }
 
 static void
-pounce_update_entry_fields(GtkWidget *w, gpointer data)
+pounce_update_entry_fields(void *user_data, const char *filename)
 {
-	const char *filename;
-	GHashTable *args;
-	GtkFileSelection *filesel;
+	GtkWidget *entry = (GtkWidget *)user_data;
 
-	args = (GHashTable *)data;
-	filesel = GTK_FILE_SELECTION(g_hash_table_lookup(args, "filesel"));
-
-	filename = gtk_file_selection_get_filename(filesel);
-
-	if (gaim_gtk_check_if_dir(filename, filesel))
-		return;
-
-	if (filename != NULL)
-		gtk_entry_set_text(GTK_ENTRY(g_hash_table_lookup(args, "entry")),
-						   filename);
-
-	gtk_widget_destroy(GTK_WIDGET(filesel));
-	g_hash_table_destroy(args);
+	gtk_entry_set_text(GTK_ENTRY(entry), filename);
 }
 
 static void
-filesel(GtkWidget *w, gpointer data)
+filesel(GtkWidget *widget, gpointer data)
 {
-	GtkWidget *filesel;
 	GtkWidget *entry;
-	GHashTable *args;
+	const gchar *name;
 
 	entry = (GtkWidget *)data;
+	name = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	filesel = gtk_file_selection_new(_("Select a file"));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel),
-									gtk_entry_get_text(GTK_ENTRY(entry)));
-	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(filesel));
-	gtk_file_selection_set_select_multiple(GTK_FILE_SELECTION(filesel), FALSE);
-
-	args = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(args, "filesel", filesel);
-	g_hash_table_insert(args, "entry",   entry);
-
-	g_signal_connect(
-		GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button), "clicked",
-		G_CALLBACK(pounce_update_entry_fields), args);
-	g_signal_connect_swapped(
-		G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button), "clicked",
-		G_CALLBACK(g_hash_table_destroy), args);
-	g_signal_connect_swapped(
-		G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button), "clicked",
-		G_CALLBACK(gtk_widget_destroy), filesel);
-
-	gtk_widget_show(filesel);
+	gaim_request_file(entry, _("Select a file"), name, FALSE,
+					  G_CALLBACK(pounce_update_entry_fields), NULL, entry);
 }
 
 static void
