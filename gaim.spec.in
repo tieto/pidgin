@@ -93,6 +93,18 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Apr 25 2002 Rob Flynn <rob@marko.net (0.57 release)
+- New authorization method for Yahoo!
+- Polish translation updated (Thanks Przemyslaw Sulek)
+- Jabber will tell you when your buddies signed on (Thanks Nathan Walp)
+- Danish translation added (Thanks, Sarauw Hansen)
+- Finnish translation update (Thanks, Tero Kuusela)
+- Japanese translation added (Thanks, Ryosuke Kutsuna)
+- Jabber improvements (Thanks, Nathan Walp)
+- More keyboard shortcuts
+- event_chat_recv takes char**'s, and event_im_recv takes a *guint32 for flags
+- Secure hotmail login for MSN (thanks for the tips, Scott Werndorfer)
+
 * Thu Apr 11 2002 Rob Flynn <rob@marko.net (0.56 release)
 - German translation update (Thanks Karsten Weiss)
 - Shell-like send history binded to Ctrl-Up and Ctrl-Down
@@ -103,6 +115,9 @@ rm -r $RPM_BUILD_ROOT
 - Group deletion fix (Thanks Mark Doliner)
 - Alias/Group syncronization for Jabber (Thanks JSeymour)
 - Fixed broken signal handling in gdm-started GNOME sessions (Thanks Jim Seymour, Vann, Robert McQueen)
+- Oscar group syncronization (Thanks, Mark Doliner)
+- ICQ Authorization via Oscar (Thanks, Mark Doliner)
+
 
 * Fri Mar 29 2002 Rob Flynn <rob@marko.net> (0.55 release)
 - Jabber improvements (Thanks Jim Seymour)
