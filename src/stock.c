@@ -141,7 +141,7 @@ gaim_gtk_stock_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#FF7E00\" size=\"larger\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#FFFFFF\" size=\"larger\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
