@@ -122,7 +122,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 2, 3);
 
-		label = gtk_label_new("rob@tgflinux.com");
+		label = gtk_label_new("rob@marko.net");
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 1, 2, 2, 3);
 

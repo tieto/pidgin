@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.20\n"
-"POT-Creation-Date: 2001-03-23 15:58-0800\n"
+"POT-Creation-Date: 2001-03-26 16:55-0800\n"
 "PO-Revision-Date: 2000-06-13 22:26-0700\n"
 "Last-Translator: Seb Carpe\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: plugins/icq/gaim_icq.c:394 src/oscar.c:2236 src/toc.c:917
+#: plugins/icq/gaim_icq.c:394 src/oscar.c:2249 src/toc.c:917
 #, fuzzy
 msgid "Get Info"
 msgstr "Message d'Information"
@@ -24,8 +24,8 @@ msgid "Your message did not get sent."
 msgstr "Son à l'envoi d'un message"
 
 #: plugins/yay/yay.c:169 src/dialogs.c:3030 src/dialogs.c:3037
-#: src/oscar.c:1294 src/oscar.c:1299 src/oscar.c:1335 src/oscar.c:1354
-#: src/oscar.c:1390
+#: src/oscar.c:1298 src/oscar.c:1303 src/oscar.c:1339 src/oscar.c:1358
+#: src/oscar.c:1394
 #, fuzzy
 msgid "Gaim - Error"
 msgstr "Gaim - Erreur %d"
@@ -42,7 +42,7 @@ msgstr "GAIM - Ajouter un Pote"
 
 #: plugins/yay/yay.c:233 src/about.c:169 src/aim.c:301 src/buddy.c:2302
 #: src/buddy_chat.c:849 src/buddy_chat.c:985 src/buddy_chat.c:1012
-#: src/conversation.c:2041 src/dialogs.c:432 src/dialogs.c:3777
+#: src/conversation.c:2042 src/dialogs.c:432 src/dialogs.c:3780
 #: src/multi.c:674 src/plugins.c:308 src/prefs.c:1970 src/prpl.c:355
 msgid "Close"
 msgstr "Fermer"
@@ -184,7 +184,7 @@ msgstr ""
 
 #. Put the buttons in the box
 #: src/buddy.c:245 src/buddy.c:2443 src/buddy_chat.c:1017
-#: src/conversation.c:1738 src/conversation.c:2055 src/dialogs.c:868
+#: src/conversation.c:1738 src/conversation.c:2056 src/dialogs.c:868
 #: src/dialogs.c:992 src/dialogs.c:1867 src/multi.c:658 src/prefs.c:798
 #: src/prefs.c:1460 src/prefs.c:1810 src/prefs.c:1844
 msgid "Add"
@@ -195,7 +195,7 @@ msgid "Group"
 msgstr "Groupe"
 
 #: src/buddy.c:247 src/buddy.c:2445 src/buddy_chat.c:1019
-#: src/conversation.c:1728 src/conversation.c:2053 src/prefs.c:799
+#: src/conversation.c:1728 src/conversation.c:2054 src/prefs.c:799
 #: src/prefs.c:1474 src/prefs.c:1814 src/prefs.c:1848
 msgid "Remove"
 msgstr "Enlever"
@@ -210,7 +210,7 @@ msgid "IM"
 msgstr "IM"
 
 #: src/buddy.c:252 src/buddy.c:2185 src/buddy_chat.c:487 src/buddy_chat.c:812
-#: src/buddy_chat.c:1025 src/conversation.c:2073
+#: src/buddy_chat.c:1025 src/conversation.c:2074
 msgid "Info"
 msgstr "Info"
 
@@ -536,15 +536,15 @@ msgid "Whisper"
 msgstr "Murmurer"
 
 #: src/buddy_chat.c:865 src/buddy_chat.c:981 src/buddy_chat.c:1027
-#: src/conversation.c:2084
+#: src/conversation.c:2085
 msgid "Send"
 msgstr "Envoyer"
 
-#: src/buddy_chat.c:1021 src/conversation.c:2061
+#: src/buddy_chat.c:1021 src/conversation.c:2062
 msgid "Block"
 msgstr "Bloquer"
 
-#: src/buddy_chat.c:1023 src/conversation.c:2067 src/dialogs.c:372
+#: src/buddy_chat.c:1023 src/conversation.c:2068 src/dialogs.c:372
 #: src/dialogs.c:397
 msgid "Warn"
 msgstr "Donner un Avertissement"
@@ -671,7 +671,7 @@ msgid "Enable logging"
 msgstr "Activer la Connection"
 
 #: src/conversation.c:1643 src/conversation.c:1644 src/dialogs.c:1455
-#: src/dialogs.c:1648 src/dialogs.c:3175 src/dialogs.c:3786
+#: src/dialogs.c:1648 src/dialogs.c:3175 src/dialogs.c:3789
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -688,12 +688,12 @@ msgstr "Son"
 msgid "Enable sounds"
 msgstr "Activer le son"
 
-#: src/conversation.c:1928
+#: src/conversation.c:1929
 #, fuzzy
 msgid "Gaim - Conversations"
 msgstr "Gaim - Tracer la Conversation"
 
-#: src/conversation.c:2003
+#: src/conversation.c:2004
 #, fuzzy
 msgid "Send message as: "
 msgstr "Son à l'envoi d'un message"
@@ -1105,8 +1105,8 @@ msgstr "Selectionner la couleur de texte"
 msgid "Error writing file %s"
 msgstr "Erreur à l'écriture du fichier %s"
 
-#: src/dialogs.c:2770 src/dialogs.c:2892 src/dialogs.c:3637 src/oscar.c:1800
-#: src/oscar.c:2216 src/toc.c:1394 src/toc.c:1411 src/toc.c:1499
+#: src/dialogs.c:2770 src/dialogs.c:2892 src/dialogs.c:3637 src/oscar.c:1813
+#: src/oscar.c:2229 src/toc.c:1394 src/toc.c:1411 src/toc.c:1499
 #: src/toc.c:1676 src/toc.c:1706
 msgid "Error"
 msgstr "Erreur"
@@ -1191,7 +1191,7 @@ msgstr ""
 msgid "Okay"
 msgstr "Ok"
 
-#: src/dialogs.c:3781
+#: src/dialogs.c:3784
 #, fuzzy
 msgid "Clear"
 msgstr "Fermer"
@@ -1394,43 +1394,43 @@ msgstr "Impossible de se Connecter"
 msgid "Connection established, cookie sent"
 msgstr "Connection établie, cookie envoyé"
 
-#: src/oscar.c:843 src/oscar.c:2100
+#: src/oscar.c:847 src/oscar.c:2113
 #, fuzzy, c-format
 msgid "<B>Direct IM with %s established</B>"
 msgstr "<HR><B>%s s'est connecté%s%s.</B><BR><HR>"
 
 #. message too large
-#: src/oscar.c:1293
+#: src/oscar.c:1297
 #, fuzzy, c-format
 msgid "You missed a message from %s because it was too large."
 msgstr ""
 "Vous avez raté un message de %s parce qu'il était trop gros (le message :))."
 
-#: src/oscar.c:1298
+#: src/oscar.c:1302
 #, c-format
 msgid "You missed a message from %s for unknown reasons."
 msgstr ""
 
-#: src/oscar.c:1333
+#: src/oscar.c:1337
 #, c-format
 msgid "Your message to %s did not get sent: %s"
 msgstr ""
 
-#: src/oscar.c:1334 src/oscar.c:1353
+#: src/oscar.c:1338 src/oscar.c:1357
 msgid "Reason unknown"
 msgstr ""
 
-#: src/oscar.c:1352
+#: src/oscar.c:1356
 #, c-format
 msgid "User information for %s unavailable: %s"
 msgstr ""
 
-#: src/oscar.c:1388
+#: src/oscar.c:1392
 #, c-format
 msgid "%s has no %s."
 msgstr ""
 
-#: src/oscar.c:1395
+#: src/oscar.c:1399
 msgid ""
 "Username : <B>%s</B>  %s <BR>\n"
 "Warning Level : <B>%d %%</B><BR>\n"
@@ -1444,25 +1444,25 @@ msgid ""
 "SRC=\"admin_icon.gif\"> : Administrator"
 msgstr ""
 
-#: src/oscar.c:1430
+#: src/oscar.c:1437
 msgid "Your connection may be lost."
 msgstr ""
 
-#: src/oscar.c:1431
+#: src/oscar.c:1438
 msgid "AOL error"
 msgstr ""
 
-#: src/oscar.c:2157
+#: src/oscar.c:2170
 #, fuzzy, c-format
 msgid "<B>Direct IM with %s closed</B>"
 msgstr "<HR><B>%s s'est connecté%s%s.</B><BR><HR>"
 
-#: src/oscar.c:2216
+#: src/oscar.c:2229
 #, fuzzy
 msgid "Unable to open Direct IM"
 msgstr "Impossible de se connecter à AIM."
 
-#: src/oscar.c:2226
+#: src/oscar.c:2239
 #, c-format
 msgid ""
 "You have selected to open a Direct IM connection with %s. Doing this will "
@@ -1470,17 +1470,17 @@ msgid ""
 "continue?"
 msgstr ""
 
-#: src/oscar.c:2243
+#: src/oscar.c:2256
 #, fuzzy
 msgid "Get Away Msg"
 msgstr "Message d'absence"
 
-#: src/oscar.c:2251
+#: src/oscar.c:2264
 #, fuzzy
 msgid "Direct IM"
 msgstr "Information Personnelle"
 
-#: src/oscar.c:2443
+#: src/oscar.c:2456
 msgid ""
 "Unfortunately, currently Oscar only allows new user registration by going to "
 "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no"

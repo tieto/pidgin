@@ -15,7 +15,7 @@ Group:		Applications/Internet
 Vendor:		Pimpin' Penguins
 Url:		http://www.marko.net/gaim/
 Source:		%{name}-%{version}.tar.gz
-Packager:	Rob Flynn <rob@tgflinux.com>
+Packager:	Rob Flynn <rob@marko.net>
 BuildRoot:	/var/tmp/%{name}-%{version}-root
 Requires:	gtk+ >= 1.2.3
 
