@@ -29,6 +29,8 @@
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
+#include "gtkblist.h"
+#include "gtkstatusbox.h"
 #include "gtkstock.h"
 #include "util.h"
 
@@ -39,24 +41,32 @@
 static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		const char *text, size_t step, size_t step_count)
 {
-	/* SME - Pulse the statusselector */
+	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	if (!gtkblist)
+		return;
+	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
+					   (gaim_connections_get_connecting() != NULL));
+	gtk_gaim_status_box_pulse_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
 }
 
 static void gaim_gtk_connection_connected(GaimConnection *gc)
 {
-
-#if 0 /* XXX CORE/UI */
-	do_away_menu();
-#endif
+	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	if (!gtkblist)
+		return;
+	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
+					   (gaim_connections_get_connecting() != NULL));
 	gaim_gtk_blist_update_protocol_actions();
 
 }
 
 static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 {
-#if 0 /* XXX CORE/UI */
-	do_away_menu();
-#endif
+	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	if (!gtkblist)
+		return;
+	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
+					   (gaim_connections_get_connecting() != NULL));
 	gaim_gtk_blist_update_protocol_actions();
 
 	if (gaim_connections_get_all() != NULL)

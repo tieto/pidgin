@@ -53,7 +53,7 @@
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
 #include "gtksound.h"
-#include "gtkstatusselector.h"
+#include "gtkstatusbox.h"
 #include "gtkutils.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -3353,7 +3353,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkTreeViewColumn *column;
 	GtkWidget *menu;
 	GtkWidget *sw;
-	GtkWidget *selector;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -3495,9 +3494,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
-	selector = gaim_gtk_status_selector_new();
-	gtk_widget_show(selector);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), selector, FALSE, TRUE, 0);
+	gtkblist->statusbox = gtk_gaim_status_box_new();
+
+	gtk_widget_show(gtkblist->statusbox);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
 
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
@@ -4747,6 +4747,11 @@ GaimBlistUiOps *
 gaim_gtk_blist_get_ui_ops(void)
 {
 	return &blist_ui_ops;
+}
+
+GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist()
+{
+        return gtkblist;
 }
 
 static void account_signon_cb(GaimConnection *gc, gpointer z)

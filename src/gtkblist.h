@@ -83,7 +83,7 @@ struct _GaimGtkBuddyList {
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 
 	GaimBlistNode *selected_node;   /**< The currently selected node */
-
+        GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
 	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
 
@@ -120,6 +120,17 @@ void gaim_gtk_blist_uninit(void);
  * @return The GTK list operations structure.
  */
 GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
+
+/**
+ * Returns the default gtk buddy list
+ * 
+ * There's normally only one buddy list window, but that isn't a necessity. This function
+ * returns the GaimGtkBuddyList we're most likely wanting to work with. This is slightly
+ * cleaner than an externed global.
+ * 
+ * @return The default GTK buddy list
+ */
+GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist();
 
 /**
  * Returns the base image to represent the account, based on the currently selected theme

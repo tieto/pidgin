@@ -79,6 +79,18 @@ static struct StockIcon
 	{ GAIM_STOCK_TEXT_SMALLER,    "buttons", "text_smaller.png"         },
 	{ GAIM_STOCK_TYPED,           "gaim",    "typed.png"                },
 	{ GAIM_STOCK_TYPING,          "gaim",    "typing.png"               },
+	{ GAIM_STOCK_STATUS_ONLINE,   "gaim",    "status-online.png"        },
+	{ GAIM_STOCK_STATUS_OFFLINE,  "gaim",    "status-offline.png"       },
+	{ GAIM_STOCK_STATUS_AWAY,     "gaim",    "status-away.png"          },
+	{ GAIM_STOCK_STATUS_INVISIBLE,"gaim",    "status-invisible.png"     },
+	{ GAIM_STOCK_STATUS_TYPING0,  "gaim",    "status-typing0.png"       },
+	{ GAIM_STOCK_STATUS_TYPING1,  "gaim",    "status-typing1.png"       },
+	{ GAIM_STOCK_STATUS_TYPING2,  "gaim",    "status-typing2.png"       },
+	{ GAIM_STOCK_STATUS_TYPING3,  "gaim",    "status-typing3.png"       },
+	{ GAIM_STOCK_STATUS_CONNECT0, "gaim",    "status-connect0.png"      },
+	{ GAIM_STOCK_STATUS_CONNECT1, "gaim",    "status-connect1.png"      },
+	{ GAIM_STOCK_STATUS_CONNECT2, "gaim",    "status-connect2.png"      },
+	{ GAIM_STOCK_STATUS_CONNECT3, "gaim",    "status-connect3.png"      },
 	{ GAIM_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
 	{ GAIM_STOCK_WARN,            NULL,      GTK_STOCK_DIALOG_WARNING   }
 };
@@ -221,6 +233,7 @@ gaim_gtk_stock_init(void)
 	/* register custom icon sizes */
 	gtk_icon_size_register(GAIM_ICON_SIZE_LOGO, 330, 90);
 	gtk_icon_size_register(GAIM_ICON_SIZE_DIALOG_COOL, 40, 60);
+	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS, 30, 30);
 
 	g_object_unref(G_OBJECT(icon_factory));
 

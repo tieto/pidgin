@@ -171,7 +171,7 @@ gaim_SOURCES = \
 	gtksavedstatuses.c \
 	gtksound.c \
 	gtksourceiter.c \
-	gtkstatusselector.c \
+	gtkstatusbox.c \
 	gtkstock.c \
 	gtkthemes.c \
 	gtkutils.c \
@@ -206,7 +206,7 @@ gaim_headers = \
 	gtksavedstatuses.h \
 	gtksound.h \
 	gtksourceiter.h \
-	gtkstatusselector.h \
+	gtkstatusbox.h \
 	gtkstock.h \
 	gtkutils.h \
 	internal.h

@@ -68,6 +68,18 @@
 #define GAIM_STOCK_SIGN_OFF        "gaim-sign-off"
 #define GAIM_STOCK_SIGN_ON         "gaim-sign-on"
 #define GAIM_STOCK_SMILEY          "gaim-smiley"
+#define GAIM_STOCK_STATUS_ONLINE   "gaim-status-online"
+#define GAIM_STOCK_STATUS_AWAY     "gaim-status-away"
+#define GAIM_STOCK_STATUS_INVISIBLE "gaim-status-invisible"
+#define GAIM_STOCK_STATUS_OFFLINE   "gaim-status-offline"
+#define GAIM_STOCK_STATUS_TYPING0  "gaim-status-typing0"
+#define GAIM_STOCK_STATUS_TYPING1  "gaim-status-typing1"
+#define GAIM_STOCK_STATUS_TYPING2  "gaim-status-typing2"
+#define GAIM_STOCK_STATUS_TYPING3  "gaim-status-typing3"
+#define GAIM_STOCK_STATUS_CONNECT0 "gaim-status-connect0"
+#define GAIM_STOCK_STATUS_CONNECT1 "gaim-status-connect1"
+#define GAIM_STOCK_STATUS_CONNECT2 "gaim-status-connect2"
+#define GAIM_STOCK_STATUS_CONNECT3 "gaim-status-connect3"
 #define GAIM_STOCK_TEXT_BIGGER     "gaim-text-bigger"
 #define GAIM_STOCK_TEXT_NORMAL     "gaim-text-normal"
 #define GAIM_STOCK_TEXT_SMALLER    "gaim-text-smaller"
@@ -82,6 +94,7 @@
  */
 #define GAIM_ICON_SIZE_DIALOG_COOL "gaim-icon-size-dialog-cool"
 #define GAIM_ICON_SIZE_LOGO        "gaim-icon-size-logo"
+#define GAIM_ICON_SIZE_STATUS      "gaim-icon-size-status"
 
 /**
  * Sets up the gaim stock repository.
