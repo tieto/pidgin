@@ -95,11 +95,11 @@ msgstr "Gaim - Abwesenheit!"
 
 #: src/away.c:264 src/gnome_applet_mgr.c:262
 msgid "New Away Message"
-msgstr ""
+msgstr "Neue Abwesenheits-Mitteilung"
 
 #: src/away.c:283
 msgid "Remove Away Message"
-msgstr ""
+msgstr "Abwesenheits-Mitteilung löschen"
 
 #: src/buddy.c:143
 #, c-format
@@ -126,7 +126,7 @@ msgstr ""
 #: src/buddy.c:273 src/buddy.c:281 src/buddy.c:434 src/buddy.c:1829
 #: src/buddy_chat.c:561
 msgid "IM"
-msgstr ""
+msgstr "Telegramm"
 
 #: src/buddy.c:274 src/buddy.c:282 src/buddy.c:440 src/buddy.c:1830
 #: src/buddy_chat.c:563 src/conversation.c:1096 src/rvous.c:634
@@ -143,15 +143,15 @@ msgstr ""
 
 #: src/buddy.c:460
 msgid "Toggle Logging"
-msgstr ""
+msgstr "Mitschnitt ein"
 
 #: src/buddy.c:466
 msgid "Add Buddy Pounce"
-msgstr "Buddy-Alert hinzufügen"
+msgstr "Buddy-Alert Hinzufügen"
 
 #: src/buddy.c:569 src/buddy.c:1017 src/buddy.c:1987 src/dialogs.c:1480
 msgid "Permit"
-msgstr ""
+msgstr "Zalassen
 
 #: src/buddy.c:585 src/dialogs.c:1475
 msgid "Deny"
@@ -159,7 +159,7 @@ msgstr ""
 
 #: src/buddy.c:1298
 msgid "New Buddy Pounce"
-msgstr ""
+msgstr "Neuer Buddy-Alert"
 
 #: src/buddy.c:1316
 msgid "Remove Buddy Pounce"
@@ -222,7 +222,7 @@ msgstr "Abwesenheit"
 
 #: src/buddy.c:1743
 msgid "Buddy Pounce"
-msgstr ""
+msgstr "Buddy-Alert"
 
 #: src/buddy.c:1751
 msgid "Search for Buddy"
@@ -238,15 +238,15 @@ msgstr "nach Profil"
 
 #: src/buddy.c:1765
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: src/buddy.c:1768
 msgid "User Info"
-msgstr ""
+msgstr "Benutzer-Info"
 
 #: src/buddy.c:1772
 msgid "Directory Info"
-msgstr ""
+msgstr "Profil"
 
 #: src/buddy.c:1776
 msgid "Change Password"
@@ -254,19 +254,19 @@ msgstr ""
 
 #: src/buddy.c:1790
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
 #: src/buddy.c:1795
 msgid "About"
-msgstr ""
+msgstr "Info Über"
 
 #: src/buddy.c:1843
 msgid "Buddy List"
-msgstr ""
+msgstr "Buddy-Liste"
 
 #: src/buddy.c:1866
 msgid "Information on selected Buddy"
-msgstr ""
+msgstr "Info über gewählten Buddy"
 
 #: src/buddy.c:1867
 msgid "Send Instant Message"
@@ -274,15 +274,15 @@ msgstr "Telegramm"
 
 #: src/buddy.c:1868
 msgid "Start/join a Buddy Chat"
-msgstr ""
+msgstr "Chat starten"
 
 #: src/buddy.c:1903
 msgid "Add a new Buddy"
-msgstr ""
+msgstr "Buddy Hinzufügen"
 
 #: src/buddy.c:1904
 msgid "Remove selected Buddy"
-msgstr ""
+msgstr "Gewählten Buddy entfernen"
 
 #: src/buddy.c:1927
 msgid "Allow anyone"
@@ -298,11 +298,11 @@ msgstr ""
 
 #: src/buddy.c:1963
 msgid "Add buddy to permit/deny"
-msgstr ""
+msgstr "Buddy zu Sperren/Zulassen hinzufügen"
 
 #: src/buddy.c:1964
 msgid "Remove buddy from permit/deny"
-msgstr ""
+msgstr "Buddy aus Sperren/Zulassen löschen"
 
 #: src/buddy.c:1983
 msgid "Online"
@@ -310,19 +310,19 @@ msgstr ""
 
 #: src/buddy.c:1985
 msgid "Edit Buddies"
-msgstr ""
+msgstr "Budies bearbeiten"
 
 #: src/buddy.c:2034
 msgid "Gaim - Buddy List"
-msgstr ""
+msgstr "Gaim - Buddy-Liste"
 
 #: src/buddy_chat.c:102
 msgid "Join"
-msgstr ""
+msgstr "Teilnehmen"
 
 #: src/buddy_chat.c:112
 msgid "Join what group:"
-msgstr ""
+msgstr "An wlecher Gruppe teinlnehmen:"
 
 #: src/buddy_chat.c:138
 msgid "Join Chat"
@@ -330,15 +330,15 @@ msgstr ""
 
 #: src/buddy_chat.c:177 src/buddy_chat.c:557
 msgid "Invite"
-msgstr ""
+msgstr "Einladen"
 
 #: src/buddy_chat.c:188
 msgid "Invite who?"
-msgstr ""
+msgstr "Wen einladen"
 
 #: src/buddy_chat.c:192
 msgid "With message:"
-msgstr ""
+msgstr "Mit Nachricht:"
 
 #: src/buddy_chat.c:219
 msgid "Invite to Buddy Chat"
@@ -346,50 +346,50 @@ msgstr ""
 
 #: src/buddy_chat.c:558
 msgid "Whisper"
-msgstr ""
+msgstr "Flüstern"
 
 #: src/buddy_chat.c:559 src/conversation.c:1095 src/dialogs.c:1273
 msgid "Send"
-msgstr ""
+msgstr "Abschicken"
 
 #: src/buddy_chat.c:562
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorieren"
 
 #: src/buddy_chat.c:627 src/conversation.c:1180
 msgid "Bold"
-msgstr ""
+msgstr "Fetter"
 
 #: src/buddy_chat.c:627 src/conversation.c:1180 src/prefs.c:773
 msgid "Bold Text"
-msgstr ""
+msgstr "Fetter Text"
 
 #: src/buddy_chat.c:631 src/buddy_chat.c:632 src/conversation.c:1184
 #: src/conversation.c:1185
 msgid "Italics"
-msgstr ""
+msgstr "Kursiver"
 
 #: src/buddy_chat.c:631 src/conversation.c:1184 src/prefs.c:774
 msgid "Italics Text"
-msgstr ""
+msgstr "Kursiver Text"
 
 #: src/buddy_chat.c:635 src/buddy_chat.c:636 src/conversation.c:1188
 #: src/conversation.c:1189
 msgid "Underline"
-msgstr ""
+msgstr "Unterstrichener"
 
 #: src/buddy_chat.c:635 src/conversation.c:1188
 msgid "Underline Text"
-msgstr ""
+msgstr "Unterstrichener Text"
 
 #: src/buddy_chat.c:639 src/buddy_chat.c:640 src/conversation.c:1192
 #: src/conversation.c:1193
 msgid "Strike"
-msgstr ""
+msgstr "Durchgestrichener through"
 
 #: src/buddy_chat.c:639 src/conversation.c:1192
 msgid "Strike through Text"
-msgstr ""
+msgstr "Durchgestrichener through Text"
 
 #: src/buddy_chat.c:642 src/conversation.c:1195
 msgid "Small"
@@ -397,7 +397,7 @@ msgstr ""
 
 #: src/buddy_chat.c:642 src/conversation.c:1195
 msgid "Decrease font size"
-msgstr ""
+msgstr "Schrift kleiner
 
 #: src/buddy_chat.c:643 src/conversation.c:1196
 msgid "Normal"
@@ -405,7 +405,7 @@ msgstr ""
 
 #: src/buddy_chat.c:643 src/conversation.c:1196
 msgid "Normal font size"
-msgstr ""
+msgstr "Schrift normal
 
 #: src/buddy_chat.c:644 src/conversation.c:1197
 msgid "Big"
@@ -413,7 +413,7 @@ msgstr ""
 
 #: src/buddy_chat.c:644 src/conversation.c:1197
 msgid "Increase font size"
-msgstr ""
+msgstr "Schrift größer"
 
 #: src/buddy_chat.c:648 src/buddy_chat.c:649 src/conversation.c:1208
 #: src/conversation.c:1209
@@ -422,7 +422,7 @@ msgstr ""
 
 #: src/buddy_chat.c:648 src/conversation.c:1208
 msgid "Insert Link"
-msgstr ""
+msgstr "Link einfügen"
 
 #: src/buddy_chat.c:792 src/buddy_chat.c:804
 msgid "Buddy Chat"
@@ -440,7 +440,7 @@ msgstr ""
 #: src/conversation.c:496 src/dialogs.c:2168 src/dialogs.c:2239
 #: src/rvous.c:222 src/rvous.c:491
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 #: src/conversation.c:670
 #, c-format
@@ -454,11 +454,11 @@ msgstr ""
 
 #: src/conversation.c:1097 src/dialogs.c:372 src/rvous.c:635
 msgid "Warn"
-msgstr ""
+msgstr "Warnen"
 
 #: src/conversation.c:1106
 msgid "Block"
-msgstr ""
+msgstr "Sperren
 
 #: src/conversation.c:1200 src/conversation.c:1201
 msgid "Font"
@@ -471,15 +471,15 @@ msgstr ""
 
 #: src/conversation.c:1212 src/conversation.c:1213
 msgid "Color"
-msgstr ""
+msgstr "Farbe"
 
 #: src/conversation.c:1212
 msgid "Text Color"
-msgstr ""
+msgstr "Text-Farbe"
 
 #: src/conversation.c:1216 src/conversation.c:1217
 msgid "Logging"
-msgstr "Mitschnitte an/aus"
+msgstr ""
 
 #: src/conversation.c:1216
 msgid "Enable logging"
