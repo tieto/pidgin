@@ -1007,7 +1007,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 {
         struct buddy_pounce *bp = g_new0(struct buddy_pounce, 1);
 
-        if(strlen(gtk_entry_get_text(GTK_ENTRY(b->nameentry))) == 0) {
+        if (strlen(gtk_entry_get_text(GTK_ENTRY(b->nameentry))) == 0) {
           	do_error_dialog(_("Please enter a buddy to pounce."), _("Buddy Pounce Error"));
 	        g_free(bp);
                 return;
@@ -3744,7 +3744,10 @@ show_log (char *name)
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	dialogwindows = g_list_prepend(dialogwindows, window);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "log", "Gaim");
-	g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
+	if (name)
+		g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
+	else
+		g_snprintf(buf, BUF_LONG, "Gaim - System Log" );
 	gtk_window_set_title(GTK_WINDOW(window), buf);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
