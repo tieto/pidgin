@@ -38,7 +38,7 @@ version 0.78cvs
 	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Ampersands in links should work right (Tim Ringenbach)
 	* IM Image support for AIM is back. It still depends on Direct
-	  Connect, and both are still as bugger as ever, if not more so.
+	  Connect, and both are still as buggy as ever, if not more so.
 
 	Preference Changes:
 	* Added a "none" smiley theme to replace the "Show graphical
