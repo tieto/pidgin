@@ -54,6 +54,8 @@ void serv_login(struct aim_user *user)
 		}
 
 		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name());
+		user->connecting = TRUE;
+		plugin_event(event_connecting, user, 0, 0, 0);
 		p->login(user);
 	}
 }

@@ -757,6 +757,7 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		buf = g_malloc0(1);
 		break;
 	case event_new_conversation:
+	case event_del_conversation:
 		buf = g_strdup_printf("'%s'", escape_quotes(arg1));
 		break;
 	case event_im_displayed_sent:
@@ -780,6 +781,7 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		}
 		break;
 	default:
+		debug_printf("someone forgot to handle %s in the perl binding\n", event_name(event));
 		return 0;
 	}
 

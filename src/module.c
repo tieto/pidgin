@@ -363,6 +363,12 @@ char *event_name(enum gaim_event event)
 	case event_got_typing:
 		sprintf(buf, "event_got_typing");
 		break;
+	case event_del_conversation:
+		sprintf(buf, "event_del_conversation");
+		break;
+	case event_connecting:
+		sprintf(buf, "event_connecting");
+		break;
 	default:
 		sprintf(buf, "event_unknown");
 		break;
@@ -376,6 +382,12 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 		return;
 
 	switch (event) {
+		case event_blist_update:
+			/* this happens *really* often */
+			if (opt_debug) {
+				debug_printf("%s\n", event_name(event));
+			}
+			break;
 	        case event_quit:
 			debug_printf("%s\n", event_name(event));
 			break;
@@ -385,10 +397,10 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 					((struct gaim_connection *)arg1)->username);
 			break;
 		case event_new_conversation:
-			debug_printf("event_new_conversation: %s\n", (char *)arg1);
+			debug_printf("%s: %s\n", event_name(event), (char *)arg1);
 			break;
 		case event_error:
-			debug_printf("event_error: %d\n", (int)arg1);
+			debug_printf("%s: %d\n", event_name(event), (int)arg1);
 			break;
 		case event_buddy_signon:
 		case event_buddy_signoff:
@@ -398,11 +410,11 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 	        case event_buddy_unidle:
 	        case event_set_info:
 	        case event_got_typing:
-		debug_printf("%s: %s %s\n", event_name(event),
+			debug_printf("%s: %s %s\n", event_name(event),
 					((struct gaim_connection *)arg1)->username, (char *)arg2);
 			break;
 		case event_chat_leave:
-			debug_printf("event_chat_leave: %s %d\n",
+			debug_printf("%s: %s %d\n", event_name(event),
 					((struct gaim_connection *)arg1)->username, (int)arg2);
 			break;
 		case event_im_send:
@@ -464,7 +476,14 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 					(char *)arg2, (char *)arg3,
 					(char *)arg4 ? (char *)arg4 : "");
 			break;
+		case event_del_conversation:
+			debug_printf("%s: %s\n", event_name(event), (char *)arg1);
+			break;
+		case event_connecting:
+			debug_printf("%s: %s\n", event_name(event), ((struct aim_user *)arg1)->username);
+			break;
 		default:
+			debug_printf("%s: um, right. yeah.\n", event_name(event));
 			break;
 	}
 }
@@ -503,6 +522,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_new_conversation:
 			case event_del_conversation:
 			case event_error:
+			case event_connecting:
 				one = g->function;
 				one(arg1, g->data);
 				break;

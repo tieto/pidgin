@@ -64,6 +64,7 @@ struct aim_user {
 	char iconfile[256];
 
 	struct gaim_connection *gc;
+	gboolean connecting;
 };
 	
 enum gaim_event {
@@ -98,6 +99,7 @@ enum gaim_event {
 	event_chat_send_invite,
 	event_got_typing,
 	event_del_conversation,
+	event_connecting,
 	/* any others? it's easy to add... */
 };
 

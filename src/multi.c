@@ -101,7 +101,6 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 	GSList *h;
 	struct group *m;
 	struct buddy *n;
-	connections = g_slist_remove(connections, gc);
 	while (g) {
 		m = (struct group *)g->data;
 		g = g_slist_remove(g, m);
@@ -126,7 +125,7 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		g = g_slist_remove(g, g->data);
 	}
 	g_free(gc);
-/* fixme: docklet */
+
 	if (!connections && mainwindow)
 		gtk_widget_show(mainwindow);
 }
@@ -1156,6 +1155,7 @@ void account_online(struct gaim_connection *gc)
 	redo_convo_menus();
 	gaim_setup(gc);
 
+	gc->user->connecting = FALSE;
 	plugin_event(event_signon, gc, 0, 0, 0);
 	system_log(log_signon, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
@@ -1437,15 +1437,23 @@ void signoff_all()
 
 void signoff(struct gaim_connection *gc)
 {
-	/* core stuff */
-	debug_printf("date: %s\n", full_date());
-	plugin_event(event_signoff, gc, 0, 0, 0);
-	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
-
 	/* UI stuff */
 	convo_menu_remove(gc);
 	remove_icon_data(gc);
+
+	/* core stuff */
+	/* remove this here so plugins get a sensible count of connections */
+	connections = g_slist_remove(connections, gc);
+	debug_printf("date: %s\n", full_date());
+	plugin_event(event_signoff, gc, 0, 0, 0);
+	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
+	/* set this in case the plugin died before really connecting.
+	   do it after calling the plugins so they can determine if
+	   this user was ever on-line or not */
+	gc->user->connecting = FALSE;
 	serv_close(gc);
+
+	/* more UI stuff */
 	redo_buddy_list();
 	build_edit_tree();
 	do_away_menu();
@@ -1453,22 +1461,12 @@ void signoff(struct gaim_connection *gc)
 	redo_convo_menus();
 	update_privacy_connections();
 
+	/* in, out, shake it all about */
 	if (connections)
 		return;
 
 	destroy_all_dialogs();
 	destroy_buddy();
-/* fixme: docklet
-	set_user_state(offline);
-	applet_buddy_show = FALSE;
-
-	if (applet) {
-		/* These don't have any purpose if the applet is gone :-P
-		applet_widget_unregister_callback(APPLET_WIDGET(applet), "signoff");
-		applet_widget_register_callback(APPLET_WIDGET(applet),
-						"autologin", _("Auto-login"), (AppletCallbackFunc)auto_login, NULL);
-		remove_applet_away();
-	} */
 
 	show_login();
 }

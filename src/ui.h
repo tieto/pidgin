@@ -269,6 +269,7 @@ extern struct away_message *default_away;
 extern int auto_away;
 extern GtkWidget *awaymenu;
 extern GtkWidget *clistqueue; 
+extern GtkWidget *imaway;
 
 /* Globals in buddy.c */
 extern GtkWidget *buddies;
@@ -349,7 +350,6 @@ extern void redo_buddy_list(); /* you really shouldn't call this function */
 extern void set_blist_tab();
 extern void hide_buddy_list();
 extern void unhide_buddy_list();
-extern void toggle_buddy_list();
 extern void docklet_add();
 extern void docklet_remove();
 

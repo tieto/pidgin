@@ -1995,40 +1995,26 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 
 /* used by this file, and by iconaway.so */
 void hide_buddy_list() {
-	if (!blist) return;
-	if (!connections || docklet_refcount) {
-		gtk_widget_hide(blist);
-	} else {
-		gtk_window_iconify(GTK_WINDOW(blist));
-	}
-	blist_hidden = TRUE;
-}
-
-/* shared code... not in lschiere/faceprint tree though. oh well */
-static void move_buddy_list() {
-	if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
-		if (blist_pos.width != 0) {	/* Sanity check! */
-			gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
-						 blist_pos.y - blist_pos.yoff);
-			gtk_widget_set_usize(blist, blist_pos.width, blist_pos.height);
+	if (blist) {
+		if (!connections || docklet_refcount) {
+			gtk_widget_hide(blist);
+		} else {
+			gtk_window_iconify(GTK_WINDOW(blist));
 		}
 	}
 }
 
 /* mostly used by code in this file */
 void unhide_buddy_list() {
-	if (!blist) return;
-	gtk_window_present(GTK_WINDOW(blist));
-	move_buddy_list();
-	blist_hidden = FALSE;
-}
-
-/* used by the docklet */
-void toggle_buddy_list() {
-	if (blist_hidden) {
-		unhide_buddy_list();
-	} else {
-		hide_buddy_list();
+	if (blist) {
+		gtk_window_present(GTK_WINDOW(blist));
+		if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
+			if (blist_pos.width != 0) {	/* Sanity check! */
+				gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
+							 blist_pos.y - blist_pos.yoff);
+				gtk_widget_set_usize(blist, blist_pos.width, blist_pos.height);
+			}
+		}
 	}
 }
 
@@ -2441,9 +2427,6 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 	int save = 0;
 	gdk_window_get_position(blist->window, &x, &y);
 	gdk_window_get_size(blist->window, &width, &height);
-
-/* fixme: docklet		*
- *	if (applet_buddy_show){	*/
 
 	if (e->send_event) {	/* Is a position event */
 		if (blist_pos.x != x || blist_pos.y != y)
@@ -2910,8 +2893,9 @@ void show_buddy_list()
 
 
 	gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
-	move_buddy_list();
-	blist_hidden = FALSE;
+
+	/* this conveniently moves it to the right place and stuff */
+	unhide_buddy_list();
 }
 
 void refresh_buddy_window()

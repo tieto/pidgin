@@ -302,8 +302,6 @@ void show_login()
 	gtk_widget_show(bbox);
 
 	cancel = gtk_button_new_with_label(_("Quit"));
-/* fixme: docklet					*
- *	cancel = gtk_button_new_with_label(_("Close"));	*/
 #ifndef NO_MULTI
 	accts = gtk_button_new_with_label(_("Accounts"));
 #endif
