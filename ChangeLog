@@ -7,10 +7,13 @@ version 0.57
 	  Nathan Walp)
 	* Danish translation added (Thanks, Sarauw Hansen)
 	* Finnish translation update (Thanks, Tero Kuusela)
+	* Japanese translation added (Thanks, Ryosuke Kutsuna)
 	* Jabber improvements (Thanks, Nathan Walp)
 	* More keyboard shortcuts
 	* event_chat_recv takes char**'s, and event_im_recv takes
 	  a *guint32 for flags
+	* Secure hotmail login for MSN (thanks for the tips,
+	  Scott Werndorfer)
 
 version 0.56 (04/11/2002):
 	* German translation update (Thanks Karsten Weiss)
