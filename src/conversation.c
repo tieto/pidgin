@@ -61,6 +61,7 @@ GdkPixmap *dark_icon_pm = NULL;
 GdkBitmap *dark_icon_bm = NULL;
 
 char fontface[64];
+int fontsize = 3;
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
 
@@ -635,6 +636,11 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 		if ((font_options & OPT_FONT_FACE) || c->hasfont) {
 			g_snprintf(buf2, limit, "<FONT FACE=\"%s\">%s</FONT>", c->fontface, buf);
+			strcpy(buf, buf2);
+		}
+
+		if ((font_options & OPT_FONT_SIZE) || c->hassize) {
+			g_snprintf(buf2, limit, "<FONT SIZE=\"%d\">%s</FONT>", c->fontsize, buf);
 			strcpy(buf, buf2);
 		}
 
@@ -1689,6 +1695,8 @@ void show_conv(struct conversation *c)
 	c->log_dialog = NULL;
 	sprintf(c->fontface, "%s", fontface);
 	c->hasfont = 0;
+	c->fontsize = fontsize;
+	c->hassize = 0;
 	c->bgcol = bgcolor;
 	c->hasbg = 0;
 	c->fgcol = fgcolor;

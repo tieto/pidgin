@@ -803,6 +803,11 @@ void update_color(GtkWidget *w, GtkWidget *pic)
 	gtk_style_unref(style);
 }
 
+static void set_font_size(GtkWidget *w, GtkWidget *spin)
+{
+	fontsize = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spin));
+}
+
 static void font_page()
 {
 	GtkWidget *parent;
@@ -812,6 +817,8 @@ static void font_page()
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *select;
+	GtkWidget *spin;
+	GtkObject *adjust;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -891,6 +898,23 @@ static void font_page()
 	gtk_widget_show(select);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	button = gaim_button(_("Font Size for Text"), &font_options, OPT_FONT_SIZE, hbox);
+
+	adjust = gtk_adjustment_new(fontsize, 1, 7, 1, 1, 1);
+	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+	gtk_widget_set_usize(spin, 50, -1);
+	if (!(font_options & OPT_FONT_SIZE))
+		gtk_widget_set_sensitive(GTK_WIDGET(spin), FALSE);
+	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), spin);
+	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(set_font_size),
+			   GTK_WIDGET(spin));
+	gtk_widget_show(spin);
 
 	gtk_widget_show(prefdialog);
 }

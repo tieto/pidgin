@@ -633,6 +633,8 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "font_face")) {
 			if (p->value[0] != NULL)
 				g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
+		} else if (!strcmp(p->option, "font_size")) {
+			fontsize = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "foreground")) {
 			fgcolor.red = atoi(p->value[0]);
 			fgcolor.green = atoi(p->value[1]);
@@ -670,6 +672,7 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tfont_options { %d }\n", font_options);
 	if (fontface)
 		fprintf(f, "\tfont_face { %s }\n", fontface);
+	fprintf(f, "\tfont_size { %d }\n", fontsize);
 	fprintf(f, "\tforeground { %d } { %d } { %d }\n", fgcolor.red, fgcolor.green, fgcolor.blue);
 	fprintf(f, "\tbackground { %d } { %d } { %d }\n", bgcolor.red, bgcolor.green, bgcolor.blue);
 	fprintf(f, "\treport_idle { %d }\n", report_idle);

@@ -1050,6 +1050,11 @@ char *stylize(gchar *text, int length)
 		strcpy(buf, tmp);
 	}
 
+	if (font_options & OPT_FONT_SIZE) {
+		g_snprintf(tmp, length, "<FONT SIZE=\"%d\">%s</FONT>", fontsize, buf);
+		strcpy(buf, tmp);
+	}
+
 	if (font_options & OPT_FONT_FGCOL) {
 		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red,
 			   fgcolor.green, fgcolor.blue, buf);

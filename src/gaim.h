@@ -321,6 +321,8 @@ struct conversation {
 	int makesound;
 	char fontface[128];
 	int hasfont;
+	int fontsize;
+	int hassize;
 	GdkColor bgcol;
 	int hasbg;
 	GdkColor fgcol;
@@ -410,6 +412,7 @@ extern GtkWidget *applet;
 
 /* Globals in dialog.c */
 extern char fontface[64];
+extern int fontsize;
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
 extern int smiley_array[FACE_TOTAL];
@@ -512,6 +515,7 @@ extern int font_options;
 #define OPT_FONT_FACE            0x00000020
 #define OPT_FONT_FGCOL           0x00000040
 #define OPT_FONT_BGCOL           0x00000080
+#define OPT_FONT_SIZE            0x00000100
 
 #define OPT_USR_AUTO		0x00000001
 #define OPT_USR_KEEPALV		0x00000002
