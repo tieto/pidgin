@@ -26,7 +26,7 @@
 	{ \
 		tag += strlen(id "=\""); \
 		c = strchr(tag, '"'); \
-		obj->field = g_strndup(tag, tag - c); \
+		obj->field = g_strndup(tag, c - tag); \
 	}
 
 #define GET_INT_TAG(field, id) \
@@ -35,7 +35,7 @@
 		char buf[16]; \
 		tag += strlen(id "=\""); \
 		c = strchr(tag, '"'); \
-		strncpy(buf, tag, tag - c); \
+		strncpy(buf, tag, c - tag); \
 		obj->field = atoi(buf); \
 	}
 
@@ -62,8 +62,6 @@ msn_object_new_from_string(const char *str)
 	g_return_val_if_fail(!strncmp(str, "<msnobj ", 8), NULL);
 
 	obj = msn_object_new();
-
-	g_return_val_if_fail(str != NULL, NULL);
 
 	GET_STRING_TAG(creator,  "Creator");
 	GET_INT_TAG(size,        "Size");
