@@ -36,9 +36,6 @@ struct _MsnNotification
 	MsnCmdProc *cmdproc;
 	MsnServConn *servconn;
 
-	gboolean destroying;	/**< A flag that states if the notification is on
-							  the process of being destroyed. */
-
 	gboolean in_use;
 };
 

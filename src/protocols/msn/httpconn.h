@@ -28,101 +28,79 @@ typedef struct _MsnHttpConn MsnHttpConn;
 
 #include "servconn.h"
 
+/**
+ * An HTTP Connection.
+ */
 struct _MsnHttpConn
 {
-	MsnSession *session;
-	MsnServConn *servconn;
+	MsnSession *session; /**< The MSN Session. */
+	MsnServConn *servconn; /**< The connection object. */
 
-	char *full_session_id;
-	char *session_id;
+	char *full_session_id; /**< The full session id. */
+	char *session_id; /**< The trimmed session id. */
 
-	int timer;
+	int timer; /**< The timer for polling. */
 
-	gboolean waiting_response;
-	gboolean dirty; /**< The flag that states if we should poll. */
-	gboolean connected;
+	gboolean waiting_response; /**< The flag that states if we are waiting
+								 a response from the server. */
+	gboolean dirty;            /**< The flag that states if we should poll. */
+	gboolean connected;        /**< The flag that states if the connection is on. */
+	gboolean virgin;           /**< The flag that states if this connection
+								 should specify the host (not gateway) to
+								 connect to. */
 
-	char *host;
-	GList *queue;
+	char *host; /**< The HTTP gateway host. */
+	GList *queue; /**< The queue of data chunks to write. */
 
-	int fd;
-	int inpa;
+	int fd; /**< The connection's file descriptor. */
+	int inpa; /**< The connection's input handler. */
 
-	char *rx_buf;
-	int rx_len;
-
-#if 0
-	GQueue *servconn_queue;
-#endif
-
-	gboolean virgin;
+	char *rx_buf; /**< The receive buffer. */
+	int rx_len; /**< The receive buffer lenght. */
 };
 
+/**
+ * Creates a new HTTP connection object.
+ *
+ * @param servconn The connection object.
+ *
+ * @return The new object.
+ */
 MsnHttpConn *msn_httpconn_new(MsnServConn *servconn);
+
+/**
+ * Destroys an HTTP connection object.
+ *
+ * @param httpconn The HTTP connection object.
+ */
 void msn_httpconn_destroy(MsnHttpConn *httpconn);
-size_t msn_httpconn_write(MsnHttpConn *httpconn, const char *buf, size_t size);
-
-gboolean msn_httpconn_connect(MsnHttpConn *httpconn,
-							  const char *host, int port);
-void msn_httpconn_disconnect(MsnHttpConn *httpconn);
-
-#if 0
-void msn_httpconn_queue_servconn(MsnHttpConn *httpconn, MsnServConn *servconn);
-#endif
-
-#if 0
-/**
- * Initializes the HTTP data for a session.
- *
- * @param session The session.
- */
-void msn_http_session_init(MsnSession *session);
 
 /**
- * Uninitializes the HTTP data for a session.
- *
- * @param session The session.
- */
-void msn_http_session_uninit(MsnSession *session);
-
-/**
- * Writes data to the server using the HTTP connection method.
+ * Writes a chunk of data to the HTTP connection.
  *
  * @param servconn    The server connection.
- * @param buf         The data to write.
+ * @param data        The data to write.
  * @param size        The size of the data to write.
- * @param server_type The optional server type.
  *
  * @return The number of bytes written.
  */
-size_t msn_http_servconn_write(MsnServConn *servconn, const char *buf,
-							   size_t size, const char *server_type);
+size_t msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size);
 
 /**
- * Polls the server for data.
+ * Connects the HTTP connection object to a host.
  *
- * @param servconn The server connection.
+ * @param httpconn The HTTP connection object.
+ * @param host The host to connect to.
+ * @param port The port to connect to.
  */
-void msn_http_servconn_poll(MsnServConn *servconn);
+gboolean msn_httpconn_connect(MsnHttpConn *httpconn,
+							  const char *host, int port);
 
 /**
- * Processes an incoming message and returns a string the rest of MSN
- * can deal with.
+ * Disconnects the HTTP connection object.
  *
- * @param servconn The server connection.
- * @param buf      The incoming buffer.
- * @param size     The incoming size.
- * @param ret_buf  The returned buffer.
- * @param ret_len  The returned length.
- * @param error    TRUE if there was an HTTP error.
- *
- * @return TRUE if the returned buffer is ready to be processed.
- *         FALSE otherwise.
+ * @param httpconn The HTTP connection object.
  */
-gboolean msn_http_servconn_parse_data(MsnServConn *servconn,
-									  const char *buf, size_t size,
-									  char **ret_buf, size_t *ret_size,
-									  gboolean *error);
-#endif
+void msn_httpconn_disconnect(MsnHttpConn *httpconn);
 
 #endif /* _MSN_HTTPCONN_H_ */

@@ -43,15 +43,13 @@ msn_cmdproc_destroy(MsnCmdProc *cmdproc)
 {
 	MsnTransaction *trans;
 
-	if (cmdproc->last_trans != NULL)
-		g_free(cmdproc->last_trans);
-
 	while ((trans = g_queue_pop_head(cmdproc->txqueue)) != NULL)
 		msn_transaction_destroy(trans);
 
 	g_queue_free(cmdproc->txqueue);
 
 	msn_history_destroy(cmdproc->history);
+	g_free(cmdproc);
 }
 
 void
@@ -59,11 +57,8 @@ msn_cmdproc_process_queue(MsnCmdProc *cmdproc)
 {
 	MsnTransaction *trans;
 
-	while ((trans = g_queue_pop_head(cmdproc->txqueue)) != NULL &&
-		   cmdproc->error == 0)
-	{
+	while ((trans = g_queue_pop_head(cmdproc->txqueue)) != NULL)
 		msn_cmdproc_send_trans(cmdproc, trans);
-	}
 }
 
 void
@@ -109,18 +104,16 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	size_t len;
 
 	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(cmdproc->ready);
 	g_return_if_fail(trans != NULL);
 
 	servconn = cmdproc->servconn;
+
+	if (!servconn->connected)
+		return;
+
 	msn_history_add(cmdproc->history, trans);
 
 	data = msn_transaction_to_string(trans);
-
-	if (cmdproc->last_trans != NULL)
-		g_free(cmdproc->last_trans);
-
-	cmdproc->last_trans = g_strdup(data);
 
 	len = strlen(data);
 
@@ -153,10 +146,12 @@ msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 	size_t len;
 
 	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(cmdproc->ready);
 	g_return_if_fail(command != NULL);
 
 	servconn = cmdproc->servconn;
+
+	if (!servconn->connected)
+		return;
 
 	if (format != NULL)
 	{
@@ -189,8 +184,10 @@ msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 	va_list arg;
 
 	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(cmdproc->ready);
 	g_return_if_fail(command != NULL);
+
+	if (!cmdproc->servconn->connected)
+		return;
 
 	trans = g_new0(MsnTransaction, 1);
 
@@ -317,19 +314,8 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 						   cmd->command);
 	}
 
-#if 1
-	/* TODO this is really ugly */
-	/* Since commands have not stored payload and we need it for pendent
-	 * commands at the time we process again the same command we will try
-	 * to read again the payload of payload_len size but we will actually
-	 * read sometime else, and reading from server synchronization goes to
-	 * hell. */
-	/* Now we store the payload in the command when we queue them :D */
-
 	if (trans != NULL && trans->pendent_cmd != NULL)
-		if (cmdproc->ready)
-			msn_transaction_unqueue_cmd(trans, cmdproc);
-#endif
+		msn_transaction_unqueue_cmd(trans, cmdproc);
 }
 
 void
@@ -343,33 +329,4 @@ msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command)
 	cmdproc->last_cmd = msn_command_from_string(command);
 
 	msn_cmdproc_process_cmd(cmdproc, cmdproc->last_cmd);
-}
-
-void
-msn_cmdproc_show_error(MsnCmdProc *cmdproc, int error)
-{
-	GaimConnection *gc =
-		gaim_account_get_connection(cmdproc->session->account);
-
-	char *tmp;
-
-	tmp = NULL;
-
-	switch (error)
-	{
-		case MSN_ERROR_MISC:
-			tmp = _("Miscellaneous error"); break;
-		case MSN_ERROR_SIGNOTHER:
-			gc->wants_to_die = TRUE;
-			tmp = _("You have signed on from another location."); break;
-		case MSN_ERROR_SERVDOWN:
-			tmp = _("The MSN servers are going down temporarily."); break;
-		default:
-			break;
-	}
-
-	if (tmp != NULL)
-	{
-		gaim_connection_error(gc, tmp);
-	}
 }

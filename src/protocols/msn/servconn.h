@@ -32,21 +32,30 @@ typedef struct _MsnServConn MsnServConn;
 #include "proxy.h"
 #include "httpconn.h"
 
-/*
- * Connection types
+/**
+ * Connection error types.
  */
 typedef enum
 {
-	MSN_SERVER_NS,
-	MSN_SERVER_SB,
-	MSN_SERVER_NX,
-	MSN_SERVER_DC,
-	MSN_SERVER_HT
+	MSN_SERVCONN_ERROR_NONE,
+	MSN_SERVCONN_ERROR_CONNECT,
+	MSN_SERVCONN_ERROR_WRITE,
+	MSN_SERVCONN_ERROR_READ,
+
+} MsnServConnError;
+
+/**
+ * Connection types.
+ */
+typedef enum
+{
+	MSN_SERVCONN_NS,
+	MSN_SERVCONN_SB
 
 } MsnServConnType;
 
-/*
- * A Connection
+/**
+ * A Connection.
  */
 struct _MsnServConn
 {
@@ -58,8 +67,6 @@ struct _MsnServConn
 	gboolean processing;  /**< A flag that states if something is working
 							with this connection. */
 	gboolean wasted;      /**< A flag that states if it should be destroyed. */
-	gboolean destroying;  /**< A flag that states if the connection is on
-							the process of being destroyed. */
 
 	char *host; /**< The host this connection is connected or should be
 				  connected to. */
@@ -147,5 +154,13 @@ void msn_servconn_set_destroy_cb(MsnServConn *servconn,
  */
 size_t msn_servconn_write(MsnServConn *servconn, const char *buf,
 						  size_t size);
+
+/**
+ * Function to call whenever an error related to a switchboard occurs.
+ *
+ * @param servconn The servconn.
+ * @param error The error that happened.
+ */
+void msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error);
 
 #endif /* _MSN_SERVCONN_H_ */

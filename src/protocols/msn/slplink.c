@@ -213,15 +213,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			slplink->swboard->slplink = slplink;
 		}
 
-		if (!g_queue_is_empty(slplink->swboard->im_queue) ||
-			slplink->swboard->empty)
-		{
-			msn_switchboard_queue_msg(slplink->swboard, msg);
-		}
-		else
-		{
-			msn_switchboard_send_msg(slplink->swboard, msg);
-		}
+		msn_switchboard_send_msg(slplink->swboard, msg, TRUE);
 	}
 }
 

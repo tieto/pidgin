@@ -673,22 +673,23 @@ msn_login(GaimAccount *account, GaimStatus *status)
 		http_method = TRUE;
 
 	host = gaim_account_get_string(account, "server", MSN_SERVER);
-	port = gaim_account_get_int(account,    "port",   MSN_PORT);
+	port = gaim_account_get_int(account, "port", MSN_PORT);
 
-	session = msn_session_new(account, host, port, http_method);
+	session = msn_session_new(account);
 
 	gc->proto_data = session;
 	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_FORMATTING_WBFO | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_FONTSIZE | GAIM_CONNECTION_NO_URLDESC;
 
-	gaim_connection_update_progress(gc, _("Connecting"), 0, MSN_CONNECT_STEPS);
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_START);
 
 	/* Hmm, I don't like this. */
+	/* XXX shx: Me neither */
 	username = msn_normalize(account, gaim_account_get_username(account));
 
 	if (strcmp(username, gaim_account_get_username(account)))
 		gaim_account_set_username(account, username);
 
-	msn_session_connect(session);
+	msn_session_connect(session, host, port, http_method);
 }
 
 static void
@@ -740,14 +741,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		session = gc->proto_data;
 		swboard = msn_session_get_swboard(session, who);
 
-		if (!g_queue_is_empty(swboard->im_queue) || swboard->empty)
-		{
-			msn_switchboard_queue_msg(swboard, msg);
-		}
-		else
-		{
-			msn_switchboard_send_msg(swboard, msg);
-		}
+		msn_switchboard_send_msg(swboard, msg, TRUE);
 	}
 	else
 	{
@@ -802,13 +796,7 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 
 	swboard = msn_session_find_swboard(session, who);
 
-	if (swboard == NULL)
-		return 0;
-
-	if (swboard->empty)
-		return 0;
-
-	if (!g_queue_is_empty(swboard->im_queue))
+	if (swboard == NULL || !msn_switchboard_can_send(swboard))
 		return 0;
 
 	msg = msn_message_new(MSN_MSG_TYPING);
@@ -818,7 +806,7 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 						 gaim_account_get_username(account));
 	msn_message_set_bin_data(msg, "\r\n", 2);
 
-	msn_switchboard_send_msg(swboard, msg);
+	msn_switchboard_send_msg(swboard, msg, FALSE);
 
 	msn_message_destroy(msg);
 
@@ -1150,7 +1138,7 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 
 	msg = msn_message_new_plain(msgtext);
 	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
-	msn_switchboard_send_msg(swboard, msg);
+	msn_switchboard_send_msg(swboard, msg, FALSE);
 	msn_message_destroy(msg);
 
 	g_free(msgformat);
@@ -1169,6 +1157,7 @@ msn_keepalive(GaimConnection *gc)
 	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
+
 	cmdproc = session->notification->cmdproc;
 
 	if (!session->http_method)

@@ -35,8 +35,8 @@ typedef struct _MsnSwitchBoard MsnSwitchBoard;
 
 #include "slplink.h"
 
-/*
- * A switchboard error
+/**
+ * A switchboard error.
  */
 typedef enum
 {
@@ -49,9 +49,10 @@ typedef enum
 
 } MsnSBErrorType;
 
-/*
- * A switchboard  A place where a bunch of users send messages to the rest
- * of the users.
+/**
+ * A switchboard.
+ *
+ * A place where a bunch of users send messages to the rest of the users.
  */
 struct _MsnSwitchBoard
 {
@@ -71,8 +72,6 @@ struct _MsnSwitchBoard
 							  users in it. */
 	gboolean invited;		/**< A flag that states if we were invited to the
 							  switchboard. */
-	gboolean destroying;	/**< A flag that states if the switchboard is on
-							  the process of being destroyed. */
 	gboolean ready;			/**< A flag that states if this switchboard is
 							  ready to be used. */
 	gboolean closed;		/**< A flag that states if the switchboard has
@@ -84,7 +83,7 @@ struct _MsnSwitchBoard
 
 	int chat_id;
 
-	GQueue *im_queue; /**< Queue of messages to send. */
+	GQueue *msg_queue; /**< Queue of messages to send. */
 	GList *ack_list; /**< List of messages waiting for an ack. */
 
 	MsnSBErrorType error; /**< The error that occurred in this switchboard
@@ -197,9 +196,28 @@ void msn_switchboard_disconnect(MsnSwitchBoard *swboard);
  */
 void msn_switchboard_close(MsnSwitchBoard *swboard);
 
-void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg);
-void msn_switchboard_queue_msg(MsnSwitchBoard *swboard, MsnMessage *msg);
-void msn_switchboard_process_queue(MsnSwitchBoard *swboard);
+/**
+ * Returns whether or not we currently can send a message through this
+ * switchboard.
+ *
+ * @param swboard The switchboard.
+ *
+ * @return @c TRUE if a message can be sent, @c FALSE otherwise.
+ */
+gboolean msn_switchboard_can_send(MsnSwitchBoard *swboard);
+
+/**
+ * Sends a message through this switchboard.
+ *
+ * @param swboard The switchboard.
+ * @param msg The message.
+ * @param queue A flag that states if we want this message to be queued (in
+ * the case it cannot currently be sent).
+ *
+ * @return @c TRUE if a message can be sent, @c FALSE otherwise.
+ */
+void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
+							  gboolean queue);
 
 gboolean msn_switchboard_chat_leave(MsnSwitchBoard *swboard);
 gboolean msn_switchboard_chat_invite(MsnSwitchBoard *swboard, const char *who);
@@ -208,13 +226,27 @@ void msn_switchboard_request(MsnSwitchBoard *swboard);
 void msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user);
 
 /**
- * Processes application/x-msnmsgrp2p messages.
+ * Processes peer to peer messages.
  *
  * @param cmdproc The command processor.
  * @param msg     The message.
  */
 void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+/**
+ * Processes emoticon messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
 void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+/**
+ * Processes INVITE messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
 void msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 #endif /* _MSN_SWITCHBOARD_H_ */

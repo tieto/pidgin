@@ -27,6 +27,10 @@
 
 static void read_cb(gpointer data, gint source, GaimInputCondition cond);
 
+/**************************************************************************
+ * Main
+ **************************************************************************/
+
 MsnServConn *
 msn_servconn_new(MsnSession *session, MsnServConnType type)
 {
@@ -42,8 +46,7 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 	servconn->cmdproc = msn_cmdproc_new(session);
 	servconn->cmdproc->servconn = servconn;
 
-	if (session->http_method)
-		servconn->httpconn = msn_httpconn_new(servconn);
+	servconn->httpconn = msn_httpconn_new(servconn);
 
 	servconn->num = session->servconns_count++;
 
@@ -61,11 +64,6 @@ msn_servconn_destroy(MsnServConn *servconn)
 		return;
 	}
 
-	if (servconn->destroying)
-		return;
-
-	servconn->destroying = TRUE;
-
 	if (servconn->connected)
 		msn_servconn_disconnect(servconn);
 
@@ -82,51 +80,82 @@ msn_servconn_destroy(MsnServConn *servconn)
 	g_free(servconn);
 }
 
-static void
-show_error(MsnServConn *servconn)
+void
+msn_servconn_set_connect_cb(MsnServConn *servconn,
+							void (*connect_cb)(MsnServConn *))
 {
-	GaimConnection *gc;
+	g_return_if_fail(servconn != NULL);
+	servconn->connect_cb = connect_cb;
+}
+
+void
+msn_servconn_set_disconnect_cb(MsnServConn *servconn,
+							   void (*disconnect_cb)(MsnServConn *))
+{
+	g_return_if_fail(servconn != NULL);
+
+	servconn->disconnect_cb = disconnect_cb;
+}
+
+void
+msn_servconn_set_destroy_cb(MsnServConn *servconn,
+							void (*destroy_cb)(MsnServConn *))
+{
+	g_return_if_fail(servconn != NULL);
+
+	servconn->destroy_cb = destroy_cb;
+}
+
+/**************************************************************************
+ * Utility
+ **************************************************************************/
+
+void
+msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
+{
 	char *tmp;
-	char *cmd;
+	const char *reason;
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
 
-	gc = gaim_account_get_connection(servconn->session->account);
 	name = names[servconn->type];
 
-	switch (servconn->cmdproc->error)
+	switch (error)
 	{
-		case MSN_ERROR_CONNECT:
-			tmp = g_strdup_printf(_("Unable to connect to %s server"),
-								  name);
-			break;
-		case MSN_ERROR_WRITE:
-			tmp = g_strdup_printf(_("Error writing to %s server"), name);
-			break;
-		case MSN_ERROR_READ:
-			cmd = servconn->cmdproc->last_trans;
-			tmp = g_strdup_printf(_("Error reading from %s server"), name);
-			gaim_debug_info("msn", "Last command was: %s\n", cmd);
-			break;
+		case MSN_SERVCONN_ERROR_CONNECT:
+			reason = _("Unable to connect"); break;
+		case MSN_SERVCONN_ERROR_WRITE:
+			reason = _("Writing error"); break;
+		case MSN_SERVCONN_ERROR_READ:
+			reason = _("Reading error"); break;
 		default:
-			tmp = g_strdup_printf(_("Unknown error from %s server"), name);
-			break;
+			reason = _("Unknown error"); break;
 	}
 
-	if (servconn->type != MSN_SERVER_SB)
+	tmp = g_strdup_printf(_("Connection error from %s server (%s):\n%s"),
+						  name, servconn->host, reason);
+
+	if (servconn->type == MSN_SERVCONN_NS)
 	{
-		gaim_connection_error(gc, tmp);
+		msn_session_set_error(servconn->session, MSN_ERROR_SERVCONN, tmp);
 	}
-	else
+	else if (servconn->type == MSN_SERVCONN_SB)
 	{
 		MsnSwitchBoard *swboard;
 		swboard = servconn->cmdproc->data;
-		swboard->error = MSN_SB_ERROR_CONNECTION;
+		if (swboard != NULL)
+			swboard->error = MSN_SB_ERROR_CONNECTION;
 	}
+
+	msn_servconn_disconnect(servconn);
 
 	g_free(tmp);
 }
+
+/**************************************************************************
+ * Connect
+ **************************************************************************/
 
 static void
 connect_cb(gpointer data, gint source, GaimInputCondition cond)
@@ -146,7 +175,6 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (source > 0)
 	{
 		servconn->connected = TRUE;
-		servconn->cmdproc->ready = TRUE;
 
 		/* Someone wants to know we connected. */
 		servconn->connect_cb(servconn);
@@ -155,8 +183,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 	else
 	{
-		servconn->cmdproc->error = MSN_ERROR_CONNECT;
-		show_error(servconn);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }
 
@@ -188,7 +215,6 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 			msn_httpconn_connect(servconn->httpconn, host, port);
 
 		servconn->connected = TRUE;
-		servconn->cmdproc->ready = TRUE;
 		servconn->httpconn->virgin = TRUE;
 
 		/* Someone wants to know we connected. */
@@ -216,6 +242,7 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	if (!servconn->connected)
 	{
+		/* We could not connect. */
 		if (servconn->disconnect_cb != NULL)
 			servconn->disconnect_cb(servconn);
 
@@ -224,7 +251,7 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	if (servconn->session->http_method)
 	{
-		/* Fake disconnection */
+		/* Fake disconnection. */
 		if (servconn->disconnect_cb != NULL)
 			servconn->disconnect_cb(servconn);
 
@@ -244,46 +271,9 @@ msn_servconn_disconnect(MsnServConn *servconn)
 	servconn->payload_len = 0;
 
 	servconn->connected = FALSE;
-	servconn->cmdproc->ready = FALSE;
 
 	if (servconn->disconnect_cb != NULL)
 		servconn->disconnect_cb(servconn);
-}
-
-void
-msn_servconn_set_connect_cb(MsnServConn *servconn,
-							void (*connect_cb)(MsnServConn *))
-{
-	g_return_if_fail(servconn != NULL);
-	servconn->connect_cb = connect_cb;
-}
-
-void
-msn_servconn_set_disconnect_cb(MsnServConn *servconn,
-							   void (*disconnect_cb)(MsnServConn *))
-{
-	g_return_if_fail(servconn != NULL);
-
-	servconn->disconnect_cb = disconnect_cb;
-}
-
-void
-msn_servconn_set_destroy_cb(MsnServConn *servconn,
-							   void (*destroy_cb)(MsnServConn *))
-{
-	g_return_if_fail(servconn != NULL);
-
-	servconn->destroy_cb = destroy_cb;
-}
-
-static void
-failed_io(MsnServConn *servconn)
-{
-	g_return_if_fail(servconn != NULL);
-
-	show_error(servconn);
-
-	msn_servconn_disconnect(servconn);
 }
 
 size_t
@@ -297,14 +287,16 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 	{
 		switch (servconn->type)
 		{
-			case MSN_SERVER_NS:
-			case MSN_SERVER_SB:
+			case MSN_SERVCONN_NS:
+			case MSN_SERVCONN_SB:
 				ret = write(servconn->fd, buf, len);
 				break;
-			case MSN_SERVER_DC:
+#if 0
+			case MSN_SERVCONN_DC:
 				ret = write(servconn->fd, &buf, sizeof(len));
 				ret = write(servconn->fd, buf, len);
 				break;
+#endif
 			default:
 				ret = write(servconn->fd, buf, len);
 				break;
@@ -317,8 +309,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 	if (ret == -1)
 	{
-		servconn->cmdproc->error = MSN_ERROR_WRITE;
-		failed_io(servconn);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE);
 	}
 
 	return ret;
@@ -340,9 +331,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (len <= 0)
 	{
-		servconn->cmdproc->error = MSN_ERROR_READ;
-
-		failed_io(servconn);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
 	}

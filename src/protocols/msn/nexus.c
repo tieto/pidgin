@@ -26,6 +26,38 @@
 #include "notification.h"
 
 /**************************************************************************
+ * Main
+ **************************************************************************/
+
+MsnNexus *
+msn_nexus_new(MsnSession *session)
+{
+	MsnNexus *nexus;
+
+	nexus = g_new0(MsnNexus, 1);
+	nexus->session = session;
+	nexus->challenge_data = g_hash_table_new_full(g_str_hash, g_str_equal,
+												  g_free, g_free);
+
+	return nexus;
+}
+
+void
+msn_nexus_destroy(MsnNexus *nexus)
+{
+	if (nexus->login_host != NULL)
+		g_free(nexus->login_host);
+
+	if (nexus->login_path != NULL)
+		g_free(nexus->login_path);
+
+	if (nexus->challenge_data != NULL)
+		g_hash_table_destroy(nexus->challenge_data);
+
+	g_free(nexus);
+}
+
+/**************************************************************************
  * Util
  **************************************************************************/
 
@@ -76,7 +108,7 @@ login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 	gc = gaim_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
 
-	gaim_connection_error(gc, _("Unable to connect to server"));
+	msn_session_set_error(session, MSN_ERROR_AUTH, _("Unable to connect"));
 
 	msn_nexus_destroy(nexus);
 	session->nexus = NULL;
@@ -99,6 +131,8 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
+
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username =
 		g_strdup(gaim_url_encode(gaim_account_get_username(session->account)));
@@ -191,14 +225,15 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}
 	else if (strstr(buffer, "HTTP/1.1 401 Unauthorized") != NULL)
 	{
-		GaimConnection *gc;
-		const char *error, *c;
-		char *temp;
+		const char *error;
 
 		if ((error = strstr(buffer, "WWW-Authenticate")) != NULL)
 		{
 			if ((error = strstr(error, "cbtxt=")) != NULL)
 			{
+				const char *c;
+				char *temp;
+
 				error += strlen("cbtxt=");
 
 				if ((c = strchr(error, '\n')) == NULL)
@@ -210,16 +245,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 			}
 		}
 
-		gc = gaim_account_get_connection(session->account);
-
-		if (error == NULL)
-		{
-			gaim_connection_error(gc,
-				_("Unknown error when attempting to authorize with "
-				  "MSN login server."));
-		}
-		else
-			gaim_connection_error(gc, error);
+		msn_session_set_error(session, MSN_ERROR_AUTH, error);
 	}
 	else if (strstr(buffer, "HTTP/1.1 200 OK"))
 	{
@@ -264,6 +290,10 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	g_free(buffer);
 }
 
+/**************************************************************************
+ * Connect
+ **************************************************************************/
+
 static void
 nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
@@ -281,6 +311,8 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
+
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
 
 	request_str = g_strdup_printf("GET /rdr/pprdr.asp\r\n\r\n");
 
@@ -330,38 +362,6 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 	gaim_ssl_connect(session->account, nexus->login_host,
 					 GAIM_SSL_DEFAULT_PORT, login_connect_cb,
 					 login_error_cb, nexus);
-}
-
-/**************************************************************************
- * Nexus
- **************************************************************************/
-
-MsnNexus *
-msn_nexus_new(MsnSession *session)
-{
-	MsnNexus *nexus;
-
-	nexus = g_new0(MsnNexus, 1);
-	nexus->session = session;
-	nexus->challenge_data = g_hash_table_new_full(g_str_hash, g_str_equal,
-												  g_free, g_free);
-
-	return nexus;
-}
-
-void
-msn_nexus_destroy(MsnNexus *nexus)
-{
-	if (nexus->login_host != NULL)
-		g_free(nexus->login_host);
-
-	if (nexus->login_path != NULL)
-		g_free(nexus->login_path);
-
-	if (nexus->challenge_data != NULL)
-		g_hash_table_destroy(nexus->challenge_data);
-
-	g_free(nexus);
 }
 
 void

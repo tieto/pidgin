@@ -24,18 +24,6 @@
 #ifndef _MSN_ERROR_H_
 #define _MSN_ERROR_H_
 
-typedef enum
-{
-	MSN_ERROR_NONE,
-	MSN_ERROR_MISC,
-	MSN_ERROR_CONNECT,
-	MSN_ERROR_WRITE,
-	MSN_ERROR_READ,
-	MSN_ERROR_SIGNOTHER,
-	MSN_ERROR_SERVDOWN
-
-} MsnErrorType;
-
 #include "session.h"
 
 /**

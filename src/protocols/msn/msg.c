@@ -197,7 +197,8 @@ msn_message_parse_payload(MsnMessage *msg,
 
 	g_return_if_fail(payload != NULL);
 
-	tmp_base = tmp = g_memdup(payload, payload_len);
+	tmp_base = tmp = g_malloc0(payload_len + 1);
+	memcpy(tmp_base, payload, payload_len);
 
 	/* Parse the attributes. */
 	end = strstr(tmp, "\r\n\r\n");

@@ -96,11 +96,15 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 
 		g_return_if_fail(slpmsg != NULL);
 
+#if 0
 		gaim_debug_info("msn", "slpcall destroy: trying slp_msg (%p)\n",
 						slpmsg);
+#endif
 
 		if (slpmsg->slpcall == slpcall)
+		{
 			msn_slpmsg_destroy(slpmsg);
+		}
 	}
 
 	if (slpcall->end_cb != NULL)
@@ -188,7 +192,7 @@ msn_slp_call_timeout(gpointer data)
 {
 	MsnSlpCall *slpcall;
 
-	gaim_debug_info("msn", "slpcall timeout\n");
+	gaim_debug_info("msn", "slpcall timeout (%p)\n", slpcall);
 
 	slpcall = data;
 

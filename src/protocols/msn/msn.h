@@ -45,8 +45,13 @@
 
 #include "ft.h"
 
-/* XXX */
-#include "gaim.h"
+/* #define MSN_DEBUG_MSG 1 */
+/* #define MSN_DEBUG_SLPMSG 1 */
+/* #define MSN_DEBUG_HTTP 1 */
+
+/* #define MSN_DEBUG_SLP 1 */
+/* #define MSN_DEBUG_SLP_VERBOSE 1 */
+/* #define MSN_DEBUG_SLP_FILES 1 */
 
 #define MSN_BUF_LEN 8192
 
@@ -66,8 +71,6 @@
 
 
 #define MSN_FT_GUID "{5D3E02AB-6190-11d3-BBBB-00C04F795683}"
-
-#define MSN_CONNECT_STEPS 8
 
 #define MSN_CLIENTINFO \
 	"Client-Name: Gaim/" VERSION "\r\n" \

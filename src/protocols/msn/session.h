@@ -40,6 +40,40 @@ typedef struct _MsnSession MsnSession;
 #include "userlist.h"
 #include "sync.h"
 
+/**
+ * Types of errors.
+ */
+typedef enum
+{
+	MSN_ERROR_SERVCONN,
+	MSN_ERROR_UNSUPORTED_PROTOCOL,
+	MSN_ERROR_HTTP_MALFORMED,
+	MSN_ERROR_AUTH,
+	MSN_ERROR_BAD_BLIST,
+	MSN_ERROR_SIGN_OTHER,
+	MSN_ERROR_SERV_DOWN
+
+} MsnErrorType;
+
+/**
+ * Login steps.
+ */
+typedef enum
+{
+	MSN_LOGIN_STEP_START,
+	MSN_LOGIN_STEP_HANDSHAKE,
+	MSN_LOGIN_STEP_TRANSFER,
+	MSN_LOGIN_STEP_AUTH_START,
+	MSN_LOGIN_STEP_AUTH,
+	MSN_LOGIN_STEP_GET_COOKIE,
+	MSN_LOGIN_STEP_AUTH_END,
+	MSN_LOGIN_STEP_SYN,
+	MSN_LOGIN_STEP_END
+
+} MsnLoginStep;
+
+#define MSN_LOGIN_STEPS MSN_LOGIN_STEP_END
+
 struct _MsnSession
 {
 	GaimAccount *account;
@@ -48,18 +82,16 @@ struct _MsnSession
 
 	guint protocol_ver;
 
-	char *dispatch_host;
-	int dispatch_port;
+	MsnLoginStep login_step; /**< The current step in the login process. */
 
 	gboolean connected;
 	gboolean logged_in; /**< A temporal flag to ignore local buddy list adds. */
 	gboolean destroying; /**< A flag that states if the session is being destroyed. */
+	gboolean http_method;
 
 	MsnNotification *notification;
 	MsnNexus *nexus;
-
-	gboolean http_method;
-	gint http_poll_timer;
+	MsnSync *sync;
 
 	MsnUserList *userlist;
 	MsnUserList *sync_userlist;
@@ -67,8 +99,9 @@ struct _MsnSession
 	int servconns_count; /**< The count of server connections. */
 	GList *switches; /**< The list of all the switchboards. */
 	GList *directconns; /**< The list of all the directconnections. */
+	GList *slplinks; /**< The list of all the slplinks. */
 
-	int conv_seq;
+	int conv_seq; /**< The current conversation sequence number. */
 
 	struct
 	{
@@ -81,27 +114,16 @@ struct _MsnSession
 		int client_port;
 
 	} passport_info;
-
-	/* You have no idea how much I hate all that is below. */
-	/* shx: What? ;) */
-
-	MsnSync *sync;
-
-	GList *slplinks;
 };
 
 /**
  * Creates an MSN session.
  *
  * @param account The account.
- * @param host    The dispatch server host.
- * @param port    The dispatch server port.
  *
  * @return The new MSN session.
  */
-MsnSession *msn_session_new(GaimAccount *account,
-							const char *host, int port,
-							gboolean http_method);
+MsnSession *msn_session_new(GaimAccount *account);
 
 /**
  * Destroys an MSN session.
@@ -113,11 +135,16 @@ void msn_session_destroy(MsnSession *session);
 /**
  * Connects to and initiates an MSN session.
  *
- * @param session The MSN session.
+ * @param session     The MSN session.
+ * @param host        The dispatch server host.
+ * @param port        The dispatch server port.
+ * @param http_method Whether to use or not http_method.
  *
  * @return @c TRUE on success, @c FALSE on failure.
  */
-gboolean msn_session_connect(MsnSession *session);
+gboolean msn_session_connect(MsnSession *session,
+							 const char *host, int port,
+							 gboolean http_method);
 
 /**
  * Disconnects from an MSN session.
@@ -142,6 +169,29 @@ MsnSwitchBoard *msn_session_find_swboard(MsnSession *session,
 MsnSwitchBoard *msn_session_get_swboard(MsnSession *session,
 										const char *username);
 
+/**
+ * Sets an error for the MSN session.
+ *
+ * @param session The MSN session.
+ * @param error The error.
+ * @param info Extra information.
+ */
+void msn_session_set_error(MsnSession *session, MsnErrorType error,
+						   const char *info);
+
+/**
+ * Sets the current step in the login proccess.
+ *
+ * @param session The MSN session.
+ * @param step The current step.
+ */
+void msn_session_set_login_step(MsnSession *session, MsnLoginStep step);
+
+/**
+ * Finish the login proccess.
+ *
+ * @param session The MSN session.
+ */
 void msn_session_finish_login(MsnSession *session);
 
 #endif /* _MSN_SESSION_H_ */

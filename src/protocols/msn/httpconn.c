@@ -28,7 +28,7 @@
 typedef struct
 {
 	MsnHttpConn *httpconn;
-	char *buffer;
+	char *data;
 	size_t size;
 
 } MsnHttpQueueData;
@@ -48,6 +48,8 @@ msn_httpconn_new(MsnServConn *servconn)
 
 	httpconn = g_new0(MsnHttpConn, 1);
 
+	gaim_debug_info("msn", "new httpconn (%p)\n", httpconn);
+
 	/* TODO: Remove this */
 	httpconn->session = servconn->session;
 
@@ -61,87 +63,55 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 {
 	g_return_if_fail(httpconn != NULL);
 
+	gaim_debug_info("msn", "destroy httpconn (%p)\n", httpconn);
+
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
-
-	if (httpconn->host != NULL)
-		g_free(httpconn->host);
 
 	g_free(httpconn);
 }
 
-static void
-show_error(MsnHttpConn *httpconn)
-{
-	GaimConnection *gc;
-	char *tmp;
-	char *cmd;
-
-	const char *names[] = { "Notification", "Switchboard" };
-	const char *name;
-
-	gc = gaim_account_get_connection(httpconn->servconn->session->account);
-	name = names[httpconn->servconn->type];
-
-	switch (httpconn->servconn->cmdproc->error)
-	{
-		case MSN_ERROR_CONNECT:
-			tmp = g_strdup_printf(_("Unable to connect to %s server"),
-								  name);
-			break;
-		case MSN_ERROR_WRITE:
-			tmp = g_strdup_printf(_("Error writing to %s server"), name);
-			break;
-		case MSN_ERROR_READ:
-			cmd = httpconn->servconn->cmdproc->last_trans;
-			tmp = g_strdup_printf(_("Error reading from %s server"), name);
-			gaim_debug_info("msn", "Last command was: %s\n", cmd);
-			break;
-		default:
-			tmp = g_strdup_printf(_("Unknown error from %s server"), name);
-			break;
-	}
-
-	if (httpconn->servconn->type == MSN_SERVER_NS)
-	{
-		gaim_connection_error(gc, tmp);
-	}
-	else
-	{
-		MsnSwitchBoard *swboard;
-		swboard = httpconn->servconn->cmdproc->data;
-		swboard->error = MSN_SB_ERROR_CONNECTION;
-	}
-
-	g_free(tmp);
-}
-
 static ssize_t
-write_raw(MsnHttpConn *httpconn, const void *buffer, size_t len)
+write_raw(MsnHttpConn *httpconn, const char *header,
+		  const char *body, size_t body_len)
 {
+	char *buf;
+	size_t buf_len;
+
 	ssize_t s;
 	ssize_t res; /* result of the write operation */
 
 #ifdef MSN_DEBUG_HTTP
-	gaim_debug_misc("msn", "Writing HTTP: {%s}\n", buffer);
+	gaim_debug_misc("msn", "Writing HTTP (header): {%s}\n", header);
 #endif
+
+	buf = g_strdup_printf("%s\r\n", header);
+	buf_len = strlen(buf);
+
+	if (body != NULL)
+	{
+		buf = g_realloc(buf, buf_len + body_len);
+		memcpy(buf + buf_len, body, body_len);
+		buf_len += body_len;
+	}
 
 	s = 0;
 
 	do
 	{
-		res = write(httpconn->fd, buffer, len);
+		res = write(httpconn->fd, buf, buf_len);
 		if (res >= 0)
 		{
 			s += res;
 		}
 		else if (errno != EAGAIN)
 		{
-			httpconn->servconn->cmdproc->error = MSN_ERROR_WRITE;
-			show_error(httpconn);
+			msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE);
 			return -1;
 		}
-	} while (s < len);
+	} while (s < buf_len);
+
+	g_free(buf);
 
 	return s;
 }
@@ -149,8 +119,8 @@ write_raw(MsnHttpConn *httpconn, const void *buffer, size_t len)
 void
 msn_httpconn_poll(MsnHttpConn *httpconn)
 {
+	char *header;
 	int r;
-	char *temp;
 
 	g_return_if_fail(httpconn != NULL);
 
@@ -160,7 +130,7 @@ msn_httpconn_poll(MsnHttpConn *httpconn)
 		return;
 	}
 
-	temp = g_strdup_printf(
+	header = g_strdup_printf(
 		"POST http://%s/gateway/gateway.dll?Action=poll&SessionID=%s HTTP/1.1\r\n"
 		"Accept: */*\r\n"
 		"Accept-Language: en-us\r\n"
@@ -170,15 +140,14 @@ msn_httpconn_poll(MsnHttpConn *httpconn)
 		"Connection: Keep-Alive\r\n"
 		"Pragma: no-cache\r\n"
 		"Content-Type: application/x-msn-messenger\r\n"
-		"Content-Length: 0\r\n"
-		"\r\n",
+		"Content-Length: 0\r\n",
 		httpconn->host,
 		httpconn->full_session_id,
 		httpconn->host);
 
-	r = write_raw(httpconn, temp, strlen(temp));
+	r = write_raw(httpconn, header, NULL, -1);
 
-	g_free(temp);
+	g_free(header);
 
 	if (r > 0)
 	{
@@ -224,7 +193,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	else
 	{
 		gaim_debug_error("msn", "HTTP: Connection error\n");
-		show_error(httpconn);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }
 
@@ -257,7 +226,9 @@ void
 msn_httpconn_disconnect(MsnHttpConn *httpconn)
 {
 	g_return_if_fail(httpconn != NULL);
-	g_return_if_fail(httpconn->connected);
+
+	if (!httpconn->connected)
+		return;
 
 	if (httpconn->timer)
 		gaim_timeout_remove(httpconn->timer);
@@ -302,7 +273,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (len <= 0)
 	{
 		gaim_debug_error("msn", "HTTP: Read error\n");
-		show_error(httpconn);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
 		msn_httpconn_disconnect(httpconn);
 
 		return;
@@ -329,7 +300,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (error)
 	{
 		gaim_debug_error("msn", "HTTP: Special error\n");
-		show_error(httpconn);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
 		msn_httpconn_disconnect(httpconn);
 
 		return;
@@ -341,6 +312,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 #if 0
 		gaim_debug_info("msn", "HTTP: nothing to do here\n");
 #endif
+		g_free(result_msg);
 		g_free(httpconn->rx_buf);
 		httpconn->rx_buf = NULL;
 		httpconn->rx_len = 0;
@@ -351,6 +323,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	httpconn->rx_buf = NULL;
 	httpconn->rx_len = 0;
 
+	g_free(servconn->rx_buf);
 	servconn->rx_buf = result_msg;
 	servconn->rx_len = result_len;
 
@@ -425,10 +398,10 @@ msn_httpconn_process_queue(MsnHttpConn *httpconn)
 		httpconn->queue = g_list_remove(httpconn->queue, queue_data);
 
 		msn_httpconn_write(queue_data->httpconn,
-						   queue_data->buffer,
+						   queue_data->data,
 						   queue_data->size);
 
-		g_free(queue_data->buffer);
+		g_free(queue_data->data);
 		g_free(queue_data);
 	}
 	else
@@ -438,22 +411,21 @@ msn_httpconn_process_queue(MsnHttpConn *httpconn)
 }
 
 size_t
-msn_httpconn_write(MsnHttpConn *httpconn, const char *buf, size_t size)
+msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 {
 	char *params;
-	char *temp;
+	char *header;
 	gboolean first;
 	const char *server_types[] = { "NS", "SB" };
 	const char *server_type;
 	size_t r; /* result of the write operation */
-	size_t len;
 	char *host;
 	MsnServConn *servconn;
 
 	/* TODO: remove http data from servconn */
 
 	g_return_val_if_fail(httpconn != NULL, 0);
-	g_return_val_if_fail(buf      != NULL, 0);
+	g_return_val_if_fail(data     != NULL, 0);
 	g_return_val_if_fail(size      > 0,    0);
 
 	servconn = httpconn->servconn;
@@ -463,7 +435,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *buf, size_t size)
 		MsnHttpQueueData *queue_data = g_new0(MsnHttpQueueData, 1);
 
 		queue_data->httpconn = httpconn;
-		queue_data->buffer   = g_memdup(buf, size);
+		queue_data->data     = g_memdup(data, size);
 		queue_data->size     = size;
 
 		httpconn->queue = g_list_append(httpconn->queue, queue_data);
@@ -495,7 +467,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *buf, size_t size)
 								 httpconn->full_session_id);
 	}
 
-	temp = g_strdup_printf(
+	header = g_strdup_printf(
 		"POST http://%s/gateway/gateway.dll?%s HTTP/1.1\r\n"
 		"Accept: */*\r\n"
 		"Accept-Language: en-us\r\n"
@@ -505,8 +477,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *buf, size_t size)
 		"Connection: Keep-Alive\r\n"
 		"Pragma: no-cache\r\n"
 		"Content-Type: application/x-msn-messenger\r\n"
-		"Content-Length: %d\r\n"
-		"\r\n",
+		"Content-Length: %d\r\n",
 		host,
 		params,
 		host,
@@ -514,15 +485,9 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *buf, size_t size)
 
 	g_free(params);
 
-	len = strlen(temp);
-	temp = g_realloc(temp, len + size + 1);
-	memcpy(temp + len, buf, size);
-	len += size;
-	temp[len] = '\0';
+	r = write_raw(httpconn, header, data, size);
 
-	r = write_raw(httpconn, temp, len);
-
-	g_free(temp);
+	g_free(header);
 
 	if (r > 0)
 	{
@@ -541,7 +506,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 {
 	GaimConnection *gc;
 	const char *s, *c;
-	char *headers, *body;
+	char *header, *body;
 	const char *body_start;
 	char *tmp;
 	size_t body_len = 0;
@@ -604,12 +569,12 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	if ((s = strstr(buf, "\r\n\r\n")) == NULL)
 		return FALSE;
 
-	headers = g_strndup(buf, s - buf);
+	header = g_strndup(buf, s - buf);
 	s += 4; /* Skip \r\n */
 	body_start = s;
 	body_len = size - (body_start - buf);
 
-	if ((s = strstr(headers, "Content-Length: ")) != NULL)
+	if ((s = strstr(header, "Content-Length: ")) != NULL)
 	{
 		int tmp_len;
 
@@ -617,7 +582,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		if ((c = strchr(s, '\r')) == NULL)
 		{
-			g_free(headers);
+			g_free(header);
 
 			return FALSE;
 		}
@@ -628,7 +593,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		if (body_len != tmp_len)
 		{
-			g_free(headers);
+			g_free(header);
 
 #if 0
 			gaim_debug_warning("msn",
@@ -640,14 +605,16 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 	}
 
-	body = g_memdup(body_start, body_len);
+	body = g_malloc0(body_len + 1);
+	memcpy(body, body_start, body_len);
 
 #ifdef MSN_DEBUG_HTTP
-	gaim_debug_misc("msn", "Incoming HTTP buffer: {%s\r\n\r\n%s}\n", headers, body);
+	gaim_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
+					header);
 #endif
 
 	/* Now we should be able to process the data. */
-	if ((s = strstr(headers, "X-MSN-Messenger: ")) != NULL)
+	if ((s = strstr(header, "X-MSN-Messenger: ")) != NULL)
 	{
 		char *full_session_id, *gw_ip, *session_action;
 		char *t, *session_id;
@@ -659,10 +626,12 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		if ((c = strchr(s, '\r')) == NULL)
 		{
-			gaim_connection_error(gc, "Malformed X-MSN-Messenger field.");
+			msn_session_set_error(httpconn->session,
+								  MSN_ERROR_HTTP_MALFORMED, NULL);
 			gaim_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}",
 							 buf);
 
+			g_free(body);
 			return FALSE;
 		}
 
@@ -731,7 +700,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 	}
 
-	g_free(headers);
+	g_free(header);
 
 	*ret_buf  = body;
 	*ret_size = body_len;

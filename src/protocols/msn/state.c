@@ -46,11 +46,12 @@ msn_change_status(MsnSession *session, MsnAwayType state)
 	MsnObject *msnobj;
 	const char *state_text;
 
+	g_return_if_fail(session != NULL);
+	g_return_if_fail(session->notification != NULL);
+
 	cmdproc = session->notification->cmdproc;
 	user = session->user;
 	state_text = msn_state_get_text(state);
-
-	g_return_if_fail(session != NULL);
 
 	msnobj = msn_user_get_object(user);
 

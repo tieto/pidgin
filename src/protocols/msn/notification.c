@@ -32,13 +32,12 @@
 #include "sync.h"
 #include "slplink.h"
 
-#define BUDDY_ALIAS_MAXLEN 388
-
 static MsnTable *cbs_table;
 
 /**************************************************************************
  * Main
  **************************************************************************/
+
 static void
 destroy_cb(MsnServConn *servconn)
 {
@@ -61,7 +60,7 @@ msn_notification_new(MsnSession *session)
 	notification = g_new0(MsnNotification, 1);
 
 	notification->session = session;
-	notification->servconn = servconn = msn_servconn_new(session, MSN_SERVER_NS);
+	notification->servconn = servconn = msn_servconn_new(session, MSN_SERVCONN_NS);
 	msn_servconn_set_destroy_cb(servconn, destroy_cb);
 
 	notification->cmdproc = servconn->cmdproc;
@@ -74,20 +73,19 @@ msn_notification_new(MsnSession *session)
 void
 msn_notification_destroy(MsnNotification *notification)
 {
-	if (notification->destroying)
-		return;
+	notification->cmdproc->data = NULL;
 
-	notification->destroying = TRUE;
+	msn_servconn_set_destroy_cb(notification->servconn, NULL);
 
 	msn_servconn_destroy(notification->servconn);
 
-	notification->session->notification = NULL;
 	g_free(notification);
 }
 
 /**************************************************************************
  * Connect
  **************************************************************************/
+
 static void
 connect_cb(MsnServConn *servconn)
 {
@@ -113,17 +111,11 @@ connect_cb(MsnServConn *servconn)
 
 	vers = g_strjoinv(" ", a);
 
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
 	msn_cmdproc_send(cmdproc, "VER", "%s", vers);
 
 	g_strfreev(a);
 	g_free(vers);
-
-	if (cmdproc->error)
-		return;
-
-	if (session->user == NULL)
-		session->user = msn_user_new(session->userlist,
-									 gaim_account_get_username(account), NULL);
 }
 
 gboolean
@@ -155,6 +147,7 @@ msn_notification_disconnect(MsnNotification *notification)
 /**************************************************************************
  * Util
  **************************************************************************/
+
 static void
 group_error_helper(MsnSession *session, const char *msg, int group_id, int error)
 {
@@ -198,12 +191,15 @@ group_error_helper(MsnSession *session, const char *msg, int group_id, int error
 /**************************************************************************
  * Login
  **************************************************************************/
+
 void
 msn_got_login_params(MsnSession *session, const char *login_params)
 {
 	MsnCmdProc *cmdproc;
 
 	cmdproc = session->notification->cmdproc;
+
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
 	msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
 }
@@ -220,31 +216,6 @@ cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
-inf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	GaimAccount *account;
-	GaimConnection *gc;
-
-	account = cmdproc->session->account;
-	gc = gaim_account_get_connection(account);
-
-	if (strcmp(cmd->params[1], "MD5"))
-	{
-		msn_cmdproc_show_error(cmdproc, MSN_ERROR_MISC);
-		return;
-	}
-
-	msn_cmdproc_send(cmdproc, "USR", "MD5 I %s",
-					 gaim_account_get_username(account));
-
-	if (cmdproc->error)
-		return;
-
-	gaim_connection_update_progress(gc, _("Requesting to send password"),
-									5, MSN_CONNECT_STEPS);
-}
-
-static void
 usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
@@ -255,33 +226,22 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	account = session->account;
 	gc = gaim_account_get_connection(account);
 
-	/*
-	 * We're either getting the passport connect info (if we're on
-	 * MSNP8 or higher), or a challenge request (MSNP7 and lower).
-	 *
-	 * Let's find out.
-	 */
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
-		const char *friendly = gaim_url_decode(cmd->params[3]);
-
 		/* OK */
+		const char *friendly = gaim_url_decode(cmd->params[3]);
 
 		gaim_connection_set_display_name(gc, friendly);
 
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
+
 		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
-
-		if (cmdproc->error)
-			return;
-
-		gaim_connection_update_progress(gc, _("Retrieving buddy list"),
-										7, MSN_CONNECT_STEPS);
 	}
 	else if (!g_ascii_strcasecmp(cmd->params[1], "TWN"))
 	{
+		/* Passport authentication */
 		char **elems, **cur, **tokens;
 
-		/* Passport authentication */
 		session->nexus = msn_nexus_new(session);
 
 		/* Parse the challenge data. */
@@ -298,39 +258,9 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		g_strfreev(elems);
 
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
+
 		msn_nexus_connect(session->nexus);
-
-		gaim_connection_update_progress(gc, _("Password sent"),
-										6, MSN_CONNECT_STEPS);
-	}
-	else if (!g_ascii_strcasecmp(cmd->params[1], "MD5"))
-	{
-		/* Challenge */
-		const char *challenge;
-		const char *password;
-		char buf[33];
-		md5_state_t st;
-		md5_byte_t di[16];
-		int i;
-
-		challenge = cmd->params[3];
-		password = gaim_account_get_password(account);
-
-		md5_init(&st);
-		md5_append(&st, (const md5_byte_t *)challenge, strlen(challenge));
-		md5_append(&st, (const md5_byte_t *)password, strlen(password));
-		md5_finish(&st, di);
-
-		for (i = 0; i < 16; i++)
-			g_snprintf(buf + (i*2), 3, "%02x", di[i]);
-
-		msn_cmdproc_send(cmdproc, "USR", "MD5 S %s", buf);
-
-		if (cmdproc->error)
-			return;
-
-		gaim_connection_update_progress(gc, _("Password sent"),
-										6, MSN_CONNECT_STEPS);
 	}
 }
 
@@ -359,7 +289,8 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!protocol_supported)
 	{
-		msn_cmdproc_show_error(cmdproc, MSN_ERROR_MISC);
+		msn_session_set_error(session, MSN_ERROR_UNSUPORTED_PROTOCOL,
+							  NULL);
 		return;
 	}
 
@@ -371,13 +302,15 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Log out
  **************************************************************************/
+
 static void
 out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	if (!g_ascii_strcasecmp(cmd->params[0], "OTH"))
-		msn_cmdproc_show_error(cmdproc, MSN_ERROR_SIGNOTHER);
+		msn_session_set_error(cmdproc->session, MSN_ERROR_SIGN_OTHER,
+							  NULL);
 	else if (!g_ascii_strcasecmp(cmd->params[0], "SSD"))
-		msn_cmdproc_show_error(cmdproc, MSN_ERROR_SERVDOWN);
+		msn_session_set_error(cmdproc->session, MSN_ERROR_SERV_DOWN, NULL);
 }
 
 void
@@ -393,6 +326,7 @@ msn_notification_close(MsnNotification *notification)
 /**************************************************************************
  * Messages
  **************************************************************************/
+
 static void
 msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
@@ -431,6 +365,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Challenges
  **************************************************************************/
+
 static void
 chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -464,6 +399,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Buddy Lists
  **************************************************************************/
+
 static void
 add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -874,22 +810,13 @@ syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (cmd->param_count == 2)
 	{
-		char *buf;
 		/*
 		 * This can happen if we sent a SYN with an up-to-date
 		 * buddy list revision, but we send 0 to get a full list.
 		 * So, error out.
 		 */
-		buf = g_strdup_printf(
-				_("Your MSN buddy list for %s is temporarily unavailable. "
-				  "Please wait and try again."),
-				gaim_account_get_username(session->account));
 
-		gaim_connection_error(gaim_account_get_connection(session->account),
-							  buf);
-
-		g_free(buf);
-
+		msn_session_set_error(cmdproc->session, MSN_ERROR_BAD_BLIST, NULL);
 		return;
 	}
 
@@ -916,6 +843,7 @@ syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Misc commands
  **************************************************************************/
+
 static void
 url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -1018,6 +946,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Switchboards
  **************************************************************************/
+
 static void
 rng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -1056,7 +985,8 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (strcmp(cmd->params[1], "SB") && strcmp(cmd->params[1], "NS"))
 	{
-		msn_cmdproc_show_error(cmdproc, MSN_ERROR_MISC);
+		/* Maybe we can have a generic bad command error. */
+		gaim_debug_error("msn", "Bad XFR command (%s)\n", cmd->params[1]);
 		return;
 	}
 
@@ -1065,25 +995,15 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (!strcmp(cmd->params[1], "SB"))
 	{
 		gaim_debug_error("msn", "This shouldn't be handled here.\n");
-#if 0
-		swboard = cmd->trans->data;
-
-		if (swboard != NULL)
-		{
-			msn_switchboard_set_auth_key(swboard, cmd->params[4]);
-
-			if (session->http_method)
-				port = 80;
-
-			msn_switchboard_connect(swboard, host, port);
-		}
-#endif
 	}
 	else if (!strcmp(cmd->params[1], "NS"))
 	{
 		MsnSession *session;
 
 		session = cmdproc->session;
+
+		if (!session->logged_in)
+			msn_session_set_login_step(session, MSN_LOGIN_STEP_TRANSFER);
 
 		msn_notification_connect(session->notification, host, port);
 	}
@@ -1094,6 +1014,7 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Message Types
  **************************************************************************/
+
 static void
 profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -1343,6 +1264,7 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 /**************************************************************************
  * Init
  **************************************************************************/
+
 void
 msn_notification_init(void)
 {
@@ -1360,7 +1282,6 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "USR", "XFR", xfr_cmd);
 	msn_table_add_cmd(cbs_table, "SYN", "SYN", syn_cmd);
 	msn_table_add_cmd(cbs_table, "CVR", "CVR", cvr_cmd);
-	msn_table_add_cmd(cbs_table, "INF", "INF", inf_cmd);
 	msn_table_add_cmd(cbs_table, "VER", "VER", ver_cmd);
 	msn_table_add_cmd(cbs_table, "REA", "REA", rea_cmd);
 	/* msn_table_add_cmd(cbs_table, "PRP", "PRP", prp_cmd); */

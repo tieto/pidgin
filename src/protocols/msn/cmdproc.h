@@ -33,11 +33,6 @@ typedef struct _MsnCmdProc MsnCmdProc;
 #include "table.h"
 #include "history.h"
 
-#if 0
-typedef void (*MsnPayloadCb)(MsnCmdProc *cmdproc, char *payload,
-							 size_t len);
-#endif
-
 struct _MsnCmdProc
 {
 	MsnSession *session;
@@ -45,14 +40,9 @@ struct _MsnCmdProc
 
 	GQueue *txqueue;
 
-	gboolean ready;
-	MsnErrorType error;
-
 	MsnCommand *last_cmd;
-	char *last_trans;
 
 	MsnTable *cbs_table;
-	/* MsnPayloadCb payload_cb; */
 
 	MsnHistory *history;
 
@@ -80,7 +70,5 @@ void msn_cmdproc_process_payload(MsnCmdProc *cmdproc,
 								 char *payload, int payload_len);
 
 void msn_cmdproc_disconnect(MsnCmdProc *cmdproc);
-
-void msn_cmdproc_show_error(MsnCmdProc *cmdproc, int error);
 
 #endif /* _MSN_CMDPROC_H_ */
