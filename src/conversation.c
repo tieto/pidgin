@@ -119,6 +119,7 @@ static void
 common_send(GaimConversation *conv, const char *message)
 {
 	GaimConversationType type;
+	GaimAccount *account;
 	GaimConnection *gc;
 	GaimConversationUiOps *ops;
 	char *displayed = NULL, *sent = NULL;
@@ -128,8 +129,10 @@ common_send(GaimConversation *conv, const char *message)
 	if (strlen(message) == 0)
 		return;
 
+	account = gaim_conversation_get_account(conv);
 	gc = gaim_conversation_get_gc(conv);
 
+	g_return_if_fail(account != NULL);
 	g_return_if_fail(gc != NULL);
 
 	type = gaim_conversation_get_type(conv);
@@ -144,7 +147,7 @@ common_send(GaimConversation *conv, const char *message)
 		GPOINTER_TO_INT(gaim_signal_emit_return_1(
 			gaim_conversations_get_handle(),
 			(type == GAIM_CONV_IM ? "writing-im-msg" : "writing-chat-msg"),
-			gaim_conversation_get_account(conv), conv, &displayed));
+			account, conv, &displayed));
 
 	if (displayed == NULL)
 		return;
@@ -156,7 +159,7 @@ common_send(GaimConversation *conv, const char *message)
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 		(type == GAIM_CONV_IM ? "wrote-im-msg" : "wrote-chat-msg"),
-		gaim_conversation_get_account(conv), conv, displayed);
+		account, conv, displayed);
 
 	sent = g_strdup(displayed);
 
@@ -164,7 +167,7 @@ common_send(GaimConversation *conv, const char *message)
 		GPOINTER_TO_INT(gaim_signal_emit_return_1(
 			gaim_conversations_get_handle(), (type == GAIM_CONV_IM ?
 			"displaying-im-msg" : "displaying-chat-msg"),
-			gaim_conversation_get_account(conv), conv, &displayed));
+			account, conv, &displayed));
 
 	if (plugin_return) {
 		g_free(displayed);
@@ -172,14 +175,14 @@ common_send(GaimConversation *conv, const char *message)
 	} else {
 		gaim_signal_emit(gaim_conversations_get_handle(),
 			(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-			gaim_conversation_get_account(conv), conv, displayed);
+			account, conv, displayed);
 	}
 
 	if (type == GAIM_CONV_IM) {
 		GaimConvIm *im = GAIM_CONV_IM(conv);
 
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-im-msg",
-						 gaim_conversation_get_account(conv),
+						 account,
 						 gaim_conversation_get_name(conv), &sent);
 
 		if (sent != NULL && sent[0] != '\0') {
@@ -199,13 +202,13 @@ common_send(GaimConversation *conv, const char *message)
 				gaim_conv_im_write(im, NULL, displayed, msgflags, time(NULL));
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
-							 gaim_conversation_get_account(conv),
+							 account,
 							 gaim_conversation_get_name(conv), sent);
 		}
 	}
 	else {
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-chat-msg",
-						 gaim_conversation_get_account(conv), &sent,
+						 account, &sent,
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 
 		if (sent != NULL && sent[0] != '\0') {
@@ -218,23 +221,38 @@ common_send(GaimConversation *conv, const char *message)
 			}
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-chat-msg",
-							 gaim_conversation_get_account(conv), sent,
+							 account, sent,
 							 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 		}
 	}
 
 	if (err < 0) {
+		const char *who;
+		char *msg;
+
+		who = gaim_conversation_get_name(conv);
+
 		if (err == -E2BIG) {
-			gaim_notify_error(NULL, NULL,
-							  _("Unable to send message. The message is "
-								"too large."), NULL);
+			msg = _("Unable to send message: The message is too large.");
+
+			if (!gaim_conv_present_error(who, account, msg)) {
+				msg = g_strdup_printf(_("Unable to send message to %s."), who);
+				gaim_notify_error(gc, NULL, msg, _("The message is too large."));
+				g_free(msg);
+			}
 		}
 		else if (err == -ENOTCONN) {
 			gaim_debug(GAIM_DEBUG_ERROR, "conversation",
 					   "Not yet connected.\n");
 		}
 		else {
-			gaim_notify_error(NULL, NULL, _("Unable to send message."), NULL);
+			msg = _("Unable to send message.");
+
+			if (!gaim_conv_present_error(who, account, msg)) {
+				msg = g_strdup_printf(_("Unable to send messge to %s."), who);
+				gaim_notify_error(gc, NULL, msg, NULL);
+				g_free(msg);
+			}
 		}
 	}
 
