@@ -201,6 +201,11 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 	struct group *g = group;
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	gboolean save = FALSE;
+
+	/* if we're moving to overtop of ourselves, do nothing */
+	if((GaimBlistNode*)buddy == node)
+		return;
+
 	if (!n) {
 		if (!g) {
 			g = gaim_group_new(_("Buddies"));
@@ -216,14 +221,14 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		ops->remove(gaimbuddylist, (GaimBlistNode*)buddy);
 		node2 = ((GaimBlistNode*)buddy)->next;
 		node3 = ((GaimBlistNode*)buddy)->prev;
-		
+
 		if (node2)
 			node2->prev = node3;
 		if (node3)
 			node3->next = node2;
 
 		if (((GaimBlistNode*)buddy)->parent != n->parent)
-			serv_move_buddy(buddy, (struct group*)((GaimBlistNode*)buddy)->parent, 
+			serv_move_buddy(buddy, (struct group*)((GaimBlistNode*)buddy)->parent,
 					(struct group*)n->parent);
 		save = TRUE;
 	}
@@ -242,7 +247,7 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
-	if (save) 
+	if (save)
 		gaim_blist_save();
 }
 
