@@ -3,6 +3,7 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.11.0:
 	* multiple connections
 	* logs now stored to ~/.gaim/logs rather than ~/.gaim/SN/
+	* protocol plugins
 
 version 0.10.3 (10/09/2000):
 	* Segfault when viewing user info fixed

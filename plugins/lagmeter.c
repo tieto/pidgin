@@ -72,6 +72,7 @@ void update_lag(int us) {
 void check_lag(char **who, char **message, void *m) {
 	char *name = g_strdup(normalize(*who));
 	if (!strcasecmp(normalize(current_user->username), name) &&
+	    (*message != NULL) &&
 	    !strcmp(*message, MY_LAG_STRING)) {
 		struct timeval tv;
 		int ms;
@@ -98,8 +99,11 @@ void gaim_plugin_remove() {
 		gtk_timeout_remove(check_timeout);
 	if (confdlg)
 		gtk_widget_destroy(confdlg);
+	if (lagbox)
+		gtk_widget_destroy(lagbox);
+
 	confdlg = NULL;
-	gtk_widget_destroy(lagbox);
+	lagbox = NULL;
 }
 
 void avail_now(void *m) {
@@ -111,6 +115,9 @@ void avail_now(void *m) {
 
 void gaim_plugin_init(void *h) {
 	handle = h;
+
+	confdlg = NULL;
+	lagbox = NULL;
 
 	if (!blist)
 		gaim_signal_connect(handle, event_signon, avail_now, NULL);
@@ -138,7 +145,7 @@ void gaim_plugin_config() {
 	GtkWidget *box;
 
 	if (confdlg) {
-		gtk_widget_show(confdlg);
+		gtk_widget_show_all(confdlg);
 		return;
 	}
 
@@ -148,25 +155,21 @@ void gaim_plugin_config() {
 	box = gtk_hbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(confdlg), box);
-	gtk_widget_show(box);
 
 	label = gtk_label_new("Delay between updates: ");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, TRUE, 0);
-	gtk_widget_show(label);
 
 	adj = (GtkAdjustment *)gtk_adjustment_new(delay, 0, 3600, 1, 0, 0);
 	spinner = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 0, 0);
 	gtk_box_pack_start(GTK_BOX(box), spinner, TRUE, TRUE, 0);
-	gtk_widget_show(spinner);
 
 	button = gtk_button_new_with_label("OK");
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
 			   (GtkSignalFunc)adjust_timeout, spinner);
 	gtk_box_pack_start(GTK_BOX(box), button, FALSE, TRUE, 0);
-	gtk_widget_show(button);
 
-	gtk_widget_show(confdlg);
+	gtk_widget_show_all(confdlg);
 }
 
 char *name() {
