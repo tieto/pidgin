@@ -2486,12 +2486,16 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					}
 				}
 			} else if (!g_strcasecmp (tag, "</A>")) {
-				got_tag = TRUE;
 				if (url != NULL) {
+					got_tag = TRUE;
 					NEW_BIT (NEW_TEXT_BIT);
 					g_free (url);
+					url = NULL;
+				} else {
+					intag = FALSE;
+					tpos = 0;
+					continue;
 				}
-				url = NULL;
 			} else if (!g_strncasecmp (tag, "<IMG ", strlen ("<IMG "))) {
 				gchar *t, *e, *src = NULL;
 				gchar *copy = g_strdup (tag);
