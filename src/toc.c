@@ -882,14 +882,16 @@ static void toc_join_chat(struct gaim_connection *g, int exchange, char *name)
 {
 	char buf[BUF_LONG];
 	if (!name) {
+		const char *nm;
 		if (!join_chat_entry || !join_chat_spin)
 			return;
-		name = gtk_entry_get_text(GTK_ENTRY(join_chat_entry));
+		nm = gtk_entry_get_text(GTK_ENTRY(join_chat_entry));
 		exchange = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(join_chat_spin));
 		if (!name || !strlen(name))
 			return;
-	}
-	g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", exchange, name);
+		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", exchange, nm);
+	} else
+		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", exchange, name);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
@@ -1500,7 +1502,7 @@ static void toc_send_file_connect(gpointer data, gint src, GdkInputCondition con
 static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
-	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
+	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
 	int fd;
 	struct aim_user *user;
 	char buf[BUF_LEN * 2];
@@ -1707,7 +1709,7 @@ static void toc_get_file_connect(gpointer data, gint src, GdkInputCondition cond
 static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
-	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
+	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
 	int fd;
 	struct aim_user *user;
 	char *buf, buf2[BUF_LEN * 2];
