@@ -594,7 +594,7 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
 		{
 			GString *str = decode_html(id->whois_str->str);
-			g_show_info_text(str->str);
+			g_show_info_text(str->str, NULL);
 			g_string_free(str, TRUE);
 		}
 		g_string_free(id->whois_str, TRUE);
