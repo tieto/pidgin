@@ -77,7 +77,7 @@ static void destdeb(GtkWidget *m, gpointer n)
 
 static void set_idle(GtkWidget *w, int *data)
 {
-        report_idle = (int)data;
+	report_idle = (int)data;
 	save_prefs();
 }
 
@@ -88,7 +88,9 @@ static GtkWidget *idle_radio(char *label, int which, GtkWidget *box, GtkWidget *
 	if (!set)
 		opt = gtk_radio_button_new_with_label(NULL, label);
 	else
-		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label);
+		opt =
+		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
+						    label);
 	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_idle), (void *)which);
 	gtk_widget_show(opt);
@@ -105,7 +107,7 @@ static void general_page()
 	GtkWidget *label;
 	GtkWidget *sep;
 	GtkWidget *idle;
-	
+
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
 
@@ -113,7 +115,7 @@ static void general_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -122,17 +124,19 @@ static void general_page()
 	gtk_widget_show(label);
 
 	/*
-	prefrem = gaim_button(_("Remember password"), &general_options, OPT_GEN_REMEMBER_PASS, box);
-	gtk_signal_connect(GTK_OBJECT(prefrem), "destroy", GTK_SIGNAL_FUNC(remdes), 0);
-	gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box);
+	   prefrem = gaim_button(_("Remember password"), &general_options, OPT_GEN_REMEMBER_PASS, box);
+	   gtk_signal_connect(GTK_OBJECT(prefrem), "destroy", GTK_SIGNAL_FUNC(remdes), 0);
+	   gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box);
 
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
-	*/
+	   sep = gtk_hseparator_new();
+	   gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	   gtk_widget_show(sep);
+	 */
 
-	gaim_button(_("Use borderless buttons (requires restart for some buttons)"), &display_options, OPT_DISP_COOL_LOOK, box);
-	gaim_button(_("Show Buddy Ticker after restart"), &display_options, OPT_DISP_SHOW_BUDDYTICKER, box);
+	gaim_button(_("Use borderless buttons (requires restart for some buttons)"), &display_options,
+		    OPT_DISP_COOL_LOOK, box);
+	gaim_button(_("Show Buddy Ticker after restart"), &display_options, OPT_DISP_SHOW_BUDDYTICKER,
+		    box);
 	if (!dw && (general_options & OPT_GEN_DEBUG))
 		general_options = general_options ^ OPT_GEN_DEBUG;
 	debugbutton = gaim_button(_("Show Debug Window"), &general_options, OPT_GEN_DEBUG, box);
@@ -149,7 +153,7 @@ static void general_page()
 
 	label = gtk_label_new(_("Report Idle Times:"));
 	gtk_box_pack_start(GTK_BOX(box2), label, FALSE, FALSE, 5);
-	gtk_widget_show (label);
+	gtk_widget_show(label);
 	idle = idle_radio(_("None"), IDLE_NONE, box2, NULL);
 	idle = idle_radio(_("GAIM Use"), IDLE_GAIM, box2, idle);
 #ifdef USE_SCREENSAVER
@@ -173,7 +177,7 @@ static void buddy_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -183,7 +187,8 @@ static void buddy_page()
 
 	gaim_button(_("Save Window Size/Position"), &general_options, OPT_GEN_SAVED_WINDOWS, box);
 #ifdef USE_APPLET
-	gaim_button(_("Automatically show buddy list on sign on"), &general_options, OPT_GEN_APP_BUDDY_SHOW, box);
+	gaim_button(_("Automatically show buddy list on sign on"), &general_options,
+		    OPT_GEN_APP_BUDDY_SHOW, box);
 	gaim_button(_("Display Buddy List near applet"), &general_options, OPT_GEN_NEAR_APPLET, box);
 #endif
 
@@ -226,7 +231,7 @@ static void convo_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -261,7 +266,8 @@ static void convo_page()
 
 	gaim_button(_("Highlight misspelled words"), &general_options, OPT_GEN_CHECK_SPELLING, box);
 	gaim_button(_("Show URLs as links"), &general_options, OPT_GEN_SEND_LINKS, box);
-	gaim_button(_("Sending messages removes away status"), &general_options, OPT_GEN_BACK_ON_IM, box);
+	gaim_button(_("Sending messages removes away status"), &general_options, OPT_GEN_BACK_ON_IM,
+		    box);
 
 	gtk_widget_show(prefdialog);
 }
@@ -269,7 +275,7 @@ static void convo_page()
 static void set_buttons_opt(GtkWidget *w, int data)
 {
 	int mask;
-	if (data & 0x1) /* set the first bit if we're affecting chat buttons */
+	if (data & 0x1)		/* set the first bit if we're affecting chat buttons */
 		mask = (OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM);
 	else
 		mask = (OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM);
@@ -287,15 +293,14 @@ static void im_buttons_menu_init(GtkWidget *omenu)
 	GtkWidget *menu, *opt;
 	int index;
 
-	switch (display_options & 
-		(OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM)) {
+	switch (display_options & (OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM)) {
 	case OPT_DISP_CONV_BUTTON_TEXT:
 		index = 2;
 		break;
 	case OPT_DISP_CONV_BUTTON_XPM:
 		index = 1;
 		break;
-	default: /* both or neither */
+	default:		/* both or neither */
 		index = 0;
 		break;
 	}
@@ -303,17 +308,20 @@ static void im_buttons_menu_init(GtkWidget *omenu)
 	menu = gtk_menu_new();
 
 	opt = gtk_menu_item_new_with_label(_("Pictures and Text"));
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt),
+			   (void *)(OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM));
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 
 	opt = gtk_menu_item_new_with_label(_("Pictures Only"));
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)OPT_DISP_CONV_BUTTON_XPM);
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt),
+			   (void *)OPT_DISP_CONV_BUTTON_XPM);
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 
 	opt = gtk_menu_item_new_with_label(_("Text Only"));
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)OPT_DISP_CONV_BUTTON_TEXT);
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt),
+			   (void *)OPT_DISP_CONV_BUTTON_TEXT);
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 
@@ -339,7 +347,7 @@ static void im_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -362,9 +370,11 @@ static void im_page()
 	im_buttons_menu_init(opt);
 	gtk_widget_show(opt);
 
-	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CONV_BIG_ENTRY, box);
+	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CONV_BIG_ENTRY,
+		    box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_WINDOWS, box);
-	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, box);
+	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY,
+		    box);
 	gaim_button(_("Ignore TiK Automated Messages"), &general_options, OPT_GEN_TIK_HACK, box);
 
 	gtk_widget_show(prefdialog);
@@ -375,15 +385,14 @@ static void chat_buttons_menu_init(GtkWidget *omenu)
 	GtkWidget *menu, *opt;
 	int index;
 
-	switch (display_options & 
-		(OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM)) {
+	switch (display_options & (OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM)) {
 	case OPT_DISP_CHAT_BUTTON_TEXT:
 		index = 2;
 		break;
 	case OPT_DISP_CHAT_BUTTON_XPM:
 		index = 1;
 		break;
-	default: /* both or neither */
+	default:		/* both or neither */
 		index = 0;
 		break;
 	}
@@ -391,17 +400,20 @@ static void chat_buttons_menu_init(GtkWidget *omenu)
 	menu = gtk_menu_new();
 
 	opt = gtk_menu_item_new_with_label(_("Pictures and Text"));
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM | 1));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt),
+			   (void *)(OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM | 1));
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 
 	opt = gtk_menu_item_new_with_label(_("Pictures Only"));
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CHAT_BUTTON_XPM | 1));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt),
+			   (void *)(OPT_DISP_CHAT_BUTTON_XPM | 1));
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 
 	opt = gtk_menu_item_new_with_label(_("Text Only"));
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CHAT_BUTTON_TEXT | 1));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt),
+			   (void *)(OPT_DISP_CHAT_BUTTON_TEXT | 1));
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 
@@ -425,7 +437,7 @@ static void chat_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -433,7 +445,8 @@ static void chat_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON, box);
+	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON,
+		    box);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
@@ -449,7 +462,8 @@ static void chat_page()
 	gtk_widget_show(opt);
 
 
-	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CHAT_BIG_ENTRY, box);
+	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CHAT_BIG_ENTRY,
+		    box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_CHAT, box);
 
 	gtk_widget_show(prefdialog);
@@ -464,155 +478,155 @@ static struct chat_page *cp = NULL;
 
 static void refresh_list(GtkWidget *w, gpointer *m)
 {
-        char *text = grab_url(NULL, "http://www.aol.com/community/chat/allchats.html");
-        char *c;
-        int len = strlen(text);
-        GtkWidget *item;
-        GList *items = GTK_LIST(cp->list1)->children;
-        struct chat_room *cr;
-        c = text;
+	char *text = grab_url(NULL, "http://www.aol.com/community/chat/allchats.html");
+	char *c;
+	int len = strlen(text);
+	GtkWidget *item;
+	GList *items = GTK_LIST(cp->list1)->children;
+	struct chat_room *cr;
+	c = text;
 
-        while(items) {
-                g_free(gtk_object_get_user_data(GTK_OBJECT(items->data)));
-                items = items->next;
-        }
+	while (items) {
+		g_free(gtk_object_get_user_data(GTK_OBJECT(items->data)));
+		items = items->next;
+	}
 
-        items = NULL;
+	items = NULL;
 
-        gtk_list_clear_items(GTK_LIST(cp->list1), 0, -1);
+	gtk_list_clear_items(GTK_LIST(cp->list1), 0, -1);
 
-        item = gtk_list_item_new_with_label(_("Gaim Chat"));
-        cr = g_new0(struct chat_room, 1);
-        strcpy(cr->name, _("Gaim Chat"));
-        cr->exchange = 4;
-        gtk_object_set_user_data(GTK_OBJECT(item), cr);
-        gtk_widget_show(item);
+	item = gtk_list_item_new_with_label(_("Gaim Chat"));
+	cr = g_new0(struct chat_room, 1);
+	strcpy(cr->name, _("Gaim Chat"));
+	cr->exchange = 4;
+	gtk_object_set_user_data(GTK_OBJECT(item), cr);
+	gtk_widget_show(item);
 
-        items = g_list_append(NULL, item);
+	items = g_list_append(NULL, item);
 
-        while(c) {
-                if (c - text > len - 30)
-                        break; /* assume no chat rooms 30 from end, padding */
-                if (!strncasecmp(AOL_SRCHSTR, c, strlen(AOL_SRCHSTR))) {
-                        char *t;
-                        int len=0;
-                        int exchange;
-                        char *name = NULL;
+	while (c) {
+		if (c - text > len - 30)
+			break;	/* assume no chat rooms 30 from end, padding */
+		if (!strncasecmp(AOL_SRCHSTR, c, strlen(AOL_SRCHSTR))) {
+			char *t;
+			int len = 0;
+			int exchange;
+			char *name = NULL;
 
-                        c += strlen(AOL_SRCHSTR);
-                        t = c;
-                        while(t) {
-                                len++;
-                                name = g_realloc(name, len);
-                                if (*t == '+')
-                                        name[len - 1] = ' ';
-                                else if (*t == '&') {
-                                        name[len - 1] = 0;
-                                        sscanf(t, "&Exchange=%d", &exchange);
-                                        c = t + strlen("&Exchange=x");
-                                        break;
-                                } else
-                                        name[len - 1] = *t;
-                                t++;
-                        }
-                        cr = g_new0(struct chat_room, 1);
-                        strcpy(cr->name, name);
-                        cr->exchange = exchange;
-                        item = gtk_list_item_new_with_label(name);
-                        gtk_widget_show(item);
-                        items = g_list_append(items, item);
-                        gtk_object_set_user_data(GTK_OBJECT(item), cr);
-                        g_free(name);
-                }
-                c++;
-        }
-        gtk_list_append_items(GTK_LIST(cp->list1), items);
-        g_free(text);
+			c += strlen(AOL_SRCHSTR);
+			t = c;
+			while (t) {
+				len++;
+				name = g_realloc(name, len);
+				if (*t == '+')
+					name[len - 1] = ' ';
+				else if (*t == '&') {
+					name[len - 1] = 0;
+					sscanf(t, "&Exchange=%d", &exchange);
+					c = t + strlen("&Exchange=x");
+					break;
+				} else
+					name[len - 1] = *t;
+				t++;
+			}
+			cr = g_new0(struct chat_room, 1);
+			strcpy(cr->name, name);
+			cr->exchange = exchange;
+			item = gtk_list_item_new_with_label(name);
+			gtk_widget_show(item);
+			items = g_list_append(items, item);
+			gtk_object_set_user_data(GTK_OBJECT(item), cr);
+			g_free(name);
+		}
+		c++;
+	}
+	gtk_list_append_items(GTK_LIST(cp->list1), items);
+	g_free(text);
 }
 
 static void add_chat(GtkWidget *w, gpointer *m)
 {
-        GList *sel = GTK_LIST(cp->list1)->selection;
-        struct chat_room *cr, *cr2;
-        GList *crs = chat_rooms;
-        GtkWidget *item;
+	GList *sel = GTK_LIST(cp->list1)->selection;
+	struct chat_room *cr, *cr2;
+	GList *crs = chat_rooms;
+	GtkWidget *item;
 
-        if (sel) {
-                cr = (struct chat_room *)gtk_object_get_user_data(GTK_OBJECT(sel->data));
-        } else
-                return;
+	if (sel) {
+		cr = (struct chat_room *)gtk_object_get_user_data(GTK_OBJECT(sel->data));
+	} else
+		return;
 
-        while(crs) {
-                cr2 = (struct chat_room *)crs->data;
-                if (!strcasecmp(cr->name, cr2->name))
-                        return;
-                crs = crs->next;
-        }
-        item = gtk_list_item_new_with_label(cr->name);
-        cr2 = g_new0(struct chat_room, 1);
-        strcpy(cr2->name, cr->name);
-        cr2->exchange = cr->exchange;
-        gtk_object_set_user_data(GTK_OBJECT(item), cr2);
-        gtk_widget_show(item);
-        sel = g_list_append(NULL, item);
-        gtk_list_append_items(GTK_LIST(cp->list2), sel);
-        chat_rooms = g_list_append(chat_rooms, cr2);
+	while (crs) {
+		cr2 = (struct chat_room *)crs->data;
+		if (!strcasecmp(cr->name, cr2->name))
+			 return;
+		crs = crs->next;
+	}
+	item = gtk_list_item_new_with_label(cr->name);
+	cr2 = g_new0(struct chat_room, 1);
+	strcpy(cr2->name, cr->name);
+	cr2->exchange = cr->exchange;
+	gtk_object_set_user_data(GTK_OBJECT(item), cr2);
+	gtk_widget_show(item);
+	sel = g_list_append(NULL, item);
+	gtk_list_append_items(GTK_LIST(cp->list2), sel);
+	chat_rooms = g_list_append(chat_rooms, cr2);
 
-        setup_buddy_chats();
-        save_prefs();
+	setup_buddy_chats();
+	save_prefs();
 
 
 }
 
 static void remove_chat(GtkWidget *w, gpointer *m)
 {
-        GList *sel = GTK_LIST(cp->list2)->selection;
-        struct chat_room *cr;
-        GList *crs;
-        GtkWidget *item;
+	GList *sel = GTK_LIST(cp->list2)->selection;
+	struct chat_room *cr;
+	GList *crs;
+	GtkWidget *item;
 
-        if (sel) {
-                item = (GtkWidget *)sel->data;
-                cr = (struct chat_room *)gtk_object_get_user_data(GTK_OBJECT(item));
-        } else
-                return;
+	if (sel) {
+		item = (GtkWidget *)sel->data;
+		cr = (struct chat_room *)gtk_object_get_user_data(GTK_OBJECT(item));
+	} else
+		return;
 
-        chat_rooms = g_list_remove(chat_rooms, cr);
-
-
-        gtk_list_clear_items(GTK_LIST(cp->list2), 0, -1);
-
-        if (g_list_length(chat_rooms) == 0)
-                chat_rooms = NULL;
-
-        crs = chat_rooms;
-
-        while(crs) {
-                cr = (struct chat_room *)crs->data;
-                item = gtk_list_item_new_with_label(cr->name);
-                gtk_object_set_user_data(GTK_OBJECT(item), cr);
-                gtk_widget_show(item);
-                gtk_list_append_items(GTK_LIST(cp->list2), g_list_append(NULL, item));
+	chat_rooms = g_list_remove(chat_rooms, cr);
 
 
-                crs = crs->next;
-        }
+	gtk_list_clear_items(GTK_LIST(cp->list2), 0, -1);
 
-        setup_buddy_chats();
-        save_prefs();
+	if (g_list_length(chat_rooms) == 0)
+		chat_rooms = NULL;
+
+	crs = chat_rooms;
+
+	while (crs) {
+		cr = (struct chat_room *)crs->data;
+		item = gtk_list_item_new_with_label(cr->name);
+		gtk_object_set_user_data(GTK_OBJECT(item), cr);
+		gtk_widget_show(item);
+		gtk_list_append_items(GTK_LIST(cp->list2), g_list_append(NULL, item));
+
+
+		crs = crs->next;
+	}
+
+	setup_buddy_chats();
+	save_prefs();
 }
 
 static void room_page()
 {
-        GtkWidget *table;
-        GtkWidget *rem_button, *add_button, *ref_button;
-        GtkWidget *list1, *list2;
-        GtkWidget *label;
-        GtkWidget *sw1, *sw2;
-        GtkWidget *item;
-        GList *crs = chat_rooms;
-        GList *items = NULL;
-        struct chat_room *cr;
+	GtkWidget *table;
+	GtkWidget *rem_button, *add_button, *ref_button;
+	GtkWidget *list1, *list2;
+	GtkWidget *label;
+	GtkWidget *sw1, *sw2;
+	GtkWidget *item;
+	GList *crs = chat_rooms;
+	GList *items = NULL;
+	struct chat_room *cr;
 
 	GtkWidget *parent;
 	GtkWidget *box;
@@ -628,94 +642,84 @@ static void room_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
-        table = gtk_table_new(4, 2, FALSE);
-        gtk_widget_show(table);
+	table = gtk_table_new(4, 2, FALSE);
+	gtk_widget_show(table);
 
-        gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
 
-        list1 = gtk_list_new();
-        list2 = gtk_list_new();
-        sw1 = gtk_scrolled_window_new(NULL, NULL);
-        sw2 = gtk_scrolled_window_new(NULL, NULL);
+	list1 = gtk_list_new();
+	list2 = gtk_list_new();
+	sw1 = gtk_scrolled_window_new(NULL, NULL);
+	sw2 = gtk_scrolled_window_new(NULL, NULL);
 
-        ref_button = picture_button(prefs, _("Refresh"), refresh_xpm);
-        add_button = picture_button(prefs, _("Add"), gnome_add_xpm);
-        rem_button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
-        gtk_widget_show(list1);
-        gtk_widget_show(sw1);
-        gtk_widget_show(list2);
-        gtk_widget_show(sw2);
+	ref_button = picture_button(prefs, _("Refresh"), refresh_xpm);
+	add_button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	rem_button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
+	gtk_widget_show(list1);
+	gtk_widget_show(sw1);
+	gtk_widget_show(list2);
+	gtk_widget_show(sw2);
 
-        gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw1), list1);
-        gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list2);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw1), list1);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list2);
 
-        gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw1),
-                                       GTK_POLICY_AUTOMATIC,GTK_POLICY_ALWAYS);
-        gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
-                                       GTK_POLICY_AUTOMATIC,GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw1),
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 
-        cp->list1 = list1;
-        cp->list2 = list2;
+	cp->list1 = list1;
+	cp->list2 = list2;
 
-        gtk_signal_connect(GTK_OBJECT(ref_button), "clicked",
-                           GTK_SIGNAL_FUNC(refresh_list), cp);
-        gtk_signal_connect(GTK_OBJECT(rem_button), "clicked",
-                           GTK_SIGNAL_FUNC(remove_chat), cp);
-        gtk_signal_connect(GTK_OBJECT(add_button), "clicked",
-                           GTK_SIGNAL_FUNC(add_chat), cp);
+	gtk_signal_connect(GTK_OBJECT(ref_button), "clicked", GTK_SIGNAL_FUNC(refresh_list), cp);
+	gtk_signal_connect(GTK_OBJECT(rem_button), "clicked", GTK_SIGNAL_FUNC(remove_chat), cp);
+	gtk_signal_connect(GTK_OBJECT(add_button), "clicked", GTK_SIGNAL_FUNC(add_chat), cp);
 
 
 
-        label = gtk_label_new(_("List of available chats"));
-        gtk_widget_show(label);
+	label = gtk_label_new(_("List of available chats"));
+	gtk_widget_show(label);
 
-        gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1,
-                         GTK_SHRINK, GTK_SHRINK, 0, 0);
-        gtk_table_attach(GTK_TABLE(table), ref_button, 0, 1, 1, 2,
-                         GTK_SHRINK, GTK_SHRINK, 0, 0);
-        gtk_table_attach(GTK_TABLE(table), sw1, 0, 1, 2, 3,
-                         GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL,
-                         5, 5);
-        gtk_table_attach(GTK_TABLE(table), add_button, 0, 1, 3, 4,
-                         GTK_SHRINK, GTK_SHRINK, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_SHRINK, GTK_SHRINK, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ref_button, 0, 1, 1, 2, GTK_SHRINK, GTK_SHRINK, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), sw1, 0, 1, 2, 3,
+			 GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 5, 5);
+	gtk_table_attach(GTK_TABLE(table), add_button, 0, 1, 3, 4, GTK_SHRINK, GTK_SHRINK, 0, 0);
 
 
-        label = gtk_label_new(_("List of subscribed chats"));
-        gtk_widget_show(label);
+	label = gtk_label_new(_("List of subscribed chats"));
+	gtk_widget_show(label);
 
-        gtk_table_attach(GTK_TABLE(table), label, 1, 2, 0, 1,
-                         GTK_SHRINK, GTK_SHRINK, 0, 0);
-        gtk_table_attach(GTK_TABLE(table), sw2, 1, 2, 2, 3,
-                         GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL,
-                         5, 5);
-        gtk_table_attach(GTK_TABLE(table), rem_button, 1, 2, 3, 4,
-                         GTK_SHRINK, GTK_SHRINK, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), label, 1, 2, 0, 1, GTK_SHRINK, GTK_SHRINK, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), sw2, 1, 2, 2, 3,
+			 GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 5, 5);
+	gtk_table_attach(GTK_TABLE(table), rem_button, 1, 2, 3, 4, GTK_SHRINK, GTK_SHRINK, 0, 0);
 
 
-        item = gtk_list_item_new_with_label(_("Gaim Chat"));
-        cr = g_new0(struct chat_room, 1);
-        strcpy(cr->name, _("Gaim Chat"));
-        cr->exchange = 4;
-        gtk_object_set_user_data(GTK_OBJECT(item), cr);
-        gtk_widget_show(item);
-        gtk_list_append_items(GTK_LIST(list1), g_list_append(NULL, item));
+	item = gtk_list_item_new_with_label(_("Gaim Chat"));
+	cr = g_new0(struct chat_room, 1);
+	strcpy(cr->name, _("Gaim Chat"));
+	cr->exchange = 4;
+	gtk_object_set_user_data(GTK_OBJECT(item), cr);
+	gtk_widget_show(item);
+	gtk_list_append_items(GTK_LIST(list1), g_list_append(NULL, item));
 
 
-        while(crs) {
-                cr = (struct chat_room *)crs->data;
-                item = gtk_list_item_new_with_label(cr->name);
-                gtk_object_set_user_data(GTK_OBJECT(item), cr);
-                gtk_widget_show(item);
-                items = g_list_append(items, item);
+	while (crs) {
+		cr = (struct chat_room *)crs->data;
+		item = gtk_list_item_new_with_label(cr->name);
+		gtk_object_set_user_data(GTK_OBJECT(item), cr);
+		gtk_widget_show(item);
+		items = g_list_append(items, item);
 
-                crs = crs->next;
-        }
+		crs = crs->next;
+	}
 
-        gtk_list_append_items(GTK_LIST(list2), items);
+	gtk_list_append_items(GTK_LIST(list2), items);
 
 	gtk_widget_show(prefdialog);
 }
@@ -814,7 +818,7 @@ static void font_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -822,10 +826,10 @@ static void font_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-        gaim_button(_("Bold Text"), &font_options, OPT_FONT_BOLD, box);
-        gaim_button(_("Italics Text"), &font_options, OPT_FONT_ITALIC, box);
-        gaim_button(_("Underlined Text"), &font_options, OPT_FONT_UNDERLINE, box);
-        gaim_button(_("Strike Text"), &font_options, OPT_FONT_STRIKE, box);
+	gaim_button(_("Bold Text"), &font_options, OPT_FONT_BOLD, box);
+	gaim_button(_("Italics Text"), &font_options, OPT_FONT_ITALIC, box);
+	gaim_button(_("Underlined Text"), &font_options, OPT_FONT_UNDERLINE, box);
+	gaim_button(_("Strike Text"), &font_options, OPT_FONT_STRIKE, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
@@ -834,7 +838,7 @@ static void font_page()
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
-	
+
 	pref_fg_picture = show_color_pref(hbox, TRUE);
 	button = gaim_button(_("Text Color"), &font_options, OPT_FONT_FGCOL, hbox);
 
@@ -846,12 +850,13 @@ static void font_page()
 	gtk_widget_show(select);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color), pref_fg_picture);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color),
+			   pref_fg_picture);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
-	
+
 	pref_bg_picture = show_color_pref(hbox, FALSE);
 	button = gaim_button(_("Background Color"), &font_options, OPT_FONT_BGCOL, hbox);
 
@@ -863,7 +868,8 @@ static void font_page()
 	gtk_widget_show(select);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color), pref_bg_picture);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color),
+			   pref_bg_picture);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
@@ -900,7 +906,7 @@ static void sound_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -918,11 +924,11 @@ static void sound_page()
 static GtkWidget *sndent[NUM_SOUNDS];
 static GtkWidget *sndcmd = NULL;
 
-void close_sounddialog(GtkWidget *w, GtkWidget *w2) 
+void close_sounddialog(GtkWidget *w, GtkWidget *w2)
 {
 
 	GtkWidget *dest;
-	
+
 	if (!GTK_IS_WIDGET(w2))
 		dest = w;
 	else
@@ -933,10 +939,11 @@ void close_sounddialog(GtkWidget *w, GtkWidget *w2)
 	gtk_widget_destroy(dest);
 }
 
-void do_select_sound(GtkWidget *w, int snd) {
-	
+void do_select_sound(GtkWidget *w, int snd)
+{
+
 	char *file;
-	
+
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
 
 	/* If they type in a directory, change there */
@@ -954,41 +961,42 @@ void do_select_sound(GtkWidget *w, int snd) {
 
 	/* Set our text entry */
 	gtk_entry_set_text(GTK_ENTRY(sndent[snd]), sound_file[snd]);
-	
+
 	/* Close the window! It's getting cold in here! */
 	close_sounddialog(NULL, sounddialog);
 }
 
-static void reset_sound(GtkWidget *button, int snd) {
+static void reset_sound(GtkWidget *button, int snd)
+{
 
 	/* This just resets a sound file back to default */
 	sound_file[snd] = NULL;
-	
+
 	gtk_entry_set_text(GTK_ENTRY(sndent[snd]), "(default)");
 }
 
-static void sel_sound(GtkWidget *button, int snd) {
-	
+static void sel_sound(GtkWidget *button, int snd)
+{
+
 	char *buf = g_malloc(BUF_LEN);
-	
-	if (!sounddialog)
-	{
+
+	if (!sounddialog) {
 		sounddialog = gtk_file_selection_new(_("Gaim - Sound Configuration"));
 
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
 
-		g_snprintf(buf, BUF_LEN -1, "%s/", getenv("HOME"));
+		g_snprintf(buf, BUF_LEN - 1, "%s/", getenv("HOME"));
 
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
 
-		gtk_signal_connect(GTK_OBJECT(sounddialog), "destroy", 
-				GTK_SIGNAL_FUNC(close_sounddialog), sounddialog);
+		gtk_signal_connect(GTK_OBJECT(sounddialog), "destroy",
+				   GTK_SIGNAL_FUNC(close_sounddialog), sounddialog);
 
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
-				"clicked", GTK_SIGNAL_FUNC(do_select_sound), (int *)snd);
+				   "clicked", GTK_SIGNAL_FUNC(do_select_sound), (int *)snd);
 
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
-				"clicked", GTK_SIGNAL_FUNC(close_sounddialog), sounddialog);
+				   "clicked", GTK_SIGNAL_FUNC(close_sounddialog), sounddialog);
 	}
 
 	g_free(buf);
@@ -996,7 +1004,8 @@ static void sel_sound(GtkWidget *button, int snd) {
 	gdk_window_raise(sounddialog->window);
 }
 
-static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
+static void sound_entry(char *label, int opt, GtkWidget *box, int snd)
+{
 	GtkWidget *hbox;
 	GtkWidget *entry;
 	GtkWidget *button;
@@ -1019,7 +1028,7 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
 
 	entry = gtk_entry_new();
 	gtk_entry_set_editable(GTK_ENTRY(entry), FALSE);
-	
+
 	if (sound_file[snd])
 		gtk_entry_set_text(GTK_ENTRY(entry), sound_file[snd]);
 	else
@@ -1030,7 +1039,7 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
 	gtk_widget_show(entry);
 }
 
-static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
+static gint sound_cmd_yeah(GtkEntry * entry, GdkEvent *event, gpointer d)
 {
 	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	save_prefs();
@@ -1052,7 +1061,7 @@ static void event_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -1111,15 +1120,15 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 {
 	gchar buffer[2048];
 	guint text_len;
-	
+
 	cur_message = a;
-	
+
 	/* Get proper Length */
 	text_len = gtk_text_get_length(GTK_TEXT(away_text));
-	
+
 	/* Clear the Box */
-	gtk_text_set_point(GTK_TEXT(away_text), 0 );
-	gtk_text_forward_delete (GTK_TEXT(away_text), text_len);
+	gtk_text_set_point(GTK_TEXT(away_text), 0);
+	gtk_text_forward_delete(GTK_TEXT(away_text), text_len);
 
 	/* Fill the text box with new message */
 	strcpy(buffer, a->message);
@@ -1136,16 +1145,17 @@ void save_away_message(GtkWidget *widget, void *dummy)
 
 void remove_away_message(GtkWidget *widget, void *dummy)
 {
-        GList *i;
-        struct away_message *a;
+	GList *i;
+	struct away_message *a;
 
-        i = GTK_LIST(prefs_away_list)->selection;
+	i = GTK_LIST(prefs_away_list)->selection;
 
-	if (!i) return;
+	if (!i)
+		return;
 	if (!i->next) {
 		int text_len = gtk_text_get_length(GTK_TEXT(away_text));
-		gtk_text_set_point(GTK_TEXT(away_text), 0 );
-		gtk_text_forward_delete (GTK_TEXT(away_text), text_len);
+		gtk_text_set_point(GTK_TEXT(away_text), 0);
+		gtk_text_forward_delete(GTK_TEXT(away_text), text_len);
 	}
 	a = gtk_object_get_user_data(GTK_OBJECT(i->data));
 	rem_away_mess(NULL, a);
@@ -1176,7 +1186,7 @@ void set_default_away(GtkWidget *w, gpointer i)
 	if (away_messages == NULL)
 		default_away = 0;
 	else if ((int)i >= length)
-		default_away = length-1;
+		default_away = length - 1;
 	else
 		default_away = (int)i;
 }
@@ -1193,7 +1203,8 @@ void default_away_menu_init(GtkWidget *omenu)
 	while (awy) {
 		a = (struct away_message *)awy->data;
 		opt = gtk_menu_item_new_with_label(a->name);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_default_away), (gpointer)index);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_default_away),
+				   (gpointer)index);
 		gtk_widget_show(opt);
 		gtk_menu_append(GTK_MENU(menu), opt);
 
@@ -1206,7 +1217,7 @@ void default_away_menu_init(GtkWidget *omenu)
 	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), default_away);
 }
 
-	
+
 
 static void away_page()
 {
@@ -1235,7 +1246,7 @@ static void away_page()
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_widget_show(box);
 
 	hbox = gtk_hbox_new(TRUE, 0);
@@ -1256,7 +1267,7 @@ static void away_page()
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(top), sw, TRUE, TRUE, 0);
 	gtk_widget_set_usize(sw, -1, 225);
 	gtk_widget_show(sw);
@@ -1268,7 +1279,7 @@ static void away_page()
 
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
-			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(top), sw2, TRUE, TRUE, 0);
 	gtk_widget_show(sw2);
 
@@ -1289,7 +1300,7 @@ static void away_page()
 	button = picture_button(prefs, _("Edit"), save_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), button);
 	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
-	
+
 	button = picture_button(prefs, _("Make Away"), gnome_preferences_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_away_mess), NULL);
 	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
@@ -1308,17 +1319,18 @@ static void away_page()
 		a = (struct away_message *)awy->data;
 		label = gtk_label_new(a->name);
 		list_item = gtk_list_item_new();
-                gtk_container_add(GTK_CONTAINER(list_item), label);
-                gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked), a);
+		gtk_container_add(GTK_CONTAINER(list_item), label);
+		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked),
+				   a);
 /*                gtk_signal_connect(GTK_OBJECT(list_item), "deselect", GTK_SIGNAL_FUNC(away_list_unclicked), a);*/
-                gtk_object_set_user_data(GTK_OBJECT(list_item), a);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), a);
 
-                gtk_widget_show(label);
-                gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
-                gtk_widget_show(list_item);
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
+		gtk_widget_show(list_item);
 
-                awy = awy->next;
-        }
+		awy = awy->next;
+	}
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
@@ -1328,7 +1340,8 @@ static void away_page()
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	gaim_button(_("Ignore new conversations when away   "), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, hbox);
+	gaim_button(_("Ignore new conversations when away   "), &general_options,
+		    OPT_GEN_DISCARD_WHEN_AWAY, hbox);
 	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, hbox);
 
 	sep = gtk_hseparator_new();
@@ -1348,7 +1361,8 @@ static void away_page()
 		gtk_widget_set_sensitive(GTK_WIDGET(spin), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), spin);
-	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(set_auto_away), GTK_WIDGET(spin));
+	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(set_auto_away),
+			   GTK_WIDGET(spin));
 	gtk_widget_show(spin);
 
 	label = gtk_label_new(_("minutes using"));
@@ -1360,7 +1374,8 @@ static void away_page()
 	default_away_menu_init(prefs_away_menu);
 	if (!(general_options & OPT_GEN_AUTO_AWAY))
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), prefs_away_menu);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),
+			   prefs_away_menu);
 	gtk_widget_show(prefs_away_menu);
 
 	gtk_widget_show(prefdialog);
@@ -1372,24 +1387,24 @@ static GtkWidget *new_window = NULL;
 static void set_browser(GtkWidget *w, int *data)
 {
 	web_browser = (int)data;
-        if (web_browser != BROWSER_MANUAL) {
-                if (browser_entry)
-                        gtk_widget_set_sensitive(browser_entry, FALSE);
-        } else {
-                if (browser_entry)
-                        gtk_widget_set_sensitive(browser_entry, TRUE);
-        }
+	if (web_browser != BROWSER_MANUAL) {
+		if (browser_entry)
+			gtk_widget_set_sensitive(browser_entry, FALSE);
+	} else {
+		if (browser_entry)
+			gtk_widget_set_sensitive(browser_entry, TRUE);
+	}
 
-        if (web_browser != BROWSER_NETSCAPE) {
-                if (new_window)
-                        gtk_widget_set_sensitive(new_window, FALSE);
-        } else {
-                if (new_window)
-                        gtk_widget_set_sensitive(new_window, TRUE);
-        }
+	if (web_browser != BROWSER_NETSCAPE) {
+		if (new_window)
+			gtk_widget_set_sensitive(new_window, FALSE);
+	} else {
+		if (new_window)
+			gtk_widget_set_sensitive(new_window, TRUE);
+	}
 
 
-        save_prefs();
+	save_prefs();
 }
 
 static int manualentry_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
@@ -1406,7 +1421,9 @@ static GtkWidget *browser_radio(char *label, int which, GtkWidget *box, GtkWidge
 	if (!set)
 		opt = gtk_radio_button_new_with_label(NULL, label);
 	else
-		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label);
+		opt =
+		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
+						    label);
 	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_browser), (void *)which);
 	gtk_widget_show(opt);
@@ -1437,7 +1454,7 @@ static void browser_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -1455,23 +1472,25 @@ static void browser_page()
 	browser_entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(box), browser_entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
-	gtk_signal_connect(GTK_OBJECT(browser_entry), "focus_out_event", GTK_SIGNAL_FUNC(manualentry_key_pressed), NULL);
+	gtk_signal_connect(GTK_OBJECT(browser_entry), "focus_out_event",
+			   GTK_SIGNAL_FUNC(manualentry_key_pressed), NULL);
 	gtk_signal_connect(GTK_OBJECT(browser_entry), "destroy", GTK_SIGNAL_FUNC(brentdes), NULL);
 	gtk_widget_show(browser_entry);
 
-	new_window = gaim_button(_("Pop up new window by default"), &general_options, OPT_GEN_BROWSER_POPUP, box);
+	new_window =
+	    gaim_button(_("Pop up new window by default"), &general_options, OPT_GEN_BROWSER_POPUP, box);
 
-        if (web_browser != BROWSER_MANUAL) {
-                gtk_widget_set_sensitive(browser_entry, FALSE);
-        } else {
-                gtk_widget_set_sensitive(browser_entry, TRUE);
-        }
+	if (web_browser != BROWSER_MANUAL) {
+		gtk_widget_set_sensitive(browser_entry, FALSE);
+	} else {
+		gtk_widget_set_sensitive(browser_entry, TRUE);
+	}
 
-        if (web_browser != BROWSER_NETSCAPE) {
-                gtk_widget_set_sensitive(new_window, FALSE);
-        } else {
-                gtk_widget_set_sensitive(new_window, TRUE);
-        }
+	if (web_browser != BROWSER_NETSCAPE) {
+		gtk_widget_set_sensitive(new_window, FALSE);
+	} else {
+		gtk_widget_set_sensitive(new_window, TRUE);
+	}
 
 	gtk_widget_show(prefdialog);
 }
@@ -1497,13 +1516,15 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *se
 	if (!set)
 		opt = gtk_radio_button_new_with_label(NULL, label);
 	else
-		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label);
+		opt =
+		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
+						    label);
 	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
 	if (current_deny_gc->permdeny == which)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-	
+
 	return opt;
 }
 
@@ -1595,8 +1616,7 @@ static void build_deny_menu()
 	while (c) {
 		gc = (struct gaim_connection *)c->data;
 		opt = gtk_menu_item_new_with_label(gc->username);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate",
-				   GTK_SIGNAL_FUNC(deny_gc_opt), gc);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(deny_gc_opt), gc);
 		gtk_widget_show(opt);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		if (gc == current_deny_gc)
@@ -1667,8 +1687,8 @@ static void deny_page()
 	GtkWidget *bbox;
 	GtkWidget *button;
 
-	current_deny_gc = connections->data; /* this is safe because this screen will only be
-						available when there are connections */
+	current_deny_gc = connections->data;	/* this is safe because this screen will only be
+						   available when there are connections */
 	current_is_deny = TRUE;
 
 	parent = prefdialog->parent;
@@ -1678,7 +1698,7 @@ static void deny_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -1696,8 +1716,7 @@ static void deny_page()
 
 	deny_opt_menu = gtk_option_menu_new();
 	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), deny_opt_menu, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy",
-			   GTK_SIGNAL_FUNC(des_deny_opt), NULL);
+	gtk_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy", GTK_SIGNAL_FUNC(des_deny_opt), NULL);
 	gtk_widget_show(deny_opt_menu);
 
 	build_deny_menu();
@@ -1718,8 +1737,7 @@ static void deny_page()
 	gtk_widget_show(label);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-			GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
 	gtk_widget_show(sw);
 
@@ -1753,8 +1771,7 @@ static void deny_page()
 	gtk_widget_show(label);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-			GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
 	gtk_widget_show(sw);
 
@@ -1779,9 +1796,10 @@ static void deny_page()
 	gtk_widget_show(prefdialog);
 }
 
-void update_connection_dependent_prefs() /* what a crappy name */
-{
-	if (!prefs) return;
+void update_connection_dependent_prefs()
+{				/* what a crappy name */
+	if (!prefs)
+		return;
 	if (!connections && deny_node) {
 		if (current_is_deny)
 			gtk_ctree_select(GTK_CTREE(preftree), general_node);
@@ -1798,7 +1816,7 @@ void update_connection_dependent_prefs() /* what a crappy name */
 	}
 }
 
-static void try_me(GtkCTree *ctree, GtkCTreeNode *node)
+static void try_me(GtkCTree * ctree, GtkCTreeNode * node)
 {
 	/* this is a hack */
 	void (*func)();
@@ -1826,8 +1844,7 @@ void show_prefs()
 	aol_icon(prefs->window);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
 	gtk_widget_set_usize(prefs, 690, 540);
-	gtk_signal_connect(GTK_OBJECT(prefs), "destroy",
-			   GTK_SIGNAL_FUNC(delete_prefs), NULL);
+	gtk_signal_connect(GTK_OBJECT(prefs), "destroy", GTK_SIGNAL_FUNC(delete_prefs), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_border_width(GTK_CONTAINER(vbox), 5);
@@ -1837,17 +1854,16 @@ void show_prefs()
 	hpaned = gtk_hpaned_new();
 	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show(hpaned);
-	
-       	scroll = gtk_scrolled_window_new(NULL, NULL);
+
+	scroll = gtk_scrolled_window_new(NULL, NULL);
 	gtk_paned_pack1(GTK_PANED(hpaned), scroll, FALSE, FALSE);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
-			GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 	gtk_widget_set_usize(scroll, 125, -1);
 	gtk_widget_show(scroll);
 
 	preftree = gtk_ctree_new(1, 0);
-	gtk_ctree_set_line_style (GTK_CTREE(preftree), GTK_CTREE_LINES_SOLID);
-        gtk_ctree_set_expander_style(GTK_CTREE(preftree), GTK_CTREE_EXPANDER_TRIANGLE);
+	gtk_ctree_set_line_style(GTK_CTREE(preftree), GTK_CTREE_LINES_SOLID);
+	gtk_ctree_set_expander_style(GTK_CTREE(preftree), GTK_CTREE_EXPANDER_TRIANGLE);
 	gtk_clist_set_reorderable(GTK_CLIST(preftree), FALSE);
 	gtk_container_add(GTK_CONTAINER(scroll), preftree);
 	gtk_signal_connect(GTK_OBJECT(preftree), "tree_select_row", GTK_SIGNAL_FUNC(try_me), NULL);
@@ -1888,14 +1904,13 @@ static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 {
 	if (debugbutton)
 		gtk_button_clicked(GTK_BUTTON(debugbutton));
-        if (general_options & OPT_GEN_DEBUG)
-        {
-                general_options = general_options ^ (int)OPT_GEN_DEBUG;
-                save_prefs();
-        }
-        g_free(dw);
-        dw=NULL;
-        return FALSE;
+	if (general_options & OPT_GEN_DEBUG) {
+		general_options = general_options ^ (int)OPT_GEN_DEBUG;
+		save_prefs();
+	}
+	g_free(dw);
+	dw = NULL;
+	return FALSE;
 
 }
 
@@ -1906,34 +1921,34 @@ static void build_debug()
 	if (!dw)
 		dw = g_new0(struct debug_window, 1);
 
-	box = gtk_hbox_new(FALSE,0);
+	box = gtk_hbox_new(FALSE, 0);
 	dw->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_title(GTK_WINDOW(dw->window), _("GAIM debug output window"));
-	gtk_window_set_wmclass(GTK_WINDOW(dw->window),
-                               "debug_out", "Gaim");
+	gtk_window_set_wmclass(GTK_WINDOW(dw->window), "debug_out", "Gaim");
 	gtk_container_add(GTK_CONTAINER(dw->window), box);
-	dw->entry = gtk_text_new(NULL,NULL);
+	dw->entry = gtk_text_new(NULL, NULL);
 	gtk_widget_set_usize(dw->entry, 500, 200);
 	scroll = gtk_vscrollbar_new(GTK_TEXT(dw->entry)->vadj);
-	gtk_box_pack_start(GTK_BOX(box), dw->entry, TRUE,TRUE,0);
-	gtk_box_pack_end(GTK_BOX(box), scroll,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(box), dw->entry, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(box), scroll, FALSE, FALSE, 0);
 	gtk_widget_show(dw->entry);
 	gtk_widget_show(scroll);
 	gtk_widget_show(box);
-	gtk_signal_connect(GTK_OBJECT(dw->window),"delete_event", GTK_SIGNAL_FUNC(debug_delete), NULL);
+	gtk_signal_connect(GTK_OBJECT(dw->window), "delete_event", GTK_SIGNAL_FUNC(debug_delete), NULL);
 	gtk_widget_show(dw->window);
 }
 
-void show_debug(GtkObject *obj)
+void show_debug(GtkObject * obj)
 {
-	if((general_options & OPT_GEN_DEBUG)) {
-                if(!dw || !dw->window)
-                        build_debug();
-                gtk_widget_show(dw->window);
-        } else {
-		if (!dw) return;
-                gtk_widget_destroy(dw->window);
-                dw->window = NULL;
+	if ((general_options & OPT_GEN_DEBUG)) {
+		if (!dw || !dw->window)
+			build_debug();
+		gtk_widget_show(dw->window);
+	} else {
+		if (!dw)
+			return;
+		gtk_widget_destroy(dw->window);
+		dw->window = NULL;
 	}
 }
 
@@ -1949,7 +1964,7 @@ void debug_printf(char *fmt, ...)
 
 		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, s, -1);
 #ifdef DEBUG
-        printf("%s", chars);
+		printf("%s", chars);
 #endif
 		g_free(s);
 	}
@@ -1969,8 +1984,8 @@ static gint handle_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 	prefdialog = NULL;
 	debugbutton = NULL;
 	prefs_away_menu = NULL;
-	
-        return FALSE;
+
+	return FALSE;
 }
 
 static void delete_prefs(GtkWidget *w, void *data)
@@ -1984,7 +1999,7 @@ static void delete_prefs(GtkWidget *w, void *data)
 	deny_node = NULL;
 	current_deny_gc = NULL;
 }
-      
+
 
 void set_option(GtkWidget *w, int *option)
 {
@@ -1995,8 +2010,8 @@ void set_general_option(GtkWidget *w, int *option)
 {
 	general_options = general_options ^ (int)option;
 
-       	if ((int)option == OPT_GEN_LOG_ALL)
-       		update_log_convs();
+	if ((int)option == OPT_GEN_LOG_ALL)
+		update_log_convs();
 
 	if ((int)option == OPT_GEN_CHECK_SPELLING)
 		toggle_spellchk();
@@ -2006,7 +2021,7 @@ void set_general_option(GtkWidget *w, int *option)
 
 void set_display_option(GtkWidget *w, int *option)
 {
-        display_options = display_options ^ (int)option;
+	display_options = display_options ^ (int)option;
 
 	if (blist && ((int)option == OPT_DISP_NO_BUTTONS))
 		build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
@@ -2034,7 +2049,7 @@ void set_font_option(GtkWidget *w, int *option)
 {
 	font_options = font_options ^ (int)option;
 
-	update_font_buttons();	
+	update_font_buttons();
 
 	save_prefs();
 }
@@ -2047,15 +2062,19 @@ GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *pa
 	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
 
 	if (options == &font_options)
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_font_option), (int *)option);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_font_option),
+				   (int *)option);
 
 	if (options == &sound_options)
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_sound_option), (int *)option);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_sound_option),
+				   (int *)option);
 	if (options == &display_options)
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_display_option), (int *)option);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_display_option),
+				   (int *)option);
 
 	if (options == &general_options)
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_general_option), (int *)option);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_general_option),
+				   (int *)option);
 	gtk_widget_show(button);
 
 	return button;
@@ -2067,7 +2086,7 @@ void prefs_build_general()
 
 	text[0] = _("General");
 	general_node = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+					     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), general_node, general_page);
 
 	gtk_ctree_select(GTK_CTREE(preftree), general_node);
@@ -2080,7 +2099,7 @@ void prefs_build_buddy()
 
 	text[0] = _("Buddy List");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				       text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, buddy_page);
 }
 
@@ -2091,27 +2110,27 @@ void prefs_build_convo()
 
 	text[0] = _("Conversations");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				       text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, convo_page);
 
 	text[0] = _("IM Window");
 	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, im_page);
 
 	text[0] = _("Chat Window");
 	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, chat_page);
 
 	text[0] = _("Chat Rooms");
 	node2 = gtk_ctree_insert_node(GTK_CTREE(preftree), node, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 1, 0);
+				      text, 5, NULL, NULL, NULL, NULL, 1, 0);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node2, room_page);
 
 	text[0] = _("Font Options");
 	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, font_page);
 }
 
@@ -2122,12 +2141,12 @@ void prefs_build_sound()
 
 	text[0] = _("Sounds");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				       text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, sound_page);
 
 	text[0] = _("Events");
 	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, event_page);
 }
 
@@ -2138,7 +2157,7 @@ void prefs_build_away()
 
 	text[0] = _("Away Messages");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				       text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, away_page);
 }
 
@@ -2149,7 +2168,7 @@ void prefs_build_browser()
 
 	text[0] = _("Browser");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+				       text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, browser_page);
 }
 
@@ -2160,7 +2179,7 @@ void prefs_build_deny()
 	if (connections && !deny_node) {
 		text[0] = _("Privacy");
 		deny_node = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-						text, 5, NULL, NULL, NULL, NULL, 0, 1);
+						  text, 5, NULL, NULL, NULL, NULL, 0, 1);
 		gtk_ctree_node_set_row_data(GTK_CTREE(preftree), deny_node, deny_page);
 	}
 }

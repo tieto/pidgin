@@ -199,7 +199,7 @@ faim_export int aim_send_login (struct aim_session_t *sess,
   
     curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
     curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
-    //curbyte += aim_puttlv_8(newpacket->data+curbyte, 0x004a, 0x01);
+    curbyte += aim_puttlv_8(newpacket->data+curbyte, 0x004a, 0x00);
   } else {
     /* Use very specific version numbers, to further indicate the hack. */
     curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x010a);
