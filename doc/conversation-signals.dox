@@ -29,7 +29,7 @@
 
  @signaldef displaying-im-msg
   @signalproto
-gboolean (*displaying_im_msg)(GaimAccount *account, char **message);
+gboolean (*displaying_im_msg)(GaimAccount *account, GaimConversation *conv, char **message);
   @endsignalproto
   @signaldesc
    Emitted just before a message is displayed in an IM conversation.
@@ -39,17 +39,19 @@ gboolean (*displaying_im_msg)(GaimAccount *account, char **message);
   @note
    Make sure to free @a *message before you replace it!
   @param account The account the message is being displayed on.
+  @param conv    The conversation the message is being displayed on.
   @param message A pointer to the message that will be displayed.
   @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
  @endsignaldef
 
  @signaldef displayed-im-msg
   @signalproto
-void (*displayed_im_msg)(GaimAccount *account, const char *message);
+void (*displayed_im_msg)(GaimAccount *account, GaimConversation *conv, const char *message);
   @endsignalproto
   @signaldesc
    Emitted after a message is displayed in an IM conversation.
   @param account The account the message was displayed on.
+  @param conv    The conversation the message was displayed on.
   @param message The message that was displayed.
  @endsignaldef
 
@@ -100,7 +102,7 @@ gboolean (*received_im_msg)(GaimAccount *account, char **sender,
 
  @signaldef displaying-chat-msg
   @signalproto
-gboolean (*displaying_chat_msg)(GaimAccount *account, char **message);
+gboolean (*displaying_chat_msg)(GaimAccount *account, GaimConversation *conv, char **message);
   @endsignalproto
   @signaldesc
    Emitted just before a message is displayed in a chat.
@@ -110,17 +112,19 @@ gboolean (*displaying_chat_msg)(GaimAccount *account, char **message);
   @note
    Make sure to free @a *message before you replace it!
   @param account The account the message is being displayed on.
+  @param conv    The conversation the message is being displayed on.
   @param message A pointer to the message that will be displayed.
   @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
  @endsignaldef
 
  @signaldef displayed-chat-msg
   @signalproto
-void (*displayed_chat_msg)(GaimAccount *account, const char *message);
+void (*displayed_chat_msg)(GaimAccount *account, GaimConversation *conv, const char *message);
   @endsignalproto
   @signaldesc
    Emitted after a message is displayed in a chat conversation.
   @param account The account the message was displayed on.
+  @param conv    The conversation the message was displayed on.
   @param message The message that was displayed.
  @endsignaldef
 

@@ -10,6 +10,7 @@ version 0.69
 	* Yahoo ignore support (Jesse Farmer (farmerje))
 	* The accounts window now shows offline accounts as greyed out, and
 	  online accounts as colored.
+	* Fixed the text replacement plugin.
 	* Added SSL support, compatible with GNUTLS and Mozilla NSS.
 	* Added support for gettext 0.12.x.
 	* The right-click menu for conversation tabs now shows the tab icon
