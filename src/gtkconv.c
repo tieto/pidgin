@@ -73,20 +73,29 @@
 
 /* These colors come from the default GNOME palette */
 static GdkColor nick_colors[] = {
-	{0, 47616, 46336, 43776},      /* Basic 3D Medium */
-	{0, 33536, 42496, 32512},      /* Green Medium */
-	{0, 49408, 26112, 23040},      /* Red Medium */
-	{0, 23808, 29952, 21760},      /* Green Dark */
-	{0, 34816, 17920, 12544},      /* Red Dark */
-	{0, 45824, 37120, 26880},      /* Face skin Dark */
-	{0, 32768, 32000, 29696},      /* Basic 3D Dark */
-	{0, 33280, 26112, 18176},      /* Face Skin Shadow */
-	{0, 57088, 16896, 7680},       /* Accent Red */
-	{0, 17920, 40960, 17920},      /* Accent Green */
-	{0, 39168, 0, 0},              /* Accent Red Dark */
-	{0, 9728, 50944, 9728},        /* Accent Green Dark */
-	{0, 34816, 32512, 41728},     /* Purple Medium */
-	{0, 49408, 14336, 8704}        /* Red Shadow */
+	{0, 47616, 46336, 43776},       /* Basic 3D Medium */
+	{0, 32768, 32000, 29696},       /* Basic 3D Dark */
+	{0, 22016, 20992, 18432},       /* 3D Shadow */
+	{0, 33536, 42496, 32512},       /* Green Medium */
+	{0, 23808, 29952, 21760},       /* Green Dark */
+	{0, 17408, 22016, 12800},       /* Green Shadow */
+	{0, 57344, 46592, 44800},       /* Red Hilight */
+	{0, 49408, 26112, 23040},       /* Red Medium */
+	{0, 34816, 17920, 12544},       /* Red Dark */
+	{0, 49408, 14336, 8704},        /* Red Shadow */
+	{0, 34816, 32512, 41728},       /* Purple Medium */
+	{0, 25088, 23296, 33024},       /* Purple Dark */
+	{0, 18688, 16384, 26112},       /* Purple Shadow */
+	{0, 40192, 47104, 53760},       /* Blue Hilight */
+	{0, 29952, 36864, 44544},       /* Blue Medium */
+	{0, 57344, 49920, 40448},       /* Face Skin Medium */
+	{0, 45824, 37120, 26880},       /* Face skin Dark */
+	{0, 33280, 26112, 18176},       /* Face Skin Shadow */
+	{0, 57088, 16896, 7680},        /* Accent Red */
+	{0, 39168, 0, 0},               /* Accent Red Dark */
+	{0, 60928, 54784, 32768},       /* Accent Yellow */
+	{0, 17920, 40960, 17920},       /* Accent Green */
+	{0, 9728, 50944, 9728}          /* Accent Green Dark */
 };
 
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
@@ -2823,7 +2832,7 @@ gray_stuff_out(GaimConversation *conv)
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			gtk_widget_set_sensitive(gtkwin->menu.add, (prpl_info->join_chat != NULL));
 			gtk_widget_set_sensitive(gtkwin->menu.remove, (prpl_info->join_chat != NULL));
-			gtk_widget_set_sensitive(gtkwin->menu.alias, 
+			gtk_widget_set_sensitive(gtkwin->menu.alias,
 					(gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) != NULL));
 		}
 	} else {
@@ -4153,7 +4162,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	/* Build the toolbar. */
 	frame = gtk_frame_new(NULL);
-	
+
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
@@ -4172,8 +4181,8 @@ setup_chat_pane(GaimConversation *conv)
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), vbox2);
 	gtk_widget_show_all(frame);
-	
-       	gtkconv->toolbar = gtk_imhtmltoolbar_new();
+
+	gtkconv->toolbar = gtk_imhtmltoolbar_new();
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar, FALSE, FALSE, 0);
 
 	sep = gtk_hseparator_new();
@@ -4704,18 +4713,18 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		gtk_drag_dest_set(gtkconv->imhtml, 0,
 				  te, sizeof(te) / sizeof(GtkTargetEntry),
 				  GDK_ACTION_COPY);
-		
+
 		gtk_drag_dest_set(gtkconv->entry, 0,
 				  te, sizeof(te) / sizeof(GtkTargetEntry),
 				  GDK_ACTION_COPY);
-		
+
 		g_signal_connect(G_OBJECT(pane), "drag_data_received",
 				 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
 				 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
 				 G_CALLBACK(conv_dnd_recv), conv);
-		
+
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 6);
 		gtk_container_set_border_width(GTK_CONTAINER(tab_cont), 6);
