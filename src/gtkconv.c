@@ -4335,7 +4335,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 		gtk_font_options ^= GTK_IMHTML_RETURN_LOG;
 
-	if (GAIM_PLUGIN_PROTOCOL_INFO(conv->account->gc->prpl)->options &
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol(conv->account)))->options &
 		OPT_PROTO_USE_POINTSIZE) {
 
 		gtk_font_options ^= GTK_IMHTML_USE_POINTSIZE;
