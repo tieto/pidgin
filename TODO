@@ -63,6 +63,9 @@ DISCUSSION:
 	option to disable close for x seconds after recieve im. this would
 		short circuit missing messages as you close the window.
 		make it an option that's off by default. 
+	the privacy dialog has five different options now.  this looks
+		rather ugly.  When we redesign the dialog, perhaps we should
+		change the privacy setting to a combobox? 
 
 IN GENERAL:
 	segfault on pressing back with messages in queue if coming back
