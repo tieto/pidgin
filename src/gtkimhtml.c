@@ -72,8 +72,8 @@ static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, g
 #define POINT_SIZE(x) (options & GTK_IMHTML_USE_POINTSIZE ? x : _point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
 static gdouble _point_sizes [] = { .69444444, .8333333, 1, 1.2, 1.44, 1.728, 2.0736};
 
-enum {
-/*	TARGET_HTML,  */
+enum { 
+	TARGET_HTML,  
 	TARGET_UTF8_STRING,
 	TARGET_COMPOUND_TEXT,
 	TARGET_STRING,
@@ -94,7 +94,7 @@ enum {
 static guint signals [LAST_SIGNAL] = { 0 };
 
 GtkTargetEntry selection_targets[] = {
-	{ "text/html", 0, TARGET_HTML },
+/*	{ "text/html", 0, TARGET_HTML },*/
 	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT },
 	{ "STRING", 0, TARGET_STRING },
