@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: seanegan $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -91,7 +91,8 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	    }
 #ifndef X_DISPLAY_MISSING
 	    if ((display = getenv("DISPLAY")) && *display) {
-		    (void) strcpy(mytty, display);
+		    (void) strncpy(mytty, sizeof(mytty), display);
+		    mytty[sizeof(mytty)-1] = '\0';
 	    } else {
 #endif
 		    ttyp = ttyname(0);
