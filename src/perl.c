@@ -642,7 +642,7 @@ void load_perl_script(GtkWidget *w, gpointer d)
 
 	if (!last_dir) {
 		temp = gaim_user_dir();
-		buf = g_strconcat(temp, G_DIR_SEPARATOR_S);
+		buf = g_strconcat(temp, G_DIR_SEPARATOR_S, NULL);
 		g_free(temp);
 	} else {
 		buf = g_strconcat(last_dir, G_DIR_SEPARATOR_S, NULL);
