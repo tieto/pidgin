@@ -112,10 +112,24 @@ __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	char buf[MSN_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "MSN Error: %s\n",
-			   (isdigit(*command)
-				? msn_error_get_text(atoi(command))
-				: "Unable to parse message."));
+	if (isdigit(*command)) {
+		int errnum = atoi(command);
+
+		if (errnum == 225) {
+			/*
+			 * Ignore this. It happens as a result of moving a buddy from
+			 * one group that isn't on the server to another that is.
+			 * The user doesn't care if the old group was there or not.
+			 */
+			return TRUE;
+		}
+
+		g_snprintf(buf, sizeof(buf), "MSN Error: %s\n",
+				   msn_error_get_text(errnum));
+	}
+	else {
+		g_snprintf(buf, sizeof(buf), "MSN Error: Unable to parse message\n");
+	}
 
 	do_error_dialog(buf, NULL, GAIM_ERROR);
 
