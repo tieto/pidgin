@@ -3205,7 +3205,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 				tag[tpos] = 0;
 				if (!strcasecmp(tag, "B"))
 					bold = 1;
-				else if (!strcasecmp(tag, "STRIKE"))
+				else if (!strcasecmp(tag, "STRIKE") || !strcasecmp(tag, "S"))
 					strike = 1;
 				else if (!strcasecmp(tag, "I"))
 					italic = 1;
@@ -3217,7 +3217,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 					gtk_html_add_seperator(html);
 				else if (!strcasecmp(tag, "/B"))
 					bold = 0;
-				else if (!strcasecmp(tag, "/STRIKE"))
+				else if (!strcasecmp(tag, "/STRIKE") || !strcasecmp(tag, "/S"))
 					strike = 0;
 				else if (!strcasecmp(tag, "/I"))
 					italic = 0;
