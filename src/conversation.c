@@ -253,7 +253,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 			int imflags = 0;
 
 			if (conv->u.im->images != NULL) {
-				int id = 1, offset = 0;
+				int id = 0, offset = 0;
 				char *bigbuf = NULL;
 				GSList *tmplist;
 
@@ -266,6 +266,8 @@ common_send(struct gaim_conversation *conv, const char *message)
 					char *filename, *c;
 					struct stat st;
 					char imgtag[1024];
+
+					id++;
 
 					if (stat(img_filename, &st) != 0) {
 						debug_printf("Could not stat %s\n",
@@ -328,7 +330,6 @@ common_send(struct gaim_conversation *conv, const char *message)
 							strlen("</DATA>") + 1);
 
 					offset += strlen("</DATA>");
-					id++;
 				}
 
 				if (binary) {
@@ -354,7 +355,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 						g_free(tempy->data);
 					}
 
-					g_slist_free(tempy);
+					g_slist_free(conv->u.im->images);
 					conv->u.im->images = NULL;
 
 					if (binary)

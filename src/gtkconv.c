@@ -215,9 +215,10 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 			"clicked", G_CALLBACK(gtk_widget_destroy), window);
 
 	gtk_widget_show(window);
-
+/*
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
 								FALSE);
+								*/
 }
 
 static void
@@ -3871,6 +3872,10 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 	char *str;
 	char *with_font_tag;
 	
+
+	if(length == -1)
+		length = strlen(message) + 1;
+
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gc = gaim_conversation_get_gc(conv);
 
@@ -3956,8 +3961,8 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, -1, 0);
 	}
 	else {
-		char *new_message = g_strdup(message);
-
+		char *new_message = g_memdup(message, length);
+		
 		if (flags & WFLAG_WHISPER) {
 			str = g_malloc(1024);
 
@@ -4032,15 +4037,26 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, -1, 0);
 
-		if(gc)
-			with_font_tag = g_strdup_printf("<font sml=\"%s\">%s</font>",
-										gc->prpl->name, new_message);
+		if(gc){
+			char *pre = g_strdup_printf("<font sml=\"%s\">", gc->prpl->name);
+			char *post = "</font>";
+			int pre_len = strlen(pre);
+			int post_len = strlen(post);
+
+			with_font_tag = g_malloc(length + pre_len + post_len + 1);
+
+			strcpy(with_font_tag, pre);
+			memcpy(with_font_tag + pre_len, new_message, length);
+			strcpy(with_font_tag + pre_len + length, post);
+
+			length += pre_len + post_len;
+			g_free(pre);
+		}
 		else
-			with_font_tag = g_strdup(new_message);
+			with_font_tag = g_memdup(new_message, length);
 
 		log_str = gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
-										 with_font_tag, length,
-										 gtk_font_options);
+										 with_font_tag, length, gtk_font_options);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", -1, 0);
 

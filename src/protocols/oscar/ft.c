@@ -672,8 +672,10 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 
 		isawaymsg = flags & 0x0001;
 
-		if (!(msg = calloc(1, payloadlength+1)))
+		if (!(msg = calloc(1, payloadlength+1))) {
+			free(snptr);
 			return -ENOMEM;
+		}
 
 		while (payloadlength - recvd) {
 			if (payloadlength - recvd >= 1024)
@@ -682,6 +684,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 				i = aim_recv(conn->fd, &msg[recvd], payloadlength - recvd);
 			if (i <= 0) {
 				free(msg);
+				free(snptr);
 				return -1;
 			}
 			recvd = recvd + i;
@@ -694,6 +697,8 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 
 		free(msg);
 	}
+
+	free(snptr);
 
 	return ret;
 }

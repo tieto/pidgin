@@ -60,6 +60,8 @@ struct _GtkIMHtml {
 	GtkWidget *tip_window;
 	char *tip;
 	guint tip_timer;
+
+	GList *scalables;
 };
 
 struct _GtkIMHtmlClass {
@@ -117,6 +119,51 @@ void       gtk_imhtml_page_up          (GtkIMHtml        *imhtml);
 
 void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml);
 void       gtk_imhtml_to_bottom        (GtkIMHtml        *imhtml);
+
+/* GtkIMHtmlScalable, gaim_im_image, and gaim_hr */
+
+typedef struct _GtkIMHtmlScalable GtkIMHtmlScalable;
+#define GTK_IMHTML_SCALABLE(x) ((GtkIMHtmlScalable *)x)
+
+struct _GtkIMHtmlScalable{
+	void (*scale)(struct _GtkIMHtmlScalable *, int, int);
+	void (*add_to)(struct _GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
+	void (*free)(struct _GtkIMHtmlScalable *);
+};
+
+typedef struct {
+	GtkIMHtmlScalable scalable;
+	GdkPixbuf *image;
+	GtkIMHtml *imhtml;
+	GtkTextMark *mark;
+	int width;
+	int height;
+} gaim_im_image;
+
+typedef struct {
+	GtkIMHtmlScalable scalable;
+	GtkWidget *sep;
+} gaim_hr;
+
+GtkIMHtmlScalable *gtk_imhtml_scalable_new();
+
+GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img);
+
+void gaim_im_image_free(GtkIMHtmlScalable *);
+
+void gaim_im_image_scale(GtkIMHtmlScalable *, int, int);
+
+void gaim_im_image_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
+
+GtkIMHtmlScalable *gaim_hr_new();
+
+void gaim_hr_free(GtkIMHtmlScalable *);
+
+void gaim_hr_scale(GtkIMHtmlScalable *, int, int);
+
+void gaim_hr_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
+
+
 
 #ifdef __cplusplus
 }

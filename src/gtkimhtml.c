@@ -24,6 +24,7 @@
 #endif
 #include "gtkimhtml.h"
 #include <gtk/gtk.h>
+#include <glib/gerror.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 #include <ctype.h>
@@ -54,8 +55,9 @@
 
 static gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer user_data);
 
-
+static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gpointer user_data);
 static gint gtk_imhtml_tip (gpointer data);
+
 
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
@@ -153,6 +155,8 @@ static void
 gtk_imhtml_finalize (GObject *object)
 {
 	GtkIMHtml *imhtml = GTK_IMHTML(object);
+	GList *scalables;
+
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
 	gdk_cursor_unref(imhtml->hand_cursor);
@@ -163,6 +167,12 @@ gtk_imhtml_finalize (GObject *object)
 	if(imhtml->tip_timer)
 		gtk_timeout_remove(imhtml->tip_timer);
 
+	for(scalables = imhtml->scalables; scalables; scalables = scalables->next) {
+		GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(scalables->data);
+		scale->free(scale);
+	}
+
+	g_list_free(imhtml->scalables);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -221,10 +231,13 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->default_smilies = gtk_smiley_tree_new();
 
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
+	g_signal_connect(G_OBJECT(imhtml), "size-allocate", G_CALLBACK(gtk_size_allocate_cb), NULL);
 
 	imhtml->tip = NULL;
 	imhtml->tip_timer = 0;
 	imhtml->tip_window = NULL;
+
+	imhtml->scalables = NULL;
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -719,17 +732,17 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 
 
 #define NEW_TEXT_BIT 0
-#define NEW_HR_BIT 1
 #define NEW_COMMENT_BIT 2
+#define NEW_SCALABLE_BIT 1
 #define NEW_BIT(x)	ws [wpos] = '\0'; \
                         mark2 = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE); \
                         gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, -1); \
-                      	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter); \
+						gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter); \
                         gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &siter, mark2); \
                         gtk_text_buffer_delete_mark(imhtml->text_buffer, mark2); \
                         if (bold) \
                                  gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &siter, &iter); \
-		        if (italics) \
+						if (italics) \
                                  gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &siter, &iter); \
                         if (underline) \
                                  gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &siter, &iter); \
@@ -775,15 +788,16 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                         wpos = 0; \
                         ws[0] = 0; \
                         gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter); \
-                        if (x == NEW_HR_BIT) { \
-                                 GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter); \
-                                 GtkWidget *sep = gtk_hseparator_new(); \
-                                 GdkRectangle rect; \
-                                 gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect); \
-                                 gtk_widget_set_size_request(GTK_WIDGET(sep), rect.width, 2); \
-                                 gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), sep, anchor); \
-                                 gtk_widget_show(sep); \
+                        if (x == NEW_SCALABLE_BIT) { \
+								GdkRectangle rect; \
+								gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect); \
+								scalable->add_to(scalable, imhtml, &iter); \
+								scalable->scale(scalable, rect.width, rect.height); \
+								imhtml->scalables = g_list_append(imhtml->scalables, scalable); \
+								gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter); \
                         } \
+
+
 
 GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				 const gchar      *text,
@@ -817,6 +831,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	GdkRectangle rect;
 	int y, height;
+
+	GtkIMHtmlScalable *scalable = NULL;
 
 	g_return_val_if_fail (imhtml != NULL, NULL);
 	g_return_val_if_fail (GTK_IS_IMHTML (imhtml), NULL);
@@ -941,7 +957,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 26:        /* HR */
 				case 42:        /* HR (opt) */
 					ws[wpos++] = '\n';
-					NEW_BIT(NEW_HR_BIT);
+					scalable = gaim_hr_new();
+					NEW_BIT(NEW_SCALABLE_BIT);
 					ws[wpos++] = '\n';
 					break;
 				case 27:	/* /FONT */
@@ -980,6 +997,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 39:	/* /HEAD */
 					break; 
 				case 40:        /* BINARY */
+					NEW_BIT (NEW_TEXT_BIT);
+					break;
 				case 41:        /* /BINARY */
 					break;
 				case 43:	/* FONT (opt) */
@@ -1062,6 +1081,54 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 						}
 					}
 					break;
+				case 46:	/* IMG (opt) */
+					{
+						gchar *src = gtk_imhtml_get_html_opt (tag, "SRC=");
+						gchar *id = gtk_imhtml_get_html_opt (tag, "ID=");
+						gchar *datasize = gtk_imhtml_get_html_opt (tag, "DATASIZE=");
+						gint im_len = datasize?atoi(datasize):0;
+
+						if (src && id && im_len && im_len <= len - pos) {
+							/* This is an embedded IM image, or is it? */
+							char *tmp = NULL;
+							const char *alltext;
+							guchar *imagedata = NULL;
+
+							GdkPixbufLoader *load;
+							GdkPixbuf *imagepb = NULL;
+							GError *error = NULL;
+
+							tmp = g_strdup_printf("<DATA ID=\"%s\" SIZE=\"%s\">", id, datasize);
+							alltext = strstr(c, tmp);
+							imagedata = g_memdup(alltext + strlen(tmp), im_len);
+
+							g_free(tmp);
+
+							load = gdk_pixbuf_loader_new();
+							if (!gdk_pixbuf_loader_write(load, imagedata, im_len, &error)){
+								fprintf(stderr, "IM Image corrupted or unreadable.: %s\n", error->message);
+							} else {
+								imagepb = gdk_pixbuf_loader_get_pixbuf(load);
+								if (imagepb) {
+									scalable = gaim_im_image_new(imagepb);
+									NEW_BIT(NEW_SCALABLE_BIT);
+								}
+							}
+
+							gdk_pixbuf_loader_close(load, NULL);
+
+
+							g_free(imagedata);
+							g_free(id);
+							g_free(datasize);
+							g_free(src);
+
+							break;
+						}
+						g_free(id);
+						g_free(datasize);
+						g_free(src);
+					}
 				case 47:	/* P (opt) */
 				case 48:	/* H3 (opt) */
 					break;
@@ -1303,7 +1370,131 @@ gtk_imhtml_tip (gpointer data)
 	gtk_window_move (GTK_WINDOW(imhtml->tip_window), x, y);
 
 	pango_font_metrics_unref(font);
-	g_object_unref (layout);
+	g_object_unref(layout);
 
 	return FALSE;
+}
+
+static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gpointer user_data)
+{
+	static GdkRectangle old_rect = {0, 0, 0, 0};
+    GdkRectangle rect;
+
+    gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
+
+	if(old_rect.width && (old_rect.width != rect.width || old_rect.height != rect.height)){
+		GList *iter = GTK_IMHTML(widget)->scalables;
+		
+		while(iter){
+			GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(iter->data);
+			scale->scale(scale, rect.width, rect.height);
+
+			iter = iter->next;
+		}
+	}
+
+	old_rect = rect;
+	return FALSE;
+}
+
+/* GtkIMHtmlScalable, gaim_im_image, gaim_hr */
+GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img)
+{
+	gaim_im_image *im_image = g_malloc(sizeof(gaim_im_image));
+
+	GTK_IMHTML_SCALABLE(im_image)->scale = gaim_im_image_scale;
+	GTK_IMHTML_SCALABLE(im_image)->add_to = gaim_im_image_add_to;
+	GTK_IMHTML_SCALABLE(im_image)->free = gaim_im_image_free;
+	im_image->image = img;
+	im_image->width = gdk_pixbuf_get_width(img);
+	im_image->height = gdk_pixbuf_get_height(img);
+	im_image->imhtml = NULL;
+	im_image->mark = NULL;
+
+	return GTK_IMHTML_SCALABLE(im_image);
+}
+
+void gaim_im_image_scale(GtkIMHtmlScalable *scale, int width, int height)
+{
+	gaim_im_image *image = (gaim_im_image *)scale;
+
+	if(image->width > width || image->height > height){
+		GdkPixbuf *new_image = NULL;
+		GtkTextIter start, end;
+		float factor;
+		int new_width = image->width, new_height = image->height;
+
+		gtk_text_buffer_get_iter_at_mark(image->imhtml->text_buffer, &start, image->mark);
+		end = start;
+		gtk_text_iter_forward_char(&end);
+		gtk_text_buffer_delete(image->imhtml->text_buffer, &start, &end);
+
+		if(image->width > width){
+			factor = (float)(width)/image->width;
+			new_width = width;
+			new_height = image->height * factor;
+		}
+		if(new_height > height){
+			factor = (float)(height)/new_height;
+			new_height = height;
+			new_width = new_width * factor;
+		}
+
+		gtk_text_buffer_get_iter_at_mark(image->imhtml->text_buffer, &start, image->mark);
+		new_image = gdk_pixbuf_scale_simple(image->image, new_width, new_height, GDK_INTERP_BILINEAR);
+		gtk_text_buffer_insert_pixbuf(image->imhtml->text_buffer, &start, new_image);
+
+		g_object_unref(G_OBJECT(new_image));
+	}
+}
+
+void gaim_im_image_free(GtkIMHtmlScalable *scale)
+{
+	gaim_im_image *image = (gaim_im_image *)scale;
+
+	g_object_unref(image->image);
+	g_free(scale);
+}
+
+void gaim_im_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
+{
+	gaim_im_image *image = (gaim_im_image *)scale;
+
+	image->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
+	gtk_text_buffer_insert_pixbuf(imhtml->text_buffer, iter, image->image);
+	image->imhtml = imhtml;
+}
+
+GtkIMHtmlScalable *gaim_hr_new()
+{
+	gaim_hr *hr = g_malloc(sizeof(gaim_hr));
+
+	GTK_IMHTML_SCALABLE(hr)->scale = gaim_hr_scale;
+	GTK_IMHTML_SCALABLE(hr)->add_to = gaim_hr_add_to;
+	GTK_IMHTML_SCALABLE(hr)->free = gaim_hr_free;
+
+	hr->sep = gtk_hseparator_new();
+	gtk_widget_set_size_request(hr->sep, 5000, 2);
+	gtk_widget_show(hr->sep);
+
+	return GTK_IMHTML_SCALABLE(hr);
+}
+
+void gaim_hr_scale(GtkIMHtmlScalable *scale, int width, int height)
+{
+	gtk_widget_set_size_request(((gaim_hr *)scale)->sep, width, 2);
+}
+
+void gaim_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
+{
+	gaim_hr *hr = (gaim_hr *)scale;
+	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
+
+	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), hr->sep, anchor);
+}
+
+void gaim_hr_free(GtkIMHtmlScalable *scale)
+{
+/*	gtk_widget_destroy(((gaim_hr *)scale)->sep); */
+	g_free(scale);
 }
