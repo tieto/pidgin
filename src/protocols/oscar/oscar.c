@@ -2423,6 +2423,7 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 	aim_send_typing(odata->sess, dim->conn, typing);
 	return 0;
 }
+static void oscar_ask_direct_im(struct gaim_connection *gc, char *name);
 
 static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int len, int imflags) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;

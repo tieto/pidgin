@@ -241,7 +241,7 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 		    (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
 			/* I strongly suspect that this is a horrible thing to do
 			 * and I feel really guilty doing it. */
-			char *sn = aim_directim_getsn(conn);
+			const char *sn = aim_directim_getsn(conn);
 			aim_rxcallback_t userfunc;
 			while (count - wrote > 1024) {
 				wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, 1024);

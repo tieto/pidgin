@@ -372,7 +372,7 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 					nm[i++] = *tmp++;
 				
 				while (*tmp != ':' && *tmp)
-					*tmp++;
+					tmp++;
 				
 				if (*tmp == ':')
 					*tmp++ = '\0';

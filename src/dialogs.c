@@ -37,6 +37,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <math.h>
 
 #include <gtk/gtk.h>
 #include "gaim.h"

@@ -1092,9 +1092,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		g_snprintf(buf, limit, "%s", buffy);
 		g_free(buffy);
 	}
-
+	
 	if (!c->is_chat) {
 		char *buffy;
+		gboolean binary = FALSE;
 
 		buffy = g_strdup(buf);
 		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy, 0);
@@ -1102,23 +1103,23 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 			int imflags = 0;
 			if (c->check && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->check)))
 				imflags = IM_FLAG_CHECKBOX;
+			
 			if (c->images) {
 				int id, offset;
 				char *bigbuf;
 				GSList *tmplist = c->images;
 				id = 1;
-				length = strlen(buffy) + strlen("<BINARY></BINARY>");
-				bigbuf = g_malloc(length);
-				g_snprintf(bigbuf, strlen(buffy)+strlen("<BINARY> ") + 1, "%s<BINARY>", buffy);
-				offset = strlen(buffy) + strlen("<BINARY>");
+				
 				while (tmplist) {
 					FILE *imgfile;
 					char *filename;
 					struct stat st;
 					char imgtag[1024];
+	
 					if (stat(tmplist->data, &st) != 0) {
 						debug_printf("Could not stat %s\n", tmplist->data);
-						break;
+						tmplist = tmplist->next;
+						continue;
 					}
 								
 					/* Here we check to make sure the user still wants to send the
@@ -1130,18 +1131,29 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 					g_snprintf(imgtag, sizeof(imgtag),
 						   "<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
 						   filename, id, (int)st.st_size);
-				       	if (!strstr(buffy, imgtag)) {
+				       	
+					if (strstr(buffy, imgtag) == 0) {
+						debug_printf("Not sending image: %s\n", tmplist->data);
 						tmplist = tmplist->next;
 						continue;
+					}
+					if (!binary) {
+						length = strlen(buffy) + strlen("<BINARY></BINARY>");
+						bigbuf = g_malloc(length + 1);
+						g_snprintf(bigbuf, strlen(buffy) + strlen("<BINARY> ") + 1,
+							   "%s<BINARY>", buffy);
+						offset = strlen(buffy) + strlen("<BINARY>");
+						binary = TRUE;
 					}
 					g_snprintf(imgtag, sizeof(imgtag),
 						   "<DATA ID=\"%d\" SIZE=\"%d\">",
 						   id, (int)st.st_size);
 					
 					length = length + strlen(imgtag) + st.st_size + strlen("</DATA>");;
-					bigbuf = g_realloc(bigbuf, length);
+					bigbuf = g_realloc(bigbuf, length + 1);
 					if (!(imgfile = fopen(tmplist->data, "r"))) {
 						debug_printf("Could not open %s\n", tmplist->data);
+						tmplist = tmplist->next;
 						continue;
 					}
 					g_snprintf(bigbuf + offset, strlen(imgtag) + 1, "%s", imgtag);
@@ -1153,9 +1165,12 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 					id++;
 					tmplist = tmplist->next;
 				}
-				
-				g_snprintf(bigbuf + offset, strlen("</BINARY>") + 1, "</BINARY>"); 
-				err =serv_send_im(c->gc, c->name, bigbuf, length, imflags);
+				if (binary) {
+					g_snprintf(bigbuf + offset, strlen("</BINARY>") + 1, "</BINARY>"); 
+					err =serv_send_im(c->gc, c->name, bigbuf, length, imflags);
+				} else {
+					err = serv_send_im(c->gc, c->name, buffy, -1, imflags);
+				}					
 				if (err > 0) {
 					GSList *tempy = c->images;
 					while (tempy) {
@@ -1164,7 +1179,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 					}
 					g_slist_free(tempy);
 					c->images = NULL;
-					write_to_conv(c, bigbuf, WFLAG_SEND, NULL, time(NULL), length);
+					if (binary)
+						write_to_conv(c, bigbuf, WFLAG_SEND, NULL, time(NULL), length);
+					else
+						write_to_conv(c, buffy, WFLAG_SEND, NULL, time(NULL), -1);
 					if (c->makesound && (sound_options & OPT_SOUND_SEND))
 						play_sound(SEND);
 					if (im_options & OPT_IM_POPDOWN)
@@ -1172,7 +1190,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 					
 					
 				}
-				g_free(bigbuf);
+				if (binary)
+					g_free(bigbuf);
 			} else {
 				err =serv_send_im(c->gc, c->name, buffy, -1, imflags);
 				if (err > 0) { 

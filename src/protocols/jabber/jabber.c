@@ -1602,7 +1602,7 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 
 static void jabber_remove_buddy(struct gaim_connection *gc, char *name, char *group)
 {
-	xmlnode x, y;
+	xmlnode x;
 	char *realwho;
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 
@@ -2795,40 +2795,6 @@ static void gjab_reqreg(gjconn gjc)
 	}
 	z = xmlnode_insert_tag(y, "password");
 	xmlnode_insert_cdata(z, gjc->pass, -1);
-
-	debug_printf("jabber: registration packet: %s\n", xmlnode2str(x));
-	gjab_send(gjc, x);
-	xmlnode_free(x);
-}
-
-/*
- * Like gjab_reqauth(), only different
- */
-static void gjab_reqregreqs(gjconn gjc)
-{
-	xmlnode x, y, z;
-	char *user;
-
-	if (!gjc)
-		return;
-
-	x = jutil_iqnew(JPACKET__GET, NS_REGISTER);
-	y = xmlnode_get_tag(x, "query");
-
-	xmlnode_put_attrib(x, "to", "jimsun.linxnet.com");
-	/*
-	xmlnode_put_attrib(x, "from", "jseymour@jimsun.linxnet.com");
-	 */
-	/*
-	user = gjc->user->user;
-
-	if (user) {
-		z = xmlnode_insert_tag(y, "username");
-		xmlnode_insert_cdata(z, user, -1);
-	}
-	z = xmlnode_insert_tag(y, "password");
-	xmlnode_insert_cdata(z, gjc->pass, -1);
-	 */
 
 	debug_printf("jabber: registration packet: %s\n", xmlnode2str(x));
 	gjab_send(gjc, x);
