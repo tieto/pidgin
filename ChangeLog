@@ -8,6 +8,8 @@ version 0.79cvs:
 	  (Ambrose Li)
 	* Yahoo! Japan support. Click More Options and check Yahoo Japan
 	  in the account editor, to use your Yahoo! Japan account.
+	* Gtk themes can now theme the Gaim buddy list independently of
+	  other things (Stu Tomlinson)
 
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze
