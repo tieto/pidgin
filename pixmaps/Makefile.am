@@ -109,7 +109,7 @@ gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png 
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
-gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png 
+gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png logo.png
 
 distpixmapdir = $(datadir)/pixmaps
 distpixmap_DATA = gaim.png
