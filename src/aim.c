@@ -109,6 +109,12 @@ void hide_login_progress(char *why)
                gtk_main_iteration();
 }
 
+static int snd_tmout;
+static void sound_timeout() {
+	sound_options += OPT_SOUND_LOGIN;
+	gtk_timeout_remove(snd_tmout);
+}
+
 void dologin(GtkWidget *widget, GtkWidget *w)
 {
 	static gboolean running = FALSE;
@@ -138,6 +144,13 @@ void dologin(GtkWidget *widget, GtkWidget *w)
         if (serv_login(username, password) < 0) {
 		running = FALSE;
                 return;
+	}
+
+	if (sound_options & OPT_SOUND_LOGIN &&
+		sound_options & OPT_SOUND_SILENT_SIGNON) {
+		sound_options -= OPT_SOUND_LOGIN;
+		snd_tmout = gtk_timeout_add(10000, (GtkFunction)sound_timeout,
+				NULL);
 	}
 
 #ifdef USE_APPLET

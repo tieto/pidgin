@@ -619,6 +619,7 @@ void build_prefs()
 	gaim_button("Sound when message is sent", &sound_options, OPT_SOUND_SEND, sound_page);
         gaim_button("Sound when first message is received", &sound_options, OPT_SOUND_FIRST_RCV, sound_page);
         gaim_button("Sound when message is received if away", &sound_options, OPT_SOUND_WHEN_AWAY, sound_page);
+	gaim_button("No sound for buddies signed on when you log in", &sound_options, OPT_SOUND_SILENT_SIGNON, sound_page);
         gtk_widget_show(sound_page);
 
 
