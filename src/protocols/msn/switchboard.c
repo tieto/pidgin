@@ -84,16 +84,7 @@ static gboolean
 ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 size_t param_count)
 {
-#if 0
-	GaimAccount *account = servconn->session->account;
-#endif
 	MsnSwitchBoard *swboard = servconn->data;
-
-#if 0
-	if (swboard->chat != NULL)
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
-						   gaim_account_get_username(account), NULL);
-#endif
 
 	return send_clientcaps(swboard);
 }
