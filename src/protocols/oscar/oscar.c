@@ -5600,8 +5600,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 		dim->watcher = 0;
 	}
 	/* XXX is this really necessary? */
-	while (gtk_events_pending())
-		gtk_main_iteration();
+	gaim_core_mainloop_finish_events();
 
 	c = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
 	if (c != NULL)
