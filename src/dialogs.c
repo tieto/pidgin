@@ -3451,7 +3451,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	GtkWidget *win;
 
 	if (c->smiley_dialog)
-		return NULL;
+		return;
 		
 	dialog = gtk_dialog_new();
 	win = c->window;
