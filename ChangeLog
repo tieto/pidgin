@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.68:
+version 0.68 (09/01/2003):
 	* Removed the old event system and replaced it with a much better
 	  signal system.
 	* Added plugin dependency support.
