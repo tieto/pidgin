@@ -2428,8 +2428,12 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	struct direct_im *dim = find_direct_im(odata, name);
 	int ret = 0;
 	if (dim) {
-		if (dim->connected)   /* If we're not connected yet, send through server */
-			return  aim_send_im_direct(odata->sess, dim->conn, message);
+		if (dim->connected) {  /* If we're not connected yet, send through server */
+			ret =  aim_send_im_direct(odata->sess, dim->conn, message);
+			if (ret == 0)
+				return 1;
+			else return ret;
+		}
 		debug_printf("Direct IM pending, but not connected; sending through server\n");
 		}
 	if (imflags & IM_FLAG_AWAY) {
