@@ -187,7 +187,7 @@ static void buddy_ticker_show()
 	}
 }
 
-void signon_cb(struct gaim_connection *gc, char *who) {
+void signon_cb(GaimConnection *gc, char *who) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);
@@ -195,7 +195,7 @@ void signon_cb(struct gaim_connection *gc, char *who) {
 		buddy_ticker_add_buddy(b);
 }
 
-void signoff_cb(struct gaim_connection *gc) {
+void signoff_cb(GaimConnection *gc) {
 	if (!connections) {
 		while(tickerbuds) {
 			g_free(tickerbuds->data);
@@ -217,7 +217,7 @@ void signoff_cb(struct gaim_connection *gc) {
 	}
 }
 
-void buddy_signoff_cb(struct gaim_connection *gc, char *who) {
+void buddy_signoff_cb(GaimConnection *gc, char *who) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 
 	buddy_ticker_remove_buddy(b);
@@ -225,7 +225,7 @@ void buddy_signoff_cb(struct gaim_connection *gc, char *who) {
 		gtk_widget_hide(tickerwindow);
 }
 
-void away_cb(struct gaim_connection *gc, char *who) {
+void away_cb(GaimConnection *gc, char *who) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);

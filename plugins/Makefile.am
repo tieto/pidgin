@@ -10,7 +10,7 @@ plugindir = $(libdir)/gaim
 
 autorecon_la_LDFLAGS   = -module -avoid-version
 iconaway_la_LDFLAGS    = -module -avoid-version
-notify_la_LDFLAGS      = -module -avoid-version
+#notify_la_LDFLAGS      = -module -avoid-version
 spellchk_la_LDFLAGS    = -module -avoid-version
 history_la_LDFLAGS     = -module -avoid-version
 timestamp_la_LDFLAGS   = -module -avoid-version
@@ -22,16 +22,17 @@ if PLUGINS
 plugin_LTLIBRARIES = \
 	autorecon.la   \
 	iconaway.la    \
-	notify.la      \
 	spellchk.la    \
 	history.la     \
 	timestamp.la   \
 	idle.la        \
 	statenotify.la
 
+#	notify.la
+
 autorecon_la_SOURCES   = autorecon.c
 iconaway_la_SOURCES    = iconaway.c
-notify_la_SOURCES      = notify.c
+#notify_la_SOURCES      = notify.c
 spellchk_la_SOURCES    = spellchk.c
 history_la_SOURCES     = history.c
 timestamp_la_SOURCES   = timestamp.c
@@ -43,6 +44,7 @@ endif # PLUGINS
 EXTRA_DIST = \
 	ChangeLog PERL-HOWTO HOWTO SIGNALS \
 	filectl.c mailchk.c gtik.c \
+	raw.c events.c simple.c \
 	gaim.pl fortuneprofile.pl
 
 AM_CPPFLAGS = \

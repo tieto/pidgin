@@ -38,7 +38,7 @@ static char *have_word(char *, int);
 static void substitute(char **, int, int, const char *);
 static GtkListStore *model;
 
-static void substitute_words(struct gaim_connection *gc, char *who, char **message, void *m) {
+static void substitute_words(GaimConnection *gc, char *who, char **message, void *m) {
 	int i, l;
 	int word;
 	char *tmp;

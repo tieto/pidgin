@@ -12,31 +12,37 @@
 
 #define IDLE_PLUGIN_ID "gtk-idle"
 
-static struct gaim_connection *gc = NULL;
+static GaimConnection *gc = NULL;
 
 static void set_idle(GtkWidget *button, GtkWidget *spinner) {
 	time_t t;
 	int tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 0, G_MAXINT);
-	if (!gc) {
+	GaimAccount *account;
+
+	if (!gc)
 		return;
-	}
+
+	account = gaim_connection_get_account(gc);
+
 	gaim_debug(GAIM_DEBUG_INFO, "idle",
-			   "setting idle time for %s to %d\n", gc->username, tm);
+			   "setting idle time for %s to %d\n",
+			   gaim_account_get_username(account), tm);
 	time(&t);
 	t -= 60 * tm;
-	gc->lastsent = t;
+	gc->last_sent_time = t;
 	serv_set_idle(gc, 60 * tm);
 	gc->is_idle = 0;
 }
 
-static void sel_gc(GtkWidget *opt, struct gaim_connection *g) {
+static void sel_gc(GtkWidget *opt, GaimConnection *g) {
 	gc = g;
 }
 
 static void make_connect_menu(GtkWidget *box) {
 	GtkWidget *optmenu, *menu, *opt;
-	GSList *c = connections;
-	struct gaim_connection *g;
+	GaimAccount *account;
+	GList *c = gaim_connections_get_all();
+	GaimConnection *g;
 
 	optmenu = gtk_option_menu_new();
 	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 5);
@@ -44,21 +50,23 @@ static void make_connect_menu(GtkWidget *box) {
 	menu = gtk_menu_new();
 
 	while (c) {
-		g = (struct gaim_connection *)c->data;
-		opt = gtk_menu_item_new_with_label(g->username);
+		g = (GaimConnection *)c->data;
+		account = gaim_connection_get_account(g);
+
+		opt = gtk_menu_item_new_with_label(gaim_account_get_username(g));
 		g_signal_connect(G_OBJECT(opt), "activate",
 				   G_CALLBACK(sel_gc), g);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
-		c = g_slist_next(c);
+		c = g_list_next(c);
 	}
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
 
-	if (connections)
-		gc = connections->data;
+	if (gaim_connections_get_all())
+		gc = gaim_connections_get_all()->data;
 	else
 		gc = NULL;
 }

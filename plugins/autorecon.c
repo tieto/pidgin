@@ -19,19 +19,19 @@ static GHashTable *hash = NULL;
 static guint tim = 0;
 
 static gboolean do_signon(gpointer data) {
-	struct gaim_account *account = data;
+	GaimAccount *account = data;
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "do_signon called\n");
 
 	if (g_slist_index(gaim_accounts, account) < 0)
 		return FALSE;
-	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling serv_login\n");
-	serv_login(account);
-	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling serv_login\n");
+	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling gaim_account_connect\n");
+	gaim_account_connect(account);
+	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling gaim_account_connect\n");
 	tim = 0;
 	return FALSE;
 }
 
-static void reconnect(struct gaim_connection *gc, void *m) {
+static void reconnect(GaimConnection *gc, void *m) {
 	if (!gc->wants_to_die) {
 		int del;
 		del = (int)g_hash_table_lookup(hash, gc->account);

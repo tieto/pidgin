@@ -18,7 +18,7 @@ G_MODULE_IMPORT GtkWidget *imaway;
 extern void applet_destroy_buddy();
 #endif
 
-void iconify_windows(struct gaim_connection *gc, char *state,
+void iconify_windows(GaimConnection *gc, char *state,
 					 char *message, void *data) {
 	struct gaim_window *win;
 	GList *windows;

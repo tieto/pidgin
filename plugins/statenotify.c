@@ -1,7 +1,7 @@
 #include "gaim.h"
 
 static void
-write_status(struct gaim_connection *gc, char *who, const char *message)
+write_status(GaimConnection *gc, char *who, const char *message)
 {
 	struct gaim_conversation *conv;
 	struct buddy *b;
@@ -21,25 +21,25 @@ write_status(struct gaim_connection *gc, char *who, const char *message)
 }
 
 static void
-buddy_away_cb(struct gaim_connection *gc, char *who, void *data)
+buddy_away_cb(GaimConnection *gc, char *who, void *data)
 {
 	write_status(gc, who, "has gone away.");
 }
 
 static void
-buddy_unaway_cb(struct gaim_connection *gc, char *who, void *data)
+buddy_unaway_cb(GaimConnection *gc, char *who, void *data)
 {
 	write_status(gc, who, "is no longer away.");
 }
 
 static void
-buddy_idle_cb(struct gaim_connection *gc, char *who, void *data)
+buddy_idle_cb(GaimConnection *gc, char *who, void *data)
 {
 	write_status(gc, who, "has become idle.");
 }
 
 static void
-buddy_unidle_cb(struct gaim_connection *gc, char *who, void *data)
+buddy_unidle_cb(GaimConnection *gc, char *who, void *data)
 {
 	write_status(gc, who, "is no longer idle.");
 }
