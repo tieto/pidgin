@@ -177,8 +177,8 @@ void gaim_prefs_set_string_list(const char *name, GList *value);
 /**
  * Check if a pref exists
  *
- * @param name  The name of the pref
- * @return Whether or not the pref exists
+ * @param name The name of the pref
+ * @return TRUE if the pref exists.  Otherwise FALSE.
  */
 gboolean gaim_prefs_exists(const char *name);
 

@@ -192,14 +192,6 @@ dialogs.c:
   is housed, to import buddy lists. (The actual buddy list parsing code
   is in util.c for winaim lists and buddy.c for gaim's own lists.)
 
-gaimrc.c:
-  This controls everything about the .gaimrc file. There's not really much
-  to say about it; this is probably one of the better designed and easier
-  to follow files in gaim. The important functions are towards the bottom.
-	This file is also utterly deprecated. It is used only for importing
-	on upgrade. the prefs.c and prefs.h files replace the control,
-	and gtkprefs.c replaces the gui component.
-
 gtkimhtml.c:
   This is gaim's HTML widget. It replaced the old widget, GtkHtml (which
   was different than GNOME's GtkHTML). It's self-contained (it doesn't
