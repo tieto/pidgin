@@ -41,6 +41,11 @@ struct _prompt {
 	void *data;
 };
 
+//struct _prpl_smiley {
+//	char *key;
+//	char *xpm; 
+//};
+
 struct prpl *find_prpl(int prot)
 {
 	GSList *e = protocols;
@@ -689,4 +694,17 @@ void register_dialog()
 	reset_reg_dlg();
 
 	gtk_widget_show(regdlg);
+}
+
+GSList *add_smiley(GSList *list, char *key, char **xpm, int show) 
+{
+	struct _prpl_smiley *smiley;
+
+ 	smiley = (struct _prpl_smiley *)g_new0(struct _prpl_smiley, 1);
+	smiley->key = g_strdup(key);
+	smiley->xpm = xpm;
+	smiley->show = show;
+	list = g_slist_append(list, smiley);
+
+	return list;
 }

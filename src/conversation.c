@@ -86,6 +86,9 @@ static void remove_icon(struct conversation *);
 static void update_checkbox(struct conversation *);
 static void remove_checkbox(struct conversation *);
 
+static void update_smilies(struct conversation *c);
+
+
 /*------------------------------------------------------------------------*/
 /*  Helpers                                                               */
 /*------------------------------------------------------------------------*/
@@ -176,6 +179,7 @@ struct conversation *new_conversation(char *name)
 	conversations = g_list_append(conversations, c);
 	show_conv(c);
 	update_icon(c);
+	update_smilies(c);
 	update_checkbox(c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
 	return c;
@@ -932,6 +936,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 	if (!c->gc)
 		return;
+
 
 	buf2 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
 	limit = 32 * 1024;	/* you shouldn't be sending more than 32k in your messages. that's a book. */
@@ -3245,6 +3250,23 @@ void remove_icon(struct conversation *c)
 	c->icon_timer = 0;
 	c->frame = 0;
 #endif
+}
+
+void update_smilies(struct conversation *c)
+{
+	GSList *smilies;
+
+	if (c->gc->prpl->smiley_list) {
+		smilies = c->gc->prpl->smiley_list();
+
+		while (smilies) {
+			struct _prpl_smiley *smile =
+				(struct _prpl_smiley *)smilies->data;
+
+			gtk_imhtml_associate_smiley(GTK_IMHTML(c->text), smile->key, smile->xpm);
+			smilies = g_slist_next(smilies);
+		}
+	}
 }
 
 void update_icon(struct conversation *c)

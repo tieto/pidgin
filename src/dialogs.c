@@ -82,6 +82,7 @@
 #define PATHSIZE 1024
 
 int smiley_array[FACE_TOTAL];
+char *current_smiley;
 GdkColor bgcolor;
 GdkColor fgcolor;
 
@@ -3182,6 +3183,11 @@ void close_smiley_dialog(GtkWidget *widget, struct conversation *c)
 	c->smiley_dialog = NULL;
 }
 
+void set_smiley(GtkWidget *w, char *face) 
+{
+	current_smiley = face;
+}
+
 void set_smiley_array(GtkWidget *widget, int smiley_type)
 {
 	int i;
@@ -3199,63 +3205,69 @@ void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 	char *smiley_text;
 	int i;
 
-	for (i = 0; i < FACE_TOTAL; i++)
-		if (smiley_array[i] == 1)
-			break;
+	if (c->gc->prpl->smiley_list) {
+		smiley_text = strdup(current_smiley);
+	} else {
 
-	switch (i) {
-	case (FACE_ANGEL):
-		smiley_text = g_strndup("O:-)", strlen("O:-)"));
-		break;
-	case (FACE_BIGSMILE):
-		smiley_text = g_strndup(":-D", strlen(":-D"));
-		break;
-	case (FACE_BURP):
-		smiley_text = g_strndup(":-!", strlen(":-!"));
-		break;
-	case (FACE_CROSSEDLIPS):
-		smiley_text = g_strndup(":-X", strlen(":-X"));
-		break;
-	case (FACE_CRY):
-		smiley_text = g_strndup(":'(", strlen(":'("));
-		break;
-	case (FACE_EMBARRASSED):
-		smiley_text = g_strndup(":-[", strlen(":-["));
-		break;
-	case (FACE_KISS):
-		smiley_text = g_strndup(":-*", strlen(":-*"));
-		break;
-	case (FACE_MONEYMOUTH):
-		smiley_text = g_strndup(":-$", strlen(":-$"));
-		break;
-	case (FACE_SAD):
-		smiley_text = g_strndup(":-(", strlen(":-("));
-		break;
-	case (FACE_SCREAM):
-		smiley_text = g_strndup("=-O", strlen("=-O"));
-		break;
-	case (FACE_SMILE):
-		smiley_text = g_strndup(":-)", strlen(":-)"));
-		break;
-	case (FACE_SMILE8):
-		smiley_text = g_strndup("8-)", strlen("8-)"));
-		break;
-	case (FACE_THINK):
-		smiley_text = g_strndup(":-/", strlen(":-/"));
-		break;
-	case (FACE_TONGUE):
-		smiley_text = g_strndup(":-P", strlen(":-p"));
-		break;
-	case (FACE_WINK):
-		smiley_text = g_strndup(";-)", strlen(";-)"));
-		break;
-	case (FACE_YELL):
-		smiley_text = g_strndup(">:o", strlen(">:o"));
-		break;
-	default:
-		smiley_text = g_strndup(":-)", strlen(":-)"));
-		break;
+		for (i = 0; i < FACE_TOTAL; i++)
+			if (smiley_array[i] == 1)
+				break;
+
+		switch (i) {
+		case (FACE_ANGEL):
+			smiley_text = g_strndup("O:-)", strlen("O:-)"));
+			break;
+		case (FACE_BIGSMILE):
+			smiley_text = g_strndup(":-D", strlen(":-D"));
+			break;
+		case (FACE_BURP):
+			smiley_text = g_strndup(":-!", strlen(":-!"));
+			break;
+		case (FACE_CROSSEDLIPS):
+			smiley_text = g_strndup(":-X", strlen(":-X"));
+			break;
+		case (FACE_CRY):
+			smiley_text = g_strndup(":'(", strlen(":'("));
+			break;
+		case (FACE_EMBARRASSED):
+			smiley_text = g_strndup(":-[", strlen(":-["));
+			break;
+		case (FACE_KISS):
+			smiley_text = g_strndup(":-*", strlen(":-*"));
+			break;
+		case (FACE_MONEYMOUTH):
+			smiley_text = g_strndup(":-$", strlen(":-$"));
+			break;
+		case (FACE_SAD):
+			smiley_text = g_strndup(":-(", strlen(":-("));
+			break;
+		case (FACE_SCREAM):
+			smiley_text = g_strndup("=-O", strlen("=-O"));
+			break;
+		case (FACE_SMILE):
+			smiley_text = g_strndup(":-)", strlen(":-)"));
+			break;
+		case (FACE_SMILE8):
+			smiley_text = g_strndup("8-)", strlen("8-)"));
+			break;
+		case (FACE_THINK):
+			smiley_text = g_strndup(":-/", strlen(":-/"));
+			break;
+		case (FACE_TONGUE):
+			smiley_text = g_strndup(":-P", strlen(":-p"));
+			break;
+		case (FACE_WINK):
+			smiley_text = g_strndup(";-)", strlen(";-)"));
+			break;
+		case (FACE_YELL):
+			smiley_text = g_strndup(">:o", strlen(">:o"));
+			break;
+		default:
+			smiley_text = g_strndup(":-)", strlen(":-)"));
+			break;
+		}
 	}
+
 
 	/* surround(c->entry, smiley_text, ""); */
 
@@ -3276,7 +3288,7 @@ void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 }
 
 static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char **xpm, GtkWidget *win,
-			       int face)
+			       char *face)
 {
 	GtkWidget *tpm;
 	GdkBitmap *mask;
@@ -3290,7 +3302,7 @@ static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char **xp
 	gdk_bitmap_unref(mask);
 	button =
 	    gtk_toolbar_append_element(GTK_TOOLBAR(bar), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, NULL,
-				       NULL, tpm, GTK_SIGNAL_FUNC(set_smiley_array), (int *)face);
+				       NULL, tpm, GTK_SIGNAL_FUNC(set_smiley), (char *)face);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
 
 	/* these look really weird with borders */
@@ -3300,9 +3312,11 @@ static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char **xp
 void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 {
 	GtkWidget *dialog;
-	GtkWidget *vbox, *smiley_box_1, *smiley_box_2, *smiley_box_3, *smiley_box_4;
+	GtkWidget *vbox, *smiley_box = NULL;
 	GtkWidget *win;
 	GtkWidget *bbox;
+	GSList *smilies;
+	int smiley_count = 0;
 
 	if (c->smiley_dialog)
 		return;
@@ -3318,39 +3332,65 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	vbox = gtk_vbox_new(TRUE, 5);
 	bbox = gtk_hbox_new(FALSE, 5);
 
-	smiley_box_1 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
-	smiley_box_2 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
-	smiley_box_3 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
-	smiley_box_4 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
 
 	/* setup buttons */
 
 	/* pack buttons */
-	toolbar_add_smiley(c, smiley_box_1, angel_xpm, win, FACE_ANGEL);
-	toolbar_add_smiley(c, smiley_box_1, bigsmile_xpm, win, FACE_BIGSMILE);
-	toolbar_add_smiley(c, smiley_box_1, burp_xpm, win, FACE_BURP);
-	toolbar_add_smiley(c, smiley_box_1, crossedlips_xpm, win, FACE_CROSSEDLIPS);
+	if (c->gc->prpl->smiley_list == NULL) {
+		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+		
+		toolbar_add_smiley(c, smiley_box, angel_xpm, win, "O:-)");
+		toolbar_add_smiley(c, smiley_box, bigsmile_xpm, win, ":-D");
+		toolbar_add_smiley(c, smiley_box, burp_xpm, win, ":-!");
+		toolbar_add_smiley(c, smiley_box, crossedlips_xpm, win, ":-X");
 
-	toolbar_add_smiley(c, smiley_box_2, cry_xpm, win, FACE_CRY);
-	toolbar_add_smiley(c, smiley_box_2, embarrassed_xpm, win, FACE_EMBARRASSED);
-	toolbar_add_smiley(c, smiley_box_2, kiss_xpm, win, FACE_KISS);
-	toolbar_add_smiley(c, smiley_box_2, moneymouth_xpm, win, FACE_MONEYMOUTH);
+		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 
-	toolbar_add_smiley(c, smiley_box_3, sad_xpm, win, FACE_SAD);
-	toolbar_add_smiley(c, smiley_box_3, scream_xpm, win, FACE_SCREAM);
-	toolbar_add_smiley(c, smiley_box_3, smile_xpm, win, FACE_SMILE);
-	toolbar_add_smiley(c, smiley_box_3, smile8_xpm, win, FACE_SMILE8);
+		toolbar_add_smiley(c, smiley_box, cry_xpm, win, ":'(");
+		toolbar_add_smiley(c, smiley_box, embarrassed_xpm, win, ":-[");
+		toolbar_add_smiley(c, smiley_box, kiss_xpm, win, ":-*");
+		toolbar_add_smiley(c, smiley_box, moneymouth_xpm, win, ":-$");
 
-	toolbar_add_smiley(c, smiley_box_4, think_xpm, win, FACE_THINK);
-	toolbar_add_smiley(c, smiley_box_4, tongue_xpm, win, FACE_TONGUE);
-	toolbar_add_smiley(c, smiley_box_4, wink_xpm, win, FACE_WINK);
-	toolbar_add_smiley(c, smiley_box_4, yell_xpm, win, FACE_YELL);
+		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 
-	/* pack containers */
-	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_1, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_2, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_3, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_4, TRUE, TRUE, 0);
+		toolbar_add_smiley(c, smiley_box, sad_xpm, win, ":-(");
+		toolbar_add_smiley(c, smiley_box, scream_xpm, win, "=-O");
+		toolbar_add_smiley(c, smiley_box, smile_xpm, win, ":-)");
+		toolbar_add_smiley(c, smiley_box, smile8_xpm, win, "8-)");
+
+		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+
+		toolbar_add_smiley(c, smiley_box, think_xpm, win, ":-/");
+		toolbar_add_smiley(c, smiley_box, tongue_xpm, win, ":-P");
+		toolbar_add_smiley(c, smiley_box, wink_xpm, win, ";-)");
+		toolbar_add_smiley(c, smiley_box, yell_xpm, win, ">:o");
+	} else {
+
+		smilies = c->gc->prpl->smiley_list();
+
+		while (smilies) {
+			struct _prpl_smiley *smile =
+				(struct _prpl_smiley *)smilies->data;
+
+			if ((!(smiley_count % 4)) && (smiley_count > 0)) {
+				smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+				gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+			}
+			
+			if (smile->show) {
+				toolbar_add_smiley(c, smiley_box, smile->xpm, win, smile->key);
+				smiley_count++;
+			}
+
+			smilies = g_slist_next(smilies);
+
+		}
+	}
+	
 
 	gtk_container_add(GTK_CONTAINER(dialog), vbox);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);

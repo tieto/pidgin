@@ -3548,6 +3548,8 @@ static void oscar_convo_closed(struct gaim_connection *gc, char *who)
 	g_free(dim);
 }
 
+
+
 static struct prpl *my_protocol = NULL;
 
 void oscar_init(struct prpl *ret) {
