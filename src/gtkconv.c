@@ -3800,7 +3800,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		GaimAccount *account;
 
 		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
-										&protocol, &username, NULL))
+						&protocol, &username, NULL))
 		{
 			if (account == NULL)
 			{
@@ -3810,7 +3810,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			}
 			else
 			{
-				gaim_conversation_new(GAIM_CONV_IM, account, username);
+				c = gaim_conversation_new(GAIM_CONV_IM, account, username);
+				gaim_conv_window_add_conversation(win, c);
 			}
 		}
 
