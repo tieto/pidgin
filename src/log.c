@@ -37,6 +37,13 @@ static GaimLogLogger html_logger;
 static GaimLogLogger txt_logger;
 static GaimLogLogger old_logger;
 
+struct _gaim_logsize_user {
+	char *name;
+	GaimAccount *account;
+};
+static GHashTable *logsize_users = NULL;
+
+
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -44,7 +51,7 @@ static GaimLogLogger old_logger;
 GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account, time_t time)
 {
 	GaimLog *log = g_new0(GaimLog, 1);
-	log->name = g_strdup(name);
+	log->name = g_strdup(gaim_normalize(account, name));
 	log->account = account;
 	log->time = time;
 	log->type = type;
@@ -67,14 +74,24 @@ void gaim_log_free(GaimLog *log)
 void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 		    const char *from, time_t time, const char *message)
 {
+	struct _gaim_logsize_user lu;
+
 	g_return_if_fail(log);
 	g_return_if_fail(log->logger);
 	g_return_if_fail(log->logger->write);
 
-	if ((log->type == GAIM_LOG_IM && gaim_prefs_get_bool("/core/logging/log_ims")) ||
-	    (log->type == GAIM_LOG_CHAT && gaim_prefs_get_bool("/core/logging/log_chats")) ||
-+ 		(log->type == GAIM_LOG_SYSTEM && gaim_prefs_get_bool("/core/logging/log_system")))
+	if ((log->type == GAIM_LOG_IM &&
+				gaim_prefs_get_bool("/core/logging/log_ims")) ||
+			(log->type == GAIM_LOG_CHAT &&
+			 gaim_prefs_get_bool("/core/logging/log_chats")) ||
+			(log->type == GAIM_LOG_SYSTEM &&
+			 gaim_prefs_get_bool("/core/logging/log_system"))) {
 		(log->logger->write)(log, type, from, time, message);
+		lu.name = g_strdup(gaim_normalize(log->account, log->name));
+		lu.account = log->account;
+		g_hash_table_remove(logsize_users, &lu);
+		g_free(lu.name);
+	}
 }
 
 char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
@@ -98,33 +115,61 @@ int gaim_log_get_size(GaimLog *log)
 	return 0;
 }
 
+static guint _gaim_logsize_user_hash(struct _gaim_logsize_user *lu)
+{
+	return g_str_hash(lu->name);
+}
+
+static guint _gaim_logsize_user_equal(struct _gaim_logsize_user *lu1,
+		struct _gaim_logsize_user *lu2)
+{
+	return ((!strcmp(lu1->name, lu2->name)) && lu1->account == lu2->account);
+}
+
+static void _gaim_logsize_user_free_key(struct _gaim_logsize_user *lu)
+{
+	g_free(lu->name);
+	g_free(lu);
+}
+
 int gaim_log_get_total_size(const char *name, GaimAccount *account)
 {
-	int size = 0;
+	int size;
 	GSList *n;
+	struct _gaim_logsize_user *lu;
 
-	for (n = loggers; n; n = n->next) {
-		GaimLogLogger *logger = n->data;
+	lu = g_new(struct _gaim_logsize_user, 1);
+	lu->name = g_strdup(gaim_normalize(account, name));
+	lu->account = account;
 
-		if(logger->total_size){
-			size += (logger->total_size)(name, account);
-		} else if(logger->list) {
-			GList *logs = (logger->list)(name, account);
-			int this_size = 0;
+	if((size = GPOINTER_TO_INT(g_hash_table_lookup(logsize_users, lu)))) {
+		g_free(lu->name);
+		g_free(lu);
+	} else {
+		for (n = loggers; n; n = n->next) {
+			GaimLogLogger *logger = n->data;
 
-			while (logs) {
-				GList *logs2 = logs->next;
-				GaimLog *log = (GaimLog*)(logs->data);
-				this_size += gaim_log_get_size(log);
-				gaim_log_free(log);
-				g_list_free_1(logs);
-				logs = logs2;
+			if(logger->total_size){
+				size += (logger->total_size)(name, account);
+			} else if(logger->list) {
+				GList *logs = (logger->list)(name, account);
+				int this_size = 0;
+
+				while (logs) {
+					GList *logs2 = logs->next;
+					GaimLog *log = (GaimLog*)(logs->data);
+					this_size += gaim_log_get_size(log);
+					gaim_log_free(log);
+					g_list_free_1(logs);
+					logs = logs2;
+				}
+
+				size += this_size;
 			}
-
-			size += this_size;
 		}
-	}
 
+		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(size));
+	}
 	return size;
 }
 
@@ -269,6 +314,10 @@ void gaim_log_init(void)
 	gaim_prefs_connect_callback("/core/logging/format",
 				    logger_pref_cb, NULL);
 	gaim_prefs_trigger_callback("/core/logging/format");
+
+	logsize_users = g_hash_table_new_full((GHashFunc)_gaim_logsize_user_hash,
+			(GEqualFunc)_gaim_logsize_user_equal,
+			(GDestroyNotify)_gaim_logsize_user_free_key, NULL);
 }
 
 /****************************************************************************

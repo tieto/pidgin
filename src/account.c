@@ -923,16 +923,9 @@ gaim_account_get_log(GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	if(!account->system_log){
-		char *name = g_strdup(gaim_account_get_username(account));
-		char *c = strchr(name, '/');
-
-		if(c) {
-			c[0] = '\0';
-		}
-
-		account->system_log	 = gaim_log_new(GAIM_LOG_SYSTEM, name,
-											account, account->gc->login_time);
-		g_free(name);
+		account->system_log	 = gaim_log_new(GAIM_LOG_SYSTEM,
+				gaim_account_get_username(account), account,
+				account->gc->login_time);
 	}
 
 	return account->system_log;
