@@ -140,6 +140,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *real_jid = NULL;
 	char *status = NULL;
 	int priority = 0;
 	JabberID *jid;
@@ -250,6 +251,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 								G_CALLBACK(jabber_chat_create_instant_room));
 					}
 				}
+				if((z = xmlnode_get_child(y, "item"))) {
+					real_jid = xmlnode_get_attrib(z, "jid");
+				}
 			}
 		}
 	}
@@ -309,12 +313,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_chat_destroy(chat);
 			} else {
 				gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
-						NULL);
+						real_jid);
 			}
 		} else {
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
-						NULL);
+						real_jid);
 		}
 		g_free(room_jid);
 	} else {

@@ -6,6 +6,7 @@ version 0.75cvs :
 	* Yahoo! chat joining fixes (Tim Ringenbach)
 	* Improved i18n support for MSN email notification (Felipe Contreras)
 	* Jabber SASL PLAIN support
+	* Improved Jabber MUC (Chat) support
 	* Touch-up various dialogs to follow the Gnome Human Interface
 	  Guidelines more closely (Steven Garrity, Nathan Fredrickson, and
 	  Ka-Hing Cheung)
