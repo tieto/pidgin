@@ -5002,7 +5002,7 @@ gaim_gtkconv_update_font_face(struct gaim_conversation *conv)
 		return;
 	
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	
+
 	strncpy(gtkconv->fontface, fontface, 128);
 }
 

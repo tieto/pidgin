@@ -3172,7 +3172,6 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 			}
 		}
 
-		/* Try this. */
 		gaim_prefs_set_string("/gaim/gtk/conversations/font_face", fontname);
 	}
 
