@@ -133,7 +133,6 @@ static gboolean update_applet(gboolean force_update){
 					icon_online_pm,
 					icon_online_bm );                
 			gtk_label_set( GTK_LABEL(status_label), _MSG_ONLINE_ );
-			update_num_groups();
 			break;
 		case away:
 			gtk_pixmap_set( GTK_PIXMAP(icon),
