@@ -232,8 +232,8 @@ GtkTreePath *theme_refresh_theme_list()
 	while (themes) {
 		struct smiley_theme *theme = themes->data;
 		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
-						    "<span size='smaller' foreground='gray'>%s</span>",
-						    theme->name, theme->author, theme->desc);; 
+						    "<span size='smaller' foreground='dim grey'>%s</span>",
+						    theme->name, theme->author, theme->desc);
 		gtk_list_store_append (smiley_theme_store, &iter);
 		pixbuf = gdk_pixbuf_new_from_file(theme->icon, NULL);
 

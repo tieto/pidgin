@@ -184,17 +184,17 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 
 	if (event->button != 3)
 		return FALSE;
-	
+
 	/* Here we figure out which node was clicked */
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
-	
-	if (!GAIM_BLIST_NODE_IS_BUDDY(node)) 
+
+	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
 		return FALSE;
-		
+
 	menu = gtk_menu_new();
 
 	/* Protocol specific options */
@@ -511,7 +511,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b)
 	}		
 
 	
-	/* Idle gray buddies affects the whole row.  This converts the status icon to greyscale. */
+	/* Idle grey buddies affects the whole row.  This converts the status icon to greyscale. */
 	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0, FALSE);
 	return scale;
@@ -548,7 +548,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
 		if (b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS) {
-			text =  g_strdup_printf("<span color='gray'>%s</span>",
+			text =  g_strdup_printf("<span color='dim grey'>%s</span>",
 						esc);
 			g_free(esc);
 			return text;
@@ -572,11 +572,11 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 		warning = g_strdup_printf(_("Warned (%d%%)"), b->evil);
 
 	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
-		text =  g_strdup_printf("<span color='grey'>%s</span>\n<span color='gray' size='smaller'>%s %s</span>",
+		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n<span color='dim grey' size='smaller'>%s %s</span>",
 					esc,
 					idletime, warning);
 	else
-		text = g_strdup_printf("%s\n<span color='gray' size='smaller'>%s %s</span>", esc, idletime, warning);
+		text = g_strdup_printf("%s\n<span color='dim grey' size='smaller'>%s %s</span>", esc, idletime, warning);
 
 	if (idletime[0])
 		g_free(idletime);
@@ -675,12 +675,12 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	g_object_set(rend, "ypad", 0.0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes("Warning", rend, "text", WARNING_COLUMN, NULL);
+	column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes("Idle", rend, "text", IDLE_COLUMN, NULL);
+	column = gtk_tree_view_column_new_with_attributes("Idle", rend, "markup", IDLE_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
 
@@ -688,7 +688,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	column = gtk_tree_view_column_new_with_attributes("Buddy Icon", rend, "pixbuf", BUDDY_ICON_COLUMN, NULL);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
-	
+
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-activated", G_CALLBACK(gtk_blist_row_activated_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "button-press-event", G_CALLBACK(gtk_blist_button_press_cb), NULL);
 
@@ -893,13 +893,34 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 			time(&t);
 			ihrs = (t - ((struct buddy *)node)->idle) / 3600;
 			imin = ((t - ((struct buddy*)node)->idle) / 60) % 60;
-			idle = g_strdup_printf("%d:%02d", ihrs, imin);
+			if(ihrs > 0)
+				idle = g_strdup_printf("(%d:%02d)", ihrs, imin);
+			else
+				idle = g_strdup_printf("(%d)", imin);
 		}
 
 		if ((((struct buddy*)node)->evil > 0) &&
 		    (!(blist_options & OPT_BLIST_SHOW_ICONS) && (blist_options & OPT_BLIST_SHOW_WARN))) {
 			warning = g_strdup_printf("%d%%", ((struct buddy*)node)->evil);
 		}
+
+		if((blist_options & OPT_BLIST_GREY_IDLERS)
+				&& ((struct buddy *)node)->idle) {
+			if(warning) {
+				char *w2 = g_strdup_printf("<span color='dim grey'>%s</span>",
+						warning);
+				g_free(warning);
+				warning = w2;
+			}
+
+			if(idle) {
+				char *i2 = g_strdup_printf("<span color='dim grey'>%s</span>",
+						idle);
+				g_free(idle);
+				idle = i2;
+			}
+		}
+
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_COLUMN, status,
