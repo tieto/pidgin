@@ -3174,7 +3174,7 @@ gaim_gtk_new_window(struct gaim_window *win)
 	gtk_window_set_policy(GTK_WINDOW(gtkwin->window), TRUE, TRUE, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->window), 0);
 	gtk_widget_realize(gtkwin->window);
-	gtk_window_set_title(GTK_WINDOW(gtkwin->window), _("Gaim - Conversations"));
+	gtk_window_set_title(GTK_WINDOW(gtkwin->window), _("Conversations"));
 
 	g_signal_connect(G_OBJECT(gtkwin->window), "delete_event",
 					 G_CALLBACK(close_win_cb), win);
@@ -3202,12 +3202,12 @@ gaim_gtk_new_window(struct gaim_window *win)
 	gtk_widget_add_events(gtkwin->notebook,
 				GDK_BUTTON1_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(gtkwin->notebook), "button_press_event",
-			 G_CALLBACK(notebook_press_cb), win);
+					 G_CALLBACK(notebook_press_cb), win);
 	g_signal_connect(G_OBJECT(gtkwin->notebook), "button_release_event",
-			 G_CALLBACK(notebook_release_cb), win);
-	
+					 G_CALLBACK(notebook_release_cb), win);
+
 	testidea = gtk_vbox_new(FALSE, 0);
-	
+
 	/* Setup the menubar. */
 	menubar = setup_menubar(win);
 	gtk_box_pack_start(GTK_BOX(testidea), menubar, FALSE, TRUE, 0);
@@ -3329,12 +3329,8 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		}
 
 		if (pane == NULL) {
-			if (conv_type == GAIM_CONV_CHAT) {
-				g_free(gtkconv->u.chat);
-			}
-			else if (conv_type == GAIM_CONV_IM) {
-				g_free(gtkconv->u.im);
-			};
+			if      (conv_type == GAIM_CONV_CHAT) g_free(gtkconv->u.chat);
+			else if (conv_type == GAIM_CONV_IM)   g_free(gtkconv->u.im);
 
 			g_free(gtkconv);
 			conv->ui_data = NULL;
@@ -3394,7 +3390,7 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 			  GTK_ICON_SIZE_MENU));
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
-    			 _("Close conversation"), NULL);
+						 _("Close conversation"), NULL);
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
 					 G_CALLBACK(close_conv_cb), conv);

@@ -985,6 +985,11 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		gaim_im_stop_typing_timeout(conv->u.im);
 		gaim_im_stop_type_again_timeout(conv->u.im);
 
+		for (node = conv->u.im->images; node != NULL; node = node->next) {
+			if (node->data != NULL)
+				g_free(node->data);
+		}
+
 		g_slist_free(conv->u.im->images);
 
 		g_free(conv->u.im);
@@ -992,6 +997,17 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		ims = g_list_remove(ims, conv);
 	}
 	else if (conv->type == GAIM_CONV_CHAT) {
+
+		for (node = conv->u.chat->in_room; node != NULL; node = node->next) {
+			if (node->data != NULL)
+				g_free(node->data);
+		}
+
+		for (node = conv->u.chat->ignored; node != NULL; node = node->next) {
+			if (node->data != NULL)
+				g_free(node->data);
+		}
+
 		g_list_free(conv->u.chat->in_room);
 		g_list_free(conv->u.chat->ignored);
 
@@ -1001,6 +1017,8 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		if (conv->u.chat->topic != NULL)
 			g_free(conv->u.chat->topic);
 
+		g_free(conv->u.chat->who);
+		g_free(conv->u.chat->topic);
 		g_free(conv->u.chat);
 
 		chats = g_list_remove(chats, conv);
