@@ -697,7 +697,7 @@ static void _init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_int_new(_("Port"), "port", IRC_DEFAULT_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Encoding"), "encoding", IRC_DEFAULT_CHARSET);
+	option = gaim_account_option_string_new(_("Encodings"), "encoding", IRC_DEFAULT_CHARSET);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Username"), "username", "");

@@ -693,6 +693,17 @@ GList* gaim_uri_list_extract_filenames (const gchar* uri_list);
 gchar *gaim_utf8_try_convert(const char *str);
 
 /**
+ * Salvages the valid UTF-8 characters from a string, replacing any
+ * invalid characters with a filler character (currently hardcoded to
+ * '?').
+ *
+ * @param str The source string.
+ *
+ * @return A valid UTF-8 string.
+ */
+gchar *gaim_utf8_salvage(const char *str);
+
+/**
  * Compares two UTF-8 strings.
  *
  * @param a The first string.

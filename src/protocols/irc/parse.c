@@ -26,6 +26,7 @@
 #include "conversation.h"
 #include "notify.h"
 #include "debug.h"
+#include "util.h"
 #include "cmds.h"
 #include "irc.h"
 
@@ -201,47 +202,59 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 {
 	char *utf8;
 	GError *err = NULL;
-	const gchar *charset;
+	gchar **encodings;
+	const gchar *enclist;
 
-	charset = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
-	if (!strcasecmp("UTF-8", charset))
+	enclist = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
+	encodings = g_strsplit(enclist, ",", 2);
+
+	if (encodings[0] == NULL || !strcasecmp("UTF-8", encodings[0]))
 		return g_strdup(string);
 
-	utf8 = g_convert(string, strlen(string), charset, "UTF-8", NULL, NULL, &err);
+	utf8 = g_convert(string, strlen(string), encodings[0], "UTF-8", NULL, NULL, &err);
 	if (err) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Send conversion error: %s\n", err->message);
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Sending as UTF-8 instead of %s\n", charset);
+		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Sending as UTF-8 instead of %s\n", encodings[0]);
 		utf8 = g_strdup(string);
 		g_error_free(err);
 	}
-	
+	g_strfreev(encodings);
+
 	return utf8;
 }
 
 static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 {
 	char *utf8 = NULL;
-	GError *err = NULL;
-	const gchar *charset;
+	const gchar *charset, *enclist;
+	gchar **encodings;
+	int i;
 
-	charset = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
+	enclist = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
+	encodings = g_strsplit(enclist, ",", -1);
 
-	if (!strcasecmp("UTF-8", charset)) {
-		if (g_utf8_validate(string, strlen(string), NULL))
-			utf8 = g_strdup(string);
-	} else {
-		utf8 = g_convert(string, strlen(string), "UTF-8", charset, NULL, NULL, &err);
+	if (encodings[0] == NULL)
+		return gaim_utf8_salvage(string);
+
+	for (i = 0; encodings[i] != NULL; i++) {
+		charset = encodings[i];
+		while (*charset == ' ')
+			charset++;
+
+		if (!strcasecmp("UTF-8", charset)) {
+			if (g_utf8_validate(string, strlen(string), NULL))
+				utf8 = g_strdup(string);
+		} else {
+			utf8 = g_convert(string, strlen(string), "UTF-8", charset, NULL, NULL, NULL);
+		}
+
+		if (utf8) {
+			g_strfreev(encodings);
+			return utf8;
+		}
 	}
 
-	if (err) {
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "recv conversion error: %s\n", err->message);
-		g_error_free(err);
-	}
-
-	if (utf8 == NULL)
-		utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
-
-	return utf8;
+	return gaim_utf8_salvage(string);
 }
 
 /* XXX tag closings are not necessarily correctly nested here!  If we

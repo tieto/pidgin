@@ -3057,6 +3057,33 @@ gaim_utf8_try_convert(const char *str)
 	return NULL;
 }
 
+#define utf8_first(x) ((x & 0x80) == 0 || (x & 0xe0) == 0xc0 \
+		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf)
+gchar *
+gaim_utf8_salvage(const char *str)
+{
+	GString *workstr;
+	const char *end;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	workstr = g_string_sized_new(strlen(str));
+
+	do {
+		g_utf8_validate(str, -1, &end);
+		workstr = g_string_append_len(workstr, str, end - str);
+		str = end;
+		if (*str == '\0')
+			break;
+		do {
+			workstr = g_string_append_c(workstr, '?');
+			str++;
+		} while (!utf8_first(*str));
+	} while (*str != '\0');
+
+	return g_string_free(workstr, FALSE);
+}
+
 char *
 gaim_utf8_ncr_decode(const char *in)
 {
