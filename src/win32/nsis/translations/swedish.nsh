@@ -5,7 +5,7 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Tore Lundqvist <tlt@mima.x.se>, 2003.
-;;  Author: Kalle Kotte <xake@telia.com>, 2005.
+;;  Author: Peter Hjalmarsson <xake@telia.com>, 2005.
 ;;  Version 3
 ;;
 
