@@ -114,6 +114,7 @@ void silcgaim_get_chmode_string(SilcUInt32 mode, char *buf,
 void silcgaim_get_chumode_string(SilcUInt32 mode, char *buf,
 				 SilcUInt32 buf_size);
 GList *silcgaim_chat_info(GaimConnection *gc);
+GHashTable *silcgaim_chat_info_defaults(GaimConnection *gc, const char *chat_name);
 GList *silcgaim_chat_menu(GaimChat *);
 void silcgaim_chat_join(GaimConnection *gc, GHashTable *data);
 void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
