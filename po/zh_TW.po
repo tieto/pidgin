@@ -431,13 +431,14 @@ msgid "Test plugin IPC support, as a client."
 msgstr "以客戶端身份測試插件系統的 IPC 支援。"
 
 # FIXME 務必要覆核這段譯文!!!
+# NOTE 譯文更動 by Paladin
 #. *  description
 #: plugins/ipc-test-client.c:89
 msgid ""
 "Test plugin IPC support, as a client. This locates the server plugin and "
 "calls the commands registered."
 msgstr ""
-"以客戶端身份測試插件系統的 IPC 支援，即是找尋伺服器插件後叫出事先註冊的指令。"
+"以客戶端身份測試模組系統的 IPC 支援，即是找尋伺服器模組後叫出事先註冊的指令。"
 
 #. *< api_version
 #. *< type
@@ -458,10 +459,11 @@ msgid "Test plugin IPC support, as a server."
 msgstr "以伺服器身份測試插件系統的 IPC 支援。"
 
 # FIXME 務必要覆核這段譯文!!!
+# NOTE 譯文更動 by Paladin
 #. *  description
 #: plugins/ipc-test-server.c:76
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
-msgstr "以伺服器身份測試插件系統的 IPC 支援，即是註冊測試用的 IPC 指令。"
+msgstr "以伺服器身份測試模組系統的 IPC 支援，即是註冊測試用的 IPC 指令。"
 
 #: plugins/mailchk.c:156
 msgid "Mail Checker"
@@ -816,13 +818,11 @@ msgid "Buddy List"
 msgstr "好友清單"
 
 #: plugins/win32/winprefs/winprefs.c:367
-#, fuzzy
 msgid "_Dockable Buddy List"
 msgstr "可停駐的好友清單(_D)"
 
 #. Docked Blist On Top
 #: plugins/win32/winprefs/winprefs.c:371
-#, fuzzy
 msgid "Docked _Buddy List is always on top"
 msgstr "停駐了的好友清單保持在桌面的最上層(_B)"
 
@@ -837,7 +837,6 @@ msgstr "將好友清單視窗保持在桌面的最上層(_K)"
 msgid "Conversations"
 msgstr "交談"
 
-# TODO Untranslated
 #: plugins/win32/winprefs/winprefs.c:387
 msgid "_Flash Window when messages are received"
 msgstr "收到訊息後閃動視窗(_F)"
@@ -867,6 +866,7 @@ msgstr ""
 
 # FIXME probably not the right place to put this zh_TW-specific info
 # FIXME but this info need to go somewhere
+# NOTE  Never mind, it is okay.
 #: src/about.c:99
 msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr ""
@@ -1159,18 +1159,19 @@ msgid ""
 "chat."
 msgstr "您並未登入任何一個可供您加入聊天室的通訊協定。"
 
+# TODO 看起來應該為加一個新的聊天室，並把聊天室歸類到某個群組。
+# NOTE 譯文更動 by Paladin
 #: src/buddy_chat.c:330
 msgid "Join Chat"
-msgstr "加入聊天"
+msgstr "加入聊天室"
 
 #: src/buddy_chat.c:336
 msgid "Buddy Chat"
-msgstr "與好友聊天"
+msgstr "好友聊天室"
 
-# TODO 不很通順
 #: src/buddy_chat.c:346
 msgid "Join Chat As:"
-msgstr "加入聊天為："
+msgstr "聊天室所屬帳號："
 
 #. Join button.
 #: src/buddy_chat.c:369
@@ -1360,17 +1361,17 @@ msgid "Remove Group"
 msgstr "移除群組"
 
 #: src/dialogs.c:528
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 msgstr ""
-"您正試著將群組 %s 及相關的成員從您的好友清單中移除。您要繼續這個動作嗎？"
+"您正試著將群組 %s 及相關的 %d 個成員從您的好友清單中移除。您要繼"
+"續這個動作嗎？"
 
 #: src/dialogs.c:531 src/dialogs.c:532
-#, fuzzy
 msgid "Remove Contact"
-msgstr "移除聊天室"
+msgstr "移除好友"
 
 #: src/dialogs.c:680
 msgid "New Message"
@@ -1389,6 +1390,7 @@ msgid "_Account:"
 msgstr "帳號(_A)："
 
 # XXX 「取得使用者資訊」是正確譯法，但它實在太長了，令畫面很奇怪 (GTK Layout Bug?)
+# ANS Never Mind
 #: src/dialogs.c:760
 msgid "Get User Info"
 msgstr "取得使用者資訊"
@@ -1787,15 +1789,13 @@ msgstr "傳送檔案到 %s 被取消。\n"
 msgid "File transfer from %s aborted.\n"
 msgstr "由 %s 傳送檔案被取消。\n"
 
-# TODO: Untranslated
 #: src/gaim-disclosure.c:253
 msgid "Expander Size"
-msgstr ""
+msgstr "展開器大小"
 
-# TODO: Untranslated
 #: src/gaim-disclosure.c:254
 msgid "Size of the expander arrow"
-msgstr ""
+msgstr "展開器箭頭大小"
 
 #: src/gaim-remote.c:33
 #, c-format
@@ -2112,15 +2112,13 @@ msgstr "加入(_J)"
 msgid "Auto-Join"
 msgstr "自動加入"
 
-# TODO Untranslated
 #: src/gtkblist.c:544 src/gtkblist.c:575
 msgid "_Collapse"
-msgstr ""
+msgstr "收起(_C)"
 
-# TODO Untranslated
 #: src/gtkblist.c:580
 msgid "_Expand"
-msgstr ""
+msgstr "展開(_E)"
 
 #. Buddies menu
 #: src/gtkblist.c:1005
@@ -3295,11 +3293,13 @@ msgid "Right"
 msgstr "視窗右側"
 
 # XXX 要複查有無錯譯
+# ANS No Problem
 #: src/gtkprefs.c:922
 msgid "Show IMs and chats in _tabbed windows"
 msgstr "使用標籤視窗顯示即時訊息和聊天(_T)"
 
 # XXX 要複查有無錯譯
+# ANS No Problem
 #. XXX: grey this out when the above is unchecked
 #: src/gtkprefs.c:926
 msgid "Show IMs and chats in _same tabbed window"
@@ -3338,9 +3338,10 @@ msgid "Buddy Icons"
 msgstr "好友圖示"
 
 # XXX Enable 譯「開啟」好像有點奇怪，改譯「使用」有沒有問題？
+# ANS 改為「啟動」？
 #: src/gtkprefs.c:995
 msgid "Enable buddy icon a_nimation"
-msgstr "開啟好友圖示動畫(_N)"
+msgstr "啟動好友圖示動畫(_N)"
 
 #: src/gtkprefs.c:999
 msgid "Show _logins in window"
@@ -3515,14 +3516,16 @@ msgid "_Sounds while away"
 msgstr "離開時仍發出音效(_S)"
 
 # XXX 「模式」這樣用是否有點奇怪？
+# ANS 修更譯文 by Paladin
 #: src/gtkprefs.c:1392
 msgid "Sound Method"
-msgstr "聲音模式"
+msgstr "音效播放方式"
 
 # XXX「Method」譯「模式」好像有些怪
+# ANS 修更譯文 by Paladin
 #: src/gtkprefs.c:1393
 msgid "_Method:"
-msgstr "模式(_M)："
+msgstr "播放方式(_M)："
 
 #: src/gtkprefs.c:1395
 msgid "Console beep"
@@ -4512,9 +4515,10 @@ msgid "You are banned from %s."
 msgstr "您被禁於 %s 了。"
 
 # FIXME 這是暫譯
+# NOTE 譯文更動 by Paladin
 #: src/protocols/irc/msgs.c:113
 msgid "Banned"
-msgstr "被禁"
+msgstr "被禁止"
 
 #: src/protocols/irc/msgs.c:186
 msgid " <i>(ircop)</i>"
@@ -5159,7 +5163,7 @@ msgstr "伺服器忙碌"
 #: src/protocols/msn/error.c:130 src/protocols/msn/error.c:143
 #: src/protocols/msn/error.c:198
 msgid "Server unavailable"
-msgstr "伺服器不存在"
+msgstr "伺服器目前不提供服務"
 
 #: src/protocols/msn/error.c:133
 msgid "Peer Notification server down"
@@ -5482,10 +5486,9 @@ msgstr "無法寫入到 MSN 的 Nexus 伺服器。"
 msgid "Unable to read from MSN Nexus server."
 msgstr "無法由 MSN 的 Nexus 伺服器讀取。"
 
-# TODO Untranslated
 #: src/protocols/msn/notification.c:391
 msgid "MSN Nexus server returned invalid redirect information."
-msgstr ""
+msgstr "MSN Nexus 伺服器傳回無效的重新導向資訊。"
 
 #: src/protocols/msn/notification.c:437
 msgid "Unknown error when attempting to authorize with MSN login server."
@@ -5974,10 +5977,12 @@ msgstr ""
 "%s"
 
 # XXX 應該把 contact 也統一譯為「好友」嗎？
+# ANS I guess not.
+# NOTE 譯文更動 by Paladin
 #: src/protocols/oscar/oscar.c:2685
 #, c-format
 msgid "ICQ user %u has sent you a contact: %s (%s)"
-msgstr "ICQ 使用者 %u 送來一個聯絡人：%s (%s)"
+msgstr "ICQ 使用者 %u 送來一個聯絡人資訊：%s (%s)"
 
 #: src/protocols/oscar/oscar.c:2691
 msgid "Do you want to add this contact to your Buddy List?"
@@ -6110,8 +6115,6 @@ msgstr "送出好友清單"
 msgid "EveryBuddy Bug"
 msgstr "EveryBuddy 錯誤"
 
-# XXX 很多PO都沒有譯AP一詞，有翻的都是看不明的語文，不知有沒有譯錯
-# ANS 我記得在 ICQ 中，有分三種使用者，「AP User」為其中一種。
 #: src/protocols/oscar/oscar.c:3122
 msgid "AP User"
 msgstr "應用程式使用者"
@@ -6965,9 +6968,10 @@ msgid "Set Profile"
 msgstr "設定個人資料"
 
 # XXX 好像不太對
+# NOTE 譯文更動 by Paladin
 #: src/protocols/trepia/trepia.c:558
 msgid "Visit Homepage"
-msgstr "瀏覽網頁"
+msgstr "參觀網頁"
 
 # NOTE Debian 譯「local」為「本地端」
 #: src/protocols/trepia/trepia.c:904 src/protocols/trepia/trepia.c:907
@@ -7006,17 +7010,17 @@ msgid "Your Yahoo! message did not get sent."
 msgstr "您的 Yahoo! 訊息並沒有被送出。"
 
 #: src/protocols/yahoo/yahoo.c:752
-#, fuzzy, c-format
+#, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr "使用者 %s（事後追溯而）拒絕了您將他（她）新增至您的好友清單的要求。"
+msgstr "使用者 %s 剛剛拒絕了您先前將他（她）新增至您的好友清單的要求。"
 
 #: src/protocols/yahoo/yahoo.c:754
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
 "following reason: %s."
 msgstr ""
-"使用者 %s 因為下列原因，（事後追溯而）拒絕了您將他（她）新增至您的好友清單的"
+"使用者 %s 因為下列原因，剛剛拒絕了您先前將他（她）新增至您的好友清單的"
 "要求：%s"
 
 #: src/protocols/yahoo/yahoo.c:755
@@ -7101,9 +7105,10 @@ msgstr "不在伺服器上的清單中"
 # NOTE #gaim 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
 # TODO 譯文有待改進
+# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoo.c:1577
 msgid "Join in Chat"
-msgstr "加入好友身處的聊天室"
+msgstr "加入好友目前所在的聊天室"
 
 # NOTE「會議室」是暫時的意譯。Yahoo! 好像沒有為「Conference」提供正式中譯名。
 #: src/protocols/yahoo/yahoo.c:1583
@@ -7193,31 +7198,36 @@ msgid "Pager port"
 msgstr "傳呼系統通訊埠"
 
 # TODO 要核對譯文
+# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoochat.c:191
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s 婉拒了你給他（她）到會議室「%s」的邀請，理由是「%s」。"
+msgstr "%s 婉拒了你詢問他（她）到會議室「%s」的邀請，理由是「%s」。"
 
 #: src/protocols/yahoo/yahoochat.c:193
 msgid "Invitation Rejected"
 msgstr "邀請被婉拒了"
 
 # TODO 要核對譯文
+# NOTE No Problem
 #: src/protocols/yahoo/yahoochat.c:317
 msgid "Failed to join chat"
 msgstr "無法加入聊天室"
 
 # TODO 要核對譯文
+# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoochat.c:317
 msgid "Maybe the room is full?"
-msgstr "聊天室大概已經人滿了？"
+msgstr "或許參與聊天室使用者已經到達上限？"
 
 # TODO 要核對譯文
+# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoochat.c:509
 msgid "Failed to join buddy in chat"
-msgstr "無法加入好友身處的聊天室"
+msgstr "無法加入好友目前所在的聊天室"
 
 # TODO 要核對譯文
+# NOTE No Problem
 #: src/protocols/yahoo/yahoochat.c:510
 msgid "Maybe they're not in a chat?"
 msgstr "可能他（她）並不在聊天室內？"
