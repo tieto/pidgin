@@ -749,8 +749,7 @@ static void gaimrc_read_sounds(FILE *f)
 		if (!strcmp(p->option, "sound_cmd")) {
 			g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", p->value[0]);
 		} else if (!strncmp(p->option, "sound", strlen("sound"))) {
-			sscanf(p->option, "sound%c", (char *)&i);
-			i -= 'A';
+			i = p->option[strlen("sound")] - 'A';
 
 			if (p->value[0][0])
 				sound_file[i] = g_strdup(p->value[0]);
