@@ -4566,12 +4566,22 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	return;
 }
 
-static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *text)
+static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *state, const char *text)
 {
 	fu32_t flags = 0;
 	gchar *text_html = NULL;
 	char *msg = NULL;
 	gsize msglen = 0;
+
+	if (!strcmp(state, _("Visible"))) {
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+		return;
+	} else if (!strcmp(state, _("Invisible"))) {
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
+		return;
+	} /* else... */
+
+	aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 	if (od->rights.maxawaymsglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
@@ -4625,6 +4635,7 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *te
 	}
 	
 	g_free(text_html);
+
 	return;
 }
 
@@ -4685,7 +4696,7 @@ static void oscar_set_away(GaimConnection *gc, const char *state, const char *me
 	if (od->icq)
 		oscar_set_away_icq(gc, od, state, message);
 	else
-		oscar_set_away_aim(gc, od, message);
+		oscar_set_away_aim(gc, od, state, message);
 
 	return;
 }
@@ -5093,7 +5104,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} /* End of for loop */
 
 	/* Set our ICQ status */
-	if  (od->icq && !gc->away) {
+	if  (!gc->away) {
 		aim_setextstatus(sess, AIM_ICQ_STATE_NORMAL);
 	}
 
@@ -6304,16 +6315,19 @@ static GList *oscar_away_states(GaimConnection *gc)
 	OscarData *od = gc->proto_data;
 	GList *m = NULL;
 
-	if (!od->icq)
-		return g_list_append(m, GAIM_AWAY_CUSTOM);
-
-	m = g_list_append(m, _("Online"));
-	m = g_list_append(m, _("Away"));
-	m = g_list_append(m, _("Do Not Disturb"));
-	m = g_list_append(m, _("Not Available"));
-	m = g_list_append(m, _("Occupied"));
-	m = g_list_append(m, _("Free For Chat"));
-	m = g_list_append(m, _("Invisible"));
+	if (od->icq) {
+		m = g_list_append(m, _("Online"));
+		m = g_list_append(m, _("Away"));
+		m = g_list_append(m, _("Do Not Disturb"));
+		m = g_list_append(m, _("Not Available"));
+		m = g_list_append(m, _("Occupied"));
+		m = g_list_append(m, _("Free For Chat"));
+		m = g_list_append(m, _("Invisible"));
+	} else {
+		m = g_list_append(m, GAIM_AWAY_CUSTOM);
+		m = g_list_append(m, _("Visible"));
+		m = g_list_append(m, _("Invisible"));
+	}
 
 	return m;
 }
