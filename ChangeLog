@@ -2,6 +2,7 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.9.15:
 	* Plugin support enabled by default (oops)
+	* Some plugins built/installed by default
 
 version 0.9.14:
 	* Numerous Fixes by G. Sumner Hayes (buffer over flow patches,

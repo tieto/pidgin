@@ -1,5 +1,9 @@
 SUFFIXES = .c .so
-CFLAGS += $(GTK_CFLAGS) -I../src $(GAIM_CFLAGS)
+if GNOMEAPPLET
+CFLAGS += $(GTK_CFLAGS) -I../src -DUSE_APPLET
+else
+CFLAGS += $(GTK_CFLAGS) -I../src
+endif
 LDFLAGS += -ggdb $(GTK_LIBS) -shared
 .c.so:
 	$(CC) $(CFLAGS) -Wl,-soname,$@ -o $@ $< $(LDFLAGS)

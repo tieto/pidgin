@@ -446,7 +446,7 @@ void show_login()
 	}
 }
 
-
+extern show_debug(GtkObject *);
 int main(int argc, char *argv[])
 {
 #ifdef USE_APPLET
@@ -460,6 +460,8 @@ int main(int argc, char *argv[])
 
         set_defaults();
         load_prefs();
+	if (general_options & OPT_GEN_DEBUG)
+		show_debug(NULL);
 
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),

@@ -147,6 +147,8 @@ void load_plugin(char *filename) {
 		sprintf(plug->filename, "%s%s", buf, filename);
 	} else
 		plug->filename = g_strdup(filename);
+	sprintf(debug_buff, "Loading %s\n", filename);
+	debug_print(debug_buff);
 	/* do NOT OR with RTLD_GLOBAL, otherwise plugins may conflict
 	 * (it's really just a way to work around other people's bad
 	 * programming, by not using RTLD_GLOBAL :P ) */
@@ -343,22 +345,31 @@ void unload(GtkWidget *w, gpointer data) {
 	if (i == NULL) return;
 
 	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
+	sprintf(debug_buff, "Unloading %s\n", p->filename);
+	debug_print(debug_buff);
 
 	gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
 	if ((error = (char *)dlerror()) == NULL)
 		(*gaim_plugin_remove)();
+	sprintf(debug_buff, "%d callbacks to search\n", g_list_length(callbacks));
+	debug_print(debug_buff);
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (g->handle == p->handle) {
 			callbacks = g_list_remove(callbacks, c->data);
 			g_free(g);
+			sprintf(debug_buff, "Removing callback, %d remain\n",
+					g_list_length(callbacks));
+			debug_print(debug_buff);
 			c = callbacks;
-			if (c == NULL) break;
+			if (c == NULL) {
+				break;
+			}
+		} else {
+			c = c->next;
 		}
-		c = c->next;
 	}
-	/* don't ask me why this works */
-	if (callbacks != NULL) dlclose(p->handle);
+	dlclose(p->handle);
 
 	plugins = g_list_remove(plugins, p);
 	g_free(p->filename);
@@ -406,6 +417,8 @@ void gaim_signal_connect(void *handle, enum gaim_event which,
 	call->data = data;
 
 	callbacks = g_list_append(callbacks, call);
+	sprintf(debug_buff, "Adding callback %d\n", g_list_length(callbacks));
+	debug_print(debug_buff);
 }
 
 void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
