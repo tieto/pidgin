@@ -152,6 +152,16 @@ static void gtk_appbar_setpos(GtkAppBar *ab, HWND hwnd) {
 	SHAppBarMessage(ABM_SETPOS, &abd);
 }
 
+static void gtk_appbar_dispatch_dock_cbs(GtkAppBar *ab, gboolean val) {
+        GList *lst = ab->dock_cbs;
+
+        while(lst) {
+                GtkAppBarDockCB dock_cb = lst->data;
+                dock_cb(val);
+                lst = lst->next;
+        }
+}
+
 static GdkFilterReturn wnd_moving(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
         POINT cp;
@@ -243,9 +253,11 @@ static GdkFilterReturn wnd_exitsizemove(GtkAppBar *ab, GdkXEvent *xevent) {
                 gtk_appbar_setpos(ab, msg->hwnd);
                 ab->docking = FALSE;
                 ab->docked = TRUE;
+                gtk_appbar_dispatch_dock_cbs(ab, TRUE);
         }
         else if(!ab->docked) {
                 gtk_appbar_unregister(ab, msg->hwnd);
+                gtk_appbar_dispatch_dock_cbs(ab, FALSE);
         }
 
         return GDK_FILTER_CONTINUE;
@@ -414,6 +426,12 @@ void gtk_appbar_dock(GtkAppBar *ab, UINT side) {
         gtk_appbar_setpos(ab, GDK_WINDOW_HWND(ab->win->window));
         set_toolbar(GDK_WINDOW_HWND(ab->win->window), TRUE);
         ab->docked = TRUE;
+}
+
+void gtk_appbar_add_dock_cb(GtkAppBar *ab, GtkAppBarDockCB dock_cb) {
+        if(!ab)
+                return;
+        ab->dock_cbs = g_list_append(ab->dock_cbs, dock_cb);
 }
 
 GtkAppBar *gtk_appbar_add(GtkWidget *win) {

@@ -33,10 +33,14 @@ typedef struct {
         gboolean docked;
         gboolean docking;
         gboolean registered;
+        GList *dock_cbs;
 } GtkAppBar;
+
+typedef void (*GtkAppBarDockCB)(gboolean);
 
 GtkAppBar *gtk_appbar_add(GtkWidget *win);
 void gtk_appbar_remove(GtkAppBar *ab);
 void gtk_appbar_dock(GtkAppBar *ab, UINT side);
+void gtk_appbar_add_dock_cb(GtkAppBar *ab, GtkAppBarDockCB dock_cb);
 
 #endif /* _GTKAPPBAR_H_ */
