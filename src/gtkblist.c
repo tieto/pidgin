@@ -1236,8 +1236,6 @@ static gboolean gaim_gtk_blist_refresh_timer(struct gaim_buddy_list *list)
 {
 	GaimBlistNode *group, *buddy;
 
-	gaim_debug(GAIM_DEBUG_INFO, "refresh_timer", "called\n");
-
 	for(group = list->root; group; group = group->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(group))
 			continue;
