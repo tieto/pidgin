@@ -46,6 +46,9 @@ info dialog
 irc (patch pending?)
 	
 DISCUSSION:
+	protocol action to log into webmail for those that support such
+		(aim, yahoo, msn)
+		maybe a r-click option to send to user(yahoo, msn)
 	"console beep" sound option should use different frequency beeps
 		for different events, or at least give some way to allow
 		this behavior. 
