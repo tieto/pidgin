@@ -49,6 +49,7 @@ char *yahoo_crypt(const char *key, const char *salt)
 	size_t salt_len;
 	size_t key_len;
 	size_t cnt;
+
 	char *cp;
 
 	if (buflen < needed) {
@@ -100,7 +101,7 @@ char *yahoo_crypt(const char *key, const char *salt)
 	gaim_cipher_context_append(context2, key, key_len);
 
 	/* Now get result of this (16 bytes) and add it to the other context.  */
-	gaim_cipher_context_digest(context2, NULL, digest);
+	gaim_cipher_context_digest(context2, sizeof(digest), digest, NULL);
 
 	/* Add for any character in the key one byte of the alternate sum.  */
 	for (cnt = key_len; cnt > 16; cnt -= 16)
@@ -120,7 +121,7 @@ char *yahoo_crypt(const char *key, const char *salt)
 								   (cnt & 1) != 0 ? digest : (guint8 *)key, 1);
 
 	/* Create intermediate result.  */
-	gaim_cipher_context_digest(context1, NULL, digest);
+	gaim_cipher_context_digest(context1, sizeof(digest), digest, NULL);
 
 	/* Now comes another weirdness.  In fear of password crackers here
 	 * comes a quite long loop which just processes the output of the
@@ -151,7 +152,7 @@ char *yahoo_crypt(const char *key, const char *salt)
 			gaim_cipher_context_append(context2, key, key_len);
 
 		/* Create intermediate result.  */
-		gaim_cipher_context_digest(context2, NULL, digest);
+		gaim_cipher_context_digest(context2, sizeof(digest), digest, NULL);
 	}
 
 	/* Now we can construct the result string.  It consists of three parts. */
@@ -197,7 +198,7 @@ char *yahoo_crypt(const char *key, const char *salt)
 	 * inside the MD5 implementation as well.
 	 */
 	gaim_cipher_context_reset(context1, NULL);
-	gaim_cipher_context_digest(context1, NULL, digest);
+	gaim_cipher_context_digest(context1, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context1);
 	gaim_cipher_context_destroy(context2);
 

@@ -65,6 +65,7 @@ cipher_test_md5() {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
 	gchar digest[32];
+	gboolean ret;
 	gint i = 0;
 
 	cipher = gaim_ciphers_find_cipher("md5");
@@ -85,10 +86,16 @@ cipher_test_md5() {
 		gaim_cipher_context_append(context, md5_tests[i].question,
 								   strlen(md5_tests[i].question));
 
-		gaim_cipher_context_digest_to_str(context, NULL, digest);
+		ret = gaim_cipher_context_digest_to_str(context, sizeof(digest),
+												digest, NULL);
 
-		gaim_debug_info("cipher-test", "\tGot:    %s\n", digest);
-		gaim_debug_info("cipher-test", "\tWanted: %s\n", md5_tests[i].answer);
+		if(!ret) {
+			gaim_debug_info("cipher-test", "failed\n");
+		} else {
+			gaim_debug_info("cipher-test", "\tGot:    %s\n", digest);
+			gaim_debug_info("cipher-test", "\tWanted: %s\n",
+							md5_tests[i].answer);
+		}
 
 		gaim_cipher_context_reset(context, NULL);
 		i++;
@@ -116,6 +123,7 @@ cipher_test_sha1() {
 	GaimCipherContext *context;
 	gchar digest[40];
 	gint i = 0;
+	gboolean ret;
 
 	cipher = gaim_ciphers_find_cipher("sha1");
 	if(!cipher) {
@@ -147,10 +155,16 @@ cipher_test_sha1() {
 				gaim_cipher_context_append(context, buff, 1000);
 		}
 
-		gaim_cipher_context_digest_to_str(context, NULL, digest);
+		ret = gaim_cipher_context_digest_to_str(context, sizeof(digest),
+												digest, NULL);
 
-		gaim_debug_info("cipher-test", "\tGot:    %s\n", digest);
-		gaim_debug_info("cipher-test", "\tWanted: %s\n", sha1_tests[i].answer);
+		if(!ret) {
+			gaim_debug_info("cipher-test", "failed\n");
+		} else {
+			gaim_debug_info("cipher-test", "\tGot:    %s\n", digest);
+			gaim_debug_info("cipher-test", "\tWanted: %s\n",
+							sha1_tests[i].answer);
+		}
 
 		gaim_cipher_context_reset(context, NULL);
 		i++;

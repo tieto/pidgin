@@ -394,7 +394,8 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 				enc = gaim_base64_encode(avatar_data, avatar_len);
 
 				gaim_cipher_digest_region("sha1", (guint8 *)avatar_data,
-										  avatar_len, hashval, NULL);
+										  avatar_len, sizeof(hashval),
+										  hashval, NULL);
 
 				p = hash;
 				for(i=0; i<20; i++, p+=2)
@@ -820,7 +821,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 						data, size);
 
 				gaim_cipher_digest_region("sha1", (guint8 *)data, size,
-										  hashval, NULL);
+										  sizeof(hashval), hashval, NULL);
 				p = hash;
 				for(i=0; i<20; i++, p+=2)
 					snprintf(p, 3, "%02x", hashval[i]);

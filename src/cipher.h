@@ -83,7 +83,7 @@ struct _GaimCipherOps {
 	void (*append)(GaimCipherContext *context, const guint8 *data, size_t len);
 
 	/** The digest function */
-	gboolean (*digest)(GaimCipherContext *context, size_t *len, guint8 digest[]);
+	gboolean (*digest)(GaimCipherContext *context, size_t in_len, guint8 digest[], size_t *out_len);
 
 	/** The encrypt function */
 	int (*encrypt)(GaimCipherContext *context, const guint8 data[], size_t len, guint8 output[], size_t *outlen);
@@ -134,13 +134,16 @@ guint gaim_cipher_get_capabilities(GaimCipher *cipher);
 /**
  * Gets a digest from a cipher
  *
- * @param name       The cipher's name
- * @param data       The data to hash
- * @param data_len   The length of the data
- * @param digest     The returned digest
- * @param digest_len The returned digest's length
+ * @param name     The cipher's name
+ * @param data     The data to hash
+ * @param data_len The length of the data
+ * @param in_len   The length of the buffer
+ * @param digest   The returned digest
+ * @param out_len  The length written
+ *
+ * @return @c TRUE if successful, @c FALSE otherwise
  */
-void gaim_cipher_digest_region(const gchar *name, const guint8 *data, size_t data_len, guint8 digest[], size_t *digest_len); 
+gboolean gaim_cipher_digest_region(const gchar *name, const guint8 *data, size_t data_len, size_t in_len, guint8 digest[], size_t *out_len); 
 
 /*@}*/
 /******************************************************************************/
@@ -290,19 +293,21 @@ void gaim_cipher_context_append(GaimCipherContext *context, const guint8 *data, 
  * Digests a context
  *
  * @param context The context to digest
- * @param len     The length of the returned value
+ * @param in_len  The length of the buffer
  * @param digest  The return buffer for the digest
+ * @param out_len The length of the returned value
  */
-gboolean gaim_cipher_context_digest(GaimCipherContext *context, size_t *len, guint8 digest[]);
+gboolean gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len, guint8 digest[], size_t *out_len);
 
 /**
  * Converts a guint8 digest into a hex string
  *
  * @param context  The context to get a digest from
- * @param len      The length of the returned value
+ * @param in_len   The length of the buffer
  * @param digest_s The return buffer for the string digest
+ * @param out_len  The length of the returned value
  */
-gboolean gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t *len, gchar digest_s[]);
+gboolean gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len, gchar digest_s[], size_t *out_len);
 
 /**
  * Encrypts data using the context

@@ -418,7 +418,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	gaim_cipher_context_append(context, challenge_resp,
 							   strlen(challenge_resp));
-	gaim_cipher_context_digest(context, NULL, digest);
+	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
 
 	for (i = 0; i < 16; i++)
@@ -910,7 +910,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	context = gaim_cipher_context_new(cipher, NULL);
 
 	gaim_cipher_context_append(context, buf, strlen(buf));
-	gaim_cipher_context_digest(context, NULL, digest);
+	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
 
 	memset(sendbuf, 0, sizeof(sendbuf));

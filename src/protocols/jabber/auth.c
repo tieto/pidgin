@@ -228,7 +228,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
 
 			gaim_cipher_digest_region("sha1", (guint8 *)s, strlen(s),
-									  hashval, NULL);
+									  sizeof(hashval), hashval, NULL);
 
 			p = h;
 			for(i=0; i<20; i++, p+=2)
@@ -323,7 +323,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd);
 	gaim_cipher_context_append(context, x, strlen(x));
-	gaim_cipher_context_digest(context, NULL, result);
+	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
@@ -331,13 +331,13 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 	gaim_cipher_context_reset(context, NULL);
 	gaim_cipher_context_append(context, a1, a1len);
-	gaim_cipher_context_digest(context, NULL, result);
+	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 
 	ha1 = gaim_base16_encode(result, 16);
 
 	gaim_cipher_context_reset(context, NULL);
 	gaim_cipher_context_append(context, a2, strlen(a2));
-	gaim_cipher_context_digest(context, NULL, result);
+	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 
 	ha2 = gaim_base16_encode(result, 16);
 
@@ -345,7 +345,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 	gaim_cipher_context_reset(context, NULL);
 	gaim_cipher_context_append(context, kd, strlen(kd));
-	gaim_cipher_context_digest(context, NULL, result);
+	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 	gaim_cipher_context_destroy(context);
 
 	z = gaim_base16_encode(result, 16);

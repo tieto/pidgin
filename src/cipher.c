@@ -254,7 +254,9 @@ md5_append(GaimCipherContext *context, const guint8 *data, size_t len) {
 }
 
 static gboolean
-md5_digest(GaimCipherContext *context, size_t *len, guint8 digest[16]) {
+md5_digest(GaimCipherContext *context, size_t in_len, guint8 digest[16],
+		   size_t *out_len)
+{
 	struct MD5Context *md5_context = NULL;
 	guint32 last, pad;
 	guint32 high, low;
@@ -266,8 +268,7 @@ md5_digest(GaimCipherContext *context, size_t *len, guint8 digest[16]) {
 		   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
 
-	g_return_val_if_fail(len, FALSE);
-	g_return_val_if_fail(*len >= 16, FALSE);
+	g_return_val_if_fail(in_len >= 16, FALSE);
 
 	md5_context = gaim_cipher_context_get_data(context);
 
@@ -288,6 +289,9 @@ md5_digest(GaimCipherContext *context, size_t *len, guint8 digest[16]) {
 	MD5_PUT_GUINT32(md5_context->state[1], digest, 4);
 	MD5_PUT_GUINT32(md5_context->state[2], digest, 8);
 	MD5_PUT_GUINT32(md5_context->state[3], digest, 12);
+
+	if(out_len)
+		*out_len = 16;
 
 	return TRUE;
 }
@@ -490,14 +494,15 @@ sha1_append(GaimCipherContext *context, const guint8 *data, size_t len) {
 }
 
 static gboolean
-sha1_digest(GaimCipherContext *context, size_t *len, guint8 digest[20]) {
+sha1_digest(GaimCipherContext *context, size_t in_len, guint8 digest[20],
+			size_t *out_len)
+{
 	struct SHA1Context *sha1_ctx;
 	guint8 pad0x80 = 0x80, pad0x00 = 0x00;
 	guint8 padlen[8];
 	gint i;
 
-	g_return_val_if_fail(len, FALSE);
-	g_return_val_if_fail(*len <= 20, FALSE);
+	g_return_val_if_fail(in_len >= 20, FALSE);
 
 	sha1_ctx = gaim_cipher_context_get_data(context);
 
@@ -524,6 +529,9 @@ sha1_digest(GaimCipherContext *context, size_t *len, guint8 digest[20]) {
 	}
 
 	gaim_cipher_context_reset(context, NULL);
+
+	if(out_len)
+		*out_len = 20;
 
 	return TRUE;
 }
@@ -616,31 +624,35 @@ gaim_cipher_get_capabilities(GaimCipher *cipher) {
 	return caps;
 }
 
-void
+gboolean
 gaim_cipher_digest_region(const gchar *name, const guint8 *data,
-						  size_t data_len, guint8 digest[], size_t *digest_len)
+						  size_t data_len, size_t in_len,
+						  guint8 digest[], size_t *out_len)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
+	gboolean ret = FALSE;
 
-	g_return_if_fail(name);
-	g_return_if_fail(data);
+	g_return_val_if_fail(name, FALSE);
+	g_return_val_if_fail(data, FALSE);
 
 	cipher = gaim_ciphers_find_cipher(name);
 
-	g_return_if_fail(cipher);
+	g_return_val_if_fail(cipher, FALSE);
 
 	if(!cipher->ops->append || !cipher->ops->digest) {
 		gaim_debug_info("cipher", "gaim_cipher_region failed: "
 						"the %s cipher does not support appending and or "
 						"digesting.", cipher->name);
-		return;	
+		return FALSE;
 	}
 
 	context = gaim_cipher_context_new(cipher, NULL);
 	gaim_cipher_context_append(context, data, data_len);
-	gaim_cipher_context_digest(context, digest_len, digest);
-	gaim_cipher_context_destroy(context);
+	ret = gaim_cipher_context_digest(context, in_len, digest, out_len);
+ 	gaim_cipher_context_destroy(context);
+
+	return ret;
 }
 
 /******************************************************************************
@@ -891,8 +903,8 @@ gaim_cipher_context_append(GaimCipherContext *context, const guint8 *data,
 }
 
 gboolean
-gaim_cipher_context_digest(GaimCipherContext *context, size_t *len,
-						   guint8 digest[])
+gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len,
+						   guint8 digest[], size_t *out_len)
 {
 	GaimCipher *cipher = NULL;
 
@@ -902,7 +914,7 @@ gaim_cipher_context_digest(GaimCipherContext *context, size_t *len,
 	g_return_val_if_fail(context, FALSE);
 
 	if(cipher->ops && cipher->ops->digest)
-		return cipher->ops->digest(context, len, digest);
+		return cipher->ops->digest(context, in_len, digest, out_len);
 	else {
 		gaim_debug_info("cipher", "the %s cipher does not support the digest "
 						"operation\n", cipher->name);
@@ -911,10 +923,10 @@ gaim_cipher_context_digest(GaimCipherContext *context, size_t *len,
 }
 
 gboolean
-gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t *len,
-								   gchar digest_s[])
+gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len,
+								   gchar digest_s[], size_t *out_len)
 {
-	/* 16k is a bit excessive, will tweak later. */
+	/* 8k is a bit excessive, will tweak later. */
 	guint8 digest[BUF_LEN * 4];
 	gint n = 0;
 	size_t dlen = 0;
@@ -922,18 +934,19 @@ gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t *len,
 	g_return_val_if_fail(context, FALSE);
 	g_return_val_if_fail(digest_s, FALSE);
 
-	if(!gaim_cipher_context_digest(context, &dlen, digest))
+	if(!gaim_cipher_context_digest(context, sizeof(digest), digest, &dlen))
 		return FALSE;
 
-	dlen *= 2;
-
-	if(len)
-		*len = dlen;
+	if(in_len < dlen * 2)
+		return FALSE;
 
 	for(n = 0; n < dlen; n++)
 		sprintf(digest_s + (n * 2), "%02x", digest[n]);
 
 	digest_s[n * 2] = '\0';
+
+	if(out_len)
+		*out_len = dlen * 2;
 
 	return TRUE;
 }

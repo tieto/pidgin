@@ -1377,7 +1377,7 @@ static void hmacmd5_chap(const unsigned char * challenge, int challen, const cha
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
 		gaim_cipher_context_append(ctx, passwd, strlen(passwd));
-		gaim_cipher_context_digest(ctx, NULL, md5buf);
+		gaim_cipher_context_digest(ctx, sizeof(md5buf), md5buf, NULL);
 		pwinput=(char *)md5buf;
 		pwlen=16;
 	}
@@ -1394,12 +1394,12 @@ static void hmacmd5_chap(const unsigned char * challenge, int challen, const cha
 	gaim_cipher_context_reset(ctx, NULL);
 	gaim_cipher_context_append(ctx, Kxoripad, 64);
 	gaim_cipher_context_append(ctx, challenge, challen);
-	gaim_cipher_context_digest(ctx, NULL, Kxoripad);
+	gaim_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
 
 	gaim_cipher_context_reset(ctx, NULL);
 	gaim_cipher_context_append(ctx, Kxoropad, 64);
 	gaim_cipher_context_append(ctx, Kxoripad, 16);
-	gaim_cipher_context_digest(ctx, NULL, response);
+	gaim_cipher_context_digest(ctx, sizeof(response), response, NULL);
 
 	gaim_cipher_context_destroy(ctx);
 }
