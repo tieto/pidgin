@@ -596,6 +596,7 @@ static int gaim_offlinemsgdone   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icqinfo          (aim_session_t *, aim_frame_t *, ...);
 static int gaim_popup            (aim_session_t *, aim_frame_t *, ...);
 #ifndef NOSSI
+static int gaim_ssi_parseerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parserights  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parselist    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parseack     (aim_session_t *, aim_frame_t *, ...);
@@ -1103,6 +1104,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO, gaim_icqinfo, 0);
 #ifndef NOSSI
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_ERROR, gaim_ssi_parseerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RIGHTSINFO, gaim_ssi_parserights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_LIST, gaim_ssi_parselist, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_NOLIST, gaim_ssi_parselist, 0);
@@ -4220,6 +4222,31 @@ static void oscar_rename_group(struct gaim_connection *g, const char *old_group,
 	}
 }
 
+static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	va_list ap;
+	fu16_t reason;
+
+	va_start(ap, fr);
+	reason = (fu16_t)va_arg(ap, unsigned int);
+	va_end(ap);
+
+	debug_printf("ssi: SNAC error %hu\n", reason);
+
+	if (reason == 0x0005) {
+		do_error_dialog(_("Unable To Retrive Buddy List"), _("Gaim was temporarily unable to retrive your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."), GAIM_ERROR);
+	}
+
+	/* Activate SSI */
+	/* Sending the enable causes other people to be able to see you, and you to see them */
+	/* Make sure your privacy setting/invisibility is set how you want it before this! */
+	debug_printf("ssi: activating server-stored buddy list\n");
+	aim_ssi_enable(od->sess);
+
+	return 1;
+}
+
 static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -4414,7 +4441,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
 							     "  Until you are below the limit, some buddies will not show up as online."), 
 							   od->rights.maxbuddies, tmp);
-			do_error_dialog("Maximum buddy list length exceeded.", dialog_msg, GAIM_WARNING);
+			do_error_dialog(_("Maximum buddy list length exceeded."), dialog_msg, GAIM_WARNING);
 			g_free(dialog_msg);
 		}
 		
@@ -4424,7 +4451,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Sending the enable causes other people to be able to see you, and you to see them */
 	/* Make sure your privacy setting/invisibility is set how you want it before this! */
 	debug_printf("ssi: activating server-stored buddy list\n");
-	aim_ssi_enable(sess, fr->conn);
+	aim_ssi_enable(sess);
 
 	return 1;
 }
@@ -4993,7 +5020,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, gc->username);
 		break;
 	case 3:
-		list = gc->permit;
+		list = gc->account->permit;
 		at = 0;
 		while (list) {
 			at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);
@@ -5002,7 +5029,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
 		break;
 	case 4:
-		list = gc->deny;
+		list = gc->account->deny;
 		at = 0;
 		while (list) {
 			at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);

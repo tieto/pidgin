@@ -233,7 +233,8 @@ faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
 
 	ob[len] = '\0';
 
-	return ob;}
+	return ob;
+}
 
 faim_internal int aimbs_putraw(aim_bstream_t *bs, const fu8_t *v, int len)
 {

@@ -1196,8 +1196,13 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * settings into effect.
  * 
  */
-faim_export int aim_ssi_enable(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ssi_enable(aim_session_t *sess)
 {
+	aim_conn_t *conn;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+		return -EINVAL;
+
 	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, 0x0007);
 }
 
