@@ -392,16 +392,19 @@ void
 msn_message_set_content_type(MsnMessage *msg, const char *type)
 {
 	g_return_if_fail(msg != NULL);
-	g_return_if_fail(type != NULL);
 
 	if (msg->content_type != NULL) {
 		msg->size -= strlen(msg->content_type);
 		g_free(msg->content_type);
 	}
 
-	msg->content_type = g_strdup(type);
+	if (type != NULL) {
+		msg->content_type = g_strdup(type);
 
-	msg->size += strlen(type);
+		msg->size += strlen(type);
+	}
+	else
+		msg->content_type = NULL;
 }
 
 const char *
