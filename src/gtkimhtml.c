@@ -1368,6 +1368,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
 			GtkTextChildAnchor *anchor;
 			GtkWidget *icon = NULL;
+			GtkTextIter copy;
 			GdkPixbufAnimation *annipixbuf = NULL;
 			GdkPixbuf *pixbuf = NULL;
 			GtkIMHtmlFontDetail *fd;
@@ -1394,7 +1395,20 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 				gtk_widget_show(icon);
 				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
 			}
-
+			
+			copy = iter;
+			gtk_text_iter_backward_char(&copy);
+			if (bg) {					
+                                texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "background", bg, NULL); 
+                                gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &iter, &copy); 
+                        } 
+                        if (fonts) { 
+                                 GtkIMHtmlFontDetail *fd = fonts->data; 
+				 if (fd->back) { 
+					 texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "background", fd->back, NULL); 
+					 gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &iter, &copy); 
+                                 }
+			} 
 			c += smilelen;
 			pos += smilelen;
 			wpos = 0;
