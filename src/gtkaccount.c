@@ -716,7 +716,8 @@ __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
-__cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
+__account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
+						 AccountPrefsDialog *dialog)
 {
 	if (dialog->user_split_entries != NULL)
 		g_list_free(dialog->user_split_entries);
@@ -724,16 +725,15 @@ __cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	if (dialog->protocol_opt_entries != NULL)
 		g_list_free(dialog->protocol_opt_entries);
 
-	gtk_widget_destroy(dialog->window);
-
 	g_free(dialog);
 }
 
 static void
-__account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
-						 AccountPrefsDialog *dialog)
+__cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	__cancel_account_prefs_cb(NULL, dialog);
+	gtk_widget_destroy(dialog->window);
+
+	__account_win_destroy_cb(NULL, NULL, dialog);
 }
 
 static void
@@ -753,15 +753,28 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		dialog->account = gaim_account_new(screenname, dialog->protocol);
 	}
 
-	if ((value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry))) != NULL)
+	/* Alias */
+	value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry));
+
+	if (*value != '\0')
 		gaim_account_set_alias(dialog->account, value);
 	else
 		gaim_account_set_alias(dialog->account, NULL);
 
+	/* Buddy Icon */
+	value = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_icon_entry));
+
+	if ((dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON) && *value != '\0')
+		gaim_account_set_buddy_icon(dialog->account, value);
+	else
+		gaim_account_set_buddy_icon(dialog->account, NULL);
+
+	/* Remember Password */
 	gaim_account_set_remember_password(dialog->account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
 
+	/* Check Mail */
 	if (dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
 		gaim_account_set_check_mail(dialog->account,
 			gtk_toggle_button_get_active(
@@ -769,9 +782,11 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* TODO: Do something about auto-login. */
 
-	if (gaim_account_get_remember_password(dialog->account))
-		gaim_account_set_password(dialog->account,
-				gtk_entry_get_text(GTK_ENTRY(dialog->password_entry)));
+	/* Password */
+	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
+
+	if (gaim_account_get_remember_password(dialog->account) && *value != '\0')
+		gaim_account_set_password(dialog->account, value);
 	else
 		gaim_account_set_password(dialog->account, NULL);
 
@@ -874,6 +889,10 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_proxy_info_set_password(proxy_info,
 				gtk_entry_get_text(GTK_ENTRY(dialog->proxy_pass_entry)));
 	}
+
+	gtk_widget_destroy(dialog->window);
+
+	__account_win_destroy_cb(NULL, NULL, dialog);
 }
 
 static void
