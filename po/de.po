@@ -27,11 +27,11 @@ msgstr "Schließen"
 
 #: src/aim.c:137
 msgid "Please enter your logon"
-msgstr ""
+msgstr "Bitte geben Sie einen Benutzernamen ein"
 
 #: src/aim.c:141
 msgid "You must give your password"
-msgstr ""
+msgstr "Bitte geben Sie ein Passwort ein"
 
 #: src/aim.c:191 src/buddy.c:1723
 msgid "Signoff"
@@ -39,7 +39,7 @@ msgstr ""
 
 #: src/aim.c:301 src/aim.c:503 src/buddy.c:366 src/gnome_applet_mgr.c:348
 msgid "Signon"
-msgstr ""
+msgstr "Los"
 
 #: src/aim.c:302 src/buddy_chat.c:101 src/buddy_chat.c:176 src/dialogs.c:371
 #: src/dialogs.c:627 src/dialogs.c:743 src/dialogs.c:853 src/dialogs.c:982
@@ -47,15 +47,15 @@ msgstr ""
 #: src/dialogs.c:1649 src/dialogs.c:1747 src/dialogs.c:1836 src/rvous.c:280
 #: src/rvous.c:415 src/rvous.c:636
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr "Ende"
 
 #: src/aim.c:303 src/buddy.c:1720
 msgid "Register"
-msgstr ""
+msgstr "Neu"
 
 #: src/aim.c:304
 msgid "Options"
-msgstr ""
+msgstr "Einstellungen"
 
 #: src/aim.c:306 src/aim.c:509 src/buddy.c:1785
 msgid "Plugins"
@@ -87,11 +87,11 @@ msgstr ""
 
 #: src/away.c:111
 msgid "I'm Back!"
-msgstr ""
+msgstr "Ich bin zurück"
 
 #: src/away.c:151
 msgid "Gaim - Away!"
-msgstr ""
+msgstr "Gaim - Abwesenheit!"
 
 #: src/away.c:264 src/gnome_applet_mgr.c:262
 msgid "New Away Message"
