@@ -15,6 +15,7 @@ version 0.73cvs:
 	* Compatible with autoconf 2.58.
 	* Cleaned up gtkspell-related code (Robert McQueen)
 	* Changed the parameters for the received-chat-msg signal.
+	* Added a Release Notification plugin
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
