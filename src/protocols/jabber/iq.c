@@ -229,6 +229,8 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		jabber_iq_handle_version(js, packet);
 	} else if(!strcmp(xmlns, "jabber:iq:register")) {
 		jabber_register_parse(js, packet);
+	} else if(!strcmp(xmlns, "jabber:iq:oob")) {
+		/* XXX: need to re-implement file receive for the old-skool way */
 	} else {
 		gaim_debug(GAIM_DEBUG_WARNING, "jabber", "Unknown query: %s\n", xmlns);
 	}

@@ -352,7 +352,7 @@ jabber_login(GaimAccount *account)
 	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, NULL);
+			g_free, (GDestroyNotify)jabber_buddy_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));

@@ -24,17 +24,6 @@
 
 #include "jabber.h"
 
-typedef struct _JabberBuddyResource {
-	char *name;
-	int priority;
-	int state;
-	char *status;
-	enum {
-		JABBER_CAP_XHTML     = 1 << 1,
-		JABBER_CAP_COMPOSING = 1 << 2
-	} capabilities;
-} JabberBuddyResource;
-
 typedef struct _JabberBuddy {
 	GList *resources;
 	char *error_msg;
@@ -52,12 +41,26 @@ typedef struct _JabberBuddy {
 	} subscription;
 } JabberBuddy;
 
+typedef struct _JabberBuddyResource {
+	JabberBuddy *jb;
+	char *name;
+	int priority;
+	int state;
+	char *status;
+	enum {
+		JABBER_CAP_XHTML     = 1 << 1,
+		JABBER_CAP_COMPOSING = 1 << 2
+	} capabilities;
+} JabberBuddyResource;
+
+void jabber_buddy_free(JabberBuddy *jb);
 JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 		gboolean create);
 JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		const char *resource);
 void jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
 		int priority, int state, const char *status);
+void jabber_buddy_resource_free(JabberBuddyResource *jbr);
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource);
 const char *jabber_buddy_get_status_msg(JabberBuddy *jb);
 void jabber_buddy_get_info(GaimConnection *gc, const char *who);

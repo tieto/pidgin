@@ -34,6 +34,18 @@
 #include "xmlnode.h"
 
 
+void jabber_buddy_free(JabberBuddy *jb)
+{
+	g_return_if_fail(jb != NULL);
+
+	if(jb->error_msg)
+		g_free(jb->error_msg);
+	while(jb->resources)
+		jabber_buddy_resource_free(jb->resources->data);
+
+	g_free(jb);
+}
+
 JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 		gboolean create)
 {
@@ -97,6 +109,7 @@ void jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
 
 	if(!jbr) {
 		jbr = g_new0(JabberBuddyResource, 1);
+		jbr->jb = jb;
 		jbr->name = g_strdup(resource);
 		jbr->capabilities = JABBER_CAP_XHTML;
 		jb->resources = g_list_append(jb->resources, jbr);
@@ -108,6 +121,18 @@ void jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
 	jbr->status = g_strdup(status);
 }
 
+void jabber_buddy_resource_free(JabberBuddyResource *jbr)
+{
+	g_return_if_fail(jbr != NULL);
+
+	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
+
+	g_free(jbr->name);
+	if(jbr->status)
+		g_free(jbr->status);
+	g_free(jbr);
+}
+
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource)
 {
 	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
@@ -115,12 +140,7 @@ void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource)
 	if(!jbr)
 		return;
 
-	jb->resources = g_list_remove(jb->resources, jbr);
-
-	g_free(jbr->name);
-	if(jbr->status)
-		g_free(jbr->status);
-	g_free(jbr);
+	jabber_buddy_resource_free(jbr);
 }
 
 const char *jabber_buddy_get_status_msg(JabberBuddy *jb)
@@ -524,6 +544,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
 	if(!from)
 		return;
 
+	/* XXX: make this handle handle errors */
+
 	resource_name = jabber_get_resource(from);
 
 	jb = jabber_buddy_find(js, from, TRUE);
@@ -725,7 +747,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
 
 						imgid = gaim_imgstore_add(data, size, "logo.png");
 						g_string_append_printf(info_text,
-								"<b>%s:</b> <img id='%d' /><br/>",
+								"<b>%s:</b> <img id='%d'><br/>",
 								strcmp(child->name, "PHOTO")  == 0 ?
 								_("Photo") : _("Logo"),
 								imgid);
