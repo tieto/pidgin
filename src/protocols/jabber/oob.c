@@ -170,6 +170,7 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 
 	gaim_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
 	gaim_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
+	gaim_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_cancel_recv); /* XXX */
 	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_cancel_recv);
 	gaim_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
 	gaim_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
