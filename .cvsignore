@@ -1,3 +1,4 @@
+ABOUT-NLS
 confdefs.h
 gaim
 au2h
@@ -7,6 +8,10 @@ Makefile.in
 config.status
 config.cache
 config.log
+config.guess
+config.sub
+ltmain.sh
+ltconfig
 .deps
 BuddyArrive.h
 BuddyLeave.h
@@ -20,3 +25,7 @@ config.h.in
 config.h
 stamp-h.in
 stamp-h
+install-sh
+mkinstalldirs
+missing
+intl
