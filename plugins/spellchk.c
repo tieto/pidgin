@@ -140,7 +140,7 @@ static void load_conf() {
 
 static int num_words(const char *m) {
 	int count = 0;
-	int pos;
+	guint pos;
 	int state = 0;
 
 	for (pos = 0; pos < strlen(m); pos++) {
@@ -169,7 +169,7 @@ static int num_words(const char *m) {
 
 static int get_word(char *m, int word) {
 	int count = 0;
-	int pos = 0;
+	guint pos = 0;
 	int state = 0;
 
 	for (pos = 0; pos < strlen(m) && count <= word; pos++) {

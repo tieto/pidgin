@@ -1556,7 +1556,8 @@ char *
 gaim_str_add_cr(const char *text)
 {
 	char *ret = NULL;
-	int count = 0, i, j;
+	int count = 0, j;
+	guint i;
 
 	g_return_val_if_fail(text != NULL, NULL);
 
@@ -2057,7 +2058,7 @@ const char *
 gaim_url_decode(const char *str)
 {
 	static char buf[BUF_LEN];
-	int i, j = 0;
+	guint i, j = 0;
 	char *bum;
 
 	g_return_val_if_fail(str != NULL, NULL);
@@ -2094,7 +2095,7 @@ const char *
 gaim_url_encode(const char *str)
 {
 	static char buf[BUF_LEN];
-	int i, j = 0;
+	guint i, j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
 

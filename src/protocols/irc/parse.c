@@ -127,7 +127,7 @@ static struct _irc_user_cmd {
 	{ "voice", ":", irc_cmd_op },
 	{ "wallops", ":", irc_cmd_wallops },
 	{ "whois", "n", irc_cmd_whois },
-	{ NULL, NULL }
+	{ NULL, NULL, NULL }
 };
 
 static char *irc_send_convert(struct irc_conn *irc, const char *string)
@@ -380,7 +380,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 {
 	struct _irc_msg *msgent;
 	char *cur, *end, *tmp, *from, *msgname, *fmt, **args, *msg;
-	int i;
+	guint i;
 
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
@@ -461,7 +461,8 @@ int irc_parse_cmd(struct irc_conn *irc, const char *target, const char *cmdstr)
 	const char *cur, *end, *fmt; 
 	char *tmp, *cmd, **args;
 	struct _irc_user_cmd *cmdent;
-	int i, ret;
+	guint i;
+	int ret;
 
 	cur = cmdstr;
 	end = strchr(cmdstr, ' ');

@@ -2716,7 +2716,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		} break;
 
 		case 0x13: { /* Someone has sent you some ICQ buddies */
-			int i, num;
+			guint i, num;
 			gchar **text;
 			text = g_strsplit(args->msg, "\376", 0);
 			if (text) {
@@ -5346,7 +5346,7 @@ static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
 	GaimConversation *b = NULL;
 	struct chat_connection *c = NULL;
 	char *buf, *buf2;
-	int i, j;
+	guint i, j;
 
 	while (bcs) {
 		b = (GaimConversation *)bcs->data;

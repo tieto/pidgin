@@ -202,7 +202,7 @@ gstroke_set_mouse_button(gint button)
 	mouse_button = button;
 }
 
-int
+guint
 gstroke_get_mouse_button(void)
 {
 	return mouse_button;

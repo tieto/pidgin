@@ -37,7 +37,7 @@ struct _MsnSession
 	MsnUser *user;
 	char *away_state;
 
-	int protocol_ver;
+	guint protocol_ver;
 
 	char *dispatch_server;
 	int dispatch_port;

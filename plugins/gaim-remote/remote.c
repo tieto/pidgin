@@ -501,7 +501,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 
 	gchar type;
 	gchar subtype;
-	guint32 len;
+	gint len;
 
 	GError *error = NULL;
 

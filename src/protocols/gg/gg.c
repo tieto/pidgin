@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 8091 2003-11-11 20:34:00Z hermanator $
+ * $Id: gg.c 8255 2003-11-25 07:16:11Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -86,7 +86,7 @@ static gchar *charset_convert(const gchar *locstr, const char *encsrc, const cha
 static gboolean invalid_uin(const char *uin)
 {
 	unsigned long int res = strtol(uin, (char **)NULL, 10);
-	if (res == LONG_MIN || res == LONG_MAX || res == 0)
+	if (res == ULONG_MAX || res == 0)
 		return TRUE;
 	return FALSE;
 }

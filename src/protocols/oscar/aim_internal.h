@@ -68,7 +68,7 @@ faim_internal int aim_genericreq_s(aim_session_t *, aim_conn_t *conn, fu16_t fam
 faim_internal int aim_bstream_init(aim_bstream_t *bs, fu8_t *data, int len);
 faim_internal int aim_bstream_empty(aim_bstream_t *bs);
 faim_internal int aim_bstream_curpos(aim_bstream_t *bs);
-faim_internal int aim_bstream_setpos(aim_bstream_t *bs, int off);
+faim_internal int aim_bstream_setpos(aim_bstream_t *bs, unsigned int off);
 faim_internal void aim_bstream_rewind(aim_bstream_t *bs);
 faim_internal int aim_bstream_advance(aim_bstream_t *bs, int n);
 faim_internal fu8_t aimbs_get8(aim_bstream_t *bs);

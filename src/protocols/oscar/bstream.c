@@ -30,7 +30,7 @@ faim_internal int aim_bstream_curpos(aim_bstream_t *bs)
 	return bs->offset;
 }
 
-faim_internal int aim_bstream_setpos(aim_bstream_t *bs, int off)
+faim_internal int aim_bstream_setpos(aim_bstream_t *bs, unsigned int off)
 {
 
 	if (off > bs->len)

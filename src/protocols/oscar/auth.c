@@ -45,7 +45,7 @@ static int aim_encode_password(const char *password, fu8_t *encoded)
 		0x53, 0x7a, 0x95, 0x7c
 #endif
 	};
-	int i;
+	unsigned int i;
 
 	for (i = 0; i < strlen(password); i++)
 		encoded[i] = (password[i] ^ encoding_table[i]);

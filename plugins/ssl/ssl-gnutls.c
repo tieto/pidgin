@@ -144,9 +144,6 @@ ssl_gnutls_write(GaimSslConnection *gsc, const void *data, size_t len)
 	if(gnutls_data)
 		s = gnutls_record_send(gnutls_data->session, data, len);
 
-	if (s < 0)
-		s = 0;
-
 	return s;
 }
 

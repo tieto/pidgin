@@ -2107,8 +2107,6 @@ static char *yahoo_status_text(GaimBuddy *b)
 	default:
 		return g_strdup(yahoo_get_status_string(f->status));
  	}
-
-	return NULL;
 }
 
 static char *yahoo_tooltip_text(GaimBuddy *b)

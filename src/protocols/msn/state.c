@@ -39,7 +39,7 @@ static const char *away_text[] =
 const char *
 msn_away_get_text(MsnAwayType type)
 {
-	g_return_val_if_fail(type >= 0 && type <= MSN_HIDDEN, NULL);
+	g_return_val_if_fail(type <= MSN_HIDDEN, NULL);
 
 	return _(away_text[type]);
 }

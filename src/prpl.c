@@ -97,7 +97,7 @@ gaim_find_prpl(GaimProtocol type)
 	return NULL;
 }
 
-void gaim_prpl_ask_send_file (GaimConnection *gc, char *name)
+void gaim_prpl_ask_send_file (GaimConnection *gc, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
  
@@ -105,13 +105,13 @@ void gaim_prpl_ask_send_file (GaimConnection *gc, char *name)
                 prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info->has_send_file == NULL || prpl_info->send_file == NULL)
-		return FALSE;	
+		return;	
 
 	prpl_info->ask_send_file(gc, name);
 }
 
 
-gboolean gaim_prpl_has_send_file (GaimConnection *gc, char *name)
+gboolean gaim_prpl_has_send_file (GaimConnection *gc, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
  

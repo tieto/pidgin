@@ -363,7 +363,7 @@ GaimPlugin *gaim_find_prpl(GaimProtocol type);
  * @param gc The Gaim Connection to send the file trough;
  * @param name The screen name of the one we are sending the file;
  */
-void gaim_prpl_ask_send_file (GaimConnection *gc, char *name);
+void gaim_prpl_ask_send_file (GaimConnection *gc, const char *name);
 
 /**
  * Checks if a given user supports file sends
@@ -372,7 +372,7 @@ void gaim_prpl_ask_send_file (GaimConnection *gc, char *name);
  * @param name The screen name of the one we are sending the file;
  * @return TRUE if we can send files to this user, FALSE otherwise.
  */
-gboolean gaim_prpl_has_send_file (GaimConnection *gc, char *name);
+gboolean gaim_prpl_has_send_file (GaimConnection *gc, const char *name);
 
 #ifdef __cplusplus
 }

@@ -28,7 +28,7 @@ void gstroke_set_draw_strokes(gboolean draw);
 gboolean gstroke_draw_strokes(void);
 
 void gstroke_set_mouse_button(gint button);
-int gstroke_get_mouse_button(void);
+guint gstroke_get_mouse_button(void);
 
 /* enable strokes for the widget */
 void gstroke_enable (GtkWidget *widget);
