@@ -9,14 +9,15 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.73 vi\n"
-"POT-Creation-Date: 2003-11-23 21:35+0700\n"
-"PO-Revision-Date: 2003-11-23 23:48+0700\n"
+"Project-Id-Version: Version 0.73-vi\n"
+"POT-Creation-Date: 2003-11-24 14:58+0700\n"
+"PO-Revision-Date: 2003-11-24 14:48+0700\n"
 "Last-Translator: Trinh Minh Thanh <tmthanh@yahoo.com>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #. *< api_version
 #. *< type
@@ -32,14 +33,11 @@ msgstr "Tự động kết nối lại"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/autorecon.c:107
-#: plugins/autorecon.c:109
+#: plugins/autorecon.c:107 plugins/autorecon.c:109
 msgid "When you are kicked offline, this reconnects you."
 msgstr "Tự động kết nối lại khi bạn bị mất kết nối."
 
-#: plugins/chkmail.c:90
-#: plugins/chkmail.c:113
-#: plugins/chkmail.c:122
+#: plugins/chkmail.c:90 plugins/chkmail.c:113 plugins/chkmail.c:122
 msgid "Mail Server"
 msgstr "Máy Chủ Thư"
 
@@ -70,7 +68,7 @@ msgstr "Buddy vắng mặt:"
 
 #: plugins/contact_priority.c:119
 msgid "Buddy is idle:"
-msgstr "Buddy không hoạt động:"
+msgstr "Buddy đang nghỉ:"
 
 #: plugins/contact_priority.c:133
 msgid "Use last matching buddy"
@@ -79,13 +77,16 @@ msgstr "Dùng buddy so khớp cuối cùng"
 #. Explanation
 #: plugins/contact_priority.c:139
 msgid ""
-"The buddy with the lowest score is the buddy who will have priority in the contact.\n"
+"The buddy with the lowest score is the buddy who will have priority in the "
+"contact.\n"
 "The default values (offline = 4,away = 2, and idle = 1)\n"
-"will use what used to be the built-in order active->idle->away->away+idle->offline."
+"will use what used to be the built-in order active->idle->away->away+idle-"
+">offline."
 msgstr ""
 "Buddy có điểm thấp nhất là buddy có mức ưu tiên trong liên lạc.\n"
-"Giá trị mặc định (không kết nối = 4, vắng mặt = 2 và không hoạt động = 1)\n"
-"sẽ dùng mức ưu tiên được đặt là hoạt động->không hoạt động->vắng mặt->vắng mặt + bỏ không->không kết nối."
+"Giá trị mặc định (không kết nối = 4, vắng mặt = 2 và nghỉ = 1)\n"
+"sẽ dùng mức ưu tiên được đặt là hoạt động->nghỉ->vắng mặt->vắng "
+"mặt + nghỉ->không kết nối."
 
 #: plugins/contact_priority.c:142
 msgid "Point values to use for Account..."
@@ -106,13 +107,20 @@ msgstr "Ưu tiên liên lạc"
 #. *< version
 #. *< summary
 #: plugins/contact_priority.c:194
-msgid "Allows for controlling the values associated with different buddy states."
-msgstr "Cho phép điều chỉnh các giá trị liên quan đến các trạng thái khác nhau của buddy."
+msgid ""
+"Allows for controlling the values associated with different buddy states."
+msgstr ""
+"Cho phép điều chỉnh các giá trị liên quan đến các trạng thái khác nhau của "
+"buddy."
 
 #. *< description
 #: plugins/contact_priority.c:196
-msgid "Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."
-msgstr "Cho phép thay đổi giá trj đặt cho các trạng thái không hoạt động/vắng mặt/không kết nối cho các byddy trong việc tính mức ưu tiên liên lạc"
+msgid ""
+"Allows for changing the point values of idle/away/offline states for buddies "
+"in contact priority computations."
+msgstr ""
+"Cho phép thay đổi giá trj đặt cho các trạng thái nghỉ/vắng mặt/"
+"không kết nối cho các buddy trong việc tính mức ưu tiên liên lạc"
 
 #.
 #. *  DEFINES, MACROS & DATA TYPES
@@ -129,9 +137,7 @@ msgstr "Gaim - Thôi kết nối"
 msgid "Gaim - Away"
 msgstr "Gaim - Vắng mặt"
 
-#: plugins/docklet/docklet.c:114
-#: src/gtkaccount.c:482
-#: src/gtkaccount.c:1768
+#: plugins/docklet/docklet.c:114 src/gtkaccount.c:482 src/gtkaccount.c:1768
 msgid "Auto-login"
 msgstr "Đăng nhập tự động"
 
@@ -141,30 +147,22 @@ msgstr "Thông điệp mới.."
 
 #: plugins/docklet/docklet.c:118
 msgid "Join A Chat..."
-msgstr "Tham gia trò chuyện..."
+msgstr "Tham gia Chat..."
 
 #: plugins/docklet/docklet.c:149
 msgid "New..."
 msgstr "Mới..."
 
-#: plugins/docklet/docklet.c:153
-#: src/gtkblist.c:2328
-#: src/gtkpounce.c:411
-#: src/gtkprefs.c:1467
-#: src/protocols/gg/gg.c:51
-#: src/protocols/irc/msgs.c:187
-#: src/protocols/jabber/jabber.c:929
-#: src/protocols/jabber/jutil.c:98
-#: src/protocols/jabber/presence.c:84
-#: src/protocols/oscar/oscar.c:2844
-#: src/protocols/oscar/oscar.c:4591
-#: src/protocols/oscar/oscar.c:5537
+#: plugins/docklet/docklet.c:153 src/gtkblist.c:2328 src/gtkpounce.c:411
+#: src/gtkprefs.c:1467 src/protocols/gg/gg.c:51 src/protocols/irc/msgs.c:187
+#: src/protocols/jabber/jabber.c:929 src/protocols/jabber/jutil.c:98
+#: src/protocols/jabber/presence.c:84 src/protocols/oscar/oscar.c:2844
+#: src/protocols/oscar/oscar.c:4591 src/protocols/oscar/oscar.c:5537
 #: src/protocols/oscar/oscar.c:6138
 msgid "Away"
 msgstr "Trạng thái"
 
-#: plugins/docklet/docklet.c:159
-#: src/away.c:515
+#: plugins/docklet/docklet.c:159 src/away.c:515
 msgid "Back"
 msgstr "Trở lại"
 
@@ -172,21 +170,16 @@ msgstr "Trở lại"
 msgid "Mute Sounds"
 msgstr "Tắt âm thanh"
 
-#: plugins/docklet/docklet.c:172
-#: src/gtkft.c:559
+#: plugins/docklet/docklet.c:172 src/gtkft.c:559
 msgid "File Transfers"
 msgstr "Truyền tập tin"
 
 #. And now for the buttons
-#: plugins/docklet/docklet.c:173
-#: src/gtkaccount.c:1927
-#: src/main.c:323
+#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1927 src/main.c:323
 msgid "Accounts"
 msgstr "Tài khoản"
 
-#: plugins/docklet/docklet.c:174
-#: src/gtkprefs.c:2331
-#: src/main.c:333
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2331 src/main.c:333
 msgid "Preferences"
 msgstr "Tùy chỉnh"
 
@@ -226,8 +219,17 @@ msgstr "Hiển thị biểu tượng Gaim trên khay hệ thống."
 
 #. *  description
 #: plugins/docklet/docklet.c:511
-msgid "Displays a system tray icon (in GNOME, KDE or Windows for example) to show the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ."
-msgstr "Hiển thị biểu tượng trên khay hệ thống (ví dụ GNOME, KDE hoặc Windows) để hiển thị trạng thái hiện thời của Gaim, cho phép truy cập nhanh những chức năng thông thường, và chuyển đổi giữa danh sách buddy hoặc cửa sổ đăng nhập. Ngoài ra còn cho phép thông điệp được xếp hàng đợi đến khi nhấn chuột lên biểu tượng, giống như ICQ."
+msgid ""
+"Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
+"the current status of Gaim, allow fast access to commonly used functions, "
+"and to toggle display of the buddy list or login window. Also allows "
+"messages to be queued until the icon is clicked, similar to ICQ."
+msgstr ""
+"Hiển thị biểu tượng trên khay hệ thống (ví dụ GNOME, KDE hoặc Windows) để "
+"hiển thị trạng thái hiện thời của Gaim, cho phép truy cập nhanh những chức "
+"năng thông thường, và chuyển đổi giữa danh sách buddy hoặc cửa sổ đăng nhập. "
+"Ngoài ra còn cho phép thông điệp được xếp hàng đợi đến khi nhấn chuột lên "
+"biểu tượng, giống như ICQ."
 
 #. *< api_version
 #. *< type
@@ -243,8 +245,7 @@ msgstr "Tập Tin Điều Khiển Gaim"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/filectl.c:204
-#: plugins/filectl.c:206
+#: plugins/filectl.c:204 plugins/filectl.c:206
 msgid "Allows you to control Gaim by entering commands in a file."
 msgstr "Cho phép bạn điều khiển Gaim bằng các lệnh ghi trong tập tin."
 
@@ -252,8 +253,7 @@ msgstr "Cho phép bạn điều khiển Gaim bằng các lệnh ghi trong tập 
 msgid "Not connected to AIM"
 msgstr "Không kết nối được với AIM"
 
-#: plugins/gaim-remote/remote.c:97
-#: plugins/gaim-remote/remote.c:136
+#: plugins/gaim-remote/remote.c:97 plugins/gaim-remote/remote.c:136
 msgid "No screenname given."
 msgstr "Chưa đặt tên hiển thị."
 
@@ -272,21 +272,25 @@ msgstr "Đường dẫn AIM không hợp lệ"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/gaim-remote/remote.c:714
+#: plugins/gaim-remote/remote.c:715
 msgid "Remote Control"
 msgstr "Điều khiển từ xa"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/gaim-remote/remote.c:717
+#: plugins/gaim-remote/remote.c:718
 msgid "Provides remote control for gaim applications."
 msgstr "Cung cấp khả năng điều khiển từ xa cho ứng dụng Gaim."
 
 #. *  description
-#: plugins/gaim-remote/remote.c:719
-msgid "Gives Gaim the ability to be remote-controlled through third-party applications or through the gaim-remote tool."
-msgstr "Cho phép điều khiển Gaim từ xa thông qua ứng dụng ngoài hoặc thông qua công cụ điều khiển Gaim từ xa."
+#: plugins/gaim-remote/remote.c:720
+msgid ""
+"Gives Gaim the ability to be remote-controlled through third-party "
+"applications or through the gaim-remote tool."
+msgstr ""
+"Cho phép điều khiển Gaim từ xa thông qua ứng dụng ngoài hoặc thông qua công "
+"cụ điều khiển Gaim từ xa."
 
 #. *< api_version
 #. *< type
@@ -410,8 +414,12 @@ msgid "Shows recently logged conversations in new conversations."
 msgstr "Hiển thị cuộc hội thoại được ghi lại gần đây trong cuộc hội thoại mới."
 
 #: plugins/history.c:78
-msgid "When a new conversation is opened this plugin will insert the last XXX of the last conversation into the current conversation."
-msgstr "Khi bắt đầu cuộc trò chuyện mới, plugin này sẽ chèn XXX gần nhất của lần trò chuyện lần cuối vào cuộc trò chuyện hiện thời."
+msgid ""
+"When a new conversation is opened this plugin will insert the last XXX of "
+"the last conversation into the current conversation."
+msgstr ""
+"Khi bắt đầu cuộc trò chuyện mới, plugin này sẽ chèn XXX gần nhất của lần trò "
+"chuyện lần cuối vào cuộc trò chuyện hiện thời."
 
 #. *< api_version
 #. *< type
@@ -422,15 +430,15 @@ msgstr "Khi bắt đầu cuộc trò chuyện mới, plugin này sẽ chèn XXX 
 #. *< id
 #: plugins/iconaway.c:80
 msgid "Iconify on Away"
-msgstr "Biểu tượng trạng thái"
+msgstr "Biểu tượng cho trạng thái"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/iconaway.c:83
-#: plugins/iconaway.c:85
+#: plugins/iconaway.c:83 plugins/iconaway.c:85
 msgid "Iconifies the buddy list and your conversations when you go away."
-msgstr "Biểu tượng hóa danh sách buddy và cuộc trò chuyện của bạn khi bạn đi vắng."
+msgstr ""
+"Biểu tượng hóa danh sách buddy và cuộc trò chuyện của bạn khi bạn đi vắng."
 
 #: plugins/idle.c:70
 msgid "Idle Time"
@@ -444,8 +452,7 @@ msgstr "Thiết lập"
 msgid "idle for"
 msgstr "nghỉ trong"
 
-#: plugins/idle.c:90
-#: plugins/timestamp.c:109
+#: plugins/idle.c:90 plugins/timestamp.c:109
 msgid "minutes."
 msgstr "phút."
 
@@ -457,10 +464,9 @@ msgstr "_Thiết lập"
 msgid "I'dle Mak'er"
 msgstr ""
 
-#: plugins/idle.c:121
-#: plugins/idle.c:122
+#: plugins/idle.c:121 plugins/idle.c:122
 msgid "Allows you to hand-configure how long you've been idle for"
-msgstr "Cho phép bạn cấu hình bằng tay thời gian nghỉ trong bao lâu"
+msgstr "Cho phép bạn tự đặt ra thời gian nghỉ sau bao lâu"
 
 #. *< api_version
 #. *< type
@@ -482,8 +488,12 @@ msgstr "Kiểm tra hỗ trợ IPC, như một máy khách."
 
 #. *  description
 #: plugins/ipc-test-client.c:89
-msgid "Test plugin IPC support, as a client. This locates the server plugin and calls the commands registered."
-msgstr "Kiểm tra hỗ trợ IPC plugin, như một máy khách. Việc này định vị plugin máy chủ và gọi lệnh đã đăng ký."
+msgid ""
+"Test plugin IPC support, as a client. This locates the server plugin and "
+"calls the commands registered."
+msgstr ""
+"Kiểm tra hỗ trợ IPC plugin, như một máy khách. Việc này định vị plugin máy "
+"chủ và gọi lệnh đã đăng ký."
 
 #. *< api_version
 #. *< type
@@ -506,14 +516,14 @@ msgstr "Kiểm tra hỗ trợ IPC plugin, như một máy chủ."
 #. *  description
 #: plugins/ipc-test-server.c:76
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
-msgstr "Kiểm tra hỗ trợ IPC plugin, như một máy chủ. Việc này đăng ký lệnh IPC."
+msgstr ""
+"Kiểm tra hỗ trợ IPC plugin, như một máy chủ. Việc này đăng ký lệnh IPC."
 
 #: plugins/mailchk.c:156
 msgid "Mail Checker"
 msgstr "Trình kiểm thư"
 
-#: plugins/mailchk.c:158
-#: plugins/mailchk.c:159
+#: plugins/mailchk.c:158 plugins/mailchk.c:159
 msgid "Checks for new local mail."
 msgstr "Kiểm tra thư mới nội bộ"
 
@@ -597,8 +607,7 @@ msgstr "Thông báo thông điệp"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/notify.c:765
-#: plugins/notify.c:767
+#: plugins/notify.c:765 plugins/notify.c:767
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr "Cung cấp các cách thông báo cho bạn về các thông điệp chưa đọc."
 
@@ -615,8 +624,7 @@ msgstr "Trình nạp Perl Plugin"
 
 #. *< name
 #. *< version
-#: plugins/perl/perl.c:526
-#: plugins/perl/perl.c:527
+#: plugins/perl/perl.c:526 plugins/perl/perl.c:527
 msgid "Provides support for loading perl plugins."
 msgstr "Cung cấp hỗ trợ cho việc nạp những tiện ích bổ trợ perl."
 
@@ -629,8 +637,12 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Cho phép bạn gởi dựa trên văn bản."
 
 #: plugins/raw.c:157
-msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
-msgstr "Cho phép bạn gởi dữ liệu thô đến phương thức dựa trên văn bản (Jabber, MSN, IRC, TOC). Nhấn 'Enter' trong hộp nhập để gởi đi. Xem cửa sổ gỡ rối."
+msgid ""
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"'Enter' in the entry box to send. Watch the debug window."
+msgstr ""
+"Cho phép bạn gởi dữ liệu thô đến phương thức dựa trên văn bản (Jabber, MSN, "
+"IRC, TOC). Nhấn 'Enter' trong hộp nhập để gởi đi. Xem cửa sổ gỡ rối."
 
 #: plugins/relnot.c:62
 #, c-format
@@ -648,11 +660,14 @@ msgstr ""
 
 #: plugins/relnot.c:73
 #, c-format
-msgid "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net</a>."
-msgstr "Bạn có thể lấy phiên bản %s từ:<br><a href=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net</a>."
+msgid ""
+"You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
+"\">http://gaim.sourceforge.net</a>."
+msgstr ""
+"Bạn có thể lấy phiên bản %s từ:<br><a href=\"http://gaim.sourceforge.net/"
+"\">http://gaim.sourceforge.net</a>."
 
-#: plugins/relnot.c:77
-#: plugins/relnot.c:78
+#: plugins/relnot.c:77 plugins/relnot.c:78
 msgid "New Version Available"
 msgstr "Hiện đang có phiên bản mới"
 
@@ -676,8 +691,12 @@ msgstr "Kiểm tra phiên bản mới theo định kỳ."
 
 #. *  description
 #: plugins/relnot.c:139
-msgid "Checks periodically for new releases and notifies the user with the ChangeLog."
-msgstr "Kiểm tra phiên bản mới theo định kỳ và thông báo về thay đổi của phiên bản mới cho người dùng."
+msgid ""
+"Checks periodically for new releases and notifies the user with the "
+"ChangeLog."
+msgstr ""
+"Kiểm tra phiên bản mới theo định kỳ và thông báo về thay đổi của phiên bản "
+"mới cho người dùng."
 
 #. *< api_version
 #. *< type
@@ -693,8 +712,7 @@ msgstr "Tín hiệu kiểm tra"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/signals-test.c:468
-#: plugins/signals-test.c:470
+#: plugins/signals-test.c:468 plugins/signals-test.c:470
 msgid "Test to see that all signals are working properly."
 msgstr "Kiểm tra để biết là mọi tín hiệu hoạt động tốt."
 
@@ -712,8 +730,7 @@ msgstr "Plugin đơn giản"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/simple.c:34
-#: plugins/simple.c:36
+#: plugins/simple.c:34 plugins/simple.c:36
 msgid "Tests to see that most things are working."
 msgstr "Kiểm tra để biết mọi thứ đang hoạt động."
 
@@ -745,10 +762,10 @@ msgstr "Bạn gở_i tin:"
 msgid "Text replacement"
 msgstr "Văn bản thay thế"
 
-#: plugins/spellchk.c:537
-#: plugins/spellchk.c:538
+#: plugins/spellchk.c:537 plugins/spellchk.c:538
 msgid "Replaces text in outgoing messages according to user-defined rules."
-msgstr "Thay thế văn bản trong thông điệp gởi đi theo qui tắc người dùng định ra."
+msgstr ""
+"Thay thế văn bản trong thông điệp gởi đi theo qui tắc người dùng định ra."
 
 #. *< api_version
 #. *< type
@@ -764,8 +781,7 @@ msgstr "GNUTLS"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ssl/ssl-gnutls.c:200
-#: plugins/ssl/ssl-gnutls.c:202
+#: plugins/ssl/ssl-gnutls.c:200 plugins/ssl/ssl-gnutls.c:202
 msgid "Provides SSL support through GNUTLS."
 msgstr "Cung cấp hỗ trợ SSL thông qua GNUTLS."
 
@@ -783,8 +799,7 @@ msgstr "NSS"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ssl/ssl-nss.c:299
-#: plugins/ssl/ssl-nss.c:301
+#: plugins/ssl/ssl-nss.c:299 plugins/ssl/ssl-nss.c:301
 msgid "Provides SSL support through Mozilla NSS."
 msgstr "Cung cấp hỗ trợ SSL thông qua Mozilla NSS."
 
@@ -802,13 +817,11 @@ msgstr "SSL"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ssl/ssl.c:94
-#: plugins/ssl/ssl.c:96
+#: plugins/ssl/ssl.c:94 plugins/ssl/ssl.c:96
 msgid "Provides a wrapper around SSL support libraries."
 msgstr "Cung cấp một lớp bọc cho thư viện hỗ trợ SSL."
 
-#: plugins/statenotify.c:30
-#: src/gtkpounce.c:793
+#: plugins/statenotify.c:30 src/gtkpounce.c:793
 #, c-format
 msgid "%s has gone away."
 msgstr "%s đã đi vắng."
@@ -816,17 +829,17 @@ msgstr "%s đã đi vắng."
 #: plugins/statenotify.c:36
 #, c-format
 msgid "%s is no longer away."
-msgstr "%s có mặt."
+msgstr "%s lại có mặt."
 
 #: plugins/statenotify.c:42
 #, c-format
 msgid "%s has become idle."
-msgstr "%s đi vào trạng thái nghỉ."
+msgstr "%s rơi vào trạng thái nghỉ."
 
 #: plugins/statenotify.c:48
 #, c-format
 msgid "%s is no longer idle."
-msgstr "%s làm việc trở lại."
+msgstr "%s hoạt động trở lại."
 
 #. *< api_version
 #. *< type
@@ -842,17 +855,19 @@ msgstr "Thông báo trạng thái buddy"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/statenotify.c:81
-#: plugins/statenotify.c:84
-msgid "Notifies in a conversation window when a buddy goes or returns from away or idle."
-msgstr "Thông báo trong cửa sổ hội thoại hiện trạng vắng mặt, có mặt, hay nghỉ của buddy."
+#: plugins/statenotify.c:81 plugins/statenotify.c:84
+msgid ""
+"Notifies in a conversation window when a buddy goes or returns from away or "
+"idle."
+msgstr ""
+"Thông báo trong cửa sổ hội thoại hiện trạng vắng mặt, có mặt, hay nghỉ của "
+"buddy."
 
 #: plugins/tcl/tcl.c:344
 msgid "Tcl Plugin Loader"
 msgstr "Trình nạp Tcl Plugin"
 
-#: plugins/tcl/tcl.c:346
-#: plugins/tcl/tcl.c:347
+#: plugins/tcl/tcl.c:346 plugins/tcl/tcl.c:347
 msgid "Provides support for loading Tcl plugins"
 msgstr "Cung cấp hỗ trợ cho việc nạp Tcl Plugin"
 
@@ -863,16 +878,14 @@ msgstr "Cung cấp hỗ trợ cho việc nạp Tcl Plugin"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/ticker/ticker.c:74
-#: plugins/ticker/ticker.c:330
+#: plugins/ticker/ticker.c:74 plugins/ticker/ticker.c:330
 msgid "Buddy Ticker"
 msgstr "Đánh Dấu Buddy"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ticker/ticker.c:333
-#: plugins/ticker/ticker.c:335
+#: plugins/ticker/ticker.c:333 plugins/ticker/ticker.c:335
 msgid "A horizontal scrolling version of the buddy list."
 msgstr "Thanh cuộn ngang danh sách buddy."
 
@@ -902,8 +915,7 @@ msgstr "Nhãn thời gian"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/timestamp.c:176
-#: plugins/timestamp.c:178
+#: plugins/timestamp.c:176 plugins/timestamp.c:178
 msgid "Adds iChat-style timestamps to conversations every N minutes."
 msgstr "Thêm nhãn thời gian kiểu iChat vào hội thoại N phút một lần."
 
@@ -927,8 +939,7 @@ msgid "_Show slider bar in IM window"
 msgstr "_Hiển thị thanh trượt trong cửa sổ IM"
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:365
-#: src/gtkprefs.c:844
+#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:844
 msgid "Buddy List Window"
 msgstr "Cửa sổ danh sách buddy"
 
@@ -975,8 +986,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Chạy Gaim khi Windows khởi động"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366
-#: src/gtkblist.c:2165
+#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2165
 #: src/gtkprefs.c:2264
 msgid "Buddy List"
 msgstr "Danh sách Buddy"
@@ -996,8 +1006,7 @@ msgid "_Keep Buddy List window on top"
 msgstr "_Giữ cửa sổ danh sách Buddy trên cùng"
 
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:386
-#: src/gtkprefs.c:880
+#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:880
 #: src/gtkprefs.c:2265
 msgid "Conversations"
 msgstr "Cuộc thoại"
@@ -1010,8 +1019,7 @@ msgstr "_Nhấp nháy cửa sổ khi nhận tin"
 msgid "WinGaim Options"
 msgstr "Tùy chọn WinGaim"
 
-#: plugins/win32/winprefs/winprefs.c:411
-#: plugins/win32/winprefs/winprefs.c:412
+#: plugins/win32/winprefs/winprefs.c:411 plugins/win32/winprefs/winprefs.c:412
 msgid "Options specific to Windows Gaim."
 msgstr "Tùy chọn riêng cho Gaim trên Windows."
 
@@ -1021,8 +1029,14 @@ msgid "About Gaim v%s"
 msgstr "Giới thiệu Gaim v%s"
 
 #: src/about.c:89
-msgid "Gaim is a modular Instant Messaging client capable of using AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
-msgstr "Gaim là trình khách nhắn tin có khả năng sử dụng AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, và Gadu-Gadu. Gaim sử dụng Gtk+ và đăng ký theo GPL.<BR><BR>"
+msgid ""
+"Gaim is a modular Instant Messaging client capable of using AIM, ICQ, "
+"Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is "
+"written using Gtk+ and is licensed under the GPL.<BR><BR>"
+msgstr ""
+"Gaim là trình khách nhắn tin có khả năng sử dụng AIM, ICQ, Yahoo!, MSN, IRC, "
+"Jabber, Napster, Zephyr, và Gadu-Gadu. Gaim sử dụng Gtk+ và đăng ký theo GPL."
+"<BR><BR>"
 
 #: src/about.c:99
 msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
@@ -1048,9 +1062,7 @@ msgstr "lập trình viên và chủ trang web"
 msgid "win32 port"
 msgstr "bản cho win32"
 
-#: src/about.c:114
-#: src/about.c:115
-#: src/about.c:116
+#: src/about.c:114 src/about.c:115 src/about.c:116
 msgid "developer"
 msgstr "lập trình viên"
 
@@ -1094,13 +1106,11 @@ msgstr "hacker và designated driver [lazy bum]"
 msgid "Current Translators"
 msgstr "Những người dịch hiện thời"
 
-#: src/about.c:164
-#: src/about.c:195
+#: src/about.c:164 src/about.c:196
 msgid "Catalan"
 msgstr "Tiếng Catalan"
 
-#: src/about.c:165
-#: src/about.c:196
+#: src/about.c:165 src/about.c:197
 msgid "Czech"
 msgstr "Tiếng Czech"
 
@@ -1108,13 +1118,11 @@ msgstr "Tiếng Czech"
 msgid "Danish"
 msgstr "Tiếng Đan Mạch"
 
-#: src/about.c:167
-#: src/about.c:197
+#: src/about.c:167 src/about.c:198
 msgid "German"
 msgstr "Tiếng Đức"
 
-#: src/about.c:168
-#: src/about.c:198
+#: src/about.c:168 src/about.c:199
 msgid "Spanish"
 msgstr "Tiếng Tây Ban Nha"
 
@@ -1122,8 +1130,7 @@ msgstr "Tiếng Tây Ban Nha"
 msgid "Finnish"
 msgstr "Tiếng Phần Lan"
 
-#: src/about.c:170
-#: src/about.c:199
+#: src/about.c:170 src/about.c:200
 msgid "French"
 msgstr "Tiếng Pháp"
 
@@ -1135,13 +1142,11 @@ msgstr "Tiếng Hin-đi"
 msgid "Hungarian"
 msgstr "Tiếng Hung-ga-ri"
 
-#: src/about.c:173
-#: src/about.c:201
+#: src/about.c:173 src/about.c:202
 msgid "Italian"
 msgstr "Tiếng Ý"
 
-#: src/about.c:174
-#: src/about.c:203
+#: src/about.c:174 src/about.c:204
 msgid "Korean"
 msgstr "Tiếng Hàn Quốc"
 
@@ -1153,8 +1158,7 @@ msgstr "Tiếng Đan Mạch"
 msgid "Norwegian"
 msgstr "Tiếng Na-uy"
 
-#: src/about.c:177
-#: src/about.c:204
+#: src/about.c:177 src/about.c:205
 msgid "Polish"
 msgstr "Tiếng Ba Lan"
 
@@ -1170,8 +1174,7 @@ msgstr "Tiếng Thổ Nhĩ Kỳ-Brazil"
 msgid "Romanian"
 msgstr "Tiếng Ru-ma-ni"
 
-#: src/about.c:181
-#: src/about.c:205
+#: src/about.c:181 src/about.c:206
 msgid "Russian"
 msgstr "Tiếng Nga"
 
@@ -1179,56 +1182,56 @@ msgstr "Tiếng Nga"
 msgid "Serbian"
 msgstr "Tiếng Séc-bi"
 
-#: src/about.c:183
-#: src/about.c:207
+#: src/about.c:183 src/about.c:208
 msgid "Swedish"
 msgstr "Tiếng Thụy Điển"
 
 #: src/about.c:184
+msgid "Vietnamese"
+msgstr "Tiếng Việt"
+
+#: src/about.c:185
 msgid "Simplified Chinese"
 msgstr "Tiếng Trung Quốc phổ thông"
 
-#: src/about.c:185
+#: src/about.c:186
 msgid "Traditional Chinese"
 msgstr "Tiếng Trung Quốc truyền thống"
 
-#: src/about.c:192
+#: src/about.c:193
 msgid "Past Translators"
 msgstr "Người dịch trước đây"
 
-#: src/about.c:193
+#: src/about.c:194
 msgid "Amharic"
 msgstr "Tiếng Amharic"
 
-#: src/about.c:194
+#: src/about.c:195
 msgid "Bulgarian"
 msgstr "Tiếng Bun-ga-ri"
 
-#: src/about.c:200
+#: src/about.c:201
 msgid "Hebrew"
 msgstr "Tiếng Hebrew"
 
-#: src/about.c:202
+#: src/about.c:203
 msgid "Japanese"
 msgstr "Tiếng Nhật"
 
-#: src/about.c:206
+#: src/about.c:207
 msgid "Slovak"
 msgstr "Tiếng Slovak"
 
-#: src/about.c:208
+#: src/about.c:209
 msgid "Chinese"
 msgstr "Tiếng Trung Quốc"
 
-#: src/about.c:221
-#: src/dialogs.c:2180
-#: src/gtkrequest.c:198
+#: src/about.c:222 src/dialogs.c:2180 src/gtkrequest.c:198
 #: src/protocols/msn/msn.c:247
 msgid "Close"
 msgstr "Đóng"
 
-#: src/account.c:275
-#: src/protocols/jabber/jabber.c:981
+#: src/account.c:275 src/protocols/jabber/jabber.c:981
 msgid "New passwords do not match."
 msgstr "Mật khẩu mới không khớp."
 
@@ -1260,77 +1263,38 @@ msgstr "Hãy nhập mật khẩu hiện tại và mật khẩu mới của bạn
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:334
-#: src/connection.c:193
-#: src/dialogs.c:1720
-#: src/dialogs.c:1737
-#: src/dialogs.c:1780
-#: src/gtkblist.c:1527
-#: src/gtkrequest.c:195
-#: src/protocols/jabber/jabber.c:1026
-#: src/protocols/msn/msn.c:181
-#: src/protocols/msn/msn.c:192
-#: src/protocols/msn/msn.c:203
-#: src/protocols/msn/msn.c:214
-#: src/protocols/oscar/oscar.c:2455
-#: src/protocols/oscar/oscar.c:2535
-#: src/protocols/oscar/oscar.c:6188
-#: src/protocols/oscar/oscar.c:6284
-#: src/protocols/oscar/oscar.c:6333
-#: src/protocols/oscar/oscar.c:6415
-#: src/protocols/yahoo/yahoo.c:2232
-#: src/request.h:852
+#: src/account.c:334 src/connection.c:193 src/dialogs.c:1720
+#: src/dialogs.c:1737 src/dialogs.c:1780 src/gtkblist.c:1527
+#: src/gtkrequest.c:195 src/protocols/jabber/jabber.c:1026
+#: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
+#: src/protocols/msn/msn.c:203 src/protocols/msn/msn.c:214
+#: src/protocols/oscar/oscar.c:2455 src/protocols/oscar/oscar.c:2535
+#: src/protocols/oscar/oscar.c:6188 src/protocols/oscar/oscar.c:6284
+#: src/protocols/oscar/oscar.c:6333 src/protocols/oscar/oscar.c:6415
+#: src/protocols/yahoo/yahoo.c:2232 src/request.h:852
 msgid "OK"
 msgstr "Đồng ý"
 
 #. Cancel button.
-#: src/account.c:335
-#: src/account.c:369
-#: src/buddy_chat.c:371
-#: src/connection.c:194
-#: src/dialogs.c:459
-#: src/dialogs.c:471
-#: src/dialogs.c:484
-#: src/dialogs.c:505
-#: src/dialogs.c:890
-#: src/dialogs.c:1554
-#: src/dialogs.c:1721
-#: src/dialogs.c:1738
-#: src/dialogs.c:1781
-#: src/dialogs.c:1897
-#: src/gtkaccount.c:1622
-#: src/gtkaccount.c:2090
-#: src/gtkblist.c:1528
-#: src/gtkblist.c:3465
-#: src/gtkconn.c:148
-#: src/gtkprivacy.c:568
-#: src/gtkprivacy.c:581
-#: src/gtkprivacy.c:606
-#: src/gtkprivacy.c:617
-#: src/gtkrequest.c:196
-#: src/protocols/icq/gaim_icq.c:277
-#: src/protocols/jabber/buddy.c:512
-#: src/protocols/jabber/jabber.c:657
-#: src/protocols/jabber/jabber.c:1027
-#: src/protocols/msn/msn.c:182
-#: src/protocols/msn/msn.c:193
-#: src/protocols/msn/msn.c:204
-#: src/protocols/msn/msn.c:215
-#: src/protocols/msn/msn.c:228
-#: src/protocols/oscar/oscar.c:2419
-#: src/protocols/oscar/oscar.c:2456
-#: src/protocols/oscar/oscar.c:2491
-#: src/protocols/oscar/oscar.c:2536
-#: src/protocols/oscar/oscar.c:6016
-#: src/protocols/oscar/oscar.c:6189
-#: src/protocols/oscar/oscar.c:6285
-#: src/protocols/oscar/oscar.c:6334
-#: src/protocols/oscar/oscar.c:6399
-#: src/protocols/oscar/oscar.c:6416
-#: src/protocols/trepia/trepia.c:347
-#: src/protocols/yahoo/yahoo.c:2233
-#: src/request.h:852
-#: src/request.h:862
+#: src/account.c:335 src/account.c:369 src/buddy_chat.c:371
+#: src/connection.c:194 src/dialogs.c:459 src/dialogs.c:471 src/dialogs.c:484
+#: src/dialogs.c:505 src/dialogs.c:890 src/dialogs.c:1554 src/dialogs.c:1721
+#: src/dialogs.c:1738 src/dialogs.c:1781 src/dialogs.c:1897
+#: src/gtkaccount.c:1622 src/gtkaccount.c:2090 src/gtkblist.c:1528
+#: src/gtkblist.c:3465 src/gtkconn.c:148 src/gtkprivacy.c:568
+#: src/gtkprivacy.c:581 src/gtkprivacy.c:606 src/gtkprivacy.c:617
+#: src/gtkrequest.c:196 src/protocols/icq/gaim_icq.c:277
+#: src/protocols/jabber/buddy.c:512 src/protocols/jabber/jabber.c:657
+#: src/protocols/jabber/jabber.c:1027 src/protocols/msn/msn.c:182
+#: src/protocols/msn/msn.c:193 src/protocols/msn/msn.c:204
+#: src/protocols/msn/msn.c:215 src/protocols/msn/msn.c:228
+#: src/protocols/oscar/oscar.c:2419 src/protocols/oscar/oscar.c:2456
+#: src/protocols/oscar/oscar.c:2491 src/protocols/oscar/oscar.c:2536
+#: src/protocols/oscar/oscar.c:6016 src/protocols/oscar/oscar.c:6189
+#: src/protocols/oscar/oscar.c:6285 src/protocols/oscar/oscar.c:6334
+#: src/protocols/oscar/oscar.c:6399 src/protocols/oscar/oscar.c:6416
+#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2233
+#: src/request.h:852 src/request.h:862
 msgid "Cancel"
 msgstr "Hủy bỏ"
 
@@ -1339,12 +1303,8 @@ msgstr "Hủy bỏ"
 msgid "Change user information for %s"
 msgstr "Đổi thông tin người dùng cho %s"
 
-#: src/account.c:368
-#: src/dialogs.c:886
-#: src/dialogs.c:1542
-#: src/dialogs.c:2189
-#: src/gtkrequest.c:202
-#: src/protocols/jabber/buddy.c:511
+#: src/account.c:368 src/dialogs.c:886 src/dialogs.c:1542 src/dialogs.c:2189
+#: src/gtkrequest.c:202 src/protocols/jabber/buddy.c:511
 #: src/protocols/trepia/trepia.c:346
 msgid "Save"
 msgstr "Lưu"
@@ -1355,45 +1315,50 @@ msgstr "Gaim - Vắng mặt!"
 
 #: src/away.c:269
 msgid "I'm Back!"
-msgstr "Tôi quay lại!"
+msgstr "Tôi trở lại!"
 
 #: src/away.c:368
 msgid "New Away Message"
-msgstr "Tạo thông điệp trạng thái mới"
+msgstr "Thông báo vắng mặt mới"
 
 #: src/away.c:388
 msgid "Remove Away Message"
-msgstr "Bỏ thông điệp trạng thái"
+msgstr "Bỏ thông báo vắng mặt"
 
 #: src/away.c:583
 msgid "Set All Away"
-msgstr "Thiết lập tất cả trạng thái"
+msgstr "Lập trạng thái đi vắng cho tất cả"
 
-#: src/blist.c:551
-#: src/gtkprefs.c:2267
+#: src/blist.c:551 src/gtkprefs.c:2267
 msgid "Chats"
-msgstr "Chat"
+msgstr "Cuộc Chat"
 
-#: src/blist.c:646
-#: src/blist.c:834
-#: src/blist.c:2042
-#: src/gtkblist.c:2945
-#: src/protocols/jabber/roster.c:66
-#: src/protocols/msn/notification.c:1160
+#: src/blist.c:646 src/blist.c:834 src/blist.c:2042 src/gtkblist.c:2945
+#: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:1160
 msgid "Buddies"
 msgstr "Buddy"
 
 #: src/blist.c:1134
-#: src/blist.c:1143
 #, c-format
+msgid ""
+"%d buddy from group %s was not removed because its account was not logged "
+"in.  This buddy and the group were not removed.\n"
+msgid_plural ""
+"%d buddies from group %s were not removed because their accounts were not "
+"logged in.  These buddies and the group were not removed.\n"
+msgstr[0] ""
+"Không xóa được %d buddy từ nhóm %s vì tài khoản của nó đã chưa đăng nhập. "
+"Không xóa được buddy và nhóm này.\n"
+msgstr[1] ""
+"Không xóa được %d buddy từ nhóm %s vì tài khoản của chúng đã chưa đăng nhập. "
+"Không xóa được các buddy và nhóm này.\n"
+
+#: src/blist.c:1143
 msgid "Group not removed"
 msgstr "Nhóm không xóa được"
 
-#: src/blist.c:1193
-#: src/gtkaccount.c:159
-#: src/gtkutils.c:844
-#: src/protocols/jabber/auth.c:110
-#: src/protocols/jabber/buddy.c:563
+#: src/blist.c:1193 src/gtkaccount.c:159 src/gtkutils.c:844
+#: src/protocols/jabber/auth.c:110 src/protocols/jabber/buddy.c:563
 msgid "Unknown"
 msgstr "Không xác định"
 
@@ -1402,17 +1367,22 @@ msgid "Invalid Groupname"
 msgstr "Tên nhóm không hợp lệ"
 
 #: src/blist.c:2159
-msgid "An error was encountered parsing your buddy list.  It has not been loaded."
-msgstr "Lỗi đã xảy ra khi phân tích danh sách buddy. Danh sách đã không được nạp."
+msgid ""
+"An error was encountered parsing your buddy list.  It has not been loaded."
+msgstr ""
+"Lỗi đã xảy ra khi phân tích danh sách buddy. Danh sách đã không được nạp."
 
 #: src/blist.c:2161
 msgid "Buddy List Error"
 msgstr "Lỗi Danh sách Buddy"
 
-#: src/buddy_chat.c:312
-#: src/gtkblist.c:3357
-msgid "You are not currently signed on with any protocols that have the ability to chat."
-msgstr "Hiện tại bạn không kết nối được bằng bất kỳ phương thức nào để có khả năng hội thoại."
+#: src/buddy_chat.c:312 src/gtkblist.c:3357
+msgid ""
+"You are not currently signed on with any protocols that have the ability to "
+"chat."
+msgstr ""
+"Hiện tại bạn không kết nối được bằng bất kỳ phương thức nào để có khả năng "
+"Chat."
 
 #: src/buddy_chat.c:326
 msgid "Join Chat"
@@ -1424,15 +1394,14 @@ msgstr "Buddy Chat"
 
 #: src/buddy_chat.c:342
 msgid "Join Chat As:"
-msgstr "Tham gia chat là:"
+msgstr "Tham gia Chat là:"
 
 #. Join button.
 #: src/buddy_chat.c:365
 msgid "Join"
 msgstr "Tham gia"
 
-#: src/connection.c:117
-#: src/connection.c:165
+#: src/connection.c:117 src/connection.c:165
 #, c-format
 msgid "Missing protocol plugin for %s"
 msgstr "Thiếu plugin giao thức cho %s"
@@ -1522,11 +1491,13 @@ msgstr "_Cảnh báo"
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
 "\n"
-"This will increase %s's warning level and he or she will be subject to harsher rate limiting.\n"
+"This will increase %s's warning level and he or she will be subject to "
+"harsher rate limiting.\n"
 msgstr ""
 "<span weight=\"bold\" size=\"larger\">Cảnh báo %s?</span>\n"
 "\n"
-"Điều này sẽ tăng mức độ cảnh báo cho %s và anh hoặc chị sẽ bị giới hạn mức chủ đề.\n"
+"Điều này sẽ tăng mức độ cảnh báo cho %s và anh hoặc chị sẽ bị giới hạn mức "
+"chủ đề.\n"
 
 #: src/dialogs.c:335
 msgid "Warn _anonymously?"
@@ -1538,41 +1509,48 @@ msgstr "<b>Cảnh báo nặc danh là ít nghiêm trọng.</b>"
 
 #: src/dialogs.c:455
 #, c-format
-msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
+msgid ""
+"You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Bạn sắp xóa %s khỏi danh sách buddy của bạn. Bạn muốn thực hiện không?"
 
-#: src/dialogs.c:457
-#: src/dialogs.c:458
+#: src/dialogs.c:457 src/dialogs.c:458
 msgid "Remove Buddy"
 msgstr "Xóa Buddy"
 
 #: src/dialogs.c:467
 #, c-format
-msgid "You are about to remove the chat %s from your buddy list.  Do you want to continue?"
-msgstr "Bạn sắp xóa chat %s khỏi danh sách buddy. Bạn muốn thực hiện không?"
+msgid ""
+"You are about to remove the chat %s from your buddy list.  Do you want to "
+"continue?"
+msgstr "Bạn sắp xóa Chat %s khỏi danh sách buddy. Bạn muốn thực hiện không?"
 
-#: src/dialogs.c:469
-#: src/dialogs.c:470
+#: src/dialogs.c:469 src/dialogs.c:470
 msgid "Remove Chat"
 msgstr "Xóa Chat"
 
 #: src/dialogs.c:479
 #, c-format
-msgid "You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"
-msgstr "Bạn sắp xóa nhóm %s và mọi thành viên ra khỏi danh sách buddy của bạn. Bạn muốn thực hiện không?"
+msgid ""
+"You are about to remove the group %s and all its members from your buddy "
+"list.  Do you want to continue?"
+msgstr ""
+"Bạn sắp xóa nhóm %s và mọi thành viên ra khỏi danh sách buddy của bạn. Bạn "
+"muốn thực hiện không?"
 
-#: src/dialogs.c:482
-#: src/dialogs.c:483
+#: src/dialogs.c:482 src/dialogs.c:483
 msgid "Remove Group"
 msgstr "Xóa nhóm"
 
 #: src/dialogs.c:500
 #, c-format
-msgid "You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"
-msgstr "Bạn sắp xóa liên lạc có chứa %s và %d các buddy khác ra khỏi danh sách buddy của bạn. Bạn muốn thực hiện không?"
+msgid ""
+"You are about to remove the contact containing %s and %d other buddies from "
+"your buddy list.  Do you want to continue?"
+msgstr ""
+"Bạn sắp xóa liên lạc có chứa %s và %d các buddy khác ra khỏi danh sách buddy "
+"của bạn. Bạn muốn thực hiện không?"
 
-#: src/dialogs.c:503
-#: src/dialogs.c:504
+#: src/dialogs.c:503 src/dialogs.c:504
 msgid "Remove Contact"
 msgstr "Xóa Liên Lạc"
 
@@ -1584,14 +1562,11 @@ msgstr "Thông Điệp Mới"
 msgid "Please enter the screenname of the person you would like to IM.\n"
 msgstr "Hãy nhập tên hiển thị của người mà bạn muốn trò chuyện bằng IM.\n"
 
-#: src/dialogs.c:686
-#: src/dialogs.c:763
+#: src/dialogs.c:686 src/dialogs.c:763
 msgid "_Screenname:"
 msgstr "_Tên Hiển Thị:"
 
-#: src/dialogs.c:701
-#: src/dialogs.c:779
-#: src/gtkpounce.c:358
+#: src/dialogs.c:701 src/dialogs.c:779 src/gtkpounce.c:358
 msgid "_Account:"
 msgstr "_Tài khoản:"
 
@@ -1600,13 +1575,13 @@ msgid "Get User Info"
 msgstr "Lấy thông tin người dùng"
 
 #: src/dialogs.c:751
-msgid "Please enter the screenname of the person whose info you would like to view.\n"
+msgid ""
+"Please enter the screenname of the person whose info you would like to "
+"view.\n"
 msgstr "Hãy nhập tên hiển thị của người mà bạn muốn xem thông tin về họ.\n"
 
-#: src/dialogs.c:845
-#: src/protocols/jabber/jabber.c:1037
-#: src/protocols/oscar/oscar.c:6484
-#: src/protocols/toc/toc.c:1532
+#: src/dialogs.c:845 src/protocols/jabber/jabber.c:1037
+#: src/protocols/oscar/oscar.c:6484 src/protocols/toc/toc.c:1532
 msgid "Set User Info"
 msgstr "Lập thông tin người dùng"
 
@@ -1624,54 +1599,51 @@ msgid "Insert"
 msgstr "Chèn"
 
 #: src/dialogs.c:993
-msgid "Please enter the URL and description of the link that you want to insert.  The description is optional.\n"
-msgstr "Hãy nhập URL và mô tả liên kết mà bạn muốn chèn. Mô tả là tùy chọn thêm.\n"
+msgid ""
+"Please enter the URL and description of the link that you want to insert.  "
+"The description is optional.\n"
+msgstr ""
+"Hãy nhập URL và mô tả liên kết mà bạn muốn chèn. Mô tả là tùy chọn thêm.\n"
 
-#: src/dialogs.c:1011
-#: src/protocols/jabber/buddy.c:249
+#: src/dialogs.c:1011 src/protocols/jabber/buddy.c:249
 #: src/protocols/jabber/jabber.c:638
 msgid "URL"
 msgstr "URL"
 
-#: src/dialogs.c:1021
-#: src/gtkprefs.c:601
-#: src/gtkprefs.c:1803
-#: src/protocols/jabber/buddy.c:263
-#: src/protocols/jabber/buddy.c:738
+#: src/dialogs.c:1021 src/gtkprefs.c:601 src/gtkprefs.c:1803
+#: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:738
 msgid "Description"
 msgstr "Mô tả"
 
-#: src/dialogs.c:1157
-#: src/dialogs.c:1174
+#: src/dialogs.c:1157 src/dialogs.c:1174
 msgid "Select Text Color"
 msgstr "Chọn màu chữ"
 
-#: src/dialogs.c:1209
-#: src/dialogs.c:1226
+#: src/dialogs.c:1209 src/dialogs.c:1226
 msgid "Select Background Color"
 msgstr "Chọn màu nền"
 
-#: src/dialogs.c:1311
-#: src/dialogs.c:1337
+#: src/dialogs.c:1311 src/dialogs.c:1337
 msgid "Select Font"
 msgstr "Chọn phông chữ"
 
 #: src/dialogs.c:1403
 msgid "You cannot save an away message with a blank title"
-msgstr "Bạn không thể lưu thông báo trạng thái với tiêu đề trống"
+msgstr "Bạn không thể lưu thông báo đi vắng mà không có tiêu đề"
 
 #: src/dialogs.c:1405
-msgid "Please give the message a title, or choose \"Use\" to use without saving."
-msgstr "Hãy nhập tiêu đề cho thông điệp, hoặc chọn \"Sử dụng\" để dùng mà không lưu."
+msgid ""
+"Please give the message a title, or choose \"Use\" to use without saving."
+msgstr ""
+"Hãy nhập tiêu đề cho thông điệp, hoặc chọn \"Sử dụng\" để dùng mà không lưu."
 
 #: src/dialogs.c:1415
 msgid "You cannot create an empty away message"
-msgstr "Không thể tạo thông điệp thông báo trạng thái mà không có nội dung"
+msgstr "Không thể tạo thông báo đi vắng mà không có nội dung"
 
-#: src/dialogs.c:1480
-#: src/dialogs.c:1488
+#: src/dialogs.c:1480 src/dialogs.c:1488
 msgid "New away message"
-msgstr "Thông báo trạng thái mới"
+msgstr "Thông báo trạng thái vắng mặt mới"
 
 #: src/dialogs.c:1498
 msgid "Away title: "
@@ -1679,7 +1651,7 @@ msgstr "Tiêu đề trạng thái:"
 
 #: src/dialogs.c:1546
 msgid "Save & Use"
-msgstr "Lưu & Sử dụng"
+msgstr "Lưu Lại & Dùng"
 
 #: src/dialogs.c:1550
 msgid "Use"
@@ -1696,11 +1668,11 @@ msgstr "Bí danh Chat"
 
 #: src/dialogs.c:1717
 msgid "Alias chat"
-msgstr "Bí danh chat"
+msgstr "Bí danh Chat"
 
 #: src/dialogs.c:1718
 msgid "Please enter an aliased name for this chat."
-msgstr "Vui lòng nhập bí danh cho cuộc trò chuyện này."
+msgstr "Vui lòng nhập bí danh cho Chat này."
 
 #: src/dialogs.c:1734
 msgid "Alias Contact"
@@ -1718,10 +1690,7 @@ msgstr "Hãy nhập bí danh cho liên lạc này."
 msgid "_Screenname"
 msgstr "_Tên hiển thị"
 
-#: src/dialogs.c:1771
-#: src/gtkblist.c:838
-#: src/gtkblist.c:926
-#: src/gtkblist.c:945
+#: src/dialogs.c:1771 src/gtkblist.c:838 src/gtkblist.c:926 src/gtkblist.c:945
 msgid "_Alias"
 msgstr "_Bí danh"
 
@@ -1734,11 +1703,14 @@ msgid "Alias buddy"
 msgstr "Bí danh buddy"
 
 #: src/dialogs.c:1777
-msgid "Please enter an aliased name for the person below, or rename this contact in your buddy list."
-msgstr "Hãy nhập bí danh cho người bên dưới, hoặc đổi tên cho ngưòi này trong danh sách buddy của bạn."
+msgid ""
+"Please enter an aliased name for the person below, or rename this contact in "
+"your buddy list."
+msgstr ""
+"Hãy nhập bí danh cho người bên dưới, hoặc đổi tên cho ngưòi này trong danh "
+"sách buddy của bạn."
 
-#: src/dialogs.c:1813
-#: src/dialogs.c:1820
+#: src/dialogs.c:1813 src/dialogs.c:1820
 #, c-format
 msgid "Couldn't write to %s."
 msgstr "Không thể ghi vào %s."
@@ -1757,18 +1729,15 @@ msgstr "Không thể xóa tập tin %s."
 msgid "You are about to remove the log file for %s.  Do you want to continue?"
 msgstr "Bạn sắp xóa tập tin bản ghi cho %s. Bạn muốn thực hiện không?"
 
-#: src/dialogs.c:1892
-#: src/dialogs.c:2062
+#: src/dialogs.c:1892 src/dialogs.c:2062
 msgid "System Log"
 msgstr "Bản ghi hệ thống"
 
-#: src/dialogs.c:1893
-#: src/dialogs.c:1895
+#: src/dialogs.c:1893 src/dialogs.c:1895
 msgid "Remove Log"
 msgstr "Xóa bản ghi"
 
-#: src/dialogs.c:1923
-#: src/dialogs.c:2083
+#: src/dialogs.c:1923 src/dialogs.c:2083
 #, c-format
 msgid "Couldn't open log file %s."
 msgstr "Không thể mở tập tin bản ghi %s."
@@ -1778,8 +1747,7 @@ msgstr "Không thể mở tập tin bản ghi %s."
 msgid "Conversations with %s"
 msgstr "Hội thoại với %s"
 
-#: src/dialogs.c:2104
-#: src/protocols/jabber/jabber.c:643
+#: src/dialogs.c:2104 src/protocols/jabber/jabber.c:643
 msgid "Date"
 msgstr "Ngày tháng"
 
@@ -1840,8 +1808,7 @@ msgstr ""
 "   TÙY CHỌN:\n"
 "       -h, --help [lệnh]    Hiển thị trợ giúp cho lệnh này\n"
 
-#: src/gaim-remote.c:139
-#: src/gaim-remote.c:155
+#: src/gaim-remote.c:139 src/gaim-remote.c:155
 msgid "Gaim not running (on session 0)\n"
 msgstr "Gaim không chạy (trong phiên làm việc 0)\n"
 
@@ -1871,15 +1838,17 @@ msgstr ""
 "Sử dụng AIM: URIs:\n"
 "Gởi tin nhắn cho một bí danh nào đó:\n"
 "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
-"Trong trường hợp này, 'Penguin' là bí danh mà chúng ta muốn chat, và 'hello world'\n"
+"Trong trường hợp này, 'Penguin' là bí danh mà chúng ta muốn chat, và 'hello "
+"world'\n"
 "là tin sẽ gởi.  '+' phải được dùng cho khoảng trắng.\n"
-"Vui lòng chú ý những dấu nháy được sử dụng bên trên - nếu bạn thực thi lệnh này từ shell '&'\n"
+"Vui lòng chú ý những dấu nháy được sử dụng bên trên - nếu bạn thực thi lệnh "
+"này từ shell '&'\n"
 "cần được mã hóa, hoặc lệnh sẽ dừng tại đây.\n"
 "Ngoài ra,lệnh sau chỉ mở một cửa sổ hoại thoại đối với một bí danh,\n"
 "mà không có tinh:\n"
 "\tgaim-remote uri aim:goim?screenname=Penguin\n"
 "\n"
-"Tham gia chat:\n"
+"Tham gia Chat:\n"
 "\tgaim-remote uri aim:gochat?roomname=PenguinLounge\n"
 "...tham gia phòng chat'PenguinLounge'.\n"
 "\n"
@@ -1898,25 +1867,21 @@ msgstr ""
 #. for people like myself, who are too lazy to add an away msg :)
 #: src/gaimrc.c:44
 msgid "sorry, i ran out for a while. bbl"
-msgstr "xin lỗi, tôi ra ngoài một lát.bbl"
+msgstr "xin lỗi, tôi ra ngoài một lát. bbl"
 
-#: src/gaimrc.c:373
-#: src/gaimrc.c:1450
+#: src/gaimrc.c:373 src/gaimrc.c:1450
 msgid "boring default"
 msgstr "trạng thái nghỉ mặc định"
 
-#: src/gaimrc.c:1259
-#: src/gtkblist.c:2126
+#: src/gaimrc.c:1259 src/gtkblist.c:2126
 msgid "Alphabetical"
 msgstr "Theo bảng chữ cái"
 
-#: src/gaimrc.c:1261
-#: src/gtkblist.c:2127
+#: src/gaimrc.c:1261 src/gtkblist.c:2127
 msgid "By status"
 msgstr "Theo trạng thái"
 
-#: src/gaimrc.c:1263
-#: src/gtkblist.c:2128
+#: src/gaimrc.c:1263 src/gtkblist.c:2128
 msgid "By log size"
 msgstr "Theo kích thước bản ghi"
 
@@ -1936,8 +1901,7 @@ msgstr ""
 "<b>Kích thước tập tin:</b> %s\n"
 "<b>Kích thước ảnh:</b> %dx%d"
 
-#: src/gtkaccount.c:318
-#: src/protocols/oscar/oscar.c:3077
+#: src/gtkaccount.c:318 src/protocols/oscar/oscar.c:3077
 msgid "Buddy Icon"
 msgstr "Biểu tượng Buddy"
 
@@ -1954,16 +1918,12 @@ msgstr "Giao thức:"
 msgid "Screenname:"
 msgstr "Tên hiển thị:"
 
-#: src/gtkaccount.c:464
-#: src/main.c:307
-#: src/protocols/irc/irc.c:161
+#: src/gtkaccount.c:464 src/main.c:307 src/protocols/irc/irc.c:161
 #: src/protocols/jabber/chat.c:56
 msgid "Password:"
 msgstr "Mật khẩu:"
 
-#: src/gtkaccount.c:469
-#: src/gtkblist.c:3097
-#: src/gtkblist.c:3416
+#: src/gtkaccount.c:469 src/gtkblist.c:3097 src/gtkblist.c:3416
 msgid "Alias:"
 msgstr "Bí danh:"
 
@@ -2024,8 +1984,7 @@ msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 #. Use Environmental Settings
-#: src/gtkaccount.c:782
-#: src/gtkprefs.c:1101
+#: src/gtkaccount.c:782 src/gtkprefs.c:1101
 msgid "Use Environmental Settings"
 msgstr "Dùng thiết lập môi trường"
 
@@ -2041,8 +2000,7 @@ msgstr "Nếu bạn thật sự gần"
 msgid "Proxy Options"
 msgstr "Tùy chọn Proxy"
 
-#: src/gtkaccount.c:851
-#: src/gtkprefs.c:1095
+#: src/gtkaccount.c:851 src/gtkprefs.c:1095
 msgid "Proxy _type:"
 msgstr "_Loại Proxy:"
 
@@ -2080,8 +2038,7 @@ msgid "Show fewer options"
 msgstr "Hiển thị ít tùy chọn"
 
 #. Register button
-#: src/gtkaccount.c:1272
-#: src/protocols/jabber/jabber.c:656
+#: src/gtkaccount.c:1272 src/protocols/jabber/jabber.c:656
 msgid "Register"
 msgstr "Đăng ký"
 
@@ -2090,8 +2047,7 @@ msgstr "Đăng ký"
 msgid "Are you sure you want to delete %s?"
 msgstr "Bạn chắc chắn muốn xóa %s?"
 
-#: src/gtkaccount.c:1621
-#: src/gtkrequest.c:199
+#: src/gtkaccount.c:1621 src/gtkrequest.c:199
 msgid "Delete"
 msgstr "Xóa"
 
@@ -2099,16 +2055,12 @@ msgstr "Xóa"
 msgid "Screen Name"
 msgstr "Tên Hiển Thị"
 
-#: src/gtkaccount.c:1757
-#: src/protocols/jabber/jabber.c:927
-#: src/protocols/oscar/oscar.c:2850
-#: src/protocols/oscar/oscar.c:4589
-#: src/protocols/oscar/oscar.c:6137
-#: src/protocols/yahoo/yahoo.c:2032
-#: src/protocols/zephyr/zephyr.c:886
-#: src/protocols/zephyr/zephyr.c:896
+#: src/gtkaccount.c:1757 src/protocols/jabber/jabber.c:927
+#: src/protocols/oscar/oscar.c:2850 src/protocols/oscar/oscar.c:4589
+#: src/protocols/oscar/oscar.c:6137 src/protocols/yahoo/yahoo.c:2032
+#: src/protocols/zephyr/zephyr.c:886 src/protocols/zephyr/zephyr.c:896
 msgid "Online"
-msgstr "Trực tuyến"
+msgstr "Kết nối"
 
 #: src/gtkaccount.c:1775
 msgid "Protocol"
@@ -2137,14 +2089,9 @@ msgstr "Gaim - Thông tin"
 msgid "Add buddy to your list?"
 msgstr "Thêm buddy vào danh sách?"
 
-#: src/gtkaccount.c:2089
-#: src/gtkblist.c:3464
-#: src/gtkconv.c:1257
-#: src/gtkconv.c:3110
-#: src/gtkconv.c:4280
-#: src/gtkrequest.c:200
-#: src/protocols/icq/gaim_icq.c:277
-#: src/protocols/oscar/oscar.c:2692
+#: src/gtkaccount.c:2089 src/gtkblist.c:3464 src/gtkconv.c:1257
+#: src/gtkconv.c:3110 src/gtkconv.c:4280 src/gtkrequest.c:200
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2692
 msgid "Add"
 msgstr "Thêm"
 
@@ -2164,9 +2111,7 @@ msgstr "Thêm Buddy _Pounce"
 msgid "View _Log"
 msgstr "Xem _Bản ghi"
 
-#: src/gtkblist.c:840
-#: src/gtkblist.c:928
-#: src/gtkblist.c:950
+#: src/gtkblist.c:840 src/gtkblist.c:928 src/gtkblist.c:950
 msgid "_Remove"
 msgstr "_Bỏ"
 
@@ -2194,8 +2139,7 @@ msgstr "Tham _Gia"
 msgid "Auto-Join"
 msgstr "Tự động tham gia"
 
-#: src/gtkblist.c:947
-#: src/gtkblist.c:982
+#: src/gtkblist.c:947 src/gtkblist.c:982
 msgid "_Collapse"
 msgstr "_Co lại"
 
@@ -2255,7 +2199,7 @@ msgstr "/_Công cụ"
 
 #: src/gtkblist.c:1493
 msgid "/Tools/_Away"
-msgstr "/Công cụ/_Trạng thái"
+msgstr "/Công cụ/_Vắng mặt"
 
 #: src/gtkblist.c:1494
 msgid "/Tools/Buddy _Pounce"
@@ -2263,7 +2207,7 @@ msgstr "/Công cụ/Buddy _Pounce"
 
 #: src/gtkblist.c:1495
 msgid "/Tools/P_rotocol Actions"
-msgstr "/Công cụ/_Giao thức hoạt động"
+msgstr "/Công cụ/Hoạt động của _Giao thức"
 
 #: src/gtkblist.c:1497
 msgid "/Tools/A_ccounts"
@@ -2323,8 +2267,7 @@ msgstr ""
 "\n"
 "<b>Tài khoản:</b> %s"
 
-#: src/gtkblist.c:1617
-#: src/protocols/oscar/oscar.c:5517
+#: src/gtkblist.c:1617 src/protocols/oscar/oscar.c:5517
 msgid "<b>Status:</b> Offline"
 msgstr "<b>Trạng thái:</b> Ngoại tuyến"
 
@@ -2424,15 +2367,13 @@ msgstr "Cảnh báo (%d%%) "
 msgid "Offline "
 msgstr "Ngoại tuyến"
 
-#: src/gtkblist.c:2124
-#: src/gtkprefs.c:841
-#: src/gtkprefs.c:1495
+#: src/gtkblist.c:2124 src/gtkprefs.c:841 src/gtkprefs.c:1495
 msgid "None"
 msgstr "Không"
 
 #: src/gtkblist.c:2192
 msgid "/Tools/Away"
-msgstr "/Công cụ/Trạng thái"
+msgstr "/Công cụ/Vắng Mặt"
 
 #: src/gtkblist.c:2195
 msgid "/Tools/Buddy Pounce"
@@ -2453,8 +2394,7 @@ msgstr "/Buddies/Hiển thị Buddy ngoại tuyến"
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Buddies/Hiển thị nhóm rỗng"
 
-#: src/gtkblist.c:2302
-#: src/gtkconv.c:1216
+#: src/gtkblist.c:2302 src/gtkconv.c:1216
 msgid "IM"
 msgstr "IM"
 
@@ -2462,8 +2402,7 @@ msgstr "IM"
 msgid "Send a message to the selected buddy"
 msgstr "Gởi tin nhắn đến buddy được chọn"
 
-#: src/gtkblist.c:2311
-#: src/protocols/napster/napster.c:529
+#: src/gtkblist.c:2311 src/protocols/napster/napster.c:529
 msgid "Get Info"
 msgstr "Lấy thông tin"
 
@@ -2471,41 +2410,42 @@ msgstr "Lấy thông tin"
 msgid "Get information on the selected buddy"
 msgstr "Lấy thông tinh buddy được chọn"
 
-#: src/gtkblist.c:2320
-#: src/protocols/oscar/oscar.c:3086
+#: src/gtkblist.c:2320 src/protocols/oscar/oscar.c:3086
 msgid "Chat"
 msgstr "Chat"
 
 #: src/gtkblist.c:2325
 msgid "Join a chat room"
-msgstr "Vào phòng chat"
+msgstr "Vào phòng Chat"
 
 #: src/gtkblist.c:2333
 msgid "Set an away message"
-msgstr "Lập thông báo trạng thái"
+msgstr "Lập thông báo vắng mặt"
 
-#: src/gtkblist.c:3039
-#: src/protocols/yahoo/yahoo.c:2166
+#: src/gtkblist.c:3039 src/protocols/yahoo/yahoo.c:2166
 msgid "Add Buddy"
 msgstr "Thêm Buddy"
 
 #: src/gtkblist.c:3062
-msgid "Please enter the screen name of the person you would like to add to your buddy list. You may optionally enter an alias, or nickname,  for the buddy. The alias will be displayed in place of the screen name whenever possible.\n"
-msgstr "Hãy nhập tên hiển thị của người mà bạn muốn thêm vào danh sách buddy. Bạn có thể nhập bí danh, hoặc biệt hiệu cho buddy. Bí danh này sẽ hiện lên bất cứ khi nào có thể.\n"
+msgid ""
+"Please enter the screen name of the person you would like to add to your "
+"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
+"The alias will be displayed in place of the screen name whenever possible.\n"
+msgstr ""
+"Hãy nhập tên hiển thị của người mà bạn muốn thêm vào danh sách buddy. Bạn có "
+"thể nhập bí danh, hoặc biệt hiệu cho buddy. Bí danh này sẽ hiện lên bất cứ "
+"khi nào có thể.\n"
 
-#: src/gtkblist.c:3084
-#: src/main.c:289
+#: src/gtkblist.c:3084 src/main.c:289
 msgid "Screen Name:"
 msgstr "Tên Hiển Thị:"
 
-#: src/gtkblist.c:3110
-#: src/gtkblist.c:3427
+#: src/gtkblist.c:3110 src/gtkblist.c:3427
 msgid "Group:"
 msgstr "Nhóm:"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:3119
-#: src/gtkblist.c:3397
+#: src/gtkblist.c:3119 src/gtkblist.c:3397
 msgid "Account:"
 msgstr "Tài khoản:"
 
@@ -2514,8 +2454,12 @@ msgid "Add Chat"
 msgstr "Thêm Chat"
 
 #: src/gtkblist.c:3387
-msgid "Please enter an alias, and the appropriate information about the chat you would like to add to your buddy list.\n"
-msgstr "Hãy nhập bí danh và thông tin thích hợp cho cuộc trò chuyện mà bạn muốn thêm danh sách buddy.\n"
+msgid ""
+"Please enter an alias, and the appropriate information about the chat you "
+"would like to add to your buddy list.\n"
+msgstr ""
+"Hãy nhập bí danh và thông tin thích hợp cho cuộc Chat mà bạn muốn thêm "
+"danh sách buddy.\n"
 
 #: src/gtkblist.c:3461
 msgid "Add Group"
@@ -2533,9 +2477,7 @@ msgstr "Hãy nhập tên nhóm được thêm vào."
 msgid "No actions available"
 msgstr "Hiện không có hành động nào"
 
-#: src/gtkconn.c:58
-#: src/gtkconn.c:242
-#: src/gtkconn.c:253
+#: src/gtkconn.c:58 src/gtkconn.c:242 src/gtkconn.c:253
 msgid "Done."
 msgstr "Hoàn thành."
 
@@ -2571,8 +2513,7 @@ msgstr "Thời gian"
 msgid "That file already exists"
 msgstr "Tập tin này đã tồn tại rồi"
 
-#: src/gtkconv.c:186
-#: src/gtkft.c:1034
+#: src/gtkconv.c:186 src/gtkft.c:1034
 msgid "Would you like to overwrite it?"
 msgstr "Bạn có muốn ghi đè lên nó không?"
 
@@ -2591,7 +2532,9 @@ msgstr "Gaim - Mời Buddy vào phòng chat"
 
 #. Put our happy label in it.
 #: src/gtkconv.c:643
-msgid "Please enter the name of the user you wish to invite, along with an optional invite message."
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
 msgstr "Hãy nhập tên người dùng mà bạn muốn mời, kèm theo lời mời."
 
 #: src/gtkconv.c:664
@@ -2618,24 +2561,20 @@ msgstr "Tìm từ:"
 msgid "Un-Ignore"
 msgstr "Không-Bỏ qua"
 
-#: src/gtkconv.c:1226
-#: src/gtkprefs.c:774
+#: src/gtkconv.c:1226 src/gtkprefs.c:774
 msgid "Ignore"
 msgstr "Bỏ qua"
 
 #. Info button
-#: src/gtkconv.c:1235
-#: src/gtkconv.c:3133
+#: src/gtkconv.c:1235 src/gtkconv.c:3133
 msgid "Info"
 msgstr "Thông tin"
 
 #: src/gtkconv.c:1244
 msgid "Get Away Msg"
-msgstr "Lấy thông báo trạng thái"
+msgstr "Nhận thông báo vắng mặt"
 
-#: src/gtkconv.c:1255
-#: src/gtkconv.c:3116
-#: src/gtkconv.c:4265
+#: src/gtkconv.c:1255 src/gtkconv.c:3116 src/gtkconv.c:4265
 #: src/gtkrequest.c:201
 msgid "Remove"
 msgstr "Xóa bỏ"
@@ -2793,21 +2732,16 @@ msgstr "/Tùy chọn/Hiển thị thanh định dạng"
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3090
-#: src/gtkconv.c:3092
-#: src/gtkconv.c:3190
-#: src/gtkconv.c:3192
+#: src/gtkconv.c:3090 src/gtkconv.c:3092 src/gtkconv.c:3190 src/gtkconv.c:3192
 #: src/gtkconv.c:5975
 msgid "Send"
 msgstr "Đã gửi"
 
-#: src/gtkconv.c:3113
-#: src/gtkconv.c:4283
+#: src/gtkconv.c:3113 src/gtkconv.c:4283
 msgid "Add the user to your buddy list"
 msgstr "Thêm người dùng vào danh sách buddy"
 
-#: src/gtkconv.c:3119
-#: src/gtkconv.c:4268
+#: src/gtkconv.c:3119 src/gtkconv.c:4268
 msgid "Remove the user from your buddy list"
 msgstr "Xóa người dùng ra khỏi danh sách buddy"
 
@@ -2820,15 +2754,12 @@ msgstr "Cảnh báo"
 msgid "Warn the user"
 msgstr "Cảnh báo người dùng"
 
-#: src/gtkconv.c:3137
-#: src/gtkconv.c:3575
+#: src/gtkconv.c:3137 src/gtkconv.c:3575
 msgid "Get the user's information"
 msgstr "Lấy thông tin người dùng"
 
 #. Block button
-#: src/gtkconv.c:3140
-#: src/gtkprivacy.c:605
-#: src/gtkprivacy.c:616
+#: src/gtkconv.c:3140 src/gtkprivacy.c:605 src/gtkprivacy.c:616
 msgid "Block"
 msgstr "Chặn"
 
@@ -2837,8 +2768,7 @@ msgid "Block the user"
 msgstr "Chặn người dùng"
 
 #. Invite
-#: src/gtkconv.c:3202
-#: src/gtkconv.c:5978
+#: src/gtkconv.c:3202 src/gtkconv.c:5978
 msgid "Invite"
 msgstr "Mời"
 
@@ -2915,12 +2845,14 @@ msgstr "Bỏ qua người dùng"
 msgid "Close conversation"
 msgstr "Đóng hội thoại"
 
-#: src/gtkconv.c:4668
-#: src/gtkconv.c:4700
-#: src/gtkconv.c:4821
-#: src/gtkconv.c:4888
-#: src/gtkconv.c:5222
+#: src/gtkconv.c:4668 src/gtkconv.c:4700 src/gtkconv.c:4821 src/gtkconv.c:4888
 #, c-format
+msgid "%d person in room"
+msgid_plural "%d people in room"
+msgstr[0] "%d người trong phòng"
+msgstr[1] "0 ngươì trong phòng"
+
+#: src/gtkconv.c:5222
 msgid "Animate"
 msgstr "Hoạt cảnh"
 
@@ -2932,8 +2864,7 @@ msgstr "Ẩn biểu tượng"
 msgid "Save Icon As..."
 msgstr "Lưu biểu tượng là..."
 
-#: src/gtkconv.c:5712
-#: src/gtkconv.c:5715
+#: src/gtkconv.c:5712 src/gtkconv.c:5715
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Hội thoại/Đóng"
 
@@ -3016,8 +2947,7 @@ msgid "Hide download details"
 msgstr "Ẩn thông tin tải về"
 
 #. Pause button
-#: src/gtkft.c:650
-#: src/stock.c:86
+#: src/gtkft.c:650 src/stock.c:86
 msgid "_Pause"
 msgstr "Tạm _Dừng"
 
@@ -3042,8 +2972,7 @@ msgstr "Tập tin đã tồn tại rồi."
 msgid "Gaim - Open..."
 msgstr "Gaim - Mở..."
 
-#: src/gtkft.c:1060
-#: src/protocols/toc/toc.c:2042
+#: src/gtkft.c:1060 src/protocols/toc/toc.c:2042
 msgid "Gaim - Save As..."
 msgstr "Gaim - Lưu là..."
 
@@ -3065,8 +2994,11 @@ msgid "_Open Link in Browser"
 msgstr "_Mở liên kết trong trình duyệt"
 
 #: src/gtkimhtml.c:1744
-msgid "Unable to guess the image type based on the file extension supplied.  Defaulting to PNG."
-msgstr "Không đoán được loại ảnh bằng tên mởi rộng được cung cấp. Mặc định là PNG."
+msgid ""
+"Unable to guess the image type based on the file extension supplied.  "
+"Defaulting to PNG."
+msgstr ""
+"Không đoán được loại ảnh bằng tên mởi rộng được cung cấp. Mặc định là PNG."
 
 #: src/gtkimhtml.c:1752
 #, c-format
@@ -3086,6 +3018,12 @@ msgid "Conversations with"
 msgstr "Hội thoại với"
 
 #: src/gtknotify.c:211
+#, c-format
+msgid "%s has %d new message."
+msgid_plural "%s has %d new messages."
+msgstr[0] "%s có %d thông điệp mới."
+msgstr[1] "%s đã đi vắng."
+
 #: src/gtknotify.c:219
 #, c-format
 msgid "<span weight=\"bold\">From:</span> %s\n"
@@ -3118,15 +3056,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/gtknotify.c:428
-#: src/gtknotify.c:448
-#: src/gtknotify.c:456
+#: src/gtknotify.c:428 src/gtknotify.c:448 src/gtknotify.c:456
 msgid "Unable to open URL"
 msgstr "Không thể mở URL"
 
 #: src/gtknotify.c:429
-msgid "The 'Manual' browser command has been chosen, but no command has been set."
-msgstr "Phần lệnh chạy trình duyệt 'Tự chọn' được chọn, nhưng không cho lệnh nào."
+msgid ""
+"The 'Manual' browser command has been chosen, but no command has been set."
+msgstr ""
+"Phần lệnh chạy trình duyệt 'Tự chọn' được chọn, nhưng không cho lệnh nào."
 
 #: src/gtknotify.c:446
 #, c-format
@@ -3147,8 +3085,7 @@ msgid "Please enter a buddy to pounce."
 msgstr "Hãy nhập một buddy để pounce."
 
 #. "New Buddy Pounce"
-#: src/gtkpounce.c:333
-#: src/gtkpounce.c:738
+#: src/gtkpounce.c:333 src/gtkpounce.c:738
 msgid "New Buddy Pounce"
 msgstr "Buddy Pounce mới"
 
@@ -3170,8 +3107,7 @@ msgstr "Tên _Buddy:"
 msgid "Pounce When"
 msgstr "Pounce Khi Nào"
 
-#: src/gtkpounce.c:407
-#: src/main.c:339
+#: src/gtkpounce.c:407 src/main.c:339
 msgid "Sign on"
 msgstr "Đăng nhập"
 
@@ -3181,11 +3117,9 @@ msgstr "Ngắt kết nối"
 
 #: src/gtkpounce.c:413
 msgid "Return from away"
-msgstr "Trở lại từ trạng thái vắng mặt"
+msgstr "Thôi không vắng mặt"
 
-#: src/gtkpounce.c:415
-#: src/gtkprefs.c:1492
-#: src/protocols/msn/state.c:30
+#: src/gtkpounce.c:415 src/gtkprefs.c:1492 src/protocols/msn/state.c:30
 #: src/protocols/yahoo/yahoo.c:2028
 msgid "Idle"
 msgstr "Nghỉ"
@@ -3227,13 +3161,11 @@ msgstr "Thực thi lệnh"
 msgid "Play a sound"
 msgstr "Chơi âm thanh"
 
-#: src/gtkpounce.c:465
-#: src/gtkpounce.c:467
+#: src/gtkpounce.c:465 src/gtkpounce.c:467
 msgid "Browse"
 msgstr "Duyệt"
 
-#: src/gtkpounce.c:468
-#: src/gtkprefs.c:2081
+#: src/gtkpounce.c:468 src/gtkprefs.c:2081
 msgid "Test"
 msgstr "Thử"
 
@@ -3259,12 +3191,12 @@ msgstr "%s đã đăng nhập"
 #: src/gtkpounce.c:788
 #, c-format
 msgid "%s has returned from being idle"
-msgstr "%s trở lại từ trạng thái nghỉ"
+msgstr "%s hoạt động trở lại từ trạng thái nghỉ"
 
 #: src/gtkpounce.c:789
 #, c-format
 msgid "%s has returned from being away"
-msgstr "%s trở lại từ trạng thái vắng mặt"
+msgstr "%s hoạt động trở lại từ trạng thái vắng mặt"
 
 #: src/gtkpounce.c:790
 #, c-format
@@ -3294,8 +3226,12 @@ msgid "D_isplay remote nicknames if no alias is set"
 msgstr "Hiển _thị nickname ở xa nếu bí danh không có"
 
 #: src/gtkprefs.c:561
-msgid "Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."
-msgstr "Chọn hình cười mà bạn muốn dùng từ danh sách bên dưới. Cài đặt hình cười mới bằng cách kéo và thả chúng vào danh sách hình cười."
+msgid ""
+"Select a smiley theme that you would like to use from the list below. New "
+"themes can be installed by dragging and dropping them onto the theme list."
+msgstr ""
+"Chọn hình cười mà bạn muốn dùng từ danh sách bên dưới. Cài đặt hình cười mới "
+"bằng cách kéo và thả chúng vào danh sách hình cười."
 
 #: src/gtkprefs.c:594
 msgid "Icon"
@@ -3345,9 +3281,7 @@ msgstr "Màu _chữ"
 msgid "Bac_kground color"
 msgstr "Màu _nền"
 
-#: src/gtkprefs.c:762
-#: src/gtkprefs.c:992
-#: src/gtkprefs.c:1045
+#: src/gtkprefs.c:762 src/gtkprefs.c:992 src/gtkprefs.c:1045
 msgid "Display"
 msgstr "Hiển thị"
 
@@ -3423,33 +3357,23 @@ msgstr "Sắp xếp:"
 msgid "Buddy List Toolbar"
 msgstr "Thanh công cụ Danh sách Buddy"
 
-#: src/gtkprefs.c:836
-#: src/gtkprefs.c:962
-#: src/gtkprefs.c:1018
+#: src/gtkprefs.c:836 src/gtkprefs.c:962 src/gtkprefs.c:1018
 msgid "Show _buttons as:"
 msgstr "Kiểu hiển thị _nút nhấn:"
 
-#: src/gtkprefs.c:838
-#: src/gtkprefs.c:964
-#: src/gtkprefs.c:1020
+#: src/gtkprefs.c:838 src/gtkprefs.c:964 src/gtkprefs.c:1020
 msgid "Pictures"
 msgstr "Ảnh"
 
-#: src/gtkprefs.c:839
-#: src/gtkprefs.c:965
-#: src/gtkprefs.c:1021
+#: src/gtkprefs.c:839 src/gtkprefs.c:965 src/gtkprefs.c:1021
 msgid "Text"
 msgstr "Văn bản"
 
-#: src/gtkprefs.c:840
-#: src/gtkprefs.c:966
-#: src/gtkprefs.c:1022
+#: src/gtkprefs.c:840 src/gtkprefs.c:966 src/gtkprefs.c:1022
 msgid "Pictures and text"
 msgstr "Ảnh và văn bản"
 
-#: src/gtkprefs.c:845
-#: src/gtkprefs.c:980
-#: src/gtkprefs.c:1036
+#: src/gtkprefs.c:845 src/gtkprefs.c:980 src/gtkprefs.c:1036
 msgid "_Raise window on events"
 msgstr "_Bật cửa sổ lên khi có sự kiện"
 
@@ -3465,8 +3389,7 @@ msgstr "Hiển thị _số lượng trong nhóm"
 msgid "Buddy Display"
 msgstr "Hiển Thị Buddy"
 
-#: src/gtkprefs.c:853
-#: src/gtkprefs.c:987
+#: src/gtkprefs.c:853 src/gtkprefs.c:987
 msgid "Show buddy _icons"
 msgstr "Hiện _biểu tượng buddy"
 
@@ -3476,11 +3399,11 @@ msgstr "Hiện các mức _cảnh báo"
 
 #: src/gtkprefs.c:857
 msgid "Show idle _times"
-msgstr "Hiện _thời gian nghỉ"
+msgstr "Hiển thị thời gi_an nghỉ"
 
 #: src/gtkprefs.c:859
 msgid "Dim i_dle buddies"
-msgstr "Ẩn Buddy nghỉ"
+msgstr "Ẩn Buddy ngh_ỉ"
 
 #: src/gtkprefs.c:884
 msgid "_Placement:"
@@ -3520,11 +3443,11 @@ msgstr "Phải"
 
 #: src/gtkprefs.c:910
 msgid "Show IMs and chats in _tabbed windows"
-msgstr "Hiển thị IM và chat trong cử sổ dạng _tab"
+msgstr "Hiển thị IM và Chat trong cửa sổ có dạng _tab"
 
 #: src/gtkprefs.c:913
 msgid "Show IMs and chats in _same tabbed window"
-msgstr "Hiển thị IM và chat trong cùng cửa sổ tab"
+msgstr "Hiển thị IM và Chat trong cùng cửa sổ tab"
 
 #: src/gtkprefs.c:923
 msgid "Show _close button on tabs"
@@ -3534,23 +3457,19 @@ msgstr "Hiện nút _đóng trên tab"
 msgid "Show status _icons on tabs"
 msgstr "Hiện _biểu tượng trạng thái trên tab"
 
-#: src/gtkprefs.c:961
-#: src/gtkprefs.c:1017
+#: src/gtkprefs.c:961 src/gtkprefs.c:1017
 msgid "Window"
 msgstr "Cửa sổ"
 
-#: src/gtkprefs.c:971
-#: src/gtkprefs.c:1027
+#: src/gtkprefs.c:971 src/gtkprefs.c:1027
 msgid "New window _width:"
 msgstr "Bề _rộng cửa sổ mới: "
 
-#: src/gtkprefs.c:974
-#: src/gtkprefs.c:1030
+#: src/gtkprefs.c:974 src/gtkprefs.c:1030
 msgid "New window _height:"
 msgstr "Chiều _cao cửa sổ mới:"
 
-#: src/gtkprefs.c:977
-#: src/gtkprefs.c:1033
+#: src/gtkprefs.c:977 src/gtkprefs.c:1033
 msgid "_Entry field height:"
 msgstr "Chiều cao trường nhậ_p:"
 
@@ -3622,12 +3541,9 @@ msgstr "Máy chủ Proxy"
 msgid "_Host"
 msgstr "_Máy chủ"
 
-#: src/gtkprefs.c:1142
-#: src/protocols/irc/irc.c:553
-#: src/protocols/jabber/jabber.c:1153
-#: src/protocols/msn/msn.c:1656
-#: src/protocols/napster/napster.c:642
-#: src/protocols/trepia/trepia.c:1345
+#: src/gtkprefs.c:1142 src/protocols/irc/irc.c:553
+#: src/protocols/jabber/jabber.c:1153 src/protocols/msn/msn.c:1656
+#: src/protocols/napster/napster.c:642 src/protocols/trepia/trepia.c:1345
 msgid "Port"
 msgstr "Cổng"
 
@@ -3747,11 +3663,11 @@ msgstr ""
 
 #: src/gtkprefs.c:1468
 msgid "_Sending messages removes away status"
-msgstr "_Gửi thông điệp khi thôi trạng thái vắng mặt"
+msgstr "_Gửi thông báo thôi trạng thái vắng mặt"
 
 #: src/gtkprefs.c:1470
 msgid "_Queue new messages when away"
-msgstr "_Lưu lại thông điệp mới khi vắng mặt"
+msgstr "_Xắp hàng thông điệp mới khi vắng mặt"
 
 #: src/gtkprefs.c:1473
 msgid "Auto-response"
@@ -3767,11 +3683,11 @@ msgstr "_Gửi trả lời tự động"
 
 #: src/gtkprefs.c:1481
 msgid "_Only send auto-response when idle"
-msgstr "_Chỉ gửi trả lời tự động khi rơi vào trạng thái nghỉ"
+msgstr "_Chỉ trả lời tự động khi rơi vào trạng thái nghỉ"
 
 #: src/gtkprefs.c:1483
 msgid "Send auto-response in _active conversations"
-msgstr "Gửi trả lời tự động trong hội thoại hoạt động"
+msgstr "Gửi trả lời tự động trong khi hoạt động"
 
 #: src/gtkprefs.c:1493
 msgid "Idle _time reporting:"
@@ -3791,7 +3707,7 @@ msgstr "Cách dùng Windows"
 
 #: src/gtkprefs.c:1509
 msgid "Auto-away"
-msgstr "Trạng thái tự động"
+msgstr "Tự động báo trạng thái"
 
 #: src/gtkprefs.c:1510
 msgid "Set away _when idle"
@@ -3799,11 +3715,11 @@ msgstr "Đặt trạng thái _khi nghỉ"
 
 #: src/gtkprefs.c:1512
 msgid "_Minutes before setting away:"
-msgstr "Thời gian theo _phút trước khi xác lập trạng thái:"
+msgstr "Số _phút trước khi báo trạng thái vắng mặt:"
 
 #: src/gtkprefs.c:1519
 msgid "Away m_essage:"
-msgstr "_Thông điệp trạng thái:"
+msgstr "Thông _báo vắng mặt:"
 
 #: src/gtkprefs.c:1581
 #, c-format
@@ -3839,10 +3755,8 @@ msgstr ""
 msgid "Load"
 msgstr "Nạp"
 
-#: src/gtkprefs.c:1774
-#: src/protocols/jabber/jabber.c:588
-#: src/protocols/msn/msn.c:1344
-#: src/protocols/trepia/trepia.c:401
+#: src/gtkprefs.c:1774 src/protocols/jabber/jabber.c:588
+#: src/protocols/msn/msn.c:1344 src/protocols/trepia/trepia.c:401
 msgid "Name"
 msgstr "Tên"
 
@@ -3925,7 +3839,7 @@ msgstr "Vắng mặt / Nghỉ"
 
 #: src/gtkprefs.c:2277
 msgid "Away Messages"
-msgstr "Thông điệp Trạng thái"
+msgstr "Thông báo vắng mặt"
 
 #: src/gtkprefs.c:2280
 msgid "Plugins"
@@ -3941,7 +3855,7 @@ msgstr "Chỉ cho phép người dùng trong danh sách buddy"
 
 #: src/gtkprivacy.c:88
 msgid "Allow only the users below"
-msgstr "Chỉ cho phép người dùng dưới đây"
+msgstr "Chỉ cho phép người dùng sau đây"
 
 #: src/gtkprivacy.c:89
 msgid "Block all users"
@@ -3964,8 +3878,7 @@ msgstr "Thay đổi thiết lập tính riêng tư để có tác dụng ngay."
 msgid "Set privacy for:"
 msgstr "Lập tính riêng tư cho:"
 
-#: src/gtkprivacy.c:562
-#: src/gtkprivacy.c:578
+#: src/gtkprivacy.c:562 src/gtkprivacy.c:578
 msgid "Permit User"
 msgstr "Cho phép người dùng"
 
@@ -3977,8 +3890,7 @@ msgstr "Nhập người dùng mà bạn cho phép liên lạc với bạn."
 msgid "Please enter the name of the user you wish to be able to contact you."
 msgstr "Hãy nhập tên người dùng mà bạn cho phép liên lạc với bạn."
 
-#: src/gtkprivacy.c:567
-#: src/gtkprivacy.c:580
+#: src/gtkprivacy.c:567 src/gtkprivacy.c:580
 msgid "Permit"
 msgstr "Cho phép"
 
@@ -3992,8 +3904,7 @@ msgstr "Cho phép %s liên lạc với bạn không?"
 msgid "Are you sure you wish to allow %s to contact you?"
 msgstr "Bạn có chắc là muốn cho phép %s liên lạc với bạn không?"
 
-#: src/gtkprivacy.c:601
-#: src/gtkprivacy.c:614
+#: src/gtkprivacy.c:601 src/gtkprivacy.c:614
 msgid "Block User"
 msgstr "Chặn người dùng"
 
@@ -4018,15 +3929,11 @@ msgstr "Bạn có chắc là muốn chặn %s không?"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:193
-#: src/protocols/gg/gg.c:660
-#: src/request.h:843
+#: src/gtkrequest.c:193 src/protocols/gg/gg.c:660 src/request.h:843
 msgid "Yes"
 msgstr "Có"
 
-#: src/gtkrequest.c:194
-#: src/protocols/gg/gg.c:660
-#: src/request.h:843
+#: src/gtkrequest.c:194 src/protocols/gg/gg.c:660 src/request.h:843
 msgid "No"
 msgstr "Không"
 
@@ -4044,35 +3951,35 @@ msgstr "Buddy đăng xuất"
 
 #: src/gtksound.c:63
 msgid "Message received"
-msgstr "Thông điệp được nhận"
+msgstr "Nhận thông điệp"
 
 #: src/gtksound.c:64
 msgid "Message received begins conversation"
-msgstr "Thông điệp được nhận bắt đầu cuộc hội thoại"
+msgstr "Nhận thông điệp khởi đầu cuộc thoại"
 
 #: src/gtksound.c:65
 msgid "Message sent"
-msgstr "Thông điệp đã gửi"
+msgstr "Gửi thông điệp"
 
 #: src/gtksound.c:66
 msgid "Person enters chat"
-msgstr "Người tham gia vào chat"
+msgstr "Người vào phòng Chat"
 
 #: src/gtksound.c:67
 msgid "Person leaves chat"
-msgstr "Người thôi chat"
+msgstr "Người rời phòng Chat"
 
 #: src/gtksound.c:68
 msgid "You talk in chat"
-msgstr "Bạn nói trong chat"
+msgstr "Bạn nói trong Chat"
 
 #: src/gtksound.c:69
 msgid "Others talk in chat"
-msgstr "Người khác nói trong chat"
+msgstr "Người khác nói trong Chat"
 
 #: src/gtksound.c:72
 msgid "Someone says your name in chat"
-msgstr "Ai đó nói tên bạn trong chat"
+msgstr "Ai đó nói tên bạn trong Chat"
 
 #: src/gtksound.c:156
 #, c-format
@@ -4080,12 +3987,18 @@ msgid "Unable to play sound because the chosen file (%s) does not exist."
 msgstr "Không thể phát âm thanh vì tập tin được chọn (%s) không tồn tại."
 
 #: src/gtksound.c:172
-msgid "Unable to play sound because the 'Command' sound method has been chosen, but no command has been set."
-msgstr "Không thể phát âm thanh vì cách phát âm thanh theo 'Lệnh' đã được chọn, nhưng không có lệnh nào được thiết lập."
+msgid ""
+"Unable to play sound because the 'Command' sound method has been chosen, but "
+"no command has been set."
+msgstr ""
+"Không thể phát âm thanh vì cách phát âm thanh theo 'Lệnh' đã được chọn, "
+"nhưng không có lệnh nào được thiết lập."
 
 #: src/gtksound.c:184
 #, c-format
-msgid "Unable to play sound because the configured sound command could not be launched: %s"
+msgid ""
+"Unable to play sound because the configured sound command could not be "
+"launched: %s"
 msgstr "Không thể phát âm thanh vì không thể chạy lệnh phát âm thanh: %s"
 
 #: src/gtkutils.c:291
@@ -4100,41 +4013,42 @@ msgstr "Gaim - Lưu biểu tượng"
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">logger không có chức năng đọc</font></b>"
 
-#: src/log.c:409
+#: src/log.c:408
 msgid "XML"
 msgstr "XML"
 
-#: src/log.c:488
+#: src/log.c:479
 #, c-format
 msgid "<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
-msgstr "<font color=\"#16569E\">(%s) <b>%s <Trả Lời-Tự Động>:</b></font> %s<br/>\n"
+msgstr ""
+"<font color=\"#16569E\">(%s) <b>%s <Trả Lời-Tự Động>:</b></font> %s<br/>\n"
 
-#: src/log.c:490
+#: src/log.c:481
 #, c-format
 msgid "<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
-msgstr "<font color=\"#A82F2F\">(%s) <b>%s <Trả Lời-Tự Động>:</b></font> %s<br/>\n"
+msgstr ""
+"<font color=\"#A82F2F\">(%s) <b>%s <Trả Lời-Tự Động>:</b></font> %s<br/>\n"
 
-#: src/log.c:531
-#: src/log.c:663
-msgid "<font color=\"red\"><b>log->logger_data was NULL!</b></font>"
-msgstr "<font color=\"red\"><b>log->logger_data là NULL!</b></font>"
+#: src/log.c:527 src/log.c:657
+msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
+msgstr ""
+"<font color=\"red\"><b>Không tìm được đường dẫn tới bản ghi (log)!</b></font>"
 
-#: src/log.c:541
-#: src/log.c:673
+#: src/log.c:537 src/log.c:667
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
 msgstr "<font color=\"red\"><b>Không thể đọc tập tin: %s</b></font>"
 
-#: src/log.c:545
+#: src/log.c:541
 msgid "HTML"
 msgstr "HTML"
 
-#: src/log.c:623
+#: src/log.c:611
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <Trả Lời-Tự Động>: %s\n"
 
-#: src/log.c:677
+#: src/log.c:671
 msgid "Plain text"
 msgstr "Văn bản đơn thuần"
 
@@ -4173,15 +4087,15 @@ msgstr ""
 "Sử dụng: %s [TÙY CHỌN]...\n"
 "\n"
 "  -a, --acct          hiển thị cửa sổ hiệu chỉnh tài khoản\n"
-"  -w, --away[=MESG]   đặt trạng thái khi đăng nhập (optional argument MESG specifies\n"
+"  -w, --away[=MESG]   lập thông báo vắng mặt (optional argument MESG specifies\n"
 "                      name of away message to use)\n"
 "  -l, --login[=NAME]  đăng nhập tự động (đối số NAME là tùy chọn\n"
 "                      tài khoản sử dụng, phân cách bằng dấu phẩy)\n"
 "  -n, --loginwin      không đăng nhập tự động; hiển thị cửa sổ đăng nhập\n"
 "  -u, --user=NAME     sử dụng tài khoản NAME\n"
-"  -f, --file=FILE     sử dụng tập tin cấu hình FILE\n"
+"  -f, --file=FILE     sử dụng FILE để cấu hình\n"
 "  -d, --debug         xuất thông điệp gỡ rối ra thiết bị xuất chuẩn\n"
-"  -v, --version       hiển thị phiên bản hiện tại và thoát\n"
+"  -v, --version       hiển thị phiên bản hiện thời và thoát\n"
 "  -h, --help          hiển thị phần trợ giúp này và thoát\n"
 
 #. short message
@@ -4192,11 +4106,12 @@ msgstr "Gaim %s. Thử '%s -h' để có thêm thông tin.\n"
 
 #: src/plugin.c:260
 #, c-format
-msgid "The required plugin %s was not found. Please install this plugin and try again."
+msgid ""
+"The required plugin %s was not found. Please install this plugin and try "
+"again."
 msgstr "Không tìm thấy plugin %s. Hãy cài đặt nó rồi thử lại."
 
-#: src/plugin.c:265
-#: src/plugin.c:293
+#: src/plugin.c:265 src/plugin.c:293
 msgid "Gaim was unable to load your plugin."
 msgstr "Gaim không thể nạp plugin của bạn."
 
@@ -4205,19 +4120,14 @@ msgstr "Gaim không thể nạp plugin của bạn."
 msgid "The required plugin %s was unable to load."
 msgstr "Không nạp được plugin %s theo yêu cầu."
 
-#: src/prefs.c:111
-#: src/status.c:270
+#: src/prefs.c:111 src/status.c:270
 msgid "Slightly less boring default"
 msgstr "Mặc định thông điệp riêng của người dùng"
 
-#: src/protocols/gg/gg.c:49
-#: src/protocols/jabber/jutil.c:110
-#: src/protocols/msn/msn.c:344
-#: src/protocols/msn/state.c:27
-#: src/protocols/msn/state.c:28
-#: src/protocols/msn/state.c:35
-#: src/protocols/msn/state.c:36
-#: src/protocols/yahoo/yahoo.c:2304
+#: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:110
+#: src/protocols/msn/msn.c:344 src/protocols/msn/state.c:27
+#: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2304
 #: src/protocols/yahoo/yahoo.c:2405
 msgid "Available"
 msgstr "Có mặt"
@@ -4230,16 +4140,11 @@ msgstr "Chỉ báo có mặt cho bạn bè"
 msgid "Away for friends only"
 msgstr "Chỉ báo vắng mặt cho bạn bè"
 
-#: src/protocols/gg/gg.c:53
-#: src/protocols/jabber/jabber.c:932
-#: src/protocols/jabber/presence.c:91
-#: src/protocols/oscar/oscar.c:2848
-#: src/protocols/oscar/oscar.c:4579
-#: src/protocols/oscar/oscar.c:4606
-#: src/protocols/oscar/oscar.c:6143
-#: src/protocols/yahoo/yahoo.c:2026
-#: src/protocols/yahoo/yahoo.c:2324
-#: src/protocols/yahoo/yahoo.c:2415
+#: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:932
+#: src/protocols/jabber/presence.c:91 src/protocols/oscar/oscar.c:2848
+#: src/protocols/oscar/oscar.c:4579 src/protocols/oscar/oscar.c:4606
+#: src/protocols/oscar/oscar.c:6143 src/protocols/yahoo/yahoo.c:2026
+#: src/protocols/yahoo/yahoo.c:2324 src/protocols/yahoo/yahoo.c:2415
 msgid "Invisible"
 msgstr "Giấu mặt"
 
@@ -4293,8 +4198,7 @@ msgid "Unable to read socket"
 msgstr "Không thể đọc socket"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
-#: src/protocols/gg/gg.c:399
-#: src/protocols/icq/gaim_icq.c:344
+#: src/protocols/gg/gg.c:399 src/protocols/icq/gaim_icq.c:344
 #: src/protocols/toc/toc.c:200
 msgid "Unable to connect."
 msgstr "Không thể kết nối."
@@ -4319,8 +4223,7 @@ msgstr "Đang chuyển đổi khóa băm"
 msgid "Critical error in GG library\n"
 msgstr "Lỗi nghiêm trọng trong thư viện GG\n"
 
-#: src/protocols/gg/gg.c:452
-#: src/protocols/gg/gg.c:543
+#: src/protocols/gg/gg.c:452 src/protocols/gg/gg.c:543
 #: src/protocols/toc/toc.c:176
 #, c-format
 msgid "Connect to %s failed"
@@ -4358,8 +4261,7 @@ msgstr "Máy Tìm kiếm Gadu-Gadu"
 msgid "Active"
 msgstr "Kích hoạt"
 
-#: src/protocols/gg/gg.c:664
-#: src/protocols/oscar/oscar.c:3957
+#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:3957
 msgid "UIN"
 msgstr "UIN"
 
@@ -4368,54 +4270,39 @@ msgid "First name"
 msgstr "Tên"
 
 #. Last Name
-#: src/protocols/gg/gg.c:673
-#: src/protocols/jabber/jabber.c:608
-#: src/protocols/oscar/oscar.c:3965
-#: src/protocols/trepia/trepia.c:274
+#: src/protocols/gg/gg.c:673 src/protocols/jabber/jabber.c:608
+#: src/protocols/oscar/oscar.c:3965 src/protocols/trepia/trepia.c:274
 msgid "Last Name"
 msgstr "Họ"
 
-#: src/protocols/gg/gg.c:677
-#: src/protocols/gg/gg.c:1389
-#: src/protocols/irc/msgs.c:183
-#: src/protocols/oscar/oscar.c:3959
+#: src/protocols/gg/gg.c:677 src/protocols/gg/gg.c:1389
+#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:3959
 msgid "Nick"
 msgstr "Nick"
 
-#: src/protocols/gg/gg.c:684
-#: src/protocols/gg/gg.c:687
+#: src/protocols/gg/gg.c:684 src/protocols/gg/gg.c:687
 msgid "Birth year"
 msgstr "Năm sinh"
 
-#: src/protocols/gg/gg.c:693
-#: src/protocols/gg/gg.c:695
+#: src/protocols/gg/gg.c:693 src/protocols/gg/gg.c:695
 #: src/protocols/gg/gg.c:697
 msgid "Sex"
 msgstr "Giới tính"
 
 #. City
-#: src/protocols/gg/gg.c:701
-#: src/protocols/jabber/jabber.c:618
-#: src/protocols/oscar/oscar.c:4011
-#: src/protocols/oscar/oscar.c:4027
-#: src/protocols/trepia/trepia.c:331
-#: src/protocols/trepia/trepia.c:430
+#: src/protocols/gg/gg.c:701 src/protocols/jabber/jabber.c:618
+#: src/protocols/oscar/oscar.c:4011 src/protocols/oscar/oscar.c:4027
+#: src/protocols/trepia/trepia.c:331 src/protocols/trepia/trepia.c:430
 msgid "City"
 msgstr "Thành phố"
 
 #. res[0] == username
-#: src/protocols/gg/gg.c:722
-#: src/protocols/msn/msn.c:1282
-#: src/protocols/msn/msn.c:1524
-#: src/protocols/napster/napster.c:387
-#: src/protocols/oscar/oscar.c:2890
-#: src/protocols/oscar/oscar.c:3200
-#: src/protocols/toc/toc.c:498
-#: src/protocols/yahoo/yahoo.c:2581
-#: src/protocols/yahoo/yahoo.c:2603
-#: src/protocols/yahoo/yahoo.c:2626
-#: src/protocols/yahoo/yahoo.c:2813
-#: src/protocols/zephyr/zephyr.c:355
+#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1282
+#: src/protocols/msn/msn.c:1524 src/protocols/napster/napster.c:387
+#: src/protocols/oscar/oscar.c:2890 src/protocols/oscar/oscar.c:3200
+#: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2581
+#: src/protocols/yahoo/yahoo.c:2603 src/protocols/yahoo/yahoo.c:2626
+#: src/protocols/yahoo/yahoo.c:2813 src/protocols/zephyr/zephyr.c:355
 msgid "Buddy Information"
 msgstr "Thông tin về Buddy"
 
@@ -4456,25 +4343,34 @@ msgid "Error communicating with Gadu-Gadu server"
 msgstr "Lỗi liên lạc với máy chủ Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:969
-msgid "Gaim was unable to complete your request due to a problem communicating with the Gadu-Gadu HTTP server.  Please try again later."
-msgstr "Gaim đã không hoàn thành yêu cầu của bạn do có vấn đề truyền thông với máy chủ HTTP Gadu-Gadu. Hãy thử lại sau."
+msgid ""
+"Gaim was unable to complete your request due to a problem communicating with "
+"the Gadu-Gadu HTTP server.  Please try again later."
+msgstr ""
+"Gaim đã không hoàn thành yêu cầu của bạn do có vấn đề truyền thông với máy "
+"chủ HTTP Gadu-Gadu. Hãy thử lại sau."
 
 #: src/protocols/gg/gg.c:997
 msgid "Unable to import Gadu-Gadu buddy list"
 msgstr "Không thể nhập về danh sách buddy Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:998
-msgid "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try again later."
-msgstr "Gaim không thể kết nối đến máy chủ danh sách buddy Gadu-Gadu. Vui lòng thử lại sau."
+msgid ""
+"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"again later."
+msgstr ""
+"Gaim không thể kết nối đến máy chủ danh sách buddy Gadu-Gadu. Vui lòng thử "
+"lại sau."
 
 #: src/protocols/gg/gg.c:1071
 msgid "Couldn't export buddy list"
 msgstr "Không thể xuất danh sách buddy"
 
-#: src/protocols/gg/gg.c:1072
-#: src/protocols/gg/gg.c:1095
-msgid "Gaim was unable to connect to the buddy list server.  Please try again later."
-msgstr "Gaim không thể kết nối vào máy chủ danh sách buddy. Vui lòng thử lại sau."
+#: src/protocols/gg/gg.c:1072 src/protocols/gg/gg.c:1095
+msgid ""
+"Gaim was unable to connect to the buddy list server.  Please try again later."
+msgstr ""
+"Gaim không thể kết nối vào máy chủ danh sách buddy. Vui lòng thử lại sau."
 
 #: src/protocols/gg/gg.c:1094
 msgid "Unable to delete Gadu-Gadu buddy list"
@@ -4485,25 +4381,31 @@ msgid "Unable to access directory"
 msgstr "Không thể truy cập thư mục"
 
 #: src/protocols/gg/gg.c:1144
-msgid "Gaim was unable to search the Directory because it was unable to connect to the directory server.  Please try again later."
-msgstr "Gaim không thể tìm kiếm thư mục bởi nó không thể kết nối được đến máy chủ thư mục. Vui lòng thử lại sau."
+msgid ""
+"Gaim was unable to search the Directory because it was unable to connect to "
+"the directory server.  Please try again later."
+msgstr ""
+"Gaim không thể tìm kiếm thư mục bởi nó không thể kết nối được đến máy chủ "
+"thư mục. Vui lòng thử lại sau."
 
 #: src/protocols/gg/gg.c:1177
 msgid "Unable to change Gadu-Gadu password"
 msgstr "Không thể đổi mật khẩu Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:1178
-msgid "Gaim was unable to change your password due to an error connecting to the Gadu-Gadu server.  Please try again later."
-msgstr "Gaim không thể đổi mật khẩu của bạn do có lỗi xảy ra khi kết nối đến máy chủ Gadu-Gadu. Vui lòng thử lại sau."
+msgid ""
+"Gaim was unable to change your password due to an error connecting to the "
+"Gadu-Gadu server.  Please try again later."
+msgstr ""
+"Gaim không thể đổi mật khẩu của bạn do có lỗi xảy ra khi kết nối đến máy chủ "
+"Gadu-Gadu. Vui lòng thử lại sau."
 
 #: src/protocols/gg/gg.c:1195
 msgid "Directory Search"
 msgstr "Tìm kiếm Thư mục"
 
-#: src/protocols/gg/gg.c:1204
-#: src/protocols/jabber/jabber.c:1044
-#: src/protocols/oscar/oscar.c:6498
-#: src/protocols/toc/toc.c:1546
+#: src/protocols/gg/gg.c:1204 src/protocols/jabber/jabber.c:1044
+#: src/protocols/oscar/oscar.c:6498 src/protocols/toc/toc.c:1546
 msgid "Change Password"
 msgstr "Đổi mật khẩu"
 
@@ -4524,8 +4426,12 @@ msgid "Unable to access user profile."
 msgstr "Không thể truy cập lý lịch người dùng."
 
 #: src/protocols/gg/gg.c:1258
-msgid "Gaim was unable to access this user's profile due to an error connecting to the directory server.  Please try again later."
-msgstr "Gaim không thể truy cập lý lịch của người dùng này do có lỗi kết nối đến máy chủ thư mục. Vui lòng thử lại sau."
+msgid ""
+"Gaim was unable to access this user's profile due to an error connecting to "
+"the directory server.  Please try again later."
+msgstr ""
+"Gaim không thể truy cập lý lịch của người dùng này do có lỗi kết nối đến máy "
+"chủ thư mục. Vui lòng thử lại sau."
 
 #. *< api_version
 #. *< type
@@ -4537,8 +4443,7 @@ msgstr "Gaim không thể truy cập lý lịch của người dùng này do có
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/gg/gg.c:1370
-#: src/protocols/gg/gg.c:1372
+#: src/protocols/gg/gg.c:1370 src/protocols/gg/gg.c:1372
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Plugin giao thức Gadu-Gadu"
 
@@ -4551,22 +4456,16 @@ msgstr "Gaim gặp lỗi truyền thông với máy chủ ICQ."
 msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 msgstr "Người dùng %s (%s%s%s%s%s) muốn bạn thẩm tra họ."
 
-#: src/protocols/icq/gaim_icq.c:297
-#: src/protocols/jabber/presence.c:184
-#: src/protocols/msn/notification.c:949
-#: src/protocols/msn/notification.c:1270
-#: src/protocols/msn/notification.c:1435
-#: src/protocols/oscar/oscar.c:2620
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:184
+#: src/protocols/msn/notification.c:949 src/protocols/msn/notification.c:1270
+#: src/protocols/msn/notification.c:1435 src/protocols/oscar/oscar.c:2620
 #: src/protocols/oscar/oscar.c:5137
 msgid "Authorize"
 msgstr "Thẩm tra"
 
-#: src/protocols/icq/gaim_icq.c:297
-#: src/protocols/jabber/presence.c:185
-#: src/protocols/msn/notification.c:950
-#: src/protocols/msn/notification.c:1272
-#: src/protocols/msn/notification.c:1437
-#: src/protocols/oscar/oscar.c:2622
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:185
+#: src/protocols/msn/notification.c:950 src/protocols/msn/notification.c:1272
+#: src/protocols/msn/notification.c:1437 src/protocols/oscar/oscar.c:2622
 #: src/protocols/oscar/oscar.c:5138
 msgid "Deny"
 msgstr "Từ chối"
@@ -4593,12 +4492,22 @@ msgid "Unknown command: %s"
 msgstr "Lệnh không xác định: %s"
 
 #: src/protocols/irc/cmds.c:135
-msgid "<B>Supported IRC Commands:</B><BR>AWAY INVITE JOIN KICK<BR>ME MODE MSG NAMES<BR>NICK OP DEOP OPERWALL<BR>PART PING QUERY QUIT<BR>QUOTE REMOVE TOPIC UMODE<BR>VOICE DEVOICE WALLOPS WHOIS<BR>"
-msgstr "<B>Các lệnh IRC được hỗ trợ:</B><BR>AWAY INVITE JOIN KICK<BR>ME MODE MSG NAMES<BR>NICK OP DEOP OPERWALL<BR>PART PING QUERY QUIT<BR>QUOTE REMOVE TOPIC UMODE<BR>VOICE DEVOICE WALLOPS WHOIS<BR>"
+msgid ""
+"<B>Supported IRC Commands:</B><BR>AWAY INVITE JOIN KICK<BR>ME MODE MSG "
+"NAMES<BR>NICK OP DEOP OPERWALL<BR>PART PING QUERY QUIT<BR>QUOTE REMOVE TOPIC "
+"UMODE<BR>VOICE DEVOICE WALLOPS WHOIS<BR>"
+msgstr ""
+"<B>Các lệnh IRC được hỗ trợ:</B><BR>AWAY INVITE JOIN KICK<BR>ME MODE MSG "
+"NAMES<BR>NICK OP DEOP OPERWALL<BR>PART PING QUERY QUIT<BR>QUOTE REMOVE TOPIC "
+"UMODE<BR>VOICE DEVOICE WALLOPS WHOIS<BR>"
 
 #: src/protocols/irc/cmds.c:144
-msgid "<B>Supported IRC Commands:</B><BR>AWAY JOIN ME MODE<BR>MSG NICK OPERWALL PING<BR>QUERY QUIT QUOTE UMODE<BR>WALLOPS WHOIS"
-msgstr "<B>Các lệnh IRC được hỗ trợ:</B><BR>AWAY JOIN ME MODE<BR>MSG NICK OPERWALL PING<BR>QUERY QUIT QUOTE UMODE<BR>WALLOPS WHOIS"
+msgid ""
+"<B>Supported IRC Commands:</B><BR>AWAY JOIN ME MODE<BR>MSG NICK OPERWALL "
+"PING<BR>QUERY QUIT QUOTE UMODE<BR>WALLOPS WHOIS"
+msgstr ""
+"<B>Các lệnh IRC được hỗ trợ:</B><BR>AWAY JOIN ME MODE<BR>MSG NICK OPERWALL "
+"PING<BR>QUERY QUIT QUOTE UMODE<BR>WALLOPS WHOIS"
 
 #: src/protocols/irc/cmds.c:459
 #, c-format
@@ -4638,8 +4547,7 @@ msgstr "Kênh:"
 msgid "IRC nicks may not contain whitespace"
 msgstr "IRC nick không được chứa dấu cách"
 
-#: src/protocols/irc/irc.c:199
-#: src/protocols/toc/toc.c:228
+#: src/protocols/irc/irc.c:199 src/protocols/toc/toc.c:228
 #, c-format
 msgid "Signon: %s"
 msgstr "Đăng nhập: %s"
@@ -4666,10 +4574,8 @@ msgstr "Plugin giao thức IRC"
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Plugin giao thức IRC ít phiền phức"
 
-#: src/protocols/irc/irc.c:550
-#: src/protocols/irc/msgs.c:197
-#: src/protocols/jabber/jabber.c:1143
-#: src/protocols/napster/napster.c:637
+#: src/protocols/irc/irc.c:550 src/protocols/irc/msgs.c:197
+#: src/protocols/jabber/jabber.c:1143 src/protocols/napster/napster.c:637
 msgid "Server"
 msgstr "Máy chủ"
 
@@ -4677,8 +4583,7 @@ msgstr "Máy chủ"
 msgid "Encoding"
 msgstr "Mã hóa"
 
-#: src/protocols/irc/irc.c:559
-#: src/protocols/irc/msgs.c:191
+#: src/protocols/irc/irc.c:559 src/protocols/irc/msgs.c:191
 #: src/protocols/jabber/jabber.c:578
 msgid "Username"
 msgstr "Tên đăng nhập"
@@ -4704,8 +4609,7 @@ msgstr " <i>(ircop)</i>"
 msgid " <i>(identified)</i>"
 msgstr " <i>(identified)</i>"
 
-#: src/protocols/irc/msgs.c:192
-#: src/protocols/yahoo/yahoo.c:2684
+#: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2684
 msgid "Realname"
 msgstr "Tên thật"
 
@@ -4720,7 +4624,7 @@ msgstr "<b>Trạng thái nghỉ cho:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:209
 msgid "Online since"
-msgstr "Trực tuyến từ"
+msgstr "Kết nối từ"
 
 #: src/protocols/irc/msgs.c:212
 msgid "<br><b>Defining adjective:</b> Glorious<br>"
@@ -4832,8 +4736,12 @@ msgid "Wallops from %s"
 msgstr "Cú đánh từ %s"
 
 #: src/protocols/irc/parse.c:160
-msgid "(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"
-msgstr "(Có lỗi khi chuyển đổi thông điệp này. Đánh dấu vào tùy chọn 'Mã hóa' trong Trình hiệu chỉnh Tài khoản)"
+msgid ""
+"(There was an error converting this message.  Check the 'Encoding' option in "
+"the Account Editor)"
+msgstr ""
+"(Có lỗi khi chuyển đổi thông điệp này. Đánh dấu vào tùy chọn 'Mã hóa' trong "
+"Trình hiệu chỉnh Tài khoản)"
 
 #: src/protocols/irc/parse.c:291
 #, c-format
@@ -4856,15 +4764,12 @@ msgstr "Mất kết nối"
 msgid "Server requires SSL for login"
 msgstr "Máy chủ yêu cầu SSL để đăng nhập"
 
-#: src/protocols/jabber/auth.c:59
-#: src/protocols/jabber/auth.c:281
-#: src/protocols/jabber/auth.c:380
-#: src/protocols/jabber/auth.c:392
+#: src/protocols/jabber/auth.c:59 src/protocols/jabber/auth.c:281
+#: src/protocols/jabber/auth.c:380 src/protocols/jabber/auth.c:392
 msgid "Invalid response from server"
 msgstr "Máy chủ trả lời không hợp lệ."
 
-#: src/protocols/jabber/auth.c:86
-#: src/protocols/jabber/auth.c:143
+#: src/protocols/jabber/auth.c:86 src/protocols/jabber/auth.c:143
 msgid "Server does not use any supported authentication method"
 msgstr "Máy chủ không sử dụng bất kỳ phương thức xác thực được hỗ trợ nào"
 
@@ -4896,10 +4801,8 @@ msgstr "Realm không hợp lệ"
 msgid "Mechanism Too Weak"
 msgstr "Cơ chế quá yếu"
 
-#: src/protocols/jabber/auth.c:412
-#: src/protocols/jabber/jabber.c:158
-#: src/protocols/jabber/jabber.c:867
-#: src/protocols/jabber/jabber.c:917
+#: src/protocols/jabber/auth.c:412 src/protocols/jabber/jabber.c:158
+#: src/protocols/jabber/jabber.c:867 src/protocols/jabber/jabber.c:917
 #: src/protocols/oscar/oscar.c:5545
 msgid "Not Authorized"
 msgstr "Không xác thực được"
@@ -4912,124 +4815,102 @@ msgstr "Xác Thực Tạm Thời Lỗi"
 msgid "Authentication Failure"
 msgstr "Lỗi Xác Thực"
 
-#: src/protocols/jabber/buddy.c:245
-#: src/protocols/jabber/buddy.c:597
+#: src/protocols/jabber/buddy.c:245 src/protocols/jabber/buddy.c:597
 msgid "Full Name"
 msgstr "Tên đầy đủ"
 
-#: src/protocols/jabber/buddy.c:246
-#: src/protocols/jabber/buddy.c:610
+#: src/protocols/jabber/buddy.c:246 src/protocols/jabber/buddy.c:610
 msgid "Family Name"
 msgstr "Họ"
 
-#: src/protocols/jabber/buddy.c:247
-#: src/protocols/jabber/buddy.c:614
+#: src/protocols/jabber/buddy.c:247 src/protocols/jabber/buddy.c:614
 msgid "Given Name"
 msgstr "Tên hay gọi"
 
-#: src/protocols/jabber/buddy.c:248
-#: src/protocols/jabber/buddy.c:625
-#: src/protocols/jabber/jabber.c:598
-#: src/protocols/yahoo/yahoo.c:2678
+#: src/protocols/jabber/buddy.c:248 src/protocols/jabber/buddy.c:625
+#: src/protocols/jabber/jabber.c:598 src/protocols/yahoo/yahoo.c:2678
 msgid "Nickname"
 msgstr "Nick"
 
-#: src/protocols/jabber/buddy.c:250
-#: src/protocols/jabber/buddy.c:653
+#: src/protocols/jabber/buddy.c:250 src/protocols/jabber/buddy.c:653
 msgid "Street Address"
 msgstr "Địa chỉ nhà"
 
-#: src/protocols/jabber/buddy.c:251
-#: src/protocols/jabber/buddy.c:649
+#: src/protocols/jabber/buddy.c:251 src/protocols/jabber/buddy.c:649
 msgid "Extended Address"
 msgstr "Địa chỉ khác"
 
-#: src/protocols/jabber/buddy.c:252
-#: src/protocols/jabber/buddy.c:657
+#: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:657
 msgid "Locality"
 msgstr "Nơi ở"
 
-#: src/protocols/jabber/buddy.c:253
-#: src/protocols/jabber/buddy.c:661
+#: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:661
 msgid "Region"
 msgstr "Vùng"
 
-#: src/protocols/jabber/buddy.c:254
-#: src/protocols/jabber/buddy.c:665
+#: src/protocols/jabber/buddy.c:254 src/protocols/jabber/buddy.c:665
 #: src/protocols/jabber/jabber.c:628
 msgid "Postal Code"
 msgstr "Mã vùng"
 
 #. Country
-#: src/protocols/jabber/buddy.c:255
-#: src/protocols/jabber/buddy.c:670
-#: src/protocols/trepia/trepia.c:339
-#: src/protocols/trepia/trepia.c:448
+#: src/protocols/jabber/buddy.c:255 src/protocols/jabber/buddy.c:670
+#: src/protocols/trepia/trepia.c:339 src/protocols/trepia/trepia.c:448
 msgid "Country"
 msgstr "Quốc gia"
 
-#: src/protocols/jabber/buddy.c:256
-#: src/protocols/jabber/buddy.c:681
+#: src/protocols/jabber/buddy.c:256 src/protocols/jabber/buddy.c:681
 #: src/protocols/jabber/buddy.c:688
 msgid "Telephone"
 msgstr "Điện thoại"
 
-#: src/protocols/jabber/buddy.c:257
-#: src/protocols/jabber/buddy.c:699
-#: src/protocols/jabber/buddy.c:707
-#: src/protocols/yahoo/yahoo.c:2672
+#: src/protocols/jabber/buddy.c:257 src/protocols/jabber/buddy.c:699
+#: src/protocols/jabber/buddy.c:707 src/protocols/yahoo/yahoo.c:2672
 msgid "Email"
 msgstr "Thư điện tử"
 
-#: src/protocols/jabber/buddy.c:258
-#: src/protocols/jabber/buddy.c:722
+#: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:722
 msgid "Organization Name"
 msgstr "Tên Cơ Quan"
 
-#: src/protocols/jabber/buddy.c:259
-#: src/protocols/jabber/buddy.c:726
+#: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:726
 msgid "Organization Unit"
 msgstr "Phòng ban"
 
-#: src/protocols/jabber/buddy.c:260
-#: src/protocols/jabber/buddy.c:732
+#: src/protocols/jabber/buddy.c:260 src/protocols/jabber/buddy.c:732
 msgid "Title"
 msgstr "Chức danh"
 
-#: src/protocols/jabber/buddy.c:261
-#: src/protocols/jabber/buddy.c:735
+#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:735
 msgid "Role"
 msgstr "Vị trí"
 
-#: src/protocols/jabber/buddy.c:262
-#: src/protocols/jabber/buddy.c:628
+#: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:628
 #: src/protocols/oscar/oscar.c:3991
 msgid "Birthday"
 msgstr "Ngày sinh"
 
-#: src/protocols/jabber/buddy.c:506
-#: src/protocols/jabber/buddy.c:507
+#: src/protocols/jabber/buddy.c:506 src/protocols/jabber/buddy.c:507
 msgid "Edit Jabber vCard"
 msgstr "Soạn Jabber vCard"
 
 #: src/protocols/jabber/buddy.c:508
-msgid "All items below are optional. Enter only the information with which you feel comfortable."
+msgid ""
+"All items below are optional. Enter only the information with which you feel "
+"comfortable."
 msgstr "Mọi mục bên dưới là tùy chọn. Chỉ nhập thông tin bạn thấy cần thiết."
 
 #: src/protocols/jabber/buddy.c:546
 msgid "Jabber ID"
 msgstr "Jabber ID"
 
-#: src/protocols/jabber/buddy.c:556
-#: src/protocols/jabber/buddy.c:563
-#: src/protocols/jabber/buddy.c:574
-#: src/protocols/jabber/jabber.c:904
+#: src/protocols/jabber/buddy.c:556 src/protocols/jabber/buddy.c:563
+#: src/protocols/jabber/buddy.c:574 src/protocols/jabber/jabber.c:904
 #: src/protocols/jabber/jabber.c:917
 msgid "Status"
 msgstr "Trạng thái"
 
-#: src/protocols/jabber/buddy.c:572
-#: src/protocols/jabber/jabber.c:1146
+#: src/protocols/jabber/buddy.c:572 src/protocols/jabber/jabber.c:1146
 msgid "Resource"
 msgstr "Tài nguyên"
 
@@ -5037,10 +4918,8 @@ msgstr "Tài nguyên"
 msgid "Middle Name"
 msgstr "Tên đệm"
 
-#: src/protocols/jabber/buddy.c:633
-#: src/protocols/jabber/jabber.c:613
-#: src/protocols/oscar/oscar.c:4008
-#: src/protocols/oscar/oscar.c:4024
+#: src/protocols/jabber/buddy.c:633 src/protocols/jabber/jabber.c:613
+#: src/protocols/oscar/oscar.c:4008 src/protocols/oscar/oscar.c:4024
 msgid "Address"
 msgstr "Địa chỉ"
 
@@ -5080,8 +4959,7 @@ msgstr "Yêu cầu xác thực"
 msgid "Unsubscribe"
 msgstr "Không đăng ký"
 
-#: src/protocols/jabber/chat.c:37
-#: src/protocols/yahoo/yahoochat.c:870
+#: src/protocols/jabber/chat.c:37 src/protocols/yahoo/yahoochat.c:870
 msgid "Room:"
 msgstr "Phòng:"
 
@@ -5107,8 +4985,7 @@ msgstr "Tên phòng không hợp lệ"
 msgid "%s is not a valid server name"
 msgstr "%s không phải tên máy chủ hợp lệ"
 
-#: src/protocols/jabber/chat.c:165
-#: src/protocols/jabber/chat.c:166
+#: src/protocols/jabber/chat.c:165 src/protocols/jabber/chat.c:166
 msgid "Invalid Server Name"
 msgstr "Tên máy chủ không hợp lệ"
 
@@ -5117,8 +4994,7 @@ msgstr "Tên máy chủ không hợp lệ"
 msgid "%s is not a valid room handle"
 msgstr "%s không phải một xử lý phòng hợp lệ"
 
-#: src/protocols/jabber/chat.c:171
-#: src/protocols/jabber/chat.c:172
+#: src/protocols/jabber/chat.c:171 src/protocols/jabber/chat.c:172
 msgid "Invalid Room Handle"
 msgstr "Xử lý phòng không hợp lệ"
 
@@ -5222,49 +5098,29 @@ msgstr "XML có định dạng không chuẩn"
 msgid "Stream Error"
 msgstr "Lỗi stream"
 
-#: src/protocols/jabber/jabber.c:245
-#: src/protocols/msn/httpmethod.c:216
-#: src/protocols/msn/msn.c:82
-#: src/protocols/msn/msn.c:102
-#: src/protocols/msn/msn.c:160
-#: src/protocols/msn/msn.c:260
-#: src/protocols/msn/msn.c:536
-#: src/protocols/msn/msn.c:707
-#: src/protocols/msn/msn.c:730
-#: src/protocols/msn/msn.c:762
-#: src/protocols/msn/msn.c:770
-#: src/protocols/msn/msn.c:803
-#: src/protocols/msn/msn.c:811
-#: src/protocols/msn/msn.c:825
-#: src/protocols/msn/msn.c:834
-#: src/protocols/msn/msn.c:849
-#: src/protocols/msn/msn.c:859
-#: src/protocols/msn/msn.c:881
-#: src/protocols/msn/msn.c:931
-#: src/protocols/msn/msn.c:969
-#: src/protocols/msn/msn.c:1067
-#: src/protocols/msn/msn.c:1099
-#: src/protocols/msn/msn.c:1120
-#: src/protocols/msn/msn.c:1131
-#: src/protocols/msn/msn.c:1142
-#: src/protocols/msn/msn.c:1166
-#: src/protocols/msn/msn.c:1178
-#: src/protocols/msn/msn.c:1259
-#: src/protocols/msn/notification.c:179
-#: src/protocols/msn/notification.c:207
-#: src/protocols/msn/notification.c:1664
-#: src/protocols/msn/notification.c:1684
-#: src/protocols/trepia/trepia.c:248
-#: src/protocols/trepia/trepia.c:749
-#: src/protocols/trepia/trepia.c:1033
-#: src/protocols/trepia/trepia.c:1077
-#: src/protocols/trepia/trepia.c:1176
-#: src/protocols/trepia/trepia.c:1232
+#: src/protocols/jabber/jabber.c:245 src/protocols/msn/httpmethod.c:216
+#: src/protocols/msn/msn.c:82 src/protocols/msn/msn.c:102
+#: src/protocols/msn/msn.c:160 src/protocols/msn/msn.c:260
+#: src/protocols/msn/msn.c:536 src/protocols/msn/msn.c:707
+#: src/protocols/msn/msn.c:730 src/protocols/msn/msn.c:762
+#: src/protocols/msn/msn.c:770 src/protocols/msn/msn.c:803
+#: src/protocols/msn/msn.c:811 src/protocols/msn/msn.c:825
+#: src/protocols/msn/msn.c:834 src/protocols/msn/msn.c:849
+#: src/protocols/msn/msn.c:859 src/protocols/msn/msn.c:881
+#: src/protocols/msn/msn.c:931 src/protocols/msn/msn.c:969
+#: src/protocols/msn/msn.c:1067 src/protocols/msn/msn.c:1099
+#: src/protocols/msn/msn.c:1120 src/protocols/msn/msn.c:1131
+#: src/protocols/msn/msn.c:1142 src/protocols/msn/msn.c:1166
+#: src/protocols/msn/msn.c:1178 src/protocols/msn/msn.c:1259
+#: src/protocols/msn/notification.c:179 src/protocols/msn/notification.c:207
+#: src/protocols/msn/notification.c:1664 src/protocols/msn/notification.c:1684
+#: src/protocols/trepia/trepia.c:248 src/protocols/trepia/trepia.c:749
+#: src/protocols/trepia/trepia.c:1033 src/protocols/trepia/trepia.c:1077
+#: src/protocols/trepia/trepia.c:1176 src/protocols/trepia/trepia.c:1232
 msgid "Write error"
 msgstr "Lỗi ghi"
 
-#: src/protocols/jabber/jabber.c:282
-#: src/protocols/jabber/jabber.c:302
+#: src/protocols/jabber/jabber.c:282 src/protocols/jabber/jabber.c:302
 msgid "Read Error"
 msgstr "Lỗi đọc"
 
@@ -5272,13 +5128,11 @@ msgstr "Lỗi đọc"
 msgid "SSL Handshake Failed"
 msgstr "SSL Handshake lỗi"
 
-#: src/protocols/jabber/jabber.c:393
-#: src/protocols/jabber/jabber.c:687
+#: src/protocols/jabber/jabber.c:393 src/protocols/jabber/jabber.c:687
 msgid "Invalid Jabber ID"
 msgstr "ID Jabber không hợp lệ"
 
-#: src/protocols/jabber/jabber.c:427
-#: src/protocols/jabber/jabber.c:721
+#: src/protocols/jabber/jabber.c:427 src/protocols/jabber/jabber.c:721
 #: src/protocols/trepia/trepia.c:1116
 msgid "Unable to create socket"
 msgstr "Không tạo được socket"
@@ -5288,8 +5142,7 @@ msgstr "Không tạo được socket"
 msgid "Registration of %s@%s successful"
 msgstr "%s@%s đăng ký thành công"
 
-#: src/protocols/jabber/jabber.c:454
-#: src/protocols/jabber/jabber.c:455
+#: src/protocols/jabber/jabber.c:454 src/protocols/jabber/jabber.c:455
 msgid "Registration Successful"
 msgstr "Đăng ký thành công"
 
@@ -5302,18 +5155,15 @@ msgstr "Lỗi không xác định"
 msgid "Registration of %s@%s failed: %s"
 msgstr "%s@%s đăng ký không được: %s"
 
-#: src/protocols/jabber/jabber.c:469
-#: src/protocols/jabber/jabber.c:470
+#: src/protocols/jabber/jabber.c:469 src/protocols/jabber/jabber.c:470
 msgid "Registration Failed"
 msgstr "Đăng ký không được"
 
-#: src/protocols/jabber/jabber.c:568
-#: src/protocols/jabber/jabber.c:569
+#: src/protocols/jabber/jabber.c:568 src/protocols/jabber/jabber.c:569
 msgid "Already Registered"
 msgstr "Đã đăng ký rồi"
 
-#: src/protocols/jabber/jabber.c:582
-#: src/protocols/jabber/jabber.c:1014
+#: src/protocols/jabber/jabber.c:582 src/protocols/jabber/jabber.c:1014
 msgid "Password"
 msgstr "Mật khẩu"
 
@@ -5322,17 +5172,14 @@ msgid "E-Mail"
 msgstr "Email"
 
 #. First Name
-#: src/protocols/jabber/jabber.c:603
-#: src/protocols/oscar/oscar.c:3962
+#: src/protocols/jabber/jabber.c:603 src/protocols/oscar/oscar.c:3962
 #: src/protocols/trepia/trepia.c:267
 msgid "First Name"
 msgstr "Tên"
 
 #. State
-#: src/protocols/jabber/jabber.c:623
-#: src/protocols/oscar/oscar.c:4014
-#: src/protocols/oscar/oscar.c:4030
-#: src/protocols/trepia/trepia.c:335
+#: src/protocols/jabber/jabber.c:623 src/protocols/oscar/oscar.c:4014
+#: src/protocols/oscar/oscar.c:4030 src/protocols/trepia/trepia.c:335
 #: src/protocols/trepia/trepia.c:439
 msgid "State"
 msgstr "Bang"
@@ -5345,17 +5192,13 @@ msgstr "Điện thoại"
 msgid "Please fill out the information below to register your new account."
 msgstr "Hãy điền thông tin bên dưới để đăng ký tài khoản mới cho bạn."
 
-#: src/protocols/jabber/jabber.c:654
-#: src/protocols/jabber/jabber.c:655
+#: src/protocols/jabber/jabber.c:654 src/protocols/jabber/jabber.c:655
 msgid "Register New Jabber Account"
 msgstr "Đăng ký tài khoản Jabber mới"
 
-#: src/protocols/jabber/jabber.c:770
-#: src/protocols/msn/dispatch.c:219
-#: src/protocols/msn/msn.c:481
-#: src/protocols/napster/napster.c:487
-#: src/protocols/oscar/oscar.c:694
-#: src/protocols/trepia/trepia.c:1110
+#: src/protocols/jabber/jabber.c:770 src/protocols/msn/dispatch.c:219
+#: src/protocols/msn/msn.c:481 src/protocols/napster/napster.c:487
+#: src/protocols/oscar/oscar.c:694 src/protocols/trepia/trepia.c:1110
 #: src/protocols/yahoo/yahoo.c:1923
 msgid "Connecting"
 msgstr "Kết nối"
@@ -5372,36 +5215,30 @@ msgstr "Xác thực"
 msgid "Re-initializing Stream"
 msgstr "Khởi tạo lại Stream"
 
-#: src/protocols/jabber/jabber.c:912
-#: src/protocols/jabber/jabber.c:965
-#: src/protocols/jabber/presence.c:270
+#: src/protocols/jabber/jabber.c:912 src/protocols/jabber/jabber.c:965
+#: src/protocols/jabber/presence.c:271
 msgid "Error"
 msgstr "Lỗi"
 
-#: src/protocols/jabber/jabber.c:928
-#: src/protocols/jabber/jutil.c:101
+#: src/protocols/jabber/jabber.c:928 src/protocols/jabber/jutil.c:101
 #: src/protocols/jabber/presence.c:82
 msgid "Chatty"
 msgstr "Hay chat"
 
-#: src/protocols/jabber/jabber.c:930
-#: src/protocols/jabber/jutil.c:104
+#: src/protocols/jabber/jabber.c:930 src/protocols/jabber/jutil.c:104
 #: src/protocols/jabber/presence.c:87
 msgid "Extended Away"
 msgstr "Mở rộng Trạng thái"
 
-#: src/protocols/jabber/jabber.c:931
-#: src/protocols/jabber/jutil.c:107
-#: src/protocols/jabber/presence.c:89
-#: src/protocols/oscar/oscar.c:2838
-#: src/protocols/oscar/oscar.c:4594
-#: src/protocols/oscar/oscar.c:6139
+#: src/protocols/jabber/jabber.c:931 src/protocols/jabber/jutil.c:107
+#: src/protocols/jabber/presence.c:89 src/protocols/oscar/oscar.c:2838
+#: src/protocols/oscar/oscar.c:4594 src/protocols/oscar/oscar.c:6139
 msgid "Do Not Disturb"
 msgstr "Xin đừng quấy rầy"
 
 #: src/protocols/jabber/jabber.c:947
 msgid "Password Changed"
-msgstr "Mật khẩu đã thay đổi"
+msgstr "Mật khẩu đã được đổi"
 
 #: src/protocols/jabber/jabber.c:948
 msgid "Your password has been changed."
@@ -5420,8 +5257,7 @@ msgstr "Lỗi không xác định xảy ra khi đổi mật khẩu"
 msgid "Password (again)"
 msgstr "Nhập Lại Mật khẩu"
 
-#: src/protocols/jabber/jabber.c:1024
-#: src/protocols/jabber/jabber.c:1025
+#: src/protocols/jabber/jabber.c:1024 src/protocols/jabber/jabber.c:1025
 msgid "Change Jabber Password"
 msgstr "Đổi mật khẩu Jabber"
 
@@ -5439,8 +5275,7 @@ msgstr "Hãy nhập mật khẩu mới"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/jabber/jabber.c:1123
-#: src/protocols/jabber/jabber.c:1125
+#: src/protocols/jabber/jabber.c:1123 src/protocols/jabber/jabber.c:1125
 msgid "Jabber Protocol Plugin"
 msgstr "Plugin Giao Thức Jabber"
 
@@ -5489,62 +5324,53 @@ msgstr "Hiện tại không xác định được lỗi gì"
 msgid "The user %s wants to add you to their buddy list."
 msgstr "Người dùng %s muốn thêm bạn vào danh sách buddy của họ."
 
-#: src/protocols/jabber/presence.c:260
-#: src/protocols/oscar/oscar.c:2949
+#: src/protocols/jabber/presence.c:261 src/protocols/oscar/oscar.c:2949
 msgid "Unknown error"
 msgstr "Lỗi không xác định"
 
-#: src/protocols/jabber/presence.c:266
+#: src/protocols/jabber/presence.c:267
 msgid "Unable to join chat"
-msgstr "Không thể vào chat"
+msgstr "Không thể tham gia Chat"
 
 #: src/protocols/jabber/si.c:233
 #, c-format
 msgid "Could not send %s to %s, protocol not supported."
 msgstr "Không thể gửi %s tới %s, giao thức không được hỗ trợ."
 
-#: src/protocols/jabber/si.c:234
-#: src/protocols/jabber/si.c:235
+#: src/protocols/jabber/si.c:234 src/protocols/jabber/si.c:235
 msgid "File Send Failed"
 msgstr "Không gửi được tập tin"
 
-#: src/protocols/msn/dispatch.c:42
-#: src/protocols/msn/notification.c:278
+#: src/protocols/msn/dispatch.c:42 src/protocols/msn/notification.c:278
 #: src/protocols/msn/notification.c:521
 msgid "Unable to request USR\n"
 msgstr "Không thể yêu cầu USR\n"
 
-#: src/protocols/msn/dispatch.c:59
-#: src/protocols/msn/notification.c:295
+#: src/protocols/msn/dispatch.c:59 src/protocols/msn/notification.c:295
 msgid "Unable to login using MD5"
 msgstr "Không thể đăng nhập bằng MD5"
 
-#: src/protocols/msn/dispatch.c:68
-#: src/protocols/msn/notification.c:304
+#: src/protocols/msn/dispatch.c:68 src/protocols/msn/notification.c:304
 msgid "Unable to send USR"
-msgstr "Không thể gởi USR"
+msgstr "Không thể gửi USR"
 
-#: src/protocols/msn/dispatch.c:73
-#: src/protocols/msn/notification.c:309
+#: src/protocols/msn/dispatch.c:73 src/protocols/msn/notification.c:309
 msgid "Requesting to send password"
-msgstr "Yêu cầu  gởi mật khẩu"
+msgstr "Yêu cầu  gửi mật khẩu"
 
 #: src/protocols/msn/dispatch.c:104
 msgid "Protocol version not supported"
 msgstr "Phiên bản giao thức không được hỗ trợ"
 
-#: src/protocols/msn/dispatch.c:117
-#: src/protocols/msn/notification.c:785
+#: src/protocols/msn/dispatch.c:117 src/protocols/msn/notification.c:785
 msgid "Unable to request CVR\n"
 msgstr "Không thể yêu cầu CVR\n"
 
-#: src/protocols/msn/dispatch.c:126
-#: src/protocols/msn/notification.c:794
+#: src/protocols/msn/dispatch.c:126 src/protocols/msn/notification.c:794
 msgid "Unable to request INF\n"
 msgstr "Không thể yêu cầu INF\n"
 
-#: src/protocols/msn/dispatch.c:147
-#: src/protocols/msn/notification.c:1911
+#: src/protocols/msn/dispatch.c:147 src/protocols/msn/notification.c:1911
 msgid "Got invalid XFR"
 msgstr "Nhận XFR không hợp lệ"
 
@@ -5556,30 +5382,23 @@ msgstr "Không thể truyền"
 msgid "Unable to parse message."
 msgstr "Không thể phân tích thông điệp."
 
-#: src/protocols/msn/dispatch.c:215
-#: src/protocols/msn/msn.c:490
-#: src/protocols/msn/notification.c:2141
-#: src/protocols/napster/napster.c:463
-#: src/protocols/napster/napster.c:494
-#: src/protocols/yahoo/yahoo.c:1715
-#: src/protocols/yahoo/yahoo.c:1746
-#: src/protocols/yahoo/yahoo.c:1811
+#: src/protocols/msn/dispatch.c:215 src/protocols/msn/msn.c:490
+#: src/protocols/msn/notification.c:2141 src/protocols/napster/napster.c:463
+#: src/protocols/napster/napster.c:494 src/protocols/yahoo/yahoo.c:1715
+#: src/protocols/yahoo/yahoo.c:1746 src/protocols/yahoo/yahoo.c:1811
 msgid "Unable to connect"
 msgstr "Không thể kết nối"
 
-#: src/protocols/msn/dispatch.c:239
-#: src/protocols/msn/notification.c:890
+#: src/protocols/msn/dispatch.c:239 src/protocols/msn/notification.c:890
 #: src/protocols/msn/notification.c:2163
 msgid "Unable to write to server"
 msgstr "Không thể ghi vào máy chủ"
 
-#: src/protocols/msn/dispatch.c:243
-#: src/protocols/msn/notification.c:2170
+#: src/protocols/msn/dispatch.c:243 src/protocols/msn/notification.c:2170
 msgid "Syncing with server"
 msgstr "Đồng bộ hoá với máy chủ"
 
-#: src/protocols/msn/dispatch.c:257
-#: src/protocols/msn/notification.c:2184
+#: src/protocols/msn/dispatch.c:257 src/protocols/msn/notification.c:2184
 msgid "Error reading from server"
 msgstr "Lỗi đọc từ máy chủ"
 
@@ -5675,8 +5494,7 @@ msgstr "Thiếu các trường được yêu cầu"
 msgid "Too many hits to a FND"
 msgstr "Có quá kết nối tới FND"
 
-#: src/protocols/msn/error.c:107
-#: src/protocols/oscar/oscar.c:183
+#: src/protocols/msn/error.c:107 src/protocols/oscar/oscar.c:183
 msgid "Not logged in"
 msgstr "Chưa đăng nhập"
 
@@ -5704,8 +5522,7 @@ msgstr "Giá trị CHL gửi tới máy chủ bị sai"
 msgid "Server busy"
 msgstr "Máy chủ bận"
 
-#: src/protocols/msn/error.c:130
-#: src/protocols/msn/error.c:143
+#: src/protocols/msn/error.c:130 src/protocols/msn/error.c:143
 #: src/protocols/msn/error.c:198
 msgid "Server unavailable"
 msgstr "Máy chủ hiện không hoạt động"
@@ -5730,8 +5547,7 @@ msgstr "Lỗi khi tạo kết nối"
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Tham số CVR hoặc không xác định được hoặc không được phép dùng"
 
-#: src/protocols/msn/error.c:154
-#: src/protocols/msn/notification.c:636
+#: src/protocols/msn/error.c:154 src/protocols/msn/notification.c:636
 msgid "Unable to write"
 msgstr "Không ghi được"
 
@@ -5747,8 +5563,7 @@ msgstr "Người dùng quá hoạt náo"
 msgid "Too many sessions"
 msgstr "Quá nhiều phiên kết nối"
 
-#: src/protocols/msn/error.c:166
-#: src/protocols/msn/error.c:172
+#: src/protocols/msn/error.c:166 src/protocols/msn/error.c:172
 msgid "Not expected"
 msgstr "Không mong đợi"
 
@@ -5764,8 +5579,7 @@ msgstr "Tên thân thiện thay đổi quá nhanh"
 msgid "Server too busy"
 msgstr "Máy chủ bận"
 
-#: src/protocols/msn/error.c:190
-#: src/protocols/oscar/oscar.c:1076
+#: src/protocols/msn/error.c:190 src/protocols/oscar/oscar.c:1076
 #: src/protocols/toc/toc.c:659
 msgid "Authentication failed"
 msgstr "Không xác thực được"
@@ -5820,8 +5634,12 @@ msgid "Allow MSN Mobile pages?"
 msgstr "Cho phép nhắn tin vào di động MSN?"
 
 #: src/protocols/msn/msn.c:222
-msgid "Do you want to allow or disallow people on your buddy list to send you MSN Mobile pages to your cell phone or other mobile device?"
-msgstr "Bạn muốn cho phép hoặc cấm người khác gửi tin nhắn MSN vào điện thoại di động hay thiết bị di động nào khác của bạn hay không?"
+msgid ""
+"Do you want to allow or disallow people on your buddy list to send you MSN "
+"Mobile pages to your cell phone or other mobile device?"
+msgstr ""
+"Bạn muốn cho phép hoặc cấm người khác gửi tin nhắn MSN vào điện thoại di "
+"động hay thiết bị di động nào khác của bạn hay không?"
 
 #: src/protocols/msn/msn.c:226
 msgid "Allow"
@@ -5839,58 +5657,42 @@ msgstr "Gửi tin nhắn tới di động"
 msgid "Page"
 msgstr "Nhắn tin"
 
-#: src/protocols/msn/msn.c:332
-#: src/protocols/yahoo/yahoo.c:2142
+#: src/protocols/msn/msn.c:332 src/protocols/yahoo/yahoo.c:2142
 #, c-format
 msgid "<b>Status:</b> %s"
 msgstr "<b>Trạng thái:</b> %s"
 
-#: src/protocols/msn/msn.c:345
-#: src/protocols/msn/msn.c:626
+#: src/protocols/msn/msn.c:345 src/protocols/msn/msn.c:626
 #: src/protocols/msn/state.c:32
 msgid "Away From Computer"
-msgstr "Không có mặt bên máy tính"
+msgstr "Rời khỏi máy tính"
 
-#: src/protocols/msn/msn.c:346
-#: src/protocols/msn/msn.c:628
-#: src/protocols/msn/state.c:31
-#: src/protocols/yahoo/yahoo.c:2008
-#: src/protocols/yahoo/yahoo.c:2306
-#: src/protocols/yahoo/yahoo.c:2406
+#: src/protocols/msn/msn.c:346 src/protocols/msn/msn.c:628
+#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:2008
+#: src/protocols/yahoo/yahoo.c:2306 src/protocols/yahoo/yahoo.c:2406
 msgid "Be Right Back"
 msgstr "Sẽ quay lại ngay"
 
-#: src/protocols/msn/msn.c:347
-#: src/protocols/msn/msn.c:630
-#: src/protocols/msn/state.c:29
-#: src/protocols/yahoo/yahoo.c:2010
-#: src/protocols/yahoo/yahoo.c:2308
-#: src/protocols/yahoo/yahoo.c:2407
+#: src/protocols/msn/msn.c:347 src/protocols/msn/msn.c:630
+#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:2010
+#: src/protocols/yahoo/yahoo.c:2308 src/protocols/yahoo/yahoo.c:2407
 msgid "Busy"
 msgstr "Đang bận"
 
-#: src/protocols/msn/msn.c:348
-#: src/protocols/msn/msn.c:632
-#: src/protocols/msn/state.c:33
-#: src/protocols/yahoo/yahoo.c:2018
-#: src/protocols/yahoo/yahoo.c:2316
-#: src/protocols/yahoo/yahoo.c:2411
+#: src/protocols/msn/msn.c:348 src/protocols/msn/msn.c:632
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2018
+#: src/protocols/yahoo/yahoo.c:2316 src/protocols/yahoo/yahoo.c:2411
 msgid "On The Phone"
 msgstr "Đang bận nói điện thoại"
 
-#: src/protocols/msn/msn.c:349
-#: src/protocols/msn/msn.c:634
-#: src/protocols/msn/state.c:34
-#: src/protocols/yahoo/yahoo.c:2022
-#: src/protocols/yahoo/yahoo.c:2320
-#: src/protocols/yahoo/yahoo.c:2413
+#: src/protocols/msn/msn.c:349 src/protocols/msn/msn.c:634
+#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:2022
+#: src/protocols/yahoo/yahoo.c:2320 src/protocols/yahoo/yahoo.c:2413
 msgid "Out To Lunch"
 msgstr "Đi ăn trưa"
 
-#: src/protocols/msn/msn.c:350
-#: src/protocols/msn/msn.c:636
-#: src/protocols/zephyr/zephyr.c:883
-#: src/protocols/zephyr/zephyr.c:898
+#: src/protocols/msn/msn.c:350 src/protocols/msn/msn.c:636
+#: src/protocols/zephyr/zephyr.c:883 src/protocols/zephyr/zephyr.c:898
 msgid "Hidden"
 msgstr "Ẩn mặt"
 
@@ -5924,7 +5726,7 @@ msgstr "Gửi tới thiết bị di động"
 
 #: src/protocols/msn/msn.c:433
 msgid "Initiate Chat"
-msgstr "Bắt đầu nói chuyện"
+msgstr "Khởi tạo Chat"
 
 #: src/protocols/msn/msn.c:457
 msgid "SSL support is needed for MSN. Please install it."
@@ -5932,103 +5734,93 @@ msgstr "MSN đòi hỏi hỗ trợ SSL. Hãy cài đặt nó."
 
 #: src/protocols/msn/msn.c:743
 #, c-format
-msgid "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant %s@hotmail.com. No changes were made to your allow list."
-msgstr "Tên hiển thị MSN phải có dạng \"tên@máychủ.com\". Có thể ý của bạn là %s@hotmail.com. Danh sách được phép không có gì thay đổi."
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
+"%s@hotmail.com. No changes were made to your allow list."
+msgstr ""
+"Tên hiển thị MSN phải có dạng \"tên@máychủ.com\". Có thể ý của bạn là %"
+"s@hotmail.com. Danh sách được phép không có gì thay đổi."
 
-#: src/protocols/msn/msn.c:747
-#: src/protocols/msn/msn.c:787
+#: src/protocols/msn/msn.c:747 src/protocols/msn/msn.c:787
 msgid "Invalid MSN screenname"
 msgstr "Tên hiển thị MSN không hợp lệ"
 
 #: src/protocols/msn/msn.c:783
 #, c-format
-msgid "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant %s@hotmail.com. No changes were made to your block list."
-msgstr "Tên hiển thị MSN phải có dạng \"user@server.com\". Có thể ý của bạn là %s@hotmail.com. Danh sách bị chặn không có gì thay đổi."
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
+"%s@hotmail.com. No changes were made to your block list."
+msgstr ""
+"Tên hiển thị MSN phải có dạng \"user@server.com\". Có thể ý của bạn là %"
+"s@hotmail.com. Danh sách bị chặn không có gì thay đổi."
 
-#: src/protocols/msn/msn.c:1283
-#: src/protocols/yahoo/yahoo.c:2582
+#: src/protocols/msn/msn.c:1283 src/protocols/yahoo/yahoo.c:2582
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr "<html><body><b>Lỗi xảy ra khi lấy thông tin lý lịch</b></body></html>"
 
 #. Age
-#: src/protocols/msn/msn.c:1351
-#: src/protocols/oscar/oscar.c:3996
-#: src/protocols/trepia/trepia.c:285
-#: src/protocols/trepia/trepia.c:413
+#: src/protocols/msn/msn.c:1351 src/protocols/oscar/oscar.c:3996
+#: src/protocols/trepia/trepia.c:285 src/protocols/trepia/trepia.c:413
 #: src/protocols/yahoo/yahoo.c:2696
 msgid "Age"
 msgstr "Tuổi"
 
 #. Gender
-#: src/protocols/msn/msn.c:1358
-#: src/protocols/oscar/oscar.c:3982
-#: src/protocols/trepia/trepia.c:279
-#: src/protocols/trepia/trepia.c:421
+#: src/protocols/msn/msn.c:1358 src/protocols/oscar/oscar.c:3982
+#: src/protocols/trepia/trepia.c:279 src/protocols/trepia/trepia.c:421
 #: src/protocols/yahoo/yahoo.c:2708
 msgid "Gender"
 msgstr "Giới tính"
 
-#: src/protocols/msn/msn.c:1366
-#: src/protocols/yahoo/yahoo.c:2702
+#: src/protocols/msn/msn.c:1366 src/protocols/yahoo/yahoo.c:2702
 msgid "Marital Status"
 msgstr "Tình trạng hôn nhân"
 
-#: src/protocols/msn/msn.c:1373
-#: src/protocols/yahoo/yahoo.c:2690
+#: src/protocols/msn/msn.c:1373 src/protocols/yahoo/yahoo.c:2690
 msgid "Location"
 msgstr "Nơi ở"
 
-#: src/protocols/msn/msn.c:1381
-#: src/protocols/yahoo/yahoo.c:2714
+#: src/protocols/msn/msn.c:1381 src/protocols/yahoo/yahoo.c:2714
 msgid "Occupation"
 msgstr "Nghề nghiệp"
 
-#: src/protocols/msn/msn.c:1398
-#: src/protocols/msn/msn.c:1404
-#: src/protocols/msn/msn.c:1411
-#: src/protocols/msn/msn.c:1418
+#: src/protocols/msn/msn.c:1398 src/protocols/msn/msn.c:1404
+#: src/protocols/msn/msn.c:1411 src/protocols/msn/msn.c:1418
 #: src/protocols/msn/msn.c:1425
 msgid "A Little About Me"
 msgstr "Đôi chút về bản thân"
 
-#: src/protocols/msn/msn.c:1434
-#: src/protocols/msn/msn.c:1447
+#: src/protocols/msn/msn.c:1434 src/protocols/msn/msn.c:1447
 #: src/protocols/msn/msn.c:1454
 msgid "Favorite Things"
 msgstr "Những thứ yêu thích"
 
-#: src/protocols/msn/msn.c:1463
-#: src/protocols/msn/msn.c:1469
+#: src/protocols/msn/msn.c:1463 src/protocols/msn/msn.c:1469
 #: src/protocols/msn/msn.c:1476
 msgid "Hobbies and Interests"
 msgstr "Sở thích"
 
-#: src/protocols/msn/msn.c:1485
-#: src/protocols/msn/msn.c:1491
+#: src/protocols/msn/msn.c:1485 src/protocols/msn/msn.c:1491
 #: src/protocols/yahoo/yahoo.c:2758
 msgid "Favorite Quote"
 msgstr "Câu trích dẫn ưa thích"
 
-#: src/protocols/msn/msn.c:1499
-#: src/protocols/yahoo/yahoo.c:2802
+#: src/protocols/msn/msn.c:1499 src/protocols/yahoo/yahoo.c:2802
 msgid "Last Updated"
 msgstr "Cập nhật lần cuối"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1510
-#: src/protocols/trepia/trepia.c:289
+#: src/protocols/msn/msn.c:1510 src/protocols/trepia/trepia.c:289
 #: src/protocols/trepia/trepia.c:457
 msgid "Homepage"
 msgstr "Trang chủ"
 
-#: src/protocols/msn/msn.c:1532
-#: src/protocols/yahoo/yahoo.c:2820
+#: src/protocols/msn/msn.c:1532 src/protocols/yahoo/yahoo.c:2820
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Hiện không có thông tin về %s"
 
-#: src/protocols/msn/msn.c:1534
-#: src/protocols/yahoo/yahoo.c:2822
+#: src/protocols/msn/msn.c:1534 src/protocols/yahoo/yahoo.c:2822
 msgid "The user's profile is empty."
 msgstr "Lý lịch người dùng này trống."
 
@@ -6042,13 +5834,11 @@ msgstr "Lý lịch người dùng này trống."
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/msn/msn.c:1632
-#: src/protocols/msn/msn.c:1634
+#: src/protocols/msn/msn.c:1632 src/protocols/msn/msn.c:1634
 msgid "MSN Protocol Plugin"
 msgstr "Plugin Giao Thức MSN"
 
-#: src/protocols/msn/msn.c:1651
-#: src/protocols/trepia/trepia.c:1340
+#: src/protocols/msn/msn.c:1651 src/protocols/trepia/trepia.c:1340
 msgid "Login server"
 msgstr "Đăng Nhập Máy Chủ"
 
@@ -6065,13 +5855,11 @@ msgstr "Lỗi MSN: %s\n"
 msgid "Unable to connect to server"
 msgstr "Không thể kết nối đến máy chủ"
 
-#: src/protocols/msn/notification.c:377
-#: src/protocols/msn/notification.c:546
+#: src/protocols/msn/notification.c:377 src/protocols/msn/notification.c:546
 msgid "Unable to write to MSN Nexus server."
 msgstr "Không ghi được vào máy chủ Nexus MSN."
 
-#: src/protocols/msn/notification.c:386
-#: src/protocols/msn/notification.c:561
+#: src/protocols/msn/notification.c:386 src/protocols/msn/notification.c:561
 msgid "Unable to read from MSN Nexus server."
 msgstr "Không đọc được từ máy chủ Nexus MSN."
 
@@ -6087,8 +5875,7 @@ msgstr "Có lỗi không xác định khi kết nối đăng nhập với máy c
 msgid "MSN Nexus server returned invalid information."
 msgstr "Máy chủ Nexus MSN gửi lại thông tin không hợp lệ."
 
-#: src/protocols/msn/notification.c:641
-#: src/protocols/trepia/trepia.c:686
+#: src/protocols/msn/notification.c:641 src/protocols/trepia/trepia.c:686
 msgid "Retrieving buddy list"
 msgstr "Lấy danh sách buddy"
 
@@ -6096,8 +5883,7 @@ msgstr "Lấy danh sách buddy"
 msgid "Unable to connect to passport server"
 msgstr "Không thể kết nối tới máy chủ passport"
 
-#: src/protocols/msn/notification.c:709
-#: src/protocols/msn/notification.c:741
+#: src/protocols/msn/notification.c:709 src/protocols/msn/notification.c:741
 #: src/protocols/oscar/oscar.c:1362
 msgid "Password sent"
 msgstr "Đã gửi mật khẩu"
@@ -6123,8 +5909,7 @@ msgstr "Bạn bị ngắt kết nối. Máy chủ MSN tạm thời bị ngừng.
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
 msgstr "Người dùng %s (%s) muốn thêm %s vào danh sách buddy của họ."
 
-#: src/protocols/msn/notification.c:1264
-#: src/protocols/msn/notification.c:1429
+#: src/protocols/msn/notification.c:1264 src/protocols/msn/notification.c:1429
 #, c-format
 msgid "The user %s (%s) wants to add you to their buddy list."
 msgstr "Người dùng %s (%s) muốn thêm bạn vào danh sách buddy của họ."
@@ -6134,8 +5919,29 @@ msgid "Unable to transfer to notification server"
 msgstr "Không thể truyền tới máy chủ thông báo"
 
 #: src/protocols/msn/notification.c:2104
-#: src/protocols/msn/servconn.c:533
 #, c-format
+msgid ""
+"The MSN server will shut down for maintenance in %d minute. You will "
+"automatically be signed out at that time.  Please finish any conversations "
+"in progress.\n"
+"\n"
+"After the maintenance has been completed, you will be able to successfully "
+"sign in."
+msgid_plural ""
+"The MSN server will shut down for maintenance in %d minutes. You will "
+"automatically be signed out at that time.  Please finish any conversations "
+"in progress.\n"
+"\n"
+"After the maintenance has been completed, you will be able to successfully "
+"sign in."
+msgstr[0] ""
+"Máy chủ MSN sẽ tắt trong vòng %d phút để bảo trì. Bạn sẽ được tự động ngắt "
+"kết nối vào lúc đó. Hãy kết thúc mọi hội thoại đang diễn ra.\n"
+"\n"
+"Sau khi hoàn tất việc bảo trì, bạn có thể kết nối lại như bình thường."
+msgstr[1] ""
+
+#: src/protocols/msn/servconn.c:533
 msgid "Received HTTP error. Please report this."
 msgstr "Nhận lỗi HTTP. Hãy thông báo lỗi này."
 
@@ -6183,8 +5989,11 @@ msgid "%s requested your information"
 msgstr "%s yêu cầu thông tin của bạn"
 
 #: src/protocols/napster/napster.c:410
-msgid "You were disconnected from the server, because you logged on from a different location"
-msgstr "Bạn bị ngắt kết nối khỏi máy chủ vì bạn đã đăng nhập từ một vị trí khác"
+msgid ""
+"You were disconnected from the server, because you logged on from a "
+"different location"
+msgstr ""
+"Bạn bị ngắt kết nối khỏi máy chủ vì bạn đã đăng nhập từ một vị trí khác"
 
 #. MSG_CLIENT_PING
 #: src/protocols/napster/napster.c:416
@@ -6192,8 +6001,7 @@ msgstr "Bạn bị ngắt kết nối khỏi máy chủ vì bạn đã đăng nh
 msgid "%s requested a PING"
 msgstr "%s yêu cầu PING"
 
-#: src/protocols/napster/napster.c:543
-#: src/protocols/oscar/oscar.c:5208
+#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5208
 #: src/protocols/toc/toc.c:1259
 msgid "Join what group:"
 msgstr "Tham gia nhóm nào:"
@@ -6208,8 +6016,7 @@ msgstr "Tham gia nhóm nào:"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/napster/napster.c:619
-#: src/protocols/napster/napster.c:621
+#: src/protocols/napster/napster.c:619 src/protocols/napster/napster.c:621
 msgid "NAPSTER Protocol Plugin"
 msgstr "Plugin giao thức NAPSTER"
 
@@ -6319,26 +6126,22 @@ msgstr "Nhắn tin trực tiếp với %s bị đóng"
 msgid "Direct IM with %s failed"
 msgstr "Không nhắn tin trực tiếp được với %s"
 
-#: src/protocols/oscar/oscar.c:535
-#: src/protocols/toc/toc.c:218
-#: src/protocols/toc/toc.c:625
-#: src/protocols/toc/toc.c:641
+#: src/protocols/oscar/oscar.c:535 src/protocols/toc/toc.c:218
+#: src/protocols/toc/toc.c:625 src/protocols/toc/toc.c:641
 #: src/protocols/toc/toc.c:709
 msgid "Disconnected."
 msgstr "Đã ngắt kết nối."
 
-#: src/protocols/oscar/oscar.c:547
-#: src/protocols/toc/toc.c:885
+#: src/protocols/oscar/oscar.c:547 src/protocols/toc/toc.c:885
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "Bạn đã bị ngắt kết nối với phòng chat %s."
+msgstr "Bạn đã bị ngắt kết nối với phòng Chat %s."
 
 #: src/protocols/oscar/oscar.c:563
 msgid "Chat is currently unavailable"
-msgstr "Hiện thời không có chat"
+msgstr "Hiện thời không có Chat"
 
-#: src/protocols/oscar/oscar.c:634
-#: src/protocols/oscar/oscar.c:690
+#: src/protocols/oscar/oscar.c:634 src/protocols/oscar/oscar.c:690
 msgid "Couldn't connect to host"
 msgstr "Không kết nối được với máy chủ"
 
@@ -6350,8 +6153,7 @@ msgstr "đã gửi tên hiển thị"
 msgid "Unable to login to AIM"
 msgstr "Không đăng nhập AIM được"
 
-#: src/protocols/oscar/oscar.c:779
-#: src/protocols/oscar/oscar.c:1167
+#: src/protocols/oscar/oscar.c:779 src/protocols/oscar/oscar.c:1167
 msgid "Could Not Connect"
 msgstr "Không kết nối được"
 
@@ -6359,8 +6161,7 @@ msgstr "Không kết nối được"
 msgid "Connection established, cookie sent"
 msgstr "Kết nối được thiết lập, đã gửi cookie"
 
-#: src/protocols/oscar/oscar.c:854
-#: src/protocols/oscar/oscar.c:867
+#: src/protocols/oscar/oscar.c:854 src/protocols/oscar/oscar.c:867
 #: src/protocols/oscar/oscar.c:872
 msgid "File Transfer Aborted"
 msgstr "Hủy bỏ việc truyền tập tin"
@@ -6377,8 +6178,7 @@ msgstr "Không thể thiết lập tập tin bộ mô tả."
 msgid "Unable to create new connection."
 msgstr "Không tạo được kết nối mới."
 
-#: src/protocols/oscar/oscar.c:1053
-#: src/protocols/toc/toc.c:571
+#: src/protocols/oscar/oscar.c:1053 src/protocols/toc/toc.c:571
 msgid "Incorrect nickname or password."
 msgstr "Tên hoặc mật khẩu sai."
 
@@ -6392,8 +6192,12 @@ msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Tạm thời không dùng được Dịch vụ tin nhắn tức thời AOL."
 
 #: src/protocols/oscar/oscar.c:1067
-msgid "You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."
-msgstr "Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Xin chờ 10 phút rồi thử lại. Nếu bạn cố kết nối, bạn có thể sẽ phải đợi lâu hơn."
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Xin chờ 10 phút rồi thử "
+"lại. Nếu bạn cố kết nối, bạn có thể sẽ phải đợi lâu hơn."
 
 #: src/protocols/oscar/oscar.c:1072
 #, c-format
@@ -6408,15 +6212,17 @@ msgstr "Lỗi bên trong"
 msgid "Received authorization"
 msgstr "Xác thực đã nhận"
 
-#: src/protocols/oscar/oscar.c:1209
-#: src/protocols/oscar/oscar.c:1239
+#: src/protocols/oscar/oscar.c:1209 src/protocols/oscar/oscar.c:1239
 #: src/protocols/oscar/oscar.c:1327
 #, c-format
-msgid "You may be disconnected shortly.  You may want to use TOC until this is fixed.  Check %s for updates."
-msgstr "Bạn có thể bị ngắt kết nối một thời gian ngắn. Trong lúc chờ đợi lỗi được sửa, bạn có thể sử dụng TOC. Hãy kiểm tra %s để cập nhật."
+msgid ""
+"You may be disconnected shortly.  You may want to use TOC until this is "
+"fixed.  Check %s for updates."
+msgstr ""
+"Bạn có thể bị ngắt kết nối một thời gian ngắn. Trong lúc chờ đợi lỗi được "
+"sửa, bạn có thể sử dụng TOC. Hãy kiểm tra %s để cập nhật."
 
-#: src/protocols/oscar/oscar.c:1212
-#: src/protocols/oscar/oscar.c:1242
+#: src/protocols/oscar/oscar.c:1212 src/protocols/oscar/oscar.c:1242
 msgid "Gaim was unable to get a valid AIM login hash."
 msgstr "Gaim không thể nhận mã đăng nhập AIM hợp lệ."
 
@@ -6424,14 +6230,12 @@ msgstr "Gaim không thể nhận mã đăng nhập AIM hợp lệ."
 msgid "Gaim was unable to get a valid login hash."
 msgstr "Gaim không thể nhận mã đăng nhập hợp lệ."
 
-#: src/protocols/oscar/oscar.c:1912
-#: src/protocols/oscar/oscar.c:5646
+#: src/protocols/oscar/oscar.c:1912 src/protocols/oscar/oscar.c:5646
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Đã thiết lập IM trực tiếp với %s"
 
-#: src/protocols/oscar/oscar.c:2241
-#: src/protocols/oscar/oscar.c:2263
+#: src/protocols/oscar/oscar.c:2241 src/protocols/oscar/oscar.c:2263
 msgid "(There was an error receiving this message)"
 msgstr "(Có lỗi khi nhận thông điệp này)"
 
@@ -6441,11 +6245,16 @@ msgid "%s has just asked to directly connect to %s"
 msgstr "%s đề nghị kết nối trực tiếp với %s"
 
 #: src/protocols/oscar/oscar.c:2413
-msgid "This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."
-msgstr "Điều này đòi hỏi một kết nối trực tiếp giữa hai máy tính và là cần thiết để trao đổi tin nhắncó hình ảnh. Tuy nhiên, người ta sẽ thấy địa chỉ IP của bạn, một nguy cơ sẽ làm ảnh hưởng đến quyền riêng tư."
+msgid ""
+"This requires a direct connection between the two computers and is necessary "
+"for IM Images.  Because your IP address will be revealed, this may be "
+"considered a privacy risk."
+msgstr ""
+"Điều này đòi hỏi một kết nối trực tiếp giữa hai máy tính và là cần thiết để "
+"trao đổi tin nhắncó hình ảnh. Tuy nhiên, người ta sẽ thấy địa chỉ IP của "
+"bạn, một nguy cơ sẽ làm ảnh hưởng đến quyền riêng tư."
 
-#: src/protocols/oscar/oscar.c:2418
-#: src/protocols/oscar/oscar.c:6015
+#: src/protocols/oscar/oscar.c:2418 src/protocols/oscar/oscar.c:6015
 msgid "Connect"
 msgstr "Kết nối"
 
@@ -6463,22 +6272,21 @@ msgstr "Hãy xác thực tôi!"
 
 #: src/protocols/oscar/oscar.c:2482
 #, c-format
-msgid "The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"
-msgstr "Người dùng %s yêu cầu xác thực trước khi thêm họ vào danh sách buddy. Bạn muốn gửi một yêu cầu xác thực không ?"
+msgid ""
+"The user %s requires authorization before being added to a buddy list.  Do "
+"you want to send an authorization request?"
+msgstr ""
+"Người dùng %s yêu cầu xác thực trước khi thêm họ vào danh sách buddy. Bạn "
+"muốn gửi một yêu cầu xác thực không ?"
 
-#: src/protocols/oscar/oscar.c:2487
-#: src/protocols/oscar/oscar.c:2489
+#: src/protocols/oscar/oscar.c:2487 src/protocols/oscar/oscar.c:2489
 msgid "Request Authorization"
 msgstr "Yêu cầu xác thực"
 
-#: src/protocols/oscar/oscar.c:2525
-#: src/protocols/oscar/oscar.c:2527
-#: src/protocols/oscar/oscar.c:2534
-#: src/protocols/oscar/oscar.c:2610
-#: src/protocols/oscar/oscar.c:2630
-#: src/protocols/oscar/oscar.c:2986
-#: src/protocols/oscar/oscar.c:3043
-#: src/protocols/oscar/oscar.c:5129
+#: src/protocols/oscar/oscar.c:2525 src/protocols/oscar/oscar.c:2527
+#: src/protocols/oscar/oscar.c:2534 src/protocols/oscar/oscar.c:2610
+#: src/protocols/oscar/oscar.c:2630 src/protocols/oscar/oscar.c:2986
+#: src/protocols/oscar/oscar.c:3043 src/protocols/oscar/oscar.c:5129
 #: src/protocols/oscar/oscar.c:5175
 msgid "No reason given."
 msgstr "Không nêu lý do."
@@ -6496,18 +6304,19 @@ msgstr ""
 "Người dùng %u muốn thêm bạn vào danh sách buddy của họ với lý do sau:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2618
-#: src/protocols/oscar/oscar.c:5135
+#: src/protocols/oscar/oscar.c:2618 src/protocols/oscar/oscar.c:5135
 msgid "Authorization Request"
 msgstr "Yêu cầu xác thực"
 
 #: src/protocols/oscar/oscar.c:2630
 #, c-format
 msgid ""
-"The user %u has denied your request to add them to your buddy list for the following reason:\n"
+"The user %u has denied your request to add them to your buddy list for the "
+"following reason:\n"
 "%s"
 msgstr ""
-"Người dùng %u từ chối để bạn thêm họ vào danh sách buddy của bạn vì lý do sau:\n"
+"Người dùng %u từ chối để bạn thêm họ vào danh sách buddy của bạn vì lý do "
+"sau:\n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:2631
@@ -6573,26 +6382,62 @@ msgid "Decline"
 msgstr "Từ chối"
 
 #: src/protocols/oscar/oscar.c:2775
-#: src/protocols/oscar/oscar.c:2784
-#: src/protocols/oscar/oscar.c:2793
-#: src/protocols/oscar/oscar.c:2802
-#: src/protocols/oscar/oscar.c:2811
-#: src/protocols/oscar/oscar.c:2820
-#: src/protocols/oscar/oscar.c:2836
-#: src/protocols/oscar/oscar.c:4603
-#: src/protocols/oscar/oscar.c:6142
 #, c-format
+msgid "You missed %hu message from %s because it was invalid."
+msgid_plural "You missed %hu messages from %s because they were invalid."
+msgstr[0] "Bạn không nhận được %hu thông điệp từ %s vì nó không hợp lệ."
+msgstr[1] "Bạn không nhận được %hu thông điệp từ %s vì chúng không hợp lệ."
+
+#: src/protocols/oscar/oscar.c:2784
+#, c-format
+msgid "You missed %hu message from %s because it was too large."
+msgid_plural "You missed %hu messages from %s because they were too large."
+msgstr[0] "Bạn không nhận được %hu thông điệp từ %s vì nó quá lớn."
+msgstr[1] "Bạn không nhận được %hu thông điệp từ %s vì chúng quá lớn."
+
+#: src/protocols/oscar/oscar.c:2793
+#, c-format
+msgid ""
+"You missed %hu message from %s because the rate limit has been exceeded."
+msgid_plural ""
+"You missed %hu messages from %s because the rate limit has been exceeded."
+msgstr[0] ""
+"Bạn không nhận được %hu thông điệp từ %s vì đã vượt quá mức giới hạn."
+msgstr[1] ""
+"Bạn không nhận được %hu thông điệp từ %s vì đã vượt quá mức giới hạn."
+
+#: src/protocols/oscar/oscar.c:2802
+#, c-format
+msgid "You missed %hu message from %s because he/she was too evil."
+msgid_plural "You missed %hu messages from %s because he/she was too evil."
+msgstr[0] "Bạn không nhận được %hu thông điệp từ %s vì họ quá bảo mật."
+msgstr[1] "Bạn không nhận được %hu thông điệp từ %s vì nó quá lớn."
+
+#: src/protocols/oscar/oscar.c:2811
+#, c-format
+msgid "You missed %hu message from %s because you are too evil."
+msgid_plural "You missed %hu messages from %s because you are too evil."
+msgstr[0] "Bạn không nhận được %hu thông điệp từ %s vì bạn quá bảo mật."
+msgstr[1] "Bạn không nhận được %hu thông điệp từ %s vì bạn quá bảo mật."
+
+#: src/protocols/oscar/oscar.c:2820
+#, c-format
+msgid "You missed %hu message from %s for an unknown reason."
+msgid_plural "You missed %hu messages from %s for an unknown reason."
+msgstr[0] "Bạn không nhận được %hu thông điệp từ %s do lỗi chưa xác định."
+msgstr[1] "Bạn không nhận được %hu thông điệp từ %s do lỗi chưa xác định."
+
+#: src/protocols/oscar/oscar.c:2836 src/protocols/oscar/oscar.c:4603
+#: src/protocols/oscar/oscar.c:6142
 msgid "Free For Chat"
 msgstr "Rảnh rỗi để Chat"
 
-#: src/protocols/oscar/oscar.c:2840
-#: src/protocols/oscar/oscar.c:4597
+#: src/protocols/oscar/oscar.c:2840 src/protocols/oscar/oscar.c:4597
 #: src/protocols/oscar/oscar.c:6140
 msgid "Not Available"
 msgstr "Không có mặt"
 
-#: src/protocols/oscar/oscar.c:2842
-#: src/protocols/oscar/oscar.c:4600
+#: src/protocols/oscar/oscar.c:2842 src/protocols/oscar/oscar.c:4600
 #: src/protocols/oscar/oscar.c:6141
 msgid "Occupied"
 msgstr "Đang bận"
@@ -6630,13 +6475,11 @@ msgstr "Tiếng"
 msgid "AIM Direct IM"
 msgstr "Nhắn tin trực tiếp AIM"
 
-#: src/protocols/oscar/oscar.c:3089
-#: src/protocols/oscar/oscar.c:6241
+#: src/protocols/oscar/oscar.c:3089 src/protocols/oscar/oscar.c:6241
 msgid "Get File"
 msgstr "Nhận tập tin"
 
-#: src/protocols/oscar/oscar.c:3092
-#: src/protocols/oscar/oscar.c:6233
+#: src/protocols/oscar/oscar.c:3092 src/protocols/oscar/oscar.c:6233
 msgid "Send File"
 msgstr "Gửi tập tin"
 
@@ -6734,12 +6577,20 @@ msgid "Rate limiting error."
 msgstr "Mức giới hạn bị lỗi."
 
 #: src/protocols/oscar/oscar.c:3614
-msgid "The last action you attempted could not be performed because you are over the rate limit. Please wait 10 seconds and try again."
-msgstr "Hành động lần cuối mà bạn thử không được thực hiện vì bạn đã vượt quá mức giới hạn. Hãy chờ 10 giây rồi thử lại."
+msgid ""
+"The last action you attempted could not be performed because you are over "
+"the rate limit. Please wait 10 seconds and try again."
+msgstr ""
+"Hành động lần cuối mà bạn thử không được thực hiện vì bạn đã vượt quá mức "
+"giới hạn. Hãy chờ 10 giây rồi thử lại."
 
 #: src/protocols/oscar/oscar.c:3675
-msgid "You have been disconnected because you have signed on with this screen name at another location."
-msgstr "Bạn bị ngắt kết nối vì bạn đã đăng nhập với tên hiển thị này tại một vị trí khác."
+msgid ""
+"You have been disconnected because you have signed on with this screen name "
+"at another location."
+msgstr ""
+"Bạn bị ngắt kết nối vì bạn đã đăng nhập với tên hiển thị này tại một vị trí "
+"khác."
 
 #: src/protocols/oscar/oscar.c:3677
 msgid "You have been signed off for an unknown reason."
@@ -6749,8 +6600,7 @@ msgstr "Bạn bị ngắt kết nối do một nguyên nhân chưa xác định.
 msgid "Finalizing connection"
 msgstr "Hoàn tất kết nối"
 
-#: src/protocols/oscar/oscar.c:3968
-#: src/protocols/oscar/oscar.c:3974
+#: src/protocols/oscar/oscar.c:3968 src/protocols/oscar/oscar.c:3974
 msgid "Email Address"
 msgstr "Địa chỉ email"
 
@@ -6758,14 +6608,12 @@ msgstr "Địa chỉ email"
 msgid "Mobile Phone"
 msgstr "Số điện thoại đi động"
 
-#: src/protocols/oscar/oscar.c:3982
-#: src/protocols/trepia/trepia.c:281
+#: src/protocols/oscar/oscar.c:3982 src/protocols/trepia/trepia.c:281
 #: src/protocols/trepia/trepia.c:422
 msgid "Female"
 msgstr "Nữ"
 
-#: src/protocols/oscar/oscar.c:3982
-#: src/protocols/trepia/trepia.c:280
+#: src/protocols/oscar/oscar.c:3982 src/protocols/trepia/trepia.c:280
 #: src/protocols/trepia/trepia.c:422
 msgid "Male"
 msgstr "Nam"
@@ -6782,8 +6630,7 @@ msgstr "Thông tin thêm"
 msgid "Home Address"
 msgstr "Địa chỉ nhà"
 
-#: src/protocols/oscar/oscar.c:4017
-#: src/protocols/oscar/oscar.c:4033
+#: src/protocols/oscar/oscar.c:4017 src/protocols/oscar/oscar.c:4033
 msgid "Zip Code"
 msgstr "Mã bưu điện"
 
@@ -6849,33 +6696,54 @@ msgstr "Có lỗi khi thay đổi thông tin tài khoản"
 
 #: src/protocols/oscar/oscar.c:4201
 #, c-format
-msgid "Error 0x%04x: Unable to format screen name because the requested screen name differs from the original."
-msgstr "Lỗi 0x%04x: không thể định dạng tên hiển thị vì nó khác với tên ban đầu (gốc)."
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"differs from the original."
+msgstr ""
+"Lỗi 0x%04x: không thể định dạng tên hiển thị vì nó khác với tên ban đầu "
+"(gốc)."
 
 #: src/protocols/oscar/oscar.c:4204
 #, c-format
-msgid "Error 0x%04x: Unable to format screen name because the requested screen name ends in a space."
-msgstr "Lỗi 0x%04x: Không thể định dạng tên hiển thị vì nó kết thúc bằng một khoảng trắng."
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"ends in a space."
+msgstr ""
+"Lỗi 0x%04x: Không thể định dạng tên hiển thị vì nó kết thúc bằng một khoảng "
+"trắng."
 
 #: src/protocols/oscar/oscar.c:4207
 #, c-format
-msgid "Error 0x%04x: Unable to format screen name because the requested screen name is too long."
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"is too long."
 msgstr "Lỗi 0x%04x: Không thể định dạng tên hiển thị bởi vì nó quá dài."
 
 #: src/protocols/oscar/oscar.c:4210
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
-msgstr "Lỗi 0x%04x: Không đổi được địa chỉ email vì đã có một yêu cầu được xử lý cho tên hiển thị này."
+msgid ""
+"Error 0x%04x: Unable to change email address because there is already a "
+"request pending for this screen name."
+msgstr ""
+"Lỗi 0x%04x: Không đổi được địa chỉ email vì đã có một yêu cầu được xử lý cho "
+"tên hiển thị này."
 
 #: src/protocols/oscar/oscar.c:4213
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
-msgstr "Lỗi 0x%04x: Không đổi được địa chỉ email vì có quá nhiều tên hiển thị có liên quan với địa chỉ này."
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address has "
+"too many screen names associated with it."
+msgstr ""
+"Lỗi 0x%04x: Không đổi được địa chỉ email vì có quá nhiều tên hiển thị có "
+"liên quan với địa chỉ này."
 
 #: src/protocols/oscar/oscar.c:4216
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
-msgstr "Lỗi 0x%04x: Không thay đổi được địa chỉ email vì địa chỉ đưa ra không hợp lệ."
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address is "
+"invalid."
+msgstr ""
+"Lỗi 0x%04x: Không thay đổi được địa chỉ email vì địa chỉ đưa ra không hợp lệ."
 
 #: src/protocols/oscar/oscar.c:4219
 #, c-format
@@ -6891,8 +6759,7 @@ msgstr ""
 "Tên hiển thị hiện thời của bạn được định dạng như sau:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4230
-#: src/protocols/oscar/oscar.c:4237
+#: src/protocols/oscar/oscar.c:4230 src/protocols/oscar/oscar.c:4237
 msgid "Account Info"
 msgstr "Thông tin tài khoản"
 
@@ -6906,67 +6773,116 @@ msgid "Unable to set AIM profile."
 msgstr "Không thể lập lý lịch AIM."
 
 #: src/protocols/oscar/oscar.c:4468
-msgid "You have probably requested to set your profile before the login procedure completed.  Your profile remains unset; try setting it again when you are fully connected."
-msgstr "Bạn có thể đã yêu cầu lập lý lịch trước khi hoàn thành thủ tục đăng nhập. Vì vậy lý lịch của bạn vẫn chưa được lập; hãy thử lại sau khi bạn kết nối xong."
+msgid ""
+"You have probably requested to set your profile before the login procedure "
+"completed.  Your profile remains unset; try setting it again when you are "
+"fully connected."
+msgstr ""
+"Bạn có thể đã yêu cầu lập lý lịch trước khi hoàn thành thủ tục đăng nhập. Vì "
+"vậy lý lịch của bạn vẫn chưa được lập; hãy thử lại sau khi bạn kết nối xong."
 
 #: src/protocols/oscar/oscar.c:4495
-#: src/protocols/oscar/oscar.c:4500
 #, c-format
+msgid ""
+"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"it for you."
+msgid_plural ""
+"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"truncated it for you."
+msgstr[0] ""
+"Đã vượt quá độ dài lý lịch tối đa %d byte. Gaim sẽ lược bỏ nó giúp bạn."
+msgstr[1] ""
+
+#: src/protocols/oscar/oscar.c:4500
 msgid "Profile too long."
 msgstr "Lý lịch quá dài."
 
 #: src/protocols/oscar/oscar.c:4517
 msgid "Unable to set AIM away message."
-msgstr "Không lập được thông điệp trạng thái AIM."
+msgstr "Không lập được thông điệp vắng mặt cho AIM."
 
 #: src/protocols/oscar/oscar.c:4518
-msgid "You have probably requested to set your away message before the login procedure completed.  You remain in a \"present\" state; try setting it again when you are fully connected."
-msgstr "Bạn có thể đã đặt thông điệp trạng thái trước khi đăng nhập thành công. Bạn vẫn trong trạngthái \"hiện tại\"; hãy thử đặt lại thông điệp trạng thái sau khi kết nối xong."
+msgid ""
+"You have probably requested to set your away message before the login "
+"procedure completed.  You remain in a \"present\" state; try setting it "
+"again when you are fully connected."
+msgstr ""
+"Bạn có thể đã đặt thông điệp vắng mặt trước khi đăng nhập thành công. Bạn "
+"vẫn trong trạngthái \"hiện tại\"; hãy thử đặt lại thông điệp vắng mặt sau "
+"khi kết nối xong."
 
 #: src/protocols/oscar/oscar.c:4558
-#: src/protocols/oscar/oscar.c:4563
 #, c-format
+msgid ""
+"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"truncated it for you."
+msgid_plural ""
+"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"truncated it for you."
+msgstr[0] ""
+"Đã vượt quá độ dài tối đa %d byte của thông báo vắng mặt.  Gaim sẽ lược bỏ "
+"giúp bạn."
+msgstr[1] ""
+"Đã vượt quá độ dài tối đa %d byte của thông báo vắng mặt.  Gaim sẽ lược bỏ "
+"giúp bạn."
+
+#: src/protocols/oscar/oscar.c:4563
 msgid "Away message too long."
-msgstr "Thông điệp trạng thái quá dài."
+msgstr "Thông báo vắng mặt quá dài."
 
 #: src/protocols/oscar/oscar.c:4777
 msgid "Unable To Retrieve Buddy List"
 msgstr "Không thể nhận danh sách Buddy"
 
 #: src/protocols/oscar/oscar.c:4778
-msgid "Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."
-msgstr "Gaim tạm thời không nhận được danh sách buddy của bạn từ máy chủ AIM. Danh sách này không mất và có thể nhận được sau vài giờ nữa."
+msgid ""
+"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"servers.  Your buddy list is not lost, and will probably become available in "
+"a few hours."
+msgstr ""
+"Gaim tạm thời không nhận được danh sách buddy của bạn từ máy chủ AIM. Danh "
+"sách này không mất và có thể nhận được sau vài giờ nữa."
 
-#: src/protocols/oscar/oscar.c:4870
-#: src/protocols/oscar/oscar.c:4871
+#: src/protocols/oscar/oscar.c:4870 src/protocols/oscar/oscar.c:4871
 #: src/protocols/oscar/oscar.c:4876
 msgid "Orphans"
 msgstr "Một mình"
 
 #: src/protocols/oscar/oscar.c:5042
 #, c-format
-msgid "Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."
-msgstr "Không thể thêm buddy %s vì danh sách của bạn có quá nhiều buddy. Hãy bỏ bớt 1 buddy và thử lại."
+msgid ""
+"Could not add the buddy %s because you have too many buddies in your buddy "
+"list.  Please remove one and try again."
+msgstr ""
+"Không thể thêm buddy %s vì danh sách của bạn có quá nhiều buddy. Hãy bỏ bớt "
+"1 buddy và thử lại."
 
-#: src/protocols/oscar/oscar.c:5042
-#: src/protocols/oscar/oscar.c:5055
+#: src/protocols/oscar/oscar.c:5042 src/protocols/oscar/oscar.c:5055
 msgid "(no name)"
 msgstr "(không tên)"
 
-#: src/protocols/oscar/oscar.c:5043
-#: src/protocols/oscar/oscar.c:5056
+#: src/protocols/oscar/oscar.c:5043 src/protocols/oscar/oscar.c:5056
 msgid "Unable To Add"
 msgstr "Không thể thêm"
 
 #: src/protocols/oscar/oscar.c:5055
 #, c-format
-msgid "Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."
-msgstr "Không thể thêm buddy %s vì nguyên nhân không xác định. Lý do thường gặp là bạn đặt số lượng buddy tối đa trong danh sách buddy của bạn."
+msgid ""
+"Could not add the buddy %s for an unknown reason.  The most common reason "
+"for this is that you have the maximum number of allowed buddies in your "
+"buddy list."
+msgstr ""
+"Không thể thêm buddy %s vì nguyên nhân không xác định. Lý do thường gặp là "
+"bạn đặt số lượng buddy tối đa trong danh sách buddy của bạn."
 
 #: src/protocols/oscar/oscar.c:5090
 #, c-format
-msgid "The user %s has given you permission to add you to their buddy list.  Do you want to add them?"
-msgstr "Người dùng %s đã xin phép bạn để họ thêm bạn vào danh sách buddy của họ. Bạn có muốn thêm họ vào danh sách của bạn không?"
+msgid ""
+"The user %s has given you permission to add you to their buddy list.  Do you "
+"want to add them?"
+msgstr ""
+"Người dùng %s đã xin phép bạn để họ thêm bạn vào danh sách buddy của họ. Bạn "
+"có muốn thêm họ vào danh sách của bạn không?"
 
 #: src/protocols/oscar/oscar.c:5096
 msgid "Authorization Given"
@@ -6995,18 +6911,19 @@ msgstr "Xác thực được chấp thuận"
 #: src/protocols/oscar/oscar.c:5175
 #, c-format
 msgid ""
-"The user %s has denied your request to add them to your buddy list for the following reason:\n"
+"The user %s has denied your request to add them to your buddy list for the "
+"following reason:\n"
 "%s"
 msgstr ""
-"Người dùng %s đã từ chối yêu cầu của bạn thêm họ vào danh sách buddy của bạn với lý do sau:\n"
+"Người dùng %s đã từ chối yêu cầu của bạn thêm họ vào danh sách buddy của bạn "
+"với lý do sau:\n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:5176
 msgid "Authorization Denied"
 msgstr "Xác thực bị từ chối"
 
-#: src/protocols/oscar/oscar.c:5213
-#: src/protocols/toc/toc.c:1264
+#: src/protocols/oscar/oscar.c:5213 src/protocols/toc/toc.c:1264
 msgid "Exchange:"
 msgstr "Trao đổi:"
 
@@ -7032,14 +6949,13 @@ msgstr "<b>Hiện có:</b> "
 
 #: src/protocols/oscar/oscar.c:5504
 msgid "<b>Away Message:</b> "
-msgstr "<b>Thông điệp trạng thái:</b> "
+msgstr "<b>Thông báo vắng mặt:</b> "
 
 #: src/protocols/oscar/oscar.c:5513
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>Trạng thái:</b> Không được xác thực"
 
-#: src/protocols/oscar/oscar.c:5547
-#: src/protocols/yahoo/yahoo.c:2030
+#: src/protocols/oscar/oscar.c:5547 src/protocols/yahoo/yahoo.c:2030
 msgid "Offline"
 msgstr "Ngoại tuyến"
 
@@ -7053,8 +6969,12 @@ msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Bạn đã chọn mở kết nối Nhắn tin Trực tiếp với %s."
 
 #: src/protocols/oscar/oscar.c:6011
-msgid "Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"
-msgstr "Điều này cho phép người khác thấy được địa chỉ IP máy bạn, có thể bị hưởng đến sự riêng tư của bạn. Bạn có muốn tiếp tục không?"
+msgid ""
+"Because this reveals your IP address, it may be considered a privacy risk.  "
+"Do you wish to continue?"
+msgstr ""
+"Điều này cho phép người khác thấy được địa chỉ IP máy bạn, có thể bị hưởng "
+"đến sự riêng tư của bạn. Bạn có muốn tiếp tục không?"
 
 #: src/protocols/oscar/oscar.c:6186
 msgid "Buddy Comment:"
@@ -7101,8 +7021,12 @@ msgid "You are awaiting authorization from the following buddies"
 msgstr "Bạn đang chờ xác thực của các buddy sau đây"
 
 #: src/protocols/oscar/oscar.c:6379
-msgid "You can re-request authorization from these buddies by right-clicking on them and selecting \"Re-request Authorization.\""
-msgstr "Bạn có thể gửi lại yêu cầu xác thực của người khác bằng cách nhấn chuột phải vào tên người đó và chọn \"Gửi lại yêu cầu xác thực.\""
+msgid ""
+"You can re-request authorization from these buddies by right-clicking on "
+"them and selecting \"Re-request Authorization.\""
+msgstr ""
+"Bạn có thể gửi lại yêu cầu xác thực của người khác bằng cách nhấn chuột phải "
+"vào tên người đó và chọn \"Gửi lại yêu cầu xác thực.\""
 
 #: src/protocols/oscar/oscar.c:6393
 msgid "Find Buddy by E-mail"
@@ -7126,7 +7050,8 @@ msgstr "Thông điệp hiện có:"
 
 #: src/protocols/oscar/oscar.c:6413
 msgid "I'm doing work and hoping for a distraction--IM me!"
-msgstr "Tôi đang làm việc và cần chút thư giãn--Hãy dùng tin nhắn nhanh với tôi!"
+msgstr ""
+"Tôi đang làm việc và cần chút thư giãn--Hãy dùng tin nhắn nhanh với tôi!"
 
 #: src/protocols/oscar/oscar.c:6491
 msgid "Set Available Message"
@@ -7174,8 +7099,7 @@ msgstr "Tìm kiếm buddy bằng email"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/oscar/oscar.c:6680
-#: src/protocols/oscar/oscar.c:6682
+#: src/protocols/oscar/oscar.c:6680 src/protocols/oscar/oscar.c:6682
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Plugin giao thức AIM/ICQ"
 
@@ -7219,7 +7143,9 @@ msgstr "Cảnh báo cho %s không được phép."
 
 #: src/protocols/toc/toc.c:525
 msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Một tin nhắn không gửi đi được, bạn đang vượt quá tốc độ cho phép của máy chủ."
+msgstr ""
+"Một tin nhắn không gửi đi được, bạn đang vượt quá tốc độ cho phép của máy "
+"chủ."
 
 #: src/protocols/toc/toc.c:528
 #, c-format
@@ -7291,8 +7217,12 @@ msgid "Your warning level is currently too high to log in."
 msgstr "Mức cảnh báo của bạn quá cao nên không đăng nhập được."
 
 #: src/protocols/toc/toc.c:580
-msgid "You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."
-msgstr "Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Hẵy đợi 10 phút và kết nối lại. Nếu bạn vẫn cố kết nối, bạn sẽ phải chờ lâu hơn."
+msgid ""
+"You have been connecting and disconnecting too frequently.  Wait ten minutes "
+"and try again.  If you continue to try, you will need to wait even longer."
+msgstr ""
+"Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Hẵy đợi 10 phút và kết "
+"nối lại. Nếu bạn vẫn cố kết nối, bạn sẽ phải chờ lâu hơn."
 
 #: src/protocols/toc/toc.c:582
 #, c-format
@@ -7314,7 +7244,8 @@ msgstr "Đợi hồi âm..."
 
 #: src/protocols/toc/toc.c:715
 msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC thôi trạng thái tạm ngừng. Bây giờ bạn có thể gửi tin nhắn trở lại."
+msgstr ""
+"TOC thôi trạng thái tạm ngừng. Bây giờ bạn có thể gửi tin nhắn trở lại."
 
 #: src/protocols/toc/toc.c:903
 msgid "Password Change Successful"
@@ -7325,8 +7256,14 @@ msgid "TOC has sent a PAUSE command."
 msgstr "TOC đã gửi lệnh TẠM NGỪNG."
 
 #: src/protocols/toc/toc.c:908
-msgid "When this happens, TOC ignores any messages sent to it, and may kick you off if you send a message. Gaim will prevent anything from going through. This is only temporary, please be patient."
-msgstr "Khi hiện tượng này xảy ra, TOC không nhận bất kỳ tin nhắn nào gửi tới, và có thể ngắt kết nối của bạnnếu bạn tiếp tục gửi tin nhắn. Gaim sẽ không cho phép một liên lạc nào. Hiện tượng này chỉ là tạm thời, hãy kiên nhẫn chờ."
+msgid ""
+"When this happens, TOC ignores any messages sent to it, and may kick you off "
+"if you send a message. Gaim will prevent anything from going through. This "
+"is only temporary, please be patient."
+msgstr ""
+"Khi hiện tượng này xảy ra, TOC không nhận bất kỳ tin nhắn nào gửi tới, và có "
+"thể ngắt kết nối của bạnnếu bạn tiếp tục gửi tin nhắn. Gaim sẽ không cho "
+"phép một liên lạc nào. Hiện tượng này chỉ là tạm thời, hãy kiên nhẫn chờ."
 
 #: src/protocols/toc/toc.c:1402
 msgid "Get Dir Info"
@@ -7345,8 +7282,7 @@ msgstr "Không mở  được %s để ghi!"
 msgid "File transfer failed; other side probably canceled."
 msgstr "Không truyền được tập tin; bên nhận có thể đã hủy bỏ."
 
-#: src/protocols/toc/toc.c:1745
-#: src/protocols/toc/toc.c:1785
+#: src/protocols/toc/toc.c:1745 src/protocols/toc/toc.c:1785
 #: src/protocols/toc/toc.c:1997
 msgid "Could not connect for transfer."
 msgstr "Không thể kết nối để truyền đi"
@@ -7360,6 +7296,12 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr "Không thể ghi header tập tin. Tập tin sẽ không được truyền."
 
 #: src/protocols/toc/toc.c:2076
+#, c-format
+msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+msgstr[0] "%s yêu cầu %s chấp nhận %d tập tin: %s (%.2f %s)%s%s"
+msgstr[1] ""
+
 #: src/protocols/toc/toc.c:2083
 #, c-format
 msgid "%s requests you to send them a file"
@@ -7375,8 +7317,7 @@ msgstr "%s yêu cầu bạn gửi tập tin"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/toc/toc.c:2159
-#: src/protocols/toc/toc.c:2161
+#: src/protocols/toc/toc.c:2159 src/protocols/toc/toc.c:2161
 msgid "TOC Protocol Plugin"
 msgstr "Plugin giao thức TOC"
 
@@ -7449,8 +7390,7 @@ msgstr "Lập lý lịch"
 msgid "Visit Homepage"
 msgstr "Thăm trang chủ"
 
-#: src/protocols/trepia/trepia.c:872
-#: src/protocols/trepia/trepia.c:875
+#: src/protocols/trepia/trepia.c:872 src/protocols/trepia/trepia.c:875
 msgid "Local Users"
 msgstr "Người dùng Cục bộ"
 
@@ -7472,8 +7412,7 @@ msgstr "Đăng nhập"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/trepia/trepia.c:1321
-#: src/protocols/trepia/trepia.c:1323
+#: src/protocols/trepia/trepia.c:1321 src/protocols/trepia/trepia.c:1323
 msgid "Trepia Protocol Plugin"
 msgstr "Plugin giao thức Trepia"
 
@@ -7488,8 +7427,11 @@ msgstr "%s không chấp nhận đề nghị thêm họ vào danh sách của b�
 
 #: src/protocols/yahoo/yahoo.c:760
 #, c-format
-msgid "%s has (retroactively) denied your request to add them to your list for the following reason: %s."
-msgstr "%s không chấp nhận đề nghị thêm họ vào danh sách của bạn với lý do sau: %s."
+msgid ""
+"%s has (retroactively) denied your request to add them to your list for the "
+"following reason: %s."
+msgstr ""
+"%s không chấp nhận đề nghị thêm họ vào danh sách của bạn với lý do sau: %s."
 
 #: src/protocols/yahoo/yahoo.c:761
 msgid "Add buddy rejected"
@@ -7497,8 +7439,13 @@ msgstr "Thêm buddy bị từ chối"
 
 #: src/protocols/yahoo/yahoo.c:1381
 #, c-format
-msgid "The Yahoo server has requested the use of an unrecognized authentication method.  This version of Gaim will likely not be able to successfully sign on to Yahoo.  Check %s for updates."
-msgstr "Máy chủ Yahoo yêu cầu dùng phương thức xác thực không xác định. Phiên bản Gaim này sẽ có thể không đăng nhập vào Yahoo được. Hãy xem %s để cập nhật."
+msgid ""
+"The Yahoo server has requested the use of an unrecognized authentication "
+"method.  This version of Gaim will likely not be able to successfully sign "
+"on to Yahoo.  Check %s for updates."
+msgstr ""
+"Máy chủ Yahoo yêu cầu dùng phương thức xác thực không xác định. Phiên bản "
+"Gaim này sẽ có thể không đăng nhập vào Yahoo được. Hãy xem %s để cập nhật."
 
 #: src/protocols/yahoo/yahoo.c:1384
 msgid "Failed Yahoo! Authentication"
@@ -7506,8 +7453,12 @@ msgstr "Chứng thực Yahooo! không được"
 
 #: src/protocols/yahoo/yahoo.c:1457
 #, c-format
-msgid "You have tried to ignore %s, but the user is on your buddy list.  Clicking \"Yes\" will remove and ignore the buddy."
-msgstr "Bạn đang cố lờ bỏ %s nhưng người đó có trong danh sách của bạn. Nhấn \"Có\" sẽ xóa bỏ và lờ đi buddy này."
+msgid ""
+"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
+"\"Yes\" will remove and ignore the buddy."
+msgstr ""
+"Bạn đang cố lờ bỏ %s nhưng người đó có trong danh sách của bạn. Nhấn \"Có\" "
+"sẽ xóa bỏ và lờ đi buddy này."
 
 #: src/protocols/yahoo/yahoo.c:1460
 msgid "Ignore buddy?"
@@ -7528,55 +7479,49 @@ msgstr "Lỗi không xác định."
 #: src/protocols/yahoo/yahoo.c:1542
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
-msgstr "Không thể thêm budddy %s vào nhóm %s trong danh sach máy chủ của tài khoản %s."
+msgstr ""
+"Không thể thêm budddy %s vào nhóm %s trong danh sach máy chủ của tài khoản %"
+"s."
 
 #: src/protocols/yahoo/yahoo.c:1544
 msgid "Could not add buddy to server list"
 msgstr "Không thể thêm buddy vào danh sách máy chủ"
 
-#: src/protocols/yahoo/yahoo.c:1646
-#: src/protocols/yahoo/yahoo.c:1776
+#: src/protocols/yahoo/yahoo.c:1646 src/protocols/yahoo/yahoo.c:1776
 msgid "Unable to read"
 msgstr "Không thể đọc"
 
-#: src/protocols/yahoo/yahoo.c:1801
-#: src/protocols/yahoo/yahoo.c:1910
+#: src/protocols/yahoo/yahoo.c:1801 src/protocols/yahoo/yahoo.c:1910
 #: src/protocols/yahoo/yahoo.c:1934
 msgid "Connection problem"
 msgstr "Kết nối có vấn đề"
 
-#: src/protocols/yahoo/yahoo.c:2012
-#: src/protocols/yahoo/yahoo.c:2310
+#: src/protocols/yahoo/yahoo.c:2012 src/protocols/yahoo/yahoo.c:2310
 #: src/protocols/yahoo/yahoo.c:2408
 msgid "Not At Home"
 msgstr "Không có ở nhà"
 
-#: src/protocols/yahoo/yahoo.c:2014
-#: src/protocols/yahoo/yahoo.c:2312
+#: src/protocols/yahoo/yahoo.c:2014 src/protocols/yahoo/yahoo.c:2312
 #: src/protocols/yahoo/yahoo.c:2409
 msgid "Not At Desk"
 msgstr "Không có tại bàn làm việc"
 
-#: src/protocols/yahoo/yahoo.c:2016
-#: src/protocols/yahoo/yahoo.c:2314
+#: src/protocols/yahoo/yahoo.c:2016 src/protocols/yahoo/yahoo.c:2314
 #: src/protocols/yahoo/yahoo.c:2410
 msgid "Not In Office"
 msgstr "Không có ở Văn phòng"
 
-#: src/protocols/yahoo/yahoo.c:2020
-#: src/protocols/yahoo/yahoo.c:2318
+#: src/protocols/yahoo/yahoo.c:2020 src/protocols/yahoo/yahoo.c:2318
 #: src/protocols/yahoo/yahoo.c:2412
 msgid "On Vacation"
 msgstr "Nghỉ phép"
 
-#: src/protocols/yahoo/yahoo.c:2024
-#: src/protocols/yahoo/yahoo.c:2322
+#: src/protocols/yahoo/yahoo.c:2024 src/protocols/yahoo/yahoo.c:2322
 #: src/protocols/yahoo/yahoo.c:2414
 msgid "Stepped Out"
 msgstr "Đi ra ngoài"
 
-#: src/protocols/yahoo/yahoo.c:2088
-#: src/protocols/yahoo/yahoo.c:2122
+#: src/protocols/yahoo/yahoo.c:2088 src/protocols/yahoo/yahoo.c:2122
 msgid "Not on server list"
 msgstr "Không có trong danh sách máy chủ"
 
@@ -7597,30 +7542,38 @@ msgid "Activate ID"
 msgstr "Kích hoạt ID"
 
 #: src/protocols/yahoo/yahoo.c:2599
-msgid "<b>Sorry, profiles marked as containing adult content are not supported at this time.</b><br><br>\n"
-msgstr "<b>Xin lỗi, lý lịch được đánh dấu có nội dung người lớn chưa được hỗ trợ vào thời điểm này.</b><br><br>\n"
+msgid ""
+"<b>Sorry, profiles marked as containing adult content are not supported at "
+"this time.</b><br><br>\n"
+msgstr ""
+"<b>Xin lỗi, lý lịch được đánh dấu có nội dung người lớn chưa được hỗ trợ vào "
+"thời điểm này.</b><br><br>\n"
 
-#: src/protocols/yahoo/yahoo.c:2600
-#: src/protocols/yahoo/yahoo.c:2623
-msgid "If you wish to view this profile, you will need to visit this link in your web browser<br>"
-msgstr "Nếu bạn muốn xem lý lịch này, bạn cần thăm liên kết này bằng trình duyệt web<br>"
+#: src/protocols/yahoo/yahoo.c:2600 src/protocols/yahoo/yahoo.c:2623
+msgid ""
+"If you wish to view this profile, you will need to visit this link in your "
+"web browser<br>"
+msgstr ""
+"Nếu bạn muốn xem lý lịch này, bạn cần thăm liên kết này bằng trình duyệt "
+"web<br>"
 
 #: src/protocols/yahoo/yahoo.c:2622
-msgid "<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"
-msgstr "<b>Xin lỗi, lí lịch viết bằng ngôn ngữ khác tiếng Anh chưa được hỗ trợ.</b><br><br>\n"
+msgid ""
+"<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"
+msgstr ""
+"<b>Xin lỗi, lí lịch viết bằng ngôn ngữ khác tiếng Anh chưa được hỗ trợ.</"
+"b><br><br>\n"
 
 #: src/protocols/yahoo/yahoo.c:2667
 msgid "Yahoo! ID"
 msgstr "Yahoo! ID"
 
-#: src/protocols/yahoo/yahoo.c:2727
-#: src/protocols/yahoo/yahoo.c:2731
+#: src/protocols/yahoo/yahoo.c:2727 src/protocols/yahoo/yahoo.c:2731
 #: src/protocols/yahoo/yahoo.c:2735
 msgid "Hobbies"
 msgstr "Sở thích"
 
-#: src/protocols/yahoo/yahoo.c:2746
-#: src/protocols/yahoo/yahoo.c:2750
+#: src/protocols/yahoo/yahoo.c:2746 src/protocols/yahoo/yahoo.c:2750
 msgid "Latest News"
 msgstr "Tin mới nhất"
 
@@ -7654,8 +7607,7 @@ msgstr "Là thành viên từ "
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/yahoo/yahoo.c:2961
-#: src/protocols/yahoo/yahoo.c:2963
+#: src/protocols/yahoo/yahoo.c:2961 src/protocols/yahoo/yahoo.c:2963
 msgid "Yahoo Protocol Plugin"
 msgstr "Plugin giao thức Yahoo"
 
@@ -7686,7 +7638,7 @@ msgstr "Có thể phòng Chat hết chỗ?"
 
 #: src/protocols/yahoo/yahoochat.c:531
 msgid "Failed to join buddy in chat"
-msgstr "Buddy không thể tham gia Chat"
+msgstr "Buddy không tham gia Chat được"
 
 #: src/protocols/yahoo/yahoochat.c:532
 msgid "Maybe they're not in a chat?"
@@ -7711,8 +7663,7 @@ msgstr "<br>Ẩn mặt hay chưa đăng nhập"
 msgid "<br>At %s since %s"
 msgstr "<br>Tại %s từ lúc %s"
 
-#: src/protocols/zephyr/zephyr.c:584
-#: src/protocols/zephyr/zephyr.c:585
+#: src/protocols/zephyr/zephyr.c:584 src/protocols/zephyr/zephyr.c:585
 msgid "Anyone"
 msgstr "Bất kỳ ai"
 
@@ -7721,8 +7672,12 @@ msgid "Already logged in with Zephyr"
 msgstr "Đã đăng nhập bằng Zephyr"
 
 #: src/protocols/zephyr/zephyr.c:610
-msgid "Because Zephyr uses your system username, you are unable to have multiple accounts on it when logged in as the same user."
-msgstr "Do Zephyr sử dụng tên người dùng hệ thống của bạn, bạn không thể có đa tài khoản với nó khi đăng nhập cùng một người dùng."
+msgid ""
+"Because Zephyr uses your system username, you are unable to have multiple "
+"accounts on it when logged in as the same user."
+msgstr ""
+"Do Zephyr sử dụng tên người dùng hệ thống của bạn, bạn không thể có đa tài "
+"khoản với nó khi đăng nhập cùng một người dùng."
 
 #: src/protocols/zephyr/zephyr.c:868
 msgid "ZLocate"
@@ -7750,8 +7705,7 @@ msgstr "Người nhận:"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/zephyr/zephyr.c:1050
-#: src/protocols/zephyr/zephyr.c:1052
+#: src/protocols/zephyr/zephyr.c:1050 src/protocols/zephyr/zephyr.c:1052
 msgid "Zephyr Protocol Plugin"
 msgstr "Plugin giao thức Zephyr"
 
@@ -7760,7 +7714,9 @@ msgid "Invalid proxy settings"
 msgstr "Thiết lập proxy sai"
 
 #: src/proxy.c:1681
-msgid "Either the host name or port number specified for your given proxy type is invalid."
+msgid ""
+"Either the host name or port number specified for your given proxy type is "
+"invalid."
 msgstr "Bạn chỉ định tên máy hay số hiệu cổng cho proxy không đúng"
 
 #. * Custom away message.
@@ -7780,19 +7736,22 @@ msgid "Please enter your password"
 msgstr "Hãy nhập mật khẩu của bạn"
 
 #: src/server.c:948
-#: src/server.c:961
 #, c-format
+msgid "(%d message)"
+msgid_plural "(%d messages)"
+msgstr[0] "(%d thông điệp)"
+msgstr[1] "(1 thông điệp)"
+
+#: src/server.c:961
 msgid "(1 message)"
 msgstr "(1 thông điệp)"
 
-#: src/server.c:1142
-#: src/server.c:1152
+#: src/server.c:1142 src/server.c:1152
 #, c-format
 msgid "%s logged in."
 msgstr "%s đã đăng nhập"
 
-#: src/server.c:1169
-#: src/server.c:1177
+#: src/server.c:1169 src/server.c:1177
 #, c-format
 msgid "%s logged out."
 msgstr "%s đã rời khỏi."
@@ -7822,11 +7781,11 @@ msgstr ""
 #: src/server.c:1334
 #, c-format
 msgid "User '%s' invites %s to buddy chat room: '%s'\n"
-msgstr "Người dùng '%s' mời %s vào phòng tán gẫu: '%s'\n"
+msgstr "Người dùng '%s' mời %s vào phòng Chat: '%s'\n"
 
 #: src/server.c:1340
 msgid "Accept chat invitation?"
-msgstr "Có nhận lời mời chat không?"
+msgstr "Có nhận lời mời Chat không?"
 
 #. for people like myself who are too lazy to add an away msg :)
 #. I don't know who "myself" is in this context.  The exclamation point
@@ -7837,29 +7796,39 @@ msgstr "Xin lỗi, tôi ra ngoài một lúc !"
 
 #: src/stock.c:84
 msgid "_Modify"
-msgstr "_Thay đổi"
+msgstr "_Hiệu chỉnh"
 
 #: src/stock.c:85
 msgid "_Open Mail"
 msgstr "_Mở thư"
 
-#: src/util.c:1590
+#: src/util.c:1639
 msgid "Calculating..."
 msgstr "Đang tính toán..."
 
-#: src/util.c:1593
+#: src/util.c:1642
 msgid "Unknown."
 msgstr "Không xác định."
 
-#: src/util.c:1624
-#: src/util.c:1629
-#: src/util.c:1634
-#: src/util.c:1637
-#: src/util.c:1625
-#: src/util.c:1643
-#: src/util.c:1645
-#: src/util.c:1648
-#: src/util.c:1980
+#: src/util.c:1673 src/util.c:1678 src/util.c:1683 src/util.c:1686
+msgid "day"
+msgid_plural "days"
+msgstr[0] "ngày"
+msgstr[1] ""
+
+#: src/util.c:1674 src/util.c:1678 src/util.c:1692 src/util.c:1694
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] "giờ"
+msgstr[1] ""
+
+#: src/util.c:1674 src/util.c:1683 src/util.c:1692 src/util.c:1697
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] "phút"
+msgstr[1] "phút."
+
+#: src/util.c:2029
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Lỗi mở kết nối.\n"
 
@@ -7875,3 +7844,5 @@ msgstr "Chuyển thiết lập người dùng Gaim đến: "
 msgid "Notification"
 msgstr "Thông báo"
 
+#~ msgid "<font color=\"red\"><b>log->logger_data was NULL!</b></font>"
+#~ msgstr "<font color=\"red\"><b>log->logger_data là NULL!</b></font>"
