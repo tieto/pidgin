@@ -49,7 +49,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
 			if(gaim_ssl_is_supported()) {
-				gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  Select \"Enable TLS if available\" in account properties"));
+				gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  Select \"Use TLS if available\" in account properties"));
 			} else {
 				gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			}
