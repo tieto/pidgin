@@ -1,16 +1,16 @@
 ;;
-;;  english.nsi
+;;  english.nsh
 ;;
 ;;  Default language strings for the Windows Gaim NSIS installer.
-;;  Code page: 1033
+;;  Windows Code page: 1252
 ;;
 
 ; Startup GTK+ check
 LangString GTK_INSTALLER_NEEDED			${LANG_ENGLISH} "The GTK+ runtime environment is either missing or needs to be upgraded.$\rPlease install v${GTK_VERSION} or higher of the GTK+ runtime"
 
-; Componants Page
+; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_ENGLISH} "Gaim Instant Messenger (required)"
-LangString GTK_SECTION_TITLE				${LANG_ENGLISH} "GTK+ Rutime Environment (required)"
+LangString GTK_SECTION_TITLE				${LANG_ENGLISH} "GTK+ Runtime Environment (required)"
 LangString GTK_THEMES_SECTION_TITLE			${LANG_ENGLISH} "GTK+ Themes"
 LangString GTK_NOTHEME_SECTION_TITLE		${LANG_ENGLISH} "No Theme"
 LangString GTK_WIMP_SECTION_TITLE			${LANG_ENGLISH} "Wimp Theme"
