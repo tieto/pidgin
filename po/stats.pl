@@ -18,7 +18,7 @@
 #
 
 
-my $PACXAGE="gaim";
+my $PACKAGE="gaim";
 
 
 use Locale::Language;
