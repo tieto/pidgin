@@ -80,18 +80,18 @@ struct g_url parse_url(char *url)
 
 	if (strstr(url, "http://"))
 		g_snprintf(scan_info, sizeof(scan_info),
-			   "http://%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
+			   "http://%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?=+]");
 	else
 		g_snprintf(scan_info, sizeof(scan_info),
-			   "%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
+			   "%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?=+^]");
 	f = sscanf(url, scan_info, test.address, port, test.page);
 	if (f == 1) {
 		if (strstr(url, "http://"))
 			g_snprintf(scan_info, sizeof(scan_info),
-				   "http://%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
+				   "http://%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?=+^]");
 		else
 			g_snprintf(scan_info, sizeof(scan_info),
-				   "%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
+				   "%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?=+^]");
 		f = sscanf(url, scan_info, test.address, test.page);
 		g_snprintf(port, sizeof(test.port), "80");
 		port[2] = 0;
