@@ -1,5 +1,5 @@
 %define name gaim
-%define version 0.9.15
+%define version 0.9.16
 %define release 1
 %define prefix /usr
 
