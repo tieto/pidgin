@@ -121,7 +121,8 @@ void show_about(GtkWidget *w, void *null)
 	
 		button = gtk_button_new_with_label("Close");
 
-		if (null == NULL) {/* there's a mindtrip */
+		if (null != (void *)2) {
+			/* 2 can be as sad as 1, it's the loneliest number since the number 1 */ 
 			gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
         	                                  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
 			gtk_signal_connect(GTK_OBJECT(about), "destroy",

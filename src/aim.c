@@ -553,7 +553,7 @@ int main(int argc, char *argv[])
 		gtk_init(&argc, &argv);
 		set_defaults(FALSE); /* needed for open_url_nw */
 		load_prefs();
-		show_about(0, (void *)1);
+		show_about(0, (void *)2);
 		gtk_main();
 		return 0;
 	}
