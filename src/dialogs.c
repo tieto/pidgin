@@ -3748,7 +3748,7 @@ show_log (char *name)
 		if (strlen (buf) >= 5 && (!strncmp (buf+strlen(buf)-5, "<BR>\n", 5)))
 			/* take off the \n */
 			buf[strlen(buf)-1] = '\0';
-		if (strlen (buf) >= 21 && strstr (buf, "---- New C")) {
+		if (!name || (strlen (buf) >= 21 && strstr (buf, "---- New C"))) {
 			gtk_imhtml_append_text (GTK_IMHTML(layout), string->str, options);
 			g_string_free (string, TRUE);
 			string = g_string_new (buf);
