@@ -953,22 +953,39 @@ static GList *jabber_status_types(GaimAccount *account)
 	GaimStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE, "offline", _("Offline"), TRUE, FALSE, FALSE, "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE, "offline",
+			_("Offline"), FALSE, TRUE, FALSE, "message", _("Message"),
+			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_ONLINE, "online", _("Online"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_ONLINE, "online",
+			_("Online"), TRUE, TRUE, FALSE, "priority", _("Priority"),
+			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "chat", _("Chatty"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "chat",
+			_("Chatty"), TRUE, TRUE, FALSE, "priority", _("Priority"),
+			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away",
+			_("Away"), TRUE, TRUE, FALSE, "priority", _("Priority"),
+			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY, "xa", _("Extended Away"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY, "xa",
+			_("Extended Away"), TRUE, TRUE, FALSE, "priority", _("Priority"),
+			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, "dnd", _("Do Not Disturb"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, "dnd",
+			_("Do Not Disturb"), TRUE, TRUE, FALSE, "priority", _("Priority"),
+			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	/*
