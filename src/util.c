@@ -1121,6 +1121,7 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 
 char *convert_string(char *str, const char *destset, const char *srcset)
 {
+#ifdef HAVE_ICONV
 	char *buf;
 	iconv_t cd;
 	size_t insize = 0;
@@ -1158,6 +1159,8 @@ char *convert_string(char *str, const char *destset, const char *srcset)
 	g_free(buf);
 
 	return ret;
+#else
+	return g_strdup(str);
 }
 
 void strip_linefeed(gchar *text)

@@ -433,8 +433,14 @@ extern void strip_linefeed(char *);
 extern time_t get_time(int, int, int, int, int, int);
 extern FILE *gaim_mkstemp(gchar **);
 extern char *convert_string(char *, const char *, const char *);
+
+#ifdef HAVE_LANGINFO_CODESET
 #define utf8_to_str(in) convert_string(in, nl_langinfo(CODESET), "UTF-8");
 #define str_to_utf8(in) convert_string(in, "UTF-8", nl_langinfo(CODESET));
+#else
+#define utf8_to_str(in) convert_string(in, "ISO-8859-1", "UTF-8");
+#define str_to_utf8(in) convert_string(in, "UTF-8", "ISO-8859-1");
+#endif
 
 /*------------------------------------------------------------------------*/
 /*  Multi-Entry dialog and vCard dialog support                           */

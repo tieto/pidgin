@@ -26,8 +26,14 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ICONV
 #include <iconv.h>
+#endif
+
+#ifdef HAVE_LANGINFO_CODESET
 #include <langinfo.h>
+#endif
+
 #include <stdio.h>
 #include <time.h>
 #include <glib.h>

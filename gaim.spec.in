@@ -74,7 +74,7 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 %{prefix}/man/man1/gaim.1.gz
 %attr(755,root,root) %{prefix}/lib/gaim/*
 %{prefix}/share/locale/*/*/*
-%{prefix}/share/pixmaps/gaim.xpm
+%{prefix}/share/pixmaps/gaim.png
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
 
 
@@ -85,7 +85,7 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 %{prefix}/man/man1/gaim.1.gz
 %{prefix}/lib/gaim/*
 %{prefix}/share/locale/*/*/*
-%{prefix}/share/pixmaps/gaim.xpm
+%{prefix}/share/pixmaps/gaim.png
 %{prefix}/share/pixmaps/gaim/*
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
 %{sysconfdir}/CORBA/servers/*
