@@ -206,7 +206,8 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 }
 
-void t_ack(MsnCmdProc *cmdproc, MsnCommand *cmd)
+static void
+t_ack(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSlpMessage *slpmsg;
 	long long real_size;
@@ -388,8 +389,8 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 	msn_slplink_send_slpmsg(slplink, slpmsg);
 }
 
-void
-send_file(MsnSlpSession *slpsession)
+static void
+send_file_cb(MsnSlpSession *slpsession)
 {
 	MsnSlpCall *slpcall;
 	MsnSlpMessage *slpmsg;
@@ -570,7 +571,7 @@ typedef struct
 
 #define MAX_FILE_NAME_LEN 0x226
 
-char *
+static char *
 gen_context(const char *file_name)
 {
 	struct stat st;
@@ -629,7 +630,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer)
 	slpcall = msn_slp_call_new(slplink);
 	msn_slp_call_init(slpcall, MSN_SLPCALL_DC);
 
-	slpcall->session_init_cb = send_file;
+	slpcall->session_init_cb = send_file_cb;
 	slpcall->progress_cb = msn_xfer_progress_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
