@@ -28,6 +28,11 @@
 	exit;
 }
 
+# Thanks decklin
+if autoconf --version | grep -q '2\.[01]'; then
+	ln -sf configure.ac configure.in
+fi
+
 echo "Generating configuration files for Gaim, please wait...."
 echo;
 
