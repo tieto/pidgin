@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-12-20 08:27:10 -0500 (Wed, 20 Dec 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-12-21 08:56:59 -0500 (Thu, 21 Dec 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -120,12 +120,12 @@ Chat and file transfer are planned but not yet implemented.
 Jabber
 ======
 
-Jabber can currently sign on/off, and send/receive messages. That's all it can
-do on its own so far. But if you use a different Jabber client and create a
-roster and set up your transports then gaim/Jabber will be able to use those.
-(For those of you who haven't used jabber before, that probably made little to
-no sense. But for those of you who have jabber accounts, set your username in
-gaim to be nick@server.com/resource and things will be good.)
+Jabber can sign on/off, send/receive messages, and add/remove buddies. All good
+things. If you have a registered transport then you can still use that; however
+you won't see it on your buddy list yet; and you can't add or remove transports
+yet. To use it, set your username to be name@server/resource; the reason for
+this is so that your resource becomes a part of your name and you can sign in
+to jabber using the same account more than once.
 
 
 Napster
