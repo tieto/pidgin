@@ -70,9 +70,6 @@
 # include <gdk/gdkx.h>
 #endif
 
-static GtkWidget *name;
-static GtkWidget *pass;
-
 #ifdef HAVE_STARTUP_NOTIFICATION
 static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
