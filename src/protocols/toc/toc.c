@@ -33,10 +33,7 @@
 #include "html.h"
 
 /* XXX */
-#include "gtkinternal.h"
 #include "gaim.h"
-#include "ui.h"
-#include "gtkutils.h"
 
 static GaimPlugin *my_protocol = NULL;
 
@@ -126,7 +123,6 @@ struct signon {
 
 static void toc_login_callback(gpointer, gint, GaimInputCondition);
 static void toc_callback(gpointer, gint, GaimInputCondition);
-static void accept_file_dialog(struct ft_request *);
 
 /* The following were added for win32 port - Herman */
 
@@ -918,6 +914,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 							  "going through. This is only temporary, please "
 							  "be patient."));
 	} else if (!g_ascii_strcasecmp(c, "RVOUS_PROPOSE")) {
+#if 0
 		char *user, *uuid, *cookie;
 		int seq;
 		char *rip, *pip, *vip, *trillian = NULL;
@@ -1031,7 +1028,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		} else if (!strcmp(uuid, VOICE_UID)) {
 			/* oh goody. voice over ip. fun stuff. */
 		} else if (!strcmp(uuid, B_ICON_UID)) {
-			/*
 			int unk[4], i;
 			char *messages[4];
 			struct buddy_icon *icon;
@@ -1049,7 +1045,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			g_free(icon);
 			for (i--; i >= 0; i--)
 				g_free(messages[i]);
-			*/
 		} else if (!strcmp(uuid, IMAGE_UID)) {
 			/* aka Direct IM */
 		} else {
@@ -1057,6 +1052,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 					   "Don't know what to do with RVOUS UUID %s\n", uuid);
 			/* do we have to do anything here? i think it just times out */
 		}
+#endif
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "toc",
 				   "don't know what to do with %s\n", c);
@@ -1543,6 +1539,7 @@ static GList *toc_actions(GaimConnection *gc)
 	return m;
 }
 
+#if 0
 /*********
  * RVOUS ACTIONS
  ********/
@@ -2078,6 +2075,7 @@ static void accept_file_dialog(struct ft_request *ft) {
 							   G_CALLBACK(toc_accept_ft),
 							   G_CALLBACK(toc_reject_ft));
 }
+#endif
 
 static GaimPluginProtocolInfo prpl_info =
 {
