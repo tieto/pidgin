@@ -7,10 +7,10 @@
 # NOTE gftt is http://gnome-fi.sourceforge.net/
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.81\n"
+"Project-Id-Version: gaim 0.82\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-25 23:58-0400\n"
-"PO-Revision-Date: 2004-08-04 18:43+0300\n"
+"POT-Creation-Date: 2004-08-25 11:29+0300\n"
+"PO-Revision-Date: 2004-08-26 07:15+0300\n"
 "Last-Translator: Arto Alakulju <arto@alakulju.net>\n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -465,7 +465,7 @@ msgstr "Paikallinen osoitekirja"
 #: plugins/gevolution/add_buddy_dialog.c:144
 #: plugins/gevolution/add_buddy_dialog.c:155
 #: plugins/gevolution/assoc-buddy.c:82 plugins/gevolution/assoc-buddy.c:93
-#: src/gtkblist.c:3011 src/gtkprefs.c:959 src/gtkprefs.c:1011
+#: src/gtkblist.c:2998 src/gtkprefs.c:959 src/gtkprefs.c:1011
 #: src/gtkprefs.c:1823 src/protocols/jabber/jabber.c:924
 msgid "None"
 msgstr "Ei mitään"
@@ -493,8 +493,8 @@ msgid "Search"
 msgstr "Etsi"
 
 #: plugins/gevolution/add_buddy_dialog.c:564
-#: plugins/gevolution/new_person_dialog.c:308 src/gtkblist.c:4051
-#: src/gtkblist.c:4389
+#: plugins/gevolution/new_person_dialog.c:308 src/gtkblist.c:4038
+#: src/gtkblist.c:4376
 msgid "Group:"
 msgstr "Ryhmä:"
 
@@ -534,7 +534,7 @@ msgid "_Associate Buddy"
 msgstr "_Assosioi tuttava"
 
 #: plugins/gevolution/gevo-util.c:65 plugins/gevolution/gevolution.c:89
-#: src/blist.c:774 src/blist.c:982 src/blist.c:1912 src/gtkblist.c:3870
+#: src/blist.c:774 src/blist.c:982 src/blist.c:1912 src/gtkblist.c:3857
 #: src/protocols/jabber/roster.c:66
 msgid "Buddies"
 msgstr "Tuttavat"
@@ -1240,7 +1240,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Käynnistä gaim windowsin käynnistyessä."
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:361 src/gtkblist.c:3056
+#: plugins/win32/winprefs/winprefs.c:361 src/gtkblist.c:3043
 #: src/gtkprefs.c:2416
 msgid "Buddy List"
 msgstr "Tuttavalista"
@@ -1309,7 +1309,7 @@ msgstr "Anna nykyinen sekä uusi salasana."
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:342 src/connection.c:198 src/gtkblist.c:2384
+#: src/account.c:342 src/connection.c:198 src/gtkblist.c:2371
 #: src/gtkdialogs.c:384 src/gtkdialogs.c:526 src/gtkdialogs.c:579
 #: src/gtkrequest.c:242 src/protocols/jabber/jabber.c:1048
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:226
@@ -1327,8 +1327,8 @@ msgid "OK"
 msgstr "OK"
 
 #: src/account.c:343 src/account.c:381 src/away.c:366 src/connection.c:199
-#: src/gtkaccount.c:2010 src/gtkaccount.c:2506 src/gtkblist.c:2385
-#: src/gtkblist.c:4427 src/gtkconn.c:169 src/gtkdialogs.c:385
+#: src/gtkaccount.c:2010 src/gtkaccount.c:2506 src/gtkblist.c:2372
+#: src/gtkblist.c:4414 src/gtkconn.c:169 src/gtkdialogs.c:385
 #: src/gtkdialogs.c:527 src/gtkdialogs.c:580 src/gtkdialogs.c:678
 #: src/gtkdialogs.c:700 src/gtkdialogs.c:720 src/gtkdialogs.c:756
 #: src/gtkdialogs.c:816 src/gtkdialogs.c:858 src/gtkdialogs.c:879
@@ -1374,9 +1374,8 @@ msgid "Away!"
 msgstr "Poissa!"
 
 #: src/away.c:303
-#, fuzzy
 msgid "Edit This Message"
-msgstr "Lähetä viestinä"
+msgstr "Muokkaa tätä viestiä"
 
 #: src/away.c:308
 msgid "I'm Back!"
@@ -1392,7 +1391,7 @@ msgid "Remove Away Message"
 msgstr "Poista poissaoloviesti"
 
 #. Remove button
-#: src/away.c:365 src/gtkconv.c:1400 src/gtkconv.c:3743 src/gtkconv.c:3814
+#: src/away.c:365 src/gtkconv.c:1402 src/gtkconv.c:3745 src/gtkconv.c:3816
 #: src/gtkrequest.c:248
 msgid "Remove"
 msgstr "Poista"
@@ -1486,9 +1485,9 @@ msgid "Connection Error"
 msgstr "Yhteysvirhe"
 
 #: src/connection.c:195
-#, fuzzy, c-format
+#, c-format
 msgid "Enter password for %s (%s)"
-msgstr "Anna %s:n salasana"
+msgstr "Anna salasana käyttäjätilille %s (%s)"
 
 # XXX relatively trivial editing of old string (+"Viesti on")
 #: src/conversation.c:229
@@ -1561,39 +1560,44 @@ msgid "By account"
 msgstr "Tilin mukaan"
 
 #: src/ft.c:122
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reading %s: \n"
 "%s.\n"
-msgstr "Virhe käynnistettäessä \"%s\": %s"
+msgstr ""
+"Virhe luettaessa %s:  \n"
+"%s.\n"
 
 #: src/ft.c:126
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error writing %s: \n"
 "%s.\n"
-msgstr "Virhe kirjoitettaessa %s palvelimelle"
+msgstr ""
+"Virhe kirjoitettaessa %s: \n"
+"%s.\n"
 
 #: src/ft.c:130
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error accessing %s: \n"
 "%s.\n"
-msgstr "Virhe käynnistettäessä \"%s\": %s"
+msgstr ""
+"Virhe käytettäessä tiedostoa %s: \n"
+"%s. \n"
 
 #: src/ft.c:161
 msgid "Cannot send a file of 0 bytes."
 msgstr "Ei voida lähettää tiedostoa jonka koko on 0 tavua."
 
 #: src/ft.c:171
-#, fuzzy
 msgid "Cannot send a directory."
-msgstr "Ei voida lähettää tiedostoa jonka koko on 0 tavua."
+msgstr "Ei voida lähettää hakemistoa."
 
 #: src/ft.c:178
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
-msgstr ""
+msgstr "%s ei ole tavallinen tiedosto. Ei suostuta ylikirjoittamaan sitä.\n"
 
 #: src/ft.c:232
 #, c-format
@@ -1622,9 +1626,9 @@ msgid "%s is not a valid filename.\n"
 msgstr "%s ei ole kelvollinen tiedostonimi.\n"
 
 #: src/ft.c:898
-#, fuzzy, c-format
+#, c-format
 msgid "%s canceled the transfer of %s"
-msgstr "%s on vaihtanut aiheeksi: %s"
+msgstr "%s peruutti tiedoston %s siirron"
 
 #: src/ft.c:948
 #, c-format
@@ -1672,11 +1676,12 @@ msgstr ""
 "           -h, --help [komento] Näytä komennon ohje\n"
 
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
-#, fuzzy
 msgid ""
 "Gaim not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
-msgstr "Gaim ei ole käynnissä (sessiossa 0)\n"
+msgstr ""
+"Gaim ei ole käynnissä (sessiossa 0)\n"
+"Onko \"Kauko-ohjain\"-liitännäinen ladattu?\n"
 
 #: src/gaim-remote.c:219
 msgid ""
@@ -1732,13 +1737,13 @@ msgstr ""
 msgid ""
 "\n"
 "Mark all accounts as \"away\" with the default message.\n"
-msgstr ""
+msgstr "\nMerkitse kaikki tilit poissaolevaksi oletus poissaoloviestillä.\n"
 
 #: src/gaim-remote.c:247
 msgid ""
 "\n"
 "Set all accounts as not away.\n"
-msgstr ""
+msgstr "\nPoista poissaolotila kaikilta käyttäjätileiltä.\n"
 
 #: src/gtkaccount.c:325
 #, c-format
@@ -1760,7 +1765,7 @@ msgstr "Sisäänkirjautumisvalinnat"
 msgid "Protocol:"
 msgstr "Protokolla:"
 
-#: src/gtkaccount.c:647 src/gtkblist.c:4023
+#: src/gtkaccount.c:647 src/gtkblist.c:4010
 msgid "Screen Name:"
 msgstr "Näyttönimi:"
 
@@ -1768,7 +1773,7 @@ msgstr "Näyttönimi:"
 msgid "Password:"
 msgstr "Salasana:"
 
-#: src/gtkaccount.c:725 src/gtkblist.c:4037 src/gtkblist.c:4375
+#: src/gtkaccount.c:725 src/gtkblist.c:4024 src/gtkblist.c:4362
 msgid "Alias:"
 msgstr "Alias:"
 
@@ -1930,8 +1935,8 @@ msgid "Add buddy to your list?"
 msgstr "Lisää tuttava listalle?"
 
 #. Add button
-#: src/gtkaccount.c:2505 src/gtkblist.c:4426 src/gtkconv.c:1402
-#: src/gtkconv.c:3736 src/gtkconv.c:3807 src/gtkrequest.c:247
+#: src/gtkaccount.c:2505 src/gtkblist.c:4413 src/gtkconv.c:1404
+#: src/gtkconv.c:3738 src/gtkconv.c:3809 src/gtkrequest.c:247
 #: src/protocols/icq/gaim_icq.c:276 src/protocols/oscar/oscar.c:3741
 #: src/protocols/silc/chat.c:593
 msgid "Add"
@@ -1951,11 +1956,11 @@ msgstr "Anna tiedot chatistä johon haluat liittyä.\n"
 msgid "_Account:"
 msgstr "_Käyttäjätili:"
 
-#: src/gtkblist.c:1119 src/gtkblist.c:3209
+#: src/gtkblist.c:1119 src/gtkblist.c:3196
 msgid "Get _Info"
 msgstr "Hae _tiedot"
 
-#: src/gtkblist.c:1122 src/gtkblist.c:3199
+#: src/gtkblist.c:1122 src/gtkblist.c:3186
 msgid "I_M"
 msgstr "_Pikaviesti"
 
@@ -2017,7 +2022,7 @@ msgstr "_Pienennä"
 msgid "_Expand"
 msgstr "_Laajenna"
 
-#: src/gtkblist.c:1919 src/gtkconv.c:4379 src/gtkpounce.c:314
+#: src/gtkblist.c:1919 src/gtkconv.c:4381 src/gtkpounce.c:314
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -2025,134 +2030,134 @@ msgstr ""
 "tuttavan."
 
 #. Buddies menu
-#: src/gtkblist.c:2329
+#: src/gtkblist.c:2316
 msgid "/_Buddies"
 msgstr "/_Tuttavat"
 
-#: src/gtkblist.c:2330
+#: src/gtkblist.c:2317
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Tuttavat/Uusi _pikaviesti..."
 
-#: src/gtkblist.c:2331
+#: src/gtkblist.c:2318
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Tuttavat/Liity _ryhmäkeskusteluun..."
 
-#: src/gtkblist.c:2332
+#: src/gtkblist.c:2319
 msgid "/Buddies/Get User _Info..."
 msgstr "/Tuttavat/Hae _käyttäjätiedot..."
 
-#: src/gtkblist.c:2333
+#: src/gtkblist.c:2320
 msgid "/Buddies/View User _Log..."
 msgstr "/Tuttavat/Näytä käyttäjä_loki..."
 
-#: src/gtkblist.c:2335
+#: src/gtkblist.c:2322
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Tuttavat/Näytä poissaolevat tuttavat"
 
-#: src/gtkblist.c:2336
+#: src/gtkblist.c:2323
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Tuttavat/Näytä tyhjät ryhmät"
 
-#: src/gtkblist.c:2337
+#: src/gtkblist.c:2324
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Tuttavat/_Lisää tuttava..."
 
 # XXX or should it mean "Add a chat *room*"?
-#: src/gtkblist.c:2338
+#: src/gtkblist.c:2325
 msgid "/Buddies/Add C_hat..."
 msgstr "/Tuttavat/Lisää ryhmäkeskustelu..."
 
-#: src/gtkblist.c:2339
+#: src/gtkblist.c:2326
 msgid "/Buddies/Add _Group..."
 msgstr "/Tuttavat/Lisää _ryhmä..."
 
-#: src/gtkblist.c:2341
+#: src/gtkblist.c:2328
 msgid "/Buddies/_Signoff"
 msgstr "/Tuttavat/Kirjaa _ulos"
 
-#: src/gtkblist.c:2342
+#: src/gtkblist.c:2329
 msgid "/Buddies/_Quit"
 msgstr "/Tuttavat/_Lopeta"
 
 #. Tools
-#: src/gtkblist.c:2345
+#: src/gtkblist.c:2332
 msgid "/_Tools"
 msgstr "/_Työkalut"
 
-#: src/gtkblist.c:2346
+#: src/gtkblist.c:2333
 msgid "/Tools/_Away"
 msgstr "/Työkalut/_Poissa"
 
-#: src/gtkblist.c:2347
+#: src/gtkblist.c:2334
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Työkalut/Tuttava_ilmoitin"
 
-#: src/gtkblist.c:2348
+#: src/gtkblist.c:2335
 msgid "/Tools/Account Ac_tions"
 msgstr "/Työkalut/_Käyttäjätilitoiminnot"
 
-#: src/gtkblist.c:2349
+#: src/gtkblist.c:2336
 msgid "/Tools/Pl_ugin Actions"
 msgstr "/Työkalut/_Liitännäistoiminnot"
 
-#: src/gtkblist.c:2351
+#: src/gtkblist.c:2338
 msgid "/Tools/A_ccounts"
 msgstr "/Työkalut/_Käyttäjätilit"
 
-#: src/gtkblist.c:2352
+#: src/gtkblist.c:2339
 msgid "/Tools/_File Transfers"
 msgstr "/Työkalut/_Tiedostosiirtot..."
 
-#: src/gtkblist.c:2353
+#: src/gtkblist.c:2340
 msgid "/Tools/R_oom List"
 msgstr "/Työkalut/Chat-huone_lista"
 
-#: src/gtkblist.c:2354
+#: src/gtkblist.c:2341
 msgid "/Tools/Pr_eferences"
 msgstr "/Työkalut/A_setukset"
 
-#: src/gtkblist.c:2355
+#: src/gtkblist.c:2342
 msgid "/Tools/Pr_ivacy"
 msgstr "/Työkalut/Yks_ityisyys"
 
-#: src/gtkblist.c:2357
+#: src/gtkblist.c:2344
 msgid "/Tools/View System _Log"
 msgstr "/Työkalut/Näytä järjestelmä_loki"
 
 #. Help
-#: src/gtkblist.c:2360
+#: src/gtkblist.c:2347
 msgid "/_Help"
 msgstr "/_Ohje"
 
 # XXX fuzzy tag accidentally removed before it was ready :-(
 # XXX but the bot on #finnish seems to say the original fuzzy is correct
 # XXX note: http://www.tt-tori.fi/atk-sanakirja/ lists "Suoraohje" (n.)
-#: src/gtkblist.c:2361
+#: src/gtkblist.c:2348
 msgid "/Help/Online _Help"
 msgstr "/Ohje/_Tukea linjoilla"
 
-#: src/gtkblist.c:2362
+#: src/gtkblist.c:2349
 msgid "/Help/_Debug Window"
 msgstr "/Ohje/_Testausikkuna"
 
-#: src/gtkblist.c:2363
+#: src/gtkblist.c:2350
 msgid "/Help/_About"
 msgstr "/Ohje/Tietoj_a"
 
-#: src/gtkblist.c:2381
+#: src/gtkblist.c:2368
 msgid "Rename Group"
 msgstr "Nimeä ryhmä uudelleen"
 
 # XXX
-#: src/gtkblist.c:2381
+#: src/gtkblist.c:2368
 msgid "New group name"
 msgstr "Uusi ryhmänimi"
 
-#: src/gtkblist.c:2382
+#: src/gtkblist.c:2369
 msgid "Please enter a new name for the selected group."
 msgstr "Anna uusi nimi valitulle ryhmälle."
 
-#: src/gtkblist.c:2410
+#: src/gtkblist.c:2397
 #, c-format
 msgid ""
 "\n"
@@ -2161,7 +2166,7 @@ msgstr ""
 "\n"
 "<b>Käyttäjätili:</b> %s"
 
-#: src/gtkblist.c:2474
+#: src/gtkblist.c:2461
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2169,12 +2174,12 @@ msgstr ""
 "\n"
 "<b>Tila:</b> Poissa linjoilta"
 
-#: src/gtkblist.c:2489
+#: src/gtkblist.c:2476
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:2505
+#: src/gtkblist.c:2492
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2182,7 +2187,7 @@ msgstr ""
 "\n"
 "<b>Käyttäjätili:</b>"
 
-#: src/gtkblist.c:2506
+#: src/gtkblist.c:2493
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2190,7 +2195,7 @@ msgstr ""
 "\n"
 "<b>Kontaktin Alias:</b>"
 
-#: src/gtkblist.c:2507
+#: src/gtkblist.c:2494
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2198,7 +2203,7 @@ msgstr ""
 "\n"
 "<b>Alias:</b>"
 
-#: src/gtkblist.c:2508
+#: src/gtkblist.c:2495
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2206,7 +2211,7 @@ msgstr ""
 "\n"
 "<b>Kutsumanimi:</b>"
 
-#: src/gtkblist.c:2509
+#: src/gtkblist.c:2496
 msgid ""
 "\n"
 "<b>Logged In:</b>"
@@ -2214,7 +2219,7 @@ msgstr ""
 "\n"
 "<b>Kirjautuneena sisään:</b> "
 
-#: src/gtkblist.c:2510
+#: src/gtkblist.c:2497
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2222,7 +2227,7 @@ msgstr ""
 "\n"
 "<b>Jouten:</b>"
 
-#: src/gtkblist.c:2511
+#: src/gtkblist.c:2498
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2230,7 +2235,7 @@ msgstr ""
 "\n"
 "<b>Varoitettu:</b>"
 
-#: src/gtkblist.c:2513
+#: src/gtkblist.c:2500
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2238,7 +2243,7 @@ msgstr ""
 "\n"
 "<b>Kuvaus:</b> Aavemainen"
 
-#: src/gtkblist.c:2514
+#: src/gtkblist.c:2501
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2246,7 +2251,7 @@ msgstr ""
 "\n"
 "<b>Tila</b>: Mahtava"
 
-#: src/gtkblist.c:2515
+#: src/gtkblist.c:2502
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2254,109 +2259,109 @@ msgstr ""
 "\n"
 "<b>Tila</b>: Rockin'"
 
-#: src/gtkblist.c:2797
+#: src/gtkblist.c:2784
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Jouten (%dt%02dm) "
 
-#: src/gtkblist.c:2799
+#: src/gtkblist.c:2786
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Jouten (%dm) "
 
-#: src/gtkblist.c:2804
+#: src/gtkblist.c:2791
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Varoitettu (%d%%)"
 
-#: src/gtkblist.c:2807
+#: src/gtkblist.c:2794
 msgid "Offline "
 msgstr "Poissa linjoilta"
 
 #. Make menu items sensitive/insensitive where appropriate
-#: src/gtkblist.c:2925
+#: src/gtkblist.c:2912
 msgid "/Buddies/Join a Chat..."
 msgstr "/Tuttavat/Liity Chattiin..."
 
-#: src/gtkblist.c:2928
+#: src/gtkblist.c:2915
 msgid "/Tools/Room List"
 msgstr "/Työkalut/Chat-lista"
 
-#: src/gtkblist.c:2931
+#: src/gtkblist.c:2918
 msgid "/Tools/Privacy"
 msgstr "/Työkalut/Yksityisyys"
 
-#: src/gtkblist.c:3013
+#: src/gtkblist.c:3000
 msgid "Alphabetical"
 msgstr "Aakkosellinen"
 
-#: src/gtkblist.c:3014
+#: src/gtkblist.c:3001
 msgid "By status"
 msgstr "Tilan mukaan"
 
-#: src/gtkblist.c:3015
+#: src/gtkblist.c:3002
 msgid "By log size"
 msgstr "Lokin koon mukaan"
 
-#: src/gtkblist.c:3081
+#: src/gtkblist.c:3068
 msgid "/Tools/Away"
 msgstr "/Työkalut/Poissa"
 
-#: src/gtkblist.c:3084
+#: src/gtkblist.c:3071
 msgid "/Tools/Buddy Pounce"
 msgstr "/Työkalut/Tuttavailmoitin"
 
-#: src/gtkblist.c:3087
+#: src/gtkblist.c:3074
 msgid "/Tools/Account Actions"
 msgstr "/Työkalut/Käyttäjätilitoiminnot"
 
-#: src/gtkblist.c:3090
+#: src/gtkblist.c:3077
 msgid "/Tools/Plugin Actions"
 msgstr "/Työkalut/Liitännäistoiminnot"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3178
+#: src/gtkblist.c:3165
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Tuttavat/Näytä poissaolevat tuttavat"
 
-#: src/gtkblist.c:3180
+#: src/gtkblist.c:3167
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Tuttavat/Näytä tyhjät ryhmät"
 
-#: src/gtkblist.c:3205
+#: src/gtkblist.c:3192
 msgid "Send a message to the selected buddy"
 msgstr "Lähetä viesti valitulle tuttavalle"
 
-#: src/gtkblist.c:3215
+#: src/gtkblist.c:3202
 msgid "Get information on the selected buddy"
 msgstr "Hae tietoja valitusta tuttavasta"
 
-#: src/gtkblist.c:3219
+#: src/gtkblist.c:3206
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gtkblist.c:3224
+#: src/gtkblist.c:3211
 msgid "Join a chat room"
 msgstr "Liity ryhmäkeskusteluun"
 
-#: src/gtkblist.c:3229
+#: src/gtkblist.c:3216
 msgid "_Away"
 msgstr "_Poissa"
 
 # XXX This is "almost certain" to be right
-#: src/gtkblist.c:3234
+#: src/gtkblist.c:3221
 msgid "Set an away message"
 msgstr "Aseta poissaoloviesti"
 
-#: src/gtkblist.c:3977 src/protocols/silc/buddy.c:731
+#: src/gtkblist.c:3964 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
 #: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2734
 msgid "Add Buddy"
 msgstr "Lisää tuttava"
 
-#: src/gtkblist.c:4001
+#: src/gtkblist.c:3988
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2367,17 +2372,15 @@ msgstr ""
 "näyttönimen sijasta aina kuin mahdollista.\n"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:4061 src/gtkblist.c:4355
+#: src/gtkblist.c:4048 src/gtkblist.c:4342
 msgid "Account:"
 msgstr "Käyttäjätili:"
 
-# XXX I declined "Protokolla" and "versio", either could be wrong
-#: src/gtkblist.c:4288
-#, fuzzy
+#: src/gtkblist.c:4275
 msgid "This protocol does not support chat rooms."
-msgstr "Protokollan versiota ei tuettu"
+msgstr "Tämä protokolla ei tue chat-huoneita."
 
-#: src/gtkblist.c:4304
+#: src/gtkblist.c:4291
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -2385,11 +2388,11 @@ msgstr ""
 "Et ole kirjautuneena millään protokollalla jolla voisi käyttää "
 "ryhmäkeskustelua."
 
-#: src/gtkblist.c:4321
+#: src/gtkblist.c:4308
 msgid "Add Chat"
 msgstr "Lisää ryhmäkeskustelu"
 
-#: src/gtkblist.c:4345
+#: src/gtkblist.c:4332
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2397,15 +2400,15 @@ msgstr ""
 "Anna alias, ja tiedot ryhmäkeskustelusta jonka haluat lisätä "
 "tuttavalistalle.\n"
 
-#: src/gtkblist.c:4423
+#: src/gtkblist.c:4410
 msgid "Add Group"
 msgstr "Lisää ryhmä"
 
-#: src/gtkblist.c:4424
+#: src/gtkblist.c:4411
 msgid "Please enter the name of the group to be added."
 msgstr "Anna lisättävän ryhmän nimi."
 
-#: src/gtkblist.c:4991 src/gtkblist.c:5088
+#: src/gtkblist.c:4978 src/gtkblist.c:5075
 msgid "No actions available"
 msgstr "Ei toimintoja saatavilla."
 
@@ -2457,20 +2460,20 @@ msgstr "Uudelleenyhdistä _kaikki"
 msgid "Time"
 msgstr "Aika"
 
-#: src/gtkconv.c:327
+#: src/gtkconv.c:329
 #, c-format
 msgid "me is using Gaim v%s."
 msgstr "Minä käyttää Gaim versiota v%s."
 
-#: src/gtkconv.c:336
+#: src/gtkconv.c:338
 msgid "Supported debug options are:  version"
 msgstr "Tuetut debug valinnat ovat: versio"
 
-#: src/gtkconv.c:360
+#: src/gtkconv.c:362
 msgid "No such command (in this context)."
 msgstr "Komento ei saatavilla (tässä kontekstissa)."
 
-#: src/gtkconv.c:363
+#: src/gtkconv.c:365
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
@@ -2478,405 +2481,403 @@ msgstr ""
 "Kirjoita \"/help &alt;komento&gt;\" saadaksesi ohjeen tietystä komennosta.\n"
 "Seuraavat komennot ovat saatavilla tässä kontekstissa:\n"
 
-#: src/gtkconv.c:435
-#, fuzzy
+#: src/gtkconv.c:437
 msgid "No such command."
-msgstr "Kanavaa ei ole"
+msgstr "Sellaista komentoa ei ole."
 
-#: src/gtkconv.c:442
+#: src/gtkconv.c:444
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
-msgstr ""
+msgstr "Syntaksivirhe: Syötit väärän määrän argumentteja kyseiselle komennolle."
 
-#: src/gtkconv.c:447
+#: src/gtkconv.c:449
 msgid "Your command failed for an unknown reason."
 msgstr "Komento epäonnistui tuntemattomasta syystä."
 
-#: src/gtkconv.c:454
+#: src/gtkconv.c:456
 msgid "That command only works in Chats, not IMs."
 msgstr "Tämä komento toimii vain chatissä, ei pikaviesteissä."
 
-#: src/gtkconv.c:457
+#: src/gtkconv.c:459
 msgid "That command only works in IMs, not Chats."
 msgstr "Tämä komento toimii vain pikaviesteissä, ei chatissä."
 
-#: src/gtkconv.c:461
+#: src/gtkconv.c:463
 msgid "That command doesn't work on this protocol."
 msgstr "Tämä komento ei toimi tälle protokollalle."
 
-#: src/gtkconv.c:707
+#: src/gtkconv.c:709
 msgid "Invite Buddy Into Chat Room"
 msgstr "Kutsu tuttava keskusteluhuoneeseen"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:735
+#: src/gtkconv.c:737
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
 msgstr "Anna kutsuttavan käyttäjän nimi sekä vapaaehtoinen viesti."
 
-#: src/gtkconv.c:756
+#: src/gtkconv.c:758
 msgid "_Buddy:"
 msgstr "_Tuttava:"
 
 # src/sidebar.c:103
-#: src/gtkconv.c:776
+#: src/gtkconv.c:778
 msgid "_Message:"
 msgstr "_Viesti:"
 
-#: src/gtkconv.c:813 src/gtkconv.c:2498 src/gtkdebug.c:182
+#: src/gtkconv.c:815 src/gtkconv.c:2500 src/gtkdebug.c:182
 msgid "Unable to open file."
 msgstr "Ei kyetty avaamaan tiedostoa."
 
-#: src/gtkconv.c:818
+#: src/gtkconv.c:820
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
 msgstr "<h1>Keskustelu käyttäjän %s kanssa</h1>\n"
 
-#: src/gtkconv.c:832
+#: src/gtkconv.c:834
 msgid "Save Conversation"
 msgstr "Tallenna keskustelu"
 
-#: src/gtkconv.c:909 src/gtkdebug.c:131
+#: src/gtkconv.c:911 src/gtkdebug.c:131
 msgid "Find"
 msgstr "Etsi"
 
-#: src/gtkconv.c:935 src/gtkdebug.c:159
+#: src/gtkconv.c:937 src/gtkdebug.c:159
 msgid "_Search for:"
 msgstr "_Haettava termi:"
 
-#: src/gtkconv.c:1350
+#: src/gtkconv.c:1352
 msgid "IM"
 msgstr "Pikaviesti"
 
 #. Send File button
-#: src/gtkconv.c:1359 src/gtkconv.c:3729 src/protocols/oscar/oscar.c:569
+#: src/gtkconv.c:1361 src/gtkconv.c:3731 src/protocols/oscar/oscar.c:569
 msgid "Send File"
 msgstr "Lähetä tiedosto"
 
-#: src/gtkconv.c:1368
+#: src/gtkconv.c:1370
 msgid "Un-Ignore"
 msgstr "Välitä"
 
-#: src/gtkconv.c:1370 src/gtkprefs.c:828
+#: src/gtkconv.c:1372 src/gtkprefs.c:828
 msgid "Ignore"
 msgstr "Älä välitä"
 
 #. Info button
-#: src/gtkconv.c:1379 src/gtkconv.c:3750
+#: src/gtkconv.c:1381 src/gtkconv.c:3752
 msgid "Info"
 msgstr "Tietoja"
 
-#: src/gtkconv.c:1388
+#: src/gtkconv.c:1390
 msgid "Get Away Msg"
 msgstr "Hae poissaoloviesti"
 
-#: src/gtkconv.c:2506
+#: src/gtkconv.c:2508
 msgid "Unable to save icon file to disk."
 msgstr "Ikonitiedostoa ei voida tallentaa levylle."
 
-#: src/gtkconv.c:2527
+#: src/gtkconv.c:2529
 msgid "Save Icon"
 msgstr "Tallenna kuvake"
 
-#: src/gtkconv.c:2557
+#: src/gtkconv.c:2559
 msgid "Animate"
 msgstr "Animoi"
 
-#: src/gtkconv.c:2562
+#: src/gtkconv.c:2564
 msgid "Hide Icon"
 msgstr "Piilota kuvake"
 
-#: src/gtkconv.c:2568
+#: src/gtkconv.c:2570
 msgid "Save Icon As..."
 msgstr "Tallenna kuvake nimellä..."
 
-#: src/gtkconv.c:2938
+#: src/gtkconv.c:2940
 msgid "User is typing..."
 msgstr "Käyttäjä kirjoittaa..."
 
-#: src/gtkconv.c:2946
+#: src/gtkconv.c:2948
 msgid "User has typed something and paused"
 msgstr "Käyttäjä kirjoitti jotain ja keskeytti"
 
 #. Build the Send As menu
-#: src/gtkconv.c:3049
+#: src/gtkconv.c:3051
 msgid "_Send As"
 msgstr "_Lähetä nimellä"
 
 #. Conversation menu
-#: src/gtkconv.c:3500
+#: src/gtkconv.c:3502
 msgid "/_Conversation"
 msgstr "/_Keskustelu"
 
-#: src/gtkconv.c:3502
+#: src/gtkconv.c:3504
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Keskustelu/Uusi _pikaviesti..."
 
-#: src/gtkconv.c:3507
+#: src/gtkconv.c:3509
 msgid "/Conversation/_Find..."
 msgstr "/Keskustelu/_Etsi..."
 
-#: src/gtkconv.c:3509
+#: src/gtkconv.c:3511
 msgid "/Conversation/View _Log"
 msgstr "/Keskustelu/Näytä_loki..."
 
-#: src/gtkconv.c:3510
+#: src/gtkconv.c:3512
 msgid "/Conversation/_Save As..."
 msgstr "/Keskustelu/_Tallenna nimellä..."
 
-#: src/gtkconv.c:3512
+#: src/gtkconv.c:3514
 msgid "/Conversation/Clear"
 msgstr "/Keskustelu/Tyhjennä"
 
-#: src/gtkconv.c:3516
+#: src/gtkconv.c:3518
 msgid "/Conversation/Se_nd File..."
 msgstr "/Keskustelu/_Lähetä Tiedosto..."
 
-#: src/gtkconv.c:3517
+#: src/gtkconv.c:3519
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Keskustelu/Lisää tuttava_ilmoitin..."
 
-#: src/gtkconv.c:3519
+#: src/gtkconv.c:3521
 msgid "/Conversation/_Get Info"
 msgstr "/Keskustelu/_Hae tiedot..."
 
-#: src/gtkconv.c:3521
+#: src/gtkconv.c:3523
 msgid "/Conversation/_Warn..."
 msgstr "/Keskustelu/_Varoita..."
 
-#: src/gtkconv.c:3523
+#: src/gtkconv.c:3525
 msgid "/Conversation/In_vite..."
 msgstr "/Keskustelu/Kut_su..."
 
-#: src/gtkconv.c:3528
+#: src/gtkconv.c:3530
 msgid "/Conversation/A_lias..."
 msgstr "/Keskustelu/A_lias..."
 
-#: src/gtkconv.c:3530
+#: src/gtkconv.c:3532
 msgid "/Conversation/_Block..."
 msgstr "/Keskustelu/E_stä..."
 
-#: src/gtkconv.c:3532
+#: src/gtkconv.c:3534
 msgid "/Conversation/_Add..."
 msgstr "/Keskustelu/_Lisää..."
 
-#: src/gtkconv.c:3534
+#: src/gtkconv.c:3536
 msgid "/Conversation/_Remove..."
 msgstr "/Keskustelu/_Poista..."
 
-#: src/gtkconv.c:3539
+#: src/gtkconv.c:3541
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Keskustelu/Lisää lin_kki..."
 
-#: src/gtkconv.c:3541
+#: src/gtkconv.c:3543
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Keskustelu/Liitä _kuva..."
 
-#: src/gtkconv.c:3546
+#: src/gtkconv.c:3548
 msgid "/Conversation/_Close"
 msgstr "/Keskustelu/_Sulje"
 
 # src/menus.c:311
 #. Options
-#: src/gtkconv.c:3550
+#: src/gtkconv.c:3552
 msgid "/_Options"
 msgstr "/_Valinnat"
 
-#: src/gtkconv.c:3551
+#: src/gtkconv.c:3553
 msgid "/Options/Enable _Logging"
 msgstr "/Valinnat/_Lokiinkirjaus"
 
-#: src/gtkconv.c:3552
+#: src/gtkconv.c:3554
 msgid "/Options/Enable _Sounds"
 msgstr "/Valinnat/S_oita merkkiäänet"
 
-#: src/gtkconv.c:3553
+#: src/gtkconv.c:3555
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Valinnat/Näytä muokkaus-_työkalurivi"
 
-#: src/gtkconv.c:3554
+#: src/gtkconv.c:3556
 msgid "/Options/Show T_imestamps"
 msgstr "/Valinnat/Näytä _aikaleima"
 
-#: src/gtkconv.c:3596
+#: src/gtkconv.c:3598
 msgid "/Conversation/View Log"
 msgstr "/Keskustelu/Näytä loki..."
 
-#: src/gtkconv.c:3601
+#: src/gtkconv.c:3603
 msgid "/Conversation/Send File..."
 msgstr "/Keskustelu/Lähetä Tiedosto..."
 
-#: src/gtkconv.c:3605
+#: src/gtkconv.c:3607
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Keskustelu/Lisää tuttavailmoitin..."
 
-#: src/gtkconv.c:3611
+#: src/gtkconv.c:3613
 msgid "/Conversation/Get Info"
 msgstr "/Keskustelu/Hae tiedot..."
 
-#: src/gtkconv.c:3615
+#: src/gtkconv.c:3617
 msgid "/Conversation/Warn..."
 msgstr "/Keskustelu/Varoita..."
 
-#: src/gtkconv.c:3619
+#: src/gtkconv.c:3621
 msgid "/Conversation/Invite..."
 msgstr "/Keskustelu/Kutsu..."
 
-#: src/gtkconv.c:3625
+#: src/gtkconv.c:3627
 msgid "/Conversation/Alias..."
 msgstr "/Keskustelu/Alias..."
 
-#: src/gtkconv.c:3629
+#: src/gtkconv.c:3631
 msgid "/Conversation/Block..."
 msgstr "/Keskustelu/Estä..."
 
-#: src/gtkconv.c:3633
+#: src/gtkconv.c:3635
 msgid "/Conversation/Add..."
 msgstr "/Keskustelu/Lisää..."
 
-#: src/gtkconv.c:3637
+#: src/gtkconv.c:3639
 msgid "/Conversation/Remove..."
 msgstr "/Keskustelu/Poista..."
 
-#: src/gtkconv.c:3643
+#: src/gtkconv.c:3645
 msgid "/Conversation/Insert Link..."
 msgstr "/Keskustelu/Liitä linkki..."
 
-#: src/gtkconv.c:3647
+#: src/gtkconv.c:3649
 msgid "/Conversation/Insert Image..."
 msgstr "/Keskustelu/Liitä kuva..."
 
-#: src/gtkconv.c:3653
+#: src/gtkconv.c:3655
 msgid "/Options/Enable Logging"
 msgstr "/Valinnat/Lokiinkirjaus"
 
-#: src/gtkconv.c:3656
+#: src/gtkconv.c:3658
 msgid "/Options/Enable Sounds"
 msgstr "/Valinnat/Soita merkkiäänet"
 
-#: src/gtkconv.c:3659
+#: src/gtkconv.c:3661
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Valinnat/Näytä muokkaus-työkalurivi"
 
-#: src/gtkconv.c:3662
+#: src/gtkconv.c:3664
 msgid "/Options/Show Timestamps"
 msgstr "/Valinnat/Näytä aikaleima"
 
 #. The buttons, from left to right
 #. Warn button
-#: src/gtkconv.c:3715
+#: src/gtkconv.c:3717
 msgid "Warn"
 msgstr "Varoita"
 
 # XXX partitive is wrong; should be accusative II
-#: src/gtkconv.c:3716
+#: src/gtkconv.c:3718
 msgid "Warn the user"
 msgstr "Varoita käyttäjää"
 
 #. Block button
-#: src/gtkconv.c:3722 src/gtkprivacy.c:623 src/gtkprivacy.c:634
+#: src/gtkconv.c:3724 src/gtkprivacy.c:623 src/gtkprivacy.c:634
 msgid "Block"
 msgstr "Estä"
 
-#: src/gtkconv.c:3723
+#: src/gtkconv.c:3725
 msgid "Block the user"
 msgstr "Estä käyttäjä"
 
-#: src/gtkconv.c:3730
+#: src/gtkconv.c:3732
 msgid "Send a file to the user"
 msgstr "Lähetä tiedosto käyttäjälle"
 
-#: src/gtkconv.c:3737
+#: src/gtkconv.c:3739
 msgid "Add the user to your buddy list"
 msgstr "Lisää käyttäjä tuttavalistalle"
 
-#: src/gtkconv.c:3744
+#: src/gtkconv.c:3746
 msgid "Remove the user from your buddy list"
 msgstr "Poista käyttäjä tuttavalistalta"
 
-#: src/gtkconv.c:3751 src/gtkconv.c:4086
+#: src/gtkconv.c:3753 src/gtkconv.c:4088
 msgid "Get the user's information"
 msgstr "Hae käyttäjätiedot"
 
 #. Send button
-#: src/gtkconv.c:3757 src/gtkconv.c:3821
+#: src/gtkconv.c:3759 src/gtkconv.c:3823
 msgid "Send"
 msgstr "Lähetä"
 
-#: src/gtkconv.c:3758 src/gtkconv.c:3822
-#, fuzzy
+#: src/gtkconv.c:3760 src/gtkconv.c:3824
 msgid "Send message"
 msgstr "Lähetä viesti"
 
 #. The buttons, from left to right
 #. Invite
-#: src/gtkconv.c:3800
+#: src/gtkconv.c:3802
 msgid "Invite"
 msgstr "Kutsu"
 
-#: src/gtkconv.c:3801
+#: src/gtkconv.c:3803
 msgid "Invite a user"
 msgstr "Kutsu käyttäjä"
 
-#: src/gtkconv.c:3808
+#: src/gtkconv.c:3810
 msgid "Add the chat to your buddy list"
 msgstr "Lisää chat tuttavalistalle"
 
-#: src/gtkconv.c:3815
+#: src/gtkconv.c:3817
 msgid "Remove the chat from your buddy list"
 msgstr "Poista chat tuttavalistalta"
 
-#: src/gtkconv.c:3939
+#: src/gtkconv.c:3941
 msgid "Topic:"
 msgstr "Aihe:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:4002
+#: src/gtkconv.c:4004
 msgid "0 people in room"
 msgstr "0 ihmistä huoneessa"
 
-#: src/gtkconv.c:4063
+#: src/gtkconv.c:4065
 msgid "IM the user"
 msgstr "Lähetä pikaviesti käyttäjälle"
 
-#: src/gtkconv.c:4075
+#: src/gtkconv.c:4077
 msgid "Ignore the user"
 msgstr "Älä välitä käyttäjästä"
 
-#: src/gtkconv.c:4669
+#: src/gtkconv.c:4671
 msgid "Close conversation"
 msgstr "Sulje keskustelu"
 
-#: src/gtkconv.c:5202 src/gtkconv.c:5231 src/gtkconv.c:5327 src/gtkconv.c:5385
+#: src/gtkconv.c:5204 src/gtkconv.c:5233 src/gtkconv.c:5329 src/gtkconv.c:5387
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d ihminen huoneessa"
 msgstr[1] "%d ihmistä huoneessa"
 
-#: src/gtkconv.c:5951 src/gtkconv.c:5954
+#: src/gtkconv.c:5952 src/gtkconv.c:5955
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Keskustelu/Sulje"
 
-#: src/gtkconv.c:6326
+#: src/gtkconv.c:6327
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
-msgstr ""
+msgstr "say &lt;viesti&gt;: Lähetä viesti normaalisti, niin kuin et olisi käyttämässä komentoa."
 
-#: src/gtkconv.c:6329
+#: src/gtkconv.c:6330
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
 "me &lt;toiminta&gt;: Lähetä IRC-tyylinen toiminta tuttavalle tai chattiin."
 
-#: src/gtkconv.c:6332
+#: src/gtkconv.c:6333
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
 msgstr ""
 "debug &lt;valinta&gt;: Lähetä eri debug-tietoja senhetkiseen keskusteluun."
 
-#: src/gtkconv.c:6336
+#: src/gtkconv.c:6337
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;komento&gt;: Ohje tietylle komennolle."
 
@@ -3076,9 +3077,8 @@ msgid "Vietnamese"
 msgstr "Vietnam"
 
 #: src/gtkdialogs.c:114
-#, fuzzy
 msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "ja Gnome Vi-työryhmä"
+msgstr "T.M Thanh ja Gnome Vi-työryhmä"
 
 # XXX source: netscape + google
 #: src/gtkdialogs.c:115
@@ -3310,22 +3310,20 @@ msgid "Waiting for transfer to begin"
 msgstr "Odotetaan lähetyksen alkamista"
 
 #: src/gtkft.c:220
-#, fuzzy
 msgid "<b>Receiving As:</b>"
-msgstr "<b>Otetaan vastaan:</b>"
+msgstr "<b>Otetaan vastaan käyttäjänä:</b>"
 
 #: src/gtkft.c:222
 msgid "<b>Receiving From:</b>"
-msgstr "<b>Otetaan vastaan:</b>"
+msgstr "<b>Otetaan vastaan käyttäjältä:</b>"
 
 #: src/gtkft.c:226
 msgid "<b>Sending To:</b>"
 msgstr "<b>Lähetetään:</b>"
 
 #: src/gtkft.c:228
-#, fuzzy
 msgid "<b>Sending As:</b>"
-msgstr "<b>Lähetetään:</b>"
+msgstr "<b>Lähetetään käyttäjänä:</b>"
 
 #: src/gtkft.c:407
 msgid "There is no application configured to open this type of file."
@@ -3607,9 +3605,9 @@ msgstr ""
 "%s"
 
 #: src/gtknotify.c:430
-#, fuzzy, c-format
+#, c-format
 msgid "The browser command <b>%s</b> is invalid."
-msgstr "Selainkomento \"%s\" ei kelpaa."
+msgstr "Selainkomento <b>%s</b> on virheellinen."
 
 #: src/gtknotify.c:432 src/gtknotify.c:444 src/gtknotify.c:457
 #: src/gtknotify.c:576
@@ -3617,9 +3615,9 @@ msgid "Unable to open URL"
 msgstr "Ei kyetty avaamaan URL:ää"
 
 #: src/gtknotify.c:442 src/gtknotify.c:455
-#, fuzzy, c-format
+#, c-format
 msgid "Error launching <b>%s</b>: %s"
-msgstr "Virhe käynnistettäessä \"%s\": %s"
+msgstr "Virhe käynnistettäessä <b>%s</b>: %s"
 
 #: src/gtknotify.c:577
 msgid ""
@@ -3944,7 +3942,7 @@ msgstr "Käytä \"kauttaviiva\"-komentoja"
 
 #: src/gtkprefs.c:1020
 msgid "Send unknown \"_slash\" commands as messages"
-msgstr ""
+msgstr "Lähetä _tuntemattomia \"kauttaviiva\"-komentoja viesteinä"
 
 #: src/gtkprefs.c:1023
 msgid "Show _formatting toolbar"
@@ -4249,14 +4247,12 @@ msgid "Never"
 msgstr "Ei koskaan"
 
 #: src/gtkprefs.c:1816
-#, fuzzy
 msgid "When away"
-msgstr "Vain poissaollessa"
+msgstr "Poissaollessa"
 
 #: src/gtkprefs.c:1817
-#, fuzzy
 msgid "When away and idle"
-msgstr "Vain ollessa poissa ja jouten"
+msgstr "Poissa ja jouten ollessa"
 
 #: src/gtkprefs.c:1820 src/protocols/msn/msn.c:1180
 #: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2804
@@ -5243,7 +5239,7 @@ msgstr "Palvelin"
 msgid "Port"
 msgstr "Portti"
 
-#: src/protocols/irc/irc.c:681 src/protocols/oscar/oscar.c:7348
+#: src/protocols/irc/irc.c:681 src/protocols/oscar/oscar.c:7349
 #: src/protocols/zephyr/zephyr.c:1922
 msgid "Encoding"
 msgstr "Koodaus"
@@ -6481,15 +6477,15 @@ msgid "File Send Failed"
 msgstr "Tiedoston lähetys epäonnistui"
 
 # src/prefs.c:111
-#: src/protocols/msn/cmdproc.c:342
+#: src/protocols/msn/cmdproc.c:336
 msgid "Miscellaneous error"
 msgstr "Sekalainen virhe"
 
-#: src/protocols/msn/cmdproc.c:345
+#: src/protocols/msn/cmdproc.c:339
 msgid "You have signed on from another location."
 msgstr "Olet kirjautunut sisään toisesta paikasta."
 
-#: src/protocols/msn/cmdproc.c:347
+#: src/protocols/msn/cmdproc.c:341
 msgid "The MSN servers are going down temporarily."
 msgstr "MSN-palvelimet ajetaan alas väliaikaisesti."
 
@@ -7397,23 +7393,20 @@ msgid "Error communicating with server. Closing connection."
 msgstr "Virhe kommunikoitaessa palvelimelle. Suljetaan yhteys."
 
 #: src/protocols/novell/novell.c:1442
-#, fuzzy
 msgid "Telephone Number"
-msgstr "Puhelin"
+msgstr "Puhelin numero"
 
 #: src/protocols/novell/novell.c:1446
 msgid "Department"
-msgstr ""
+msgstr "Osasto"
 
 #: src/protocols/novell/novell.c:1448
-#, fuzzy
 msgid "Personal Title"
-msgstr "Henkilökohtainen kotisivu"
+msgstr "Titteli"
 
 #: src/protocols/novell/novell.c:1452
-#, fuzzy
 msgid "Mailstop"
-msgstr "Sähköposti"
+msgstr ""
 
 #: src/protocols/novell/novell.c:1454 src/protocols/oscar/oscar.c:4980
 #: src/protocols/oscar/oscar.c:4987
@@ -7421,9 +7414,8 @@ msgid "Email Address"
 msgstr "Sähköpostiosoite"
 
 #: src/protocols/novell/novell.c:1470
-#, fuzzy
 msgid "User ID"
-msgstr "Käyttäjät"
+msgstr "Käyttäjä ID"
 
 #. tag = _("DN");
 #. value = nm_user_record_get_dn(user_record);
@@ -8142,20 +8134,19 @@ msgstr "Tuntematon virhe"
 
 #. Data is assumed to be the destination sn
 #: src/protocols/oscar/oscar.c:4027
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message: %s"
-msgstr "Viestiä ei voitu lähettää (%s)."
+msgstr "Viestiä ei voitu lähettää: %s"
 
 #: src/protocols/oscar/oscar.c:4027 src/protocols/oscar/oscar.c:4032
 #: src/protocols/oscar/oscar.c:4090 src/protocols/oscar/oscar.c:4094
-#, fuzzy
 msgid "Unknown reason."
-msgstr "Tuntematon virhe."
+msgstr "Tuntematon syy."
 
 #: src/protocols/oscar/oscar.c:4030
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s:"
-msgstr "Viestiä ei voitu lähettää (%s)."
+msgstr "Viestiä ei voitu lähettää käyttäjälle %s."
 
 #: src/protocols/oscar/oscar.c:4090
 #, c-format
@@ -8675,55 +8666,55 @@ msgstr "Paikallaoloviesti:"
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Olen työskentelemässä ja tahdon häiriöitä -- laita viestiä!"
 
-#: src/protocols/oscar/oscar.c:7138 src/protocols/silc/silc.c:795
+#: src/protocols/oscar/oscar.c:7139 src/protocols/silc/silc.c:795
 msgid "Set User Info..."
 msgstr "Aseta käyttäjätiedot..."
 
-#: src/protocols/oscar/oscar.c:7143
+#: src/protocols/oscar/oscar.c:7144
 msgid "Set User Info (URL)..."
 msgstr "Aseta käyttäjätiedot (URL)..."
 
-#: src/protocols/oscar/oscar.c:7149
+#: src/protocols/oscar/oscar.c:7150
 msgid "Set Available Message..."
 msgstr "Uusi paikallaoloviesti..."
 
-#: src/protocols/oscar/oscar.c:7154 src/protocols/silc/silc.c:791
+#: src/protocols/oscar/oscar.c:7155 src/protocols/silc/silc.c:791
 msgid "Change Password..."
 msgstr "Vaihda salasana..."
 
-#: src/protocols/oscar/oscar.c:7159
+#: src/protocols/oscar/oscar.c:7160
 msgid "Change Password (URL)"
 msgstr "Vaihda salasanaa (URL)"
 
-#: src/protocols/oscar/oscar.c:7163
+#: src/protocols/oscar/oscar.c:7164
 msgid "Configure IM Forwarding (URL)"
 msgstr "Aseta pikaviestien edelleenlähetys (URL)"
 
-#: src/protocols/oscar/oscar.c:7172
+#: src/protocols/oscar/oscar.c:7173
 msgid "Format Screen Name..."
 msgstr "Muotoile näyttönimi..."
 
-#: src/protocols/oscar/oscar.c:7176
+#: src/protocols/oscar/oscar.c:7177
 msgid "Confirm Account"
 msgstr "Vahvista tili"
 
-#: src/protocols/oscar/oscar.c:7180
+#: src/protocols/oscar/oscar.c:7181
 msgid "Display Currently Registered Address"
 msgstr "Näytä rekisteröity osoite"
 
-#: src/protocols/oscar/oscar.c:7184
+#: src/protocols/oscar/oscar.c:7185
 msgid "Change Currently Registered Address..."
 msgstr "Muuta rekisteröityä osoitetta"
 
-#: src/protocols/oscar/oscar.c:7191
+#: src/protocols/oscar/oscar.c:7192
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Näytä tuttavat jotka odottavat valtuutusta"
 
-#: src/protocols/oscar/oscar.c:7197
+#: src/protocols/oscar/oscar.c:7198
 msgid "Search for Buddy by Email..."
 msgstr "Etsi tuttava sähköpostiosoitteen perusteella"
 
-#: src/protocols/oscar/oscar.c:7202
+#: src/protocols/oscar/oscar.c:7203
 msgid "Search for Buddy by Information"
 msgstr "Etsi tuttavaa tietojen perusteella"
 
@@ -8738,15 +8729,15 @@ msgstr "Etsi tuttavaa tietojen perusteella"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:7321 src/protocols/oscar/oscar.c:7323
+#: src/protocols/oscar/oscar.c:7322 src/protocols/oscar/oscar.c:7324
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "AIM/ICQ-protokollaliitännäinen"
 
-#: src/protocols/oscar/oscar.c:7342
+#: src/protocols/oscar/oscar.c:7343
 msgid "Auth host"
 msgstr "Kirjautumispalvelin"
 
-#: src/protocols/oscar/oscar.c:7345
+#: src/protocols/oscar/oscar.c:7346
 msgid "Auth port"
 msgstr "portti"
 
@@ -10446,12 +10437,10 @@ msgid "Invalid username."
 msgstr "Epäkelpo käyttäjänimi."
 
 #: src/protocols/yahoo/yahoo.c:1825
-#, fuzzy
 msgid "Normal authentication failed!"
 msgstr "Tavallinen tunnistautumismenetelmä epäonnistui!"
 
 #: src/protocols/yahoo/yahoo.c:1826
-#, fuzzy
 msgid ""
 "The normal authentication method has failed. This means either your password "
 "is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
@@ -11044,9 +11033,8 @@ msgid "_Alias"
 msgstr "_Alias"
 
 #: src/stock.c:89
-#, fuzzy
 msgid "_Invite"
-msgstr "Kutsu"
+msgstr "_Kutsu"
 
 # XXX consistency
 #: src/stock.c:90
