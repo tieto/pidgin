@@ -118,6 +118,12 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	buddy->uc = status;
+
+	if(!(status & UC_UNAVAILABLE))
+		plugin_event(event_buddy_back, buddy->account->gc, buddy->name);
+	else
+		plugin_event(event_buddy_away, buddy->account->gc, buddy->name);
+
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
@@ -125,10 +131,12 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 static gboolean presence_update_timeout_cb(struct buddy *buddy) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
-	if(buddy->present == GAIM_BUDDY_SIGNING_ON)
+	if(buddy->present == GAIM_BUDDY_SIGNING_ON) {
 		buddy->present = GAIM_BUDDY_ONLINE;
-	else if(buddy->present == GAIM_BUDDY_SIGNING_OFF)
+		plugin_event(event_buddy_signon, buddy->account->gc, buddy->name);
+	} else if(buddy->present == GAIM_BUDDY_SIGNING_OFF) {
 		buddy->present = GAIM_BUDDY_OFFLINE;
+	}
 
 	buddy->timer = 0;
 
@@ -144,9 +152,11 @@ void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
 
 	if (!GAIM_BUDDY_IS_ONLINE(buddy) && presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_ON;
+		plugin_event(event_buddy_signon, buddy->account->gc, buddy->name);
 		do_timer = TRUE;
 	} else if(GAIM_BUDDY_IS_ONLINE(buddy) && !presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
+		plugin_event(event_buddy_signoff, buddy->account->gc, buddy->name);
 		do_timer = TRUE;
 	}
 

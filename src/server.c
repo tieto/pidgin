@@ -882,16 +882,14 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_AWAY_RETURN);
-		plugin_event(event_buddy_back, gc, b->name);
 		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_AWAY);
-		plugin_event(event_buddy_away, gc, b->name);
 		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
 	}
 
 	gaim_blist_update_buddy_status(b, type);
-	
+
 
 	if (loggedin) {
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
@@ -914,7 +912,6 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 			}
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
 			gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_SIGNON);
-			plugin_event(event_buddy_signon, gc, b->name);
 			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	} else {
@@ -938,7 +935,6 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 			}
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
 			gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_SIGNOFF);
-			plugin_event(event_buddy_signoff, gc, b->name);
 			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	}	

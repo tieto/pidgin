@@ -57,7 +57,7 @@ struct _GtkTicker
   guint total;		/* total width of widgets */
   guint width;		/* width of containing window */
   gboolean dirty;
-  GList *children;	
+  GList *children;
 };
 
 struct _GtkTickerClass
@@ -69,7 +69,7 @@ struct _GtkTickerChild
 {
   GtkWidget *widget;
   gint x;		/* current position */
-  gint offset;     	/* offset in list */
+  gint offset;	/* offset in list */
 };
 
 
