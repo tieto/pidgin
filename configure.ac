@@ -1129,9 +1129,16 @@ AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
+dnlAC_CONFIG_COMMANDS([version],
+dnl[[
+dnl	sed -e "s/@VERSION@/$VERSION/" VERSION.in > VERSION.tmp
+dnl	cmp VERSION VERSION.in 2>/dev/null || cp VERSION.tmp VERSION
+dnl	rm -f VERSION.tmp
+dnl]]
+dnl)
+
 AC_OUTPUT([Makefile
 		   Doxyfile
-		   VERSION
 		   doc/Makefile
 		   doc/gaim.1
 		   doc/gaim-remote.1
@@ -1161,7 +1168,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/jabber/Makefile
 		   src/protocols/msn/Makefile
 		   src/protocols/napster/Makefile
-   		   src/protocols/novell/Makefile
+		   src/protocols/novell/Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/rendezvous/Makefile
 		   src/protocols/silc/Makefile
