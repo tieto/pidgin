@@ -45,12 +45,14 @@ EXTRA_DIST = \
 
 SUBDIRS = protocols
 
+SSLSOURCES =
+
 if USE_NSS
-SSLSOURCES = ssl-nss.c
+SSLSOURCES += ssl-nss.c
 endif
 
 if USE_GNUTLS
-SSLSOURCES = ssl-gnutls.c
+SSLSOURCES += ssl-gnutls.c
 endif
 
 CORESOURCES = \
