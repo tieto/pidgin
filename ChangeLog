@@ -19,6 +19,9 @@ version 0.11.0-pre12:
 	* Can turn on/off Yahoo! Mail announcements
 	* Can force messages through the server for ICQ (use this if
 	  you have problems sending)
+	* Can receive buddy icons in Oscar (requires gdk_pixbuf,
+	  which GNOME depends on. If you --disable-gnome, it will
+	  disable this.)
 
 version 0.11.0-pre11 (04/30/2001):
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)

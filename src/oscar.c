@@ -43,6 +43,11 @@
 #include "aim.h"
 #include "proxy.h"
 
+#if USE_GNOME
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk-pixbuf/gdk-pixbuf-loader.h>
+#endif
+
 /*#include "pixmaps/cancel.xpm"*/
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/aol_icon.xpm"
@@ -56,7 +61,12 @@
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
-static int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_GETFILE | AIM_CAPS_IMIMAGE;
+static int gaim_caps = AIM_CAPS_CHAT |
+#if USE_GNOME
+		       AIM_CAPS_BUDDYICON |
+#endif
+		       AIM_CAPS_GETFILE |
+		       AIM_CAPS_IMIMAGE;
 
 static GtkWidget *join_chat_spin = NULL;
 static GtkWidget *join_chat_entry = NULL;
@@ -80,6 +90,7 @@ struct oscar_data {
 	GSList *oscar_chats;
 	GSList *direct_ims;
 	GSList *getfiles;
+	GSList *hasicons;
 };
 
 struct chat_connection {
@@ -130,6 +141,19 @@ struct getfile_transfer {
 	GtkWidget *label;
 	long pos;
 	long size;
+};
+
+struct icon_req {
+	char *user;
+	time_t timestamp;
+	unsigned long length;
+	gpointer data;
+	gboolean request;
+	GdkPixbufAnimation *anim;
+	struct conversation *cnv;
+	GtkWidget *pix;
+	int curframe;
+	int timer;
 };
 
 static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
@@ -478,19 +502,39 @@ static void oscar_login(struct aim_user *user) {
 
 static void oscar_close(struct gaim_connection *gc) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	GSList *c = odata->oscar_chats;
-	struct chat_connection *n;
 	if (gc->protocol != PROTO_OSCAR) return;
 	
-	while (c) {
-		n = (struct chat_connection *)c->data;
+	while (odata->oscar_chats) {
+		struct chat_connection *n = odata->oscar_chats->data;
 		if (n->inpa > 0)
 			gdk_input_remove(n->inpa);
 		g_free(n->name);
 		g_free(n->show);
-		c = g_slist_remove(c, n);
+		odata->oscar_chats = g_slist_remove(odata->oscar_chats, n);
 		g_free(n);
 	}
+	while (odata->direct_ims) {
+		struct direct_im *n = odata->direct_ims->data;
+		if (n->watcher > 0)
+			gdk_input_remove(n->watcher);
+		odata->direct_ims = g_slist_remove(odata->direct_ims, n);
+		g_free(n);
+	}
+#if USE_GNOME
+	while (odata->hasicons) {
+		struct icon_req *n = odata->hasicons->data;
+		gdk_pixbuf_animation_unref(n->anim);
+		if (n->timer)
+			gtk_timeout_remove(n->timer);
+		if (n->cnv)
+			gtk_container_remove(GTK_CONTAINER(n->cnv->bbox), n->pix);
+		g_free(n->user);
+		if (n->data)
+			g_free(n->data);
+		odata->hasicons = g_slist_remove(odata->hasicons, n);
+		g_free(n);
+	}
+#endif
 	if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
 	if (odata->cnpa > 0)
@@ -1547,6 +1591,57 @@ static int accept_getfile(gpointer w, struct ask_getfile *g) {
 }
 */
 
+#if USE_GNOME
+static gboolean redraw_anim(gpointer data)
+{
+	int delay;
+	struct icon_req *ir = data;
+	GList *frames;
+	GdkPixbufFrame *frame;
+	GdkPixbuf *buf;
+	GdkPixmap *pm; GdkBitmap *bm;
+
+	if (!ir->cnv || !g_list_find(conversations, ir->cnv)) {
+		debug_printf("I think this is a bug.\n");
+		return FALSE;
+	}
+
+	frames = gdk_pixbuf_animation_get_frames(ir->anim);
+	frame = g_list_nth_data(frames, ir->curframe);
+	buf = gdk_pixbuf_frame_get_pixbuf(frame);
+	gtk_pixmap_get(GTK_PIXMAP(ir->pix), &pm, &bm);
+	switch (gdk_pixbuf_frame_get_action(frame)) {
+		case GDK_PIXBUF_FRAME_RETAIN: {
+			GdkPixmap *src;
+			GdkGC *gc = gdk_gc_new(pm);
+			gdk_pixbuf_render_pixmap_and_mask(buf, &src, NULL, 0);
+			gdk_draw_pixmap(pm, gc, src, 0, 0,
+					gdk_pixbuf_frame_get_x_offset(frame),
+					gdk_pixbuf_frame_get_y_offset(frame),
+					-1, -1);
+			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
+			gtk_widget_queue_draw(ir->pix);
+			gdk_gc_unref(gc);
+					      }
+			break;
+		case GDK_PIXBUF_FRAME_DISPOSE:
+			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
+			break;
+		case GDK_PIXBUF_FRAME_REVERT:
+			frame = frames->data;
+			buf = gdk_pixbuf_frame_get_pixbuf(frame);
+			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
+			break;
+	}
+	ir->curframe = (ir->curframe + 1) % g_list_length(frames);
+	delay = gdk_pixbuf_frame_get_delay_time(frame);
+	ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+	return FALSE;
+}
+#endif
+
 int gaim_parse_incoming_im(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
 	int channel;
@@ -1565,6 +1660,30 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 
 		args = va_arg(ap, struct aim_incomingim_ch1_args *);
 		va_end(ap);
+
+#if USE_GNOME
+		if (args->icbmflags & AIM_IMFLAGS_HASICON) {
+			struct oscar_data *od = gc->proto_data;
+			struct icon_req *ir;
+			GSList *h = od->hasicons;
+			char *who = normalize(userinfo->sn);
+			debug_printf("%s has an icon\n", userinfo->sn);
+			while (h) {
+				ir = h->data;
+				if (!strcmp(ir->user, who))
+					break;
+				h = h->next;
+			}
+			if (!h) {
+				ir = g_new0(struct icon_req, 1);
+				ir->user = g_strdup(who);
+				od->hasicons = g_slist_append(od->hasicons, ir);
+			}
+			if (args->iconstamp > ir->timestamp)
+				ir->request = TRUE;
+			ir->timestamp = args->iconstamp;
+		}
+#endif
 
 		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
 		serv_got_im(gc, userinfo->sn, tmp, args->icbmflags & AIM_IMFLAGS_AWAY, time(NULL));
@@ -1604,6 +1723,70 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			*/
 		} else if (args->reqclass & AIM_CAPS_VOICE) {
 		} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
+#if USE_GNOME
+			struct oscar_data *od = gc->proto_data;
+			GSList *h = od->hasicons;
+			struct icon_req *ir = NULL;
+			char *who;
+			struct conversation *c;
+
+			GdkPixbufLoader *load;
+			GList *frames;
+			GdkPixbuf *buf;
+			GdkPixmap *pm;
+			GdkBitmap *bm;
+
+			who = normalize(userinfo->sn);
+
+			while (h) {
+				ir = h->data;
+				if (!strcmp(who, ir->user))
+					break;
+				h = h->next;
+
+			}
+
+			if (!h || ((c = find_conversation(userinfo->sn)) == NULL) || (c->gc != gc)) {
+				debug_printf("got buddy icon for %s but didn't want it\n", userinfo->sn);
+				return 1;
+			}
+
+			if (ir->pix && ir->cnv)
+				gtk_container_remove(GTK_CONTAINER(ir->cnv->bbox), ir->pix);
+			ir->pix = NULL;
+			ir->cnv = NULL;
+			if (ir->data)
+				g_free(ir->data);
+			if (ir->anim)
+				gdk_pixbuf_animation_unref(ir->anim);
+			ir->anim = NULL;
+			if (ir->timer)
+				gtk_timeout_remove(ir->timer);
+			ir->timer = 0;
+
+			ir->cnv = c;
+			ir->length = args->info.icon.length;
+			ir->data = g_memdup(args->info.icon.icon, args->info.icon.length);
+
+			load = gdk_pixbuf_loader_new();
+			gdk_pixbuf_loader_write(load, ir->data, ir->length);
+			ir->anim = gdk_pixbuf_loader_get_animation(load);
+			gdk_pixbuf_loader_close(load);
+
+			frames = gdk_pixbuf_animation_get_frames(ir->anim);
+			buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
+			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+
+			ir->pix = gtk_pixmap_new(pm, bm);
+			gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
+			gtk_widget_show(ir->pix);
+
+			if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
+				int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
+				ir->curframe = 1;
+				ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+			}
+#endif
 		} else if (args->reqclass & AIM_CAPS_IMIMAGE) {
 			struct ask_direct *d = g_new0(struct ask_direct, 1);
 			char buf[256];
@@ -2252,8 +2435,26 @@ static void oscar_send_im(struct gaim_connection *gc, char *name, char *message,
 	} else {
 		if (away)
 			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
-		else
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message);
+		else {
+			int flags = AIM_IMFLAGS_ACK;
+#if USE_GNOME
+			GSList *h = odata->hasicons;
+			struct icon_req *ir;
+			char *who = normalize(name);
+			while (h) {
+				ir = h->data;
+				if (ir->request && !strcmp(who, ir->user))
+					break;
+				h = h->next;
+			}
+			if (h) {
+				ir->request = FALSE;
+				flags |= AIM_IMFLAGS_BUDDYREQ;
+				debug_printf("sending buddy icon request with message\n");
+			}
+#endif
+			aim_send_im(odata->sess, odata->conn, name, flags, message);
+		}
 	}
 }
 
@@ -2922,6 +3123,84 @@ static void oscar_change_passwd(struct gaim_connection *gc, char *old, char *new
 	}
 }
 
+static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *c)
+{
+#if USE_GNOME
+	struct oscar_data *od = gc->proto_data;
+	GSList *h = od->hasicons;
+	struct icon_req *ir = NULL;
+	char *who = normalize(c->name);
+
+	GdkPixbufLoader *load;
+	GList *frames;
+	GdkPixbuf *buf;
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+
+	while (h) {
+		ir = h->data;
+		if (!strcmp(who, ir->user))
+			break;
+		h = h->next;
+	}
+	if (!h || !ir->data)
+		return;
+
+	ir->cnv = c;
+
+	load = gdk_pixbuf_loader_new();
+	gdk_pixbuf_loader_write(load, ir->data, ir->length);
+	ir->anim = gdk_pixbuf_loader_get_animation(load);
+	gdk_pixbuf_loader_close(load);
+
+	frames = gdk_pixbuf_animation_get_frames(ir->anim);
+	buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
+	gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+
+	ir->pix = gtk_pixmap_new(pm, bm);
+	gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
+	gtk_widget_show(ir->pix);
+
+	if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
+		int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
+		ir->curframe = 1;
+		ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+	}
+#endif
+}
+
+static void oscar_remove_convo(struct gaim_connection *gc, struct conversation *c)
+{
+#if USE_GNOME
+	struct oscar_data *od = gc->proto_data;
+	GSList *h = od->hasicons;
+	struct icon_req *ir = NULL;
+	char *who = normalize(c->name);
+	
+	while (h) {
+		ir = h->data;
+		if (!strcmp(who, ir->user))
+			break;
+		h = h->next;
+	}
+	if (!h || !ir->data)
+		return;
+	
+	gtk_container_remove(GTK_CONTAINER(ir->cnv->bbox), ir->pix);
+	ir->pix = NULL;
+	ir->cnv = NULL;
+	
+	gdk_pixbuf_animation_unref(ir->anim);
+	ir->anim = NULL;
+	
+	ir->curframe = 0;
+	
+	if (ir->timer)
+		gtk_timeout_remove(ir->timer);
+	ir->timer = 0;
+#endif
+}
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME;
@@ -2934,6 +3213,8 @@ void oscar_init(struct prpl *ret) {
 	ret->user_opts = oscar_user_opts;
 	ret->draw_new_user = oscar_draw_new_user;
 	ret->do_new_user = oscar_do_new_user;
+	ret->insert_convo = oscar_insert_convo;
+	ret->remove_convo = oscar_remove_convo;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;

@@ -63,7 +63,7 @@ fi
 
 if test "x$enable_gnome" = "xyes" ; then
 	if test "x$enable_panel" = "xyes" ; then
-		GNOME_INIT(gnomeui applets)
+		GNOME_INIT(gnomeui applets gdk_pixbuf)
 		GNOME_X_CHECKS
 		CFLAGS="$CFLAGS $GNOME_INCLUDEDIR"
 		AC_DEFINE(USE_APPLET)
@@ -73,7 +73,7 @@ if test "x$enable_gnome" = "xyes" ; then
 	else
 		AC_PATH_PROG(gnomepath, gnome-config)
 		AC_MSG_CHECKING(for Gnome compile flags)
-		GNOME_CFLAGS=`$gnomepath gnomeui --cflags 2>/dev/null`
+		GNOME_CFLAGS=`$gnomepath gnomeui gdk_pixbuf --cflags 2>/dev/null`
 		if test "x$GNOME_CFLAGS" = "x" ; then
 			enable_gnome=no
 			AC_MSG_RESULT([Gnome not found, building without it.])
@@ -86,7 +86,7 @@ if test "x$enable_gnome" = "xyes" ; then
 			else
 				AC_MSG_RESULT(ok)
 				CFLAGS="$CFLAGS $GNOME_CFLAGS"
-				LIBS="$LIBS `$gnomepath gnomeui --libs 2>/dev/null`"
+				LIBS="$LIBS `$gnomepath gnomeui gdk_pixbuf --libs 2>/dev/null`"
 				AC_DEFINE(USE_GNOME)
 				GNOME_CONFIG="$gnomepath"
 				AC_SUBST(GNOME_CONFIG)
