@@ -518,7 +518,7 @@ char *escape_text2(char *msg)
 		msg[2047] = '\0';
 	}
 
-	woo = malloc(strlen(msg) * 2);
+	woo = malloc(strlen(msg) * 4 + 1);
 	cpy = g_strdup(msg);
 	c = cpy;
 	while (*c) {

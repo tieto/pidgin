@@ -742,17 +742,16 @@ static void toc_dir_search(struct gaim_connection *g, char *first, char *middle,
 static void toc_set_away(struct gaim_connection *g, char *state, char *message)
 {
 	char buf[MSG_LEN];
+	if (g->away)
+		g_free (g->away);
+	g->away = NULL;
 	if (message) {
+		g->away = g_strdup (message);
 		escape_text(message);
 		g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
 	} else
 		g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
 	sflap_send(g, buf, -1, TYPE_DATA);
-	if (g->away)
-		g_free (g->away);
-	g->away = NULL;
-	if (message)
-		g->away = g_strdup (message);
 }
 
 static void toc_set_info(struct gaim_connection *g, char *info)
