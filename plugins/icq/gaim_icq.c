@@ -97,10 +97,6 @@ static void icq_online(ICQLINK *link) {
 	gc->options |= OPT_USR_KEEPALV;
 	serv_finish_login(gc);
 
-	icq_ContactClear(id->link);
-	if (bud_list_cache_exists(gc))
-		do_import(NULL, gc);
-
 	icq_ChangeStatus(id->link, STATUS_ONLINE);
 }
 
@@ -245,9 +241,6 @@ static void icq_login(struct aim_user *user) {
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
 	ICQLINK *link;
 
-	if (!icq_SocketNotify)
-		icq_SocketNotify = icq_sock_notify;
-
 	icq_LogLevel = ICQ_LOG_MESSAGE;
 
 	link = id->link = icq_ICQLINKNew(atol(user->username), user->password,
@@ -268,6 +261,10 @@ static void icq_login(struct aim_user *user) {
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
 	link->icq_SetTimeout = icq_set_timeout;
+
+	icq_ContactClear(id->link);
+	if (bud_list_cache_exists(gc))
+		do_import(NULL, gc);
 
 	icq_UnsetProxy(link);
 
@@ -483,6 +480,7 @@ static void icq_init(struct prpl *ret) {
 }
 
 char *gaim_plugin_init(GModule *handle) {
+	icq_SocketNotify = icq_sock_notify;
 	load_protocol(icq_init, sizeof(struct prpl));
 	return NULL;
 }
