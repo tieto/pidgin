@@ -4,9 +4,11 @@ version 0.68:
 	* Removed the old event system and replaced it with a much better
 	  signal system.
 	* Added plugin dependency support.
+	* Rewrote the Perl plugin. All old scripts will break, but it offers
+	  a much better API for new scripts.
 	* Swedish translation updated (Tore Lundqvist (luntor))
 	* German translation updated (Bjoern Voigt)
-		
+
 version 0.67 (08/14/2003):
 	* Brought back the message notification plugin (Brian Tarricone)
 	  You'll need to reconfigure your settings for this plugin
