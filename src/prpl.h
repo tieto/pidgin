@@ -33,6 +33,7 @@
 #define PROTO_FTP	6
 #define PROTO_VGATE	7
 #define PROTO_JABBER	8
+#define PROTO_NAPSTER	9
 
 typedef void (*proto_init)(struct prpl *);
 
