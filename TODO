@@ -3,10 +3,10 @@ WINGAIM:
 	font issues?
 	resizing windows doesn't work right.
 	Gtk windows that appear when you hover over a button, and just stay there and never close until you click on them once
-	bug selecting people in channel user list?
 	sounds while away?	
 
 gtk2/new prefs
+	bug selecting people in channel user list? (this is a bug on all the gtk2 stuff) [ROB]
 	replace legend in info dialog with link to status icons page
 	buddy ticker stays around when you sign off - showing the buddies who were online
 	need a close button on conversations for when its tabed if nothing else.
