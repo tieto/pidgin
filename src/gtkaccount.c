@@ -123,7 +123,6 @@ typedef struct
 	
 	/* Protocol Options */
 	GtkWidget *protocol_frame;
-	GtkWidget *register_check;
 
 	/* Proxy Options */
 	GtkWidget *proxy_frame;
@@ -1082,9 +1081,20 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 }
 
 static void
+register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
+{
+	GaimAccount *account = dialog->account;
+	GaimProtocolPluginInfo *prpl_info = dialog->prpl_info;
+
+	ok_account_prefs_cb(NULL, dialog);
+
+	prpl_info->register_user(account);
+}
+
+static void
 show_account_prefs(AccountPrefsDialogType type,
-					 AccountsDialog *accounts_dialog,
-					 GaimAccount *account)
+				   AccountsDialog *accounts_dialog,
+				   GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
@@ -1175,9 +1185,8 @@ show_account_prefs(AccountPrefsDialogType type,
 		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		gtk_widget_show(button);
 
-		g_signal_connect_swapped(G_OBJECT(button), "clicked",
-								 G_CALLBACK(dialog->prpl_info->register_user),
-								 dialog->account);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(register_account_prefs_cb), dialog);
 	}
 
 	/* Cancel button */
