@@ -419,6 +419,7 @@ msn_userlist_destroy(MsnUserList *userlist)
 	}
 
 	g_list_free(userlist->groups);
+	g_free(userlist);
 }
 
 void
