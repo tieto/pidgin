@@ -426,7 +426,7 @@ gtk_imhtml_finalize (GObject *object)
 		GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(scalables->data);
 		scale->free(scale);
 	}
-	
+
 #if GTK_CHECK_VERSION(2,2,0)
 	for (copyables = imhtml->copyables; copyables; copyables = copyables->next) {
 		GtkIMHtmlCopyable *copy = GTK_IMHTML_COPYABLE(copyables->data);
@@ -1595,11 +1595,19 @@ void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 void
 gtk_imhtml_clear (GtkIMHtml *imhtml)
 {
+	GList *del;
 	GtkTextIter start, end;
-	
+
 	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
 	gtk_text_buffer_delete(imhtml->text_buffer, &start, &end);
+
+	for(del = imhtml->scalables; del; del = del->next) {
+		GtkIMHtmlScalable *scale = del->data;
+		scale->free(scale);
+	}
+	g_list_free(imhtml->scalables);
+	imhtml->scalables = NULL;
 }
 
 void gtk_imhtml_page_up (GtkIMHtml *imhtml)
