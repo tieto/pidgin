@@ -647,7 +647,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		switch (gaim_account_option_get_type(option)) {
 			case GAIM_PREF_BOOLEAN:
-				if (account == NULL || !strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
+				if (account == NULL || strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
 					bool_value = gaim_account_option_get_default_bool(option);
 				} else {
 					bool_value = gaim_account_get_bool(account,
@@ -670,7 +670,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_INT:
-				if (account == NULL || !strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
+				if (account == NULL || strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
 					int_value = gaim_account_option_get_default_int(option);
 				} else {
 					int_value = gaim_account_get_int(account,
@@ -696,7 +696,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_STRING:
-				if (account == NULL || !strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
+				if (account == NULL || strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
 					str_value = gaim_account_option_get_default_string(option);
 				} else {
 					str_value = gaim_account_get_string(account,
