@@ -636,27 +636,92 @@ void show_ee_dialog(int ee)
 
 void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 {
-        GtkWidget *cancel;
-	GtkWidget *ok;
+	GtkWidget *button;
+	GtkWidget *button_box;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
 	GtkWidget *imentry;
         GtkWidget *vbox;
         GtkWidget *ebox;
         GtkWidget *bbox;
         GtkWidget *label;
+	GtkWidget *frame;
+	GtkWidget *fbox;
 
         if (!imdialog) {
 
                 imdialog = gtk_window_new(GTK_WINDOW_DIALOG);
-                cancel = gtk_button_new_with_label(_("Cancel"));
-                ok = gtk_button_new_with_label(_("OK"));
-                bbox = gtk_hbox_new(TRUE, 10);
+		gtk_widget_set_usize(imdialog, 255, 105);
+		gtk_container_border_width(GTK_CONTAINER(imdialog), 5);
+		gtk_widget_show(imdialog);
+
+		bbox = gtk_hbox_new(TRUE, 10);
                 vbox = gtk_vbox_new(FALSE, 5);
                 ebox = gtk_hbox_new(FALSE, 2);
+		fbox = gtk_vbox_new(TRUE, 10);
 
-                /* Put the buttons in the box */
-                gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
-                gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
+		frame = gtk_frame_new(_("Send Instant Message"));
 
+	/* Build OK Button */
+
+	button = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( imdialog->window, &mask, NULL, ok_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("OK"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+                           GTK_SIGNAL_FUNC(do_im), imentry);
+
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+
+	gtk_widget_show(button);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	button = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( imdialog->window, &mask, NULL, cancel_xpm);
+
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+	
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+                           GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
+
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+
+	gtk_widget_show(button);
+
+	/* End of Cancel Button */
+	
                 label = gtk_label_new(_("IM who: "));
                 gtk_box_pack_start(GTK_BOX(ebox), label, TRUE, TRUE, 10);
                 gtk_widget_show(label);
@@ -672,22 +737,22 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 				   GTK_SIGNAL_FUNC(do_im), imentry);
                 gtk_signal_connect(GTK_OBJECT(imdialog), "destroy",
                                    GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
-                gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
-                                   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
-                gtk_signal_connect(GTK_OBJECT(ok), "clicked",
-                                   GTK_SIGNAL_FUNC(do_im), imentry);
-                /* Finish up */
-                gtk_widget_show(ok);
-                gtk_widget_show(cancel);
+
+		/* Finish up */
                 gtk_widget_show(ebox);
                 gtk_widget_show(imentry);
                 gtk_widget_show(bbox);
                 gtk_widget_show(vbox);
-                gtk_window_set_title(GTK_WINDOW(imdialog), _("Gaim - IM user"));
-                gtk_container_add(GTK_CONTAINER(imdialog), vbox);
+		gtk_widget_show(fbox);
+		gtk_widget_show(frame);
+		gtk_container_add(GTK_CONTAINER(frame), vbox);
+		gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
+		gtk_window_set_title(GTK_WINDOW(imdialog), _("Gaim - IM user"));
+                gtk_container_add(GTK_CONTAINER(imdialog), fbox);
                 gtk_widget_grab_focus(imentry);
                 gtk_widget_realize(imdialog);
-                aol_icon(imdialog->window);
+		
+		aol_icon(imdialog->window);
 
         }
         gtk_widget_show(imdialog);
