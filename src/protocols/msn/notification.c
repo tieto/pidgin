@@ -355,29 +355,24 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	passport = params[1];
 
 	if (!strcmp(list, "FL"))
-		msg = g_strdup("Unable to add user on MSN");
+		msg = g_strdup_printf("Unable to add user on %s (%s)",
+							  gaim_account_get_username(account),
+							  gaim_account_get_protocol_name(account));
 	else if (!strcmp(list, "BL"))
-		msg = g_strdup("Unable to block user on MSN");
+		msg = g_strdup_printf("Unable to block user on %s (%s)",
+							  gaim_account_get_username(account),
+							  gaim_account_get_protocol_name(account));
 	else if (!strcmp(list, "AL"))
-		msg = g_strdup("Unable to permit user on MSN");
+		msg = g_strdup_printf("Unable to permit user on %s (%s)",
+							  gaim_account_get_username(account),
+							  gaim_account_get_protocol_name(account));
 
 	if (!strcmp(list, "FL"))
 	{
-		if (error == 208)
+		if (error == 210)
 		{
-			reason = g_strdup_printf("%s is not a valid passport account.\n\n"
-									 "This user will be automatically removed "
-									 "from your %s account's buddy list, "
-									 "this won't appear again.",
-									 passport,
-									 gaim_account_get_username(account));
-		}
-		else if (error == 210)
-		{
-			reason = g_strdup_printf("%s's buddy list is full.\n\n"
-									 "%s could not be added.",
-									 gaim_account_get_username(account),
-									 passport);
+			reason = g_strdup_printf("%s could not be added because "
+									 "your buddy list is full.", passport);
 		}
 	}
 
