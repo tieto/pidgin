@@ -116,10 +116,10 @@ Code_t ZUnsetVariable(var)
 static int get_localvarfile(bfr)
     char *bfr;
 {
-    char *envptr;
+    const char *envptr;
     struct passwd *pwd;
 
-    envptr = (char*) gaim_home_dir();
+    envptr = gaim_home_dir();
     if (envptr)
 	(void) strcpy(bfr, envptr);
     else {
