@@ -398,6 +398,34 @@ static void yahoo_process_logon(struct gaim_connection *gc, struct yahoo_packet 
 			buddy->msg = msg ? g_strdup(msg) : NULL;
 			yd->login = g_slist_append(yd->login, buddy);
 			break;
+		case 60: /* uh */
+			while (yd->login) {
+				buddy = yd->login->data;
+				state = buddy->state;
+				yd->login = g_slist_remove(yd->login, buddy);
+				if (state == YAHOO_STATUS_AVAILABLE)
+					serv_got_update(gc, buddy->name, 1, 0, 0, 0, 0, 0);
+				else if (state == YAHOO_STATUS_IDLE)
+					serv_got_update(gc, buddy->name, 1, 0, 0, time(NULL) - 600,
+							(state << 1), 0);
+				else
+					serv_got_update(gc, buddy->name, 1, 0, 0, 0,
+							(state << 1) | UC_UNAVAILABLE, 0);
+				if (state == YAHOO_STATUS_CUSTOM) {
+					gpointer val = g_hash_table_lookup(yd->hash, buddy->name);
+					if (val) {
+						g_free(val);
+						g_hash_table_insert(yd->hash, buddy->name,
+								    g_strdup(buddy->msg));
+					} else
+						g_hash_table_insert(yd->hash, g_strdup(buddy->name),
+								    g_strdup(buddy->msg));
+				}
+				g_free(buddy->msg);
+				g_free(buddy->name);
+				g_free(buddy);
+			}
+			break;
 		default:
 			debug_printf("unknown login key %d\n", pair->key);
 			break;
@@ -641,6 +669,7 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 	case YAHOO_SERVICE_LOGON:
 		yahoo_process_logon(gc, pkt);
 		break;
+	case YAHOO_SERVICE_LOGOFF:
 	case YAHOO_SERVICE_ISAWAY:
 	case YAHOO_SERVICE_ISBACK:
 		yahoo_process_status(gc, pkt);
