@@ -71,6 +71,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 C_SRC =			buddyicon.c \
 			dispatch.c \
 			error.c \
+			group.c \
 			msg.c \
 			msn.c \
 			notification.c \

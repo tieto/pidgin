@@ -249,7 +249,7 @@ GaimConnectionUiOps *gaim_get_gtk_connection_ui_ops(void)
 }
 
 
-static void away_on_login(char *mesg)
+void away_on_login(char *mesg)
 {
 	GSList *awy = away_messages;
 	struct away_message *a, *message = NULL;

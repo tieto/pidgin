@@ -256,15 +256,15 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 			break;
 		case SYSTRAY_CMND_SIGNOFF:
 			debug_printf("signoff\n");
-			signoff_all();
+			gaim_connections_disconnect_all();
 			break;
 		case SYSTRAY_CMND_AUTOLOGIN:
 			debug_printf("autologin\n");
-			auto_login();
+			/*auto_login();*/
 			break;
 		case SYSTRAY_CMND_PREFS:
 			debug_printf("Prefs\n");
-			show_prefs();
+			gaim_gtk_prefs_show();
 			break;
 		case SYSTRAY_CMND_BACK:
 			debug_printf("I'm back\n");
@@ -420,24 +420,26 @@ static void systray_update_icon() {
 static void systray_update_status() {
 	SYSTRAY_STATE old_state = st_state;
 
-	if(connections) {
+	if(gaim_connections_get_all()) {
 		if(awaymessage) {
 			st_state = SYSTRAY_STATE_AWAY;
-		} else if(connecting_count) {
+#if 0
+		} else if(gaim_connections_get_connecting()) {
 			st_state = SYSTRAY_STATE_ONLINE_CONNECTING;
+#endif
 		} else {
 			st_state = SYSTRAY_STATE_ONLINE;
 		}
 	} else {
-		if(connecting_count) {
-			/* Don't rely on this state.. signoff in multi.c sends
-			   event_signoff before decrementing connecting_count
-			   for a reason unknown to me..
-			*/
+#if 0
+		if(gaim_connections_get_connecting()) {
 			st_state = SYSTRAY_STATE_OFFLINE_CONNECTING;
 		} else {
+#endif
 			st_state = SYSTRAY_STATE_OFFLINE;
+#if 0
 		}
+#endif
 	}
 	if(st_state != old_state) {
 		systray_update_icon();
@@ -448,19 +450,19 @@ static void systray_update_status() {
  * GAIM EVENT CALLBACKS
  ***********************/
 
-static void st_signon(struct gaim_connection *gc, void *data) {
+static void st_signon(GaimConnection *gc, void *data) {
 	systray_update_status();
 }
 
-static void st_signoff(struct gaim_connection *gc, void *data) {
+static void st_signoff(GaimConnection *gc, void *data) {
 	systray_update_status();
 }
 
-static void st_away(struct gaim_connection *gc, void *data) {
+static void st_away(GaimConnection *gc, void *data) {
 	systray_update_status();
 }
 
-static void st_back(struct gaim_connection *gc, void *data) {
+static void st_back(GaimConnection *gc, void *data) {
 	systray_update_status();
 }
 

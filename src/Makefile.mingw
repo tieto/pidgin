@@ -26,7 +26,7 @@ TARGET = gaim
 
 # Compiler and Linker Options
 
-CFLAGS =
+CFLAGS = -g
 
 DEFINES =
 
@@ -71,10 +71,13 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 
 DLL_C_SRC =		about.c \
+			account.c \
+			accountopt.c \
 			away.c \
 			blist.c \
 			browser.c \
 			buddy_chat.c \
+			connection.c \
 			conversation.c \
 			core.c \
 			debug.c \
@@ -84,7 +87,9 @@ DLL_C_SRC =		about.c \
 			ft.c \
 			gaim-disclosure.c \
 			gaimrc.c \
+			gtkaccount.c \
 			gtkblist.c \
+			gtkconn.c \
 			gtkconv.c \
 			gtkcellrendererprogress.c \
 			gtkdebug.c \
@@ -95,13 +100,13 @@ DLL_C_SRC =		about.c \
 			gtkpounce.c \
 			gtkprefs.c \
 			gtkrequest.c \
+			gtksound.c \
 			gtkutils.c \
 			html.c \
 			idle.c \
 			log.c \
 			main.c \
 			md5.c \
-			multi.c \
 			notify.c \
 			plugin.c \
 			pounce.c \

@@ -52,6 +52,7 @@
 
 #ifdef _WIN32
 #include "wspell.h"
+#include "win32dep.h"
 #endif
 
 void
