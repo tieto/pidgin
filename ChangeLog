@@ -38,6 +38,9 @@ version 0.76cvs:
 	  cancel button is used (Stu Tomlinson)
 	* Improved chat parting logic (Tim Ringenbach)
 	* Yet Another IRC channel user duplication bugfix (Tim Ringenbach)
+	* Deleting an account while modifying it will no longer crash gaim.
+	* Only one account preference window will now appear per account when
+	  clicking Modify.
 	* TCL Plugin API changed
 	* The mobile icon on MSN users is now removed when the person disables
 	  mobile paging (Stu Tomlinson)

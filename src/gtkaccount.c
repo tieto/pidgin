@@ -76,6 +76,8 @@ typedef struct
 
 	GtkTreeViewColumn *screenname_col;
 
+	GHashTable *account_pref_wins;
+
 } AccountsWindow;
 
 typedef struct
@@ -166,12 +168,12 @@ proto_name(const char *id)
 static void add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_protocol_options(AccountPrefsDialog *dialog,
-								   GtkWidget *parent);
+								 GtkWidget *parent);
 static void add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 
 static GtkWidget *
 add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
-			   const char *text, GtkWidget *widget)
+			 const char *text, GtkWidget *widget)
 {
 	GtkWidget *hbox;
 	GtkWidget *label;
@@ -195,7 +197,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 
 static void
 set_account_protocol_cb(GtkWidget *item, const char *id,
-						  AccountPrefsDialog *dialog)
+						AccountPrefsDialog *dialog)
 {
 	if ((dialog->plugin = gaim_find_prpl(id)) != NULL) {
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
@@ -316,27 +318,42 @@ buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	dialog->buddy_icon_filesel = gtk_file_selection_new(_("Buddy Icon"));
 	dialog->buddy_icon_preview = gtk_image_new();
 	dialog->buddy_icon_text = gtk_label_new(NULL);
+
 	gtk_widget_set_size_request(GTK_WIDGET(dialog->buddy_icon_preview), -1, 50);
 	hbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->main_vbox), hbox,
-			   FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), dialog->buddy_icon_preview, FALSE, FALSE, 0);
+	gtk_box_pack_start(
+		GTK_BOX(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->main_vbox),
+		hbox, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), dialog->buddy_icon_preview,
+					 FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox), dialog->buddy_icon_text, FALSE, FALSE, 0);
 
 	tv = GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->file_list;
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
-	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(buddy_icon_preview_change_cb), dialog);
 
-	g_signal_connect(G_OBJECT(dialog->buddy_icon_filesel), "destroy", G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->cancel_button), "clicked",
-			 G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->ok_button), "clicked", G_CALLBACK(buddy_icon_filesel_choose),
-			 dialog);
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(buddy_icon_preview_change_cb), dialog);
+
+	g_signal_connect(G_OBJECT(dialog->buddy_icon_filesel), "destroy",
+					 G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
+	g_signal_connect(
+		G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->cancel_button),
+		"clicked",
+		G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
+	g_signal_connect(
+		G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->ok_button),
+		"clicked",
+		G_CALLBACK(buddy_icon_filesel_choose), dialog);
 
 	gtk_widget_show_all(GTK_WIDGET(dialog->buddy_icon_filesel));
-	if (dialog->account && (gaim_account_get_buddy_icon(dialog->account) != NULL)) {
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->buddy_icon_filesel),
-						gaim_account_get_buddy_icon(dialog->account));
+
+	if (dialog->account &&
+		(gaim_account_get_buddy_icon(dialog->account) != NULL))
+	{
+		gtk_file_selection_set_filename(
+			GTK_FILE_SELECTION(dialog->buddy_icon_filesel),
+			gaim_account_get_buddy_icon(dialog->account));
+
 		buddy_icon_preview_change_cb(NULL, dialog);
 	}
 
@@ -639,14 +656,21 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		dialog->protocol_opt_entries = NULL;
 	}
 
-	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next) {
+	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
+	{
 		option = (GaimAccountOption *)l->data;
 
-		switch (gaim_account_option_get_type(option)) {
+		switch (gaim_account_option_get_type(option))
+		{
 			case GAIM_PREF_BOOLEAN:
-				if (account == NULL || strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
+				if (account == NULL ||
+					strcmp(gaim_account_get_protocol_id(account),
+						   dialog->protocol_id))
+				{
 					bool_value = gaim_account_option_get_default_bool(option);
-				} else {
+				}
+				else
+				{
 					bool_value = gaim_account_get_bool(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_bool(option));
@@ -667,9 +691,14 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_INT:
-				if (account == NULL || strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
+				if (account == NULL ||
+					strcmp(gaim_account_get_protocol_id(account),
+						   dialog->protocol_id))
+				{
 					int_value = gaim_account_option_get_default_int(option);
-				} else {
+				}
+				else
+				{
 					int_value = gaim_account_get_int(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_int(option));
@@ -693,9 +722,14 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_STRING:
-				if (account == NULL || strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
+				if (account == NULL ||
+					strcmp(gaim_account_get_protocol_id(account),
+						   dialog->protocol_id))
+				{
 					str_value = gaim_account_option_get_default_string(option);
-				} else {
+				}
+				else
+				{
 					str_value = gaim_account_get_string(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_string(option));
@@ -918,8 +952,10 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 static void
 account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
-						 AccountPrefsDialog *dialog)
+					   AccountPrefsDialog *dialog)
 {
+	g_hash_table_remove(accounts_window->account_pref_wins, dialog->account);
+
 	gtk_widget_destroy(dialog->window);
 
 	if (dialog->user_split_entries != NULL)
@@ -955,14 +991,16 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	GtkTreeIter iter;
 	GaimAccount *ret;
 
-	if (dialog->account == NULL) {
+	if (dialog->account == NULL)
+	{
 		const char *screenname;
 
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
 
 		dialog->account = gaim_account_new(screenname, dialog->protocol_id);
 	}
-	else {
+	else
+	{
 		/* Protocol */
 		gaim_account_set_protocol_id(dialog->account, dialog->protocol_id);
 	}
@@ -1016,11 +1054,13 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	username =
 		g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
 
-	if(dialog->prpl_info) {
-		for (l = dialog->prpl_info->user_splits, l2 = dialog->user_split_entries;
-				l != NULL && l2 != NULL;
-				l = l->next, l2 = l2->next) {
-
+	if (dialog->prpl_info != NULL)
+	{
+		for (l = dialog->prpl_info->user_splits,
+			 l2 = dialog->user_split_entries;
+			 l != NULL && l2 != NULL;
+			 l = l->next, l2 = l2->next)
+		{
 			GaimAccountUserSplit *split = l->data;
 			GtkEntry *entry = l2->data;
 			char sep[2] = " ";
@@ -1180,16 +1220,30 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	GtkWidget *sep;
 	GtkWidget *button;
 
+	if (accounts_window != NULL && account != NULL &&
+		(dialog = g_hash_table_lookup(accounts_window->account_pref_wins,
+									  account)) != NULL)
+	{
+		gtk_window_present(GTK_WINDOW(dialog->window));
+		return;
+	}
+
 	dialog = g_new0(AccountPrefsDialog, 1);
+
+	if (accounts_window != NULL && account != NULL)
+	{
+		g_hash_table_insert(accounts_window->account_pref_wins,
+							account, dialog);
+	}
 
 	dialog->account = account;
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	if (dialog->account == NULL) {
+	if (dialog->account == NULL)
 		dialog->protocol_id = g_strdup(GAIM_PROTO_DEFAULT);
-	}
-	else {
+	else
+	{
 		dialog->protocol_id =
 			g_strdup(gaim_account_get_protocol_id(dialog->account));
 	}
@@ -1381,8 +1435,8 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 
 static void
 drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
-				   GtkSelectionData *data, guint info, guint time,
-				   AccountsWindow *dialog)
+				 GtkSelectionData *data, guint info, guint time,
+				 AccountsWindow *dialog)
 {
 	if (data->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
@@ -1451,8 +1505,8 @@ move_account_before(GtkListStore *store, GtkTreeIter *iter,
 
 static void
 drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
-						guint x, guint y, GtkSelectionData *sd,
-						guint info, guint t, AccountsWindow *dialog)
+					  guint x, guint y, GtkSelectionData *sd,
+					  guint info, guint t, AccountsWindow *dialog)
 {
 	if (sd->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE) && sd->data) {
 		size_t dest_index;
@@ -1551,7 +1605,7 @@ add_account_cb(GtkWidget *w, AccountsWindow *dialog)
 
 static void
 modify_account_sel(GtkTreeModel *model, GtkTreePath *path,
-					 GtkTreeIter *iter, gpointer data)
+				   GtkTreeIter *iter, gpointer data)
 {
 	GaimAccount *account;
 
@@ -1568,8 +1622,7 @@ modify_account_cb(GtkWidget *w, AccountsWindow *dialog)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 
-	gtk_tree_selection_selected_foreach(selection, modify_account_sel,
-										dialog);
+	gtk_tree_selection_selected_foreach(selection, modify_account_sel, dialog);
 }
 
 static void
@@ -1580,11 +1633,21 @@ delete_account_cb(GaimAccount *account)
 
 	index = g_list_index(gaim_accounts_get_all(), account);
 
-	if ((accounts_window != NULL) &&
-		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(accounts_window->model),
-									  &iter, NULL, index)) {
+	if (accounts_window != NULL)
+	{
+		AccountPrefsDialog *dialog;
 
-		gtk_list_store_remove(accounts_window->model, &iter);
+		if (gtk_tree_model_iter_nth_child(
+				GTK_TREE_MODEL(accounts_window->model), &iter, NULL, index))
+		{
+			gtk_list_store_remove(accounts_window->model, &iter);
+		}
+
+		if ((dialog = g_hash_table_lookup(accounts_window->account_pref_wins,
+										  account)) != NULL)
+		{
+			account_win_destroy_cb(NULL, NULL, dialog);
+		}
 	}
 
 	gaim_accounts_delete(account);
@@ -1592,7 +1655,7 @@ delete_account_cb(GaimAccount *account)
 
 static void
 ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
-						 GtkTreeIter *iter, gpointer data)
+					   GtkTreeIter *iter, gpointer data)
 {
 	GaimAccount *account;
 
@@ -1906,6 +1969,9 @@ gaim_gtk_accounts_window_show(void)
 
 	accounts_window = dialog = g_new0(AccountsWindow, 1);
 
+	accounts_window->account_pref_wins =
+		g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);
+
 	width  = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
 	height = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/height");
 
@@ -1994,6 +2060,8 @@ gaim_gtk_accounts_window_hide(void)
 		return;
 
 	gaim_signals_disconnect_by_handle(accounts_window);
+
+	g_hash_table_destroy(accounts_window->account_pref_wins);
 
 	g_free(accounts_window);
 	accounts_window = NULL;
