@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.79\n"
+"Project-Id-Version: gaim v0_80\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-16 00:15-0400\n"
-"PO-Revision-Date: 2004-06-26 00:55+0900\n"
+"POT-Creation-Date: 2004-07-18 22:06+0900\n"
+"PO-Revision-Date: 2004-07-18 22:05+0900\n"
 "Last-Translator: Takeshi AIHANA <aihana@gnome.gr.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
@@ -51,46 +51,41 @@ msgid "When you are kicked offline, this reconnects you."
 msgstr "オフラインにされたら再接続します。"
 
 #: plugins/chkmail.c:90 plugins/chkmail.c:113 plugins/chkmail.c:122
-#, fuzzy
 msgid "Mail Server"
-msgstr "不正なサーバ名"
+msgstr "メール・サーバ"
 
 #: plugins/chkmail.c:132
 #, c-format
 msgid "%s (%d new/%d total)"
-msgstr ""
+msgstr "%s (新規 %d 通/合計 %d 通)"
 
 #: plugins/chkmail.c:195
-#, fuzzy
 msgid "Check Mail"
-msgstr "メールを開く(_O)"
+msgstr "メールのチェック"
 
 #: plugins/chkmail.c:199
 msgid "Check email every X seconds.\n"
-msgstr ""
+msgstr "X 秒間隔で E-メールをチェックします。\n"
 
 #: plugins/contact_priority.c:82
 msgid "Point values to use when..."
-msgstr ""
+msgstr "次の時に使用するポイント値..."
 
 #: plugins/contact_priority.c:91
-#, fuzzy
 msgid "Buddy is offline:"
-msgstr "仲間アイコン:"
+msgstr "仲間がオフラインの時:"
 
 #: plugins/contact_priority.c:105
-#, fuzzy
 msgid "Buddy is away:"
-msgstr "仲間の表示"
+msgstr "仲間が離席中の時:"
 
 #: plugins/contact_priority.c:119
-#, fuzzy
 msgid "Buddy is idle:"
-msgstr "仲間リスト・ウィンドウ"
+msgstr "仲間が待機中の時:"
 
 #: plugins/contact_priority.c:133
 msgid "Use last matching buddy"
-msgstr ""
+msgstr "最後に一致する仲間を使用する"
 
 #. Explanation
 #: plugins/contact_priority.c:139
@@ -101,10 +96,14 @@ msgid ""
 "will use what used to be the built-in order active->idle->away->away+idle-"
 ">offline."
 msgstr ""
+"一番低いスコアの仲間がコンタクトの優先度を持つことになります。\n"
+"デフォルト値 (オフライン時 = 4、離席中 = 2、待機中 = 1) は\n"
+"アクティブ->待機中->離席中->離席中+待機中->オフラインになるように使用されま"
+"す。"
 
 #: plugins/contact_priority.c:142
 msgid "Point values to use for Account..."
-msgstr ""
+msgstr "アカウントで使用するポイント値..."
 
 #. *< api_version
 #. *< type
@@ -115,7 +114,7 @@ msgstr ""
 #. *< id
 #: plugins/contact_priority.c:191
 msgid "Contact Priority"
-msgstr ""
+msgstr "コンタクトの優先度"
 
 #. *< name
 #. *< version
@@ -123,7 +122,7 @@ msgstr ""
 #: plugins/contact_priority.c:194
 msgid ""
 "Allows for controlling the values associated with different buddy states."
-msgstr ""
+msgstr "別の仲間の状態に対応する値をコントロールできます。"
 
 #. *< description
 #: plugins/contact_priority.c:196
@@ -131,6 +130,8 @@ msgid ""
 "Allows for changing the point values of idle/away/offline states for buddies "
 "in contact priority computations."
 msgstr ""
+"コンタクトの優先度計算で仲間の状態 (待機中/離席中/オフライン) のポイント値を"
+"変更することができます。"
 
 #.
 #. *  DEFINES, MACROS & DATA TYPES
@@ -255,12 +256,11 @@ msgstr "会話ウィンドウの配置"
 
 #: plugins/extplacement.c:101
 msgid "Number of conversations per window"
-msgstr "会話ウィンドウの数"
+msgstr "ウィンドウ毎の会話数"
 
 #: plugins/extplacement.c:107
-#, fuzzy
 msgid "Separate IM and Chat windows when placing by number"
-msgstr "IM とチャット・ウィンドウを分割する"
+msgstr "番号順に配置する際に IM とチャット・ウィンドウを分割する"
 
 #. *< api_version
 #. *< type
@@ -282,13 +282,12 @@ msgstr "会話ウィンドウの配置に関する追加オプションです。
 #. *< summary
 #. *  description
 #: plugins/extplacement.c:130
-#, fuzzy
 msgid ""
 "Restrict the number of conversations per windows, optionally separating IMs "
 "and Chats"
 msgstr ""
-"ウィンドウあたりの会話数を制限するか、または IM とチャットのウィンドウを分割"
-"します"
+"ウィンドウあたりの会話数を制限し、追加で IM とチャットのウィンドウを分割しま"
+"す"
 
 #. *< api_version
 #. *< type
@@ -374,14 +373,14 @@ msgstr ""
 #. *< id
 #: plugins/gaiminc.c:87
 msgid "Gaim Demonstration Plugin"
-msgstr ""
+msgstr "Gaim デモ・プラグイン"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/gaiminc.c:90
 msgid "An example plugin that does stuff - see the description."
-msgstr ""
+msgstr "いろいろなことを実行するサンプル・プラグインです (説明をご覧下さい)。"
 
 #. *  description
 #: plugins/gaiminc.c:92
@@ -391,6 +390,10 @@ msgid ""
 "- It reverses all incoming text\n"
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
+"これはいろいろなことを実行する、ホントにクールなプラグインです:\n"
+"- ログインしたらプログラムの作者を伝えてくれます\n"
+"- 受信した全てのテキストを反転します\n"
+"- サイン・オンしたら仲間リストの人たちにメッセージを速攻で送信します"
 
 #. Configuration frame
 #: plugins/gestures/gestures.c:220
@@ -671,14 +674,14 @@ msgstr "待機中の時間を手動でセットすることができます。"
 #. *< id
 #: plugins/ipc-test-client.c:84
 msgid "IPC Test Client"
-msgstr ""
+msgstr "IPC テスト用クライアント"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/ipc-test-client.c:87
 msgid "Test plugin IPC support, as a client."
-msgstr ""
+msgstr "クライアント側で IPC をサポートするテスト用プラグインです。"
 
 #. *  description
 #: plugins/ipc-test-client.c:89
@@ -686,6 +689,8 @@ msgid ""
 "Test plugin IPC support, as a client. This locates the server plugin and "
 "calls the commands registered."
 msgstr ""
+"クライアント側で IPC をサポートするテスト用プラグインです。これはサーバ用プラ"
+"グインの場所を検出して登録されたコマンドを呼び出します。"
 
 #. *< api_version
 #. *< type
@@ -695,21 +700,22 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/ipc-test-server.c:71
-#, fuzzy
 msgid "IPC Test Server"
-msgstr "サーバに接続する"
+msgstr "IPC テスト用サーバ"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/ipc-test-server.c:74
 msgid "Test plugin IPC support, as a server."
-msgstr ""
+msgstr "サーバ側で IPC をサポートするテスト用プラグインです。"
 
 #. *  description
 #: plugins/ipc-test-server.c:76
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr ""
+"サーバ側で IPC をサポートするテスト用プラグインです。これは IPC コマンドを登"
+"録します。"
 
 #: plugins/mailchk.c:157
 msgid "Mail Checker"
@@ -1342,7 +1348,7 @@ msgstr "チェコ語"
 
 #: src/about.c:170
 msgid "Danish"
-msgstr "オランダ語"
+msgstr "デンマーク語"
 
 #: src/about.c:171
 msgid "British English"
@@ -1390,7 +1396,7 @@ msgstr "日本語"
 
 #: src/about.c:182
 msgid "Lithuanian"
-msgstr ""
+msgstr "リトアニア語"
 
 #: src/about.c:183 src/about.c:215
 msgid "Korean"
@@ -1445,9 +1451,8 @@ msgid "Vietnamese"
 msgstr "ベトナム語"
 
 #: src/about.c:195
-#, fuzzy
 msgid "and the Gnome-Vi Team"
-msgstr "GNOME Vi チーム"
+msgstr "そして Gnome-Vi チーム"
 
 #: src/about.c:196
 msgid "Simplified Chinese"
@@ -1882,7 +1887,7 @@ msgstr "このコンタクトの別名を入力して下さい。"
 #: src/dialogs.c:837
 #, c-format
 msgid "Enter an alias for %s."
-msgstr "%s のパスワードを入力して下さい。"
+msgstr "%s のエイリアスを入力して下さい。"
 
 #: src/dialogs.c:839
 msgid "Alias Buddy"
@@ -2260,9 +2265,8 @@ msgid "I_M"
 msgstr "IM(_M)"
 
 #: src/gtkblist.c:1141
-#, fuzzy
 msgid "_Send File"
-msgstr "ファイルの送信"
+msgstr "ファイルの送信(_S)"
 
 #: src/gtkblist.c:1145
 msgid "Add Buddy _Pounce"
@@ -2802,9 +2806,8 @@ msgid "_Message:"
 msgstr "メッセージ(_M):"
 
 #: src/gtkconv.c:799 src/gtkconv.c:2489 src/gtkdebug.c:182
-#, fuzzy
 msgid "Unable to open file."
-msgstr "ファイル %s を読み込めません。"
+msgstr "ファイルを開けません。"
 
 #: src/gtkconv.c:804
 #, c-format
@@ -2851,9 +2854,8 @@ msgid "Get Away Msg"
 msgstr "離席メッセージの取得"
 
 #: src/gtkconv.c:2497
-#, fuzzy
 msgid "Unable to save icon file to disk."
-msgstr "アイコン・ファイルをディスクに保存できません。"
+msgstr "アイコン・ファイルを保存できません。"
 
 #: src/gtkconv.c:2514
 msgid "Save Icon"
@@ -2910,9 +2912,8 @@ msgid "/Conversation/Clear"
 msgstr "/会話/クリア"
 
 #: src/gtkconv.c:3466
-#, fuzzy
 msgid "/Conversation/Se_nd File..."
-msgstr "/会話/検索(_F)..."
+msgstr "/会話/ファイルの送信(_N)..."
 
 #: src/gtkconv.c:3467
 msgid "/Conversation/Add Buddy _Pounce..."
@@ -2984,9 +2985,8 @@ msgid "/Conversation/View Log"
 msgstr "/会話/ログの表示"
 
 #: src/gtkconv.c:3551
-#, fuzzy
 msgid "/Conversation/Send File..."
-msgstr "/会話/招待..."
+msgstr "/会話/ファイルの送信..."
 
 #: src/gtkconv.c:3555
 msgid "/Conversation/Add Buddy Pounce..."
@@ -3070,9 +3070,8 @@ msgid "Block the user"
 msgstr "ユーザからの会話を拒否します"
 
 #: src/gtkconv.c:3669
-#, fuzzy
 msgid "Send a file to the user"
-msgstr "モバイル・メッセージを送信します。"
+msgstr "ファイルをユーザへ送信します"
 
 #: src/gtkconv.c:3676
 msgid "Add the user to your buddy list"
@@ -3511,7 +3510,7 @@ msgstr "つかむ仲間の編集"
 #. Create the "Pounce Who" frame.
 #: src/gtkpounce.c:405
 msgid "Pounce Who"
-msgstr "つかむ相手は？"
+msgstr "つかむ相手"
 
 #: src/gtkpounce.c:432
 msgid "_Buddy name:"
@@ -3520,7 +3519,7 @@ msgstr "仲間の名前(_B):"
 #. Create the "Pounce When" frame.
 #: src/gtkpounce.c:456
 msgid "Pounce When"
-msgstr "いつつかむか？"
+msgstr "つかむ時期"
 
 #: src/gtkpounce.c:464 src/main.c:296
 msgid "_Sign on"
@@ -3528,11 +3527,11 @@ msgstr "サイン・オン(_S)"
 
 #: src/gtkpounce.c:466
 msgid "Sign _off"
-msgstr "サイン・オフ(_O)"
+msgstr "サイン・オフした時(_O)"
 
 #: src/gtkpounce.c:468
 msgid "A_way"
-msgstr "離席(_W)"
+msgstr "離席した時(_W)"
 
 #: src/gtkpounce.c:470
 msgid "Re_turn from away"
@@ -3540,7 +3539,7 @@ msgstr "離席から戻った時(_T)"
 
 #: src/gtkpounce.c:472
 msgid "_Idle"
-msgstr "待機中(_I)"
+msgstr "待機中の時(_I)"
 
 #: src/gtkpounce.c:474
 msgid "Retur_n from idle"
@@ -3557,7 +3556,7 @@ msgstr "仲間が入力をやめた時(_Y)"
 #. Create the "Pounce Action" frame.
 #: src/gtkpounce.c:507
 msgid "Pounce Action"
-msgstr "つかんだらどうするか？"
+msgstr "つかんだ時のアクション"
 
 #: src/gtkpounce.c:515
 msgid "Op_en an IM window"
@@ -3675,7 +3674,7 @@ msgstr "表示"
 
 #: src/gtkprefs.c:819
 msgid "Show _timestamp on messages"
-msgstr "メッセージにタイムスタンプを表示する(_T)"
+msgstr "メッセージにタイムスタンプを挿入する(_T)"
 
 #: src/gtkprefs.c:822
 msgid "_Highlight misspelled words"
@@ -3751,11 +3750,11 @@ msgstr "[CTRL]+[数字] キーでスマイリー (顔文字) を挿入する(_I)
 
 #: src/gtkprefs.c:941
 msgid "Buddy List Sorting"
-msgstr "仲間リストのソート"
+msgstr "仲間リストの並び替え"
 
 #: src/gtkprefs.c:950
 msgid "_Sorting:"
-msgstr "ソート(_S):"
+msgstr "並び替え(_S):"
 
 #: src/gtkprefs.c:956 src/gtkprefs.c:1009
 msgid "Show _buttons as:"
@@ -3763,15 +3762,15 @@ msgstr "ボタンの表示方法(_B):"
 
 #: src/gtkprefs.c:958 src/gtkprefs.c:1011
 msgid "Pictures"
-msgstr "画像"
+msgstr "アイコン"
 
 #: src/gtkprefs.c:959 src/gtkprefs.c:1012
 msgid "Text"
-msgstr "テキスト"
+msgstr "ラベル"
 
 #: src/gtkprefs.c:960 src/gtkprefs.c:1013
 msgid "Pictures and text"
-msgstr "画像とテキスト"
+msgstr "アイコンとラベル"
 
 #: src/gtkprefs.c:963
 msgid "_Raise window on events"
@@ -3913,7 +3912,7 @@ msgstr "ユーザ名(_U):"
 
 #: src/gtkprefs.c:1301
 msgid "Epiphany"
-msgstr ""
+msgstr "Epiphany"
 
 #: src/gtkprefs.c:1302
 msgid "Firebird"
@@ -4034,11 +4033,11 @@ msgstr "サウンドのオプション"
 
 #: src/gtkprefs.c:1648
 msgid "Sounds when conversation has _focus"
-msgstr "会話ウィンドウがフォーカスされたらサウンドを鳴らす(_F)"
+msgstr "会話ウィンドウがフォーカスされたらサウンドを演奏する(_F)"
 
 #: src/gtkprefs.c:1650
 msgid "_Sounds while away"
-msgstr "離席している間もサウンドを鳴らす(_S)"
+msgstr "離席している間もサウンドを演奏する(_S)"
 
 #: src/gtkprefs.c:1654
 msgid "Sound Method"
@@ -4075,7 +4074,7 @@ msgstr "サウンドのイベント"
 
 #: src/gtkprefs.c:1752
 msgid "Play"
-msgstr "有効"
+msgstr "演奏"
 
 #: src/gtkprefs.c:1759
 msgid "Event"
@@ -4107,7 +4106,7 @@ msgstr "自動的に応答する(_S)"
 
 #: src/gtkprefs.c:1816
 msgid "_Only send auto-response when idle"
-msgstr "待機中の際にのみ自動的に応答する(_O)"
+msgstr "待機中のみ自動的に応答する(_O)"
 
 #: src/gtkprefs.c:1819 src/protocols/msn/msn.c:1179
 #: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2730
@@ -4142,7 +4141,7 @@ msgstr "待機中は離席にする(_W)"
 
 #: src/gtkprefs.c:1841
 msgid "_Minutes before setting away:"
-msgstr "離席状態になるまでの時間(秒)(M):"
+msgstr "離席状態になるまでの時間(分)(M):"
 
 #: src/gtkprefs.c:1849
 msgid "Away m_essage:"
@@ -4353,14 +4352,12 @@ msgid "Would you like to overwrite it?"
 msgstr "上書きしてもよろしいですか？"
 
 #: src/gtkrequest.c:1430 src/gtkrequest.c:1451
-#, fuzzy
 msgid "Save File..."
-msgstr "ファイルの送信"
+msgstr "ファイルの保存..."
 
 #: src/gtkrequest.c:1431 src/gtkrequest.c:1452
-#, fuzzy
 msgid "Open File..."
-msgstr "ファイルの送信"
+msgstr "ファイルを開く..."
 
 #: src/gtkroomlist.c:330
 msgid "Room List"
@@ -4911,14 +4908,13 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu プロトコルのプラグイン"
 
 #: src/protocols/icq/gaim_icq.c:224
-#, fuzzy
 msgid "Gaim encountered an error communicating with the ICQ server."
-msgstr "サーバと通信する際にエラーが発生しました"
+msgstr "ICQ サーバと通信する際にエラーを受け取りました。"
 
 #: src/protocols/icq/gaim_icq.c:294
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
-msgstr "ユーザ %s (%s) が %s を仲間リストに追加したがっています。"
+msgstr "ユーザ %s (%s%s%s%s%s) が彼らの認証を要求しています。"
 
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:232
 #: src/protocols/msn/userlist.c:100 src/protocols/oscar/oscar.c:3555
@@ -4933,22 +4929,18 @@ msgid "Deny"
 msgstr "拒否する"
 
 #: src/protocols/icq/gaim_icq.c:310
-#, fuzzy
 msgid "Send message through server"
-msgstr "選択した仲間にメッセージを送信します"
+msgstr "メッセージをサーバを介して送信します"
 
 #: src/protocols/icq/gaim_icq.c:352
-#, fuzzy
 msgid "Connecting..."
-msgstr "接続中"
+msgstr "接続中..."
 
 #: src/protocols/icq/gaim_icq.c:498
-#, fuzzy
 msgid "Nick:"
-msgstr "あだ名"
+msgstr "あだ名:"
 
 #: src/protocols/icq/gaim_icq.c:499
-#, fuzzy
 msgid "Gaim User"
 msgstr "Gaim を使う"
 
@@ -4997,9 +4989,8 @@ msgid "MOTD for %s"
 msgstr "%s の MOTD"
 
 #: src/protocols/irc/irc.c:93 src/protocols/irc/irc.c:373
-#, fuzzy
 msgid "Server has disconnected"
-msgstr "切断されました"
+msgstr "サーバが切断しました"
 
 #: src/protocols/irc/irc.c:147
 msgid "View MOTD"
@@ -5245,19 +5236,23 @@ msgstr "%s からの wallops です"
 
 #: src/protocols/irc/parse.c:109
 msgid "action &lt;action to perform&gt;:  Perform an action."
-msgstr "action &lt;実行するアクション&gt;:  アクションを実行します"
+msgstr "action &lt;実行するアクション&gt;:  アクションを実行します。"
 
 #: src/protocols/irc/parse.c:110
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
 msgstr ""
+"away [メッセージ]:  離席中のメッセージをセットする、または離席中から戻ったこ"
+"とを示すためにセットしたメッセージを解除します。"
 
 #: src/protocols/irc/parse.c:111
 msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
 msgstr ""
+"deop &lt;あだ名１&gt; [あだ名２] ...:  チャンネル操作権を剥奪します (これを行"
+"うには、自分自身がチャンネル操作権を持っていなければなりません)。"
 
 #: src/protocols/irc/parse.c:112
 msgid ""
@@ -5265,128 +5260,163 @@ msgid ""
 "someone, preventing them from speaking if the channel is moderated (+m). You "
 "must be a channel operator to do this."
 msgstr ""
+"devoice &lt;あだ名１&gt; [あだ名２] ...:  チャンネル発言権を剥奪し、チャンネ"
+"ルがモデレート (+m) した時に発言しないようにします (これを行うには、自分自身"
+"がチャンネル操作権を持っていなければなりません)。"
 
 #: src/protocols/irc/parse.c:113
 msgid ""
 "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified "
 "channel, or the current channel."
 msgstr ""
+"invite &lt;あだ名&gt; [部屋]:  指定したチャンネル、または現在のチャンネルに招"
+"待します。"
 
 #: src/protocols/irc/parse.c:114
 msgid ""
 "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
+"j &lt;部屋１&gt;[,部屋２][,...] [キー１[,キー２][,...]]:  一つ以上のチャンネ"
+"ルを指定すると、必要に応じて、追加でそれぞれのチャンネル・キーを提供します。"
 
 #: src/protocols/irc/parse.c:115
 msgid ""
 "join &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
+"join &lt;部屋１&gt;[,部屋２][,...] [キー１[,キー２][,...]]:  一つ以上のチャン"
+"ネルを指定すると、必要に応じて、追加でそれぞれのチャンネル・キーを提供しま"
+"す。"
 
 #: src/protocols/irc/parse.c:116
 msgid ""
 "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a "
 "channel operator to do this."
 msgstr ""
+"kick &lt;あだ名&gt; [メッセージ]:  チャンネルから追い出します (これを行うに"
+"は、自分自身がチャンネル操作権を持っていなければなりません)。"
 
 #: src/protocols/irc/parse.c:117
 msgid ""
 "list:  Display a list of chat rooms on the network. <i>Warning, some servers "
 "may disconnect you upon doing this.</i>"
 msgstr ""
+"list:  ネットワーク上のチャット部屋を一覧表示します。<i>【注意】これを行うと"
+"接続を切断するサーバがいくつかあります。</i>"
 
 #: src/protocols/irc/parse.c:118
 msgid "me &lt;action to perform&gt;:  Perform an action."
-msgstr ""
+msgstr "me &lt;実行するアクション&gt;:  指定したアクションを実行します。"
 
 #: src/protocols/irc/parse.c:119
 msgid ""
 "mode &lt;nick|channel&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a channel "
 "or user mode."
 msgstr ""
+"mode &lt;あだ名|チャンネル&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  チャンネルまたは"
+"ユーザ・モードを設定または解除します。"
 
 #: src/protocols/irc/parse.c:120
 msgid ""
 "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
 msgstr ""
+"msg &lt;あだ名&gt; &lt;メッセージ&gt;:  あるユーザへ (チャンネルとは別に) 個"
+"人的なメッセージを送信します。"
 
 #: src/protocols/irc/parse.c:121
 msgid "names [channel]:  List the users currently in a channel."
-msgstr ""
+msgstr "names [チャンネル]:  チャンネルに現在いるユーザを一覧表示します。"
 
 #: src/protocols/irc/parse.c:122 src/protocols/jabber/jabber.c:1407
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
-msgstr ""
+msgstr "nick &lt;新しいあだ名&gt;:  あだ名を変更します。"
 
 #: src/protocols/irc/parse.c:123
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
+"op &lt;あだ名１&gt; [あだ名２] ...:  チャンネル操作権を与えます (これを行うに"
+"は、自分自身がチャンネル操作権を持っていなければなりません)。"
 
 #: src/protocols/irc/parse.c:124
 msgid ""
 "operwall &lt;message&gt;:  If you don't know what this is, you probably "
 "can't use it."
 msgstr ""
+"operwall &lt;メッセージ&gt;:  (このコマンドが何を行うか知らない場合は、おそら"
+"く使うことは無いでしょう:)"
 
 #: src/protocols/irc/parse.c:125
 msgid ""
 "part [room] [message]:  Leave the current channel, or a specified channel, "
 "with an optional message."
 msgstr ""
+"part [部屋] [メッセージ]:  現在のチャンネルまたは指定したチャンネルからメッ"
+"セージを残して退出します。"
 
 #: src/protocols/irc/parse.c:126
 msgid ""
 "ping [nick]:  Asks how much lag a user (or the server if no user specified) "
 "has."
 msgstr ""
+"ping [あだ名]:  ユーザ (または、ユーザが指定されない場合はサーバ) とどれくら"
+"いズレがあるか問い合わせます。"
 
 #: src/protocols/irc/parse.c:127
 msgid ""
 "query &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
 msgstr ""
+"query &lt;あだ名&gt; &lt;メッセージ&gt;:  あるユーザへ (チャンネルとは別に) "
+"個人的なメッセージを送信します。"
 
 #: src/protocols/irc/parse.c:128
 msgid "quit [message]:  Disconnect from the server, with an optional message."
-msgstr ""
+msgstr "quit [メッセージ]:  メッセージを残してサーバとの接続を切断します。"
 
 #: src/protocols/irc/parse.c:129
 msgid "quote [...]:  Send a raw command to the server."
-msgstr ""
+msgstr "quote [...]:  サーバへ低レベル・コマンドを送信します。"
 
 #: src/protocols/irc/parse.c:130
 msgid ""
 "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a "
 "channel operator to do this."
 msgstr ""
+"remove &lt;あだ名&gt; [メッセージ]:  部屋からあだ名の人を追い出します (これを"
+"行うには、自分自身がチャンネル操作権を持っていなければなりません)。"
 
 #: src/protocols/irc/parse.c:131
 msgid "topic [new topic]:  View or change the channel topic."
-msgstr ""
+msgstr "topic [新しいトピック]:  チャンネル・トピックを表示したり変更します。"
 
 #: src/protocols/irc/parse.c:132
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
 msgstr ""
+"umode &lt;+|-&gt;&lt;A-Za-z&gt;:  ユーザ・モードを設定または解除します。"
 
 #: src/protocols/irc/parse.c:133
 msgid ""
 "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
+"voice &lt;あだ名１&gt; [あだ名２] ...:  チャンネル・ボイス権を与えます (これ"
+"を行うには、自分自身がチャンネル操作権を持っていなければなりません)。"
 
 #: src/protocols/irc/parse.c:134
 msgid ""
 "wallops &lt;message&gt;:  If you don't know what this is, you probably can't "
 "use it."
 msgstr ""
+"wallops &lt;メッセージ&gt;:  (このコマンドが何を行うか知らない場合は、おそら"
+"く使うことは無いでしょう:)"
 
 #: src/protocols/irc/parse.c:135
 msgid "whois &lt;nick&gt;:  Get information on a user."
-msgstr ""
+msgstr "whois &lt;あだ名&gt;:  ユーザ情報を取得します。"
 
 #: src/protocols/irc/parse.c:228 src/protocols/zephyr/zephyr.c:256
 msgid ""
@@ -6089,52 +6119,58 @@ msgid "Unable to ban user %s"
 msgstr "ユーザ %s を ban できません"
 
 #: src/protocols/jabber/jabber.c:1376
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to kick user %s"
-msgstr "ユーザ (%s) を招待できません。"
+msgstr "ユーザ %s を kick できません"
 
 #: src/protocols/jabber/jabber.c:1401
-#, fuzzy
 msgid "config:  Configure a chat room."
-msgstr "チャット・ルームに参加します"
+msgstr "config:  チャット・ルームを設定します。"
 
 #: src/protocols/jabber/jabber.c:1404
-#, fuzzy
 msgid "configure:  Configure a chat room."
-msgstr "チャット・ルームに参加します"
+msgstr "configure:  チャット・ルームを設定します。"
 
 #: src/protocols/jabber/jabber.c:1411
 msgid "part [room]:  Leave the room."
-msgstr ""
+msgstr "part [部屋]:  部屋から退出します。"
 
 #: src/protocols/jabber/jabber.c:1414
 msgid "register:  Register with a chat room."
-msgstr ""
+msgstr "register:  チャット・ルームを登録します。"
 
 #: src/protocols/jabber/jabber.c:1419
 msgid "topic [new topic]:  View or change the topic."
-msgstr ""
+msgstr "topic [新しいトピック]:  トピックを表示したり変更します。"
 
 #: src/protocols/jabber/jabber.c:1423
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
 msgstr ""
+"ban &lt;ユーザ&gt; [ルーム]:  指定したチャット・ルームからユーザを追い出しま"
+"す。"
 
 #: src/protocols/jabber/jabber.c:1427
 msgid "invite &lt;user&gt; [room]:  Invite a user to the room."
 msgstr ""
+"invite &lt;ユーザ&gt; [ルーム]:  指定したユーザをチャット・ルームへ招待しま"
+"す。"
 
 #: src/protocols/jabber/jabber.c:1431
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
-msgstr ""
+msgstr "join: &lt;ルーム&gt; [サーバ]:  指定したサーバのチャットへ参加します。"
 
 #: src/protocols/jabber/jabber.c:1435
 msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr ""
+"kick &lt;ユーザ&gt; [ルーム]:  指定したユーザをチャット・ルームから追い出しま"
+"す。"
 
 #: src/protocols/jabber/jabber.c:1439
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr ""
+"msg &lt;ユーザ&gt; &lt;メッセージ&gt;:  他のユーザへ個人的なメッセージを送信"
+"します。"
 
 #: src/protocols/jabber/jabber.c:1453
 msgid "Hide Operating System"
@@ -6153,7 +6189,7 @@ msgstr "OS を隠す"
 #. *  description
 #: src/protocols/jabber/jabber.c:1537 src/protocols/jabber/jabber.c:1539
 msgid "Jabber Protocol Plugin"
-msgstr "Jabberプロトコル・プラグイン"
+msgstr "Jabber プロトコル・プラグイン"
 
 #: src/protocols/jabber/jabber.c:1565
 msgid "Use TLS if available"
@@ -6170,7 +6206,7 @@ msgstr "暗号化されていないストリームを介したプレーンテキ
 #. Account options
 #: src/protocols/jabber/jabber.c:1584 src/protocols/silc/silc.c:1572
 msgid "Connect server"
-msgstr "サーバに接続する"
+msgstr "サーバへ接続"
 
 #: src/protocols/jabber/message.c:111
 #, c-format
@@ -6216,15 +6252,15 @@ msgstr "ユーザ %s があなたを仲間リストに追加したがってい�
 
 #: src/protocols/jabber/presence.c:280 src/protocols/jabber/presence.c:281
 msgid "Create New Room"
-msgstr "新しいチャットルームの生成"
+msgstr "新しいチャット・ルームの生成"
 
 #: src/protocols/jabber/presence.c:282
 msgid ""
 "You are creating a new room.  Would you like to configure it, or accept the "
 "default settings?"
 msgstr ""
-"新しいチャットルームを生成します。チャットルームの設定を行いますか？ それとも"
-"デフォルト値を適用しますか？"
+"新しいチャット・ルームを生成します。チャット・ルームの設定を行いますか？ それ"
+"ともデフォルト値を適用しますか？"
 
 #: src/protocols/jabber/presence.c:284
 msgid "Configure Room"
@@ -6256,17 +6292,15 @@ msgstr "ファイル送信の失敗"
 
 #: src/protocols/msn/cmdproc.c:336
 msgid "Miscellaneous error"
-msgstr ""
+msgstr "その他のエラー"
 
 #: src/protocols/msn/cmdproc.c:338
-#, fuzzy
 msgid "You have signed on from another location."
-msgstr "別の場所からサイン・オンしたので、切断されています。"
+msgstr "別の場所からサイン・オンしています。"
 
 #: src/protocols/msn/cmdproc.c:340
-#, fuzzy
 msgid "The MSN servers are going down temporarily."
-msgstr "MSN サーバが一時的にダウンしているので、切断されています。"
+msgstr "MSN サーバが一時的にダウンしています。"
 
 #: src/protocols/msn/error.c:35
 msgid "Unable to parse message"
@@ -6634,32 +6668,28 @@ msgstr "<b>エイリアス:</b> %s<br>"
 #. put a link to the actual profile URL
 #: src/protocols/msn/msn.c:1172 src/protocols/msn/msn.c:1512
 #: src/protocols/yahoo/yahoo_profile.c:1168 src/util.c:792
-#, fuzzy, c-format
+#, c-format
 msgid "<b>%s:</b> "
-msgstr ""
-"\n"
-"<b>%s:</b> %s"
+msgstr "<b>%s:</b> "
 
 #: src/protocols/msn/msn.c:1173
 #, c-format
 msgid "<font sml=\"msn\">%s</font><br>"
-msgstr ""
+msgstr "<font sml=\"msn\">%s</font><br>"
 
 #: src/protocols/msn/msn.c:1179 src/protocols/yahoo/yahoo_profile.c:664
-#, fuzzy, c-format
+#, c-format
 msgid "<b>%s:</b> %s<br>"
-msgstr "<b>ユーザ:</b> %s<br>"
+msgstr "<b>%s:</b> %s<br>"
 
 #: src/protocols/msn/msn.c:1242
-#, fuzzy
 msgid "MSN Profile"
-msgstr "プロフィールの設定"
+msgstr "MSN プロフィール"
 
 #: src/protocols/msn/msn.c:1247 src/protocols/msn/msn.c:1499
 #: src/protocols/yahoo/yahoo_profile.c:761
-#, fuzzy
 msgid "Error retrieving profile"
-msgstr "部屋一覧取得のエラー"
+msgstr "プロフィール取得のエラー"
 
 #. Age
 #: src/protocols/msn/msn.c:1318 src/protocols/oscar/oscar.c:4888
@@ -6677,7 +6707,7 @@ msgstr "性別"
 
 #: src/protocols/msn/msn.c:1334 src/protocols/yahoo/yahoo_profile.c:1020
 msgid "Marital Status"
-msgstr "既婚者かどうか"
+msgstr "既婚/未婚"
 
 #: src/protocols/msn/msn.c:1341 src/protocols/yahoo/yahoo_profile.c:1010
 msgid "Location"
@@ -6720,7 +6750,7 @@ msgstr "ホームページ"
 
 #: src/protocols/msn/msn.c:1501
 msgid "The user has not created a public profile."
-msgstr ""
+msgstr "このユーザはプロフィールを公開していません。"
 
 #: src/protocols/msn/msn.c:1502
 msgid ""
@@ -6728,17 +6758,21 @@ msgid ""
 "that the user does not exist, or that the user exists but has not created a "
 "public profile."
 msgstr ""
+"そのユーザのプロフィールが見つからないと MSN が報告してきました。これは、その"
+"ユーザが存在しないか、あるいはユーザは存在するが、プロフィールは公開していな"
+"いかのどちらかです。"
 
 #: src/protocols/msn/msn.c:1506
 msgid ""
 "Gaim could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
+"Gaim はユーザのプロフィールから情報を取得できませんでした。そのユーザはおそら"
+"く存在していないと思われます。"
 
 #: src/protocols/msn/msn.c:1512 src/protocols/yahoo/yahoo_profile.c:1168
-#, fuzzy
 msgid "Profile URL"
-msgstr "プロフィール"
+msgstr "プロフィールの URL"
 
 #: src/protocols/msn/msn.c:1643
 msgid "Display conversation closed notices"
@@ -6831,12 +6865,12 @@ msgstr "サーバ %s へ接続できません"
 #: src/protocols/msn/servconn.c:50
 #, c-format
 msgid "Error writing to %s server"
-msgstr "サーバ %s へ書き込む際にエラーが発生しました"
+msgstr "サーバ %s へ書き込む際にエラー"
 
 #: src/protocols/msn/servconn.c:54
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from %s server"
-msgstr "サーバ %s へ書き込む際にエラーが発生しました"
+msgstr "サーバ %s から読み込む際にエラー"
 
 #: src/protocols/msn/servconn.c:58
 #, c-format
@@ -6846,7 +6880,7 @@ msgstr "サーバ %s から不明なエラーです"
 #: src/protocols/msn/servconn.c:72
 #, c-format
 msgid "MSN error for account %s"
-msgstr ""
+msgstr "アカウント %s の MSN エラー"
 
 #: src/protocols/msn/servconn.c:346
 msgid "Received HTTP error. Please report this."
@@ -6867,9 +6901,9 @@ msgid "The user %s (%s) wants to add %s to his or her buddy list."
 msgstr "ユーザ %s (%s) が %s を仲間リストに追加したがっています。"
 
 #: src/protocols/msn/userlist.c:94
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s wants to add %s to his or her buddy list."
-msgstr "ユーザ %s (%s) が %s を仲間リストに追加したがっています。"
+msgstr "ユーザ %s が %s を仲間リストに追加したがっています。"
 
 #: src/protocols/napster/napster.c:230
 msgid "Unable to read header from server"
@@ -7384,13 +7418,12 @@ msgid "Not while on AOL"
 msgstr "AOL 中にはできません"
 
 #: src/protocols/oscar/oscar.c:403
-#, fuzzy
 msgid ""
 "(There was an error converting this message.  The buddy you are speaking to "
 "most likely has a buggy client.)"
 msgstr ""
-"(このメッセージを変換する際にエラーが発生しました。アカウント・エディタの 'エ"
-"ンコード' オプションを確認して下さい)"
+"(このメッセージを変換する際にエラーが発生しました。会話している仲間は buggy "
+"なクライアントを持っているようです。)"
 
 #: src/protocols/oscar/oscar.c:441
 msgid "Voice"
@@ -7557,7 +7590,7 @@ msgstr "接続"
 #: src/protocols/oscar/oscar.c:1442 src/protocols/toc/toc.c:872
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "チャットルーム %s から切断されました"
+msgstr "チャット・ルーム %s から切断されました"
 
 #: src/protocols/oscar/oscar.c:1458
 msgid "Chat is currently unavailable"
@@ -7860,9 +7893,9 @@ msgstr[1] ""
 "原因不明ですが、%2$s からの %1$hu 個のメッセージを受け取れませんでした。"
 
 #: src/protocols/oscar/oscar.c:3815 src/protocols/oscar/oscar.c:4039
-#, fuzzy, c-format
+#, c-format
 msgid "Info for %s"
-msgstr "%s の ICQ 情報"
+msgstr "%s の情報"
 
 #: src/protocols/oscar/oscar.c:3881
 #, c-format
@@ -8462,42 +8495,41 @@ msgstr "ユーザ %s はネットワーク上にいません"
 #: src/protocols/silc/buddy.c:114 src/protocols/silc/buddy.c:118
 #: src/protocols/silc/buddy.c:123 src/protocols/silc/buddy.c:128
 #: src/protocols/silc/buddy.c:133 src/protocols/silc/buddy.c:251
-#, fuzzy
 msgid "Key Agreement"
-msgstr "テキストの置換"
+msgstr "キーの同意"
 
 #: src/protocols/silc/buddy.c:53
 msgid "Cannot perform the key agreement"
-msgstr ""
+msgstr "キーの同意を実行できません"
 
 #: src/protocols/silc/buddy.c:110
 msgid "Error occurred during key agreement"
-msgstr ""
+msgstr "キーに同意する際にエラーが発生しました"
 
 #: src/protocols/silc/buddy.c:114
 msgid "Key Agreement failed"
-msgstr ""
+msgstr "キーの同意に失敗しました"
 
 #: src/protocols/silc/buddy.c:119
 msgid "Timeout during key agreement"
-msgstr ""
+msgstr "キーに同意する際にタイムアウトしました"
 
 #: src/protocols/silc/buddy.c:124
 msgid "Key agreement was aborted"
-msgstr ""
+msgstr "キーの同意が中断されました"
 
 #: src/protocols/silc/buddy.c:129
 msgid "Key agreement is already started"
-msgstr ""
+msgstr "既にキーの同意を開始しています"
 
 #: src/protocols/silc/buddy.c:134
 msgid "Key agreement cannot be started with yourself"
-msgstr ""
+msgstr "キーの同意を自分自身では開始できません"
 
 #: src/protocols/silc/buddy.c:252 src/protocols/silc/buddy.c:382
 #: src/protocols/silc/buddy.c:507
 msgid "The remote user is not present in the network any more"
-msgstr ""
+msgstr "リモート・ユーザはネットワーク等に存在しません"
 
 #: src/protocols/silc/buddy.c:288
 #, c-format
@@ -8505,81 +8537,79 @@ msgid ""
 "Key agreement request received from %s. Would you like to perform the key "
 "agreement?"
 msgstr ""
+"キーの同意要求を %s から受け取りました。キーの同意を実行してもよろしいです"
+"か？"
 
 #: src/protocols/silc/buddy.c:292
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The remote user is waiting key agreement on:\n"
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
-"次のサイトからファイルのダウンロードが可能です:\n"
+"リモート・ユーザがキーの同意を要求しています:\n"
 "リモート・ホスト: %s\n"
 "リモート・ポート: %d"
 
 #: src/protocols/silc/buddy.c:305
 msgid "Key Agreement Request"
-msgstr ""
+msgstr "キーの同意の要求"
 
 #: src/protocols/silc/buddy.c:381 src/protocols/silc/buddy.c:416
 #: src/protocols/silc/buddy.c:458
-#, fuzzy
 msgid "IM With Password"
-msgstr "パスワード"
+msgstr "パスワード付き IM"
 
 #: src/protocols/silc/buddy.c:417
 msgid "Cannot set IM key"
-msgstr ""
+msgstr "IM キーをセットできません"
 
 #: src/protocols/silc/buddy.c:459
-#, fuzzy
 msgid "Set IM Password"
-msgstr "パスワード"
+msgstr "IM パスワードのセット"
 
 #: src/protocols/silc/buddy.c:506 src/protocols/silc/buddy.c:541
 #: src/protocols/silc/ops.c:1256 src/protocols/silc/ops.c:1267
 msgid "Get Public Key"
-msgstr ""
+msgstr "公開鍵の取得"
 
 #: src/protocols/silc/buddy.c:542 src/protocols/silc/ops.c:1257
 #: src/protocols/silc/ops.c:1268
-#, fuzzy
 msgid "Cannot fetch the public key"
-msgstr "ニックネームを変更できません"
+msgstr "公開鍵を取得できません"
 
 #: src/protocols/silc/buddy.c:629 src/protocols/silc/buddy.c:1544
 msgid "Show Public Key"
-msgstr ""
+msgstr "公開鍵の表示"
 
 #: src/protocols/silc/buddy.c:630 src/protocols/silc/buddy.c:989
 #: src/protocols/silc/chat.c:222
-#, fuzzy
 msgid "Could not load public key"
-msgstr "ニックネームを変更できませんでした"
+msgstr "公開鍵を読み込めませんでした"
 
 #: src/protocols/silc/buddy.c:707 src/protocols/silc/ops.c:853
 #: src/protocols/silc/ops.c:925 src/protocols/silc/ops.c:1060
 #: src/protocols/silc/ops.c:1061 src/protocols/silc/ops.c:1079
-#, fuzzy
 msgid "User Information"
-msgstr "情報"
+msgstr "ユーザ情報"
 
 #: src/protocols/silc/buddy.c:708 src/protocols/silc/ops.c:926
 #: src/protocols/silc/ops.c:1080
-#, fuzzy
 msgid "Cannot get user information"
-msgstr "%s のユーザ情報の変更"
+msgstr "ユーザ情報を取得できません"
 
 #: src/protocols/silc/buddy.c:729
 #, c-format
 msgid "The %s buddy is not trusted"
-msgstr ""
+msgstr "仲間 %s は信用されていません"
 
 #: src/protocols/silc/buddy.c:732
 msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
+"仲間の公開鍵を取り込むまで仲間通知を受け取ることはできません。公開鍵を取得す"
+"る際は、ボタン [公開鍵を取得する...] をクリックして下さい。"
 
 #. Open file selector to select the public key.
 #: src/protocols/silc/buddy.c:1023
@@ -8589,264 +8619,248 @@ msgstr "開く..."
 #: src/protocols/silc/buddy.c:1032
 #, c-format
 msgid "The %s buddy is not present in the network"
-msgstr ""
+msgstr "仲間 %s はネットワーク上に存在しません"
 
 #: src/protocols/silc/buddy.c:1035
 msgid ""
 "To add the buddy you must import his/her public key. Press Import to import "
 "a public key."
 msgstr ""
+"仲間を追加するには公開鍵を取り込まなければなりません。公開鍵を取り込む際は、"
+"ボタン [インポートする...] をクリックして下さい。"
 
 #: src/protocols/silc/buddy.c:1038
 msgid "Import..."
-msgstr ""
+msgstr "インポートする..."
 
 #: src/protocols/silc/buddy.c:1125
-#, fuzzy
 msgid "Select correct user"
-msgstr "問い合わせる会議サーバの選択"
+msgstr "妥当なユーザの選択"
 
 #: src/protocols/silc/buddy.c:1127
 msgid ""
 "More than one user was found with the same public key. Select the correct "
 "user from the list to add to the buddy list."
 msgstr ""
+"同じ公開鍵を持ったユーザが一人以上います。仲間リストへ追加する妥当なユーザを"
+"一覧から選択して下さい。"
 
 #: src/protocols/silc/buddy.c:1129
 msgid ""
 "More than one user was found with the same name. Select the correct user "
 "from the list to add to the buddy list."
 msgstr ""
+"同じ名前を持ったユーザが一人以上います。仲間リストへ追加する妥当なユーザを一"
+"覧から選択して下さい。"
 
 #: src/protocols/silc/buddy.c:1377
 msgid "Detached"
-msgstr ""
+msgstr "切り離し済"
 
 #: src/protocols/silc/buddy.c:1381 src/protocols/silc/silc.c:48
 #: src/protocols/silc/silc.c:80
 msgid "Indisposed"
-msgstr ""
+msgstr "不適済"
 
 #: src/protocols/silc/buddy.c:1385 src/protocols/silc/silc.c:49
 #: src/protocols/silc/silc.c:82
 msgid "Wake Me Up"
-msgstr ""
+msgstr "起こして下さい"
 
 #: src/protocols/silc/buddy.c:1387 src/protocols/silc/silc.c:45
 #: src/protocols/silc/silc.c:74
-#, fuzzy
 msgid "Hyper Active"
-msgstr "有効"
+msgstr "ハイパー・アクティブ"
 
 #: src/protocols/silc/buddy.c:1389
 msgid "Robot"
-msgstr ""
+msgstr "ロボット"
 
 #: src/protocols/silc/buddy.c:1396 src/protocols/silc/silc.c:610
 #: src/protocols/silc/util.c:469
-#, fuzzy
 msgid "Happy"
-msgstr "適用"
+msgstr "ハッピー"
 
 #: src/protocols/silc/buddy.c:1398 src/protocols/silc/silc.c:612
 #: src/protocols/silc/util.c:471
 msgid "Sad"
-msgstr ""
+msgstr "悲しむ"
 
 #: src/protocols/silc/buddy.c:1400 src/protocols/silc/silc.c:614
 #: src/protocols/silc/util.c:473
 msgid "Angry"
-msgstr ""
+msgstr "怒る"
 
 #: src/protocols/silc/buddy.c:1402 src/protocols/silc/silc.c:616
 #: src/protocols/silc/util.c:475
 msgid "Jealous"
-msgstr ""
+msgstr "やきもち"
 
 #: src/protocols/silc/buddy.c:1404 src/protocols/silc/silc.c:618
 #: src/protocols/silc/util.c:477
 msgid "Ashamed"
-msgstr ""
+msgstr "恥じる"
 
 #: src/protocols/silc/buddy.c:1406 src/protocols/silc/silc.c:620
 #: src/protocols/silc/util.c:479
-#, fuzzy
 msgid "Invincible"
-msgstr "隠れる"
+msgstr "無敵"
 
 #: src/protocols/silc/buddy.c:1408 src/protocols/silc/silc.c:622
 #: src/protocols/silc/util.c:481
-#, fuzzy
 msgid "In Love"
-msgstr "無視する"
+msgstr "恋愛中"
 
 #: src/protocols/silc/buddy.c:1410 src/protocols/silc/silc.c:624
 #: src/protocols/silc/util.c:483
 msgid "Sleepy"
-msgstr ""
+msgstr "眠いよ"
 
 #: src/protocols/silc/buddy.c:1412 src/protocols/silc/silc.c:626
 #: src/protocols/silc/util.c:485
-#, fuzzy
 msgid "Bored"
-msgstr "太字にします"
+msgstr "うんざり"
 
 #: src/protocols/silc/buddy.c:1414 src/protocols/silc/silc.c:628
 #: src/protocols/silc/util.c:487
 msgid "Excited"
-msgstr ""
+msgstr "興奮"
 
 #: src/protocols/silc/buddy.c:1416 src/protocols/silc/silc.c:630
 #: src/protocols/silc/util.c:489
 msgid "Anxious"
-msgstr ""
+msgstr "心配"
 
 #: src/protocols/silc/buddy.c:1448 src/protocols/silc/ops.c:962
-#, fuzzy
 msgid "User Modes"
-msgstr "ユーザ ID"
+msgstr "ユーザ・モード"
 
 #: src/protocols/silc/buddy.c:1457 src/protocols/silc/ops.c:971
 msgid "Mood"
-msgstr ""
+msgstr "不機嫌"
 
 #: src/protocols/silc/buddy.c:1461 src/protocols/silc/ops.c:977
-#, fuzzy
 msgid "Status Text"
-msgstr "状態"
+msgstr "ステータス文"
 
 #: src/protocols/silc/buddy.c:1466 src/protocols/silc/ops.c:983
-#, fuzzy
 msgid "Preferred Contact"
-msgstr "コンタクトの削除"
+msgstr "お好みの連絡先"
 
 #: src/protocols/silc/buddy.c:1471 src/protocols/silc/ops.c:988
-#, fuzzy
 msgid "Preferred Language"
-msgstr "設定"
+msgstr "お好みの言語"
 
 #: src/protocols/silc/buddy.c:1476 src/protocols/silc/ops.c:993
-#, fuzzy
 msgid "Device"
-msgstr "拒否する"
+msgstr "デバイス"
 
 #: src/protocols/silc/buddy.c:1481 src/protocols/silc/ops.c:998
 #: src/protocols/silc/silc.c:678 src/protocols/silc/silc.c:680
-#, fuzzy
 msgid "Timezone"
-msgstr "時間"
+msgstr "タイムゾーン"
 
 #: src/protocols/silc/buddy.c:1486 src/protocols/silc/ops.c:1003
-#, fuzzy
 msgid "Geolocation"
-msgstr "場所"
+msgstr "地理的位置"
 
 #: src/protocols/silc/buddy.c:1529
 msgid "Reset IM Key"
-msgstr ""
+msgstr "IM キーのリセット"
 
 #: src/protocols/silc/buddy.c:1534
 msgid "IM with Key Exchange"
-msgstr ""
+msgstr "キー交換付き IM"
 
 #: src/protocols/silc/buddy.c:1538
-#, fuzzy
 msgid "IM with Password"
-msgstr "パスワード"
+msgstr "パスワード付き IM"
 
 #: src/protocols/silc/buddy.c:1549
 msgid "Get Public Key..."
-msgstr ""
+msgstr "公開鍵を取得する..."
 
 #: src/protocols/silc/buddy.c:1555 src/protocols/silc/ops.c:1389
-#, fuzzy
 msgid "Kill User"
-msgstr "ユーザの拒否"
+msgstr "ユーザの強制終了"
 
 #: src/protocols/silc/chat.c:37
-#, fuzzy
 msgid "_Passphrase:"
-msgstr "パスワード(_P):"
+msgstr "パスフレーズ(_P):"
 
 #: src/protocols/silc/chat.c:66
 #, c-format
 msgid "Channel %s does not exist in the network"
-msgstr ""
+msgstr "チャンネル %s はネットワーク上に存在しません"
 
 #: src/protocols/silc/chat.c:67 src/protocols/silc/chat.c:159
-#, fuzzy
 msgid "Channel Information"
-msgstr "情報"
+msgstr "チャンネル情報"
 
 #: src/protocols/silc/chat.c:68
-#, fuzzy
 msgid "Cannot get channel information"
-msgstr "%s のユーザ情報の変更"
+msgstr "チャンネル情報を取得できません"
 
 #: src/protocols/silc/chat.c:105
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Channel Name:</b> %s"
-msgstr "離席メッセージ"
+msgstr "<b>チャンネル名:</b> %s"
 
 #: src/protocols/silc/chat.c:108
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>User Count:</b> %d"
-msgstr "<b>ユーザ:</b> %s<br>"
+msgstr "<br><b>ユーザのカウント:</b> %d"
 
 #: src/protocols/silc/chat.c:115
 #, c-format
 msgid "<br><b>Channel Founder:</b> %s"
-msgstr ""
+msgstr "<br><b>チャンネル設立者:</b> %s"
 
 #: src/protocols/silc/chat.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>Channel Cipher:</b> %s"
-msgstr "パスワードの変更"
+msgstr "<br><b>チャンネル符号:</b> %s"
 
 #: src/protocols/silc/chat.c:127
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>Channel HMAC:</b> %s"
-msgstr "チャンネル(_C):"
+msgstr "<br><b>チャンネル HMAC:</b> %s"
 
 #: src/protocols/silc/chat.c:132
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>Channel Topic:</b><br>%s"
-msgstr ""
-"<b>変更履歴:</b>\n"
-"%s<br><br>"
+msgstr "<br><b>チャンネル・トピック:</b><br>%s"
 
 #: src/protocols/silc/chat.c:137
-#, fuzzy
 msgid "<br><b>Channel Modes:</b> "
-msgstr "離席メッセージ"
+msgstr "<br><b>チャンネル・モード:</b> "
 
 #: src/protocols/silc/chat.c:150
 #, c-format
 msgid "<br><b>Founder Key Fingerprint:</b><br>%s"
-msgstr ""
+msgstr "<br><b>創立者キーの指紋:</b><br>%s"
 
 #: src/protocols/silc/chat.c:151
 #, c-format
 msgid "<br><b>Founder Key Babbleprint:</b><br>%s"
-msgstr ""
+msgstr "<br><b>創立者キーの Babbleprint:</b><br>%s"
 
 #: src/protocols/silc/chat.c:221
 msgid "Add Channel Public Key"
-msgstr ""
+msgstr "チャンネル公開鍵の追加"
 
 #. Add new public key
 #: src/protocols/silc/chat.c:276
 msgid "Open Public Key..."
-msgstr ""
+msgstr "公開鍵を開く..."
 
 #: src/protocols/silc/chat.c:385
-#, fuzzy
 msgid "Channel Passphrase"
-msgstr "パスワードの変更"
+msgstr "チャンネルのパスフレーズ"
 
 #: src/protocols/silc/chat.c:392
 msgid "Channel Public Keys List"
-msgstr ""
+msgstr "チャンネル公開鍵の一覧"
 
 #: src/protocols/silc/chat.c:397
 msgid ""
@@ -8856,355 +8870,320 @@ msgid ""
 "channel public keys are set then only users whose public keys are listed are "
 "able to join."
 msgstr ""
+"チャンネル認証は認証されていないアクセスからチャンネルを保護するために使用し"
+"ます。その認証方式はパスフレーズと電子署名をベースにしています。パスフレーズ"
+"がセットされていると参加するためのパスフレーズが要求され、チャンネルの公開鍵"
+"がセットされていると、公開鍵が一覧表示されているユーザのみ参加可能です。"
 
 #: src/protocols/silc/chat.c:406 src/protocols/silc/chat.c:407
 #: src/protocols/silc/chat.c:444 src/protocols/silc/chat.c:445
 #: src/protocols/silc/chat.c:874
-#, fuzzy
 msgid "Channel Authentication"
-msgstr "プレーンテキスト認証"
+msgstr "チャンネル認証"
 
 #: src/protocols/silc/chat.c:408 src/protocols/silc/chat.c:446
-#, fuzzy
 msgid "Add / Remove"
-msgstr "削除"
+msgstr "追加 / 削除"
 
 #: src/protocols/silc/chat.c:563
-#, fuzzy
 msgid "Group Name"
-msgstr "新しいグループ名"
+msgstr "グループ名"
 
 #: src/protocols/silc/chat.c:567 src/protocols/silc/ops.c:1669
-#, fuzzy
 msgid "Passphrase"
-msgstr "パスワードの送信中"
+msgstr "パスフレーズ"
 
 #: src/protocols/silc/chat.c:578
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter the %s channel private group name and passphrase."
-msgstr "追加するグループの名前を入力して下さい。"
+msgstr ""
+"チャンネル %s のプライベートなグループ名とパフフレーズを入力して下さい。"
 
 #: src/protocols/silc/chat.c:580
 msgid "Add Channel Private Group"
-msgstr ""
+msgstr "プライベートなグループの追加"
 
 #: src/protocols/silc/chat.c:707
-#, fuzzy
 msgid "User Limit"
-msgstr "許可する"
+msgstr "ユーザの制限"
 
 #: src/protocols/silc/chat.c:708
 msgid "Set user limit on channel. Set to zero to reset user limit."
 msgstr ""
+"チャンネルで制限するユーザをセットして下さい (0: ユーザ制限をクリアします)。"
 
 #: src/protocols/silc/chat.c:850
 msgid "Get Info"
-msgstr "情報取得"
+msgstr "情報の取得"
 
 #: src/protocols/silc/chat.c:857
-#, fuzzy
 msgid "Invite List"
-msgstr "招待"
+msgstr "招待リスト"
 
 #: src/protocols/silc/chat.c:861
-#, fuzzy
 msgid "Ban List"
-msgstr "仲間リスト"
+msgstr "追い出しリスト"
 
 #: src/protocols/silc/chat.c:868
-#, fuzzy
 msgid "Add Private Group"
-msgstr "グループの追加"
+msgstr "プライベート・グループの追加"
 
 #: src/protocols/silc/chat.c:879
 msgid "Reset Permanent"
-msgstr ""
+msgstr "永続性 OFF"
 
 #: src/protocols/silc/chat.c:883
 msgid "Set Permanent"
-msgstr ""
+msgstr "永続性 ON"
 
 #: src/protocols/silc/chat.c:890
-#, fuzzy
 msgid "Set User Limit"
-msgstr "ユーザ情報のセット"
+msgstr "ユーザ制限 ON"
 
 #: src/protocols/silc/chat.c:895
-#, fuzzy
 msgid "Reset Topic Restriction"
-msgstr "リリース通知"
+msgstr "トピック限定 OFF"
 
 #: src/protocols/silc/chat.c:899
 msgid "Set Topic Restriction"
-msgstr ""
+msgstr "トピック限定 ON"
 
 #: src/protocols/silc/chat.c:905
 msgid "Reset Private Channel"
-msgstr ""
+msgstr "プライベートなチャンネル OFF"
 
 #: src/protocols/silc/chat.c:909
 msgid "Set Private Channel"
-msgstr ""
+msgstr "プライベートなチャンネル ON"
 
 #: src/protocols/silc/chat.c:915
 msgid "Reset Secret Channel"
-msgstr ""
+msgstr "シークレットなチャンネル OFF"
 
 #: src/protocols/silc/chat.c:919
 msgid "Set Secret Channel"
-msgstr ""
+msgstr "シークレットなチャンネル ON"
 
 #: src/protocols/silc/chat.c:989
-#, fuzzy, c-format
+#, c-format
 msgid "You are channel founder on <I>%s</I>"
-msgstr "あなたは %s に締め出されました。"
+msgstr "あなたは <I>%s</I> のチャンネル創設者です"
 
 #: src/protocols/silc/chat.c:993
 #, c-format
 msgid "Channel founder on <I>%s</I> is <I>%s</I>"
-msgstr ""
+msgstr "<I>%s</I> のチャンネル創設者は <I>%s</I> です"
 
 #: src/protocols/silc/chat.c:1046
 #, c-format
 msgid ""
 "You have to join the %s channel before you are able to join the private group"
-msgstr ""
+msgstr "プライベートなグループへ参加する前にチャンネル %s へ参加して下さい"
 
 #: src/protocols/silc/chat.c:1048
-#, fuzzy
 msgid "Join Private Group"
-msgstr "グループ名の変更"
+msgstr "プライベート・グループへ参加"
 
 #: src/protocols/silc/chat.c:1049
-#, fuzzy
 msgid "Cannot join private group"
-msgstr "グループ 0 は削除できません"
+msgstr "プライベート・グループへ参加できません"
 
 #: src/protocols/silc/chat.c:1242 src/protocols/silc/silc.c:888
 msgid "Cannot call command"
-msgstr ""
+msgstr "コマンドを呼び出せません"
 
 #: src/protocols/silc/chat.c:1243 src/protocols/silc/silc.c:889
-#, fuzzy
 msgid "Unknown command"
-msgstr "不明なコマンド: %s"
+msgstr "不明なコマンド"
 
 #: src/protocols/silc/ft.c:89 src/protocols/silc/ft.c:92
 #: src/protocols/silc/ft.c:96 src/protocols/silc/ft.c:100
 #: src/protocols/silc/ft.c:104 src/protocols/silc/ft.c:206
 #: src/protocols/silc/ft.c:211 src/protocols/silc/ft.c:216
 #: src/protocols/silc/ft.c:222 src/protocols/silc/ft.c:342
-#, fuzzy
 msgid "Secure File Transfer"
-msgstr "ファイルの転送"
+msgstr "セキュアなファイル転送"
 
 #: src/protocols/silc/ft.c:90 src/protocols/silc/ft.c:93
 #: src/protocols/silc/ft.c:97 src/protocols/silc/ft.c:101
 #: src/protocols/silc/ft.c:105
 msgid "Error during file transfer"
-msgstr ""
+msgstr "ファイルを転送する際にエラー"
 
 #: src/protocols/silc/ft.c:94
 msgid "Permission denied"
-msgstr ""
+msgstr "権限がありません"
 
 #: src/protocols/silc/ft.c:98
 msgid "Key agreement failed"
-msgstr ""
+msgstr "キーの同意に失敗しました"
 
 #: src/protocols/silc/ft.c:102
-#, fuzzy
 msgid "File transfer sessions does not exist"
-msgstr "ユーザがいません"
+msgstr "ファイル転送セッションがありません"
 
 #: src/protocols/silc/ft.c:207
-#, fuzzy
 msgid "No file transfer session active"
-msgstr "ファイル転送のホスト"
+msgstr "ファイル転送セッションがアクティブではありません"
 
 #: src/protocols/silc/ft.c:212
-#, fuzzy
 msgid "File transfer already started"
-msgstr "%s からのファイル転送が中断されました。\n"
+msgstr "既にファイル転送を開始しています"
 
 #: src/protocols/silc/ft.c:217
-#, fuzzy
 msgid "Could not perform key agreement for file transfer"
-msgstr "転送できませんでした！"
+msgstr "ファイル転送に必要なキーの同意を実行できませんでした"
 
 #: src/protocols/silc/ft.c:223
-#, fuzzy
 msgid "Could not start the file transfer"
-msgstr "転送できませんでした！"
+msgstr "ファイル転送を開始できませんでした"
 
 #: src/protocols/silc/ft.c:343
-#, fuzzy
 msgid "Cannot send file"
-msgstr "0 バイトのファイルは送信できません。"
+msgstr "ファイルを送信できません"
 
 #: src/protocols/silc/ops.c:333 src/protocols/silc/ops.c:342
 #: src/protocols/silc/ops.c:351
-#, fuzzy, c-format
+#, c-format
 msgid "%s has changed the topic of <I>%s</I> to: %s"
-msgstr "%s はトピックを変更しました: %s"
+msgstr "%s は <I>%s</I> のトピックを %s へ変更しました:"
 
 #: src/protocols/silc/ops.c:413
 #, c-format
 msgid "<I>%s</I> set channel <I>%s</I> modes to: %s"
-msgstr ""
+msgstr "<I>%s</I> はチャンネル <I>%s</I> のモードを %s へセットしました:"
 
 #: src/protocols/silc/ops.c:417
 #, c-format
 msgid "<I>%s</I> removed all channel <I>%s</I> modes"
-msgstr ""
+msgstr "<I>%s</I> はチャンネル <I>%s</I> の全てのモードを削除しました:"
 
 #: src/protocols/silc/ops.c:448
 #, c-format
 msgid "<I>%s</I> set <I>%s's</I> modes to: %s"
-msgstr ""
+msgstr "<I>%s</I> は <I>%s の</I> モードを %s へセットしました:"
 
 #: src/protocols/silc/ops.c:452
 #, c-format
 msgid "<I>%s</I> removed all <I>%s's</I> modes"
-msgstr ""
+msgstr "<I>%s</I> は <I>%s の</I> 全てのモードを削除しました:"
 
 #: src/protocols/silc/ops.c:479
-#, fuzzy, c-format
+#, c-format
 msgid "You have been kicked off <I>%s</I> by <I>%s</I> (%s)"
-msgstr "あなたは %s に蹴られました: (%s)"
+msgstr "あなたは <I>%s</I> から <I>%s</I> (%s) によって追い出されました:"
 
 #: src/protocols/silc/ops.c:509 src/protocols/silc/ops.c:514
 #: src/protocols/silc/ops.c:519
-#, fuzzy, c-format
+#, c-format
 msgid "You have been killed by %s (%s)"
-msgstr "あなたは %s に蹴られました: (%s)"
+msgstr "あなたは %s (%s) によって強制終了させられました:"
 
 #: src/protocols/silc/ops.c:540 src/protocols/silc/ops.c:545
 #: src/protocols/silc/ops.c:550
-#, fuzzy, c-format
+#, c-format
 msgid "Killed by %s (%s)"
-msgstr "%s (%s) に蹴られました"
+msgstr "%s (%s) によって強制終了させられました"
 
 #: src/protocols/silc/ops.c:596
-#, fuzzy
 msgid "Server signoff"
-msgstr "サイン・オフ"
+msgstr "サーバのサインオフ"
 
 #: src/protocols/silc/ops.c:783
-#, fuzzy
 msgid "Personal Information"
-msgstr "プロファイル情報"
+msgstr "個人情報"
 
 #: src/protocols/silc/ops.c:806
-#, fuzzy
 msgid "Birth Day"
 msgstr "誕生日"
 
 #: src/protocols/silc/ops.c:810
-#, fuzzy
 msgid "Job Title"
 msgstr "肩書"
 
 #: src/protocols/silc/ops.c:814
-#, fuzzy
 msgid "Job Role"
 msgstr "役職"
 
 #: src/protocols/silc/ops.c:818
-#, fuzzy
 msgid "Organization"
 msgstr "担当部署"
 
 #: src/protocols/silc/ops.c:822
-#, fuzzy
 msgid "Unit"
-msgstr "招待"
+msgstr "グループ"
 
 #: src/protocols/silc/ops.c:841
-#, fuzzy
 msgid "EMail"
 msgstr "E-メール"
 
 #: src/protocols/silc/ops.c:846
-#, fuzzy
 msgid "Note"
-msgstr "なし"
+msgstr "備考"
 
 #: src/protocols/silc/ops.c:894
-#, fuzzy
 msgid "Join Chat"
 msgstr "チャットに参加"
 
 #: src/protocols/silc/ops.c:1050 src/protocols/silc/ops.c:1120
 msgid "Public Key Fingerprint"
-msgstr ""
+msgstr "公開鍵の指紋"
 
 #: src/protocols/silc/ops.c:1051 src/protocols/silc/ops.c:1121
 msgid "Public Key Babbleprint"
-msgstr ""
+msgstr "公開鍵の Babbleprint"
 
 #: src/protocols/silc/ops.c:1064
-#, fuzzy
 msgid "More..."
-msgstr "選択..."
+msgstr "詳細..."
 
 #: src/protocols/silc/ops.c:1135 src/protocols/silc/silc.c:777
-#, fuzzy
 msgid "Detach From Server"
-msgstr "プロキシ・サーバ"
+msgstr "サーバから切り離し"
 
 #: src/protocols/silc/ops.c:1135
 msgid "Cannot detach"
-msgstr ""
+msgstr "切り離せません"
 
 #: src/protocols/silc/ops.c:1146
-#, fuzzy
 msgid "Cannot set topic"
-msgstr "ニックネームを変更できません"
+msgstr "トピックをセットできません"
 
 #: src/protocols/silc/ops.c:1184
-#, fuzzy
 msgid "Failed to change nickname"
-msgstr "ニックネームを変更できませんでした"
+msgstr "あだ名の変更に失敗しました"
 
 #: src/protocols/silc/ops.c:1221
-#, fuzzy
 msgid "Roomlist"
-msgstr "部屋の一覧"
+msgstr "部屋のリスト"
 
 #: src/protocols/silc/ops.c:1221
-#, fuzzy
 msgid "Cannot get room list"
-msgstr "部屋一覧を取得できません"
+msgstr "部屋のリストを取得できません"
 
 #: src/protocols/silc/ops.c:1269
 msgid "No public key was received"
-msgstr ""
+msgstr "公開鍵を受け取っていません"
 
 #: src/protocols/silc/ops.c:1282 src/protocols/silc/ops.c:1296
-#, fuzzy
 msgid "Server Information"
-msgstr "職業"
+msgstr "サーバの情報"
 
 #: src/protocols/silc/ops.c:1283
-#, fuzzy
 msgid "Cannot get server information"
-msgstr "%s のユーザ情報の変更"
+msgstr "サーバの情報を取得できません"
 
 #: src/protocols/silc/ops.c:1314 src/protocols/silc/ops.c:1323
-#, fuzzy
 msgid "Server Statistics"
-msgstr "サーバのアドレス"
+msgstr "サーバの統計情報"
 
 #: src/protocols/silc/ops.c:1315
-#, fuzzy
 msgid "Cannot get server statistics"
-msgstr "%s のユーザ情報の変更"
+msgstr "サーバの統計情報を取得できません"
 
 #: src/protocols/silc/ops.c:1324
-#, fuzzy
 msgid "No server statisitics available"
-msgstr "利用可能なアクションはありません"
+msgstr "利用可能な統計情報はありません"
 
 #: src/protocols/silc/ops.c:1346
 #, c-format
@@ -9225,111 +9204,118 @@ msgid ""
 "Total server operators: %d\n"
 "Total router operators: %d\n"
 msgstr ""
+"ローカルのサーバ起動時刻: %s\n"
+"ローカルのサーバ起動時間: %s\n"
+"ローカルのサーバのクライアント数: %d\n"
+"ローカルのサーバのチャンネル数: %d\n"
+"ローカルのサーバのオペレータ数: %d\n"
+"ローカルのルータのオペレータ数: %d\n"
+"ローカルのセルのクライアント数: %d\n"
+"ローカルのセルのチャンネル数: %d\n"
+"ローカルのセルのサーバ数: %d\n"
+"クライアント数の合計: %d\n"
+"チャンネル数の合計: %d\n"
+"サーバ数の合計: %d\n"
+"ルータ数の合計: %d\n"
+"サーバのオペレータ数の合計: %d\n"
+"ルータのオペレータ数の合計: %d\n"
 
 #: src/protocols/silc/ops.c:1369
 msgid "Network Statistics"
-msgstr ""
+msgstr "ネットワークの統計情報"
 
 #: src/protocols/silc/ops.c:1377 src/protocols/silc/ops.c:1382
-#, fuzzy
 msgid "Ping"
-msgstr "ログの記録"
+msgstr "Ping"
 
 #: src/protocols/silc/ops.c:1377
-#, fuzzy
 msgid "Ping failed"
-msgstr "接続に失敗"
+msgstr "Ping に失敗"
 
 #: src/protocols/silc/ops.c:1382
-#, fuzzy
 msgid "Ping reply received from server"
-msgstr "サーバからの不正な challenge です"
+msgstr "サーバから Ping リプライを受け取りました"
 
 #: src/protocols/silc/ops.c:1390
-#, fuzzy
 msgid "Could not kill user"
-msgstr "送信できませんでした"
+msgstr "ユーザを強制終了できませんでした"
 
 #: src/protocols/silc/ops.c:1471
-#, fuzzy
 msgid "Error during connecting to SILC Server"
-msgstr "接続を開始する際にエラー"
+msgstr "SILC サーバへ接続する際にエラー"
 
 #: src/protocols/silc/ops.c:1476
 msgid "Key Exchange failed"
-msgstr ""
+msgstr "キーの交換に失敗しました"
 
 #: src/protocols/silc/ops.c:1485
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
+"切り離したセッションの復帰に失敗しました。新しい接続を確立する際は、ボタン "
+"[再接続] をクリックして下さい。"
 
 #: src/protocols/silc/ops.c:1520
-#, fuzzy
 msgid "Disconnected by server"
-msgstr "サーバに接続する"
+msgstr "サーバが接続を切断しました"
 
 #: src/protocols/silc/ops.c:1580 src/protocols/silc/ops.c:1627
 #: src/protocols/silc/silc.c:167
-#, fuzzy
 msgid "Resuming session"
-msgstr "セッションが多すぎです"
+msgstr "セッションの復帰中"
 
 #: src/protocols/silc/ops.c:1582
-#, fuzzy
 msgid "Authenticating connection"
-msgstr "認証中"
+msgstr "接続の認証中"
 
 #: src/protocols/silc/ops.c:1629
-#, fuzzy
 msgid "Verifying server public key"
-msgstr "サーバ・キーの読み込み中"
+msgstr "サーバの公開鍵の検証中"
 
 #: src/protocols/silc/ops.c:1670
-#, fuzzy
 msgid "Passphrase required"
-msgstr "有料です"
+msgstr "パスフレーズの要求"
 
 #: src/protocols/silc/ops.c:1699
 msgid "Failure: Version mismatch, upgrade your client"
-msgstr ""
+msgstr "失敗: バージョン不整合、クライアントをアップグレードして下さい"
 
 #: src/protocols/silc/ops.c:1702
 msgid "Failure: Remote does not trust/support your public key"
 msgstr ""
+"失敗: リモート側は信用されていなか、お使いの公開鍵をサポートしていません"
 
 #: src/protocols/silc/ops.c:1705
 msgid "Failure: Remote does not support proposed KE group"
-msgstr ""
+msgstr "失敗: リモート側は推奨されている KE グループをサポートしていません"
 
 #: src/protocols/silc/ops.c:1708
 msgid "Failure: Remote does not support proposed cipher"
-msgstr ""
+msgstr "失敗: リモート側は推奨されている Cipher をサポートしていません"
 
 #: src/protocols/silc/ops.c:1711
 msgid "Failure: Remote does not support proposed PKCS"
-msgstr ""
+msgstr "失敗: リモート側は推奨されている PKCS をサポートしていません"
 
 #: src/protocols/silc/ops.c:1714
 msgid "Failure: Remote does not support proposed hash function"
-msgstr ""
+msgstr "失敗: リモート側は推奨されているハッシュ機能をサポートしていません"
 
 #: src/protocols/silc/ops.c:1717
 msgid "Failure: Remote does not support proposed HMAC"
-msgstr ""
+msgstr "失敗: リモート側は推奨されている HMAC をサポートしていません"
 
 #: src/protocols/silc/ops.c:1719
 msgid "Failure: Incorrect signature"
-msgstr ""
+msgstr "失敗: 不正な署名です"
 
 #: src/protocols/silc/ops.c:1721
 msgid "Failure: Invalid cookie"
-msgstr ""
+msgstr "失敗: 不正なクッキーです"
 
 #: src/protocols/silc/ops.c:1732
-#, fuzzy
 msgid "Failure: Authentication failed"
-msgstr "認証に失敗しました"
+msgstr "失敗: 認証に失敗しました"
 
 #: src/protocols/silc/pk.c:103
 #, c-format
@@ -9337,11 +9323,13 @@ msgid ""
 "Received %s's public key. Your local copy does not match this key. Would you "
 "still like to accept this public key?"
 msgstr ""
+"%s の公開鍵を受け取りましたが、ローカルの複製と一致しません。この受け取った公"
+"開鍵をまだ受け入れますか？"
 
 #: src/protocols/silc/pk.c:108
 #, c-format
 msgid "Received %s's public key. Would you like to accept this public key?"
-msgstr ""
+msgstr "%s の公開鍵を受け取りました。この受け取った公開鍵を受け入れますか？"
 
 #: src/protocols/silc/pk.c:112
 #, c-format
@@ -9351,99 +9339,95 @@ msgid ""
 "%s\n"
 "%s\n"
 msgstr ""
+"%s 鍵の指紋と Babbleprint は次のとおりです:\n"
+"\n"
+"%s\n"
+"%s\n"
 
 #: src/protocols/silc/pk.c:115 src/protocols/silc/pk.c:139
 msgid "Verify Public Key"
-msgstr ""
+msgstr "公開鍵の検証"
 
 #: src/protocols/silc/pk.c:118
-#, fuzzy
 msgid "View..."
-msgstr "新規..."
+msgstr "表示..."
 
 #: src/protocols/silc/pk.c:140
-#, fuzzy
 msgid "Unsupported public key type"
-msgstr "サポートしていない Stanza 型"
+msgstr "サポートしていない公開鍵の種類"
 
 #: src/protocols/silc/silc.c:133
-#, fuzzy
 msgid "Connection failed"
 msgstr "接続に失敗"
 
 #: src/protocols/silc/silc.c:159
-#, fuzzy
 msgid "Cannot initialize SILC Client connection"
-msgstr "接続の最終調整中"
+msgstr "SILC クライアント接続を初期化できません"
 
 #: src/protocols/silc/silc.c:170
 msgid "Performing key exchange"
-msgstr ""
+msgstr "鍵の交換の実行中"
 
 #: src/protocols/silc/silc.c:242
 msgid "Out of memory"
-msgstr ""
+msgstr "メモリが足りません"
 
 #. Progress
 #: src/protocols/silc/silc.c:276
-#, fuzzy
 msgid "Connecting to SILC Server"
-msgstr "サーバに接続する"
+msgstr "SILC サーバへ接続中"
 
 #: src/protocols/silc/silc.c:606
-#, fuzzy
 msgid "Your Current Mood"
-msgstr "現在は ON"
+msgstr "現在の Mood"
 
 #: src/protocols/silc/silc.c:608
 msgid "Normal"
-msgstr ""
+msgstr "標準"
 
 #: src/protocols/silc/silc.c:633
 msgid ""
 "\n"
 "Your Preferred Contact Methods"
 msgstr ""
+"\n"
+"お好みの連絡方法"
 
 #: src/protocols/silc/silc.c:641 src/protocols/silc/util.c:514
-#, fuzzy
 msgid "SMS"
-msgstr "MSN"
+msgstr "SMS"
 
 #: src/protocols/silc/silc.c:643 src/protocols/silc/util.c:516
-#, fuzzy
 msgid "MMS"
-msgstr "MSN"
+msgstr "MMS"
 
 #: src/protocols/silc/silc.c:645 src/protocols/silc/util.c:518
-#, fuzzy
 msgid "Video Conferencing"
-msgstr "会議に招待"
+msgstr "ビデオ会議"
 
 #: src/protocols/silc/silc.c:650
 msgid "Your Current Status"
-msgstr ""
+msgstr "現在のステータス"
 
 #: src/protocols/silc/silc.c:657
-#, fuzzy
 msgid "Online Services"
-msgstr "オンラインの期間"
+msgstr "オンライン・サービス"
 
 #: src/protocols/silc/silc.c:660
 msgid "Let others see what services you are using"
-msgstr ""
+msgstr "何のサービスが利用されているか他の人たちに公開して下さい"
 
 #: src/protocols/silc/silc.c:666
 msgid "Let others see what computer you are using"
-msgstr ""
+msgstr "どんなコンピュータを利用しているか他の人たちに公開して下さい"
 
 #: src/protocols/silc/silc.c:673
 msgid "Your VCard File"
-msgstr ""
+msgstr "VCard 型式ファイル"
 
 #: src/protocols/silc/silc.c:686 src/protocols/silc/silc.c:687
 msgid "User Online Status Attributes"
-msgstr ""
+msgstr "ユーザのオンライン・ステータスの属性"
 
 #: src/protocols/silc/silc.c:688
 msgid ""
@@ -9451,237 +9435,247 @@ msgid ""
 "information. Please fill the information you would like other users to see "
 "about yourself."
 msgstr ""
+"あなたのオンライン・ステータス情報と個人情報を他のユーザへ公開することが可能"
+"です。他のユーザに公開したい情報を全て入力して下さい。"
 
 #: src/protocols/silc/silc.c:728 src/protocols/silc/silc.c:734
 #: src/protocols/silc/silc.c:1135
-#, fuzzy
 msgid "Message of the Day"
-msgstr "%s からのメッセージ"
+msgstr "今日のメッセージ"
 
 #: src/protocols/silc/silc.c:728
-#, fuzzy
 msgid "No Message of the Day available"
-msgstr "MOTD を利用できません"
+msgstr "\"今日のメッセージ\" は利用できません"
 
 #: src/protocols/silc/silc.c:729 src/protocols/silc/silc.c:1130
-#, fuzzy
 msgid "There is no Message of the Day associated with this connection"
-msgstr "この接続に関連した MOTD がありません。"
+msgstr "この接続に対応した \"今日のメッセージ\" はありません"
 
 #: src/protocols/silc/silc.c:772
-#, fuzzy
 msgid "Online Status"
-msgstr "オンラインの期間"
+msgstr "オンライン・ステータス"
 
 #: src/protocols/silc/silc.c:781
 msgid "View Message of the Day"
-msgstr ""
+msgstr "\"今日のメッセージ\" を表示する"
 
 #: src/protocols/silc/silc.c:853
 #, c-format
 msgid "User <I>%s</I> is not present in the network"
-msgstr ""
+msgstr "ユーザ <I>%s</I> はネットワークに存在しません"
 
 #: src/protocols/silc/silc.c:962
-#, fuzzy
 msgid "Failed to leave channel"
-msgstr "チャットへの参加が失敗しました"
+msgstr "チャンネルからの退出に失敗しました"
 
 #: src/protocols/silc/silc.c:1006
-#, fuzzy
 msgid "Topic too long"
-msgstr "プロフィールが長すぎます"
+msgstr "トピックが長すぎます"
 
 #: src/protocols/silc/silc.c:1087
 msgid "You must specify a nick"
-msgstr ""
+msgstr "あだ名を指定して下さい"
 
 #: src/protocols/silc/silc.c:1189
-#, fuzzy, c-format
+#, c-format
 msgid "channel %s not found"
-msgstr "会議が見つかりません"
+msgstr "チャンネル %s が見つかりません"
 
 #: src/protocols/silc/silc.c:1194
-#, fuzzy, c-format
+#, c-format
 msgid "channel modes for %s: %s"
-msgstr "%s のトピック: %s"
+msgstr "%s のチャンネル・モード: %s"
 
 #: src/protocols/silc/silc.c:1196
-#, fuzzy, c-format
+#, c-format
 msgid "no channel modes are set on %s"
-msgstr "あなたは %s に締め出されました。"
+msgstr "%s ではチャンネル・モードをセットしてません"
 
 #: src/protocols/silc/silc.c:1209
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to set cmodes for %s"
-msgstr "画像の格納に失敗しました: %s\n"
+msgstr "%s のチャンネル・モードのセットに失敗"
 
 #: src/protocols/silc/silc.c:1239
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown command: %s, (may be a Gaim bug)"
-msgstr "不明なコマンド: %s"
+msgstr "不明なコマンド: %s (おそらく Gaim のバグ)"
 
 #: src/protocols/silc/silc.c:1302
 msgid "part [channel]:  Leave the chat"
-msgstr ""
+msgstr "part [チャンネル]:  指定したチャンネルから退出します"
 
 #: src/protocols/silc/silc.c:1306
 msgid "leave [channel]:  Leave the chat"
-msgstr ""
+msgstr "leave [チャンネル]:  指定したチャンネルから退出します"
 
 #: src/protocols/silc/silc.c:1310
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
-msgstr ""
+msgstr "topic [&lt;新しいトピック&gt;]:  トピックを表示したり変更します"
 
 #: src/protocols/silc/silc.c:1315
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
 msgstr ""
+"join &lt;チャンネル&gt; [&lt;パスワード&gt;]:  このネットワークのチャットへ参"
+"加します"
 
 #: src/protocols/silc/silc.c:1319
-#, fuzzy
 msgid "list:  List channels on this network"
-msgstr "ユーザ %s はネットワーク上にいません"
+msgstr "list:  このネットワーク上のチャンネルを一覧表示します"
 
 #: src/protocols/silc/silc.c:1323
 msgid "whois &lt;nick&gt;:  View nick's information"
-msgstr ""
+msgstr "whois &lt;あだ名&gt;:  指定したあだ名のユーザ情報を表示します"
 
 #: src/protocols/silc/silc.c:1327 src/protocols/zephyr/zephyr.c:1673
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
 msgstr ""
+"msg &lt;あだ名&gt; &lt;メッセージ&gt;:  指定したあだ名のユーザへ個人的なメッ"
+"セージを送信します"
 
 #: src/protocols/silc/silc.c:1331
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr ""
+"query &lt;あだ名&gt; [&lt;メッセージ&gt;]:  指定したあだ名のユーザへ個人的な"
+"メッセージを送信します"
 
 #: src/protocols/silc/silc.c:1335
 msgid "motd:  View the server's Message Of The Day"
-msgstr ""
+msgstr "motd:  サーバにある \"今日のメッセージ\" を表示します"
 
 #: src/protocols/silc/silc.c:1339
 msgid "detach:  Detach this session"
-msgstr ""
+msgstr "detach:  このセッションを切り離します"
 
 #: src/protocols/silc/silc.c:1343
 msgid "quit [message]:  Disconnect from the server, with an optional message"
-msgstr ""
+msgstr "quit [メッセージ]:  追加でメッセージを残して、このサーバから切断します"
 
 #: src/protocols/silc/silc.c:1347
-#, fuzzy
 msgid "call &lt;command&gt;:  Call any silc client command"
-msgstr "help &lt;コマンド&gt;:  特定のコマンドに対するヘルプを表示します"
+msgstr "call &lt;コマンド&gt;:  SILC クライアント・コマンドを呼び出します"
 
 #: src/protocols/silc/silc.c:1352
 msgid "kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"
 msgstr ""
+"kill &lt;あだ名&gt; [-pubkey|&lt;理由&gt;]:  あだ名のユーザを強制終了します"
 
 #: src/protocols/silc/silc.c:1356
 msgid "nick &lt;newnick&gt;:  Change your nickname"
-msgstr ""
+msgstr "nick &lt;新しいあだ名&gt;:  お使いのあだ名を変更します"
 
 #: src/protocols/silc/silc.c:1360
 msgid "whowas &lt;nick&gt;:  View nick's information"
-msgstr ""
+msgstr "whowas &lt;あだ名&gt;:  あだ名のユーザ情報を表示します"
 
 #: src/protocols/silc/silc.c:1364
 msgid ""
 "cmode &lt;channel&gt; [+|-&lt;modes&gt]; [arguments]:  Change or display "
 "channel modes"
 msgstr ""
+"cmode &lt;チャンネル&gt; [+|-&lt;モード&gt]; [引数]:  チャンネルのモードを変"
+"更したり表示します"
 
 #: src/protocols/silc/silc.c:1368
 msgid ""
 "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes "
 "on channel"
 msgstr ""
+"cumode &lt;チャンネル&gt; +|-&lt;モード&gt; &lt;あだ名&gt;:  指定したチャンネ"
+"ルのあだ名のユーザのモードを変更します"
 
 #: src/protocols/silc/silc.c:1372
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
-msgstr ""
+msgstr "umode &lt;ユーザ・モード&gt;:  ネットワークでのモードをセットします"
 
 #: src/protocols/silc/silc.c:1376
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
-msgstr ""
+msgstr "oper &lt;あだ名&gt; [-pubkey]:  サーバのオペレータ特権を取得します"
 
 #: src/protocols/silc/silc.c:1380
 msgid ""
 "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from "
 "channel invite list"
 msgstr ""
+"invite &lt;チャンネル&gt; [-|+]&lt;あだ名&gt;:  指定したあだ名のユーザを招待"
+"する、または招待リストからそのユーザを追加/削除します"
 
 #: src/protocols/silc/silc.c:1384
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
 msgstr ""
+"kick &lt;チャンネル&gt; &lt;あだ名&gt; [コメント]:  チャンネルからクライアン"
+"トを追い出します"
 
 #: src/protocols/silc/silc.c:1388
 msgid "info [server]:  View server administrative details"
-msgstr ""
+msgstr "info [サーバ]:  サーバの管理者の詳細を表示します"
 
 #: src/protocols/silc/silc.c:1392
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
 msgstr ""
+"ban [&lt;チャンネル&gt; +|-&lt;あだ名&gt;]:  チャンネルからクライアントを追い"
+"出します"
 
 #: src/protocols/silc/silc.c:1396
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
 msgstr ""
+"getkey &lt;あだ名|サーバ&gt;:  クライアントまたはサーバの公開鍵を取得します"
 
 #: src/protocols/silc/silc.c:1400
 msgid "stats:  View server and network statistics"
-msgstr ""
+msgstr "stats:  サーバとネットワークの統計情報を表示します"
 
 #: src/protocols/silc/silc.c:1404
 msgid "ping:  Send PING to the connected server"
-msgstr ""
+msgstr "ping:  接続しているサーバへ PING を送信します"
 
 #: src/protocols/silc/silc.c:1409
 msgid "users &lt;channel&gt;:  List users in channel"
-msgstr ""
+msgstr "users &lt;チャンネル&gt;:  チャンネル内のユーザを一覧表示します"
 
 #: src/protocols/silc/silc.c:1413
 msgid ""
 "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List "
 "specific users in channel(s)"
 msgstr ""
+"names [-count|-ops|-halfops|-voices|-normal] &lt;(複数の)チャンネル&gt;:  (複"
+"数の) チャンネル内の指定したユーザを一覧表示します"
 
 #: src/protocols/silc/silc.c:1425
-#, fuzzy
 msgid "Instant Messages"
-msgstr "インスタント・メッセンジャー"
+msgstr "インスタント・メッセージ"
 
 #: src/protocols/silc/silc.c:1430
-#, fuzzy
 msgid "Digitally sign all IM messages"
-msgstr "全てのインスタント・メッセージを記録する(_L)"
+msgstr "全ての IM メッセージに電子署名する"
 
 #: src/protocols/silc/silc.c:1435
 msgid "Verify all IM message signatures"
-msgstr ""
+msgstr "全ての IM メッセージの署名を検証する"
 
 #: src/protocols/silc/silc.c:1438
-#, fuzzy
 msgid "Channel Messages"
-msgstr "離席メッセージ"
+msgstr "チャンネル・メッセージ"
 
 #: src/protocols/silc/silc.c:1443
-#, fuzzy
 msgid "Digitally sign all channel messages"
-msgstr "全てのインスタント・メッセージを記録する(_L)"
+msgstr "全てのチャンネル・メッセージに電子署名する"
 
 #: src/protocols/silc/silc.c:1448
 msgid "Verify all channel message signatures"
-msgstr ""
+msgstr "全てのチャンネル・メッセージの署名を検証する"
 
 #: src/protocols/silc/silc.c:1451
 msgid "Default SILC Key Pair"
-msgstr ""
+msgstr "デフォルトの SILC 鍵ペア"
 
 #: src/protocols/silc/silc.c:1456
 msgid "SILC Public Key"
-msgstr ""
+msgstr "SILC 公開鍵"
 
 #: src/protocols/silc/silc.c:1461
 msgid "SILC Private Key"
-msgstr ""
+msgstr "SILC 秘密鍵"
 
 #. *< api_version
 #. *< type
@@ -9694,99 +9688,99 @@ msgstr ""
 #. *< version
 #. *  summary
 #: src/protocols/silc/silc.c:1547
-#, fuzzy
 msgid "SILC Protocol Plugin"
-msgstr "IRC プロトコル・プラグイン"
+msgstr "SILC プロトコルのプラグイン"
 
 #. *  description
 #: src/protocols/silc/silc.c:1549
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
-msgstr ""
+msgstr "セキュアなインターネット・ライブ会議 (SILC) プロトコル"
 
 #: src/protocols/silc/silc.c:1579
-#, fuzzy
 msgid "Public key authentication"
-msgstr "プレーンテキスト認証"
+msgstr "公開鍵の認証"
 
 #: src/protocols/silc/silc.c:1585
 msgid "Public Key File"
-msgstr ""
+msgstr "公開鍵ファイル"
 
 #: src/protocols/silc/silc.c:1589
 msgid "Private Key File"
-msgstr ""
+msgstr "秘密鍵のファイル"
 
 #: src/protocols/silc/silc.c:1594
 msgid "Reject watching by other users"
-msgstr ""
+msgstr "他のユーザからの監視を拒否する"
 
 #: src/protocols/silc/silc.c:1597
-#, fuzzy
 msgid "Block invites"
-msgstr "ユーザからの会話を拒否します"
+msgstr "招待を拒否する"
 
 #: src/protocols/silc/silc.c:1600
 msgid "Block IMs without Key Exchange"
-msgstr ""
+msgstr "鍵の交換が無い IM を拒否する"
 
 #: src/protocols/silc/silc.c:1603
 msgid "Reject online status attribute requests"
-msgstr ""
+msgstr "オンライン・ステータスの属性要求を拒否する"
 
 #: src/protocols/silc/util.c:202 src/protocols/silc/util.c:227
 msgid "Creating SILC key pair..."
-msgstr ""
+msgstr "SILC 鍵ペアの生成中..."
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
 #. sum: 3 tabs or 24 characters)
 #: src/protocols/silc/util.c:310
-#, fuzzy, c-format
+#, c-format
 msgid "Real Name: \t%s\n"
-msgstr "氏名"
+msgstr "氏名: \t%s\n"
 
 #: src/protocols/silc/util.c:312
-#, fuzzy, c-format
+#, c-format
 msgid "User Name: \t%s\n"
-msgstr "ユーザ名"
+msgstr "ユーザ名: \t%s\n"
 
 #: src/protocols/silc/util.c:314
 #, c-format
 msgid "EMail: \t\t%s\n"
-msgstr ""
+msgstr "E-メール: \t\t%s\n"
 
 #: src/protocols/silc/util.c:316
-#, fuzzy, c-format
+#, c-format
 msgid "Host Name: \t%s\n"
-msgstr "姓"
+msgstr "ホスト名: \t%s\n"
 
 #: src/protocols/silc/util.c:318
-#, fuzzy, c-format
+#, c-format
 msgid "Organization: \t%s\n"
-msgstr "担当部署"
+msgstr "組織: \t%s\n"
 
 #: src/protocols/silc/util.c:320
-#, fuzzy, c-format
+#, c-format
 msgid "Country: \t%s\n"
-msgstr "国"
+msgstr "国: \t%s\n"
 
 #: src/protocols/silc/util.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "Algorithm: \t%s\n"
-msgstr "姓"
+msgstr "アルゴリズム: \t%s\n"
 
 #: src/protocols/silc/util.c:322
 #, c-format
 msgid "Key Length: \t%d bits\n"
-msgstr ""
+msgstr "鍵の長さ: \t%d ビット\n"
 
 #: src/protocols/silc/util.c:324
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Public Key Fingerprint:\n"
 "%s\n"
 "\n"
-msgstr "プロファイル情報"
+msgstr ""
+"公開鍵の指紋:\n"
+"%s\n"
+"\n"
 
 #: src/protocols/silc/util.c:325
 #, c-format
@@ -9794,29 +9788,28 @@ msgid ""
 "Public Key Babbleprint:\n"
 "%s"
 msgstr ""
+"公開鍵の Babbleprint:\n"
+"%s"
 
 #: src/protocols/silc/util.c:329 src/protocols/silc/util.c:330
-#, fuzzy
 msgid "Public Key Information"
-msgstr "プロファイル情報"
+msgstr "公開鍵の情報"
 
 #: src/protocols/silc/util.c:512
-#, fuzzy
 msgid "Paging"
-msgstr "ログの記録"
+msgstr "ページング"
 
 #: src/protocols/silc/util.c:536
-#, fuzzy
 msgid "Computer"
-msgstr "国"
+msgstr "コンピュータ"
 
 #: src/protocols/silc/util.c:540
 msgid "PDA"
-msgstr ""
+msgstr "PDA"
 
 #: src/protocols/silc/util.c:542
 msgid "Terminal"
-msgstr ""
+msgstr "端末"
 
 #: src/protocols/toc/toc.c:137
 #, c-format
@@ -10191,9 +10184,8 @@ msgid "Invalid username."
 msgstr "無効なユーザ名です。"
 
 #: src/protocols/yahoo/yahoo.c:1825
-#, fuzzy
 msgid "Normal authencation failed!"
-msgstr "認証に失敗しました"
+msgstr "標準の認証に失敗しました！"
 
 #: src/protocols/yahoo/yahoo.c:1826
 msgid ""
@@ -10202,22 +10194,27 @@ msgid ""
 "attempt to log in using Web Messenger authencation, will which result in "
 "reduced functionality and features."
 msgstr ""
+"標準の認証方法で失敗しました。これは、お使いのパスワードが間違っているか、あ"
+"るいは Yahoo! の認証手順が変更されかのどちらかです。Gaim はウェブ・マネージャ"
+"の認証方法を利用してログインを試みますが、利用できる機能が少なくなるかもしれ"
+"ません。"
 
 #: src/protocols/yahoo/yahoo.c:1834
 msgid "Incorrect password."
 msgstr "パスワードが間違っています。"
 
 #: src/protocols/yahoo/yahoo.c:1837
-#, fuzzy
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr ""
-"お使いのアカウントがロックされています。Yahoo ウェブサイトへログインして下さ"
+"お使いのアカウントがロックされています。Yahoo! ウェブサイトへログインして下さ"
 "い。"
 
 #: src/protocols/yahoo/yahoo.c:1840
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
+"不明なエラー番号 %d です。Yahoo! ウェブサイトへログインすると修正されるかもし"
+"れません。"
 
 #: src/protocols/yahoo/yahoo.c:1894
 #, c-format
@@ -10318,18 +10315,16 @@ msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo! プロトコル・プラグイン"
 
 #: src/protocols/yahoo/yahoo.c:3313
-#, fuzzy
 msgid "Yahoo Japan"
-msgstr "Yahoo"
+msgstr "Yahoo Japan"
 
 #: src/protocols/yahoo/yahoo.c:3316
 msgid "Pager host"
 msgstr "ページャのホスト名"
 
 #: src/protocols/yahoo/yahoo.c:3319
-#, fuzzy
 msgid "Japan Pager host"
-msgstr "ページャのホスト名"
+msgstr "Japan ページャのホスト名"
 
 #: src/protocols/yahoo/yahoo.c:3322
 msgid "Pager port"
@@ -10340,9 +10335,8 @@ msgid "File transfer host"
 msgstr "ファイル転送のホスト"
 
 #: src/protocols/yahoo/yahoo.c:3328
-#, fuzzy
 msgid "Japan File transfer host"
-msgstr "ファイル転送のホスト"
+msgstr "Japan ファイル転送のホスト"
 
 #: src/protocols/yahoo/yahoo.c:3331
 msgid "File transfer port"
@@ -10354,12 +10348,11 @@ msgstr "チャット部屋一覧の URL"
 
 #: src/protocols/yahoo/yahoo.c:3337
 msgid "YCHT Host"
-msgstr ""
+msgstr "YCHT ホスト"
 
 #: src/protocols/yahoo/yahoo.c:3340
-#, fuzzy
 msgid "YCHT Port"
-msgstr "ポート番号"
+msgstr "YCHT ポート番号"
 
 #: src/protocols/yahoo/yahoo_filexfer.c:170
 msgid ""
@@ -10370,37 +10363,33 @@ msgstr ""
 "信できません (1,048,576 バイト= 1Mバイト)"
 
 #: src/protocols/yahoo/yahoo_profile.c:675
-#, fuzzy, c-format
+#, c-format
 msgid "<b>IP Address:</b> %s<br>"
-msgstr "<b>エイリアス:</b> %s<br>"
+msgstr "<b>IP-アドレス:</b> %s<br>"
 
 #: src/protocols/yahoo/yahoo_profile.c:749
-#, fuzzy
 msgid "Yahoo! Japan Profile"
-msgstr "Yahoo"
+msgstr "Yahoo! Japan プロファイル"
 
 #: src/protocols/yahoo/yahoo_profile.c:750
-#, fuzzy
 msgid "Yahoo! Profile"
-msgstr "プロフィール"
+msgstr "Yahoo! プロファイル"
 
 #: src/protocols/yahoo/yahoo_profile.c:794
-#, fuzzy
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
 "time."
 msgstr ""
-"<b>すみません、このバージョンではアダルト向けのコンテンツを含んでいるプロファ"
-"イルには対応していません。</b><br><br>\n"
+"すみません、このバージョンでは、アダルト向けコンテンツを含んでいるとマークが"
+"付けられたプロファイルは利用いただけません."
 
 #: src/protocols/yahoo/yahoo_profile.c:796
-#, fuzzy
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser"
 msgstr ""
-"このプロファイルの表示を希望する場合は、お使いのウェブ・ブラウザでこのリンク"
-"を訪問する必要があります。<br>"
+"このプロファイルの閲覧を希望する場合は、お使いのウェブ・ブラウザでこのリンク"
+"を訪問して下さい。"
 
 #: src/protocols/yahoo/yahoo_profile.c:969
 msgid "Yahoo! ID"
@@ -10439,19 +10428,20 @@ msgid "User information for %s unavailable"
 msgstr "%s のユーザ情報は有効ではありません"
 
 #: src/protocols/yahoo/yahoo_profile.c:1136
-#, fuzzy
 msgid ""
 "Sorry, this profile seems to be in a language that is not supported at this "
 "time."
 msgstr ""
-"<b>すみません、このバージョンでは英語ではないプロファイルには対応していませ"
-"ん。</b><br><br>\n"
+"すみません、このプロファイルは、このバージョンではサポートされていない言語の"
+"ようです。"
 
 #: src/protocols/yahoo/yahoo_profile.c:1152
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
 msgstr ""
+"ユーザのプロフィールを取得できませんでした。これは、おそらく一時的なサーバ側"
+"の問題でしょう。後で再試行してみて下さい。"
 
 #: src/protocols/yahoo/yahoo_profile.c:1155
 msgid ""
@@ -10459,6 +10449,10 @@ msgid ""
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
 "profile. If you know that the user exists, please try again later."
 msgstr ""
+"ユーザのプロフィールを取得できませんでした。これは、おそらくそのユーザが存在"
+"しないと思われます。ただし、時々 Yahoo! はユーザのプロフィールの取得に失敗す"
+"ることがあります。そのユーザが存在していることが確かならば、後で再試行してみ"
+"て下さい。"
 
 #: src/protocols/yahoo/yahoo_profile.c:1163
 msgid "The user's profile is empty."
@@ -10467,7 +10461,7 @@ msgstr "ユーザのプロファイルが空です。"
 #: src/protocols/yahoo/yahoochat.c:203
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s は会議招待をルーム \"%s\" に落としました (理由は \"%s\")。"
+msgstr "%s は会議招待を部屋 \"%s\" に落としました (理由は \"%s\")。"
 
 #: src/protocols/yahoo/yahoochat.c:205
 msgid "Invitation Rejected"
@@ -10479,7 +10473,7 @@ msgstr "チャットへの参加が失敗しました"
 
 #: src/protocols/yahoo/yahoochat.c:355
 msgid "Maybe the room is full?"
-msgstr "おそらくルームが一杯かも？"
+msgstr "おそらく部屋が一杯かも？"
 
 #: src/protocols/yahoo/yahoochat.c:429
 #, c-format
@@ -10521,7 +10515,7 @@ msgstr "ユーザの部屋"
 #: src/protocols/zephyr/zephyr.c:589
 #, c-format
 msgid "Unable send to chat %s,%s,%s"
-msgstr ""
+msgstr "チャット %s,%s,%s へ送信できません"
 
 #: src/protocols/zephyr/zephyr.c:624
 #, c-format
@@ -10568,64 +10562,75 @@ msgstr "受取人(_R):"
 #: src/protocols/zephyr/zephyr.c:1409
 #, c-format
 msgid "Attempt to subscribe to %s,%s,%s failed"
-msgstr ""
+msgstr "%s,%s,%s への購読の試行に失敗"
 
 #: src/protocols/zephyr/zephyr.c:1678
 msgid "zlocate &lt;nick&gt;: Locate user"
-msgstr ""
+msgstr "zlocate &lt;あだ名&gt;: ユーザの所在地を確認します"
 
 #: src/protocols/zephyr/zephyr.c:1683
 msgid "zl &lt;nick&gt;: Locate user"
-msgstr ""
+msgstr "zl &lt;あだ名&gt;: ユーザの所在地を確認します"
 
 #: src/protocols/zephyr/zephyr.c:1688
 msgid "instance &lt;instance&gt;: Set the instance to be used on this class"
 msgstr ""
+"instance &lt;インスタンス&gt;: このクラスで使用するインスタンスをセットします"
 
 #: src/protocols/zephyr/zephyr.c:1693
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
 msgstr ""
+"inst &lt;インスタンス&gt;: このクラスで使用するインスタンスをセットします"
 
 #: src/protocols/zephyr/zephyr.c:1699
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
 msgstr ""
+"sub &lt;クラス&gt; &lt;インスタンス&gt; &lt;宛先&gt;: 新しいチャットへ参加し"
+"ます"
 
 #: src/protocols/zephyr/zephyr.c:1704
 msgid ""
 "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
 msgstr ""
+"zi &lt;インスタンス&gt;: &lt;メッセージ、<i>インスタンス</i>、*&gt; へメッ"
+"セージを送信します"
 
 #: src/protocols/zephyr/zephyr.c:1710
 msgid ""
 "zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,"
 "<i>instance</i>,*&gt;"
 msgstr ""
+"zci &lt;クラス&gt; &lt;インスタンス&gt;: &lt;<i>クラス</i>、<i>インスタンス</"
+"i>、*&gt; へメッセージを送信します"
 
 #: src/protocols/zephyr/zephyr.c:1716
 msgid ""
 "zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;"
 "<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"
 msgstr ""
+"zcir &lt;クラス&gt; &lt;インスタンス&gt; &lt;宛先&gt;: &lt;<i>クラス</i>、<i>"
+"インスタンス</i>、<i>宛先</i>&gt; へメッセージを送信します"
 
 #: src/protocols/zephyr/zephyr.c:1722
 msgid ""
 "zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,"
 "<i>instance</i>,<i>recipient</i>&gt;"
 msgstr ""
+"zir &lt;インスタンス&gt; &lt;宛先&gt;: &lt;MESSAGE、<i>インスタンス</i>、<i>"
+"宛先</i>&gt; へメッセージを送信します"
 
 #: src/protocols/zephyr/zephyr.c:1727
 msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
 msgstr ""
+"zc &lt;クラス&gt;: &lt;<i>クラス</i>,PERSONAL,*&gt; へメッセージを送信します"
 
 #: src/protocols/zephyr/zephyr.c:1802
-#, fuzzy
 msgid "Resubscribe"
-msgstr "購読の取り消し"
+msgstr "再購読"
 
 #: src/protocols/zephyr/zephyr.c:1805
-#, fuzzy
 msgid "Retrieve subscriptions from server"
-msgstr "サーバからの応答が不正です。"
+msgstr "サーバから購読を取得します"
 
 #. *< api_version
 #. *< type
@@ -10695,9 +10700,9 @@ msgid "Please enter your password"
 msgstr "パスワードを入力して下さい"
 
 #: src/server.c:528
-#, fuzzy, c-format
+#, c-format
 msgid "%s is now known as %s.\n"
-msgstr "%s は %s と認識されました"
+msgstr "%s は %s と認識されました。\n"
 
 #: src/server.c:938
 #, c-format
@@ -10769,13 +10774,13 @@ msgid ""
 "User '%s' invites %s to buddy chat room: '%s'\n"
 "%s"
 msgstr ""
-"ユーザ '%s' が %s を仲間チャットルームに招待: '%s'\n"
+"ユーザ '%s' が %s を仲間のチャット・ルームに招待します: '%s'\n"
 "%s"
 
 #: src/server.c:1452
 #, c-format
 msgid "User '%s' invites %s to buddy chat room: '%s'\n"
-msgstr "ユーザ '%s' が %s を仲間チャットルームに招待: '%s'\n"
+msgstr "ユーザ '%s' が %s を仲間のチャット・ルームへ招待します: '%s'\n"
 
 #: src/server.c:1458
 msgid "Accept chat invitation?"
@@ -10813,11 +10818,10 @@ msgid "Unknown."
 msgstr "不明です。"
 
 #: src/util.c:2392
-#, fuzzy
 msgid "second"
 msgid_plural "seconds"
-msgstr[0] "アイコン"
-msgstr[1] "アイコン"
+msgstr[0] "秒間"
+msgstr[1] "秒間"
 
 #: src/util.c:2406
 msgid "day"
@@ -10846,36 +10850,9 @@ msgid "Moving Gaim Settings.."
 msgstr "Gaim 設定の移動.."
 
 #: src/win32/win32dep.c:276
-#, fuzzy
 msgid "Moving Gaim user settings to: "
-msgstr "Gaim 設定の移動.."
+msgstr "Gaim ユーザ設定の移動先: "
 
 #: src/win32/win32dep.c:278
-#, fuzzy
 msgid "Notification"
-msgstr "入力の通知"
-
-#~ msgid "Invalid Groupname"
-#~ msgstr "おかしなグループ名です"
-
-#~ msgid "That file already exists."
-#~ msgstr "既にそのファイルは存在しています。"
-
-#~ msgid "Save As..."
-#~ msgstr "別名で保存..."
-
-#, fuzzy
-#~ msgid "MSN ID"
-#~ msgstr "MSN"
-
-#, fuzzy
-#~ msgid "User Count:\t\t%d\n"
-#~ msgstr "ユーザが見つかりません"
-
-#, fuzzy
-#~ msgid "Hostname"
-#~ msgstr "ホストがお亡くなりになりました"
-
-#, fuzzy
-#~ msgid "Channels"
-#~ msgstr "チャンネル(_C):"
+msgstr "通知"
