@@ -577,6 +577,7 @@ static int gaim_parse_evilnotify (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searcherror(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searchreply(aim_session_t *, aim_frame_t *, ...);
 static int gaim_bosrights        (aim_session_t *, aim_frame_t *, ...);
+static int gaim_connerr          (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_admin    (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_bos      (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chatnav  (aim_session_t *, aim_frame_t *, ...);
@@ -848,6 +849,7 @@ static void oscar_login(struct gaim_account *account) {
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
 	set_login_progress(gc, 2, buf);
 
+	aim_conn_addhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
 
@@ -1072,6 +1074,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 0;
 	}
 
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_bos, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0003, gaim_bosrights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ACK, AIM_CB_ACK_ACK, NULL, 0);
@@ -1505,6 +1508,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_admin, 0);
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0003, gaim_info_change, 0);
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0005, gaim_info_change, 0);
@@ -1527,6 +1531,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_chatnav, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
@@ -1549,6 +1554,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			return 1;
 		}
 
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_chat, 0);
 
 		ccon = g_new0(struct chat_connection, 1);
@@ -1580,6 +1586,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_email, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
@@ -3292,6 +3299,29 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	gc->evil = info->warnlevel/10;
 	/* gc->correction_time = (info->onlinesince - gc->login_time); */
+
+	return 1;
+}
+
+static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	fu16_t code;
+	char *msg;
+
+	va_start(ap, fr);
+	code = (fu16_t)va_arg(ap, int);
+	msg = va_arg(ap, char *);
+	va_end(ap);
+
+	debug_printf("Disconnected.  Code is 0x%04x and msg is %s\n", code, msg);
+	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
+		if (code == 0x0001)
+			do_error_dialog(_("Connection Error"), _("You have been disconnected because you have signed on with this screen name at another location."), GAIM_ERROR);
+		else
+			do_error_dialog(_("Connection Error"), _("You have been signed off for an unknown reason."), GAIM_ERROR);
+		signoff(gc);
+	}
 
 	return 1;
 }
