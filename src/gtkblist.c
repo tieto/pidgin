@@ -3641,8 +3641,10 @@ static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
 	 * out ever since. I can't find any reason at all why this is bad and
 	 * valgrind found several reasons why it's good. If this causes problems
 	 * comment it out again. Stu */
+	/* Of course it still causes problems - this breaks dragging buddies into
+	 * contacts, the dragged buddy mysteriously 'disappears'. Stu.
 	g_free(node->ui_data);
-	node->ui_data = NULL;
+	node->ui_data = NULL; */
 }
 
 static gboolean do_selection_changed(GaimBlistNode *new_selection)
