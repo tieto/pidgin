@@ -43,6 +43,7 @@
 #include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkutils.h"
+#include "gtkstatusbox.h"
 #include "gtkstock.h"
 
 enum
@@ -2038,6 +2039,14 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   COLUMN_DATA, &account,
 					   COLUMN_ENABLED, &enabled,
 					   -1);
+	if (enabled) {
+		gaim_account_disconnect(account);
+	} else {
+		GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+		const char *type = gtk_gaim_status_box_get_active_type(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
+		const char *message = gtk_gaim_status_box_get_message(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
+		gaim_account_set_status(account, type, TRUE, "message", message, NULL);
+	}
 
 	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
 

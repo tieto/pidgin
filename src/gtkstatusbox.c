@@ -473,3 +473,21 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 	box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, box);
 	gtk_gaim_status_box_refresh(box);
 }
+
+const char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box)
+{
+	GtkTreeIter iter;
+	char *type;
+	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter, 
+			   TYPE_COLUMN, &type, -1);
+	return type;
+}
+
+const char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box)
+{
+	if (status_box->imhtml_visible)
+		return gtk_imhtml_get_markup(GTK_IMHTML(status_box->imhtml));
+	else
+		return NULL;
+}
