@@ -32,6 +32,7 @@
 #include "gaim-disclosure.h"
 #include "gtkcellrendererprogress.h"
 #include "gtkft.h"
+#include "prefs.h"
 #include "gtkutils.h"
 #include "stock.h"
 
@@ -299,12 +300,14 @@ static void
 toggle_keep_open_cb(GtkWidget *w, struct gaim_gtkxfer_dialog *dialog)
 {
 	dialog->keep_open = !dialog->keep_open;
+	gaim_prefs_set_bool("/gaim/gtk/filetransfer/keep_open", dialog->keep_open);
 }
 
 static void
 toggle_clear_finished_cb(GtkWidget *w, struct gaim_gtkxfer_dialog *dialog)
 {
 	dialog->auto_clear = !dialog->auto_clear;
+	gaim_prefs_set_bool("/gaim/gtk/filetransfer/clear_finished", dialog->auto_clear);
 }
 
 static void
@@ -545,8 +548,8 @@ gaim_gtkxfer_dialog_new(void)
 	GtkWidget *checkbox;
 
 	dialog = g_new0(struct gaim_gtkxfer_dialog, 1);
-	dialog->keep_open  = FALSE;
-	dialog->auto_clear = TRUE;
+	dialog->keep_open  = gaim_prefs_get_bool("/gaim/gtk/filetransfer/keep_open");
+	dialog->auto_clear = gaim_prefs_get_bool("/gaim/gtk/filetransfer/clear_finished");
 
 	/* Create the window. */
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1178,6 +1181,14 @@ struct gaim_xfer_ui_ops ops =
 /**************************************************************************
  * GTK+ File Transfer API
  **************************************************************************/
+void
+gaim_gtk_xfer_init(void)
+{
+	gaim_prefs_add_none("/gaim/gtk/filetransfer");
+	gaim_prefs_add_bool("/gaim/gtk/filetransfer/clear_finished", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/filetransfer/keep_open", FALSE);
+}
+
 void
 gaim_set_gtkxfer_dialog(struct gaim_gtkxfer_dialog *dialog)
 {

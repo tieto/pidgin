@@ -115,6 +115,11 @@ void gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
 /*@{*/
 
 /**
+ * Initializes the GTK+ file transfer system.
+ */
+void gaim_gtk_xfer_init(void);
+
+/**
  * Sets gaim's main file transfer dialog.
  *
  * @param dialog The main dialog.
