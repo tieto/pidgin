@@ -2774,7 +2774,7 @@ void
 gtk_imhtml_clear (GtkIMHtml *imhtml)
 {
 	GList *del;
-	GSList *dels
+	GSList *dels;
 	GtkTextIter start, end;
 	GObject *object = g_object_ref(G_OBJECT(imhtml));
 	
