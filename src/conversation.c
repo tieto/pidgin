@@ -498,29 +498,96 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct convers
 			pos=gtk_editable_get_position(GTK_EDITABLE(entry));
 			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
 		}
-	} else if ((event->state & GDK_CONTROL_MASK)
-		   && (general_options & OPT_GEN_CTL_CHARS)) {
-		switch (event->keyval) {
-		case 'i':
-			quiet_set(c->italic, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->italic)));
-			do_italic(c->italic, c->entry);
-			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			break;
-		case 'u': /* ctl-u is GDK_Clear, which clears the line */
-			quiet_set(c->underline, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->underline)));
-			do_underline(c->underline, c->entry);
-			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			break;
-		case 'b': /* ctl-b is GDK_Left, which moves backwards */
-			quiet_set(c->bold, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->bold)));
-			do_bold(c->bold, c->entry);
-			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			break;
-		case 's':
-			quiet_set(c->strike, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->strike)));
-			do_strike(c->strike, c->entry);
-			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			break;
+	} else if (event->state & GDK_CONTROL_MASK) {
+		if (general_options & OPT_GEN_CTL_CHARS) {
+			switch (event->keyval) {
+			case 'i':
+				quiet_set(c->italic, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->italic)));
+				do_italic(c->italic, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			case 'u': /* ctl-u is GDK_Clear, which clears the line */
+				quiet_set(c->underline, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->underline)));
+				do_underline(c->underline, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			case 'b': /* ctl-b is GDK_Left, which moves backwards */
+				quiet_set(c->bold, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->bold)));
+				do_bold(c->bold, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			case 's':
+				quiet_set(c->strike, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->strike)));
+				do_strike(c->strike, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			}
+		}
+		if (general_options & OPT_GEN_CTL_SMILEYS) {
+			char buf[7];
+			buf[0] = '\0';
+			switch (event->keyval) {
+				case '1':
+					sprintf(buf, ":-)");
+					break;
+				case '2':
+					sprintf(buf, ":-(");
+					break;
+				case '3':
+					sprintf(buf, ";-)");
+					break;
+				case '4':
+					sprintf(buf, ":-P");
+					break;
+				case '5':
+					sprintf(buf, "=-O");
+					break;
+				case '6':
+					sprintf(buf, ":-*");
+					break;
+				case '7':
+					sprintf(buf, ">:o");
+					break;
+				case '8':
+					sprintf(buf, "8-)");
+					break;
+				case '!':
+					sprintf(buf, ":-$");
+					break;
+				case '@':
+					sprintf(buf, ":-!");
+					break;
+				case '#':
+					sprintf(buf, ":-[");
+					break;
+				case '$':
+					sprintf(buf, "O:-)");
+					break;
+				case '%':
+					sprintf(buf, ":-/");
+					break;
+				case '^':
+					sprintf(buf, ":'(");
+					break;
+				case '&':
+					sprintf(buf, ":-X");
+					break;
+				case '*':
+					sprintf(buf, ":-D");
+					break;
+			}
+			if (buf[0]) {
+				if (GTK_EDITABLE(c->entry)->has_selection) {
+					int finish = GTK_EDITABLE(c->entry)->selection_end_pos;
+					gtk_editable_insert_text(GTK_EDITABLE(c->entry),
+								 buf, strlen(buf), &finish);
+				} else {
+					pos = GTK_EDITABLE(c->entry)->current_pos;
+					gtk_editable_insert_text(GTK_EDITABLE(c->entry),
+								 buf, strlen(buf), &pos);
+				}
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			}
 		}
 	}
 

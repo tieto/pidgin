@@ -8,6 +8,7 @@ version 0.10.0:
 	* Borderless buttons (for that cool pop-up look)
 	* Fixed some resizing bugs
 	* Added Ctrl+{B/I/U/S} hotkeys to conversation windows.
+	* Added Ctrl+(number) hotkeys to insert smileys in conversation windows.
 	* Support for %n, %d, and %t in away messages.  Thanks bmiller!
 	* Background colors
 	* Redesigned preferences dialog
