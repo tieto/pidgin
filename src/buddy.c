@@ -178,6 +178,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	GtkTreeIter iter;
 	GtkWidget *menu, *menuitem;
 	GtkWidget *image;
+	GtkTreeSelection *sel;
 	GList *list;
 	struct prpl *prpl;
 
@@ -232,7 +233,12 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, event->time);
 
-	return FALSE;
+#if (1)  /* This code only exists because GTK doesn't work.  If we return FALSE here, as would be normal
+	  * the event propoagates down and somehow gets interpreted as the start of a drag event. */
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	gtk_tree_selection_select_path(sel, path);
+	return TRUE;
+#endif
 }
 
 static void gaim_gtk_blist_reordered_cb(GtkTreeModel *model,
@@ -281,6 +287,43 @@ static void gaim_gtk_blist_update_toolbar_icons (GtkWidget *widget, gpointer dat
 			gtk_widget_hide(widget);
 	} else if (GTK_IS_CONTAINER(widget)) {
 		gtk_container_foreach(GTK_CONTAINER(widget), gaim_gtk_blist_update_toolbar_icons, NULL);
+	}
+}
+
+static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
+					     GdkDragContext *dc,
+					     GtkSelectionData *data,
+					     guint info,
+					     guint time,
+					     gpointer *null)
+{
+	if (data->target == gdk_atom_intern("GAIM_BUDDY", FALSE)) {
+		GtkTreeRowReference *ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
+		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
+		GtkTreeIter iter;
+		GaimBlistNode *node = NULL;
+		GValue val = {0};
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, sourcerow);
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+		node = g_value_get_pointer(&val);
+		if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
+			gtk_selection_data_set (data,
+						gdk_atom_intern ("GAIM_BUDDY", FALSE),
+						8, /* bits */
+						(void*)&node,
+						sizeof (node));
+	}
+		
+}
+
+static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
+			  GtkSelectionData *sd, guint info, guint t)
+{	
+	if (sd->target == gdk_atom_intern("GAIM_BUDDY", FALSE)) {
+		struct buddy *b = NULL;
+		GtkTreePath *path = NULL;
+		memcpy(&b, sd->data, sizeof(b));
+		gtk_tree_view_get_dest_row_at_pos(widget, x, y, &path, GTK_TREE_VIEW_DROP_INTO_OR_AFTER);
 	}
 }
 
@@ -553,6 +596,8 @@ static void gaim_gtk_blist_new_node(GaimBlistNode *node)
 	node->ui_data = g_new0(struct gaim_gtk_blist_node, 1);
 }
 
+enum {DRAG_BUDDY, DRAG_ROW};
+
 static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 {
 	GtkItemFactory *ift;
@@ -561,6 +606,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkWidget *sw;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
+ 	GtkTargetEntry gte[] = {{"GAIM_BUDDY", GTK_TARGET_SAME_APP, DRAG_ROW},
+				{"application/x-im-contact", 0, DRAG_BUDDY}};
 
 	if (gtkblist) {
 		gtk_widget_show(gtkblist->window);
@@ -600,10 +647,17 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
 						 G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
-	/* This is broken because GTK is broken
- 	g_signal_connect(G_OBJECT(gtkblist->treemodel), "row-reordered", gaim_gtk_blist_reordered_cb, NULL); */
- 
+
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
+	
+	/* Set up dnd */
+	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview), GDK_BUTTON1_MASK, gte,
+					       2, GDK_ACTION_COPY);
+	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview), gte, 2, 
+					     GDK_ACTION_COPY | GDK_ACTION_MOVE);
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", gaim_gtk_blist_drag_data_rcv_cb, NULL);
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", gaim_gtk_blist_drag_data_get_cb, NULL);
+	
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 

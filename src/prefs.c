@@ -344,7 +344,7 @@ GtkWidget *theme_page() {
 	GtkTreeSelection *sel;
 	GtkTreePath *path = NULL;
 	GtkWidget *label;
-	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 1, 0},{"STRING", 2, 0}};
+	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);

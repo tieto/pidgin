@@ -3198,10 +3198,16 @@ move_next_tab(struct gaim_conversation *conv)
 
 static void
 conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
-			  GtkSelectionData *sd, guint info, guint t, gpointer data)
+			  GtkSelectionData *sd, guint info, guint t)
 {
-	do_error_dialog("MWAHAHAHA! I AM A TROLL! I AM GOING TO EAT YOU!",
-					NULL, GAIM_WARNING);
+	if (sd->target == gdk_atom_intern("GAIM_BUDDY", FALSE)) {
+		struct buddy *b = NULL;
+		memcpy(&b, sd->data, sizeof(b));
+		gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
+	}
+
+		/* do_error_dialog("MWAHAHAHA! I AM A TROLL! I AM GOING TO EAT YOU!",
+		   NULL, GAIM_WARNING); */
 }
 
 /**************************************************************************
@@ -3335,8 +3341,9 @@ gaim_gtk_switch_conversation(struct gaim_window *win, unsigned int index)
 static const GtkTargetEntry te[] =
 {
 	{"text/plain", 0, 0},
-	{"text/uri-list", 1, 0},
-	{"STRING", 2, 0}
+	{"text/uri-list", 0, 1},
+	{"GAIM_BUDDY", 0, 2},
+	{"STRING", 0, 3}
 };
 
 static void
@@ -3407,8 +3414,7 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 						  GDK_ACTION_COPY);
 		gtk_drag_dest_set(gtkconv->imhtml,
 						  GTK_DEST_DEFAULT_MOTION |
-						  GTK_DEST_DEFAULT_HIGHLIGHT |
-						  GTK_DEST_DEFAULT_DROP,
+				                  GTK_DEST_DEFAULT_DROP,
 						  te, sizeof(te) / sizeof(GtkTargetEntry),
 						  GDK_ACTION_DEFAULT | GDK_ACTION_COPY | GDK_ACTION_MOVE);
 		gtk_drag_dest_set(gtkconv->entry,
