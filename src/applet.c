@@ -306,7 +306,7 @@ void insert_applet_away()
 						awayname,
 						a->name, (AppletCallbackFunc)do_away_message, a);
 
-		awy = g_slist_next(awy);
+		awy = awy->next;
 		g_free(awayname);
 	}
 }

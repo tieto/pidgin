@@ -773,10 +773,14 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 		} else {
 			/* keep track of away msg same as yahoo plugin */
 			struct jabber_data *jd = GJ_GC(j)->proto_data;
-			gpointer val = g_hash_table_lookup(jd->hash, b->name);
-			if (val)
+			gpointer val = g_hash_table_lookup(jd->hash, normalize(b->name));
+			if (val) {
 			   	g_free(val);
-			g_hash_table_insert(jd->hash, g_strdup(b->name), g_strdup(xmlnode_get_tag_data(p->x, "status")));
+				g_hash_table_insert(jd->hash, normalize(b->name),
+						g_strdup(xmlnode_get_tag_data(p->x, "status")));
+			} else
+				g_hash_table_insert(jd->hash, g_strdup(normalize(b->name)),
+						g_strdup(xmlnode_get_tag_data(p->x, "status")));
 
 
 			if (!resources) {
