@@ -149,13 +149,44 @@ static UINT win_html_fmt;
 
 static gchar *
 clipboard_win32_to_html(char *clipboard) {
+	const char *header;
 	const char *begin, *end;
+	gint start=0;
+	gint finish=0;
 	gchar *html;
+	FILE *fd;
 
-	begin = strstr(clipboard, "<!--StartFragment");
-	while(*begin++ != '>');
-	end = strstr(clipboard, "<!--EndFragment");
-	html = g_strstrip(g_strndup(begin, (end ? (end - begin) : strlen(begin))));
+#if 0 /* Debugging for Windows clipboard */
+	gaim_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
+
+	fd = fopen("e:\\gaimcb.txt", "wb");
+	fprintf(fd, "%s", clipboard);
+	fclose(fd);
+#endif
+
+	if (header = strstr(clipboard, "Version:1.0\n"))
+
+	if (!(header = strstr(clipboard, "StartFragment:")))
+		return NULL;
+
+	sscanf(header, "StartFragment:%d", &start);
+
+	header = strstr(clipboard, "EndFragment:");
+	sscanf(header, "EndFragment:%d", &finish);
+
+	begin = clipboard + start;
+
+	if (header == NULL)
+		end = clipboard + strlen(clipboard);
+	else
+		end = clipboard + finish;
+
+	html = g_strstrip(g_strndup(begin, end-begin));
+
+#if 0 /* Debugging for Windows clipboard */
+	gaim_debug_info("imhtml clipboard", "HTML fragment: %s\n", html);
+#endif
+
 	return html;
 }
 
@@ -169,16 +200,21 @@ clipboard_html_to_win32(char *html) {
 		return NULL;
 
 	length = strlen(html);
-	clipboard = g_string_new ("Version:0.9\r\n");
+	clipboard = g_string_new ("Version:1.0\r\n");
 	g_string_append(clipboard, "StartHTML:0000000105\r\n");
-	g_string_append(clipboard, g_strdup_printf("EndHTML:%010d\r\n", 143 + length));
-	g_string_append(clipboard, "StartFragment:0000000105\r\n");
-	g_string_append(clipboard, g_strdup_printf("EndFragment:%010d\r\n", 143 + length));
-	g_string_append(clipboard, "<!--StartFragment-->");
+	g_string_append(clipboard, g_strdup_printf("EndHTML:%010d\r\n", 147 + length));
+	g_string_append(clipboard, "StartFragment:0000000127\r\n");
+	g_string_append(clipboard, g_strdup_printf("EndFragment:%010d\r\n", 127 + length));
+	g_string_append(clipboard, "<!--StartFragment-->\r\n");
 	g_string_append(clipboard, html);
-	g_string_append(clipboard, "<!--EndFragment-->");
+	g_string_append(clipboard, "\r\n<!--EndFragment-->");
 	ret = clipboard->str;
 	g_string_free(clipboard, FALSE);
+
+#if 0 /* Debugging for Windows clipboard */
+	gaim_debug_info("imhtml clipboard", "from gaim: %s\n", ret);
+#endif
+
 	return ret;
 }
 #endif
@@ -725,7 +761,7 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean plaintext)
 {
 	GtkTextIter iter;
-	GtkIMHtmlOptions flags = plaintext ? 0 : GTK_IMHTML_NO_NEWLINE;
+	GtkIMHtmlOptions flags = plaintext ? 0 : (GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_COMMENTS);
 
 	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
 		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
@@ -2463,9 +2499,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 62:	/* comment */
 					/* NEW_BIT (NEW_TEXT_BIT); */
 					ws[wpos] = '\0';
+
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-					if (imhtml->show_comments)
+					if (imhtml->show_comments && !(options & GTK_IMHTML_NO_COMMENTS))
 						wpos = g_snprintf (ws, len, "%s", tag);
 					/* NEW_BIT (NEW_COMMENT_BIT); */
 					break;
