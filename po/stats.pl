@@ -47,7 +47,7 @@ print "<html>\n";
 print "<body>\n";
 print "<table cellspacing='0' cellpadding='0' border='0' bgcolor='#888888' width='100%'><tr><td><table cellspacing='1' cellpadding='2' border='0' width='100%'>\n";
 
-print"<tr bgcolor='#e0e0e0'><th>language</th><th style='background: #339933;'>trans</th><th style='background: #339933;'>%</th><th style='background: #333399;'>fuzzy</th><th style='background: #333399;'>%</th><th style='background: #dd3333;'>untrans</th><th style='background: #dd3333;'>%</th><th style='background: yellow;'>missing</th><th style='background: yellow;'>%</th><th>&nbsp;</th></tr>\n";
+print"<tr bgcolor='#e0e0e0'><th>language</th><th style='background: #339933;'>trans</th><th style='background: #339933;'>%</th><th style='background: #333399;'>fuzzy</th><th style='background: #333399;'>%</th><th style='background: #dd3333;'>untrans</th><th style='background: #dd3333;'>%</th><th>&nbsp;</th></tr>\n";
 
 foreach $index (0 .. $#pos) {
 	$trans = $fuzz = $untrans = 0;
@@ -59,8 +59,6 @@ foreach $index (0 .. $#pos) {
 	if(/(\d+) translated messages/) { $trans = $1; }
 	if(/(\d+) fuzzy translations/) { $fuzz = $1; }
 	if(/(\d+) untranslated messages/) { $untrans = $1; }
-	$gone = $total - $trans - $fuzz - $untrans;
-	$gonep = 100 * $gone / $total;
 	$transp = 100 * $trans / $total;
 	$fuzzp = 100 * $fuzz / $total;
 	$untransp = 100 * $untrans / $total;
@@ -73,16 +71,14 @@ foreach $index (0 .. $#pos) {
 	$name = $lang{$po};
 	$name = code2language($po) unless $name ne "";
 	$name = "???" unless $name ne "";
-	printf "<tr$color><td>%s(%s.po)</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>",
-	$name, $po, $trans, $transp, $fuzz, $fuzzp, $untrans, $untransp, $gone, $gonep;
+	printf "<tr$color><td>%s(%s.po)</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>",
+	$name, $po, $trans, $transp, $fuzz, $fuzzp, $untrans, $untransp;
 	printf "<img src='bar_g.gif' height='15' width='%0.0f' />", $transp*2
 	unless $transp*2 < 0.5;
 	printf "<img src='bar_b.gif' height='15' width='%0.0f' />", $fuzzp*2
 	unless $fuzzp*2 < 0.5;
 	printf "<img src='bar_r.gif' height='15' width='%0.0f' />", $untransp*2
 	unless $untransp*2 < 0.5;
-	printf "<img src='bar_y.gif' height='15' width='%0.0f' />", $gonep*2
-	unless $gonep*2 < 0.5;
 	print "</tr>\n";
 	unlink("$po.new");
 	print STDERR "done ($untrans untranslated strings).\n" if($ARGV[0] eq '-v');
