@@ -755,8 +755,10 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		/* apply default fonts and colors */
 		tmpmsg = stylize(awaymessage->message, MSG_LEN);
 		
-		escape_text(tmpmsg);
-		escape_message(tmpmsg);
+		if (gc->protocol == PROTO_TOC) {
+			escape_text(tmpmsg);
+			escape_message(tmpmsg);
+		}
 		serv_send_im(name, away_subs(tmpmsg, alias), 1);
 		g_free(tmpmsg);
 		tmpmsg = stylize(awaymessage->message, MSG_LEN);
