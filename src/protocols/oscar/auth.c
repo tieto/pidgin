@@ -555,7 +555,7 @@ faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid)
 
 	len = strlen(securid);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 10+2+len)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+len)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_RESPONSE, 0x0000, NULL, 0);
