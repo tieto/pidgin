@@ -1106,3 +1106,30 @@ void translate_blt (FILE *src_fp, char *dest)
 
 	return;
 }
+
+void stylize(gchar *text, int length)
+{
+	gchar *buf;	
+
+	buf = g_malloc(length);
+
+	if (font_options & OPT_FONT_FACE)
+	{
+		g_snprintf(buf, length, "<FONT FACE=\"%s\">%s</FONT>", fontface, text);
+		strcpy(text, buf);
+	}
+
+	if (font_options & OPT_FONT_FGCOL)
+	{
+		g_snprintf(buf, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red, fgcolor.green, fgcolor.blue, text);
+		strcpy(text, buf);
+	}
+
+	if (font_options & OPT_FONT_BGCOL)
+	{
+		g_snprintf(buf, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", bgcolor.red, bgcolor.green, bgcolor.blue, text);
+		strcpy(text, buf);
+	}
+	
+	g_free(buf);
+}

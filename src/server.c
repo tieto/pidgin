@@ -628,12 +628,11 @@ void serv_chat_send(int id, char *message)
 
 
 
-
 void serv_got_im(char *name, char *message, int away)
 {
 	struct conversation *cnv;
-        int is_idle = -1;
-        int new_conv = 0;
+	int is_idle = -1;
+	int new_conv = 0;
 
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
@@ -658,7 +657,8 @@ void serv_got_im(char *name, char *message, int away)
 #endif
 	
 	if ((general_options & OPT_GEN_TIK_HACK) && awaymessage &&
-	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
+	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<"))
+	{
 	    	serv_send_im(name, awaymessage->message, 1);
 	    	return;
 	}
@@ -669,7 +669,8 @@ void serv_got_im(char *name, char *message, int away)
 		linkify_text(message);
 	}
 	
-	if (away) away = WFLAG_AUTO;
+	if (away)
+		away = WFLAG_AUTO;
 
 	if (awaymessage != NULL) {
 		if (!(general_options & OPT_GEN_DISCARD_WHEN_AWAY)) {
@@ -701,32 +702,35 @@ void serv_got_im(char *name, char *message, int away)
 
 
 
-        if (awaymessage != NULL) {
-                time_t t;
+	if (awaymessage != NULL) {
+		time_t t;
 		char tmpmsg[BUF_LEN];
 
-                time(&t);
+		time(&t);
 
 
-                if ((cnv == NULL) || (t - cnv->sent_away) < 120)
-                        return;
+		if ((cnv == NULL) || (t - cnv->sent_away) < 120)
+			return;
 
-                cnv->sent_away = t;
+		cnv->sent_away = t;
 
-                if (is_idle)
-                        is_idle = -1;
+		if (is_idle)
+			is_idle = -1;
 
+		/* apply default fonts and colors */
+		stylize(awaymessage->message, MSG_LEN);
+		
 		strcpy(tmpmsg, awaymessage->message);
 		escape_text(tmpmsg);
 		escape_message(tmpmsg);
-                serv_send_im(name, away_subs(tmpmsg, name), 1);
+		serv_send_im(name, away_subs(tmpmsg, name), 1);
 
-                if (is_idle == -1)
+		if (is_idle == -1)
 			is_idle = 1;
 		
-                if (cnv != NULL)
+		if (cnv != NULL)
 			write_to_conv(cnv, away_subs(awaymessage->message, name), WFLAG_SEND | WFLAG_AUTO, NULL);
-        }
+	}
 }
 
 
