@@ -275,6 +275,9 @@ struct conversation {
 	GtkWidget *link_dialog;
 	GtkWidget *log_dialog;
 	int makesound;
+	char fontface[128];
+	int bgcol;
+	int fgcol;
 
 	/* stuff used just for IM */
 	GtkWidget *add_button;
@@ -393,7 +396,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 694 $"
+#define REVISION "gaim:$Revision: 697 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

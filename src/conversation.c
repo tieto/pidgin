@@ -405,6 +405,7 @@ void set_font_face(char *newfont, struct conversation *c)
 		pre_fontface = "<FONT FACE=\"Helvetica\">";
 	}
 
+	sprintf(c->fontface, "%s", newfont ? (newfont[0] ? newfont : "Helvetica") : "Helvetica");
 	surround(c->entry, pre_fontface, "</FONT>");
 	gtk_widget_grab_focus(c->entry);
 	
@@ -575,17 +576,17 @@ void send_callback(GtkWidget *widget, struct conversation *c)
         }
 
         if (font_options & OPT_FONT_FACE) {
-                g_snprintf(buf2, BUF_LONG, "<FONT FACE=\"%s\">%s</FONT>", fontface, buf);
+                g_snprintf(buf2, BUF_LONG, "<FONT FACE=\"%s\">%s</FONT>", c->fontface, buf);
                 strcpy(buf, buf2);
         }
 
 	if (font_options & OPT_FONT_FGCOL) {
-		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"#%x\">%s</FONT>", fgcolor, buf);
+		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"#%x\">%s</FONT>", c->fgcol, buf);
 		strcpy(buf, buf2);
 	}
 
 	if (font_options & OPT_FONT_BGCOL) {
-		g_snprintf(buf2, BUF_LONG, "<BODY BGCOLOR=\"#%x\">%s</BODY>", bgcolor, buf);
+		g_snprintf(buf2, BUF_LONG, "<BODY BGCOLOR=\"#%x\">%s</BODY>", c->bgcol, buf);
 		strcpy(buf, buf2);
 	}
 
@@ -1587,6 +1588,9 @@ void show_conv(struct conversation *c)
 	c->smiley_dialog = NULL;
 	c->link_dialog = NULL;
 	c->log_dialog = NULL;
+	sprintf(c->fontface, "%s", fontface);
+	c->bgcol = bgcolor;
+	c->fgcol = fgcolor;
 	
 	gtk_container_add(GTK_CONTAINER(win), paned);
         gtk_container_border_width(GTK_CONTAINER(win), 10);
