@@ -44,7 +44,9 @@ AM_CONDITIONAL(PLUGINS, test x$enable_plugins = xyes)
 LIBFAIM_DO=""
 
 if test "$enable_debug" = yes ; then
-	CFLAGS="$CFLAGS -Wall -d -g"
+dnl	someone please tell me what -d does
+dnl	CFLAGS="$CFLAGS -Wall -d -g"
+	CFLAGS="$CFLAGS -Wall -g"
 	AC_DEFINE(DEBUG)
 fi
 
