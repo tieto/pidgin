@@ -132,6 +132,9 @@ struct aim_user {
 	char user_info[2048];
 	int options;
 	int protocol;
+	/* prpls can use this to save information about the user,
+	 * like which server to connect to, etc */
+	char proto_opt[6][256];
 
 	struct gaim_connection *gc;
 

@@ -53,7 +53,6 @@ struct gaim_connection {
 
 	char username[64];
 	char password[32];
-	char user_info[2048];
 	char g_screenname[64];
 	int options; /* same as aim_user options */
 	int keepalive;

@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1048 $"
+#define REVISION "gaim:$Revision: 1061 $"
 
 struct toc_data {
 	int toc_fd;
@@ -133,7 +133,6 @@ void toc_login(struct aim_user *user)
 		return;
 	}
 
-	sprintf(gc->user_info, "%s", user->user_info);
 	gc->options = user->options;
 	save_prefs();
 

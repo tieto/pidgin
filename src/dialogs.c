@@ -1150,7 +1150,6 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 		save_prefs();
 
 		if (gc) {
-			g_snprintf(gc->user_info, sizeof(gc->user_info), "%s", junk);
 			buf = g_malloc(strlen(junk) * 4);
 			if (!buf) {
 				buf = g_malloc(1);
@@ -1637,13 +1636,16 @@ void show_set_info()
 /*  The dialog for the info requests                                      */
 /*------------------------------------------------------------------------*/
 
+static void info_dlg_free(GtkWidget *b, struct info_dlg *d) {
+	g_free(d);
+}
+
 void g_show_info_text(char *info)
 {
         GtkWidget *ok;
         GtkWidget *label;
 	GtkWidget *text;
         GtkWidget *bbox;
-        GtkWidget *button_box;
         GtkWidget *sw;
 
         struct info_dlg *b = g_new0(struct info_dlg, 1);
@@ -1654,11 +1656,12 @@ void g_show_info_text(char *info)
         gtk_container_border_width(GTK_CONTAINER(b->window), 5);
         bbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(b->window), bbox);
-		button_box = gtk_hbox_new(FALSE, 5);
 		gtk_widget_realize(GTK_WIDGET(b->window));
         ok = picture_button(b->window, _("OK"), ok_xpm);
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
+			   GTK_SIGNAL_FUNC(info_dlg_free), b);
         gtk_signal_connect(GTK_OBJECT(ok), "clicked",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 
@@ -1682,7 +1685,6 @@ void g_show_info_text(char *info)
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 0);
-/*	gtk_box_pack_start(GTK_BOX(button_box), ok, FALSE, FALSE, 0);*/
 
 	aol_icon(b->window->window);
 	gtk_widget_show_all(b->window);

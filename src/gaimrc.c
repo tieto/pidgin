@@ -428,6 +428,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 {
         struct parse *p;
         struct aim_user *u;
+	int i;
         char buf[4096];
 
         if (!fgets(buf, sizeof(buf), f))
@@ -482,6 +483,20 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	u->options = atoi(p->value[0]);
 	u->protocol = atoi(p->value[1]);
 
+	if (!fgets(buf, sizeof(buf), f))
+		return u;
+
+	if (!strcmp(buf, "\t}"))
+		return u;
+
+	p = parse_line(buf);
+
+	if (strcmp(p->option, "proto_opts"))
+		return u;
+
+	for (i = 0; i < 6; i++)
+		g_snprintf(u->proto_opt[i], sizeof u->proto_opt[i], "%s", p->value[i]);
+
         return u;
         
 }
@@ -489,7 +504,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 static void gaimrc_write_user(FILE *f, struct aim_user *u)
 {
         char *c;
-        int nl = 1;;
+        int nl = 1, i;
 	if (u->options & OPT_USR_REM_PASS)
 	        fprintf(f, "\t\tident { %s } { %s }\n", u->username, u->password);
 	else
@@ -513,7 +528,10 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
         }
         fprintf(f, "\n\t\t}\n");
 	fprintf(f, "\t\tuser_opts { %d } { %d }\n", u->options, u->protocol);
-        
+        fprintf(f, "\t\tproto_opts");
+	for (i = 0; i < 6; i++)
+		fprintf(f, " { %s }", u->proto_opt[i]);
+	fprintf(f, "\n");
 }
 
 

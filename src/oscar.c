@@ -309,7 +309,6 @@ void oscar_login(struct aim_user *user) {
 	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, conn);
 
-	sprintf(gc->user_info, "%s", user->user_info);
 	gc->options = user->options;
 	save_prefs(); /* is this necessary anymore? */
 
@@ -1067,7 +1066,7 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		aim_bos_ackrateresp(sess, command->conn);
 		aim_bos_reqpersonalinfo(sess, command->conn);
 		aim_bos_reqlocaterights(sess, command->conn);
-		aim_bos_setprofile(sess, command->conn, gc->user_info, NULL, gaim_caps);
+		aim_bos_setprofile(sess, command->conn, gc->user->user_info, NULL, gaim_caps);
 		aim_bos_reqbuddyrights(sess, command->conn);
 
 		account_online(gc->user, gc); /* this is an awkward hack */
@@ -1193,7 +1192,7 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 
 static void oscar_set_away(struct gaim_connection *g, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_bos_setprofile(odata->sess, odata->conn, g->user_info, message, gaim_caps);
+	aim_bos_setprofile(odata->sess, odata->conn, g->user->user_info, message, gaim_caps);
 }
 
 static void oscar_warn(struct gaim_connection *g, char *name, int anon) {

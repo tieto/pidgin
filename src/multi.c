@@ -173,6 +173,10 @@ static void mod_opt(GtkWidget *b, struct mod_usr_opt *m)
 	}
 }
 
+static void free_muo(GtkWidget *b, struct mod_usr_opt *m) {
+	g_free(m);
+}
+
 static GtkWidget *acct_button(const char *text, struct aim_user *u, int option, GtkWidget *box)
 {
 	GtkWidget *button;
@@ -186,6 +190,7 @@ static GtkWidget *acct_button(const char *text, struct aim_user *u, int option, 
 	gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
 	muo->user = u; muo->opt = option;
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_opt), muo);
+	gtk_signal_connect(GTK_OBJECT(button), "destroy", GTK_SIGNAL_FUNC(free_muo), muo);
 	gtk_widget_show(button);
 	return button;
 }
