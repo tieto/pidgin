@@ -383,46 +383,94 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 SV *
 gaim_perl_sv_from_vargs(const GaimValue *value, va_list args)
 {
-	switch (gaim_value_get_type(value))
+	if (gaim_value_is_outgoing(value))
 	{
-		case GAIM_TYPE_SUBTYPE:
-			return gaim_perl_sv_from_subtype(value, va_arg(args, void *));
+		switch (gaim_value_get_type(value))
+		{
+			case GAIM_TYPE_SUBTYPE:
+				return gaim_perl_sv_from_subtype(value, *va_arg(args, void **));
 
-		case GAIM_TYPE_BOOLEAN:
-			return newSViv(va_arg(args, gboolean));
+			case GAIM_TYPE_BOOLEAN:
+				return newSViv(*va_arg(args, gboolean *));
 
-		case GAIM_TYPE_INT:
-			return newSViv(va_arg(args, int));
+			case GAIM_TYPE_INT:
+				return newSViv(*va_arg(args, int *));
 
-		case GAIM_TYPE_UINT:
-			return newSVuv(va_arg(args, unsigned int));
+			case GAIM_TYPE_UINT:
+				return newSVuv(*va_arg(args, unsigned int *));
 
-		case GAIM_TYPE_LONG:
-			return newSViv(va_arg(args, long));
+			case GAIM_TYPE_LONG:
+				return newSViv(*va_arg(args, long *));
 
-		case GAIM_TYPE_ULONG:
-			return newSVuv(va_arg(args, unsigned long));
+			case GAIM_TYPE_ULONG:
+				return newSVuv(*va_arg(args, unsigned long *));
 
-		case GAIM_TYPE_INT64:
-			return newSViv(va_arg(args, gint64));
+			case GAIM_TYPE_INT64:
+				return newSViv(*va_arg(args, gint64 *));
 
-		case GAIM_TYPE_UINT64:
-			return newSVuv(va_arg(args, guint64));
+			case GAIM_TYPE_UINT64:
+				return newSVuv(*va_arg(args, guint64 *));
 
-		case GAIM_TYPE_STRING:
-			return newSVGChar(va_arg(args, char *));
+			case GAIM_TYPE_STRING:
+				return newSVGChar(*va_arg(args, char **));
 
-		case GAIM_TYPE_POINTER:
-			return newSViv((IV)va_arg(args, void *));
+			case GAIM_TYPE_POINTER:
+				return newSViv((IV)*va_arg(args, void **));
 
-		case GAIM_TYPE_BOXED:
-			/* Uh.. I dunno. Try this? */
-			return sv_2mortal(gaim_perl_bless_object(
-					va_arg(args, void *),
-					gaim_value_get_specific_type(value)));
+			case GAIM_TYPE_BOXED:
+				/* Uh.. I dunno. Try this? */
+				return sv_2mortal(gaim_perl_bless_object(
+						va_arg(args, void **),
+						gaim_value_get_specific_type(value)));
 
-		default:
-			/* If this happens, things are going to get screwed up... */
-			return NULL;
+			default:
+				/* If this happens, things are going to get screwed up... */
+				return NULL;
+		}
+	}
+	else
+	{
+		switch (gaim_value_get_type(value))
+		{
+			case GAIM_TYPE_SUBTYPE:
+				return gaim_perl_sv_from_subtype(value, va_arg(args, void *));
+
+			case GAIM_TYPE_BOOLEAN:
+				return newSViv(va_arg(args, gboolean));
+
+			case GAIM_TYPE_INT:
+				return newSViv(va_arg(args, int));
+
+			case GAIM_TYPE_UINT:
+				return newSVuv(va_arg(args, unsigned int));
+
+			case GAIM_TYPE_LONG:
+				return newSViv(va_arg(args, long));
+
+			case GAIM_TYPE_ULONG:
+				return newSVuv(va_arg(args, unsigned long));
+
+			case GAIM_TYPE_INT64:
+				return newSViv(va_arg(args, gint64));
+
+			case GAIM_TYPE_UINT64:
+				return newSVuv(va_arg(args, guint64));
+
+			case GAIM_TYPE_STRING:
+				return newSVGChar(va_arg(args, char *));
+
+			case GAIM_TYPE_POINTER:
+				return newSViv((IV)va_arg(args, void *));
+
+			case GAIM_TYPE_BOXED:
+				/* Uh.. I dunno. Try this? */
+				return sv_2mortal(gaim_perl_bless_object(
+						va_arg(args, void *),
+						gaim_value_get_specific_type(value)));
+
+			default:
+				/* If this happens, things are going to get screwed up... */
+				return NULL;
+		}
 	}
 }
