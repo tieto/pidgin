@@ -519,72 +519,68 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct convers
 
 void send_callback(GtkWidget *widget, struct conversation *c)
 {
-        char *buf = g_malloc(BUF_LEN * 4);
-	char *buf2;
-	char *buf3;
-	gchar *buf4;
-        int hdrlen;
+	char *buf, *buf2, *buf3;
+	int hdrlen, limit;
 
-	/* FIXME : for USE_OSCAR, libfaim can send messages much longer
-	 * than this (I think it's about 7K rather than 4K. So we need
-	 * to do these checks a little bit differently here */
-	buf4 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
-	g_snprintf(buf, BUF_LONG, "%s", buf4);
-	g_free(buf4);
+	if (c->is_direct) limit = 0x1ffffff;
+	else if (c->is_chat && USE_OSCAR) limit = MAXCHATMSGLEN;
+	else if (USE_OSCAR) limit = MAXMSGLEN;
+	else limit = MSG_LEN;
+	limit <<= 2;
 
-        if (!strlen(buf)) {
-                return;
-        }
-
+	buf = g_malloc(limit);
+	
+	buf2 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
+	if (!strlen(buf2)) return;
+	g_snprintf(buf, limit, "%s", buf2);
 	gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
 
-        if (general_options & OPT_GEN_SEND_LINKS) {
-                linkify_text(buf);
-        }
-	
+	if (general_options & OPT_GEN_SEND_LINKS)
+		linkify_text(buf);
+
+	buf2 = g_malloc(limit);
+
         /* Let us determine how long the message CAN be.
          * toc_send_im is 11 chars long + 2 quotes.
-	 * + 2 spaces + 6 for the header + 2 for good
-	 * measure = 23 bytes + the length of normalize c->name */
-
-	buf2 = g_malloc(BUF_LONG);
-	
-        hdrlen = 23 + strlen(normalize(c->name));
-
-/*	printf("%d %d %d\n", strlen(buf), hdrlen, BUF_LONG);*/
+         * + 2 spaces + 6 for the header + 2 for good
+         * measure = 23 bytes + the length of normalize c->name */
+	if (!USE_OSCAR)
+		hdrlen = 23 + strlen(normalize(c->name));
+	else
+		hdrlen = 0;
 
         if (font_options & OPT_FONT_BOLD) {
-                g_snprintf(buf2, BUF_LONG, "<B>%s</B>", buf);
+                g_snprintf(buf2, limit, "<B>%s</B>", buf);
                 strcpy(buf, buf2);
         }
 
         if (font_options & OPT_FONT_ITALIC) {
-                g_snprintf(buf2, BUF_LONG, "<I>%s</I>", buf);
+                g_snprintf(buf2, limit, "<I>%s</I>", buf);
                 strcpy(buf, buf2);
         }
 
         if (font_options & OPT_FONT_UNDERLINE) {
-                g_snprintf(buf2, BUF_LONG, "<U>%s</U>", buf);
+                g_snprintf(buf2, limit, "<U>%s</U>", buf);
                 strcpy(buf, buf2);
         }
 
         if (font_options & OPT_FONT_STRIKE) {
-                g_snprintf(buf2, BUF_LONG, "<STRIKE>%s</STRIKE>", buf);
+                g_snprintf(buf2, limit, "<STRIKE>%s</STRIKE>", buf);
                 strcpy(buf, buf2);
         }
 
         if ((font_options & OPT_FONT_FACE) || c->hasfont) {
-                g_snprintf(buf2, BUF_LONG, "<FONT FACE=\"%s\">%s</FONT>", c->fontface, buf);
+                g_snprintf(buf2, limit, "<FONT FACE=\"%s\">%s</FONT>", c->fontface, buf);
                 strcpy(buf, buf2);
         }
 
 	if ((font_options & OPT_FONT_FGCOL) || c->hasfg) {
-		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", c->fgcol.red, c->fgcol.green, c->fgcol.blue, buf);
+		g_snprintf(buf2, limit, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", c->fgcol.red, c->fgcol.green, c->fgcol.blue, buf);
 		strcpy(buf, buf2);
 	}
 
 	if ((font_options & OPT_FONT_BGCOL) || c->hasbg) {
-		g_snprintf(buf2, BUF_LONG, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", c->bgcol.red, c->bgcol.green, c->bgcol.blue, buf);
+		g_snprintf(buf2, limit, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", c->bgcol.red, c->bgcol.green, c->bgcol.blue, buf);
 		strcpy(buf, buf2);
 	}
 
@@ -607,7 +603,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 			g_free(buf2);
 			return;
 		}
-		g_snprintf(buf, BUF_LONG, "%s", buffy);
+		g_snprintf(buf, limit, "%s", buffy);
 		g_free(buffy);
 	}
 #endif
@@ -617,7 +613,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		write_to_conv(c, buf3, WFLAG_SEND, NULL);
 		g_free(buf3);
 		escape_text(buf);
-		if (escape_message(buf) > MSG_LEN - hdrlen)
+		if (escape_message(buf) > limit/4 - hdrlen)
 			do_error_dialog(_("Message too long, some data truncated."), _("Error"));
 
 	        serv_send_im(c->name, buf, 0);
@@ -643,9 +639,6 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	}
 
 	gtk_widget_grab_focus(c->entry);
-
-	g_free(buf2);
-	g_free(buf);
 }
 
 static int
