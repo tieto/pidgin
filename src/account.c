@@ -567,8 +567,8 @@ parse_account(xmlnode *node)
 	child = xmlnode_get_child(node, "password");
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
 	{
-		gaim_account_set_password(ret, data);
 		gaim_account_set_remember_password(ret, TRUE);
+		gaim_account_set_password(ret, data);
 		g_free(data);
 	}
 
