@@ -184,14 +184,18 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 			       irc->whois.ircop ? _(" <i>(ircop)</i>") : "",
 			       irc->whois.identified ? _(" <i>(identified)</i>") : "");
 	if (irc->whois.away) {
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Away"), irc->whois.away);
+		char *tmp = g_markup_escape_text(irc->whois.away, strlen(irc->whois.away));
 		g_free(irc->whois.away);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Away"), tmp);
+		g_free(tmp);
 	}
 	if (irc->whois.userhost) {
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Username"), irc->whois.userhost);
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Realname"), irc->whois.name);
-		g_free(irc->whois.userhost);
+		char *tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
 		g_free(irc->whois.name);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Username"), irc->whois.userhost);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Realname"), tmp);
+		g_free(irc->whois.userhost);
+		g_free(tmp);
 	}
 	if (irc->whois.server) {
 		g_string_append_printf(info, _("<b>%s:</b> %s"), _("Server"), irc->whois.server);
