@@ -2895,11 +2895,8 @@ static void gtk_html_add_text(GtkHtml * html,
 	 * HTK_SCROLLED_WINDOW(GTK_WIDGET(layout)->parent)->vscrollbar->allocation.width) - 8; 
 	 */
 
-	if ((maxwidth == (hwidth - 8) && gdk_text_measure(cfont, text, num) > maxwidth) || gdk_text_measure(cfont, text, num) < 0) {
-		/* so here's how it works. we divide it in half. we look for the next whitespace char.
-		 * we print the first half up to the whitespace char, then the second half. if we
-		 * didn't find a whitespace char, we search backwards for one. if we still don't find
-		 * one, we just print the two halves; it would have wrapped anyway */
+	if ((maxwidth == (hwidth - 8) && gdk_text_measure(cfont, text, num) > 2 * maxwidth) ||
+	    gdk_text_measure(cfont, text, num) < 0) {
 		int pos = num / 2;
 		static int count = 0;
 		count ++;
