@@ -90,6 +90,7 @@ DLL_C_SRC =		about.c \
 			gtkcellrendererprogress.c \
 			gtkft.c \
 			gtkimhtml.c \
+			gtkpounce.c \
 			gtkutils.c \
 			html.c \
 			idle.c \
