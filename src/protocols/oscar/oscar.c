@@ -2646,6 +2646,9 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		case 0:
 			utf8 = g_strndup(text, text_len);
 			break;
+		case AIM_IMFLAGS_ISO_8859_1:
+			utf8 = g_convert(text, text_len, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
+			break;
 		case AIM_IMFLAGS_UNICODE:
 			utf8 = g_convert(text, text_len, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
 			break;
@@ -5006,6 +5009,8 @@ static fu32_t parse_encoding(const char *enc)
 	charset += 8;
 	if (!strcmp(charset, "\"us-ascii\"")) {
 		return 0;
+	} else if (!strcmp(charset, "\"iso-8859-1\"")) {
+		return AIM_IMFLAGS_ISO_8859_1;
 	} else if (!strcmp(charset, "\"unicode-2-0\"")) {
 		return AIM_IMFLAGS_UNICODE;
 	} else {
