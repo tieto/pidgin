@@ -723,6 +723,9 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_TAG ("STRONG");
 	VALID_TAG ("/STRONG");
 
+	VALID_OPT_TAG ("SPAN");
+	VALID_TAG ("/SPAN");
+
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
@@ -1188,8 +1191,10 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 49:	/* HTML (opt) */
 				case 50:	/* CITE */
 				case 51:	/* /CITE */
+				case 56:	/* SPAN */
+				case 57:	/* /SPAN */
 					break;
-				case 56:	/* comment */
+				case 58:	/* comment */
 					NEW_BIT (NEW_TEXT_BIT);
 					if (imhtml->show_comments)
 						wpos = g_snprintf (ws, len, "%s", tag);

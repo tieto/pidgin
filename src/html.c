@@ -323,12 +323,21 @@ void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned
 	}
 }
 
+struct gaim_parse_tag {
+	char *src_tag;
+	char *dest_tag;
+};
+
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
 						char *o = strchr(c+1, '<'); \
 						char *p = strchr(c+1, '>'); \
 						if(p && (!o || p < o)) { \
-							if(*(p-1) != '/') \
-								tags = g_list_prepend(tags, y); \
+							if(*(p-1) != '/') { \
+								struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1); \
+								pt->src_tag = x; \
+								pt->dest_tag = y; \
+								tags = g_list_prepend(tags, pt); \
+							} \
 							xhtml = g_string_append(xhtml, "<" y); \
 							c += strlen("<" x ); \
 							xhtml = g_string_append_len(xhtml, c, (p - c) + 1); \
@@ -343,8 +352,12 @@ void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned
 								 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
 							xhtml = g_string_append(xhtml, "<" y); \
 							c += strlen("<" x); \
-							if(*c != '/') \
-								tags = g_list_prepend(tags, y); \
+							if(*c != '/') { \
+								struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1); \
+								pt->src_tag = x; \
+								pt->dest_tag = y; \
+								tags = g_list_prepend(tags, pt); \
+							} \
 							continue; \
 						}
 #define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
@@ -372,19 +385,23 @@ char *html_to_xhtml(const char *html) {
 			if(*(c+1) == '/') { /* closing tag */
 				tag = tags;
 				while(tag) {
-					if(!g_ascii_strncasecmp((c+2), tag->data, strlen(tag->data)) && *(c+strlen(tag->data)+2) == '>') {
-						c += strlen(tag->data) + 3;
+					struct gaim_parse_tag *pt = tag->data;
+					if(!g_ascii_strncasecmp((c+2), pt->src_tag, strlen(pt->src_tag)) && *(c+strlen(pt->src_tag)+2) == '>') {
+						c += strlen(pt->src_tag) + 3;
 						break;
 					}
 					tag = tag->next;
 				}
 				if(tag) {
 					while(tags) {
-						g_string_append_printf(xhtml, "</%s>", (char *)tags->data);
+						struct gaim_parse_tag *pt = tags->data;
+						g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(tags == tag)
 							break;
-						tags = g_list_remove(tags, tags->data);
+						tags = g_list_remove(tags, pt);
+						g_free(pt);
 					}
+					g_free(tag->data);
 					tags = g_list_remove(tags, tag->data);
 				} else {
 					/* we tried to close a tag we never opened! escape it
@@ -418,16 +435,46 @@ char *html_to_xhtml(const char *html) {
 				ALLOW_TAG("p");
 				ALLOW_TAG("pre");
 				ALLOW_TAG("q");
-				ALLOW_TAG_ALT("s", "strike"); /* FIXME: see strike */
 				ALLOW_TAG("span");
-				ALLOW_TAG("strike"); /* FIXME: not valid, need to convert */
 				ALLOW_TAG("strong");
-				ALLOW_TAG("sub"); /* FIXME: not valid, need to convert */
-				ALLOW_TAG("sup"); /* FIXME: not valid, need to convert */
-				ALLOW_TAG("u"); /* FIXME: need to convert */
-				ALLOW_TAG_ALT("underline","u"); /* FIXME: need to convert */
 				ALLOW_TAG("ul");
 
+				if(!g_ascii_strncasecmp(c, "<u>", 2) || !g_ascii_strncasecmp(c, "<underline>", strlen("<underline>"))) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = *(c+2) == '>' ? "u" : "underline";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='text-decoration: underline;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<s>", 2) || !g_ascii_strncasecmp(c, "<strike>", strlen("<strike>"))) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = *(c+2) == '>' ? "s" : "strike";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='text-decoration: line-through;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<sub>", 5)) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = "sub";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='vertical-align:sub;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<sup>", 5)) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = "sup";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
+					continue;
+				}
 				if(!g_ascii_strncasecmp(c, "<!--", strlen("<!--"))) {
 					char *p = strstr(c + strlen("<!--"), "-->");
 					if(p) {
