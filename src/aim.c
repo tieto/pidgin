@@ -464,7 +464,10 @@ int main(int argc, char *argv[])
 
 	if (general_options & OPT_GEN_CHECK_VERSIONS)
 	{
+/* FIXME:
+	Thread this code later
 		check_gaim_versions();
+*/
 	}
 
 	if (general_options & OPT_GEN_DEBUG)
