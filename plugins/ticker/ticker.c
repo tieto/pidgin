@@ -54,8 +54,12 @@ GList *tickerbuds = NULL;
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
-static void buddy_ticker_destroy_window(GtkWidget *window, gpointer data) {
-	gtk_widget_hide(window);
+static gboolean buddy_ticker_destroy_window(GtkWidget *window,
+		GdkEventAny *event, gpointer data) {
+	if(window)
+		gtk_widget_hide(window);
+
+	return TRUE; /* don't actually destroy the window */
 }
 
 static void buddy_ticker_create_window() {
@@ -65,7 +69,7 @@ static void buddy_ticker_create_window() {
 	}
 
 	tickerwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	g_signal_connect(G_OBJECT(tickerwindow), "destroy",
+	g_signal_connect(G_OBJECT(tickerwindow), "delete_event",
 			G_CALLBACK (buddy_ticker_destroy_window), NULL);
 	gtk_window_set_title (GTK_WINDOW(tickerwindow), _("Buddy Ticker"));
 	gtk_window_set_role (GTK_WINDOW(tickerwindow), "ticker");
@@ -118,6 +122,7 @@ static void buddy_ticker_add_buddy(struct buddy *b) {
 	TickerData *td;
 
 	buddy_ticker_create_window();
+
 	if (!ticker)
 		return;
 
@@ -150,6 +155,9 @@ static void buddy_ticker_remove_buddy(struct buddy *b) {
 
 	if (!td)
 		return;
+
+	/* pop up the ticker window again */
+	buddy_ticker_create_window();
 
 	gtk_ticker_remove(GTK_TICKER(ticker), td->ebox);
 	tickerbuds = g_list_remove(tickerbuds, td);
@@ -235,7 +243,7 @@ G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
 }
 
 G_MODULE_EXPORT void gaim_plugin_remove() {
-	buddy_ticker_destroy_window(tickerwindow, NULL);
+	buddy_ticker_destroy_window(tickerwindow, NULL, NULL);
 }
 
 struct gaim_plugin_description desc;
