@@ -89,6 +89,7 @@ void serv_close(struct gaim_connection *gc)
 		struct conversation *b = gc->buddy_chats->data;
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
 		b->gc = NULL;
+		update_buttons_by_protocol(b);
 	}
 
 	if (gc->idle_timer > 0)

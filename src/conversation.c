@@ -2028,6 +2028,11 @@ void update_buttons_by_protocol(struct conversation *c)
 		gtk_widget_set_sensitive(c->block, FALSE);
 		gtk_widget_set_sensitive(c->add, FALSE);
 
+		if (c->whisper)
+			gtk_widget_set_sensitive(c->whisper, FALSE);
+		if (c->invite)
+			gtk_widget_set_sensitive(c->invite, FALSE);
+
 		return;
 	}
 
