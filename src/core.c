@@ -96,11 +96,12 @@ static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args)
 
 gint UI_write(struct UI *ui, guchar *data, gint len)
 {
-	GError *error;
+	GError *error = NULL;
 	gint sent;
 	/* we'll let the write silently fail because the read will pick it up as dead */
 	g_io_channel_write_chars(ui->channel, data, len, &sent, &error);
-	g_error_free(error);
+	if (error)
+		g_error_free(error);
 	return sent;
 }
 
@@ -302,7 +303,8 @@ static gint gaim_recv(GIOChannel *source, guchar *buf, gint len)
 
 	while (total < len) {
 		if (g_io_channel_read_chars(source, buf + total, len - total, &cur, &error) != G_IO_STATUS_NORMAL) {
-			g_error_free(error);
+			if (error)
+				g_error_free(error);
 			return -1;
 		}
 		if (cur == 0)
@@ -342,7 +344,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	guchar subtype;
 	guint32 len;
 
-	GError *error;
+	GError *error = NULL;
 
 	guchar *in;
 
@@ -351,8 +353,10 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
-		if(error)
+		if(error) {
 			g_error_free(error);
+			error = NULL;
+		}
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -362,8 +366,10 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
-		if(error)
+		if(error) {
 			g_error_free(error);
+			error = NULL;
+		}
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -373,8 +379,10 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
-		if(error)
+		if(error) {
 			g_error_free(error);
+			error = NULL;
+		}
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -386,8 +394,10 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 			debug_printf("UI has abandoned us!\n");
 			uis = g_slist_remove(uis, ui);
 			g_io_channel_shutdown(ui->channel, TRUE, &error);
-			if(error)
+			if(error) {
 				g_error_free(error);
+				error = NULL;
+			}
 			g_source_remove(ui->inpa);
 			g_free(ui);
 			return FALSE;
