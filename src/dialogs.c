@@ -2500,7 +2500,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_container_add(GTK_CONTAINER(frame), fbox);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
 	gtk_box_pack_start(GTK_BOX(tbox), frame, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(tbox), hbox, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(tbox), hbox, TRUE, FALSE, 5);
 	
 	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
 
