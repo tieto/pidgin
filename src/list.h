@@ -199,7 +199,7 @@ void gaim_blist_update_buddy_idle(struct buddy *buddy, int idle);
 void gaim_blist_update_buddy_evil(struct buddy *buddy, int warning);
 
 /**
- * Updates a buddy's warning level.
+ * Updates a buddy's icon.
  *
  * @param buddy  The buddy whose buddy icon has changed
  */
