@@ -3216,30 +3216,25 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	return;
 }
 
-static void do_alias(GtkWidget *w, gpointer n)
+static void do_alias(GtkWidget *w, struct buddy_show *b)
 {
-	char *name, *who;
-	struct buddy *b;
-	name = g_strdup(gtk_entry_get_text(GTK_ENTRY(aliasentry)));
-	/* FIXME */
-	if ((b = find_buddy(connections->data, name)) == NULL) {
-		g_free(name);
-		destroy_dialog(aliasdlg, aliasdlg);
-		return;
+	GSList *c = b->connlist;
+	struct gaim_connection *g;
+	struct buddy *n;
+	g_free(b->show);
+	b->show = g_strdup(gtk_entry_get_text(GTK_ENTRY(aliasname)));
+	gtk_label_set(GTK_LABEL(b->label), b->show);
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		n = find_buddy(g, b->name);
+		if (n) g_snprintf(n->show, sizeof(n->show), "%s", b->show);
+		c = c->next;
 	}
-	g_snprintf(b->show, sizeof(b->show), "%s", gtk_entry_get_text(GTK_ENTRY(aliasname)));
 	do_export(0, 0);
-	who = g_malloc(sizeof(b->show) + 10);
-	strcpy(who, b->show);
-	/* FIXME */
-	/* gtk_label_set(GTK_LABEL(b->label), who); */
-	g_free(who);
-	/* set_buddy(b); */
-	g_free(name);
 	destroy_dialog(aliasdlg, aliasdlg);
 }
 
-void alias_dialog(struct buddy *b)
+void alias_dialog(struct buddy_show *b)
 {
 	GtkWidget *frame;
 	GtkWidget *vbox;
@@ -3269,7 +3264,7 @@ void alias_dialog(struct buddy *b)
 	aliasname = gtk_entry_new();
         /* Put the buttons in the box */
 
-	add = picture_button(aliasdlg, _("Add"), add_xpm);
+	add = picture_button(aliasdlg, _("Alias"), add_xpm);
 
 	cancel = picture_button(aliasdlg, _("Cancel"), cancel_xpm);
 
@@ -3301,11 +3296,11 @@ void alias_dialog(struct buddy *b)
         gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), aliasdlg);
         gtk_signal_connect(GTK_OBJECT(add), "clicked",
-                           GTK_SIGNAL_FUNC(do_alias), NULL);
+                           GTK_SIGNAL_FUNC(do_alias), b);
         gtk_signal_connect(GTK_OBJECT(aliasentry), "activate",
-                           GTK_SIGNAL_FUNC(do_alias), NULL);
+                           GTK_SIGNAL_FUNC(do_alias), b);
 	gtk_signal_connect(GTK_OBJECT(aliasname), "activate",
-			   GTK_SIGNAL_FUNC(do_alias), NULL);
+			   GTK_SIGNAL_FUNC(do_alias), b);
         /* Finish up */
         gtk_widget_show(add);
         gtk_widget_show(cancel);

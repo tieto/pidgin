@@ -16,10 +16,14 @@ This is just for the buddy list window now. Everything else is nearing completio
 
 3. Need to modify the right-click menu for buddies, to include status for the buddy from each
    connection that has it registered, and also to get available actions from each connection
-   that has it registered.
+   that has it registered. DONE
 
-4. Need to get Aliases working again.
+4. Need to get Aliases working again. DONE - I think
 
 5. Need to set number of buddies in group (as an option)
 
 6. Need to not hide empty groups (as an option)
+
+7. Need to do Buddy Pounces on a per-connection basis
+
+8. Need to report logins/outs to convo window

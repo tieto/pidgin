@@ -226,6 +226,16 @@ struct buddy {
 	u_short caps; /* woohoo! */
 };
 
+struct buddy_show {
+	GtkWidget *item;
+	GtkWidget *pix;
+	GtkWidget *label;
+	char *name;
+	char *show;
+	GSList *connlist;
+	guint log_timer;
+};
+
 struct log_conversation {
 	char name[80];
 	char filename[512];
@@ -798,7 +808,7 @@ extern void save_prefs();
 
 
 /* Functions in dialogs.c */
-extern void alias_dialog(struct buddy *);
+extern void alias_dialog(struct buddy_show *);
 extern void do_export(GtkWidget *, void *);
 extern void show_warn_dialog(struct gaim_connection *, char *);
 extern void do_error_dialog(char *, char *);

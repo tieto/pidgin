@@ -91,14 +91,6 @@ static void new_bp_callback(GtkWidget *w, char *name);
 static void log_callback(GtkWidget *w, char *name);
 
 /* stuff for actual display of buddy list */
-struct buddy_show {
-	GtkWidget *item;
-	GtkWidget *pix;
-	GtkWidget *label;
-	char *name;
-	GSList *connlist;
-	guint log_timer;
-};
 struct group_show {
 	GtkWidget *item;
 	GtkWidget *label;
@@ -252,8 +244,7 @@ void pressed_ticker(char *buddy)
 
 void pressed_alias(GtkWidget *widget, struct buddy_show *b)
 {
-	struct buddy *m = find_buddy(connections->data, b->name);
-	alias_dialog(m);
+	alias_dialog(b);
 }
 
 void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
@@ -1289,13 +1280,14 @@ static struct group_show *new_group_show(char *group) {
 	return g;
 }
 
-static struct buddy_show *new_buddy_show(struct group_show *gs, char *buddy) {
+static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy) {
 	struct buddy_show *b = g_new0(struct buddy_show, 1);
 	GtkWidget *box;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 
-	b->name = g_strdup(buddy);
+	b->name = g_strdup(buddy->name);
+	b->show = g_strdup(buddy->show);
 
 	b->item = gtk_tree_item_new();
 	/* FIXME */
@@ -1316,7 +1308,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, char *buddy) {
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(bm);
 
-	b->label = gtk_label_new(buddy);
+	b->label = gtk_label_new(buddy->show);
 	gtk_misc_set_alignment(GTK_MISC(b->label), 0.0, 0.5);
 	gtk_box_pack_start(GTK_BOX(box), b->label, TRUE, TRUE, 1);
 	gtk_widget_show(b->label);
@@ -1360,6 +1352,7 @@ static int log_timeout(struct buddy_show *b) {
 			g_free(g);
 		}
 		g_free(b->name);
+		g_free(b->show);
 		g_free(b);
 	} else {
 		/* um.... what do we have to do here? just update the pixmap? */
@@ -1397,7 +1390,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if ((gs = find_group_show(g->name)) == NULL)
 			gs = new_group_show(g->name);
 		if ((bs = find_buddy_show(gs, b->name)) == NULL)
-			bs = new_buddy_show(gs, b->name);
+			bs = new_buddy_show(gs, b);
 		if (b->present == 1) {
 			play_sound(BUDDY_ARRIVE);
 			b->present = 2;
