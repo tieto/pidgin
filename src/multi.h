@@ -87,6 +87,12 @@ struct proto_user_opt {
 	int pos;
 };
 
+struct proto_actions_menu {
+	char *label;
+	void (*callback)(struct gaim_connection *);
+	struct gaim_connection *gc;
+};
+
 struct proto_buddy_menu {
 	char *label;
 	void (*callback)(struct gaim_connection *, char *);

@@ -4147,28 +4147,30 @@ void jabber_register_user(struct aim_user *au)
 /* End Jabber "user registration" support */
 /*----------------------------------------*/
 
-static void jabber_do_action(struct gaim_connection *gc, char *act)
-{
-	if (!strcmp(act, _("Set User Info"))) {
-		jabber_setup_set_info(gc);
-	/*
-	} else if (!strcmp(act, _("Set Dir Info"))) {
-		show_set_dir(gc);
-	 */
-	} else if (!strcmp(act, _("Change Password"))) {
-		show_change_passwd(gc);
-	}
-}
-
-static GList *jabber_actions()
+static GList *jabber_actions(struct gaim_connection *gc)
 {
 	GList *m = NULL;
+	struct proto_actions_menu *pam;
 
-	m = g_list_append(m, _("Set User Info"));
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set User Info");
+	pam->callback = jabber_setup_set_info;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
 	/*
-	m = g_list_append(m, _("Set Dir Info"));
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Dir Info");
+	pam->callback = show_set_dir;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 	 */
-	m = g_list_append(m, _("Change Password"));
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Change Password");
+	pam->callback = show_change_passwd;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 
 	return m;
 }
@@ -4183,7 +4185,6 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->list_icon = jabber_list_icon;
 	ret->away_states = jabber_away_states;
 	ret->actions = jabber_actions;
-	ret->do_action = jabber_do_action;
 	ret->buddy_menu = jabber_buddy_menu;
 	ret->edit_buddy_menu = jabber_edit_buddy_menu;
 	ret->login = jabber_login;

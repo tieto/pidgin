@@ -625,6 +625,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 faim_export int aim_send_login(aim_session_t *, aim_conn_t *, const char *, const char *, struct client_info_s *, const char *key);
 faim_export int aim_encode_password_md5(const char *password, const char *key, unsigned char *digest);
 faim_export void aim_purge_rxqueue(aim_session_t *);
+faim_export void aim_cleansnacs(aim_session_t *, int maxage);
 
 #define AIM_TX_QUEUED    0 /* default */
 #define AIM_TX_IMMEDIATE 1

@@ -637,7 +637,7 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
  */
 faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 {
-	struct aim_ssi_item *cur;
+	struct aim_ssi_item *cur, *next;
 
 	/* If there are any buddies directly in the master group, put them in a real group */
 	/* This will kind of mess up if you hit the item limit, but this function isn't too critical */
@@ -646,17 +646,25 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 			aim_ssi_addbuddy(sess, conn, cur->name, "orphans", NULL, NULL, NULL, 0);
 
 	/* Now DESTROY any buddies that are directly in the master group */
-	for (cur=sess->ssi.local; cur; cur=cur->next)
+	cur = sess->ssi.local;
+	while (cur) {
+		next = cur->next;
 		if ((cur->type == AIM_SSI_TYPE_BUDDY) && (cur->gid == 0x0000))
 			aim_ssi_delbuddy(sess, conn, cur->name, NULL);
+		cur = next;
+	}
 
 	/* Check if there are empty groups */
-	for (cur=sess->ssi.local; cur; cur=cur->next)
+	cur = sess->ssi.local;
+	while (cur) {
+		next = cur->next;
 		if (cur->type == AIM_SSI_TYPE_GROUP) {
 			aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00c8, 1);
 			if (!cur->data || !tlv || !tlv->length)
 				aim_ssi_itemlist_del(&sess->ssi.local, cur);
 		}
+		cur = next;
+	}
 
 	/* Check if the master group is empty */
 	if ((cur = aim_ssi_itemlist_find(sess->ssi.local, 0x0000, 0x0000)) && (!cur->data))

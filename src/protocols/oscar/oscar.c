@@ -1884,7 +1884,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			g_hash_table_insert(od->supports_tn, who, who);
 	}
 
-	//strip_linefeed(tmp);
+	/* strip_linefeed(tmp); */
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL), -1);
 	g_free(tmp);
 
@@ -2230,6 +2230,14 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			gchar *dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
 			do_error_dialog("ICQ authorization accepted.", dialog_msg, GAIM_INFO);
 			g_free(dialog_msg);
+		} break;
+
+		case 0x09: { /* Message from the Godly ICQ server itself, I think */
+			if (i >= 5) {
+				gchar *dialog_msg = g_strdup_printf(_("You have received a special message\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
+				do_error_dialog("ICQ Server Message", dialog_msg, GAIM_INFO);
+				g_free(dialog_msg);
+			}
 		} break;
 
 		case 0x0d: { /* Someone has sent you a pager message from http://www.icq.com/your_uin */
@@ -4901,82 +4909,6 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 		oscar_get_info(gc, who);
 }
 
-static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = gc->proto_data;
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Info");
-	pbm->callback = oscar_get_info;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	if (od->icq) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Get Status Msg");
-		pbm->callback = oscar_get_away_msg;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
-	} else {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Get Away Msg");
-		pbm->callback = oscar_get_away_msg;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
-
-		if (aim_sncmp(gc->username, who)) {
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Direct IM");
-			pbm->callback = oscar_ask_direct_im;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
-		
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Send File");
-			pbm->callback = oscar_ask_send_file;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
-		}
-	}
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Capabilities");
-	pbm->callback = oscar_get_caps;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	return m;
-}
-
-static GList *oscar_edit_buddy_menu(struct gaim_connection *gc, char *who)
-{
-	struct oscar_data *od = gc->proto_data;
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-
-	if (od->icq) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Get Info");
-		pbm->callback = oscar_get_info;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
-	}
-
-	if (od->sess->ssi.received_data) {
-		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
-		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Re-request Authorization");
-			pbm->callback = gaim_auth_sendrequest;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
-		}
-	}
-
-	return m;
-}
-
 static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 #ifdef NOSSI
@@ -5088,15 +5020,138 @@ static GList *oscar_away_states(struct gaim_connection *gc)
 	if (!od->icq)
 		return g_list_append(m, GAIM_AWAY_CUSTOM);
 
-	m = g_list_append(m, "Online");
-	m = g_list_append(m, "Away");
-	m = g_list_append(m, "Do Not Disturb");
-	m = g_list_append(m, "Not Available");
-	m = g_list_append(m, "Occupied");
-	m = g_list_append(m, "Free For Chat");
-	m = g_list_append(m, "Invisible");
+	m = g_list_append(m, _("Online"));
+	m = g_list_append(m, _("Away"));
+	m = g_list_append(m, _("Do Not Disturb"));
+	m = g_list_append(m, _("Not Available"));
+	m = g_list_append(m, _("Occupied"));
+	m = g_list_append(m, _("Free For Chat"));
+	m = g_list_append(m, _("Invisible"));
 
 	return m;
+}
+
+static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = gc->proto_data;
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Info");
+	pbm->callback = oscar_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	if (od->icq) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Get Status Msg");
+		pbm->callback = oscar_get_away_msg;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	} else {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Get Away Msg");
+		pbm->callback = oscar_get_away_msg;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+
+		if (aim_sncmp(gc->username, who)) {
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Direct IM");
+			pbm->callback = oscar_ask_direct_im;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
+		
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Send File");
+			pbm->callback = oscar_ask_send_file;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
+		}
+	}
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Capabilities");
+	pbm->callback = oscar_get_caps;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	return m;
+}
+
+static GList *oscar_edit_buddy_menu(struct gaim_connection *gc, char *who)
+{
+	struct oscar_data *od = gc->proto_data;
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+
+	if (od->icq) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Get Info");
+		pbm->callback = oscar_get_info;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	}
+
+	if (od->sess->ssi.received_data) {
+		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
+		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Re-request Authorization");
+			pbm->callback = gaim_auth_sendrequest;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
+		}
+	}
+
+	return m;
+}
+
+static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
+	struct oscar_data *od = gc->proto_data;
+	if (!aim_sncmp(gc->username, nick)) {
+		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
+			od->setnick = TRUE;
+			od->newsn = g_strdup(nick);
+			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+		} else {
+			aim_admin_setnick(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH), nick);
+		}
+	} else {
+		do_error_dialog(_("The new formatting is invalid."),
+				_("Screenname formatting can change only capitalization and whitespace."), GAIM_ERROR);
+	}
+}
+
+static void oscar_show_format_screenname(struct gaim_connection *gc)
+{
+	do_prompt_dialog(_("New screenname formatting:"), gc->displayname, gc, oscar_format_screenname, NULL);
+}
+
+static void oscar_confirm_account(struct gaim_connection *gc)
+{
+	struct oscar_data *od = gc->proto_data;
+	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
+
+	if (conn) {
+		aim_admin_reqconfirm(od->sess, conn);
+	} else {
+		od->conf = TRUE;
+		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+	}
+}
+
+static void oscar_show_email(struct gaim_connection *gc)
+{
+	struct oscar_data *od = gc->proto_data;
+	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
+
+	if (conn) {
+		aim_admin_getinfo(od->sess, conn, 0x11);
+	} else {
+		od->reqemail = TRUE;
+		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+	}
 }
 
 static void oscar_change_email(struct gaim_connection *gc, char *email)
@@ -5113,96 +5168,131 @@ static void oscar_change_email(struct gaim_connection *gc, char *email)
 	}
 }
 
-static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
-	struct oscar_data *od = gc->proto_data;
-	if (!aim_sncmp(gc->username, nick)) {
-		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
-			od->setnick = TRUE;
-			od->newsn = g_strdup(nick);
-			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
-		} else {
-			aim_admin_setnick(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH), nick);
-		}
-	} else {
-		do_error_dialog("The new formatting is invalid.",
-				"Screenname formatting can change only capitalization and whitespace.", GAIM_ERROR);
-	}
+static void oscar_show_change_email(struct gaim_connection *gc)
+{
+	do_prompt_dialog(_("Change Address To: "), NULL, gc, oscar_change_email, NULL);
 }
 
-static void oscar_do_action(struct gaim_connection *gc, char *act)
+static void oscar_show_awaitingauth(struct gaim_connection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
-	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
+	gchar *nombre, *text, *tmp;
+	GSList *curg, *curb;
+	int num=0;
 
-	if (!strcmp(act, "Set User Info")) {
-		show_set_info(gc);
-	} else if (!strcmp(act, "Change Password")) {
-		show_change_passwd(gc);
-	} else if (!strcmp(act, "Format Screenname")) {
-		do_prompt_dialog("New screenname formatting:", 
-				 gc->displayname, gc, oscar_format_screenname, NULL);
-	} else if (!strcmp(act, "Confirm Account")) {
-		if (!conn) {
-			od->conf = TRUE;
-			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
-		} else
-			aim_admin_reqconfirm(od->sess, conn);
-	} else if (!strcmp(act, "Display Current Registered Address")) {
-		if (!conn) {
-			od->reqemail = TRUE;
-			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
-		} else
-			aim_admin_getinfo(od->sess, conn, 0x11);
-	} else if (!strcmp(act, "Change Current Registered Address")) {
-		do_prompt_dialog("Change Address To: ", NULL, gc, oscar_change_email, NULL);
-	} else if (!strcmp(act, "Show Buddies Awaiting Authorization")) {
-		gchar *nombre, *text, *tmp;
-		GSList *curg, *curb;
+	text = g_strdup(_("You are awaiting authorization from the following buddies:<BR>"));
 
-		text = g_strdup(_("You are awaiting authorization from the following buddies:"));
-
-		for (curg=gc->groups; curg; curg=g_slist_next(curg)) {
-			struct group *group = curg->data;
-			for (curb=group->members; curb; curb=g_slist_next(curb)) {
-				struct buddy *buddy = curb->data;
-				if (aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
-					if (get_buddy_alias_only(buddy))
-						nombre = g_strdup_printf(" %s (%s)", buddy->name, get_buddy_alias_only(buddy));
-					else
-						nombre = g_strdup(buddy->name);
-					tmp = g_strdup_printf("%s<BR>%s", text, nombre);
-					g_free(text);
-					text = tmp;
-					g_free(nombre);
-				}
+	for (curg=gc->groups; curg; curg=g_slist_next(curg)) {
+		struct group *group = curg->data;
+		for (curb=group->members; curb; curb=g_slist_next(curb)) {
+			struct buddy *buddy = curb->data;
+			if (aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
+				if (get_buddy_alias_only(buddy))
+					nombre = g_strdup_printf(" %s (%s)", buddy->name, get_buddy_alias_only(buddy));
+				else
+					nombre = g_strdup(buddy->name);
+				tmp = g_strdup_printf("%s<BR>%s", text, nombre);
+				g_free(text);
+				text = tmp;
+				g_free(nombre);
+				num++;
 			}
 		}
+	}
 
-		tmp = g_strdup_printf(_("%s<BR><BR>You can re-request authorization from these buddies by right-clicking on them in the \"Edit Buddies\" pane and selecting \"Re-request authorization.\""), text);
+	if (!num) {
+		tmp = g_strdup_printf("%s<BR>%s", text, _("<i>you are not waiting for authorization</i>"));
 		g_free(text);
 		text = tmp;
-		g_show_info_text(gc, gc->username, 2, text, NULL);
-		g_free(text);
-	} else if (!strcmp(act, "Search for Buddy by Email")) {
-		show_find_email(gc);
 	}
+
+	tmp = g_strdup_printf(_("%s<BR><BR>You can re-request authorization from these buddies by right-clicking on them in the \"Edit Buddies\" pane and selecting \"Re-request authorization.\""), text);
+	g_free(text);
+	text = tmp;
+	g_show_info_text(gc, gc->username, 2, text, NULL);
+	g_free(text);
 }
 
-static GList *oscar_actions()
+static void oscar_show_chpassurl(struct gaim_connection *gc)
 {
+	struct oscar_data *od = gc->proto_data;
+	open_url(NULL, od->sess->authinfo->chpassurl);
+}
+
+static GList *oscar_actions(struct gaim_connection *gc)
+{
+	struct oscar_data *od = gc->proto_data;
+	struct proto_actions_menu *pam;
 	GList *m = NULL;
 
-	m = g_list_append(m, "Set User Info");
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set User Info");
+	pam->callback = show_set_info;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	if (od->sess->authinfo->regstatus == 0x0003) {
+		/* AIM actions */
+		m = g_list_append(m, NULL);
+
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Change Password");
+		pam->callback = show_change_passwd;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Format Screenname");
+		pam->callback = oscar_show_format_screenname;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Confirm Account");
+		pam->callback = oscar_confirm_account;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Display Current Registered Address");
+		pam->callback = oscar_show_email;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Change Current Registered Address");
+		pam->callback = oscar_show_change_email;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+	} else if (od->sess->authinfo->chpassurl) {
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Change Password");
+		pam->callback = oscar_show_chpassurl;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+	}
+
 	m = g_list_append(m, NULL);
-	m = g_list_append(m, "Change Password");
-	m = g_list_append(m, "Format Screenname");
-	m = g_list_append(m, "Confirm Account");
-	m = g_list_append(m, "Display Current Registered Address");
-	m = g_list_append(m, "Change Current Registered Address");
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Show Buddies Awaiting Authorization");
+	pam->callback = oscar_show_awaitingauth;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
 	m = g_list_append(m, NULL);
-	m = g_list_append(m, "Show Buddies Awaiting Authorization");
-	m = g_list_append(m, NULL);
-	m = g_list_append(m, "Search for Buddy by Email");
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Search for Buddy by Email");
+	pam->callback = show_find_email;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Search for Buddy by Information");
+	pam->callback = show_find_info;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 
 	return m;
 }
@@ -5301,7 +5391,6 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;
 	ret->actions = oscar_actions;
-	ret->do_action = oscar_do_action;
 	ret->buddy_menu = oscar_buddy_menu;
 	ret->edit_buddy_menu = oscar_edit_buddy_menu;
 	ret->login = oscar_login;

@@ -1129,17 +1129,20 @@ static void yahoo_act_id(gpointer data, char *entry)
 	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", entry);
 }
 
-static void yahoo_do_action(struct gaim_connection *gc, char *act)
+static void yahoo_show_act_id(struct gaim_connection *gc)
 {
-	if (!strcmp(act, "Activate ID")) {
-		do_prompt_dialog("Activate which ID:", gc->displayname, gc, yahoo_act_id, NULL);
-	}
+	do_prompt_dialog("Activate which ID:", gc->displayname, gc, yahoo_act_id, NULL);
 }
 
-static GList *yahoo_actions() {
+static GList *yahoo_actions(struct gaim_connection *gc) {
 	GList *m = NULL;
+	struct proto_actions_menu *pam;
 
-	m = g_list_append(m, "Activate ID");
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Activate ID");
+	pam->callback = yahoo_show_act_id;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 
 	return m;
 }
@@ -1347,7 +1350,6 @@ G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
 	ret->buddy_menu = yahoo_buddy_menu;
 	ret->list_icon = yahoo_list_icon;
 	ret->actions = yahoo_actions;
-	ret->do_action = yahoo_do_action;
 	ret->send_im = yahoo_send_im;
 	ret->away_states = yahoo_away_states;
 	ret->set_away = yahoo_set_away;

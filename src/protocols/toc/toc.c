@@ -1379,24 +1379,28 @@ static GList *toc_away_states(struct gaim_connection *gc)
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }
 
-static void toc_do_action(struct gaim_connection *gc, char *act)
-{
-	if (!strcmp(act, "Set User Info")) {
-		show_set_info(gc);
-	} else if (!strcmp(act, "Set Dir Info")) {
-		show_set_dir(gc);
-	} else if (!strcmp(act, "Change Password")) {
-		show_change_passwd(gc);
-	}
-}
-
-static GList *toc_actions()
+static GList *toc_actions(struct gaim_connection *gc)
 {
 	GList *m = NULL;
+	struct proto_actions_menu *pam;
 
-	m = g_list_append(m, "Set User Info");
-	m = g_list_append(m, "Set Dir Info");
-	m = g_list_append(m, "Change Password");
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set User Info");
+	pam->callback = show_set_info;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Dir Info");
+	pam->callback = show_set_dir;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Change Password");
+	pam->callback = show_change_passwd;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 
 	return m;
 }
@@ -1410,7 +1414,6 @@ G_MODULE_EXPORT void toc_init(struct prpl *ret)
 	ret->list_icon = toc_list_icon;
 	ret->away_states = toc_away_states;
 	ret->actions = toc_actions;
-	ret->do_action = toc_do_action;
 	ret->buddy_menu = toc_buddy_menu;
 	ret->login = toc_login;
 	ret->close = toc_close;

@@ -139,7 +139,6 @@ faim_internal void aim_initsnachash(aim_session_t *sess);
 faim_internal aim_snacid_t aim_newsnac(aim_session_t *, aim_snac_t *newsnac);
 faim_internal aim_snacid_t aim_cachesnac(aim_session_t *sess, const fu16_t family, const fu16_t type, const fu16_t flags, const void *data, const int datalen);
 faim_internal aim_snac_t *aim_remsnac(aim_session_t *, aim_snacid_t id);
-faim_internal void aim_cleansnacs(aim_session_t *, int maxage);
 faim_internal int aim_putsnac(aim_bstream_t *, fu16_t family, fu16_t type, fu16_t flags, aim_snacid_t id);
 
 /* Stored in ->priv of the service request SNAC for chats. */

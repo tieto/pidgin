@@ -139,8 +139,6 @@ void serv_finish_login(struct gaim_connection *gc)
 	gc->idle_timer = g_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);
 
-	time(&gc->login_time);
-
 	if (gc->prpl->options & OPT_PROTO_CORRECT_TIME)
 		serv_add_buddy(gc, gc->username);
 

@@ -2551,18 +2551,21 @@ static void msn_act_id(gpointer data, char *entry)
 	}
 }
 
-static void msn_do_action(struct gaim_connection *gc, char *act)
+static void msn_show_set_friendly_name(struct gaim_connection *gc)
 {
-	if (!strcmp(act, _("Set Friendly Name"))) {
-		do_prompt_dialog(_("Set Friendly Name:"), gc->displayname, gc, msn_act_id, NULL);
-	}
+	do_prompt_dialog(_("Set Friendly Name:"), gc->displayname, gc, msn_act_id, NULL);
 }
 
-static GList *msn_actions()
+static GList *msn_actions(struct gaim_connection *gc)
 {
 	GList *m = NULL;
+	struct proto_actions_menu *pam;
 
-	m = g_list_append(m, _("Set Friendly Name"));
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Friendly Name");
+	pam->callback = msn_show_set_friendly_name;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 
 	return m;
 }
@@ -2837,7 +2840,6 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->chat_invite = msn_chat_invite;
 	ret->chat_leave = msn_chat_leave;
 	ret->normalize = msn_normalize;
-	ret->do_action = msn_do_action;
 	ret->actions = msn_actions;
 	ret->convo_closed = msn_convo_closed;
 	ret->keepalive = msn_keepalive;

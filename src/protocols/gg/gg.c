@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4474 2003-01-07 20:57:48Z thekingant $
+ * $Id: gg.c 4597 2003-01-18 01:58:00Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1157,32 +1157,44 @@ static void agg_change_passwd(struct gaim_connection *gc, const char *old, const
 	}                                        
 }
 
-static void agg_do_action(struct gaim_connection *gc, char *action)
-{
-	if (!strcmp(action, _("Directory Search"))) {
-		show_find_info(gc);
-	} else if (!strcmp(action, _("Change Password"))) {
-		show_change_passwd(gc);
-	} else if (!strcmp(action, _("Import Buddy List from Server"))) {
-		import_buddies_server(gc);
-	} else if (!strcmp(action, _("Export Buddy List to Server"))) {
-		export_buddies_server(gc);
-	} else if (!strcmp(action, _("Delete Buddy List from Server"))) {
-	        delete_buddies_server(gc);
-	}
-}
-
-static GList *agg_actions()
+static GList *agg_actions(struct gaim_connection *gc)
 {
 	GList *m = NULL;
+	struct proto_actions_menu *pam;
 
-	m = g_list_append(m, _("Directory Search"));
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Directory Search");
+	pam->callback = show_find_info;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
 	m = g_list_append(m, NULL);
-	m = g_list_append(m, _("Change Password"));
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Change Password");
+	pam->callback = show_change_passwd;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
 	m = g_list_append(m, NULL);
-	m = g_list_append(m, _("Import Buddy List from Server"));
-	m = g_list_append(m, _("Export Buddy List to Server"));
-	m = g_list_append(m, _("Delete Buddy List from Server"));
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Import Buddy List from Server");
+	pam->callback = import_buddies_server;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Export Buddy List to Server");
+	pam->callback = export_buddies_server;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Delete Buddy List from Server");
+	pam->callback = delete_buddies_server;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 
 	return m;
 }
@@ -1258,7 +1270,6 @@ G_MODULE_EXPORT void gg_init(struct prpl *ret)
 	ret->list_icon = agg_list_icon;
 	ret->away_states = agg_away_states;
 	ret->actions = agg_actions;
-	ret->do_action = agg_do_action;
 	ret->buddy_menu = agg_buddy_menu;
 	ret->chat_info = NULL;
 	ret->login = agg_login;

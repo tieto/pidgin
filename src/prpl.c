@@ -315,10 +315,10 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	gtk_widget_show_all(window);
 }
 
-static void proto_act(GtkObject *obj, struct gaim_connection *gc)
+static void proto_act(GtkObject *obj, struct proto_actions_menu *pam)
 {
-	char *act = gtk_object_get_user_data(obj);
-	gc->prpl->do_action(gc, act);
+	if (pam->callback && pam->gc)
+		pam->callback(pam->gc);
 }
 
 void do_proto_menu()
@@ -327,6 +327,7 @@ void do_proto_menu()
 	GtkWidget *submenu;
 	GList *l;
 	GSList *c = connections;
+	struct proto_actions_menu *pam;
 	struct gaim_connection *gc = NULL;
 	int count = 0;
 	char buf[256];
@@ -336,20 +337,24 @@ void do_proto_menu()
 
 	l = gtk_container_children(GTK_CONTAINER(protomenu));
 	while (l) {
-		gtk_container_remove(GTK_CONTAINER(protomenu), GTK_WIDGET(l->data));
+		menuitem = l->data;
+		pam = gtk_object_get_data(GTK_OBJECT(menuitem), "user_data");
+		if (pam)
+			g_free(pam);
+		gtk_container_remove(GTK_CONTAINER(protomenu), GTK_WIDGET(menuitem));
 		l = l->next;
 	}
 
 	while (c) {
 		gc = c->data;
-		if (gc->prpl->actions && gc->prpl->do_action)
+		if (gc->prpl->actions && gc->login_time)
 			count++;
 		c = g_slist_next(c);
 	}
 	c = connections;
 
 	if (!count) {
-		g_snprintf(buf, sizeof(buf), "No actions available");
+		g_snprintf(buf, sizeof(buf), _("No actions available"));
 		menuitem = gtk_menu_item_new_with_label(buf);
 		gtk_menu_append(GTK_MENU(protomenu), menuitem);
 		gtk_widget_show(menuitem);
@@ -357,39 +362,35 @@ void do_proto_menu()
 	}
 
 	if (count == 1) {
-		GList *tmp, *act;
+		GList *act;
 		while (c) {
 			gc = c->data;
-			if (gc->prpl->actions && gc->prpl->do_action)
+			if (gc->prpl->actions && gc->login_time)
 				break;
 			c = g_slist_next(c);
 		}
 
-		tmp = act = gc->prpl->actions();
+		act = gc->prpl->actions(gc);
 
 		while (act) {
-			if (act->data == NULL) {
+			if (act->data) {
+				struct proto_actions_menu *pam = act->data;
+				menuitem = gtk_menu_item_new_with_label(pam->label);
+				gtk_menu_append(GTK_MENU(protomenu), menuitem);
+				g_signal_connect(GTK_OBJECT(menuitem), "activate",
+							G_CALLBACK(proto_act), pam);
+				gtk_object_set_data(GTK_OBJECT(menuitem), "user_data", pam);
+				gtk_widget_show(menuitem);
+			} else {
 				gaim_separator(protomenu);
-				act = g_list_next(act);
-				continue;
 			}
-
-			menuitem = gtk_menu_item_new_with_label(act->data);
-			gtk_object_set_user_data(GTK_OBJECT(menuitem), act->data);
-			gtk_menu_append(GTK_MENU(protomenu), menuitem);
-			g_signal_connect(GTK_OBJECT(menuitem), "activate",
-					   G_CALLBACK(proto_act), gc);
-			gtk_widget_show(menuitem);
-
 			act = g_list_next(act);
 		}
-
-		g_list_free(tmp);
 	} else {
 		while (c) {
-			GList *tmp, *act;
+			GList *act;
 			gc = c->data;
-			if (!gc->prpl->actions || !gc->prpl->do_action) {
+			if (!gc->prpl->actions || !gc->login_time) {
 				c = g_slist_next(c);
 				continue;
 			}
@@ -403,26 +404,22 @@ void do_proto_menu()
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 			gtk_widget_show(submenu);
 
-			tmp = act = gc->prpl->actions();
+			act = gc->prpl->actions(gc);
 
 			while (act) {
-				if (act->data == NULL) {
+				if (act->data) {
+					struct proto_actions_menu *pam = act->data;
+					menuitem = gtk_menu_item_new_with_label(pam->label);
+					gtk_menu_append(GTK_MENU(submenu), menuitem);
+					g_signal_connect(GTK_OBJECT(menuitem), "activate",
+								G_CALLBACK(proto_act), pam);
+					gtk_object_set_data(GTK_OBJECT(menuitem), "user_data", pam);
+					gtk_widget_show(menuitem);
+				} else {
 					gaim_separator(submenu);
-					act = g_list_next(act);
-					continue;
 				}
-
-				menuitem = gtk_menu_item_new_with_label(act->data);
-				gtk_object_set_user_data(GTK_OBJECT(menuitem), act->data);
-				gtk_menu_append(GTK_MENU(submenu), menuitem);
-				g_signal_connect(GTK_OBJECT(menuitem), "activate",
-						   G_CALLBACK(proto_act), gc);
-				gtk_widget_show(menuitem);
-
 				act = g_list_next(act);
 			}
-
-			g_list_free(tmp);
 			c = g_slist_next(c);
 		}
 	}
@@ -664,9 +661,9 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		   msg ? msg : "",
 		   find_buddy(gc, ga->who) ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));
 	if (find_buddy(gc, ga->who))
-		do_error_dialog(buf, _("Gaim - Information"), GAIM_INFO);
+		do_error_dialog(_("Gaim - Information"), buf, GAIM_INFO);
 	else
-		do_ask_dialog(buf, _("Gaim - Confirm"), ga, _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
+		do_ask_dialog(_("Gaim - Confirm"), buf, ga, _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
 }
 
 static GtkWidget *regdlg = NULL;

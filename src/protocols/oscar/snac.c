@@ -143,7 +143,7 @@ faim_internal faim_shortfunc void aim_cleansnac(aim_session_t *sess, aim_snac_t 
  * maxage is the _minimum_ age in seconds to keep SNACs.
  *
  */
-faim_internal void aim_cleansnacs(aim_session_t *sess, int maxage)
+faim_export void aim_cleansnacs(aim_session_t *sess, int maxage)
 {
 	int i;
 

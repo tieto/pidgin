@@ -1321,6 +1321,9 @@ void account_online(struct gaim_connection *gc)
 	struct signon_meter *meter = find_signon_meter(gc);
 	GtkTreeIter iter;
 
+	/* Set the time the account came online */
+	time(&gc->login_time);
+
 	/* first we hide the login progress meter */
 	if (meter) {
 		kill_meter(meter);

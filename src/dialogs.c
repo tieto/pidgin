@@ -2771,8 +2771,8 @@ void show_find_info(struct gaim_connection *gc)
 	b->stateentry = gtk_entry_new();
 	b->countryentry = gtk_entry_new();
 
-	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), ok, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
 
 	/* Line 1 */
 	label = gtk_label_new(_("First Name"));
@@ -3989,14 +3989,14 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	button = picture_button(window, _("Cancel"), cancel_xpm);
+	button = picture_button(window, _("Okay"), ok_xpm);
+	gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(GTK_OBJECT(w)));
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_clear_log_file), name);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 
-	button = picture_button(window, _("Okay"), ok_xpm);
-	gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(GTK_OBJECT(w)));
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_clear_log_file), name);
+	button = picture_button(window, _("Cancel"), cancel_xpm);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
@@ -4244,6 +4244,7 @@ void show_log(char *nm)
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_widget_set_usize(sw, 390, 220);
 	gtk_container_add(GTK_CONTAINER(frame), sw);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
