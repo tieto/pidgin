@@ -37,7 +37,7 @@ struct _GaimGtkPluginUiInfo
 {
 	GtkWidget *(*get_config_frame)(GaimPlugin *plugin);
 
-	void *iter;                                           /**< Reserved */
+	int page_num;                                         /**< Reserved */
 };
 
 #define GAIM_GTK_PLUGIN_TYPE "gtk"

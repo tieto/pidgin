@@ -146,7 +146,7 @@ struct _GaimPlugin
 struct _GaimPluginUiInfo {
 	GaimPluginPrefFrame *(*get_plugin_pref_frame)(GaimPlugin *plugin);
 
-	void *iter;                                           /**< Reserved */
+	int page_num;                                         /**< Reserved */
 	GaimPluginPrefFrame *frame;                           /**< Reserved */
 };
 

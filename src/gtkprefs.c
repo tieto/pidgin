@@ -64,14 +64,14 @@ static GtkWidget *prefs_proxy_frame = NULL;
 static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
-static GtkTreeIter proto_iter, plugin_iter;
+static GtkTreeIter plugin_iter;
 
 /*
  * PROTOTYPES
  */
-static GtkTreeIter *prefs_notebook_add_page(const char*, GdkPixbuf*,
-											GtkWidget*, GtkTreeIter*,
-											GtkTreeIter*, int);
+static int prefs_notebook_add_page(const char*, GdkPixbuf*,
+									GtkWidget*, GtkTreeIter*,
+									GtkTreeIter*, int);
 static void delete_prefs(GtkWidget *, void *);
 static void update_plugin_list(void *data);
 
@@ -127,7 +127,7 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 	}
 
 	gaim_set_accessible_label (spin, label);
-	
+
 	return hbox;
 }
 
@@ -337,10 +337,98 @@ gaim_gtk_prefs_dropdown(GtkWidget *box, const gchar *title, GaimPrefType type,
 }
 
 static void
+add_plugin_prefs(GaimPlugin *plugin)
+{
+	/*
+	 * NOTE: This is basically the same check as before
+	 *       (plug->type == plugin), but now there aren't plugin types.
+	 *       Not yet, anyway. I want to do a V2 of the plugin API.
+	 *       The thing is, we should have a flag specifying the UI type,
+	 *       or just whether it's a general plugin or a UI-specific
+	 *       plugin. We should only load this if it's UI-specific.
+	 *
+	 *         -- ChipX86
+	 */
+	if (GAIM_IS_GTK_PLUGIN(plugin))
+	{
+		GtkWidget *config_frame;
+		GaimGtkPluginUiInfo *ui_info;
+
+		ui_info = GAIM_GTK_PLUGIN_UI_INFO(plugin);
+		config_frame = gaim_gtk_plugin_get_config_frame(plugin);
+
+		if (config_frame != NULL)
+		{
+			ui_info->page_num =
+				prefs_notebook_add_page(_(plugin->info->name), NULL,
+										config_frame, NULL,
+										&plugin_iter, notebook_page++);
+		}
+	}
+
+	if (GAIM_PLUGIN_HAS_PREF_FRAME(plugin))
+	{
+		GtkWidget *gtk_frame;
+		GaimPluginUiInfo *prefs_info;
+
+		prefs_info = GAIM_PLUGIN_UI_INFO(plugin);
+		prefs_info->frame = prefs_info->get_plugin_pref_frame(plugin);
+		gtk_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->frame);
+
+		if (GTK_IS_WIDGET(gtk_frame))
+		{
+			prefs_info->page_num =
+				prefs_notebook_add_page(_(plugin->info->name), NULL,
+										gtk_frame, NULL,
+										(plugin->info->type == GAIM_PLUGIN_PROTOCOL) ?  NULL : &plugin_iter,
+										notebook_page++);
+		} else if(prefs_info->frame) {
+			/* in the event that there is a pref frame and we can
+			 * not make a widget out of it, we free the
+			 * pluginpref frame --Gary
+			 */
+			gaim_plugin_pref_frame_destroy(prefs_info->frame);
+		}
+	}
+}
+
+static void
+delete_plugin_prefs(GaimPlugin *plugin)
+{
+	if (GAIM_IS_GTK_PLUGIN(plugin))
+	{
+		GaimGtkPluginUiInfo *ui_info;
+
+		ui_info = GAIM_GTK_PLUGIN_UI_INFO(plugin);
+
+		if (ui_info != NULL && ui_info->page_num > 0) {
+			gtk_notebook_remove_page(GTK_NOTEBOOK(prefsnotebook),
+									 ui_info->page_num);
+		}
+	}
+
+	if (GAIM_PLUGIN_HAS_PREF_FRAME(plugin))
+	{
+		GaimPluginUiInfo *prefs_info;
+
+		prefs_info = GAIM_PLUGIN_UI_INFO(plugin);
+
+		if (prefs_info->frame != NULL) {
+			gaim_plugin_pref_frame_destroy(prefs_info->frame);
+			prefs_info->frame = NULL;
+		}
+
+		if (prefs_info->page_num > 0) {
+			gtk_notebook_remove_page(GTK_NOTEBOOK(prefsnotebook),
+									 prefs_info->page_num);
+		}
+	}
+}
+
+static void
 delete_prefs(GtkWidget *asdf, void *gdsa)
 {
 	GList *l;
-	GaimPlugin *plug;
 
 	/* Close any "select sound" request dialogs */
 	gaim_request_close_with_handle(prefs);
@@ -356,35 +444,9 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	notebook_page = 0;
 	smiley_theme_store = NULL;
 
-	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
-		plug = l->data;
-
-		if (GAIM_IS_GTK_PLUGIN(plug)) {
-			GaimGtkPluginUiInfo *ui_info;
-
-			ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
-
-			if (ui_info->iter != NULL) {
-				g_free(ui_info->iter);
-				ui_info->iter = NULL;
-			}
-		}
-
-		if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
-			GaimPluginUiInfo *prefs_info;
-
-			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
-
-			if(prefs_info->frame != NULL) {
-				gaim_plugin_pref_frame_destroy(prefs_info->frame);
-				prefs_info->frame = NULL;
-			}
-
-			if(prefs_info->iter != NULL) {
-				g_free(prefs_info->iter);
-				prefs_info->iter = NULL;
-			}
-		}
+	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next)
+	{
+		delete_plugin_prefs(l->data);
 	}
 }
 
@@ -1829,85 +1891,10 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 
 	if (!gaim_plugin_is_loaded(plug)) {
 		gaim_plugin_load(plug);
-
-		/*
-		 * NOTE: This is basically the same check as before
-		 *       (plug->type == plugin), but now there aren't plugin types.
-		 *       Not yet, anyway. I want to do a V2 of the plugin API.
-		 *       The thing is, we should have a flag specifying the UI type,
-		 *       or just whether it's a general plugin or a UI-specific
-		 *       plugin. We should only load this if it's UI-specific.
-		 *
-		 *         -- ChipX86
-		 */
-		if (GAIM_IS_GTK_PLUGIN(plug))
-		{
-			GtkWidget *config_frame;
-			GaimGtkPluginUiInfo *ui_info;
-
-			ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
-			config_frame = gaim_gtk_plugin_get_config_frame(plug);
-
-			if (config_frame != NULL) {
-				ui_info->iter = g_new0(GtkTreeIter, 1);
-				prefs_notebook_add_page(_(plug->info->name), NULL,
-							config_frame, ui_info->iter,
-							&plugin_iter, notebook_page++);
-			}
-		}
-
-		if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
-			GtkTreeIter iter;
-			GtkWidget *pref_frame;
-			GaimPluginUiInfo *prefs_info;
-
-			if(plug->info->type == GAIM_PLUGIN_PROTOCOL)
-				iter = proto_iter;
-			else
-				iter = plugin_iter;
-
-			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
-			prefs_info->frame = prefs_info->get_plugin_pref_frame(plug);
-			pref_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->frame);
-
-			if(pref_frame != NULL) {
-				prefs_info->iter = g_new0(GtkTreeIter, 1);
-				prefs_notebook_add_page(_(plug->info->name), NULL,
-										pref_frame, prefs_info->iter,
-										&iter, notebook_page++);
-			}
-		}
+		add_plugin_prefs(plug);
 	}
 	else {
-		if (GAIM_IS_GTK_PLUGIN(plug)) {
-			GaimGtkPluginUiInfo *ui_info;
-
-			ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
-
-			if (ui_info != NULL && ui_info->iter != NULL) {
-				g_free(ui_info->iter);
-				ui_info->iter = NULL;
-			}
-		}
-
-		if (GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
-			GaimPluginUiInfo *prefs_info;
-
-			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
-
-			if(prefs_info != NULL) {
-				if(prefs_info->frame != NULL) {
-					gaim_plugin_pref_frame_destroy(prefs_info->frame);
-					prefs_info->frame = NULL;
-				}
-
-				if(prefs_info->iter != NULL) {
-					g_free(prefs_info->iter);
-					prefs_info->iter = NULL;
-				}
-			}
-		}
-
+		delete_plugin_prefs(plug);
 		gaim_plugin_unload(plug);
 	}
 
@@ -2085,7 +2072,7 @@ static GtkWidget *plugin_page ()
 	return ret;
 }
 
-GtkTreeIter *prefs_notebook_add_page(const char *text,
+int prefs_notebook_add_page(const char *text,
 				     GdkPixbuf *pixbuf,
 				     GtkWidget *page,
 				     GtkTreeIter *iter,
@@ -2100,14 +2087,13 @@ GtkTreeIter *prefs_notebook_add_page(const char *text,
 		g_object_unref(pixbuf);
 	if (icon)
 		g_object_unref(icon);
-	gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-	return iter;
+
+	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
 }
 
 void prefs_notebook_init() {
 	GtkTreeIter p, c, c2;
 	GList *l;
-	GaimPlugin *plug;
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c2, &c, notebook_page++);
@@ -2128,45 +2114,7 @@ void prefs_notebook_init() {
 		prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
 
 		for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
-			plug = (GaimPlugin *)l->data;
-
-			if (GAIM_IS_GTK_PLUGIN(plug)) {
-				GtkWidget *config_frame;
-				GaimGtkPluginUiInfo *ui_info;
-
-				ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
-				config_frame = gaim_gtk_plugin_get_config_frame(plug);
-
-				if (config_frame != NULL) {
-					ui_info->iter = g_new0(GtkTreeIter, 1);
-					prefs_notebook_add_page(_(plug->info->name), NULL,
-											config_frame, ui_info->iter,
-											&plugin_iter, notebook_page++);
-				}
-			}
-
-			if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
-				GtkWidget *gtk_frame;
-				GaimPluginUiInfo *prefs_info;
-
-				prefs_info = GAIM_PLUGIN_UI_INFO(plug);
-				prefs_info->frame = prefs_info->get_plugin_pref_frame(plug);
-				gtk_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->frame);
-
-				if(GTK_IS_WIDGET(gtk_frame)) {
-					prefs_info->iter = g_new0(GtkTreeIter, 1);
-					prefs_notebook_add_page(_(plug->info->name), NULL,
-										gtk_frame, prefs_info->iter,
-										(plug->info->type == GAIM_PLUGIN_PROTOCOL) ?  NULL : &plugin_iter,
-										notebook_page++);
-				} else if(prefs_info->frame) {
-					/* in the event that there is a pref frame and we can
-					 * not make a widget out of it, we free the
-					 * pluginpref frame --Gary
-					 */
-					gaim_plugin_pref_frame_destroy(prefs_info->frame);
-				}
-			}
+			add_plugin_prefs(l->data);
 		}
 	}
 }
