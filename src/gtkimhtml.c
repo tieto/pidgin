@@ -2703,7 +2703,7 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-	if (color) { //!imhtml->edit.forecolor) {
+	if (color) {
 		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup_printf("<font color=\"%s\">", color);
@@ -2729,7 +2729,7 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-	if (color) { //!imhtml->edit.backcolor) {
+	if (color) {
 		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup_printf("<font back=\"%s\">", color);
@@ -2753,7 +2753,7 @@ gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-	if (face) { //!imhtml->edit.fontface) {
+	if (face) {
 		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup_printf("<font face=\"%s\">", face);
@@ -2868,7 +2868,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &siter);
 	eiter = siter;
 
-	if (starters) {
+ 	if (starters) {
 		while (starters) {
 			GtkTextIter tagend;
 			sspan = (GtkIMHtmlFormatSpan*)starters->data;
@@ -2923,7 +2923,10 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 					gtk_text_buffer_get_end_iter(imhtml->text_buffer, &eiter);
 				} else {
 					espan = (GtkIMHtmlFormatSpan*)closers->data;
-					gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
+					if (espan->end)
+						gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
+					else 
+						gtk_text_iter_forward_to_end(&eiter);
 				}
 			}
 			while (gtk_text_iter_equal(&siter, &iter)) {
