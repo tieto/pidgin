@@ -88,7 +88,7 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 	g_free(l->data);
 
 	if (!local_only && gaim_account_is_connected(account))
-		serv_rem_deny(gaim_account_get_connection(account), who);
+		serv_rem_permit(gaim_account_get_connection(account), who);
 
 	gaim_blist_save();
 
