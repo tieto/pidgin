@@ -147,6 +147,8 @@ gaim_account_new(const char *username, const char *protocol_id)
 void
 gaim_account_destroy(GaimAccount *account)
 {
+	GaimBlistNode *gnode, *bnode;
+
 	g_return_if_fail(account != NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "account",
@@ -157,6 +159,25 @@ gaim_account_destroy(GaimAccount *account)
 
 	gaim_debug(GAIM_DEBUG_INFO, "account",
 			   "Continuing to destroy account %p\n", account);
+
+	/* Let's remove the buddies for this account, before they cause trouble */
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(bnode = gnode->child; bnode; bnode=bnode->next) {
+			if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+				struct buddy *b = (struct buddy *)bnode;
+				if(b->account == account)
+					gaim_blist_remove_buddy(b);
+			} else if(GAIM_BLIST_NODE_IS_CHAT(bnode)) {
+				struct chat *c = (struct chat *)bnode;
+				if(c->account == account)
+					gaim_blist_remove_chat(c);
+			}
+		}
+	}
+
+	gaim_blist_save();
 
 	if (account->username    != NULL) g_free(account->username);
 	if (account->alias       != NULL) g_free(account->alias);

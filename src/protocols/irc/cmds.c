@@ -197,10 +197,12 @@ int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, cons
 			return 0;
 		gc = gaim_account_get_connection(irc->account);
 		buf = irc_format(irc, "vnv", "MODE", gaim_connection_get_display_name(gc), args[0]);
+	} else {
+		return 0;
 	}
+
 	irc_send(irc, buf);
 	g_free(buf);
-		
 
 	return 0;
 }
@@ -452,6 +454,8 @@ int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, c
 		buf = irc_format(irc, "v:", "WALLOPS", args[0]);
 	else if (!strcmp(cmd, "operwall"))
 		buf = irc_format(irc, "v:", "OPERWALL", args[0]);
+	else
+		return 0;
 
 	irc_send(irc, buf);
 	g_free(buf);
