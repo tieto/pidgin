@@ -125,7 +125,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
       gdk_pointer_grab (widget->window, FALSE,
 			GDK_BUTTON_RELEASE_MASK, NULL, cursor,
 			event->button.time);
-      timer_id = gtk_timeout_add (GSTROKE_TIMEOUT_DURATION,
+      timer_id = g_timeout_add (GSTROKE_TIMEOUT_DURATION,
 				  gstroke_timeout, widget);
       return TRUE;
 
@@ -139,7 +139,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 		  original_widget = NULL;
 
 		  if (timer_id > 0)
-			  gtk_timeout_remove (timer_id);
+			  g_source_remove (timer_id);
 
 		  gdk_pointer_ungrab (event->button.time);
 		  timer_id = 0;
@@ -156,7 +156,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 
       last_mouse_position.invalid = TRUE;
       original_widget = NULL;
-      gtk_timeout_remove (timer_id);
+      g_source_remove (timer_id);
       gdk_pointer_ungrab (event->button.time);
       timer_id = 0;
 

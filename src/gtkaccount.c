@@ -128,7 +128,9 @@ typedef struct
 	GtkWidget *proxy_frame;
 	GtkWidget *proxy_vbox;
 	GtkWidget *proxy_dropdown;
+#if !GTK_CHECK_VERSION(2,4,0)
 	GtkWidget *proxy_menu;
+#endif
 	GtkWidget *proxy_host_entry;
 	GtkWidget *proxy_port_entry;
 	GtkWidget *proxy_user_entry;
@@ -762,6 +764,57 @@ static GtkWidget *
 make_proxy_dropdown(void)
 {
 	GtkWidget *dropdown;
+
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkListStore *model;
+	GtkTreeIter iter;
+	GtkCellRenderer *renderer;
+
+	model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+	dropdown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("Use Global Proxy Settings"),
+			1, GAIM_PROXY_USE_GLOBAL
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("No Proxy"),
+			1, GAIM_PROXY_NONE,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("HTTP"),
+			1, GAIM_PROXY_HTTP,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("SOCKS 4"),
+			1, GAIM_PROXY_SOCKS4,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("SOCKS 5"),
+			1, GAIM_PROXY_SOCKS5,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("Use Environmental Settings"),
+			1, GAIM_PROXY_USE_ENVVAR,
+			-1);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dropdown), renderer, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dropdown), renderer,
+			"text", 0, NULL);
+
+#else
 	GtkWidget *menu;
 	GtkWidget *item;
 
@@ -811,15 +864,21 @@ make_proxy_dropdown(void)
 	gtk_widget_show(item);
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
+#endif
 
 	return dropdown;
 }
 
 static void
-proxy_type_changed_cb(GtkWidget *optmenu, AccountPrefsDialog *dialog)
+proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 {
+#if GTK_CHECK_VERSION(2,4,0)
 	dialog->new_proxy_type =
-		gtk_option_menu_get_history(GTK_OPTION_MENU(optmenu)) - 1;
+		gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) - 1;
+#else
+	dialog->new_proxy_type =
+		gtk_option_menu_get_history(GTK_OPTION_MENU(menu)) - 1;
+#endif
 
 	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL ||
 		dialog->new_proxy_type == GAIM_PROXY_NONE ||
@@ -870,8 +929,10 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Proxy Type drop-down. */
 	dialog->proxy_dropdown = make_proxy_dropdown();
+#if !GTK_CHECK_VERSION(2,4,0)
 	dialog->proxy_menu =
 		gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->proxy_dropdown));
+#endif
 
 	add_pref_box(dialog, vbox, _("Proxy _type:"), dialog->proxy_dropdown);
 
@@ -909,8 +970,13 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		/* Hah! */
 		/* I dunno what you're laughing about, fuzz ball. */
 		dialog->new_proxy_type = type;
+#if GTK_CHECK_VERSION(2,4,0)
+		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
+				type - 1);
+#else
 		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
-									(int)type + 1);
+				(int)type + 1);
+#endif
 
 		if (type == GAIM_PROXY_USE_GLOBAL || type == GAIM_PROXY_NONE ||
 			type == GAIM_PROXY_USE_ENVVAR) {
@@ -940,8 +1006,13 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 	else {
 		dialog->new_proxy_type = GAIM_PROXY_USE_GLOBAL;
+#if GTK_CHECK_VERSION(2,4,0)
+		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
+				dialog->new_proxy_type + 1);
+#else
 		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
 									dialog->new_proxy_type + 1);
+#endif
 		gtk_widget_hide_all(vbox2);
 	}
 
