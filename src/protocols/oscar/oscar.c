@@ -53,7 +53,6 @@
 
 #ifdef _WIN32
 #include "win32dep.h"
-#define NOSIGALARM
 #endif
 
 #include "pixmaps/protocols/oscar/ab.xpm"
@@ -377,7 +376,7 @@ static int gaim_update_ui       (aim_session_t *, aim_frame_t *, ...);
 static int oscar_file_transfer_do(aim_session_t *, aim_frame_t *, ...);
 static void oscar_file_transfer_disconnect(aim_session_t *,
 		aim_conn_t *);
-static void oscar_cancel_transfer(struct gaim_connection *,
+static void oscar_file_transfer_cancel(struct gaim_connection *,
 		struct file_transfer *);
 static int oscar_sendfile_request(aim_session_t *sess,
 		struct oscar_file_transfer *oft);
@@ -1540,12 +1539,12 @@ static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_kill(sess, &listenerconn);
 
 	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
-			AIM_CB_OFT_GETFILEFILESEND,
+			AIM_CB_OFT_SENDFILEFILESEND,
 			oscar_file_transfer_do,
 			0);
 	aim_conn_addhandler(sess, conn,
 			AIM_CB_FAM_OFT,
-			AIM_CB_OFT_GETFILECOMPLETE,
+			AIM_CB_OFT_SENDFILECOMPLETE,
 			oscar_sendfile_out_done,
 			0);
 	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
@@ -1580,7 +1579,7 @@ static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 /* Called once at the beginning of an outgoing transfer session. */
-static void oscar_start_transfer_out(struct gaim_connection *gc,
+static void oscar_file_transfer_out(struct gaim_connection *gc,
 		struct file_transfer *xfer, const char *name, int totfiles,
 		int totsize) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -1601,14 +1600,14 @@ static void oscar_start_transfer_out(struct gaim_connection *gc,
 	}
 
 	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
-			AIM_CB_OFT_GETFILEINITIATE,
+			AIM_CB_OFT_SENDFILEINITIATE,
 			oscar_sendfile_accepted,
 			0);
 	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
 			oscar_callback, oft->conn);
 }
 
-static void oscar_transfer_data_chunk(struct gaim_connection *gc,
+static void oscar_file_transfer_data_chunk(struct gaim_connection *gc,
 		struct file_transfer *xfer, const char *buf, int len)
 {
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
@@ -1618,7 +1617,7 @@ static void oscar_transfer_data_chunk(struct gaim_connection *gc,
 		aim_update_checksum(sess, oft->conn, buf, len);
 }
 
-static void oscar_start_transfer_in(struct gaim_connection *gc,
+static void oscar_file_transfer_in(struct gaim_connection *gc,
 		struct file_transfer *xfer, int offset) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
@@ -1636,14 +1635,14 @@ static void oscar_start_transfer_in(struct gaim_connection *gc,
 	}
 
 	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
-			AIM_CB_OFT_GETFILEFILEREQ, oscar_file_transfer_do,
+			AIM_CB_OFT_SENDFILEFILEREQ, oscar_file_transfer_do,
 			0);
 
 	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
 			oscar_callback, oft->conn);
 }
 
-static void oscar_cancel_transfer(struct gaim_connection *gc,
+static void oscar_file_transfer_cancel(struct gaim_connection *gc,
 		struct file_transfer *xfer) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
@@ -1892,12 +1891,12 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 			aim_conn_addhandler(sess, oft->conn,
 				AIM_CB_FAM_OFT,
-				AIM_CB_OFT_GETFILECOMPLETE,
+				AIM_CB_OFT_SENDFILECOMPLETE,
 				oscar_sendfile_out_done,
 				0);
 			aim_conn_addhandler(sess, oft->conn,
 				AIM_CB_FAM_OFT,
-				AIM_CB_OFT_GETFILEFILESEND,
+				AIM_CB_OFT_SENDFILEFILESEND,
 				oscar_file_transfer_do,
 				0);
 			oft->watcher = gaim_input_add(oft->conn->fd,
@@ -4138,7 +4137,7 @@ static char **oscar_list_icon(int uc) {
 	return NULL;
 }
 
-void oscar_transfer_nextfile(struct gaim_connection *gc,
+void oscar_file_transfer_nextfile(struct gaim_connection *gc,
 		struct file_transfer *xfer) {
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
 	aim_conn_t *conn = oft->conn;
@@ -4159,7 +4158,7 @@ void oscar_transfer_nextfile(struct gaim_connection *gc,
 		aim_oft_end(sess, conn);
 }
 
-void oscar_transfer_done(struct gaim_connection *gc,
+void oscar_file_transfer_done(struct gaim_connection *gc,
 		struct file_transfer *xfer) {
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
 	aim_conn_t *conn = oft->conn;
@@ -4182,10 +4181,13 @@ static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	aim_conn_t *conn;
 	struct oscar_file_transfer *oft;
+	struct aim_fileheader_t *fh;
 	int err;
 
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
+	fh = va_arg(ap, struct aim_fileheader_t *);
+	va_end(ap);
 
 	oft = find_oft_by_conn(gc, conn);
 
@@ -4194,15 +4196,12 @@ static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
 	oft->watcher = 0;
 
 	if (oft->type == OFT_SENDFILE_IN) {
-		const char *name = va_arg(ap, const char *);
-		int size = va_arg(ap, int);
-		err = transfer_in_do(oft->xfer, conn->fd, name, size);
+		err = transfer_in_do(oft->xfer, conn->fd,
+				fh->name, fh->size);
 	}
 	else {
-		int offset = va_arg(ap, int);
-		err = transfer_out_do(oft->xfer, conn->fd, offset);
+		err = transfer_out_do(oft->xfer, conn->fd, fh->nrecvd);
 	}
-	va_end(ap);
 
 	if (err) {
 		/* There was an error; cancel the transfer. */
@@ -4725,12 +4724,12 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->add_buddies = oscar_add_buddies;
 	ret->group_buddy = oscar_move_buddy;
 	ret->rename_group = oscar_rename_group;
-	ret->file_transfer_cancel = oscar_cancel_transfer;
-	ret->file_transfer_in = oscar_start_transfer_in;
-	ret->file_transfer_out = oscar_start_transfer_out;
-	ret->file_transfer_data_chunk = oscar_transfer_data_chunk;
-	ret->file_transfer_nextfile = oscar_transfer_nextfile;
-	ret->file_transfer_done = oscar_transfer_done;
+	ret->file_transfer_cancel = oscar_file_transfer_cancel;
+	ret->file_transfer_in = oscar_file_transfer_in;
+	ret->file_transfer_out = oscar_file_transfer_out;
+	ret->file_transfer_data_chunk = oscar_file_transfer_data_chunk;
+	ret->file_transfer_nextfile = oscar_file_transfer_nextfile;
+	ret->file_transfer_done = oscar_file_transfer_done;
 	ret->remove_buddy = oscar_remove_buddy;
 	ret->remove_buddies = oscar_remove_buddies;
 	ret->add_permit = oscar_add_permit;

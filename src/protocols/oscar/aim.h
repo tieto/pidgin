@@ -694,14 +694,10 @@ struct aim_fileheader_t {
 				/* 256 */
 };
 
-struct aim_filetransfer_priv {
-	char sn[MAXSNLEN];
-	char cookie[8];
-	char ip[30];
-	int state;
-	struct aim_fileheader_t fh;
-};
-#define OFT_TIMEOUT (60)
+#define AIM_OFT_SUBTYPE_SEND_FILE 0x0001
+#define AIM_OFT_SUBTYPE_SEND_DIR 0x0002
+#define AIM_OFT_SUBTYPE_GET_FILE 0x0011
+#define AIM_OPT_SUBTYPE_GET_LIST 0x0012
 
 struct aim_chat_roominfo {
 	unsigned short exchange;
@@ -862,7 +858,7 @@ struct aim_incomingim_ch2_args {
 			const char *rtfmsg;
 		} rtfmsg;
 		struct {
-			fu16_t multiple;
+			fu16_t subtype;
 			fu16_t totfiles;
 			fu32_t totsize;
 			char *filename;

@@ -103,9 +103,8 @@ faim_internal aim_snac_t *aim_remsnac(aim_session_t *sess, aim_snacid_t id)
 }
 
 /* Free a SNAC, and call the appropriate destructor if necessary.
- * XXX perhaps this should be inline? -- wtm
  */
-faim_internal void aim_cleansnac(aim_session_t *sess, aim_snac_t *snac)
+faim_internal faim_shortfunc void aim_cleansnac(aim_session_t *sess, aim_snac_t *snac)
 {
 	aim_module_t *cur;
 

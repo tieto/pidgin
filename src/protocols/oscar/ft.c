@@ -10,7 +10,6 @@
 #endif
 #include <aim.h>
 
-
 #ifndef _WIN32
 #include <netdb.h>
 #include <sys/socket.h>
@@ -25,10 +24,19 @@
 #include "win32dep.h"
 #endif
 
+#define AIM_OFT_PROTO_OFFER          0x0101
+#define AIM_OFT_PROTO_ACCEPT         0x0202
+#define AIM_OFT_PROTO_RESUME         0x0205
+#define AIM_OFT_PROTO_RESUMEACCEPT   0x0207
+#define AIM_OFT_PROTO_ACK            0x0204
 
-/* TODO: 
-   o look for memory leaks.. there's going to be shitloads, i'm sure. 
-*/
+struct aim_filetransfer_priv {
+	char sn[MAXSNLEN+1];
+	char cookie[8];
+	char ip[30];
+	int state;
+	struct aim_fileheader_t fh;
+};
 
 struct aim_directim_intdata {
 	fu8_t cookie[8];
@@ -38,6 +46,7 @@ struct aim_directim_intdata {
 
 static int listenestablish(fu16_t portnum);
 static struct aim_fileheader_t *aim_oft_getfh(unsigned char *hdr);
+static const char *oft_basename(const char *name);
  
 /**
  * aim_handlerendconnect - call this to accept OFT connections and set up the required structures
@@ -91,6 +100,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 			ret = userfunc(sess, NULL, newconn, cur);
 
 	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_GETFILE) {
+#if 0
 		struct aim_filetransfer_priv *priv;
 		aim_rxcallback_t userfunc;
 
@@ -102,18 +112,19 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 
 		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEINITIATE)))
 			ret = userfunc(sess, NULL, newconn, cur);
+#endif
 	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
 		struct aim_filetransfer_priv *ft;
 		aim_rxcallback_t userfunc;
 
-		/* The new conn automatically inherits the priv value
+		/* The new conn automatically inherits the internal value
 		 * of cur. */
-		cur->priv = NULL;
-		ft = (struct aim_filetransfer_priv *)newconn->priv;
+		cur->internal = NULL;
+		ft = (struct aim_filetransfer_priv *)newconn->internal;
 
 		snprintf(ft->ip, sizeof(ft->ip), "%s:%u", inet_ntoa(((struct sockaddr_in *)&cliaddr)->sin_addr), ntohs(((struct sockaddr_in *)&cliaddr)->sin_port));
 
-		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEINITIATE)))
+		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_SENDFILEINITIATE)))
 			ret = userfunc(sess, NULL, newconn, cur);
 	} else { 
 		faimdprintf(sess, 1,"Got a Connection on a listener that's not Rendezvous Closing conn.\n");
@@ -369,10 +380,7 @@ faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *sess, const char *d
 	struct aim_filetransfer_priv *ft;
 	int listenfd;
 
-	/* Due to other limitations, we can only initiate one
-	 * sendfile transfer at a time, so it seems safe to
-	 * restrict the listener to a single port. -- wtm
-	 */
+	/* XXX allow different ports */
 	fu16_t port = 4443;
 	fu8_t localip[4];
 	fu8_t ck[8];
@@ -383,13 +391,8 @@ faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *sess, const char *d
 	if ((listenfd = listenestablish(port)) == -1)
 		return NULL;
 
-	{
-		/* XXX */
-		char *basename = g_path_get_basename(filename);
-		aim_request_sendfile(sess, destsn, basename,
-				numfiles, totsize, localip, port, ck);
-		g_free(basename);
-	}
+	aim_request_sendfile(sess, destsn, oft_basename(filename),
+			numfiles, totsize, localip, port, ck);
 
 	cookie = (aim_msgcookie_t *)calloc(1, sizeof(aim_msgcookie_t));
 	memcpy(cookie->cookie, ck, 8);
@@ -417,7 +420,7 @@ faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *sess, const char *d
 
 	newconn->fd = listenfd;
 	newconn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
-	newconn->priv = ft;
+	newconn->internal = ft;
 	newconn->lastactivity = time(NULL);
 
 	faimdprintf(sess, 2,"faim: listening (fd = %d, unconnected)\n", newconn->fd);
@@ -612,7 +615,7 @@ faim_export aim_conn_t *aim_accepttransfer(aim_session_t *sess,
   aim_tx_enqueue(sess, newpacket);
 
 
-  g_snprintf(addr, sizeof(addr), "%s:%d", ip, port);
+  snprintf(addr, sizeof(addr), "%s:%d", ip, port);
   newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS, addr);
  
   if (newconn->status & AIM_CONN_STATUS_CONNERR) {
@@ -631,7 +634,7 @@ faim_export aim_conn_t *aim_accepttransfer(aim_session_t *sess,
   priv->state = 0;
   strncpy(priv->sn, sn, MAXSNLEN);
   strncpy(priv->ip, ip, sizeof(priv->ip));
-  newconn->priv = (void *)priv;
+  newconn->internal = (void *)priv;
 
   faimdprintf(sess, 2, "faim: connected to peer (fd = %d)\n", newconn->fd);
 
@@ -1057,7 +1060,7 @@ static int getcommand_getfile(aim_session_t *sess, aim_conn_t *conn)
 static void connclose_sendfile(aim_session_t *sess, aim_conn_t *conn)
 {
 	aim_msgcookie_t *cook;
-	struct aim_filetransfer_priv *priv = (struct aim_filetransfer_priv *)conn->priv;
+	struct aim_filetransfer_priv *priv = (struct aim_filetransfer_priv *)conn->internal;
 
 	cook = aim_uncachecookie(sess, priv->cookie, AIM_COOKIETYPE_OFTSEND);
 	aim_cookie_free(sess, cook);
@@ -1067,23 +1070,20 @@ static void connclose_sendfile(aim_session_t *sess, aim_conn_t *conn)
 
 static void connkill_sendfile(aim_session_t *sess, aim_conn_t *conn)
 {
-	/* XXX we don't free conn->priv here because it is currently
-	 * freed in the caller.  If that ever changes, we should
-	 * free it here. -- wtm
-	 */
-	conn->priv = NULL;
+	free(conn->internal);
 
 	return;
 }
 
 static void connclose_getfile(aim_session_t *sess, aim_conn_t *conn)
 {
+#if 0
 	aim_msgcookie_t *cook;
 	struct aim_filetransfer_priv *priv = (struct aim_filetransfer_priv *)conn->priv;
 
 	cook = aim_uncachecookie(sess, priv->cookie, AIM_COOKIETYPE_OFTGET);
 	aim_cookie_free(sess, cook);
-
+#endif
 	return;
 }
 
@@ -1449,6 +1449,10 @@ static int handlehdr_getfile_sending(aim_session_t *sess, aim_conn_t *conn, fu8_
 #endif
 }
 
+/* We are receiving a file, and the buddy sent us this header describing
+ * it.  We send back a similar header to confirm, then we're ready to
+ * start reading the raw data.
+ */
 static int handlehdr_sendfile_sending(aim_session_t *sess, aim_conn_t *conn, fu8_t *hdr)
 {
 	struct aim_filetransfer_priv *ft;
@@ -1461,13 +1465,13 @@ static int handlehdr_sendfile_sending(aim_session_t *sess, aim_conn_t *conn, fu8
 	/* We receive a null cookie for the first file; we must fill
 	 * it in to authenticate ourselves. -- wtm
 	 */
-	ft = conn->priv;
+	ft = conn->internal;
 	memcpy(&(fh->bcookie), ft->cookie, 8);
 
 	memcpy(&(ft->fh), fh, sizeof(struct aim_fileheader_t));
 	free(fh);
 
-	if (!(newoft = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0202, 0))) {
+	if (!(newoft = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, AIM_OFT_PROTO_ACCEPT, 0))) {
 		faimdprintf(sess, 2, "faim: send_final_transfer: tx_new OFT failed\n");
 		return -1;
 	}
@@ -1488,9 +1492,7 @@ static int handlehdr_sendfile_sending(aim_session_t *sess, aim_conn_t *conn, fu8
 
 	aim_tx_enqueue(sess, newoft);
 
-	faimdprintf(sess, 2, "faim: OFT: OFT 0x0202 enqueued.\n");
-
-	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILEREQ)) == NULL)
+	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_SENDFILEFILEREQ)) == NULL)
 		return 1;
 
 	{
@@ -1502,7 +1504,7 @@ static int handlehdr_sendfile_sending(aim_session_t *sess, aim_conn_t *conn, fu8
 			*cur = G_DIR_SEPARATOR;
 		}
 	}
-	return userfunc(sess, NULL, conn, ft->fh.name, ft->fh.size);
+	return userfunc(sess, NULL, conn, &(ft->fh));
 }
 
 
@@ -1552,6 +1554,9 @@ static int handlehdr_sendfile_resume(aim_session_t *sess, aim_conn_t *conn, fu8_
   return 0;
 }
 
+/* We are sending a file, and the buddy sent us this header indicating
+ * that he or she is ready for the raw data.
+ */
 static int handlehdr_sendfile_recv(aim_session_t *sess, aim_conn_t *conn, fu8_t *hdr) {
 	struct aim_fileheader_t *fh;
 	aim_msgcookie_t *cook;
@@ -1566,10 +1571,8 @@ static int handlehdr_sendfile_recv(aim_session_t *sess, aim_conn_t *conn, fu8_t 
 	}
 	ft = (struct aim_filetransfer_priv *)cook->data;
 
-	faimdprintf(sess, 2, "faim: get_rend: looks like we're ready to send data.(oft 0x0202)\n");
-
-	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILESEND)) )
-		ret = userfunc(sess, NULL, conn, ft->fh.nrecvd);
+	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_SENDFILEFILESEND)) )
+		ret = userfunc(sess, NULL, conn, &(ft->fh));
 
 	free(fh);
 
@@ -1607,6 +1610,9 @@ static int handlehdr_getfile_recv(aim_session_t *sess, aim_conn_t *conn, fu8_t *
 #endif
 }
 
+/* We just sent the raw data of a file, and the buddy sent us back this
+ * header indicating that the transfer is complete.
+ */
 static int handlehdr_sendfile_finish(aim_session_t *sess, aim_conn_t *conn, fu8_t *hdr)
 {
 	struct aim_fileheader_t *fh;
@@ -1620,11 +1626,7 @@ static int handlehdr_sendfile_finish(aim_session_t *sess, aim_conn_t *conn, fu8_
 		return -1;
 	}
 
-	faimdprintf(sess, 2, "faim: get_rend: looks like we're done with a transfer (oft 0x0204)\n");
-
-	debug_printf("sendfile: receiver sent checksum %x\n", fh->recvcsum);
-
-	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILECOMPLETE)) )
+	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_SENDFILECOMPLETE)) )
 		userfunc(sess, NULL, conn, fh->bcookie);
 
 	free(fh);
@@ -1665,22 +1667,17 @@ faim_internal int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *co
 	int hdrlen, hdrtype;
 	int ret = -1;
 
-	if (!sess || !conn)
-		return -1;
-
-	memset(hdrbuf1, 0, sizeof(hdrbuf1));
 
 	if (conn->subtype == AIM_CONN_SUBTYPE_OFT_GETFILE) {
-		/* This should never happen yet. -- wtm */
+		/* This should never happen. -- wtm */
 		return getcommand_getfile(sess, conn);
 	}
 
-	/* XXX fix all the error cases here */
+	memset(hdrbuf1, 0, sizeof(hdrbuf1));
+
 	if (aim_recv(conn->fd, hdrbuf1, 6) < 6) {
 		faimdprintf(sess, 2, "faim: rend: read error (fd: %i)\n", conn->fd);
-
 		aim_conn_close(conn);
-
 		return -1;
 	}
 
@@ -1688,6 +1685,10 @@ faim_internal int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *co
 	hdrlen -= 6;
 
 	hdr = malloc(hdrlen);
+	if (!hdr) {
+		aim_conn_close(conn);
+		return -1;
+	}
 
 	if (aim_recv(conn->fd, hdr, hdrlen) < hdrlen) {
 		faimdprintf(sess, 2, "faim: rend: read2 error on %d (%d)\n", conn->fd, hdrlen);
@@ -1700,27 +1701,23 @@ faim_internal int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *co
 
 	if (conn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
 		switch(hdrtype) {
-			case 0x0101:
-				ret = handlehdr_sendfile_sending(sess, conn, hdr);
+			case AIM_OFT_PROTO_OFFER:
+				ret = handlehdr_sendfile_sending(sess, conn,
+						hdr);
 				break;
-			case 0x0205:
-				/* This seems equivalent to 0x0202, 
-				 * but has the nrecvd and nrecvcsum
-				 * fields filled in.  We send back a
-				 * 0x0106, and get then a 0x0207 which
-				 * we treat just like a 0x0202. -- wtm */
+			case AIM_OFT_PROTO_RESUME:
 				ret = handlehdr_sendfile_resume(sess,
 						conn, hdr);
 				break;
-			case 0x0207: /* see above */;
-			case 0x0202:
+			case AIM_OFT_PROTO_RESUMEACCEPT: /* like _ACCEPT */;
+			case AIM_OFT_PROTO_ACCEPT:
 				ret = handlehdr_sendfile_recv(sess, conn, hdr);
 				break;
-			case 0x0204:
+			case AIM_OFT_PROTO_ACK:
 				ret = handlehdr_sendfile_finish(sess, conn, hdr);
 				break;
 			default:
-				debug_printf("unknown header type %x received", hdrtype);
+				faimdprintf(sess, 2, "faim: OFT frame: uknown type %04x\n", hdrtype);
 				ret = -1;
 				break;
 		}
@@ -1732,6 +1729,9 @@ faim_internal int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *co
 
 	if (hdrtype == 0x0001)
 		ret = handlehdr_directim(sess, conn, hdr);
+
+	/* This _really_ shouldn't happen. :) -- wtm */
+
 	else if (hdrtype == 0x1108) /* getfile listing.txt incoming tx->rx */
 		ret = handlehdr_getfile_listing(sess, conn, hdr);
 	else if (hdrtype == 0x1209) /* get file listing ack rx->tx */
@@ -1875,7 +1875,7 @@ faim_export fu32_t aim_oft_checksum(const unsigned char *buffer, int bufferlen, 
 
 faim_export fu32_t aim_update_checksum(aim_session_t *sess, aim_conn_t *conn,
 		const unsigned char *buffer, int len) {
-	struct aim_filetransfer_priv *ft = conn->priv;
+	struct aim_filetransfer_priv *ft = conn->internal;
 
 	ft->fh.nrecvd += len;
 	ft->fh.recvcsum = aim_oft_checksum(buffer, len, ft->fh.recvcsum);
@@ -2080,7 +2080,7 @@ faim_export aim_conn_t *aim_getfile_initiate(aim_session_t *sess, aim_conn_t *co
 
   newconn->fd = listenfd;
   newconn->subtype = AIM_CONN_SUBTYPE_OFT_GETFILE;
-  newconn->priv = priv;
+  newconn->internal = priv;
   faimdprintf(sess, 2,"faim: listening (fd = %d, unconnected)\n", newconn->fd);
 
   return newconn;
@@ -2141,14 +2141,14 @@ faim_export int aim_oft_getfile_request(aim_session_t *sess, aim_conn_t *conn, c
 /* Identify a file that we are about to send by transmitting the
  * appropriate header.
  */
-faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, const char *name, int filesdone, int numfiles, int size, int totsize)
+faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, const char *filename, int filesdone, int numfiles, int size, int totsize)
 {
   aim_frame_t *newoft;
   aim_msgcookie_t *cook;
-  struct aim_filetransfer_priv *ft = (struct aim_filetransfer_priv *)conn->priv;
+  struct aim_filetransfer_priv *ft = (struct aim_filetransfer_priv *)conn->internal;
   struct aim_fileheader_t *fh;
 
-  if (!sess || !conn || !name)
+  if (!sess || !conn || !filename)
     return -1;
 
   if (!(fh = (struct aim_fileheader_t*)calloc(1, sizeof(struct aim_fileheader_t))))
@@ -2163,7 +2163,7 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, 
    * -- wtm
    */
   {
-    int fd = open(name, O_RDONLY);
+    int fd = open(filename, O_RDONLY);
     if (fd >= 0) {
        int bytes;
        char buf[1024];
@@ -2206,14 +2206,10 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, 
   fh->nencode = 0x0000;
   fh->nlanguage = 0x0000;
 
-  {
-	  /* Don't "show full pathname to buddy", just because it is
-	   * non-portable. -- wtm 
-	   */
-	  char *basename = g_path_get_basename(name);
-	  strncpy(fh->name, basename, sizeof(fh->name));
-	  g_free(basename);
-  }
+  /* Don't "show full pathname to buddy", just because it is
+   * non-portable. -- wtm 
+   */
+  strncpy(fh->name, oft_basename(filename), sizeof(fh->name));
 
   /* XXX we should normally send a null cookie here, and make
    * the receiver fill it in for authentication -- wtm
@@ -2229,7 +2225,7 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, 
   memcpy(&(((struct aim_filetransfer_priv *)cook->data)->fh), fh,
 		  sizeof(struct aim_fileheader_t));
 
-  if (!(newoft = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0101, 0))) {
+  if (!(newoft = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, AIM_OFT_PROTO_OFFER, 0))) {
     faimdprintf(sess, 2, "faim: aim_accepttransfer: tx_new OFT failed\n");
     free(fh);
     return -1;
@@ -2316,10 +2312,10 @@ faim_export int aim_oft_end(aim_session_t *sess, aim_conn_t *conn)
   aim_frame_t *newoft;
   struct aim_filetransfer_priv *ft;
   
-  if (!sess || !conn || !conn->priv)
+  if (!sess || !conn || !conn->internal)
     return -1;
 
-  if (!(newoft = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0204, 0))) {
+  if (!(newoft = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, AIM_OFT_PROTO_ACK, 0))) {
     faimdprintf(sess, 2, "faim: aim_accepttransfer: tx_new OFT failed\n");
     return -1;
   }
@@ -2332,7 +2328,7 @@ faim_export int aim_oft_end(aim_session_t *sess, aim_conn_t *conn)
     return -1;
   }
   
-  ft = (struct aim_filetransfer_priv *)conn->priv;
+  ft = (struct aim_filetransfer_priv *)conn->internal;
   ft->state = 4; /* no longer wanting data */
   ft->fh.flags = 0x21;
   
@@ -2344,5 +2340,12 @@ faim_export int aim_oft_end(aim_session_t *sess, aim_conn_t *conn)
   aim_tx_enqueue(sess, newoft);
   
   return 0;
+}
+
+/* Portability.  Yuck. */
+static const char *oft_basename(const char *name) {
+	const char *r = strrchr(name, G_DIR_SEPARATOR);
+	r = r ? r + 1 : name;
+	return r;
 }
 

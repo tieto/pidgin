@@ -238,6 +238,7 @@
 #define AIM_CB_OFT_DIRECTIMTYPING 0x0004
 #define AIM_CB_OFT_DIRECTIMINITIATE 0x0005
 
+#if 0
 #define AIM_CB_OFT_GETFILECONNECTREQ 0x0006 /* connect request -- actually an OSCAR CAP*/
 #define AIM_CB_OFT_GETFILELISTINGREQ 0x0007 /* OFT listing.txt request */
 #define AIM_CB_OFT_GETFILEFILEREQ 0x0008    /* received file request */
@@ -249,9 +250,12 @@
 #define AIM_CB_OFT_GETFILERECEIVE 0x000e   /* OFT file incoming.*/
 #define AIM_CB_OFT_GETFILELISTINGRXCONFIRM 0x000f
 #define AIM_CB_OFT_GETFILESTATE4 0x0010
+#endif
 
-#define AIM_CB_OFT_SENDFILEDISCONNECT 0x0020   /* OFT connection disconnected.*/
-
+#define AIM_CB_OFT_SENDFILEFILEREQ 0x0011 /* started receiving file */
+#define AIM_CB_OFT_SENDFILEFILESEND 0x0012 /* buddy ready to for us to send */
+#define AIM_CB_OFT_SENDFILECOMPLETE 0x0013 /* send to buddy complete */
+#define AIM_CB_OFT_SENDFILEINITIATE 0x0014 /* connection to buddy initiated */
 
 
 /*

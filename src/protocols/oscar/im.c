@@ -1554,8 +1554,8 @@ static void incomingim_ch2_sendfile(aim_session_t *sess, aim_module_t *mod, aim_
 	args->destructor = (void *)incomingim_ch2_sendfile_free;
 
 	if (servdata) {
-		/* 0x0001 for one file, 0x0002 for multiple files. */
-		args->info.sendfile.multiple = aimbs_get16(servdata);
+		/* subtype is one of AIM_OFT_SUBTYPE_* */
+		args->info.sendfile.subtype = aimbs_get16(servdata);
 		args->info.sendfile.totfiles = aimbs_get16(servdata);
 		args->info.sendfile.totsize = aimbs_get32(servdata);
 		args->info.sendfile.filename = aimbs_getstr(servdata,
@@ -1594,7 +1594,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	/*
 	 * First two bytes represent the status of the connection.
 	 *
-	 * 0 is a request, 1 is a deny (?), 2 is an accept
+	 * 0 is a request, 1 is a cancel, 2 is an accept
 	 */ 
 	args.status = aimbs_get16(&bbs);
 
