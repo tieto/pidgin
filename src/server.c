@@ -311,6 +311,8 @@ void serv_add_permit(char *name)
 #ifndef USE_OSCAR
 	g_snprintf(buf, sizeof(buf), "toc_add_permit %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	serv_set_permit_deny();
 #endif
 }
 
@@ -322,6 +324,8 @@ void serv_add_deny(char *name)
 #ifndef USE_OSCAR
 	g_snprintf(buf, sizeof(buf), "toc_add_deny %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	serv_set_permit_deny();
 #endif
 }
 
@@ -361,6 +365,22 @@ void serv_set_permit_deny()
 	}
 	buf[at] = 0;
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	/* oscar requires us to do everyone at once (?) */
+	list = permit; at = 0;
+	while (list) {
+		at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
+		list = list->next;
+	}
+	aim_bos_changevisibility(gaim_sess, gaim_conn,
+			AIM_VISIBILITYCHANGE_PERMITADD, buf);
+	list = deny; at = 0;
+	while (list) {
+		at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
+		list = list->next;
+	}
+	aim_bos_changevisibility(gaim_sess, gaim_conn,
+			AIM_VISIBILITYCHANGE_DENYADD, buf);
 #endif
 }
 

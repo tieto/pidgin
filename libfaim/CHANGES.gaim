@@ -1,3 +1,11 @@
+
+Sat May 20 22:42:24 UTC 2000 EWarmenhoven
+	- Getting a user's info now displays the familiar dialog window
+	- You can now add people to your permit/deny list (I think - but I
+	  also think I did it wrong)
+	- It's been a busy day, I think I'm done until libfaim gets updated
+	  again (which means no chat for a while, sorry)
+
 Sat May 20 09:56:16 UTC 2000 EWarmenhoven
 	- That 2 second delay in updates is gone, and I think it's actually
 	  faster than the TOC code now.

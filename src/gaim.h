@@ -337,7 +337,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 252 $"
+#define REVISION "gaim:$Revision: 257 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -661,6 +661,7 @@ extern void show_log_dialog(char *);
 extern void show_find_email();
 extern void show_find_info();
 extern void g_show_info (char *);
+extern void g_show_info_text (char *);
 extern void show_register_dialog();
 extern void show_set_info();
 extern void show_set_dir();

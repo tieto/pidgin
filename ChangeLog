@@ -10,6 +10,7 @@ version 0.9.16:
 	  (AOL does not back up machines that contain TOC-based buddy
 	  lists, unfortunately).  (Thanks Syd)
 	* Font selection dialog 
+	* Small changes to the Oscar/libfaim stuff (it works now, sort of)
 
 version 0.9.15: (05/06/2000)
 	* Plugin support enabled by default (oops)

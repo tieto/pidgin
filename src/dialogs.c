@@ -1337,14 +1337,13 @@ void show_register_dialog()
 /*  The dialog for the info requests                                      */
 /*------------------------------------------------------------------------*/
 
-void g_show_info(char *url)
+void g_show_info_text(char *info)
 {
         GtkWidget *ok;
         GtkWidget *label;
 	GtkWidget *text;
         GtkWidget *bbox;
         GtkWidget *sw;
-        char *url_text;
 
         struct info_dlg *b = g_new0(struct info_dlg, 1);
 
@@ -1382,8 +1381,12 @@ void g_show_info(char *url)
 	aol_icon(b->window->window);
 	gtk_widget_show_all(b->window);
 
-	url_text = grab_url(url);
-	gtk_html_append_text(GTK_HTML(b->text), url_text, 0);
+	gtk_html_append_text(GTK_HTML(b->text), info, 0);
+}
+
+void g_show_info(char *url) {
+	char *url_text = grab_url(url);
+	g_show_info_text(url_text);
 	g_free(url_text);
 }
 

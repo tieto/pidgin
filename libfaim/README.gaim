@@ -17,6 +17,28 @@ libfaim source on sourceforge) with the Gaim GTK front-end. I'll put any changes
 I make into a file, but so far, I haven't made any changes other than moving the
 .h files down a directory.
 
+CURRENTLY SUPPORTED FEATURES
+============================
+Signing on
+Sending IMs
+Receiving IMs
+Being away/coming back
+Being idle
+Setting your info
+Getting other users' info
+Telling the server who's on your permit/deny lists (buggy)
+
+CURRENTLY UNSUPPORTED FEATURES
+==============================
+Warning users (libfaim's problem)
+Chat (gaim's problem)
+Getting users' away messages (libfaim's problem? doesn't work with TOC either)
+Getting/setting dir info (libfaim's problem?)
+Changing your password (gaim's problem?)
+File transfer/IM images/voice chat/etc. (gaim's problem?)
+
+(If I assigned problems incorrectly, sorry.)
+
 HOW TO HELP
 ===========
 So here's what you can do in order to help gaim use libfaim. There are basically
@@ -60,7 +82,7 @@ void serv_send_im(char *name, char *message, int away)
 3) Edit oscar.c to implement the new function
 
 Most of the functions you're going to need to call use a session and connection
-structure. These are kept statically in oscar.c as gaim_sess and gaim_conn. For
+structure. These are kept (globally) in oscar.c as gaim_sess and gaim_conn. For
 example, from above:
 
 void oscar_send_im(char *name, char *msg, int away) {

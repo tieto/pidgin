@@ -509,41 +509,27 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	struct aim_userinfo_s *info;
 	char *prof_enc = NULL, *prof = NULL;
-
+	char buf[BUF_LONG];
 	va_list ap;
+
 	va_start(ap, command);
 	info = va_arg(ap, struct aim_userinfo_s *);
 	prof_enc = va_arg(ap, char *);
 	prof = va_arg(ap, char *);
 	va_end(ap);
-	sprintf(debug_buff, "userinfo: sn: %s\n", info->sn);
-	debug_print(debug_buff);
-	sprintf(debug_buff, "userinfo: warnings: %d\n", info->warnlevel);
-	debug_print(debug_buff);
-	sprintf(debug_buff, "userinfo: class: ");
-	debug_print(debug_buff);
-	if (info->class & 0x0001)
-		debug_print("TRIAL ");
-	if (info->class & 0x0002)
-		debug_print("HUH? ");
-	if (info->class & 0x0004)
-		debug_print("AOL ");
-	if (info->class & 0x0008)
-		debug_print("HUH? ");
-	if (info->class & 0x0010)
-		debug_print("FREE");
-	debug_print("\n");
-	sprintf(debug_buff, "userinfo: member since: %lu\n", info->membersince);
-	debug_print(debug_buff);
-	sprintf(debug_buff, "userinfo: online since: %lu\n", info->onlinesince);
-	debug_print(debug_buff);
-	sprintf(debug_buff, "userinfo: idle time: %d\n", info->idletime);
-	debug_print(debug_buff);
-	sprintf(debug_buff, "userinfo: profile encoding: %s\n", prof_enc ?
-						prof_enc : "[none]");
-	debug_print(debug_buff);
-	sprintf(debug_buff, "userinfo: profile: %s\n", prof ? prof : "[none]");
-	debug_print(debug_buff);
+
+	snprintf(buf, sizeof buf, "Username : <B>%s</B>\n<BR>"
+				  "Warning Level : <B>%d %%</B>\n<BR>"
+				  "Online Since : <B>%s</B><BR>"
+				  "Idle Minutes : <B>%d</B>\n<BR><HR><BR>"
+				  "%s\n",
+				  info->sn,
+				  info->warnlevel,
+				  asctime(localtime(&info->onlinesince)),
+				  info->idletime,
+				  prof);
+	g_show_info_text(buf);
+
 	return 1;
 }
 
