@@ -46,18 +46,6 @@ GtkWidget *awayqueuesw;
 struct away_message *awaymessage = NULL;
 int auto_away;
 
-static void destroy_im_away()
-{
-	if (imaway)
-		gtk_widget_destroy(imaway);
-
-	awayqueue = NULL;
-	g_object_unref(G_OBJECT(awayqueuestore));
-	awayqueuestore = NULL;
-	awayqueuesw = NULL;
-	imaway = NULL;
-}
-
 static void dequeue_message(GtkTreeIter *iter)
 {
 	gchar *name;
@@ -212,84 +200,82 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	if (!a)
 		return;
 
-	if (!imaway) {
-		GAIM_DIALOG(imaway);
-		gtk_window_set_role(GTK_WINDOW(imaway), "imaway");
-		if (strlen(a->name))
-			 gtk_window_set_title(GTK_WINDOW(imaway), a->name);
-		else
-			gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
-		g_signal_connect(G_OBJECT(imaway), "destroy",
-						 G_CALLBACK(do_im_back), imaway);
-		gtk_widget_realize(imaway);
+	if(imaway)
+		gtk_widget_destroy(imaway);
 
-		vbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_add(GTK_CONTAINER(imaway), vbox);
-		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-		gtk_widget_show(vbox);
+	GAIM_DIALOG(imaway);
+	gtk_window_set_role(GTK_WINDOW(imaway), "imaway");
+	if (strlen(a->name))
+		gtk_window_set_title(GTK_WINDOW(imaway), a->name);
+	else
+		gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
+	g_signal_connect(G_OBJECT(imaway), "destroy",
+			G_CALLBACK(do_im_back), imaway);
+	gtk_widget_realize(imaway);
 
-		sw = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER,
-					       GTK_POLICY_ALWAYS);
-		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-		gtk_widget_set_size_request(sw, 245, 120);
-		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-		gtk_widget_show(sw);
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(imaway), vbox);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_widget_show(vbox);
 
-		awaytext = gtk_imhtml_new(NULL, NULL);
-		gtk_container_add(GTK_CONTAINER(sw), awaytext);
-		gaim_setup_imhtml(awaytext);
-		gtk_widget_show(awaytext);
-		buf = stylize(a->message, BUF_LONG);
-		gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, -1, GTK_IMHTML_NO_TITLE |
-				       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
-		g_free(buf);
-		gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>", -1, GTK_IMHTML_NO_TITLE |
-				       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER,
+			GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+	gtk_widget_set_size_request(sw, 245, 120);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_widget_show(sw);
 
-		awayqueuesw = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(awayqueuesw), GTK_POLICY_NEVER,
-					       GTK_POLICY_AUTOMATIC);
-		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(awayqueuesw),
-							GTK_SHADOW_IN);
-		gtk_box_pack_start(GTK_BOX(vbox), awayqueuesw, TRUE, TRUE, 0);
+	awaytext = gtk_imhtml_new(NULL, NULL);
+	gtk_container_add(GTK_CONTAINER(sw), awaytext);
+	gaim_setup_imhtml(awaytext);
+	gtk_widget_show(awaytext);
+	buf = stylize(a->message, BUF_LONG);
+	gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, -1, GTK_IMHTML_NO_TITLE |
+			GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
+	g_free(buf);
+	gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>", -1,
+			GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_COMMENTS |
+			GTK_IMHTML_NO_SCROLL);
 
-		awayqueuestore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-		awayqueue = gtk_tree_view_new_with_model(GTK_TREE_MODEL(awayqueuestore));
-		renderer = gtk_cell_renderer_text_new();
-		
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(awayqueue), FALSE);
-		column = gtk_tree_view_column_new_with_attributes (NULL, renderer,
-										"text", 0,
-										NULL);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
-		column = gtk_tree_view_column_new_with_attributes(NULL, renderer,
-										"text", 1, 
-										NULL);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
-			
-		gtk_container_add(GTK_CONTAINER(awayqueuesw), awayqueue);
-		
-		g_signal_connect(G_OBJECT(awayqueue), "button_press_event", G_CALLBACK(dequeue_cb), NULL);
+	awayqueuesw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(awayqueuesw),
+			GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(awayqueuesw),
+			GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), awayqueuesw, TRUE, TRUE, 0);
+
+	awayqueuestore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	awayqueue = gtk_tree_view_new_with_model(GTK_TREE_MODEL(awayqueuestore));
+	renderer = gtk_cell_renderer_text_new();
+
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(awayqueue), FALSE);
+	column = gtk_tree_view_column_new_with_attributes (NULL, renderer,
+			"text", 0,
+			NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
+	column = gtk_tree_view_column_new_with_attributes(NULL, renderer,
+			"text", 1,
+			NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
+
+	gtk_container_add(GTK_CONTAINER(awayqueuesw), awayqueue);
+
+	g_signal_connect(G_OBJECT(awayqueue), "button_press_event", G_CALLBACK(dequeue_cb), NULL);
 
 
-		if (gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
-			gtk_widget_show(awayqueuesw);
-			gtk_widget_show(awayqueue);
-		}
-
-		back = gaim_pixbuf_button_from_stock(_("I'm Back!"), GTK_STOCK_JUMP_TO, GAIM_BUTTON_HORIZONTAL);
-		gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
-		g_signal_connect(G_OBJECT(back), "clicked", G_CALLBACK(do_im_back), imaway);
-		gtk_window_set_focus(GTK_WINDOW(imaway), back);
-		gtk_widget_show(back);
-
-		awaymessage = a;
-	} else {
-		destroy_im_away();
-		do_away_message(w, a);
-		return;
+	if (gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
+		gtk_widget_show(awayqueuesw);
+		gtk_widget_show(awayqueue);
 	}
+
+	back = gaim_pixbuf_button_from_stock(_("I'm Back!"), GTK_STOCK_JUMP_TO, GAIM_BUTTON_HORIZONTAL);
+	gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(back), "clicked", G_CALLBACK(do_im_back), imaway);
+	gtk_window_set_focus(GTK_WINDOW(imaway), back);
+	gtk_widget_show(back);
+
+	awaymessage = a;
 
 	/* New away message... Clear out the old sent_aways */
 	while (away_time_queue) {
