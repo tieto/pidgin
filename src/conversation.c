@@ -258,7 +258,11 @@ void delete_conversation(struct conversation *cnv)
 		gtk_widget_destroy(cnv->font_dialog);
 	if (cnv->smiley_dialog)
 		gtk_widget_destroy(cnv->smiley_dialog);
-        g_free(cnv);
+	if (cnv->link_dialog)
+		gtk_widget_destroy(cnv->link_dialog);
+	if (cnv->log_dialog)
+		gtk_widget_destroy(cnv->log_dialog);
+	g_free(cnv);
 }
 
 void update_log_convs()
@@ -338,15 +342,16 @@ void update_transparency()
 /*  Callbacks                                                             */
 /*------------------------------------------------------------------------*/
 
-void toggle_loggle(GtkWidget *w, struct conversation *p)
+void toggle_loggle(GtkWidget *loggle, struct conversation *c)
 {
         if (state_lock)
                 return;
-        
-        if (find_log_info(p->name))
-                rm_log(find_log_info(p->name));
-        else 
-		show_log_dialog(p->name);
+        if (find_log_info(c->name))
+                rm_log(find_log_info(c->name));
+        else if (GTK_TOGGLE_BUTTON(loggle)->active)
+			show_log_dialog(c);
+		else
+			cancel_log(NULL, c);
 }
 
 void insert_smiley(GtkWidget *smiley, struct conversation *c)
@@ -826,7 +831,7 @@ void toggle_font(GtkWidget *font, struct conversation *c)
 	else
 		advance_past(c->entry, "<FONT FACE>", "</FONT>");
 }
-
+/*
 void do_link(GtkWidget *linky, GtkWidget *entry)
 {
 	if (state_lock)
@@ -835,6 +840,18 @@ void do_link(GtkWidget *linky, GtkWidget *entry)
 		show_add_link(entry, linky);
 	else
 		advance_past(entry, "<A HREF>", "</A>"	);
+}
+*/
+void toggle_link(GtkWidget *linky, struct conversation *c)
+{
+	if (state_lock)
+		return;
+	if (GTK_TOGGLE_BUTTON(linky)->active)
+		show_add_link(linky, c);
+	else if (c->link_dialog)
+		cancel_link(linky, c);
+	else
+		advance_past(c->entry, "<A HREF>", "</A>");
 }
 
 void do_strike(GtkWidget *strike, GtkWidget *entry)
@@ -1330,7 +1347,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
                                             GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, _("Link"), _("Insert Link"),
-                                            _("Link"), link_p, GTK_SIGNAL_FUNC(do_link), entry);                 
+                                            _("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);                 
 	palette = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Color"), _("Text Color"),
@@ -1384,6 +1401,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
         c->log_button = wood;
 	c->palette = palette;
 	c->link = link;  
+	c->wood = wood;
 	c->font = font;
 	c->smiley = smiley;
 
@@ -1546,6 +1564,8 @@ void show_conv(struct conversation *c)
 	c->font_dialog = NULL;
 	c->color_dialog = NULL;	
 	c->smiley_dialog = NULL;
+	c->link_dialog = NULL;
+	c->log_dialog = NULL;
 	
 	gtk_container_add(GTK_CONTAINER(win), paned);
         gtk_container_border_width(GTK_CONTAINER(win), 10);

@@ -50,7 +50,7 @@ extern void do_small(GtkWidget *, GtkWidget *);
 extern void do_normal(GtkWidget *, GtkWidget *);
 extern void do_big(GtkWidget *, GtkWidget *);
 extern void toggle_font(GtkWidget *, struct conversation *);
-extern void do_link(GtkWidget *, GtkWidget *);
+extern void toggle_link(GtkWidget *, struct conversation *);
 extern void toggle_color(GtkWidget *, struct conversation *);
 extern void toggle_loggle(GtkWidget *, struct conversation *);
 extern void insert_smiley(GtkWidget *, struct conversation *);

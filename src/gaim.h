@@ -275,6 +275,7 @@ struct conversation {
 	GtkWidget *underline;
 	GtkWidget *palette;
 	GtkWidget *link;
+	GtkWidget *wood;
 	GtkWidget *log_button;
 	GtkWidget *strike;
 	GtkWidget *font;
@@ -282,6 +283,8 @@ struct conversation {
 	GtkWidget *color_dialog;
 	GtkWidget *font_dialog;
 	GtkWidget *smiley_dialog;
+	GtkWidget *link_dialog;
+	GtkWidget *log_dialog;
 	int makesound;
 	char current_fontface[64];
 	char current_fontname[64];
@@ -405,7 +408,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 614 $"
+#define REVISION "gaim:$Revision: 618 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -648,7 +651,7 @@ extern void do_strike(GtkWidget *, GtkWidget *);
 extern void do_small(GtkWidget *, GtkWidget *);
 extern void do_normal(GtkWidget *, GtkWidget *);
 extern void do_big(GtkWidget *, GtkWidget *);
-extern void do_link(GtkWidget *, GtkWidget *);
+extern void toggle_link(GtkWidget *, struct conversation *);
 extern int invert_tags(GtkWidget *, char *, char *, int);
 extern void quiet_set(GtkWidget *, int);
 extern int count_tag(GtkWidget *, char *, char *);
@@ -762,7 +765,7 @@ extern void destroy_all_dialogs();
 extern void show_export_dialog();
 extern void show_import_dialog();
 extern void show_new_bp();
-extern void show_log_dialog(char *);
+extern void show_log_dialog(struct conversation *);
 extern void show_find_email();
 extern void show_find_info();
 extern void g_show_info (char *);
@@ -774,7 +777,7 @@ extern void show_color_dialog(struct conversation *c, GtkWidget *color);
 extern void cancel_color(GtkWidget *widget, struct conversation *c);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
-extern void show_add_link(GtkWidget *, GtkWidget *);
+extern void show_add_link(GtkWidget *,struct conversation *);
 extern void show_change_passwd();
 extern void do_import(GtkWidget *, void *);
 extern int bud_list_cache_exists();
@@ -782,7 +785,8 @@ extern void show_smiley_dialog(struct conversation *, GtkWidget *);
 extern void close_smiley_dialog(GtkWidget *widget, struct conversation *c);
 extern void set_smiley_array(GtkWidget *widget, int smiley_type);
 extern void insert_smiley_text(GtkWidget *widget, struct conversation *c);
-
+extern void cancel_log(GtkWidget *, struct conversation *);
+extern void cancel_link(GtkWidget *, struct conversation *);
 extern void show_font_dialog(struct conversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);

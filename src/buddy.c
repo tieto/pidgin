@@ -1344,7 +1344,7 @@ static void log_callback(GtkWidget *w, char *name)
 	}
 	else
 	{
-		show_log_dialog(name);
+		show_log_dialog(c);
 		if (c) {
 			set_state_lock(1);
 			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->log_button), TRUE);

@@ -71,7 +71,7 @@ int smiley_array[FACE_TOTAL];
 
 static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
-static GtkWidget *linkdialog, *exportdialog, *importdialog, *logdialog;
+static GtkWidget *exportdialog, *importdialog;
 
 struct create_away {
         GtkWidget *window;
@@ -299,6 +299,13 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct conversatio
 		set_state_lock(0);
 		c->smiley_dialog = NULL;
 	}
+	else if (!g_strcasecmp(object_data, "log dialog"))
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->wood), FALSE);
+		set_state_lock(0);
+		c->log_dialog = NULL;
+	}
 	
 	return FALSE;
 }
@@ -320,18 +327,6 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 
 	if (dest == importdialog)
 		importdialog = NULL;
-
-	if (dest == logdialog)
-		logdialog = NULL;
-
-/*	if (GTK_COLOR_SELECTION_DIALOG(dest))
-		color_dialog = NULL;*/
-
-	if (dest == linkdialog)
-		linkdialog = NULL;
-	
-/*	if (dest == fontdialog)
-		fontdialog = NULL;*/
 
         dialogwindows = g_list_remove(dialogwindows, dest);
         gtk_widget_destroy(dest);
@@ -359,16 +354,6 @@ void destroy_all_dialogs()
                 imdialog = NULL;
         }
         
-	if (linkdialog) {
-		destroy_dialog(NULL, linkdialog);
-		linkdialog = NULL;
-	}
-/* is this needed? */
-/*	if (colordialog) {
-		destroy_dialog(NULL, colordialog);
-		colordialog = NULL;
-	}*/
-
         if (exportdialog) {
                 destroy_dialog(NULL, exportdialog);
                 exportdialog = NULL;
@@ -378,16 +363,6 @@ void destroy_all_dialogs()
                 destroy_dialog(NULL, importdialog);
                 importdialog = NULL;
         }
-	
-	if (logdialog) {
-		destroy_dialog(NULL, logdialog);
-		logdialog = NULL;
-	}
-/* is this needed? */
-/*	if (fontdialog) {
-		destroy_dialog(NULL, fontdialog);
-		fontdialog = NULL;
-	}*/
 }
 
 static void do_warn(GtkWidget *widget, struct warning *w)
@@ -1849,20 +1824,31 @@ void show_add_perm(char *who)
 
 
 /*------------------------------------------------------------------------*/
-/*  Function Called To Add A Log                                          */
+/*  Functions Called To Add A Log                                          */
 /*------------------------------------------------------------------------*/
 
-void do_log(GtkWidget *w, char *name)
+void cancel_log(GtkWidget *widget, struct conversation *c)
+{	
+	if (c->wood)
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->wood), FALSE);
+		set_state_lock(0);
+	}
+	dialogwindows = g_list_remove(dialogwindows, c->log_dialog);
+	gtk_widget_destroy(c->log_dialog);
+	c->log_dialog = NULL;	
+}
+
+void do_log(GtkWidget *w, struct conversation *c)
 {
         struct log_conversation *l;
-	struct conversation *c;
         char buf[128];
 
-	c = find_conversation(name);
-        if (!find_log_info(name)) {
+        if (!find_log_info(c->name)) {
                 l = (struct log_conversation *)g_new0(struct log_conversation, 1);
-                strcpy(l->name, name);
-                strcpy(l->filename, gtk_file_selection_get_filename(GTK_FILE_SELECTION(logdialog)));
+                strcpy(l->name, c->name);
+                strcpy(l->filename, gtk_file_selection_get_filename(GTK_FILE_SELECTION(c->log_dialog)));
                 log_conversations = g_list_append(log_conversations, l);
 
                 if (c != NULL)
@@ -1873,11 +1859,10 @@ void do_log(GtkWidget *w, char *name)
         }
 
         save_prefs();
-
-        destroy_dialog(NULL, logdialog);
-        logdialog = NULL;
+        cancel_log(NULL, c);
 } 
 
+/*
 static void cancel_log(GtkWidget *w, char *name)
 {
 	
@@ -1891,32 +1876,29 @@ static void cancel_log(GtkWidget *w, char *name)
         }
 	destroy_dialog(NULL, logdialog);
 }
+*/
 
-void show_log_dialog(char *bname)
+void show_log_dialog(struct conversation *c)
 {
 	char *buf = g_malloc(BUF_LEN);
-        struct conversation *c = find_conversation(bname);
-
 	
-	if (!logdialog) {
-		logdialog = gtk_file_selection_new(_("Gaim - Log Conversation"));
+	if (!c->log_dialog) {
+		c->log_dialog = gtk_file_selection_new(_("Gaim - Log Conversation"));
 		
-		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(logdialog));	
-
-                gtk_object_set_user_data(GTK_OBJECT(logdialog), c);
+		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(c->log_dialog));	
 		
-		g_snprintf(buf, BUF_LEN - 1, "%s/%s.log", getenv("HOME"), bname);
-		
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(logdialog), buf);
-		gtk_signal_connect(GTK_OBJECT(logdialog), "delete_event", GTK_SIGNAL_FUNC(cancel_log), c);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(logdialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_log), bname);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(logdialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_log), bname);
+		g_snprintf(buf, BUF_LEN - 1, "%s/%s.log", getenv("HOME"), c->name);
+		gtk_object_set_user_data(GTK_OBJECT(c->log_dialog), "log dialog");
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(c->log_dialog), buf);
+		gtk_signal_connect(GTK_OBJECT(c->log_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->log_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_log), c);
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->log_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_log), c);
 	}
 
 	g_free(buf);
 
-	gtk_widget_show(logdialog);
-	gdk_window_raise(logdialog->window);
+	gtk_widget_show(c->log_dialog);
+	gdk_window_raise(c->log_dialog->window);
 }
 
 /*------------------------------------------------------*/
@@ -2185,14 +2167,15 @@ void show_find_email()
 /* Link Dialog                                          */
 /*------------------------------------------------------*/
 
-void cancel_link(GtkWidget *widget, struct linkdlg *b)
+void cancel_link(GtkWidget *widget, struct conversation *c)
 {
-	if (b->toggle) {
+	if (c->link) {
 		set_state_lock(1);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->toggle), FALSE);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->link), FALSE);
 		set_state_lock(0);
 	}	
-	destroy_dialog(NULL, b->window);
+	destroy_dialog(NULL, c->link_dialog);
+	c->link_dialog = NULL;
 }
 
 void do_add_link(GtkWidget *widget, struct linkdlg *b)
@@ -2213,7 +2196,7 @@ void do_add_link(GtkWidget *widget, struct linkdlg *b)
 }
 
 
-void show_add_link(GtkWidget *entry, GtkWidget *link)
+void show_add_link(GtkWidget *linky, struct conversation *c)
 {
 	GtkWidget *vbox;
 	GtkWidget *bbox;
@@ -2222,14 +2205,14 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 	GtkWidget *frame;
 	GtkWidget *fbox;
 
-	if (!linkdialog) {
+	if (!c->link_dialog) {
 		struct linkdlg *b = g_new0(struct linkdlg, 1);
-		linkdialog = gtk_window_new(GTK_WINDOW_DIALOG);
-		dialogwindows = g_list_prepend(dialogwindows, linkdialog);
+		c->link_dialog = gtk_window_new(GTK_WINDOW_DIALOG);
+		dialogwindows = g_list_prepend(dialogwindows, c->link_dialog);
 
-		gtk_widget_set_usize(linkdialog, 270, 165);
-		gtk_window_set_policy(GTK_WINDOW(linkdialog), FALSE, FALSE, TRUE);
-		gtk_widget_show(linkdialog);
+		gtk_widget_set_usize(c->link_dialog, 270, 165);
+		gtk_window_set_policy(GTK_WINDOW(c->link_dialog), FALSE, FALSE, TRUE);
+		gtk_widget_show(c->link_dialog);
 
 		vbox = gtk_vbox_new(FALSE, 10);
 		bbox = gtk_hbox_new(TRUE, 10);
@@ -2238,8 +2221,8 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 
 		/* Build OK Button */
 
-		b->ok = picture_button(linkdialog, _("OK"), ok_xpm);
-		b->cancel = picture_button(linkdialog, _("Cancel"), cancel_xpm);
+		b->ok = picture_button(c->link_dialog, _("OK"), ok_xpm);
+		b->cancel = picture_button(c->link_dialog, _("Cancel"), cancel_xpm);
 
 		gtk_box_pack_start(GTK_BOX(bbox), b->ok, FALSE, FALSE, 10);
 		gtk_box_pack_end(GTK_BOX(bbox), b->cancel, FALSE, FALSE, 10);
@@ -2274,27 +2257,27 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 		gtk_box_pack_start(GTK_BOX(fbox), bbox, TRUE, TRUE, 5);
 		gtk_widget_show(vbox);
 
-		gtk_signal_connect(GTK_OBJECT(linkdialog), "destroy",
-				   GTK_SIGNAL_FUNC(cancel_link), b);
+		gtk_signal_connect(GTK_OBJECT(c->link_dialog), "destroy",
+				   GTK_SIGNAL_FUNC(cancel_link), c);
 		gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked",
-				   GTK_SIGNAL_FUNC(cancel_link), b);
+				   GTK_SIGNAL_FUNC(cancel_link), c);
 		gtk_signal_connect(GTK_OBJECT(b->ok), "clicked",
 				   GTK_SIGNAL_FUNC(do_add_link), b);
 
-		gtk_container_add(GTK_CONTAINER(linkdialog  ), fbox);
-		gtk_container_border_width(GTK_CONTAINER(linkdialog  ), 10);
-		gtk_window_set_title(GTK_WINDOW(linkdialog  ), _("GAIM - Add URL"));
-		gtk_window_set_focus(GTK_WINDOW(linkdialog  ), b->url);
-		b->window = linkdialog;
-		b->toggle = link;
-                b->entry = entry;
-                gtk_widget_realize(linkdialog);
-		aol_icon(linkdialog->window);
+		gtk_container_add(GTK_CONTAINER(c->link_dialog  ), fbox);
+		gtk_container_border_width(GTK_CONTAINER(c->link_dialog  ), 10);
+		gtk_window_set_title(GTK_WINDOW(c->link_dialog  ), _("GAIM - Add URL"));
+		gtk_window_set_focus(GTK_WINDOW(c->link_dialog  ), b->url);
+		b->window = c->link_dialog;
+		b->toggle = linky;
+        b->entry = c->entry;
+                gtk_widget_realize(c->link_dialog);
+		aol_icon(c->link_dialog->window);
 
 	}
 
-	gtk_widget_show(linkdialog);
-	gdk_window_raise(linkdialog->window);
+	gtk_widget_show(c->link_dialog);
+	gdk_window_raise(c->link_dialog->window);
 }
 
 
