@@ -143,6 +143,41 @@ static char tochar(char *h)
 	return v;
 }
 
+static char *url_encode(unsigned char *text, int dospace)
+{
+	static char newtext[MSN_BUF_LEN*2];
+	char *buf;
+	char *temp = (char *)malloc(4);
+	int c = 0;
+	int i = 0;
+	int j = 0;
+
+	bzero(newtext, MSN_BUF_LEN*2);
+
+	for (j = 0; j < strlen(text); j++)
+	{
+		if ((text[j] < 33) || (text[j] > 126) || (text[j] == 32 && dospace==1))
+		{
+			/* Other wise, we should escape this booger */
+			newtext[i++] = '%';
+			sprintf(temp, "%02x", text[j]);
+			newtext[i++] = temp[0];
+			newtext[i++] = temp[1];
+		}
+		else
+		{
+			/* It's ok to store this one, sarge */
+			newtext[i++] = text[j];
+		}
+	}
+
+	newtext[i] = 0;
+
+	free(temp);
+
+	return newtext;
+}
+
 static char *url_decode(char *text)
 {
 	static char newtext[MSN_BUF_LEN];
@@ -150,6 +185,8 @@ static char *url_decode(char *text)
 	int c = 0;
 	int i = 0;
 	int j = 0;
+
+	bzero(newtext, MSN_BUF_LEN);
 
 	for (i = 0; i < strlen(text); i++) {
 		if (text[i] == '%')
@@ -811,9 +848,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 				hide_login_progress(gc, "Error signing on");
 				signoff(gc);
 			} else {
-				debug_printf("Before: %s\n", res[4]);
 				md->friendly = g_strdup(url_decode(res[4]));
-				debug_printf("After: %s\n", md->friendly);
 
 				/* Ok, ok.  Your account is FINALLY online.  Ya think Microsoft
 				 * could have had any more steps involved? */
@@ -935,7 +970,7 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 		g_snprintf(buf, MSN_BUF_LEN, "MSG %ld N %d\r\n%s%s", trId(md), 
 				strlen(message) + strlen(MIME_HEADER), MIME_HEADER, message);
 
-		msn_write(mc->fd, buf);
+		msn_write(mc->fd, url_encode(buf, 0));
 	}
 
 }
@@ -1280,10 +1315,15 @@ static void do_change_name(GtkWidget *w, struct msn_name_dlg *b)
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
 	char buf[MSN_BUF_LEN - 1];
 	const gchar *newname;
+	char *temp;
 
 	newname = gtk_entry_get_text(GTK_ENTRY(b->entry));
+
+	temp = strdup(newname);
 	
-	snprintf(buf, MSN_BUF_LEN, "REA %ld %s %s\n", trId(md), gc->username, newname);
+	snprintf(buf, MSN_BUF_LEN, "REA %ld %s %s\n", trId(md), gc->username, url_encode(temp, 1));
+
+	free(temp);
 
 	msn_write(md->fd, buf);
 
@@ -1330,7 +1370,7 @@ static void show_change_name(struct gaim_connection *gc)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
 	buf = g_malloc(256);
-	g_snprintf(buf, 256, "New name for %s (%s):", tmp->username, md->friendly);
+	g_snprintf(buf, 256, "New name for %s (%s):", tmp->username, url_decode(md->friendly));
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
