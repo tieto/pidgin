@@ -38,6 +38,7 @@ typedef gboolean (*GaimFilterAccountFunc)(GaimAccount *account);
 #include "log.h"
 #include "proxy.h"
 #include "prpl.h"
+#include "status.h"
 
 struct _GaimAccountUiOps
 {
