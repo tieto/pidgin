@@ -32,6 +32,7 @@ msn_angel.png      	(a) (A)
 msn_angry.png      	:-@ :@
 msn_bat.png        	:-[ :[
 msn_beer.png       	(B) (b)
+msn_bowl.png		(||)
 msn_boy.png        	(Z) (z)
 msn_brheart.png    	(U) (u)
 msn_cake.png       	(^)
@@ -63,6 +64,7 @@ msn_idea.png       	(I) (i)
 msn_island.png		(ip)
 msn_kiss.png       	(K) (k)
 msn_laugh.png      	:-D :-d :d :D :-> :>
+msn_lightning.png	(li)
 msn_nerd.png		8-|
 msn_neutral.png    	:-| :|
 msn_note.png       	(8)
@@ -72,6 +74,7 @@ msn_phone.png      	(T) (t)
 msn_photo.png	   	(P) (p)
 msn_pizza.png		(pi)
 msn_plane.png		(ap)
+msn_plate.png		(pl)
 msn_question.png   	(?)
 msn_rainbow.png    	(r) (R)
 msn_run.png        	({)
@@ -87,8 +90,9 @@ msn_smiley.png    	:-) :)
 msn_snail.png		(sn)
 msn_soccer.png		(so)
 msn_star.png       	(*)
+msn_stormy.png		(st)
 msn_sun.png		(#)
-msn_teeth.png           8o|8O|
+msn_teeth.png           8o| 8O|
 msn_think.png           *-)
 msn_thumbdown.png 	(N) (n)
 msn_thumbup.png   	(Y) (y)
