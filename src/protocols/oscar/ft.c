@@ -824,6 +824,32 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
 	return 0;
 }
 
+faim_export struct aim_oft_info *aim_oft_createnewheader(fu8_t *cookie, char *ip, fu32_t size, fu32_t modtime, char *filename)
+{
+	struct aim_oft_info *new;
+
+	if (!(new = (struct aim_oft_info *)calloc(1, sizeof(struct aim_oft_info))))
+		return NULL;
+
+	if (cookie && (sizeof(cookie) == 8)) {
+		memcpy(new->cookie, cookie, 8);
+		memcpy(new->fh.bcookie, cookie, 8);
+	}
+	if (ip)
+		strncpy(new->ip, ip, 30);
+	new->fh.filesleft = 0;
+	new->fh.totparts = 1;
+	new->fh.partsleft = 1;
+	new->fh.totsize = size;
+	new->fh.size = size;
+	new->fh.modtime = modtime;
+	strcpy(new->fh.idstring, "OFT_Windows ICBMFT V1.1 32");
+	if (filename)
+		strncpy(new->fh.name, filename, 64);
+
+	return new;
+}
+
 /**
  * Create an OFT packet based on the given information, and send it on its merry way.
  *

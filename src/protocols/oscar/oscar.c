@@ -669,6 +669,10 @@ static void oscar_close(struct gaim_connection *gc) {
 		gaim_input_remove(od->emlpa);
 	if (od->icopa > 0)
 		gaim_input_remove(od->icopa);
+	if (od->icopa > 0)
+		gaim_input_remove(od->icopa);
+	if (od->icontimer)
+		g_source_remove(od->icontimer);
 	aim_session_kill(od->sess);
 	g_free(od->sess);
 	od->sess = NULL;

@@ -254,47 +254,32 @@
 /*
  * OFT Services
  *
- * See non-SNAC note below.
+ * For all of the above #defines, the number is the subtype 
+ * of the SNAC.  For OFT #defines, the number is the 
+ * "hdrtype" which comes after the magic string and OFT 
+ * packet length.
+ *
+ * I'm pretty sure the ODC ones are arbitrary right now, 
+ * that should be changed.
  */
-#define AIM_CB_OFT_DIRECTIMCONNECTREQ 0x0001/* connect request -- actually an OSCAR CAP */
+#define AIM_CB_OFT_DIRECTIMCONNECTREQ 0x0001	/* connect request -- actually an OSCAR CAP */
 #define AIM_CB_OFT_DIRECTIMINCOMING 0x0002
 #define AIM_CB_OFT_DIRECTIMDISCONNECT 0x0003
 #define AIM_CB_OFT_DIRECTIMTYPING 0x0004
 #define AIM_CB_OFT_DIRECTIM_ESTABLISHED 0x0005
 
-#if 0
-/* Are this arbitrary?! */
-#define AIM_CB_OFT_GETFILECONNECTREQ 0x0006	/* connect request -- actually an OSCAR CAP */
-#define AIM_CB_OFT_GETFILELISTINGREQ 0x0007	/* OFT listing.txt request */
-#define AIM_CB_OFT_GETFILEFILEREQ 0x0008	/* received file request */
-#define AIM_CB_OFT_GETFILEFILESEND 0x0009	/* received file request confirm -- send data */
-#define AIM_CB_OFT_GETFILECOMPLETE 0x000a	/* received file send complete*/
-#define AIM_CB_OFT_GETFILE_ESTABLISHED 0x000b	/* request for file get acknowledge */
-#define AIM_CB_OFT_GETFILEDISCONNECT 0x000c	/* OFT connection disconnected.*/
-#define AIM_CB_OFT_GETFILELISTING 0x000d	/* OFT listing.txt received.*/
-#define AIM_CB_OFT_GETFILERECEIVE 0x000e	/* OFT file incoming.*/
-#define AIM_CB_OFT_GETFILELISTINGRXCONFIRM 0x000f
-#define AIM_CB_OFT_GETFILESTATE4 0x0010
-#endif
-
-#define AIM_CB_OFT_SENDFILE_REQUEST 0x0011	/* started receiving file */
-#define AIM_CB_OFT_SENDFILE_SEND 0x0012		/* buddy ready to for us to send */
-#define AIM_CB_OFT_SENDFILE_COMPLETE 0x0013	/* send to buddy complete */
-#define AIM_CB_OFT_SENDFILE_RESUME 0x0015	/* somethin' */
-
-#define AIM_CB_OFT_PROMPT 0x0101		/* Just connected to another buddy, receiver sends this */
+#define AIM_CB_OFT_PROMPT 0x0101		/* "I am going to send you this file, is that ok?" */
 #define AIM_CB_OFT_RESUMESOMETHING 0x0106	/* I really don't know */
-#define AIM_CB_OFT_ACK 0x0202			/* Just after receiving the prompt, sender sends this */
-#define AIM_CB_OFT_DONE 0x0204			/* After a transfer is complete, sender sends this */
-#define AIM_CB_OFT_RESUME 0x0205		/* Resume transferring, send by whoever paused? */
+#define AIM_CB_OFT_ACK 0x0202			/* "Yes, it is ok for you to send me that file" */
+#define AIM_CB_OFT_DONE 0x0204			/* "I received that file with no problems, thanks a bunch" */
+#define AIM_CB_OFT_RESUME 0x0205		/* Resume transferring, sent by whoever paused? */
 #define AIM_CB_OFT_RESUMEACK 0x0207		/* Not really sure */
 
-#define AIM_CB_OFT_GETFILE_REQUESTLISTING 0x1108 /* request a listing.txt file from the remote user */
-#define AIM_CB_OFT_GETFILE_SENDLISTING 0x1208	/* we're going to send a listing.txt file */
-#define AIM_CB_OFT_GETFILE_RECEIVELISTING 0x1209 /* the other dude sent us a listing.txt file */
-#define AIM_CB_OFT_GETFILE_RECEIVEDLISTING 0x120a /* we received a listing.txt file, thanks */ /* I'm just guessing about this one... */
-#define AIM_CB_OFT_GETFILE_ACKLISTING 0x120b	/* other user received the listing.txt file, yay */
-#define AIM_CB_OFT_GETFILE_REQUESTFILE 0x120c	/* request a specific file from the remote user */
+#define AIM_CB_OFT_GETFILE_REQUESTLISTING 0x1108 /* "I have a listing.txt file, do you want it?" */
+#define AIM_CB_OFT_GETFILE_RECEIVELISTING 0x1209 /* "Yes, please send me your listing.txt file" */
+#define AIM_CB_OFT_GETFILE_RECEIVEDLISTING 0x120a /* received corrupt listing.txt file? */ /* I'm just guessing about this one... */
+#define AIM_CB_OFT_GETFILE_ACKLISTING 0x120b	/* "I received the listing.txt file successfully" */
+#define AIM_CB_OFT_GETFILE_REQUESTFILE 0x120c	/* "Please send me this file" */
 
 #define AIM_CB_OFT_ESTABLISHED 0xFFFF		/* connection to buddy initiated */
 
