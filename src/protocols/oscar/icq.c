@@ -105,12 +105,20 @@ faim_export int aim_icq_hideip(aim_session_t *sess)
 	return 0;
 }
 
+/**
+ * Change your ICQ password.
+ *
+ * @param sess The oscar session
+ * @param passwd The new password.  If this is longer than 8 characters it 
+ *        will be truncated.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
 faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
-	int bslen;
+	int bslen, passwdlen;
 
 	if (!passwd)
 		return -EINVAL;
@@ -118,7 +126,10 @@ faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
 		return -EINVAL;
 
-	bslen = 2+4+2+2+2+2+strlen(passwd)+1;
+	passwdlen = strlen(passwd);
+	if (passwdlen > MAXICQPASSLEN)
+		passwdlen = MAXICQPASSLEN;
+	bslen = 2+4+2+2+2+2+passwdlen+1;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
@@ -135,8 +146,8 @@ faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd)
 	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
 	aimbs_putle16(&fr->data, snacid); /* eh. */
 	aimbs_putle16(&fr->data, 0x042e); /* shrug. */
-	aimbs_putle16(&fr->data, strlen(passwd)+1);
-	aimbs_putraw(&fr->data, passwd, strlen(passwd));
+	aimbs_putle16(&fr->data, passwdlen+1);
+	aimbs_putraw(&fr->data, passwd, passwdlen);
 	aimbs_putle8(&fr->data, '\0');
 
 	aim_tx_enqueue(sess, fr);

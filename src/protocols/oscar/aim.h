@@ -119,6 +119,11 @@ typedef fu16_t flap_seqnum_t;
  */
 #define MAXCHATMSGLEN 512
 
+/**
+ * Maximum length for the password of an ICQ account
+ */
+#define MAXICQPASSLEN 8
+
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
 /*

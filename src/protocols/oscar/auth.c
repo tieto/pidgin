@@ -7,7 +7,7 @@
  */
 
 #define FAIM_INTERNAL
-#include <aim.h> 
+#include <aim.h>
 
 #include "md5.h"
 
@@ -156,10 +156,14 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 {
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
+	int passwdlen;
 	char *password_encoded;
 
-	if (!(password_encoded = (char *) malloc(strlen(password))))
+	passwdlen = strlen(password);
+	if (!(password_encoded = (char *)malloc(passwdlen+1)))
 		return -ENOMEM;
+	if (passwdlen > MAXICQPASSLEN)
+		passwdlen = MAXICQPASSLEN;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 1152))) {
 		free(password_encoded);
@@ -170,7 +174,7 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 
 	aimbs_put32(&fr->data, 0x00000001); /* FLAP Version */
 	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
-	aim_addtlvtochain_raw(&tl, 0x0002, strlen(password), password_encoded);
+	aim_addtlvtochain_raw(&tl, 0x0002, passwdlen, password_encoded);
 
 	if (ci->clientstring)
 		aim_addtlvtochain_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
