@@ -360,9 +360,7 @@ void show_login()
 #endif
 
 	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
-#ifdef GAIM_PLUGINS
 	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
-#endif
 
 	gtk_widget_show(reg);
 	gtk_widget_show(options);
