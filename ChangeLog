@@ -3,7 +3,10 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.9.12:
 	* Segfault fix for PPC/Alpha/etc machines with log(0)
 	  Thanks to Todd Cohen for this one.
-
+	* Small internal change to the way prefs work
+	* GNOME Applet support works better
+	  (thanks to Eric Warmenhoven for the patch)
+	
 version 0.9.11:
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
 	* Another memory leak fix

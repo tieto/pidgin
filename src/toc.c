@@ -146,7 +146,7 @@ int toc_login(char *username, char *password)
 
         
 #ifdef USE_APPLET
- 	if (applet_buddy_auto_show) {
+	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
                 make_buddy();
                 parse_toc_buddy_list(config);
                 refresh_buddy_window();
@@ -160,6 +160,7 @@ int toc_login(char *username, char *password)
 
        
 	setUserState(online);
+	gtk_widget_hide(mainwindow);
 #else
         gtk_widget_hide(mainwindow);
 	show_buddy_list();

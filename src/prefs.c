@@ -369,7 +369,7 @@ void build_prefs()
 	gaim_button("Log All Conversations", &general_options, OPT_GEN_LOG_ALL, genbox);
 	gaim_button("Strip HTML from log files", &general_options, OPT_GEN_STRIP_HTML, genbox);
 #ifdef USE_APPLET
-	gaim_button("Automatically Show Buddy List", &applet_buddy_auto_show, genbox);
+	gaim_button("Automatically Show Buddy List", &general_options, OPT_GEN_APP_BUDDY_SHOW, genbox);
 #endif
 	gaim_button("Raise windows when message recieved", &general_options, OPT_GEN_POPUP_WINDOWS, genbox);
         gaim_button("Send URLs as links", &general_options, OPT_GEN_SEND_LINKS, genbox);

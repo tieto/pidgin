@@ -37,5 +37,6 @@ int main(int argc, char *argv[])
 		fprintf(f, "\n");
 	}
 	fprintf(f,"};\n");
+	fclose(f);
 	return 0;
 }

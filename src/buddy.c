@@ -80,6 +80,9 @@ void destroy_buddy()
 	if (blist)
 		gtk_widget_destroy(blist);
 	blist=NULL;
+#ifdef USE_APPLET
+	buddy_created = FALSE;
+#endif
 }
 
 void update_num_groups()

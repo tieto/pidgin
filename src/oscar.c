@@ -309,7 +309,7 @@ int gaim_redirect_handle(struct command_rx_struct *command, ...)
 
 		set_login_progress(5, "Logged in.\n");
 #ifdef USE_APPLET
-		if (applet_buddy_auto_show) {
+		if (general_options & OPT_GEN_APP_BUDDY_SOW) {
 			show_buddy_list();
 			refresh_buddy_window();
 		} else {
