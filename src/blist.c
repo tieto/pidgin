@@ -2567,7 +2567,7 @@ void gaim_blist_node_set_int(GaimBlistNode* node, const char *key, int value)
 	g_return_if_fail(key != NULL);
 
 	setting = g_new0(struct gaim_blist_node_setting, 1);
-	setting->type = GAIM_BLIST_NODE_SETTING_STRING;
+	setting->type = GAIM_BLIST_NODE_SETTING_INT;
 	setting->value.integer = value;
 
 	g_hash_table_replace(node->settings, g_strdup(key), setting);
