@@ -38,7 +38,7 @@ ssl_init(void)
 	if (_ssl_initialized)
 		return FALSE;
 
-	plugin = gaim_plugins_find_with_id("ssl");
+	plugin = gaim_plugins_find_with_id("core-ssl");
 
 	if (plugin != NULL && !gaim_plugin_is_loaded(plugin))
 		gaim_plugin_load(plugin);
