@@ -2927,6 +2927,13 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
 	gtk_widget_show(image->filesel);
 }
 
+/*
+ * So, um, AIM Direct IM lets you send any file, not just images.  You can
+ * just insert a sound or a file or whatever in a conversation.  It's
+ * basically like file transfer, except there is an icon to open the file
+ * embedded in the conversation.  Someone should make the Gaim core handle
+ * all of that.
+ */
 static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlImage *image)
 {
 	GdkEventButton *event_button = (GdkEventButton *) event;
