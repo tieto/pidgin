@@ -235,7 +235,8 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 		if( lparam == WM_LBUTTONDBLCLK ) {
 			/* Double Click */
 			/* Either hide or show current window (login or buddy) */
-			docklet_toggle();
+			gaim_gtk_blist_docklet_toggle();
+#if 0
 			/* if away.. hide/show I'm back win too */
 			if(st_state == SYSTRAY_STATE_AWAY) {
 				if(GTK_WIDGET_VISIBLE(blist) && !GTK_WIDGET_VISIBLE(imaway)) {
@@ -246,6 +247,7 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 					gtk_widget_hide(imaway);
 				}
 			}
+#endif
 			debug_printf("Systray got double click\n");
 		}
 		if( lparam == WM_RBUTTONUP ) {
@@ -418,12 +420,12 @@ GdkFilterReturn st_buddywin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer
 	switch( msg->message ) {
 	case WM_SYSCOMMAND:
 		if( msg->wParam == SC_MINIMIZE ) {
-			hide_buddy_list();
+			gaim_blist_set_visible(FALSE);
 			return GDK_FILTER_REMOVE;
 		}
 		break;
 	case WM_CLOSE:
-		hide_buddy_list();
+		gaim_blist_set_visible(FALSE);
 		return GDK_FILTER_REMOVE;
 	}
 
@@ -464,7 +466,7 @@ GdkFilterReturn st_backwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer 
 /* Create a hidden window and associate it with the systray icon.
    We use this hidden window to proccess WM_TRAYMESSAGE msgs. */
 void wgaim_systray_init(void) {
-	docklet_add();
+	gaim_gtk_blist_docklet_add();
 
 	/* dummy window to process systray messages */
 	systray_hwnd = systray_create_hiddenwin();
@@ -489,7 +491,7 @@ void wgaim_systray_init(void) {
 }
 
 void wgaim_systray_cleanup(void) {
-	docklet_remove();
+	gaim_gtk_blist_docklet_remove();
 	systray_remove_nid();
 	DestroyMenu(systray_menu);
 	DestroyWindow(systray_hwnd);
