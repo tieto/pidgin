@@ -25,6 +25,11 @@
 	works with the latest MSN protocol. Please be patient for that, as
 	we're getting a lot of MSN questions we answer over and over.
 
+	Luke: Wow, I actually did something for this release besides commit
+	translations! Well, sorta. I got permission to commit some patches 
+	so gaim now has color support for yahoo, and you can fetch some 
+	basic info on yahoo and msn users. Yay for people submitting patches!
+
 0.67 (08/14/2003):
 
 	Rob: I live in Georgia.  I don't care about blackouts.  We only
