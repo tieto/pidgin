@@ -314,23 +314,32 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 		gtk_tree_model_get_value(model, &iter, 4, &val);
 		account = g_value_get_pointer(&val);
 		g_value_unset(&val);
-		gaim_account_connect(account);
-		/* remove all disconnections of the account reconnected */
+		/* remove all disconnections of the account to be reconnected */
 		if (gtk_tree_model_get_iter_first(model, &iter)) {
+			GList *l_del = NULL;
 			GaimAccount *account2 = NULL;
-			gboolean alreadyIterated = FALSE;
 			do {
-				alreadyIterated = FALSE;
 				gtk_tree_model_get_value(model, &iter, 4, &val);
 				account2 = g_value_get_pointer(&val);
 				g_value_unset(&val);
 				if (account2 == account) {
-					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-					alreadyIterated = TRUE;
+					GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+					GtkTreeRowReference* del_row = gtk_tree_row_reference_new(model, path);
+					l_del = g_list_append(l_del, del_row);
 				}
 				g_value_unset(&val);
-			} while (alreadyIterated || gtk_tree_model_iter_next(model, &iter));
+			} while (gtk_tree_model_iter_next(model, &iter));
+
+			while (l_del != NULL) {
+				GtkTreeRowReference* del_row = l_del->data;
+				GtkTreePath *path = gtk_tree_row_reference_get_path(del_row);
+				if (gtk_tree_model_get_iter(model, &iter, path))
+					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+				l_del = l_del->next;
+			}
 		}
+
+		gaim_account_connect(account);
 
 		if (!gtk_tree_model_get_iter_first(model, &iter))
 			disconnect_window_hide();
