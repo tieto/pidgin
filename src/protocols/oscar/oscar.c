@@ -3287,6 +3287,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	va_list ap;
 	fu16_t code;
 	char *msg;
@@ -3303,6 +3304,7 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} else {
 			hide_login_progress_error(gc, _("You have been signed off for an unknown reason."));
 		}
+		od->killme = TRUE;
 	}
 
 	return 1;
