@@ -1382,7 +1382,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			case 'l':
 				gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
 				g_string_free(conv->history, TRUE);
-				conv->history = NULL;
+				conv->history = g_string_new("");
 
 				return TRUE;
 				break;
