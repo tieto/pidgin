@@ -65,7 +65,7 @@ void msn_buddy_icon_xfer_destroy(MsnBuddyIconXfer *xfer);
  *
  * @return TRUE
  */
-gboolean msn_buddy_icon_msg(MsnServConn *servconn, const MsnMessage *msg);
+gboolean msn_buddy_icon_msg(MsnServConn *servconn, MsnMessage *msg);
 
 /**
  * Sends a buddy icon invitation message.

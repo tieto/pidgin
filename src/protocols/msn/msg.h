@@ -32,6 +32,8 @@ typedef struct _MsnMessage MsnMessage;
  */
 struct _MsnMessage
 {
+	size_t ref_count;           /**< The reference count.       */
+
 	MsnUser *sender;
 	MsnUser *receiver;
 
@@ -71,6 +73,26 @@ MsnMessage *msn_message_new_from_str(MsnSession *session, const char *str);
  * Destroys a message.
  */
 void msn_message_destroy(MsnMessage *msg);
+
+/**
+ * Increments the reference count on a message.
+ *
+ * @param msg The message.
+ *
+ * @return @a msg
+ */
+MsnMessage *msn_message_ref(MsnMessage *msg);
+
+/**
+ * Decrements the reference count on a message.
+ *
+ * This will destroy the structure if the count hits 0.
+ *
+ * @param msg The message.
+ *
+ * @return @a msg, or @c NULL if the new count is 0.
+ */
+MsnMessage *msn_message_unref(MsnMessage *msg);
 
 /**
  * Converts a message to a string.

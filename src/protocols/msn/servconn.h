@@ -30,8 +30,7 @@ typedef gboolean (*MsnServConnCommandCb)(MsnServConn *servconn,
 										 const char *cmd, const char **params,
 										 size_t param_count);
 
-typedef gboolean (*MsnServConnMsgCb)(MsnServConn *servconn,
-									 const MsnMessage *msg);
+typedef gboolean (*MsnServConnMsgCb)(MsnServConn *servconn, MsnMessage *msg);
 
 #include "session.h"
 
@@ -49,6 +48,8 @@ struct _MsnServConn
 
 	char *rxqueue;
 	int rxlen;
+
+	GSList *msg_queue;
 
 	GSList *txqueue;
 
@@ -91,6 +92,11 @@ size_t msn_servconn_write(MsnServConn *servconn, const char *buf,
 
 gboolean msn_servconn_send_command(MsnServConn *servconn, const char *command,
 								   const char *params);
+
+void msn_servconn_queue_message(MsnServConn *servconn, const char *command,
+								MsnMessage *msg);
+
+void msn_servconn_unqueue_message(MsnServConn *servconn, MsnMessage *msg);
 
 void msn_servconn_register_command(MsnServConn *servconn,
 								   const char *command,

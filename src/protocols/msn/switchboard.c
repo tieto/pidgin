@@ -262,7 +262,7 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Message Types
  **************************************************************************/
 static gboolean
-__plain_msg(MsnServConn *servconn, const MsnMessage *msg)
+__plain_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	struct gaim_connection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -301,7 +301,7 @@ __plain_msg(MsnServConn *servconn, const MsnMessage *msg)
 }
 
 static gboolean
-__control_msg(MsnServConn *servconn, const MsnMessage *msg)
+__control_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	struct gaim_connection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -318,7 +318,7 @@ __control_msg(MsnServConn *servconn, const MsnMessage *msg)
 }
 
 static gboolean
-__clientcaps_msg(MsnServConn *servconn, const MsnMessage *msg)
+__clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	MsnSwitchBoard *swboard = servconn->data;

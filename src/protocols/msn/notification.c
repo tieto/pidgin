@@ -1139,7 +1139,7 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Message Types
  **************************************************************************/
 static gboolean
-__profile_msg(MsnServConn *servconn, const MsnMessage *msg)
+__profile_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	const char *value;
@@ -1162,7 +1162,7 @@ __profile_msg(MsnServConn *servconn, const MsnMessage *msg)
 }
 
 static gboolean
-__initial_email_msg(MsnServConn *servconn, const MsnMessage *msg)
+__initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	struct gaim_connection *gc = session->account->gc;
@@ -1176,6 +1176,9 @@ __initial_email_msg(MsnServConn *servconn, const MsnMessage *msg)
 
 	if (session->passport_info.file == NULL) {
 		msn_servconn_send_command(servconn, "URL", "INBOX");
+
+		msn_servconn_queue_message(servconn, "URL", msg);
+
 		return TRUE;
 	}
 
@@ -1193,7 +1196,7 @@ __initial_email_msg(MsnServConn *servconn, const MsnMessage *msg)
 }
 
 static gboolean
-__email_msg(MsnServConn *servconn, const MsnMessage *msg)
+__email_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	struct gaim_connection *gc = session->account->gc;
@@ -1207,6 +1210,9 @@ __email_msg(MsnServConn *servconn, const MsnMessage *msg)
 
 	if (session->passport_info.file == NULL) {
 		msn_servconn_send_command(servconn, "URL", "INBOX");
+
+		msn_servconn_queue_message(servconn, "URL", msg);
+
 		return TRUE;
 	}
 
@@ -1229,7 +1235,7 @@ __email_msg(MsnServConn *servconn, const MsnMessage *msg)
 }
 
 static gboolean
-__system_msg(MsnServConn *servconn, const MsnMessage *msg)
+__system_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	GHashTable *table;
 	const char *type_s;

@@ -464,7 +464,7 @@ msn_buddy_icon_xfer_destroy(MsnBuddyIconXfer *xfer)
 }
 
 gboolean
-msn_buddy_icon_msg(MsnServConn *servconn, const MsnMessage *msg)
+msn_buddy_icon_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	if (!strncmp(msn_message_get_body(msg), "ICON", 4))
 		return __process_data(servconn, msg);

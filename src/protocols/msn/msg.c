@@ -63,6 +63,8 @@ msn_message_new(void)
 	msn_message_set_charset(msg, "UTF-8");
 	msn_message_set_flag(msg, 'N');
 
+	msn_message_ref(msg);
+
 	return msg;
 }
 
@@ -174,6 +176,12 @@ msn_message_destroy(MsnMessage *msg)
 {
 	g_return_if_fail(msg != NULL);
 
+	if (msg->ref_count > 0) {
+		msn_message_unref(msg);
+
+		return;
+	}
+
 	if (msg->sender != NULL)
 		msn_user_unref(msg->sender);
 
@@ -192,7 +200,37 @@ msn_message_destroy(MsnMessage *msg)
 	g_hash_table_destroy(msg->attr_table);
 	g_list_free(msg->attr_list);
 
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Destroying message\n");
 	g_free(msg);
+}
+
+MsnMessage *
+msn_message_ref(MsnMessage *msg)
+{
+	g_return_val_if_fail(msg != NULL, NULL);
+
+	msg->ref_count++;
+
+	return msg;
+}
+
+MsnMessage *
+msn_message_unref(MsnMessage *msg)
+{
+	g_return_val_if_fail(msg != NULL, NULL);
+
+	if (msg->ref_count <= 0)
+		return NULL;
+
+	msg->ref_count--;
+
+	if (msg->ref_count == 0) {
+		msn_message_destroy(msg);
+
+		return NULL;
+	}
+
+	return msg;
 }
 
 char *

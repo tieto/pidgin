@@ -22,10 +22,40 @@
 #include "msn.h"
 #include "servconn.h"
 
+typedef struct
+{
+	char *command;
+	MsnMessage *msg;
+
+} MsnQueueEntry;
+
+static gboolean
+__process_message(MsnServConn *servconn, MsnMessage *msg)
+{
+	MsnServConnMsgCb cb;
+
+	cb = g_hash_table_lookup(servconn->msg_types,
+							 msn_message_get_content_type(msg));
+
+	if (cb == NULL) {
+		gaim_debug(GAIM_DEBUG_WARNING, "msn",
+				   "Unhandled content-type '%s': %s\n",
+				   msn_message_get_content_type(msg),
+				   msn_message_get_body(msg));
+
+		return FALSE;
+	}
+
+	cb(servconn, msg);
+
+	return TRUE;
+}
+
 static gboolean
 __process_single_line(MsnServConn *servconn, char *str)
 {
 	MsnServConnCommandCb cb;
+	GSList *l, *l_next;
 	gboolean result;
 	size_t param_count = 0;
 	char *command, *param_start;
@@ -68,45 +98,64 @@ __process_single_line(MsnServConn *servconn, char *str)
 	if (params != NULL)
 		g_strfreev(params);
 
+	
+	/* Process all queued messages that are waiting on this command. */
+	for (l = servconn->msg_queue; l != NULL; l = l_next) {
+		MsnQueueEntry *entry = l->data;
+		MsnMessage *msg;
+
+		l_next = l->next;
+
+		if (entry->command == NULL ||
+			!g_ascii_strcasecmp(entry->command, command)) {
+
+			MsnUser *sender;
+
+			msg = entry->msg;
+
+			msn_message_ref(msg);
+
+			msn_servconn_unqueue_message(servconn, entry->msg);
+
+			sender = msn_message_get_sender(msg);
+
+			servconn->msg_passport = g_strdup(msn_user_get_passport(sender));
+			servconn->msg_friendly = g_strdup(msn_user_get_name(sender));
+
+			__process_message(servconn, msg);
+
+			g_free(servconn->msg_passport);
+			g_free(servconn->msg_friendly);
+
+			msn_message_destroy(msg);
+		}
+	}
+
 	return result;
 }
 
 static gboolean
 __process_multi_line(MsnServConn *servconn, char *buffer)
 {
-	MsnServConnMsgCb cb;
 	MsnMessage *msg;
 	char msg_str[MSN_BUF_LEN];
+	gboolean result;
 
 	g_snprintf(msg_str, sizeof(msg_str),
 			   "MSG %s %s %d\r\n%s",
 			   servconn->msg_passport, servconn->msg_friendly,
 			   servconn->msg_len, buffer);
 
-	msg = msn_message_new_from_str(servconn->session, msg_str);
-
-	cb = g_hash_table_lookup(servconn->msg_types,
-							 msn_message_get_content_type(msg));
-
-	if (cb == NULL) {
-		gaim_debug(GAIM_DEBUG_WARNING, "msn",
-				   "Unhandled content-type '%s': %s\n",
-				   msn_message_get_content_type(msg),
-				   msn_message_get_body(msg));
-
-		msn_message_destroy(msg);
-
-		return FALSE;
-	}
-
 	gaim_debug(GAIM_DEBUG_MISC, "msn",
 			   "Message: {%s}\n", buffer);
 
-	cb(servconn, msg);
+	msg = msn_message_new_from_str(servconn->session, msg_str);
+
+	result = __process_message(servconn, msg);
 
 	msn_message_destroy(msg);
 
-	return TRUE;
+	return result;
 }
 
 static void
@@ -171,11 +220,17 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	g_free(servconn->rxqueue);
 
-	while (servconn->txqueue) {
+	while (servconn->txqueue != NULL) {
 		g_free(servconn->txqueue->data);
 
 		servconn->txqueue = g_slist_remove(servconn->txqueue,
 										   servconn->txqueue->data);
+	}
+
+	while (servconn->msg_queue != NULL) {
+		MsnQueueEntry *entry = servconn->msg_queue->data;
+
+		msn_servconn_unqueue_message(servconn, entry->msg);
 	}
 
 	servconn->connected = FALSE;
@@ -273,6 +328,54 @@ msn_servconn_send_command(MsnServConn *servconn, const char *command,
 				   command, servconn->session->trId++, params);
 
 	return (msn_servconn_write(servconn, buf, strlen(buf)) > 0);
+}
+
+void
+msn_servconn_queue_message(MsnServConn *servconn, const char *command,
+						   MsnMessage *msg)
+{
+	MsnQueueEntry *entry;
+
+	g_return_if_fail(servconn != NULL);
+	g_return_if_fail(msg != NULL);
+
+	entry          = g_new0(MsnQueueEntry, 1);
+	entry->msg     = msg;
+	entry->command = (command == NULL ? NULL : g_strdup(command));
+
+	servconn->msg_queue = g_slist_append(servconn->msg_queue, entry);
+
+	msn_message_ref(msg);
+}
+
+void
+msn_servconn_unqueue_message(MsnServConn *servconn, MsnMessage *msg)
+{
+	MsnQueueEntry *entry = NULL;
+	GSList *l;
+
+	g_return_if_fail(servconn != NULL);
+	g_return_if_fail(msg != NULL);
+
+	for (l = servconn->msg_queue; l != NULL; l = l->next) {
+		entry = l->data;
+
+		if (entry->msg == msg)
+			break;
+
+		entry = NULL;
+	}
+
+	g_return_if_fail(entry != NULL);
+
+	msn_message_unref(msg);
+
+	servconn->msg_queue = g_slist_remove(servconn->msg_queue, entry);
+
+	if (entry->command != NULL)
+		g_free(entry->command);
+
+	g_free(entry);
 }
 
 void
