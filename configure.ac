@@ -113,17 +113,18 @@ for i in $STATIC_PRPLS ; do
 	extern_init="$extern_init extern gboolean gaim_init_${i}_plugin();"
 	load_proto="$load_proto gaim_init_${i}_plugin();"
 	case $i in
-		gg) static_gg=yes ;;
-		irc) static_irc=yes ;;
-		jabber) static_jabber=yes ;;
-		msn) static_msn=yes ;;
-		napster) static_napster=yes ;;
-		oscar) static_oscar=yes ;;
-		toc) static_toc=yes ;;
-		trepia) static_trepia=yes ;;
-		yahoo) static_yahoo=yes ;;
-		zephyr) static_zephyr=yes ;;
-		*) echo "Invalid static protocol $i!!" ; exit ;;
+		gg)			static_gg=yes ;;
+		irc)		static_irc=yes ;;
+		jabber)		static_jabber=yes ;;
+		msn)		static_msn=yes ;;
+		napster)	static_napster=yes ;;
+		oscar)		static_oscar=yes ;;
+		rendezvous)	static_rendezvous=yes ;;
+		toc)		static_toc=yes ;;
+		trepia)		static_trepia=yes ;;
+		yahoo)		static_yahoo=yes ;;
+		zephyr)		static_zephyr=yes ;;
+		*)			echo "Invalid static protocol $i!!" ; exit ;;
 	esac
 done
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
@@ -132,6 +133,7 @@ AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_NAPSTER, test "x$static_napster" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
+AM_CONDITIONAL(STATIC_RENDEZVOUS, test "x$static_rendezvous" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_TREPIA, test "x$static_trepia" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
@@ -147,17 +149,18 @@ fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
 	case $i in
-		gg)      dynamic_gg=yes ;;
-		irc)     dynamic_irc=yes ;;
-		jabber)  dynamic_jabber=yes ;;
-		msn)     dynamic_msn=yes ;;
-		napster) dynamic_napster=yes ;;
-		oscar)   dynamic_oscar=yes ;;
-		toc)     dynamic_toc=yes ;;
-		trepia)  dynamic_trepia=yes ;;
-		yahoo)   dynamic_yahoo=yes ;;
-		zephyr)  dynamic_zephyr=yes ;;
-		*)       echo "Invalid dynamic protocol $i!!" ; exit ;;
+		gg)			dynamic_gg=yes ;;
+		irc)		dynamic_irc=yes ;;
+		jabber)		dynamic_jabber=yes ;;
+		msn)		dynamic_msn=yes ;;
+		napster)	dynamic_napster=yes ;;
+		oscar)		dynamic_oscar=yes ;;
+		rendezvous)	dynamic_rendezvous=yes ;;
+		toc)		dynamic_toc=yes ;;
+		trepia)		dynamic_trepia=yes ;;
+		yahoo)		dynamic_yahoo=yes ;;
+		zephyr)		dynamic_zephyr=yes ;;
+		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
 AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
@@ -166,6 +169,7 @@ AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
 AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NAPSTER, test "x$dynamic_napster" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
+AM_CONDITIONAL(DYNAMIC_RENDEZVOUS, test "x$dynamic_rendezvous" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TREPIA, test "x$dynamic_trepia" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
@@ -1077,6 +1081,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/msn/Makefile
 		   src/protocols/napster/Makefile
 		   src/protocols/oscar/Makefile
+		   src/protocols/rendezvous/Makefile
 		   src/protocols/toc/Makefile
 		   src/protocols/trepia/Makefile
 		   src/protocols/yahoo/Makefile
