@@ -1198,9 +1198,14 @@ int gaim_build_dir (const char *path, int mode)
 	components = g_strsplit(path, delim, -1);
 	len = 0;
 	for (cur = 0; components[cur] != NULL; cur++) {
+		/* If you don't know what you're doing on both
+		 * win32 and *NIX, stay the hell away from this code */
+		if(cur > 1)
+			dir[len++] = G_DIR_SEPARATOR;
 		strcpy(dir + len, components[cur]);
 		len += strlen(components[cur]);
-		dir[len++] = G_DIR_SEPARATOR;
+		if(cur == 0)
+			dir[len++] = G_DIR_SEPARATOR;
 
 		if(g_file_test(dir, G_FILE_TEST_IS_DIR)) {
 			continue;
