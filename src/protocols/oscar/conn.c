@@ -965,6 +965,8 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	sess->ssi.items = NULL;
 	sess->ssi.timestamp = (time_t)0;
 
+	sess->emailinfo = NULL;
+
 	/*
 	 * Default to SNAC login unless XORLOGIN is explicitly set.
 	 */
@@ -1003,6 +1005,7 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	aim__registermodule(sess, icq_modfirst);
 	/* missing 0x16 */
 	aim__registermodule(sess, auth_modfirst);
+	aim__registermodule(sess, email_modfirst);
 
 	return;
 }

@@ -26,6 +26,7 @@
 #define AIM_CB_FAM_SSI 0x0013 /* Server stored information */
 #define AIM_CB_FAM_ICQ 0x0015
 #define AIM_CB_FAM_ATH 0x0017
+#define AIM_CB_FAM_EML 0x0018
 #define AIM_CB_FAM_OFT 0xfffe /* OFT/Rvous */
 #define AIM_CB_FAM_SPECIAL 0xffff /* Internal libfaim use */
 
@@ -213,6 +214,18 @@
 #define AIM_CB_ATH_LOGINRESPONSE 0x0003
 #define AIM_CB_ATH_AUTHREQ 0x0006
 #define AIM_CB_ATH_AUTHRESPONSE 0x0007
+
+/*
+ * SNAC Family: Email
+ *
+ * Used for getting information on the email address
+ * associated with your screen name.
+ *
+ */
+#define AIM_CB_EML_ERROR 0x0001
+#define AIM_CB_EML_SENDCOOKIES 0x0006
+#define AIM_CB_EML_MAILSTATUS 0x0007
+#define AIM_CB_EML_INIT 0x0016
 
 /*
  * OFT Services

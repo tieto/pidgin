@@ -10,6 +10,7 @@ buddylist.lo
 chat.lo
 chatnav.lo
 conn.lo
+email.lo
 ft.lo
 im.lo
 info.lo

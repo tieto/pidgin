@@ -108,6 +108,7 @@ struct oscar_data {
 
 	guint cnpa;
 	guint paspa;
+	guint emlpa;
 
 	GSList *create_rooms;
 
@@ -344,6 +345,7 @@ static int gaim_chat_join        (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chat_leave       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chat_info_update (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chat_incoming_msg(aim_session_t *, aim_frame_t *, ...);
+static int gaim_email_parseupdate(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgack     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_ratechange (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_evilnotify (aim_session_t *, aim_frame_t *, ...);
@@ -354,6 +356,7 @@ static int conninitdone_bos      (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_admin    (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chat     (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chatnav  (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_email    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_mtn        (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_locaterights(aim_session_t *, aim_frame_t *, ...);
@@ -534,6 +537,12 @@ static void oscar_callback(gpointer data, gint source,
 						gaim_input_remove(odata->paspa);
 					odata->paspa = 0;
 					debug_printf("removing authconn input watcher\n");
+					aim_conn_kill(odata->sess, &conn);
+				} else if (conn->type == AIM_CONN_TYPE_EMAIL) {
+					if (odata->emlpa > 0)
+						gaim_input_remove(odata->emlpa);
+					odata->emlpa = 0;
+					debug_printf("removing email input watcher\n");
 					aim_conn_kill(odata->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 					if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
@@ -719,6 +728,8 @@ static void oscar_close(struct gaim_connection *gc) {
 		gaim_input_remove(odata->cnpa);
 	if (odata->paspa > 0)
 		gaim_input_remove(odata->paspa);
+	if (odata->emlpa > 0)
+		gaim_input_remove(odata->emlpa);
 	aim_session_kill(odata->sess);
 	g_free(odata->sess);
 	odata->sess = NULL;
@@ -1134,6 +1145,18 @@ static int conninitdone_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+static int conninitdone_email(aim_session_t *sess, aim_frame_t *fr, ...) {
+
+	aim_conn_addhandler(sess, fr->conn, 0x0018, 0x0001, gaim_parse_genericerr, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_EML, AIM_CB_EML_MAILSTATUS, gaim_email_parseupdate, 0);
+
+	aim_email_sendcookies(sess, fr->conn);
+	aim_email_activate(sess, fr->conn);
+	aim_clientready(sess, fr->conn);
+
+	return 1;
+}
+
 static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition cond) {
 	struct gaim_connection *gc = data;
 	struct oscar_data *odata;
@@ -1234,6 +1257,32 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 			GAIM_INPUT_READ,
 			oscar_callback, tstconn);
 	odata->oscar_chats = g_slist_append(odata->oscar_chats, ccon);
+}
+
+static void oscar_email_connect(gpointer data, gint source, GaimInputCondition cond) {
+	struct gaim_connection *gc = data;
+	struct oscar_data *odata;
+	aim_session_t *sess;
+	aim_conn_t *tstconn;
+
+	if (!g_slist_find(connections, gc)) {
+		close(source);
+		return;
+	}
+
+	odata = gc->proto_data;
+	sess = odata->sess;
+	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_EMAIL);
+
+	if (source < 0) {
+		aim_conn_kill(sess, &tstconn);
+		debug_printf("unable to connect to email server\n");
+		return;
+	}
+
+	aim_conn_completeconnect(sess, tstconn);
+	odata->emlpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
+	debug_printf("email: connected\n");
 }
 
 /* Hrmph. I don't know how to make this look better. --mid */
@@ -1342,6 +1391,26 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		debug_printf("Connected to chat room %s exchange %d\n", ccon->name, ccon->exchange);
 		}
 		break;
+
+	case 0x0018: { /* email */
+		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_EMAIL, NULL))) {
+			debug_printf("unable to connect to email server\n");
+			g_free(host);
+			return 1;
+		}
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_email, 0);
+
+		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
+		tstconn->fd = proxy_connect(host, port, oscar_email_connect, gc);
+		if (tstconn->fd < 0) {
+			aim_conn_kill(sess, &tstconn);
+			debug_printf("unable to connect to email server\n");
+			g_free(host);
+			return 1;
+		}
+		aim_sendcookie(sess, tstconn, redir->cookie);
+	} break;
+
 	default: /* huh? */
 		debug_printf("got redirect for unknown service 0x%04x\n", redir->group);
 		break;
@@ -2765,6 +2834,27 @@ static int gaim_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
+	va_list ap;
+	struct gaim_connection *gc = sess->aux_data;
+	struct aim_emailinfo *emailinfo;
+
+	va_start(ap, fr);
+	emailinfo = va_arg(ap, struct aim_emailinfo *);
+	va_end(ap);
+
+	while (emailinfo) {
+		debug_printf("Got email info. webmail address for screenname@%s is %s,  new email: %hd,  number new: %d,  flag is %d\n", emailinfo->domain, emailinfo->url, emailinfo->unread, emailinfo->nummsgs, emailinfo->flag);
+		if (emailinfo->unread)
+			connection_has_mail(gc, emailinfo->nummsgs ? emailinfo->nummsgs : -1, NULL, NULL, emailinfo->url);
+		else
+			connection_has_mail(gc, 0, NULL, NULL, emailinfo->url);
+		emailinfo = emailinfo->next;
+	}
+
+	return 1;
+}
+
 /*
  * Recieved in response to an IM sent with the AIM_IMFLAGS_ACK option.
  */
@@ -3025,6 +3115,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_icq_reqofflinemsgs(sess);
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
+	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_EMAIL);
 
 	if (!odata->icq) {
 		debug_printf("ssi: requesting ssi list\n");
@@ -4640,7 +4731,7 @@ static struct prpl *my_protocol = NULL;
 G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_OSCAR;
-	ret->options = OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
+	ret->options = OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
 	ret->name = g_strdup("Oscar");
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;

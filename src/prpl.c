@@ -412,9 +412,12 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 		mailnots = g_slist_append(mailnots, mn);
 	}
 
-	if (count < 0 && from && subject) {
-		g_snprintf(buf, sizeof buf, "%s has mail from %s: %s", gc->username, from, subject);
-	} else if (count) {
+	if (count < 0) {
+		if (from && subject)
+			g_snprintf(buf, sizeof buf, "%s has mail from %s: %s", gc->username, from, subject);
+		else
+			g_snprintf(buf, sizeof buf, "%s has new mail.", gc->username);
+	} else if (count > 0) {
 		g_snprintf(buf, sizeof buf, "%s has %d new message%s.",
 			   gc->username, count, count == 1 ? "" : "s");
 	} else if (mn->email_win) {

@@ -20,6 +20,7 @@ liboscar_a_SOURCES = 	admin.c		\
 			chat.c		\
 			chatnav.c	\
 			conn.c		\
+			email.c		\
 			ft.c		\
 			icq.c		\
 			im.c		\
@@ -58,6 +59,7 @@ liboscar_la_SOURCES = 	admin.c		\
 			chat.c		\
 			chatnav.c	\
 			conn.c		\
+			email.c		\
 			ft.c		\
 			icq.c		\
 			im.c		\

@@ -216,6 +216,7 @@ struct client_info_s {
 #define AIM_CONN_TYPE_BOS           0x0002
 #define AIM_CONN_TYPE_CHAT          0x000e
 #define AIM_CONN_TYPE_CHATNAV       0x000d
+#define AIM_CONN_TYPE_EMAIL         0x0018
 
 /* they start getting arbitrary in rendezvous stuff =) */
 #define AIM_CONN_TYPE_RENDEZVOUS    0x0101 /* these do not speak FLAP! */
@@ -339,6 +340,8 @@ typedef struct aim_session_s {
 		int waiting_for_ack;
 		aim_frame_t *holding_queue;
 	} ssi;
+
+	struct aim_emailinfo *emailinfo;
 
 	/* Connection information */
 	aim_conn_t *connlist;
@@ -1122,6 +1125,21 @@ struct aim_icq_simpleinfo {
 faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
 faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess);
 faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin);
+
+/* email.c */
+struct aim_emailinfo {
+	fu8_t *cookie16;
+	fu8_t *cookie8;
+	char *url;
+	fu16_t nummsgs;
+	fu8_t unread;
+	char *domain;
+	fu16_t flag;
+	struct aim_emailinfo *next;
+};
+
+faim_export int aim_email_sendcookies(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_email_activate(aim_session_t *sess, aim_conn_t *conn);
 
 /* aim_util.c */
 /*
