@@ -61,7 +61,19 @@ static gint log_viewer_equal(gconstpointer y, gconstpointer z)
 	return ret;
 }
 
-static void log_select(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
+static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
+	GaimGtkLogViewer *lv = g_hash_table_lookup(log_viewers, ht);
+
+	g_hash_table_remove(log_viewers, ht);
+	g_free(ht->screenname);
+	g_free(ht);
+	g_free(lv);
+	gtk_widget_destroy(w);
+
+	return TRUE;
+}
+
+static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	GtkTreeIter   iter;
 	GValue val = { 0, };
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
@@ -151,7 +163,9 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	gtk_container_set_border_width (GTK_CONTAINER(lv->window), 6);
 	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
-	
+	g_signal_connect(G_OBJECT(lv->window), "response", 
+					 G_CALLBACK(destroy_cb), ht);
+
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 6);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), hbox, FALSE, FALSE, 0);
@@ -195,7 +209,7 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (lv->treeview));
 	g_signal_connect (G_OBJECT (sel), "changed",
-			  G_CALLBACK (log_select),
+			  G_CALLBACK (log_select_cb),
 			  lv);
 		
 	/* Viewer ************/
