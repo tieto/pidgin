@@ -48,9 +48,8 @@
 
 #define PROXYHOST 0
 #define PROXYPORT 1
-#define PROXYTYPE 2
-#define PROXYUSER 3
-#define PROXYPASS 4
+#define PROXYUSER 2
+#define PROXYPASS 3
 
 /* XXX This needs to be made static after we solve the away.c mess. */
 GtkListStore *prefs_away_store = NULL;
@@ -80,6 +79,7 @@ static GtkTreeIter plugin_iter;
 
 static guint browser_pref_id = 0;
 static guint proxy_pref_id = 0;
+static guint sound_pref_id = 0;
 
 /*
  * PROTOTYPES
@@ -187,22 +187,6 @@ dropdown_set(GObject *w, const char *key)
 	}
 
 #if 0
-	if (option == (int*)&global_proxy_info.proxytype) {
-		if (opt == PROXY_NONE)
-			gtk_widget_set_sensitive(prefs_proxy_frame, FALSE);
-		else
-			gtk_widget_set_sensitive(prefs_proxy_frame, TRUE);
-	} else if (option == &web_browser) {
-		if (opt == BROWSER_MANUAL)
-			gtk_widget_set_sensitive(gtk_widget_get_parent(browser_entry), TRUE);
-		else
-			gtk_widget_set_sensitive(gtk_widget_get_parent(browser_entry), FALSE);
-	} else if (option == (int*)&sound_options) {
-		if (opt == OPT_SOUND_CMD)
-			gtk_widget_set_sensitive(sndcmd, TRUE);
-		else
-			gtk_widget_set_sensitive(sndcmd, FALSE);
-		gaim_sound_change_output_method();
 	} else if (option == (int*)&blist_options) {
 		gaim_gtk_blist_update_toolbar();
 	} else if (option == (int*)&im_options) { 
@@ -370,6 +354,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	/* Unregister callbacks. */
 	gaim_prefs_disconnect_callback(browser_pref_id);
 	gaim_prefs_disconnect_callback(proxy_pref_id);
+	gaim_prefs_disconnect_callback(sound_pref_id);
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
@@ -1153,7 +1138,6 @@ GtkWidget *proxy_page() {
 
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
 	}
-
 	proxy_pref_id = gaim_prefs_connect_callback("/core/proxy/type",
 												  proxy_changed_cb, prefs_proxy_frame);
 
@@ -1337,6 +1321,8 @@ GtkWidget *browser_page() {
 
 	if (strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
 		gtk_widget_set_sensitive(hbox, FALSE);
+	browser_pref_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
+												  browser_changed_cb, hbox);
 
 	gtk_box_pack_start (GTK_BOX (hbox), browser_entry, FALSE, FALSE, 0);
 
@@ -1344,9 +1330,6 @@ GtkWidget *browser_page() {
 					   gaim_prefs_get_string("/gaim/gtk/browsers/command"));
 	g_signal_connect(G_OBJECT(browser_entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
-
-	browser_pref_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
-												  browser_changed_cb, hbox);
 
 	if (browsers != NULL) {
 		vbox = gaim_gtk_make_frame (ret, _("Browser Options"));
@@ -1397,6 +1380,16 @@ static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 	gaim_prefs_set_string("/gaim/gtk/sound/command",
 			gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	return TRUE;
+}
+
+static void
+sound_changed_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+	GtkWidget *hbox = data;
+	const char *method = value;
+
+	gtk_widget_set_sensitive(hbox, !strcmp(method, "custom"));
 }
 #endif
 
@@ -1459,13 +1452,16 @@ GtkWidget *sound_page() {
 		gtk_entry_set_text(GTK_ENTRY(sndcmd), cmd);
 	gtk_widget_set_size_request(sndcmd, 75, -1);
 
-	gtk_widget_set_sensitive(sndcmd,
-			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
-					"command"));
-
 	gtk_box_pack_start(GTK_BOX(hbox), sndcmd, TRUE, TRUE, 5);
 	g_signal_connect(G_OBJECT(sndcmd), "changed",
 					 G_CALLBACK(sound_cmd_yeah), NULL);
+
+	gtk_widget_set_sensitive(hbox,
+			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
+					"custom"));
+	sound_pref_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
+												  sound_changed_cb, hbox);
+
 #endif /* _WIN32 */
 	gtk_widget_show_all(ret);
 	return ret;
