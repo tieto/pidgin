@@ -2507,7 +2507,7 @@ static const char *yahoo_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "yahoo";
 }
 
-static void yahoo_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
+static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
 	int i = 0;
 	char *emblems[4] = {NULL,NULL,NULL,NULL};

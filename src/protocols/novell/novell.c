@@ -2741,7 +2741,7 @@ novell_rename_group(GaimConnection * gc, const char *old_name,
 }
 
 static void
-novell_list_emblems(GaimBuddy * buddy, char **se, char **sw, char **nw, char **ne)
+novell_list_emblems(GaimBuddy * buddy, const char **se, const char **sw, const char **nw, const char **ne)
 {
 	int status = buddy->uc >> 1;
 

@@ -3473,7 +3473,8 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 							  "the two computers and is necessary for IM "
 							  "Images.  Because your IP address will be "
 							  "revealed, this may be considered a privacy "
-							  "risk."), 0, d, 2,
+							  "risk."),
+							GAIM_DEFAULT_ACTION_NONE, d, 2,
 							_("Connect"), G_CALLBACK(accept_direct_im_request),
 							_("Cancel"), G_CALLBACK(destroy_direct_im_request));
 							/* FIXME: we should actually send a packet on cancel */
@@ -3788,7 +3789,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					gaim_request_action(gc, NULL, message,
 										_("Do you want to add this buddy "
 										  "to your buddy list?"),
-										0, data, 2,
+										GAIM_DEFAULT_ACTION_NONE, data, 2,
 										_("Add"), G_CALLBACK(gaim_icq_buddyadd),
 										_("Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
@@ -6272,7 +6273,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->nick = NULL;
 
 	gaim_request_action(gc, NULL, _("Authorization Request"), dialog_msg,
-						0, data, 2,
+						GAIM_DEFAULT_ACTION_NONE, data, 2,
 						_("Authorize"), G_CALLBACK(gaim_auth_grant),
 						_("Deny"), G_CALLBACK(gaim_auth_dontgrant_msgprompt));
 
@@ -6511,7 +6512,7 @@ static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b) {
 	return "aim";
 }
 
-static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
+static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
 	GaimAccount *account = NULL;
 	GaimConnection *gc = NULL;

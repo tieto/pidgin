@@ -359,8 +359,8 @@ trepia_list_icon(GaimAccount *a, GaimBuddy *b)
 }
 
 static void
-trepia_list_emblems(GaimBuddy *b, char **se, char **sw,
-				 char **nw, char **ne)
+trepia_list_emblems(GaimBuddy *b, const char **se, const char **sw,
+					const char **nw, const char **ne)
 {
 	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
 
