@@ -29,6 +29,7 @@ version 0.10.0:
 	* New icons for panel (depends on some GNOME pixmaps)
 	* Perl scripting. See plugins/PERL-HOWTO for how to write perl scripts.
 	  All .pl files in ~/.gaim are autoloaded when gaim starts.
+	* HTML widget is faster, more stable
 
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features

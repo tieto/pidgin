@@ -2782,7 +2782,6 @@ static void gtk_html_add_seperator(GtkHtml * html)
 
 }
 
-
 static void gtk_html_add_text(GtkHtml * html,
 							  GdkFont * cfont,
 							  GdkColor * fore,
@@ -2896,9 +2895,29 @@ static void gtk_html_add_text(GtkHtml * html,
 	 * HTK_SCROLLED_WINDOW(GTK_WIDGET(layout)->parent)->vscrollbar->allocation.width) - 8; 
 	 */
 
-	/* FIXME: gtk_text_measure can overflow if the text is too long. hopefully that will
-	 * never happen though. but it is very possible. NOTE: this is not a buffer overflow,
-	 * it just means it won't display text properly. */
+	if ((maxwidth == (hwidth - 8) && gdk_text_measure(cfont, text, num) > maxwidth) || gdk_text_measure(cfont, text, num) < 0) {
+		char *tmp1, *tmp2;
+		static int count = 0;
+		count ++;
+		tmp1 = g_malloc(num / 2 + 1);
+		tmp2 = g_malloc(num / 2 + 2);
+		g_snprintf(tmp1, num / 2 + 1, "%s", text);
+		g_snprintf(tmp2, num / 2 + 2, "%s", text + num / 2);
+		gtk_html_add_text(html, cfont, fore, back, tmp1, num / 2 + 1, uline, strike, url);
+		gtk_html_add_text(html, cfont, fore, back, tmp2, num / 2 + 2, uline, strike, url);
+		g_free(tmp1);
+		g_free(tmp2);
+		g_free(text);
+		count--;
+		if (!count) {
+			hbits = g_list_last(html->html_bits);
+			if (!hbits) return; /* does this ever happen? */
+			hb = (GtkHtmlBit *)hbits->data;
+			hb->newline = 1;
+		}
+		return;
+	}
+
 	while (gdk_text_measure(cfont, text, num) > maxwidth)
 	{
 		if (num > 1)
@@ -2975,7 +2994,7 @@ static void gtk_html_add_text(GtkHtml * html,
 		 * * much better lookin 
 		 */
 
-		for (i=2; (num - i > 0); i++) {
+		for (i=2; (num > i); i++) {
 			if (text[num - i] == ' ') {
 				num = num - (i - 1);
 				nl2 = 1;
