@@ -46,10 +46,6 @@ static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *l
 	if (!(group = aim_ssi_itemlist_finditem(list, name, NULL, AIM_SSI_TYPE_GROUP)))
 		return NULL;
 
-	/* Free the old data */
-	aim_freetlvchain(&group->data);
-	group->data = NULL;
-
 	/* Find the length for the new additional data */
 	newlen = 0;
 	if (group->gid == 0x0000) {
@@ -78,7 +74,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *l
 				if ((cur->gid == group->gid) && (cur->type == AIM_SSI_TYPE_BUDDY))
 						newlen += aimutil_put16(newdata+newlen, cur->bid);
 		}
-		aim_addtlvtochain_raw(&group->data, 0x00c8, newlen, newdata);
+		aim_tlvlist_replace_raw(&group->data, 0x00c8, newlen, newdata);
 
 		free(newdata);
 	}
@@ -183,10 +179,10 @@ static int aim_ssi_itemlist_del(struct aim_ssi_item **list, struct aim_ssi_item 
 		struct aim_ssi_item *cur;
 		for (cur=*list; (cur->next && (cur->next!=del)); cur=cur->next);
 		if (cur->next)
-			cur->next = cur->next->next;
+			cur->next = del->next;
 	}
 
-	/* Free the deleted item */
+	/* Free the removed item */
 	free(del->name);
 	aim_freetlvchain(&del->data);
 	free(del);
@@ -357,12 +353,9 @@ faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list)
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, NULL, NULL, AIM_SSI_TYPE_PDINFO);
 	if (cur) {
-		aim_tlvlist_t *tlvlist = cur->data;
-		if (tlvlist) {
-			aim_tlv_t *tlv = aim_gettlv(tlvlist, 0x00ca, 1);
-			if (tlv && tlv->value)
-				return aimutil_get8(tlv->value);
-		}
+		aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00ca, 1);
+		if (tlv && tlv->value)
+			return aimutil_get8(tlv->value);
 	}
 	return 0;
 }
@@ -379,12 +372,9 @@ faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list)
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
 	if (cur) {
-		aim_tlvlist_t *tlvlist = cur->data;
-		if (tlvlist) {
-			aim_tlv_t *tlv = aim_gettlv(tlvlist, 0x00c9, 1);
-			if (tlv && tlv->length)
-				return aimutil_get32(tlv->value);
-		}
+		aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00c9, 1);
+		if (tlv && tlv->length)
+			return aimutil_get32(tlv->value);
 	}
 	return 0xFFFFFFFF;
 }
@@ -403,15 +393,12 @@ faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, co
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
-		aim_tlvlist_t *tlvlist = cur->data;
-		if (tlvlist) {
-			aim_tlv_t *tlv = aim_gettlv(tlvlist, 0x0131, 1);
-			if (tlv && tlv->length) {
-				char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
-				strncpy(alias, tlv->value, tlv->length);
-				alias[tlv->length] = 0;
-				return alias;
-			}
+		aim_tlv_t *tlv = aim_gettlv(cur->data, 0x0131, 1);
+		if (tlv && tlv->length) {
+			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
+			strncpy(alias, tlv->value, tlv->length);
+			alias[tlv->length] = 0;
+			return alias;
 		}
 	}
 	return NULL;
@@ -431,10 +418,8 @@ faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
-		aim_tlvlist_t *tlvlist = cur->data;
-		if (tlvlist)
-			if (aim_gettlv(tlvlist, 0x0066, 1))
-				return 1;
+		if (aim_gettlv(cur->data, 0x0066, 1))
+			return 1;
 	}
 	return 0;
 }
@@ -896,13 +881,13 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const 
  * @param sess The oscar session.
  * @param gn The group that the buddy is currently in.
  * @param sn The screen name of the buddy.
- * @param alias The new alias for the buddy.
+ * @param alias The new alias for the buddy, or NULL if you want to remove 
+ *        a buddies alias.
  * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const char *sn, const char *alias)
 {
 	struct aim_ssi_item *tmp;
-	aim_tlvlist_t *data = NULL;
 
 	if (!sess || !gn || !sn)
 		return -EINVAL;
@@ -910,15 +895,11 @@ faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const ch
 	if (!(tmp = aim_ssi_itemlist_finditem(sess->ssi.local, gn, sn, AIM_SSI_TYPE_BUDDY)))
 		return -EINVAL;
 
-	if (alias && !strlen(alias))
-		alias = NULL;
-
-	/* Need to add the x0131 TLV to the TLV chain */
-	if (alias)
-		aim_addtlvtochain_raw(&data, 0x0131, strlen(alias), alias);
-
-	aim_freetlvchain(&tmp->data);
-	tmp->data = data;
+	/* Either add or remove the 0x0131 TLV from the TLV chain */
+	if ((alias != NULL) && (strlen(alias) > 0))
+		aim_tlvlist_replace_raw(&tmp->data, 0x0131, strlen(alias), alias);
+	else
+		aim_tlvlist_remove(&tmp->data, 0x0131);
 
 	/* Sync our local list with the server list */
 	aim_ssi_sync(sess);
@@ -971,24 +952,19 @@ faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, con
 faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t vismask)
 {
 	struct aim_ssi_item *tmp;
-	aim_tlvlist_t *data = NULL;
 
 	if (!sess)
 		return -EINVAL;
 
-	/* Need to add the x00ca TLV to the TLV chain */
-	aim_addtlvtochain8(&data, 0x00ca, permdeny);
+	/* Find the PDINFO item, or add it if it does not exist */
+	if (!(tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, NULL, AIM_SSI_TYPE_PDINFO)))
+		tmp = aim_ssi_itemlist_add(&sess->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PDINFO, NULL);
 
-	/* Need to add the x00cb TLV to the TLV chain */
-	aim_addtlvtochain32(&data, 0x00cb, vismask);
+	/* Need to add the 0x00ca TLV to the TLV chain */
+	aim_tlvlist_replace_8(&tmp->data, 0x00ca, permdeny);
 
-	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, NULL, AIM_SSI_TYPE_PDINFO))) {
-		aim_freetlvchain(&tmp->data);
-		tmp->data = data;
-	} else {
-		tmp = aim_ssi_itemlist_add(&sess->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PDINFO, data);
-		aim_freetlvchain(&data);
-	}
+	/* Need to add the 0x00cb TLV to the TLV chain */
+	aim_tlvlist_replace_32(&tmp->data, 0x00cb, vismask);
 
 	/* Sync our local list with the server list */
 	aim_ssi_sync(sess);
@@ -1007,42 +983,30 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t 
 faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t iconsumlen)
 {
 	struct aim_ssi_item *tmp;
-	aim_tlvlist_t *data = NULL;
 	fu8_t *csumdata;
 
 	if (!sess || !iconsum || !iconsumlen)
 		return -EINVAL;
 
+	/* Find the ICONINFO item, or add it if it does not exist */
+	if (!(tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO))) {
+		tmp = aim_ssi_itemlist_add(&sess->ssi.local, "1", 0x0000, 0x51F4, AIM_SSI_TYPE_ICONINFO, NULL);
+	}
+
+	/* Need to add the 0x00d5 TLV to the TLV chain */
 	if (!(csumdata = (fu8_t *)malloc((iconsumlen+2)*sizeof(fu8_t))))
 		return -ENOMEM;
 	csumdata[0] = 0x00;
 	csumdata[1] = 0x10;
 	memcpy(&csumdata[2], iconsum, iconsumlen);
+	aim_tlvlist_replace_raw(&tmp->data, 0x00d5, (iconsumlen+2) * sizeof(fu8_t), csumdata);
+	free(csumdata);
 
-	/* Need to add the x00d5 TLV to the TLV chain */
-	aim_addtlvtochain_raw(&data, 0x00d5, (iconsumlen+2) * sizeof(fu8_t), csumdata);
-
-	/* This TLV is added to cache the icon. */
-	aim_addtlvtochain_noval(&data, 0x0131);
-
-	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO))) {
-		/* If the new tlvchain and oldtlvchain are the same, then do nothing */
-		if (!aim_tlvlist_cmp(tmp->data, data)) {
-			/* The new tlvlist is the identical to the old one */
-			aim_freetlvchain(&data);
-			free(csumdata);
-			return 0;
-		}
-		aim_freetlvchain(&tmp->data);
-		tmp->data = data;
-	} else {
-		tmp = aim_ssi_itemlist_add(&sess->ssi.local, "1", 0x0000, 0x51F4, AIM_SSI_TYPE_ICONINFO, data);
-		aim_freetlvchain(&data);
-	}
+	/* Need to add the 0x0131 TLV to the TLV chain, used to cache the icon */
+	aim_tlvlist_replace_noval(&tmp->data, 0x0131);
 
 	/* Sync our local list with the server list */
 	aim_ssi_sync(sess);
-	free(csumdata);
 	return 0;
 }
 
@@ -1056,21 +1020,16 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t icon
  */
 faim_export int aim_ssi_setpresence(aim_session_t *sess, fu32_t presence) {
 	struct aim_ssi_item *tmp;
-	aim_tlvlist_t *data = NULL;
 
 	if (!sess)
 		return -EINVAL;
 
-	/* Need to add the x00c9 TLV to the TLV chain */
-	aim_addtlvtochain32(&data, 0x00c9, presence);
+	/* Find the PRESENCEPREFS item, or add it if it does not exist */
+	if (!(tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS)))
+		tmp = aim_ssi_itemlist_add(&sess->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PRESENCEPREFS, NULL);
 
-	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS))) {
-		aim_freetlvchain(&tmp->data);
-		tmp->data = data;
-	} else {
-		tmp = aim_ssi_itemlist_add(&sess->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PRESENCEPREFS, data);
-		aim_freetlvchain(&data);
-	}
+	/* Need to add the x00c9 TLV to the TLV chain */
+	aim_tlvlist_replace_32(&tmp->data, 0x00c9, presence);
 
 	/* Sync our local list with the server list */
 	aim_ssi_sync(sess);

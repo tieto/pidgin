@@ -80,7 +80,10 @@ static int reply(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	tlvlist = aim_readtlvchain(bs);
 	m = aim_counttlvchain(&tlvlist);
 
-	/* XXX uhm. */
+	/* XXX uhm.
+	 * This is the only place that uses something other than 1 for the 3rd 
+	 * parameter to aim_gettlv_whatever().
+	 */
 	while ((cur = aim_gettlv_str(tlvlist, 0x0001, j+1)) && j < m) {
 		buf = realloc(buf, (j+1) * (MAXSNLEN+1));
 

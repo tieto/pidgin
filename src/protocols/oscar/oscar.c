@@ -4793,9 +4793,9 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
 					char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, curitem->name);
-					char *gname_utf8 = gaim_utf8_try_convert(gname);
+					char *gname_utf8 = gname ? gaim_utf8_try_convert(gname) : NULL;
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
-					char *alias_utf8 = gaim_utf8_try_convert(alias);
+					char *alias_utf8 = alias ? gaim_utf8_try_convert(alias) : NULL;
 					GaimBuddy *buddy = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
 					/* Not with the current code, but that might be cleaner -- med */

@@ -242,7 +242,7 @@ static void aim_locate_dorequest(aim_session_t *sess) {
 		return;
 
 	sess->locate.waiting_for_response = TRUE;
-	aim_locate_getinfoshort(sess, cur->sn, 0x00000007);
+	aim_locate_getinfoshort(sess, cur->sn, 0x00000003);
 }
 
 faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn) {

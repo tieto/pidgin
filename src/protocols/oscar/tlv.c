@@ -371,20 +371,20 @@ faim_internal int aim_sizetlvchain(aim_tlvlist_t **list)
 
 /**
  * aim_addtlvtochain_raw - Add a string to a TLV chain
- * @list: Desination chain (%NULL pointer if empty)
- * @t: TLV type
- * @l: Length of string to add (not including %NULL)
- * @v: String to add
  *
  * Adds the passed string as a TLV element of the passed type
  * to the TLV chain.
  *
+ * @param list Desination chain (%NULL pointer if empty)
+ * @param type TLV type
+ * @length Length of string to add (not including %NULL)
+ * @value String to add
  */
 faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t length, const fu8_t *value)
 {
 	aim_tlvlist_t *newtlv, *cur;
 
-	if (!list)
+	if (list == NULL)
 		return 0;
 
 	if (!(newtlv = (aim_tlvlist_t *)malloc(sizeof(aim_tlvlist_t))))
@@ -558,6 +558,124 @@ faim_internal int aim_addtlvtochain_frozentlvlist(aim_tlvlist_t **list, fu16_t t
 }
 
 /**
+ * Substitute a TLV of a given type with a new TLV of the same type.  If 
+ * you attempt to replace a TLV that does not exist, this function will 
+ * just add a new TLV as if you called aim_addtlvtochain_raw().
+ *
+ * @param list Desination chain (%NULL pointer if empty).
+ * @param type TLV type.
+ * @param length Length of string to add (not including %NULL).
+ * @param value String to add.
+ * @return The length of the TLV.
+ */
+faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t length, const fu8_t *value)
+{
+	aim_tlvlist_t *cur;
+
+	if (list == NULL)
+		return 0;
+
+	for (cur = *list; ((cur != NULL) && (cur->tlv->type != type)); cur = cur->next);
+	if (cur == NULL)
+		return aim_addtlvtochain_raw(list, type, length, value);
+
+	free(cur->tlv->value);
+	cur->tlv->length = length;
+	if (cur->tlv->length > 0) {
+		cur->tlv->value = (fu8_t *)malloc(cur->tlv->length);
+		memcpy(cur->tlv->value, value, cur->tlv->length);
+	} else
+		cur->tlv->value = NULL;
+
+	return cur->tlv->length;
+}
+
+/**
+ * Substitute a TLV of a given type with a new TLV of the same type.  If 
+ * you attempt to replace a TLV that does not exist, this function will 
+ * just add a new TLV as if you called aim_addtlvtochain_raw().
+ *
+ * @param list Desination chain (%NULL pointer if empty).
+ * @param type TLV type.
+ * @return The length of the TLV.
+ */
+faim_internal int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const fu16_t type)
+{
+	return aim_tlvlist_replace_raw(list, type, 0, NULL);
+}
+
+/**
+ * Substitute a TLV of a given type with a new TLV of the same type.  If 
+ * you attempt to replace a TLV that does not exist, this function will 
+ * just add a new TLV as if you called aim_addtlvtochain_raw().
+ *
+ * @param list Desination chain (%NULL pointer if empty).
+ * @param type TLV type.
+ * @param value 8 bit value to add.
+ * @return The length of the TLV.
+ */
+faim_internal int aim_tlvlist_replace_8(aim_tlvlist_t **list, const fu16_t type, const fu8_t value)
+{
+	fu8_t v8[1];
+
+	aimutil_put8(v8, value);
+
+	return aim_tlvlist_replace_raw(list, type, 1, v8);
+}
+
+/**
+ * Substitute a TLV of a given type with a new TLV of the same type.  If 
+ * you attempt to replace a TLV that does not exist, this function will 
+ * just add a new TLV as if you called aim_addtlvtochain_raw().
+ *
+ * @param list Desination chain (%NULL pointer if empty).
+ * @param type TLV type.
+ * @param value 32 bit value to add.
+ * @return The length of the TLV.
+ */
+faim_internal int aim_tlvlist_replace_32(aim_tlvlist_t **list, const fu16_t type, const fu32_t value)
+{
+	fu8_t v32[4];
+
+	aimutil_put32(v32, value);
+
+	return aim_tlvlist_replace_raw(list, type, 4, v32);
+}
+
+/**
+ * Remove a TLV of a given type.  If you attempt to remove a TLV that 
+ * does not exist, nothing happens.
+ *
+ * @param list Desination chain (%NULL pointer if empty).
+ * @param type TLV type.
+ */
+faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const fu16_t type)
+{
+	aim_tlvlist_t *del;
+
+	if (!list || !(*list))
+		return;
+
+	/* Remove the item from the list */
+	if ((*list)->tlv->type == type) {
+		del = *list;
+		*list = (*list)->next;
+	} else {
+		aim_tlvlist_t *cur;
+		for (cur=*list; (cur->next && (cur->next->tlv->type!=type)); cur=cur->next);
+		if (!cur->next)
+			return;
+		del = cur->next;
+		cur->next = del->next;
+	}
+
+	/* Free the removed item */
+	free(del->tlv->value);
+	free(del->tlv);
+	free(del);
+}
+
+/**
  * aim_writetlvchain - Write a TLV chain into a data buffer.
  * @buf: Destination buffer
  * @buflen: Maximum number of bytes that will be written to buffer
@@ -594,16 +712,17 @@ faim_internal int aim_writetlvchain(aim_bstream_t *bs, aim_tlvlist_t **list)
 
 
 /**
- * aim_gettlv - Grab the Nth TLV of type type in the TLV list list.
- * @list: Source chain
- * @type: Requested TLV type
- * @nth: Index of TLV of type to get
+ * Grab the Nth TLV of type type in the TLV list list.
  *
  * Returns a pointer to an aim_tlv_t of the specified type; 
  * %NULL on error.  The @nth parameter is specified starting at %1.
  * In most cases, there will be no more than one TLV of any type
  * in a chain.
  *
+ * @param list Source chain
+ * @param type Requested TLV type
+ * @param nth Index of TLV of type to get
+ * @return The TLV you were looking for, or NULL if one could not be found.
  */
 faim_internal aim_tlv_t *aim_gettlv(aim_tlvlist_t *list, const fu16_t t, const int n)
 {
