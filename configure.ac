@@ -766,7 +766,7 @@ if test "$enable_tcl" = yes; then
 			eval "TCL_LIB_SPEC=\"$TCL_LIB_SPEC\""
 			AC_MSG_CHECKING([for Tcl linkability])
 			oldCPPFLAGS=$CPPFLAGS
-			CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
+			CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC -I$TCL_PREFIX/include"
 			oldLIBS=$LIBS
 			LIBS="$LIBS $TCL_LIB_SPEC"
 			AC_TRY_LINK([#include <tcl.h>],
@@ -783,7 +783,7 @@ if test "$enable_tcl" = yes; then
 	AM_CONDITIONAL(USE_TCL, true)
 	TCL_LIBS=$TCL_LIB_SPEC
 	AC_SUBST(TCL_LIBS)
-	TCL_CFLAGS=$TCL_INCLUDE_SPEC
+	TCL_CFLAGS="$TCL_INCLUDE_SPEC -I$TCL_PREFIX/include"
 	if test "x$GCC" = "xyes"; then
 		TCL_CFLAGS="$TCL_CFLAGS -fno-strict-aliasing"
 	fi
