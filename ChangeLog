@@ -33,6 +33,8 @@ version 0.78cvs
 	* Novell protocol works on big endian machines (Novell)
 	* Massive rewrite of MSN support, which should fix a number of issues
 	  and make errors easier to interpret (Felipe Contreras)
+	* Fixed a privacy-related bug in MSN that affected blocking/permitting,
+	  which was due to case-sensitive string comparisons (Gudmundur Olafsson)
 	* ALT-F works correctly in the System Log Viewer (Stu Tomlinson)
 	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Dialogs opened from a conversation window are now closed when

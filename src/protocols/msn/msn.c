@@ -812,7 +812,7 @@ msn_add_permit(GaimConnection *gc, const char *who)
 		return;
 	}
 
-	if (g_slist_find_custom(gc->account->deny, who, (GCompareFunc)strcmp))
+	if (g_slist_find_custom(gc->account->deny, who, (GCompareFunc)strcasecmp))
 	{
 		gaim_debug_info("msn", "Moving %s from BL to AL\n", who);
 		gaim_privacy_deny_remove(gc->account, who, TRUE);
