@@ -1,4 +1,4 @@
-/* $Id: libgg.c 3943 2002-10-25 04:32:23Z chipx86 $ */
+/* $Id: libgg.c 4216 2002-11-29 12:48:01Z lschiere $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -18,6 +18,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <sys/types.h>
 #ifndef _WIN32
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -30,7 +31,6 @@
 #include <fcntl.h>
 #endif
 
-#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -72,7 +72,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 3943 2002-10-25 04:32:23Z chipx86 $";
+= "$Id: libgg.c 4216 2002-11-29 12:48:01Z lschiere $";
 
 #endif 
 
