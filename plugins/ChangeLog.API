@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 0.81cvs
+version 0.81 (08/05/2004)
 	Commands API:
 	* Most functions now have a void *data argument.
 
