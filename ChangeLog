@@ -2,6 +2,7 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.80cvs:
 	New Features:
+	* Yet more new commands and features for SILC (Stu Tomlinson)
 	* Support for the Epiphany web browser (Leonardo Serra)
 	* Status messages in Gadu-Gadu (Andrew (proton) Wellington)
 	* Ability to send files from the conversation window (Daniel Atallah)

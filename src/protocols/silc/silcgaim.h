@@ -126,6 +126,9 @@ GaimRoomlist *silcgaim_roomlist_get_list(GaimConnection *gc);
 void silcgaim_roomlist_cancel(GaimRoomlist *list);
 void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 			       SilcBuffer channel_pubkeys);
+void silcgaim_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
+					 char **contactstr, char **langstr, char **devicestr,
+					 char **tzstr, char **geostr);
 
 #ifdef _WIN32
 typedef int uid_t;

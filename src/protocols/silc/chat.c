@@ -78,7 +78,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 {
 	SilcGaim sg = gc->proto_data;
 	const char *chname;
-	char *buf, tmp[256];
+	char *buf, tmp[256], *tmp2;
 	GString *s;
 	SilcChannelEntry channel;
 	SilcHashTableList htl;
@@ -101,36 +101,42 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	}
 
 	s = g_string_new("");
-	g_string_append_printf(s, _("Channel Name:\t\t%s\n"), channel->channel_name);
+	tmp2 = gaim_escape_html(channel->channel_name);
+	g_string_append_printf(s, _("<b>Channel Name:</b> %s"), tmp2);
+	g_free(tmp2);
 	if (channel->user_list && silc_hash_table_count(channel->user_list))
-		g_string_append_printf(s, _("User Count:\t\t%d\n"),
+		g_string_append_printf(s, _("<br><b>User Count:</b> %d"),
 				       (int)silc_hash_table_count(channel->user_list));
 
 	silc_hash_table_list(channel->user_list, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
 		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {
-			g_string_append_printf(s, _("Channel Founder:\t%s\n"),
-					       chu->client->nickname);
+			tmp2 = gaim_escape_html(chu->client->nickname);
+			g_string_append_printf(s, _("<br><b>Channel Founder:</b> %s"),
+					       tmp2);
+			g_free(tmp2);
 			break;
 		}
 	}
 	silc_hash_table_list_reset(&htl);
 
 	if (channel->channel_key)
-		g_string_append_printf(s, _("Channel Cipher:\t\t%s\n"),
+		g_string_append_printf(s, _("<br><b>Channel Cipher:</b> %s"),
 				       silc_cipher_get_name(channel->channel_key));
 	if (channel->hmac)
-		g_string_append_printf(s, _("Channel HMAC:\t\t%s\n"),
+		g_string_append_printf(s, _("<br><b>Channel HMAC:</b> %s"),
 				       silc_hmac_get_name(channel->hmac));
 
-	if (channel->topic)
-		g_string_append_printf(s, _("\nChannel Topic:\n\t%s\n"), channel->topic);
+	if (channel->topic) {
+		tmp2 = gaim_escape_html(channel->topic);
+		g_string_append_printf(s, _("<br><b>Channel Topic:</b><br>%s"), tmp2);
+		g_free(tmp2);
+	}
 
 	if (channel->mode) {
-		g_string_append_printf(s, _("\nChannel Modes:\n"));
+		g_string_append_printf(s, _("<br><b>Channel Modes:</b> "));
 		silcgaim_get_chmode_string(channel->mode, tmp, sizeof(tmp));
 		g_string_append_printf(s, tmp);
-		g_string_append_printf(s, "\n");
 	}
 
 	if (channel->founder_key) {
@@ -141,8 +147,8 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 		fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 		babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
 
-		g_string_append_printf(s, _("\nFounder Key Fingerprint:\n%s\n\n"), fingerprint);
-		g_string_append_printf(s, _("Founder Key Babbleprint:\n%s"), babbleprint);
+		g_string_append_printf(s, _("<br><b>Founder Key Fingerprint:</b><br>%s"), fingerprint);
+		g_string_append_printf(s, _("<br><b>Founder Key Babbleprint:</b><br>%s"), babbleprint);
 
 		silc_free(fingerprint);
 		silc_free(babbleprint);
@@ -150,10 +156,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	}
 
 	buf = g_string_free(s, FALSE);
-	gaim_notify_message(NULL, GAIM_NOTIFY_MSG_INFO,
-			    _("Channel Information"),
-			    _("Channel Information"),
-			    buf, NULL, NULL);
+	gaim_notify_formatted(gc, NULL, _("Channel Information"), NULL, buf, NULL, NULL);
 	g_free(buf);
 }
 

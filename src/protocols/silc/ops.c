@@ -911,13 +911,14 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			SilcUInt32 idle, mode;
 			SilcBuffer channels, user_modes;
 			SilcClientEntry client_entry;
-			char *buf, tmp[1024];
+			char *buf, tmp[1024], *tmp2;
+			char *moodstr, *statusstr, *contactstr, *langstr, *devicestr, *tzstr, *geostr;
 			GString *s;
 
 			if (!success) {
 				gaim_notify_error(gc, _("User Information"),
-						  _("Cannot get user information"),
-						  silc_get_status_message(status));
+						_("Cannot get user information"),
+						silc_get_status_message(status));
 				break;
 			}
 
@@ -934,38 +935,88 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			user_modes = va_arg(vp, SilcBuffer);
 
 			s = g_string_new("");
-			g_string_append_printf(s, "%s:\t\t%s\n", _("Nickname"), client_entry->nickname);
-			if (client_entry->realname)
-				g_string_append_printf(s, "%s:\t%s\n", _("Realname"), client_entry->realname);
-			if (client_entry->username)
-				g_string_append_printf(s, "%s:\t\t%s\n", _("Username"), client_entry->username);
-			if (client_entry->hostname)
-				g_string_append_printf(s, "%s:\t\t%s\n", _("Hostname"), client_entry->hostname);
-			if (client_entry->server)
-				g_string_append_printf(s, "%s:\t\t%s\n", _("Server"), client_entry->server);
-
-			if (mode) {
-				memset(tmp, 0, sizeof(tmp));
-				silcgaim_get_umode_string(mode, tmp, sizeof(tmp) - 1);
-				g_string_append_printf(s, "%s:\t%s\n", _("User Mode"), tmp);
+			tmp2 = gaim_escape_html(client_entry->nickname);
+			g_string_append_printf(s, "<b>%s:</b> %s", _("Nickname"), tmp2);
+			g_free(tmp2);
+			if (client_entry->realname) {
+				tmp2 = gaim_escape_html(client_entry->realname);
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Realname"), tmp2);
+				g_free(tmp2);
 			}
+			if (client_entry->username) {
+				tmp2 = gaim_escape_html(client_entry->username);
+				if (client_entry->hostname)
+					g_string_append_printf(s, "<br><b>%s:</b> %s@%s", _("Username"), tmp2, client_entry->hostname);
+				else
+					g_string_append_printf(s, "<br><b>%s:</b> %s", _("Username"), tmp2);
+				g_free(tmp2);
+			}
+
+			if (client_entry->mode) {
+				g_string_append_printf(s, "<br><b>%s:</b> ", _("User Modes"));
+				memset(tmp, 0, sizeof(tmp));
+				silcgaim_get_umode_string(client_entry->mode,
+						tmp, sizeof(tmp) - strlen(tmp));
+				g_string_append_printf(s, "%s", tmp);
+			}
+
+			silcgaim_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
+			if (moodstr) {
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Mood"), moodstr);
+				g_free(moodstr);
+			}
+
+			if (statusstr) {
+				tmp2 = gaim_escape_html(statusstr);
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Status Text"), tmp2);
+				g_free(statusstr);
+				g_free(tmp2);
+			}
+
+			if (contactstr) {
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Preferred Contact"), contactstr);
+				g_free(contactstr);
+			}
+
+			if (langstr) {
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Preferred Language"), langstr);
+				g_free(langstr);
+			}
+
+			if (devicestr) {
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Device"), devicestr);
+				g_free(devicestr);
+			}
+
+			if (tzstr) {
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Timezone"), tzstr);
+				g_free(tzstr);
+			}
+
+			if (geostr) {
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Geolocation"), geostr);
+				g_free(geostr);
+			}
+
+			if (client_entry->server)
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Server"), client_entry->server);
 
 			if (channels && user_modes) {
 				SilcUInt32 *umodes;
 				SilcDList list =
 					silc_channel_payload_parse_list(channels->data,
-									channels->len);
+							channels->len);
 				if (list && silc_get_mode_list(user_modes,
-							       silc_dlist_count(list),
-							       &umodes)) {
+							silc_dlist_count(list),
+							&umodes)) {
 					SilcChannelPayload entry;
 					int i = 0;
 
-					g_string_append_printf(s, "\n%s:\n", _("Channels"));
+					g_string_append_printf(s, "<br><b>%s:</b> ", _("Currently on"));
 					memset(tmp, 0, sizeof(tmp));
 					silc_dlist_start(list);
 					while ((entry = silc_dlist_get(list))
-					       != SILC_LIST_END) {
+							!= SILC_LIST_END) {
 						SilcUInt32 name_len;
 						char *m = silc_client_chumode_char(umodes[i++]);
 						char *name = silc_channel_get_name(entry, &name_len);
@@ -976,7 +1027,9 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						silc_free(m);
 
 					}
-					g_string_append_printf(s, "%s\n", tmp);
+					tmp2 = gaim_escape_html(tmp);
+					g_string_append_printf(s, "%s", tmp2);
+					g_free(tmp2);
 					silc_free(umodes);
 				}
 			}
@@ -988,8 +1041,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
 				fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 				babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
-				g_string_append_printf(s, "\n%s:\n%s\n\n", _("Public Key Fingerprint"), fingerprint);
-				g_string_append_printf(s, "%s:\n%s", _("Public Key Babbleprint"), babbleprint);
+				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Fingerprint"), fingerprint);
+				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Babbleprint"), babbleprint);
 				silc_free(fingerprint);
 				silc_free(babbleprint);
 				silc_free(pk);
@@ -999,14 +1052,74 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 #if 0 /* XXX for now, let's not show attrs here */
 			if (client_entry->attrs)
 				gaim_request_action(NULL, _("User Information"),
-						    _("User Information"),
-						    buf, 1, client_entry, 2,
-						    _("OK"), G_CALLBACK(silcgaim_whois_more),
-						    _("More..."), G_CALLBACK(silcgaim_whois_more));
+						_("User Information"),
+						buf, 1, client_entry, 2,
+						_("OK"), G_CALLBACK(silcgaim_whois_more),
+						_("More..."), G_CALLBACK(silcgaim_whois_more));
 			else
 #endif
-				gaim_notify_info(NULL, _("User Information"),
-						 _("User Information"), buf);
+				gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, buf, NULL, NULL);
+			g_free(buf);
+		}
+		break;
+
+	case SILC_COMMAND_WHOWAS:
+		{
+			SilcClientEntry client_entry;
+			char *buf, *nickname, *realname, *username, *tmp;
+			GString *s;
+
+			if (!success) {
+				gaim_notify_error(gc, _("User Information"),
+						  _("Cannot get user information"),
+						  silc_get_status_message(status));
+				break;
+			}
+
+			client_entry = va_arg(vp, SilcClientEntry);
+			nickname = va_arg(vp, char *);
+			username = va_arg(vp, char *);
+			realname = va_arg(vp, char *);
+			if (!nickname)
+				break;
+
+			s = g_string_new("");
+			tmp = gaim_escape_html(nickname);
+			g_string_append_printf(s, "<b>%s:</b> %s", _("Nickname"), tmp);
+			g_free(tmp);
+			if (realname) {
+				tmp = gaim_escape_html(realname);
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Realname"), tmp);
+				g_free(tmp);
+			}
+			if (username) {
+				tmp = gaim_escape_html(username);
+				if (client_entry && client_entry->hostname)
+					g_string_append_printf(s, "<br><b>%s:</b> %s@%s", _("Username"), tmp, client_entry->hostname);
+				else
+					g_string_append_printf(s, "<br><b>%s:</b> %s", _("Username"), tmp);
+				g_free(tmp);
+			}
+			if (client_entry && client_entry->server)
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Server"), client_entry->server);
+
+
+			if (client_entry && client_entry->public_key) {
+				char *fingerprint, *babbleprint;
+				unsigned char *pk;
+				SilcUInt32 pk_len;
+				pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
+				fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
+				babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
+				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Fingerprint"), fingerprint);
+				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Babbleprint"), babbleprint);
+				silc_free(fingerprint);
+				silc_free(babbleprint);
+				silc_free(pk);
+			}
+
+			buf = g_string_free(s, FALSE);
+			gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, buf, NULL, NULL);
 			g_free(buf);
 		}
 		break;
@@ -1062,6 +1175,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			const char *oldnick;
 
 			if (!success) {
+				gaim_notify_error(gc, _("Nick"), _("Failed to change nickname"),
+						silc_get_status_message(status));
 				return;
 			}
 
@@ -1082,6 +1197,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				}
 			}
 			silc_hash_table_list_reset(&htl);
+
+			gaim_connection_set_display_name(gc, local_entry->nickname);
 		}
 		break;
 
@@ -1170,10 +1287,94 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				g_snprintf(tmp, sizeof(tmp), "Server: %s\n%s",
 					   server_name, server_info);
 				msg = g_markup_escape_text(tmp, strlen(tmp));
-				gaim_notify_info(NULL, _("Server Information"),
-						 _("Server Information"), msg);
+				gaim_notify_info(gc, NULL, _("Server Information"), msg);
 				g_free(msg);
 			}
+		}
+		break;
+
+	case SILC_COMMAND_STATS:
+		{
+			SilcUInt32 starttime, uptime, my_clients, my_channels, my_server_ops,
+			my_router_ops, cell_clients, cell_channels, cell_servers,
+			clients, channels, servers, routers, server_ops, router_ops;
+			SilcUInt32 buffer_length;
+			SilcBufferStruct buf;
+
+			unsigned char *server_stats;
+			char *msg;
+
+			if (!success) {
+				gaim_notify_error(gc, _("Server Statistics"),
+						_("Cannot get server statisticss"),
+						silc_get_status_message(status));
+				return;
+			}
+
+			server_stats = va_arg(vp, unsigned char *);
+			buffer_length = va_arg(vp, SilcUInt32);
+			if (!server_stats || !buffer_length) {
+				gaim_notify_error(gc, _("Server Statistics"),
+						_("No server statisitics available"), NULL);
+				break;
+			}
+			silc_buffer_set(&buf, server_stats, buffer_length);
+			silc_buffer_unformat(&buf,
+					SILC_STR_UI_INT(&starttime),
+					SILC_STR_UI_INT(&uptime),
+					SILC_STR_UI_INT(&my_clients),
+					SILC_STR_UI_INT(&my_channels),
+					SILC_STR_UI_INT(&my_server_ops),
+					SILC_STR_UI_INT(&my_router_ops),
+					SILC_STR_UI_INT(&cell_clients),
+					SILC_STR_UI_INT(&cell_channels),
+					SILC_STR_UI_INT(&cell_servers),
+					SILC_STR_UI_INT(&clients),
+					SILC_STR_UI_INT(&channels),
+					SILC_STR_UI_INT(&servers),
+					SILC_STR_UI_INT(&routers),
+					SILC_STR_UI_INT(&server_ops),
+					SILC_STR_UI_INT(&router_ops),
+					SILC_STR_END);
+
+			msg = g_strdup_printf(_("Local server start time: %s\n"
+					"Local server uptime: %s\n"
+					"Local server clients: %d\n"
+					"Local server channels: %d\n"
+					"Local server operators: %d\n"
+					"Local router operators: %d\n"
+					"Local cell clients: %d\n"
+					"Local cell channels: %d\n"
+					"Local cell servers: %d\n"
+					"Total clients: %d\n"
+					"Total channels: %d\n"
+					"Total servers: %d\n"
+					"Total routers: %d\n"
+					"Total server operators: %d\n"
+					"Total router operators: %d\n"),
+					silc_get_time(starttime),
+					gaim_str_seconds_to_string((int)uptime),
+					(int)my_clients, (int)my_channels, (int)my_server_ops, (int)my_router_ops,
+					(int)cell_clients, (int)cell_channels, (int)cell_servers,
+					(int)clients, (int)channels, (int)servers, (int)routers,
+					(int)server_ops, (int)router_ops);
+
+			gaim_notify_info(gc, NULL,
+					_("Network Statistics"), msg);
+			g_free(msg);
+		}
+		break;
+
+	case SILC_COMMAND_PING:
+		{
+			if (!success) {
+				gaim_notify_error(gc, _("Ping"), _("Ping failed"),
+								  silc_get_status_message(status));
+				return;
+			}
+
+			gaim_notify_info(gc, _("Ping"), _("Ping reply received from server"),
+							 NULL);
 		}
 		break;
 
@@ -1219,7 +1420,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 /* Called to indicate that connection was either successfully established
    or connecting failed.  This is also the first time application receives
-   the SilcClientConnection objecet which it should save somewhere.
+   the SilcClientConnection object which it should save somewhere.
    If the `success' is FALSE the application must always call the function
    silc_client_close_connection. */
 
@@ -1251,16 +1452,15 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 		if (reject_watch || block_invites || block_ims) {
 			char m[5];
 			g_snprintf(m, sizeof(m), "+%s%s%s",
-				   reject_watch ? "w" : "",
-				   block_invites ? "I" : "",
-				   block_ims ? "P" : "");
+					   reject_watch ? "w" : "",
+					   block_invites ? "I" : "",
+					   block_ims ? "P" : "");
 			silc_client_command_call(sg->client, sg->conn, NULL,
-						 "UMODE", m, NULL);
+					"UMODE", m, NULL);
 		}
 
 		return;
 		break;
-
 	case SILC_CLIENT_CONN_ERROR:
 		gaim_connection_error(gc, _("Error during connecting to SILC Server"));
 		unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));

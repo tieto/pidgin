@@ -318,7 +318,7 @@ void silcgaim_show_public_key(SilcGaim sg,
 		g_string_append_printf(s, _("Organization: \t%s\n"), ident->org);
 	if (ident->country)
 		g_string_append_printf(s, _("Country: \t%s\n"), ident->country);
-	g_string_append_printf(s, _("Algorithm: \t\t%s\n"), public_key->name);
+	g_string_append_printf(s, _("Algorithm: \t%s\n"), public_key->name);
 	g_string_append_printf(s, _("Key Length: \t%d bits\n"), (int)key_len);
 	g_string_append_printf(s, "\n");
 	g_string_append_printf(s, _("Public Key Fingerprint:\n%s\n\n"), fingerprint);
@@ -435,4 +435,134 @@ void silcgaim_get_chumode_string(SilcUInt32 mode, char *buf,
 		strcat(buf, "[blocks robot messages] ");
 	if (mode & SILC_CHANNEL_UMODE_QUIET)
 		strcat(buf, "[quieted] ");
+}
+
+void
+silcgaim_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
+					 char **contactstr, char **langstr, char **devicestr,
+					 char **tzstr, char **geostr)
+{
+	SilcAttributePayload attr;
+	SilcAttributeMood mood = 0;
+	SilcAttributeContact contact;
+	SilcAttributeObjDevice device;
+	SilcAttributeObjGeo geo;
+
+	char tmp[1024];
+	GString *s;
+
+	*moodstr = NULL;
+	*statusstr = NULL;
+	*contactstr = NULL;
+	*langstr = NULL;
+	*devicestr = NULL;
+	*tzstr = NULL;
+	*geostr = NULL;
+
+	if (!attrs)
+		return;
+
+	s = g_string_new("");
+	attr = silcgaim_get_attr(attrs, SILC_ATTRIBUTE_STATUS_MOOD);
+	if (attr && silc_attribute_get_object(attr, &mood, sizeof(mood))) {
+		if (mood & SILC_ATTRIBUTE_MOOD_HAPPY)
+			g_string_append_printf(s, "[%s] ", _("Happy"));
+		if (mood & SILC_ATTRIBUTE_MOOD_SAD)
+			g_string_append_printf(s, "[%s] ", _("Sad"));
+		if (mood & SILC_ATTRIBUTE_MOOD_ANGRY)
+			g_string_append_printf(s, "[%s] ", _("Angry"));
+		if (mood & SILC_ATTRIBUTE_MOOD_JEALOUS)
+			g_string_append_printf(s, "[%s] ", _("Jealous"));
+		if (mood & SILC_ATTRIBUTE_MOOD_ASHAMED)
+			g_string_append_printf(s, "[%s] ", _("Ashamed"));
+		if (mood & SILC_ATTRIBUTE_MOOD_INVINCIBLE)
+			g_string_append_printf(s, "[%s] ", _("Invincible"));
+		if (mood & SILC_ATTRIBUTE_MOOD_INLOVE)
+			g_string_append_printf(s, "[%s] ", _("In Love"));
+		if (mood & SILC_ATTRIBUTE_MOOD_SLEEPY)
+			g_string_append_printf(s, "[%s] ", _("Sleepy"));
+		if (mood & SILC_ATTRIBUTE_MOOD_BORED)
+			g_string_append_printf(s, "[%s] ", _("Bored"));
+		if (mood & SILC_ATTRIBUTE_MOOD_EXCITED)
+			g_string_append_printf(s, "[%s] ", _("Excited"));
+		if (mood & SILC_ATTRIBUTE_MOOD_ANXIOUS)
+			g_string_append_printf(s, "[%s] ", _("Anxious"));
+	}
+	if (strlen(s->str)) {
+		*moodstr = s->str;
+		g_string_free(s, FALSE);
+	} else
+		g_string_free(s, TRUE);
+
+	attr = silcgaim_get_attr(attrs, SILC_ATTRIBUTE_STATUS_FREETEXT);
+	memset(tmp, 0, sizeof(tmp));
+	if (attr && silc_attribute_get_object(attr, tmp, sizeof(tmp)))
+		*statusstr = g_strdup(tmp);
+
+	s = g_string_new("");
+	attr = silcgaim_get_attr(attrs, SILC_ATTRIBUTE_PREFERRED_CONTACT);
+	if (attr && silc_attribute_get_object(attr, &contact, sizeof(contact))) {
+		if (contact & SILC_ATTRIBUTE_CONTACT_CHAT)
+			g_string_append_printf(s, "[%s] ", _("Chat"));
+		if (contact & SILC_ATTRIBUTE_CONTACT_EMAIL)
+			g_string_append_printf(s, "[%s] ", _("Email"));
+		if (contact & SILC_ATTRIBUTE_CONTACT_CALL)
+			g_string_append_printf(s, "[%s] ", _("Phone"));
+		if (contact & SILC_ATTRIBUTE_CONTACT_PAGE)
+			g_string_append_printf(s, "[%s] ", _("Paging"));
+		if (contact & SILC_ATTRIBUTE_CONTACT_SMS)
+			g_string_append_printf(s, "[%s] ", _("SMS"));
+		if (contact & SILC_ATTRIBUTE_CONTACT_MMS)
+			g_string_append_printf(s, "[%s] ", _("MMS"));
+		if (contact & SILC_ATTRIBUTE_CONTACT_VIDEO)
+			g_string_append_printf(s, "[%s] ", _("Video Conferencing"));
+	}
+	if (strlen(s->str)) {
+		*contactstr = s->str;
+		g_string_free(s, FALSE);
+	} else
+		g_string_free(s, TRUE);
+
+	attr = silcgaim_get_attr(attrs, SILC_ATTRIBUTE_PREFERRED_LANGUAGE);
+	memset(tmp, 0, sizeof(tmp));
+	if (attr && silc_attribute_get_object(attr, tmp, sizeof(tmp)))
+		*langstr = g_strdup(tmp);
+
+	s = g_string_new("");
+	attr = silcgaim_get_attr(attrs, SILC_ATTRIBUTE_DEVICE_INFO);
+	memset(&device, 0, sizeof(device));
+	if (attr && silc_attribute_get_object(attr, &device, sizeof(device))) {
+		if (device.type == SILC_ATTRIBUTE_DEVICE_COMPUTER)
+			g_string_append_printf(s, "%s: ", _("Computer"));
+		if (device.type == SILC_ATTRIBUTE_DEVICE_MOBILE_PHONE)
+			g_string_append_printf(s, "%s: ", _("Mobile Phone"));
+		if (device.type == SILC_ATTRIBUTE_DEVICE_PDA)
+			g_string_append_printf(s, "%s: ", _("PDA"));
+		if (device.type == SILC_ATTRIBUTE_DEVICE_TERMINAL)
+			g_string_append_printf(s, "%s: ", _("Terminal"));
+		g_string_append_printf(s, "%s %s %s %s",
+				device.manufacturer ? device.manufacturer : "",
+				device.version ? device.version : "",
+				device.model ? device.model : "",
+				device.language ? device.language : "");
+	}
+	if (strlen(s->str)) {
+		*devicestr = s->str;
+		g_string_free(s, FALSE);
+	} else
+		g_string_free(s, TRUE);
+
+	attr = silcgaim_get_attr(attrs, SILC_ATTRIBUTE_TIMEZONE);
+	memset(tmp, 0, sizeof(tmp));
+	if (attr && silc_attribute_get_object(attr, tmp, sizeof(tmp)))
+		*tzstr = g_strdup(tmp);
+
+	attr = silcgaim_get_attr(attrs, SILC_ATTRIBUTE_GEOLOCATION);
+	memset(&geo, 0, sizeof(geo));
+	if (attr && silc_attribute_get_object(attr, &geo, sizeof(geo)))
+		*geostr = g_strdup_printf("%s %s %s (%s)",
+				geo.longitude ? geo.longitude : "",
+				geo.latitude ? geo.latitude : "",
+				geo.altitude ? geo.altitude : "",
+				geo.accuracy ? geo.accuracy : "");
 }
