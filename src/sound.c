@@ -390,6 +390,7 @@ void play_file(char *filename)
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
+		alarm(30);
 		if (sound_options & OPT_SOUND_BEEP) {
 			g_print("\a");
 			_exit(0);
@@ -459,6 +460,7 @@ void play(unsigned char *data, int size)
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
+		alarm(30);
 		if (sound_options & OPT_SOUND_BEEP) {
 			g_print("\a");
 			_exit(0);
