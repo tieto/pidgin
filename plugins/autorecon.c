@@ -18,25 +18,12 @@ typedef struct {
 	guint timeout;
 } GaimAutoRecon;
 
-/*
-   I use a struct here, but the visible/invisible isn't yet supported
-   in this plugin, so this is more for future implementation of those
-   features
-*/
-typedef struct {
-	const char *state;
-	const char *message;
-} GaimAwayState;
-
 static GHashTable *hash = NULL;
-static GHashTable *awayStates = NULL;
-
 
 #define AUTORECON_OPT  "/plugins/core/autorecon"
 #define OPT_HIDE_CONNECTED   AUTORECON_OPT "/hide_connected_error"
 #define OPT_HIDE_CONNECTING  AUTORECON_OPT "/hide_connecting_error"
 #define OPT_RESTORE_STATE    AUTORECON_OPT "/restore_state"
-
 
 /* storage of original (old_ops) and modified (new_ops) ui ops to allow us to
    intercept calls to report_disconnect */
@@ -116,37 +103,6 @@ static void reconnect(GaimConnection *gc, void *m) {
 	} else if (info != NULL) {
 		g_hash_table_remove(hash, account);
 	}
-
-	if (gc->wants_to_die) 
-		g_hash_table_remove(awayStates, account);
-}
-
-static void save_state(GaimAccount *account, const char *state, const char *message) {
-	/* Saves whether the account is back/away/visible/invisible */
-
-	GaimAwayState *info;
-
-	if (!strcmp(state,GAIM_AWAY_CUSTOM)) {
-		info = g_new0(GaimAwayState, 1);
-		info->state = state;
-		info->message = message;
-
-		g_hash_table_insert(awayStates, account, info);
-	} else if(!strcmp(state,"Back")) 
-		g_hash_table_remove(awayStates, account);
-}
-
-static void restore_state(GaimConnection *gc, void *m) {
-	/* Restore the state to what it was before the disconnect */
-	GaimAwayState *info;
-	GaimAccount *account;
-
-	g_return_if_fail(gc != NULL && gaim_prefs_get_bool(OPT_RESTORE_STATE));
-	account = gaim_connection_get_account(gc);
-
-	info = g_hash_table_lookup(awayStates, account);
-	if (info)
-		serv_set_away(gc, info->state, info->message);
 }
 
 static void
@@ -185,17 +141,8 @@ plugin_load(GaimPlugin *plugin)
 	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
 			free_auto_recon);
 
-	awayStates = g_hash_table_new(g_int_hash, g_int_equal);
-
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
 			plugin, GAIM_CALLBACK(reconnect), NULL);
-
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-			plugin, GAIM_CALLBACK(restore_state), NULL);
-
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-away",
-			plugin, GAIM_CALLBACK(save_state), NULL);
-
 
 	return TRUE;
 }
@@ -207,17 +154,8 @@ plugin_unload(GaimPlugin *plugin)
 	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-off",
 			plugin, GAIM_CALLBACK(reconnect));
 
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on",
-			plugin, GAIM_CALLBACK(restore_state));
-	
-	gaim_signal_disconnect(gaim_accounts_get_handle(), "account-away",
-			plugin, GAIM_CALLBACK(save_state));
-
 	g_hash_table_destroy(hash);
 	hash = NULL;
-
-	g_hash_table_destroy(awayStates);
-	awayStates = NULL;
 
 	gaim_connections_set_ui_ops(old_ops);
 	g_free(new_ops);
@@ -240,10 +178,6 @@ static GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin *plugin) {
 
 	pref = gaim_plugin_pref_new_with_name_and_label(OPT_HIDE_CONNECTING,
 		_("Hide Login Errors"));
-	gaim_plugin_pref_frame_add(frame, pref);
-
-	pref = gaim_plugin_pref_new_with_name_and_label(OPT_RESTORE_STATE,
-		_("Restore Away State On Reconnect"));
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	return frame;
@@ -293,7 +227,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none(AUTORECON_OPT);
 	gaim_prefs_add_bool(OPT_HIDE_CONNECTED, FALSE);
 	gaim_prefs_add_bool(OPT_HIDE_CONNECTING, FALSE);
-	gaim_prefs_add_bool(OPT_RESTORE_STATE, TRUE);
+	gaim_prefs_remove_bool(OPT_RESTORE_STATE);
 }
 
 GAIM_INIT_PLUGIN(autorecon, init_plugin, info)
