@@ -113,6 +113,7 @@ DLL_C_SRC =	\
 			gtksound.c \
 			gtksourceiter.c \
 			gtkstatusselector.c \
+			gtkthemes.c \
 			gtkutils.c \
 			idle.c \
 			imgstore.c \
@@ -138,7 +139,6 @@ DLL_C_SRC =	\
 			status.c \
 			stock.c \
 			stringref.c \
-			themes.c \
 			util.c \
 			value.c \
 			xmlnode.c \

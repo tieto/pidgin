@@ -168,12 +168,12 @@ gaim_SOURCES = \
 	gtksound.c \
 	gtksourceiter.c \
 	gtkstatusselector.c \
+	gtkthemes.c \
 	gtkutils.c \
 	idle.c \
 	main.c \
 	session.c \
-	stock.c \
-	themes.c
+	stock.c 
 
 gaim_headers = \
 	$(gaim_coreheaders) \
