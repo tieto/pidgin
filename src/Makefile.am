@@ -40,7 +40,7 @@ gaim_SOURCES =	about.c \
 		html.c \
 		idle.c \
 		list.c \
-		list.h
+		list.h \
 		log.c \
 		main.c \
 		md5.c \
