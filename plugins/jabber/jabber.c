@@ -598,7 +598,9 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 
 	if ((y = xmlnode_get_tag(p->x, "show"))) {
 		show = xmlnode_get_data(y);
-		if (!strcmp(show, "away")) {
+		if (!show) {
+			state = UC_NORMAL;
+		} else if (!strcmp(show, "away")) {
 			state = UC_AWAY;
 		} else if (!strcmp(show, "chat")) {
 			state = UC_CHAT;
@@ -760,14 +762,14 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 					groupname = xmlnode_get_data(xmlnode_get_firstchild(g));
 					if (groupname == NULL)
 						groupname = "Buddies";
-					if (strcasecmp(sub, "from") &&
+					if (strcasecmp(sub, "from") && strcasecmp(sub, "none") &&
 							!(b = find_buddy(GJ_GC(j), buddyname))) {
 						debug_printf("adding buddy: %s\n", buddyname);
 						b =
 						    add_buddy(GJ_GC(j), groupname, buddyname,
 							      name ? name : buddyname);
 						do_export(0, 0);
-					} else {
+					} else if (b) {
 						debug_printf("updating buddy: %s/%s\n", buddyname, name);
 						g_snprintf(b->name, sizeof(b->name), "%s", buddyname);
 						g_snprintf(b->show, sizeof(b->show), "%s",
@@ -787,7 +789,8 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 				continue;
 			}
 			buddyname = g_strdup_printf("%s@%s", who->user, who->server);
-			if (strcasecmp(sub, "from") && !(b = find_buddy(GJ_GC(j), buddyname))) {
+			if (strcasecmp(sub, "from") && strcasecmp(sub, "none") &&
+					!(b = find_buddy(GJ_GC(j), buddyname))) {
 				b = add_buddy(GJ_GC(j), "Buddies", buddyname, name ? name : Jid);
 				do_export(0, 0);
 			}
@@ -1453,6 +1456,67 @@ static char *jabber_normalize(const char *s)
 	return buf;
 }
 
+static GList *jabber_away_states() {
+	GList *m = NULL;
+
+	m = g_list_append(m, "Online");
+	m = g_list_append(m, "Chatty");
+	m = g_list_append(m, "Away");
+	m = g_list_append(m, "Extended Away");
+	m = g_list_append(m, "Do Not Disturb");
+
+	return m;
+}
+
+static void jabber_set_away(struct gaim_connection *gc, char *state, char *message)
+{
+	xmlnode x, y;
+	struct jabber_data *jd = gc->proto_data;
+	gjconn j = jd->jc;
+
+	gc->away = NULL; /* never send an auto-response */
+
+	x = xmlnode_new_tag("presence");
+
+	if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
+		/* oh goody. Gaim is telling us what to do. */
+		if (message) {
+			/* Gaim wants us to be away */
+			y = xmlnode_insert_tag(x, "show");
+			xmlnode_insert_cdata(y, "away", -1);
+			y = xmlnode_insert_tag(x, "status");
+			xmlnode_insert_cdata(y, message, -1);
+			gc->away = "";
+		} else {
+			/* Gaim wants us to not be away */
+			/* but for Jabber, we can just send presence with no other information. */
+		}
+	} else {
+		/* state is one of our own strings. it won't be NULL. */
+		if (!strcmp(state, "Online")) {
+			/* once again, we don't have to put anything here */
+		} else if (!strcmp(state, "Chatty")) {
+			y = xmlnode_insert_tag(x, "show");
+			xmlnode_insert_cdata(y, "chat", -1);
+		} else if (!strcmp(state, "Away")) {
+			y = xmlnode_insert_tag(x, "show");
+			xmlnode_insert_cdata(y, "away", -1);
+			gc->away = "";
+		} else if (!strcmp(state, "Extended Away")) {
+			y = xmlnode_insert_tag(x, "show");
+			xmlnode_insert_cdata(y, "xa", -1);
+			gc->away = "";
+		} else if (!strcmp(state, "Do Not Disturb")) {
+			y = xmlnode_insert_tag(x, "show");
+			xmlnode_insert_cdata(y, "dnd", -1);
+			gc->away = "";
+		}
+	}
+
+	gjab_send(j, x);
+	xmlnode_free(x);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Jabber_init(struct prpl *ret)
@@ -1461,6 +1525,7 @@ void Jabber_init(struct prpl *ret)
 	ret->protocol = PROTO_JABBER;
 	ret->name = jabber_name;
 	ret->list_icon = jabber_list_icon;
+	ret->away_states = jabber_away_states;
 	ret->buddy_menu = NULL;
 	ret->user_opts = NULL;
 	ret->draw_new_user = jabber_draw_new_user;
@@ -1470,7 +1535,7 @@ void Jabber_init(struct prpl *ret)
 	ret->send_im = jabber_send_im;
 	ret->set_info = NULL;
 	ret->get_info = NULL;
-	ret->set_away = NULL;
+	ret->set_away = jabber_set_away;
 	ret->get_away_msg = NULL;
 	ret->set_dir = NULL;
 	ret->get_dir = NULL;
