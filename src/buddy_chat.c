@@ -601,6 +601,7 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *vpaned;
 	GtkWidget *hpaned;
 	GtkWidget *toolbar;
+	char buf[BUF_LONG];
 
 	int dispstyle = set_dispstyle(1);
 
@@ -610,7 +611,8 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 	gtk_container_border_width(GTK_CONTAINER(win), 10);
-	gtk_window_set_title(GTK_WINDOW(win), b->name);
+	g_snprintf(buf, sizeof(buf), "Gaim - %s (chat)", b->name);
+	gtk_window_set_title(GTK_WINDOW(win), buf);
 	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);
 	gtk_widget_realize(win);
 	aol_icon(win->window);

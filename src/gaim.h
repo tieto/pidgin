@@ -361,8 +361,8 @@ struct file_transfer {
 	struct gaim_connection *gc;
 };
 
-#define CONVERSATION_TITLE "Gaim - Conversation with %s"
-#define LOG_CONVERSATION_TITLE "Gaim - Conversation with %s (logged)"
+#define CONVERSATION_TITLE "Gaim - %s"
+#define LOG_CONVERSATION_TITLE "Gaim - %s (logged)"
 
 #define VOICE_UID     "09461341-4C7F-11D1-8222-444553540000"
 #define FILE_SEND_UID "09461343-4C7F-11D1-8222-444553540000"

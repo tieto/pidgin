@@ -2005,21 +2005,30 @@ static int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_st
 	return 1;
 }
 
-static void oscar_direct_im(GtkObject *obj, char *who) {
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
+struct ask_do_dir_im {
+	char *who;
+	struct gaim_connection *gc;
+};
+
+static void oscar_cancel_direct_im(GtkObject *obj, struct ask_do_dir_im *data) {
+	g_free(data);
+}
+
+static void oscar_direct_im(GtkObject *obj, struct ask_do_dir_im *data) {
+	struct gaim_connection *gc = data->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
 
-	dim = find_direct_im(od, who);
+	dim = find_direct_im(od, data->who);
 	if (dim) {
 		do_error_dialog("Direct IM request already pending.", "Unable");
 		return;
 	}
 	dim = g_new0(struct direct_im, 1);
 	dim->gc = gc;
-	g_snprintf(dim->name, sizeof dim->name, "%s", who);
+	g_snprintf(dim->name, sizeof dim->name, "%s", data->who);
 
-	dim->conn = aim_directim_initiate(od->sess, od->conn, NULL, who);
+	dim->conn = aim_directim_initiate(od->sess, od->conn, NULL, data->who);
 	if (dim->conn != NULL) {
 		od->direct_ims = g_slist_append(od->direct_ims, dim);
 		dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
@@ -2030,6 +2039,17 @@ static void oscar_direct_im(GtkObject *obj, char *who) {
 		do_error_dialog(_("Unable to open Direct IM"), _("Error"));
 		g_free(dim);
 	}
+}
+
+static void oscar_ask_direct_im(GtkObject *m, gchar *who) {
+	char buf[BUF_LONG];
+	struct ask_do_dir_im *data = g_new0(struct ask_do_dir_im, 1);
+	data->who = who;
+	data->gc = gtk_object_get_user_data(m);
+	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."
+					" Doing this will let them see your IP address, and may be"
+					" a security risk. Do you wish to continue?"), who);
+	do_ask_dialog(buf, data, oscar_direct_im, oscar_cancel_direct_im);
 }
 
 static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
@@ -2053,7 +2073,7 @@ static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	if (strcmp(n, normalize(who))) {
 		button = gtk_menu_item_new_with_label(_("Direct IM"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(oscar_direct_im), who);
+				   GTK_SIGNAL_FUNC(oscar_ask_direct_im), who);
 		gtk_object_set_user_data(GTK_OBJECT(button), gc);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
