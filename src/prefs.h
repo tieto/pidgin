@@ -1,5 +1,6 @@
 /**
  * @file prefs.h Prefs API
+ * @ingroup core
  *
  * gaim
  *
