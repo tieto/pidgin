@@ -26,7 +26,6 @@
 
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
-#include "pixmaps/register.xpm"
 
 GSList *protocols = NULL;
 
