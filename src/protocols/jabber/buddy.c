@@ -51,16 +51,10 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 		gboolean create)
 {
 	JabberBuddy *jb;
-	JabberID *jid = jabber_id_new(name);
-	char *realname;
+	const char *realname;
 
-	if(!jid)
+	if(!(realname = jabber_normalize(js->gc->account, name)))
 		return NULL;
-
-	if(jid->node)
-		realname = g_strdup_printf("%s@%s", jid->node, jid->domain);
-	else
-		realname = g_strdup(jid->domain);
 
 	jb = g_hash_table_lookup(js->buddies, realname);
 
@@ -68,9 +62,6 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 		jb = g_new0(JabberBuddy, 1);
 		g_hash_table_insert(js->buddies, g_strdup(realname), jb);
 	}
-	g_free(realname);
-
-	jabber_id_free(jid);
 
 	return jb;
 }

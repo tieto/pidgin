@@ -119,29 +119,19 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 	const char *from = xmlnode_get_attrib(packet, "from");
 
 	if(from) {
-		char *me, *from_norm;
-		JabberID *from_jid = jabber_id_new(from);
+		char *from_norm;
 		gboolean invalid;
 
-		if(!from_jid)
+		from_norm = g_strdup(jabber_normalize(js->gc->account, from));
+
+		if(!from_norm)
 			return;
 
-		from_norm = g_strdup_printf("%s@%s%s%s",
-				from_jid->node ? from_jid->node : "",
-				from_jid->domain,
-				from_jid->resource ? "/" : "",
-				from_jid->resource ? from_jid->resource : "");
+		invalid = g_utf8_collate(from_norm,
+				jabber_normalize(js->gc->account,
+					gaim_account_get_username(js->gc->account)));
 
-		if(from_jid->resource)
-			me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
-					js->user->resource);
-		else
-			me = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-
-		invalid = g_utf8_collate(from_norm, me);
 		g_free(from_norm);
-		g_free(me);
-		jabber_id_free(from_jid);
 
 		if(invalid)
 			return;

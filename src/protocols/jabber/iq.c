@@ -279,11 +279,10 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 
 		if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
 			jbr = jabber_buddy_find_resource(jb, jid->resource);
+		jabber_id_free(jid);
 
-		if(!jbr) {
-			jabber_id_free(jid);
+		if(!jbr)
 			return;
-		}
 
 		for(child = query->child; child; child = child->next) {
 			if(child->type != NODE_TYPE_TAG)
@@ -303,7 +302,6 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					jbr->capabilities |= JABBER_CAP_BYTESTREAMS;
 			}
 		}
-		jabber_id_free(jid);
 	}
 }
 

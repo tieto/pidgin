@@ -274,21 +274,28 @@ const char *jabber_normalize(const GaimAccount *account, const char *in)
 	JabberStream *js = gc ? gc->proto_data : NULL;
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;
+	char *node, *domain;
 
 	jid = jabber_id_new(in);
 
 	if(!jid)
 		return NULL;
 
-	if(js && jid->node && jid->resource &&
-			jabber_chat_find(js, jid->node, jid->domain))
-		g_snprintf(buf, sizeof(buf), "%s@%s/%s", jid->node, jid->domain,
+	node = jid->node ? g_utf8_strdown(jid->node, -1) : NULL;
+	domain = g_utf8_strdown(jid->domain, -1);
+
+
+	if(js && node && jid->resource &&
+			jabber_chat_find(js, node, domain))
+		g_snprintf(buf, sizeof(buf), "%s@%s/%s", node, domain,
 				jid->resource);
 	else
-		g_snprintf(buf, sizeof(buf), "%s%s%s", jid->node ? jid->node : "",
-				jid->node ? "@" : "", jid->domain);
+		g_snprintf(buf, sizeof(buf), "%s%s%s", node ? node : "",
+				node ? "@" : "", domain);
 
 	jabber_id_free(jid);
+	g_free(node);
+	g_free(domain);
 
 	return buf;
 }
