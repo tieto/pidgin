@@ -15,6 +15,7 @@ version 0.46:
 	  perl much easier to use (thanks Dennis Lambe Jr.)
 	* Can pass an argument to timeout_handlers in perl
 	  (thanks Artem Litvinovich)
+	* Redesigned Modify Account window (thanks Sean Egan)
 
 version 0.45 (10/04/2001):
 	* New plugin event: event_chat_send_invite

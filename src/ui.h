@@ -155,7 +155,6 @@ struct conversation {
 #if USE_PIXBUF
 	/* buddy icon stuff. sigh. */
 	GtkWidget *icon;
-	GdkPixbuf *unanim;
 	GdkPixbufAnimation *anim;
 	guint32 icon_timer;
 	int frame;
@@ -202,6 +201,8 @@ struct mod_user {
 	GtkWidget *pwdbox;
 	GtkWidget *pass;
 	GtkWidget *rempass;
+	GtkWidget *user_frame;
+	GtkWidget *proto_frame;
 	GList *opt_entries;
 
 	/* stuff for icon selection */

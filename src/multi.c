@@ -59,7 +59,7 @@ static struct mod_user *find_mod_user(struct aim_user *a)
 	return NULL;
 }
 
-static void generate_prpl_options(struct mod_user *, GtkWidget *);
+static void generate_protocol_options(struct mod_user *, GtkWidget *);
 
 struct mod_usr_opt {
 	struct mod_user *user;
@@ -309,8 +309,13 @@ static void set_prot(GtkWidget *opt, int proto)
 			gtk_widget_hide(u->iconsel);
 		}
 
+		if ((q->options & OPT_PROTO_BUDDY_ICON) || (q->options & OPT_PROTO_MAIL_CHECK))
+			gtk_widget_show(u->user_frame);
+		else
+			gtk_widget_hide(u->user_frame);
+
 		u->protocol = proto;
-		generate_prpl_options(u, u->main);
+		generate_protocol_options(u, u->main);
 	}
 }
 
@@ -455,21 +460,21 @@ static GtkWidget *build_icon_selection(struct mod_user *u, GtkWidget *box)
 	return hbox;
 }
 
-static void generate_general_options(struct mod_user *u, GtkWidget *book)
+static void generate_login_options(struct mod_user *u, GtkWidget *box)
 {
+	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
-	GtkWidget *pwdbox;
 	GtkWidget *label;
-	GtkWidget *name;
-	GtkWidget *pass;
-	GtkWidget *rempass;
-	GtkWidget *checkmail;
-	GtkWidget *iconsel;
+
+	struct prpl *p;
+
+	frame = gtk_frame_new("Login Options");
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new(_("General Options")));
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -477,18 +482,18 @@ static void generate_general_options(struct mod_user *u, GtkWidget *book)
 	label = gtk_label_new(_("Screenname:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	name = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), name, TRUE, TRUE, 0);
+	u->name = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), u->name, TRUE, TRUE, 0);
 
-	pwdbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), pwdbox, FALSE, FALSE, 0);
+	u->pwdbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), u->pwdbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Password:"));
-	gtk_box_pack_start(GTK_BOX(pwdbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(u->pwdbox), label, FALSE, FALSE, 0);
 
-	pass = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(pwdbox), pass, TRUE, TRUE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
+	u->pass = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(u->pwdbox), u->pass, TRUE, TRUE, 0);
+	gtk_entry_set_visibility(GTK_ENTRY(u->pass), FALSE);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -499,29 +504,63 @@ static void generate_general_options(struct mod_user *u, GtkWidget *book)
 
 	make_protocol_menu(hbox, u);
 
-	rempass = acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
+	u->rempass = acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
-	/*acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox); */
-	checkmail = acct_button(_("New Mail Notifications"), u, OPT_USR_MAIL_CHECK, vbox);
 
-	iconsel = build_icon_selection(u, vbox);
+	gtk_widget_show_all(frame);
 
-	gtk_widget_show_all(vbox);
-
-	u->name = name;
-	u->pwdbox = pwdbox;
-	u->pass = pass;
-	u->rempass = rempass;
-	u->checkmail = checkmail;
-	u->iconsel = iconsel;
 	if (u->user) {
-		gtk_entry_set_text(GTK_ENTRY(name), u->user->username);
-		gtk_entry_set_text(GTK_ENTRY(pass), u->user->password);
-		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
+		gtk_entry_set_text(GTK_ENTRY(u->name), u->user->username);
+		gtk_entry_set_text(GTK_ENTRY(u->pass), u->user->password);
+		gtk_entry_set_editable(GTK_ENTRY(u->name), FALSE);
+	}
+
+	p = find_prpl(u->protocol);
+	if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
+		gtk_widget_hide(u->pwdbox);
+		gtk_widget_hide(u->rempass);
 	}
 }
 
-static void generate_prpl_options(struct mod_user *u, GtkWidget *book)
+static void generate_user_options(struct mod_user *u, GtkWidget *box)
+{
+	/* This function will add the appropriate (depending on the current
+	 * protocol) widgets to frame and return TRUE if there anything
+	 * was added (meaning the frame should be shown)
+	 * Eric will most likely change this (as he does all other submitted code)
+	 * so that it will accept the vbox as an argument and create, add, and show
+	 * the frame itself (like generate_protocol_options).  I'd do it myself, but I'm
+	 * tired and I don't care. */
+	/* Sean was right. I did do that. I told him I would. */
+
+	GtkWidget *vbox;
+
+	struct prpl *p = find_prpl(u->protocol);
+
+	u->user_frame = gtk_frame_new("User Options");
+	gtk_box_pack_start(GTK_BOX(box), u->user_frame, FALSE, FALSE, 0);
+	gtk_widget_show(u->user_frame);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(u->user_frame), vbox);
+	gtk_widget_show(vbox);
+
+	u->checkmail = acct_button(_("New Mail Notifications"), u, OPT_USR_MAIL_CHECK, vbox);
+	u->iconsel = build_icon_selection(u, vbox);
+
+	if (!p) {
+		gtk_widget_hide(u->user_frame);
+		return;
+	}
+
+	if (!(p->options & OPT_PROTO_MAIL_CHECK))
+		gtk_widget_hide(u->checkmail);
+	if (!(p->options & OPT_PROTO_BUDDY_ICON))
+		gtk_widget_hide(u->iconsel);
+}
+
+static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 {
 	struct prpl *p = find_prpl(u->protocol);
 
@@ -534,28 +573,34 @@ static void generate_prpl_options(struct mod_user *u, GtkWidget *book)
 
 	char buf[256];
 
-	/* page 0 is general, keep it. page 1 is options for our
-	 * particular protocol, so clear it out and make a new one. */
-
-	gtk_notebook_remove_page(GTK_NOTEBOOK(book), 1);
-
-	if (!p)
-		return;
+	if (u->proto_frame)
+		gtk_widget_destroy(u->proto_frame);
+	u->proto_frame = NULL;
 
 	if (u->opt_entries) {
 		g_list_free(u->opt_entries);
 		u->opt_entries = NULL;
 	}
 
+	if (!p)
+		return;
+
 	if (!p->user_opts)
 		return;
 
 	tmp = op = (*p->user_opts)();
 
+	if (!op)
+		return;
+
+	g_snprintf(buf, sizeof(buf), "%s Options", (*p->name)());
+	u->proto_frame = gtk_frame_new(buf);
+	gtk_box_pack_start(GTK_BOX(box), u->proto_frame, FALSE, FALSE, 0);
+	gtk_widget_show(u->proto_frame);
+
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	g_snprintf(buf, sizeof(buf), "%s Options", (*p->name)());
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new(buf));
+	gtk_container_add(GTK_CONTAINER(u->proto_frame), vbox);
 	gtk_widget_show(vbox);
 
 	while (op) {
@@ -590,19 +635,14 @@ static void generate_prpl_options(struct mod_user *u, GtkWidget *book)
 
 static void show_acct_mod(struct aim_user *a)
 {
-	/* here we can have all the aim_user options, including ones not shown in the main acctedit
-	 * window. this can keep the size of the acctedit window small and readable, and make this
-	 * one the powerful editor. this is where things like name/password are edited, but can
-	 * also have toggles (and even more complex options) like whether to autologin or whether
-	 * to send keepalives or whatever. this would be the perfect place to specify which protocol
-	 * to use. make sure to account for the possibility of protocol plugins. */
-	GtkWidget *mod;
-	GtkWidget *box;
-	GtkWidget *book;
+	/* This is the fucking modify account dialog. I've fucking seperated it into
+	 * three fucking frames:
+	 * a fucking Login Options frame, a fucking User Options frame and a fucking
+	 * Protcol Options frame. This fucking removes the two fucking tabs, which were
+	 * quite fucking uneccessary. Fuck. */
+				/* -- SeanEgan */
 	GtkWidget *hbox;
 	GtkWidget *button;
-
-	struct prpl *p;
 
 	struct mod_user *u = find_mod_user(a);
 
@@ -638,54 +678,38 @@ static void show_acct_mod(struct aim_user *a)
 		return;
 	}
 
-	mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_wmclass(GTK_WINDOW(mod), "account", "Gaim");
-	gtk_widget_realize(mod);
-	aol_icon(mod->window);
-	gtk_window_set_title(GTK_WINDOW(mod), _("Gaim - Modify Account"));
-	gtk_window_set_policy(GTK_WINDOW(mod), FALSE, TRUE, TRUE);	/* nothing odd here :) */
-	gtk_signal_connect(GTK_OBJECT(mod), "destroy", GTK_SIGNAL_FUNC(delmod), u);
+	u->mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_wmclass(GTK_WINDOW(u->mod), "account", "Gaim");
+	gtk_widget_realize(u->mod);
+	aol_icon(u->mod->window);
+	gtk_window_set_title(GTK_WINDOW(u->mod), _("Gaim - Modify Account"));
+	gtk_window_set_policy(GTK_WINDOW(u->mod), FALSE, TRUE, TRUE);	/* nothing odd here :) */
+	gtk_signal_connect(GTK_OBJECT(u->mod), "destroy", GTK_SIGNAL_FUNC(delmod), u);
 
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_border_width(GTK_CONTAINER(mod), 5);
-	gtk_container_add(GTK_CONTAINER(mod), box);
-	gtk_widget_show(box);
+	u->main = gtk_vbox_new(FALSE, 5);
+	gtk_container_border_width(GTK_CONTAINER(u->main), 5);
+	gtk_container_add(GTK_CONTAINER(u->mod), u->main);
+	gtk_widget_show(u->main);
 
-	book = gtk_notebook_new();
-	gtk_box_pack_start(GTK_BOX(box), book, FALSE, FALSE, 0);
-	gtk_widget_show(book);
-
-	generate_general_options(u, book);
-	generate_prpl_options(u, book);
+	generate_login_options(u, u->main);
+	generate_user_options(u, u->main);
+	generate_protocol_options(u, u->main);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(u->main), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	button = picture_button(mod, _("Cancel"), cancel_xpm);
+	button = picture_button(u->mod, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_mod), u);
 	gtk_widget_show(button);
 
-	button = picture_button(mod, _("OK"), ok_xpm);
+	button = picture_button(u->mod, _("OK"), ok_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_mod), u);
 	gtk_widget_show(button);
 
-	u->mod = mod;
-	u->main = book;	/* sorry, i think i broke the joke :) */
-
-	p = find_prpl(u->protocol);
-	if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
-		gtk_widget_hide(u->pwdbox);
-		gtk_widget_hide(u->rempass);
-	}
-	if (p && (!(p->options & OPT_PROTO_MAIL_CHECK)))
-		gtk_widget_hide(u->checkmail);
-	if (p && (!(p->options & OPT_PROTO_BUDDY_ICON)))
-		gtk_widget_hide(u->iconsel);
-
-	gtk_widget_show(mod);
+	gtk_widget_show(u->mod);
 }
 
 static void add_acct(GtkWidget *w, gpointer d)
