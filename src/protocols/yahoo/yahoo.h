@@ -197,7 +197,7 @@ struct yahoo_packet {
 
 
 #define YAHOO_WEBMESSENGER_PROTO_VER 0x0065
-#define YAHOO_PROTO_VER 0x000b
+#define YAHOO_PROTO_VER 0x000c
 
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
