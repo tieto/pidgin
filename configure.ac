@@ -1033,7 +1033,6 @@ AC_OUTPUT([Makefile
 		   pixmaps/status/default/Makefile
 		   plugins/Makefile
 		   plugins/docklet/Makefile
-		   plugins/gevolution/Makefile
 		   plugins/gaim-remote/Makefile
 		   plugins/gestures/Makefile
 		   plugins/perl/Makefile
