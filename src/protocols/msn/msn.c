@@ -1753,6 +1753,18 @@ static void msn_do_action(struct gaim_connection *gc, char *act)
 {
 	if (!strcmp(act, "Set Friendly Name")) {
 		do_prompt_dialog("Set Friendly Name:", gc->displayname, gc, msn_act_id, NULL);
+	} else if (!strcmp(act, "Reset All Friendly Names")) {
+		GSList *g = gc->groups;
+		while (g) {
+			GSList *m = ((struct group *)g->data)->members;
+			while (m) {
+				struct buddy *b = m->data;
+				if (b->present)
+					msn_reset_friend(gc, b->name);
+				m = m->next;
+			}
+			g = g->next;
+		}
 	}
 }
 
@@ -1761,6 +1773,7 @@ static GList *msn_actions()
 	GList *m = NULL;
 
 	m = g_list_append(m, "Set Friendly Name");
+	m = g_list_append(m, "Reset All Friendly Names");
 
 	return m;
 }
