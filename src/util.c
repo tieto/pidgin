@@ -1309,7 +1309,7 @@ gaim_normalize(const GaimAccount *account, const char *s)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if(prpl_info && prpl_info->normalize) {
-		return prpl_info->normalize(s);
+		return prpl_info->normalize(account, s);
 	} else {
 		static char buf[BUF_LEN];
 		char *tmp;

@@ -1370,7 +1370,9 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 		char *filename;
 
 		filename = (char *)malloc(100);
-		g_snprintf(filename, 100, "%s.chat", gaim_conversation_get_name(conv));
+		g_snprintf(filename, 100, "%s.chat",
+				gaim_normalize(gaim_conversation_get_account(conv),
+					gaim_conversation_get_name(conv)));
 
 		fd = open_log_file(filename, TRUE);
 

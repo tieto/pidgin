@@ -4027,7 +4027,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 			FILE *fd;
 			char filename[256];
 
-			g_snprintf(filename, sizeof(filename), "%s%s", name,
+			g_snprintf(filename, sizeof(filename), "%s%s",
+					gaim_normalize(gaim_conversation_get_account(conv),name),
 					   (conv_type == GAIM_CONV_CHAT ? ".chat" : ""));
 
 			fd = open_log_file(filename, (conv_type == GAIM_CONV_CHAT));
@@ -4520,17 +4521,20 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 			char *t1;
 			char nm[256];
+			const char *nm2;
 
 			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 				t1 = gaim_markup_strip_html(buf);
 			else
 				t1 = buf;
 
+			nm2 = gaim_normalize(gaim_conversation_get_account(conv),
+					gaim_conversation_get_name(conv));
+
 			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
-				g_snprintf(nm, sizeof(nm), "%s.chat",
-						   gaim_conversation_get_name(conv));
+				g_snprintf(nm, sizeof(nm), "%s.chat", nm2);
 			else
-				strncpy(nm, gaim_conversation_get_name(conv), sizeof(nm));
+				strncpy(nm, nm2, sizeof(nm));
 
 			fd = open_log_file(nm,
 				(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT));
@@ -4689,12 +4693,15 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		if (gaim_conversation_is_logging(conv)) {
 			char *t1, *t2;
 			char nm[256];
+			const char *nm2;
+
+			nm2 = gaim_normalize(gaim_conversation_get_account(conv),
+					gaim_conversation_get_name(conv));
 
 			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
-				g_snprintf(nm, sizeof(nm), "%s.chat",
-						   gaim_conversation_get_name(conv));
+				g_snprintf(nm, sizeof(nm), "%s.chat", nm2);
 			else
-				strncpy(nm, gaim_conversation_get_name(conv), sizeof(nm));
+				strncpy(nm, nm2, sizeof(nm));
 
 			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 				t1 = gaim_markup_strip_html(buf);

@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "server.h"
 
+#include "chat.h"
 #include "presence.h"
 #include "jutil.h"
 
@@ -260,24 +261,33 @@ char *jabber_get_bare_jid(const char *in)
 	if(!jid)
 		return NULL;
 
-	out = g_strdup_printf("%s@%s", jid->node, jid->domain);
+	out = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
+			jid->node ? "@" : "", jid->domain);
 	jabber_id_free(jid);
 
 	return out;
 }
 
-const char *jabber_normalize(const char *in)
+const char *jabber_normalize(const GaimAccount *account, const char *in)
 {
-	static char buf[2048]; /* maximum legal length of a jabber jid */
-	char *tmp;
+	GaimConnection *gc = account ? account->gc : NULL;
+	JabberStream *js = gc ? gc->proto_data : NULL;
+	static char buf[3072]; /* maximum legal length of a jabber jid */
+	JabberID *jid;
 
-	tmp = jabber_get_bare_jid(in);
+	jid = jabber_id_new(in);
 
-	if(!tmp)
+	if(!jid)
 		return NULL;
 
-	g_snprintf(buf, sizeof(buf), "%s", tmp);
-	g_free(tmp);
+	if(js && jid->node && jid->resource &&
+			jabber_chat_find(js, jid->node, jid->domain))
+		g_snprintf(buf, sizeof(buf), "%s@%s/%s", jid->node, jid->domain,
+				jid->resource);
+	else
+		g_snprintf(buf, sizeof(buf), "%s%s%s", jid->node ? jid->node : "",
+				jid->node ? "@" : "", jid->domain);
+
 	return buf;
 }
 

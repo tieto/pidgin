@@ -71,7 +71,7 @@ struct _zephyr_triple {
 					return;\
 				}
 
-static const char *zephyr_normalize(const char *);
+static const char *zephyr_normalize(const GaimAccount *, const char *);
 
 /* this is so bad, and if Zephyr weren't so fucked up to begin with I
  * wouldn't do this. but it is so i will. */
@@ -307,7 +307,7 @@ static gboolean pending_zloc(char *who)
 {
 	GList *curr;
 	for (curr = pending_zloc_names; curr != NULL; curr = curr->next) {
-		if (!g_ascii_strcasecmp(zephyr_normalize(who), (char*)curr->data)) {
+		if (!g_ascii_strcasecmp(zephyr_normalize(NULL, who), (char*)curr->data)) {
 			g_free((char*)curr->data);
 			pending_zloc_names = g_list_remove(pending_zloc_names, curr->data);
 			return TRUE;
@@ -466,7 +466,7 @@ static gint check_loc(gpointer data)
 					continue;
 				if(b->account->gc == zgc) {
 					const char *chk;
-					chk = zephyr_normalize(b->name);
+					chk = zephyr_normalize(b->account, b->name);
 					/* doesn't matter if this fails or not; we'll just move on to the next one */
 					ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
 					free(ald.user);
@@ -783,9 +783,9 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 	notice.z_class = zt->class;
 	notice.z_class_inst = zt->instance;
 	if (!g_ascii_strcasecmp(zt->recipient, "*"))
-		notice.z_recipient = zephyr_normalize("");
+		notice.z_recipient = zephyr_normalize(gc->account, "");
 	else
-		notice.z_recipient = zephyr_normalize(zt->recipient);
+		notice.z_recipient = zephyr_normalize(gc->account, zt->recipient);
 	notice.z_sender = 0;
 	notice.z_default_format =
 		"Class $class, Instance $instance:\n"
@@ -832,7 +832,7 @@ static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, G
 	return 1;
 }
 
-static const char *zephyr_normalize(const char *orig)
+static const char *zephyr_normalize(const GaimAccount *account,const char *orig)
 {
 	static char buf[80];
 	if (!g_ascii_strcasecmp(orig, "")) {
@@ -851,12 +851,12 @@ static void zephyr_zloc(GaimConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
 
-	if (ZRequestLocations(zephyr_normalize(who), &ald, UNACKED, ZAUTH)
+	if (ZRequestLocations(zephyr_normalize(gc->account, who), &ald, UNACKED, ZAUTH)
 					!= ZERR_NONE) {
 		return;
 	}
 	pending_zloc_names = g_list_append(pending_zloc_names,
-					g_strdup(zephyr_normalize(who)));
+					g_strdup(zephyr_normalize(gc->account, who)));
 }
 
 static GList *zephyr_buddy_menu(GaimConnection *gc, const char *who)

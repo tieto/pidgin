@@ -236,7 +236,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 
 
-	if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 0;
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
@@ -305,7 +305,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 
-		buddy_name = g_strdup_printf("%s@%s", jid->node, jid->domain);
+		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
+				jid->node ? "@" : "", jid->domain);
 		if((b = gaim_find_buddy(js->gc->account, buddy_name)) == NULL) {
 			jabber_id_free(jid);
 			g_free(buddy_name);

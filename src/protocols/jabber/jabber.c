@@ -361,6 +361,7 @@ jabber_login(GaimAccount *account)
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));
+	js->next_id = g_random_int();
 
 	if(!js->user) {
 		gaim_connection_error(gc, _("Invalid Jabber ID"));
@@ -654,6 +655,7 @@ static void jabber_register_account(GaimAccount *account)
 	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));
+	js->next_id = g_random_int();
 
 	if(!js->user) {
 		gaim_connection_error(gc, _("Invalid Jabber ID"));
@@ -762,7 +764,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 char *jabber_get_next_id(JabberStream *js)
 {
-	return g_strdup_printf("gaim%d", js->next_id++);
+	return g_strdup_printf("gaim%x", js->next_id++);
 }
 
 void jabber_idle_set(GaimConnection *gc, int idle)

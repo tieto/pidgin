@@ -215,7 +215,7 @@ FILE *open_log_file(const char *name, int is_chat)
 		return fd;
 	}
 
-	g_snprintf(realname, sizeof(realname), "%s.log", gaim_normalize(NULL, name));
+	g_snprintf(realname, sizeof(realname), "%s.log", name);
 	fd = open_gaim_log_file(realname, &flag);
 
 	if (fd && flag) {	/* is a new file */

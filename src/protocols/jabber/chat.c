@@ -69,7 +69,7 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 
 	room_jid = g_strdup_printf("%s@%s", room, server);
 
-	chat = g_hash_table_lookup(js->chats, jabber_normalize(room_jid));
+	chat = g_hash_table_lookup(js->chats, jabber_normalize(NULL, room_jid));
 	g_free(room_jid);
 
 	return chat;
@@ -147,8 +147,6 @@ void jabber_chat_whisper(GaimConnection *gc, int id, const char *who,
 
 	chat = jabber_chat_find_by_id(js, id);
 
-	/* TODO: we get real Jabber IDs from MUC sometimes, we need to cache
-	 * them eventually */
 	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
 
 	jabber_message_send_im(gc, full_jid, message, 0);
@@ -194,7 +192,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 		return;
 
 	tmp = g_strdup_printf("%s@%s", room, server);
-	room_jid = g_strdup(jabber_normalize(tmp));
+	room_jid = g_strdup(jabber_normalize(NULL, tmp));
 	g_free(tmp);
 
 	chat = g_new0(JabberChat, 1);
@@ -248,7 +246,7 @@ void jabber_chat_destroy(JabberChat *chat)
 	JabberStream *js = chat->js;
 	char *room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	g_hash_table_remove(js->chats, jabber_normalize(room_jid));
+	g_hash_table_remove(js->chats, jabber_normalize(NULL, room_jid));
 	g_free(room_jid);
 
 	g_free(chat->room);
