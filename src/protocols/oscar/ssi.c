@@ -1040,14 +1040,12 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t icon
 	csumdata[0] = 0x00;
 	csumdata[1] = 0x10;
 	memcpy(&csumdata[2], iconsum, iconsumlen);
-	
-		
+
 	/* Need to add the x00d5 TLV to the TLV chain */
 	aim_addtlvtochain_raw(&data, 0x00d5, (iconsumlen+2) * sizeof(fu8_t), csumdata);
 
 	/* This TLV is added to cache the icon. */
 	aim_addtlvtochain_noval(&data, 0x0131);
-
 
 	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "0", AIM_SSI_TYPE_ICONINFO))) {
 		aim_freetlvchain(&tmp->data);

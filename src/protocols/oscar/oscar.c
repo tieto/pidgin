@@ -3521,9 +3521,11 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 	aim_conn_t *conn;
 
 	conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON);
-	if (!conn && !od->iconconnecting) {
-		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
-		od->iconconnecting = TRUE;
+	if (!conn) {
+		if (!od->iconconnecting) {
+			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
+			od->iconconnecting = TRUE;
+		}
 		return FALSE;
 	}
 
@@ -4715,7 +4717,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_debug(GAIM_DEBUG_ERROR, "oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
-		gaim_notify_error(gc, NULL, _("Unable To Retrive Buddy List"),
+		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
 						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
 	}
 
@@ -5442,58 +5444,64 @@ static char *oscar_status_text(struct buddy *b) {
 static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
-
-	char *md5 = NULL;
-	fu16_t type;
-	fu8_t length = 0, cached = 0;
 	va_list ap;
+	fu16_t type;
+	fu8_t flags = 0, length = 0;
+	char *md5 = NULL;
+
 	va_start(ap, fr);
 	type = va_arg(ap, int);
-	switch (type) {
-	case 0x0001:
-	case 0x0000:
-		cached = va_arg(ap, int);
-		length = va_arg(ap, int);
-		md5 = va_arg(ap, char*);
-		break;
-	}
-	va_end(ap);
-	if (cached == 0x41) {
-		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON) && !od->iconconnecting) {
-			od->iconconnecting = TRUE;
-			od->set_icon = TRUE;
-			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
-		} else {
-			const char *iconfile;
-			if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc)))) {
-				FILE *file;
-				struct stat st;
 
-				if (!stat(iconfile, &st)) {
-					char *buf = g_malloc(st.st_size);
-					file = fopen(iconfile, "rb");
-					if (file) {
-						fread(buf, 1, st.st_size, file);
-						gaim_debug(GAIM_DEBUG_INFO, "oscar",
-							   "Uploading icon to icon server\n");
-						aim_icon_upload(od->sess, buf, st.st_size);
-						fclose(file);
-					} else
-						gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-							   "Can't open buddy icon file!\n");
-					g_free(buf);
-				} else
-					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-						   "Can't stat buddy icon file!\n");
-			}
-		}
-	} else if (cached == 0x81)
-		aim_ssi_seticon(od->sess, md5, length);
+gaim_debug(GAIM_DEBUG_ERROR, "XXX", "got self icon info, type is 0x%04hx, flags is 0x%02hhx\n", type, flags);
+	switch(type) {
+		case 0x0000:
+		case 0x0001: {
+			flags = va_arg(ap, int);
+			length = va_arg(ap, int);
+			md5 = va_arg(ap, char *);
+
+			if (flags == 0x41) {
+				if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON) && !od->iconconnecting) {
+					od->iconconnecting = TRUE;
+					od->set_icon = TRUE;
+					aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
+				} else {
+					const char *iconfile;
+					if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc)))) {
+						FILE *file;
+						struct stat st;
+
+						if (!stat(iconfile, &st)) {
+							char *buf = g_malloc(st.st_size);
+							file = fopen(iconfile, "rb");
+							if (file) {
+								fread(buf, 1, st.st_size, file);
+								gaim_debug(GAIM_DEBUG_INFO, "oscar",
+									   "Uploading icon to icon server\n");
+								aim_icon_upload(od->sess, buf, st.st_size);
+								fclose(file);
+							} else
+								gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+									   "Can't open buddy icon file!\n");
+							g_free(buf);
+						} else
+							gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+								   "Can't stat buddy icon file!\n");
+					}
+				}
+			} /* else if (flags == 0x81)
+				aim_ssi_seticon(od->sess, md5, length); */
+		} break;
+
+		case 0x0002: { /* We just set an "available" message? */
+		} break;
+	}
+
+	va_end(ap);
 
 	return 0;
 }
-			    
-			    
+
 /*
  * We have just established a socket with the other dude, so set up some handlers.
  */

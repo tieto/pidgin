@@ -11,16 +11,17 @@ version 0.65:
 	* Chinses (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
 	* Massive internal core/ui splitting
-	* New account dialog.
+	* New account dialog
 	* Preferences moved to ~/.gaim/prefs.xml
 	* Account information moved to ~/.gaim/accounts.xml
 	* Pounces moved to ~/.gaim/pounces.xml
-	* Added support for the Trepia protocol.
-	* Added protocol icons to various drop-down boxes.
+	* Added support for the Trepia protocol
+	* Added protocol icons to various drop-down boxes
 	* New Send IM buddy icon merged from Ximian Desktop 2
 	* Fixed "Sort by Status" crash
 	* Fixed the MSN add buddy crash.
-	* Ability to view iChat "Available" messages
+	* Ability to view iChat "Available" messages for AIM
+	* Stores your buddy icon on the server for AIM
 
 version 0.64 (05/29/2003):
 	* Buddy list sorting in buddy list preferences.
