@@ -34,6 +34,14 @@ typedef gboolean (*MsnServConnMsgCb)(MsnServConn *servconn, MsnMessage *msg);
 
 #include "session.h"
 
+typedef enum
+{
+	MSN_MULTILINE_MSG,
+	MSN_MULTILINE_IPG,
+	MSN_MULTILINE_NOT
+
+} MsnMultilineType;
+
 struct _MsnServConn
 {
 	MsnSession *session;
@@ -53,10 +61,11 @@ struct _MsnServConn
 
 	GSList *txqueue;
 
-	gboolean parsing_msg;
+	gboolean parsing_multiline;
+	MsnMultilineType multiline_type;
 	char *msg_passport;
 	char *msg_friendly;
-	int msg_len;
+	int multiline_len;
 
 	GHashTable *commands;
 	GHashTable *msg_types;

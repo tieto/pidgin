@@ -141,23 +141,42 @@ process_single_line(MsnServConn *servconn, char *str)
 static gboolean
 process_multi_line(MsnServConn *servconn, char *buffer)
 {
-	MsnMessage *msg;
 	char msg_str[MSN_BUF_LEN];
-	gboolean result;
+	gboolean result = TRUE;
 
-	g_snprintf(msg_str, sizeof(msg_str),
-			   "MSG %s %s %d\r\n%s",
-			   servconn->msg_passport, servconn->msg_friendly,
-			   servconn->msg_len, buffer);
+	if (servconn->multiline_type == MSN_MULTILINE_MSG) {
+		MsnMessage *msg;
 
-	gaim_debug(GAIM_DEBUG_MISC, "msn",
-			   "Message: {%s}\n", buffer);
+		g_snprintf(msg_str, sizeof(msg_str),
+				   "MSG %s %s %d\r\n%s",
+				   servconn->msg_passport, servconn->msg_friendly,
+				   servconn->multiline_len, buffer);
 
-	msg = msn_message_new_from_str(servconn->session, msg_str);
+		gaim_debug(GAIM_DEBUG_MISC, "msn",
+				   "Message: {%s}\n", buffer);
 
-	result = process_message(servconn, msg);
+		msg = msn_message_new_from_str(servconn->session, msg_str);
 
-	msn_message_destroy(msg);
+		result = process_message(servconn, msg);
+
+		msn_message_destroy(msg);
+	}
+	else if (servconn->multiline_type == MSN_MULTILINE_IPG) {
+		g_snprintf(msg_str, sizeof(msg_str),
+				   "IPG %d\r\n%s",
+				   servconn->multiline_len, buffer);
+
+		gaim_debug(GAIM_DEBUG_MISC, "msn",
+				   "Incoming Page: {%s}\n", buffer);
+	}
+	else if (servconn->multiline_type == MSN_MULTILINE_NOT) {
+		g_snprintf(msg_str, sizeof(msg_str),
+				   "NOT %d\r\n%s",
+				   servconn->multiline_len, buffer);
+
+		gaim_debug(GAIM_DEBUG_MISC, "msn",
+				   "Notification: {%s}\n", buffer);
+	}
 
 	return result;
 }
@@ -440,34 +459,34 @@ msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
 	servconn->rxlen += len;
 
 	while (cont) {
-		if (servconn->parsing_msg) {
+		if (servconn->parsing_multiline) {
 			char *msg;
 
 			if (servconn->rxlen == 0)
 				break;
 
-			if (servconn->msg_len > servconn->rxlen)
+			if (servconn->multiline_len > servconn->rxlen)
 				break;
 
 			msg = servconn->rxqueue;
-			servconn->rxlen -= servconn->msg_len;
+			servconn->rxlen -= servconn->multiline_len;
 
 			if (servconn->rxlen) {
-				servconn->rxqueue = g_memdup(msg + servconn->msg_len,
+				servconn->rxqueue = g_memdup(msg + servconn->multiline_len,
 											 servconn->rxlen);
 			}
 			else {
 				servconn->rxqueue = NULL;
-				msg = g_realloc(msg, servconn->msg_len + 1);
+				msg = g_realloc(msg, servconn->multiline_len + 1);
 			}
 
-			msg[servconn->msg_len] = '\0';
-			servconn->parsing_msg = FALSE;
+			msg[servconn->multiline_len] = '\0';
+			servconn->parsing_multiline = FALSE;
 
 			process_multi_line(servconn, msg);
 
 			if (g_list_find(session->servconns, servconn) != NULL) {
-				servconn->msg_len = 0;
+				servconn->multiline_len = 0;
 
 				if (servconn->msg_passport != NULL)
 					g_free(servconn->msg_passport);
