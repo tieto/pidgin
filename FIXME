@@ -1,33 +1,10 @@
 GAIM: Items to be fixed
 ------------------------
-This is just for the buddy list window now. Everything else is nearing completion.
-
-1. Enforce order. E.g. a buddy list looks like:
-	|-Buddies
-	|   |--EWarmenhoven
-	|   `--RobFlynn
-	`-Friends
-	    `--Zilding
-
-   Need to enforce that Buddies comes before Friends, and EWarmenhoven comes before RobFlynn.
-   See appropriate FIXME comments in buddy.c. DONE
-
-2. Need to make it so that when the buddy list is edited the main window properly reflects that.
-
-3. Need to modify the right-click menu for buddies, to include status for the buddy from each
-   connection that has it registered, and also to get available actions from each connection
-   that has it registered. DONE
-
-4. Need to get Aliases working again. DONE - I think
-
-5. Need to set number of buddies in group (as an option)
-
-6. Need to not hide empty groups (as an option)
-
-7. Need to do Buddy Pounces on a per-connection basis
-
-8. Need to report logins/outs to convo window
-
-9. Need to get the permit/deny stuff put back
-
-10. Need to have per-connection protocol options (e.g. which server to connect to for IRC)
+Need to make it so that when the buddy list is edited the main window properly reflects that.
+Need to set number of buddies in group (as an option)
+Need to not hide empty groups (as an option)
+Need to do Buddy Pounces on a per-connection basis
+Need to report logins/outs to convo window
+Need to get the permit/deny stuff put back
+Need to have per-connection protocol options (e.g. which server to connect to for IRC)
+Need to get the ticker working again.

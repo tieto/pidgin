@@ -16,7 +16,6 @@ static time_t mtime;
 static void init_file();
 static void check_file();
 
-extern void dologin(GtkWidget *, GtkWidget *);
 extern void do_quit();
 
 /* parse char * as if were word array */
@@ -45,7 +44,11 @@ void run_commands() {
 				dologin(NULL, NULL);
 			}
 		} else if (!strncasecmp(command, "signoff", 7)) {
-			signoff();
+			struct gaim_connection *gc = NULL;
+			arg1 = getarg(buffer, 1, 1);
+			if (arg1) gc = find_gaim_conn_by_name(arg1);
+			if (gc) signoff(gc);
+			else signoff_all(NULL, NULL);
 		} else if (!strncasecmp(command, "send", 4)) {
 			struct conversation *c;
 			arg1 = getarg(buffer, 1, 0);
@@ -53,7 +56,7 @@ void run_commands() {
 			c = find_conversation(arg1);
 			if (!c) c = new_conversation(arg1);
 			write_to_conv(c, arg2, WFLAG_SEND, NULL);
-			serv_send_im(arg1, arg2, 0);
+			serv_send_im(c->gc, arg1, arg2, 0);
 			free(arg1);
 			free(arg2);
 		} else if (!strncasecmp(command, "away", 4)) {
@@ -78,7 +81,7 @@ void run_commands() {
 	mtime = finfo.st_mtime;
 }
 
-void gaim_plugin_init(void *h) {
+char *gaim_plugin_init(GModule *h) {
 	handle = h;
 	init_file();
 	check = gtk_timeout_add(5000, (GtkFunction)check_file, NULL);

@@ -892,9 +892,9 @@ void irc_login(struct aim_user *user) {
 	irc_request_buddy_update(gc);
 }
 
-struct prpl *irc_init() {
-	struct prpl *ret = g_new0(struct prpl, 1);
+static struct prpl *my_protocol = NULL;
 
+void irc_init(struct prpl *ret) {
 	ret->protocol = PROTO_IRC;
 	ret->name = irc_name;
 	ret->login = irc_login;
@@ -922,11 +922,17 @@ struct prpl *irc_init() {
 	ret->chat_whisper = NULL;
 	ret->chat_send = irc_chat_send;
 	ret->keepalive = NULL;
-	
-	return ret;
+
+	my_protocol = ret;
 }
 
-int gaim_plugin_init(void *handle) {
-	load_protocl(irc_init);
-	return 0;
+char *gaim_plugin_init(GModule *handle) {
+	load_protocol(irc_init);
+	return NULL;
+}
+
+void gaim_plugin_remove() {
+	struct prpl *p = find_prpl(PROTO_IRC);
+	if (p == my_protocol)
+		unload_protocol(p);
 }

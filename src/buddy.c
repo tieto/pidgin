@@ -788,12 +788,10 @@ void do_quit()
 	c = plugins;
 	while (c) {
 		p = (struct gaim_plugin *)c->data;
-		gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
-		if ((error = (char *)dlerror()) == NULL)
+		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
 			(*gaim_plugin_remove)();
 		/* we don't need to worry about removing callbacks since
 		 * there won't be any more chance to call them back :) */
-		g_free(p->filename); /* why do i bother? */
 		g_free(p);
 		c = c->next;
 	}

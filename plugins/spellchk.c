@@ -136,11 +136,12 @@ void load_conf() {
 	free(ibuf);
 }
 
-void gaim_plugin_init(void *handle) {
+char *gaim_plugin_init(GModule *handle) {
 	load_conf();
 
 	gaim_signal_connect(handle, event_im_send, substitute_words, NULL);
 	gaim_signal_connect(handle, event_chat_send, substitute_words, NULL);
+	return NULL;
 }
 
 void gaim_plugin_remove() {

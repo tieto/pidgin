@@ -96,6 +96,7 @@ void static_proto_init();
 
 /* this is what should actually load the protocol. pass it the protocol's initializer */
 void load_protocol(proto_init);
+void unload_protocol(struct prpl *);
 
 struct prpl *find_prpl(int);
 

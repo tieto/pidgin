@@ -6,7 +6,8 @@
 void enter_callback(GtkWidget *widget, GtkWidget *entry) {
 	gchar *entry_text;
 	entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
-	sflap_send(entry_text, strlen(entry_text), TYPE_DATA);
+	/* this is bad, but you really shouldn't be using this plugin */
+	sflap_send(connections->data, entry_text, strlen(entry_text), TYPE_DATA);
 }
 
 void destroy_callback(GtkWidget *widget, void *handle) {
@@ -15,7 +16,7 @@ void destroy_callback(GtkWidget *widget, void *handle) {
 }
 
 GtkWidget *window;
-void gaim_plugin_init(void *h) {
+char *gaim_plugin_init(GModule *h) {
 	GtkWidget *entry;
 
 	window = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -33,6 +34,8 @@ void gaim_plugin_init(void *h) {
 			   h);
 
 	gtk_widget_show(window);
+
+	return NULL;
 }
 
 void gaim_plugin_remove() {

@@ -10,6 +10,13 @@ void received_im(struct gaim_connection *gc, char **who, char **what, void *m) {
 	char buf[256];
 	struct conversation *cnv = find_conversation(*who);
 	GtkWindow *win;
+	char *me = g_strdup(normalize(gc->username));
+
+	if (!strcmp(me, normalize(*who))) {
+		g_free(me);
+		return;
+	}
+	g_free(me);
 
 	if (cnv == NULL)
 		cnv = new_conversation(*who);
@@ -35,7 +42,7 @@ void sent_im(struct gaim_connection *gc, char *who, char **what, void *m) {
 	}
 }
 
-void gaim_plugin_init(void *hndl) {
+char *gaim_plugin_init(GModule *hndl) {
 	handle = hndl;
 
 	gaim_signal_connect(handle, event_im_recv, received_im, NULL);

@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-int gaim_plugin_init(void *handle) {
+char *gaim_plugin_error(int);
+
+char *gaim_plugin_init(GModule *handle) {
 	int error;
 
 	/* so here, we load any callbacks, do the normal stuff */
@@ -13,7 +15,7 @@ int gaim_plugin_init(void *handle) {
 	error = rand() % 3;
 	error -= 2;
 	/* there's a 1 in 3 chance there *won't* be an error :) */
-	return error;
+	return gaim_plugin_error(error);
 }
 
 void gaim_plugin_remove() {
@@ -27,13 +29,12 @@ char *gaim_plugin_error(int error) {
 	 * and do any other clean-up stuff we need to do. */
 	switch (error) {
 	case -1:
-		do_error_dialog("I'm calling the error myself", "MY BAD");
-		return NULL;
+		return "MY BAD";
 	case -2:
 		return "Internal plugin error: exiting.";
+	default:
+		return NULL;
 	}
-	/* we should never get here */
-	return NULL;
 }
 
 char *name() {

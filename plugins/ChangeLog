@@ -2,18 +2,25 @@ version 0.11.0:
 	Gaim is now multi-connection based. This represents a significant
 	change. Most of the code was modified, though most of the modifications
 	were small (referencing an int as part of a struct as opposed to as a
-	global int). Such changes will require most plugins to be modified to
-	match the new function declarations and such.
+	global int). Plugins need to be modified to match the new function
+	declarations and such.
 
-	The plugin system itself was only slightly modified. However, the
-	arguments passed to signal handlers have been modified in some cases.
-	Look at the updates SIGNALS file to see what the new arguments passed
-	to your handlers are. In some cases the only change necessary will be
-	to modify the function declaration; in many cases the changes will be
-	much more substantial. The only thing really to say here is that there
-	is no more event_blist_update. This event may make a comeback, but
-	that seems doubtful at this point. The good news is that you shouldn't
-	need it anymore anyway.
+	Gaim now uses GModule from the GLib library for plugins. This brings
+	a few changes. gaim_plugin_init is now passed a GModule *, which it
+	should use for all of its callbacks. gaim_plugin_init now returns
+	char * instead of int instead of void. If gaim_plugin_init returns
+	NULL then gaim assumes everything was OK and proceeds. Otherwise, it
+	displays the error message and unloads your plugin. There is no more
+	gaim_plugin_error (at least, that gaim itself will use. You may wish
+	to simply return gaim_plugin_error() in gaim_plugin_init).
+
+	Because gaim now uses GModule, plugins are opened with RTLD_GLOBAL. I
+	had previously wanted to avoid this, but there are simply too many
+	benefits gained from using GModule to reject it for this reason. This
+	means that plugins can now call each other's functions. Beware, this
+	has good and bad implications. If you call a function, it will look
+	first in your plugin, and then in gaim's global symbol table, including
+	other plugins.
 
 	The new system allows for protocol plugins. New protocols (including
 	Yahoo, MSN, IRC, ICQ, etc) can be loaded dynamically. However, most

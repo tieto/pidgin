@@ -196,15 +196,16 @@ enum gaim_event {
 };
 
 #ifdef GAIM_PLUGINS
+#include <gmodule.h>
+
 struct gaim_plugin {
+	GModule *handle;
 	char *name;
-	char *filename;
 	char *description;
-	void *handle;
 };
 
 struct gaim_callback {
-	void *handle;
+	GModule *handle;
 	enum gaim_event event;
 	void *function;
 	void *data;
@@ -780,9 +781,9 @@ extern void list_perl_scripts(GtkWidget *, gpointer);
 #ifdef GAIM_PLUGINS
 extern void show_plugins(GtkWidget *, gpointer);
 extern void load_plugin (char *);
-extern void gaim_signal_connect(void *, enum gaim_event, void *, void *);
-extern void gaim_signal_disconnect(void *, enum gaim_event, void *);
-extern void gaim_plugin_unload(void *);
+extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
+extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
+extern void gaim_plugin_unload(GModule *);
 #endif
 extern char *event_name(enum gaim_event);
 extern void plugin_event(enum gaim_event, void *, void *, void *, void *);

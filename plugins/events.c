@@ -11,117 +11,112 @@
 #define GAIM_PLUGINS
 #include "gaim.h"
 
-void evt_signon(void *data)
+static void evt_signon(struct gaim_connection *gc, void *data)
 {
 	printf("event_signon\n");
 }
 
-void evt_signoff(void *data)
+static void evt_signoff(struct gaim_connection *gc, void *data)
 {
 	printf("event_signoff\n");
 }
 
-void evt_away(void *data)
+static void evt_away(void *data)
 {
 	printf("event_away\n");
 }
 
-void evt_back(void *data)
+static void evt_back(void *data)
 {
 	printf("event_back\n");
 }
 
-void evt_im_recv(char **who, char **what, void *data)
+static void evt_im_recv(struct gaim_connection *gc, char **who, char **what, void *data)
 {
 	printf("event_im_recv: %s %s\n", *who, *what);
 }
 
-void evt_im_send(char *who, char **what, void *data)
+static void evt_im_send(struct gaim_connection *gc, char *who, char **what, void *data)
 {
 	printf("event_im_send: %s %s\n", who, *what);
 }
 
-void evt_buddy_signon(char *who, void *data)
+static void evt_buddy_signon(struct gaim_connection *gc, char *who, void *data)
 {
 	printf("event_buddy_signon: %s\n", who);
 }
 
-void evt_buddy_signoff(char *who, void *data)
+static void evt_buddy_signoff(struct gaim_connection *gc, char *who, void *data)
 {
 	printf("event_buddy_signoff: %s\n", who);
 }
 
-void evt_buddy_away(char *who, void *data)
+static void evt_buddy_away(struct gaim_connection *gc, char *who, void *data)
 {
 	printf("event_buddy_away: %s\n", who);
 }
 
-void evt_buddy_back(char *who, void *data)
+static void evt_buddy_back(struct gaim_connection *gc, char *who, void *data)
 {
 	printf("event_buddy_back: %s\n", who);
 }
 
-void evt_blist_update(void *data)
-{
-	printf("event_blist_update\n");
-}
-
-void evt_chat_invited(char *who, char *room, char *message, void *data)
+static void evt_chat_invited(struct gaim_connection *gc, char *who, char *room, char *message, void *data)
 {
 	printf("event_chat_invited: %s %s %s\n", who, room, message);
 }
 
-void evt_chat_join(char *room, void *data)
+static void evt_chat_join(struct gaim_connection *gc, char *room, void *data)
 {
 	printf("event_chat_join: %s\n", room);
 }
 
-void evt_chat_leave(char *room, void *data)
+static void evt_chat_leave(struct gaim_connection *gc, char *room, void *data)
 {
 	printf("event_chat_leave: %s\n", room);
 }
 
-void evt_chat_buddy_join(char *room, char *who, void *data)
+static void evt_chat_buddy_join(struct gaim_connection *gc, char *room, char *who, void *data)
 {
 	printf("event_chat_buddy_join: %s %s\n", room, who);
 }
 
-void evt_chat_buddy_leave(char *room, char *who, void *data)
+static void evt_chat_buddy_leave(struct gaim_connection *gc, char *room, char *who, void *data)
 {
 	printf("event_chat_buddy_leave: %s %s\n", room, who);
 }
 
-void evt_chat_recv(char *room, char *who, char *text, void *data)
+static void evt_chat_recv(struct gaim_connection *gc, char *room, char *who, char *text, void *data)
 {
 	printf("event_chat_recv: %s %s %s\n", room, who, text);
 }
 
-void evt_chat_send(char *room, char **what, void *data)
+static void evt_chat_send(struct gaim_connection *gc, char *room, char **what, void *data)
 {
 	printf("event_chat_send: %s %s\n", room, *what);
 }
 
-void evt_warned(char *who, int level, void *data)
+static void evt_warned(struct gaim_connection *gc, char *who, int level, void *data)
 {
 	printf("event_warned: %s %d\n", who, level);
 }
 
-void evt_error(int error, void *data)
+static void evt_error(int error, void *data)
 {
 	printf("event_error: %d\n", error);
 }
 
-void evt_quit(void *data)
+static void evt_quit(void *data)
 {
 	printf("event_quit\n");
 }
 
-void evt_new_conversation(char *who, void *data)
+static void evt_new_conversation(char *who, void *data)
 {
 	printf("event_new_conversation: %s\n", who);
 }
 
-int gaim_plugin_init(void *h)
+char *gaim_plugin_init(GModule *h)
 {
 	gaim_signal_connect(h, event_signon,           evt_signon, NULL);
 	gaim_signal_connect(h, event_signoff,          evt_signoff, NULL);
@@ -133,7 +128,6 @@ int gaim_plugin_init(void *h)
 	gaim_signal_connect(h, event_buddy_signoff,    evt_buddy_signoff, NULL);
 	gaim_signal_connect(h, event_buddy_away,       evt_buddy_away, NULL);
 	gaim_signal_connect(h, event_buddy_back,       evt_buddy_back, NULL);
-	gaim_signal_connect(h, event_blist_update,     evt_blist_update, NULL);
 	gaim_signal_connect(h, event_chat_invited,     evt_chat_invited, NULL);
 	gaim_signal_connect(h, event_chat_join,        evt_chat_join, NULL);
 	gaim_signal_connect(h, event_chat_leave,       evt_chat_leave, NULL);
@@ -145,7 +139,7 @@ int gaim_plugin_init(void *h)
 	gaim_signal_connect(h, event_error,            evt_error, NULL);
 	gaim_signal_connect(h, event_quit,             evt_quit, NULL);
 	gaim_signal_connect(h, event_new_conversation, evt_new_conversation, NULL);
-	return 0;
+	return NULL;
 }
 
 char *name()

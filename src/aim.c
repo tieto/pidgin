@@ -85,7 +85,6 @@ void cancel_logon(void)
 	GList *c;
 	struct gaim_plugin *p;
 	void (*gaim_plugin_remove)();
-	char *error;
 
 	/* first we tell those who have requested it we're quitting */
 	plugin_event(event_quit, 0, 0, 0, 0);
@@ -94,12 +93,10 @@ void cancel_logon(void)
 	c = plugins;
 	while (c) {
 		p = (struct gaim_plugin *)c->data;
-		gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
-		if ((error = (char *)dlerror()) == NULL)
+		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
 			(*gaim_plugin_remove)();
 		/* we don't need to worry about removing callbacks since
 		 * there won't be any more chance to call them back :) */
-		g_free(p->filename); /* why do i bother? */
 		g_free(p);
 		c = c->next;
 	}
@@ -437,12 +434,12 @@ void sighandler(int sig)
 int main(int argc, char *argv[])
 {
 	char opt;
-	int i;
 	int opt_acct = 0, opt_help = 0, opt_version = 0,
 	    opt_user = 0, opt_login = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
 
 #ifdef USE_GNOME
+	int i;
 	poptContext popt_context;
 	struct poptOption popt_options[] =
 	{

@@ -70,14 +70,15 @@ static char *last_dir = NULL;
        void show_plugins (GtkWidget *, gpointer);
        void load_plugin  (char *);
 
-       void gaim_signal_connect   (void *, enum gaim_event, void *, void *);
-       void gaim_signal_disconnect(void *, enum gaim_event, void *);
-       void gaim_plugin_unload    (void *);
+       void gaim_signal_connect   (GModule *, enum gaim_event, void *, void *);
+       void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
+       void gaim_plugin_unload    (GModule *);
 
 static void destroy_plugins  (GtkWidget *, gpointer);
 static void load_file        (GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
 static void unload           (GtkWidget *, gpointer);
+static void unload_immediate (GModule *);
 static void list_clicked     (GtkWidget *, struct gaim_plugin *);
 static void update_show_plugins();
 static void hide_plugins     (GtkWidget *, gpointer);
@@ -146,59 +147,58 @@ static void load_which_plugin(GtkWidget *w, gpointer data) {
 void load_plugin(char *filename) {
 	struct gaim_plugin *plug;
 	GList *c = plugins;
-	int (*gaim_plugin_init)();
-	char *(*gaim_plugin_error)(int);
+	char *(*gaim_plugin_init)(GModule *);
 	char *(*cfunc)();
 	char *error;
-	int retval;
-	char *plugin_error;
+	char *retval;
+	char *tmp_filename;
 
+	if (!g_module_supported()) return;
 	if (filename == NULL) return;
-	/* i shouldn't be checking based solely on path, but i'm lazy */
+
 	while (c) {
 		plug = (struct gaim_plugin *)c->data;
-		if (!strcmp(filename, plug->filename)) {
-			debug_printf( _("Already loaded %s, not reloading.\n"), filename);
-			return;
-		}
-		c = g_list_next(c);
+		if (!strcmp(filename, g_module_name(plug->handle))) {
+			void (*gaim_plugin_remove)();
+			if (g_module_symbol(plug->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
+				(*gaim_plugin_remove)();
+
+			unload_immediate(plug->handle);
+			c = plugins;
+		} else
+			c = g_list_next(c);
 	}
 	plug = g_malloc(sizeof *plug);
 	if (!g_path_is_absolute(filename))
-		plug->filename = g_strconcat(g_get_home_dir(), G_DIR_SEPARATOR_S,
+		tmp_filename = g_strconcat(g_get_home_dir(), G_DIR_SEPARATOR_S,
 			PLUGIN_DIR, filename, NULL);
 	else
-		plug->filename = g_strdup(filename);
+		tmp_filename = g_strdup(filename);
 
 	if (last_dir)
 		g_free(last_dir);
-	last_dir = g_dirname(plug->filename);
+	last_dir = g_dirname(tmp_filename);
 
-	debug_printf("Loading %s\n", filename);
-	/* do NOT `OR' with RTLD_GLOBAL, otherwise plugins may conflict
-	 * (it's really just a way to work around other people's bad
-	 * programming, by not using RTLD_GLOBAL :P ) */
-	plug->handle = dlopen(plug->filename, RTLD_LAZY);
+	debug_printf("Loading %s\n", tmp_filename);
+	plug->handle = g_module_open(tmp_filename, 0);
+	g_free(tmp_filename);
 	if (!plug->handle) {
-		error = (char *)dlerror();
+		error = (char *)g_module_error();
 		do_error_dialog(error, _("Plugin Error"));
-		g_free(plug->filename);
 		g_free(plug);
 		return;
 	}
 
-	gaim_plugin_init = dlsym(plug->handle, "gaim_plugin_init");
-	if ((error = (char *)dlerror()) != NULL) {
-		do_error_dialog(error, _("Plugin Error"));
-		dlclose(plug->handle);
-		g_free(plug->filename);
+	if (!g_module_symbol(plug->handle, "gaim_plugin_init", (gpointer *)&gaim_plugin_init)) {
+		do_error_dialog(g_module_error(), _("Plugin Error"));
+		g_module_close(plug->handle);
 		g_free(plug);
 		return;
 	}
 
 	retval = (*gaim_plugin_init)(plug->handle);
 	debug_printf("loaded plugin returned %d\n", retval);
-	if (retval < 0) {
+	if (retval) {
 		GList *c = callbacks;
 		struct gaim_callback *g;
 		while (c) {
@@ -216,28 +216,20 @@ void load_plugin(char *filename) {
 				c = g_list_next(c);
 			}
 		}
-		gaim_plugin_error = dlsym(plug->handle, "gaim_plugin_error");
-		if ((error = (char *)dlerror()) == NULL) {
-			plugin_error = (*gaim_plugin_error)(retval);
-			if (plugin_error)
-				do_error_dialog(plugin_error, _("Plugin Error"));
-		}
-		dlclose(plug->handle);
-		g_free(plug->filename);
+		do_error_dialog(retval, _("Plugin Error"));
+		g_module_close(plug->handle);
 		g_free(plug);
 		return;
 	}
 
 	plugins = g_list_append(plugins, plug);
 
-	cfunc = dlsym(plug->handle, "name");
-	if ((error = (char *)dlerror()) == NULL)
+	if (g_module_symbol(plug->handle, "name", (gpointer *)&cfunc))
 		plug->name = (*cfunc)();
 	else
 		plug->name = NULL;
 
-	cfunc = dlsym(plug->handle, "description");
-	if ((error = (char *)dlerror()) == NULL)
+	if (g_module_symbol(plug->handle, "description", (gpointer *)&cfunc))
 		plug->description = (*cfunc)();
 	else
 		plug->description = NULL;
@@ -332,7 +324,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 
 	while (plugs) {
 		p = (struct gaim_plugin *)plugs->data;
-		label = gtk_label_new(p->filename);
+		label = gtk_label_new(g_module_name(p->handle));
 		list_item = gtk_list_item_new();
 		gtk_container_add(GTK_CONTAINER(list_item), label);
 		gtk_signal_connect(GTK_OBJECT(list_item), "select",
@@ -377,7 +369,7 @@ void update_show_plugins() {
 	gtk_list_clear_items(GTK_LIST(pluglist), 0, -1);
 	while (plugs) {
 		p = (struct gaim_plugin *)plugs->data;
-		label = gtk_label_new(p->filename);
+		label = gtk_label_new(g_module_name(p->handle));
 		list_item = gtk_list_item_new();
 		gtk_container_add(GTK_CONTAINER(list_item), label);
 		gtk_signal_connect(GTK_OBJECT(list_item), "select",
@@ -402,7 +394,6 @@ void unload(GtkWidget *w, gpointer data) {
 	GList *i;
 	struct gaim_plugin *p;
 	void (*gaim_plugin_remove)();
-	char *error;
 
 	i = GTK_LIST(pluglist)->selection;
 
@@ -411,16 +402,13 @@ void unload(GtkWidget *w, gpointer data) {
 	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
 
 	/* Attempt to call the plugin's remove function (if there) */
-	gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
-	if ((error = (char *)dlerror()) == NULL)
+	if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
 		(*gaim_plugin_remove)();
 
-	gaim_plugin_unload(p->handle);
+	unload_immediate(p->handle);
 }
 
-/* gaim_plugin_unload serves 2 purposes: 1. so plugins can unload themselves
- * 					 2. to make my life easier */
-void gaim_plugin_unload(void *handle) {
+static void unload_for_real(void *handle) {
 	GList *i;
 	struct gaim_plugin *p = NULL;
 	GList *c = callbacks;
@@ -438,7 +426,7 @@ void gaim_plugin_unload(void *handle) {
 	if (!p)
 		return;
 
-	sprintf(debug_buff, "Unloading %s\n", p->filename);
+	sprintf(debug_buff, "Unloading %s\n", g_module_name(p->handle));
 	debug_print(debug_buff);
 
 	sprintf(debug_buff, "%d callbacks to search\n", g_list_length(callbacks));
@@ -462,12 +450,25 @@ void gaim_plugin_unload(void *handle) {
 	}
 
 	plugins = g_list_remove(plugins, p);
-	g_free(p->filename);
-	/* we don't dlclose(p->handle) in case if we still need code from the plugin later */
 	g_free(p);
 	if (config) gtk_widget_set_sensitive(config, 0);
 	update_show_plugins();
 	save_prefs();
+}
+
+void unload_immediate(GModule *handle) {
+	unload_for_real(handle);
+	g_module_close(handle);
+}
+
+static gint unload_timeout(GModule *handle) {
+	g_module_close(handle);
+	return FALSE;
+}
+
+void gaim_plugin_unload(GModule *handle) {
+	unload_for_real(handle);
+	gtk_timeout_add(5000, (GtkFunction)unload_timeout, handle);
 }
 
 void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
@@ -487,8 +488,7 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	g_free(temp);
 
 	/* Find out if this plug-in has a configuration function */
-	gaim_plugin_config = dlsym(p->handle, "gaim_plugin_config");
-	if ((error = (char *)dlerror()) == NULL) {
+	if (g_module_symbol(p->handle, "gaim_plugin_config", (gpointer *)&gaim_plugin_config)) {
 		confighandle = gtk_signal_connect(GTK_OBJECT(config), "clicked",
 				   GTK_SIGNAL_FUNC(gaim_plugin_config), NULL);
 		gtk_widget_set_sensitive(config, 1);
@@ -506,7 +506,7 @@ void hide_plugins(GtkWidget *w, gpointer data) {
 	confighandle = 0;
 }
 
-void gaim_signal_connect(void *handle, enum gaim_event which,
+void gaim_signal_connect(GModule *handle, enum gaim_event which,
 			 void *func, void *data) {
 	struct gaim_callback *call = g_new0(struct gaim_callback, 1);
 	call->handle = handle;
@@ -519,7 +519,7 @@ void gaim_signal_connect(void *handle, enum gaim_event which,
 	debug_print(debug_buff);
 }
 
-void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
+void gaim_signal_disconnect(GModule *handle, enum gaim_event which, void *func) {
 	GList *c = callbacks;
 	struct gaim_callback *g = NULL;
 
@@ -672,6 +672,12 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, voi
 			/* struct gaim_connection *, char * */
 			case event_chat_join:
 			case event_chat_leave:
+			case event_buddy_signon:
+			case event_buddy_signoff:
+			case event_buddy_away:
+			case event_buddy_back:
+			case event_buddy_idle:
+			case event_buddy_unidle:
 				{
 					void (*function)(struct gaim_connection *, char *, void *) =
 										g->function;
@@ -680,12 +686,6 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, voi
 				break;
 
 			/* char * */
-			case event_buddy_signon:
-			case event_buddy_signoff:
-			case event_buddy_away:
-			case event_buddy_back:
-			case event_buddy_idle:
-			case event_buddy_unidle:
 			case event_new_conversation:
 				{
 					void (*function)(char *, void *) = g->function;

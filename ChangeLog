@@ -9,6 +9,7 @@ version 0.11.0:
 	* X-Idle support added (thanks bmiller and bryner)
 	* small change in the way away messages are displayed
 	  (Thanks Ryan C. Gordon)
+	* plugin system uses GModule now (improves portability, adds features)
 
 version 0.10.3 (10/09/2000):
 	* Segfault when viewing user info fixed

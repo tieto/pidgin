@@ -40,7 +40,7 @@ void away_toggle(void *m) {
 		away_state = 0;
 }
 
-void gaim_plugin_init(void *handle) {
+char *gaim_plugin_init(GModule *handle) {
 	if (imaway) {
 		away_state = 1;
 		last_away = awaymessage;
@@ -50,4 +50,6 @@ void gaim_plugin_init(void *handle) {
 	gaim_signal_connect(handle, event_away, away_toggle, (void *)1);
 	gaim_signal_connect(handle, event_back, away_toggle, (void *)0);
 	gaim_signal_connect(handle, event_signoff, reconnect, NULL);
+
+	return NULL;
 }

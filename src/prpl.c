@@ -52,26 +52,29 @@ void load_protocol(proto_init pi)
 	struct prpl *old;
 	GSList *n = protocols;
 	pi(p);
-	if (old = find_prpl(p->protocol)) {
-		GSList *c = connections;
-		struct gaim_connection *g;
-		while (c) {
-			g = (struct gaim_connection *)c->data;
-			if (g->prpl == old) {
-				char buf[256];
-				g_snprintf(buf, sizeof buf, _("%s was using %s, which got replaced."
-								" %s is now offline."), g->username,
-								(*p->name)(), g->username);
-				do_error_dialog(buf, _("Disconnect"));
-				signoff(g);
-				c = connections;
-			} else
-				c = c->next;
-		}
-		protocols = g_slist_remove(protocols, old);
-		g_free(old);
-	}
+	if (old = find_prpl(p->protocol))
+		unload_protocol(old);
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
+}
+
+void unload_protocol(struct prpl *p) {
+	GSList *c = connections;
+	struct gaim_connection *g;
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		if (g->prpl == p) {
+			char buf[256];
+			g_snprintf(buf, sizeof buf, _("%s was using %s, which got removed."
+							" %s is now offline."), g->username,
+							(*p->name)(), g->username);
+			do_error_dialog(buf, _("Disconnect"));
+			signoff(g);
+			c = connections;
+		} else
+			c = c->next;
+	}
+	protocols = g_slist_remove(protocols, p);
+	g_free(p);
 }
 
 void static_proto_init()

@@ -113,7 +113,7 @@ void avail_now(struct gaim_connection *gc, void *m) {
 	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, gc);
 }
 
-void gaim_plugin_init(void *h) {
+char *gaim_plugin_init(GModule *h) {
 	handle = h;
 
 	confdlg = NULL;

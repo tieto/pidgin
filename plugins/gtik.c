@@ -825,7 +825,7 @@
 
 
 	/*-----------------------------------------------------------------*/
-	int gaim_plugin_init(void *handle) { /* used to be main() */
+	char *gaim_plugin_init(GModule *handle) { /* used to be main() */
 		GtkWidget *label;
 
 		GtkWidget * vbox;
@@ -877,7 +877,7 @@
 				   (gpointer)updateOutput,"NULL");
 
 
-		return 0;
+		return NULL;
 	}
 
 

@@ -12,7 +12,7 @@ void echo_hi(void *m) {
 	show_about(NULL, NULL);
 }
 
-void reverse(char **who, char **message, void *m) {
+void reverse(struct gaim_connection *gc, char **who, char **message, void *m) {
 	/* this will drive you insane. whenever you receive a message,
 	 * the text of the message (HTML and all) will be reversed. */
 	int i, l;
@@ -24,7 +24,7 @@ void reverse(char **who, char **message, void *m) {
 
 	l = strlen(*message);
 
-	if (!strcmp(*who, current_user->username))
+	if (!strcmp(*who, gc->username))
 		return;
 
 	for (i = 0; i < l/2; i++) {
@@ -34,13 +34,13 @@ void reverse(char **who, char **message, void *m) {
 	}
 }
 
-void bud(char *who, void *m) {
+void bud(struct gaim_connection *gc, char *who, void *m) {
 	/* whenever someone comes online, it sends them a message. if i
 	 * cared more, i'd make it so it popped up on your screen too */
-	serv_send_im(who, "Hello!", 0);
+	serv_send_im(gc, who, "Hello!", 0);
 }
 
-void gaim_plugin_init(void *handle) {
+char *gaim_plugin_init(GModule *handle) {
 	/* this is for doing something fun when we sign on */
 	gaim_signal_connect(handle, event_signon, echo_hi, NULL);
 
@@ -49,6 +49,8 @@ void gaim_plugin_init(void *handle) {
 
 	/* this is for doing something fun when a buddy comes online */
 	gaim_signal_connect(handle, event_buddy_signon, bud, NULL);
+
+	return NULL;
 }
 
 char *name() {

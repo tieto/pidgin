@@ -59,7 +59,7 @@ if test "$enable_debug" = yes ; then
 fi
 
 CFLAGS="$CFLAGS -I../libfaim -I../libfaim/faim"
-LDADD="$LDADD -L../libfaim -lfaim -pthread"
+LDADD="$LDADD -L../libfaim -lfaim"
 
 if test "x$enable_gnome" = "xyes" ; then
 	if test "x$enable_panel" = "xyes" ; then
@@ -133,15 +133,8 @@ fi
 
 CFLAGS="$CFLAGS $GTK_CFLAGS"
 
-dnl Even more X-Chat code
 if test "x$enable_plugins" = xyes ; then
-	AC_CHECK_FUNCS(dlopen, have_dl=yes)
-	if test "$have_dl" = yes; then
-		AC_CHECK_FUNCS(dlerror)
-		AC_DEFINE(GAIM_PLUGINS)
-	else
-		enable_plugins=no
-	fi
+	AC_DEFINE(GAIM_PLUGINS)
 fi
 
 dnl This was taken straight from X-Chat.

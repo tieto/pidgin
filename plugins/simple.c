@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include "gaim.h"
 
-static void *handle = NULL;
+static GModule *handle = NULL;
 
-void gaim_plugin_init(void *h) {
+char *gaim_plugin_init(GModule *h) {
 	printf("plugin loaded.\n");
 	handle = h;
 }

@@ -1372,6 +1372,8 @@ static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	gtk_widget_show(button);
 }
 
+static struct prpl *my_protocol = NULL;
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->name = oscar_name;
@@ -1405,6 +1407,8 @@ void oscar_init(struct prpl *ret) {
 	ret->chat_whisper = oscar_chat_whisper;
 	ret->chat_send = oscar_chat_send;
 	ret->keepalive = oscar_keepalive;
+
+	my_protocol = ret;
 }
 
 char *name() {
@@ -1415,7 +1419,13 @@ char *description() {
 	return "Allows gaim to use the Oscar protocol";
 }
 
-int gaim_plugin_init(void *handle) {
+char *gaim_plugin_init(GModule *handle) {
 	load_protocol(oscar_init);
-	return 0;
+	return NULL;
+}
+
+void gaim_plugin_remove() {
+	struct prpl *p = find_prpl(PROTO_OSCAR);
+	if (p == my_protocol)
+		unload_protocol(p);
 }

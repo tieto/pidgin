@@ -26,10 +26,12 @@ void iconify_windows(void *data) {
 #endif
 }
 
-void gaim_plugin_init(void *h) {
+char *gaim_plugin_init(GModule *h) {
 	handle = h;
 
 	gaim_signal_connect(handle, event_away, iconify_windows, NULL);
+
+	return NULL;
 }
 
 char *name() {
