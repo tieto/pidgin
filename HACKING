@@ -33,7 +33,7 @@ when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
 and send it off.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-08-20 16:39:29 -0400 (Mon, 20 Aug 2001) $.
+$Date: 2001-08-26 15:18:39 -0400 (Sun, 26 Aug 2001) $.
 
 
 CODING STYLE
@@ -186,7 +186,7 @@ dialogs.c:
   and the add buddy dialog are here. Not all of the dialogs in gaim are in
   this file, though. But most of them are. This is also where do_import
   is housed, to import buddy lists. (The actual buddy list parsing code
-  is in util.c for winaim lists and toc.c for gaim's own lists.)
+  is in util.c for winaim lists and buddy.c for gaim's own lists.)
 
 gaimrc.c:
   This controls everything about the .gaimrc file. There's not really much
@@ -520,3 +520,10 @@ get done.
 
 I hope some of that made sense. Looking back at it it makes absolutely no
 sense to me. Thank god I wrote the code; otherwise I'm sure I'd be lost.
+
+There should be absolutely *ZERO* GTK in the PRPLs. PRPLs should *NEVER*
+say what the UI *looks* like, only what information needs to be there.
+There's currently an effort to get the GTK that is contained in the PRPLs
+directory out of there. If you submit a patch that adds GTK to those
+directories it's very likely to be refused, unless if I'm in a good mood
+and decide to relocate things for you. That's not likely.
