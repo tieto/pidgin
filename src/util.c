@@ -590,10 +590,10 @@ char *escape_text2(char *msg)
 char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" "0123456789+/";
 
 
-char *tobase64(char *text)
+char *tobase64(const char *text)
 {
 	char *out = NULL;
-	char *c;
+	const char *c;
 	unsigned int tmp = 0;
 	int len = 0, n = 0;
 
@@ -645,13 +645,16 @@ char *tobase64(char *text)
 }
 
 
-char *frombase64(char *text)
+void frombase64(const char *text, char **data, int *size)
 {
 	char *out = NULL;
 	char tmp = 0;
-	char *c;
+	const char *c;
 	gint32 tmp2 = 0;
 	int len = 0, n = 0;
+
+	if (!text || !data)
+		return;
 
 	c = text;
 
@@ -699,7 +702,9 @@ char *frombase64(char *text)
 	out = g_realloc(out, len + 1);
 	out[len] = 0;
 
-	return out;
+	*data = out;
+	if (size)
+		*size = len;
 }
 
 void put_out(struct gaim_connection *gc, char *buf, char *(*fun)())

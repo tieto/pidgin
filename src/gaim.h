@@ -376,6 +376,7 @@ struct conversation {
 	GtkWidget *whisper;
 	GtkWidget *invite;
 	GtkWidget *close;
+	GtkWidget *topic_text;
 
 	/* something to distinguish */
 	gboolean is_chat;
@@ -590,6 +591,7 @@ extern void update_chat_tabs();
 extern void update_im_tabs();
 extern void update_idle_times();
 extern void do_join_chat();
+extern void chat_set_topic(struct conversation*, char*, char*);
 
 /* Functions in html.c */
 extern struct g_url parse_url(char *);
@@ -604,8 +606,8 @@ extern char *normalize(const char *);
 extern int escape_text(char *);
 extern char *escape_text2(char *);
 extern int escape_message(char *msg);
-extern char *tobase64(char *);
-extern char *frombase64(char *);
+extern char *tobase64(const char *);
+extern void frombase64(const char *, char **, int *);
 extern gint clean_pid(void *);
 extern char *date();
 extern gint linkify_text(char *);
@@ -664,6 +666,7 @@ extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_send(struct gaim_connection *, int, char *);
+extern void serv_chat_set_topic(struct gaim_connection *, int, char *);
 extern void update_keepalive(struct gaim_connection *, gboolean);
 
 /* output from serv */

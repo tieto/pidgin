@@ -92,6 +92,13 @@ struct ft_request {
         int size;
 };
 
+struct buddy_icon {
+	guint32 hash;
+	guint32 len;
+	time_t time;
+	void *data;
+};
+
 struct toc_data {
 	int toc_fd;
 	int seqno;
@@ -381,6 +388,10 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		g_snprintf(snd, sizeof snd, "toc_init_done");
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
+		/*
+		g_snprintf(snd, sizeof snd, "toc_set_caps %s %s %s",
+				FILE_SEND_UID, FILE_GET_UID, B_ICON_UID);
+		*/
 		g_snprintf(snd, sizeof snd, "toc_set_caps %s %s", FILE_SEND_UID, FILE_GET_UID);
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
@@ -616,9 +627,9 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 				sscanf(strtok(NULL, ":"), "%d", &unk[i]);
 				if (unk[i] == 10001)
 					break;
-				messages[i] = frombase64(strtok(NULL, ":"));
+				frombase64(strtok(NULL, ":"), &messages[i], NULL);
 			}
-			tmp = frombase64(strtok(NULL, ":"));
+			frombase64(strtok(NULL, ":"), &tmp, NULL);
 
 			subtype = tmp[1];
 			files = tmp[3];
@@ -670,9 +681,9 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 				sscanf(strtok(NULL, ":"), "%d", unk + i);
 				if (unk[i] == 10001)
 					break;
-				messages[i] = frombase64(strtok(NULL, ":"));
+				frombase64(strtok(NULL, ":"), &messages[i], NULL);
 			}
-			tmp = frombase64(strtok(NULL, ":"));
+			frombase64(strtok(NULL, ":"), &tmp, NULL);
 
 			ft = g_new0(struct ft_request, 1);
 			ft->cookie = g_strdup(cookie);
@@ -694,7 +705,24 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		} else if (!strcmp(uuid, VOICE_UID)) {
 			/* oh goody. voice over ip. fun stuff. */
 		} else if (!strcmp(uuid, B_ICON_UID)) {
-			/* buddy icon... */
+			/*
+			int unk[4], i;
+			char *messages[4];
+			struct buddy_icon *icon;
+
+			for (i = 0; i < 4; i++) {
+				sscanf(strtok(NULL, ":"), "%d", unk + i);
+				if (unk[i] == 10001)
+					break;
+				frombase64(strtok(NULL, ":"), &messages[i], NULL);
+			}
+			frombase64(strtok(NULL, ":"), (char **)&icon, NULL);
+
+			debug_printf("received icon of length %d\n", icon->len);
+			g_free(icon);
+			for (i--; i >= 0; i--)
+				g_free(messages[i]);
+			*/
 		} else if (!strcmp(uuid, IMAGE_UID)) {
 			/* aka Direct IM */
 		} else {
@@ -1362,7 +1390,8 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 	}
 
 	if (ft->hdr.hdrtype != 0x202) {
-		char *buf = frombase64(ft->cookie);
+		char *buf;
+		frombase64(ft->cookie, &buf, NULL);
 
 		read(source, ft, 8);
 		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
@@ -1646,7 +1675,7 @@ static void toc_get_file_connect(gpointer data, gint src, GdkInputCondition cond
 	hdr->magic[0] = 'O'; hdr->magic[1] = 'F'; hdr->magic[2] = 'T'; hdr->magic[3] = '2';
 	hdr->hdrlen = htons(256);
 	hdr->hdrtype = htons(0x1108);
-	buf = frombase64(ft->cookie);
+	frombase64(ft->cookie, &buf, NULL);
 	g_snprintf(hdr->bcookie, 8, "%s", buf);
 	g_free(buf);
 	hdr->totfiles = htons(1); hdr->filesleft = htons(1);

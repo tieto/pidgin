@@ -441,6 +441,13 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 
 }
 
+void topic_callback(GtkWidget *widget, struct conversation *b) {
+   	char *buf = gtk_entry_get_text(GTK_ENTRY(widget));;
+
+	serv_chat_set_topic(b->gc, b->id, buf);
+
+	g_free(buf);
+}
 
 static gint insertname(gconstpointer one, gconstpointer two)
 {
@@ -831,7 +838,7 @@ void show_new_buddy_chat(struct conversation *b)
 		gtk_notebook_append_page(GTK_NOTEBOOK(chat_notebook), cont, gtk_label_new(b->name));
 		gtk_widget_show(cont);
 	} else {
-		cont = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		b->window = win;
 		gtk_object_set_user_data(GTK_OBJECT(win), b);
 		gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
@@ -842,6 +849,29 @@ void show_new_buddy_chat(struct conversation *b)
 		g_snprintf(buf, sizeof(buf), "Gaim - %s (chat)", b->name);
 		gtk_window_set_title(GTK_WINDOW(win), buf);
 		gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);
+
+		cont = gtk_vbox_new(FALSE,5);
+		gtk_container_add(GTK_CONTAINER(win), cont);
+		gtk_widget_show(cont);
+	}
+
+	if (b->gc->prpl->options & OPT_PROTO_CHAT_TOPIC) {
+		GtkWidget *hbox;
+		GtkWidget *label;
+
+		hbox = gtk_hbox_new(FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(cont), hbox, FALSE, FALSE, 5);
+		gtk_widget_show(hbox);
+
+		label = gtk_label_new(_("Topic:"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+		gtk_widget_show(label);
+
+		b->topic_text = gtk_entry_new();
+		gtk_signal_connect(GTK_OBJECT(b->topic_text), "activate",
+				   GTK_SIGNAL_FUNC(topic_callback), b);
+		gtk_box_pack_start(GTK_BOX(hbox), b->topic_text, TRUE, TRUE, 5);
+		gtk_widget_show(b->topic_text);
 	}
 
 	vpaned = gtk_vpaned_new();
@@ -977,6 +1007,14 @@ void show_new_buddy_chat(struct conversation *b)
 	update_buttons_by_protocol(b);
 
 	gtk_widget_show(win);
+}
+
+void chat_set_topic(struct conversation *b, char* who, char* topic) {
+
+	debug_printf("event_chat_topic: \"%s\" \"%s\" %s\n", b->name, who, topic);
+
+	gtk_entry_set_text(GTK_ENTRY(b->topic_text), topic);
+
 }
 
 
