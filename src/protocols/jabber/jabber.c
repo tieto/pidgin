@@ -94,6 +94,7 @@ G_MODULE_IMPORT GSList *connections;
 #define DEFAULT_PORT 5222
 
 #define USEROPT_PORT 0
+#define USEROPT_CONN_SERVER 1
 
 #define JABBER_TYPING_NOTIFY_INT 15	/* Delay (in seconds) between sending typing notifications */
 
@@ -798,19 +799,22 @@ static void gjab_start(gjconn gjc)
 {
 	struct aim_user *user;
 	int port, rc;
+	char *server;
 
 	if (!gjc || gjc->state != JCONN_STATE_OFF)
 		return;
 
 	user = GJ_GC(gjc)->user;
 	port = user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : DEFAULT_PORT;
+	server = user->proto_opt[USEROPT_CONN_SERVER][0] ? user->proto_opt[USEROPT_CONN_SERVER] : gjc->user->server;
+
 
 	gjc->parser = XML_ParserCreate(NULL);
 	XML_SetUserData(gjc->parser, (void *)gjc);
 	XML_SetElementHandler(gjc->parser, startElement, endElement);
 	XML_SetCharacterDataHandler(gjc->parser, charData);
 
-	rc = proxy_connect(gjc->user->server, port, gjab_connected, GJ_GC(gjc));
+	rc = proxy_connect(server, port, gjab_connected, GJ_GC(gjc));
 	if (!user->gc || (rc < 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
@@ -4233,6 +4237,12 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("5222");
 	puo->pos = USEROPT_PORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Connect Server:");
+	puo->def = g_strdup("");
+	puo->pos = USEROPT_CONN_SERVER;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	my_protocol = ret;
