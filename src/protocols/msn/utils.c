@@ -238,11 +238,15 @@ msn_import_html(const char *html, char **attributes, char **message)
 				else if (!g_ascii_strncasecmp(c, "face=\"", 6))
 				{
 					const char *end = NULL;
+					const char *comma = NULL;
 					unsigned int namelen = 0;
 
 					c += 6;
 					end = strchr(c, '\"');
-					namelen = (unsigned int)(end - c);
+					comma = strchr(c, ',');
+
+					namelen = (unsigned int)((comma != NULL ? comma : end) - c);
+
 					fontface = g_strndup(c, namelen);
 					c = end + 2;
 				}
@@ -262,21 +266,31 @@ msn_import_html(const char *html, char **attributes, char **message)
 
 				c++;
 			}
-		} else if (*c == '&') {
-			if (!g_ascii_strncasecmp(c, "&lt;", 4)) {
+		}
+		else if (*c == '&')
+		{
+			if (!g_ascii_strncasecmp(c, "&lt;", 4))
+			{
 				msg[retcount++] = '<';
 				c += 4;
-			} else if (!g_ascii_strncasecmp(c, "&gt;", 4)) {
+			}
+			else if (!g_ascii_strncasecmp(c, "&gt;", 4))
+			{
 				msg[retcount++] = '>';
 				c += 4;
-			} else if (!g_ascii_strncasecmp(c, "&quot;", 6)) {
+			}
+			else if (!g_ascii_strncasecmp(c, "&quot;", 6))
+			{
 				msg[retcount++] = '"';
 				c += 6;
-			} else if (!g_ascii_strncasecmp(c, "&amp;", 5)) {
+			}
+			else if (!g_ascii_strncasecmp(c, "&amp;", 5))
+			{
 				msg[retcount++] = '&';
 				c += 5;
 			}
-		} else
+		}
+		else
 			msg[retcount++] = *c++;
 	}
 
