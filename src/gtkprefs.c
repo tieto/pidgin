@@ -1806,8 +1806,8 @@ GtkWidget *away_page() {
 	label = gaim_gtk_prefs_dropdown(vbox, _("_Auto-reply:"),
 		GAIM_PREF_STRING, "/core/away/auto_reply",
 		_("Never"), "never",
-		_("Only when away"), "away",
-		_("Only when away and idle"), "awayidle",
+		_("When away"), "away",
+		_("When away and idle"), "awayidle",
 		NULL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
