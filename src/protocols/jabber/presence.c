@@ -123,9 +123,10 @@ xmlnode *jabber_presence_create(const char *state, const char *msg)
 			show_string = "xa";
 		else if(!strcmp(state, _("Do Not Disturb")))
 			show_string = "dnd";
-		else if(!strcmp(state, _("Invisible"))) {
+		else if(!strcmp(state, _("Invisible")))
 			xmlnode_set_attrib(presence, "type", "invisible");
-		}
+		else if(!strcmp(state, "unavailable"))
+			xmlnode_set_attrib(presence, "type", "unavailable");
 
 		if(show_string) {
 			show = xmlnode_new_child(presence, "show");

@@ -22,8 +22,8 @@ version 0.79cvs:
 	  "Return from idle" by default. The last action(s) used are the
 	  defaults for the next pounce
 	* Yahoo buddy icon support
-	* Selected buddy icons will automatically convert to the appopriate
-	  format for the protcol.
+	* Selected buddy icons will automatically convert to the appropriate
+	  format for the protocol.
 	* Dragging an image file into the Modify Account dialog will set that
 	  as a buddy icon.
 
