@@ -549,8 +549,10 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition co
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
 		close(source);
-		g_free(ms->auth);
-		g_free(ms);
+		if (g_slist_find(connections, gc)) {
+			msn_kill_switch(ms);
+			do_error_dialog(_("MSN Error"), _("Gaim was unable to send a message"));
+		}
 		return;
 	}
 
