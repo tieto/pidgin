@@ -42,6 +42,7 @@ static GtkWidget *entry;
 static GtkWidget *invite;
 static GtkWidget *inviteentry;
 static GtkWidget *invitemess;
+static int community;
 extern int state_lock;
 
 static void destroy_join_chat()
@@ -68,7 +69,7 @@ static void do_join_chat()
 	group = gtk_entry_get_text(GTK_ENTRY(entry));
 
         if (joinchat) {
-                serv_join_chat(4, group);
+                serv_join_chat(community + 4, group);
 		gtk_widget_destroy(joinchat);
 	}
 	joinchat=NULL;
@@ -84,11 +85,9 @@ void join_chat()
 	GtkWidget *bbox;
 	GtkWidget *vbox;
 	GtkWidget *topbox;
-	GtkWidget *button_box;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
 	GtkWidget *frame;
+	GtkWidget *opt;
+	GtkWidget *hbox;
 
 	if (!joinchat) {
 		joinchat = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -99,71 +98,37 @@ void join_chat()
 		topbox = gtk_hbox_new(FALSE, 5);
 		vbox = gtk_vbox_new(FALSE, 5);
 		entry = gtk_entry_new();
+		hbox = gtk_hbox_new(TRUE, 10);
 
 		frame = gtk_frame_new(_("Buddy Chat"));
-       /* Build Join Button */
 
-        join = gtk_button_new();
+		join = picture_button(joinchat, _("Join"), join_xpm);
+		cancel = picture_button(joinchat, _("Cancel"), cancel_xpm);
 
-        button_box = gtk_hbox_new(FALSE, 5);
-        icon = gdk_pixmap_create_from_xpm_d (joinchat->window, &mask, NULL, join_xpm);
-        icon_i = gtk_pixmap_new(icon, mask);
-
-        label = gtk_label_new(_("Join"));
-
-        gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-        gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-        gtk_widget_show(label);
-        gtk_widget_show(icon_i);
-
-        gtk_widget_show(button_box);
-
-        gtk_container_add(GTK_CONTAINER(join), button_box);
-	gtk_widget_set_usize(join, 75, 30);
-
-        /* End of OK Button */
-
-        /* Build Cancel Button */
-
-        cancel = gtk_button_new();
-
-        button_box = gtk_hbox_new(FALSE, 5);
-        icon = gdk_pixmap_create_from_xpm_d ( joinchat->window, &mask, NULL, cancel_xpm);
-        icon_i = gtk_pixmap_new(icon, mask);
-
-        label = gtk_label_new(_("Cancel"));
-
-        gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-        gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-        gtk_widget_show(label);
-        gtk_widget_show(icon_i);
-
-        gtk_widget_show(button_box);
-
-        gtk_container_add(GTK_CONTAINER(cancel), button_box);
-
-	gtk_widget_set_usize(cancel, 75, 30);
-
-        /* End of Cancel Button */
-        
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
-		gtk_button_set_relief(GTK_BUTTON(join), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-	}
-
-	gtk_box_pack_start(GTK_BOX(bbox), join, FALSE, FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(bbox), join, FALSE, FALSE, 5);
+		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 
 		label = gtk_label_new(_("Join what group:"));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(topbox), entry, FALSE, FALSE, 5);
-	
+
+		opt = gtk_radio_button_new_with_label(NULL,
+							_("AIM Private Chats"));
+		gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+		community = 0;
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+		gtk_signal_connect(GTK_OBJECT(opt), "clicked", set_option, &community);
+		gtk_widget_show(opt);
+
+		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(opt)),
+							_("AOL Community Chats"));
+		gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+		gtk_widget_show(opt);
+
 		/* And the boxes in the box */
 		gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
 		
 		/* Handle closes right */
@@ -181,6 +146,7 @@ void join_chat()
 		gtk_widget_show(cancel);
 		gtk_widget_show(entry);
 		gtk_widget_show(topbox);
+		gtk_widget_show(hbox);
 		gtk_widget_show(bbox);
 		gtk_widget_show(vbox);
 		gtk_widget_show(frame);

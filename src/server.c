@@ -533,7 +533,7 @@ void serv_join_chat(int exchange, char *name)
 	} else {
 		sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
 		debug_print(debug_buff);
-		aim_chat_join(gaim_sess, gaim_conn, 0x0004, name);
+		aim_chat_join(gaim_sess, gaim_conn, exchange, name);
 	}
 }
 
@@ -570,37 +570,38 @@ void serv_chat_leave(int id)
 	        sflap_send(buf, -1, TYPE_DATA);
 	        g_free(buf);
 	} else {
-	GList *bcs = buddy_chats;
-	struct conversation *b = NULL;
-	struct chat_connection *c = NULL;
-	int count = 0;
+		GList *bcs = buddy_chats;
+		struct conversation *b = NULL;
+		struct chat_connection *c = NULL;
+		int count = 0;
 
-	while (bcs) {
-		count++;
-		b = (struct conversation *)bcs->data;
-		if (id == b->id)
-			break;
-		bcs = bcs->next;
-		b = NULL;
-	}
+		while (bcs) {
+			count++;
+			b = (struct conversation *)bcs->data;
+			if (id == b->id)
+				break;
+			bcs = bcs->next;
+			b = NULL;
+		}
 
-	if (!b)
-		return;
+		if (!b)
+			return;
 
-	sprintf(debug_buff, "Attempting to leave room %s (currently in %d rooms)\n",
-				b->name, count);
-	debug_print(debug_buff);
+		sprintf(debug_buff, "Attempting to leave room %s (currently in %d rooms)\n",
+					b->name, count);
+		debug_print(debug_buff);
 
-	aim_chat_leaveroom(gaim_sess, b->name);
-	c = find_oscar_chat(b->name);
-	if (c != NULL) {
-		oscar_chats = g_list_remove(oscar_chats, c);
-		gdk_input_remove(c->inpa);
-		g_free(c->name);
-		g_free(c);
-	}
-	/* we do this because with Oscar it doesn't tell us we left */
-	serv_got_chat_left(b->id);
+		aim_chat_leaveroom(gaim_sess, b->name);
+		c = find_oscar_chat(b->name);
+		if (c != NULL) {
+			aim_conn_kill(gaim_sess, &c->conn);
+			oscar_chats = g_list_remove(oscar_chats, c);
+			gdk_input_remove(c->inpa);
+			g_free(c->name);
+			g_free(c);
+		}
+		/* we do this because with Oscar it doesn't tell us we left */
+		serv_got_chat_left(b->id);
 	}
 }
 
@@ -904,7 +905,7 @@ static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 		gtk_widget_destroy(w2);
 	} else {
 		char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
-		serv_join_chat(0, i); /* for oscar, it doesn't use the id anyway */
+		serv_join_chat(4, i);
 		g_free(i);
 		gtk_widget_destroy(w2);
 	}

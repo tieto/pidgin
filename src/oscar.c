@@ -125,6 +125,8 @@ static void oscar_callback(gpointer data, gint source,
 					if (cnv) {
 						make_direct(cnv, FALSE, NULL, 0);
 					}
+				} else if (conn->type = AIM_CONN_TYPE_CHAT) {
+					/* FIXME! we got kicked out of chat */
 				}
 				aim_conn_kill(gaim_sess, &conn);
 				if (!aim_getconn_type(gaim_sess, AIM_CONN_TYPE_BOS)) {
