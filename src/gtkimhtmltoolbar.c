@@ -38,9 +38,9 @@ static GtkHBoxClass *parent_class = NULL;
 static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 {
 	GObject *object;
-	
+
 	g_return_if_fail(toolbar);
-	
+
 	/* block the format_function_toggle handler */
 	object = g_object_ref(G_OBJECT(GTK_IMHTML(toolbar->imhtml)));
 	g_signal_handlers_block_matched(object,	G_SIGNAL_MATCH_DATA, 0, 0, NULL,
@@ -49,7 +49,7 @@ static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 	g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
 									  NULL, toolbar);
 	g_object_unref(object);
-	
+
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -57,9 +57,9 @@ static void
 do_italic(GtkWidget *italic, GtkIMHtmlToolbar *toolbar)
 {
 	GObject *object;
-	
+
 	g_return_if_fail(toolbar);
-	
+
 	/* block the format_function_toggle handler */
 	object = g_object_ref(G_OBJECT(GTK_IMHTML(toolbar->imhtml)));
 	g_signal_handlers_block_matched(object,	G_SIGNAL_MATCH_DATA, 0, 0, NULL,
@@ -68,7 +68,7 @@ do_italic(GtkWidget *italic, GtkIMHtmlToolbar *toolbar)
 	g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
 									  NULL, toolbar);
 	g_object_unref(object);
-	
+
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -76,9 +76,9 @@ static void
 do_underline(GtkWidget *underline, GtkIMHtmlToolbar *toolbar)
 {
 	GObject *object;
-	
+
 	g_return_if_fail(toolbar);
-	
+
 	/* block the format_function_toggle handler */
 	object = g_object_ref(G_OBJECT(GTK_IMHTML(toolbar->imhtml)));
 	g_signal_handlers_block_matched(object,	G_SIGNAL_MATCH_DATA, 0, 0, NULL,
@@ -87,7 +87,7 @@ do_underline(GtkWidget *underline, GtkIMHtmlToolbar *toolbar)
 	g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
 									  NULL, toolbar);
 	g_object_unref(object);
-	
+
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -176,7 +176,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 		toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
 		g_object_set_data(G_OBJECT(toolbar->font_dialog), "gaim_toolbar", toolbar);
-		
+
 		if(fontname) {
 			char fonttif[128];
 			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontname);
@@ -551,20 +551,22 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-
 static void
-close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
-					GtkIMHtmlToolbar *toolbar)
+destroy_smiley_menu(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
-
-	if (toolbar->smiley_dialog != NULL)
+	if (toolbar->smiley_menu != NULL)
 	{
-		gtk_widget_destroy(toolbar->smiley_dialog);
-		toolbar->smiley_dialog = NULL;
+		gtk_widget_destroy(toolbar->smiley_menu);
+		toolbar->smiley_menu = NULL;
 	}
 }
 
+static void
+deactivate_smiley_menu(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
+	gtk_button_released(GTK_BUTTON(toolbar->smiley));
+}
 
 static void
 insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
@@ -579,31 +581,22 @@ insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 							 escaped_smiley);
 
 	g_free(escaped_smiley);
-	close_smiley_dialog(NULL, NULL, toolbar);
+	destroy_smiley_menu(NULL, toolbar);
 }
 
-
-static void add_smiley(GtkIMHtmlToolbar *toolbar, GtkWidget *table, int row, int col, char *filename, char *face)
+static void add_smiley(GtkIMHtmlToolbar *toolbar, GtkWidget *menu, int row, int col, char *filename, char *face)
 {
 	GtkWidget *image;
-	GtkWidget *button;
+	GtkWidget *menuitem;
 
 	image = gtk_image_new_from_file(filename);
-	button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(button), image);
-	g_object_set_data(G_OBJECT(button), "smiley_text", face);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(insert_smiley_text), toolbar);
-
-	gtk_tooltips_set_tip(toolbar->tooltips, button, face, NULL);
-
-	gtk_table_attach_defaults(GTK_TABLE(table), button, col, col+1, row, row+1);
-
-	/* these look really weird with borders */
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-
-	gtk_widget_show(button);
+	menuitem = gtk_image_menu_item_new_with_label("");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+	g_object_set_data(G_OBJECT(menuitem), "smiley_text", face);
+	gtk_tooltips_set_tip(toolbar->tooltips, menuitem, face, NULL);
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(insert_smiley_text), toolbar);
+	gtk_menu_attach(GTK_MENU(menu), menuitem, col, col+1, row, row+1);
 }
-
 
 static gboolean smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley) {
 	while(list) {
@@ -619,83 +612,65 @@ static gboolean smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley) {
 static void
 insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
+	GtkWidget *menu;
+	GSList *smileys, *unique_smileys = NULL;
+	int width;
+	int row = 0, col = 0;
 
-		GtkWidget *dialog;
-		GtkWidget *smiley_table = NULL;
-		GSList *smileys, *unique_smileys = NULL;
-		int width;
-		int row = 0, col = 0;
+	destroy_smiley_menu(NULL, toolbar);
 
-		if (toolbar->smiley_dialog) {
-			gtk_widget_grab_focus(toolbar->imhtml);
-			return;
+	if (toolbar->sml)
+		smileys = get_proto_smileys(toolbar->sml);
+	else
+		smileys = get_proto_smileys(NULL);
+
+	while(smileys) {
+		GtkIMHtmlSmiley *smiley = smileys->data;
+		if(!smiley->hidden) {
+			if(smiley_is_unique(unique_smileys, smiley))
+				unique_smileys = g_slist_append(unique_smileys, smiley);
 		}
-
-		if (toolbar->sml)
-			smileys = get_proto_smileys(toolbar->sml);
-		else
-			smileys = get_proto_smileys(NULL);
-
-		while(smileys) {
-			GtkIMHtmlSmiley *smiley = smileys->data;
-			if(!smiley->hidden) {
-				if(smiley_is_unique(unique_smileys, smiley))
-					unique_smileys = g_slist_append(unique_smileys, smiley);
-			}
-			smileys = smileys->next;
-		}
-
-		GAIM_DIALOG(dialog);
-
-		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-		gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
-		gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-
-		if(g_slist_length(unique_smileys)) {
-
-			width = floor(sqrt(g_slist_length(unique_smileys)));
-
-			smiley_table = gtk_table_new(width, width, TRUE);
-
-			/* pack buttons */
-
-			while(unique_smileys) {
-				GtkIMHtmlSmiley *smiley = unique_smileys->data;
-				if(!smiley->hidden) {
-					add_smiley(toolbar, smiley_table, row, col, smiley->file, smiley->smile);
-					if(++col >= width) {
-						col = 0;
-						row++;
-					}
-				}
-				unique_smileys = unique_smileys->next;
-			}
-		}
-		else {
-			smiley_table = gtk_label_new(_("This theme has no available smileys."));
-		}
-
-		gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
-
-		gtk_widget_show(smiley_table);
-
-		gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
-
-		/* connect signals */
-		g_object_set_data(G_OBJECT(dialog), "dialog_type", "smiley dialog");
-		g_signal_connect(G_OBJECT(dialog), "delete_event",
-						 G_CALLBACK(close_smiley_dialog), toolbar);
-
-		/* show everything */
-		gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
-		gtk_widget_show_all(dialog);
-
-		toolbar->smiley_dialog = dialog;
-
-	} else if (toolbar->smiley_dialog) {
-		close_smiley_dialog(smiley, NULL, toolbar);
+		smileys = smileys->next;
 	}
+
+	menu = gtk_menu_new();
+
+	if(g_slist_length(unique_smileys)) {
+
+		width = floor(sqrt(g_slist_length(unique_smileys)));
+
+		/* build menu */
+		while(unique_smileys) {
+			GtkIMHtmlSmiley *smiley = unique_smileys->data;
+			if(!smiley->hidden) {
+				add_smiley(toolbar, menu, row, col, smiley->file, smiley->smile);
+
+				if(++col >= width) {
+					col = 0;
+					row++;
+				}
+			}
+			unique_smileys = unique_smileys->next;
+		}
+	}
+	else {
+		GtkWidget *menuitem;
+		menuitem = gtk_menu_item_new_with_label(_("This theme has no available smileys."));
+		gtk_widget_set_sensitive(menuitem, FALSE);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	}
+
+	/* connect signals */
+	g_signal_connect(G_OBJECT(menu), "deactivate",
+					 G_CALLBACK(deactivate_smiley_menu), toolbar);
+	g_signal_connect(G_OBJECT(menu), "selection-done",
+					 G_CALLBACK(destroy_smiley_menu), toolbar);
+
+	/* show everything */
+	gtk_widget_show_all(menu);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+	toolbar->smiley_menu = menu;
+
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -760,11 +735,11 @@ static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)))
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), FALSE,
 									   toolbar);
-	
+
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)))
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic),
 									   FALSE, toolbar);
-	
+
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)))
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
 									   FALSE, toolbar);
@@ -772,7 +747,7 @@ static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
 
 static void update_buttons(GtkIMHtmlToolbar *toolbar) {
 	gboolean bold, italic, underline;
-	
+
 	bold = italic = underline = FALSE;
 	gtk_imhtml_get_current_format(GTK_IMHTML(toolbar->imhtml),
 								  &bold, &italic, &underline);
@@ -819,35 +794,11 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 		toolbar->image_dialog = NULL;
 	}
 
-	if (toolbar->font_dialog != NULL)
-	{
-		gtk_widget_destroy(toolbar->font_dialog);
-		toolbar->font_dialog = NULL;
-	}
-
-	if (toolbar->smiley_dialog != NULL)
-	{
-		gtk_widget_destroy(toolbar->smiley_dialog);
-		toolbar->smiley_dialog = NULL;
-	}
-
-	if (toolbar->bgcolor_dialog != NULL)
-	{
-		gtk_widget_destroy(toolbar->bgcolor_dialog);
-		toolbar->bgcolor_dialog = NULL;
-	}
-
-	if (toolbar->fgcolor_dialog != NULL)
-	{
-		gtk_widget_destroy(toolbar->fgcolor_dialog);
-		toolbar->fgcolor_dialog = NULL;
-	}
-
-	if (toolbar->link_dialog != NULL)
-	{
-		gaim_request_close(GAIM_REQUEST_FIELDS, toolbar->link_dialog);
-		toolbar->link_dialog = NULL;
-	}
+	destroy_toolbar_font(NULL, NULL, toolbar);
+	destroy_smiley_menu(NULL, toolbar);
+	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
+	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
+	close_link_dialog(toolbar);
 
 	if (toolbar->sml)
 		free(toolbar->sml);
@@ -879,11 +830,11 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->fgcolor_dialog = NULL;
 	toolbar->bgcolor_dialog = NULL;
 	toolbar->link_dialog = NULL;
-	toolbar->smiley_dialog = NULL;
+	toolbar->smiley_menu = NULL;
 	toolbar->image_dialog = NULL;
 
 	toolbar->tooltips = gtk_tooltips_new();
-	
+
 	gtk_box_set_spacing(GTK_BOX(toolbar), 6);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
@@ -1020,7 +971,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert smiley"), NULL);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(button), "pressed",
 			 G_CALLBACK(insert_smiley_cb), toolbar);
 
 	toolbar->smiley = button;
@@ -1082,11 +1033,11 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	bold = italic = underline = FALSE;
 
 	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
-	
+
 	if(bold)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
 									   toolbar);
-	
+
 	if(italic)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
 									   toolbar);
@@ -1100,6 +1051,6 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 {
 	if (toolbar->sml)
 		g_free(toolbar->sml);
-	
+
 	toolbar->sml = g_strdup(proto_id);
 }

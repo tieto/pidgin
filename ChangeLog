@@ -9,6 +9,7 @@ version 2.0.0
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 	* Screenname colors in chats now come from GNOME color palette
 	* Yahoo! has the following new "/" commands:  /join, /buzz
+	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
 
 	Bug fixes:
 	* People using input methods can now use Enter again.

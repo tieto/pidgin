@@ -370,7 +370,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		gaim_xfer_set_local_filename(xfer, filename);
 		gaim_xfer_set_filename(xfer, g_basename(filename));
 		gaim_xfer_set_size(xfer, st.st_size);
-		
+
 		msg = g_strdup_printf(_("Offering to send %s to %s"),
 							  filename, xfer->who);
 		gaim_xfer_conversation_write(xfer, msg, FALSE);
