@@ -27,56 +27,6 @@
 
 #include <gaim-remote/remote.h>
 
-/* writes a message 'text' to screen
- * message tries to convert 'text' from utf-8 to user's locale and 
- * uses the original message 'text' as a fallback
- *
- * if channel is 1, the message is printed to stdout
- * if channel is 2, the message is printed to stderr
- */ 
-void message(char *text,int channel)
-{
-	char *text_conv=NULL,*text_output;
-	GError *error=NULL;
-	
-	text_conv=g_locale_from_utf8(text,-1,NULL,NULL,&error);
-
-	if(!text_conv) {
-		g_warning("%s\n", error->message);
-		g_error_free(error);
-	}
-
-	text_output=(text_conv ? text_conv : text);
-	
-	switch (channel) {
-	case 1:  puts(text_output); break;
-	case 2:  fputs(text_output, stderr); break;
-	default: break;
-	}
-
-	if(text_conv)
-		g_free(text_conv);
-}
-
-void show_remote_usage(char *name)
-{
-	char *text = NULL;
-
-	text = g_strdup_printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
-		"    COMMANDS:\n"
-		"       uri                      Handle AIM: URI\n"
-		"       away                     Popup the away dialog with the default message\n"
-		"       back                     Remove the away dialog\n"
-		"       quit                     Close running copy of Gaim\n\n"
-		"    OPTIONS:\n"
-		"       -h, --help [command]     Show help for command\n"), name);
-
-	message(text, 1);
-	g_free(text);
-
-	return;
-}
-
 /*To be implemented:
 	     "       info                     Show information about connected accounts\n"
 	     "       list                     Print buddy list\n"
@@ -110,14 +60,74 @@ struct remoteopts {
 	char *message, *to, *from;
 	int protocol;
 };
-
-
 struct remoteopts opts;
-int get_options(int argc, char *argv[])
+
+/*
+ * Prints a message to the terminal/shell/console.
+ * We try to convert "text" from UTF-8 to the user's locale.
+ * If that fails then UTF-8 is used as a fallback.
+ *
+ * If channel is 1, the message is printed to stdout.
+ * if channel is 2, the message is printed to stderr.
+ */ 
+static void
+message(char *text, int channel)
+{
+	char *text_conv = NULL,*text_output;
+	GError *error = NULL;
+
+	text_conv = g_locale_from_utf8(text, -1, NULL, NULL, &error);
+
+	if (text_conv == NULL) {
+		g_warning("%s\n", error->message);
+		g_error_free(error);
+	}
+
+	text_output = (text_conv ? text_conv : text);
+
+	switch (channel) {
+		case 1:
+			puts(text_output);
+			break;
+		case 2:
+			fputs(text_output, stderr);
+			break;
+		default:
+			break;
+	}
+
+	if (text_conv)
+		g_free(text_conv);
+}
+
+static void
+show_remote_usage(const char *name)
+{
+	char *text = NULL;
+
+	text = g_strdup_printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
+		"    COMMANDS:\n"
+		"       uri                      Handle AIM: URI\n"
+		"       away                     Popup the away dialog with the default message\n"
+		"       back                     Remove the away dialog\n"
+		"       quit                     Close running copy of Gaim\n\n"
+		"    OPTIONS:\n"
+		"       -h, --help [command]     Show help for command\n"), name);
+
+	message(text, 1);
+	g_free(text);
+
+	return;
+}
+
+int
+get_options(int argc, char *argv[])
 {
 	int i;
+
 	memset(&opts, 0, sizeof(opts));
 	opts.protocol = -1;
+
 	while ((i=getopt_long(argc, argv, "m:t:p:f:qh", longopts, NULL)) != -1) {
 		switch (i) {
 		case 'm':
@@ -157,8 +167,7 @@ int get_options(int argc, char *argv[])
 			opts.uri = g_strdup(argv[optind++]);
 		else
 			return 1;
-	}
-	else if (optind == argc)
+	} else if (optind == argc)
 		return 0;
 	else
 		return 1;
@@ -166,12 +175,32 @@ int get_options(int argc, char *argv[])
 	return 0;			
 }
 
-int command_uri() {
+static int
+send_generic_command(guchar type, guchar subtype) {
 	int fd = 0;
 	GaimRemotePacket *p = NULL;
+
 	fd = gaim_remote_session_connect(0);
-	if (fd<0) {
-		message(_("Gaim not running (on session 0)\n"),2);
+	if (fd < 0) {
+		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
+		return 1;
+	}
+	p = gaim_remote_packet_new(type, subtype);
+	gaim_remote_session_send_packet(fd, p);
+	close(fd);
+	gaim_remote_packet_free(p);
+
+	return 0;
+}
+
+static int
+send_command_uri() {
+	int fd = 0;
+	GaimRemotePacket *p = NULL;
+
+	fd = gaim_remote_session_connect(0);
+	if (fd < 0) {
+		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_URI);
@@ -179,60 +208,14 @@ int command_uri() {
 	gaim_remote_session_send_packet(fd, p);
 	close(fd);
 	gaim_remote_packet_free(p);
+
 	return 0;
 }
 
-int command_quit() {
-	int fd = 0;
-	GaimRemotePacket *p = NULL;
-	fd = gaim_remote_session_connect(0);
-	if (fd<0) {
-		message(_("Gaim not running (on session 0)\n"),2);
-		return 1;
-	}
-	p = gaim_remote_packet_new(CUI_TYPE_META, CUI_META_QUIT);
-	gaim_remote_session_send_packet(fd, p);
-	close(fd);
-	gaim_remote_packet_free(p);
-	return 0;
-}
-
-int command_away()
+static void
+show_longhelp( char *name, char *command)
 {
-	int fd = 0;
-	GaimRemotePacket *p = NULL;
-	fd = gaim_remote_session_connect(0);
-	if (fd<0) {
-		message(_("Gaim not running (on session 0)\n"),2);
-		return 1;
-	}
-	p = gaim_remote_packet_new(CUI_TYPE_USER, CUI_USER_AWAY);
-	gaim_remote_session_send_packet(fd, p);
-	close(fd);
-	gaim_remote_packet_free(p);
-	return 0;
-}
-
-int command_back()
-{
-	int fd = 0;
-	GaimRemotePacket *p = NULL;
-	fd = gaim_remote_session_connect(0);
-	if (fd<0) {
-		message(_("Gaim not running (on session 0)\n"),2);
-		return 1;
-	}
-	p = gaim_remote_packet_new(CUI_TYPE_USER, CUI_USER_BACK);
-	gaim_remote_session_send_packet(fd, p);
-	close(fd);
-	gaim_remote_packet_free(p);
-	return 0;
-}
-
-
-void show_longhelp( char *name, char *command)
-{
-	if(!strcmp(command, "uri")) {
+	if (!strcmp(command, "uri")) {
 		message(_("\n"
 		       "Using AIM: URIs:\n"
 		       "Sending an IM to a screen name:\n"
@@ -269,9 +252,8 @@ void show_longhelp( char *name, char *command)
 	}
 }
 
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-
 #ifdef ENABLE_NLS
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -284,33 +266,32 @@ int main (int argc, char *argv[])
 		return 0;
 	}
 
-
 	if (!strcmp(opts.command, "uri")) {
 		if (opts.help)
 			show_longhelp(argv[0], "uri");
 		else
-			return command_uri();
+			return send_command_uri();
 	}
 
 	else if (!strcmp(opts.command, "away")) {
 		if (opts.help)
 			show_longhelp(argv[0], "away");
 		else
-			return command_away();
+			return send_generic_command(CUI_TYPE_USER, CUI_USER_AWAY);
 	}
 
 	else if (!strcmp(opts.command, "back")) {
 		if (opts.help)
 			show_longhelp(argv[0], "back");
 		else
-			return command_back();
+			return send_generic_command(CUI_TYPE_USER, CUI_USER_BACK);
 	}
 
 	else if (!strcmp(opts.command, "quit")) {
 		if (opts.help)
 			show_longhelp(argv[0], "quit");
 		else
-			return command_quit();
+			return send_generic_command(CUI_TYPE_META, CUI_META_QUIT);
 	}
 
 	else {
