@@ -909,7 +909,7 @@ int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *c
 	va_list ap;
 	char *sn;
 
-	ap = va_start(ap, command);
+	va_start(ap, command);
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
