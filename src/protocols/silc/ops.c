@@ -1306,7 +1306,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			if (!success) {
 				gaim_notify_error(gc, _("Server Statistics"),
-						_("Cannot get server statisticss"),
+						_("Cannot get server statistics"),
 						silc_get_status_message(status));
 				return;
 			}
