@@ -120,7 +120,7 @@ static void restore_chat_prefs()
 	}
 	while (fgets(buf, 1024, f)) {
 		struct chat_room *cr = g_new0(struct chat_room, 1);
-		g_snprintf(cr->name, sizeof(cr->name), "%s", buf);
+		g_snprintf(cr->name, sizeof(cr->name), "%s", g_strchomp(buf));
 		if (!fgets(buf, 1024, f)) {
 			g_free(cr);
 			break;
