@@ -2475,12 +2475,10 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 	struct gaim_connection *gc;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_im_pane *gtkim;
-	struct gaim_gtk_window *gtkwin;
 	GaimConversationType type = GAIM_CONV_IM;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkim   = gtkconv->u.im;
-	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
 	gc      = gaim_conversation_get_gc(conv);
 
 	/* From right to left... */
@@ -2524,8 +2522,6 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 	gtkim->warn = gaim_gtk_change_text(_("Warn"), gtkim->warn,
 									   GAIM_STOCK_WARN, type);
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->warn, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->add,
-						 _("Remove buddy"), NULL);
 
 	/* Info button */
 	gtkconv->info = gaim_gtk_change_text(_("Info"), gtkconv->info,
