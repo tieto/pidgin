@@ -1,6 +1,6 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.9.16: (05/24/2000)
+version 0.9.16: (05/31/2000)
 	* Paned buddy chat window (Thanks Syd)
 	* Buddy lists (and changes) are cached to ~/.gaim/<sn>.blist
 	  where <sn> is your screen name. If for some reason, you log
@@ -16,6 +16,7 @@ version 0.9.16: (05/24/2000)
 	* Two-way file transfer (you can get and send files, but you still
 	  can't initiate either)
 	* Fixed font problem with Misconfigured X-Servers.  Thanks Decklin!
+	* Fixed the No Configuration problem that came about today (5/31)
 
 version 0.9.15: (05/06/2000)
 	* Plugin support enabled by default (oops)
