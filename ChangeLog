@@ -11,6 +11,7 @@ version 0.66 (07/17/2003):
 	* MSN messages with newlines are now sent correctly to MSN clients.
 	* Italian translation updated (Claudio Satriano)
 	* British English "translation" added (Sam Halliday)
+	* Fix some sound initialization stuff
 
 version 0.65 (07/16/2003):
 	* French translation updated (Eric (Zongo) Boumaour)

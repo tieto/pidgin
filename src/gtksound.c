@@ -54,6 +54,7 @@ struct gaim_sound_event {
 
 static gboolean mute_login_sounds = FALSE;
 static gboolean mute_sounds = FALSE;
+static gboolean sound_initialized = FALSE;
 static char *sound_cmd = NULL;
 
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
@@ -115,7 +116,6 @@ static void gaim_gtk_sound_init(void)
 
 	gaim_prefs_connect_callback("/gaim/gtk/sound/method",
 			_pref_sound_method_changed, NULL);
-	gaim_prefs_trigger_callback("/gaim/gtk/sound/method");
 }
 
 
@@ -124,6 +124,7 @@ static void gaim_gtk_sound_shutdown(void)
 #ifdef USE_AO
 	ao_shutdown();
 #endif
+	sound_initialized = FALSE;
 }
 
 static void gaim_gtk_sound_play_file(const char *filename)
@@ -135,6 +136,9 @@ static void gaim_gtk_sound_play_file(const char *filename)
 	AFfilehandle file;
 #endif
 #endif
+
+	if (!sound_initialized)
+		gaim_prefs_trigger_callback("/gaim/gtk/sound/method");
 
 	if (mute_sounds)
 		return;
@@ -308,6 +312,8 @@ GaimSoundUiOps *gaim_get_gtk_sound_ui_ops(void)
 
 static void _pref_sound_method_changed(const char *name, GaimPrefType type,
 		gpointer val, gpointer data) {
+	sound_initialized = TRUE;
+
 	if(type != GAIM_PREF_STRING || strcmp(name, "/gaim/gtk/sound/method"))
 		return;
 #ifdef USE_AO
