@@ -657,7 +657,8 @@ void gaim_presence_set_idle(GaimPresence *presence, gboolean idle,
  * Sets the warning level on a presence.
  *
  * @param presence The presence.
- * @param level    The warning level.
+ * @param level    The warning level.  An integer between 0 and 100
+ *                 (inclusive) representing the percentage warned.
  */
 void gaim_presence_set_warning_level(GaimPresence *presence,
 									 unsigned int level);
