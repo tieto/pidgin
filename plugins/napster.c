@@ -1,7 +1,7 @@
 /*
  * gaim - Napster Protocol Plugin
  *
- * Copyright (C) 2000, Rob Flynn <rob@tgflinux.com>
+ * Copyright (C) 2000-2001, Rob Flynn <rob@tgflinux.com>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

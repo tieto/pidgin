@@ -1,7 +1,7 @@
 /*
  * gaim - IRC Protocol Plugin
  *
- * Copyright (C) 2000, Rob Flynn <rob@tgflinux.com>
+ * Copyright (C) 2000-2001, Rob Flynn <rob@tgflinux.com>
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
  * 
  * This program is free software; you can redistribute it and/or modify
