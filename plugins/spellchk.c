@@ -27,22 +27,21 @@
 #include "win32dep.h"
 #endif
 
-struct replace_words {
-	char *bad;
-	char *good;
+enum {
+	BAD_COLUMN,
+	GOOD_COLUMN,
+	N_COLUMNS
 };
 
-GList *words = NULL;
-
-static int num_words(char *);
+static int num_words(const char *);
 static int get_word(char *, int);
 static char *have_word(char *, int);
-static void substitute(char **, int, int, char *);
+static void substitute(char **, int, int, const char *);
+static GtkListStore *model;
 
 static void substitute_words(struct gaim_connection *gc, char *who, char **message, void *m) {
 	int i, l;
 	int word;
-	GList *w;
 	char *tmp;
 
 	if (message == NULL || *message == NULL)
@@ -50,20 +49,29 @@ static void substitute_words(struct gaim_connection *gc, char *who, char **messa
 
 	l = num_words(*message);
 	for (i = 0; i < l; i++) {
+		GtkTreeIter iter;
 		word = get_word(*message, i);
-		w = words;
-		while (w) {
-			struct replace_words *r;
-			r = (struct replace_words *)(w->data);
-			tmp = have_word(*message, word);
-			if (!strcmp(tmp, r->bad)) {
-				substitute(message, word, strlen(r->bad),
-						r->good);
-				l += num_words(r->good) - num_words(r->bad);
-				i += num_words(r->good) - num_words(r->bad);
-			}
-			free(tmp);
-			w = w->next;
+		if(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
+			do {
+				GValue val0, val1;
+				const char *bad, *good;
+				memset(&val0, 0, sizeof(val0));
+				memset(&val1, 0, sizeof(val1));
+				gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 0, &val0);
+				gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 1, &val1);
+				tmp = have_word(*message, word);
+				bad = g_value_get_string(&val0);
+				good = g_value_get_string(&val1);
+				if (!strcmp(tmp, bad)) {
+					substitute(message, word, strlen(bad),
+							good);
+					l += num_words(good) - num_words(bad);
+					i += num_words(good) - num_words(bad);
+				}
+				free(tmp);
+				g_value_unset(&val0);
+				g_value_unset(&val1);
+			} while(gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 		}
 	}
 }
@@ -87,56 +95,41 @@ static int buf_get_line(char *ibuf, char **buf, int *position, int len) {
 }
 
 static void load_conf() {
-	char *defaultconf = "BAD r\nGOOD are\n\n"
+	const char * const defaultconf = "BAD r\nGOOD are\n\n"
 			"BAD u\nGOOD you\n\n"
 			"BAD teh\nGOOD the\n\n";
 	char *buf, *ibuf;
 	char name[82];
 	char cmd[256];
-	int fh, pnt = 0;
-	struct stat st;
+	int pnt = 0;
+	gsize size;
 
-	if (words != NULL)
-		g_list_free(words);
-	words = NULL;
+	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
 
-	buf = malloc(1000);
-	snprintf(buf, 1000, "%s/.gaim/dict", gaim_home_dir());
-	fh = open(buf, O_RDONLY, 0600);
-	if (fh == -1) {
-		fh = open(buf, O_TRUNC | O_WRONLY | O_CREAT, 0600);
-		if (fh != -1) {
-			write(fh, defaultconf, strlen(defaultconf));
-			close(fh);
-			free(buf);
-			load_conf();
-		}
-		return;
-	}
+	buf = g_build_filename(gaim_home_dir(), ".gaim", "dict", NULL);
+	g_file_get_contents(buf, &ibuf, &size, NULL);
 	free(buf);
-	if (fstat(fh, &st) != 0)
-		return;
-	ibuf = malloc(st.st_size);
-	read(fh, ibuf, st.st_size);
-	close(fh);
+	if(!ibuf) {
+		ibuf = g_strdup(defaultconf);
+		size = strlen(defaultconf);
+	}
 
 	cmd[0] = 0;
 	name[0] = 0;
 
-	while(buf_get_line(ibuf, &buf, &pnt, st.st_size)) {
+	while(buf_get_line(ibuf, &buf, &pnt, size)) {
 		if (*buf != '#') {
 			if (!strncasecmp(buf, "BAD ", 4))
 				strncpy(name, buf + 4, 81);
 			if (!strncasecmp(buf, "GOOD ", 5)) {
 				strncpy(cmd, buf + 5, 255);
 				if (*name) {
-					struct replace_words *r;
-					r = malloc(sizeof *r);
-					r->bad = strdup(name);
-					r->good = strdup(cmd);
-					words = g_list_append(words, r);
-					cmd[0] = 0;
-					name[0] = 0;
+					GtkTreeIter iter;
+					gtk_list_store_append(model, &iter);
+					gtk_list_store_set(model, &iter,
+						0, g_strdup(name),
+						1, g_strdup(cmd),
+						-1);
 				}
 			}
 		}
@@ -146,7 +139,7 @@ static void load_conf() {
 
 
 
-static int num_words(char *m) {
+static int num_words(const char *m) {
 	int count = 0;
 	int pos;
 	int state = 0;
@@ -220,7 +213,7 @@ static char *have_word(char *m, int pos) {
 	return tmp;
 }
 
-static void substitute(char **mes, int pos, int m, char *text) {
+static void substitute(char **mes, int pos, int m, const char *text) {
 	char *new = g_malloc(strlen(*mes) + strlen(text) + 1);
 	char *tmp;
 	new[0] = 0;
@@ -234,108 +227,151 @@ static void substitute(char **mes, int pos, int m, char *text) {
 	g_free(tmp);
 }
 
-static GtkWidget *configwin = NULL;
-static GtkWidget *list;
+static GtkWidget *tree;
 static GtkWidget *bad_entry;
 static GtkWidget *good_entry;
 
-static void row_unselect() {
-	gtk_entry_set_text(GTK_ENTRY(bad_entry), "");
-	gtk_entry_set_text(GTK_ENTRY(good_entry), "");
-}
+static void save_list();
 
-static void row_select() {
-	char *badwrd, *goodwrd;
-	int row;
-
-	if (GTK_CLIST(list)->selection)
-		row = (int) GTK_CLIST (list)->selection->data;
-	else
-		row = -1;
-	if (row != -1) {
-		gtk_clist_get_text(GTK_CLIST(list), row, 0, &badwrd);
-		gtk_clist_get_text(GTK_CLIST(list), row, 1, &goodwrd);
-		gtk_entry_set_text(GTK_ENTRY(bad_entry), badwrd);
-		gtk_entry_set_text(GTK_ENTRY(good_entry), goodwrd);
-	} else {
-		row_unselect();
+static void on_edited(GtkCellRendererText *cellrenderertext,
+	gchar *path,
+	gchar *arg2,
+	gpointer data)
+{
+	GtkTreeIter iter;
+	GValue val;
+	if(arg2[0] == '\0') {
+		gdk_beep();
+		return;
 	}
-}
-
-static void list_add_new() {
-	int i;
-	gchar *item[2] = {"*NEW*", "EDIT ME"};
-
-	i = gtk_clist_append(GTK_CLIST(list), item);
-	gtk_clist_select_row(GTK_CLIST(list), i, 0);
-	gtk_clist_moveto(GTK_CLIST(list), i, 0, 0.5, 0);
-}
-
-static void list_delete() {
-	int row;
-
-	if (GTK_CLIST(list)->selection)
-		row = (int) GTK_CLIST (list)->selection->data;
-	else
-		row = -1;
-	if (row != -1) {
-		gtk_clist_unselect_all(GTK_CLIST(list));
-		gtk_clist_remove(GTK_CLIST(list), row);
+	memset(&val, 0, sizeof(val));
+	g_return_if_fail(gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(model), &iter, path));
+	gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GPOINTER_TO_INT(data), &val);
+	if(strcmp(arg2, g_value_get_string(&val))) {
+		gtk_list_store_set(model, &iter, GPOINTER_TO_INT(data), arg2, -1);
+		save_list();
+		printf("Editado! %s, %s\n", path, arg2);
 	}
+	g_value_unset(&val);
 }
 
-static void close_config() {
-	if (configwin)
-		gtk_widget_destroy(configwin);
-	configwin = NULL;
+static void list_add_new()
+{
+	GtkTreeIter iter;
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+		0, gtk_entry_get_text(GTK_ENTRY(bad_entry)),
+		1, gtk_entry_get_text(GTK_ENTRY(good_entry)),
+		-1);
+	gtk_editable_select_region(GTK_EDITABLE(bad_entry), 0, -1);
+	gtk_widget_grab_focus(bad_entry);
 }
 
-static void save_list() {
-	int fh, i = 0;
-	char buf[512];
-	char *a, *b;
+static void add_selected_row_to_list(GtkTreeModel *model, GtkTreePath *path,
+	GtkTreeIter *iter, gpointer data)
+{
+	GSList **list = (GSList **)data;
+	*list = g_slist_append(*list, gtk_tree_path_copy(path) );
+}
+	
 
-	snprintf(buf, sizeof buf, "%s/.gaim/dict", gaim_home_dir());
-	fh = open(buf, O_TRUNC | O_WRONLY | O_CREAT, 0600);
-	if (fh != 1) {
-		while (gtk_clist_get_text(GTK_CLIST(list), i, 0, &a)) {
-			gtk_clist_get_text(GTK_CLIST(list), i, 1, &b);
-			snprintf(buf, sizeof buf, "BAD %s\nGOOD %s\n\n", a, b);
-			write(fh, buf, strlen(buf));
-			i++;
-		}
-		close (fh);
+static void remove_row(void *data1, gpointer data2)
+{
+	GtkTreePath *path = (GtkTreePath*)data1;
+	GtkTreeIter iter;
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
+	gtk_list_store_remove(model, &iter);
+	gtk_tree_path_free(path);
+}
+
+static void list_delete()
+{
+	GtkTreeSelection *sel;
+	GSList *list = NULL;
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
+	gtk_tree_selection_selected_foreach(sel, add_selected_row_to_list, &list);
+
+	g_slist_foreach(list, remove_row, NULL);
+	g_slist_free(list);
+}
+
+static void save_list()
+{
+	FILE *f;
+	char *name;
+	GtkTreeIter iter;
+	char tempfilename[BUF_LONG];
+	int fd;
+
+	name = g_build_filename(gaim_home_dir(), ".gaim", "dict", NULL);
+	strcpy(tempfilename, name);
+	strcat(tempfilename,".XXXXXX");
+	fd = g_mkstemp(tempfilename);
+	if(fd<0) {
+		perror(tempfilename);
+		g_free(name);
+		return;
 	}
-	close_config();
-	load_conf();
+	if (!(f = fdopen(fd, "w"))) {
+		perror("fdopen");
+		close(fd);
+		g_free(name);
+		return;
+	}
+
+	fchmod(fd, S_IRUSR | S_IWUSR);
+		
+	if(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
+		do {
+			GValue val0, val1;
+			memset(&val0, 0, sizeof(val0));
+			memset(&val1, 0, sizeof(val1));
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 0, &val0);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 1, &val1);
+			fprintf(f, "BAD %s\nGOOD %s\n\n", g_value_get_string(&val0), g_value_get_string(&val1));
+			g_value_unset(&val0);
+			g_value_unset(&val1);
+		} while(gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
+	}
+	if(fclose(f)) {
+		debug_printf("Error writing to %s: %m\n", tempfilename);
+		unlink(tempfilename);
+		g_free(name);
+		return;
+	}
+	rename(tempfilename, name);	
+	g_free(name);
 }
 
-static void bad_changed() {
-	int row;
-	const char *m;
-
-	if (GTK_CLIST(list)->selection)
-		row = (int) GTK_CLIST (list)->selection->data;
-	else
-		row = -1;
-	if (row != -1) {
-		m = gtk_entry_get_text(GTK_ENTRY(bad_entry));
-		gtk_clist_set_text(GTK_CLIST(list), row, 0, m);
-	}
+static void
+check_if_something_is_selected(GtkTreeModel *model,
+	GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+	*((gboolean*)data) = TRUE;
 }
 
-static void good_changed() {
-	int row;
-	const char *m;
+static void on_selection_changed(GtkTreeSelection *sel,
+	gpointer data)
+{
+	gboolean is = FALSE;
+	gtk_tree_selection_selected_foreach(sel, check_if_something_is_selected, &is);
+	gtk_widget_set_sensitive((GtkWidget*)data, is);
+}
 
-	if (GTK_CLIST(list)->selection)
-		row = (int) GTK_CLIST (list)->selection->data;
-	else
-		row = -1;
-	if (row != -1) {
-		m = gtk_entry_get_text(GTK_ENTRY(good_entry));
-		gtk_clist_set_text(GTK_CLIST(list), row, 1, m);
-	}
+static gboolean non_empty(const char *s)
+{
+	while(*s && isspace(*s))
+		s++;
+	return *s;
+}
+
+static void on_entry_changed(GtkEditable *editable, gpointer data)
+{
+	gtk_widget_set_sensitive((GtkWidget*)data,
+		non_empty(gtk_entry_get_text(GTK_ENTRY(bad_entry))) &&
+		non_empty(gtk_entry_get_text(GTK_ENTRY(good_entry))));
 }
 
 /*
@@ -372,95 +408,122 @@ G_MODULE_EXPORT char *description() {
 	return "Watches outgoing IM text and corrects common spelling errors.";
 }
 
-G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
+G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
+{
 	GtkWidget *ret, *vbox, *win;
-	GtkWidget *hbox;
+	GtkWidget *hbox, *label;
 	GtkWidget *button;
-	GList *w = words;
-	struct replace_words *r;
-	char *pair[2] = {"Replace", "With"};
+	GtkSizeGroup *sg;
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 	
 	vbox = make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
-	gtk_container_add(GTK_CONTAINER(configwin), vbox);
+	gtk_widget_set_size_request(vbox, 300, -1);
 	gtk_widget_show (vbox);
 
 	win = gtk_scrolled_window_new(0, 0);
 	gtk_container_add(GTK_CONTAINER(vbox), win);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (win),
 			GTK_POLICY_AUTOMATIC,
-			GTK_POLICY_ALWAYS);
+			GTK_POLICY_AUTOMATIC);
 	gtk_widget_show(win);
-	list = gtk_clist_new_with_titles(2, pair);
-	gtk_clist_set_column_width(GTK_CLIST(list), 0, 90);
-	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_BROWSE);
-	gtk_clist_column_titles_passive(GTK_CLIST(list));
-	gtk_container_add(GTK_CONTAINER(win), list);
-	g_signal_connect(GTK_OBJECT(list), "select_row",
-			   G_CALLBACK(row_select), NULL);
-	g_signal_connect(GTK_OBJECT(list), "unselect_row",
-			   G_CALLBACK(row_unselect), NULL);
-	gtk_widget_show(list);
 
-	hbox = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(vbox), hbox, 0, 0, 0);
+	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
+	/* gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE); */
+	gtk_widget_set_size_request(tree, 260,200);
+	
+	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (G_OBJECT (renderer),
+		"editable", TRUE,
+		NULL);
+	g_signal_connect(G_OBJECT(renderer), "edited",
+			   G_CALLBACK(on_edited), GINT_TO_POINTER(0));
+	column = gtk_tree_view_column_new_with_attributes (_("You type"),
+		renderer, "text", BAD_COLUMN, NULL);
+	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
+	gtk_tree_view_column_set_fixed_width(column, 130);
+	/* gtk_tree_view_column_set_resizable(column, TRUE); */
+	gtk_tree_view_append_column (GTK_TREE_VIEW (tree), column);
+	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (G_OBJECT (renderer),
+		"editable", TRUE,
+		NULL);
+	g_signal_connect(G_OBJECT(renderer), "edited",
+			   G_CALLBACK(on_edited), GINT_TO_POINTER(1));
+	column = gtk_tree_view_column_new_with_attributes (_("You send"),
+		renderer, "text", GOOD_COLUMN, NULL);
+	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
+	gtk_tree_view_column_set_fixed_width(column, 130);
+	/* gtk_tree_view_column_set_resizable(column, TRUE); */
+	gtk_tree_view_append_column (GTK_TREE_VIEW (tree), column);
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree)),
+		 GTK_SELECTION_MULTIPLE);
+	gtk_container_add(GTK_CONTAINER(win), tree);
+	gtk_widget_show(tree);
+
+	hbox = gtk_hbutton_box_new();
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	button = gtk_button_new_with_label("Add New");
-	g_signal_connect(GTK_OBJECT(button), "clicked",
-			   G_CALLBACK(list_add_new), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
-	gtk_widget_set_usize(button, 100, 0);
-	gtk_widget_show(button);
-
-	button = gtk_button_new_with_label("Delete");
-	g_signal_connect(GTK_OBJECT(button), "clicked",
+	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	g_signal_connect(G_OBJECT(button), "clicked",
 			   G_CALLBACK(list_delete), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
-	gtk_widget_set_usize(button, 100, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
+
+	g_signal_connect(G_OBJECT(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree))),
+		"changed", G_CALLBACK(on_selection_changed), button);
+
 	gtk_widget_show(button);
 
-	button = gtk_button_new_with_label("Cancel");
-	g_signal_connect(GTK_OBJECT(button), "clicked",
-			   G_CALLBACK(close_config), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
-	gtk_widget_set_usize(button, 100, 0);
-	gtk_widget_show(button);
-
-	button = gtk_button_new_with_label("Save");
-	g_signal_connect(GTK_OBJECT(button), "clicked",
-			   G_CALLBACK(save_list), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
-	gtk_widget_set_usize(button, 100, 0);
-	gtk_widget_show(button);
+	vbox = make_frame(ret, _("Add a new text replacement"));
+	gtk_widget_set_size_request(vbox, 300, -1);
 
 	hbox = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(vbox), hbox, 0, 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
+	
+	label = gtk_label_new_with_mnemonic(_("You _type:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	bad_entry = gtk_entry_new_with_max_length(40);
-	gtk_widget_set_usize(bad_entry, 96, 0);
-	g_signal_connect(GTK_OBJECT(bad_entry), "changed",
-			   G_CALLBACK(bad_changed), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), bad_entry, 0, 0, 0);
+	bad_entry = gtk_entry_new();
+	gtk_entry_set_max_length(GTK_ENTRY(bad_entry), 40);
+	gtk_box_pack_start(GTK_BOX(hbox), bad_entry, TRUE, TRUE, 0);
+	gtk_size_group_add_widget(sg, bad_entry);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), bad_entry);
 	gtk_widget_show(bad_entry);
 
-	good_entry = gtk_entry_new_with_max_length(255);
-	g_signal_connect(GTK_OBJECT(good_entry), "changed",
-			   G_CALLBACK(good_changed), NULL);
-	gtk_container_add(GTK_CONTAINER(hbox), good_entry);
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new_with_mnemonic(_("You _send:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	good_entry = gtk_entry_new();
+	gtk_entry_set_max_length(GTK_ENTRY(good_entry), 255);
+	gtk_box_pack_start(GTK_BOX(hbox), good_entry, TRUE, TRUE, 0);
+	gtk_size_group_add_widget(sg, good_entry);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), good_entry);
 	gtk_widget_show(good_entry);
 
-	while (w) {
-		r = (struct replace_words *)(w->data);
-		pair[0] = r->bad;
-		pair[1] = r->good;
-		gtk_clist_append(GTK_CLIST(list), pair);
-		w = w->next;
-	}
+	hbox = gtk_hbutton_box_new();
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			   G_CALLBACK(list_add_new), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(bad_entry), "changed", G_CALLBACK(on_entry_changed), button);
+	g_signal_connect(G_OBJECT(good_entry), "changed", G_CALLBACK(on_entry_changed), button);
+	gtk_widget_set_sensitive(button, FALSE);
+	gtk_widget_show(button);
+
 
 	gtk_widget_show_all(ret);
 	return ret;
