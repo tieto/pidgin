@@ -24,6 +24,7 @@
 #include "accountopt.h"
 #include "md5.h"
 #include "profile.h"
+#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -83,6 +84,51 @@ typedef struct
 #define TREPIA_SERVER    "trepia.com"
 #define TREPIA_PORT       8201
 #define TREPIA_REG_PORT   8209
+
+static const char alphabet[] =
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	"0123456789+/";
+
+static char *
+base64_enc(const char *data, int len)
+{
+	char *dest;
+	char *buf;
+
+	buf = dest = g_malloc(4 * len / 3 + 4);
+
+	/* Encode 3 bytes at a time */
+	while (len >= 3) {
+		buf[0] = alphabet[(data[0] >> 2) & 0x3F];
+		buf[1] = alphabet[((data[0] << 4) & 0x30) | ((data[1] >> 4) & 0x0F)];
+		buf[2] = alphabet[((data[1] << 2) & 0x3C) | ((data[2] >> 6) & 0x03)];
+		buf[3] = alphabet[data[2] & 0x3F];
+		data += 3;
+		buf += 4;
+		len -= 3;
+	}
+
+	if (len > 0) {
+		buf[0] = alphabet[(data[0] >> 2) & 0x3F];
+		buf[1] = alphabet[(data[0] << 4) & 0x30];
+
+		if (len > 1) {
+			buf[1] += (data[1] >> 4) & 0x0F;
+			buf[2] = alphabet[(data[1] << 2) & 0x3C];
+		}
+
+		else
+			buf[2] = '=';
+
+		buf[3] = '=';
+		buf += 4;
+	}
+
+	*buf = '\0';
+
+	return dest;
+}
+
 
 static int
 trepia_write(int fd, const char *data, size_t len)
@@ -1100,6 +1146,41 @@ trepia_buddy_free(struct buddy *b)
 }
 
 static void
+trepia_set_buddy_icon(GaimConnection *gc, const char *filename)
+{
+	TrepiaSession *session = gc->proto_data;
+	struct stat sb;
+
+	if (!stat(filename, &sb)) {
+		FILE *fp;
+
+		if ((fp = fopen(filename, "rb")) != NULL) {
+			char *buf = g_malloc(sb.st_size + 1);
+			char *temp;
+			char *out_buf;
+
+			fread(buf, 1, sb.st_size, fp);
+
+			buf[sb.st_size] = '\0';
+
+			temp = base64_enc(buf, sb.st_size);
+
+			out_buf = g_strdup_printf("<K><m>%s</m></K>", temp);
+
+			g_free(temp);
+			g_free(buf);
+
+			fclose(fp);
+
+			if (trepia_write(session->fd, out_buf, strlen(out_buf)) < 0) {
+				gaim_connection_error(session->gc, _("Write error"));
+				return;
+			}
+		}
+	}
+}
+
+static void
 trepia_register_user(GaimAccount *account)
 {
 #if 0
@@ -1164,7 +1245,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	trepia_buddy_free,
 	NULL,
-	NULL
+	NULL,
+	trepia_set_buddy_icon
 };
 
 static GaimPluginInfo info =
