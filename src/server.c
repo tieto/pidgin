@@ -44,7 +44,7 @@ void serv_login(struct aim_user *user)
 {
 	struct prpl *p = find_prpl(user->protocol);
 	
-	if (user->gc != NULL)
+	if (user->gc != NULL || p == NULL)
 		return;
 
 #ifdef GAIM_PLUGINS
@@ -59,7 +59,7 @@ void serv_login(struct aim_user *user)
 	}
 #endif
 
-	if (p && p->login) {
+	if (p->login) {
 		if (!strlen(user->password) && !(p->options & OPT_PROTO_NO_PASSWORD)) {
 			do_error_dialog(_("Please enter your password"), NULL, GAIM_ERROR);
 			return;
