@@ -67,6 +67,7 @@ typedef enum {
 	GTK_IMHTML_LINK =      1 << 8,
 	GTK_IMHTML_IMAGE =     1 << 9,
 	GTK_IMHTML_SMILEY =    1 << 10,
+	GTK_IMHTML_LINKDESC =  1 << 11,
 	GTK_IMHTML_ALL =      -1
 } GtkIMHtmlButtons;
 

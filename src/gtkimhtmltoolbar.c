@@ -358,7 +358,10 @@ do_insert_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
 	const char *url, *description;
 
 	url         = gaim_request_fields_get_string(fields, "url");
-	description = gaim_request_fields_get_string(fields, "description");
+	if (GTK_IMHTML(toolbar->imhtml)->format_functions & GTK_IMHTML_LINKDESC)
+		description = gaim_request_fields_get_string(fields, "description");
+	else
+		description = NULL;
 
 	if (description == NULL)
 		description = url;
@@ -379,6 +382,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		GaimRequestFields *fields;
 		GaimRequestFieldGroup *group;
 		GaimRequestField *field;
+		char *msg;
 
 		fields = gaim_request_fields_new();
 
@@ -389,20 +393,27 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		gaim_request_field_set_required(field, TRUE);
 		gaim_request_field_group_add_field(group, field);
 
-		field = gaim_request_field_string_new("description", _("_Description"),
-						      NULL, FALSE);
-		gaim_request_field_group_add_field(group, field);
+		if(GTK_IMHTML(toolbar->imhtml)->format_functions & GTK_IMHTML_LINKDESC) {
+			field = gaim_request_field_string_new("description", _("_Description"),
+							      NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+			msg = g_strdup(_("Please enter the URL and description of the "
+							 "link that you want to insert. The description "
+							 "is optional."));
+		} else {
+			msg = g_strdup(_("Please enter the URL of the "
+									"link that you want to insert."));
+		}
 
 		toolbar->link_dialog =
 			gaim_request_fields(toolbar, _("Insert Link"),
 					    NULL,
-					    _("Please enter the URL and description of the "
-					      "link that you want to insert. The description "
-					      "is optional."),
+						msg,
 					    fields,
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
 					    toolbar);
+		g_free(msg);
 	} else {
 		close_link_dialog(toolbar);
 	}

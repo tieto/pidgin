@@ -2416,6 +2416,8 @@ gray_stuff_out(GaimConversation *conv)
 				buttons &= ~GTK_IMHTML_GROW;
 				buttons &= ~GTK_IMHTML_SHRINK;
 			}
+			if (gc->flags & GAIM_CONNECTION_NO_URLDESC)
+				buttons &= ~GTK_IMHTML_LINKDESC;
 		} else {
 			buttons = GTK_IMHTML_SMILEY;
 		}
