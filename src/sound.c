@@ -27,6 +27,9 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/signal.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #ifdef ESD_SOUND
 #include <esd.h>
@@ -56,9 +59,18 @@ static void play_audio(char *data, int size)
 
 static int can_play_audio()
 {
-        /* FIXME check for write access and such. */
-        return 1;
-
+	struct stat *stat_buf;
+	uid_t user = getuid();
+	gid_t group = getgid(); 
+	if (stat("/dev/audio", stat_buf))
+		return 0;
+	if (user == stat_buf->st_uid && stat_buf->st_mode & S_IWUSR)
+		return 1;
+	if (group == stat_buf->st_gid && stat_buf->st_mode & S_IWGRP)
+		return 1;
+	if (stat_buf->st_mode & S_IWOTH)
+		return 1;
+	return 0;
 }
 
 
