@@ -2800,6 +2800,7 @@ void show_conv(struct conversation *c)
 /*		gtk_notebook_insert_page(GTK_NOTEBOOK(convo_notebook), cont, gtk_label_new(c->name),*/
 		tabby = gtk_hbox_new(FALSE, 0);
 		c->close = gtk_button_new();
+		gtk_widget_set_size_request(GTK_WIDGET(c->close), 16, 16);
 		gtk_container_add(GTK_CONTAINER(c->close), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
 		gtk_button_set_relief(GTK_BUTTON(c->close), GTK_RELIEF_NONE);
 		c->tab_label = gtk_label_new(c->name);

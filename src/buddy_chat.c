@@ -1250,6 +1250,7 @@ void show_new_buddy_chat(struct conversation *b)
 
 		tabby = gtk_hbox_new(FALSE, 0);
 		b->close = gtk_button_new();
+		gtk_widget_set_size_request(GTK_WIDGET(b->close), 16, 16);
 		gtk_container_add(GTK_CONTAINER(b->close), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
 		gtk_button_set_relief(GTK_BUTTON(b->close), GTK_RELIEF_NONE);
 		b->tab_label = gtk_label_new(b->name);
