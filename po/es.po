@@ -27,7 +27,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "POT-Creation-Date: 2003-10-09 15:23-0700\n"
-"PO-Revision-Date: 2003-09-24 01:59+0200\n"
+"PO-Revision-Date: 2003-10-28 20:12+0100\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  <es@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -91,7 +91,6 @@ msgid "Auto-login"
 msgstr "Conectarse automáticamente"
 
 #: plugins/docklet/docklet.c:117
-#, fuzzy
 msgid "New Message..."
 msgstr "Nuevo mensaje..."
 
@@ -494,14 +493,12 @@ msgid "_IM windows"
 msgstr "Ventanas de _mensajes"
 
 #: plugins/notify.c:583
-#, fuzzy
 msgid "C_hat windows"
 msgstr "Ventanas de _chat"
 
 #: plugins/notify.c:590
-#, fuzzy
 msgid "_Focused windows"
-msgstr "Ventanas de _mensajes"
+msgstr "Ventanas _enfocadas"
 
 #. ---------- "Notification Methods" ----------
 #: plugins/notify.c:598
@@ -519,9 +516,8 @@ msgstr "Insertar la c_uenta de los nuevos mensajes en el título de la ventana"
 
 #. Urgent method button
 #: plugins/notify.c:633
-#, fuzzy
 msgid "Set window manager \"_URGENT\" hint"
-msgstr "Activar pista \"_URGENTE\" del gestor de ventanas"
+msgstr "Activar pista «_URGENTE» del gestor de ventanas"
 
 #. ---------- "Notification Removals" ----------
 #: plugins/notify.c:640
@@ -530,7 +526,6 @@ msgstr "Eliminado de la Notificación"
 
 #. Remove on focus button
 #: plugins/notify.c:646
-#, fuzzy
 msgid "Remove when conversation window _gains focus"
 msgstr "Eliminar cuando la ventana de la conversación obtiene el _foco"
 
@@ -546,15 +541,13 @@ msgstr "Eliminar cuando se _escriba en la ventana de la conversación"
 
 #. Remove on message send button
 #: plugins/notify.c:670
-#, fuzzy
 msgid "Remove when a _message gets sent"
-msgstr "Quitar mensaje de ausencia"
+msgstr "Eliminar cuando se envíe un _mensaje"
 
 #. Remove on conversation switch button
 #: plugins/notify.c:679
-#, fuzzy
 msgid "Remove on conversation ta_b switch"
-msgstr "Eliminar cuando la ventana de la conversación _recibe un click"
+msgstr "Eliminar al cambiar de _pestaña"
 
 #. *< api_version
 #. *< type
@@ -688,14 +681,14 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl-gnutls.c:190
 msgid "GNUTLS"
-msgstr ""
+msgstr "GNUTLS"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/ssl/ssl-gnutls.c:193 plugins/ssl/ssl-gnutls.c:195
 msgid "Provides SSL support through GNUTLS."
-msgstr ""
+msgstr "Provee soporte SSL a través de GNUTLS"
 
 #. *< api_version
 #. *< type
@@ -706,14 +699,14 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl-nss.c:287
 msgid "NSS"
-msgstr ""
+msgstr "NSS"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/ssl/ssl-nss.c:290 plugins/ssl/ssl-nss.c:292
 msgid "Provides SSL support through Mozilla NSS."
-msgstr ""
+msgstr "Provee soporte SSL a través del NSS de Mozilla"
 
 #. *< api_version
 #. *< type
@@ -724,14 +717,14 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl.c:91
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/ssl/ssl.c:94 plugins/ssl/ssl.c:96
 msgid "Provides a wrapper around SSL support libraries."
-msgstr ""
+msgstr "Provee un recubrimiento a través de las librerías de soporte de SSL."
 
 #: plugins/statenotify.c:30 src/gtkpounce.c:843
 #, c-format
@@ -1145,31 +1138,25 @@ msgid "Fill out all fields completely."
 msgstr "Rellene todos los campos completamente."
 
 #: src/account.c:298
-#, fuzzy
 msgid "Original password"
 msgstr "Contraseña original"
 
 #: src/account.c:304
-#, fuzzy
 msgid "New password"
 msgstr "Nueva contraseña"
 
 #: src/account.c:310
-#, fuzzy
 msgid "New password (again)"
 msgstr "Nueva contraseña (de nuevo)"
 
 #: src/account.c:315
-#, fuzzy, c-format
+#, c-format
 msgid "Change password for %s"
 msgstr "Cambiando contraseña de %s:"
 
 #: src/account.c:321
-#, fuzzy
 msgid "Please enter your current password and your new password."
-msgstr ""
-"Por favor, indique la contraseña de %s.\n"
-"\n"
+msgstr "Por favor, indique su contraseña actual y la nueva contraseña."
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
@@ -1209,9 +1196,9 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: src/account.c:351
-#, fuzzy, c-format
+#, c-format
 msgid "Change user information for %s"
-msgstr "Obtener la información del usuario"
+msgstr "Cambiar la información del usuario %s"
 
 #: src/account.c:358 src/dialogs.c:893 src/dialogs.c:1634 src/dialogs.c:2299
 #: src/gtkrequest.c:209 src/protocols/jabber/buddy.c:519
@@ -2414,9 +2401,9 @@ msgid "Would you like to overwrite it?"
 msgstr "¿Quiere sobreescribirlo?"
 
 #: src/gtkconv.c:241
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to store image: %s\n"
-msgstr "No se pudo leer archivo %s."
+msgstr "No se pudo guardar la imagen: %s\\n"
 
 #: src/gtkconv.c:303
 msgid "Gaim - Insert Image"
@@ -2870,9 +2857,8 @@ msgid "%s wants to send you %s (%s)"
 msgstr "%s quiere enviarle %s (%s)"
 
 #: src/gtkimhtml.c:535
-#, fuzzy
 msgid "_Copy E-Mail Address"
-msgstr "Correo electrónico"
+msgstr "_Copiar dirección de correo electrónico"
 
 #: src/gtkimhtml.c:547
 msgid "_Copy Link Location"
@@ -3595,7 +3581,6 @@ msgid "_Only send auto-response when idle"
 msgstr "Sólo enviar la respuesta automática cuando esté _inactivo"
 
 #: src/gtkprefs.c:1489
-#, fuzzy
 msgid "Send auto-response in _active conversations"
 msgstr "Enviar la respuesta automática en conversaciones a_ctivas"
 
@@ -4296,9 +4281,8 @@ msgstr "Ciudad"
 #: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2581
 #: src/protocols/yahoo/yahoo.c:2603 src/protocols/yahoo/yahoo.c:2623
 #: src/protocols/yahoo/yahoo.c:2810 src/protocols/zephyr/zephyr.c:355
-#, fuzzy
 msgid "Buddy Information"
-msgstr "Información de trabajo"
+msgstr "Información de amigos"
 
 #: src/protocols/gg/gg.c:741
 msgid "There is no Buddy List stored on the Gadu-Gadu server."
@@ -4515,25 +4499,24 @@ msgstr "No hay tema establecido"
 
 #: src/protocols/irc/irc.c:64
 msgid "Error displaying MOTD"
-msgstr ""
+msgstr "Error al mostrar el MOTD"
 
 #: src/protocols/irc/irc.c:64
-#, fuzzy
 msgid "No MOTD available"
-msgstr "No disponible"
+msgstr "No hay MOTD disponible"
 
 #: src/protocols/irc/irc.c:65
 msgid "There is no MOTD associated with this connection."
-msgstr ""
+msgstr "No hay MOTD asociado con esta conexión."
 
 #: src/protocols/irc/irc.c:68
 #, c-format
 msgid "MOTD for %s"
-msgstr ""
+msgstr "MOTD para %s"
 
 #: src/protocols/irc/irc.c:137
 msgid "View MOTD"
-msgstr ""
+msgstr "Ver MOTD"
 
 #: src/protocols/irc/irc.c:156
 msgid "Channel:"
@@ -4627,9 +4610,9 @@ msgid "<br><b>Defining adjective:</b> Glorious<br>"
 msgstr "<br><b>Adjetivo que lo define:</b> Glorioso</b>"
 
 #: src/protocols/irc/msgs.c:219
-#, fuzzy, c-format
+#, c-format
 msgid "Buddy Information for %s"
-msgstr "Información ICQ para %s:"
+msgstr "Información de amigo para %s:"
 
 #: src/protocols/irc/msgs.c:247
 #, c-format
@@ -4758,50 +4741,44 @@ msgstr "Desconectado"
 
 #: src/protocols/jabber/auth.c:50
 msgid "Server requires SSL for login"
-msgstr ""
+msgstr "El servidor require SSL para conectarse"
 
 #: src/protocols/jabber/auth.c:58 src/protocols/jabber/auth.c:342
 #: src/protocols/jabber/auth.c:354
-#, fuzzy
 msgid "Invalid response from server"
 msgstr "Respuesta inválida del servidor."
 
 #: src/protocols/jabber/auth.c:77 src/protocols/jabber/auth.c:124
 msgid "Server does not use any supported authentication method"
-msgstr ""
+msgstr "El servidor no usa un método de autenticación conocido."
 
 #: src/protocols/jabber/auth.c:327
-#, fuzzy
 msgid "Invalid challenge from server"
-msgstr "Respuesta inválida del servidor."
+msgstr "Desafío inválido del servidor."
 
 #: src/protocols/jabber/auth.c:357
-#, fuzzy
 msgid "Bad Protocol"
-msgstr "Protocolo"
+msgstr "Protocolo erróneo"
 
 #: src/protocols/jabber/auth.c:360
 msgid "Encryption Required"
-msgstr ""
+msgstr "Cifrado necesario"
 
 #: src/protocols/jabber/auth.c:363
-#, fuzzy
 msgid "Invalid authzid"
-msgstr "Grupo inválido"
+msgstr "Authzid inválido"
 
 #: src/protocols/jabber/auth.c:366
-#, fuzzy
 msgid "Invalid Mechanism"
-msgstr "Nombre de usuario no válido"
+msgstr "Mecanismo inválido"
 
 #: src/protocols/jabber/auth.c:368
-#, fuzzy
 msgid "Invalid Realm"
-msgstr "Nombre de usuario no válido"
+msgstr "Zona inválida"
 
 #: src/protocols/jabber/auth.c:371
 msgid "Mechanism Too Weak"
-msgstr ""
+msgstr "Mecanismo demasiado débil"
 
 #: src/protocols/jabber/auth.c:374 src/protocols/jabber/jabber.c:130
 #: src/protocols/jabber/jabber.c:806 src/protocols/jabber/jabber.c:856
@@ -4810,14 +4787,12 @@ msgid "Not Authorized"
 msgstr "No Autorizado"
 
 #: src/protocols/jabber/auth.c:377
-#, fuzzy
 msgid "Temporary Authentication Failure"
-msgstr "Falló la Autorización"
+msgstr "Falló temporal de la autenticación"
 
 #: src/protocols/jabber/auth.c:379
-#, fuzzy
 msgid "Authentication Failure"
-msgstr "Falló la Autorización"
+msgstr "Falló de autenticación"
 
 #: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:603
 msgid "Full Name"
@@ -4931,22 +4906,19 @@ msgstr "Calle"
 
 #: src/protocols/jabber/buddy.c:651
 msgid "P.O. Box"
-msgstr ""
+msgstr "Código postal"
 
 #: src/protocols/jabber/buddy.c:757
-#, fuzzy
 msgid "Photo"
-msgstr "Puerto"
+msgstr "Foto"
 
 #: src/protocols/jabber/buddy.c:757
-#, fuzzy
 msgid "Logo"
-msgstr "Historial"
+msgstr "Logotipo"
 
 #: src/protocols/jabber/buddy.c:771
-#, fuzzy
 msgid "Jabber Profile"
-msgstr "Fijar perfil"
+msgstr "Perfil jabber"
 
 #: src/protocols/jabber/buddy.c:866
 msgid "Un-hide From"
@@ -4978,115 +4950,103 @@ msgstr "Gestor:"
 
 #: src/protocols/jabber/jabber.c:80
 msgid "Error initializing session"
-msgstr ""
+msgstr "Error al inicializar la sesión"
 
 #: src/protocols/jabber/jabber.c:105
 msgid "Bad Format"
-msgstr ""
+msgstr "Formato erróneo"
 
 #: src/protocols/jabber/jabber.c:107
 msgid "Bad Namespace Prefix"
-msgstr ""
+msgstr "Prefijo del espacio de nombres erróneo"
 
 #: src/protocols/jabber/jabber.c:110
-#, fuzzy
 msgid "Resource Conflict"
-msgstr "Eliminar contacto"
+msgstr "Conflicto de recurso"
 
 #: src/protocols/jabber/jabber.c:112
-#, fuzzy
 msgid "Connection Timeout"
-msgstr "Se perdió la conexión"
+msgstr "Expiró la conexión"
 
 #: src/protocols/jabber/jabber.c:114
 msgid "Host Gone"
-msgstr ""
+msgstr "Servidor desaparecido"
 
 #: src/protocols/jabber/jabber.c:116
-#, fuzzy
 msgid "Host Unknown"
-msgstr "Desconocido"
+msgstr "Servidor desconocido"
 
 #: src/protocols/jabber/jabber.c:118
-#, fuzzy
 msgid "Improper Addressing"
-msgstr "Domicilio"
+msgstr "Direccionamiento incorrecto"
 
 #: src/protocols/jabber/jabber.c:120
-#, fuzzy
 msgid "Internal Server Error"
 msgstr "Error interno del servidor"
 
 #: src/protocols/jabber/jabber.c:122
-#, fuzzy
 msgid "Invalid ID"
-msgstr "Usuario no válido"
+msgstr "ID no válido"
 
 #: src/protocols/jabber/jabber.c:124
-#, fuzzy
 msgid "Invalid Namespace"
-msgstr "Usuario no válido"
+msgstr "Espacio de nombres no válido"
 
 #: src/protocols/jabber/jabber.c:126
-#, fuzzy
 msgid "Invalid XML"
-msgstr "Usuario no válido"
+msgstr "XML inválido"
 
 #: src/protocols/jabber/jabber.c:128
 msgid "Non-matching Hosts"
-msgstr ""
+msgstr "No existen servidores coincidentes"
 
 #: src/protocols/jabber/jabber.c:132
 msgid "Policy Violation"
-msgstr ""
+msgstr "Violación de la política"
 
 #: src/protocols/jabber/jabber.c:134
-#, fuzzy
 msgid "Remote Connection Failed"
-msgstr "Control remoto"
+msgstr "Falló el control remoto"
 
 #: src/protocols/jabber/jabber.c:136
-#, fuzzy
 msgid "Resource Constraint"
-msgstr "Eliminar contacto"
+msgstr "Restricción de recursos"
 
 #: src/protocols/jabber/jabber.c:138
 msgid "Restricted XML"
-msgstr ""
+msgstr "XML restringido"
 
 #: src/protocols/jabber/jabber.c:140
 msgid "See Other Host"
-msgstr ""
+msgstr "Ver otros servidores"
 
 #: src/protocols/jabber/jabber.c:142
-#, fuzzy
 msgid "System Shutdown"
-msgstr "Registros del Sistema"
+msgstr "Parada del sistema"
 
 #: src/protocols/jabber/jabber.c:144
 msgid "Undefined Condition"
-msgstr ""
+msgstr "Condición no definida"
 
 #: src/protocols/jabber/jabber.c:146
 msgid "Unsupported Condition"
-msgstr ""
+msgstr "Condición no soportada"
 
 #: src/protocols/jabber/jabber.c:148
 msgid "Unsupported Stanza Type"
-msgstr ""
+msgstr "Typo de «stanza» no soportado"
 
 #: src/protocols/jabber/jabber.c:150
 msgid "Unsupported Version"
-msgstr ""
+msgstr "Versión no soportada"
 
 #: src/protocols/jabber/jabber.c:152
 msgid "XML Not Well Formed"
-msgstr ""
+msgstr "XML malformado"
 
 #: src/protocols/jabber/jabber.c:154
-#, fuzzy
 msgid "Stream Error"
-msgstr "Error interno"
+msgstr "Error de flujo"
 
 #: src/protocols/jabber/jabber.c:232 src/protocols/msn/msn.c:82
 #: src/protocols/msn/msn.c:102 src/protocols/msn/msn.c:160
@@ -5111,7 +5071,6 @@ msgid "Write error"
 msgstr "Error de escritura"
 
 #: src/protocols/jabber/jabber.c:269 src/protocols/jabber/jabber.c:289
-#, fuzzy
 msgid "Read Error"
 msgstr "Error de lectura"
 
@@ -5121,42 +5080,36 @@ msgid "Unable to create socket"
 msgstr "No se pudo crear el socket"
 
 #: src/protocols/jabber/jabber.c:419
-#, fuzzy, c-format
+#, c-format
 msgid "Registration of %s@%s successful"
-msgstr "¡Registro en el servidor efectuado exitosamente!"
+msgstr "¡Registro de %s@%s efectuado con éxito!"
 
 #: src/protocols/jabber/jabber.c:421 src/protocols/jabber/jabber.c:422
-#, fuzzy
 msgid "Registration Successful"
-msgstr "¡Registro en el servidor efectuado exitosamente!"
+msgstr "¡Éxito en el registro!"
 
 #: src/protocols/jabber/jabber.c:431
-#, fuzzy
 msgid "Unknown Error"
 msgstr "Error desconocido"
 
 #: src/protocols/jabber/jabber.c:434
 #, c-format
 msgid "Registration of %s@%s failed: %s"
-msgstr ""
+msgstr "Falló el registro de %s@%s: %s"
 
 #: src/protocols/jabber/jabber.c:436 src/protocols/jabber/jabber.c:437
-#, fuzzy
 msgid "Registration Failed"
-msgstr "Error de registro"
+msgstr "Falló el registro"
 
 #: src/protocols/jabber/jabber.c:524 src/protocols/jabber/jabber.c:525
-#, fuzzy
 msgid "Already Registered"
-msgstr "Ya está en lista"
+msgstr "Ya está registrado"
 
 #: src/protocols/jabber/jabber.c:538 src/protocols/jabber/jabber.c:951
-#, fuzzy
 msgid "Password"
-msgstr "Contraseña:"
+msgstr "Contraseña"
 
 #: src/protocols/jabber/jabber.c:549
-#, fuzzy
 msgid "E-Mail"
 msgstr "Correo Electrónico"
 
@@ -5174,17 +5127,16 @@ msgid "State"
 msgstr "Estado"
 
 #: src/protocols/jabber/jabber.c:589
-#, fuzzy
 msgid "Phone"
-msgstr "Ninguno"
+msgstr "Teléfono"
 
 #: src/protocols/jabber/jabber.c:607
 msgid "Please fill out the information below to register your new account."
-msgstr ""
+msgstr "Por favor rellene la información abajo indicada para registrar su nueva cuenta."
 
 #: src/protocols/jabber/jabber.c:610 src/protocols/jabber/jabber.c:611
 msgid "Register New Jabber Account"
-msgstr ""
+msgstr "Registrando nueva cuenta de Jabber"
 
 #: src/protocols/jabber/jabber.c:710 src/protocols/msn/dispatch.c:219
 #: src/protocols/msn/msn.c:461 src/protocols/napster/napster.c:487
@@ -5194,7 +5146,7 @@ msgstr "Conectando"
 
 #: src/protocols/jabber/jabber.c:714
 msgid "Initializing Stream"
-msgstr ""
+msgstr "Inicializando flujo"
 
 #: src/protocols/jabber/jabber.c:720
 msgid "Authenticating"
@@ -5202,7 +5154,7 @@ msgstr "Autenticando"
 
 #: src/protocols/jabber/jabber.c:728
 msgid "Re-initializing Stream"
-msgstr ""
+msgstr "Reinicializando flujo"
 
 #: src/protocols/jabber/jabber.c:851 src/protocols/jabber/jabber.c:902
 #: src/protocols/jabber/presence.c:257
@@ -5226,39 +5178,33 @@ msgid "Do Not Disturb"
 msgstr "No molestar"
 
 #: src/protocols/jabber/jabber.c:884
-#, fuzzy
 msgid "Password Changed"
-msgstr "Cambio con éxito de la contraseña"
+msgstr "Contraseña modificada"
 
 #: src/protocols/jabber/jabber.c:885
-#, fuzzy
 msgid "Your password has been changed."
-msgstr "No se pudo cambiar la contraseña"
+msgstr "Su contraseña ha sido modificado."
 
 #: src/protocols/jabber/jabber.c:895
-#, fuzzy, c-format
+#, c-format
 msgid "Error changing password: %s"
-msgstr "Cambiando contraseña de %s:"
+msgstr "Error al cambiar la contraseña: %s"
 
 #: src/protocols/jabber/jabber.c:899
-#, fuzzy
 msgid "Unknown error occurred changing password"
-msgstr "No se pudo cambiar la contraseña"
+msgstr "Ocurrió un error desconocido al cambiar la contraseña"
 
 #: src/protocols/jabber/jabber.c:956
-#, fuzzy
 msgid "Password (again)"
-msgstr "Nueva contraseña (de nuevo)"
+msgstr "Contraseña (de nuevo)"
 
 #: src/protocols/jabber/jabber.c:961 src/protocols/jabber/jabber.c:962
-#, fuzzy
 msgid "Change Jabber Password"
-msgstr "Cambiar contraseña"
+msgstr "Cambiar contraseña de Jabber"
 
 #: src/protocols/jabber/jabber.c:962
-#, fuzzy
 msgid "Please enter your new password"
-msgstr "Por favor, indique su contraseña"
+msgstr "Por favor, indique su nueva contraseña"
 
 #. *< api_version
 #. *< type
@@ -5276,41 +5222,39 @@ msgstr "Plugin de protocolo Jabber"
 
 #: src/protocols/jabber/jabber.c:1083
 msgid "Force Old SSL"
-msgstr ""
+msgstr "Forzar SSL antiguo"
 
 #: src/protocols/jabber/jabber.c:1091
 msgid "Connect server"
 msgstr "Conectar al servidor"
 
 #: src/protocols/jabber/message.c:95
-#, fuzzy, c-format
+#, c-format
 msgid "Message from %s"
-msgstr "Registro de Mensajes"
+msgstr "Mensaje de %s"
 
 #: src/protocols/jabber/message.c:178
 #, c-format
 msgid "Message delivery to %s failed: %s"
-msgstr ""
+msgstr "Falló el envío de mensaje a %s: %s"
 
 #: src/protocols/jabber/message.c:181
-#, fuzzy
 msgid "Jabber Message Error"
-msgstr "Error Jabber"
+msgstr "Mensaje de error de Jabber"
 
 #: src/protocols/jabber/message.c:244
 #, c-format
 msgid " (Code %s)"
-msgstr ""
+msgstr " (Código %s)"
 
 #: src/protocols/jabber/parser.c:129
-#, fuzzy
 msgid "XML Parse error"
-msgstr "Error de escritura"
+msgstr "Error de tratamiento XML"
 
 #: src/protocols/jabber/presence.c:167
 #, c-format
 msgid "%s (Code %s)"
-msgstr ""
+msgstr "%s (Código %s)"
 
 #: src/protocols/jabber/presence.c:172
 msgid "Unknown Error in presence"
@@ -5403,7 +5347,6 @@ msgid "Fully Qualified Domain Name missing"
 msgstr "Falta un nombre de dominio totalmante cualificado"
 
 #: src/protocols/msn/error.c:47
-#, fuzzy
 msgid "Already Logged In"
 msgstr "Ya está conectado"
 
@@ -5802,13 +5745,13 @@ msgid "Homepage"
 msgstr "Página personal"
 
 #: src/protocols/msn/msn.c:1491 src/protocols/yahoo/yahoo.c:2817
-#, fuzzy, c-format
+#, c-format
 msgid "User information for %s unavailable"
-msgstr "Información de usuario de %s no disponible:"
+msgstr "Información de usuario de %s no disponible"
 
 #: src/protocols/msn/msn.c:1493 src/protocols/yahoo/yahoo.c:2819
 msgid "The user's profile is empty."
-msgstr ""
+msgstr "El perfil del usuario está vacío."
 
 #. *< api_version
 #. *< type
@@ -5921,9 +5864,9 @@ msgstr[0] ""
 "Después de que se hayan realizado las tareas de mantenimiento debería poder "
 "conectarse con éxito de nuevo."
 msgstr[1] ""
-"El servidor de MSN se desconectará para tareas de mantenimiento en %d minuto/"
-"s. Se le desconectará automáticamente en ese momento. Por favor, termine "
-"cualquier conversación activa.\n"
+"El servidor de MSN se desconectará para tareas de mantenimiento en %d "
+"minuto/s. Se le desconectará automáticamente en ese momento. Por favor, "
+" termine cualquier conversación activa.\n"
 "\n"
 "Después de que se hayan realizado las tareas de mantenimiento debería poder "
 "conectarse con éxito de nuevo."
@@ -5946,11 +5889,9 @@ msgid "Unable to read header from server"
 msgstr "No se pudieron leer las cabeceras del servidor"
 
 #: src/protocols/napster/napster.c:242
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read message from server.  Command is %hd, length is %hd."
-msgstr ""
-"No se pudieron leer los mensajes del servidor. La orden es %hd, la longitud %"
-"hd."
+msgstr "No se pudieron leer los mensajes del servidor. La orden es %hd, la longitud es %hd."
 
 #: src/protocols/napster/napster.c:303
 #, c-format
@@ -6289,7 +6230,7 @@ msgid "Authorization Request"
 msgstr "Solicitud de autorización"
 
 #: src/protocols/oscar/oscar.c:2619
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
 "following reason:\n"
@@ -6305,10 +6246,9 @@ msgstr "Autorización ICQ denegada."
 
 #. Someone has granted you authorization
 #: src/protocols/oscar/oscar.c:2627
-#, fuzzy, c-format
+#, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
-msgstr ""
-"El usuario %u ha autorizado su petición de añadirlo a su lista de amigos."
+msgstr "El usuario %u ha autorizado su petición de añadirlo a su lista de amigos."
 
 #: src/protocols/oscar/oscar.c:2635
 #, c-format
@@ -6350,12 +6290,11 @@ msgstr ""
 "%s"
 
 #: src/protocols/oscar/oscar.c:2672
-#, fuzzy, c-format
+#, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "El usuario ICQ %u le ha enviado un amigo: %s (%s)"
 
 #: src/protocols/oscar/oscar.c:2678
-#, fuzzy
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "¿Desea añadir este amigo a su lista de amigos?"
 
@@ -6452,9 +6391,8 @@ msgid "Voice"
 msgstr "Voz"
 
 #: src/protocols/oscar/oscar.c:3073
-#, fuzzy
 msgid "AIM Direct IM"
-msgstr "MI Directo"
+msgstr "MI Directo AIM"
 
 #: src/protocols/oscar/oscar.c:3079 src/protocols/oscar/oscar.c:6167
 msgid "Get File"
@@ -6477,9 +6415,8 @@ msgid "Send Buddy List"
 msgstr "Enviar lista de amigos"
 
 #: src/protocols/oscar/oscar.c:3095
-#, fuzzy
 msgid "ICQ Direct Connect"
-msgstr "No se pudo conectar"
+msgstr "Conexión directa ICQ"
 
 #: src/protocols/oscar/oscar.c:3098
 msgid "AP User"
@@ -6518,27 +6455,27 @@ msgid "Secure IM"
 msgstr "MI segura"
 
 #: src/protocols/oscar/oscar.c:3151
-#, fuzzy, c-format
+#, c-format
 msgid "Username: <b>%s</b><br>\n"
-msgstr "Miembro desde: <b>%s</b><br>\n"
+msgstr "Nombre de usuario: <b>%s</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3152
-#, fuzzy, c-format
+#, c-format
 msgid "Warning Level: <b>%d%%</b><br>\n"
-msgstr "En línea desde: <b>%s</b><br>\n"
+msgstr "Nivel de aviso: <b>%d%%</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3155
-#, fuzzy, c-format
+#, c-format
 msgid "Online Since: <b>%s</b><br>\n"
 msgstr "En línea desde: <b>%s</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3159
-#, fuzzy, c-format
+#, c-format
 msgid "Member Since: <b>%s</b><br>\n"
 msgstr "Miembro desde: <b>%s</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3164
-#, fuzzy, c-format
+#, c-format
 msgid "Idle: <b>%s</b>"
 msgstr "Ausente: <b>%s</b>"
 
@@ -6639,9 +6576,8 @@ msgid "ICQ Info for %s"
 msgstr "Información ICQ para %s:"
 
 #: src/protocols/oscar/oscar.c:4040
-#, fuzzy
 msgid "Pop-Up Message"
-msgstr "Nuevo mensaje"
+msgstr "Mensaje pop-up"
 
 #: src/protocols/oscar/oscar.c:4061
 #, c-format
@@ -6884,7 +6820,7 @@ msgstr ""
 
 #. Granted
 #: src/protocols/oscar/oscar.c:5114
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr ""
 "El usuario %s ha autorizado su petición de añadirlo a su lista de amigos."
@@ -6895,14 +6831,13 @@ msgstr "Autorización aceptada"
 
 #. Denied
 #: src/protocols/oscar/oscar.c:5118
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
 "following reason:\n"
 "%s"
 msgstr ""
-"El usuario %s ha negado su petición de añadirlo a su lista de amigos por la "
-"siguiente razón:\n"
+"El usuario %s ha denegado su petición de añadirlo a su lista de amigos por la siguiente razón:\n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:5119
@@ -6934,9 +6869,8 @@ msgid "<b>Available:</b> "
 msgstr "<b>Disponible:</b> "
 
 #: src/protocols/oscar/oscar.c:5431
-#, fuzzy
 msgid "<b>Away Message:</b> "
-msgstr "Mensajes de ausencia"
+msgstr "<b>Mensajes de ausencia:</b>"
 
 #: src/protocols/oscar/oscar.c:5440
 msgid "<b>Status:</b> Not Authorized"
@@ -6964,14 +6898,12 @@ msgstr ""
 "privacidad.  ¿Quiere continuar?"
 
 #: src/protocols/oscar/oscar.c:6112
-#, fuzzy
 msgid "Buddy Comment:"
-msgstr "Nombre de _amigo:"
+msgstr "Comentario amigo:"
 
 #: src/protocols/oscar/oscar.c:6128
-#, fuzzy
 msgid "Edit Buddy Comment"
-msgstr "Editar aviso de amigo"
+msgstr "Editar comentario de amigo"
 
 #: src/protocols/oscar/oscar.c:6136
 msgid "Get Status Msg"
@@ -7020,22 +6952,20 @@ msgstr ""
 "del ratón sobre ellos y escogiendo \"Volver a pedir autorización.\""
 
 #: src/protocols/oscar/oscar.c:6319
-#, fuzzy
 msgid "Find Buddy by E-mail"
 msgstr "Encontrar un amigo por correo electrónico"
 
 #: src/protocols/oscar/oscar.c:6320
-#, fuzzy
 msgid "Search for a buddy by e-mail address"
-msgstr "Buscar amigo por correo electrónico"
+msgstr "Buscar amigo por la dirección correo electrónico"
 
 #: src/protocols/oscar/oscar.c:6321
 msgid "Type the e-mail address of the buddy you are searching for."
-msgstr ""
+msgstr "Escriba la dirección de correo electrónico del amigo que está buscando."
 
 #: src/protocols/oscar/oscar.c:6324
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 #: src/protocols/oscar/oscar.c:6337
 msgid "Available Message:"
@@ -7051,7 +6981,7 @@ msgstr "Cambiar contraseña (URL)"
 
 #: src/protocols/oscar/oscar.c:6437
 msgid "Configure IM Forwarding (URL)"
-msgstr ""
+msgstr "Configurar reenvío de MI (URL)"
 
 #: src/protocols/oscar/oscar.c:6448
 msgid "Format Screenname"
@@ -7097,7 +7027,7 @@ msgstr "Servidor de autenticación"
 
 #: src/protocols/oscar/oscar.c:6628
 msgid "Auth port"
-msgstr "Autorizar envío"
+msgstr "Puerto de autenticación"
 
 #: src/protocols/toc/toc.c:167
 #, c-format
@@ -7437,12 +7367,11 @@ msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
 "method.  This version of Gaim will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
-msgstr ""
+msgstr "El servidor de Yahoo ha solicitado el uso de un método de autenticación desconocido. Esta versión de Gaim posiblemente no sea capaz de conectarse a Yahoo. Compruebe %s para obtener una actualización."
 
 #: src/protocols/yahoo/yahoo.c:1384
-#, fuzzy
 msgid "Failed Yahoo! Authentication"
-msgstr "Autenticando"
+msgstr "Falló la autenticación en Yahoo!"
 
 #: src/protocols/yahoo/yahoo.c:1457
 #, c-format
@@ -7543,12 +7472,10 @@ msgstr ""
 "soportados actualmente.</b><br><br>\n"
 
 #: src/protocols/yahoo/yahoo.c:2600 src/protocols/yahoo/yahoo.c:2620
-#, fuzzy
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser<br>"
-msgstr ""
-"Si desea ver este perfil, deberá visitar el enlace con su navegador web"
+msgstr "Si desea ver este perfil, deberá visitar este enlace con su navegador web<br>"
 
 #: src/protocols/yahoo/yahoo.c:2619
 msgid ""
@@ -7831,13 +7758,12 @@ msgid "g003: Error opening connection.\n"
 msgstr "g003: Error abriendo la conexión. \n"
 
 #: src/win32/win32dep.c:474
-#, fuzzy
 msgid "Notification"
-msgstr "Notificación de Tipeo"
+msgstr "Notificación"
 
 #: src/win32/win32dep.c:475
 msgid "Moving Gaim user settings directory to:"
-msgstr ""
+msgstr "Moviendo el directorio de preferencias de usuario a:"
 
 #~ msgid "_Quote window title"
 #~ msgstr "_Entrecomillar el título de la ventana"
