@@ -22,7 +22,7 @@
  */
 #ifndef _WIN32DEP_H_
 #define _WIN32DEP_H_
-#include <winsock.h>
+#include <winsock2.h>
 #include <process.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkevents.h>

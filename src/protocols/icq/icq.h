@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: icq.h 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: icq.h 8967 2004-02-12 19:54:18Z hermanator $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -34,7 +34,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #else
-#include <winsock.h>
+#include "libc_interface.h"
 #endif /* _WIN32 */
 
 #ifdef __BEOS__

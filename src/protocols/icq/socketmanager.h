@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: socketmanager.h 2405 2001-09-29 02:08:00Z warmenhoven $
+ * $Id: socketmanager.h 8967 2004-02-12 19:54:18Z hermanator $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -34,7 +34,7 @@
 #ifndef _WIN32
 #include <sys/socket.h>
 #else
-#include <winsock.h>
+#include "libc_interface.h"
 #endif
 
 #include "icq.h"

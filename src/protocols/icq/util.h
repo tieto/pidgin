@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: util.h 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: util.h 8967 2004-02-12 19:54:18Z hermanator $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -31,10 +31,10 @@
 
 #include <sys/types.h>
 
-#ifdef _WIN32
-#include <winsock.h>
-#else
+#ifndef _WIN32
 #include <netinet/in.h>
+#else
+#include "libc_interface.h"
 #endif
 
 #include "icqtypes.h"

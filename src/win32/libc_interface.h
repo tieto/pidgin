@@ -22,7 +22,8 @@
  */
 #ifndef _LIBC_INTERFACE_H_
 #define _LIBC_INTERFACE_H_
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <io.h>
 #include <errno.h>
 #include "libc_internal.h"
@@ -39,6 +40,22 @@ wgaim_connect( socket, addr, length )
 extern int wgaim_getsockopt(int socket, int level, int optname, void *optval, unsigned int *optlenptr);
 #define getsockopt( args... ) \
 wgaim_getsockopt( args )
+
+extern int wgaim_setsockopt(int socket, int level, int optname, void *optval, unsigned int *optlenptr);
+#define setsockopt( args... ) \
+wgaim_setsockopt( args )
+
+extern int wgaim_getsockname (int socket, struct sockaddr *addr, socklen_t *lenptr);
+#define getsockname( socket, addr, lenptr ) \
+wgaim_getsockname( socket, addr, lenptr )
+
+extern int wgaim_bind(int socket, struct sockaddr *addr, socklen_t length);
+#define bind( socket, addr, length ) \
+wgaim_bind( socket, addr, length )
+
+extern int wgaim_listen(int socket, unsigned int n);
+#define listen( socket, n ) \
+wgaim_listen( socket, n )
 
 /* sys/ioctl.h */
 extern int wgaim_ioctl(int fd, int command, void* opt);
@@ -93,6 +110,10 @@ extern int wgaim_close(int fd);
 wgaim_close( fd )
 
 #define sleep(x) Sleep((x)*1000)
+
+extern int wgaim_gethostname(char *name, size_t size);
+#define gethostname( name, size ) \
+wgaim_gethostname( name, size )
 
 /* sys/time.h */
 extern int wgaim_gettimeofday(struct timeval *p, struct timezone *z);

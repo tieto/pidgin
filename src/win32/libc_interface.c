@@ -22,7 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <io.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -91,16 +92,44 @@ int wgaim_connect(int socket, struct sockaddr *addr, u_long length) {
 	return 0;
 }
 
-int wgaim_getsockopt(int socket, int level, int optname, void *optval, unsigned int *optlenptr) {
-	int ret;
-
-	ret = getsockopt( socket, level, optname, optval, optlenptr );
-	if( ret == SOCKET_ERROR ) {
+int wgaim_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlenptr) {
+	if(getsockopt(socket, level, optname, optval, optlenptr) == SOCKET_ERROR ) {
 		errno = WSAGetLastError();
 		return -1;
 	}
-
 	return 0;
+}
+
+int wgaim_setsockopt(int socket, int level, int optname, void *optval, socklen_t optlen) {
+	if(setsockopt(socket, level, optname, optval, optlen) == SOCKET_ERROR ) {
+		errno = WSAGetLastError();
+		return -1;
+	}
+	return 0;
+}
+
+int wgaim_getsockname(int socket, struct sockaddr *addr, socklen_t *lenptr) {
+        if(getsockname(socket, addr, lenptr) == SOCKET_ERROR) {
+                errno = WSAGetLastError();
+                return -1;
+        }
+        return 0;
+}
+
+int wgaim_bind(int socket, struct sockaddr *addr, socklen_t length) {
+        if(bind(socket, addr, length) == SOCKET_ERROR) {
+                errno = WSAGetLastError();
+                return -1;
+        }
+        return 0;
+}
+
+int wgaim_listen(int socket, unsigned int n) {
+        if(listen(socket, n) == SOCKET_ERROR) {
+                errno = WSAGetLastError();
+                return -1;
+        }
+        return 0;
 }
 
 /* fcntl.h */
@@ -287,6 +316,14 @@ int wgaim_close(int fd) {
 	}
 	else
 		return close(fd);
+}
+
+int wgaim_gethostname(char *name, size_t size) {
+        if(gethostname(name, size) == SOCKET_ERROR) {
+                errno = WSAGetLastError();
+			return -1;
+        }
+        return 0;
 }
 
 /* sys/time.h */

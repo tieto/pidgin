@@ -32,7 +32,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #else
-#include <winsock.h>
+#include "libc_interface.h"
 #endif
 
 #ifdef __cplusplus
