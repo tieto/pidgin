@@ -48,7 +48,8 @@ typedef enum
 	GAIM_REQUEST_FIELD_STRING,
 	GAIM_REQUEST_FIELD_INTEGER,
 	GAIM_REQUEST_FIELD_BOOLEAN,
-	GAIM_REQUEST_FIELD_CHOICE
+	GAIM_REQUEST_FIELD_CHOICE,
+	GAIM_REQUEST_FIELD_LIST
 
 } GaimRequestFieldType;
 
@@ -96,6 +97,15 @@ typedef struct
 			GList *labels;
 
 		} choice;
+
+		struct
+		{
+			GList *items;
+			GList *selected;
+
+			gboolean multiple_selection;
+
+		} list;
 
 	} u;
 
@@ -434,7 +444,7 @@ void gaim_request_field_string_set_editable(GaimRequestField *field,
  * Returns the default value in a string field.
  *
  * @param field The field.
- * 
+ *
  * @return The default value.
  */
 const char *gaim_request_field_string_get_default_value(
@@ -517,7 +527,7 @@ void gaim_request_field_int_set_value(GaimRequestField *field, int value);
  * Returns the default value in an integer field.
  *
  * @param field The field.
- * 
+ *
  * @return The default value.
  */
 int gaim_request_field_int_get_default_value(const GaimRequestField *field);
@@ -642,7 +652,7 @@ void gaim_request_field_choice_set_value(GaimRequestField *field, int value);
  * Returns the default value in an choice field.
  *
  * @param field The field.
- * 
+ *
  * @return The default value.
  */
 int gaim_request_field_choice_get_default_value(const GaimRequestField *field);
@@ -666,6 +676,63 @@ int gaim_request_field_choice_get_value(const GaimRequestField *field);
 GList *gaim_request_field_choice_get_labels(const GaimRequestField *field);
 
 /*@}*/
+
+/**************************************************************************/
+/** @name List Field API                                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a multiple list item field.
+ *
+ * @param id    The field ID.
+ * @param text  The optional label of the field.
+ * @param items The list of items.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_list_new(const char *id, const char *text,
+											  GList *items);
+
+/**
+ * Sets the list of items in a list field.
+ *
+ * The items are not copied. The actual list passed is assigned to the field.
+ *
+ * @param field The list field.
+ * @param items The items.
+ */
+void gaim_request_field_list_set_items(GaimRequestField *field, GList *items);
+
+/**
+ * Adds an item to a list field.
+ *
+ * @param field The list field.
+ * @param item  The list item.
+ */
+void gaim_request_field_list_add(GaimRequestField *field, const char *item);
+
+/**
+ * Returns a list of selected items in a list field.
+ *
+ * @param field The field.
+ *
+ * @return The list of selected items.
+ */
+const GList *gaim_request_field_list_get_selected(
+	const GaimRequestField *field);
+
+/**
+ * Returns a list of items in a list field.
+ *
+ * @param field The field.
+ *
+ * @return The list of items.
+ */
+const GList *gaim_request_field_list_get_items(const GaimRequestField *field);
+
+/*@}*/
+
 
 /**************************************************************************/
 /** @name Request API                                                     */
