@@ -240,8 +240,6 @@ void
 gaim_gtk_set_font_face(GaimGtkConversation *gtkconv,
 					   const char *font)
 {
-	char *pre_fontface;
-
 	if (gtkconv == NULL || font == NULL)
 		return;
 
