@@ -1,3 +1,7 @@
-EXTRA_DIST = gaim.1 the_penguin.txt CREDITS FAQ gaims_funniest_home_convos.txt
-	
-man_MANS = gaim.1
+EXTRA_DIST = \
+	the_penguin.txt \
+	gaims_funniest_home_convos.txt \
+	CREDITS \
+	FAQ
+
+man_MANS = gaim.1 gaim-remote.1
