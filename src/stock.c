@@ -74,7 +74,7 @@ static struct StockIcon
 	{ GAIM_STOCK_TEXT_NORMAL,     "buttons", "text_normal.png"          },
 	{ GAIM_STOCK_TEXT_SMALLER,    "buttons", "text_smaller.png"         },
 	{ GAIM_STOCK_TYPED,           "gaim",    "typed.png"                },
-	{ GAIM_STOCK_TYPING,          "gaim",    "typing.gif"               },
+	{ GAIM_STOCK_TYPING,          "gaim",    "typing.png"               },
 	{ GAIM_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
 	{ GAIM_STOCK_WARN,            NULL,      GTK_STOCK_DIALOG_WARNING   }
 };
