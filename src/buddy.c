@@ -1004,7 +1004,6 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkItemFactory *ift;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
-	GtkTreeViewColumn *expcol;
 	GtkWidget *sw;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
@@ -1080,10 +1079,6 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 
-	rend = gtk_cell_renderer_text_new();
-	expcol = gtk_tree_view_column_new_with_attributes("Empty", rend, "pixbuf", EXPANDER_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), expcol);
-
 	rend = gtk_cell_renderer_pixbuf_new();
 	column = gtk_tree_view_column_new_with_attributes("Status", rend, "pixbuf", STATUS_ICON_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
@@ -1150,9 +1145,6 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gaim_gtk_blist_refresh(list);
 	gaim_gtk_blist_restore_position();
 	gtk_widget_show_all(gtkblist->window);
-
-	gtk_tree_view_set_expander_column(GTK_TREE_VIEW(gtkblist->treeview), GTK_TREE_VIEW_COLUMN(expcol));
-	gtk_tree_view_column_set_visible(GTK_TREE_VIEW_COLUMN(expcol), FALSE);
 
 	gaim_gtk_blist_update_toolbar();
 
