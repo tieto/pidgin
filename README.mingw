@@ -71,6 +71,17 @@ Install LIBs, DLLs and headers used by GAIM
   Copy Perl's "CORE" directory to ~/win32-dev/perl56 as well as "perl56.dll"
   and "perl56.lib".
 
+  Aspell-15
+  ---------
+
+  Download the dev package (aspell-15.tar.gz) from http://gaim.sourceforge.net,
+  and untar it under ~/win32-dev.
+
+  Gtkspell 2.0.2
+  --------------
+
+  Download the dev package (gtkspell-2.0.2.tar.gz) from http://gaim.sourceforge.net,
+  and untar it under ~/win32-dev.
 
 Build Gaim
 ----------
