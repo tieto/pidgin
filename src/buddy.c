@@ -2057,14 +2057,14 @@ static void close_buddy_list() {
 
 void docklet_add() {
 	docklet_count++;
-	printf("docklet_count: %d\n",docklet_count);
+	debug_printf("docklet_count: %d\n",docklet_count);
 }
 
 void docklet_remove() {
 	if (docklet_count) {
 		docklet_count--;
 	}
-	printf("docklet_count: %d\n",docklet_count);
+	debug_printf("docklet_count: %d\n",docklet_count);
 	if (!docklet_count) {
 		if (connections) {
 			unhide_buddy_list();
