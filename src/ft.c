@@ -85,6 +85,8 @@ static void ft_callback(gpointer data, gint source, GaimInputCondition condition
 static void ft_nextfile(struct file_transfer *xfer);
 static int ft_mkdir(const char *name);
 static int ft_mkdir_help(char *dir);
+static gboolean ft_choose_file_close(GtkWidget *widget, GdkEvent *event,
+									 gpointer user_data);
 
 static struct file_transfer *ft_new(int type, struct gaim_connection *gc,
 		const char *who)
@@ -95,6 +97,7 @@ static struct file_transfer *ft_new(int type, struct gaim_connection *gc,
 	xfer->gc = gc;
 	xfer->who = g_strdup(who);
 	xfer->filesdone = 0;
+	xfer->w = NULL;
 
 	return xfer;
 }
@@ -166,6 +169,8 @@ struct file_transfer *transfer_out_add(struct gaim_connection *gc,
  */
 static void ft_cancel(struct file_transfer *xfer)
 {
+	debug_printf("** ft_cancel\n");
+
 	/* Make sure we weren't aborted while waiting for
 	 * confirmation from the user.
 	 */
@@ -232,8 +237,8 @@ int transfer_abort(struct file_transfer *xfer, const char *why)
 		 * destroy the dialog window first.
 		 */
 		if (xfer->w) {
-			gtk_signal_disconnect_by_func(GTK_OBJECT(xfer->w),
-					G_CALLBACK(ft_cancel), xfer);
+			g_signal_handlers_disconnect_by_func(G_OBJECT(xfer->w),
+					G_CALLBACK(ft_choose_file_close), xfer);
 			gtk_widget_destroy(xfer->w);
 			xfer->w = NULL;
 		}
@@ -367,6 +372,20 @@ int transfer_get_file_info(struct file_transfer *xfer, int *size,
 	return 0;
 }
 
+static gboolean
+ft_choose_file_close(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	ft_cancel((struct file_transfer *)user_data);
+
+	return FALSE;
+}
+
+static void
+ft_cancel_button_cb(GtkButton *button, gpointer user_data)
+{
+	ft_cancel((struct file_transfer *)user_data);
+}
+
 static int ft_choose_file(struct file_transfer *xfer)
 {
 	char *curdir = g_get_current_dir(); /* should be freed */
@@ -401,12 +420,13 @@ static int ft_choose_file(struct file_transfer *xfer)
 			initstr);
 	g_free(initstr);
 
-	g_signal_connect(GTK_OBJECT(xfer->w), "delete_event",
-			G_CALLBACK(ft_cancel), xfer);
-        g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(xfer->w)->cancel_button),
-			"clicked", G_CALLBACK(ft_cancel), xfer);
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(xfer->w)->ok_button),
-			"clicked", G_CALLBACK(ft_choose_ok), xfer);
+	g_signal_connect(G_OBJECT(xfer->w), "delete_event",
+					 G_CALLBACK(ft_choose_file_close), xfer);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(xfer->w)->cancel_button), "clicked",
+					 G_CALLBACK(ft_cancel_button_cb), xfer);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(xfer->w)->ok_button), "clicked",
+					 G_CALLBACK(ft_choose_ok), xfer);
+
 	gtk_widget_show(xfer->w);
 
 	return 0;
