@@ -54,7 +54,7 @@ Section "" ; (default section)
   ; Read in Aspell install path
   ReadRegStr $R0 HKEY_LOCAL_MACHINE "Software\Aspell" ""
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "" "$INSTDIR"
-  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "Version" "0.60a3"
+  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "Version" "0.60a4"
   ; Keep track of aspell install path, for when we uninstall
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "AspellPath" $R0
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "DisplayName" "Gaim (remove only)"
