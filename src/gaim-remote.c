@@ -43,6 +43,7 @@ static struct option longopts[] = {
 	{"to",      required_argument, NULL, 't'},
 	{"protocol",required_argument, NULL, 'p'},
 	{"from",    required_argument, NULL, 'f'},
+	{"session", required_argument, NULL, 's'},
 	{"quiet",   no_argument,       NULL, 'q'},
 	{"help",    no_argument,       NULL, 'h'},
 	{0,0,0,0}
@@ -52,7 +53,7 @@ struct remoteopts {
 	char *command;
 	char *uri;
 	gboolean help, quiet;
-	char *message, *to, *from, *protocol;
+	char *message, *to, *from, *protocol, *session;
 	/*int protocol;*/
 };
 struct remoteopts opts;
@@ -112,6 +113,7 @@ show_remote_usage(const char *name)
 		"       -t, --to=SCREENNAME      Select a target for command\n"
 		"       -p, --protocol=PROTO     Specify protocol to use\n"
 		"       -f, --from=SCREENNAME    Specify screen name to use\n"
+		"       -s, --session=SESSION    Specify which Gaim session to use\n"
 		"       -h, --help [command]     Show help for command\n"), name);
 
 	message(text, 1);
@@ -128,7 +130,7 @@ get_options(int argc, char *argv[])
 	memset(&opts, 0, sizeof(opts));
 	/*opts.protocol = -1;*/
 
-	while ((i=getopt_long(argc, argv, "m:t:p:f:qh", longopts, NULL)) != -1) {
+	while ((i=getopt_long(argc, argv, "m:t:p:f:s:qh", longopts, NULL)) != -1) {
 		switch (i) {
 		case 'm':
 			opts.message = optarg;
@@ -142,6 +144,9 @@ get_options(int argc, char *argv[])
 		case 'f':
 			opts.from = optarg;
 			break;
+		case 's':
+			opts.session = optarg;
+			break;
 		case 'q':
 			opts.quiet = TRUE;
 			break;
@@ -150,7 +155,7 @@ get_options(int argc, char *argv[])
 			break;
 		}
 	}
-	
+
 	/* We must have non getopt'ed argument-- the command */
 	if (optind < argc)
 		opts.command = g_strdup(argv[optind++]);
@@ -172,7 +177,26 @@ get_options(int argc, char *argv[])
 	else
 		return 1;
 
-	return 0;			
+	return 0;
+}
+
+static int
+open_session() {
+	int fd = 0, session = 0;
+	char *msg;
+
+	if (opts.session != NULL)
+		session = atoi(opts.session);
+
+	fd = gaim_remote_session_connect(session);
+	if (fd < 0) {
+		msg = g_strdup_printf(_("Gaim not running (on session %d)\nIs the \"Remote Control\" plugin loaded?\n"), session);
+		message(msg, 2);
+		g_free(msg);
+		return -1;
+	}
+
+	return fd;
 }
 
 static int
@@ -180,9 +204,8 @@ send_generic_command(guchar type, guchar subtype) {
 	int fd = 0;
 	GaimRemotePacket *p = NULL;
 
-	fd = gaim_remote_session_connect(0);
+	fd = open_session();
 	if (fd < 0) {
-		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(type, subtype);
@@ -198,9 +221,8 @@ send_command_uri() {
 	int fd = 0;
 	GaimRemotePacket *p = NULL;
 
-	fd = gaim_remote_session_connect(0);
+	fd = open_session();
 	if (fd < 0) {
-		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_URI);
@@ -218,9 +240,8 @@ send_command_send() {
 	GaimRemotePacket *p = NULL;
 	char temp[10003]; /* TODO: Future implementation should send packets instead */
 
-	fd = gaim_remote_session_connect(0);
+	fd = open_session();
 	if (fd < 0) {
-		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_SEND);
