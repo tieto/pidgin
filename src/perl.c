@@ -352,11 +352,14 @@ XS (XS_AIM_command)
 	} else if (!strncasecmp(command, "signoff", 7)) {
 		signoff();
 	} else if (!strncasecmp(command, "away", 4)) {
-		/* FIXME */
+		char *message = SvPV(ST(1), junk);
+		struct away_message a;
+		g_snprintf(a.message, sizeof(a.message), "%s", message);
+		do_away_message(NULL, &a);
 	} else if (!strncasecmp(command, "back", 4)) {
 		do_im_back();
 	} else if (!strncasecmp(command, "idle", 4)) {
-		/* FIXME */
+		serv_set_idle(atoi(SvPV(ST(1), junk)));
 	} else if (!strncasecmp(command, "warn", 4)) {
 		/* FIXME */
 	}
