@@ -3381,6 +3381,12 @@ void update_smilies(struct conversation *c)
 {
 	GSList *smilies;
 
+	if (!c)
+		return;
+
+	if (!c->gc)
+		return;
+
 	if (c->gc->prpl->smiley_list) {
 		gtk_imhtml_remove_smileys(GTK_IMHTML(c->text));
 		smilies = c->gc->prpl->smiley_list();
