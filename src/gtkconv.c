@@ -3246,7 +3246,8 @@ generate_invite_user_names(GaimConnection *gc)
 
 					if (buddy->account == gc->account &&
 							GAIM_BUDDY_IS_ONLINE(buddy))
-						tmp = g_list_append(tmp, buddy->name);
+						tmp = g_list_insert_sorted(tmp, buddy->name,
+												   (GCompareFunc)g_utf8_collate);
 				}
 			}
 		}
