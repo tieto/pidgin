@@ -131,7 +131,13 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
 	GtkWidget *vbox;
+	GtkWidget *entry;
+	GaimPlugin *plugin = NULL;
 	GaimProtocol protocol;
+	GList *user_splits;
+	GList *split_entries = NULL;
+	GList *l, *l2;
+	char *username;
 
 	if (dialog->login_frame != NULL)
 		gtk_widget_destroy(dialog->login_frame);
@@ -141,6 +147,10 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	else
 		protocol = gaim_account_get_protocol(dialog->account);
 
+	plugin = gaim_find_prpl(protocol);
+
+
+	/* Build the login options frame. */
 	frame = gaim_gtk_make_frame(parent, _("Login Options"));
 
 	/* cringe */
@@ -168,12 +178,55 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	__add_pref_box(dialog, vbox, _("Screenname:"), dialog->screenname_entry);
 
-#if 0
-	if (dialog->user_splits != NULL) {
-		g_list_free(dialog->user_splits);
-		dialog->user_splits = NULL;
+	/* Do the user split thang */
+	if (plugin == NULL) /* Yeah right. */
+		user_splits = NULL;
+	else
+		user_splits = GAIM_PLUGIN_PROTOCOL_INFO(plugin)->user_splits;
+
+	if (dialog->account != NULL)
+		username = g_strdup(gaim_account_get_username(dialog->account));
+
+	for (l = user_splits; l != NULL; l = l->next) {
+		char *buf;
+
+		buf = g_strdup_printf("%s:", gaim_account_user_split_get_text(buf));
+
+		entry = gtk_entry_new();
+
+		__add_pref_box(dialog, vbox, buf, entry);
+
+		g_free(buf);
+
+		split_entries = g_list_append(split_entries, entry);
 	}
-#endif
+
+	for (l = g_list_last(split_entries), l2 = g_list_last(user_splits);
+		 l != NULL && l2 != NULL;
+		 l = l->prev, l2 = l2->prev) {
+
+		GaimAccountUserSplit *split = l2->data;
+		GtkWidget *entry = l->data;
+		char *value;
+		char *c;
+
+		if (dialog->account == NULL)
+			value = gaim_account_user_split_get_default_value(split);
+		else {
+			c = strrchr(username, gaim_account_user_split_get_sep(split));
+
+			if (c != NULL) {
+				*c = '\0';
+				c++;
+
+				value = c;
+			}
+		}
+
+		gtk_entry_set_text(GTK_ENTRY(entry), value);
+	}
+
+	g_list_free(split_entries);
 }
 
 static void
