@@ -152,13 +152,15 @@ gaim_account_new(const char *username, const char *protocol_id)
 	account->presence = gaim_presence_new_for_account(account);
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-	
+
 	if (prpl == NULL)
 		return account;
-	
+
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 	if ( prpl_info != NULL && prpl_info->status_types != NULL )
 		gaim_account_set_status_types(account, prpl_info->status_types(account));
+
+	gaim_presence_set_status_active(account->presence, "offline", TRUE);
 
 	return account;
 }

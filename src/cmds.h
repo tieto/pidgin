@@ -120,7 +120,7 @@ extern "C" {
  *                before the command name.
  * @param data User defined data to pass to the GaimCmdFunc
  * @return A GaimCmdId. This is only used for calling gaim_cmd_unregister.
- *         Returns @c NULL on failure.
+ *         Returns 0 on failure.
  */
 GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority p, GaimCmdFlag f,
                              const gchar *prpl_id, GaimCmdFunc func, const gchar *helpstr, void *data);

@@ -941,12 +941,9 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 *    is set
 		 */
 		auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
-		status = gaim_presence_get_active_status(presence);
-		away_msg = gaim_value_get_string(
-			gaim_status_get_attr_value(status, "message"));
-		
+
 		if (!(gc->flags & GAIM_CONNECTION_AUTO_RESP) ||
-				away_msg == NULL || *away_msg == '\0' ||
+				gaim_presence_is_available(presence) ||
 				!strcmp(auto_reply_pref, "never") ||
 				(!gaim_presence_is_idle(presence) &&
 				!strcmp(auto_reply_pref, "awayidle"))) {
@@ -972,6 +969,13 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			return;
 		}
 		lar->sent = t;
+
+		status = gaim_presence_get_active_status(presence);
+		if (status == NULL)
+			return;
+
+		away_msg = gaim_value_get_string(
+			gaim_status_get_attr_value(status, "message"));
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(away_msg, MSG_LEN);

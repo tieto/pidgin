@@ -251,21 +251,10 @@ void gaim_blist_set_visible(gboolean show);
 /**
  * Updates a buddy's status.
  *
- * This needs to not take an int.
- *
- * @param buddy   The buddy whose status has changed
- * @param status  The new status in cryptic prpl-understood code
+ * @param buddy      The buddy whose status has changed.
+ * @param old_status The status from which we are changing.
  */
-void gaim_blist_update_buddy_status(GaimBuddy *buddy, int status);
-
-
-/**
- * Updates a buddy's presence.
- *
- * @param buddy    The buddy whose presence has changed
- * @param online   If the buddy is now online
- */
-void gaim_blist_update_buddy_presence(GaimBuddy *buddy, gboolean online);
+void gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status);
 
 /**
  * Updates a buddy's signon time.

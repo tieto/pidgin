@@ -213,6 +213,7 @@ gaim_connection_disconnect(GaimConnection *gc)
 {
 	GaimAccount *account;
 	GList *wins;
+	GaimPresence *presence = NULL;
 
 	g_return_if_fail(gc != NULL);
 
@@ -242,6 +243,9 @@ gaim_connection_disconnect(GaimConnection *gc)
 		   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
 
+		presence = gaim_account_get_presence(account);
+		if (gaim_presence_is_online(presence) == TRUE)
+			gaim_presence_set_status_active(presence, "offline", TRUE);
 
 		/*
 		 * XXX This is a hack! Remove this and replace it with a better event
@@ -313,7 +317,11 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		GaimBlistNode *gnode,*cnode,*bnode;
 		GList *wins;
 		GList *add_buds = NULL;
-		GaimAccount *account = gaim_connection_get_account(gc);
+		GaimAccount *account;
+		GaimPresence *presence;
+
+		account = gaim_connection_get_account(gc);
+		presence = gaim_account_get_presence(account);
 
 		/* Set the time the account came online */
 		time(&gc->login_time);
@@ -349,20 +357,9 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
 
-#if 0
-		/* away option given? */
-		if (opt_away) {
-			away_on_login(opt_away_arg);
-			/* don't do it again */
-			opt_away = 0;
-		} else if (awaymessage) {
-			serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
-		}
-		if (opt_away_arg != NULL) {
-			g_free(opt_away_arg);
-			opt_away_arg = NULL;
-		}
-#endif
+		/* XXX - STATUS - Need to handle away at login here. */
+		if (gaim_presence_is_online(presence) == FALSE)
+			gaim_presence_set_status_active(presence, "online", TRUE);
 
 		/* let the prpl know what buddies we pulled out of the local list */
 		for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {

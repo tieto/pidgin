@@ -241,32 +241,6 @@ void gaim_blist_set_visible(gboolean show)
 		ops->set_visible(gaimbuddylist, show);
 }
 
-void gaim_blist_update_buddy_status(GaimBuddy *buddy, int status)
-{
-#if 0
-	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
-	int old_status;
-
-	g_return_if_fail(buddy != NULL);
-
-	old_status = buddy->uc;
-	if (old_status != status) {
-		buddy->uc = status;
-		gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
-
-		if ((status & UC_UNAVAILABLE) != (old_status & UC_UNAVAILABLE)) {
-			if (status & UC_UNAVAILABLE)
-				gaim_signal_emit(gaim_blist_get_handle(), "buddy-away", buddy);
-			else
-				gaim_signal_emit(gaim_blist_get_handle(), "buddy-back", buddy);
-		}
-	}
-
-	if (ops && ops->update)
-		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
-#endif
-}
-
 static gboolean presence_update_timeout_cb(GaimBuddy *buddy)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
@@ -299,35 +273,58 @@ static gboolean presence_update_timeout_cb(GaimBuddy *buddy)
 	return FALSE;
 }
 
-void gaim_blist_update_buddy_presence(GaimBuddy *buddy, gboolean online)
+void
+gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+	GaimPresence *presence;
+	GaimStatus *status;
 	gboolean did_something = FALSE;
 
 	g_return_if_fail(buddy != NULL);
 
-	if (!GAIM_BUDDY_IS_ONLINE(buddy) && online) {
-		int old_present = buddy->present;
-		buddy->present = GAIM_BUDDY_SIGNING_ON;
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
-		did_something = TRUE;
+	presence = gaim_buddy_get_presence(buddy);
+	status = gaim_presence_get_active_status(presence);
 
+	gaim_debug_info("blist", "Updating buddy status\n");
+
+	if (gaim_status_is_online(status) &&
+		!gaim_status_is_online(old_status)) {
+		int old_present = buddy->present;
+
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
 		if (old_present != GAIM_BUDDY_SIGNING_OFF) {
 			((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;
 			if (((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 1)
 				((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online++;
 		}
-	} else if (GAIM_BUDDY_IS_ONLINE(buddy) && !online) {
-		buddy->present = GAIM_BUDDY_SIGNING_OFF;
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
-		did_something = TRUE;
-	}
-
-	if (did_something) {
 		if (buddy->timer > 0)
 			gaim_timeout_remove(buddy->timer);
 		buddy->timer = gaim_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
+		did_something = TRUE;
 
+	} else if (!gaim_status_is_online(status) &&
+				gaim_status_is_online(old_status)) {
+		buddy->present = GAIM_BUDDY_SIGNING_OFF;
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
+		if (buddy->timer > 0)
+			gaim_timeout_remove(buddy->timer);
+		buddy->timer = gaim_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
+		did_something = TRUE;
+
+	} else if (gaim_status_is_available(status) &&
+			   !gaim_status_is_available(old_status)) {
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-back", buddy);
+		did_something = TRUE;
+
+	} else if (!gaim_status_is_available(status) &&
+			   gaim_status_is_available(old_status)) {
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-away", buddy);
+		did_something = TRUE;
+
+	}
+
+	if (did_something) {
 		gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 		if (ops && ops->update)
 			ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
@@ -606,6 +603,8 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 	buddy->name     = g_strdup(screenname);
 	buddy->alias    = g_strdup(alias);
 	buddy->presence = gaim_presence_new_for_buddy(buddy);
+
+	gaim_presence_set_status_active(buddy->presence, "offline", TRUE);
 
 	gaim_blist_node_initialize_settings((GaimBlistNode *)buddy);
 	((GaimBlistNode *)buddy)->type = GAIM_BLIST_BUDDY_NODE;

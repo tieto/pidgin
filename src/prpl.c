@@ -270,13 +270,15 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 	GaimBuddy *buddy;
 	GaimPresence *presence;
 	GaimStatus *status;
+	GaimStatus *old_status;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(name      != NULL);
 	g_return_if_fail(status_id != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
 
-	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+	buddy = gaim_find_buddy(account, name);
+	if (buddy == NULL)
 		return;
 
 	presence = gaim_buddy_get_presence(buddy);
@@ -300,10 +302,9 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		va_end(args);
 	}
 
+	old_status = gaim_presence_get_active_status(presence);
 	gaim_presence_set_status_active(presence, status_id, TRUE);
-
-	gaim_blist_update_buddy_presence(buddy, GAIM_BUDDY_IS_ONLINE(buddy));
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+	gaim_blist_update_buddy_status(buddy, old_status);
 }
 
 void

@@ -14,13 +14,6 @@ OUTPUT:
 	RETVAL
 
 void
-update_presence(buddy, presence)
-	Gaim::BuddyList::Buddy buddy
-	int presence
-CODE:
-	gaim_blist_update_buddy_presence(buddy, presence);
-
-void
 rename(buddy, new_name)
 	Gaim::BuddyList::Buddy buddy
 	const char *new_name

@@ -621,7 +621,7 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 
 	if (!active && !gaim_status_type_is_independent(status_type))
 	{
-		gaim_debug(GAIM_DEBUG_ERROR, "status",
+		gaim_debug_error("status",
 				   "Cannot deactivate an exclusive status (%s).\n",
 				   gaim_status_type_get_id(status_type));
 		return;
@@ -1099,13 +1099,13 @@ gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 			return;
 		}
 
-		if (presence->active_status != NULL)
-			gaim_status_set_active(presence->active_status, FALSE);
+	} else if (presence->active_status != NULL) {
+		gaim_status_set_active(presence->active_status, FALSE);
 
-		presence->active_status = status;
 	}
 
 	gaim_status_set_active(status, active);
+	presence->active_status = status;
 }
 
 void
