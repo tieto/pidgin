@@ -523,6 +523,25 @@ gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 	return vbox;
 }
 
+static void
+__protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
+{
+	GtkWidget *menu;
+	GtkWidget *item;
+	GaimProtocol protocol;
+	gpointer user_data;
+
+	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
+	item = gtk_menu_get_active(GTK_MENU(menu));
+
+	protocol = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item), "protocol"));
+	user_data = (g_object_get_data(G_OBJECT(optmenu), "user_data"));
+
+	if (cb != NULL)
+		((void (*)(GtkWidget *, GaimProtocol, gpointer))cb)(item, protocol,
+															user_data);
+}
+
 GtkWidget *
 gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 								  gpointer user_data)
@@ -544,8 +563,13 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 	optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
 
+	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
+
 	menu = gtk_menu_new();
 	gtk_widget_show(menu);
+
+	g_signal_connect(G_OBJECT(optmenu), "changed",
+					 G_CALLBACK(__protocol_menu_cb), cb);
 
 	for (p = gaim_plugins_get_protocols(), i = 0;
 		 p != NULL;
@@ -577,10 +601,8 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
 		}
 
-		g_object_set_data(G_OBJECT(item), "user_data", user_data);
-
-		g_signal_connect(G_OBJECT(item), "activate",
-						 cb, GINT_TO_POINTER(prpl_info->protocol));
+		g_object_set_data(G_OBJECT(item), "protocol",
+						 GINT_TO_POINTER(prpl_info->protocol));
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
