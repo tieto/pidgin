@@ -171,7 +171,7 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 
 	xfer = (GaimXfer *)user_data;
 
-	if (stat(filename, &st) != 0) {
+	if (g_stat(filename, &st) != 0) {
 		/* File not found. */
 		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 			gaim_xfer_request_accepted(xfer, filename);
@@ -370,7 +370,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 			return;
 		}
 
-		if (stat(filename, &st) == -1) {
+		if (g_stat(filename, &st) == -1) {
 		  	gaim_xfer_show_file_error(xfer, filename);
 			gaim_xfer_unref(xfer);
 			return;
@@ -792,7 +792,7 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 {
 	GaimXferType type = gaim_xfer_get_type(xfer);
 
-	xfer->dest_fp = fopen(gaim_xfer_get_local_filename(xfer),
+	xfer->dest_fp = g_fopen(gaim_xfer_get_local_filename(xfer),
 						  type == GAIM_XFER_RECEIVE ? "wb" : "rb");
 
 	if (xfer->dest_fp == NULL) {

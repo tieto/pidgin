@@ -1327,7 +1327,7 @@ static void process_zsubs(zephyr_account *zephyr)
 	gchar buff[BUFSIZ];
 
 	fname = g_strdup_printf("%s/.zephyr.subs", gaim_home_dir());
-	f = fopen(fname, "r");
+	f = g_fopen(fname, "r");
 	if (f) {
 		char **triple;
 		char *recip;
@@ -1423,7 +1423,7 @@ static void process_anyone(GaimConnection *gc)
 	}
 
 	filename = g_strconcat(gaim_home_dir(), "/.anyone", NULL);
-	if ((fd = fopen(filename, "r")) != NULL) {
+	if ((fd = g_fopen(filename, "r")) != NULL) {
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0]) {
@@ -1777,7 +1777,7 @@ static void write_zsubs(zephyr_account *zephyr)
 	char **triple;
 
 	fname = g_strdup_printf("%s/.zephyr.subs", gaim_home_dir());
-	fd = fopen(fname, "w");
+	fd = g_fopen(fname, "w");
 
 	if (!fd) {
 		g_free(fname);
@@ -1839,7 +1839,7 @@ static void write_anyone(GaimConnection *gc)
 	FILE *fd;
 	zephyr_account* zephyr = gc->proto_data;
 	fname = g_strdup_printf("%s/.anyone", gaim_home_dir());
-	fd = fopen(fname, "w");
+	fd = g_fopen(fname, "w");
 	if (!fd) {
 		g_free(fname);
 		return;

@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: datallah $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -59,9 +59,9 @@ Code_t ZSetVariable(var, value)
     (void) strcpy(varfilebackup, varfile);
     (void) strcat(varfilebackup, ".backup");
 	
-    if (!(fpout = fopen(varfilebackup, "w")))
+    if (!(fpout = g_fopen(varfilebackup, "w")))
 	return (errno);
-    if ((fpin = fopen(varfile, "r")) != NULL) {
+    if ((fpin = g_fopen(varfile, "r")) != NULL) {
 	while (fgets(varbfr, sizeof varbfr, fpin) != (char *) 0) {
 	    if (varbfr[strlen(varbfr)-1] < ' ')
 		varbfr[strlen(varbfr)-1] = '\0';
@@ -78,7 +78,7 @@ Code_t ZSetVariable(var, value)
 	fprintf(fpout, "%s = %s\n", var, value);
     if (fclose(fpout) == EOF)
 	    return(EIO);		/* can't rely on errno */
-    if (rename(varfilebackup, varfile))
+    if (g_rename(varfilebackup, varfile))
 	return (errno);
     return (ZERR_NONE);
 }	
@@ -95,9 +95,9 @@ Code_t ZUnsetVariable(var)
     (void) strcpy(varfilebackup, varfile);
     (void) strcat(varfilebackup, ".backup");
 	
-    if (!(fpout = fopen(varfilebackup, "w")))
+    if (!(fpout = g_fopen(varfilebackup, "w")))
 	return (errno);
-    if ((fpin = fopen(varfile, "r")) != NULL) {
+    if ((fpin = g_fopen(varfile, "r")) != NULL) {
 	while (fgets(varbfr, sizeof varbfr, fpin) != (char *) 0) {
 	    if (varbfr[strlen(varbfr)-1] < ' ')
 		varbfr[strlen(varbfr)-1] = '\0';
@@ -108,7 +108,7 @@ Code_t ZUnsetVariable(var)
     } 
     if (fclose(fpout) == EOF)
 	    return(EIO);		/* errno isn't reliable */
-    if (rename(varfilebackup, varfile))
+    if (g_rename(varfilebackup, varfile))
 	return (errno);
     return (ZERR_NONE);
 }	
@@ -143,7 +143,7 @@ static char *get_varval(fn, var)
     static char varbfr[512];
     int i;
 	
-    fp = fopen(fn, "r");
+    fp = g_fopen(fn, "r");
     if (!fp)
 	return ((char *)0);
 

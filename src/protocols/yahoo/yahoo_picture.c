@@ -466,8 +466,8 @@ void yahoo_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 		if (yd->logged_in)
 			yahoo_send_picture_update(gc, 0);
 		/* TODO: check if we're connected and tell everyone we ain't not one no more */
-	} else if (!stat(iconfile, &st)) {
-		file = fopen(iconfile, "rb");
+	} else if (!g_stat(iconfile, &st)) {
+		file = g_fopen(iconfile, "rb");
 		if (file) {
 			GString *s = g_string_sized_new(st.st_size);
 			size_t len;

@@ -1467,7 +1467,7 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 	case SILC_CLIENT_CONN_SUCCESS_RESUME:
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
 		serv_finish_login(gc);
-		unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
+		g_unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
 
 		/* Send any UMODEs configured for account */
 		reject_watch = gaim_account_get_bool(sg->account, "reject-watch", FALSE);
@@ -1487,7 +1487,7 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 		break;
 	case SILC_CLIENT_CONN_ERROR:
 		gaim_connection_error(gc, _("Error during connecting to SILC Server"));
-		unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
+		g_unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_KE:
@@ -1502,7 +1502,7 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 		gaim_connection_error(gc,
 				      _("Resuming detached session failed. "
 					"Press Reconnect to create new connection."));
-		unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
+		g_unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
@@ -1529,7 +1529,7 @@ silc_disconnected(SilcClient client, SilcClientConnection conn,
 	SilcGaim sg = gc->proto_data;
 
 	if (sg->resuming && !sg->detaching)
-		unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
+		g_unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
 
 	sg->conn = NULL;
 
@@ -1820,7 +1820,7 @@ silc_detach(SilcClient client, SilcClientConnection conn,
 
 	/* Save the detachment data to file. */
 	file = silcgaim_session_file(gaim_account_get_username(sg->account));
-	unlink(file);
+	g_unlink(file);
 	silc_file_writefile(file, detach_data, detach_data_len);
 }
 

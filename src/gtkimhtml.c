@@ -153,7 +153,7 @@ clipboard_win32_to_html(char *clipboard) {
 
 	gaim_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
 
-	fd = fopen("e:\\gaimcb.txt", "wb");
+	fd = g_fopen("e:\\gaimcb.txt", "wb");
 	fprintf(fd, "%s", clipboard);
 	fclose(fd);
 #endif

@@ -869,7 +869,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	FILE *fp;
 	const char *name;
 
-	if ((fp = fopen(filename, "w+")) == NULL) {
+	if ((fp = g_fopen(filename, "w+")) == NULL) {
 		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
 		return;
 	}
@@ -2520,7 +2520,7 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	const void *data;
 	size_t len;
 
-	if ((fp = fopen(filename, "wb")) == NULL) {
+	if ((fp = g_fopen(filename, "wb")) == NULL) {
 		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
 		return;
 	}

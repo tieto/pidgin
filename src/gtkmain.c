@@ -404,7 +404,7 @@ static char *gaim_find_binary_location(void *symbol, void *data)
 	basebuf = g_find_program_in_path(argv0);
 
 	/* But we still need to deal with symbolic links */
-	lstat(basebuf, &st);
+	g_lstat(basebuf, &st);
 	while ((st.st_mode & S_IFLNK) == S_IFLNK) {
 		linkbuf = g_malloc(1024);
 		readlink(basebuf, linkbuf, 1024);
@@ -423,7 +423,7 @@ static char *gaim_find_binary_location(void *symbol, void *data)
 		g_free(linkbuf);
 		g_free(basebuf);
 		basebuf = fullbuf;
-		lstat(basebuf, &st);
+		g_lstat(basebuf, &st);
 	}
 
 	fullname = basebuf;

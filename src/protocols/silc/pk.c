@@ -216,7 +216,7 @@ void silcgaim_verify_public_key(SilcClient client, SilcClientConnection conn,
 	babbleprint = verify->babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
 
 	/* Check whether this key already exists */
-	if (stat(ipf, &st) < 0 && (!hostf || stat(hostf, &st) < 0)) {
+	if (g_stat(ipf, &st) < 0 && (!hostf || g_stat(hostf, &st) < 0)) {
 		/* Key does not exist, ask user to verify the key and save it */
 		silcgaim_verify_ask(name ? name : entity,
 				    fingerprint, babbleprint, verify);

@@ -31,9 +31,13 @@
 #include <sys/timeb.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <glib.h>
 #include "debug.h"
 #include "libc_internal.h"
 
+#if !GLIB_CHECK_VERSION(2,6,0)
+#	define g_remove remove
+#endif
 /*
  *  PROTOS
  */
@@ -215,47 +219,6 @@ char* wgaim_strerror( int errornum ) {
 		return strerror( errornum );
 }
 
-/* From glibc 2.2.5 */
-char* wgaim_strsep(char **stringp, const char *delim) {
-	char *begin, *end;
-
-	begin = *stringp;
-	if (begin == NULL)
-		return NULL;
-	
-	/* A frequent case is when the delimiter string contains only one
-	   character.  Here we don't need to call the expensive `strpbrk'
-	   function and instead work using `strchr'.  */
-	if (delim[0] == '\0' || delim[1] == '\0') {
-		char ch = delim[0];
-		
-		if (ch == '\0')
-			end = NULL;
-		else {
-			if (*begin == ch)
-				end = begin;
-			else if (*begin == '\0')
-				end = NULL;
-			else
-				end = strchr (begin + 1, ch);
-		}
-	}
-	else
-		/* Find the end of the token.  */
-		end = strpbrk (begin, delim);
-	
-	if (end) {
-		/* Terminate the token and set *STRINGP past NUL character.  */
-		*end++ = '\0';
-		*stringp = end;
-	}
-	else
-		/* No more delimiters; this is the last token.  */
-		*stringp = NULL;
-
-	return begin;
-}
-
 /* unistd.h */
 
 /*
@@ -349,6 +312,7 @@ int wgaim_gettimeofday(struct timeval *p, struct timezone *z) {
 
 /* stdio.h */
 
+#if !GLIB_CHECK_VERSION(2,6,0)
 int wgaim_rename (const char *oldname, const char *newname) {
 	struct _stat oldstat, newstat;
 
@@ -379,7 +343,7 @@ int wgaim_rename (const char *oldname, const char *newname) {
 				}
 				/* newname is not a dir */
 				else {
-					remove(newname);
+					g_remove(newname);
 					return rename(oldname, newname);
 				}
 			}
@@ -395,6 +359,7 @@ int wgaim_rename (const char *oldname, const char *newname) {
 	}
 
 }
+#endif
 
 /* time.h */
 

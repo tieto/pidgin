@@ -78,8 +78,17 @@
 #endif
 #include "debug.h"
 #include "untar.h"
+#include <glib.h>
 
+#if GLIB_CHECK_VERSION(2,6,0)
+#	include <glib/gstdio.h>
+#else
 #define mkdir(a,b) _mkdir((a))
+#define g_mkdir mkdir
+#define g_fopen fopen
+#define g_unlink unlink
+#endif
+
 #define untar_error( error, args... )      gaim_debug(GAIM_DEBUG_ERROR, "untar", error, ## args )
 #define untar_warning( warning, args... )  gaim_debug(GAIM_DEBUG_WARNING, "untar", warning, ## args )
 #define untar_verbose( args... )           gaim_debug(GAIM_DEBUG_INFO, "untar", ## args )
@@ -153,7 +162,7 @@ static FILE *createpath(name)
 	}
 
 	/* first try creating it the easy way */
-	fp = fopen(name, CONVERT ? "w" : "wb");
+	fp = g_fopen(name, CONVERT ? "w" : "wb");
 	if (fp)
 		return fp;
 
@@ -169,11 +178,11 @@ static FILE *createpath(name)
 		if (name[i] == '/')
 		{
 			name[i] = '\0';
-			(void)mkdir(name, 0777);
+			(void)g_mkdir(name, 0777);
 			name[i] = '/';
 		}
 	}
-	fp = fopen(name, CONVERT ? "w" : "wb");
+	fp = g_fopen(name, CONVERT ? "w" : "wb");
 	if (!fp)
 		untar_error("Error opening: %s\n", name);
 	return fp;
@@ -192,7 +201,7 @@ static void linkorcopy(src, dst, sym)
 	int	c;
 
 	/* Open the source file.  We do this first to make sure it exists */
-	fpsrc = fopen(src, "rb");
+	fpsrc = g_fopen(src, "rb");
 	if (!fpsrc)
 	{
 		untar_error("Error opening: %s\n", src);
@@ -211,7 +220,7 @@ static void linkorcopy(src, dst, sym)
 # ifndef _WEAK_POSIX
 	/* first try to link it over, instead of copying */
 	fclose(fpdst);
-	unlink(dst);
+	g_unlink(dst);
 	if (sym)
 	{
 		if (symlink(src, dst))
@@ -229,7 +238,7 @@ static void linkorcopy(src, dst, sym)
 	}
 
 	/* Dang.  Reopen the destination again */
-	fpdst = fopen(dst, "wb");
+	fpdst = g_fopen(dst, "wb");
 	/* This *can't* fail */
 
 # endif /* _WEAK_POSIX */
@@ -521,7 +530,7 @@ static int untar_block(Uchar_t *blk) {
 #ifdef _POSIX_SOURCE
 			else if (mkdir(nbuf, mode) == 0)
 #else
-			else if (mkdir(nbuf, 0755) == 0)
+			else if (g_mkdir(nbuf, 0755) == 0)
 #endif
 				n2 = " created";
 			else
@@ -578,7 +587,7 @@ int untar(const char *filename, const char* destdir, untar_opt options) {
 	untarops = options;
 	/* open the archive */
 	inname = filename;
-	infp = fopen(filename, "rb");
+	infp = g_fopen(filename, "rb");
 	if (!infp)
 	{
 		untar_error("Error opening: %s\n", filename);

@@ -1689,7 +1689,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 		write(source, ft, 256);
 
 		if (ft->files == 1) {
-			ft->file = fopen(ft->filename, "w");
+			ft->file = g_fopen(ft->filename, "w");
 			if (!ft->file) {
 				buf = g_strdup_printf(_("Could not open %s for writing!"), ft->filename);
 				gaim_notify_error(ft->gc, NULL, buf, strerror(errno));
@@ -1704,7 +1704,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 			}
 		} else {
 			buf = g_strdup_printf("%s/%s", ft->filename, ft->hdr.name);
-			ft->file = fopen(buf, "w");
+			ft->file = g_fopen(buf, "w");
 			g_free(buf);
 			if (!ft->file) {
 				buf = g_strdup_printf("Could not open %s/%s for writing!", ft->filename,
@@ -1852,7 +1852,7 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
-		stat(ft->filename, &st);
+		g_stat(ft->filename, &st);
 		fortime = localtime(&st.st_mtime);
 		basename = g_path_get_basename(ft->filename);
 		g_snprintf(buf, sizeof(buf), "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
@@ -1994,7 +1994,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 		return;
 	ft = g_new0(struct file_transfer, 1);
 	ft->filename = g_strdup(dirname);
-	ft->file = fopen(ft->filename, "r");
+	ft->file = g_fopen(ft->filename, "r");
 	if (!ft->file) {
 		buf = g_strdup_printf("Unable to open %s for transfer.", ft->filename);
 		gaim_notify_error(ft->gc, NULL, buf, NULL);
@@ -2003,7 +2003,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 		g_free(ft);
 		return;
 	}
-	if (stat(dirname, &ft->st)) {
+	if (g_stat(dirname, &ft->st)) {
 		buf = g_strdup_printf("Unable to examine %s.", dirname);
 		gaim_notify_error(ft->gc, NULL, buf, NULL);
 		g_free(buf);

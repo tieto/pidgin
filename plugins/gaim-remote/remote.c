@@ -798,7 +798,7 @@ plugin_unload(GaimPlugin *plugin)
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
 			g_get_tmp_dir(), g_get_user_name(), gaim_session);
 
-	unlink(buf);
+	g_unlink(buf);
 
 	gaim_debug_misc("core", "Removed core\n");
 

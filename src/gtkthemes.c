@@ -62,7 +62,7 @@ void smiley_themeize(GtkWidget *imhtml)
 
 void load_smiley_theme(const char *file, gboolean load)
 {
-	FILE *f = fopen(file, "r");
+	FILE *f = g_fopen(file, "r");
 	char buf[256];
 	char *i;
 	struct smiley_theme *theme=NULL;
@@ -232,7 +232,7 @@ void smiley_theme_probe()
 			}
 			g_dir_close(dir);
 		} else if (l == 1) {
-			mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR);
+			g_mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR);
 		}
 		g_free(probedirs[l]);
 	}

@@ -519,7 +519,7 @@ theme_got_url(void *data, const char *themedata, size_t len)
 
 	theme_install_theme(path, data);
 
-	unlink(path);
+	g_unlink(path);
 	g_free(path);
 }
 

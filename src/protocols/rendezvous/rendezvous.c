@@ -503,10 +503,10 @@ rendezvous_read_icon_data(const char *filename, unsigned short *length)
 
 	g_return_val_if_fail(filename != NULL, NULL);
 
-	if (stat(filename, &st))
+	if (g_stat(filename, &st))
 		return NULL;
 
-	if (!(file = fopen(filename, "rb")))
+	if (!(file = g_fopen(filename, "rb")))
 		return NULL;
 
 	*length = st.st_size;

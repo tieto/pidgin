@@ -27,9 +27,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <winuser.h>
+#include <shlobj.h>
 
 #include <gtk/gtk.h>
 #include <glib.h>
+#if GLIB_CHECK_VERSION(2,6,0)
+#	include <glib/gstdio.h>
+#else
+#	define g_fopen fopen
+#	define g_unlink unlink
+#endif
 #include <gdk/gdkwin32.h>
 
 #include "gaim.h"
@@ -56,15 +63,13 @@
  */
 
 /* For shfolder.dll */
-typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATH)(HWND, int, HANDLE, DWORD, LPTSTR);
+typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
+typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWSTR);
 
 typedef enum {
     SHGFP_TYPE_CURRENT  = 0,   // current value for user, verify it exists
     SHGFP_TYPE_DEFAULT  = 1,   // default value, may not exist
 } SHGFP_TYPE;
-
-#define CSIDL_APPDATA 0x001a
-#define CSIDL_FLAG_CREATE 0x8000
 
 /* flash info */
 typedef BOOL (CALLBACK* LPFNFLASHWINDOWEX)(PFLASHWINFO);
@@ -78,7 +83,7 @@ typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
 /*
  * LOCALS
  */
-static char app_data_dir[MAX_PATH] = "C:";
+static char app_data_dir[MAX_PATH + 1] = "C:";
 static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
@@ -94,7 +99,8 @@ HINSTANCE gaimdll_hInstance = 0;
  *  PROTOS
  */
 LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
-LPFNSHGETFOLDERPATH MySHGetFolderPath = NULL;
+LPFNSHGETFOLDERPATHA MySHGetFolderPathA = NULL;
+LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
 
 FARPROC wgaim_find_and_loadproc(char*, char*);
 extern void wgaim_gtkspell_init();
@@ -142,136 +148,15 @@ static void load_winver_specific_procs(void) {
 	MyFlashWindowEx = (LPFNFLASHWINDOWEX)wgaim_find_and_loadproc("user32.dll", "FlashWindowEx" );
 }
 
-#if 0
-static char* base_name(char* path) {
-        char *tmp = path;
-        char *prev = NULL;
-
-        while((tmp=strchr(tmp, '\\'))) {
-                prev = tmp;
-                tmp += 1;
-        }
-        if(prev)
-                return ++prev;
-        else
-                return NULL;
-}
-#endif
-
-BOOL folder_exists(char *folder) {
-        BOOL ret = FALSE;
-        WIN32_FIND_DATA fileinfo;
-        HANDLE fh;
-
-        memset(&fileinfo, 0, sizeof(WIN32_FIND_DATA));
-        if((fh=FindFirstFile(folder, &fileinfo))) {
-                if(fileinfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                        ret = TRUE;
-                        SetLastError(ERROR_SUCCESS);
-                }
-                else
-                        SetLastError(ERROR_FILE_EXISTS);
-                FindClose(fh);
-        }
-        return ret;
-}
-
-/* Recursively create directories in the dest path */
-static BOOL CreateDirectoryR(char *dest) {
-        static BOOL start = TRUE;
-        BOOL ret = FALSE;
-
-        if(!dest)
-                return ret;
-
-        if(start) {
-                char *str = g_strdup(dest);
-                start = FALSE;
-                ret = CreateDirectoryR(str);
-                g_free(str);
-                start = TRUE;
-        }
-        else {
-                char *tmp1 = dest;
-                char *tmp=NULL;
-
-                while((tmp1=strchr(tmp1, '\\'))) {
-                        tmp = tmp1;
-                        tmp1+=1;
-                }
-                
-                if(tmp) {
-                        tmp[0] = '\0';
-                        CreateDirectoryR(dest);
-                        tmp[0] = '\\';
-                        if(CreateDirectory(dest, NULL) == 0 && GetLastError() != ERROR_ALREADY_EXISTS) {
-                                gaim_debug(GAIM_DEBUG_ERROR, "wgaim",
-                                           "Error creating directory: %s. Errno: %u\n", 
-                                           dest, (UINT)GetLastError());
-                        }
-                        else
-                                ret = TRUE;
-                }
-        }
-        return ret;
-}
-
-#if 0
-static BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) {
-        char *tsrc, *tdest;
-        SHFILEOPSTRUCT dirmove;
-        BOOL ret = FALSE;
-
-        g_return_val_if_fail(src!=NULL, ret);
-        g_return_val_if_fail(dest!=NULL, ret);
-
-        if(!folder_exists(src)) {
-                gaim_debug(GAIM_DEBUG_WARNING, "wgaim", 
-                           "move_folder: Source folder %s, does not exist\n", src);
-                return ret;
-        }
-        if(!overwrite) {
-                char *dstpath = g_strdup_printf("%s\\%s", dest, base_name(src));
-
-                if(folder_exists(dstpath)) {
-                        gaim_debug(GAIM_DEBUG_WARNING, "wgaim", 
-                                   "move_folder: Destination Folder %s, already exists\n", dstpath);
-                        g_free(dstpath);
-                        return ret;
-                }
-                g_free(dstpath);
-        }
-
-        /* Create dest folder if it doesn't exist */
-        if(!CreateDirectoryR(dest)) {
-                gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Error creating directory: %s\n", dest);
-                return ret;
-        }
-
-        tsrc = g_strdup_printf("%s%c", src, '\0');
-        tdest = g_strdup_printf("%s%c", dest, '\0');
-
-        memset(&dirmove, 0, sizeof(SHFILEOPSTRUCT));
-        dirmove.wFunc = FO_MOVE;
-        dirmove.pFrom = tsrc;
-        dirmove.pTo = tdest;
-        dirmove.fFlags = FOF_NOCONFIRMATION | FOF_SIMPLEPROGRESS;
-        dirmove.hNameMappings = 0;
-        dirmove.lpszProgressTitle = copytitle;
-
-        if(SHFileOperation(&dirmove)==0)
-                ret = TRUE;
-
-        g_free(tsrc);
-        g_free(tdest);
-        return ret;
-}
-#endif
-
 static void wgaim_debug_print(GaimDebugLevel level, const char *category, const char *format, va_list args) {
-        char *str = g_strdup_vprintf(format, args);
-        printf("%s%s%s", category?category:"", category?": ":"",str);
-        g_free(str);
+	char *str = NULL;
+	if (args != NULL) {
+		str = g_strdup_vprintf(format, args);
+	} else {
+		str = g_strdup(format);
+	}
+	printf("%s%s%s", category?category:"", category?": ":"",str);
+	g_free(str);
 }
 
 static GaimDebugUiOps ops =  {
@@ -448,7 +333,7 @@ int wgaim_gz_decompress(const char* in, const char* out) {
 	int ret;
 
 	if((fin = gzopen(in, "rb"))) {
-		if(!(fout = fopen(out, "wb"))) {
+		if(!(fout = g_fopen(out, "wb"))) {
 			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error opening file: %s\n", out);
 			gzclose(fin);
 			return 0;
@@ -491,7 +376,7 @@ int wgaim_gz_untar(const char* filename, const char* destdir) {
 			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failure untaring %s\n", tmpfile);
 			ret=0;
 		}
-		unlink(tmpfile);
+		g_unlink(tmpfile);
 		return ret;
 	}
 	else {
@@ -569,13 +454,33 @@ void wgaim_init(HINSTANCE hint) {
         /* Set app data dir, used by gaim_home_dir */
         newenv = (char*)g_getenv("GAIMHOME");
         if(!newenv) {
-                if((MySHGetFolderPath = (LPFNSHGETFOLDERPATH)wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
-                        MySHGetFolderPath(NULL,
-                                          CSIDL_APPDATA, 
-                                          NULL, SHGFP_TYPE_CURRENT, app_data_dir);
-                }
-                else
-                        strcpy(app_data_dir, "C:");
+#if GLIB_CHECK_VERSION(2,6,0)
+		if ((MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathW"))) {
+			wchar_t utf_16_dir[MAX_PATH +1];
+			char *temp;
+			MySHGetFolderPathW(NULL, CSIDL_APPDATA, NULL,
+					SHGFP_TYPE_CURRENT, utf_16_dir);
+			temp = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
+			g_strlcpy(app_data_dir, temp, sizeof(app_data_dir));
+			g_free(temp);
+		} else if ((MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
+			char locale_dir[MAX_PATH + 1];
+			char *temp;
+			MySHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
+					SHGFP_TYPE_CURRENT, locale_dir);
+			temp = g_locale_to_utf8(locale_dir, -1, NULL, NULL, NULL);
+			g_strlcpy(app_data_dir, temp, sizeof(app_data_dir));
+			g_free(temp);
+		}
+#else
+		if ((MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
+			MySHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
+					SHGFP_TYPE_CURRENT, app_data_dir);
+		}
+#endif
+		else {
+			strcpy(app_data_dir, "C:");
+		}
         }
         else {
                 g_strlcpy(app_data_dir, newenv, sizeof(app_data_dir));

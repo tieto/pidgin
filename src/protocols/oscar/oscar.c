@@ -3362,9 +3362,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		FILE *file;
 		struct stat st;
 
-		if (!stat(iconfile, &st)) {
+		if (!g_stat(iconfile, &st)) {
 			char *buf = g_malloc(st.st_size);
-			file = fopen(iconfile, "rb");
+			file = g_fopen(iconfile, "rb");
 			if (file) {
 				/* XXX - Use g_file_get_contents() */
 				int len = fread(buf, 1, st.st_size, file);
@@ -4695,9 +4695,9 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 		const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
 		if (iconfile == NULL) {
 			aim_ssi_delicon(od->sess);
-		} else if (!stat(iconfile, &st)) {
+		} else if (!g_stat(iconfile, &st)) {
 			char *buf = g_malloc(st.st_size);
-			FILE *file = fopen(iconfile, "rb");
+			FILE *file = g_fopen(iconfile, "rb");
 			if (file) {
 				/* XXX - Use g_file_get_contents()? */
 				fread(buf, 1, st.st_size, file);
@@ -5542,8 +5542,8 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			bi->ico_need = FALSE;
 		}
 
-		if (iconfile && !stat(iconfile, &st)) {
-			FILE *file = fopen(iconfile, "rb");
+		if (iconfile && !g_stat(iconfile, &st)) {
+			FILE *file = g_fopen(iconfile, "rb");
 			if (file) {
 				char *buf = g_malloc(st.st_size);
 				/* XXX - Use g_file_get_contents()? */
@@ -6846,9 +6846,9 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 					const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
 					if (iconfile == NULL) {
 						aim_ssi_delicon(od->sess);
-					} else if (!stat(iconfile, &st)) {
+					} else if (!g_stat(iconfile, &st)) {
 						char *buf = g_malloc(st.st_size);
-						FILE *file = fopen(iconfile, "rb");
+						FILE *file = g_fopen(iconfile, "rb");
 						if (file) {
 							/* XXX - Use g_file_get_contents()? */
 							fread(buf, 1, st.st_size, file);
@@ -7431,9 +7431,9 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 
 	if (iconfile == NULL) {
 		aim_ssi_delicon(od->sess);
-	} else if (!stat(iconfile, &st)) {
+	} else if (!g_stat(iconfile, &st)) {
 		char *buf = g_malloc(st.st_size);
-		file = fopen(iconfile, "rb");
+		file = g_fopen(iconfile, "rb");
 		if (file) {
 			md5_state_t *state;
 			char md5[16];

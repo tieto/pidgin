@@ -392,7 +392,7 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 
 		log->logger_data = data = g_new0(struct generic_logger_data, 1);
 
-		data->file = fopen(path, "a");
+		data->file = g_fopen(path, "a");
 		if (!data->file) {
 			gaim_debug(GAIM_DEBUG_ERROR, "log",
 					"Could not create log file %s\n", path);
@@ -447,7 +447,7 @@ int log_sizer_common(GaimLog *log)
 	struct stat st;
 	struct generic_logger_data *data = log->logger_data;
 
-	if (!data->path || stat(data->path, &st))
+	if (!data->path || g_stat(data->path, &st))
 		st.st_size = 0;
 
 	return st.st_size;
@@ -490,7 +490,7 @@ static void xml_logger_write(GaimLog *log,
 		char *filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
 
-		log->logger_data = fopen(filename, "a");
+		log->logger_data = g_fopen(filename, "a");
 		if (!log->logger_data) {
 			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
 			g_free(filename);
@@ -851,7 +851,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	g_free(logfile);
 	g_free(pathstr);
 
-	if (!(file = fopen(gaim_stringref_value(pathref), "rb"))) {
+	if (!(file = g_fopen(gaim_stringref_value(pathref), "rb"))) {
 		gaim_stringref_unref(pathref);
 		return NULL;
 	}
@@ -962,7 +962,7 @@ static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount
 	int size;
 	struct stat st;
 
-	if (stat(pathstr, &st))
+	if (g_stat(pathstr, &st))
 		size = 0;
 	else
 		size = st.st_size;
@@ -976,7 +976,7 @@ static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount
 static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 {
 	struct old_logger_data *data = log->logger_data;
-	FILE *file = fopen(gaim_stringref_value(data->pathref), "rb");
+	FILE *file = g_fopen(gaim_stringref_value(data->pathref), "rb");
 	char *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);

@@ -87,7 +87,7 @@ msn_session_destroy(MsnSession *session)
 
 	if (session->passport_info.file != NULL)
 	{
-		unlink(session->passport_info.file);
+		g_unlink(session->passport_info.file);
 		g_free(session->passport_info.file);
 	}
 

@@ -225,7 +225,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	{
 		gaim_debug_info("buddy icons", "Creating icon cache directory.\n");
 
-		if (mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
+		if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
 		{
 			gaim_debug_error("buddy icons",
 							 "Unable to create directory %s: %s\n",
@@ -233,7 +233,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 		}
 	}
 
-	if ((file = fopen(filename, "wb")) != NULL)
+	if ((file = g_fopen(filename, "wb")) != NULL)
 	{
 		fwrite(data, 1, len, file);
 		fclose(file);
@@ -243,12 +243,12 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 
 	if (old_icon != NULL)
 	{
-		if(!stat(old_icon, &st))
-			unlink(old_icon);
+		if(!g_stat(old_icon, &st))
+			g_unlink(old_icon);
 		else {
 			filename = g_build_filename(dirname, old_icon, NULL);
-			if(!stat(filename, &st))
-				unlink(filename);
+			if(!g_stat(filename, &st))
+				g_unlink(filename);
 			g_free(filename);
 		}
 	}
@@ -373,13 +373,13 @@ gaim_buddy_icons_find(GaimAccount *account, const char *username)
 		if ((file = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon")) == NULL)
 			return NULL;
 
-		if (!stat(file, &st))
+		if (!g_stat(file, &st))
 			filename = g_strdup(file);
 		else
 			filename = g_build_filename(gaim_buddy_icons_get_cache_dir(), file, NULL);
 
-		if (!stat(filename, &st)) {
-			FILE *f = fopen(filename, "rb");
+		if (!g_stat(filename, &st)) {
+			FILE *f = g_fopen(filename, "rb");
 			if (f) {
 				char *data = g_malloc(st.st_size);
 				fread(data, 1, st.st_size, f);

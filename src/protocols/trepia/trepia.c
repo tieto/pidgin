@@ -1154,10 +1154,10 @@ trepia_set_buddy_icon(GaimConnection *gc, const char *filename)
 	TrepiaSession *session = gc->proto_data;
 	struct stat sb;
 
-	if (!stat(filename, &sb)) {
+	if (!g_stat(filename, &sb)) {
 		FILE *fp;
 
-		if ((fp = fopen(filename, "rb")) != NULL) {
+		if ((fp = g_fopen(filename, "rb")) != NULL) {
 			char *buf = g_malloc(sb.st_size + 1);
 			char *temp;
 			char *out_buf;

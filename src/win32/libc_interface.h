@@ -27,6 +27,7 @@
 #include <io.h>
 #include <errno.h>
 #include "libc_internal.h"
+#include <glib.h>
 
 /* sys/socket.h */
 extern int wgaim_socket(int namespace, int style, int protocol);
@@ -67,7 +68,9 @@ extern int wgaim_fcntl(int socket, int command, int val);
 #define fcntl( fd, command, val ) \
 wgaim_fcntl( fd, command, val )
 
-#define open( args... ) _open( args )
+#if !GLIB_CHECK_VERSION(2,6,0)
+#	define open( args... ) _open( args )
+#endif
 
 /* arpa/inet.h */
 extern int wgaim_inet_aton(const char *name, struct in_addr *addr);
@@ -89,10 +92,6 @@ extern char* wgaim_strerror( int errornum );
 wgaim_strerror( errno )
 #define strerror( errornum ) \
 wgaim_strerror( errornum )
-
-extern char* wgaim_strsep(char **stringp, const char *delim);
-#define strsep( stringp, delim ) \
-wgaim_strsep( stringp, delim )
 
 #define bzero( dest, size ) memset( dest, 0, size )
 
@@ -126,12 +125,18 @@ wgaim_gettimeofday( timeval, timezone )
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
 
+#if !GLIB_CHECK_VERSION(2,6,0)
+/* I think that this can probably go away, in favor of g_rename() */
 extern int wgaim_rename(const char *oldname, const char *newname);
 #define rename( oldname, newname ) \
 wgaim_rename( oldname, newname )
+#endif
 
 /* sys/stat.h */
+
+#if !GLIB_CHECK_VERSION(2,6,0)
 #define mkdir(a,b) _mkdir((a))
+#endif
 #define fchmod(a,b)
 
 /* time.h */

@@ -155,7 +155,7 @@ silcgaim_ftp_ask_name_ok(GaimXfer *x)
 	const char *name;
 
 	name = gaim_xfer_get_local_filename(x);
-	unlink(name);
+	g_unlink(name);
 	xfer->completion(name, xfer->completion_context);
 }
 

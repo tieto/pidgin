@@ -47,7 +47,7 @@ run_commands()
 
 	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
 
-	file = fopen(filename, "r+");
+	file = g_fopen(filename, "r+");
 	while (fgets(buffer, sizeof(buffer), file)) {
 
 		/* Read the next command */
@@ -131,7 +131,7 @@ run_commands()
 
 	fclose(file);
 
-	if (stat (filename, &finfo) != 0)
+	if (g_stat(filename, &finfo) != 0)
 		return;
 	mtime = finfo.st_mtime;
 }
@@ -148,7 +148,7 @@ init_file()
 
 	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
 
-	if ((stat(filename, &finfo) == 0) && (finfo.st_size > 0))
+	if ((g_stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 		run_commands();
 }
 
@@ -164,7 +164,7 @@ check_file()
 
 	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
 
-	if ((stat(filename, &finfo) == 0) && (finfo.st_size > 0))
+	if ((g_stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 	{
 		if (mtime != finfo.st_mtime) {
 			gaim_debug_info("filectl", "control changed, checking\n");

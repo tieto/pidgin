@@ -170,11 +170,11 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 	g_return_if_fail(user != NULL);
 
-	if (filename == NULL || stat(filename, &st) == -1)
+	if (filename == NULL || g_stat(filename, &st) == -1)
 	{
 		msn_user_set_object(user, NULL);
 	}
-	else if ((fp = fopen(filename, "rb")) != NULL)
+	else if ((fp = g_fopen(filename, "rb")) != NULL)
 	{
 		unsigned char *buf;
 		SHA_CTX ctx;

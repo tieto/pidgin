@@ -187,7 +187,7 @@ msn_directconn_write(MsnDirectConn *directconn,
 	char *str;
 	str = g_strdup_printf("%s/msntest/w%.4d.bin", g_get_home_dir(), directconn->c);
 
-	FILE *tf = fopen(str, "w");
+	FILE *tf = g_fopen(str, "w");
 	fwrite(buffer, 1, buf_size, tf);
 	fclose(tf);
 
@@ -206,7 +206,7 @@ msn_directconn_write(MsnDirectConn *directconn,
 	char *str;
 	str = g_strdup_printf("/home/revo/msntest/w%.4d.bin", directconn->c);
 
-	FILE *tf = fopen(str, "w");
+	FILE *tf = g_fopen(str, "w");
 	fwrite(&len, 1, sizeof(len), tf);
 	fwrite(data, 1, len, tf);
 	fclose(tf);
@@ -329,7 +329,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 #ifdef DEBUG_DC
 		str = g_strdup_printf("/home/revo/msntest/r%.4d.bin", directconn->c);
 
-		FILE *tf = fopen(str, "w");
+		FILE *tf = g_fopen(str, "w");
 		fwrite(body, 1, len, tf);
 		fclose(tf);
 

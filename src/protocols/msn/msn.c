@@ -354,7 +354,7 @@ t_msn_xfer_init(GaimXfer *xfer)
 
 	slplink = xfer->data;
 
-	if ((fp = fopen(filename, "rb")) == NULL)
+	if ((fp = g_fopen(filename, "rb")) == NULL)
 	{
 		GaimAccount *account;
 		GaimConnection *gc;

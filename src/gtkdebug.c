@@ -173,7 +173,7 @@ save_writefile_cb(void *user_data, const char *filename)
 	FILE *fp;
 	char *tmp;
 
-	if ((fp = fopen(filename, "w+")) == NULL) {
+	if ((fp = g_fopen(filename, "w+")) == NULL) {
 		gaim_notify_error(win, NULL, _("Unable to open file."), NULL);
 		return;
 	}

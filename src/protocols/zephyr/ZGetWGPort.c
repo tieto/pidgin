@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: datallah $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -29,7 +29,7 @@ int ZGetWGPort()
 	(void) sprintf(name, "/tmp/wg.%d", getuid());
 	envptr = name;
     } 
-    if (!(fp = fopen(envptr, "r")))
+    if (!(fp = g_fopen(envptr, "r")))
 	return (-1);
 
     /* if fscanf fails, return -1 via wgport */

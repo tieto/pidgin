@@ -175,7 +175,7 @@ DLL_LIBS =		-lgtk-win32-2.0 \
 			-lws2_32 \
 			-liberty \
 			-lwinmm \
-			-lzdll \
+			-lz \
 			-lidletrack \
 			-lnss3 \
 			-lnspr4 \

@@ -1928,7 +1928,7 @@ int gaim_build_dir (const char *path, int mode)
 			return -1;
 		}
 
-		if (mkdir(dir, mode) < 0) {
+		if (g_mkdir(dir, mode) < 0) {
 			gaim_debug_warning("build_dir", "mkdir: %s\n", strerror(errno));
 			g_strfreev(components);
 			g_free(dir);
@@ -1963,7 +1963,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Ensure the user directory exists */
 	if (!g_file_test(user_dir, G_FILE_TEST_IS_DIR))
 	{
-		if (mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+		if (g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
 		{
 			gaim_debug_error("util", "Error creating directory %s: %s\n",
 							 user_dir, strerror(errno));
@@ -1977,7 +1977,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Remove an old temporary file, if one exists */
 	if (g_file_test(filename_temp, G_FILE_TEST_EXISTS))
 	{
-		if (unlink(filename_temp) == -1)
+		if (g_unlink(filename_temp) == -1)
 		{
 			gaim_debug_error("util", "Error removing old file %s: %s\n",
 							 filename_temp, strerror(errno));
@@ -1985,7 +1985,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	}
 
 	/* Open file */
-	file = fopen(filename_temp, "wb");
+	file = g_fopen(filename_temp, "wb");
 	if (file == NULL)
 	{
 		gaim_debug_error("util", "Error opening file %s for writing: %s\n",
@@ -2020,7 +2020,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 		return FALSE;
 	}
 	/* Use stat to be absolutely sure. */
-	if ((stat(filename_temp, &st) == -1) || (st.st_size != real_size))
+	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size))
 	{
 		gaim_debug_error("util", "Error writing data to file %s: "
 						 "Incomplete file written; is your disk full?\n",
@@ -2040,7 +2040,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Remove the old file, if it exists */
 	if (g_file_test(filename_full, G_FILE_TEST_EXISTS))
 	{
-		if (unlink(filename_full) == -1)
+		if (g_unlink(filename_full) == -1)
 		{
 			gaim_debug_error("util", "Error removing old file %s: %s\n",
 							 filename_full, strerror(errno));
@@ -2048,7 +2048,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	}
 
 	/* Rename to the REAL name */
-	if (rename(filename_temp, filename_full) == -1)
+	if (g_rename(filename_temp, filename_full) == -1)
 	{
 		gaim_debug_error("util", "Error renaming %s to %s: %s\n",
 						 filename_temp, filename_full, strerror(errno));
@@ -2161,7 +2161,7 @@ gaim_mkstemp(char **fpath, gboolean binary)
 						   "Problem creating the template\n");
 			else
 			{
-				if( (fp = fopen( result, binary?"wb+":"w+")) == NULL ) {
+				if( (fp = g_fopen( result, binary?"wb+":"w+")) == NULL ) {
 					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
 							   "Couldn't fopen() %s\n", result);
 				}

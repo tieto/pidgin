@@ -343,11 +343,11 @@ static void save_list()
 	if(fclose(f)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "spellchk",
 				   "Error writing to %s: %m\n", tempfilename);
-		unlink(tempfilename);
+		g_unlink(tempfilename);
 		g_free(name);
 		return;
 	}
-	rename(tempfilename, name);
+	g_rename(tempfilename, name);
 	g_free(name);
 }
 

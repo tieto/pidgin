@@ -91,11 +91,11 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	/*
 	 * Check ~/.silc directory
 	 */
-	if ((stat(filename, &st)) == -1) {
+	if ((g_stat(filename, &st)) == -1) {
 		/* If dir doesn't exist */
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
-				if ((mkdir(filename, 0755)) == -1) {
+				if ((g_mkdir(filename, 0755)) == -1) {
 					gaim_debug_error("silc", "Couldn't create '%s' directory\n", filename);
 					return FALSE;
 				}
@@ -122,11 +122,11 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	/*
 	 * Check ~./silc/serverkeys directory
 	 */
-	if ((stat(servfilename, &st)) == -1) {
+	if ((g_stat(servfilename, &st)) == -1) {
 		/* If dir doesn't exist */
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
-				if ((mkdir(servfilename, 0755)) == -1) {
+				if ((g_mkdir(servfilename, 0755)) == -1) {
 					gaim_debug_error("silc", "Couldn't create '%s' directory\n", servfilename);
 					return FALSE;
 				}
@@ -145,11 +145,11 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	/*
 	 * Check ~./silc/clientkeys directory
 	 */
-	if ((stat(clientfilename, &st)) == -1) {
+	if ((g_stat(clientfilename, &st)) == -1) {
 		/* If dir doesn't exist */
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
-				if ((mkdir(clientfilename, 0755)) == -1) {
+				if ((g_mkdir(clientfilename, 0755)) == -1) {
 					gaim_debug_error("silc", "Couldn't create '%s' directory\n", clientfilename);
 					return FALSE;
 				}
@@ -168,11 +168,11 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	/*
 	 * Check ~./silc/friends directory
 	 */
-	if ((stat(friendsfilename, &st)) == -1) {
+	if ((g_stat(friendsfilename, &st)) == -1) {
 		/* If dir doesn't exist */
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
-				if ((mkdir(friendsfilename, 0755)) == -1) {
+				if ((g_mkdir(friendsfilename, 0755)) == -1) {
 					gaim_debug_error("silc", "Couldn't create '%s' directory\n", friendsfilename);
 					return FALSE;
 				}
@@ -196,7 +196,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	g_snprintf(file_private_key, sizeof(file_public_key) - 1, "%s",
 		   gaim_prefs_get_string("/plugins/prpl/silc/privkey"));
 
-	if ((stat(file_public_key, &st)) == -1) {
+	if ((g_stat(file_public_key, &st)) == -1) {
 		/* If file doesn't exist */
 		if (errno == ENOENT) {
 			gaim_connection_update_progress(gc, _("Creating SILC key pair..."), 1, 5);
@@ -205,7 +205,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 					     file_public_key, file_private_key, NULL,
 					     (gc->account->password == NULL) ? "" : gc->account->password,
 						 NULL, NULL, NULL, FALSE);
-			stat(file_public_key, &st);
+			g_stat(file_public_key, &st);
 		} else {
 			gaim_debug_error("silc", "Couldn't stat '%s' public key, error: %s\n",
 							 file_public_key, strerror(errno));
@@ -221,7 +221,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	}
 #endif
 
-	if ((stat(file_private_key, &st)) == -1) {
+	if ((g_stat(file_private_key, &st)) == -1) {
 		/* If file doesn't exist */
 		if (errno == ENOENT) {
 			gaim_connection_update_progress(gc, _("Creating SILC key pair..."), 1, 5);
@@ -230,7 +230,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 					     file_public_key, file_private_key, NULL,
 					     (gc->account->password == NULL) ? "" : gc->account->password,
 						 NULL, NULL, NULL, FALSE);
-			stat(file_private_key, &st);
+			g_stat(file_private_key, &st);
 		} else {
 			gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 							 file_private_key, strerror(errno));

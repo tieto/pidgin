@@ -1150,7 +1150,7 @@ gaim_desktop_item_new_from_file (const char *filename)
 
 	g_return_val_if_fail (filename != NULL, NULL);
 
-	dfile = fopen(filename, "r");
+	dfile = g_fopen(filename, "r");
 	if (!dfile) {
 		printf ("Can't open %s: %s", filename, strerror(errno));
 		return NULL;

@@ -917,10 +917,10 @@ silcgaim_add_buddy_save(bool success, void *context)
 			return;
 
 		/* Create dir if it doesn't exist */
-		if ((stat(filename, &st)) == -1) {
+		if ((g_stat(filename, &st)) == -1) {
 			if (errno == ENOENT) {
 				if (pw->pw_uid == geteuid())
-					mkdir(filename, 0755);
+					g_mkdir(filename, 0755);
 			}
 		}
 

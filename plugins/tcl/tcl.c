@@ -161,8 +161,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	const char *next;
 	int len, found = 0, err = 0, nelems;
 	gboolean status = FALSE;
-
-	if ((fp = fopen(plugin->path, "r")) == NULL)
+	if ((fp = g_fopen(plugin->path, "r")) == NULL)
 		return FALSE;
 	if (fstat(fileno(fp), &st)) {
 		fclose(fp);

@@ -304,7 +304,7 @@ icon_preview_change_cb(GtkTreeSelection *sel, AccountPrefsDialog *dialog)
 		GTK_FILE_SELECTION(dialog->icon_filesel)));
 #endif /* FILECHOOSER */
 
-	if (!filename || stat(filename, &st))
+	if (!filename || g_stat(filename, &st))
 	{
 		g_free(filename);
 		return;
@@ -520,7 +520,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	format = gdk_pixbuf_get_file_info (path, &width, &height);
 #else
 	loader = gdk_pixbuf_loader_new();
-	if (!stat(path, &st) && (file = fopen(path, "rb")) != NULL) {
+	if (!g_stat(path, &st) && (file = g_fopen(path, "rb")) != NULL) {
 		data = g_malloc(st.st_size);
 		fread(data, 1, st.st_size, file);
 		fclose(file);
@@ -599,7 +599,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
 			gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
 
-			if (mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
+			if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
 				gaim_debug_error("buddyicon",
 								 "Unable to create directory %s: %s\n",
 								 dirname, strerror(errno));
