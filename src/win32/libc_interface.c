@@ -341,3 +341,15 @@ int wgaim_rename (const char *oldname, const char *newname) {
 	}
 
 }
+
+/* time.h */
+
+struct tm * wgaim_localtime_r (const time_t *time, struct tm *resultp) {
+	struct tm* tmptm;
+
+	tmptm = localtime(time);
+	if(resultp && tmptm)
+		return memcpy(resultp, tmptm, sizeof(struct tm));
+	else
+		return NULL;
+}

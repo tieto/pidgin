@@ -93,4 +93,9 @@ wgaim_rename( ## oldname ##, ## newname ## )
 #define mkdir(a,b) _mkdir((a))
 #define fchmod(a,b)
 
+/* time.h */
+extern struct tm *wgaim_localtime_r(const time_t *time, struct tm *resultp);
+#define localtime_r( time, resultp ) \
+wgaim_localtime_r( ## time ##, ## resultp ## )
+
 #endif /* _LIBC_INTERFACE_H_ */
