@@ -24,7 +24,11 @@
 /***************************** Key Agreement *********************************/
 
 static void
-silcgaim_buddy_keyagr(GaimConnection *gc, const char *name);
+silcgaim_buddy_keyagr(GaimBlistNode *node, gpointer data);
+
+static void
+silcgaim_buddy_keyagr_do(GaimConnection *gc, const char *name,
+			 			 gboolean force_local);
 
 typedef struct {
 	char *nick;
@@ -52,7 +56,7 @@ silcgaim_buddy_keyagr_resolved(SilcClient client,
 		return;
 	}
 
-	silcgaim_buddy_keyagr(gc, r->nick);
+	silcgaim_buddy_keyagr_do(gc, r->nick, FALSE);
 	silc_free(r->nick);
 	silc_free(r);
 }
@@ -305,9 +309,12 @@ void silcgaim_buddy_keyagr_request(SilcClient client,
 }
 
 static void
-silcgaim_buddy_keyagr(GaimConnection *gc, const char *name)
+silcgaim_buddy_keyagr(GaimBlistNode *node, gpointer data)
 {
-	silcgaim_buddy_keyagr_do(gc, name, FALSE);
+	GaimBuddy *buddy; 
+
+	buddy = (GaimBuddy *)node;
+	silcgaim_buddy_keyagr_do(buddy->account->gc, buddy->name, FALSE);
 }
 
 
