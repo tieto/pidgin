@@ -204,27 +204,35 @@ faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *sess,
  */
 faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess,
 					     struct aim_conn_t *conn, 
-					     char *profile,
-					     char *awaymsg,
+					     const char *profile,
+					     const char *awaymsg,
 					     unsigned short caps)
 {
   struct command_tx_struct *newpacket;
   int i = 0, tmp, caplen;
+  static const char defencoding[] = {"text/aolrtf; charset=\"us-ascii\""};
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152+strlen(profile)+1+(awaymsg?strlen(awaymsg):0))))
+  i = 10;
+  if (profile)
+    i += 4+strlen(defencoding)+4+strlen(profile);
+  if (awaymsg)
+    i += 4+strlen(defencoding)+4+strlen(awaymsg);
+  i += 4+512; /* for capabilities */
+
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, i)))
     return -1;
 
-  i += aim_putsnac(newpacket->data, 0x0002, 0x004, 0x0000, sess->snac_nextid);
-  i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen("text/aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
-  i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(profile), profile);
-  /* why do we send this twice?  */
-  i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen("text/aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
-  
-  /* Away message -- we send this no matter what, even if its blank */
-  if (awaymsg)
+  i = aim_putsnac(newpacket->data, 0x0002, 0x004, 0x0000, sess->snac_nextid);
+
+  if (profile) {
+    i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen(defencoding), defencoding);
+    i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(profile), profile);
+  }
+
+  if (awaymsg) {
+    i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen(defencoding), defencoding);
     i += aim_puttlv_str(newpacket->data+i, 0x0004, strlen(awaymsg), awaymsg);
-  else
-    i += aim_puttlv_str(newpacket->data+i, 0x0004, 0x0000, NULL);
+  }
 
   /* Capability information. */
  

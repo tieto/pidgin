@@ -548,7 +548,7 @@ faim_export unsigned long aim_flap_nop(struct aim_session_t *sess, struct aim_co
 faim_export unsigned long aim_bos_setidle(struct aim_session_t *, struct aim_conn_t *, u_long);
 faim_export unsigned long aim_bos_changevisibility(struct aim_session_t *, struct aim_conn_t *, int, char *);
 faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *, struct aim_conn_t *, char *);
-faim_export unsigned long aim_bos_setprofile(struct aim_session_t *, struct aim_conn_t *, char *, char *, unsigned short);
+faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess, struct aim_conn_t *conn, const char *profile, const char *awaymsg, unsigned short caps);
 faim_export unsigned long aim_bos_setgroupperm(struct aim_session_t *, struct aim_conn_t *, u_long);
 faim_export unsigned long aim_bos_clientready(struct aim_session_t *, struct aim_conn_t *);
 faim_export unsigned long aim_bos_reqrate(struct aim_session_t *, struct aim_conn_t *);

@@ -1,6 +1,11 @@
 
 No release numbers
 ------------------
+ - Thu Jun 14 17:37:47 PDT 2001
+  - Rearrange aim_setprofile().  It will now let you _not_ send a profile,
+      if you really want to (pass NULL).  Note that this is quite different
+      than sending a _blank_ profile.  Also fixes the "asci" bug.
+
  - Mon Jun  4 12:57:46 PDT 2001
   - Fix chatnav.  Whoops.
 
