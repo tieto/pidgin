@@ -1348,8 +1348,8 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					conv->send_history->next->data) {
 
 					conv->send_history = conv->send_history->next;
-					gtk_text_buffer_set_text(gtkconv->entry_buffer,
-											 conv->send_history->data, -1);
+					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+					gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->entry), conv->send_history->data, 0, NULL);
 				}
 
 				break;
@@ -1361,9 +1361,10 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				if (conv->send_history->prev) {
 					conv->send_history = conv->send_history->prev;
 
-					if (conv->send_history->data)
-						gtk_text_buffer_set_text(gtkconv->entry_buffer,
-												 conv->send_history->data, -1);
+					if (conv->send_history->data) {
+						gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+						gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->entry), conv->send_history->data, 0, NULL);
+					}
 				}
 
 				break;

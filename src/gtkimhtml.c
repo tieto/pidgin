@@ -643,7 +643,7 @@ static void url_copy(GtkWidget *w, gchar *url) {
 /* The callback for an event on a link tag. */
 gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, char *url) {
 	GdkEventButton *event_button = (GdkEventButton *) event;
-	if (imhtml->editable)
+	if (GTK_IMHTML(imhtml)->editable)
 		return FALSE;
 	if (event->type == GDK_BUTTON_RELEASE) {
 		if (event_button->button == 1) { 
