@@ -1,3 +1,14 @@
+Sat May 20 06:29:31 UTC 2000 EWarmenhoven
+	- You can add and remove buddies now. It also tries to retrieve the
+	  buddy list using the .gaimbdcache list, and saves it the same way
+	  (remember the Oscar server doesn't save the list for us).
+	- When someone goes idle (e.g. 10 minutes idle), it appears as 266334.5
+	  hours idle. I'm not sure if that's my problem or libfaim's.
+	- Sometimes it segfaults when you try to sign in, sometimes it doesn't.
+	  I can't figure out why.
+	- It still has the 2 second delay between display updates. I think I'm
+	  going insane; it doesn't bug as much as it used to.
+
 Sat May 20 00:16:25 UTC 2000 EWarmenhoven
 	- First log entry! Yay!
 	- Updated the libfaim code to the latest in CVS

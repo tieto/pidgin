@@ -337,7 +337,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 247 $"
+#define REVISION "gaim:$Revision: 252 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -559,6 +559,7 @@ extern int connect_address(unsigned int, unsigned short);
 
 /* Functions in oscar.c */
 extern int oscar_login(char *, char *);
+extern void oscar_close();
 extern int oscar_send_im(char *, char *, int);
 
 /* Functions in toc.c */

@@ -807,6 +807,7 @@ char *toc_wait_config()
 	return buf;
 }
 
+#endif /* USE_OSCAR */
 
 void toc_build_config(char *s, int len)
 {
@@ -843,8 +844,6 @@ void toc_build_config(char *s, int len)
                 dlist=dlist->next;
         }
 }
-
-#endif /* USE_OSCAR */
 
 void parse_toc_buddy_list(char *config)
 {

@@ -39,8 +39,8 @@
 #include "gnome_applet_mgr.h"
 
 static int inpa = -1;
-static struct aim_session_t *gaim_sess;
-static struct aim_conn_t    *gaim_conn;
+struct aim_session_t *gaim_sess;
+struct aim_conn_t    *gaim_conn;
 
 static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_auth_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
@@ -53,6 +53,7 @@ static int gaim_parse_misses     (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_user_info  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_unknown    (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_motd       (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_chatnav_info     (struct aim_session_t *, struct command_rx_struct *, ...);
 
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
@@ -75,7 +76,7 @@ static void oscar_callback(gpointer data, gint source,
 			aim_logoff(sess);
 			gdk_input_remove(inpa);
 			break;
-		case 0: /* this should never happen because of the gdk_input */
+		case 0:
 			gdk_input_remove(inpa);
 			while (gtk_events_pending())
 				gtk_main_iteration();
@@ -168,6 +169,17 @@ int oscar_send_im(char *name, char *msg, int away) {
 		aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, msg);
 	else
 		aim_send_im(gaim_sess, gaim_conn, name, 0, msg);
+}
+
+void oscar_close() {
+#ifdef USE_APPLET
+	setUserState(offline);
+#endif
+	set_state(STATE_OFFLINE);
+	if (inpa > 0)
+		gdk_input_remove(inpa);
+	inpa = -1;
+	aim_logoff(gaim_sess);
 }
 
 int gaim_parse_auth_resp(struct aim_session_t *sess,
@@ -263,8 +275,14 @@ int gaim_server_ready(struct aim_session_t *sess,
 		debug_print("done with BOS ServerReady\n");
 		break;
 	case AIM_CONN_TYPE_CHATNAV:
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
+		aim_bos_reqrate(sess, command->conn);
+		aim_bos_ackrateresp(sess, command->conn);
+		aim_chatnav_clientready(sess, command->conn);
+		aim_chatnav_reqrights(sess, command->conn);
 		break;
 	case AIM_CONN_TYPE_CHAT:
+		/* FIXME */
 		break;
 	default: /* huh? */
 		break;
@@ -279,8 +297,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	char *ip;
 	char *cookie;
 
-	/* FIXME */
-	char buddies[] = "EWarmenhoven&RobFlynn&Zilding&FlynOrange&";
+	char buddies[] = "EWarmenhoven&";
 	char profile[] = "Hello";
 
 	va_start(ap, command);
@@ -291,7 +308,8 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	switch(serviceid) {
 	case 0x0005: /* Ads */
 		aim_bos_setbuddylist(sess, command->conn, buddies);
-		aim_bos_setprofile(sess, command->conn, profile, NULL, AIM_CAPS_CHAT);
+		aim_bos_setprofile(sess, command->conn, profile,
+					NULL, AIM_CAPS_CHAT);
 
 		aim_bos_clientready(sess, command->conn);
 
@@ -316,6 +334,10 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		show_buddy_list();
 		refresh_buddy_window();
 #endif
+		serv_finish_login();
+		if (bud_list_cache_exists())
+			do_import(NULL, 0);
+
 		break;
 	case 0x7: /* Authorizer */
 		{
@@ -327,8 +349,19 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		}
 		break;
 	case 0xd: /* ChatNav */
+		{
+		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, ip);
+		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR) {
+			debug_print("unable to connect to chatnav server\n");
+			return 1;
+		}
+		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
+		aim_auth_sendcookie(sess, tstconn, cookie);
+		}
+		debug_print("chatnav: connected\n");
 		break;
 	case 0xe: /* Chat */
+		/* FIXME */
 		break;
 	default: /* huh? */
 		sprintf(debug_buff, "got redirect for unknown service 0x%04x\n",
@@ -344,11 +377,40 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 int gaim_parse_oncoming(struct aim_session_t *sess,
 			struct command_rx_struct *command, ...) {
+	struct aim_userinfo_s *info;
+	int type = 0;
+
+	va_list ap;
+	va_start(ap, command);
+	info = va_arg(ap, struct aim_userinfo_s *);
+	va_end(ap);
+
+	if (info->class & AIM_CLASS_TRIAL)
+		type |= UC_UNCONFIRMED;
+	if (info->class & AIM_CLASS_AOL)
+		type |= UC_AOL;
+	if (info->class & AIM_CLASS_FREE)
+		type |= UC_NORMAL;
+	if (info->class & AIM_CLASS_AWAY)
+		type |= UC_UNAVAILABLE;
+
+	serv_got_update(info->sn, 1, info->warnlevel, info->onlinesince,
+			info->idletime, type);
+
 	return 1;
 }
 
 int gaim_parse_offgoing(struct aim_session_t *sess,
 			struct command_rx_struct *command, ...) {
+	char *sn;
+	va_list ap;
+
+	va_start(ap, command);
+	sn = va_arg(ap, char *);
+	va_end(ap);
+
+	serv_got_update(sn, 0, 0, 0, 0, 0);
+
 	return 1;
 }
 
@@ -383,16 +445,19 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 
 int gaim_parse_misses(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
+	/* FIXME */
 	return 1;
 }
 
 int gaim_parse_user_info(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
+	/* FIXME */
 	return 1;
 }
 
 int gaim_parse_unknown(struct aim_session_t *sess,
 		       struct command_rx_struct *command, ...) {
+	/* FIXME */
 	return 1;
 }
 
@@ -413,4 +478,9 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	return 1;
 }
 
+int gaim_chatnav_info(struct aim_session_t *sess,
+		      struct command_rx_struct *command, ...) {
+	/* FIXME */
+	return 1;
+}
 #endif /* USE_OSCAR */

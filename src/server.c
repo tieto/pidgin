@@ -53,6 +53,8 @@ void serv_close()
 {
 #ifndef USE_OSCAR
 	toc_close();
+#else
+	oscar_close();
 #endif
         gtk_timeout_remove(idle_timer);
         idle_timer = -1;
@@ -244,6 +246,8 @@ void serv_add_buddy(char *name)
 #ifndef USE_OSCAR
 	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	aim_add_buddy(gaim_sess, gaim_conn, name);
 #endif
 }
 
@@ -265,6 +269,12 @@ void serv_add_buddies(GList *buddies)
                 buddies = buddies->next;
         }
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	/* oscar you have to add them one name at a time, except at login */
+	while(buddies) {
+		serv_add_buddy((char *)buddies->data);
+		buddies = buddies->next;
+	}
 #endif
 }
 
@@ -275,6 +285,8 @@ void serv_remove_buddy(char *name)
 #ifndef USE_OSCAR
 	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	aim_remove_buddy(gaim_sess, gaim_conn, name);
 #endif
 }
 
@@ -359,9 +371,7 @@ void serv_warn(char *name, int anon)
 }
 
 void serv_build_config(char *buf, int len) {
-#ifndef USE_OSCAR
 	toc_build_config(buf, len);
-#endif
 }
 
 
