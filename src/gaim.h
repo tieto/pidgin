@@ -131,10 +131,12 @@ struct gaim_plugin {
 enum gaim_event {
 	event_signon = 0,
 	event_signoff,
+	event_away,
 	event_im_recv,
 	event_im_send,
 	event_buddy_signon,
 	event_buddy_signoff,
+	event_buddy_away,
 	event_blist_update,
 	/* any others? it's easy to add... */
 };
@@ -291,7 +293,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 125 $"
+#define REVISION "gaim:$Revision: 143 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

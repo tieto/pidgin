@@ -1450,6 +1450,20 @@ void set_buddy(struct buddy *b)
                 if (!b->log_timer) {
                         gtk_widget_hide(b->pix);
                         if (b->uc & UC_UNAVAILABLE) {
+#ifdef GAIM_PLUGINS
+				GList *c = callbacks;
+				struct gaim_callback *g;
+				void (*function)(char *, void *);
+				while (c) {
+					g = (struct gaim_callback *)c->data;
+					if (g->event == event_buddy_away &&
+							g->function != NULL) {
+						function = g->function;
+						(*function)(b->name, g->data);
+					}
+					c = c->next;
+				}
+#endif
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)away_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);

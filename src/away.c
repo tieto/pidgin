@@ -32,7 +32,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 
-static GtkWidget *imaway=NULL;
+GtkWidget *imaway=NULL;
 #ifdef USE_APPLET
 extern enum gaim_user_states MRI_user_status;
 #endif
@@ -165,6 +165,21 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         serv_set_away(buf2);
         g_free(buf2);
 	gtk_widget_show(imaway);
+#ifdef GAIM_PLUGINS
+	{
+		GList *c = callbacks;
+		struct gaim_callback *g;
+		void (*function)(void *);
+		while (c) {
+			g = (struct gaim_callback *)c->data;
+			if (g->event == event_away && g->function != NULL) { 
+				function = g->function;
+				(*function)(g->data);
+			}
+			c = c->next;
+		}
+	}
+#endif
 }
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)

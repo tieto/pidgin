@@ -110,8 +110,9 @@ void hide_login_progress(char *why)
 }
 
 static int snd_tmout;
+int logins_not_muted = 1;
 static void sound_timeout() {
-	sound_options += OPT_SOUND_LOGIN;
+	logins_not_muted = 1;
 	gtk_timeout_remove(snd_tmout);
 }
 
@@ -148,7 +149,7 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 
 	if (sound_options & OPT_SOUND_LOGIN &&
 		sound_options & OPT_SOUND_SILENT_SIGNON) {
-		sound_options -= OPT_SOUND_LOGIN;
+		logins_not_muted = 0;
 		snd_tmout = gtk_timeout_add(10000, (GtkFunction)sound_timeout,
 				NULL);
 	}

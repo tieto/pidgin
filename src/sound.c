@@ -220,7 +220,7 @@ static int can_play_nas()
 
 #endif
 
-static void play(unsigned char *data, int size)
+void play(unsigned char *data, int size)
 {
         int pid;
 
@@ -260,7 +260,7 @@ static void play(unsigned char *data, int size)
         }
 }
 
-
+extern int logins_not_muted;
 #ifndef USE_APPLET
 
 void play_sound(int sound)
@@ -268,7 +268,7 @@ void play_sound(int sound)
 
 	switch(sound) {
 	case BUDDY_ARRIVE:
-		if (sound_options & OPT_SOUND_LOGIN)
+		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted)
 			play(BuddyArrive, sizeof(BuddyArrive));
 		break;
 	case BUDDY_LEAVE:
@@ -302,7 +302,7 @@ void play_sound(int sound)
 
 	switch(sound) {
 	case BUDDY_ARRIVE:
-		if (sound_options & OPT_SOUND_LOGIN)
+		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted)
 			gnome_triggers_do("", "program", "gaim_applet", "login", NULL);
 		break;
 	case BUDDY_LEAVE:
