@@ -209,13 +209,11 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 		cur->capabilities = userinfo->capabilities;
 	cur->present |= userinfo->present;
 
-	if ((userinfo->away != NULL) && (userinfo->away_len > 0)) {
-		free(cur->away);
-		free(cur->away_encoding);
-		cur->away = (char *)malloc(userinfo->away_len);
-		memcpy(cur->away, userinfo->away, userinfo->away_len);
-		cur->away_encoding = strdup(userinfo->away_encoding); /* XXX - This seems to leak occasionally */
-		cur->away_len = userinfo->away_len;
+	if (userinfo->iconcsumlen > 0) {
+		free(cur->iconcsum);
+		cur->iconcsum = (fu8_t *)malloc(userinfo->iconcsumlen);
+		memcpy(cur->iconcsum, userinfo->iconcsum, userinfo->iconcsumlen);
+		cur->iconcsumlen = userinfo->iconcsumlen;
 	}
 
 	if ((userinfo->info != NULL) && (userinfo->info_len > 0)) {
@@ -225,6 +223,15 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 		memcpy(cur->info, userinfo->info, userinfo->info_len);
 		cur->info_encoding = strdup(userinfo->info_encoding); /* XXX - This seems to leak occasionally */
 		cur->info_len = userinfo->info_len;
+	}
+
+	if ((userinfo->away != NULL) && (userinfo->away_len > 0)) {
+		free(cur->away);
+		free(cur->away_encoding);
+		cur->away = (char *)malloc(userinfo->away_len);
+		memcpy(cur->away, userinfo->away, userinfo->away_len);
+		cur->away_encoding = strdup(userinfo->away_encoding); /* XXX - This seems to leak occasionally */
+		cur->away_len = userinfo->away_len;
 	}
 }
 
@@ -1133,10 +1140,7 @@ static void locate_shutdown(aim_session_t *sess, aim_module_t *mod)
 	while (sess->locate.userinfo) {
 		del = sess->locate.userinfo;
 		sess->locate.userinfo = sess->locate.userinfo->next;
-		free(del->sn);
-		free(del->info);
-		free(del->avail);
-		free(del->away);
+		aim_info_free(del);
 		free(del);
 	}
 }
