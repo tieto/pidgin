@@ -59,18 +59,27 @@ for i in $STATIC_PRPLS ; do
 	extern_init="$extern_init extern void ${i}_init(struct prpl *);"
 	load_proto="$load_proto load_protocol(${i}_init, sizeof(struct prpl));"
 	case $i in
-		icq) AM_CONDITIONAL(STATIC_ICQ, true) ;;
-		irc) AM_CONDITIONAL(STATIC_IRC, true) ;;
-		jabber) AM_CONDITIONAL(STATIC_JABBER, true) ;;
-		msn) AM_CONDITIONAL(STATIC_MSN, true) ;;
-		napster) AM_CONDITIONAL(STATIC_NAPSTER, true) ;;
-		oscar) AM_CONDITIONAL(STATIC_OSCAR, true) ;;
-		toc) AM_CONDITIONAL(STATIC_TOC, true) ;;
-		yahoo) AM_CONDITIONAL(STATIC_YAHOO, true) ;;
-		zephyr) AM_CONDITIONAL(STATIC_ZEPHYR, true) ;;
+		icq) static_icq=yes ;;
+		irc) static_irc=yes ;;
+		jabber) static_jabber=yes ;;
+		msn) static_msn=yes ;;
+		napster) static_napster=yes ;;
+		oscar) static_oscar=yes ;;
+		toc) static_toc=yes ;;
+		yahoo) static_yahoo=yes ;;
+		zephyr) static_zephyr=yes ;;
 		*) echo "Invalid static protocol $i!!" ; exit ;;
 	esac
 done
+AM_CONDITIONAL(STATIC_ICQ, test "x$static_icq" = "xyes")
+AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
+AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
+AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
+AM_CONDITIONAL(STATIC_NAPSTER, test "x$static_napster" = "xyes")
+AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
+AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
+AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
+AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto })
 
