@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.20\n"
 "POT-Creation-Date: 2001-06-17 23:41-0700\n"
-"PO-Revision-Date: 2000-06-13 22:26-0700\n"
+"PO-Revision-Date: 2001-12-27 22:26-0700\n"
 "Last-Translator: Sebfrance\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
@@ -17,28 +17,28 @@ msgstr ""
 #: plugins/icq/gaim_icq.c:442 src/oscar.c:2895 src/toc.c:1031
 #, fuzzy
 msgid "Get Info"
-msgstr "Message d'Information"
+msgstr "Obtenir des informations"
 
 #: plugins/yay/yay.c:183
 #, fuzzy
 msgid "Your message did not get sent."
-msgstr "Son à l'envoi d'un message"
+msgstr "Votre message n'a pas été envoyé."
 
 #: plugins/yay/yay.c:183 src/dialogs.c:3066 src/dialogs.c:3073
 #: src/oscar.c:1869 src/oscar.c:1874 src/oscar.c:1910 src/oscar.c:1929
 #, fuzzy
 msgid "Gaim - Error"
-msgstr "Gaim - Erreur %d"
+msgstr "Gaim - Erreur"
 
 #: plugins/yay/yay.c:201
 #, c-format
 msgid "%s has made %s their buddy%s%s"
-msgstr ""
+msgstr "%s a ajouté %s dans sa liste""
 
 #: plugins/yay/yay.c:203
 #, fuzzy
 msgid "Gaim - Buddy"
-msgstr "Gaim - Ajouter un Pote"
+msgstr "Gaim - Pote"
 
 #: plugins/yay/yay.c:250 src/about.c:179 src/aim.c:303 src/buddy.c:2607
 #: src/buddy_chat.c:971 src/buddy_chat.c:1125 src/buddy_chat.c:1152
@@ -62,6 +62,9 @@ msgid ""
 "written using Gtk+ and is licensed under the GPL.\n"
 "URL: "
 msgstr ""
+"Gaim est un client supportant le protocol d'AIM. Il est écrit en Gtk+"
+"et est sous la GPL.\n"
+"URL: "
 
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
@@ -199,7 +202,7 @@ msgstr "Enlever"
 
 #: src/buddy.c:446 src/buddy.c:2130 src/buddy.c:2485
 msgid "Chat"
-msgstr "Forum"
+msgstr "Salon"
 
 #: src/buddy.c:447 src/buddy.c:648 src/buddy.c:761 src/buddy.c:2483
 #: src/buddy_chat.c:507 src/buddy_chat.c:927
@@ -276,7 +279,7 @@ msgstr "Bourse"
 #: src/buddy.c:2194
 #, fuzzy, c-format
 msgid "Logged in: %s\n"
-msgstr "Connection de %s.\n"
+msgstr "Connection de %s\n"
 
 #: src/buddy.c:2205
 #, c-format
@@ -323,12 +326,12 @@ msgstr "Envoyer un message"
 
 #: src/buddy.c:2517
 msgid "Start/join a Buddy Chat"
-msgstr "Ouvrir/Rallier un Forum"
+msgstr "Ouvrir/Rallier un Salon"
 
 #: src/buddy.c:2518
 #, fuzzy
 msgid "Activate Away Message"
-msgstr "Nouveau Message d'absence"
+msgstr "Activer le message d'absence"
 
 #: src/buddy.c:2582
 msgid "File"
@@ -341,12 +344,12 @@ msgstr "Ajouter un Pote"
 #: src/buddy.c:2588
 #, fuzzy
 msgid "Join A Chat"
-msgstr "Rallier le forum"
+msgstr "Rallier le salon"
 
 #: src/buddy.c:2590
 #, fuzzy
 msgid "New Instant Message"
-msgstr "Envoyer un message"
+msgstr "Nouveau message"
 
 #: src/buddy.c:2595
 msgid "Import Buddy List"
@@ -391,7 +394,7 @@ msgstr "Changer de Mot de Passe"
 #: src/buddy.c:2666
 #, fuzzy
 msgid "Protocol Actions"
-msgstr "Options"
+msgstr "Options du protocol"
 
 #: src/buddy.c:2673
 msgid "View System Log"
@@ -446,11 +449,11 @@ msgstr "En Ligne"
 
 #: src/buddy.c:2810
 msgid "Edit Buddies"
-msgstr "Editer ses amis"
+msgstr "Editer sa liste de potes"
 
 #: src/buddy.c:2847
 msgid "Gaim - Buddy List"
-msgstr "Gaim - Liste des Potes"
+msgstr "Gaim - Liste de Potes"
 
 #: src/buddy_chat.c:104 src/oscar.c:2590 src/toc.c:1001
 msgid "Join what group:"
@@ -458,16 +461,16 @@ msgstr "Joindre le groupe: "
 
 #: src/buddy_chat.c:202
 msgid "Join Chat"
-msgstr "Rallier le forum"
+msgstr "Rallier le salon"
 
 #: src/buddy_chat.c:209 src/buddy_chat.c:1057 src/buddy_chat.c:1069
 msgid "Buddy Chat"
-msgstr "Forum"
+msgstr "Salon"
 
 #: src/buddy_chat.c:220
 #, fuzzy
 msgid "Join Chat As:"
-msgstr "Rallier le forum"
+msgstr "Rallier le salon en tant que:"
 
 #: src/buddy_chat.c:241 src/buddy_chat.c:286 src/dialogs.c:410
 #: src/dialogs.c:697 src/dialogs.c:757 src/dialogs.c:885 src/dialogs.c:1002
@@ -497,7 +500,7 @@ msgstr "En utilisant le message:"
 
 #: src/buddy_chat.c:331
 msgid "Invite to Buddy Chat"
-msgstr "Inviter à un Forum"
+msgstr "Inviter à un Salon"
 
 #: src/buddy_chat.c:513 src/buddy_chat.c:931
 msgid "Ignore"
@@ -506,12 +509,12 @@ msgstr "Ignorer"
 #: src/buddy_chat.c:565 src/buddy_chat.c:671
 #, c-format
 msgid "%d %s in room"
-msgstr "%d %s dans le Forum"
+msgstr "%d %s dans le salon"
 
 #: src/buddy_chat.c:572
 #, c-format
 msgid "%s entered the room."
-msgstr "%s entre dans le Forum."
+msgstr "%s est entré dans le salon."
 
 #: src/buddy_chat.c:635
 #, c-format
@@ -521,12 +524,12 @@ msgstr "%s est désormais connu sous le nom de %s"
 #: src/buddy_chat.c:678
 #, c-format
 msgid "%s left the room."
-msgstr "%s quitte le Forum."
+msgstr "%s a quitté le salon."
 
 #: src/buddy_chat.c:805
 #, fuzzy
 msgid "Gaim - Group Chats"
-msgstr "Forum Gaim"
+msgstr "Salon Gaim"
 
 #: src/buddy_chat.c:866
 msgid "Topic:"
@@ -534,7 +537,7 @@ msgstr "Sujet: "
 
 #: src/buddy_chat.c:908
 msgid "0 people in room"
-msgstr "Personne dans ce Forum"
+msgstr "Personne dans ce Salon"
 
 #: src/buddy_chat.c:982 src/buddy_chat.c:1123
 msgid "Whisper"
@@ -752,7 +755,7 @@ msgstr "Un message a été perdu, vous dépassez la vitesse limite du serveur."
 #: src/dialogs.c:492
 #, c-format
 msgid "Chat in %s is not available."
-msgstr "Le forum %s est inaccessible."
+msgstr "Le Salon %s est inaccessible."
 
 #: src/dialogs.c:495
 #, c-format
@@ -1352,22 +1355,22 @@ msgstr "erreur majeure à la connection!\n"
 #: src/oscar.c:370 src/toc.c:585
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "Vous avez été déconnecté du forum %s."
+msgstr "Vous avez été déconnecté du salon %s."
 
 #: src/oscar.c:371
 #, fuzzy
 msgid "Chat Error!"
-msgstr "Erreur de forum!"
+msgstr "Erreur de salon!"
 
 #: src/oscar.c:381
 #, fuzzy
 msgid "Chat is currently unavailable"
-msgstr "Le forum est inaccessible."
+msgstr "Le salon est inaccessible."
 
 #: src/oscar.c:382
 #, fuzzy
 msgid "Gaim - Chat"
-msgstr "Gaim - Forum"
+msgstr "Gaim - Salon"
 
 #: src/oscar.c:437 src/oscar.c:490
 #, fuzzy
@@ -1974,15 +1977,15 @@ msgstr "Droite"
 
 #: src/prefs.c:973
 msgid "Chat Tab Placement:"
-msgstr "Placement des onglets sur la fenêtre de Forum"
+msgstr "Placement des onglets sur la fenêtre de Salon"
 
 #: src/prefs.c:1031 src/prefs.c:1033 src/prefs.c:1241 src/prefs.c:1243
 msgid "Gaim Chat"
-msgstr "Forum Gaim"
+msgstr "Salon Gaim"
 
 #: src/prefs.c:1179 src/prefs.c:2697
 msgid "Chat Rooms"
-msgstr "Forums"
+msgstr "Salons"
 
 #: src/prefs.c:1197
 msgid "Refresh"
@@ -1990,11 +1993,11 @@ msgstr "Rafraichir"
 
 #: src/prefs.c:1222
 msgid "List of available chats"
-msgstr "Liste des forums disponibles"
+msgstr "Liste des salons disponibles"
 
 #: src/prefs.c:1232
 msgid "List of subscribed chats"
-msgstr "Liste des forums souscrits"
+msgstr "Liste des salons souscrits"
 
 #: src/prefs.c:1358 src/prefs.c:2692
 #, fuzzy
@@ -2093,22 +2096,22 @@ msgstr "Son à l'envoi d'un message"
 #: src/prefs.c:1699
 #, fuzzy
 msgid "Sound in chat rooms when people enter"
-msgstr "Son lorsque les personnes entrent d'un forum"
+msgstr "Son lorsque les personnes entrent dans un salon"
 
 #: src/prefs.c:1700
 #, fuzzy
 msgid "Sound in chat rooms when people leave"
-msgstr "Son lorsque les personnes sortent d'un forum"
+msgstr "Son lorsque les personnes sortent d'un salon"
 
 #: src/prefs.c:1701
 #, fuzzy
 msgid "Sound in chat rooms when you talk"
-msgstr "Son lorsque vous parlez dans un forum"
+msgstr "Son lorsque vous parlez dans un salon"
 
 #: src/prefs.c:1702
 #, fuzzy
 msgid "Sound in chat rooms when others talk"
-msgstr "Son lorsque les autres personnes parlent dans un forum"
+msgstr "Son lorsque les autres personnes parlent dans un salon"
 
 #: src/prefs.c:1827 src/prefs.c:2719
 #, fuzzy
@@ -2334,7 +2337,7 @@ msgstr "TOC retour"
 #: src/toc.c:587
 #, fuzzy
 msgid "Chat Error"
-msgstr "Erreur de Forum"
+msgstr "Erreur de Salon"
 
 #: src/toc.c:606
 #, fuzzy
@@ -2448,7 +2451,7 @@ msgstr "%s vous demande de leur envoyer un fichier"
 
 #, fuzzy
 #~ msgid "Ignore new conversations when away   "
-#~ msgstr "Ignorer les nouveaux forums lors des absences"
+#~ msgstr "Ignorer les nouveaux salons lors des absences"
 
 #, fuzzy
 #~ msgid "Change password for:"
@@ -2515,7 +2518,7 @@ msgstr "%s vous demande de leur envoyer un fichier"
 
 #, fuzzy
 #~ msgid "%sChat"
-#~ msgstr "Forum"
+#~ msgstr "%s Salon"
 
 #~ msgid "Message too long, some data truncated."
 #~ msgstr "Message trop long, données tronquées"
@@ -2612,7 +2615,7 @@ msgstr "%s vous demande de leur envoyer un fichier"
 #~ msgstr "Inactivité"
 
 #~ msgid "Raise chat windows when people speak"
-#~ msgstr "Avancer les fenêtres de forum quand les personnes parlent"
+#~ msgstr "Avancer les fenêtres de salon quand les personnes parlent"
 
 #~ msgid "Show Lag-O-Meter"
 #~ msgstr "Afficher le Lag-O-Metre"
@@ -2654,7 +2657,7 @@ msgstr "%s vous demande de leur envoyer un fichier"
 #~ msgstr "utiliser des icones diaboliques"
 
 #~ msgid "Buddy Chats"
-#~ msgstr "Forums"
+#~ msgstr "Salons"
 
 #~ msgid "Create new message"
 #~ msgstr "Créer un nouveau message"
