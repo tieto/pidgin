@@ -14,7 +14,8 @@ version 0.9.12:
 	  Eric.  Someone needs to stop this boy :-) ) 
 	* A lot of random, obscure bugs fixed
 	* About very many memory leaks fixed (yes, we're embarassed)
-	  (Thanks to Jeramey and Peter Teichman for these!)
+	  (Thanks to Peter Teichman, Larry Ewing, and Jeramey
+	   Crawford) 
 	
 version 0.9.11:
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
