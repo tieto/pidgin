@@ -315,8 +315,8 @@ void chat_write(struct conversation *b, char *who, int flag, char *message)
         
         if (!(flag & WFLAG_WHISPER)) {
 		str = g_strdup(normalize(who));
-		if (!strcasecmp(str, normalize(current_user->username))) {
-			sprintf(debug_buff, "%s %s\n", normalize(who), normalize(current_user->username));
+		if (!strcasecmp(str, normalize(b->gc->username))) {
+			sprintf(debug_buff, "%s %s\n", normalize(who), normalize(b->gc->username));
 			debug_print(debug_buff);
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_SAY))
 				play_sound(SEND);
@@ -358,10 +358,10 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 
 	gtk_editable_delete_text(GTK_EDITABLE(b->entry), 0, -1);
 
-        escape_text(buf);
+        escape_text(buf); /* it's ok to leave this here because oscar can't whisper */
         serv_chat_whisper(b->id, who, buf);
                           
-	g_snprintf(buf2, sizeof(buf2), "%s->%s", current_user->username, who);
+	g_snprintf(buf2, sizeof(buf2), "%s->%s", b->gc->username, who);
 
 	chat_write(b, buf2, WFLAG_WHISPER, buf);
 

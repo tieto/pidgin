@@ -505,13 +505,17 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 	/*
 	 * Call client.
 	 */
+#if 0
 	userfunc = aim_callhandler(command->conn, 0x0004, 0x0007);
 	if (userfunc || (i = 0))
 	  i = userfunc(sess, 
 		       command, 
 		       channel, 
 		       reqclass,
-		       &userinfo);
+		       &userinfo,
+		       ip,
+		       cookie);
+#endif
 
       } else if (reqclass & AIM_CAPS_VOICE) {
 	struct aim_msgcookie_t *cachedcook;
@@ -541,7 +545,7 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 	char ip[30];
 	struct aim_directim_priv *priv;
 
-	memset(ip, 0, sizeof(ip));
+	memset(ip, 0, 30);
 	
 	if (aim_gettlv(list2, 0x0003, 1) && aim_gettlv(list2, 0x0005, 1)) {
 	  struct aim_tlv_t *iptlv, *porttlv;
@@ -549,7 +553,7 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 	  iptlv = aim_gettlv(list2, 0x0003, 1);
 	  porttlv = aim_gettlv(list2, 0x0005, 1);
 
-	  snprintf(ip, sizeof(ip)-1, "%d.%d.%d.%d:%d", 
+	  snprintf(ip, 30, "%d.%d.%d.%d:%d", 
 		  aimutil_get8(iptlv->value+0),
 		  aimutil_get8(iptlv->value+1),
 		  aimutil_get8(iptlv->value+2),
@@ -623,7 +627,7 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 	if (!(cachedcook = calloc(1, sizeof(struct aim_msgcookie_t))))
 	  return 0;
 
-	memset(ip, 0, sizeof(ip));
+	memset(ip, 0, 30);
 
 	if (!(miscinfo = aim_gettlv(list2, 0x2711, 1))) {
 	  free(cachedcook);
@@ -638,7 +642,7 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 	    return 0;
 	  }
 
-	  snprintf(ip, sizeof(ip)-1, "%d.%d.%d.%d:%d",
+	  snprintf(ip, 30, "%d.%d.%d.%d:%d",
 		   aimutil_get8(iptlv->value+0),
 		   aimutil_get8(iptlv->value+1),
 		   aimutil_get8(iptlv->value+2),
@@ -648,40 +652,6 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 
 	printf("faim: rend: file get request from %s (%s)\n", userinfo.sn, ip);
 
-#if 0 /* XXX finish this */
-	newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS, ip);
-	if (!newconn || (newconn->fd == -1)) {
-	  printf("could not connect to %s\n", ip);
-	  perror("aim_newconn");
-	  aim_conn_kill(sess, &newconn);
-	} else {
-	  struct aim_filetransfer_priv *priv;
-	  priv = (struct aim_filetransfer_priv *)calloc(1, sizeof(struct aim_filetransfer_priv));
-	  memcpy(priv->cookie, cookie, 8);
-	  strncpy(priv->sn, userinfo.sn, MAXSNLEN);
-	  newconn->priv = priv;
-	  printf("faim: connected to peer (fd = %d)\n", newconn->fd);
-	}
-
-	memcpy(cachedcook->cookie, cookie, 8);
-
-	ft = malloc(sizeof(struct aim_filetransfer_priv));
-	ft->state = 1;
-	strncpy(ft->sn, userinfo.sn, sizeof(ft->sn));
-	strncpy(ft->ip, ip, sizeof(ft->ip));
-#if 0
-	strncpy(ft->fh.name, miscinfo->value+8, sizeof(ft->fh.name));
-#endif
-	cachedcook->type = AIM_COOKIETYPE_OFTGET;
-	cachedcook->data = ft;
-
-	if (aim_cachecookie(sess, cachedcook) != 0)
-	  printf("faim: ERROR caching message cookie\n");
-
-	aim_accepttransfer(sess, command->conn, newconn, ft->sn, cookie, AIM_CAPS_GETFILE);
-
-	free(desc);
-#endif
 	/*
 	 * Call client.
 	 */
@@ -691,7 +661,9 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 		       command, 
 		       channel, 
 		       reqclass,
-		       &userinfo);
+		       &userinfo,
+		       ip,
+		       cookie);
 
       } else if (reqclass & AIM_CAPS_SENDFILE) {
 #if 0

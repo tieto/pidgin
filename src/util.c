@@ -38,7 +38,6 @@
 
 static GdkPixmap *icon_pm = NULL;
 static GdkBitmap *icon_bm = NULL;
-static int state;
 
 char *full_date() {
 	char * date;
@@ -382,7 +381,9 @@ FILE *open_log_file (char *name)
         } else
                 fclose(fd);
 
-        g_snprintf(log_all_file, 256, "%s/.gaim/%s", getenv("HOME"), current_user->username);
+	/* FIXME: we need to figure out which directory to log things to. for now, it's just going
+	 * to have to be ~/.gaim/logs :-P */
+        g_snprintf(log_all_file, 256, "%s/.gaim/logs", getenv("HOME"));
 
         if (stat(log_all_file, &st) < 0)
                 flag = 1;
@@ -403,7 +404,8 @@ FILE *open_log_file (char *name)
                 fclose(fd);
 
         
-        g_snprintf(log_all_file, 256, "%s/.gaim/%s/%s.log", getenv("HOME"), current_user->username, normalize(name));
+	/* same FIXME as above; need to find better dir than ~/.gaim/logs */
+        g_snprintf(log_all_file, 256, "%s/.gaim/logs/%s.log", getenv("HOME"), normalize(name));
 
         if (stat(log_all_file, &st) < 0)
                 flag = 1;
@@ -413,7 +415,7 @@ FILE *open_log_file (char *name)
 
         fd = fopen(log_all_file, "a");
 
-        if (flag) { /* is a new file */
+        if (fd && flag) { /* is a new file */
 		fprintf(fd, "<HTML><HEAD><TITLE>" );
 		fprintf(fd, "IM Sessions with %s", name );
 		fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n" );
@@ -428,7 +430,6 @@ FILE *open_log_file (char *name)
 /* we only need this for TOC, because messages must be escaped */
 int escape_message(char *msg)
 {
-if (!USE_OSCAR) {
 	char *c, *cpy;
 	int cnt=0;
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
@@ -458,15 +459,11 @@ if (!USE_OSCAR) {
 	msg[cnt]='\0';
 	g_free(cpy);
 	return cnt;
-} else {
-	return strlen(msg);
-}
 }
 
 /* we don't need this for oscar either */
 int escape_text(char *msg)
 {
-if (!USE_OSCAR) {
 	char *c, *cpy;
 	int cnt=0;
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 4 bytes */
@@ -478,13 +475,13 @@ if (!USE_OSCAR) {
 	cpy = g_strdup(msg);
 	c = cpy;
 	while(*c) {
-                switch(*c) {
-                case '\n':
-                        msg[cnt++] = '<';
-                        msg[cnt++] = 'B';
-                        msg[cnt++] = 'R';
-                        msg[cnt++] = '>';
-                        break;
+		switch(*c) {
+		case '\n':
+			msg[cnt++] = '<';
+			msg[cnt++] = 'B';
+			msg[cnt++] = 'R';
+			msg[cnt++] = '>';
+			break;
 		case '{':
 		case '}':
 		case '\\':
@@ -499,9 +496,6 @@ if (!USE_OSCAR) {
 	msg[cnt]='\0';
 	g_free(cpy);
 	return cnt;
-} else {
-	return strlen(msg);
-}
 }
 
 char * escape_text2(char *msg)
@@ -682,16 +676,6 @@ char *normalize(const char *s)
         buf[x]='\0';
         g_free(u);
 	return buf;
-}
-
-int query_state()
-{
-        return state;
-}
-
-void set_state(int i)
-{
-        state = i;
 }
 
 char *date()

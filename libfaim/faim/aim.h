@@ -276,6 +276,14 @@ struct command_tx_struct {
   struct command_tx_struct *next; /* ptr to next struct in list */
 };
 
+/*
+ * OFT session: random oft cruft, per-session.
+ *
+ */
+struct aim_oft_session_t {
+  FILE *listing;
+  char *listingdir;
+};
 
 /*
  * AIM Session: The main client-data interface.  
@@ -296,6 +304,11 @@ struct aim_session_t {
    */
   void *aux_data;
 
+  /* 
+   * OFT Data 
+   */
+
+  struct aim_oft_session_t oft;
 
   /* ---- Internal Use Only ------------------------ */
   /* 
@@ -534,9 +547,12 @@ faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,struct aim
 faim_export unsigned long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_export unsigned long aim_setdirectoryinfo(struct aim_session_t *sess, struct aim_conn_t *conn, char *first, char *middle, char *last, char *maiden, char *nickname, char *street, char *city, char *state, char *zip, int country, unsigned short privacy);
 faim_export unsigned long aim_setuserinterests(struct aim_session_t *sess, struct aim_conn_t *conn, char *interest1, char *interest2, char *interest3, char *interest4, char *interest5, unsigned short privacy);
+faim_export unsigned long aim_icq_setstatus(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned long status);
 
-faim_internal struct aim_fileheader_t *aim_getlisting(struct aim_session_t*);
+faim_internal struct aim_fileheader_t *aim_getlisting(FILE *);
+faim_internal int aim_oft_buildheader(char *,struct aim_fileheader_t *);
 faim_internal int aim_listenestablish(u_short);
+faim_internal int aim_tx_destroy(struct command_tx_struct *);
 
 /* aim_rxhandlers.c */
 faim_export int aim_rxdispatch(struct aim_session_t *);
@@ -671,7 +687,8 @@ faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_con
 #define AIM_TRANSFER_DENY_DECLINE 0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING 0x0002
 faim_export unsigned long aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short code);
-faim_export unsigned long aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn,struct aim_conn_t *oftconn, char *sender, char *cookie, unsigned short rendid);
+faim_export struct aim_conn_t *aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn,char *cookie,char *ip, FILE *file, unsigned short rendid);
+
 
 faim_export unsigned long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
 faim_internal int aim_extractuserinfo(u_char *, struct aim_userinfo_s *);

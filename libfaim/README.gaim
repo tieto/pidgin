@@ -80,6 +80,9 @@ been.
 - What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
 request RVOUS actions, though both can receive them.
 
+- Direct IM has problems. Don't accept a Direct IM if you're offered one, it
+may cause you to segfault.
+
 - Getting Dir Info is not in libfaim yet, and so is not in Gaim/Faim yet.
 
 - Warnings are there now. Yes, I know it says the wrong value.

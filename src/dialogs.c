@@ -129,15 +129,6 @@ struct findbyinfo {
 	GtkWidget *countryentry;
 };
 
-struct registerdlg {
-	GtkWidget *window;
-	GtkWidget *name;
-	GtkWidget *email;
-	GtkWidget *uname;
-	GtkWidget *sname;
-	GtkWidget *country;
-};
-
 struct info_dlg {
 	GtkWidget *window;
 	GtkWidget *text;
@@ -147,6 +138,8 @@ struct info_dlg {
 
 struct set_info_dlg {
 	GtkWidget *window;
+	GtkWidget *menu;
+	struct aim_user *user;
 	GtkWidget *text;
 	GtkWidget *save;
 	GtkWidget *cancel;
@@ -184,93 +177,6 @@ struct passwddlg {
 	GtkWidget *new1;
 	GtkWidget *new2;
 };
-
-/*------------------------------------------------------------------------*/
-/*  Function to Send an Email                                             */
-/*------------------------------------------------------------------------*/
-
-static int g_sendemail(char *name, char *email, int uname, int sname, char *country)
-{
-	static char email_data[2000];
-	int sock;
-	struct in_addr *host;
-/*	char data[3]; */
-	FILE *sockfile;
-	char uname_output;
-        FILE *tmpfile;
-        char filename[128];
-        char buf[256];
-        int i=0, tmpfd=-1;
-
-        while (i<10000 && tmpfd < 0) {
-                g_snprintf(filename, 128, "/tmp/gaim_%s%d.tmp", current_user->username, i++);
-
-                tmpfd = open(filename, O_RDWR|O_CREAT|O_EXCL, 0600);
-        }
-
-        if(tmpfd < 0) {
-                return -1;
-        }
-
-        
-	if (uname)
-        {
-                g_snprintf(buf, sizeof(buf), "uname -a > %s", filename);
-		system(buf);
-	}
-	
-	host = (struct in_addr *)get_address(REG_SRVR);
-	if (!host) 
-	{
-		printf(_("Error Resolving Mail Server.\n"));
-		return -1;
-	}
-
-	if ((sock = connect_address(host->s_addr, REG_PORT)) < 0)
-	{
-		printf(_("Error Connecting to Socket.\n"));
-		return -1;
-	}	 
-
-	sockfile = fdopen(sock, "r+");
-
-	g_snprintf(email_data, sizeof(email_data), "mail from: %s\n", REG_EMAIL_ADDR);
-	fputs(email_data, sockfile);
-	
-	g_snprintf(email_data, sizeof(email_data), "rcpt to: %s\n", REG_EMAIL_ADDR);
-	fputs(email_data, sockfile);
-
-	g_snprintf(email_data, sizeof(email_data), "data\n");
-	fputs(email_data, sockfile);
-	g_snprintf(email_data, sizeof(email_data), "Subject: Registration Information\n\nBelow is the submitted Registration Information\n----------------------------------\nName: %s\nEmail: %s\nCountry: %s\nSName: %s\nGAIM: v%s\nUname: ", name, email, country, sname ? current_user->username : "N/A", VERSION);
-	fputs(email_data, sockfile);
-
-	if (uname)
-	{
-		tmpfile = fopen(filename, "r");
-		while (!feof(tmpfile))
-		{
-			uname_output = fgetc(tmpfile);
-			if (!feof(tmpfile))
-				fputc(uname_output, sockfile);
-		}
-		fclose(tmpfile);
-        }
-
-        unlink(filename);
-	
-	g_snprintf(email_data, sizeof(email_data), "\n.\nquit\n\n");
-	fputs(email_data, sockfile);
-
-/*	while (fgets(data, 2, sockfile)) {
-	}
-        */
-        /* I don't think the above is necessary... */
-        
-	close(sock);
-
-	return 1;
-}
 
 /*------------------------------------------------------------------------*/
 /*  Destroys                                                              */
@@ -530,10 +436,7 @@ void show_error_dialog(char *d)
 
 	plugin_event(event_error, (void *)no, 0, 0);
 
-	if (USE_OSCAR)
-		w = d + 4;
-	else
-		w = strtok(NULL, ":");
+	w = strtok(NULL, ":");
  	
 	
         switch(no) {
@@ -1235,22 +1138,27 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 {
 	gchar *junk;
 	char *buf;
+	struct gaim_connection *gc;
 
 	junk = gtk_editable_get_chars(GTK_EDITABLE(b->text), 0, -1);
 
-	g_snprintf(current_user->user_info, sizeof(current_user->user_info), "%s", junk);
-		
-	save_prefs();
+	if (b->user) {
+		g_snprintf(b->user->user_info, sizeof(b->user->user_info), "%s", junk);
+		gc = find_gaim_conn_by_name(b->user->username);
+			
+		save_prefs();
 
-        buf = g_malloc(strlen(current_user->user_info) * 4);
-	if (!buf) {
-		buf = g_malloc(1);
-		buf[0] = 0;
+		if (gc) {
+			buf = g_malloc(strlen(junk) * 4);
+			if (!buf) {
+				buf = g_malloc(1);
+				buf[0] = 0;
+			}
+			g_snprintf(buf, MIN(strlen(junk) * 2, 4096), "%s", junk);
+			serv_set_info(gc, buf);
+			g_free(buf);
+		}
 	}
-        g_snprintf(buf, strlen(current_user->user_info) * 2, "%s", current_user->user_info);
-        escape_text(buf);
-        serv_set_info(buf);
-        g_free(buf);
 	g_free(junk);
 	destroy_dialog(NULL, b->window);
 	g_free(b);
@@ -1576,6 +1484,57 @@ void show_change_passwd()
 
 }
 
+static void info_choose(GtkWidget *opt, struct set_info_dlg *b)
+{
+	int text_len;
+	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
+	b->user = u;
+	text_len = gtk_text_get_length(GTK_TEXT(b->text));
+	gtk_text_set_point(GTK_TEXT(b->text), 0);
+	gtk_text_forward_delete(GTK_TEXT(b->text), text_len);
+	gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, u->user_info, -1);
+}
+
+static void info_user_menu(struct set_info_dlg *b, GtkWidget *box)
+{
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *optmenu;
+	GtkWidget *menu;
+	GtkWidget *opt;
+	GList *u = aim_users;
+	struct aim_user *a;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Set info for:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	optmenu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(hbox), optmenu, FALSE, FALSE, 5);
+	gtk_widget_show(optmenu);
+
+	menu = gtk_menu_new();
+
+	while (u) {
+		a = (struct aim_user *)u->data;
+		opt = gtk_menu_item_new_with_label(a->username);
+		gtk_object_set_user_data(GTK_OBJECT(opt), a);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(info_choose), b);
+		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_widget_show(opt);
+		u = u->next;
+	}
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
+
+	b->menu = optmenu;
+}
+
 void show_set_info()
 {
 	GtkWidget *bot;
@@ -1586,7 +1545,7 @@ void show_set_info()
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
         gtk_window_set_wmclass(GTK_WINDOW(b->window), "set_info", "Gaim");
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_widget_show(b->window);
+	gtk_widget_realize(b->window);
 
 	bot = gtk_hbox_new(TRUE, 10);
 	top = gtk_vbox_new(FALSE, 10);
@@ -1609,11 +1568,17 @@ void show_set_info()
 	gtk_widget_show(bot);
 
 
+	info_user_menu(b, top);
+
 	b->text = gtk_text_new(NULL, NULL);
 	gtk_text_set_word_wrap(GTK_TEXT(b->text), TRUE);
 	gtk_text_set_editable(GTK_TEXT(b->text), TRUE);
 	gtk_widget_set_usize(b->text, 350, 100);
-	gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, current_user->user_info, -1);
+	/* is this necessary?
+	if (users)
+		gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL,
+				((struct aim_user *)users->data)->user_info, -1);
+	*/
 
 	gtk_widget_show(b->text);
 
@@ -1631,125 +1596,6 @@ void show_set_info()
 	gtk_widget_show(b->window);
 
 }
-
-/*------------------------------------------------------------------------*/
-/*  The dialog for registration information                               */
-/*------------------------------------------------------------------------*/
-
-void do_register_dialog(GtkWidget *widget, struct registerdlg *b)
-{
-	char *email = gtk_entry_get_text(GTK_ENTRY(b->email));
-	char *name = gtk_entry_get_text(GTK_ENTRY(b->name));
-	int uname = GTK_TOGGLE_BUTTON(b->uname)->active;
-	int sname = GTK_TOGGLE_BUTTON(b->sname)->active;
-	char *country = gtk_entry_get_text(GTK_ENTRY(b->country));
-
-	general_options |= OPT_GEN_REGISTERED;
-	save_prefs();
-	
-	destroy_dialog(NULL, b->window);
-
-	g_free(b);
-
-        g_sendemail(name, email, uname, sname, country);
-}
-
-void set_reg_flag(GtkWidget *widget, struct registerdlg *b)
-{
-	general_options |= OPT_GEN_REGISTERED;
-	save_prefs();
-	destroy_dialog(NULL, b->window);
-	g_free(b);
-}
- 
-void show_register_dialog()
-{
-	GtkWidget *ok;
-	GtkWidget *cancel;
-	GtkWidget *label;
-	GtkWidget *table;
-	GtkWidget *vbox;
-	GtkWidget *bbox;
-
-	struct registerdlg *b = g_new0(struct registerdlg, 1);
-	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	dialogwindows = g_list_prepend(dialogwindows, b->window);
-
-	cancel = gtk_button_new_with_label(_("Cancel"));
-	ok = gtk_button_new_with_label(_("Send"));
-
-	bbox = gtk_hbox_new(TRUE, 10);
-	table = gtk_table_new(6, 2, TRUE);
-	vbox = gtk_vbox_new(FALSE, 5);
-
-	b->name = gtk_entry_new();
-	b->email = gtk_entry_new();
-	b->uname = gtk_check_button_new_with_label("Send the output of uname -a with registration");
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->uname), TRUE);
-	b->sname = gtk_check_button_new_with_label("Send my screenname with registration");
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sname), TRUE);
-	gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
-	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
-
-	label = gtk_label_new("This list will not, in any way, be distributed and\nwill be used for internal census purposes only.\nAll fields are completely optional.");
-	gtk_widget_show(label);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 2, 0, 1);
-
-	label = gtk_label_new("Name");
-	gtk_widget_show(label);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-	gtk_table_attach_defaults(GTK_TABLE(table), b->name, 1, 2, 1, 2);
-
-	label = gtk_label_new("Email");
-	gtk_widget_show(label);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
-	gtk_table_attach_defaults(GTK_TABLE(table), b->email, 1, 2, 2, 3);
-	
-	label = gtk_label_new("Country");
-	b->country = gtk_entry_new();
-	gtk_widget_show(label);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
-	gtk_table_attach_defaults(GTK_TABLE(table), b->country, 1, 2, 3, 4);
-
-	gtk_table_attach_defaults(GTK_TABLE(table), b->sname, 0, 2, 4, 5);
-	gtk_table_attach_defaults(GTK_TABLE(table), b->uname, 0, 2, 5, 6);
-
-	gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
-		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-	}
-	
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
-			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
-			   GTK_SIGNAL_FUNC(set_reg_flag), b);
-	gtk_signal_connect(GTK_OBJECT(ok), "clicked",
-			   GTK_SIGNAL_FUNC(do_register_dialog), b);
-
-	gtk_widget_show(ok);
-	gtk_widget_show(cancel);
-	gtk_widget_show(b->name);
-	gtk_widget_show(b->email);
-	gtk_widget_show(b->uname);
-	gtk_widget_show(b->sname);
-	gtk_widget_show(b->country);
-	gtk_widget_show(table);
-	gtk_widget_show(bbox);
-	gtk_widget_show(vbox);
-	gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - Registration");
-	gtk_window_set_focus(GTK_WINDOW(b->window), b->name);
-	gtk_container_add(GTK_CONTAINER(b->window), vbox);
-        gtk_container_border_width(GTK_CONTAINER(b->window), 10);
-        gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
-
-	gtk_widget_show(b->window);
-}
-
 
 /*------------------------------------------------------------------------*/
 /*  The dialog for the info requests                                      */
@@ -1816,7 +1662,11 @@ void g_show_info_text(char *info)
 
 void g_show_info(char *url) {
 	char *url_text = grab_url(url);
-	g_show_info_text(away_subs(url_text, current_user->username));
+	if (connections)
+		g_show_info_text(away_subs(url_text,
+					((struct gaim_connection *)connections->data)->username));
+	else
+		g_show_info_text(url_text);
 	g_free(url_text);
 }
 
@@ -2769,24 +2619,36 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 /* see if a buddy list cache file for this user exists */
 
 gboolean
-bud_list_cache_exists( void )
+bud_list_cache_exists(struct gaim_connection *gc)
 {
 	gboolean ret = FALSE;
 	char path[PATHSIZE];
 	char *file;
 	struct stat sbuf;
-	extern char g_screenname[];
+	char g_screenname[64];
+	int i;
+
+	for (i = 0; i < strlen(gc->username); i++)
+		g_screenname[i] = toupper(gc->username[i]);
+	g_screenname[i] = '\0';
 
 	file = getenv( "HOME" );
 	if ( file != (char *) NULL ) {
-	       	sprintf( path, "%s/.gaim/%s.blist", file, g_screenname );
-		if ( !stat(path, &sbuf) ) 
+	       	sprintf( path, "%s/.gaim/%s.blist", file, g_screenname);
+		if ( !stat(path, &sbuf) ) {
+			sprintf(debug_buff, "%s exists.\n", path);
+			debug_print(debug_buff);
 			ret = TRUE;
+		} else {
+			sprintf(debug_buff, "%s does not exist.\n", path);
+			debug_print(debug_buff);
+		}
 	}
 	return ret;
 }
 
-/* if dummy is 0, save to ~/.gaim/screenname.blist. Else, let user choose */
+/* if dummy is 0, save to ~/.gaim/screenname.blist, where screenname is each
+ * signed in user. Else, let user choose */
 
 void do_export(GtkWidget *w, void *dummy)
 {
@@ -2795,13 +2657,27 @@ void do_export(GtkWidget *w, void *dummy)
         char *buf = g_malloc(BUF_LONG);
         char *file;
 	char path[PATHSIZE];
-	extern char g_screenname[];
 
 	if ( show_dialog == 1 ) {
 		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(exportdialog));
 		strncpy( path, file, PATHSIZE - 1 );
-	}
-	else {
+		if ((f = fopen(path,"w"))) {
+			serv_build_config(buf, 8192 - 1, TRUE);
+			fprintf(f, "%s\n", buf);
+			fclose(f);
+			chmod(buf, S_IRUSR | S_IWUSR);
+		} else {
+			g_snprintf(buf, BUF_LONG / 2, _("Error writing file %s"), file);
+			do_error_dialog(buf, _("Error"));
+		}
+        	destroy_dialog(NULL, exportdialog);
+        	exportdialog = NULL;
+	} else {
+		GSList *c = connections;
+		struct gaim_connection *g;
+		char g_screenname[64];
+		int i;
+
 		file = getenv( "HOME" );
 		if ( file != (char *) NULL ) {
 			FILE *dir;
@@ -2811,24 +2687,31 @@ void do_export(GtkWidget *w, void *dummy)
 				mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
 			else
 				fclose(dir);
-                        sprintf( path, "%s/.gaim/%s.blist", file, g_screenname );
-		} else
-			return;
+
+			while (c) {
+				g = (struct gaim_connection *)c->data;
+
+				for (i = 0; i < strlen(g->username); i++)
+					g_screenname[i] = toupper(g->username[i]);
+				g_screenname[i] = '\0';
+				sprintf( path, "%s/.gaim/%s.blist", file, g_screenname);
+				if ((f = fopen(path,"w"))) {
+					sprintf(debug_buff, "writing %s\n", path);
+					debug_print(debug_buff);
+					serv_build_config(buf, 8192 - 1, TRUE);
+					fprintf(f, "%s\n", buf);
+					fclose(f);
+					chmod(buf, S_IRUSR | S_IWUSR);
+				} else {
+					sprintf(debug_buff, "unable to write %s\n", path);
+					debug_print(debug_buff);
+				}
+
+				c = c->next;
+			}
+		} else return;
 	}
-        if ((f = fopen(path,"w"))) {
-                serv_build_config(buf, 8192 - 1, TRUE);
-                fprintf(f, "%s\n", buf);
-                fclose(f);
-                chmod(buf, S_IRUSR | S_IWUSR);
-        } else if ( show_dialog == 1 ) {
-                g_snprintf(buf, BUF_LONG / 2, _("Error writing file %s"), file);
-                do_error_dialog(buf, _("Error"));
-        }
-	if ( show_dialog == 1 ) {
-        	destroy_dialog(NULL, exportdialog);
-        	exportdialog = NULL;
-	}
-        
+
         g_free(buf);
         
 }
@@ -2863,39 +2746,45 @@ void show_export_dialog()
 
 }
 
-/* if dummy is 0, then import from ~/.gaim/screenname.blist, else let user
+/* if gc is non-NULL, then import from ~/.gaim/gc->username.blist, else let user
    choose */
 
-void do_import(GtkWidget *w, void *dummy)
+void do_import(GtkWidget *w, struct gaim_connection *gc)
 {
-	gint show_dialog = (int) dummy;
         char *buf = g_malloc(BUF_LONG);
         char *buf2;
         char *first = g_malloc(64);
 	char *file;
 	char path[PATHSIZE];
+	char g_screenname[64];
+	int i;
         FILE *f;
-	extern char g_screenname[];
 
-        if ( show_dialog == 1 ) {
+        if ( !gc ) {
         	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
                 strncpy( path, file, PATHSIZE - 1 );
         }
         else {
+		for (i = 0; i < strlen(gc->username); i++)
+			g_screenname[i] = toupper(gc->username[i]);
+		g_screenname[i] = '\0';
+
                 file = getenv( "HOME" );
                 if ( file != (char *) NULL )
-                        sprintf( path, "%s/.gaim/%s.blist", file, g_screenname );
+                        sprintf( path, "%s/.gaim/%s.blist", file, g_screenname);
                 else
 			return;
         }
 
         if (!(f = fopen(path,"r"))) {
-		if ( show_dialog == 1 ) {
+		if ( !gc ) {
                 	g_snprintf(buf, BUF_LONG / 2, _("Error reading file %s"), file);
                 	do_error_dialog(buf, _("Error"));
                 	destroy_dialog(NULL, importdialog);
                 	importdialog = NULL;
 		}
+		sprintf(debug_buff, "Unable to open %s.\n", path);
+		debug_print(debug_buff);
                 g_free(buf);
 		g_free(first);
                 return;
@@ -2935,7 +2824,7 @@ void do_import(GtkWidget *w, void *dummy)
                 g_free(buf2);
 	/* Something else */
         } else {
-		if ( show_dialog == 1 ) {
+		if ( !gc ) {
                 	destroy_dialog(NULL, importdialog);
                 	importdialog = NULL;
 		}
@@ -2945,7 +2834,7 @@ void do_import(GtkWidget *w, void *dummy)
                 return;
 	}
 
-        parse_toc_buddy_list(buf, 1);
+        parse_toc_buddy_list(gc, buf, 1);
 
         serv_save_config();
 
@@ -2954,7 +2843,7 @@ void do_import(GtkWidget *w, void *dummy)
 
 	fclose( f );
 
-	if ( show_dialog == 1 ) {
+	if ( !gc ) {
 		/* save what we just did to cache */
 
 		do_export( (GtkWidget *) NULL, 0 );
@@ -2981,7 +2870,7 @@ void show_import_dialog()
                                    GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
                 
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
-                                   "clicked", GTK_SIGNAL_FUNC(do_import), (void*)1);
+                                   "clicked", GTK_SIGNAL_FUNC(do_import), NULL);
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
                                    "clicked", GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
                 

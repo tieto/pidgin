@@ -1,0 +1,78 @@
+STATUS of GAIM CVS tree. Last modified $Date: 2000-10-09 20:02:02 -0400 (Mon, 09 Oct 2000) $ by $Author: warmenhoven $.
+
+This file is meant to provide gaim users who use the CVS version to see whether
+the actually want to compile what they just checked out. Gaim CVS is usually
+relatively stable (we use it all the time), but has tendencies to be quirky at
+times.
+
+
+OVERALL
+=======
+
+The current CVS tree is completely broken. You can still use it to sign in and
+converse with users as normal. If you only have one account signed in then all
+of the old functions still work perfectly (or as well as they did before The
+Change (multiple connections)).
+
+There are a lot of things that are probably going to be very buggy over the
+next month or so. Please bear with us.
+
+
+MULTIPLE CONNECTIONS
+====================
+
+I'm impressed that this is working. It took a major restructuring of the
+internals of gaim. Everything had been based around one connection, and that
+connection used one protocol or the other. Now, there are many connections, and
+each connection may be using a different protocol. Most of the functionality is
+complete but the UI hasn't been updated to reflect all of the different users.
+This change isn't going to be complete for quite some time so just bear with us
+as we try to get things operational again.
+
+
+BUDDY LIST
+==========
+
+The buddy list is completely fucked up. It needs to be heavily modified to be
+able to support The Change. But logging in as only one user makes it work as
+it always did.
+
+This may be changed, but here's how the buddy list cache currently works. When
+you sign on it imports the list from the name you sign on as. When the list is
+saved, it is saved to all of the signed on users. This means that when you sign
+on two or more names at once their lists will be merged.
+
+
+TOC
+===
+
+TOC is working reasonably well.
+
+
+Oscar
+=====
+
+Oscar is working reasonably well. Please see gaim/libfaim/README.gaim for more
+details on Oscar.
+
+
+Applet
+======
+
+I'll be amazed if the applet compiles. If it compiles, I'll be amazed if it
+doesn't segfault. But technically nothing drastic changed with the applet in
+The Change, so it may end up working just fine. I don't have the time nor the
+energy to test it right now though; I'll come back to it as soon as the app is
+stabilized.
+
+
+Plugins/Perl
+============
+
+The current plugin/perl system is in complete disarray as things are being
+totally restructured inside gaim, in hopes of adding a more powerful plugin
+system (one that can hopefully support Protocol Plugins (see PRPL comments)).
+While The Change is taking place, most plugins won't compile (and we have set
+all plugins in gaim/plugins not to compile by default). However, ones that have
+been previously compiled may or may not work. The only way to know is to load
+the plugin and test it.

@@ -889,3 +889,29 @@ faim_export unsigned long aim_setuserinterests(struct aim_session_t *sess, struc
     
   return(sess->snac_nextid);
 }
+
+faim_export unsigned long aim_icq_setstatus(struct aim_session_t *sess,
+					    struct aim_conn_t *conn, 
+					    unsigned long status)
+{
+  struct command_tx_struct *newpacket;
+  int i;
+  unsigned long data;
+  
+  data = 0x00030000 | status; /* yay for error checking ;^) */
+
+  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10 + 4)))
+    return -1;
+
+  newpacket->lock = 1;
+
+  i = aim_putsnac(newpacket->data, 0x0001, 0x001e, 0x0000, 0x0000001e);
+  i += aim_puttlv_32(newpacket->data+i, 0x0006, data);
+
+  newpacket->commandlen = i;
+  newpacket->lock = 0;
+
+  aim_tx_enqueue(sess, newpacket);
+
+  return(sess->snac_nextid);
+}

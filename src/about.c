@@ -30,7 +30,6 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "pixmaps/logo.xpm"
-#include "pixmaps/gnome_close.xpm"
 
 static GtkWidget *about=NULL;
 

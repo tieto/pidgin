@@ -1,4 +1,12 @@
 
+Mon Oct  9 22:40:56 UTC 2000 EWarmenhoven
+	- added multiple connections to gaim. This actually happened over
+	  the course of about 3 or 4 days. It is now somewhat functional;
+	  enough for me to commit.
+	- libfaim had some updates which make Direct IM not quite work.
+	  Please don't use Direct IM for a short time. There is a fix that
+	  has been submitted but has not been put into CVS yet.
+
 Fri Sep 22 10:12:37 UTC 2000 EWarmenhoven
 	- yeah, libfaim does socks 5 proxying now. it may be fragile though,
 	  and the necessary call in gaim to get it to work isn't there yet.

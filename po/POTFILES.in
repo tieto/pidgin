@@ -8,7 +8,10 @@ src/dialogs.c
 src/gnome_applet_mgr.c
 src/gtkhtml.c
 src/html.c
+src/multi.c
 src/oscar.c
+src/perl.c
 src/plugins.c
 src/prefs.c
 src/rvous.c
+src/toc.c

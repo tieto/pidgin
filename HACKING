@@ -34,53 +34,16 @@ on in the preferences) whether or not --enable-debug was selected. Most
 of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
-This file was last modified by $Author: warmenhoven $ on $Date: 2000-10-09 05:18:19 -0400 (Mon, 09 Oct 2000) $.
+This file was last modified by $Author: warmenhoven $ on $Date: 2000-10-09 20:02:02 -0400 (Mon, 09 Oct 2000) $.
 
 
 PROGRAM FLOW
 ============
 
-Before gaim does anything you can see, it initializes itself, which is
-mostly just reading .gaimrc (handled by the functions in gaimrc.c). It
-then draws the login window by calling show_login, and waits for input.
-
-At the login window, when "signon" is clicked, dologin() is called. This
-in turn calls serv_login, which checks to see if you want to use Oscar or
-TOC, and calls oscar_login or toc_login appropriately. We'll assume TOC
-for the rest of this discussion; Oscar has a lot of bad hacks to get it
-working that I don't even want to think about.
-
-After you're signed in (I'll skip that discussion - I doubt many people
-are going to change the login process, since it pretty much just follows
-PROTOCOL), Gaim draws the buddy list by calling show_buddy_list, and
-waits for input from two places: the server and the user. The first place
-it gets input from after signon is invariably the server, when the server
-tells Gaim which buddies are signed on.
-
-When there is information ready to be read from the server, toc_callback
-is called (by GDK) to parse the incoming information. On an UPDATE,
-serv_got_update is called, which takes care of things like notifying
-conversation windows of the update if need be; notifying the plugins;
-and finally, calling set_buddy.
-
-set_buddy is one of the most frequently called functions in gaim, one of
-the largest functions in gaim, and probably one of the buggiest functions
-in gaim. It is responsible for updating the pixmaps in the buddy list;
-notifying plugins of various events; updating the tooltips for buddies;
-making sounds; and updating the ticker. It's also called once per online
-buddy every 20 seconds (by GTK through update_all_buddies).
-
-When the user opens a new conversation window, new_conversation is called.
-That's easy enough. If there isn't a conversation with the person already
-open (checked by calling find_conversation), show_conv is called to
-create the new window. All sorts of neat things happen there, but it's
-mostly drawing the window. show_conv is the best place to edit the UI. Be
-prepared for some incredibly bad GTK programming. (Rob's fixing this as
-we speak no doubt.)
-
-That's pretty much it for the quick tutorial. I know it wasn't much but
-it's enough to get you started. Make sure you know GTK before you get too
-involved. Most of the back-end stuff is pretty basic; most of gaim is GTK.
+This has completely changed since multiple connections were added. Please
+be patient; as soon as the code starts to settle this will get rewritten.
+Most of the source files stayed the same though; only the one that got
+added (multi.c) isn't covered below.
 
 
 SOURCE FILES

@@ -14,6 +14,7 @@ gaim_applet_SOURCES =	about.c \
 			gtkticker.c \
 			html.c \
 			idle.c \
+			multi.c \
 			network.c \
 			oscar.c \
 			perl.c \
@@ -43,6 +44,7 @@ gaim_SOURCES =	about.c \
 		gtkticker.c \
 		html.c \
 		idle.c \
+		multi.c \
 		network.c \
 		oscar.c \
 		perl.c \
@@ -58,6 +60,7 @@ gaim_SOURCES =	about.c \
 gaim_DEPENDENCIES = ../libfaim/libfaim.a
 endif
 
-CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\"
+CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" $(DEBUG_CFLAGS)
+LDFLAGS += $(DEBUG_LDFLAGS)
 
-EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h gtkticker.h convo.h
+EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h gtkticker.h convo.h multi.h

@@ -5,13 +5,13 @@ SUFFIXES = .c .so
 
 
 
-if PLUGINS
-plugin_DATA = autorecon.so iconaway.so notify.so spellchk.so lagmeter.so
-plugindir = $(libdir)/gaim
+#if PLUGINS
+#plugin_DATA = autorecon.so iconaway.so notify.so spellchk.so lagmeter.so
+#plugindir = $(libdir)/gaim
 
-clean distclean clean-recursive distclean-recursive:
-	$(RM) $(plugin_DATA)
-endif
+#clean distclean clean-recursive distclean-recursive:
+#	$(RM) $(plugin_DATA)
+#endif
 
 
 

@@ -28,8 +28,6 @@
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/gnome_add.xpm"
-#include "pixmaps/fgcolor.xpm"
-#include "pixmaps/bgcolor.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/warn.xpm"
 #include "pixmaps/tb_search.xpm"
@@ -59,7 +57,6 @@ extern void do_small(GtkWidget *, GtkWidget *);
 extern void do_normal(GtkWidget *, GtkWidget *);
 extern void do_big(GtkWidget *, GtkWidget *);
 extern void toggle_font(GtkWidget *, struct conversation *);
-extern void toggle_link(GtkWidget *, struct conversation *);
 extern void toggle_color(GtkWidget *, struct conversation *);
 extern void toggle_loggle(GtkWidget *, struct conversation *);
 extern void insert_smiley(GtkWidget *, struct conversation *);

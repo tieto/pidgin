@@ -37,30 +37,22 @@
 #include <time.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include "multi.h"
 #include "gaim.h"
-#include <aim.h>
+#include "aim.h"
 #include "gnome_applet_mgr.h"
 
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
 
-static int inpa = -1;
-static int paspa = -1;
-static int cnpa = -1;
-struct aim_session_t *gaim_sess = NULL;
-struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
-int USE_OSCAR = 0;
 int keepalv = -1;
-int create_exchange = 0;
-char *create_name = NULL;
 
-GList *oscar_chats = NULL;
-
-struct chat_connection *find_oscar_chat(char *name) {
-	GList *g = oscar_chats;
+struct chat_connection *find_oscar_chat(struct gaim_connection *gc, char *name) {
+	GSList *g = gc->oscar_chats;
 	struct chat_connection *c = NULL;
+	if (gc->protocol != PROTO_OSCAR) return NULL;
 
 	while (g) {
 		c = (struct chat_connection *)g->data;
@@ -73,14 +65,50 @@ struct chat_connection *find_oscar_chat(char *name) {
 	return c;
 }
 
-static struct chat_connection *find_oscar_chat_by_conn(struct aim_conn_t *conn) {
-	GList *g = oscar_chats;
+static struct chat_connection *find_oscar_chat_by_conn(struct gaim_connection *gc,
+							struct aim_conn_t *conn) {
+	GSList *g = gc->oscar_chats;
 	struct chat_connection *c = NULL;
 
 	while (g) {
 		c = (struct chat_connection *)g->data;
 		if (c->conn == conn)
 			break;
+		g = g->next;
+		c = NULL;
+	}
+
+	return c;
+}
+
+static struct gaim_connection *find_gaim_conn_by_aim_sess(struct aim_session_t *sess) {
+	GSList *g = connections;
+	struct gaim_connection *gc = NULL;
+
+	while (g) {
+		gc = (struct gaim_connection *)g->data;
+		if (sess == gc->oscar_sess)
+			break;
+		g = g->next;
+		gc = NULL;
+	}
+
+	return gc;
+}
+
+static struct gaim_connection *find_gaim_conn_by_oscar_conn(struct aim_conn_t *conn) {
+	GSList *g = connections;
+	struct gaim_connection *c = NULL;
+	struct aim_conn_t *s;
+	while (g) {
+		c = (struct gaim_connection *)g->data;
+		s = c->oscar_sess->connlist;
+		while (s) {
+			if (conn == s)
+				break;
+			s = s->next;
+		}
+		if (s) break;
 		g = g->next;
 		c = NULL;
 	}
@@ -146,27 +174,31 @@ static char *msgerrreason[] = {
 };
 static int msgerrreasonlen = 25;
 
-extern void auth_failed();
-
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
 	struct aim_conn_t *conn = (struct aim_conn_t *)data;
+	struct gaim_connection *gc = find_gaim_conn_by_oscar_conn(conn);
+	if (!gc) {
+		/* oh boy. this is probably bad. i guess the only thing we can really do
+		 * is return? */
+		debug_print("oscar callback for closed connection.\n");
+		return;
+	}
 
 	if (condition & GDK_INPUT_EXCEPTION) {
-		signoff();
+		signoff(gc);
 		hide_login_progress(_("Disconnected."));
-		auth_failed();
 		return;
 	}
 	if (condition & GDK_INPUT_READ) {
 		if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
 			debug_print("got information on rendezvous\n");
-			if (aim_handlerendconnect(gaim_sess, conn) < 0) {
+			if (aim_handlerendconnect(gc->oscar_sess, conn) < 0) {
 				debug_print(_("connection error (rend)\n"));
 			}
 		} else {
-			if (aim_get_command(gaim_sess, conn) >= 0) {
-				aim_rxdispatch(gaim_sess);
+			if (aim_get_command(gc->oscar_sess, conn) >= 0) {
+				aim_rxdispatch(gc->oscar_sess);
 			} else {
 				if (conn->type == AIM_CONN_TYPE_RENDEZVOUS &&
 				    conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM) {
@@ -176,56 +208,59 @@ static void oscar_callback(gpointer data, gint source,
 					if (cnv) {
 						make_direct(cnv, FALSE, NULL, 0);
 					}
-					aim_conn_kill(gaim_sess, &conn);
+					aim_conn_kill(gc->oscar_sess, &conn);
 				} else if ((conn->type == AIM_CONN_TYPE_BOS) ||
-					   !(aim_getconn_type(gaim_sess, AIM_CONN_TYPE_BOS))) {
+					   !(aim_getconn_type(gc->oscar_sess, AIM_CONN_TYPE_BOS))) {
 					debug_print(_("major connection error\n"));
-					signoff();
+					signoff(gc);
 					hide_login_progress(_("Disconnected."));
-					auth_failed();
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
-					struct chat_connection *c = find_oscar_chat_by_conn(conn);
+					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
 					char buf[BUF_LONG];
 					sprintf(debug_buff, "disconnected from chat room %s\n", c->name);
 					debug_print(debug_buff);
 					c->conn = NULL;
-					gdk_input_remove(c->inpa);
+					if (c->inpa > -1)
+						gdk_input_remove(c->inpa);
 					c->inpa = -1;
 					c->fd = -1;
-					aim_conn_kill(gaim_sess, &conn);
+					aim_conn_kill(gc->oscar_sess, &conn);
 					sprintf(buf, _("You have been disconnected from chat room %s."), c->name);
 					do_error_dialog(buf, _("Chat Error!"));
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
-					gdk_input_remove(cnpa);
-					cnpa = -1;
+					if (gc->cnpa > -1)
+						gdk_input_remove(gc->cnpa);
+					gc->cnpa = -1;
 					debug_print("removing chatnav input watcher\n");
-					aim_conn_kill(gaim_sess, &conn);
+					aim_conn_kill(gc->oscar_sess, &conn);
 				} else {
 					sprintf(debug_buff, "holy crap! generic connection error! %d\n",
 							conn->type);
 					debug_print(debug_buff);
-					aim_conn_kill(gaim_sess, &conn);
+					aim_conn_kill(gc->oscar_sess, &conn);
 				}
 			}
 		}
 	}
 }
 
-int oscar_login(char *username, char *password) {
+struct gaim_connection *oscar_login(char *username, char *password) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
 	struct aim_user *u;
 	char buf[256];
+	struct gaim_connection *gc;
 
 	sprintf(debug_buff, _("Logging in %s\n"), username);
 	debug_print(debug_buff);
 
+	gc = new_gaim_conn(PROTO_OSCAR, username, password);
 	sess = g_new0(struct aim_session_t, 1);
 	aim_session_init(sess);
 	/* we need an immediate queue because we don't use a while-loop to
 	 * see if things need to be sent. */
 	sess->tx_enqueue = &aim_tx_enqueue__immediate;
-	gaim_sess = sess;
+	gc->oscar_sess = sess;
 
 	sprintf(buf, _("Looking up %s"), FAIM_LOGIN_SERVER);
 	set_login_progress(1, buf);
@@ -236,14 +271,14 @@ int oscar_login(char *username, char *password) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
-		set_state(STATE_OFFLINE);
+		destroy_gaim_conn(gc);
 		hide_login_progress(_("Unable to login to AIM"));
-		return -1;
+		return NULL;
 	} else if (conn->fd == -1) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
-		set_state(STATE_OFFLINE);
+		destroy_gaim_conn(gc);
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
 			sprintf(debug_buff, _("couldn't resolve host\n"));
 			debug_print(debug_buff);
@@ -253,7 +288,7 @@ int oscar_login(char *username, char *password) {
 			debug_print(debug_buff);
 			hide_login_progress(debug_buff);
 		}
-		return -1;
+		return NULL;
 	}
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), username);
 	set_login_progress(2, buf);
@@ -263,45 +298,42 @@ int oscar_login(char *username, char *password) {
 	aim_sendconnack(sess, conn);
 	aim_request_login(sess, conn, username);
 
-	inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, conn);
 
 	u = find_user(username);
-
-	if (!u) {
-		u = g_new0(struct aim_user, 1);
-		g_snprintf(u->username, sizeof(u->username), DEFAULT_INFO);
-		aim_users = g_list_append(aim_users, u);
-	}
-	current_user = u;
-	g_snprintf(current_user->username, sizeof(current_user->username),
-				"%s", username);
-	g_snprintf(current_user->password, sizeof(current_user->password),
-				"%s", password);
+	sprintf(gc->user_info, "%s", u->user_info);
+	gc->options = u->options;
 	save_prefs();
 
 	debug_print(_("Password sent, waiting for response\n"));
 
-	return 0;
+	return gc;
 }
 
-void oscar_close() {
+void oscar_close(struct gaim_connection *gc) {
+	if (gc->protocol != PROTO_OSCAR) return;
 #ifdef USE_APPLET
 	set_user_state(offline);
 #endif
-	set_state(STATE_OFFLINE);
-	if (inpa > 0)
-		gdk_input_remove(inpa);
-	inpa = -1;
-	aim_logoff(gaim_sess);
-	g_free(gaim_sess);
-	gaim_sess = NULL;
+	if (gc->inpa > 0)
+		gdk_input_remove(gc->inpa);
+	gc->inpa = -1;
+	if (gc->cnpa > 0)
+		gdk_input_remove(gc->cnpa);
+	gc->cnpa = -1;
+	if (gc->paspa > 0)
+		gdk_input_remove(gc->paspa);
+	gc->paspa = -1;
+	aim_logoff(gc->oscar_sess);
+	g_free(gc->oscar_sess);
 	debug_print(_("Signed off.\n"));
 }
 
 int gaim_parse_auth_resp(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	struct aim_conn_t *bosconn = NULL;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	sprintf(debug_buff, "inside auth_resp (Screen name: %s)\n",
 			sess->logininfo.screen_name);
 	debug_print(debug_buff);
@@ -333,11 +365,9 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
-		set_state(STATE_OFFLINE);
-		gdk_input_remove(inpa);
+		gdk_input_remove(gc->inpa);
 		hide_login_progress(_("Authentication Failed"));
-		signoff();
-		auth_failed();
+		signoff(gc);
 		return 0;
 	}
 
@@ -350,7 +380,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	}
 	sprintf(debug_buff, "Closing auth connection...\n");
 	debug_print(debug_buff);
-	gdk_input_remove(inpa);
+	gdk_input_remove(gc->inpa);
 	aim_conn_kill(sess, &command->conn);
 
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, sess->logininfo.BOSIP);
@@ -358,17 +388,15 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
-		set_state(STATE_OFFLINE);
+		destroy_gaim_conn(gc);
 		hide_login_progress(_("Internal Error"));
-		auth_failed();
 		return -1;
 	} else if (bosconn->status != 0) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
-		set_state(STATE_OFFLINE);
+		destroy_gaim_conn(gc);
 		hide_login_progress(_("Could Not Connect"));
-		auth_failed();
 		return -1;
 	}
 
@@ -395,8 +423,8 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 
 	aim_auth_sendcookie(sess, bosconn, sess->logininfo.cookie);
-	gaim_conn = bosconn;
-	inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	gc->oscar_conn = bosconn;
+	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, bosconn);
 	set_login_progress(4, _("Connection established, cookie sent"));
 	return 1;
@@ -407,13 +435,13 @@ int gaim_parse_login(struct aim_session_t *sess,
 	struct client_info_s info = {"AOL Instant Messenger (SM), version 4.1.2010/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055};
 	char *key;
 	va_list ap;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	key = va_arg(ap, char *);
 	va_end(ap);
 
-	aim_send_login(sess, command->conn,
-			current_user->username, current_user->password, &info, key);
+	aim_send_login(sess, command->conn, gc->username, gc->password, &info, key);
 	return 1;
 }
 
@@ -462,6 +490,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	int serviceid;
 	char *ip;
 	unsigned char *cookie;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	serviceid = va_arg(ap, int);
@@ -476,7 +505,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR)
 			debug_print("unable to reconnect with authorizer\n");
 		else {
-			paspa = gdk_input_add(tstconn->fd,
+			gc->paspa = gdk_input_add(tstconn->fd,
 					GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, tstconn);
 			aim_auth_sendcookie(sess, tstconn, cookie);
@@ -492,7 +521,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		}
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 		aim_auth_sendcookie(sess, tstconn, cookie);
-		cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+		gc->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, tstconn);
 		}
 		debug_print("chatnav: connected\n");
@@ -518,7 +547,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
 
-		oscar_chats = g_list_append(oscar_chats, ccon);
+		gc->oscar_chats = g_slist_append(gc->oscar_chats, ccon);
 		
 		aim_chat_attachname(tstconn, roomname);
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
@@ -589,18 +618,20 @@ static void accept_directim(GtkWidget *w, GtkWidget *m)
 {
 	struct aim_conn_t *newconn;
 	struct aim_directim_priv *priv;
+	struct gaim_connection *gc;
 	int watcher;
 
 	priv = (struct aim_directim_priv *)gtk_object_get_user_data(GTK_OBJECT(m));
+	gc = (struct gaim_connection *)gtk_object_get_user_data(GTK_OBJECT(w));
 	gtk_widget_destroy(m);
 
-	if (!(newconn = aim_directim_connect(gaim_sess, gaim_conn, priv))) {
+	if (!(newconn = aim_directim_connect(gc->oscar_sess, gc->oscar_conn, priv))) {
 		debug_print("imimage: could not connect\n");
 		return;
 	}
 
-	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
-	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
+	aim_conn_addhandler(gc->oscar_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
+	aim_conn_addhandler(gc->oscar_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
 
 	watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, newconn);
@@ -608,7 +639,7 @@ static void accept_directim(GtkWidget *w, GtkWidget *m)
 	sprintf(debug_buff, "DirectIM: connected to %s\n", priv->sn);
 	debug_print(debug_buff);
 
-	serv_got_imimage(priv->sn, priv->cookie, priv->ip, newconn, watcher);
+	serv_got_imimage(gc, priv->sn, priv->cookie, priv->ip, newconn, watcher);
 
 	g_free(priv);
 }
@@ -618,7 +649,7 @@ static void cancel_directim(GtkWidget *w, GtkWidget *m)
 	gtk_widget_destroy(m);
 }
 
-static void directim_dialog(struct aim_directim_priv *priv)
+static void directim_dialog(struct gaim_connection *gc, struct aim_directim_priv *priv)
 {
 	GtkWidget *window;
 	GtkWidget *vbox;
@@ -651,6 +682,7 @@ static void directim_dialog(struct aim_directim_priv *priv)
 
 	yes = picture_button(window, _("Accept"), ok_xpm);
 	gtk_box_pack_start(GTK_BOX(hbox), yes, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(yes), gc);
 
 	no = picture_button(window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), no, FALSE, FALSE, 5);
@@ -667,6 +699,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
 	int channel;
 	va_list ap;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	channel = va_arg(ap, int);
@@ -687,7 +720,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		va_end(ap);
 
 		g_snprintf(tmp, BUF_LONG, "%s", msg);
-		serv_got_im(userinfo->sn, tmp, icbmflags & AIM_IMFLAGS_AWAY);
+		serv_got_im(gc, userinfo->sn, tmp, icbmflags & AIM_IMFLAGS_AWAY);
 		g_free(tmp);
 	} else if (channel == 2) {
 		struct aim_userinfo_s *userinfo;
@@ -730,7 +763,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			strcpy(priv2->cookie, priv->cookie);
 			strcpy(priv2->sn, priv->sn);
 			strcpy(priv2->ip, priv->ip);
-			directim_dialog(priv2);
+			directim_dialog(gc, priv2);
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -815,6 +848,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	char *prof_enc = NULL, *prof = NULL;
 	u_short infotype;
 	char buf[BUF_LONG];
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	va_list ap;
 
 	va_start(ap, command);
@@ -843,8 +877,8 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 				  asctime(localtime(&info->onlinesince)),
 				  info->idletime,
 				  infotype == AIM_GETINFO_GENERALINFO ? prof :
-		  		   away_subs(prof, current_user->username));
-	g_show_info_text(away_subs(buf, current_user->username));
+ 				  away_subs(prof, gc->username));
+	g_show_info_text(away_subs(buf, gc->username));
 
 	return 1;
 }
@@ -854,6 +888,7 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	char *msg;
 	u_short id;
 	va_list ap;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	id  = (u_short)va_arg(ap, u_int);
@@ -869,8 +904,8 @@ int gaim_parse_motd(struct aim_session_t *sess,
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
 
-	if (keepalv < 0)
-		update_keepalive(general_options & OPT_GEN_KEEPALIVE);
+	if (gc->keepalive < 0)
+		update_keepalive(gc, gc->keepalive);
 
 	return 1;
 }
@@ -879,6 +914,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	va_list ap;
 	u_short type;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	type = (u_short)va_arg(ap, u_int);
@@ -908,14 +944,14 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 				debug_print(debug_buff);
 				i++;
 			}
-			if (create_exchange) {
+			if (gc->create_exchange) {
 				sprintf(debug_buff, "creating room %s\n",
-						create_name);
+						gc->create_name);
 				debug_print(debug_buff);
-				aim_chatnav_createroom(sess, command->conn, create_name, create_exchange);
-				create_exchange = 0;
-				g_free(create_name);
-				create_name = NULL;
+				aim_chatnav_createroom(sess, command->conn, gc->create_name, gc->create_exchange);
+				gc->create_exchange = 0;
+				g_free(gc->create_name);
+				gc->create_name = NULL;
 			}
 			}
 			break;
@@ -942,11 +978,11 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			if (flags & 0x4) {
 				sprintf(debug_buff, "joining %s on exchange 5\n", name);
 				debug_print(debug_buff);
-				aim_chat_join(gaim_sess, gaim_conn, 5, ck);
+				aim_chat_join(gc->oscar_sess, gc->oscar_conn, 5, ck);
 			} else 
 				sprintf(debug_buff, "joining %s on exchange 4\n", name);{
 				debug_print(debug_buff);
-				aim_chat_join(gaim_sess, gaim_conn, 4, ck);
+				aim_chat_join(gc->oscar_sess, gc->oscar_conn, 4, ck);
 			}
 			}
 			break;
@@ -1100,13 +1136,13 @@ int gaim_parse_evilnotify(struct aim_session_t *sess, struct command_rx_struct *
 }
 
 int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
 		aim_bos_ackrateresp(sess, command->conn);
 		aim_bos_reqpersonalinfo(sess, command->conn);
 		aim_bos_reqlocaterights(sess, command->conn);
-		aim_bos_setprofile(sess, command->conn, current_user->user_info,
-					NULL, gaim_caps);
+		aim_bos_setprofile(sess, command->conn, gc->user_info, NULL, gaim_caps);
 		aim_bos_reqbuddyrights(sess, command->conn);
 
 		gtk_widget_hide(mainwindow);
@@ -1126,11 +1162,11 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		refresh_buddy_window();
 #endif
 
-		serv_finish_login();
-		gaim_setup();
+		serv_finish_login(gc);
+		gaim_setup(gc);
 
-		if (bud_list_cache_exists())
-			do_import(NULL, 0);
+		if (bud_list_cache_exists(gc))
+			do_import(NULL, gc);
 
 		debug_print("buddy list loaded\n");
 
@@ -1202,6 +1238,7 @@ int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct 
 	va_list ap;
 	char *sn = NULL, *msg = NULL;
 	struct aim_conn_t *conn;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	conn = va_arg(ap, struct aim_conn_t *);
@@ -1212,7 +1249,7 @@ int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct 
 	sprintf(debug_buff, "Got DirectIM message from %s\n", sn);
 	debug_print(debug_buff);
 
-	serv_got_im(sn, msg, 0);
+	serv_got_im(gc, sn, msg, 0);
 
 	return 1;
 }
@@ -1261,30 +1298,31 @@ int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *c
 	return 1;
 }
 
-void oscar_do_directim(char *name) {
-	struct aim_conn_t *newconn = aim_directim_initiate(gaim_sess, gaim_conn, NULL, name);
+void oscar_do_directim(struct gaim_connection *gc, char *name) {
+	struct aim_conn_t *newconn = aim_directim_initiate(gc->oscar_sess, gc->oscar_conn, NULL, name);
 	struct conversation *cnv = find_conversation(name); /* this will never be null because it just got set up */
 	cnv->conn = newconn;
 	cnv->watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
-	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE, gaim_directim_initiate, 0);
+	aim_conn_addhandler(gc->oscar_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE, gaim_directim_initiate, 0);
 }
 
 void send_keepalive(gpointer d) {
+	struct gaim_connection *gc = (struct gaim_connection *)d;
 	debug_print("sending oscar NOP\n");
-	if (USE_OSCAR) { /* keeping it open for TOC */
-		aim_flap_nop(gaim_sess, gaim_conn);
-	} else {
-		sflap_send("", 0, TYPE_KEEPALIVE);
+	if (gc->protocol == PROTO_OSCAR) { /* keeping it open for TOC */
+		aim_flap_nop(gc->oscar_sess, gc->oscar_conn);
+	} else if (gc->protocol == PROTO_TOC) {
+		sflap_send(gc, "", 0, TYPE_KEEPALIVE);
 	}
 }
 
-void update_keepalive(gboolean on) {
-	if (on && keepalv < 0 && blist) {
+void update_keepalive(struct gaim_connection *gc, gboolean on) {
+	if (on && gc->keepalive < 0 && blist) {
 		debug_print("allowing NOP\n");
-		keepalv = gtk_timeout_add(60000, (GtkFunction)send_keepalive, 0);
-	} else if (!on && keepalv > -1) {
+		gc->keepalive = gtk_timeout_add(60000, (GtkFunction)send_keepalive, gc);
+	} else if (!on && gc->keepalive > -1) {
 		debug_print("removing NOP\n");
-		gtk_timeout_remove(keepalv);
-		keepalv = -1;
+		gtk_timeout_remove(gc->keepalive);
+		gc->keepalive = -1;
 	}
 }

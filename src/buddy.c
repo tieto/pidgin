@@ -48,19 +48,8 @@
 #include "pixmaps/login_icon.xpm"
 #include "pixmaps/logout_icon.xpm"
 
-#include "pixmaps/buddyadd.xpm"
-#include "pixmaps/buddydel.xpm"
-#include "pixmaps/buddychat.xpm"
-#include "pixmaps/im.xpm"
-#include "pixmaps/info.xpm"
 #include "pixmaps/away_icon.xpm"
 #include "pixmaps/away_small.xpm"
-
-#include "pixmaps/daemon-buddyadd.xpm"
-#include "pixmaps/daemon-buddydel.xpm"
-#include "pixmaps/daemon-buddychat.xpm"
-#include "pixmaps/daemon-im.xpm"
-#include "pixmaps/daemon-info.xpm"
 
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
@@ -286,12 +275,26 @@ gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
 #endif
 
 
-void signoff()
+static void signoff_all(GtkWidget *w, gpointer d)
+{
+	GSList *c = connections;
+	struct gaim_connection *g = NULL;
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		signoff(g);
+		c = connections;
+	}
+}
+
+void signoff(struct gaim_connection *gc)
 {
 	GList *mem;
 
-	plugin_event(event_signoff, 0, 0, 0);
+	plugin_event(event_signoff, gc, 0, 0);
+	serv_close(gc);
 
+	if (connections) return;
         while(groups) {
 		mem = ((struct group *)groups->data)->members;
 		while(mem) {
@@ -304,8 +307,7 @@ void signoff()
 
 	sprintf(debug_buff, "date: %s\n", full_date());
 	debug_print(debug_buff);
-	update_keepalive(FALSE);
-	serv_close();
+	update_keepalive(gc, FALSE);
         destroy_all_dialogs();
         destroy_buddy();
         hide_login_progress("");
@@ -421,13 +423,11 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-	if (!USE_OSCAR) {
 		button = gtk_menu_item_new_with_label(_("Dir Info"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_dir_info), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
-	} else {
 
 		button = gtk_menu_item_new_with_label(_("Direct IM"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
@@ -440,7 +440,6 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
-	}
 
 		button = gtk_menu_item_new_with_label(_("Toggle Logging"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
@@ -968,11 +967,6 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 }
 
 
-void gaimreg_callback(GtkWidget *widget)
-{
-	show_register_dialog(); 
-}
-
 void import_callback(GtkWidget *widget, void *null)
 {
         show_import_dialog();
@@ -1206,8 +1200,6 @@ void do_pounce(char *name)
                                 	c = new_conversation(name);
 
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL);
-
-                        	escape_text(b->message);
 
                                 serv_send_im(name, b->message, 0);
 			}
@@ -1835,6 +1827,11 @@ void show_buddy_list()
         GtkWidget *bbox;
         GtkWidget *tbox;
 
+	if (blist) {
+		gtk_widget_show(blist);
+		return;
+	}
+
 
 #ifdef USE_APPLET
         blist = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -1864,13 +1861,8 @@ void show_buddy_list()
         gaim_seperator(menu);
         gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm, GTK_SIGNAL_FUNC(import_callback));
         gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,GTK_SIGNAL_FUNC(export_callback));
-	if (!(general_options & OPT_GEN_REGISTERED))
-	{
-        	gaim_seperator(menu);
-		gaim_new_item_with_pixmap(menu, _("Register"), add_small_xpm, GTK_SIGNAL_FUNC(gaimreg_callback));
-	}
 	gaim_seperator(menu);
-	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_icon_xpm, GTK_SIGNAL_FUNC(signoff));
+	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_icon_xpm, GTK_SIGNAL_FUNC(signoff_all));
 
 #ifndef USE_APPLET
 	gaim_new_item_with_pixmap(menu, _("Quit"), exit_small_xpm, GTK_SIGNAL_FUNC(do_quit));
@@ -1928,6 +1920,7 @@ void show_buddy_list()
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_change_passwd), NULL);
 	gtk_widget_show(menuitem);
+        gaim_new_item_with_pixmap(menu, _("Accounts"), add_small_xpm, GTK_SIGNAL_FUNC(account_editor));
 	gaim_seperator(menu);
 
         gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm, GTK_SIGNAL_FUNC(show_prefs));

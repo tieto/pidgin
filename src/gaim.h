@@ -19,19 +19,24 @@
  *
  */
 
+#ifndef _GAIM_GAIM_H_
+#define _GAIM_GAIM_H_
+
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
 #endif
+
 #include <gtk/gtk.h>
 #include <time.h>
 #include <stdio.h>
-#include <aim.h>
 #ifdef USE_APPLET
 #include <applet-widget.h>
 #endif /* USE_APPLET */
 #ifdef USE_GNOME
 #include <gnome.h>
 #endif
+#include "aim.h"
+#include "multi.h"
 
 
 /*
@@ -60,8 +65,6 @@
 #define PERMIT_NONE	2
 #define PERMIT_SOME	3
 #define DENY_SOME	4
-#define PERMIT_BUDDY	5 /* TOC doesn't have this,
-			     but we can fake it */
 
 #define UC_AOL		1
 #define UC_ADMIN 	2
@@ -125,8 +128,21 @@ extern struct debug_window *dw;
 
 struct aim_user {
 	char username[64];
-        char password[32];
-        char user_info[2048];
+	char password[32];
+	char user_info[2048];
+	int options;
+	int protocol;
+
+	/* stuff for modify window */
+	GtkWidget *mod;
+	GtkWidget *name;
+	GtkWidget *pass;
+	int tmp_options;
+	int tmp_protocol;
+
+	/* stuff for password prompt */
+	GtkWidget *passprmt;
+	GtkWidget *passentry;
 };
 
 struct save_pos {
@@ -257,6 +273,8 @@ struct debug_window {
 
 /* struct buddy_chat went away and got merged with this. */
 struct conversation {
+	struct gaim_connection *gc;
+
 	/* stuff used for both IM and chat */
 	GtkWidget *window;
 	char name[80];
@@ -297,6 +315,7 @@ struct conversation {
 	GtkWidget *sep1;
 	GtkWidget *sep2;
  	time_t sent_away;
+	GtkWidget *menu;
 
 	/* stuff used just for chat */
         GList *in_room;
@@ -414,7 +433,6 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 950 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -431,14 +449,6 @@ struct signon {
 #ifdef USE_APPLET
 extern GtkWidget *applet;
 #endif /* USE_APPLET */
-
-/* Globals in oscar.c */
-extern struct aim_session_t *gaim_sess;
-extern struct aim_conn_t    *gaim_conn;
-extern GList *oscar_chats;
-extern int create_exchange;
-extern char *create_name;
-extern int keepalv;
 
 /* Globals in server.c */
 extern int correction_time;
@@ -464,7 +474,6 @@ extern GList *buddy_chats;
 extern GList *conversations;
 extern GList *chat_rooms;
 extern GtkWidget *mainwindow;
-extern GtkWidget *remember;
 extern char *quad_addr;
 extern char toc_addy[16];
 
@@ -479,29 +488,28 @@ extern GtkWidget *bpmenu;
 extern GtkWidget *blist;
 
 extern int general_options;
-#define OPT_GEN_ENTER_SENDS      0x00000001
-#define OPT_GEN_AUTO_LOGIN       0x00000002
-#define OPT_GEN_LOG_ALL          0x00000004
-#define OPT_GEN_STRIP_HTML       0x00000008
-#define OPT_GEN_APP_BUDDY_SHOW   0x00000010
-#define OPT_GEN_POPUP_WINDOWS    0x00000020
-#define OPT_GEN_SEND_LINKS       0x00000040
-#define OPT_GEN_DEBUG            0x00000100
-#define OPT_GEN_REMEMBER_PASS    0x00000200
-#define OPT_GEN_REGISTERED       0x00000400
-#define OPT_GEN_BROWSER_POPUP    0x00000800
-#define OPT_GEN_SAVED_WINDOWS    0x00001000
+#define OPT_GEN_ENTER_SENDS       0x00000001
+/* #define OPT_GEN_AUTO_LOGIN        0x00000002 now OPT_USR_AUTO */
+#define OPT_GEN_LOG_ALL           0x00000004
+#define OPT_GEN_STRIP_HTML        0x00000008
+#define OPT_GEN_APP_BUDDY_SHOW    0x00000010
+#define OPT_GEN_POPUP_WINDOWS     0x00000020
+#define OPT_GEN_SEND_LINKS        0x00000040
+#define OPT_GEN_DEBUG             0x00000100
+/* #define OPT_GEN_REMEMBER_PASS     0x00000200 now OPT_USR_REM_PASS */
+#define OPT_GEN_REGISTERED        0x00000400
+#define OPT_GEN_BROWSER_POPUP     0x00000800
+#define OPT_GEN_SAVED_WINDOWS     0x00001000
 #define OPT_GEN_DISCARD_WHEN_AWAY 0x00002000
-#define OPT_GEN_NEAR_APPLET	0x00004000
-#define OPT_GEN_CHECK_SPELLING	0x00008000
-#define OPT_GEN_POPUP_CHAT	0x00010000
-#define OPT_GEN_BACK_ON_IM	0x00020000
-#define OPT_GEN_USE_OSCAR	0x00040000
-#define OPT_GEN_CTL_CHARS	0x00080000
-#define OPT_GEN_TIK_HACK        0x00100000
-#define OPT_GEN_CTL_SMILEYS     0x00200000
-#define OPT_GEN_KEEPALIVE       0x00400000
-extern int USE_OSCAR;
+#define OPT_GEN_NEAR_APPLET       0x00004000
+#define OPT_GEN_CHECK_SPELLING    0x00008000
+#define OPT_GEN_POPUP_CHAT        0x00010000
+#define OPT_GEN_BACK_ON_IM        0x00020000
+/* #define OPT_GEN_USE_OSCAR         0x00040000 now PROTO_OSCAR */
+#define OPT_GEN_CTL_CHARS         0x00080000
+#define OPT_GEN_TIK_HACK          0x00100000
+#define OPT_GEN_CTL_SMILEYS       0x00200000
+/* #define OPT_GEN_KEEPALIVE         0x00400000 now OPT_USR_KEEPALV */
 
 extern int display_options;
 #define OPT_DISP_SHOW_TIME        0x00000001
@@ -548,11 +556,14 @@ extern int font_options;
 #define OPT_FONT_FGCOL           0x00000040
 #define OPT_FONT_BGCOL           0x00000080
 
+#define OPT_USR_AUTO		0x00000001
+#define OPT_USR_KEEPALV		0x00000002
+#define OPT_USR_REM_PASS	0x00000004
+
 #define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://www.marko.net/gaim\">http://www.marko.net/gaim</A>."
 
 extern int report_idle;
 extern int web_browser;
-extern struct aim_user *current_user;
 extern GList *aim_users;
 extern char web_command[2048];
 extern char debug_buff[BUF_LONG];
@@ -598,8 +609,6 @@ extern gint clean_pid(void *);
 extern char *date();
 extern gint linkify_text(char *);
 extern void aol_icon(GdkWindow *);
-extern int query_state();
-extern void set_state(int);
 extern FILE *open_log_file (char *);
 extern char *sec_to_text(int);
 extern struct aim_user *find_user(const char *);
@@ -616,16 +625,16 @@ extern int set_dispstyle (int);
 
 /* Functions in server.c */
 /* input to serv */
-extern int serv_login(char *, char *);
-extern void serv_close();
-extern void serv_touch_idle();
+extern struct gaim_connection *serv_login(char *, char *);
+extern void serv_close(struct gaim_connection *);
+extern void serv_touch_idle(struct gaim_connection *);
 extern void serv_finish_login();
 extern void serv_send_im(char *, char *, int);
 extern void serv_get_info(char *);
 extern void serv_get_away_msg(char *);
 extern void serv_get_dir(char *);
-extern void serv_set_idle(int);
-extern void serv_set_info(char *);
+extern void serv_set_idle(struct gaim_connection *, int);
+extern void serv_set_info(struct gaim_connection *, char *);
 extern void serv_set_away(char *);
 extern void serv_change_passwd(char *, char *);
 extern void serv_add_buddy(char *);
@@ -646,11 +655,11 @@ extern void serv_chat_leave(int);
 extern void serv_chat_whisper(int, char *, char *);
 extern void serv_chat_send(int, char *);
 extern void serv_do_imimage(GtkWidget *, char *);
-extern void serv_got_imimage(char *, char *, char *, struct aim_conn_t *, int);
+extern void serv_got_imimage(struct gaim_connection *, char *, char *, char *, struct aim_conn_t *, int);
 
 /* output from serv */
 extern void serv_got_update(char *, int, int, time_t, time_t, int, u_short);
-extern void serv_got_im(char *, char *, int);
+extern void serv_got_im(struct gaim_connection *, char *, char *, int);
 extern void serv_got_eviled(char *, int);
 extern void serv_got_chat_invite(char *, int, char *, char *);
 extern void serv_got_joined_chat(int, char *);
@@ -684,30 +693,27 @@ extern void do_strike(GtkWidget *, GtkWidget *);
 extern void do_small(GtkWidget *, GtkWidget *);
 extern void do_normal(GtkWidget *, GtkWidget *);
 extern void do_big(GtkWidget *, GtkWidget *);
-extern void toggle_link(GtkWidget *, struct conversation *);
-extern int invert_tags(GtkWidget *, char *, char *, int);
-extern void quiet_set(GtkWidget *, int);
-extern int count_tag(GtkWidget *, char *, char *);
 extern void set_font_face(char *, struct conversation *);
+extern void redo_convo_menus();
 
 /* Functions in network.c */
 extern unsigned int *get_address(char *);
 extern int connect_address(unsigned int, unsigned short);
 
 /* Functions in oscar.c */
-extern int oscar_login(char *, char *);
-extern void oscar_close();
-extern struct chat_connection *find_oscar_chat(char *name);
-extern void oscar_do_directim(char *);
-extern void update_keepalive(gboolean);
+extern struct gaim_connection *oscar_login(char *, char *);
+extern void oscar_close(struct gaim_connection *);
+extern struct chat_connection *find_oscar_chat(struct gaim_connection *, char *name);
+extern void oscar_do_directim(struct gaim_connection *, char *);
+extern void update_keepalive(struct gaim_connection *, gboolean);
 
 /* Functions in toc.c */
 extern void toc_close();
-extern int toc_login(char *, char *);
-extern int toc_wait_signon(void);
-extern char *toc_wait_config(void);
-extern int sflap_send(char *, int , int );
-extern void parse_toc_buddy_list(char *, int);
+extern struct gaim_connection *toc_login(char *, char *);
+extern int toc_wait_signon(struct gaim_connection *);
+extern char *toc_wait_config(struct gaim_connection *);
+extern int sflap_send(struct gaim_connection *, char *, int , int );
+extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
 
 
 /* Functions in buddy.c */
@@ -719,7 +725,7 @@ extern void update_all_buddies();
 extern void show_buddy_list();
 extern void refresh_buddy_window();
 extern void toc_build_config(char *, int len, gboolean);
-extern void signoff();
+extern void signoff(struct gaim_connection *);
 extern void do_im_back();
 extern void set_buddy(struct buddy *);
 extern struct person *add_person(char *, char *);
@@ -749,7 +755,7 @@ extern void away_list_clicked(GtkWidget *, struct away_message *);
 extern void hide_login_progress(char *);
 extern void set_login_progress(int, char *);
 extern void show_login();
-extern void gaim_setup();
+extern void gaim_setup(struct gaim_connection *gc);
 #ifdef USE_APPLET
 extern void createOnlinePopup();
 extern void applet_show_login(AppletWidget *, gpointer);
@@ -822,7 +828,6 @@ extern void show_find_email();
 extern void show_find_info();
 extern void g_show_info (char *);
 extern void g_show_info_text (char *);
-extern void show_register_dialog();
 extern void show_set_info();
 extern void show_set_dir();
 extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);
@@ -833,8 +838,8 @@ extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *,struct conversation *);
 extern void show_change_passwd();
-extern void do_import(GtkWidget *, void *);
-extern int bud_list_cache_exists();
+extern void do_import(GtkWidget *, struct gaim_connection *);
+extern int bud_list_cache_exists(struct gaim_connection *);
 extern void show_smiley_dialog(struct conversation *, GtkWidget *);
 extern void close_smiley_dialog(GtkWidget *widget, struct conversation *c);
 extern void set_smiley_array(GtkWidget *widget, int smiley_type);
@@ -863,3 +868,5 @@ void BuddyTickerSignOff();
 void BuddyTickerAddUser(char *, GdkPixmap *, GdkBitmap *);
 void BuddyTickerSetPixmap(char *, GdkPixmap *, GdkBitmap *);
 void BuddyTickerSignoff();
+
+#endif /* _GAIM_GAIM_H_ */

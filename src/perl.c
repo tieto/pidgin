@@ -298,15 +298,19 @@ XS (XS_AIM_get_info)
 		XST_mPV(0, VERSION);
 		break;
 	case 1:
+		/* FIXME: no more current_user
 		XST_mPV(0, current_user->username);
+		*/
 		break;
 	case 2:
+		/* FIXME: more per-connection issues
 		if (!blist)
 			XST_mPV(0, "Offline");
 		else if (!USE_OSCAR)
 			XST_mPV(0, "TOC");
 		else
 			XST_mPV(0, "Oscar");
+		*/
 		break;
 	default:
 		XST_mPV(0, "Error2");
@@ -401,12 +405,15 @@ XS (XS_AIM_command)
 	command = SvPV(ST(0), junk);
 	if (!command) XSRETURN(0);
 	if        (!strncasecmp(command, "signon", 6)) {
+		/* FIXME
 		if (!blist) {
 			show_login();
 			dologin(0, 0);
 		}
+		*/
 	} else if (!strncasecmp(command, "signoff", 7)) {
-		signoff();
+		/* FIXME: we need to figure out how this works for multiple connections
+		 * signoff(); */
 	} else if (!strncasecmp(command, "away", 4)) {
 		char *message = SvPV(ST(1), junk);
 		struct away_message a;
@@ -415,7 +422,9 @@ XS (XS_AIM_command)
 	} else if (!strncasecmp(command, "back", 4)) {
 		do_im_back();
 	} else if (!strncasecmp(command, "idle", 4)) {
+		/* FIXME
 		serv_set_idle(atoi(SvPV(ST(1), junk)));
+		*/
 	} else if (!strncasecmp(command, "warn", 4)) {
 		char *name = SvPV(ST(1), junk);
 		serv_warn(name, 0);

@@ -50,7 +50,7 @@ static GtkWidget *prefs = NULL;
 
 static GtkWidget *gaim_button(const char *, int *, int, GtkWidget *);
 static void prefs_build_general(GtkWidget *);
-static void prefs_build_connect(GtkWidget *);
+static void prefs_build_proxy(GtkWidget *);
 #ifdef USE_APPLET
 static void prefs_build_applet(GtkWidget *);
 #endif
@@ -101,9 +101,11 @@ static void general_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
+	/*
 	prefrem = gaim_button(_("Remember password"), &general_options, OPT_GEN_REMEMBER_PASS, box);
 	gtk_signal_connect(GTK_OBJECT(prefrem), "destroy", GTK_SIGNAL_FUNC(remdes), 0);
-	gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box);
+	*/
+	/* gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box); */
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
@@ -189,42 +191,7 @@ static void connect_destroy(GtkWidget *n, gpointer d)
 	proxy_port_entry = NULL;
 }
 
-static void connect_page()
-{
-	GtkWidget *parent;
-	GtkWidget *box;
-	GtkWidget *label;
-	GtkWidget *sep;
-
-	parent = prefdialog->parent;
-	gtk_widget_destroy(prefdialog);
-
-	prefdialog = gtk_frame_new(_("Connection Options"));
-	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
-	gtk_signal_connect(GTK_OBJECT(prefdialog), "destroy", GTK_SIGNAL_FUNC(connect_destroy), 0);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(prefdialog), box);
-	gtk_widget_show(box);
-
-	label = gtk_label_new(_("AOL has two protocols for connecting to AIM. One of them is Oscar and the other is TOC.\n\nTOC is a published protocol; AOL allows people to use the TOC protocol in their clients to connect. It is a simplified version of Oscar; it is capable of most tasks, but cannot perform all of the functions of Oscar. Because TOC is published, using TOC in gaim tends to be more stable and reliable.\n\nOscar is a proprietary protocol. AOL has not published any information about it. Gaim is able to use Oscar thanks to libfaim, which reverse-engineered the Oscar protocol and is able to emulate it. While libfaim has not decoded or implemented all of the functions of Oscar, it is still able to perform most functions TOC provides as well as several others. However, using Oscar in gaim tends to be less reliable, though more usable.\n\nChanging this option takes effect at signon time."));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	gaim_button(_("Use Oscar Protocol"), &general_options, OPT_GEN_USE_OSCAR, box);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
-
-	gaim_button(_("Send Keep-Alive Packet (6 bytes/minute)"), &general_options, OPT_GEN_KEEPALIVE, box);
-
-	gtk_widget_show(prefdialog);
-}
-
-static void toc_page()
+static void proxy_page()
 {
 	GtkWidget *parent;
 	GtkWidget *box;
@@ -236,7 +203,7 @@ static void toc_page()
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
 
-	prefdialog = gtk_frame_new(_("TOC Options"));
+	prefdialog = gtk_frame_new(_("Proxy Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 	gtk_signal_connect(GTK_OBJECT(prefdialog), "destroy", GTK_SIGNAL_FUNC(connect_destroy), 0);
 
@@ -335,33 +302,6 @@ static void toc_page()
 		gtk_widget_set_sensitive(proxy_host_entry, FALSE);
 		gtk_widget_set_sensitive(proxy_port_entry, FALSE);
 	}
-
-	gtk_widget_show(prefdialog);
-}
-
-static void oscar_page()
-{
-	GtkWidget *parent;
-	GtkWidget *box;
-	GtkWidget *label;
-
-	parent = prefdialog->parent;
-	gtk_widget_destroy(prefdialog);
-
-	prefdialog = gtk_frame_new(_("Oscar Options"));
-	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(prefdialog), box);
-	gtk_widget_show(box);
-
-	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	label = gtk_label_new(_("No options currently (Isn't that sad)"));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
 
 	gtk_widget_show(prefdialog);
 }
@@ -1226,12 +1166,6 @@ static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 GtkWidget *pref_fg_picture = NULL;
 GtkWidget *pref_bg_picture = NULL;
 
-static fgbgdes(GtkWidget *w, gpointer d)
-{
-	pref_fg_picture = NULL;
-	pref_bg_picture = NULL;
-}
-
 void update_color(GtkWidget *w, GtkWidget *pic)
 {
 	GdkColor c;
@@ -1791,7 +1725,7 @@ void show_prefs()
 	gtk_widget_show(prefdialog);
 
 	prefs_build_general(preftree);
-	prefs_build_connect(preftree);
+	prefs_build_proxy(preftree);
 #ifdef USE_APPLET
 	prefs_build_applet(preftree);
 #endif
@@ -1917,9 +1851,7 @@ void set_general_option(GtkWidget *w, int *option)
        	if ((int)option == OPT_GEN_LOG_ALL)
        		update_log_convs();
 
-	if ((int)option == OPT_GEN_KEEPALIVE)
-		update_keepalive(general_options & OPT_GEN_KEEPALIVE);
-
+	/*
 	if (prefrem)
 		gtk_signal_handler_block_by_data(GTK_OBJECT(prefrem), (int *)OPT_GEN_REMEMBER_PASS);
 	if (remember)
@@ -1934,6 +1866,7 @@ void set_general_option(GtkWidget *w, int *option)
 		gtk_signal_handler_unblock_by_data(GTK_OBJECT(prefrem), (int *)OPT_GEN_REMEMBER_PASS);
 	if (remember)
 		gtk_signal_handler_unblock_by_data(GTK_OBJECT(remember), (int *)OPT_GEN_REMEMBER_PASS);
+	*/
 
 	save_prefs();
 }
@@ -2003,25 +1936,15 @@ void prefs_build_general(GtkWidget *preftree)
 	gtk_ctree_select(GTK_CTREE(preftree), parent);
 }
 
-void prefs_build_connect(GtkWidget *preftree)
+void prefs_build_proxy(GtkWidget *preftree)
 {
-	GtkCTreeNode *parent, *node;
+	GtkCTreeNode *parent;
 	char *text[1];
 
-	text[0] = _("Connection");
+	text[0] = _("Proxy");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, connect_page);
-
-	text[0] = _("TOC Options");
-	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, toc_page);
-
-	text[0] = _("Oscar Options");
-	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, oscar_page);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, proxy_page);
 }
 
 #ifdef USE_APPLET

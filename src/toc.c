@@ -35,30 +35,31 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/socket.h>
+#include "multi.h"
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
+#define REVISION "gaim:$Revision: 970 $"
 
 
-/* descriptor for talking to TOC */
-static int toc_fd;
-static int seqno;
 static unsigned int peer_ver=0;
-static int state;
-static int inpa=-1;
 #ifdef _WIN32
 static int win32_r;
 #endif
 
-int toc_signon(char *username, char *password);
+static int toc_signon(struct gaim_connection *);
 
 
 
-int toc_login(char *username, char *password)
+/* ok. this function used to take username/password, and return 0 on success.
+ * now, it takes username/password, and returns NULL on error or a new gaim_connection
+ * on success. FIXME: should this modify the UI? or just sign in? */
+struct gaim_connection *toc_login(char *username, char *password)
 {
 	char *config;
         struct in_addr *sin;
         struct aim_user *u;
+	struct gaim_connection *gc;
 	char buf[80];
 	char buf2[2048];
 
@@ -71,10 +72,9 @@ int toc_login(char *username, char *password)
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
 		g_snprintf(buf, sizeof(buf), "Unable to lookup %s", aim_host);
 		hide_login_progress(buf);
-		return -1;
+		return NULL;
 	}
 	
 	g_snprintf(toc_addy, sizeof(toc_addy), "%s", inet_ntoa(*sin));
@@ -83,18 +83,19 @@ int toc_login(char *username, char *password)
 	set_login_progress(2, buf);
 
 
+	gc = new_gaim_conn(PROTO_TOC, username, password);
 	
-	toc_fd = connect_address(sin->s_addr, aim_port);
+	gc->toc_fd = connect_address(sin->s_addr, aim_port);
 
-        if (toc_fd < 0) {
+        if (gc->toc_fd < 0) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
 			 inet_ntoa(*sin));
 		hide_login_progress(buf);
-		return -1;
+		destroy_gaim_conn(gc);
+		return NULL;
         }
 
         g_free(sin);
@@ -103,45 +104,35 @@ int toc_login(char *username, char *password)
 	
 	set_login_progress(3, buf);
 	
-	if (toc_signon(username, password) < 0) {
+	if (toc_signon(gc) < 0) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
 		hide_login_progress("Disconnected.");
-		return -1;
+		destroy_gaim_conn(gc);
+		return NULL;
 	}
 
 	g_snprintf(buf, sizeof(buf), "Waiting for reply...");
 	set_login_progress(4, buf);
-	if (toc_wait_signon() < 0) {
+	if (toc_wait_signon(gc) < 0) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif /* USE_APPLET */
-                set_state(STATE_OFFLINE);
 		hide_login_progress("Authentication Failed");
-		return -1;
+		destroy_gaim_conn(gc);
+		return NULL;
 	}
 
         u = find_user(username);
-
-        if (!u) {
-                u = g_new0(struct aim_user, 1);
-                g_snprintf(u->user_info, sizeof(u->user_info), DEFAULT_INFO);
-                aim_users = g_list_append(aim_users, u);
-        }
-
-        current_user = u;
-        
-	g_snprintf(current_user->username, sizeof(current_user->username), "%s", username);
-	g_snprintf(current_user->password, sizeof(current_user->password), "%s", password);
-
+	sprintf(gc->user_info, "%s", u->user_info);
+	gc->options = u->options;
 	save_prefs();
 
 	g_snprintf(buf, sizeof(buf), "Retrieving config...");
 	set_login_progress(5, buf);
-	config = toc_wait_config();
-	state = STATE_ONLINE;
+	config = toc_wait_config(gc);
+	gc->state = STATE_ONLINE;
 
         gtk_widget_hide(mainwindow);
 	show_buddy_list();
@@ -160,39 +151,38 @@ int toc_login(char *username, char *password)
 	refresh_buddy_window();
 #endif
 	if (config != NULL)
-		parse_toc_buddy_list(config, 0);
+		parse_toc_buddy_list(gc, config, 0);
 	else
-		do_import(0, 0);
+		do_import(0, gc);
         
 	setup_buddy_chats();
 
 	g_snprintf(buf2, sizeof(buf2), "toc_init_done");
-	sflap_send(buf2, -1, TYPE_DATA);
+	sflap_send(gc, buf2, -1, TYPE_DATA);
 
 	g_snprintf(buf2, sizeof(buf2), "toc_set_caps %s %s %s %s %s",
 		   FILE_SEND_UID, FILE_GET_UID, B_ICON_UID, IMAGE_UID,
 		   VOICE_UID);
-	sflap_send(buf2, -1, TYPE_DATA);
+	sflap_send(gc, buf2, -1, TYPE_DATA);
 
-	if (keepalv < 0)
-		update_keepalive(general_options & OPT_GEN_KEEPALIVE);
+	if (gc->keepalive < 0)
+		update_keepalive(gc, gc->options & OPT_USR_KEEPALV);
 
-        serv_finish_login();
+        serv_finish_login(gc);
+	gaim_setup(gc);
 	return 0;
 }
 
-void toc_close()
+void toc_close(struct gaim_connection *gc)
 {
+	if (gc->protocol != PROTO_TOC) return; /* how did this happen? */
 #ifdef USE_APPLET
 	set_user_state(offline);
 #endif /* USE_APPLET */
-        seqno = 0;
-        state = STATE_OFFLINE;
-        if (inpa > 0)
-		gdk_input_remove(inpa);
-	close(toc_fd);
-	toc_fd=-1;
-	inpa=-1;
+        if (gc->inpa > 0)
+		gdk_input_remove(gc->inpa);
+	gc->inpa = -1;
+	close(gc->toc_fd);
 }
 
 unsigned char *roast_password(char *pass)
@@ -234,7 +224,7 @@ void print_buffer(char *buf, int len)
 #endif
 }
 
-int sflap_send(char *buf, int olen, int type)
+int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 {
 	int len;
 	int slen=0;
@@ -261,7 +251,7 @@ int sflap_send(char *buf, int olen, int type)
 		len = olen;
 	hdr.ast = '*';
 	hdr.type = type;
-	hdr.seqno = htons(seqno++ & 0xffff);
+	hdr.seqno = htons(gc->seqno++ & 0xffff);
         hdr.len = htons(len + (type == TYPE_SIGNON ? 0 : 1));
 
     sprintf(debug_buff,"Escaped message is '%s'\n",buf);
@@ -277,11 +267,11 @@ int sflap_send(char *buf, int olen, int type)
 	}
 	print_buffer(obuf, slen);
 
-	return write(toc_fd, obuf, slen);
+	return write(gc->toc_fd, obuf, slen);
 }
 
 
-int wait_reply(char *buffer, size_t buflen)
+static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 {
         size_t res=-1;
 	int read_rv = -1;
@@ -289,11 +279,12 @@ int wait_reply(char *buffer, size_t buflen)
         char *c;
 
 	if(buflen < sizeof(struct sflap_hdr)) {
-	    do_error_dialog("Buffer too small", "Gaim - Error (internal)");
+	    do_error_dialog(_("Unable to read from server: Buffer too small"),
+			    _("Gaim - Error (internal)"));
 	    return -1;
 	}
 
-        while((read_rv = read(toc_fd, buffer, 1))) {
+        while((read_rv = read(gc->toc_fd, buffer, 1))) {
 		if (read_rv < 0 || read_rv > 1)
 			return -1;
 		if (buffer[0] == '*')
@@ -301,7 +292,7 @@ int wait_reply(char *buffer, size_t buflen)
 
 	}
 
-	read_rv = read(toc_fd, buffer+1, sizeof(struct sflap_hdr) - 1);
+	read_rv = read(gc->toc_fd, buffer+1, sizeof(struct sflap_hdr) - 1);
 
         if (read_rv < 0)
 		return read_rv;
@@ -314,16 +305,21 @@ int wait_reply(char *buffer, size_t buflen)
 
 
 	if(buflen < sizeof(struct sflap_hdr) + ntohs(hdr->len) + 1) {
-	    do_error_dialog("Buffer too small", "Gaim - Error (internal)");
+	    do_error_dialog(_("Unable to read from server: Too much information"),
+			    _("Gaim - Error (internal)"));
 	    return -1;
 	}
 
         while (res < (sizeof(struct sflap_hdr) + ntohs(hdr->len))) {
-		read_rv = read(toc_fd, buffer + res, (ntohs(hdr->len) + sizeof(struct sflap_hdr)) - res);
+		read_rv = read(gc->toc_fd, buffer + res, (ntohs(hdr->len) + sizeof(struct sflap_hdr)) - res);
 		if(read_rv < 0) return read_rv;
 		res += read_rv;
+		/* my feeling is this will kill us. if there's data pending then we'll come right back
+		 * to where we are now. possible workarounds are to remove the input watcher until
+		 * we're done with this part
 		while(gtk_events_pending())
 			gtk_main_iteration();
+		 */
 	}
         
         if (res >= sizeof(struct sflap_hdr)) 
@@ -335,14 +331,14 @@ int wait_reply(char *buffer, size_t buflen)
 	case TYPE_SIGNON:
 		memcpy(&peer_ver, buffer + sizeof(struct sflap_hdr), 4);
 		peer_ver = ntohl(peer_ver);
-		seqno = ntohs(hdr->seqno);
-		state = STATE_SIGNON_REQUEST;
+		gc->seqno = ntohs(hdr->seqno);
+		gc->state = STATE_SIGNON_REQUEST;
 		break;
 	case TYPE_DATA:
 		if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "SIGN_ON:", strlen("SIGN_ON:")))
-			state = STATE_SIGNON_ACK;
+			gc->state = STATE_SIGNON_ACK;
 		else if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "CONFIG:", strlen("CONFIG:"))) {
-			state = STATE_CONFIG;
+			gc->state = STATE_CONFIG;
 		} else if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "ERROR:", strlen("ERROR:"))) {
 			c = strtok(buffer + sizeof(struct sflap_hdr) + strlen("ERROR:"), ":");
 			show_error_dialog(c);
@@ -368,10 +364,11 @@ void toc_callback( gpointer          data,
         char *buf;
 	char *c;
         char *l;
+	struct gaim_connection *gc = (struct gaim_connection *)data;
 
         buf = g_malloc(2 * BUF_LONG);
-        if (wait_reply(buf, 2 * BUF_LONG) < 0) {
-                signoff();
+        if (wait_reply(gc, buf, 2 * BUF_LONG) < 0) {
+                signoff(gc); /* this will free gc for us */
                 hide_login_progress("Connection Closed");
                 g_free(buf);
 		return;
@@ -440,7 +437,7 @@ void toc_callback( gpointer          data,
 	} else if (!strcasecmp(c, "CONFIG")) {
 		/* do we want to load the buddy list again here? */
 		c = strtok(NULL,":");
-		parse_toc_buddy_list(c, 0);
+		parse_toc_buddy_list(gc, c, 0);
 	} else if (!strcasecmp(c, "ERROR")) {
 		/* This should be handled by wait_reply
 		c = strtok(NULL,":");
@@ -448,7 +445,7 @@ void toc_callback( gpointer          data,
 		*/
 	} else if (!strcasecmp(c, "NICK")) {
 		c = strtok(NULL,":");
-		g_snprintf(current_user->username, sizeof(current_user->username), "%s", c);
+		g_snprintf(gc->username, sizeof(gc->username), "%s", c);
 	} else if (!strcasecmp(c, "IM_IN")) {
 		char *away, *message;
                 int a = 0;
@@ -465,7 +462,7 @@ void toc_callback( gpointer          data,
 
 		if (!strncasecmp(away, "T", 1))
 			a = 1;
-                serv_got_im(c, message, a);
+                serv_got_im(gc, c, message, a);
 		
 	} else if (!strcasecmp(c, "GOTO_URL")) {
 		char *name;
@@ -695,7 +692,7 @@ void toc_callback( gpointer          data,
 			name = frombase64(cookie);
 			snprintf(tmp, BUF_LEN, "toc_rvous_cancel %s %s %s",
 					user, name, uuid);
-			sflap_send(tmp, strlen(tmp), TYPE_DATA);
+			sflap_send(gc, tmp, strlen(tmp), TYPE_DATA);
 			free(name);
 			free(tmp);
 		}
@@ -707,59 +704,59 @@ void toc_callback( gpointer          data,
 }
 
 
-int toc_signon(char *username, char *password)
+int toc_signon(struct gaim_connection *gc)
 {
 	char buf[BUF_LONG];
 	int res;
 	struct signon so;
 
-        sprintf(debug_buff,"State = %d\n", state);
+        sprintf(debug_buff,"State = %d\n", gc->state);
 	debug_print(debug_buff);
 
-	if ((res = write(toc_fd, FLAPON, strlen(FLAPON))) < 0)
+	if ((res = write(gc->toc_fd, FLAPON, strlen(FLAPON))) < 0)
 		return res;
 	/* Wait for signon packet */
 
-	state = STATE_FLAPON;
+	gc->state = STATE_FLAPON;
 
-	if ((res = wait_reply(buf, sizeof(buf)) < 0))
+	if ((res = wait_reply(gc, buf, sizeof(buf)) < 0))
 		return res;
 	
-	if (state != STATE_SIGNON_REQUEST) {
-			sprintf(debug_buff, "State should be %d, but is %d instead\n", STATE_SIGNON_REQUEST, state);
+	if (gc->state != STATE_SIGNON_REQUEST) {
+			sprintf(debug_buff, "State should be %d, but is %d instead\n", STATE_SIGNON_REQUEST, gc->state);
 			debug_print(debug_buff);
 			return -1;
 	}
 	
 	/* Compose a response */
 	
-	g_snprintf(so.username, sizeof(so.username), "%s", username);
+	g_snprintf(so.username, sizeof(so.username), "%s", gc->username);
 	so.ver = ntohl(1);
 	so.tag = ntohs(1);
 	so.namelen = htons(strlen(so.username));	
 	
-	sflap_send((char *)&so, ntohs(so.namelen) + 8, TYPE_SIGNON);
+	sflap_send(gc, (char *)&so, ntohs(so.namelen) + 8, TYPE_SIGNON);
 	
 	g_snprintf(buf, sizeof(buf), 
 		"toc_signon %s %d %s %s %s \"%s\"",
-		login_host, login_port, normalize(username), roast_password(password), LANGUAGE, REVISION);
+		login_host, login_port, normalize(gc->username), roast_password(gc->password), LANGUAGE, REVISION);
 
         sprintf(debug_buff,"Send: %s\n", buf);
 		debug_print(debug_buff);
 
-	return sflap_send(buf, -1, TYPE_DATA);
+	return sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
-int toc_wait_signon()
+int toc_wait_signon(struct gaim_connection *gc)
 {
 	/* Wait for the SIGNON to be approved */
 	char buf[BUF_LONG];
 	int res;
-	res = wait_reply(buf, sizeof(buf));
+	res = wait_reply(gc, buf, sizeof(buf));
 	if (res < 0)
 		return res;
-	if (state != STATE_SIGNON_ACK) {
-			sprintf(debug_buff, "State should be %d, but is %d instead\n",STATE_SIGNON_ACK, state);
+	if (gc->state != STATE_SIGNON_ACK) {
+			sprintf(debug_buff, "State should be %d, but is %d instead\n",STATE_SIGNON_ACK, gc->state);
 			debug_print(debug_buff);
 		return -1;
 	}
@@ -792,27 +789,27 @@ gint win32_read()
 #endif
 
 
-char *toc_wait_config()
+char *toc_wait_config(struct gaim_connection *gc)
 {
 	/* Waits for configuration packet, returning the contents of the packet */
 	static char buf[BUF_LONG];
 	int res;
-	res = wait_reply(buf, sizeof(buf));
+	res = wait_reply(gc, buf, sizeof(buf));
 	if (res < 0)
 		return NULL;
 /* Apparently, the toc_config is optional.  *VERY* Optional
 */
-	if (state != STATE_CONFIG) {
+	if (gc->state != STATE_CONFIG) {
 		res = 0;
 	} else {
 		res = 1;
 	}
 	/* At this point, it's time to setup automatic handling of incoming packets */
-	state = STATE_ONLINE;
+	gc->state = STATE_ONLINE;
 #ifdef _WIN32
 	win32_r = gtk_timeout_add(1000, (GtkFunction)win32_read, NULL);
 #else
-	inpa = gdk_input_add(toc_fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_callback, NULL);
+	gc->inpa = gdk_input_add(gc->toc_fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_callback, gc);
 #endif
 	if (res)
 		return buf;
@@ -859,7 +856,7 @@ void toc_build_config(char *s, int len, gboolean show)
 	}
 }
 
-void parse_toc_buddy_list(char *config, int from_do_import)
+void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_import)
 {
 	char *c;
 	char current[256];
@@ -869,10 +866,9 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 
 	bud = NULL;
         
-/* skip "CONFIG:" (if it exists)*/
-
 	if (config != NULL) {
 
+		/* skip "CONFIG:" (if it exists)*/
 		c = strncmp(config + sizeof(struct sflap_hdr),"CONFIG:",strlen("CONFIG:"))?
 			strtok(config, "\n"):
 			strtok(config + sizeof(struct sflap_hdr)+strlen("CONFIG:"), "\n");
@@ -956,8 +952,8 @@ void parse_toc_buddy_list(char *config, int from_do_import)
            cache */
 
 	if ( how_many == 0 && !from_do_import ) {
-		do_import( (GtkWidget *) NULL, 0 );
-	} else if ( bud_list_cache_exists() == FALSE ) {
+		do_import( (GtkWidget *) NULL, gc );
+	} else if ( gc && (bud_list_cache_exists(gc) == FALSE) ) {
 		do_export( (GtkWidget *) NULL, 0 );	
 	}
  }

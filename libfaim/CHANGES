@@ -1,6 +1,25 @@
 
 No release numbers
 ------------------
+ - Fri Sep 22 22:47:49 UTC 2000
+  - Add aim_icq_setstatus() (jbm)
+
+ - Fri Sep 22 22:35:51 UTC 2000
+  - Apply jbm's patch below
+  - Minor cleanup in cb handler stuff
+
+ - Thu Sep 21 20:28:20 CDT 2000 (jbm)
+  - DirectIM shouldn't kill us any more.
+  - Eliminated a potential segfault in aim_send_im_direct().
+  - make tags (yay!).
+  - Added an aim_tx_destroy(); need to move the lib over to using it.
+  - Got rid of some #if 0 BS code in a couple of places 
+      (aim_ft::establish() and aim_im::aim_parse_incoming_im_middle()).
+  - Added some file transfer stuff (so experimental, i haven't 
+      had a chance to see if it causes cancer in lab animals).
+  - Added to faimtest for all of the above.
+  - Added myself to AUTHORS with Real Info.
+
  - Thu Sep 21 00:24:36 UTC 2000
    - Add socks5 proxy support (not tested real well, worked the 
        few times a tried).

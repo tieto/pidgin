@@ -273,10 +273,10 @@ faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx
   } else if (cur->hdrtype == AIM_FRAMETYPE_OFT) {
     int z = 0;
 
-    z += aimutil_put8(curPacket+z, 0x4f);
-    z += aimutil_put8(curPacket+z, 0x44);
-    z += aimutil_put8(curPacket+z, 0x43);
-    z += aimutil_put8(curPacket+z, 0x32);
+    z += aimutil_put8(curPacket+z, cur->hdr.oft.magic[0]);
+    z += aimutil_put8(curPacket+z, cur->hdr.oft.magic[1]);
+    z += aimutil_put8(curPacket+z, cur->hdr.oft.magic[2]);
+    z += aimutil_put8(curPacket+z, cur->hdr.oft.magic[3]);
 
     z += aimutil_put16(curPacket+z, cur->hdr.oft.hdr2len + 8);
     z += aimutil_put16(curPacket+z, cur->hdr.oft.type);

@@ -38,7 +38,6 @@
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
 
-struct aim_user *current_user = NULL;
 GList *aim_users = NULL;
 int general_options;
 int display_options;
@@ -442,6 +441,8 @@ static struct aim_user *gaimrc_read_user(FILE *f)
         strcpy(u->password, p->value[1]);
 
         u->user_info[0] = 0;
+	u->options = OPT_USR_REM_PASS;
+	u->protocol = PROTO_TOC;
 
         if (!fgets(buf, sizeof(buf), f))
                 return u;
@@ -462,6 +463,22 @@ static struct aim_user *gaimrc_read_user(FILE *f)
                 }
         }
 
+	if (!fgets(buf, sizeof(buf), f)) {
+		return u;
+	}
+
+	if (!strcmp(buf, "\t}")) {
+		return u;
+	}
+
+	p = parse_line(buf);
+
+	if (strcmp(p->option, "user_opts"))
+		return u;
+
+	u->options = atoi(p->value[0]);
+	u->protocol = atoi(p->value[1]);
+
         return u;
         
 }
@@ -470,7 +487,7 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 {
         char *c;
         int nl = 1;;
-	if (general_options & OPT_GEN_REMEMBER_PASS)
+	if (u->options & OPT_USR_REM_PASS)
 	        fprintf(f, "\t\tident { %s } { %s }\n", u->username, u->password);
 	else
 		fprintf(f, "\t\tident { %s } {  }\n", u->username);
@@ -492,6 +509,7 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
                 c++;
         }
         fprintf(f, "\n\t\t}\n");
+	fprintf(f, "\t\tuser_opts { %d } { %d }\n", u->options, u->protocol);
         
 }
 
@@ -501,7 +519,6 @@ static void gaimrc_read_users(FILE *f)
 	char buf[2048];
         struct aim_user *u;
         struct parse *p;
-        int cur = 0;
 
 	buf[0] = 0;
 
@@ -517,19 +534,13 @@ static void gaimrc_read_users(FILE *f)
                 p = parse_line(buf);
 
                 if (!strcmp(p->option, "current_user")) {
-                        cur = 1;
                 } else if (strcmp(p->option, "user")) {
-			cur = 0;
                         continue;
                 } else {
-			cur = 0;
 		}
 
                 u = gaimrc_read_user(f);
 
-                if (cur)
-                        current_user = u;
-                
                 aim_users = g_list_append(aim_users, u);
 	}
 }
@@ -543,11 +554,7 @@ static void gaimrc_write_users(FILE *f)
 	
 	while(usr) {
                 u = (struct aim_user *)usr->data;
-                if (current_user == u) {
-                        fprintf(f, "\tcurrent_user {\n");
-                } else {
-                        fprintf(f, "\tuser {\n");
-                }
+                fprintf(f, "\tuser {\n");
                 gaimrc_write_user(f, u);
 
                 fprintf(f, "\t}\n");
@@ -679,7 +686,7 @@ void set_defaults(int saveinfo)
                 OPT_GEN_SEND_LINKS |
                 OPT_GEN_ENTER_SENDS |
                 OPT_GEN_SAVED_WINDOWS |
-                OPT_GEN_REMEMBER_PASS |
+                /* OPT_GEN_REMEMBER_PASS | */
 		OPT_GEN_REGISTERED |
 		OPT_GEN_NEAR_APPLET |
 		OPT_GEN_CTL_SMILEYS |

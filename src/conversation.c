@@ -47,6 +47,8 @@
 #include "pixmaps/wood.xpm"
 #include "pixmaps/link.xpm"
 #include "pixmaps/strike.xpm"
+#include "pixmaps/fgcolor.xpm"
+#include "pixmaps/bgcolor.xpm"
 
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
@@ -134,6 +136,8 @@ struct conversation *new_conversation(char *name)
 	}
 
         show_conv(c);
+	if (connections)
+		c->gc = (struct gaim_connection *)connections->data;
         conversations = g_list_append(conversations, c);
 	plugin_event(event_new_conversation, name, 0, 0);
         return c;
@@ -348,7 +352,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		debug_print("chat clicked close button\n");
 		c->window = NULL;
 		gtk_widget_destroy(tmp);
-		return;
+		return FALSE;
 	}
 
 	debug_print("conversation close callback\n");
@@ -380,13 +384,13 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		serv_chat_leave(c->id);
 	} else {
 		if (c->is_direct) {
-			if (!USE_OSCAR) {
-				/* Direct IM TOC FIXME */
-			} else {
+			if (c->gc->protocol == PROTO_OSCAR) {
 				gdk_input_remove(c->watcher);
 				sprintf(debug_buff, "Closing DirectIM conversation (%p)\n", c->conn);
 				debug_print(debug_buff);
-				aim_conn_kill(gaim_sess, &c->conn);
+				aim_conn_kill(c->gc->oscar_sess, &c->conn);
+			} else {
+				/* Direct IM TOC FIXME */
 			}
 		}
 	        delete_conversation(c);
@@ -600,9 +604,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	char *buf, *buf2, *buf3;
 	int hdrlen, limit;
 
+	if (!c->gc) return;
 	if (c->is_direct) limit = 0x8000; /* 32 k */
-	else if (c->is_chat && USE_OSCAR) limit = MAXCHATMSGLEN;
-	else if (USE_OSCAR) limit = MAXMSGLEN;
+	else if (c->is_chat && c->gc->protocol == PROTO_OSCAR) limit = MAXCHATMSGLEN;
+	else if (c->gc->protocol == PROTO_OSCAR) limit = MAXMSGLEN;
 	else limit = MSG_LEN;
 	limit <<= 2;
 
@@ -626,7 +631,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
          * toc_send_im is 11 chars long + 2 quotes.
          * + 2 spaces + 6 for the header + 2 for good
          * measure = 23 bytes + the length of normalize c->name */
-	if (!USE_OSCAR)
+	if (c->gc->protocol == PROTO_TOC)
 		hdrlen = 23 + strlen(normalize(c->name));
 	else
 		hdrlen = 0;
@@ -683,16 +688,13 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		buf3 = g_strdup(buf);
 		write_to_conv(c, buf3, WFLAG_SEND, NULL);
 		g_free(buf3);
-		escape_text(buf);
-		if (escape_message(buf) > limit/4 - hdrlen)
-			do_error_dialog(_("Message too long, some data truncated."), _("Error"));
 
 	        serv_send_im(c->name, buf, 0);
 
 		if (c->makesound && (sound_options & OPT_SOUND_SEND))
 			play_sound(SEND);
 	} else {
-		serv_chat_send(c->id, buf); /* this does escape_text for us */
+		serv_chat_send(c->id, buf);
 
 		/* no sound because we do that when we receive our message */
 	}
@@ -1204,11 +1206,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 	if (!who) {
 		if (flags & WFLAG_SEND) {
-			b = find_buddy(current_user->username);
+			b = find_buddy(c->gc->username);
 			if (b)
 				who = b->show;
 			else
-				who = current_user->username;
+				who = c->gc->username;
 		} else {
 			b = find_buddy(c->name);
 			if (b)
@@ -1615,6 +1617,54 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	return toolbar;
 }
 
+static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
+{
+	struct conversation *cnv = gtk_object_get_user_data(m);
+	cnv->gc = c;
+}
+
+static void create_convo_menu(struct conversation *cnv)
+{
+	GtkWidget *menu, *opt;
+	GSList *g = connections;
+	struct gaim_connection *c;
+
+	if (g_slist_length(g) < 2)
+		gtk_widget_hide(cnv->menu->parent);
+	else {
+		menu = gtk_menu_new();
+
+		while (g) {
+			c = (struct gaim_connection *)g->data;
+			opt = gtk_menu_item_new_with_label(c->username);
+			gtk_object_set_user_data(GTK_OBJECT(opt), cnv);
+			gtk_signal_connect(GTK_OBJECT(opt), "activate",
+					   GTK_SIGNAL_FUNC(convo_sel_send), c);
+			gtk_widget_show(opt);
+			gtk_menu_append(GTK_MENU(menu), opt);
+			g = g->next;
+		}
+
+		gtk_option_menu_remove_menu(GTK_OPTION_MENU(cnv->menu));
+		gtk_option_menu_set_menu(GTK_OPTION_MENU(cnv->menu), menu);
+		gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu), 0);
+
+		gtk_widget_show(cnv->menu);
+		gtk_widget_show(cnv->menu->parent);
+	}
+}
+
+void redo_convo_menus()
+{
+	GList *c = conversations;
+	struct conversation *C;
+
+	while (c) {
+		C = (struct conversation *)c->data;
+		create_convo_menu(C);
+		c = c->next;
+	}
+}
 
 void show_conv(struct conversation *c)
 {
@@ -1634,7 +1684,8 @@ void show_conv(struct conversation *c)
 	GtkWidget *paned;
 	GtkWidget *add;
 	GtkWidget *toolbar;
-	GtkWidget *sep;
+	GtkWidget *hbox;
+	GtkWidget *label;
 	int dispstyle;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1678,6 +1729,20 @@ void show_conv(struct conversation *c)
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
 	gtk_widget_show(vbox2);
 	gtk_widget_show(paned);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Send message as: "));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	c->menu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(hbox), c->menu, FALSE, FALSE, 5);
+	gtk_widget_show(c->menu);
+
+	create_convo_menu(c);
 	
 	entry = gtk_text_new(NULL, NULL);
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);

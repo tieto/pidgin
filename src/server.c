@@ -32,51 +32,57 @@
 #include <gtk/gtk.h>
 #include <aim.h>
 extern int gaim_caps;
+#include "multi.h"
 #include "gaim.h"
-
-static int idle_timer = -1;
-static time_t lastsent = 0;
-static time_t login_time = 0;
-static int is_idle = 0;
 
 int correction_time = 0;
 
-int serv_login(char *username, char *password)
+struct gaim_connection *serv_login(char *username, char *password)
 {
-	if (!(general_options & OPT_GEN_USE_OSCAR)) {
-		USE_OSCAR = 0;
+	struct aim_user *u = find_user(username);
+
+	if (u->protocol == PROTO_TOC) {
 	        return toc_login(username, password);
-	} else {
-		USE_OSCAR = 1;
+	} else if (u->protocol == PROTO_OSCAR) {
 		debug_print("Logging in using Oscar. Expect problems.\n");
 		return oscar_login(username, password);
+	} else {
+		/* PRPL */
+		return NULL;
 	}
 }
 
-void serv_close()
+void serv_close(struct gaim_connection *gc)
 {
-	if (!USE_OSCAR)
-		toc_close();
-	else
-		oscar_close();
+	if (gc->protocol == PROTO_TOC)
+		toc_close(gc);
+	else if (gc->protocol == PROTO_OSCAR)
+		oscar_close(gc);
+	else /* PRPL */ ;
 
-        gtk_timeout_remove(idle_timer);
-        idle_timer = -1;
+	account_offline(gc);
+	destroy_gaim_conn(gc);
+
+	if (connections) return;
+
+	if (gc->idle_timer > 0)
+		gtk_timeout_remove(gc->idle_timer);
+        gc->idle_timer = -1;
 }
 
 
-void serv_touch_idle()
+void serv_touch_idle(struct gaim_connection *gc)
 {
 	/* Are we idle?  If so, not anymore */
-	if (is_idle > 0) {
-		is_idle = 0;
-                serv_set_idle(0);
+	if (gc->is_idle > 0) {
+		gc->is_idle = 0;
+                serv_set_idle(gc, 0);
         }
-        time(&lastsent);
+        time(&gc->lastsent);
 }
 
 
-static gint check_idle()
+static gint check_idle(struct gaim_connection *gc)
 {
 	time_t t;
 
@@ -91,12 +97,12 @@ static gint check_idle()
                 return TRUE;
 
 	
-	if (is_idle)
+	if (gc->is_idle)
 		return TRUE;
 
-	if ((t - lastsent) > 600) { /* 15 minutes! */
-		serv_set_idle((int)t - lastsent);
-		is_idle = 1;
+	if ((t - gc->lastsent) > 600) { /* 15 minutes! */
+		serv_set_idle(gc, (int)t - gc->lastsent);
+		gc->is_idle = 1;
         }
 
 	return TRUE;
@@ -104,33 +110,26 @@ static gint check_idle()
 }
 
 
-void serv_finish_login()
+void serv_finish_login(struct gaim_connection *gc)
 {
         char *buf;
 
-	if (strlen(current_user->user_info)) {
-		buf = g_malloc(strlen(current_user->user_info) * 4);
-		strcpy(buf, current_user->user_info);
-		escape_text(buf);
-		serv_set_info(buf);
+	if (strlen(gc->user_info)) {
+		buf = g_malloc(strlen(gc->user_info) * 4);
+		strcpy(buf, gc->user_info);
+		serv_set_info(gc, buf);
 		g_free(buf);
 	}
 
-        if (idle_timer != -1)
-                gtk_timeout_remove(idle_timer);
+        if (gc->idle_timer > 0)
+                gtk_timeout_remove(gc->idle_timer);
         
-        idle_timer = gtk_timeout_add(20000, (GtkFunction)check_idle, NULL);
-        serv_touch_idle();
+        gc->idle_timer = gtk_timeout_add(20000, (GtkFunction)check_idle, gc);
+        serv_touch_idle(gc);
 
-        time(&login_time);
+        time(&gc->login_time);
 
-        serv_add_buddy(current_user->username);
-        
-	if (!(general_options & OPT_GEN_REGISTERED))
-	{
-		show_register_dialog();
-		save_prefs();
-	}
+        serv_add_buddy(gc->username);
 }
 
 
@@ -139,74 +138,85 @@ void serv_send_im(char *name, char *message, int away)
 {
 	struct conversation *cnv = find_conversation(name);
 	if (cnv && cnv->is_direct) {
-		if (!USE_OSCAR) {
-			/* Direct IM TOC FIXME */
-		} else {
+		if (cnv->gc->protocol == PROTO_OSCAR) {
 			sprintf(debug_buff, "Sending DirectIM to %s\n", name);
 			debug_print(debug_buff);
-			aim_send_im_direct(gaim_sess, cnv->conn, message);
+			aim_send_im_direct(cnv->gc->oscar_sess, cnv->conn, message);
+		} else {
+			/* Direct IM TOC FIXME */
 		}
 	} else {
-		if (!USE_OSCAR) {
+		if (cnv->gc->protocol == PROTO_TOC) {
 			char buf[MSG_LEN - 7];
 
+			escape_text(message);
 		        g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
 		                   message, ((away) ? " auto" : ""));
-			sflap_send(buf, strlen(buf), TYPE_DATA);
-		} else {
+			sflap_send(cnv->gc, buf, -1, TYPE_DATA);
+		} else if (cnv->gc->protocol == PROTO_OSCAR) {
 			if (away)
-				aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
+				aim_send_im(cnv->gc->oscar_sess, cnv->gc->oscar_conn,
+						name, AIM_IMFLAGS_AWAY, message);
 			else
-				aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_ACK, message);
+				aim_send_im(cnv->gc->oscar_sess, cnv->gc->oscar_conn,
+						name, AIM_IMFLAGS_ACK, message);
 		}
 	}
         if (!away)
-                serv_touch_idle();
+                serv_touch_idle(cnv->gc);
 }
 
 void serv_get_info(char *name)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
         	char buf[MSG_LEN];
 	        g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
-	        sflap_send(buf, -1, TYPE_DATA);
-	} else {
-		aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_GENERALINFO);
+	        sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
+		aim_getinfo(g->oscar_sess, g->oscar_conn, name, AIM_GETINFO_GENERALINFO);
 	}
 }
 
 void serv_get_away_msg(char *name)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		/* HAHA! TOC doesn't have this yet */
-	} else {
-		aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_AWAYMESSAGE);
+	} else if (g->protocol == PROTO_OSCAR) {
+		aim_getinfo(g->oscar_sess, g->oscar_conn, name, AIM_GETINFO_AWAYMESSAGE);
 	}
 }
 
 void serv_get_dir(char *name)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char buf[MSG_LEN];
 		g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
-		sflap_send(buf, -1, TYPE_DATA);
+		sflap_send(g, buf, -1, TYPE_DATA);
 	}
 }
 
 void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char buf2[BUF_LEN*4], buf[BUF_LEN];
 		g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
 			   middle, last, maiden, city, state, country,
 			   (web == 1) ? "Y" : "");
 		escape_text(buf2);
 		g_snprintf(buf, sizeof(buf), "toc_set_dir %s", buf2);
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		/* FIXME : some of these things are wrong, but i'm lazy */
-		aim_setdirectoryinfo(gaim_sess, gaim_conn, first, middle, last,
+		aim_setdirectoryinfo(g->oscar_sess, g->oscar_conn, first, middle, last,
 				maiden, NULL, NULL, city, state, NULL, 0, web);
 	}
 }
@@ -214,75 +224,86 @@ void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 		     char *city, char *state, char *country, char *email)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char buf[BUF_LONG];
 		g_snprintf(buf, sizeof(buf)/2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle, last, maiden, city, state, country, email);
 		sprintf(debug_buff,"Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden, city, state, country);
 		debug_print(debug_buff);
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		if (strlen(email))
-			aim_usersearch_address(gaim_sess, gaim_conn, email);
+			aim_usersearch_address(g->oscar_sess, g->oscar_conn, email);
 	}
 }
 
 
 void serv_set_away(char *message)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        char buf[MSG_LEN];
-	        if (message)
+	        if (message) {
+			escape_text(message);
 	                g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
-	        else
+		} else
 	                g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
-		aim_bos_setprofile(gaim_sess, gaim_conn, current_user->user_info,
-					message, gaim_caps);
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
+		aim_bos_setprofile(g->oscar_sess, g->oscar_conn, g->user_info, message, gaim_caps);
 	}
 }
 
-void serv_set_info(char *info)
+void serv_set_info(struct gaim_connection *g, char *info)
 {
-	if (!USE_OSCAR) {
+	if (g->protocol == PROTO_TOC) {
 		char buf[MSG_LEN];
+		escape_text(info);
 		g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", info);
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		if (awaymessage)
-			aim_bos_setprofile(gaim_sess, gaim_conn, info,
+			aim_bos_setprofile(g->oscar_sess, g->oscar_conn, info,
 						awaymessage->message, gaim_caps);
 		else
-			aim_bos_setprofile(gaim_sess, gaim_conn, info,
+			aim_bos_setprofile(g->oscar_sess, g->oscar_conn, info,
 						NULL, gaim_caps);
 	}
 }
 
 void serv_change_passwd(char *orig, char *new) {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char *buf = g_malloc(BUF_LONG); 
 		g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
-		sflap_send(buf, strlen(buf), TYPE_DATA);
+		sflap_send(g, buf, strlen(buf), TYPE_DATA);
 		g_free(buf);
-	} else {
+	} else if (g->protocol == PROTO_OSCAR) {
 		/* Oscar change_passwd FIXME */
 	}
 }
 
 void serv_add_buddy(char *name)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char buf[1024];
 		g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
-		aim_add_buddy(gaim_sess, gaim_conn, name);
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
+		aim_add_buddy(g->oscar_sess, g->oscar_conn, name);
 	}
 }
 
 void serv_add_buddies(GList *buddies)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char buf[MSG_LEN];
 	        int n, num = 0;
 
@@ -290,7 +311,7 @@ void serv_add_buddies(GList *buddies)
 	        while(buddies) {
 			/* i don't know why we choose 8, it just seems good */
 	                if (strlen(normalize(buddies->data)) > MSG_LEN - n - 8) {
-	                        sflap_send(buf, -1, TYPE_DATA);
+	                        sflap_send(g, buf, -1, TYPE_DATA);
 	                        n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
 	                        num = 0;
 	                }
@@ -298,32 +319,34 @@ void serv_add_buddies(GList *buddies)
 	                n += g_snprintf(buf + n, sizeof(buf) - n, " %s", normalize(buddies->data));
 	                buddies = buddies->next;
 	        }
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		char buf[MSG_LEN];
 		int n = 0;
 		while(buddies) {
 			if (n > MSG_LEN - 18) {
-				aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
+				aim_bos_setbuddylist(g->oscar_sess, g->oscar_conn, buf);
 				n = 0;
 			}
 			n += g_snprintf(buf + n, sizeof(buf) - n, "%s&",
 					(char *)buddies->data);
 			buddies = buddies->next;
 		}
-		aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
+		aim_bos_setbuddylist(g->oscar_sess, g->oscar_conn, buf);
 	}
 }
 
 
 void serv_remove_buddy(char *name)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char buf[1024];
 		g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
-		aim_remove_buddy(gaim_sess, gaim_conn, name);
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
+		aim_remove_buddy(g->oscar_sess, g->oscar_conn, name);
 	}
 }
 
@@ -347,23 +370,25 @@ void serv_add_deny(char *name)
 
 void serv_set_permit_deny()
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char buf[MSG_LEN];
 		int at;
 		GList *list;
 
 		switch (permdeny) {
 		case PERMIT_ALL:
-			sprintf(buf, "toc_add_permit %s", current_user->username);
-			sflap_send(buf, -1, TYPE_DATA);
+			sprintf(buf, "toc_add_permit %s", g->username);
+			sflap_send(g, buf, -1, TYPE_DATA);
 			sprintf(buf, "toc_add_deny");
-			sflap_send(buf, -1, TYPE_DATA);
+			sflap_send(g, buf, -1, TYPE_DATA);
 			break;
 		case PERMIT_NONE:
-			sprintf(buf, "toc_add_deny %s", current_user->username);
-			sflap_send(buf, -1, TYPE_DATA);
+			sprintf(buf, "toc_add_deny %s", g->username);
+			sflap_send(g, buf, -1, TYPE_DATA);
 			sprintf(buf, "toc_add_permit");
-			sflap_send(buf, -1, TYPE_DATA);
+			sflap_send(g, buf, -1, TYPE_DATA);
 			break;
 		case PERMIT_SOME:
 			at = g_snprintf(buf, sizeof(buf), "toc_add_permit");
@@ -373,7 +398,7 @@ void serv_set_permit_deny()
 				list = list->next;
 			}
 			buf[at] = 0; /* is this necessary? */
-			sflap_send(buf, -1, TYPE_DATA);
+			sflap_send(g, buf, -1, TYPE_DATA);
 			break;
 		case DENY_SOME:
 			/* you'll still see people as being online, but they won't see you, and you
@@ -385,10 +410,10 @@ void serv_set_permit_deny()
 				list = list->next;
 			}
 			buf[at] = 0; /* is this necessary? */
-			sflap_send(buf, -1, TYPE_DATA);
+			sflap_send(g, buf, -1, TYPE_DATA);
 			break;
 		}
-	} else {
+	} else if (g->protocol == PROTO_OSCAR) {
 /*
 		int at;
 		GList *list;
@@ -438,28 +463,30 @@ void serv_set_permit_deny()
 	}
 }
 
-void serv_set_idle(int time)
+void serv_set_idle(struct gaim_connection *g, int time)
 {
-	if (!USE_OSCAR) {
+	if (g->protocol == PROTO_TOC) {
 		char buf[256];
 		g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
-		aim_bos_setidle(gaim_sess, gaim_conn, time);
+		sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
+		aim_bos_setidle(g->oscar_sess, g->oscar_conn, time);
 	}
 }
 
 
 void serv_warn(char *name, int anon)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char *send = g_malloc(256);
 		g_snprintf(send, 255, "toc_evil %s %s", name,
 			   ((anon) ? "anon" : "norm"));
-		sflap_send(send, -1, TYPE_DATA);
+		sflap_send(g, send, -1, TYPE_DATA);
 		g_free(send);
-	} else {
-		aim_send_warning(gaim_sess, gaim_conn, name, anon);
+	} else if (g->protocol == PROTO_OSCAR) {
+		aim_send_warning(g->oscar_sess, g->oscar_conn, name, anon);
 	}
 }
 
@@ -470,12 +497,14 @@ void serv_build_config(char *buf, int len, gboolean show) {
 
 void serv_save_config()
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 		char *buf = g_malloc(BUF_LONG);
 		char *buf2 = g_malloc(MSG_LEN);
 		serv_build_config(buf, BUF_LONG / 2, FALSE);
 		g_snprintf(buf2, MSG_LEN, "toc_set_config {%s}", buf);
-	        sflap_send(buf2, -1, TYPE_DATA);
+	        sflap_send(g, buf2, -1, TYPE_DATA);
 		g_free(buf2);
 		g_free(buf);
 	}
@@ -484,12 +513,14 @@ void serv_save_config()
 
 void serv_accept_chat(int i)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        char *buf = g_malloc(256);
 	        g_snprintf(buf, 255, "toc_chat_accept %d",  i);
-	        sflap_send(buf, -1, TYPE_DATA);
+	        sflap_send(g, buf, -1, TYPE_DATA);
 	        g_free(buf);
-	} else {
+	} else if (g->protocol == PROTO_OSCAR) {
 	/* this should never get called because libfaim doesn't use the id
 	 * (i'm not even sure Oscar does). go through serv_join_chat instead */
 	}
@@ -497,34 +528,38 @@ void serv_accept_chat(int i)
 
 void serv_join_chat(int exchange, char *name)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        char buf[BUF_LONG];
 	        g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
-	        sflap_send(buf, -1, TYPE_DATA);
-	} else {
+	        sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		struct aim_conn_t *cur = NULL;
 		sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
 		debug_print(debug_buff);
-		if ((cur = aim_getconn_type(gaim_sess, AIM_CONN_TYPE_CHATNAV))) {
+		if ((cur = aim_getconn_type(g->oscar_sess, AIM_CONN_TYPE_CHATNAV))) {
 			debug_print("chatnav exists, creating room\n");
-			aim_chatnav_createroom(gaim_sess, cur, name, exchange);
+			aim_chatnav_createroom(g->oscar_sess, cur, name, exchange);
 		} else {
 			/* this gets tricky */
 			debug_print("chatnav does not exist, opening chatnav\n");
-			create_exchange = exchange;
-			create_name = g_strdup(name);
-			aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_CHATNAV);
+			g->create_exchange = exchange;
+			g->create_name = g_strdup(name);
+			aim_bos_reqservice(g->oscar_sess, g->oscar_conn, AIM_CONN_TYPE_CHATNAV);
 		}
 	}
 }
 
 void serv_chat_invite(int id, char *message, char *name)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        char buf[BUF_LONG];
 	        g_snprintf(buf, sizeof(buf)/2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
-	        sflap_send(buf, -1, TYPE_DATA);
-	} else {
+	        sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		GList *bcs = buddy_chats;
 		struct conversation *b = NULL;
 
@@ -539,18 +574,20 @@ void serv_chat_invite(int id, char *message, char *name)
 		if (!b)
 			return;
 		
-		aim_chat_invite(gaim_sess, gaim_conn, name, message, 0x4, b->name, 0x1);
+		aim_chat_invite(g->oscar_sess, g->oscar_conn, name, message, 0x4, b->name, 0x1);
 	}
 }
 
 void serv_chat_leave(int id)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        char *buf = g_malloc(256);
 	        g_snprintf(buf, 255, "toc_chat_leave %d",  id);
-	        sflap_send(buf, -1, TYPE_DATA);
+	        sflap_send(g, buf, -1, TYPE_DATA);
 	        g_free(buf);
-	} else {
+	} else if (g->protocol == PROTO_OSCAR) {
 		GList *bcs = buddy_chats;
 		struct conversation *b = NULL;
 		struct chat_connection *c = NULL;
@@ -572,12 +609,12 @@ void serv_chat_leave(int id)
 					b->name, count);
 		debug_print(debug_buff);
 
-		c = find_oscar_chat(b->name);
+		c = find_oscar_chat(g, b->name);
 		if (c != NULL) {
-			oscar_chats = g_list_remove(oscar_chats, c);
+			g->oscar_chats = g_slist_remove(g->oscar_chats, c);
 			gdk_input_remove(c->inpa);
-			if (gaim_sess)
-				aim_conn_kill(gaim_sess, &c->conn);
+			if (g && g->oscar_sess)
+				aim_conn_kill(g->oscar_sess, &c->conn);
 			g_free(c->name);
 			g_free(c);
 		}
@@ -588,11 +625,13 @@ void serv_chat_leave(int id)
 
 void serv_chat_whisper(int id, char *who, char *message)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        char buf2[MSG_LEN];
 	        g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
-	        sflap_send(buf2, -1, TYPE_DATA);
-	} else {
+	        sflap_send(g, buf2, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		do_error_dialog("Sorry, Oscar doesn't whisper. Send an IM. (The last message was not received.)",
 				"Gaim - Chat");
 	}
@@ -600,12 +639,14 @@ void serv_chat_whisper(int id, char *who, char *message)
 
 void serv_chat_send(int id, char *message)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        char buf[MSG_LEN];
 		escape_text(message);
 	        g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"",id, message);
-	        sflap_send(buf, -1, TYPE_DATA);
-	} else {
+	        sflap_send(g, buf, -1, TYPE_DATA);
+	} else if (g->protocol == PROTO_OSCAR) {
 		struct aim_conn_t *cn;
 		GList *bcs = buddy_chats;
 		struct conversation *b = NULL;
@@ -620,15 +661,15 @@ void serv_chat_send(int id, char *message)
 		if (!b)
 			return;
 
-		cn = aim_chat_getconn(gaim_sess, b->name);
-		aim_chat_send_im(gaim_sess, cn, message);
+		cn = aim_chat_getconn(g->oscar_sess, b->name);
+		aim_chat_send_im(g->oscar_sess, cn, message);
 	}
-	serv_touch_idle();
+	serv_touch_idle(g);
 }
 
 
 
-void serv_got_im(char *name, char *message, int away)
+void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away)
 {
 	struct conversation *cnv;
 	int is_idle = -1;
@@ -690,11 +731,15 @@ void serv_got_im(char *name, char *message, int away)
 	}
 
 
+	cnv->gc = gc;
+	gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu), g_slist_index(connections, gc));
 
 
 	if (awaymessage != NULL) {
 		time_t t;
 		char *tmpmsg;
+		struct buddy *b = find_buddy(name);
+		char *alias = b ? b->show : name;
 
 		time(&t);
 
@@ -712,7 +757,7 @@ void serv_got_im(char *name, char *message, int away)
 		
 		escape_text(tmpmsg);
 		escape_message(tmpmsg);
-		serv_send_im(name, away_subs(tmpmsg, name), 1);
+		serv_send_im(name, away_subs(tmpmsg, alias), 1);
 		g_free(tmpmsg);
 		tmpmsg = stylize(awaymessage->message, MSG_LEN);
 
@@ -720,7 +765,7 @@ void serv_got_im(char *name, char *message, int away)
 			is_idle = 1;
 		
 		if (cnv != NULL)
-			write_to_conv(cnv, away_subs(tmpmsg, name), WFLAG_SEND | WFLAG_AUTO, NULL);
+			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL);
 		g_free(tmpmsg);
 	}
 }
@@ -729,22 +774,16 @@ void serv_got_im(char *name, char *message, int away)
 
 void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t idle, int type, u_short caps)
 {
-        struct buddy *b;
-        char *nname;
+        struct buddy *b = find_buddy(name);
+	struct gaim_connection *gc = find_gaim_conn_by_name(name);
                      
-        b = find_buddy(name);
-
-        nname = g_strdup(normalize(name));
-        if (!strcasecmp(nname, normalize(current_user->username))) {
-                correction_time = (int)(signon - login_time);
+        if (gc) {
+                correction_time = (int)(signon - gc->login_time);
                 update_all_buddies();
                 if (!b) {
-			g_free(nname);
                         return;
 		}
         }
-
-	g_free(nname);
         
         if (!b) {
                 sprintf(debug_buff,"Error, no such person\n");
@@ -860,11 +899,13 @@ static void close_invite(GtkWidget *w, GtkWidget *w2)
 
 static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 {
-	if (!USE_OSCAR) {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
+	if (g->protocol == PROTO_TOC) {
 	        int i = (int)gtk_object_get_user_data(GTK_OBJECT(w2));
 	        serv_accept_chat(i);
 		gtk_widget_destroy(w2);
-	} else {
+	} else if (g->protocol == PROTO_OSCAR) {
 		char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
 		int id = (int)gtk_object_get_user_data(GTK_OBJECT(w));
 		serv_join_chat(id, i);
@@ -883,6 +924,8 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
         GtkWidget *nobtn;
 
         char buf2[BUF_LONG];
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
 
 
 	plugin_event(event_chat_invited, who, name, message);
@@ -917,11 +960,13 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 
         /*		gtk_widget_set_usize(d, 200, 110); */
 
-	if (!USE_OSCAR)
+	if (g->protocol == PROTO_TOC)
 	        gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
-	else {
+	else if (g->protocol == PROTO_OSCAR) {
 		gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
 		gtk_object_set_user_data(GTK_OBJECT(yesbtn), (void *)id);
+	} else {
+		/* PRPL */
 	}
 
 
@@ -1026,36 +1071,41 @@ void serv_got_chat_in(int id, char *who, int whisper, char *message)
 void serv_rvous_accept(char *name, char *cookie, char *uid)
 {
 	/* Oscar doesn't matter here because this won't ever be called for it */
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
 	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_accept %s %s %s", normalize(name),
 			cookie, uid);
-	sflap_send(buf, strlen(buf), TYPE_DATA);
+	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
 void serv_rvous_cancel(char *name, char *cookie, char *uid)
 {
+	/* FIXME */
+	struct gaim_connection *g = connections->data;
 	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
 			cookie, uid);
-	sflap_send(buf, strlen(buf), TYPE_DATA);
+	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
 void serv_do_imimage(GtkWidget *w, char *name) {
 	struct conversation *cnv = find_conversation(name);
 	if (!cnv) cnv = new_conversation(name);
 
-	if (!USE_OSCAR) {
+	if (cnv->gc->protocol == PROTO_TOC) {
 		/* Direct IM TOC FIXME */
-	} else {
-		oscar_do_directim(name);
+	} else if (cnv->gc->protocol == PROTO_OSCAR) {
+		oscar_do_directim(cnv->gc, name);
 	}
 }
 
-void serv_got_imimage(char *name, char *cookie, char *ip, struct aim_conn_t *conn, int watcher)
+void serv_got_imimage(struct gaim_connection *gc, char *name, char *cookie, char *ip,
+			struct aim_conn_t *conn, int watcher)
 {
-	if (!USE_OSCAR) {
+	if (gc->protocol == PROTO_TOC) {
 		/* Direct IM TOC FIXME */
-	} else {
+	} else if (gc->protocol == PROTO_OSCAR) {
 		struct conversation *cnv = find_conversation(name);
 		if (!cnv) cnv = new_conversation(name);
 		make_direct(cnv, TRUE, conn, watcher);

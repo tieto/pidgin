@@ -188,14 +188,15 @@ faim_export int aim_conn_addhandler(struct aim_session_t *sess,
 			rxcallback_t newhandler,
 			u_short flags)
 {
-  struct aim_rxcblist_t *newcb,*cur;
+  struct aim_rxcblist_t *newcb;
 
   if (!conn)
     return -1;
 
   faimdprintf(1, "aim_conn_addhandler: adding for %04x/%04x\n", family, type);
 
-  newcb = (struct aim_rxcblist_t *)calloc(1, sizeof(struct aim_rxcblist_t));
+  if (!(newcb = (struct aim_rxcblist_t *)calloc(1, sizeof(struct aim_rxcblist_t))))
+    return -1;
   newcb->family = family;
   newcb->type = type;
   newcb->flags = flags;
@@ -205,32 +206,37 @@ faim_export int aim_conn_addhandler(struct aim_session_t *sess,
     newcb->handler = newhandler;
   newcb->next = NULL;
   
-  cur = conn->handlerlist;
-  if (!cur)
+  if (!conn->handlerlist)
     conn->handlerlist = newcb;
-  else 
-    {
-      while (cur->next)
-	cur = cur->next;
-      cur->next = newcb;
-    }
+  else {
+    struct aim_rxcblist_t *cur;
+
+    cur = conn->handlerlist;
+
+    while (cur->next)
+      cur = cur->next;
+    cur->next = newcb;
+  }
 
   return 0;
 }
 
 faim_export int aim_clearhandlers(struct aim_conn_t *conn)
 {
- struct aim_rxcblist_t *cur,*tmp;
+ struct aim_rxcblist_t *cur;
+
  if (!conn)
    return -1;
 
  cur = conn->handlerlist;
- while(cur)
-   {
-     tmp = cur->next;
-     free(cur);
-     cur = tmp;
-   }
+ while(cur) {
+   struct aim_rxcblist_t *tmp;
+
+   tmp = cur->next;
+   free(cur);
+   cur = tmp;
+ }
+
  return 0;
 }
 
@@ -255,6 +261,7 @@ faim_internal rxcallback_t aim_callhandler(struct aim_conn_t *conn,
 
   if (type==0xffff)
     return NULL;
+
   return aim_callhandler(conn, family, 0xffff);
 }
 
