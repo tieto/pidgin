@@ -2532,5 +2532,5 @@ gaim_gtk_account_init(void) {
 
 void
 gaim_gtk_account_uninit(void) {
-	gaim_signals_unregister_by_instance(gaim_gtk_blist_get_handle());
+	gaim_signals_unregister_by_instance(gaim_gtk_account_get_handle());
 }
