@@ -63,6 +63,7 @@ typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
 static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
+static gboolean blink_turned_on = TRUE;
 
 /*
  *  GLOBALS
@@ -209,9 +210,25 @@ char* wgaim_locale_dir(void) {
 
 /* Miscellaneous */
 
+gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len) {
+        HKEY hkey;
+        gboolean ret = FALSE;
+
+        if(ERROR_SUCCESS == RegOpenKeyEx(key, 
+                                         sub_key, 
+					 0,  KEY_QUERY_VALUE, &hkey)) {
+                if(ERROR_SUCCESS == RegQueryValueEx(hkey, val_name, 0, NULL, data, data_len))
+                        ret = TRUE;
+                RegCloseKey(key);
+        }
+        return ret;
+}
+
 /* FlashWindowEx is only supported by Win98+ and WinNT5+. If its
    not supported we do it our own way */
 void wgaim_im_blink(GtkWidget *window) {
+        if(!blink_turned_on)
+                return;
 	if(MyFlashWindowEx) {
 		FLASHWINFO info;
 
@@ -232,6 +249,10 @@ void wgaim_im_blink(GtkWidget *window) {
 						      "focus-in-event", 
 						      G_CALLBACK(halt_flash_filter), finfo);
 	}
+}
+
+void wgaim_im_blink_state(gboolean val) {
+        blink_turned_on = val;
 }
 
 int wgaim_gz_decompress(const char* in, const char* out) {
