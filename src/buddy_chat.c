@@ -260,6 +260,15 @@ void chat_write(struct buddy_chat *b, char *who, int flag, char *message)
         } else {
 		buf2 = g_strdup(message);
 		if (!strncmp(buf2, "/me ", 4)) {
+	                str = g_strdup(normalize(who));
+	                if (!strcasecmp(str, normalize(current_user->username))) {
+				if (b->makesound && (sound_options & OPT_SOUND_CHAT_SAY))
+					play_sound(SEND);
+			} else {
+				if (b->makesound && (sound_options & OPT_SOUND_CHAT_SAY))
+					play_sound(RECEIVE);
+			}
+	                g_free(str);
 			str = g_malloc(64);
 			g_snprintf(str, 62, "***%s", who);
 			strcpy(colour, "#6C2585\0");
