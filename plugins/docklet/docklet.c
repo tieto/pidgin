@@ -164,6 +164,9 @@ static void docklet_menu(GdkEventButton *event) {
 }
 
 static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data) {
+	if (event->type != GDK_BUTTON_PRESS)
+		return;
+
 	switch (event->button) {
 		case 1:
 			if (unread_message_queue) {
@@ -182,7 +185,7 @@ static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data
 }
 
 static void docklet_update_icon() {
-	gchar *filename;
+	gchar *filename = NULL;
 	GdkPixbuf *unscaled;
 
 	switch (status) {
@@ -201,7 +204,7 @@ static void docklet_update_icon() {
 		case connecting:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "connect.png", NULL);
 			break;
-		default:
+		case offline:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "offline.png", NULL);
 	}
 

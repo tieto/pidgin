@@ -101,6 +101,7 @@ struct group_show {
 static GSList *shows = NULL;
 
 int docklet_count = 0;
+static gboolean obscured = FALSE;
 
 /* Predefine some functions */
 static void new_bp_callback(GtkWidget *w, struct buddy *bs);
@@ -2021,11 +2022,25 @@ void hide_buddy_list() {
 /* mostly used by code in this file */
 void unhide_buddy_list() {
 	if (blist) {
-		gtk_window_present(GTK_WINDOW(blist));
 		if (blist_options & OPT_BLIST_SAVED_WINDOWS && blist_pos.width != 0) {
+			/* don't move it off screen */
+			if (blist_pos.x >= gdk_screen_width()) {
+				blist_pos.x = gdk_screen_width() - 100;
+			} else if (blist_pos.x <= 0) {
+				blist_pos.x = 100;
+			}
+
+			if (blist_pos.y >= gdk_screen_height()) {
+				blist_pos.y = gdk_screen_height() - 100;
+			} else if (blist_pos.y <= 0) {
+				blist_pos.y = 100;
+			}
+
 			gtk_window_move(GTK_WINDOW(blist), blist_pos.x, blist_pos.y);
 			gtk_window_resize(GTK_WINDOW(blist), blist_pos.width, blist_pos.height);
 		}
+
+		gtk_window_present(GTK_WINDOW(blist));
 	}
 }
 
@@ -2061,7 +2076,7 @@ void docklet_toggle() {
 	   buddy list/login window--depending on which is active */
 	if (connections && blist) {
 		if (GTK_WIDGET_VISIBLE(blist)) {
-			if (GAIM_WINDOW_ICONIFIED(blist)) {
+			if (GAIM_WINDOW_ICONIFIED(blist) || obscured) {
 				unhide_buddy_list();
 			} else {
 				hide_buddy_list();
@@ -2472,10 +2487,11 @@ static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void 
 	}
 }
 
-static void change_state_blist_window(GtkWidget *w, GdkEventWindowState *event, void *dummy) {
-	if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED &&
-	    docklet_count) {
-		gtk_widget_hide(blist);
+static void visibility_blist_window(GtkWidget *w, GdkEventVisibility *event, void *data) {
+	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED) {
+		obscured = TRUE;
+	} else {
+		obscured = FALSE;
 	}
 }
 
@@ -2785,7 +2801,9 @@ void make_buddy_list()
 
 	g_signal_connect(G_OBJECT(blist), "delete_event", G_CALLBACK(close_buddy_list), NULL);
 	g_signal_connect(G_OBJECT(blist), "configure_event", G_CALLBACK(configure_blist_window), NULL);
-	g_signal_connect(G_OBJECT(blist), "window_state_event", G_CALLBACK(change_state_blist_window), NULL);
+	g_signal_connect(G_OBJECT(blist), "visibility_notify_event", G_CALLBACK(visibility_blist_window), NULL);
+
+	gtk_widget_add_events(blist, GDK_VISIBILITY_NOTIFY_MASK);
 
 	/* The edit tree */
 	gtk_container_add(GTK_CONTAINER(tbox), edittree);
