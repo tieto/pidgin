@@ -499,6 +499,7 @@ static void txt_logger_write(GaimLog *log,
 		 * that you open a convo with someone, but don't say anything.
 		 */
 		char *ud = gaim_user_dir();
+		char *filename;
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
 		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
 			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
@@ -523,7 +524,7 @@ static void txt_logger_write(GaimLog *log,
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		g_free(guy);
 
-		char *filename = g_build_filename(dir, date, NULL);
+		filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
 
 		file = fopen(dir, "r");
@@ -614,10 +615,10 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	char *path = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
 	char *newlog;
 
-	g_free(logfile);
-
 	GaimLog *log = NULL;
 	GList *list = NULL;
+
+	g_free(logfile);
 
 	if (!(file = fopen(path, "rb"))) {
 		g_free(path);
