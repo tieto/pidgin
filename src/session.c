@@ -133,6 +133,34 @@ static void ice_init() {
 	debug_printf("Session Management: ICE initialised\n");
 }
 
+/* my magic utility function */
+
+static gchar **session_make_command(gchar *client_id) {
+	gint i = 2;
+	gint j = 0;
+	gchar **ret;
+
+	if (client_id) i += 2;
+	if (opt_rcfile_arg) i += 2;
+
+	ret = g_new(gchar *, i);
+	ret[j++] = g_strdup(myself);
+
+	if (client_id) {
+		ret[j++] = g_strdup("--session");
+		ret[j++] = g_strdup(client_id);
+	}
+
+	if (opt_rcfile_arg) {
+		ret[j++] = g_strdup("--file");
+		ret[j++] = g_strdup(opt_rcfile_arg);
+	}
+
+	ret[j++] = NULL;
+
+	return ret;
+}
+
 /* SM callback handlers */
 
 void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
@@ -247,7 +275,7 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	gchar *client_id = NULL;
 	gchar error[ERROR_LENGTH] = "";
 	gchar *tmp = NULL;
-	gchar *cmd[4] = { NULL, NULL, NULL, NULL };
+	gchar **cmd = NULL;
 
 	if (session != NULL) {
 		/* session is already established, what the hell is going on? */
@@ -312,21 +340,23 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	myself = g_strdup(argv0);
 	debug_printf("Session Management: using %s as command\n", myself);
 
-	cmd[0] = myself;
-	cmd[1] = NULL;
+	cmd = session_make_command(NULL);
 	session_set_array(session, SmCloneCommand, cmd);
+	g_strfreev(cmd);
 
 	/* this is currently useless, but gnome-session warns 'the following applications will not
 	   save their current status' bla bla if we don't have it and the user checks 'Save Session'
 	   when they log out */
-	cmd[1] = "-v";
-	cmd[2] = NULL;
+	cmd = g_new(gchar *, 2);
+	cmd[0] = g_strdup("/bin/true");
+	cmd[1] = NULL;
 	session_set_array(session, SmDiscardCommand, cmd);
+	g_strfreev(cmd);
 
-	cmd[1] = "--session";
-	cmd[2] = client_id;
-	cmd[3] = NULL;
+	cmd = session_make_command(client_id);
 	session_set_array(session, SmRestartCommand, cmd);
+	g_strfreev(cmd);
+
 	g_free(client_id);
 #endif /* USE_SM */
 }
