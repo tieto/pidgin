@@ -2270,7 +2270,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	ihrs = (t - b->idle) / 3600;
 	imin = ((t - b->idle) / 60) % 60;
 
-	if (prpl && prpl_info->status_text && b->account->gc) {
+	if (prpl_info && prpl_info->status_text && b->account->gc) {
 		char *tmp = prpl_info->status_text(b);
 		const char *end;
 
