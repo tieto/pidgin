@@ -532,6 +532,9 @@ void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
 #endif /* GAIM_PLUGINS */
 
 void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
+#ifdef USE_PERL
+	char buf[BUF_LONG];
+#endif
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
 	struct gaim_callback *g;
@@ -567,6 +570,7 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 
 			/* char *, char ** */
 			case event_im_send:
+			case event_chat_send:
 				{
 					void (*function)(char *, char **, void *) = g->function;
 					(*function)(arg1, arg2, g->data);
@@ -589,7 +593,6 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 			/* char *, char *, char * */
 			case event_chat_invited:
 			case event_chat_recv:
-			case event_chat_send:
 				{
 					void (*function)(char *, char *, char *, void *) = g->function;
 					(*function)(arg1, arg2, arg3, g->data);
@@ -631,6 +634,75 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 	}
 #endif /* GAIM_PLUGINS */
 #ifdef USE_PERL
-	/* FIXME : AIM::event_handler */
+	switch (event) {
+		case event_signon:
+			buf[0] = 0;
+			break;
+		case event_signoff:
+			buf[0] = 0;
+			break;
+		case event_away:
+			buf[0] = 0;
+			break;
+		case event_back:
+			buf[0] = 0;
+			break;
+		case event_im_recv:
+			sprintf(buf, "%s %s", *(char **)arg1, *(char **)arg2);
+			break;
+		case event_im_send:
+			sprintf(buf, "%s %s", (char *)arg1, *(char **)arg2);
+			break;
+		case event_buddy_signon:
+			sprintf(buf, "%s", (char *)arg1);
+			break;
+		case event_buddy_signoff:
+			sprint:
+			break;
+		case event_buddy_away:
+			sprintf(buf, "%s", (char *)arg1);
+			break;
+		case event_buddy_back:
+			sprintf(buf, "%s", (char *)arg1);
+			break;
+		case event_blist_update:
+			buf[0] = 0;
+			break;
+		case event_chat_invited:
+			sprintf(buf, "%s %s %s", (char *)arg1, (char *)arg2, (char *)arg3);
+			break;
+		case event_chat_join:
+			sprintf(buf, "%s", (char *)arg1);
+			break;
+		case event_chat_leave:
+			sprintf(buf, "%s", (char *)arg1);
+			break;
+		case event_chat_buddy_join:
+			sprintf(buf, "%s %s", (char *)arg1, (char *)arg2);
+			break;
+		case event_chat_buddy_leave:
+			sprintf(buf, "%s %s", (char *)arg1, (char *)arg2);
+			break;
+		case event_chat_recv:
+			sprintf(buf, "%s %s %s", (char *)arg1, (char *)arg2, (char *)arg3);
+			break;
+		case event_chat_send:
+			sprintf(buf, "%s %s", (char *)arg1, *(char **)arg2);
+			break;
+		case event_warned:
+			sprintf(buf, "%s %d", (char *)arg1, (int)arg2);
+			break;
+		case event_error:
+			sprintf(buf, "%d", (int)arg1);
+			break;
+		case event_quit:
+			buf[0] = 0;
+			break;
+		default:
+			break;
+	}
+	sprintf(debug_buff, "perl event %d: %s\n", event, buf);
+	debug_print(debug_buff);
+	perl_event(event, buf);
 #endif
 }
