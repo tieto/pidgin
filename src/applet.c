@@ -153,11 +153,23 @@ static gboolean update_applet()
 }
 
 #ifdef HAVE_PANEL_PIXEL_SIZE
+
+static gint applet_update_pixel_size(gpointer data)
+{
+        update_applet();
+	return FALSE;
+}
+
 static void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
 {
 	sizehint = size;
 	gtk_widget_set_usize(icon, sizehint, sizehint);
-	update_applet();
+	/* we need to wait for the mainloop to finish updating the
+	   background pixel size, otherwise we'll end up getting the
+	   wrong background size when loading and drawing the new
+	   icon */
+	gtk_timeout_add(100, applet_update_pixel_size,
+			NULL);
 }
 #endif
 

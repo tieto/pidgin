@@ -24,6 +24,7 @@ version 0.59
 	* Aliases in buddy ticker
 	* Perl scripts can play Gaim sounds (thanks Andrew Rodland)
 	* Internal sounds can be played by commands (thanks Lex Spoon)
+	* Auto-login item in applet menu (thanks Chris Boyle)
 	
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
@@ -61,7 +62,7 @@ version 0.58 (05/13/2002):
 	* Secure MSN logins (added in 0.57) no longer blow up
 	  on Solaris.
 	* Timezone support improved.
-
+	 
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
 	* Polish translation updated (Thanks Przemyslaw Sulek)
