@@ -190,7 +190,9 @@ void update_lagometer(int us)
 
                 
         pct = last_lag_us/100000;
-        pct = 25 * log(pct);
+
+	if (pct > 0)
+		pct = 25 * log(pct);
 
         if (pct < 0)
                 pct = 0;
