@@ -324,6 +324,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 			gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	}
 
+	gaim_set_accessible_label (entry, label);
 	data->u.input.entry = entry;
 
 	/* Show everything. */

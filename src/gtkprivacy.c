@@ -404,6 +404,7 @@ privacy_dialog_new(void)
 												check_account_func, dialog);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
+	gaim_set_accessible_label (dropdown, label);
 
 	/* Add the drop-down list with the allow/block types. */
 	dialog->type_menu = gtk_option_menu_new();

@@ -188,6 +188,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_widget_show(widget);
+	gaim_set_accessible_label (widget, label);
 
 	return hbox;
 }
@@ -554,6 +555,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_editable_set_editable(GTK_EDITABLE(dialog->buddy_icon_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_icon_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_icon_entry);
+	gaim_set_accessible_label (dialog->buddy_icon_entry, label);
 
 	button = gtk_button_new_with_mnemonic(_("_Browse"));
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);

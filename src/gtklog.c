@@ -307,6 +307,7 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 			  G_CALLBACK (search_cb),
 			  lv);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gaim_set_accessible_label (lv->treeview, label);
 
 	gtk_widget_show_all(lv->window);
 }

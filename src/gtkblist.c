@@ -805,10 +805,10 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 	GtkWidget *menuitem;
 
 	if (prpl_info && prpl_info->get_info) {
-		gaim_new_item_from_stock(menu, _("_Get Info"), GAIM_STOCK_INFO,
+		gaim_new_item_from_stock(menu, _("Get _Info"), GAIM_STOCK_INFO,
 				G_CALLBACK(gtk_blist_menu_info_cb), b, 0, 0, NULL);
 	}
-	gaim_new_item_from_stock(menu, _("_IM"), GAIM_STOCK_IM,
+	gaim_new_item_from_stock(menu, _("I_M"), GAIM_STOCK_IM,
 			G_CALLBACK(gtk_blist_menu_im_cb), b, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
 			G_CALLBACK(gtk_blist_menu_bp_cb), b, 0, 0, NULL);
@@ -2699,7 +2699,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->bbox, FALSE, FALSE, 0);
 	gtk_widget_show(gtkblist->bbox);
 
-	button = gaim_pixbuf_button_from_stock(_("IM"), GAIM_STOCK_IM, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("I_M"), GAIM_STOCK_IM, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
@@ -2708,7 +2708,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Send a message to the selected buddy"), NULL);
 	gtk_widget_show(button);
 
-	button = gaim_pixbuf_button_from_stock(_("Get Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("Get _Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
@@ -2717,7 +2717,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Get information on the selected buddy"), NULL);
 	gtk_widget_show(button);
 
-	button = gaim_pixbuf_button_from_stock(_("Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("_Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
@@ -2725,7 +2725,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Join a chat room"), NULL);
 	gtk_widget_show(button);
 
-	button = gaim_pixbuf_button_from_stock(_("Away"), GAIM_STOCK_ICON_AWAY, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("_Away"), GAIM_STOCK_ICON_AWAY, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
@@ -3500,6 +3500,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 		gtk_entry_set_text(GTK_ENTRY(data->entry), username);
 
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry), TRUE);
+	gaim_set_accessible_label (data->entry, label);
 
 	label = gtk_label_new(_("Alias:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -3513,6 +3514,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 		gtk_entry_set_text(GTK_ENTRY(data->entry_for_alias), alias);
 
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry_for_alias), TRUE);
+	gaim_set_accessible_label (data->entry_for_alias, label);
 
 	label = gtk_label_new(_("Group:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -3521,6 +3523,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 	data->combo = gtk_combo_new();
 	gtk_combo_set_popdown_strings(GTK_COMBO(data->combo), groups_tree());
 	gtk_table_attach_defaults(GTK_TABLE(table), data->combo, 1, 2, 2, 3);
+	gaim_set_accessible_label (data->combo, label);
 
 	/* Set up stuff for the account box */
 	label = gtk_label_new(_("Account:"));
@@ -3531,6 +3534,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 			G_CALLBACK(add_buddy_select_account_cb), NULL, data);
 
 	gtk_table_attach_defaults(GTK_TABLE(table), data->account_box, 1, 2, 3, 4);
+	gaim_set_accessible_label (data->account_box, label);
 
 	/* End of account box */
 
@@ -3662,6 +3666,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
 			gtk_label_set_mnemonic_widget(GTK_LABEL(label), spin);
+			gaim_set_accessible_label (spin, label);
 		}
 		else
 		{
@@ -3687,6 +3692,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 			g_signal_connect(G_OBJECT(entry), "activate",
 							 G_CALLBACK(add_chat_cb), data);
 			gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+			gaim_set_accessible_label (entry, label);
 		}
 
 		g_free(pce);
@@ -3813,6 +3819,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 			G_CALLBACK(add_chat_select_account_cb),
 			add_chat_check_account_func, data);
 	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
+	gaim_set_accessible_label (data->account_menu, label);
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
     gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
@@ -3832,6 +3839,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	if (alias != NULL)
 		gtk_entry_set_text(GTK_ENTRY(data->alias_entry), alias);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->alias_entry, TRUE, TRUE, 0);
+	gaim_set_accessible_label (data->alias_entry, label);
 
 	rowbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
@@ -3850,6 +3858,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(data->group_combo)->entry),
 						   group->name);
 	}
+	gaim_set_accessible_label (data->group_combo, label);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
 					 G_CALLBACK(add_chat_resp_cb), data);

@@ -123,6 +123,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
 			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(spin));
+			gaim_set_accessible_label (spin, label);
 		} else {
 			GtkWidget *entry = gtk_entry_new();
 
@@ -143,6 +144,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 
 			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
 			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(entry));
+			gaim_set_accessible_label (entry, label);
 		}
 
 		g_free(pce);
@@ -262,6 +264,7 @@ join_chat()
 				join_chat_check_account_func, data);
 		gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(data->account_menu));
+		gaim_set_accessible_label (data->account_menu, label);
 	}
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);

@@ -455,6 +455,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
 */
+	gaim_set_accessible_label (menuitem, label);
 	return menuitem;
 }
 
@@ -531,6 +532,7 @@ gaim_pixbuf_button_from_stock(const char *text, const char *icon,
 		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
 		gtk_box_pack_start(GTK_BOX(lbox), label, FALSE, FALSE, 0);
+		gaim_set_accessible_label (button, label);
 	}
 
 	gtk_widget_show_all(bbox);
@@ -600,6 +602,7 @@ gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
+	gaim_set_accessible_label (vbox, label);
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
@@ -718,6 +721,7 @@ gaim_gtk_protocol_option_menu_new(const char *id, GCallback cb,
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
+		gaim_set_accessible_label (item, label);
 
 		if (!strcmp(plugin->info->id, id))
 			selected_index = i;
@@ -858,6 +862,7 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
+		gaim_set_accessible_label (item, label);
 
 		if (default_account != NULL && account == default_account)
 			selected_index = i;
@@ -1347,4 +1352,40 @@ gaim_gtk_parse_x_im_contact(const char *msg, gboolean all_accounts,
 	g_free(str);
 
 	return valid;
+}
+
+void
+gaim_set_accessible_label (GtkWidget *w, GtkWidget *l)
+{
+	AtkObject *acc, *label;
+	AtkObject *rel_obj[1];
+	AtkRelationSet *set;
+	AtkRelation *relation;
+	const gchar *label_text;
+	const gchar *existing_name;
+
+	acc = gtk_widget_get_accessible (w);
+	label = gtk_widget_get_accessible (l);
+
+	/* If this object has no name, set it's name with the label text */
+	existing_name = atk_object_get_name (acc);
+	if (!existing_name) {
+		label_text = gtk_label_get_text (GTK_LABEL(l));
+		if (label_text)
+			atk_object_set_name (acc, label_text);
+	}
+
+	/* Create the labeled-by relation */
+	set = atk_object_ref_relation_set (acc);
+	rel_obj[0] = label;
+	relation = atk_relation_new (rel_obj, 1, ATK_RELATION_LABELLED_BY);
+	atk_relation_set_add (set, relation);
+	g_object_unref (relation);
+
+	/* Create the label-for relation */
+	set = atk_object_ref_relation_set (label);
+	rel_obj[0] = acc;
+	relation = atk_relation_new (rel_obj, 1, ATK_RELATION_LABEL_FOR);
+	atk_relation_set_add (set, relation);
+	g_object_unref (relation);
 }

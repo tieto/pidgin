@@ -370,6 +370,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->account_menu, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->account_menu);
+	gaim_set_accessible_label (dialog->account_menu, label);
 
 	/* Buddy: */
 	hbox = gtk_hbox_new(FALSE, 6);
@@ -388,6 +389,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	g_signal_connect(G_OBJECT(dialog->buddy_entry), "changed",
 			 G_CALLBACK(buddy_changed_cb), dialog);
+	gaim_set_accessible_label (dialog->buddy_entry, label);
 
 	if (cur_pounce != NULL) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry),

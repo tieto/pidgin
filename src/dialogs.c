@@ -578,6 +578,7 @@ void show_im_dialog()
 	gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
 	gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
+	gaim_set_accessible_label (info->entry, label);
 
 	g_signal_connect(G_OBJECT(info->entry), "changed",
 			G_CALLBACK(gaim_gtk_set_sensitive_if_input), window);
@@ -594,6 +595,7 @@ void show_im_dialog()
 
 		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
+		gaim_set_accessible_label (info->account, label);
 	}
 
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_im), info);
@@ -653,6 +655,7 @@ void show_info_dialog()
 	gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
 	gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
+	gaim_set_accessible_label (info->entry, label);
 
 	g_signal_connect(G_OBJECT(info->entry), "changed",
 			G_CALLBACK(gaim_gtk_set_sensitive_if_input), window);
@@ -669,6 +672,7 @@ void show_info_dialog()
 
 		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
+		gaim_set_accessible_label (info->account, label);
 	}
 
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_info), info);
@@ -784,6 +788,7 @@ void dialog_link_show(GaimConversation *c)
 	a->url = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), a->url, 1, 2, 0, 1);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->url));
+	gaim_set_accessible_label (a->url, label);
 	gtk_widget_grab_focus(a->url);
 
 	gtk_entry_set_activates_default (GTK_ENTRY(a->url), TRUE);
@@ -797,6 +802,7 @@ void dialog_link_show(GaimConversation *c)
 	a->text = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), a->text, 1, 2, 1, 2);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->text));
+	gaim_set_accessible_label (a->text, label);
 	gtk_entry_set_activates_default (GTK_ENTRY(a->text), TRUE);
 
 	gtkconv->dialogs.link = a->window;
@@ -1257,6 +1263,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	ca->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), ca->entry, TRUE, TRUE, 0);
+	gaim_set_accessible_label (ca->entry, label);
 	gtk_widget_grab_focus(ca->entry);
 
 	/* Away message text */

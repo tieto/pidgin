@@ -139,6 +139,8 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	}
 
+	gaim_set_accessible_label (spin, label);
+	
 	return label;
 }
 
@@ -254,6 +256,7 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
+	gaim_set_accessible_label (dropdown, label);
 
 	return label;
 }
@@ -605,6 +608,9 @@ GtkWidget *theme_page() {
 	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smiley_sel), NULL);
 
 	gtk_widget_show_all(ret);
+
+	gaim_set_accessible_label (view, label);
+
 	return ret;
 }
 
@@ -1127,6 +1133,7 @@ GtkWidget *proxy_page() {
 
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gaim_set_accessible_label (entry, label);
 
 	label = gtk_label_new_with_mnemonic(_("_Port:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
@@ -1145,6 +1152,7 @@ GtkWidget *proxy_page() {
 
 		gtk_entry_set_text(GTK_ENTRY(entry), buf);
 	}
+	gaim_set_accessible_label (entry, label);
 
 	label = gtk_label_new_with_mnemonic(_("_User:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
@@ -1162,6 +1170,7 @@ GtkWidget *proxy_page() {
 
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gaim_set_accessible_label (entry, label);
 
 	label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
@@ -1177,6 +1186,7 @@ GtkWidget *proxy_page() {
 	if (proxy_info != NULL && gaim_proxy_info_get_password(proxy_info) != NULL)
 		gtk_entry_set_text(GTK_ENTRY(entry),
 						   gaim_proxy_info_get_password(proxy_info));
+	gaim_set_accessible_label (entry, label);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1294,6 +1304,7 @@ GtkWidget *browser_page() {
 		label = gaim_gtk_prefs_checkbox(_("Open new _window by default"),
 							  "/gaim/gtk/browsers/new_window", vbox);
 	}
+	gaim_set_accessible_label (entry, label);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1425,6 +1436,8 @@ GtkWidget *sound_page() {
 
 #endif /* _WIN32 */
 	gtk_widget_show_all(ret);
+	gaim_set_accessible_label (entry, label);
+
 	return ret;
 }
 
@@ -1524,6 +1537,8 @@ GtkWidget *away_page() {
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
 	}
+
+	gaim_set_accessible_label (prefs_away_menu, label);
 
 	gtk_widget_show_all(ret);
 

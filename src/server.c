@@ -156,6 +156,7 @@ void serv_finish_login(GaimConnection *gc)
 	gc->idle_timer = g_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);
 
+	/* Move this hack into toc.c */
 	if (prpl_info->options & OPT_PROTO_CORRECT_TIME)
 		serv_add_buddy(gc,
 				gaim_account_get_username(gaim_connection_get_account(gc)),

@@ -2,6 +2,7 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.76cvs:
 	* WYSIWYG text input (with scrollbars, too!)
+	* Improved accessibility support pretty much everywhere (Marc Mulcahy)
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
 	* Chatroom List support (thanks, Tim Ringenbach)
 	* TCL Plugin API changed
