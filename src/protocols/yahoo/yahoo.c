@@ -2381,13 +2381,27 @@ static void yahoo_show_act_id(GaimConnection *gc)
 					   _("Cancel"), NULL, gc);
 }
 
+static void yahoo_show_chat_goto(GaimConnection *gc)
+{
+	gaim_request_input(gc, NULL, _("Join who in chat?"), NULL,
+					   "", FALSE, FALSE,
+					   _("OK"), G_CALLBACK(yahoo_chat_goto),
+					   _("Cancel"), NULL, gc);
+}
+
 static GList *yahoo_actions(GaimConnection *gc) {
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
 
 	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Activate ID");
+	pam->label = _("Activate ID...");
 	pam->callback = yahoo_show_act_id;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Join user in chat...");
+	pam->callback = yahoo_show_chat_goto;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
