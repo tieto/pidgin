@@ -317,7 +317,7 @@ void rm_log(struct log_conversation *a)
 		set_convo_title(cnv);
 }
 
-struct log_conversation *find_log_info(char *name)
+struct log_conversation *find_log_info(const char *name)
 {
 	char *pname = g_malloc(1024);
 	GList *lc = log_conversations;

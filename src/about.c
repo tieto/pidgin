@@ -118,18 +118,18 @@ void show_about(GtkWidget *w, void *data)
 				WEBSITE "</A><BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				"<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"
-				"<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
+				_("<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"
+				"<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 			_("<FONT SIZE=\"3\">Active Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-			"  Rob Flynn (maintainer) "
+			_("  Rob Flynn (maintainer) "
 			"&lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>"
 			"  Sean Egan (coder) "
 			"&lt;<A HREF=\"mailto:bj91704@binghamton.edu\">"
 			"bj91704@binghamton.edu</A>&gt;"
-			"<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
+			"<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 			_("<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
@@ -149,14 +149,14 @@ void show_about(GtkWidget *w, void *data)
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_("<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				"  Jim Duchek<BR>"
+				_("  Jim Duchek<BR>"
 				"  Eric Warmenhoven "
 				"&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">"
 				"warmenhoven@yahoo.com</A>&gt;<BR>"
 				"  Mark Spencer (original author) "
 				"&lt;<A HREF=\"mailto:markster@marko.net\">"
 				"markster@marko.net</A>&gt;"
-				"<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
+				"<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 

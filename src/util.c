@@ -67,7 +67,7 @@ char *full_date()
 	return date;
 }
 
-gint badchar(char c)
+G_GNUC_CONST static gint badchar(char c)
 {
 	switch (c) {
 	case ' ':
@@ -155,7 +155,7 @@ gint linkify_text(char *text)
 				if (!(*c))
 					break;
 			}
-		} else if ((!g_strncasecmp(c, "http://", 7) || (!g_strncasecmp(c, "https://", 8)))) {
+		} else if ((*c=='h') && (!g_strncasecmp(c, "http://", 7) || (!g_strncasecmp(c, "https://", 8)))) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -180,7 +180,7 @@ gint linkify_text(char *text)
 
 			}
 		} else if (!g_strncasecmp(c, "www.", 4)) {
-			if (g_strncasecmp(c, "www..", 5)) {
+			if (c[4] != '.') {
 				t = c;
 				while (1) {
 					if (badchar(*t)) {
@@ -227,7 +227,7 @@ gint linkify_text(char *text)
 
 			}
 		} else if (!g_strncasecmp(c, "ftp.", 4)) {
-			if (g_strncasecmp(c, "ftp..", 5)) {
+			if (c[4] != '.') {
 				t = c;
 				while (1) {
 					if (badchar(*t)) {
@@ -267,15 +267,14 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (c != cpy && !g_strncasecmp(c, "@", 1)) {
+		} else if (c != cpy && (*c == '@')) {
 			char *tmp;
 			int flag;
 			int len = 0;
-			char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\0";
+			const char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\r\n \0";
 			url_buf[0] = 0;
 
-			if (*(c - 1) == ' ' || *(c + 1) == ' ' || rindex(illegal_chars, *(c + 1))
-			    || *(c + 1) == 13 || *(c + 1) == 10)
+			if (strchr(illegal_chars,*(c - 1)) || strchr(illegal_chars, *(c + 1)))
 				flag = 0;
 			else
 				flag = 1;
@@ -343,7 +342,7 @@ gint linkify_text(char *text)
 }
 
 
-FILE *open_gaim_log_file(char *name, int *flag)
+FILE *open_gaim_log_file(const char *name, int *flag)
 {
 	char *buf;
 	char *buf2;
@@ -372,7 +371,7 @@ FILE *open_gaim_log_file(char *name, int *flag)
 	if (!fd) {
 		res = mkdir(log_all_file, S_IRUSR | S_IWUSR | S_IXUSR);
 		if (res < 0) {
-			g_snprintf(buf, BUF_LONG, "Unable to make directory %s for logging",
+			g_snprintf(buf, BUF_LONG, _("Unable to make directory %s for logging"),
 				   log_all_file);
 			do_error_dialog(buf, NULL, GAIM_ERROR);
 			g_free(buf);
@@ -393,7 +392,7 @@ FILE *open_gaim_log_file(char *name, int *flag)
 	if (!fd) {
 		res = mkdir(log_all_file, S_IRUSR | S_IWUSR | S_IXUSR);
 		if (res < 0) {
-			g_snprintf(buf, BUF_LONG, "Unable to make directory %s for logging",
+			g_snprintf(buf, BUF_LONG, _("Unable to make directory %s for logging"),
 				   log_all_file);
 			do_error_dialog(buf, NULL, GAIM_ERROR);
 			g_free(buf);
@@ -406,7 +405,7 @@ FILE *open_gaim_log_file(char *name, int *flag)
 	g_snprintf(log_all_file, 256, "%s" G_DIR_SEPARATOR_S "logs", gaim_dir);
 
 	if( _mkdir(log_all_file) < 0 && errno != EEXIST ) {
-	  g_snprintf(buf, BUF_LONG, "Unable to make directory %s for logging", log_all_file);
+	  g_snprintf(buf, BUF_LONG, _("Unable to make directory %s for logging"), log_all_file);
 	  do_error_dialog(buf, NULL, GAIM_ERROR);
 	  g_free(buf);
 	  g_free(buf2);
@@ -427,7 +426,7 @@ FILE *open_gaim_log_file(char *name, int *flag)
 	return fd;
 }
 
-FILE *open_log_file(char *name, int is_chat)
+FILE *open_log_file(const char *name, int is_chat)
 {
 	struct stat st;
 	char realname[256];
@@ -450,10 +449,10 @@ FILE *open_log_file(char *name, int is_chat)
 
 		if (flag) {	/* is a new file */
 			if (logging_options & OPT_LOG_STRIP_HTML) {
-				fprintf(fd, "IM Sessions with %s\n", name);
+				fprintf(fd, _("IM Sessions with %s\n"), name);
 			} else {
 				fprintf(fd, "<HTML><HEAD><TITLE>");
-				fprintf(fd, "IM Sessions with %s", name);
+				fprintf(fd, _("IM Sessions with %s"), name);
 				fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
 			}
 		}
@@ -466,10 +465,10 @@ FILE *open_log_file(char *name, int is_chat)
 
 	if (fd && flag) {	/* is a new file */
 		if (logging_options & OPT_LOG_STRIP_HTML) {
-			fprintf(fd, "IM Sessions with %s\n", name);
+			fprintf(fd, _("IM Sessions with %s\n"), name);
 		} else {
 			fprintf(fd, "<HTML><HEAD><TITLE>");
-			fprintf(fd, "IM Sessions with %s", name);
+			fprintf(fd, _("IM Sessions with %s"), name);
 			fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
 		}
 	}
@@ -487,7 +486,7 @@ FILE *open_system_log_file(char *name)
 		return open_gaim_log_file("system", &x);
 }
 
-char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" "0123456789+/";
+const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" "0123456789+/";
 
 /* XXX Find bug */
 char *tobase64(const char *text)
@@ -884,8 +883,9 @@ const gchar *gaim_home_dir()
  * dir. Note that there is no trailing slash after .gaim. */
 gchar *gaim_user_dir()
 {
-        if(gaim_home_dir()) {
-		strcpy( (char*)&home_dir, gaim_home_dir() );
+	const gchar *hd = gaim_home_dir();
+        if(hd) {
+		strcpy( (char*)&home_dir, hd );
 		strcat( (char*)&home_dir, G_DIR_SEPARATOR_S ".gaim" );
 		return (gchar*)&home_dir;
 	}
@@ -1219,7 +1219,7 @@ FILE *gaim_mkstemp(gchar **fpath)
 			else
 			{
 				if( (fp = fopen( result, "w+" )) == NULL ) {
-					debug_printf("Error: Couldn't fopen()in gaim_mkstemp():\n%s\n", result);
+					debug_printf("Error: Couldn't fopen() in gaim_mkstemp():\n%s\n", result);
 				}
 			}
 #else
@@ -1263,7 +1263,7 @@ const char *handle_uri(char *uri) {
 	}
 
 	if (gc == NULL)
-		return "Not connected to AIM";
+		return _("Not connected to AIM");
 
  	/* aim:goim?screenname=screenname&message=message */
 	if (!g_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
@@ -1272,7 +1272,7 @@ const char *handle_uri(char *uri) {
 		uri = uri + strlen("aim:goim?");
 		
 		if (!(who = strstr(uri, "screenname="))) {
-			return "No screenname given.";
+			return _("No screenname given.");
 		}
 		/* spaces are encoded as +'s */
 		who = who + strlen("screenname=");
@@ -1309,7 +1309,7 @@ const char *handle_uri(char *uri) {
 		/* spaces are encoded as +'s */
 		
 		if (!(who = strstr(uri, "screenname="))) {
-			return "No screenname given.";
+			return _("No screenname given.");
 		}
 		who = who + strlen("screenname=");
 		str = g_string_new(NULL);
@@ -1345,7 +1345,7 @@ const char *handle_uri(char *uri) {
 		/* spaces are encoded as +'s */
 		
 		if (!(room = strstr(uri, "roomname="))) {
-			return "No roomname given.";
+			return _("No roomname given.");
 		}
 		room = room + strlen("roomname=");
 		str = g_string_new(NULL);
@@ -1361,7 +1361,7 @@ const char *handle_uri(char *uri) {
 		g_free(room);
 		g_list_free(chat);
 	} else {
-		return "Invalid AIM URI";
+		return _("Invalid AIM URI");
 	}
 	
 	

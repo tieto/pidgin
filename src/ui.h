@@ -396,7 +396,7 @@ extern void surround(struct conversation *, char *, char *);
 extern int is_logging(char *);
 extern void set_state_lock(int);
 extern void rm_log(struct log_conversation *);
-extern struct log_conversation *find_log_info(char *);
+extern struct log_conversation *find_log_info(const char *);
 extern void remove_tags(struct conversation *, char *);
 extern void update_log_convs();
 extern void update_transparency();

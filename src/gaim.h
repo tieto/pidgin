@@ -408,7 +408,7 @@ struct g_url *parse_url(char *url);
 extern gint check_idle(gpointer);
 
 /* Functions in prefs.c */
-extern void debug_printf(char * fmt, ...);
+extern void debug_printf(char * fmt, ...) G_GNUC_PRINTF(1,2);
 
 /* Functions in server.c */
 /* input to serv */
@@ -454,10 +454,10 @@ extern void frombase64(const char *, char **, int *);
 extern void clean_pid();
 extern char *date();
 extern gint linkify_text(char *);
-extern FILE *open_log_file (char *, int);
+extern FILE *open_log_file (const char *, int);
 extern char *sec_to_text(guint);
-extern struct aim_user *find_user(const char *, int);
-extern char *full_date();
+extern struct aim_user *find_user(const char *, int) G_GNUC_PURE;
+extern char *full_date() G_GNUC_PURE;
 extern void check_gaim_versions();
 extern char *away_subs(char *, char *);
 extern char *stylize(gchar *, int);
@@ -471,7 +471,7 @@ extern void away_on_login(char *);
 extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
 extern char *add_cr(char *);
 extern void strip_linefeed(char *);
-extern time_t get_time(int, int, int, int, int, int);
+extern time_t get_time(int, int, int, int, int, int) G_GNUC_CONST;
 extern FILE *gaim_mkstemp(gchar **);
 extern char *convert_string(char *, const char *, const char *);
 extern const char *handle_uri(char *);
