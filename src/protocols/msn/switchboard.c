@@ -273,9 +273,14 @@ __plain_msg(MsnServConn *servconn, const MsnMessage *msg)
 
 	body = g_strdup(msn_message_get_body(msg));
 
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Checking User-Agent...\n");
+
 	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL) {
-		if (!g_ascii_strncasecmp(value, "Gaim", 4))
+		gaim_debug(GAIM_DEBUG_MISC, "msn", "value = '%s'\n", value);
+		if (!g_ascii_strncasecmp(value, "Gaim", 4)) {
+			gaim_debug(GAIM_DEBUG_INFO, "msn", "Setting GAIMUSER flag.\n");
 			flags |= IM_FLAG_GAIMUSER;
+		}
 	}
 
 	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL) {

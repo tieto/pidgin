@@ -100,7 +100,7 @@ __process_multi_line(MsnServConn *servconn, char *buffer)
 	}
 
 	gaim_debug(GAIM_DEBUG_MISC, "msn",
-			   "Message: {%s}\n", msn_message_get_body(msg));
+			   "Message: {%s}\n", buffer);
 
 	cb(servconn, msg);
 

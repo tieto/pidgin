@@ -77,6 +77,9 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 
 	msg = msn_message_new();
 
+	/* Clear out the old stuff. */
+	msn_message_set_attr(msg, "User-Agent", NULL);
+
 	tmp = g_strdup(str);
 
 	GET_NEXT(tmp); /* Skip MSG */
