@@ -518,6 +518,7 @@ static void set_first_user(char *name)
 	save_prefs();
 }
 
+/* FUCKING GET ME A TOWEL! */
 int main(int argc, char *argv[])
 {
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, do_login_ret = -1;
