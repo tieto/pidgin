@@ -4682,7 +4682,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrive Buddy List"),
-						  _("Gaim was temporarily unable to retrive your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
+						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
 	}
 
 	/* Activate SSI */
