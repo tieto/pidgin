@@ -3372,16 +3372,20 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 		smilies = c->gc->prpl->smiley_list();
 
+		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+
 		while (smilies) {
 			struct _prpl_smiley *smile =
 				(struct _prpl_smiley *)smilies->data;
 
-			if ((!(smiley_count % 4)) && (smiley_count > 0)) {
-				smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
-				gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
-			}
-			
 			if (smile->show) {
+
+				if ((!(smiley_count % 4)) && (smiley_count > 0)) {
+					smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+					gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+				}
+			
 				toolbar_add_smiley(c, smiley_box, smile->xpm, win, smile->key);
 				smiley_count++;
 			}
