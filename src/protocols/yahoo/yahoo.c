@@ -299,10 +299,15 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 
 static void yahoo_update_status(GaimConnection *gc, const char *name, struct yahoo_friend *f)
 {
+	int online = 1;
+
 	if (!gc || !name || !f || !gaim_find_buddy(gaim_connection_get_account(gc), name))
 		return;
 
-	serv_got_update(gc, name, 1, 0, 0, f->idle, f->away ? UC_UNAVAILABLE : 0);
+	if (f->status == YAHOO_STATUS_OFFLINE)
+		online = 0;
+
+	serv_got_update(gc, name, online, 0, 0, f->idle, f->away ? UC_UNAVAILABLE : 0);
 }
 
 static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -747,7 +752,7 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list."), who);
 		else
 			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg);
-		gaim_notify_info(gc, NULL, buf->str, NULL);
+		gaim_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
 		g_string_free(buf, TRUE);
 		g_hash_table_remove(yd->friends, who);
 		serv_got_update(gc, who, 0, 0, 0, 0, 0);
@@ -1082,6 +1087,54 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 	gaim_connection_error(gc, msg);
 }
 
+static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	int err = 0;
+	char *who = NULL;
+	char *group = NULL;
+	char *buf;
+	struct yahoo_friend *f;
+	struct yahoo_data *yd = gc->proto_data;
+	GSList *l = pkt->hash;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 66:
+			err = strtol(pair->value, NULL, 10);
+			break;
+		case 7:
+			who = pair->value;
+			break;
+		case 65:
+			group = pair->value;
+			break;
+		}
+
+		l = l->next;
+	}
+
+	if (!who)
+		return;
+	if (!group)
+		group = "";
+
+	if (!err || (err == 2)) { /* 0 = ok, 2 = already on serv list */
+		if (!g_hash_table_lookup(yd->friends, who)) {
+			f = yahoo_friend_new();
+			g_hash_table_insert(yd->friends, g_strdup(who), f);
+			yahoo_update_status(gc, who, f);
+		}
+		return;
+	}
+
+	buf = g_strdup_printf(_("Could not add buddy %s to group %s to the server list on account %s."),
+				who, group, gaim_connection_get_display_name(gc));
+	gaim_notify_error(gc, NULL, _("Could not add buddy to server list"), buf);
+	g_free(buf);
+}
+
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service) {
@@ -1117,6 +1170,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_AUTH:
 		yahoo_process_auth(gc, pkt);
+		break;
+	case YAHOO_SERVICE_ADDBUDDY:
+		yahoo_process_addbuddy(gc, pkt);
 		break;
 	case YAHOO_SERVICE_IGNORECONTACT:
 		yahoo_process_ignore(gc, pkt);
@@ -1781,11 +1837,15 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *foo)
 	if (!yd->logged_in)
 		return;
 
-	g = gaim_find_buddys_group(gaim_find_buddy(gc->account, who));
-	if (g)
-		group = g->name;
-	else
-		group = "Buddies";
+	if (foo)
+		group = foo->name;
+	if (!group) {
+		g = gaim_find_buddys_group(gaim_find_buddy(gc->account, who));
+		if (g)
+			group = g->name;
+		else
+			group = "Buddies";
+	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
@@ -1801,11 +1861,25 @@ static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_friend *f;
         struct yahoo_packet *pkt;
+	GSList *buddies, *l;
+	GaimGroup *g;
+	gboolean remove = TRUE;
 
 	if (!(f = g_hash_table_lookup(yd->friends, who)))
 		return;
 
-	if (!gaim_find_buddy(gaim_connection_get_account(gc), who))
+	buddies = gaim_find_buddies(gaim_connection_get_account(gc), who);
+	for (l = buddies; l; l = l->next) {
+		g = gaim_find_buddys_group(l->data);
+		if (gaim_utf8_strcasecmp(group, g->name)) {
+			remove = FALSE;
+			break;
+		}
+	}
+
+	g_slist_free(buddies);
+
+	if (remove)
 		g_hash_table_remove(yd->friends, who);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
