@@ -7,8 +7,8 @@ EXTRA_DIST = \
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)
 
-pixmapdir = $(datadir)/applications
-pixmap_DATA = gaim.desktop
+appsdir = $(datadir)/applications
+apps_DATA = gaim.desktop
 
 SUBDIRS = sounds plugins pixmaps doc po intl src
 
