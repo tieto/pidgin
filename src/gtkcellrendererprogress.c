@@ -225,7 +225,7 @@ static void gtk_cell_renderer_progress_get_size (GtkCellRenderer *cell,
 	gint calc_height;
 	
 	calc_width = (gint) cell->xpad * 2 + 50;
-	calc_height = (gint) cell->ypad * 2 + 10;
+	calc_height = (gint) cell->ypad * 2 + 12;
 	
 	if (width)
 		*width = calc_width;
@@ -289,8 +289,8 @@ static void gtk_cell_renderer_progress_render (GtkCellRenderer *cell,
 		       window,
 		       state, GTK_SHADOW_OUT,
 		       NULL, widget, "bar",
-		       cell_area->x + x_offset + cell->xpad,
-		       cell_area->y + y_offset + cell->ypad,
-		       width * cellprogress->progress,
-		       height - 1);
+		       cell_area->x + x_offset + cell->xpad + 1,
+		       cell_area->y + y_offset + cell->ypad + 1,
+		       (width - 3) * cellprogress->progress,
+		       height - 3);
 }
