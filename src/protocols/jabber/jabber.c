@@ -401,7 +401,7 @@ static void gjab_recv(gjconn gjc)
 	if (!gjc || gjc->state == JCONN_STATE_OFF)
 		return;
 
-	if ((len = read(gjc->fd, buf, sizeof(buf))) > 0) {
+	if ((len = read(gjc->fd, buf, sizeof(buf) - 1)) > 0) {
 		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 		buf[len] = '\0';
 		debug_printf("input (len %d): %s\n", len, buf);
