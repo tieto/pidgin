@@ -921,7 +921,10 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 	}
 #endif
 
-        g_snprintf(buf2, sizeof(buf2), "User '%s' invites you to buddy chat room: '%s'\n%s", who, name, message);
+	if (message)
+		g_snprintf(buf2, sizeof(buf2), "User '%s' invites you to buddy chat room: '%s'\n%s", who, name, message);
+	else
+		g_snprintf(buf2, sizeof(buf2), "User '%s' invites you to buddy chat room: '%s'\n", who, name);
 
         d = gtk_dialog_new();
         gtk_widget_realize(d);
