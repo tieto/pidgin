@@ -9,6 +9,7 @@ GAIM_SRC = ./src
 GAIM_PROTOS = $(GAIM_SRC)/protocols
 GAIM_PLUGINS = ./plugins
 GAIM_PIXMAPS = ./pixmaps
+GAIM_SOUNDS = ./sounds
 GAIM_INSTALL_DIR = ./win32-install-dir
 GTK_TOP = ../win32-dev/gtk_2_0
 GTK_LIBS = $(GTK_TOP)/lib
@@ -94,6 +95,12 @@ PIXMAPS =		$(GAIM_PIXMAPS)/away.png \
 			$(GAIM_PIXMAPS)/online.png \
 			$(GAIM_PIXMAPS)/logo.png
 
+SOUNDS =		$(GAIM_SOUNDS)/leave.wav \
+			$(GAIM_SOUNDS)/redalert.wav \
+			$(GAIM_SOUNDS)/receive.wav \
+			$(GAIM_SOUNDS)/send.wav \
+			$(GAIM_SOUNDS)/arrive.wav
+
 GTKRC_ENGINES =		$(GTKRC_TOP)/libnativewin.dll
 
 
@@ -129,6 +136,7 @@ install: all
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/dialogs
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/buttons
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/menus
+	mkdir -p $(GAIM_INSTALL_DIR)/sounds/gaim
 	$(MAKE) -C $(PO) -f Makefile.mingw install
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw install
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw install
@@ -144,6 +152,7 @@ install: all
 	cp $(PIXMAPS_BUTTONS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/buttons
 	cp $(PIXMAPS_MENUS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/menus
 	cp $(PIXMAPS) $(GAIM_INSTALL_DIR)/pixmaps/gaim
+	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0
 	cp -R $(GTK_LIBS)/gtk-2.0/2.0.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
 	cp -R $(GTK_LIBS)/pango $(GAIM_INSTALL_DIR)/lib
