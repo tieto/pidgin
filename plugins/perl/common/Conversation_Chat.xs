@@ -75,7 +75,7 @@ gaim_chat_get_id(chat)
 	Gaim::Conversation::Chat chat
 
 void
-write(chat, who, message, flags)
+gaim_chat_write(chat, who, message, flags)
 	Gaim::Conversation::Chat chat
 	const char *who
 	const char *message

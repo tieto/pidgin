@@ -27,7 +27,7 @@ gaim_window_raise(win)
 
 void
 gaim_window_flash(win)
-	Gaim::ConvWindow flash
+	Gaim::ConvWindow win
 
 int
 gaim_window_add_conversation(win, conv)
