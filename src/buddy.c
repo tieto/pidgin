@@ -737,6 +737,8 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 			show_ee_dialog(5);
 		else if (!g_strcasecmp("chipx86", normalize (b->name)))
 			show_ee_dialog(6);
+		else if (!g_strcasecmp("kingant", normalize (b->name)))
+			show_ee_dialog(7);
 
 	} else {
 
@@ -2749,7 +2751,7 @@ void show_buddy_list()
 	}
 
 	edittree = gtk_ctree_new(1, 0);
-	gtk_ctree_set_line_style(GTK_CTREE(edittree), GTK_CTREE_LINES_SOLID);
+	gtk_ctree_set_line_style(GTK_CTREE(edittree), GTK_CTREE_LINES_SOLID);;
 	gtk_ctree_set_expander_style(GTK_CTREE(edittree), GTK_CTREE_EXPANDER_SQUARE);
 	gtk_clist_set_reorderable(GTK_CLIST(edittree), TRUE);
 	gtk_signal_connect(GTK_OBJECT(edittree), "button_press_event",
