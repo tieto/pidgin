@@ -80,6 +80,7 @@ static GtkTreeIter plugin_iter;
 static guint browser_pref_id = 0;
 static guint proxy_pref_id = 0;
 static guint sound_pref_id = 0;
+static guint auto_resp_pref_id = 0;
 
 /*
  * PROTOTYPES
@@ -334,6 +335,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	gaim_prefs_disconnect_callback(browser_pref_id);
 	gaim_prefs_disconnect_callback(proxy_pref_id);
 	gaim_prefs_disconnect_callback(sound_pref_id);
+	gaim_prefs_disconnect_callback(auto_resp_pref_id);
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
@@ -1292,6 +1294,16 @@ browser_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	gtk_widget_set_sensitive(hbox, !strcmp(browser, "custom"));
 }
 
+static void
+auto_resp_changed_cb(const char *name, GaimPrefType type, gpointer value,
+		gpointer data)
+{
+	GtkWidget *hbox = data;
+	gboolean enabled = value;
+
+	gtk_widget_set_sensitive(hbox, enabled);
+}
+
 GtkWidget *browser_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1508,8 +1520,14 @@ GtkWidget *away_page() {
 	prefs_checkbox(_("Send auto-response in active conversations"),
 				  "/core/away/auto_response/in_active_conv", vbox);
 
+	auto_resp_pref_id = gaim_prefs_connect_callback("/core/away/auto_response/enabled",
+												  auto_resp_changed_cb, hbox);
+
 	if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))
 		gtk_widget_set_sensitive(hbox, FALSE);
+
+	auto_resp_pref_id = gaim_prefs_connect_callback("/core/away/auto_response/enabled",
+												  auto_resp_changed_cb, hbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
 	dd = prefs_dropdown(vbox, _("Idle _time reporting:"), GAIM_PREF_STRING,
