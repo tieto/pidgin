@@ -96,6 +96,10 @@ AC_TRY_COMPILE([
 	])
 ])
 
+dnl to prevent the g_stat()/g_unlink() crash,
+dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
+AC_SYS_LARGEFILE
+
 dnl Check for SILC client includes and libraries
 AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR
                           Compile the SILC plugin against includes in DIR ], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
