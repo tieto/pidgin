@@ -11,9 +11,9 @@
 #include "proxy.h"
 #include "md5.h"
 
-#include "pixmaps/msn_online.xpm"
-#include "pixmaps/msn_away.xpm"
-#include "pixmaps/msn_occ.xpm"
+#include "pixmaps/protocols/msn/msn_online.xpm"
+#include "pixmaps/protocols/msn/msn_away.xpm"
+#include "pixmaps/protocols/msn/msn_occ.xpm"
 
 /* MSN Smiley Faces */
 #include "pixmaps/protocols/msn/msn_angry.xpm"
