@@ -4353,7 +4353,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 static void oscar_get_info(GaimConnection *gc, const char *name) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
-	if (od->icq)
+	if (od->icq && isdigit(name[0]))
 		aim_icq_getallinfo(od->sess, name);
 	else
 		aim_locate_getinfoshort(od->sess, name, 0x00000007);
