@@ -2883,10 +2883,12 @@ gaim_url_encode(const char *str)
 
 	g_return_val_if_fail(str != NULL, NULL);
 
-	for (i = 0; i < strlen(str); i++) {
+	for (i = 0; i < strlen(str) && j < (BUF_LEN - 1); i++) {
 		if (isalnum(str[i]))
 			buf[j++] = str[i];
 		else {
+			if (j > (BUF_LEN - 4))
+				break;
 			sprintf(buf + j, "%%%02x", (unsigned char)str[i]);
 			j += 3;
 		}
@@ -3219,11 +3221,13 @@ gaim_escape_filename(const char *str)
 
 	g_return_val_if_fail(str != NULL, NULL);
 
-	for (i = 0; i < strlen(str); i++) {
+	for (i = 0; i < strlen(str) && j < (BUF_LEN - 1); i++) {
 		if (isalnum(str[i]) || str[i] == '@' || str[i] == '-' ||
 				str[i] == '_' || str[i] == '.' || str[i] == '#')
 			buf[j++] = str[i];
 		else {
+			if (j > (BUF_LEN - 4))
+				break;
 			sprintf(buf + j, "%%%02x", (unsigned char)str[i]);
 			j += 3;
 		}
