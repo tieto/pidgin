@@ -3348,11 +3348,7 @@ void show_smiley_dialog(struct gaim_conversation *c, GtkWidget *widget)
 static void do_alias_bud(GtkWidget *w, struct buddy *b)
 {
 	const char *al = gtk_entry_get_text(GTK_ENTRY(aliasname));
-	if (al && strlen(al))
-		g_snprintf(b->alias, sizeof(b->alias), "%s", al);
-	else
-		b->alias[0] = '\0';
-	gaim_blist_alias_buddy (b, al);
+	gaim_blist_alias_buddy (b, (al && strlen(al)) ? al : NULL);
 	serv_alias_buddy(b);
 	gaim_blist_save();
 	destroy_dialog(aliasdlg, aliasdlg);
