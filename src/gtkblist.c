@@ -1684,9 +1684,9 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
-	{ N_("/Buddies/_Add a Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ N_("/Buddies/Add a C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ N_("/Buddies/Add a _Group..."), NULL, gaim_blist_request_add_group, 0, NULL},
+	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
+	{ N_("/Buddies/Add C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
+	{ N_("/Buddies/Add _Group..."), NULL, gaim_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Signoff"), "<CTL>D", gaim_connections_disconnect_all, 0, "<StockItem>", GAIM_STOCK_SIGN_OFF },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
@@ -3659,7 +3659,7 @@ add_group_cb(GaimConnection *gc, const char *group_name)
 void
 gaim_gtk_blist_request_add_group(void)
 {
-	gaim_request_input(NULL, _("Add Group"), _("Add a new group"),
+	gaim_request_input(NULL, _("Add Group"), NULL,
 					   _("Please enter the name of the group to be added."),
 					   NULL, FALSE, FALSE,
 					   _("Add"), G_CALLBACK(add_group_cb),

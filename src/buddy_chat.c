@@ -220,7 +220,7 @@ join_chat()
 	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	data = g_new0(GaimGtkJoinChatData, 1);
 
-	data->window = gtk_dialog_new_with_buttons(_("Join Chat"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
+	data->window = gtk_dialog_new_with_buttons(_("Join a Chat"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 											   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 											   _("_Join"), GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);

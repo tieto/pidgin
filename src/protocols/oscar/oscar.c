@@ -6496,21 +6496,21 @@ static GList *oscar_actions(GaimConnection *gc)
 	GList *m = NULL;
 
 	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set User Info");
+	pam->label = _("Set User Info...");
 	pam->callback = oscar_show_set_info;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
 #if 0
 	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Available Message");
+	pam->label = _("Set Available Message...");
 	pam->callback = oscar_show_setavailmsg;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 #endif
 
 	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Change Password");
+	pam->label = _("Change Password...");
 	pam->callback = oscar_change_pass;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
@@ -6536,7 +6536,7 @@ static GList *oscar_actions(GaimConnection *gc)
 		m = g_list_append(m, NULL);
 
 		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Format Screenname");
+		pam->label = _("Format Screenname...");
 		pam->callback = oscar_show_format_screenname;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
@@ -6554,7 +6554,7 @@ static GList *oscar_actions(GaimConnection *gc)
 		m = g_list_append(m, pam);
 
 		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Change Current Registered Address");
+		pam->label = _("Change Current Registered Address...");
 		pam->callback = oscar_show_change_email;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
@@ -6571,7 +6571,7 @@ static GList *oscar_actions(GaimConnection *gc)
 	m = g_list_append(m, NULL);
 
 	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Search for Buddy by Email");
+	pam->label = _("Search for Buddy by Email...");
 	pam->callback = oscar_show_find_email;
 	pam->gc = gc;
 	m = g_list_append(m, pam);

@@ -307,7 +307,7 @@ insert_image_cb(GtkWidget *save, GaimConversation *conv)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image))) {
-		window = gtk_file_selection_new(_("Gaim - Insert Image"));
+		window = gtk_file_selection_new(_("Insert Image"));
 		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 
@@ -2900,7 +2900,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
 
-	{ N_("/Conversation/Insert _URL..."), NULL, menu_insert_link_cb, 0,
+	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
 	  "<StockItem>", GAIM_STOCK_LINK },
 	{ N_("/Conversation/Insert _Image..."), NULL, menu_insert_image_cb, 0,
 	  "<StockItem>", GAIM_STOCK_IMAGE },
