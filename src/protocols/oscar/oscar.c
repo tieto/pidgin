@@ -1414,6 +1414,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					gaim_connection_error(gc, _("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
+					GaimConversation *conv = gaim_find_chat(gc, c->id);
 					char *buf;
 					gaim_debug_info("oscar",
 							   "disconnected from chat room %s\n", c->name);
@@ -1424,7 +1425,10 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					c->fd = -1;
 					aim_conn_kill(od->sess, &conn);
 					buf = g_strdup_printf(_("You have been disconnected from chat room %s."), c->name);
-					gaim_notify_error(gc, NULL, buf, NULL);
+					if (conv) 
+						gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
+					else
+						gaim_notify_error(gc, NULL, buf, NULL);
 					g_free(buf);
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (od->cnpa > 0)
@@ -3678,7 +3682,6 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimConversation *conv;
 	char *buf;
 	va_list ap;
 	fu16_t chan, nummissed, reason;
@@ -3748,10 +3751,7 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			break;
 	}
 
-	conv = gaim_find_conversation_with_account(userinfo->sn, account);
-	if (conv != NULL)
-		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
-	else
+	if (!gaim_conv_present_error(userinfo->sn, account, buf))
 		gaim_notify_error(sess->aux_data, NULL, buf, NULL);
 	g_free(buf);
 
@@ -3872,8 +3872,8 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
-#if 0
 	GaimConnection *gc = sess->aux_data;
+#if 0
 	OscarData *od = gc->proto_data;
 	GaimXfer *xfer;
 #endif
@@ -3899,11 +3899,13 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 #endif
 
 	/* Data is assumed to be the destination sn */
-	buf = g_strdup_printf(_("Your message to %s did not get sent:"), data);
-	gaim_notify_error(sess->aux_data, NULL, buf,
-					  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
-	g_free(buf);
-
+	if (!gaim_conv_present_error(data, gaim_connection_get_account(gc), 
+				     (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Your message did not get sent."))) {
+		buf = g_strdup_printf(_("Your message to %s did not get sent:"), data);
+		gaim_notify_error(sess->aux_data, NULL, buf,
+				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
+		g_free(buf);
+	}
 	return 1;
 }
 
@@ -3945,7 +3947,7 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
  * happens when you request info of someone who is offline.
  */
 static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
-	gchar *buf;
+	gchar *buf, *cbuf;
 	va_list ap;
 	fu16_t reason;
 	char *destn;
@@ -3957,12 +3959,15 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (destn == NULL)
 		return 1;
-
-	buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
-
-	gaim_notify_error(sess->aux_data, NULL, buf,
-					  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
-	g_free(buf);
+	
+	cbuf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
+	if (!gaim_conv_present_error(destn, gaim_connection_get_account((GaimConnection*)sess->aux_data), cbuf)) {
+		buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
+		gaim_notify_error(sess->aux_data, NULL, buf,
+				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
+		g_free(buf);
+	}
+	g_free(cbuf);
 
 	return 1;
 }
@@ -5522,7 +5527,8 @@ static void oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gro
 	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
-		gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
+		if (!gaim_conv_present_error(buddy->name, gaim_connection_get_account(gc), buf))
+			gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
 
 		/* Remove from local list */
@@ -5970,7 +5976,8 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
 				gchar *buf;
 				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
-				gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
+				if (!gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
+					gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
 			}
 
@@ -5983,7 +5990,8 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 				gchar *buf;
 				gaim_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
-				gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
+				if (!gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
+					gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
 			} break;
 		}
@@ -6448,15 +6456,17 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			g_free(charset);
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
-				tmp1 = gaim_strcasereplace(away_utf8, "<BR>", "\n");
+				/* tmp1 = gaim_strcasereplace(away_utf8, "<BR>", "\n"); This replacement is handled in strip_html. 
+				 *  g_free(away_utf8);
+				 */
+				tmp2 = gaim_markup_strip_html(away_utf8);
 				g_free(away_utf8);
-				tmp2 = gaim_markup_strip_html(tmp1);
-				g_free(tmp1);
 				tmp1 = gaim_escape_html(tmp2);
 				g_free(tmp2);
 				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);
 				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), tmp2);
+			
 				g_free(tmp2);
 			}
 		}

@@ -1666,6 +1666,29 @@ gaim_conv_im_write(GaimConvIm *im, const char *who, const char *message,
 		gaim_conversation_write(c, who, message, flags, mtime);
 }
 
+gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const char *what)
+{
+	GaimConversation *conv;
+	GaimConvWindow *window;
+
+	g_return_val_if_fail(who != NULL, FALSE);
+	g_return_val_if_fail(account !=NULL, FALSE);
+	g_return_val_if_fail(what != NULL, FALSE);
+
+	conv = gaim_find_conversation_with_account(who, account);
+	if (conv != NULL)
+		gaim_conversation_write(conv, NULL, what, GAIM_MESSAGE_ERROR, time(NULL));
+	else
+		return FALSE;
+	window = gaim_conversation_get_window(conv);
+	if (!gaim_conv_window_has_focus(window)) /* don't change the active conversation if the user is using this window */
+		gaim_conv_window_switch_conversation(window, gaim_conversation_get_index(conv));
+
+	gaim_conv_window_raise(window);
+
+	return TRUE;
+}
+
 void
 gaim_conv_im_send(GaimConvIm *im, const char *message)
 {

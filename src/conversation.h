@@ -1001,6 +1001,21 @@ void gaim_conv_im_write(GaimConvIm *im, const char *who,
 						time_t mtime);
 
 /**
+ * Presents an IM-error to the user
+ * 
+ * This is a helper function to find a conversation, write an error to it, and
+ * raise the window.  If a conversation with this user doesn't already exist,
+ * the function will return FALSE and the calling function can attempt to present
+ * the error another way (gaim_notify_error, most likely)
+ *
+ * @param who     The user this error is about
+ * @param account The account this error is on
+ * @param what    The error
+ * @return        TRUE if the error was presented, else FALSE
+ */
+gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const char *what);
+
+/**
  * Sends a message to this IM conversation.
  *
  * @param im      The IM.

@@ -5073,13 +5073,13 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	} else if (flags & GAIM_MESSAGE_ERROR) {
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
-			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
+			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><FONT SIZE=\"2\">(%s)</FONT> <B>%s</B></FONT>",
 				   mdate, message);
 		else
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><B>%s</B></FONT>", message);
 
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
+			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT></FONT>",
 			   sml_attrib, mdate, message);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
