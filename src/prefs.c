@@ -909,6 +909,7 @@ static void sound_page()
 }
 
 static GtkWidget *sndent[NUM_SOUNDS];
+static GtkWidget *sndcmd = NULL;
 
 void close_sounddialog(GtkWidget *w, GtkWidget *w2) 
 {
@@ -1022,12 +1023,20 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
 	gtk_widget_show(entry);
 }
 
+static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
+{
+	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
+	save_prefs();
+	return TRUE;
+}
+
 static void event_page()
 {
 	GtkWidget *parent;
 	GtkWidget *box;
 	GtkWidget *label;
 	GtkWidget *sep;
+	GtkWidget *hbox;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -1063,6 +1072,25 @@ static void event_page()
 	sound_entry(_("Sound in chat rooms when people leave"), OPT_SOUND_CHAT_PART, box, CHAT_LEAVE);
 	sound_entry(_("Sound in chat rooms when you talk"), OPT_SOUND_CHAT_YOU_SAY, box, CHAT_YOU_SAY);
 	sound_entry(_("Sound in chat rooms when others talk"), OPT_SOUND_CHAT_SAY, box, CHAT_SAY);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Command to play sound files (%s for filename; internal if empty):"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	sndcmd = gtk_entry_new();
+	gtk_entry_set_editable(GTK_ENTRY(sndcmd), TRUE);
+	gtk_entry_set_text(GTK_ENTRY(sndcmd), sound_cmd);
+	gtk_box_pack_end(GTK_BOX(hbox), sndcmd, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(sndcmd), "focus_out_event", GTK_SIGNAL_FUNC(sound_cmd_yeah), NULL);
+	gtk_widget_show(sndcmd);
 
 	gtk_widget_show(prefdialog);
 }

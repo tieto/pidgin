@@ -320,6 +320,18 @@ void play_file(char *filename) {
 			_exit(0);
 		}
 
+		if (sound_cmd[0]) {
+			char *args[4];
+			char command[4096];
+			g_snprintf(command, sizeof command, sound_cmd, filename);
+			args[0] = "sh";
+			args[1] = "-c";
+			args[2] = command;
+			args[3] = NULL;
+			execvp(args[0], args);
+			_exit(0);
+		}
+
 #ifdef ESD_SOUND
 		if (play_esd_file(filename))
 			_exit(0);

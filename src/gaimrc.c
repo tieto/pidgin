@@ -49,6 +49,7 @@ struct save_pos blist_pos;
 char web_command[2048];
 char latest_ver[25];
 char *sound_file[NUM_SOUNDS];
+char sound_cmd[2048];
 
 struct parse {
         char option[256];
@@ -703,6 +704,7 @@ static void gaimrc_read_sounds(FILE *f)
 
 	for (i = 0; i < NUM_SOUNDS; i++)
 		sound_file[i] = NULL;
+	sound_cmd[0] = 0;
         
 	while (buf[0] != '}') {
 		if (buf[0] == '#')
@@ -713,16 +715,15 @@ static void gaimrc_read_sounds(FILE *f)
 
                 p = parse_line(buf);
                 
-		sscanf(p->option, "sound%c", (char *)&i);
-		i -= 'A';
-		
-		if (p->value[0][0])
-			sound_file[i] = g_strdup(p->value[0]);
-/*		else
-			sound_file[i] = NULL;
-		Removed by Rob.  Kill me if this is retarded.
-		Tis was causing segfaults on PPC machines, though.
-*/
+		if (!strcmp(p->option, "sound_cmd")) {
+			g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", p->value[0]);
+		} else if (!strncmp(p->option, "sound", strlen("sound"))) {
+			sscanf(p->option, "sound%c", (char *)&i);
+			i -= 'A';
+			
+			if (p->value[0][0])
+				sound_file[i] = g_strdup(p->value[0]);
+		}
 	}
 }
 
@@ -735,6 +736,7 @@ static void gaimrc_write_sounds(FILE *f)
 			fprintf(f, "\tsound%c { %s }\n", i + 'A', sound_file[i]);
 		else
 			fprintf(f, "\tsound%c {  }\n", i + 'A');
+	fprintf(f, "\tsound_cmd { %s }\n", sound_cmd);
 	fprintf(f, "}\n");
 }
 

@@ -495,6 +495,7 @@ extern int font_options;
 extern int report_idle;
 extern int web_browser;
 extern GList *aim_users;
+extern char sound_cmd[2048];
 extern char web_command[2048];
 extern char debug_buff[BUF_LONG];
 extern struct save_pos blist_pos;
