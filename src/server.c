@@ -51,7 +51,8 @@ void serv_login(GaimAccount *account)
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
 
 	if (prpl_info->login) {
-		if (!strlen(account->password) && !(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+		if (gaim_account_get_password(account) == NULL &&
+			!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL)) {
 			gaim_notify_error(NULL, NULL,
 							  _("Please enter your password"), NULL);
