@@ -5,6 +5,7 @@
 #ifndef _LIBC_INTERFACE_H_
 #define _LIBC_INTERFACE_H_
 #include <winsock.h>
+#include <io.h>
 #include <errno.h>
 #include "libc_internal.h"
 
