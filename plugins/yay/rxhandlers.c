@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *conn, char *buf)
+static void yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *conn, char *buf)
 {
 	char **str_array = g_strsplit(buf, "\n", 1024);
 	char **it;
@@ -36,7 +36,7 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 			yahoo_close(session, conn);
 			if (session->callbacks[YAHOO_HANDLE_BADPASSWORD].function)
 				(*session->callbacks[YAHOO_HANDLE_BADPASSWORD].function)(session);
-			return 1;
+			return;
 		} else if (!strncmp(*it, "Set-Cookie: ", strlen("Set-Cookie: "))) {
 			char **sa;
 			char **m;
@@ -52,7 +52,7 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 				YAHOO_PRINT(session, YAHOO_LOG_ERROR, "did not get cookie");
 				if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
 					(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
-				return 1;
+				return;
 			}
 
 			sa = g_strsplit(session->cookie, "&", 8);
@@ -105,7 +105,6 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 	yahoo_close(session, conn);
 	if (session->callbacks[YAHOO_HANDLE_LOGINCOOKIE].function)
 		(*session->callbacks[YAHOO_HANDLE_LOGINCOOKIE].function)(session);
-	return 0;
 }
 
 static void yahoo_parse_status(struct yahoo_session *sess, struct yahoo_packet *pkt)
@@ -306,11 +305,7 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 			return;
 		}
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
-		if (yahoo_parse_config(session, conn, buf)) {
-			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not parse auth response");
-			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
-				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
-		}
+		yahoo_parse_config(session, conn, buf);
 		g_free(buf);
 	} else if (conn->type == YAHOO_CONN_TYPE_MAIN) {
 		struct yahoo_packet pkt;
