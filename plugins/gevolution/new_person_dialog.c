@@ -350,7 +350,7 @@ gevo_new_person_dialog_show(EContact *contact, GaimAccount *account,
 
 	/* First Name field */
 	dialog->firstname = gtk_entry_new();
-	add_pref_box(sg2, vbox2, _("First Name:"), dialog->firstname);
+	add_pref_box(sg2, vbox2, _("First name:"), dialog->firstname);
 
 	if (contact != NULL)
 	{
