@@ -357,6 +357,18 @@ gaim_request_field_string_set_default_value(GaimRequestField *field,
 									  ? NULL : g_strdup(default_value));
 }
 
+void
+gaim_request_field_string_set_value(GaimRequestField *field, const char *value)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
+
+	if (field->u.string.value != NULL)
+		g_free(field->u.string.value);
+
+	field->u.string.value = (value == NULL ? NULL : g_strdup(value));
+}
+
 const char *
 gaim_request_field_string_get_default_value(const GaimRequestField *field)
 {
@@ -410,6 +422,15 @@ gaim_request_field_int_set_default_value(GaimRequestField *field,
 	field->u.integer.default_value = default_value;
 }
 
+void
+gaim_request_field_int_set_value(GaimRequestField *field, int value)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_INTEGER);
+
+	field->u.integer.value = value;
+}
+
 int
 gaim_request_field_int_get_default_value(const GaimRequestField *field)
 {
@@ -452,6 +473,15 @@ gaim_request_field_bool_set_default_value(GaimRequestField *field,
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_BOOLEAN);
 
 	field->u.boolean.default_value = default_value;
+}
+
+void
+gaim_request_field_bool_set_value(GaimRequestField *field, gboolean value)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_BOOLEAN);
+
+	field->u.boolean.value = value;
 }
 
 gboolean
@@ -507,6 +537,16 @@ gaim_request_field_choice_set_default_value(GaimRequestField *field,
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE);
 
 	field->u.choice.default_value = default_value;
+}
+
+void
+gaim_request_field_choice_set_value(GaimRequestField *field,
+											int value)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE);
+
+	field->u.choice.value = value;
 }
 
 int

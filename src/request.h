@@ -388,11 +388,20 @@ GaimRequestField *gaim_request_field_string_new(const char *id,
 /**
  * Sets the default value in a string field.
  *
- * @param field The field.
- * @param value The default value.
+ * @param field         The field.
+ * @param default_value The default value.
  */
 void gaim_request_field_string_set_default_value(GaimRequestField *field,
 												 const char *default_value);
+
+/**
+ * Sets the value in a string field.
+ *
+ * @param field The field.
+ * @param value The value.
+ */
+void gaim_request_field_string_set_value(GaimRequestField *field,
+										 const char *value);
 
 /**
  * Returns the default value in a string field.
@@ -445,11 +454,19 @@ GaimRequestField *gaim_request_field_int_new(const char *id,
 /**
  * Sets the default value in an integer field.
  *
- * @param field The field.
- * @param value The default value.
+ * @param field         The field.
+ * @param default_value The default value.
  */
 void gaim_request_field_int_set_default_value(GaimRequestField *field,
 											  int default_value);
+
+/**
+ * Sets the value in an integer field.
+ *
+ * @param field The field.
+ * @param value The value.
+ */
+void gaim_request_field_int_set_value(GaimRequestField *field, int value);
 
 /**
  * Returns the default value in an integer field.
@@ -499,6 +516,15 @@ GaimRequestField *gaim_request_field_bool_new(const char *id,
  */
 void gaim_request_field_bool_set_default_value(GaimRequestField *field,
 											   gboolean default_value);
+
+/**
+ * Sets the value in an boolean field.
+ *
+ * @param field         The field.
+ * @param default_value The default value.
+ */
+void gaim_request_field_bool_set_value(GaimRequestField *field,
+									   gboolean value);
 
 /**
  * Returns the default value in an boolean field.
@@ -553,11 +579,19 @@ void gaim_request_field_choice_add(GaimRequestField *field,
 /**
  * Sets the default value in an choice field.
  *
- * @param field The field.
- * @param value The default value.
+ * @param field         The field.
+ * @param default_value The default value.
  */
 void gaim_request_field_choice_set_default_value(GaimRequestField *field,
 												 int default_value);
+
+/**
+ * Sets the value in an choice field.
+ *
+ * @param field The field.
+ * @param value The value.
+ */
+void gaim_request_field_choice_set_value(GaimRequestField *field, int value);
 
 /**
  * Returns the default value in an choice field.
