@@ -37,12 +37,12 @@
 	if (*(tmp) == '\n') *(tmp)++
 
 /*
- * "<TEXT>"    ==  6
- * "</TEXT>"   ==  7
- *               ----
- *                13
+ * <TEXT xml:space="preserve" enc="utf-8"> == 39
+ * </TEXT>                                 ==  7
+ *                                           ----
+ *                                            46
  */
-#define MSN_PAGE_BASE_SIZE 13
+#define MSN_PAGE_BASE_SIZE 46
 
 MsnPage *
 msn_page_new(void)
@@ -113,7 +113,7 @@ msn_page_build_string(const MsnPage *page)
 	else {
 		MsnUser *receiver = msn_page_get_receiver(page);
 
-		g_snprintf(buf, sizeof(buf), "PAG %d %s %d\r\n",
+		g_snprintf(buf, sizeof(buf), "PGD %d %s 1 %d\r\n",
 				   msn_page_get_transaction_id(page),
 				   msn_user_get_passport(receiver),
 				   (int)page->size);
@@ -127,7 +127,9 @@ msn_page_build_string(const MsnPage *page)
 
 	page_start = str + strlen(str);
 
-	g_snprintf(buf, sizeof(buf), "<TEXT>%s</TEXT>", msn_page_get_body(page));
+	g_snprintf(buf, sizeof(buf),
+			   "<TEXT xml:space=\"preserve\" enc=\"utf-8\">%s</TEXT>",
+			   msn_page_get_body(page));
 
 	g_strlcat(str, buf, len);
 
@@ -163,7 +165,7 @@ msn_page_set_sender(MsnPage *page, MsnUser *user)
 	g_return_if_fail(user != NULL);
 
 	page->sender = user;
-	
+
 	msn_user_ref(page->sender);
 }
 
@@ -182,7 +184,7 @@ msn_page_set_receiver(MsnPage *page, MsnUser *user)
 	g_return_if_fail(user != NULL);
 
 	page->receiver = user;
-	
+
 	msn_user_ref(page->receiver);
 }
 
