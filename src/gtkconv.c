@@ -2727,7 +2727,8 @@ gray_stuff_out(GaimConversation *conv)
 		/* Deal with the toolbar */
 		if (conv->features & GAIM_CONNECTION_HTML) {
 			buttons = GTK_IMHTML_ALL;    /* Everything on */
-			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
+			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE) ||
+			    conv->features & GAIM_CONNECTION_NO_IMAGES)
 				buttons &= ~GTK_IMHTML_IMAGE;
 			if (conv->features & GAIM_CONNECTION_NO_BGCOLOR)
 				buttons &= ~GTK_IMHTML_BACKCOLOR;
