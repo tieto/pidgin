@@ -1,9 +1,13 @@
-EXTRA_DIST = login.png logout.png aim.png icq.png msn.png jabber.png yahoo.png gadu-gadu.png napster.png irc.png \
-	     activebuddy.png admin.png aol.png away.png wireless.png offline.png \
-	     dnd.png freeforchat.png invisible.png na.png occupied.png game.png
+EXTRA_DIST = activebuddy.png admin.png aim.png aol.png away.png dnd.png \
+			 extendedaway.png freeforchat.png gadu-gadu.png game.png icq.png \
+			 invisible.png irc.png jabber.png login.png logout.png msn.png \
+			 na.png napster.png occupied.png offline.png wireless.png yahoo.png
 
 gaimstatuspixdir = $(datadir)/pixmaps/gaim/status/default
 
-gaimstatuspix_DATA = login.png logout.png aim.png icq.png msn.png jabber.png yahoo.png gadu-gadu.png napster.png irc.png \
-		     activebuddy.png admin.png aol.png away.png wireless.png offline.png \
-		     dnd.png freeforchat.png invisible.png na.png occupied.png game.png
+gaimstatuspix_DATA = activebuddy.png admin.png aim.png aol.png away.png \
+					 dnd.png extendedaway.png freeforchat.png gadu-gadu.png \
+					 game.png icq.png invisible.png irc.png jabber.png \
+					 login.png logout.png msn.png na.png napster.png \
+					 occupied.png offline.png wireless.png yahoo.png
+
