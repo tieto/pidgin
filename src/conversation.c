@@ -802,9 +802,9 @@ void surround(GtkWidget *entry, char *pre, char *post)
 		gtk_editable_select_region(GTK_EDITABLE(entry), start, finish + strlen(pre) + strlen(post));
 	} else {
 		gtk_editable_insert_text(GTK_EDITABLE(entry), pre, strlen(pre), &pos);
-		dummy = pos + strlen(pre);
+		dummy = pos;
 		gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
-		gtk_editable_set_position(GTK_EDITABLE(entry), dummy);
+		gtk_editable_set_position(GTK_EDITABLE(entry), pos);
 	}
 	gtk_widget_grab_focus(entry);
 }
