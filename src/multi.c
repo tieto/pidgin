@@ -28,6 +28,7 @@
 #include "gaim.h"
 #include "conversation.h"
 #include "gtklist.h"
+#include "gaim-disclosure.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -1048,7 +1049,7 @@ static void show_acct_mod(struct gaim_account *a)
 	 * were quite fucking uneccessary. Fuck. */
 				/* -- SeanEgan */
 				/* YEAH!! -- ChipX86 */
-	GtkWidget *hbox, *vbox;
+	GtkWidget *hbox, *vbox, *disc, *dbox;
 	GtkWidget *button;
 	GtkWidget *sep;
 	GtkSizeGroup *button_sg;
@@ -1108,8 +1109,15 @@ static void show_acct_mod(struct gaim_account *a)
 
 	generate_login_options(ma, ma->main);
 	generate_user_options(ma, ma->main);
-	generate_protocol_options(ma, ma->main);
-	generate_proxy_options(ma, ma->main);
+	disc = gaim_disclosure_new(_("Show more options"), _("Show fewer options"));
+	gtk_box_pack_start(GTK_BOX(ma->main), disc, FALSE, FALSE, 0);
+	gtk_widget_show(disc);
+	dbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_set_border_width(GTK_CONTAINER(dbox), 6);
+	gtk_box_pack_start(GTK_BOX(ma->main), dbox, FALSE, FALSE, 0);
+	gaim_disclosure_set_container(GAIM_DISCLOSURE(disc), dbox);
+	generate_protocol_options(ma, dbox);
+	generate_proxy_options(ma, dbox);
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
