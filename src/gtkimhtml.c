@@ -2693,6 +2693,7 @@ GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, i
 	im_image->mark = NULL;
 	im_image->filename = filename ? g_strdup(filename) : NULL;
 	im_image->id = id;
+	im_image->filesel = NULL;
 
 	g_object_ref(img);
 	return GTK_IMHTML_SCALABLE(im_image);
@@ -2724,34 +2725,24 @@ void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 	}
 }
 
-static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
+static void
+image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 {
-	const gchar *filename = gtk_file_selection_get_filename(sel);
-	gchar *dirname;
-	GtkIMHtmlImage *image = g_object_get_data(G_OBJECT(sel), "GtkIMHtmlImage");
 	gchar *type = NULL;
 	GError *error = NULL;
 #if GTK_CHECK_VERSION(2,2,0)
 	GSList *formats = gdk_pixbuf_get_formats();
 #else
+	GtkIMHtmlImage *image = g_object_get_data(G_OBJECT(sel), "GtkIMHtmlImage");
 	char *basename = g_path_get_basename(filename);
 	char *ext = strrchr(basename, '.');
 #endif
 
-	if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
-		/* append a / if needed */
-		if (filename[strlen(filename) - 1] != '/') {
-			dirname = g_strconcat(filename, "/", NULL);
-		} else {
-			dirname = g_strdup(filename);
-		}
-		gtk_file_selection_set_filename(sel, dirname);
-		g_free(dirname);
-		return;
-	}
+	gtk_widget_destroy(image->filesel);
+	image->filesel = NULL;
 
 #if GTK_CHECK_VERSION(2,2,0)
-	while(formats){
+	while (formats) {
 		GdkPixbufFormat *format = formats->data;
 		gchar **extensions = gdk_pixbuf_format_get_extensions(format);
 		gpointer p = extensions;
@@ -2770,7 +2761,7 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 
 		g_strfreev(p);
 
-		if(type)
+		if (type)
 			break;
 
 		formats = formats->next;
@@ -2779,11 +2770,11 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 	g_slist_free(formats);
 #else
 	/* this is really ugly code, but I think it will work */
-	if(ext) {
+	if (ext) {
 		ext++;
-		if(!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
+		if (!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
 			type = g_strdup("jpeg");
-		else if(!g_ascii_strcasecmp(ext, "png"))
+		else if (!g_ascii_strcasecmp(ext, "png"))
 			type = g_strdup("png");
 	}
 
@@ -2792,7 +2783,7 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 
 	/* If I can't find a valid type, I will just tell the user about it and then assume
 	   it's a png */
-	if(!type){
+	if (!type){
 		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Unable to guess the image type based on the file extension supplied.  Defaulting to PNG."));
 		type = g_strdup("png");
@@ -2800,7 +2791,7 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 
 	gdk_pixbuf_save(image->pixbuf, filename, type, &error, NULL);
 
-	if(error){
+	if (error){
 		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("Error saving image: %s"), error->message);
 		g_error_free(error);
@@ -2809,22 +2800,100 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 	g_free(type);
 }
 
-static void gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+static void
+image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImage *image)
 {
-	GtkWidget *sel = gtk_file_selection_new(_("Save Image"));
+	gchar *filename;
 
-	if (image->filename)
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sel), image->filename);
-	g_object_set_data(G_OBJECT(sel), "GtkIMHtmlImage", image);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sel)->ok_button), "clicked",
-					 G_CALLBACK(write_img_to_file), sel);
+	if (response != GTK_RESPONSE_ACCEPT) {
+		gtk_widget_destroy(widget);
+		image->filesel = NULL;
+		return;
+	}
 
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(sel)->ok_button), "clicked",
-							 G_CALLBACK(gtk_widget_destroy), sel);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(sel)->cancel_button), "clicked",
-							 G_CALLBACK(gtk_widget_destroy), sel);
+	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
+#else /* FILECHOOSER */
+static void
+image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImage *image)
+{
+	gchar *filename;
 
-	gtk_widget_show(sel);
+	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(image->filesel)));
+
+	if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
+		gchar *dirname;
+		/* append a / is needed */
+		if (filename[strlen(filename) - 1] != G_DIR_SEPARATOR) {
+			dirname = g_strconcat(filename, G_DIR_SEPARATOR_S, NULL);
+		} else {
+			dirname = g_strdup(filename);
+		}
+		gtk_file_selection_set_filename(image->filesel, dirname);
+		g_free(dirname);
+		g_free(filename);
+		return;
+	}
+#endif /* FILECHOOSER */
+
+	/*
+	 * XXX - We should probably prompt the user to determine if they really
+	 * want to overwrite the file or not.  However, I don't feel like doing
+	 * that, so we're just always going to overwrite if the file exists.
+	 */
+	/*
+	if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
+	} else
+		image_save_yes_cb(image, filename);
+	*/
+
+	image_save_yes_cb(image, filename);
+
+	g_free(filename);
+}
+
+#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+static void
+image_save_cancel_cb(GtkIMHtmlImage *image)
+{
+	gtk_widget_destroy(image->filesel);
+	image->filesel = NULL;
+}
+#endif /* FILECHOOSER */
+
+static void
+gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
+{
+	if (image->filesel != NULL) {
+		gtk_window_present(GTK_WINDOW(image->filesel));
+		return;
+	}
+
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	image->filesel = gtk_file_chooser_dialog_new(_("Save Image"),
+						NULL,
+						GTK_FILE_CHOOSER_ACTION_SAVE,
+						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+						NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(image->filesel), GTK_RESPONSE_ACCEPT);
+	if (image->filename != NULL)
+		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(image->filesel), image->filename);
+	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(image->filesel)), "response",
+					 G_CALLBACK(image_save_check_if_exists_cb), image);
+#else /* FILECHOOSER */
+	image->filesel = gtk_file_selection_new(_("Save Image"));
+	if (image->filename != NULL)
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), image->filename);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
+					 G_CALLBACK(image_save_check_if_exists_cb), image);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
+							 G_CALLBACK(image_save_cancel_cb), image);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->cancel_button), "clicked",
+							 G_CALLBACK(image_save_cancel_cb), image);
+#endif /* FILECHOOSER */
+
+	gtk_widget_show(image->filesel);
 }
 
 static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlImage *image)
@@ -2866,6 +2935,8 @@ void gtk_imhtml_image_free(GtkIMHtmlScalable *scale)
 	g_object_unref(image->pixbuf);
 	if (image->filename)
 		g_free(image->filename);
+	if (image->filesel)
+		gtk_widget_destroy(image->filesel);
 	g_free(scale);
 }
 

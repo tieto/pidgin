@@ -170,6 +170,7 @@ struct _GtkIMHtmlImage {
 	int width;
 	int height;
 	int id;
+	GtkWidget *filesel;
 };
 
 struct _GtkIMHtmlHr {

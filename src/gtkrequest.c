@@ -1360,8 +1360,8 @@ file_yes_no_cb(GaimGtkRequestData *data, gint id)
 		gaim_request_close(GAIM_REQUEST_FILE, data);
 }
 
-static void
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+static void
 file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData *data)
 {
 	if (response != GTK_RESPONSE_ACCEPT) {
@@ -1373,6 +1373,7 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData 
 
 	data->u.file.name = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(data->dialog));
 #else /* FILECHOOSER */
+static void
 file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 {
 	const gchar *name;
