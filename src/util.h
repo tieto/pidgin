@@ -174,7 +174,8 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  * protocols/yahoo/yahoo.c for example usage.
  *
  * @param str            The string to parse.
- * @param dest_buffer    The destination buffer to append the new
+ * @param len            The size of str.
+ * @param dest           The destination GString to append the new
  *                       field info to.
  * @param start_token    The beginning token.
  * @param skip           The number of characters to skip after the
@@ -188,14 +189,12 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  *
  * @return TRUE if successful, or FALSE otherwise.
  */
-gboolean gaim_markup_extract_info_field(const char *str, char *dest_buffer,
-										const char *start_token, int skip,
-										const char *end_token,
-										char check_value,
-										const char *no_value_token,
-										const char *display_name,
-										gboolean is_link,
-										const char *link_prefix);
+gboolean gaim_markup_extract_info_field(const char *str, int len, GString *dest,
+                                        const char *start_token, int skip,
+                                        const char *end_token, char check_value,
+                                        const char *no_value_token,
+                                        const char *display_name, gboolean is_link,
+                                        const char *link_prefix);
 
 /**
  * Converts HTML markup to XHTML.

@@ -2599,9 +2599,10 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	YahooGetInfoData *info_data = (YahooGetInfoData *)data;
 	char *stripped, *p;
 	char buf[1024];
-	gboolean found;
-	gboolean has_info = FALSE;
+	gboolean found = FALSE;
 	char *url_buffer;
+	GString *s;
+	int stripped_len;
 
 	gaim_debug_info("yahoo", "In yahoo_got_info\n");
 
@@ -2640,7 +2641,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	/* at the moment we don't support profile pages with languages other than
 	 * english. the problem is, that every user may choose his/her own profile
 	 * language. this language has nothing to do with the preferences of the
-	 * user which looks at the profile 
+	 * user which looks at the profile
 	 */
 	p = strstr(url_text, "Last Updated:");
 	if (!p) {
@@ -2683,66 +2684,54 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
 	stripped = gaim_markup_strip_html(url_buffer);
+	stripped_len = strlen(stripped);
 
 	gaim_debug_misc("yahoo", "stripped = %p\n", stripped);
 	gaim_debug_misc("yahoo", "url_buffer = %p\n", url_buffer);
 
 	/* gonna re-use the memory we've already got for url_buffer */
-	strcpy(url_buffer, "<html><body>\n");
+	/* no we're not */
+	s = g_string_sized_new(strlen(url_buffer));
+	g_string_append(s, "<html><body>\n");
 
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
 	 * true, since the Yahoo! ID will always be there */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Yahoo! ID:", 2, "\n", 0,
-			NULL, _("Yahoo! ID"), 0, NULL);
+	if (!gaim_markup_extract_info_field(stripped, stripped_len, s, "Yahoo! ID:", 2, "\n", 0,
+			NULL, _("Yahoo! ID"), 0, NULL))
+		g_string_append_printf(s, "<b>%s:</b> %s<br>", _("Yahoo! ID"), info_data->name);
 
 
 	/* extract their Email address and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "My Email", 5, "\n", 0,
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "My Email", 5, "\n", 0,
 			"Private", _("Email"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract the Nickname if it exists */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Nickname:", 1, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Nickname:", 1, "\n", '\n',
 			NULL, _("Nickname"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract their RealName and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "RealName:", 1, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "RealName:", 1, "\n", '\n',
 			NULL, _("Realname"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract their Location and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Location:", 2, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Location:", 2, "\n", '\n',
 			NULL, _("Location"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract their Age and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Age:", 3, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Age:", 3, "\n", '\n',
 			NULL, _("Age"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract their MaritalStatus and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "MaritalStatus:", 3, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "MaritalStatus:", 3, "\n", '\n',
 			"No Answer", _("Marital Status"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract their Gender and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Gender:", 3, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Gender:", 3, "\n", '\n',
 			"No Answer", _("Gender"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract their Occupation and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Occupation:", 2, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Occupation:", 2, "\n", '\n',
 			NULL, _("Occupation"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* Hobbies, Latest News, and Favorite Quote are a bit different, since the
 	 * values can contain embedded newlines... but any or all of them can also
@@ -2752,51 +2741,40 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	 * bunch.
 	 */
 
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Hobbies:", 1, "Latest News",
-			'\n', NULL, _("Hobbies"), 0, NULL);
-	if(!found)
+	if (!gaim_markup_extract_info_field(stripped, stripped_len, s, "Hobbies:", 1, "Latest News",
+			'\n', NULL, _("Hobbies"), 0, NULL))
 	{
-		found = gaim_markup_extract_info_field(stripped, url_buffer, "Hobbies:", 1, "Favorite Quote",
-				'\n', NULL, _("Hobbies"), 0, NULL);
-		if(!found)
+		if (!gaim_markup_extract_info_field(stripped, stripped_len, s, "Hobbies:", 1, "Favorite Quote",
+				'\n', NULL, _("Hobbies"), 0, NULL))
 		{
-			found = gaim_markup_extract_info_field(stripped, url_buffer, "Hobbies:", 1, "Links",
+			found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Hobbies:", 1, "Links",
 					'\n', NULL, _("Hobbies"), 0, NULL);
-			if(found)
-				has_info = TRUE;
 		}
 		else
-			has_info = TRUE;
+			found = TRUE;
 	}
 	else
-		has_info = TRUE;
+		found = TRUE;
 
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Latest News:", 1, "Favorite Quote",
-			'\n', NULL, _("Latest News"), 0, NULL);
-	if(!found)
+	if (!gaim_markup_extract_info_field(stripped, stripped_len, s, "Latest News:", 1, "Favorite Quote",
+			'\n', NULL, _("Latest News"), 0, NULL))
 	{
-		found = gaim_markup_extract_info_field(stripped, url_buffer, "Latest News:", 1, "Links",
+		found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Latest News:", 1, "Links",
 				'\n', NULL, _("Latest News"), 0, NULL);
-		if(found)
-			has_info = TRUE;
 	}
 	else
-		has_info = TRUE;
+		found = TRUE;
 
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Favorite Quote:", 0, "Links",
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Favorite Quote:", 0, "Links",
 			'\n', NULL, _("Favorite Quote"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* Home Page will either be "No home page specified",
 	 * or "Home Page: " and a link. */
 	p = strstr(stripped, "No home page specified");
 	if(!p)
 	{
-		found = gaim_markup_extract_info_field(stripped, url_buffer, "Home Page:", 1, " ", 0, NULL,
+		found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Home Page:", 1, " ", 0, NULL,
 				_("Home Page"), 1, NULL);
-		if(found)
-			has_info = TRUE;
 	}
 
 	/* Cool Link {1,2,3} is also different.  If "No cool link specified" exists,
@@ -2807,52 +2785,46 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	p = strstr(stripped,"No cool link specified");
 	if (!p)
 	{
-		found = gaim_markup_extract_info_field(stripped, url_buffer, "Cool Link 1:", 1, " ", 0, NULL,
-				_("Cool Link 1"), 1, NULL);
-		if(found)
+		if (gaim_markup_extract_info_field(stripped, stripped_len, s, "Cool Link 1:", 1, " ", 0, NULL,
+				_("Cool Link 1"), 1, NULL))
 		{
-			has_info = TRUE;
-			found = gaim_markup_extract_info_field(stripped, url_buffer, "Cool Link 2:", 1, " ", 0, NULL,
-					_("Cool Link 2"), 1, NULL);
-			if(found)
-				gaim_markup_extract_info_field(stripped, url_buffer, "Cool Link 3:", 1, " ", 0, NULL,
+			found = TRUE;
+			if (gaim_markup_extract_info_field(stripped, stripped_len, s, "Cool Link 2:", 1, " ", 0, NULL,
+					_("Cool Link 2"), 1, NULL))
+							gaim_markup_extract_info_field(stripped, stripped_len, s, "Cool Link 3:", 1, " ", 0, NULL,
 						_("Cool Link 3"), 1, NULL);
 		}
 	}
 
 	/* see if Member Since is there, and if so, extract it. */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Member Since:", 1, "Last Updated:",
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Member Since:", 1, "Last Updated:",
 			'\n', NULL, _("Member Since"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* extract the Last Updated date and put it in */
-	found = gaim_markup_extract_info_field(stripped, url_buffer, "Last Updated:", 1, "\n", '\n', NULL,
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Last Updated:", 1, "\n", '\n', NULL,
 			_("Last Updated"), 0, NULL);
-	if(found)
-		has_info = TRUE;
 
 	/* finish off the html */
-	strcat(url_buffer, "</body></html>\n");
+	g_string_append(s, "</body></html>\n");
 	g_free(stripped);
 
-	if(has_info)
+	if(found)
 	{
 		/* show it to the user */
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
-							  url_buffer, NULL, NULL);
+							  s->str, NULL, NULL);
 	}
 	else
 	{
-		char primary[256];
-		g_snprintf(primary, sizeof(primary),
-				_("User information for %s unavailable"), info_data->name);
+		char *primary;
+		primary = g_strdup_printf(_("User information for %s unavailable"), info_data->name);
 		gaim_notify_error(info_data->gc, NULL, primary,
-				_("The user's profile is empty."));			
+				_("The user's profile is empty."));
+		g_free(primary);
 	}
 
 	g_free(url_buffer);
-
+	g_string_free(s, TRUE);
 	g_free(info_data->name);
 	g_free(info_data);
 }

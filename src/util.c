@@ -434,7 +434,7 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 }
 
 gboolean
-gaim_markup_extract_info_field(const char *str, char *dest_buffer,
+gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 							   const char *start_token, int skip,
 							   const char *end_token, char check_value,
 							   const char *no_value_token,
@@ -442,10 +442,9 @@ gaim_markup_extract_info_field(const char *str, char *dest_buffer,
 							   const char *link_prefix)
 {
 	const char *p, *q;
-	char buf[1024];
 
 	g_return_val_if_fail(str          != NULL, FALSE);
-	g_return_val_if_fail(dest_buffer  != NULL, FALSE);
+	g_return_val_if_fail(dest  != NULL, FALSE);
 	g_return_val_if_fail(start_token  != NULL, FALSE);
 	g_return_val_if_fail(end_token    != NULL, FALSE);
 	g_return_val_if_fail(display_name != NULL, FALSE);
@@ -457,6 +456,9 @@ gaim_markup_extract_info_field(const char *str, char *dest_buffer,
 
 	p += strlen(start_token) + skip;
 
+	if (p >= str + len)
+		return FALSE;
+
 	if (check_value != '\0' && *p == check_value)
 		return FALSE;
 
@@ -466,36 +468,32 @@ gaim_markup_extract_info_field(const char *str, char *dest_buffer,
 					  (no_value_token && strncmp(p, no_value_token,
 												 strlen(no_value_token)))))
 	{
-		strcat(dest_buffer, "<b>");
-		strcat(dest_buffer, display_name);
-		strcat(dest_buffer, ":</b> ");
+		g_string_append(dest, "<b>");
+		g_string_append(dest, display_name);
+		g_string_append(dest, ":</b> ");
 
 		if (is_link)
 		{
-			strcat(dest_buffer, "<br><a href=\"");
-			memcpy(buf, p, q - p);
-			buf[q - p] = '\0';
+			g_string_append(dest, "<br><a href=\"");
 
 			if (link_prefix)
-				strcat(dest_buffer, link_prefix);
+				g_string_append(dest, link_prefix);
 
-			strcat(dest_buffer, buf);
-			strcat(dest_buffer, "\">");
+			g_string_append_len(dest, p, q - p);
+			g_string_append(dest, "\">");
 
 			if (link_prefix)
-				strcat(dest_buffer, link_prefix);
+				g_string_append(dest, link_prefix);
 
-			strcat(dest_buffer, buf);
-			strcat(dest_buffer, "</a>");
+			g_string_append_len(dest, p, q - p);
+			g_string_append(dest, "</a>");
 		}
 		else
 		{
-			memcpy(buf, p, q - p);
-			buf[q - p] = '\0';
-			strcat(dest_buffer, buf);
+			g_string_append_len(dest, p, q - p);
 		}
 
-		strcat(dest_buffer, "<br>\n");
+		g_string_append(dest, "<br>\n");
 
 		return TRUE;
 	}
