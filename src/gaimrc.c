@@ -694,8 +694,11 @@ static void gaimrc_read_sounds(FILE *f)
 		
 		if (p->value[0][0])
 			sound_file[i] = g_strdup(p->value[0]);
-		else
+/*		else
 			sound_file[i] = NULL;
+		Removed by Rob.  Kill me if this is retarded.
+		Tis was causing segfaults on PPC machines, though.
+*/
 	}
 }
 
