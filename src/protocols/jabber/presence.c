@@ -263,6 +263,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			g_free(text);
 			g_free(buf);
 
+			if(chat->conv)
+				serv_got_chat_left(js->gc, chat->id);
+
 			jabber_chat_destroy(chat);
 			jabber_id_free(jid);
 			return;
