@@ -127,7 +127,18 @@ __close_accounts_cb(GtkWidget *w, AccountsDialog *dialog)
 static void
 __online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 {
-	
+	AccountsDialog *dialog = (AccountsDialog *)data;
+	GaimAccount *account;
+	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
+	GtkTreeIter iter;
+
+	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
+	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account, -1);
+
+	if (gaim_account_is_connected(account))
+		gaim_account_disconnect(account);
+	else
+		gaim_account_connect(account);
 }
 
 static void

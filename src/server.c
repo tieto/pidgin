@@ -122,8 +122,6 @@ void serv_close(GaimConnection *gc)
 	}
 
 	prpl = gc->prpl;
-
-	gaim_account_disconnect(gaim_connection_get_account(gc));
 }
 
 void serv_touch_idle(GaimConnection *gc)
