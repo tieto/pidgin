@@ -73,6 +73,10 @@ whatever.
 The panel (if you made an applet) requires certain things to be in certain
 places, but the Makefile/configure script should figure things out for you.
 
+If you set a command for your browser or your sound player, make sure to put
+quotes around the %s where appropriate; otherwise, bad things could happen.
+Remember, you did it to yourself.
+
 Send me bug reports.  The web page is http://gaim.sourceforge.net/and the ftp
 site is ftp://ftp.sourceforge.net/pub/sourceforge/gaim. We also have a
 sourceforge page at http://sourceforge.net/projects/gaim/

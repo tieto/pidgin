@@ -1026,7 +1026,7 @@ static void set_defaults()
 
 	report_idle = IDLE_SCREENSAVER;
 	web_browser = BROWSER_NETSCAPE;
-	g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
+	g_snprintf(web_command, sizeof(web_command), "xterm -e lynx \"%%s\"");
 
 	auto_away = 10;
 	a = g_new0(struct away_message, 1);

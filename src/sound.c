@@ -406,14 +406,9 @@ void play_file(char *filename)
 			char *args[4];
 			char command[4096];
 			char *ms;
-			if (strstr(sound_cmd, "\"%s\""))
-				g_snprintf(command, sizeof(command), sound_cmd, filename);
-			else if ((ms = strstr(sound_cmd, "%s")) != NULL) {
-				*ms = 0;
-				g_snprintf(command, sizeof(command), "%s\"%s\"%s", sound_cmd,
-					   filename, ms + 2);
-			} else
-				g_snprintf(command, sizeof(command), sound_cmd);
+
+			g_snprintf(command, sizeof(command), sound_cmd, filename);
+
 			args[0] = "sh";
 			args[1] = "-c";
 			args[2] = command;

@@ -622,14 +622,7 @@ void open_url(GtkWidget *w, char *url)
 
 			char *ms;
 
-			if (strstr(web_command, "\"%s\""))
-				g_snprintf(command, sizeof(command), web_command, url);
-			else if ((ms = strstr(web_command, "%s")) != NULL) {
-				*ms = 0;
-				g_snprintf(command, sizeof(command), "%s\"%s\"%s", web_command, url,
-					   ms + 2);
-			} else
-				g_snprintf(command, sizeof(command), web_command);
+			g_snprintf(command, sizeof(command), web_command, url);
 
 			args[0] = "sh";
 			args[1] = "-c";
