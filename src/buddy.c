@@ -1095,15 +1095,13 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 			b = (struct buddy *)type;
 			g = find_group_by_buddy(b->gc, b->name);
 			remove_buddy(b->gc, g, b);
+			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
+			do_export( (GtkWidget *) NULL, 0 );
 		} else if (*type == EDIT_GROUP) {
 			remove_group(((struct group *)type)->gc, (struct group *)type);
+			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
+			do_export( (GtkWidget *) NULL, 0 );
                 }
-                
-                build_edit_tree();
-
-        	// flush buddy list to cache
-
-        	do_export( (GtkWidget *) NULL, 0 );
 
         } else {
                 /* Nothing selected. */
