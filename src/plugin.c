@@ -459,13 +459,12 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 
 		loader = find_loader_for_plugin(plugin);
 
-		if (loader == NULL)
-			return;
+		if (loader != NULL) {
+			loader_info = GAIM_PLUGIN_LOADER_INFO(loader);
 
-		loader_info = GAIM_PLUGIN_LOADER_INFO(loader);
-
-		if (loader_info->destroy != NULL)
-			loader_info->destroy(plugin);
+			if (loader_info->destroy != NULL)
+				loader_info->destroy(plugin);
+		}
 	}
 
 	if (plugin->path  != NULL) g_free(plugin->path);
