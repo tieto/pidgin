@@ -8,34 +8,34 @@ version 0.79cvs:
 	  (Ambrose Li)
 	* General "Get Info" improvements on Yahoo! and MSN (Ambrose Li)
 	* Yahoo! Japan support. Click More Options and check Yahoo Japan
-	  in the account editor, to use your Yahoo! Japan account.
+	  in the account editor, to use your Yahoo! Japan account
 	* Gtk themes can now theme the Gaim buddy list independently of
 	  other things (Stu Tomlinson)
 	* Show timestamps now has a per-conversation option in addition
 	  to the global one, bringing it in line with the other conver-
-	  sation options (Stu Tomlinson).
+	  sation options (Stu Tomlinson)
 	* Added MSN buddy icons (Felipe Contreras)
 	* Added MSN file transfer (Felipe Contreras)
-	* MSN's idle state now actually sets a buddy idle.
+	* MSN's idle state now actually sets a buddy idle
 	* Buddy pounce defaults are now more sane, and apply to the state the
 	  buddy is currently in. For example, if the buddy is idle, set
 	  "Return from idle" by default. The last action(s) used are the
-	  defaults for the next pounce.
-	* Yahoo buddy icon support, can't set your own yet though.
+	  defaults for the next pounce
+	* Yahoo buddy icon support, can't set your own yet though
 
 	Bug Fixes:
+	* Non-looping animated icons no longer cause Gaim to freeze
+	* Flashing windows should work again for unix in window managers that
+	  support the URGENT hint (Etan Reisner)
 	* Better handling of character sets in RTF for Novell (Mike Stoddard of
 	  Novell)
-	* Non-looping animated icons no longer cause Gaim to freeze
 	* Fixed a crash in SILC that sometimes happened when resolving
 	  the buddy list (Pekka Riikonen)
 	* Parallel compiles of the perl plugin should work better
 	  (Stu Tomlinson)
 	* The disconnected UI op was called twice on connection errors. Now
-	  it is only called once. (Evan Schoenberg).
-	* Flashing windows should work again for unix in window managers that
-	  support the URGENT hint (Etan Reisner)
-	* Dragging into conversation windows works better.
+	  it is only called once. (Evan Schoenberg)
+	* Dragging into conversation windows works better
 
 version 0.78 (05/30/2004):
 	New Features:
