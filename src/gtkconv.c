@@ -199,7 +199,7 @@ static void
 default_formatize(GaimConversation *conv)
 {
 	GaimGtkConversation *c = GAIM_GTK_CONVERSATION(conv);
-
+		
 	if (conv->features & GAIM_CONNECTION_HTML)
 	{
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_formatting"))
@@ -207,13 +207,13 @@ default_formatize(GaimConversation *conv)
 			char *color;
 			GdkColor fg_color, bg_color;
 
-			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
+			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold") != GTK_IMHTML(c->entry)->edit.bold)
 				gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
 
-			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
+			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic") != GTK_IMHTML(c->entry)->edit.italic)
 				gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
 
-			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
+			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline") != GTK_IMHTML(c->entry)->edit.underline)
 				gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
 
 			gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry),

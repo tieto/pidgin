@@ -704,7 +704,9 @@ static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean pl
 		gtk_imhtml_close_tags(imhtml, &iter);
 
 	gtk_imhtml_insert_html_at_iter(imhtml, text, flags, &iter);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
+        if (!imhtml->wbfo && !plaintext)
+                  gtk_imhtml_close_tags(imhtml, &iter);
+  	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
 	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), gtk_text_buffer_get_insert(imhtml->text_buffer),
 	                             0, FALSE, 0.0, 0.0);
 }
@@ -2709,9 +2711,6 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	g_list_free(imhtml->scalables);
 	imhtml->scalables = NULL;
 
-	gtk_imhtml_close_tags(imhtml, &start);
-
-	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
 	g_object_unref(object);
 }
 
