@@ -320,6 +320,7 @@ GList *generate_invite_user_names(struct gaim_connection *gc)
 
 	if (tmp)
 		g_list_free(tmp);
+	tmp = NULL;
 
 	tmp = g_list_append(tmp, "");
 
