@@ -855,7 +855,7 @@ static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 
 static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 {
-	GtkWidget *hbox = GTK_HBOX(toolbar);
+	GtkWidget *hbox = GTK_WIDGET(toolbar);
 	GtkWidget *button;
 	GtkWidget *sep;
 	GtkSizeGroup *sg;
