@@ -218,7 +218,7 @@ common_send(GaimConversation *conv, const char *message)
 
 	buf2 = g_malloc(limit);
 
-	if ((gc->flags & OPT_CONN_HTML) &&
+	if ((gc->flags & GAIM_CONNECTION_HTML) &&
 		gaim_prefs_get_bool("/core/conversations/send_urls_as_links")) {
 
 		buffy = linkify_text(buf);

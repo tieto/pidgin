@@ -88,7 +88,7 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 
 	gc = gaim_account_get_connection(irc->account);
 	if (gc)
-		serv_got_im(gc, args[1], args[2], IM_FLAG_AWAY, time(NULL), -1);
+		serv_got_im(gc, args[1], args[2], GAIM_IM_AUTO_RESP, time(NULL), -1);
 }
 
 void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, char **args)

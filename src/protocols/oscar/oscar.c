@@ -656,8 +656,8 @@ static void oscar_login(GaimAccount *account) {
 	if (isdigit(*(gaim_account_get_username(account)))) {
 		od->icq = TRUE;
 	} else {
-		gc->flags |= OPT_CONN_HTML;
-		gc->flags |= OPT_CONN_AUTO_RESP;
+		gc->flags |= GAIM_CONNECTION_HTML;
+		gc->flags |= GAIM_CONNECTION_AUTO_RESP;
 	}
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
 
@@ -2163,7 +2163,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 	char *tmp;
-	int flags = 0;
+	GaimImFlags flags = 0;
 	gsize convlen;
 	GError *err = NULL;
 	struct buddyinfo *bi;
@@ -2176,7 +2176,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
-		flags |= IM_FLAG_AWAY;
+		flags |= GAIM_IM_AUTO_RESP;
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT)
 		bi->typingnot = TRUE;
@@ -4259,7 +4259,7 @@ static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
 }
 static void oscar_ask_direct_im(GaimConnection *gc, const char *name);
 
-static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, int len, int imflags) {
+static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, int len, GaimImFlags imflags) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	int ret = 0;
@@ -4270,7 +4270,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
 		/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
-		if (imflags & IM_FLAG_AWAY)
+		if (imflags & GAIM_IM_AUTO_RESP)
 			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0, 1);
 		else
 			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0, 0);
@@ -4299,7 +4299,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);
 
-			if (imflags & IM_FLAG_AWAY)
+			if (imflags & GAIM_IM_AUTO_RESP)
 				args.flags |= AIM_IMFLAGS_AWAY;
 		}
 
@@ -5633,7 +5633,7 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	int imflags = 0;
+	GaimImFlags imflags = 0;
 	va_list ap;
 	char *sn, *msg;
 	int len, encoding, isawaymsg;
@@ -5650,7 +5650,7 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "Got DirectIM message from %s\n", sn);
 
 	if (isawaymsg)
-		imflags |= IM_FLAG_AWAY;
+		imflags |= GAIM_IM_AUTO_RESP;
 
 	/* XXX - I imagine Paco-Paco will want to do some voodoo with the encoding here */
 	serv_got_im(gc, sn, msg, imflags, time(NULL), len);

@@ -258,7 +258,7 @@ void flush_last_auto_responses(GaimConnection *gc)
 }
 
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,
-				 int len, int imflags)
+				 int len, GaimImFlags imflags)
 {
 	GaimConversation *c;
 	int val = -EINVAL;
@@ -272,11 +272,11 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, len, imflags);
 
-	if (!(imflags & IM_FLAG_AWAY))
+	if (!(imflags & GAIM_MESSAGE_AUTO_RESP))
 		serv_touch_idle(gc);
 
 	if (gc->away &&
-		(gc->flags & OPT_CONN_AUTO_RESP) &&
+		(gc->flags & GAIM_CONNECTION_AUTO_RESP) &&
 		gaim_prefs_get_bool("/core/away/auto_response/enabled") &&
 		!gaim_prefs_get_bool("/core/away/auto_response/in_active_conv")) {
 
@@ -813,30 +813,13 @@ int find_queue_total_by_name(char *name)
  * sure to follow along, kids
  */
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 guint32 imflags, time_t mtime, gint len)
+				 GaimImFlags imflags, time_t mtime, gint len)
 {
-	char *buffy;
-	char *angel;
-	int plugin_return;
-	GaimMessageFlags away = 0;
-
 	GaimConversation *cnv;
-
+	GaimMessageFlags auto_resp;
 	char *message, *name;
-
-	/*
-	 * Pay no attention to the man behind the curtain.
-	 *
-	 * The reason i feel okay with this is because it's useful to some
-	 * plugins. Gaim doesn't ever use it itself. Besides, it's not entirely
-	 * accurate; it's possible to have false negatives with most protocols.
-	 * Also with some it's easy to have false positives as well. So if you're
-	 * a plugin author, don't rely on this, still do your own checks. But uh.
-	 * It's a start.
-	 */
-
-	if (imflags & IM_FLAG_GAIMUSER)
-		gaim_debug(GAIM_DEBUG_MISC, "server", "%s is a gaim user.\n", who);
+	char *angel, *buffy;
+	int plugin_return;
 
 	/*
 	 * We should update the conversation window buttons and menu,
@@ -893,8 +876,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * was an auto-response, we set the appropriate flag. This is just so
 	 * prpls don't have to know about GAIM_MESSAGE_* (though some do anyway)
 	 */
-	if (imflags & IM_FLAG_AWAY)
-		away = GAIM_MESSAGE_AUTO_RESP;
+	if (imflags & GAIM_IM_AUTO_RESP)
+		auto_resp = GAIM_MESSAGE_AUTO_RESP;
+	else
+		auto_resp = 0;
 
 	/*
 	 * Alright. Two cases for how to handle this. Either we're away or
@@ -936,7 +921,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
 			qm->account = gc->account;
 			qm->tm = mtime;
-			qm->flags = GAIM_MESSAGE_RECV | away;
+			qm->flags = GAIM_MESSAGE_RECV | auto_resp;
 			qm->len = len;
 			message_queue = g_slist_append(message_queue, qm);
 
@@ -973,7 +958,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
-						  away | GAIM_MESSAGE_RECV, mtime);
+						  GAIM_MESSAGE_RECV | auto_resp, mtime);
 		}
 
 		/*
@@ -987,7 +972,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 *  - or we're not idle and the 'only auto respond if idle' pref
 		 *    is set
 		 */
-		if (!(gc->flags & OPT_CONN_AUTO_RESP) ||
+		if (!(gc->flags & GAIM_CONNECTION_AUTO_RESP) ||
 			!gaim_prefs_get_bool("/core/away/auto_response/enabled") ||
 			*gc->away == '\0' ||
 			(!gc->is_idle &&
@@ -1019,7 +1004,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
-		serv_send_im(gc, name, away_subs(tmpmsg, alias), -1, IM_FLAG_AWAY);
+		serv_send_im(gc, name, away_subs(tmpmsg, alias), -1, GAIM_IM_AUTO_RESP);
 		if (!cnv && awayqueue &&
 			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 
@@ -1063,7 +1048,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->message = g_strdup(message);
 			qm->account = gc->account;
 			qm->tm = mtime;
-			qm->flags = away | GAIM_MESSAGE_RECV;
+			qm->flags = GAIM_MESSAGE_RECV | auto_resp;
 			qm->len = len;
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		}
@@ -1072,7 +1057,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
-						  away | GAIM_MESSAGE_RECV, mtime);
+						  GAIM_MESSAGE_RECV | auto_resp, mtime);
 			gaim_window_flash(gaim_conversation_get_window(cnv));
 		}
 	}

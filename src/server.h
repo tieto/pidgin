@@ -23,10 +23,6 @@
 #ifndef _GAIM_SERVER_H_
 #define _GAIM_SERVER_H_
 
-#define IM_FLAG_AWAY     0x01
-#define IM_FLAG_CHECKBOX 0x02
-#define IM_FLAG_GAIMUSER 0x04
-
 /*
  * Really user states are controlled by the PRPLs now. We just
  * use this for event_away
@@ -43,7 +39,7 @@ extern "C" {
 void serv_login(GaimAccount *);
 void serv_close(GaimConnection *);
 void serv_touch_idle(GaimConnection *);
-int  serv_send_im(GaimConnection *, const char *, const char *, int, int);
+int  serv_send_im(GaimConnection *, const char *, const char *, int, GaimImFlags);
 void serv_get_info(GaimConnection *, const char *);
 void serv_get_dir(GaimConnection *, const char *);
 void serv_set_idle(GaimConnection *, int);
@@ -85,7 +81,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 void serv_set_buddyicon(GaimConnection *gc, const char *filename);
 void serv_got_typing_stopped(GaimConnection *gc, const char *name);
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 guint32 flags, time_t mtime, gint len);
+				 GaimImFlags imflags, time_t mtime, gint len);
 void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type);
 void serv_finish_login(GaimConnection *gc);

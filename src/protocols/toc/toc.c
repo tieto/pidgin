@@ -169,8 +169,8 @@ static void toc_login(GaimAccount *account)
 
 	gc = gaim_account_get_connection(account);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
-	gc->flags |= OPT_CONN_HTML;
-	gc->flags |= OPT_CONN_AUTO_RESP;
+	gc->flags |= GAIM_CONNECTION_HTML;
+	gc->flags |= GAIM_CONNECTION_AUTO_RESP;
 
 	g_snprintf(buf, sizeof buf, _("Looking up %s"),
 			gaim_account_get_string(account, "server", TOC_HOST));
@@ -737,7 +737,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			message++;
 		message++;
 
-		a = (away && (*away == 'T')) ? IM_FLAG_AWAY : 0;
+		a = (away && (*away == 'T')) ? GAIM_IM_AUTO_RESP : 0;
 
 		serv_got_im(gc, c, message, a, time(NULL), -1);
 	} else if (!g_ascii_strcasecmp(c, "UPDATE_BUDDY")) {
@@ -1058,7 +1058,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static int toc_send_im(GaimConnection *gc, const char *name, const char *message, int len, int flags)
+static int toc_send_im(GaimConnection *gc, const char *name, const char *message, int len, GaimImFlags flags)
 {
 	char *buf1, *buf2;
 
@@ -1071,7 +1071,7 @@ gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", message);
 
 gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", buf1);
 	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", normalize(name), buf1, 
-						   ((flags & IM_FLAG_AWAY) ? " auto" : ""));
+						   ((flags & GAIM_IM_AUTO_RESP) ? " auto" : ""));
 	g_free(buf1);
 gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", buf2);
 	sflap_send(gc, buf2, -1, TYPE_DATA);

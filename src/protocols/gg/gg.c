@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6876 2003-08-05 10:55:04Z chipx86 $
+ * $Id: gg.c 7146 2003-08-25 14:12:28Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -560,7 +560,7 @@ static void agg_close(GaimConnection *gc)
 	g_free(gc->proto_data);
 }
 
-static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, int len, int flags)
+static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, int len, GaimImFlags flags)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	gchar *imsg;
@@ -574,8 +574,7 @@ static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, int
 
 	if (strlen(msg) > 0) {
 		imsg = charset_convert(msg, "UTF-8", "CP1250");
-		if (gg_send_message(gd->sess, (flags & IM_FLAG_CHECKBOX)
-				    ? GG_CLASS_MSG : GG_CLASS_CHAT,
+		if (gg_send_message(gd->sess, GG_CLASS_CHAT,
 				    strtol(who, (char **)NULL, 10), imsg) < 0)
 			return -1;
 		g_free(imsg);

@@ -293,7 +293,6 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	MsnSwitchBoard *swboard = servconn->data;
 	char *body;
 	const char *value;
-	int flags = 0;
 
 	body = g_strdup(msn_message_get_body(msg));
 
@@ -301,10 +300,6 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL) {
 		gaim_debug(GAIM_DEBUG_MISC, "msn", "value = '%s'\n", value);
-		if (!g_ascii_strncasecmp(value, "Gaim", 4)) {
-			gaim_debug(GAIM_DEBUG_INFO, "msn", "Setting GAIMUSER flag.\n");
-			flags |= IM_FLAG_GAIMUSER;
-		}
 	}
 
 	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL) {
@@ -322,7 +317,7 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(swboard->chat)),
 						 servconn->msg_passport, 0, body, time(NULL));
 	else
-		serv_got_im(gc, servconn->msg_passport, body, flags, time(NULL), -1);
+		serv_got_im(gc, servconn->msg_passport, body, 0, time(NULL), -1);
 
 	g_free(body);
 

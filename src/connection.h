@@ -30,9 +30,14 @@
 
 typedef struct _GaimConnection GaimConnection;
 
-#define OPT_CONN_HTML		0x00000001
-/* set this flag on a gc if you want serv_got_im to autoreply when away */
-#define OPT_CONN_AUTO_RESP	0x00000002
+/**
+ * Flags to change behavior of the client for a given connection.
+ */
+typedef enum
+{
+	GAIM_CONNECTION_HTML      = 0x0001, /**< Connection sends/receives in 'HTML'. */
+	GAIM_CONNECTION_AUTO_RESP = 0x0002  /**< Send auto responses when away.       */
+} GaimConnectionFlags;
 
 typedef enum
 {
@@ -59,7 +64,7 @@ typedef struct
 struct _GaimConnection
 {
 	GaimPlugin *prpl;            /**< The protocol plugin.               */
-	guint32 flags;               /**< Connection flags.                  */
+	GaimConnectionFlags flags;   /**< Connection flags.                  */
 
 	GaimConnectionState state;   /**< The connection state.              */
 

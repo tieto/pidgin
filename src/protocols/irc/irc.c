@@ -43,7 +43,7 @@ static GList *irc_away_states(GaimConnection *gc);
 static void irc_login(GaimAccount *account);
 static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond);
 static void irc_close(GaimConnection *gc);
-static int irc_im_send(GaimConnection *gc, const char *who, const char *what, int len, int flags);
+static int irc_im_send(GaimConnection *gc, const char *who, const char *what, int len, GaimImFlags flags);
 static int irc_chat_send(GaimConnection *gc, int id, const char *what);
 static void irc_chat_join (GaimConnection *gc, GHashTable *data);
 static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond);
@@ -237,7 +237,7 @@ static void irc_close(GaimConnection *gc)
 	g_free(irc);
 }
 
-static int irc_im_send(GaimConnection *gc, const char *who, const char *what, int len, int flags)
+static int irc_im_send(GaimConnection *gc, const char *who, const char *what, int len, GaimImFlags flags)
 {
 	struct irc_conn *irc = gc->proto_data;
 	const char *args[2];

@@ -87,6 +87,14 @@ typedef enum
 /*@}*/
 
 /**
+ * Flags applicable to outgoing/incoming IMs from prpls.
+ */
+typedef enum
+{
+	GAIM_IM_AUTO_RESP = 0x01,    /**< Auto response.    */
+} GaimImFlags;
+
+/**
  * Protocol options
  *
  * These should all be stuff that some plugins can do and others can't.
@@ -232,7 +240,8 @@ struct _GaimPluginProtocolInfo
 	void (*login)(GaimAccount *);
 	void (*close)(GaimConnection *);
 	int  (*send_im)(GaimConnection *, const char *who,
-					const char *message, int len, int away);
+					const char *message, int len,
+					GaimImFlags flags);
 	void (*set_info)(GaimConnection *, const char *info);
 	int  (*send_typing)(GaimConnection *, const char *name, int typing);
 	void (*get_info)(GaimConnection *, const char *who);

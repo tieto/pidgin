@@ -381,7 +381,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 
 	buf2 = g_malloc(limit);
 
-	if (gc && gc->flags & OPT_CONN_HTML) {
+	if (gc && gc->flags & GAIM_CONNECTION_HTML) {
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold")) {
 			g_snprintf(buf2, limit, "<B>%s</B>", buf);
 			strcpy(buf, buf2);

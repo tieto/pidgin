@@ -129,7 +129,7 @@ static int nap_do_irc_style(GaimConnection *gc, const char *message, const char 
 }
 
 /* 205 - MSG_CLIENT_PRIVMSG */
-static int nap_send_im(GaimConnection *gc, const char *who, const char *message, int len, int flags)
+static int nap_send_im(GaimConnection *gc, const char *who, const char *message, int len, GaimImFlags flags)
 {
 
 	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {

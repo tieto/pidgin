@@ -102,14 +102,14 @@ typedef enum
  */
 typedef enum
 {
-	GAIM_MESSAGE_SEND = 0x01,      /**< Outgoing message.     */
-	GAIM_MESSAGE_RECV = 0x02,      /**< Incoming message.     */
-	GAIM_MESSAGE_SYSTEM = 0x04,    /**< System message.       */
-	GAIM_MESSAGE_AUTO_RESP = 0x08, /**< Auto response.        */
-	GAIM_MESSAGE_COLORIZE = 0x10,  /**< Colorize nicks.       */
-	GAIM_MESSAGE_NICK = 0x20,      /**< Contains your nick.   */
-	GAIM_MESSAGE_NO_LOG = 0x40,    /**< Do not log.           */
-	GAIM_MESSAGE_WHISPER = 0x80    /**< Whispered message.    */
+	GAIM_MESSAGE_SEND      = 0x0001, /**< Outgoing message.     */
+	GAIM_MESSAGE_RECV      = 0x0002, /**< Incoming message.     */
+	GAIM_MESSAGE_SYSTEM    = 0x0004, /**< System message.       */
+	GAIM_MESSAGE_AUTO_RESP = 0x0008, /**< Auto response.        */
+	GAIM_MESSAGE_COLORIZE  = 0x0010, /**< Colorize nicks.       */
+	GAIM_MESSAGE_NICK      = 0x0020, /**< Contains your nick.   */
+	GAIM_MESSAGE_NO_LOG    = 0x0040, /**< Do not log.           */
+	GAIM_MESSAGE_WHISPER   = 0x0080  /**< Whispered message.    */
 } GaimMessageFlags;
 
 #include "account.h"

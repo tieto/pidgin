@@ -1174,7 +1174,7 @@ trepia_close(GaimConnection *gc)
 
 static int
 trepia_send_im(GaimConnection *gc, const char *who, const char *message,
-			int len, int flags)
+			int len, GaimImFlags flags)
 {
 	TrepiaSession *session = gc->proto_data;
 	TrepiaProfile *profile;

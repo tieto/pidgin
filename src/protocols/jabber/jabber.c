@@ -2359,7 +2359,7 @@ static void jabber_login(GaimAccount *account)
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
-	gc->flags |= OPT_CONN_HTML;
+	gc->flags |= GAIM_CONNECTION_HTML;
 
 	jd->buddies = g_hash_table_new(g_str_hash, g_str_equal);
 	jd->chats = NULL;	/* we have no chats yet */
@@ -2515,7 +2515,7 @@ static void insert_message(xmlnode x, const char *message, gboolean use_xhtml) {
 	g_free(xhtml);
 }
 
-static int jabber_send_im(GaimConnection *gc, const char *who, const char *message, int len, int flags)
+static int jabber_send_im(GaimConnection *gc, const char *who, const char *message, int len, GaimImFlags flags)
 {
 	xmlnode x, y;
 	char *thread_id = NULL;
