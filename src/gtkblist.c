@@ -2891,7 +2891,7 @@ sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
-	gtk_widget_set_sensitive(widget, gaim_roomlist_is_showable());
+	gtk_widget_set_sensitive(widget, gaim_gtk_roomlist_is_showable());
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
 	gtk_widget_set_sensitive(widget, gaim_gtk_privacy_is_showable());

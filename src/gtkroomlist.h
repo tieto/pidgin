@@ -1,5 +1,5 @@
 /**
- * @file gtkroomlist.h Gtk Room List UI
+ * @file gtkroomlist.h GTK+ Room List UI
  * @ingroup gtkui
  *
  * gaim
@@ -36,16 +36,28 @@ typedef struct _GaimGtkRoomlistDialog GaimGtkRoomlistDialog;
  */
 void gaim_gtk_roomlist_init(void);
 
-void gaim_gtk_roomlist_dialog_show(void);
 /**
- * Create a new room list dialog.
+ * Determines if showing the room list dialog is a valid action.
+ *
+ * @return TRUE if there are accounts online that support listing
+ *         chat rooms.  Otherwise return FALSE.
+ */
+gboolean gaim_gtk_roomlist_is_showable(void);
+
+/**
+ * Shows the roomlist dialog.
+ */
+void gaim_gtk_roomlist_dialog_show(void);
+
+/**
+ * Creates a new room list dialog.
  *
  * @return The new dialog.
  */
 GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new(void);
 
 /**
- * Create a new room list dialog and fetch the list on
+ * Creates a new room list dialog and fetch the list on
  * the specified account.
  *
  * @param account The account to force.

@@ -113,22 +113,6 @@ extern "C" {
 /*@{*/
 
 /**
- * Return true if there are accounts signed on that support showing
- * a roomlist.
- *
- * @return True if showing the roomlist is a valid action.
- */
-gboolean gaim_roomlist_is_showable();
-
-/**
- * Get the first online acocunt that supports showing a roomlist.
- *
- * @return The first selected account of all the accounts that
- *         support showing a roomlist.
- */
-GaimAccount *gaim_roomlist_get_first_valid_account();
-
-/**
  * This is used to get the room list on an account, asking the UI
  * to pop up a dialog with the specified account already selected,
  * and pretend the user clicked the get list button.
@@ -207,14 +191,6 @@ gboolean gaim_roomlist_get_in_progress(GaimRoomlist *list);
                order as was given in gaim_roomlist_set_fields().
 */
 void gaim_roomlist_room_add(GaimRoomlist *list, GaimRoomlistRoom *room);
-
-/**
- * Do we support room listing?
- *
- * @param gc The GaimConnection we're asking.
- * @return @c TRUE if it's possible to get a room list.
- */
-gboolean gaim_roomlist_is_possible(GaimConnection *gc);
 
 /**
  * Returns a GaimRoomlist structure from the prpl, and

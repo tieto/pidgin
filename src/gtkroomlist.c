@@ -1,5 +1,5 @@
 /**
- * @file gtkroomlist.c Gtk Room List UI
+ * @file gtkroomlist.c GTK+ Room List UI
  * @ingroup gtkui
  *
  * gaim
@@ -283,14 +283,33 @@ static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePat
 	}
 }
 
-static gboolean accounts_filter_func(GaimAccount *account)
+static gboolean account_filter_func(GaimAccount *account)
 {
+	GaimConnection *gc = gaim_account_get_connection(account);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+//	if (!gc)
+//		return FALSE;
+
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	return (prpl_info->roomlist_get_list != NULL);
+}
+
+gboolean
+gaim_gtk_roomlist_is_showable()
+{
+	GList *c;
 	GaimConnection *gc;
 
-	gc = gaim_account_get_connection(account);
-	if (!gc)
-		return FALSE;
-	return gaim_roomlist_is_possible(gc);
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+		gc = c->data;
+
+		if (account_filter_func(gaim_connection_get_account(gc)))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account)
@@ -302,19 +321,6 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	GtkWidget *account_hbox;
 	GtkWidget *bbox;
 	GtkWidget *label;
-
-	if (account == NULL) {
-		account = gaim_roomlist_get_first_valid_account();
-
-		if (account == NULL) {
-			gaim_notify_error(NULL, NULL,
-			                  _("You are not currently signed on with any "
-		                            "protocols that have the ability to list rooms."),
-			                     NULL);
-
-			return NULL;
-		}
-	}
 
 	dialog = g_new0(GaimGtkRoomlistDialog, 1);
 	dialog->account = account;
@@ -351,7 +357,7 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	gtk_widget_show(label);
 
 	dialog->account_widget = gaim_gtk_account_option_menu_new(dialog->account, FALSE,
-	                         G_CALLBACK(dialog_select_account_cb), accounts_filter_func, dialog);
+	                         G_CALLBACK(dialog_select_account_cb), account_filter_func, dialog);
 
 	gtk_box_pack_start(GTK_BOX(account_hbox), dialog->account_widget, TRUE, TRUE, 0);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(dialog->account_widget));
