@@ -419,7 +419,7 @@ gaim_xfer_read(GaimXfer *xfer, char **buffer)
 		*buffer = g_malloc0(s);
 
 		r = read(xfer->fd, *buffer, s);
-		if ((gaim_xfer_get_size > 0) &&
+		if ((gaim_xfer_get_size(xfer) > 0) &&
 			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer)))
 			gaim_xfer_set_completed(xfer, TRUE);
 	}
