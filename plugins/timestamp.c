@@ -26,7 +26,7 @@ gboolean do_timestamp (gpointer data)
 	char mdate[6];
 	time_t tim = time(NULL);
 	
-	if (!g_list_find(conversations, c))
+	if (!g_list_find(gaim_get_conversations(), c))
 		return FALSE;
 
 	strftime(mdate, sizeof(mdate), "%H:%M", localtime(&tim));
@@ -99,7 +99,7 @@ GtkWidget *gaim_plugin_config_gtk() {
 
 
 char *gaim_plugin_init(GModule *h) {
-	GList *cnvs = conversations;
+	GList *cnvs = gaim_get_conversations();
 	struct gaim_conversation *c;
 	handle = h;
 

@@ -508,7 +508,7 @@ void options(GtkWidget *widget, gpointer data) {
 }
 
 void apply_options(GtkWidget *widget, gpointer data) {
-	GList *cnv = conversations;
+	GList *cnv = gaim_get_conversations();
 
 	while (cnv) {
 		guint notification;

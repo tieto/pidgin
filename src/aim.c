@@ -65,7 +65,6 @@ static GtkWidget *pass;
 GList *log_conversations = NULL;
 GList *buddy_pounces = NULL;
 GSList *away_messages = NULL;
-GList *conversations = NULL;
 GSList *message_queue = NULL;
 GSList *unread_message_queue = NULL;
 GSList *away_time_queue = NULL;
