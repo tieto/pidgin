@@ -11,7 +11,7 @@
 LangString GTK_INSTALLER_NEEDED			${LANG_DUTCH} "De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_VERSION} of nieuwer van de GTK+ runtime-omgeving"
 
 ; Components Page
-LangString GAIM_SECTION_TITLE				${LANG_DUTCH} "Gaim Instant Messenging (vereist)"
+LangString GAIM_SECTION_TITLE				${LANG_DUTCH} "Gaim Instant Messaging Client (vereist)"
 LangString GTK_SECTION_TITLE				${LANG_DUTCH} "GTK+ runtime-omgeving (vereist)"
 LangString GTK_THEMES_SECTION_TITLE			${LANG_DUTCH} "GTK+ thema's"
 LangString GTK_NOTHEME_SECTION_TITLE		${LANG_DUTCH} "Geen thema"

@@ -10,7 +10,7 @@
 LangString GTK_INSTALLER_NEEDED			${LANG_GERMAN} "Die GTK+ Runtime Umgebung ist entweder nicht vorhanden oder sollte aktualisiert werden.$\rBitte installieren Sie v${GTK_VERSION} oder höher der GTK+ Runtime"
 
 ; Components Page
-LangString GAIM_SECTION_TITLE				${LANG_GERMAN} "Gaim Instant Messenging (erforderlich)"
+LangString GAIM_SECTION_TITLE				${LANG_GERMAN} "Gaim Instant Messaging Client (erforderlich)"
 LangString GTK_SECTION_TITLE				${LANG_GERMAN} "GTK+ Runtime Umgebung (erforderlich)"
 LangString GTK_THEMES_SECTION_TITLE			${LANG_GERMAN} "GTK+ Themen"
 LangString GTK_NOTHEME_SECTION_TITLE		${LANG_GERMAN} "Kein Thema"
