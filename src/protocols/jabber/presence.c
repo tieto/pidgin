@@ -32,6 +32,7 @@
 #include "presence.h"
 #include "iq.h"
 #include "jutil.h"
+#include "sha.h"
 #include "xmlnode.h"
 
 
@@ -84,7 +85,7 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 void jabber_presence_send(GaimConnection *gc, GaimStatus *status)
 {
 	JabberStream *js = gc->proto_data;
-	xmlnode *presence;
+	xmlnode *presence, *x, *photo;
 	char *stripped = NULL;
 	const char *msg;
 	JabberBuddyState state;
@@ -99,6 +100,14 @@ void jabber_presence_send(GaimConnection *gc, GaimStatus *status)
 	g_free(stripped);
 
 	jabber_send(js, presence);
+
+	if(js->avatar_hash) {
+		x = xmlnode_new_child(presence, "x");
+		xmlnode_set_attrib(x, "xmlns", "vcard-temp:x:update");
+		photo = xmlnode_new_child(x, "photo");
+		xmlnode_insert_data(photo, js->avatar_hash, -1);
+	}
+
 	g_hash_table_foreach(js->chats, chats_send_presence_foreach, presence);
 	xmlnode_free(presence);
 
@@ -165,6 +174,40 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 	g_free(jap);
 }
 
+static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointer blah)
+{
+	GaimBuddy *b = NULL;
+	xmlnode *vcard, *photo;
+	char *text, *data;
+	int size;
+	const char *from = xmlnode_get_attrib(packet, "from");
+
+	if(!from)
+		return;
+
+	if((vcard = xmlnode_get_child(packet, "vCard")) ||
+			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
+		if((photo = xmlnode_get_child(vcard, "PHOTO"))) {
+			if((text = xmlnode_get_data(photo))) {
+				gaim_base64_decode(text, &data, &size);
+
+				gaim_buddy_icons_set_for_user(js->gc->account, from, data, size);
+				if((b = gaim_find_buddy(js->gc->account, from))) {
+					unsigned char hashval[20];
+					char hash[41], *p;
+					int i;
+
+					shaBlock((unsigned char *)data, size, hashval);
+					p = hash;
+					for(i=0; i<20; i++, p+=2)
+						snprintf(p, 3, "%02x", hashval[i]);
+					gaim_blist_node_set_string((GaimBlistNode*)b, "avatar_hash", hash);
+				}
+			}
+		}
+	}
+}
+
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -180,11 +223,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberBuddyResource *jbr = NULL, *found_jbr = NULL;
 	GaimConvChatBuddyFlags flags = GAIM_CBFLAGS_NONE;
 	gboolean delayed = FALSE;
-	GaimBuddy *b;
+	GaimBuddy *b = NULL;
 	char *buddy_name;
 	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
 	xmlnode *y;
 	gboolean muc = FALSE;
+	char *avatar_hash = NULL;
 
 
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
@@ -209,7 +253,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
 
-		gaim_request_action(js->gc, NULL, msg, NULL, GAIM_DEFAULT_ACTION_NONE, 
+		gaim_request_action(js->gc, NULL, msg, NULL, GAIM_DEFAULT_ACTION_NONE,
 				jap, 2,
 				_("Authorize"), G_CALLBACK(authorize_add_cb),
 				_("Deny"), G_CALLBACK(deny_add_cb));
@@ -282,6 +326,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 							flags |= GAIM_CBFLAGS_VOICE;
 					}
 				}
+			} else if(xmlns && !strcmp(xmlns, "vcard-temp:x:update")) {
+				xmlnode *photo = xmlnode_get_child(y, "photo");
+				if(photo) {
+					if(avatar_hash)
+						g_free(avatar_hash);
+					avatar_hash = xmlnode_get_data(photo);
+				}
 			}
 		}
 	}
@@ -308,6 +359,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_id_free(jid);
 			g_free(status);
 			g_free(room_jid);
+			if(avatar_hash)
+				g_free(avatar_hash);
 			return;
 		}
 
@@ -323,6 +376,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_id_free(jid);
 				g_free(status);
 				g_free(room_jid);
+				if(avatar_hash)
+					g_free(avatar_hash);
 				return;
 			}
 
@@ -404,6 +459,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					"got unexpected presence from %s, ignoring\n", from);
 			jabber_id_free(jid);
 			g_free(status);
+			if(avatar_hash)
+				g_free(avatar_hash);
 			return;
 		}
 
@@ -411,9 +468,27 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jid->node ? "@" : "", jid->domain);
 		if((b = gaim_find_buddy(js->gc->account, buddy_name)) == NULL) {
 			jabber_id_free(jid);
+			if(avatar_hash)
+				g_free(avatar_hash);
 			g_free(buddy_name);
 			g_free(status);
 			return;
+		}
+
+		if(avatar_hash) {
+			const char *avatar_hash2 = gaim_blist_node_get_string((GaimBlistNode*)b, "avatar_hash");
+			if(!avatar_hash2 || strcmp(avatar_hash, avatar_hash2)) {
+				JabberIq *iq;
+				xmlnode *vcard;
+
+				iq = jabber_iq_new(js, JABBER_IQ_GET);
+				xmlnode_set_attrib(iq->node, "to", buddy_name);
+				vcard = xmlnode_new_child(iq->node, "vCard");
+				xmlnode_set_attrib(vcard, "xmlns", "vcard-temp");
+
+				jabber_iq_set_callback(iq, jabber_vcard_parse_avatar, NULL);
+				jabber_iq_send(iq);
+			}
 		}
 
 		if(state == JABBER_BUDDY_STATE_ERROR ||
@@ -441,6 +516,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 	g_free(status);
 	jabber_id_free(jid);
+	if(avatar_hash)
+		g_free(avatar_hash);
 }
 
 void jabber_presence_subscription_set(JabberStream *js, const char *who, const char *type)

@@ -95,6 +95,8 @@ typedef struct _JabberStream
 	GaimSslConnection *gsc;
 
 	gboolean registration;
+
+	char *avatar_hash;
 } JabberStream;
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet);

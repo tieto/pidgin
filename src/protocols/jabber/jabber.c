@@ -771,6 +771,8 @@ static void jabber_close(GaimConnection *gc)
 		g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
+	if(js->avatar_hash)
+		g_free(js->avatar_hash);
 	g_free(js);
 }
 
@@ -1511,7 +1513,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	NO_BUDDY_ICONS,					/* icon_spec */
+	{"jpeg,gif,png", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
 	jabber_list_emblems,			/* list_emblems */
 	jabber_status_text,				/* status_text */
@@ -1556,7 +1558,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,							/* buddy_free */
 	jabber_convo_closed,			/* convo_closed */
 	jabber_normalize,				/* normalize */
-	NULL,							/* set_buddy_icon */
+	jabber_set_buddy_icon,			/* set_buddy_icon */
 	NULL,							/* remove_group */
 	jabber_chat_buddy_real_name,	/* get_cb_real_name */
 	jabber_chat_set_topic,			/* set_chat_topic */

@@ -81,6 +81,7 @@ GList *jabber_blist_node_menu(GaimBlistNode *node);
 
 void jabber_set_info(GaimConnection *gc, const char *info);
 void jabber_setup_set_info(GaimPluginAction *action);
+void jabber_set_buddy_icon(GaimConnection *gc, const char *iconfile);
 
 const char *jabber_buddy_state_get_name(JabberBuddyState state);
 const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
