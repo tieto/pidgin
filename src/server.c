@@ -378,6 +378,7 @@ void serv_set_permit_deny()
 #else
 	/* oscar requires us to do everyone at once (?) */
 	/* I think this code is OK now. */
+	/* FIXME : I changed my mind
 	if (!(permdeny == 1 || permdeny == 4)) {
 		list = permit; at = 0;
 		while (list) {
@@ -396,6 +397,7 @@ void serv_set_permit_deny()
 		aim_bos_changevisibility(gaim_sess, gaim_conn,
 				AIM_VISIBILITYCHANGE_DENYADD, buf);
 	}
+	*/
 #endif
 }
 

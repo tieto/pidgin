@@ -1,4 +1,13 @@
 
+Fri May 26 22:56:00 UTC 2000 EWarmenhoven
+	- Adam explained to me everything I was doing wrong, ridiculed me a bit,
+	  and eventually told me how to fix the 100% bug. Gaim/Faim is now
+	  completely usable (chat is still a little funny). The only thing left
+	  to do is add better error handling.
+	- Changed aim_txqueue.c in libfaim to flush the queue after something
+	  was enqueue'd, per Adam's suggestion. This is the only real change I
+	  have made to libfaim in order to get it to work with gaim.
+
 Thu May 25 07:10:34 UTC 2000 EWarmenhoven
 	- Changed around aim.c a bit so that the registering of sounds and
 	  plugins and such gets taken care of after we actually finish signing

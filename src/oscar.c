@@ -58,13 +58,6 @@ static int gaim_chat_leave       (struct aim_session_t *, struct command_rx_stru
 static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
 
-/* FIXME ! This uses 100% of the CPU, guaranteed. It's not using aim_select
- * anymore, which is a good thing, but gdk still thinks there's always data
- * to be read, even though aim_get_command and aim_rxdispatch have already
- * taken care of the data that there was. So, it constantly calls this, and
- * it acts basically like an infinite loop that actually does some work, and
- * eats all of your CPU.
- */
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
 	struct aim_session_t *sess = (struct aim_session_t *)data;
@@ -75,9 +68,6 @@ static void oscar_callback(gpointer data, gint source,
 		aim_logoff(sess);
 		gdk_input_remove(inpa);
 		return;
-	}
-	if (condition & GDK_INPUT_WRITE) {
-		aim_tx_flushqueue(sess);
 	}
 	if (condition & GDK_INPUT_READ) {
 		if (aim_get_command(sess, gaim_conn) < 0) {
@@ -142,8 +132,7 @@ int oscar_login(char *username, char *password) {
 	aim_send_login(sess, conn, username, password, &info);
 
 	gaim_conn = conn;
-	inpa = gdk_input_add(conn->fd,
-			GDK_INPUT_READ | GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
+	inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, sess);
 
 	u = find_user(username);
@@ -165,9 +154,9 @@ int oscar_login(char *username, char *password) {
 
 int oscar_send_im(char *name, char *msg, int away) {
 	if (away)
-		aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, msg);
+		return aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, msg);
 	else
-		aim_send_im(gaim_sess, gaim_conn, name, 0, msg);
+		return aim_send_im(gaim_sess, gaim_conn, name, 0, msg);
 }
 
 void oscar_close() {
@@ -180,6 +169,8 @@ void oscar_close() {
 	inpa = -1;
 	aim_logoff(gaim_sess);
 }
+
+extern void auth_failed();
 
 int gaim_parse_auth_resp(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
@@ -202,6 +193,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		hide_login_progress("Authentication Failed");
 		gdk_input_remove(inpa);
 		aim_conn_close(command->conn);
+		auth_failed();
 		return 0;
 	}
 
@@ -248,8 +240,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 
 	aim_auth_sendcookie(sess, bosconn, sess->logininfo.cookie);
-	inpa = gdk_input_add(bosconn->fd,
-			GDK_INPUT_READ | GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
+	inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, sess);
 	set_login_progress(4, "Connection established, cookie sent");
 	return 1;
@@ -295,6 +286,10 @@ int gaim_server_ready(struct aim_session_t *sess,
 	return 1;
 }
 
+extern void gaim_setup();
+extern int  bud_list_cache_exists();
+extern void do_import(GtkWidget *w, void *dummy);
+
 int gaim_handle_redirect(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	va_list ap;
@@ -317,6 +312,8 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 					NULL, AIM_CAPS_CHAT);
 
 		aim_bos_clientready(sess, command->conn);
+
+		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 
 		gaim_sess = sess;
 		gaim_conn = command->conn;
@@ -452,7 +449,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		struct aim_userinfo_s *userinfo;
 		char *msg = NULL;
 		u_int icbmflags = 0;
-		char *tmpstr = NULL;
 		u_short flag1, flag2;
 
 		userinfo  = va_arg(ap, struct aim_userinfo_s *);
@@ -673,7 +669,7 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 		b = NULL;
 	}
 	if (!b)
-		return;
+		return 0;
 
 	serv_got_chat_in(b->id, info->sn, 0, msg);
 

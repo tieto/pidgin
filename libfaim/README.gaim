@@ -16,10 +16,9 @@ libfaim source on sourceforge) with the Gaim GTK front-end. I'll put any changes
 I make into a file, but so far, I haven't made any changes other than moving the
 .h files down a directory.
 
-And finally, a word of warning. Gaim/Faim is VERY buggy. It'll screw with your
-.gaimrc file. It won't always sign on right. It uses all your CPU. Please, don't
-use this for anything other than laughs right now. Hopefully we'll get it
-working better soon (please help!).
+And finally, a word of warning. Gaim/Faim is VERY buggy. Please, don't use this
+for anything other than laughs right now. Hopefully we'll get it working better
+soon (please help!).
 
 CURRENTLY SUPPORTED FEATURES
 ============================
@@ -39,7 +38,6 @@ Chat:
 Getting users' away messages (PLEASE do not use oscar/libfaim just because of
 	this, gaim with libfaim is still really buggy, none of you will listen
 	to me anyway)
-Telling the server who's on your permit/deny lists
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
@@ -50,12 +48,17 @@ Chat:
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.
+Telling the server who's on your permit/deny lists
 
 KNOWN ISSUES
 ============
 - libfaim apparently has a problem with receiving messages too fast (sort of).
 You can receive more messages in less time with TOC than with libfaim. It's not
 completely libfaim's fault though.
+
+- The permit/deny stuff is really funny. If I don't put it there, everything
+works great, if I do, it occasionally works, but not well. I've commented it out
+(again - I swear, this is the most on-again-off-again feature).
 
 - There are a lot of problems with panel support (funny that I'm supporting the
 panel code, and the oscar code I wrote doesn't work well with it). I think this
@@ -64,8 +67,9 @@ is related to oscar_callback being funny.
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
-- Oh, yeah, by the way, it'll eat up all your CPU. (Someone please fix this,
-there's a nice FIXME near the top of oscar.c that says what the problem is.)
+- Chat is really funny. I have no idea what's going on with it. I'm not sure I
+want to know. I'm not worried about it, I never use chat. It's not exactly high-
+priority.
 
 - There are also FIXME's scattered about oscar.c. Grep around for those, figure
 out what needs to be fixed, do that sort of thing. :) (Fixing the things listed

@@ -3,6 +3,11 @@
  *
  * Herein lies all the mangement routines for the transmit (Tx) queue.
  *
+ * Changes by EWarmenhoven Fri May 26 22:52:46 UTC 2000:
+ * - added aim_tx_flushqueue() to the end of aim_tx_enqueue() so that I don't
+ * have to worry about it any more. mid tells me that doing so will solve the
+ * 100% bug. Thanks mid!
+ *
  */
 
 #include <aim.h>
@@ -86,6 +91,9 @@ int aim_tx_enqueue(struct aim_session_t *sess,
   aim_tx_printqueue(sess);
   faimdprintf(2, "back from aim_tx_printqueue()\n");
 #endif
+
+  /* mid tells me this should solve a lot of my problems */
+  aim_tx_flushqueue(sess);
 
   return 0;
 }

@@ -164,6 +164,10 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 #ifdef USE_OSCAR
 }
 
+void auth_failed() {
+	running = FALSE;
+}
+
 /* we need to do this for Oscar because serv_login only starts the login
  * process, it doesn't end there. gaim_setup will be called later from
  * oscar.c, after the buddy list is made and serv_finish_login is called */
