@@ -67,7 +67,8 @@ and undocumented.  Some people have used network tools and such to figure
 it mostly out -- Look for 'faim'.  We use TOC, which is completely open and
 documented. 
 		There is some support for libfaim now, which allows gaim to
-use Oscar, but DON'T USE IT! It's seriously buggy.
+use Oscar, and it's even becoming usable. Maybe one day it'll be the default
+protocol, but it doesn't look like that's going to happen soon.
 
 	2. Where can I find info on TOC?
 		In the document called PROTOCOL. It's the version that was
@@ -288,7 +289,7 @@ cygwin and I think other windows compilers set).
 		I like the GPL.  
 
 	8. I use *BSD and I hate the penguin!  I want daemon images!
-		Quit your complaining! They're there already! I stukk don't
+		Quit your complaining! They're there already! I still don't
 understand why ya'll hate the penguin though, maybe it's just jealousy cause
 our OS gets all the media attention? I kinda like the daemon :)
 
