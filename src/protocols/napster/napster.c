@@ -240,6 +240,8 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (tmp <= 0) {
 			g_free(buf);
 			buf = g_strdup_printf(_("Unable to read message from server.  Command is %hd, length is %hd."), len, command);
+			/* Change this to use the line below when we're not in string freeze */
+			/* buf = g_strdup_printf(_("Unable to read message from server: %s.  Command is %hd, length is %hd."), strerror(errno), len, command); */
 			gaim_connection_error(gc, buf);
 			g_free(buf);
 			return;
@@ -280,7 +282,9 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 205: /* MSG_CLIENT_PRIVMSG */
 		res = g_strsplit(buf, " ", 2);
-		serv_got_im(gc, res[0], res[1], 0, time(NULL));
+		buf2 = gaim_escape_html(res[1]);
+		serv_got_im(gc, res[0], buf2, 0, time(NULL));
+		g_free(buf2);
 		g_strfreev(res);
 		break;
 
@@ -339,7 +343,9 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 404: /* MSG_SERVER_NOSUCH */
 		/* abused by opennap servers to broadcast stuff */
-		serv_got_im(gc, "server", buf, 0, time(NULL));
+		buf2 = gaim_escape_html(buf);
+		serv_got_im(gc, "server", buf2, 0, time(NULL));
+		g_free(buf2);
 		break;
 
 	case 405: /* MSG_SERVER_JOIN_ACK */
@@ -392,16 +398,22 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 621:
 	case 622: /* MSG_CLIENT_MOTD */
 		/* also replaces MSG_SERVER_MOTD, so we should display it */
-		serv_got_im(gc, "motd", buf, 0, time(NULL));
+		buf2 = gaim_escape_html(buf);
+		serv_got_im(gc, "motd", buf2, 0, time(NULL));
+		g_free(buf2);
 		break;
 
 	case 627: /* MSG_CLIENT_WALLOP */
 		/* abused by opennap server maintainers to broadcast stuff */
-		serv_got_im(gc, "wallop", buf, 0, time(NULL));
+		buf2 = gaim_escape_html(buf);
+		serv_got_im(gc, "wallop", buf2, 0, time(NULL));
+		g_free(buf2);
 		break;
 
 	case 628: /* MSG_CLIENT_ANNOUNCE */
-		serv_got_im(gc, "announce", buf, 0, time(NULL));
+		buf2 = gaim_escape_html(buf);
+		serv_got_im(gc, "announce", buf2, 0, time(NULL));
+		g_free(buf);
 		break;
 
 	case 748: /* MSG_SERVER_GHOST */
