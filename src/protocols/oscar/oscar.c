@@ -49,6 +49,7 @@
 #include "pixmaps/away_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
+#include "pixmaps/wireless_icon.xpm"
 
 #include "pixmaps/gnomeicu-online.xpm"
 #include "pixmaps/gnomeicu-offline.xpm"
@@ -71,6 +72,7 @@ typedef uint32_t        socklen_t;
 #define UC_UNCONFIRMED	0x08
 #define UC_NORMAL	0x10
 #define UC_AB		0x20
+#define UC_WIRELESS	0x40
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -1159,9 +1161,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			type |= UC_NORMAL;
 		if (info->flags & AIM_FLAG_AWAY)
 			type |= UC_UNAVAILABLE;
+		if (info->flags & AIM_FLAG_WIRELESS)
+			type |= UC_WIRELESS;
 	}
 	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
-		type = (info->icqinfo.status << 6);
+		type = (info->icqinfo.status << 7);
 		if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT) &&
 		      (info->icqinfo.status != AIM_ICQ_STATE_NORMAL)) {
 			type |= UC_UNAVAILABLE;
@@ -1608,12 +1612,13 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static char *images(int flags) {
 	static char buf[1024];
-	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s",
+	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s%s",
 			(flags & AIM_FLAG_ACTIVEBUDDY) ? "<IMG SRC=\"ab_icon.gif\">" : "",
 			(flags & AIM_FLAG_UNCONFIRMED) ? "<IMG SRC=\"dt_icon.gif\">" : "",
 			(flags & AIM_FLAG_AOL) ? "<IMG SRC=\"aol_icon.gif\">" : "",
 			(flags & AIM_FLAG_ADMINISTRATOR) ? "<IMG SRC=\"admin_icon.gif\">" : "",
-			(flags & AIM_FLAG_FREE) ? "<IMG SRC=\"free_icon.gif\">" : "");
+			(flags & AIM_FLAG_FREE) ? "<IMG SRC=\"free_icon.gif\">" : "",
+			(flags & AIM_FLAG_WIRELESS) ? "<IMG SRC=\"wireless_icon.gif\">" : "");
 	return buf;
 }
 
@@ -1715,7 +1720,8 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
 			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
 			"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
-			"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"));
+			"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"
+			"<IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"));
 
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		onlinesince = g_strdup_printf("Online Since : <B>%s</B><BR>\n",
@@ -3056,8 +3062,8 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 static char **oscar_list_icon(int uc) {
 	if (uc == 0)
 		return (char **)icon_online_xpm;
-	if (uc & 0x7fc0) {
-		uc >>= 6;
+	if (uc & 0xff80) {
+		uc >>= 7;
 		if (uc & AIM_ICQ_STATE_AWAY)
 			return icon_away_xpm;
 		if (uc & AIM_ICQ_STATE_DND)
@@ -3072,6 +3078,8 @@ static char **oscar_list_icon(int uc) {
 			return icon_offline_xpm;
 		return icon_online_xpm;
 	}
+	if (uc & UC_WIRELESS)
+		return (char **)wireless_icon_xpm;
 	if (uc & UC_UNAVAILABLE)
 		return (char **)away_icon_xpm;
 	if (uc & UC_AB)

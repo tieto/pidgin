@@ -111,6 +111,7 @@ EXTRA_DIST =	ab.xpm				\
 		underline.xpm			\
 		warn.xpm			\
 		wink.xpm			\
+		wireless_icon.xpm		\
 		wood.xpm			\
 		yell.xpm			
 

@@ -79,6 +79,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/ab.xpm"
+#include "pixmaps/wireless_icon.xpm"
 
 #define PATHSIZE 1024
 
@@ -1847,6 +1848,8 @@ gchar **info_img_handler(gchar *url)
 		return admin_icon_xpm;
 	if (!g_strcasecmp(url, "ab_icon.gif"))
 		return ab_xpm;
+	if (!g_strcasecmp(url, "wireless_icon.gif"))
+		return wireless_icon_xpm;
 	return NULL;
 }
 

@@ -425,7 +425,7 @@ faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu32_t cap);
 #define AIM_FLAG_FREE 		0x0010
 #define AIM_FLAG_AWAY		0x0020
 #define AIM_FLAG_ICQ		0x0040
-#define AIM_FLAG_UNKNOWN80	0x0080
+#define AIM_FLAG_WIRELESS	0x0080
 #define AIM_FLAG_UNKNOWN100	0x0100
 #define AIM_FLAG_UNKNOWN200	0x0200
 #define AIM_FLAG_ACTIVEBUDDY    0x0400

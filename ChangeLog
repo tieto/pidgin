@@ -10,7 +10,9 @@ version 0.55:
 	* Can reorder your accounts in the account editor (Thanks
 	  Luke Schierer)
 	* Updated Dutch translation
-	
+	* Shows "mobile" icon for Oscar buddies using mobile
+	  devices (Thanks Mark Doliner)
+
 version 0.54 (03/14/2002):
 	* Compiles without GdkPixbuf again
 	* GtkIMHtml will refresh when you set a new GTK+ theme
@@ -29,7 +31,7 @@ version 0.54 (03/14/2002):
 	* Protocol specific smiley faces
 	* Italian translation added
 	* IM Image sending
-	
+
 version 0.53 (02/28/2002):
 	* Updated Polish Translation (thanks Przemyslaw Sulek)
 	* Slovak translation added (Thanks Daniel Rezny)
