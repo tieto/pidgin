@@ -225,7 +225,7 @@ void remove_applet_away()
 		applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
 
 		awy = g_slist_next(awy);
-		free(awayname);
+		g_free(awayname);
 	}
 	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away/");
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
