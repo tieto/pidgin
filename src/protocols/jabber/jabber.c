@@ -3662,13 +3662,6 @@ struct tag_attr {
 
 
 /*
- * V-Card user instructions
- */
-static char *multi_entry_instructions =
-	N_("All items below are optional. Enter only the information with which you feel comfortable");
-static char *entries_title = N_("User Identity");
-
-/*
  * Used by routines to parse an XML-encoded string into an xmlnode tree
  */
 typedef struct {
@@ -3959,14 +3952,15 @@ static void jabber_set_info(GaimConnection *gc, const char *info)
  * g_free()'ing the returned string space is the responsibility of
  * the caller.
  */
-static gchar *jabber_format_info(MultiEntryDlg *b)
+static void
+jabber_format_info(GaimConnection *gc, GaimRequestFields *fields)
 {
+	GaimAccount *account;
 	xmlnode vc_node;
-	GSList *list;
-	MultiEntryData *med;
-	MultiTextData *mtd;
+	GaimRequestField *field;
+	const char *text;
 	char *p;
-
+	const struct vcard_template *vc_tp;
 	struct tag_attr *tag_attr;
 
 	vc_node = xmlnode_new_tag("vCard");
@@ -3974,55 +3968,62 @@ static gchar *jabber_format_info(MultiEntryDlg *b)
 	for(tag_attr = vcard_tag_attr_list; tag_attr->attr != NULL; ++tag_attr)
 		xmlnode_put_attrib(vc_node, tag_attr->attr, tag_attr->value);
 
-	for(list = b->multi_entry_items; list != NULL; list = list->next) {
-		med = (MultiEntryData *) list->data;
-		if(med->label != NULL && med->text != NULL && (med->text)[0] != '\0') {
-			if((p = tag_for_label(med->label)) != NULL) {
-				xmlnode xp;
-				if((xp = insert_tag_to_parent_tag(vc_node, NULL, p)) != NULL) {
-					xmlnode_insert_cdata(xp, med->text, -1);
-				}
+	for (vc_tp = vcard_template_data; vc_tp->label != NULL; vc_tp++) {
+		if (*vc_tp->label == '\0')
+			continue;
+
+		field = gaim_request_fields_get_field(fields, vc_tp->tag);
+		text  = gaim_request_field_string_get_value(field);
+
+		gaim_debug(GAIM_DEBUG_INFO, "jabber",
+				   "Setting %s to '%s'\n", vc_tp->tag, text);
+
+		if (text != NULL && *text != '\0') {
+			xmlnode xp;
+
+			if ((xp = insert_tag_to_parent_tag(vc_node,
+											   NULL, vc_tp->tag)) != NULL) {
+
+				xmlnode_insert_cdata(xp, text, -1);
 			}
 		}
 	}
-
-	for(list = b->multi_text_items; list != NULL; list = list->next) {
-		mtd = (MultiTextData *) list->data;
-		if(mtd->label != NULL && mtd->text != NULL && (mtd->text)[0] != '\0') {
-			if((p = tag_for_label(mtd->label)) != NULL) {
-				xmlnode xp;
-				if((xp = insert_tag_to_parent_tag(vc_node, NULL, p)) != NULL) {
-					xmlnode_insert_cdata(xp, mtd->text, -1);
-				}
-			}
-		}
-	}
-
 
 	p = g_strdup(xmlnode2str(vc_node));
 	xmlnode_free(vc_node);
 
-	return(p);
+	account = gaim_connection_get_account(gc);
+
+	if (account != NULL) {
+		gaim_account_set_user_info(account, p);
+
+		if (gc != NULL)
+			serv_set_info(gc, p);
+	}
+
+	g_free(p);
 }
 
 /*
  * This gets executed by the proto action
  *
- * Creates a new MultiEntryDlg struct, gets the XML-formatted user_info
+ * Creates a new GaimRequestFields struct, gets the XML-formatted user_info
  * string (if any) into GSLists for the (multi-entry) edit dialog and
  * calls the set_vcard dialog.
  */
 static void jabber_setup_set_info(GaimConnection *gc)
 {
-	MultiEntryData *data;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
 	const struct vcard_template *vc_tp;
 	char *user_info;
-	MultiEntryDlg *b = multi_entry_dialog_new();
 	char *cdata;
 	xmlnode x_vc_data = NULL;
 
-	b->account = gc->account;
-
+	fields = gaim_request_fields_new();
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
 
 	/*
 	 * Get existing, XML-formatted, user info
@@ -4046,20 +4047,42 @@ static void jabber_setup_set_info(GaimConnection *gc)
 			g_free(tag);
 		}
 		if(strcmp(vc_tp->tag, "DESC") == 0) {
+			field = gaim_request_field_string_new(vc_tp->tag,
+												  _(vc_tp->label), cdata,
+												  TRUE);
+#if 0
 			multi_text_list_update(&(b->multi_text_items),
 				vc_tp->label, cdata, TRUE);
+#endif
 		} else {
+			field = gaim_request_field_string_new(vc_tp->tag,
+												  _(vc_tp->label), cdata,
+												  FALSE);
+#if 0
 			data = multi_entry_list_update(&(b->multi_entry_items),
 				vc_tp->label, cdata, TRUE);
 			data->visible = vc_tp->visible;
 			data->editable = vc_tp->editable;
+#endif
 		}
-	}
 
+		gaim_request_field_group_add_field(group, field);
+	}
 
 	if(x_vc_data != NULL) {
 		xmlnode_free(x_vc_data);
 	} else {
+		/*
+		 * I'm commenting this out for now. faceprint can look at it
+		 * later. The comment below says this is going away "real soon now,"
+		 * but it's probably been here a really long time. Getting this
+		 * to work with the multi-field stuff won't be pretty, since we're
+		 * manually going to have to search through all fields for the
+		 * label and update.
+		 *
+		 *     -- ChipX86
+		 */
+#if 0
 		/*
 		 * Early Beta versions had a different user_info storage format--let's
 		 * see if that works.
@@ -4089,18 +4112,19 @@ static void jabber_setup_set_info(GaimConnection *gc)
 			}
 			g_strfreev(str_list);
 		}
+#endif
 	}
 
     g_free(user_info);
 
-	b->title = _("Gaim - Edit Jabber vCard");
-	b->role = "set_info";
-	b->instructions->text = g_strdup(_(multi_entry_instructions));
-	b->entries_title = g_strdup(_(entries_title));
-
-	b->custom = (void *) jabber_format_info;
-
-	show_set_vcard(b);
+	gaim_request_fields(gc, _("Edit Jabber vCard"),
+						_("Edit Jabber vCard"),
+						_("All items below are optional. Enter only the "
+						  "information with which you feel comfortable."),
+						fields,
+						_("Save"), G_CALLBACK(jabber_format_info),
+						_("Cancel"), NULL,
+						gc);
 }
 
 /*---------------------------------------*/
