@@ -82,6 +82,7 @@ find_nick(GaimConnection *gc, const char *message)
 {
 	GaimAccount *account;
 	char *msg, *who, *p;
+	const char *disp;
 	int n;
 
 	account = gaim_connection_get_account(gc);
@@ -102,26 +103,31 @@ find_nick(GaimConnection *gc, const char *message)
 
 	g_free(who);
 
-	if (!gaim_utf8_strcasecmp(gaim_account_get_username(account),
-							  gaim_connection_get_display_name(gc))) {
-		g_free(msg);
+	disp = gaim_connection_get_display_name(gc);
 
-		return FALSE;
-	}
 
-	who = g_utf8_strdown(gaim_connection_get_display_name(gc), -1);
-	n = who ? strlen(who) : 0;
-
-	if (n > 0 && (p = strstr(msg, who)) != NULL) {
-		if ((p == msg || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
-			g_free(who);
+	if(disp)  {
+		if (!gaim_utf8_strcasecmp(gaim_account_get_username(account), disp)) {
 			g_free(msg);
 
-			return TRUE;
+			return FALSE;
 		}
+
+		who = g_utf8_strdown(disp, -1);
+		n = who ? strlen(who) : 0;
+
+		if (n > 0 && (p = strstr(msg, who)) != NULL) {
+			if ((p == msg || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
+				g_free(who);
+				g_free(msg);
+
+				return TRUE;
+			}
+		}
+
+		g_free(who);
 	}
 
-	g_free(who);
 	g_free(msg);
 
 	return FALSE;
@@ -1855,11 +1861,13 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 
 	if (!(flags & WFLAG_WHISPER)) {
 		char *str;
+		const char *disp;
 
 		str = g_strdup(normalize(who));
+		disp = gaim_connection_get_display_name(gc);
 
 		if (!gaim_utf8_strcasecmp(str, normalize(gaim_account_get_username(account))) ||
-			!gaim_utf8_strcasecmp(str, normalize(gaim_connection_get_display_name(gc)))) {
+			(disp && !gaim_utf8_strcasecmp(str, normalize(disp)))) {
 
 			flags |= WFLAG_SEND;
 		}
@@ -1869,7 +1877,7 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 			if (find_nick(gc, message))
 				flags |= WFLAG_NICK;
 		}
-		
+
 		g_free(str);
 	}
 
