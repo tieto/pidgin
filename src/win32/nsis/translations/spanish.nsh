@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"El entorno de ejecución de GTK+ falta o necesita ser actualizado.$\rPor favor, instale la versión v${GTK_VERSION} del ejecutable GTK+ o alguna posterior.
+!define GTK_INSTALLER_NEEDED			"El entorno de ejecución de GTK+ falta o necesita ser actualizado.$\rPor favor, instale la versión v${GTK_VERSION} del ejecutable GTK+ o alguna posterior."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Siguiente >"
@@ -21,7 +21,7 @@
 !define GTK_THEMES_SECTION_TITLE		"Temas GTK+" 
 !define GTK_NOTHEME_SECTION_TITLE		"Sin tema"
 !define GTK_WIMP_SECTION_TITLE		"Tema Wimp"
-!define GTK_BLUECURVE_SECTION_TITLE		"Tema Bluecurve
+!define GTK_BLUECURVE_SECTION_TITLE		"Tema Bluecurve"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Tema Light House Blue"
 !define GAIM_SECTION_DESCRIPTION		"Ficheros y dlls principales de Core"
 !define GTK_SECTION_DESCRIPTION		"Una suite de herramientas GUI multiplataforma, utilizada por Gaim"
