@@ -52,13 +52,13 @@
 #include "pixmaps/protocols/oscar/free_icon.xpm"
 #include "pixmaps/protocols/oscar/wireless_icon.xpm"
 
-#include "pixmaps/gnomeicu-online.xpm"
-#include "pixmaps/gnomeicu-offline.xpm"
-#include "pixmaps/gnomeicu-away.xpm"
-#include "pixmaps/gnomeicu-dnd.xpm"
-#include "pixmaps/gnomeicu-na.xpm"
-#include "pixmaps/gnomeicu-occ.xpm"
-#include "pixmaps/gnomeicu-ffc.xpm"
+#include "pixmaps/protocols/icq/gnomeicu-online.xpm"
+#include "pixmaps/protocols/icq/gnomeicu-offline.xpm"
+#include "pixmaps/protocols/icq/gnomeicu-away.xpm"
+#include "pixmaps/protocols/icq/gnomeicu-dnd.xpm"
+#include "pixmaps/protocols/icq/gnomeicu-na.xpm"
+#include "pixmaps/protocols/icq/gnomeicu-occ.xpm"
+#include "pixmaps/protocols/icq/gnomeicu-ffc.xpm"
 
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
