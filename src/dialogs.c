@@ -798,20 +798,19 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
         c = find_conversation(who);
 
-	if (a->gc) add_buddy(a->gc, grp, who, whoalias);
-	else if (connections) add_buddy(connections->data, grp, who, whoalias);
+	if (a->gc) {
+		add_buddy(a->gc, grp, who, whoalias);
+		serv_add_buddy(a->gc, who);
+	} else if (connections) {
+		add_buddy(connections->data, grp, who, whoalias);
+		serv_add_buddy(connections->data, who);
+	}
 
         if (c != NULL) {
 		update_convo_add_button(c);
 	}
         
         build_edit_tree();
-
-	while (n) {
-		g = (struct gaim_connection *)n->data;
-		serv_add_buddy(g, who);
-		n = n->next;
-	}
 
 	do_export( (GtkWidget *) NULL, 0 );
 

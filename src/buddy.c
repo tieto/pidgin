@@ -555,7 +555,6 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 		delb = (struct buddy *)delg->members->data;
 		remove_buddy(gc, delg, delb); /* this should take care of removing
 						 the group_show if necessary */
-                serv_remove_buddy(gc, delb->name);
 	}
 
 	gc->groups = g_slist_remove(gc->groups, delg);
