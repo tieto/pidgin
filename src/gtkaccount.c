@@ -1884,11 +1884,28 @@ populate_accounts_list(AccountsWindow *dialog)
 		add_account(dialog, (GaimAccount *)l->data);
 }
 
+#if !GTK_CHECK_VERSION(2,2,0)
+static void
+get_selected_helper(GtkTreeModel *model, GtkTreePath *path,
+					GtkTreeIter *iter, gpointer user_data)
+{
+	*((gboolean *)user_data) = TRUE;
+}
+#endif
+
 static void
 account_selected_cb(GtkTreeSelection *sel, AccountsWindow *dialog)
 {
-	gtk_widget_set_sensitive(dialog->modify_button, TRUE);
-	gtk_widget_set_sensitive(dialog->delete_button, TRUE);
+	gboolean selected = FALSE;
+
+#if GTK_CHECK_VERSION(2,2,0)
+	selected = (gtk_tree_selection_count_selected_rows(sel) > 0);
+#else
+	gtk_tree_selection_selected_foreach(sel, get_selected_helper, &selected);
+#endif
+
+	gtk_widget_set_sensitive(dialog->modify_button, selected);
+	gtk_widget_set_sensitive(dialog->delete_button, selected);
 }
 
 static GtkWidget *
