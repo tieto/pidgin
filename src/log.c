@@ -706,11 +706,15 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	FILE *file;
 	char buf[BUF_LONG];
 	struct tm tm;
-	struct old_logger_data *data = NULL;
 	char month[4];
+	struct old_logger_data *data = NULL;
 	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, sn));
 	char *path = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
 	char *newlog;
+	int logfound = 0;
+	int lastoff = 0;
+	int newlen;
+	time_t lasttime;
 
 	GaimLog *log = NULL;
 	GList *list = NULL;
@@ -738,34 +742,35 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 
 			offset = ftell(file);
 
-			if (data) {
-				data->length = offset - data->offset - length;
+			if (logfound) {
+				newlen = offset - lastoff - length;
 				if(strstr(buf, "----</H3><BR>")) {
-					data->length -=
-						strlen("<HR><BR><H3 Align=Center> ---- New Conversation @ ") +
-						strlen("----</H3><BR>");
+					newlen -=
+						sizeof("<HR><BR><H3 Align=Center> ---- New Conversation @ ") +
+						sizeof("----</H3><BR>") - 2;
 				} else {
-					data->length -=
-						strlen("---- New Conversation @ ") + strlen("----");
+					newlen -=
+						sizeof("---- New Conversation @ ") + sizeof("----") - 2;
 				}
 
 				if(strchr(buf, '\r'))
 					data->length--;
 
-				if (data->length != 0)
+				if (newlen != 0) {
+					log = gaim_log_new(GAIM_LOG_IM, sn, account, -1);
+					log->logger = &old_logger;
+					log->time = lasttime;
+					data = g_new0(struct old_logger_data, 1);
+					data->offset = lastoff;
+					data->length = newlen;
+					data->path = g_strdup(path);
+					log->logger_data = data;
 					list = g_list_append(list, log);
-				else
-					gaim_log_free(log);
+				}
 			}
 
-			log = gaim_log_new(GAIM_LOG_IM, sn, account, -1);
-			log->logger = &old_logger;
-
-			data = g_new0(struct old_logger_data, 1);
-			data->offset = offset;
-			data->path   = g_strdup(path);
-			log->logger_data = data;
-
+			logfound = 1;
+			lastoff = offset;
 
 			g_snprintf(convostart, length, "%s", temp);
 			sscanf(convostart, "%*s %s %d %d:%d:%d %d",
@@ -797,16 +802,22 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 				tm.tm_mon = 11;
 			}
 			tm.tm_year -= 1900;
-			log->time = mktime(&tm);
+			lasttime = mktime(&tm);
 		}
 	}
 
-	if (data) {
-		data->length = ftell(file) - data->offset;
-		if (data->length != 0)
+	if (logfound) {
+		if ((newlen = ftell(file) - lastoff) != 0) {
+			log = gaim_log_new(GAIM_LOG_IM, sn, account, -1);
+			log->logger = &old_logger;
+			log->time = lasttime;
+			data = g_new0(struct old_logger_data, 1);
+			data->offset = lastoff;
+			data->length = newlen;
+			data->path = g_strdup(path);
+			log->logger_data = data;
 			list = g_list_append(list, log);
-		else
-			gaim_log_free(log);
+		}
 	}
 
 	g_free(path);
