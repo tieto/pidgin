@@ -558,11 +558,11 @@ XS (XS_GAIM_get_info)
 
 		case 1:
 			{
-				GSList *c = gaim_get_connections();
-				struct gaim_connection *gc;
+				GList *c = gaim_connections_get_all();
+				GaimConnection *gc;
 
 				while (c) {
-					gc = (struct gaim_connection *)c->data;
+					gc = (GaimConnection *)c->data;
 					XST_mIV(i++, (guint)gc);
 					c = c->next;
 				}
@@ -571,11 +571,12 @@ XS (XS_GAIM_get_info)
 
 		case 2:
 			{
-				struct gaim_connection *gc =
-					(struct gaim_connection *)SvIV(ST(1));
+				GaimConnection *gc =
+					(GaimConnection *)SvIV(ST(1));
+				GaimAccount *account = gaim_connection_get_account(gc);
 
-				if (g_slist_find(gaim_get_connections(), gc))
-					XST_mIV(i++, gc->protocol);
+				if (g_list_find(gaim_connections_get_all(), gc))
+					XST_mIV(i++, gaim_account_get_protocol(account));
 				else
 					XST_mIV(i++, -1);
 			}
@@ -583,11 +584,12 @@ XS (XS_GAIM_get_info)
 
 		case 3:
 			{
-				struct gaim_connection *gc =
-					(struct gaim_connection *)SvIV(ST(1));
+				GaimConnection *gc =
+					(GaimConnection *)SvIV(ST(1));
+				GaimAccount *account = gaim_connection_get_account(gc);
 
-				if (g_slist_find(gaim_get_connections(), gc))
-					XST_mPV(i++, gc->username);
+				if (g_list_find(gaim_connections_get_all(), gc))
+					XST_mPV(i++, gaim_account_get_username(account));
 				else
 					XST_mPV(i++, "");
 			}
@@ -595,11 +597,13 @@ XS (XS_GAIM_get_info)
 
 		case 4:
 			{
-				struct gaim_connection *gc =
-					(struct gaim_connection *)SvIV(ST(1));
+				GaimConnection *gc =
+					(GaimConnection *)SvIV(ST(1));
+				GaimAccount *account = gaim_connection_get_account(gc);
 
-				if (g_slist_find(gaim_get_connections(), gc))
-					XST_mIV(i++, g_slist_index(gaim_accounts, gc->account));
+				if (g_list_find(gaim_connections_get_all(), gc))
+					XST_mIV(i++, g_list_index(gaim_accounts_get_all(),
+											  account));
 				else
 					XST_mIV(i++, -1);
 			}
@@ -607,10 +611,10 @@ XS (XS_GAIM_get_info)
 
 		case 5:
 			{
-				GSList *a = gaim_accounts;
+				GList *a = gaim_accounts_get_all();
 				while (a) {
-					struct gaim_account *account = a->data;
-					XST_mPV(i++, account->username);
+					GaimAccount *account = a->data;
+					XST_mPV(i++, gaim_account_get_username(account));
 					a = a->next;
 				}
 			}
@@ -618,10 +622,10 @@ XS (XS_GAIM_get_info)
 
 		case 6:
 			{
-				GSList *a = gaim_accounts;
+				GList *a = gaim_accounts_get_all();
 				while (a) {
-					struct gaim_account *account = a->data;
-					XST_mIV(i++, account->protocol);
+					GaimAccount *account = a->data;
+					XST_mIV(i++, gaim_account_get_protocol(account));
 					a = a->next;
 				}
 			}
@@ -629,10 +633,10 @@ XS (XS_GAIM_get_info)
 
 		case 7:
 			{
-				struct gaim_connection *gc =
-					(struct gaim_connection *)SvIV(ST(1));
+				GaimConnection *gc =
+					(GaimConnection *)SvIV(ST(1));
 
-				if (g_slist_find(gaim_get_connections(), gc))
+				if (g_list_find(gaim_connections_get_all(), gc))
 					XST_mPV(i++, gc->prpl->info->name);
 				else
 					XST_mPV(i++, "Unknown");
@@ -663,7 +667,7 @@ XS (XS_GAIM_print)
 
 XS (XS_GAIM_buddy_list)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct buddy *buddy;
 	struct group *g;
 	GaimBlistNode *gnode,*bnode;
@@ -671,7 +675,7 @@ XS (XS_GAIM_buddy_list)
 	dXSARGS;
 	items = 0;
 
-	gc = (struct gaim_connection *)SvIV(ST(0));
+	gc = (GaimConnection *)SvIV(ST(0));
 
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
@@ -690,7 +694,7 @@ XS (XS_GAIM_buddy_list)
 
 XS (XS_GAIM_online_list)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct buddy *b;
 	struct group *g;
 	GaimBlistNode *gnode,*bnode;
@@ -698,7 +702,7 @@ XS (XS_GAIM_online_list)
 	dXSARGS;
 	items = 0;
 
-	gc = (struct gaim_connection *)SvIV(ST(0));
+	gc = (GaimConnection *)SvIV(ST(0));
 
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
@@ -725,15 +729,17 @@ XS (XS_GAIM_command)
 	if (!command) XSRETURN(0);
 	if (!strncasecmp(command, "signon", 6)) {
 		int index = SvIV(ST(1));
-		if (g_slist_nth_data(gaim_accounts, index))
-		serv_login(g_slist_nth_data(gaim_accounts, index));
+		if (g_list_nth_data(gaim_accounts_get_all(), index))
+		serv_login(g_list_nth_data(gaim_accounts_get_all(), index));
 	} else if (!strncasecmp(command, "signoff", 7)) {
-		struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-		if (g_slist_find(gaim_get_connections(), gc)) signoff(gc);
-		else signoff_all(NULL, NULL);
+		GaimConnection *gc = (GaimConnection *)SvIV(ST(1));
+		if (g_list_find(gaim_connections_get_all(), gc))
+			gaim_connection_disconnect(gc);
+		else
+			gaim_connections_disconnect_all();
 	} else if (!strncasecmp(command, "info", 4)) {
-		struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-		if (g_slist_find(gaim_get_connections(), gc))
+		GaimConnection *gc = (GaimConnection *)SvIV(ST(1));
+		if (g_list_find(gaim_connections_get_all(), gc))
 			serv_set_info(gc, SvPV(ST(2), junk));
 	} else if (!strncasecmp(command, "away", 4)) {
 		char *message = SvPV(ST(1), junk);
@@ -743,20 +749,20 @@ XS (XS_GAIM_command)
 	} else if (!strncasecmp(command, "back", 4)) {
 		do_im_back();
 	} else if (!strncasecmp(command, "idle", 4)) {
-		GSList *c = gaim_get_connections();
-		struct gaim_connection *gc;
+		GList *c = gaim_connections_get_all();
+		GaimConnection *gc;
 
 		while (c) {
-			gc = (struct gaim_connection *)c->data;
+			gc = (GaimConnection *)c->data;
 			serv_set_idle(gc, SvIV(ST(1)));
 			c = c->next;
 		}
 	} else if (!strncasecmp(command, "warn", 4)) {
-		GSList *c = gaim_get_connections();
-		struct gaim_connection *gc;
+		GList *c = gaim_connections_get_all();
+		GaimConnection *gc;
 
 		while (c) {
-			gc = (struct gaim_connection *)c->data;
+			gc = (GaimConnection *)c->data;
 			serv_warn(gc, SvPV(ST(1), junk), SvIV(ST(2)));
 			c = c->next;
 		}
@@ -767,14 +773,14 @@ XS (XS_GAIM_command)
 
 XS (XS_GAIM_user_info)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	unsigned int junk;
 	struct buddy *buddy = NULL;
 	dXSARGS;
 	items = 0;
 
-	gc = (struct gaim_connection *)SvIV(ST(0));
-	if (g_slist_find(gaim_get_connections(), gc))
+	gc = (GaimConnection *)SvIV(ST(0));
+	if (g_list_find(gaim_connections_get_all(), gc))
 		buddy = gaim_find_buddy(gc->account, SvPV(ST(1), junk));
 
 	if (!buddy)
@@ -822,19 +828,19 @@ XS (XS_GAIM_write_to_conv)
 
 XS (XS_GAIM_serv_send_im)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *nick, *what;
 	int isauto;
 	int junk;
 	dXSARGS;
 	items = 0;
 
-	gc = (struct gaim_connection *)SvIV(ST(0));
+	gc = (GaimConnection *)SvIV(ST(0));
 	nick = SvPV(ST(1), junk);
 	what = SvPV(ST(2), junk);
 	isauto = SvIV(ST(3));
 
-	if (!g_slist_find(gaim_get_connections(), gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		XSRETURN(0);
 		return;
 	}
@@ -844,7 +850,7 @@ XS (XS_GAIM_serv_send_im)
 
 XS (XS_GAIM_print_to_conv)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *nick, *what;
 	int isauto;
 	struct gaim_conversation *c;
@@ -852,11 +858,11 @@ XS (XS_GAIM_print_to_conv)
 	dXSARGS;
 	items = 0;
 
-	gc = (struct gaim_connection *)SvIV(ST(0));
+	gc = (GaimConnection *)SvIV(ST(0));
 	nick = SvPV(ST(1), junk);
 	what = SvPV(ST(2), junk);
 	isauto = SvIV(ST(3));
-	if (!g_slist_find(gaim_get_connections(), gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		XSRETURN(0);
 		return;
 	}
@@ -878,7 +884,7 @@ XS (XS_GAIM_print_to_conv)
 	
 XS (XS_GAIM_print_to_chat)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	int id;
 	char *what;
 	struct gaim_conversation *b = NULL;
@@ -887,11 +893,11 @@ XS (XS_GAIM_print_to_chat)
 	dXSARGS;
 	items = 0;
 
-	gc = (struct gaim_connection *)SvIV(ST(0));
+	gc = (GaimConnection *)SvIV(ST(0));
 	id = SvIV(ST(1));
 	what = SvPV(ST(2), junk);
 
-	if (!g_slist_find(gaim_get_connections(), gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		XSRETURN(0);
 		return;
 	}
@@ -940,8 +946,8 @@ perl_event(GaimEvent event, void *unused, va_list args)
 	case event_away:
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
 		buf[0] = tmpbuf1;
-		buf[1] = ((struct gaim_connection *)arg1)->away ?
-				((struct gaim_connection *)arg1)->away : tmpbuf2;
+		buf[1] = ((GaimConnection *)arg1)->away ?
+				((GaimConnection *)arg1)->away : tmpbuf2;
 		break;
 	case event_im_recv:
 		if (!*(char**)arg2 || !*(char**)arg3) return 1;
