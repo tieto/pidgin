@@ -421,19 +421,26 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimConnection *gc = gaim_account_get_connection(account);
 	MsnPermitAdd *pa;
 	GSList *sl;
-	const char *list, *passport;
+	const char *list, *passport, *group_id = NULL;
 	char *friend;
 	char msg[MSN_BUF_LEN];
 
 	list = params[1];
-	passport = params[2];
 
-	friend = msn_url_decode(params[3]);
+	if (!strcmp(params[0], "0")) {
+		passport = params[3];
+		friend = msn_url_decode(params[4]);
+	}
+	else {
+		passport = params[2];
+		friend   = msn_url_decode(params[3]);
+		group_id = params[4];
+	}
 
 	if (!g_ascii_strcasecmp(list, "FL")) {
 		user = msn_user_new(session, passport, NULL);
 
-		msn_user_set_group_id(user, atoi(params[4]));
+		msn_user_set_group_id(user, atoi(group_id));
 
 		add_buddy(servconn, user);
 
