@@ -1710,7 +1710,7 @@ gchar **info_img_handler(gchar *url)
 	return NULL;
 }
 
-void g_show_info_text(char *info)
+void g_show_info_text(char *info, ...)
 {
         GtkWidget *ok;
         GtkWidget *label;
@@ -1718,8 +1718,12 @@ void g_show_info_text(char *info)
         GtkWidget *bbox;
         GtkWidget *sw;
 	gint options = 0;
+	char *more_info;
+	va_list ap;
 
         struct info_dlg *b = g_new0(struct info_dlg, 1);
+
+	va_start(ap, info);
 
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
         dialogwindows = g_list_prepend(dialogwindows, b->window);
@@ -1773,6 +1777,9 @@ void g_show_info_text(char *info)
 	options ^= GTK_IMHTML_NO_NEWLINE;
 	options ^= GTK_IMHTML_NO_SCROLL;
 	gtk_imhtml_append_text(GTK_IMHTML(b->text), info, options);
+	while ((more_info = va_arg(ap, char *)) != NULL)
+		gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, options);
+	va_end(ap);
 	gtk_imhtml_append_text(GTK_IMHTML(b->text), "<BR>", 0);
 
 	gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);

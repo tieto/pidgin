@@ -855,7 +855,7 @@ extern void show_log(char *);
 extern void show_log_dialog(struct conversation *);
 extern void show_find_email(struct gaim_connection *gc);
 extern void show_find_info();
-extern void g_show_info_text(char *);
+extern void g_show_info_text(char *, ...);
 extern void show_set_info(struct gaim_connection *);
 extern void show_set_dir();
 extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);

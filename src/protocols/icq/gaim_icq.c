@@ -226,7 +226,7 @@ static void icq_info_reply(icq_Link *link, unsigned long uin, const char *nick,
 		   nick,
 		   first, last,
 		   email);
-	g_show_info_text(buf);
+	g_show_info_text(buf, NULL);
 }
 
 static void icq_web_pager(icq_Link *link, unsigned char hour, unsigned char minute,

@@ -946,7 +946,7 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	if (desc)
 		at += g_snprintf(buf + at, sizeof(buf) - at, "<HR>%s<br>\n", desc);
 
-	g_show_info_text(buf);
+	g_show_info_text(buf, NULL);
 	g_free(buddy);
 }
 

@@ -1695,7 +1695,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 #if USE_PIXBUF
 		if (args->icbmflags & AIM_IMFLAGS_HASICON) {
 			struct oscar_data *od = gc->proto_data;
-			struct icon_req *ir;
+			struct icon_req *ir = NULL;
 			GSList *h = od->hasicons;
 			char *who = normalize(userinfo->sn);
 			debug_printf("%s has an icon\n", userinfo->sn);
@@ -1999,6 +1999,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	char *prof_enc = NULL, *prof = NULL;
 	unsigned short infotype;
 	char buf[BUF_LONG];
+	char legend[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	char *asc;
@@ -2021,28 +2022,27 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 			"%s"
 			"Warning Level : <B>%d %%</B><BR>\n"
 			"Online Since : <B>%s</B><BR>\n"
-			"Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"
-			"%s"
-			"<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
-			"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
-			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
-			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
-			"<IMG SRC=\"admin_icon.gif\"> : Administrator"),
+			"Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"),
 			info->sn, images(info->flags),
 			asc,
 			info->warnlevel/10,
 			asctime(localtime(&info->onlinesince)),
-			info->idletime,
-			(prof && strlen(prof)) ?
-				(infotype == AIM_GETINFO_GENERALINFO ?
-					prof :
-					away_subs(prof, gc->username))
+			info->idletime);
+	g_snprintf(legend, sizeof legend,
+			_("<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
+			"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
+			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
+			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
+			"<IMG SRC=\"admin_icon.gif\"> : Administrator"));
+	g_show_info_text(buf,
+			 (prof && strlen(prof)) ?
+				away_subs(prof, gc->username)
 				:
 				(infotype == AIM_GETINFO_GENERALINFO ?
 					_("<i>No Information Provided</i>") :
-					_("<i>User has no away message</i>")));
-
-	g_show_info_text(away_subs(buf, gc->username));
+					_("<i>User has no away message</i>")),
+			 legend,
+			 NULL);
 
 	g_free(asc);
 
@@ -2398,7 +2398,7 @@ int gaim_parse_searchreply(struct aim_session_t *sess, struct command_rx_struct 
 	at += g_snprintf(buf + at, len - at, "<B>%s has the following screen names:</B><BR>", address);
 	for (i = 0; i < num; i++)
 		at += g_snprintf(buf + at, len - at, "%s<BR>", &SNs[i * (MAXSNLEN + 1)]);
-	g_show_info_text(buf);
+	g_show_info_text(buf, NULL);
 	g_free(buf);
 
 	return 1;
@@ -2491,7 +2491,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			int flags = AIM_IMFLAGS_ACK;
 #if USE_PIXBUF
 			GSList *h = odata->hasicons;
-			struct icon_req *ir;
+			struct icon_req *ir = NULL;
 			char *who = normalize(name);
 			while (h) {
 				ir = h->data;

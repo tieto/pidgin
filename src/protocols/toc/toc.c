@@ -307,7 +307,7 @@ static void toc_got_info(gpointer data, char *url_text)
 	if (!url_text)
 		return;
 
-	g_show_info_text(url_text);
+	g_show_info_text(url_text, NULL);
 }
 
 static void toc_callback(gpointer data, gint source, GaimInputCondition condition)

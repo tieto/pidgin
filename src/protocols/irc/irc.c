@@ -109,8 +109,9 @@ static void irc_update_user(struct gaim_connection *gc, char *name, int status)
 	return;
 }
 
-static gboolean irc_request_buddy_update(struct gaim_connection *gc)
+static gboolean irc_request_buddy_update(gpointer data)
 {
+	struct gaim_connection *gc = data;
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GSList *grp = gc->groups;
 	GSList *person;
@@ -119,7 +120,7 @@ static gboolean irc_request_buddy_update(struct gaim_connection *gc)
 	struct irc_channel *u;
 
 	if (idata->templist != NULL)
-		return;
+		return TRUE;
 
 	idata->recblocks = 0;
 	idata->totalblocks = 1;
@@ -628,7 +629,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 				   "<b>Host:</b> %s@%s<br>"
 				   "<b>Name:</b> %s<br>", res[3], res[4], res[5], res[7] + 1);
 
-			g_show_info_text(buf);
+			g_show_info_text(buf, NULL);
 		}
 
 		g_strfreev(res);
