@@ -662,6 +662,11 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 		g_free(tmp);
 	}
 
+	while (b->ignored) {
+		g_free(b->ignored->data);
+		b->ignored = g_list_remove(b->ignored, b->ignored->data);
+	}
+
 	g_free(b);
 }
 
