@@ -612,6 +612,7 @@ static void show_acct_mod(struct aim_user *a)
 		mod_users = g_slist_append(mod_users, u);
 
 		if (a) {
+			int i;
 			u->options = a->options;
 			if (find_prpl(a->protocol))
 				u->protocol = a->protocol;
@@ -620,6 +621,9 @@ static void show_acct_mod(struct aim_user *a)
 			else
 				u->protocol = -1;
 			g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", a->iconfile);
+			for (i = 0; i < 7; i++)
+				g_snprintf(u->proto_opt[i], sizeof(u->proto_opt[i]), "%s",
+						a->proto_opt[i]);
 		} else {
 			u->options = OPT_USR_REM_PASS;
 			if (find_prpl(DEFAULT_PROTO))
