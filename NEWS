@@ -29,6 +29,14 @@
 	what iChat does, only our tooltip will wrap lines rather than displaying 
 	off your screen :-)
 
+	Nathan: Chocolate women are cool, but I'm a bigger fan of the real kind.
+	I re-wrote the Jabber support from scratch, so now there's at least one
+	person who knows what's going on with it.  I got lost in the old code,
+	even in the parts I wrote.  It now supports the SASL login stuff from
+	the XMPP protocol specs, and will automagically upgrade the conncetion
+	to SSL if it's supported.  If anything doesn't work like it did before,
+	it's probably better, and you should be thankful for it.
+
 0.70 (9/28/2003):
 	Sean: Yahoo! works (for now).  That's good NEWS if I've ever heard it.  
 	Huge thanks to our dear friends over at Cerulean Studios, creators of
