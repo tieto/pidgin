@@ -67,12 +67,13 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	if (ssl_plugin != NULL)
+	if (ssl_plugin != NULL &&
+		g_list_find(gaim_plugins_get_loaded(), plugin) != NULL)
 	{
 		gaim_plugin_unload(ssl_plugin);
-
-		ssl_plugin = NULL;
 	}
+
+	ssl_plugin = NULL;
 
 	return TRUE;
 }
