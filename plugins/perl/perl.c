@@ -80,6 +80,8 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "debug.h"
 #include "plugin.h"
 
+#include "perl-handlers.h"
+
 #define PERL_PLUGIN_ID "core-perl"
 
 typedef struct
@@ -364,6 +366,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 	LEAVE;
 
 	gaim_signals_disconnect_by_handle(plugin);
+	gaim_perl_timeout_clear_for_plugin(plugin);
 
 	return TRUE;
 }
