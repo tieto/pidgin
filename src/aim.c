@@ -550,7 +550,7 @@ int main(int argc, char *argv[])
 #endif
 
 	/* scan command-line options */
-	opterr = 1;
+	opterr = 0;
 	while ((opt = getopt_long(argc, argv, "ahu:f:v",
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -569,11 +569,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'h':	/* help */
 			opt_help = 1;
-			break;
-		case '?':
-		default:
-			show_usage(1, argv[0]);
-			return 0;
 			break;
 		}
 	}
