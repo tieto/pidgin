@@ -433,6 +433,8 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 
 	win = gtk_scrolled_window_new(0, 0);
 	gtk_container_add(GTK_CONTAINER(vbox), win);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(win),
+										GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (win),
 			GTK_POLICY_AUTOMATIC,
 			GTK_POLICY_AUTOMATIC);
