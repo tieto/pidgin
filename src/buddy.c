@@ -890,6 +890,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 					      1, 1,
 					      GDK_INTERP_BILINEAR,
 					      255);
+			g_object_unref(G_OBJECT(emblem));
 		}
 	}
 
@@ -1386,7 +1387,7 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 	if (get_iter_from_node(node, &iter)) {
 		gtk_tree_store_remove(gtkblist->treemodel, &iter);
 		if(GAIM_BLIST_NODE_IS_BUDDY(node) &&
-		   !blist_options & OPT_BLIST_SHOW_OFFLINE &&
+		   !(blist_options & OPT_BLIST_SHOW_OFFLINE) &&
 		   gaim_blist_get_group_online_count((struct group *)node->parent) == 0) {
 			GtkTreeIter groupiter;
 			if(get_iter_from_node(node->parent, &groupiter))
