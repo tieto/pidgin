@@ -79,8 +79,8 @@ gaim_xfer_destroy(struct gaim_xfer *xfer)
 	if (xfer->remote_ip != NULL) g_free(xfer->remote_ip);
 	if (xfer->local_ip  != NULL) g_free(xfer->local_ip);
 
-	if (xfer->dest_filename != NULL)
-		g_free(xfer->dest_filename);
+	if (xfer->local_filename != NULL)
+		g_free(xfer->local_filename);
 
 	g_free(xfer);
 }
@@ -147,13 +147,13 @@ gaim_xfer_request_accepted(struct gaim_xfer *xfer, char *filename)
 			return;
 		}
 
-		gaim_xfer_set_filename(xfer, filename);
+		gaim_xfer_set_local_filename(xfer, filename);
 		gaim_xfer_set_size(xfer, sb.st_size);
 	}
 	else {
 		/* TODO: Sanity checks and file overwrite checks. */
 
-		gaim_xfer_set_dest_filename(xfer, filename);
+		gaim_xfer_set_local_filename(xfer, filename);
 	}
 
 	g_free(filename);
@@ -207,12 +207,12 @@ gaim_xfer_get_filename(const struct gaim_xfer *xfer)
 }
 
 const char *
-gaim_xfer_get_dest_filename(const struct gaim_xfer *xfer)
+gaim_xfer_get_local_filename(const struct gaim_xfer *xfer)
 {
 	if (xfer == NULL)
 		return NULL;
 
-	return xfer->dest_filename;
+	return xfer->local_filename;
 }
 
 size_t
@@ -313,15 +313,15 @@ gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename)
 }
 
 void
-gaim_xfer_set_dest_filename(struct gaim_xfer *xfer, const char *filename)
+gaim_xfer_set_local_filename(struct gaim_xfer *xfer, const char *filename)
 {
 	if (xfer == NULL)
 		return;
 
-	if (xfer->dest_filename != NULL)
-		g_free(xfer->dest_filename);
+	if (xfer->local_filename != NULL)
+		g_free(xfer->local_filename);
 
-	xfer->dest_filename = (filename == NULL ? NULL : g_strdup(filename));
+	xfer->local_filename = (filename == NULL ? NULL : g_strdup(filename));
 }
 
 void
@@ -524,7 +524,7 @@ begin_transfer(struct gaim_xfer *xfer, GaimInputCondition cond)
 	 * We'll have already tried to open this earlier to make sure we can
 	 * read/write here. Should be safe.
 	 */
-	xfer->dest_fp = fopen(gaim_xfer_get_dest_filename(xfer),
+	xfer->dest_fp = fopen(gaim_xfer_get_local_filename(xfer),
 						  type == GAIM_XFER_RECEIVE ? "wb" : "rb");
 
 	/* Just in case, though. */

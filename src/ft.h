@@ -67,8 +67,8 @@ struct gaim_xfer
 	char *who;                    /**< The person on the other end of the
 	                                   transfer.                           */
 
-	char *filename;               /**< The name of the file.               */
-	char *dest_filename;          /**< The destination filename.           */
+	char *filename;               /**< The name sent over the network.     */
+	char *local_filename;         /**< The name on the local hard drive.   */
 	size_t size;                  /**< The size of the file.               */
 
 	FILE *dest_fp;                /**< The destination file pointer.       */
@@ -196,7 +196,7 @@ const char *gaim_xfer_get_filename(const struct gaim_xfer *xfer);
  *
  * @return The destination filename.
  */
-const char *gaim_xfer_get_dest_filename(const struct gaim_xfer *xfer);
+const char *gaim_xfer_get_local_filename(const struct gaim_xfer *xfer);
 
 /**
  * Returns the number of bytes sent so far.
@@ -289,12 +289,12 @@ void gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed);
 void gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename);
 
 /**
- * Sets the destination filename for the file transfer.
+ * Sets the local filename for the file transfer.
  *
  * @param xfer     The file transfer.
  * @param filename The filename
  */
-void gaim_xfer_set_dest_filename(struct gaim_xfer *xfer, const char *filename);
+void gaim_xfer_set_local_filename(struct gaim_xfer *xfer, const char *filename);
 
 /**
  * Sets the size of the file in a file transfer.
