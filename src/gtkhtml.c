@@ -1840,9 +1840,10 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	if (hb->type == HTML_BIT_TEXT)
 	{
 
-/*		if (!strlen(hb->text))
-			return;*/
 		if (!(hb->text))
+			return;
+		/* this is possible, don't comment it out >:P */
+		if (!strlen(hb->text))
 			return;
 
 		mypos = g_list_index(html->html_bits, hb);
