@@ -599,6 +599,14 @@ void gaim_conversation_set_unseen(GaimConversation *conv,
 GaimUnseenState gaim_conversation_get_unseen(const GaimConversation *conv);
 
 /**
+ * Sets the specified conversation's name.
+ *
+ * @param conv The conversation.
+ * @param name The conversation's name.
+ */
+void gaim_conversation_set_name(GaimConversation *conv, const char *name);
+
+/**
  * Returns the specified conversation's name.
  *
  * @param conv The conversation.

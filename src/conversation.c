@@ -1163,6 +1163,17 @@ gaim_conversation_get_unseen(const GaimConversation *conv)
 	return conv->unseen;
 }
 
+void
+gaim_conversation_set_name(GaimConversation *conv, const char *name)
+{
+	g_return_if_fail(conv != NULL);
+
+	if (conv->name != NULL)
+		g_free(conv->name);
+
+	conv->name = (name == NULL ? NULL : g_strdup(name));
+}
+
 const char *
 gaim_conversation_get_name(const GaimConversation *conv)
 {
