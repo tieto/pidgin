@@ -105,7 +105,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_box_pack_start(GTK_BOX(fbox), pixmap, FALSE, FALSE, 0);
 
 		/* Set up the author table */
-		a_table = gtk_table_new(6, 2, TRUE);
+		a_table = gtk_table_new(8, 2, TRUE);
 		gtk_table_set_row_spacings(GTK_TABLE(a_table), 5);
 		gtk_table_set_col_spacings(GTK_TABLE(a_table), 5);
 
@@ -134,20 +134,30 @@ void show_about(GtkWidget *w, void *null)
 		label = gtk_label_new("warmenhoven@yahoo.com");
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 1, 2, 3, 4);
+		
+		/* Bmiller */
+		label = gtk_label_new("Benjamin Miller");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 4, 5);
+		
+		/* Decklin */
+		label = gtk_label_new("Decklin Foster");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 5, 6);
 
 		/* Jim */
 		label = gtk_label_new("Jim Duchek");
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 4, 5);
+		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 6, 7);
 
 		/* Mark */
 		label = gtk_label_new("Mark Spencer");
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 5, 6);
+		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 7, 8);
 
 		label = gtk_label_new("markster@marko.net");
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 1, 2, 5, 6);
+		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 1, 2, 7, 8);
 
 		gtk_box_pack_start(GTK_BOX(fbox), a_table, TRUE, TRUE, 0);
 
