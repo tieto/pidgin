@@ -101,6 +101,7 @@ DLL_C_SRC =		about.c \
 			gtkeventloop.c \
 			gtkft.c \
 			gtkimhtml.c \
+			gtkimhtmltoolbar.c \
 			gtklog.c \
 			gtknotify.c \
 			gtkplugin.c \
