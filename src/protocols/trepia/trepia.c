@@ -251,8 +251,9 @@ save_profile_cb(GaimConnection *gc, GaimRequestFields *fields)
 }
 
 static void
-set_profile(GaimConnection *gc)
+set_profile(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *)action->context;
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
