@@ -1011,11 +1011,11 @@ gaim_status_get_attr_int(const GaimStatus *status, const char *id)
 {
 	const GaimValue *value;
 
-	g_return_val_if_fail(status != NULL, FALSE);
-	g_return_val_if_fail(id     != NULL, FALSE);
+	g_return_val_if_fail(status != NULL, 0);
+	g_return_val_if_fail(id     != NULL, 0);
 
 	if ((value = gaim_status_get_attr_value(status, id)) == NULL)
-		return FALSE;
+		return 0;
 
 	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_INT, 0);
 
@@ -1027,8 +1027,8 @@ gaim_status_get_attr_string(const GaimStatus *status, const char *id)
 {
 	const GaimValue *value;
 
-	g_return_val_if_fail(status != NULL, FALSE);
-	g_return_val_if_fail(id     != NULL, FALSE);
+	g_return_val_if_fail(status != NULL, NULL);
+	g_return_val_if_fail(id     != NULL, NULL);
 
 	if ((value = gaim_status_get_attr_value(status, id)) == NULL)
 		return NULL;
