@@ -447,6 +447,7 @@ jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
 	GList *groups, *flds;
 	xmlnode *query, *y;
 	JabberIq *iq;
+	char *username;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
 	query = xmlnode_get_child(iq->node, "query");
@@ -491,8 +492,18 @@ jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
 				continue;
 			}
 			xmlnode_insert_data(y, value, -1);
+			if(!strcmp(id, "username")) {
+				if(js->user->node)
+					g_free(js->user->node);
+				js->user->node = g_strdup(value);
+			}
 		}
 	}
+
+	username = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
+			js->user->resource);
+	gaim_account_set_username(js->gc->account, username);
+	g_free(username);
 
 	jabber_iq_set_callback(iq, jabber_registration_result_cb);
 
