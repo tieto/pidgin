@@ -591,8 +591,6 @@ GList *gaim_prefs_get_string_list(const char *name) {
 void gaim_prefs_rename(const char *oldname, const char *newname) {
 	struct gaim_pref *oldpref, *newpref;
 
-	gaim_debug_info("prefs", "Attempting to rename %s to %s\n", oldname, newname);
-
 	oldpref = find_pref(oldname);
 	newpref = find_pref(newname);
 
@@ -600,7 +598,9 @@ void gaim_prefs_rename(const char *oldname, const char *newname) {
 	if(!oldpref)
 		return;
 
-	g_return_if_fail(newpref != NULL); /* the new one needs to be created */
+	gaim_debug_info("prefs", "Renaming %s to %s\n", oldname, newname);
+
+	g_return_if_fail(newpref != NULL); /* the new one needs to be created first */
 	g_return_if_fail(oldpref->type == newpref->type);
 	g_return_if_fail(oldpref->first_child == NULL); /* can't rename parents */
 
