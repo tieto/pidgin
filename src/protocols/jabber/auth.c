@@ -79,7 +79,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	if(digest_md5) {
 		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
-	} else if(plain) {
+	} else if(plain && js->gsc != NULL) { /* only do plain if we're encrypted */
 		GString *response = g_string_new("");
 		char *enc_out;
 
