@@ -477,6 +477,7 @@ extern void update_privacy_connections();
 extern void show_privacy_options();
 extern void build_allow_list();
 extern void build_block_list();
+extern void destroy_fontsel(GtkWidget *w, gpointer d);
 
 /* Functions in multi.c */
 extern void account_editor(GtkWidget *, GtkWidget *);

@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <ctype.h>
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
 #include "gaim.h"
@@ -89,7 +90,7 @@ GtkWidget *preftree = NULL;
 GtkWidget *fontseld = NULL;
 
 #if GTK_CHECK_VERSION(1,3,0)
-GtkTreeStore *prefs_away_store = NULL;
+GtkListStore *prefs_away_store = NULL;
 #endif
 
 static int sound_row_sel = 0;
@@ -108,7 +109,6 @@ static GtkWidget *gaim_dropdown(GtkWidget *, const gchar *, int *, int, ...);
 static GtkWidget *show_color_pref(GtkWidget *, gboolean);
 static void delete_prefs(GtkWidget *, void *);
 void set_default_away(GtkWidget *, gpointer);
-static void set_font_option(GtkWidget *w, int option);
 
 struct debug_window *dw = NULL;
 static GtkWidget *prefs = NULL;
@@ -126,7 +126,8 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	 sound_entry = NULL;
 	 browser_entry = NULL;
 	 debugbutton=NULL;
-	 gtk_widget_destroy(sounddialog);
+	 if(sounddialog)
+		gtk_widget_destroy(sounddialog);
 #if GTK_CHECK_VERSION(1,3,0)
 	 g_object_unref(G_OBJECT(prefs_away_store)); 	
 #endif
@@ -1359,7 +1360,6 @@ void away_message_sel(GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	GtkTreeIter  iter;
 	GValue val = { 0, };
-	gchar *message;
 	gchar buffer[BUF_LONG];
 	char *tmp;
 	struct away_message *am;
@@ -1386,16 +1386,17 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 	GtkTreePath *path;
 	GtkTreeStore *ts = GTK_TREE_STORE(gtk_tree_view_get_model(tv));
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
+	GtkTreeModel *model = GTK_TREE_MODEL(prefs_away_store);
 	GValue val = { 0, };
 	
-	if (! gtk_tree_selection_get_selected (sel, &prefs_away_store, &iter))
+	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
-	gtk_tree_model_get_value (prefs_away_store, &iter, 1, &val);
+	gtk_tree_model_get_value (GTK_TREE_MODEL(prefs_away_store), &iter, 1, &val);
 	am = g_value_get_pointer (&val);
 	gtk_imhtml_clear(GTK_IMHTML(away_text));
 	rem_away_mess(NULL, am);
-	gtk_list_store_remove(ts, &iter);
-       	path = gtk_tree_path_new_first();
+	gtk_list_store_remove(GTK_LIST_STORE(ts), &iter);
+	path = gtk_tree_path_new_first();
 	gtk_tree_selection_select_path(sel, path);
 }
 
@@ -1440,8 +1441,8 @@ void remove_away_message(GtkWidget *widget, GtkWidget *list) {
 GtkWidget *away_message_page() {
 	GtkWidget *ret;
 	GtkWidget *frame;
-	GtkWidget *vbox, *hbox, *bbox;
-	GtkWidget *button, *image, *label;
+	GtkWidget *vbox, *hbox;
+	GtkWidget *button;
 	GtkWidget *sw;
 
 #if GTK_CHECK_VERSION(1,3,0)
@@ -1467,6 +1468,10 @@ GtkWidget *away_message_page() {
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	away_text = gtk_imhtml_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(1,3,0)
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+					GTK_SHADOW_IN);
+#endif
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
       
 #if GTK_CHECK_VERSION(1,3,0)
@@ -2172,13 +2177,14 @@ void destroy_colorsel(GtkWidget *w, gpointer d)
 
 void apply_color_dlg(GtkWidget *w, gpointer d)
 {
-	gdouble color[3];
-	if ((int)d == 1) {
 #if GTK_CHECK_VERSION(1,3,0)
+	if ((int)d == 1) {
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION
 						      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), 
 						      &fgcolor_new);
 #else
+	gdouble color[3];
+	if ((int)d == 1) {
 		gtk_color_selection_get_color(GTK_COLOR_SELECTION
 					      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), color);
 
@@ -2306,7 +2312,7 @@ void dropdown_set(GtkObject *w, int *option)
 			gtk_widget_set_sensitive(browser_entry, TRUE);
 		else
 			gtk_widget_set_sensitive(browser_entry, FALSE);
-	} else if (option == &sound_options_new) {
+	} else if (*option == sound_options_new) {
 		if (opt == OPT_SOUND_CMD)
 			gtk_widget_set_sensitive(sndcmd, TRUE);
 		else
