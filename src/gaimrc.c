@@ -872,11 +872,11 @@ void set_defaults(int saveinfo)
 
 		conv_size.width = 320;
 		conv_size.height = 175;
-		conv_size.entry_height = 25;
+		conv_size.entry_height = 50;
 
 		buddy_chat_size.width = 320;
 		buddy_chat_size.height = 160;
-		buddy_chat_size.entry_height = 25;
+		buddy_chat_size.entry_height = 50;
 	}
 }
 
