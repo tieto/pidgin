@@ -2,3 +2,4 @@
 
 IDI_ICON2		ICON "../pixmaps/gaim.ico"
 IDI_ICON3		ICON "../pixmaps/gaim-conn.ico"
+IDI_ICON4		ICON "../pixmaps/gaim-away.ico"
