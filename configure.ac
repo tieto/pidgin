@@ -43,7 +43,7 @@ dnl AC_CYGWIN
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h signal.h)
+AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h)
 
 dnl Check for SILC includes
 AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR

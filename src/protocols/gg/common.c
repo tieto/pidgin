@@ -1,4 +1,4 @@
-/* $Id: common.c 9665 2004-05-06 22:38:01Z thekingant $ */
+/* $Id: common.c 10064 2004-06-11 03:58:48Z eblanton $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -42,8 +42,8 @@
 #ifdef sun
   #include <sys/filio.h>
 #endif
-#include "libgg.h"
 #include "config.h"
+#include "libgg.h"
 #include <glib.h>
 
 #ifdef _WIN32

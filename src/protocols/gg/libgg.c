@@ -1,4 +1,4 @@
-/* $Id: libgg.c 9537 2004-04-23 17:24:19Z lschiere $ */
+/* $Id: libgg.c 10064 2004-06-11 03:58:48Z eblanton $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -49,9 +49,9 @@
 #if G_BYTE_ORDER == G_BIG_ENDIAN
 #  define WORDS_BIGENDIAN 1
 #endif
+#include "internal.h"
 #include "libgg.h"
 
-#include "internal.h"
 #include "proxy.h"
 #include "debug.h"
 
@@ -73,7 +73,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 9537 2004-04-23 17:24:19Z lschiere $";
+= "$Id: libgg.c 10064 2004-06-11 03:58:48Z eblanton $";
 
 #endif 
 

@@ -1,4 +1,4 @@
-/* $Id: libgg.h 10052 2004-06-10 02:15:16Z thekingant $ */
+/* $Id: libgg.h 10064 2004-06-11 03:58:48Z eblanton $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -29,6 +29,9 @@ extern "C" {
   #define INADDR_NONE 0xffffffff
 #endif
 
+#ifdef HAVE_STDINT_H
+#  include <stdint.h>
+#endif
 #include <sys/types.h>
 
 /*
