@@ -73,8 +73,6 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 	gc->permit = NULL;
 	gc->deny = NULL;
 
-	gc->iconfile = "/home/ewarmenhoven/peng.gif";
-
 	connections = g_slist_append(connections, gc);
 
 	user->gc = gc;
