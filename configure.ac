@@ -112,7 +112,7 @@ SILC_LIBS=""
 if test "$ac_silc_libs" != "no"; then
 	SILC_LIBS="-L$ac_silc_libs"
 fi
-SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread"
+SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread -ldl"
 AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
 AC_SUBST(SILC_LIBS)
 
