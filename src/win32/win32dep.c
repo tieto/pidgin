@@ -214,7 +214,7 @@ static BOOL CreateDirectoryR(char *dest) {
         return ret;
 }
 
-static BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) {
+BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) {
         char *tsrc, *tdest;
         SHFILEOPSTRUCT dirmove;
         BOOL ret = FALSE;
@@ -262,31 +262,6 @@ static BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) 
         g_free(tsrc);
         g_free(tdest);
         return ret;
-}
-
-static void move_settings_dir() {
-        char *old_home = g_strdup_printf("%s%s", g_get_home_dir() ? g_get_home_dir() : "C:", "\\.gaim");
-        char *new_home = g_strdup_printf("%s%s", wgaim_data_dir(), "\\.gaim");
-
-        /* Do users really need to know their settings have moved?  Is that what MessageBox does? */
-        if(folder_exists(old_home) && !folder_exists(new_home)) {
-                if(move_folder(old_home, wgaim_data_dir(), _("Moving Gaim Settings.."), FALSE)) {
-                        char *locenc, *locenc1, *str;
-                        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Success moving '.gaim' directory\n");
-                        str = g_strdup_printf("%s%s", _("Moving Gaim user settings to: "), new_home);
-                        locenc=g_locale_from_utf8(str, -1, NULL, NULL, NULL);
-                        locenc1=g_locale_from_utf8(_("Notification"), -1, NULL, NULL, NULL);
-                        MessageBox(NULL, locenc, locenc1, MB_OK | MB_TOPMOST);
-                        g_free(locenc);
-                        g_free(locenc1);
-                        g_free(str);
-                }
-                else
-                        gaim_debug(GAIM_DEBUG_ERROR, "wgaim", 
-                                   "Failed to move '.gaim' directory to %s.\n", wgaim_data_dir());
-        }
-        g_free(new_home);
-        g_free(old_home);
 }
 
 static void wgaim_debug_print(GaimDebugLevel level, const char *category, const char *format, va_list args) {
@@ -558,16 +533,6 @@ void wgaim_init(HINSTANCE hint) {
 	}
 
         /* Set Environmental Variables */
-	/* Disable PANGO UNISCRIBE (for GTK 2.2.0). This may not be necessary in the
-	   future because there will most likely be a check to see if we need this.
-	   For now we need to set this in order to avoid poor performance for some 
-	   windows machines.
-	*/
-	newenv = g_strdup("PANGO_WIN32_NO_UNISCRIBE=1");
-	if(putenv(newenv)<0)
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
-        g_free(newenv);
-
         /* Tell perl where to find Gaim's perl modules */
         perlenv = (char*)g_getenv("PERL5LIB");
         newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
@@ -580,7 +545,7 @@ void wgaim_init(HINSTANCE hint) {
         g_free(newenv);
 
         /* Set app data dir, used by gaim_home_dir */
-        newenv = (char*)g_getenv("HOME");
+        newenv = (char*)g_getenv("GAIMHOME");
         if(!newenv) {
                 if((MySHGetFolderPath = (LPFNSHGETFOLDERPATH)wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
                         MySHGetFolderPath(NULL,
@@ -589,9 +554,6 @@ void wgaim_init(HINSTANCE hint) {
                 }
                 else
                         strcpy(app_data_dir, "C:");
-                /* As of 0.69, using SHGetFolderPath to determine app settings directory.
-                   Move app settings to new location if need be. */
-                move_settings_dir();
         }
         else {
                 g_strlcpy(app_data_dir, newenv, sizeof(app_data_dir));

@@ -212,21 +212,20 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 }
 
 /* Determine and set Gaim locale as follows (in order of priority):
-   - Check LANG env var
+   - Check GAIMLANG env var
    - Check NSIS Installer Language reg value
    - Use default user locale
 */
 static void wgaim_set_locale() {
         char data[10];
         DWORD datalen = 10;
-	char* locale=NULL;
+        char* locale=NULL;
         char envstr[25];
         LCID lcid;
 
-        /* Check if user set LANG env var */
-        if((locale = (char*)getenv("LANG"))) {
+        /* Check if user set GAIMLANG env var */
+        if((locale = (char*)getenv("GAIMLANG")))
                 goto finish;
-        }
 
         if(read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\gaim", "Installer Language", (LPBYTE)&data, &datalen)) {
                 if((locale = wgaim_lcid_to_posix(atoi(data))))
