@@ -6733,6 +6733,7 @@ static void oscar_buddycb_edit_comment(GaimBlistNode *node, gpointer ignore) {
 	GaimGroup *g;
 	char *comment;
 	gchar *comment_utf8;
+	gchar *title;
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
@@ -6751,11 +6752,13 @@ static void oscar_buddycb_edit_comment(GaimBlistNode *node, gpointer ignore) {
 	data->name = g_strdup(buddy->name);
 	data->nick = NULL;
 
-	gaim_request_input(gc, NULL, _("Buddy Comment:"), NULL,
+	title = g_strdup_printf(_("Buddy Comment for %s"), data->name);
+	gaim_request_input(gc, title, _("Buddy Comment:"), NULL,
 					   comment_utf8, TRUE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
+	g_free(title);
 
 	free(comment);
 	g_free(comment_utf8);
