@@ -171,12 +171,6 @@ extern GtkWidget *bgcseld;
 void build_allow_list();
 void build_block_list();
 
-/* Globals in pounce.c */
-extern GtkWidget *bpmenu;
-
-/* Globals in prefs.c */
-extern struct debug_window *dw;
-
 /* Globals in prpl.c */
 extern GtkWidget *protomenu;
 
@@ -208,36 +202,6 @@ extern void purge_away_queue(GSList**);
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);
 extern void add_bookmark(GtkWidget *, char *);
-
-/* Functions in buddy.c */
-extern void handle_group_rename(struct group *, char *);
-extern void handle_buddy_rename(struct buddy *, char *);
-extern void destroy_buddy();
-extern void update_button_pix();
-extern void toggle_show_empty_groups();
-extern void update_all_buddies();
-extern void update_num_groups(void);
-extern void show_buddy_list();
-extern void signoff_all();
-extern void do_im_back();
-extern void set_buddy(GaimConnection *, struct buddy *);
-extern void build_edit_tree();
-extern void do_bp_menu();
-extern void ui_add_buddy(GaimConnection *, struct group *, struct buddy *);
-extern void ui_remove_buddy(struct buddy *);
-extern void ui_add_group(struct group *);
-extern void ui_remove_group(struct group *);
-extern void toggle_buddy_pixmaps();
-extern void gaim_separator(GtkWidget *);
-extern void set_blist_tab();
-extern void hide_buddy_list();
-extern void unhide_buddy_list();
-extern void docklet_add();
-extern void docklet_remove();
-extern void docklet_toggle();
-extern void update_idle_times();
-extern void build_imchat_box(gboolean);
-extern void show_xfer_dialog();
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);
@@ -272,10 +236,8 @@ extern void cancel_link(GtkWidget *, GaimConversation *);
 extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
-extern void set_color_selection(GtkWidget *selection, GdkColor color);
 extern void show_rename_group(GtkWidget *, struct group *);
 extern void show_rename_buddy(GtkWidget *, struct buddy *);
-extern void load_perl_script();
 extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
@@ -286,15 +248,6 @@ extern void build_allow_list();
 extern void build_block_list();
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
 extern void join_chat();
-
-/* Functions in multi.c */
-extern void account_editor(GtkWidget *, GtkWidget *);
-
-/* Functions in plugins.c */
-#ifdef GAIM_PLUGINS
-extern void show_plugins(GtkWidget *, gpointer);
-extern void update_show_plugins(); /* this is a hack and will be removed */
-#endif
 
 /* Functions in prpl.c */
 extern void register_dialog();
