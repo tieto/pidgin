@@ -1247,6 +1247,60 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	return TRUE;
 }
 
+static void
+move_to_next_unread_tab(GaimConversation *conv)
+{
+	GaimConversation *next_conv = NULL;
+	GaimConvWindow *win;
+	GList *l;
+	int index, i;
+
+	win   = gaim_conversation_get_window(conv);
+	index = gaim_conversation_get_index(conv);
+
+	/* First check the tabs after this position. */
+	for (l = g_list_nth(gaim_conv_window_get_conversations(win), index);
+		 l != NULL;
+		 l = l->next) {
+
+		next_conv = (GaimConversation *)l->data;
+
+		if (gaim_conversation_get_unseen(next_conv) > 0)
+			break;
+
+		next_conv = NULL;
+	}
+
+	if (next_conv == NULL) {
+
+		/* Now check before this position. */
+		for (l = gaim_conv_window_get_conversations(win), i = 0;
+			 l != NULL && i < index;
+			 l = l->next) {
+
+			next_conv = (GaimConversation *)l->data;
+
+			if (gaim_conversation_get_unseen(next_conv) > 0)
+				break;
+
+			next_conv = NULL;
+		}
+
+		if (next_conv == NULL) {
+			/* Okay, just grab the next conversation tab. */
+			if (index == gaim_conv_window_get_conversation_count(win) - 1)
+				next_conv = gaim_conv_window_get_conversation_at(win, 0);
+			else
+				next_conv = gaim_conv_window_get_conversation_at(win, index + 1);
+		}
+	}
+
+	if (next_conv != NULL && next_conv != conv) {
+		gaim_conv_window_switch_conversation(win,
+			gaim_conversation_get_index(next_conv));
+	}
+}
+
 static gboolean
 entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 {
@@ -1330,8 +1384,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			case GDK_Page_Up:
 			case ']':
-			case GDK_Tab:
 				gaim_conv_window_switch_conversation(win,  (curconv + 1) % numconvs);
+
+				return TRUE;
+				break;
+
+			case GDK_Tab:
+				move_to_next_unread_tab(conv);
 
 				return TRUE;
 				break;
