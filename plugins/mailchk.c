@@ -1,14 +1,14 @@
 #include "internal.h"
+#include "gtkinternal.h"
 
 #include "blist.h"
-#include "gtkblist.h"
+#include "conversation.h"
 #include "debug.h"
+#include "signals.h"
 #include "sound.h"
-#include "gtkplugin.h"
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include "gtkblist.h"
+#include "gtkplugin.h"
 
 #define MAILCHK_PLUGIN_ID "gtk-mailchk"
 

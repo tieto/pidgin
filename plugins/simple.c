@@ -1,5 +1,6 @@
-#include "config.h"
-#include "gaim.h"
+#include "internal.h"
+#include "debug.h"
+#include "plugin.h"
 
 static gboolean
 plugin_load(GaimPlugin *plugin)

@@ -13,6 +13,7 @@ version 0.68:
 	  appeared in the same conversation window, and other related
 	  problems. (Robot101)
 	* Corrected problems with proxy preferences.
+	* Mailchk.c and simple.c compile again (Paul A (darkrain))
 	* Catalan translation updated (Robert Millan)
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
