@@ -522,7 +522,7 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	struct dcc_chat *chat = data;
 	gchar buffer[IRC_BUF_LEN];
 	gchar buf[128];
-	int n = 0, l;
+	int n = 0;
 	struct conversation *convo;
 	debug_printf("THIS IS TOO MUCH EFFORT\n");
 	n = read (chat->fd, buffer, IRC_BUF_LEN);
