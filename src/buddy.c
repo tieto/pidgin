@@ -698,6 +698,8 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 			 show_ee_dialog(2);
 		else if (!g_strcasecmp("ewarmenhoven", normalize (b->name)))
 			 show_ee_dialog(3);
+		else if (!g_strcasecmp("markster97", normalize (b->name)))
+			 show_ee_dialog(4);
 
 	} else {
 
