@@ -229,15 +229,15 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					node = va_arg(args, GaimBlistNode *);
 				switch (node->type) {
 				case GAIM_BLIST_GROUP_NODE:
-					g_string_printf(val, "group {%s}", ((struct group *)node)->name);
+					g_string_printf(val, "group {%s}", ((GaimGroup *)node)->name);
 					break;
 				case GAIM_BLIST_BUDDY_NODE:
-					g_string_printf(val, "buddy {%s} %lu", ((struct buddy *)node)->name,
-							(unsigned long)((struct buddy *)node)->account);
+					g_string_printf(val, "buddy {%s} %lu", ((GaimBuddy *)node)->name,
+							(unsigned long)((GaimBuddy *)node)->account);
 					break;
 				case GAIM_BLIST_CHAT_NODE:
-					g_string_printf(val, "chat {%s} %lu", ((struct chat *)node)->alias,
-							(unsigned long)((struct chat *)node)->account);
+					g_string_printf(val, "chat {%s} %lu", ((GaimBlistChat *)node)->alias,
+							(unsigned long)((GaimBlistChat *)node)->account);
 					break;
 				case GAIM_BLIST_OTHER_NODE:
 					g_string_printf(val, "other");

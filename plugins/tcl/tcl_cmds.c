@@ -28,6 +28,7 @@
 #include "account.h"
 #include "server.h"
 #include "notify.h"
+#include "blist.h"
 #include "debug.h"
 #include "prefs.h"
 #include "core.h"
@@ -248,8 +249,8 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	struct gaim_buddy_list *blist;
 	GaimBlistNode *node, *gnode;
 	GaimAccount *account;
-	struct buddy *bnode;
-	struct chat *cnode;
+	GaimBuddy *bnode;
+	GaimBlistChat *cnode;
 	int error, all = 0, count;
 
 	if (objc < 2) {
@@ -272,9 +273,9 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		if ((node = tcl_list_to_buddy(interp, count, elems)) == NULL)
 			return TCL_ERROR;
 		if (node->type == GAIM_BLIST_CHAT_NODE)
-			Tcl_SetStringObj(result, ((struct chat *)node)->alias, -1);
+			Tcl_SetStringObj(result, ((GaimBlistChat *)node)->alias, -1);
 		else if (node->type == GAIM_BLIST_BUDDY_NODE)
-			Tcl_SetStringObj(result, gaim_get_buddy_alias((struct buddy *)node), -1);
+			Tcl_SetStringObj(result, (char *)gaim_get_buddy_alias((GaimBuddy *)node), -1);
 		return TCL_OK;
 		break;
 	case CMD_BUDDY_HANDLE:
@@ -329,12 +330,12 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			tclgroup = Tcl_NewListObj(0, NULL);
 			Tcl_ListObjAppendElement(interp, tclgroup, Tcl_NewStringObj("group", -1));
 			Tcl_ListObjAppendElement(interp, tclgroup,
-						 Tcl_NewStringObj(((struct group *)gnode)->name, -1));
+						 Tcl_NewStringObj(((GaimGroup *)gnode)->name, -1));
 			tclgrouplist = Tcl_NewListObj(0, NULL);
 			for (node = gnode->child; node != NULL; node = node->next) {
 				switch (node->type) {
 				case GAIM_BLIST_BUDDY_NODE:
-					bnode = (struct buddy *)node;
+					bnode = (GaimBuddy *)node;
 					if (!all && !gaim_account_is_connected(bnode->account))
 						continue;
 					tclbud = Tcl_NewListObj(0, NULL);
@@ -343,7 +344,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewIntObj((int)bnode->account));
 					break;
 				case GAIM_BLIST_CHAT_NODE:
-					cnode = (struct chat *)node;
+					cnode = (GaimBlistChat *)node;
 					if (!all && !gaim_account_is_connected(cnode->account))
 						continue;
 					tclbud = Tcl_NewListObj(0, NULL);
