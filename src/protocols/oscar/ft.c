@@ -390,7 +390,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 
 /**
  * Get the screen name of the peer of a direct connection.
- * 
+ *
  * @param conn The ODC connection.
  * @return The screen name of the dude, or NULL if there was an anomaly.
  */
@@ -401,13 +401,35 @@ faim_export const char *aim_odc_getsn(aim_conn_t *conn)
 	if (!conn || !conn->internal)
 		return NULL;
 
-	if ((conn->type != AIM_CONN_TYPE_RENDEZVOUS) || 
+	if ((conn->type != AIM_CONN_TYPE_RENDEZVOUS) ||
 			(conn->subtype != AIM_CONN_SUBTYPE_OFT_DIRECTIM))
 		return NULL;
 
 	intdata = (struct aim_odc_intdata *)conn->internal;
 
 	return intdata->sn;
+}
+
+/**
+ * Get the cookie of a direct connection.
+ *
+ * @param conn The ODC connection.
+ * @return The cookie, an 8 byte unterminated string, or NULL if there was an anomaly.
+ */
+faim_export const char *aim_odc_getcookie(aim_conn_t *conn)
+{
+	struct aim_odc_intdata *intdata;
+
+	if (!conn || !conn->internal)
+		return NULL;
+
+	if ((conn->type != AIM_CONN_TYPE_RENDEZVOUS) ||
+			(conn->subtype != AIM_CONN_SUBTYPE_OFT_DIRECTIM))
+		return NULL;
+
+	intdata = (struct aim_odc_intdata *)conn->internal;
+
+	return intdata->cookie;
 }
 
 /**

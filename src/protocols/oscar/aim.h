@@ -932,6 +932,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur);
 faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing);
 faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *msg, int len, int encoding, int isawaymsg);
 faim_export const char *aim_odc_getsn(aim_conn_t *conn);
+faim_export const char *aim_odc_getcookie(aim_conn_t *conn);
 faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn);
 faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd,
                                          const fu8_t *localip, fu16_t port, const fu8_t *mycookie);

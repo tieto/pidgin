@@ -288,6 +288,7 @@ static gboolean gaim_icon_timerfunc(gpointer data);
 
 /* just because */
 static void oscar_callback(gpointer data, gint source, GaimInputCondition condition);
+static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const char *cookie);
 
 /* remove these at some point? */
 /* Because I don't like forward declarations?  I think that was why... */
@@ -795,7 +796,15 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	}
 
 	if (source < 0) {
-		oscar_direct_im_disconnect(od, dim);
+		fu8_t cookie[8];
+		char *who = g_strdup(dim->name);
+		const char *tmp = aim_odc_getcookie(dim->conn);
+
+		memcpy(cookie, tmp, 8);
+		oscar_direct_im_destroy(od, dim);
+		oscar_direct_im_initiate(gc, who, cookie);
+		gaim_debug_info("oscar", "asking direct im initiator to connect to us\n");
+		g_free(who);
 		return;
 	}
 
@@ -804,13 +813,26 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, dim->name);
 
 	/* This is the best way to see if we're connected or not */
+	/* Is this really needed? */
 	if (getpeername(source, &name, &name_len) == 0) {
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 		dim->connected = TRUE;
 		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
+	} else {
+		fu8_t cookie[8];
+		char *who = g_strdup(dim->name);
+		const char *tmp = aim_odc_getcookie(dim->conn);
+
+		memcpy(cookie, tmp, 8);
+		oscar_direct_im_destroy(od, dim);
+		oscar_direct_im_initiate(gc, who, cookie);
+		gaim_debug_info("oscar", "asking direct im initiator to connect to us\n");
+		g_free(who);
+		return;
 	}
 
-	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
+
 }
 
 static void accept_direct_im_request(struct ask_direct *d) {
@@ -872,7 +894,7 @@ static void accept_direct_im_request(struct ask_direct *d) {
 	                      port);
 	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	g_free(tmp);
-	
+
 	g_free(host);
 	if (rc < 0) {
 		dim->gpc_pend = FALSE;
@@ -1237,22 +1259,25 @@ static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
 	g_free(data);
 }
 
-static void oscar_direct_im(struct ask_do_dir_im *data) {
-	GaimConnection *gc = data->gc;
+/* this function is used to initiate a direct im session with someone.
+ * we start listening on a port and send a request. they either connect
+ * or send some kind of reply. If they can't connect, they ask us to
+ * connect to them, and so we do that.
+ *
+ * this function will also get called if the other side initiate's a direct
+ * im and we try to connect and fail. in that case cookie will not be null.
+ *
+ * note that cookie is an 8 byte string that isn't NULL terminated
+ */
+static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const char *cookie) {
 	OscarData *od;
 	struct oscar_direct_im *dim;
 	int listenfd;
 	const char *ip;
 
-	if (!g_list_find(gaim_connections_get_all(), gc)) {
-		g_free(data->who);
-		g_free(data);
-		return;
-	}
-
 	od = (OscarData *)gc->proto_data;
 
-	dim = oscar_direct_im_find(od, data->who);
+	dim = oscar_direct_im_find(od, who);
 	if (dim) {
 		if (!(dim->connected)) {  /* We'll free the old, unconnected dim, and start over */
 			oscar_direct_im_disconnect(od, dim);
@@ -1260,18 +1285,16 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 					   "Gave up on old direct IM, trying again\n");
 		} else {
 			gaim_notify_error(gc, NULL, "DirectIM already open.", NULL);
-			g_free(data->who);
-			g_free(data);
 			return;
 		}
 	}
 	dim = g_new0(struct oscar_direct_im, 1);
 	dim->gc = gc;
-	g_snprintf(dim->name, sizeof dim->name, "%s", data->who);
+	g_snprintf(dim->name, sizeof dim->name, "%s", who);
 
 	listenfd = gaim_network_listen_range(5190, 5199);
 	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
-	dim->conn = aim_odc_initiate(od->sess, data->who, listenfd, gaim_network_ip_atoi(ip), gaim_network_get_port_from_fd(listenfd), NULL);
+	dim->conn = aim_odc_initiate(od->sess, who, listenfd, gaim_network_ip_atoi(ip), gaim_network_get_port_from_fd(listenfd), cookie);
 	if (dim->conn != NULL) {
 		char *tmp;
 		GaimConversation *conv;
@@ -1282,8 +1305,8 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED,
 					gaim_odc_initiate, 0);
 
-		conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, data->who);
-		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."), data->who, ip,
+		conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, who);
+		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."), who, ip,
 		                      gaim_network_get_port_from_fd(listenfd));
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
@@ -1291,7 +1314,18 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 		gaim_notify_error(gc, NULL, _("Unable to open Direct IM"), NULL);
 		oscar_direct_im_destroy(od, dim);
 	}
+}
 
+static void oscar_direct_im(struct ask_do_dir_im *data) {
+	GaimConnection *gc = data->gc;
+
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
+		g_free(data->who);
+		g_free(data);
+		return;
+	}
+
+	oscar_direct_im_initiate(gc, data->who, NULL);
 	g_free(data->who);
 	g_free(data);
 }
@@ -3184,6 +3218,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		char buf[256];
 
 		if (!args->verifiedip) {
+			/* TODO: do something about this, after figuring out what it means */
 			gaim_debug_info("oscar",
 					   "directim kill blocked (%s)\n", userinfo->sn);
 			return 1;
@@ -3191,17 +3226,20 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		gaim_debug_info("oscar",
 				   "%s received direct im request from %s (%s)\n",
-				   username, userinfo->sn, args->verifiedip);
+				   username, userinfo->sn, args->clientip);
 
 		d->gc = gc;
 		d->sn = g_strdup(userinfo->sn);
-		snprintf(d->ip, sizeof(d->ip), "%s:%d", args->verifiedip, args->port?args->port:5190);
+		/* Let's use the clientip here, because I think that's what AIM does.
+		 * Besides, if the clientip is wrong, we'll probably timeout faster,
+		 * and then ask them to connect to us. */
+		snprintf(d->ip, sizeof(d->ip), "%s:%d", args->clientip, args->port?args->port:5190);
 		memcpy(d->cookie, args->cookie, 8);
-		if (dim && !dim->connected) {
+		if (dim && !dim->connected && (!memcmp(aim_odc_getcookie(dim->conn), args->cookie, 8))) {
 			oscar_direct_im_destroy(od, dim);
 			accept_direct_im_request(d);
 		} else {
-			if (dim)
+			if (dim && !dim->connected)
 				gaim_debug_warning("oscar", "DirectIM: received direct im request while "
 				                   "already connected to that buddy!");
 		g_snprintf(buf, sizeof buf, _("%s has just asked to directly connect to %s"), userinfo->sn, username);
