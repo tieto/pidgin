@@ -3141,7 +3141,8 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	percent = va_arg(ap, double);
 	va_end(ap);
 	
-	dim = find_direct_im(od, sn);
+	if (!(dim = find_direct_im(od, sn)))
+		return 1;
 	gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
 	if ((c = find_conversation(sn)))
 		update_progress(c, percent);

@@ -64,6 +64,7 @@
 #include "pixmaps/tongue.xpm"
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
+#include "pixmaps/broken.xpm"
 
 #define MAX_FONT_SIZE 7
 
@@ -254,28 +255,26 @@ gtk_imhtml_remove_smileys (GtkIMHtml *imhtml)
 	imhtml->smiley_data = gtk_smiley_tree_new ();
 }
 
-#if USE_PIXBUF
 struct im_image {
 	gchar *filename;
 	
 	gint len;
 	gpointer data;
-	GdkPixbuf *pb;
-
+	
 	gint x,y;
 	gint width,height;
 	GtkIMHtml *imhtml;
 	GtkIMHtmlBit *bit;
-};
+#if USE_PIXBUF
+	GdkPixbuf *pb;
 #endif
+};
 
 struct _GtkIMHtmlBit {
 	gint type;
 
 	gchar *text;
-#if USE_PIXBUF
 	struct im_image *img;
-#endif
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 
@@ -823,6 +822,24 @@ gtk_imhtml_style_set (GtkWidget *widget,
 		return;
 
 	imhtml = GTK_IMHTML (widget);
+	if (imhtml->default_fg_color)
+		gdk_color_free(imhtml->default_fg_color);
+	if (imhtml->default_bg_color)
+		gdk_color_free(imhtml->default_bg_color);
+	if (imhtml->default_hl_color)
+		gdk_color_free(imhtml->default_hl_color);
+	if (imhtml->default_hlfg_color)
+		gdk_color_free(imhtml->default_hlfg_color);
+	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_NORMAL]);
+	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
+	imhtml->default_hl_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->bg [GTK_STATE_SELECTED]);
+	imhtml->default_hlfg_color=gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_SELECTED]);
+	if (imhtml->default_font)
+		gdk_font_unref (imhtml->default_font);
+	imhtml->default_font = gdk_font_ref (GTK_IMHTML_GET_STYLE_FONT (widget->style));
+	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
+	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
+				   &widget->style->base [GTK_STATE_NORMAL]);
 	gtk_imhtml_draw_exposed (imhtml);
 }
 
@@ -1591,7 +1608,6 @@ struct imgsv {
 	struct im_image *img;
 };
 
-#if USE_PIXBUF
 static void
 save_img (GtkObject *object,
 	  gpointer data)
@@ -1637,7 +1653,6 @@ save_img_dialog (GtkObject *object,
 
 
 }
-#endif
 
 
 static void
@@ -2085,22 +2100,22 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 				newvals [ENCDNG] = "*";
 			}
 			/* right. */
-			if (bold)
-				if (usebold)
-					newvals [WGHT] = "bold";
-				else
-					newvals [WGHT] = "*";
+			if (usebold && bold)
+				newvals [WGHT] = "bold";
+			else if (!usebold)
+				newvals [WGHT] = "*";
+			
 			if (italics)
 				/* We'll try "i" "o" to get italics and then just use "*" */
 				newvals [SLANT] = italicstrings[italicsind];
-			if (fontsize) {
-				if (usesize) {
-					g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (fontsize));
-					newvals [PTSZ] = fs;
-				} else 
-					newvals [PTSZ] = "*";
-				newvals [PXLSZ] = "*";
-			}
+			
+			if (usesize && fontsize) {
+				g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (fontsize));
+				newvals [PTSZ] = fs;
+			} else if (!usesize)
+				newvals [PTSZ] = "*";
+			newvals [PXLSZ] = "*";
+			
 			
 			if (name) {
 				/* we got passed a name. it might be a list of names. */
@@ -2146,14 +2161,12 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			tmp = g_strconcat(garbage, ",*", NULL);
 			ret_font = gdk_fontset_load (tmp); 
 		}
-				
 		/* If the font didn't load, we change some of the xlfds one by one
 		 * to get the closest we can.  */
 		if (!ret_font) {
 			if (!useregenc &&
 			    (!italics || italicsind == 2) && 
-			    (!bold || !usebold) && 
-			    (!fontsize || !usesize)) {
+			    !usebold && !usesize) {
 				useregenc = TRUE;
 				usebold = TRUE;
 				italicsind = 0;
@@ -2165,22 +2178,22 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			}	
 			if (useregenc)
 				useregenc = FALSE;
-			else if (italics && italicsind != 2) {
+			else if (usesize) {
+				useregenc = TRUE;        
+				usesize = FALSE;
+			} else if (italics && italicsind != 2) {
 				useregenc = TRUE;
 				italicsind++;
-			}	else if (bold && usebold) {
+			} else if (usebold) {
 				useregenc = TRUE;
 				usebold = FALSE;
-			}	else if (fontsize && usesize)
-			  useregenc = TRUE;        
-			usesize = FALSE;
+			}
 		}
 		g_strfreev (names);
 		names = NULL;
 		g_free(tmp);
 		tmp=NULL;
 	} while (!ret_font); /* Loop with the new options */
-	
 	return ret_font;
 }
 	
@@ -2269,9 +2282,7 @@ gtk_imhtml_new (GtkAdjustment *hadj,
 
 	gtk_imhtml_set_adjustments (imhtml, hadj, vadj);
 
-#if USE_PIXBUF
 	imhtml->im_images = NULL;
-#endif
 
 	imhtml->bits = NULL;
 	imhtml->click = NULL;
@@ -2429,7 +2440,6 @@ backwards_update (GtkIMHtml    *imhtml,
 			ls = g_list_next (ls);
 		}
 
-#if USE_PIXBUF		
 		ls = imhtml->im_images;
 		while(ls) {
 			img = ls->data;
@@ -2437,7 +2447,6 @@ backwards_update (GtkIMHtml    *imhtml,
 				img->y += diff;
 			ls = g_list_next(ls);
 		}
-#endif
 
 		imhtml->llheight = height;
 		if (ascent)
@@ -2506,11 +2515,8 @@ add_img_renderer (GtkIMHtml    *imhtml,
 	li->ascent = 0;
 	li->bit = bit;
 
-#if USE_PIXBUF
+
 	if (bit->url || bit->img) {
-#else
-	if (bit->url) {
-#endif
 		uw = g_new0 (struct clickable, 1);
 		uw->x = imhtml->x;
 		uw->y = imhtml->y;
@@ -3339,16 +3345,14 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					break;
 				
 				if (!imhtml->img && id && datasize) { /* This is an embedded IM image */
-#if USE_PIXBUF
 					char *tmp, *imagedata, *e;
 					const gchar *alltext;
 					struct im_image *img;
+#if USE_PIXBUF
 					GdkPixbufLoader *load;
 					GdkPixbuf *imagepb = NULL;
-					
 #endif
 					NEW_BIT (NEW_TEXT_BIT);
-#if USE_PIXBUF
 					if (!id || !datasize)
 						break;
 					tmp = g_malloc(strlen("<DATA ID=\"\" SIZE=\"\">") + 
@@ -3384,14 +3388,16 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					if (img->len) {
 						img->data = g_malloc(img->len);
 						memcpy(img->data, imagedata, img->len);
-						
+#if USE_PIXBUF
 						load = gdk_pixbuf_loader_new();
 						if (!gdk_pixbuf_loader_write(load, imagedata, img->len))
 							g_print("IM Image corrupt or unreadable.\n");
 						else 
 							imagepb = gdk_pixbuf_loader_get_pixbuf(load);
 						img->pb = imagepb;
+#endif
 					}
+#if USE_PIXBUF
 					if (imagepb) {
 						bit = g_new0 (GtkIMHtmlBit, 1);
 						bit->type = TYPE_IMG;
@@ -3403,14 +3409,25 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					} else {
 						g_free(img->filename);
 						g_free(img->data);
-						gdk_pixbuf_unref(img->pb);
 					}
+#else
+					bit = g_new0 (GtkIMHtmlBit, 1);
+						bit->type = TYPE_IMG;
+						bit->img = img;
+						if (url)
+							bit->url = g_strdup (url);
+						if (!fonts || ((clr = ((FontDetail *) fonts->data)->back) == NULL))
+							clr = (bg != NULL) ? bg : imhtml->default_bg_color;
+						
+						bit->pm = gdk_pixmap_create_from_xpm_d (GTK_WIDGET (imhtml)->window,
+											&bit->bm, clr, broken_xpm);
+						NEW_BIT (bit);
+#endif
 					g_free(imagedata);
 					g_free(e);
 					g_free(id);
 					g_free(datasize);
 
-#endif
 					break;
 				}
 				

@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.54
+	* Compiles without GdkPixbuf again
+	* GtkIMHtml will refresh when you set a new GTK+ theme
+	
 version 0.53 (02/28/2002):
 	* Updated Polish Translation (thanks Przemyslaw Sulek)
 	* Slovak translation added (Thanks Daniel Rezny)

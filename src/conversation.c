@@ -1212,7 +1212,7 @@ static char *html_logize(char *p)
 			*buffer_p++ = '\n';
 		} else if ((*temp_p == '<') && (*(temp_p + 1) == '!')) {
 			*buffer_p++ = '&';
-			*buffer_p++ = 'g';
+			*buffer_p++ = 'l';
 			*buffer_p++ = 't';
 			*buffer_p++ = ';';
 		} else
