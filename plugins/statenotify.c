@@ -5,6 +5,12 @@
 #include "debug.h"
 #include "signals.h"
 
+#include "plugin.h"
+#include "pluginpref.h"
+#include "prefs.h"
+
+#define STATENOTIFY_PLUGIN_ID "core-statenotify"
+
 static void
 write_status(GaimBuddy *buddy, const char *message)
 {
@@ -27,25 +33,49 @@ write_status(GaimBuddy *buddy, const char *message)
 static void
 buddy_away_cb(GaimBuddy *buddy, void *data)
 {
-	write_status(buddy, _("%s has gone away."));
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_away"))
+		write_status(buddy, _("%s has gone away."));
 }
 
 static void
 buddy_unaway_cb(GaimBuddy *buddy, void *data)
 {
-	write_status(buddy, _("%s is no longer away."));
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_away"))
+		write_status(buddy, _("%s is no longer away."));
 }
 
 static void
 buddy_idle_cb(GaimBuddy *buddy, void *data)
 {
-	write_status(buddy, _("%s has become idle."));
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_idle"))
+		write_status(buddy, _("%s has become idle."));
 }
 
 static void
 buddy_unidle_cb(GaimBuddy *buddy, void *data)
 {
-	write_status(buddy, _("%s is no longer idle."));
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_idle"))
+		write_status(buddy, _("%s is no longer idle."));
+}
+
+static GaimPluginPrefFrame *
+get_plugin_pref_frame(GaimPlugin *plugin)
+{
+	GaimPluginPrefFrame *frame;
+	GaimPluginPref *ppref;
+
+	frame = gaim_plugin_pref_frame_new();
+
+	ppref = gaim_plugin_pref_new_with_label("Notify When");
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_away", "Buddy Goes _Away");
+	gaim_plugin_pref_frame_add(frame, ppref);
+	
+	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_idle", "Buddy Goes _Idle");
+	gaim_plugin_pref_frame_add(frame, ppref);
+	
+	return frame;
 }
 
 static gboolean
@@ -65,6 +95,11 @@ plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
+static GaimPluginUiInfo prefs_info =
+{
+	get_plugin_pref_frame
+};
+
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
@@ -74,7 +109,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
-	NULL,                                             /**< id             */
+	STATENOTIFY_PLUGIN_ID,                            /**< id             */
 	N_("Buddy State Notification"),                   /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
@@ -92,13 +127,16 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
-	NULL,
+	&prefs_info,                                      /**< prefs_info     */
 	NULL
 };
 
 static void
 init_plugin(GaimPlugin *plugin)
 {
+	gaim_prefs_add_none("/plugins/core/statenotify");
+	gaim_prefs_add_bool("/plugins/core/statenotify/notify_away", TRUE);
+	gaim_prefs_add_bool("/plugins/core/statenotify/notify_idle", TRUE);
 }
 
 GAIM_INIT_PLUGIN(statenotify, init_plugin, info)
