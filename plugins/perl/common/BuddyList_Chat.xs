@@ -11,10 +11,10 @@ CODE:
 	gaim_blist_alias_chat(chat, alias);
 
 const char *
-gaim_chat_get_display_name(chat)
+gaim_chat_get_name(chat)
 	Gaim::BuddyList::Chat chat
 CODE:
-	RETVAL = gaim_chat_get_display_name(chat);
+	RETVAL = gaim_chat_get_name(chat);
 OUTPUT:
 	RETVAL
 
