@@ -81,6 +81,39 @@ has_file_extension(const char *filename, const char *ext)
 }
 
 static gboolean
+is_native(const char *filename)
+{
+	const char *last_period;
+
+	last_period = strrchr(filename, '.');
+	if (last_period == NULL)
+		return FALSE;
+
+	return !(strcmp(last_period, GAIM_PLUGIN_EXT_WIN32) &
+	         strcmp(last_period, GAIM_PLUGIN_EXT_HPUX) &
+	         strcmp(last_period, GAIM_PLUGIN_EXT_UNIX));
+}
+
+static char *
+gaim_plugin_get_basename(const char *filename)
+{
+	const char *basename;
+	const char *last_period;
+
+	basename = strrchr(filename, G_DIR_SEPARATOR);
+	if (basename != NULL)
+		basename++;
+	else
+		basename = filename;
+
+	if (is_native(basename) &&
+		((last_period = strrchr(basename, '.')) != NULL))
+			return g_strndup(basename, (last_period - basename));
+
+	return g_strdup(basename);
+}
+
+static gboolean
 loader_supports_file(GaimPlugin *loader, const char *filename)
 {
 	GList *exts;
@@ -843,24 +876,42 @@ gaim_plugins_load_saved(const char *key)
 
 	for (f = files; f; f = f->next)
 	{
-		char *filename = g_path_get_basename(f->data);
-		GaimPlugin *plugin = NULL;
+		char *filename;
+		char *basename;
+		GaimPlugin *plugin;
 
-		if (filename != NULL)
+		if (f->data == NULL)
+			continue;
+
+		filename = f->data;
+		/*
+		 * We don't know if the filename uses Windows or Unix path
+		 * separators (because people might be sharing a prefs.xml
+		 * file across systems), so we find the last occurrence
+		 * of either.
+		 */
+		basename = strrchr(filename, '/');
+		if ((basename == NULL) || (basename < strrchr(filename, '\\')))
+			basename = strrchr(filename, '\\');
+		if (basename != NULL)
+			basename++;
+
+		if ((plugin = gaim_plugins_find_with_filename(filename)) != NULL)
 		{
-			if ((plugin = gaim_plugins_find_with_basename(filename)) != NULL)
-			{
-				gaim_debug_info("plugins", "Loading saved plugin %s\n",
-								filename);
-				gaim_plugin_load(plugin);
-			}
-			else
-			{
-				gaim_debug_error("plugins", "Unable to find saved plugin %s\n",
-								 filename);
-			}
-
-			g_free(filename);
+			gaim_debug_info("plugins", "Loading saved plugin %s\n",
+							plugin->path);
+			gaim_plugin_load(plugin);
+		}
+		else if ((plugin = gaim_plugins_find_with_basename(basename)) != NULL)
+		{
+			gaim_debug_info("plugins", "Loading saved plugin %s\n",
+							plugin->path);
+			gaim_plugin_load(plugin);
+		}
+		else
+		{
+			gaim_debug_error("plugins", "Unable to find saved plugin %s\n",
+							 filename);
 		}
 
 		g_free(f->data);
@@ -1121,24 +1172,30 @@ gaim_plugins_find_with_basename(const char *basename)
 {
 	GaimPlugin *plugin;
 	GList *l;
+	char *basename_no_ext;
+	char *tmp;
 
 	g_return_val_if_fail(basename != NULL, NULL);
 
+	basename_no_ext = gaim_plugin_get_basename(basename);
+
 	for (l = plugins; l != NULL; l = l->next)
 	{
-		char *tmp;
-
 		plugin = (GaimPlugin *)l->data;
 
 		if (plugin->path != NULL) {
-			tmp = g_path_get_basename(plugin->path);
-			if (!strcmp(tmp, basename)) {
+			tmp = gaim_plugin_get_basename(plugin->path);
+			if (!strcmp(tmp, basename_no_ext))
+			{
 				g_free(tmp);
+				g_free(basename_no_ext);
 				return plugin;
 			}
 			g_free(tmp);
 		}
 	}
+
+	g_free(basename_no_ext);
 
 	return NULL;
 }
