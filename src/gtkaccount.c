@@ -414,9 +414,12 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		switch (gaim_account_option_get_type(option)) {
 			case GAIM_PREF_BOOLEAN:
-				bool_value = gaim_account_get_bool(dialog->account,
-					gaim_account_option_get_setting(option),
-					gaim_account_option_get_default_bool(option));
+				if (dialog->account == NULL)
+					bool_value = gaim_account_option_get_default_bool(option);
+				else
+					bool_value = gaim_account_get_bool(dialog->account,
+						gaim_account_option_get_setting(option),
+						gaim_account_option_get_default_bool(option));
 
 				check = gtk_check_button_new_with_label(
 					gaim_account_option_get_text(option));
@@ -429,9 +432,12 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_INT:
-				int_value = gaim_account_get_int(dialog->account,
-					gaim_account_option_get_setting(option),
-					gaim_account_option_get_default_int(option));
+				if (dialog->account == NULL)
+					int_value = gaim_account_option_get_default_int(option);
+				else
+					int_value = gaim_account_get_int(dialog->account,
+						gaim_account_option_get_setting(option),
+						gaim_account_option_get_default_int(option));
 
 				g_snprintf(buf, sizeof(buf), "%d", int_value);
 
@@ -447,9 +453,12 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_STRING:
-				str_value = gaim_account_get_string(dialog->account,
-					gaim_account_option_get_setting(option),
-					gaim_account_option_get_default_string(option));
+				if (dialog->account == NULL)
+					str_value = gaim_account_option_get_default_string(option);
+				else
+					str_value = gaim_account_get_string(dialog->account,
+						gaim_account_option_get_setting(option),
+						gaim_account_option_get_default_string(option));
 
 				entry = gtk_entry_new();
 
