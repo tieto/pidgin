@@ -3,8 +3,6 @@ EXTRA_DIST = PROTOCOL md5.h
 pkgdir = $(libdir)/gaim
 
 MSNSOURCES = \
-	away.c \
-	away.h \
 	buddyicon.c \
 	buddyicon.h \
 	dispatch.c \
@@ -22,6 +20,8 @@ MSNSOURCES = \
 	servconn.h \
 	session.c \
 	session.h \
+	state.c \
+	state.h \
 	switchboard.c \
 	switchboard.h \
 	user.c \

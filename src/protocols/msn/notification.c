@@ -21,7 +21,7 @@
  */
 #include "msn.h"
 #include "notification.h"
-#include "away.h"
+#include "state.h"
 #include "error.h"
 #include "utils.h"
 
@@ -428,6 +428,34 @@ __blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
+__bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	struct gaim_connection *gc = servconn->session->account->gc;
+	struct buddy *b;
+	const char *passport, *type, *value;
+	int status = 0;
+
+	passport = params[1];
+	type     = params[2];
+	value    = params[3];
+
+	if (!strcmp(type, "MOB")) {
+		if (value != NULL && !strcmp(value, "Y")) {
+			gaim_debug(GAIM_DEBUG_MISC, "msn",
+					   "%s has a pager\n", passport);
+			if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
+				status = b->uc | (1 << 5);
+
+				serv_got_update(gc, (char *)passport, 1, 0, 0, 0, status);
+			}
+		}
+	}
+
+	return TRUE;
+}
+
+static gboolean
 __fln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
@@ -445,12 +473,16 @@ __iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	struct gaim_connection *gc = servconn->session->account->gc;
 	int status = 0;
 	const char *state, *passport, *friend;
+	struct buddy *b;
 
 	state    = params[1];
 	passport = params[2];
 	friend   = msn_url_decode(params[3]);
 
 	serv_got_alias(gc, (char *)passport, (char *)friend);
+
+	if ((b = gaim_find_buddy(gc->account, passport)) != NULL)
+		status |= ((((b->uc) >> 1) & 0xF0) << 1);
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
@@ -1197,7 +1229,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "ADD",       __add_cmd);
 		msn_servconn_register_command(notification, "ADG",       __adg_cmd);
 		msn_servconn_register_command(notification, "BLP",       __blp_cmd);
-		msn_servconn_register_command(notification, "BPR",       __blank_cmd);
+		msn_servconn_register_command(notification, "BPR",       __bpr_cmd);
 		msn_servconn_register_command(notification, "CHG",       __blank_cmd);
 		msn_servconn_register_command(notification, "CHL",       __chl_cmd);
 		msn_servconn_register_command(notification, "FLN",       __fln_cmd);

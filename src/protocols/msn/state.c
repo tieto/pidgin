@@ -1,5 +1,5 @@
 /**
- * @file away.h Away functions
+ * @file state.c State functions and definitions
  *
  * gaim
  *
@@ -19,33 +19,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _MSN_AWAY_H_
-#define _MSN_AWAY_H_
+#include "msn.h"
+#include "state.h"
 
-/**
- * Away types.
- */
-typedef enum
+static const char *away_text[] =
 {
-	MSN_ONLINE  = 1,
-	MSN_BUSY    = 2,
-	MSN_IDLE    = 3,
-	MSN_BRB     = 4,
-	MSN_AWAY    = 5,
-	MSN_PHONE   = 6,
-	MSN_LUNCH   = 7,
-	MSN_OFFLINE = 8,
-	MSN_HIDDEN  = 9
+	N_("Available"),
+	N_("Available"),
+	N_("Busy"),
+	N_("Idle"),
+	N_("Be Right Back"),
+	N_("Away From Computer"),
+	N_("On The Phone"),
+	N_("Out To Lunch"),
+	N_("Available"),
+	N_("Available")
+};
 
-} MsnAwayType;
+const char *
+msn_away_get_text(MsnAwayType type)
+{
+	g_return_val_if_fail(type >= 0 && type <= MSN_HIDDEN, NULL);
 
-/**
- * Returns the string representation of an away type.
- *
- * @param type The away type.
- *
- * @return The string representation of the away type.
- */
-const char *msn_away_get_text(MsnAwayType type);
-
-#endif /* _MSN_AWAY_H_ */
+	return away_text[type];
+}

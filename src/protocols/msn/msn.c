@@ -20,9 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
-#include "away.h"
 #include "msg.h"
 #include "session.h"
+#include "state.h"
 #include "utils.h"
 
 #define BUDDY_ALIAS_MAXLEN 388
@@ -88,19 +88,31 @@ static void
 msn_list_emblems(struct buddy *b, char **se, char **sw,
 				 char **nw, char **ne)
 {
+	char *emblems[4] = { NULL, NULL, NULL, NULL };
+	int away_type = MSN_AWAY_TYPE(b->uc);
+	int i = 0;
+
 	if (b->present == GAIM_BUDDY_OFFLINE)
-		*se = "offline";
-	else if ((b->uc >> 1) == 2 || (b->uc >> 1) == 6)
-		*se = "occupied";
-	else if (b->uc)
-		*se = "away";
+		emblems[i++] = "offline";
+	else if (away_type == MSN_BUSY || away_type == MSN_PHONE)
+		emblems[i++] = "occupied";
+	else if (away_type != 0)
+		emblems[i++] = "away";
+
+	if (MSN_MOBILE(b->uc))
+		emblems[i++] = "wireless";
+
+	*se = emblems[0];
+	*sw = emblems[1];
+	*nw = emblems[2];
+	*ne = emblems[3];
 }
 
 static char *
 msn_status_text(struct buddy *b)
 {
 	if (b->uc & UC_UNAVAILABLE)
-		return g_strdup(msn_away_get_text(b->uc >> 1));
+		return g_strdup(msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
 
 	return NULL;
 }
@@ -110,7 +122,7 @@ msn_tooltip_text(struct buddy *b)
 {
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
 		return g_strdup_printf(_("<b>Status:</b> %s"),
-							   msn_away_get_text(b->uc >> 1));
+							   msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
 	}
 
 	return NULL;
