@@ -2227,6 +2227,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 						continue;
 					if (account == ((GaimBuddy *)bnode)->account) {
+						GaimPresence *presence;
 						recompute = TRUE;
 						if (((GaimBuddy*)bnode)->present == GAIM_BUDDY_ONLINE ||
 								((GaimBuddy*)bnode)->present == GAIM_BUDDY_SIGNING_ON) {
@@ -2241,6 +2242,9 @@ void gaim_blist_remove_account(GaimAccount *account)
 							((GaimGroup*)gnode)->currentsize--;
 
 						((GaimBuddy*)bnode)->present = GAIM_BUDDY_OFFLINE;
+
+						presence = gaim_buddy_get_presence((GaimBuddy*)bnode);
+						gaim_presence_set_status_active(presence, "offline", TRUE);
 
 						((GaimBuddy*)bnode)->uc = 0;
 						/* TODO: ((GaimBuddy*)bnode)->idle = 0; */
