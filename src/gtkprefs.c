@@ -357,6 +357,17 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 				ui_info->iter = NULL;
 			}
 		}
+
+		if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
+			GaimPluginUiInfo *prefs_info;
+
+			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
+
+			if(prefs_info->iter != NULL) {
+				g_free(prefs_info->iter);
+				prefs_info->iter = NULL;
+			}
+		}
 	}
 }
 
@@ -1873,15 +1884,19 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				g_free(ui_info->iter);
 				ui_info->iter = NULL;
 			}
-		} else if (GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
+		}
+
+		if (GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
 			GaimPluginUiInfo *prefs_info;
 
 			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
 
-			if(prefs_info != NULL && prefs_info->iter != NULL) {
-				gtk_tree_store_remove(GTK_TREE_STORE(prefstree), prefs_info->iter);
-				g_free(prefs_info->iter);
-				prefs_info->iter = NULL;
+			if(prefs_info != NULL) {
+				if(prefs_info->iter != NULL) {
+					gtk_tree_store_remove(GTK_TREE_STORE(prefstree), prefs_info->iter);
+					g_free(prefs_info->iter);
+					prefs_info->iter = NULL;
+				}
 			}
 		}
 
@@ -2526,16 +2541,19 @@ void prefs_notebook_init() {
 			}
 
 			if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
-				GtkWidget *pref_frame;
+				GtkWidget *gtk_frame;
+				GaimPluginPrefFrame *pp_frame;
 				GaimPluginUiInfo *prefs_info;
 
 				prefs_info = GAIM_PLUGIN_UI_INFO(plug);
-				pref_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->get_plugin_pref_frame(plug));
+				pp_frame = prefs_info->get_plugin_pref_frame(plug);
+				gtk_frame = gaim_gtk_plugin_pref_create_frame(pp_frame);
+				gaim_plugin_pref_frame_destroy(pp_frame);
 
-				if(pref_frame != NULL) {
+				if(GTK_IS_WIDGET(gtk_frame)) {
 					prefs_info->iter = g_new0(GtkTreeIter, 1);
 					prefs_notebook_add_page(_(plug->info->name), NULL,
-										pref_frame, prefs_info->iter,
+										gtk_frame, prefs_info->iter,
 										(plug->info->type == GAIM_PLUGIN_PROTOCOL) ? &proto_iter : &plugin_iter,
 										notebook_page++);
 				}
@@ -2988,4 +3006,3 @@ void gaim_gtk_prefs_rename_old() {
 	gaim_prefs_rename_boolean_toggle("/gaim/gtk/sound/silent_signon",
 									 "/gaim/gtk/sound/signon");
 }
-

@@ -58,19 +58,19 @@ gaim_plugin_pref_frame_new() {
 void
 gaim_plugin_pref_frame_destroy(GaimPluginPrefFrame *frame) {
 	GaimPluginPref *pref;
-	GList *l, *ll;
+	GList *l;
 
 	g_return_if_fail(frame);
 
-	for(l = frame->prefs; l != NULL; l = ll) {
-		ll = l->next;
-
+	for(l = frame->prefs; l != NULL; l = l->next) {
 		pref = (GaimPluginPref *)l->data;
 		gaim_plugin_pref_destroy(pref);
-
-		g_list_free_1(l);
 	}
 
+	g_list_free(frame->prefs);
+	frame->prefs = NULL;
+
+	g_free(frame);
 	frame = NULL;
 }
 
@@ -79,11 +79,14 @@ gaim_plugin_pref_frame_add(GaimPluginPrefFrame *frame, GaimPluginPref *pref) {
 	g_return_if_fail(frame);
 	g_return_if_fail(pref);
 
-	frame->prefs = g_list_append(frame->prefs, (gpointer)pref);
+	frame->prefs = g_list_append(frame->prefs, pref);
 }
 
 GList *
 gaim_plugin_pref_frame_get_prefs(GaimPluginPrefFrame *frame) {
+	g_return_val_if_fail(frame, NULL);
+	g_return_val_if_fail(frame->prefs, NULL);
+
 	return frame->prefs;
 }
 
@@ -140,20 +143,19 @@ gaim_plugin_pref_destroy(GaimPluginPref *pref) {
 
 	g_return_if_fail(pref);
 
-	if(pref->name)
+	if(pref->name) {
 		g_free(pref->name);
+		pref->name = NULL;
+	}
 
-	if(pref->label)
+	if(pref->label) {
 		g_free(pref->label);
+		pref->label = NULL;
+	}
 
-	l = pref->choices;
-	while(l) {
-		ll = l->next;
-
-		g_free(l->data);
-		g_list_free_1(l);
-
-		l = l->next;
+	if(pref->choices) {
+		g_list_free(pref->choices);
+		pref->choices = NULL;
 	}
 
 	g_free(pref);
@@ -256,16 +258,6 @@ gaim_plugin_pref_add_choice(GaimPluginPref *pref, char *label, gpointer choice) 
 
 	pref->choices = g_list_append(pref->choices, label);
 	pref->choices = g_list_append(pref->choices, choice);
-}
-
-gpointer
-gaim_plugin_pref_get_choice(GaimPluginPref *pref, unsigned int index) {
-	g_return_val_if_fail(pref, NULL);
-
-	if(index > g_list_length(pref->choices))
-		return NULL;
-
-	return g_list_nth_data(pref->choices, index);
 }
 
 GList *

@@ -33,7 +33,7 @@
 #include "pluginpref.h"
 #include "prefs.h"
 
-GaimPluginPrefFrame *
+static GaimPluginPrefFrame *
 get_plugin_pref_frame(GaimPlugin *plugin) {
 	GaimPluginPrefFrame *frame;
 	GaimPluginPref *ppref;
@@ -146,4 +146,4 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_string("/plugins/core/pluginpref_example/string_choice", "red");
 }
 
-GAIM_INIT_PLUGIN(relnot, init_plugin, info)
+GAIM_INIT_PLUGIN(ppexample, init_plugin, info)
