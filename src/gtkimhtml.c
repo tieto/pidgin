@@ -353,6 +353,9 @@ gtk_imhtml_destroy (GtkObject *object)
 		g_free (bit);
 	}
 
+	if (imhtml->line)
+		g_list_free (imhtml->line);
+
 	while (imhtml->urls) {
 		g_free (imhtml->urls->data);
 		imhtml->urls = g_list_remove (imhtml->urls, imhtml->urls->data);
@@ -3448,8 +3451,12 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 void
 gtk_imhtml_clear (GtkIMHtml *imhtml)
 {
+	GtkLayout *layout;
+
 	g_return_if_fail (imhtml != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
+
+	layout = GTK_LAYOUT (imhtml);
 
 	while (imhtml->bits) {
 		GtkIMHtmlBit *bit = imhtml->bits->data;
@@ -3490,6 +3497,12 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		imhtml->selected_text = g_string_new ("");
 	}
 
+	imhtml->sel_startx = 0;
+	imhtml->sel_starty = 0;
+	imhtml->sel_endx = 0;
+	imhtml->sel_endx = 0;
+	imhtml->sel_endchunk = NULL;
+
 	if (imhtml->tip_timer) {
 		gtk_timeout_remove (imhtml->tip_timer);
 		imhtml->tip_timer = 0;
@@ -3500,13 +3513,36 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	}
 	imhtml->tip_bit = NULL;
 
+	if (imhtml->scroll_timer) {
+		gtk_timeout_remove (imhtml->scroll_timer);
+		imhtml->scroll_timer = 0;
+	}
+
 	gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window, imhtml->arrow_cursor);
 
 	imhtml->x = 0;
 	imhtml->y = TOP_BORDER;
+	imhtml->xsize = 0;
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
+	if (imhtml->line)
+		g_list_free (imhtml->line);
 	imhtml->line = NULL;
+
+	layout->hadjustment->page_size = 0;
+	layout->hadjustment->page_increment = 0;
+	layout->hadjustment->lower = 0;
+	layout->hadjustment->upper = imhtml->x;
+	gtk_adjustment_set_value (layout->hadjustment, 0);
+
+	layout->vadjustment->page_size = 0;
+	layout->vadjustment->page_increment = 0;
+	layout->vadjustment->lower = 0;
+	layout->vadjustment->upper = imhtml->y;
+	gtk_adjustment_set_value (layout->vadjustment, 0);
+
+	gtk_signal_emit_by_name (GTK_OBJECT (layout->hadjustment), "changed");
+	gtk_signal_emit_by_name (GTK_OBJECT (layout->vadjustment), "changed");
 
 	if (GTK_WIDGET_REALIZED (GTK_WIDGET (imhtml)))
 		gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);

@@ -223,6 +223,15 @@ struct passwddlg {
 	struct gaim_connection *gc;
 };
 
+struct view_log {
+	long offset;
+	int options;
+	char *name;
+	GtkWidget *bbox;
+	GtkWidget *window;
+	GtkWidget *layout;
+};
+
 /*------------------------------------------------------------------------*/
 /*  Destroys                                                              */
 /*------------------------------------------------------------------------*/
@@ -308,15 +317,8 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 
 void destroy_all_dialogs()
 {
-	GList *d = dialogwindows;
-
-	while (d) {
-		destroy_dialog(NULL, d->data);
-		d = d->next;
-	}
-
-	g_list_free(dialogwindows);
-	dialogwindows = NULL;
+	while (dialogwindows)
+		destroy_dialog(NULL, dialogwindows->data);
 
 	if (awaymessage)
 		do_im_back(NULL, NULL);
@@ -3287,7 +3289,6 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 	fclose(fp_old);
 	fclose(fp_new);
 
-	dialogwindows = g_list_remove(dialogwindows, filesel);
 	gtk_widget_destroy(filesel);
 
 	return;
@@ -3302,7 +3303,6 @@ static void show_save_log(GtkWidget *w, gchar *name)
 		   name ? normalize(name) : "system", name ? ".log" : "");
 
 	filesel = gtk_file_selection_new(_("Gaim - Save Log File"));
-	dialogwindows = g_list_prepend(dialogwindows, filesel);
 	gtk_signal_connect(GTK_OBJECT(filesel), "delete_event",
 			   GTK_SIGNAL_FUNC(destroy_dialog), filesel);
 
@@ -3352,7 +3352,6 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	GtkWidget *hsep;
 
 	window = gtk_window_new(GTK_WINDOW_DIALOG);
-	dialogwindows = g_list_prepend(dialogwindows, window);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "dialog", "Gaim");
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
@@ -3390,30 +3389,20 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	return;
 }
 
-static void log_show_convo(GtkWidget *w, GtkWidget *layout)
+static void log_show_convo(GtkWidget *w, struct view_log *view)
 {
 	gchar buf[BUF_LONG];
-	long offset;
-	int options;
-	gchar *name;
-	GtkWidget *bbox;
-	GtkWidget *window;
 	FILE *fp;
 	char filename[256];
 	int i=0;
 	GString *string;
 	guint block;
 
-	offset = (long)gtk_object_get_user_data(GTK_OBJECT(w));
-	options = (int)gtk_object_get_data(GTK_OBJECT(w), "options");
-	name = gtk_object_get_data(GTK_OBJECT(w), "name");
-	bbox = gtk_object_get_data(GTK_OBJECT(w), "box");
-	window = gtk_object_get_data(GTK_OBJECT(w), "window");
 	string = g_string_new("");
 
-	if (name) {
+	if (view->name) {
 		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(name));
+		g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(view->name));
 		g_free(tmp);
 	} else {
 		char *tmp = gaim_user_dir();
@@ -3426,15 +3415,18 @@ static void log_show_convo(GtkWidget *w, GtkWidget *layout)
 		return;
 	}
 
-	gtk_widget_set_sensitive(bbox, FALSE);
-	gtk_signal_disconnect_by_func(GTK_OBJECT(window), GTK_SIGNAL_FUNC(destroy_dialog), window);
-	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event",
-				   GTK_SIGNAL_FUNC(dont_destroy), window);
+	gtk_widget_set_sensitive(view->bbox, FALSE);
+	gtk_signal_disconnect_by_func(GTK_OBJECT(view->window),
+				      GTK_SIGNAL_FUNC(destroy_dialog), view->window);
+	block = gtk_signal_connect(GTK_OBJECT(view->window), "delete_event",
+				   GTK_SIGNAL_FUNC(dont_destroy), view->window);
 
-	fseek(fp, offset, SEEK_SET);
-	gtk_imhtml_clear(GTK_IMHTML(layout));
+	fseek(fp, view->offset, SEEK_SET);
+	gtk_imhtml_clear(GTK_IMHTML(view->layout));
+	/*
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	*/
 
 	while (fgets(buf, BUF_LONG, fp) && !strstr(buf, "---- New C")) {
 		i++;
@@ -3443,25 +3435,36 @@ static void log_show_convo(GtkWidget *w, GtkWidget *layout)
 			buf[strlen(buf) - 1] = '\0';
 
 		if (i == 30) {
-			gtk_imhtml_append_text(GTK_IMHTML(layout), string->str, options);
+			gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
 			g_string_free(string, TRUE);
 			string = g_string_new("");
+			/* you can't have these anymore. if someone clicks on another item while one is
+			 * drawing, it will try to move to that item, and that causes problems here.
 			while (gtk_events_pending())
 				gtk_main_iteration();
+			*/
 			i = 0;
 		} else {
 			g_string_append(string, buf);
 		}
 
 	}
-	gtk_imhtml_append_text(GTK_IMHTML(layout), string->str, options);
-	gtk_imhtml_append_text(GTK_IMHTML(layout), "<BR>", options);
+	gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
+	gtk_imhtml_append_text(GTK_IMHTML(view->layout), "<BR>", view->options);
 
-	gtk_widget_set_sensitive(bbox, TRUE);
-	gtk_signal_disconnect(GTK_OBJECT(window), block);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
+	gtk_widget_set_sensitive(view->bbox, TRUE);
+	gtk_signal_disconnect(GTK_OBJECT(view->window), block);
+	gtk_signal_connect(GTK_OBJECT(view->window), "delete_event",
+			   GTK_SIGNAL_FUNC(destroy_dialog), view->window);
 	g_string_free(string, TRUE);
 	fclose(fp);
+}
+
+static void des_view_item(GtkObject *obj, struct view_log *view)
+{
+	if (view->name)
+		g_free(view->name);
+	g_free(view);
 }
 
 void show_log(char *name)
@@ -3483,6 +3486,7 @@ void show_log(char *name)
 	GtkWidget *item = NULL;
 	GtkWidget *last = NULL;
 	GtkWidget *frame;
+	struct view_log *view;
 
 	int options;
 	guint block;
@@ -3499,7 +3503,6 @@ void show_log(char *name)
 		options ^= GTK_IMHTML_NO_SIZES;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	dialogwindows = g_list_prepend(dialogwindows, window);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "log", "Gaim");
 	if (name)
 		g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
@@ -3568,13 +3571,17 @@ void show_log(char *name)
 				offset = ftell(fp);
 				g_snprintf(convo_start, length, "%s", temp);
 				item = gtk_list_item_new_with_label(convo_start);
-				gtk_object_set_user_data(GTK_OBJECT(item), (gpointer)offset);
-				gtk_object_set_data(GTK_OBJECT(item), "options", (gpointer)options);
-				gtk_object_set_data(GTK_OBJECT(item), "name", (gpointer)name);
-				gtk_object_set_data(GTK_OBJECT(item), "box", (gpointer)bbox);
-				gtk_object_set_data(GTK_OBJECT(item), "window", (gpointer)window);
+				view = g_new0(struct view_log, 1);
+				view->options = options;
+				view->offset = offset;
+				view->name = g_strdup(name);
+				view->bbox = bbox;
+				view->window = window;
+				view->layout = layout;
 				gtk_signal_connect(GTK_OBJECT(item), "select",
-						   GTK_SIGNAL_FUNC(log_show_convo), layout);
+						   GTK_SIGNAL_FUNC(log_show_convo), view);
+				gtk_signal_connect(GTK_OBJECT(item), "destroy",
+						   GTK_SIGNAL_FUNC(des_view_item), view);
 				last = item;
 				item_list = g_list_append(item_list, item);
 
@@ -3626,12 +3633,14 @@ void show_log(char *name)
 	gtk_widget_show_all(window);				
 	
 	if (!name) {
-		gtk_object_set_user_data(GTK_OBJECT(layout), (gpointer)0);
-		gtk_object_set_data(GTK_OBJECT(layout), "options", (gpointer)options);
-		gtk_object_set_data(GTK_OBJECT(layout), "name", (gpointer)NULL);
-		gtk_object_set_data(GTK_OBJECT(layout), "box", (gpointer)bbox);
-		gtk_object_set_data(GTK_OBJECT(layout), "window", (gpointer)window);
-		log_show_convo(layout, layout);
+		view = g_new0(struct view_log, 1);
+		view->options = options;
+		view->name = NULL;
+		view->bbox = bbox;
+		view->window = window;
+		view->layout = layout;
+		log_show_convo(layout, view);
+		gtk_signal_connect(GTK_OBJECT(layout), "destroy", GTK_SIGNAL_FUNC(des_view_item), view);
 	} else {
 		gtk_list_select_item(GTK_LIST(list), 0);
 	}
