@@ -321,6 +321,10 @@ static void do_warn(GtkWidget *widget, struct warning *w)
         destroy_dialog(NULL, w->window);
 }
 
+static void free_warn_data(GtkObject *obj, struct warning *w)
+{
+	g_free(w);
+}
 
 void show_warn_dialog(struct gaim_connection *gc, char *who)
 {
@@ -331,77 +335,65 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
         GtkWidget *bbox;
 	GtkWidget *frame;
 	GtkWidget *fbox;
+	char buf[128];
 
         struct warning *w = g_new0(struct warning, 1);
+        w->who = who;
+	w->gc = gc;
         
-        char *buf = g_malloc(128);
         w->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	dialogwindows = g_list_prepend(dialogwindows, w->window);
         gtk_window_set_wmclass(GTK_WINDOW(w->window), "warning", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(w->window), FALSE, FALSE, TRUE);
-	gtk_widget_show(w->window);
-	dialogwindows = g_list_prepend(dialogwindows, w->window);
-        bbox = gtk_hbox_new(TRUE, 10);
-        vbox = gtk_vbox_new(FALSE, 5);
+	gtk_window_set_title(GTK_WINDOW(w->window), _("Gaim - Warn user?"));
+	gtk_container_set_border_width(GTK_CONTAINER(w->window), 5);
+        gtk_signal_connect(GTK_OBJECT(w->window), "delete_event",
+                           GTK_SIGNAL_FUNC(destroy_dialog), w->window);
+        gtk_signal_connect(GTK_OBJECT(w->window), "delete_event",
+                           GTK_SIGNAL_FUNC(free_warn_data), w);
+	gtk_widget_realize(w->window);
+        aol_icon(w->window->window);
+
 	fbox = gtk_vbox_new(FALSE, 5);
+        gtk_container_add(GTK_CONTAINER(w->window), fbox);
+	gtk_widget_show(fbox);
 
 	frame = gtk_frame_new(_("Warn"));
-	
-	warn = picture_button(w->window, _("Warn"), warn_xpm);
+	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
+	gtk_widget_show(frame);
 
-	cancel = picture_button(w->window, _("Cancel"), cancel_xpm);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
-	}
-	
-	/* Put the buttons in the box */
-
-	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 5);
-        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+        vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+        gtk_widget_show(vbox);
 
         g_snprintf(buf, 127, _("Do you really want to warn %s?"), who);
         label = gtk_label_new(buf);
         gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
         gtk_widget_show(label);
+
         w->anon = gtk_check_button_new_with_label(_("Warn anonymously?"));
         gtk_box_pack_start(GTK_BOX(vbox), w->anon, TRUE, TRUE, 5);
+        gtk_widget_show(w->anon);
 
         label = gtk_label_new(_("Anonymous warnings are less harsh."));
         gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
         gtk_widget_show(label);
 
-        w->who = who;
-	w->gc = gc;
-	
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-
-	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
+        bbox = gtk_hbox_new(TRUE, 10);
         gtk_box_pack_start(GTK_BOX(fbox), bbox, FALSE, FALSE, 5);
+        gtk_widget_show(bbox);
 
-        /* Handle closes right */
-        gtk_signal_connect(GTK_OBJECT(w->window), "delete_event",
-                           GTK_SIGNAL_FUNC(destroy_dialog), w->window);
-        gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
-                           GTK_SIGNAL_FUNC(destroy_dialog), w->window);
+	warn = picture_button(w->window, _("Warn"), warn_xpm);
+	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 5);
         gtk_signal_connect(GTK_OBJECT(warn), "clicked",
                            GTK_SIGNAL_FUNC(do_warn), w);
-        /* Finish up */
-        gtk_widget_show(w->anon);
-        gtk_widget_show(bbox);
-        gtk_widget_show(vbox);
-	gtk_widget_show(frame);
-	gtk_widget_show(fbox);
 
-	gtk_window_set_title(GTK_WINDOW(w->window), _("Gaim - Warn user?"));
-        gtk_container_add(GTK_CONTAINER(w->window), fbox);
-	gtk_container_set_border_width(GTK_CONTAINER(w->window), 5);
-	gtk_widget_realize(w->window);
-        aol_icon(w->window->window);
+	cancel = picture_button(w->window, _("Cancel"), cancel_xpm);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+        gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
+                           GTK_SIGNAL_FUNC(destroy_dialog), w->window);
 
         gtk_widget_show(w->window);
-	g_free(buf);
 }
 
 

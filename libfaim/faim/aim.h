@@ -577,7 +577,13 @@ faim_internal int aim_parse_unknown(struct aim_session_t *, struct command_rx_st
 int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
 faim_internal int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *command, ...);
 faim_internal int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+
+#define AIM_RATE_CODE_CHANGE     0x0001
+#define AIM_RATE_CODE_WARNING    0x0002
+#define AIM_RATE_CODE_LIMIT      0x0003
+#define AIM_RATE_CODE_CLEARLIMIT 0x0004
 faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+
 faim_internal int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 faim_internal int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 

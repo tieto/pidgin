@@ -40,9 +40,6 @@
 #include "prpl.h"
 #include "gaim.h"
 
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/ok.xpm"
-
 #include "pixmaps/free_icon.xpm"
 
 #define IRC_BUF_LEN 4096

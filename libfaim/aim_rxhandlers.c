@@ -574,6 +574,8 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
 	  else if (subtype == 0x0007)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
+	  else if (subtype == 0x000a)
+	    workingPtr->handled = aim_parse_ratechange_middle(sess, workingPtr);
 	  else
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
 	} else if (family == 0x000e) {
@@ -657,17 +659,36 @@ faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct
 {
   rxcallback_t userfunc = NULL;
   int ret = 1;
-  unsigned long newrate;
+  int i;
+  int code;
+  unsigned long parmid, windowsize, clear, alert, limit, disconnect;
+  unsigned long currentavg, maxavg;
 
-  if (command->commandlen != 0x2f) {
-    printf("faim: unknown rate change length 0x%04x\n", command->commandlen);
-    return 1;
-  }
-  
-  newrate = aimutil_get32(command->data+34);
+  i = 10;
+
+  code = aimutil_get16(command->data+i);
+  i += 2;
+
+  parmid = aimutil_get16(command->data+i);
+  i += 2;
+
+  windowsize = aimutil_get32(command->data+i);
+  i += 4;
+  clear = aimutil_get32(command->data+i);
+  i += 4;
+  alert = aimutil_get32(command->data+i);
+  i += 4;
+  limit = aimutil_get32(command->data+i);
+  i += 4;
+  disconnect = aimutil_get32(command->data+i);
+  i += 4;
+  currentavg = aimutil_get32(command->data+i);
+  i += 4;
+  maxavg = aimutil_get32(command->data+i);
+  i += 4;
 
   if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x000a)))
-    ret =  userfunc(sess, command, newrate);
+    ret =  userfunc(sess, command, code, parmid, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
 
   return ret;
 }

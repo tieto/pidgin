@@ -1512,14 +1512,47 @@ int gaim_parse_msgack(struct aim_session_t *sess, struct command_rx_struct *comm
 }
 
 int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	static char *codes[5] = {"invalid",
+				 "change",
+				 "warning",
+				 "limit",
+				 "limit cleared"};
 	va_list ap;
-	unsigned long newrate;
+	int code;
+	unsigned long parmid, windowsize, clear, alert, limit, disconnect;
+	unsigned long currentavg, maxavg;
 
 	va_start(ap, command); 
-	newrate = va_arg(ap, unsigned long);
+	code = va_arg(ap, int);
+	parmid = va_arg(ap, int);
+	windowsize = va_arg(ap, unsigned long);
+	clear = va_arg(ap, unsigned long);
+	alert = va_arg(ap, unsigned long);
+	limit = va_arg(ap, unsigned long);
+	disconnect = va_arg(ap, unsigned long);
+	currentavg = va_arg(ap, unsigned long);
+	maxavg = va_arg(ap, unsigned long);
 	va_end(ap);
 
-	debug_printf("ratechange: %lu\n", newrate);
+	debug_printf("rate %s (paramid 0x%04lx): curavg = %ld, maxavg = %ld, alert at %ld, "
+		     "clear warning at %ld, limit at %ld, disconnect at %ld (window size = %ld)\n",
+		     (code < 5) ? codes[code] : codes[0],
+		     parmid,
+		     currentavg, maxavg,
+		     alert, clear,
+		     limit, disconnect,
+		     windowsize);
+
+	if (code == AIM_RATE_CODE_CHANGE) {
+		if (currentavg >= clear)
+			aim_conn_setlatency(command->conn, 0);
+	} else if (code == AIM_RATE_CODE_WARNING) {
+		aim_conn_setlatency(command->conn, windowsize/4);
+	} else if (code == AIM_RATE_CODE_LIMIT) {
+		aim_conn_setlatency(command->conn, windowsize/2);
+	} else if (code == AIM_RATE_CODE_CLEARLIMIT) {
+		aim_conn_setlatency(command->conn, 0);
+	}
 
 	return 1;
 }
