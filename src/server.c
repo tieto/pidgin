@@ -31,6 +31,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <errno.h>
+#include "gtkimhtml.h"
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
@@ -40,6 +41,7 @@
 
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
+#include "pixmaps/tb_search.xpm"
 
 void serv_login(struct aim_user *user)
 {
@@ -949,4 +951,61 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 
 	chat_write(b, who, w, buf, mtime);
 	g_free(buf);
+}
+
+static void des_popup(GtkWidget *w, GtkWidget *window)
+{
+	if (w == window) {
+		char *u = gtk_object_get_user_data(GTK_OBJECT(window));
+		g_free(u);
+	}
+	gtk_widget_destroy(window);
+}
+
+void serv_got_popup(char *msg, char *u, int wid, int hei)
+{
+	GtkWidget *window;
+	GtkWidget *vbox;
+	GtkWidget *sw;
+	GtkWidget *text;
+	GtkWidget *hbox;
+	GtkWidget *button;
+	char *url = g_strdup(u);
+
+	GAIM_DIALOG(window);
+	gtk_window_set_wmclass(GTK_WINDOW(window), "popup", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, TRUE);
+	gtk_window_set_title(GTK_WINDOW(window), "Gaim - Popup");
+	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
+	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_popup), window);
+	gtk_object_set_user_data(GTK_OBJECT(window), url);
+	gtk_widget_realize(window);
+	aol_icon(window->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_widget_set_usize(sw, wid, hei);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+
+	text = gtk_imhtml_new(NULL, NULL);
+	gtk_container_add(GTK_CONTAINER(sw), text);
+	gaim_setup_imhtml(text);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	button = picture_button(window, _("Close"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_popup), window);
+
+	button = picture_button(window, _("More Info"), tb_search_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(open_url_nw), url);
+
+	gtk_widget_show_all(window);
+
+	gtk_imhtml_append_text(GTK_IMHTML(text), msg, GTK_IMHTML_NO_NEWLINE);
 }

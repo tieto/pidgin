@@ -87,6 +87,8 @@ struct oscar_data {
 
 	gboolean conf;
 	gboolean reqemail;
+	gboolean setemail;
+	char *email;
 	gboolean chpass;
 	char *oldp;
 	char *newp;
@@ -243,6 +245,7 @@ static int gaim_selfinfo         (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsg       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsgdone   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_simpleinfo       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_popup            (aim_session_t *, aim_frame_t *, ...);
 
 static int gaim_directim_initiate(aim_session_t *, aim_frame_t *, ...);
 static int gaim_directim_incoming(aim_session_t *, aim_frame_t *, ...);
@@ -519,6 +522,8 @@ static void oscar_close(struct gaim_connection *gc) {
 	}
 	if (odata->create_name)
 		g_free(odata->create_name);
+	if (odata->email)
+		g_free(odata->email);
 	if (odata->newp)
 		g_free(odata->newp);
 	if (odata->oldp)
@@ -658,6 +663,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x000f, gaim_selfinfo, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_SIMPLEINFO, gaim_simpleinfo, 0);
 
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
@@ -1927,7 +1933,9 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 		debug_printf("changing password\n");
 		aim_admin_changepasswd(sess, fr->conn, od->newp, od->oldp);
 		g_free(od->oldp);
+		od->oldp = NULL;
 		g_free(od->newp);
+		od->newp = NULL;
 		od->chpass = FALSE;
 	}
 	if (od->conf) {
@@ -1939,6 +1947,12 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 		debug_printf("requesting email\n");
 		aim_admin_getinfo(sess, fr->conn, 0x0011);
 		od->reqemail = FALSE;
+	}
+	if (od->setemail) {
+		debug_printf("setting email\n");
+		aim_admin_setemail(sess, fr->conn, od->email);
+		g_free(od->email);
+		od->setemail = FALSE;
 	}
 
 	return 1;
@@ -2052,6 +2066,25 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		   info->email);
 
 	g_show_info_text(buf, NULL);
+
+	return 1;
+}
+
+static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	char *msg, *url;
+	fu16_t wid, hei, delay;
+	va_list ap;
+
+	va_start(ap, fr);
+	msg = va_arg(ap, char *);
+	url = va_arg(ap, char *);
+	wid = (fu16_t)va_arg(ap, int);
+	hei = (fu16_t)va_arg(ap, int);
+	delay = (fu16_t)va_arg(ap, int);
+	va_end(ap);
+
+	serv_got_popup(msg, url, wid, hei);
 
 	return 1;
 }
@@ -2771,6 +2804,20 @@ static GList *oscar_away_states(struct gaim_connection *gc)
 	return m;
 }
 
+static void oscar_change_email(struct gaim_connection *gc, char *email)
+{
+	struct oscar_data *od = gc->proto_data;
+	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
+
+	if (conn) {
+		aim_admin_setemail(od->sess, conn, email);
+	} else {
+		od->setemail = TRUE;
+		od->email = g_strdup(email);
+		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+	}
+}
+
 static void oscar_do_action(struct gaim_connection *gc, char *act)
 {
 	struct oscar_data *od = gc->proto_data;
@@ -2786,13 +2833,14 @@ static void oscar_do_action(struct gaim_connection *gc, char *act)
 			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
 		} else
 			aim_admin_reqconfirm(od->sess, conn);
-	} else if (!strcmp(act, "Change Email")) {
 	} else if (!strcmp(act, "Display Current Registered Address")) {
 		if (!conn) {
 			od->reqemail = TRUE;
 			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
 		} else
 			aim_admin_getinfo(od->sess, conn, 0x11);
+	} else if (!strcmp(act, "Change Current Registered Address")) {
+		do_prompt_dialog("Change Address To: ", NULL, gc, oscar_change_email, NULL);
 	} else if (!strcmp(act, "Search for Buddy by Email")) {
 		show_find_email(gc);
 	}
@@ -2806,10 +2854,8 @@ static GList *oscar_actions()
 	m = g_list_append(m, NULL);
 	m = g_list_append(m, "Change Password");
 	m = g_list_append(m, "Confirm Account");
-	/*
-	m = g_list_append(m, "Change Email");
-	*/
 	m = g_list_append(m, "Display Current Registered Address");
+	m = g_list_append(m, "Change Current Registered Address");
 	m = g_list_append(m, NULL);
 	m = g_list_append(m, "Search for Buddy by Email");
 

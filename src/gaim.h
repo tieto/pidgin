@@ -383,6 +383,7 @@ extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern int  serv_chat_send(struct gaim_connection *, int, char *);
+extern void serv_got_popup(char *, char *, int, int);
 
 /* Functions in util.c */
 extern char *normalize(const char *);
