@@ -85,9 +85,10 @@ static struct developer retired_developers[] = {
 
 static struct translator current_translators[] = {
 	{N_("Bulgarian"),			"bg", "Alexander Shopov", "al_shopov@users.sf.net"},
-	{N_("Catalan"),				"ca", "Robert Millan", "zeratul2@wanadoo.es"},
+	{N_("Catalan"),				"ca", "Josep Puigdemont", "tradgnome@softcatala.org"},
 	{N_("Czech"),				"cs", "Miloslav Trmac", "mitr@volny.cz"},
 	{N_("Danish"),				"da", "Morten Brix Pedersen", "morten@wtf.dk"},
+	{N_("Australian English"),	"en_AU", "Peter Lawler", "trans@six-by-nine.com.au"},
 	{N_("British English"),		"en_GB", "Luke Ross", "lukeross@sys3175.co.uk"},
 	{N_("Canadian English"),	"en_CA", "Adam Weinberger", "adamw@gnome.org"},
 	{N_("German"),				"de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
@@ -123,6 +124,7 @@ static struct translator past_translators[] = {
 	{N_("Amharic"),				"am", "Daniel Yacob", NULL},
 	{N_("Bulgarian"),			"bg", "Hristo Todorov", NULL},
 	{N_("Catalan"),				"ca", "JM Pérez Cáncer", NULL},
+	{N_("Catalan"),				"ca", "Robert Millan", NULL},
 	{N_("Czech"),				"cs", "Honza Král", NULL},
 	{N_("German"),				"de", "Daniel Seifert, Karsten Weiss", NULL},
 	{N_("Spanish"),				"es", "Amaya Rodrigo, Alejandro G Villar, Nicolás Lichtmaier, JM Pérez Cáncer", NULL},
