@@ -42,9 +42,21 @@ constantly overwriting each others' variables. Unfortunately, this also means
 that plugins will have difficulty working together. But then again, that's
 what shared memory is for.
 
+Plugins can be configured. This makes is so they don't have to be recompiled
+in order to change things internal to them, and it's also just a cool feature
+to have :). It's optional; to allow your plugin to be configured, add a
+function called gaim_plugin_config(). The advised course of action is to have
+it pop up a dialog window; but it's your plugin.
+
 When your plugin gets unloaded, gaim will try to call gaim_plugin_remove(). It
 doesn't have to be there, but it's nice if, say, you create a window, and when
 the plugin gets unloaded, it removes the window. Also, all the callbacks you
 have attached to gaim signals will be removed.
+
+Compilation of the plugins is fairly straight-forward; there is a Makefile in
+this directory that has a rule for making the .so file from a .c file. No
+modification of the Makefile should be necessary, unless if you simply want
+to type 'make' to have it made; otherwise, 'make filename.so' will take
+filename.c and make the .so plugin from it.
 
 There are a few examples in this directory. Enjoy.
