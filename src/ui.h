@@ -150,7 +150,6 @@ extern void cancel_link(GtkWidget *, GaimConversation *);
 extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
-extern void show_rename_group(GtkWidget *, GaimGroup *);
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
 extern void join_chat();
 

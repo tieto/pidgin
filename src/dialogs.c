@@ -2318,21 +2318,3 @@ void show_log(char *nm)
 	return;
 }
 
-/*------------------------------------------------------------------------*/
-/*  The dialog for renaming groups                                        */
-/*------------------------------------------------------------------------*/
-
-static void do_rename_group(GaimGroup *g, const char *new_name)
-{
-	gaim_blist_rename_group(g, new_name);
-	gaim_blist_save();
-}
-
-void show_rename_group(GtkWidget *unused, GaimGroup *g)
-{
-	gaim_request_input(NULL, _("Rename Group"), _("New group name"),
-					   _("Please enter a new name for the selected group."),
-					   g->name, FALSE, FALSE,
-					   _("OK"), G_CALLBACK(do_rename_group),
-					   _("Cancel"), NULL, g);
-}
