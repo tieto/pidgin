@@ -3483,7 +3483,9 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 
 	name = gtk_object_get_user_data(GTK_OBJECT(filesel));
 	tmp = gaim_user_dir();
-	g_snprintf(filename, PATHSIZE, "%s/logs/%s.log", tmp, normalize(name));
+	g_snprintf(filename, PATHSIZE, "%s/logs/%s%s", tmp,
+			name ? normalize(name) : "system",
+			name ? ".log" : "");
 	g_free(tmp);
 
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
@@ -3524,8 +3526,9 @@ static void show_save_log(GtkWidget *w, gchar *name)
 	GtkWidget *filesel;
 	gchar buf[BUF_LEN];
 
-	g_snprintf(buf, BUF_LEN - 1, "%s/%s.log", 
-		   getenv("HOME"), normalize(name));
+	g_snprintf(buf, BUF_LEN - 1, "%s/%s%s", getenv("HOME"),
+			name ? normalize(name) : "system",
+			name ? ".log" : "");
 
 	filesel = gtk_file_selection_new(_("Gaim - Save Log File"));
 	dialogwindows = g_list_prepend(dialogwindows, filesel);
@@ -3556,7 +3559,9 @@ static void do_clear_log_file(GtkWidget *w, gchar *name)
 	char *tmp;
 
 	tmp = gaim_user_dir();
-	g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(name));
+	g_snprintf(filename, 256, "%s/logs/%s%s", tmp,
+			name ? normalize(name) : "system",
+			name ? ".log" : "");
 	g_free(tmp);
 
 	if ((remove(filename)) == -1) {
