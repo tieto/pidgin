@@ -3091,7 +3091,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
-	gtk_widget_set_size_request(gtkblist->treeview, -1, 100);
 	gtk_widget_set_name(gtkblist->treeview, "gaim_gtkblist_treeview");
 
 	/* Set up selection stuff */
