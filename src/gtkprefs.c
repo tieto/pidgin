@@ -363,6 +363,11 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
 
+			if(prefs_info->frame != NULL) {
+				gaim_plugin_pref_frame_destroy(prefs_info->frame);
+				prefs_info->frame = NULL;
+			}
+
 			if(prefs_info->iter != NULL) {
 				g_free(prefs_info->iter);
 				prefs_info->iter = NULL;
@@ -1856,7 +1861,8 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				iter = plugin_iter;
 
 			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
-			pref_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->get_plugin_pref_frame(plug));
+			prefs_info->frame = prefs_info->get_plugin_pref_frame(plug);
+			pref_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->frame);
 
 			if(pref_frame != NULL) {
 				prefs_info->iter = g_new0(GtkTreeIter, 1);
@@ -1894,6 +1900,11 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
 
 			if(prefs_info != NULL) {
+				if(prefs_info->frame != NULL) {
+					gaim_plugin_pref_frame_destroy(prefs_info->frame);
+					prefs_info->frame = NULL;
+				}
+
 				if(prefs_info->iter != NULL) {
 					gtk_tree_store_remove(GTK_TREE_STORE(prefstree), prefs_info->iter);
 					g_free(prefs_info->iter);
@@ -2544,13 +2555,11 @@ void prefs_notebook_init() {
 
 			if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
 				GtkWidget *gtk_frame;
-				GaimPluginPrefFrame *pp_frame;
 				GaimPluginUiInfo *prefs_info;
 
 				prefs_info = GAIM_PLUGIN_UI_INFO(plug);
-				pp_frame = prefs_info->get_plugin_pref_frame(plug);
-				gtk_frame = gaim_gtk_plugin_pref_create_frame(pp_frame);
-				gaim_plugin_pref_frame_destroy(pp_frame);
+				prefs_info->frame = prefs_info->get_plugin_pref_frame(plug);
+				gtk_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->frame);
 
 				if(GTK_IS_WIDGET(gtk_frame)) {
 					prefs_info->iter = g_new0(GtkTreeIter, 1);
@@ -2558,6 +2567,12 @@ void prefs_notebook_init() {
 										gtk_frame, prefs_info->iter,
 										(plug->info->type == GAIM_PLUGIN_PROTOCOL) ? &proto_iter : &plugin_iter,
 										notebook_page++);
+				} else if(prefs_info->frame) {
+					/* in the event that there is a pref frame and we can
+					 * not make a widget out of it, we free the
+					 * pluginpref frame --Gary
+					 */
+					gaim_plugin_pref_frame_destroy(prefs_info->frame);
 				}
 			}
 		}

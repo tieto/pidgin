@@ -87,7 +87,7 @@ struct _GaimPluginInfo
 
 	void *ui_info;
 	void *extra_info;
-	void *prefs_info;
+	GaimPluginUiInfo *prefs_info;
 };
 
 /**
@@ -127,6 +127,7 @@ struct _GaimPluginUiInfo {
 	GaimPluginPrefFrame *(*get_plugin_pref_frame)(GaimPlugin *plugin);
 
 	void *iter;                                           /**< Reserved */
+	GaimPluginPrefFrame *frame;                           /**< Reserved */
 };
 
 #define GAIM_PLUGIN_HAS_PREF_FRAME(plugin) \
