@@ -446,7 +446,9 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 			break;
 		}
 	}
-	(msgent->cb)(irc, msgent->name, from, args);
+	tmp = irc_recv_convert(irc, from);
+	(msgent->cb)(irc, msgent->name, tmp, args);
+	g_free(tmp);
 	for (i = 0; i < strlen(msgent->format); i++) {
 		g_free(args[i]);
 	}
