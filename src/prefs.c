@@ -1398,9 +1398,6 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
-#ifdef _WIN32
-	prefs_notebook_add_page(_("Windows Only"), NULL, wgaim_winprefs_page(), &p, NULL, notebook_page++);
-#endif
 #if USE_PLUGINS
 	prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
 	while (l) {
@@ -1748,14 +1745,6 @@ static void set_away_option(GtkWidget *w, int option)
 	save_prefs();
 }
 
-#ifdef _WIN32
-static void set_wgaim_option(GtkWidget *w, int option)
-{
-	wgaim_options ^= option;
-	save_prefs();
-}
-#endif
-
 GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *page)
 {
 	GtkWidget *button;
@@ -1788,11 +1777,6 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	if (options == &sound_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_sound_option),
 				   (int *)option);
-#ifdef _WIN32
-	if (options == &wgaim_options)
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_wgaim_option),
-				   (int *)option);
-#endif
 	gtk_widget_show(button);
 
 	return button;

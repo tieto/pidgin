@@ -57,9 +57,6 @@ guint font_options;
 guint sound_options;
 guint away_options;
 guint away_resend;
-#ifdef _WIN32
-guint wgaim_options;
-#endif
 
 int report_idle;
 int web_browser;
@@ -769,10 +766,6 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "away_options")) {
 			away_options = atoi(p->value[0]);
 			away_resend = atoi(p->value[1]);
-#ifdef _WIN32
-		} else if(!strcmp(p->option, "wgaim_options")) {
-			wgaim_options = atoi(p->value[0]);
-#endif
 		} else if (!strcmp(p->option, "font_face")) {
 			g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
 		} else if (!strcmp(p->option, "font_size")) {
@@ -881,9 +874,6 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tfont_options { %u }\n", font_options);
 	fprintf(f, "\tsound_options { %u }\n", sound_options);
 	fprintf(f, "\taway_options { %u } { %u }\n", away_options, away_resend);
-#ifdef _WIN32
-	fprintf(f, "\twgaim_options { %u }\n", wgaim_options);
-#endif
 	fprintf(f, "\tfont_face { %s }\n", fontface);
 	fprintf(f, "\tfont_size { %d }\n", fontsize);
 	fprintf(f, "\tforeground { %d } { %d } { %d }\n", fgcolor.red, fgcolor.green, fgcolor.blue);
@@ -1130,38 +1120,6 @@ static void gaimrc_write_proxy(FILE *f)
 	fprintf(f, "}\n");
 }
 
-#ifdef _WIN32
-static void gaimrc_read_wgaim(FILE *f)
-{
-	char buf[2048];
-	struct parse parse_buffer;
-	struct parse *p;
-
-	buf[0] = 0;
-
-	while (buf[0] != '}') {
-		if (buf[0] == '#')
-			continue;
-
-		if (!fgets(buf, sizeof(buf), f))
-			return;
-
-		p = parse_line(buf, &parse_buffer);
-
-		if (!strcmp(p->option, "imalpha")) {
-			wgaim_set_imalpha(atoi(p->value[0]));
-		}
-	}
-}
-
-static void gaimrc_write_wgaim(FILE *f)
-{
-	fprintf(f, "wgaim {\n");
-	fprintf(f, "\timalpha { %d }\n", wgaim_get_imalpha());
-	fprintf(f, "}\n");
-}
-#endif
-
 static void set_defaults()
 {
 	int i;
@@ -1205,10 +1163,6 @@ static void set_defaults()
 
 	away_options =
 		OPT_AWAY_BACK_ON_IM;
-
-#ifdef _WIN32
-	wgaim_options = 0;
-#endif
 
 	for (i = 0; i < NUM_SOUNDS; i++)
 		sound_file[i] = NULL;
@@ -1304,11 +1258,6 @@ void load_prefs()
 			case 7:
 				gaimrc_read_proxy(f);
 				break;
-#ifdef _WIN32
-			case 8:
-				gaimrc_read_wgaim(f);
-				break;
-#endif
 			default:
 				/* NOOP */
 				break;
@@ -1350,9 +1299,6 @@ void save_prefs()
 		gaimrc_write_plugins(f);
 #endif
 		gaimrc_write_proxy(f);
-#ifdef _WIN32
-		gaimrc_write_wgaim(f);
-#endif
 		fclose(f);
 
 		chmod(buf, S_IRUSR | S_IWUSR);

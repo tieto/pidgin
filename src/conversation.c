@@ -2853,17 +2853,6 @@ void show_conv(struct conversation *c)
 			menubar = build_conv_menubar(c);
 			gtk_box_pack_start(GTK_BOX(testidea), menubar, FALSE, TRUE, 0);
 			gtk_box_pack_start(GTK_BOX(testidea), convo_notebook, TRUE, TRUE, 0);
-#ifdef _WIN32
-			/* Windows transparency slider */
-			if ((wgaim_options & OPT_WGAIM_IMTRANS) &&
-			    (wgaim_options & OPT_WGAIM_SHOW_IMTRANS)) {
-				gtk_box_pack_start(GTK_BOX(testidea),
-						   wgaim_wintrans_slider(win),
-						   FALSE, FALSE, 0);
-			} else if(wgaim_options & OPT_WGAIM_IMTRANS) {
-				wgaim_set_wintrans(win, wgaim_get_imalpha());
-			}
-#endif
 			gtk_widget_show(testidea);
 			gtk_widget_show(convo_notebook);
 			convo_menubar = menubar;
@@ -2997,23 +2986,6 @@ void show_conv(struct conversation *c)
 	c->bbox = bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
-
-#ifdef _WIN32
-	/* Windows transparency slider */
-	if ((wgaim_options & OPT_WGAIM_IMTRANS) &&
-	    (wgaim_options & OPT_WGAIM_SHOW_IMTRANS) &&
-	    !(im_options & OPT_IM_ONE_WINDOW)) {
-		GtkWidget *wsep = gtk_hseparator_new();
-		gtk_box_pack_start(GTK_BOX(vbox2), wsep, FALSE, FALSE, 0);
-		gtk_widget_show(wsep);
-		gtk_box_pack_start(GTK_BOX(vbox2),
-				   wgaim_wintrans_slider(c->window),
-				   FALSE, FALSE, 0);
-	} else if((wgaim_options & OPT_WGAIM_IMTRANS) &&
-		  !(im_options & OPT_IM_ONE_WINDOW)) {
-		wgaim_set_wintrans(win, wgaim_get_imalpha());
-	}
-#endif
 
 /* I'm leaving this here just incase we want to bring this back. I'd rather not have the close
  * button any more.  If we do, though, it needs to be on the left side.  I might bring it back and put
