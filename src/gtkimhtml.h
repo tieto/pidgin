@@ -220,7 +220,7 @@ void       gtk_imhtml_html_shortcuts(GtkIMHtml *imhtml, gboolean allow);
 
 void       gtk_imhtml_smiley_shortcuts (GtkIMHtml *imhtml, gboolean allow);
 
-void       gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, gchar *protocol_name);
+void       gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name);
 
 #define    gtk_imhtml_append_text(x, y, z) \
  gtk_imhtml_append_text_with_images(x, y, z, NULL)

@@ -941,6 +941,8 @@ gtk_imhtml_finalize (GObject *object)
 
 	g_list_free(imhtml->scalables);
 	g_slist_free(imhtml->im_images);
+	if (imhtml->protocol_name)
+		g_free(imhtml->protocol_name);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -1383,11 +1385,12 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 		sml = font->sml;
 	}
 
-	if (sml == NULL)
+	if (!sml)
+		sml = imhtml->protocol_name;
+
+	if (!sml || !(tree = g_hash_table_lookup(imhtml->smiley_data, sml)))
 		tree = imhtml->default_smilies;
-	else {
-		tree = g_hash_table_lookup(imhtml->smiley_data, sml);
-	}
+
 	if (tree == NULL)
 		return FALSE;
 
@@ -2379,7 +2382,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			pos += tlen;
 			if(tag)
 				g_free(tag); /* This was allocated back in VALID_TAG() */
-		} else if (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen)) {
+		} else if (gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
 
 			gchar *sml = NULL;
@@ -2387,6 +2390,9 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				fd = fonts->data;
 				sml = fd->sml;
 			}
+			if (!sml)
+				sml = imhtml->protocol_name;
+
 			gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
 
@@ -2488,8 +2494,10 @@ void       gtk_imhtml_smiley_shortcuts (GtkIMHtml        *imhtml,
 }
 
 void
-gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, gchar *protocol_name) {
-	imhtml->protocol_name = protocol_name;
+gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name) {
+	if (imhtml->protocol_name)
+		g_free(imhtml->protocol_name);
+	imhtml->protocol_name = protocol_name ? g_strdup(protocol_name) : NULL;
 }
 
 void
