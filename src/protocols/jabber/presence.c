@@ -386,7 +386,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			/* If we haven't joined the chat yet, we don't care that someone
 			 * left, or it was us leaving after we closed the chat */
 			if(!chat->conv) {
-				if(!strcmp(jid->resource, chat->handle))
+				if(jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
 					jabber_chat_destroy(chat);
 				jabber_id_free(jid);
 				g_free(status);
