@@ -3087,14 +3087,11 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	/*
-	 * If the message is being sent to an ICQ user then escape any HTML,
+	 * If the message is being sent to an ICQ user then strip any HTML,
 	 * because HTML should not be sent over ICQ as a means to format a message.
-	 * SIM is the only client we know of that sends HTML, everything else
-	 * (ie. official clients) use RTF.  Please let us know if this is
-	 * incorrect.
 	 */
 	if (isdigit(gaim_account_get_username(account)[0])) {
-		gchar *tmp2 = gaim_escape_html(tmp);
+		gchar *tmp2 = gaim_markup_strip_html(tmp);
 		g_free(tmp);
 		tmp = tmp2;
 	}
@@ -5151,8 +5148,10 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		args.destsn = name;
 
-		/* For ICQ send newlines as CR/LF, for AIM send newlines as <BR> */
-		/* Also strip HTML for ICQ */
+		/*
+		 * If we're IMing an ICQ user then send newlines as CR/LF and
+		 * strip all HTML
+		 */
 		if (isdigit(name[0])) {
 			tmpmsg2 = gaim_markup_strip_html(message);
 			tmpmsg = gaim_str_add_cr(tmpmsg2);
