@@ -40,7 +40,7 @@
 
 	This is how buddy lists should work. This needs to be added to struct
 	prpl:
-		char *(*get_real_name)(char *)
+		char *(*normalize)(char *)
 	This is mostly for Jabber/MSN. E.g. for Jabber, passing "warmenhoven"
 	gets you "warmenhoven@jabber.org", passing "warmenhoven@jabber.org/GAIM"
 	gets you "warmenhoven@jabber.org". For AIM, "EWarmenhoven" returns
