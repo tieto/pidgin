@@ -2493,6 +2493,8 @@ void gaim_blist_save() {
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "blist save", "Unable to write %s\n",
 				   filename);
+		g_free(filename);
+		return;
 	}
 
 	filename_real = g_build_filename(user_dir, "blist.xml", NULL);

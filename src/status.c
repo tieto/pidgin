@@ -232,6 +232,8 @@ void gaim_status_sync()
 	else {
 		gaim_debug(GAIM_DEBUG_ERROR, "status", "Unable to write %s\n",
 				   filename);
+		g_free(filename);
+		return;
 	}
 
 	filename_real = g_build_filename(user_dir, "status.xml", NULL);
