@@ -1147,7 +1147,8 @@ void show_new_bp(char *name)
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *button;
-
+	GtkWidget *sep;
+	
         struct addbp *b = g_new0(struct addbp, 1);
         
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -1190,25 +1191,33 @@ void show_new_bp(char *name)
 	// I was left aligning these but I dunno if Like it -- Rob
 	
 	/* Set up the different options */
-	b->p_signon = gtk_check_button_new_with_label(_("Sign On"));
+	b->p_signon = gtk_check_button_new_with_label(_("Pounce on sign on"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
-	b->p_unaway = gtk_check_button_new_with_label(_("Return from away"));
-	b->p_unidle = gtk_check_button_new_with_label(_("Return from idle"));
+	b->p_unaway = gtk_check_button_new_with_label(_("Pounce on return from away"));
+	b->p_unidle = gtk_check_button_new_with_label(_("Pounce on return from idle"));
 
+	sep = gtk_hseparator_new();
+	
 	/* Show them */
-	gtk_widget_show(label);
+//	gtk_widget_show(label);
 	gtk_widget_show(b->p_signon);
 	gtk_widget_show(b->p_unaway);
 	gtk_widget_show(b->p_unidle);
-
+	gtk_widget_show(sep);
+	
 	/* And pack'em */
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	//gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), b->p_signon, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), b->p_unaway, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), b->p_unidle, FALSE, FALSE, 0);
 
+	sep = gtk_hseparator_new();
+	gtk_widget_show(sep);
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 
-	label = gtk_label_new(_("Actions"));
+
+	//label = gtk_label_new(_("Actions"));
 	// gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	// I was left aligning these but I dunno if Like it -- Rob
 
@@ -1219,15 +1228,16 @@ void show_new_bp(char *name)
 	b->sendim = gtk_check_button_new_with_label(_("Send IM on pounce")); 
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
 
-	gtk_widget_show(label);
+	//gtk_widget_show(label);
 	gtk_widget_show(b->openwindow);
 	gtk_widget_show(b->sendim);
 
-	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+	//gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), b->openwindow, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), b->sendim, FALSE, FALSE, 0);
 
         label = gtk_label_new(_("Message:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
         gtk_widget_show(label);
 
         gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
