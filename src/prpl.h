@@ -145,32 +145,21 @@ struct prpl {
 extern GSList *protocols;
 
 /* this is mostly just for aim.c, when it initializes the protocols */
-void static_proto_init();
+extern void static_proto_init();
 
 /* this is what should actually load the protocol. pass it the protocol's initializer */
-void load_protocol(proto_init, int);
-void unload_protocol(struct prpl *);
+extern void load_protocol(proto_init, int);
+extern void unload_protocol(struct prpl *);
 
-struct prpl *find_prpl(int);
-void do_proto_menu();
+extern struct prpl *find_prpl(int);
+extern void do_proto_menu();
 
-void register_user(gpointer, gpointer);
-void prepare_regbox_for_next();
+extern void register_user(gpointer, gpointer);
+extern void prepare_regbox_for_next();
 
-void do_ask_dialog(const char *, void *, void *, void *);
-void do_prompt_dialog(const char *, void *, void *, void *);
+extern void do_ask_dialog(const char *, void *, void *, void *);
+extern void do_prompt_dialog(const char *, void *, void *, void *);
 
-void connection_has_mail(struct gaim_connection *, int, const char *, const char *);
-
-/* UI for file transfer */
-#define FT_EXIST_DNE       0
-#define FT_EXIST_OVERWRITE 1
-#define FT_EXIST_RESUME    2
-typedef void (*ft_callback)(struct gaim_connection *, const char *, gint, gpointer);
-
-void ft_receive_request(struct gaim_connection *, const char *, gboolean, gboolean,
-		char *, guint size, ft_callback, gpointer);
-void ft_send_request(struct gaim_connection *, const char *, gboolean, char *, ft_callback, gpointer);
-gpointer ft_meter(gpointer, const char *, gfloat);
+extern void connection_has_mail(struct gaim_connection *, int, const char *, const char *);
 
 #endif
