@@ -117,6 +117,8 @@ void destroy_buddy()
 		gtk_widget_destroy(blist);
 	blist=NULL;
 	imchatbox = NULL;
+	awaymenu = NULL;
+	protomenu = NULL;
 }
 
 static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
