@@ -456,7 +456,7 @@ GtkTreePath *theme_refresh_theme_list()
 		 * LEAK - Gentoo memprof thinks pixbuf is leaking here... but it
 		 * looks like it should be ok to me.  Anyone know what's up?  --Mark
 		 */
-		pixbuf = gdk_pixbuf_new_from_file(theme->icon, NULL);
+		pixbuf = (theme->icon ? gdk_pixbuf_new_from_file(theme->icon, NULL) : NULL);
 
 		gtk_list_store_set(smiley_theme_store, &iter,
 				   0, pixbuf,
