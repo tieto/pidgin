@@ -3890,7 +3890,31 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 	return 1;
 }
 
-/* This function was recommended by the STRFTIME(3) man page to remove the
+#if 0
+/*
+ * It may not be my place to do this, but...
+ * I feel pretty strongly that the "last 2 digits" warning is ridiculously 
+ * stupid, and should not exist for % switches (%x in our case) that request 
+ * a year in the preferred representation for the current locale.  For that 
+ * reason I've chosen to not use this workaround (n., see kluge).
+ *
+ * I have a date.  I want to show it to the user in the "preferred" way.  
+ * Whether that displays a 2 digit year is perfectly fine--after all, it's 
+ * what the locale wanted.
+ * 
+ * If I have a necessity for a full representation of the year in the current 
+ * locale, then I'll use a switch that returns a full representation of the 
+ * year.
+ *
+ * If you think the preferred locale should show 4 digits instead of 2 digits 
+ * (because you're anal, or whatever), then change the f***ing locale.
+ *
+ * I guess the bottom line is--I'm trying to show a date to the user how they 
+ * prefer to see it, why the hell does gcc want me to change that?
+ */
+
+/*
+ * This function was recommended by the STRFTIME(3) man page to remove the
  * "last 2 digits" warning.
  */
 static size_t my_strftime(char *s, size_t max, const char  *fmt,  
@@ -3898,6 +3922,7 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 {
 	return strftime(s, max, fmt, tm);
 }
+#endif
 
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
@@ -3950,7 +3975,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tm.tm_mday = (int)info->birthday;
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
-		my_strftime(date, sizeof(date), "%x", &tm);
+		strftime(date, sizeof(date), "%x", &tm);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Birthday"), ":</b> ", date, NULL);  g_free(tmp);
 	}
 	if (info->age) {
