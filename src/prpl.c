@@ -101,7 +101,7 @@ void load_protocol(proto_init pi)
 				_("Gaim has loaded the ICQ plugin.  This plugin has been deprecated. "
 				  "As such, it was probably not compiled from the same version of the "
 				  "source as this application was, and cannot be guaranteed to work.  "
-				  "It is reccomended that you use the AIM/ICQ protocol to connect to ICQ"),
+				  "It is recommended that you use the AIM/ICQ protocol to connect to ICQ"),
 				GAIM_WARNING);
 	pi(p);
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);

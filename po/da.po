@@ -3628,7 +3628,7 @@ msgstr ""
 msgid ""
 "Gaim has loaded the ICQ plugin.  This plugin has been deprecated. As such, "
 "it was probably not compiled from the same version of the source as this "
-"application was, and cannot be guaranteed to work.  It is reccomended that "
+"application was, and cannot be guaranteed to work.  It is recommended that "
 "you use the AIM/ICQ protocol to connect to ICQ"
 msgstr ""
 
