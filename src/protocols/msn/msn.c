@@ -1101,10 +1101,10 @@ msn_convo_closed(GaimConnection *gc, char *who)
 	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
 	MsnSwitchBoard *swboard;
-	
+
 	swboard = msn_session_find_switch_with_passport(session, who);
 
-	if (swboard != NULL) {
+	if (swboard != NULL && swboard->chat == NULL) {
 		char sendbuf[256];
 
 		g_snprintf(sendbuf, sizeof(sendbuf), "BYE %s\r\n",

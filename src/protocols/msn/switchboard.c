@@ -164,11 +164,17 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (swboard->total_users > 1) {
 		if (swboard->chat == NULL) {
+			GaimConversation *conv;
+
+			conv = gaim_find_conversation(msn_user_get_passport(swboard->user));
+
 			swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 												 "MSN Chat");
 
 			gaim_chat_add_user(GAIM_CHAT(swboard->chat),
 							   gaim_account_get_username(account), NULL);
+
+			gaim_conversation_destroy(conv);
 		}
 
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat), params[3], NULL);
@@ -189,6 +195,10 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 	passport = params[0];
 
 	if (swboard->total_users == 1) {
+		GaimConversation *conv;
+
+		conv = gaim_find_conversation(msn_user_get_passport(swboard->user));
+
 		swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 											 "MSN Chat");
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
@@ -197,6 +207,8 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 						   gaim_account_get_username(account), NULL);
 
 		msn_user_unref(swboard->user);
+
+		gaim_conversation_destroy(conv);
 	}
 
 	if (swboard->chat != NULL)
