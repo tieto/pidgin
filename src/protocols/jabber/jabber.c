@@ -171,7 +171,7 @@ static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 	} else if(xmlnode_get_child(packet, "undefined-condition")) {
 		text = _("Undefined Condition");
 	} else if(xmlnode_get_child(packet, "unsupported-encoding")) {
-		text = _("Unsupported Condition");
+		text = _("Unsupported Encoding");
 	} else if(xmlnode_get_child(packet, "unsupported-stanza-type")) {
 		text = _("Unsupported Stanza Type");
 	} else if(xmlnode_get_child(packet, "unsupported-version")) {
