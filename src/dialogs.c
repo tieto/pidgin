@@ -3451,7 +3451,6 @@ void use_away_mess(GtkWidget *widget, struct create_away *ca)
 
 	destroy_dialog(NULL, ca->window);
 	g_free(ca);
-	g_free(am.message);
 }
 
 void su_away_mess(GtkWidget *widget, struct create_away *ca)
