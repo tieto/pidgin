@@ -98,16 +98,16 @@ retrieval of away messages; isn't capable of sending or receiving buddy
 icons; it also can't make file transfer requests.
 
 
-Oscar (Eric)
+Oscar (Mark)
 =====
 
 Oscar is the default protocol. It is recommended that you use Oscar for
 both AIM and ICQ, as TOC isn't very featureful and the old ICQ protocol no
-longer works.
+longer works. 
 
 For AIM, Oscar can get people's away messages. It can request and accept
-Direct IM connections, but it cannot yet transfer files through this (or
-through any other means). It can send and receive buddy icons if you have
+Direct Connections, and has limited support for file transfer. IM Image 
+does not currently work. It can send and receive buddy icons if you have 
 GdkPixbuf.
 
 For ICQ, it supports nearly everything that the old ICQ plugin supported,
@@ -116,16 +116,16 @@ screenname. The default host/port will work. You'll need to use a different
 client to register a new ICQ account if you don't have one yet.
 
 
-Yahoo (Eric)
+Yahoo (Sean)
 =====
 
 Yahoo is currently using the new YMSG protocol that newer official Yahoo
 clients are using. This protocol is much better than the old one, and
 tends to be somewhat more reliable. However, the Yahoo service is still
-flaky at best. Group chats aren't supported yet.
+flaky at best. 
 
 
-IRC (Eric)
+IRC (Ethan)
 ===
 
 There are three ways to join an IRC chat room. The first is the File->Join
@@ -136,7 +136,7 @@ account. There are other / commands that work in IM and Chat windows for
 IRC, /help will give you a list of them.
 
 
-MSN (Eric)
+MSN (Christian)
 ===
 
 With MSN you can join a conversation with several people, but you can't
@@ -152,7 +152,7 @@ need a different client to register an ICQ account if you don't have
 one yet.
 
 
-Jabber (Eric)
+Jabber (Nathan)
 ======
 
 Transports aren't currently supported at all, though if you have a
