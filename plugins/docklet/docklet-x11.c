@@ -164,6 +164,10 @@ docklet_x11_create()
 
 	gtk_container_add(GTK_CONTAINER(box), image);
 	gtk_container_add(GTK_CONTAINER(docklet), box);
+
+	if(!gtk_check_version(2,4,0))
+		g_object_set(G_OBJECT(box), "visible-window", FALSE, NULL);
+
 	gtk_widget_show_all(GTK_WIDGET(docklet));
 
 	/* ref the docklet before we bandy it about the place */
