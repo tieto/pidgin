@@ -138,7 +138,6 @@ void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
 	label = gtk_label_new(text);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 5);

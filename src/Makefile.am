@@ -22,7 +22,6 @@ gaim_applet_SOURCES =	about.c \
 			prefs.c \
 			proxy.c \
 			prpl.c \
-			rvous.c \
 			server.c \
 			sound.c \
 			ticker.c \
@@ -54,7 +53,6 @@ gaim_SOURCES =	about.c \
 		prefs.c \
 		proxy.c \
 		prpl.c \
-		rvous.c \
 		server.c \
 		sound.c \
 		ticker.c \

@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1445 $"
+#define REVISION "gaim:$Revision: 1467 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -68,6 +68,27 @@
 #define STATE_SIGNON_REQUEST 2
 #define STATE_ONLINE 3
 #define STATE_PAUSE 4
+
+#define VOICE_UID     "09461341-4C7F-11D1-8222-444553540000"
+#define FILE_SEND_UID "09461343-4C7F-11D1-8222-444553540000"
+#define IMAGE_UID     "09461345-4C7F-11D1-8222-444553540000"
+#define B_ICON_UID    "09461346-4C7F-11D1-8222-444553540000"
+#define STOCKS_UID    "09461347-4C7F-11D1-8222-444553540000"
+#define FILE_GET_UID  "09461348-4C7F-11D1-8222-444553540000"
+#define GAMES_UID     "0946134a-4C7F-11D1-8222-444553540000"
+
+struct ft_request {
+	struct gaim_connection *gc;
+        char *user;
+	char UID[2048];
+        char *cookie;
+        char *ip;
+        int port;
+        char *message;
+        char *filename;
+	int files;
+        int size;
+};
 
 struct toc_data {
 	int toc_fd;
@@ -98,6 +119,7 @@ struct signon {
 
 static void toc_callback(gpointer, gint, GdkInputCondition);
 static unsigned char *roast_password(char *);
+static void accept_file_dialog(struct ft_request *);
 
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
@@ -161,7 +183,7 @@ static void toc_close(struct gaim_connection *gc)
 	close(((struct toc_data *)gc->proto_data)->toc_fd);
 }
 
-int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
+static int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 {
 	int len;
 	int slen = 0;
@@ -337,8 +359,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		g_snprintf(snd, sizeof snd, "toc_init_done");
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
-		g_snprintf(snd, sizeof snd, "toc_set_caps %s %s",
-			   FILE_SEND_UID, FILE_GET_UID);
+		g_snprintf(snd, sizeof snd, "toc_set_caps %s", FILE_SEND_UID);
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
 		return;
@@ -561,7 +582,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			int unk[4], i;
 			char *messages[4], *tmp, *name;
 			int subtype, files, totalsize = 0;
-			struct file_transfer *ft;
+			struct ft_request *ft;
 
 			for (i = 0; i < 4; i++) {
 				sscanf(strtok(NULL, ":"), "%d", &unk[i]);
@@ -588,7 +609,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 
 			name = tmp + 8;
 
-			ft = g_new0(struct file_transfer, 1);
+			ft = g_new0(struct ft_request, 1);
 			ft->cookie = g_strdup(cookie);
 			ft->ip = g_strdup(pip);
 			ft->port = port;
@@ -599,6 +620,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			ft->filename = g_strdup(name);
 			ft->user = g_strdup(user);
 			ft->size = totalsize;
+			ft->files = files;
 			g_snprintf(ft->UID, sizeof(ft->UID), "%s", FILE_SEND_UID);
 			ft->gc = gc;
 
@@ -606,12 +628,15 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			for (i--; i >= 0; i--)
 				g_free(messages[i]);
 
+			debug_printf("English translation of RVOUS_PROPOSE: %s requests Send File (i.e."
+				" send a file to you); %s:%d (verified_ip:port), %d files at"
+				" total size of %ld bytes.\n", user, vip, port, files, totalsize);
 			accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
-			/* they want us to send a file */
+			/* they want us to send a file
 			int unk[4], i;
 			char *messages[4], *tmp;
-			struct file_transfer *ft;
+			struct ft_request *ft;
 
 			for (i = 0; i < 4; i++) {
 				sscanf(strtok(NULL, ":"), "%d", unk + i);
@@ -621,7 +646,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			}
 			tmp = frombase64(strtok(NULL, ":"));
 
-			ft = g_new0(struct file_transfer, 1);
+			ft = g_new0(struct ft_request, 1);
 			ft->cookie = g_strdup(cookie);
 			ft->ip = g_strdup(pip);
 			ft->port = port;
@@ -638,6 +663,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 				g_free(messages[i]);
 
 			accept_file_dialog(ft);
+			*/
 		} else if (!strcmp(uuid, VOICE_UID)) {
 			/* oh goody. voice over ip. fun stuff. */
 		} else if (!strcmp(uuid, B_ICON_UID)) {
@@ -1218,4 +1244,285 @@ void toc_init(struct prpl *ret)
 	ret->chat_whisper = toc_chat_whisper;
 	ret->chat_send = toc_chat_send;
 	ret->keepalive = toc_keepalive;
+}
+
+/*********
+ * RVOUS ACTIONS
+ ********/
+
+struct file_header {
+	char  magic[4];		/* 0 */
+	short hdrlen;		/* 4 */
+	short hdrtype;		/* 6 */
+	char  bcookie[8];	/* 8 */
+	short encrypt;		/* 16 */
+	short compress;		/* 18 */
+	short totfiles;		/* 20 */
+	short filesleft;	/* 22 */
+	short totparts;		/* 24 */
+	short partsleft;	/* 26 */
+	long  totsize;		/* 28 */
+	long  size;		/* 32 */
+	long  modtime;		/* 36 */
+	long  checksum;		/* 40 */
+	long  rfrcsum;		/* 44 */
+	long  rfsize;		/* 48 */
+	long  cretime;		/* 52 */
+	long  rfcsum;		/* 56 */
+	long  nrecvd;		/* 60 */
+	long  recvcsum;		/* 64 */
+	char  idstring[32];	/* 68 */
+	char  flags;		/* 100 */
+	char  lnameoffset;	/* 101 */
+	char  lsizeoffset;	/* 102 */
+	char  dummy[69];	/* 103 */
+	char  macfileinfo[16];	/* 172 */
+	short nencode;		/* 188 */
+	short nlanguage;	/* 190 */
+	char  name[64];		/* 192 */
+				/* 256 */
+};
+
+struct file_transfer {
+	struct file_header hdr;
+
+	struct gaim_connection *gc;
+
+	char *user;
+	char *cookie;
+	char *ip;
+	int port;
+	long size;
+
+	GtkWidget *window;
+	FILE *file;
+	int recvsize;
+
+	gint inpa;
+};
+
+static void toc_get_file(gpointer a, struct file_transfer *ft) {
+	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window));
+
+	if (file_is_dir(dirname, ft->window))
+		return;
+	gtk_widget_destroy(ft->window);
+}
+
+static void debug_header(struct file_transfer *ft) {
+	struct file_header *f = (struct file_header *)ft;
+	debug_printf("TOC FT HEADER:\n"
+			"\t%s %d 0x%04x\n"
+			"\t%s %d %d\n"
+			"\t%d %d %d %d %ld %ld\n"
+			"\t%ld %ld %ld %ld %ld %ld %ld %ld\n"
+			"\t%s\n"
+			"\t0x%02x, 0x%02x, 0x%02x\n"
+			"\t%s %s\n"
+			"\t%d %d\n"
+			"\t%s\n",
+			f->magic, ntohs(f->hdrlen), f->hdrtype,
+			f->bcookie, ntohs(f->encrypt), ntohs(f->compress),
+			ntohs(f->totfiles), ntohs(f->filesleft), ntohs(f->totparts),
+				ntohs(f->partsleft), ntohl(f->totsize), ntohl(f->size),
+			ntohl(f->modtime), ntohl(f->checksum), ntohl(f->rfrcsum), ntohl(f->rfsize),
+				ntohl(f->cretime), ntohl(f->rfcsum), ntohl(f->nrecvd),
+				ntohl(f->recvcsum),
+			f->idstring,
+			f->flags, f->lnameoffset, f->lsizeoffset,
+			f->dummy, f->macfileinfo,
+			ntohs(f->nencode), ntohs(f->nlanguage),
+			f->name);
+}
+
+static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition cond) {
+	char buf[BUF_LONG];
+	int rt, i;
+
+	struct file_transfer *ft = data;
+
+	if (cond & GDK_INPUT_EXCEPTION) {
+		gdk_input_remove(ft->inpa);
+		close(source);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft->cookie);
+		fclose(ft->file);
+		g_free(ft);
+		return;
+	}
+
+	if (ft->hdr.hdrtype != 0x202) {
+		char *buf = frombase64(ft->cookie);
+
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		debug_header(ft);
+
+		ft->hdr.hdrtype = 0x202;
+		memcpy(ft->hdr.bcookie, buf, 8);
+		g_free(buf);
+		ft->hdr.encrypt = 0; ft->hdr.compress = 0;
+		debug_header(ft);
+		write(source, ft, 256);
+
+		return;
+	}
+
+	rt = read(source, buf, MIN(ntohl(ft->hdr.size) - ft->recvsize, 1024));
+	if (rt < 0) {
+		do_error_dialog("File transfer failed; other side probably canceled.", "Error");
+		gdk_input_remove(ft->inpa);
+		close(source);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft->cookie);
+		fclose(ft->file);
+		g_free(ft);
+		return;
+	}
+	ft->recvsize += rt;
+	for (i = 0; i < rt; i++)
+		fprintf(ft->file, "%c", buf[i]);
+
+	if (ft->recvsize == ntohl(ft->hdr.size)) {
+		ft->hdr.hdrtype = 0x402;
+		ft->hdr.filesleft = htons(ntohs(ft->hdr.filesleft) - 1);
+		ft->hdr.partsleft = htons(ntohs(ft->hdr.partsleft) - 1);
+		ft->hdr.recvcsum = ft->hdr.checksum; /* uh... */
+		ft->hdr.nrecvd = htons(ntohs(ft->hdr.nrecvd) + 1);
+		ft->hdr.flags = 0;
+		write(source, ft, 256);
+		ft->recvsize = 0;
+		if (ft->hdr.filesleft != 0) {
+			char *msg = g_strdup_printf("%s tried to send you more than one file, but"
+					" currently that is not possible.", ft->user);
+			do_error_dialog(msg, "Error");
+			g_free(msg);
+		}
+		gdk_input_remove(ft->inpa);
+		close(source);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft->cookie);
+		fclose(ft->file);
+		g_free(ft);
+	}
+}
+
+static void toc_send_file(gpointer a, struct file_transfer *old_ft) {
+	struct file_transfer *ft;
+	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
+	int fd;
+	struct aim_user *user;
+	char *buf;
+
+	if (file_is_dir(dirname, old_ft->window))
+		return;
+	ft = g_new0(struct file_transfer, 1);
+	ft->file = fopen(dirname, "w");
+	if (!ft->file) {
+		do_error_dialog(_("Could not open file for writing!"), _("Error"));
+		g_free(ft);
+		gtk_widget_destroy(old_ft->window);
+		return;
+	}
+
+	ft->cookie = g_strdup(old_ft->cookie);
+	ft->user = g_strdup(old_ft->user);
+	ft->ip = g_strdup(old_ft->ip);
+	ft->port = old_ft->port;
+	ft->gc = old_ft->gc;
+	user = ft->gc->user;
+	gtk_widget_destroy(old_ft->window);
+
+	buf = g_strdup_printf("toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
+	sflap_send(ft->gc, buf, -1, TYPE_DATA);
+	g_free(buf);
+
+	fd =
+	    proxy_connect(ft->ip, ft->port,
+			  user->proto_opt[USEROPT_SOCKSHOST],
+			  atoi(user->proto_opt[USEROPT_SOCKSPORT]),
+			  atoi(user->proto_opt[USEROPT_PROXYTYPE]));
+	if (fd < 0) {
+		do_error_dialog(_("Could not connect for transfer!"), _("Error"));
+		g_free(ft->cookie);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft);
+		return;
+	}
+
+	ft->inpa = gdk_input_add(fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_send_file_callback, ft);
+}
+
+static void cancel_callback(gpointer a, struct file_transfer *ft) {
+	gtk_widget_destroy(ft->window);
+	if (a == ft->window) {
+		g_free(ft->cookie);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft);
+	}
+}
+
+static void toc_accept_ft(gpointer a, struct ft_request *fr) {
+	GtkWidget *window;
+	char buf[BUF_LEN];
+
+	struct file_transfer *ft = g_new0(struct file_transfer, 1);
+	ft->gc = fr->gc;
+	ft->user = g_strdup(fr->user);
+	ft->cookie = g_strdup(fr->cookie);
+	ft->ip = g_strdup(fr->ip);
+	ft->port = fr->port;
+
+	ft->window = window = gtk_file_selection_new(_("Gaim - Save As..."));
+	g_snprintf(buf, sizeof(buf), "%s/%s", g_get_home_dir(), fr->filename ? fr->filename : "");
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
+	gtk_signal_connect(GTK_OBJECT(window), "destroy",
+			   GTK_SIGNAL_FUNC(cancel_callback), ft);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(ft->window)->cancel_button), "clicked",
+			   GTK_SIGNAL_FUNC(cancel_callback), ft);
+
+	if (!strcmp(fr->UID, FILE_SEND_UID))
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
+				   GTK_SIGNAL_FUNC(toc_send_file), ft);
+	else
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
+				   GTK_SIGNAL_FUNC(toc_get_file), ft);
+
+	gtk_widget_show(window);
+}
+
+static void toc_reject_ft(gpointer a, struct ft_request *ft) {
+	g_free(ft->user);
+	g_free(ft->filename);
+	g_free(ft->ip);
+	g_free(ft->cookie);
+	if (ft->message)
+		g_free(ft->message);
+	g_free(ft);
+}
+
+static void accept_file_dialog(struct ft_request *ft) {
+	char buf[BUF_LONG];
+	if (!strcmp(ft->UID, FILE_SEND_UID)) {
+		/* holy crap. who the fuck would transfer gigabytes through AIM?! */
+		static char *sizes[4] = { "bytes", "KB", "MB", "GB" };
+		float size = ft->size;
+		int index = 0;
+		while ((index < 4) && (size > 1024)) {
+			size /= 1024;
+			index++;
+		}
+	        g_snprintf(buf, sizeof(buf), _("%s requests %s to accept %d file%s: %s (%.2f %s)%s%s"),
+				ft->user, ft->gc->username, ft->files, (ft->files == 1) ? "" : "s",
+				ft->filename, size, sizes[index], (ft->message) ? "\n" : "",
+				(ft->message) ? ft->message : "");
+	} else {
+		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"), ft->user);
+	}
+	do_ask_dialog(buf, ft, toc_accept_ft, toc_reject_ft);
 }

@@ -354,33 +354,8 @@ struct conversation {
 	gboolean is_chat;
 };
 
-struct file_transfer {
-        GtkWidget *window;
-        char *cookie;
-        char *ip;
-        char *message;
-        int port;
-        int size;
-        int accepted;
-        char *filename;
-        char *lfilename;
-        char *user;
-        FILE *f;
-        int fd;
-	char UID[2048];
-	struct gaim_connection *gc;
-};
-
 #define CONVERSATION_TITLE "Gaim - %s"
 #define LOG_CONVERSATION_TITLE "Gaim - %s (logged)"
-
-#define VOICE_UID     "09461341-4C7F-11D1-8222-444553540000"
-#define FILE_SEND_UID "09461343-4C7F-11D1-8222-444553540000"
-#define IMAGE_UID     "09461345-4C7F-11D1-8222-444553540000"
-#define B_ICON_UID    "09461346-4C7F-11D1-8222-444553540000"
-#define STOCKS_UID    "09461347-4C7F-11D1-8222-444553540000"
-#define FILE_GET_UID  "09461348-4C7F-11D1-8222-444553540000"
-#define GAMES_UID     "0946134a-4C7F-11D1-8222-444553540000"
 
 #define AOL_SRCHSTR "/community/aimcheck.adp/url="
 
@@ -808,9 +783,6 @@ extern void show_font_dialog(struct conversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void set_color_selection(GtkWidget *selection, GdkColor color);
-
-/* Functions in rvous.c */
-extern void accept_file_dialog(struct file_transfer *);
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);
