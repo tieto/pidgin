@@ -55,6 +55,9 @@ gaim_perl_bless_object(void *object, const char *stash_name)
 	HV *stash;
 	HV *hv;
 
+	if (object == NULL)
+		return NULL;
+
 	if (object_stashes == NULL)
 	{
 		object_stashes = g_hash_table_new(g_direct_hash, g_direct_equal);
@@ -93,6 +96,9 @@ gaim_perl_ref_object(SV *o)
 	SV **sv;
 	HV *hv;
 	void *p;
+
+	if (o == NULL)
+		return NULL;
 
 	hv = hvref(o);
 
