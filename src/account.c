@@ -1418,6 +1418,8 @@ gaim_accounts_add(GaimAccount *account)
 	accounts = g_list_append(accounts, account);
 
 	schedule_accounts_save();
+
+	gaim_signal_emit(gaim_accounts_get_handle(), "account-added", account);
 }
 
 void
@@ -1428,6 +1430,8 @@ gaim_accounts_remove(GaimAccount *account)
 	accounts = g_list_remove(accounts, account);
 
 	schedule_accounts_save();
+
+	gaim_signal_emit(gaim_accounts_get_handle(), "account-removed", account);
 }
 
 void
@@ -1637,6 +1641,14 @@ gaim_accounts_init(void)
 										GAIM_SUBTYPE_ACCOUNT),
 						 gaim_value_new(GAIM_TYPE_STRING),
 						 gaim_value_new(GAIM_TYPE_UINT));
+
+	gaim_signal_register(handle, "account-added",
+			gaim_marshal_VOID__POINTER, NULL, 1,
+			gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_ACCOUNT));
+
+	gaim_signal_register(handle, "account-removed",
+			gaim_marshal_VOID__POINTER, NULL, 1,
+			gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_ACCOUNT));
 }
 
 void

@@ -873,7 +873,7 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 }
 
 static void
-account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
+regenerate_account_menu(GtkWidget *optmenu)
 {
 	GtkWidget *menu;
 	GtkWidget *item;
@@ -894,6 +894,18 @@ account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
 
 	create_account_menu(optmenu, account, check_account_func, show_all);
+}
+
+static void
+account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
+{
+	regenerate_account_menu(optmenu);
+}
+
+static void
+account_menu_added_removed_cb(GaimAccount *account, GtkWidget *optmenu)
+{
+	regenerate_account_menu(optmenu);
 }
 
 static gboolean
@@ -926,6 +938,12 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 						optmenu);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
 						optmenu, GAIM_CALLBACK(account_menu_sign_on_off_cb),
+						optmenu);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-added",
+						optmenu, GAIM_CALLBACK(account_menu_added_removed_cb),
+						optmenu);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+						optmenu, GAIM_CALLBACK(account_menu_added_removed_cb),
 						optmenu);
 
 	/* Set some data. */
