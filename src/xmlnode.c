@@ -54,21 +54,6 @@ xmlnode_new(const char *name)
 	return new_node(name, XMLNODE_TYPE_TAG);
 }
 
-xmlnode*
-xmlnode_new_with_data(const char *name, const char *data, size_t size)
-{
-	xmlnode *node;
-
-	g_return_val_if_fail(name != NULL, NULL);
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(size != 0, NULL);
-
-	node = new_node(name, XMLNODE_TYPE_TAG);
-	xmlnode_insert_data(node, data, size);
-
-	return node;
-}
-
 xmlnode *
 xmlnode_new_child(xmlnode *parent, const char *name)
 {
@@ -78,25 +63,6 @@ xmlnode_new_child(xmlnode *parent, const char *name)
 	g_return_val_if_fail(name != NULL, NULL);
 
 	node = new_node(name, XMLNODE_TYPE_TAG);
-
-	xmlnode_insert_child(parent, node);
-
-	return node;
-}
-
-xmlnode *
-xmlnode_new_child_with_data(xmlnode *parent, const char *name,
-							const char *data, size_t size)
-{
-	xmlnode *node;
-
-	g_return_val_if_fail(parent != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(size != 0, NULL);
-
-	node = new_node(name, XMLNODE_TYPE_TAG);
-	xmlnode_insert_data(node, data, size);
 
 	xmlnode_insert_child(parent, node);
 

@@ -111,22 +111,17 @@ substatus_to_xmlnode(GaimSavedStatusSub *substatus)
 
 	node = xmlnode_new("substatus");
 
-	child = xmlnode_new("account");
-	xmlnode_set_attrib(node, "protocol",
-					   gaim_account_get_protocol_id(substatus->account));
-	xmlnode_insert_data(child,
-						gaim_account_get_username(substatus->account), -1);
-	xmlnode_insert_child(node, child);
+	child = xmlnode_new_child(node, "account");
+	xmlnode_set_attrib(child, "protocol", gaim_account_get_protocol_id(substatus->account));
+	xmlnode_insert_data(child, gaim_account_get_username(substatus->account), -1);
 
-	child = xmlnode_new("state");
+	child = xmlnode_new_child(node, "state");
 	xmlnode_insert_data(child, gaim_status_type_get_id(substatus->type), -1);
-	xmlnode_insert_child(node, child);
 
 	if (substatus->message != NULL)
 	{
-		child = xmlnode_new("message");
+		child = xmlnode_new_child(node, "message");
 		xmlnode_insert_data(child, substatus->message, -1);
-		xmlnode_insert_child(node, child);
 	}
 
 	return node;
@@ -141,13 +136,11 @@ status_to_xmlnode(GaimSavedStatus *status)
 	node = xmlnode_new("status");
 	xmlnode_set_attrib(node, "name", status->title);
 
-	child = xmlnode_new("state");
-	xmlnode_insert_data(child, strdup(gaim_primitive_get_id_from_type(status->type)), -1);
-	xmlnode_insert_child(node, child);
+	child = xmlnode_new_child(node, "state");
+	xmlnode_insert_data(child, gaim_primitive_get_id_from_type(status->type), -1);
 
-	child = xmlnode_new("message");
+	child = xmlnode_new_child(node, "message");
 	xmlnode_insert_data(child, status->message, -1);
-	xmlnode_insert_child(node, child);
 
 	for (cur = status->substatuses; cur != NULL; cur = cur->next)
 	{

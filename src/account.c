@@ -1365,7 +1365,7 @@ setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	setting = (GaimAccountSetting *)value;
 	node    = (xmlnode *)user_data;
 
-	child = xmlnode_new("setting");
+	child = xmlnode_new_child(node, "setting");
 	xmlnode_set_attrib(child, "name", name);
 
 	if (setting->type == GAIM_PREF_INT) {
@@ -1382,8 +1382,6 @@ setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 		snprintf(buf, sizeof(buf), "%d", setting->value.bool);
 		xmlnode_insert_data(child, buf, -1);
 	}
-
-	xmlnode_insert_child(node, child);
 }
 
 static void
@@ -1397,11 +1395,9 @@ ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	table = (GHashTable *)value;
 	node  = (xmlnode *)user_data;
 
-	child = xmlnode_new("settings");
+	child = xmlnode_new_child(node, "settings");
 	xmlnode_set_attrib(child, "ui", ui);
 	g_hash_table_foreach(table, setting_to_xmlnode, child);
-
-	xmlnode_insert_child(node, child);
 }
 
 static xmlnode *
@@ -1417,7 +1413,8 @@ proxy_settings_to_xmlnode(GaimProxyInfo *proxy_info)
 
 	node = xmlnode_new("proxy");
 
-	child = xmlnode_new_child_with_data(node, "type",
+	child = xmlnode_new_child(node, "type");
+	xmlnode_insert_data(child,
 			(proxy_type == GAIM_PROXY_USE_GLOBAL ? "global" :
 			 proxy_type == GAIM_PROXY_NONE       ? "none"   :
 			 proxy_type == GAIM_PROXY_HTTP       ? "http"   :
@@ -1430,19 +1427,29 @@ proxy_settings_to_xmlnode(GaimProxyInfo *proxy_info)
 		proxy_type != GAIM_PROXY_USE_ENVVAR)
 	{
 		if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
-			child = xmlnode_new_child_with_data(node, "host", value, -1);
+		{
+			child = xmlnode_new_child(node, "host");
+			xmlnode_insert_data(child, value, -1);
+		}
 
 		if ((int_value = gaim_proxy_info_get_port(proxy_info)) != 0)
 		{
 			snprintf(buf, sizeof(buf), "%d", int_value);
-			child = xmlnode_new_child_with_data(node, "port", buf, -1);
+			child = xmlnode_new_child(node, "port");
+			xmlnode_insert_data(child, buf, -1);
 		}
 
 		if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
-			child = xmlnode_new_child_with_data(node, "username", value, -1);
+		{
+			child = xmlnode_new_child(node, "username");
+			xmlnode_insert_data(child, value, -1);
+		}
 
 		if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
-			child = xmlnode_new_child_with_data(node, "password", value, -1);
+		{
+			child = xmlnode_new_child(node, "password");
+			xmlnode_insert_data(child, value, -1);
+		}
 	}
 
 	return node;
@@ -1457,47 +1464,40 @@ account_to_xmlnode(GaimAccount *account)
 
 	node = xmlnode_new("account");
 
-	child = xmlnode_new("protocol");
+	child = xmlnode_new_child(node, "protocol");
 	xmlnode_insert_data(child, gaim_account_get_protocol_id(account), -1);
-	xmlnode_insert_child(node, child);
 
-	child = xmlnode_new("name");
+	child = xmlnode_new_child(node, "name");
 	xmlnode_insert_data(child, gaim_account_get_username(account), -1);
-	xmlnode_insert_child(node, child);
 
 	if (gaim_account_get_remember_password(account) &&
 		((tmp = gaim_account_get_password(account)) != NULL))
 	{
-		child = xmlnode_new("password");
+		child = xmlnode_new_child(node, "password");
 		xmlnode_insert_data(child, tmp, -1);
-		xmlnode_insert_child(node, child);
 	}
 
 	if ((tmp = gaim_account_get_alias(account)) != NULL)
 	{
-		child = xmlnode_new("alias");
+		child = xmlnode_new_child(node, "alias");
 		xmlnode_insert_data(child, tmp, -1);
-		xmlnode_insert_child(node, child);
 	}
 
 	if ((tmp = gaim_account_get_user_info(account)) != NULL)
 	{
 		/* TODO: Do we need to call gaim_str_strip_cr(tmp) here? */
-		child = xmlnode_new("userinfo");
+		child = xmlnode_new_child(node, "userinfo");
 		xmlnode_insert_data(child, tmp, -1);
-		xmlnode_insert_child(node, child);
 	}
 
 	if ((tmp = gaim_account_get_buddy_icon(account)) != NULL)
 	{
-		child = xmlnode_new("buddyicon");
+		child = xmlnode_new_child(node, "buddyicon");
 		xmlnode_insert_data(child, tmp, -1);
-		xmlnode_insert_child(node, child);
 	}
 
-	child = xmlnode_new("settings");
+	child = xmlnode_new_child(node, "settings");
 	g_hash_table_foreach(account->settings, setting_to_xmlnode, child);
-	xmlnode_insert_child(node, child);
 
 	g_hash_table_foreach(account->ui_settings, ui_setting_to_xmlnode, node);
 
