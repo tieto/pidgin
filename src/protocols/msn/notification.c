@@ -38,6 +38,11 @@ static GHashTable *notification_msg_types = NULL;
 /**************************************************************************
  * Utility functions
  **************************************************************************/
+static void
+sync_groups_for_buddy(MsnServConn *servconn, MsnUser *user)
+{
+}
+
 static gboolean
 add_buddy(MsnServConn *servconn, MsnUser *user)
 {
@@ -48,6 +53,7 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 	MsnGroup *group = NULL;
 	GaimGroup *g = NULL;
 	GList *l, *l2;
+	GSList *sl;
 	GSList *buddies;
 
 	buddies = gaim_find_buddies(account, msn_user_get_passport(user));
@@ -55,7 +61,6 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 	for (l = msn_user_get_group_ids(user); l != NULL; l = l->next)
 	{
 		int group_id = GPOINTER_TO_INT(l->data);
-		GSList *l3;
 
 		if (group_id > -1)
 			group = msn_groups_find_with_id(session->groups, group_id);
@@ -91,9 +96,9 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 
 		b = NULL;
 
-		for (l3 = buddies; l3 != NULL; l3 = l3->next)
+		for (sl = buddies; sl != NULL; sl = sl->next)
 		{
-			b = (GaimBuddy *)l3->data;
+			b = (GaimBuddy *)sl->data;
 
 			if (gaim_find_buddys_group(b) == g)
 				break;
@@ -109,11 +114,22 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 			gaim_blist_add_buddy(b, NULL, g, NULL);
 		}
 
-		gaim_debug(GAIM_DEBUG_INFO, "msn",
-				   "Adding MsnUser to %s's proto_data (group %d, %s)\n",
-				   b->name, group_id, (g == NULL ? "(null)" : g->name));
-
 		b->proto_data = user;
+	}
+
+	/* Find all occurrences of this buddy in the wrong place. */
+	for (sl = buddies; sl != NULL; sl = sl->next)
+	{
+		b = sl->data;
+
+		if (b->proto_data == NULL)
+		{
+			gaim_debug_warning("msn",
+				"Deleting misplaced user %s (%s) during sync with server.\n",
+				b->name, gaim_find_buddys_group(b)->name);
+
+			gaim_blist_remove_buddy(b);
+		}
 	}
 
 	g_slist_free(buddies);
@@ -1146,12 +1162,11 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 			tokens = g_strsplit(group_nums, ",", -1);
 
-			gaim_debug(GAIM_DEBUG_MISC, "msn",
-					   "Fetching group IDs from '%s'\n", group_nums);
+			gaim_debug_misc("msn", "Fetching group IDs from '%s'\n",
+							group_nums);
 			for (c = tokens; *c != NULL; c++)
 			{
-				gaim_debug(GAIM_DEBUG_MISC, "msn",
-						   "Appending group ID %d\n", atoi(*c));
+				gaim_debug_misc("msn", "Appending group ID %d\n", atoi(*c));
 				msn_user_add_group_id(user, atoi(*c));
 			}
 
