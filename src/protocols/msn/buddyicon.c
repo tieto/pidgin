@@ -24,6 +24,8 @@
 
 #define PACKET_LENGTH 1500
 
+#define MAX_BUDDY_ICON_FILE_SIZE 8192
+
 static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
@@ -239,6 +241,13 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 			gaim_debug(GAIM_DEBUG_ERROR, "msn",
 					   "Missing Bas64-Size from buddy icon message.\n");
 
+			return TRUE;
+		}
+
+		if (atoi(size_s) > MAX_BUDDY_ICON_FILE_SIZE) {
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "User tried to send a buddy icon over 8KB! "
+					   "Not accepting.");
 			return TRUE;
 		}
 
@@ -480,6 +489,13 @@ msn_buddy_icon_invite(MsnSwitchBoard *swboard)
 
 	if (!__get_buddy_icon_info(account, NULL, &md5sum,
 							   &file_size, &base64_size)) {
+		return;
+	}
+
+	if (file_size > MAX_BUDDY_ICON_FILE_SIZE) {
+		gaim_debug(GAIM_DEBUG_ERROR, "msn",
+				   "The buddy icon is too large to send. Must be no more "
+				   "than %d bytes!\n", MAX_BUDDY_ICON_FILE_SIZE);
 		return;
 	}
 
