@@ -80,6 +80,9 @@ typedef struct
 
 	GaimProxyType new_proxy_type;
 
+	GList *user_split_entries;
+	GList *protocol_opt_entries;
+
 	GtkSizeGroup *sg;
 	GtkWidget *window;
 
@@ -183,7 +186,6 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *vbox;
 	GtkWidget *entry;
 	GList *user_splits;
-	GList *split_entries = NULL;
 	GList *l, *l2;
 	char *username = NULL;
 
@@ -224,6 +226,11 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->account != NULL)
 		username = g_strdup(gaim_account_get_username(dialog->account));
 
+	if (dialog->user_split_entries != NULL) {
+		g_list_free(dialog->user_split_entries);
+		dialog->user_split_entries = NULL;
+	}
+
 	for (l = user_splits; l != NULL; l = l->next) {
 		GaimAccountUserSplit *split = l->data;
 		char *buf;
@@ -236,10 +243,12 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		g_free(buf);
 
-		split_entries = g_list_append(split_entries, entry);
+		dialog->user_split_entries =
+			g_list_append(dialog->user_split_entries, entry);
 	}
 
-	for (l = g_list_last(split_entries), l2 = g_list_last(user_splits);
+	for (l = g_list_last(dialog->user_split_entries),
+		 l2 = g_list_last(user_splits);
 		 l != NULL && l2 != NULL;
 		 l = l->prev, l2 = l2->prev) {
 
@@ -272,7 +281,6 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	g_free(username);
 
-	g_list_free(split_entries);
 
 	/* Password */
 	dialog->password_entry = gtk_entry_new();
@@ -444,6 +452,11 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
+	if (dialog->protocol_opt_entries != NULL) {
+		g_list_free(dialog->protocol_opt_entries);
+		dialog->protocol_opt_entries = NULL;
+	}
+
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next) {
 		option = (GaimAccountOption *)l->data;
 
@@ -467,6 +480,10 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 				gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
 				gtk_widget_show(check);
+
+				dialog->protocol_opt_entries =
+					g_list_append(dialog->protocol_opt_entries, check);
+
 				break;
 
 			case GAIM_PREF_INT:
@@ -491,6 +508,10 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				__add_pref_box(dialog, vbox, title, entry);
 
 				g_free(title);
+
+				dialog->protocol_opt_entries =
+					g_list_append(dialog->protocol_opt_entries, entry);
+
 				break;
 
 			case GAIM_PREF_STRING:
@@ -515,6 +536,10 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				__add_pref_box(dialog, vbox, title, entry);
 
 				g_free(title);
+
+				dialog->protocol_opt_entries =
+					g_list_append(dialog->protocol_opt_entries, entry);
+
 				break;
 
 			default:
@@ -691,8 +716,14 @@ __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
-__close_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
+__cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
+	if (dialog->user_split_entries != NULL)
+		g_list_free(dialog->user_split_entries);
+
+	if (dialog->protocol_opt_entries != NULL)
+		g_list_free(dialog->protocol_opt_entries);
+
 	gtk_widget_destroy(dialog->window);
 
 	g_free(dialog);
@@ -702,7 +733,147 @@ static void
 __account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 						 AccountPrefsDialog *dialog)
 {
-	__close_account_prefs_cb(NULL, dialog);
+	__cancel_account_prefs_cb(NULL, dialog);
+}
+
+static void
+__ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
+{
+	GaimProxyInfo *proxy_info = NULL;
+	GList *l, *l2;
+	const char *value;
+	char *username;
+	char *tmp;
+
+	if (dialog->account == NULL) {
+		const char *screenname;
+
+		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
+
+		dialog->account = gaim_account_new(screenname, dialog->protocol);
+	}
+
+	if ((value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry))) != NULL)
+		gaim_account_set_alias(dialog->account, value);
+	else
+		gaim_account_set_alias(dialog->account, NULL);
+
+	gaim_account_set_remember_password(dialog->account,
+			gtk_toggle_button_get_active(
+					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
+
+	if (dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
+		gaim_account_set_check_mail(dialog->account,
+			gtk_toggle_button_get_active(
+					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
+
+	/* TODO: Do something about auto-login. */
+
+	if (gaim_account_get_remember_password(dialog->account))
+		gaim_account_set_password(dialog->account,
+				gtk_entry_get_text(GTK_ENTRY(dialog->password_entry)));
+	else
+		gaim_account_set_password(dialog->account, NULL);
+
+	/* Build the username string. */
+	username = g_strdup(gaim_account_get_username(dialog->account));
+
+	for (l = dialog->prpl_info->user_splits, l2 = dialog->user_split_entries;
+		 l != NULL && l2 != NULL;
+		 l = l->next, l2 = l2->next) {
+
+		GaimAccountUserSplit *split = l->data;
+		GtkEntry *entry = l2->data;
+		char sep[2] = " ";
+
+		value = gtk_entry_get_text(entry);
+
+		*sep = gaim_account_user_split_get_separator(split);
+
+		tmp = g_strconcat(username, sep,
+						  (*value ? value :
+						   gaim_account_user_split_get_default_value(split)));
+
+		g_free(username);
+		username = tmp;
+	}
+
+	gaim_account_set_username(dialog->account, username);
+	g_free(username);
+
+	/* Add the protocol settings */
+	gaim_account_clear_settings(dialog->account);
+
+	for (l = dialog->prpl_info->protocol_options,
+		 l2 = dialog->protocol_opt_entries;
+		 l != NULL && l2 != NULL;
+		 l = l->next, l2 = l2->next) {
+
+		GaimPrefType type;
+		GaimAccountOption *option = l->data;
+		GtkWidget *widget = l2->data;
+		const char *setting;
+		int int_value;
+		gboolean bool_value;
+
+		type = gaim_account_option_get_type(option);
+
+		setting = gaim_account_option_get_setting(option);
+
+		switch (type) {
+			case GAIM_PREF_STRING:
+				value = gtk_entry_get_text(GTK_ENTRY(widget));
+				gaim_account_set_string(dialog->account, setting, value);
+				break;
+
+			case GAIM_PREF_INT:
+				int_value = atoi(gtk_entry_get_text(GTK_ENTRY(widget)));
+				gaim_account_set_int(dialog->account, setting, int_value);
+				break;
+
+			case GAIM_PREF_BOOLEAN:
+				bool_value =
+					gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+				gaim_account_set_bool(dialog->account, setting, bool_value);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	/* Set the proxy stuff. */
+	if (dialog->new_proxy_type == GAIM_PROXY_NONE) {
+		gaim_account_set_proxy_info(dialog->account, NULL);
+	}
+	else {
+		const char *port_str;
+
+		proxy_info = gaim_account_get_proxy_info(dialog->account);
+
+		if (proxy_info == NULL) {
+			proxy_info = gaim_proxy_info_new();
+			gaim_account_set_proxy_info(dialog->account, proxy_info);
+		}
+
+		gaim_proxy_info_set_type(proxy_info, dialog->new_proxy_type);
+
+		gaim_proxy_info_set_host(proxy_info,
+				gtk_entry_get_text(GTK_ENTRY(dialog->proxy_host_entry)));
+
+		port_str = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_port_entry));
+
+		if (port_str != NULL)
+			gaim_proxy_info_set_port(proxy_info, atoi(port_str));
+		else
+			gaim_proxy_info_set_port(proxy_info, 0);
+
+		gaim_proxy_info_set_username(proxy_info,
+				gtk_entry_get_text(GTK_ENTRY(dialog->proxy_user_entry)));
+
+		gaim_proxy_info_set_password(proxy_info,
+				gtk_entry_get_text(GTK_ENTRY(dialog->proxy_pass_entry)));
+	}
 }
 
 static void
@@ -796,12 +967,15 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(__close_account_prefs_cb), dialog);
+					 G_CALLBACK(__cancel_account_prefs_cb), dialog);
 
 	/* OK button */
 	button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(__ok_account_prefs_cb), dialog);
 
 	/* Show the window. */
 	gtk_widget_show(win);
