@@ -70,7 +70,6 @@
 #define UC_NORMAL	0x10
 #define UC_AB		0x20
 #define UC_WIRELESS	0x40
-#define UC_TYPINGNOT	0x80
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -106,6 +105,7 @@ struct oscar_data {
 	GSList *oscar_chats;
 	GSList *direct_ims;
 	GSList *hasicons;
+	GHashTable *supports_tn;
 
 	gboolean killme;
 	gboolean icq;
@@ -499,6 +499,7 @@ static void oscar_login(struct aim_user *user) {
 		gc->protocol = PROTO_TOC;
 		gc->flags |= OPT_CONN_HTML;
 	}
+	odata->supports_tn = g_hash_table_new(g_str_hash, g_str_equal);
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -564,6 +565,7 @@ static void oscar_close(struct gaim_connection *gc) {
 		odata->hasicons = g_slist_remove(odata->hasicons, n);
 		g_free(n);
 	}
+	g_hash_table_destroy(odata->supports_tn);
 	while (odata->evilhack) {
 		g_free(odata->evilhack->data);
 		odata->evilhack = g_slist_remove(odata->evilhack, odata->evilhack->data);
@@ -1332,13 +1334,13 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
 	char *tmp = g_malloc(BUF_LONG);
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	int flags = 0;
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
 		flags |= IM_FLAG_AWAY;
 
 	if (args->icbmflags & AIM_IMFLAGS_HASICON) {
-		struct oscar_data *od = gc->proto_data;
 		struct icon_req *ir = NULL;
 		GSList *h = od->hasicons;
 		char *who = normalize(userinfo->sn);
@@ -1409,9 +1411,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
-		struct buddy *b = find_buddy(gc, userinfo->sn);
-		if (b)
-			b->uc |= UC_TYPINGNOT;
+		char *who = normalize(userinfo->sn);
+		if (!g_hash_table_lookup(od->supports_tn, who))
+			g_hash_table_insert(od->supports_tn, who, who);
 	}
 
 	strip_linefeed(tmp);
@@ -2774,8 +2776,8 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 	if (dim)
 		aim_send_typing(odata->sess, dim->conn, typing);
 	else {
-		struct buddy *b = find_buddy(gc, name);
-		if (b && (b->uc & UC_TYPINGNOT)) {
+		char *who = normalize(name);
+		if (g_hash_table_lookup(odata->supports_tn, who)) {
 			if (typing == TYPING)
 				aim_mtn_send(odata->sess, 0x0001, name, 0x0002);
 			else if (typing == TYPED)
