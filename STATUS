@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-02-04 06:27:15 -0500 (Sun, 04 Feb 2001) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-02-06 12:58:17 -0500 (Tue, 06 Feb 2001) $ by $Author: robflynn $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -135,6 +135,6 @@ Napster (Rob)
 
 Heh.  Ok, so I (Rob) am on crack!  Gaim can sign on/off of Napster, add/remove
 people to your hotlist (buddylist) as well as chat privately and in chat rooms.
-You can search for files and browse a list of other user's files.  File 
-transfers are currently being implemented.
-
+You can search for files and browse a list of other user's files.  You can
+currently download files as long as the person you're retrieving files from
+is not firewalled.
