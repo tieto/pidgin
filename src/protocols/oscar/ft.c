@@ -739,7 +739,7 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
  *        "AIM_CB_OFT_DONE" message, and "0x02" for everything else.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t type, const fu8_t *cookie, const char *filename, fu16_t filesdone, fu16_t numfiles, fu32_t size, fu32_t totsize, fu32_t modtime, fu32_t checksum, fu8_t flags)
+faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t type, const fu8_t *cookie, const char *filename, fu16_t filesdone, fu16_t numfiles, fu32_t size, fu32_t totsize, fu32_t modtime, fu32_t checksum, fu8_t flags, fu32_t bytesreceived, fu32_t recvcsum)
 {
 	aim_frame_t *newoft;
 	struct aim_fileheader_t *fh;
@@ -765,9 +765,11 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t
 	fh->size = size;
 	fh->modtime = modtime;
 	fh->checksum = checksum;
+	fh->nrecvd = bytesreceived;
+	fh->recvcsum = recvcsum;
 
 	strncpy(fh->idstring, "OFT_Windows ICBMFT V1.1 32", sizeof(fh->idstring));
-	fh->flags = 0x02;
+	fh->flags = flags;
 	fh->lnameoffset = 0x1a;
 	fh->lsizeoffset = 0x10;
 	memset(fh->dummy, 0, sizeof(fh->dummy));

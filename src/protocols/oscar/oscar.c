@@ -180,8 +180,8 @@ struct ask_direct {
 /* BBB */
 struct oscar_xfer_data {
 	fu8_t cookie[8];
-	fu16_t modtime;
-	fu16_t checksum;
+	fu32_t modtime;
+	fu32_t checksum;
 	aim_conn_t *conn;
 	struct gaim_xfer *xfer;
 	struct gaim_connection *gc;
@@ -360,8 +360,8 @@ debug_printf("in oscar_xfer_init\n");
 				xfer->watcher = gaim_input_add(xfer_data->conn->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
 				aim_im_sendch2_sendfile_ask(od->sess, xfer_data->cookie, xfer->who, ip, xfer->local_port, xfer->filename, 1, xfer->size);
 				aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_established, 0);
-				/* Calculate a checksum thingy.  This is ugly.
-				if ((fd = open(xfer->local_filename, O_RDONLY))) {
+				/* Calculate a checksum thingy.  This is ugly. */
+				/* if ((fd = open(xfer->local_filename, O_RDONLY))) {
 					int bytes;
 					char buf[1024];
 					xfer_data->checksum = 0xffff0000;
@@ -433,7 +433,7 @@ debug_printf("AAA - in oscar_xfer_end\n");
 		return;
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
-		aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_DONE, xfer_data->cookie, xfer->filename, 1, 1, xfer->size, xfer->size, xfer_data->modtime, xfer_data->checksum, 0x21);
+		aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_DONE, xfer_data->cookie, xfer->filename, 1, 1, xfer->size, xfer->size, xfer_data->modtime, xfer_data->checksum, 0x02, xfer->size, xfer_data->checksum);
 
 	if ((gc = xfer_data->gc)) {
 		if ((od = gc->proto_data))
@@ -479,7 +479,7 @@ oscar_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
 	if (!(xfer_data = xfer->data))
 		return;
 
-	aim_oft_checksum(buffer, size, xfer_data->checksum);
+	/* xfer_data->checksum = aim_oft_checksum(buffer, size, xfer_data->checksum); */
 }
 
 static struct gaim_xfer *
@@ -1755,7 +1755,7 @@ debug_printf("AAA - in oscar_sendfile_established\n");
 	xfer->watcher = gaim_input_add(xfer_data->conn->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
 
 	/* Inform the other user that we are connected and ready to transfer */
-	aim_oft_sendheader(sess, xfer_data->conn, AIM_CB_OFT_PROMPT, NULL, xfer->filename, 0, 1,  xfer->size, xfer->size, time(NULL), xfer_data->checksum, 0x02);
+	aim_oft_sendheader(sess, xfer_data->conn, AIM_CB_OFT_PROMPT, NULL, xfer->filename, 0, 1,  xfer->size, xfer->size, time(NULL), xfer_data->checksum, 0x02, 0, 0);
 
 	return 0;
 }
@@ -1829,7 +1829,7 @@ debug_printf("AAA - in oscar_sendfile_prompt\n");
 	xfer->watcher = 0;
 
 	/* XXX - convert the name from UTF-8 to UCS-2 if necessary, and pass the encoding to the call below */
-	aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_ACK, xfer_data->cookie, xfer->filename, 0, 1, xfer->size, xfer->size, fh->modtime, fh->checksum, 0x02);
+	aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_ACK, xfer_data->cookie, xfer->filename, 0, 1, xfer->size, xfer->size, fh->modtime, fh->checksum, 0x02, 0, 0);
 	gaim_xfer_start(xfer, xfer->fd, NULL, 0);
 
 	return 0;

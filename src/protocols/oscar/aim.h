@@ -1005,7 +1005,7 @@ faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn);
 faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn);
 faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const fu8_t *cookie);
 faim_export aim_conn_t *aim_sendfile_listen(aim_session_t *sess, const fu8_t *cookie, const fu8_t *ip, fu16_t port);
-faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t type, const fu8_t *cookie, const char *filename, fu16_t filesdone, fu16_t numfiles, fu32_t size, fu32_t totsize, fu32_t modtime, fu32_t checksum, fu8_t flags);
+faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t type, const fu8_t *cookie, const char *filename, fu16_t filesdone, fu16_t numfiles, fu32_t size, fu32_t totsize, fu32_t modtime, fu32_t checksum, fu8_t flags, fu32_t bytesreceived, fu32_t recvcsum);
 
 
 

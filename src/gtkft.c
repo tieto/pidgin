@@ -161,7 +161,7 @@ get_xfer_info_strings(struct gaim_xfer *xfer,
 			*time_remaining = g_strdup("Unknown");
 		}
 		else if (gaim_xfer_is_completed(xfer)) {
-			*time_remaining = g_strdup("Done.");
+			*time_remaining = g_strdup("Finished");
 		}
 		else {
 			int h, m, s;
@@ -878,7 +878,7 @@ gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
 
 		gtk_list_store_set(GTK_LIST_STORE(xfer_dialog->model), &data->iter,
 						   COLUMN_STATUS, pixbuf,
-						   COLUMN_REMAINING, "Finished.",
+						   COLUMN_REMAINING, "Finished",
 						   -1);
 
 		g_object_unref(pixbuf);
