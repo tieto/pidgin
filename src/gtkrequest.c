@@ -652,7 +652,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 						if (gaim_prefs_get_bool(
 								"/gaim/gtk/conversations/spellcheck"))
 						{
-							gtkspell_new_attach(GTK_TEXT_VIEW(widget),
+							gtkspell_new_attach(GTK_TEXT_VIEW(textview),
 												NULL, NULL);
 						}
 #endif

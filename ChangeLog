@@ -5,7 +5,9 @@ version 0.73cvs:
 		* fixes i18n issues with logs
 		* compatable with old logs
 		* hopefully fixes segfault in viewing logs
-	* Fix several Jabber bugs
+	* Fixes several Jabber bugs
+	* Fixes the bug where some dialogs would crash when spell checking was
+	  enabled. Closes #827930.
 	* The border on the close buttons on inactive tabs are no longer shown,
 	  thanks to a fix used by Galeon.
 	* Compatible with autoconf 2.58.
