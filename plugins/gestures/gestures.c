@@ -252,7 +252,8 @@ gaim_plugin_desc()
 	desc.name = g_strdup(_("Mouse Gestures"));
 	desc.version = g_strdup(VERSION);
 	desc.description = g_strdup(
-		_("Allows support for mouse gestures in conversation windows.\n\n"
+		_("Allows support for mouse gestures in conversation windows.\n"
+		  "Drag the middle mouse button to perform certain actions:\n\n"
 		  "Drag down and then to the right to close a conversation.\n"
 		  "Drag up and then to the left to switch to the previous "
 		  "conversation.\n"
@@ -273,7 +274,8 @@ name(void)
 char *
 description(void)
 {
-	return _("Allows support for mouse gestures in conversation windows.\n\n"
+	return _("Allows support for mouse gestures in conversation windows.\n"
+			 "Drag the middle mouse button to perform certain actions:\n\n"
 			 "Drag down and then to the right to close a conversation.\n"
 			 "Drag up and then to the left to switch to the previous "
 			 "conversation.\n"
