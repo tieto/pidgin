@@ -1347,26 +1347,25 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *key;
 	va_list ap;
 	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimAccount *ac = gaim_connection_get_account(gc);
-	char pass[9];
 	struct oscar_data *od = gc->proto_data;
 
 	va_start(ap, fr);
 	key = va_arg(ap, char *);
 	va_end(ap);
 
-	/* Truncate the password at 8 characters */
-	g_snprintf(pass, sizeof(pass), gaim_account_get_password(ac));
-	
 	if (od->icq) {
 		struct client_info_s info = CLIENTINFO_ICQ_KNOWNGOOD;
-		aim_send_login(sess, fr->conn, gaim_account_get_username(ac), pass, &info, key);
+		aim_send_login(sess, fr->conn, gaim_account_get_username(ac),
+					   gaim_account_get_password(account), &info, key);
 	} else {
 #if 0
 		struct client_info_s info = {"gaim", 4, 1, 2010, "us", "en", 0x0004, 0x0000, 0x04b};
 #endif
 		struct client_info_s info = CLIENTINFO_AIM_KNOWNGOOD;
-		aim_send_login(sess, fr->conn, gaim_account_get_username(ac), pass, &info, key);
+		aim_send_login(sess, fr->conn, gaim_account_get_username(ac),
+					   gaim_account_get_password(account), &info, key);
 	}
 
 	return 1;
