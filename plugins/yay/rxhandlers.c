@@ -208,7 +208,7 @@ static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet 
 {
 	char buf[256];
 	int type = yahoo_makeint(pkt->msgtype);
-	char *str_array[3];
+	char *str_array[4];
 	char *tmp;
 
 	switch(type) {
@@ -231,6 +231,32 @@ static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet 
 	case YAHOO_MESSAGE_BOUNCE:
 		if (sess->callbacks[YAHOO_HANDLE_BOUNCE].function)
 			(*sess->callbacks[YAHOO_HANDLE_BOUNCE].function)(sess);
+		break;
+	case YAHOO_MESSAGE_OFFLINE:
+		tmp = pkt->content;
+		if ((tmp = strchr(tmp, ',')) == NULL)
+			break;
+		++tmp;
+		if ((tmp = strchr(tmp, ',')) == NULL)
+			break;
+		str_array[0] = ++tmp;
+		if ((tmp = strchr(tmp, ',')) == NULL)
+			break;
+		*tmp++ = '\0';
+		str_array[1] = tmp;
+		if ((tmp = strchr(tmp, ',')) == NULL)
+			break;
+		*tmp++ = '\0';
+		str_array[2] = tmp;
+		if ((tmp = strchr(tmp, ',')) == NULL)
+			break;
+		*tmp++ = '\0';
+		str_array[3] = tmp;
+		if (sess->callbacks[YAHOO_HANDLE_MESSAGE].function)
+			(*sess->callbacks[YAHOO_HANDLE_MESSAGE].function)(sess, str_array[0],
+									  str_array[1],
+									  atol(str_array[2]),
+									  str_array[3]);
 		break;
 	default:
 		g_snprintf(buf, sizeof(buf), "unhandled message type %d", type);

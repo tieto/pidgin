@@ -115,7 +115,7 @@ int yahoo_send_message(struct yahoo_session *session, const char *active_id,
 		return 0;
 
 	ret = yahoo_write_cmd(session, conn, YAHOO_SERVICE_MESSAGE,
-			active_id ? active_id : session->name, buf, 0);
+			active_id ? active_id : session->name, buf, YAHOO_MESSAGE_SEND);
 	g_free(buf);
 
 	return ret;
