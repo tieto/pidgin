@@ -75,7 +75,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 	auth = xmlnode_new("auth");
 	xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
-	if(0 && digest_md5) {
+	if(digest_md5) {
 		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
 		/*
