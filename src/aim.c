@@ -406,6 +406,7 @@ void sighandler(int sig)
 	default:
 		debug_printf("caught signal %d\n", sig);
 		gtkspell_stop();
+		signoff_all(NULL, NULL);
 #ifdef GAIM_PLUGINS
 		remove_all_plugins();
 #endif

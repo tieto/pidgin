@@ -46,10 +46,6 @@ ICQ:
 	New User Registration
 
 MSN:
-	Need to make it so txqueue is a GSList* of char* instead of char*, so
-		that you can "send" more than one message before you're
-		actually connected. This is actually a bug that it doesn't do
-		this already.
 	Permit/Deny
 	Need some way of indicating "invite" in IM window
 	File Transfer

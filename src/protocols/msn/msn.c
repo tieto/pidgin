@@ -53,7 +53,7 @@ struct msn_switchboard {
 	int trId;
 	int total;
 	char *user;
-	char *txqueue;
+	GSList *txqueue;
 };
 
 struct msn_buddy {
@@ -296,7 +296,7 @@ static struct msn_switchboard *msn_find_switch(struct gaim_connection *gc, char 
 	while (m) {
 		struct msn_switchboard *ms = m->data;
 		m = m->next;
-		if ((ms->total == 1) && !g_strcasecmp(ms->user, id))
+		if ((ms->total <= 1) && !g_strcasecmp(ms->user, id))
 			return ms;
 	}
 
@@ -346,8 +346,10 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	g_free(ms->auth);
 	if (ms->user)
 		g_free(ms->user);
-	if (ms->txqueue)
-		g_free(ms->txqueue);
+	while (ms->txqueue) {
+		g_free(ms->txqueue->data);
+		ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
+	}
 	if (ms->chat)
 		serv_got_chat_left(gc, ms->chat->id);
 
@@ -422,16 +424,18 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 		if (ms->chat)
 			add_chat_buddy(ms->chat, user);
 		ms->total++;
-		if (ms->txqueue) {
-			char *utf8 = str_to_utf8(ms->txqueue);
+		while (ms->txqueue) {
+			char *utf8 = str_to_utf8(ms->txqueue->data);
 			g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
 					strlen(MIME_HEADER) + strlen(utf8),
 					MIME_HEADER, utf8);
 			g_free(utf8);
-			g_free(ms->txqueue);
-			ms->txqueue = NULL;
-			if (msn_write(ms->fd, buf, strlen(buf)) < 0)
+			g_free(ms->txqueue->data);
+			ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
+			if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
 				msn_kill_switch(ms);
+				return;
+			}
 			debug_printf("\n");
 		}
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
@@ -1194,7 +1198,15 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 	char buf[MSN_BUF_LEN];
 
 	if (ms) {
-		char *utf8 = str_to_utf8(message);
+		char *utf8;
+
+		if (ms->txqueue) {
+			debug_printf("appending to queue\n");
+			ms->txqueue = g_slist_append(ms->txqueue, g_strdup(message));
+			return 1;
+		}
+
+		utf8 = str_to_utf8(message);
 		g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
 				strlen(MIME_HEADER) + strlen(utf8),
 				MIME_HEADER, utf8);
@@ -1213,7 +1225,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 		ms = g_new0(struct msn_switchboard, 1);
 		md->switches = g_slist_append(md->switches, ms);
 		ms->user = g_strdup(who);
-		ms->txqueue = g_strdup(message);
+		ms->txqueue = g_slist_append(ms->txqueue, g_strdup(message));
 		ms->gc = gc;
 		ms->fd = -1;
 	} else
@@ -1233,8 +1245,10 @@ static int msn_chat_send(struct gaim_connection *gc, int id, char *message)
 	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
 			strlen(MIME_HEADER) + strlen(message),
 			MIME_HEADER, message);
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
+	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
 		msn_kill_switch(ms);
+		return 0;
+	}
 	debug_printf("\n");
 	serv_got_chat_in(gc, id, gc->username, 0, message, time(NULL));
 	return 0;
@@ -1457,6 +1471,14 @@ static GList *msn_actions()
 	return m;
 }
 
+static void msn_convo_closed(struct gaim_connection *gc, char *who)
+{
+	struct msn_switchboard *ms = msn_find_switch(gc, who);
+
+	if (ms)
+		msn_kill_switch(ms);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret)
@@ -1480,6 +1502,7 @@ void msn_init(struct prpl *ret)
 	ret->normalize = msn_normalize;
 	ret->do_action = msn_do_action;
 	ret->actions = msn_actions;
+	ret->convo_closed = msn_convo_closed;
 
 	my_protocol = ret;
 }
