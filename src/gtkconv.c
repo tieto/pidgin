@@ -4012,8 +4012,10 @@ gaim_gtkconv_chat_rename_user(struct gaim_conversation *conv,
 
 				gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &val, -1);
 
-				if (!g_strcasecmp(old_name, val))
+				if (!g_strcasecmp(old_name, val)) {
 					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+					break;
+				}
 
 				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
 
