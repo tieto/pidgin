@@ -116,6 +116,8 @@ static void list_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 	}
 
 	dialog->roomlist = gaim_roomlist_get_list(gc);
+	if (!dialog->roomlist)
+		return;
 	gaim_roomlist_ref(dialog->roomlist);
 	rl = dialog->roomlist->ui_data;
 	rl->dialog = dialog;
