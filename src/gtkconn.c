@@ -275,6 +275,13 @@ struct disconnect_window {
 };
 struct disconnect_window *disconnect_window = NULL;
 
+static void disconnect_window_hide()
+{
+	gtk_widget_destroy(disconnect_window->window);
+	g_free(disconnect_window);
+	disconnect_window = NULL;
+}
+
 static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 {
 	GtkTreeIter iter;
@@ -282,12 +289,11 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 	GtkTreeSelection *sel = NULL;
 	GtkTreeModel *model = NULL;
 	GaimAccount *account = NULL;
+	GaimConnection *gc = NULL;
 	
 	switch(id) {
 	case GTK_RESPONSE_CLOSE:
-		gtk_widget_destroy(disconnect_window->window);
-		g_free(disconnect_window);
-		disconnect_window = NULL;
+		disconnect_window_hide();
 		break;
 	case GTK_RESPONSE_ACCEPT:
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview));
@@ -305,10 +311,20 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 			if (!gtk_tree_model_get_iter_first(model, &iter))
 				return;
 		}
-		gtk_tree_model_get_value (model, &iter, 4, &val);
+		gtk_tree_model_get_value(model, &iter, 4, &val);
 		account = g_value_get_pointer(&val);
-		gaim_account_connect(account);
+		gc = gaim_account_connect(account);
 		g_value_unset(&val);
+		if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
+			gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+			if (!gtk_tree_model_get_iter_first(model, &iter))
+				disconnect_window_hide();
+			else {
+				gtk_tree_selection_select_iter(sel, &iter);
+				if (!gtk_tree_model_iter_next(model, &iter))
+					gtk_widget_hide_all(disconnect_window->sw);
+			}
+		}
 		break;
 	}
 }
@@ -422,14 +438,20 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 				  G_CALLBACK (disconnect_tree_cb), list_store);
 	} else {
 		list_store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview)));
+		gboolean removedPreviousAccountDisconnection = FALSE;
 
-		gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &iter);
-		do {
-			gtk_tree_model_get_value(GTK_TREE_MODEL(list_store), &iter, 4, &val);
-			account = g_value_get_pointer(&val);
-			if (account == gaim_connection_get_account(gc))
-				gtk_list_store_remove(list_store, &iter);
-		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(list_store), &iter));
+		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &iter)) {
+			do {
+				gtk_tree_model_get_value(GTK_TREE_MODEL(list_store), &iter, 4, &val);
+				account = g_value_get_pointer(&val);
+				g_value_unset(&val);
+				if (account == gaim_connection_get_account(gc)) {
+					gtk_list_store_remove(list_store, &iter);
+					removedPreviousAccountDisconnection = TRUE;
+					break;
+				}
+			} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(list_store), &iter));
+		}
 
 		gtk_list_store_append (list_store, &iter);
 		gtk_list_store_set(list_store, &iter,
@@ -439,11 +461,17 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 				   3, label_text,
 				   4, gaim_connection_get_account(gc), -1);
 		gtk_label_set_markup(GTK_LABEL(disconnect_window->label), label_text);
+		/*
+		 *	Only cause the tree view to show up if there will be 
+		 *	more than one disconnection event listed in it.
+		 */
+		if (!removedPreviousAccountDisconnection || GTK_WIDGET_VISIBLE(disconnect_window->sw))
 		gtk_widget_show_all(disconnect_window->sw);
 	}
 	g_free(label_text);
 	g_object_unref(G_OBJECT(icon));
 	g_object_unref(G_OBJECT(scale));
+	gtk_window_present(GTK_WINDOW(disconnect_window->window));
 }
 
 static GaimConnectionUiOps conn_ui_ops =
