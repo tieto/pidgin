@@ -5,7 +5,7 @@
  * with aim_rxdispatch(), the Rx dispatcher.  Queue/list management is
  * actually done in aim_rxqueue.c.
  *
- * Changes by Eric Warmenhoven, Wed May 24 09:33:38 UTC 2000:
+ * Changes by EWarmenhoven, Wed May 24 09:33:38 UTC 2000:
  * - there were some "bleck" printf's i changed to faimdprintf's.
  *
  */

@@ -3,11 +3,6 @@
  *
  * Herein lies all the mangement routines for the transmit (Tx) queue.
  *
- * Changes by EWarmenhoven Fri May 26 22:52:46 UTC 2000:
- * - added aim_tx_flushqueue() to the end of aim_tx_enqueue() so that I don't
- * have to worry about it any more. mid tells me that doing so will solve the
- * 100% bug. Thanks mid!
- *
  */
 
 #include <aim.h>
@@ -24,8 +19,10 @@ struct command_tx_struct *aim_tx_new(int chan, struct aim_conn_t *conn, int data
 {
   struct command_tx_struct *new;
 
-  if (!conn)
+  if (!conn) {
+    printf("aim_tx_new: ERROR: no connection specified\n");
     return NULL;
+  }
 
   new = (struct command_tx_struct *)malloc(sizeof(struct command_tx_struct));
   if (!new)
@@ -44,7 +41,7 @@ struct command_tx_struct *aim_tx_new(int chan, struct aim_conn_t *conn, int data
 }
 
 /*
- * aim_tx_enqeue()
+ * aim_tx_enqeue__queuebased()
  *
  * The overall purpose here is to enqueue the passed in command struct
  * into the outgoing (tx) queue.  Basically...
@@ -55,9 +52,12 @@ struct command_tx_struct *aim_tx_new(int chan, struct aim_conn_t *conn, int data
  *   5) Unlock the struct once it's linked in
  *   6) Return
  *
+ * Note that this is only used when doing queue-based transmitting;
+ * that is, when sess->tx_enqueue is set to &aim_tx_enqueue__queuebased.
+ *
  */
-int aim_tx_enqueue(struct aim_session_t *sess,
-		   struct command_tx_struct *newpacket)
+int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
+			       struct command_tx_struct *newpacket)
 {
   struct command_tx_struct *cur;
 
@@ -92,8 +92,40 @@ int aim_tx_enqueue(struct aim_session_t *sess,
   faimdprintf(2, "back from aim_tx_printqueue()\n");
 #endif
 
-  /* mid tells me this should solve a lot of my problems */
-  aim_tx_flushqueue(sess);
+  return 0;
+}
+
+/*
+ * aim_tx_enqueue__immediate()
+ *
+ * Parallel to aim_tx_enqueue__queuebased, however, this bypasses
+ * the whole queue mess when you want immediate writes to happen.
+ *
+ * Basically the same as its __queuebased couterpart, however
+ * instead of doing a list append, it just calls aim_tx_sendframe()
+ * right here. 
+ * 
+ */
+int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_struct *newpacket)
+{
+  if (newpacket->conn == NULL) {
+    faimdprintf(1, "aim_tx_enqueue: ERROR: packet has no connection\n");
+    if (newpacket->data)
+      free(newpacket->data);
+    free(newpacket);
+    return -1;
+  }
+
+  newpacket->seqnum = aim_get_next_txseqnum(newpacket->conn);
+
+  newpacket->lock = 1; /* lock */
+  newpacket->sent = 0; /* not sent yet */
+
+  aim_tx_sendframe(newpacket);
+
+  if (newpacket->data)
+    free(newpacket->data);
+  free(newpacket);
 
   return 0;
 }
@@ -169,10 +201,72 @@ int aim_tx_printqueue(struct aim_session_t *sess)
  *    9) Step to next struct in list and go back to 1.
  *
  */
+int aim_tx_sendframe(struct command_tx_struct *cur)
+{
+  u_char *curPacket;
+
+  if (!cur)
+    return -1; /* fatal */
+
+  cur->lock = 1; /* lock the struct */
+
+  /* allocate full-packet buffer */
+  curPacket = (char *) malloc(cur->commandlen + 6);
+      
+  /* command byte */
+  curPacket[0] = 0x2a;
+      
+  /* type/family byte */
+  curPacket[1] = cur->type;
+      
+  /* bytes 3+4: word: FLAP sequence number */
+  aimutil_put16(curPacket+2, cur->seqnum);
+
+  /* bytes 5+6: word: SNAC len */
+  aimutil_put16(curPacket+4, cur->commandlen);
+      
+  /* bytes 7 and on: raw: SNAC data */  /* XXX: ye gods! get rid of this! */
+  memcpy(&(curPacket[6]), cur->data, cur->commandlen);
+      
+  /* full image of raw packet data now in curPacket */
+  faim_mutex_lock(&cur->conn->active);
+  if ( (u_int)write(cur->conn->fd, curPacket, (cur->commandlen + 6)) != (cur->commandlen + 6)) {
+    faim_mutex_unlock(&cur->conn->active);
+    printf("\nWARNING: Error in sending packet 0x%4x -- will try again next time\n\n", cur->seqnum);
+    cur->sent = 0; /* mark it unsent */
+    return 0; /* bail out -- continuable error */
+  } else {
+    faimdprintf(2, "\nSENT 0x%4x\n\n", cur->seqnum);
+    
+    cur->sent = 1; /* mark the struct as sent */
+    cur->conn->lastactivity = time(NULL);
+  }
+  faim_mutex_unlock(&cur->conn->active);
+
+#if debug > 2
+  faimdprintf(2, "\nPacket:");
+  for (i = 0; i < (cur->commandlen + 6); i++) {
+    if ((i % 8) == 0) {
+      faimdprintf(2, "\n\t");
+    }
+    if (curPacket[i] >= ' ' && curPacket[i]<127) {
+      faimdprintf(2, "%c=%02x ", curPacket[i], curPacket[i]);
+    } else {
+      faimdprintf(2, "0x%2x ", curPacket[i]);
+    }
+  }
+  faimdprintf(2, "\n");
+#endif
+  cur->lock = 0; /* unlock the struct */
+  free(curPacket); /* free up full-packet buffer */
+
+  return 1; /* success */
+}
+
 int aim_tx_flushqueue(struct aim_session_t *sess)
 {
   struct command_tx_struct *cur;
-  u_char *curPacket = NULL;
+   
 #if debug > 1
   int i = 0;
 #endif
@@ -193,54 +287,9 @@ int aim_tx_flushqueue(struct aim_session_t *sess)
 	/* FIXME FIXME -- should be a break! we dont want to block the upper layers */
 	sleep((cur->conn->lastactivity + cur->conn->forcedlatency) - time(NULL));
       }
-      
-      cur->lock = 1; /* lock the struct */
-      
-      /* allocate full-packet buffer */
-      curPacket = (char *) malloc(cur->commandlen + 6);
-      
-      /* command byte */
-      curPacket[0] = 0x2a;
-      
-      /* type/family byte */
-      curPacket[1] = cur->type;
-      
-      /* bytes 3+4: word: FLAP sequence number */
-      aimutil_put16(curPacket+2, cur->seqnum);
 
-      /* bytes 5+6: word: SNAC len */
-      aimutil_put16(curPacket+4, cur->commandlen);
-      
-      /* bytes 7 and on: raw: SNAC data */
-      memcpy(&(curPacket[6]), cur->data, cur->commandlen);
-      
-      /* full image of raw packet data now in curPacket */
-      if ( (u_int)write(cur->conn->fd, curPacket, (cur->commandlen + 6)) != (cur->commandlen + 6)) {
-	printf("\nWARNING: Error in sending packet 0x%4x -- will try again next time\n\n", cur->seqnum);
-	cur->sent = 0; /* mark it unsent */
-	continue; /* bail out */
-      } else {
-	faimdprintf(2, "\nSENT 0x%4x\n\n", cur->seqnum);
-
-	cur->sent = 1; /* mark the struct as sent */
-	cur->conn->lastactivity = time(NULL);
-      }
-#if debug > 2
-      faimdprintf(2, "\nPacket:");
-      for (i = 0; i < (cur->commandlen + 6); i++) {
-	if ((i % 8) == 0) {
-	  faimdprintf(2, "\n\t");
-	}
-	if (curPacket[i] >= ' ' && curPacket[i]<127) {
-	  faimdprintf(2, "%c=%02x ", curPacket[i], curPacket[i]);
-	} else {
-	  faimdprintf(2, "0x%2x ", curPacket[i]);
-	}
-      }
-      faimdprintf(2, "\n");
-#endif
-      cur->lock = 0; /* unlock the struct */
-      free(curPacket); /* free up full-packet buffer */
+      if (aim_tx_sendframe(cur) == -1)
+	break;
     }
   }
 

@@ -1,4 +1,18 @@
 
+Mon May 29 20:24:24 UTC 2000 EWarmenhoven
+	- Updated the libfaim code to the latest that's in libfaim's CVS. The
+	  new code has one nice feature and one feature that may or may not
+	  cause problems. The nice feature is aim_tx_enqueue__immediate, which
+	  means that the change to aim_txenqueue I made no longer applies, I
+	  just have to set gaim_sess->tx_enqueue to the __immediate function.
+	  The one that may cause problems is libfaim has the beginnings of
+	  threads. The way the code worked in libfaim was if you were using
+	  linux, FAIM_USEPTHREADS was defined, otherwise, you couldn't use
+	  libfaim. Since gaim requires pthreads at ./configure-time, we can
+	  let anyone use it. So I changed that in faimconfig.h.
+	- The changes clued me in to a few bugs in oscar.c that were causing
+	  signon problems. Those should be fixed now.
+
 Sun May 28 21:33:43 UTC 2000 EWarmenhoven
 	- Figured out how aim_set_latency works, and why I thought it wasn't
 	  working before, and so now you can receive messages a lot faster, I

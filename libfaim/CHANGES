@@ -1,6 +1,24 @@
 
 No release numbers
 ------------------
+ - Mon May 29 12:08:28 GMT 2000
+   - Rearranged aim_tx_flushqueue(); moved write operation 
+       to aim_tx_sendframe()
+   - Turned aim_tx_enqueue() into a macro that calls sess->tx_enqueue,
+       a function pointer to whatever you want to use to enqueue
+       things for transmition (or not)
+   - Old aim_tx_enqueue becomes aim_tx_enqueue__queuebased.  Added
+       aim_tx_enqueue__immediate for doing immediate writes.  Default
+       is to use queue-based procedure.
+   - Cleaned up parts of aim_conn.c
+   - Added locking around the sockets themselves.  Should allow
+       for full cross-thread usage.
+     - Unfortunatly, only pthreads are supported at this time.
+       If you don't have pthreads on your arch, implement the
+       macros your arch needs and send me a patch.  (A SysV
+       semaphore implementation would be trivial, as would a 
+       simple integer-based lock.)
+
  - Sun May 21 14:59:20 GMT 2000
    - Added infotype parameter to aim_getinfo() for requesting
        different types of messages.  AIM_GETINFO_GENERALINFO

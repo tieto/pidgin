@@ -31,10 +31,13 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
    *   2 short -- Sequence number 
    *   4 short -- Number of data bytes that follow.
    */
+  faim_mutex_lock(&conn->active);
   if (read(conn->fd, generic, 6) < 6){
     aim_conn_close(conn);
+    faim_mutex_unlock(&conn->active);
     return -1;
   }
+  faim_mutex_unlock(&conn->active);
 
   /*
    * This shouldn't happen unless the socket breaks, the server breaks,
@@ -72,12 +75,15 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
   }
 
   /* read the data portion of the packet */
+  faim_mutex_lock(&conn->active);
   if (read(conn->fd, newrx->data, newrx->commandlen) < newrx->commandlen){
     free(newrx->data);
     free(newrx);
     aim_conn_close(conn);
+    faim_mutex_unlock(&conn->active);
     return -1;
   }
+  faim_mutex_unlock(&conn->active);
 
   newrx->conn = conn;
 

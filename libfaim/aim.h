@@ -9,6 +9,10 @@
 #include <faimconfig.h>
 #include <aim_cbtypes.h>
 
+#ifndef FAIM_USEPTHREADS
+#error pthreads are currently required.
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -16,6 +20,14 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <errno.h>
+
+#ifdef FAIM_USEPTHREADS
+#include <pthread.h>
+#define faim_mutex_t pthread_mutex_t 
+#define faim_mutex_init pthread_mutex_init
+#define faim_mutex_lock pthread_mutex_lock
+#define faim_mutex_unlock pthread_mutex_unlock
+#endif
 
 #ifdef _WIN32
 #include <windows.h>
@@ -121,6 +133,9 @@ struct aim_conn_t {
   time_t lastactivity; /* time of last transmit */
   int forcedlatency; 
   struct aim_rxcblist_t *handlerlist;
+#ifdef FAIM_USEPTHREADS
+  faim_mutex_t active;
+#endif
 };
 
 /* struct for incoming commands */
@@ -180,9 +195,14 @@ struct aim_session_t {
   /* 
    * TX/RX queues 
    */
-  struct command_tx_struct *queue_outgoing; 
+  struct command_tx_struct *queue_outgoing;   
   struct command_rx_struct *queue_incoming; 
   
+  /*
+   * Tx Enqueuing function
+   */
+  int (*tx_enqueue)(struct aim_session_t *, struct command_tx_struct *);
+
   /*
    * This is a dreadful solution to the what-room-are-we-joining
    * problem.  (There's no connection between the service
@@ -301,7 +321,10 @@ int aim_parse_missed_im(struct aim_session_t *, struct command_rx_struct *, ...)
 int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
 
 struct command_tx_struct *aim_tx_new(int, struct aim_conn_t *, int);
-int aim_tx_enqueue(struct aim_session_t *, struct command_tx_struct *);
+int aim_tx_enqueue__queuebased(struct aim_session_t *, struct command_tx_struct *);
+int aim_tx_enqueue__immediate(struct aim_session_t *, struct command_tx_struct *);
+#define aim_tx_enqueue(x, y) ((*(x->tx_enqueue))(x, y))
+int aim_tx_sendframe(struct command_tx_struct *cur);
 u_int aim_get_next_txseqnum(struct aim_conn_t *);
 int aim_tx_flushqueue(struct aim_session_t *);
 int aim_tx_printqueue(struct aim_session_t *);

@@ -648,7 +648,7 @@ u_long aim_bos_reqlocaterights(struct aim_session_t *sess,
 }
 
 /*
- * aim_bos_reqicbmparaminfo()
+* aim_bos_reqicbmparaminfo()
  *
  * Request ICBM parameter information.
  *
@@ -658,3 +658,4 @@ u_long aim_bos_reqicbmparaminfo(struct aim_session_t *sess,
 {
   return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
 }
+

@@ -11,18 +11,9 @@
 void aim_connrst(struct aim_session_t *sess)
 {
   int i;
-  for (i = 0; i < AIM_CONN_MAX; i++)
-    {
-      sess->conns[i].fd = -1;
-      sess->conns[i].type = -1;
-      sess->conns[i].status = 0;
-      sess->conns[i].seqnum = 0;
-      sess->conns[i].lastactivity = 0;
-      sess->conns[i].forcedlatency = 0;
-      aim_clearhandlers(&(sess->conns[i]));
-      sess->conns[i].handlerlist = NULL;
-    }
-
+  for (i = 0; i < AIM_CONN_MAX; i++) {
+    aim_conn_close(&sess->conns[i]);
+  }
 }
 
 struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
@@ -48,6 +39,7 @@ void aim_conn_close(struct aim_conn_t *deadconn)
   if (deadconn->priv)
     free(deadconn->priv);
   deadconn->priv = NULL;
+  faim_mutex_init(&deadconn->active, NULL);
 }
 
 struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
@@ -100,13 +92,12 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
    *
    */
 
-  for(i=0;i<strlen(dest);i++)
-    {
-      if (dest[i] == ':') {
-	port = atoi(&(dest[i+1]));
-	break;
-      }
+  for(i=0;i<strlen(dest);i++) {
+    if (dest[i] == ':') {
+      port = atoi(&(dest[i+1]));
+      break;
     }
+  }
   host = (char *)malloc(i+1);
   strncpy(host, dest, i);
   host[i] = '\0';
@@ -114,11 +105,10 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
   hp = gethostbyname2(host, AF_INET);
   free(host);
 
-  if (hp == NULL)
-    {
-      connstruct->status = (h_errno | AIM_CONN_STATUS_RESOLVERR);
-      return connstruct;
-    }
+  if (hp == NULL) {
+    connstruct->status = (h_errno | AIM_CONN_STATUS_RESOLVERR);
+    return connstruct;
+  }
 
   memset(&sa.sin_zero, 0, 8);
   sa.sin_port = htons(port);
@@ -127,12 +117,11 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
   
   connstruct->fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
   ret = connect(connstruct->fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in));
-  if( ret < 0)
-    {
-      connstruct->fd = -1;
-      connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
-      return connstruct;
-    }
+  if(ret < 0) {
+    connstruct->fd = -1;
+    connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
+    return connstruct;
+  }
   
   return connstruct;
 }
@@ -140,8 +129,8 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
 int aim_conngetmaxfd(struct aim_session_t *sess)
 {
   int i,j;
-  j=0;
-  for (i=0;i<AIM_CONN_MAX;i++)
+
+  for (i=0,j=0;i<AIM_CONN_MAX;i++)
     if(sess->conns[i].fd > j)
       j = sess->conns[i].fd;
   return j;
@@ -150,8 +139,8 @@ int aim_conngetmaxfd(struct aim_session_t *sess)
 int aim_countconn(struct aim_session_t *sess)
 {
   int i,cnt;
-  cnt = 0;
-  for (i=0;i<AIM_CONN_MAX;i++)
+
+  for (i=0,cnt=0;i<AIM_CONN_MAX;i++)
     if (sess->conns[i].fd > -1)
       cnt++;
   return cnt;
@@ -239,8 +228,6 @@ int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
 
 void aim_session_init(struct aim_session_t *sess)
 {
-  int i;
-
   if (!sess)
     return;
 
@@ -250,23 +237,19 @@ void aim_session_init(struct aim_session_t *sess)
   sess->logininfo.email = NULL;
   sess->logininfo.regstatus = 0x00;
 
-  for (i = 0; i < AIM_CONN_MAX; i++)
-    {
-      sess->conns[i].fd = -1;
-      sess->conns[i].type = -1;
-      sess->conns[i].status = 0;
-      sess->conns[i].seqnum = 0;
-      sess->conns[i].lastactivity = 0;
-      sess->conns[i].forcedlatency = 0;
-      sess->conns[i].handlerlist = NULL;
-      sess->conns[i].priv = NULL;
-    }
-  
+  aim_connrst(sess);
+
   sess->queue_outgoing = NULL;
   sess->queue_incoming = NULL;
   sess->pendingjoin = NULL;
   sess->outstanding_snacs = NULL;
   sess->snac_nextid = 0x00000001;
+
+  /*
+   * This must always be set.  Default to the queue-based
+   * version for back-compatibility.  
+   */
+  sess->tx_enqueue = &aim_tx_enqueue__queuebased;
 
   return;
 }

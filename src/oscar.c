@@ -92,6 +92,10 @@ int oscar_login(char *username, char *password) {
 
 	sess = g_new0(struct aim_session_t, 1);
 	aim_session_init(sess);
+	/* we need an immediate queue because we don't use a while-loop to
+	 * see if things need to be sent. */
+	sess->tx_enqueue = &aim_tx_enqueue__immediate;
+	gaim_sess = sess;
 
 	sprintf(buf, "Looking up %s", FAIM_LOGIN_SERVER);
 	set_login_progress(1, buf);
@@ -222,6 +226,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		hide_login_progress("Could Not Connect");
 		return -1;
 	}
+	gaim_conn = bosconn;
 
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ACK, AIM_CB_ACK_ACK, NULL, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, gaim_server_ready, 0);
@@ -319,9 +324,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_bos_clientready(sess, command->conn);
 
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
-
-		gaim_sess = sess;
-		gaim_conn = command->conn;
 
 		debug_print("Roger that, all systems go\n");
 #ifdef USE_APPLET
