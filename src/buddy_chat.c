@@ -45,12 +45,28 @@ static GtkWidget *entry;
 static GtkWidget *invite;
 static GtkWidget *inviteentry;
 static GtkWidget *invitemess;
-static int community;
+static GtkWidget *jc_vbox;
 extern int state_lock;
 
 GList *chats = NULL;
 GtkWidget *all_chats = NULL;
 GtkWidget *chat_notebook = NULL;
+
+
+static void destroy_prev_jc()
+{
+	GList *children, *curr;
+	GtkWidget *w;
+	if (!jc_vbox)
+		return;
+
+	children = g_list_copy(gtk_container_children(GTK_CONTAINER(jc_vbox)));
+	for (curr = children; curr != NULL; curr = g_list_next(curr)) {
+		w = (GtkWidget *)curr->data;
+		gtk_container_remove(GTK_CONTAINER(jc_vbox), w);
+	}
+	g_list_free(children);
+}
 
 static void destroy_join_chat()
 {
@@ -69,22 +85,55 @@ static void destroy_invite()
 
 static void do_join_chat()
 {
-	char *group;
-
-	group = gtk_entry_get_text(GTK_ENTRY(entry));
-
 	if (joinchat) {
-		serv_join_chat(joinchatgc, community + 4, group);
+		if (joinchatgc->prpl->draw_join_chat)
+			serv_join_chat(joinchatgc, 0, NULL);
+		else
+			serv_join_chat(joinchatgc, 0, gtk_entry_get_text(GTK_ENTRY(entry)));
 		gtk_widget_destroy(joinchat);
 	}
 	joinchat = NULL;
 }
 
-static void joinchat_choose(GtkWidget *w, struct gaim_connection *g)
-{
-	joinchatgc = g;
+static void default_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
+	GtkWidget *label;
+	GtkWidget *rowbox;
+
+	if (!joinchat || !fbox)
+		return;
+	
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
+
+	label = gtk_label_new(_("Join what group:"));
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
+
+	gtk_widget_show(label);
+	gtk_widget_show(entry);
+	gtk_widget_show(rowbox);
 }
 
+static void rebuild_jc()
+{
+	if (!joinchatgc)
+		return;
+
+	destroy_prev_jc();
+	if (joinchatgc->prpl->draw_join_chat)
+		(*joinchatgc->prpl->draw_join_chat)(joinchatgc, jc_vbox);
+	else
+		default_draw_join_chat(joinchatgc, jc_vbox);
+}
+
+static void joinchat_choose(GtkWidget *w, struct gaim_connection *g)
+{
+	if (joinchatgc == g)
+		return;
+	joinchatgc = g;
+	rebuild_jc();
+}
 
 static void create_joinchat_menu(GtkWidget *box)
 {
@@ -120,7 +169,6 @@ static void create_joinchat_menu(GtkWidget *box)
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
 }
 
-
 void join_chat()
 {
 	GtkWidget *mainbox;
@@ -131,7 +179,6 @@ void join_chat()
 	GtkWidget *join;
 	GtkWidget *cancel;
 	GtkWidget *label;
-	GtkWidget *opt;
 	GSList *c = connections;
 	struct gaim_connection *gc = NULL;
 
@@ -169,18 +216,6 @@ void join_chat()
 		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 		gtk_container_add(GTK_CONTAINER(frame), fbox);
 
-		rowbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
-
-		label = gtk_label_new(_("Join what group:"));
-		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-
-		entry = gtk_entry_new();
-		gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
-		gtk_signal_connect(GTK_OBJECT(entry), "activate",
-				   GTK_SIGNAL_FUNC(do_join_chat), joinchat);
-		gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
-
 #ifndef NO_MULTI
 		rowbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
@@ -189,24 +224,18 @@ void join_chat()
 		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 
 		create_joinchat_menu(rowbox);
+
+		{
+			GtkWidget *tmp = fbox;
+			fbox = gtk_vbox_new(FALSE, 5);
+			gtk_container_add(GTK_CONTAINER(tmp), fbox);
+			gtk_container_set_border_width(GTK_CONTAINER(fbox), 0);
+			jc_vbox = fbox;
+		}
 #else
 		joinchatgc = connections->data;
 #endif
-
-		rowbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
-
-		community = 0;
-		opt = gtk_radio_button_new_with_label(NULL, _("AIM Private Chats"));
-		gtk_box_pack_start(GTK_BOX(rowbox), opt, TRUE, TRUE, 0);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-		gtk_signal_connect(GTK_OBJECT(opt), "clicked", set_option, &community);
-		gtk_widget_show(opt);
-
-		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(opt)),
-						      _("AOL Community Chats"));
-		gtk_box_pack_start(GTK_BOX(rowbox), opt, TRUE, TRUE, 0);
-
+		rebuild_jc();
 		/* buttons */
 
 		bbox = gtk_hbox_new(FALSE, 5);

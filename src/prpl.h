@@ -77,6 +77,7 @@ struct prpl {
 	void (* user_opts)(GtkWidget *, struct aim_user *);
 	void (* draw_new_user)(GtkWidget *);
 	void (* do_new_user)();
+	void (* draw_join_chat)	(struct gaim_connection *, GtkWidget *);
 
 	/* all the server-related functions */
 	void (* login)		(struct aim_user *);
