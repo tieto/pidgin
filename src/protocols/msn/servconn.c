@@ -65,6 +65,10 @@ show_error(MsnServConn *servconn)
 	}
 	else
 	{
+		MsnSwitchBoard *swboard;
+		swboard = servconn->data;
+		swboard->error = MSN_SB_ERROR_CONNECTION;
+		/*
 		GaimAccount *account;
 		char *primary;
 
@@ -75,6 +79,7 @@ show_error(MsnServConn *servconn)
 		gaim_notify_error(gc, NULL, primary, tmp);
 
 		g_free(primary);
+		*/
 	}
 
 	g_free(tmp);

@@ -25,11 +25,12 @@
 #include "msg.h"
 
 MsnMessage *
-msn_message_new(void)
+msn_message_new(MsnMsgType type)
 {
 	MsnMessage *msg;
 
 	msg = g_new0(MsnMessage, 1);
+	msg->type = type;
 
 	msg->attr_table = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, g_free);
@@ -45,11 +46,11 @@ msn_message_new_plain(const char *message)
 	MsnMessage *msg;
 	char *message_cr;
 
-	msg = msn_message_new();
+	msg = msn_message_new(MSN_MSG_TEXT);
 	msn_message_set_attr(msg, "User-Agent", "Gaim/" VERSION);
 	msn_message_set_content_type(msg, "text/plain");
 	msn_message_set_charset(msg, "UTF-8");
-	msn_message_set_flag(msg, 'N');
+	msn_message_set_flag(msg, 'A');
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
 						 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
 
@@ -65,7 +66,7 @@ msn_message_new_msnslp(void)
 {
 	MsnMessage *msg;
 
-	msg = msn_message_new();
+	msg = msn_message_new(MSN_MSG_SLP);
 
 	msn_message_set_attr(msg, "User-Agent", NULL);
 
@@ -226,7 +227,7 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 
 	g_return_val_if_fail(cmd != NULL, NULL);
 
-	msg = msn_message_new();
+	msg = msn_message_new(MSN_MSG_UNKNOWN);
 
 	msg->remote_user = g_strdup(cmd->params[0]);
 	/* msg->size = atoi(cmd->params[2]); */
@@ -610,6 +611,20 @@ msn_message_get_hashtable_from_body(const MsnMessage *msg)
 	g_strfreev(elems);
 
 	return table;
+}
+
+char *
+msn_message_to_string(MsnMessage *msg)
+{
+	size_t body_len;
+	const char *body;
+
+	g_return_val_if_fail(msg != NULL, NULL);
+	g_return_val_if_fail(msg->type == MSN_MSG_TEXT, NULL);
+
+	body = msn_message_get_bin_data(msg, &body_len);
+
+	return g_strndup(body, body_len);
 }
 
 void

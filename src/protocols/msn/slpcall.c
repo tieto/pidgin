@@ -62,6 +62,8 @@ msn_slp_call_new(MsnSlpLink *slplink)
 	slplink->slp_calls =
 		g_list_append(slplink->slp_calls, slpcall);
 
+	slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
+
 	return slpcall;
 }
 
@@ -92,6 +94,9 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 	GList *e;
 
 	g_return_if_fail(slpcall != NULL);
+
+	if (slpcall->timer)
+		gaim_timeout_remove(slpcall->timer);
 
 	if (slpcall->id != NULL)
 		g_free(slpcall->id);
@@ -181,6 +186,16 @@ msn_slp_call_close(MsnSlpCall *slpcall)
 	msn_slp_call_destroy(slpcall);
 }
 
+gboolean
+msn_slp_call_timeout(gpointer data)
+{
+	gaim_debug_info("msn", "slpcall timeout\n");
+
+	msn_slp_call_destroy(data);
+
+	return FALSE;
+}
+
 MsnSlpCall *
 msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
@@ -201,7 +216,20 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 
 		if (slpcall != NULL)
+		{
+			if (slpcall->timer)
+				gaim_timeout_remove(slpcall->timer);
+
 			slpcall->cb(slpcall, body, body_len);
+
+			/* TODO: Shall we send a BYE? I don't think so*/
+#if 0
+			send_bye(slpcall, "application/x-msnmsgr-sessionclosebody");
+			msn_slplink_unleash(slpcall->slplink);
+#endif
+
+			slpcall->wasted = TRUE;
+		}
 	}
 #if 0
 	else if (slpmsg->flags == 0x100)
@@ -212,6 +240,15 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_slp_call_session_init(slpcall);
 	}
 #endif
+
+	if (slpcall != NULL)
+	{
+		if (slpcall->timer)
+			gaim_timeout_remove(slpcall->timer);
+
+		slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT,
+										  msn_slp_call_timeout, slpcall);
+	}
 
 	return slpcall;
 }

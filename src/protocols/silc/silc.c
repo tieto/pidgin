@@ -65,11 +65,15 @@ static void
 silcgaim_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	SilcGaim sg = gc->proto_data;
+	SilcGaim sg;
 	SilcUInt32 mode;
 	SilcBuffer idp;
 	unsigned char mb[4];
 	const char *state;
+
+	g_return_if_fail(gc != NULL);
+
+	sg = gc->proto_data;
 
 	if ((status == NULL) || (sg->conn == NULL))
 		return;

@@ -192,7 +192,7 @@ send_to_mobile(GaimConnection *gc, const char *who, const char *entry)
 
 	payload = msn_page_gen_payload(page, &payload_len);
 
-	trans = msn_transaction_new("PGD", "%s 1 %d", who, payload_len);
+	trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who, payload_len);
 
 	msn_transaction_set_payload(trans, payload, payload_len);
 
@@ -798,7 +798,7 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 	if (!swboard->user_joined)
 		return 0;
 
-	msg = msn_message_new();
+	msg = msn_message_new(MSN_MSG_TYPING);
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
 	msn_message_set_flag(msg, 'U');
 	msn_message_set_attr(msg, "TypingUser",

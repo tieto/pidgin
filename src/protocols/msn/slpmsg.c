@@ -122,6 +122,7 @@ msn_slpmsg_show(MsnMessage *msg)
 		case 0x2:
 			info = "SLP ACK"; break;
 		case 0x20:
+		case 0x1000030:
 			info = "SLP DATA"; break;
 		default:
 			info = "SLP UNKNOWN"; break;

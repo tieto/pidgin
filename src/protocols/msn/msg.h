@@ -32,11 +32,25 @@ typedef struct _MsnMessage MsnMessage;
 #include "command.h"
 #include "transaction.h"
 
+typedef void (*MsnCb)(void *data);
+
+/*
 typedef enum
 {
 	MSN_MSG_NORMAL,
 	MSN_MSG_SLP_SB,
 	MSN_MSG_SLP_DC
+
+} MsnMsgType;
+*/
+
+typedef enum
+{
+	MSN_MSG_UNKNOWN,
+	MSN_MSG_TEXT,
+	MSN_MSG_TYPING,
+	MSN_MSG_CAPS,
+	MSN_MSG_SLP
 
 } MsnMsgType;
 
@@ -88,7 +102,7 @@ struct _MsnMessage
 	MsnCommand *cmd;
 	MsnTransaction *trans;
 
-	MsnTransCb ack_cb;
+	MsnCb ack_cb;
 	void *ack_data;
 };
 
@@ -97,7 +111,7 @@ struct _MsnMessage
  *
  * @return A new message.
  */
-MsnMessage *msn_message_new(void);
+MsnMessage *msn_message_new(MsnMsgType type);
 
 /**
  * Creates a new, empty MSNSLP message.
@@ -299,5 +313,6 @@ void msn_message_parse_slp_body(MsnMessage *msg, const char *body,
 
 char *msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size);
 
+char *msn_message_to_string(MsnMessage *msg);
 
 #endif /* _MSN_MSG_H_ */

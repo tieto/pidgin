@@ -1433,7 +1433,8 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	filesel = gtk_file_selection_new(title ? title
 										   : (savedialog ? _("Save File...")
 														 : _("Open File...")));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), filename);
+	if (filename != NULL)
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), filename);
 	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)), "delete_event",
 							 G_CALLBACK(file_cancel_cb), data);
 	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),

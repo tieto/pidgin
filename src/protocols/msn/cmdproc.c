@@ -250,6 +250,10 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (cmd->trId)
 		trans = msn_history_find(cmdproc->history, cmd->trId);
 
+	if (trans != NULL)
+		if (trans->timer)
+			gaim_timeout_remove(trans->timer);
+
 	if (g_ascii_isdigit(cmd->command[0]))
 	{
 		if (trans != NULL)
@@ -258,11 +262,17 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			int error;
 
 			error = atoi(cmd->command);
-			if (cmdproc->cbs_table->errors != NULL)
+
+			if (trans->error_cb != NULL)
+				error_cb = trans->error_cb;
+
+			if (error_cb == NULL && cmdproc->cbs_table->errors != NULL)
 				error_cb = g_hash_table_lookup(cmdproc->cbs_table->errors, trans->command);
 
 			if (error_cb != NULL)
+			{
 				error_cb(cmdproc, trans, error);
+			}
 			else
 			{
 #if 1

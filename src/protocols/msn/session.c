@@ -131,7 +131,6 @@ msn_session_disconnect(MsnSession *session)
 }
 
 /* TODO: This must go away when conversation is redesigned */
-
 MsnSwitchBoard *
 msn_session_find_swboard(MsnSession *session, const char *username)
 {
@@ -185,9 +184,9 @@ msn_session_get_swboard(MsnSession *session, const char *username)
 	if (swboard == NULL)
 	{
 		swboard = msn_switchboard_new(session);
+		swboard->im_user = g_strdup(username);
 		msn_switchboard_request(swboard);
 		msn_switchboard_request_add_user(swboard, username);
-		swboard->im_user = g_strdup(username);
 	}
 
 	return swboard;

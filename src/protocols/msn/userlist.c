@@ -73,7 +73,7 @@ static void
 got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 {
 	MsnPermitAdd *pa;
-	char *msg;
+	char *msg, *escaped;
 
 	pa      = g_new0(MsnPermitAdd, 1);
 	pa->who = g_strdup(passport);
@@ -81,11 +81,13 @@ got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 
 	if (friendly != NULL)
 	{
+		escaped = g_markup_escape_text(friendly, -1);
 		msg = g_strdup_printf(
 				   _("The user %s (%s) wants to add %s to his or her "
 					 "buddy list."),
-				   passport, friendly,
+				   passport, escaped,
 				   gaim_account_get_username(gc->account));
+		g_free(escaped);
 	}
 	else
 	{
@@ -173,7 +175,7 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 	if (old_group_name)
 		data->old_group_name = g_strdup(old_group_name);
 
-	trans = msn_transaction_new("ADG", "%s %d",
+	trans = msn_transaction_new(cmdproc, "ADG", "%s %d",
 								gaim_url_encode(new_group_name),
 								0);
 

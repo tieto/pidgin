@@ -38,14 +38,11 @@ struct _GaimGtkStatusSelectorPrivate
 	GtkWidget *entry;
 	GtkWidget *frame;
 
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkListStore *model;
-#endif
 
 	guint entry_timer;
 };
 
-#if GTK_CHECK_VERSION(2,4,0)
 enum
 {
 	COLUMN_STATUS_TYPE_ID,
@@ -53,15 +50,16 @@ enum
 	COLUMN_NAME,
 	NUM_COLUMNS
 };
-#endif /* GTK >= 2.4.0 */
 
 static void gaim_gtk_status_selector_class_init(GaimGtkStatusSelectorClass *klass);
 static void gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector);
 static void gaim_gtk_status_selector_finalize(GObject *obj);
 static void gaim_gtk_status_selector_destroy(GtkObject *obj);
+#if GTK_CHECK_VERSION (2,4,0)
 static void status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector);
 static gboolean key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer user_data);
 static void signed_on_off_cb(GaimConnection *gc, GaimGtkStatusSelector *selector);
+#endif
 static void rebuild_list(GaimGtkStatusSelector *selector);
 
 static GtkVBox *parent_class = NULL;
@@ -112,11 +110,11 @@ gaim_gtk_status_selector_class_init(GaimGtkStatusSelectorClass *klass)
 static void
 gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 {
+#if GTK_CHECK_VERSION(2,4,0)
 	GtkWidget *combo;
 	GtkWidget *entry;
 	GtkWidget *toolbar;
 	GtkWidget *frame;
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkCellRenderer *renderer;
 #endif
 
@@ -145,11 +143,9 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 
 	g_signal_connect(G_OBJECT(combo), "changed",
 					 G_CALLBACK(status_switched_cb), selector);
-#else /* GTK < 2.4.0 */
 
 	/* TODO */
 
-#endif /* GTK < 2.4.0 */
 
 	gtk_widget_show(combo);
 	gtk_box_pack_start(GTK_BOX(selector), combo, FALSE, FALSE, 0);
@@ -172,6 +168,7 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 						selector);
 
 	rebuild_list(selector);
+#endif /* GTK < 2.4.0 */
 }
 
 static void
@@ -206,6 +203,7 @@ gaim_gtk_status_selector_destroy(GtkObject *obj)
 		GTK_OBJECT_CLASS(parent_class)->destroy(obj);
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
 static void
 status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 {
@@ -280,10 +278,12 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			gtk_widget_hide(selector->priv->frame);
 	}
 }
+#endif
 
 static gboolean
 insert_text_timeout_cb(gpointer data)
 {
+#if GTK_CHECK_VERSION(2,4,0)
 	GaimGtkStatusSelector *selector = (GaimGtkStatusSelector *)data;
 	GtkTreeIter iter;
 	const char *status_type_id;
@@ -335,6 +335,7 @@ insert_text_timeout_cb(gpointer data)
 			}
 		}
 	}
+#endif
 
 	return FALSE;
 }

@@ -28,9 +28,13 @@ typedef struct _MsnSlpCall MsnSlpCall;
 
 typedef void (*MsnSlpCb)(MsnSlpCall *slpcall,
 						 const char *data, long long size);
+typedef void (*MsnSlpEndCb)(MsnSlpCall *slpcall);
 
 #include "slplink.h"
 #include "slpsession.h"
+
+/* The official client seems to timeout slp calls after 5 minutes */
+#define MSN_SLPCALL_TIMEOUT 300000
 
 typedef enum
 {
@@ -66,6 +70,8 @@ struct _MsnSlpCall
 	void (*end_cb)(MsnSlpCall *slpcall);
 	gboolean wasted;
 	gboolean started;
+
+	int timer;
 };
 
 MsnSlpCall *msn_slp_call_new(MsnSlpLink *slplink);
@@ -75,5 +81,6 @@ void msn_slp_call_destroy(MsnSlpCall *slpcall);
 void msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 						 int app_id, const char *context);
 void msn_slp_call_close(MsnSlpCall *slpcall);
+gboolean msn_slp_call_timeout(gpointer data);
 
 #endif /* _MSN_SLPCALL_H_ */

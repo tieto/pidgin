@@ -286,7 +286,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	for (i = 0; i < 16; i++)
 		g_snprintf(buf + (i*2), 3, "%02x", di[i]);
 
-	trans = msn_transaction_new("QRY", "%s 32", "PROD0038W!61ZTF9");
+	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", "PROD0038W!61ZTF9");
 
 	msn_transaction_set_payload(trans, buf, 32);
 
@@ -981,7 +981,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if (session->passport_info.file == NULL)
 	{
 		MsnTransaction *trans;
-		trans = msn_transaction_new("URL", "%s", "INBOX");
+		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
 		msn_transaction_queue_cmd(trans, msg->cmd);
 
 		msn_cmdproc_send_trans(cmdproc, trans);
@@ -1034,7 +1034,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if (session->passport_info.file == NULL)
 	{
 		MsnTransaction *trans;
-		trans = msn_transaction_new("URL", "%s", "INBOX");
+		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
 		msn_transaction_queue_cmd(trans, msg->cmd);
 
 		msn_cmdproc_send_trans(cmdproc, trans);

@@ -30,28 +30,38 @@ typedef struct _MsnTransaction MsnTransaction;
 #include "cmdproc.h"
 
 typedef void (*MsnTransCb)(MsnCmdProc *cmdproc, MsnCommand *cmd);
+typedef void (*MsnTimeoutCb)(MsnCmdProc *cmdproc, MsnTransaction *trans);
+typedef void (*MsnErrorCb)(MsnCmdProc *cmdproc, MsnTransaction *trans,
+						   int error);
 
 /**
- * A transaction. A command that will initiate the transaction.
+ * A transaction. A sending command that will initiate the transaction.
  */
 struct _MsnTransaction
 {
+	MsnCmdProc *cmdproc;
 	unsigned int trId;
 
 	char *command;
 	char *params;
 
+	int timer;
+
+	void *data; /* The data to be used on the different callbacks */
 	GHashTable *callbacks;
-	void *data;
+	MsnErrorCb error_cb;
+	MsnTimeoutCb timeout_cb;
 
 	char *payload;
 	size_t payload_len;
 
 	GQueue *queue;
-	MsnCommand *pendent_cmd;
+	MsnCommand *pendent_cmd; /* The command that is waiting for the result of
+								this transaction. */
 };
 
-MsnTransaction *msn_transaction_new(const char *command,
+MsnTransaction *msn_transaction_new(MsnCmdProc *cmdproc,
+									const char *command,
 									const char *format, ...);
 void msn_transaction_destroy(MsnTransaction *trans);
 
@@ -62,6 +72,8 @@ void msn_transaction_set_payload(MsnTransaction *trans,
 								 const char *payload, int payload_len);
 void msn_transaction_set_data(MsnTransaction *trans, void *data);
 void msn_transaction_add_cb(MsnTransaction *trans, char *answer,
-							MsnTransCb cb, void *data);
+							MsnTransCb cb);
+void msn_transaction_set_error_cb(MsnTransaction *trans, MsnErrorCb cb);
+void msn_transaction_set_timeout_cb(MsnTransaction *trans, MsnTimeoutCb cb);
 
 #endif /* _MSN_TRANSACTION_H */

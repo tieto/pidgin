@@ -25,7 +25,8 @@
 #include "transaction.h"
 
 MsnTransaction *
-msn_transaction_new(const char *command, const char *format, ...)
+msn_transaction_new(MsnCmdProc *cmdproc, const char *command,
+					const char *format, ...)
 {
 	MsnTransaction *trans;
 	va_list arg;
@@ -34,6 +35,7 @@ msn_transaction_new(const char *command, const char *format, ...)
 
 	trans = g_new0(MsnTransaction, 1);
 
+	trans->cmdproc = cmdproc;
 	trans->command = g_strdup(command);
 
 	if (format != NULL)
@@ -72,6 +74,9 @@ msn_transaction_destroy(MsnTransaction *trans)
 		g_queue_free(trans->queue);
 	}
 #endif
+
+	if (trans->timer)
+		gaim_timeout_remove(trans->timer);
 
 	g_free(trans);
 }
@@ -156,7 +161,7 @@ msn_transaction_set_data(MsnTransaction *trans, void *data)
 
 void
 msn_transaction_add_cb(MsnTransaction *trans, char *answer,
-					   MsnTransCb cb, void *data)
+					   MsnTransCb cb)
 {
 	g_return_if_fail(trans  != NULL);
 	g_return_if_fail(answer != NULL);
@@ -165,6 +170,38 @@ msn_transaction_add_cb(MsnTransaction *trans, char *answer,
 		trans->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
 	g_hash_table_insert(trans->callbacks, answer, cb);
+}
 
-	trans->data = data;
+static gboolean
+transaction_timeout(gpointer data)
+{
+	MsnTransaction *trans;
+
+	trans = data;
+	g_return_val_if_fail(trans != NULL, FALSE);
+
+	gaim_debug_info("msn", "%s %d %s\n", trans->command, trans->trId, trans->params);
+
+	if (trans->timeout_cb != NULL)
+		trans->timeout_cb(trans->cmdproc, trans);
+
+	return FALSE;
+}
+
+void
+msn_transaction_set_timeout_cb(MsnTransaction *trans, MsnTimeoutCb cb)
+{
+	if (trans->timer)
+	{
+		gaim_debug_error("msn", "This shouldn't be happening\n");
+		gaim_timeout_remove(trans->timer);
+	}
+	trans->timeout_cb = cb;
+	trans->timer = gaim_timeout_add(60000, transaction_timeout, trans);
+}
+
+void
+msn_transaction_set_error_cb(MsnTransaction *trans, MsnErrorCb cb)
+{
+	trans->error_cb = cb;
 }

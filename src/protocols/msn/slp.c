@@ -144,9 +144,11 @@ msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize o
 void
 msn_xfer_end_cb(MsnSlpCall *slpcall)
 {
-	if (gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_DONE)
+	if ((gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_DONE) &&
+		(gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE) &&
+		(gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_CANCEL_LOCAL))
 	{
-		gaim_xfer_cancel_remote(slpcall->xfer);
+		/* gaim_xfer_cancel_remote(slpcall->xfer); */
 	}
 }
 
@@ -334,13 +336,13 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		gaim_base64_decode(context, &bin, &bin_len);
 		file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
-		
+
 		uni_name = (gunichar2 *)(bin + 20);
 		while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {
 			*uni_name = GUINT16_FROM_LE(*uni_name);
 			uni_name++;
 		}
-		
+
 		file_name = g_utf16_to_utf8((const gunichar2 *)(bin + 20), -1,
 									NULL, NULL, NULL);
 
@@ -669,7 +671,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body, gsize len)
 				size_t offset =  c - status;
 				if (offset >= sizeof(temp))
 					offset = sizeof(temp) - 1;
-		      
+
 				strncpy(temp, status, offset);
 				temp[offset] = '\0';
 			}
@@ -760,7 +762,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	slplink = msn_session_get_slplink(session, who);
 
-	msn_slplink_request_object(slplink, smile, got_emoticon, obj);
+	msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 
 	g_strfreev(tokens);
 }
@@ -802,6 +804,10 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 {
 	MsnUser *user;
 
+	g_return_if_fail(userlist != NULL);
+
+	gaim_debug_info("msn", "Releasing buddy icon request\n");
+
 	while (userlist->buddy_icon_window > 0)
 	{
 		GQueue *queue;
@@ -820,6 +826,9 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 
 		msn_request_user_display(user);
 		userlist->buddy_icon_window--;
+
+		gaim_debug_info("msn", "buddy_icon_window=%d\n",
+						userlist->buddy_icon_window);
 	}
 }
 
@@ -829,6 +838,8 @@ msn_queue_buddy_icon_request(MsnUser *user)
 	GaimAccount *account;
 	MsnObject *obj;
 	GQueue *queue;
+
+	g_return_if_fail(user != NULL);
 
 	account = user->userlist->session->account;
 
@@ -860,7 +871,13 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		userlist = user->userlist;
 		queue = userlist->buddy_icon_requests;
 
+		gaim_debug_info("msn", "Queueing buddy icon request: %s\n",
+						user->passport);
+
 		g_queue_push_tail(queue, user);
+
+		gaim_debug_info("msn", "buddy_icon_window=%d\n",
+						userlist->buddy_icon_window);
 
 		if (userlist->buddy_icon_window > 0)
 			msn_release_buddy_icon_request(userlist);
@@ -871,13 +888,17 @@ void
 got_user_display(MsnSlpCall *slpcall,
 				 const char *data, long long size)
 {
+	MsnUserList *userlist;
 	const char *info;
 	GaimAccount *account;
 	GSList *sl;
 
+	g_return_if_fail(slpcall != NULL);
+
 	info = slpcall->data_info;
 	gaim_debug_info("msn", "Got User Display: %s\n", info);
 
+	userlist = slpcall->slplink->session->userlist;
 	account = slpcall->slplink->session->account;
 
 	/* TODO: I think we need better buddy icon core functions. */
@@ -892,8 +913,35 @@ got_user_display(MsnSlpCall *slpcall,
 		gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
 	}
 
-	slpcall->slplink->session->userlist->buddy_icon_window++;
-	msn_release_buddy_icon_request(slpcall->slplink->session->userlist);
+#if 0
+	/* Free one window slot */
+	userlist->buddy_icon_window++;
+
+	gaim_debug_info("msn", "buddy_icon_window=%d\n",
+					userlist->buddy_icon_window);
+
+	msn_release_buddy_icon_request(userlist);
+#endif
+}
+
+void
+end_user_display(MsnSlpCall *slpcall)
+{
+	MsnUserList *userlist;
+
+	g_return_if_fail(slpcall != NULL);
+
+	gaim_debug_info("msn", "End User Display\n");
+
+	userlist = slpcall->slplink->session->userlist;
+
+	/* Free one window slot */
+	userlist->buddy_icon_window++;
+
+	gaim_debug_info("msn", "buddy_icon_window=%d\n",
+					userlist->buddy_icon_window);
+
+	msn_release_buddy_icon_request(userlist);
 }
 
 void
@@ -917,7 +965,8 @@ msn_request_user_display(MsnUser *user)
 	if (g_ascii_strcasecmp(user->passport,
 						   gaim_account_get_username(account)))
 	{
-		msn_slplink_request_object(slplink, info, got_user_display, obj);
+		msn_slplink_request_object(slplink, info, got_user_display,
+								   end_user_display, obj);
 	}
 	else
 	{
@@ -943,7 +992,7 @@ msn_request_user_display(MsnUser *user)
 
 		/* TODO: I think we need better buddy icon core functions. */
 		gaim_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
-		
+
 		sl = gaim_find_buddies(account, user->passport);
 
 		for (; sl != NULL; sl = sl->next)
@@ -952,7 +1001,12 @@ msn_request_user_display(MsnUser *user)
 			gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
 		}
 
+		/* Free one window slot */
 		session->userlist->buddy_icon_window++;
+
+		gaim_debug_info("msn", "buddy_icon_window=%d\n",
+						session->userlist->buddy_icon_window);
+
 		msn_release_buddy_icon_request(session->userlist);
 	}
 }

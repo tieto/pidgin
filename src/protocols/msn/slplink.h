@@ -79,6 +79,7 @@ void msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer);
 void msn_slplink_request_object(MsnSlpLink *slplink,
 								 const char *info,
 								 MsnSlpCb cb,
+								 MsnSlpEndCb end_cb,
 								 const MsnObject *obj);
 
 MsnSlpCall *msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);

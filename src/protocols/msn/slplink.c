@@ -100,11 +100,12 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 MsnSlpLink *
 msn_session_find_slplink(MsnSession *session, const char *who)
 {
-	MsnSlpLink *slplink;
 	GList *l;
 
 	for (l = session->slplinks; l != NULL; l = l->next)
 	{
+		MsnSlpLink *slplink;
+
 		slplink = l->data;
 
 		if (!strcmp(slplink->remote_user, who))
@@ -192,7 +193,8 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	{
 		MsnSwitchBoard *swboard;
 
-		swboard = msn_session_get_swboard(slplink->session, slplink->remote_user);
+		swboard = msn_session_get_swboard(slplink->session,
+										  slplink->remote_user);
 
 		if (swboard == NULL)
 			return;
@@ -209,13 +211,14 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 }
 
+/* We have received the message receive ack */
 static void
-t_ack(MsnCmdProc *cmdproc, MsnCommand *cmd)
+msg_ack(void *data)
 {
 	MsnSlpMessage *slpmsg;
 	long long real_size;
 
-	slpmsg = cmd->trans->data;
+	slpmsg = data;
 
 	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
 
@@ -283,10 +286,16 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msn_slplink_send_msg(slplink, msg);
 
-	if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
+	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030) && (slpmsg->slpcall != NULL))
 	{
-		if ((slpmsg->slpcall != NULL) &&
-			(slpmsg->slpcall->progress_cb != NULL))
+		if (slpmsg->slpcall->timer)
+		{
+			gaim_timeout_remove(slpmsg->slpcall->timer);
+			slpmsg->slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT,
+													  msn_slp_call_timeout, slpmsg->slpcall);
+		}
+
+		if (slpmsg->slpcall->progress_cb != NULL)
 		{
 			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
 										 len, slpmsg->offset);
@@ -338,7 +347,7 @@ msn_slplink_release_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msn_message_set_attr(msg, "P2P-Dest", slplink->remote_user);
 
-	msg->ack_cb = t_ack;
+	msg->ack_cb = msg_ack;
 	msg->ack_data = slpmsg;
 
 	msn_slplink_send_msgpart(slplink, slpmsg);
@@ -473,7 +482,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 				}
 			}
 		}
-		if (!slpmsg->fp)
+		if (!slpmsg->fp && slpmsg->size)
 		{
 			slpmsg->buffer = g_try_malloc(slpmsg->size);
 			if (slpmsg->buffer == NULL)
@@ -495,7 +504,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			/* fseek(slpmsg->fp, offset, SEEK_SET); */
 			len = fwrite(data, 1, len, slpmsg->fp);
 		}
-		else
+		else if (slpmsg->size)
 		{
 			if ((offset + len) > slpmsg->size)
 			{
@@ -512,10 +521,16 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		g_return_if_reached();
 	}
 
-	if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
+	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030) && (slpmsg->slpcall != NULL))
 	{
-		if ((slpmsg->slpcall != NULL) &&
-			(slpmsg->slpcall->progress_cb != NULL))
+		if (slpmsg->slpcall->timer)
+		{
+			gaim_timeout_remove(slpmsg->slpcall->timer);
+			slpmsg->slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT,
+													  msn_slp_call_timeout, slpmsg->slpcall);
+		}
+
+		if (slpmsg->slpcall->progress_cb != NULL)
 		{
 			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
 										 len, offset);
@@ -623,7 +638,7 @@ gen_context(const char *file_name, const char *file_path)
 	header.file_size = GUINT32_TO_LE(size);
 	header.unk2 = GUINT32_TO_LE(0);
 	header.unk3 = GUINT32_TO_LE(0);
-	
+
 	base = g_malloc(len + 1);
 	n = base;
 
@@ -638,7 +653,7 @@ gen_context(const char *file_name, const char *file_path)
 
 	memset(n, 0xFF, 4);
 	n += 4;
-	
+
 	g_free(uni);
 	return gaim_base64_encode(base, len);
 }
@@ -682,6 +697,7 @@ void
 msn_slplink_request_object(MsnSlpLink *slplink,
 						   const char *info,
 						   MsnSlpCb cb,
+						   MsnSlpEndCb end_cb,
 						   const MsnObject *obj)
 {
 	MsnSlpCall *slpcall;
@@ -700,6 +716,7 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 
 	slpcall->data_info = g_strdup(info);
 	slpcall->cb = cb;
+	slpcall->end_cb = end_cb;
 
 	msn_slp_call_invite(slpcall, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6", 1,
 						msnobj_base64);
