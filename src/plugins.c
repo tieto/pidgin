@@ -152,9 +152,7 @@ void load_plugin(char *filename) {
 	while (c) {
 		plug = (struct gaim_plugin *)c->data;
 		if (!strcmp(filename, plug->filename)) {
-			sprintf(debug_buff, _("Already loaded %s, "
-						"not reloading.\n"), filename);
-			debug_print(debug_buff);
+			debug_printf( _("Already loaded %s, not reloading.\n"), filename);
 			return;
 		}
 		c = g_list_next(c);
@@ -166,8 +164,7 @@ void load_plugin(char *filename) {
 	else
 		plug->filename = g_strdup(filename);
 
-	sprintf(debug_buff, "Loading %s\n", filename);
-	debug_print(debug_buff);
+	debug_printf("Loading %s\n", filename);
 	/* do NOT `OR' with RTLD_GLOBAL, otherwise plugins may conflict
 	 * (it's really just a way to work around other people's bad
 	 * programming, by not using RTLD_GLOBAL :P ) */
@@ -190,8 +187,7 @@ void load_plugin(char *filename) {
 	}
 
 	retval = (*gaim_plugin_init)(plug->handle);
-	sprintf(debug_buff, "loaded plugin returned %d\n", retval);
-	debug_print(debug_buff);
+	debug_printf("loaded plugin returned %d\n", retval);
 	if (retval < 0) {
 		GList *c = callbacks;
 		struct gaim_callback *g;

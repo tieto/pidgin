@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "proxy.h"
@@ -1803,6 +1804,21 @@ void debug_print(char *chars)
 #ifdef DEBUG
         printf("%s\n", chars);
 #endif
+}
+
+void debug_printf(char *fmt, ...)
+{
+	va_list ap;
+	gchar *s;
+
+	if (general_options & OPT_GEN_DEBUG && dw) {
+		va_start(ap, fmt);
+		s = g_strdup_vprintf(fmt, ap);
+		va_end(ap);
+
+		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, s, -1);
+		g_free(s);
+	}
 }
 
 static gint handle_delete(GtkWidget *w, GdkEvent *event, void *dummy)

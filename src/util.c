@@ -51,34 +51,28 @@ char *full_date() {
 
 gint badchar(char c)
 {
-        if (c == ' ')
-                return 1;
-        if (c == ',')
-                return 1;
-        if (c == ')')
-                return 1;
-        if (c == '(')
-                return 1;
-        if (c == 0)
-                return 1;
-        if (c == '\n')
-                return 1;
-	if (c == '<')
+	switch(c) {
+	case ' ':
+	case ',':
+	case '(':
+	case ')':
+	case '\0':
+	case '\n ':
+	case '<':
+	case '>':
 		return 1;
-	if (c == '>')
-		return 1;
-        return 0;
-
-
+	default:
+		return 0;
+	}
 }
 
 
-char *sec_to_text(int sec)
+gchar *sec_to_text(gint sec)
 {
         int hrs, min;
         char minutes[64];
         char hours[64];
-        char sep[16];
+        char *sep;
         char *ret = g_malloc(256);
         
         hrs = sec / 3600;
@@ -92,7 +86,7 @@ char *sec_to_text(int sec)
                         g_snprintf(minutes, sizeof(minutes), "%d minute.", min);
                 else
                         g_snprintf(minutes, sizeof(minutes), "%d minutes.", min);
-                sprintf(sep, ", ");
+                sep = ", ";
         } else {
                 if (!hrs)
                         g_snprintf(minutes, sizeof(minutes), "%d minutes.", min);
@@ -100,7 +94,7 @@ char *sec_to_text(int sec)
                         minutes[0] = '.';
                         minutes[1] = '\0';
                 }
-                sep[0] = '\0';
+                sep = "";
         }
 
         if (hrs) {

@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 976 $"
+#define REVISION "gaim:$Revision: 980 $"
 
 
 static unsigned int peer_ver=0;
@@ -169,7 +169,7 @@ struct gaim_connection *toc_login(char *username, char *password)
 	if (gc->keepalive < 0)
 		update_keepalive(gc, gc->options & OPT_USR_KEEPALV);
 
-        serv_finish_login(gc);
+	serv_finish_login(gc);
 	gaim_setup(gc);
 	return 0;
 }
@@ -232,19 +232,16 @@ int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 	struct sflap_hdr hdr;
 	char obuf[MSG_LEN];
 
-        /* One _last_ 2048 check here!  This shouldn't ever
-         * get hit though, hopefully.  If it gets hit on an IM
-         * It'll lose the last " and the message won't go through,
-         * but this'll stop a segfault. */
-        if (strlen(buf) > (MSG_LEN - sizeof(hdr))) {
-                buf[MSG_LEN - sizeof(hdr) - 3] = '"';
-                buf[MSG_LEN - sizeof(hdr) - 2] = '\0';
-        }
+	/* One _last_ 2048 check here!  This shouldn't ever
+	 * get hit though, hopefully.  If it gets hit on an IM
+	 * It'll lose the last " and the message won't go through,
+	 * but this'll stop a segfault. */
+	if (strlen(buf) > (MSG_LEN - sizeof(hdr))) {
+		buf[MSG_LEN - sizeof(hdr) - 3] = '"';
+		buf[MSG_LEN - sizeof(hdr) - 2] = '\0';
+	}
 
-        sprintf(debug_buff,"%s [Len %d]\n", buf, strlen(buf));
-		debug_print(debug_buff);
-        
-
+	debug_printf("%s [Len %d]\n", buf, strlen(buf));
 	
 	if (olen < 0)
 		len = escape_message(buf);

@@ -142,8 +142,7 @@ void serv_send_im(char *name, char *message, int away)
 	struct conversation *cnv = find_conversation(name);
 	if (cnv && cnv->is_direct) {
 		if (cnv->gc->protocol == PROTO_OSCAR) {
-			sprintf(debug_buff, "Sending DirectIM to %s\n", name);
-			debug_print(debug_buff);
+			debug_printf("Sending DirectIM to %s\n", name);
 			aim_send_im_direct(cnv->gc->oscar_sess, cnv->conn, message);
 		} else {
 			/* Direct IM TOC FIXME */
