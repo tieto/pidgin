@@ -14,18 +14,9 @@
 faim_export unsigned long aim_chatnav_reqrights(struct aim_session_t *sess,
 						struct aim_conn_t *conn)
 {
-  struct aim_snac_t snac;
+  aim_genericreq_n(sess, conn, 0x000d, 0x0002);
 
-  snac.id = aim_genericreq_n(sess, conn, 0x000d, 0x0002);
-
-  snac.family = 0x000d;
-  snac.type = 0x0002;
-  snac.flags = 0x0000;
-  snac.data = NULL;
-  
-  aim_newsnac(sess, &snac);
-
-  return (sess->snac_nextid); /* already incremented */
+  return sess->snac_nextid;
 }
 
 faim_export unsigned long aim_chatnav_clientready(struct aim_session_t *sess,
@@ -105,11 +96,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 	   * Type 0x0002: Maximum concurrent rooms.
 	   */ 
 	  if (aim_gettlv(tlvlist, 0x0002, 1))
-	    {
-	      struct aim_tlv_t *maxroomstlv;
-	      maxroomstlv = aim_gettlv(tlvlist, 0x0002, 1);
-	      maxrooms = aimutil_get8(maxroomstlv->value);
-	    }
+	    maxrooms = aim_gettlv8(tlvlist, 0x0002, 1);
 
 	  /* 
 	   * Type 0x0003: Exchange information
@@ -145,11 +132,9 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 	       * Type 0x0002: Unknown
 	       */
 	      if (aim_gettlv(innerlist, 0x0002, 1)) {
-		struct aim_tlv_t *tmptlv;
-		unsigned short classperms = 0;
+		unsigned short classperms;
 
-		tmptlv = aim_gettlv(innerlist, 0x0002, 1);
-		classperms = aimutil_get16(tmptlv->value);
+		classperms = aim_gettlv16(innerlist, 0x0002, 1);
 		
 		printf("faim: class permissions %x\n", classperms);
 	      }
@@ -201,12 +186,9 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 	       * 
 	       */
 	      if (aim_gettlv(innerlist, 0x00d5, 1)) {
-		struct aim_tlv_t *tmptlv;
-		unsigned char createperms = 0;
+		unsigned char createperms;
 
-		tmptlv = aim_gettlv(innerlist, 0x00d5, 1);
-		createperms = aimutil_get8(tmptlv->value);
-		
+		createperms = aim_gettlv8(innerlist, 0x00d5, 1);
 	      }
 
 	      /*
@@ -315,7 +297,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
       unsigned long createtime = 0;
       unsigned char createperms;
       int i, cklen;
-      struct aim_tlv_t *bigblock, *tmp;
+      struct aim_tlv_t *bigblock;
 
       i = 10;
       if (!(tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i))) {
@@ -365,23 +347,23 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
       if (aim_gettlv(innerlist, 0x006a, 1))
 	fqcn = aim_gettlv_str(innerlist, 0x006a, 1);
 
-      if ((tmp = aim_gettlv(innerlist, 0x00c9, 1)))
-	flags = aimutil_get16(tmp->value);
+      if (aim_gettlv(innerlist, 0x00c9, 1))
+	flags = aim_gettlv16(innerlist, 0x00c9, 1);
 
-      if ((tmp = aim_gettlv(innerlist, 0x00ca, 1)))
-	createtime = aimutil_get32(tmp->value);
+      if (aim_gettlv(innerlist, 0x00ca, 1))
+	createtime = aim_gettlv32(innerlist, 0x00ca, 1);
 
-      if ((tmp = aim_gettlv(innerlist, 0x00d1, 1)))
-	maxmsglen = aimutil_get16(tmp->value);
+      if (aim_gettlv(innerlist, 0x00d1, 1))
+	maxmsglen = aim_gettlv16(innerlist, 0x00d1, 1);
 
-      if ((tmp = aim_gettlv(innerlist, 0x00d2, 1)))
-	maxoccupancy = aimutil_get16(tmp->value);
+      if (aim_gettlv(innerlist, 0x00d2, 1))
+	maxoccupancy = aim_gettlv16(innerlist, 0x00d2, 1);
 
       if (aim_gettlv(innerlist, 0x00d3, 1))
 	name = aim_gettlv_str(innerlist, 0x00d3, 1);
 
-      if ((tmp = aim_gettlv(innerlist, 0x00d5, 1)))
-	createperms = aimutil_get8(tmp->value);
+      if (aim_gettlv(innerlist, 0x00d5, 1))
+	createperms = aim_gettlv8(innerlist, 0x00d5, 1);
 
       if ((userfunc = aim_callhandler(command->conn, 0x000d, 0x0009))) {
 	ret = userfunc(sess, command, snac->type, fqcn, instance, exchange, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
@@ -417,7 +399,6 @@ faim_export unsigned long aim_chatnav_createroom(struct aim_session_t *sess,
 {
   struct command_tx_struct *newpacket; 
   int i;
-  struct aim_snac_t snac;
 
   if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+12+strlen("invite")+strlen(name))))
     return -1;
@@ -445,15 +426,9 @@ faim_export unsigned long aim_chatnav_createroom(struct aim_session_t *sess,
   /* room name */
   i+= aim_puttlv_str(newpacket->data+i, 0x00d3, strlen(name), name);
 
-  snac.id = sess->snac_nextid;
-  snac.family = 0x000d;
-  snac.type = 0x0008;
-  snac.flags = 0x0000;
-  snac.data = NULL;
-  
-  aim_newsnac(sess, &snac);
+  aim_cachesnac(sess, 0x000d, 0x0008, 0x0000, NULL, 0);
 
   aim_tx_enqueue(sess, newpacket);
 
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }

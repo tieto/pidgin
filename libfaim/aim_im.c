@@ -118,25 +118,10 @@ faim_export unsigned long aim_send_im(struct aim_session_t *sess,
 
   aim_tx_enqueue(sess, newpacket);
 
-#ifdef USE_SNAC_FOR_IMS
- {
-    struct aim_snac_t snac;
+  aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, destsn, strlen(destsn)+1);
+  aim_cleansnacs(sess, 60); /* clean out all SNACs over 60sec old */
 
-    snac.id = sess->snac_nextid;
-    snac.family = 0x0004;
-    snac.type = 0x0006;
-    snac.flags = 0x0000;
-
-    snac.data = malloc(strlen(destsn)+1);
-    memcpy(snac.data, destsn, strlen(destsn)+1);
-
-    aim_newsnac(sess, &snac);
-  }
-
- aim_cleansnacs(sess, 60); /* clean out all SNACs over 60sec old */
-#endif
-
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 faim_internal int aim_parse_outgoing_im_middle(struct aim_session_t *sess,
@@ -467,14 +452,13 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 	  struct aim_filetransfer_priv *ft;
 
 	  if (cook->data) {
-	    struct aim_tlv_t *errortlv;
-	    int errorcode = -1;
+	    int errorcode = -1; /* XXX shouldnt this be 0? */
 
 	    ft = (struct aim_filetransfer_priv *)cook->data;
 
-	    if ((errortlv = aim_gettlv(list2, 0x000b, 1))) {
-	      errorcode = aimutil_get16(errortlv->value);
-	    }
+	    if (aim_gettlv(list2, 0x000b, 1))
+	      errorcode = aim_gettlv16(list2, 0x000b, 1);
+
 	    if (errorcode) {
 	      printf("faim: transfer from %s (%s) for %s cancelled (error code %d)\n", ft->sn, ft->ip, ft->fh.name, errorcode);
 	    } else if (status == 0x0002) { /* connection accepted */

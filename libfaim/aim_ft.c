@@ -423,24 +423,6 @@ faim_export struct aim_conn_t *aim_directim_initiate(struct aim_session_t *sess,
    * n seconds of no connection. -- mid
    */
 
-#ifdef USE_SNAC_FOR_IMS
- {
-    struct aim_snac_t snac;
-
-    snac.id = sess->snac_nextid;
-    snac.family = 0x0004;
-    snac.type = 0x0006;
-    snac.flags = 0x0000;
-
-    snac.data = malloc(strlen(destsn)+1);
-    memcpy(snac.data, destsn, strlen(destsn)+1);
-
-    aim_newsnac(sess, &snac);
-
-    aim_cleansnacs(sess, 60); /* clean out all SNACs over 60sec old */
-  }
-#endif
-  
   return (newconn);
 } 
 
@@ -1859,24 +1841,6 @@ faim_export struct aim_conn_t *aim_getfile_initiate(struct aim_session_t *sess,
    * n seconds of no connection. -- mid
    */
 
-#ifdef USE_SNAC_FOR_IMS
- {
-    struct aim_snac_t snac;
-
-    snac.id = sess->snac_nextid;
-    snac.family = 0x0004;
-    snac.type = 0x0006;
-    snac.flags = 0x0000;
-
-    snac.data = malloc(strlen(destsn)+1);
-    memcpy(snac.data, destsn, strlen(destsn)+1);
-
-    aim_newsnac(sess, &snac);
-
-    aim_cleansnacs(sess, 60); /* clean out all SNACs over 60sec old */
-  }
-#endif
-  
   return newconn;
 }
 

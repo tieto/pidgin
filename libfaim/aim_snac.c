@@ -30,6 +30,25 @@ faim_internal void aim_initsnachash(struct aim_session_t *sess)
   return;
 }
 
+faim_internal unsigned long aim_cachesnac(struct aim_session_t *sess,
+					  const unsigned short family,
+					  const unsigned short type,
+					  const unsigned short flags,
+					  const void *data, const int datalen)
+{
+  struct aim_snac_t snac;
+
+  snac.id = sess->snac_nextid++;
+  snac.family = family;
+  snac.type = type;
+  snac.flags = flags;
+
+  snac.data = malloc(datalen);
+  memcpy(snac.data, data, datalen);
+
+  return aim_newsnac(sess, &snac);
+}
+
 /*
  * Clones the passed snac structure and caches it in the
  * list/hash.

@@ -173,23 +173,9 @@ faim_export unsigned long aim_chat_join(struct aim_session_t *sess,
   newpacket->lock = 0;
   aim_tx_enqueue(sess, newpacket);
 
-#if 0
-  {
-    struct aim_snac_t snac;
-    
-    snac.id = sess->snac_nextid;
-    snac.family = 0x0001;
-    snac.type = 0x0004;
-    snac.flags = 0x0000;
+  aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, roomname, strlen(roomname)+1);
 
-    snac.data = malloc(strlen(roomname)+1);
-    strcpy(snac.data, roomname);
-
-    aim_newsnac(sess, &snac);
-  }
-
-#endif
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 faim_internal int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo)
@@ -240,7 +226,6 @@ faim_internal int aim_chat_parse_infoupdate(struct aim_session_t *sess,
   u_short tlvcount = 0;
   struct aim_tlvlist_t *tlvlist;
   char *roomdesc = NULL;
-  struct aim_tlv_t *tmptlv;
   unsigned short unknown_c9 = 0;
   unsigned long creationtime = 0;
   unsigned short maxmsglen = 0;
@@ -277,12 +262,8 @@ faim_internal int aim_chat_parse_infoupdate(struct aim_session_t *sess,
   /*
    * Type 0x006f: Number of occupants.
    */
-  if (aim_gettlv(tlvlist, 0x006f, 1)) {
-    struct aim_tlv_t *tmptlv;
-    tmptlv = aim_gettlv(tlvlist, 0x006f, 1);
-    
-    usercount = aimutil_get16(tmptlv->value);
-  }
+  if (aim_gettlv(tlvlist, 0x006f, 1))
+    usercount = aim_gettlv16(tlvlist, 0x006f, 1);
 
   /*
    * Type 0x0073:  Occupant list.
@@ -304,26 +285,26 @@ faim_internal int aim_chat_parse_infoupdate(struct aim_session_t *sess,
   /* 
    * Type 0x00c9: Unknown. (2 bytes)
    */
-  if ((tmptlv = aim_gettlv(tlvlist, 0x00c9, 1)))
-    unknown_c9 = aimutil_get16(tmptlv->value);
+  if (aim_gettlv(tlvlist, 0x00c9, 1))
+    unknown_c9 = aim_gettlv16(tlvlist, 0x00c9, 1);
   
   /* 
    * Type 0x00ca: Creation time (4 bytes)
    */
-  if ((tmptlv = aim_gettlv(tlvlist, 0x00ca, 1)))
-    creationtime = aimutil_get32(tmptlv->value);
+  if (aim_gettlv(tlvlist, 0x00ca, 1))
+    creationtime = aim_gettlv32(tlvlist, 0x00ca, 1);
 
   /* 
    * Type 0x00d1: Maximum Message Length
    */
-  if ((tmptlv = aim_gettlv(tlvlist, 0x00d1, 1)))
-    maxmsglen = aimutil_get16(tmptlv->value);
+  if (aim_gettlv(tlvlist, 0x00d1, 1))
+    maxmsglen = aim_gettlv16(tlvlist, 0x00d1, 1);
 
   /* 
    * Type 0x00d2: Unknown. (2 bytes)
    */
-  if ((tmptlv = aim_gettlv(tlvlist, 0x00d2, 1)))
-    unknown_d2 = aimutil_get16(tmptlv->value);;
+  if (aim_gettlv(tlvlist, 0x00d2, 1))
+    unknown_d2 = aim_gettlv16(tlvlist, 0x00d2, 1);
 
   /* 
    * Type 0x00d3: Room Description
@@ -334,12 +315,11 @@ faim_internal int aim_chat_parse_infoupdate(struct aim_session_t *sess,
   /* 
    * Type 0x00d5: Unknown. (1 byte)
    */
-  if ((tmptlv = aim_gettlv(tlvlist, 0x00d5, 1)))
-    unknown_d5 = aimutil_get8(tmptlv->value);;
+  if (aim_gettlv(tlvlist, 0x00d5, 1))
+    unknown_d5 = aim_gettlv8(tlvlist, 0x00d5, 1);
 
 
-  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE);
-  if (userfunc) {
+  if ((userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE))) {
     ret = userfunc(sess,
 		   command, 
 		   &roominfo,
@@ -375,8 +355,7 @@ faim_internal int aim_chat_parse_joined(struct aim_session_t *sess,
     i += aim_extractuserinfo(command->data+i, &userinfo[curcount-1]);
   }
 
-  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN);
-  if (userfunc) {	
+  if ((userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN))) {
     ret = userfunc(sess,
 		   command, 
 		   curcount,
@@ -402,8 +381,7 @@ faim_internal int aim_chat_parse_leave(struct aim_session_t *sess,
     i += aim_extractuserinfo(command->data+i, &userinfo[curcount-1]);
   }
 
-  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE);
-  if (userfunc) {
+  if ((userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE))) {
     ret = userfunc(sess,
 		   command, 
 		   curcount,

@@ -52,20 +52,9 @@ faim_export unsigned long aim_auth_clientready(struct aim_session_t *sess,
 
   aim_tx_enqueue(sess, newpacket);
 
-  {
-    struct aim_snac_t snac;
-    
-    snac.id = sess->snac_nextid;
-    snac.family = 0x0001;
-    snac.type = 0x0004;
-    snac.flags = 0x0000;
+  aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, NULL, 0);
 
-    snac.data = NULL;
-
-    aim_newsnac(sess, &snac);
-  }
-
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 faim_export unsigned long aim_auth_changepasswd(struct aim_session_t *sess,
@@ -90,18 +79,7 @@ faim_export unsigned long aim_auth_changepasswd(struct aim_session_t *sess,
 
   aim_tx_enqueue(sess, newpacket);
 
-  {
-    struct aim_snac_t snac;
-    
-    snac.id = sess->snac_nextid;
-    snac.family = 0x0001;
-    snac.type = 0x0004;
-    snac.flags = 0x0000;
+  aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, NULL, 0);
 
-    snac.data = NULL;
-
-    aim_newsnac(sess, &snac);
-  }
-
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }

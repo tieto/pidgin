@@ -1,6 +1,10 @@
 
 No release numbers
 ------------------
+ - Wed Dec 13 02:26:39 UTC 2000
+  - Create aim_cachesnac()
+  - Some long overdue cleanups
+
  - Wed Dec 13 00:38:56 UTC 2000
   - Added the client update/version info to the authresp callback
   - Added the prototype for aim_getfile_send_chunk to aim.h

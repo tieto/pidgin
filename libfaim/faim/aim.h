@@ -505,6 +505,7 @@ struct aim_snac_t {
 };
 faim_internal void aim_initsnachash(struct aim_session_t *sess);
 faim_internal unsigned long aim_newsnac(struct aim_session_t *, struct aim_snac_t *newsnac);
+faim_internal unsigned long aim_cachesnac(struct aim_session_t *sess, const unsigned short family, const unsigned short type, const unsigned short flags, const void *data, const int datalen);
 faim_internal struct aim_snac_t *aim_remsnac(struct aim_session_t *, u_long id);
 faim_internal int aim_cleansnacs(struct aim_session_t *, int maxage);
 faim_internal int aim_putsnac(u_char *, int, int, int, u_long);

@@ -734,66 +734,45 @@ faim_internal int aim_parsemotd_middle(struct aim_session_t *sess,
 faim_internal int aim_handleredirect_middle(struct aim_session_t *sess,
 			      struct command_rx_struct *command, ...)
 {
-  struct aim_tlv_t *tmptlv = NULL;
-  int serviceid = 0x00;
-  unsigned char cookie[AIM_COOKIELEN];
+  int serviceid = 0;
+  unsigned char *cookie = NULL;
   char *ip = NULL;
   rxcallback_t userfunc = NULL;
   struct aim_tlvlist_t *tlvlist;
   int ret = 1;
   
-  if (!(tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10)))
-    {
-      printf("libfaim: major bug: unable to read tlvchain from redirect\n");
-      return ret;
-    }
-  
-  if (!(tmptlv = aim_gettlv(tlvlist, 0x000d, 1))) 
-    {
-      printf("libfaim: major bug: no service ID in tlvchain from redirect\n");
-      aim_freetlvchain(&tlvlist);
-      return ret;
-    }
-  serviceid = aimutil_get16(tmptlv->value);
+  tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10);
 
-  if (!(ip = aim_gettlv_str(tlvlist, 0x0005, 1))) 
-    {
-      printf("libfaim: major bug: no IP in tlvchain from redirect (service 0x%02x)\n", serviceid);
-      free(ip);
-      aim_freetlvchain(&tlvlist);
-      return ret;
-    }
-  
-  if (!(tmptlv = aim_gettlv(tlvlist, 0x0006, 1)))
-    {
-      printf("libfaim: major bug: no cookie in tlvchain from redirect (service 0x%02x)\n", serviceid);
-      free(ip);
-      aim_freetlvchain(&tlvlist);
-      return ret;
-    }
-  memcpy(cookie, tmptlv->value, AIM_COOKIELEN);
+  if (aim_gettlv(tlvlist, 0x000d, 1))
+    serviceid = aim_gettlv16(tlvlist, 0x000d, 1);
+  if (aim_gettlv(tlvlist, 0x0005, 1))
+    ip = aim_gettlv_str(tlvlist, 0x0005, 1);
+  if (aim_gettlv(tlvlist, 0x0006, 1))
+    cookie = aim_gettlv_str(tlvlist, 0x0006, 1);
 
-  if (serviceid == AIM_CONN_TYPE_CHAT)
-    {
-      /*
-       * Chat hack.
-       *
-       */
-      userfunc = aim_callhandler(command->conn, 0x0001, 0x0005);
-      if (userfunc)
-	ret =  userfunc(sess, command, serviceid, ip, cookie, sess->pendingjoin, (int)sess->pendingjoinexchange);
+  if ((serviceid == AIM_CONN_TYPE_CHAT) && sess->pendingjoin) {
+
+    /*
+     * Chat hack.
+     *
+     */
+    if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0005)))
+      ret =  userfunc(sess, command, serviceid, ip, cookie, sess->pendingjoin, (int)sess->pendingjoinexchange);
       free(sess->pendingjoin);
       sess->pendingjoin = NULL;
       sess->pendingjoinexchange = 0;
-    }
-  else
-    {
-      userfunc = aim_callhandler(command->conn, 0x0001, 0x0005);
-      if (userfunc)
-	ret =  userfunc(sess, command, serviceid, ip, cookie);
-    }
+  } else if (!serviceid || !ip || !cookie) { /* yeep! */
+    ret = 1;
+  } else {
+    if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0005)))
+      ret =  userfunc(sess, command, serviceid, ip, cookie);
+  }
 
-  free(ip);
+  if (ip)
+    free(ip);
+  if (cookie)
+    free(cookie);
+
   aim_freetlvchain(&tlvlist);
 
   return ret;
@@ -829,25 +808,24 @@ faim_internal int aim_negchan_middle(struct aim_session_t *sess,
   struct aim_tlvlist_t *tlvlist;
   char *msg = NULL;
   unsigned short code = 0;
-  struct aim_tlv_t *tmptlv;
   rxcallback_t userfunc = NULL;
   int ret = 1;
 
   tlvlist = aim_readtlvchain(command->data, command->commandlen);
 
-  if ((tmptlv = aim_gettlv(tlvlist, 0x0009, 1)))
-    code = aimutil_get16(tmptlv->value);
+  if (aim_gettlv(tlvlist, 0x0009, 1))
+    code = aim_gettlv16(tlvlist, 0x0009, 1);
 
-  if ((tmptlv = aim_gettlv(tlvlist, 0x000b, 1)))
+  if (aim_gettlv(tlvlist, 0x000b, 1))
     msg = aim_gettlv_str(tlvlist, 0x000b, 1);
 
-  userfunc = aim_callhandler(command->conn, 
-			     AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR);
-  if (userfunc)
+  if ((userfunc = aim_callhandler(command->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR))) 
     ret =  userfunc(sess, command, code, msg);
 
   aim_freetlvchain(&tlvlist);
-  free(msg);
+
+  if (msg)
+    free(msg);
 
   return ret;
 }

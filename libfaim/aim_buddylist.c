@@ -28,23 +28,9 @@ faim_export unsigned long aim_add_buddy(struct aim_session_t *sess,
 
    aim_tx_enqueue(sess, newpacket );
 
-#if 0 /* do we really need this code? */
-   {
-      struct aim_snac_t snac;
-    
-      snac.id = sess->snac_nextid;
-      snac.family = 0x0003;
-      snac.type = 0x0004;
-      snac.flags = 0x0000;
+   aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, sn, strlen(sn)+1);
 
-      snac.data = malloc( strlen( sn ) + 1 );
-      memcpy( snac.data, sn, strlen( sn ) + 1 );
-
-      aim_newsnac(sess, &snac);
-   }
-#endif
-
-   return( sess->snac_nextid++ );
+   return sess->snac_nextid;
 }
 
 faim_export unsigned long aim_remove_buddy(struct aim_session_t *sess,
@@ -69,21 +55,9 @@ faim_export unsigned long aim_remove_buddy(struct aim_session_t *sess,
 
    aim_tx_enqueue(sess, newpacket);
 
-   {
-      struct aim_snac_t snac;
-    
-      snac.id = sess->snac_nextid;
-      snac.family = 0x0003;
-      snac.type = 0x0005;
-      snac.flags = 0x0000;
+   aim_cachesnac(sess, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);
 
-      snac.data = malloc( strlen( sn ) + 1 );
-      memcpy( snac.data, sn, strlen( sn ) + 1 );
-
-      aim_newsnac(sess, &snac );
-   }
-
-   return( sess->snac_nextid++ );
+   return sess->snac_nextid;
 }
 
 faim_internal int aim_parse_buddyrights(struct aim_session_t *sess,
@@ -92,7 +66,6 @@ faim_internal int aim_parse_buddyrights(struct aim_session_t *sess,
   rxcallback_t userfunc = NULL;
   int ret=1;
   struct aim_tlvlist_t *tlvlist;
-  struct aim_tlv_t *tlv;
   unsigned short maxbuddies = 0, maxwatchers = 0;
 
   /* 
@@ -104,9 +77,8 @@ faim_internal int aim_parse_buddyrights(struct aim_session_t *sess,
   /*
    * TLV type 0x0001: Maximum number of buddies.
    */
-  if ((tlv = aim_gettlv(tlvlist, 0x0001, 1))) {
-    maxbuddies = aimutil_get16(tlv->value);
-  }
+  if (aim_gettlv(tlvlist, 0x0001, 1))
+    maxbuddies = aim_gettlv16(tlvlist, 0x0001, 1);
 
   /*
    * TLV type 0x0002: Maximum number of watchers.
@@ -114,12 +86,10 @@ faim_internal int aim_parse_buddyrights(struct aim_session_t *sess,
    * XXX: what the hell is a watcher? 
    *
    */
-  if ((tlv = aim_gettlv(tlvlist, 0x0002, 1))) {
-    maxwatchers = aimutil_get16(tlv->value);
-  }
+  if (aim_gettlv(tlvlist, 0x0002, 1))
+    maxwatchers = aim_gettlv16(tlvlist, 0x0002, 1);
   
-  userfunc = aim_callhandler(command->conn, 0x0003, 0x0003);
-  if (userfunc)
+  if ((userfunc = aim_callhandler(command->conn, 0x0003, 0x0003)))
     ret =  userfunc(sess, command, maxbuddies, maxwatchers);
 
   aim_freetlvchain(&tlvlist);

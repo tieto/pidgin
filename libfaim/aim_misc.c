@@ -267,7 +267,6 @@ faim_internal int aim_parse_bosrights(struct aim_session_t *sess,
   rxcallback_t userfunc = NULL;
   int ret=1;
   struct aim_tlvlist_t *tlvlist;
-  struct aim_tlv_t *tlv;
   unsigned short maxpermits = 0, maxdenies = 0;
 
   /* 
@@ -279,21 +278,18 @@ faim_internal int aim_parse_bosrights(struct aim_session_t *sess,
   /*
    * TLV type 0x0001: Maximum number of buddies on permit list.
    */
-  if ((tlv = aim_gettlv(tlvlist, 0x0001, 1))) {
-    maxpermits = aimutil_get16(tlv->value);
-  }
+  if (aim_gettlv(tlvlist, 0x0001, 1))
+    maxpermits = aim_gettlv16(tlvlist, 0x0001, 1);
 
   /*
    * TLV type 0x0002: Maximum number of buddies on deny list.
    *
    */
-  if ((tlv = aim_gettlv(tlvlist, 0x0002, 1))) {
-    maxdenies = aimutil_get16(tlv->value);
-  }
+  if (aim_gettlv(tlvlist, 0x0002, 1)) 
+    maxdenies = aim_gettlv16(tlvlist, 0x0002, 1);
   
-  userfunc = aim_callhandler(command->conn, 0x0009, 0x0003);
-  if (userfunc)
-    ret =  userfunc(sess, command, maxpermits, maxdenies);
+  if ((userfunc = aim_callhandler(command->conn, 0x0009, 0x0003)))
+    ret = userfunc(sess, command, maxpermits, maxdenies);
 
   aim_freetlvchain(&tlvlist);
 

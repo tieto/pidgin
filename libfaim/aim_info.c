@@ -10,7 +10,7 @@
 #include <faim/aim.h>
 
 struct aim_priv_inforeq {
-  char sn[MAXSNLEN];
+  char sn[MAXSNLEN+1];
   unsigned short infotype;
 };
 
@@ -20,6 +20,7 @@ faim_export unsigned long aim_getinfo(struct aim_session_t *sess,
 				      unsigned short infotype)
 {
   struct command_tx_struct *newpacket;
+  struct aim_priv_inforeq privdata;
   int i = 0;
 
   if (!sess || !conn || !sn)
@@ -39,22 +40,11 @@ faim_export unsigned long aim_getinfo(struct aim_session_t *sess,
   newpacket->lock = 0;
   aim_tx_enqueue(sess, newpacket);
 
-  {
-    struct aim_snac_t snac;
-    
-    snac.id = sess->snac_nextid;
-    snac.family = 0x0002;
-    snac.type = 0x0005;
-    snac.flags = 0x0000;
+  strncpy(privdata.sn, sn, sizeof(privdata.sn));
+  privdata.infotype = infotype;
+  aim_cachesnac(sess, 0x0002, 0x0005, 0x0000, &privdata, sizeof(struct aim_priv_inforeq));
 
-    snac.data = malloc(sizeof(struct aim_priv_inforeq));
-    strcpy(((struct aim_priv_inforeq *)snac.data)->sn, sn);
-    ((struct aim_priv_inforeq *)snac.data)->infotype = infotype;
-
-    aim_newsnac(sess, &snac);
-  }
-
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 faim_internal int aim_parse_locateerr(struct aim_session_t *sess,
