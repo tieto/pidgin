@@ -315,7 +315,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	int rc, err;
 	GSList *hosts = NULL;
 	struct sockaddr *addr = NULL;
-	socklen_t addrlen;
+	size_t addrlen;
 
 	gaim_debug(GAIM_DEBUG_INFO, "dns", "Host '%s' resolved\n", req->host);
 	gaim_input_remove(req->inpa);
