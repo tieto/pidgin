@@ -608,7 +608,12 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	gtk_widget_show(list_item);
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
-		g_snprintf(tmp, sizeof(tmp), _("<B>%s is now known as %s</B>"), old, new);
+		if (display_options & OPT_DISP_SHOW_TIME)
+			g_snprintf(tmp, sizeof(tmp),
+					_("<FONT SIZE=\"2\">(%s) </FONT><B>%s is now known as %s.</B>"),
+						date(), old, new);
+		else
+			g_snprintf(tmp, sizeof(tmp), _("<B>%s is now known as %s</B>"), old, new);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
 	}
 }
@@ -651,7 +656,12 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 		play_sound(CHAT_LEAVE);
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
-		g_snprintf(tmp, sizeof(tmp), _("<B>%s left the room.</B>"), buddy);
+		if (display_options & OPT_DISP_SHOW_TIME)
+			g_snprintf(tmp, sizeof(tmp),
+					_("<FONT SIZE=\"2\">(%s) </FONT><B>%s left the room.</B>"),
+						date(), buddy);
+		else
+			g_snprintf(tmp, sizeof(tmp), _("<B>%s left the room.</B>"), buddy);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
 	}
 }
