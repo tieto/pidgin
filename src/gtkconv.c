@@ -1995,7 +1995,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
  * A bunch of buddy icon functions
  **************************************************************************/
 static GdkPixbuf *
-get_tab_icon(GaimConversation *conv, gboolean small)
+get_tab_icon(GaimConversation *conv, gboolean small_icon)
 {
 	GaimAccount *account = gaim_conversation_get_account(conv);
 	const char *name = gaim_conversation_get_name(conv);
@@ -2005,7 +2005,7 @@ get_tab_icon(GaimConversation *conv, gboolean small)
 		GaimBuddy *b = gaim_find_buddy(account, name);
 		if (b != NULL) {
 			status = gaim_gtk_blist_get_status_icon((GaimBlistNode*)b,
-				(small ? GAIM_STATUS_ICON_SMALL : GAIM_STATUS_ICON_LARGE));
+				(small_icon ? GAIM_STATUS_ICON_SMALL : GAIM_STATUS_ICON_LARGE));
 		}
 	}
 
@@ -2013,7 +2013,7 @@ get_tab_icon(GaimConversation *conv, gboolean small)
 		GdkPixbuf *pixbuf;
 		pixbuf = create_prpl_icon(account);
 
-		if (small && pixbuf != NULL)
+		if (small_icon && pixbuf != NULL)
 		{
 			status = gdk_pixbuf_scale_simple(pixbuf, 15, 15,
 					GDK_INTERP_BILINEAR);
