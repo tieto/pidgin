@@ -412,7 +412,7 @@ gaim_gtk_notify_uri(const char *uri)
 			command = g_strdup_printf("opera \"%s\"", uri);
 	} else if (!strcmp(web_browser, "kfmclient")) {
 		command = g_strdup_printf("kfmclient openURL \"%s\"", uri);
-	}	else if (!strcmp(web_browser, "galeon")) {
+	} else if (!strcmp(web_browser, "galeon")) {
 		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
 			command = g_strdup_printf("galeon -w \"%s\"", uri);
 		else
@@ -421,7 +421,7 @@ gaim_gtk_notify_uri(const char *uri)
 		command = g_strdup_printf("mozilla \"%s\"", uri);
 	} else if (!strcmp(web_browser, "mozilla-firebird")) {
 		command = g_strdup_printf("mozilla-firebird \"%s\"", uri);
-	}	else if (!strcmp(web_browser, "custom")) {
+	} else if (!strcmp(web_browser, "custom")) {
 		const char *web_command;
 
 		web_command = gaim_prefs_get_string("/gaim/gtk/browsers/command");
