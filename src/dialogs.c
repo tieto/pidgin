@@ -2360,6 +2360,7 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
 
 		text = gtk_imhtml_new(NULL, NULL);
