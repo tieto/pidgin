@@ -2181,6 +2181,8 @@ gray_stuff_out(GaimConversation *conv)
 		/* Deal with the toolbar */
 		gtk_widget_set_sensitive(gtkconv->toolbar.image,
 								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
+		gtk_widget_set_sensitive(gtkconv->toolbar.bgcolor,
+								 !(gc->flags & GAIM_CONNECTION_NO_BGCOLOR));
 
 		/* Deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
