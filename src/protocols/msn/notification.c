@@ -38,11 +38,6 @@ static GHashTable *notification_msg_types = NULL;
 /**************************************************************************
  * Utility functions
  **************************************************************************/
-static void
-sync_groups_for_buddy(MsnServConn *servconn, MsnUser *user)
-{
-}
-
 static gboolean
 add_buddy(MsnServConn *servconn, MsnUser *user)
 {
@@ -1541,12 +1536,22 @@ rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
 	MsnSession *session = servconn->session;
+	const char *passport = params[3];
+
+	if (param_count == 5)
+	{
+		MsnUser *user;
+		int group_id = atoi(params[4]);
+
+		user = msn_users_find_with_passport(session->users, passport);
+
+		msn_user_remove_group_id(user, group_id);
+	}
 
 	/* I hate this. */
 	if (session->moving_buddy) {
 		MsnGroup *group, *old_group;
 		GaimConnection *gc = session->account->gc;
-		const char *passport = params[3];
 		char outparams[MSN_BUF_LEN];
 
 		group = msn_groups_find_with_name(session->groups,
