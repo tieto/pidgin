@@ -307,8 +307,14 @@ void wgaim_init(void) {
 	WSADATA wsaData;
 	char* locale=0;
 	char newenv[128];
+	char* drmingw;
 
 	debug_printf("wgaim_init\n");
+
+	/* Load exception handler if we have it */
+	drmingw = g_build_filename(wgaim_install_dir(), "exchndl.dll", NULL);
+	LoadLibrary(drmingw);
+	g_free(drmingw);
 
 	load_winver_specific_procs();
 
