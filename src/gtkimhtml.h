@@ -88,7 +88,8 @@ typedef enum
 	GTK_IMHTML_NO_NEWLINE   = 1 << 4,
 	GTK_IMHTML_NO_SIZES	= 1 << 5,
 	GTK_IMHTML_NO_SCROLL	= 1 << 6,
-	GTK_IMHTML_RETURN_LOG	= 1 << 7
+	GTK_IMHTML_RETURN_LOG	= 1 << 7,
+	GTK_IMHTML_USE_POINTSIZE = 1 << 8
 } GtkIMHtmlOptions;
 
 GtkType    gtk_imhtml_get_type         (void);
@@ -165,7 +166,6 @@ void gaim_hr_free(GtkIMHtmlScalable *);
 void gaim_hr_scale(GtkIMHtmlScalable *, int, int);
 
 void gaim_hr_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
-
 
 
 #ifdef __cplusplus

@@ -159,6 +159,13 @@ typedef enum
 	 */
 	OPT_PROTO_PASSWORD_OPTIONAL = 0x00000100,
 
+	/**
+	 * Allows font size to be specified in sane point size
+	 *
+	 * Probably just Jabber and Y!M
+	 */
+	OPT_PROTO_USE_POINTSIZE = 0x00000200,
+
 } GaimProtocolOptions;
 
 /** Custom away message. */

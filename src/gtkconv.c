@@ -3676,6 +3676,7 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 
 	if (gaim_window_get_conversation_count(win) == 1)
 		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+
 }
 
 static void
@@ -3962,6 +3963,8 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 
 	if (!(logging_options & OPT_LOG_STRIP_HTML))
 		gtk_font_options ^= GTK_IMHTML_RETURN_LOG;
+	if (GAIM_PLUGIN_PROTOCOL_INFO(conv->account->gc->prpl)->options & OPT_PROTO_USE_POINTSIZE)
+		gtk_font_options ^= GTK_IMHTML_USE_POINTSIZE;
 
 	if (flags & WFLAG_SYSTEM) {
 		if (convo_options & OPT_CONVO_SHOW_TIME)

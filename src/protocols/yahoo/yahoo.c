@@ -1459,7 +1459,7 @@ G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PROTO_YAHOO,
-	OPT_PROTO_MAIL_CHECK,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_USE_POINTSIZE,
 	NULL,
 	NULL,
 	yahoo_list_icon,

@@ -21,7 +21,7 @@ static GaimPluginInfo info =
 {
 	2,                                                /**< api_version    */
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
+    NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
