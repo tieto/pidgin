@@ -599,13 +599,13 @@ int main(int argc, char *argv[])
 	applet_widget_gtk_main();
 #else
 
-	if (opt_acct) {
-		account_editor(NULL, NULL);
-	} else if (do_login_ret == -1)
-		show_login();
-
 	if (!opt_acct)
 		auto_login();
+
+	if (opt_acct) {
+		account_editor(NULL, NULL);
+	} else if ((do_login_ret == -1) && !connections)
+		show_login();
 
 	gtk_main();
 
