@@ -398,50 +398,19 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 
 
 
-void update_chat_list(struct conversation *b)
-{
-        GtkWidget *list_item;
-        char name[80];
-        char *tmp;
-        GList *names = b->in_room;
-
-	if (!b->is_chat) {
-		debug_print("update_chat_list: expecting chat, got IM\n");
-		return;
-	}
-
-        gtk_list_clear_items(GTK_LIST(b->list), 0, -1);
-
-
-        while(names) {
-                tmp = (char *)names->data;
-                if (g_list_index(b->ignored, names->data) != -1)
-                        g_snprintf(name, sizeof(name), "X %s", tmp);
-                else
-                        g_snprintf(name, sizeof(name), "%s", tmp);
-
-                list_item = gtk_list_item_new_with_label(name);
-                gtk_widget_show(list_item);
-                gtk_object_set_user_data(GTK_OBJECT(list_item), tmp);
-
-                gtk_list_append_items(GTK_LIST(b->list), g_list_append(NULL, list_item));
-
-                names = names->next;
-        }
-
-}
-
-
-
 void add_chat_buddy(struct conversation *b, char *buddy)
 {
         char *name = g_strdup(buddy);
 	char tmp[BUF_LONG];
+	GtkWidget *list_item;
 
 	plugin_event(event_chat_buddy_join, b->gc, b->name, name, 0);
         b->in_room = g_list_append(b->in_room, name);
 
-        update_chat_list(b);
+        list_item = gtk_list_item_new_with_label(name);
+	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
+	gtk_list_append_items(GTK_LIST(b->list), g_list_append(NULL, list_item));
+	gtk_widget_show(list_item);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
 		play_sound(CHAT_JOIN);
@@ -458,14 +427,25 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 void remove_chat_buddy(struct conversation *b, char *buddy)
 {	
         GList *names = b->in_room;
+	GList *items = GTK_LIST(b->list)->children;
+	
 	char tmp[BUF_LONG];
 
 	plugin_event(event_chat_buddy_leave, b->gc, b->name, buddy, 0);
 
         while(names) {
                 if (!strcasecmp((char *)names->data, buddy)) {
+			char *tmp = names->data;
                         b->in_room = g_list_remove(b->in_room, names->data);
-                        update_chat_list(b);
+			while (items) {
+				if (tmp == gtk_object_get_user_data(items->data)) {
+					gtk_list_remove_items(GTK_LIST(b->list),
+							g_list_append(NULL, items->data));
+					break;
+				}
+				items = items->next;
+			}
+			g_free(tmp);
                         break;
                 }
                 names = names->next;
@@ -508,6 +488,9 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 {
         char *name;
         GList *i;
+	int pos;
+	GtkWidget *list_item;
+	char tmp[80];
 
         i = GTK_LIST(b->list)->selection;
         if (i)
@@ -515,12 +498,21 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
         else
                 return;
 
-        if (g_list_index(b->ignored, (gpointer)name) == -1)
-                b->ignored = g_list_append(b->ignored, name);
-        else
-                b->ignored = g_list_remove(b->ignored, name);
+	pos = gtk_list_child_position(GTK_LIST(b->list), i->data);
 
-        update_chat_list(b);
+        if (g_list_index(b->ignored, (gpointer)name) == -1) {
+                b->ignored = g_list_append(b->ignored, name);
+		g_snprintf(tmp, sizeof tmp, "X %s", name);
+	} else {
+                b->ignored = g_list_remove(b->ignored, name);
+		g_snprintf(tmp, sizeof tmp, "%s", name);
+	}
+
+	list_item = gtk_list_item_new_with_label(tmp);
+	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
+	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
+	gtk_widget_destroy(i->data);
+	gtk_widget_show(list_item);
 }
 
 

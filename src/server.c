@@ -660,6 +660,12 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 
         g->buddy_chats = g_slist_remove(g->buddy_chats, b);
 
+	while (b->in_room) {
+		char *tmp = b->in_room->data;
+		b->in_room = g_list_remove(b->in_room, tmp);
+		g_free(tmp);
+	}
+
         g_free(b);
 }
 
