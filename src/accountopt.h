@@ -227,13 +227,22 @@ GaimAccountUserSplit *gaim_account_user_split_new(const char *text,
 void gaim_account_user_split_destroy(GaimAccountUserSplit *split);
 
 /**
+ * Returns the text for an account username split.
+ *
+ * @param split The account username split.
+ *
+ * @return The account username split's text.
+ */
+const char *gaim_account_user_split_get_text(const GaimAccountUserSplit *split);
+
+/**
  * Returns the default string value for an account split.
  *
  * @param split The account username split.
  *
  * @return The default string.
  */
-const char *gaim_account_split_get_default_value(
+const char *gaim_account_user_split_get_default_value(
 		const GaimAccountUserSplit *split);
 
 /**
@@ -243,7 +252,7 @@ const char *gaim_account_split_get_default_value(
  *
  * @return The field separator.
  */
-char gaim_account_split_get_separator(const GaimAccountUserSplit *split);
+char gaim_account_user_split_get_separator(const GaimAccountUserSplit *split);
 
 /*@}*/
 

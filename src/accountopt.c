@@ -223,7 +223,15 @@ gaim_account_user_split_destroy(GaimAccountUserSplit *split)
 }
 
 const char *
-gaim_account_split_get_default_value(const GaimAccountUserSplit *split)
+gaim_account_user_split_get_text(const GaimAccountUserSplit *split)
+{
+	g_return_val_if_fail(split != NULL, NULL);
+
+	return split->text;
+}
+
+const char *
+gaim_account_user_split_get_default_value(const GaimAccountUserSplit *split)
 {
 	g_return_val_if_fail(split != NULL, NULL);
 
@@ -231,7 +239,7 @@ gaim_account_split_get_default_value(const GaimAccountUserSplit *split)
 }
 
 char
-gaim_account_split_get_separator(const GaimAccountUserSplit *split)
+gaim_account_user_split_get_separator(const GaimAccountUserSplit *split)
 {
 	g_return_val_if_fail(split != NULL, 0);
 
