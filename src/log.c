@@ -288,7 +288,7 @@ static void xml_logger_write(GaimLog *log,
 		char *dir;
 		FILE *file;
 
-		strftime(date, sizeof(date), "%F.%H%M%S.xml", localtime(&log->time));
+		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
 
 		dir = g_build_filename(ud, "logs", NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -323,12 +323,12 @@ static void xml_logger_write(GaimLog *log,
 		fprintf(log->logger_data, "<?xml version='1.0' encoding='UTF-8' ?>\n"
 			"<?xml-stylesheet href='file:///usr/src/web/htdocs/log-stylesheet.xsl' type='text/xml' ?>\n");
 
-		strftime(date, sizeof(date), "%F %T", localtime(&log->time));
+		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&log->time));
 		fprintf(log->logger_data, "<conversation time='%s' screenname='%s' protocol='%s'>\n",
 			date, log->name, prpl);
 	}
 
-	strftime(date, sizeof(date), "%T", localtime(&time));
+	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	gaim_markup_html_to_xhtml(message, &xhtml, NULL);
 	if (from)
 		fprintf(log->logger_data, "<message %s %s from='%s' time='%s'>%s</message>\n",
@@ -392,7 +392,7 @@ static void txt_logger_write(GaimLog *log,
 		char *dir;
 		FILE *file;
 
-		strftime(date, sizeof(date), "%F.%H%M%S.txt", localtime(&log->time));
+		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.txt", localtime(&log->time));
 
 		dir = g_build_filename(ud, "logs", NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -425,12 +425,12 @@ static void txt_logger_write(GaimLog *log,
 			return;
 		}
 		g_free(filename);
-		strftime(date, sizeof(date), "%F %T", localtime(&log->time));
+		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&log->time));
 		fprintf(log->logger_data, "Conversation with %s at %s on %s (%s)\n",
 			log->name, date, gaim_account_get_username(log->account), prpl);
 	}
 
-	strftime(date, sizeof(date), "%T", localtime(&time));
+	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	stripped = gaim_markup_strip_html(message);
 	fprintf(log->logger_data, "(%s) %s%s %s\n", date, from ? from : "", from ? ":" : "", stripped);
 	fflush(log->logger_data);
