@@ -185,9 +185,12 @@ gaim_plugin_probe(const char *filename)
 		plugin->handle = g_module_open(filename, 0);
 
 		if (plugin->handle == NULL) {
-			plugin->error = g_strdup(g_module_error());
+			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: %s\n",
+					   plugin->path, g_module_error());
 
-			return plugin;
+			gaim_plugin_destroy(plugin);
+
+			return NULL;
 		}
 
 		if (!g_module_symbol(plugin->handle, "gaim_init_plugin",
