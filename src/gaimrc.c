@@ -456,9 +456,11 @@ static void gaimrc_read_options(FILE *f)
 				} else if (!strcmp(p->option, "font_options")) {
 						font_options = atoi(p->value[0]);
 				} else if (!strcmp(p->option, "font_face")) {
-						fontface = g_strconcat(p->value[0], '\0');
+						if (p->value[0] != NULL)
+							fontface = g_strconcat(p->value[0], '\0');
 				} else if (!strcmp(p->option, "font_name")) {
-						fontname = g_strconcat(p->value[0], '\0');
+						if (p->value[0] != NULL)
+							fontname = g_strconcat(p->value[0], '\0');
 				} else if (!strcmp(p->option, "latest_ver")) {
 						g_snprintf(latest_ver, BUF_LONG, "%s", p->value[0]);
                 } else if (!strcmp(p->option, "report_idle")) {
