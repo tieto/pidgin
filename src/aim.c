@@ -537,6 +537,7 @@ int main(int argc, char *argv[])
 	}
 	*/
 
+	gtk_set_locale();
 #ifdef USE_GNOME
 	gnome_init_with_popt_table(PACKAGE, VERSION, argc, argv, popt_options, 0, NULL);
 #else
