@@ -14,10 +14,10 @@ version 0.76cvs:
 	  (Tim Ringenbach)
 	* Improved local IP address detection (Tim Ringenbach)
 	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
-	* Tabs now stay green when they are supposed to (Etan Reisner)
 
 	Bug Fixes:
 	* Various buffer overflow fixes (Stefan Esser)
+	* Tabs now stay green when they are supposed to (Etan Reisner)
 	* Fixed a bug where only the first user in a chat room list was removed
 	  sometimes when trying to remove a group of users (Tim Ringenbach)
 	* Improved chat parting logic (Tim Ringenbach)
