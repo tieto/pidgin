@@ -750,7 +750,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 
 void send_callback(GtkWidget *widget, struct conversation *c)
 {
-	char *buf, *buf2, *buf3;
+	char *buf, *buf2;
 	int limit;
 
 	if (!c->gc)
@@ -851,11 +851,17 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	}
 
 	if (!c->is_chat) {
-		buf3 = g_strdup(buf);
-		write_to_conv(c, buf3, WFLAG_SEND, NULL, time((time_t)NULL));
-		g_free(buf3);
+		char *buffy;
 
-		serv_send_im(c->gc, c->name, buf, 0);
+		write_to_conv(c, buf, WFLAG_SEND, NULL, time((time_t)NULL));
+
+		buffy = g_strdup(buf);
+		plugin_event(event_im_displayed, c->gc, c->name, &buffy, 0);
+		if (buffy) {
+			serv_send_im(c->gc, c->name, buffy, 0);
+			g_free(buffy);
+		}
+
 
 		if (c->makesound && (sound_options & OPT_SOUND_SEND))
 			play_sound(SEND);

@@ -201,6 +201,7 @@ enum gaim_event {
 	event_new_conversation,
 	event_set_info,
 	event_draw_menu,
+	event_im_displayed,
 	/* any others? it's easy to add... */
 };
 

@@ -9,6 +9,10 @@ version 0.11.0:
 	* Added Russian Translation
 	* Can select which protocols are compiled statically
 	  (e.g.: ./configure --with-static-prpls=oscar,jabber)
+	* New plugin event: event_im_displayed. Use this to change
+	  the message after it's displayed (e.g. encrypt it), or to
+	  display an auto-response after the message is displayed
+	  (e.g. for eliza bots).
 
 version 0.11.0-pre14 (06/17/2001):
 	* Fixed a segfault with Oscar's account confirmation

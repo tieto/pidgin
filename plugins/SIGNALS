@@ -23,7 +23,9 @@ enum gaim_event {
 	event_error,
 	event_quit,
 	event_new_conversation,
-	event_set_info
+	event_set_info,
+	event_draw_menu,
+	event_im_displayed
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -257,3 +259,29 @@ event_set_info:
 
         Called when the user sends his profile to the server.  'info' is the
         profile being sent. 
+
+event_draw_menu:
+	GtkWidget *menu, char *name
+
+	Called when you right-click on a buddy.
+
+	'menu' is the menu that is about to be displayed.
+	'name' is the name of the buddy that was clicked.
+
+event_im_displayed:
+	struct gaim_connection *gc, char *who, char **what
+
+	This is called after what you send is displayed but before it's
+	actually sent. That is, when the user clicks the "send" button
+	in an IM window, first it gets passed to event_im_send handlers,
+	then it gets displayed, then it gets passed to these handlers, and
+	then it gets sent over the wire. This is useful for when you want
+	to encrypt something on the way out, or when you want to send a
+	response and have it displayed after what triggered the response.
+
+	'gc' is the connection the message was received on.
+	'who' is who sent the message.
+	'what' is what was sent. It's expected that you modify this. If
+	you set *what to NULL the message won't be sent, but the preferred
+	way of doing this is to attach to event_im_send so that it really
+	won't be displayed at all.
