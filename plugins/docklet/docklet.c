@@ -32,6 +32,7 @@
 #include "gtkaccount.h"
 #include "gaim.h"
 #include "sound.h"
+#include "gtksound.h"
 #include "prefs.h"
 #include "gtkblist.h"
 #include "eggtrayicon.h"
@@ -61,7 +62,7 @@ static enum docklet_status status;
 static enum docklet_status icon;
 
 static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
-	gaim_sound_set_mute(GTK_CHECK_MENU_ITEM(toggle)->active);
+	gaim_gtk_sound_set_mute(GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void docklet_set_bool(GtkWidget *widget, const char *key) {
@@ -144,7 +145,7 @@ static void docklet_menu(GdkEventButton *event) {
 	gaim_separator(menu);
 
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_sound_get_mute());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_gtk_sound_get_mute());
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 
@@ -442,7 +443,7 @@ plugin_unload(GaimPlugin *plugin)
 	docklet = NULL;
 
 	/* do this while gaim has no other way to toggle the global mute */
-	gaim_sound_set_mute(FALSE);
+	gaim_gtk_sound_set_mute(FALSE);
 
 	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: removed\n");
 

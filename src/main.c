@@ -48,6 +48,7 @@
 #include <ctype.h>
 #include "prpl.h"
 #include "sound.h"
+#include "gtksound.h"
 #include "gaim.h"
 #include "gaim-socket.h"
 #include "account.h"
@@ -58,6 +59,7 @@
 #include "gtkdebug.h"
 #include "gtknotify.h"
 #include "gtkrequest.h"
+#include "gtksound.h"
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -150,7 +152,7 @@ void do_quit()
 static guint snd_tmout = 0;
 static gboolean sound_timeout(gpointer data)
 {
-	gaim_sound_set_login_mute(FALSE);
+	gaim_gtk_sound_set_login_mute(FALSE);
 	snd_tmout = 0;
 	return FALSE;
 }
@@ -164,7 +166,7 @@ void gaim_setup(GaimConnection *gc)
 		if(snd_tmout) {
 			g_source_remove(snd_tmout);
 		}
-		gaim_sound_set_login_mute(TRUE);
+		gaim_gtk_sound_set_login_mute(TRUE);
 		snd_tmout = g_timeout_add(10000, sound_timeout, NULL);
 	}
 }
@@ -876,18 +878,24 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	/* Set the UI operation structures. */
+	gaim_prefs_init();
+	gaim_gtk_prefs_init();
+
+	/* This kind of has to be here.. sucks, but it's important. */
 	gaim_set_debug_ui_ops(gaim_get_gtk_debug_ui_ops());
+	gaim_gtk_debug_init();
+
+	/* Set the UI operation structures. */
 	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
 	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
 	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
 	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
 	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
+	gaim_set_sound_ui_ops(gaim_get_gtk_sound_ui_ops());
 
-	gaim_prefs_init();
 	gaim_proxy_init();
+	gaim_sound_init();
 
-	gaim_gtk_prefs_init();
 	gaim_gtk_conversation_init();
 
 	plugin_search_paths[0] = LIBDIR;
@@ -907,8 +915,6 @@ int main(int argc, char *argv[])
 		gaim_prefs_sync();
 	}
 
-	/* This kind of has to be here.. sucks, but it's important. */
-	gaim_gtk_debug_init();
 
 	gaim_accounts_load();
 
@@ -960,7 +966,7 @@ int main(int argc, char *argv[])
 
 	gtk_main();
 	core_quit();
-	gaim_sound_quit();
+	gaim_sound_shutdown();
 #ifdef _WIN32
 	wgaim_cleanup();
 #endif

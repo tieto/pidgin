@@ -190,6 +190,11 @@ guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback cb,
 void gaim_prefs_disconnect_callback(guint callback_id);
 
 /**
+ * Trigger callbacks as if the pref changed
+ */
+void gaim_prefs_trigger_callback(const char *name);
+
+/**
  * Read preferences
  */
 gboolean gaim_prefs_load();

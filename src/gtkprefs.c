@@ -47,6 +47,7 @@
 #include "prefs.h"
 #include "proxy.h"
 #include "sound.h"
+#include "gtksound.h"
 #include "notify.h"
 
 #ifdef _WIN32
@@ -1386,7 +1387,8 @@ static GtkWidget *sndcmd = NULL;
 #ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
-	gaim_sound_set_command(gtk_entry_get_text(GTK_ENTRY(sndcmd)));
+	gaim_prefs_set_string("/gaim/gtk/sound/command",
+			gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	return TRUE;
 }
 #endif
@@ -1399,7 +1401,7 @@ GtkWidget *sound_page() {
 	GtkWidget *dd;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	char *cmd;
+	const char *cmd;
 #endif
 
 	ret = gtk_vbox_new(FALSE, 18);
@@ -1411,12 +1413,12 @@ GtkWidget *sound_page() {
 	prefs_checkbox(_("_No sounds when you log in"),
 				   "/gaim/gtk/sound/silent_signon", vbox);
 	prefs_checkbox(_("_Sounds while away"),
-				   "/gaim/gtk/sound/while_away", vbox);
+				   "/core/sound/while_away", vbox);
 
 #ifndef _WIN32
 	vbox = gaim_gtk_make_frame (ret, _("Sound Method"));
 	dd = prefs_dropdown(vbox, _("_Method"), GAIM_PREF_STRING,
-						"/gaim/gtk/sound/sound_method",
+						"/gaim/gtk/sound/method",
 						_("Console beep"), "beep",
 #ifdef USE_AO
 						_("Automatic"), "automatic",
@@ -1426,7 +1428,7 @@ GtkWidget *sound_page() {
 #ifdef USE_NAS_AUDIO
 						"NAS", "nas",
 #endif
-						_("Command"), "custom_command",
+						_("Command"), "custom",
 						NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
@@ -1445,13 +1447,13 @@ GtkWidget *sound_page() {
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), sndcmd);
 
 	gtk_editable_set_editable(GTK_EDITABLE(sndcmd), TRUE);
-	cmd = gaim_sound_get_command();
+	cmd = gaim_prefs_get_string("/gaim/gtk/sound/command");
 	if(cmd)
 		gtk_entry_set_text(GTK_ENTRY(sndcmd), cmd);
 	gtk_widget_set_size_request(sndcmd, 75, -1);
 
-	gtk_widget_set_sensitive(sndcmd, 
-			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/sound_method"),
+	gtk_widget_set_sensitive(sndcmd,
+			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
 					"command"));
 
 	gtk_box_pack_start(GTK_BOX(hbox), sndcmd, TRUE, TRUE, 5);
@@ -1854,7 +1856,7 @@ event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 						2, &pref,
 						-1);
 
-	gaim_prefs_set_bool(pref, gtk_cell_renderer_toggle_get_active(cell));
+	gaim_prefs_set_bool(pref, !gtk_cell_renderer_toggle_get_active(cell));
 
 	gtk_list_store_set(GTK_LIST_STORE (model), &iter,
 					   0, !gtk_cell_renderer_toggle_get_active(cell),
@@ -1866,10 +1868,11 @@ event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 static void
 test_sound(GtkWidget *button, gpointer i_am_NULL)
 {
-	const char *pref;
+	char *pref;
 	gboolean temp_value1, temp_value2;
 
-	pref = gaim_sound_get_event_option(sound_row_sel);
+	pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
+			gaim_gtk_sound_get_event_option(sound_row_sel));
 
 	temp_value1 = gaim_prefs_get_bool("/gaim/gtk/sound/while_away");
 	temp_value2 = gaim_prefs_get_bool(pref);
@@ -1881,13 +1884,19 @@ test_sound(GtkWidget *button, gpointer i_am_NULL)
 
 	if (!temp_value1) gaim_prefs_set_bool("/gaim/gtk/sound/while_away", FALSE);
 	if (!temp_value2) gaim_prefs_set_bool(pref, FALSE);
+
+	g_free(pref);
 }
 
 static void
 reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 {
+	char *pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			gaim_gtk_sound_get_event_option(sound_row_sel));
+
 	/* This just resets a sound file back to default */
-	gaim_sound_set_event_file(sound_row_sel, NULL);
+	gaim_prefs_set_string(pref, "");
+	g_free(pref);
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
 }
@@ -1910,6 +1919,7 @@ void close_sounddialog(GtkWidget *w, GtkWidget *w2)
 void do_select_sound(GtkWidget *w, int snd)
 {
 	const char *file;
+	char *pref;
 
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
 
@@ -1918,7 +1928,10 @@ void do_select_sound(GtkWidget *w, int snd)
 		return;
 
 	/* Set it -- and forget it */
-	gaim_sound_set_event_file(snd, file);
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			gaim_gtk_sound_get_event_option(snd));
+	gaim_prefs_set_string(pref, file);
+	g_free(pref);
 
 	/* Set our text entry */
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), file);
@@ -1965,13 +1978,18 @@ static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	GValue val = { 0, };
-	char *file;
+	const char *file;
+	char *pref;
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
 	gtk_tree_model_get_value (model, &iter, 3, &val);
 	sound_row_sel = g_value_get_uint(&val);
-	file = gaim_sound_get_event_file(sound_row_sel);
+
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			gaim_gtk_sound_get_event_option(sound_row_sel));
+	file = gaim_prefs_get_string(pref);
+	g_free(pref);
 	if (sound_entry)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), file ? file : "(default)");
 	g_value_unset (&val);
@@ -1992,7 +2010,8 @@ GtkWidget *sound_events_page() {
 	GtkTreeSelection *sel;
 	GtkTreePath *path;
 	int j;
-	char *file;
+	const char *file;
+	char *pref;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -2005,18 +2024,21 @@ GtkWidget *sound_events_page() {
 	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
 
 	for (j=0; j < GAIM_NUM_SOUNDS; j++) {
-		const char *pref = gaim_sound_get_event_option(j);
+		char *pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
+				gaim_gtk_sound_get_event_option(j));
+		const char *label = gaim_gtk_sound_get_event_label(j);
 
-		if (pref == NULL)
+		if (label == NULL)
 			continue;
 
 		gtk_list_store_append (event_store, &iter);
 		gtk_list_store_set(event_store, &iter,
 				   0, gaim_prefs_get_bool(pref),
-				   1, _(gaim_sound_get_event_label(j)),
+				   1, _(label),
 				   2, pref,
 				   3, j,
 				   -1);
+		g_free(pref);
 	}
 
 	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(event_store));
@@ -2050,7 +2072,10 @@ GtkWidget *sound_events_page() {
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(ret), hbox, FALSE, FALSE, 0);
 	sound_entry = gtk_entry_new();
-	file = gaim_sound_get_event_file(0);
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			gaim_gtk_sound_get_event_option(0));
+	file = gaim_prefs_get_string(pref);
+	g_free(pref);
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), file ? file : "(default)");
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
@@ -2766,20 +2791,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
 
-	/* Debug window preferences. */
-	/*
-	 * NOTE: This must be set before prefs are loaded, and the callbacks
-	 *       set after they are loaded, since prefs sets the enabled
-	 *       preference here and that loads the window, which calls the
-	 *       configure event, which overrrides the width and height! :P
-	 */
-	gaim_prefs_add_none("/gaim/gtk/debug");
-	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/debug/timestamps", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
-	gaim_prefs_add_int("/gaim/gtk/debug/width",  450);
-	gaim_prefs_add_int("/gaim/gtk/debug/height", 250);
-
 	/* Idle */
 	gaim_prefs_add_none("/gaim/gtk/idle");
 	gaim_prefs_add_string("/gaim/gtk/idle/reporting_method", "system");
@@ -2799,21 +2810,5 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_none("/gaim/gtk/smileys");
 	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "");
 
-	/* Sound */
-	gaim_prefs_add_none("/gaim/gtk/sound");
-	gaim_prefs_add_bool("/gaim/gtk/sound/login", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/logout", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/im_recv", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/first_im_recv", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/send_im", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/join_chat", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/left_chat", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/send_chat_msg", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/chat_msg_recv", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/nick_said", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/silent_signon", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/while_away", TRUE);
-	gaim_prefs_add_string("/gaim/gtk/sound/command", "");
-	gaim_prefs_add_string("/gaim/gtk/sound/sound_method", "automatic");
 }
 

@@ -29,7 +29,7 @@
 
 
 /**
- * A type of conversation.
+ * A type of sound.
  */
 
 typedef enum _GaimSoundEventID
@@ -48,27 +48,50 @@ typedef enum _GaimSoundEventID
 	GAIM_NUM_SOUNDS              /**< Total number of sounds.               */
 } GaimSoundEventID;
 
+typedef struct _GaimSoundUiOps
+{
+	void (*init)(void);
+	void (*shutdown)(void);
+	void (*play_file)(const char *filename);
+	void (*play_event)(GaimSoundEventID event);
+
+} GaimSoundUiOps;
+
 /**************************************************************************/
 /** @name Sound API                                                       */
 /**************************************************************************/
 /*@{*/
 
 /**
- * Lets the sound subsystem know when the sound output method has changed.
+ * Sets the UI sound operations
+ *
+ * @param ops The UI sound operations structure.
  */
-void gaim_sound_change_output_method();
+void gaim_set_sound_ui_ops(GaimSoundUiOps *ops);
 
 /**
- * Properly shuts down the sound system.
+ * Gets the UI sound operations
+ *
+ * @return The UI sound operations structure.
  */
-void gaim_sound_quit();
+GaimSoundUiOps *gaim_get_sound_ui_ops(void);
+
+/**
+ * Initializes the sound subsystem
+ */
+void gaim_sound_init(void);
+
+/**
+ * Shuts down the sound subsystem
+ */
+void gaim_sound_shutdown(void);
 
 /**
  * Plays the specified sound file.
  *
  * @param filename The file to play.
  */
-void gaim_sound_play_file(char *filename);
+void gaim_sound_play_file(const char *filename);
 
 /**
  * Plays the sound associated with the specified event.
@@ -76,72 +99,6 @@ void gaim_sound_play_file(char *filename);
  * @param event The event.
  */
 void gaim_sound_play_event(GaimSoundEventID event);
-
-/**
- * Mutes or un-mutes sounds.
- *
- * @param mute The mute state.
- */
-void gaim_sound_set_mute(gboolean mute);
-
-/**
- * Gets mute state for sounds.
- *
- * @return The mute state.
- */
-gboolean gaim_sound_get_mute();
-
-/**
- * Mutes or un-mutes login sounds.
- *
- * @param mute The mute state.
- */
-void gaim_sound_set_login_mute(gboolean mute);
-
-/**
- * Set sound file for an event.
- *
- * @param event The event.
- * @param filename The sound file.
- */
-void gaim_sound_set_event_file(GaimSoundEventID event, const char *filename);
-
-/** Get sound file for an event.
- *
- * @param event The event.
- * @return The filename if set, otherwise @c NULL.
- */
-char *gaim_sound_get_event_file(GaimSoundEventID event);
-
-/**
- * Get the prefs option for an event.
- *
- * @param event The event.
- * @return The option.
- */
-const char *gaim_sound_get_event_option(GaimSoundEventID event);
-
-/**
- * Get the label for an event.
- *
- * @param event The event.
- * @return The label.
- */
-char *gaim_sound_get_event_label(GaimSoundEventID event);
-
-/**
- * Set sound command for command mode.
- *
- * @param cmd The command.
- */
-void gaim_sound_set_command(const char *cmd);
-
-/**
- * Get sound command for command mode.
- *
- * @return The command if set, otherwise @c NULL.
- */
-char *gaim_sound_get_command();
 
 /*@}*/
 

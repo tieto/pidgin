@@ -137,15 +137,6 @@ void gaim_prefs_init() {
 	gaim_prefs_add_bool("/core/conversations/im/show_login", TRUE);
 	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
 
-	/* Sound */
-	gaim_prefs_add_none("/core/sound");
-	gaim_prefs_add_bool("/core/sound/use_sys_default", TRUE);
-	gaim_prefs_add_bool("/core/sound/use_esd", FALSE);
-	gaim_prefs_add_bool("/core/sound/use_arts", FALSE);
-	gaim_prefs_add_bool("/core/sound/use_beep", FALSE);
-	gaim_prefs_add_bool("/core/sound/use_custom", FALSE);
-	gaim_prefs_add_string("/core/sound/command", "");
-	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
 }
 
 static char *pref_full_name(struct gaim_pref *pref) {
@@ -354,6 +345,13 @@ static void do_callbacks(const char* name, struct gaim_pref *pref) {
 			cb->func(name, pref->type, pref->value.generic, cb->data);
 		}
 	}
+}
+
+void gaim_prefs_trigger_callback(const char *name) {
+	struct gaim_pref *pref = find_pref(name);
+
+	g_return_if_fail(pref != NULL);
+	do_callbacks(name, pref);
 }
 
 void gaim_prefs_set_generic(const char *name, gpointer value) {

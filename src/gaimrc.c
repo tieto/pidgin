@@ -40,6 +40,7 @@
 #include "prefs.h"
 #include "proxy.h"
 #include "sound.h"
+#include "gtksound.h"
 #include "pounce.h"
 #include "gtkpounce.h"
 #include "notify.h"
@@ -942,10 +943,8 @@ static void gaimrc_read_options(FILE *f)
 
 		} else if (!strcmp(p->option, "sound_options")) {
 			sound_options = atoi(p->value[0]);
-			gaim_sound_change_output_method();
-			/* XXX: still need to convert these */
-			/* XXX: but first we need to figure out where the split is
-			 * for sounds */
+			/* XXX: figure out the mapping between the options
+			 * and the new sound method option */
 		} else if (!strcmp(p->option, "away_options")) {
 			away_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/core/conversations/away_back_on_send",
@@ -1065,7 +1064,7 @@ static void gaimrc_read_options(FILE *f)
 	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_NORMAL | OPT_SOUND_ESD
 					| OPT_SOUND_ARTS | OPT_SOUND_NAS | OPT_SOUND_CMD))) {
 		sound_options |= OPT_SOUND_NORMAL;
-		gaim_sound_change_output_method();
+		/* XXX: I don't think we need this anymore */
 	}
 
 	if (read_general) {
@@ -1112,11 +1111,16 @@ static void gaimrc_read_sounds(FILE *f)
 	char buf[2048];
 	struct parse parse_buffer;
 	struct parse *p;
+	char *pref_name;
 
 	buf[0] = 0;
 
-	for(i=0; i<GAIM_NUM_SOUNDS; i++)
-		gaim_sound_set_event_file(i, NULL);
+	for(i=0; i<GAIM_NUM_SOUNDS; i++) {
+		pref_name = g_strdup_printf("/gaim/gtk/sound/file/%s",
+				gaim_gtk_sound_get_event_option(i));
+		gaim_prefs_set_string(pref_name, "");
+		g_free(pref_name);
+	}
 
 	while (buf[0] != '}') {
 		if (buf[0] == '#')
@@ -1128,14 +1132,15 @@ static void gaimrc_read_sounds(FILE *f)
 		p = parse_line(buf, &parse_buffer);
 #ifndef _WIN32
 		if (!strcmp(p->option, "sound_cmd")) {
-			gaim_sound_set_command(p->value[0]);
+			gaim_prefs_set_string("/gaim/gtk/sound/command", p->value[0]);
 		} else
 #endif
 		if (!strncmp(p->option, "sound", strlen("sound"))) {
 			i = p->option[strlen("sound")] - 'A';
 
-			if (p->value[0][0])
-				gaim_sound_set_event_file(i, p->value[0]);
+			pref_name = g_strdup_printf("/gaim/gtk/sound/file/%s",
+					gaim_gtk_sound_get_event_option(i));
+			gaim_prefs_set_string(pref_name, p->value[0]);
 		}
 	}
 }

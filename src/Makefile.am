@@ -83,6 +83,8 @@ gaim_SOURCES = \
 	gtkpounce.h \
 	gtkrequest.c \
 	gtkrequest.h \
+	gtksound.c \
+	gtksound.h \
 	gtkutils.c \
 	gtkutils.h \
 	html.c \
