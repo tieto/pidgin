@@ -28,3 +28,7 @@ stats.lo
 tlv.lo
 txqueue.lo
 util.lo
+invite.lo
+popups.lo
+ssi.lo
+translate.lo
