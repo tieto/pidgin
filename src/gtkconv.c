@@ -4569,7 +4569,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", message);
 
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT><BR>",
+			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib, mdate, message);
 
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
@@ -4581,7 +4581,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	} else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf, BUF_LONG,
-			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B><BR>",
+			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
 			   sml_attrib, message);
 
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
@@ -4685,8 +4685,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
 							 with_font_tag, gtk_font_options, images);
-
-		//gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
 
 		conv->history = g_string_append(conv->history, buf);
 		conv->history = g_string_append(conv->history, new_message);
