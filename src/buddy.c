@@ -1103,6 +1103,7 @@ void do_quit()
 		dlclose(p->handle);
 		g_free(p->filename); /* why do i bother? */
 		g_free(p);
+		c = c->next;
 	}
 #endif
 

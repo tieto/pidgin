@@ -62,6 +62,7 @@ static GtkWidget *plugtext;
 static GtkWidget *plugwindow;
 
 static GtkWidget *config;
+static guint confighandle = 0;
 
 /* --------------- Function Declarations --------------------- */
 
@@ -423,6 +424,8 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	void (*gaim_plugin_config)();
 	char *error;
 
+	if (confighandle)
+		gtk_signal_disconnect(GTK_OBJECT(config), confighandle);
 	text_len = gtk_text_get_length(GTK_TEXT(plugtext));
 	gtk_text_set_point(GTK_TEXT(plugtext), 0);
 	gtk_text_forward_delete(GTK_TEXT(plugtext), text_len);
@@ -432,10 +435,11 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 
 	gaim_plugin_config = dlsym(p->handle, "gaim_plugin_config");
 	if ((error = (char *)dlerror()) == NULL) {
-		gtk_signal_connect(GTK_OBJECT(config), "clicked",
+		confighandle = gtk_signal_connect(GTK_OBJECT(config), "clicked",
 				   GTK_SIGNAL_FUNC(gaim_plugin_config), NULL);
 		gtk_widget_set_sensitive(config, 1);
 	} else {
+		confighandle = 0;
 		gtk_widget_set_sensitive(config, 0);
 	}
 }

@@ -112,6 +112,7 @@ void cancel_logon(void)
 		dlclose(p->handle);
 		g_free(p->filename); /* why do i bother? */
 		g_free(p);
+		c = c->next;
 	}
 #endif /* GAIM_PLUGINS */
 
