@@ -58,7 +58,12 @@ EXTRA_DIST = \
 	$(common_sources)
 
 common/Makefile: common/Makefile.PL
-	cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
+	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
+		for f in ${common_sources}; do \
+			${LN_S} -f ../${srcdir}/$$f $$f; \
+		done; \
+	fi
+	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
 
 common/Makefile.PL: common/Makefile.PL.in $(top_srcdir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
@@ -73,6 +78,11 @@ all-local: common/Makefile
 		 $(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS)) && \
 		cd ..; \
 	done
+	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
+		for f in ${common_sources}; do \
+			rm -f $$f; \
+		done; \
+	fi
 
 install-exec-local:
 	@for dir in $(perl_dirs); do \
