@@ -52,7 +52,7 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
 
 	to_codeset = "ISO-8859-1";
 
-	ret = g_convert_with_fallback(str, strlen(str), to_codeset, "UTF-8", NULL, NULL, NULL, NULL);
+	ret = g_convert_with_fallback(str, strlen(str), to_codeset, "UTF-8", "?", NULL, NULL, NULL);
 	if (ret)
 		return ret;
 	else
