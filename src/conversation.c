@@ -599,9 +599,11 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		if ((event->state & GDK_CONTROL_MASK) && (convo_options & OPT_CONVO_CTL_ENTER)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			return TRUE;
 		} else if (!(event->state & GDK_SHIFT_MASK) && (convo_options & OPT_CONVO_ENTER_SENDS)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			return TRUE;
 		} else {
 			int oldpos;
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
@@ -609,6 +611,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
 			if (oldpos == pos)
 				gtk_editable_set_position(GTK_EDITABLE(entry), pos + 1);
+			return TRUE;
 		}
 	} else if ((event->state & GDK_CONTROL_MASK) && (event->keyval == 'm')) {
 		int oldpos;
