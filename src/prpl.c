@@ -50,9 +50,8 @@ void load_protocol(proto_init pi)
 {
 	struct prpl *p = g_new0(struct prpl, 1);
 	struct prpl *old;
-	GSList *n = protocols;
 	pi(p);
-	if (old = find_prpl(p->protocol))
+	if ((old = find_prpl(p->protocol)) == NULL)
 		unload_protocol(old);
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
 }

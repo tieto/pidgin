@@ -707,7 +707,7 @@ static void gaimrc_read_sounds(FILE *f)
 
                 p = parse_line(buf);
                 
-		sscanf(p->option, "sound%c", &i);
+		sscanf(p->option, "sound%c", (char *)&i);
 		i -= 'A';
 		
 		if (p->value[0][0])

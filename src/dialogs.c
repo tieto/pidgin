@@ -46,7 +46,6 @@
 #include "pixmaps/ok.xpm"
 #include "pixmaps/add.xpm"
 #include "pixmaps/warn.xpm"
-#include "pixmaps/gnome_remove.xpm"
 
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
@@ -3244,7 +3243,7 @@ void alias_dialog(struct buddy_show *b)
 	GtkWidget *vbox;
 	GtkWidget *bbox;
 	GtkWidget *cancel;
-	GtkWidget *add;
+	static GtkWidget *add = NULL;
 	GtkWidget *label;
         GtkWidget *topbox;
 	static int a, c;

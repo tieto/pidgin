@@ -475,7 +475,6 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	gchar *temp;
 	guint text_len;
 	void (*gaim_plugin_config)();
-	char *error;
 
 	if (confighandle != 0)
 		gtk_signal_disconnect(GTK_OBJECT(config), confighandle);

@@ -1839,7 +1839,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	GtkWidget *widget = GTK_WIDGET(html);
 	GdkRectangle area;
 	GList *hbits;
-	GtkHtmlBit *hbit;
 	
 	if (html->frozen > 0)
 		return;
@@ -4393,7 +4392,7 @@ void gtk_html_thaw(GtkHtml * html)
 
 static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
 {
-	int height, max_height = 0;
+	int height = 1, max_height = 0;
 	GList *hbits = html->html_bits;
 	GtkHtmlBit *hbit = start; /* default this in case hbits is NULL */
 
