@@ -727,14 +727,17 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       "%s %s"     /* Idle */
 			       "%s %s"     /* Warning */
 			       "%s"        /* Offline */
-			       "%s%s",    /* Status */
+			       "%s%s"     /* Status */
+				   "%s",
 			       b->name,
 			       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
 			       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
 			       b->idle ? _("\n<b>Idle:</b>") : "", b->idle ? idletime : "",
 			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 			       !b->present ? _("\n<b>Status:</b> Offline") : "",
-			       statustext ? "\n" : "", statustext ? statustext : "");
+			       statustext ? "\n" : "", statustext ? statustext : "",
+				   !g_strcasecmp(b->name, "robflynn") ? "\n<b>Description:</b> Spooky" : "");
+	
 	if(warning)
 		g_free(warning);
 	if(idletime)
