@@ -444,6 +444,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 	MsnObject *msnobj;
 	int status = 0;
+	int idle = 0;
 	const char *state, *passport, *friendly;
 	GaimBuddy *b;
 
@@ -473,7 +474,10 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
 	else if (!g_ascii_strcasecmp(state, "IDL"))
+	{
 		status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
+		idle = -1;
+	}
 	else if (!g_ascii_strcasecmp(state, "BRB"))
 		status |= UC_UNAVAILABLE | (MSN_BRB << 1);
 	else if (!g_ascii_strcasecmp(state, "AWY"))
@@ -483,7 +487,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 
-	serv_got_update(gc, passport, 1, 0, 0, 0, status);
+	serv_got_update(gc, passport, 1, 0, 0, idle, status);
 }
 
 static void
@@ -512,6 +516,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *passport;
 	const char *friendly;
 	int status = 0;
+	int idle = 0;
 
 	session = cmdproc->session;
 	gc = session->account->gc;
@@ -536,7 +541,10 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
 	else if (!g_ascii_strcasecmp(state, "IDL"))
+	{
 		status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
+		idle = -1;
+	}
 	else if (!g_ascii_strcasecmp(state, "BRB"))
 		status |= UC_UNAVAILABLE | (MSN_BRB << 1);
 	else if (!g_ascii_strcasecmp(state, "AWY"))
@@ -546,7 +554,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 
-	serv_got_update(gc, passport, 1, 0, 0, 0, status);
+	serv_got_update(gc, passport, 1, 0, 0, idle, status);
 }
 
 static void
@@ -1130,16 +1138,11 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	MsnCmdProc *cmdproc;
 	cmdproc = notification->servconn->cmdproc;
 
-	if (group_id >= 0)
-	{
-		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s %d", list, who,
-						 store_name, group_id);
-	}
-	else
-	{
-		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s", list, who,
-						 store_name);
-	}
+	if (group_id < 0)
+		group_id = 0;
+
+	msn_cmdproc_send(cmdproc, "ADD", "%s %s %s %d",
+					 list, who, store_name, group_id);
 }
 
 void
@@ -1181,6 +1184,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "REA", "REA", rea_cmd);
 	/* msn_table_add_cmd(cbs_table, "PRP", "PRP", prp_cmd); */
 	/* msn_table_add_cmd(cbs_table, "BLP", "BLP", blp_cmd); */
+	msn_table_add_cmd(cbs_table, "BLP", "BLP", NULL);
 	msn_table_add_cmd(cbs_table, "REG", "REG", reg_cmd);
 	msn_table_add_cmd(cbs_table, "ADG", "ADG", adg_cmd);
 	msn_table_add_cmd(cbs_table, "RMG", "RMG", rmg_cmd);
@@ -1204,7 +1208,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "RNG", rng_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "URL", url_cmd);
-	
+
 	/* msn_table_add_cmd(cbs_table, NULL, "XFR", xfr_cmd); */
 
 	msn_table_add_error(cbs_table, "ADD", add_error);

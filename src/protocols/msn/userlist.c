@@ -549,7 +549,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	int group_id;
 	const char *list;
 	const char *store_name;
-	
+
 	group_id = -1;
 
 	if (group_name != NULL)
@@ -566,12 +566,11 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	user = msn_userlist_find_user(userlist, who);
 
-	/* First we're going to check if it's alredy there. */
+	/* First we're going to check if it's already there. */
 	if (user_is_there(user, list_id, group_id))
 	{
 		list = lists[list_id];
-		gaim_debug_error("msn", "User '%s' is alredy there: %s\n",
-						 who, list);
+		gaim_debug_error("msn", "User '%s' is already there: %s\n", who, list);
 		return;
 	}
 

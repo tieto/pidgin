@@ -150,7 +150,7 @@ ans_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		GList *l;	
 
-		/* But we alredy know the switchboard... */
+		/* But we already know the switchboard... */
 		/* What if there is more than one user? */
 		for (l = swboard->users; l != NULL; l = l->next)
 		{
@@ -266,7 +266,7 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 #if 1
 	if (session->protocol_ver >= 9)
-		/* But we alredy know the switchboard... */
+		/* But we already know the switchboard... */
 		msn_request_buddy_icon(gc, passport);
 #endif
 }
