@@ -1,7 +1,7 @@
 noinst_LIBRARIES = libfaim.a
 
 EXTRA_DIST = aim.h aim_cbtypes.h aim_internal.h faimconfig.h md5.h README \
-		README.gaim CHANGES CHANGES.gaim COPYING BUGS AUTHORS
+		CHANGES COPYING BUGS AUTHORS
 
 libfaim_a_SOURCES = 	adverts.c	\
 			auth.c 		\

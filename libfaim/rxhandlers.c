@@ -315,6 +315,8 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
   } else {
     workingPtr = sess->queue_incoming;
     for (i = 0; workingPtr != NULL; workingPtr = workingPtr->next, i++) {
+      unsigned short family,subtype;
+
       /*
        * XXX: This is still fairly ugly.
        */
@@ -334,324 +336,182 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	continue;
       }
 
-      switch(workingPtr->conn->type) {
-      case -1:
-	/*
-	 * This can happen if we have a queued command
-	 * that was recieved after a connection has 
-	 * been terminated.  In which case, the handler
-	 * list has been cleared, and there's nothing we
-	 * can do for it.  We can only cancel it.
-	 */
-	workingPtr->handled = 1;
-	break;
-      case AIM_CONN_TYPE_AUTH: {
-	unsigned long head;
-	
-	head = aimutil_get32(workingPtr->data);
-	if ((head == 0x00000001) && (workingPtr->commandlen == 4)) {
-	  faimdprintf(sess, 1, "got connection ack on auth line\n");
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
-	} else if (workingPtr->hdr.oscar.type == 0x04) {
-	  /* Used only by the older login protocol */
-	  workingPtr->handled = aim_authparse(sess, workingPtr);
-        } else {
-	  unsigned short family,subtype;
-	  
-	  family = aimutil_get16(workingPtr->data);
-	  subtype = aimutil_get16(workingPtr->data+2);
-	  
-	  switch (family) {
-	    /* New login protocol */
-	  case 0x0017:
-	    if (subtype == 0x0001)
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0x0001, workingPtr);
-	    else if (subtype == 0x0003)
-	      workingPtr->handled = aim_authparse(sess, workingPtr);
-	    else if (subtype == 0x0007)
-	      workingPtr->handled = aim_authkeyparse(sess, workingPtr);
-	    else
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
-	    break;
-
-	  case 0x0001:
-	    if (subtype == 0x0003)
-	      workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
-	    else if (subtype == 0x0007)
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
-	    else if (subtype == 0x0018)
-	      workingPtr->handled = aim_parse_hostversions(sess, workingPtr);
-	    else
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0xffff, workingPtr);
-	    break;
-
-	  case 0x0007:
-	    if (subtype == 0x0003)
-	      workingPtr->handled = aim_parse_infochange(sess, workingPtr);
-	    else if (subtype == 0x0005)
-	      workingPtr->handled = aim_parse_infochange(sess, workingPtr);
-	    else if (subtype == 0x0007)
-	      workingPtr->handled = aim_parse_accountconfirm(sess, workingPtr);
-	    break;
-
-	  case AIM_CB_FAM_SPECIAL:
-	    if (subtype == AIM_CB_SPECIAL_DEBUGCONN_CONNECT) {
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-	      break;
-	    } else
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
-	    break;
-
-	  default:
-	    break;
-	  }
-	}
-	break;
-      }
-      case AIM_CONN_TYPE_BOS: {
-	u_short family;
-	u_short subtype;
-
-	if (workingPtr->hdr.oscar.type == 0x04) {
-	  workingPtr->handled = aim_negchan_middle(sess, workingPtr);
-	  break;
-	}
-
-	family = aimutil_get16(workingPtr->data);
-	subtype = aimutil_get16(workingPtr->data+2);
-	
-	switch (family) {
-	case 0x0000: /* not really a family, but it works */
-	  if (subtype == 0x0001)
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
-	  else
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
-	  break;
-	case 0x0001: /* Family: General */
-	  switch (subtype) {
-	  case 0x0001:
-	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
-	    break;
-	  case 0x0003:
-	    workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
-	    break;
-	  case 0x0005:
-	    workingPtr->handled = aim_handleredirect_middle(sess, workingPtr);
-	    break;
-	  case 0x0007:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
-	    break;
-	  case 0x000a:
-	    workingPtr->handled = aim_parse_ratechange_middle(sess, workingPtr);
-	    break;
-	  case 0x000f:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x000f, workingPtr);
-	    break;
-	  case 0x0010:
-	    workingPtr->handled = aim_parse_evilnotify_middle(sess, workingPtr);
-	    break;
-	  case 0x0013:
-	    workingPtr->handled = aim_parsemotd_middle(sess, workingPtr);
-	    break;
-	  case 0x0018:
-	    workingPtr->handled = aim_parse_hostversions(sess, workingPtr);
-	    break;
-	  default:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_GEN, AIM_CB_GEN_DEFAULT, workingPtr);
-	    break;
-	  }
-	  break;
-	case 0x0002: /* Family: Location */
-	  switch (subtype) {
-	  case 0x0001:
-	    workingPtr->handled = aim_parse_locateerr(sess, workingPtr);
-	    break;
-	  case 0x0003:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0002, 0x0003, workingPtr);
-	    break;
-	  case 0x0006:
-	    workingPtr->handled = aim_parse_userinfo_middle(sess, workingPtr);
-	    break;
-	  default:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_DEFAULT, workingPtr);
-	    break;
-	  }
-	  break;
-	case 0x0003: /* Family: Buddy List */
-	  switch (subtype) {
-	  case 0x0001:
-	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
-	    break;
-	  case 0x0003:
-	    workingPtr->handled = aim_parse_buddyrights(sess, workingPtr);
-	    break;
-	  case 0x000b: /* oncoming buddy */
-	    workingPtr->handled = aim_parse_oncoming_middle(sess, workingPtr);
-	    break;
-	  case 0x000c: /* offgoing buddy */
-	    workingPtr->handled = aim_parse_offgoing_middle(sess, workingPtr);
-	    break;
-	  default:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_DEFAULT, workingPtr);
-	  }
-	  break;
-	case 0x0004: /* Family: Messaging */
-	  switch (subtype) {
-	  case 0x0001:
-	    workingPtr->handled = aim_parse_msgerror_middle(sess, workingPtr);
-	    break;
-	  case 0x0005:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0004, 0x0005, workingPtr);
-	    break;
-	  case 0x0006:
-	    workingPtr->handled = aim_parse_outgoing_im_middle(sess, workingPtr);
-	    break;
-	  case 0x0007:
-	    workingPtr->handled = aim_parse_incoming_im_middle(sess, workingPtr);
-	    break;
-	  case 0x000a:
-	    workingPtr->handled = aim_parse_missedcall(sess, workingPtr);
-	    break;
-	  case 0x000c:
-	    workingPtr->handled = aim_parse_msgack_middle(sess, workingPtr);
-	    break;
-	  default:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_MSG, AIM_CB_MSG_DEFAULT, workingPtr);
-	  }
-	  break;
-	case 0x0009:
-	  if (subtype == 0x0001)
-	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
-	  else if (subtype == 0x0003)
-	    workingPtr->handled = aim_parse_bosrights(sess, workingPtr);
-	  else
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_BOS, AIM_CB_BOS_DEFAULT, workingPtr);
-	  break;
-	case 0x000a:  /* Family: User lookup */
-	  switch (subtype) {
-	  case 0x0001:
-	    workingPtr->handled = aim_parse_searcherror(sess, workingPtr);
-	    break;
-	  case 0x0003:
-	    workingPtr->handled = aim_parse_searchreply(sess, workingPtr);
-	    break;
-	  default:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_LOK, AIM_CB_LOK_DEFAULT, workingPtr);
-	  }
-	  break;
-	case 0x000b: {
-	  if (subtype == 0x0001)
-	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
-	  else if (subtype == 0x0002)
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x000b, 0x0002, workingPtr);
-	  else
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_STS, AIM_CB_STS_DEFAULT, workingPtr);
-	  break;
-	}
-	case 0x0013: {
-	  faimdprintf(sess, 0, "lalala: 0x%04x/0x%04x\n", family, subtype);
-	  break;
-	}
-	case AIM_CB_FAM_SPECIAL: 
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-	  break;
-	default:
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
-	  break;
-	} /* switch(family) */
-	break;
-      } /* AIM_CONN_TYPE_BOS */
-      case AIM_CONN_TYPE_ADS: {
-	unsigned short family;
-	unsigned short subtype;
-
-	family = aimutil_get16(workingPtr->data);
-	subtype= aimutil_get16(workingPtr->data+2);
-
-	if ((family == 0x0000) && (subtype == 0x00001)) {
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
-	} else if ((family == 0x0001) && (subtype == 0x0003)) {
-	  workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
-	} else {
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-	}
-	break;
-      }
-      case AIM_CONN_TYPE_CHATNAV: {
-	u_short family;
-	u_short subtype;
-	family = aimutil_get16(workingPtr->data);
-	subtype= aimutil_get16(workingPtr->data+2);
-
-	if ((family == 0x0000) && (subtype == 0x00001)) {
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
-	} else if ((family == 0x0001) && (subtype == 0x0003)) {
-	  workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
-	} else if ((family == 0x000d) && (subtype == 0x0009)) {
-	  workingPtr->handled = aim_chatnav_parse_info(sess, workingPtr);
-	} else {
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-	}
-	break;
-      }
-      case AIM_CONN_TYPE_CHAT: {
-	u_short family, subtype;
-	
-	family = aimutil_get16(workingPtr->data);
-	subtype= aimutil_get16(workingPtr->data+2);
-	
-	if ((family == 0x0000) && (subtype == 0x00001)) {
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
-	} else if (family == 0x0001) {
-	  if (subtype == 0x0001)
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0001, workingPtr);
-	  else if (subtype == 0x0003)
-	    workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
-	  else if (subtype == 0x0007)
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
-	  else if (subtype == 0x000a)
-	    workingPtr->handled = aim_parse_ratechange_middle(sess, workingPtr);
-	  else
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-	} else if (family == 0x000e) {
-	  if (subtype == 0x0002)
-	    workingPtr->handled = aim_chat_parse_infoupdate(sess, workingPtr);
-	  else if (subtype == 0x0003)
-	    workingPtr->handled = aim_chat_parse_joined(sess, workingPtr);	
-	  else if (subtype == 0x0004)
-	    workingPtr->handled = aim_chat_parse_leave(sess, workingPtr);	
-	  else if (subtype == 0x0006)
-	    workingPtr->handled = aim_chat_parse_incoming(sess, workingPtr);
-	  else	
-	    faimdprintf(sess, 0, "Chat: unknown snac %04x/%04x\n", family, subtype); 
-	} else {
-	  faimdprintf(sess, 0, "Chat: unknown snac %04x/%04x\n", family, subtype);
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_DEFAULT, workingPtr);
-	}
-	break;
-      }
-      case AIM_CONN_TYPE_RENDEZVOUS: {
+      if (workingPtr->conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 	/* make sure that we only get OFT frames on these connections */
 	if (workingPtr->hdrtype != AIM_FRAMETYPE_OFT) {
 	  faimdprintf(sess, 0, "internal error: non-OFT frames on OFT connection\n");
 	  workingPtr->handled = 1; /* get rid of it */
-	  break;
+	} else {
+	  /* XXX: implement this */
+	  faimdprintf(sess, 0, "faim: OFT frame!\n");
+	  workingPtr->handled = 1; /* get rid of it */
 	}
-	
-	/* XXX: implement this */
-	faimdprintf(sess, 0, "faim: OFT frame!\n");
-	
-	break;
+	continue;
       }
-      case AIM_CONN_TYPE_RENDEZVOUS_OUT: {
+
+      if (workingPtr->conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
 	/* not possible */
-	break;
+	faimdprintf(sess, 0, "rxdispatch called on RENDEZVOUS_OUT connection!\n");
+	workingPtr->handled = 1;
+	continue;
       }
-      default:
-	faimdprintf(sess, 0, "internal error: unknown connection type (very bad.) (type = %d, fd = %d, commandlen = %02x)\n\n", workingPtr->conn->type, workingPtr->conn->fd, workingPtr->commandlen);
-	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
+
+      if ((workingPtr->commandlen == 4) && 
+	  (aimutil_get32(workingPtr->data) == 0x00000001)) {
+	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
+	continue;
+      } 
+
+      if (workingPtr->hdr.oscar.type == 0x04) {
+	workingPtr->handled = aim_negchan_middle(sess, workingPtr);
+	continue;
+      }
+	  
+      family = aimutil_get16(workingPtr->data);
+      subtype = aimutil_get16(workingPtr->data+2);
+	  
+      if (family == 0x0001) {
+
+	if (subtype == 0x0001)
+	  workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
+	else if (subtype == 0x0003)
+	  workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
+	else if (subtype == 0x0005)
+	  workingPtr->handled = aim_handleredirect_middle(sess, workingPtr);
+	else if (subtype == 0x0007)
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
+	else if (subtype == 0x000a)
+	  workingPtr->handled = aim_parse_ratechange_middle(sess, workingPtr);
+	else if (subtype == 0x000f)
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x000f, workingPtr);
+	else if (subtype == 0x0010)
+	  workingPtr->handled = aim_parse_evilnotify_middle(sess, workingPtr);
+	else if (subtype == 0x0013)
+	  workingPtr->handled = aim_parsemotd_middle(sess, workingPtr);
+	else if (subtype == 0x0018)
+	  workingPtr->handled = aim_parse_hostversions(sess, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0xffff, workingPtr);
+
+      } else if (family == 0x0002) {
+
+	if (subtype == 0x0001)
+	    workingPtr->handled = aim_parse_locateerr(sess, workingPtr);
+	else if (subtype == 0x0003)
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0002, 0x0003, workingPtr);
+	else if (subtype == 0x0006)
+	  workingPtr->handled = aim_parse_userinfo_middle(sess, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_DEFAULT, workingPtr);
+
+      } else if (family == 0x0003) {
+
+	if (subtype == 0x0001)
+	  workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
+	else if (subtype == 0x0003)
+	  workingPtr->handled = aim_parse_buddyrights(sess, workingPtr);
+	else if (subtype == 0x000b)
+	  workingPtr->handled = aim_parse_oncoming_middle(sess, workingPtr);
+	else if (subtype == 0x000c)
+	  workingPtr->handled = aim_parse_offgoing_middle(sess, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_DEFAULT, workingPtr);
+
+      } else if (family == 0x0004) {
+
+	if (subtype == 0x0001)
+	  workingPtr->handled = aim_parse_msgerror_middle(sess, workingPtr);
+	else if (subtype == 0x0005)
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0004, 0x0005, workingPtr);
+	else if (subtype == 0x0006)
+	  workingPtr->handled = aim_parse_outgoing_im_middle(sess, workingPtr);
+	else if (subtype == 0x0007)
+	  workingPtr->handled = aim_parse_incoming_im_middle(sess, workingPtr);
+	else if (subtype == 0x000a)
+	  workingPtr->handled = aim_parse_missedcall(sess, workingPtr);
+	else if (subtype == 0x000c)
+	  workingPtr->handled = aim_parse_msgack_middle(sess, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_MSG, AIM_CB_MSG_DEFAULT, workingPtr);
+
+      } else if (family == 0x0007) {
+
+	if (subtype == 0x0003)
+	  workingPtr->handled = aim_parse_infochange(sess, workingPtr);
+	else if (subtype == 0x0005)
+	  workingPtr->handled = aim_parse_infochange(sess, workingPtr);
+	else if (subtype == 0x0007)
+	  workingPtr->handled = aim_parse_accountconfirm(sess, workingPtr);
 	break;
-      }	
+
+      } else if (family == 0x0009) {
+
+	if (subtype == 0x0001)
+	  workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
+	else if (subtype == 0x0003)
+	  workingPtr->handled = aim_parse_bosrights(sess, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_BOS, AIM_CB_BOS_DEFAULT, workingPtr);
+
+      } else if (family == 0x000a) {
+
+	if (subtype == 0x0001)
+	  workingPtr->handled = aim_parse_searcherror(sess, workingPtr);
+	else if (subtype == 0x0003)
+	  workingPtr->handled = aim_parse_searchreply(sess, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_LOK, AIM_CB_LOK_DEFAULT, workingPtr);
+
+      } else if (family == 0x000b) {
+
+	if (subtype == 0x0001)
+	  workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
+	else if (subtype == 0x0002)
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x000b, 0x0002, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_STS, AIM_CB_STS_DEFAULT, workingPtr);
+
+      } else if (family == 0x000d) {
+
+	if (subtype == 0x0009)
+	  workingPtr->handled = aim_chatnav_parse_info(sess, workingPtr);
+
+      } else if (family == 0x000e) {
+
+	if (subtype == 0x0002)
+	  workingPtr->handled = aim_chat_parse_infoupdate(sess, workingPtr);
+	else if (subtype == 0x0003)
+	  workingPtr->handled = aim_chat_parse_joined(sess, workingPtr);
+	else if (subtype == 0x0004)
+	  workingPtr->handled = aim_chat_parse_leave(sess, workingPtr);
+	else if (subtype == 0x0006)
+	  workingPtr->handled = aim_chat_parse_incoming(sess, workingPtr);
+
+      } else if (family == 0x0013) {
+
+	faimdprintf(sess, 0, "lalala: 0x%04x/0x%04x\n", family, subtype);
+
+      } else if (family == 0x0017) {	/* New login protocol */
+
+	if (subtype == 0x0001)
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0x0001, workingPtr);
+	else if (subtype == 0x0003)
+	  workingPtr->handled = aim_authparse(sess, workingPtr);
+	else if (subtype == 0x0007)
+	  workingPtr->handled = aim_authkeyparse(sess, workingPtr);
+	else
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
+
+      } else if (family == AIM_CB_FAM_SPECIAL) {
+
+	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+
+      }
+
+      /* Try it raw and see if we can get it to happen... */
+      if (!workingPtr->handled) /* XXX this is probably bad. */
+	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+
     }
   }
 
@@ -1030,6 +890,11 @@ faim_internal int aim_negchan_middle(struct aim_session_t *sess,
   unsigned short code = 0;
   rxcallback_t userfunc = NULL;
   int ret = 1;
+
+  /* Used only by the older login protocol */
+  /* XXX remove this special case? */
+  if (command->conn->type == AIM_CONN_TYPE_AUTH)
+    return aim_authparse(sess, command);
 
   tlvlist = aim_readtlvchain(command->data, command->commandlen);
 
