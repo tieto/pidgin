@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,7 +27,7 @@
 
 /**
  * An option for an account.
- * 
+ *
  * This is set by protocol plugins, and appears in the account settings
  * dialogs.
  */
@@ -187,7 +187,7 @@ const char *gaim_account_option_get_setting(const GaimAccountOption *option);
  * Returns the default boolean value for an account option.
  *
  * @param option The account option.
- * 
+ *
  * @return The default boolean value.
  */
 gboolean gaim_account_option_get_default_bool(const GaimAccountOption *option);
@@ -196,7 +196,7 @@ gboolean gaim_account_option_get_default_bool(const GaimAccountOption *option);
  * Returns the default integer value for an account option.
  *
  * @param option The account option.
- * 
+ *
  * @return The default integer value.
  */
 int gaim_account_option_get_default_int(const GaimAccountOption *option);
@@ -205,7 +205,7 @@ int gaim_account_option_get_default_int(const GaimAccountOption *option);
  * Returns the default string value for an account option.
  *
  * @param option The account option.
- * 
+ *
  * @return The default string value.
  */
 const char *gaim_account_option_get_default_string(

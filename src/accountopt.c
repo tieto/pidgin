@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -49,7 +49,7 @@ gaim_account_option_bool_new(const char *text, const char *pref_name,
 							 gboolean default_value)
 {
 	GaimAccountOption *option;
-	
+
 	option = gaim_account_option_new(GAIM_PREF_BOOLEAN, text, pref_name);
 
 	if (option == NULL)
@@ -65,7 +65,7 @@ gaim_account_option_int_new(const char *text, const char *pref_name,
 							int default_value)
 {
 	GaimAccountOption *option;
-	
+
 	option = gaim_account_option_new(GAIM_PREF_INT, text, pref_name);
 
 	if (option == NULL)
@@ -81,7 +81,7 @@ gaim_account_option_string_new(const char *text, const char *pref_name,
 							   const char *default_value)
 {
 	GaimAccountOption *option;
-	
+
 	option = gaim_account_option_new(GAIM_PREF_STRING, text, pref_name);
 
 	if (option == NULL)
