@@ -267,7 +267,7 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 		kill(req->dns_pid, SIGKILL);
 		return -1;
 	}
-	
+
 	gaim_debug(GAIM_DEBUG_INFO, "dns",
 			   "Successfully sent DNS request to child %d\n", req->dns_pid);
 	return 0;
@@ -303,7 +303,7 @@ static void release_dns_child(pending_dns_request_t *req)
 			req->inpa = gaim_input_add(req->fd_out, GAIM_INPUT_READ, host_resolved, req);
 			g_free(r);
 		}
-		
+
 	} else {
 		req->host = NULL;
 		req->callback = NULL;
@@ -421,10 +421,10 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 {
 	pending_dns_request_t *req = NULL;
 	dns_params_t dns_params;
-        
-        char *host_temp = g_strdup(hostname);
+
+	char *host_temp = g_strdup(hostname);
 	strncpy(dns_params.hostname, g_strstrip(host_temp), sizeof(dns_params.hostname)-1);
-        g_free(host_temp);
+	g_free(host_temp);
 	dns_params.hostname[sizeof(dns_params.hostname)-1] = '\0';
 	dns_params.port = port;
 
@@ -469,9 +469,9 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 
 		/* We need to create a new child. */
 		req = g_new(pending_dns_request_t,1);
-		
+
 		cope_with_gdb_brokenness();
-	
+
 		req->dns_pid=fork();
 		if(req->dns_pid==0) {
 			const int zero = 0;
@@ -530,7 +530,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 #if HAVE_GETADDRINFO
 				g_snprintf(servname, sizeof(servname), "%d", dns_params.port);
 				memset(&hints,0,sizeof(hints));
-				
+
 				/* This is only used to convert a service
 				 * name to a port number. As we know we are
 				 * passing a number already, we know this
@@ -939,7 +939,7 @@ proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			gaim_debug(GAIM_DEBUG_WARNING, "http proxy",
 					   "Connect would have blocked.\n");
-			
+
 			if (phb->port != 80) {
 				/* we need to do CONNECT first */
 				phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE,
