@@ -361,7 +361,7 @@ gboolean meify(char *message)
 	/* k, so now we've gotten past all the HTML crap. */
 	if (!*c)
 		return FALSE;
-	if (!strncmp(c, "/me ", 4)) {
+	if (!strncasecmp(c, "/me ", 4)) {
 		sprintf(c, "%s", c + 4);
 		return TRUE;
 	} else
