@@ -73,7 +73,8 @@ static void cancel_all () {
 
 	while (m) {
 		meter = m->data;
-		cancel_signon(NULL, meter);
+		if (gaim_connection_get_state(meter->account->gc) != GAIM_CONNECTED)
+			cancel_signon(NULL, meter);
 		m = m->next;
 	}
 }
