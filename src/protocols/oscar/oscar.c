@@ -4346,16 +4346,13 @@ static void oscar_set_info(struct gaim_connection *gc, char *text) {
 			msg = g_convert(text, strlen(text), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 			aim_bos_setprofile(od->sess, od->conn, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 			g_free(msg);
-			gc->away = g_strndup(text, od->rights.maxsiglen/2);
 		} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
 			msg = g_convert(text, strlen(text), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 			aim_bos_setprofile(od->sess, od->conn, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 			g_free(msg);
-			gc->away = g_strndup(text, od->rights.maxsiglen);
 		} else {
 			msglen = strlen(text);
 			aim_bos_setprofile(od->sess, od->conn, "us-ascii", text, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
-			gc->away = g_strndup(text, od->rights.maxsiglen);
 		}
 
 		if (msglen > od->rights.maxsiglen) {
