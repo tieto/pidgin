@@ -2503,7 +2503,7 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	 * parse-icq-status-message function knows if it is putting it's message in 
 	 * an info window because the name will _not_ be in od->evilhack.  For getting 
 	 * only the away message the contact's UIN is put in od->evilhack. */
-	if (budlight = find_buddy(gc, who)) {
+	if ((budlight = find_buddy(gc, who))) {
 		if ((budlight->uc >> 7) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
 			if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
 				g_show_info_text(gc, who, 0, buf, NULL);

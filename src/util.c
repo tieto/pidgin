@@ -928,7 +928,7 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 
 gchar *strdup_withhtml(const gchar *src)
 {
-	char *sp, *dest;
+	gchar *sp, *dest;
 	gulong destsize;
 
 	/*
@@ -936,7 +936,7 @@ gchar *strdup_withhtml(const gchar *src)
 	 * additional length of "<BR>" over "\n"), account for the
 	 * terminator, malloc the space and call strncpy_withhtml.
 	 */
-	for(destsize = 0, sp = src; (sp = strchr(sp, '\n')) != NULL; ++sp, ++destsize)
+	for(destsize = 0, sp = (gchar *)src; (sp = strchr(sp, '\n')) != NULL; ++sp, ++destsize)
 		;
 	destsize *= 3;
 	destsize += strlen(src) + 1;

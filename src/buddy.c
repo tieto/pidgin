@@ -37,6 +37,7 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>

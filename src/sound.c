@@ -56,17 +56,17 @@
  * per pounce. NULL option means it doesn't get displayed in the sound *
  * preferences box */
 struct sound_struct sounds[NUM_SOUNDS] = {
-	N_("Buddy logs in"), OPT_SOUND_LOGIN, BuddyArrive, sizeof(BuddyArrive),
-	N_("Buddy logs out"), OPT_SOUND_LOGOUT, BuddyLeave, sizeof(BuddyLeave),
-	N_("Message received"), OPT_SOUND_RECV, Receive, sizeof(Receive),
-	N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive),
-	N_("Message sent"), OPT_SOUND_SEND, Send, sizeof(Send),
-	N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, BuddyArrive, sizeof(BuddyArrive),
-	N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave),
-	N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, Send, sizeof(Send),
-	N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, Receive, sizeof(Receive),
-	NULL, 0, RedAlert, sizeof(RedAlert),
-	N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, Receive, sizeof(Receive)
+	{N_("Buddy logs in"), OPT_SOUND_LOGIN, BuddyArrive, sizeof(BuddyArrive)},
+	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, BuddyLeave, sizeof(BuddyLeave)},
+	{N_("Message received"), OPT_SOUND_RECV, Receive, sizeof(Receive)},
+	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive)},
+	{N_("Message sent"), OPT_SOUND_SEND, Send, sizeof(Send)},
+	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, BuddyArrive, sizeof(BuddyArrive)},
+	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave)},
+	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, Send, sizeof(Send)},
+	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, Receive, sizeof(Receive)},
+	{NULL, 0, RedAlert, sizeof(RedAlert)},
+	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, Receive, sizeof(Receive)}
 };
 
 static int check_dev(char *dev)

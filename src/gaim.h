@@ -345,6 +345,8 @@ extern void remove_chat_buddy(struct conversation *, char *, char *);
 /* Functions in conversation.c */
 extern void write_to_conv(struct conversation *, char *, int, char *, time_t, int);
 extern struct conversation *find_conversation(char *);
+extern void set_anim();
+extern void set_blist_tab();
 
 /* Functions in dialogs.c */
 extern void g_show_info_text(struct gaim_connection *, char *, int, char *, ...);

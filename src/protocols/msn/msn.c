@@ -1242,7 +1242,6 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		char hippy[2048];
 		char *rru;
 		char *passport;
-		char *filename;
 
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
@@ -1250,7 +1249,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		passport = tmp;
 		
-		snprintf(hippy, sizeof(hippy), "%s%d%s", md->mspauth, time(NULL) - md->sl, gc->password);
+		snprintf(hippy, sizeof(hippy), "%s%lu%s", md->mspauth, time(NULL) - md->sl, gc->password);
 
 		md5_init(&st);
 		md5_append(&st, (const md5_byte_t *)hippy, strlen(hippy));

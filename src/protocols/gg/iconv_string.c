@@ -74,7 +74,7 @@ int iconv_string (const char* tocode, const char* fromcode,
   {
     size_t count = 0;
     char tmpbuf[tmpbufsize];
-    const char* inptr = start;
+    char* inptr = (char *)start;
     size_t insize = end-start;
     while (insize > 0) {
       char* outptr = tmpbuf;
@@ -126,7 +126,7 @@ int iconv_string (const char* tocode, const char* fromcode,
   iconv(cd,NULL,NULL,NULL,NULL); /* return to the initial state */
   /* Do the conversion for real. */
   {
-    const char* inptr = start;
+    char* inptr = (char *)start;
     size_t insize = end-start;
     char* outptr = result;
     size_t outsize = length;
