@@ -53,6 +53,16 @@ gboolean gaim_core_init(const char *ui);
 void gaim_core_quit(void);
 
 /**
+ * Iterates once through the gaim mainloop.
+ *
+ * This is in actuality a wrapper around glib's mainloop iteration
+ * function, but provides a nice, healthy level of abstraction.
+ *
+ * All UIs not using glib must call this in a timer.
+ */
+void gaim_core_mainloop_iteration(void);
+
+/**
  * Returns the ID of the UI that is using the core.
  *
  * @return The ID of the UI that is currently using the core.

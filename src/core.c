@@ -120,6 +120,12 @@ gaim_core_quit(void)
 	_core = NULL;
 }
 
+void
+gaim_core_mainloop_iteration(void)
+{
+	g_main_context_iteration(g_main_context_default(), FALSE);
+}
+
 const char *
 gaim_core_get_ui(void)
 {
