@@ -926,8 +926,6 @@ static void gaimrc_read_options(FILE *f)
 					display_options & OPT_DISP_IGNORE_COLOUR);
 			gaim_prefs_set_bool("/core/conversations/im/show_login",
 					display_options & OPT_DISP_SHOW_LOGON);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/show_smileys",
-					display_options & OPT_DISP_SHOW_SMILEY);
 			gaim_prefs_set_bool("/core/conversations/chat/show_join",
 					display_options & OPT_DISP_CHAT_LOGON);
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/button_type",
@@ -1013,8 +1011,6 @@ static void gaimrc_read_options(FILE *f)
 					convo_options & OPT_CONVO_SHOW_TIME);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
 					convo_options & OPT_CONVO_IGNORE_COLOUR);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/show_smileys",
-					convo_options & OPT_CONVO_SHOW_SMILEY);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_fonts",
 					convo_options & OPT_CONVO_IGNORE_FONTS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_font_sizes",

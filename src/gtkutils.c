@@ -68,9 +68,6 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_smileys"))
-		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
-
 	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
 					 G_CALLBACK(url_clicked_cb), NULL);
 

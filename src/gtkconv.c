@@ -5637,27 +5637,6 @@ spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-show_smileys_pref_cb(const char *name, GaimPrefType type, gpointer value,
-					 gpointer data)
-{
-	GList *cl;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
-		conv = (GaimConversation *)cl->data;
-
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->imhtml), (gboolean)GPOINTER_TO_INT(value));
-		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->entry), (gboolean)GPOINTER_TO_INT(value));
-	}
-}
-
-static void
 tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 				 gpointer data)
 {
@@ -5869,7 +5848,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/show_smileys", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
@@ -5922,8 +5900,6 @@ gaim_gtk_conversations_init(void)
 								icons_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_smileys",
-								show_smileys_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_timestamps",
 								show_timestamps_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/html_shortcuts",

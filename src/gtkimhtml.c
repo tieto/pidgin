@@ -968,7 +968,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 	imhtml->text_cursor = gdk_cursor_new (GDK_XTERM);
 
-	imhtml->show_smileys = TRUE;
 	imhtml->show_comments = TRUE;
 
 	imhtml->zoom = 1.0;
@@ -2323,7 +2322,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			pos += tlen;
 			if(tag)
 				g_free(tag); /* This was allocated back in VALID_TAG() */
-		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
+		} else if (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
 
 			gchar *sml = NULL;
@@ -2448,12 +2447,6 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
-}
-
-void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
-					gboolean          show)
-{
-	imhtml->show_smileys = show;
 }
 
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
@@ -3475,11 +3468,6 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GtkWidget *icon = NULL;
 	GtkTextChildAnchor *anchor;
 	char *unescaped = gaim_unescape_html(smiley);
-
-	if (!imhtml->show_smileys) {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, strlen(smiley));
-		return;
-	}
 
 	anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 	g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", unescaped, g_free);

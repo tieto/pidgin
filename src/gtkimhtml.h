@@ -75,7 +75,6 @@ struct _GtkIMHtml {
 	GtkSmileyTree *default_smilies;
 	char *protocol_name;
 
-	gboolean show_smileys;
 	gboolean show_comments;
 
 	gboolean html_shortcuts;
@@ -190,8 +189,6 @@ void       gtk_imhtml_associate_smiley (GtkIMHtml *imhtml,
 					gchar *sml, GtkIMHtmlSmiley *smiley);
 
 void       gtk_imhtml_remove_smileys   (GtkIMHtml *imhtml);
-
-void       gtk_imhtml_show_smileys     (GtkIMHtml *imhtml, gboolean show);
 
 void       gtk_imhtml_show_comments    (GtkIMHtml *imhtml, gboolean show);
 

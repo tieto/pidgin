@@ -91,7 +91,9 @@ static guint auto_resp_pref_id = 0;
 static GtkTreeIter *prefs_notebook_add_page(const char*, GdkPixbuf*,
 											GtkWidget*, GtkTreeIter*,
 											GtkTreeIter*, int);
+#if 0 /* PREFSLASH04 */
 static GtkWidget *show_color_pref(GtkWidget *, gboolean);
+#endif
 static void delete_prefs(GtkWidget *, void *);
 static void update_plugin_list(void *data);
 
@@ -755,28 +757,25 @@ GtkWidget *messages_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
-	/*
-	  gaim_gtk_prefs_checkbox(_("Show graphical _smileys"),
-	  "/gaim/gtk/conversations/show_smileys", vbox);
-	*/
 	gaim_gtk_prefs_checkbox(_("Show _timestamp on messages"),
 			"/gaim/gtk/conversations/show_timestamps", vbox);
-	/*
+#if 0 /* PREFSLASH04 */
 	  gaim_gtk_prefs_checkbox(_("Show _URLs as links"),
 			"/gaim/gtk/conversations/show_urls_as_links", vbox);
-	*/
+#endif /* PREFSLASH04 */
 #ifdef USE_GTKSPELL
 	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
 			"/gaim/gtk/conversations/spellcheck", vbox);
 #endif
-	/*	vbox = gaim_gtk_make_frame (ret, _("Ignore"));
+#if 0 /* PREFSLASH04 */
+	vbox = gaim_gtk_make_frame (ret, _("Ignore"));
 	gaim_gtk_prefs_checkbox(_("Ignore c_olors"),
 			"/gaim/gtk/conversations/ignore_colors", vbox);
 	gaim_gtk_prefs_checkbox(_("Ignore font _faces"),
 			"/gaim/gtk/conversations/ignore_fonts", vbox);
 	gaim_gtk_prefs_checkbox(_("Ignore font si_zes"),
 			"/gaim/gtk/conversations/ignore_font_sizes", vbox);
-	*/
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Ignore formatting on incoming messages"), NULL, vbox);
 	gtk_widget_show_all(ret);
 	return ret;
@@ -831,7 +830,7 @@ GtkWidget *list_page() {
 
 	g_list_free(l);
 
-	/*	
+#if 0 /* PREFSLASH04 */
 	  vbox = gaim_gtk_make_frame (ret, _("Buddy List Toolbar"));
 	  gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 	  "/gaim/gtk/blist/button_style",
@@ -840,17 +839,17 @@ GtkWidget *list_page() {
 	  _("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
 	  _("None"), GAIM_BUTTON_NONE,
 	  NULL);
-	*/
+#endif /* PREFSLASH04 */
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/blist/raise_on_events", vbox);
 
-	/*	
+#if 0 /* PREFSLASH04 */
 	  vbox = gaim_gtk_make_frame (ret, _("Group Display"));
 	  gaim_gtk_prefs_checkbox(_("Show _numbers in groups"),
 	  "/gaim/gtk/blist/show_group_count", vbox);
-	*/
+#endif /* PREFSLASH04 */
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Display"));
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
@@ -873,7 +872,7 @@ GtkWidget *conv_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *label;
-	GtkWidget *close_checkbox, *icons_checkbox;
+	GtkWidget *close_checkbox;/*, *icons_checkbox;*/
 	GtkWidget *tabs_checkbox, *same_checkbox;
 	GtkSizeGroup *sg;
 	GList *names = NULL;
@@ -893,10 +892,10 @@ GtkWidget *conv_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	/*
+#if 0 /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Send _URLs as links"),
 				  "/core/conversations/send_urls_as_links", vbox);
-	*/
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
 
@@ -939,7 +938,7 @@ GtkWidget *conv_page() {
 
 	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
-	/*
+#if 0 /* PREFSLASH04 */
 	icons_checkbox = gaim_gtk_prefs_checkbox(_("Show status _icons on tabs"),
 									"/gaim/gtk/conversations/icons_on_tabs",
 									vbox);
@@ -950,7 +949,7 @@ GtkWidget *conv_page() {
 
 	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), icons_checkbox);
-	*/
+#endif /* PREFSLASH04 */
 
 	gtk_widget_show_all(ret);
 
@@ -960,7 +959,9 @@ GtkWidget *conv_page() {
 GtkWidget *im_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
+#if 0 /* PREFSLASH04 */
 	GtkWidget *widge;
+#endif /* PREFSLASH04 */
 	GtkSizeGroup *sg;
 
 	ret = gtk_vbox_new(FALSE, 18);
@@ -968,7 +969,8 @@ GtkWidget *im_page() {
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	/*vbox = gaim_gtk_make_frame (ret, _("Window"));
+#if 0 /* PREFSLASH04 */
+	vbox = gaim_gtk_make_frame (ret, _("Window"));
 	widge = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/im/button_type",
 			_("Pictures"), GAIM_BUTTON_IMAGE,
@@ -990,17 +992,18 @@ GtkWidget *im_page() {
 	gaim_gtk_prefs_checkbox(_("Hide window on _send"),
 			"/gaim/gtk/conversations/im/hide_on_send", vbox);
 	gtk_widget_show (vbox);
-	*/
+#endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Icons"));
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
 	gaim_gtk_prefs_checkbox(_("Enable buddy icon a_nimation"),
 			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
 
-	/*vbox = gaim_gtk_make_frame (ret, _("Display"));
+#if 0 /* PREFSLASH04 */
+	vbox = gaim_gtk_make_frame (ret, _("Display"));
 	gaim_gtk_prefs_checkbox(_("Show _logins in window"),
 			"/core/conversations/im/show_login", vbox);
-	*/
+#endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Typing Notification"));
 	gaim_gtk_prefs_checkbox(_("Notify buddies that you are _typing to them"),
 			"/core/conversations/im/send_typing", vbox);
@@ -1012,14 +1015,16 @@ GtkWidget *im_page() {
 GtkWidget *chat_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
+#if 0 /* PREFSLASH04 */
 	GtkWidget *dd;
+#endif /* PREFSLASH04 */
 	GtkSizeGroup *sg;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-	/*
+#if 0 /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Window"));
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/chat/button_type",
@@ -1045,14 +1050,14 @@ GtkWidget *chat_page() {
 			"/gaim/gtk/conversations/chat/tab_completion", vbox);
 	gaim_gtk_prefs_checkbox(_("_Old-style tab completion"),
 			"/gaim/gtk/conversations/chat/old_tab_complete", vbox);
-	*/
+#endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
-	/*	
+#if 0 /* PREFSLASH04 */
 	  gaim_gtk_prefs_checkbox(_("_Show people joining in window"),
 			"/core/conversations/chat/show_join", vbox);
 	gaim_gtk_prefs_checkbox(_("_Show people leaving in window"),
 			"/core/conversations/chat/show_leave", vbox);
-	*/
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Co_lorize screen names"),
 			"/gaim/gtk/conversations/chat/color_nicks", vbox);
 
@@ -1468,10 +1473,10 @@ GtkWidget *logging_page() {
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
 	gtk_widget_set_sensitive(box, syslog_enabled);
 
-/*
+#if 0 /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("I_ndividual log file for each buddy's signons"),
 				   "/gaim/gtk/logging/individual_logs", vbox);
-*/
+#endif /* PREFSLASH04 */
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1514,9 +1519,10 @@ GtkWidget *sound_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Sound Options"));
-	/*	gaim_gtk_prefs_checkbox(_("Sounds when you _log in"),
+#if 0 /* PREFSLASH04 */
+	gaim_gtk_prefs_checkbox(_("Sounds when you _log in"),
 				   "/gaim/gtk/sound/signon", vbox);
-	*/
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Sounds when conversation has _focus"),
 				   "/gaim/gtk/sound/conv_focus", vbox);
 	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
@@ -1576,6 +1582,7 @@ GtkWidget *sound_page() {
 	return ret;
 }
 
+#if 0 /* PREFSLASH04 */
 static void
 auto_resp_changed_cb(const char *name, GaimPrefType type, gpointer value,
 		gpointer data)
@@ -1585,6 +1592,7 @@ auto_resp_changed_cb(const char *name, GaimPrefType type, gpointer value,
 
 	gtk_widget_set_sensitive(hbox, enabled);
 }
+#endif /* PREFSLASH04 */
 
 GtkWidget *away_page() {
 	GtkWidget *ret;
@@ -1602,26 +1610,26 @@ GtkWidget *away_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Away"));
-	/*	
+#if 0 /* PREFSLASH04 */
 	  gaim_gtk_prefs_checkbox(_("_Sending messages removes away status"),
 	  "/core/conversations/away_back_on_send", vbox);
-	*/
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("_Queue new messages when away"),
 				   "/gaim/gtk/away/queue_messages", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-response"));
-	/*	
+#if 0 /* PREFSLASH04 */
 	  hbox = gtk_hbox_new(FALSE, 0);
 	  gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	  gaim_gtk_prefs_labeled_spin_button(hbox, _("Seconds before _resending:"),
 	  "/core/away/auto_response/sec_before_resend",
 	  1, 24 * 60 * 60, sg);
-	*/
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("_Send auto-response"),
 				  "/core/away/auto_response/enabled", vbox);
 	gaim_gtk_prefs_checkbox(_("_Only send auto-response when idle"),
 				  "/core/away/auto_response/idle_only", vbox);
-	/*	
+#if 0 /* PREFSLASH04 */
 	  gaim_gtk_prefs_checkbox(_("Send auto-response in _active conversations"),
 				  "/core/away/auto_response/in_active_conv", vbox);
 	if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))
@@ -1629,7 +1637,7 @@ GtkWidget *away_page() {
 
 	auto_resp_pref_id = gaim_prefs_connect_callback("/core/away/auto_response/enabled",
 												  auto_resp_changed_cb, hbox);
-	*/
+#endif /* PREFSLASH04 */
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle _time reporting:"),
@@ -2852,6 +2860,7 @@ void set_default_away(GtkWidget *w, gpointer data)
 		gaim_prefs_set_string("/core/away/default_message", "");
 }
 
+#if 0 /* PREFSLASH04 */
 static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 {
 	/* more stuff stolen from X-Chat */
@@ -2905,6 +2914,7 @@ static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 	gtk_widget_show(swid);
 	return swid;
 }
+#endif /* PREFSLASH04 */
 
 void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 {
