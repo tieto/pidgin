@@ -146,8 +146,6 @@ void gaim_prefs_init() {
 	gaim_prefs_add_bool("/core/sound/use_custom", FALSE);
 	gaim_prefs_add_string("/core/sound/command", "");
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
-
-	gaim_proxy_init();
 }
 
 static char *pref_full_name(struct gaim_pref *pref) {

@@ -885,8 +885,9 @@ int main(int argc, char *argv[])
 	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
 
 	gaim_prefs_init();
-	gaim_gtk_prefs_init();
+	gaim_proxy_init();
 
+	gaim_gtk_prefs_init();
 	gaim_gtk_conversation_init();
 
 	plugin_search_paths[0] = LIBDIR;
@@ -906,6 +907,7 @@ int main(int argc, char *argv[])
 		gaim_prefs_sync();
 	}
 
+	/* This kind of has to be here.. sucks, but it's important. */
 	gaim_gtk_debug_init();
 
 	gaim_accounts_load();
