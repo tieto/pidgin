@@ -1607,7 +1607,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			 away ?
 				_("<i>User has no away message</i>") :
 				_("<i>No Information Provided</i>"),
-			 away ? legend : NULL,
+			 legend,
 			 NULL);
 
 	return 1;
@@ -2269,11 +2269,13 @@ static void oscar_get_info(struct gaim_connection *g, char *name) {
 		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_GENERALINFO);
 }
 
+/*
 static void oscar_get_away_msg(struct gaim_connection *g, char *name) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (!odata->icq)
 		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_AWAYMESSAGE);
 }
+*/
 
 static void oscar_set_dir(struct gaim_connection *g, char *first, char *middle, char *last,
 			  char *maiden, char *city, char *state, char *country, int web) {
@@ -2913,7 +2915,7 @@ void oscar_init(struct prpl *ret) {
 	ret->set_info = oscar_set_info;
 	ret->get_info = oscar_get_info;
 	ret->set_away = oscar_set_away;
-	ret->get_away = oscar_get_away_msg;
+	ret->get_away = NULL;
 	ret->set_dir = oscar_set_dir;
 	ret->get_dir = NULL; /* Oscar really doesn't have this */
 	ret->dir_search = oscar_dir_search;
