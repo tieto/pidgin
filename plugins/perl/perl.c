@@ -92,6 +92,7 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 typedef struct
 {
 	GaimPlugin *plugin;
+	char *package;
 	char *load_sub;
 	char *unload_sub;
 
@@ -111,7 +112,7 @@ xs_init(pTHX)
 
 	/* This one allows dynamic loading of perl modules in perl
            scripts by the 'use perlmod;' construction*/
-	newXS ("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
+	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
 }
 
 
@@ -130,7 +131,10 @@ perl_init(void)
 		   the file conents. This allows to have a realy local $/
 		   without introducing temp variables to hold the old
 		   value. Just a question of style:) */
-		"sub load_file{"
+		"package Gaim::PerlLoader;"
+		"use Symbol;"
+
+		"sub load_file {"
 		  "my $f_name=shift;"
 		  "local $/=undef;"
 		  "open FH,$f_name or return \"__FAILED__\";"
@@ -138,16 +142,28 @@ perl_init(void)
 		  "close FH;"
 		  "return $_;"
 		"}"
-		"sub load_n_eval{"
-		  "my $f_name=shift;"
+
+		"sub destroy_package {"
+		  "eval { $_[0]->UNLOAD() if $_[0]->can('UNLOAD'); };"
+		  "Symbol::delete_package($_[0]);"
+		"}"
+
+		"sub load_n_eval {"
+		  "my ($f_name, $package) = @_;"
+		  "destroy_package($package);"
 		  "my $strin=load_file($f_name);"
 		  "return 2 if($strin eq \"__FAILED__\");"
-		  "eval $strin;"
-		  "if($@){"
-		    /*"  #something went wrong\n"*/
-		    "Gaim::debug(\"perl\", \"Errors loading file $f_name:\\n$@\");"
-		    "return 1;"
+		  "my $eval = qq{package $package; $strin;};"
+
+		  "{"
+		  "  eval $eval;"
 		  "}"
+
+		  "if($@) {"
+		    /*"  #something went wrong\n"*/
+		    "die(\"Errors loading file $f_name: $@\");"
+		  "}"
+
 		  "return 0;"
 		"}"
 	};
@@ -199,6 +215,23 @@ gaim_perl_callXS(void (*subaddr)(pTHX_ CV *cv), CV *cv, SV **mark)
 	PUTBACK;
 }
 
+static void
+normalize_script_name(char *name)
+{
+	char *c;
+
+	c = strrchr(name, '.');
+
+	if (c != NULL)
+		*c = '\0';
+
+	for (c = name; *c != '\0'; c++)
+	{
+		if (*c == '_' && !g_ascii_isalnum(*c))
+			*c = '_';
+	}
+}
+
 static gboolean
 probe_perl_plugin(GaimPlugin *plugin)
 {
@@ -242,6 +275,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 		{
 			GaimPluginInfo *info;
 			GaimPerlScript *gps;
+			char *basename;
 			int len;
 
 			gaim_debug(GAIM_DEBUG_INFO, "perl", "Found plugin info\n");
@@ -256,6 +290,11 @@ probe_perl_plugin(GaimPlugin *plugin)
 											   PERL_PLUGIN_ID);
 
 			gps->plugin = plugin;
+
+			basename = g_path_get_basename(plugin->path);
+			normalize_script_name(basename);
+			gps->package = g_strdup_printf("Gaim::Script::%s", basename);
+			g_free(basename);
 
 			/* We know this one exists. */
 			key = hv_fetch(plugin_info, "name", strlen("name"), 0);
@@ -279,10 +318,12 @@ probe_perl_plugin(GaimPlugin *plugin)
 				info->version = g_strdup(SvPV(*key, len));
 
 			if ((key = hv_fetch(plugin_info, "load", strlen("load"), 0)))
-				gps->load_sub = g_strdup(SvPV(*key, len));
+				gps->load_sub = g_strdup_printf("%s::%s", gps->package,
+												SvPV(*key, len));
 
 			if ((key = hv_fetch(plugin_info, "unload", strlen("unload"), 0)))
-				gps->unload_sub = g_strdup(SvPV(*key, len));
+				gps->unload_sub = g_strdup_printf("%s::%s", gps->package,
+												  SvPV(*key, len));
 
 			plugin->info = info;
 			info->extra_info = gps;
@@ -301,7 +342,7 @@ static gboolean
 load_perl_plugin(GaimPlugin *plugin)
 {
 	GaimPerlScript *gps = (GaimPerlScript *)plugin->info->extra_info;
-	char *atmp[2] = { plugin->path, NULL };
+	char *atmp[3] = { plugin->path, NULL, NULL };
 
 	if (gps == NULL || gps->load_sub == NULL)
 		return FALSE;
@@ -311,9 +352,11 @@ load_perl_plugin(GaimPlugin *plugin)
 	if (my_perl == NULL)
 		perl_init();
 
-	plugin->handle = plugin->path;
+	plugin->handle = gps;
 
-	execute_perl("load_n_eval", 1, atmp);
+	atmp[1] = gps->package;
+
+	execute_perl("Gaim::PerlLoader::load_n_eval", 2, atmp);
 
 	{
 		dSP;
@@ -340,6 +383,28 @@ load_perl_plugin(GaimPlugin *plugin)
 	}
 
 	return TRUE;
+}
+
+static void
+destroy_package(const char *package)
+{
+	dSP;
+
+	ENTER;
+	SAVETMPS;
+
+	PUSHMARK(SP);
+	XPUSHs(sv_2mortal(newSVpv(package, strlen(package))));
+	PUTBACK;
+
+	perl_call_pv("Gaim::PerlLoader::destroy_package",
+				 G_VOID | G_EVAL | G_DISCARD);
+
+	SPAGAIN;
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
 }
 
 static gboolean
@@ -371,7 +436,6 @@ unload_perl_plugin(GaimPlugin *plugin)
 					   gps->load_sub, SvPV(ERRSV, len));
 		}
 
-
 		PUTBACK;
 		FREETMPS;
 		LEAVE;
@@ -379,6 +443,8 @@ unload_perl_plugin(GaimPlugin *plugin)
 
 	gaim_perl_signal_clear_for_plugin(plugin);
 	gaim_perl_timeout_clear_for_plugin(plugin);
+
+	destroy_package(gps->package);
 
 	return TRUE;
 }
@@ -417,6 +483,9 @@ destroy_perl_plugin(GaimPlugin *plugin)
 
 			if (gps->unload_sub != NULL)
 				g_free(gps->unload_sub);
+
+			if (gps->package != NULL)
+				g_free(gps->package);
 
 			g_free(gps);
 			plugin->info->extra_info = NULL;
