@@ -836,7 +836,7 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		tmp = g_utf8_next_char(text);
 		memmove(text, tmp, strlen(tmp) + 1);
 	}
-
+	
 	if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
 		gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in paste_received_cb\n");
 		g_free(text);
@@ -2546,6 +2546,17 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				ws[0] = '\0';
 				wpos = 0;
 				/* NEW_BIT (NEW_TEXT_BIT); */
+			} else {
+				/* A newline is defined by HTML as whitespace, which means we have to replace it with a word boundary.
+				 * word breaks vary depending on the language used, so the correct thing to do is to use Pango to determine
+				 * what language this is, determine the proper word boundary to use, and insert that. I'm just going to insert
+				 * a space instead.  What are the non-English speakers going to do?  Complain in a language I'll understand?
+				 * Bu-wahaha! */
+				ws[wpos] = ' ';
+				wpos++;
+				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+				ws[0] = '\0';
+				wpos = 0;
 			}
 			c++;
 			pos++;
