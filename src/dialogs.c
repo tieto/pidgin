@@ -1260,7 +1260,6 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("New away message"));
 	g_signal_connect(G_OBJECT(ca->window), "delete_event",
 			   G_CALLBACK(destroy_dialog), ca->window);
-	gtk_widget_realize(ca->window);
 
 	tbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
