@@ -4,7 +4,7 @@
  * Copyright (C) 2000-2001, Eric Warmenhoven (original code)
  * Copyright (C) 2002, Etan Reisner <deryni@eden.rutgers.edu> (rewritten code)
  * Copyright (C) 2003, Christian Hammond (update for changed API)
- * Copyright (C) 2003, Brian Tarricon <bjt23@cornell.edu> (mostly rewritten)
+ * Copyright (C) 2003, Brian Tarricone <bjt23@cornell.edu> (mostly rewritten)
  * Copyright (C) 2003, Mark Doliner (minor cleanup)
  *
  * This program is free software; you can redistribute it and/or modify

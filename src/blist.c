@@ -875,8 +875,13 @@ GSList *gaim_group_get_accounts(struct group *g)
 	GaimBlistNode *child = ((GaimBlistNode *)g)->child;
 
 	while (child) {
-		if (!g_slist_find(l, ((struct buddy*)child)->account))
-			l = g_slist_append(l, ((struct buddy*)child)->account);
+		GaimAccount *account = NULL;
+		if (GAIM_BLIST_NODE_IS_BUDDY(child))
+			account = ((struct buddy *)child)->account;
+		else if (GAIM_BLIST_NODE_IS_CHAT(child))
+			account = ((struct chat *)child)->account;
+		if (!g_slist_find(l, account))
+			l = g_slist_append(l, account);
 		child = child->next;
 	}
 	return l;

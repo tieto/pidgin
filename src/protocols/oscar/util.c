@@ -81,7 +81,7 @@ faim_export int aimutil_itemcnt(char *toSearch, char dl)
 	return curCount;
 }
 
-faim_export char *aimutil_itemidx(char *toSearch, int index, char dl)
+faim_export char *aimutil_itemindex(char *toSearch, int index, char dl)
 {
 	int curCount;
 	char *next;

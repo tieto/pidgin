@@ -13,13 +13,13 @@ version 0.67
 	* Danish translation updated (Morten Brix Pedersen)
 	* Dutch translation updated (Vincent van Adrighem)
 	* German translation updated (Bjoern Voigt)
+	* Hindi translation added (Guntupalli Karunakar)
 	* Hungarian translation updated (Zoltan Sutto)
 	* Italian translation updated (Luca Beltrame, Claudio Satriano)
 	* Portuguese (Brazilian) translation updated (Mauricio de Lemos Rodrigues Collares 
 	  Neto)
 	* Serbian translation updated (Danilo Segan)
 	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
-	* Hindi translation added (Guntupalli Karunakar)
 
 version 0.66 (07/18/2003):
 	* Freebsd compile fix (Matthew Luckie)

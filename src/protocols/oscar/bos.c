@@ -129,7 +129,7 @@ faim_export int aim_bos_changevisibility(aim_session_t *sess, aim_conn_t *conn, 
 	aim_putsnac(&fr->data, 0x0009, subtype, 0x00, snacid);
 
 	for (i = 0; (i < (listcount - 1)) && (i < 99); i++) {
-		tmpptr = aimutil_itemidx(localcpy, i, '&');
+		tmpptr = aimutil_itemindex(localcpy, i, '&');
 
 		aimbs_put8(&fr->data, strlen(tmpptr));
 		aimbs_putraw(&fr->data, tmpptr, strlen(tmpptr));

@@ -35,6 +35,10 @@
 #include <winsock.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* XXX adjust these based on autoconf-detected platform */
 typedef unsigned char fu8_t;
 typedef unsigned short fu16_t;
@@ -67,9 +71,12 @@ typedef fu16_t flap_seqnum_t;
 #define faim_internal
 #endif
 
+#ifndef FALSE
+#define FALSE (0)
+#endif
+
 #ifndef TRUE
-#define TRUE 1
-#define FALSE 0
+#define TRUE (!FALSE)
 #endif
 
 /* 
@@ -1433,11 +1440,15 @@ faim_export fu16_t aimutil_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_util_getlocalip(fu8_t *ip);
 faim_export int aimutil_tokslen(char *toSearch, int index, char dl);
 faim_export int aimutil_itemcnt(char *toSearch, char dl);
-faim_export char *aimutil_itemidx(char *toSearch, int index, char dl);
+faim_export char *aimutil_itemindex(char *toSearch, int index, char dl);
 
 faim_export int aim_snlen(const char *sn);
 faim_export int aim_sncmp(const char *sn1, const char *sn2);
 
 #include <aim_internal.h>
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __AIM_H__ */
