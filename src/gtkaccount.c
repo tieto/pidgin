@@ -98,11 +98,9 @@ proto_name(int proto)
  * Add/Modify Account dialog
  **************************************************************************/
 static void
-__set_account_protocol(GtkWidget *item, GaimProtocol protocol)
+__set_account_protocol(GtkWidget *item, GaimProtocol protocol,
+					   AccountPrefsDialog *dialog)
 {
-	AccountPrefsDialog *dialog;
-	
-	dialog = g_object_get_data(G_OBJECT(item), "user_data");
 }
 
 static GtkWidget *
