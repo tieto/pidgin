@@ -199,13 +199,15 @@ set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 static void
 screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
-	if (dialog->ok_button == NULL)
-		return;
+	if (dialog->ok_button)
+		gtk_widget_set_sensitive(dialog->ok_button,
+				*gtk_entry_get_text(entry) != '\0');
+	if (dialog->register_button)
+		gtk_widget_set_sensitive(dialog->register_button,
+				*gtk_entry_get_text(entry) != '\0');
 
-	gtk_widget_set_sensitive(dialog->ok_button,
-				 *gtk_entry_get_text(entry) != '\0');
 }
-	
+
 static void buddy_icon_filesel_delete_cb (GtkWidget *w, AccountPrefsDialog *dialog)
 {
 	if (dialog->buddy_icon_filesel != NULL)
@@ -1223,6 +1225,9 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 			G_CALLBACK(register_account_prefs_cb), dialog);
 
 	dialog->register_button = button;
+
+	if (dialog->account == NULL)
+		gtk_widget_set_sensitive(button, FALSE);
 
 	if (dialog->prpl_info->register_user == NULL)
 		gtk_widget_hide(button);
