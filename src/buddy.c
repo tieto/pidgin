@@ -1295,7 +1295,7 @@ void rem_bp(GtkWidget *w, struct buddy_pounce *b)
 	save_prefs();
 }
 
-void do_pounce(char *name)
+void do_pounce(char *name, int when)
 {
         char *who;
         
@@ -1311,6 +1311,8 @@ void do_pounce(char *name)
 		b = (struct buddy_pounce *)bp->data;
 		bp = bp->next; /* increment the list here because rem_bp can make our handle bad */
 
+		if (!(b->options & when)) continue;
+
 		u = find_user(b->pouncer, b->protocol); /* find our user */
 		if (u == NULL) continue;
 
@@ -1318,13 +1320,13 @@ void do_pounce(char *name)
 		if (u->gc == NULL) continue;
 		
                 if (!strcasecmp(who, normalize(b->name))) { /* find someone to pounce */
-			if (b->popup == 1)
+			if (b->options & OPT_POUNCE_POPUP)
 			{
 				c = find_conversation(name);
 				if (c == NULL)
 					c = new_conversation(name);
 			}
-			if (b->sendim == 1)
+			if (b->options & OPT_POUNCE_SEND_IM)
 			{
                         	c = find_conversation(name);
                         	if (c == NULL)
@@ -1333,7 +1335,7 @@ void do_pounce(char *name)
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL);
                                 serv_send_im(u->gc, name, b->message, 0);
 			}
-			if (b->cmd == 1)
+			if (b->options & OPT_POUNCE_COMMAND)
 			{
 				int pid = fork();
 
@@ -1350,7 +1352,8 @@ void do_pounce(char *name)
 				}
 			}
                         
-                        rem_bp(NULL, b);
+			if (!(b->options & OPT_POUNCE_SAVE))
+				rem_bp(NULL, b);
                         
                 }
         }

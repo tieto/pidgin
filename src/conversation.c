@@ -35,6 +35,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "convo.h"
 #include "gtkspell.h"
+#include "prpl.h"
 
 #include "pixmaps/underline.xpm"
 #include "pixmaps/bold.xpm"
@@ -1646,6 +1647,7 @@ static void create_convo_menu(struct conversation *cnv)
 	GtkWidget *menu, *opt;
 	GSList *g = connections;
 	struct gaim_connection *c;
+	char buf[2048];
 
 	if (g_slist_length(g) < 2)
 		gtk_widget_hide(cnv->menu->parent);
@@ -1654,7 +1656,8 @@ static void create_convo_menu(struct conversation *cnv)
 
 		while (g) {
 			c = (struct gaim_connection *)g->data;
-			opt = gtk_menu_item_new_with_label(c->username);
+			g_snprintf(buf, sizeof buf, "%s (%s)", c->username, (*c->prpl->name)());
+			opt = gtk_menu_item_new_with_label(buf);
 			gtk_object_set_user_data(GTK_OBJECT(opt), cnv);
 			gtk_signal_connect(GTK_OBJECT(opt), "activate",
 					   GTK_SIGNAL_FUNC(convo_sel_send), c);

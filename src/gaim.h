@@ -240,20 +240,25 @@ struct log_conversation {
         struct log_conversation *next;
 };
 
+#define OPT_POUNCE_POPUP    0x001
+#define OPT_POUNCE_SEND_IM  0x002
+#define OPT_POUNCE_COMMAND  0x004
+
+#define OPT_POUNCE_SIGNON   0x010
+#define OPT_POUNCE_UNAWAY   0x020
+#define OPT_POUNCE_UNIDLE   0x040
+
+#define OPT_POUNCE_SAVE     0x100
+
 struct buddy_pounce {
         char name[80];
         char message[2048];
 	char command[2048];
-	int popup;
-	int sendim;
-	int cmd;
 	
 	char pouncer[80];
 	int protocol;
 
-	int signon;
-	int unaway;
-	int unidle;
+	int options;
 };
 
 struct away_message {
@@ -648,7 +653,7 @@ extern void add_category(char *);
 extern void build_edit_tree();
 extern void remove_person(struct group *, struct buddy *);
 extern void remove_category(struct group *);
-extern void do_pounce(char *);
+extern void do_pounce(char *, int);
 extern void do_bp_menu();
 extern struct buddy *find_buddy(struct gaim_connection *, char *);
 extern struct group *find_group(struct gaim_connection *, char *);

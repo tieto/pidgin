@@ -33,6 +33,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "convo.h"
+#include "prpl.h"
 
 #include "pixmaps/tb_forward.xpm"
 #include "pixmaps/join.xpm"
@@ -88,6 +89,7 @@ static void create_joinchat_menu(GtkWidget *box)
 	GtkWidget *opt;
 	GSList *c = connections;
 	struct gaim_connection *g;
+	char buf[2048];
 
 	optmenu = gtk_option_menu_new();
 	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 0);
@@ -96,7 +98,8 @@ static void create_joinchat_menu(GtkWidget *box)
 
 	while (c) {
 		g = (struct gaim_connection *)c->data;
-		opt = gtk_menu_item_new_with_label(g->username);
+		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, (*g->prpl->name)());
+		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), g);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(joinchat_choose), g);
 		gtk_menu_append(GTK_MENU(menu), opt);

@@ -122,6 +122,7 @@ struct addbp {
 	GtkWidget *p_signon;
 	GtkWidget *p_unaway;
 	GtkWidget *p_unidle;
+	GtkWidget *save;
 	GtkWidget *menu;
 
 	struct aim_user *user;
@@ -1009,35 +1010,28 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 
 	bp->protocol = b->user->protocol;
 
+	bp->options = 0;
+
 	if (GTK_TOGGLE_BUTTON(b->openwindow)->active)
-		bp->popup = 1;
-	else
-		bp->popup = 0;
+		bp->options |= OPT_POUNCE_POPUP;
 
 	if (GTK_TOGGLE_BUTTON(b->sendim)->active)
-		bp->sendim = 1;
-	else
-		bp->sendim = 0;
+		bp->options |= OPT_POUNCE_SEND_IM;
 	
 	if (GTK_TOGGLE_BUTTON(b->command)->active)
-		bp->cmd = 1;
-	else
-		bp->cmd = 0;
+		bp->options |= OPT_POUNCE_COMMAND;
 	
 	if (GTK_TOGGLE_BUTTON(b->p_signon)->active)
-		bp->signon = 1;
-	else
-		bp->signon = 0;
+		bp->options |= OPT_POUNCE_SIGNON;
 	
 	if (GTK_TOGGLE_BUTTON(b->p_unaway)->active)
-		bp->unaway = 1;
-	else
-		bp->unaway = 0;
+		bp->options |= OPT_POUNCE_UNAWAY;
 	
 	if (GTK_TOGGLE_BUTTON(b->p_unidle)->active)
-		bp->unidle = 1;
-	else
-		bp->unidle = 0;
+		bp->options |= OPT_POUNCE_UNIDLE;
+
+	if (GTK_TOGGLE_BUTTON(b->save)->active)
+		bp->options |= OPT_POUNCE_SAVE;
 
         buddy_pounces = g_list_append(buddy_pounces, bp);
 	
@@ -1210,6 +1204,15 @@ void show_new_bp(char *name)
         gtk_signal_connect(GTK_OBJECT(b->commentry), "activate",
                            GTK_SIGNAL_FUNC(do_new_bp), b);
         gtk_widget_show(b->commentry);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	b->save = gtk_check_button_new_with_label(_("Save this pounce after activation")); 
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->save), FALSE);
+	gtk_box_pack_start(GTK_BOX(vbox), b->save, FALSE, FALSE, 0);
+	gtk_widget_show(b->save);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);

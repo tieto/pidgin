@@ -336,8 +336,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			}
 		}
 		if (cnv != NULL) {
-			if (sound_options & OPT_SOUND_WHEN_AWAY)
-				play_sound(RECEIVE);
+			play_sound(RECEIVE);
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL);
 		}
 
@@ -454,7 +453,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 
 	if (!b->idle && idle) plugin_event(event_buddy_idle, gc, b->name, 0, 0);
 	if (b->idle && !idle) {
-                do_pounce(b->name);
+                do_pounce(b->name, OPT_POUNCE_UNIDLE);
 		plugin_event(event_buddy_unidle, gc, b->name, 0, 0);
 	}
 
@@ -462,7 +461,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
         b->evil = evil;
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
-                do_pounce(b->name);
+                do_pounce(b->name, OPT_POUNCE_UNAWAY);
 		plugin_event(event_buddy_back, gc, b->name, 0, 0);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
 		plugin_event(event_buddy_away, gc, b->name, 0, 0);
@@ -476,7 +475,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
         if (loggedin) {
                 if (!b->present) {
                         b->present = 1;
-                        do_pounce(b->name);
+                        do_pounce(b->name, OPT_POUNCE_SIGNON);
 			plugin_event(event_buddy_signon, gc, b->name, 0, 0);
                 }
         } else {

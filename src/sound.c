@@ -406,6 +406,9 @@ extern int logins_not_muted;
 void play_sound(int sound)
 {
 
+	if (awaymessage && !(sound_options & OPT_SOUND_WHEN_AWAY))
+		return;
+
 	switch(sound) {
 	case BUDDY_ARRIVE:
 		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted) {
