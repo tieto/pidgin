@@ -1,4 +1,4 @@
-/* $Id: libgg.c 2406 2001-09-29 23:06:30Z warmenhoven $ */
+/* $Id: libgg.c 2412 2001-10-01 06:56:34Z warmenhoven $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -31,7 +31,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <pwd.h>
-#include "endian.h"
+#include <glib.h>
 #include "libgg.h"
 
 int gg_debug_level = 0;
@@ -68,12 +68,14 @@ void gg_debug_real(int level, char *format, ...)
  */
 static inline unsigned long fix32(unsigned long x)
 {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
 	return x;
 #else
-	char *y = &x;
-
-	return (y[0] << 24 + y[1] << 16 + y[2] << 8 + y[3]);
+	return (unsigned long)
+		(((x & (unsigned long) 0x000000ffU) << 24) |
+                 ((x & (unsigned long) 0x0000ff00U) << 8) |
+                 ((x & (unsigned long) 0x00ff0000U) >> 8) |
+                 ((x & (unsigned long) 0xff000000U) >> 24));
 #endif		
 }
 
@@ -84,13 +86,13 @@ static inline unsigned long fix32(unsigned long x)
  */
 static inline unsigned short fix16(unsigned short x)
 {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
 	return x;
 #else
-	char *y = &x;
-
-	return (y[0] << 8 + y[1]);
-#endif	
+	return (unsigned short)
+		(((x & (unsigned short) 0x00ffU) << 8) |
+                 ((x & (unsigned short) 0xff00U) >> 8));
+#endif
 }
 
 /*
@@ -343,7 +345,7 @@ static void *gg_recv_packet(struct gg_session *sess)
 				return NULL;
 			}
 			if (errno != EINTR) {
-				/* errno = EINVAL; */
+//				errno = EINVAL;
 				free(buf);
 				return NULL;
 			}
@@ -838,6 +840,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 	if (h->type == GG_NOTIFY_REPLY) {
 		struct gg_notify_reply *n = p;
+		int count, i;
 
 		gg_debug(GG_DEBUG_MISC, "-- received a notify reply\n");
 		
@@ -847,8 +850,13 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 			free(h);
 			return -1;
 		}
+		count = h->length / sizeof(*n);
 		memcpy(e->event.notify, p, h->length);
-		e->event.notify[h->length / sizeof(*n)].uin = 0;
+		e->event.notify[count].uin = 0;
+		for (i = 0; i < count; i++) {
+			e->event.notify[i].uin = fix32(e->event.notify[i].uin);
+			e->event.notify[i].status = fix32(e->event.notify[i].status);
+		}
 	}
 
 	if (h->type == GG_STATUS) {
@@ -859,6 +867,8 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 		if (h->length >= sizeof(*s)) {
 			e->type = GG_EVENT_STATUS;
 			memcpy(&e->event.status, p, h->length);
+			e->event.status.uin = fix32(e->event.status.uin);
+			e->event.status.status = fix32(e->event.status.status);
 		}
 	}
 

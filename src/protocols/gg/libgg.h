@@ -1,4 +1,4 @@
-/* $Id: libgg.h 2406 2001-09-29 23:06:30Z warmenhoven $ */
+/* $Id: libgg.h 2412 2001-10-01 06:56:34Z warmenhoven $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>
