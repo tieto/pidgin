@@ -59,6 +59,7 @@ MSN_SMILEYS = \
 	msn_girl.png		\
 	msn_handcuffs.png	\
 	msn_heart.png		\
+	msn_highfive.png	\
 	msn_hot.png			\
 	msn_icon.png		\
 	msn_idea.png		\
