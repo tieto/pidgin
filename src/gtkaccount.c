@@ -138,7 +138,7 @@ __add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new(text);
+	label = gtk_label_new_with_mnemonic(text);
 	gtk_size_group_add_widget(dialog->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -400,7 +400,7 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Build the protocol options frame. */
 	g_snprintf(buf, sizeof(buf), _("%s Options"), dialog->plugin->info->name);
 
-	frame = gaim_gtk_make_frame(parent, _("Protocol Options"));
+	frame = gaim_gtk_make_frame(parent, buf);
 	dialog->protocol_frame =
 		gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
@@ -492,12 +492,81 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 }
 
+static GtkWidget *
+__make_proxy_dropdown(GaimAccount *account)
+{
+	GtkWidget *dropdown;
+	GtkWidget *menu;
+	GtkWidget *item;
+
+	dropdown = gtk_option_menu_new();
+	menu = gtk_menu_new();
+
+	/* Use Global Proxy Settings */
+	item = gtk_menu_item_new_with_label(_("Use Global Proxy Settings"));
+	g_object_set_data(G_OBJECT(item), "proxytype",
+					  GINT_TO_POINTER(GAIM_PROXY_USE_GLOBAL));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
+	/* No Proxy */
+	item = gtk_menu_item_new_with_label(_("No Proxy"));
+	g_object_set_data(G_OBJECT(item), "proxytype",
+					  GINT_TO_POINTER(GAIM_PROXY_NONE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
+	/* SOCKS 4 */
+	item = gtk_menu_item_new_with_label(_("SOCKS 4"));
+	g_object_set_data(G_OBJECT(item), "proxytype",
+					  GINT_TO_POINTER(GAIM_PROXY_SOCKS4));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
+	/* SOCKS 5 */
+	item = gtk_menu_item_new_with_label(_("SOCKS 5"));
+	g_object_set_data(G_OBJECT(item), "proxytype",
+					  GINT_TO_POINTER(GAIM_PROXY_SOCKS5));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
+	/* HTTP */
+	item = gtk_menu_item_new_with_label(_("HTTP"));
+	g_object_set_data(G_OBJECT(item), "proxytype",
+					  GINT_TO_POINTER(GAIM_PROXY_HTTP));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
+
+	return dropdown;
+}
+
 static void
 __add_proxy_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
+	GtkWidget *frame;
+	GtkWidget *vbox;
+	GtkWidget *dropdown;
+
 	if (dialog->proxy_frame != NULL)
 		gtk_widget_destroy(dialog->proxy_frame);
 
+	frame = gaim_gtk_make_frame(parent, _("Proxy Options"));
+	dialog->proxy_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+
+	gtk_box_reorder_child(GTK_BOX(parent), dialog->proxy_frame, 1);
+	gtk_widget_show(dialog->proxy_frame);
+
+	/* Main vbox */
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
+
+	/* Proxy Type drop-down. */
+	dropdown = __make_proxy_dropdown(dialog->account);
+
+	__add_pref_box(dialog, vbox, _("Proxy _type"), dropdown);
 }
 
 static void
@@ -505,6 +574,7 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
+	GtkWidget *main_vbox;
 	GtkWidget *vbox;
 	GtkWidget *bbox;
 	GtkWidget *dbox;
@@ -545,8 +615,13 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 #endif
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(win), vbox);
+	main_vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(win), main_vbox);
+	gtk_widget_show(main_vbox);
+
+	/* Setup the inner vbox */
+	vbox = gtk_vbox_new(FALSE, 18);
+	gtk_box_pack_start(GTK_BOX(main_vbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
 	/* Setup the top frames. */
@@ -560,24 +635,25 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	gtk_widget_show(disclosure);
 
 	/* Setup the box that the disclosure will cover. */
-	dbox = gtk_vbox_new(FALSE, 0);
+	dbox = gtk_vbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), dbox, FALSE, FALSE, 0);
 
 	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), dbox);
 
 	/** Setup the bottom frames. */
 	__add_protocol_options_frame(dialog, dbox);
+	__add_proxy_options_frame(dialog, dbox);
 
 	/* Separator... */
 	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(main_vbox), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
 
 	/* Setup the button box */
 	bbox = gtk_hbutton_box_new();
 	gtk_box_set_spacing(GTK_BOX(bbox), 6);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(main_vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
 
 	/* Cancel button */
