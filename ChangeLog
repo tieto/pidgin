@@ -14,6 +14,7 @@ version 0.10.0:
 	* Redesigned conversation dialog
 	* Removed the Lag-O-Meter
 	* Socks 4/5 Proxy works
+	* Buddy Pounces are now saved in .gaimrc
 	
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features

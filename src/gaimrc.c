@@ -146,6 +146,8 @@ static int gaimrc_parse_tag(FILE *f)
 		return 2;
 	} else if (!strcmp(tag, "plugins")) {
 		return 3;
+	} else if (!strcmp(tag, "pounce")) {
+		return 4;
 	}
 
 	return -1;
@@ -236,6 +238,72 @@ static void gaimrc_write_away(FILE *f)
 	}
 	else
 		fprintf(f, "\tmessage { boring default } { %s }\n", BORING_DEFAULT_AWAY_MSG);
+
+	fprintf(f, "}\n");
+}
+
+static void gaimrc_read_pounce(FILE *f)
+{
+	struct parse *p;
+	char buf[4096];
+	struct buddy_pounce *b;
+
+	buf[0] = 0;
+	
+	while (buf[0] != '}')
+	{
+		if (!fgets(buf, sizeof(buf), f))
+			return;
+		
+		if (buf[0] == '}')
+			return;
+
+		p = parse_line(buf);
+		if (!strcmp(p->option, "entry"))
+		{
+			b = g_new0(struct buddy_pounce, 1);
+
+			g_snprintf(b->name, sizeof(b->name),  "%s", p->value[0]);
+			g_snprintf(b->message, sizeof(b->message), "%s", p->value[1]);
+
+			b->popup = atoi(p->value[2]);
+			b->sendim = atoi(p->value[3]);
+		
+			filter_break(b->message);
+			buddy_pounces = g_list_append(buddy_pounces, b);
+		}
+	}
+}
+
+static void gaimrc_write_pounce(FILE *f)
+{
+	GList *pnc = buddy_pounces;
+	struct buddy_pounce *b;
+
+	fprintf(f, "pounce {\n");
+
+	if (pnc)
+	{
+		while (pnc) {
+			char *str1, *str2;
+			int popup, sendim;
+
+			b = (struct buddy_pounce *)pnc->data;
+
+			str1 = escape_text2(b->name);
+			str2 = escape_text2(b->message);
+			popup = b->popup;
+			sendim = b->sendim;
+
+			fprintf(f, "\tentry { %s } { %s } { %d } { %d }\n", str1, str2, popup, sendim);
+
+			/* escape_text2 uses malloc(), so we don't want to g_free these */
+			free(str1);
+			free(str2);
+	
+			pnc = pnc->next;
+		}
+	}
 
 	fprintf(f, "}\n");
 }
@@ -607,6 +675,9 @@ void load_prefs()
 					gaimrc_read_plugins(f);
 					break;
 #endif
+				case 4:
+					gaimrc_read_pounce(f);
+					break;
 				default:
 					/* NOOP */
 					break;
@@ -628,15 +699,15 @@ void save_prefs()
 		if ((f = fopen(buf,"w"))) {
 			fprintf(f, "# .gaimrc v%d\n", 2);
 			gaimrc_write_users(f);
-                        gaimrc_write_options(f);
-                        gaimrc_write_away(f);
+			gaimrc_write_options(f);
+			gaimrc_write_away(f);
 #ifdef GAIM_PLUGINS
 			gaimrc_write_plugins(f);
 #endif
-                        fclose(f);
-                        chmod(buf, S_IRUSR | S_IWUSR);
-                }
-                
+			gaimrc_write_pounce(f);
+			fclose(f);
+			chmod(buf, S_IRUSR | S_IWUSR);
+		}
 	}
 }
 

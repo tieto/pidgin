@@ -2,7 +2,6 @@
 	Ability to merge gaim, toc, aim2, aim4 buddylists
 	Third sound option for people without soundcards who still want
 		sound events.  Make a PC Speaker Beep (^G / Char 7)
-	Save Buddy Pounces 
 	Save Buddy Chats
 	Execute Command on Buddy Pounce
 	Hmm, fix <BODY BGCOLOR=""></BODY>  hehe. Doesnt seem to want to
@@ -14,3 +13,4 @@
 		on your buddy list.  This won't be too hard it'll just
 		take a bit of work.  Maybe we'll save this one for the
 		release after our next release.
+	Fix deletion of buddy pounces
