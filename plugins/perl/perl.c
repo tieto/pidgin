@@ -79,6 +79,7 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "internal.h"
 #include "debug.h"
 #include "plugin.h"
+#include "signals.h"
 
 #include "perl-common.h"
 #include "perl-handlers.h"
@@ -202,7 +203,6 @@ probe_perl_plugin(GaimPlugin *plugin)
 	 *     PerlInterpreter every time I probed a plugin */
 	PerlInterpreter *prober = perl_alloc();
 	char *argv[] = {"", plugin->path };
-	int count;
 	gboolean status = TRUE;
 	HV *plugin_info;
 

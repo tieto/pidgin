@@ -39,7 +39,6 @@ gaim_perl_bless_object(void *object, const char *stash_name)
 {
 	HV *stash;
 	HV *hv;
-	void *hash;
 
 	if (object_stashes == NULL)
 	{

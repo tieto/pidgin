@@ -1,8 +1,11 @@
 TYPEMAP
-gboolean            T_BOOL
-Gaim::Account       T_GaimObj
-Gaim::Connection    T_GaimObj
-Gaim::Plugin        T_GaimObj
+gboolean                 T_BOOL
+Gaim::Account            T_GaimObj
+Gaim::Connection         T_GaimObj
+Gaim::Plugin             T_GaimObj
+Gaim::BuddyList::Group   T_GaimObj
+Gaim::BuddyList::Buddy   T_GaimObj
+Gaim::BuddyList::Chat    T_GaimObj
 
 INPUT
 
@@ -13,4 +16,4 @@ T_GaimObj
 OUTPUT
 
 T_GaimObj
-	$arg = gaim_perl_bless_object($var, "\$type\");
+	$arg = gaim_perl_bless_object($var, \"$type\");

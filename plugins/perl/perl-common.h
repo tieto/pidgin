@@ -6,14 +6,6 @@
 #include <perl.h>
 #include <glib.h>
 
-
-//#define plain_bless(object, stash) \
-//	sv_bless(sv_setref_pv(newRV((object))))
-
-//#define plain_bless(object, stash) \
-//	((object) == NULL ? &PL_sv_undef : \
-//	gaim_perl_bless_plain((stash), (object)))
-
 #define is_hvref(o) \
 	((o) && SvROK(o) && SvRV(o) && (SvTYPE(SvRV(o)) == SVt_PVHV))
 
