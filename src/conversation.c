@@ -2858,7 +2858,7 @@ gaim_conversations_init(void)
 										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "chat-topic-changed",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 2,
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_STRING),
