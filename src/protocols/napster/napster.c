@@ -230,6 +230,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 {
 	GaimConnection *gc = data;
 	struct nap_data *ndata = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimConversation *c;
 	gchar *buf, *buf2, *buf3, **res;
 	unsigned short header[2];
@@ -283,12 +284,12 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 201: /* MSG_SERVER_SEARCH_RESULT */
 		res = g_strsplit(buf, " ", 0);
-		serv_got_update(gc, res[0], TRUE, 0);
+		gaim_prpl_got_user_status(account, res[0], "online", NULL);
 		g_strfreev(res);
 		break;
 
 	case 202: /* MSG_SERVER_SEARCH_END */
-		serv_got_update(gc, buf, FALSE, 0);
+		gaim_prpl_got_user_status(account, res[0], "offline", NULL);
 		break;
 
 	case 205: /* MSG_CLIENT_PRIVMSG */
@@ -302,14 +303,14 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 209: /* MSG_SERVER_USER_SIGNON */
 		/* USERNAME SPEED */
 		res = g_strsplit(buf, " ", 2);
-		serv_got_update(gc, res[0], TRUE, 0);
+		gaim_prpl_got_user_status(account, res[0], "online", NULL);
 		g_strfreev(res);
 		break;
 
 	case 210: /* MSG_SERVER_USER_SIGNOFF */
 		/* USERNAME SPEED */
 		res = g_strsplit(buf, " ", 2);
-		serv_got_update(gc, res[0], FALSE, 0);
+		gaim_prpl_got_user_status(account, res[0], "offline", NULL);
 		g_strfreev(res);
 		break;
 

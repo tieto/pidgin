@@ -181,16 +181,6 @@ static GList *irc_actions(GaimPlugin *plugin, gpointer context)
 	return list;
 }
 
-#if 0
-static GList *irc_blist_node_menu(GaimBlistNode *node)
-{
-	GList *m = NULL;
-	GaimBlistNodeAction *act;
-
-	return m;
-}
-#endif
-
 static GList *irc_chat_join_info(GaimConnection *gc)
 {
 	GList *m = NULL;

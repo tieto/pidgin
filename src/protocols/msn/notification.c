@@ -449,24 +449,30 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	GaimConnection *gc;
+	GaimAccount *account;
 
-	gc = cmdproc->session->account->gc;
+	account = cmdproc->session->account;
 
-	serv_got_update(gc, cmd->params[0], FALSE, 0);
+	gaim_prpl_got_user_status(account, cmd->params[0], "offline", NULL);
 }
 
+/*
+ * XXX - There is a bit of code duplication between this function
+ * and nln_cmd.  Someone should do something about that.
+ */
 static void
 iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
+	GaimAccount *account;
 	GaimConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
 	const char *status, *state, *passport, *friendly;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	account = session->account;
+	gc = gaim_account_get_connection(account);
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
@@ -485,15 +491,16 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_object(user, msnobj);
 	}
 
-/*	what does this do?????
-	if ((b = gaim_find_buddy(gc->account, passport)) != NULL)
-		status |= ((((b->uc) >> 1) & 0xF0) << 1); */
+	/* XXX - What does this do?????
+	if ((b = gaim_find_buddy(account, passport)) != NULL)
+		status |= ((((b->uc) >> 1) & 0xF0) << 1);
+	*/
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status = "busy";
 	else if (!g_ascii_strcasecmp(state, "IDL"))
 	{
-		/* do something about idle time? */
+		/* XXX - Do something about idle time? */
 		status = "idle";
 	}
 	else if (!g_ascii_strcasecmp(state, "BRB"))
@@ -507,8 +514,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else
 		status = "available";
 
-	/* serv_got_update(gc, passport, TRUE, 0, 0, idle, status); */
-	gaim_prpl_got_user_status(gc->account, passport, status, NULL);
+	gaim_prpl_got_user_status(account, passport, status, NULL);
 }
 
 static void
@@ -530,6 +536,7 @@ static void
 nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
+	GaimAccount *account;
 	GaimConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
@@ -539,7 +546,8 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *status;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	account = session->account;
+	gc = gaim_account_get_connection(account);
 
 	state    = cmd->params[0];
 	passport = cmd->params[1];
@@ -570,7 +578,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		status = "busy";
 	else if (!g_ascii_strcasecmp(state, "IDL"))
 	{
-		/* do something about idle time? */
+		/* XXX - Do something about idle time? */
 		status = "idle";
 	}
 	else if (!g_ascii_strcasecmp(state, "BRB"))
@@ -584,8 +592,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else
 		status = "available";
 
-	/* serv_got_update(gc, passport, TRUE, 0, 0, idle, status); */
-	gaim_prpl_got_user_status(gc->account, passport, status, NULL);
+	gaim_prpl_got_user_status(account, passport, status, NULL);
 }
 
 static void

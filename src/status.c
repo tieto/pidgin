@@ -225,6 +225,7 @@ gaim_status_type_new_with_attrs(GaimStatusPrimitive primitive,
 	status_type = gaim_status_type_new_full(primitive, id, name, saveable,
 			user_settable, independent);
 
+	/* Add the first attribute */
 	gaim_status_type_add_attr(status_type, attr_id, attr_name, attr_value);
 
 	va_start(args, attr_value);
@@ -286,25 +287,6 @@ gaim_status_type_add_attr(GaimStatusType *status_type, const char *id,\
 }
 
 void
-gaim_status_type_add_attrs(GaimStatusType *status_type, const char *id,
-		const char *name, GaimValue *value, ...)
-{
-	va_list args;
-
-	g_return_if_fail(status_type != NULL);
-	g_return_if_fail(id          != NULL);
-	g_return_if_fail(name        != NULL);
-	g_return_if_fail(value       != NULL);
-
-	/* Add the first. */
-	gaim_status_type_add_attr(status_type, id, name, value);
-
-	va_start(args, value);
-	gaim_status_type_add_attrs_vargs(status_type, args);
-	va_end(args);
-}
-
-void
 gaim_status_type_add_attrs_vargs(GaimStatusType *status_type, va_list args)
 {
 	const char *id, *name;
@@ -322,6 +304,25 @@ gaim_status_type_add_attrs_vargs(GaimStatusType *status_type, va_list args)
 
 		gaim_status_type_add_attr(status_type, id, name, value);
 	}
+}
+
+void
+gaim_status_type_add_attrs(GaimStatusType *status_type, const char *id,
+		const char *name, GaimValue *value, ...)
+{
+	va_list args;
+
+	g_return_if_fail(status_type != NULL);
+	g_return_if_fail(id          != NULL);
+	g_return_if_fail(name        != NULL);
+	g_return_if_fail(value       != NULL);
+
+	/* Add the first attribute */
+	gaim_status_type_add_attr(status_type, id, name, value);
+
+	va_start(args, value);
+	gaim_status_type_add_attrs_vargs(status_type, args);
+	va_end(args);
 }
 
 GaimStatusPrimitive
