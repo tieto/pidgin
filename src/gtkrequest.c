@@ -205,6 +205,14 @@ multifield_cancel_cb(GtkWidget *button, GaimGtkRequestData *data)
 	gaim_request_close(GAIM_REQUEST_FIELDS, data);
 }
 
+static void
+destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
+					  GaimGtkRequestData *data)
+{
+	multifield_cancel_cb(NULL, data);
+}
+
+
 #define STOCK_ITEMIZE(r, l) \
 	if (!strcmp((r), text)) \
 		return (l);
@@ -990,6 +998,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
+	g_signal_connect(G_OBJECT(win), "delete_event",
+					 G_CALLBACK(destroy_multifield_cb), data);
+
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(win), hbox);
@@ -1091,7 +1102,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 			col_num++;
 
-			if(col_num >= cols)
+			if (col_num >= cols)
 				col_num = 0;
 		}
 
