@@ -853,7 +853,7 @@ gboolean ref_protocol(struct prpl *p) {
 #ifdef GAIM_PLUGINS
 	if(p->plug) { /* This protocol is a plugin */
 		prpl_accounts[p->protocol]++;
-		debug_printf("Protocol %s now in use by %d connections.\n", p->name, prpl_accounts[p->protocol]);
+		debug_printf("Protocol %s refcount now %d\n", p->name, prpl_accounts[p->protocol]);
 		if(!p->plug->handle) { /*But the protocol isn't yet loaded */
 			unload_protocol(p);
 			if (load_prpl(p))
@@ -868,7 +868,7 @@ void unref_protocol(struct prpl *p) {
 #ifdef GAIM_PLUGINS
 	if(p->plug) { /* This protocol is a plugin */
 		prpl_accounts[p->protocol]--;
-		debug_printf("Protocol %s now in use by %d connections.\n", p->name, prpl_accounts[p->protocol]);
+		debug_printf("Protocol %s refcount now %d\n", p->name, prpl_accounts[p->protocol]);
 		if(prpl_accounts[p->protocol] == 0) { /* No longer needed */
 			debug_printf("Throwing out %s protocol plugin\n", p->name);
 			do_ask_cancel_by_handle(p->plug->handle);

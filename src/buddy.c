@@ -1782,7 +1782,20 @@ create_prpl_icon(struct gaim_account *account)
 	struct prpl *prpl = find_prpl(account->protocol);
 	GdkPixbuf *status = NULL;
 	char *filename = NULL;
-	const char *protoname = prpl->list_icon(account, NULL);
+	const char *protoname = NULL;
+
+	/* this is so we can get the icon when the prpl isn't loaded.
+	 * it's not as bad as it looks, since most of the time this function
+	 * is called, the prpl is already loaded, so it'll just increment and
+	 * decrement the refcount, won't have to go through the hassle of
+	 * actually loading and unloading the prpl.  the few times it actually
+	 * does that, it saves us from crashing */
+	if(prpl && prpl->list_icon) {
+		ref_protocol(prpl);
+		protoname = prpl->list_icon(account, NULL);
+		unref_protocol(prpl);
+	}
+
 	/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and 
 	   then it will look up protoname from the theme */
 	if (!strcmp(protoname, "aim")) {
