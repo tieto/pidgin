@@ -11,8 +11,12 @@
 #define FAIM_INTERNAL
 #include <aim.h>
 
-/*
+/**
  * Subtype 0x0006 - Request information about your email account
+ *
+ * @param sess The oscar session.
+ * @param conn The email connection for this session.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_email_sendcookies(aim_session_t *sess, aim_conn_t *conn)
 {
@@ -56,10 +60,16 @@ faim_export int aim_email_sendcookies(aim_session_t *sess, aim_conn_t *conn)
 }
 
 
-/*
+/**
  * Subtype 0x0007 - Receive information about your email account
- * So I don't even know if you can have 2 different 16 byte keys, 
+ * So I don't even know if you can have multiple 16 byte keys, 
  * but this is coded so it will handle that, and handle it well.
+ * This tells you if you have unread mail or not, the URL you 
+ * should use to access that mail, and the domain name for the 
+ * email account (screenname@domainname.com).  If this is the 
+ * first 0x0007 SNAC you've received since you signed on, or if 
+ * this is just a periodic status update, this will also contain 
+ * the number of unread emails that you have.
  */
 static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
@@ -67,6 +77,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	struct aim_emailinfo *new;
 	aim_tlvlist_t *tlvlist;
 	fu8_t *cookie8, *cookie16;
+	int tmp, havenewmail = 0; /* Used to tell the client we have _new_ mail */
 
 	cookie8 = aimbs_getraw(bs, 8); /* Possibly the code used to log you in to mail? */
 	cookie16 = aimbs_getraw(bs, 16); /* Mail cookie sent above */
@@ -83,36 +94,48 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 		/* We don't already have info, so create a new struct for it */
 		if (!(new = malloc(sizeof(struct aim_emailinfo))))
 			return -ENOMEM;
-
+		memset(new, 0, sizeof(struct aim_emailinfo));
 		new->next = sess->emailinfo;
 		sess->emailinfo = new;
 	}
 
 	new->cookie8 = cookie8;
 	new->cookie16 = cookie16;
-	new->url = NULL;
-	new->nummsgs = 0;
-	new->unread = 0;
-	new->domain = NULL;
-	new->flag = 0;
 
 	aimbs_get16(bs); /* Number of TLVs to follow */
 	tlvlist = aim_readtlvchain(bs);
 
+	tmp = aim_gettlv16(tlvlist, 0x0080, 1);
+	if (tmp) {
+		if (new->nummsgs < tmp)
+			havenewmail = 1;
+		new->nummsgs = tmp;
+	} else {
+		/* If they don't send a 0x0080 TLV, it means we definately have new mail */
+		/* (ie. this is not just another status update) */
+		havenewmail = 1;
+		new->nummsgs++; /* We know we have at least 1 new email */
+	}
 	new->url = aim_gettlv_str(tlvlist, 0x0007, 1);
-	new->nummsgs = aim_gettlv16(tlvlist, 0x0080, 1);
-	new->unread = aim_gettlv8(tlvlist, 0x0081, 1);
+	if (!(new->unread = aim_gettlv8(tlvlist, 0x0081, 1))) {
+		havenewmail = 0;
+		new->nummsgs = 0;
+	}
 	new->domain = aim_gettlv_str(tlvlist, 0x0082, 1);
 	new->flag = aim_gettlv16(tlvlist, 0x0084, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, new);
+		return userfunc(sess, rx, new, havenewmail);
 
 	return 0;
 }
 
-/*
+/**
  * Subtype 0x0016 - Send something or other
+ *
+ * @param sess The oscar session.
+ * @param conn The email connection for this session.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_email_activate(aim_session_t *sess, aim_conn_t *conn)
 {

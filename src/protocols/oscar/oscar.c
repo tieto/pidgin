@@ -2801,18 +2801,20 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
 	struct aim_emailinfo *emailinfo;
+	int havenewmail;
 
 	va_start(ap, fr);
 	emailinfo = va_arg(ap, struct aim_emailinfo *);
+	havenewmail = va_arg(ap, int);
 	va_end(ap);
 
-	while (emailinfo) {
-		debug_printf("Got email info. webmail address for screenname@%s is %s,  new email: %hd,  number new: %d,  flag is %d\n", emailinfo->domain, emailinfo->url, emailinfo->unread, emailinfo->nummsgs, emailinfo->flag);
-		if (emailinfo->unread)
-			connection_has_mail(gc, emailinfo->nummsgs ? emailinfo->nummsgs : -1, NULL, NULL, emailinfo->url);
-		else
+	if (emailinfo) {
+		debug_printf("Got email info. webmail address for screenname@%s is %s,  new email: %hd,  number new: %d,  flag is %d, havenewmail is %d\n", emailinfo->domain, emailinfo->url, emailinfo->unread, emailinfo->nummsgs, emailinfo->flag, havenewmail);
+		if (emailinfo->unread) {
+			if (havenewmail)
+				connection_has_mail(gc, emailinfo->nummsgs ? emailinfo->nummsgs : -1, NULL, NULL, emailinfo->url);
+		} else
 			connection_has_mail(gc, 0, NULL, NULL, emailinfo->url);
-		emailinfo = emailinfo->next;
 	}
 
 	return 1;
