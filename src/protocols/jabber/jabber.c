@@ -1205,6 +1205,59 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 		} else {
 			text = _("Authentication Failure");
 		}
+	} else if(!strcmp(packet->name, "stream:error")) {
+		if(xmlnode_get_child(packet, "bad-format")) {
+			text = _("Bad Format");
+		} else if(xmlnode_get_child(packet, "bad-namespace-prefix")) {
+			text = _("Bad Namespace Prefix");
+		} else if(xmlnode_get_child(packet, "conflict")) {
+			js->gc->wants_to_die = TRUE;
+			text = _("Resource Conflict");
+		} else if(xmlnode_get_child(packet, "connection-timeout")) {
+			text = _("Connection Timeout");
+		} else if(xmlnode_get_child(packet, "host-gone")) {
+			text = _("Host Gone");
+		} else if(xmlnode_get_child(packet, "host-unknown")) {
+			text = _("Host Unknown");
+		} else if(xmlnode_get_child(packet, "improper-addressing")) {
+			text = _("Improper Addressing");
+		} else if(xmlnode_get_child(packet, "internal-server-error")) {
+			text = _("Internal Server Error");
+		} else if(xmlnode_get_child(packet, "invalid-id")) {
+			text = _("Invalid ID");
+		} else if(xmlnode_get_child(packet, "invalid-namespace")) {
+			text = _("Invalid Namespace");
+		} else if(xmlnode_get_child(packet, "invalid-xml")) {
+			text = _("Invalid XML");
+		} else if(xmlnode_get_child(packet, "nonmatching-hosts")) {
+			text = _("Non-matching Hosts");
+		} else if(xmlnode_get_child(packet, "not-authorized")) {
+			text = _("Not Authorized");
+		} else if(xmlnode_get_child(packet, "policy-violation")) {
+			text = _("Policy Violation");
+		} else if(xmlnode_get_child(packet, "remote-connection-failed")) {
+			text = _("Remote Connection Failed");
+		} else if(xmlnode_get_child(packet, "resource-constraint")) {
+			text = _("Resource Constraint");
+		} else if(xmlnode_get_child(packet, "restricted-xml")) {
+			text = _("Restricted XML");
+		} else if(xmlnode_get_child(packet, "see-other-host")) {
+			text = _("See Other Host");
+		} else if(xmlnode_get_child(packet, "system-shutdown")) {
+			text = _("System Shutdown");
+		} else if(xmlnode_get_child(packet, "undefined-condition")) {
+			text = _("Undefined Condition");
+		} else if(xmlnode_get_child(packet, "unsupported-encoding")) {
+			text = _("Unsupported Encoding");
+		} else if(xmlnode_get_child(packet, "unsupported-stanza-type")) {
+			text = _("Unsupported Stanza Type");
+		} else if(xmlnode_get_child(packet, "unsupported-version")) {
+			text = _("Unsupported Version");
+		} else if(xmlnode_get_child(packet, "xml-not-well-formed")) {
+			text = _("XML Not Well Formed");
+		} else {
+			text = _("Stream Error");
+		}
 	}
 
 	if(text || cdata) {
