@@ -926,6 +926,10 @@ GtkWidget *conv_page() {
 	button = prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
 
+	/* XXX: grey this out when the above is unchecked */
+	button = prefs_checkbox(_("Show IMs and chats in _same tabbed window"),
+							"/core/conversations/combine_chat_im", vbox);
+
 	close_checkbox = prefs_checkbox(_("Show _close button on tabs"),
 									"/gaim/gtk/conversations/close_on_tabs",
 									vbox);
