@@ -2,21 +2,23 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.82cvs:
 	Gaim API:
-	* Removed multi.h
-	* Renamed ui.h to gtkdialogs.h
-	* Renamed show_info_dialog to gaim_gtkdialogs_info
-	* Renamed show_log_dialog to gaim_gtkdialogs_log
-	* Renamed show_warn_dialog to gaim_gtkdialogs_warn
-	* Renamed show_im_dialog to gaim_gtkdialogs_im
-	* Renamed gaim_gtkdialogs_new_im to gaim_gtkdialogs_im_with_user
-	* Renamed destroy_all_dialogs to gaim_gtkdialogs_destroy_all
-	* Renamed alias_dialog_bud to gaim_gtkdialogs_alias_buddy
-	* Renamed alias_dialog_contact to gaim_gtkdialogs_alias_contact
-	* Renamed alias_dialog_blist_chat to gaim_gtkdialogs_alias_chat
-	* Renamed show_confirm_del to gaim_gtkdialogs_remove_buddy
-	* Renamed show_confirm_del_group to gaim_gtkdialogs_remove_group
-	* Renamed show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
-	* Renamed show_confirm_del_contact to gaim_gtkdialogs_remove_contact
+	* Removed: gaim_gtk_get_dispstyle(), gaim_gtk_change_text()
+	* Added: gaim_gtkconv_button_new()
+	* Removed: multi.h
+	* Renamed: ui.h to gtkdialogs.h
+	* Renamed: show_info_dialog to gaim_gtkdialogs_info
+	* Renamed: show_log_dialog to gaim_gtkdialogs_log
+	* Renamed: show_warn_dialog to gaim_gtkdialogs_warn
+	* Renamed: show_im_dialog to gaim_gtkdialogs_im
+	* Renamed: gaim_gtkdialogs_new_im to gaim_gtkdialogs_im_with_user
+	* Renamed: destroy_all_dialogs to gaim_gtkdialogs_destroy_all
+	* Renamed: alias_dialog_bud to gaim_gtkdialogs_alias_buddy
+	* Renamed: alias_dialog_contact to gaim_gtkdialogs_alias_contact
+	* Renamed: alias_dialog_blist_chat to gaim_gtkdialogs_alias_chat
+	* Renamed: show_confirm_del to gaim_gtkdialogs_remove_buddy
+	* Renamed: show_confirm_del_group to gaim_gtkdialogs_remove_group
+	* Renamed: show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
+	* Renamed: show_confirm_del_contact to gaim_gtkdialogs_remove_contact
 
 	Signals:
 	* Added: conversation-updated for any update to the data associated
@@ -27,17 +29,17 @@ version 0.81 (08/05/2004):
 	* Most functions now have a void *data argument.
 
 	Blist API:
-	* Added gaim_buddy_get_contact_alias
-	* Renamed gaim_get_buddy_alias to gaim_buddy_get_alias
-	* Renamed gaim_get_buddy_alias_only to gaim_buddy_get_alias_only
+	* Added: gaim_buddy_get_contact_alias
+	* Renamed: gaim_get_buddy_alias to gaim_buddy_get_alias
+	* Renamed: gaim_get_buddy_alias_only to gaim_buddy_get_alias_only
 
 	Conversation API:
-	* Changed gaim_conv_chat_add_user(), added flags parameter
-	* Changed gaim_conv_chat_add_users(), added GList of flags parameter
-	* Changed gaim_conv_chat_get_users(), now returns a GList of
-	  GaimChatBuddy's
-	* Changed gaim_conv_chat_set_users() now expects a GList of
-	  GaimChatBuddy's
+	* Changed: gaim_conv_chat_add_user(), added flags parameter
+	* Changed: gaim_conv_chat_add_users(), added GList of flags parameter
+	* Changed: gaim_conv_chat_get_users(), now returns a GList of
+	  GaimConvChatBuddy's
+	* Changed: gaim_conv_chat_set_users() now expects a GList of
+	  GaimConvChatBuddy's
 	* Added: gaim_conv_chat_set_user_flags()
 	* Added: gaim_conv_chat_get_user_flags()
 	* Added: gaim_conv_chat_find_user()

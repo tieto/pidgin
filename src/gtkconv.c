@@ -3659,8 +3659,8 @@ setup_menubar(GaimConvWindow *win)
 	return gtkwin->menu.menubar;
 }
 
-static GtkWidget *
-new_gtkconv_button(const char *icon, const char *text, const char *tooltip, GtkTooltips *tooltips, void *callback, void *data)
+GtkWidget *
+gaim_gtkconv_button_new(const char *icon, const char *text, const char *tooltip, GtkTooltips *tooltips, void *callback, void *data)
 {
 	GtkWidget *button;
 	int buttons;
@@ -3701,49 +3701,49 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 	/* The buttons, from left to right */
 
 	/* Warn button */
-	gtkim->warn = new_gtkconv_button(GAIM_STOCK_WARN, _("Warn"),
+	gtkim->warn = gaim_gtkconv_button_new(GAIM_STOCK_WARN, _("Warn"),
 									_("Warn the user"),
 									gtkconv->tooltips, warn_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->warn, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkim->warn);
 
 	/* Block button */
-	gtkim->block = new_gtkconv_button(GAIM_STOCK_BLOCK, _("Block"),
+	gtkim->block = gaim_gtkconv_button_new(GAIM_STOCK_BLOCK, _("Block"),
 									_("Block the user"),
 									gtkconv->tooltips, block_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->block, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkim->block);
 
 	/* Send File button */
-	gtkim->send_file = new_gtkconv_button(GAIM_STOCK_FILE_TRANSFER, _("Send File"),
+	gtkim->send_file = gaim_gtkconv_button_new(GAIM_STOCK_FILE_TRANSFER, _("Send File"),
 									_("Send a file to the user"),
 									gtkconv->tooltips, send_file_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->send_file, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkim->send_file);
 
 	/* Add button */
-	gtkconv->add = new_gtkconv_button(GTK_STOCK_ADD, _("Add"),
+	gtkconv->add = gaim_gtkconv_button_new(GTK_STOCK_ADD, _("Add"),
 									_("Add the user to your buddy list"),
 									gtkconv->tooltips, add_remove_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkconv->add, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->add);
 
 	/* Remove button */
-	gtkconv->remove = new_gtkconv_button(GTK_STOCK_REMOVE, _("Remove"),
+	gtkconv->remove = gaim_gtkconv_button_new(GTK_STOCK_REMOVE, _("Remove"),
 									_("Remove the user from your buddy list"),
 									gtkconv->tooltips, add_remove_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkconv->remove, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->remove);
 
 	/* Info button */
-	gtkconv->info = new_gtkconv_button(GAIM_STOCK_INFO, _("Info"),
+	gtkconv->info = gaim_gtkconv_button_new(GAIM_STOCK_INFO, _("Info"),
 									_("Get the user's information"),
 									gtkconv->tooltips, info_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkconv->info, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->info);
 
 	/* Send button */
-	gtkconv->send = new_gtkconv_button(GAIM_STOCK_SEND, _("Send"),
+	gtkconv->send = gaim_gtkconv_button_new(GAIM_STOCK_SEND, _("Send"),
 									_("Send message"),
 									gtkconv->tooltips, send_cb, conv);
 	gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE, 0);
@@ -3786,28 +3786,28 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 	/* The buttons, from left to right */
 
 	/* Invite */
-	gtkchat->invite = new_gtkconv_button(GAIM_STOCK_INVITE, _("Invite"),
+	gtkchat->invite = gaim_gtkconv_button_new(GAIM_STOCK_INVITE, _("Invite"),
 									_("Invite a usuer"),
 									gtkconv->tooltips, invite_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkchat->invite, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkchat->invite);
 
 	/* Add button */
-	gtkconv->add = new_gtkconv_button(GTK_STOCK_ADD, _("Add"),
+	gtkconv->add = gaim_gtkconv_button_new(GTK_STOCK_ADD, _("Add"),
 									_("Add the chat to your buddy list"),
 									gtkconv->tooltips, add_remove_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkconv->add, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->add);
 
 	/* Remove button */
-	gtkconv->remove = new_gtkconv_button(GTK_STOCK_REMOVE, _("Remove"),
+	gtkconv->remove = gaim_gtkconv_button_new(GTK_STOCK_REMOVE, _("Remove"),
 									_("Remove the chat from your buddy list"),
 									gtkconv->tooltips, add_remove_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkconv->remove, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->remove);
 
 	/* Send button */
-	gtkconv->send = new_gtkconv_button(GAIM_STOCK_SEND, _("Send"),
+	gtkconv->send = gaim_gtkconv_button_new(GAIM_STOCK_SEND, _("Send"),
 									_("Send message"),
 									gtkconv->tooltips, send_cb, conv);
 	gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE, 0);
