@@ -658,7 +658,7 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	char *msnobj_base64;
 
 	g_return_if_fail(slplink != NULL);
-	g_return_if_fail(obj      != NULL);
+	g_return_if_fail(obj     != NULL);
 
 	msnobj_data = msn_object_to_string(obj);
 	msnobj_base64 = gaim_base64_encode(msnobj_data, strlen(msnobj_data));

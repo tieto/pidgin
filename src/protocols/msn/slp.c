@@ -287,7 +287,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		}
 
 		slpsession = msn_slplink_find_slp_session(slplink,
-												   slpcall->session_id);
+												  slpcall->session_id);
 
 		/* DATA PREP */
 		slpmsg = msn_slpmsg_new(slplink);
@@ -771,9 +771,7 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 	sl = gaim_find_buddies(account, msn_object_get_creator(obj));
 
 	if (sl == NULL)
-	{
 		return FALSE;
-	}
 
 	buddy = (GaimBuddy *)sl->data;
 
@@ -781,9 +779,7 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 	new = msn_object_get_sha1c(obj);
 
 	if (new == NULL)
-	{
 		return FALSE;
-	}
 
 	if (old != NULL && !strcmp(old, new))
 		return TRUE;

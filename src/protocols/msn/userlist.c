@@ -216,7 +216,9 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 
 	if (list_id == MSN_LIST_FL)
 	{
-		GaimConnection *gc = gaim_account_get_connection(account);
+		GaimConnection *gc;
+
+		gc = gaim_account_get_connection(account);
 
 		serv_got_alias(gc, passport, friendly);
 
@@ -240,7 +242,9 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	}
 	else if (list_id == MSN_LIST_RL)
 	{
-		GaimConnection *gc = gaim_account_get_connection(account);
+		GaimConnection *gc;
+
+		gc = gaim_account_get_connection(account);
 
 		gaim_debug_info("msn",
 						"%s has added you to his or her contact list.\n",
