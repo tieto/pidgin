@@ -73,8 +73,11 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 {
 	if (debug_win->timestamps_handle != 0)
 		gaim_prefs_disconnect_callback(debug_win->timestamps_handle);
-	if (debug_win->save != NULL)
+	if (debug_win->save != NULL) {
+		gaim_notify_close_with_handle(debug_win->save);
+		gaim_request_close_with_handle(debug_win->save);
 		gtk_widget_destroy(debug_win->save);
+	}
 
 	g_free(debug_win);
 	debug_win = NULL;
@@ -172,41 +175,39 @@ find_cb(GtkWidget *w, DebugWindow *win)
 }
 
 static void
-save_writefile_cb(GtkWidget *widget)
+save_writefile_cb(DebugWindow *win, gint id)
 {
 	const char *filename;
-	char *tmp;
 	FILE *fp;
-
-	g_return_if_fail(debug_win != NULL);
+	char *tmp;
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(debug_win->save));
+	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(win->save));
 #else /* FILECHOOSER */
-	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(debug_win->save));
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(win->save));
 #endif /* FILECHOOSER */
 
-	gaim_notify_close_with_handle(debug_win->save);
+	gaim_notify_close_with_handle(win->save);
 
 	if (filename == NULL) {
-		gaim_notify_error(debug_win->save, NULL, _("Invalid file name."), NULL);
+		gaim_notify_error(win->save, NULL, _("Invalid file name."), NULL);
 		return;
 	}
 
 	if ((fp = fopen(filename, "w+")) == NULL) {
-		gaim_notify_error(debug_win->save, NULL, _("Unable to open file."), NULL);
+		gaim_notify_error(win->save, NULL, _("Unable to open file."), NULL);
 		return;
 	}
 
-	tmp = gtk_imhtml_get_text(GTK_IMHTML(debug_win->text), NULL, NULL);
+	tmp = gtk_imhtml_get_text(GTK_IMHTML(win->text), NULL, NULL);
 	fprintf(fp, "Gaim Debug log : %s\n", gaim_date_full());
 	fprintf(fp, "%s", tmp);
 	g_free(tmp);
 
 	fclose(fp);
 
-	gtk_widget_destroy(debug_win->save);
-	debug_win->save = NULL;
+	gtk_widget_destroy(win->save);
+	win->save = NULL;
 }
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
@@ -216,6 +217,8 @@ save_checkfile_cb(GtkWidget *widget, gint response, DebugWindow *win)
 	const char *filename;
 
 	if (response != GTK_RESPONSE_ACCEPT) {
+		gaim_notify_close_with_handle(win->save);
+		gaim_request_close_with_handle(win->save);
 		if (response == GTK_RESPONSE_CANCEL)
 			gtk_widget_destroy(win->save);
 		win->save = NULL;
@@ -236,25 +239,28 @@ save_checkfile_cb(GtkWidget *widget, DebugWindow *win)
 	}
 #endif /* FILECHOOSER */
 
+	gaim_request_close_with_handle(win->save);
+
 	if (g_file_test(filename, G_FILE_TEST_EXISTS))
 	{
-		gaim_request_close_with_handle(win->save);
 		gaim_request_yes_no(win->save, NULL, _("That file already exists"),
 							_("Would you like to overwrite it?"), 1,
-							win->save, G_CALLBACK(save_writefile_cb), NULL);
+							win, G_CALLBACK(save_writefile_cb), NULL);
 	}
 	else
-		save_writefile_cb(win->save);
+		save_writefile_cb(win, 1);
 }
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
 save_destroy_cb(GtkWidget *widget, DebugWindow *win)
 {
-	if (win->save != NULL)
+	if (win->save != NULL) {
+		gaim_notify_close_with_handle(win->save);
+		gaim_request_close_with_handle(win->save);
 		gtk_widget_destroy(win->save);
-
-	win->save = NULL;
+		win->save = NULL;
+	}
 }
 #endif
 
@@ -283,17 +289,17 @@ save_cb(GtkWidget *w, DebugWindow *win)
 	g_signal_connect(G_OBJECT(win->save), "response",
 					 G_CALLBACK(save_checkfile_cb), win);
 #else /* FILECHOOSER */
-	win->save = gtk_file_selection_new(_("Save Debug Log"));
 	buf = g_strdup_printf("%s" G_DIR_SEPARATOR_S "gaim-debug.log",
 						  gaim_home_dir());
+	win->save = gtk_file_selection_new(_("Save Debug Log"));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(win->save), buf);
-	g_free(buf);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(win->save)->ok_button),
 					 "clicked", G_CALLBACK(save_checkfile_cb), win);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(win->save)->cancel_button),
 					 "clicked", G_CALLBACK(save_destroy_cb), win);
 	g_signal_connect(G_OBJECT(win->save),
 					 "destroy", G_CALLBACK(save_destroy_cb), win);
+	g_free(buf);
 #endif /* FILECHOOSER */
 
 	gtk_widget_show_all(GTK_WIDGET(win->save));
