@@ -315,6 +315,8 @@ load_perl_plugin(GaimPlugin *plugin)
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(SP);
+	XPUSHs(gaim_perl_ref_object(plugin));
+	PUTBACK;
 
 	perl_call_pv(gps->load_sub, G_NOARGS | G_EVAL | G_SCALAR);
 	SPAGAIN;
@@ -348,6 +350,8 @@ unload_perl_plugin(GaimPlugin *plugin)
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(SP);
+	XPUSHs(gaim_perl_ref_object(plugin));
+	PUTBACK;
 
 	perl_call_pv(gps->unload_sub, G_NOARGS | G_EVAL | G_SCALAR);
 	SPAGAIN;
