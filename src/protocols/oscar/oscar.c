@@ -3299,7 +3299,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	gchar *tmp;
 	aim_mpmsg_section_t *curpart;
 
-	gaim_debug_misc("oscar", "Recived IM from %s with %d parts\n",
+	gaim_debug_misc("oscar", "Received IM from %s with %d parts\n",
 					userinfo->sn, args->mpmsg.numparts);
 
 	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
