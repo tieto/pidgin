@@ -1216,6 +1216,16 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
+
+	/* OK... let's show this bad boy. */
+	gaim_gtk_blist_refresh(list);
+	gaim_gtk_blist_restore_position();
+	gtk_widget_show_all(gtkblist->window);
+
+	/* the button box below is first added now, the reason is that if we
+	 * show() it immediately, the buddy list width will be dependent of
+	 * the button box even if the user turned the button box off. */
+
 	/**************************** Button Box **************************************/
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
@@ -1247,13 +1257,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_away_cb), NULL);
 
-	/* OK... let's show this bad boy. */
-	gaim_gtk_blist_refresh(list);
-	gaim_gtk_blist_restore_position();
-	gtk_widget_show_all(gtkblist->window);
-
 	gaim_gtk_blist_update_toolbar();
-
 }
 
 void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
