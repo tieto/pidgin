@@ -27,6 +27,7 @@
 #include "prefs.h"
 #include "stock.h"
 #include "gtkblist.h"
+#include "gaim-disclosure.h"
 
 #ifdef _WIN32       
 # include <gdk/gdkwin32.h>
@@ -73,17 +74,26 @@ typedef struct
 	AccountPrefsDialogType type;
 
 	GaimAccount *account;
+	GaimProtocol protocol;
+	GaimPlugin *plugin;
+	GaimPluginProtocolInfo *prpl_info;
 
 	GtkWidget *window;
+
+	/* Login Options */
 	GtkWidget *login_frame;
 	GtkWidget *protocol_menu;
-
 	GtkWidget *screenname_entry;
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
-
 	GtkWidget *remember_pass_check;
 	GtkWidget *auto_login_check;
+
+	/* User Options */
+	GtkWidget *user_frame;
+	GtkWidget *new_mail_check;
+	GtkWidget *buddy_icon_hbox;
+	GtkWidget *buddy_icon_entry;
 
 	GtkSizeGroup *sg;
 
@@ -141,7 +151,6 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *entry;
 	GaimPlugin *plugin = NULL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimProtocol protocol;
 	GList *user_splits;
 	GList *split_entries = NULL;
 	GList *l, *l2;
@@ -149,15 +158,6 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->login_frame != NULL)
 		gtk_widget_destroy(dialog->login_frame);
-
-	if (dialog->account == NULL)
-		protocol = GAIM_PROTO_OSCAR;
-	else
-		protocol = gaim_account_get_protocol(dialog->account);
-
-	if ((plugin = gaim_find_prpl(protocol)) != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
-
 
 	/* Build the login options frame. */
 	frame = gaim_gtk_make_frame(parent, _("Login Options"));
@@ -168,13 +168,14 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_reorder_child(GTK_BOX(parent), dialog->login_frame, 0);
 	gtk_widget_show(dialog->login_frame);
 
+	/* Main vbox */
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
 	/* Protocol */
 	dialog->protocol_menu = gaim_gtk_protocol_option_menu_new(
-			protocol, G_CALLBACK(__set_account_protocol), dialog);
+			dialog->protocol, G_CALLBACK(__set_account_protocol), dialog);
 
 	__add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
 
@@ -290,6 +291,82 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
+__add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
+{
+	GtkWidget *frame;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *button;
+	GtkWidget *label;
+
+	if (dialog->user_frame != NULL)
+		gtk_widget_destroy(dialog->user_frame);
+
+	/* Build the user options frame. */
+	frame = gaim_gtk_make_frame(parent, _("User Options"));
+	dialog->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+
+	gtk_box_reorder_child(GTK_BOX(parent), dialog->user_frame, 1);
+	gtk_widget_show(dialog->user_frame);
+
+	/* Main vbox */
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
+
+	/* New mail notifications */
+	dialog->new_mail_check =
+		gtk_check_button_new_with_label(_("New mail notifications"));
+	gtk_box_pack_start(GTK_BOX(vbox), dialog->new_mail_check, FALSE, FALSE, 0);
+	gtk_widget_show(dialog->new_mail_check);
+
+	/* Buddy icon */
+	dialog->buddy_icon_hbox = hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Buddy icon file:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	dialog->buddy_icon_entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_icon_entry, TRUE, TRUE, 0);
+	gtk_widget_show(dialog->buddy_icon_entry);
+
+	button = gtk_button_new_with_label(_("Browse"));
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	button = gtk_button_new_with_label(_("Reset"));
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	if (dialog->prpl_info != NULL) {
+		if (!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK))
+			gtk_widget_hide(dialog->new_mail_check);
+
+		if (!(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON))
+			gtk_widget_hide(dialog->buddy_icon_hbox);
+	}
+
+	if (dialog->account != NULL) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
+				gaim_account_get_check_mail(dialog->account));
+
+		if (gaim_account_get_buddy_icon(dialog->account) != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry),
+					gaim_account_get_buddy_icon(dialog->account));
+	}
+
+	if (!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK) &&
+		!(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON)) {
+
+		/* Nothing to see :( aww. */
+		gtk_widget_hide(dialog->user_frame);
+	}
+}
+
+static void
 __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
@@ -305,6 +382,15 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	dialog->account = account;
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	if (dialog->account == NULL)
+		dialog->protocol = GAIM_PROTO_OSCAR;
+	else
+		dialog->protocol = gaim_account_get_protocol(dialog->account);
+
+	if ((dialog->plugin = gaim_find_prpl(dialog->protocol)) != NULL)
+		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+
 
 	GAIM_DIALOG(win);
 	dialog->window = win;
@@ -330,9 +416,13 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 
 	/* Setup the top frames. */
 	__add_login_options(dialog, vbox);
-#if 0
 	__add_user_options(dialog, vbox);
-#endif
+
+	/* Add the disclosure */
+	disclosure = gaim_disclosure_new(_("Show more options"),
+									 _("Show fewer options"));
+	gtk_box_pack_start(GTK_BOX(vbox), disclosure, FALSE, FALSE, 0);
+	gtk_widget_show(disclosure);
 
 	/* Separator... */
 	sep = gtk_hseparator_new();
