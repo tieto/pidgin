@@ -1340,9 +1340,11 @@ void gaim_blist_add_account(GaimAccount *account)
 			continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+				gboolean recompute = FALSE;
 					for(bnode = cnode->child; bnode; bnode = bnode->next) {
 						if(GAIM_BLIST_NODE_IS_BUDDY(bnode) &&
 								((GaimBuddy*)bnode)->account == account) {
+							recompute = TRUE;
 							((GaimContact*)cnode)->currentsize++;
 							if(((GaimContact*)cnode)->currentsize == 1)
 								((GaimGroup*)gnode)->currentsize++;
@@ -1354,8 +1356,10 @@ void gaim_blist_add_account(GaimAccount *account)
 							ops->update(gaimbuddylist, bnode);
 						}
 					}
-					gaim_contact_compute_priority_buddy((GaimContact*)cnode);
-					ops->update(gaimbuddylist, cnode);
+					if(recompute) {
+						gaim_contact_compute_priority_buddy((GaimContact*)cnode);
+						ops->update(gaimbuddylist, cnode);
+					}
 			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
 					((GaimBlistChat*)cnode)->account == account) {
 				((GaimGroup *)gnode)->online++;
