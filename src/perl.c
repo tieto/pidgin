@@ -931,6 +931,7 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 	case event_buddy_back:
 	case event_buddy_idle:
 	case event_buddy_unidle:
+	case event_got_typing:
 		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
 		buf[1] = g_strdup_printf("%s", escape_quotes(arg2));
 		break;

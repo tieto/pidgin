@@ -107,7 +107,6 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
   static GtkWidget *original_widget = NULL;
   switch (event->type) {
     case GDK_BUTTON_PRESS:
-		debug_printf("Button press: %d\n", event->button.button);
       if (event->button.button != gstroke_get_mouse_button())
 	break;
 
