@@ -106,7 +106,7 @@ faim_export fu32_t aim_userinfo_sessionlen(aim_userinfo_t *ui)
 	return ui->sessionlen;
 }
 
-faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu16_t cap)
+faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu32_t cap)
 {
 
 	if (!ui || !ui->capspresent)
@@ -117,11 +117,18 @@ faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu16_t cap)
 
 
 /*
- * Capability blocks.  
+ * Capability blocks. 
+ *
+ * These are CLSIDs. They should actually be of the form:
+ *
+ * {0x0946134b, 0x4c7f, 0x11d1,
+ *  {0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}}},
+ *
+ * But, eh.
  */
 static const struct {
-	unsigned short flag;
-	unsigned char data[16];
+	fu32_t flag;
+	fu8_t data[16];
 } aim_caps[] = {
 
 	/*
@@ -165,6 +172,10 @@ static const struct {
 	 {0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
+	{AIM_CAPS_ICQSERVERRELAY,
+	 {0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
+	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
 	/*
 	 * Indeed, there are two of these.  The former appears to be correct, 
 	 * but in some versions of winaim, the second one is set.  Either they 
@@ -186,6 +197,18 @@ static const struct {
 	 {0x09, 0x46, 0x13, 0x4f, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
+	{AIM_CAPS_ICQRTF,
+	 {0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34, 
+	  0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
+
+	{AIM_CAPS_ICQUNKNOWN,
+	 {0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
+	  0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
+
+	{AIM_CAPS_EMPTY,
+	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+
 	{AIM_CAPS_LAST}
 };
 
@@ -194,9 +217,9 @@ static const struct {
  * are not naturally bounded.
  * 
  */
-faim_internal fu16_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len)
+faim_internal fu32_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len)
 {
-	fu16_t flags = 0;
+	fu32_t flags = 0;
 	int offset;
 
 	for (offset = 0; aim_bstream_empty(bs) && (offset < len); offset += 0x10) {
@@ -224,7 +247,7 @@ faim_internal fu16_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len)
 	return flags;
 }
 
-faim_internal int aim_putcap(aim_bstream_t *bs, fu16_t caps)
+faim_internal int aim_putcap(aim_bstream_t *bs, fu32_t caps)
 {
 	int i;
 

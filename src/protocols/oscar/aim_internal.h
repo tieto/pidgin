@@ -194,8 +194,8 @@ typedef struct aim_conn_inside_s {
 
 faim_internal void aim_conn_addgroup(aim_conn_t *conn, fu16_t group);
 
-faim_internal fu16_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len);
-faim_internal int aim_putcap(aim_bstream_t *bs, fu16_t caps);
+faim_internal fu32_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len);
+faim_internal int aim_putcap(aim_bstream_t *bs, fu32_t caps);
 
 faim_internal int aim_cachecookie(aim_session_t *sess, aim_msgcookie_t *cookie);
 faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, fu8_t *cookie, int type);

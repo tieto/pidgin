@@ -360,13 +360,14 @@ typedef struct aim_session_s {
 #define AIM_SESS_FLAGS_DONTTIMEOUTONICBM 0x00000008
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
-#define AIM_ICQ_STATE_ONLINE    0x0000
-#define AIM_ICQ_STATE_AWAY      0x0001
-#define AIM_ICQ_STATE_DND       0x0002
-#define AIM_ICQ_STATE_NA        0x0004
-#define AIM_ICQ_STATE_OCCUPIED  0x0010
-#define AIM_ICQ_STATE_CHAT      0x0020
-#define AIM_ICQ_STATE_INVISIBLE 0x0100
+#define AIM_ICQ_STATE_NORMAL    0x00000000
+#define AIM_ICQ_STATE_AWAY      0x00000001
+#define AIM_ICQ_STATE_DND       0x00000002
+#define AIM_ICQ_STATE_OUT       0x00000004
+#define AIM_ICQ_STATE_BUSY      0x00000010
+#define AIM_ICQ_STATE_CHAT      0x00000020
+#define AIM_ICQ_STATE_INVISIBLE 0x00000100
+#define AIM_ICQ_STATE_WEBAWARE  0x00010000
 
 /*
  * AIM User Info, Standard Form.
@@ -380,9 +381,9 @@ typedef struct {
 	fu32_t onlinesince;
 	fu32_t sessionlen; 
 	int capspresent;
-	fu16_t capabilities;
+	fu32_t capabilities;
 	struct {
-		fu16_t status;
+		fu32_t status;
 		fu32_t ipaddr;
 		fu8_t crap[0x25]; /* until we figure it out... */
 	} icqinfo;
@@ -395,7 +396,7 @@ faim_export float aim_userinfo_warnlevel(aim_userinfo_t *ui);
 faim_export time_t aim_userinfo_membersince(aim_userinfo_t *ui);
 faim_export time_t aim_userinfo_onlinesince(aim_userinfo_t *ui);
 faim_export fu32_t aim_userinfo_sessionlen(aim_userinfo_t *ui);
-faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu16_t cap);
+faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu32_t cap);
 
 #define AIM_FLAG_UNCONFIRMED 	0x0001 /* "damned transients" */
 #define AIM_FLAG_ADMINISTRATOR	0x0002
@@ -455,7 +456,7 @@ faim_internal int aim_addtlvtochain8(aim_tlvlist_t **list, const fu16_t t, const
 faim_internal int aim_addtlvtochain16(aim_tlvlist_t **list, const fu16_t t, const fu16_t v);
 faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t type, const fu32_t v);
 faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, const fu16_t l, const fu8_t *v);
-faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu16_t caps);
+faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu32_t caps);
 faim_internal int aim_addtlvtochain_noval(aim_tlvlist_t **list, const fu16_t type);
 faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *ui);
 faim_internal int aim_addtlvtochain_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl);
@@ -578,7 +579,7 @@ faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_bos_setidle(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_bos_changevisibility(aim_session_t *, aim_conn_t *, int, const char *);
 faim_export int aim_bos_setbuddylist(aim_session_t *, aim_conn_t *, const char *);
-faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu16_t caps);
+faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu32_t caps);
 faim_export int aim_bos_setgroupperm(aim_session_t *, aim_conn_t *, fu32_t mask);
 faim_export int aim_bos_setprivacyflags(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_reqpersonalinfo(aim_session_t *, aim_conn_t *);
@@ -588,7 +589,7 @@ faim_export int aim_bos_reqbuddyrights(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_reqlocaterights(aim_session_t *, aim_conn_t *);
 faim_export int aim_setdirectoryinfo(aim_session_t *sess, aim_conn_t *conn, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);
 faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy);
-faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status);
+faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t status);
 
 faim_export struct aim_fileheader_t *aim_getlisting(aim_session_t *sess, FILE *);
 
@@ -725,6 +726,16 @@ struct aim_sendimext_args {
 };
 
 /*
+ * Arguments to aim_send_rtfmsg().
+ */
+struct aim_sendrtfmsg_args {
+	const char *destsn;
+	fu32_t fgcolor;
+	fu32_t bgcolor;
+	const char *rtfmsg; /* must be in RTF */
+};
+
+/*
  * This information is provided in the Incoming ICBM callback for
  * Channel 1 ICBM's.  
  *
@@ -777,7 +788,7 @@ struct aim_incomingim_ch2_args {
 			fu8_t *icon;
 		} icon;
 		struct {
-			fu8_t junk;
+			fu32_t implementme;
 		} voice;
 		struct {
 			fu8_t ip[22]; /* xxx.xxx.xxx.xxx:xxxxx\0 */
@@ -793,11 +804,17 @@ struct aim_incomingim_ch2_args {
 			unsigned char *cookie;
 		} getfile;
 		struct {
-			fu8_t junk;
+			fu32_t implementme;
 		} sendfile;
+		struct {
+			fu32_t fgcolor;
+			fu32_t bgcolor;
+			const char *rtfmsg;
+		} rtfmsg;
 	} info;
 };
 
+faim_export int aim_send_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
 faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *args);
 faim_export int aim_send_im(aim_session_t *, const char *destsn, unsigned short flags, const char *msg);
 faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
@@ -815,19 +832,23 @@ faim_export int aim_oft_getfile_ack(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_oft_getfile_end(aim_session_t *sess, aim_conn_t *conn);
 
 /* aim_info.c */
-#define AIM_CAPS_BUDDYICON      0x0001
-#define AIM_CAPS_VOICE          0x0002
-#define AIM_CAPS_IMIMAGE        0x0004
-#define AIM_CAPS_CHAT           0x0008
-#define AIM_CAPS_GETFILE        0x0010
-#define AIM_CAPS_SENDFILE       0x0020
-#define AIM_CAPS_GAMES          0x0040
-#define AIM_CAPS_SAVESTOCKS     0x0080
-#define AIM_CAPS_SENDBUDDYLIST  0x0100
-#define AIM_CAPS_GAMES2         0x0200
-#define AIM_CAPS_ICQ            0x0400
-#define AIM_CAPS_ABINTERNAL     0x0800
-#define AIM_CAPS_LAST           0x8000
+#define AIM_CAPS_BUDDYICON      0x00000001
+#define AIM_CAPS_VOICE          0x00000002
+#define AIM_CAPS_IMIMAGE        0x00000004
+#define AIM_CAPS_CHAT           0x00000008
+#define AIM_CAPS_GETFILE        0x00000010
+#define AIM_CAPS_SENDFILE       0x00000020
+#define AIM_CAPS_GAMES          0x00000040
+#define AIM_CAPS_SAVESTOCKS     0x00000080
+#define AIM_CAPS_SENDBUDDYLIST  0x00000100
+#define AIM_CAPS_GAMES2         0x00000200
+#define AIM_CAPS_ICQ            0x00000400
+#define AIM_CAPS_ABINTERNAL     0x00000800
+#define AIM_CAPS_ICQRTF		0x00001000
+#define AIM_CAPS_EMPTY		0x00002000
+#define AIM_CAPS_ICQSERVERRELAY 0x00004000
+#define AIM_CAPS_ICQUNKNOWN     0x00008000
+#define AIM_CAPS_LAST           0x00010000
 
 faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 

@@ -729,7 +729,7 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
  * Currently only works if using ICQ.
  *
  */
-faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status)
+faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t status)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;

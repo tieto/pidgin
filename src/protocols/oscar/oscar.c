@@ -2365,7 +2365,7 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 		gc->away = NULL;
 
 	if (!strcmp(state, "Online"))
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
 	else if (!strcmp(state, "Away")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
 		gc->away = "";
@@ -2373,10 +2373,10 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_DND);
 		gc->away = "";
 	} else if (!strcmp(state, "Not Available")) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT);
 		gc->away = "";
 	} else if (!strcmp(state, "Occupied")) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OCCUPIED);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_BUSY);
 		gc->away = "";
 	} else if (!strcmp(state, "Free For Chat")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
@@ -2386,10 +2386,10 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 		gc->away = "";
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 		if (message) {
-			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
+			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT);
 			gc->away = "";
 		} else {
-			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
+			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
 		}
 	}
 }
@@ -2590,9 +2590,9 @@ static char **oscar_list_icon(int uc) {
 			return icon_away_xpm;
 		if (uc & AIM_ICQ_STATE_DND)
 			return icon_dnd_xpm;
-		if (uc & AIM_ICQ_STATE_NA)
+		if (uc & AIM_ICQ_STATE_OUT)
 			return icon_na_xpm;
-		if (uc & AIM_ICQ_STATE_OCCUPIED)
+		if (uc & AIM_ICQ_STATE_BUSY)
 			return icon_occ_xpm;
 		if (uc & AIM_ICQ_STATE_CHAT)
 			return icon_ffc_xpm;

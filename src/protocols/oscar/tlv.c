@@ -279,9 +279,9 @@ faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t t, cons
  *      %AIM_CAPS_SENDFILE    Supports Send File functions
  *
  */
-faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu16_t caps)
+faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu32_t caps)
 {
-	fu8_t buf[16*16]; /* icky fixed length buffer */
+	fu8_t buf[16*16]; /* XXX icky fixed length buffer */
 	aim_bstream_t bs;
 
 	if (!caps)

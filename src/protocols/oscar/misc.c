@@ -78,7 +78,7 @@ faim_export int aim_bos_setbuddylist(aim_session_t *sess, aim_conn_t *conn, cons
  * Gives BOS your profile.
  * 
  */
-faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu16_t caps)
+faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu32_t caps)
 {
 	static const char defencoding[] = {"text/aolrtf; charset=\"us-ascii\""};
 	aim_frame_t *fr;

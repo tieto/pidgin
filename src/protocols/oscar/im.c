@@ -448,6 +448,122 @@ faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *
 	return 0;
 }
 
+/*
+ * This only works for ICQ 2001b (thats 2001 not 2000).  Better, only
+ * send it to clients advertising the RTF capability.  In fact, if you send
+ * it to a client that doesn't support that capability, the server will gladly
+ * bounce it back to you.
+ *
+ * You'd think this would be in icq.c, but, well, I'm trying to stick with
+ * the one-group-per-file scheme as much as possible.  This could easily
+ * be an exception, since Rendezvous IMs are external of the Oscar core, 
+ * and therefore are undefined.  Really I just need to think of a good way to
+ * make an interface similar to what AOL actually uses.  But I'm not using COM.
+ *
+ */
+faim_export int aim_send_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args)
+{
+	const char rtfcap[] = {"{97B12751-243C-4334-AD22-D6ABF73F1492}"}; /* AIM_CAPS_ICQRTF capability in string form */
+	aim_conn_t *conn;
+	int i;
+	fu8_t ck[8];
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int servdatalen;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
+	if (!args || !args->destsn || !args->rtfmsg)
+		return -EINVAL;
+
+	servdatalen = 2+2+16+2+4+1+2  +  2+2+4+4+4  +  2+4+2+strlen(args->rtfmsg)+1  +  4+4+4+strlen(rtfcap)+1;
+
+	for (i = 0; i < 8; i++)
+		aimutil_put8(ck+i, (fu8_t) rand());
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+128+servdatalen)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
+
+	/*
+	 * Cookie
+	 */
+	aimbs_putraw(&fr->data, ck, 8);
+
+	/*
+	 * Channel (2)
+	 */
+	aimbs_put16(&fr->data, 0x0002);
+
+	/*
+	 * Dest sn
+	 */
+	aimbs_put8(&fr->data, strlen(args->destsn));
+	aimbs_putraw(&fr->data, args->destsn, strlen(args->destsn));
+
+	/*
+	 * TLV t(0005)
+	 *
+	 * Encompasses everything below.
+	 */
+	aimbs_put16(&fr->data, 0x0005);
+	aimbs_put16(&fr->data, 2+8+16  +  2+2+2  +  2+2  +  2+2+servdatalen);
+
+	aimbs_put16(&fr->data, 0x0000);
+	aimbs_putraw(&fr->data, ck, 8);
+	aim_putcap(&fr->data, AIM_CAPS_ICQSERVERRELAY);
+
+	/*
+	 * t(000a) l(0002) v(0001)
+	 */
+	aimbs_put16(&fr->data, 0x000a);
+	aimbs_put16(&fr->data, 0x0002);
+	aimbs_put16(&fr->data, 0x0001);
+
+	/*
+	 * t(000f) l(0000) v()
+	 */
+	aimbs_put16(&fr->data, 0x000f);
+	aimbs_put16(&fr->data, 0x0000);
+
+	/*
+	 * Service Data TLV
+	 */
+	aimbs_put16(&fr->data, 0x2711);
+	aimbs_put16(&fr->data, servdatalen);
+
+	aimbs_putle16(&fr->data, 11 + 16 /* 11 + (sizeof CLSID) */);
+	aimbs_putle16(&fr->data, 9);
+	aim_putcap(&fr->data, AIM_CAPS_EMPTY);
+	aimbs_putle16(&fr->data, 0);
+	aimbs_putle32(&fr->data, 0);
+	aimbs_putle8(&fr->data, 0);
+	aimbs_putle16(&fr->data, 0x03ea); /* trid1 */
+
+	aimbs_putle16(&fr->data, 14);
+	aimbs_putle16(&fr->data, 0x03eb); /* trid2 */
+	aimbs_putle32(&fr->data, 0);
+	aimbs_putle32(&fr->data, 0);
+	aimbs_putle32(&fr->data, 0);
+
+	aimbs_putle16(&fr->data, 0x0001);
+	aimbs_putle32(&fr->data, 0);
+	aimbs_putle16(&fr->data, strlen(args->rtfmsg)+1);
+	aimbs_putraw(&fr->data, args->rtfmsg, strlen(args->rtfmsg)+1);
+
+	aimbs_putle32(&fr->data, args->fgcolor);
+	aimbs_putle32(&fr->data, args->bgcolor);
+	aimbs_putle32(&fr->data, strlen(rtfcap)+1);
+	aimbs_putraw(&fr->data, rtfcap, strlen(rtfcap)+1);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
 faim_internal int aim_request_directim(aim_session_t *sess, const char *destsn, fu8_t *ip, fu16_t port, fu8_t *ckret)
 {
 	aim_conn_t *conn;
@@ -1368,6 +1484,54 @@ static int incomingim_ch2_imimage(aim_session_t *sess, aim_module_t *mod, aim_fr
 	return ret;
 }
 
+/*
+ * The relationship between AIM_CAPS_ICQSERVERRELAY and AIM_CAPS_ICQRTF is 
+ * kind of odd. This sends the client ICQRTF since that is all that I've seen
+ * SERVERRELAY used for.
+ */
+static int incomingim_ch2_icqserverrelay(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+{
+	aim_rxcallback_t userfunc;
+	int ret = 0;
+	aim_tlv_t *miscinfo;
+	aim_bstream_t tbs;
+	fu16_t hdrlen, anslen, msglen;
+	fu16_t msgtype;
+
+	if (!(miscinfo = aim_gettlv(list2, 0x2711, 1)))
+		return 0;
+	aim_bstream_init(&tbs, miscinfo->value, miscinfo->length);
+
+	hdrlen = aimbs_getle16(&tbs);
+	aim_bstream_advance(&tbs, hdrlen);
+
+	hdrlen = aimbs_getle16(&tbs);
+	aim_bstream_advance(&tbs, hdrlen);
+
+	msgtype = aimbs_getle16(&tbs);
+	
+	anslen = aimbs_getle32(&tbs);
+	aim_bstream_advance(&tbs, anslen);
+
+	msglen = aimbs_getle16(&tbs);
+	args->info.rtfmsg.rtfmsg = aimbs_getstr(&tbs, msglen);
+
+	args->info.rtfmsg.fgcolor = aimbs_getle32(&tbs);
+	args->info.rtfmsg.bgcolor = aimbs_getle32(&tbs);
+
+	hdrlen = aimbs_getle32(&tbs);
+	aim_bstream_advance(&tbs, hdrlen);
+
+	args->reqclass = AIM_CAPS_ICQRTF;
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, 0x0002, userinfo, args);
+
+	free(args->info.icon.icon);
+
+	return ret;
+}
+
 /* XXX Ugh.  I think its obvious. */
 static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, fu8_t *cookie)
 {
@@ -1498,6 +1662,8 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 		ret = incomingim_ch2_getfile(sess, mod, rx, snac, userinfo, &args, list2);
 	else if (args.reqclass & AIM_CAPS_SENDFILE)
 		ret = incomingim_ch2_sendfile(sess, mod, rx, snac, userinfo, &args, list2);
+	else if (args.reqclass & AIM_CAPS_ICQSERVERRELAY)
+		ret = incomingim_ch2_icqserverrelay(sess, mod, rx, snac, userinfo, &args, list2);
 	else
 		faimdprintf(sess, 0, "rend: unknown rendezvous 0x%04x\n", args.reqclass);
 
