@@ -1593,7 +1593,8 @@ delete_account_cb(GaimAccount *account)
 
 	index = g_list_index(gaim_accounts_get_all(), account);
 
-	if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(accounts_window->model),
+	if ((accounts_window != NULL) &&
+		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(accounts_window->model),
 									  &iter, NULL, index)) {
 
 		gtk_list_store_remove(accounts_window->model, &iter);
@@ -1611,15 +1612,15 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
 
 	if (account != NULL) {
-		char buf[8192];
+		char *buf;
 
-		g_snprintf(buf, sizeof(buf),
-				   _("Are you sure you want to delete %s?"),
-				   gaim_account_get_username(account));
+		buf = g_strdup_printf(_("Are you sure you want to delete %s?"),
+							  gaim_account_get_username(account));
 
 		gaim_request_action(NULL, NULL, buf, NULL, 1, account, 2,
 							_("Delete"), delete_account_cb,
 							_("Cancel"), NULL);
+		g_free(buf);
 	}
 }
 
