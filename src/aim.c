@@ -418,9 +418,10 @@ void sighandler(int sig)
 
 int main(int argc, char *argv[])
 {
-	int opt;
-	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_user = 0, opt_login = 0, do_login_ret = -1;
+	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
+#ifndef USE_APPLET
+	int opt, opt_user = 0;
 	int i;
 
 #ifdef USE_GNOME
@@ -448,6 +449,7 @@ int main(int argc, char *argv[])
 		{"version", no_argument, NULL, 'v'},
 		{0, 0, 0, 0}
 	};
+#endif
 
 
 #ifdef ENABLE_NLS
