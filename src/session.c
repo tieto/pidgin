@@ -300,7 +300,11 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	callbacks.save_complete.client_data      = NULL;
 	callbacks.shutdown_cancelled.client_data = NULL;
 
-	debug_printf("Session Management: connecting with previous ID %s\n", previous_id);
+	if (previous_id) {
+		debug_printf("Session Management: connecting with previous ID %s\n", previous_id);
+	} else {
+		debug_printf("Session Management: connecting with no previous ID\n");
+	}
 
 	session = SmcOpenConnection(NULL, "session", SmProtoMajor, SmProtoMinor, SmcSaveYourselfProcMask |
 		    SmcDieProcMask | SmcSaveCompleteProcMask | SmcShutdownCancelledProcMask,
