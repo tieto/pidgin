@@ -1656,6 +1656,7 @@ static void
 init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
+	struct proto_pref *ppref;
 
 	option = gaim_account_option_string_new(_("Login server"), "server",
 											MSN_SERVER);
@@ -1678,6 +1679,21 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none("/plugins/prpl/msn");
 	gaim_prefs_add_bool("/plugins/prpl/msn/conv_close_notice",   TRUE);
 	gaim_prefs_add_bool("/plugins/prpl/msn/conv_timeout_notice", TRUE);
+
+	ppref = g_new0(struct proto_pref, 1);
+	ppref->key = NULL;
+	ppref->label = _("Conversations");
+	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
+
+	ppref = g_new0(struct proto_pref, 1);
+	ppref->key = "/plugins/prpl/msn/conv_close_notice";
+	ppref->label = _("Display conversation closed notices");
+	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
+
+	ppref = g_new0(struct proto_pref, 1);
+	ppref->key = "/plugins/prpl/msn/conv_timeout_notice";
+	ppref->label = _("Display timeout notices");
+	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
 }
 
 GAIM_INIT_PLUGIN(msn, init_plugin, info);
