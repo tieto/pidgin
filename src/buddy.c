@@ -1444,6 +1444,17 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 					execvp(args[0], args);
 					_exit(0);
 				}
+#else
+				STARTUPINFO si;
+				PROCESS_INFORMATION pi;
+
+				ZeroMemory( &si, sizeof(si) );
+				si.cb = sizeof(si);
+				ZeroMemory( &pi, sizeof(pi) );
+
+				CreateProcess( NULL, b->command, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi );
+				CloseHandle( pi.hProcess );
+				CloseHandle( pi.hThread );
 #endif /*_WIN32*/
 			}
 			if (b->options & OPT_POUNCE_SOUND) {
