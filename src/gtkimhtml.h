@@ -67,6 +67,7 @@ typedef enum {
 	GTK_IMHTML_IMAGE =     1 << 9,
 	GTK_IMHTML_SMILEY =    1 << 10,
 	GTK_IMHTML_LINKDESC =  1 << 11,
+	GTK_IMHTML_STRIKE =    1 << 12,
 	GTK_IMHTML_ALL =      -1
 } GtkIMHtmlButtons;
 
@@ -105,6 +106,7 @@ struct _GtkIMHtml {
 		gboolean bold:1;
 		gboolean italic:1;
 		gboolean underline:1;
+		gboolean strike:1;
 		gchar *forecolor;
 		gchar *backcolor;
 		gchar *fontface;
@@ -568,6 +570,15 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);
  * @return @c TRUE if underline was turned on, or @c FALSE if it was turned off.
  */
 gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
+
+/**
+ * Toggles strikethrough at the cursor location or selection in a GTK IM/HTML.
+ *
+ * @param imhtml The GTK IM/HTML.
+ *
+ * @return @c TRUE if strikethrough was turned on, or @c FALSE if it was turned off.
+ */
+gboolean gtk_imhtml_toggle_strike(GtkIMHtml *imhtml);
 
 /**
  * Toggles a foreground color at the current location or selection in a GTK

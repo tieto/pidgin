@@ -1065,7 +1065,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 	/* These tags will be used often and can be reused--we create them on init and then apply them by name
 	 * other tags (color, size, face, etc.) will have to be created and applied dynamically
-	 * Note that even though we created STRIKE, SUB, SUP, and PRE tags here, we don't really
+	 * Note that even though we created SUB, SUP, and PRE tags here, we don't really
 	 * apply them anywhere yet. */
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "BOLD", "weight", PANGO_WEIGHT_BOLD, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "ITALICS", "style", PANGO_STYLE_ITALIC, NULL);
@@ -2102,14 +2102,20 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 					break;
 				case 13:	/* S */
 				case 14:	/* STRIKE */
-					/* FIXME: reimplement this */
+					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+					ws[0] = '\0'; wpos = 0;
+					if ((strike == 0) && (imhtml->format_functions & GTK_IMHTML_STRIKE))
+						gtk_imhtml_toggle_strike(imhtml);
 					strike++;
 					break;
 				case 15:	/* /S */
 				case 16:	/* /STRIKE */
-					/* FIXME: reimplement this */
+					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+					ws[0] = '\0'; wpos = 0;
 					if (strike)
 						strike--;
+					if ((strike == 0) && (imhtml->format_functions & GTK_IMHTML_STRIKE) && !imhtml->wbfo)
+						gtk_imhtml_toggle_strike(imhtml);
 					break;
 				case 17:	/* SUB */
 					/* FIXME: reimpliment this */
@@ -3297,6 +3303,11 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *end, gchar *text, gint
 	else
 		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, end);
 
+	if (imhtml->edit.strike)
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, end);
+	else
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, end);
+
 	if (imhtml->edit.forecolor) {
 		remove_font_forecolor(imhtml, &start, end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
@@ -3446,7 +3457,7 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 	if (!gtk_text_buffer_get_char_count(buffer))
 		return;
 
-	imhtml->edit.bold = imhtml->edit.italic = imhtml->edit.underline = FALSE;
+	imhtml->edit.bold = imhtml->edit.italic = imhtml->edit.underline = imhtml->edit.strike = FALSE;
 	if (imhtml->edit.forecolor)
 		g_free(imhtml->edit.forecolor);
 	imhtml->edit.forecolor = NULL;
@@ -3477,6 +3488,8 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 				imhtml->edit.italic = TRUE;
 			if (strcmp(tag->name, "UNDERLINE") == 0)
 				imhtml->edit.underline = TRUE;
+			if (strcmp(tag->name, "STRIKE") == 0)
+				imhtml->edit.strike = TRUE;
 			if (strncmp(tag->name, "FORECOLOR ", 10) == 0)
 				imhtml->edit.forecolor = g_strdup(&(tag->name)[10]);
 			if (strncmp(tag->name, "BACKCOLOR ", 10) == 0)
@@ -3570,6 +3583,32 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 	g_object_unref(object);
 
 	return imhtml->edit.underline != FALSE;
+}
+
+gboolean gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
+{
+	GObject *object;
+	GtkTextIter start, end;
+
+	imhtml->edit.strike = !imhtml->edit.strike;
+
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		if (imhtml->edit.strike)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.strike)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+	}
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_STRIKE);
+	g_object_unref(object);
+
+	return imhtml->edit.strike != FALSE;
 }
 
 void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
@@ -3930,6 +3969,8 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		return "<i>";
 	} else if (strcmp(name, "UNDERLINE") == 0) {
 		return "<u>";
+	} else if (strcmp(name, "STRIKE") == 0) {
+		return "<s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
 		char *tmp = g_object_get_data(G_OBJECT(tag), "link_url");
 		if (tmp) {
@@ -3969,6 +4010,8 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 		return "</i>";
 	} else if (strcmp(name, "UNDERLINE") == 0) {
 		return "</u>";
+	} else if (strcmp(name, "STRIKE") == 0) {
+		return "</s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
 		return "</a>";
 	} else if (strncmp(name, "FORECOLOR ", 10) == 0) {
@@ -4114,6 +4157,9 @@ void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter)
 
 	if (imhtml->edit.underline)
 		gtk_imhtml_toggle_underline(imhtml);
+
+	if (imhtml->edit.strike)
+		gtk_imhtml_toggle_strike(imhtml);
 
 	if (imhtml->edit.forecolor)
 		gtk_imhtml_toggle_forecolor(imhtml, NULL);
