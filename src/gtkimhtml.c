@@ -1887,6 +1887,55 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 		} \
 	}
 
+static gboolean
+is_amp_escape (const gchar *string,
+	       gchar       *replace,
+	       gint        *length)
+{
+	g_return_val_if_fail (string != NULL, FALSE);
+	g_return_val_if_fail (replace != NULL, FALSE);
+	g_return_val_if_fail (length != NULL, FALSE);
+
+	if (!g_strncasecmp (string, "&amp;", 5)) {
+		*replace = '&';
+		*length = 5;
+	} else if (!g_strncasecmp (string, "&lt;", 4)) {
+		*replace = '<';
+		*length = 4;
+	} else if (!g_strncasecmp (string, "&gt;", 4)) {
+		*replace = '>';
+		*length = 4;
+	} else if (!g_strncasecmp (string, "&nbsp;", 6)) {
+		*replace = ' ';
+		*length = 6;
+	} else if (!g_strncasecmp (string, "&copy;", 6)) {
+		*replace = '©';
+		*length = 6;
+	} else if (!g_strncasecmp (string, "&quot;", 6)) {
+		*replace = '\"';
+		*length = 6;
+	} else if (!g_strncasecmp (string, "&reg;", 5)) {
+		*replace = '®';
+		*length = 5;
+	} else if (*(string + 1) == '#') {
+		gint pound = 0;
+		if (sscanf (string, "&#%d;", &pound) == 1) {
+			if (*(string + 3 + (gint)log10 (pound)) != ';')
+				return FALSE;
+			*replace = (gchar)pound;
+			*length = 2;
+			while (isdigit ((gint) string [*length])) (*length)++;
+			if (string [*length] == ';') (*length)++;
+		} else {
+			return FALSE;
+		}
+	} else {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 GString*
 gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			const gchar      *text,
@@ -1939,7 +1988,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	while (*c) {
 		if (*c == '<') {
-			if (intag) {
+			if (intag && !tagquote) {
 				char *d;
 				tag [tpos] = 0;
 				d = tag;
@@ -1951,6 +2000,23 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 						g_snprintf (ws, smilelen + 1, "%s", d);
 						NEW_BIT (NEW_SMILEY_BIT);
 						d += smilelen;
+					} else if (*d == '&') {
+						gchar replace;
+						gint length;
+						if (is_amp_escape (d, &replace, &length)) {
+							ws [wpos++] = replace;
+							d += length;
+						} else {
+							ws [wpos++] = *d++;
+						}
+					} else if (*d == '\n') {
+						if (!(options & GTK_IMHTML_NO_NEWLINE)) {
+							ws [wpos] = 0;
+							wpos = 0;
+							NEW_BIT (NEW_TEXT_BIT);
+							NEW_BIT (NEW_BR_BIT);
+						}
+						d++;
 					} else {
 						ws [wpos++] = *d++;
 					}
@@ -2490,6 +2556,23 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 						g_snprintf (ws, smilelen + 1, "%s", d);
 						NEW_BIT (NEW_SMILEY_BIT);
 						d += smilelen;
+					} else if (*d == '&') {
+						gchar replace;
+						gint length;
+						if (is_amp_escape (d, &replace, &length)) {
+							ws [wpos++] = replace;
+							d += length;
+						} else {
+							ws [wpos++] = *d++;
+						}
+					} else if (*d == '\n') {
+						if (!(options & GTK_IMHTML_NO_NEWLINE)) {
+							ws [wpos] = 0;
+							wpos = 0;
+							NEW_BIT (NEW_TEXT_BIT);
+							NEW_BIT (NEW_BR_BIT);
+						}
+						d++;
 					} else {
 						ws [wpos++] = *d++;
 					}
@@ -2501,41 +2584,11 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			intag = FALSE;
 			tpos = 0;
 		} else if (*c == '&' && !intag) {
-			if (!g_strncasecmp (c, "&amp;", 5)) {
-				ws [wpos++] = '&';
-				c += 5;
-			} else if (!g_strncasecmp (c, "&lt;", 4)) {
-				ws [wpos++] = '<';
-				c += 4;
-			} else if (!g_strncasecmp (c, "&gt;", 4)) {
-				ws [wpos++] = '>';
-				c += 4;
-			} else if (!g_strncasecmp (c, "&nbsp;", 6)) {
-				ws [wpos++] = ' ';
-				c += 6;
-			} else if (!g_strncasecmp (c, "&copy;", 6)) {
-				ws [wpos++] = '©';
-				c += 6;
-			} else if (!g_strncasecmp (c, "&quot;", 6)) {
-				ws [wpos++] = '\"';
-				c += 6;
-			} else if (!g_strncasecmp (c, "&reg;", 5)) {
-				ws [wpos++] = '®';
-				c += 5;
-			} else if (*(c + 1) == '#') {
-				gint pound = 0;
-				if (sscanf (c, "&#%d;", &pound) == 1) {
-					if (*(c + 3 + (gint)log10 (pound)) != ';') {
-						ws [wpos++] = *c++;
-						continue;
-					}
-					ws [wpos++] = (gchar)pound;
-					c += 2;
-					while (isdigit ((gint) *c)) c++;
-					if (*c == ';') c++;
-				} else {
-					ws [wpos++] = *c++;
-				}
+			gchar replace;
+			gint length;
+			if (is_amp_escape (c, &replace, &length)) {
+				ws [wpos++] = replace;
+				c += length;
 			} else {
 				ws [wpos++] = *c++;
 			}
@@ -2576,6 +2629,23 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				g_snprintf (ws, smilelen + 1, "%s", c);
 				NEW_BIT (NEW_SMILEY_BIT);
 				c += smilelen;
+			} else if (*c == '&') {
+				gchar replace;
+				gint length;
+				if (is_amp_escape (c, &replace, &length)) {
+					ws [wpos++] = replace;
+					c += length;
+				} else {
+					ws [wpos++] = *c++;
+				}
+			} else if (*c == '\n') {
+				if (!(options & GTK_IMHTML_NO_NEWLINE)) {
+					ws [wpos] = 0;
+					wpos = 0;
+					NEW_BIT (NEW_TEXT_BIT);
+					NEW_BIT (NEW_BR_BIT);
+				}
+				c++;
 			} else {
 				ws [wpos++] = *c++;
 			}
@@ -2594,6 +2664,23 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				g_snprintf (ws, smilelen + 1, "%s", c);
 				NEW_BIT (NEW_SMILEY_BIT);
 				c += smilelen;
+			} else if (*c == '&') {
+				gchar replace;
+				gint length;
+				if (is_amp_escape (c, &replace, &length)) {
+					ws [wpos++] = replace;
+					c += length;
+				} else {
+					ws [wpos++] = *c++;
+				}
+			} else if (*c == '\n') {
+				if (!(options & GTK_IMHTML_NO_NEWLINE)) {
+					ws [wpos] = 0;
+					wpos = 0;
+					NEW_BIT (NEW_TEXT_BIT);
+					NEW_BIT (NEW_BR_BIT);
+				}
+				c++;
 			} else {
 				ws [wpos++] = *c++;
 			}
