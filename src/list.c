@@ -1106,7 +1106,6 @@ static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 	fprintf(file, "<gaim version=\"1\">\n");
 	fprintf(file, "\t<blist>\n");
 
-	if (gaimbuddylist)
 	for(group = (struct group*)gaimbuddylist->root; group; group = (struct group*)((GaimBlistNode*)group)->next) {
 		if(!exp_acct || gaim_group_on_account(group, exp_acct)) {
 			char *group_name = g_markup_escape_text(group->name, -1);

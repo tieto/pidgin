@@ -477,6 +477,7 @@ int core_main()
 	GIOChannel *channel;
 #endif
 
+	gaim_set_blist(gaim_blist_new());
 	gaim_blist_load();
 
 #ifndef _WIN32
