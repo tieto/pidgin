@@ -1370,7 +1370,7 @@ void gaim_gtk_blist_docklet_toggle() {
 		/* we're logging in or something... do nothing */
 		debug_printf("docklet_toggle called with connections but no blist!\n");
 	} else {
-		if (GTK_WIDGET_VISIBLE(mainwindow)) {
+		if (mainwindow && GTK_WIDGET_VISIBLE(mainwindow)) {
 			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
 				gtk_window_present(GTK_WINDOW(mainwindow));
 			} else {
@@ -1383,7 +1383,7 @@ void gaim_gtk_blist_docklet_toggle() {
 #if _WIN32
 			wgaim_systray_maximize(mainwindow);
 #endif
-			gtk_window_present(GTK_WINDOW(mainwindow));
+			show_login();
 		}
 	}
 }
