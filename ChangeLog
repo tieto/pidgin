@@ -6,6 +6,8 @@ version 0.80cvs:
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9
+	* Buddy icons in conversations no longer depend on the
+	  buddy list
 
 version 0.79 (06/24/2004):
 	New Features:
