@@ -3536,7 +3536,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	data->window = gtk_dialog_new_with_buttons(_("Add Buddy"),
-			(gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL), 0,
+			NULL, 0,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_ADD, GTK_RESPONSE_OK,
 			NULL);
@@ -3870,7 +3870,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
     data->window = gtk_dialog_new_with_buttons(_("Add Chat"),
-            GTK_WINDOW(gtkblist->window), 0,
+            NULL, 0,
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
             GTK_STOCK_ADD, GTK_RESPONSE_OK,
             NULL);
