@@ -78,6 +78,7 @@ src/protocols/jabber/xmltok.c
 src/protocols/jabber/xmltok_impl.c
 src/protocols/jabber/xmltok_ns.c
 src/protocols/jabber/xstream.c
+src/protocols/msn/buddyicon.c
 src/protocols/msn/dispatch.c
 src/protocols/msn/error.c
 src/protocols/msn/ft.c
@@ -120,6 +121,7 @@ src/protocols/oscar/translate.c
 src/protocols/oscar/txqueue.c
 src/protocols/oscar/util.c
 src/protocols/toc/toc.c
+src/protocols/trepia/trepia.c
 src/protocols/yahoo/crypt.c
 src/protocols/yahoo/yahoo.c
 src/protocols/zephyr/ZAsyncLocate.c
@@ -191,14 +193,18 @@ src/gaim-remote.c
 src/gaimrc.c
 src/getopt.c
 src/getopt1.c
+src/gtkaccount.c
 src/gtkblist.c
 src/gtkcellrendererprogress.c
+src/gtkconn.c
 src/gtkconv.c
 src/gtkft.c
 src/gtkimhtml.c
 src/gtknotify.c
 src/gtkpounce.c
 src/gtkprefs.c
+src/gtkrequest.c
+src/gtksound.c
 src/gtkutils.c
 src/html.c
 src/idle.c
@@ -210,6 +216,7 @@ src/pounce.c
 src/prefs.c
 src/proxy.c
 src/prpl.c
+src/request.h
 src/server.c
 src/session.c
 src/socket.c
