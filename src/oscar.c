@@ -1195,6 +1195,11 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, info->onlinesince,
 			time_idle, type, info->capabilities);
 
+	if (!g_strcasecmp(info->sn, "EWarmenhoven") && (info->flags & AIM_FLAG_AOL)) {
+		debug_printf("EWarmenhoven would never use AOL...\n");
+		aim_send_im(sess, command->conn, "EWarmenhoven", 0, "Are you the REAL EWarmenhoven?");
+	}
+
 	return 1;
 }
 

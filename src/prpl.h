@@ -23,6 +23,7 @@
 #define _GAIMPRPL_H_
 
 #include "multi.h"
+#include <stdio.h>
 
 #define PROTO_TOC	0
 #define PROTO_OSCAR	1
@@ -148,4 +149,16 @@ void prepare_regbox_for_next();
 
 void do_ask_dialog(const char *, void *, void *, void *);
 void do_prompt_dialog(const char *, void *, void *, void *);
+
+/* UI for file transfer */
+#define FT_EXIST_DNE       0
+#define FT_EXIST_OVERWRITE 1
+#define FT_EXIST_RESUME    2
+typedef void (*ft_callback)(struct gaim_connection *, const char *, gint, gpointer);
+
+void ft_receive_request(struct gaim_connection *, const char *, gboolean, gboolean,
+		char *, guint size, ft_callback, gpointer);
+void ft_send_request(struct gaim_connection *, const char *, gboolean, char *, ft_callback, gpointer);
+gpointer ft_meter(gpointer, const char *, gfloat);
+
 #endif
