@@ -10,7 +10,7 @@ gtk2/new prefs
 		smiles and links do not.
 	replace legend in info dialog with link to status icons page
 	buddy ticker stays around when you sign off - showing the buddies who were online
-	need a close button on conversations for when its tabed if nothing else.
+	need a close button on conversations for when its tabed if nothing else. [ROB]
 	text like <font color=blah>with only some text</font> being colored causes the whole line to be colored. 
 	lots of font troubles. esp in picking good fonts to use when the theme doesn't have an installed one.
 	on away tab, if you set the time between responces, you 
@@ -31,7 +31,7 @@ gtk2/new prefs
 	escape to close window pref or function doesn't work right
 		has to do with loss of focus and incorrect initial focus.
 	there is a blank line in the blist for a couple seconds after someone
-		signs off.
+		signs off. [gtk2 bug with the deprecated gtklist?]
 	themes don't set background correctly in the blist. (reported, not verified)
 
 GAIM-REMOTE:
@@ -87,8 +87,7 @@ IN GENERAL:
 		licq has a directory with one file per buddy
 		eb i don't know. but the trick there would be 
 		converting to several accounts at once.
-		we have a perl script for licq, but nothing for
-		eb yet.
+		we have a perl script for licq and c code for eb.
 	fix memory leaks
 	block buddy option from right click menu in blist
 	sounds/Makefile needs to use host CC, not target 
