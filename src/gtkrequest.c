@@ -666,7 +666,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 							gtk_text_buffer_set_text(buffer, value, -1);
 						}
 
-						gtk_text_view_set_editable(GTK_TEXT_VIEW(widget),
+						gtk_text_view_set_editable(GTK_TEXT_VIEW(textview),
 							gaim_request_field_string_is_editable(field));
 
 						g_signal_connect(G_OBJECT(textview), "focus-out-event",
