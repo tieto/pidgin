@@ -2209,6 +2209,7 @@ void show_find_email(GaimConnection *gc)
 void cancel_link(GtkWidget *widget, GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
+	GtkWidget *link_dialog;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -2217,8 +2218,9 @@ void cancel_link(GtkWidget *widget, GaimConversation *c)
 									FALSE);
 	}
 
-	destroy_dialog(NULL, gtkconv->dialogs.link);
+	link_dialog = gtkconv->dialogs.link;
 	gtkconv->dialogs.link = NULL;
+	destroy_dialog(NULL, link_dialog);
 }
 
 void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
@@ -2274,6 +2276,9 @@ void show_insert_link(GtkWidget *linky, GaimConversation *c)
 		a->window = gtk_dialog_new_with_buttons(_("Insert Link"),
 				GTK_WINDOW(gtkwin->window), 0, GTK_STOCK_CANCEL,
 				GTK_RESPONSE_CANCEL, _("Insert"), GTK_RESPONSE_OK, NULL);
+		gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
+		g_signal_connect(G_OBJECT(a->window), "response",
+						 G_CALLBACK(do_insert_link), a);
 
 		gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
 		gtk_container_set_border_width(GTK_CONTAINER(a->window), 6);
@@ -2304,12 +2309,6 @@ void show_insert_link(GtkWidget *linky, GaimConversation *c)
 		hbox = gtk_hbox_new(FALSE, 6);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-		g_signal_connect(G_OBJECT(a->window), "destroy",
-						 G_CALLBACK(destroy_dialog), a->window);
-		g_signal_connect(G_OBJECT(a->window), "destroy",
-						 G_CALLBACK(free_dialog), a);
-		dialogwindows = g_list_prepend(dialogwindows, a->window);
-
 		table = gtk_table_new(4, 2, FALSE);
 		gtk_table_set_row_spacings(GTK_TABLE(table), 5);
 		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
@@ -2334,8 +2333,9 @@ void show_insert_link(GtkWidget *linky, GaimConversation *c)
 		gtk_table_attach_defaults(GTK_TABLE(table), a->text, 1, 2, 1, 2);
 		gtk_entry_set_activates_default (GTK_ENTRY(a->text), TRUE);
 
-		g_signal_connect(G_OBJECT(a->window), "response",
-						 G_CALLBACK(do_insert_link), a);
+		g_signal_connect(G_OBJECT(a->window), "destroy",
+						 G_CALLBACK(free_dialog), a);
+		dialogwindows = g_list_prepend(dialogwindows, a->window);
 
 		a->toggle = linky;
 		gtkconv->dialogs.link = a->window;
