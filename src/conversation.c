@@ -1552,14 +1552,14 @@ gaim_conv_im_get_icon(const GaimConvIm *im)
 }
 
 void
-gaim_conv_im_set_typing_state(GaimConvIm *im, int state)
+gaim_conv_im_set_typing_state(GaimConvIm *im, GaimTypingState state)
 {
 	g_return_if_fail(im != NULL);
 
 	im->typing_state = state;
 }
 
-int
+GaimTypingState
 gaim_conv_im_get_typing_state(const GaimConvIm *im)
 {
 	g_return_val_if_fail(im != NULL, 0);

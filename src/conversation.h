@@ -860,7 +860,7 @@ GaimBuddyIcon *gaim_conv_im_get_icon(const GaimConvIm *im);
  * @param im    The IM.
  * @param state The typing state.
  */
-void gaim_conv_im_set_typing_state(GaimConvIm *im, int state);
+void gaim_conv_im_set_typing_state(GaimConvIm *im, GaimTypingState state);
 
 /**
  * Returns the IM's typing state.
@@ -869,7 +869,7 @@ void gaim_conv_im_set_typing_state(GaimConvIm *im, int state);
  *
  * @return The IM's typing state.
  */
-int gaim_conv_im_get_typing_state(const GaimConvIm *im);
+GaimTypingState gaim_conv_im_get_typing_state(const GaimConvIm *im);
 
 /**
  * Starts the IM's typing timeout.
