@@ -111,8 +111,6 @@ void serv_finish_login(struct gaim_connection *gc)
 
 	time(&gc->login_time);
 
-	serv_add_buddy(gc, gc->username);
-
 	update_keepalive(gc, gc->options & OPT_USR_KEEPALV);
 }
 
@@ -414,17 +412,9 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		     time_t idle, int type, gushort caps)
 {
 	struct buddy *b = find_buddy(gc, name);
-	struct gaim_connection *g = find_gaim_conn_by_name(name);
-
-	if (g) {
-		gc->correction_time = (int)(signon - g->login_time);
-		if (!b) {
-			return;
-		}
-	}
 
 	if (!b) {
-		debug_printf("Error, no such person\n");
+		debug_printf("Error, no such buddy %s\n", name);
 		return;
 	}
 

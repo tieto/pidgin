@@ -33,6 +33,7 @@
 #include <sys/wait.h>
 #include <gtk/gtk.h>
 #include <ctype.h>
+#include <math.h>
 #include <pixmaps/aimicon.xpm>
 #include "gaim.h"
 
@@ -68,7 +69,7 @@ gint badchar(char c)
 }
 
 
-gchar *sec_to_text(gint sec)
+gchar *sec_to_text(guint sec)
 {
 	int hrs, min;
 	char minutes[64];
@@ -86,11 +87,11 @@ gchar *sec_to_text(gint sec)
 		if (min == 1)
 			g_snprintf(minutes, sizeof(minutes), "%d minute.", min);
 		else
-			g_snprintf(minutes, sizeof(minutes), "%d minutes.", min);
+			g_snprintf(minutes, sizeof(minutes), "%d minutes.", abs(min));
 		sep = ", ";
 	} else {
 		if (!hrs)
-			g_snprintf(minutes, sizeof(minutes), "%d minutes.", min);
+			g_snprintf(minutes, sizeof(minutes), "%d minutes.", abs(min));
 		else {
 			minutes[0] = '.';
 			minutes[1] = '\0';
@@ -102,7 +103,7 @@ gchar *sec_to_text(gint sec)
 		if (hrs == 1)
 			g_snprintf(hours, sizeof(hours), "%d hour%s", hrs, sep);
 		else
-			g_snprintf(hours, sizeof(hours), "%d hours%s", hrs, sep);
+			g_snprintf(hours, sizeof(hours), "%d hours%s", abs(hrs), sep);
 	} else
 		hours[0] = '\0';
 

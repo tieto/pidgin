@@ -553,7 +553,7 @@ extern char *date();
 extern gint linkify_text(char *);
 extern void aol_icon(GdkWindow *);
 extern FILE *open_log_file (char *);
-extern char *sec_to_text(int);
+extern char *sec_to_text(guint);
 extern struct aim_user *find_user(const char *, int);
 extern char *full_date();
 extern void check_gaim_versions();

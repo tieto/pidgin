@@ -1780,8 +1780,7 @@ static void update_idle_time(struct buddy_show *bs) {
 		gtk_widget_show(bs->idle);
 
 	/* now we do the tooltip */
-	sotime = sec_to_text(t - b->signon +
-			((struct gaim_connection *)bs->connlist->data)->correction_time);
+	sotime = sec_to_text(t - b->signon);
 
 	if (b->idle)
 		itime = sec_to_text(t - b->idle);
