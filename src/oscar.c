@@ -41,6 +41,7 @@
 #include "prpl.h"
 #include "gaim.h"
 #include "aim.h"
+#include "proxy.h"
 
 /*#include "pixmaps/cancel.xpm"*/
 #include "pixmaps/admin_icon.xpm"
@@ -52,12 +53,15 @@
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
-#define USEROPT_SOCKSHOST 2
-#define USEROPT_SOCKSPORT 3
+#define USEROPT_PROXYHOST 2
+#define USEROPT_PROXYPORT 3
+#define USEROPT_PROXYTYPE 4
+#define USEROPT_USER      5
+#define USEROPT_PASS      6
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
-int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_GETFILE | AIM_CAPS_IMIMAGE;
+static int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_GETFILE | AIM_CAPS_IMIMAGE;
 
 static GtkWidget *join_chat_spin = NULL;
 static GtkWidget *join_chat_entry = NULL;
@@ -91,6 +95,8 @@ struct chat_connection {
 	struct aim_conn_t *conn;
 	int inpa;
 	int id;
+	struct gaim_connection *gc; /* i hate this. */
+	gpointer priv; /* don't ask. */
 };
 
 struct direct_im {
@@ -404,11 +410,34 @@ static void oscar_debug(struct aim_session_t *sess, int level, const char *forma
 	g_free(s);
 }
 
-void oscar_login(struct aim_user *user) {
+static void oscar_login_connect(gpointer data, gint source, GdkInputCondition cond)
+{
+	struct gaim_connection *gc = data;
+	struct oscar_data *odata = gc->proto_data;
+	struct aim_session_t *sess = odata->sess;
+	struct aim_conn_t *conn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
+
+	if (source < 0) {
+		hide_login_progress(gc, _("Couldn't connect to host"));
+		signoff(gc);
+		return;
+	}
+
+	if (conn->fd != source)
+		conn->fd = source;
+
+	aim_request_login(sess, conn, gc->username);
+
+	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+			oscar_callback, conn);
+
+	debug_printf(_("Password sent, waiting for response\n"));
+}
+
+static void oscar_login(struct aim_user *user) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
 	char buf[256];
-	char *finalauth = NULL;
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
 	odata->create_exchange = 0;
@@ -420,68 +449,43 @@ void oscar_login(struct aim_user *user) {
 	aim_session_init(sess, AIM_SESS_FLAGS_NONBLOCKCONNECT, 0);
 	aim_setdebuggingcb(sess, oscar_debug);
 
-	if (user->proto_opt[USEROPT_SOCKSHOST][0]) {
-		char *finalproxy;
-		if (user->proto_opt[USEROPT_SOCKSPORT][0])
-			finalproxy = g_strconcat(user->proto_opt[USEROPT_SOCKSHOST], ":",
-					user->proto_opt[USEROPT_SOCKSPORT], NULL);
-		else
-			finalproxy = g_strdup(user->proto_opt[USEROPT_SOCKSHOST]);
-		aim_setupproxy(sess, finalproxy, NULL, NULL);
-		g_free(finalproxy);
-	}
-
-	if (user->proto_opt[USEROPT_AUTH][0]) {
-		if (user->proto_opt[USEROPT_AUTHPORT][0])
-			finalauth = g_strconcat(user->proto_opt[USEROPT_AUTH], ":",
-					user->proto_opt[USEROPT_AUTHPORT], NULL);
-		else
-			finalauth = g_strdup(user->proto_opt[USEROPT_AUTH]);
-	}
-
 	/* we need an immediate queue because we don't use a while-loop to
 	 * see if things need to be sent. */
 	aim_tx_setenqueue(sess, AIM_TX_IMMEDIATE, NULL);
 	odata->sess = sess;
 	sess->aux_data = gc;
 
-	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, finalauth ? finalauth : FAIM_LOGIN_SERVER);
-
-        if (finalauth)
-                g_free(finalauth);
-
+	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 	if (conn == NULL) {
 		debug_printf(_("internal connection error\n"));
 		hide_login_progress(gc, _("Unable to login to AIM"));
 		signoff(gc);
 		return;
-	} else if (conn->fd == -1) {
-		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
-			char *crh = _("couldn't resolve host");
-			debug_printf("%s\n", crh);
-			hide_login_progress(gc, crh);
-		} else if (conn->status & AIM_CONN_STATUS_CONNERR) {
-			char *cch = _("couldn't connect to host");
-			debug_printf("%s\n", cch);
-			hide_login_progress(gc, cch);
-		}
-		signoff(gc);
-		return;
 	}
+
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
 	set_login_progress(gc, 2, buf);
 
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
-	aim_request_login(sess, conn, gc->username);
 
-	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-			oscar_callback, conn);
-
-	debug_printf(_("Password sent, waiting for response\n"));
+	conn->fd = proxy_connect(user->proto_opt[USEROPT_AUTH][0] ?
+					user->proto_opt[USEROPT_AUTH] : FAIM_LOGIN_SERVER,
+				 user->proto_opt[USEROPT_AUTHPORT][0] ?
+					atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
+				 user->proto_opt[USEROPT_PROXYHOST],
+				 atoi(user->proto_opt[USEROPT_PROXYPORT]),
+				 atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+				 user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
+				 oscar_login_connect, gc);
+	if (!user->gc || (conn->fd < 0)) {
+		hide_login_progress(gc, _("Couldn't connect to host"));
+		signoff(gc);
+		return;
+	}
 }
 
-void oscar_close(struct gaim_connection *gc) {
+static void oscar_close(struct gaim_connection *gc) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	GSList *c = odata->oscar_chats;
 	struct chat_connection *n;
@@ -510,6 +514,32 @@ void oscar_close(struct gaim_connection *gc) {
 	debug_printf(_("Signed off.\n"));
 }
 
+static void oscar_bos_connect(gpointer data, gint source, GdkInputCondition cond) {
+	struct gaim_connection *gc = data;
+	struct oscar_data *odata = gc->proto_data;
+	struct aim_session_t *sess = odata->sess;
+	struct aim_conn_t *bosconn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
+
+	if (source < 0) {
+		if (bosconn->priv)
+			g_free(bosconn->priv);
+		bosconn->priv = NULL;
+		hide_login_progress(gc, _("Could Not Connect"));
+		signoff(gc);
+		return;
+	}
+
+	if (bosconn->fd != source)
+		bosconn->fd = source;
+
+	aim_auth_sendcookie(sess, bosconn, bosconn->priv);
+	g_free(bosconn->priv);
+	bosconn->priv = NULL;
+	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+			oscar_callback, bosconn);
+	set_login_progress(gc, 4, _("Connection established, cookie sent"));
+}
+
 int gaim_parse_auth_resp(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	va_list ap;
@@ -521,8 +551,11 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	char *latestrelease = NULL, *latestbeta = NULL;
 	char *latestreleaseurl = NULL, *latestbetaurl = NULL;
 	char *latestreleaseinfo = NULL, *latestbetainfo = NULL;
+	int i; char *host; int port = FAIM_LOGIN_PORT;
+	struct aim_user *user;
 
 	struct gaim_connection *gc = sess->aux_data;
+	user = gc->user;
 
 	va_start(ap, command);
 	sn = va_arg(ap, char *);
@@ -593,13 +626,9 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	gdk_input_remove(gc->inpa);
 	aim_conn_kill(sess, &command->conn);
 
-	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, bosip);
+	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, NULL);
 	if (bosconn == NULL) {
 		hide_login_progress(gc, _("Internal Error"));
-		signoff(gc);
-		return -1;
-	} else if (bosconn->status & AIM_CONN_STATUS_CONNERR) {
-		hide_login_progress(gc, _("Could Not Connect"));
 		signoff(gc);
 		return -1;
 	}
@@ -630,11 +659,30 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x001f, gaim_memrequest, 0);
 
-	aim_auth_sendcookie(sess, bosconn, cookie);
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
-	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-			oscar_callback, bosconn);
-	set_login_progress(gc, 4, _("Connection established, cookie sent"));
+	for (i = 0; i < (int)strlen(bosip); i++) {
+		if (bosip[i] == ':') {
+			port = atoi(&(bosip[i+1]));
+			break;
+		}
+	}
+	host = g_strndup(bosip, i);
+	bosconn->priv = g_memdup(cookie, AIM_COOKIELEN);
+	bosconn->fd = proxy_connect(host, port,
+				    gc->user->proto_opt[USEROPT_PROXYHOST],
+				    atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
+				    atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
+				    gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
+				    oscar_bos_connect, gc);
+	g_free(host);
+	if (!user->gc || (bosconn->fd < 0)) {
+		if (bosconn->priv)
+			g_free(bosconn->priv);
+		bosconn->priv = NULL;
+		hide_login_progress(gc, _("Could Not Connect"));
+		signoff(gc);
+		return -1;
+	}
 	return 1;
 }
 
@@ -643,41 +691,20 @@ struct pieceofcrap {
 	unsigned long offset;
 	unsigned long len;
 	char *modname;
+	int fd;
 	struct aim_conn_t *conn;
-	struct aim_conn_t *mainconn;
 	unsigned int inpa;
 };
 
-void damn_you(gpointer data, gint source, GdkInputCondition c)
+static void damn_you(gpointer data, gint source, GdkInputCondition c)
 {
 	struct pieceofcrap *pos = data;
 	struct oscar_data *od = pos->gc->proto_data;
 	char in = '\0';
 	int x = 0;
 	char m[17];
-	if (c == GDK_INPUT_WRITE) {
-		char buf[BUF_LONG];
-		if (aim_conn_completeconnect(od->sess, pos->conn) < 0) {
-			do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
-					" You may be disconnected shortly.", "Login Error");
-			gdk_input_remove(pos->inpa);
-			close(pos->conn->fd);
-			aim_conn_kill(od->sess, &pos->conn);
-			g_free(pos);
-			return;
-		}
-		g_snprintf(buf, sizeof(buf), "GET " AIMHASHDATA
-				"?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
-				pos->offset, pos->len, pos->modname ? pos->modname : "");
-		write(pos->conn->fd, buf, strlen(buf));
-		if (pos->modname)
-			g_free(pos->modname);
-		gdk_input_remove(pos->inpa);
-		pos->inpa = gdk_input_add(pos->conn->fd, GDK_INPUT_READ, damn_you, pos);
-		return;
-	}
 
-	while (read(pos->conn->fd, &in, 1) == 1) {
+	while (read(pos->fd, &in, 1) == 1) {
 		if (in == '\n')
 			x++;
 		else if (in != '\r')
@@ -690,22 +717,46 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
 				" You may be disconnected shortly.", "Login Error");
 		gdk_input_remove(pos->inpa);
-		close(pos->conn->fd);
-		aim_conn_kill(od->sess, &pos->conn);
+		close(pos->fd);
 		g_free(pos);
 		return;
 	}
-	read(pos->conn->fd, m, 16);
+	read(pos->fd, m, 16);
 	m[16] = '\0';
 	debug_printf("Sending hash: ");
 	for (x = 0; x < 16; x++)
 		debug_printf("%02x ", (unsigned char)m[x]);
 	debug_printf("\n");
 	gdk_input_remove(pos->inpa);
-	close(pos->conn->fd);
-	aim_conn_kill(od->sess, &pos->conn);
-	aim_sendmemblock(od->sess, pos->mainconn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
+	close(pos->fd);
+	aim_sendmemblock(od->sess, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
 	g_free(pos);
+}
+
+static void straight_to_hell(gpointer data, gint source, GdkInputCondition cond) {
+	struct pieceofcrap *pos = data;
+	char buf[BUF_LONG];
+
+	if (source < 0) {
+		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
+				" You may be disconnected shortly.", "Login Error");
+		if (pos->modname)
+			g_free(pos->modname);
+		g_free(pos);
+		return;
+	}
+
+	if (pos->fd != source)
+		pos->fd = source;
+
+	g_snprintf(buf, sizeof(buf), "GET " AIMHASHDATA
+			"?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
+			pos->offset, pos->len, pos->modname ? pos->modname : "");
+	write(pos->fd, buf, strlen(buf));
+	if (pos->modname)
+		g_free(pos->modname);
+	pos->inpa = gdk_input_add(pos->fd, GDK_INPUT_READ, damn_you, pos);
+	return;
 }
 
 /* size of icbmui.ocm, the largest module in AIM 3.5 */
@@ -713,10 +764,12 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 
 int gaim_memrequest(struct aim_session_t *sess,
 		    struct command_rx_struct *command, ...) {
+	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	struct pieceofcrap *pos;
 	unsigned long offset, len;
 	char *modname;
+	int fd;
 
 	va_start(ap, command);
 	offset = va_arg(ap, unsigned long);
@@ -724,6 +777,7 @@ int gaim_memrequest(struct aim_session_t *sess,
 	modname = va_arg(ap, char *);
 	va_end(ap);
 
+	debug_printf("offset: %d, len: %d, file: %s\n", offset, len, modname ? modname : "aim.exe");
 	if (len == 0) {
 		debug_printf("len is 0, hashing NULL\n");
 		aim_sendmemblock(sess, command->conn, offset, len, NULL,
@@ -759,14 +813,26 @@ int gaim_memrequest(struct aim_session_t *sess,
 
 	pos = g_new0(struct pieceofcrap, 1);
 	pos->gc = sess->aux_data;
-	pos->mainconn = command->conn;
+	pos->conn = command->conn;
 
 	pos->offset = offset;
 	pos->len = len;
 	pos->modname = modname ? g_strdup(modname) : NULL;
 
-	pos->conn = aim_newconn(sess, 0, "gaim.sourceforge.net:80");
-	pos->inpa = gdk_input_add(pos->conn->fd, GDK_INPUT_WRITE, damn_you, pos);
+	fd = proxy_connect("gaim.sourceforge.net", 80,
+			   gc->user->proto_opt[USEROPT_PROXYHOST],
+			   atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
+			   atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
+			   gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
+			   straight_to_hell, pos);
+	if (fd < 0) {
+		if (pos->modname)
+			g_free(pos->modname);
+		g_free(pos);
+		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
+				" You may be disconnected shortly.", "Login Error");
+	}
+	pos->fd = fd;
 
 	return 1;
 }
@@ -864,6 +930,85 @@ int gaim_server_ready(struct aim_session_t *sess,
 	return 1;
 }
 
+static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition cond)
+{
+	struct gaim_connection *gc = data;
+	struct oscar_data *odata = gc->proto_data;
+	struct aim_session_t *sess = odata->sess;
+	struct aim_conn_t *tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_CHATNAV);
+
+	if (source < 0) {
+		if (tstconn->priv)
+			g_free(tstconn->priv);
+		tstconn->priv = NULL;
+		aim_conn_kill(sess, &tstconn);
+		debug_printf("unable to connect to chatnav server\n");
+		return;
+	}
+
+	if (tstconn->fd != source)
+		tstconn->fd = source;
+
+	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
+	g_free(tstconn->priv);
+	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+				oscar_callback, tstconn);
+	debug_printf("chatnav: connected\n");
+}
+
+static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition cond)
+{
+	struct gaim_connection *gc = data;
+	struct oscar_data *odata = gc->proto_data;
+	struct aim_session_t *sess = odata->sess;
+	struct aim_conn_t *tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
+
+	if (source < 0) {
+		if (tstconn->priv)
+			g_free(tstconn->priv);
+		tstconn->priv = NULL;
+		aim_conn_kill(sess, &tstconn);
+		debug_printf("unable to connect to authorizer\n");
+		return;
+	}
+
+	if (tstconn->fd != source)
+		tstconn->fd = source;
+
+	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
+	g_free(tstconn->priv);
+	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+				oscar_callback, tstconn);
+	debug_printf("chatnav: connected\n");
+}
+
+static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition cond)
+{
+	struct chat_connection *ccon = data;
+	struct gaim_connection *gc = ccon->gc;
+	struct oscar_data *odata = gc->proto_data;
+	struct aim_session_t *sess = odata->sess;
+	struct aim_conn_t *tstconn = ccon->conn;
+
+	if (source < 0) {
+		aim_conn_kill(sess, &tstconn);
+		g_free(ccon->priv);
+		g_free(ccon->show);
+		g_free(ccon->name);
+		g_free(ccon);
+	}
+
+	if (ccon->fd != source)
+		ccon->fd = tstconn->fd = source;
+
+	ccon->inpa = gdk_input_add(tstconn->fd,
+			GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+			oscar_callback, tstconn);
+	odata->oscar_chats = g_slist_append(odata->oscar_chats, ccon);
+	aim_chat_attachname(tstconn, ccon->name);
+	aim_auth_sendcookie(sess, tstconn, ccon->priv);
+	g_free(ccon->priv);
+}
 int gaim_handle_redirect(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	va_list ap;
@@ -871,75 +1016,119 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	char *ip;
 	unsigned char *cookie;
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct aim_user *user = gc->user;
+	struct aim_conn_t *tstconn;
+	int i;
+	char *host; int port = FAIM_LOGIN_PORT, fd;
 
 	va_start(ap, command);
 	serviceid = va_arg(ap, int);
 	ip        = va_arg(ap, char *);
 	cookie    = va_arg(ap, unsigned char *);
 
+	for (i = 0; i < (int)strlen(ip); i++) {
+		if (ip[i] == ':') {
+			port = atoi(&(ip[i+1]));
+			break;
+		}
+	}
+	host = g_strndup(ip, i);
+
 	switch(serviceid) {
 	case 0x7: /* Authorizer */
 		debug_printf("Reconnecting with authorizor...\n");
-		{
-		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, ip);
-		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR)
+		tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
+		if (tstconn == NULL) {
 			debug_printf("unable to reconnect with authorizer\n");
-		else {
-			aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
-			aim_conn_addhandler(sess, tstconn, 0x0001, 0x0007, gaim_rateresp, 0);
-			aim_conn_addhandler(sess, tstconn, 0x0007, 0x0003, gaim_info_change, 0);
-			aim_conn_addhandler(sess, tstconn, 0x0007, 0x0005, gaim_info_change, 0);
-			aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
-			odata->paspa = gdk_input_add(tstconn->fd,
-					GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-					oscar_callback, tstconn);
-			aim_auth_sendcookie(sess, tstconn, cookie);
-		}
-		}
-		break;
-	case 0xd: /* ChatNav */
-		{
-		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, ip);
-		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR) {
-			debug_printf("unable to connect to chatnav server\n");
+			g_free(host);
 			return 1;
 		}
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
-		aim_auth_sendcookie(sess, tstconn, cookie);
-		odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-					oscar_callback, tstconn);
+		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0007, gaim_rateresp, 0);
+		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0003, gaim_info_change, 0);
+		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0005, gaim_info_change, 0);
+		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
+
+		tstconn->priv = g_memdup(cookie, AIM_COOKIELEN);
+		fd = proxy_connect(host, port, user->proto_opt[USEROPT_PROXYHOST],
+				   atoi(user->proto_opt[USEROPT_PROXYPORT]),
+				   atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+				   user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
+				   oscar_auth_connect, gc);
+		if (fd < 0) {
+			if (tstconn->priv)
+				g_free(tstconn->priv);
+			aim_conn_kill(sess, &tstconn);
+			debug_printf("unable to reconnect with authorizer\n");
+			g_free(host);
+			return 1;
 		}
-		debug_printf("chatnav: connected\n");
+		tstconn->fd = fd;
+		break;
+	case 0xd: /* ChatNav */
+		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, NULL);
+		if (tstconn == NULL) {
+			debug_printf("unable to connect to chatnav server\n");
+			g_free(host);
+			return 1;
+		}
+		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
+
+		tstconn->priv = g_memdup(cookie, AIM_COOKIELEN);
+		fd = proxy_connect(host, port, user->proto_opt[USEROPT_PROXYHOST],
+				   atoi(user->proto_opt[USEROPT_PROXYPORT]),
+				   atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+				   user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
+				   oscar_chatnav_connect, gc);
+		if (fd < 0) {
+			if (tstconn->priv)
+				g_free(tstconn->priv);
+			aim_conn_kill(sess, &tstconn);
+			debug_printf("unable to connect to chatnav server\n");
+			g_free(host);
+			return 1;
+		}
+		tstconn->fd = fd;
 		break;
 	case 0xe: /* Chat */
 		{
-		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, ip);
 		char *roomname = va_arg(ap, char *);
 		int exchange = va_arg(ap, int);
 		struct chat_connection *ccon;
-		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR) {
+		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, NULL);
+		if (tstconn == NULL) {
 			debug_printf("unable to connect to chat server\n");
+			g_free(host);
 			return 1;
 		}
-		debug_printf("Connected to chat room %s exchange %d\n", roomname, exchange);
 
+		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 		ccon = g_new0(struct chat_connection, 1);
 		ccon->conn = tstconn;
-		ccon->fd = tstconn->fd;
+		ccon->gc = gc;
+		ccon->fd = -1;
 		ccon->name = g_strdup(roomname);
 		ccon->exchange = exchange;
 		ccon->show = extract_name(roomname);
 		
-		ccon->inpa = gdk_input_add(tstconn->fd,
-				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-				oscar_callback, tstconn);
-
-		odata->oscar_chats = g_slist_append(odata->oscar_chats, ccon);
-		
-		aim_chat_attachname(tstconn, roomname);
-		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
-		aim_auth_sendcookie(sess, tstconn, cookie);
+		ccon->priv = g_memdup(cookie, AIM_COOKIELEN);
+		fd = proxy_connect(host, port, user->proto_opt[USEROPT_PROXYHOST],
+				   atoi(user->proto_opt[USEROPT_PROXYPORT]),
+				   atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+				   user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
+				   oscar_chat_connect, ccon);
+		if (fd < 0) {
+			aim_conn_kill(sess, &tstconn);
+			debug_printf("unable to connect to chat server\n");
+			g_free(host);
+			g_free(ccon->priv);
+			g_free(ccon->show);
+			g_free(ccon->name);
+			g_free(ccon);
+			return 1;
+		}
+		ccon->fd = tstconn->fd = fd;
+		debug_printf("Connected to chat room %s exchange %d\n", roomname, exchange);
 		}
 		break;
 	default: /* huh? */
@@ -949,6 +1138,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 	va_end(ap);
 
+	g_free(host);
 	return 1;
 }
 
@@ -1024,6 +1214,15 @@ static void oscar_directim_callback(gpointer data, gint source, GdkInputConditio
 	struct oscar_data *od = gc->proto_data;
 	char buf[256];
 
+	if (source < 0) {
+		od->direct_ims = g_slist_remove(od->direct_ims, dim);
+		g_free(dim);
+		return;
+	}
+
+	if (dim->conn->fd != source)
+		dim->conn->fd = source;
+
 	if (!(dim->cnv = find_conversation(dim->name))) dim->cnv = new_conversation(dim->name);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
@@ -1031,14 +1230,6 @@ static void oscar_directim_callback(gpointer data, gint source, GdkInputConditio
 	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
 			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
 
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
-				gaim_directim_incoming, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT,
-				gaim_directim_disconnect, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
-				gaim_directim_typing, 0);
-
-	gdk_input_remove(dim->watcher);
 	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, dim->conn);
 }
@@ -1047,6 +1238,8 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
+	char *host; int port = FAIM_LOGIN_PORT;
+	int i;
 
 	debug_printf("Accepted DirectIM.\n");
 
@@ -1059,16 +1252,43 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	dim->gc = d->gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", d->sn);
 
-	if ((dim->conn = aim_directim_connect(od->sess, od->conn, d->priv)) == NULL) {
-		od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
+	if ((dim->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL)) == NULL) {
+		g_free(dim);
+		cancel_direct_im(w, d);
+		return TRUE;
+	}
+	dim->conn->subtype = AIM_CONN_SUBTYPE_OFT_DIRECTIM;
+	dim->conn->priv = d->priv;
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
+				gaim_directim_incoming, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT,
+				gaim_directim_disconnect, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
+				gaim_directim_typing, 0);
+
+	for (i = 0; i < (int)strlen(d->priv->ip); i++) {
+		if (d->priv->ip[i] == ':') {
+			port = atoi(&(d->priv->ip[i+1]));
+			break;
+		}
+	}
+	host = g_strndup(d->priv->ip, i);
+	dim->conn->fd = proxy_connect(host, port,
+				      gc->user->proto_opt[USEROPT_PROXYHOST],
+				      atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
+				      atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
+				      gc->user->proto_opt[USEROPT_USER],
+				      gc->user->proto_opt[USEROPT_PASS],
+				      oscar_directim_callback, dim);
+	g_free(host);
+	if (dim->conn->fd < 0) {
+		aim_conn_kill(od->sess, &dim->conn);
 		g_free(dim);
 		cancel_direct_im(w, d);
 		return TRUE;
 	}
 
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
-
-	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_WRITE, oscar_directim_callback, dim);
 
 	cancel_direct_im(w, d);
 
@@ -2538,56 +2758,69 @@ static void oscar_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *
 
 
 /* weeee */
-static void oscar_print_option(GtkEntry *entry, struct aim_user *user) {
-        int entrynum;
+static void oscar_print_option(GtkEntry *entry, struct aim_user *user)
+{
+	int entrynum;
 
-        entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
- 
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
 	if (entrynum == USEROPT_AUTH) {
 		g_snprintf(user->proto_opt[USEROPT_AUTH],
-                           sizeof(user->proto_opt[USEROPT_AUTH]), 
-                           "%s", gtk_entry_get_text(entry));
+			   sizeof(user->proto_opt[USEROPT_AUTH]), "%s", gtk_entry_get_text(entry));
 	} else if (entrynum == USEROPT_AUTHPORT) {
-		g_snprintf(user->proto_opt[USEROPT_AUTHPORT], 
-                           sizeof(user->proto_opt[USEROPT_AUTHPORT]), 
-                           "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_SOCKSHOST) {
-		g_snprintf(user->proto_opt[USEROPT_SOCKSHOST], 
-                           sizeof(user->proto_opt[USEROPT_SOCKSHOST]), 
-                           "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_SOCKSPORT) {
-		g_snprintf(user->proto_opt[USEROPT_SOCKSPORT], 
-                           sizeof(user->proto_opt[USEROPT_SOCKSPORT]), 
-                           "%s", gtk_entry_get_text(entry));
-        } 
+		g_snprintf(user->proto_opt[USEROPT_AUTHPORT],
+			   sizeof(user->proto_opt[USEROPT_AUTHPORT]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYHOST) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYHOST],
+			   sizeof(user->proto_opt[USEROPT_PROXYHOST]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYPORT) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
+			   sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_USER) {
+		g_snprintf(user->proto_opt[USEROPT_USER],
+			   sizeof(user->proto_opt[USEROPT_USER]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PASS) {
+		g_snprintf(user->proto_opt[USEROPT_PASS],
+			   sizeof(user->proto_opt[USEROPT_PASS]), "%s", gtk_entry_get_text(entry));
+	}
 }
 
-static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
+static void oscar_print_optionrad(GtkRadioButton * entry, struct aim_user *user)
+{
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
+		   sizeof(user->proto_opt[USEROPT_PROXYTYPE]), "%d", entrynum);
+}
+
+static void oscar_user_opts(GtkWidget *book, struct aim_user *user)
+{
 	/* so here, we create the new notebook page */
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *entry;
+	GtkWidget *first, *opt;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
-			gtk_label_new("OSCAR Options"));
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Oscar Options"));
 	gtk_widget_show(vbox);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("Authorizer:");
+	label = gtk_label_new("Auth Host:");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTH);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(oscar_print_option), user);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
 	if (user->proto_opt[USEROPT_AUTH][0]) {
 		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTH]);
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTH]);
@@ -2595,42 +2828,119 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 		gtk_entry_set_text(GTK_ENTRY(entry), "login.oscar.aol.com");
 	gtk_widget_show(entry);
 
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("Authorizer Port:");
+	label = gtk_label_new("Auth Port:");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)1);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(oscar_print_option), user);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTHPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
 	if (user->proto_opt[USEROPT_AUTHPORT][0]) {
 		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHPORT]);
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHPORT]);
 	} else
-		gtk_entry_set_text(GTK_ENTRY(entry), "5190");
+		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
+
 	gtk_widget_show(entry);
 
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_hbox_new(TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("SOCKS5 Host:");
+	first = gtk_radio_button_new_with_label(NULL, "No proxy");
+	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
+	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
+	gtk_widget_show(first);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Host:");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSHOST);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(oscar_print_option), user);
-	if (user->proto_opt[USEROPT_SOCKSHOST][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSHOST]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSHOST]);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYHOST);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYHOST][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYHOST]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYHOST]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy User:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_USER);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_USER][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_USER]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_USER]);
 	}
 	gtk_widget_show(entry);
 
@@ -2638,18 +2948,18 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("SOCKS5 Port:");
+	label = gtk_label_new("Proxy Password:");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSPORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(oscar_print_option), user);
-	if (user->proto_opt[USEROPT_SOCKSPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSPORT]);
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PASS);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_PASS][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PASS]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PASS]);
 	}
 	gtk_widget_show(entry);
 }

@@ -69,6 +69,17 @@ static void no_one_calls(gpointer data, gint source, GdkInputCondition cond)
 	g_free(phb);
 }
 
+static gboolean clean_connect(gpointer data)
+{
+	struct PHB *phb = data;
+
+	phb->func(phb->data, phb->port, GDK_INPUT_READ);
+	g_free(phb);
+
+	return FALSE;
+}
+
+
 static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 {
 	struct sockaddr_in sin;
@@ -112,8 +123,10 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 			return -1;
 		}
 		fcntl(fd, F_SETFL, 0);
-		phb->func(phb->data, fd, GDK_INPUT_READ);
-		g_free(phb);
+		phb->port = fd; /* bleh */
+		gtk_timeout_add(50, clean_connect, phb); /* we do this because we never
+							    want to call our callback
+							    before we return. */
 	}
 
 	return fd;

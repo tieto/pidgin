@@ -13,7 +13,7 @@ version 0.11.0-pre12:
 	* MSN can now change your 'friendly name' (Thanks for the
 	  packet logs, aechols)
 	* More IRC improvements [colors, etc] (Thanks Sean Egan)
-	* Improved proxy options for TOC, IRC, MSN, Jabber
+	* Improved proxy options for TOC, IRC, MSN, Jabber, Oscar
 	* Fixed a small issue with HTML not being stripped from
 	  log files properly (Thanks, faceprint)
 
