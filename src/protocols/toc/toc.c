@@ -945,12 +945,15 @@ static void toc_chat_whisper(struct gaim_connection *g, int id, char *who, char 
 	sflap_send(g, buf2, -1, TYPE_DATA);
 }
 
-static void toc_chat_send(struct gaim_connection *g, int id, char *message)
+static int toc_chat_send(struct gaim_connection *g, int id, char *message)
 {
 	char buf[BUF_LEN * 2];
 	escape_text(message);
+	if (strlen(message) > 2000)
+		return -E2BIG;
 	g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"", id, message);
 	sflap_send(g, buf, -1, TYPE_DATA);
+	return 0;
 }
 
 static void toc_keepalive(struct gaim_connection *gc)

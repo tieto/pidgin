@@ -952,7 +952,7 @@ static void nap_chat_leave(struct gaim_connection *gc, int id)
 	
 }
 
-static void nap_chat_send(struct gaim_connection *gc, int id, char *message)
+static int nap_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 	struct nap_channel *channel = NULL;
 	gchar buf[NAP_BUF_LEN];
@@ -961,12 +961,12 @@ static void nap_chat_send(struct gaim_connection *gc, int id, char *message)
 
 	if (!channel) {
 		/* This shouldn't happen */
-		return;
+		return -EINVAL;
 	}
 
 	g_snprintf(buf, NAP_BUF_LEN, "%s %s", channel->name, message);
 	nap_write_packet(gc, 0x192, buf);
-
+	return 0;
 }
 
 static void nap_add_buddy(struct gaim_connection *gc, char *name)

@@ -327,11 +327,13 @@ void serv_chat_set_topic(struct gaim_connection *g, int id, char *topic)
 	   	(*g->prpl->chat_set_topic)(g, id, topic);
 }
 
-void serv_chat_send(struct gaim_connection *g, int id, char *message)
+int serv_chat_send(struct gaim_connection *g, int id, char *message)
 {
+	int val = -EINVAL;
 	if (g->prpl && g->prpl->chat_send)
-		(*g->prpl->chat_send)(g, id, message);
+		val = (*g->prpl->chat_send)(g, id, message);
 	serv_touch_idle(g);
+	return val;
 }
 
 int find_queue_row_by_name(char *name)

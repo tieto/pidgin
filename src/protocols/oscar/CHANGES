@@ -1,6 +1,39 @@
 
 No release numbers
 ------------------
+ - Sat Aug 25 19:46:38 PDT 2001
+  - Pass "Maximum visible message length" to client in chat info update
+    - This is the real maximum message length now.  There is still a
+      "complexity" limit that will prevent you from sending messages 
+      even if they are less than this limit (102 right now), but I don't 
+      know how that is calculated.
+
+ - Sat Aug 25 19:19:16 PDT 2001
+  - Keep parsing missed calls for entire packet
+    - This is really easy to test now.  Just talk to someone with
+      their minmsginterval set high (like 10seconds or something)
+
+ - Sat Aug 25 18:35:13 PDT 2001
+  - aim_sendconnack -> aim_sendflapver
+  - Remove addicbmparam.  This was identical to aim_seticbmparam
+  - aim_seticbmparam now takes a struct with the parameters in it.  See
+      faimtest.  !!! REQUIRES CLIENT CHANGES if you use aim_seticbmparam, which
+      you really really should -- the defaults are insanely limited
+  - Fix rendezvous IM parsing that I broke last time.
+  - ICBM parameter info callback gives same struct as above.  !!! REQUIRES
+      CLIENT CHANGES
+  - Reformat login.c and part of faimtest.c
+  - !!! NOTE: don't do anything in your motd handler.  If you do, it will
+      get run twice, sine for some reason AOL is sending two MOTDs now.
+
+ - Wed Aug 22 22:11:18 PDT 2001
+  - Reformat the rest of im.c
+  - Fix a few returns, particularly in error cases
+
+ - Thu Aug 16 06:17:57 PDT 2001
+  - Reformat a bit of im.c and aim.h
+  - Rearrange encoding/subencoding checks in IM parsing
+ 
  - Fri Aug  3 14:19:37 EDT 2001
   - Naje aun_sebd_un retyrn sabe vakyes
 

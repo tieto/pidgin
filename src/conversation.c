@@ -865,7 +865,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 				play_sound(SEND);
 		}
 	} else {
-		serv_chat_send(c->gc, c->id, buf);
+		err = serv_chat_send(c->gc, c->id, buf);
 
 		/* no sound because we do that when we receive our message */
 	}

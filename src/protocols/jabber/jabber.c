@@ -1447,7 +1447,7 @@ static void jabber_chat_leave(struct gaim_connection *gc, int id)
 	jc->b = NULL;
 }
 
-static void jabber_chat_send(struct gaim_connection *gc, int id, char *message)
+static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 	GSList *bcs = gc->buddy_chats;
 	struct conversation *b;
@@ -1463,7 +1463,7 @@ static void jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 		bcs = bcs->next;
 	}
 	if (!bcs)
-		return;
+		return -EINVAL;
 
 	bcs = jd->existing_chats;
 	while (bcs) {
@@ -1473,7 +1473,7 @@ static void jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 		bcs = bcs->next;
 	}
 	if (!bcs)
-		return;
+		return -EINVAL;
 
 	x = xmlnode_new_tag("message");
 	xmlnode_put_attrib(x, "from", jid_full(jc->Jid));
@@ -1491,6 +1491,7 @@ static void jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 	xmlnode_free(x);
+	return 0;
 }
 
 static void jabber_chat_set_topic(struct gaim_connection *gc, int id, char *topic)

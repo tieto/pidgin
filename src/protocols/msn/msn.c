@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <string.h>
+#include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <ctype.h>
@@ -1170,13 +1171,13 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 	return 0;
 }
 
-static void msn_chat_send(struct gaim_connection *gc, int id, char *message)
+static int msn_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 	struct msn_switchboard *ms = msn_find_switch_by_id(gc, id);
 	char buf[MSN_BUF_LEN];
 
 	if (!ms)
-		return;
+		return -EINVAL;
 
 	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
 			strlen(MIME_HEADER) + strlen(message),
@@ -1185,6 +1186,7 @@ static void msn_chat_send(struct gaim_connection *gc, int id, char *message)
 		msn_kill_switch(ms);
 	debug_printf("\n");
 	serv_got_chat_in(gc, id, gc->username, 0, message, time(NULL));
+	return 0;
 }
 
 static void msn_chat_invite(struct gaim_connection *gc, int id, char *msg, char *who)

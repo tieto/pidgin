@@ -3,6 +3,20 @@
  *
  *  The routines for sending/receiving Instant Messages.
  *
+ *  Note the term ICBM (Inter-Client Basic Message) which blankets
+ *  all types of genericly routed through-server messages.  Within
+ *  the ICBM types (family 4), a channel is defined.  Each channel
+ *  represents a different type of message.  Channel 1 is used for
+ *  what would commonly be called an "instant message".  Channel 2
+ *  is used for negotiating "rendezvous".  These transactions end in
+ *  something more complex happening, such as a chat invitation, or
+ *  a file transfer.
+ *
+ *  In addition to the channel, every ICBM contains a cookie.  For
+ *  standard IMs, these are only used for error messages.  However,
+ *  the more complex rendezvous messages make suitably more complex
+ *  use of this field.
+ *
  */
 
 #define FAIM_INTERNAL
@@ -27,56 +41,56 @@
  */
 faim_export unsigned short aim_fingerprintclient(unsigned char *msghdr, int len)
 {
-  static const struct {
-    unsigned short clientid;
-    int len;
-    unsigned char data[10];
-  } fingerprints[] = {
-    /* AOL Mobile Communicator, WinAIM 1.0.414 */
-    { AIM_CLIENTTYPE_MC, 
-      9, {0x05, 0x01, 0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01}},
+	static const struct {
+		unsigned short clientid;
+		int len;
+		unsigned char data[10];
+	} fingerprints[] = {
+		/* AOL Mobile Communicator, WinAIM 1.0.414 */
+		{ AIM_CLIENTTYPE_MC, 
+		  9, {0x05, 0x01, 0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01}},
 
-    /* WinAIM 2.0.847, 2.1.1187, 3.0.1464, 4.3.2229, 4.4.2286 */
-    { AIM_CLIENTTYPE_WINAIM, 
-      9, {0x05, 0x01, 0x00, 0x03, 0x01, 0x01, 0x02, 0x01, 0x01}},
+		/* WinAIM 2.0.847, 2.1.1187, 3.0.1464, 4.3.2229, 4.4.2286 */
+		{ AIM_CLIENTTYPE_WINAIM, 
+		  9, {0x05, 0x01, 0x00, 0x03, 0x01, 0x01, 0x02, 0x01, 0x01}},
 
-    /* WinAIM 4.1.2010, libfaim */
-    { AIM_CLIENTTYPE_WINAIM41,
-      10, {0x05, 0x01, 0x00, 0x04, 0x01, 0x01, 0x01, 0x02, 0x01, 0x01}},
+		/* WinAIM 4.1.2010, libfaim */
+		{ AIM_CLIENTTYPE_WINAIM41,
+		 10, {0x05, 0x01, 0x00, 0x04, 0x01, 0x01, 0x01, 0x02, 0x01, 0x01}},
 
-    /* AOL v6.0, CompuServe 2000 v6.0, any TOC client */
-    { AIM_CLIENTTYPE_AOL_TOC,
-      7, {0x05, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01}},
+		/* AOL v6.0, CompuServe 2000 v6.0, any TOC client */
+		{ AIM_CLIENTTYPE_AOL_TOC,
+		  7, {0x05, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01}},
 
-    { 0, 0}
-  };
-  int i;
+		{ 0, 0}
+	};
+	int i;
 
-  if (!msghdr || (len <= 0))
-    return 0;
+	if (!msghdr || (len <= 0))
+		return AIM_CLIENTTYPE_UNKNOWN;
 
-  for (i = 0; fingerprints[i].len; i++) {
-    if (fingerprints[i].len != len)
-      continue;
-    if (memcmp(fingerprints[i].data, msghdr, fingerprints[i].len) == 0)
-      return fingerprints[i].clientid;
-  }
+	for (i = 0; fingerprints[i].len; i++) {
+		if (fingerprints[i].len != len)
+			continue;
+		if (memcmp(fingerprints[i].data, msghdr, fingerprints[i].len) == 0)
+			return fingerprints[i].clientid;
+	}
 
-  return AIM_CLIENTTYPE_UNKNOWN;
+	return AIM_CLIENTTYPE_UNKNOWN;
 }
 
 /* This should be endian-safe now... but who knows... */
 faim_export unsigned short aim_iconsum(const unsigned char *buf, int buflen)
 {
-  unsigned long sum;
-  int i;
+	unsigned long sum;
+	int i;
 
-  for (i = 0, sum = 0; i < buflen; i += 2)
-    sum += (buf[i+1] << 8) + buf[i];
+	for (i = 0, sum = 0; i < buflen; i += 2)
+		sum += (buf[i+1] << 8) + buf[i];
 
-  sum = ((sum & 0xffff0000) >> 16) + (sum & 0x0000ffff);
+	sum = ((sum & 0xffff0000) >> 16) + (sum & 0x0000ffff);
 
-  return sum & 0xffff;
+	return sum & 0xffff;
 }
 
 /*
@@ -284,578 +298,626 @@ faim_export int aim_send_im(struct aim_session_t *sess, struct aim_conn_t *conn,
 
 faim_export int aim_send_icon(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn, const unsigned char *icon, int iconlen, time_t stamp, unsigned short iconsum)
 {
-  struct command_tx_struct *np;
-  int i,curbyte = 0;
-  unsigned char ck[8];
+	struct command_tx_struct *np;
+	int i, curbyte = 0;
+	unsigned char ck[8];
 
-  if (!sess || !conn || !sn || !icon || (iconlen <= 0) || (iconlen >= MAXICONLEN))
-    return -1;
+	if (!sess || !conn || !sn || !icon || 
+			(iconlen <= 0) || (iconlen >= MAXICONLEN))
+	return -EINVAL;
 
-  if (conn->type != AIM_CONN_TYPE_BOS)
-    return -1;
+	if (conn->type != AIM_CONN_TYPE_BOS)
+		return -EINVAL;
 
-  for (i = 0, curbyte = 0; i < 8; i++)
-    curbyte += aimutil_put8(ck+curbyte, (u_char)rand());
+	for (i = 0, curbyte = 0; i < 8; i++)
+		curbyte += aimutil_put8(ck+curbyte, (u_char)rand());
 
-  if (!(np = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+8+2+1+strlen(sn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2)))
-    return -1;
+	if (!(np = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+8+2+1+strlen(sn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2)))
+		return -ENOMEM;
 
-  np->lock = 1;
+	np->lock = 1;
 
-  curbyte = aim_putsnac(np->data, 0x0004, 0x0006, 0x0000, sess->snac_nextid);
+	curbyte = aim_putsnac(np->data, 0x0004, 0x0006, 0x0000, sess->snac_nextid);
 
-  /*
-   * Cookie
-   */
-  memcpy(np->data+curbyte, ck, 8);
-  curbyte += 8;
+	/*
+	 * Cookie
+	 */
+	memcpy(np->data+curbyte, ck, 8);
+	curbyte += 8;
 
-  /*
-   * Channel (2)
-   */
-  curbyte += aimutil_put16(np->data+curbyte, 0x0002);
+	/*
+	 * Channel (2)
+	 */
+	curbyte += aimutil_put16(np->data+curbyte, 0x0002);
 
-  /*
-   * Dest sn
-   */
-  curbyte += aimutil_put8(np->data+curbyte, strlen(sn));
-  curbyte += aimutil_putstr(np->data+curbyte, sn, strlen(sn));
+	/*
+	 * Dest sn
+	 */
+	curbyte += aimutil_put8(np->data+curbyte, strlen(sn));
+	curbyte += aimutil_putstr(np->data+curbyte, sn, strlen(sn));
 
-  /*
-   * TLV t(0005)
-   */
-  curbyte += aimutil_put16(np->data+curbyte, 0x0005);
-  curbyte += aimutil_put16(np->data+curbyte, 2+8+16+6+4+4+iconlen+4+4+4+strlen(AIM_ICONIDENT));
+	/*
+	 * TLV t(0005)
+	 */
+	curbyte += aimutil_put16(np->data+curbyte, 0x0005);
+	curbyte += aimutil_put16(np->data+curbyte, 2+8+16+6+4+4+iconlen+4+4+4+strlen(AIM_ICONIDENT));
 
-  curbyte += aimutil_put16(np->data+curbyte, 0x0000);
+	curbyte += aimutil_put16(np->data+curbyte, 0x0000);
 
-  memcpy(np->data+curbyte, ck, 8);
-  curbyte += 8;
+	memcpy(np->data+curbyte, ck, 8);
+	curbyte += 8;
 
-  curbyte += aim_putcap(np->data+curbyte, 16, AIM_CAPS_BUDDYICON);
+	curbyte += aim_putcap(np->data+curbyte, 16, AIM_CAPS_BUDDYICON);
 
-  /* TLV t(000a) */
-  curbyte += aimutil_put16(np->data+curbyte, 0x000a);
-  curbyte += aimutil_put16(np->data+curbyte, 0x0002);
-  curbyte += aimutil_put16(np->data+curbyte, 0x0001);
+	/* TLV t(000a) */
+	curbyte += aimutil_put16(np->data+curbyte, 0x000a);
+	curbyte += aimutil_put16(np->data+curbyte, 0x0002);
+	curbyte += aimutil_put16(np->data+curbyte, 0x0001);
 
-  /* TLV t(000f) */
-  curbyte += aimutil_put16(np->data+curbyte, 0x000f);
-  curbyte += aimutil_put16(np->data+curbyte, 0x0000);
+	/* TLV t(000f) */
+	curbyte += aimutil_put16(np->data+curbyte, 0x000f);
+	curbyte += aimutil_put16(np->data+curbyte, 0x0000);
 
-  /* TLV t(2711) */
-  curbyte += aimutil_put16(np->data+curbyte, 0x2711);
-  curbyte += aimutil_put16(np->data+curbyte, 4+4+4+iconlen+strlen(AIM_ICONIDENT));
-  curbyte += aimutil_put16(np->data+curbyte, 0x0000);
-  curbyte += aimutil_put16(np->data+curbyte, iconsum);
-  curbyte += aimutil_put32(np->data+curbyte, iconlen);
-  curbyte += aimutil_put32(np->data+curbyte, stamp);
-  memcpy(np->data+curbyte, icon, iconlen);
-  curbyte += iconlen;
-  memcpy(np->data+curbyte, AIM_ICONIDENT, strlen(AIM_ICONIDENT));
-  curbyte += strlen(AIM_ICONIDENT);
+	/* TLV t(2711) */
+	curbyte += aimutil_put16(np->data+curbyte, 0x2711);
+	curbyte += aimutil_put16(np->data+curbyte, 4+4+4+iconlen+strlen(AIM_ICONIDENT));
+	curbyte += aimutil_put16(np->data+curbyte, 0x0000);
+	curbyte += aimutil_put16(np->data+curbyte, iconsum);
+	curbyte += aimutil_put32(np->data+curbyte, iconlen);
+	curbyte += aimutil_put32(np->data+curbyte, stamp);
+	memcpy(np->data+curbyte, icon, iconlen);
+	curbyte += iconlen;
+	memcpy(np->data+curbyte, AIM_ICONIDENT, strlen(AIM_ICONIDENT));
+	curbyte += strlen(AIM_ICONIDENT);
 
-  /* TLV t(0003) */
-  curbyte += aimutil_put16(np->data+curbyte, 0x0003);
-  curbyte += aimutil_put16(np->data+curbyte, 0x0000);
-  
-  np->commandlen = curbyte;
-  np->lock = 0;
-  aim_tx_enqueue(sess, np);
+	/* TLV t(0003) */
+	curbyte += aimutil_put16(np->data+curbyte, 0x0003);
+	curbyte += aimutil_put16(np->data+curbyte, 0x0000);
 
-  return 0;
+	np->commandlen = curbyte;
+	np->lock = 0;
+	aim_tx_enqueue(sess, np);
+
+	return 0;
 }
 
 static int outgoingim(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  unsigned int i, ret = 0;
-  aim_rxcallback_t userfunc;
-  unsigned char cookie[8];
-  int channel;
-  struct aim_tlvlist_t *tlvlist;
-  char sn[MAXSNLEN];
-  unsigned short icbmflags = 0;
-  unsigned char flag1 = 0, flag2 = 0;
-  unsigned char *msgblock = NULL, *msg = NULL;
+	unsigned int i, ret = 0;
+	aim_rxcallback_t userfunc;
+	unsigned char cookie[8];
+	int channel;
+	struct aim_tlvlist_t *tlvlist;
+	char sn[MAXSNLEN];
+	unsigned short icbmflags = 0;
+	unsigned char flag1 = 0, flag2 = 0;
+	unsigned char *msgblock = NULL, *msg = NULL;
 
-  /* ICBM Cookie. */
-  for (i = 0; i < 8; i++)
-    cookie[i] = aimutil_get8(data+i);
+	/* ICBM Cookie. */
+	for (i = 0; i < 8; i++)
+		cookie[i] = aimutil_get8(data+i);
 
-  /* Channel ID */
-  channel = aimutil_get16(data+i);
-  i += 2;
+	/* Channel ID */
+	channel = aimutil_get16(data+i);
+	i += 2;
 
-  if (channel != 0x01) {
-    faimdprintf(sess, 0, "icbm: ICBM recieved on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
-    return 1;
-  }
+	if (channel != 0x01) {
+		faimdprintf(sess, 0, "icbm: ICBM recieved on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
+		return 1;
+	}
 
-  strncpy(sn, (char *) data+i+1, (int) *(data+i));
-  i += 1 + (int) *(data+i);
+	strncpy(sn, (char *) data+i+1, (int) *(data+i));
+	i += 1 + (int) *(data+i);
 
-  tlvlist = aim_readtlvchain(data+i, datalen-i);
+	tlvlist = aim_readtlvchain(data+i, datalen-i);
 
-  if (aim_gettlv(tlvlist, 0x0003, 1))
-    icbmflags |= AIM_IMFLAGS_ACK;
-  if (aim_gettlv(tlvlist, 0x0004, 1))
-    icbmflags |= AIM_IMFLAGS_AWAY;
+	if (aim_gettlv(tlvlist, 0x0003, 1))
+		icbmflags |= AIM_IMFLAGS_ACK;
+	if (aim_gettlv(tlvlist, 0x0004, 1))
+		icbmflags |= AIM_IMFLAGS_AWAY;
 
-  if (aim_gettlv(tlvlist, 0x0002, 1)) {
-    int j = 0;
+	if ((msgblock = (unsigned char *)aim_gettlv_str(tlvlist, 0x0002, 1))) {
+		int j = 0;
 
-    msgblock = (unsigned char *)aim_gettlv_str(tlvlist, 0x0002, 1);
+		/* no, this really is correct.  I'm not high or anything either. */
+		j += 2;
+		j += 2 + aimutil_get16(msgblock+j);
+		j += 2;
 
-    /* no, this really is correct.  I'm not high or anything either. */
-    j += 2;
-    j += 2 + aimutil_get16(msgblock+j);
-    j += 2;
-    
-    j += 2; /* final block length */
+		j += 2; /* final block length */
 
-    flag1 = aimutil_get16(msgblock);
-    j += 2;
-    flag2 = aimutil_get16(msgblock);
-    j += 2;
-    
-    msg = msgblock+j;
-  }
+		flag1 = aimutil_get16(msgblock);
+		j += 2;
+		flag2 = aimutil_get16(msgblock);
+		j += 2;
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    ret = userfunc(sess, rx, channel, sn, msg, icbmflags, flag1, flag2);
-  
-  if (msgblock)
-    free(msgblock);
-  aim_freetlvchain(&tlvlist);
+		msg = msgblock+j;
+	}
 
-  return ret;
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, channel, sn, msg, icbmflags, flag1, flag2);
+
+	free(msgblock);
+	aim_freetlvchain(&tlvlist);
+
+	return ret;
 }
 
+/*
+ * A multipart IM:
+ *
+ * 0004 0007 0000 8f08 d295 
+ *      0031 6520 3b7b f9fd
+ * 	0001 
+ * 	06 XXXX XXXX XXXX
+ * 	0000 
+ * 	0004 
+ * 		0001 0002 0004 
+ * 		0010 0004 0000 01a3
+ * 		0002 0004 3ab6 94fa
+ * 		0003 0004 3b7b f85a
+ * 	0002 003c 
+ * 		0501 0001 01
+ * 		0101 000a 0000 0000 3c48 544d 4c3e   ASCII part 
+ * 		ISO-8859 part:
+ * 		0101 0016 0003 0000 6c6b 7364 6a6b 6c6a 676c a56b 3b73 646a 6b6a
+ * 		0101 000b 0000 0000 3c2f 4854 4d4c 3e   another ASCII part
+ *
+ */
 static int incomingim_ch1(struct aim_session_t *sess, aim_module_t *mod,  struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned short channel, struct aim_userinfo_s *userinfo, unsigned char *data, int datalen, unsigned char *cookie)
 {
-  unsigned short type, length;
-  aim_rxcallback_t userfunc;
-  int i, ret = 0;
-  struct aim_incomingim_ch1_args args;
+	unsigned short type, length;
+	aim_rxcallback_t userfunc;
+	int i, ret = 0;
+	struct aim_incomingim_ch1_args args;
 
-  memset(&args, 0, sizeof(args));
+	memset(&args, 0, sizeof(args));
 
-  /*
-   * This used to be done using tlvchains.  For performance reasons,
-   * I've changed it to process the TLVs in-place.  This avoids lots
-   * of per-IM memory allocations.
-   */
-  for (i = 0; i < datalen; ) {
-      
-    type = aimutil_get16(data+i);
-    i += 2;
-      
-    length = aimutil_get16(data+i);
-    i += 2;
+	/*
+	 * This used to be done using tlvchains.  For performance reasons,
+	 * I've changed it to process the TLVs in-place.  This avoids lots
+	 * of per-IM memory allocations.
+	 */
+	for (i = 0; i < datalen; ) {
 
-    if (type == 0x0002) { /* Message Block */
-      unsigned short wastebits;
-      unsigned char *msgblock;
-      int j = 0, y = 0, z = 0;
+		type = aimutil_get16(data+i);
+		i += 2;
+		      
+		length = aimutil_get16(data+i);
+		i += 2;
 
-      msgblock = data+i;
-      
-      /*
-       * Extracting the message from the unknown cruft.
-       * 
-       * This is a bit messy, and I'm not really qualified,
-       * even as the author, to comment on it.  At least
-       * its not as bad as a while loop shooting into infinity.
-       *
-       * "Do you believe in magic?"
-       *
-       */
+		if (type == 0x0002) { /* Message Block */
+			unsigned short wastebits;
+			unsigned char *msgblock;
+			int j = 0, y = 0, z = 0;
 
-      wastebits = aimutil_get8(msgblock+j++);
-      wastebits = aimutil_get8(msgblock+j++);
-      
-      y = aimutil_get16(msgblock+j);
-      j += 2;
-      for (z = 0; z < y; z++)
-	wastebits = aimutil_get8(msgblock+j++);
-      wastebits = aimutil_get8(msgblock+j++);
-      wastebits = aimutil_get8(msgblock+j++);
+			msgblock = data+i;
+			      
+			/*
+			 * Extracting the message from the unknown cruft.
+			 * 
+			 * This is a bit messy, and I'm not really qualified,
+			 * even as the author, to comment on it.  At least
+			 * its not as bad as a while loop shooting into 
+			 * infinity.
+			 *
+			 * "Do you believe in magic?"
+			 *
+			 */
 
-      args.finlen = j;
-      if (args.finlen > sizeof(args.fingerprint))
-	args.finlen = sizeof(args.fingerprint);
-      memcpy(args.fingerprint, msgblock, args.finlen);
+			wastebits = aimutil_get8(msgblock+j++);
+			wastebits = aimutil_get8(msgblock+j++);
+			      
+			y = aimutil_get16(msgblock+j);
+			j += 2;
+			for (z = 0; z < y; z++)
+				wastebits = aimutil_get8(msgblock+j++);
+			wastebits = aimutil_get8(msgblock+j++);
+			wastebits = aimutil_get8(msgblock+j++);
 
-      /* Message string length, including flag words. */
-      args.msglen = aimutil_get16(msgblock+j);
-      j += 2;
+			args.finlen = j;
+			if (args.finlen > sizeof(args.fingerprint))
+				args.finlen = sizeof(args.fingerprint);
+			memcpy(args.fingerprint, msgblock, args.finlen);
 
-      /* Flag words. */
-      args.flag1 = aimutil_get16(msgblock+j);
-      if (args.flag1 == 0x0002)
-	args.icbmflags |= AIM_IMFLAGS_UNICODE;
-      else if (args.flag1 == 0x0003)
-	args.icbmflags |= AIM_IMFLAGS_ISO_8859_1;
-      j += 2;
+			/* Message string length, including flag words. */
+			args.msglen = aimutil_get16(msgblock+j);
+			j += 2;
 
-      args.flag2 = aimutil_get16(msgblock+j);
-      j += 2;
-      
-      if ((args.flag1 && (args.flag1 != 0x0002) && (args.flag1 != 0x0003)) || args.flag2)
-	faimdprintf(sess, 0, "icbm: **warning: encoding flags are being used! {%04x, %04x}\n", args.flag1, args.flag2);
+			/* Flag words. */
+			args.flag1 = aimutil_get16(msgblock+j);
+			if (args.flag1 == 0x0000)
+				; /* ASCII */
+			else if (args.flag1 == 0x0002)
+				args.icbmflags |= AIM_IMFLAGS_UNICODE;
+			else if (args.flag1 == 0x0003)
+				args.icbmflags |= AIM_IMFLAGS_ISO_8859_1;
+			else if (args.flag1 == 0xffff)
+				; /* no encoding (yeep!) */
+			j += 2;
 
-      /* Message string. */
-      args.msglen -= 4;
-      if (args.icbmflags & AIM_IMFLAGS_UNICODE) {
-	args.msg = malloc(args.msglen+2);
-	memcpy(args.msg, msgblock+j, args.msglen);
-	args.msg[args.msglen] = '\0'; /* wide NULL */
-	args.msg[args.msglen+1] = '\0';
-      } else {
-	args.msg = malloc(args.msglen+1);
-	memcpy(args.msg, msgblock+j, args.msglen);
-	args.msg[args.msglen] = '\0';
-      }
+			args.flag2 = aimutil_get16(msgblock+j);
+			if (args.flag2 == 0x0000)
+				; /* standard subencoding? */
+			else if (args.flag2 == 0x000b)
+				args.icbmflags |= AIM_IMFLAGS_SUBENC_MACINTOSH;
+			else if (args.flag2 == 0xffff)
+				; /* no subencoding */
+			j += 2;
+			
+			if (	((args.flag1 != 0x0000) &&
+				 (args.flag1 != 0x0002) &&
+				 (args.flag1 != 0x0003) &&
+				 (args.flag1 != 0xffff)) ||
+				((args.flag2 != 0x0000) &&
+				 (args.flag2 != 0x000b) &&
+				 (args.flag2 != 0xffff))) {
+				faimdprintf(sess, 0, "icbm: **warning: encoding flags are being used! {%04x, %04x}\n", args.flag1, args.flag2);
+			}
 
-    } else if (type == 0x0003) { /* Server Ack Requested */
+			/* Message string. */
+			args.msglen -= 4;
+			if (args.icbmflags & AIM_IMFLAGS_UNICODE) {
+				args.msg = malloc(args.msglen+2);
+				memcpy(args.msg, msgblock+j, args.msglen);
+				args.msg[args.msglen] = '\0'; /* wide NULL */
+				args.msg[args.msglen+1] = '\0';
+			} else {
+				args.msg = malloc(args.msglen+1);
+				memcpy(args.msg, msgblock+j, args.msglen);
+				args.msg[args.msglen] = '\0';
+			}
 
-      args.icbmflags |= AIM_IMFLAGS_ACK;
+		} else if (type == 0x0003) { /* Server Ack Requested */
 
-    } else if (type == 0x0004) { /* Message is Auto Response */
+			args.icbmflags |= AIM_IMFLAGS_ACK;
 
-      args.icbmflags |= AIM_IMFLAGS_AWAY;
+		} else if (type == 0x0004) { /* Message is Auto Response */
 
-    } else if ((type == 0x0008) && 
-	       (length == 0x000c)) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
+			args.icbmflags |= AIM_IMFLAGS_AWAY;
 
-      args.iconstamp = aimutil_get32(data+i+8);
-      args.icbmflags |= AIM_IMFLAGS_HASICON;
+		} else if ((type == 0x0008) && (length == 0x000c)) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
 
-    } else if (type == 0x0009) {
+			args.iconstamp = aimutil_get32(data+i+8);
+			args.icbmflags |= AIM_IMFLAGS_HASICON;
 
-      args.icbmflags |= AIM_IMFLAGS_BUDDYREQ;
+		} else if (type == 0x0009) {
 
-    } else {
-      fprintf(stderr, "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
-    }
+			args.icbmflags |= AIM_IMFLAGS_BUDDYREQ;
 
-    i += length;
-  }
+		} else if (type == 0x0017) {
+
+			args.extdatalen = length;
+			args.extdata = data+i;
+
+		} else {
+			faimdprintf(sess, 0, "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
+		}
+
+		i += length;
+	}
 
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    ret = userfunc(sess, rx, channel, userinfo, &args);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, channel, userinfo, &args);
 
-  free(args.msg);
+	free(args.msg);
 
-  return ret;
+	return ret;
 }
 
 static int incomingim_ch2(struct aim_session_t *sess, aim_module_t *mod,  struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned short channel, struct aim_userinfo_s *userinfo, struct aim_tlvlist_t *tlvlist, unsigned char *cookie)
 {
-  aim_rxcallback_t userfunc;
-  struct aim_tlv_t *block1;
-  struct aim_tlvlist_t *list2;
-  int ret = 0;
-  struct aim_incomingim_ch2_args args;
+	aim_rxcallback_t userfunc;
+	struct aim_tlv_t *block1;
+	struct aim_tlvlist_t *list2;
+	int ret = 0;
+	struct aim_incomingim_ch2_args args;
 
-  memset(&args, 0, sizeof(args));
-      
-  /*
-   * There's another block of TLVs embedded in the type 5 here. 
-   */
-  block1 = aim_gettlv(tlvlist, 0x0005, 1);
-  if (!block1 || !block1->value) {
-    faimdprintf(sess, 0, "no tlv 0x0005 in rendezvous transaction!\n");
-    return 0;
-  }
+	memset(&args, 0, sizeof(args));
 
-  /*
-   * First two bytes represent the status of the connection.
-   *
-   * 0 is a request, 2 is an accept
-   */ 
-  args.status = aimutil_get16(block1->value+0);
-      
-  /*
-   * Next comes the cookie.  Should match the ICBM cookie.
-   */
-  if (memcmp(block1->value+2, cookie, 8) != 0) 
-    faimdprintf(sess, 0, "rend: warning cookies don't match!\n");
-
-  /*
-   * The next 16bytes are a capability block so we can
-   * identify what type of rendezvous this is.
-   *
-   * Thanks to Eric Warmenhoven <warmenhoven@linux.com> (of GAIM)
-   * for pointing some of this out to me.  In fact, a lot of 
-   * the client-to-client info comes from the work of the GAIM 
-   * developers. Thanks!
-   *
-   * Read off one capability string and we should have it ID'd.
-   * 
-   */
-  if ((args.reqclass = aim_getcap(sess, block1->value+2+8, 0x10)) == 0x0000) {
-    faimdprintf(sess, 0, "rend: no ID block\n");
-    return 0;
-  }
-
-  /* 
-   * What follows may be TLVs or nothing, depending on the
-   * purpose of the message.
-   *
-   * Ack packets for instance have nothing more to them.
-   */
-  list2 = aim_readtlvchain(block1->value+2+8+16, block1->length-2-8-16);
-      
-  if (!list2 || ((args.reqclass != AIM_CAPS_IMIMAGE) && !(aim_gettlv(list2, 0x2711, 1)))) {
-    struct aim_msgcookie_t *cook;
-    int type;
-	
-    type = aim_msgcookie_gettype(args.reqclass); /* XXX: fix this shitty code */
-
-    if ((cook = aim_checkcookie(sess, cookie, type)) == NULL) {
-      faimdprintf(sess, 0, "non-data rendezvous thats not in cache %d/%s!\n", type, cookie);
-      aim_freetlvchain(&list2);
-      return 0;
-    }
-
-    if (cook->type == AIM_COOKIETYPE_OFTGET) {
-      struct aim_filetransfer_priv *ft;
-
-      if (cook->data) {
-	int errorcode = -1; /* XXX shouldnt this be 0? */
-
-	ft = (struct aim_filetransfer_priv *)cook->data;
-
-	if (args.status != 0x0002) {
-
-	  if (aim_gettlv(list2, 0x000b, 1))
-	    errorcode = aim_gettlv16(list2, 0x000b, 1);
-
-	  /* XXX this should make it up to the client, you know.. */
-	  if (errorcode)
-	    faimdprintf(sess, 0, "transfer from %s (%s) for %s cancelled (error code %d)\n", ft->sn, ft->ip, ft->fh.name, errorcode);
+	/*
+	 * There's another block of TLVs embedded in the type 5 here. 
+	 */
+	if (!(block1 = aim_gettlv(tlvlist, 0x0005, 1)) || !block1->value) {
+		faimdprintf(sess, 0, "no tlv 0x0005 in rendezvous transaction!\n");
+		return 0;
 	}
-      } else {
-	faimdprintf(sess, 0, "no data attached to file transfer\n");
-      }
-    } else if (cook->type == AIM_CAPS_VOICE) {
-      faimdprintf(sess, 0, "voice request cancelled\n");
-    } else {
-      faimdprintf(sess, 0, "unknown cookie cache type %d\n", cook->type);
-    }
-	
-    aim_freetlvchain(&list2);
 
-    return 1;
-  }
+	/*
+	 * First two bytes represent the status of the connection.
+	 *
+	 * 0 is a request, 2 is an accept
+	 */ 
+	args.status = aimutil_get16(block1->value+0);
 
-  /*
-   * The rest of the handling depends on what type it is.
-   */
-  if (args.reqclass & AIM_CAPS_BUDDYICON) {
-    struct aim_tlv_t *miscinfo;
-    int curpos = 0;
+	/*
+	 * Next comes the cookie.  Should match the ICBM cookie.
+	 */
+	if (memcmp(block1->value+2, cookie, 8) != 0) 
+		faimdprintf(sess, 0, "rend: warning cookies don't match!\n");
 
-    miscinfo = aim_gettlv(list2, 0x2711, 1);
+	/*
+	 * The next 16bytes are a capability block so we can
+	 * identify what type of rendezvous this is.
+	 *
+	 * Thanks to Eric Warmenhoven <warmenhoven@linux.com> (of GAIM)
+	 * for pointing some of this out to me.  In fact, a lot of 
+	 * the client-to-client info comes from the work of the GAIM 
+	 * developers. Thanks!
+	 *
+	 * Read off one capability string and we should have it ID'd.
+	 * 
+	 */
+	if ((args.reqclass = aim_getcap(sess, block1->value+2+8, 0x10)) == 0x0000) {
+		faimdprintf(sess, 0, "rend: no ID block\n");
+		return 0;
+	}
 
-    /* aimutil_get32(miscinfo->value+curpos); i don't know what this is */
-    curpos += 4;
-    args.info.icon.length = aimutil_get32(miscinfo->value+curpos);
-    curpos += 4;
-    args.info.icon.timestamp = aimutil_get32(miscinfo->value+curpos);
-    curpos += 4;
-    args.info.icon.icon = malloc(args.info.icon.length);
-    memcpy(args.info.icon.icon, miscinfo->value+curpos, args.info.icon.length);
+	/* 
+	* What follows may be TLVs or nothing, depending on the
+	* purpose of the message.
+	*
+	* Ack packets for instance have nothing more to them.
+	*/
+	list2 = aim_readtlvchain(block1->value+2+8+16, block1->length-2-8-16);
 
-    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-      ret = userfunc(sess, rx, channel, userinfo, &args);
+	if (!list2 || ((args.reqclass != AIM_CAPS_IMIMAGE) && !(aim_gettlv(list2, 0x2711, 1)))) {
+		struct aim_msgcookie_t *cook;
+		int type;
 
-    free(args.info.icon.icon);
+		type = aim_msgcookie_gettype(args.reqclass); /* XXX: fix this shitty code */
 
-  } else if (args.reqclass & AIM_CAPS_VOICE) {
-    struct aim_msgcookie_t *cachedcook;
+		if ((cook = aim_checkcookie(sess, cookie, type)) == NULL) {
+			faimdprintf(sess, 0, "non-data rendezvous thats not in cache (type %d)\n", type);
+		aim_freetlvchain(&list2);
+		return 1;
+		}
 
-    faimdprintf(sess, 0, "rend: voice!\n");
+		if (cook->type == AIM_COOKIETYPE_OFTGET) {
+			struct aim_filetransfer_priv *ft;
 
-    if(!(cachedcook = (struct aim_msgcookie_t*)calloc(1, sizeof(struct aim_msgcookie_t)))) {
-      aim_freetlvchain(&list2);
-      return 0;
-    }
+			if (cook->data) {
+				int errorcode = -1; /* XXX shouldnt this be 0? */
 
-    memcpy(cachedcook->cookie, cookie, 8);
-    cachedcook->type = AIM_COOKIETYPE_OFTVOICE;
-    cachedcook->data = NULL;
+				ft = (struct aim_filetransfer_priv *)cook->data;
 
-    if (aim_cachecookie(sess, cachedcook) == -1)
-      faimdprintf(sess, 0, "ERROR caching message cookie\n");
+				if (args.status != 0x0002) {
 
-    /* XXX: implement all this */
+				  if (aim_gettlv(list2, 0x000b, 1))
+					    errorcode = aim_gettlv16(list2, 0x000b, 1);
 
-    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) 
-      ret = userfunc(sess, rx, channel, userinfo, &args);
+				  /* XXX this should make it up to the client, you know.. */
+				  if (errorcode)
+					faimdprintf(sess, 0, "transfer from %s (%s) for %s cancelled (error code %d)\n", ft->sn, ft->ip, ft->fh.name, errorcode);
+				} /* args.status != 0x0002 */
+				
+			} else {
+				faimdprintf(sess, 0, "no data attached to file transfer\n");
+			} /* !cook->data */
 
-  } else if (args.reqclass & AIM_CAPS_IMIMAGE) {
-    char ip[30];
-    struct aim_directim_priv *priv;
+		} else if (cook->type == AIM_CAPS_VOICE) {
 
-    memset(ip, 0, sizeof(ip));
-	
-    if (aim_gettlv(list2, 0x0003, 1) && aim_gettlv(list2, 0x0005, 1)) {
-      struct aim_tlv_t *iptlv, *porttlv;
-	  
-      iptlv = aim_gettlv(list2, 0x0003, 1);
-      porttlv = aim_gettlv(list2, 0x0005, 1);
+			faimdprintf(sess, 0, "voice request cancelled\n");
+		
+		} else {
+		
+			faimdprintf(sess, 0, "unknown cookie cache type %d\n", cook->type);
+		}
 
-      snprintf(ip, 30, "%d.%d.%d.%d:%d", 
-	       aimutil_get8(iptlv->value+0),
-	       aimutil_get8(iptlv->value+1),
-	       aimutil_get8(iptlv->value+2),
-	       aimutil_get8(iptlv->value+3),
-	       4443 /*aimutil_get16(porttlv->value)*/);
-    }
+		aim_freetlvchain(&list2);
 
-    faimdprintf(sess, 0, "rend: directIM request from %s (%s)\n",
-		userinfo->sn, ip);
+		return 1;
+	}
 
-    /* 
-     * XXX: there are a couple of different request packets for
-     *          different things 
-     */
+	/*
+	 * The rest of the handling depends on what type it is.
+	 */
+	if (args.reqclass & AIM_CAPS_BUDDYICON) {
+		struct aim_tlv_t *miscinfo;
+		int curpos = 0;
 
-    args.info.directim = priv = (struct aim_directim_priv *)calloc(1, sizeof(struct aim_directim_priv));
-    memcpy(priv->ip, ip, sizeof(priv->ip));
-    memcpy(priv->sn, userinfo->sn, sizeof(priv->sn));
-    memcpy(priv->cookie, cookie, sizeof(priv->cookie));
+		miscinfo = aim_gettlv(list2, 0x2711, 1);
 
-    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-      ret = userfunc(sess, rx, channel, userinfo, &args);
+		/* aimutil_get32(miscinfo->value+curpos); i don't know what this is */
+		curpos += 4;
+		args.info.icon.length = aimutil_get32(miscinfo->value+curpos);
+		curpos += 4;
+		args.info.icon.timestamp = aimutil_get32(miscinfo->value+curpos);
+		curpos += 4;
+		args.info.icon.icon = malloc(args.info.icon.length);
+		memcpy(args.info.icon.icon, miscinfo->value+curpos, args.info.icon.length);
 
-  } else if (args.reqclass & AIM_CAPS_CHAT) {
-    struct aim_tlv_t *miscinfo;
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			ret = userfunc(sess, rx, channel, userinfo, &args);
 
-    miscinfo = aim_gettlv(list2, 0x2711, 1);
-    aim_chat_readroominfo(miscinfo->value, &args.info.chat.roominfo);
-		  
-    if (aim_gettlv(list2, 0x000c, 1))
-      args.info.chat.msg = aim_gettlv_str(list2, 0x000c, 1);
-	  
-    if (aim_gettlv(list2, 0x000d, 1))
-      args.info.chat.encoding = aim_gettlv_str(list2, 0x000d, 1);
-	  
-    if (aim_gettlv(list2, 0x000e, 1))
-      args.info.chat.lang = aim_gettlv_str(list2, 0x000e, 1);
-      
-    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-      ret = userfunc(sess, rx, channel, userinfo, &args);
+		free(args.info.icon.icon);
 
-    free(args.info.chat.roominfo.name);
-    free(args.info.chat.msg);
-    free(args.info.chat.encoding);
-    free(args.info.chat.lang);
+	} else if (args.reqclass & AIM_CAPS_VOICE) {
+		struct aim_msgcookie_t *cachedcook;
 
-  } else if (args.reqclass & AIM_CAPS_GETFILE) {
-    char ip[30];
-    struct aim_msgcookie_t *cachedcook;
-    struct aim_tlv_t *miscinfo;
-    struct aim_tlv_t *iptlv, *porttlv;
+		faimdprintf(sess, 1, "rend: voice!\n");
 
-    memset(ip, 0, 30);
+		if(!(cachedcook = (struct aim_msgcookie_t*)calloc(1, sizeof(struct aim_msgcookie_t)))) {
+			aim_freetlvchain(&list2);
+			return 0;
+		}
 
-    if (!(cachedcook = calloc(1, sizeof(struct aim_msgcookie_t)))) {
-      aim_freetlvchain(&list2);
-      return 0;
-    }
+		memcpy(cachedcook->cookie, cookie, 8);
+		cachedcook->type = AIM_COOKIETYPE_OFTVOICE;
+		cachedcook->data = NULL;
 
-    if (!(miscinfo = aim_gettlv(list2, 0x2711, 1)) || 
-	!(iptlv = aim_gettlv(list2, 0x0003, 1)) || 
-	!(porttlv = aim_gettlv(list2, 0x0005, 1))) {
-      faimdprintf(sess, 0, "rend: badly damaged file get request from %s...\n", userinfo->sn);
-      aim_cookie_free(sess, cachedcook);
-      aim_freetlvchain(&list2);
-      return 0;
-    }
+		if (aim_cachecookie(sess, cachedcook) == -1)
+			faimdprintf(sess, 0, "ERROR caching message cookie\n");
 
-    snprintf(ip, 30, "%d.%d.%d.%d:%d",
-	     aimutil_get8(iptlv->value+0),
-	     aimutil_get8(iptlv->value+1),
-	     aimutil_get8(iptlv->value+2),
-	     aimutil_get8(iptlv->value+3),
-	     aimutil_get16(porttlv->value));
+		/* XXX: implement all this */
 
-    faimdprintf(sess, 0, "rend: file get request from %s (%s)\n", userinfo->sn, ip);
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) 
+			ret = userfunc(sess, rx, channel, userinfo, &args);
 
-    args.info.getfile.ip = ip;
-    args.info.getfile.cookie = cookie;
+	} else if (args.reqclass & AIM_CAPS_IMIMAGE) {
+		char ip[30];
+		struct aim_directim_priv *priv;
 
-    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-      ret = userfunc(sess, rx, channel, userinfo, &args);
+		memset(ip, 0, sizeof(ip));
 
-  } else if (args.reqclass & AIM_CAPS_SENDFILE) {
-#if 0
-    char ip[30];
-    struct aim_msgcookie_t *cachedcook;
-    struct aim_tlv_t *miscinfo;
-    struct aim_tlv_t *iptlv, *porttlv;
+		if (aim_gettlv(list2, 0x0003, 1) && aim_gettlv(list2, 0x0005, 1)) {
+			struct aim_tlv_t *iptlv, *porttlv;
+			  
+			iptlv = aim_gettlv(list2, 0x0003, 1);
+			porttlv = aim_gettlv(list2, 0x0005, 1);
 
-    memset(ip, 0, 30);
+			snprintf(ip, 30, "%d.%d.%d.%d:%d", 
+				aimutil_get8(iptlv->value+0),
+				aimutil_get8(iptlv->value+1),
+				aimutil_get8(iptlv->value+2),
+				aimutil_get8(iptlv->value+3),
+				4443 /*aimutil_get16(porttlv->value)*/);
+		}
 
-    if (!(cachedcook = calloc(1, sizeof(struct aim_msgcookie_t)))) {
-      aim_freetlvchain(&list2);
-      return 0;
-    }
+		faimdprintf(sess, 1, "rend: directIM request from %s (%s)\n",
+				userinfo->sn, ip);
 
-    if (!(miscinfo = aim_gettlv(list2, 0x2711, 1)) || 
-	!(iptlv = aim_gettlv(list2, 0x0003, 1)) || 
-	!(porttlv = aim_gettlv(list2, 0x0005, 1))) {
-      faimdprintf(sess, 0, "rend: badly damaged file get request from %s...\n", userinfo->sn);
-      aim_cookie_free(sess, cachedcook);
-      aim_freetlvchain(&list2);
-      return 0;
-    }
+		/* 
+		 * XXX: there are a couple of different request packets for
+		 *          different things 
+		 */
 
-    snprintf(ip, 30, "%d.%d.%d.%d:%d",
-	     aimutil_get8(iptlv->value+0),
-	     aimutil_get8(iptlv->value+1),
-	     aimutil_get8(iptlv->value+2),
-	     aimutil_get8(iptlv->value+3),
-	     aimutil_get16(porttlv->value));
+		args.info.directim = priv = (struct aim_directim_priv *)calloc(1, sizeof(struct aim_directim_priv)); /* XXX error */
+		memcpy(priv->ip, ip, sizeof(priv->ip));
+		memcpy(priv->sn, userinfo->sn, sizeof(priv->sn));
+		memcpy(priv->cookie, cookie, sizeof(priv->cookie));
 
-    if (aim_gettlv(list2, 0x000c, 1))
-      desc = aim_gettlv_str(list2, 0x000c, 1);
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			ret = userfunc(sess, rx, channel, userinfo, &args);
 
-    faimdprintf(sess, 0, "rend: file transfer request from %s for %s: %s (%s)\n",
-		userinfo->sn, miscinfo->value+8,
-		desc, ip);
-	
-    memcpy(cachedcook->cookie, cookie, 8);
-	
-    ft = malloc(sizeof(struct aim_filetransfer_priv));
-    strncpy(ft->sn, userinfo.sn, sizeof(ft->sn));
-    strncpy(ft->ip, ip, sizeof(ft->ip));
-    strncpy(ft->fh.name, miscinfo->value+8, sizeof(ft->fh.name));
-    cachedcook->type = AIM_COOKIETYPE_OFTSEND;
-    cachedcook->data = ft;
+	} else if (args.reqclass & AIM_CAPS_CHAT) {
+		struct aim_tlv_t *miscinfo;
 
-    if (aim_cachecookie(sess, cachedcook) == -1)
-      faimdprintf(sess, 0, "ERROR caching message cookie\n");
+		miscinfo = aim_gettlv(list2, 0x2711, 1);
+		aim_chat_readroominfo(miscinfo->value, &args.info.chat.roominfo);
+			  
+		if (aim_gettlv(list2, 0x000c, 1))
+			args.info.chat.msg = aim_gettlv_str(list2, 0x000c, 1);
+		
+		if (aim_gettlv(list2, 0x000d, 1))
+			args.info.chat.encoding = aim_gettlv_str(list2, 0x000d, 1);
+		
+		if (aim_gettlv(list2, 0x000e, 1))
+			args.info.chat.lang = aim_gettlv_str(list2, 0x000e, 1);
 
-    aim_accepttransfer(sess, rx->conn, ft->sn, cookie, AIM_CAPS_SENDFILE);
-	
-    if (desc)
-      free(desc);
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			ret = userfunc(sess, rx, channel, userinfo, &args);
 
-    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-      ret = userfunc(sess, rx, channel, userinfo, &args);
+		free(args.info.chat.roominfo.name);
+		free(args.info.chat.msg);
+		free(args.info.chat.encoding);
+		free(args.info.chat.lang);
+
+	} else if (args.reqclass & AIM_CAPS_GETFILE) {
+		char ip[30];
+		struct aim_msgcookie_t *cachedcook;
+		struct aim_tlv_t *miscinfo;
+		struct aim_tlv_t *iptlv, *porttlv;
+
+		memset(ip, 0, 30);
+
+		if (!(cachedcook = calloc(1, sizeof(struct aim_msgcookie_t)))) {
+			aim_freetlvchain(&list2);
+			return 0;
+		}
+
+		if (!(miscinfo = aim_gettlv(list2, 0x2711, 1)) || 
+			!(iptlv = aim_gettlv(list2, 0x0003, 1)) || 
+			!(porttlv = aim_gettlv(list2, 0x0005, 1))) {
+			
+			faimdprintf(sess, 0, "rend: badly damaged file get request from %s...\n", userinfo->sn);
+			aim_cookie_free(sess, cachedcook);
+			aim_freetlvchain(&list2);
+			
+			return 0;
+		}
+
+		snprintf(ip, 30, "%d.%d.%d.%d:%d",
+			aimutil_get8(iptlv->value+0),
+			aimutil_get8(iptlv->value+1),
+			aimutil_get8(iptlv->value+2),
+			aimutil_get8(iptlv->value+3),
+			aimutil_get16(porttlv->value));
+
+		faimdprintf(sess, 0, "rend: file get request from %s (%s)\n", userinfo->sn, ip);
+
+		args.info.getfile.ip = ip;
+		args.info.getfile.cookie = cookie;
+
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			ret = userfunc(sess, rx, channel, userinfo, &args);
+
+	} else if (args.reqclass & AIM_CAPS_SENDFILE) {
+#if 0 
+		char ip[30];
+		struct aim_msgcookie_t *cachedcook;
+		struct aim_tlv_t *miscinfo;
+		struct aim_tlv_t *iptlv, *porttlv;
+
+		memset(ip, 0, 30);
+
+		if (!(cachedcook = calloc(1, sizeof(struct aim_msgcookie_t)))) {
+			aim_freetlvchain(&list2);
+			return 0;
+		}
+
+		if (!(miscinfo = aim_gettlv(list2, 0x2711, 1)) || 
+			!(iptlv = aim_gettlv(list2, 0x0003, 1)) || 
+			!(porttlv = aim_gettlv(list2, 0x0005, 1))) {
+		
+			faimdprintf(sess, 0, "rend: badly damaged file get request from %s...\n", userinfo->sn);
+			aim_cookie_free(sess, cachedcook);
+			aim_freetlvchain(&list2);
+
+			return 0;
+		}
+
+		snprintf(ip, 30, "%d.%d.%d.%d:%d",
+			aimutil_get8(iptlv->value+0),
+			aimutil_get8(iptlv->value+1),
+			aimutil_get8(iptlv->value+2),
+			aimutil_get8(iptlv->value+3),
+			aimutil_get16(porttlv->value));
+
+		if (aim_gettlv(list2, 0x000c, 1))
+			desc = aim_gettlv_str(list2, 0x000c, 1);
+
+		faimdprintf(sess, 0, "rend: file transfer request from %s: %s (%s)\n",
+			userinfo->sn, desc, ip);
+
+		memcpy(cachedcook->cookie, cookie, 8);
+
+		ft = malloc(sizeof(struct aim_filetransfer_priv)); /* XXX */
+		strncpy(ft->sn, userinfo.sn, sizeof(ft->sn));
+		strncpy(ft->ip, ip, sizeof(ft->ip));
+		strncpy(ft->fh.name, miscinfo->value+8, sizeof(ft->fh.name));
+		cachedcook->type = AIM_COOKIETYPE_OFTSEND;
+		cachedcook->data = ft;
+
+		if (aim_cachecookie(sess, cachedcook) == -1)
+			faimdprintf(sess, 0, "ERROR caching message cookie\n");
+
+		aim_accepttransfer(sess, rx->conn, ft->sn, cookie, AIM_CAPS_SENDFILE);
+
+		if (desc)
+			free(desc);
+
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			ret = userfunc(sess, rx, channel, userinfo, &args);
 
 #endif	
-  } else
-    faimdprintf(sess, 0, "rend: unknown rendezvous 0x%04x\n", args.reqclass);
+	} else
+		faimdprintf(sess, 0, "rend: unknown rendezvous 0x%04x\n", args.reqclass);
 
-  aim_freetlvchain(&list2);
+	aim_freetlvchain(&list2);
 
-  return ret;
+	return ret;
 }
 
 /*
@@ -871,90 +933,90 @@ static int incomingim_ch2(struct aim_session_t *sess, aim_module_t *mod,  struct
  */
 static int incomingim(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  int i, ret = 0;
-  unsigned char cookie[8];
-  int channel;
-  struct aim_userinfo_s userinfo;
+	int i, ret = 0;
+	unsigned char cookie[8];
+	int channel;
+	struct aim_userinfo_s userinfo;
 
-  memset(&userinfo, 0x00, sizeof(struct aim_userinfo_s));
- 
-  /*
-   * Read ICBM Cookie.  And throw away.
-   */
-  for (i = 0; i < 8; i++)
-    cookie[i] = aimutil_get8(data+i);
-  
-  /*
-   * Channel ID.
-   *
-   * Channel 0x0001 is the message channel.  There are 
-   * other channels for things called "rendevous"
-   * which represent chat and some of the other new
-   * features of AIM2/3/3.5. 
-   *
-   * Channel 0x0002 is the Rendevous channel, which
-   * is where Chat Invitiations and various client-client
-   * connection negotiations come from.
-   * 
-   */
-  channel = aimutil_get16(data+i);
-  i += 2;
-  
-  /*
-   *
-   */
-  if ((channel != 0x01) && (channel != 0x02)) {
-    faimdprintf(sess, 0, "icbm: ICBM received on an unsupported channel.  Ignoring.\n (chan = %04x)", channel);
-    return 1;
-  }
+	memset(&userinfo, 0x00, sizeof(struct aim_userinfo_s));
 
-  /*
-   * Extract the standard user info block.
-   *
-   * Note that although this contains TLVs that appear contiguous
-   * with the TLVs read below, they are two different pieces.  The
-   * userinfo block contains the number of TLVs that contain user
-   * information, the rest are not even though there is no seperation.
-   * aim_extractuserinfo() returns the number of bytes used by the
-   * userinfo tlvs, so you can start reading the rest of them right
-   * afterward.  
-   *
-   * That also means that TLV types can be duplicated between the
-   * userinfo block and the rest of the message, however there should
-   * never be two TLVs of the same type in one block.
-   * 
-   */
-  i += aim_extractuserinfo(sess, data+i, &userinfo);
-  
-  /*
-   * From here on, its depends on what channel we're on.
-   *
-   * Technically all channels have a TLV list have this, however,
-   * for the common channel 1 case, in-place parsing is used for
-   * performance reasons (less memory allocation).
-   */
-  if (channel == 1) {
+	/*
+	 * Read ICBM Cookie.  And throw away.
+	 */
+	for (i = 0; i < 8; i++)
+		cookie[i] = aimutil_get8(data+i);
 
-    ret = incomingim_ch1(sess, mod, rx, snac, channel, &userinfo, data+i, datalen-i, cookie);
+	/*
+	 * Channel ID.
+	 *
+	 * Channel 0x0001 is the message channel.  There are 
+	 * other channels for things called "rendevous"
+	 * which represent chat and some of the other new
+	 * features of AIM2/3/3.5. 
+	 *
+	 * Channel 0x0002 is the Rendevous channel, which
+	 * is where Chat Invitiations and various client-client
+	 * connection negotiations come from.
+	 * 
+	 */
+	channel = aimutil_get16(data+i);
+	i += 2;
 
-  } else if (channel == 0x0002) {
-    struct aim_tlvlist_t *tlvlist;
+	/*
+	 * Technically Channel 3 in chat could be done here too.
+	 */
+	if ((channel != 0x01) && (channel != 0x02)) {
+		faimdprintf(sess, 0, "icbm: ICBM received on an unsupported channel.  Ignoring.\n (chan = %04x)", channel);
+		return 1;
+	}
 
-    /*
-     * Read block of TLVs (not including the userinfo data).  All 
-     * further data is derived from what is parsed here.
-     */
-    tlvlist = aim_readtlvchain(data+i, datalen-i);
+	/*
+	 * Extract the standard user info block.
+	 *
+	 * Note that although this contains TLVs that appear contiguous
+	 * with the TLVs read below, they are two different pieces.  The
+	 * userinfo block contains the number of TLVs that contain user
+	 * information, the rest are not even though there is no seperation.
+	 * aim_extractuserinfo() returns the number of bytes used by the
+	 * userinfo tlvs, so you can start reading the rest of them right
+	 * afterward.  
+	 *
+	 * That also means that TLV types can be duplicated between the
+	 * userinfo block and the rest of the message, however there should
+	 * never be two TLVs of the same type in one block.
+	 * 
+	 */
+	i += aim_extractuserinfo(sess, data+i, &userinfo);
 
-    ret = incomingim_ch2(sess, mod, rx, snac, channel, &userinfo, tlvlist, cookie);
+	/*
+	 * From here on, its depends on what channel we're on.
+	 *
+	 * Technically all channels have a TLV list have this, however,
+	 * for the common channel 1 case, in-place parsing is used for
+	 * performance reasons (less memory allocation).
+	 */
+	if (channel == 1) {
 
-    /*
-     * Free up the TLV chain.
-     */
-    aim_freetlvchain(&tlvlist);
-  }
+		ret = incomingim_ch1(sess, mod, rx, snac, channel, &userinfo, data+i, datalen-i, cookie);
 
-  return ret;
+	} else if (channel == 0x0002) {
+		struct aim_tlvlist_t *tlvlist;
+
+		/*
+		 * Read block of TLVs (not including the userinfo data).  All 
+		 * further data is derived from what is parsed here.
+		 */
+		tlvlist = aim_readtlvchain(data+i, datalen-i);
+
+		ret = incomingim_ch2(sess, mod, rx, snac, channel, &userinfo, tlvlist, cookie);
+
+		/*
+		 * Free up the TLV chain.
+		 */
+		aim_freetlvchain(&tlvlist);
+	}
+
+	return ret;
 }
 
 /*
@@ -964,184 +1026,190 @@ static int incomingim(struct aim_session_t *sess, aim_module_t *mod, struct comm
  *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
  * 
  */
-faim_export unsigned long aim_denytransfer(struct aim_session_t *sess,
-					   struct aim_conn_t *conn, 
-					   char *sender,
-					   char *cookie, 
-					   unsigned short code)
+faim_export int aim_denytransfer(struct aim_session_t *sess,
+					struct aim_conn_t *conn, 
+					const char *sender,
+					const char *cookie, 
+					unsigned short code)
 {
-  struct command_tx_struct *newpacket;
-  int curbyte, i;
+	struct command_tx_struct *newpacket;
+	int curbyte, i;
 
-  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+8+2+1+strlen(sender)+6)))
-    return -1;
+	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+8+2+1+strlen(sender)+6)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	newpacket->lock = 1;
 
-  curbyte = aim_putsnac(newpacket->data, 0x0004, 0x000b, 0x0000, sess->snac_nextid);
-  for (i = 0; i < 8; i++)
-    curbyte += aimutil_put8(newpacket->data+curbyte, cookie[i]);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
-  curbyte += aimutil_put8(newpacket->data+curbyte, strlen(sender));
-  curbyte += aimutil_putstr(newpacket->data+curbyte, sender, strlen(sender));
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0003, code);
+	curbyte = aim_putsnac(newpacket->data, 0x0004, 0x000b, 0x0000, sess->snac_nextid++);
+	for (i = 0; i < 8; i++)
+		curbyte += aimutil_put8(newpacket->data+curbyte, cookie[i]);
+	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
+	curbyte += aimutil_put8(newpacket->data+curbyte, strlen(sender));
+	curbyte += aimutil_putstr(newpacket->data+curbyte, sender, strlen(sender));
+	curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0003, code);
 
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
+	newpacket->lock = 0;
+	aim_tx_enqueue(sess, newpacket);
 
-  return (sess->snac_nextid++);
+	return 0;
 }
 
 /*
- * Not real sure what this does, nor does anyone I've talk to.
+ * aim_reqicbmparaminfo()
  *
- * Didn't use to send it.  But now I think it might be a good
- * idea. 
+ * Request ICBM parameter information.
  *
  */
-faim_export unsigned long aim_seticbmparam(struct aim_session_t *sess,
-					   struct aim_conn_t *conn)
+faim_export unsigned long aim_reqicbmparams(struct aim_session_t *sess, struct aim_conn_t *conn)
 {
-  struct command_tx_struct *newpacket;
-  int curbyte;
+	return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
+}
 
-  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+16)))
-    return -1;
+/*
+ *
+ */
+faim_export unsigned long aim_seticbmparam(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_icbmparameters *params)
+{
+	struct command_tx_struct *newpacket;
+	int curbyte;
 
-  newpacket->lock = 1;
+	if (!sess || !conn || !params)
+		return -EINVAL;
 
-  curbyte = aim_putsnac(newpacket->data, 0x0004, 0x0002, 0x0000, sess->snac_nextid);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  curbyte += aimutil_put32(newpacket->data+curbyte, 0x00000003);
-  curbyte += aimutil_put16(newpacket->data+curbyte,  0x1f40);
-  curbyte += aimutil_put16(newpacket->data+curbyte,  0x03e7);
-  curbyte += aimutil_put16(newpacket->data+curbyte,  0x03e7);
-  curbyte += aimutil_put32(newpacket->data+curbyte, 0x00000000);
+	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+16)))
+		return -ENOMEM;
 
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
+	newpacket->lock = 1;
 
-  return (sess->snac_nextid++);
+	curbyte = aim_putsnac(newpacket->data, 0x0004, 0x0002, 0x0000, sess->snac_nextid++);
+
+	/* This is read-only (in Parameter Reply). Must be set to zero here. */
+	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
+
+	/* These are all read-write */
+	curbyte += aimutil_put32(newpacket->data+curbyte, params->flags); 
+	curbyte += aimutil_put16(newpacket->data+curbyte, params->maxmsglen);
+	curbyte += aimutil_put16(newpacket->data+curbyte, params->maxsenderwarn); 
+	curbyte += aimutil_put16(newpacket->data+curbyte, params->maxrecverwarn); 
+	curbyte += aimutil_put32(newpacket->data+curbyte, params->minmsginterval);
+
+	newpacket->lock = 0;
+	aim_tx_enqueue(sess, newpacket);
+
+	return 0;
 }
 
 static int paraminfo(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  unsigned long defflags, minmsginterval;
-  unsigned short maxicbmlen, maxsenderwarn, maxrecverwarn, maxchannel;
-  aim_rxcallback_t userfunc;
-  int i = 0;
+	struct aim_icbmparameters params;
+	aim_rxcallback_t userfunc;
+	int i = 0;
 
-  maxchannel = aimutil_get16(data+i);
-  i += 2;
+	params.maxchan = aimutil_get16(data+i);
+	i += 2;
 
-  defflags = aimutil_get32(data+i);
-  i += 4;
+	params.flags = aimutil_get32(data+i);
+	i += 4;
 
-  maxicbmlen = aimutil_get16(data+i);
-  i += 2;
+	params.maxmsglen = aimutil_get16(data+i);
+	i += 2;
 
-  maxsenderwarn = aimutil_get16(data+i);
-  i += 2;
+	params.maxsenderwarn = aimutil_get16(data+i);
+	i += 2;
 
-  maxrecverwarn = aimutil_get16(data+i);
-  i += 2;
+	params.maxrecverwarn = aimutil_get16(data+i);
+	i += 2;
 
-  minmsginterval = aimutil_get32(data+i);
-  i += 4;
+	params.minmsginterval = aimutil_get32(data+i);
+	i += 4;
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    return userfunc(sess, rx, maxchannel, defflags, maxicbmlen, maxsenderwarn, maxrecverwarn, minmsginterval);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		return userfunc(sess, rx, &params);
 
-  return 0;
+	return 0;
 }
 
 static int missedcall(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  int i = 0;
-  aim_rxcallback_t userfunc;
-  unsigned short channel, nummissed, reason;
-  struct aim_userinfo_s userinfo;
- 
-  /*
-   * XXX: supposedly, this entire packet can repeat as many times
-   * as necessary. Should implement that.
-   */
+	int i, ret = 0;
+	aim_rxcallback_t userfunc;
+	unsigned short channel, nummissed, reason;
+	struct aim_userinfo_s userinfo;
+	
+	for (i = 0; i < datalen; ) {
 
-  /*
-   * Channel ID.
-   */
-  channel = aimutil_get16(data+i);
-  i += 2;
-  
-  /*
-   * Extract the standard user info block.
-   */
-  i += aim_extractuserinfo(sess, data+i, &userinfo);
-  
-  nummissed = aimutil_get16(data+i);
-  i += 2;
-  
-  reason = aimutil_get16(data+i);
-  i += 2;
+		/* Channel ID. */
+		channel = aimutil_get16(data+i);
+		i += 2;
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    return userfunc(sess, rx, channel, &userinfo, nummissed, reason);
-  
-  return 0;
+		/* Extract the standard user info block. */
+		i += aim_extractuserinfo(sess, data+i, &userinfo);
+
+		nummissed = aimutil_get16(data+i);
+		i += 2;
+
+		reason = aimutil_get16(data+i);
+		i += 2;
+
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			 ret = userfunc(sess, rx, channel, &userinfo, nummissed, reason);
+	}
+
+	return ret;
 }
 
 static int msgack(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  aim_rxcallback_t userfunc;
-  char sn[MAXSNLEN];
-  unsigned char ck[8];
-  unsigned short type;
-  int i = 0;
-  unsigned char snlen;
+	aim_rxcallback_t userfunc;
+	char sn[MAXSNLEN];
+	unsigned char ck[8];
+	unsigned short type;
+	int i = 0;
+	unsigned char snlen;
 
-  memcpy(ck, data, 8);
-  i += 8;
+	memcpy(ck, data, 8);
+	i += 8;
 
-  type = aimutil_get16(data+i);
-  i += 2;
+	type = aimutil_get16(data+i);
+	i += 2;
 
-  snlen = aimutil_get8(data+i);
-  i++;
+	snlen = aimutil_get8(data+i);
+	i++;
 
-  memset(sn, 0, sizeof(sn));
-  strncpy(sn, (char *)data+i, snlen);
+	memset(sn, 0, sizeof(sn));
+	strncpy(sn, (char *)data+i, snlen);
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    return userfunc(sess, rx, type, sn);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		return userfunc(sess, rx, type, sn);
 
-  return 0;
+	return 0;
 }
 
 static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
 
-  if (snac->subtype == 0x0005)
-    return paraminfo(sess, mod, rx, snac, data, datalen);
-  else if (snac->subtype == 0x0006)
-    return outgoingim(sess, mod, rx, snac, data, datalen);
-  else if (snac->subtype == 0x0007)
-    return incomingim(sess, mod, rx, snac, data, datalen);
-  else if (snac->subtype == 0x000a)
-    return missedcall(sess, mod, rx, snac, data, datalen);
-  else if (snac->subtype == 0x000c)
-    return msgack(sess, mod, rx, snac, data, datalen);
+	if (snac->subtype == 0x0005)
+		return paraminfo(sess, mod, rx, snac, data, datalen);
+	else if (snac->subtype == 0x0006)
+		return outgoingim(sess, mod, rx, snac, data, datalen);
+	else if (snac->subtype == 0x0007)
+		return incomingim(sess, mod, rx, snac, data, datalen);
+	else if (snac->subtype == 0x000a)
+		return missedcall(sess, mod, rx, snac, data, datalen);
+	else if (snac->subtype == 0x000c)
+		return msgack(sess, mod, rx, snac, data, datalen);
 
-  return 0;
+	return 0;
 }
 
 faim_internal int msg_modfirst(struct aim_session_t *sess, aim_module_t *mod)
 {
 
-  mod->family = 0x0004;
-  mod->version = 0x0000;
-  mod->flags = 0;
-  strncpy(mod->name, "messaging", sizeof(mod->name));
-  mod->snachandler = snachandler;
+	mod->family = 0x0004;
+	mod->version = 0x0000;
+	mod->flags = 0;
+	strncpy(mod->name, "messaging", sizeof(mod->name));
+	mod->snachandler = snachandler;
 
-  return 0;
+	return 0;
 }

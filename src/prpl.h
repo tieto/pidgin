@@ -135,7 +135,7 @@ struct prpl {
 	void (* chat_invite)	(struct gaim_connection *, int id, char *who, char *message);
 	void (* chat_leave)	(struct gaim_connection *, int id);
 	void (* chat_whisper)	(struct gaim_connection *, int id, char *who, char *message);
-	void (* chat_send)	(struct gaim_connection *, int id, char *message);
+	int  (* chat_send)	(struct gaim_connection *, int id, char *message);
 	void (* keepalive)	(struct gaim_connection *);
 	void (* chat_set_topic) (struct gaim_connection *, int id, char *topic);
 

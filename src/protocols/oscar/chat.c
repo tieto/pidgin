@@ -401,130 +401,166 @@ faim_export unsigned long aim_chat_invite(struct aim_session_t *sess,
  */
 static int infoupdate(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  struct aim_userinfo_s *userinfo = NULL;
-  aim_rxcallback_t userfunc=NULL;	
-  int ret = 0, i = 0;
-  int usercount = 0;
-  unsigned char detaillevel = 0;
-  char *roomname = NULL;
-  struct aim_chat_roominfo roominfo;
-  unsigned short tlvcount = 0;
-  struct aim_tlvlist_t *tlvlist;
-  char *roomdesc = NULL;
-  unsigned short unknown_c9 = 0;
-  unsigned long creationtime = 0;
-  unsigned short maxmsglen = 0;
-  unsigned short unknown_d2 = 0, unknown_d5 = 0;
+	struct aim_userinfo_s *userinfo = NULL;
+	aim_rxcallback_t userfunc=NULL;	
+	int ret = 0, i = 0;
+	int usercount = 0;
+	unsigned char detaillevel = 0;
+	char *roomname = NULL;
+	struct aim_chat_roominfo roominfo;
+	unsigned short tlvcount = 0;
+	struct aim_tlvlist_t *tlvlist;
+	char *roomdesc = NULL;
+	unsigned short unknown_c9 = 0;
+	unsigned long creationtime = 0;
+	unsigned short maxmsglen = 0, maxvisiblemsglen = 0;
+	unsigned short unknown_d2 = 0, unknown_d5 = 0;
 
-  i += aim_chat_readroominfo(data+i, &roominfo);
-  
-  detaillevel = aimutil_get8(data+i);
-  i++;
+	i += aim_chat_readroominfo(data+i, &roominfo);
 
-  if (detaillevel != 0x02) {
-    if (detaillevel == 0x01)
-      faimdprintf(sess, 0, "faim: chat_roomupdateinfo: detail level 1 not supported\n");
-    else
-      faimdprintf(sess, 0, "faim: chat_roomupdateinfo: unknown detail level %d\n", detaillevel);
-    return 1;
-  }
-  
-  tlvcount = aimutil_get16(data+i);
-  i += 2;
+	detaillevel = aimutil_get8(data+i);
+	i++;
 
-  /*
-   * Everything else are TLVs.
-   */ 
-  tlvlist = aim_readtlvchain(data+i, datalen-i);
-  
-  /*
-   * TLV type 0x006a is the room name in Human Readable Form.
-   */
-  if (aim_gettlv(tlvlist, 0x006a, 1))
-    roomname = aim_gettlv_str(tlvlist, 0x006a, 1);
+	if (detaillevel != 0x02) {
+		if (detaillevel == 0x01)
+			faimdprintf(sess, 0, "faim: chat_roomupdateinfo: detail level 1 not supported\n");
+		else
+			faimdprintf(sess, 0, "faim: chat_roomupdateinfo: unknown detail level %d\n", detaillevel);
+		return 1;
+	}
 
-  /*
-   * Type 0x006f: Number of occupants.
-   */
-  if (aim_gettlv(tlvlist, 0x006f, 1))
-    usercount = aim_gettlv16(tlvlist, 0x006f, 1);
+	tlvcount = aimutil_get16(data+i);
+	i += 2;
 
-  /*
-   * Type 0x0073:  Occupant list.
-   */
-  if (aim_gettlv(tlvlist, 0x0073, 1)) {	
-    int curoccupant = 0;
-    struct aim_tlv_t *tmptlv;
-    
-    tmptlv = aim_gettlv(tlvlist, 0x0073, 1);
+	/*
+	 * Everything else are TLVs.
+	 */ 
+	tlvlist = aim_readtlvchain(data+i, datalen-i);
 
-    /* Allocate enough userinfo structs for all occupants */
-    userinfo = calloc(usercount, sizeof(struct aim_userinfo_s));
-    
-    i = 0;
-    while (curoccupant < usercount)
-      i += aim_extractuserinfo(sess, tmptlv->value+i, &userinfo[curoccupant++]);
-  }
-  
-  /* 
-   * Type 0x00c9: Unknown. (2 bytes)
-   */
-  if (aim_gettlv(tlvlist, 0x00c9, 1))
-    unknown_c9 = aim_gettlv16(tlvlist, 0x00c9, 1);
-  
-  /* 
-   * Type 0x00ca: Creation time (4 bytes)
-   */
-  if (aim_gettlv(tlvlist, 0x00ca, 1))
-    creationtime = aim_gettlv32(tlvlist, 0x00ca, 1);
+	/*
+	 * TLV type 0x006a is the room name in Human Readable Form.
+	 */
+	if (aim_gettlv(tlvlist, 0x006a, 1))
+		roomname = aim_gettlv_str(tlvlist, 0x006a, 1);
 
-  /* 
-   * Type 0x00d1: Maximum Message Length
-   */
-  if (aim_gettlv(tlvlist, 0x00d1, 1))
-    maxmsglen = aim_gettlv16(tlvlist, 0x00d1, 1);
+	/*
+	 * Type 0x006f: Number of occupants.
+	 */
+	if (aim_gettlv(tlvlist, 0x006f, 1))
+		usercount = aim_gettlv16(tlvlist, 0x006f, 1);
 
-  /* 
-   * Type 0x00d2: Unknown. (2 bytes)
-   */
-  if (aim_gettlv(tlvlist, 0x00d2, 1))
-    unknown_d2 = aim_gettlv16(tlvlist, 0x00d2, 1);
+	/*
+	 * Type 0x0073:  Occupant list.
+	 */
+	if (aim_gettlv(tlvlist, 0x0073, 1)) {	
+		int curoccupant = 0;
+		struct aim_tlv_t *tmptlv;
 
-  /* 
-   * Type 0x00d3: Room Description
-   */
-  if (aim_gettlv(tlvlist, 0x00d3, 1))
-    roomdesc = aim_gettlv_str(tlvlist, 0x00d3, 1);
+		tmptlv = aim_gettlv(tlvlist, 0x0073, 1);
 
-  /* 
-   * Type 0x00d5: Unknown. (1 byte)
-   */
-  if (aim_gettlv(tlvlist, 0x00d5, 1))
-    unknown_d5 = aim_gettlv8(tlvlist, 0x00d5, 1);
+		/* Allocate enough userinfo structs for all occupants */
+		userinfo = calloc(usercount, sizeof(struct aim_userinfo_s));
+
+		for (i = 0; curoccupant < usercount; )
+			i += aim_extractuserinfo(sess, tmptlv->value+i, &userinfo[curoccupant++]);
+	}
+
+	/* 
+	 * Type 0x00c9: Unknown. (2 bytes)
+	 */
+	if (aim_gettlv(tlvlist, 0x00c9, 1))
+		unknown_c9 = aim_gettlv16(tlvlist, 0x00c9, 1);
+
+	/* 
+	 * Type 0x00ca: Creation time (4 bytes)
+	 */
+	if (aim_gettlv(tlvlist, 0x00ca, 1))
+		creationtime = aim_gettlv32(tlvlist, 0x00ca, 1);
+
+	/* 
+	 * Type 0x00d1: Maximum Message Length
+	 */
+	if (aim_gettlv(tlvlist, 0x00d1, 1))
+		maxmsglen = aim_gettlv16(tlvlist, 0x00d1, 1);
+
+	/* 
+	 * Type 0x00d2: Unknown. (2 bytes)
+	 */
+	if (aim_gettlv(tlvlist, 0x00d2, 1))
+		unknown_d2 = aim_gettlv16(tlvlist, 0x00d2, 1);
+
+	/* 
+	 * Type 0x00d3: Room Description
+	 */
+	if (aim_gettlv(tlvlist, 0x00d3, 1))
+		roomdesc = aim_gettlv_str(tlvlist, 0x00d3, 1);
+
+	/*
+	 * Type 0x000d4: Unknown (flag only)
+	 */
+	if (aim_gettlv(tlvlist, 0x000d4, 1))
+		;
+
+	/* 
+	 * Type 0x00d5: Unknown. (1 byte)
+	 */
+	if (aim_gettlv(tlvlist, 0x00d5, 1))
+		unknown_d5 = aim_gettlv8(tlvlist, 0x00d5, 1);
 
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
-    ret = userfunc(sess,
-		   rx, 
-		   &roominfo,
-		   roomname,
-		   usercount,
-		   userinfo,	
-		   roomdesc,
-		   unknown_c9,
-		   creationtime,
-		   maxmsglen,
-		   unknown_d2,
-		   unknown_d5);
-  }
+	/*
+	 * Type 0x00d6: Encoding 1 ("us-ascii")
+	 */
+	if (aim_gettlv(tlvlist, 0x000d6, 1))
+		;
+	
+	/*
+	 * Type 0x00d7: Language 1 ("en")
+	 */
+	if (aim_gettlv(tlvlist, 0x000d7, 1))
+		;
 
-  free(roominfo.name);
-  free(userinfo);
-  free(roomname);
-  free(roomdesc);
-  aim_freetlvchain(&tlvlist);
- 
-  return ret;
+	/*
+	 * Type 0x00d8: Encoding 2 ("us-ascii")
+	 */
+	if (aim_gettlv(tlvlist, 0x000d8, 1))
+		;
+	
+	/*
+	 * Type 0x00d9: Language 2 ("en")
+	 */
+	if (aim_gettlv(tlvlist, 0x000d9, 1))
+		;
+
+	/*
+	 * Type 0x00da: Maximum visible message length
+	 */
+	if (aim_gettlv(tlvlist, 0x000da, 1))
+		maxvisiblemsglen = aim_gettlv16(tlvlist, 0x00da, 1);
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
+		ret = userfunc(sess,
+				rx, 
+				&roominfo,
+				roomname,
+				usercount,
+				userinfo,	
+				roomdesc,
+				unknown_c9,
+				creationtime,
+				maxmsglen,
+				unknown_d2,
+				unknown_d5,
+				maxvisiblemsglen);
+	}
+
+	free(roominfo.name);
+	free(userinfo);
+	free(roomname);
+	free(roomdesc);
+	aim_freetlvchain(&tlvlist);
+
+	return ret;
 }
 
 static int userlistchange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)

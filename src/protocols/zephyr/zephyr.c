@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "gaim.h"
 #include "prpl.h"
 #include "zephyr/zephyr.h"
@@ -683,7 +684,7 @@ static void zephyr_close(struct gaim_connection *gc)
 static void zephyr_add_buddy(struct gaim_connection *gc, char *buddy) { }
 static void zephyr_remove_buddy(struct gaim_connection *gc, char *buddy) { }
 
-static void zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
+static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 {
 	ZNotice_t notice;
 	zephyr_triple *zt;
@@ -693,7 +694,7 @@ static void zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	zt = find_sub_by_id(id);
 	if (!zt)
 		/* this should never happen. */
-		return;
+		return -EINVAL;
 	
 	sig = ZGetVariable("zwrite-signature");
 	if (!sig) {
@@ -720,6 +721,7 @@ static void zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	notice.z_message = buf;
 	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
+	return 0;
 }
 
 static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int away) {

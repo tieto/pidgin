@@ -106,6 +106,8 @@ struct chat_connection {
 	int id;
 	struct gaim_connection *gc; /* i hate this. */
 	struct conversation *cnv; /* bah. */
+	int maxlen;
+	int maxvis;
 };
 
 struct direct_im {
@@ -281,6 +283,7 @@ static int gaim_reportinterval   (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_msgerr     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_buddyrights(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_locerr     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_icbm_param_info  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_genericerr (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_memrequest       (struct aim_session_t *, struct command_rx_struct *, ...);
 
@@ -692,6 +695,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0004, 0x0005, gaim_icbm_param_info, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0003, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
@@ -1915,18 +1919,63 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	va_end(ap);
 
 	switch(reason) {
+		case 0:
+			/* Invalid (0) */
+			g_snprintf(buf,
+				   sizeof(buf),
+				   _("You missed %d message%s from %s because %s invalid."),
+				   nummissed,
+				   nummissed == 1 ? "" : "s",
+				   nummissed == 1 ? "it was" : "they were",
+				   userinfo->sn);
+			break;
 		case 1:
-			/* message too large */
-			sprintf(buf, _("You missed a message from %s because it was too large."), userinfo->sn);
-			do_error_dialog(buf, _("Gaim - Error"));
-			plugin_event(event_error, (void *)961, 0, 0, 0);
+			/* Message too large */
+			g_snprintf(buf,
+				   sizeof(buf),
+				   _("You missed %d message%s from %s because %s too large."),
+				   nummissed,
+				   nummissed == 1 ? "" : "s",
+				   nummissed == 1 ? "it was" : "they were",
+				   userinfo->sn);
+			break;
+		case 2:
+			/* Rate exceeded */
+			g_snprintf(buf,
+				   sizeof(buf),
+				   _("You missed %d message%s from %s because the rate limit has been exceeded."),
+				   nummissed,
+				   nummissed == 1 ? "" : "s",
+				   userinfo->sn);
+			break;
+		case 3:
+			/* Evil Sender */
+			g_snprintf(buf,
+				   sizeof(buf),
+				   _("You missed %d message%s from %s because they are too evil."),
+				   nummissed,
+				   nummissed == 1 ? "" : "s",
+				   userinfo->sn);
+			break;
+		case 4:
+			/* Evil Receiver */
+			g_snprintf(buf,
+				   sizeof(buf),
+				   _("You missed %d message%s from %s because you are too evil."),
+				   nummissed,
+				   nummissed == 1 ? "" : "s",
+				   userinfo->sn);
 			break;
 		default:
-			sprintf(buf, _("You missed a message from %s for unknown reasons."), userinfo->sn);
-			do_error_dialog(buf, _("Gaim - Error"));
-			plugin_event(event_error, (void *)970, 0, 0, 0);
+			g_snprintf(buf,
+				   sizeof(buf),
+				   _("You missed %d message%s from %s for unknown reasons."),
+				   nummissed,
+				   nummissed == 1 ? "" : "s",
+				   userinfo->sn);
 			break;
 	}
+	do_error_dialog(buf, _("Gaim - Error"));
 
 	return 1;
 }
@@ -2194,7 +2243,37 @@ int gaim_chat_leave(struct aim_session_t *sess,
 
 int gaim_chat_info_update(struct aim_session_t *sess,
 			  struct command_rx_struct *command, ...) {
-	debug_printf("inside chat_info_update\n");
+	va_list ap;
+	struct aim_userinfo_s *userinfo;
+	struct aim_chat_roominfo *roominfo;
+	char *roomname;
+	int usercount;
+	char *roomdesc;
+	unsigned short unknown_c9, unknown_d2, unknown_d5, maxmsglen, maxvisiblemsglen;
+	unsigned long creationtime;
+	struct gaim_connection *gc = sess->aux_data;
+	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, command->conn);
+
+	va_start(ap, command);
+	roominfo = va_arg(ap, struct aim_chat_roominfo *);
+	roomname = va_arg(ap, char *);
+	usercount= va_arg(ap, int);
+	userinfo = va_arg(ap, struct aim_userinfo_s *);
+	roomdesc = va_arg(ap, char *);
+	unknown_c9 = va_arg(ap, int);
+	creationtime = va_arg(ap, unsigned long);
+	maxmsglen = va_arg(ap, int);
+	unknown_d2 = va_arg(ap, int);
+	unknown_d5 = va_arg(ap, int);
+	maxvisiblemsglen = va_arg(ap, int);
+	va_end(ap);
+
+	debug_printf("inside chat_info_update (maxmsglen = %d, maxvislen = %d)\n",
+			maxmsglen, maxvisiblemsglen);
+
+	ccon->maxlen = maxmsglen;
+	ccon->maxvis = maxvisiblemsglen;
+
 	return 1;
 }
 
@@ -2317,8 +2396,7 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 
 		debug_printf("buddy list loaded\n");
 
-		aim_addicbmparam(sess, command->conn);
-		aim_bos_reqicbmparaminfo(sess, command->conn);
+		aim_reqicbmparams(sess, command->conn);
 
 		aim_bos_reqrights(sess, command->conn);
 		aim_bos_setgroupperm(sess, command->conn, AIM_FLAG_ALLUSERS);
@@ -2340,11 +2418,40 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 	return 1;
 }
 
+int gaim_icbm_param_info(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	struct aim_icbmparameters *params;
+	va_list ap;
+
+	va_start(ap, command);
+	params = va_arg(ap, struct aim_icbmparameters *);
+	va_end(ap);
+
+	debug_printf("ICBM Parameters: maxchannel = %d, default flags = 0x%08lx, max msg len = %d, "
+			"max sender evil = %f, max receiver evil = %f, min msg interval = %ld\n",
+			params->maxchan, params->flags, params->maxmsglen,
+			((float)params->maxsenderwarn)/10.0, ((float)params->maxrecverwarn)/10.0,
+			params->minmsginterval);
+
+	params->maxmsglen = 8000;
+	params->minmsginterval = 0;
+
+	aim_seticbmparam(sess, command->conn, params);
+
+	return 1;
+}
+
 int gaim_reportinterval(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	if (command->data) {
-		debug_printf("minimum report interval: %d (seconds?)\n", aimutil_get16(command->data+10));
-	} else
-		debug_printf("NULL minimum report interval!\n");
+	va_list ap;
+	unsigned short interval = 0;
+
+	va_start(ap, command);
+	interval = va_arg(ap, int);
+	va_end(ap);
+
+	debug_printf("minimum report interval: %d (seconds?)\n", interval);
+
+	aim_reqicbmparams(sess, command->conn);
+
 	return 1;
 }
 
@@ -2713,12 +2820,12 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 	serv_got_chat_left(g, b->id);
 }
 
-static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
+static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
 	struct chat_connection *c = NULL;
-	char *buf;
+	char *buf, *buf2;
 	int i, j;
 
 	while (bcs) {
@@ -2729,7 +2836,7 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 		b = NULL;
 	}
 	if (!b)
-		return;
+		return -EINVAL;
 
 	bcs = odata->oscar_chats;
 	while (bcs) {
@@ -2740,7 +2847,7 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 		c = NULL;
 	}
 	if (!c)
-		return;
+		return -EINVAL;
 
 	buf = g_malloc(strlen(message) * 4 + 1);
 	for (i = 0, j = 0; i < strlen(message); i++) {
@@ -2754,8 +2861,20 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 		}
 	}
 	buf[j] = '\0';
+
+	if (strlen(buf) > c->maxlen)
+		return -E2BIG;
+
+	buf2 = strip_html(buf);
+	if (strlen(buf2) > c->maxvis) {
+		g_free(buf2);
+		return -E2BIG;
+	}
+	g_free(buf2);
+
 	aim_chat_send_im(odata->sess, c->conn, 0, buf, strlen(buf));
 	g_free(buf);
+	return 0;
 }
 
 static char **oscar_list_icon(int uc) {

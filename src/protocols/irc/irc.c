@@ -308,7 +308,7 @@ static struct conversation *find_chat(struct gaim_connection *gc, char *name)
 }
 
 static void irc_chat_leave(struct gaim_connection *gc, int id);
-static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
+static int irc_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
@@ -323,7 +323,7 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 	if (!channel) {
 		/* If for some reason we've lost our channel, let's bolt */
 		g_free(buf);
-		return;
+		return -EINVAL;
 	}
 
 
@@ -416,7 +416,7 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 
 			irc_chat_leave(gc, id);
 			is_command = TRUE;
-			return;
+			return 0;
 
 
 		}
@@ -431,7 +431,7 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 			irc_join_chat(gc, 0, temp);
 			g_free(temp);
 			is_command = TRUE;
-			return;
+			return 0;
 		}
 
 		else if (!g_strncasecmp(message, "/raw ", 5) && (strlen(message) > 5)) {
@@ -524,8 +524,9 @@ I THOUGHT THIS WOULD WORK, BUT I WAS WRONG.  WOULD SOMEONE KINDLY FIX IT?
 
 	g_free(buf);
 
-
+	return 0;
 }
+
 static struct conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
 {
 	GSList *bc = gc->buddy_chats;

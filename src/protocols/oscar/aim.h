@@ -484,8 +484,8 @@ faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **d
 typedef int (*aim_rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
 
 /* aim_login.c */
-faim_export int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
-faim_export int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
+faim_export int aim_sendflapver(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn);
 faim_export int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *, char *key);
 faim_export int aim_encode_password_md5(const char *password, const char *key, unsigned char *digest);
 faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, int errorcode, char *errorurl, char *bosip, char *cookie, char *email, int regstatus);
@@ -563,8 +563,6 @@ faim_export unsigned long aim_bos_reqservice(struct aim_session_t *, struct aim_
 faim_export unsigned long aim_bos_reqrights(struct aim_session_t *, struct aim_conn_t *);
 faim_export unsigned long aim_bos_reqbuddyrights(struct aim_session_t *, struct aim_conn_t *);
 faim_export unsigned long aim_bos_reqlocaterights(struct aim_session_t *, struct aim_conn_t *);
-faim_export unsigned long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
-faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,struct aim_conn_t *conn);
 faim_export unsigned long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_export unsigned long aim_auth_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_export unsigned long aim_auth_reqconfirm(struct aim_session_t *sess, struct aim_conn_t *conn);
@@ -636,17 +634,17 @@ struct aim_fileheader_t {
 };
 
 struct aim_filetransfer_priv {
-  char sn[MAXSNLEN];
-  char cookie[8];
-  char ip[30];
-  int state;
-  struct aim_fileheader_t fh;
+	char sn[MAXSNLEN];
+	char cookie[8];
+	char ip[30];
+	int state;
+	struct aim_fileheader_t fh;
 };
 
 struct aim_chat_roominfo {
-  u_short exchange;
-  char *name;
-  u_short instance;
+	unsigned short exchange;
+	char *name;
+	unsigned short instance;
 };
 
 #define AIM_IMFLAGS_AWAY 0x01 /* mark as an autoreply */
@@ -655,53 +653,56 @@ struct aim_chat_roominfo {
 #define AIM_IMFLAGS_ISO_8859_1 0x08
 #define AIM_IMFLAGS_BUDDYREQ   0x10 /* buddy icon requested */
 #define AIM_IMFLAGS_HASICON    0x20 /* already has icon (timestamp included) */
+#define AIM_IMFLAGS_SUBENC_MACINTOSH	0x40 /* damn that Steve Jobs! */
 
 struct aim_sendimext_args {
-  const char *destsn;
-  unsigned short flags;
-  const char *msg;
-  int msglen;
-  int iconlen;
-  time_t iconstamp;
-  unsigned short iconsum;
+	const char *destsn;
+	unsigned short flags;
+	const char *msg;
+	int msglen;
+	int iconlen;
+	time_t iconstamp;
+	unsigned short iconsum;
 };
 
 struct aim_incomingim_ch1_args {
-  char *msg;
-  int msglen;
-  unsigned long icbmflags;
-  unsigned short flag1;
-  unsigned short flag2;
-  int finlen;
-  unsigned char fingerprint[10];
-  time_t iconstamp;
+	char *msg;
+	int msglen;
+	unsigned long icbmflags;
+	unsigned short flag1;
+	unsigned short flag2;
+	int finlen;
+	unsigned char fingerprint[10];
+	time_t iconstamp;
+	int extdatalen;
+	unsigned char *extdata;
 };
 
 struct aim_incomingim_ch2_args {
-  unsigned short reqclass;
-  unsigned short status;
-  union {
-    struct {
-      unsigned int length;
-      time_t timestamp;
-      unsigned char *icon;
-    } icon;
-    struct {
-    } voice;
-    struct aim_directim_priv *directim;
-    struct {
-      char *msg;
-      char *encoding;
-      char *lang;
-      struct aim_chat_roominfo roominfo;
-    } chat;
-    struct {
-      char *ip;
-      unsigned char *cookie;
-    } getfile;
-    struct {
-    } sendfile;
-  } info;
+	unsigned short reqclass;
+	unsigned short status;
+	union {
+		struct {
+			unsigned int length;
+			time_t timestamp;
+			unsigned char *icon;
+		} icon;
+		struct {
+		} voice;
+		struct aim_directim_priv *directim;
+		struct {
+			char *msg;
+			char *encoding;
+			char *lang;
+		struct aim_chat_roominfo roominfo;
+		} chat;
+		struct {
+			char *ip;
+			unsigned char *cookie;
+		} getfile;
+		struct {
+		} sendfile;
+	} info;
 };
 
 faim_export int aim_send_im_ext(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_sendimext_args *args);
@@ -711,7 +712,6 @@ faim_export unsigned short aim_iconsum(const unsigned char *buf, int buflen);
 faim_export int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);
 faim_export struct aim_conn_t * aim_directim_initiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *destsn);
 faim_export struct aim_conn_t *aim_directim_connect(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *);
-faim_export unsigned long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
 
 faim_export struct aim_conn_t *aim_getfile_initiate(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn);
 faim_export int aim_oft_getfile_request(struct aim_session_t *sess, struct aim_conn_t *conn, const unsigned char *name, const int size);
@@ -778,12 +778,46 @@ faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_con
 #define AIM_TRANSFER_DENY_NOTSUPPORTED 0x0000
 #define AIM_TRANSFER_DENY_DECLINE 0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING 0x0002
-faim_export unsigned long aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short code);
+faim_export int aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sender, const char *cookie, unsigned short code);
 faim_export struct aim_conn_t *aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *cookie, char *ip, unsigned short listingfiles, unsigned short listingtotsize, unsigned short listingsize, unsigned int listingchecksum, unsigned short rendid);
 
 faim_export int aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
 faim_export int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info);
 faim_export int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
+
+#define AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED	0x00000001
+#define AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED	0x00000002
+
+/* This is what the server will give you if you don't set them yourself. */
+#define AIM_IMPARAM_DEFAULTS { \
+	0, \
+	AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED | AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED, \
+	512, /* !! Note how small this is. */ \
+	(99.9)*10, (99.9)*10, \
+	1000 \
+}
+
+/* This is what most AIM versions use. */
+#define AIM_IMPARAM_REASONABLE { \
+	0, \
+	AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED | AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED, \
+	8000, \
+	(99.9)*10, (99.9)*10, \
+	0 \
+}
+
+
+struct aim_icbmparameters {
+	unsigned short maxchan;
+	unsigned long flags; /* AIM_IMPARAM_FLAG_ */
+	unsigned short maxmsglen; /* message size that you will accept */
+	unsigned short maxsenderwarn; /* this and below are *10 (999=99.9%) */
+	unsigned short maxrecverwarn;
+	unsigned long minmsginterval; /* in milliseconds? */
+};
+
+faim_export unsigned long aim_reqicbmparams(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export unsigned long aim_seticbmparam(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_icbmparameters *params);
 
 
 /* aim_auth.c */

@@ -669,48 +669,6 @@ faim_export unsigned long aim_bos_reqlocaterights(struct aim_session_t *sess,
   return aim_genericreq_n(sess, conn, 0x0002, 0x0002);
 }
 
-/*
-* aim_bos_reqicbmparaminfo()
- *
- * Request ICBM parameter information.
- *
- */
-faim_export unsigned long aim_bos_reqicbmparaminfo(struct aim_session_t *sess,
-						   struct aim_conn_t *conn)
-{
-  return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
-}
-
-/*
- * Add ICBM parameter? Huh?
- */
-faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,
-					   struct aim_conn_t *conn)
-{
-  struct command_tx_struct *newpacket;
-  int packlen = 10+16, i=0;
-
-  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen)))
-    return (sess->snac_nextid);
-  
-  newpacket->lock = 1;
-
-  i = aim_putsnac(newpacket->data, 0x0004, 0x0002, 0x0000, 0x00000000);
-
-  i += aimutil_put16(newpacket->data+i, 0x0000); 
-  i += aimutil_put16(newpacket->data+i, 0x0000);
-  i += aimutil_put16(newpacket->data+i, 0x0003);
-  i += aimutil_put16(newpacket->data+i, 0x1f40);
-  i += aimutil_put16(newpacket->data+i, 0x03e7);
-  i += aimutil_put16(newpacket->data+i, 0x03e7);
-  i += aimutil_put16(newpacket->data+i, 0x0000); 
-  i += aimutil_put16(newpacket->data+i, 0x0000); 
-  
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
-}
-
 /* 
  * Set directory profile data (not the same as aim_bos_setprofile!)
  */
