@@ -1768,11 +1768,14 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		args = va_arg(ap, struct aim_incomingim_ch2_args *);
 		va_end(ap);
 		if (args->reqclass & AIM_CAPS_CHAT) {
+			char *name = extract_name(args->info.chat.roominfo.name);
 			serv_got_chat_invite(gc,
-					     args->info.chat.roominfo.name,
+					     name ? name : args->info.chat.roominfo.name,
 					     args->info.chat.roominfo.exchange,
 					     userinfo->sn,
 					     args->info.chat.msg);
+			if (name)
+				g_free(name);
 		} else if (args->reqclass & AIM_CAPS_SENDFILE) {
 		} else if (args->reqclass & AIM_CAPS_GETFILE) {
 			/*

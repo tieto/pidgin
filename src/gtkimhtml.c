@@ -635,6 +635,10 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
 
+	if (GTK_LAYOUT (imhtml)->yoffset < TOP_BORDER)
+		gdk_window_clear_area (GTK_LAYOUT (imhtml)->bin_window, 0, 0,
+				       imhtml->xsize, TOP_BORDER - GTK_LAYOUT (imhtml)->yoffset);
+
 	b = imhtml->bits;
 	while (b) {
 		bit = b->data;
