@@ -38,7 +38,13 @@
 #else
 #  define N_(String) (String)
 #  define _(x) (x)
+#  define ngettext(Singular, Plural, Number) ((Number == 1) ? (Singular) : (Plural))
 #endif
+/*
+ * The Singular/Plural/Number ngettext define above was taken from 
+ * an email to the texinfo mailing list by Manuel Guerrero.  Thank 
+ * you Manuel, and thank you Alex's good friend Google.
+ */
 
 #ifdef HAVE_ENDIAN_H
 # include <endian.h>
