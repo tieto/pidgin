@@ -2004,7 +2004,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		result = parse_vcard(sd->data, group);
 
 		gtk_drag_finish(dc, result, (dc->action == GDK_ACTION_MOVE), t);
-	} else if (sd->target == gdk_atom_intern("text/plain", FALSE) && sd->data) {
+	} else if (sd->target == gdk_atom_intern("text/uri-list", FALSE) && sd->data) {
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
@@ -3002,7 +3002,7 @@ void gaim_gtk_blist_update_columns()
 	}
 }
 
-enum {DRAG_BUDDY, DRAG_ROW, DRAG_VCARD, DRAG_TEXT, NUM_TARGETS};
+enum {DRAG_BUDDY, DRAG_ROW, DRAG_VCARD, DRAG_TEXT, DRAG_URI,NUM_TARGETS};
 
 static char *
 item_factory_translate_func (const char *path, gpointer func_data)
@@ -3043,7 +3043,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD },
-	                        {"text/plain", 0, DRAG_TEXT}};
+				{"text/uri-list", 0, DRAG_URI},
+				{"text/plain", 0, DRAG_TEXT}};
 
 	if (gtkblist && gtkblist->window) {
 		gtk_widget_show(gtkblist->window);

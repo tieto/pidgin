@@ -4329,7 +4329,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
-	else if (sd->target == gdk_atom_intern("text/plain", FALSE)) {
+	else if (sd->target == gdk_atom_intern("text/uri-list", FALSE)) {
 		if (!g_ascii_strncasecmp(sd->data, "file://", 7)) {
 			GError *converr = NULL;
 			gchar *file;
@@ -4501,9 +4501,9 @@ gaim_gtk_switch_conversation(GaimConvWindow *win, unsigned int index)
 
 static const GtkTargetEntry te[] =
 {
-	{"text/plain", 0, 0},
-	{"text/uri-list", 0, 1},
-	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, 2},
+	{"text/uri-list", 0, 0},
+	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, 1},
+	{"text/plain", 0, 2},
 	{"STRING", 0, 3},
 	{"application/x-im-contact", 0, 4}
 };
