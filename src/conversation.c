@@ -645,25 +645,49 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			}
 		}
 		if (display_options & OPT_DISP_ONE_WINDOW) {
-			/* if (event->keyval == GDK_Left) {
+			if (event->keyval == '[') {
 				gtk_notebook_prev_page(GTK_NOTEBOOK(convo_notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			} else if (event->keyval == GDK_Right) {
+			} else if (event->keyval == ']') {
 				gtk_notebook_next_page(GTK_NOTEBOOK(convo_notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			} else */ if (event->keyval == GDK_Tab) {
-				GList *cnv = conversations;
-				struct conversation *c;
+			} else if (event->keyval == GDK_Tab) {
+				GList *cnv = g_list_nth(conversations,
+						gtk_notebook_get_current_page(
+							GTK_NOTEBOOK(convo_notebook)));
+				struct conversation *d;
 				while (cnv) {
-					c = cnv->data;
-					if (c->unseen)
+					d = cnv->data;
+					if (d->unseen)
 						break;
 					cnv = cnv->next;
-					c = NULL;
+					d = NULL;
 				}
-				if (c) {
+				if (d) {
 					gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook),
-							g_list_index(conversations, c));
+							g_list_index(conversations, d));
+				} else {
+					cnv = conversations;
+					while (cnv) {
+						d = cnv->data;
+						if (d->unseen)
+							break;
+						cnv = cnv->next;
+						d = NULL;
+					}
+					if (d) {
+						gtk_notebook_set_page(
+								GTK_NOTEBOOK(convo_notebook),
+								g_list_index(conversations, d));
+					} else {
+						cnv = g_list_last(conversations);
+						if (c == cnv->data)
+							gtk_notebook_set_page(
+								GTK_NOTEBOOK(convo_notebook), 0);
+						else
+							gtk_notebook_next_page(
+								GTK_NOTEBOOK(convo_notebook));
+					}
 				}
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
