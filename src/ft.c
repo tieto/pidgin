@@ -583,10 +583,13 @@ gaim_xfer_end(struct gaim_xfer *xfer)
 	if (xfer->ops.end != NULL)
 		xfer->ops.end(xfer);
 
-	gaim_input_remove(xfer->watcher);
-	xfer->watcher = 0;
+	if (xfer->watcher != 0) {
+		gaim_input_remove(xfer->watcher);
+		xfer->watcher = 0;
+	}
 
-	close(xfer->fd);
+	if (xfer->fd != 0)
+		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
 		fclose(xfer->dest_fp);
@@ -608,10 +611,13 @@ gaim_xfer_cancel(struct gaim_xfer *xfer)
 	if (xfer->ops.cancel != NULL)
 		xfer->ops.cancel(xfer);
 
-	gaim_input_remove(xfer->watcher);
-	xfer->watcher = 0;
+	if (xfer->watcher != 0) {
+		gaim_input_remove(xfer->watcher);
+		xfer->watcher = 0;
+	}
 
-	close(xfer->fd);
+	if (xfer->fd != 0)
+		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
 		fclose(xfer->dest_fp);
