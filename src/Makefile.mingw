@@ -123,7 +123,6 @@ DLL_C_SRC =		about.c \
 			win32/win32dep.c \
 			win32/MinimizeToTray.c \
 			win32/libc_interface.c \
-			win32/systray.c \
 			win32/wspell.c \
 			win32/untar.c
 
