@@ -18,26 +18,13 @@
  * 
  * Contributor(s):
  *
- *     Paul Kocher
- * 
- * Alternatively, the contents of this file may be used under the
- * terms of the GNU General Public License Version 2 or later (the
- * "GPL"), in which case the provisions of the GPL are applicable 
- * instead of those above.  If you wish to allow use of your 
- * version of this file only under the terms of the GPL and not to
- * allow others to use your version of this file under the MPL,
- * indicate your decision by deleting the provisions above and
- * replace them with the notice and other provisions required by
- * the GPL.  If you do not delete the provisions above, a recipient
- * may use your version of this file under either the MPL or the
- * GPL.
  */
 
-#include "libxode.h"
+#include "lib.h"
 
-static void shaHashBlock(SHA_CTX *ctx);
+static void shaHashBlock(j_SHA_CTX *ctx);
 
-void shaInit(SHA_CTX *ctx) {
+void shaInit(j_SHA_CTX *ctx) {
   int i;
 
   ctx->lenW = 0;
@@ -56,7 +43,7 @@ void shaInit(SHA_CTX *ctx) {
 }
 
 
-void shaUpdate(SHA_CTX *ctx, unsigned char *dataIn, int len) {
+void shaUpdate(j_SHA_CTX *ctx, unsigned char *dataIn, int len) {
   int i;
 
   /* Read the data into W and process blocks as they get full
@@ -74,7 +61,7 @@ void shaUpdate(SHA_CTX *ctx, unsigned char *dataIn, int len) {
 }
 
 
-void shaFinal(SHA_CTX *ctx, unsigned char hashout[20]) {
+void shaFinal(j_SHA_CTX *ctx, unsigned char hashout[20]) {
   unsigned char pad0x80 = 0x80;
   unsigned char pad0x00 = 0x00;
   unsigned char padlen[8];
@@ -105,12 +92,12 @@ void shaFinal(SHA_CTX *ctx, unsigned char hashout[20]) {
   /*
    *  Re-initialize the context (also zeroizes contents)
    */
-  shaInit(ctx);
+  shaInit(ctx); 
 }
 
 
 void shaBlock(unsigned char *dataIn, int len, unsigned char hashout[20]) {
-  SHA_CTX ctx;
+  j_SHA_CTX ctx;
 
   shaInit(&ctx);
   shaUpdate(&ctx, dataIn, len);
@@ -118,9 +105,9 @@ void shaBlock(unsigned char *dataIn, int len, unsigned char hashout[20]) {
 }
 
 
-#define SHA_ROTL(X,n) (((X) << (n)) | ((X) >> (32-(n))))
+#define SHA_ROTL(X,n) ((((X) << (n)) | ((X) >> (32-(n)))) & 0xffffffffL)
 
-static void shaHashBlock(SHA_CTX *ctx) {
+static void shaHashBlock(j_SHA_CTX *ctx) {
   int t;
   unsigned long A,B,C,D,E,TEMP;
 
@@ -135,19 +122,19 @@ static void shaHashBlock(SHA_CTX *ctx) {
   E = ctx->H[4];
 
   for (t = 0; t <= 19; t++) {
-    TEMP = SHA_ROTL(A,5) + (((C^D)&B)^D)     + E + ctx->W[t] + 0x5a827999L;
+    TEMP = (SHA_ROTL(A,5) + (((C^D)&B)^D)     + E + ctx->W[t] + 0x5a827999L) & 0xffffffffL;
     E = D; D = C; C = SHA_ROTL(B, 30); B = A; A = TEMP;
   }
   for (t = 20; t <= 39; t++) {
-    TEMP = SHA_ROTL(A,5) + (B^C^D)           + E + ctx->W[t] + 0x6ed9eba1L;
+    TEMP = (SHA_ROTL(A,5) + (B^C^D)           + E + ctx->W[t] + 0x6ed9eba1L) & 0xffffffffL;
     E = D; D = C; C = SHA_ROTL(B, 30); B = A; A = TEMP;
   }
   for (t = 40; t <= 59; t++) {
-    TEMP = SHA_ROTL(A,5) + ((B&C)|(D&(B|C))) + E + ctx->W[t] + 0x8f1bbcdcL;
+    TEMP = (SHA_ROTL(A,5) + ((B&C)|(D&(B|C))) + E + ctx->W[t] + 0x8f1bbcdcL) & 0xffffffffL;
     E = D; D = C; C = SHA_ROTL(B, 30); B = A; A = TEMP;
   }
   for (t = 60; t <= 79; t++) {
-    TEMP = SHA_ROTL(A,5) + (B^C^D)           + E + ctx->W[t] + 0xca62c1d6L;
+    TEMP = (SHA_ROTL(A,5) + (B^C^D)           + E + ctx->W[t] + 0xca62c1d6L) & 0xffffffffL;
     E = D; D = C; C = SHA_ROTL(B, 30); B = A; A = TEMP;
   }
 

@@ -17,8 +17,10 @@ libjabber_a_SOURCES = \
 			genhash.c \
 			hashtable.c \
 			hashtable.h \
+			karma.c \
 			iasciitab.h \
 			latin1tab.h \
+			lib.h \
 			libxode.h \
 			nametab.h \
 			pool.c \
@@ -27,6 +29,7 @@ libjabber_a_SOURCES = \
 			socket.c \
 			str.c \
 			utf8tab.h \
+			xhash.c \
 			xmldef.h \
 			xmlnode.c \
 			xmlparse.c \
@@ -63,7 +66,9 @@ libjabber_la_SOURCES = \
 			hashtable.c \
 			hashtable.h \
 			iasciitab.h \
+			karma.c \
 			latin1tab.h \
+			lib.h \
 			libxode.h \
 			nametab.h \
 			pool.c \
@@ -72,6 +77,7 @@ libjabber_la_SOURCES = \
 			socket.c \
 			str.c \
 			utf8tab.h \
+			xhash.c \
 			xmldef.h \
 			xmlnode.c \
 			xmlparse.c \

@@ -1,23 +1,45 @@
-/*
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+/* --------------------------------------------------------------------------
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * License
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * The contents of this file are subject to the Jabber Open Source License
+ * Version 1.0 (the "JOSL").  You may not copy or use this file, in either
+ * source code or executable form, except in compliance with the JOSL. You
+ * may obtain a copy of the JOSL at http://www.jabber.org/ or at
+ * http://www.opensource.org/.  
  *
- *  Jabber
- *  Copyright (C) 1998-1999 The Jabber Team http://jabber.org/
- */
+ * Software distributed under the JOSL is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied.  See the JOSL
+ * for the specific language governing rights and limitations under the
+ * JOSL.
+ *
+ * Copyrights
+ * 
+ * Portions created by or assigned to Jabber.com, Inc. are 
+ * Copyright (c) 1999-2002 Jabber.com, Inc.  All Rights Reserved.  Contact
+ * information for Jabber.com, Inc. is available at http://www.jabber.com/.
+ *
+ * Portions Copyright (c) 1998-1999 Jeremie Miller.
+ * 
+ * Acknowledgements
+ * 
+ * Special thanks to the Jabber Open Source Contributors for their
+ * suggestions and support of Jabber.
+ * 
+ * Alternatively, the contents of this file may be used under the terms of the
+ * GNU General Public License Version 2 or later (the "GPL"), in which case
+ * the provisions of the GPL are applicable instead of those above.  If you
+ * wish to allow use of your version of this file only under the terms of the
+ * GPL and not to allow others to use your version of this file under the JOSL,
+ * indicate your decision by deleting the provisions above and replace them
+ * with the notice and other provisions required by the GPL.  If you do not
+ * delete the provisions above, a recipient may use your version of this file
+ * under either the JOSL or the GPL. 
+ * 
+ * 
+ * --------------------------------------------------------------------------*/
 
-#include <libxode.h>
+#include "lib.h"
 
 void expat_startElement(void* userdata, const char* name, const char** atts)
 {
@@ -128,15 +150,45 @@ xmlnode xmlnode_file(char *file)
     return node; /* return the xmlnode x points to */
 }
 
+char* xmlnode_file_borked(char *file)
+{
+    XML_Parser p;
+    char buf[BUFSIZ];
+    static char err[1024];
+    int fd, len, done;
+
+    if(NULL == file)
+        return "no file specified";
+
+    fd = open(file,O_RDONLY);
+    if(fd < 0)
+        return "unable to open file";
+
+    p = XML_ParserCreate(NULL);
+    while(1)
+    {
+        len = read(fd, buf, BUFSIZ);
+        done = len < BUFSIZ;
+        if(!XML_Parse(p, buf, len, done))
+        {
+            snprintf(err,1023,"%s at line %d and column %d",XML_ErrorString(XML_GetErrorCode(p)),XML_GetErrorLineNumber(p),XML_GetErrorColumnNumber(p));
+            XML_ParserFree(p);
+            close(fd);
+            return err;
+        }
+    }
+}
+
 int xmlnode2file(char *file, xmlnode node)
 {
-    char *doc;
+    char *doc, *ftmp;
     int fd, i;
 
     if(file == NULL || node == NULL)
         return -1;
 
-    fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0600);
+    ftmp = spools(xmlnode_pool(node),file,".t.m.p",xmlnode_pool(node));
+    fd = open(ftmp, O_CREAT | O_WRONLY | O_TRUNC, 0600);
     if(fd < 0)
         return -1;
 
@@ -146,6 +198,12 @@ int xmlnode2file(char *file, xmlnode node)
         return -1;
 
     close(fd);
+
+    if(rename(ftmp,file) < 0)
+    {
+        unlink(ftmp);
+        return -1;
+    }
     return 1;
 }
 

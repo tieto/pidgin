@@ -17,15 +17,6 @@ James Clark. All Rights Reserved.
 
 Contributor(s):
 
-Alternatively, the contents of this file may be used under the terms
-of the GNU General Public License (the "GPL"), in which case the
-provisions of the GPL are applicable instead of those above.  If you
-wish to allow use of your version of this file only under the terms of
-the GPL and not to allow others to use your version of this file under
-the MPL, indicate your decision by deleting the provisions above and
-replace them with the notice and other provisions required by the
-GPL. If you do not delete the provisions above, a recipient may use
-your version of this file under either the MPL or the GPL.
 */
 
 #ifndef IS_INVALID_CHAR
@@ -1391,7 +1382,7 @@ int PREFIX(getAtts)(const ENCODING *enc, const char *ptr,
 {
     enum { other, inName, inValue } state = inName;
     int nAtts = 0;
-    int open;
+    int open = 0;
 
     for (ptr += MINBPC(enc);; ptr += MINBPC(enc)) {
         switch (BYTE_TYPE(enc, ptr)) {

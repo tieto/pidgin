@@ -53,7 +53,7 @@
  * <panos@alumni.cs.colorado.edu> for xinetd.
  */
 
-#include <libxode.h>
+#include "lib.h"
 
 #if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
