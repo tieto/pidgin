@@ -870,15 +870,18 @@ static void
 gaim_gtkdialogs_remove_chat_cb(GaimChat *chat)
 {
 	char *name = NULL;
+	GaimAccount *account;
 	GaimConversation *conv = NULL;
 
-	if (GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->get_chat_name != NULL)
-		name = GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->get_chat_name(chat->components);
+	account = chat->account;
+
+	if (GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl)->get_chat_name != NULL)
+		name = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl)->get_chat_name(chat->components);
 
 	gaim_blist_remove_chat(chat);
 
 	if (name != NULL) {
-		conv = gaim_find_conversation_with_account(name, chat->account);
+		conv = gaim_find_conversation_with_account(name, account);
 		g_free(name);
 	}
 

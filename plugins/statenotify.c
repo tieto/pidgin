@@ -18,6 +18,7 @@ write_status(GaimBuddy *buddy, const char *message)
 	GaimConversation *conv;
 	const char *who;
 	char buf[256];
+	char *escaped;
 
 	conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
 
@@ -25,8 +26,10 @@ write_status(GaimBuddy *buddy, const char *message)
 		return;
 
 	who = gaim_buddy_get_alias(buddy);
+	escaped = g_markup_escape_text(who, -1);
 
-	g_snprintf(buf, sizeof(buf), message, who);
+	g_snprintf(buf, sizeof(buf), message, escaped);
+	g_free(escaped);
 
 	gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 }
