@@ -524,7 +524,6 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	if (u->user) {
 		gtk_entry_set_text(GTK_ENTRY(u->name), u->user->username);
 		gtk_entry_set_text(GTK_ENTRY(u->pass), u->user->password);
-		gtk_entry_set_editable(GTK_ENTRY(u->name), FALSE);
 	}
 
 	p = find_prpl(u->protocol);
