@@ -913,11 +913,17 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	pixmap = gtk_pixmap_new(pm, mask);
 	gtk_box_pack_end(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
 
-	label = gtk_label_new(text);
-	gtk_box_pack_start(GTK_BOX(button_box_3), label, FALSE, FALSE, 2);
+	if (text)
+	{
+		label = gtk_label_new(text);
+		gtk_box_pack_start(GTK_BOX(button_box_3), label, FALSE, FALSE, 2);
+	}
 
 	gtk_widget_show(pixmap);
-	gtk_widget_show(label);
+	if (text)
+	{
+		gtk_widget_show(label);
+	}
 	gtk_widget_show(button_box_2);
 	gtk_widget_show(button_box_3);
 	gtk_widget_show(button_box);
@@ -925,3 +931,39 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 		
 	return button;
 }
+
+GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm)
+{
+	GtkWidget *button;
+	GtkWidget *button_box, *button_box_2;
+	GdkBitmap *mask;
+	GdkPixmap *pm;
+	GtkWidget *pixmap;
+	GtkTooltips *tips;	
+	
+	tips = gtk_tooltips_new();
+	button = gtk_button_new();
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+
+	button_box_2 = gtk_hbox_new(FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
+	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
+	pixmap = gtk_pixmap_new(pm, mask);
+	gtk_box_pack_end(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
+
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	
+	gtk_widget_show(pixmap);
+	gtk_widget_show(button_box_2);
+	gtk_widget_show(button_box);
+	gtk_widget_show(button);
+	
+	gtk_tooltips_set_tip(tips, button, text, "Gaim");	
+	return button;
+}
+

@@ -68,6 +68,12 @@
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
 
+#include "pixmaps/tmp_send.xpm"
+#include "pixmaps/gnome_remove.xpm"
+#include "pixmaps/gnome_add.xpm"
+#include "pixmaps/cancel.xpm"
+#include "pixmaps/warn.xpm"
+#include "pixmaps/tb_search.xpm"
 
 int state_lock=0;
 
@@ -1425,13 +1431,13 @@ void show_conv(struct conversation *c)
 	GtkWidget *block;
 	GtkWidget *close;
 	GtkWidget *entry;
-	GtkWidget *toolbar;
 	GtkWidget *bbox;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *paned;
 	GtkWidget *add;
-	
+	GtkWidget *toolbar;
+
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 
@@ -1439,16 +1445,17 @@ void show_conv(struct conversation *c)
 	aol_icon(win->window);
         
 	c->window = win;
-        
-	send = gtk_button_new_with_label(_("Send"));
-	info = gtk_button_new_with_label(_("Info"));
-	warn = gtk_button_new_with_label(_("Warn"));
-	close = gtk_button_new_with_label(_("Close"));
+       
+
+	send = picture_button2(win, _("Send"), tmp_send_xpm);
+	info = picture_button2(win, _("Info"), tb_search_xpm);
+	warn = picture_button2(win, _("Warn"), warn_xpm);
+	close = picture_button2(win, _("Close"), cancel_xpm);
 	if (find_buddy(c->name) != NULL)
-		add = gtk_button_new_with_label(_("Remove"));
+		add = picture_button2(win, _("Remove"), gnome_remove_xpm);
 	else
-		add = gtk_button_new_with_label(_("Add"));
-	block = gtk_button_new_with_label(_("Block"));
+		add = picture_button2(win, _("Add"), gnome_add_xpm);
+	block = picture_button2(win, _("Block"), tmp_send_xpm);
 
 	/* use a slicker look if the user wants to */
 	if (display_options & OPT_DISP_COOL_LOOK)
@@ -1461,7 +1468,7 @@ void show_conv(struct conversation *c)
 		gtk_button_set_relief(GTK_BUTTON(block), GTK_RELIEF_NONE);
 	}
 	
-	bbox = gtk_hbox_new(TRUE, 0);
+	bbox = gtk_hbox_new(FALSE, 5);
 	vbox = gtk_vbox_new(FALSE, 0);
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	paned = gtk_vpaned_new();
@@ -1485,13 +1492,16 @@ void show_conv(struct conversation *c)
 	/* Text box */
 	text = gtk_html_new(NULL, NULL);
 	gtk_html_set_editable(GTK_HTML(text), FALSE);
-/*	gtk_html_set_transparent(GTK_HTML(text), (transparent) ? TRUE : FALSE);*/
+	/*
+	gtk_html_set_transparent(GTK_HTML(text), (transparent) ? TRUE : FALSE);
+	*/
+
 	c->text = text;
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-												GTK_POLICY_NEVER,
-												GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), 
+			GTK_POLICY_NEVER, 
+			GTK_POLICY_AUTOMATIC);
 	gtk_widget_show(sw);
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	gtk_widget_show(text);
@@ -1513,12 +1523,12 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_widget_set_usize(entry, 300, 25);
 
-	gtk_box_pack_start(GTK_BOX(bbox), send, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), info, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), block, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), add, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), close, TRUE, TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), close, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), block, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), warn, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), info, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), send, FALSE, FALSE, 0);
 	
 	/* pack and fill the rest */
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
