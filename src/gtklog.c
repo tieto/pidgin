@@ -121,8 +121,8 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	GtkWidget *icon, *label, *pane, *sw, *button;
 	GList *logs;
 	char *text;
-	struct log_viewer_hash_t *ht = g_malloc(sizeof(struct log_viewer_hash_t)); 
-	
+	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
+
 	ht->screenname = g_strdup(screenname);
 	ht->account = account;
 
