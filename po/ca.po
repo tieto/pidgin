@@ -1333,7 +1333,7 @@ msgstr "Canviant la clau de %s:"
 
 #: src/account.c:331
 msgid "Please enter your current password and your new password."
-msgstr "Si us plau, introduïu la clau de %s.\n"
+msgstr "Si us plau, introduïu la clau de %s."
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
@@ -1932,9 +1932,7 @@ msgstr ""
 "Enviant un MI a un contacte:\n"
 "\tgaim-remote uri 'aim:goim?screenname=Pingüí&message=Hola+a+tot+el+món'\n"
 "En aquest cas, 'Pingüí' és el nom del contacte al que volem enviar el MI, i 'Hola a tot el món'\n"
-"és el missatge a enviar.  S'ha d'utilitzar '+' envers d'espais.\n"
 "Si us plau, teniu en compte els símbols entre les cometes utilitzats a dalt. Si voleu executar"
-" això en una consola, el caràcter '&' ha d'anar precedit per '\' o sinó l'ordre s'aturarà en aquest punt.\n"
 "Per altra banda, el següent obrirà només una conversa amb un contacte,\n"
 "sense cap missatge:\n"
 "\tgaim-remote uri aim:goim?screenname=Pingüí\n"
@@ -2356,7 +2354,7 @@ msgstr "Nou nom de grup"
 
 #: src/gtkblist.c:1525
 msgid "Please enter a new name for the selected group."
-msgstr "Si us plau, introduïu un nou nom per al grup seleccionat.\n"
+msgstr "Si us plau, introduïu un nou nom per al grup seleccionat."
 
 #: src/gtkblist.c:1554
 #, c-format
@@ -3182,7 +3180,7 @@ msgstr ""
 
 #: src/gtknotify.c:428 src/gtknotify.c:448 src/gtknotify.c:456
 msgid "Unable to open URL"
-msgstr "Impossible obrir l'URL\n"
+msgstr "Impossible obrir l'URL"
 
 #: src/gtknotify.c:429
 #, fuzzy
@@ -7835,7 +7833,6 @@ msgid ""
 "web browser<br>"
 msgstr ""
 "Si voleu veure aquest perfil, haureu de visitar aquest enllaç amb el vostre "
-"navegador<br>
 
 #: src/protocols/yahoo/yahoo.c:2622
 #, fuzzy

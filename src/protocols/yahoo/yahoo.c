@@ -2705,9 +2705,10 @@ static void yahoo_add_deny(GaimConnection *gc, const char *who) {
 
 	if (!yd->logged_in)
 		return;
-
-	if (gc->account->perm_deny != 4)
-		return;
+	
+	/* It seems to work better without this */
+	/* if (gc->account->perm_deny != 4)     */
+	/*	return;                         */
 
 	if (!who || who[0] == '\0')
 		return;
