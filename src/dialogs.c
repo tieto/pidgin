@@ -3317,6 +3317,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	GtkWidget *bbox;
 	GSList *smilies;
 	int smiley_count = 0;
+	int total_count = 0;
 
 	if (c->smiley_dialog)
 		return;
@@ -3372,6 +3373,19 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 		smilies = c->gc->prpl->smiley_list();
 
+		while (smilies) {
+			struct _prpl_smiley *smile =
+				(struct _prpl_smiley *)smilies->data;
+
+			if (smile->show) {
+				total_count++;
+			}
+
+			smilies = g_slist_next(smilies);
+		}
+
+		smilies = c->gc->prpl->smiley_list();
+
 		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
 		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 
@@ -3381,7 +3395,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 			if (smile->show) {
 
-				if ((!(smiley_count % 4)) && (smiley_count > 0)) {
+				if ((!(smiley_count % ((int)(sqrt(total_count))))) && (smiley_count > 0)) {
 					smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
 					gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 				}
