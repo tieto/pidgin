@@ -365,7 +365,7 @@ void silcgaim_ftp_send_file(GaimConnection *gc, const char *name)
 	if (!silc_parse_userfqdn(name, &nickname, NULL))
 		return;
 
-#if 1
+#ifndef _WIN32
 	silc_debug = TRUE;
 	silc_log_set_debug_string("*client*,*ftp*");
 #endif

@@ -127,4 +127,22 @@ void silcgaim_roomlist_cancel(GaimRoomlist *list);
 void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 			       SilcBuffer channel_pubkeys);
 
+#ifdef _WIN32
+typedef int uid_t;
+
+struct passwd {
+	char	*pw_name;	/* user name */
+	char	*pw_passwd;	/* user password */
+	int		pw_uid;		/* user id */
+	int		pw_gid;		/* group id */
+	char	*pw_gecos;	/* real name */
+	char	*pw_dir;	/* home directory */
+	char	*pw_shell;	/* shell program */
+};
+
+struct passwd *getpwuid(int uid);
+int getuid();
+int geteuid();
+#endif
+
 #endif /* SILCGAIM_H */

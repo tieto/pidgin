@@ -1003,6 +1003,9 @@ void silcgaim_chat_join_done(SilcClient client,
 	/* Set topic */
 	if (channel->topic)
 		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, channel->topic);
+
+	/* Set nick */
+	gaim_conv_chat_set_nick(GAIM_CONV_CHAT(convo), conn->local_entry->nickname);
 }
 
 void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
@@ -1130,7 +1133,7 @@ void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
 	/* Call INVITE */
 	silc_client_command_call(client, conn, NULL, "INVITE",
 				 chu->channel->channel_name,
-				 name);
+				 name, NULL);
 }
 
 void silcgaim_chat_leave(GaimConnection *gc, int id)
@@ -1213,21 +1216,31 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 	SilcChannelPrivateKey key = NULL;
 	SilcUInt32 flags;
 	int ret;
+	const char *msg2;
 	gboolean found = FALSE;
 	gboolean sign = gaim_prefs_get_bool("/plugins/prpl/silc/sign_chat");
 
 	if (!msg || !conn)
 		return 0;
 
-	/* See if command */
-	if (strlen(msg) > 1 && msg[0] == '/') {
+	flags = SILC_MESSAGE_FLAG_UTF8;
+
+	msg2 = msg;
+
+	if (!g_ascii_strncasecmp(msg2, "/me ", 4))
+	{
+		msg2 += 4;
+		if (!msg2)
+			return 0;
+		flags |= SILC_MESSAGE_FLAG_ACTION;
+	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
 			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
-					  _("Unknown command"));
+							  _("Unknown command"));
 		return 0;
 	}
 
-	flags = SILC_MESSAGE_FLAG_UTF8;
+
 	if (sign)
 		flags |= SILC_MESSAGE_FLAG_SIGNED;
 
@@ -1267,8 +1280,8 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 
 	/* Send channel message */
 	ret = silc_client_send_channel_message(client, conn, channel, key,
-					       flags, (unsigned char *)msg,
-					       strlen(msg), TRUE);
+					       flags, (unsigned char *)msg2,
+					       strlen(msg2), TRUE);
 	if (ret)
 		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, msg,
 				 time(NULL));
@@ -1285,7 +1298,7 @@ void silcgaim_chat_set_topic(GaimConnection *gc, int id, const char *topic)
 	SilcChannelUser chu;
 	gboolean found = FALSE;
 
-	if (!topic || !conn)
+	if (!conn)
 		return;
 
 	/* See if setting topic on private group.  Set it

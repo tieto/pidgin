@@ -1,4 +1,4 @@
-EXTRA_DIST = README TODO
+EXTRA_DIST = README TODO Makefile.mingw
 
 pkgdir = $(libdir)/gaim
 

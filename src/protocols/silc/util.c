@@ -80,7 +80,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		return FALSE;
 	}
 
-	g_snprintf(filename, sizeof(filename) - 1, "%s" G_DIR_SEPARATOR_S, silcgaim_silcdir());
+	g_snprintf(filename, sizeof(filename) - 1, "%s", silcgaim_silcdir());
 	g_snprintf(servfilename, sizeof(servfilename) - 1, "%s" G_DIR_SEPARATOR_S "serverkeys",
 		   silcgaim_silcdir());
 	g_snprintf(clientfilename, sizeof(clientfilename) - 1, "%s" G_DIR_SEPARATOR_S "clientkeys",
@@ -109,12 +109,14 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 			return FALSE;
 		}
 	} else {
+#ifndef _WIN32
 		/* Check the owner of the dir */
 		if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
 			gaim_debug_error("silc", "You don't seem to own '%s' directory\n",
 				filename);
 			return FALSE;
 		}
+#endif
 	}
 
 	/*
@@ -211,11 +213,13 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		}
 	}
 
+#ifndef _WIN32
 	/* Check the owner of the public key */
 	if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
 		gaim_debug_error("silc", "You don't seem to own your public key!?\n");
 		return FALSE;
 	}
+#endif
 
 	if ((stat(file_private_key, &st)) == -1) {
 		/* If file doesn't exist */
@@ -234,6 +238,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		}
 	}
 
+#ifndef _WIN32
 	/* Check the owner of the private key */
 	if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
 		gaim_debug_error("silc", "You don't seem to own your private key!?\n");
@@ -252,9 +257,25 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		}
 		gaim_debug_warning("silc", "Done.\n\n");
 	}
+#endif
 
 	return TRUE;
 }
+
+#ifdef _WIN32
+struct passwd *getpwuid(uid_t uid) {
+	struct passwd *pwd = calloc(1, sizeof(struct passwd));
+	return pwd;
+}
+
+uid_t getuid() {
+	return 0;
+}
+
+uid_t geteuid() {
+	return 0;
+}
+#endif
 
 void silcgaim_show_public_key(SilcGaim sg,
 			      const char *name, SilcPublicKey public_key,

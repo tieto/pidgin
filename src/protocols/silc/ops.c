@@ -85,16 +85,16 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_ACTION) {
-		msg = g_strdup_printf("<I>%s</I> %s",
-				      sender->nickname ?
-				      sender->nickname : "<unknown>",
+		msg = g_strdup_printf("/me %s",
 				      (const char *)message);
 		if (!msg)
 			return;
 
 		/* Send to Gaim */
-		gaim_conversation_write(convo, NULL, (const char *)msg,
-					GAIM_MESSAGE_SYSTEM, time(NULL));
+		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
+				 sender->nickname ?
+				 sender->nickname : "<unknown>", 0,
+				 msg, time(NULL));
 		g_free(msg);
 		return;
 	}
@@ -157,16 +157,15 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_ACTION && convo) {
-		msg = g_strdup_printf("<I>%s</I> %s",
-				      sender->nickname ?
-				      sender->nickname : "<unknown>",
+		msg = g_strdup_printf("/me %s",
 				      (const char *)message);
 		if (!msg)
 			return;
 
 		/* Send to Gaim */
-		gaim_conversation_write(convo, NULL, (const char *)msg,
-					GAIM_MESSAGE_SYSTEM, time(NULL));
+		serv_got_im(gc, sender->nickname ?
+			    sender->nickname : "<unknown>",
+			    msg, 0, time(NULL));
 		g_free(msg);
 		return;
 	}
@@ -241,8 +240,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			client_entry = va_arg(va, SilcClientEntry);
 
 			components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-			g_hash_table_insert(components, strdup("channel"), name);
-			serv_got_chat_invite(gc, name, client_entry->nickname, NULL, NULL);
+			g_hash_table_insert(components, strdup("channel"), strdup(name));
+			serv_got_chat_invite(gc, name, client_entry->nickname, NULL, components);
 		}
 		break;
 
@@ -471,7 +470,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			/* Remove user from channel */
 			g_snprintf(buf, sizeof(buf), ("Kicked by %s (%s)"),
 				   client_entry2->nickname, tmp ? tmp : "");
-			gaim_conv_chat_rename_user(GAIM_CONV_CHAT(convo),
+			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo),
 						   client_entry->nickname,
 						   buf);
 		}
@@ -698,6 +697,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		break;
 
 	default:
+		gaim_debug_info("silc", "Unhandled notification: %d\n", type);
 		break;
 	}
 
@@ -1023,12 +1023,55 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			convo = gaim_find_conversation_with_account(channel->channel_name,
 								    sg->account);
-			if (!convo)
+			if (!convo) {
+				gaim_debug_error("silc", "Got a topic for %s, which doesn't exist\n",
+								 channel->channel_name);
 				break;
+			}
+
+			if (gaim_conversation_get_type(convo) != GAIM_CONV_CHAT) {
+				gaim_debug_error("silc", "Got a topic for %s, which isn't a chat\n",
+								 channel->channel_name);
+				break;
+			}
 
 			/* Set topic */
 			if (channel->topic)
 				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, channel->topic);
+		}
+		break;
+
+	case SILC_COMMAND_NICK:
+		{
+			/* I don't think we should need to do this because the server should
+			 * be sending a SILC_NOTIFY_TYPE_NICK_CHANGE when we change our own
+			 * nick, but it isn't, so we deal with it here instead. Stu. */
+			SilcClientEntry local_entry;
+			SilcHashTableList htl;
+			SilcChannelUser chu;
+			const char *oldnick;
+
+			if (!success) {
+				return;
+			}
+
+			local_entry = va_arg(vp, SilcClientEntry);
+
+			/* Change nick on all channels */
+			silc_hash_table_list(local_entry->channels, &htl);
+			while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+				convo = gaim_find_conversation_with_account(chu->channel->channel_name,
+						sg->account);
+				if (!convo || (gaim_conversation_get_type(convo) != GAIM_CONV_CHAT))
+					continue;
+				oldnick = gaim_conv_chat_get_nick(GAIM_CONV_CHAT(convo));
+				if (strcmp(oldnick, local_entry->nickname)) {
+					gaim_conv_chat_rename_user(GAIM_CONV_CHAT(convo),
+							oldnick, local_entry->nickname);
+					gaim_conv_chat_set_nick(GAIM_CONV_CHAT(convo), local_entry->nickname);
+				}
+			}
+			silc_hash_table_list_reset(&htl);
 		}
 		break;
 
@@ -1100,7 +1143,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			SilcServerEntry server_entry;
 			char *server_name;
 			char *server_info;
-			char tmp[256];
+			char tmp[256], *msg;
 
 			if (!success) {
 				gaim_notify_error(gc, _("Server Information"),
@@ -1116,8 +1159,10 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (server_name && server_info) {
 				g_snprintf(tmp, sizeof(tmp), "Server: %s\n%s",
 					   server_name, server_info);
+				msg = g_markup_escape_text(tmp, strlen(tmp));
 				gaim_notify_info(NULL, _("Server Information"),
-						 _("Server Information"), tmp);
+						 _("Server Information"), msg);
+				g_free(msg);
 			}
 		}
 		break;
@@ -1150,6 +1195,11 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 		break;
 
 	default:
+		if (success)
+			gaim_debug_info("silc", "Unhandled command: %d (succeeded)\n", command);
+		else
+			gaim_debug_info("silc", "Unhandled command: %d (failed: %s)\n", command,
+							silc_get_status_message(status));
 		break;
 	}
 

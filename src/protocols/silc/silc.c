@@ -304,7 +304,11 @@ silcgaim_login(GaimAccount *account)
 	}
 
 	/* Schedule SILC using Glib's event loop */
+#ifndef _WIN32
 	sg->scheduler = g_timeout_add(5, (GSourceFunc)silcgaim_scheduler, sg);
+#else
+	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcgaim_scheduler, sg);
+#endif
 }
 
 static int
@@ -336,7 +340,7 @@ silcgaim_close(GaimConnection *gc)
 
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", "Leaving", NULL);
+				 "QUIT", "Download Gaim: " GAIM_WEBSITE, NULL);
 
 	if (sg->conn)
 		silc_client_close_connection(sg->client, sg->conn);
@@ -869,18 +873,24 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 	if (!who || !msg)
 		return 0;
 
-	/* See if command */
-	if (strlen(msg) > 1 && msg[0] == '/') {
+	mflags = SILC_MESSAGE_FLAG_UTF8;
+
+	if (!g_ascii_strncasecmp(msg, "/me ", 4)) {
+		msg += 4;
+		if (!msg)
+			return 0;
+		mflags |= SILC_MESSAGE_FLAG_ACTION;
+	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
 			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
-					  _("Unknown command"));
+							  _("Unknown command"));
 		return 0;
 	}
+
 
 	if (!silc_parse_userfqdn(who, &nickname, NULL))
 		return 0;
 
-	mflags = SILC_MESSAGE_FLAG_UTF8;
 	if (sign)
 		mflags |= SILC_MESSAGE_FLAG_SIGNED;
 
@@ -923,7 +933,7 @@ GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
 		return silcgaim_buddy_menu((GaimBuddy *) node);
 	} else {
 		g_return_val_if_reached(NULL);
-	}	
+	}
 }
 
 /********************************* Commands **********************************/
@@ -932,12 +942,25 @@ static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
 		const char *cmd, char **args, char **error)
 {
 	GaimConnection *gc;
+	GaimConversation *convo;
 	int id = 0;
 
 	gc = gaim_conversation_get_gc(conv);
-	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
 
-	if (gc == NULL || id == 0)
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	if(args && args[0]) {
+		convo = gaim_find_conversation_with_account(args[0], gc->account);
+	} else
+		convo = conv;
+
+	if (gaim_conversation_get_type(convo) != GAIM_CONV_CHAT)
+		return GAIM_CMD_RET_FAILED;
+
+	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo));
+
+	if (id == 0)
 		return GAIM_CMD_RET_FAILED;
 
 	silcgaim_chat_leave(gc, id);
@@ -1092,9 +1115,8 @@ static GaimCmdRet silcgaim_cmd_motd(GaimConversation *conv,
 		return GAIM_CMD_RET_FAILED;
 
 	if (!sg->motd) {
-		gaim_notify_error(
-				gc, _("Message of the Day"), _("No Message of the Day available"),
-				_("There is no Message of the Day associated with this connection"));
+		gaim_notify_error(gc, _("Message of the Day"), _("No Message of the Day available"),
+						  _("There is no Message of the Day associated with this connection"));
 		return GAIM_CMD_RET_FAILED;
 	}
 
@@ -1126,11 +1148,12 @@ static GaimCmdRet silcgaim_cmd_detach(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_umode(GaimConversation *conv,
+static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
 		const char *cmd, char **args, char **error)
 {
 	GaimConnection *gc;
 	SilcGaim sg;
+	char *silccmd, *silcargs;
 
 	gc = gaim_conversation_get_gc(conv);
 
@@ -1142,8 +1165,14 @@ static GaimCmdRet silcgaim_cmd_umode(GaimConversation *conv,
 	if (sg == NULL)
 		return GAIM_CMD_RET_FAILED;
 
-	silc_client_command_call(sg->client, sg->conn, NULL, "UMODE",
-			args[0], NULL);
+	silcargs = g_strjoinv(" ", args);
+	silccmd = g_strconcat(cmd, " ", args ? silcargs : NULL, NULL);
+	g_free(silcargs);
+	if (!silc_client_command_call(sg->client, sg->conn, silccmd)) {
+		g_free(silccmd);
+		return GAIM_CMD_RET_FAILED;
+	}
+	g_free(silccmd);
 
 	return GAIM_CMD_RET_OK;
 }
@@ -1154,11 +1183,13 @@ static GaimCmdRet silcgaim_cmd_umode(GaimConversation *conv,
 static void
 silcgaim_register_commands(void)
 {
-	gaim_cmd_register("part", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	gaim_cmd_register("part", "w", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
+			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
 			"prpl-silc", silcgaim_cmd_chat_part, _("part:  Leave the chat"));
-	gaim_cmd_register("leave", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	gaim_cmd_register("leave", "w", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
+			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
 			"prpl-silc", silcgaim_cmd_chat_part, _("leave:  Leave the chat"));
 	gaim_cmd_register("topic", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
@@ -1194,12 +1225,12 @@ silcgaim_register_commands(void)
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_motd,
 			_("motd:  View the server's Message Of The Day"));
 	gaim_cmd_register("detach", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_detach,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_detach,
 			_("detach:  Detach this session"));
 	gaim_cmd_register("umode", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_umode,
+			"prpl-silc", silcgaim_cmd_generic,
 			_("umode &lt;usermodes&gt;:  Set your user options"));
 }
 
@@ -1404,6 +1435,11 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_string("/plugins/prpl/silc/vcard", "");
 
 	silcgaim_register_commands();
+
+#ifdef _WIN32
+	silc_net_win32_init();
+#endif
+
 }
 
 GAIM_INIT_PLUGIN(silc, init_plugin, info);
