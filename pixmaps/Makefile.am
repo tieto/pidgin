@@ -40,7 +40,6 @@ EXTRA_DIST =	about_small.xpm			\
 		insert-image-small.png \
 		insert-link-small.png \
 		insert-smiley-small.png \
-		image_icon.xpm			\
 		import_small.xpm		\
 		join.xpm			\
 		kiss.xpm			\
@@ -75,8 +74,6 @@ EXTRA_DIST =	about_small.xpm			\
 		smile.xpm			\
 		smile8.xpm			\
 		smile_icon.xpm			\
-		speaker.xpm			\
-		speaker_mute.xpm		\
 		status-away.xpm			\
 		status-game.xpm			\
 		status-here.xpm			\

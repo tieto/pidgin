@@ -54,9 +54,6 @@
 #include "pixmaps/smile_icon.xpm"
 #include "pixmaps/search_small.xpm"
 #include "pixmaps/save_small.xpm"
-#include "pixmaps/speaker.xpm"
-#include "pixmaps/speaker_mute.xpm"
-#include "pixmaps/image_icon.xpm"
 
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
