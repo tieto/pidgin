@@ -2486,6 +2486,8 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
 	struct chat_connection *c = NULL;
+	char *buf;
+	int i, j;
 
 	while (bcs) {
 		b = (struct conversation *)bcs->data;
@@ -2508,7 +2510,20 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	if (!c)
 		return;
 
-	aim_chat_send_im(odata->sess, c->conn, 0, message, strlen(message));
+	buf = g_malloc(strlen(message) * 4 + 1);
+	for (i = 0, j = 0; i < strlen(message); i++) {
+		if (message[i] == '\n') {
+			buf[j++] = '<';
+			buf[j++] = 'B';
+			buf[j++] = 'R';
+			buf[j++] = '>';
+		} else {
+			buf[j++] = message[i];
+		}
+	}
+	buf[j] = '\0';
+	aim_chat_send_im(odata->sess, c->conn, 0, buf, strlen(buf));
+	g_free(buf);
 }
 
 static char **oscar_list_icon(int uc) {
