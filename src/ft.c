@@ -294,10 +294,18 @@ gaim_xfer_get_remote_port(const struct gaim_xfer *xfer)
 void
 gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed)
 {
+	struct gaim_xfer_ui_ops *ui_ops;
+
 	if (xfer == NULL)
 		return;
 
 	xfer->completed = completed;
+
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
+
+	if (ui_ops != NULL && ui_ops->update_progress != NULL)
+		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
+
 }
 
 void

@@ -858,7 +858,8 @@ gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = GAIM_GTKXFER(xfer);
+	if (!(data = GAIM_GTKXFER(xfer)))
+		return;
 
 	size_str      = get_size_string(gaim_xfer_get_size(xfer));
 	remaining_str = get_size_string(gaim_xfer_get_bytes_remaining(xfer));

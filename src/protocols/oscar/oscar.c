@@ -180,8 +180,8 @@ struct ask_direct {
 /* BBB */
 struct oscar_xfer_data {
 	fu8_t cookie[8];
-	char *clientip;
-	char *clientip2;
+	gchar *clientip;
+	gchar *clientip2;
 	fu32_t modtime;
 	fu32_t checksum;
 	aim_conn_t *conn;
@@ -283,235 +283,7 @@ static struct chat_connection *find_oscar_chat_by_conn(struct gaim_connection *g
 	return c;
 }
 
-/* XXX - I really don't like forward declarations */
-static void oscar_callback(gpointer data, gint source, GaimInputCondition condition);
-
-/* BBB */
-/*
- * This little area in oscar.c is the nexus of file transfer code, 
- * so I wrote a little explanation of what happens.  I am such a 
- * ninja.
- *
- * The series of events for a file send is:
- *  -Create xfer and call gaim_xfer_request (this happens in oscar_ask_sendfile)
- *  -User chooses a file and oscar_xfer_init is called.  It establishs a 
- *   listening socket, then asks the remote user to connect to us (and 
- *   gives them the file name, port, IP, etc.)
- *  -They connect to us and we send them an AIM_CB_OFT_PROMPT (this happens 
- *   in oscar_sendfile_established)
- *  -They send us an AIM_CB_OFT_ACK and then we start sending data
- *  -When we finish, they send us an AIM_CB_OFT_DONE and they close the 
- *   connection.
- *  -We get drunk because file transfer kicks ass.
- *
- * The series of events for a file receive is:
- *  -Create xfer and call gaim_xfer request (this happens in incomingim_chan2)
- *  -Gaim user selects file to name and location to save file to and 
- *   oscar_xfer_init is called
- *  -It connects to the remote user using the IP they gave us earlier
- *  -After connecting, they send us an AIM_CB_OFT_PROMPT.  In reply, we send 
- *   them an AIM_CB_OFT_ACK.
- *  -They begin to send us lots of raw data.
- *  -When they finish sending data we send an AIM_CB_OFT_DONE and then close 
- *   the connectionn.
- */
-static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition);
-static int oscar_sendfile_established(aim_session_t *, aim_frame_t *, ...);
-static int oscar_sendfile_prompt(aim_session_t *, aim_frame_t *, ...);
-static int oscar_sendfile_ack(aim_session_t *, aim_frame_t *, ...);
-static int oscar_sendfile_done(aim_session_t *, aim_frame_t *, ...);
-
-/* XXX - This function is pretty ugly */
-static void
-oscar_xfer_init(struct gaim_xfer *xfer)
-{
-	struct gaim_connection *gc;
-	struct oscar_data *od;
-	struct oscar_xfer_data *xfer_data;
-debug_printf("in oscar_xfer_init\n");
-
-	if (!(xfer_data = xfer->data))
-		return;
-	if (!(gc = xfer_data->gc))
-		return;
-	if (!(od = gc->proto_data))
-		return;
-
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
-		int i;
-		char ip[4];
-		gchar **ipsplit;
-
-		if (xfer->local_ip) {
-			ipsplit = g_strsplit(xfer->local_ip, ".", 4);
-			for (i=0; ipsplit[i]; i++)
-				ip[i] = atoi(ipsplit[i]);
-			g_strfreev(ipsplit);
-		} else {
-			memset(ip, 0x00, 4);
-		}
-
-		xfer->filename = g_path_get_basename(xfer->local_filename);
-		xfer_data->checksum = aim_oft_checksum_file(xfer->local_filename);
-
-		/*
-		 * Try a few random ports.  Maybe we need a 
-		 * way to tell libfaim to listen for multiple 
-		 * connections on one listener socket.
-		 */
-		xfer_data->conn = aim_sendfile_listen(od->sess, xfer_data->cookie, ip, xfer->local_port);
-		for (i=0; (i<5 && !xfer_data->conn); i++) {
-			xfer->local_port = (rand() % (65535-1024)) + 1024;
-			xfer_data->conn = aim_sendfile_listen(od->sess, xfer_data->cookie, ip, xfer->local_port);
-		}
-		if (xfer_data->conn) {
-			xfer->watcher = gaim_input_add(xfer_data->conn->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
-			aim_im_sendch2_sendfile_ask(od->sess, xfer_data->cookie, xfer->who, ip, xfer->local_port, xfer->filename, 1, xfer->size);
-			aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_established, 0);
-		} else {
-			do_error_dialog(_("File Transfer Aborted"), _("Unable to establish listener socket."), GAIM_ERROR);
-			/* XXX - The below line causes a crash because the transfer is canceled before the "Ok" callback on the file selection thing exists, I think */
-			/* gaim_xfer_cancel(xfer); */
-		}
-	} else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		xfer_data->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
-		if (xfer_data->conn) {
-			xfer_data->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
-			aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
-			xfer_data->conn->fd = xfer->fd = proxy_connect(gc->account, xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
-			if (xfer->fd == -1) {
-				do_error_dialog(_("File Transfer Aborted"), _("Unable to establish file descriptor."), GAIM_ERROR);
-				/* gaim_xfer_cancel? */
-			}
-		} else {
-			do_error_dialog(_("File Transfer Aborted"), _("Unable to create new connection."), GAIM_ERROR);
-			/* gaim_xfer_cancel? */
-			/* Try a different port? Ask them to connect to us? */
-		}
-
-	}
-}
-
-static void
-oscar_xfer_start(struct gaim_xfer *xfer)
-{
-/*	struct gaim_connection *gc;
-	struct oscar_data *od;
-	struct oscar_xfer_data *xfer_data;
-
-	if (!(xfer_data = xfer->data))
-		return;
-	if (!(gc = xfer_data->gc))
-		return;
-	if (!(od = gc->proto_data))
-		return;
-
-	od = xfer_data->od;
-*/
-debug_printf("AAA - in oscar_xfer_start\n");
-
-	/* I'm pretty sure we don't need to do jack here.  Nor Jill. */
-}
-
-static void
-oscar_xfer_end(struct gaim_xfer *xfer)
-{
-	struct gaim_connection *gc;
-	struct oscar_data *od;
-	struct oscar_xfer_data *xfer_data;
-debug_printf("AAA - in oscar_xfer_end\n");
-
-	if (!(xfer_data = xfer->data))
-		return;
-
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
-		aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_DONE, xfer_data->cookie, xfer->filename, 1, 1, xfer->size, xfer->size, xfer_data->modtime, xfer_data->checksum, 0x02, xfer->size, xfer_data->checksum);
-
-	if ((gc = xfer_data->gc)) {
-		if ((od = gc->proto_data))
-			od->file_transfers = g_slist_remove(od->file_transfers, xfer);
-	}
-
-	g_free(xfer_data);
-	xfer->data = NULL;
-}
-
-static void
-oscar_xfer_cancel(struct gaim_xfer *xfer)
-{
-	struct gaim_connection *gc;
-	struct oscar_data *od;
-	struct oscar_xfer_data *xfer_data;
-	aim_conn_t *conn;
-debug_printf("AAA - in oscar_xfer_cancel\n");
-
-	if (!(xfer_data = xfer->data))
-		return;
-
-	if ((conn = xfer_data->conn)) {
-		aim_session_t *sess;
-		if ((sess = conn->sessv))
-			if (xfer_data->cookie && xfer->who)
-				aim_im_sendch2_sendfile_cancel(sess, xfer_data->cookie, xfer->who, AIM_CAPS_SENDFILE);
-	}
-
-	if ((gc = xfer_data->gc))
-		if ((od = gc->proto_data))
-			od->file_transfers = g_slist_remove(od->file_transfers, xfer);
-
-	g_free(xfer_data);
-	xfer->data = NULL;
-}
-
-static void
-oscar_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
-{
-	struct oscar_xfer_data *xfer_data;
-
-	if (!(xfer_data = xfer->data))
-		return;
-
-	/* xfer_data->checksum = aim_oft_checksum_chunk(buffer, size, xfer_data->checksum); */
-}
-
-static struct gaim_xfer *
-oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
-{
-	struct gaim_xfer *xfer;
-	struct oscar_xfer_data *data;
-
-	while (fts) {
-		xfer = fts->data;
-		data = xfer->data;
-
-		if (data && !strcmp(data->cookie, ck))
-			return xfer;
-
-		fts = g_slist_next(fts);
-	}
-
-	return NULL;
-}
-
-static struct gaim_xfer *
-oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
-{
-	struct gaim_xfer *xfer;
-	struct oscar_xfer_data *data;
-
-	while (fts) {
-		xfer = fts->data;
-		data = xfer->data;
-
-		if (data && (conn == data->conn))
-			return xfer;
-
-		fts = g_slist_next(fts);
-	}
-
-	return NULL;
-}
-
+/* All the libfaim->gaim callback functions */
 static int gaim_parse_auth_resp  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_login      (aim_session_t *, aim_frame_t *, ...);
 static int gaim_handle_redirect  (aim_session_t *, aim_frame_t *, ...);
@@ -566,10 +338,17 @@ static int gaim_ssi_authreply    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_gotadded     (aim_session_t *, aim_frame_t *, ...);
 #endif
 
+/* for DirectIM/image transfer */
 static int gaim_odc_initiate     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_odc_incoming     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_odc_typing       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_update_ui        (aim_session_t *, aim_frame_t *, ...);
+
+/* for file transfer */
+static int oscar_sendfile_estblsh(aim_session_t *, aim_frame_t *, ...);
+static int oscar_sendfile_prompt (aim_session_t *, aim_frame_t *, ...);
+static int oscar_sendfile_ack    (aim_session_t *, aim_frame_t *, ...);
+static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 
 static fu32_t check_encoding(const char *utf8);
 static fu32_t parse_encoding(const char *enc);
@@ -919,6 +698,248 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 }
 
 /* BBB */
+/*
+ * This little area in oscar.c is the nexus of file transfer code, 
+ * so I wrote a little explanation of what happens.  I am such a 
+ * ninja.
+ *
+ * The series of events for a file send is:
+ *  -Create xfer and call gaim_xfer_request (this happens in oscar_ask_sendfile)
+ *  -User chooses a file and oscar_xfer_init is called.  It establishs a 
+ *   listening socket, then asks the remote user to connect to us (and 
+ *   gives them the file name, port, IP, etc.)
+ *  -They connect to us and we send them an AIM_CB_OFT_PROMPT (this happens 
+ *   in oscar_sendfile_estblsh)
+ *  -They send us an AIM_CB_OFT_ACK and then we start sending data
+ *  -When we finish, they send us an AIM_CB_OFT_DONE and they close the 
+ *   connection.
+ *  -We get drunk because file transfer kicks ass.
+ *
+ * The series of events for a file receive is:
+ *  -Create xfer and call gaim_xfer request (this happens in incomingim_chan2)
+ *  -Gaim user selects file to name and location to save file to and 
+ *   oscar_xfer_init is called
+ *  -It connects to the remote user using the IP they gave us earlier
+ *  -After connecting, they send us an AIM_CB_OFT_PROMPT.  In reply, we send 
+ *   them an AIM_CB_OFT_ACK.
+ *  -They begin to send us lots of raw data.
+ *  -When they finish sending data we send an AIM_CB_OFT_DONE and then close 
+ *   the connectionn.
+ */
+static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition);
+
+/* XXX - This function is pretty ugly */
+static void
+oscar_xfer_init(struct gaim_xfer *xfer)
+{
+	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+
+	debug_printf("in oscar_xfer_init\n");
+	if (!(xfer_data = xfer->data))
+		return;
+	if (!(gc = xfer_data->gc))
+		return;
+	if (!(od = gc->proto_data))
+		return;
+
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
+		int i;
+		char ip[4];
+		gchar **ipsplit;
+
+		if (xfer->local_ip) {
+			ipsplit = g_strsplit(xfer->local_ip, ".", 4);
+			for (i=0; ipsplit[i]; i++)
+				ip[i] = atoi(ipsplit[i]);
+			g_strfreev(ipsplit);
+		} else {
+			memset(ip, 0x00, 4);
+		}
+
+		xfer->filename = g_path_get_basename(xfer->local_filename);
+		xfer_data->checksum = aim_oft_checksum_file(xfer->local_filename);
+
+		/*
+		 * First try the port specified earlier (5190).  If that fails, try a 
+		 * few random ports.  Maybe we need a way to tell libfaim to listen 
+		 * for multiple connections on one listener socket.
+		 */
+		xfer_data->conn = aim_sendfile_listen(od->sess, xfer_data->cookie, ip, xfer->local_port);
+		for (i=0; (i<5 && !xfer_data->conn); i++) {
+			xfer->local_port = (rand() % (65535-1024)) + 1024;
+			xfer_data->conn = aim_sendfile_listen(od->sess, xfer_data->cookie, ip, xfer->local_port);
+		}
+		debug_printf("port is %d, ip is %hhd.%hhd.%hhd.%hhd\n", xfer->local_port, ip[0], ip[1], ip[2], ip[3]);
+		if (xfer_data->conn) {
+			xfer->watcher = gaim_input_add(xfer_data->conn->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
+			aim_im_sendch2_sendfile_ask(od->sess, xfer_data->cookie, xfer->who, ip, xfer->local_port, xfer->filename, 1, xfer->size);
+			aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_estblsh, 0);
+		} else {
+			do_error_dialog(_("File Transfer Aborted"), _("Unable to establish listener socket."), GAIM_ERROR);
+			/* XXX - The below line causes a crash because the transfer is canceled before the "Ok" callback on the file selection thing exists, I think */
+			/* gaim_xfer_cancel(xfer); */
+		}
+	} else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		xfer_data->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
+		if (xfer_data->conn) {
+			xfer_data->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
+			aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
+			xfer_data->conn->fd = xfer->fd = proxy_connect(gc->account, xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
+			if (xfer->fd == -1) {
+				do_error_dialog(_("File Transfer Aborted"), _("Unable to establish file descriptor."), GAIM_ERROR);
+				/* gaim_xfer_cancel(xfer); */
+			}
+		} else {
+			do_error_dialog(_("File Transfer Aborted"), _("Unable to create new connection."), GAIM_ERROR);
+			/* gaim_xfer_cancel(xfer); */
+			/* Try a different port? Ask them to connect to us? */
+		}
+
+	}
+}
+
+static void
+oscar_xfer_start(struct gaim_xfer *xfer)
+{
+/*	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+
+	if (!(xfer_data = xfer->data))
+		return;
+	if (!(gc = xfer_data->gc))
+		return;
+	if (!(od = gc->proto_data))
+		return;
+
+	od = xfer_data->od;
+*/
+	debug_printf("AAA - in oscar_xfer_start\n");
+
+	/* I'm pretty sure we don't need to do jack here.  Nor Jill. */
+}
+
+static void
+oscar_xfer_end(struct gaim_xfer *xfer)
+{
+	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+
+	debug_printf("AAA - in oscar_xfer_end\n");
+	if (!(xfer_data = xfer->data))
+		return;
+
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
+		aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_DONE, xfer_data->cookie, xfer->filename, 1, 1, xfer->size, xfer->size, xfer_data->modtime, xfer_data->checksum, 0x02, xfer->size, xfer_data->checksum);
+
+	g_free(xfer_data->clientip);
+	g_free(xfer_data->clientip2);
+
+	if ((gc = xfer_data->gc)) {
+		if ((od = gc->proto_data))
+			od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+	}
+
+	g_free(xfer_data);
+	xfer->data = NULL;
+}
+
+static void
+oscar_xfer_cancel(struct gaim_xfer *xfer)
+{
+	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+	aim_conn_t *conn;
+
+	debug_printf("AAA - in oscar_xfer_cancel\n");
+	if (!(xfer_data = xfer->data))
+		return;
+
+	if ((conn = xfer_data->conn)) {
+		aim_session_t *sess;
+		if ((sess = conn->sessv))
+			if (xfer_data->cookie && xfer->who)
+				aim_im_sendch2_sendfile_cancel(sess, xfer_data->cookie, xfer->who, AIM_CAPS_SENDFILE);
+	}
+
+	g_free(xfer_data->clientip);
+	g_free(xfer_data->clientip2);
+
+	if ((gc = xfer_data->gc))
+		if ((od = gc->proto_data))
+			od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+
+	g_free(xfer_data);
+	xfer->data = NULL;
+}
+
+static void
+oscar_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
+{
+	struct oscar_xfer_data *xfer_data;
+
+	if (!(xfer_data = xfer->data))
+		return;
+
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
+		/*
+		 * If we're done sending, intercept the socket from the core ft code
+		 * and wait for the other guy to send the "done" OFT packet.
+		 */
+		if (gaim_xfer_get_bytes_remaining(xfer) <= 0) {
+			gaim_input_remove(xfer->watcher);
+			xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
+			xfer->fd = 0;
+			gaim_xfer_set_completed(xfer, TRUE);
+		}
+	} else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		/* Update our rolling checksum */
+		/* xfer_data->checksum = aim_oft_checksum_chunk(buffer, size, xfer_data->checksum); */
+	}
+}
+
+static struct gaim_xfer *
+oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
+{
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *data;
+
+	while (fts) {
+		xfer = fts->data;
+		data = xfer->data;
+
+		if (data && !strcmp(data->cookie, ck))
+			return xfer;
+
+		fts = g_slist_next(fts);
+	}
+
+	return NULL;
+}
+
+static struct gaim_xfer *
+oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
+{
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *data;
+
+	while (fts) {
+		xfer = fts->data;
+		data = xfer->data;
+
+		if (data && (conn == data->conn))
+			return xfer;
+
+		fts = g_slist_next(fts);
+	}
+
+	return NULL;
+}
+
 static void oscar_ask_sendfile(struct gaim_connection *gc, char *destsn) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
@@ -948,6 +969,7 @@ static void oscar_ask_sendfile(struct gaim_connection *gc, char *destsn) {
 	gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
 	gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
 	gaim_xfer_set_cancel_fnc(xfer, oscar_xfer_cancel);
+	gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack);
 
 	/* Keep track of this transfer for later */
 	od->file_transfers = g_slist_append(od->file_transfers, xfer);
@@ -1684,15 +1706,15 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
  * want to do some voodoo with the socket file descriptors, add a 
  * callback or two, and then send the AIM_CB_OFT_PROMPT.
  */
-static int oscar_sendfile_established(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct gaim_xfer *xfer;
 	struct oscar_xfer_data *xfer_data;
 	va_list ap;
 	aim_conn_t *conn, *listenerconn;
-debug_printf("AAA - in oscar_sendfile_established\n");
 
+	debug_printf("AAA - in oscar_sendfile_estblsh\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	listenerconn = va_arg(ap, aim_conn_t *);
@@ -1729,8 +1751,8 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	struct gaim_connection *gc;
 	struct gaim_xfer *xfer;
 	struct oscar_xfer_data *xfer_data;
-debug_printf("AAA - in oscar_sendfile_connected\n");
 
+	debug_printf("AAA - in oscar_sendfile_connected\n");
 	if (!(xfer = data))
 		return;
 	if (!(xfer_data = xfer->data))
@@ -1767,8 +1789,8 @@ static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_t *conn;
 	fu8_t *cookie;
 	struct aim_fileheader_t *fh;
-debug_printf("AAA - in oscar_sendfile_prompt\n");
 
+	debug_printf("AAA - in oscar_sendfile_prompt\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	cookie = va_arg(ap, fu8_t *);
@@ -1797,7 +1819,7 @@ debug_printf("AAA - in oscar_sendfile_prompt\n");
 }
 
 /*
- * We are sending a file to someone else.  They have just acknowledged are 
+ * We are sending a file to someone else.  They have just acknowledged out 
  * prompt, so we want to start sending data like there's no tomorrow.
  */
 static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -1808,8 +1830,8 @@ static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_t *conn;
 	fu8_t *cookie;
 	struct aim_fileheader_t *fh;
-debug_printf("AAA - in oscar_sendfile_ack\n");
 
+	debug_printf("AAA - in oscar_sendfile_ack\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	cookie = va_arg(ap, fu8_t *);
@@ -1818,6 +1840,10 @@ debug_printf("AAA - in oscar_sendfile_ack\n");
 
 	if (!(xfer = oscar_find_xfer_by_cookie(od->file_transfers, cookie)))
 		return 1;
+
+	/* We want to stop listening with a normal thingy */
+	gaim_input_remove(xfer->watcher);
+	xfer->watcher = 0;
 
 	gaim_xfer_start(xfer, xfer->fd, NULL, 0);
 
@@ -1836,8 +1862,8 @@ static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_t *conn;
 	fu8_t *cookie;
 	struct aim_fileheader_t *fh;
-debug_printf("AAA - in oscar_sendfile_done\n");
 
+	debug_printf("AAA - in oscar_sendfile_done\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	cookie = va_arg(ap, fu8_t *);
@@ -1847,7 +1873,7 @@ debug_printf("AAA - in oscar_sendfile_done\n");
 	if (!(xfer = oscar_find_xfer_by_conn(od->file_transfers, conn)))
 		return 1;
 
-	gaim_xfer_set_completed(xfer, TRUE);
+	xfer->fd = conn->fd;
 	gaim_xfer_end(xfer);
 
 	return 0;
@@ -2061,8 +2087,10 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 			if (!args->cookie || !args->verifiedip || !args->port ||
 			    !args->info.sendfile.filename || !args->info.sendfile.totsize ||
-			    !args->info.sendfile.totfiles || !args->reqclass)
+			    !args->info.sendfile.totfiles || !args->reqclass) {
+				debug_printf("%s tried to send you a file with incomplete information.\n", userinfo->sn);
 				return 1;
+			}
 
 			if (args->info.sendfile.subtype == AIM_OFT_SUBTYPE_SEND_DIR) {
 				/* last char of the ft req is a star, they are sending us a
@@ -5152,13 +5180,11 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
 
-#if 0
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label = _("Send File");
 			pbm->callback = oscar_ask_sendfile;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
-#endif
 		}
 	}
 
