@@ -2016,6 +2016,7 @@ gtk_imhtml_init_smileys (GtkIMHtml *imhtml)
 
 	gtk_imhtml_associate_smiley (imhtml, ":-X", crossedlips_xpm);
 	gtk_imhtml_associate_smiley (imhtml, ":-D", bigsmile_xpm);
+	gtk_imhtml_associate_smiley (imhtml, ":-d", bigsmile_xpm);
 	gtk_imhtml_associate_smiley (imhtml, "O:-)", angel_xpm);
 }
 
