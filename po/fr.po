@@ -736,7 +736,7 @@ msgstr "Impossible de lire le fichier %s."
 #: src/dialogs.c:480
 #, c-format
 msgid "Message too long, last %s bytes truncated."
-msgstr "Message trop long, perte des %d derniers octets."
+msgstr "Message trop long, perte des %s derniers octets."
 
 #: src/dialogs.c:483
 #, c-format
