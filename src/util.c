@@ -1427,7 +1427,7 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 		gtk_menu_append(GTK_MENU(menu), menuitem);
 
 	if (sf)
-		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
+		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
 
 	if (icon != NULL) {
 		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
@@ -1470,7 +1470,7 @@ GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *menu, const char *str, char *ico
 		gtk_menu_append(GTK_MENU(menu), menuitem);
 
 	if (sf)
-		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
+		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
 
 	if (iconname != NULL) {
 		char *filename;
@@ -1515,7 +1515,7 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 		gtk_menu_append(GTK_MENU(menu), menuitem);
 	if (sf)
 		/* passing 1 is necessary so if we sign off closing the account editor doesn't exit */
-		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
+		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
 	gtk_widget_show(menuitem);
 
 	/* Create our container */

@@ -753,8 +753,8 @@ void show_im_dialog()
 				opt = gtk_menu_item_new_with_label(buf);
 				gtk_object_set_user_data(GTK_OBJECT(opt), info);
 				
-				gtk_signal_connect(GTK_OBJECT(opt), "activate",
-						   GTK_SIGNAL_FUNC(show_info_select_account), c);
+				g_signal_connect(GTK_OBJECT(opt), "activate",
+						   G_CALLBACK(show_info_select_account), c);
 				
 				gtk_menu_append(GTK_MENU(menu), opt);
 				g = g->next;
@@ -847,8 +847,8 @@ void show_info_dialog()
 			opt = gtk_menu_item_new_with_label(buf);
 			gtk_object_set_user_data(GTK_OBJECT(opt), info);
 
-			gtk_signal_connect(GTK_OBJECT(opt), "activate",
-					   GTK_SIGNAL_FUNC(show_info_select_account), c);
+			g_signal_connect(GTK_OBJECT(opt), "activate",
+					   G_CALLBACK(show_info_select_account), c);
 
 			gtk_menu_append(GTK_MENU(menu), opt);
 			g = g->next;
@@ -1020,8 +1020,8 @@ static void create_online_user_names(struct addbuddy *b)
 				c->username, c->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), b);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate",
-				GTK_SIGNAL_FUNC(addbuddy_select_account),
+		g_signal_connect(GTK_OBJECT(opt), "activate",
+				G_CALLBACK(addbuddy_select_account),
 				c);
 		gtk_widget_show(opt);
 		gtk_menu_append(GTK_MENU(menu), opt);
@@ -1068,8 +1068,8 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
 
 	gtk_widget_realize(a->window);
-	gtk_signal_connect(GTK_OBJECT(a->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), a->window);
-	gtk_signal_connect(GTK_OBJECT(a->window), "destroy", GTK_SIGNAL_FUNC(free_dialog), a);
+	g_signal_connect(GTK_OBJECT(a->window), "destroy", G_CALLBACK(destroy_dialog), a->window);
+	g_signal_connect(GTK_OBJECT(a->window), "destroy", G_CALLBACK(free_dialog), a);
 	dialogwindows = g_list_prepend(dialogwindows, a->window);
 
 	mainbox = gtk_vbox_new(FALSE, 5);
@@ -1094,7 +1094,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_widget_grab_focus(a->entry);
 	if (buddy != NULL)
 		gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
-	gtk_signal_connect(GTK_OBJECT(a->entry), "activate", GTK_SIGNAL_FUNC(do_add_buddy), a);
+	g_signal_connect(GTK_OBJECT(a->entry), "activate", G_CALLBACK(do_add_buddy), a);
 
 	label = gtk_label_new(_("Alias"));
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
@@ -1127,11 +1127,11 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 
 	add = picture_button(a->window, _("Add"), add_xpm);
 	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(do_add_buddy), a);
+	g_signal_connect(GTK_OBJECT(add), "clicked", G_CALLBACK(do_add_buddy), a);
 
 	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), a->window);
+	g_signal_connect(GTK_OBJECT(cancel), "clicked", G_CALLBACK(destroy_dialog), a->window);
 
 	gtk_widget_show_all(a->window);
 	if (group != NULL) 
@@ -1171,7 +1171,7 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *se
 		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
 						    label);
 	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(opt), "toggled", GTK_SIGNAL_FUNC(set_deny_mode), (void *)which);
+	g_signal_connect(GTK_OBJECT(opt), "toggled", G_CALLBACK(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
 	if (current_deny_gc->permdeny == which)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
@@ -1298,7 +1298,7 @@ static void build_deny_menu()
 			continue;
 		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, gc->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(deny_gc_opt), gc);
+		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(deny_gc_opt), gc);
 		gtk_widget_show(opt);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		if (gc == current_deny_gc)
@@ -1411,7 +1411,7 @@ void show_privacy_options()
 	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, TRUE, TRUE);
 	gtk_window_set_role(GTK_WINDOW(pwin), "privacy");
 	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
-	gtk_signal_connect(GTK_OBJECT(pwin), "destroy", GTK_SIGNAL_FUNC(destroy_privacy), NULL);
+	g_signal_connect(GTK_OBJECT(pwin), "destroy", G_CALLBACK(destroy_privacy), NULL);
 	gtk_widget_realize(pwin);
 
 	gtk_widget_set_usize(pwin, 0, 400);
@@ -1435,7 +1435,7 @@ void show_privacy_options()
 
 	deny_opt_menu = gtk_option_menu_new();
 	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), deny_opt_menu, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy", GTK_SIGNAL_FUNC(des_deny_opt), NULL);
+	g_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy", G_CALLBACK(des_deny_opt), NULL);
 	gtk_widget_show(deny_opt_menu);
 
 	build_deny_menu();
@@ -1472,11 +1472,11 @@ void show_privacy_options()
 	gtk_widget_show(bbox);
 
 	button = picture_button(pwin, _("Add"), gnome_add_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_add), (void *)TRUE);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), (void *)TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	button = picture_button(pwin, _("Remove"), gnome_remove_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_rem), (void *)TRUE);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), (void *)TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -1506,11 +1506,11 @@ void show_privacy_options()
 	gtk_widget_show(bbox);
 
 	button = picture_button(pwin, _("Add"), gnome_add_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_add), FALSE);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), FALSE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	button = picture_button(pwin, _("Remove"), gnome_remove_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_rem), FALSE);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), FALSE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	sep = gtk_hseparator_new();
@@ -1522,7 +1522,7 @@ void show_privacy_options()
 	gtk_widget_show(hbox);
 	close_button = picture_button(pwin, _("Close"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 5);
-	gtk_signal_connect_object(GTK_OBJECT(close_button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), pwin);
+	g_signal_connect_swapped(GTK_OBJECT(close_button), "clicked", G_CALLBACK(gtk_widget_destroy), pwin);
 
 	gtk_widget_show(pwin);
 }
@@ -1629,7 +1629,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 		g_snprintf(buf, sizeof buf, "%s (%s)", a->username, (p && p->name)?p->name:"Unknown");
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), a);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(pounce_choose), b);
+		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(pounce_choose), b);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		gtk_widget_show(opt);
 
@@ -1679,7 +1679,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "new_bp");
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -1812,7 +1812,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 
 	b->messentry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), b->messentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_signal_connect(GTK_OBJECT(b->messentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
+	g_signal_connect(GTK_OBJECT(b->messentry), "activate", G_CALLBACK(do_new_bp), b);
 	if(edit_bp) {
 		gtk_widget_set_sensitive(GTK_WIDGET(b->messentry), 
 					(edit_bp->options & OPT_POUNCE_SEND_IM) ? TRUE : FALSE);
@@ -1820,7 +1820,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	}
 	gtk_widget_show(b->messentry);
 
-	gtk_signal_connect(GTK_OBJECT(b->sendim), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),	b->messentry);
+	g_signal_connect(GTK_OBJECT(b->sendim), "clicked", G_CALLBACK(toggle_sensitive),	b->messentry);
 
 	b->command = gtk_check_button_new_with_label(_("Execute command on pounce"));
 	gtk_table_attach(GTK_TABLE(table), b->command, 0, 1, 2, 3, GTK_FILL, 0, 0, 0);
@@ -1833,7 +1833,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 
 	b->commentry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), b->commentry, 1, 2, 2, 3, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_signal_connect(GTK_OBJECT(b->commentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
+	g_signal_connect(GTK_OBJECT(b->commentry), "activate", G_CALLBACK(do_new_bp), b);
 	if(edit_bp) {
 		gtk_widget_set_sensitive(GTK_WIDGET(b->commentry), 
 					(edit_bp->options & OPT_POUNCE_COMMAND) ? TRUE : FALSE);
@@ -1842,7 +1842,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	else
 		gtk_widget_set_sensitive(GTK_WIDGET(b->commentry), FALSE);
 	gtk_widget_show(b->commentry);
-	gtk_signal_connect(GTK_OBJECT(b->command), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->commentry);
+	g_signal_connect(GTK_OBJECT(b->command), "clicked", G_CALLBACK(toggle_sensitive), b->commentry);
 	
 	b->sound = gtk_check_button_new_with_label(_("Play sound on pounce"));
 	if(edit_bp)
@@ -1855,7 +1855,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 
 	b->soundentry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), b->soundentry, 1, 2, 3, 4, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_signal_connect(GTK_OBJECT(b->soundentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
+	g_signal_connect(GTK_OBJECT(b->soundentry), "activate", G_CALLBACK(do_new_bp), b);
 	if(edit_bp) {
 		gtk_widget_set_sensitive(GTK_WIDGET(b->soundentry), 
 					(edit_bp->options & OPT_POUNCE_SOUND) ? TRUE : FALSE);
@@ -1863,7 +1863,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	} else 
 		gtk_widget_set_sensitive(GTK_WIDGET(b->soundentry), FALSE);
 	gtk_widget_show(b->soundentry);
-	gtk_signal_connect(GTK_OBJECT(b->sound), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->soundentry);
+	g_signal_connect(GTK_OBJECT(b->sound), "clicked", G_CALLBACK(toggle_sensitive), b->soundentry);
 	/* </pounce type="action"> */
 
 	b->save = gtk_check_button_new_with_label(_("Save this pounce after activation"));
@@ -1888,13 +1888,13 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 
 	button = gaim_pixbuf_button_from_stock(_("_Save"), "gtk-execute", GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_new_bp), b);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_new_bp), b);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("C_ancel"), "gtk-cancel", GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), b->window);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
@@ -1964,7 +1964,7 @@ void show_set_dir(struct gaim_connection *gc)
 	gtk_window_set_role(GTK_WINDOW(b->window), "set_dir");
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
 
 	fbox = gtk_vbox_new(FALSE, 5);
@@ -2097,11 +2097,11 @@ void show_set_dir(struct gaim_connection *gc)
 
 	b->save = picture_button(b->window, _("Save"), save_xpm);
 	gtk_box_pack_end(GTK_BOX(bot), b->save, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->save), "clicked", GTK_SIGNAL_FUNC(do_set_dir), b);
+	g_signal_connect(GTK_OBJECT(b->save), "clicked", G_CALLBACK(do_set_dir), b);
 
 	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(bot), b->cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->cancel), "clicked", G_CALLBACK(destroy_dialog), b->window);
 
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->first);
 
@@ -2148,7 +2148,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "change_passwd");
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Password Change"));
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 
@@ -2220,11 +2220,11 @@ void show_change_passwd(struct gaim_connection *gc)
 
 	b->ok = picture_button(b->window, _("OK"), ok_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), b->ok, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->ok), "clicked", GTK_SIGNAL_FUNC(do_change_password), b);
+	g_signal_connect(GTK_OBJECT(b->ok), "clicked", G_CALLBACK(do_change_password), b);
 
 	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), b->cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->cancel), "clicked", G_CALLBACK(destroy_dialog), b->window);
 
 	gtk_widget_show(b->window);
 }
@@ -2247,7 +2247,7 @@ void show_set_info(struct gaim_connection *gc)
 	gtk_window_set_role(GTK_WINDOW(b->window), "set_info");
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -2285,11 +2285,11 @@ void show_set_info(struct gaim_connection *gc)
 
 	b->save = picture_button(b->window, _("Save"), save_xpm);
 	gtk_box_pack_end(GTK_BOX(buttons), b->save, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->save), "clicked", GTK_SIGNAL_FUNC(do_save_info), b);
+	g_signal_connect(GTK_OBJECT(b->save), "clicked", G_CALLBACK(do_save_info), b);
 
 	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->cancel), "clicked", G_CALLBACK(destroy_dialog), b->window);
 
 	gtk_widget_show(b->window);
 
@@ -2356,7 +2356,7 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 		gtk_window_set_title(GTK_WINDOW(b->window), "Gaim");
 		gtk_container_border_width(GTK_CONTAINER(b->window), 5);
 		gtk_widget_realize(GTK_WIDGET(b->window));
-		gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(info_dlg_free), b);
+		g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(info_dlg_free), b);
 
 		bbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_add(GTK_CONTAINER(b->window), bbox);
@@ -2377,7 +2377,7 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 		gaim_setup_imhtml(text);
 
 		ok = picture_button(b->window, _("OK"), ok_xpm);
-		gtk_signal_connect_object(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
+		g_signal_connect_swapped(GTK_OBJECT(ok), "clicked", G_CALLBACK(gtk_widget_destroy),
 					  GTK_OBJECT(b->window));
 		gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 0);
 
@@ -2521,10 +2521,10 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 
 
 	/* Handle closes right */
-	gtk_signal_connect(GTK_OBJECT(p->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), p->window);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), p->window);
-	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(do_add_perm), p);
-	gtk_signal_connect(GTK_OBJECT(p->entry), "activate", GTK_SIGNAL_FUNC(do_add_perm), p);
+	g_signal_connect(GTK_OBJECT(p->window), "destroy", G_CALLBACK(destroy_dialog), p->window);
+	g_signal_connect(GTK_OBJECT(cancel), "clicked", G_CALLBACK(destroy_dialog), p->window);
+	g_signal_connect(GTK_OBJECT(add), "clicked", G_CALLBACK(do_add_perm), p);
+	g_signal_connect(GTK_OBJECT(p->entry), "activate", G_CALLBACK(do_add_perm), p);
 
 	/* Finish up */
 	gtk_widget_show(add);
@@ -2602,12 +2602,12 @@ void show_log_dialog(struct conversation *c)
 		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.log", gaim_home_dir(), normalize(c->name));
 		gtk_object_set_user_data(GTK_OBJECT(c->log_dialog), "log dialog");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(c->log_dialog), buf);
-		gtk_signal_connect(GTK_OBJECT(c->log_dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(delete_event_dialog), c);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->log_dialog)->ok_button), "clicked",
-				   GTK_SIGNAL_FUNC(do_log), c);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->log_dialog)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(cancel_log), c);
+		g_signal_connect(GTK_OBJECT(c->log_dialog), "delete_event",
+				   G_CALLBACK(delete_event_dialog), c);
+		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->log_dialog)->ok_button), "clicked",
+				   G_CALLBACK(do_log), c);
+		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->log_dialog)->cancel_button),
+				   "clicked", G_CALLBACK(cancel_log), c);
 	}
 
 	g_free(buf);
@@ -2783,9 +2783,9 @@ void show_find_info(struct gaim_connection *gc)
 	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(fbox), bbox, FALSE, FALSE, 0);
 
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(do_find_info), b);
+	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(cancel), "clicked", G_CALLBACK(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(ok), "clicked", G_CALLBACK(do_find_info), b);
 
 	gtk_widget_show(ok);
 	gtk_widget_show(cancel);
@@ -2827,7 +2827,7 @@ void show_find_email(struct gaim_connection *gc)
 	gtk_window_set_role(GTK_WINDOW(b->window), "find_email");
 	gtk_widget_realize(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Email"));
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -2846,18 +2846,18 @@ void show_find_email(struct gaim_connection *gc)
 
 	b->emailentry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(topbox), b->emailentry, TRUE, TRUE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->emailentry), "activate", GTK_SIGNAL_FUNC(do_find_email), b);
+	g_signal_connect(GTK_OBJECT(b->emailentry), "activate", G_CALLBACK(do_find_email), b);
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->emailentry);
 
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 
 	button = picture_button(b->window, _("OK"), ok_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_find_email), b);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_find_email), b);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	button = picture_button(b->window, _("Cancel"), cancel_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), b->window);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(b->window);
@@ -2961,10 +2961,10 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 		gtk_box_pack_start(GTK_BOX(fbox), bbox, TRUE, TRUE, 5);
 		gtk_widget_show(vbox);
 
-		gtk_signal_connect(GTK_OBJECT(c->link_dialog), "destroy",
-				   GTK_SIGNAL_FUNC(cancel_link), c);
-		gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(cancel_link), c);
-		gtk_signal_connect(GTK_OBJECT(b->ok), "clicked", GTK_SIGNAL_FUNC(do_add_link), b);
+		g_signal_connect(GTK_OBJECT(c->link_dialog), "destroy",
+				   G_CALLBACK(cancel_link), c);
+		g_signal_connect(GTK_OBJECT(b->cancel), "clicked", G_CALLBACK(cancel_link), c);
+		g_signal_connect(GTK_OBJECT(b->ok), "clicked", G_CALLBACK(do_add_link), b);
 
 		gtk_container_add(GTK_CONTAINER(c->link_dialog), fbox);
 		gtk_container_border_width(GTK_CONTAINER(c->link_dialog), 10);
@@ -3082,12 +3082,12 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 		fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
 		gtk_color_selection_set_color(GTK_COLOR_SELECTION
 					      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), fgclr);
-		gtk_signal_connect(GTK_OBJECT(fgcseld), "delete_event",
-				   GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked",
-				   GTK_SIGNAL_FUNC(apply_color_dlg), (void *)1);
+		g_signal_connect(GTK_OBJECT(fgcseld), "delete_event",
+				   G_CALLBACK(destroy_colorsel), (void *)1);
+		g_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button),
+				   "clicked", G_CALLBACK(destroy_colorsel), (void *)1);
+		g_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked",
+				   G_CALLBACK(apply_color_dlg), (void *)1);
 		gtk_widget_realize(fgcseld);
 		gtk_widget_show(fgcseld);
 		gdk_window_raise(fgcseld->window);
@@ -3104,13 +3104,13 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 		gtk_color_selection_set_color(GTK_COLOR_SELECTION(colorsel), fgclr);
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
 
-		gtk_signal_connect(GTK_OBJECT(c->fg_color_dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(delete_event_dialog), c);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->ok_button),
-				   "clicked", GTK_SIGNAL_FUNC(do_fgcolor), colorsel);
-		gtk_signal_connect(GTK_OBJECT
+		g_signal_connect(GTK_OBJECT(c->fg_color_dialog), "delete_event",
+				   G_CALLBACK(delete_event_dialog), c);
+		g_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->ok_button),
+				   "clicked", G_CALLBACK(do_fgcolor), colorsel);
+		g_signal_connect(GTK_OBJECT
 				   (GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(cancel_fgcolor), c);
+				   "clicked", G_CALLBACK(cancel_fgcolor), c);
 
 		gtk_widget_realize(c->fg_color_dialog);
 	}
@@ -3134,12 +3134,12 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
 		gtk_color_selection_set_color(GTK_COLOR_SELECTION
 					      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), bgclr);
-		gtk_signal_connect(GTK_OBJECT(bgcseld), "delete_event",
-				   GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked",
-				   GTK_SIGNAL_FUNC(apply_color_dlg), (void *)2);
+		g_signal_connect(GTK_OBJECT(bgcseld), "delete_event",
+				   G_CALLBACK(destroy_colorsel), NULL);
+		g_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button),
+				   "clicked", G_CALLBACK(destroy_colorsel), NULL);
+		g_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked",
+				   G_CALLBACK(apply_color_dlg), (void *)2);
 		gtk_widget_realize(bgcseld);
 		gtk_widget_show(bgcseld);
 		gdk_window_raise(bgcseld->window);
@@ -3156,13 +3156,13 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 		gtk_color_selection_set_color(GTK_COLOR_SELECTION(colorsel), bgclr);
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
 
-		gtk_signal_connect(GTK_OBJECT(c->bg_color_dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(delete_event_dialog), c);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->ok_button),
-				   "clicked", GTK_SIGNAL_FUNC(do_bgcolor), colorsel);
-		gtk_signal_connect(GTK_OBJECT
+		g_signal_connect(GTK_OBJECT(c->bg_color_dialog), "delete_event",
+				   G_CALLBACK(delete_event_dialog), c);
+		g_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->ok_button),
+				   "clicked", G_CALLBACK(do_bgcolor), colorsel);
+		g_signal_connect(GTK_OBJECT
 				   (GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(cancel_bgcolor), c);
+				   "clicked", G_CALLBACK(cancel_bgcolor), c);
 
 		gtk_widget_realize(c->bg_color_dialog);
 	}
@@ -3237,12 +3237,12 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 		}
 
 		gtk_object_set_user_data(GTK_OBJECT(fontseld), NULL);
-		gtk_signal_connect(GTK_OBJECT(fontseld), "delete_event",
-				   GTK_SIGNAL_FUNC(destroy_fontsel), NULL);
-		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(destroy_fontsel), NULL);
-		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->ok_button), "clicked",
-				   GTK_SIGNAL_FUNC(apply_font_dlg), fontseld);
+		g_signal_connect(GTK_OBJECT(fontseld), "delete_event",
+				   G_CALLBACK(destroy_fontsel), NULL);
+		g_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->cancel_button),
+				   "clicked", G_CALLBACK(destroy_fontsel), NULL);
+		g_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->ok_button), "clicked",
+				   G_CALLBACK(apply_font_dlg), fontseld);
 		gtk_widget_realize(fontseld);
 		gtk_widget_show(fontseld);
 		gdk_window_raise(fontseld->window);
@@ -3266,12 +3266,12 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 								DEFAULT_FONT_FACE);
 		}
 
-		gtk_signal_connect(GTK_OBJECT(c->font_dialog), "delete_event",
-				   GTK_SIGNAL_FUNC(delete_event_dialog), c);
-		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->ok_button),
-				   "clicked", GTK_SIGNAL_FUNC(apply_font), c->font_dialog);
-		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(cancel_font), c);
+		g_signal_connect(GTK_OBJECT(c->font_dialog), "delete_event",
+				   G_CALLBACK(delete_event_dialog), c);
+		g_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->ok_button),
+				   "clicked", G_CALLBACK(apply_font), c->font_dialog);
+		g_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->cancel_button),
+				   "clicked", G_CALLBACK(cancel_font), c);
 
 		gtk_widget_realize(c->font_dialog);
 
@@ -3337,7 +3337,7 @@ static void create_import_dropdown(GtkFileSelection *fs)
 		c = (struct gaim_connection *)g->data;
 		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_import_gc), c);
+		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(set_import_gc), c);
 		gtk_widget_show(opt);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		g = g->next;
@@ -3358,13 +3358,13 @@ void show_import_dialog()
 		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(importdialog), buf);
-		gtk_signal_connect(GTK_OBJECT(importdialog), "destroy",
-				   GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
+		g_signal_connect(GTK_OBJECT(importdialog), "destroy",
+				   G_CALLBACK(destroy_dialog), importdialog);
 
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
-				   "clicked", GTK_SIGNAL_FUNC(do_import_dialog), NULL);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
+		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
+				   "clicked", G_CALLBACK(do_import_dialog), NULL);
+		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
+				   "clicked", G_CALLBACK(destroy_dialog), importdialog);
 
 		create_import_dropdown(GTK_FILE_SELECTION(importdialog));
 	}
@@ -3484,8 +3484,8 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_container_border_width(GTK_CONTAINER(ca->window), 5);
 	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
-	gtk_signal_connect(GTK_OBJECT(ca->window), "delete_event",
-			   GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
+	g_signal_connect(GTK_OBJECT(ca->window), "delete_event",
+			   G_CALLBACK(destroy_dialog), ca->window);
 	gtk_widget_realize(ca->window);
 
 	tbox = gtk_vbox_new(FALSE, 5);
@@ -3553,19 +3553,19 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_show(hbox);
 
 	button = picture_button(ca->window, _("Save"), ok_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(save_away_mess), ca);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(save_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = picture_button(ca->window, _("Save & Use"), add_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(su_away_mess), ca);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(su_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = picture_button(ca->window, _("Use"), gnome_preferences_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(use_away_mess), ca);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(use_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = picture_button(ca->window, _("Cancel"), cancel_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), ca->window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show(ca->window);
@@ -3620,8 +3620,8 @@ static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char* pat
 	g_free(buf);
 	button =
 		gtk_toolbar_append_item(GTK_TOOLBAR(bar), NULL, NULL, NULL,
-					image, GTK_SIGNAL_FUNC(set_smiley), (char *)face);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+					image, G_CALLBACK(set_smiley), (char *)face);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(insert_smiley_text), c);
 
 	/* these look really weird with borders */
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -3691,7 +3691,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 	/* connect signals */
 	gtk_object_set_user_data(GTK_OBJECT(dialog), "smiley dialog");
-	gtk_signal_connect(GTK_OBJECT(dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
+	g_signal_connect(GTK_OBJECT(dialog), "delete_event", G_CALLBACK(delete_event_dialog), c);
 
 	/* show everything */
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
@@ -3771,10 +3771,10 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
 
 	/* Handle closes right */
-	gtk_signal_connect(GTK_OBJECT(aliasdlg), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), aliasdlg);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), aliasdlg);
-	a = gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(do_alias_bud), b);
-	c = gtk_signal_connect(GTK_OBJECT(aliasname), "activate", GTK_SIGNAL_FUNC(do_alias_bud), b);
+	g_signal_connect(GTK_OBJECT(aliasdlg), "destroy", G_CALLBACK(destroy_dialog), aliasdlg);
+	g_signal_connect(GTK_OBJECT(cancel), "clicked", G_CALLBACK(destroy_dialog), aliasdlg);
+	a = g_signal_connect(GTK_OBJECT(add), "clicked", G_CALLBACK(do_alias_bud), b);
+	c = g_signal_connect(GTK_OBJECT(aliasname), "activate", G_CALLBACK(do_alias_bud), b);
 	/* Finish up */
 	gtk_widget_show(add);
 	gtk_widget_show(cancel);
@@ -3853,15 +3853,15 @@ static void show_save_log(GtkWidget *w, gchar *name)
 		   name ? normalize(name) : "system", name ? ".log" : "");
 
 	filesel = gtk_file_selection_new(_("Gaim - Save Log File"));
-	gtk_signal_connect(GTK_OBJECT(filesel), "delete_event",
-			   GTK_SIGNAL_FUNC(destroy_dialog), filesel);
+	g_signal_connect(GTK_OBJECT(filesel), "delete_event",
+			   G_CALLBACK(destroy_dialog), filesel);
 
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(filesel));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), buf);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
-			   "clicked", GTK_SIGNAL_FUNC(do_save_log), filesel);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
-			   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), filesel);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
+			   "clicked", G_CALLBACK(do_save_log), filesel);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
+			   "clicked", G_CALLBACK(destroy_dialog), filesel);
 	gtk_object_set_user_data(GTK_OBJECT(filesel), name);
 
 	gtk_widget_realize(filesel);
@@ -3903,7 +3903,7 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	gtk_window_set_role(GTK_WINDOW(window), "dialog");
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
+	g_signal_connect(GTK_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
 	gtk_widget_realize(window);
 
 	box = gtk_vbox_new(FALSE, 5);
@@ -3920,14 +3920,14 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	gtk_widget_show(hbox);
 
 	button = picture_button(window, _("Cancel"), cancel_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), window);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 
 	button = picture_button(window, _("Okay"), ok_xpm);
 	gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(GTK_OBJECT(w)));
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_clear_log_file), name);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), window);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_clear_log_file), name);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 
@@ -3962,9 +3962,9 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 
 	gtk_widget_set_sensitive(view->bbox, FALSE);
 	gtk_signal_disconnect_by_func(GTK_OBJECT(view->window),
-				      GTK_SIGNAL_FUNC(destroy_dialog), view->window);
-	block = gtk_signal_connect(GTK_OBJECT(view->window), "delete_event",
-				   GTK_SIGNAL_FUNC(dont_destroy), view->window);
+				      G_CALLBACK(destroy_dialog), view->window);
+	block = g_signal_connect(GTK_OBJECT(view->window), "delete_event",
+				   G_CALLBACK(dont_destroy), view->window);
 
 	fseek(fp, view->offset, SEEK_SET);
 	gtk_imhtml_clear(GTK_IMHTML(view->layout));
@@ -4000,8 +4000,8 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 
 	gtk_widget_set_sensitive(view->bbox, TRUE);
 	gtk_signal_disconnect(GTK_OBJECT(view->window), block);
-	gtk_signal_connect(GTK_OBJECT(view->window), "delete_event",
-			   GTK_SIGNAL_FUNC(destroy_dialog), view->window);
+	g_signal_connect(GTK_OBJECT(view->window), "delete_event",
+			   G_CALLBACK(destroy_dialog), view->window);
 	g_string_free(string, TRUE);
 	fclose(fp);
 }
@@ -4072,7 +4072,7 @@ void show_log(char *nm)
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_object_set_user_data(GTK_OBJECT(window), name);
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_log_win), NULL);
+	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_log_win), NULL);
 	gtk_window_set_role(GTK_WINDOW(window), "log");
 	if (name)
 		g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
@@ -4081,8 +4081,8 @@ void show_log(char *nm)
 	gtk_window_set_title(GTK_WINDOW(window), buf);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
-	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event",
-				   GTK_SIGNAL_FUNC(dont_destroy), window);
+	block = g_signal_connect(GTK_OBJECT(window), "delete_event",
+				   G_CALLBACK(dont_destroy), window);
 	gtk_widget_realize(window);
 
 	layout = gtk_imhtml_new(NULL, NULL);
@@ -4146,10 +4146,10 @@ void show_log(char *nm)
 				view->bbox = bbox;
 				view->window = window;
 				view->layout = layout;
-				gtk_signal_connect(GTK_OBJECT(item), "select",
-						   GTK_SIGNAL_FUNC(log_show_convo), view);
-				gtk_signal_connect(GTK_OBJECT(item), "destroy",
-						   GTK_SIGNAL_FUNC(des_view_item), view);
+				g_signal_connect(GTK_OBJECT(item), "select",
+						   G_CALLBACK(log_show_convo), view);
+				g_signal_connect(GTK_OBJECT(item), "destroy",
+						   G_CALLBACK(des_view_item), view);
 				last = item;
 				item_list = g_list_append(item_list, item);
 
@@ -4166,7 +4166,7 @@ void show_log(char *nm)
 	}
 
 	gtk_signal_disconnect(GTK_OBJECT(window), block);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
+	g_signal_connect(GTK_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
 
 	frame = gtk_frame_new(_("Conversation"));
 	gtk_widget_show(frame);
@@ -4178,7 +4178,7 @@ void show_log(char *nm)
 	gtk_container_add(GTK_CONTAINER(frame), sw);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
-	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", GTK_SIGNAL_FUNC(open_url), NULL);
+	g_signal_connect(GTK_OBJECT(layout), "url_clicked", G_CALLBACK(open_url), NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
 	gaim_setup_imhtml(layout);
 
@@ -4187,16 +4187,16 @@ void show_log(char *nm)
 
 	close_button = picture_button(window, _("Close"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(bbox), close_button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(close_button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), window);
+	g_signal_connect(GTK_OBJECT(close_button), "clicked", G_CALLBACK(destroy_dialog), window);
 
 	clear_button = picture_button(window, _("Clear"), close_xpm);
 	gtk_object_set_user_data(GTK_OBJECT(clear_button), window);
 	gtk_box_pack_end(GTK_BOX(bbox), clear_button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(clear_button), "clicked", GTK_SIGNAL_FUNC(show_clear_log), name);
+	g_signal_connect(GTK_OBJECT(clear_button), "clicked", G_CALLBACK(show_clear_log), name);
 
 	save_button = picture_button(window, _("Save"), save_xpm);
 	gtk_box_pack_end(GTK_BOX(bbox), save_button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(save_button), "clicked", GTK_SIGNAL_FUNC(show_save_log), name);
+	g_signal_connect(GTK_OBJECT(save_button), "clicked", G_CALLBACK(show_save_log), name);
 
 	gtk_widget_show_all(window);				
 	
@@ -4208,7 +4208,7 @@ void show_log(char *nm)
 		view->window = window;
 		view->layout = layout;
 		log_show_convo(layout, view);
-		gtk_signal_connect(GTK_OBJECT(layout), "destroy", GTK_SIGNAL_FUNC(des_view_item), view);
+		g_signal_connect(GTK_OBJECT(layout), "destroy", G_CALLBACK(des_view_item), view);
 	} else {
 		gtk_list_select_item(GTK_LIST(list), 0);
 	}
@@ -4272,8 +4272,8 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 		gtk_window_set_role(GTK_WINDOW(rename_dialog), "rename_dialog");
 		gtk_window_set_policy(GTK_WINDOW(rename_dialog), FALSE, TRUE, TRUE);
 		gtk_window_set_title(GTK_WINDOW(rename_dialog), _("Gaim - Rename Group"));
-		gtk_signal_connect(GTK_OBJECT(rename_dialog), "destroy",
-				   GTK_SIGNAL_FUNC(destroy_dialog), rename_dialog);
+		g_signal_connect(GTK_OBJECT(rename_dialog), "destroy",
+				   G_CALLBACK(destroy_dialog), rename_dialog);
 		gtk_widget_realize(rename_dialog);
 
 		mainbox = gtk_vbox_new(FALSE, 5);
@@ -4294,8 +4294,8 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 		gtk_box_pack_start(GTK_BOX(fbox), name_entry, TRUE, TRUE, 0);
 		gtk_object_set_user_data(GTK_OBJECT(name_entry), g);
 		gtk_entry_set_text(GTK_ENTRY(name_entry), g->name);
-		gtk_signal_connect(GTK_OBJECT(name_entry), "activate",
-				   GTK_SIGNAL_FUNC(do_rename_group), name_entry);
+		g_signal_connect(GTK_OBJECT(name_entry), "activate",
+				   G_CALLBACK(do_rename_group), name_entry);
 		gtk_widget_grab_focus(name_entry);
 
 		bbox = gtk_hbox_new(FALSE, 5);
@@ -4303,14 +4303,14 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 
 		button = picture_button(rename_dialog, _("Cancel"), cancel_xpm);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(destroy_dialog), rename_dialog);
+		g_signal_connect(GTK_OBJECT(button), "clicked",
+				   G_CALLBACK(destroy_dialog), rename_dialog);
 
 		button = picture_button(rename_dialog, _("OK"), ok_xpm);
 		gtk_object_set_user_data(GTK_OBJECT(button), g);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(do_rename_group), name_entry);
+		g_signal_connect(GTK_OBJECT(button), "clicked",
+				   G_CALLBACK(do_rename_group), name_entry);
 	}
 
 	gtk_widget_show_all(rename_dialog);
@@ -4377,8 +4377,8 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 		gtk_window_set_role(GTK_WINDOW(rename_bud_dialog), "rename_bud_dialog");
 		gtk_window_set_policy(GTK_WINDOW(rename_bud_dialog), FALSE, TRUE, TRUE);
 		gtk_window_set_title(GTK_WINDOW(rename_bud_dialog), _("Gaim - Rename Buddy"));
-		gtk_signal_connect(GTK_OBJECT(rename_bud_dialog), "destroy",
-				   GTK_SIGNAL_FUNC(destroy_dialog), rename_bud_dialog);
+		g_signal_connect(GTK_OBJECT(rename_bud_dialog), "destroy",
+				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
 		gtk_widget_realize(rename_bud_dialog);
 
 		mainbox = gtk_vbox_new(FALSE, 5);
@@ -4399,8 +4399,8 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 		gtk_box_pack_start(GTK_BOX(fbox), name_entry, TRUE, TRUE, 0);
 		gtk_object_set_user_data(GTK_OBJECT(name_entry), b);
 		gtk_entry_set_text(GTK_ENTRY(name_entry), b->name);
-		gtk_signal_connect(GTK_OBJECT(name_entry), "activate",
-				   GTK_SIGNAL_FUNC(do_rename_buddy), name_entry);
+		g_signal_connect(GTK_OBJECT(name_entry), "activate",
+				   G_CALLBACK(do_rename_buddy), name_entry);
 		gtk_widget_grab_focus(name_entry);
 
 		bbox = gtk_hbox_new(FALSE, 5);
@@ -4408,14 +4408,14 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 
 		button = picture_button(rename_bud_dialog, _("Cancel"), cancel_xpm);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(destroy_dialog), rename_bud_dialog);
+		g_signal_connect(GTK_OBJECT(button), "clicked",
+				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
 
 		button = picture_button(rename_bud_dialog, _("OK"), ok_xpm);
 		gtk_object_set_user_data(GTK_OBJECT(button), b);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(do_rename_buddy), name_entry);
+		g_signal_connect(GTK_OBJECT(button), "clicked",
+				   G_CALLBACK(do_rename_buddy), name_entry);
 	}
 
 	gtk_widget_show_all(rename_bud_dialog);
@@ -4482,13 +4482,13 @@ void load_perl_script()
 
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(perl_config), buf);
 	gtk_file_selection_complete(GTK_FILE_SELECTION(perl_config), "*.pl");
-	gtk_signal_connect(GTK_OBJECT(perl_config), "destroy", GTK_SIGNAL_FUNC(cfdes), perl_config);
+	g_signal_connect(GTK_OBJECT(perl_config), "destroy", G_CALLBACK(cfdes), perl_config);
 
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->ok_button),
-			   "clicked", GTK_SIGNAL_FUNC(do_load), NULL);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->ok_button),
+			   "clicked", G_CALLBACK(do_load), NULL);
 
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->cancel_button),
-			   "clicked", GTK_SIGNAL_FUNC(cfdes), NULL);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->cancel_button),
+			   "clicked", G_CALLBACK(cfdes), NULL);
 
 	g_free(buf);
 	gtk_widget_show(perl_config);
@@ -5121,7 +5121,7 @@ void show_multi_entry_dialog(gpointer data)
 	gtk_window_set_title(GTK_WINDOW (b->window), b->title);
 
 	/* Clean up if user dismisses window via window manager! */
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(b->cancel), (gpointer) b);
+	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(b->cancel), (gpointer) b);
 	gtk_widget_realize(b->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -5151,14 +5151,14 @@ void show_multi_entry_dialog(gpointer data)
 	button = picture_button(b->window, _("Cancel"), cancel_xpm);
 
 	/* Let "destroy handling" (set above) handle cleanup */
-	gtk_signal_connect_object(GTK_OBJECT (button), "clicked",
-		GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (b->window));
+	g_signal_connect_swapped(GTK_OBJECT (button), "clicked",
+		G_CALLBACK (gtk_widget_destroy), GTK_OBJECT (b->window));
 	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 
 	button = picture_button(b->window, _("Save"), save_xpm);
-	gtk_signal_connect(GTK_OBJECT (button), "clicked",
-		GTK_SIGNAL_FUNC (b->ok), (gpointer) b);
+	g_signal_connect(GTK_OBJECT (button), "clicked",
+		G_CALLBACK (b->ok), (gpointer) b);
 	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 

@@ -642,25 +642,25 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("IM"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(pressed_im), b);
+		g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(pressed_im), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("Alias"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(pressed_alias_bs), b);
+		g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(pressed_alias_bs), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(new_bp_callback),
+		g_signal_connect(GTK_OBJECT(button), "activate",
+				   G_CALLBACK(new_bp_callback),
 				   cn ? find_buddy(cn->data, b->name) : NULL);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("View Log"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_log), b->name);
+		g_signal_connect(GTK_OBJECT(button), "activate",
+				   G_CALLBACK(pressed_log), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -683,8 +683,8 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 						GtkWidget *button;
 
 						button = gtk_menu_item_new_with_label(pbm->label);
-						gtk_signal_connect(GTK_OBJECT(button), "activate",
-								   GTK_SIGNAL_FUNC(menu_click), b->name);
+						g_signal_connect(GTK_OBJECT(button), "activate",
+								   G_CALLBACK(menu_click), b->name);
 						gtk_object_set_user_data(GTK_OBJECT(button), mo);
 						gtk_menu_append(GTK_MENU(conmenu), button);
 						gtk_widget_show(button);
@@ -704,8 +704,8 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 					GtkWidget *button;
 
 					button = gtk_menu_item_new_with_label(pbm->label);
-					gtk_signal_connect(GTK_OBJECT(button), "activate",
-							   GTK_SIGNAL_FUNC(menu_click), b->name);
+					g_signal_connect(GTK_OBJECT(button), "activate",
+							   G_CALLBACK(menu_click), b->name);
 					gtk_object_set_user_data(GTK_OBJECT(button), mo);
 					gtk_menu_append(GTK_MENU(menu), button);
 					gtk_widget_show(button);
@@ -797,8 +797,8 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("Rename"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(show_rename_group), group);
+		g_signal_connect(GTK_OBJECT(button), "activate",
+				   G_CALLBACK(show_rename_group), group);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -810,38 +810,38 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("IM"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(pressed_im_bud), b);
+		g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(pressed_im_bud), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("Alias"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_alias_bud), b);
+		g_signal_connect(GTK_OBJECT(button), "activate",
+				   G_CALLBACK(pressed_alias_bud), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		if (strcmp(b->name, b->show)) {
 			button = gtk_menu_item_new_with_label(_("Un-Alias"));
-			gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(un_alias), b);
+			g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(un_alias), b);
 			gtk_menu_append(GTK_MENU(menu), button);
 			gtk_widget_show(button);
 		}
 
 		button = gtk_menu_item_new_with_label(_("Rename"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(show_rename_buddy), b);
+		g_signal_connect(GTK_OBJECT(button), "activate",
+				   G_CALLBACK(show_rename_buddy), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(new_bp_callback), b);
+		g_signal_connect(GTK_OBJECT(button), "activate",
+				   G_CALLBACK(new_bp_callback), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("View Log"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_log), b->name);
+		g_signal_connect(GTK_OBJECT(button), "activate",
+				   G_CALLBACK(pressed_log), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -856,8 +856,8 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 				GtkWidget *button;
 
 				button = gtk_menu_item_new_with_label(pbm->label);
-				gtk_signal_connect(GTK_OBJECT(button), "activate",
-						   GTK_SIGNAL_FUNC(menu_click), b->name);
+				g_signal_connect(GTK_OBJECT(button), "activate",
+						   G_CALLBACK(menu_click), b->name);
 				gtk_object_set_user_data(GTK_OBJECT(button), mo);
 				gtk_menu_append(GTK_MENU(menu), button);
 				gtk_widget_show(button);
@@ -1535,8 +1535,8 @@ static void away_callback(GtkWidget *widget, GtkTree *tree)
 
 		menuitem = gtk_menu_item_new_with_label(a->name);
 		gtk_menu_append(GTK_MENU(menu), menuitem);
-		gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-				   GTK_SIGNAL_FUNC(do_away_message), a);
+		g_signal_connect(GTK_OBJECT(menuitem), "activate",
+				   G_CALLBACK(do_away_message), a);
 		gtk_widget_show(menuitem);
 		awy = awy->next;
 	}
@@ -1683,7 +1683,7 @@ void do_bp_menu()
 	menuitem = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
 	gtk_menu_append(GTK_MENU(bpmenu), menuitem);
 	gtk_widget_show(menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(new_bp_callback), NULL);
+	g_signal_connect(GTK_OBJECT(menuitem), "activate", G_CALLBACK(new_bp_callback), NULL);
 
 
 	while (bp) {
@@ -1692,7 +1692,7 @@ void do_bp_menu()
 		remitem = gtk_menu_item_new_with_label(b->name);
 		gtk_menu_append(GTK_MENU(remmenu), remitem);
 		gtk_widget_show(remitem);
-		gtk_signal_connect(GTK_OBJECT(remitem), "activate", GTK_SIGNAL_FUNC(rem_bp), b);
+		g_signal_connect(GTK_OBJECT(remitem), "activate", G_CALLBACK(rem_bp), b);
 
 		bp = bp->next;
 
@@ -1731,7 +1731,7 @@ void do_bp_menu()
 		gtk_menu_append(GTK_MENU(messmenu), mess);
 		gtk_tooltips_set_tip(bp_tooltip, GTK_WIDGET(mess), _("[Click to edit]"), NULL);
 		gtk_widget_show(mess);
-		gtk_signal_connect(GTK_OBJECT(mess), "activate", GTK_SIGNAL_FUNC(edit_bp_callback), b);
+		g_signal_connect(GTK_OBJECT(mess), "activate", G_CALLBACK(edit_bp_callback), b);
 		bp = bp->next;
 
 	}
@@ -1852,8 +1852,8 @@ static struct group_show *new_group_show(char *group)
 
 	g->item = gtk_tree_item_new();
 
-	gtk_signal_connect(GTK_OBJECT(g->item), "button_press_event",
-			   GTK_SIGNAL_FUNC(handle_click_group), g);
+	g_signal_connect(GTK_OBJECT(g->item), "button_press_event",
+			   G_CALLBACK(handle_click_group), g);
 
 	gtk_tree_insert(GTK_TREE(buddies), g->item, pos);
 
@@ -1926,8 +1926,8 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	b->item = gtk_tree_item_new();
 	gtk_tree_insert(GTK_TREE(gs->tree), b->item, pos);
 	gtk_object_set_user_data(GTK_OBJECT(b->item), b);
-	gtk_signal_connect(GTK_OBJECT(b->item), "button_press_event",
-			   GTK_SIGNAL_FUNC(handle_click_buddy), b);
+	g_signal_connect(GTK_OBJECT(b->item), "button_press_event",
+			   G_CALLBACK(handle_click_buddy), b);
 	gtk_widget_show(b->item);
 
 	box = gtk_hbox_new(FALSE, 1);
@@ -2549,13 +2549,13 @@ void build_imchat_box(gboolean on)
 		gtk_box_pack_start(GTK_BOX(imchatbox), awaybutton, TRUE, TRUE, 0);
 		gtk_container_border_width(GTK_CONTAINER(imchatbox), 5);
 
-		gtk_signal_connect(GTK_OBJECT(imbutton), "clicked", GTK_SIGNAL_FUNC(im_callback),
+		g_signal_connect(GTK_OBJECT(imbutton), "clicked", G_CALLBACK(im_callback),
 				   buddies);
-		gtk_signal_connect(GTK_OBJECT(infobutton), "clicked", GTK_SIGNAL_FUNC(info_callback),
+		g_signal_connect(GTK_OBJECT(infobutton), "clicked", G_CALLBACK(info_callback),
 				   buddies);
-		gtk_signal_connect(GTK_OBJECT(chatbutton), "clicked", GTK_SIGNAL_FUNC(chat_callback),
+		g_signal_connect(GTK_OBJECT(chatbutton), "clicked", G_CALLBACK(chat_callback),
 				   buddies);
-		gtk_signal_connect(GTK_OBJECT(awaybutton), "clicked", GTK_SIGNAL_FUNC(away_callback),
+		g_signal_connect(GTK_OBJECT(awaybutton), "clicked", G_CALLBACK(away_callback),
 				   buddies);
 
 		gtk_tooltips_set_tip(tips, infobutton, _("Information on selected Buddy"), "Penguin");
@@ -2629,27 +2629,27 @@ void make_buddy_list()
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	gaim_new_item_from_stock(menu, _("_Add A Buddy"), GTK_STOCK_ADD,
-				  GTK_SIGNAL_FUNC(add_buddy_callback), NULL,  'b', GDK_CONTROL_MASK, "Ctl+B");
+				  G_CALLBACK(add_buddy_callback), NULL,  'b', GDK_CONTROL_MASK, "Ctl+B");
 	gaim_new_item_from_stock(menu, _("_Join A Chat"), GTK_STOCK_JUMP_TO,
-				  GTK_SIGNAL_FUNC(chat_callback), NULL, 'c', GDK_CONTROL_MASK, "Ctl+C");
+				  G_CALLBACK(chat_callback), NULL, 'c', GDK_CONTROL_MASK, "Ctl+C");
 	gaim_new_item_from_stock(menu, _("_New Message"), GTK_STOCK_CONVERT,
-				  GTK_SIGNAL_FUNC(show_im_dialog), NULL, 'i', GDK_CONTROL_MASK, "Ctl+I");
+				  G_CALLBACK(show_im_dialog), NULL, 'i', GDK_CONTROL_MASK, "Ctl+I");
 	gaim_new_item_from_stock(menu, _("_Get User Info"), GTK_STOCK_FIND,
-				  GTK_SIGNAL_FUNC(show_info_dialog), NULL, 'j', GDK_CONTROL_MASK, "Ctl+J");
+				  G_CALLBACK(show_info_dialog), NULL, 'j', GDK_CONTROL_MASK, "Ctl+J");
 
 	gaim_separator(menu);
 
 	gaim_new_item_from_pixbuf(menu, _("Import Buddy List"), "import-menu.png",
-				  GTK_SIGNAL_FUNC(import_callback), NULL, 0, 0, 0);
+				  G_CALLBACK(import_callback), NULL, 0, 0, 0);
 
 	gaim_separator(menu);
 
 	gaim_new_item_from_stock(menu, _("Signoff"), NULL,
-				  GTK_SIGNAL_FUNC(signoff_all), (void*)1, 'd', GDK_CONTROL_MASK, "Ctl+D");
+				  G_CALLBACK(signoff_all), (void*)1, 'd', GDK_CONTROL_MASK, "Ctl+D");
 	gaim_new_item_from_stock(menu, _("Hide"), NULL,
-				  GTK_SIGNAL_FUNC(hide_buddy_list), NULL, 'h', GDK_CONTROL_MASK, "Ctl+H");
+				  G_CALLBACK(hide_buddy_list), NULL, 'h', GDK_CONTROL_MASK, "Ctl+H");
 	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT,
-				  GTK_SIGNAL_FUNC(do_quit), NULL, 'q', GDK_CONTROL_MASK, "Ctl+Q");
+				  G_CALLBACK(do_quit), NULL, 'q', GDK_CONTROL_MASK, "Ctl+Q");
 
 	menu = gtk_menu_new();
 
@@ -2671,10 +2671,10 @@ void make_buddy_list()
 
 #ifndef NO_MULTI
 	gaim_new_item_from_pixbuf(menu, _("_Accounts..."), "accounts-menu.png",
-				  GTK_SIGNAL_FUNC(account_editor), NULL, 'a', GDK_CONTROL_MASK, "Ctl+A");
+				  G_CALLBACK(account_editor), NULL, 'a', GDK_CONTROL_MASK, "Ctl+A");
 #endif
 	gaim_new_item_from_stock(menu, _("_Preferences..."), GTK_STOCK_PREFERENCES,
-				  GTK_SIGNAL_FUNC(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
+				  G_CALLBACK(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
 
 	gaim_separator(menu);
 
@@ -2684,10 +2684,10 @@ void make_buddy_list()
 	do_proto_menu();
 
 	gaim_new_item_from_stock(menu, _("Pr_ivacy..."), NULL,
-				  GTK_SIGNAL_FUNC(show_privacy_options), NULL, 0, 0, 0);
+				  G_CALLBACK(show_privacy_options), NULL, 0, 0, 0);
 
 	gaim_new_item_from_stock(menu, _("_View System Log..."), NULL,
-				  GTK_SIGNAL_FUNC(show_syslog), NULL, 0, 0, 0);
+				  G_CALLBACK(show_syslog), NULL, 0, 0, 0);
 
 	menu = gtk_menu_new();
 
@@ -2695,12 +2695,12 @@ void make_buddy_list()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
-	gaim_new_item_from_stock(menu, _("Online Help"), GTK_STOCK_HELP, GTK_SIGNAL_FUNC(open_url), WEBSITE"documentation.php", GDK_F1, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Debug Window"), NULL, GTK_SIGNAL_FUNC(clicked_debug), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Online Help"), GTK_STOCK_HELP, G_CALLBACK(open_url), WEBSITE"documentation.php", GDK_F1, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Debug Window"), NULL, G_CALLBACK(clicked_debug), NULL, 0, 0, NULL);
 	
 	gaim_separator(menu);
 
-	gaim_new_item_from_pixbuf(menu, _("About Gaim"), "about_menu.png", GTK_SIGNAL_FUNC(show_about), NULL, GDK_F1, GDK_CONTROL_MASK, NULL);
+	gaim_new_item_from_pixbuf(menu, _("About Gaim"), "about_menu.png", G_CALLBACK(show_about), NULL, GDK_F1, GDK_CONTROL_MASK, NULL);
 	
 	gtk_widget_show(menubar);
 
@@ -2740,15 +2740,15 @@ void make_buddy_list()
 	gtk_ctree_set_line_style(GTK_CTREE(edittree), GTK_CTREE_LINES_SOLID);;
 	gtk_ctree_set_expander_style(GTK_CTREE(edittree), GTK_CTREE_EXPANDER_SQUARE);
 	gtk_clist_set_reorderable(GTK_CLIST(edittree), TRUE);
-	gtk_signal_connect(GTK_OBJECT(edittree), "button_press_event",
-			   GTK_SIGNAL_FUNC(click_edit_tree), NULL);
+	g_signal_connect(GTK_OBJECT(edittree), "button_press_event",
+			   G_CALLBACK(click_edit_tree), NULL);
 
 	gtk_ctree_set_drag_compare_func(GTK_CTREE(edittree),
 					(GtkCTreeCompareDragFunc) edit_drag_compare_func);
 
 
-	gtk_signal_connect_after(GTK_OBJECT(edittree), "tree_move",
-				 GTK_SIGNAL_FUNC(edit_tree_move), NULL);
+	g_signal_connect_after(GTK_OBJECT(edittree), "tree_move",
+				 G_CALLBACK(edit_tree_move), NULL);
 
 
 	bbox = gtk_hbox_new(TRUE, 5);

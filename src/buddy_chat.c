@@ -186,8 +186,8 @@ static void rebuild_jc()
 				gtk_widget_grab_focus(entry);
 				focus = FALSE;
 			}
-			gtk_signal_connect(GTK_OBJECT(entry), "activate",
-					   GTK_SIGNAL_FUNC(do_join_chat), NULL);
+			g_signal_connect(GTK_OBJECT(entry), "activate",
+					   G_CALLBACK(do_join_chat), NULL);
 			gtk_widget_show(entry);
 		}
 
@@ -230,7 +230,7 @@ static void create_joinchat_menu(GtkWidget *box)
 		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, g->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), g);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(joinchat_choose), g);
+		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(joinchat_choose), g);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		gtk_widget_show(opt);
 	}
@@ -270,8 +270,8 @@ void join_chat()
 		gtk_window_set_role(GTK_WINDOW(joinchat), "joinchat");
 		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, TRUE, TRUE);
 		gtk_widget_realize(joinchat);
-		gtk_signal_connect(GTK_OBJECT(joinchat), "delete_event",
-				   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
+		g_signal_connect(GTK_OBJECT(joinchat), "delete_event",
+				   G_CALLBACK(destroy_join_chat), joinchat);
 		gtk_window_set_title(GTK_WINDOW(joinchat), _("Join Chat"));
 
 		mainbox = gtk_vbox_new(FALSE, 5);
@@ -312,12 +312,12 @@ void join_chat()
 
 		join = picture_button(joinchat, _("Join"), join_xpm);
 		gtk_box_pack_end(GTK_BOX(bbox), join, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(join), "clicked", GTK_SIGNAL_FUNC(do_join_chat), NULL);
+		g_signal_connect(GTK_OBJECT(join), "clicked", G_CALLBACK(do_join_chat), NULL);
 
 		cancel = picture_button(joinchat, _("Cancel"), cancel_xpm);
 		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
-				   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
+		g_signal_connect(GTK_OBJECT(cancel), "clicked",
+				   G_CALLBACK(destroy_join_chat), joinchat);
 	}
 	gtk_widget_show_all(joinchat);
 }
@@ -442,13 +442,13 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		gtk_box_pack_end(GTK_BOX(bbox), invite_btn, FALSE, FALSE, 0);
 
 		/* Handle closes right */
-		gtk_signal_connect(GTK_OBJECT(invite), "delete_event",
-				   GTK_SIGNAL_FUNC(destroy_invite), invite);
+		g_signal_connect(GTK_OBJECT(invite), "delete_event",
+				   G_CALLBACK(destroy_invite), invite);
 
-		gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_invite), b);
-		gtk_signal_connect(GTK_OBJECT(invite_btn), "clicked", GTK_SIGNAL_FUNC(do_invite), b);
-		gtk_signal_connect(GTK_OBJECT(GTK_ENTRY(GTK_COMBO(inviteentry)->entry)), "activate",
-				   GTK_SIGNAL_FUNC(do_invite), b);
+		g_signal_connect(GTK_OBJECT(cancel), "clicked", G_CALLBACK(destroy_invite), b);
+		g_signal_connect(GTK_OBJECT(invite_btn), "clicked", G_CALLBACK(do_invite), b);
+		g_signal_connect(GTK_OBJECT(GTK_ENTRY(GTK_COMBO(inviteentry)->entry)), "activate",
+				   G_CALLBACK(do_invite), b);
 
 		/* Finish up */
 		gtk_widget_set_usize(GTK_WIDGET(invite), 550, 115);
@@ -867,7 +867,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("IM"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(chat_press_im), b);
+		g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(chat_press_im), b);
 		gtk_object_set_user_data(GTK_OBJECT(button), who);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
@@ -877,15 +877,15 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 		else
 			button = gtk_menu_item_new_with_label(_("Ignore"));
 		
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(chat_press_ign), b);
+		g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(chat_press_ign), b);
 		gtk_object_set_user_data(GTK_OBJECT(button), who);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		if (b->gc && b->gc->prpl->get_info) {
 			button = gtk_menu_item_new_with_label(_("Info"));
-			gtk_signal_connect(GTK_OBJECT(button), "activate",
-					   GTK_SIGNAL_FUNC(chat_press_info), b);
+			g_signal_connect(GTK_OBJECT(button), "activate",
+					   G_CALLBACK(chat_press_info), b);
 			gtk_object_set_user_data(GTK_OBJECT(button), who);
 			gtk_menu_append(GTK_MENU(menu), button);
 			gtk_widget_show(button);
@@ -893,8 +893,8 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 
 		if (b->gc && b->gc->prpl->get_cb_away) {
 			button = gtk_menu_item_new_with_label(_("Get Away Msg"));
-			gtk_signal_connect(GTK_OBJECT(button), "activate",
-					   GTK_SIGNAL_FUNC(chat_press_away), b);
+			g_signal_connect(GTK_OBJECT(button), "activate",
+					   G_CALLBACK(chat_press_away), b);
 			gtk_object_set_user_data(GTK_OBJECT(button), who);
 			gtk_menu_append(GTK_MENU(menu), button);
 			gtk_widget_show(button);
@@ -906,8 +906,8 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 				button = gtk_menu_item_new_with_label(_("Remove"));
 			else
 				button = gtk_menu_item_new_with_label(_("Add"));
-			gtk_signal_connect(GTK_OBJECT(button), "activate",
-					   GTK_SIGNAL_FUNC(chat_press_add), b);
+			g_signal_connect(GTK_OBJECT(button), "activate",
+					   G_CALLBACK(chat_press_add), b);
 			gtk_object_set_user_data(GTK_OBJECT(button), 
 						 who);
 			gtk_menu_append(GTK_MENU(menu), button);
@@ -1208,8 +1208,8 @@ void show_new_buddy_chat(struct conversation *b)
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
 			gtk_window_set_title(GTK_WINDOW(win), _("Gaim - Group Chats"));
-			gtk_signal_connect(GTK_OBJECT(win), "delete_event",
-					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
+			g_signal_connect(GTK_OBJECT(win), "delete_event",
+					   G_CALLBACK(delete_all_convo), NULL);
 
 			chat_notebook = gtk_notebook_new();
 			if ((convo_options & OPT_CONVO_COMBINE) && (im_options & OPT_IM_ONE_WINDOW))
@@ -1239,8 +1239,8 @@ void show_new_buddy_chat(struct conversation *b)
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(chat_notebook), TRUE);
 			gtk_notebook_popup_enable(GTK_NOTEBOOK(chat_notebook));
 			gtk_container_add(GTK_CONTAINER(win), testidea);
-			gtk_signal_connect(GTK_OBJECT(chat_notebook), "switch-page",
-					   GTK_SIGNAL_FUNC(convo_switch), NULL);
+			g_signal_connect(GTK_OBJECT(chat_notebook), "switch-page",
+					   G_CALLBACK(convo_switch), NULL);
 			gtk_widget_show(chat_notebook);
 		} else
 			win = b->window = all_chats;
@@ -1255,7 +1255,7 @@ void show_new_buddy_chat(struct conversation *b)
 		gtk_button_set_relief(GTK_BUTTON(b->close), GTK_RELIEF_NONE);
 		b->tab_label = gtk_label_new(b->name);
 
-		gtk_signal_connect(GTK_OBJECT(b->close), "clicked", GTK_SIGNAL_FUNC(close_callback), b);
+		g_signal_connect(GTK_OBJECT(b->close), "clicked", G_CALLBACK(close_callback), b);
 
 		gtk_box_pack_start(GTK_BOX(tabby), b->tab_label, FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(tabby), b->close, FALSE, FALSE, 0);
@@ -1272,7 +1272,7 @@ void show_new_buddy_chat(struct conversation *b)
 		gtk_widget_realize(win);
 		g_snprintf(buf, sizeof(buf), "Gaim - %s (chat)", b->name);
 		gtk_window_set_title(GTK_WINDOW(win), buf);
-		gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);
+		g_signal_connect(GTK_OBJECT(win), "destroy", G_CALLBACK(close_callback), b);
 
 		cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_add(GTK_CONTAINER(win), cont);
@@ -1342,14 +1342,14 @@ void show_new_buddy_chat(struct conversation *b)
 	rend = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend, "text", 0, NULL);
 	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
-	gtk_signal_connect(GTK_OBJECT(list), "button_press_event",
-		GTK_SIGNAL_FUNC(right_click_chat), b);
+	g_signal_connect(GTK_OBJECT(list), "button_press_event",
+		G_CALLBACK(right_click_chat), b);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend, "text", 1, NULL);
 	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
-	gtk_signal_connect(GTK_OBJECT(list), "button_press_event",
-		GTK_SIGNAL_FUNC(right_click_chat), b);
+	g_signal_connect(GTK_OBJECT(list), "button_press_event",
+		G_CALLBACK(right_click_chat), b);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
 	gtk_widget_set_usize(list, 150, -1);
@@ -1367,19 +1367,19 @@ void show_new_buddy_chat(struct conversation *b)
 	button = gaim_pixbuf_button_from_stock(NULL, "gtk-redo", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox2), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(im_callback), b);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(im_callback), b);
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(NULL, "gtk-dialog-error", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox2), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ignore_callback), b);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(ignore_callback), b);
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(NULL, "gtk-find", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox2), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(info_callback), b);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(info_callback), b);
 	gtk_widget_show(button);
 	b->info = button;
 
@@ -1427,7 +1427,7 @@ void show_new_buddy_chat(struct conversation *b)
 	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
 	b->close = close;
 	gtk_object_set_user_data(GTK_OBJECT(close), b);
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback), b);
+	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(close_callback), b);
 	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
 	*/
 
@@ -1438,7 +1438,7 @@ void show_new_buddy_chat(struct conversation *b)
 				GAIM_BUTTON_VERTICAL);
 
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(send_callback), b);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(send_callback), b);
 	gtk_widget_show(button);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	b->send = button;
@@ -1453,7 +1453,7 @@ void show_new_buddy_chat(struct conversation *b)
 				(dispstyle == 1 ? NULL : "gtk-jump-to"),
 				GAIM_BUTTON_VERTICAL);
 
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(invite_callback), b);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(invite_callback), b);
 	gtk_widget_show(button);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -1548,10 +1548,10 @@ void update_chat_button_pix()
 			gtk_box_pack_end(GTK_BOX(parent), c->send, FALSE, FALSE, 0);
 			gtk_box_pack_end(GTK_BOX(parent), c->invite, FALSE, FALSE, 0);
 
-			gtk_signal_connect(GTK_OBJECT(c->send), "clicked",
-					   GTK_SIGNAL_FUNC(send_callback), c);
-			gtk_signal_connect(GTK_OBJECT(c->invite), "clicked",
-					   GTK_SIGNAL_FUNC(invite_callback), c);
+			g_signal_connect(GTK_OBJECT(c->send), "clicked",
+					   G_CALLBACK(send_callback), c);
+			g_signal_connect(GTK_OBJECT(c->invite), "clicked",
+					   G_CALLBACK(invite_callback), c);
 
 			gtk_button_set_relief(GTK_BUTTON(c->send), GTK_RELIEF_NONE);
 			gtk_button_set_relief(GTK_BUTTON(c->invite), GTK_RELIEF_NONE);
@@ -1619,10 +1619,10 @@ void update_im_button_pix()
 
 		update_buttons_by_protocol(c);
 
-		gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
-		gtk_signal_connect(GTK_OBJECT(c->info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
-		gtk_signal_connect(GTK_OBJECT(c->warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
-		gtk_signal_connect(GTK_OBJECT(c->block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
+		g_signal_connect(GTK_OBJECT(c->send), "clicked", G_CALLBACK(send_callback), c);
+		g_signal_connect(GTK_OBJECT(c->info), "clicked", G_CALLBACK(info_callback), c);
+		g_signal_connect(GTK_OBJECT(c->warn), "clicked", G_CALLBACK(warn_callback), c);
+		g_signal_connect(GTK_OBJECT(c->block), "clicked", G_CALLBACK(block_callback), c);
 		bcs = bcs->next;
 	}
 }
@@ -1650,7 +1650,7 @@ void chat_tabize()
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
 			gtk_signal_disconnect_by_func(GTK_OBJECT(win),
-						      GTK_SIGNAL_FUNC(close_callback), c);
+						      G_CALLBACK(close_callback), c);
 			gtk_widget_destroy(win);
 
 			if (c->topic)

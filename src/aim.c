@@ -284,8 +284,8 @@ void show_login()
 	gtk_widget_realize(mainwindow);
 	gdk_window_set_group(mainwindow->window, mainwindow->window);
 	gtk_container_set_border_width(GTK_CONTAINER(mainwindow), 5);
-	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event", 
-					GTK_SIGNAL_FUNC(do_quit), mainwindow);
+	g_signal_connect(G_OBJECT(mainwindow), "delete_event",
+					 G_CALLBACK(do_quit), mainwindow);
 
 
 	icon = gaim_pixbuf(NULL, "gaim.png");
@@ -311,10 +311,10 @@ void show_login()
 	tmp = combo_user_names();
 	gtk_combo_set_popdown_strings(GTK_COMBO(name), tmp);
 	g_list_free(tmp);
-	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "activate",
-			   GTK_SIGNAL_FUNC(doenter), mainwindow);
-	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "changed",
-			   GTK_SIGNAL_FUNC(combo_changed), name);
+	g_signal_connect(G_OBJECT(GTK_COMBO(name)->entry), "activate",
+					 G_CALLBACK(doenter), mainwindow);
+	g_signal_connect(G_OBJECT(GTK_COMBO(name)->entry), "changed",
+					 G_CALLBACK(combo_changed), name);
 	gtk_box_pack_start(GTK_BOX(vbox2), name, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
 
@@ -327,7 +327,8 @@ void show_login()
 
 	pass = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
-	gtk_signal_connect(GTK_OBJECT(pass), "activate", GTK_SIGNAL_FUNC(doenter), mainwindow);
+	g_signal_connect(G_OBJECT(pass), "activate",
+					 G_CALLBACK(doenter), mainwindow);
 	gtk_box_pack_start(GTK_BOX(vbox2), pass, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
 
@@ -338,7 +339,8 @@ void show_login()
 	/* And now for the buttons */
 	button = gaim_pixbuf_button("Accounts", "accounts.png", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(account_editor), mainwindow);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(account_editor), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 #ifdef NO_MULTI
@@ -347,12 +349,14 @@ void show_login()
 
 	button = gaim_pixbuf_button("Settings", "preferences.png", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(show_prefs), mainwindow);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(show_prefs), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = gaim_pixbuf_button("Sign On", "signon.png", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(dologin), mainwindow);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(dologin), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 #ifdef _WIN32

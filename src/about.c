@@ -173,10 +173,10 @@ void show_about(GtkWidget *w, void *data)
 		button = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-		gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
-					  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
-		gtk_signal_connect(GTK_OBJECT(about), "destroy",
-					   GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
+		g_signal_connect_swapped(G_OBJECT(button), "clicked",
+								 G_CALLBACK(destroy_about), G_OBJECT(about));
+		g_signal_connect(G_OBJECT(about), "destroy",
+						 G_CALLBACK(destroy_about), G_OBJECT(about));
 		gtk_widget_show(button);
 
 		/* this makes the sizes not work. */

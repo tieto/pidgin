@@ -190,7 +190,8 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 			 gtk_window_set_title(GTK_WINDOW(imaway), a->name);
 		else
 			gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
-		gtk_signal_connect(GTK_OBJECT(imaway), "destroy", GTK_SIGNAL_FUNC(do_im_back), imaway);
+		g_signal_connect(G_OBJECT(imaway), "destroy",
+						 G_CALLBACK(do_im_back), imaway);
 		gtk_widget_realize(imaway);
 
 		vbox = gtk_vbox_new(FALSE, 5);
@@ -250,7 +251,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 		back = picture_button(imaway, _("I'm Back!"), join_xpm);
 		gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(back), "clicked", GTK_SIGNAL_FUNC(do_im_back), imaway);
+		g_signal_connect(GTK_OBJECT(back), "clicked", G_CALLBACK(do_im_back), imaway);
 		gtk_window_set_focus(GTK_WINDOW(imaway), back);
 
 		awaymessage = a;
@@ -336,8 +337,8 @@ void do_away_menu()
 			a = (struct away_message *)awy->data;
 			list_item = gtk_list_item_new();
 			gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
-			gtk_signal_connect(GTK_OBJECT(list_item), "select",
-					   GTK_SIGNAL_FUNC(away_list_clicked), a);
+			g_signal_connect(GTK_OBJECT(list_item), "select",
+					   G_CALLBACK(away_list_clicked), a);
 			gtk_object_set_user_data(GTK_OBJECT(list_item), a);
 			gtk_widget_show(list_item);
 
@@ -369,7 +370,7 @@ void do_away_menu()
 		menuitem = gtk_menu_item_new_with_label(_("New Away Message"));
 		gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 		gtk_widget_show(menuitem);
-		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(create_away_mess),
+		g_signal_connect(GTK_OBJECT(menuitem), "activate", G_CALLBACK(create_away_mess),
 				   NULL);
 
 		awy = away_messages;
@@ -379,8 +380,8 @@ void do_away_menu()
 			remitem = gtk_menu_item_new_with_label(a->name);
 			gtk_menu_append(GTK_MENU(remmenu), remitem);
 			gtk_widget_show(remitem);
-			gtk_signal_connect(GTK_OBJECT(remitem), "activate",
-					   GTK_SIGNAL_FUNC(rem_away_mess), a);
+			g_signal_connect(GTK_OBJECT(remitem), "activate",
+					   G_CALLBACK(rem_away_mess), a);
 
 			awy = g_slist_next(awy);
 
@@ -430,8 +431,8 @@ void do_away_menu()
 					gtk_object_set_user_data(GTK_OBJECT(menuitem), a);
 					gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 					gtk_widget_show(menuitem);
-					gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-							   GTK_SIGNAL_FUNC(do_away_message), a);
+					g_signal_connect(GTK_OBJECT(menuitem), "activate",
+							   G_CALLBACK(do_away_message), a);
 
 					awy = g_slist_next(awy);
 				}
@@ -445,8 +446,8 @@ void do_away_menu()
 					gtk_widget_show(menuitem);
 
 					if (strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
-						gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-								   GTK_SIGNAL_FUNC(set_gc_state), gc);
+						g_signal_connect(GTK_OBJECT(menuitem), "activate",
+								   G_CALLBACK(set_gc_state), gc);
 					} else {
 						submenu = gtk_menu_new();
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem),
@@ -461,9 +462,9 @@ void do_away_menu()
 										 a);
 							gtk_menu_append(GTK_MENU(submenu), menuitem);
 							gtk_widget_show(menuitem);
-							gtk_signal_connect(GTK_OBJECT(menuitem),
+							g_signal_connect(GTK_OBJECT(menuitem),
 									   "activate",
-									   GTK_SIGNAL_FUNC
+									   G_CALLBACK
 									   (do_away_message), a);
 
 							awy = g_slist_next(awy);
@@ -501,8 +502,8 @@ void do_away_menu()
 					menuitem = gtk_menu_item_new_with_label(_("Back"));
 					gtk_menu_append(GTK_MENU(submenu), menuitem);
 					gtk_widget_show(menuitem);
-					gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-							   GTK_SIGNAL_FUNC(set_gc_away), gc);
+					g_signal_connect(GTK_OBJECT(menuitem), "activate",
+							   G_CALLBACK(set_gc_away), gc);
 
 					sep = gtk_hseparator_new();
 					menuitem = gtk_menu_item_new();
@@ -521,8 +522,8 @@ void do_away_menu()
 						gtk_object_set_user_data(GTK_OBJECT(menuitem), a);
 						gtk_menu_append(GTK_MENU(submenu), menuitem);
 						gtk_widget_show(menuitem);
-						gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-								   GTK_SIGNAL_FUNC(set_gc_away), gc);
+						g_signal_connect(GTK_OBJECT(menuitem), "activate",
+								   G_CALLBACK(set_gc_away), gc);
 
 						awy = g_slist_next(awy);
 					}
@@ -537,9 +538,9 @@ void do_away_menu()
 						gtk_widget_show(menuitem);
 
 						if (strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
-							gtk_signal_connect(GTK_OBJECT(menuitem),
+							g_signal_connect(GTK_OBJECT(menuitem),
 									   "activate",
-									   GTK_SIGNAL_FUNC(set_gc_state),
+									   G_CALLBACK(set_gc_state),
 									   gc);
 						} else {
 							submenu2 = gtk_menu_new();
@@ -558,9 +559,9 @@ void do_away_menu()
 								gtk_menu_append(GTK_MENU(submenu2),
 										menuitem);
 								gtk_widget_show(menuitem);
-								gtk_signal_connect(GTK_OBJECT(menuitem),
+								g_signal_connect(GTK_OBJECT(menuitem),
 										   "activate",
-										   GTK_SIGNAL_FUNC
+										   G_CALLBACK
 										   (set_gc_away), gc);
 
 								awy = g_slist_next(awy);
@@ -591,8 +592,8 @@ void do_away_menu()
 				gtk_object_set_user_data(GTK_OBJECT(menuitem), a);
 				gtk_menu_append(GTK_MENU(submenu), menuitem);
 				gtk_widget_show(menuitem);
-				gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-						   GTK_SIGNAL_FUNC(do_away_message), a);
+				g_signal_connect(GTK_OBJECT(menuitem), "activate",
+						   G_CALLBACK(do_away_message), a);
 
 				awy = g_slist_next(awy);
 			}

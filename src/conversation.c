@@ -201,7 +201,7 @@ void gaim_setup_imhtml(GtkWidget *imhtml)
 	if (!(convo_options & OPT_CONVO_SHOW_SMILEY))
 		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
 
-	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url), NULL);
+	g_signal_connect(GTK_OBJECT(imhtml), "url_clicked", G_CALLBACK(open_url), NULL);
 	gaim_setup_imhtml_smileys(imhtml);	
 }
 
@@ -512,10 +512,10 @@ void save_convo(GtkWidget *save, struct conversation *c)
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log", gaim_home_dir(), normalize(c->name));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), c);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-			   "clicked", GTK_SIGNAL_FUNC(do_save_convo), window);
-	gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
-				  "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)window);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+			   "clicked", G_CALLBACK(do_save_convo), window);
+	g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+				  "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
 	gtk_widget_show(window);
 }
 
@@ -560,10 +560,10 @@ void insert_image(GtkWidget *save, struct conversation *c)
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), c);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-			   "clicked", GTK_SIGNAL_FUNC(do_insert_image), window);
-	gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
-				  "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)window);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+			   "clicked", G_CALLBACK(do_insert_image), window);
+	g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+				  "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
 	gtk_widget_show(window);
 }
 
@@ -2195,22 +2195,22 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuitem);
 
-	gaim_new_item_from_stock(menu, _("_Save Conversation"), "gtk-save-as", GTK_SIGNAL_FUNC(save_convo), c, 0, 0, NULL); 
+	gaim_new_item_from_stock(menu, _("_Save Conversation"), "gtk-save-as", G_CALLBACK(save_convo), c, 0, 0, NULL); 
 
-	gaim_new_item_from_stock(menu, _("View _History"), NULL, GTK_SIGNAL_FUNC(conv_show_log), GINT_TO_POINTER(c->name), 0, 0, NULL); 
+	gaim_new_item_from_stock(menu, _("View _History"), NULL, G_CALLBACK(conv_show_log), GINT_TO_POINTER(c->name), 0, 0, NULL); 
 
 	menuitem = gtk_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 /*
 	c->sendfile_btn = gaim_new_item_from_pixbuf(menu, _("Send File"), "send-file-small.png", NULL, NULL, 0, 0, NULL); */
 
-	gaim_new_item_from_pixbuf(menu, _("Insert _URL"), "insert-link-small.png", GTK_SIGNAL_FUNC(insert_link_cb), c, 0, 0, NULL); 
-	c->image_menubtn = gaim_new_item_from_pixbuf(menu, _("Insert _Image"), "insert-image-small.png", GTK_SIGNAL_FUNC(insert_image), c, 0, 0, NULL); 
+	gaim_new_item_from_pixbuf(menu, _("Insert _URL"), "insert-link-small.png", G_CALLBACK(insert_link_cb), c, 0, 0, NULL); 
+	c->image_menubtn = gaim_new_item_from_pixbuf(menu, _("Insert _Image"), "insert-image-small.png", G_CALLBACK(insert_image), c, 0, 0, NULL); 
 
 	menuitem = gtk_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	gaim_new_item_from_stock(menu, _("_Close"), "gtk-close", GTK_SIGNAL_FUNC(close_callback), c, 0, 0, NULL); 
+	gaim_new_item_from_stock(menu, _("_Close"), "gtk-close", G_CALLBACK(close_callback), c, 0, 0, NULL); 
 
 	/* The Options  menu */
 	menu = gtk_menu_new();
@@ -2232,7 +2232,7 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 
 	state_lock = 0;
 
-	gtk_signal_connect(GTK_OBJECT(menuitem), "toggled", GTK_SIGNAL_FUNC(toggle_loggle), c);
+	g_signal_connect(GTK_OBJECT(menuitem), "toggled", G_CALLBACK(toggle_loggle), c);
 
 	/* Sounds */
 
@@ -2240,7 +2240,7 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 
 	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Enable _Sounds"));
 	c->makesound = 1;
-	gtk_signal_connect(GTK_OBJECT(menuitem), "toggled", GTK_SIGNAL_FUNC(toggle_sound), c);
+	g_signal_connect(GTK_OBJECT(menuitem), "toggled", G_CALLBACK(toggle_sound), c);
 	state_lock = 1;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), TRUE);
 	state_lock = 0;
@@ -2294,21 +2294,21 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		button = gaim_pixbuf_toolbar_button_from_stock("gtk-bold");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_bold), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_bold), c);
 		c->bold = button; /* We should remember this */
 
 		/* Italic */
 		button = gaim_pixbuf_toolbar_button_from_stock("gtk-italic");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_italic), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_italic), c);
 		c->italic = button; /* We should remember this */
 
 		/* Underline */
 		button = gaim_pixbuf_toolbar_button_from_stock("gtk-underline");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_underline), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_underline), c);
 		c->underline = button; /* We should remember this */
 
 		/* Sep */
@@ -2319,20 +2319,20 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		button = gaim_pixbuf_toolbar_button_from_file("text_bigger.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_big), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_big), c);
 		
 		/* Normal Font Size */
 		button = gaim_pixbuf_toolbar_button_from_file("text_normal.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_normal), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_normal), c);
 		c->font = button; /* We should remember this */
 		
 		/* Decrease font size */
 		button = gaim_pixbuf_toolbar_button_from_file("text_smaller.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_small), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_small), c);
 
 		/* Sep */
 		sep = gtk_vseparator_new();
@@ -2342,14 +2342,14 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		button = gaim_pixbuf_toolbar_button_from_file("change-fgcolor-small.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_fg_color), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_fg_color), c);
 		c->fgcolorbtn = button; /* We should remember this */
 
 		/* Font Color */
 		button = gaim_pixbuf_toolbar_button_from_file("change-bgcolor-small.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_bg_color), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_bg_color), c);
 		c->bgcolorbtn = button; /* We should remember this */
 
 
@@ -2359,21 +2359,21 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 
 		/* Insert IM Image  */
 		button = gaim_pixbuf_toolbar_button_from_file("insert-image-small.png");
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_image), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(insert_image), c);
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		c->imagebtn = button;
 
 		/* Insert Link  */
 		button = gaim_pixbuf_toolbar_button_from_file("insert-link-small.png");
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_link), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_link), c);
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		c->link = button;
 
 		/* Insert Smiley */
 		button = gaim_pixbuf_toolbar_button_from_file("insert-smiley-small.png");
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_smiley), c);
+		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(insert_smiley), c);
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		c->smiley = button;
@@ -2476,7 +2476,7 @@ void update_convo_add_button(struct conversation *c)
 	}
 
 	if (rebuild) {
-		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+		g_signal_connect(GTK_OBJECT(c->add), "clicked", G_CALLBACK(add_callback), c);
 		gtk_box_pack_start(GTK_BOX(parent), c->add, FALSE, FALSE, 0);
 		gtk_box_reorder_child(GTK_BOX(parent), c->add, 3);
 		gtk_button_set_relief(GTK_BUTTON(c->add), GTK_RELIEF_NONE);
@@ -2502,8 +2502,8 @@ static void create_convo_menu(struct conversation *cnv)
 			g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
 			opt = gtk_menu_item_new_with_label(buf);
 			gtk_object_set_user_data(GTK_OBJECT(opt), cnv);
-			gtk_signal_connect(GTK_OBJECT(opt), "activate",
-					   GTK_SIGNAL_FUNC(convo_sel_send), c);
+			g_signal_connect(GTK_OBJECT(opt), "activate",
+					   G_CALLBACK(convo_sel_send), c);
 			gtk_widget_show(opt);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 			g = g->next;
@@ -2844,8 +2844,8 @@ void show_conv(struct conversation *c)
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
 			gtk_window_set_title(GTK_WINDOW(win), _("Gaim - Conversations"));
-			gtk_signal_connect(GTK_OBJECT(win), "delete_event",
-					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
+			g_signal_connect(GTK_OBJECT(win), "delete_event",
+					   G_CALLBACK(delete_all_convo), NULL);
 
 			convo_notebook = gtk_notebook_new();
 			if ((convo_options & OPT_CONVO_COMBINE) && (chat_options & OPT_CHAT_ONE_WINDOW))
@@ -2880,8 +2880,8 @@ void show_conv(struct conversation *c)
 			convo_menubar = menubar;
 
 			gtk_container_add(GTK_CONTAINER(win), testidea);
-			gtk_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
-					   GTK_SIGNAL_FUNC(convo_switch), NULL);
+			g_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
+					   G_CALLBACK(convo_switch), NULL);
 		} else
 			win = c->window = all_convos;
 
@@ -2896,7 +2896,7 @@ void show_conv(struct conversation *c)
 		gtk_button_set_relief(GTK_BUTTON(c->close), GTK_RELIEF_NONE);
 		c->tab_label = gtk_label_new(c->name);
 
-		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
+		g_signal_connect(GTK_OBJECT(c->close), "clicked", G_CALLBACK(close_callback), c);
 
 		gtk_box_pack_start(GTK_BOX(tabby), c->tab_label, FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(tabby), c->close, FALSE, FALSE, 0);
@@ -2913,8 +2913,8 @@ void show_conv(struct conversation *c)
 		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 		gtk_container_border_width(GTK_CONTAINER(win), 0);
 		gtk_widget_realize(win);
-		gtk_signal_connect(GTK_OBJECT(win), "delete_event",
-				   GTK_SIGNAL_FUNC(delete_event_convo), c);
+		g_signal_connect(GTK_OBJECT(win), "delete_event",
+				   G_CALLBACK(delete_event_convo), c);
 	}
 	set_convo_title(c);
 
@@ -3017,7 +3017,7 @@ void show_conv(struct conversation *c)
 	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
 	c->close = close;
 	gtk_object_set_user_data(GTK_OBJECT(close), c);
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
+	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(close_callback), c);
 	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
 	gtk_widget_show(close);
 	
@@ -3032,7 +3032,7 @@ void show_conv(struct conversation *c)
 				(dispstyle == 1 ? NULL : "gtk-convert"),
 				GAIM_BUTTON_VERTICAL);
 	c->send = send;
-	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
+	g_signal_connect(GTK_OBJECT(send), "clicked", G_CALLBACK(send_callback), c);
 	gtk_box_pack_end(GTK_BOX(bbox), send, FALSE, FALSE, 0);
 	gtk_widget_show(send);
 
@@ -3055,7 +3055,7 @@ void show_conv(struct conversation *c)
 				GAIM_BUTTON_VERTICAL);
 
 	c->add = add;
-	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+	g_signal_connect(GTK_OBJECT(add), "clicked", G_CALLBACK(add_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 0);
 	gtk_widget_show(add);
 
@@ -3064,7 +3064,7 @@ void show_conv(struct conversation *c)
 				(dispstyle == 1 ? NULL : "gtk-dialog-warning"),
 				GAIM_BUTTON_VERTICAL);
 	c->warn = warn;
-	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
+	g_signal_connect(GTK_OBJECT(warn), "clicked", G_CALLBACK(warn_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 0);
 	gtk_widget_show(warn);
 
@@ -3073,7 +3073,7 @@ void show_conv(struct conversation *c)
 				(dispstyle == 1 ? NULL : "gtk-find"),
 				GAIM_BUTTON_VERTICAL);
 	c->info = info;
-	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
+	g_signal_connect(GTK_OBJECT(info), "clicked", G_CALLBACK(info_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), info, FALSE, FALSE, 0);
 	gtk_widget_show(info);
 
@@ -3083,7 +3083,7 @@ void show_conv(struct conversation *c)
 				(dispstyle == 1 ? NULL : "gtk-stop"),
 				GAIM_BUTTON_VERTICAL);
 	c->block = block;
-	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
+	g_signal_connect(GTK_OBJECT(block), "clicked", G_CALLBACK(block_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), block, FALSE, FALSE, 0);
 	gtk_widget_show(block);
 
@@ -3584,12 +3584,12 @@ static void save_icon(GtkObject *obj, struct conversation *c)
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(c->save_icon));
 	g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.icon", gaim_home_dir(), c->name);
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(c->save_icon), buf);
-	gtk_signal_connect(GTK_OBJECT(c->save_icon), "delete_event",
-			   GTK_SIGNAL_FUNC(des_save_icon), c);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->save_icon)->ok_button), "clicked",
-			   GTK_SIGNAL_FUNC(do_save_icon), c);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->save_icon)->cancel_button), "clicked",
-			   GTK_SIGNAL_FUNC(cancel_save_icon), c);
+	g_signal_connect(GTK_OBJECT(c->save_icon), "delete_event",
+			   G_CALLBACK(des_save_icon), c);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->save_icon)->ok_button), "clicked",
+			   G_CALLBACK(do_save_icon), c);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->save_icon)->cancel_button), "clicked",
+			   G_CALLBACK(cancel_save_icon), c);
 
 	gtk_widget_show(c->save_icon);
 }
@@ -3615,26 +3615,26 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 
 	if (c->icon_timer) {
 		button = gtk_menu_item_new_with_label(_("Disable Animation"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(stop_anim), c);
+		g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(stop_anim), c);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
 	 else if (c->anim && !(gdk_pixbuf_animation_is_static_image(c->anim))) 
 	{
 		button = gtk_menu_item_new_with_label(_("Enable Animation"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(start_anim), c);
+		g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(start_anim), c);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
 
 	button = gtk_menu_item_new_with_label(_("Hide Icon"));
-	gtk_signal_connect_object(GTK_OBJECT(button), "activate",
-				  GTK_SIGNAL_FUNC(remove_icon), (void *)c);
+	g_signal_connect_swapped(GTK_OBJECT(button), "activate",
+				  G_CALLBACK(remove_icon), (void *)c);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
 	button = gtk_menu_item_new_with_label(_("Save Icon As..."));
-	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(save_icon), c);
+	g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(save_icon), c);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
@@ -3744,7 +3744,7 @@ void update_icon(struct conversation *c)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(frame), event);
-	gtk_signal_connect(GTK_OBJECT(event), "button-press-event", GTK_SIGNAL_FUNC(icon_menu), c);
+	g_signal_connect(GTK_OBJECT(event), "button-press-event", G_CALLBACK(icon_menu), c);
 	gtk_widget_show(event);
 
 	c->icon = gtk_pixmap_new(pm, bm);

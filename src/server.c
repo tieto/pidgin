@@ -984,8 +984,8 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char
 
 
 	gtk_window_set_title(GTK_WINDOW(d), "Buddy chat invite");
-	gtk_signal_connect(GTK_OBJECT(nobtn), "clicked", GTK_SIGNAL_FUNC(close_invite), d);
-	gtk_signal_connect(GTK_OBJECT(yesbtn), "clicked", GTK_SIGNAL_FUNC(chat_invite_callback), d);
+	g_signal_connect(GTK_OBJECT(nobtn), "clicked", G_CALLBACK(close_invite), d);
+	g_signal_connect(GTK_OBJECT(yesbtn), "clicked", G_CALLBACK(chat_invite_callback), d);
 
 
 	gtk_widget_show(d);
@@ -1146,7 +1146,7 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), "Gaim - Popup");
 	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_popup), window);
+	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_popup), window);
 	gtk_object_set_user_data(GTK_OBJECT(window), url);
 	gtk_widget_realize(window);
 
@@ -1167,11 +1167,11 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	button = picture_button(window, _("Close"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_popup), window);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(des_popup), window);
 
 	button = picture_button(window, _("More Info"), tb_search_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(open_url), url);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(open_url), url);
 
 	gtk_widget_show_all(window);
 

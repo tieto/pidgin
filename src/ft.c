@@ -233,7 +233,7 @@ int transfer_abort(struct file_transfer *xfer, const char *why)
 		 */
 		if (xfer->w) {
 			gtk_signal_disconnect_by_func(GTK_OBJECT(xfer->w),
-					GTK_SIGNAL_FUNC(ft_cancel), xfer);
+					G_CALLBACK(ft_cancel), xfer);
 			gtk_widget_destroy(xfer->w);
 			xfer->w = NULL;
 		}
@@ -401,12 +401,12 @@ static int ft_choose_file(struct file_transfer *xfer)
 			initstr);
 	g_free(initstr);
 
-	gtk_signal_connect(GTK_OBJECT(xfer->w), "delete_event",
-			GTK_SIGNAL_FUNC(ft_cancel), xfer);
-        gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(xfer->w)->cancel_button),
-			"clicked", GTK_SIGNAL_FUNC(ft_cancel), xfer);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(xfer->w)->ok_button),
-			"clicked", GTK_SIGNAL_FUNC(ft_choose_ok), xfer);
+	g_signal_connect(GTK_OBJECT(xfer->w), "delete_event",
+			G_CALLBACK(ft_cancel), xfer);
+        g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(xfer->w)->cancel_button),
+			"clicked", G_CALLBACK(ft_cancel), xfer);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(xfer->w)->ok_button),
+			"clicked", G_CALLBACK(ft_choose_ok), xfer);
 	gtk_widget_show(xfer->w);
 
 	return 0;

@@ -250,7 +250,7 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	gtk_window_set_role(GTK_WINDOW(window), "prompt");
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Prompt"));
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_prompt), p);
+	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_prompt), p);
 	gtk_widget_realize(window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -267,7 +267,7 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
 	if (def)
 		gtk_entry_set_text(GTK_ENTRY(entry), def);
-	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(act_prompt), p);
+	g_signal_connect(GTK_OBJECT(entry), "activate", G_CALLBACK(act_prompt), p);
 	p->entry = entry;
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -275,11 +275,11 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 
 	button = picture_button(window, _("Accept"), ok_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(act_prompt), p);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(act_prompt), p);
 
 	button = picture_button(window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_win), window);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(des_win), window);
 
 	gtk_widget_show_all(window);
 }
@@ -346,8 +346,8 @@ void do_proto_menu()
 			menuitem = gtk_menu_item_new_with_label(act->data);
 			gtk_object_set_user_data(GTK_OBJECT(menuitem), act->data);
 			gtk_menu_append(GTK_MENU(protomenu), menuitem);
-			gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-					   GTK_SIGNAL_FUNC(proto_act), gc);
+			g_signal_connect(GTK_OBJECT(menuitem), "activate",
+					   G_CALLBACK(proto_act), gc);
 			gtk_widget_show(menuitem);
 
 			act = g_list_next(act);
@@ -384,8 +384,8 @@ void do_proto_menu()
 				menuitem = gtk_menu_item_new_with_label(act->data);
 				gtk_object_set_user_data(GTK_OBJECT(menuitem), act->data);
 				gtk_menu_append(GTK_MENU(submenu), menuitem);
-				gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-						   GTK_SIGNAL_FUNC(proto_act), gc);
+				g_signal_connect(GTK_OBJECT(menuitem), "activate",
+						   G_CALLBACK(proto_act), gc);
 				gtk_widget_show(menuitem);
 
 				act = g_list_next(act);
@@ -472,7 +472,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	gtk_window_set_role(GTK_WINDOW(mn->email_win), "mail");
 	gtk_window_set_policy(GTK_WINDOW(mn->email_win), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(mn->email_win), _("Gaim - New Mail"));
-	gtk_signal_connect(GTK_OBJECT(mn->email_win), "destroy", GTK_SIGNAL_FUNC(des_email_win), mn);
+	g_signal_connect(GTK_OBJECT(mn->email_win), "destroy", G_CALLBACK(des_email_win), mn);
 	gtk_widget_realize(mn->email_win);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -493,14 +493,14 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	close = picture_button(mn->email_win, _("Close"), cancel_xpm);
 	gtk_window_set_focus(GTK_WINDOW(mn->email_win), close);
 	gtk_box_pack_end(GTK_BOX(hbox), close, 0, 0, 5);
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(des_email_win), mn);
+	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(des_email_win), mn);
 
 	if (url) {
 		mn->url = g_strdup(url);
 		urlbut = picture_button(mn->email_win, _("Open Mail"), tb_forward_xpm);
 		gtk_box_pack_end(GTK_BOX(hbox), urlbut, 0, 0, 5);
-		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(open_url), mn->url);
-		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(des_email_win), mn);
+		g_signal_connect(GTK_OBJECT(urlbut), "clicked", G_CALLBACK(open_url), mn->url);
+		g_signal_connect(GTK_OBJECT(urlbut), "clicked", G_CALLBACK(des_email_win), mn);
 	}
 
 	gtk_widget_show(mn->email_win);
@@ -714,7 +714,7 @@ void register_dialog()
 	gtk_window_set_title(GTK_WINDOW(regdlg), _("Gaim - Registration"));
 	gtk_window_set_role(GTK_WINDOW(regdlg), "register");
 	gtk_widget_realize(regdlg);
-	gtk_signal_connect(GTK_OBJECT(regdlg), "destroy", GTK_SIGNAL_FUNC(delete_regdlg), NULL);
+	g_signal_connect(GTK_OBJECT(regdlg), "destroy", G_CALLBACK(delete_regdlg), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -739,7 +739,7 @@ void register_dialog()
 
 	close = picture_button(regdlg, _("Close"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(delete_regdlg), NULL);
+	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(delete_regdlg), NULL);
 	gtk_widget_show(close);
 
 	reg_reg = picture_button(regdlg, _("Register"), ok_xpm);
