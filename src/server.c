@@ -58,10 +58,6 @@ void serv_login(struct aim_user *user)
 
 		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name());
 		p->login(user);
-	} else {
-		do_error_dialog(_("You cannot log this account in; you do not have "
-				  "the protocol it uses loaded, or the protocol does "
-				  "not have a login function."), _("Login Error"));
 	}
 }
 

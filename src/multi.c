@@ -896,16 +896,17 @@ static void acct_signin(GtkWidget *w, gpointer d)
 	GList *l = GTK_CLIST(list)->selection;
 	int row = -1;
 	struct aim_user *u = NULL;
-	struct prpl *p = find_prpl(u->protocol);
+	struct prpl *p = NULL;
 	while (l) {
 		row = (int)l->data;
 		u = g_slist_nth_data(aim_users, row);
-		serv_login(u);
+		p = find_prpl(u->protocol);
 		if (!u->gc && p && p->login) {
 			struct prpl *p = find_prpl(u->protocol);
 			if (p && !(p->options & OPT_PROTO_NO_PASSWORD) && !u->password[0]) {
 				do_pass_dlg(u);
 			} else {
+				serv_login(u);
 #ifdef USE_APPLET
 				set_user_state(signing_on);
 #endif /* USE_APPLET */
@@ -914,6 +915,10 @@ static void acct_signin(GtkWidget *w, gpointer d)
 		} else if (u->gc) {
 			u->gc->wants_to_die = TRUE;
 			signoff(u->gc);
+		} else {
+			do_error_dialog(_("You cannot log this account in; you do not have "
+					  "the protocol it uses loaded, or the protocol does "
+					  "not have a login function."), _("Login Error"));
 		}
 		l = l->next;
 	}
