@@ -361,13 +361,15 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	GtkTextIter start, end;
 	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	char *text;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &end, ins);
+	
 
-	char *text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 	if (info == TARGET_HTML) {
 		int len;
 		GString *str = g_string_new(NULL);
+		text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 		
 		/* Mozilla asks that we start our text/html with the Unicode byte order mark */
 		str = g_string_append_unichar(str, 0xfeff);
@@ -376,11 +378,12 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		char *selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
 		gtk_selection_data_set (selection_data, gdk_atom_intern("text/html", FALSE), 16, selection, len);
 		g_string_free(str, TRUE);
-		g_free(text);
 		g_free(selection);
 	} else {
+		text = gtk_text_buffer_get_text(imhtml, &start, &end, FALSE);
 		gtk_selection_data_set_text(selection_data, text, strlen(text));
 	}
+	g_free(text);
 }
 
 static void gtk_imhtml_clipboard_clear(GtkClipboard *clipboard, GtkIMHtml *imhtml)
@@ -2519,10 +2522,9 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 					//espan = sspan;
 					//gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
 					closers = g_list_insert_sorted(closers, sspan, (GCompareFunc)span_compare_end);
-					if (closers->data != espan) {
-						espan = (GtkIMHtmlFormatSpan*)closers->data;
-						gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
-					}
+					espan = (GtkIMHtmlFormatSpan*)closers->data;
+					gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
+					
 				}
 				starters = starters->next;
 				if (starters) {
