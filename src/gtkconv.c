@@ -357,7 +357,9 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	set_toggle(gtkconv->toolbar.bold,        FALSE);
 	set_toggle(gtkconv->toolbar.italic,      FALSE);
 	set_toggle(gtkconv->toolbar.underline,   FALSE);
+	set_toggle(gtkconv->toolbar.larger_size, FALSE);
 	set_toggle(gtkconv->toolbar.normal_size, FALSE);
+	set_toggle(gtkconv->toolbar.smaller_size,FALSE);
 	set_toggle(gtkconv->toolbar.font,        FALSE);
 	set_toggle(gtkconv->toolbar.fgcolor,     FALSE);
 	set_toggle(gtkconv->toolbar.bgcolor,     FALSE);
@@ -1786,23 +1788,32 @@ do_underline(GtkWidget *underline, struct gaim_gtk_conversation *gtkconv)
 static void
 do_small(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
 {
-	gaim_gtk_surround(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(small)))
+		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
+	else
+		gaim_gtk_advance_past(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
 
 	gtk_widget_grab_focus(gtkconv->entry);
 }
 
 static void
-do_normal(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
+do_normal(GtkWidget *normal, struct gaim_gtk_conversation *gtkconv)
 {
-	gaim_gtk_surround(gtkconv, "<FONT SIZE=\"3\">", "</FONT>");
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(normal)))
+		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"3\">", "</FONT>");
+	else
+		gaim_gtk_advance_past(gtkconv, "<FONT SIZE=\"3\">", "</FONT>");
 
 	gtk_widget_grab_focus(gtkconv->entry);
 }
 
 static void
-do_big(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
+do_big(GtkWidget *large, struct gaim_gtk_conversation *gtkconv)
 {
-	gaim_gtk_surround(gtkconv, "<FONT SIZE=\"5\">", "</FONT>");
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(large)))
+		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"5\">", "</FONT>");
+	else
+		gaim_gtk_advance_past(gtkconv, "<FONT SIZE=\"5\">", "</FONT>");
 
 	gtk_widget_grab_focus(gtkconv->entry);
 }
@@ -2770,6 +2781,8 @@ build_conv_toolbar(struct gaim_conversation *conv)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(do_big), gtkconv);
 
+	gtkconv->toolbar.larger_size = button;
+
 	/* Normal font size */
 	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_TEXT_NORMAL);
 	gtk_size_group_add_widget(sg, button);
@@ -2791,6 +2804,8 @@ build_conv_toolbar(struct gaim_conversation *conv)
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(do_small), gtkconv);
+
+	gtkconv->toolbar.smaller_size = button;
 
 	/* Sep */
 	sep = gtk_vseparator_new();

@@ -140,7 +140,9 @@ struct gaim_gtk_conversation
 		GtkWidget *italic;
 		GtkWidget *underline;
 
+		GtkWidget *larger_size;
 		GtkWidget *normal_size;
+		GtkWidget *smaller_size;
 
 		GtkWidget *font;
 		GtkWidget *fgcolor;
