@@ -1955,7 +1955,7 @@ static void irc_user_opts(GtkWidget * book, struct aim_user *user)
 		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PORT]);
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
 	} else
-		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
+		gtk_entry_set_text(GTK_ENTRY(entry), "6667");
 
 	gtk_widget_show(entry);
 
