@@ -18,6 +18,8 @@ version 0.60:
 	  Christian Hammond)
 	* Asynchronous, non-blocking, DNS function (Thanks, Nicolas
 	  Lichtmaier)
+	* As a side effect of the above: IPv6 support. Tested only with IRC
+          (you can receive ipv6 chat requests from irssi!).
 	
 	Plugins:
 	* Tray icon plugin--replaces the old GNOME applet. You'll need 

@@ -65,11 +65,15 @@ static struct prpl *my_protocol = NULL;
 G_MODULE_IMPORT GSList *connections;
 G_MODULE_IMPORT GSList *groups;
 
+#ifndef INET6_ADDRSTRLEN
+#define INET6_ADDRSTRLEN 46
+#endif
+
 /* Datastructs */
 struct dcc_chat
 {
 	struct gaim_connection *gc;	
-	char ip_address[12];	
+	char ip_address[INET6_ADDRSTRLEN];
 	int port;		
 	int fd;			
 	int inpa;		
@@ -1282,7 +1286,6 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		struct dcc_chat *dccchat = g_new0(struct dcc_chat, 1);
 		dccchat->gc = gc;	
 		g_snprintf(dccchat->ip_address, sizeof(dccchat->ip_address), chat_args[3]);	
-		printf("DCC CHAT DEBUG CRAP: %s\n", dccchat->ip_address);
 		dccchat->port=atoi(chat_args[4]);		
 		g_snprintf(dccchat->nick, sizeof(dccchat->nick), nick);	
 		g_snprintf(ask, sizeof(ask), _("%s would like to establish a DCC chat"), nick);
@@ -1679,8 +1682,7 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	
 	g_free(test);
 	
-	if (idata->fd != source)
-		idata->fd = source;
+	idata->fd = source;
 
 	gethostname(hostname, sizeof(hostname) - 1);
 	hostname[sizeof(hostname) - 1] = 0;
@@ -1721,6 +1723,7 @@ static void
 irc_login(struct aim_user *user)
 {
 	char buf[IRC_BUF_LEN];
+	int rc;
 
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
@@ -1734,12 +1737,13 @@ irc_login(struct aim_user *user)
 	idata->chanmodes = g_strdup("beI,k,lnt");
 	idata->nickmodes = g_strdup("ohv");
 	idata->str = g_string_new("");
+	idata->fd = -1;
 
-	idata->fd = proxy_connect(user->proto_opt[USEROPT_SERV],
+	rc = proxy_connect(user->proto_opt[USEROPT_SERV],
 				  user->proto_opt[USEROPT_PORT][0] ? atoi(user->
 									  proto_opt[USEROPT_PORT]) :
 				  6667, irc_login_callback, gc);
-	if (!user->gc || (idata->fd < 0)) {
+	if (!user->gc || (rc < 0)) {
 		hide_login_progress(gc, "Unable to create socket");
 		signoff(gc);
 		return;
