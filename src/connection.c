@@ -153,11 +153,11 @@ gaim_connection_connect(GaimConnection *gc)
 
 	gaim_connection_set_state(gc, GAIM_CONNECTING);
 
+	connections = g_list_append(connections, gc);
+
 	gaim_signal_emit(gaim_connections_get_handle(), "signing-on", gc);
 
 	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling serv_login\n");
-
-	connections = g_list_append(connections, gc);
 
 	serv_login(account);
 }
@@ -188,11 +188,11 @@ gaim_connection_disconnect(GaimConnection *gc)
 
 		serv_close(gc);
 
-		connections = g_list_remove(connections, gc);
-
 		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
 
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
+
+		connections = g_list_remove(connections, gc);
 
 		system_log(log_signoff, gc, NULL,
 				   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
