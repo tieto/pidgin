@@ -341,9 +341,9 @@ help_command_cb(GaimConversation *conv,
 		if (text) {
 			for (l = text; l; l = l->next)
 				if (l->next)
-					g_string_append_printf(s, "/%s\n", (char *)l->data);
+					g_string_append_printf(s, "%s\n", (char *)l->data);
 				else
-					g_string_append_printf(s, "/%s", (char *)l->data);
+					g_string_append_printf(s, "%s", (char *)l->data);
 		} else {
 			g_string_append(s, _("No such command (in this context)."));
 		}
