@@ -93,6 +93,19 @@ void BuddyTickerLogoutTimeout( gpointer data );
 /* Predefine some functions */
 static void new_bp_callback(GtkWidget *w, char *name);
 
+struct buddy_show {
+	GtkWidget *item;
+	GtkWidget *pix;
+	GtkWidget *label;
+	GtkWidget *warn;
+	GtkWidget *idle;
+	char *name;
+	char *show;
+	GSList *connlist;
+	guint log_timer;
+	gint sound;
+};
+
 /* stuff for actual display of buddy list */
 struct group_show {
 	GtkWidget *item;
@@ -111,7 +124,166 @@ static struct group_show *new_group_show(char *group);
 static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy, char **xpm);
 static void remove_buddy_show(struct group_show *gs, struct buddy_show *bs);
 static struct group_show *find_gs_by_bs(struct buddy_show *b);
+static void update_num_group(struct group_show *gs);
 static void redo_buddy_list();
+
+void handle_group_rename(struct group *g, char* prevname) {
+	struct group_show *gs, *new_gs;
+	struct buddy_show *bs;
+	struct buddy *b;
+	GSList *m;
+	GtkCTreeNode *c;
+
+	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, g);
+	gtk_ctree_node_set_text(GTK_CTREE(edittree), c, 0, g->name);
+
+	gs = find_group_show(prevname);
+	if (!gs) {
+		return;
+	}
+	new_gs = find_group_show(g->name);
+	if (new_gs) {
+		/* transfer everything that was in gs and is in the same gaim_conn as g
+		 * over to new_gs. */
+		m = gs->members;
+		while (m) {
+			bs = (struct buddy_show *)m->data;
+			if (g_slist_index(bs->connlist, g->gc) >= 0) {
+				b = find_buddy(g->gc, bs->name);
+				m = g_slist_next(m);
+				bs->connlist = g_slist_remove(bs->connlist, g->gc);
+				if (!bs->connlist) {
+					gs->members = g_slist_remove(gs->members, bs);
+					if (bs->log_timer > 0)
+						gtk_timeout_remove(bs->log_timer);
+					bs->log_timer = 0;
+					remove_buddy_show(gs, bs);
+					g_free(bs->show);
+					g_free(bs->name);
+					g_free(bs);
+				}
+				if ((bs = find_buddy_show(new_gs, b->name)) == NULL) {
+					if (*g->gc->prpl->list_icon) {
+						bs = new_buddy_show(new_gs, b,
+								(*g->gc->prpl->list_icon)(b->uc));
+					} else {
+						bs = new_buddy_show(new_gs, b, (char **)no_icon_xpm);
+					}
+				}
+				bs->connlist = g_slist_append(bs->connlist, g->gc);
+			} else {
+				m = g_slist_next(m);
+			}
+		}
+		if (!gs->members) {
+			/* we just transferred all of the members out of this group_show,
+			 * so this group_show serves no purpose now. */
+			shows = g_slist_remove(shows, gs);
+			gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
+			g_free(gs->name);
+			g_free(gs);
+		} else {
+			update_num_group(gs);
+		}
+	} else {
+		/* two possible actions: if gs contains things that are only from g,
+		 * just rename gs and fix the label. otherwise, move everything in g
+		 * over to another group_show */
+		for (m = gs->members; m != NULL; m = g_slist_next(m)) {
+			bs = (struct buddy_show *)m->data;
+			if (g_slist_index(bs->connlist, g->gc) < 0 ||
+							g_slist_length(bs->connlist) > 1) {
+				break;
+			}
+		}
+		if (m) {
+			/* there's something from a different gaim_connection. */
+			new_gs = new_group_show(g->name);
+			m = gs->members;
+			while (m) {
+				bs = (struct buddy_show *)m->data;
+				if (g_slist_index(bs->connlist, g->gc) >= 0) {
+					b = find_buddy(g->gc, bs->name);
+					m = g_slist_next(m);
+					bs->connlist = g_slist_remove(bs->connlist, g->gc);
+					if (!bs->connlist) {
+						gs->members = g_slist_remove(gs->members, bs);
+						if (bs->log_timer > 0)
+							gtk_timeout_remove(bs->log_timer);
+						bs->log_timer = 0;
+						remove_buddy_show(gs, bs);
+						g_free(bs->show);
+						g_free(bs->name);
+						g_free(bs);
+					}
+					if (*g->gc->prpl->list_icon) {
+						bs = new_buddy_show(new_gs, b,
+								(*g->gc->prpl->list_icon)(b->uc));
+					} else {
+						bs = new_buddy_show(new_gs, b, (char **)no_icon_xpm);
+					}
+					bs->connlist = g_slist_append(NULL, g->gc);
+				} else {
+					m = g_slist_next(m);
+				}
+			}
+			update_num_group(gs);
+			update_num_group(new_gs);
+		} else {
+			g_free(gs->name);
+			gs->name = g_strdup(g->name);
+			update_num_group(gs);
+		}
+	}
+}
+
+void handle_buddy_rename(struct buddy *b, char *prevname) {
+	struct buddy_show *bs;
+	struct group_show *gs;
+	struct group *g;
+	GtkCTreeNode *c;
+	char buf[256];
+
+	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
+	if (strcmp(b->show, b->name))
+		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, b->show);
+	else
+		g_snprintf(buf, sizeof(buf), "%s", b->name);
+	gtk_ctree_node_set_text(GTK_CTREE(edittree), c, 0, buf);
+
+	gs = find_group_show(prevname);
+
+	g = find_group_by_buddy(b->gc, b->name);
+	if (!g) {
+		/* shouldn't happen */
+		return;
+	}
+	gs = find_group_show(g->name);
+	if (!gs) {
+		return;
+	}
+	bs = find_buddy_show(gs, prevname);
+	if (!bs) {
+		/* buddy's offline */
+		return;
+	}
+	
+	if (strcmp(b->name, prevname)) {
+		bs->connlist = g_slist_remove(bs->connlist, b->gc);
+		if (!bs->connlist) {
+			gs->members = g_slist_remove(gs->members, bs);
+			if (bs->log_timer > 0)
+				gtk_timeout_remove(bs->log_timer);
+			bs->log_timer = 0;
+			remove_buddy_show(gs, bs);
+			g_free(bs->show);
+			g_free(bs->name);
+			g_free(bs);
+		}
+	} else {
+		gtk_label_set_text(GTK_LABEL(bs->label), b->show);
+	}
+}
 
 void destroy_buddy()
 {
@@ -365,14 +537,14 @@ void signoff(struct gaim_connection *gc)
 		BuddyTickerSignoff();
 }
 
-void handle_click_group(GtkWidget *widget, GdkEventButton *event, gpointer func_data)
+void handle_click_group(GtkWidget *widget, GdkEventButton *event, struct group *g)
 {
 	if (event->type == GDK_2BUTTON_PRESS) {
 		if (GTK_TREE_ITEM(widget)->expanded)
 			gtk_tree_item_collapse(GTK_TREE_ITEM(widget));
 		else
 			gtk_tree_item_expand(GTK_TREE_ITEM(widget));
-	} else {
+	} else if ((event->type == GDK_BUTTON_PRESS) && (event->button == 3)) {
 	}
 }
 
@@ -419,9 +591,9 @@ void pressed_ticker(char *buddy)
 	}
 }
 
-void pressed_alias_bs(GtkWidget *widget, struct buddy_show *b)
+void pressed_alias_bs(GtkWidget *widget, struct buddy_show *bs)
 {
-	alias_dialog_bs(b);
+	alias_dialog_bud(find_buddy(bs->connlist->data, bs->name));
 }
 
 void pressed_alias_bud(GtkWidget *widget, struct buddy *b)
@@ -556,18 +728,17 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	node = gtk_ctree_node_nth(GTK_CTREE(edittree), row);
 	type = gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 	if (*type == EDIT_GROUP) {
-		/*struct group *group = (struct group *)type;
+		struct group *group = (struct group *)type;
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("Rename"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(rename_group), node);
+				   GTK_SIGNAL_FUNC(show_rename_group), group);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 			       event->button, event->time);
-		*/
 	} else if (*type == EDIT_BUDDY) {
 		struct buddy *b = (struct buddy *)type;
 		menu = gtk_menu_new();
@@ -585,6 +756,12 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 			gtk_menu_append(GTK_MENU(menu), button);
 			gtk_widget_show(button);
 		}
+		
+		button = gtk_menu_item_new_with_label(_("Rename"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(show_rename_buddy), b);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
@@ -1745,7 +1922,7 @@ static struct group_show *new_group_show(char *group) {
 	g->item = gtk_tree_item_new();
 	gtk_tree_insert(GTK_TREE(buddies), g->item, pos);
 	gtk_signal_connect(GTK_OBJECT(g->item), "button_press_event",
-			   GTK_SIGNAL_FUNC(handle_click_group), NULL);
+			   GTK_SIGNAL_FUNC(handle_click_group), g);
 	gtk_widget_show(g->item);
 
 	g->label = gtk_label_new(group);
@@ -1787,7 +1964,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	gtk_container_add(GTK_CONTAINER(b->item), box);
 	gtk_widget_show(box);
 
-	pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
+	pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm ? xpm : no_icon_xpm);
 	b->pix = gtk_pixmap_new(pm, bm);
 	gtk_box_pack_start(GTK_BOX(box), b->pix, FALSE, FALSE, 1);
 	gtk_widget_show(b->pix);

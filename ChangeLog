@@ -5,6 +5,8 @@ version 0.11.0-pre11:
 	  messages
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
 	* Jabber can send/accept chat invites (due to mid)
+	* Can rename groups/buddies in the Edit Buddies pane
+	  (thanks Neil Sanchala)
 
 version 0.11.0-pre10 (04/13/2001):
 	* Many, many bug fixes

@@ -241,19 +241,6 @@ struct buddy {
 	struct gaim_connection *gc; /* the connection it belongs to */
 };
 
-struct buddy_show {
-	GtkWidget *item;
-	GtkWidget *pix;
-	GtkWidget *label;
-	GtkWidget *warn;
-	GtkWidget *idle;
-	char *name;
-	char *show;
-	GSList *connlist;
-	guint log_timer;
-	gint sound;
-};
-
 struct log_conversation {
 	char name[80];
 	char filename[512];
@@ -686,6 +673,8 @@ extern void update_pixmaps();
 extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
 
 /* Functions in buddy.c */
+extern void handle_group_rename(struct group *, char *);
+extern void handle_buddy_rename(struct buddy *, char *);
 extern void destroy_buddy();
 extern void update_button_pix();
 extern void toggle_show_empty_groups();
@@ -783,7 +772,6 @@ extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
 gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in dialogs.c */
-extern void alias_dialog_bs(struct buddy_show *);
 extern void alias_dialog_bud(struct buddy *);
 extern void do_export(GtkWidget *, void *);
 extern void show_warn_dialog(struct gaim_connection *, char *);
@@ -825,6 +813,8 @@ extern void show_font_dialog(struct conversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void set_color_selection(GtkWidget *selection, GdkColor color);
+extern void show_rename_group(GtkWidget *, struct group *);
+extern void show_rename_buddy(GtkWidget *, struct buddy *);
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);
