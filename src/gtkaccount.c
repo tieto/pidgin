@@ -954,7 +954,8 @@ static void
 account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 					   AccountPrefsDialog *dialog)
 {
-	g_hash_table_remove(accounts_window->account_pref_wins, dialog->account);
+	if (accounts_window != NULL)
+		g_hash_table_remove(accounts_window->account_pref_wins, dialog->account);
 
 	gtk_widget_destroy(dialog->window);
 
