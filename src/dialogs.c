@@ -3620,8 +3620,13 @@ static void log_show_convo(struct view_log *view)
 		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "system", tmp);
 	}
 	if ((fp = fopen(filename, "r")) == NULL) {
-		g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
-		do_error_dialog(buf, strerror(errno), GAIM_ERROR);
+		if (view->name) {
+			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
+			do_error_dialog(buf, strerror(errno), GAIM_ERROR);
+		}
+		/* If the system log doesn't exist.. no message just show empty system log window.
+		   That way user knows that the log is empty :)
+		*/
 		return;
 	}
 
