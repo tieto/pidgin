@@ -999,7 +999,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	unsigned char digest1[20];
 	unsigned char digest2[20];
 	unsigned char magic_key_char[4];
-	unsigned char *magic_ptr;
+	const unsigned char *magic_ptr;
 
 	unsigned int  magic[64];
 	unsigned int  magic_work;
