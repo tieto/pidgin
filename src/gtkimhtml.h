@@ -76,7 +76,6 @@ struct _GtkIMHtml {
 	GtkTextView text_view;
 	GtkTextBuffer *text_buffer;
 	GtkTextMark *end;
-	gboolean comments, smileys;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
 	GdkCursor *text_cursor;

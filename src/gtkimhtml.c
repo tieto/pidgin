@@ -610,12 +610,12 @@ gtk_imhtml_finalize (GObject *object)
 }
 
 /* Boring GTK stuff */
-static void gtk_imhtml_class_init (GtkIMHtmlClass *class)
+static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
 	GtkObjectClass *object_class;
 	GObjectClass   *gobject_class;
-	object_class = (GtkObjectClass*) class;
-	gobject_class = (GObjectClass*) class;
+	object_class = (GtkObjectClass*) klass;
+	gobject_class = (GObjectClass*) klass;
 	parent_class = gtk_type_class(GTK_TYPE_TEXT_VIEW);
 	signals[URL_CLICKED] = g_signal_new("url_clicked",
 						G_TYPE_FROM_CLASS(gobject_class),
@@ -3166,9 +3166,23 @@ char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
 
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml)
 {
-	GtkTextIter start_iter, end_iter;
-	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start_iter);
-	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end_iter);
-	return gtk_text_buffer_get_text(imhtml->text_buffer, &start_iter, &end_iter, FALSE);
+	GString *str = g_string_new("");
+	GtkTextIter iter, end;
+	gunichar c;
 
+	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
+
+	while ((c = gtk_text_iter_get_char(&iter)) != 0 && !gtk_text_iter_equal(&iter, &end)) {
+		if (c == 0xFFFC) {
+			GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
+			char *text = g_object_get_data(G_OBJECT(anchor), "text_tag");
+			str = g_string_append(str, text);
+		} else {
+			g_string_append_unichar(str, c);
+		}
+		gtk_text_iter_forward_char(&iter);
+	}
+
+	return g_string_free(str, FALSE);
 }
