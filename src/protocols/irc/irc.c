@@ -931,31 +931,34 @@ handle_whois(struct gaim_connection *gc, char *word[], char *word_eol[], int num
 
 	switch (num) {
 	case 311:
-		id->liststr = g_string_append(id->liststr, "<b>User: </b>");
+		g_snprintf(tmp, sizeof(tmp), "<b>%s: </b>", _("User"));
+		id->liststr = g_string_append(id->liststr, tmp);
 		break;
 	case 312:
-		id->liststr = g_string_append(id->liststr, "<b>Server: </b>");
+		g_snprintf(tmp, sizeof(tmp), "<b>%s: </b>", _("Server"));
+		id->liststr = g_string_append(id->liststr, tmp);
 		break;
 	case 313:
-		g_snprintf(tmp, sizeof(tmp), "<b>IRC Operator:</b> %s ", word[4]);
+		g_snprintf(tmp, sizeof(tmp), "<b>%s:</b> %s ", _("IRC Operator"), word[4]);
 		id->liststr = g_string_append(id->liststr, tmp);
 		break;
 	case 314:
-		id->liststr = g_string_append(id->liststr, "<b>User: </b>");
-		g_snprintf(tmp, sizeof(tmp), "<b>%s</b> (%s@%s) %s",
-			   word[4], word[5], word[6], word_eol[8]);
+		g_snprintf(tmp, sizeof(tmp), "<b>%s: </b><b>%s</b> (%s@%s) %s",
+			   _("User"), word[4], word[5], word[6], word_eol[8]);
 		id->liststr = g_string_append(id->liststr, tmp);
 		return;
 	case 317:
-		id->liststr = g_string_append(id->liststr, "<b>Idle Time: </b>");
+		g_snprintf(tmp, sizeof(tmp), "<b>%s: </b>", _("Idle Time"));
+		id->liststr = g_string_append(id->liststr, tmp);
 		break;
 	case 319:
-		id->liststr = g_string_append(id->liststr, "<b>Channels: </b>");
+		g_snprintf(tmp, sizeof(tmp), "<b>%s: </b>", _("Channels"));
+		id->liststr = g_string_append(id->liststr, tmp);
 		break;
 	/* Numeric 320 is used by the freenode irc network for showing 
 	 * that a user is identified to services (Jason Straw <misato@wopn.org>)*/
 	case 320:
-		g_snprintf(tmp, sizeof(tmp), "%s is an Identified User", word[4]);
+		g_snprintf(tmp, sizeof(tmp), _("%s is an Identified User"), word[4]);
 		id->liststr = g_string_append(id->liststr, tmp);
 		return;
 	default:
@@ -970,7 +973,7 @@ handle_whois(struct gaim_connection *gc, char *word[], char *word_eol[], int num
 		time_t signon = atol(strchr(word_eol[5], ' '));
 				
 		g_snprintf(tmp, sizeof(tmp), 
-			   "%ld seconds [signon: %s]", (idle / 1000), ctime(&signon));
+			   _("%ld seconds [signon: %s]"), (idle / 1000), ctime(&signon));
 		id->liststr = g_string_append(id->liststr, tmp);
 	}
 	else
@@ -1009,6 +1012,7 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 	struct irc_data *id = gc->proto_data;
 	char *text = word_eol[3];
 	int n = atoi(word[2]);
+	char tmp[1024];
 
 	if (!g_ascii_strncasecmp(gc->displayname, text, strlen(gc->displayname)))
 		text += strlen(gc->displayname) + 1;
@@ -1028,7 +1032,8 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 		break;
 	case 301: /* RPL_AWAY */
 		if (id->in_whois) {
-			id->liststr = g_string_append(id->liststr, "<BR><b>Away: </b>");
+			g_snprintf(tmp, sizeof(tmp), "<BR><b>%s: </b>", _("Away"));
+			id->liststr = g_string_append(id->liststr, tmp);
 
 			if (word_eol[5][0] == ':')
 				id->liststr = g_string_append(id->liststr, word_eol[5] + 1);

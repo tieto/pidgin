@@ -20,7 +20,6 @@ plugins/docklet/eggtrayicon.c
 plugins/autorecon.c
 plugins/chatlist.c
 plugins/chkmail.c
-plugins/error.c
 plugins/events.c
 plugins/filectl.c
 plugins/gaiminc.c
@@ -43,6 +42,7 @@ plugins/win32/transparency/win2ktrans.c
 plugins/win32/winprefs/winprefs.c
 src/protocols/gg/common.c
 plugins/chkmail.c
+plugins/perl/perl.c
 src/protocols/gg/gg.c
 src/protocols/gg/libgg.c
 src/protocols/icq/chatsession.c
@@ -217,9 +217,7 @@ src/list.c
 src/log.c
 src/main.c
 src/md5.c
-src/module.c
 src/multi.c
-src/perl.c
 src/pounce.c
 src/prefs.c
 src/proxy.c
@@ -242,3 +240,6 @@ src/win32/wspell.c
 src/pounce.c
 src/win_gaim.c
 src/gtkpounce.c
+src/plugin.c
+src/prpl.h
+src/gtkdebug.c

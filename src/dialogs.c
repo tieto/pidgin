@@ -4797,7 +4797,7 @@ void re_show_multi_entry_instr(MultiInstrData *instructions)
 		if(instructions->text == NULL) {
 			gtk_widget_hide(instructions->label);
 		} else {
-			gtk_label_set_text(GTK_LABEL (instructions->label), instructions->text);
+			gtk_label_set_text(GTK_LABEL (instructions->label), _(instructions->text));
 			gtk_widget_show(instructions->label);
 		}
 	}
@@ -4836,7 +4836,7 @@ void re_show_multi_entry_entries(GtkWidget **entries_table,
 
 			med = (MultiEntryData *) multi_entry->data;
 
-			label = gtk_label_new(med->label);
+			label = gtk_label_new(_(med->label));
 			gtk_misc_set_alignment(GTK_MISC(label), (gfloat) 1.0, (gfloat) 0.5);
 			gtk_table_attach_defaults(GTK_TABLE (*entries_table), label,
 				    col_offset, 1 + col_offset, row_num, row_num +1);
@@ -4885,7 +4885,7 @@ void re_show_multi_entry_textboxes(GtkWidget **texts_ibox,
 
 	for(multi_text = multi_text_items; multi_text != NULL; multi_text = multi_text->next) {
 		mtd = (MultiTextData *) multi_text->data;
-		frame = gtk_frame_new(mtd->label);
+		frame = gtk_frame_new(_(mtd->label));
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),

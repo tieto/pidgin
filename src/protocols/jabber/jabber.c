@@ -3174,8 +3174,8 @@ static void jabber_get_error_msg(struct gaim_connection *gc, const char *who) {
 
 	jbd = jabber_find_buddy(gc, realwho, TRUE);
 
-	*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
-	*ap++ = g_strdup_printf("<B>Error:</B> %s<BR>\n", jbd->error_msg);
+	*ap++ = g_strdup_printf("<B>%s:</B> %s<BR>\n", _("Jabber ID"), realwho);
+	*ap++ = g_strdup_printf("<B>%s:</B> %s<BR>\n", _("Error"), jbd->error_msg);
 	*ap = NULL;
 
 	final= g_strjoinv(NULL, str_arr);
@@ -3225,8 +3225,8 @@ static void jabber_get_away_msg(struct gaim_connection *gc, const char *who) {
 		char *status;
 		realwho = g_strdup_printf("%s/%s", buddy, jri->name);
 		status = strdup_withhtml(jabber_lookup_away(gjc, realwho));
-		*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
-		*ap++ = g_strdup_printf("<B>Status:</B> %s%s%s<BR>\n", jabber_get_state_string(jri->state), status ? ": " : "", status ? status : "");
+		*ap++ = g_strdup_printf("<B>%s:</B> %s<BR>\n", _("Jabber ID"), realwho);
+		*ap++ = g_strdup_printf("<B>%s:</B> %s%s%s<BR>\n", _("Status"), jabber_get_state_string(jri->state), status ? ": " : "", status ? status : "");
 		g_free(status);
 		g_free(realwho);
 		resources = resources->next;
@@ -3284,7 +3284,8 @@ static char *jabber_tooltip_text(struct buddy *b)
 		char *text = NULL;
 		if(stripped)
 			text = g_markup_escape_text(stripped, strlen(stripped));
-		ret = g_strdup_printf(_("<b>Status:</b> %s%s%s"),
+		ret = g_strdup_printf("<b>%s:</b> %s%s%s",
+				_("Status"),
 				jabber_get_state_string(jri->state), text ? ": " : "",
 				text ? text : "");
 
@@ -3295,7 +3296,7 @@ static char *jabber_tooltip_text(struct buddy *b)
 	} else if(jbd && !GAIM_BUDDY_IS_ONLINE(b) &&
 			(jbd->subscription & JABBER_SUB_PENDING ||
 				!(jbd->subscription & JABBER_SUB_TO))) {
-		ret = g_strdup(_("<b>Status:</b> Not Authorized"));
+		ret = g_strdup_printf("<b>%s:</b> %s", _("Status"), _("Not Authorized"));
 	}
 	return ret;
 }
@@ -3649,7 +3650,7 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 
 	jri = jabber_find_resource(GJ_GC(gjc), buddy);
 
-	*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", buddy);
+	*ap++ = g_strdup_printf("<B>%s:</B> %s<BR>\n", _("Jabber ID"), buddy);
 
 	for(vc_tp = vcard_template_data; vc_tp->label != NULL; ++vc_tp) {
 		if(strcmp(vc_tp->tag, "DESC") == 0)
@@ -3663,10 +3664,10 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 		}
 		if(cdata != NULL) {
 			if(vc_tp->url == NULL) {
-				*ap++ = g_strdup_printf("<B>%s:</B> %s<BR>\n", vc_tp->label, cdata);
+				*ap++ = g_strdup_printf("<B>%s:</B> %s<BR>\n", _(vc_tp->label), cdata);
 			} else {
 				gchar *fmt = g_strdup_printf("<B>%%s:</B> %s<BR>\n", vc_tp->url);
-				*ap++ = g_strdup_printf(fmt, vc_tp->label, cdata, cdata);
+				*ap++ = g_strdup_printf(fmt, _(vc_tp->label), cdata, cdata);
 				g_free(fmt);
 			}
 		}
@@ -3674,7 +3675,8 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 
 
 	status = strdup_withhtml(jabber_lookup_away(gjc, buddy));
-	*ap++ = g_strdup_printf("<B>Status:</B> %s%s%s<BR>\n",
+	*ap++ = g_strdup_printf("<B>%s:</B> %s%s%s<BR>\n",
+			_("Status"),
 			jri ? jabber_get_state_string(jri->state) : "",
 			jri && status ? ": " : "", status ? status : "");
 	g_free(status);
@@ -4041,8 +4043,8 @@ static void jabber_setup_set_info(struct gaim_connection *gc)
 
 	b->title = _("Gaim - Edit Jabber vCard");
 	b->role = "set_info";
-	b->instructions->text = g_strdup(multi_entry_instructions);
-	b->entries_title = g_strdup(entries_title);
+	b->instructions->text = g_strdup(_(multi_entry_instructions));
+	b->entries_title = g_strdup(_(entries_title));
 
 	b->custom = (void *) jabber_format_info;
 
