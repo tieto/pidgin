@@ -25,7 +25,7 @@
 #define GET_NEXT(tmp) \
 	while (*(tmp) && *(tmp) != ' ' && *(tmp) != '\r') \
 		(tmp)++; \
-	*(tmp)++ = '\0'; \
+	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
 	if (*(tmp) == '\n') *(tmp)++; \
 	while (*(tmp) && *(tmp) == ' ') \
 		(tmp)++
@@ -33,7 +33,7 @@
 #define GET_NEXT_LINE(tmp) \
 	while (*(tmp) && *(tmp) != '\r') \
 		(tmp)++; \
-	*(tmp)++ = '\0'; \
+	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
 	if (*(tmp) == '\n') *(tmp)++
 
 /*
@@ -501,7 +501,7 @@ msn_message_get_hashtable_from_body(const MsnMessage *msg)
 
 	table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
-	while (*s != '\r') {
+	while (*s != '\r' && *s != '\0') {
 		char *key, *value;
 
 		key = s;
