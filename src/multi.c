@@ -231,7 +231,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 	} else {
 		char *titles[4];
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
-		if (!find_user(txt)) {
+		if (find_user(txt)) {
 			/* PRPL: also need to check protocol. remember TOC and Oscar are both AIM */
 			gtk_widget_destroy(newmod);
 			return;
