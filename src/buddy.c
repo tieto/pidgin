@@ -2306,7 +2306,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 	}
 }
 
-static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void *data) {
+static gboolean configure_blist_window(GtkWidget *w, GdkEventConfigure *event, gpointer data) {
 	/* unfortunately GdkEventConfigure ignores the window gravity, but  *
 	 * the only way we have of setting the position doesn't. we have to *
 	 * call get_position and get_size because they do pay attention to  *
@@ -2326,6 +2326,7 @@ static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void 
 		blist_pos.height = event->height;
 		save_prefs();
 	}
+	return FALSE;
 }
 
 static void visibility_blist_window(GtkWidget *w, GdkEventVisibility *event, void *data) {

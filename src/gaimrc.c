@@ -1364,10 +1364,8 @@ void save_prefs()
 {
 	FILE *f;
 	char buf[BUF_LONG];
-#ifndef _WIN32
-	/* g_print breaks buddy win resizing */
+
 	debug_printf("enter save_prefs\n");  
-#endif
 	if (is_loading_prefs) {
 		request_save_prefs = 1;
 		debug_printf("currently loading, will request save\n");
@@ -1407,10 +1405,7 @@ void save_prefs()
 		load_prefs();
 		request_load_prefs = 0;
 	}
-#ifndef _WIN32
-	/* g_print breaks buddy win resizing */
 	debug_printf("exit save_prefs\n");
-#endif
 }
 
 
