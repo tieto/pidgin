@@ -85,7 +85,7 @@ foreach $index (0 .. $#pos) {
 	unless $gonep*2 < 0.5;
 	print "</tr>\n";
 	unlink("$po.new");
-	print STDERR "done.\n" if($ARGV[0] eq '-v');
+	print STDERR "done ($untrans untranslated strings).\n" if($ARGV[0] eq '-v');
 }
 print "</table></td></tr></table>\n";
 print "Latest gaim.pot generated $now: <a href='gaim.pot'>gaim.pot</a><br />\n";
