@@ -1,9 +1,9 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcpchathandle.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: tcpchathandle.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
 
 Revision 1.8  2000/07/24 03:10:08  bills
 added support for real nickname during TCP transactions like file and

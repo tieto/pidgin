@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: udphandle.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: udphandle.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.29  2000/11/02 07:28:30  denis
+Do not ack unhandled protocol version.
 
 Revision 1.28  2000/06/25 17:25:52  denis
 icq_HandleMetaUserInfo() handles all (!) available in original icq2k
@@ -843,10 +846,10 @@ void icq_ServerResponse(ICQLINK *link, icq_Packet *p)
   }
   else
   {
-    icq_FmtLog(link, ICQ_LOG_WARNING, "Unhandled message %04x, Version: %x, "
+    icq_FmtLog(link, ICQ_LOG_WARNING, "Unhandled protocol version! Message %04x, Version: %x, "
                "Sequence: %04x, Size: %d\n", cmd, icq_PacketReadUDPInVer(p),
                seq, p->length);
-    icq_UDPAck(link, seq); /* fake like we know what we're doing */
+/*    icq_UDPAck(link, seq);  DO NOT ACK unhandled protocol version! */
   }
 }
 

@@ -1,9 +1,16 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcphandle.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: tcphandle.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.14  2000/12/06 05:15:45  denis
+Handling for mass TCP messages has been added based on patch by
+Konstantin Klyagin <konst@konst.org.ua>
+
+Revision 1.13  2000/08/13 19:44:41  denis
+Cyrillic recoding on received URL description added.
 
 Revision 1.12  2000/07/09 22:19:35  bills
 added new *Close functions, use *Close functions instead of *Delete
@@ -133,7 +140,7 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
   status=icq_PacketRead16(p);
   command_type=icq_PacketRead16(p);
 
-  switch(type)
+  switch(type & ~ICQ_TCP_MASS_MASK)
   {
     case ICQ_TCP_MSG_MSG:
     case ICQ_TCP_MSG_URL:
@@ -172,7 +179,7 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
   switch(command)
   {
     case ICQ_TCP_MESSAGE:
-      switch(type)
+      switch(type & ~ICQ_TCP_MASS_MASK)
       {
         case ICQ_TCP_MSG_MSG:
           icq_TCPOnMessageReceived(plink->icqlink, uin, message, p->id, plink);
@@ -197,7 +204,8 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
       break;
 
     case ICQ_TCP_ACK:
-      switch(type) {
+      switch(type)
+      {
         case ICQ_TCP_MSG_CHAT:
           icq_HandleChatAck(plink, p, port);
           break;
@@ -208,14 +216,15 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
 
         case ICQ_TCP_MSG_MSG:
         case ICQ_TCP_MSG_URL:
-          if(plink->icqlink->icq_RequestNotify) {
+          if(plink->icqlink->icq_RequestNotify)
+          {
             icq_FmtLog(plink->icqlink, ICQ_LOG_MESSAGE, "received ack %d\n", p->id);
             (*plink->icqlink->icq_RequestNotify)(plink->icqlink, p->id, ICQ_NOTIFY_ACK, status,
                                                (void *)message);
             (*plink->icqlink->icq_RequestNotify)(plink->icqlink, p->id, ICQ_NOTIFY_SUCCESS, 0, 0);
           }
           break;
-      }        
+      }
       break;
 
     case ICQ_TCP_CANCEL:
@@ -224,7 +233,7 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
 
     default:
       icq_FmtLog(plink->icqlink, ICQ_LOG_WARNING, 
-			  "unknown packet command %d!\n", command);
+                 "unknown packet command %d!\n", command);
   }
 }
 
@@ -240,7 +249,7 @@ void icq_TCPProcessCancel(icq_Packet *p)
 }
 
 int icq_TCPProcessHello(icq_Packet *p, icq_TCPLink *plink)
-{	
+{
   /* TCP Hello packet */
   BYTE code;                /* 0xFF - init packet code */
   DWORD version;            /* tcp version */
@@ -337,8 +346,8 @@ void icq_TCPOnURLReceived(ICQLINK *link, DWORD uin, const char *message, DWORD i
      uin, id);
 #endif /*TCP_PACKET_TRACE*/
 
-  if(link->icq_RecvURL) {
-
+  if(link->icq_RecvURL)
+  {
     /* use the current system time for time received */
     time_t t=time(0);
     struct tm *ptime=localtime(&t);
@@ -349,6 +358,7 @@ void icq_TCPOnURLReceived(ICQLINK *link, DWORD uin, const char *message, DWORD i
     /* the URL is split from the description by 0xFE */
     pfe=strchr(message, '\xFE');
     *pfe=0;
+    icq_RusConv("wk", (char*)message);
     (*link->icq_RecvURL)(link, uin, ptime->tm_hour, ptime->tm_min,
        ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900, pfe+1, message);
 
@@ -362,5 +372,3 @@ void icq_TCPOnURLReceived(ICQLINK *link, DWORD uin, const char *message, DWORD i
     icq_PacketDelete(pack);
   }
 }
-
-

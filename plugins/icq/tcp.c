@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcp.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: tcp.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.37  2000/12/19 06:00:07  bills
+moved members from ICQLINK to ICQLINK_private struct
 
 Revision 1.36  2000/07/09 22:19:35  bills
 added new *Close functions, use *Close functions instead of *Delete
@@ -167,9 +170,9 @@ int icq_TCPInit(ICQLINK *link)
   icq_TCPLink *plink;
 
   /* allocate lists */
-  link->icq_TCPLinks=list_new();
-  link->icq_ChatSessions=list_new();
-  link->icq_FileSessions=list_new();
+  link->d->icq_TCPLinks=list_new();
+  link->d->icq_ChatSessions=list_new();
+  link->d->icq_FileSessions=list_new();
 
   /* only the main listening socket gets created upon initialization -
    * the other two are created when necessary */
@@ -178,7 +181,7 @@ int icq_TCPInit(ICQLINK *link)
   link->icq_TCPSrvPort=ntohs(plink->socket_address.sin_port);
 
   /* reset tcp sequence number */
-  link->icq_TCPSequence=0xfffffffe;
+  link->d->icq_TCPSequence=0xfffffffe;
 
   return 0;
 }
@@ -187,9 +190,9 @@ void icq_TCPDone(ICQLINK *link)
 {
   /* close and deallocate all tcp links, this will also close any attached 
    * file or chat sessions */
-  list_delete(link->icq_TCPLinks, icq_TCPLinkDelete);
-  list_delete(link->icq_ChatSessions, icq_ChatSessionDelete);
-  list_delete(link->icq_FileSessions, icq_FileSessionDelete);
+  list_delete(link->d->icq_TCPLinks, icq_TCPLinkDelete);
+  list_delete(link->d->icq_ChatSessions, icq_ChatSessionDelete);
+  list_delete(link->d->icq_FileSessions, icq_FileSessionDelete);
 }
 
 /* helper function for icq_TCPMain */
@@ -204,19 +207,19 @@ int _generate_fds(void *p, va_list data)
   {
     int socket=plink->socket;
 
-    FD_SET(socket, &icqlink->TCP_readfds);
+    FD_SET(socket, &icqlink->d->TCP_readfds);
 
     /* we only care about writing if socket is trying to connect */
     if(plink->mode & TCP_LINK_MODE_CONNECTING)
     {
       if(plink->mode & (TCP_LINK_SOCKS_AUTHORIZATION | TCP_LINK_SOCKS_NOAUTHSTATUS | TCP_LINK_SOCKS_AUTHSTATUS | TCP_LINK_SOCKS_CONNSTATUS))
-        FD_SET(socket, &icqlink->TCP_readfds);
+        FD_SET(socket, &icqlink->d->TCP_readfds);
       else
-        FD_SET(socket, &icqlink->TCP_writefds);
+        FD_SET(socket, &icqlink->d->TCP_writefds);
     }
 
-    if(socket+1>icqlink->TCP_maxfd)
-      icqlink->TCP_maxfd=socket+1;
+    if(socket+1>icqlink->d->TCP_maxfd)
+      icqlink->d->TCP_maxfd=socket+1;
   }
 
   return 0; /* traverse the entire list */
@@ -234,7 +237,7 @@ int _handle_ready_sockets(void *p, va_list data)
   /* handle connecting sockets */
   if (plink->mode & TCP_LINK_MODE_CONNECTING)
   {
-    if(socket>-1 && (FD_ISSET(socket, &icqlink->TCP_writefds) || FD_ISSET(socket, &icqlink->TCP_readfds)))
+    if(socket>-1 && (FD_ISSET(socket, &icqlink->d->TCP_writefds) || FD_ISSET(socket, &icqlink->d->TCP_readfds)))
     {
       icq_TCPLinkOnConnect(plink);
       return 0; 
@@ -249,7 +252,7 @@ int _handle_ready_sockets(void *p, va_list data)
 
   /* handle ready for read sockets- either a connection is waiting on *
    * the listen sockets or data is ready to be read */
-  if(socket>-1 && FD_ISSET(socket, &icqlink->TCP_readfds))
+  if(socket>-1 && FD_ISSET(socket, &icqlink->d->TCP_readfds))
   {
     if(plink->mode & TCP_LINK_MODE_LISTEN)
       (void)icq_TCPLinkAccept(plink);
@@ -295,23 +298,23 @@ void icq_TCPMain(ICQLINK *link)
   tv.tv_sec = 0;
   tv.tv_usec = 0;
 
-  link->TCP_maxfd = 0;
-  FD_ZERO(&link->TCP_readfds);
-  FD_ZERO(&link->TCP_writefds);
+  link->d->TCP_maxfd = 0;
+  FD_ZERO(&link->d->TCP_readfds);
+  FD_ZERO(&link->d->TCP_writefds);
 
   /* generate the fd sets for all open tcp links */
-  (void)list_traverse(link->icq_TCPLinks, _generate_fds);
+  (void)list_traverse(link->d->icq_TCPLinks, _generate_fds);
 
   /* determine which sockets require maintenance */
-  select(link->TCP_maxfd, &link->TCP_readfds, &link->TCP_writefds, 0, &tv);
+  select(link->d->TCP_maxfd, &link->d->TCP_readfds, &link->d->TCP_writefds, 0, &tv);
 
   /* call icq_TCPLinkOnDataReceived for any sockets with ready data,
    * send all packets on send queue if socket has connected, and
    * accept() from any listening sockets with pending connections */ 
-  (void)list_traverse(link->icq_TCPLinks, _handle_ready_sockets, 0, 0);
+  (void)list_traverse(link->d->icq_TCPLinks, _handle_ready_sockets, 0, 0);
 
   /* process all packets waiting for each TCPLink */
-  (void)list_traverse(link->icq_TCPLinks, _process_links, 0, 0);
+  (void)list_traverse(link->d->icq_TCPLinks, _process_links, 0, 0);
 }
 
 icq_TCPLink *icq_TCPCheckLink(ICQLINK *link, DWORD uin, int type)

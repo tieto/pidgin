@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: stdpackets.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: stdpackets.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.11  2000/12/19 06:00:07  bills
+moved members from ICQLINK to ICQLINK_private struct
 
 Revision 1.10  2000/06/15 01:51:23  bills
 added creation functions for cancel and refuse operations
@@ -380,7 +383,7 @@ icq_Packet *icq_TCPCreateFileReqPacket(icq_TCPLink *plink,
 
 void icq_TCPAppendSequence(ICQLINK *link, icq_Packet *p)
 {
-  p->id=link->icq_TCPSequence--;
+  p->id=link->d->icq_TCPSequence--;
   icq_PacketEnd(p);
   icq_PacketAppend32(p, p->id);
 }
@@ -529,18 +532,18 @@ icq_Packet *icq_UDPCreateStdPacket(ICQLINK *link, WORD cmd)
 {
   icq_Packet *p = icq_PacketNew();
 
-/*  if(!link->icq_UDPSession)
-    link->icq_UDPSession = rand() & 0x3FFFFFFF;
-  if(!link->icq_UDPSeqNum2)
-    link->icq_UDPSeqNum2 = rand() & 0x7FFF;*/
+/*  if(!link->d->icq_UDPSession)
+    link->d->icq_UDPSession = rand() & 0x3FFFFFFF;
+  if(!link->d->icq_UDPSeqNum2)
+    link->d->icq_UDPSeqNum2 = rand() & 0x7FFF;*/
 
   icq_PacketAppend16(p, ICQ_UDP_VER);            /* ver */
   icq_PacketAppend32(p, 0);                      /* zero */
   icq_PacketAppend32(p, link->icq_Uin);          /* uin */
-  icq_PacketAppend32(p, link->icq_UDPSession);   /* session */
+  icq_PacketAppend32(p, link->d->icq_UDPSession);   /* session */
   icq_PacketAppend16(p, cmd);                    /* cmd */
-  icq_PacketAppend16(p, link->icq_UDPSeqNum1++); /* seq1 */
-  icq_PacketAppend16(p, link->icq_UDPSeqNum2++); /* seq2 */
+  icq_PacketAppend16(p, link->d->icq_UDPSeqNum1++); /* seq1 */
+  icq_PacketAppend16(p, link->d->icq_UDPSeqNum2++); /* seq2 */
   icq_PacketAppend32(p, 0);                      /* checkcode */
 
   return p;
@@ -553,7 +556,7 @@ icq_Packet *icq_UDPCreateStdSeqPacket(ICQLINK *link, WORD cmd, WORD seq)
   icq_PacketAppend16(p, ICQ_UDP_VER);            /* ver */
   icq_PacketAppend32(p, 0);                      /* zero */
   icq_PacketAppend32(p, link->icq_Uin);          /* uin */
-  icq_PacketAppend32(p, link->icq_UDPSession);   /* session */
+  icq_PacketAppend32(p, link->d->icq_UDPSession);   /* session */
   icq_PacketAppend16(p, cmd);                    /* cmd */
   icq_PacketAppend16(p, seq);                    /* seq1 */
   icq_PacketAppend16(p, 0);                      /* seq2 */

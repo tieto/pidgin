@@ -16,11 +16,15 @@ libgaimicq_la_SOURCES =	chatsession.c \
 			contacts.c \
 			contacts.h \
 			cyrillic.c \
+			eventhandle.c \
+			eventhandle.h \
 			filesession.c \
 			filesession.h \
 			icq.h \
 			icqbyteorder.c \
 			icqbyteorder.h \
+			icqevent.c \
+			icqevent.h \
 			icqlib.c \
 			icqlib.h \
 			icqpacket.c \

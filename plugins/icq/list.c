@@ -1,9 +1,9 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: list.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: list.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
 
 Revision 1.14  2000/07/10 01:44:20  bills
 i really don't learn - removed LIST_TRACE define

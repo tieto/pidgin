@@ -12,6 +12,7 @@
 #define write _write
 #endif
 
+#include "icqlib.h"
 #include "filesession.h"
 #include "list.h"
 #include "icqpacket.h"
@@ -36,7 +37,7 @@ icq_FileSession *icq_FileSessionNew(ICQLINK *icqlink)
     p->total_files=0;
     p->total_transferred_bytes=0;
     p->working_dir[0]=0;
-    list_insert(icqlink->icq_FileSessions, 0, p);
+    list_insert(icqlink->d->icq_FileSessions, 0, p);
   }
 	
   return p;
@@ -74,7 +75,7 @@ int _icq_FindFileSession(void *p, va_list data)
 icq_FileSession *icq_FindFileSession(ICQLINK *icqlink, DWORD uin,
   unsigned long id)
 {
-  return list_traverse(icqlink->icq_FileSessions, _icq_FindFileSession, 
+  return list_traverse(icqlink->d->icq_FileSessions, _icq_FindFileSession, 
     uin, id);
 }
 
@@ -218,7 +219,7 @@ void icq_FileSessionClose(icq_FileSession *p)
 
   icq_FileSessionDelete(p);
 
-  list_remove(p->icqlink->icq_FileSessions, p);		
+  list_remove(p->icqlink->d->icq_FileSessions, p);		
 }   
 
 void icq_FileSessionSetWorkingDir(icq_FileSession *p, const char *dir)

@@ -5,8 +5,10 @@ Makefile.in
 chatsession.lo
 contacts.lo
 cyrillic.lo
+eventhandle.lo
 filesession.lo
 icqbyteorder.lo
+icqevent.lo
 icqlib.lo
 icqpacket.lo
 list.lo

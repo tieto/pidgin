@@ -6,9 +6,9 @@
 #include <config.h>
 #endif
 
-#define ICQLIBVER   0x010000
+#define ICQLIBVER   0x010100
 #define ICQLIBMAJOR 1
-#define ICQLIBMINOR 0
+#define ICQLIBMINOR 1
 #define ICQLIBMICRO 0
 
 #include <time.h>
@@ -60,50 +60,96 @@
 extern "C" {
 #endif /* __cplusplus */
 
-typedef struct 
+typedef struct
 {
   const char *name;
   unsigned short code;
 } icq_ArrayType;
 
+struct icq_link_private;
+
+/**
+ * The ICQLINK structure represents a single connection to the ICQ  servers.
+ * It is returned as the result of an icq_ICQLINKNew function, and contains
+ * connection-specific parameters such as uin, sockets, current status, etc.
+ *
+ * This structure should be considered read-only.  Modifying it will cause
+ * undefined results.
+ */
 typedef struct icq_link
 {
-  /* General */
+
+  /* General parameters */
+  
+  /** User Identification Number.  This is your ICQ 'account' number. */
   unsigned long icq_Uin;
-  unsigned long icq_OurIP;          /* HOST byteorder */
-  unsigned short icq_OurPort;       /* HOST byteorder */
-  void *icq_ContactList;
+  
+  /** Our IP as understood by the ICQ server.  This will be set once an
+   * UDP_SRV_LOGIN_REPLY has been received from the ICQ servers, in host
+   * byteorder.  Note this may be different from the actual IP in cases
+   * such as firewalls, ip masquerading, etc. */
+  unsigned long icq_OurIP; 
+  
+  /** The UDP port used to connect to the ICQ server, in host byteorder.  */
+  unsigned short icq_OurPort;
+
+  /** Our current ICQ status: one of the STATUS_* defines.
+   * @see icq_StatusUpdate */
   unsigned long icq_Status;
+  
+  /** The password used to log into the ICQ server. */  
   char *icq_Password;
+  
+  /** The user's desired nickname. */
   char *icq_Nick;
 
   /* UDP stuff */
+
+  /** socket used to send and received UDP messages */
   int icq_UDPSok;
-  unsigned char icq_UDPServMess[8192]; /* 65536 seqs max, 1 bit per seq -> 65536/8 = 8192 */
-  unsigned short icq_UDPSeqNum1, icq_UDPSeqNum2;
-  unsigned long icq_UDPSession;
-  void *icq_UDPQueue;
+
+  /** Time, in seconds, that a sent UDP message can go without an ACK from the
+   * server before being retransmitted. */
   int icq_UDPExpireInterval;
 
   /* TCP stuff */
-  unsigned short icq_TCPSrvPort;    /* HOST byteorder */
-  int icq_TCPSequence;
-  void *icq_TCPLinks;
-  void *icq_ChatSessions;
-  void *icq_FileSessions;
-  int TCP_maxfd;
-  fd_set TCP_readfds;
-  fd_set TCP_writefds;
 
+  /** TCP listen port, in host byte order.  The TCP implementation will listen
+   * here for new connections from other clients.  This is transmitted as
+   * part of the ICQ login process. */
+  unsigned short icq_TCPSrvPort;
+  
+  /** Has TCP been enabled for this connection?
+   * @see icq_NewICQLINK */
+  unsigned char icq_UseTCP;
+  
   /* SOCKS5 Proxy stuff */
+  
+  /** Should all network traffic be redirected through a proxy? 
+   * @see icq_SetProxy */
   unsigned char icq_UseProxy;
+  
+  /** Hostname of the SOCKS5 proxy to use. */
   char *icq_ProxyHost;
-  unsigned long icq_ProxyIP;        /* HOST byteorder */
-  unsigned short icq_ProxyPort;     /* HOST byteorder */
+  
+  /** IP Address of the SOCKS5 proxy after DNS resolution, in host byteorder. */
+  unsigned long icq_ProxyIP;
+  
+  /** Port of the SOCKS5 proxy to use, in host byteorder. */
+  unsigned short icq_ProxyPort;
+  
+  /** What's this? :) */
   int  icq_ProxyAuth;
+  
+  /** Username used when logging into the proxy. */
   char *icq_ProxyName;
+  
+  /** Password used when logging into the proxy. */
   char *icq_ProxyPass;
+  
+  /** TCP socket used to communicate with the proxy. */
   int icq_ProxySok;
+    
   unsigned short icq_ProxyOurPort;  /* HOST byteorder */
   unsigned long icq_ProxyDestIP;    /* HOST byteorder */
   unsigned short icq_ProxyDestPort; /* HOST byteorder */
@@ -204,18 +250,27 @@ typedef struct icq_link
   void (*icq_MetaUserHomePageCategory)(struct icq_link *link,
        unsigned short seq2, unsigned char num, unsigned short hcat1,
        const char *htext1);
+       
+  /** Private data pointer. */
+  struct icq_link_private *d;
+  
 } ICQLINK;
 
 extern int icq_Russian;
 extern unsigned char icq_LogLevel;
 extern icq_ArrayType icq_Countries[];
+extern icq_ArrayType icq_Genders[];
 
 void icq_SetProxy(ICQLINK *link, const char *phost, unsigned short pport,
      int pauth, const char *pname, const char *ppass);
 void icq_UnsetProxy(ICQLINK *link);
 
+ICQLINK *icq_ICQLINKNew(unsigned long uin, const char *password,
+  const char *nick, unsigned char useTCP);
+void icq_ICQLINKDelete(ICQLINK *link);
+  
 void icq_Init(ICQLINK *link, unsigned long uin, const char *password,
-     const char *nick);
+     const char *nick, unsigned char useTCP);
 void icq_Done(ICQLINK *link);
 int icq_Connect(ICQLINK *link, const char *hostname, int port);
 void icq_Disconnect(ICQLINK *link);

@@ -25,6 +25,7 @@
 #define ICQ_TCP_MSG_READNA       0x03EA
 #define ICQ_TCP_MSG_READDND      0x03EB
 #define ICQ_TCP_MSG_READFFC      0x03EC
+#define ICQ_TCP_MASS_MASK        0x8000
 
 /* TCP Message Command Types */
 #define ICQ_TCP_MSG_ACK          0x0000

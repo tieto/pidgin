@@ -1,12 +1,19 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: queue.c 1202 2000-12-04 06:22:48Z robflynn $
+$Id: queue.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/04 06:22:48  robflynn
-Da numba one stunna!
+Revision 1.3  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
 
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.12  2000/12/19 06:00:07  bills
+moved members from ICQLINK to ICQLINK_private struct
+
+Revision 1.11  2000/12/06 05:15:45  denis
+Handling for mass TCP messages has been added based on patch by
+Konstantin Klyagin <konst@konst.org.ua>
+
+Revision 1.10  2000/12/03 21:56:38  bills
+fixed compilation with gcc-2.96
 
 Revision 1.9  2000/07/10 01:31:17  bills
 oops - removed #define LIST_TRACE and #define QUEUE_DEBUG
@@ -44,12 +51,13 @@ Initial support for outgoing packet queue added.
 #include <stdlib.h>
 #include <time.h>
 
+#include "icqlib.h"
 #include "queue.h"
 #include "list.h"
 
 void icq_UDPQueueNew(ICQLINK *link)
 {
-  link->icq_UDPQueue = list_new();
+  link->d->icq_UDPQueue = list_new();
   link->icq_UDPExpireInterval = 15; /* expire interval = 15 sec */
 }
 
@@ -66,17 +74,17 @@ void icq_UDPQueuePut(ICQLINK *link, icq_Packet *p, int attempt)
 #ifdef QUEUE_DEBUG
   printf("enqueuing queueitem %p\n", ptr);
 #endif
-  list_enqueue(link->icq_UDPQueue, ptr);
+  list_enqueue(link->d->icq_UDPQueue, ptr);
 }
 
 icq_Packet *icq_UDPQueueGet(ICQLINK *link)
 {
-  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->icq_UDPQueue);
+  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->d->icq_UDPQueue);
   icq_Packet *pack = 0L;
   if(ptr)
   {
     pack = ptr->pack;
-    list_remove(link->icq_UDPQueue, (list_node*)ptr);
+    list_remove(link->d->icq_UDPQueue, (list_node*)ptr);
   }
 #ifdef QUEUE_DEBUG
   if(pack)
@@ -87,7 +95,7 @@ icq_Packet *icq_UDPQueueGet(ICQLINK *link)
 
 icq_Packet *icq_UDPQueuePeek(ICQLINK *link)
 {
-  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->icq_UDPQueue);
+  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->d->icq_UDPQueue);
   if(ptr)
     return ptr->pack;
   else
@@ -114,10 +122,10 @@ void icq_UDPQueueDelete(ICQLINK *link)
 #ifdef QUEUE_DEBUG
   printf("icq_UDPQueueDelete\n");
 #endif
-  if(link->icq_UDPQueue)
+  if(link->d->icq_UDPQueue)
   {
-    list_delete(link->icq_UDPQueue, _icq_UDPQueueItemFree);
-    link->icq_UDPQueue = 0;
+    list_delete(link->d->icq_UDPQueue, _icq_UDPQueueItemFree);
+    link->d->icq_UDPQueue = 0;
   }
 }
 
@@ -127,8 +135,8 @@ void icq_UDPQueueFree(ICQLINK *link)
 #ifdef QUEUE_DEBUG
   printf("icq_UDPQueueFree\n");
 #endif
-  if(link->icq_UDPQueue)
-    list_free(link->icq_UDPQueue, _icq_UDPQueueItemFree);
+  if(link->d->icq_UDPQueue)
+    list_free(link->d->icq_UDPQueue, _icq_UDPQueueItemFree);
 }
 
 int icq_UDPQueueFindSeq(void *p, va_list data)
@@ -143,13 +151,13 @@ void icq_UDPQueueDelSeq(ICQLINK *link, WORD seq)
 #ifdef QUEUE_DEBUG
   printf("icq_UDPQueueDelSeq(seq=0x%04X", seq);
 #endif
-  ptr = list_traverse(link->icq_UDPQueue, icq_UDPQueueFindSeq, seq);
+  ptr = list_traverse(link->d->icq_UDPQueue, icq_UDPQueueFindSeq, seq);
   if(ptr)
   {
 #ifdef QUEUE_DEBUG
     printf(", cmd=0x%04X",icq_PacketReadUDPOutCmd(ptr->pack));
 #endif
-    list_remove(link->icq_UDPQueue, ptr);
+    list_remove(link->d->icq_UDPQueue, ptr);
     _icq_UDPQueueItemFree(ptr);
   }
 #ifdef QUEUE_DEBUG
@@ -160,7 +168,7 @@ void icq_UDPQueueDelSeq(ICQLINK *link, WORD seq)
 long icq_UDPQueueInterval(ICQLINK *link)
 {
   long interval;
-  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->icq_UDPQueue);
+  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->d->icq_UDPQueue);
   if(ptr)
   {
     interval = ptr->expire - time(0L);

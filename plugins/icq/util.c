@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: util.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: util.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.33  2000/08/13 19:26:50  denis
+icq_Genders[] array have been added.
 
 Revision 1.32  2000/07/22 16:49:32  denis
 Trinidad and Tobago country was added.
@@ -354,6 +357,12 @@ icq_ArrayType icq_MetaLanguages[] = {
   {"Macedonian", 65},
   {"Sindhi", 66},
   {"Welsh", 67},
+};
+
+icq_ArrayType icq_Genders[] = {
+  {"Not Specified", 0},
+  {"Female", 1},
+  {"Male", 2},
 };
 
 void hex_dump(char *data, long size)

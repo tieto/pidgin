@@ -1,9 +1,15 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcplink.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: tcplink.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.40  2000/12/19 06:00:07  bills
+moved members from ICQLINK to ICQLINK_private struct
+
+Revision 1.39  2000/12/03 21:57:15  bills
+fixed bug #105068
 
 Revision 1.38  2000/07/09 22:19:35  bills
 added new *Close functions, use *Close functions instead of *Delete
@@ -196,7 +202,7 @@ icq_TCPLink *icq_TCPLinkNew(ICQLINK *link)
   p->proxy_status = 0;
 
   if(p)
-    list_enqueue(link->icq_TCPLinks, p);
+    list_enqueue(link->d->icq_TCPLinks, p);
 
   return p;
 }
@@ -267,7 +273,7 @@ void icq_TCPLinkDelete(void *pv)
 
 void icq_TCPLinkClose(icq_TCPLink *plink)
 {
-  list_remove(plink->icqlink->icq_TCPLinks, plink);
+  list_remove(plink->icqlink->d->icq_TCPLinks, plink);
   icq_TCPLinkDelete(plink);
 }
 
@@ -776,7 +782,6 @@ int icq_TCPLinkOnDataReceived(icq_TCPLink *plink)
         icq_FmtLog(plink->icqlink, ICQ_LOG_WARNING, "tcplink buffer "
           "overflow, packet size = %d, buffer size = %d, closing link\n",
           packet_size, icq_TCPLinkBufferSize);
-        icq_TCPLinkClose(plink);
         return 0;
       }
 
@@ -924,7 +929,7 @@ unsigned long icq_TCPLinkSendSeq(icq_TCPLink *plink, icq_Packet *p,
 {
   /* append the next sequence number on the packet */
   if (!sequence)
-    sequence=plink->icqlink->icq_TCPSequence--;
+    sequence=plink->icqlink->d->icq_TCPSequence--;
   p->id=sequence;
   icq_PacketEnd(p);
   icq_PacketAppend32(p, sequence);
@@ -1010,5 +1015,5 @@ int _icq_FindTCPLink(void *p, va_list data)
 
 icq_TCPLink *icq_FindTCPLink(ICQLINK *link, unsigned long uin, int type)
 {
-  return list_traverse(link->icq_TCPLinks, _icq_FindTCPLink, uin, type);
+  return list_traverse(link->d->icq_TCPLinks, _icq_FindTCPLink, uin, type);
 }

@@ -1,0 +1,23 @@
+
+This file is intendended to be a list of source incompatable changes have 
+been made since icqlib-1.0.0.
+
+2000-12-19: ICQLINKs have been reworked.  Members that provide no useful 
+information to the library client have been moved to a private structure 
+attached to the public ICQLINK, ICQLINK_private.  See icqlib.h.  ICQLINK 
+memory management now must be performed by the library (which is probably 
+how it should have always been), with icq_ICQLINKNew and 
+icq_ICQLINKDelete.
+
+2000-12-19: Your application is no longer responsible for allocating and
+freeing the ICQLINK structure, rather, it is returned as the result of a
+icq_ICQLINKNew call.  icq_ICQLINKDelete will free an ICQLINK structure.
+
+2000-12-19: icq_Init and icq_Done have been removed.  Use icq_ICQLINKNew
+and icq_ICQLINKDelete instead.  In addition, icq_ICQLINKNew has gained an
+additional parameter: a flag to turn TCP on or off.
+
+
+
+
+

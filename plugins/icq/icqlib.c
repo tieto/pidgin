@@ -1,9 +1,15 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: icqlib.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: icqlib.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.46  2000/12/19 06:00:07  bills
+moved members from ICQLINK to ICQLINK_private struct
+
+Revision 1.45  2000/11/02 07:29:07  denis
+Ability to disable TCP protocol has been added.
 
 Revision 1.44  2000/07/24 03:10:08  bills
 added support for real nickname during TCP transactions like file and
@@ -209,10 +215,14 @@ DWORD icq_SendURL(ICQLINK *link, DWORD uin, const char *url, const char *descr, 
   return 0;
 }
 
-void icq_Init(ICQLINK *link, DWORD uin, const char *password,
-  const char *nick)
+ICQLINK *icq_ICQLINKNew(DWORD uin, const char *password, const char *nick,
+  unsigned char useTCP)
 {
+  ICQLINK *link = (ICQLINK *)malloc(sizeof(ICQLINK));
+  link->d = (ICQLINK_private *)malloc(sizeof(ICQLINK_private));
+
   srand(time(0L));
+
 /*   memset(link, 0, sizeof(ICQLINK)); */
 
   /* Initialize all callbacks */
@@ -255,18 +265,19 @@ void icq_Init(ICQLINK *link, DWORD uin, const char *password,
   link->icq_Nick = strdup(nick);
   link->icq_OurIP = -1;
   link->icq_OurPort = 0;
-  link->icq_ContactList = list_new();
+  link->d->icq_ContactList = list_new();
   link->icq_Status = -1;
 
   /* UDP stuff */
   link->icq_UDPSok = -1;
-  memset(link->icq_UDPServMess, FALSE, sizeof(link->icq_UDPServMess));
-  link->icq_UDPSeqNum1 = 0;
-  link->icq_UDPSeqNum2 = 0;
-  link->icq_UDPSession = 0;
+  memset(link->d->icq_UDPServMess, FALSE, sizeof(link->d->icq_UDPServMess));
+  link->d->icq_UDPSeqNum1 = 0;
+  link->d->icq_UDPSeqNum2 = 0;
+  link->d->icq_UDPSession = 0;
   icq_UDPQueueNew(link);
 
   icq_TCPInit(link);
+  link->icq_UseTCP = useTCP;
 
   /* Proxy stuff */
   link->icq_UseProxy = 0;
@@ -280,18 +291,22 @@ void icq_Init(ICQLINK *link, DWORD uin, const char *password,
   link->icq_ProxyOurPort = 0;
   link->icq_ProxyDestIP = -1;
   link->icq_ProxyDestPort = 0;
+
+  return link;
 }
 
-void icq_Done(ICQLINK *link)
+void icq_ICQLINKDelete(ICQLINK *link)
 {
   icq_TCPDone(link);
   if(link->icq_Password)
     free(link->icq_Password);
   if(link->icq_Nick)
     free(link->icq_Nick);
-  if(link->icq_ContactList)
-    list_delete(link->icq_ContactList, icq_ContactDelete);
+  if(link->d->icq_ContactList)
+    list_delete(link->d->icq_ContactList, icq_ContactDelete);
   icq_UDPQueueDelete(link);
+  free(link->d);
+  free(link);
 }
 
 /******************************
@@ -607,12 +622,12 @@ icq_UDPServMess functions
 *************************/
 BOOL icq_GetServMess(ICQLINK *link, WORD num)
 {
-  return ((link->icq_UDPServMess[num/8] & (1 << (num%8))) >> (num%8));
+  return ((link->d->icq_UDPServMess[num/8] & (1 << (num%8))) >> (num%8));
 }
 
 void icq_SetServMess(ICQLINK *link, WORD num)
 {
-  link->icq_UDPServMess[num/8] |= (1 << (num%8));
+  link->d->icq_UDPServMess[num/8] |= (1 << (num%8));
 }
 
 int icq_GetSok(ICQLINK *link)

@@ -1,3 +1,52 @@
+
+2000-12-19  Bill Soudan  <wes0472@rit.edu>
+
+	* icqlib/chatsession.c, icqlib/contacts.c, icqlib/eventhandle.c,
+	icqlib/filesession.c, icqlib/icq.h.in, icqlib/icqlib.c,
+	icqlib/icqlib.h, icqlib/queue.c, icqlib/stdpackets.c,
+	icqlib/tcp.c, icqlib/tcplink.c icqlib/udp.c: moved some ICQLINK
+	members to ICQLINK_private structures, added icq_ICQLINKNew and
+	icq_ICQLINKDelete functions which replace icq_Init and icq_Done
+
+	* CHANGES_SINCE_1.0: lists source incompatable changes since
+	1.0 release.
+
+	* VERSION: bumped version number to 1.1
+
+2000-12-06  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/queue.c, icqlib/stdpackets.h, icqlib/tcp.h, icqlib/tcphandle.c:
+	Handling for mass TCP messages has been added based on patch by
+	Konstantin Klyagin <konst@konst.org.ua>
+
+2000-12-03  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/queue.c: fixed compilation with gcc-2.96
+
+	* icqlib/tcplink.c: fixed bug #105068
+
+2000-11-02  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/icq.h.in, icqlib/icqlib.c, icqlib/udp.c:
+	Ability to disable TCP protocol has been added.
+
+	* icqlib/udphandle.c: Do not ack unhandled protocol version.
+
+2000-08-13  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/tcphandle.c:
+	Cyrillic recoding on received URL description added.
+
+	* icqlib/icq.h.in, icqlib/util.c: icq_Genders[] array have been added.
+
+2000-08-13  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/udp.c: Patch #101057 have been applied.
+
+2000-07-31  Denis V. Dmitrienko  <denis@null.net>
+
+	* .cvsignore, Makefile.am: Little modifications before releasing.
+
 2000-07-30  Denis V. Dmitrienko  <denis@null.net>
 
 	* ChangeLog, icqlib-0.2.0.lsm, icqlib-1.0.0.lsm, README, TODO,

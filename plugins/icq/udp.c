@@ -1,9 +1,18 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: udp.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: udp.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.26  2000/12/19 06:00:07  bills
+moved members from ICQLINK to ICQLINK_private struct
+
+Revision 1.25  2000/11/02 07:29:07  denis
+Ability to disable TCP protocol has been added.
+
+Revision 1.24  2000/08/13 00:59:52  denis
+Patch #101057 have been applied.
 
 Revision 1.23  2000/07/09 22:19:35  bills
 added new *Close functions, use *Close functions instead of *Delete
@@ -297,7 +306,7 @@ void icq_HandleTimeout(ICQLINK *link)
   int attempt;
   while(icq_UDPQueueInterval(link) == 0)
   {
-    ptr = (icq_UDPQueueItem*)list_first(link->icq_UDPQueue);
+    ptr = (icq_UDPQueueItem*)list_first(link->d->icq_UDPQueue);
     attempt = ptr->attempts + 1;
     if(attempt > 6)
     {
@@ -325,7 +334,7 @@ so we do also :)
 *****************************************/
 WORD icq_KeepAlive(ICQLINK *link) /* V5 */
 {
-  icq_Packet *p = icq_UDPCreateStdSeqPacket(link, UDP_CMD_KEEP_ALIVE, link->icq_UDPSeqNum1++);
+  icq_Packet *p = icq_UDPCreateStdSeqPacket(link, UDP_CMD_KEEP_ALIVE, link->d->icq_UDPSeqNum1++);
   icq_PacketAppend32(p, rand());
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
@@ -339,7 +348,7 @@ WORD icq_KeepAlive(ICQLINK *link) /* V5 */
 
   icq_FmtLog(link, ICQ_LOG_MESSAGE, "Send Keep Alive packet to the server\n");
 
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 /**********************************
@@ -467,10 +476,10 @@ void icq_Login(ICQLINK *link, DWORD status) /* V5 */
 {
   icq_Packet *p;
 
-  memset(link->icq_UDPServMess, FALSE, sizeof(link->icq_UDPServMess));
-  link->icq_UDPSession = rand() & 0x3FFFFFFF;
-  link->icq_UDPSeqNum1 = rand() & 0x7FFF;
-  link->icq_UDPSeqNum2 = 1;
+  memset(link->d->icq_UDPServMess, FALSE, sizeof(link->d->icq_UDPServMess));
+  link->d->icq_UDPSession = rand() & 0x3FFFFFFF;
+  link->d->icq_UDPSeqNum1 = rand() & 0x7FFF;
+  link->d->icq_UDPSeqNum2 = 1;
 
   p = icq_UDPCreateStdPacket(link, UDP_CMD_LOGIN);
   icq_PacketAppend32(p, time(0L));
@@ -479,11 +488,24 @@ void icq_Login(ICQLINK *link, DWORD status) /* V5 */
   icq_PacketAppend16n(p, htons(link->icq_OurPort));*/
   icq_PacketAppendString(p, link->icq_Password);
   icq_PacketAppend32(p, LOGIN_X1_DEF);
-  icq_PacketAppend32n(p, htonl(link->icq_OurIP));
-  if(link->icq_UseProxy)
-    icq_PacketAppend8(p, LOGIN_SNDONLY_TCP);
+  if(link->icq_UseTCP)
+  {
+    if(link->icq_UseProxy)
+    {
+      icq_PacketAppend32n(p, htonl(link->icq_ProxyIP));
+      icq_PacketAppend8(p, LOGIN_SNDONLY_TCP);
+    }
+    else
+    {
+      icq_PacketAppend32n(p, htonl(link->icq_OurIP));
+      icq_PacketAppend8(p, LOGIN_SNDRCV_TCP);
+    }
+  }
   else
-    icq_PacketAppend8(p, LOGIN_SNDRCV_TCP);
+  {
+    icq_PacketAppend32n(p, htonl(link->icq_ProxyIP));
+    icq_PacketAppend8(p, LOGIN_NO_TCP);
+  }
   icq_PacketAppend32(p, status);
   icq_PacketAppend32(p, LOGIN_X3_DEF);
   icq_PacketAppend32(p, LOGIN_X4_DEF);
@@ -498,7 +520,7 @@ Logs off ICQ
 ***********************/
 void icq_Logout(ICQLINK *link) /* V5 */
 {
-  icq_Packet *p = icq_UDPCreateStdSeqPacket(link, UDP_CMD_SEND_TEXT_CODE, link->icq_UDPSeqNum1++);
+  icq_Packet *p = icq_UDPCreateStdSeqPacket(link, UDP_CMD_SEND_TEXT_CODE, link->d->icq_UDPSeqNum1++);
   icq_PacketAppendString(p, "B_USER_DISCONNECTED");
   icq_PacketAppend8(p, 5);
   icq_PacketAppend8(p, 0);
@@ -540,7 +562,7 @@ WORD icq_UDPSendMessage(ICQLINK *link, DWORD uin, const char *text) /* V5 */
 
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 WORD icq_UDPSendURL(ICQLINK *link, DWORD uin, const char *url, const char *descr) /* V5 */
@@ -561,7 +583,7 @@ WORD icq_UDPSendURL(ICQLINK *link, DWORD uin, const char *url, const char *descr
 
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 /**************************************************
@@ -577,7 +599,7 @@ WORD icq_SendAuthMsg(ICQLINK *link, DWORD uin) /* V5 */
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
 
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 /**************************************************
@@ -601,7 +623,7 @@ WORD icq_SendInfoReq(ICQLINK *link, DWORD uin) /* V5 */
   icq_PacketAppend32(p, uin);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 /********************************************************
@@ -613,7 +635,7 @@ WORD icq_SendExtInfoReq(ICQLINK *link, DWORD uin) /* V5 */
   icq_PacketAppend32(p, uin);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 /**************************************************************
@@ -648,7 +670,7 @@ Registers a new uin in the ICQ network
 void icq_RegNewUser(ICQLINK *link, const char *pass) /* V5 */
 {
   char pass8[9];
-  icq_Packet *p = icq_UDPCreateStdSeqPacket(link, UDP_CMD_REG_NEW_USER, link->icq_UDPSeqNum1++);
+  icq_Packet *p = icq_UDPCreateStdSeqPacket(link, UDP_CMD_REG_NEW_USER, link->d->icq_UDPSeqNum1++);
   strncpy(pass8, pass, 8);
   icq_PacketAppendString(p, pass8);
   icq_PacketAppend32(p, 0xA0);
@@ -674,7 +696,7 @@ WORD icq_UpdateUserInfo(ICQLINK *link, const char *nick, const char *first, cons
 /* auth (byte)? */
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 WORD icq_UpdateAuthInfo(ICQLINK *link, DWORD auth) /* V5 */
@@ -683,7 +705,7 @@ WORD icq_UpdateAuthInfo(ICQLINK *link, DWORD auth) /* V5 */
   icq_PacketAppend32(p, auth); /* NOT auth? */
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 WORD icq_UpdateMetaInfoSet(ICQLINK *link, const char *nick, const char *first, const char *last,
@@ -712,7 +734,7 @@ WORD icq_UpdateMetaInfoSet(ICQLINK *link, const char *nick, const char *first, c
   icq_PacketAppend8(p, emailhide);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum2-1;
+  return link->d->icq_UDPSeqNum2-1;
 }
 
 WORD icq_UpdateMetaInfoHomepage(ICQLINK *link, unsigned char age, const char *homepage,
@@ -732,7 +754,7 @@ WORD icq_UpdateMetaInfoHomepage(ICQLINK *link, unsigned char age, const char *ho
   icq_PacketAppend8(p, 0xFF /* lang3 */);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum2-1;
+  return link->d->icq_UDPSeqNum2-1;
 }
 
 WORD icq_UpdateMetaInfoAbout(ICQLINK *link, const char *about)
@@ -742,7 +764,7 @@ WORD icq_UpdateMetaInfoAbout(ICQLINK *link, const char *about)
   icq_PacketAppendString(p, about);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum2-1;
+  return link->d->icq_UDPSeqNum2-1;
 }
 
 WORD icq_UpdateMetaInfoSecurity(ICQLINK *link, unsigned char reqauth, unsigned char webpresence,
@@ -755,7 +777,7 @@ WORD icq_UpdateMetaInfoSecurity(ICQLINK *link, unsigned char reqauth, unsigned c
   icq_PacketAppend8(p, pubip);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum2-1;
+  return link->d->icq_UDPSeqNum2-1;
 }
 
 WORD icq_UpdateNewUserInfo(ICQLINK *link, const char *nick, const char *first, const char *last,
@@ -771,7 +793,7 @@ WORD icq_UpdateNewUserInfo(ICQLINK *link, const char *nick, const char *first, c
   icq_PacketAppend8(p, 1);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum1-1;
+  return link->d->icq_UDPSeqNum1-1;
 }
 
 WORD icq_SendMetaInfoReq(ICQLINK *link, unsigned long uin)
@@ -781,5 +803,5 @@ WORD icq_SendMetaInfoReq(ICQLINK *link, unsigned long uin)
   icq_PacketAppend32(p, uin);
   icq_UDPSockWrite(link, p);
   icq_PacketDelete(p);
-  return link->icq_UDPSeqNum2-1;
+  return link->d->icq_UDPSeqNum2-1;
 }

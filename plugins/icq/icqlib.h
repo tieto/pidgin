@@ -42,4 +42,30 @@ extern char *strdup(const char *s);
 #endif /* strdup */
 #endif /* _WIN32 */
 
+/** Private ICQLINK data.  These are members that are internal to
+ * icqlib, but must be contained in the per-connection ICQLINK
+ * struct.
+ */
+typedef struct icq_link_private {
+
+  void *icq_ContactList;
+
+  /* 65536 seqs max, 1 bit per seq -> 65536/8 = 8192 */
+  unsigned char icq_UDPServMess[8192]; 
+
+  unsigned short icq_UDPSeqNum1, icq_UDPSeqNum2;
+  unsigned long icq_UDPSession;
+  
+  void *icq_UDPQueue;
+
+  int icq_TCPSequence;
+  void *icq_TCPLinks;
+  void *icq_ChatSessions;
+  void *icq_FileSessions;
+  int TCP_maxfd;
+  fd_set TCP_readfds;
+  fd_set TCP_writefds;
+
+} ICQLINK_private;
+
 #endif /* _ICQLIB_H_ */

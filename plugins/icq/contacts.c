@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: contacts.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: contacts.c 1319 2000-12-19 10:08:29Z warmenhoven $
 $Log$
-Revision 1.1  2000/11/28 02:22:42  warmenhoven
-icq. whoop de doo
+Revision 1.2  2000/12/19 10:08:29  warmenhoven
+Yay, new icqlib
+
+Revision 1.5  2000/12/19 06:00:07  bills
+moved members from ICQLINK to ICQLINK_private struct
 
 Revision 1.4  2000/06/17 16:38:45  denis
 New parameter was added in icq_ContactSetVis() for setting/resetting
@@ -25,9 +28,10 @@ added
 #include <stdlib.h>
 #include <stdarg.h>
 
+#include "icq.h"
+#include "icqlib.h"
 #include "icqtypes.h"
 #include "util.h"
-#include "icq.h"
 #include "list.h"
 #include "contacts.h"
 
@@ -53,7 +57,7 @@ void icq_ContactAdd(ICQLINK *link, DWORD cuin)
   p->uin = cuin;
   p->vis_list = FALSE;
 
-  list_enqueue(link->icq_ContactList, p);
+  list_enqueue(link->d->icq_ContactList, p);
 }
 
 void icq_ContactRemove(ICQLINK *link, DWORD cuin)
@@ -62,15 +66,15 @@ void icq_ContactRemove(ICQLINK *link, DWORD cuin)
 
   if (pcontact)
   {
-    list_remove(link->icq_ContactList, pcontact);
+    list_remove(link->d->icq_ContactList, pcontact);
     icq_ContactDelete(pcontact);
   }
 }
 
 void icq_ContactClear(ICQLINK *link)
 {
-  list_delete(link->icq_ContactList, icq_ContactDelete);
-  link->icq_ContactList=list_new();
+  list_delete(link->d->icq_ContactList, icq_ContactDelete);
+  link->d->icq_ContactList=list_new();
 }
 
 int _icq_ContactFind(void *p, va_list data)
@@ -82,7 +86,7 @@ int _icq_ContactFind(void *p, va_list data)
 
 icq_ContactItem *icq_ContactFind(ICQLINK *link, DWORD cuin)
 {
-  return list_traverse(link->icq_ContactList, _icq_ContactFind, cuin);
+  return list_traverse(link->d->icq_ContactList, _icq_ContactFind, cuin);
 }
 
 void icq_ContactSetVis(ICQLINK *link, DWORD cuin, BYTE vu)
@@ -94,12 +98,12 @@ void icq_ContactSetVis(ICQLINK *link, DWORD cuin, BYTE vu)
 
 icq_ContactItem *icq_ContactGetFirst(ICQLINK *link)
 {
-  return list_first(link->icq_ContactList);
+  return list_first(link->d->icq_ContactList);
 }
 
 icq_ContactItem *icq_ContactGetNext(icq_ContactItem *pcontact)
 {
-  list_node *p=list_find(pcontact->icqlink->icq_ContactList, pcontact);
+  list_node *p=list_find(pcontact->icqlink->d->icq_ContactList, pcontact);
 
   if (p && p->next)
     return p->next->item;

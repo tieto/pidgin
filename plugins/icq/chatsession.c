@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 
+#include "icqlib.h"
 #include "chatsession.h"
 #include "list.h"
 
@@ -14,7 +15,7 @@ icq_ChatSession *icq_ChatSessionNew(ICQLINK *icqlink)
     p->status=0;
     p->id=0L;
     p->icqlink=icqlink;
-    list_insert(icqlink->icq_ChatSessions, 0, p);
+    list_insert(icqlink->d->icq_ChatSessions, 0, p);
   }
 	
   return p;
@@ -27,7 +28,7 @@ void icq_ChatSessionDelete(void *p)
 
 void icq_ChatSessionClose(icq_ChatSession *p)
 {
-  list_remove(p->icqlink->icq_ChatSessions, p);
+  list_remove(p->icqlink->d->icq_ChatSessions, p);
   icq_ChatSessionDelete(p);
 }
 
@@ -39,7 +40,7 @@ int _icq_FindChatSession(void *p, va_list data)
 
 icq_ChatSession *icq_FindChatSession(ICQLINK *icqlink, DWORD uin)
 {
-  return list_traverse(icqlink->icq_ChatSessions,
+  return list_traverse(icqlink->d->icq_ChatSessions,
     _icq_FindChatSession, uin);
 }
 

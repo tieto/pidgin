@@ -202,12 +202,11 @@ static void icq_req_notify(struct icq_link *link, unsigned long id, int result,
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
-	ICQLINK *link = id->link = g_new0(ICQLINK, 1);
+	ICQLINK *link = id->link = icq_ICQLINKNew(atol(user->username), user->password,
+			g_strdup("gaim user") /* hehe :) */, TRUE);
 	int icqSocket;
 
 	icq_LogLevel = ICQ_LOG_MESSAGE;
-
-	icq_Init(link, atol(user->username), user->password, "gaim user" /* hehe :) */);
 
 	link->icq_Logged = icq_online;
 	link->icq_Disconnected = icq_logged_off;
@@ -250,8 +249,8 @@ static void icq_close(struct gaim_connection *gc) {
 	gdk_input_remove(gc->inpa);
 	icq_Logout(id->link);
 	icq_Disconnect(id->link);
-	icq_Done(id->link);
-	g_free(id->link);
+	icq_ICQLINKDelete(id->link);
+	g_free(id);
 }
 
 static struct prpl *my_protocol = NULL;
