@@ -405,7 +405,6 @@ cyclop13.png \
 cyclop14.png \
 cyclop15.png \
 cyclop16.png \
-default.theme \
 diamond01.png \
 diamond02.png \
 diamond03.png \
@@ -2107,7 +2106,6 @@ cyclop13.png \
 cyclop14.png \
 cyclop15.png \
 cyclop16.png \
-default.theme \
 diamond01.png \
 diamond02.png \
 diamond03.png \
