@@ -1336,7 +1336,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				int len = fread(buf, 1, st.st_size, file);
 				debug_printf("Sending buddy icon to %s (%d bytes, %d reported)\n",
 						userinfo->sn, len, st.st_size);
-				aim_send_icon(sess, conn, userinfo->sn, buf, st.st_size,
+				aim_send_icon(sess, userinfo->sn, buf, st.st_size,
 					      st.st_mtime, aim_iconsum(buf, st.st_size));
 				fclose(file);
 			} else
@@ -1949,7 +1949,7 @@ static int rateresp_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("buddy list loaded\n");
 
-	aim_reqicbmparams(sess, fr->conn);
+	aim_reqicbmparams(sess);
 
 	aim_bos_reqrights(sess, fr->conn);
 	aim_bos_setgroupperm(sess, fr->conn, AIM_FLAG_ALLUSERS);
@@ -2008,7 +2008,7 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	params->maxmsglen = 8000;
 	params->minmsginterval = 0;
 
-	aim_seticbmparam(sess, fr->conn, params);
+	aim_seticbmparam(sess, params);
 
 	return 1;
 }
@@ -2151,7 +2151,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		ret = aim_send_im_direct(odata->sess, dim->conn, message);
 	} else {
 		if (imflags & IM_FLAG_AWAY)
-			ret = aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
+			ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
 		else {
 			struct aim_sendimext_args args;
 			GSList *h = odata->hasicons;
@@ -2198,7 +2198,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			args.msg    = message;
 			args.msglen = strlen(message);
 
-			ret = aim_send_im_ext(odata->sess, odata->conn, &args);
+			ret = aim_send_im_ext(odata->sess, &args);
 		}
 	}
 	if (ret >= 0)

@@ -144,16 +144,20 @@ faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen)
  * XXX check SNAC size for multipart
  *
  */
-faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct aim_sendimext_args *args)
+faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *args)
 {
 	static const fu8_t deffeatures[] = {
 		0x01, 0x01, 0x01, 0x02
 	};
+	aim_conn_t *conn;
 	int i, msgtlvlen;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn || !args)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
+	if (!args)
 		return -EINVAL;
 
 	if (args->flags & AIM_IMFLAGS_MULTIPART) {
@@ -340,7 +344,7 @@ faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct ai
  * that requires an explicit message length.  Use aim_send_im_ext().
  *
  */
-faim_export int aim_send_im(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu16_t flags, const char *msg)
+faim_export int aim_send_im(aim_session_t *sess, const char *destsn, fu16_t flags, const char *msg)
 {
 	struct aim_sendimext_args args;
 
@@ -352,24 +356,25 @@ faim_export int aim_send_im(aim_session_t *sess, aim_conn_t *conn, const char *d
 	/* Make these don't get set by accident -- they need aim_send_im_ext */
 	args.flags &= ~(AIM_IMFLAGS_CUSTOMFEATURES | AIM_IMFLAGS_HASICON | AIM_IMFLAGS_MULTIPART);
 
-	return aim_send_im_ext(sess, conn, &args);
+	return aim_send_im_ext(sess, &args);
 }
 
 /*
  * This is also performance sensitive. (If you can believe it...)
  *
  */
-faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum)
+faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum)
 {
+	aim_conn_t *conn;
 	int i;
 	fu8_t ck[8];
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn || !sn || !icon || (iconlen <= 0) || (iconlen >= MAXICONLEN))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
-	if (conn->type != AIM_CONN_TYPE_BOS)
+	if (!sn || !icon || (iconlen <= 0) || (iconlen >= MAXICONLEN))
 		return -EINVAL;
 
 	for (i = 0; i < 8; i++)
@@ -1446,12 +1451,16 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
  * 
  */
-faim_export int aim_denytransfer(aim_session_t *sess, aim_conn_t *conn, const char *sender, const char *cookie, fu16_t code)
+faim_export int aim_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, fu16_t code)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 	
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sender)+6)))
 		return -ENOMEM;
 
@@ -1479,8 +1488,13 @@ faim_export int aim_denytransfer(aim_session_t *sess, aim_conn_t *conn, const ch
  * Request ICBM parameter information.
  *
  */
-faim_export int aim_reqicbmparams(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_reqicbmparams(aim_session_t *sess)
 {
+	aim_conn_t *conn;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
 	return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
 }
 
@@ -1490,12 +1504,16 @@ faim_export int aim_reqicbmparams(aim_session_t *sess, aim_conn_t *conn)
  * with the rather unreasonable defaults.  You don't want those.  Send this.
  * 
  */
-faim_export int aim_seticbmparam(aim_session_t *sess, aim_conn_t *conn, struct aim_icbmparameters *params)
+faim_export int aim_seticbmparam(aim_session_t *sess, struct aim_icbmparameters *params)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn || !params)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
+	if (!params)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+16)))

@@ -783,9 +783,9 @@ struct aim_incomingim_ch2_args {
 	} info;
 };
 
-faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct aim_sendimext_args *args);
-faim_export int aim_send_im(aim_session_t *, aim_conn_t *, const char *destsn, unsigned short flags, const char *msg);
-faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
+faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *args);
+faim_export int aim_send_im(aim_session_t *, const char *destsn, unsigned short flags, const char *msg);
+faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg);
 faim_export const char *aim_directim_getsn(aim_conn_t *conn);
@@ -850,7 +850,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur);
 #define AIM_TRANSFER_DENY_NOTSUPPORTED 0x0000
 #define AIM_TRANSFER_DENY_DECLINE 0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING 0x0002
-faim_export int aim_denytransfer(aim_session_t *sess, aim_conn_t *conn, const char *sender, const char *cookie, unsigned short code);
+faim_export int aim_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, unsigned short code);
 faim_export aim_conn_t *aim_accepttransfer(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *cookie, const fu8_t *ip, fu16_t listingfiles, fu16_t listingtotsize, fu16_t listingsize, fu32_t listingchecksum, fu16_t rendid);
 
 faim_export int aim_getinfo(aim_session_t *, aim_conn_t *, const char *, unsigned short);
@@ -888,8 +888,8 @@ struct aim_icbmparameters {
 	unsigned long minmsginterval; /* in milliseconds? */
 };
 
-faim_export int aim_reqicbmparams(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_seticbmparam(aim_session_t *sess, aim_conn_t *conn, struct aim_icbmparameters *params);
+faim_export int aim_reqicbmparams(aim_session_t *sess);
+faim_export int aim_seticbmparam(aim_session_t *sess, struct aim_icbmparameters *params);
 
 
 /* auth.c */
