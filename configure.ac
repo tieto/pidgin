@@ -1129,13 +1129,13 @@ AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
-dnlAC_CONFIG_COMMANDS([version],
-dnl[[
-dnl	sed -e "s/@VERSION@/$VERSION/" VERSION.in > VERSION.tmp
-dnl	cmp VERSION VERSION.in 2>/dev/null || cp VERSION.tmp VERSION
-dnl	rm -f VERSION.tmp
-dnl]]
-dnl)
+dnl AC_CONFIG_COMMANDS([version],
+dnl [[
+dnl 	sed -e "s/@VERSION@/$VERSION/" VERSION.in > VERSION.tmp
+dnl 	cmp VERSION VERSION.in 2>/dev/null || cp VERSION.tmp VERSION
+dnl 	rm -f VERSION.tmp
+dnl ]]
+dnl )
 
 AC_OUTPUT([Makefile
 		   Doxyfile
