@@ -15,6 +15,7 @@ EXTRA_DIST = \
 		gaim_info.png			\
 		gaim_question.png		\
 		gaim_warning.png		\
+		info.png \
 		insert-image-small.png		\
 		insert-link-small.png		\
 		insert-smiley-small.png		\
@@ -58,7 +59,7 @@ gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png gaim_cool.png gaim_auth.png
 
 gaimiconpixdir = $(datadir)/pixmaps/gaim/icons
-gaimiconpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png
+gaimiconpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png info.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm typed.png typing.png
