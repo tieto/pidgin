@@ -31,13 +31,16 @@ typedef struct
 {
 	long session_id;
 	long id;
-	long offset;
-	long total_size;
+	long offset_1;
+	long offset_2;
+	long total_size_1;
+	long total_size_2;
 	long length;
 	long flags;
 	long ack_session_id;
 	long ack_unique_id;
-	long ack_length;
+	long ack_length_1;
+	long ack_length_2;
 
 } MsnSlpHeader;
 
@@ -55,6 +58,7 @@ struct _MsnMessage
 	size_t ref_count;           /**< The reference count.       */
 
 	gboolean msnslp_message;
+	gboolean msnslp_ack_message;
 
 	MsnUser *sender;
 	MsnUser *receiver;
@@ -66,12 +70,17 @@ struct _MsnMessage
 
 	size_t size;
 
+	gboolean bin_content;
+
 	char *content_type;
 	char *charset;
 	char *body;
+	size_t bin_len;
 
 	MsnSlpHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;
+	
+	MsnMessage *acked_msg;
 
 	GHashTable *attr_table;
 	GList *attr_list;
@@ -92,6 +101,15 @@ MsnMessage *msn_message_new(void);
  * @return A new MSNSLP message.
  */
 MsnMessage *msn_message_new_msnslp(void);
+
+/**
+ * Creates a MSNSLP ack message.
+ *
+ * @param acked_msg The message to acknowledge.
+ *
+ * @return A new MSNSLP ack message.
+ */
+MsnMessage *msn_message_new_msnslp_ack(MsnMessage *acked_msg);
 
 /**
  * Creates a new message based off a string.
@@ -242,6 +260,25 @@ void msn_message_set_body(MsnMessage *msg, const char *body);
  * @return The body of the message.
  */
 const char *msn_message_get_body(const MsnMessage *msg);
+
+/**
+ * Sets the binary content of the message.
+ *
+ * @param msg  The message.
+ * @param data The binary data.
+ * @param len  The length of the data.
+ */
+void msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len);
+
+/**
+ * Returns the binary content of the message.
+ *
+ * @param msg The message.
+ * @param len The returned length of the data.
+ *
+ * @return The binary data.
+ */
+const void *msn_message_get_bin_data(const MsnMessage *msg, size_t *len);
 
 /**
  * Sets the content type in a message.

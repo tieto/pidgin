@@ -38,6 +38,13 @@ struct _MsnSlpSession
 	long session_id;
 	long base_id;
 	long prev_msg_id;
+
+	size_t offset;
+
+	void *orig_body;
+	size_t orig_len;
+
+	MsnMessage *outgoing_msg;
 };
 
 /**
@@ -78,6 +85,15 @@ gboolean msn_slp_session_msg_received(MsnSlpSession *slpsession,
  * @param msg        The message to send.
  */
 void msn_slp_session_send_msg(MsnSlpSession *session, MsnMessage *msg);
+
+/**
+ * Sends an acknowledgement message over a MSNSLP session for the
+ * specified message.
+ *
+ * @param slpsession The MSNSLP session to send the acknowledgement over.
+ * @param acked_msg  The message to acknowledge.
+ */
+void msn_slp_session_send_ack(MsnSlpSession *session, MsnMessage *acked_msg);
 
 /**
  * Requests a User Display image over a MSNSLP session.

@@ -98,6 +98,35 @@ msn_message_new_msnslp(void)
 	msg->msnslp_message = TRUE;
 	msg->size += 52;
 
+	msn_message_set_flag(msg, 'D');
+	msn_message_set_content_type(msg, "application/x-msnmsgrp2p");
+	msn_message_set_charset(msg, NULL);
+
+	return msg;
+}
+
+MsnMessage *
+msn_message_new_msnslp_ack(MsnMessage *acked_msg)
+{
+	MsnMessage *msg;
+
+	g_return_val_if_fail(acked_msg != NULL, NULL);
+	g_return_val_if_fail(acked_msg->msnslp_message, NULL);
+
+	msg = msn_message_new_msnslp();
+
+	msg->msnslp_ack_message = TRUE;
+	msg->acked_msg = msn_message_ref(acked_msg);
+
+	msg->msnslp_header.session_id     = acked_msg->msnslp_header.session_id;
+	msg->msnslp_header.total_size_1   = acked_msg->msnslp_header.total_size_1;
+	msg->msnslp_header.total_size_2   = acked_msg->msnslp_header.total_size_2;
+	msg->msnslp_header.flags          = 0x02;
+	msg->msnslp_header.ack_session_id = acked_msg->msnslp_header.session_id;
+	msg->msnslp_header.ack_unique_id  = acked_msg->msnslp_header.ack_session_id;
+	msg->msnslp_header.ack_length_1   = acked_msg->msnslp_header.total_size_1;
+	msg->msnslp_header.ack_length_2   = acked_msg->msnslp_header.total_size_2;
+
 	return msg;
 }
 
@@ -219,20 +248,26 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 		/* Import the header. */
 		msg->msnslp_header.session_id     = msn_get32(tmp); tmp += 4;
 		msg->msnslp_header.id             = msn_get32(tmp); tmp += 4;
-		msg->msnslp_header.offset         = msn_get32(tmp); tmp += 8;
-		msg->msnslp_header.total_size     = msn_get32(tmp); tmp += 8;
+		msg->msnslp_header.offset_1       = msn_get32(tmp); tmp += 4;
+		msg->msnslp_header.offset_2       = msn_get32(tmp); tmp += 4;
+		msg->msnslp_header.total_size_1   = msn_get32(tmp); tmp += 4;
+		msg->msnslp_header.total_size_2   = msn_get32(tmp); tmp += 4;
 		msg->msnslp_header.length         = msn_get32(tmp); tmp += 4;
 		msg->msnslp_header.flags          = msn_get32(tmp); tmp += 4;
 		msg->msnslp_header.ack_session_id = msn_get32(tmp); tmp += 4;
 		msg->msnslp_header.ack_unique_id  = msn_get32(tmp); tmp += 4;
-		msg->msnslp_header.ack_length     = msn_get32(tmp); tmp += 8;
+		msg->msnslp_header.ack_length_1   = msn_get32(tmp); tmp += 4;
+		msg->msnslp_header.ack_length_2   = msn_get32(tmp); tmp += 4;
 
 		/* Convert to the right endianness */
 		msg->msnslp_header.session_id = ntohl(msg->msnslp_header.session_id);
 		msg->msnslp_header.id         = ntohl(msg->msnslp_header.id);
 		msg->msnslp_header.length     = ntohl(msg->msnslp_header.length);
 		msg->msnslp_header.flags      = ntohl(msg->msnslp_header.flags);
-		msg->msnslp_header.ack_length = ntohl(msg->msnslp_header.ack_length);
+		msg->msnslp_header.ack_length_1 =
+			ntohl(msg->msnslp_header.ack_length_1);
+		msg->msnslp_header.ack_length_2 =
+			ntohl(msg->msnslp_header.ack_length_2);
 		msg->msnslp_header.ack_session_id =
 			ntohl(msg->msnslp_header.ack_session_id);
 		msg->msnslp_header.ack_unique_id =
@@ -282,6 +317,9 @@ msn_message_destroy(MsnMessage *msg)
 	g_hash_table_destroy(msg->attr_table);
 	g_list_free(msg->attr_list);
 
+	if (msg->msnslp_ack_message)
+		msn_message_unref(msg->acked_msg);
+
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Destroying message\n");
 	g_free(msg);
 }
@@ -319,7 +357,6 @@ char *
 msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 {
 	GList *l;
-	const char *body;
 	char *msg_start;
 	char *str;
 	char buf[MSN_BUF_LEN];
@@ -335,8 +372,6 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 	 *     -- ChipX86
 	 */
 	g_return_val_if_fail(msg != NULL, NULL);
-
-	body = msn_message_get_body(msg);
 
 	if (msn_message_is_incoming(msg)) {
 		MsnUser *sender = msn_message_get_sender(msg);
@@ -391,42 +426,63 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 	if (msg->msnslp_message)
 	{
 		char *c;
-		long session_id, id, offset, total_size, length, flags;
-		long ack_session_id, ack_unique_id, ack_length;
+		long session_id, id, offset_1, offset_2, total_size_1, total_size_2;
+		long length, flags;
+		long ack_session_id, ack_unique_id, ack_length_1, ack_length_2;
 
 		c = str + strlen(str);
 
 		session_id      = htonl(msg->msnslp_header.session_id);
 		id              = htonl(msg->msnslp_header.id);
-		offset          = htonl(msg->msnslp_header.offset);
-		total_size      = htonl(msg->msnslp_header.total_size);
+		offset_1        = htonl(msg->msnslp_header.offset_1);
+		offset_2        = htonl(msg->msnslp_header.offset_2);
+		total_size_1    = htonl(msg->msnslp_header.total_size_1);
+		total_size_2    = htonl(msg->msnslp_header.total_size_2);
 		length          = htonl(msg->msnslp_header.length);
 		flags           = htonl(msg->msnslp_header.flags);
 		ack_session_id  = htonl(msg->msnslp_header.ack_session_id);
 		ack_unique_id   = htonl(msg->msnslp_header.ack_unique_id);
-		ack_length      = htonl(msg->msnslp_header.ack_length);
+		ack_length_1    = htonl(msg->msnslp_header.ack_length_1);
+		ack_length_2    = htonl(msg->msnslp_header.ack_length_2);
 
 		c += msn_put32(c, session_id);
 		c += msn_put32(c, id);
-		c += msn_put32(c, offset);
-		c += msn_put32(c, 0);
-		c += msn_put32(c, total_size);
-		c += msn_put32(c, 0);
+		c += msn_put32(c, offset_1);
+		c += msn_put32(c, offset_2);
+		c += msn_put32(c, total_size_1);
+		c += msn_put32(c, total_size_2);
 		c += msn_put32(c, length);
 		c += msn_put32(c, flags);
 		c += msn_put32(c, ack_session_id);
 		c += msn_put32(c, ack_unique_id);
-		c += msn_put32(c, ack_length);
-		c += msn_put32(c, 0);
+		c += msn_put32(c, ack_length_1);
+		c += msn_put32(c, ack_length_2);
 
-		if (body != NULL)
+		if (msg->bin_content)
 		{
-			g_strlcpy(c, body, msg->size - (c - msg_start));
+			size_t bin_len;
+			const void *body = msn_message_get_bin_data(msg, &bin_len);
 
-			c += strlen(body);
+			if (body != NULL)
+			{
+				memcpy(c, body, msg->size - (c - msg_start));
 
-			if (strlen(body) > 0)
-				*c++ = '\0';
+				c += bin_len;
+			}
+		}
+		else
+		{
+			const char *body = msn_message_get_body(msg);
+
+			if (body != NULL)
+			{
+				g_strlcpy(c, body, msg->size - (c - msg_start));
+
+				c += strlen(body);
+
+				if (strlen(body) > 0)
+					*c++ = '\0';
+			}
 		}
 
 		c += msn_put32(c, msg->msnslp_footer.app_id);
@@ -440,6 +496,8 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 	}
 	else
 	{
+		const char *body = msn_message_get_body(msg);
+
 		g_strlcat(str, body, len);
 
 		if (msg->size != strlen(msg_start)) {
@@ -498,6 +556,9 @@ msn_message_set_receiver(MsnMessage *msg, MsnUser *user)
 
 	msg->receiver = user;
 
+	if (msg->msnslp_message)
+		msn_message_set_attr(msg, "P2P-Dest", msn_user_get_passport(user));
+
 	msn_user_ref(msg->receiver);
 }
 
@@ -552,7 +613,9 @@ msn_message_set_body(MsnMessage *msg, const char *body)
 	size_t new_len;
 
 	g_return_if_fail(msg  != NULL);
-	g_return_if_fail(body != NULL);
+
+	if (msg->bin_content)
+		msn_message_set_bin_data(msg, NULL, 0);
 
 	if (msg->body != NULL) {
 		msg->size -= strlen(msg->body);
@@ -562,36 +625,86 @@ msn_message_set_body(MsnMessage *msg, const char *body)
 			msg->size--;
 	}
 
-	for (c = body; *c != '\0'; c++) {
-		if (*c == '\n' && (c == body || *(c - 1) != '\r'))
-			newline_count++;
-	}
-
-	new_len = strlen(body) + newline_count;
-
-	buf = g_new0(char, new_len + 1);
-
-	for (c = body, d = buf; *c != '\0'; c++) {
-		if (*c == '\n' && (c == body || *(c - 1) != '\r')) {
-			*d++ = '\r';
-			*d++ = '\n';
+	if (body != NULL)
+	{
+		for (c = body; *c != '\0'; c++)
+		{
+			if (*c == '\n' && (c == body || *(c - 1) != '\r'))
+				newline_count++;
 		}
-		else
-			*d++ = *c;
+
+		new_len = strlen(body) + newline_count;
+
+		buf = g_new0(char, new_len + 1);
+
+		for (c = body, d = buf; *c != '\0'; c++) {
+			if (*c == '\n' && (c == body || *(c - 1) != '\r')) {
+				*d++ = '\r';
+				*d++ = '\n';
+			}
+			else
+				*d++ = *c;
+		}
+
+		msg->body = buf;
+		msg->size += new_len;
+
+		msg->bin_content = FALSE;
+
+		if (msg->msnslp_message)
+			msg->size++;
 	}
-
-	msg->body = buf;
-
-	msg->size += new_len;
-
-	if (msg->msnslp_message)
-		msg->size++;
+	else
+		msg->body = NULL;
 }
 
 const char *
 msn_message_get_body(const MsnMessage *msg)
 {
 	g_return_val_if_fail(msg != NULL, NULL);
+	g_return_val_if_fail(!msg->bin_content, NULL);
+
+	return msg->body;
+}
+
+void
+msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len)
+{
+	g_return_if_fail(msg != NULL);
+
+	if (!msg->bin_content)
+		msn_message_set_body(msg, NULL);
+
+	msg->bin_content = TRUE;
+
+	if (msg->body != NULL)
+	{
+		msg->size -= msg->bin_len;
+		g_free(msg->body);
+	}
+
+	if (data != NULL && len > 0)
+	{
+		msg->body = g_memdup(data, len);
+		msg->bin_len = len;
+
+		msg->size += len;
+	}
+	else
+	{
+		msg->body = NULL;
+		msg->bin_len = 0;
+	}
+}
+
+const void *
+msn_message_get_bin_data(const MsnMessage *msg, size_t *len)
+{
+	g_return_val_if_fail(msg != NULL, NULL);
+	g_return_val_if_fail(len != NULL, NULL);
+	g_return_val_if_fail(msg->bin_content, NULL);
+
+	*len = msg->bin_len;
 
 	return msg->body;
 }
