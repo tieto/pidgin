@@ -67,6 +67,8 @@
 
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
+#include "pixmaps/close_small.xpm"
+#include "pixmaps/exit_small.xpm"
 
 static GtkTooltips *tips;
 static GtkWidget *editpane;
@@ -1858,9 +1860,9 @@ void show_buddy_list()
 	gaim_new_item_with_pixmap(menu, _("Signoff"), add_small_xpm, GTK_SIGNAL_FUNC(signoff));
 
 #ifndef USE_APPLET
-	gaim_new_item_with_pixmap(menu, _("Quit"), add_small_xpm, GTK_SIGNAL_FUNC(do_quit));
+	gaim_new_item_with_pixmap(menu, _("Quit"), exit_small_xpm, GTK_SIGNAL_FUNC(do_quit));
 #else
-	gaim_new_item_with_pixmap(menu, _("Close"), add_small_xpm, GTK_SIGNAL_FUNC(applet_destroy_buddy));
+	gaim_new_item_with_pixmap(menu, _("Close"), close_small_xpm, GTK_SIGNAL_FUNC(applet_destroy_buddy));
 #endif
 
 	menu = gtk_menu_new();
