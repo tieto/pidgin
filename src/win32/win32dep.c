@@ -60,6 +60,7 @@ typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
 /*
  * LOCALS
  */
+static char app_data_dir[MAX_PATH];
 static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
@@ -75,6 +76,8 @@ HINSTANCE gaimdll_hInstance = 0;
  *  PROTOS
  */
 BOOL (*MyFlashWindowEx)(PFLASHWINFO pfwi)=NULL;
+HRESULT (*SHGetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR) = NULL;
+
 FARPROC wgaim_find_and_loadproc(char*, char*);
 extern void wgaim_gtkspell_init();
 
@@ -206,6 +209,10 @@ char* wgaim_locale_dir(void) {
 	strcpy(locale_dir, wgaim_install_dir());
 	strcat(locale_dir, G_DIR_SEPARATOR_S "locale");
 	return (char*)&locale_dir;
+}
+
+char* wgaim_data_dir(void) {
+        return (char*)&app_data_dir;
 }
 
 /* Miscellaneous */
@@ -411,6 +418,12 @@ void wgaim_set_locale() {
 }
 
 /* Windows Initializations */
+typedef enum {
+    SHGFP_TYPE_CURRENT  = 0,   // current value for user, verify it exists
+    SHGFP_TYPE_DEFAULT  = 1,   // default value, may not exist
+} SHGFP_TYPE;
+
+#define CSIDL_APPDATA 0x001a
 
 void wgaim_pre_plugin_init(void) {
         char *perlenv, *newenv;
@@ -425,6 +438,42 @@ void wgaim_pre_plugin_init(void) {
         if(putenv(newenv)<0)
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
         g_free(newenv);
+
+        /* Set app data dir, where to save Gaim user settings */
+        newenv = (char*)g_getenv("HOME");
+        if(!newenv) {
+                SHGetFolderPath = (void*)wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA");
+                if(SHGetFolderPath) {
+                        HRESULT hrResult = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, app_data_dir);
+                        if(hrResult != S_FALSE && hrResult != E_FAIL && hrResult != E_INVALIDARG) {
+                                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "APP DATA PATH set to: %s\n", app_data_dir);
+                        }
+                        else
+                                strcpy(app_data_dir, "C:");
+                }
+
+                /* As of 0.69, using SHGetFolderPath to determine app settings directory.
+                   Move app settings to new location if need be. */
+                { 
+                        char *old_home = g_strdup_printf("%s%s", g_get_home_dir() ? g_get_home_dir() : "C:", "\\.gaim");
+                        char *new_home = g_strdup_printf("%s\\.gaim", wgaim_data_dir());
+                        GDir *dir_old, *dir_new;
+
+                        dir_old = g_dir_open(old_home, 0, NULL);
+                        dir_new = g_dir_open(new_home, 0, NULL);
+                        if(dir_old && !dir_new) {
+                                if(MoveFile(old_home, new_home) != 0)
+                                        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Success moving '.gaim' directory\n");
+                        }
+                        g_free(new_home);
+                        g_free(old_home);
+                        g_dir_close(dir_old);
+                        g_dir_close(dir_new);
+                }
+        }
+        else {
+                strcpy(app_data_dir, newenv);
+        }
 }
 
 void wgaim_init(void) {

@@ -44,6 +44,7 @@ gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE d
 extern char* wgaim_install_dir(void);
 extern char* wgaim_lib_dir(void);
 extern char* wgaim_locale_dir(void);
+extern char* wgaim_data_dir(void);
 extern char* wgaim_escape_dirsep(char*);
 /* UI related */
 extern void wgaim_im_blink(GtkWidget*);

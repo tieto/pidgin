@@ -641,16 +641,14 @@ GSList *message_split(char *message, int limit)
 
 const gchar *gaim_home_dir()
 {
+#ifndef _WIN32
 	if(g_get_home_dir())
 		return g_get_home_dir();
 	else
-#ifndef _WIN32
 		return NULL;
 #else
-		/* Win9x and WinME don't have a home dir */
-		return "C:";
+        return wgaim_data_dir();
 #endif
-
 }
 
 /* returns a string of the form ~/.gaim, where ~ is replaced by the user's home

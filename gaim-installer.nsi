@@ -348,6 +348,14 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     File ..\win32-dev\drmingw\exchndl.dll
     !endif
 
+    ; Install shfolder.dll if need be..
+    SearchPath $R4 "shfolder.dll"
+    StrCmp $R4 "" 0 got_shfolder
+      SetOutPath "$SYSDIR"
+      File ..\win32-dev\ms-deps\shfolder.dll
+      SetOutPath "$INSTDIR"
+    got_shfolder:
+
     ; Check if Perl is installed, If not remove perl plugin
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
     StrCmp $R2 "" 0 perl_exists
