@@ -80,7 +80,7 @@ been.
 - What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
 request RVOUS actions, though both can receive them.
 
-- Dir Info is not in libfaim yet, and so is not in Gaim/Faim yet.
+- Getting Dir Info is not in libfaim yet, and so is not in Gaim/Faim yet.
 
 - Warnings are there now. Yes, I know it says the wrong value.
 
