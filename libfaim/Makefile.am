@@ -1,3 +1,5 @@
+CFLAGS = -I\$(top_srcdir)/libfaim -I\$(top_srcdir)/libfaim/faim
+
 noinst_LIBRARIES = libfaim.a
 
 EXTRA_DIST = faim/aim.h faim/aim_cbtypes.h faim/faimconfig.h md5.h README \

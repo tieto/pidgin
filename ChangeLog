@@ -1,8 +1,10 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.11.0:
+version 0.11.0-pre4:
 	* ICQ upgraded to use icqlib 1.1.0
 	* An enormous amount of bug fixes
+	* Even More Protocol Plugins:
+		Jabber (plugins/jabber) [CVS - currently disabled]
 
 version 0.11.0-pre3 (12/15/2000):
 	* Away messages arranged alphabetically (Thanks Justin)

@@ -5,7 +5,11 @@ SUFFIXES = .c .so
 
 if PLUGINS
 
+if JABBER
+SUBDIRS = yay icq msn jabber
+else
 SUBDIRS = yay icq msn
+endif
 
 plugin_DATA = autorecon.so iconaway.so irc.so notify.so spellchk.so lagmeter.so
 plugindir = $(libdir)/gaim

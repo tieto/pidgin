@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/aim.c)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([gaim], [0.11.0pre3])
+AM_INIT_AUTOMAKE([gaim], [0.11.0pre4])
 
 dnl Checks for programs.
 AM_PROG_LIBTOOL
@@ -46,7 +46,8 @@ AC_ARG_ENABLE(panel,   [  --enable-panel          compile as a GNOME applet],,en
 AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
 AC_ARG_ENABLE(esd,     [  --disable-esd           Turn off ESD (default=auto)],,enable_esd=yes)
 AC_ARG_ENABLE(nas,     [  --enable-nas            Enable NAS (Network Audio System) support],,enable_nas=no)
-AC_ARG_ENABLE(plugins, [  --disable-plugins       compile with out plugin support],,enable_plugins=yes)
+AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
+AC_ARG_ENABLE(jabber,  [  --enable-jabber         compile the jabber plugin (requires libxode and libjabber)],,enable_jabber=no)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
@@ -57,9 +58,6 @@ if test "$enable_debug" = yes ; then
 	CFLAGS="$CFLAGS -Wall -g"
 	AC_DEFINE(DEBUG)
 fi
-
-CFLAGS="$CFLAGS -I\$(top_srcdir)/libfaim -I\$(top_srcdir)/libfaim/faim"
-LDADD="$LDADD -L../libfaim -lfaim"
 
 if test "x$enable_gnome" = "xyes" ; then
 	if test "x$enable_panel" = "xyes" ; then
@@ -95,7 +93,6 @@ if test "x$enable_gnome" = "xyes" ; then
 		fi
 	fi
 fi
-AM_CONDITIONAL(GNOMEBITS, test "x$enable_gnome" = "xyes")
 
 if test "x$enable_gnome" != "xyes" ; then
 	AM_PATH_GLIB(1.2.0)
@@ -116,29 +113,17 @@ if test "x$enable_xss" = "xyes" ; then
 #include <X11/extensions/scrnsaver.h>
 				],[],[],[
 				AC_DEFINE(USE_SCREENSAVER)
-				LIBS="$LIBS $XSS_LIBS"
+				AC_SUBST(XSS_LIBS)
 				])
 	else
-	       XSS_LIBS=""
+	       XSS_LIBS=no
 	fi
 else
-	XSS_LIBS=""
+	XSS_LIBS=no
 fi
 
 
 
-
-if test "x$enable_multi" != "xyes" ; then
-	AC_DEFINE(NO_MULTI)
-fi
-
-if test "x$enable_plugins" = xyes ; then
-	dnl checks for icqlib
-	AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
-	AC_CHECK_FUNCS(bswap_32 bswap_16)
-
-	AC_DEFINE(GAIM_PLUGINS)
-fi
 
 dnl This was taken straight from X-Chat.
 dnl X-Chat is the greatest application ever, not only
@@ -153,17 +138,17 @@ if test "$enable_perl" = yes ; then
 		AC_MSG_RESULT([not found, building without perl.])
 		enable_perl = no
 	else
-		PERL_LDFLAGS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
-		PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-ldb //'`
-		PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-lndbm //'`
+		PERL_LIBS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
+		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-ldb //'`
+		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lndbm //'`
 		if test "$system" = "Linux"; then
-			PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-lnsl //'`
-			PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-lposix //'`
+			PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lnsl //'`
+			PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lposix //'`
 		fi
-		PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-lc //'`
+		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lc //'`
 		AC_MSG_RESULT(ok)
-		CFLAGS="$CFLAGS $PERL_CFLAGS"
-		LIBS="$LIBS $PERL_LDFLAGS"
+		AC_SUBST(PERL_CFLAGS)
+		AC_SUBST(PERL_LIBS)
 		AC_DEFINE(USE_PERL)
 		AC_CHECK_FUNCS(Perl_eval_pv)
 	fi
@@ -195,6 +180,27 @@ AC_SUBST(CFLAGS)
 AC_SUBST(LDADD)
 AC_SUBST(LIBS)
 
+if test "x$enable_multi" != "xyes" ; then
+	AC_DEFINE(NO_MULTI)
+fi
+
+if test "x$enable_plugins" = xyes ; then
+	dnl checks for icqlib
+	AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
+	AC_CHECK_FUNCS(bswap_32 bswap_16)
+
+	AC_DEFINE(GAIM_PLUGINS)
+else
+	enable_jabber=no
+fi
+
+if test "$enable_jabber" = yes ; then
+	AC_CHECK_FUNCS(snprintf)
+	AC_CHECK_LIB(nsl, gethostent)
+	AC_CHECK_FUNCS(connect)
+	AM_CONDITIONAL(JABBER, test "x$enable_jabber" = "xyes")
+fi
+
 AC_OUTPUT([Makefile
 	   src/Makefile
 	   intl/Makefile
@@ -203,6 +209,7 @@ AC_OUTPUT([Makefile
 	   plugins/yay/Makefile
 	   plugins/icq/Makefile
 	   plugins/msn/Makefile
+	   plugins/jabber/Makefile
            pixmaps/Makefile
            libfaim/Makefile
 	   po/Makefile.in
@@ -215,12 +222,19 @@ echo
 echo $PACKAGE $VERSION
 
 echo
+if test "$XSS_LIBS" = "no" ; then
+	echo Build with X scrnsvr ext... : no
+else
+	echo X screensaver libs......... : $XSS_LIBS
+fi
 echo Build with GNOME bits...... : $enable_gnome
 echo Build as GNOME applet...... : $enable_panel
 echo
 echo Build with Plugin support.. : $enable_plugins
 echo Build with Perl support.... : $enable_perl
 echo
+#echo Build Jabber PRPL.......... : $enable_jabber
+#echo
 echo Build with ESD............. : $enable_esd
 echo Build with NAS............. : $enable_nas
 echo

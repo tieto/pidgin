@@ -1,0 +1,6 @@
+Makefile.in
+Makefile
+.deps
+.libs
+jabber.lo
+libjabber.la
