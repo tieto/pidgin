@@ -67,7 +67,7 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (lastTime)
 		*lastTime = GetTickCount();
 	
-	return 0;
+	return CallNextHookEx(keyHook, code, wParam, lParam);
 }
 
 
@@ -89,7 +89,7 @@ LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (lastTime)
 		*lastTime = GetTickCount();
 	
-	return 0;
+	return CallNextHookEx(mouseHook, code, wParam, lParam);
 }
 
 
