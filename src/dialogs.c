@@ -1395,7 +1395,7 @@ void show_change_passwd()
 	struct passwddlg *b = g_new0(struct passwddlg, 1);
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_widget_set_usize(b->window, 350, 195);
+	gtk_widget_set_usize(b->window, 325, 195);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
 	gtk_widget_show(b->window);
 
