@@ -6,6 +6,9 @@ WINGAIM:
 	sounds while away?	
 
 gtk2/new prefs
+	Privacy dialog does not work right. some accounts it refuses to change the privacy option for (aim account, can't
+		change it off allow only below).  for some accounts, it isn't even reset to an understandable value, the 
+		value it won't let you change it off of isn't even the value in the .blist file.
 	most toolbar buttons stay depressed after being clicked once, only raise when clicked a second time.
 		smiles and links do not.
 	replace legend in info dialog with link to status icons page
