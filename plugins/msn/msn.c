@@ -113,7 +113,7 @@ static char *url_decode(const char *msg)
 		}
 		g_snprintf(hex, sizeof(hex), "%s", msg + ++i);
 		i++;
-		sscanf(hex, "%x", (unsigned int *)&buf[j++]);
+		sscanf(hex, "%%x", (unsigned int *)&buf[j++]);
 	}
 	buf[j] = 0;
 
