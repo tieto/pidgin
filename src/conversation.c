@@ -846,10 +846,12 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		}
 	} else if (event->keyval == GDK_Page_Up) {
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-		gtk_imhtml_page_up(GTK_IMHTML(c->text));
+		if(!(event->state & GDK_CONTROL_MASK))
+			gtk_imhtml_page_up(GTK_IMHTML(c->text));
 	} else if (event->keyval == GDK_Page_Down) {
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-		gtk_imhtml_page_down(GTK_IMHTML(c->text));
+		if(!(event->state & GDK_CONTROL_MASK))
+			gtk_imhtml_page_down(GTK_IMHTML(c->text));
 	} else if ((event->keyval == GDK_F2) && (convo_options & OPT_CONVO_F2_TOGGLES)) {
 		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->comments);
 	} else if ((event->keyval == GDK_Return) || (event->keyval == GDK_KP_Enter)) {
