@@ -492,7 +492,7 @@ char *tobase16(const char *data, int length)
  */
 int frombase16(const char *ascii, char **raw)
 {
-	int len, i, accumulator;
+	int len, i, accumulator=0;
 	char *data;
 
 	if (!ascii || !(len = strlen(ascii)) || (len % 2))
