@@ -317,6 +317,7 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFriend *f)
 {
 	gboolean online = TRUE;
+	char *status = NULL;
 
 	if (!gc || !name || !f || !gaim_find_buddy(gaim_connection_get_account(gc), name))
 		return;
@@ -324,11 +325,66 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 	if (f->status == YAHOO_STATUS_OFFLINE)
 		online = FALSE;
 
-	serv_got_update(gc, name, online, 0, 0, f->idle, f->away ? UC_UNAVAILABLE : 0);
+	switch (f->status) {
+	case YAHOO_STATUS_AVAILABLE:
+		status = "available";
+		break;
+	case YAHOO_STATUS_BRB:
+		status = "brb";
+		break;
+	case YAHOO_STATUS_BUSY:
+		status = "busy";
+		break;
+	case YAHOO_STATUS_NOTATHOME:
+		status = "notathome";
+		break;
+	case YAHOO_STATUS_NOTATDESK:
+		status = "notatdesk";
+		break;
+	case YAHOO_STATUS_NOTINOFFICE:
+		status = "notinoffice";
+		break;
+	case YAHOO_STATUS_ONPHONE:
+		status = "onphone";
+		break;
+	case YAHOO_STATUS_ONVACATION:
+		status = "onvacation";
+		break;
+	case YAHOO_STATUS_OUTTOLUNCH:
+		status = "outtolunch";
+		break;
+	case YAHOO_STATUS_STEPPEDOUT:
+		status = "steppedout";
+		break;
+	case YAHOO_STATUS_INVISIBLE: /* this should never happen? */
+		status = "invisible";
+		break;
+	case YAHOO_STATUS_CUSTOM:
+		if (!f->away)
+			status = "avaiablewm";
+		else
+			status = "away";
+		break;
+	case YAHOO_STATUS_IDLE: /* FIXME: handle this */
+		break;
+	default:
+		gaim_debug_warning("yahoo", "Warning, unknown status %d\n", f->status);
+		break;
+	}
+
+	if (status) {
+		if (f->status == YAHOO_STATUS_CUSTOM)
+			gaim_prpl_got_user_status(gaim_connection_get_account(gc), name, status, "message",
+			                          yahoo_friend_get_status_message(f), NULL);
+		else
+			gaim_prpl_got_user_status(gaim_connection_get_account(gc), name, status, NULL);
+	}
+
 }
 
 static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	YahooFriend *f = NULL;
@@ -438,7 +494,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (strtol(pair->value, NULL, 10) == 0) {
 				if (f)
 					f->status = YAHOO_STATUS_OFFLINE;
-				serv_got_update(gc, name, FALSE, 0, 0, 0, 0);
+				gaim_prpl_got_user_status(account, name, "offline", NULL);
 				break;
 			}
 
@@ -948,7 +1004,7 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 		gaim_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
 		g_string_free(buf, TRUE);
 		g_hash_table_remove(yd->friends, who);
-		serv_got_update(gc, who, FALSE, 0, 0, 0, 0);
+		gaim_prpl_got_user_status(gaim_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
 	}
 }
 
