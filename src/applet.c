@@ -192,7 +192,7 @@ void insert_applet_away() {
 			a);
 
 		awy = g_slist_next(awy);
-		free(awayname);
+		g_free(awayname);
 	}
 }
 
