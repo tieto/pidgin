@@ -4927,6 +4927,7 @@ static void
 update_tab_icon(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
+	GaimConvWindow *win = gaim_conversation_get_window(conv);
 	GaimAccount *account;
 	const char *name;
 	GdkPixbuf *status = NULL;
@@ -4940,8 +4941,12 @@ update_tab_icon(GaimConversation *conv)
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
 
+	if (gaim_conv_window_get_active_conversation(win) == conv) 
+		gtk_window_set_icon(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window), status);
+
 	if(status)
 		g_object_unref(status);
+
 }
 
 static void
