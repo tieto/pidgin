@@ -171,6 +171,8 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer),
 									 buf, -1);
 	g_free(buf);
+
+	set_toggle(gtkconv->toolbar.image, FALSE);
 }
 
 static gint
@@ -202,26 +204,26 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	window = gtk_file_selection_new(_("Gaim - Insert Image"));
-	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image))) {
+		window = gtk_file_selection_new(_("Gaim - Insert Image"));
+		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 
-	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-					  "user_data", conv);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-					 "clicked", G_CALLBACK(do_insert_image_cb), window);
-	g_signal_connect_swapped(
-			G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
-			"clicked", G_CALLBACK(gtk_widget_destroy), window);
+		g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+				"user_data", conv);
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+				"clicked", G_CALLBACK(do_insert_image_cb), window);
+		g_signal_connect_swapped(
+				G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+				"clicked", G_CALLBACK(gtk_widget_destroy), window);
 
-	gtk_widget_show(window);
-/*
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
-								FALSE);
-								*/
+		gtk_widget_show(window);
+	} else {
+		gtk_widget_grab_focus(gtkconv->entry);
+	}
 }
 
-static void
+	static void
 insert_link_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;

@@ -136,6 +136,7 @@ struct _GtkIMHtmlScalable{
 typedef struct {
 	GtkIMHtmlScalable scalable;
 	GtkImage *image;
+	GdkPixbuf *pixbuf;
 	GtkTextMark *mark;
 	gchar *filename;
 	int width;

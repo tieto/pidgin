@@ -1433,12 +1433,15 @@ GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img, gchar *filename)
 	GTK_IMHTML_SCALABLE(im_image)->scale = gaim_im_image_scale;
 	GTK_IMHTML_SCALABLE(im_image)->add_to = gaim_im_image_add_to;
 	GTK_IMHTML_SCALABLE(im_image)->free = gaim_im_image_free;
+
+	im_image->pixbuf = img;
 	im_image->image = image;
 	im_image->width = gdk_pixbuf_get_width(img);
 	im_image->height = gdk_pixbuf_get_height(img);
 	im_image->mark = NULL;
 	im_image->filename = filename;
 
+	g_object_ref(img);
 	return GTK_IMHTML_SCALABLE(im_image);
 }
 
@@ -1447,7 +1450,6 @@ void gaim_im_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 	gaim_im_image *image = (gaim_im_image *)scale;
 
 	if(image->width > width || image->height > height){
-		GdkPixbuf *old_image = gtk_image_get_pixbuf(image->image);
 		GdkPixbuf *new_image = NULL;
 		float factor;
 		int new_width = image->width, new_height = image->height;
@@ -1463,7 +1465,7 @@ void gaim_im_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 			new_width = new_width * factor;
 		}
 
-		new_image = gdk_pixbuf_scale_simple(old_image, new_width, new_height, GDK_INTERP_BILINEAR);
+		new_image = gdk_pixbuf_scale_simple(image->pixbuf, new_width, new_height, GDK_INTERP_BILINEAR);
 		gtk_image_set_from_pixbuf(image->image, new_image);
 		g_object_unref(G_OBJECT(new_image));
 	}
@@ -1472,9 +1474,8 @@ void gaim_im_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 void gaim_im_image_free(GtkIMHtmlScalable *scale)
 {
 	gaim_im_image *image = (gaim_im_image *)scale;
-/*
-	g_object_unref(image->image);
-*/
+
+	g_object_unref(image->pixbuf);
 	g_free(image->filename);
 	g_free(scale);
 }
@@ -1587,7 +1588,7 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 		type = g_strdup("png");
 	}
 
-	gdk_pixbuf_save(gtk_image_get_pixbuf(image->image), filename, type, &error, NULL);
+	gdk_pixbuf_save(image->pixbuf, filename, type, &error, NULL);
 
 	if(error){
 		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
