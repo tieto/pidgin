@@ -95,9 +95,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	GtkWidget *back;
  	GtkWidget *awaytext;
         GtkWidget *vscrollbar;
-	GtkWidget *bbox;
 	GtkWidget *vbox;
-        GtkWidget *topbox;
         char *buf2;
         char buf[BUF_LONG];
         GList *cnv = conversations;
@@ -119,11 +117,10 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	if (!imaway) {
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
                 gtk_window_set_wmclass(GTK_WINDOW(imaway), "imaway", "Gaim");
+                gtk_container_set_border_width(GTK_CONTAINER(imaway), 5);
 		gtk_widget_realize(imaway);
 		aol_icon(imaway->window);
 		back = picture_button(imaway, _("I'm Back!"), join_xpm);
-		bbox = gtk_hbox_new(TRUE, 10);
-		topbox = gtk_hbox_new(FALSE, 5);
                 vbox = gtk_vbox_new(FALSE, 5);
 
 		awaytext = gtk_text_new(NULL, NULL);
@@ -133,7 +130,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		*/
 		strncpy_nohtml(buf, a->message, sizeof (buf));
 
-        vscrollbar = gtk_vscrollbar_new(GTK_TEXT(awaytext)->vadj);
+                vscrollbar = gtk_vscrollbar_new(GTK_TEXT(awaytext)->vadj);
 		gtk_widget_show(vscrollbar);
 		gtk_widget_set_usize(awaytext, 225, 75);
                 gtk_text_set_word_wrap(GTK_TEXT(awaytext), TRUE);
@@ -141,19 +138,14 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_text_freeze(GTK_TEXT(awaytext));
 		gtk_text_insert(GTK_TEXT(awaytext), NULL, NULL, NULL, buf, -1);
 		gtk_widget_show(awaytext);
-                
+
 		if (display_options & OPT_DISP_COOL_LOOK)
 			gtk_button_set_relief(GTK_BUTTON(back), GTK_RELIEF_NONE);
 		
 		/* Put the buttons in the box */
-		gtk_box_pack_start(GTK_BOX(bbox), back, TRUE, TRUE, 10);
-		
-		gtk_box_pack_start(GTK_BOX(topbox), awaytext, FALSE, FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), awaytext, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
 	
-		/* And the boxes in the box */
-		gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
-		
 		/* Handle closes right */
 		gtk_signal_connect(GTK_OBJECT(imaway), "destroy",
 			   GTK_SIGNAL_FUNC(do_im_back), imaway);
@@ -162,8 +154,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 		/* Finish up */
 		gtk_widget_show(back);
-		gtk_widget_show(topbox);
-		gtk_widget_show(bbox);
 		gtk_widget_show(vbox);
 		if (strlen(a->name))
 			gtk_window_set_title(GTK_WINDOW(imaway), a->name);

@@ -2018,7 +2018,7 @@ void build_imchat_box(gboolean on)
 		gtk_box_pack_start(GTK_BOX(imchatbox), imbutton, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(imchatbox), infobutton, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(imchatbox), chatbutton, TRUE, TRUE, 0);
-		gtk_container_border_width(GTK_CONTAINER(imchatbox), 10);
+		gtk_container_border_width(GTK_CONTAINER(imchatbox), 5);
 
 		gtk_signal_connect(GTK_OBJECT(imbutton), "clicked", GTK_SIGNAL_FUNC(im_callback), buddies);
 		gtk_signal_connect(GTK_OBJECT(infobutton), "clicked", GTK_SIGNAL_FUNC(info_callback), buddies);
@@ -2202,8 +2202,8 @@ void show_buddy_list()
         
 
         /* Do buddy list stuff */
-
-        buddypane = gtk_vbox_new(FALSE, 0);
+        /* FIXME: spacing on both panes is ad hoc */
+        buddypane = gtk_vbox_new(FALSE, 1);
         
 	buddies    = gtk_tree_new();
 	sw         = gtk_scrolled_window_new(NULL, NULL);
@@ -2227,9 +2227,8 @@ void show_buddy_list()
 
 
         /* Swing the edit buddy */
-        editpane = gtk_vbox_new(FALSE, 0);
+        editpane = gtk_vbox_new(FALSE, 1);
 
-        
        	addbutton = gtk_button_new_with_label(_("Add"));
        	groupbutton = gtk_button_new_with_label(_("Group"));
        	rembutton = gtk_button_new_with_label(_("Remove"));
@@ -2254,7 +2253,8 @@ void show_buddy_list()
 				  GTK_SIGNAL_FUNC (edit_tree_move), NULL);
 
 	
-	bbox = gtk_hbox_new(TRUE, 10);
+	bbox = gtk_hbox_new(TRUE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(bbox), 5);
        	tbox = gtk_scrolled_window_new(NULL, NULL);
        	/* Put the buttons in the box */
        	gtk_box_pack_start(GTK_BOX(bbox), addbutton, TRUE, TRUE, 0);
@@ -2266,8 +2266,8 @@ void show_buddy_list()
 	gtk_tooltips_set_tip(tips, rembutton, _("Remove selected Buddy"), "Penguin");
 
        	/* And the boxes in the box */
-       	gtk_box_pack_start(GTK_BOX(editpane), tbox, TRUE, TRUE, 5);
-       	gtk_box_pack_start(GTK_BOX(editpane), bbox, FALSE, FALSE, 5);
+       	gtk_box_pack_start(GTK_BOX(editpane), tbox, TRUE, TRUE, 0);
+       	gtk_box_pack_start(GTK_BOX(editpane), bbox, FALSE, FALSE, 0);
 
 	/* Handle closes right */
 

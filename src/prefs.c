@@ -112,6 +112,7 @@ static void general_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -171,6 +172,7 @@ static void buddy_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -217,6 +219,7 @@ static void convo_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -328,6 +331,7 @@ static void im_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -413,6 +417,7 @@ static void chat_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -615,6 +620,7 @@ static void room_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -800,6 +806,7 @@ static void font_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -885,6 +892,7 @@ static void sound_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -1009,6 +1017,7 @@ static void event_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -1171,12 +1180,8 @@ static void away_page()
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_widget_show(box);
-
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_set_usize(hbox, -1, 30);
-	gtk_widget_show(hbox);
 
 	hbox = gtk_hbox_new(TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
@@ -1191,7 +1196,7 @@ static void away_page()
 	gtk_widget_show(label);
 
 	top = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), top, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), top, TRUE, TRUE, 0);
 	gtk_widget_show(top);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1377,6 +1382,7 @@ static void browser_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
@@ -1617,6 +1623,7 @@ static void deny_page()
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(box), 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 

@@ -803,7 +803,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		GtkWidget *box, *label, *button;
 		char buf[256];
 
-		gc->meter = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gc->meter = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_policy(GTK_WINDOW(gc->meter), 0, 0, 1);
 		gtk_window_set_wmclass(GTK_WINDOW(gc->meter), "signon", "Gaim");
 		gtk_container_set_border_width(GTK_CONTAINER(gc->meter), 5);
@@ -819,21 +819,21 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_widget_show(box);
 
 		label = gtk_label_new(buf);
-		gtk_box_pack_start(GTK_BOX(box), label, 0, 0, 5);
+		gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
 
 		gc->progress = gtk_progress_bar_new();
 		gtk_widget_set_usize(gc->progress, 150, 0);
-		gtk_box_pack_start(GTK_BOX(box), gc->progress, 0, 0, 5);
+		gtk_box_pack_start(GTK_BOX(box), gc->progress, FALSE, FALSE, 0);
 		gtk_widget_show(gc->progress);
 
 		gc->status = gtk_statusbar_new();
 		gtk_widget_set_usize(gc->status, 150, 0);
-		gtk_box_pack_start(GTK_BOX(box), gc->status, 0, 0, 5);
+		gtk_box_pack_start(GTK_BOX(box), gc->status, FALSE, FALSE, 0);
 		gtk_widget_show(gc->status);
 
 		button = gtk_button_new_with_label(_("Cancel"));
-		gtk_box_pack_start(GTK_BOX(box), button, 0, 0, 5);
+		gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_signon), gc);
 		gtk_widget_show(button);
 
