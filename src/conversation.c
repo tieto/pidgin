@@ -1282,7 +1282,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 		}
 
-		gtk_html_append_text(GTK_HTML(c->text), buf, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+		gtk_html_append_text(GTK_HTML(c->text), buf, 0);
 
 		if (display_options & OPT_DISP_SHOW_SMILEY)
 		{
