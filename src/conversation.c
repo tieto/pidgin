@@ -1577,7 +1577,7 @@ static char* nick_colors[] = {
 	"#ff69b4",              /* Hot Pink */
 	"#ff6347",              /* Tomato */
 	"#fa8c00",              /* Dark Orange */
-	"#fa8072"               /* Salmon */
+	"#fa8072",               /* Salmon */
 	"#b22222",              /* Fire Brick */
 	"#f4a460",              /* Sandy Brown */
 	"#cd5c5c",              /* Indian Red */
