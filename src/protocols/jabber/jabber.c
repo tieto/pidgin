@@ -1914,15 +1914,15 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 		if ((b = gaim_find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
 			GaimGroup *g;
 			b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
-			if (groupname) {
-				if (!(g = gaim_find_group(groupname))) {
-					g = gaim_group_new(groupname);
-					gaim_blist_add_group(g, NULL);
-				}
-			} else {
-				g = gaim_group_new(_("Buddies"));
+
+			if(!groupname)
+				groupname = _("Buddies");
+
+			if (!(g = gaim_find_group(groupname))) {
+				g = gaim_group_new(groupname);
 				gaim_blist_add_group(g, NULL);
 			}
+
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					   "adding buddy [4]: %s\n", buddyname);
 			gaim_blist_add_buddy(b, NULL, g, NULL);
