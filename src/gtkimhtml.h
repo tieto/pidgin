@@ -121,7 +121,7 @@ void       gtk_imhtml_associate_smiley (GtkIMHtml        *imhtml,
 					gchar            *text,
 					gchar           **xpm);
 
-static void 	   gtk_imhtml_init_smileys     (GtkIMHtml *imhtml);
+void 	   gtk_imhtml_init_smileys     (GtkIMHtml *imhtml);
 
 void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml);
 

@@ -3218,7 +3218,6 @@ void set_smiley_array(GtkWidget *widget, int smiley_type)
 void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 {
 	char *smiley_text;
-	int i;
 
 	smiley_text = strdup(current_smiley);
 

@@ -789,7 +789,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	} else if (!strcasecmp(c, "RVOUS_PROPOSE")) {
 		char *user, *uuid, *cookie;
 		int seq;
-		char *rip, *pip, *vip, *trillian;
+		char *rip, *pip, *vip, *trillian = NULL;
 		int port;
 		
 		user = strtok(NULL, ":");

@@ -1603,7 +1603,7 @@ static int incomingim_ch4(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	aim_rxcallback_t userfunc;
 	aim_tlv_t *block;
 	struct aim_incomingim_ch4_args args;
-	int ret;
+	int ret = 0;
 
 	/*
 	 * Make a bstream for the meaty part.  Yum.  Meat.

@@ -348,6 +348,7 @@ extern void ui_remove_group(struct gaim_connection *, struct group *);
 extern void toggle_buddy_pixmaps();
 extern void gaim_separator(GtkWidget *);
 extern void redo_buddy_list(); /* you really shouldn't call this function */
+extern void set_blist_tab();
 
 /* Functions in buddy_chat.c */
 extern void join_chat();
@@ -395,6 +396,7 @@ extern void got_new_icon(struct gaim_connection *, char *);
 extern void toggle_spellchk();
 extern void set_convo_gc(struct conversation *, struct gaim_connection *);
 extern void update_buttons_by_protocol(struct conversation *);
+extern void toggle_fg_color(GtkWidget *, struct conversation *);
 extern void toggle_smileys();
 extern void toggle_timestamps();
 extern void update_pixmaps();
@@ -408,6 +410,7 @@ extern void set_convo_titles();
 extern void update_progress(struct conversation *, float);
 extern void show_typing(struct conversation *);
 extern gboolean reset_typing(char *);
+extern void set_anim();
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);

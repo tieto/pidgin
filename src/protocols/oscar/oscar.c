@@ -1444,7 +1444,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 static void gaim_icq_authgrant(gpointer w, struct icq_auth *data) {
 	char *uin, message;
 	struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
-	uin = g_strdup_printf("%d", data->uin);
+	uin = g_strdup_printf("%lu", data->uin);
 	message = 0;
 	aim_send_im_ch4(od->sess, uin, AIM_ICQMSG_AUTHGRANTED, &message);
 	show_got_added(data->gc, NULL, uin, NULL, NULL);
@@ -1456,7 +1456,7 @@ static void gaim_icq_authdeny(gpointer w, struct icq_auth *data) {
 	if (data->uin) {
 		char *uin, *message;
 		struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
-		uin = g_strdup_printf("%d", data->uin);
+		uin = g_strdup_printf("%lu", data->uin);
 		message = g_strdup_printf("No reason given.");
 		aim_send_im_ch4(od->sess, uin, AIM_ICQMSG_AUTHDENIED, message);
 		g_free(uin);
@@ -1471,8 +1471,8 @@ static void gaim_icq_authdeny(gpointer w, struct icq_auth *data) {
 static void gaim_icq_authask(struct gaim_connection *gc, fu32_t uin, char *msg) {
 	struct icq_auth *data = g_new(struct icq_auth, 1);
 	/* The first 6 chars of the message are some type of alien gibberish, so skip them */
-	char *dialog_msg = g_strdup_printf("The user %d wants to add you to their buddy list for the following reason:\n\n%s", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
-	debug_printf("Received an authorization request from UIN %ld\n", uin);
+	char *dialog_msg = g_strdup_printf("The user %lu wants to add you to their buddy list for the following reason:\n\n%s", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
+	debug_printf("Received an authorization request from UIN %lu\n", uin);
 	data->gc = gc;
 	data->uin = uin;
 	do_ask_dialog(dialog_msg, data, gaim_icq_authgrant, gaim_icq_authdeny);
@@ -1489,14 +1489,14 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x0007: { /* Someone has denied you authorization */
 			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %d has denied your request to add them to your contact list for the following reason:\n\n"), args->uin, args->msg ? args->msg : _("No reason given."));
+			dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, args->msg ? args->msg : _("No reason given."));
 			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Denied"));
 			g_free(dialog_msg);
 		} break;
 
 		case 0x0008: { /* Someone has granted you authorization */
 			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %d has granted your request to add them to your contact list."), args->uin);
+			dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
 			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Granted"));
 			g_free(dialog_msg);
 		} break;
@@ -2364,14 +2364,14 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		case 0x0007: { /* Someone has denied you authorization */
 			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %d has denied your request to add them to your contact list for the following reason:\n\n"), msg->sender, msg->msg ? msg->msg : _("No reason given."));
+			dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), msg->sender, msg->msg ? msg->msg : _("No reason given."));
 			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Denied"));
 			g_free(dialog_msg);
 		} break;
 
 		case 0x0008: { /* Someone has granted you authorization */
 			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %d has granted your request to add them to your contact list."), msg->sender);
+			dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), msg->sender);
 			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Granted"));
 			g_free(dialog_msg);
 		} break;

@@ -31,6 +31,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
+#include <gdk/gdkx.h>
+#include <X11/Xlib.h>
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
 #include <gdk/gdkkeysyms.h>
@@ -852,18 +854,14 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		int pos = 0;
 		switch (event->keyval) {
 		case GDK_Up:
-			debug_printf("YOU HIT UP!\n");
 			if (!c->send_history)
 				break;
-			debug_printf("history exists\n");
 			if (!c->send_history->prev) {
-				debug_printf("at curent\n");
 				if (c->send_history->data)
 					g_free(c->send_history->data);
 				c->send_history->data = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 			} 
 			if (c->send_history->next && c->send_history->next->data) {
-				debug_printf("going to ->next\n");
 				c->send_history = c->send_history->next;
 				gtk_editable_delete_text (GTK_EDITABLE(entry),0,-1);
 				gtk_editable_insert_text(GTK_EDITABLE(entry), 
@@ -916,6 +914,34 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				quiet_set(c->strike,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->strike)));
 				do_strike(c->strike, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			
+			case '-':
+				do_small(NULL, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			case '=':
+			case '+':
+				do_big(NULL, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;	
+			case '0':
+				do_normal(NULL, c->entry);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			case 'f':
+			case 'F':
+				quiet_set(c->font,
+					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->font)));
+				toggle_font(c->font, c);
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				break;
+			case 'c':
+			case 'C':
+				quiet_set(c->fgcolorbtn,
+					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->fgcolorbtn)));
+				toggle_fg_color(c->fgcolorbtn, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			}
@@ -990,7 +1016,22 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_imhtml_clear(GTK_IMHTML(c->text));
 			g_string_free(c->history, TRUE);
 			c->history = g_string_new("");
+		} else if (event->keyval == 'w') {
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			close_callback(c->close, c);
+			c = NULL;
+			return TRUE;
+		} else if (event->keyval == 'n') {
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			show_im_dialog();
+		} else if (event->keyval == 'z') {
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			XIconifyWindow(GDK_DISPLAY(),
+				       GDK_WINDOW_XWINDOW(c->window->window),
+				       ((_XPrivDisplay)GDK_DISPLAY())->default_screen);		     
 		}
+		
+
 		if ((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
 		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) {
 			GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
@@ -1164,8 +1205,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 				imflags = IM_FLAG_CHECKBOX;
 			
 			if (c->images) {
-				int id, offset;
-				char *bigbuf;
+				int id = 0, offset = 0;
+				char *bigbuf = NULL;
 				GSList *tmplist = c->images;
 				id = 1;
 				

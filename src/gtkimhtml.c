@@ -2263,7 +2263,7 @@ gtk_imhtml_get_type (void)
 	return imhtml_type;
 }
 
-static void
+void
 gtk_imhtml_init_smileys (GtkIMHtml *imhtml)
 {
 	g_return_if_fail (imhtml != NULL);

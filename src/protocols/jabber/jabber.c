@@ -731,14 +731,39 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name, char *type)
 	}
 }
 
+static time_t iso8601_to_time(char *timestamp)
+{
+   struct tm t;
+   if(sscanf(timestamp,"%04d%02d%02dT%02d:%02d:%02d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
+   {
+      t.tm_year -= 1900;
+      t.tm_mon -= 1;
+      return mktime(&t) - timezone;
+   }
+   return 0;
+}
+
 static void jabber_handlemessage(gjconn gjc, jpacket p)
 {
-	xmlnode y, xmlns, subj;
+	xmlnode y, xmlns, subj, z;
+	time_t time_sent = time(NULL);
 
 	char *from = NULL, *msg = NULL, *type = NULL, *topic = NULL;
 	char m[BUF_LONG * 2];
 
 	type = xmlnode_get_attrib(p->x, "type");
+
+	z = xmlnode_get_firstchild(p->x);
+
+	while(z)
+	{
+	   if(NSCHECK(z,NS_DELAY))
+	   {
+	      char *timestamp = xmlnode_get_attrib(z,"stamp");
+	      time_sent = iso8601_to_time(timestamp);
+	   }
+	   z = xmlnode_get_nextsibling(z);
+	}
 
 	if (!type || !strcasecmp(type, "normal") || !strcasecmp(type, "chat")) {
 
@@ -778,13 +803,13 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 			struct jabber_chat *jc;
 			g_snprintf(m, sizeof(m), "%s", msg);
 			if (((jc = find_existing_chat(GJ_GC(gjc), p->from)) != NULL) && jc->b)
-				serv_got_chat_in(GJ_GC(gjc), jc->b->id, p->from->resource, 1, m, time(NULL));
+				serv_got_chat_in(GJ_GC(gjc), jc->b->id, p->from->resource, 1, m, time_sent);
 			else {
 				int flags = 0;
 				if (xmlnode_get_tag(p->x, "gaim"))
 					flags = IM_FLAG_GAIMUSER;
 				if (find_conversation(jid_full(p->from)))
-					serv_got_im(GJ_GC(gjc), jid_full(p->from), m, flags, time(NULL), -1);
+					serv_got_im(GJ_GC(gjc), jid_full(p->from), m, flags, time_sent, -1);
 				else {
 					if(p->from->user) {
 					    from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
@@ -792,7 +817,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 					    /* server message? */
 					    from = g_strdup(p->from->server);
 					}
-					serv_got_im(GJ_GC(gjc), from, m, flags, time(NULL), -1);
+					serv_got_im(GJ_GC(gjc), from, m, flags, time_sent, -1);
 					g_free(from);
 				}
 			}
@@ -870,7 +895,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 				
 
 				g_snprintf(buf, sizeof(buf), "%s", msg);
-				serv_got_chat_in(GJ_GC(gjc), jc->b->id, p->from->resource, 0, buf, time(NULL));
+				serv_got_chat_in(GJ_GC(gjc), jc->b->id, p->from->resource, 0, buf, time_sent);
 			}
 		} else { /* message from the server */
 		   	if(jc->b && topic) {
@@ -887,7 +912,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		debug_printf("unhandled message %s\n", type);
 	}
 }
-
+	   
 static void jabber_handlepresence(gjconn gjc, jpacket p)
 {
 	char *to, *from, *type;
@@ -908,20 +933,18 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
 	
-	z = xmlnode_get_tag(p->x, "x");
+	z = xmlnode_get_firstchild(p->x);
 	
-	if(NSCHECK(z,NS_DELAY))
+	while(z)
 	{
-	   struct tm t;
-	   char *timestamp = xmlnode_get_attrib(z,"stamp");
-	   if(sscanf(timestamp,"%04d%02d%02dT%02d:%02d:%02d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
+	   if(NSCHECK(z,NS_DELAY))
 	   {
-	      t.tm_year -= 1900;
-	      t.tm_mon -= 1;
-	      signon = mktime(&t) - timezone;
+	      char *timestamp = xmlnode_get_attrib(z,"stamp");
+	      signon = iso8601_to_time(timestamp);
 	   }
+	   z = xmlnode_get_nextsibling(z);
 	}
-
+	
 	if ((y = xmlnode_get_tag(p->x, "show"))) {
 		show = xmlnode_get_data(y);
 		if (!show) {

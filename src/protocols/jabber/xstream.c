@@ -153,7 +153,7 @@ xstream xstream_new(pool p, xstream_onNode f, void *arg)
 /* attempts to parse the buff onto this stream firing events to the handler, returns the last known status */
 int xstream_eat(xstream xs, char *buff, int len)
 {
-    char *err;
+    char *err = NULL;
     xmlnode xerr;
     static char maxerr[] = "maximum node size reached";
     static char deeperr[] = "maximum node depth reached";

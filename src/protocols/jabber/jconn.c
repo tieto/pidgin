@@ -384,7 +384,7 @@ char *jab_auth(jconn j)
 char *jab_reg(jconn j)
 {
     xmlnode x,y,z;
-    char *hash, *user, *id;
+    char *user, *id;
 
     if (!j) return(NULL);
 

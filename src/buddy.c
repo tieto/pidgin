@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
@@ -1194,7 +1195,7 @@ create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
 	
 	style = gtk_widget_get_style( widget );
 	
-	if (gc->prpl->list_icon)
+	if (gc->prpl->list_icon) {
 		if (gc->prpl->protocol ==  PROTO_OSCAR) { 
 			if (isdigit(*gc->username)) {
 				xpm = gc->prpl->list_icon(0);
@@ -1204,6 +1205,7 @@ create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
 		} else { 
 			xpm = gc->prpl->list_icon (0);
 		}
+	}
 	if (xpm == NULL)
 		xpm = (char **)no_icon_xpm;
 	
@@ -1826,7 +1828,6 @@ static struct group_show *new_group_show(char *group)
 	GdkBitmap *bm;
 	GtkStyle *style;
 	GtkStyle *style2;
-	int j;
 
 	g->name = g_strdup(group);
 
