@@ -11,6 +11,8 @@ gaim_SOURCES =	about.c \
 		browser.c \
 		buddy.c \
 		buddy_chat.c \
+		buddyicondlg.c \
+		buddyicondlg.h \
 		conversation.c \
 		conversation.h \
 		core.c \
@@ -38,6 +40,7 @@ gaim_SOURCES =	about.c \
 		html.c \
 		idle.c \
 		list.c \
+		list.h
 		log.c \
 		main.c \
 		md5.c \
@@ -49,6 +52,7 @@ gaim_SOURCES =	about.c \
 		pounce.c \
 		pounce.h \
 		prefs.c \
+		privacy.h \
 		proxy.c \
 		proxy.h \
 		prpl.c \
