@@ -20,8 +20,6 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "gtkutils.h"
-#include "gtkblist.h"
 #include "multi.h"
 #include "notify.h"
 #include "prpl.h"
@@ -29,15 +27,8 @@
 #include "ui.h"
 #include "util.h"
 
-GtkWidget *protomenu = NULL;
-
-struct _prompt {
-	GtkWidget *window;
-	GtkWidget *entry;
-	void (*doit)(void *, const char *);
-	void (*dont)(void *);
-	void *data;
-};
+/* XXX */
+#include "gtkconv.h"
 
 GaimPlugin *
 gaim_find_prpl(GaimProtocol type)

@@ -160,9 +160,6 @@ extern GtkWidget *bgcseld;
 void build_allow_list();
 void build_block_list();
 
-/* Globals in prpl.c */
-extern GtkWidget *protomenu;
-
 /* Globals in session.c */
 extern gboolean session_managed;
 
