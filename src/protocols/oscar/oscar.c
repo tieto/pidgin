@@ -5644,7 +5644,7 @@ static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, name);
 		if (gname) {
 			gaim_debug_info("oscar",
-					   "ssi: changing the alias for buddy %s to %s\n", name, alias);
+					   "ssi: changing the alias for buddy %s to %s\n", name, alias ? alias : "(none)");
 			aim_ssi_aliasbuddy(od->sess, gname, name, alias);
 		}
 	}
