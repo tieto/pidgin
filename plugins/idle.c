@@ -20,7 +20,8 @@ static void set_idle(GtkWidget *button, GtkWidget *spinner) {
 	if (!gc) {
 		return;
 	}
-	debug_printf("setting idle time for %s to %d\n", gc->username, tm);
+	gaim_debug(GAIM_DEBUG_INFO, "idle",
+			   "setting idle time for %s to %d\n", gc->username, tm);
 	time(&t);
 	t -= 60 * tm;
 	gc->lastsent = t;

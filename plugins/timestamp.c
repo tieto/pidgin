@@ -50,7 +50,7 @@ static void set_timestamp(GtkWidget *button, GtkWidget *spinner) {
 	tm = 0;
 	
 	tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 1, G_MAXINT);
-	debug_printf("setting  time to %d mins\n", tm);
+	gaim_debug(GAIM_DEBUG_MISC, "timestamp", "setting  time to %d mins\n", tm);
 	
 	tm = tm * 60 * 1000;
 

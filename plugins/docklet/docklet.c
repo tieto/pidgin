@@ -288,22 +288,22 @@ static gboolean docklet_update_status() {
 }
 
 static void docklet_embedded(GtkWidget *widget, void *data) {
-	debug_printf("Tray Icon: embedded\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: embedded\n");
 	gaim_gtk_blist_docklet_add();
 }
 
 static void docklet_remove_callbacks() {
-	debug_printf("Tray Icon: removing callbacks");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: removing callbacks");
 
 	while (g_source_remove_by_user_data(&docklet)) {
-		debug_printf(".");
+		gaim_debug(GAIM_DEBUG_INFO, NULL, ".");
 	}
 
-	debug_printf("\n");
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "\n");
 }
 
 static void docklet_destroyed(GtkWidget *widget, void *data) {
-	debug_printf("Tray Icon: destroyed\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: destroyed\n");
 
 	gaim_gtk_blist_docklet_remove();
 
@@ -324,7 +324,8 @@ static gboolean docklet_create() {
 		/* if this is being called when a tray icon exists, it's because
 		   something messed up. try destroying it before we proceed,
 		   although docklet_refcount may be all hosed. hopefully won't happen. */
-		debug_printf("Tray Icon: trying to create icon but it already exists?\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "docklet",
+				   "Tray Icon: trying to create icon but it already exists?\n");
 		plugin_unload(NULL);
 	}
 
@@ -345,7 +346,7 @@ static gboolean docklet_create() {
 	docklet_update_status();
 	docklet_update_icon();
 
-	debug_printf("Tray Icon: created\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: created\n");
 
 	return FALSE; /* for when we're called by the glib idle handler */
 }
@@ -432,7 +433,7 @@ plugin_unload(GaimPlugin *plugin)
 	/* do this while gaim has no other way to toggle the global mute */
 	gaim_sound_set_mute(FALSE);
 
-	debug_printf("Tray Icon: removed\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: removed\n");
 
 	return TRUE;
 }

@@ -62,18 +62,18 @@ static void send_it(GtkEntry *entry)
 				write(*a, &seqno, 2);
 				write(*a, &len, 2);
 				write(*a, txt, ntohs(len));
-				debug_printf("TOC C: %s\n", txt);
+				gaim_debug(GAIM_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 			}
 			break;
 		case PROTO_MSN:
 			write(*(int *)gc->proto_data, txt, strlen(txt));
 			write(*(int *)gc->proto_data, "\r\n", 2);
-			debug_printf("MSN C: %s\n", txt);
+			gaim_debug(GAIM_DEBUG_MISC, "raw", "MSN C: %s\n", txt);
 			break;
 		case PROTO_IRC:
 			write(*(int *)gc->proto_data, txt, strlen(txt));
 			write(*(int *)gc->proto_data, "\r\n", 2);
-			debug_printf("IRC C: %s\n", txt);
+			gaim_debug(GAIM_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 			break;
 		case PROTO_JABBER:
 			jab_send_raw(*(jconn *)gc->proto_data, txt);

@@ -35,7 +35,7 @@ void run_commands() {
 	while (fgets(buffer, sizeof buffer, file)) {
 		if (buffer[strlen(buffer) - 1] == '\n')
 			buffer[strlen(buffer) - 1] = 0;
-		debug_printf("read: %s\n", buffer);
+		gaim_debug(GAIM_DEBUG_MISC, "filectl", "read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
 		if (!strncasecmp(command, "signon", 6)) {
 			struct gaim_account *account = NULL;
@@ -159,7 +159,8 @@ void check_file() {
 
 	if ((stat (file, &finfo) == 0) && (finfo.st_size > 0))
 		if (mtime != finfo.st_mtime) {
-			debug_printf("control changed, checking\n");
+			gaim_debug(GAIM_DEBUG_INFO, "filectl",
+					   "control changed, checking\n");
 			run_commands();
 		}
 }

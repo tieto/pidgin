@@ -270,8 +270,9 @@ execute_perl(const char *function, int argc, char **args)
 	 * return value.
 	 */
 	if (SvTRUE(ERRSV)) {
-		debug_printf("Perl function %s exited abnormally: %s\n",
-					 function, SvPV(ERRSV, na));
+		gaim_debug(GAIM_DEBUG_ERROR, "perl",
+				   "Perl function %s exited abnormally: %s\n",
+				   function, SvPV(ERRSV, na));
 		POPs;
 	}
 	else if (count != 1) {
@@ -279,8 +280,9 @@ execute_perl(const char *function, int argc, char **args)
 		 * This should NEVER happen.  G_SCALAR ensures that we WILL
 		 * have 1 parameter.
 		 */
-		debug_printf("Perl error from %s: expected 1 return value, "
-					 "but got %d\n", function, count);
+		gaim_debug(GAIM_DEBUG_ERROR, "perl",
+				   "Perl error from %s: expected 1 return value, "
+				   "but got %d\n", function, count);
 	}
 	else
 		ret_value = POPi;
@@ -511,14 +513,11 @@ XS (XS_GAIM_register)
 	callback = SvPV(ST(2), junk);
 	unused   = SvPV(ST(3), junk);
 
-	debug_printf("GAIM::register(%s, %s)\n", name, ver);
+	gaim_debug(GAIM_DEBUG_INFO, "perl",
+			   "GAIM::register(%s, %s)\n", name, ver);
 
 	for (pl = gaim_plugins_get_all(); pl != NULL; pl = pl->next) {
 		plug = pl->data;
-
-		debug_printf("** Comparing '%s' to '%s' and '%s' to '%s'\n",
-					 name, plug->info->name, ver,
-					 plug->info->version);
 
 		if (!strcmp(name, plug->info->name) &&
 		    !strcmp(ver, plug->info->version)) {
@@ -1050,8 +1049,9 @@ perl_event(GaimEvent event, void *unused, va_list args)
 		/* we can't handle this usefully without gtk/perl bindings */
 		return 0;
 	default:
-		debug_printf("someone forgot to handle %s in the perl binding\n",
-					 gaim_event_get_name(event));
+		gaim_debug(GAIM_DEBUG_WARNING, "perl",
+				   "Someone forgot to handle %s in the perl binding\n",
+				   gaim_event_get_name(event));
 		return 0;
 	}
 
@@ -1149,9 +1149,13 @@ XS (XS_GAIM_add_event_handler)
 		handler->handler_name = g_strdup(SvPV(ST(2), junk));
 		handler->plug = plug;
 		perl_event_handlers = g_list_append(perl_event_handlers, handler);
-		debug_printf("registered perl event handler for %s\n", handler->event_type);
+		gaim_debug(GAIM_DEBUG_INFO, "perl",
+				   "Registered perl event handler for %s\n",
+				   handler->event_type);
 	} else {
-		debug_printf("Invalid handle (%s) registering perl event handler\n", handle);
+		gaim_debug(GAIM_DEBUG_ERROR, "perl",
+				   "Invalid handle (%s) registering perl event handler\n",
+				   handle);
 	}
 	
 	XSRETURN_EMPTY;
@@ -1223,14 +1227,17 @@ XS (XS_GAIM_add_timeout_handler)
 	if (p) {
 		handler = g_new0(struct _perl_timeout_handlers, 1);
 		timeout = 1000 * SvIV(ST(1));
-		debug_printf("Adding timeout for %ld seconds.\n", timeout/1000);
+		gaim_debug(GAIM_DEBUG_INFO, "perl",
+				   "Adding timeout for %ld seconds.\n", timeout/1000);
 		handler->plug = plug;
 		handler->handler_name = g_strdup(SvPV(ST(2), junk));
 		handler->handler_args = g_strdup(SvPV(ST(3), junk));
 		perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 		handler->iotag = g_timeout_add(timeout, perl_timeout, handler);
 	} else {
-		debug_printf("Invalid handle (%s) in adding perl timeout handler.", handle);
+		gaim_debug(GAIM_DEBUG_ERROR, "perl",
+				   "Invalid handle (%s) in adding perl timeout handler.",
+				   handle);
 	}
 	XSRETURN_EMPTY;
 }

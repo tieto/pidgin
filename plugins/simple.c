@@ -4,7 +4,7 @@
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	debug_printf("simple plugin loaded.\n");
+	gaim_debug(GAIM_DEBUG_INFO, "simple", "simple plugin loaded.\n");
 
 	return TRUE;
 }
@@ -12,7 +12,7 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	debug_printf("simple plugin unloaded.\n");
+	gaim_debug(GAIM_DEBUG_INFO, "simple", "simple plugin unloaded.\n");
 
 	return TRUE;
 }

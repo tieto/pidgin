@@ -1,11 +1,5 @@
 #include "config.h"
 
-#if 0
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-#endif
-
 #include "gaim.h"
 #include "prpl.h"
 
@@ -26,13 +20,13 @@ static guint tim = 0;
 
 static gboolean do_signon(gpointer data) {
 	struct gaim_account *account = data;
-	debug_printf("do_signon called\n");
+	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "do_signon called\n");
 
 	if (g_slist_index(gaim_accounts, account) < 0)
 		return FALSE;
-	debug_printf("calling serv_login\n");
+	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling serv_login\n");
 	serv_login(account);
-	debug_printf("done calling serv_login\n");
+	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling serv_login\n");
 	tim = 0;
 	return FALSE;
 }

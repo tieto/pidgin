@@ -339,7 +339,8 @@ static void save_list()
 		} while(gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 	}
 	if(fclose(f)) {
-		debug_printf("Error writing to %s: %m\n", tempfilename);
+		gaim_debug(GAIM_DEBUG_ERROR, "spellchk",
+				   "Error writing to %s: %m\n", tempfilename);
 		unlink(tempfilename);
 		g_free(name);
 		return;
