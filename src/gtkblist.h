@@ -76,6 +76,9 @@ typedef struct {
 
 	GaimBlistNode *selected_node;   /**< The currently selected node */
 
+	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
+	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
+
 } GaimGtkBuddyList;
 
 #define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)
