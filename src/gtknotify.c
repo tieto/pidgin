@@ -22,6 +22,8 @@
  */
 #include "gtkinternal.h"
 
+#include <gdk/gdkkeysyms.h>
+
 #include "connection.h"
 #include "debug.h"
 #include "prefs.h"
@@ -259,6 +261,17 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	return data;
 }
 
+static
+gboolean formatted_input_cb(GtkWidget *dialog,
+		GdkEventKey *event, gpointer data)
+{
+	if (event->keyval == GDK_Escape) {
+		gtk_object_destroy(GTK_OBJECT(dialog));
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static void *
 gaim_gtk_notify_formatted(const char *title, const char *primary,
 						  const char *secondary, const char *text,
@@ -325,6 +338,9 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
 					 G_CALLBACK(formatted_close_cb), window);
+	g_signal_connect(G_OBJECT(window), "key_press_event",
+			G_CALLBACK(formatted_input_cb), NULL);
+
 
 	/* Add the text to the gtkimhtml */
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
