@@ -215,6 +215,22 @@ void gaim_plugin_pref_set_max_length(GaimPluginPref *pref, unsigned int max_leng
  */
 unsigned int gaim_plugin_pref_get_max_length(GaimPluginPref *pref);
 
+/**
+ * Sets the masking of a string plugin pref
+ *
+ * @param pref   The plugin pref
+ * @param masked The value to set
+ */
+void gaim_plugin_pref_set_masked(GaimPluginPref *pref, gboolean mask);
+
+/**
+ * Gets the masking of a string plugin pref
+ *
+ * @param pref The plugin pref
+ * @return The masking
+ */
+gboolean gaim_plugin_pref_get_masked(GaimPluginPref *pref);
+
 /*@}*/
 
 #ifdef __cplusplus

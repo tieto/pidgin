@@ -44,6 +44,7 @@ struct _GaimPluginPref {
 	int max;
 	GList *choices;
 	unsigned int max_length;
+	gboolean masked;
 };
 
 GaimPluginPrefFrame *
@@ -277,4 +278,18 @@ gaim_plugin_pref_get_max_length(GaimPluginPref *pref) {
 	g_return_val_if_fail(pref, 0);
 
 	return pref->max_length;
+}
+
+void
+gaim_plugin_pref_set_masked(GaimPluginPref *pref, gboolean masked) {
+	g_return_if_fail(pref);
+
+	pref->masked = masked;
+}
+
+gboolean
+gaim_plugin_pref_get_masked(GaimPluginPref *pref) {
+	g_return_val_if_fail(pref, FALSE);
+
+	return pref->masked;
 }

@@ -80,6 +80,12 @@ get_plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
+								"/plugins/core/pluginpref_example/masked_string",
+								"masked string");
+	gaim_plugin_pref_set_masked(ppref, TRUE);
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label(
 							"/plugins/core/pluginpref_example/max_string",
 							"string pref\n(max length of 16)");
 	gaim_plugin_pref_set_max_length(ppref, 16);
@@ -144,6 +150,7 @@ init_plugin(GaimPlugin *plugin)
 							"string");
 	gaim_prefs_add_string("/plugins/core/pluginpref_example/max_string",
 							"max length string");
+	gaim_prefs_add_string("/plugins/core/pluginpref_example/masked_string", "masked");
 	gaim_prefs_add_string("/plugins/core/pluginpref_example/string_choice", "red");
 }
 
