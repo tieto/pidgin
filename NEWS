@@ -18,6 +18,12 @@
 	buddies on my list, I definitely don't need duplicates.  Being that I
 	have class in the morning, I'll just raise my juice glass for this one.
 
+	Christian: I'm not as cool as Rob, Sean, or Nathan, so I go down here.
+	Well, among some of the fixes is my new buddy pounce code! This adds new
+	buddy pounce types, core/ui splitifies the code, and makes the dialog
+	box spiffy. Yay frequent releases! Erm, I can't think of anything else
+	cool to say here. Have fun, everyone!
+
 0.60 (04/04/2003):
 	Rob: Wow. So, it has been a really long time since we started the
 	gtk2 fork. It's finally ready for public consumption. Sean is about
