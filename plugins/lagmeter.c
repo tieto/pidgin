@@ -79,6 +79,7 @@ static void check_lag(struct gaim_connection *gc, char **who, char **message, vo
 		ms += tv.tv_usec - my_lag_tv.tv_usec;
 
 		update_lag(ms);
+		g_free(*message);
 		*message = NULL;
 	}
 	g_free(name);

@@ -76,26 +76,44 @@ static void writetext(char *text) {
 }
 
 static char *readline() {
-	int len = 1024;
-	gchar *buf = g_malloc(len);
-	int pos = 0;
-	do {
-		int val = read(fd_read[0], buf + pos, 1);
-		if (val <= 0) {
+	static gchar *buf = NULL;
+	char *end;
+	char *ret;
+	char *tmp;
+
+	/* read until we get a newline */
+	while (!buf || (end = strchr(buf, '\n')) == NULL) {
+		char space[1024];
+		int ret = read(fd_read[0], space, 1023);
+		if (ret < 0) {
 			error_print("read: %s\n", strerror(errno));
-			g_free(buf);
 			return NULL;
 		}
-		pos += val;
-		if (pos == len) {
-			len *= 2;
-			buf = g_realloc(buf, len);
-		}
-	} while (buf[pos - 1] != '\n');
+		space[ret] = 0;
+		if (buf) {
+			tmp = buf;
+			buf = g_strconcat(tmp, space, NULL);
+			g_free(tmp);
+		} else
+			buf = g_strdup(space);
+	}
 
-	buf = g_realloc(buf, pos + 1);
-	buf[pos] = 0;
-	return buf;
+	/* we got a newline, and end points to it.
+	 * copy out the data, reset buf, return */
+
+	if (end[1] == 0) {
+		/* only one line is in the buffer */
+		ret = buf;
+		buf = NULL;
+		return ret;
+	}
+
+	ret = g_strndup(buf, end - buf + 1);
+	tmp = buf;
+	buf = g_strdup(end + 1);
+	g_free(tmp);
+
+	return ret;
 }
 
 static char *readresponse() {
