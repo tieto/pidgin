@@ -1027,7 +1027,9 @@ static void
 gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 {
 	struct _gaim_gtk_blist_node *gtknode;
+	GtkTreeIter iter, parent;
 	GaimBlistNode *bnode;
+	GtkTreePath *path;		
 
 	if(!GAIM_BLIST_NODE_IS_CONTACT(node))
 		return;
@@ -1039,7 +1041,20 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	for(bnode = node->child; bnode; bnode = bnode->next) {
 		gaim_gtk_blist_update(NULL, bnode);
 	}
+	
+	/* This ensures that the bottom buddy is visible, i.e. not scrolled off the alignment */
+	get_iter_from_node(node, &parent);
+	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent, 
+				      gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &parent) -1);
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+	/* Let the treeview draw so it knows where to scroll */
+	while (gtk_events_pending())
+		gtk_main_iteration();
+	gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW(gtkblist->treeview), path, NULL, FALSE, 0, 0); 
+	
+
 	gaim_gtk_blist_update(NULL, node);
+	gtk_tree_path_free(path);
 }
 
 static void
