@@ -1048,6 +1048,15 @@ Function .onInit
   ; If install path was set on the command, use it.
   StrCmp $INSTDIR "" 0 instdir_done
 
+  ;  If gaim is currently intalled, we should default to where it is currently installed
+  ClearErrors
+  ReadRegStr $INSTDIR HKCU "${GAIM_REG_KEY}" ""
+  IfErrors +2
+  StrCmp $INSTDIR "" 0 instdir_done
+  ReadRegStr $INSTDIR HKLM "${GAIM_REG_KEY}" ""
+  IfErrors +2
+  StrCmp $INSTDIR "" 0 instdir_done
+
   Call CheckUserInstallRights
   Pop $0
 
