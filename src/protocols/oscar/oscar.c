@@ -4002,7 +4002,6 @@ static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 
 static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GString *buf;
-	int at = 0, len;
 	va_list ap;
 	char *address, *SNs;
 	int i, num;
