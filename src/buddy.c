@@ -169,6 +169,49 @@ gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
 #endif
 
 
+static void destroy_buddies(struct gaim_connection *gc) {
+	GSList *s = shows;
+	struct group_show *g;
+	GSList *m;
+	struct buddy_show *b;
+
+	while (s) {
+		gboolean remove_group = FALSE;
+		g = (struct group_show *)s->data;
+		m = g->members;
+		while (m) {
+			b = (struct buddy_show *)m->data;
+			if (g_slist_length(b->connlist) == 1 && b->connlist->data == gc) {
+				if (b->log_timer > 0)
+					gtk_timeout_remove(b->log_timer);
+				b->connlist = g_slist_remove(b->connlist, gc);
+				gtk_widget_destroy(b->item);
+				g->members = g_slist_remove(g->members, b);
+				if (g->members == NULL) {
+					shows = g_slist_remove(shows, g);
+					gtk_widget_destroy(g->item);
+					g_free(g->name);
+					g_free(g);
+					m = NULL;
+					remove_group = TRUE;
+				} else
+					m = g->members;
+				g_free(b->name);
+				g_free(b->show);
+				g_free(b);
+			} else {
+				b->connlist = g_slist_remove(b->connlist, gc);
+				m = g_slist_next(m);
+			}
+		}
+		if (remove_group)
+			s = shows;
+		else
+			s = g_slist_next(s);
+	}
+}
+
+
 void signoff_all(GtkWidget *w, gpointer d)
 {
 	GSList *c = connections;
@@ -183,6 +226,7 @@ void signoff_all(GtkWidget *w, gpointer d)
 
 void signoff(struct gaim_connection *gc)
 {
+	destroy_buddies(gc);
 	plugin_event(event_signoff, gc, 0, 0, 0);
 	serv_close(gc);
 
@@ -1264,6 +1308,10 @@ static int buddy_number(char *group, char *buddy) {
 	while (c) {
 		g = (struct gaim_connection *)c->data;
 		p = find_group(g, group);
+		if (!p) {
+			c = c->next;
+			continue;
+		}
 		z = p->members;
 		while (z) {
 			b = (struct buddy *)z->data;

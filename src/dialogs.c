@@ -2789,6 +2789,8 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 			g_free (first);
 			return;
 		}
+		/* FIXME */
+		gc = connections->data;
         }
         else {
 		for (i = 0; i < strlen(gc->username); i++)
