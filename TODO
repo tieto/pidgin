@@ -13,9 +13,7 @@
 	Rename for groups/buddies
 	Status labels in buddy list (mostly just for yahoo)
 	Border for GtkIMHtml
-	Tooltips for links in GtkIMHtml
 	Sounds on buddy pounce
-	Implement system logging
 	GPG Encryption of messages
 
 	ICQ through Oscar plugin (requires hacking libfaim :-/)

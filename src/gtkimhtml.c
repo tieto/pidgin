@@ -2051,23 +2051,23 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 		rev = g_list_last (newbits); \
 		while (rev) { \
 			GtkIMHtmlBit *bit = rev->data; \
-			if (bit->type == TYPE_BR) \
-				break; \
 			if (bit->bg) \
 				gdk_color_free (bit->bg); \
 			bit->bg = gdk_color_copy (bg); \
+			if (bit->type == TYPE_BR) \
+				break; \
 			rev = g_list_previous (rev); \
 		} \
 		if (!rev) { \
 			rev = g_list_last (imhtml->bits); \
 			while (rev) { \
 				GtkIMHtmlBit *bit = rev->data; \
-				if (bit->type == TYPE_BR) \
-					break; \
 				if (bit->bg) \
 					gdk_color_free (bit->bg); \
 				bit->bg = gdk_color_copy (bg); \
 				gdk_color_alloc (cmap, bit->bg); \
+				if (bit->type == TYPE_BR) \
+					break; \
 				rev = g_list_previous (rev); \
 			} \
 		} \
