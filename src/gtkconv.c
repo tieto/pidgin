@@ -2113,7 +2113,7 @@ gray_stuff_out(GaimConversation *conv)
 		/* Show stuff that applies to IMs, hide stuff that applies to chats */
 
 		/* Deal with buttons */
-		gtk_widget_hide(gtkconv->info);
+		gtk_widget_show(gtkconv->info);
 		gtk_widget_show(gtkconv->send);
 		gtk_widget_show(gtkconv->u.chat->invite);
 
