@@ -468,7 +468,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 	if (event->keyval == GDK_Escape) {
 		if (general_options & OPT_GEN_ESC_CAN_CLOSE) {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			close_callback(c->window, c);
+			close_callback(c->close, c);
 		}
 	} else if ((event->keyval == GDK_F2) && (general_options & OPT_GEN_F2_TOGGLES)) {
 		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->comments);
