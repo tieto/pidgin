@@ -243,7 +243,7 @@ void play(unsigned char *data, int size)
 		return;
         else if (pid == 0) {
 		if (sound_options & OPT_SOUND_BEEP) {
-			gdk_beep();
+			printf("\a");
 			_exit(0);
 		}
 
