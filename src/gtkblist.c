@@ -196,7 +196,7 @@ get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
 #if !GTK_CHECK_VERSION(2,4,8)
 	/* XXX: Kill this entire block someday.
 	 *
-	 * 2003-08-22: This bug fix should land in GTK+ version 2.4.8:
+	 * 2004-08-22: This bug fix should land in GTK+ version 2.4.8:
 	 *   http://bugzilla.gnome.org/show_bug.cgi?id=149013
 	 *
 	 * In Win32, GDK gets the workarea that isn't occupied by toolbars
