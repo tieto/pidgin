@@ -785,7 +785,7 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	if (phb->gpi->proxyuser) {
 		char *t1, *t2;
 		t1 = g_strdup_printf("%s:%s", phb->gpi->proxyuser, phb->gpi->proxypass);
-		t2 = tobase64(t1, -1);
+		t2 = tobase64(t1, strlen(t1));
 		g_free(t1);
 		g_return_if_fail(request_len < sizeof(request));
 		request_len += g_snprintf(request + request_len, sizeof(request) - request_len, "Proxy-Authorization: Basic %s\r\n", t2);

@@ -354,10 +354,7 @@ static const char alphabet[] =
 char *tobase64(const unsigned char *buf, size_t len)
 {
 	char *s = NULL, *rv = NULL;
-	unsigned tmp;
-
-	if(len == (size_t)(-1))
-		len = strlen(buf);
+	unsigned char tmp;
 
 	s = g_malloc((4 * (len + 1)) / 3 + 1);
 

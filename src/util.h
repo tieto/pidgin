@@ -44,7 +44,7 @@ char *normalize(const char *str);
  * Converts a string to its base-64 equivalent.
  *
  * @param buf The data to convert.
- * @param len The length of the data, or -1 if it's a NULL-terminated string.
+ * @param len The length of the data.
  *
  * @return The base-64 version of @a str.
  *
