@@ -37,14 +37,16 @@
 #include "ui.h"
 
 GtkWidget *imaway = NULL;
-
 GtkWidget *awaymenu = NULL;
 GtkWidget *awayqueue = NULL;
 GtkListStore *awayqueuestore = NULL;
 GtkWidget *awayqueuesw;
 
+GSList *message_queue = NULL;
+GSList *unread_message_queue = NULL;
+
+GSList *away_messages = NULL;
 struct away_message *awaymessage = NULL;
-int auto_away;
 
 static void dequeue_message(GtkTreeIter *iter)
 {
@@ -172,12 +174,6 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 			return;
 	}
 
-	while (away_time_queue) {
-		struct queued_away_response *qar = away_time_queue->data;
-		away_time_queue = g_slist_remove(away_time_queue, qar);
-		g_free(qar);
-	}
-
 	awaymessage = NULL;
 	awayqueue = NULL;
 	awayqueuesw = NULL;
@@ -276,13 +272,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	gtk_widget_show(back);
 
 	awaymessage = a;
-
-	/* New away message... Clear out the old sent_aways */
-	while (away_time_queue) {
-		struct queued_away_response *qar = away_time_queue->data;
-		away_time_queue = g_slist_remove(away_time_queue, qar);
-		g_free(qar);
-	}
 
 	gtk_widget_show(imaway);
 	serv_set_away_all(awaymessage->message);

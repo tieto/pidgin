@@ -98,11 +98,11 @@ struct smiley_theme {
 };
 
 /* Globals in aim.c */
-extern GSList *away_messages; /* this should be moved to away.c */
 extern GtkWidget *mainwindow;
 extern int docklet_count;
 
 /* Globals in away.c */
+extern GSList *away_messages;
 extern struct away_message *awaymessage;
 extern GtkWidget *awaymenu;
 extern GtkWidget *awayqueue;

@@ -65,13 +65,7 @@ extern void load_pounces();
 static GtkWidget *name;
 static GtkWidget *pass;
 
-GSList *away_messages = NULL;
-GSList *message_queue = NULL;
-GSList *unread_message_queue = NULL;
-GSList *away_time_queue = NULL;
-
 GtkWidget *mainwindow = NULL;
-
 
 int opt_away = 0;
 int docklet_count = 0;

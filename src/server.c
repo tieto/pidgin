@@ -176,12 +176,84 @@ int serv_send_typing(GaimConnection *g, const char *name, int typing) {
 	return 0;
 }
 
-struct queued_away_response {
+GSList *last_auto_responses = NULL;
+struct last_auto_response {
+	GaimConnection *gc;
 	char name[80];
-	time_t sent_away;
+	time_t sent;
 };
 
-struct queued_away_response *find_queued_away_response_by_name(const char *name);
+gboolean expire_last_auto_responses(gpointer data)
+{
+	GSList *tmp, *cur;
+	struct last_auto_response *lar;
+
+	tmp = last_auto_responses;
+
+	while (tmp) {
+		cur = tmp;
+		tmp = tmp->next;
+		lar = (struct last_auto_response *)cur->data;
+
+		if ((time(NULL) - lar->sent) >
+				gaim_prefs_get_int("/core/away/auto_response/sec_before_resend")) {
+
+			last_auto_responses = g_slist_remove(last_auto_responses, lar);
+			g_free(lar);
+		}
+	}
+
+	return FALSE; /* do not run again */
+}
+
+struct last_auto_response *get_last_auto_response(GaimConnection *gc, const char *name)
+{
+	GSList *tmp;
+	struct last_auto_response *lar;
+
+	/* because we're modifying or creating a lar, schedule the
+	 * function to expire them as the pref dictates */
+	g_timeout_add((gaim_prefs_get_int("/core/away/auto_response/sec_before_resend") + 1) * 1000,
+			expire_last_auto_responses, NULL);
+
+	tmp = last_auto_responses;
+
+	while (tmp) {
+		lar = (struct last_auto_response *)tmp->data;
+
+		if (gc == lar->gc && !strncmp(name, lar->name, sizeof(lar->name)))
+			return lar;
+
+		tmp = tmp->next;
+	}
+
+	lar = (struct last_auto_response *)g_new0(struct last_auto_response, 1);
+	g_snprintf(lar->name, sizeof(lar->name), "%s", name);
+	lar->gc = gc;
+	lar->sent = 0;
+	last_auto_responses = g_slist_append(last_auto_responses, lar);
+
+	return lar;
+}
+
+void flush_last_auto_responses(GaimConnection *gc)
+{
+	GSList *tmp, *cur;
+	struct last_auto_response *lar;
+
+	tmp = last_auto_responses;
+
+	while (tmp) {
+		cur = tmp;
+		tmp = tmp->next;
+		lar = (struct last_auto_response *)cur->data;
+
+		if (lar->gc == gc) {
+			last_auto_responses = g_slist_remove(last_auto_responses, lar);
+			g_free(lar);
+		}
+	}
+}
 
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 				 int len, int flags)
@@ -202,20 +274,13 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 		serv_touch_idle(gc);
 
 	if (gc->away &&
-		!gaim_prefs_get_bool("/core/away/auto_response/in_active_conv") &&
-		gaim_prefs_get_bool("/core/away/auto_response/enabled")) {
+		(gc->flags & OPT_CONN_AUTO_RESP) &&
+		gaim_prefs_get_bool("/core/away/auto_response/enabled") &&
+		!gaim_prefs_get_bool("/core/away/auto_response/in_active_conv")) {
 
-		time_t t;
-		struct queued_away_response *qar;
-		time(&t);
-		qar = find_queued_away_response_by_name(name);
-		if (!qar) {
-			qar = (struct queued_away_response *)g_new0(struct queued_away_response, 1);
-			g_snprintf(qar->name, sizeof(qar->name), "%s", name);
-			qar->sent_away = 0;
-			away_time_queue = g_slist_append(away_time_queue, qar);
-		}
-		qar->sent_away = t;
+		struct last_auto_response *lar;
+		lar = get_last_auto_response(gc, name);
+		lar->sent = time(NULL);
 	}
 
 	if (c && gaim_im_get_type_again_timeout(GAIM_IM(c)))
@@ -324,6 +389,9 @@ void serv_set_away(GaimConnection *gc, const char *state, const char *message)
 		gaim_event_broadcast(event_away, gc, state, message);
 
 	}
+
+	/* New away message... Clear out the record of sent autoresponses */
+	flush_last_auto_responses(gc);
 
 	system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON);
 }
@@ -716,25 +784,6 @@ int find_queue_total_by_name(char *name)
 	return i;
 }
 
-struct queued_away_response *find_queued_away_response_by_name(const char *name)
-{
-	GSList *templist;
-	struct queued_away_response *qar;
-
-	templist = away_time_queue;
-
-	while (templist) {
-		qar = (struct queued_away_response *)templist->data;
-
-		if (!strcmp(name, qar->name))
-			return qar;
-
-		templist = templist->next;
-	}
-
-	return NULL;
-}
-
 /*
  * woo. i'm actually going to comment this function. isn't that fun. make
  * sure to follow along, kids
@@ -826,14 +875,12 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * things we have to do for each.
 	 */
 	if (gc->away) {
-		time_t t;
+		time_t t = time(NULL);
 		char *tmpmsg;
 		struct buddy *b = gaim_find_buddy(gc->account, name);
 		char *alias = b ? gaim_get_buddy_alias(b) : name;
 		int row;
-		struct queued_away_response *qar;
-
-		time(&t);
+		struct last_auto_response *lar;
 
 		/*
 		 * Either we're going to queue it or not. Because of the way
@@ -930,23 +977,17 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * sent you another one, they'd get the auto-response back too
 		 * soon. Besides that, we need to keep track of this even if we've
 		 * got a queue. So the rest of this block is just the auto-response,
-		 * if necessary
+		 * if necessary.
 		 */
-		qar = find_queued_away_response_by_name(name);
-		if (!qar) {
-			qar = (struct queued_away_response *)g_new0(struct queued_away_response, 1);
-			g_snprintf(qar->name, sizeof(qar->name), "%s", name);
-			qar->sent_away = 0;
-			away_time_queue = g_slist_append(away_time_queue, qar);
-		}
-		if ((t - qar->sent_away) <
+		lar = get_last_auto_response(gc, name);
+		if ((t - lar->sent) <
 			gaim_prefs_get_int("/core/away/auto_response/sec_before_resend")) {
 
 			g_free(name);
 			g_free(message);
 			return;
 		}
-		qar->sent_away = t;
+		lar->sent = t;
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
