@@ -23,7 +23,6 @@ plugins/ticker/ticker.c
 plugins/win32/transparency/win2ktrans.c
 plugins/win32/winprefs/winprefs.c
 src/protocols/gg/common.c
-plugins/chkmail.c
 plugins/perl/perl.c
 plugins/statenotify.c
 src/protocols/gg/gg.c
@@ -79,9 +78,13 @@ src/protocols/jabber/xmltok.c
 src/protocols/jabber/xmltok_impl.c
 src/protocols/jabber/xmltok_ns.c
 src/protocols/jabber/xstream.c
+src/protocols/msn/away.c
+src/protocols/msn/dispatch.c
+src/protocols/msn/error.c
 src/protocols/msn/ft.c
 src/protocols/msn/msg.c
 src/protocols/msn/msn.c
+src/protocols/msn/notification.c
 src/protocols/msn/switchboard.c
 src/protocols/napster/napster.c
 src/protocols/oscar/admin.c
@@ -220,9 +223,6 @@ src/win32/systray.c
 src/win32/untar.c
 src/win32/win32dep.c
 src/win32/wspell.c
-src/pounce.c
-src/win_gaim.c
-src/gtkpounce.c
 src/plugin.c
 src/prpl.h
 src/gtkdebug.c
