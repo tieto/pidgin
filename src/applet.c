@@ -72,18 +72,17 @@ static GdkPixmap *get_applet_icon(const char *name)
 			gtk_widget_get_visual(applet)->depth); 
 	gc = gdk_gc_new(cache);
 	gdk_gc_copy(gc, applet->style->bg_gc[GTK_WIDGET_STATE(applet)]);
-
 	path = gnome_pixmap_file(name);
-	if (path)
+	if (path) {
 		scale = gdk_pixbuf_new_from_file(path);
-	g_free(path);
+		g_free(path);
+	}
 	if (!scale)
 		return NULL;
 	pb = gdk_pixbuf_scale_simple(scale, sizehint, sizehint, GDK_INTERP_HYPER);
 	gdk_pixbuf_unref(scale);
 
-	dst = g_new0(guchar, sizehint*sizehint*3);
-	applet_widget_get_rgb_bg(applet, &dst, &w, &h, &rowstride);
+	applet_widget_get_rgb_bg(APPLET_WIDGET(applet), &dst, &w, &h, &rowstride);
 
 	art_affine_identity(affine);
 	art_rgb_rgba_affine(dst, 0, 0, w, h, rowstride,
@@ -335,8 +334,6 @@ gint init_applet_mgr(int argc, char *argv[])
 	applet = applet_widget_new("gaim_applet");
 	if (!applet)
 		g_error(_("Can't create Gaim applet!"));
-	applet_widget_send_draw(applet, TRUE);
-	gtk_signal_connect(GTK_OBJECT(applet), "do-draw", GTK_SIGNAL_FUNC(update_applet), NULL);
 	gtk_widget_set_events(applet, gtk_widget_get_events(applet) | GDK_BUTTON_PRESS_MASK);
 	gtk_widget_realize(applet);
 
@@ -368,6 +365,8 @@ gint init_applet_mgr(int argc, char *argv[])
 			   GTK_SIGNAL_FUNC(applet_change_pixel_size), NULL);
 #endif
 
+	applet_widget_send_draw(applet, TRUE);
+	gtk_signal_connect(GTK_OBJECT(applet), "do-draw", GTK_SIGNAL_FUNC(update_applet), NULL);
 	gtk_widget_show(icon);
 	gtk_widget_show(applet);
 	return 0;
