@@ -227,6 +227,7 @@ struct buddy_show {
 	GtkWidget *item;
 	GtkWidget *pix;
 	GtkWidget *label;
+	GtkWidget *warn;
 	GtkWidget *idle;
 	char *name;
 	char *show;
@@ -467,6 +468,7 @@ extern int display_options;
 #define OPT_DISP_NO_MT_GRP        0x00040000
 #define OPT_DISP_CONV_BUTTON_XPM  0x00080000
 #define OPT_DISP_CHAT_BUTTON_XPM  0x00100000
+#define OPT_DISP_SHOW_WARN        0x00200000
 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001

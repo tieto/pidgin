@@ -181,10 +181,26 @@ static void buddy_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	gaim_button(_("Show numbers in groups"), &display_options, OPT_DISP_SHOW_GRPNUM, box);
+	gaim_button(_("Save Window Size/Position"), &general_options, OPT_GEN_SAVED_WINDOWS, box);
+#ifdef USE_APPLET
+	gaim_button(_("Automatically show buddy list on sign on"), &general_options, OPT_GEN_APP_BUDDY_SHOW, box);
+	gaim_button(_("Display Buddy List near applet"), &general_options, OPT_GEN_NEAR_APPLET, box);
+#endif
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
 	gaim_button(_("Hide groups with no online buddies"), &display_options, OPT_DISP_NO_MT_GRP, box);
-	gaim_button(_("Show idle times"), &display_options, OPT_DISP_SHOW_IDLETIME, box);
+	gaim_button(_("Show numbers in groups"), &display_options, OPT_DISP_SHOW_GRPNUM, box);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
 	gaim_button(_("Show buddy type icons"), &display_options, OPT_DISP_SHOW_PIXMAPS, box);
+	gaim_button(_("Show warning levels"), &display_options, OPT_DISP_SHOW_WARN, box);
+	gaim_button(_("Show idle times"), &display_options, OPT_DISP_SHOW_IDLETIME, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
@@ -192,16 +208,6 @@ static void buddy_page()
 
 	gaim_button(_("Hide IM/Info/Chat buttons"), &display_options, OPT_DISP_NO_BUTTONS, box);
 	gaim_button(_("Show pictures on buttons"), &display_options, OPT_DISP_SHOW_BUTTON_XPM, box);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
-
-	gaim_button(_("Save Window Size/Position"), &general_options, OPT_GEN_SAVED_WINDOWS, box);
-#ifdef USE_APPLET
-	gaim_button(_("Automatically show buddy list on sign on"), &general_options, OPT_GEN_APP_BUDDY_SHOW, box);
-	gaim_button(_("Display Buddy List near applet"), &general_options, OPT_GEN_NEAR_APPLET, box);
-#endif
 
 	gtk_widget_show(prefdialog);
 }

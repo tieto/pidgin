@@ -1590,11 +1590,15 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 
 	b->label = gtk_label_new(buddy->show);
 	gtk_misc_set_alignment(GTK_MISC(b->label), 0.0, 0.5);
-	gtk_box_pack_start(GTK_BOX(box), b->label, TRUE, TRUE, 1);
+	gtk_box_pack_start(GTK_BOX(box), b->label, FALSE, FALSE, 1);
 	gtk_widget_show(b->label);
 
+	b->warn = gtk_label_new("");
+	gtk_box_pack_start(GTK_BOX(box), b->warn, FALSE, FALSE, 1);
+	gtk_widget_show(b->warn);
+
 	b->idle = gtk_label_new("");
-	gtk_box_pack_start(GTK_BOX(box), b->idle, FALSE, FALSE, 1);
+	gtk_box_pack_end(GTK_BOX(box), b->idle, FALSE, FALSE, 1);
 	gtk_widget_show(b->idle);
 
 	gs->members = g_slist_insert(gs->members, b, pos);
@@ -1725,7 +1729,7 @@ static char *caps_string(gushort caps)
  * if it's not the one you were hoping for then you're shit out of luck */
 static void update_idle_time(struct buddy_show *bs) {
 	/* this also updates the tooltip since that has idle time in it */
-	char idlet[16];
+	char idlet[16], warnl[16];
 	time_t t;
 	int ihrs, imin;
 	struct buddy *b;
@@ -1764,10 +1768,17 @@ static void update_idle_time(struct buddy_show *bs) {
 		itime = g_malloc(1); itime[0] = 0;
 	}
 
-	if (b->evil)
+	if (b->evil) {
 		g_snprintf(warn, sizeof warn, _("Warnings: %d%%\n"), b->evil);
-	else
+		g_snprintf(warnl, sizeof warnl, "(%d%%)", b->evil);
+	} else {
 		warn[0] = '\0';
+		warnl[0] = '\0';
+	}
+	gtk_widget_hide(bs->warn);
+	gtk_label_set(GTK_LABEL(bs->warn), warnl);
+	if (display_options & OPT_DISP_SHOW_WARN)
+		gtk_widget_show(bs->warn);
 
 	if (b->caps)
 		g_snprintf(caps, sizeof caps, _("Capabilities: %s\n"), caps_string(b->caps));
