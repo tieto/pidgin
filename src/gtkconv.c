@@ -4920,6 +4920,9 @@ start_anim(GtkObject *obj, GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
+	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim))
+		return;
+
 	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
 
 	if (gtkconv->u.im->anim)

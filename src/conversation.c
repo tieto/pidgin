@@ -2313,6 +2313,21 @@ conv_placement_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	place_conv = fnc;
 }
 
+static void
+update_titles_pref_cb(const char *name, GaimPrefType type, gpointer value,
+		gpointer data)
+{
+	/*
+	 * If the use_server_alias option was changed, and use_alias_for_title 
+	 * is false, then we don't have to do anything here.
+	 */
+	if (!strcmp(name, "/core/buddies/use_server_alias") && 
+		!gaim_prefs_get_bool("/core/conversations/use_alias_for_title"))
+		return;
+
+	gaim_conversation_foreach(gaim_conversation_autoset_title);
+}
+
 void
 gaim_set_win_ui_ops(GaimWindowUiOps *ops)
 {
@@ -2350,4 +2365,8 @@ gaim_conversation_init(void)
 	gaim_prefs_connect_callback("/core/conversations/placement",
 			conv_placement_pref_cb, NULL);
 	gaim_prefs_trigger_callback("/core/conversations/placement");
+	gaim_prefs_connect_callback("/core/conversations/use_alias_for_title",
+			update_titles_pref_cb, NULL);
+	gaim_prefs_connect_callback("/core/buddies/use_server_alias",
+			update_titles_pref_cb, NULL);
 }

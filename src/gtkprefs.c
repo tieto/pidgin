@@ -1196,6 +1196,38 @@ GtkWidget *proxy_page() {
 }
 
 #ifndef _WIN32
+static gboolean program_is_valid(const char *program) 
+{
+	GError *error = NULL;
+	char **argv; 
+	gchar *progname;
+	gboolean is_valid = FALSE;
+
+	if (program == NULL || *program == '\0') {
+		return FALSE;
+	}
+
+	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
+				   "Could not parse program '%s': %s\n",
+				   program, error->message);
+		g_error_free(error);
+		return FALSE;
+	}
+
+	if (argv == NULL) {
+		return FALSE;
+	}
+
+	progname = g_find_program_in_path(argv[0]);
+	is_valid = (progname != NULL);
+
+	g_strfreev(argv);
+	g_free(progname);
+	
+	return is_valid;
+}
+
 static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
@@ -2105,7 +2137,7 @@ void away_message_sel(GtkTreeSelection *sel, GtkTreeModel *model)
 }
 
 void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
-        struct away_message *am;
+	struct away_message *am;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
 	GtkTreeModel *model = GTK_TREE_MODEL(prefs_away_store);
@@ -2295,7 +2327,8 @@ void gaim_gtk_prefs_show(void)
 
 	/* copy the preferences to tmp values...
 	 * I liked "take affect immediately" Oh well :-( */
-	
+	/* (that should have been "effect," right?) */
+
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
@@ -2401,47 +2434,12 @@ void gaim_gtk_prefs_show(void)
 }
 
 #if 0
-static void set_misc_option(GtkWidget *w, const char *key)
-{
-
-	if(option == OPT_MISC_USE_SERVER_ALIAS) {
-		/* XXX blist reset the aliases here */
-		gaim_conversation_foreach(gaim_conversation_autoset_title);
-	}
-}
-
 static void set_logging_option(GtkWidget *w, int option)
 {
 	logging_options ^= option;
 
 	if (option == OPT_LOG_CONVOS || option == OPT_LOG_CHATS)
 		update_log_convs();
-}
-
-static void set_blist_option(GtkWidget *w, int option)
-{
-	struct gaim_gtk_buddy_list *gtkblist;
-
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-
-	blist_options ^= option;
-
-	if (!gtkblist)
-		return;
-
-	if (option == OPT_BLIST_SHOW_WARN)
-		gaim_gtk_blist_update_columns();
-	else if (option == OPT_BLIST_SHOW_IDLETIME) {
-		gaim_gtk_blist_update_refresh_timeout();
-		gaim_gtk_blist_update_columns();
-	}
-	else if (option == OPT_BLIST_SHOW_ICONS) {
-		gaim_gtk_blist_update_refresh_timeout();
-		gaim_gtk_blist_refresh(gaim_get_blist());
-		gaim_gtk_blist_update_columns();
-	} else
-		gaim_gtk_blist_refresh(gaim_get_blist());
-
 }
 
 static void set_convo_option(GtkWidget *w, int option)
@@ -2453,12 +2451,6 @@ static void set_convo_option(GtkWidget *w, int option)
 
 	if (option == OPT_CONVO_SHOW_TIME)
 		gaim_gtkconv_toggle_timestamps();
-
-	if (option == OPT_CONVO_CHECK_SPELLING)
-		gaim_gtkconv_toggle_spellchk();
-
-	if (option == OPT_CONVO_NO_X_ON_TAB)
-		gaim_gtkconv_toggle_close_buttons();
 }
 
 static void set_im_option(GtkWidget *w, int option)
@@ -2469,15 +2461,6 @@ static void set_im_option(GtkWidget *w, int option)
 	if (option == OPT_IM_ONE_WINDOW)
 		im_tabize();
 #endif
-
-	if (option == OPT_IM_HIDE_ICONS)
-		gaim_gtkconv_hide_buddy_icons();
-
-	if (option == OPT_IM_ALIAS_TAB)
-		gaim_conversation_foreach(gaim_conversation_autoset_title);
-
-	if (option == OPT_IM_NO_ANIMATION)
-		gaim_gtkconv_set_anim();
 }
 
 static void set_chat_option(GtkWidget *w, int option)
@@ -2488,11 +2471,6 @@ static void set_chat_option(GtkWidget *w, int option)
 	if (option == OPT_CHAT_ONE_WINDOW)
 		chat_tabize();
 #endif
-}
-
-void set_sound_option(GtkWidget *w, int option)
-{
-	sound_options ^= option;
 }
 
 static void set_away_option(GtkWidget *w, int option)
@@ -2618,40 +2596,6 @@ void set_default_away(GtkWidget *w, gpointer i)
 	else
 		default_away = g_slist_nth_data(away_messages, (int)i);
 }
-
-#ifndef _WIN32
-static gboolean program_is_valid(const char *program) 
-{
-	GError *error = NULL;
-	char **argv; 
-	gchar *progname;
-	gboolean is_valid = FALSE;
-
-	if (program == NULL || *program == '\0') {
-		return FALSE;
-	}
-
-	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
-				   "Could not parse program '%s': %s\n",
-				   program, error->message);
-		g_error_free(error);
-		return FALSE;
-	}
-
-	if (argv == NULL) {
-		return FALSE;
-	}
-
-	progname = g_find_program_in_path(argv[0]);
-	is_valid = (progname != NULL);
-
-	g_strfreev(argv);
-	g_free(progname);
-	
-	return is_valid;
-}
-#endif
 
 static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 {
