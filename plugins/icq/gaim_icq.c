@@ -240,10 +240,12 @@ static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
 	ICQLINK *link;
+	char ps[9];
 
 	icq_LogLevel = ICQ_LOG_MESSAGE;
 
-	link = id->link = icq_ICQLINKNew(atol(user->username), user->password,
+	g_snprintf(ps, sizeof(ps), "%s", user->password);
+	link = id->link = icq_ICQLINKNew(atol(user->username), ps,
 			  user->proto_opt[USEROPT_NICK][0] ? user->proto_opt[USEROPT_NICK] : "gaim user",
 			  TRUE);
 
