@@ -28,7 +28,6 @@ struct chat_room {
 static GtkWidget *item = NULL; /* this is the parent tree */
 static GList *chat_rooms = NULL;
 
-static GtkWidget *parent = NULL; /* this is the config thing where you can see the list */
 static struct chat_page *cp = NULL;
 
 static void des_item()
@@ -145,8 +144,6 @@ static void ref_list_callback(gpointer data, char *text)
 
 	if (!text)
 		return;
-	if (!parent)
-		return;
 
 	len = strlen(text);
 
@@ -196,6 +193,7 @@ static void ref_list_callback(gpointer data, char *text)
 			cr = g_new0(struct chat_room, 1);
 			strcpy(cr->name, name);
 			cr->exchange = exchange;
+			printf("Adding '%s'\n", name);
 			item = gtk_list_item_new_with_label(name);
 			gtk_widget_show(item);
 			items = g_list_append(items, item);
@@ -388,10 +386,6 @@ G_MODULE_EXPORT char *gaim_plugin_init(GModule *m)
 
 G_MODULE_EXPORT void gaim_plugin_remove()
 {
-	if (parent)
-		gtk_widget_destroy(parent);
-	parent = NULL;
-
 	if (item)
 		gtk_tree_remove_item(GTK_TREE(buddies), item);
 	item = NULL;
