@@ -73,44 +73,51 @@ gint badchar(char c)
 
 gchar *sec_to_text(guint sec)
 {
-	int hrs, min;
-	char minutes[64];
-	char hours[64];
-	char *sep;
+	int daze, hrs, min;
 	char *ret = g_malloc(256);
 
-	hrs = sec / 3600;
-	min = sec % 3600;
-
-	min = min / 60;
+	daze = sec / (60 * 60 * 24);
+	hrs = (sec % (60 * 60 * 24)) / (60 * 60);
+	min = (sec % (60 * 60)) / 60;
 	sec = min % 60;
 
-	if (min) {
-		if (min == 1)
-			g_snprintf(minutes, sizeof(minutes), "%d minute.", min);
-		else
-			g_snprintf(minutes, sizeof(minutes), "%d minutes.", abs(min));
-		sep = ", ";
+	if (daze) {
+		if (hrs || min) {
+			if (hrs) {
+				if (min) {
+					g_snprintf(ret, 256,
+							"%d day%s, %d hour%s, %d minute%s.",
+							daze, daze == 1 ? "" : "s",
+							hrs, hrs == 1 ? "" : "s",
+							min, min == 1 ? "" : "s");
+				} else {
+					g_snprintf(ret, 256,
+							"%d day%s, %d hour%s.",
+							daze, daze == 1 ? "" : "s",
+							hrs, hrs == 1 ? "" : "s");
+				}
+			} else {
+				g_snprintf(ret, 256,
+						"%d day%s, %d minute%s.",
+						daze, daze == 1 ? "" : "s",
+						min, min == 1 ? "" : "s");
+			}
+		} else
+			g_snprintf(ret, 256, "%d day%s.", daze, daze == 1 ? "" : "s");
 	} else {
-		if (!hrs)
-			g_snprintf(minutes, sizeof(minutes), "%d minutes.", abs(min));
-		else {
-			minutes[0] = '.';
-			minutes[1] = '\0';
+		if (hrs) {
+			if (min) {
+				g_snprintf(ret, 256,
+						"%d hour%s, %d minute%s.",
+						hrs, hrs == 1 ? "" : "s",
+						min, min == 1 ? "" : "s");
+			} else {
+				g_snprintf(ret, 256, "%d hour%s.", hrs, hrs == 1 ? "" : "s");
+			}
+		} else {
+			g_snprintf(ret, 256, "%d minute%s.", min, min == 1 ? "" : "s");
 		}
-		sep = "";
 	}
-
-	if (hrs) {
-		if (hrs == 1)
-			g_snprintf(hours, sizeof(hours), "%d hour%s", hrs, sep);
-		else
-			g_snprintf(hours, sizeof(hours), "%d hours%s", abs(hrs), sep);
-	} else
-		hours[0] = '\0';
-
-
-	g_snprintf(ret, 256, "%s%s", hours, minutes);
 
 	return ret;
 }
