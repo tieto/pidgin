@@ -244,6 +244,36 @@ static void icq_req_not(icq_Link *link, unsigned long id, int type, int arg, voi
 	return;
 }
 
+struct icq_auth {
+	icq_Link *link;
+	unsigned long uin;
+};
+
+static void icq_den_auth(gpointer x, struct icq_auth *iq)
+{
+	g_free(iq);
+}
+
+static void icq_acc_auth(gpointer x, struct icq_auth *iq)
+{
+	icq_SendAuthMsg(iq->link, iq->uin);
+}
+
+static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, unsigned char minute,
+		unsigned char day, unsigned char month, unsigned short year, const char *nick,
+		const char *first, const char *last, const char *email, const char *reason)
+{
+	char msg[8192];
+	struct icq_auth *iq = g_new0(struct icq_auth, 1);
+	iq->link = link;
+	iq->uin = uin;
+
+	g_snprintf(msg, sizeof(msg), "The user %s (%s%s%s%s%s) wants you to authorize them.",
+			nick, first ? first : "", first && last ? " " : "", last ? last : "",
+			(first || last) && email ? ", " : "", email ? email : "");
+	do_ask_dialog(msg, iq, icq_acc_auth, icq_den_auth);
+}
+
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
@@ -263,6 +293,7 @@ static void icq_login(struct aim_user *user) {
 	link->icq_RecvURL = icq_url_incoming;
 	link->icq_RecvWebPager = icq_web_pager;
 	link->icq_RecvMailExpress = icq_mail_express;
+	link->icq_RecvAuthReq = icq_auth_req;
 	link->icq_UserOnline = icq_user_online;
 	link->icq_UserOffline = icq_user_offline;
 	link->icq_UserStatusUpdate = icq_user_status;

@@ -8,11 +8,6 @@ THE CORE:
 	Implement:
 		OPT_PROTO_NO_PASSWORD (mainly for IRC/Zephyr) - should hide password
 			dialog in account editor
-		OPT_PROTO_OFFLINE to allow sending offline messages... checkbox on
-			the convo window? need to decide UI for switching between
-			offline/normal message. uh... maybe this isn't the best
-			idea, but we need something that gives us this functionality....
-			prpl->send_im_offline?
 		OPT_PROTO_MAILCHECK (mainly for Yahoo/MSN) - with appropriate toggle
 			on account editor modify thing for whether or not to display
 			it (and also move Yahoo/MSN dialog to prpl.c and have both of
@@ -57,7 +52,6 @@ Yahoo:
 	File Transfer
 
 ICQ:
-	Authorization (is requesting Auth necessary?)
 	Chat
 	File Transfer
 	New User Registration
