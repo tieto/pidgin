@@ -92,14 +92,14 @@ GaimCore *gaim_get_core(void);
  *
  * @param A UI ops structure for the core.
  */
-void gaim_set_core_ui_ops(GaimCoreUiOps *ops);
+void gaim_core_set_ui_ops(GaimCoreUiOps *ops);
 
 /**
  * Returns the UI ops for the core.
  *
  * @return The core's UI ops structure.
  */
-GaimCoreUiOps *gaim_get_core_ui_ops(void);
+GaimCoreUiOps *gaim_core_get_ui_ops(void);
 
 #ifdef __cplusplus
 }

@@ -1241,7 +1241,7 @@ const char *gaim_conv_placement_get_fnc_id(GaimConvPlacementFunc fnc);
  *
  * @param ops The UI operations structure.
  */
-void gaim_set_win_ui_ops(GaimWindowUiOps *ops);
+void gaim_conversations_set_win_ui_ops(GaimWindowUiOps *ops);
 
 /**
  * Returns the gaim window UI operations structure to be used in
@@ -1249,7 +1249,7 @@ void gaim_set_win_ui_ops(GaimWindowUiOps *ops);
  *
  * @return A filled-out GaimWindowUiOps structure.
  */
-GaimWindowUiOps *gaim_get_win_ui_ops(void);
+GaimWindowUiOps *gaim_conversations_get_win_ui_ops(void);
 
 /*@}*/
 

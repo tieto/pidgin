@@ -371,7 +371,7 @@ gaim_window_new(void)
 
 	windows = g_list_append(windows, win);
 
-	win->ui_ops = gaim_get_win_ui_ops();
+	win->ui_ops = gaim_conversations_get_win_ui_ops();
 
 	if (win->ui_ops != NULL && win->ui_ops->new_window != NULL)
 		win->ui_ops->new_window(win);
@@ -2495,13 +2495,13 @@ update_titles_pref_cb(const char *name, GaimPrefType type,
 }
 
 void
-gaim_set_win_ui_ops(GaimWindowUiOps *ops)
+gaim_conversations_set_win_ui_ops(GaimWindowUiOps *ops)
 {
 	win_ui_ops = ops;
 }
 
 GaimWindowUiOps *
-gaim_get_win_ui_ops(void)
+gaim_conversations_get_win_ui_ops(void)
 {
 	return win_ui_ops;
 }

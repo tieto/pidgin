@@ -230,7 +230,7 @@ void gaim_notify_close_with_handle(void *handle);
  *
  * @param ops The UI operations structure.
  */
-void gaim_set_notify_ui_ops(GaimNotifyUiOps *ops);
+void gaim_notify_set_ui_ops(GaimNotifyUiOps *ops);
 
 /**
  * Returns the UI operations structure to be used when displaying a
@@ -238,7 +238,7 @@ void gaim_set_notify_ui_ops(GaimNotifyUiOps *ops);
  *
  * @return The UI operations structure.
  */
-GaimNotifyUiOps *gaim_get_notify_ui_ops(void);
+GaimNotifyUiOps *gaim_notify_get_ui_ops(void);
 
 /*@}*/
 

@@ -33,7 +33,7 @@
  *
  * @return UI operations struct
  */
-GaimConnectionUiOps *gaim_get_gtk_connection_ui_ops(void);
+GaimConnectionUiOps *gaim_gtk_connections_get_ui_ops(void);
 
 /*@}*/
 

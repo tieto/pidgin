@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -71,7 +71,7 @@ typedef struct
 	GtkWidget *play_sound_entry;
 	GtkWidget *play_sound_browse;
 	GtkWidget *play_sound_test;
-	
+
 	GtkWidget *save_pounce;
 
 	/* Buttons */
@@ -134,8 +134,8 @@ filesel(GtkWidget *w, gpointer data)
 	GtkWidget *filesel;
 	GtkWidget *entry;
 	GHashTable *args;
-	
-	entry = (GtkWidget *)data;	
+
+	entry = (GtkWidget *)data;
 
 	filesel = gtk_file_selection_new(_("Select a file"));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel),
@@ -509,14 +509,14 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	dialog->send_msg = gtk_check_button_new_with_label(_("Send a message"));
 	dialog->exec_cmd = gtk_check_button_new_with_label(_("Execute a command"));
 	dialog->play_sound = gtk_check_button_new_with_label(_("Play a sound"));
-	
+
 	dialog->send_msg_entry   = gtk_entry_new();
 	dialog->exec_cmd_entry   = gtk_entry_new();
 	dialog->exec_cmd_browse = gtk_button_new_with_label(_("Browse"));
 	dialog->play_sound_entry = gtk_entry_new();
 	dialog->play_sound_browse = gtk_button_new_with_label(_("Browse"));
 	dialog->play_sound_test = gtk_button_new_with_label(_("Test"));
-	
+
 	gtk_widget_set_sensitive(dialog->send_msg_entry,   FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_entry,   FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_browse, FALSE);
@@ -566,7 +566,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	exec_widgets = g_ptr_array_new();
 	g_ptr_array_add(exec_widgets,dialog->exec_cmd_entry);
 	g_ptr_array_add(exec_widgets,dialog->exec_cmd_browse);
-	
+
 	g_signal_connect(G_OBJECT(dialog->exec_cmd), "clicked",
 					 G_CALLBACK(gtk_toggle_sensitive_array),
 					 exec_widgets);
@@ -588,14 +588,14 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(dialog->play_sound_test), "clicked",
 					 G_CALLBACK(pounce_test_sound),
 					 dialog->play_sound_entry);
-	
+
 	g_signal_connect(G_OBJECT(dialog->send_msg_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->play_sound_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
-	
+
 	/* Now the last part, where we have the Save checkbox */
 	dialog->save_pounce = gtk_check_button_new_with_mnemonic(
 		_("_Save this pounce after activation"));
@@ -634,7 +634,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	dialog->save_button = button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
-	
+
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(save_pounce_cb), dialog);
 

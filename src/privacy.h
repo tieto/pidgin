@@ -98,14 +98,14 @@ gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
  *
  * @param ops The UI operations structure.
  */
-void gaim_set_privacy_ui_ops(GaimPrivacyUiOps *ops);
+void gaim_privacy_set_ui_ops(GaimPrivacyUiOps *ops);
 
 /**
  * Returns the UI operations structure for the privacy subsystem.
  *
  * @return The UI operations structure.
  */
-GaimPrivacyUiOps *gaim_get_privacy_ui_ops(void);
+GaimPrivacyUiOps *gaim_privacy_get_ui_ops(void);
 
 /**
  * Initializes the privacy subsystem.

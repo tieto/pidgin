@@ -203,10 +203,11 @@ struct _GaimGtkConversation
 	((GaimGtkConversation *)(conv)->ui_data)
 
 #define GAIM_IS_GTK_WINDOW(win) \
-	(gaim_window_get_ui_ops(win) == gaim_get_gtk_window_ui_ops())
+	(gaim_window_get_ui_ops(win) == gaim_gtk_conversations_get_win_ui_ops())
 
 #define GAIM_IS_GTK_CONVERSATION(conv) \
-	(gaim_conversation_get_ui_ops(conv) == gaim_get_gtk_conversation_ui_ops())
+	(gaim_conversation_get_ui_ops(conv) == \
+	 gaim_gtk_conversations_get_conv_ui_ops())
 
 /*@}*/
 
@@ -218,21 +219,21 @@ struct _GaimGtkConversation
 /**
  * Initializes the GTK+ conversation system.
  */
-void gaim_gtk_conversation_init(void);
+void gaim_gtk_conversations_init(void);
 
 /**
  * Returns the UI operations structure for GTK windows.
  *
  * @return The GTK window operations structure.
  */
-GaimWindowUiOps *gaim_get_gtk_window_ui_ops(void);
+GaimWindowUiOps *gaim_gtk_conversations_get_win_ui_ops(void);
 
 /**
  * Returns the UI operations structure for GTK conversations.
  *
  * @return The GTK conversation operations structure.
  */
-GaimConversationUiOps *gaim_get_gtk_conversation_ui_ops(void);
+GaimConversationUiOps *gaim_gtk_conversations_get_conv_ui_ops(void);
 
 /**
  * Updates the buddy icon on a conversation.

@@ -77,7 +77,7 @@ struct gaim_gtk_buddy_list {
 
 #define GAIM_GTK_BLIST(list) ((struct gaim_gtk_buddy_list *)(list)->ui_data)
 #define GAIM_IS_GTK_BLIST(list) \
-	((list)->ui_ops == gaim_get_gtk_blist_ui_ops())
+	((list)->ui_ops == gaim_gtk_blist_get_ui_ops())
 
 /**************************************************************************
  * @name GTK+ Buddy List API
@@ -93,7 +93,7 @@ void gaim_gtk_blist_init(void);
  *
  * @return The GTK list operations structure.
  */
-struct gaim_blist_ui_ops *gaim_get_gtk_blist_ui_ops(void);
+struct gaim_blist_ui_ops *gaim_gtk_blist_get_ui_ops(void);
 
 /**
  * Returns the base image to represent the account, based on the currently selected theme

@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,7 +27,7 @@
 
 /**
  * A file transfer dialog.
- * 
+ *
  * The structure is opaque, as nobody should be touching anything inside of
  * it.
  */
@@ -137,7 +137,7 @@ GaimGtkXferDialog *gaim_get_gtkxfer_dialog(void);
  *
  * @return The GTK+ file transfer UI operations structure.
  */
-GaimXferUiOps *gaim_get_gtk_xfer_ui_ops(void);
+GaimXferUiOps *gaim_gtk_xfers_get_ui_ops(void);
 
 /*@}*/
 

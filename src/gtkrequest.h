@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -30,6 +30,6 @@
  *
  * @return The GTK+ UI request operations structure.
  */
-GaimRequestUiOps *gaim_get_gtk_request_ui_ops(void);
+GaimRequestUiOps *gaim_gtk_request_get_ui_ops(void);
 
 #endif /* _GAIM_GTK_REQUEST_H_ */

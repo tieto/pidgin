@@ -151,7 +151,7 @@ struct gaim_buddy_list *gaim_blist_new()
 {
 	struct gaim_buddy_list *gbl = g_new0(struct gaim_buddy_list, 1);
 
-	gbl->ui_ops = gaim_get_blist_ui_ops();
+	gbl->ui_ops = gaim_blist_get_ui_ops();
 
 	gbl->buddies = g_hash_table_new_full((GHashFunc)_gaim_blist_hbuddy_hash,
 					 (GEqualFunc)_gaim_blist_hbuddy_equal,
@@ -450,7 +450,7 @@ GaimBlistChat *gaim_blist_chat_new(GaimAccount *account, const char *alias, GHas
 
 	((GaimBlistNode*)chat)->type = GAIM_BLIST_CHAT_NODE;
 
-	ops = gaim_get_blist_ui_ops();
+	ops = gaim_blist_get_ui_ops();
 
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node((GaimBlistNode *)chat);
@@ -497,7 +497,7 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 	b->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	((GaimBlistNode*)b)->type = GAIM_BLIST_BUDDY_NODE;
 
-	ops = gaim_get_blist_ui_ops();
+	ops = gaim_blist_get_ui_ops();
 
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node((GaimBlistNode *)b);
@@ -746,7 +746,7 @@ GaimContact *gaim_contact_new()
 
 	c->totalsize = c->currentsize = c->online = 0;
 
-	ops = gaim_get_blist_ui_ops();
+	ops = gaim_blist_get_ui_ops();
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node((GaimBlistNode *)c);
 
@@ -783,7 +783,7 @@ GaimGroup *gaim_group_new(const char *name)
 				g_free, g_free);
 		((GaimBlistNode*)g)->type = GAIM_BLIST_GROUP_NODE;
 
-		ops = gaim_get_blist_ui_ops();
+		ops = gaim_blist_get_ui_ops();
 
 		if (ops != NULL && ops->new_node != NULL)
 			ops->new_node((GaimBlistNode *)g);
@@ -2548,17 +2548,6 @@ char *gaim_buddy_get_setting(GaimBuddy *b, const char *key) {
 	return g_strdup(g_hash_table_lookup(b->settings, key));
 }
 
-void gaim_set_blist_ui_ops(struct gaim_blist_ui_ops *ops)
-{
-	blist_ui_ops = ops;
-}
-
-struct gaim_blist_ui_ops *
-gaim_get_blist_ui_ops(void)
-{
-	return blist_ui_ops;
-}
-
 int gaim_blist_get_group_size(GaimGroup *group, gboolean offline) {
 	if(!group)
 		return 0;
@@ -2572,6 +2561,19 @@ int gaim_blist_get_group_online_count(GaimGroup *group) {
 
 	return group->online;
 }
+
+void
+gaim_blist_set_ui_ops(struct gaim_blist_ui_ops *ops)
+{
+	blist_ui_ops = ops;
+}
+
+struct gaim_blist_ui_ops *
+gaim_blist_get_ui_ops(void)
+{
+	return blist_ui_ops;
+}
+
 
 void *
 gaim_blist_get_handle(void)

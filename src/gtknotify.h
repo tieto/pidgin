@@ -30,6 +30,6 @@
  *
  * @return The GTK+ UI notify operations structure.
  */
-GaimNotifyUiOps *gaim_get_gtk_notify_ui_ops(void);
+GaimNotifyUiOps *gaim_gtk_notify_get_ui_ops(void);
 
 #endif /* _GAIM_GTK_NOTIFY_H_ */

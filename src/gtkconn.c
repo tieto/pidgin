@@ -289,11 +289,11 @@ static GaimConnectionUiOps conn_ui_ops =
 	gaim_gtk_connection_report_disconnect
 };
 
-GaimConnectionUiOps *gaim_get_gtk_connection_ui_ops(void)
+GaimConnectionUiOps *
+gaim_gtk_connections_get_ui_ops(void)
 {
 	return &conn_ui_ops;
 }
-
 
 void away_on_login(const char *mesg)
 {

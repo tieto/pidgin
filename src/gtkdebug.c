@@ -341,7 +341,7 @@ static GaimDebugUiOps ops =
 };
 
 GaimDebugUiOps *
-gaim_get_gtk_debug_ui_ops(void)
+gaim_gtk_debug_get_ui_ops(void)
 {
 	return &ops;
 }

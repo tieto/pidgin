@@ -372,7 +372,7 @@ static GaimNotifyUiOps ops =
 };
 
 GaimNotifyUiOps *
-gaim_get_gtk_notify_ui_ops(void)
+gaim_gtk_notify_get_ui_ops(void)
 {
 	return &ops;
 }

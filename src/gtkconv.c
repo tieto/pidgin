@@ -3686,12 +3686,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 /**************************************************************************
  * GTK+ window ops
  **************************************************************************/
-static GaimConversationUiOps *
-gaim_gtk_get_conversation_ui_ops(void)
-{
-	return gaim_get_gtk_conversation_ui_ops();
-}
-
 static void
 gaim_gtk_new_window(GaimWindow *win)
 {
@@ -4108,7 +4102,7 @@ gaim_gtk_get_active_index(const GaimWindow *win)
 
 static GaimWindowUiOps window_ui_ops =
 {
-	gaim_gtk_get_conversation_ui_ops,
+	gaim_gtk_conversations_get_conv_ui_ops,
 	gaim_gtk_new_window,
 	gaim_gtk_destroy_window,
 	gaim_gtk_show,
@@ -4184,7 +4178,7 @@ update_convo_add_button(GaimConversation *conv)
 }
 
 GaimWindowUiOps *
-gaim_get_gtk_window_ui_ops(void)
+gaim_gtk_conversations_get_win_ui_ops(void)
 {
 	return &window_ui_ops;
 }
@@ -5122,7 +5116,7 @@ static GaimConversationUiOps conversation_ui_ops =
 };
 
 GaimConversationUiOps *
-gaim_get_gtk_conversation_ui_ops(void)
+gaim_gtk_conversations_get_conv_ui_ops(void)
 {
 	return &conversation_ui_ops;
 }
@@ -6020,7 +6014,7 @@ chat_button_type_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 void
-gaim_gtk_conversation_init(void)
+gaim_gtk_conversations_init(void)
 {
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");

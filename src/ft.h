@@ -533,14 +533,14 @@ void gaim_xfers_init(void);
  *
  * @param ops The UI operations structure.
  */
-void gaim_set_xfer_ui_ops(GaimXferUiOps *ops);
+void gaim_xfers_set_ui_ops(GaimXferUiOps *ops);
 
 /**
  * Returns the UI operations structure to be used in all gaim file transfers.
  *
  * @return The UI operations structure.
  */
-GaimXferUiOps *gaim_get_xfer_ui_ops(void);
+GaimXferUiOps *gaim_xfers_get_ui_ops(void);
 
 /*@}*/
 

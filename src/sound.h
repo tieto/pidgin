@@ -72,14 +72,14 @@ extern "C" {
  *
  * @param ops The UI sound operations structure.
  */
-void gaim_set_sound_ui_ops(GaimSoundUiOps *ops);
+void gaim_sound_set_ui_ops(GaimSoundUiOps *ops);
 
 /**
  * Gets the UI sound operations
  *
  * @return The UI sound operations structure.
  */
-GaimSoundUiOps *gaim_get_sound_ui_ops(void);
+GaimSoundUiOps *gaim_sound_get_ui_ops(void);
 
 /**
  * Initializes the sound subsystem

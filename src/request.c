@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -592,7 +592,7 @@ gaim_request_input(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(ok_text != NULL, NULL);
 	g_return_val_if_fail(ok_cb   != NULL, NULL);
 
-	ops = gaim_get_request_ui_ops();
+	ops = gaim_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_input != NULL) {
 		GaimRequestInfo *info;
@@ -656,7 +656,7 @@ gaim_request_choice_varg(void *handle, const char *title,
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
 	g_return_val_if_fail(choice_count > 0, NULL);
 
-	ops = gaim_get_request_ui_ops();
+	ops = gaim_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_choice != NULL) {
 		GaimRequestInfo *info;
@@ -710,7 +710,7 @@ gaim_request_action_varg(void *handle, const char *title,
 	g_return_val_if_fail(primary != NULL,  NULL);
 	g_return_val_if_fail(action_count > 0, NULL);
 
-	ops = gaim_get_request_ui_ops();
+	ops = gaim_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_action != NULL) {
 		GaimRequestInfo *info;
@@ -743,7 +743,7 @@ gaim_request_fields(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(ok_text != NULL, NULL);
 	g_return_val_if_fail(ok_cb   != NULL, NULL);
 
-	ops = gaim_get_request_ui_ops();
+	ops = gaim_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_fields != NULL) {
 		GaimRequestInfo *info;
@@ -772,7 +772,7 @@ gaim_request_close(GaimRequestType type, void *ui_handle)
 
 	g_return_if_fail(ui_handle != NULL);
 
-	ops = gaim_get_request_ui_ops();
+	ops = gaim_request_get_ui_ops();
 
 	for (l = handles; l != NULL; l = l->next) {
 		GaimRequestInfo *info = l->data;
@@ -798,7 +798,7 @@ gaim_request_close_with_handle(void *handle)
 
 	g_return_if_fail(handle != NULL);
 
-	ops = gaim_get_request_ui_ops();
+	ops = gaim_request_get_ui_ops();
 
 	for (l = handles; l != NULL; l = l_next) {
 		GaimRequestInfo *info = l->data;
@@ -817,13 +817,13 @@ gaim_request_close_with_handle(void *handle)
 }
 
 void
-gaim_set_request_ui_ops(GaimRequestUiOps *ops)
+gaim_request_set_ui_ops(GaimRequestUiOps *ops)
 {
 	request_ui_ops = ops;
 }
 
 GaimRequestUiOps *
-gaim_get_request_ui_ops(void)
+gaim_request_get_ui_ops(void)
 {
 	return request_ui_ops;
 }

@@ -735,14 +735,14 @@ char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
  *
  * @param ops The ops struct.
  */
-void gaim_set_blist_ui_ops(struct gaim_blist_ui_ops *ops);
+void gaim_blist_set_ui_ops(struct gaim_blist_ui_ops *ops);
 
 /**
  * Returns the UI operations structure to be used for the buddy list.
  *
  * @return The UI operations structure.
  */
-struct gaim_blist_ui_ops *gaim_get_blist_ui_ops(void);
+struct gaim_blist_ui_ops *gaim_blist_get_ui_ops(void);
 
 /*@}*/
 

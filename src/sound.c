@@ -30,7 +30,7 @@
 
 static GaimSoundUiOps *sound_ui_ops = NULL;
 
-void gaim_set_sound_ui_ops(GaimSoundUiOps *ops)
+void gaim_sound_set_ui_ops(GaimSoundUiOps *ops)
 {
 	if(sound_ui_ops && sound_ui_ops->shutdown)
 		sound_ui_ops->shutdown();
@@ -39,7 +39,7 @@ void gaim_set_sound_ui_ops(GaimSoundUiOps *ops)
 		sound_ui_ops->init();
 }
 
-GaimSoundUiOps *gaim_get_sound_ui_ops(void)
+GaimSoundUiOps *gaim_sound_get_ui_ops(void)
 {
 	return sound_ui_ops;
 }

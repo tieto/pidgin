@@ -33,7 +33,8 @@
  *
  * @return UI operations struct
  */
-GaimSoundUiOps *gaim_get_gtk_sound_ui_ops(void);
+GaimSoundUiOps *gaim_gtk_sound_get_ui_ops(void);
+
 /**
  * Mutes or un-mutes sounds.
  *

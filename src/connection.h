@@ -262,14 +262,14 @@ GList *gaim_connections_get_connecting(void);
  *
  * @param ops The UI operations structure.
  */
-void gaim_set_connection_ui_ops(GaimConnectionUiOps *ops);
+void gaim_connections_set_ui_ops(GaimConnectionUiOps *ops);
 
 /**
  * Returns the UI operations structure used for connections.
  *
  * @return The UI operations structure in use.
  */
-GaimConnectionUiOps *gaim_get_connection_ui_ops(void);
+GaimConnectionUiOps *gaim_connections_get_ui_ops(void);
 
 /*@}*/
 

@@ -482,7 +482,7 @@ static void gaim_log_handler (const gchar    *domain,
 static void
 debug_init(void)
 {
-	gaim_set_debug_ui_ops(gaim_get_gtk_debug_ui_ops());
+	gaim_debug_set_ui_ops(gaim_gtk_debug_get_ui_ops());
 	gaim_gtk_debug_init();
 }
 
@@ -491,18 +491,18 @@ gaim_gtk_ui_init(void)
 {
 	/* Set the UI operation structures. */
 	gaim_accounts_set_ui_ops(gaim_gtk_accounts_get_ui_ops());
-	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
-	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
-	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
-	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
-	gaim_set_privacy_ui_ops(gaim_gtk_privacy_get_ui_ops());
-	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
-	gaim_set_sound_ui_ops(gaim_get_gtk_sound_ui_ops());
-	gaim_set_connection_ui_ops(gaim_get_gtk_connection_ui_ops());
+	gaim_conversations_set_win_ui_ops(gaim_gtk_conversations_get_win_ui_ops());
+	gaim_xfers_set_ui_ops(gaim_gtk_xfers_get_ui_ops());
+	gaim_blist_set_ui_ops(gaim_gtk_blist_get_ui_ops());
+	gaim_notify_set_ui_ops(gaim_gtk_notify_get_ui_ops());
+	gaim_privacy_set_ui_ops(gaim_gtk_privacy_get_ui_ops());
+	gaim_request_set_ui_ops(gaim_gtk_request_get_ui_ops());
+	gaim_sound_set_ui_ops(gaim_gtk_sound_get_ui_ops());
+	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
 
 	gaim_gtk_prefs_init();
 	gaim_gtk_blist_init();
-	gaim_gtk_conversation_init();
+	gaim_gtk_conversations_init();
 	gaim_gtk_pounces_init();
 	gaim_gtk_privacy_init();
 	gaim_gtk_xfers_init();
@@ -534,7 +534,7 @@ static GaimCoreUiOps core_ops =
 };
 
 static GaimCoreUiOps *
-gaim_get_gtk_core_ui_ops(void)
+gaim_gtk_core_get_ui_ops(void)
 {
 	return &core_ops;
 }
@@ -797,7 +797,7 @@ int main(int argc, char *argv[])
 
 	gaim_gtk_stock_init();
 
-	gaim_set_core_ui_ops(gaim_get_gtk_core_ui_ops());
+	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 
 	if (!gaim_core_init(GAIM_GTK_UI)) {
 		fprintf(stderr,

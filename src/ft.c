@@ -43,7 +43,7 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	xfer->type    = type;
 	xfer->account = account;
 	xfer->who     = g_strdup(who);
-	xfer->ui_ops  = gaim_get_xfer_ui_ops();
+	xfer->ui_ops  = gaim_xfers_get_ui_ops();
 
 	xfer->local_ip = g_strdup(gaim_xfers_get_ip_for_account(account));
 
@@ -90,7 +90,7 @@ gaim_xfer_request(GaimXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(xfer->ops.init != NULL);
 
-	ui_ops = gaim_get_xfer_ui_ops();
+	ui_ops = gaim_xfers_get_ui_ops();
 
 	if (ui_ops == NULL || ui_ops->request_file == NULL)
 		return;
@@ -766,15 +766,13 @@ gaim_xfers_init(void)
 }
 
 void
-gaim_set_xfer_ui_ops(GaimXferUiOps *ops)
+gaim_xfers_set_ui_ops(GaimXferUiOps *ops)
 {
-	g_return_if_fail(ops != NULL);
-
 	xfer_ui_ops = ops;
 }
 
 GaimXferUiOps *
-gaim_get_xfer_ui_ops(void)
+gaim_xfers_get_ui_ops(void)
 {
 	return xfer_ui_ops;
 }

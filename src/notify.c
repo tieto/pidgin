@@ -42,7 +42,7 @@ gaim_notify_message(void *handle, GaimNotifyMsgType type,
 
 	g_return_val_if_fail(primary != NULL, NULL);
 
-	ops = gaim_get_notify_ui_ops();
+	ops = gaim_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_message != NULL) {
 		GaimNotifyInfo *info;
@@ -68,7 +68,7 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 {
 	GaimNotifyUiOps *ops;
 
-	ops = gaim_get_notify_ui_ops();
+	ops = gaim_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_email != NULL) {
 		GaimNotifyInfo *info;
@@ -106,7 +106,7 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 								 cb, user_data);
 	}
 
-	ops = gaim_get_notify_ui_ops();
+	ops = gaim_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_emails != NULL) {
 		GaimNotifyInfo *info;
@@ -134,7 +134,7 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 
 	g_return_val_if_fail(primary != NULL, NULL);
 
-	ops = gaim_get_notify_ui_ops();
+	ops = gaim_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_formatted != NULL) {
 		GaimNotifyInfo *info;
@@ -160,7 +160,7 @@ gaim_notify_uri(void *handle, const char *uri)
 
 	g_return_val_if_fail(uri != NULL, NULL);
 
-	ops = gaim_get_notify_ui_ops();
+	ops = gaim_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_uri != NULL) {
 		GaimNotifyInfo *info;
@@ -186,7 +186,7 @@ gaim_notify_close(GaimNotifyType type, void *ui_handle)
 
 	g_return_if_fail(ui_handle != NULL);
 
-	ops = gaim_get_notify_ui_ops();
+	ops = gaim_notify_get_ui_ops();
 
 	for (l = handles; l != NULL; l = l->next) {
 		GaimNotifyInfo *info = l->data;
@@ -212,7 +212,7 @@ gaim_notify_close_with_handle(void *handle)
 
 	g_return_if_fail(handle != NULL);
 
-	ops = gaim_get_notify_ui_ops();
+	ops = gaim_notify_get_ui_ops();
 
 	for (l = handles; l != NULL; l = l_next) {
 		GaimNotifyInfo *info = l->data;
@@ -231,13 +231,13 @@ gaim_notify_close_with_handle(void *handle)
 }
 
 void
-gaim_set_notify_ui_ops(GaimNotifyUiOps *ops)
+gaim_notify_set_ui_ops(GaimNotifyUiOps *ops)
 {
 	notify_ui_ops = ops;
 }
 
 GaimNotifyUiOps *
-gaim_get_notify_ui_ops(void)
+gaim_notify_get_ui_ops(void)
 {
 	return notify_ui_ops;
 }

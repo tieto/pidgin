@@ -303,7 +303,8 @@ static GaimSoundUiOps sound_ui_ops =
 	gaim_gtk_sound_play_event
 };
 
-GaimSoundUiOps *gaim_get_gtk_sound_ui_ops(void)
+GaimSoundUiOps *
+gaim_gtk_sound_get_ui_ops(void)
 {
 	return &sound_ui_ops;
 }

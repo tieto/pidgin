@@ -173,13 +173,13 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 }
 
 void
-gaim_set_privacy_ui_ops(GaimPrivacyUiOps *ops)
+gaim_privacy_set_ui_ops(GaimPrivacyUiOps *ops)
 {
 	privacy_ops = ops;
 }
 
 GaimPrivacyUiOps *
-gaim_get_privacy_ui_ops(void)
+gaim_privacy_get_ui_ops(void)
 {
 	return privacy_ops;
 }

@@ -109,7 +109,7 @@ gaim_connection_register(GaimConnection *gc)
 	gaim_debug(GAIM_DEBUG_INFO, "connection",
 			"Registering.  gc = %p\n", gc);
 
-	ops = gaim_get_connection_ui_ops();
+	ops = gaim_connections_get_ui_ops();
 
 	if (gc->prpl != NULL)
 	        prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -157,7 +157,7 @@ gaim_connection_connect(GaimConnection *gc)
 	gaim_debug(GAIM_DEBUG_INFO, "connection",
 			   "Connecting. gc = %p\n", gc);
 
-	ops = gaim_get_connection_ui_ops();
+	ops = gaim_connections_get_ui_ops();
 
 	if (gc->prpl != NULL)
 	        prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -295,7 +295,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 	gc->state = state;
 
-	ops = gaim_get_connection_ui_ops();
+	ops = gaim_connections_get_ui_ops();
 
 	if (gc->state == GAIM_CONNECTING) {
 		connections_connecting = g_list_append(connections_connecting, gc);
@@ -436,7 +436,7 @@ gaim_connection_update_progress(GaimConnection *gc, const char *text,
 	g_return_if_fail(step < count);
 	g_return_if_fail(count > 1);
 
-	ops = gaim_get_connection_ui_ops();
+	ops = gaim_connections_get_ui_ops();
 
 	if (ops != NULL && ops->connect_progress != NULL)
 		ops->connect_progress(gc, text, step, count);
@@ -450,7 +450,7 @@ gaim_connection_notice(GaimConnection *gc, const char *text)
 	g_return_if_fail(gc   != NULL);
 	g_return_if_fail(text != NULL);
 
-	ops = gaim_get_connection_ui_ops();
+	ops = gaim_connections_get_ui_ops();
 
 	if (ops != NULL && ops->notice != NULL)
 		ops->notice(gc, text);
@@ -468,7 +468,7 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	if (gc->disconnect_timeout)
 		return;
 
-	ops = gaim_get_connection_ui_ops();
+	ops = gaim_connections_get_ui_ops();
 
 	if (ops != NULL) {
 		if (ops->report_disconnect != NULL)
@@ -508,6 +508,18 @@ gaim_connections_get_connecting(void)
 }
 
 void
+gaim_connections_set_ui_ops(GaimConnectionUiOps *ops)
+{
+	connection_ui_ops = ops;
+}
+
+GaimConnectionUiOps *
+gaim_connections_get_ui_ops(void)
+{
+	return connection_ui_ops;
+}
+
+void
 gaim_connections_init(void)
 {
 	void *handle = gaim_connections_get_handle();
@@ -543,16 +555,4 @@ void *
 gaim_connections_get_handle(void)
 {
 	return &connections_handle;
-}
-
-void
-gaim_set_connection_ui_ops(GaimConnectionUiOps *ops)
-{
-	connection_ui_ops = ops;
-}
-
-GaimConnectionUiOps *
-gaim_get_connection_ui_ops(void)
-{
-	return connection_ui_ops;
 }

@@ -159,7 +159,7 @@ void gaim_debug_fatal(const char *category, const char *format, ...);
  *
  * @param ops The UI operations structure.
  */
-void gaim_set_debug_ui_ops(GaimDebugUiOps *ops);
+void gaim_debug_set_ui_ops(GaimDebugUiOps *ops);
 
 /**
  * Returns the UI operations structure used when outputting debug
@@ -167,7 +167,7 @@ void gaim_set_debug_ui_ops(GaimDebugUiOps *ops);
  *
  * @return The UI operations structure in use.
  */
-GaimDebugUiOps *gaim_get_debug_ui_ops(void);
+GaimDebugUiOps *gaim_debug_get_ui_ops(void);
 
 /*@}*/
 

@@ -35,7 +35,7 @@ gaim_debug_vargs(GaimDebugLevel level, const char *category,
 	g_return_if_fail(level != GAIM_DEBUG_ALL);
 	g_return_if_fail(format != NULL);
 
-	ops = gaim_get_debug_ui_ops();
+	ops = gaim_debug_get_ui_ops();
 
 	if (ops != NULL && ops->print != NULL)
 		ops->print(level, category, format, args);
@@ -116,13 +116,13 @@ gaim_debug_fatal(const char *category, const char *format, ...)
 }
 
 void
-gaim_set_debug_ui_ops(GaimDebugUiOps *ops)
+gaim_debug_set_ui_ops(GaimDebugUiOps *ops)
 {
 	debug_ui_ops = ops;
 }
 
 GaimDebugUiOps *
-gaim_get_debug_ui_ops(void)
+gaim_debug_get_ui_ops(void)
 {
 	return debug_ui_ops;
 }

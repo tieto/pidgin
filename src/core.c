@@ -60,7 +60,7 @@ gaim_core_init(const char *ui)
 	core->ui = g_strdup(ui);
 	core->reserved = NULL;
 
-	ops = gaim_get_core_ui_ops();
+	ops = gaim_core_get_ui_ops();
 
 	/* The signals subsystem is important and should be first. */
 	gaim_signals_init();
@@ -106,7 +106,7 @@ gaim_core_quit(void)
 
 	g_return_if_fail(core != NULL);
 
-	ops = gaim_get_core_ui_ops();
+	ops = gaim_core_get_ui_ops();
 
 	if (ops != NULL && ops->quit != NULL)
 		ops->quit();
@@ -173,13 +173,13 @@ gaim_get_core(void)
 }
 
 void
-gaim_set_core_ui_ops(GaimCoreUiOps *ops)
+gaim_core_set_ui_ops(GaimCoreUiOps *ops)
 {
 	_ops = ops;
 }
 
 GaimCoreUiOps *
-gaim_get_core_ui_ops(void)
+gaim_core_get_ui_ops(void)
 {
 	return _ops;
 }
