@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -296,6 +296,14 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	const char *value;
 
 	body = g_strdup(msn_message_get_body(msg));
+
+	if (!strcmp(servconn->msg_passport, "messenger@microsoft.com") &&
+		strstr(body, "immediate security update"))
+	{
+		g_free(body);
+
+		return TRUE;
+	}
 
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Checking User-Agent...\n");
 
