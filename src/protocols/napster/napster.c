@@ -55,6 +55,8 @@ G_MODULE_IMPORT GSList *connections;
 #define USEROPT_NAPPORT 4
 #define NAP_PORT 8888
 
+#define NAPSTER_CONNECT_STEPS 2
+
 GSList *nap_connections = NULL;
 
 struct nap_data {
@@ -62,7 +64,7 @@ struct nap_data {
 	gchar *email;
 };
 
-static struct gaim_conversation *nap_find_chat(struct gaim_connection *gc, const char *name)
+static struct gaim_conversation *nap_find_chat(GaimConnection *gc, const char *name)
 {
 	GSList *bcs = gc->buddy_chats;
 
@@ -76,7 +78,7 @@ static struct gaim_conversation *nap_find_chat(struct gaim_connection *gc, const
 	return NULL;
 }
 
-static void nap_write_packet(struct gaim_connection *gc, unsigned short command, const char *format, ...)
+static void nap_write_packet(GaimConnection *gc, unsigned short command, const char *format, ...)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	va_list ap;
@@ -97,7 +99,7 @@ static void nap_write_packet(struct gaim_connection *gc, unsigned short command,
 	g_free(message);
 }
 
-static int nap_do_irc_style(struct gaim_connection *gc, const char *message, const char *name)
+static int nap_do_irc_style(GaimConnection *gc, const char *message, const char *name)
 {
 	gchar **res;
 
@@ -146,7 +148,7 @@ static int nap_do_irc_style(struct gaim_connection *gc, const char *message, con
 }
 
 /* 205 - MSG_CLIENT_PRIVMSG */
-static int nap_send_im(struct gaim_connection *gc, const char *who, const char *message, int len, int flags)
+static int nap_send_im(GaimConnection *gc, const char *who, const char *message, int len, int flags)
 {
 
 	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {
@@ -161,13 +163,13 @@ static int nap_send_im(struct gaim_connection *gc, const char *who, const char *
 }
 
 /* 207 - MSG_CLIENT_ADD_HOTLIST */
-static void nap_add_buddy(struct gaim_connection *gc, const char *name)
+static void nap_add_buddy(GaimConnection *gc, const char *name)
 {
 	nap_write_packet(gc, 207, "%s", name);
 }
 
 /* 208 - MSG_CLIENT_ADD_HOTLIST_SEQ */
-static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
+static void nap_add_buddies(GaimConnection *gc, GList *buddies)
 {
 	while (buddies) {
 		nap_write_packet(gc, 208, "%s", (char *)buddies->data);
@@ -176,13 +178,13 @@ static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
 }
 
 /* 303 - MSG_CLIENT_REMOVE_HOTLIST */
-static void nap_remove_buddy(struct gaim_connection *gc, char *name, char *group)
+static void nap_remove_buddy(GaimConnection *gc, char *name, char *group)
 {
 	nap_write_packet(gc, 303, "%s", name);
 }
 
 /* 400 - MSG_CLIENT_JOIN */
-static void nap_join_chat(struct gaim_connection *gc, GHashTable *data)
+static void nap_join_chat(GaimConnection *gc, GHashTable *data)
 {
 	char *name;
 
@@ -199,7 +201,7 @@ static void nap_join_chat(struct gaim_connection *gc, GHashTable *data)
 }
 
 /* 401 - MSG_CLIENT_PART */
-static void nap_chat_leave(struct gaim_connection *gc, int id)
+static void nap_chat_leave(GaimConnection *gc, int id)
 {
 	struct gaim_conversation *c = gaim_find_chat(gc, id);
 
@@ -210,7 +212,7 @@ static void nap_chat_leave(struct gaim_connection *gc, int id)
 }
 
 /* 402 - MSG_CLIENT_PUBLIC */
-static int nap_chat_send(struct gaim_connection *gc, int id, char *message)
+static int nap_chat_send(GaimConnection *gc, int id, char *message)
 {
 	struct gaim_conversation *c = gaim_find_chat(gc, id);
 
@@ -229,14 +231,14 @@ static int nap_chat_send(struct gaim_connection *gc, int id, char *message)
 }
 
 /* 603 - MSG_CLIENT_WHOIS */
-static void nap_get_info(struct gaim_connection *gc, const char *who)
+static void nap_get_info(GaimConnection *gc, const char *who)
 {
 	nap_write_packet(gc, 603, "%s", who);
 }
 
 static void nap_callback(gpointer data, gint source, GaimInputCondition condition)
 {
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct nap_data *ndata = gc->proto_data;
 	struct gaim_conversation *c;
 	gchar *buf, *buf2, *buf3, **res;
@@ -246,8 +248,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	int i;
 
 	if (read(source, (void*)header, 4) != 4) {
-		hide_login_progress(gc, _("Unable to read header from server"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to read header from server"));
 		return;
 	}
 
@@ -262,9 +263,8 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (tmp <= 0) {
 			g_free(buf);
 			buf = g_strdup_printf("Unable to read mesage from server.  Command is %hd, length is %hd.", len, command);
-			hide_login_progress(gc, buf);
+			gaim_connection_error(gc, buf);
 			g_free(buf);
-			signoff(gc);
 			return;
 		}
 		i += tmp;
@@ -278,7 +278,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		gaim_input_remove(gc->inpa);
 		gc->inpa = 0;
 		close(source);
-		signoff(gc);
+		gaim_connection_destroy(gc);
 		break;
 
 	case 003: /* MSG_SERVER_EMAIL */
@@ -286,7 +286,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		ndata->email = g_strdup(buf);
 
 		/* Our signon is complete */
-		account_online(gc);
+		gaim_connection_set_state(gc, GAIM_CONNECTED);
 		serv_finish_login(gc);
 
 		break;
@@ -343,7 +343,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		/* we have been kicked off =^( */
 		gaim_notify_error(gc, NULL,
 						  _("You were disconnected from the server."), NULL);
-                signoff(gc);
+                gaim_connection_destroy(gc);
 		break;
 
 	case 401: /* MSG_CLIENT_PART */
@@ -430,7 +430,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		gaim_notify_error(gc, NULL,
 						  _("You were disconnected from the server, because "
 							"you logged on from a different location"), NULL);
-		signoff(gc);
+		gaim_connection_destroy(gc);
 		break;
 
 	case 751: /* MSG_CLIENT_PING */
@@ -471,7 +471,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 /* 002 - MSG_CLIENT_LOGIN */
 static void nap_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	gchar *buf;
 
@@ -481,43 +481,42 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	}
 
 	if (source < 0) {
-		hide_login_progress(gc, "Unable to connect");
-		signoff(gc);
+		gaim_connection_error(gc, "Unable to connect");
 		return;
 	}
 
 	ndata->fd = source;
 
 	/* Update the login progress status display */
-	buf = g_strdup_printf("Logging in: %s", gc->username);
-	set_login_progress(gc, 4, buf);
+	buf = g_strdup_printf("Logging in: %s", gaim_account_get_username(gc->account));
+	gaim_connection_update_progress(gc, buf, 2, NAPSTER_CONNECT_STEPS);
 	g_free(buf);
 
 	/* Write our signon data */
-	nap_write_packet(gc, 2, "%s %s 0 \"gaim %s\" 0", gc->username, gc->password, VERSION);
+	nap_write_packet(gc, 2, "%s %s 0 \"gaim %s\" 0",
+			gaim_account_get_username(gc->account),
+			gaim_account_get_password(gc->account), VERSION);
 
 	/* And set up the input watcher */
 	gc->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_callback, gc);
 }
 
-static void nap_login(struct gaim_account *account)
+static void nap_login(GaimAccount *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(account);
+	GaimConnection *gc = gaim_account_get_connection(account);
 
-	set_login_progress(gc, 2, _("Connecting"));
+	gaim_connection_update_progress(gc, _("Connecting"), 1, NAPSTER_CONNECT_STEPS);
 
 	gc->proto_data = g_new0(struct nap_data, 1);
-	if (proxy_connect(account, account->proto_opt[USEROPT_NAPSERVER][0] ?
-				account->proto_opt[USEROPT_NAPSERVER] : NAP_SERVER,
-				account->proto_opt[USEROPT_NAPPORT][0] ?
-				atoi(account->proto_opt[USEROPT_NAPPORT]) : NAP_PORT,
+	if (proxy_connect(account,
+				gaim_account_get_string(account, "server", NAP_SERVER),
+				gaim_account_get_int(account, "port", NAP_PORT),
 				nap_login_connect, gc) != 0) {
-		hide_login_progress(gc, _("Unable to connect"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to connect"));
 	}
 }
 
-static void nap_close(struct gaim_connection *gc)
+static void nap_close(GaimConnection *gc)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 
@@ -531,7 +530,7 @@ static void nap_close(struct gaim_connection *gc)
 	g_free(ndata);
 }
 
-static const char* nap_list_icon(struct gaim_account *a, struct buddy *b)
+static const char* nap_list_icon(GaimAccount *a, struct buddy *b)
 {
 	return "napster";
 }
@@ -542,7 +541,7 @@ static void nap_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 		*se = "offline";
 }
 
-static GList *nap_buddy_menu(struct gaim_connection *gc, const char *who)
+static GList *nap_buddy_menu(GaimConnection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -556,7 +555,7 @@ static GList *nap_buddy_menu(struct gaim_connection *gc, const char *who)
 	return m;
 }
 
-static GList *nap_chat_info(struct gaim_connection *gc)
+static GList *nap_chat_info(GaimConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
