@@ -259,7 +259,7 @@ gint linkify_text(char *text)
 			char illegal_chars[] = "!@#$%^&*()[]{}/\\<>\":;\0";
                         url_buf[0] = 0;
 
-                        if (*(c-1) == ' ' || *(c+1) == ' ' || rindex(illegal_chars, *(c+1))) 
+                        if (*(c-1) == ' ' || *(c+1) == ' ' || rindex(illegal_chars, *(c+1)) || *(c+1) == 13 || *(c+1) == 10)
                                 flag = 0;
                         else
                                 flag = 1;
