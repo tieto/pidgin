@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: socketmanager.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: socketmanager.c 2405 2001-09-29 02:08:00Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -74,7 +74,7 @@ int icq_SocketNew(int domain, int type, int protocol)
  * Creates a new socket by accepting a connection from a listening
  * socket.
  */
-int icq_SocketAccept(int listens, struct sockaddr *addr, socklen_t *addrlen)
+int icq_SocketAccept(int listens, struct sockaddr *addr, int *addrlen)
 {
   int s = accept(listens, addr, addrlen);
 
