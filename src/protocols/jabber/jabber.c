@@ -1408,7 +1408,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		if (p->from->resource) {
 			if (!y) {
 				if (!find_chat_buddy(jc->b, p->from->resource)) {
-					add_chat_buddy(jc->b, p->from->resource);
+					add_chat_buddy(jc->b, p->from->resource, NULL);
 				} else if ((y = xmlnode_get_tag(p->x, "status"))) {
 					jabber_track_away(gjc, p, NULL);
 				}
@@ -1569,7 +1569,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 					return;
 				}
 				if (!find_chat_buddy(jc->b, gjid->resource)) {
-					add_chat_buddy(jc->b, gjid->resource);
+					add_chat_buddy(jc->b, gjid->resource, NULL);
 				}
 			}
 		}

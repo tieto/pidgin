@@ -363,7 +363,8 @@ void create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
 /* Functions in buddy_chat.c */
 extern void show_new_buddy_chat(struct conversation *);
 extern void chat_set_topic(struct conversation*, char*, char*);
-extern void add_chat_buddy(struct conversation *, char *);
+/*extern void add_chat_buddy(struct conversation *, char *);*/
+extern void add_chat_buddy(struct conversation *, char *, char *);
 extern void rename_chat_buddy(struct conversation *, char *, char *);
 extern void remove_chat_buddy(struct conversation *, char *, char *);
 

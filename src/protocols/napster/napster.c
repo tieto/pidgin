@@ -263,7 +263,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		channel = find_channel_by_name(gc, res[0]);
 		convo = find_conversation_by_id(gc, channel->id);
 
-		add_chat_buddy(convo, res[1]);
+		add_chat_buddy(convo, res[1], NULL);
 
 		g_strfreev(res);
 

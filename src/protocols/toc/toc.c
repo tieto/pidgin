@@ -766,7 +766,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		if (in && (*in == 'T'))
 			while ((buddy = strtok(NULL, ":")) != NULL)
-				add_chat_buddy(b, buddy);
+				add_chat_buddy(b, buddy, NULL);
 		else
 			while ((buddy = strtok(NULL, ":")) != NULL)
 				remove_chat_buddy(b, buddy, NULL);

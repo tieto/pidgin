@@ -913,7 +913,7 @@ static void add_chat_buddy_common(struct conversation *b, char *name, int pos)
         gtk_widget_show(list_item);
 }
 
-void add_chat_buddy(struct conversation *b, char *buddy)
+void add_chat_buddy(struct conversation *b, char *buddy, char *extra_msg)
 {
 	char *name = g_strdup(buddy);
 	char tmp[BUF_LONG];
@@ -933,7 +933,11 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 		play_sound(SND_CHAT_JOIN);
 
 	if (chat_options & OPT_CHAT_LOGON) {
-		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), name);
+		if (!extra_msg)
+			g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), name);
+		else
+			g_snprintf(tmp, sizeof(tmp), _("%s [<I>%s</I>] entered the room."), name, 
+				   extra_msg);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 	}
 }

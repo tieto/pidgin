@@ -494,7 +494,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 	if (!g_strncasecmp(buf, "ACK", 3)) {
 	} else if (!g_strncasecmp(buf, "ANS", 3)) {
 		if (ms->chat)
-			add_chat_buddy(ms->chat, gc->username);
+			add_chat_buddy(ms->chat, gc->username, NULL);
 	} else if (!g_strncasecmp(buf, "BYE", 3)) {
 		if (ms->chat) {
 			char *user, *tmp = buf;
@@ -521,7 +521,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		if (ms->total > 1) {
 			if (!ms->chat)
 				ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			add_chat_buddy(ms->chat, user);
+			add_chat_buddy(ms->chat, user, NULL);
 		} 
 	} else if (!g_strncasecmp(buf, "JOI", 3)) {
 		char *user, *tmp = buf;
@@ -531,13 +531,13 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 
 		if (ms->total == 1) {
 			ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			add_chat_buddy(ms->chat, ms->user);
-			add_chat_buddy(ms->chat, gc->username);
+			add_chat_buddy(ms->chat, ms->user, NULL);
+			add_chat_buddy(ms->chat, gc->username, NULL);
 			g_free(ms->user);
 			ms->user = NULL;
 		}
 		if (ms->chat)
-			add_chat_buddy(ms->chat, user);
+			add_chat_buddy(ms->chat, user, NULL);
 		ms->total++;
 		while (ms->txqueue) {
 			char *send = add_cr(ms->txqueue->data);

@@ -76,18 +76,18 @@ struct dcc_chat
 };
 
 struct irc_file_transfer {
-		enum { IFT_SENDFILE_IN, IFT_SENDFILE_OUT } type;
-		struct file_transfer *xfer;
-		char *sn;
-		char *name;
-		int len;
-		int watcher;
-		int awatcher;
-		char ip[12];
-		int port;
-		int fd;
-		int cur;
-		struct gaim_connection *gc;
+	enum { IFT_SENDFILE_IN, IFT_SENDFILE_OUT } type;
+	struct file_transfer *xfer;
+	char *sn;
+	char *name;
+	int len;
+	int watcher;
+	int awatcher;
+	char ip[12];
+	int port;
+	int fd;
+	int cur;
+	struct gaim_connection *gc;
 };
 
 GSList *dcc_chat_list = NULL;
@@ -253,38 +253,38 @@ static void handle_005(struct gaim_connection *gc, char *word[], char *word_eol[
 static char *int_to_col(int c)
 {
 	switch(c) {
-		case 1:
-			return "#ffffff";
-		case 2:
-			return "#000066";
-		case 3:
-			return "#006600";
-		case 4:
-			return "#ff0000";
-		case 5:
-			return "#660000";
-		case 6:
-			return "#660066";
-		case 7:
-			return "#666600";
-		case 8:
-			return "#cccc00";
-		case 9:
-			return "#33cc33";
-		case 10:
-			return "#00acac";
-		case 11:
-			return "#00ccac";
-		case 12:
-			return "#0000ff";
-		case 13:
-			return "#cc00cc";
-		case 14:
-			return "#666666";
-		case 15:
-			return "#00ccac";
-		default:
-			return "#000000";
+	case 1:
+		return "#ffffff";
+	case 2:
+		return "#000066";
+	case 3:
+		return "#006600";
+	case 4:
+		return "#ff0000";
+	case 5:
+		return "#660000";
+	case 6:
+		return "#660066";
+	case 7:
+		return "#666600";
+	case 8:
+		return "#cccc00";
+	case 9:
+		return "#33cc33";
+	case 10:
+		return "#00acac";
+	case 11:
+		return "#00ccac";
+	case 12:
+		return "#0000ff";
+	case 13:
+		return "#cc00cc";
+	case 14:
+		return "#666666";
+	case 15:
+		return "#00ccac";
+	default:
+		return "#000000";
 	}
 }
 
@@ -351,87 +351,87 @@ static GString *decode_html(char *msg)
 	int fore, back;
 	while (*end) {
 		switch (*end) {
-			case 02: /* ^B */
-				*end = 0;
-				str = g_string_append(str, cur);
-				if (bold)
-					str = g_string_append(str, "</B>");
-				else
-					str = g_string_append(str, "<B>");
-				bold = !bold;
-				cur = end + 1;
-				break;
-			case 03: /* ^C */
-				*end++ = 0;
-				str = g_string_append(str, cur);
-				fore = back = -1;
+		case 02: /* ^B */
+			*end = 0;
+			str = g_string_append(str, cur);
+			if (bold)
+				str = g_string_append(str, "</B>");
+			else
+				str = g_string_append(str, "<B>");
+			bold = !bold;
+			cur = end + 1;
+			break;
+		case 03: /* ^C */
+			*end++ = 0;
+			str = g_string_append(str, cur);
+			fore = back = -1;
+			if (isdigit(*end)) {
+				fore = *end++ - '0';
 				if (isdigit(*end)) {
-					fore = *end++ - '0';
+					fore *= 10;
+					fore += *end++ - '0';
+				}
+				if (*end == ',' && isdigit(end[1])) {
+					end++;
+					back = *end++ - '0';
 					if (isdigit(*end)) {
-						fore *= 10;
-						fore += *end++ - '0';
-					}
-					if (*end == ',' && isdigit(end[1])) {
-						end++;
-						back = *end++ - '0';
-						if (isdigit(*end)) {
-							back *= 10;
-							back += *end++ - '0';
-						}
+						back *= 10;
+						back += *end++ - '0';
 					}
 				}
-				if (fore == -1) {
-					if (fg)
-						str = g_string_append(str, "</FONT>");
-					if (bg)
-						str = g_string_append(str, "</FONT>");
-					fg = bg = FALSE;
-				} else {
-					fore %= 16;
-					if (fg)
-						str = g_string_append(str, "</FONT>");
-					if (back != -1) {
-						if (bg)
-							str = g_string_append(str, "</FONT>");
-						back %= 16;
-						str = g_string_append(str, "<FONT BACK=");
-						str = g_string_append(str, int_to_col(back));
-						str = g_string_append_c(str, '>');
-						bg = TRUE;
-					}
-					str = g_string_append(str, "<FONT COLOR=");
-					str = g_string_append(str, int_to_col(fore));
-					str = g_string_append_c(str, '>');
-					fg = TRUE;
-				}
-				cur = end--;
-				break;
-			case 017: /* ^O */
-				if (!bold && !underline && !fg && !bg)
-					break;
-				*end = 0;
-				str = g_string_append(str, cur);
-				if (bold)
-					str = g_string_append(str, "</B>");
-				if (underline)
-					str = g_string_append(str, "</U>");
+			}
+			if (fore == -1) {
 				if (fg)
 					str = g_string_append(str, "</FONT>");
 				if (bg)
 					str = g_string_append(str, "</FONT>");
-				bold = underline = fg = bg = FALSE;
-				cur = end + 1;
+				fg = bg = FALSE;
+			} else {
+				fore %= 16;
+				if (fg)
+					str = g_string_append(str, "</FONT>");
+				if (back != -1) {
+					if (bg)
+						str = g_string_append(str, "</FONT>");
+					back %= 16;
+					str = g_string_append(str, "<FONT BACK=");
+					str = g_string_append(str, int_to_col(back));
+					str = g_string_append_c(str, '>');
+					bg = TRUE;
+				}
+				str = g_string_append(str, "<FONT COLOR=");
+				str = g_string_append(str, int_to_col(fore));
+				str = g_string_append_c(str, '>');
+				fg = TRUE;
+			}
+			cur = end--;
+			break;
+		case 017: /* ^O */
+			if (!bold && !underline && !fg && !bg)
 				break;
-			case 037: /* ^_ */
-				*end = 0;
-				str = g_string_append(str, cur);
-				if (underline)
-					str = g_string_append(str, "</U>");
-				else
-					str = g_string_append(str, "<U>");
-				underline = !underline;
-				cur = end + 1;
-				break;
+			*end = 0;
+			str = g_string_append(str, cur);
+			if (bold)
+				str = g_string_append(str, "</B>");
+			if (underline)
+				str = g_string_append(str, "</U>");
+			if (fg)
+				str = g_string_append(str, "</FONT>");
+			if (bg)
+				str = g_string_append(str, "</FONT>");
+			bold = underline = fg = bg = FALSE;
+			cur = end + 1;
+			break;
+		case 037: /* ^_ */
+			*end = 0;
+			str = g_string_append(str, cur);
+			if (underline)
+				str = g_string_append(str, "</U>");
+			else
+				str = g_string_append(str, "<U>");
+			underline = !underline;
+			cur = end + 1;
+			break;
 		}
 		end++;
 	}
@@ -488,46 +488,46 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_transfer *ift) {
 	/* Ok, we better be receiving some crap here boyeee */
 	if (transfer_in_do(ift->xfer, ift->fd, ift->name, ift->len)) {
-			gaim_input_remove(ift->watcher);
-			ift->watcher = 0;
+		gaim_input_remove(ift->watcher);
+		ift->watcher = 0;
 	}
 }
 
 
 void irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition) {
-		/* Read ACK Here */
+	/* Read ACK Here */
 
 }
 
 void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
-		struct irc_file_transfer *ift = data;
-		struct sockaddr_in addr;
-		int len = sizeof(addr);
+	struct irc_file_transfer *ift = data;
+	struct sockaddr_in addr;
+	int len = sizeof(addr);
 		
-		addr.sin_family = AF_INET;
-		addr.sin_port = htons(ift->port);
-		addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(ift->port);
+	addr.sin_addr.s_addr = INADDR_ANY;
 
-		ift->fd = accept(ift->fd, (struct sockaddr *)&addr, &len);
-		if (!ift->fd) {
-				/* FIXME: Handle this gracefully XXX */
-				printf("Something bad happened here, bubba!\n");
-				return;
-		}
+	ift->fd = accept(ift->fd, (struct sockaddr *)&addr, &len);
+	if (!ift->fd) {
+		/* FIXME: Handle this gracefully XXX */
+		printf("Something bad happened here, bubba!\n");
+		return;
+	}
 		
 	/*	ift->awatcher = gaim_input_add(ift->fd, GAIM_INPUT_READ, irc_read_dcc_ack, ift); */
 		
-		if (transfer_out_do(ift->xfer, ift->fd, 0)) {
-				gaim_input_remove(ift->watcher);
-				ift->watcher = 0;
-		}
+	if (transfer_out_do(ift->xfer, ift->fd, 0)) {
+		gaim_input_remove(ift->watcher);
+		ift->watcher = 0;
+	}
 }
 
 void dcc_recv_callback (gpointer data, gint source, GaimInputCondition condition) {
-		struct irc_file_transfer *ift = data;
-
-		ift->fd = source;
-		irc_file_transfer_do(ift->gc, ift);
+	struct irc_file_transfer *ift = data;
+	
+	ift->fd = source;
+	irc_file_transfer_do(ift->gc, ift);
 }
 
 void dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
@@ -631,7 +631,7 @@ static void handle_names(struct gaim_connection *gc, char *chan, char *names)
 	if (*names == ':') names++;
 	buf = g_strsplit(names, " ", -1);
 	for (tmp = buf; *tmp; tmp++)
-		add_chat_buddy(c, *tmp);
+		add_chat_buddy(c, *tmp, NULL);
 	g_strfreev(buf);
 }
 
@@ -660,7 +660,7 @@ static void handle_topic(struct gaim_connection *gc, char *text)
 		char buf[IRC_BUF_LEN];
 		chat_set_topic(c, NULL, po);
 		g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
-				text, po);
+			   text, po);
 		write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 	}
 }
@@ -747,7 +747,7 @@ static void irc_user_mode(struct gaim_connection *gc, char *room, char sign, cha
 			}
 			tmp = g_strdup(r->data);
 			g_snprintf(buf, sizeof(buf), "%s%s%s", op ? "@" : "",
-					voice ? "+" : "", nick);
+				   voice ? "+" : "", nick);
 			rename_chat_buddy(c, tmp, buf);
 			g_free(tmp);
 			return;
@@ -990,8 +990,8 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		handle_version(gc, word, word_eol, n);
 		break;
 	case 352: /* RPL_WHOREPLY */
-	       handle_who(gc, word, word_eol, n);
-	       break;
+		handle_who(gc, word, word_eol, n);
+		break;
 	case 353: /* RPL_NAMREPLY */
 		handle_names(gc, word[5], word_eol[6]);
 		break;
@@ -1152,7 +1152,7 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 
 	if (!g_strncasecmp(msg, "VERSION", 7)) {
 		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001VERSION Gaim " VERSION ": The Penguin Pimpin' "
-					     "Multi-protocol Messaging Client: " WEBSITE "\001\r\n", nick);
+			   "Multi-protocol Messaging Client: " WEBSITE "\001\r\n", nick);
 		irc_write(id->fd, buf, strlen(buf));
 	}
 	if (!g_strncasecmp(msg, "CLIENTINFO", 10)) {
@@ -1187,22 +1187,22 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 
 
 	if (!g_strncasecmp(msg, "DCC SEND", 8)) {
-			struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
-			char **send_args = g_strsplit(msg, " ", 6);
-			send_args[5][strlen(send_args[5])-1] = 0;
+		struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
+		char **send_args = g_strsplit(msg, " ", 6);
+		send_args[5][strlen(send_args[5])-1] = 0;
 
-			ift->type = IFT_SENDFILE_IN;
-			ift->sn = g_strdup(nick);
-			ift->gc = gc;
-			g_snprintf(ift->ip, sizeof(ift->ip), send_args[3]);	
-			ift->port = atoi(send_args[4]);
-			ift->len = atoi(send_args[5]);
-			ift->name = g_strdup(send_args[2]);
-			ift->cur = 0;
+		ift->type = IFT_SENDFILE_IN;
+		ift->sn = g_strdup(nick);
+		ift->gc = gc;
+		g_snprintf(ift->ip, sizeof(ift->ip), send_args[3]);	
+		ift->port = atoi(send_args[4]);
+		ift->len = atoi(send_args[5]);
+		ift->name = g_strdup(send_args[2]);
+		ift->cur = 0;
 
-			id->file_transfers = g_slist_append(id->file_transfers, ift);
+		id->file_transfers = g_slist_append(id->file_transfers, ift);
 
-			ift->xfer = transfer_in_add(gc, nick, ift->name, ift->len, 1, NULL);
+		ift->xfer = transfer_in_add(gc, nick, ift->name, ift->len, 1, NULL);
 	}
 	
 	/* XXX should probably write_to_conv or something here */
@@ -1286,9 +1286,20 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 			serv_got_joined_chat(gc, id++, chan);
 		} else {
 			struct conversation *c = irc_find_chat(gc, chan);
-			if (c)
-				add_chat_buddy(c, nick);
+			if (c) {
+				char *hostmask = g_strdup(word[1]);
+				char *p = strchr(hostmask, '!');
+				if (p) {
+					char *pend = strchr(p, ' ');
+					if (pend) {
+						*pend = 0;
+					}
+					add_chat_buddy(c, nick, p+1);
+					g_free(hostmask);
+				}
+			}
 		}
+
 	} else if (!strcmp(cmd, "KICK")) {
 		if (!strcmp(gc->displayname, word[4])) {
 			struct conversation *c = irc_find_chat(gc, word[3]);
@@ -1296,11 +1307,6 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 				return FALSE;
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
-			/*
-			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s by %s:"),
-				   word[3], nick);
-			do_error_dialog(outbuf, *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5], GAIM_INFO);
-			*/
 			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
 				   word[3], *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5]);
 			do_error_dialog(outbuf, _("IRC Error"), GAIM_ERROR);
@@ -1397,7 +1403,7 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 			char buf[IRC_BUF_LEN];
 			chat_set_topic(c, nick, topic);
 			g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
-					nick, topic);
+				   nick, topic);
 			write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 		}
 	} else if (!strcmp(cmd, "WALLOPS")) { /* Don't know if a dialog box is the right way? */
@@ -1444,6 +1450,9 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		d = g_strndup(idata->rxqueue, len);
 		g_strchomp(d);
 		debug_printf("IRC S: %s\n", d);
+
+		/* REMOVE ME BEFORE SUBMIT! */
+		/* fprintf(stderr, "IRC S: %s\n", d); */
 
 		idata->rxlen -= len;
 		if (idata->rxlen) {
@@ -1565,15 +1574,15 @@ static void irc_close(struct gaim_connection *gc)
 
 	/* Kill any existing transfers */
 	while (idata->file_transfers) {
-			struct irc_file_transfer *ift = (struct irc_file_transfer *)idata->file_transfers->data;
+		struct irc_file_transfer *ift = (struct irc_file_transfer *)idata->file_transfers->data;
 
-			g_free(ift->sn);
-			g_free(ift->name);
-			gaim_input_remove(ift->watcher);
+		g_free(ift->sn);
+		g_free(ift->name);
+		gaim_input_remove(ift->watcher);
 
-			close(ift->fd);
+		close(ift->fd);
 
-			idata->file_transfers = idata->file_transfers->next;
+		idata->file_transfers = idata->file_transfers->next;
 	}
 	idata->file_transfers = NULL;
 
@@ -1601,7 +1610,7 @@ static void irc_close(struct gaim_connection *gc)
 }
 
 static void set_mode_3(struct gaim_connection *gc, char *who, int sign, int mode,
-			int start, int end, char *word[])
+		       int start, int end, char *word[])
 {
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -1611,24 +1620,24 @@ static void set_mode_3(struct gaim_connection *gc, char *who, int sign, int mode
 	while (1) {
 		left = end - i;
 		switch (left) {
-			case 0:
-				return;
-			case 1:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c %s\r\n",
-						who, sign, mode, word[i]);
-				i += 1;
-				break;
-			case 2:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c %s %s\r\n",
-						who, sign, mode, mode, word[i], word[i + 1]);
-				i += 2;
-				break;
-			default:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c %s %s %s\r\n",
-						who, sign, mode, mode, mode,
-						word[i], word[i + 1], word[i + 2]);
-				i += 2;
-				break;
+		case 0:
+			return;
+		case 1:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c %s\r\n",
+				   who, sign, mode, word[i]);
+			i += 1;
+			break;
+		case 2:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c %s %s\r\n",
+				   who, sign, mode, mode, word[i], word[i + 1]);
+			i += 2;
+			break;
+		default:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c %s %s %s\r\n",
+				   who, sign, mode, mode, mode,
+				   word[i], word[i + 1], word[i + 2]);
+			i += 2;
+			break;
 		}
 		irc_write(id->fd, buf, strlen(buf));
 		if (left < 3)
@@ -1637,7 +1646,7 @@ static void set_mode_3(struct gaim_connection *gc, char *who, int sign, int mode
 }
 
 static void set_mode_6(struct gaim_connection *gc, char *who, int sign, int mode,
-			int start, int end, char *word[])
+		       int start, int end, char *word[])
 {
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -1647,44 +1656,44 @@ static void set_mode_6(struct gaim_connection *gc, char *who, int sign, int mode
 	while (1) {
 		left = end - i;
 		switch (left) {
-			case 0:
-				return;
-			case 1:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c %s\r\n",
-						who, sign, mode, word[i]);
-				i += 1;
-				break;
-			case 2:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c %s %s\r\n",
-						who, sign, mode, mode, word[i], word[i + 1]);
-				i += 2;
-				break;
-			case 3:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c %s %s %s\r\n",
-						who, sign, mode, mode, mode,
-						word[i], word[i + 1], word[i + 2]);
-				i += 3;
-				break;
-			case 4:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c%c %s %s %s %s\r\n",
-						who, sign, mode, mode, mode, mode,
-						word[i], word[i + 1], word[i + 2], word[i + 3]);
-				i += 4;
-				break;
-			case 5:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c%c%c %s %s %s %s %s\r\n",
-						who, sign, mode, mode, mode, mode, mode,
-						word[i], word[i + 1], word[i + 2],
-						word[i + 3], word[i + 4]);
-				i += 5;
-				break;
-			default:
-				g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c%c%c%c %s %s %s %s %s %s\r\n",
-						who, sign, mode, mode, mode, mode, mode, mode,
-						word[i], word[i + 1], word[i + 2],
-						word[i + 3], word[i + 4], word[i + 5]);
-				i += 6;
-				break;
+		case 0:
+			return;
+		case 1:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c %s\r\n",
+				   who, sign, mode, word[i]);
+			i += 1;
+			break;
+		case 2:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c %s %s\r\n",
+				   who, sign, mode, mode, word[i], word[i + 1]);
+			i += 2;
+			break;
+		case 3:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c %s %s %s\r\n",
+				   who, sign, mode, mode, mode,
+				   word[i], word[i + 1], word[i + 2]);
+			i += 3;
+			break;
+		case 4:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c%c %s %s %s %s\r\n",
+				   who, sign, mode, mode, mode, mode,
+				   word[i], word[i + 1], word[i + 2], word[i + 3]);
+			i += 4;
+			break;
+		case 5:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c%c%c %s %s %s %s %s\r\n",
+				   who, sign, mode, mode, mode, mode, mode,
+				   word[i], word[i + 1], word[i + 2],
+				   word[i + 3], word[i + 4]);
+			i += 5;
+			break;
+		default:
+			g_snprintf(buf, sizeof(buf), "MODE %s %c%c%c%c%c%c%c %s %s %s %s %s %s\r\n",
+				   who, sign, mode, mode, mode, mode, mode, mode,
+				   word[i], word[i + 1], word[i + 2],
+				   word[i + 3], word[i + 4], word[i + 5]);
+			i += 6;
+			break;
 		}
 		irc_write(id->fd, buf, strlen(buf));
 		if (left < 6)
@@ -1863,8 +1872,8 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		}
 		c = irc_find_chat(gc, chan);
 		g_snprintf(buf, sizeof(buf), "PART %s%s%s\r\n", chan,
-				*reason ? " :" : "",
-				*reason ? reason : "");
+			   *reason ? " :" : "",
+			   *reason ? reason : "");
 		irc_write(id->fd, buf, strlen(buf));
 		if (c) {
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
@@ -2154,39 +2163,39 @@ static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition con
 }
 #if 0
 static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
-		struct irc_data *id = (struct irc_data *)gc->proto_data;
-		struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
-		char *localip = (char *)malloc(12);
+	struct irc_data *id = (struct irc_data *)gc->proto_data;
+	struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
+	char *localip = (char *)malloc(12);
 
-		if (getlocalip(localip) == -1) {
-				free(localip);
-				return;
-		} 
+	if (getlocalip(localip) == -1) {
+		free(localip);
+		return;
+	} 
 
-		ift->type = IFT_SENDFILE_OUT;
-		ift->sn = g_strdup(destsn);
-		ift->gc = gc;
-		snprintf(ift->ip, sizeof(ift->ip), "%s", localip);
-		id->file_transfers = g_slist_append(id->file_transfers, ift);
+	ift->type = IFT_SENDFILE_OUT;
+	ift->sn = g_strdup(destsn);
+	ift->gc = gc;
+	snprintf(ift->ip, sizeof(ift->ip), "%s", localip);
+	id->file_transfers = g_slist_append(id->file_transfers, ift);
 
-		ift->xfer = transfer_out_add(gc, ift->sn);
+	ift->xfer = transfer_out_add(gc, ift->sn);
 }
 #endif
 static struct irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc, 
-				struct file_transfer *xfer) {
+						  struct file_transfer *xfer) {
 		
-		GSList *g = ((struct irc_data *)gc->proto_data)->file_transfers;
-		struct irc_file_transfer *f = NULL;
+	GSList *g = ((struct irc_data *)gc->proto_data)->file_transfers;
+	struct irc_file_transfer *f = NULL;
 
-		while (g) {
-				f = (struct irc_file_transfer *)g->data;
-				if (f->xfer == xfer)
-						break;
-				g = g->next;
-				f = NULL;
-		}
+	while (g) {
+		f = (struct irc_file_transfer *)g->data;
+		if (f->xfer == xfer)
+			break;
+		g = g->next;
+		f = NULL;
+	}
 
-		return f;
+	return f;
 }
 
 static void irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file_transfer *xfer, const char *data, int len) {
@@ -2270,7 +2279,7 @@ static void irc_file_transfer_out (struct gaim_connection *gc, struct file_trans
 }
 
 static void irc_file_transfer_in(struct gaim_connection *gc,
-				struct file_transfer *xfer, int offset) {
+				 struct file_transfer *xfer, int offset) {
 
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 
@@ -2311,8 +2320,8 @@ static void irc_start_chat(struct gaim_connection *gc, char *who) {
 	chat->gc = gc;
 	g_snprintf (chat->nick, sizeof (chat->nick), "%s", who);
 	if (chat->fd < 0)  {
-		  dcc_chat_cancel (NULL,chat);
-		  return;
+		dcc_chat_cancel (NULL,chat);
+		return;
 	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = 0;
@@ -2325,9 +2334,9 @@ static void irc_start_chat(struct gaim_connection *gc, char *who) {
 	getlocalip(chat->ip_address);
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_connected,
-			       chat);
+				chat);
 	g_snprintf (buf, sizeof buf, "\001DCC CHAT chat %s %d\001\n",
-		  chat->ip_address, chat->port);
+		    chat->ip_address, chat->port);
 	irc_send_im (gc, who, buf, -1, 0);
 }
 
@@ -2361,13 +2370,13 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm->callback = irc_start_chat;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-/*
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("DCC Send");
-	pbm->callback = irc_ask_send_file;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-*/
+	/*
+	  pbm = g_new0(struct proto_buddy_menu, 1);
+	  pbm->label = _("DCC Send");
+	  pbm->callback = irc_ask_send_file;
+	  pbm->gc = gc;
+	  m = g_list_append(m, pbm);
+	*/
 	
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("CTCP ClientInfo");
