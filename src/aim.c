@@ -608,7 +608,6 @@ int main(int argc, char *argv[])
         
 
         show_login();
-	new_conversation("None");
         gtk_main();
         
 #endif /* USE_APPLET */

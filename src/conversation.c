@@ -1501,7 +1501,7 @@ void show_conv(struct conversation *c)
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), 
 			GTK_POLICY_NEVER, 
-			GTK_POLICY_AUTOMATIC);
+			GTK_POLICY_ALWAYS);
 	gtk_widget_show(sw);
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	gtk_widget_show(text);
