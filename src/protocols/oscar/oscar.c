@@ -5564,19 +5564,27 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 							  "state; try setting it again when you are "
 							  "fully connected."));
 
-	status_id = gaim_status_get_name(status);
-
 	if (primitive == GAIM_STATUS_AVAILABLE) {
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
+#if 0
+		/* Set an available message */
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
+		aim_srv_setavailmsg(od->sess, text);
+#endif
 		return;
 	}
-	text_html = gaim_strdup_withhtml(status_id);
 
-#if 0
-	/* Set an available message */
-	aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
-	aim_srv_setavailmsg(od->sess, text);
-#endif
+	/*
+	 * XXX - Using status_id below is definitely wrong.  We want to get
+	 * the away message that the Gaim user just set.  We probably want
+	 * to get a certain attribute from status->attr_values, but I don't
+	 * think any of that is implemented yet.
+	 *
+	 * Something like
+	 * text_html = gaim_status_get_attr_string(status, "message");
+	 */
+	status_id = gaim_status_get_name(status);
+	text_html = gaim_strdup_withhtml(status_id);
 
 	charset = oscar_charset_check(text_html);
 	if (charset == AIM_CHARSET_UNICODE) {
