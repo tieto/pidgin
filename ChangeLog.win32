@@ -1,5 +1,8 @@
 version 0.79 (06/24/2004):
-
+	* idletrack.dll now unloads properly when you quit Gaim in Windows
+	  2000 or later, so the installer will no longer report an error
+	  replacing or removing the file. (Andrew Whewell)
+	  
 version 0.78 (05/30/2004):
 	* Win32 transparency plugin now preserves transparency when dragging
 	  conversation tabs (Kevin Stange).
