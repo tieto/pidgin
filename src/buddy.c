@@ -1835,6 +1835,8 @@ static struct group_show *new_group_show(char *group)
 	gtk_container_add(GTK_CONTAINER(g->item), g->label);
 
 	style = gtk_style_new();
+	style = gtk_style_copy(gtk_widget_get_style(GTK_WIDGET(g->label)));
+
 //	style->font = gdk_font_load("-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");
 
 	style->fg[0].red = 104 * 255;
