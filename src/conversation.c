@@ -82,8 +82,8 @@ GdkPixmap *dark_icon_pm = NULL;
 GdkBitmap *dark_icon_bm = NULL;
 
 char fontface[64];
-int bgcolor = 0;
-int fgcolor = 0;
+GdkColor bgcolor;
+GdkColor fgcolor;
 
 void check_everything(GtkWidget *entry);
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);
@@ -582,12 +582,12 @@ void send_callback(GtkWidget *widget, struct conversation *c)
         }
 
 	if (font_options & OPT_FONT_FGCOL) {
-		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"#%x\">%s</FONT>", c->fgcol, buf);
+		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", c->fgcol.red, c->fgcol.green, c->fgcol.blue, buf);
 		strcpy(buf, buf2);
 	}
 
 	if (font_options & OPT_FONT_BGCOL) {
-		g_snprintf(buf2, BUF_LONG, "<BODY BGCOLOR=\"#%x\">%s</BODY>", c->bgcol, buf);
+		g_snprintf(buf2, BUF_LONG, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", c->bgcol.red, c->bgcol.green, c->bgcol.blue, buf);
 		strcpy(buf, buf2);
 	}
 

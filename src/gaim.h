@@ -277,8 +277,8 @@ struct conversation {
 	int makesound;
 	char fontface[128];
 	int hasfont;
-	int bgcol;
-	int fgcol;
+	GdkColor bgcol;
+	GdkColor fgcol;
 
 	/* stuff used just for IM */
 	GtkWidget *add_button;
@@ -397,7 +397,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 706 $"
+#define REVISION "gaim:$Revision: 707 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -426,8 +426,8 @@ extern int correction_time;
 
 /* Globals in dialog.c */
 extern char fontface[64];
-extern int bgcolor;
-extern int fgcolor;
+extern GdkColor bgcolor;
+extern GdkColor fgcolor;
 extern int smiley_array[FACE_TOTAL];
 
 /* Globals in network.c */

@@ -2359,25 +2359,20 @@ static void destroy_colorsel(GtkWidget *w, gpointer d)
 static void apply_color_dlg(GtkWidget *w, gpointer d)
 {
 	gdouble color[3];
-	int red, green, blue;
 	if ((int)d == 1) {
 		gtk_color_selection_get_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), color);
 		destroy_colorsel(NULL, (void *)1);
 
-		red = ((guint16)(color[0]*65535))>>8;
-		green = ((guint16)(color[1]*65535))>>8;
-		blue = ((guint16)(color[2]*65535))>>8;
-
-		fgcolor = ((red & 0xff) << 16) | ((green & 0xff) < 8) | (blue & 0xff);
+		fgcolor.red = ((guint16)(color[0]*65535))>>8;
+		fgcolor.green = ((guint16)(color[1]*65535))>>8;
+		fgcolor.blue = ((guint16)(color[2]*65535))>>8;
 	} else {
 		gtk_color_selection_get_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), color);
 		destroy_colorsel(NULL, (void *)0);
 
-		red = ((guint16)(color[0]*65535))>>8;
-		green = ((guint16)(color[1]*65535))>>8;
-		blue = ((guint16)(color[2]*65535))>>8;
-
-		bgcolor = ((red & 0xff) << 16) | ((green & 0xff) < 8) | (blue & 0xff);
+		bgcolor.red = ((guint16)(color[0]*65535))>>8;
+		bgcolor.green = ((guint16)(color[1]*65535))>>8;
+		bgcolor.blue = ((guint16)(color[2]*65535))>>8;
 	}
 }
 

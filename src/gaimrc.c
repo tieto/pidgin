@@ -529,9 +529,13 @@ static void gaimrc_read_options(FILE *f)
 			if (p->value[0] != NULL)
 					g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
 		} else if (!strcmp(p->option, "foreground")) {
-			fgcolor = atoi(p->value[0]);
+			fgcolor.red = atoi(p->value[0]);
+			fgcolor.green = atoi(p->value[1]);
+			fgcolor.blue = atoi(p->value[2]);
 		} else if (!strcmp(p->option, "background")) {
-			bgcolor = atoi(p->value[0]);
+			bgcolor.red = atoi(p->value[0]);
+			bgcolor.green = atoi(p->value[1]);
+			bgcolor.blue = atoi(p->value[2]);
                 } else if (!strcmp(p->option, "report_idle")) {
                         report_idle = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "web_browser")) {
@@ -575,8 +579,8 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tfont_options { %d }\n", font_options);
 	if (fontface)
 		fprintf(f, "\tfont_face { %s }\n", fontface);
-	fprintf(f, "\tforeground { %d }\n", fgcolor);
-	fprintf(f, "\tbackground { %d }\n", bgcolor);
+	fprintf(f, "\tforeground { %d } { %d } { %d }\n", fgcolor.red, fgcolor.green, fgcolor.blue);
+	fprintf(f, "\tbackground { %d } { %d } { %d }\n", bgcolor.red, bgcolor.green, bgcolor.blue);
         fprintf(f, "\treport_idle { %d }\n", report_idle);
         fprintf(f, "\tweb_browser { %d }\n", web_browser);
         fprintf(f, "\tweb_command { %s }\n", web_command);
