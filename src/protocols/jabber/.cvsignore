@@ -10,6 +10,7 @@ jconn.lo
 jid.lo
 jpacket.lo
 jutil.lo
+karma.lo
 libjabber.la
 log.lo
 pool.lo
@@ -19,6 +20,7 @@ sha.lo
 snprintf.lo
 socket.lo
 str.lo
+xhash.lo
 xmlnode.lo
 xmlparse.lo
 xmlrole.lo

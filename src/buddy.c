@@ -880,6 +880,7 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 						gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 						g_free(gs->name);
 						g_free(gs);
+						gs = NULL;
 					}
 				}
 			}
