@@ -898,15 +898,6 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 
 	char tmp[BUF_LONG];
 
-	/* we need to check to see if they're ignored before we remove them from the list,
-	 * because otherwise the name is free'd (ignored and in_room point to the same char*'s)
-	 * and we can't search through ignored reliably anymore */
-	while (ignored) {
-		if (!g_strcasecmp(old, ignored->data))
-			break;
-		ignored = ignored->next;
-	}
-
 	while (names) {
 		if (!g_strcasecmp((char *)names->data, old)) {
 			char *tmp2 = names->data;
@@ -933,9 +924,16 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
 	pos = g_list_index(b->in_room, name);
 
+	while (ignored) {
+		if (!g_strcasecmp(old, ignored->data))
+			break;
+		ignored = ignored->next;
+	}
+
 	if (ignored) {
+		g_free(ignored->data);
 		b->ignored = g_list_remove(b->ignored, ignored->data);
-		b->ignored = g_list_append(b->ignored, name);
+		b->ignored = g_list_append(b->ignored, g_strdup(name));
 		g_snprintf(tmp, sizeof(tmp), "X %s", name);
 		list_item = gtk_list_item_new_with_label(tmp);
 	} else
@@ -983,6 +981,8 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 
 	if (!names)
 		return;
+
+	/* don't remove them from ignored in case they re-enter */
 
 	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room),
 		   g_list_length(b->in_room) == 1 ? "person" : "people");
@@ -1047,6 +1047,7 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 	}
 
 	if (ignored) {
+		g_free(ignored->data);
 		b->ignored = g_list_remove(b->ignored, ignored->data);
 		g_snprintf(tmp, sizeof tmp, "%s", name);
 	} else {

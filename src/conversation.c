@@ -723,8 +723,11 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
-		if (event->keyval == 'l')
+		if (event->keyval == 'l') {
 			gtk_imhtml_clear(GTK_IMHTML(c->text));
+			g_string_free(c->history, TRUE);
+			c->history = g_string_new("");
+		}
 		if ((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
 		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) {
 			GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
