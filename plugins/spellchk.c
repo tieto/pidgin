@@ -262,7 +262,8 @@ static void list_add_new()
 		0, gtk_entry_get_text(GTK_ENTRY(bad_entry)),
 		1, gtk_entry_get_text(GTK_ENTRY(good_entry)),
 		-1);
-	gtk_editable_select_region(GTK_EDITABLE(bad_entry), 0, -1);
+	gtk_editable_delete_text(GTK_EDITABLE(bad_entry), 0, -1);
+	gtk_editable_delete_text(GTK_EDITABLE(good_entry), 0, -1);
 	gtk_widget_grab_focus(bad_entry);
 
 	save_list();
