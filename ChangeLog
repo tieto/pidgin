@@ -27,6 +27,7 @@ version 0.76cvs:
 	  (Send Message, Get User Info, and Insert Link dialogs)
 	* Jabber file transfer
 	* IRC file transfer (Tim Ringenbach)
+	* Moved translation news to po/ChangeLog
 
 	Bug Fixes:
 	* You can now use :/ as a smiley safely (Nathan Owens)
@@ -61,24 +62,6 @@ version 0.76cvs:
 	* Various bug and memory leak fixes (Gary Kramlich)
 	* Assorted SSL crashfixes
 
-	Translations:
-	* Catalan translation updated (Xan (DXpublica))
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* Dutch translation updated (Vincent van Adrighem)
-	* English (British) translation updated (Luke Ross (lukeross))
-	* Finnish translation updated (Arto Alakulju)
-	* French translation updated (Eric Boumaour and Sebastien Francois)
-	* German Translation updated (Bjoern Voigt)
-	* Hebrew translation had 1 character removed (Ambrose C. LI)
-	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
-	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
-	  Rodrigues Collares Neto)
-	* Romanian translation updated (Misu Moldovan)
-	* Russian translation updated (Alexandre Prokoudine)
-	* Spanish translation updated (Javier Fernandez-Sanguino Pena and
-	  Francisco Javier F. Serrador)
-
 version 0.75 (01/09/2004):
 	* New Yahoo! auth method
 	* Yahoo! file transfer (Tim Ringenbach)
@@ -93,30 +76,11 @@ version 0.75 (01/09/2004):
 	  Ka-Hing Cheung)
 	* Works better with all-black gtk themes (Etan Reisner)
 	* Mozilla Firebird support (Chris (darth_sebulba04))
-	* Catalan translation updated (Xan (DXpublica))
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Czech translation updated (Stanislav Brabec, Miloslav Trmac)
-	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* English (British) translation re-added (Luke Ross (lukeross))
-	* Finnish translation updated (Arto Alakulju)
-	* French translation updated (Eric Boumaour)
-	* German translation updated (Bjoern Voigt)
-	* Italian translation updated (Claudio Satriano)
-	* Japanese translation updated (Ambrose Li)
-	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
-	  Rodrigues Collares Neto)
-	* Romanian translation updated (Misu Moldovan (dumol))
-	* Serbian translation updated (Danilo Segan)
-	* Serbian Latin translation updated (Danilo Segan)
-	* Swedish translation updated (Tore Lundqvist (luntor))
-	* Vietnamese translation updated (T.M.Thanh)
 
 version 0.74 (11/25/2003):
 	* Sort-by-size log sorting fix
 	* Log directory umask fix for users of gaim-remote
 	* Fix Jabber room creation on MUC servers.
-	* Vietnamese translation added (T.M.Thanh)
 
 version 0.73 (11/21/2003):
 	* New Logging format and code:
@@ -135,18 +99,6 @@ version 0.73 (11/21/2003):
 	* Cleaned up gtkspell-related code (Robert McQueen)
 	* Changed the parameters for the received-chat-msg signal.
 	* Added a Release Notification plugin
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* Finnish translation updated (Arto Alakulju)
-	* French translation updated (Eric Boumaour)
-	* German translation updated (Bjoern Voigt)
-	* Hindi trnaslation updated (Ravi (raviratlami))
-	* Italian translation updated (Claudio Satriano)
-	* Norwegian translation updated (Petter Johan Olsen)
-	* Polish translation updated (Emil Nowak)
-	* Serbian Latin translation updated (Danilo Segan)
-	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.72 (10/31/2003):
 	* Added a search feature to conversations.
@@ -164,23 +116,6 @@ version 0.72 (10/31/2003):
 	* Smileys have background colors
 	* If SSL is not enabled, MSN will load, but error on connect.
 	* Disable Jabber SASL auth until the standard stabilizes
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Czech translation updated (Stanislav Brabec, Miloslav Trmac)
-	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* Dutch translation updated (Vincent van Adrighem)
-	* Finnish translation updated (Arto Alakulju)
-	* French translation updated (Eric Boumaour)
-	* German translation updated (Bjoern Voigt)
-	* Italian translation updated (Claudio Satriano)
-	* Korean translation updated (Kyung-uk)
-	* Portuguese (Portugal) updated (Duarte Henriques)
-	* Romanian translation updated (Misu Moldovan)
-	* Russian translation updated (Alexandre Prokoudine)
-	* Serbian translation updated (Danilo Segan)
-	* Serbian Latin translation updated (Danilo Segan)
-	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
-	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.71 (10/09/2003):
 	* The right-click menu for e-mail links now presents a "Copy E-Mail
@@ -212,17 +147,6 @@ version 0.71 (10/09/2003):
 	* Some plugins must be updated due to code variable changes,
 	  function name changes, and change of behavior for certain
 	  functions.
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Czech translation updated (Miloslav Trmac)
-	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* Finnish translation updated (Ambrose C. LI (acli))
-	* French translation updated (Eric Boumaour)
-	* Italian translation updated (Claudio Satriano)
-	* German translation updated (Christian Weyer, Bjoern Voigt)
-	* Serbian translation updated (Danilo Segan)
-	* Serbian Latin translation updated (Danilo Segan)
-	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.70 (09/28/2003):
 	* Implemented Yahoo's new authentication method (Cerulean Studios)
@@ -230,8 +154,6 @@ version 0.70 (09/28/2003):
 	* Perl installs where it's told to a bit more correctly.
 	* Robert "Robot101" McQueen cleaned and core/UI split IM
 	  image support.
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Portuguese (Portugal) translation updated (Duarte Henriques)
 
 version 0.69 (09/24/2003):
 	* Added Contact (aka Person, aka Meta-Contact, aka Buddy Merging, etc)
@@ -254,27 +176,6 @@ version 0.69 (09/24/2003):
 	* Fixed all known signal problems in perl.
 	* The right-click menu for conversation tabs now shows the tab icon
 	  and status, if tab icons are enabled. (Jesse Farmer)
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li, Paladin R.
-	  Liu (prliu))
-	* Czech translation updated (Miloslav Trmac)
-	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* Dutch translation updated (Vincent van Adrighem)
-	* Finnish translation updated (Ambrose C. LI (acli))
-	* French translation updated (Eric Boumaour)
-	* German translation updated (Bjoern Voigt)
-	* Italian translation updated (Luca Beltrame, Claudio Satriano)
-	* Korean translation updated (Kyung-uk Son)
-	* Polish translation updated (Przemys≈Çaw Su≈Çek, Krzysztof, and Emil)
-	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
-	  Rodrigues Collares Neto)
-	* Portuguese (Portugal) added (Duarte Henriques)
-	* Romanian translation updated (Misu Moldovan (dumol))
-	* Russian translation updated (Alexandre Prokoudine)
-	* Serbian translation updated (Danilo Segan)
-	* Serbian Latin translation updated (Danilo Segan)
-	* Spanish translation updated (Javier Fern·ndez-Sanguino PeÒa)
-	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.68 (09/01/2003):
 	* Removed the old event system and replaced it with a much better
@@ -290,19 +191,6 @@ version 0.68 (09/01/2003):
 	  problems. (Robot101)
 	* Corrected problems with proxy preferences.
 	* Mailchk.c and simple.c compile again (Paul A (darkrain))
-	* Catalan translation updated (Robert Millan)
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* Finish translation updated (Ambrose C. LI (acli))
-	* German translation updated (Bjoern Voigt)
-	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
-	  Rodrigues Collares Neto)
-	* Norwegian translation updated (Petter Johan Olsen)
-	* Romanian translation updated (Misu Moldovan (dumol))
-	* Serbian translation updated (Danilo Segan)
-	* Serbian Latin translation updated (Danilo Segan)
-	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.67 (08/14/2003):
 	* Brought back the message notification plugin (Brian Tarricone)
@@ -322,21 +210,6 @@ version 0.67 (08/14/2003):
 	  etc.) now grey the tab.
 	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern 
 	  Voigt, Paul A (darkrain))
-	* British English "translation" updated (Sam Halliday)
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Danish translation updated (Morten Brix Pedersen)
-	* Dutch translation updated (Vincent van Adrighem)
-	* French translation updated (Eric Boumaour)
-	* German translation updated (Bjoern Voigt)
-	* Hindi translation added (Guntupalli Karunakar)
-	* Hungarian translation updated (Zoltan Sutto)
-	* Italian translation updated (Luca Beltrame, Claudio Satriano)
-	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
-	  Rodrigues Collares Neto)
-	* Romanian translation updated (Misu Moldovan (dumol))
-	* Serbian translation updated (Danilo Segan)
-	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
 
 version 0.66 (07/18/2003):
 	* Freebsd compile fix (Matthew Luckie)
@@ -347,26 +220,10 @@ version 0.66 (07/18/2003):
 	* Servers and ports are now imported correctly in MSN.
 	* Core/UI split the core initialization and shutdown.
 	* MSN messages with newlines are now sent correctly to MSN clients.
-	* Italian translation updated (Claudio Satriano)
-	* British English "translation" added (Sam Halliday)
 	* Fix some sound initialization stuff
-	* Updated  Portuguese (Brazilian) translation
-	  (Mauricio de Lemos Rodrigues Collares Neto)
-	* Updated Czech translation (Miloslav Trmac)
 	* Fix saving and import of default away message
 
 version 0.65 (07/16/2003):
-	* French translation updated (Eric (Zongo) Boumaour)
-	* Portuguese (Brazilian) translation added (Mauricio de Lemos Rodrigues Collares Neto)
-	* Korean translation updated (Kyung-uk Son)
-	* Japanese translation updated (Junichi Uekawa)
-	* Hebrew translation added (Pavel Bibergal)
-	* Russian translation updated (Dzmitry Chekmarou)
-	* Danish translation updated (Morten Brix Pedersen)
-	* Hungarian translation updated (Zoltan Sutto)
-	* Italian translation updated (Claudio Satriano)
-	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
 	* Massive internal core/ui splitting
 	* New account dialog
 	* Preferences moved to ~/.gaim/prefs.xml
@@ -407,7 +264,6 @@ version 0.63 (05/16/2003):
 	* Support for adding chats to your buddy list.
 	* MSN protocol plugin was rewritten, has experimental buddy icon
 	  support, and MSN Mobile support.
-	* Thanks to all the various people who submitted translation updates.
 	* Buddy list speed enhancements (Thanks Ethan Blanton).
 	* Napster protocol updates (Thanks Auke Kok).
 
@@ -415,8 +271,6 @@ version 0.62 (04/23/2003):
 	* Keyboard shortcuts in the buddy list work again (Thanks Joe 
 	  Clarke).
 	* Support for Jabber XHTML messages
-	* Updated a number of translations. Thanks to everyone who submitted
-	  a translation update.
 	* Ability to re-request authorization from ICQ and Jabber users by right 
 	  clicking on them in your buddy list.
 	* Improved Zephyr internationalization.
@@ -520,18 +374,6 @@ version 0.60 (04/04/2003):
 	  window. (Thanks, Christian Hammond)
  	* File receive support for MSN. (Thanks, Christian Hammond)
 
-	Translations:
-	* French translation updated. (Thanks, Stephane Wirtel,
-	  Sebastian Carpe, and David Odin)
-	* Polish translation updated. (Thanks, Przemyslaw Sulek)
-	* Finnish translation updated. (Thanks, Tero Kuusela)
-	* Spanish translation updated. (Thanks, Lars Goldschlager, Nicolas Lichtmaier) 
-	* Traditional Chinese translation updated. (Thanks, Paladin Liu)
-	* Japanese translation updated. (Thanks, Junichi Uekawa)
-	* Korean translation updated. (Thanks, A Lee)
-	* Romanian translation added. (Thanks, Misu Moldovan)
-	* Many other translation patches from many people merged in.
-
 	Internationalization:
 	* Now using libiconv for better i18n support (Thanks, Junichi 
 	  Uekawa)
@@ -570,12 +412,6 @@ version 0.60 (04/04/2003):
 	  in each (Thanks, Christian Hammond)
 
 version 0.59 (06/24/2002):
-	* Hungarian translation added (Thanks, Sutto Zoltan)
-	* Swedish translation updated (Thanks, Christian Rose)
-	* Spanish translation updated (Thanks, Alex)
-	* Traditional Chinese translation updated (Thanks, Paladin Liu)
-	* Czech translation added (Thanks, Honza)
-	* Polish translation updated (Thanks Przemyslaw Sulek)
 	* Squashed a bug in buddy right-click menu handling
 	  that crashed Gaim.  In the process: found and
 	  eliminated some memory leaks.
@@ -620,8 +456,6 @@ version 0.59 (06/24/2002):
 	  the end.
 
 version 0.58 (05/13/2002):
-	* Bulgarian translation added (Thanks, Igel Itzo)
-	* Traditional Chinese  translation added (Thanks, Paladin Liu)
 	* Better applet transparency
 	* Option to raise buddy list on signons/signoffs
 	* Formatting of incoming MSN messages	
@@ -658,12 +492,8 @@ version 0.58 (05/13/2002):
 
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
-	* Polish translation updated (Thanks Przemyslaw Sulek)
 	* Jabber will tell you when your buddies signed on (Thanks
 	  Nathan Walp)
-	* Danish translation added (Thanks, Sarauw Hansen)
-	* Finnish translation update (Thanks, Tero Kuusela)
-	* Japanese translation added (Thanks, Ryosuke Kutsuna)
 	* Jabber improvements (Thanks, Nathan Walp)
 	* More keyboard shortcuts
 	* event_chat_recv takes char**'s, and event_im_recv takes
@@ -672,9 +502,7 @@ version 0.57 (04/25/2002):
 	  Scott Werndorfer)
 
 version 0.56 (04/11/2002):
-	* German translation update (Thanks Karsten Weiss)
 	* Shell-like send history binded to Ctrl-Up and Ctrl-Down
-	* Russian Translation Updated (thanks Grigory Bakunov)
 	* libjabber upgraded to most recent stable version
 	* Buddylist looks a little better
 	* Fixed MSN privacy settings
@@ -692,14 +520,9 @@ version 0.55 (03/29/2002):
 	  Golden)
 	* Can reorder your accounts in the account editor (Thanks
 	  Luke Schierer)
-	* Updated Dutch translation
 	* Shows "mobile" icon for Oscar buddies using mobile
 	  devices (Thanks Mark Doliner)
-	* Updated Polish Translation (Thanks Przemyslaw Sulek)
 	* Fixed bug in MSN smilies that crashed PPC (and other?) platforms
-	* Updated Spanish Translation (Thanks Amaya)
-	* Updated French translation
-	* Updated Finnish translation (Thanks Tero Kuusela)
 	* HTTP Proxy settings now HTTP compliant (Thanks Robert McQueen)	
 	* Speling corections (Thanks Tero Kuusela)
 	* Oscar list icon fixes (Thanks Mark Doliner)
@@ -722,12 +545,9 @@ version 0.54 (03/14/2002):
 	* IRC will convert HTML formatting to mIRC formatting.
 	* Buddylist tab placement option (Thanks Jason Willis)
 	* Protocol specific smiley faces
-	* Italian translation added
 	* IM Image sending
 
 version 0.53 (02/28/2002):
-	* Updated Polish Translation (thanks Przemyslaw Sulek)
-	* Slovak translation added (Thanks Daniel Rezny)
 	* Minor bug fixes re: queued away messages
 	* Better buddy icon transparency (for real this time ;-))
 	* Ability to change formatting of Oscar screen name
@@ -742,11 +562,8 @@ version 0.53 (02/28/2002):
 
 version 0.52 (02/17/2002):
 	* Better buddy icon transparency (thanks SeanEgan)
-	* Updated Polish Translation (thanks Przemyslaw Sulek)
 	* Fixed a little bug with connecting via proxy (thanks
 	  for reminding me of this, Manish Singh)
-	* Updated Simplified Chinese Translation (Thanks Rocky S. Lee)
-	* Updated German Translation (Thanks Karsten Weiss)
 	* Yahoo! Messenger works again
 	* MSN Works again
 	* Can register a new user with a Jabber Server (JSeymour)
@@ -763,15 +580,11 @@ version 0.51 (01/24/2002):
 	  Mark Doliner)
 	* Should be able to sign on to Oscar using Mac OS X
 	  (thanks Fingolfin, Vincas Ciziunas, et al.)
-	* Finnish translation added (Thanks Tero Kuusela)
-	* Updated French Translation (Thanks sebfrance)
 
 version 0.50 (12/14/2001):
-	* Updated polish translation (Thanks Przemyslaw Sulek)
 	* Able to import GnomeICU contact lists
 	* Galeon as browser option (Thanks Rob McQueen)
 	* IRC /list, /invite (Thanks Sean Egan)
-	* Added swedish translation (Thanks Christian Rose)
 	* Option to have IMs and Chats tabbed in same window
 	* Finally put the lagmeter plugin out of its misery and
 	  removed it. (/me dances on its grave.)
@@ -779,10 +592,6 @@ version 0.50 (12/14/2001):
 version 0.49 (11/29/2001):
 	* Can compile against GTK+ 2.0 (version 1.3.10/1.3.11)
 	* Confirm before removing buddies
-	* Updated Russian translation (thanks Grigory Bakunov)
-	* Updated Korean translation (thanks Ho-seok Lee, also for
-	  resized ICQ icons)
-	* Updated Dutch translation (thanks Floris Eshuis)
 	* Yahoo updates (thanks Brian Macke)
 	* Jabber updates
 	* Zephyr updates (thanks Arun A Tharuvai)
@@ -824,8 +633,6 @@ version 0.47 (11/01/2001):
 	  right-click on their name while they're online.
 	* IRC can do /WHOIS
 	* The usual bug fixes and memory leak plugs
-	* Added Dutch translation
-	* Updated Korean translation
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)
@@ -833,7 +640,6 @@ version 0.46 (10/18/2001):
 	  (thanks to Nathan Walp and Ben Miller)
 	* Better applet icon drawing (thanks to Ari Pollak)
 	* An extraordinary number of bug fixes
-	* Updated Korean translation
 	* Ability to stop animation on buddy icons, restart animation,
 	  hide certain buddy icons, and save people's buddy icons, all 
 	  through a right-click menu
@@ -862,7 +668,6 @@ version 0.45 (10/04/2001):
 	* Large internal reworkings
 	* New Protocol: Gadu-Gadu, written by Arkadiusz Miskiewicz
 	* Can choose buddy icon to send (for Oscar)
-	* New Translation: Polish translation by Przemysaw Suek
 
 version 0.44 (09/20/2001):
 	* More sane scaling of buddy icons (intelligently scale to
@@ -887,7 +692,6 @@ version 0.44 (09/20/2001):
 	* Option to hide buddy icons
 
 version 0.43 (09/06/2001):
-	* Updated German Translation (thanks Daniel Seifert)
 	* Can change friendly name in MSN again
 	* Bug fixes
 	* Auto-reconnect plugin has exponential timeout (i.e. it
@@ -903,20 +707,17 @@ version 0.11.0-pre15 (08/28/2001):
 	* Redid the about box again.
 	* Fixed a nice little bug with the manual browser command
 	* Oscar Unicode fix (Thanks John Matthews)
-	* Added Russian Translation
 	* Can select which protocols are compiled statically
 	  (e.g.: ./configure --with-static-prpls=oscar,jabber)
 	* New plugin events: event_im_displayed_sent and
 	  event_im_displayed_rcvd. Use these to change messages after
 	  they're displayed (e.g. encrypt sent messages, or send
 	  auto-responses and have them display locally properly)
-	* Updated French Translation (thanks sebfrance)
 	* Can use Arts for sound (thanks Tom Dyas)
 
 version 0.11.0-pre14 (06/17/2001):
 	* Fixed a segfault with Oscar's account confirmation
 	  (Thanks, Adam)
-	* Updated the German translation (Thanks, Dominik)
 	* Some MSN changes
 	* Some HTML widget changes
 	* Can specify hosts/ports for Yahoo (thanks Jeremy Brooks)
@@ -1155,8 +956,6 @@ version 0.10.0 (09/11/2000):
 
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features
-	* French (fr), Spanish (es), Simplified Chinese (zh_CN), Korean (kr)
-	  translations added 
 	* Run-time OSCAR support
 	* Added buddy list ticker (See prefs/Appearance). Clicking on a
 	  name will cause a new or previous IM window to display for 
@@ -1197,7 +996,7 @@ version 0.9.17 (05/31/2000):
 	* Automagic feature to check for new versions has been removed
 	* Infinite loop bug fixed
 
-version 0.9.16: (05/31/2000)
+version 0.9.16 (05/31/2000):
 	* Paned buddy chat window (Thanks Syd)
 	* Buddy lists (and changes) are cached to ~/.gaim/<sn>.blist
 	  where <sn> is your screen name. If for some reason, you log
@@ -1215,7 +1014,7 @@ version 0.9.16: (05/31/2000)
 	* Fixed font problem with Misconfigured X-Servers.  Thanks Decklin!
 	* Fixed the No Configuration problem that came about today (5/31)
 
-version 0.9.15: (05/06/2000)
+version 0.9.15 (05/06/2000):
 	* Plugin support enabled by default (oops)
 	* Some plugins built/installed by default
 	* Option to automagically check for new releases
@@ -1223,7 +1022,7 @@ version 0.9.15: (05/06/2000)
 	* In-line spell checker (thanks to Torrey Searle of the
 	  Everybuddy Devel team for this one)
 
-version 0.9.14:
+version 0.9.14 (04/24/2000):
 	* Numerous Fixes by G. Sumner Hayes (buffer over flow patches,
 	  etc)
 	* Paned Conversation Windows (Thanks Syd)
