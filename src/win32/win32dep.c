@@ -19,6 +19,8 @@
 #include "systray.h"
 #include "winuser_extra.h"
 #include "idletrack.h"
+#include "zlib.h"
+#include "untar.h"
 
 /*
  *  DEFINES & MACROS
@@ -39,7 +41,6 @@ typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
 static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
-static int bhide_icon;
 
 /*
  *  GLOBALS
@@ -53,6 +54,7 @@ HINSTANCE gaimdll_hInstance = 0;
 
 BOOL (*MyFlashWindowEx)(PFLASHWINFO pfwi)=NULL;
 FARPROC wgaim_find_and_loadproc(char*, char*);
+extern void wgaim_gtkspell_init();
 
 /*
  *  STATIC CODE
@@ -236,6 +238,65 @@ void wgaim_im_blink(GtkWidget *window) {
 		finfo->sig_handler = g_signal_connect(G_OBJECT(window), 
 						      "focus-in-event", 
 						      G_CALLBACK(halt_flash_filter), finfo);
+	}
+}
+
+int wgaim_gz_decompress(const char* in, const char* out) {
+	gzFile fin;
+	FILE *fout;
+	char buf[1024];
+	int ret;
+
+	if((fin = gzopen(in, "rb"))) {
+		if(!(fout = fopen(out, "wb"))) {
+			debug_printf("wgaim_gz_decompress: Error opening file: %s\n", out);
+			gzclose(fin);
+			return 0;
+		}
+	}
+	else {
+		debug_printf("wgaim_gz_decompress: gzopen failed to open: %s\n", in);
+		return 0;
+	}
+
+	while((ret=gzread(fin, buf, 1024))) {
+		if(fwrite(buf, 1, ret, fout) < ret) {
+			debug_printf("wgaim_gz_decompress: Error writing %d bytes to file\n", ret);
+			gzclose(fin);
+			fclose(fout);
+			return 0;
+		}
+	}
+	fclose(fout);
+	gzclose(fin);
+
+	if(ret < 0) {
+		debug_printf("wgaim_gz_decompress: gzread failed while reading: %s\n", in);
+		return 0;
+	}
+
+	return 1;
+}
+
+int wgaim_gz_untar(const char* filename, const char* destdir) {
+	char tmpfile[_MAX_PATH];
+	char template[]="wgaimXXXXXX";
+
+	sprintf(tmpfile, "%s%s%s", g_get_tmp_dir(), G_DIR_SEPARATOR_S, _mktemp(template));
+	if(wgaim_gz_decompress(filename, tmpfile)) {
+		int ret;
+		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
+			ret=1;
+		else {
+			debug_printf("wgaim_gz_untar: Failure untaring %s\n", tmpfile);
+			ret=0;
+		}
+		unlink(tmpfile);
+		return ret;
+	}
+	else {
+		debug_printf("wgaim_gz_untar: Failed to gz decompress %s\n", filename);
+		return 0;
 	}
 }
 
