@@ -274,8 +274,8 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 					add_group(current);
 				}
 			} else if (*c == 'b') { /*&& !find_buddy(user, c + 2)) {*/
-				char nm[80], sw[BUDDY_ALIAS_MAXLEN], *tmp = c + 2, *a, *utf8 = NULL;
-				
+				char nm[80], sw[BUDDY_ALIAS_MAXLEN], *a, *utf8 = NULL;
+
 				if ((a = strchr(c + 2, ':')) != NULL) {
 					*a++ = '\0';		/* nul the : */
 				}
