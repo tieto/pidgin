@@ -367,6 +367,70 @@ entry_key_pressed_cb_1(GtkTextBuffer *buffer)
 	return FALSE;
 }
 
+static void default_formatize(GaimConversation *conv) {
+	GaimGtkConversation *c = GAIM_GTK_CONVERSATION(conv);
+	GaimConnection *gc = gaim_conversation_get_gc(conv);
+		
+	if (gc && gc->flags & GAIM_CONNECTION_HTML) {
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold")) {
+			gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
+		}
+		
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic")) {
+			gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
+		}
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline")) {
+			gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
+		}
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_strikethrough")) {
+			/* Tell me noone uses <s> by default ... maybe I won't do
+			 _toggle_strikethrough and not let them */
+			/*	g_snprintf(buf2, limit, "<STRIKE>%s</STRIKE>", buf);
+			  strcpy(buf, buf2); */
+		}
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font") || c->has_font) {
+			gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry), c->fontface);
+		}
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size")) {
+			int i = 3;
+			if (gaim_prefs_get_int("/gaim/gtk/conversations/font_size") < 3) {
+				while (gaim_prefs_get_int("/gaim/gtk/conversations/font_size") < i) {
+					gtk_imhtml_font_shrink(GTK_IMHTML(c->entry));
+					i--;
+				}
+			}
+
+			while (gaim_prefs_get_int("/gaim/gtk/conversations/font_size") > i) {
+				gtk_imhtml_font_grow(GTK_IMHTML(c->entry));
+				i++;
+			}
+			
+		}
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_fgcolor")) {
+			char *color = g_strdup_printf("#%02x%02x%02x", 
+						      c->fg_color.red   / 256,
+						      c->fg_color.green / 256,
+						      c->fg_color.blue  / 256);
+			gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), color);
+			g_free(color);
+		}
+
+		if (!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR) && gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_bgcolor")) {
+			char *color = g_strdup_printf("#%02x%02x%02x", 
+						      c->bg_color.red   / 256,
+						      c->bg_color.green / 256,
+						      c->bg_color.blue  / 256);
+			gtk_imhtml_toggle_backcolor(GTK_IMHTML(c->entry), color);
+			g_free(color);	
+		}
+	}
+}
+
 static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
@@ -408,66 +472,6 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		return;
 	}
 
-	buf2 = g_malloc(limit);
-
-	if (gc && gc->flags & GAIM_CONNECTION_HTML) {
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold")) {
-			g_snprintf(buf2, limit, "<B>%s</B>", buf);
-			strcpy(buf, buf2);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic")) {
-			g_snprintf(buf2, limit, "<I>%s</I>", buf);
-			strcpy(buf, buf2);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline")) {
-			g_snprintf(buf2, limit, "<U>%s</U>", buf);
-			strcpy(buf, buf2);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_strikethrough")) {
-			g_snprintf(buf2, limit, "<STRIKE>%s</STRIKE>", buf);
-			strcpy(buf, buf2);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font") ||
-			gtkconv->has_font) {
-
-			g_snprintf(buf2, limit,
-					   "<FONT FACE=\"%s\">%s</FONT>", gtkconv->fontface, buf);
-			strcpy(buf, buf2);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size")) {
-			g_snprintf(buf2, limit,
-					   "<FONT SIZE=\"%d\">%s</FONT>",
-					   gaim_prefs_get_int("/gaim/gtk/conversations/font_size"),
-					   buf);
-			strcpy(buf, buf2);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_fgcolor")) {
-			g_snprintf(buf2, limit,
-					   "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>",
-					   gtkconv->fg_color.red   / 256,
-					   gtkconv->fg_color.green / 256,
-					   gtkconv->fg_color.blue  / 256, buf);
-			strcpy(buf, buf2);
-		}
-
-		if (!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR) && gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_bgcolor")) {
-			g_snprintf(buf2, limit,
-					   "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
-					   gtkconv->bg_color.red   / 256,
-					   gtkconv->bg_color.green / 256,
-					   gtkconv->bg_color.blue  / 256, buf);
-			strcpy(buf, buf2);
-		}
-	}
-
-	g_free(buf2);
-
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 		gaim_conv_im_send(GAIM_CONV_IM(conv), buf);
 	else
@@ -479,6 +483,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	g_free(buf);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+	default_formatize(conv);
 }
 
 static void
@@ -3566,6 +3571,7 @@ setup_chat_pane(GaimConversation *conv)
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
 	gaim_setup_imhtml(gtkconv->entry);
+	default_formatize(conv);
 
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
@@ -3665,6 +3671,7 @@ setup_im_pane(GaimConversation *conv)
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
 	gaim_setup_imhtml(gtkconv->entry);
+	default_formatize(conv);
 	gtkconv->entry_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);

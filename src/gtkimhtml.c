@@ -372,6 +372,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		/* Mozilla asks that we start our text/html with the Unicode byte order mark */
 		str = g_string_append_unichar(str, 0xfeff);
 		str = g_string_append(str, text);
+		str = g_string_append_unichar(str, 0x0000);
 		char *selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
 		gtk_selection_data_set (selection_data, gdk_atom_intern("text/html", FALSE), 16, selection, len);
 		g_string_free(str, TRUE);
@@ -406,6 +407,39 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, GtkClipboard *clipboard)
 				     (GtkClipboardClearFunc)NULL, G_OBJECT(imhtml));
 
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
+}
+
+static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, GtkIMHtml *imhtml)
+{
+	char *text;
+	guint16 c;
+	if (selection_data->length < 0) {
+		text = gtk_clipboard_wait_for_text(clipboard);
+	printf("%s\n", text);
+	} else {
+		text = g_malloc((selection_data->format / 8) * selection_data->length);
+		memcpy(text, selection_data->data, selection_data->length * (selection_data->format / 8));
+		printf("%s\n", text);
+	}
+	
+	memcpy (&c, text, 2);
+	if (c == 0xfeff) {
+		/* This is UCS2 */
+		char *utf8 = g_convert(text, selection_data->length * (selection_data->format / 8), "UTF-8", "UCS-2", NULL, NULL, NULL);
+		g_free(text);
+		text = utf8;
+	}
+	gtk_imhtml_append_text_with_images(imhtml, text, 0, NULL);
+}
+
+
+static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
+{
+
+	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_request_contents(clipboard, gdk_atom_intern("text/html", FALSE),
+				       paste_received_cb, imhtml);
+	g_signal_stop_emission_by_name(imhtml, "paste-clipboard");
 }
 
 static gboolean button_release_cb(GtkIMHtml *imhtml, GdkEventButton event, gpointer the_foibles_of_man)
@@ -519,6 +553,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(insert_cb), imhtml);
 #if GTK_CHECK_VERSION(2,2,0)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
+	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
 #endif
 	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
