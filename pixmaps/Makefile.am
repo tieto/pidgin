@@ -101,6 +101,9 @@ EXTRA_DIST =	about_small.xpm			\
 		smile_sad.xpm			\
 		smile_wink.xpm			\
 		speaker.xpm			\
+		status-away.xpm			\
+		status-here.xpm			\
+		status-idle.xpm			\
 		strike.xpm			\
 		tb_forward.xpm			\
 		tb_search.xpm			\

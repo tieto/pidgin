@@ -112,10 +112,12 @@ static void icq_user_online(ICQLINK *link, unsigned long uin, unsigned long st,
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	guint status;
 	char buf[256];
+	time_t t;
 
 	g_snprintf(buf, sizeof buf, "%lu", uin);
 	status = (st == STATUS_ONLINE) ? UC_NORMAL : UC_UNAVAILABLE | (st << 5);
-	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
+	time(&t);
+	serv_got_update(gc, buf, 1, 0, t, 0, status, 0);
 }
 
 static void icq_user_offline(ICQLINK *link, unsigned long uin) {

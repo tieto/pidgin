@@ -42,9 +42,9 @@
 #include "gaim.h"
 #include "libyahoo.h"
 
-#include "pixmaps/free_icon.xpm"
-#include "pixmaps/away_icon.xpm"
-#include "pixmaps/dt_icon.xpm"
+#include "pixmaps/status-away.xpm"
+#include "pixmaps/status-here.xpm"
+#include "pixmaps/status-idle.xpm"
 
 struct yahoo_data {
 	struct yahoo_context *ctxt;
@@ -67,6 +67,7 @@ char *description() {
 static void process_packet_status(struct gaim_connection *gc, struct yahoo_packet *pkt) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	int i;
+	time_t tmptime;
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && !strcasecmp(pkt->active_id, gc->username)) {
 		hide_login_progress(gc, "Disconnected");
@@ -91,15 +92,18 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 			if (!b)
 				continue; /* ???!!! */
 		}
+		time(&tmptime);
+		if (b->signon == 0) b->signon = tmptime;
 		if (pkt->service == YAHOO_SERVICE_LOGOFF)
 			serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
 		else {
 			if (rec->status == YAHOO_STATUS_IDLE)
-				serv_got_update(gc, b->name, 1, 0, 0, 10, UC_NORMAL, 0);
+				serv_got_update(gc, b->name, 1, 0, b->signon, tmptime - 600,
+						(rec->status << 5) | UC_NORMAL, 0);
 			else if (rec->status == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, b->name, 1, 0, 0, 0, UC_NORMAL, 0);
+				serv_got_update(gc, b->name, 1, 0, b->signon, 0, UC_NORMAL, 0);
 			else
-				serv_got_update(gc, b->name, 1, 0, 0, 0,
+				serv_got_update(gc, b->name, 1, 0, b->signon, 0,
 						(rec->status << 5) | UC_UNAVAILABLE, 0);
 			if (rec->status == YAHOO_STATUS_CUSTOM) {
 				gpointer val = g_hash_table_lookup(yd->hash, b->name);
@@ -335,11 +339,11 @@ static void gyahoo_add_buddy(struct gaim_connection *gc, char *name) {
 }
 
 static char **yahoo_list_icon(int uc) {
-	if (uc & UC_NORMAL)
-		return free_icon_xpm;
-	if ((uc >> 5) == YAHOO_STATUS_CUSTOM)
-		return dt_icon_xpm;
-	return away_icon_xpm;
+	if ((uc >> 5) == YAHOO_STATUS_IDLE)
+		return status_idle_xpm;
+	else if (uc == UC_NORMAL)
+		return status_here_xpm;
+	return status_away_xpm;
 }
 
 static void yahoo_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {

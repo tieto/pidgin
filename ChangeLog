@@ -5,6 +5,8 @@ version 0.11.0:
 	* More GUI adjustments
 	* Can optionally run command to play sound files
 	* Icons for ICQ plugin (blatently stolen from GnomeICU)
+	* Icons for Yahoo plugin (not-so-blatently stolen from GTKYahoo)
+	* Signon times for Yahoo and ICQ sane (but not correct)
 
 version 0.11.0-pre2 (12/04/2000):
 	* Fixed a segfault with a bad util.c 
