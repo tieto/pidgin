@@ -35,6 +35,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
+#include "html.h"
 
 /* XXX */
 #include "gaim.h"

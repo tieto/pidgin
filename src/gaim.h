@@ -53,18 +53,6 @@ extern void show_confirm_del_chat(struct chat *);
 /* Functions in gaimrc.c */
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
-/* Functions in html.c */
-struct g_url {
-	char address[255];
-	int port;
-	char page[255];
-};
-
-extern void grab_url(char *, gboolean, void (*callback)(gpointer, char *, unsigned long), gpointer);
-extern gchar *strip_html(const gchar *);
-extern void html_to_xhtml(const char *, char **, char **);
-struct g_url *parse_url(char *url);
-
 /* Functions in idle.c */
 extern gint check_idle(gpointer);
 

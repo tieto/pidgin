@@ -32,6 +32,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "debug.h"
+#include "html.h"
 #include "log.h"
 #include "multi.h"
 #include "notify.h"

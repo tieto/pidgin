@@ -34,6 +34,7 @@
 #include "proxy.h"
 #include "request.h"
 #include "util.h"
+#include "html.h"
 
 #include "aim.h"
 #include "md5.h"

@@ -31,6 +31,7 @@
 #include "request.h"
 #include "server.h"
 #include "util.h"
+#include "html.h"
 
 #include "md5.h"
 

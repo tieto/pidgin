@@ -22,6 +22,7 @@
 #include "internal.h"
 
 #include "debug.h"
+#include "html.h"
 #include "proxy.h"
 
 #include "gaim.h"
