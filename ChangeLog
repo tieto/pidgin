@@ -14,7 +14,7 @@ version 0.82:
 	  don't accidentally cancel the file transfer and crash Gaim
 	  (Felipe Contreras)
 	* The chat invite button has a correct label (Stu Tomlinson)
-	* The system log should leak fewwer file descriptors now (Ka-Hing Cheung)
+	* The system log should leak fewer file descriptors now (Ka-Hing Cheung)
 
 version 0.81 (08/05/2004):
 	New Features:
