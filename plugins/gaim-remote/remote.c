@@ -51,6 +51,7 @@ struct UI {
 
 #ifndef _WIN32
 static gint UI_fd = -1;
+static guint watcher = 0;
 #endif
 static int gaim_session = 0;
 static GSList *uis = NULL;
@@ -676,7 +677,7 @@ core_main()
 		return 1;
 
 	channel = g_io_channel_unix_new(UI_fd);
-	g_io_add_watch(channel, G_IO_IN, socket_readable, NULL);
+	watcher = g_io_add_watch(channel, G_IO_IN, socket_readable, NULL);
 	g_io_channel_unref(channel);
 #endif
 
@@ -694,6 +695,7 @@ core_quit()
 	/* don't save prefs after plugins are gone... */
 #ifndef _WIN32
 	char buf[1024];
+	g_source_remove(watcher);
 	close(UI_fd);
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
 			g_get_tmp_dir(), g_get_user_name(), gaim_session);
