@@ -83,6 +83,8 @@ void show_about(GtkWidget *w, void *null)
 	GtkWidget *button;
 	GtkWidget *view;
 	GtkTextBuffer *buffer;
+	GtkTextIter iter;
+	GtkTextTag *tag;
 	GtkWidget *sw;
 
 	char abouttitle[45];
@@ -121,53 +123,58 @@ void show_about(GtkWidget *w, void *null)
 		gtk_box_pack_start(GTK_BOX(fbox), pixmap, FALSE, FALSE, 0);
 		gtk_widget_show(pixmap);
 
-		label =
-		    gtk_label_new(
-				  _("Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
-				   "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
-				    "It is written using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE "\n\n"
-				   "IRC: #gaim on irc.freenode.net"));
-
-		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-		gtk_box_pack_start(GTK_BOX(fbox), label, TRUE, TRUE, 0);
-		gtk_widget_show(label);
-
 		view = gtk_text_view_new ();
+		gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
+		gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
 
 		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-		gtk_text_buffer_set_text (buffer,
-					  "Active Developers\n"
-					  "=================\n"
-					  "Rob Flynn (maintainer)            [ rob@marko.net ]\n"
-					  "Sean Egan (coder)                 [ bj91704@binghamton.edu ]\n"
-					  "\n"
-					  "Crazy Patch Writers\n"
-					  "===================\n"
-					  "Benjamin Miller\n"
-					  "Decklin Foster\n"
-					  "Nathan Walp\n"
-					  "Mark Doliner\n"
-					  "\n"
-					  "WIN32 Port\n"
-					  "==========\n"
-					  "Herman Bloggs                     [ hermanator12002@yahoo.com ]\n" 
-					  "\n"
-					  "Retired Developers\n"
-					  "==================\n"
-					  "Jim Duchek\n"
-					  "Eric Warmenhoven                  [ warmenhoven@yahoo.com ]\n"
-					  "Mark Spencer (original author)    [ markster@marko.net ]\n"
-					  "\n",
-					  -1);
+		gtk_text_buffer_set_text(buffer, "", -1);
+		gtk_text_buffer_get_start_iter(buffer, &iter);
+
+		tag = gtk_text_buffer_create_tag(buffer, "title", "weight", PANGO_WEIGHT_BOLD, "scale", PANGO_SCALE_LARGE, NULL);
+		tag = gtk_text_buffer_create_tag(buffer, "email", "scale", PANGO_SCALE_SMALL, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
+		tag = gtk_text_buffer_create_tag(buffer, "url", "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
+
+		gtk_text_buffer_insert(buffer, &iter,
+				  _("Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
+				   "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
+				    "It is written using Gtk+ and is licensed under the GPL.\n\n"), -1);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "URL: ", -1, "title", NULL);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, WEBSITE "\n\n", -1, "url", NULL);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "IRC: ", -1, "title", NULL);
+		gtk_text_buffer_insert(buffer, &iter, "IRC: #gaim on irc.freenode.net\n", -1);
+
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nActive Developers:\n"), -1, "title", NULL);
+		gtk_text_buffer_insert(buffer, &iter, "  Rob Flynn (maintainer) ", -1);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "rob@marko.net\n", -1, "email", NULL);
+		gtk_text_buffer_insert(buffer, &iter, "  Sean Egan (coder) ",-1);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "bj91704@binghamton.edu\n", -1, "email", NULL);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nCrazy Patch Writers:\n"), -1, "title", NULL);
+		gtk_text_buffer_insert(buffer, &iter, "  Benjamin Miller\n", -1);
+		gtk_text_buffer_insert(buffer, &iter, "  Decklin Foster\n", -1);
+		gtk_text_buffer_insert(buffer, &iter, "  Nathan Walp\n", -1);
+		gtk_text_buffer_insert(buffer, &iter, "  Mark Doliner\n", -1);
+
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nWin32 Port:\n"), -1, "title", NULL);
+		gtk_text_buffer_insert(buffer, &iter, "  Herman Bloggs ", -1);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "hermanator12002@yahoo.com\n", -1, "email", NULL);
+
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nRetired Developers:\n"), -1, "title", NULL);
+		gtk_text_buffer_insert(buffer, &iter, "  Jim Duchek\n", -1);
+		gtk_text_buffer_insert(buffer, &iter, "  Eric Warmenhoven ", -1);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "warmenhoven@yahoo.com\n", -1, "email", NULL);
+		gtk_text_buffer_insert(buffer, &iter, "  Mark Spencer (original author) ", -1);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "markster@marko.net\n", -1, "email", NULL);
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
+
 		gtk_container_add(GTK_CONTAINER(sw), view);
-		gtk_widget_set_usize(GTK_WIDGET(sw), -1, 150);
+		gtk_widget_set_usize(GTK_WIDGET(sw), -1, 350);
 		gtk_widget_show(sw);
-		
+
 		gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
 		gtk_widget_show(view);
 
@@ -177,7 +184,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		gtk_widget_show(hbox);
 
-		button = picture_button(about, _("Close"), cancel_xpm);
+		button = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 		if (null != (void *)2) {
@@ -192,14 +199,16 @@ void show_about(GtkWidget *w, void *null)
 			gtk_signal_connect(GTK_OBJECT(about), "destroy",
 					   GTK_SIGNAL_FUNC(version_exit), NULL);
 		}
+		gtk_widget_show(button);
 
 		/* this makes the sizes not work. */
 		/* GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT); */
 		/* gtk_widget_grab_default(button); */
 
-		button = picture_button(about, _("Web Site"), about_small_xpm);
+		button = gaim_pixbuf_button_from_stock(_("Web Site"), GTK_STOCK_HOME, GAIM_BUTTON_HORIZONTAL);
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(about_click), NULL);
+		gtk_widget_show(button);
 	}
 
 	/* Let's give'em something to talk about -- woah woah woah */

@@ -35,6 +35,7 @@ version 0.60:
 		- IM Images
 		- Alert Dialogs
 		- GtkIMHtml tooltips Pangonated
+		- About Dialog (Nathan Walp)
 	* Notify.c plugin rewritten; check its configure dialog (Thanks,
 	  Etan Reisner)
 	* TOC no longer compiles statically by default--use OSCAR
