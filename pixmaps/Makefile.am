@@ -32,6 +32,7 @@ EXTRA_DIST =	ab.xpm				\
 		download.xpm			\
 		embarrassed.xpm			\
 		exit_small.xpm			\
+		farted.xpm			\
 		fgcolor.xpm			\
 		fontface.xpm			\
 		fontface2.xpm			\

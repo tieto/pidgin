@@ -59,6 +59,7 @@
 #include "pixmaps/crazy4.xpm"
 #include "pixmaps/mrt.xpm"
 #include "pixmaps/download.xpm"
+#include "pixmaps/farted.xpm"
 
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
 
@@ -105,6 +106,7 @@ void gaim_setup_imhtml(GtkWidget *imhtml)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-o)))", mrt_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-O)))", mrt_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "8-|)", download_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-])", farted_xpm);
 }
 
 void quiet_set(GtkWidget *tb, int state)
