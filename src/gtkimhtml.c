@@ -693,7 +693,7 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(int) pos - GPOINTER_TO_INT(t->values->str)];
+			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		else
 			break;
 
@@ -714,7 +714,7 @@ gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 	GtkSmileyTree *tree;
 	g_return_if_fail (imhtml != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
-	
+
 	if (sml == NULL)
 		tree = imhtml->default_smilies;
 	else if ((tree = g_hash_table_lookup(imhtml->smiley_data, sml))) {
@@ -748,7 +748,7 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	}
 	if (tree == NULL)
 		return FALSE;
-	
+
 	*len = gtk_smiley_tree_lookup (tree, text);
 	return (*len > 0);
 }
@@ -762,9 +762,9 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 	const gchar *x = text;
 	if (sml == NULL)
 		t = imhtml->default_smilies;
-	else 
+	else
 		t = g_hash_table_lookup(imhtml->smiley_data, sml);
-	 
+
 
 	if (t == NULL)
 		return sml ? gtk_smiley_tree_image(imhtml, NULL, text) : NULL;
@@ -775,10 +775,10 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		if (!t->values) {
 			return sml ? gtk_smiley_tree_image(imhtml, NULL, text) : NULL;
 		}
-		
+
 		pos = strchr (t->values->str, *x);
 		if (pos) {
-			t = t->children [(int) pos - GPOINTER_TO_INT(t->values->str)];
+			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		} else {
 			return sml ? gtk_smiley_tree_image(imhtml, NULL, text) : NULL;
 		}
