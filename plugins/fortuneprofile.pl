@@ -44,7 +44,7 @@ $tab = "&nbsp;";
 $tab = $tab . $tab . $tab . $tab;
 $nl = "<BR>";
 
-$seconds = 9;                    # Delay before updating away messages.
+$seconds = 30;                   # Delay before updating away messages.
 $max = 1020;                     # Max length of an profile. It should be
                                  # 1024, but I am being safe
 $pre_message = "";               # This gets added before the fortune
