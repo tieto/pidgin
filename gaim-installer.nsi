@@ -136,21 +136,25 @@ SetDateSave on
 ;--------------------------------
 ;Translations
 
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\english.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\german.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\french.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese-br.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\hungarian.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\italian.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\swedish.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\trad-chinese.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\korean.nsh"
-  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\romanian.nsh"
+  !define GAIM_DEFAULT_LANGFILE "${GAIM_NSIS_INCLUDE_PATH}\translations\english.nsh"
+
+  !include "${GAIM_NSIS_INCLUDE_PATH}\langmacros.nsh"
+
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ENGLISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\english.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "GERMAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\german.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "DUTCH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "FRENCH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\french.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SIMPCHINESE"	"${GAIM_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SERBIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "PORTUGUESEBR"	"${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese-br.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "PORTUGUESE"		"${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "HUNGARIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\hungarian.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ITALIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\italian.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "BULGARIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SWEDISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\swedish.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "TRADCHINESE"	"${GAIM_NSIS_INCLUDE_PATH}\translations\trad-chinese.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "KOREAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\korean.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ROMANIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\romanian.nsh"
 
 ;--------------------------------
 ;Reserve Files
@@ -1068,6 +1072,7 @@ FunctionEnd
 
 ; Page enter and exit functions..
 
+!ifdef WITH_GTK
 Function preGtkDirPage
   Call DoWeNeedGtk
   Pop $0
@@ -1116,6 +1121,7 @@ Function postGtkDirPage
     Abort
   done:
 FunctionEnd
+!endif
 
 ; GetParameters
 ; input, none

@@ -7,47 +7,50 @@
 ;;  Version 2
 ;;
 
+; Make sure to update the GAIM_MACRO_LANGUAGEFILE_END macro in
+; langmacros.nsh when updating this file
+
 ; Startup GTK+ check
-LangString GTK_INSTALLER_NEEDED			${LANG_ENGLISH} "The GTK+ runtime environment is either missing or needs to be upgraded.$\rPlease install v${GTK_VERSION} or higher of the GTK+ runtime"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_INSTALLER_NEEDED			"The GTK+ runtime environment is either missing or needs to be upgraded.$\rPlease install v${GTK_VERSION} or higher of the GTK+ runtime"
 
 ; License Page
-LangString GAIM_LICENSE_BUTTON			${LANG_ENGLISH} "Next >"
-LangString GAIM_LICENSE_BOTTOM_TEXT			${LANG_ENGLISH} "$(^Name) is released under the GPL license. The license is provided here for information purposes only. $_CLICK"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BUTTON			"Next >"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) is released under the GPL license. The license is provided here for information purposes only. $_CLICK"
 
 ; Components Page
-LangString GAIM_SECTION_TITLE				${LANG_ENGLISH} "Gaim Instant Messaging Client (required)"
-LangString GTK_SECTION_TITLE				${LANG_ENGLISH} "GTK+ Runtime Environment (required)"
-LangString GTK_THEMES_SECTION_TITLE			${LANG_ENGLISH} "GTK+ Themes"
-LangString GTK_NOTHEME_SECTION_TITLE		${LANG_ENGLISH} "No Theme"
-LangString GTK_WIMP_SECTION_TITLE			${LANG_ENGLISH} "Wimp Theme"
-LangString GTK_BLUECURVE_SECTION_TITLE		${LANG_ENGLISH} "Bluecurve Theme"
-LangString GTK_LIGHTHOUSEBLUE_SECTION_TITLE	${LANG_ENGLISH} "Light House Blue Theme"
-LangString GAIM_SECTION_DESCRIPTION			${LANG_ENGLISH} "Core Gaim files and dlls"
-LangString GTK_SECTION_DESCRIPTION			${LANG_ENGLISH} "A multi-platform GUI toolkit, used by Gaim"
-LangString GTK_THEMES_SECTION_DESCRIPTION		${LANG_ENGLISH} "GTK+ Themes can change the look and feel of GTK+ applications."
-LangString GTK_NO_THEME_DESC				${LANG_ENGLISH} "Don't install a GTK+ theme"
-LangString GTK_WIMP_THEME_DESC			${LANG_ENGLISH} "GTK-Wimp (Windows impersonator) is a GTK theme that blends well into the Windows desktop environment."
-LangString GTK_BLUECURVE_THEME_DESC			${LANG_ENGLISH} "The Bluecurve theme."
-LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_ENGLISH} "The Lighthouseblue theme."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_SECTION_TITLE			"Gaim Instant Messaging Client (required)"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_SECTION_TITLE			"GTK+ Runtime Environment (required)"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_THEMES_SECTION_TITLE		"GTK+ Themes"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_NOTHEME_SECTION_TITLE		"No Theme"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_WIMP_SECTION_TITLE		"Wimp Theme"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_BLUECURVE_SECTION_TITLE	"Bluecurve Theme"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Theme"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_SECTION_DESCRIPTION		"Core Gaim files and dlls"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_SECTION_DESCRIPTION		"A multi-platform GUI toolkit, used by Gaim"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themes can change the look and feel of GTK+ applications."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_NO_THEME_DESC			"Don't install a GTK+ theme"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is a GTK theme that blends well into the Windows desktop environment."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_BLUECURVE_THEME_DESC		"The Bluecurve theme."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue theme."
 
 ; GTK+ Directory Page
-LangString GTK_UPGRADE_PROMPT				${LANG_ENGLISH} "An old version of the GTK+ runtime was found. Do you wish to upgrade?$\rNote: Gaim may not work unless you do."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_UPGRADE_PROMPT			"An old version of the GTK+ runtime was found. Do you wish to upgrade?$\rNote: Gaim may not work unless you do."
 
 ; Installer Finish Page
-LangString GAIM_FINISH_VISIT_WEB_SITE		${LANG_ENGLISH} "Visit the Windows Gaim Web Page"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_FINISH_VISIT_WEB_SITE		"Visit the Windows Gaim Web Page"
 
 ; Gaim Section Prompts and Texts
-LangString GAIM_UNINSTALL_DESC			${LANG_ENGLISH} "Gaim (remove only)"
-LangString GAIM_PROMPT_WIPEOUT			${LANG_ENGLISH} "Your old Gaim directory is about to be deleted. Would you like to continue?$\r$\rNote: Any non-standard plugins that you may have installed will be deleted.$\rGaim user settings will not be affected."
-LangString GAIM_PROMPT_DIR_EXISTS			${LANG_ENGLISH} "The installation directory you specified already exists. Any contents$\rwill be deleted. Would you like to continue?"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_UNINSTALL_DESC			"Gaim (remove only)"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_PROMPT_WIPEOUT			"Your old Gaim directory is about to be deleted. Would you like to continue?$\r$\rNote: Any non-standard plugins that you may have installed will be deleted.$\rGaim user settings will not be affected."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_PROMPT_DIR_EXISTS		"The installation directory you specified already exists. Any contents$\rwill be deleted. Would you like to continue?"
 
 ; GTK+ Section Prompts
-LangString GTK_INSTALL_ERROR				${LANG_ENGLISH} "Error installing GTK+ runtime."
-LangString GTK_BAD_INSTALL_PATH			${LANG_ENGLISH} "The path you entered can not be accessed or created."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_INSTALL_ERROR			"Error installing GTK+ runtime."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_BAD_INSTALL_PATH			"The path you entered can not be accessed or created."
 
 ; GTK+ Themes section
-LangString GTK_NO_THEME_INSTALL_RIGHTS		${LANG_ENGLISH} "You do not have permission to install a GTK+ theme."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_NO_THEME_INSTALL_RIGHTS	"You do not have permission to install a GTK+ theme."
 
 ; Uninstall Section Prompts
-LangString un.GAIM_UNINSTALL_ERROR_1         	${LANG_ENGLISH} "The uninstaller could not find registry entries for Gaim.$\rIt is likely that another user installed this application."
-LangString un.GAIM_UNINSTALL_ERROR_2         	${LANG_ENGLISH} "You do not have permission to uninstall this application."
+!insertmacro GAIM_MACRO_DEFAULT_STRING un.GAIM_UNINSTALL_ERROR_1         "The uninstaller could not find registry entries for Gaim.$\rIt is likely that another user installed this application."
+!insertmacro GAIM_MACRO_DEFAULT_STRING un.GAIM_UNINSTALL_ERROR_2         "You do not have permission to uninstall this application."

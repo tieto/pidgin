@@ -9,46 +9,46 @@
 ;;
 
 ; Startup GTK+ check
-LangString GTK_INSTALLER_NEEDED			${LANG_PORTUGUESE} "O ambiente de tempo de execução do GTK+ está ausente ou precisa de ser actualizado.$\rPor favor instale a versão v${GTK_VERSION} ou superior do ambiente de tempo de execução do GTK+."
+!define GTK_INSTALLER_NEEDED			"O ambiente de tempo de execução do GTK+ está ausente ou precisa de ser actualizado.$\rPor favor instale a versão v${GTK_VERSION} ou superior do ambiente de tempo de execução do GTK+."
 
 ; License Page
-LangString GAIM_LICENSE_BUTTON			${LANG_PORTUGUESE} "Seguinte >"
-LangString GAIM_LICENSE_BOTTOM_TEXT			${LANG_PORTUGUESE} "$(^Name) está disponível sob alicença GPL. O texto da licença é fornecido meramente a título informativo. $_CLICK" 
+!define GAIM_LICENSE_BUTTON			"Seguinte >"
+!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) está disponível sob alicença GPL. O texto da licença é fornecido meramente a título informativo. $_CLICK" 
 
 ; Components Page
-LangString GAIM_SECTION_TITLE				${LANG_PORTUGUESE} "Cliente de mensagens instantâneas Gaim (obrigatório)"
-LangString GTK_SECTION_TITLE				${LANG_PORTUGUESE} "Ambiente de tempo de execução do GTK+ (obrigatório)"
-LangString GTK_THEMES_SECTION_TITLE			${LANG_PORTUGUESE} "Temas do GTK+"
-LangString GTK_NOTHEME_SECTION_TITLE		${LANG_PORTUGUESE} "Nenhum tema"
-LangString GTK_WIMP_SECTION_TITLE			${LANG_PORTUGUESE} "Tema 'Wimp'"
-LangString GTK_BLUECURVE_SECTION_TITLE		${LANG_PORTUGUESE} "Tema 'Bluecurve'"
-LangString GTK_LIGHTHOUSEBLUE_SECTION_TITLE	${LANG_PORTUGUESE} "Tema 'Light House Blue'"
-LangString GAIM_SECTION_DESCRIPTION			${LANG_PORTUGUESE} "Ficheiros e bibliotecas principais do Gaim"
-LangString GTK_SECTION_DESCRIPTION			${LANG_PORTUGUESE} "Um conjunto de ferramentas de interface gráfica multi-plataforma, usado pelo Gaim"
-LangString GTK_THEMES_SECTION_DESCRIPTION		${LANG_PORTUGUESE} "Os temas do GTK+ podem mudar a aparência dos programas GTK+."
-LangString GTK_NO_THEME_DESC				${LANG_PORTUGUESE} "Não instalar um tema do GTK+"
-LangString GTK_WIMP_THEME_DESC			${LANG_PORTUGUESE} "O tema 'GTK-Wimp' ('Windows impersonator', personificador do Windows) é um tema GTK que combina bem com o ambiente de trabalho do Windows."
-LangString GTK_BLUECURVE_THEME_DESC			${LANG_PORTUGUESE} "O tema 'Bluecurve'."
-LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_PORTUGUESE} "O tema 'Lighthouseblue'."
+!define GAIM_SECTION_TITLE			"Cliente de mensagens instantâneas Gaim (obrigatório)"
+!define GTK_SECTION_TITLE			"Ambiente de tempo de execução do GTK+ (obrigatório)"
+!define GTK_THEMES_SECTION_TITLE		"Temas do GTK+"
+!define GTK_NOTHEME_SECTION_TITLE		"Nenhum tema"
+!define GTK_WIMP_SECTION_TITLE		"Tema 'Wimp'"
+!define GTK_BLUECURVE_SECTION_TITLE		"Tema 'Bluecurve'"
+!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Tema 'Light House Blue'"
+!define GAIM_SECTION_DESCRIPTION		"Ficheiros e bibliotecas principais do Gaim"
+!define GTK_SECTION_DESCRIPTION		"Um conjunto de ferramentas de interface gráfica multi-plataforma, usado pelo Gaim"
+!define GTK_THEMES_SECTION_DESCRIPTION	"Os temas do GTK+ podem mudar a aparência dos programas GTK+."
+!define GTK_NO_THEME_DESC			"Não instalar um tema do GTK+"
+!define GTK_WIMP_THEME_DESC			"O tema 'GTK-Wimp' ('Windows impersonator', personificador do Windows) é um tema GTK que combina bem com o ambiente de trabalho do Windows."
+!define GTK_BLUECURVE_THEME_DESC		"O tema 'Bluecurve'."
+!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"O tema 'Lighthouseblue'."
 
 ; GTK+ Directory Page
-LangString GTK_UPGRADE_PROMPT				${LANG_PORTUGUESE} "Foi encontrada ma versão antiga do ambiente de tempo de execução do GTK+. Deseja actualizá-lo?$\rNota: O Gaim poderá não funcionar se não o fizer."
+!define GTK_UPGRADE_PROMPT			"Foi encontrada ma versão antiga do ambiente de tempo de execução do GTK+. Deseja actualizá-lo?$\rNota: O Gaim poderá não funcionar se não o fizer."
 
 ; Installer Finish Page
-LangString GAIM_FINISH_VISIT_WEB_SITE		${LANG_PORTUGUESE} "Visite a página web do Gaim para Windows" 
+!define GAIM_FINISH_VISIT_WEB_SITE		"Visite a página web do Gaim para Windows" 
 
 ; Gaim Section Prompts and Texts
-LangString GAIM_UNINSTALL_DESC			${LANG_PORTUGUESE} "Gaim (remover apenas)"
-LangString GAIM_PROMPT_WIPEOUT			${LANG_PORTUGUESE} "A sua antiga instalação do Gaim está prestes a ser removida. Deseja continuar?$\r$\rNota: Quaisquer plugins não-padrão que poderá ter instalado serão removidos.$\rAs configurações de utilizador do Gaim não serão afectadas."
-LangString GAIM_PROMPT_DIR_EXISTS			${LANG_PORTUGUESE} "A directoria de instalação do que especificou já existe. Qualquer conteúdo$\rserá apagado. Deseja continuar?"
+!define GAIM_UNINSTALL_DESC			"Gaim (remover apenas)"
+!define GAIM_PROMPT_WIPEOUT			"A sua antiga instalação do Gaim está prestes a ser removida. Deseja continuar?$\r$\rNota: Quaisquer plugins não-padrão que poderá ter instalado serão removidos.$\rAs configurações de utilizador do Gaim não serão afectadas."
+!define GAIM_PROMPT_DIR_EXISTS		"A directoria de instalação do que especificou já existe. Qualquer conteúdo$\rserá apagado. Deseja continuar?"
 
 ; GTK+ Section Prompts
-LangString GTK_INSTALL_ERROR				${LANG_PORTUGUESE} "Erro ao instalar o ambiente de tempo de execução do GTK+."
-LangString GTK_BAD_INSTALL_PATH			${LANG_PORTUGUESE} "Impossível aceder ou criar o caminho que digitou."
+!define GTK_INSTALL_ERROR			"Erro ao instalar o ambiente de tempo de execução do GTK+."
+!define GTK_BAD_INSTALL_PATH			"Impossível aceder ou criar o caminho que digitou."
 
 ; GTK+ Themes section
-LangString GTK_NO_THEME_INSTALL_RIGHTS		${LANG_PORTUGUESE} "Não tem permissão para instalar um tema do GTK+."
+!define GTK_NO_THEME_INSTALL_RIGHTS		"Não tem permissão para instalar um tema do GTK+."
 
 ; Uninstall Section Prompts
-LangString un.GAIM_UNINSTALL_ERROR_1         	${LANG_PORTUGUESE} "O desinstalador não pôde encontrar entradas de registo do Gaim.$\rÉ provável que outro utilizador tenha instalado este programa."
-LangString un.GAIM_UNINSTALL_ERROR_2         	${LANG_PORTUGUESE} "Não tem permissão para desinstalar este programa."
+!define un.GAIM_UNINSTALL_ERROR_1         "O desinstalador não pôde encontrar entradas de registo do Gaim.$\rÉ provável que outro utilizador tenha instalado este programa."
+!define un.GAIM_UNINSTALL_ERROR_2         "Não tem permissão para desinstalar este programa."
