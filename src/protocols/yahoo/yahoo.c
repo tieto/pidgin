@@ -50,6 +50,7 @@ extern char *yahoo_crypt(const char *, const char *);
 /* #define YAHOO_DEBUG */
 
 static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
+static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len);
 
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
@@ -1790,6 +1791,7 @@ static void yahoo_process_ignore(GaimConnection *gc, struct yahoo_packet *pkt) {
 
 static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	int err = 0;
 	char *msg;
@@ -1812,6 +1814,23 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 		msg = g_strdup(_("Invalid username."));
 		break;
 	case 13:
+		if (!yd->wm) {
+			yd->wm = TRUE;
+			if (yd->fd >= 0)
+				close(yd->fd);
+			if (gc->inpa)
+				gaim_input_remove(gc->inpa);
+			gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
+			               yahoo_login_page_cb, gc);
+			gaim_notify_warning(gc, NULL, _("Normal authencation failed!"),
+			                    _("The normal authencation method has failed. "
+			                      "This means either your password is incorrect, "
+			                      "or Yahoo!'s authencation scheme has changed. "
+			                      "Gaim will now attempt to log in using Web "
+			                      "Messenger authencation, will which result "
+			                      "in reduced functionality and features."));
+			return;
+		}
 		msg = g_strdup(_("Incorrect password."));
 		break;
 	case 14:
@@ -2151,7 +2170,6 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
-#ifdef YAHOO_WEBMESSENGER
 static void yahoo_got_web_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -2331,7 +2349,6 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 		return;
 	}
 }
-#endif
 
 static void yahoo_server_check(GaimAccount *account)
 {
@@ -2382,7 +2399,6 @@ static void yahoo_login(GaimAccount *account) {
 			return;
 		}
 	} else {
-#ifndef YAHOO_WEBMESSENGER
 		yd->jp = FALSE;
 		if (gaim_proxy_connect(account,
 		                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
@@ -2392,11 +2408,6 @@ static void yahoo_login(GaimAccount *account) {
 			gaim_connection_error(gc, _("Connection problem"));
 			return;
 		}
-#else
-		yd->wm = TRUE;
-		gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
-		               yahoo_login_page_cb, gc);
-#endif
 	}
 
 
