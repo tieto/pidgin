@@ -45,7 +45,6 @@ struct _MsnUser
 
 	} phone;
 
-	gboolean allow_pages;   /**< Allows mobile messages.    */
 	gboolean mobile;        /**< Signed up with MSN Mobile. */
 
 	int group_id;           /**< The group ID.              */

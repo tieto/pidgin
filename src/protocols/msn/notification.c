@@ -445,8 +445,6 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (value != NULL) {
 		if (!strcmp(type, "MOB"))
 			user->mobile = (!strcmp(value, "Y"));
-		else if (!strcmp(type, "MBE"))
-			user->allow_pages = (!strcmp(value, "Y"));
 		else if (!strcmp(type, "PHH"))
 			msn_user_set_home_phone(user, msn_url_decode(value));
 		else if (!strcmp(type, "PHW"))
