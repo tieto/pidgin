@@ -5,6 +5,7 @@ version 0.11.0-pre10:
 	* Can choose to not send away auto-response (thanks phzzzt)
 	* Uh... Oscar works? For now?
 	* IRC Plugin can do whois (right click and info)
+	* IRC Plugin got away message support
 
 version 0.11.0-pre9 (03/26/2001):
 	* Can register Jabber accounts (load the Jabber plugin and click

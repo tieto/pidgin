@@ -450,6 +450,18 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		g_strfreev(res);
 	}
 
+	/* Autoresponse to an away message */
+	if (((strstr(buf, " 301 ")) && (!strstr(buf, "PRIVMSG")) && (!strstr(buf, "NOTICE")))) {
+		char **res;
+
+		res = g_strsplit(buf, " ", 5);
+
+		if (!strcmp(res[1], "301"))
+			serv_got_im(gc, res[3], res[4] + 1, 1);
+
+		g_strfreev(res);
+	}
+
 	/* Parse the list of names that we receive when we first sign on to
 	 * a channel */
 
@@ -1254,6 +1266,19 @@ static void irc_buddy_menu(GtkWidget * menu, struct gaim_connection *gc, char *w
 }
 
 
+static void irc_set_away(struct gaim_connection *gc, char *state, char *msg)
+{
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	char buf[BUF_LEN];
+
+	if (msg)
+		g_snprintf(buf, BUF_LEN, "AWAY :%s\n", msg);		
+	else
+		g_snprintf(buf, BUF_LEN, "AWAY\n");		
+
+	write(idata->fd, buf, strlen(buf));
+}
+
 static struct prpl *my_protocol = NULL;
 
 static void irc_init(struct prpl *ret)
@@ -1270,6 +1295,7 @@ static void irc_init(struct prpl *ret)
 	ret->chat_leave = irc_chat_leave;
 	ret->chat_send = irc_chat_send;
 	ret->get_info = irc_get_info;
+	ret->set_away = irc_set_away;
 
 	my_protocol = ret;
 }
