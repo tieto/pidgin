@@ -1033,6 +1033,13 @@ void check_everything(GtkWidget *entry)
 	else
 		quiet_set(c->fgcolorbtn, FALSE);
 	
+	if (invert_tags(entry, "<BODY BGCOLOR", "</BODY>", 0))
+		quiet_set(c->bgcolorbtn, TRUE);
+ 	else if (count_tag(entry, "<BODY BGCOLOR", "</BODY>"))
+		quiet_set(c->bgcolorbtn, TRUE);
+	else
+		quiet_set(c->bgcolorbtn, FALSE);
+	
 	if (invert_tags(entry, "<FONT FACE", "</FONT>", 0))
 		quiet_set(c->font, TRUE);
 	else if (count_tag(entry, "<FONT FACE", "</FONT>"))
