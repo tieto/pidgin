@@ -63,6 +63,7 @@
 #define GAIM_STOCK_SIGN_OFF        "gaim-sign-off"
 #define GAIM_STOCK_SIGN_ON         "gaim-sign-on"
 #define GAIM_STOCK_SMILEY          "gaim-smiley"
+#define GAIM_STOCK_OPEN_MAIL       "gaim-stock-open-mail"
 #define GAIM_STOCK_TEXT_BIGGER     "gaim-text-bigger"
 #define GAIM_STOCK_TEXT_NORMAL     "gaim-text-normal"
 #define GAIM_STOCK_TEXT_SMALLER    "gaim-text-smaller"

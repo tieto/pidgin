@@ -72,6 +72,7 @@ static struct StockIcon
 	{ GAIM_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
 	{ GAIM_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
 	{ GAIM_STOCK_SMILEY,          "buttons", "insert-smiley-small.png"  },
+	{ GAIM_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_TEXT_BIGGER,     "buttons", "text_bigger.png"          },
 	{ GAIM_STOCK_TEXT_NORMAL,     "buttons", "text_normal.png"          },
 	{ GAIM_STOCK_TEXT_SMALLER,    "buttons", "text_smaller.png"         },
@@ -81,7 +82,13 @@ static struct StockIcon
 	{ GAIM_STOCK_WARN,            NULL,      GTK_STOCK_DIALOG_WARNING   }
 };
 
+const GtkStockItem stock_items[] =
+{
+	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL }
+};
+
 static gint stock_icon_count = sizeof(stock_icons) / sizeof(*stock_icons);
+static gint stock_item_count = sizeof(stock_items) / sizeof(*stock_items);
 
 static gchar *
 find_file(const char *dir, const char *base)
@@ -94,7 +101,7 @@ find_file(const char *dir, const char *base)
 	if (!strcmp(dir, "gaim"))
 		filename = g_build_filename(DATADIR, "pixmaps", "gaim", base, NULL);
 	else
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", dir, base, NULL);
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", dir, base, NULL);
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
 		g_critical("Unable to load stock pixmap %s\n", base);
@@ -158,4 +165,7 @@ setup_stock()
 	gtk_icon_size_register(GAIM_ICON_SIZE_LOGO, 210, 150);
 
 	g_object_unref(G_OBJECT(icon_factory));
+
+	/* Register the stock items. */
+	gtk_stock_add_static(stock_items, stock_item_count);
 }
