@@ -1396,7 +1396,3 @@ msgstr "रजिस्ट्रेशन त्रुटि"
 msgid "Connection Error"
 msgstr "कनेक्शन में त्रुटि"
 
-#: src/connection.c:191
-#, c-format
-msgid "Enter password for %s"
-msgstr "%s के लिए पा�
