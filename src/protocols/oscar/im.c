@@ -422,6 +422,94 @@ faim_export int aim_im_sendch1(aim_session_t *sess, const char *sn, fu16_t flags
 	return aim_im_sendch1_ext(sess, &args);
 }
 
+/*
+ * Subtype 0x0006 - Send a chat invitation.
+ */
+faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, const char *msg, fu16_t exchange, const char *roomname, fu16_t instance)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int i;
+	aim_msgcookie_t *cookie;
+	struct aim_invite_priv *priv;
+	fu8_t ck[8];
+	aim_tlvlist_t *otl = NULL, *itl = NULL;
+	fu8_t *hdr;
+	int hdrlen;
+	aim_bstream_t hdrbs;
+	
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
+	if (!sn || !msg || !roomname)
+		return -EINVAL;
+
+	for (i = 0; i < 8; i++)
+		ck[i] = (fu8_t)rand();
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152+strlen(sn)+strlen(roomname)+strlen(msg))))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, sn, strlen(sn)+1);
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
+
+	/* XXX should be uncached by an unwritten 'invite accept' handler */
+	if ((priv = malloc(sizeof(struct aim_invite_priv)))) {
+		priv->sn = strdup(sn);
+		priv->roomname = strdup(roomname);
+		priv->exchange = exchange;
+		priv->instance = instance;
+	}
+
+	if ((cookie = aim_mkcookie(ck, AIM_COOKIETYPE_INVITE, priv)))
+		aim_cachecookie(sess, cookie);
+	else
+		free(priv);
+
+	/* ICBM Header */
+	aimbs_putraw(&fr->data, ck, 8); /* Cookie */
+	aimbs_put16(&fr->data, 0x0002); /* Channel */
+	aimbs_put8(&fr->data, strlen(sn)); /* Screename length */
+	aimbs_putraw(&fr->data, sn, strlen(sn)); /* Screenname */
+
+	/*
+	 * TLV t(0005)
+	 *
+	 * Everything else is inside this TLV.
+	 *
+	 * Sigh.  AOL was rather inconsistent right here.  So we have
+	 * to play some minor tricks.  Right inside the type 5 is some
+	 * raw data, followed by a series of TLVs.  
+	 *
+	 */
+	hdrlen = 2+8+16+6+4+4+strlen(msg)+4+2+1+strlen(roomname)+2;
+	hdr = malloc(hdrlen);
+	aim_bstream_init(&hdrbs, hdr, hdrlen);
+	
+	aimbs_put16(&hdrbs, 0x0000); /* Unknown! */
+	aimbs_putraw(&hdrbs, ck, sizeof(ck)); /* I think... */
+	aim_putcap(&hdrbs, AIM_CAPS_CHAT);
+
+	aim_tlvlist_add_16(&itl, 0x000a, 0x0001);
+	aim_tlvlist_add_noval(&itl, 0x000f);
+	aim_tlvlist_add_raw(&itl, 0x000c, strlen(msg), msg);
+	aim_tlvlist_add_chatroom(&itl, 0x2711, exchange, roomname, instance);
+	aim_tlvlist_write(&hdrbs, &itl);
+	
+	aim_tlvlist_add_raw(&otl, 0x0005, aim_bstream_curpos(&hdrbs), hdr);
+
+	aim_tlvlist_write(&fr->data, &otl);
+
+	free(hdr);
+	aim_tlvlist_free(&itl);
+	aim_tlvlist_free(&otl);
+	
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
 /**
  * Subtype 0x0006 - Send your icon to a given user.
  *
@@ -1887,7 +1975,7 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	memset(&userinfo, 0x00, sizeof(aim_userinfo_t));
 
 	/*
-	 * Read ICBM Cookie.  And throw away.
+	 * Read ICBM Cookie.
 	 */
 	for (i = 0; i < 8; i++)
 		cookie[i] = aimbs_get8(bs);

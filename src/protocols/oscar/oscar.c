@@ -329,33 +329,51 @@ static fu32_t oscar_encoding_check(const char *utf8)
 	return encodingflag;
 }
 
-static fu32_t oscar_encoding_parse(const char *enc)
+/*
+ * Take a string of the form charset="bleh" where bleh is
+ * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and 
+ * return a newly allocated string containing bleh.
+ */
+static gchar *oscar_encoding_extract(const char *encoding)
 {
-	char *charset;
+	gchar *ret = NULL;
+	char *begin, *end;
 
-	/* If anything goes wrong, fall back on ASCII and print a message */
-	if (enc == NULL) {
-		gaim_debug(GAIM_DEBUG_WARNING, "oscar",
-				   "Encoding was null, that's odd\n");
+	/* Make sure encoding begings with charset= */
+	if (strncmp(encoding, "text/aolrtf; charset=", 21))
+		return NULL;
+
+	begin = strchr(encoding, '"');
+	end = strrchr(encoding, '"');
+
+	if ((begin == NULL) || (end == NULL) || (begin >= end))
+		return NULL;
+
+	ret = g_strndup(begin+1, (end-1) - begin);
+
+	return ret;
+}
+
+/*
+ * Return the flag specifying the given encoding.
+ */
+static fu32_t oscar_encoding_parse(const char *encoding)
+{
+	if ((encoding == NULL) || encoding[0] == '\0') {
+		gaim_debug(GAIM_DEBUG_WARNING, "oscar", "Empty encoding, assuming ASCII\n");
 		return 0;
 	}
-	charset = strstr(enc, "charset=");
-	if (charset == NULL) {
-		gaim_debug(GAIM_DEBUG_WARNING, "oscar",
-				   "No charset specified for info, assuming ASCII\n");
+
+	if (!strcmp(encoding, "us-ascii") || !strcmp(encoding, "utf-8")) {
+		/* UTF-8 is our native encoding, ASCII is a proper subset */
 		return 0;
-	}
-	charset += 8;
-	if (!strcmp(charset, "\"us-ascii\"") || !strcmp(charset, "\"utf-8\"")) {
-		/* UTF-8 is our native charset, ASCII is a proper subset */
-		return 0;
-	} else if (!strcmp(charset, "\"iso-8859-1\"")) {
+	} else if (!strcmp(encoding, "iso-8859-1")) {
 		return AIM_IMFLAGS_ISO_8859_1;
-	} else if (!strcmp(charset, "\"unicode-2-0\"")) {
+	} else if (!strcmp(encoding, "unicode-2-0")) {
 		return AIM_IMFLAGS_UNICODE;
 	} else {
 		gaim_debug(GAIM_DEBUG_WARNING, "oscar",
-				   "Unrecognized character set '%s', using ASCII\n", charset);
+				   "Unrecognized character encoding '%s', falling back to ASCII\n", encoding);
 		return 0;
 	}
 }
@@ -1825,14 +1843,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Available message stuff */
 	free(bi->availmsg);
 	if (info->avail != NULL)
-		if (info->avail_encoding) {
-			gchar *enc = g_strdup_printf("charset=\"%s\"", info->avail_encoding);
-			bi->availmsg = oscar_encoding_to_utf8(enc, info->avail, info->avail_len);
-			g_free(enc);
-		} else {
-			/* No explicit encoding means utf8.  Yay. */
-			bi->availmsg = g_strdup(info->avail);
-		}
+		bi->availmsg = oscar_encoding_to_utf8(info->avail_encoding, info->avail, info->avail_len);
 	else
 		bi->availmsg = NULL;
 
@@ -3208,7 +3219,9 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_string_append_printf(text, _("Idle: <b>Active</b>"));
 
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-		away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
+		gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
+		away_utf8 = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
+		g_free(charset);
 		if (away_utf8 != NULL) {
 			g_string_append_printf(text, "<hr>%s", away_utf8);
 			g_free(away_utf8);
@@ -3216,7 +3229,9 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
-		info_utf8 = oscar_encoding_to_utf8(userinfo->info_encoding, userinfo->info, userinfo->info_len);
+		gchar *charset = oscar_encoding_extract(userinfo->info_encoding);
+		info_utf8 = oscar_encoding_to_utf8(charset, userinfo->info, userinfo->info_len);
+		g_free(charset);
 		if (info_utf8 != NULL) {
 			g_string_append_printf(text, "<hr>%s", info_utf8);
 			g_free(info_utf8);
@@ -3412,15 +3427,13 @@ static int gaim_conv_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...)
 
 static int gaim_conv_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
+	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, fr->conn);
+	gchar *utf8;
 	va_list ap;
 	aim_userinfo_t *info;
-	GError *err = NULL;
-	char *msg;
-	char *tmp;
 	int len;
+	char *msg;
 	char *charset;
-	int convlen;
-	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, fr->conn);
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
@@ -3429,24 +3442,9 @@ static int gaim_conv_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...
 	charset = va_arg(ap, char *);
 	va_end(ap);
 
-	if (charset) {
-	  if (strcmp(charset, "unicode-2-0") == 0)
-	    charset = "UCS-2BE";
-	} else {
-	  charset = "iso-8859-1";
-	}
-
-	tmp = g_convert(msg, len, "UTF-8", charset, NULL, &convlen, &err);
-	
-	if (err) {
-	  gaim_debug(GAIM_DEBUG_INFO, "oscar",
-		     "Unicode Chat conversion: %s\n", err->message);
-	  tmp = g_strdup(_("(There was an error receiving this message)"));
-	  g_error_free(err);
-	}
-
-	serv_got_chat_in(gc, ccon->id, info->sn, 0, tmp, time((time_t)NULL));
-	g_free(tmp);
+	utf8 = oscar_encoding_to_utf8(charset, msg, len);
+	serv_got_chat_in(gc, ccon->id, info->sn, 0, utf8, time((time_t)NULL));
+	g_free(utf8);
 
 	return 1;
 }
@@ -5334,7 +5332,7 @@ static void oscar_chat_invite(GaimConnection *g, int id, const char *message, co
 	if (!ccon)
 		return;
 	
-	aim_chat_invite(od->sess, od->conn, name, message ? message : "",
+	aim_im_sendch2_chatinvite(od->sess, name, message ? message : "",
 			ccon->exchange, ccon->name, 0x0);
 }
 
@@ -5590,7 +5588,9 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 		}
 
 		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-			gchar *away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
+			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
+			gchar *away_utf8 = away_utf8 = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
+			g_free(charset);
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
 				const char *tmp3;

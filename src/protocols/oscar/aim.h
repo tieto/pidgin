@@ -862,6 +862,7 @@ struct aim_incomingim_ch4_args {
 /* 0x0004 */ faim_export int aim_im_reqparams(aim_session_t *sess);
 /* 0x0006 */ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_args *args);
 /* 0x0006 */ faim_export int aim_im_sendch1(aim_session_t *, const char *destsn, fu16_t flags, const char *msg);
+/* 0x0006 */ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, const char *msg, fu16_t exchange, const char *roomname, fu16_t instance);
 /* 0x0006 */ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 /* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
 /* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, const char *sn, const fu8_t *ip, fu16_t port);
@@ -1126,8 +1127,6 @@ faim_export char *aim_chat_getname(aim_conn_t *conn);
 faim_export aim_conn_t *aim_chat_getconn(aim_session_t *, const char *name);
 
 faim_export int aim_chatnav_reqrights(aim_session_t *sess, aim_conn_t *conn);
-
-faim_export int aim_chat_invite(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *msg, fu16_t exchange, const char *roomname, fu16_t instance);
 
 faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, const char *name, fu16_t exchange);
 faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name);
@@ -1400,6 +1399,7 @@ faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const fu16_t type, co
 faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, const fu32_t value);
 faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const fu16_t type, const fu32_t caps);
 faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *userinfo);
+faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, fu16_t type, fu16_t exchange, const char *roomname, fu16_t instance);
 faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl);
 
 faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t lenth, const fu8_t *value);

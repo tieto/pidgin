@@ -97,6 +97,47 @@ faim_export int aim_reqservice(aim_session_t *sess, aim_conn_t *conn, fu16_t ser
 	return aim_genericreq_s(sess, conn, 0x0001, 0x0004, &serviceid);
 }
 
+/*
+ * Join a room of name roomname.  This is the first step to joining an 
+ * already created room.  It's basically a Service Request for 
+ * family 0x000e, with a little added on to specify the exchange and room 
+ * name.
+ */
+faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exchange, const char *roomname, fu16_t instance)
+{
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
+	struct chatsnacinfo csi;
+	
+	if (!sess || !conn || !roomname || !strlen(roomname))
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
+		return -ENOMEM;
+
+	memset(&csi, 0, sizeof(csi));
+	csi.exchange = exchange;
+	strncpy(csi.name, roomname, sizeof(csi.name));
+	csi.instance = instance;
+
+	snacid = aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, &csi, sizeof(csi));
+	aim_putsnac(&fr->data, 0x0001, 0x0004, 0x0000, snacid);
+
+	/*
+	 * Requesting service chat (0x000e)
+	 */
+	aimbs_put16(&fr->data, 0x000e);
+
+	aim_tlvlist_add_chatroom(&tl, 0x0001, exchange, roomname, instance);
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0; 
+}
+
 /* Subtype 0x0005 - Redirect */
 static int redirect(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {

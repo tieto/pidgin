@@ -510,6 +510,40 @@ faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, fu16_t type, ai
 }
 
 /**
+ * Adds the given chatroom info to a TLV chain.
+ *
+ * @param list Destination chain.
+ * @param type TLV type to add.
+ * @param roomname The name of the chat.
+ * @param instance The instance.
+ * @retun The size of the value added.
+ */
+faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, fu16_t type, fu16_t exchange, const char *roomname, fu16_t instance)
+{
+	fu8_t *buf;
+	int len;
+	aim_bstream_t bs;
+
+	len = 2 + 1 + strlen(roomname) + 2;
+	
+	if (!(buf = malloc(len)))
+		return 0;
+
+	aim_bstream_init(&bs, buf, len);
+
+	aimbs_put16(&bs, exchange);
+	aimbs_put8(&bs, strlen(roomname));
+	aimbs_putraw(&bs, roomname, strlen(roomname));
+	aimbs_put16(&bs, instance);
+
+	len = aim_tlvlist_add_raw(list, type, aim_bstream_curpos(&bs), buf);
+
+	free(buf);
+
+	return len;
+}
+
+/**
  * Adds a TLV with a zero length to a TLV chain.
  *
  * @param list Destination chain.
