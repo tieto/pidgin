@@ -101,24 +101,26 @@ void show_about(GtkWidget *w, void *null)
 		vbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 		gtk_container_add(GTK_CONTAINER(about), vbox);
+		gtk_widget_show(vbox);
 
 		frame = gtk_frame_new("Gaim " VERSION);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+		gtk_widget_show(frame);
 
 		fbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 		gtk_container_add(GTK_CONTAINER(frame), fbox);
+		gtk_widget_show(fbox);
 
 		/* Left side, TOP */
 		style = gtk_widget_get_style(about);
 		pm = gdk_pixmap_create_from_xpm_d(about->window, &bm,
 						  &style->bg[GTK_STATE_NORMAL], (gchar **)aol_logo);
 		pixmap = gtk_pixmap_new(pm, bm);
-
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
-
 		gtk_box_pack_start(GTK_BOX(fbox), pixmap, FALSE, FALSE, 0);
+		gtk_widget_show(pixmap);
 
 		label =
 		    gtk_label_new(
@@ -127,23 +129,21 @@ void show_about(GtkWidget *w, void *null)
 				   "IRC: #gaim on irc.openprojects.net"));
 
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-
 		gtk_box_pack_start(GTK_BOX(fbox), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
 
 		text = gtk_text_new(NULL, NULL);
-
 		gtk_text_insert(GTK_TEXT(text), NULL, NULL, NULL,
 				_("Rob Flynn (maintainer)               rob@marko.net\nEric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n\nBenjamin Miller\nDecklin Foster\nJim Duchek\nMark Spencer (original author)   markster@marko.net"),
 				198);
-
-		gtk_widget_show(text);
-
 		gtk_box_pack_start(GTK_BOX(fbox), text, TRUE, TRUE, 0);
+		gtk_widget_show(text);
 
 		/* Close Button */
 
 		hbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+		gtk_widget_show(hbox);
 
 		button = picture_button(about, _("Close"), cancel_xpm);
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -168,13 +168,10 @@ void show_about(GtkWidget *w, void *null)
 		button = picture_button(about, _("Web Site"), about_small_xpm);
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(about_click), NULL);
-
-		if (misc_options & OPT_MISC_COOL_LOOK)
-			gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	}
 
 	/* Let's give'em something to talk about -- woah woah woah */
-	gtk_widget_show_all(about);
+	gtk_widget_show(about);
 
 }
 
