@@ -1298,7 +1298,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	wood_p = gtk_pixmap_new(wood_i, mask);
 	gtk_widget_show(wood_p);
 	speaker_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, bold_xpm );
+             &win->style->white, speaker_xpm );
 	speaker_p = gtk_pixmap_new(speaker_i, mask);
 	gtk_widget_show(speaker_p);
 	c->makesound=1;
@@ -1323,7 +1323,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	small_p = gtk_pixmap_new(small_i, mask);
 	gtk_widget_show(small_p);
 	normal_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, bold_xpm );
+             &win->style->white, normal_xpm );
 	normal_p = gtk_pixmap_new(normal_i, mask);
 	gtk_widget_show(normal_p);
 	big_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
