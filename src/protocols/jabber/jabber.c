@@ -589,11 +589,14 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			if (((jc = find_existing_chat(GJ_GC(j), p->from)) != NULL) && jc->b)
 				serv_got_chat_in(GJ_GC(j), jc->b->id, p->from->resource, 1, m, time(NULL));
 			else {
+				int flags = 0;
+				if (xmlnode_get_tag(p->x, "gaim"))
+					flags = IM_FLAG_GAIMUSER;
 				if (find_conversation(jid_full(p->from)))
-					serv_got_im(GJ_GC(j), jid_full(p->from), m, 0, time(NULL));
+					serv_got_im(GJ_GC(j), jid_full(p->from), m, flags, time(NULL));
 				else {
 					from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
-					serv_got_im(GJ_GC(j), from, m, 0, time(NULL));
+					serv_got_im(GJ_GC(j), from, m, flags, time(NULL));
 					g_free(from);
 				}
 			}
@@ -1238,6 +1241,7 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 	xmlnode_put_attrib(x, "to", realwho);
 	g_free(realwho);
 
+	xmlnode_insert_tag(x, "gaim");
 	xmlnode_put_attrib(x, "type", "chat");
 
 	if (message && strlen(message)) {
