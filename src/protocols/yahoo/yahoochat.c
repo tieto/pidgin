@@ -540,6 +540,9 @@ static int yahoo_conf_send(struct yahoo_data *yd, const char *dn, const char *ro
 {
 	struct yahoo_packet *pkt;
 	GList *who;
+	char *msg;
+
+	msg = yahoo_html_to_codes(what);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -547,12 +550,13 @@ static int yahoo_conf_send(struct yahoo_data *yd, const char *dn, const char *ro
 	for (who = members; who; who = who->next)
 		yahoo_packet_hash(pkt, 53, (char *)who->data);
 	yahoo_packet_hash(pkt, 57, room);
-	yahoo_packet_hash(pkt, 14, what);
+	yahoo_packet_hash(pkt, 14, msg);
 	yahoo_packet_hash(pkt, 97, "1"); /* utf-8 */
 
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
+	g_free(msg);
 
 	return 0;
 }
@@ -642,23 +646,64 @@ static void yahoo_chat_leave(struct yahoo_data *yd, const char *room, const char
 
 }
 
+/* borrowed from gtkconv.c */
+static gboolean
+meify(char *message, size_t len)
+{
+	/*
+	 * Read /me-ify: If the message (post-HTML) starts with /me,
+	 * remove the "/me " part of it (including that space) and return TRUE.
+	 */
+	char *c;
+	gboolean inside_html = 0;
+
+	/* Umm.. this would be very bad if this happens. */
+	g_return_val_if_fail(message != NULL, FALSE);
+
+	if (len == -1)
+		len = strlen(message);
+
+	for (c = message; *c != '\0'; c++, len--) {
+		if (inside_html) {
+			if (*c == '>')
+				inside_html = FALSE;
+		}
+		else {
+			if (*c == '<')
+				inside_html = TRUE;
+			else
+				break;
+		}
+	}
+
+	if (*c != '\0' && !g_ascii_strncasecmp(c, "/me ", 4)) {
+		memmove(c, c + 4, len - 3);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static int yahoo_chat_send(struct yahoo_data *yd, const char *dn, const char *room, const char *what)
 {
 	struct yahoo_packet *pkt;
-	const char *msg;
 	int me = 0;
+	char *msg1, *msg2;
 
-	if (!g_ascii_strncasecmp(what, "/me ", 4)) { /* XXX fix this to ignore leading html */
+	msg1 = g_strdup(what);
+
+	if (meify(msg1, -1))
 		me = 1;
-		msg = what + 4;
-	} else
-		msg = what;
+
+	msg2 = yahoo_html_to_codes(msg1);
+	g_free(msg1);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_COMMENT, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, 1, dn);
 	yahoo_packet_hash(pkt, 104, room);
-	yahoo_packet_hash(pkt, 117, msg);
+	yahoo_packet_hash(pkt, 117, msg2);
 	if (me)
 		yahoo_packet_hash(pkt, 124, "2");
 	else
@@ -667,6 +712,7 @@ static int yahoo_chat_send(struct yahoo_data *yd, const char *dn, const char *ro
 
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+	g_free(msg2);
 
 	return 0;
 }
@@ -756,7 +802,6 @@ int yahoo_c_send(GaimConnection *gc, int id, const char *what)
 	GaimConversation *c;
 	int ret;
 	struct yahoo_data *yd;
-	char *msg;
 
 	yd = (struct yahoo_data *) gc->proto_data;
 	if (!yd)
@@ -766,20 +811,16 @@ int yahoo_c_send(GaimConnection *gc, int id, const char *what)
 	if (!c)
 		return -1;
 
-	msg = yahoo_html_to_codes(what);
-
 	if (id != YAHOO_CHAT_ID) {
 		ret = yahoo_conf_send(yd, gaim_connection_get_display_name(gc),
-				gaim_conversation_get_name(c), gaim_chat_get_users(GAIM_CHAT(c)), msg);
+				gaim_conversation_get_name(c), gaim_chat_get_users(GAIM_CHAT(c)), what);
 	} else {
 		ret = yahoo_chat_send(yd, gaim_connection_get_display_name(gc),
-						gaim_conversation_get_name(c), msg);
+						gaim_conversation_get_name(c), what);
 		if (!ret)
 			serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)),
 					gaim_connection_get_display_name(gc), 0, what, time(NULL));
 	}
-
-	g_free(msg);
 	return ret;
 }
 

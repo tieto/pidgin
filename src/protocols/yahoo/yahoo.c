@@ -360,6 +360,8 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				f->away = 0;
 			if (f->status == YAHOO_STATUS_IDLE)
 				f->idle = time(NULL);
+			else
+				f->idle = 0;
 			if (f->status != YAHOO_STATUS_CUSTOM) {
 				g_free(f->msg);
 				f->msg = NULL;
