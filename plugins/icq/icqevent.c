@@ -1,11 +1,11 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: icqevent.c 1319 2000-12-19 10:08:29Z warmenhoven $
+ * $Id: icqevent.c 1442 2001-01-28 01:52:27Z warmenhoven $
  *
  * $Log$
- * Revision 1.1  2000/12/19 10:08:29  warmenhoven
- * Yay, new icqlib
+ * Revision 1.2  2001/01/28 01:52:27  warmenhoven
+ * icqlib 1.1.5
  *
  * Revision 1.2  2000/06/15 18:54:09  bills
  * added time attribute and handleEvent function pointer to icq_Event,

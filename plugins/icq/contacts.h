@@ -5,11 +5,12 @@
 #include "icq.h"
 #include "icqtypes.h"
 
-typedef struct icq_ContItem
+typedef struct icq_ContactItem_s
 {
   ICQLINK *icqlink;
   unsigned long uin;
   int vis_list;
+  int invis_list;
   unsigned long remote_ip;
   unsigned long remote_real_ip;
   unsigned long remote_port;

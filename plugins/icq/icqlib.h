@@ -62,10 +62,10 @@ typedef struct icq_link_private {
   void *icq_TCPLinks;
   void *icq_ChatSessions;
   void *icq_FileSessions;
-  int TCP_maxfd;
-  fd_set TCP_readfds;
-  fd_set TCP_writefds;
 
 } ICQLINK_private;
+
+#define invoke_callback(plink, callback) \
+   if (plink->callback) (*(plink->callback))
 
 #endif /* _ICQLIB_H_ */

@@ -1,5 +1,5 @@
 /*
- * $Id: icqbyteorder.c 1319 2000-12-19 10:08:29Z warmenhoven $
+ * $Id: icqbyteorder.c 1442 2001-01-28 01:52:27Z warmenhoven $
  *
  * This header defines macros to handle ICQ protocol byte order conversion.
  *

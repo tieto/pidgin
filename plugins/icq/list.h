@@ -14,19 +14,22 @@
 #define list_dequeue(plist) \
   list_remove_node(plist, plist->head)
 
-typedef struct list_node_s
-{
-  struct list_node_s *next;
-  struct list_node_s *previous;
-  void *item;
-} list_node;
+typedef struct list_node_s list_node;
+typedef struct list_s list;
 
-typedef struct list_s
+struct list_node_s
+{
+  list_node *next;
+  list_node *previous;
+  void *item;
+};
+
+struct list_s
 {
   list_node *head;
   list_node *tail;
   int count;
-} list;
+};
 
 list *list_new(void);
 void list_delete(list *plist, void (*item_free_f)(void *));

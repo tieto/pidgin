@@ -1,9 +1,13 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: stdpackets.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: stdpackets.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.12  2001/01/24 05:11:14  bills
+applied patch from Robin Ericsson <lobbin@localhost.nu> which implements
+receiving contact lists.  See new icq_RecvContactList callback.
 
 Revision 1.11  2000/12/19 06:00:07  bills
 moved members from ICQLINK to ICQLINK_private struct
@@ -422,6 +426,18 @@ icq_Packet *icq_TCPCreateURLAck(icq_TCPLink *plink, const unsigned char *message
    return p;
 }
 
+icq_Packet *icq_TCPCreateContactListAck(icq_TCPLink *plink, const unsigned char *message)
+{
+  icq_Packet *p=icq_TCPCreateStdPacket(
+    plink,
+    ICQ_TCP_ACK,
+    ICQ_TCP_MSG_CONTACTLIST,
+    message,
+    0, /* status */
+    ICQ_TCP_MSG_ACK);
+
+  return p;
+}
 
 icq_Packet *icq_TCPCreateFile00Packet(DWORD num_files, DWORD total_bytes,
   DWORD speed, const char *name)

@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcp.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: tcp.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.38  2001/01/17 01:29:17  bills
+Rework chat and file session interfaces; implement socket notifications.
 
 Revision 1.37  2000/12/19 06:00:07  bills
 moved members from ICQLINK to ICQLINK_private struct
@@ -126,10 +129,6 @@ Parameter port added to function icq_TCPCreateListeningSocket()
 
 #include <stdlib.h>
 
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-
 #include <fcntl.h>
 #include <stdarg.h>
 #include <errno.h>
@@ -140,13 +139,11 @@ Parameter port added to function icq_TCPCreateListeningSocket()
 #include <winsock.h>
 #else
 #include <sys/socket.h>
+#include <sys/time.h>
+#include <unistd.h>
 #endif
 
 #include <sys/stat.h>
-
-#ifndef _WIN32
-#include <sys/time.h>
-#endif
 
 #include "icqtypes.h"
 #include "icqlib.h"
@@ -195,53 +192,7 @@ void icq_TCPDone(ICQLINK *link)
   list_delete(link->d->icq_FileSessions, icq_FileSessionDelete);
 }
 
-/* helper function for icq_TCPMain */
-int _generate_fds(void *p, va_list data)
-{
-  icq_TCPLink *plink=(icq_TCPLink *)p;
-  ICQLINK *icqlink = plink->icqlink;
-
-  (void)data;
-
-  if(plink->socket>-1)
-  {
-    int socket=plink->socket;
-
-    FD_SET(socket, &icqlink->d->TCP_readfds);
-
-    /* we only care about writing if socket is trying to connect */
-    if(plink->mode & TCP_LINK_MODE_CONNECTING)
-    {
-      if(plink->mode & (TCP_LINK_SOCKS_AUTHORIZATION | TCP_LINK_SOCKS_NOAUTHSTATUS | TCP_LINK_SOCKS_AUTHSTATUS | TCP_LINK_SOCKS_CONNSTATUS))
-        FD_SET(socket, &icqlink->d->TCP_readfds);
-      else
-        FD_SET(socket, &icqlink->d->TCP_writefds);
-    }
-
-    if(socket+1>icqlink->d->TCP_maxfd)
-      icqlink->d->TCP_maxfd=socket+1;
-  }
-
-  return 0; /* traverse the entire list */
-}
-
-/* helper function for icq_TCPMain */
-int _handle_ready_sockets(void *p, va_list data)
-{
-  icq_TCPLink *plink=(icq_TCPLink *)p;
-  ICQLINK *icqlink = plink->icqlink;
-  int socket=plink->socket;
-
-  (void)data;
-
-  /* handle connecting sockets */
-  if (plink->mode & TCP_LINK_MODE_CONNECTING)
-  {
-    if(socket>-1 && (FD_ISSET(socket, &icqlink->d->TCP_writefds) || FD_ISSET(socket, &icqlink->d->TCP_readfds)))
-    {
-      icq_TCPLinkOnConnect(plink);
-      return 0; 
-    }
+/* need to do this somehow...
 
     if((time(0L) - plink->connect_time) > TCP_LINK_CONNECT_TIMEOUT)
     {
@@ -249,73 +200,7 @@ int _handle_ready_sockets(void *p, va_list data)
       return 0;
     }
   }
-
-  /* handle ready for read sockets- either a connection is waiting on *
-   * the listen sockets or data is ready to be read */
-  if(socket>-1 && FD_ISSET(socket, &icqlink->d->TCP_readfds))
-  {
-    if(plink->mode & TCP_LINK_MODE_LISTEN)
-      (void)icq_TCPLinkAccept(plink);
-    else {
-
-      int result=icq_TCPLinkOnDataReceived(plink);
-
-      /* close the link if there was a receive error or if *
-       * the remote end has closed the connection */
-      if (result < 1) 
-        icq_TCPLinkClose(plink);
-
-    }
-  }
-
-  return 0; /* traverse the entire list */
-}
-
-/* helper function for icq_TCPMain */
-int _process_links(void *p, va_list data)
-{
-  icq_TCPLink *plink=(icq_TCPLink *)p;
-
-  (void)data;
-
-  /* receive any packets watiting on the link */
-  icq_TCPLinkProcessReceived(plink);
-
-  /* if this a currently sending file link, send data! */
-  if(plink->type==TCP_LINK_FILE) {
-    icq_FileSession *psession=plink->session;
-    if(psession && psession->status==FILE_STATUS_SENDING)
-      icq_FileSessionSendData(psession);
-  }
-
-  return 0; /* traverse entire list */
-}
-
-void icq_TCPMain(ICQLINK *link)
-{
-  struct timeval tv;
-
-  tv.tv_sec = 0;
-  tv.tv_usec = 0;
-
-  link->d->TCP_maxfd = 0;
-  FD_ZERO(&link->d->TCP_readfds);
-  FD_ZERO(&link->d->TCP_writefds);
-
-  /* generate the fd sets for all open tcp links */
-  (void)list_traverse(link->d->icq_TCPLinks, _generate_fds);
-
-  /* determine which sockets require maintenance */
-  select(link->d->TCP_maxfd, &link->d->TCP_readfds, &link->d->TCP_writefds, 0, &tv);
-
-  /* call icq_TCPLinkOnDataReceived for any sockets with ready data,
-   * send all packets on send queue if socket has connected, and
-   * accept() from any listening sockets with pending connections */ 
-  (void)list_traverse(link->d->icq_TCPLinks, _handle_ready_sockets, 0, 0);
-
-  /* process all packets waiting for each TCPLink */
-  (void)list_traverse(link->d->icq_TCPLinks, _process_links, 0, 0);
-}
+*/
 
 icq_TCPLink *icq_TCPCheckLink(ICQLINK *link, DWORD uin, int type)
 {
@@ -516,15 +401,6 @@ void icq_TCPSendChatData_n(ICQLINK *link, DWORD uin, const char *data, int len)
   icq_ChatRusConv_n("kw", data1, len);  
 
   send(plink->socket, data1, len, 0);
-
-}
-
-void icq_TCPCloseChat(ICQLINK *link, unsigned long uin)
-{
-  icq_TCPLink *plink=icq_FindTCPLink(link, uin, TCP_LINK_CHAT);
-
-  if(plink)
-    icq_TCPLinkClose(plink);
 
 }
 

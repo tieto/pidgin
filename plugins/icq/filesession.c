@@ -47,6 +47,9 @@ void icq_FileSessionDelete(void *pv)
 {
   icq_FileSession *p=(icq_FileSession *)pv;
 
+  invoke_callback(p->icqlink, icq_FileNotify)(p, FILE_NOTIFY_CLOSE, 0, 
+    NULL);
+
   if(p->files) {
     char **p2=p->files;
     while(*p2)
@@ -84,9 +87,14 @@ void icq_FileSessionSetStatus(icq_FileSession *p, int status)
   if(status!=p->status)
   {
     p->status=status;
-    if(p->id && p->icqlink->icq_RequestNotify)
-      (*p->icqlink->icq_RequestNotify)(p->icqlink, p->id, ICQ_NOTIFY_FILE,
-       status, 0);
+    if(p->id)
+      invoke_callback(p->icqlink, icq_FileNotify)(p, FILE_NOTIFY_STATUS,
+        status, NULL);
+    if (status == FILE_STATUS_SENDING)
+      icq_SocketSetHandler(p->tcplink->socket, ICQ_SOCKET_WRITE,
+        icq_FileSessionSendData, p);
+    else
+      icq_SocketSetHandler(p->tcplink->socket, ICQ_SOCKET_WRITE, NULL, NULL);
   }
 }
 
@@ -181,10 +189,9 @@ void icq_FileSessionSendData(icq_FileSession *p)
       p->total_transferred_bytes+=count;
       p->current_file_progress+=count;
       icq_FileSessionSetStatus(p, FILE_STATUS_SENDING);
-      
-      if (p->icqlink->icq_RequestNotify)
-        (*p->icqlink->icq_RequestNotify)(p->icqlink, p->id,
-          ICQ_NOTIFY_FILEDATA, count, NULL); 
+
+      invoke_callback(p->icqlink, icq_FileNotify)(p, FILE_NOTIFY_DATAPACKET,
+        count, buffer);
   }
 
   /* done transmitting if read returns less that 2048 bytes */

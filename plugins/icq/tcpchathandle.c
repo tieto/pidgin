@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcpchathandle.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: tcpchathandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.9  2001/01/17 01:29:17  bills
+Rework chat and file session interfaces; implement socket notifications.
 
 Revision 1.8  2000/07/24 03:10:08  bills
 added support for real nickname during TCP transactions like file and
@@ -57,15 +60,25 @@ void icq_HandleChatAck(icq_TCPLink *plink, icq_Packet *p, int port)
   icq_ChatSession *pchat;
   icq_Packet *p2;
 
-  if(plink->icqlink->icq_RequestNotify)
-    (*plink->icqlink->icq_RequestNotify)(plink->icqlink, p->id, ICQ_NOTIFY_ACK, 0, 0);
+  invoke_callback(plink->icqlink, icq_RequestNotify)(plink->icqlink, 
+    p->id, ICQ_NOTIFY_ACK, 0, NULL);
+
   pchatlink=icq_TCPLinkNew(plink->icqlink);
   pchatlink->type=TCP_LINK_CHAT;
   pchatlink->id=p->id;
-  
+
+  /* once the ack packet has been processed, create a new chat session */
   pchat=icq_ChatSessionNew(plink->icqlink);
+
   pchat->id=p->id;
   pchat->remote_uin=plink->remote_uin;
+  pchat->tcplink=pchatlink;
+
+  invoke_callback(plink->icqlink, icq_RequestNotify)(plink->icqlink, p->id,
+    ICQ_NOTIFY_CHATSESSION, sizeof(icq_ChatSession), pchat);
+  invoke_callback(plink->icqlink, icq_RequestNotify)(plink->icqlink, p->id,
+    ICQ_NOTIFY_SUCCESS, 0, NULL);
+
   icq_ChatSessionSetStatus(pchat, CHAT_STATUS_CONNECTING);
   icq_TCPLinkConnect(pchatlink, plink->remote_uin, port);
 
@@ -123,13 +136,15 @@ void icq_TCPOnChatReqReceived(ICQLINK *link, DWORD uin, const char *message, DWO
   }
 }
 
-void icq_TCPChatUpdateFont(icq_TCPLink *plink, const char *font, WORD encoding, DWORD style, DWORD size)
+void icq_TCPChatUpdateFont(icq_ChatSession *psession, const char *font, 
+  WORD encoding, DWORD style, DWORD size)
 {
+  ICQLINK *icqlink = psession->icqlink;
   int packet_len, fontlen;
   char *buffer;
-  if(!plink->icqlink->icq_RequestNotify)
-    return;
-  buffer = malloc(packet_len = (2 + (fontlen = strlen(font) + 1)) + 2 + 1 + (4+1)*2);
+
+  buffer = malloc(packet_len = (2 + (fontlen = strlen(font) + 1)) + 
+    2 + 1 + (4+1)*2);
   buffer[0] = '\x11';
   *((DWORD *)&buffer[1]) = style;
   buffer[5] = '\x12';
@@ -137,26 +152,30 @@ void icq_TCPChatUpdateFont(icq_TCPLink *plink, const char *font, WORD encoding, 
   buffer[10] = '\x10';
   *((WORD *)&buffer[11]) = fontlen;
   strcpy(&buffer[13], font);
+
   icq_RusConv("wk", &buffer[13]);
+
   *((WORD *)&buffer[13 + fontlen]) = encoding;
-  if(plink->icqlink->icq_RequestNotify)
-    (*plink->icqlink->icq_RequestNotify)(plink->icqlink, plink->id, ICQ_NOTIFY_CHATDATA, packet_len, buffer);
+
+  invoke_callback(icqlink, icq_ChatNotify)(psession, CHAT_NOTIFY_DATA,
+    packet_len, buffer);
+
   free(buffer);
 }
 
-void icq_TCPChatUpdateColors(icq_TCPLink *plink, DWORD foreground, DWORD background)
+void icq_TCPChatUpdateColors(icq_ChatSession *psession, DWORD foreground, 
+  DWORD background)
 {
+  ICQLINK *icqlink = psession->icqlink;
   char buffer[10];
 
-  if(!plink->icqlink->icq_RequestNotify)
-    return;  
   buffer[0] = '\x00';
   *((DWORD *)&buffer[1]) = foreground;
   buffer[5] = '\x01';
   *((DWORD *)&buffer[6]) = background;
-  if(plink->icqlink->icq_RequestNotify)
-    (*plink->icqlink->icq_RequestNotify)(plink->icqlink, plink->id, ICQ_NOTIFY_CHATDATA,
-                                         sizeof(buffer), buffer);
+
+  invoke_callback(icqlink, icq_ChatNotify)(psession, 
+    CHAT_NOTIFY_DATA, sizeof(buffer), buffer);
 }
 
 void icq_TCPProcessChatPacket(icq_Packet *p, icq_TCPLink *plink)
@@ -204,7 +223,7 @@ void icq_TCPProcessChatPacket(icq_Packet *p, icq_TCPLink *plink)
       encoding = icq_PacketRead16(p);
     }
     if(font)
-      icq_TCPChatUpdateFont(plink, font, encoding, fontstyle, fontsize);
+      icq_TCPChatUpdateFont(pchat, font, encoding, fontstyle, fontsize);
     icq_ChatSessionSetStatus(pchat, CHAT_STATUS_READY);
     plink->mode|=TCP_LINK_MODE_RAW;
   }
@@ -216,7 +235,7 @@ void icq_TCPProcessChatPacket(icq_Packet *p, icq_TCPLink *plink)
       icq_PacketRead16(p); /* Unknown */;
       fg = icq_PacketRead32(p);
       bg = icq_PacketRead32(p);
-      icq_TCPChatUpdateColors(plink, fg, bg);
+      icq_TCPChatUpdateColors(pchat, fg, bg);
 
       presponse=icq_TCPCreateChatInfo2Packet(plink, plink->icqlink->icq_Nick,
         0x00ffffff, 0x00000000);
@@ -229,7 +248,7 @@ void icq_TCPProcessChatPacket(icq_Packet *p, icq_TCPLink *plink)
       user = icq_PacketReadString(p);
       fg = icq_PacketRead32(p);
       bg = icq_PacketRead32(p);
-      icq_TCPChatUpdateColors(plink, fg, bg);
+      icq_TCPChatUpdateColors(pchat, fg, bg);
       font = (char *)NULL;
       encoding = 0;
       fontstyle = 0;
@@ -259,7 +278,7 @@ void icq_TCPProcessChatPacket(icq_Packet *p, icq_TCPLink *plink)
         encoding = icq_PacketRead16(p);
       }
       if(font)
-        icq_TCPChatUpdateFont(plink, font, encoding, fontstyle, fontsize);
+        icq_TCPChatUpdateFont(pchat, font, encoding, fontstyle, fontsize);
       presponse=icq_TCPCreateChatFontInfoPacket(plink);
       icq_PacketSend(presponse, plink->socket);
       icq_PacketDelete(presponse);

@@ -1,3 +1,81 @@
+2001-01-27  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/socketmanager.c, icqlib/socketmanager.h, 
+	icqlib/tcplink.c: fix bugs related to TCP and new socket manager:
+	implemented accepting TCP sockets, fixed crashes when sending
+	TCP messages.
+
+2001-01-24  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/stdpackets.c, icqlib/stdpackets.h, icqlib/tcphandle.c,
+	icqlib/icq.h.in: applied patch from Robin Ericsson 
+	(lobbin@localhost.nu) which implements receiving contact lists.  
+	See new icq_RecvContactList callback.
+	
+2001-01-20  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/chatsession.c, icqlib/icq.h.in: added documentation
+
+	* icqlib/icqbyteorder.h: applied patch from Eric Warmenhoven
+	to fix byte order on HP/UX.
+
+	* icqlib/tcplink.h: applied patch from Eric Warmenhoven to
+	fix compilation on FreeBSD.
+
+2001-01-16  Bill Soudan  <soudan@kde.org>
+
+	Phase 2 of my interface cleanups.  See CHANGES_SINCE_1.0 for
+	more details.  icqlib developers be sure to look at 
+	socketmanager.c - all future socket create/delete/handling needs 
+	to go through this code so the new icq_SocketNotify callback
+	works properly.
+
+	* icqlib/socketmanager.c, icqlib/socketmanager.h, 
+	icqlib/Makefile.am: added socketmanager.c & socketmanager.h
+
+	* icqlib/contacts.h, icqlib/list.h, icqlib/proxy.c: cleanup
+
+	* icqlib/chatsession.c, icqlib/chatsession.h, icqlib/filesession.c,
+	icqlib/icq.h.in, icqlib/icqevent.c, icqlib/icqevent.h, 
+	icqlib/icqlib.c, icqlib/icqlib.h, icqlib/tcp.c, 
+	icqlib/tcpchathandle.c, icqlib/tcpfilehandle.c, 
+	icqlib/tcphandle.c, icqlib/tcplink.c, icqlib/tcplink.h:
+	Rework chat and file interfaces; implement socket notifications.
+
+	* VERSION: bumped to 1.1.5
+
+2001-01-16  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/contacts.c, icqlib/contacts.h, icqlib/icq.h.in, icqlib/udp.c:
+	Invisible list has been finished.
+
+2001-01-15  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/tcplink.c:
+	Applied patch from Ilya Melamed <ilya@ort.org.il> which fixes random
+	icq_TCPLinkAccept() fails.
+
+	* icqlib/udphandle.c:
+	Applied patch from Andrey Chernomyrdin <andrey@excom.spb.su> to
+	handle icq2000 specific "You've been added" packet.
+
+	* icqlib/icq.h.in:
+	Prototype for icq_SendInvisibleList() has been added.
+
+	* .cvsignore, icqlib.spec.in:
+	Applied patch from Ryan Weaver <ryanw@infohwy.com> for .spec file
+	generation.
+
+	* configure.in, Makefile.am, Makefile.cvs, admin/acinclude.m4.in,
+	admin/config.guess, admin/config.sub, admin/icqlib.m4.in,
+	admin/install-sh, admin/libtool.m4.in, admin/ltconfig,
+	admin/ltmain.sh, admin/missing, admin/mkinstalldirs,
+	acinclude.m4.in, am_edit, config.guess, config.sub, icqlib.m4.in,
+	install-sh, libtool.m4.in, ltconfig, ltmain.sh, missing,
+	mkinstalldirs:
+	autoconf/automake files have been moved to admin directory.
+
+	* TODO, icqlib/icqlib.c: Cleanup.
 
 2000-12-19  Bill Soudan  <wes0472@rit.edu>
 

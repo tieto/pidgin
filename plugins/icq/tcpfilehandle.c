@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcpfilehandle.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: tcpfilehandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.16  2001/01/17 01:29:17  bills
+Rework chat and file session interfaces; implement socket notifications.
 
 Revision 1.15  2000/07/24 03:10:08  bills
 added support for real nickname during TCP transactions like file and
@@ -110,6 +113,7 @@ void icq_TCPOnFileReqReceived(ICQLINK *link, DWORD uin, const char *message,
 void icq_TCPProcessFilePacket(icq_Packet *p, icq_TCPLink *plink)
 {
   icq_FileSession *psession=(icq_FileSession *)plink->session;
+  ICQLINK *icqlink = plink->icqlink;
   BYTE type;
   DWORD num_files;
   DWORD total_bytes;
@@ -136,10 +140,10 @@ void icq_TCPProcessFilePacket(icq_Packet *p, icq_TCPLink *plink)
       psession->total_bytes=total_bytes;
       psession->current_speed=speed;
       icq_FileSessionSetHandle(psession, name);
-      icq_FileSessionSetStatus(psession, FILE_STATUS_INITIALIZED);
+      icq_FileSessionSetStatus(psession, FILE_STATUS_INITIALIZING);
 
       /* respond */
-      presponse=icq_TCPCreateFile01Packet(speed, plink->icqlink->icq_Nick);
+      presponse=icq_TCPCreateFile01Packet(speed, icqlink->icq_Nick);
 
       icq_TCPLinkSend(plink, presponse);
 #ifdef TCP_PACKET_TRACE
@@ -153,7 +157,7 @@ void icq_TCPProcessFilePacket(icq_Packet *p, icq_TCPLink *plink)
       name=icq_PacketReadString(p);
       psession->current_speed=speed;
       icq_FileSessionSetHandle(psession, name);
-      icq_FileSessionSetStatus(psession, FILE_STATUS_INITIALIZED);
+      icq_FileSessionSetStatus(psession, FILE_STATUS_INITIALIZING);
 
       /* respond */
       icq_FileSessionPrepareNextFile(psession);
@@ -193,7 +197,7 @@ void icq_TCPProcessFilePacket(icq_Packet *p, icq_TCPLink *plink)
       printf("file 03 packet sent to uin %lu\n", plink->remote_uin);
 #endif       
       break;
-
+	
     case 0x03:
       filesize=icq_PacketRead32(p);
       (void)icq_PacketRead32(p);       
@@ -208,29 +212,33 @@ void icq_TCPProcessFilePacket(icq_Packet *p, icq_TCPLink *plink)
 
     case 0x04:
       (void)icq_PacketRead32(p);
-      icq_FileSessionSetStatus(psession, FILE_STATUS_STOP_FILE);
+      invoke_callback(icqlink, icq_FileNotify)(psession, 
+        FILE_NOTIFY_STOP_FILE, 0, NULL);
       break;
 
     case 0x05:
       speed=icq_PacketRead32(p);
       psession->current_speed=speed;
-      if(plink->icqlink->icq_RequestNotify)
-        (*plink->icqlink->icq_RequestNotify)(plink->icqlink, plink->id,
-          ICQ_NOTIFY_FILE, FILE_STATUS_NEW_SPEED, 0);   
+      invoke_callback(icqlink, icq_FileNotify)(psession,
+        FILE_NOTIFY_NEW_SPEED, speed, NULL);
       break;
 
     case 0x06:
-      if(plink->icqlink->icq_RequestNotify)
-        (*plink->icqlink->icq_RequestNotify)(plink->icqlink, plink->id, ICQ_NOTIFY_FILEDATA,
-                           p->length-sizeof(BYTE), p->data+sizeof(BYTE));
+    {
+      void *data = p->data+sizeof(BYTE);
+      int length = p->length-sizeof(BYTE);
+
+      invoke_callback(icqlink, icq_FileNotify)(psession,
+        FILE_NOTIFY_DATAPACKET, length, data);
       icq_FileSessionSetStatus(psession, FILE_STATUS_RECEIVING);
-      result=write(psession->current_fd, p->data+sizeof(BYTE), p->length-sizeof(BYTE));
-      psession->current_file_progress+=p->length-sizeof(BYTE);
-      psession->total_transferred_bytes+=p->length-sizeof(BYTE);
+      result=write(psession->current_fd, data, length);
+      psession->current_file_progress+=length;
+      psession->total_transferred_bytes+=length;
       break;
+    }
 
     default:
-      icq_FmtLog(plink->icqlink, ICQ_LOG_WARNING, "unknown file packet type %d!\n", type);
+      icq_FmtLog(icqlink, ICQ_LOG_WARNING, "unknown file packet type %d!\n", type);
 
   }
 }
@@ -266,8 +274,9 @@ void icq_HandleFileAck(icq_TCPLink *plink, icq_Packet *p, int port)
   icq_FileSession *pfile;
   icq_Packet *p2;
 
-  if(plink->icqlink->icq_RequestNotify)
-    (*plink->icqlink->icq_RequestNotify)(plink->icqlink, p->id, ICQ_NOTIFY_ACK, 0, 0);
+  invoke_callback(plink->icqlink, icq_RequestNotify)(plink->icqlink, 
+    p->id, ICQ_NOTIFY_ACK, 0, NULL);
+
   pfilelink=icq_TCPLinkNew(plink->icqlink);
   pfilelink->type=TCP_LINK_FILE;
   pfilelink->id=p->id;
@@ -278,9 +287,10 @@ void icq_HandleFileAck(icq_TCPLink *plink, icq_Packet *p, int port)
   pfile->tcplink=pfilelink;
   pfilelink->id=pfile->id;
 
-  if (plink->icqlink->icq_RequestNotify)
-    (*plink->icqlink->icq_RequestNotify)(plink->icqlink, pfile->id, 
-      ICQ_NOTIFY_FILESESSION, sizeof(icq_FileSession), pfile);
+  invoke_callback(plink->icqlink, icq_RequestNotify)(plink->icqlink,
+    pfile->id, ICQ_NOTIFY_FILESESSION, sizeof(icq_FileSession), pfile);
+  invoke_callback(plink->icqlink, icq_RequestNotify)(plink->icqlink,
+    pfile->id, ICQ_NOTIFY_SUCCESS, 0, NULL);
   
   icq_FileSessionSetStatus(pfile, FILE_STATUS_CONNECTING);
   icq_TCPLinkConnect(pfilelink, plink->remote_uin, port);

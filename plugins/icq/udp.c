@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: udp.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: udp.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.27  2001/01/16 00:10:13  denis
+Invisible list has been finished.
 
 Revision 1.26  2000/12/19 06:00:07  bills
 moved members from ICQLINK to ICQLINK_private struct
@@ -439,7 +442,7 @@ void icq_SendInvisibleList(ICQLINK *link) /* V5 */
   icq_PacketAdvance(p,1);
   while(ptr)
   {
-    if(ptr->vis_list)
+    if(ptr->invis_list)
     {
       icq_PacketAppend32(p, ptr->uin);
       num_used++;

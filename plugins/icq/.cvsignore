@@ -14,6 +14,7 @@ icqpacket.lo
 list.lo
 proxy.lo
 queue.lo
+socketmanager.lo
 stdpackets.lo
 tcp.lo
 tcpchathandle.lo

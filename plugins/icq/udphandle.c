@@ -1,9 +1,13 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: udphandle.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: udphandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.30  2001/01/15 06:17:35  denis
+Applied patch from Andrey Chernomyrdin <andrey@excom.spb.su> to
+handle icq2000 specific "You've been added" packet.
 
 Revision 1.29  2000/11/02 07:28:30  denis
 Do not ack unhandled protocol version.
@@ -155,15 +159,18 @@ void icq_DoMsg(ICQLINK *link, DWORD type, WORD len, char *data, DWORD uin, BYTE 
                BYTE minute, BYTE day, BYTE month, WORD year)
 {
   list *strList;
+  int fieldCount;
 
   strList = list_new();
   switch(type)
   {
     case TYPE_ADDED:
       /* Format: Nick, 0xFE, FName, 0xFE, LName, 0xFE, EMail */
-      if(icq_SplitFields(strList, data)!=4)
+      fieldCount = icq_SplitFields(strList, data);
+      if(fieldCount != 4 && fieldCount != 5)
       {
-        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad packet!\n");
+        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad TYPE_ADDED packet (expected 4/5 args, received %i)!\n",
+                   fieldCount);
         return;
       }
       icq_RusConv("wk", list_at(strList, 0)); /* Nick */
@@ -181,9 +188,11 @@ void icq_DoMsg(ICQLINK *link, DWORD type, WORD len, char *data, DWORD uin, BYTE 
       break;
     case TYPE_AUTH_REQ:
       /* Format: Nick, 0xFE, FName, 0xFE, LName, 0xFE, EMail, 0xFE, 0, 0xFE, Reason */
-      if(icq_SplitFields(strList, data)!=6)
+      fieldCount = icq_SplitFields(strList, data);
+      if(fieldCount != 6)
       {
-        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad packet!\n");
+        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad TYPE_AUTH_REQ packet (expected 6 args, received %i)!\n",
+                   fieldCount);
         return;
       }
       icq_RusConv("wk", list_at(strList, 0)); /* Nick */
@@ -202,9 +211,10 @@ void icq_DoMsg(ICQLINK *link, DWORD type, WORD len, char *data, DWORD uin, BYTE 
       break;
     case TYPE_URL:
       /* Format: Description, 0xFE, URL */
-      if(icq_SplitFields(strList, data)!=2)
+      fieldCount = icq_SplitFields(strList, data);
+      if(fieldCount != 2)
       {
-        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad packet!\n");
+        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad TYPE_URL packet (expected 2 args, recived %i)!\n", fieldCount);
         return;
       }
       icq_RusConv("wk", list_at(strList, 0)); /* Description */
@@ -217,9 +227,11 @@ void icq_DoMsg(ICQLINK *link, DWORD type, WORD len, char *data, DWORD uin, BYTE 
     case TYPE_WEBPAGER:
       /* Format: Nick, 0xFE, Empty-FName, 0xFE, Empty-LName, 0xFE, EMail, 0xFE,
        *         Reason(3), 0xFE, Message with IP & Subject */
-      if(icq_SplitFields(strList, data)!=6)
+      fieldCount = icq_SplitFields(strList, data);
+      if(fieldCount != 6)
       {
-        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad packet!\n");
+        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad TYPE_WEBPAGER packet (expected 6 args, received %i)!\n",
+                   fieldCount);
         return;
       }
       icq_RusConv("wk", list_at(strList, 0)); /* Nick */
@@ -234,9 +246,11 @@ void icq_DoMsg(ICQLINK *link, DWORD type, WORD len, char *data, DWORD uin, BYTE 
     case TYPE_EXPRESS:
       /* Format: Nick, 0xFE, Empty-FName, 0xFE, Empty-LName, 0xFE, EMail, 0xFE,
        *         Reason(3), 0xFE, Message Subject */
-      if(icq_SplitFields(strList, data)!=6)
+      fieldCount = icq_SplitFields(strList, data);
+      if(fieldCount != 6)
       {
-        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad packet!\n");
+        icq_FmtLog(link, ICQ_LOG_ERROR, "Bad TYPE_EXPRESS packet (expected 6 args, received %i)!\n",
+                   fieldCount);
         return;
       }
       icq_RusConv("wk", list_at(strList, 0)); /* Nick */

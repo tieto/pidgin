@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <string.h>
+#include <stdlib.h>
 #include "icq.h"   /* well, we're doing ICQ, right? */
 #include "multi.h" /* needed for gaim_connection */
 #include "prpl.h"  /* needed for prpl */
@@ -17,7 +18,6 @@
 struct icq_data {
 	ICQLINK *link;
 	int cur_status;
-	int tcp_timer;
 	int ack_timer;
 };
 
@@ -48,17 +48,45 @@ static void icq_do_log(ICQLINK *link, time_t time, unsigned char level, const ch
 	debug_printf("ICQ debug %d: %s", level, log);
 }
 
-static gint icq_tcp_timer(ICQLINK *link) {
-	icq_TCPMain(link);
-	return TRUE;
+GList *sockets = NULL;
+struct gaim_sock {
+	int socket;
+	gint inpa;
+};
+
+static void gaim_icq_handler(gpointer data, gint source, GdkInputCondition cond) {
+	if ((cond & GDK_INPUT_READ) || (cond & GDK_INPUT_EXCEPTION))
+		icq_HandleReadySocket(source, ICQ_SOCKET_READ);
+	if (cond & GDK_INPUT_WRITE)
+		icq_HandleReadySocket(source, ICQ_SOCKET_WRITE);
 }
 
-static void icq_callback(gpointer data, gint source, GdkInputCondition condition) {
-	struct gaim_connection *gc = (struct gaim_connection *)data;
-	struct icq_data *id = (struct icq_data *)gc->proto_data;
-	debug_printf("ICQ Callback handler\n");
-
-	icq_HandleServerResponse(id->link);
+static void icq_sock_notify(int socket, int type, int status) {
+	struct gaim_sock *gs;
+	if (status) {
+		GdkInputCondition cond;
+		if (type == ICQ_SOCKET_READ)
+			cond = GDK_INPUT_READ | GDK_INPUT_EXCEPTION;
+		else
+			cond = GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION;
+		gs = g_new0(struct gaim_sock, 1);
+		gs->socket = socket;
+		gs->inpa = gdk_input_add(socket, cond, gaim_icq_handler, NULL);
+		sockets = g_list_append(sockets, gs);
+	} else {
+		GList *m = sockets;
+		while (m) {
+			gs = m->data;
+			if (gs->socket == socket)
+				break;
+			m = g_list_next(m);
+		}
+		if (m) {
+			gdk_input_remove(gs->inpa);
+			sockets = g_list_remove(sockets, gs);
+			g_free(gs);
+		}
+	}
 }
 
 static void icq_online(ICQLINK *link) {
@@ -78,10 +106,6 @@ static void icq_online(ICQLINK *link) {
 static void icq_logged_off(ICQLINK *link) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
-	int icqSocket;
-
-	gtk_timeout_remove(id->tcp_timer);
-	gdk_input_remove(gc->inpa);
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
 		hide_login_progress(gc, "Unable to connect");
@@ -89,13 +113,8 @@ static void icq_logged_off(ICQLINK *link) {
 		return;
 	}
 
-	icqSocket = icq_GetSok(link);
-	gc->inpa = gdk_input_add(icqSocket, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, icq_callback, gc);
-
 	icq_Login(link, STATUS_ONLINE);
 	id->cur_status = STATUS_ONLINE;
-
-	id->tcp_timer = gtk_timeout_add(100, (GtkFunction)icq_tcp_timer, link);
 }
 
 static void icq_msg_incoming(ICQLINK *link, unsigned long uin, unsigned char hour, unsigned char minute,
@@ -196,10 +215,6 @@ static void icq_info_reply(struct icq_link *link, unsigned long uin, const char 
 	g_show_info_text(buf);
 }
 
-static void icq_req_notify(struct icq_link *link, unsigned long id, int result,
-				unsigned int length, void *data) {
-}
-
 static void icq_web_pager(struct icq_link *link, unsigned char hour, unsigned char minute,
 		unsigned char day, unsigned char month, unsigned short year, const char *nick,
 		const char *email, const char *msg) {
@@ -225,12 +240,16 @@ static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
-	ICQLINK *link = id->link = icq_ICQLINKNew(atol(user->username), user->password,
-			user->proto_opt[USEROPT_NICK][0] ? user->proto_opt[USEROPT_NICK] : "gaim user",
-			TRUE);
-	int icqSocket;
+	ICQLINK *link;
+
+	if (!icq_SocketNotify)
+		icq_SocketNotify = icq_sock_notify;
 
 	icq_LogLevel = ICQ_LOG_MESSAGE;
+
+	link = id->link = icq_ICQLINKNew(atol(user->username), user->password,
+			  user->proto_opt[USEROPT_NICK][0] ? user->proto_opt[USEROPT_NICK] : "gaim user",
+			  TRUE);
 
 	link->icq_Logged = icq_online;
 	link->icq_Disconnected = icq_logged_off;
@@ -245,7 +264,6 @@ static void icq_login(struct aim_user *user) {
 	link->icq_WrongPassword = icq_wrong_passwd;
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
-	link->icq_RequestNotify = icq_req_notify;
 	link->icq_SetTimeout = icq_set_timeout;
 
 	icq_UnsetProxy(link);
@@ -256,13 +274,8 @@ static void icq_login(struct aim_user *user) {
 		return;
 	}
 
-	icqSocket = icq_GetSok(link);
-	gc->inpa = gdk_input_add(icqSocket, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, icq_callback, gc);
-
 	icq_Login(link, STATUS_ONLINE);
 	id->cur_status = STATUS_ONLINE;
-
-	id->tcp_timer = gtk_timeout_add(100, (GtkFunction)icq_tcp_timer, link);
 
 	set_login_progress(gc, 0, "Connecting...");
 }
@@ -270,10 +283,6 @@ static void icq_login(struct aim_user *user) {
 static void icq_close(struct gaim_connection *gc) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
-	if (id->tcp_timer > 0)
-		gtk_timeout_remove(id->tcp_timer);
-	if (gc->inpa > 0)
-		gdk_input_remove(gc->inpa);
 	icq_Logout(id->link);
 	icq_Disconnect(id->link);
 	icq_ICQLINKDelete(id->link);
@@ -297,7 +306,6 @@ static void icq_add_buddy(struct gaim_connection *gc, char *who) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	icq_ContactAdd(id->link, atol(who));
 	icq_ContactSetVis(id->link, atol(who), TRUE);
-	icq_SendNewUser(id->link, atol(who));
 }
 
 static void icq_add_buddies(struct gaim_connection *gc, GList *whos) {
@@ -448,6 +456,8 @@ static GList *icq_away_states() {
 	m = g_list_append(m, "Occupied");
 	m = g_list_append(m, "Free For Chat");
 	m = g_list_append(m, "Invisible");
+
+	return m;
 }
 
 static void icq_init(struct prpl *ret) {

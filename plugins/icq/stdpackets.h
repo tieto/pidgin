@@ -20,6 +20,7 @@
 #define ICQ_TCP_MSG_CHAT         0x0002
 #define ICQ_TCP_MSG_FILE         0x0003
 #define ICQ_TCP_MSG_URL          0x0004
+#define ICQ_TCP_MSG_CONTACTLIST  0x0013
 #define ICQ_TCP_MSG_READAWAY     0x03E8
 #define ICQ_TCP_MSG_READOCCUPIED 0x03E9
 #define ICQ_TCP_MSG_READNA       0x03EA
@@ -70,6 +71,7 @@ void icq_TCPAppendSequenceN(ICQLINK *link, icq_Packet *p, DWORD seq);
 
 icq_Packet *icq_TCPCreateMessageAck(icq_TCPLink *plink, const unsigned char *message);
 icq_Packet *icq_TCPCreateURLAck(icq_TCPLink *plink, const unsigned char *message);
+icq_Packet *icq_TCPCreateContactListAck(icq_TCPLink *plink, const unsigned char *message);
 icq_Packet *icq_TCPCreateWebPagerAck(icq_TCPLink *plink, const unsigned char *message);
 icq_Packet *icq_TCPCreateChatReqAck(icq_TCPLink *plink, WORD port);
 icq_Packet *icq_TCPCreateChatReqCancel(icq_TCPLink *plink, WORD port);

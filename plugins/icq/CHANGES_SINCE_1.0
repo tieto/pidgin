@@ -1,6 +1,6 @@
 
-This file is intendended to be a list of source incompatable changes have 
-been made since icqlib-1.0.0.
+This file is intendended to be a list of source incompatable changes 
+that have been made since icqlib-1.0.0.
 
 2000-12-19: ICQLINKs have been reworked.  Members that provide no useful 
 information to the library client have been moved to a private structure 
@@ -17,7 +17,60 @@ icq_ICQLINKNew call.  icq_ICQLINKDelete will free an ICQLINK structure.
 and icq_ICQLINKDelete instead.  In addition, icq_ICQLINKNew has gained an
 additional parameter: a flag to turn TCP on or off.
 
+2001-01-16: The chat and file request/session interface has been
+significantly reworked.  icq_RequestNotify now will return
+ICQ_NOTIFY_SUCCESS as soon as the file or chat *request* is complete, but
+not before returning a handle to an icq_ChatSession or icq_FileSession.  
+See ICQ_NOTIFY_CHATSESSION and ICQ_NOTIFY_FILESESSION.  All future
+operations on the chat or file session should be performed using this
+handle and the appropriate icq_ChatSession* or icq_FileSession* functions.
 
+Old function             New function
 
+icq_TCPCloseChat         icq_ChatSessionClose
+icq_TCPSendChatData      icq_ChatSessionSendData
+icq_TCPSendChatData_n    icq_ChatSessionSendData_n
 
+In addition, notification messages for chat and file sessions come back 
+through two new callbacks: icq_ChatNotify and icq_FileNotify.  
+icq_ChatSession has also been exposed in the public interface, as well as 
+a number of chat status constants.
 
+Old notification                       New notification
+
+icq_RequestNotify/ICQ_NOTIFY_CHAT      icq_ChatNotify/CHAT_NOTIFY_STATUS
+icq_RequestNotify/ICQ_NOTIFY_CHATDATA  icq_ChatNotify/CHAT_NOTIFY_DATA
+icq_RequestNotify/ICQ_NOTIFY_SUCCESS   icq_ChatNotify/CHAT_NOTIFY_CLOSE
+
+icq_RequestNotify/ICQ_NOTIFY_FILE      icq_FileNotify/FILE_NOTIFY_STATUS
+icq_RequestNotify/ICQ_NOTIFY_FILEDATA  icq_FileNotify/FILE_NOTIFY_DATAPACKET
+icq_RequestNotify/ICQ_NOTIFY_SUCCESS   icq_FileNotify/FILE_NOTIFY_CLOSE
+
+Finally, some fake file status values now come through seperate 
+FILE_NOTIFY events, and one has been renamed:
+
+Old status                         New Notification/Status
+
+FILE_STATUS_NEW_SPEED              icq_FileNotify/FILE_NOTIFY_NEW_SPEED
+FILE_STATUS_STOP_FILE              icq_FileNotify/FILE_NOTIFY_STOP_FILE
+FILE_STATUS_INITIALIZED            FILE_STATUS_INITIALIZING
+
+2001-01-16: icqlib now reports when it needs read and write ready 
+notifications for sockets through icq_SocketNotify.  Install a callback 
+for the icq_SocketNotify function, which takes the following parameters:
+
+   void (*icq_SocketNotify)(int socket, int type, int status);
+
+socket will be the socket number, type will be either ICQ_SOCKET_READ or 
+ICQ_SOCKET_WRITE, and status will be either true or false, true indicating 
+icqlib now needs notification, and false indicating icqlib no longer needs 
+notification.  Your application should use this to install some sort of 
+socket notification object (e.g., in Kicq, we use a QSocketNotifier).  
+When the socket is ready, you should invoke the new 
+icq_HandleReadySocket(socket, type) function.
+
+This mechanism is completely optional - you can simply set up a timer to 
+call icq_Main every 1/10 of a second or so.  This has the disadvantage of 
+wasting CPU cycles and poor TCP file transfer performance, though.
+
+ 

@@ -1,4 +1,4 @@
-CFLAGS += -I\$(top_srcdir)/src
+CFLAGS += -I\$(top_srcdir)/src $(DEBUG_CFLAGS)
 LIBS = $(GTK_LIBS)
 
 EXTRA_DIST =	AUTHORS \
@@ -35,6 +35,8 @@ libgaimicq_la_SOURCES =	chatsession.c \
 			proxy.c \
 			queue.c \
 			queue.h \
+			socketmanager.c \
+			socketmanager.h \
 			stdpackets.c \
 			stdpackets.h \
 			tcp.c \

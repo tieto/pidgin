@@ -6,22 +6,22 @@
 #include <config.h>
 #endif
 
-#define ICQLIBVER   0x010100
-#define ICQLIBMAJOR 1
-#define ICQLIBMINOR 1
-#define ICQLIBMICRO 0
-
-#include <time.h>
-
 #ifndef _WIN32
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#endif
-
-#ifdef _WIN32
+#else
 #include <winsock.h>
-#endif
+#endif /* _WIN32 */
+
+#include <time.h>
+
+/* ICQLIB version defines */
+#define ICQLIBVER   0x010105
+#define ICQLIBMAJOR 1
+#define ICQLIBMINOR 1
+#define ICQLIBMICRO 5
+
 
 #define ICQ_LOG_OFF     0
 #define ICQ_LOG_FATAL   1
@@ -49,12 +49,8 @@
 #define ICQ_NOTIFY_SENT           4
 #define ICQ_NOTIFY_ACK            5
 
-#define ICQ_NOTIFY_CHAT           6
-#define ICQ_NOTIFY_CHATDATA       7
-
-#define ICQ_NOTIFY_FILE           10
-#define ICQ_NOTIFY_FILESESSION    11
-#define ICQ_NOTIFY_FILEDATA       12
+#define ICQ_NOTIFY_CHATSESSION    7
+#define ICQ_NOTIFY_FILESESSION    8
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,7 +62,11 @@ typedef struct
   unsigned short code;
 } icq_ArrayType;
 
+/* dummy forward declarations */
 struct icq_link_private;
+typedef struct icq_TCPLink_s icq_TCPLink;
+typedef struct icq_FileSession_s icq_FileSession;
+typedef struct icq_ChatSession_s icq_ChatSession;
 
 /**
  * The ICQLINK structure represents a single connection to the ICQ  servers.
@@ -164,6 +164,8 @@ typedef struct icq_link
        unsigned char hour, unsigned char minute, unsigned char day,
        unsigned char month, unsigned short year, const char *url,
        const char *descr);
+  void (*icq_RecvContactList)(struct icq_link *link, unsigned long uin,
+       int nr, const char **contact_uin, const char **contact_nick);
   void (*icq_RecvWebPager)(struct icq_link *link,unsigned char hour,
        unsigned char minute, unsigned char day, unsigned char month,
        unsigned short year, const char *nick, const char *email,
@@ -211,8 +213,12 @@ typedef struct icq_link
   void (*icq_Log)(struct icq_link *link, time_t time, unsigned char level,
        const char *str);
   void (*icq_SrvAck)(struct icq_link *link, unsigned short seq);
-  void (*icq_RequestNotify)(struct icq_link *link, unsigned long id, int result,
-       unsigned int length, void *data);
+  void (*icq_RequestNotify)(struct icq_link *link, unsigned long id, 
+       int type, int arg, void *data);
+  void (*icq_FileNotify)(icq_FileSession *session, int type, int arg,
+       void *data);
+  void (*icq_ChatNotify)(icq_ChatSession *session, int type, int arg,
+       void *data);
   void (*icq_NewUIN)(struct icq_link *link, unsigned long uin);
   void (*icq_SetTimeout)(struct icq_link *link, long interval);
   void (*icq_MetaUserFound)(struct icq_link *link, unsigned short seq2,
@@ -269,9 +275,6 @@ ICQLINK *icq_ICQLINKNew(unsigned long uin, const char *password,
   const char *nick, unsigned char useTCP);
 void icq_ICQLINKDelete(ICQLINK *link);
   
-void icq_Init(ICQLINK *link, unsigned long uin, const char *password,
-     const char *nick, unsigned char useTCP);
-void icq_Done(ICQLINK *link);
 int icq_Connect(ICQLINK *link, const char *hostname, int port);
 void icq_Disconnect(ICQLINK *link);
 int icq_GetSok(ICQLINK *link);
@@ -285,6 +288,7 @@ void icq_Login(ICQLINK *link, unsigned long status);
 void icq_Logout(ICQLINK *link);
 void icq_SendContactList(ICQLINK *link);
 void icq_SendVisibleList(ICQLINK *link);
+void icq_SendInvisibleList(ICQLINK *link);
 void icq_SendNewUser(ICQLINK * link, unsigned long uin);
 unsigned long icq_SendMessage(ICQLINK *link, unsigned long uin,
      const char *text, unsigned char thruSrv);
@@ -330,6 +334,7 @@ void icq_ContactAdd(ICQLINK *link, unsigned long cuin);
 void icq_ContactRemove(ICQLINK *link, unsigned long cuin);
 void icq_ContactClear(ICQLINK *link );
 void icq_ContactSetVis(ICQLINK *link, unsigned long cuin, unsigned char vu);
+void icq_ContactSetInvis(ICQLINK *link, unsigned long cuin, unsigned char vu);
 
 /*** TCP ***/
 void icq_TCPMain(ICQLINK *link);
@@ -344,16 +349,187 @@ unsigned long icq_SendChatRequest(ICQLINK *link, unsigned long uin,
      const char *message);
 void icq_AcceptChatRequest(ICQLINK *link, unsigned long uin, unsigned long seq);
 
-void icq_TCPSendChatData(ICQLINK *link, unsigned long uin, const char *data);
-void icq_TCPSendChatData_n(ICQLINK *link, unsigned long uin, const char *data, int len);
-void icq_TCPCloseChat(ICQLINK *link, unsigned long uin);
-
 void icq_CancelChatRequest(ICQLINK *link, unsigned long uin, 
      unsigned long sequence);
 void icq_RefuseChatRequest(ICQLINK *link, unsigned long uin,
      unsigned long sequence, const char *reason);
 
 /*** TCP ***/
+
+/** \defgroup ChatSession Chat Session Documentation
+ * icqlib's 'Chat Session' abstraction represents ICQ's 'chat' function
+ * between two participants.  Multi-party chat is not yet supported.
+ *
+ * An icq_ChatSession is instantiated when a 'Chat Request' event is
+ * accepted.  Upon receipt of a 'Chat Accept' event or a call to
+ * icq_AcceptChatRequest, icqlib will create a new chat session and pass the
+ * new chat session pointer back to the library client through the
+ * icq_RequestNotify / ICQ_NOTIFY_CHATSESSION callback.  This pointer should
+ * be stored by the library client, as multiple chat sessions may be in
+ * progress at any given time.  The icq_ChatSession pointer is used as a key
+ * for all future communication between the library and the library client to
+ * indicate which icq_ChatSession is currently being dealt with.
+ *
+ * icqlib communicates chat session events through use of the icq_ChatNotify
+ * callback, such as the CHAT_NOTIFY_DATA event.  The library client
+ * can perform operations on a chat session by use of the icq_ChatSession*
+ * functions, such as sending data to the remote uin by using the
+ * icq_ChatSessionSendData function.  
+ *
+ * A new chat session must first undergo an initialization sequence before is
+ * ready to transmit and receive data.  As this initialization is in progress
+ * the chat session will transition through various statuses depending on
+ * whether icqlib sent the accept event or it received the accept event.
+ * Each change in chat session status will be reported to the library
+ * client through use of the icq_ChatNotify callback, with a @type parameter
+ * of CHAT_NOTIFY_STATUS and an @a arg parameter of the status value.
+ *
+ * Once the chat session initialization is complete, both sides will enter
+ * the CHAT_STATUS_READY state, indicating that the chat session is
+ * ready to send and receive data.  Received data is reported through the
+ * icq_ChatNotify callback, with a @type of CHAT_NOTIFY_DATA.  The library
+ * client can send data using icq_ChatSessionSendData or
+ * icq_ChatSessionSendData_n.
+ *
+ * Chat sessions may be terminated at any time, by either side.  The library
+ * client may terminate a chat session by using icq_ChatSessionClose, or 
+ * the remote uin may terminate a chat session.  In either instance, a
+ * CHAT_STATUS_CLOSE event will be reported through the icq_ChatNotify
+ * callback.  Once this callback is complete (e.g. your application's
+ * callback handler returns), the icq_ChatSession will be deleted by icqlib 
+ * and the session pointer becomes invalid.
+ */
+
+/** @name Type Constants
+ * @ingroup ChatSession
+ * These values are used as the @a type parameter in the icq_ChatNotify
+ * callback to indicate the type of chat session event that has occured.
+ * The remaining @a arg and @a data parameters passed by the callback
+ * are specific to each event;  see the documentation for each type
+ * constant.
+ */
+
+/*@{*/
+
+/** Status has changed.
+ * @param arg new session status - one of the CHAT_STATUS_* defines
+ * @param data unused.
+ * @ingroup ChatSession
+ */
+#define CHAT_NOTIFY_STATUS       1
+
+/** Data has been received from a chat participant.
+ * @param arg length of data received
+ * @param data pointer to buffer containing received data
+ * @ingroup ChatSession
+ */
+#define CHAT_NOTIFY_DATA         2
+
+/** Session has been closed, either automatically by icqlib or
+ * explicitly by a call to icq_ChatSessionClose.
+ * @param arg unused
+ * @param data unused
+ * @ingroup ChatSession
+ */ 
+#define CHAT_NOTIFY_CLOSE        3
+
+/*@}*/
+
+/** @name Status Constants
+ * @ingroup ChatSession
+ * These constants are used as the @a arg parameter during in the
+ * icq_ChatNotify/CHAT_NOTIFY_STATUS callback to indicate the
+ * new status of the chat session.
+ */
+
+/*@{*/
+
+/** icqlib is listening for a chat connection from the remote uin.
+ * @ingroup ChatSession
+ */
+#define CHAT_STATUS_LISTENING    1
+
+/** A connection has been established with the remote uin.
+ * @ingroup ChatSession
+ */
+#define CHAT_STATUS_CONNECTED    3
+
+/** icqlib is currently waiting for the remote uin to send the chat
+ * initialization packet which contains the remote uin's chat handle.
+ * @ingroup ChatSession
+ */
+#define CHAT_STATUS_WAIT_NAME    4
+
+/** icqlib is currently waiting for the remote uin to send the chat
+ * initialization packet which contains the remote uin's font information.
+ * @ingroup ChatSession
+ */
+#define CHAT_STATUS_WAIT_FONT    6
+
+/** A connection to the chat session port of the remote uin is in 
+ * progress.
+ * @ingroup ChatSession
+ */
+/* chat session statuses - request sender */
+#define CHAT_STATUS_CONNECTING   2
+
+/** icqlib is currently waiting for the remote uin to send the chat
+ * initialization packet which contains the remote uin's chat handle
+ * and font information.
+ * @ingroup ChatSession
+ */
+#define CHAT_STATUS_WAIT_ALLINFO 5
+
+/** Chat session initialization has completed successfully.  The session
+ * is now fully established - both sides can begin to send data and
+ * should be prepared to accept data.
+ * @ingroup ChatSession
+ */
+#define CHAT_STATUS_READY        7
+
+/*@}*/
+
+/** Chat Session state structure.  This structure is used internally by
+ * icqlib to maintain state information about each chat session.  All
+ * members should be considered read-only!  Use the appropriate 
+ * icq_ChatSession* function to change the state of a chat session,
+ * results are undefined if your application attempts to manipulate this
+ * structure itself.
+ */
+struct icq_ChatSession_s {        
+
+  /** For internal icqlib use only. */
+  unsigned long id;
+  
+  /** Current status of the chat session.  See 'Status Constants' group. */
+  int status;
+  
+  /** ICQLINK that spawned this chat session. */
+  ICQLINK *icqlink;
+  
+  /** For internal icqlib use only. */
+  icq_TCPLink *tcplink;
+
+  /** Remote uin number. */
+  unsigned long remote_uin;
+  
+  /** Remote uin's chat handle. */
+  char remote_handle[64];
+
+};
+
+void icq_ChatSessionClose(icq_ChatSession *session);
+void icq_ChatSessionSendData(icq_ChatSession *session, const char *data);
+void icq_ChatSessionSendData_n(icq_ChatSession *session, const char *data,
+  int length);
+
+
+/* FileNotify constants */
+#define FILE_NOTIFY_DATAPACKET   1
+#define FILE_NOTIFY_STATUS       2
+#define FILE_NOTIFY_CLOSE        3
+#define FILE_NOTIFY_NEW_SPEED    4
+#define FILE_NOTIFY_STOP_FILE    5
 
 /* file session statuses- request receiver */
 #define FILE_STATUS_LISTENING    1
@@ -362,24 +538,20 @@ void icq_RefuseChatRequest(ICQLINK *link, unsigned long uin,
 /* file session statuses- request sender */
 #define FILE_STATUS_CONNECTING   2
 
-#define FILE_STATUS_INITIALIZED  4
+#define FILE_STATUS_INITIALIZING 4
+
 #define FILE_STATUS_NEXT_FILE    5
-#define FILE_STATUS_STOP_FILE    6
-#define FILE_STATUS_NEW_SPEED    7
 
 /* once negotiation is complete, file session enters proper state */
-#define FILE_STATUS_READY        8
-#define FILE_STATUS_SENDING      8
-#define FILE_STATUS_RECEIVING    9  
+#define FILE_STATUS_SENDING      6
+#define FILE_STATUS_RECEIVING    7  
 
-struct icq_TCPLink_s;
-
-typedef struct icq_FileSession_s {
+struct icq_FileSession_s {
 
   unsigned long id;
   int status;
   ICQLINK *icqlink;
-  struct icq_TCPLink_s *tcplink;
+  icq_TCPLink *tcplink;
 
   int direction;
 
@@ -400,7 +572,7 @@ typedef struct icq_FileSession_s {
 
   int current_speed;
 
-} icq_FileSession;
+};
           
 icq_FileSession *icq_AcceptFileRequest(ICQLINK *link, unsigned long uin,
                  unsigned long sequence);
@@ -415,6 +587,16 @@ void icq_FileSessionSetSpeed(icq_FileSession *p, int speed);
 void icq_FileSessionClose(icq_FileSession *p);
 void icq_FileSessionSetWorkingDir(icq_FileSession *p, const char *dir);
 void icq_FileSessionSetFiles(icq_FileSession *p, char **files);
+
+/* Socket Manager */
+
+#define ICQ_SOCKET_READ  0
+#define ICQ_SOCKET_WRITE 1
+#define ICQ_SOCKET_MAX   2
+
+extern void (*icq_SocketNotify)(int socket, int type, int status);
+
+void icq_HandleReadySocket(int socket, int type);
 
 #ifdef __cplusplus
 }

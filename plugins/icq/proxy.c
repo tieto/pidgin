@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: proxy.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: proxy.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.9  2001/01/17 01:19:49  bills
+cleanup
 
 Revision 1.8  2000/05/10 18:51:23  denis
 icq_Disconnect() now called before icq_Disconnected callback to
@@ -42,9 +45,7 @@ C++ comments changed to ANSI C comments.
 
 #ifndef _WIN32
 #include <unistd.h>
-#endif
-
-#ifdef _WIN32
+#else
 #include <winsock.h>
 #endif
 

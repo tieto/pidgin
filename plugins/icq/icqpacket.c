@@ -1,9 +1,9 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: icqpacket.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: icqpacket.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
 
 Revision 1.10  2000/07/07 15:26:35  denis
 "icq_Packet data overflow" log message temporarily commented out.

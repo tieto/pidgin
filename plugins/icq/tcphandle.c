@@ -1,9 +1,16 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcphandle.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: tcphandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.16  2001/01/24 05:11:14  bills
+applied patch from Robin Ericsson <lobbin@localhost.nu> which implements
+receiving contact lists.  See new icq_RecvContactList callback.
+
+Revision 1.15  2001/01/17 01:31:47  bills
+Rework chat and file interfaces; implement socket notifications.
 
 Revision 1.14  2000/12/06 05:15:45  denis
 Handling for mass TCP messages has been added based on patch by
@@ -85,6 +92,7 @@ Segfault fixed on spoofed messages.
 
 */
 
+#include <stdlib.h>
 #include <time.h>
 
 #ifndef _WIN32
@@ -101,6 +109,7 @@ Segfault fixed on spoofed messages.
 
 void icq_TCPOnMessageReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id, icq_TCPLink *plink);
 void icq_TCPOnURLReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id);
+void icq_TCPOnContactListReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id);
 void icq_TCPOnChatReqReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id);
 void icq_TCPOnFileReqReceived(ICQLINK *link, DWORD uin, const char *message, 
    const char *filename, unsigned long filesize, DWORD id);
@@ -144,6 +153,7 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
   {
     case ICQ_TCP_MSG_MSG:
     case ICQ_TCP_MSG_URL:
+    case ICQ_TCP_MSG_CONTACTLIST:
       p->id=icq_PacketRead32(p);
       break;
 
@@ -197,6 +207,10 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
           icq_TCPOnFileReqReceived(plink->icqlink, uin, message, filename, filesize, p->id);
           break;
 
+        case ICQ_TCP_MSG_CONTACTLIST:
+          icq_TCPOnContactListReceived(plink->icqlink, uin, message, p->id);
+          break;
+
         default:
           icq_FmtLog(plink->icqlink, ICQ_LOG_WARNING, "unknown message type %d!\n", type);
           break;
@@ -219,9 +233,10 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
           if(plink->icqlink->icq_RequestNotify)
           {
             icq_FmtLog(plink->icqlink, ICQ_LOG_MESSAGE, "received ack %d\n", p->id);
-            (*plink->icqlink->icq_RequestNotify)(plink->icqlink, p->id, ICQ_NOTIFY_ACK, status,
-                                               (void *)message);
-            (*plink->icqlink->icq_RequestNotify)(plink->icqlink, p->id, ICQ_NOTIFY_SUCCESS, 0, 0);
+            invoke_callback(plink->icqlink, icq_RequestNotify)
+              (plink->icqlink, p->id, ICQ_NOTIFY_ACK, status, (void *)message);
+            invoke_callback(plink->icqlink, icq_RequestNotify)
+              (plink->icqlink, p->id, ICQ_NOTIFY_SUCCESS, 0, NULL);
           }
           break;
       }
@@ -370,5 +385,44 @@ void icq_TCPOnURLReceived(ICQLINK *link, DWORD uin, const char *message, DWORD i
     printf("tcp message ack sent to %lu { sequence=%lx }\n", uin, id);
 #endif
     icq_PacketDelete(pack);
+  }
+}
+
+void icq_TCPOnContactListReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id)
+{
+#ifdef TCP_PACKET_TRACE
+  printf("tcp contactlist packet received from %lu { sequence=%lx }\n", uin, id);
+#endif /* TCP_PACKET_TRACE */
+
+  if (link->icq_RecvContactList) {
+    /* use the current system time for time received */
+    time_t t=time(0);
+    struct tm *ptime=localtime(&t);
+    icq_Packet *pack;
+    list *strList = list_new();
+    int i, k, nr = icq_SplitFields(strList, message);
+    char *contact_uin[(nr - 2) /2], *contact_nick[(nr - 2) /2];
+    icq_TCPLink *plink=icq_FindTCPLink(link, uin, TCP_LINK_MESSAGE);
+
+    /* split message */
+    for (i = 1, k = 0; i < (nr - 1); k++)
+    {
+      contact_uin[k]  = list_at(strList, i);
+      contact_nick[k] = list_at(strList, i + 1);
+      i += 2;
+    }
+
+    (*link->icq_RecvContactList)(link, uin, k, (const char **) 
+      contact_uin, (const char **) contact_nick);
+    /* send an acknowledement to the remote client */
+    pack=icq_TCPCreateContactListAck(plink, 0);
+    icq_PacketAppend32(pack, id);
+    icq_PacketSend(pack, plink->socket);
+#ifdef TCP_PACKET_TRACE
+    printf("tcp message ack sent to %lu { sequence=%lx }\n", uin, id);
+#endif /* TCP_PACKE_TRACE */
+    icq_PacketDelete(pack);
+
+    list_delete(strList, free);
   }
 }

@@ -40,8 +40,8 @@
 #define icq_TCPLinkBufferSize 4096
 #define TCP_LINK_CONNECT_TIMEOUT 30
 
-typedef struct icq_TCPLink_s
-{
+struct icq_TCPLink_s {
+
    /* icq_TCPLink ICQLINK, type, mode, and session */
    ICQLINK *icqlink;
    int type;
@@ -71,7 +71,7 @@ typedef struct icq_TCPLink_s
    /* connect timer */
    time_t connect_time;
 
-} icq_TCPLink;
+};
 
 icq_TCPLink *icq_TCPLinkNew(ICQLINK *link);
 void icq_TCPLinkDelete(void *p);
@@ -82,7 +82,7 @@ int icq_TCPLinkConnect(icq_TCPLink *plink, DWORD uin, int port);
 icq_TCPLink *icq_TCPLinkAccept(icq_TCPLink *plink);
 int icq_TCPLinkListen(icq_TCPLink *plink);
 
-int icq_TCPLinkOnDataReceived(icq_TCPLink *plink);
+void icq_TCPLinkOnDataReceived(icq_TCPLink *plink);
 void icq_TCPLinkOnPacketReceived(icq_TCPLink *plink, icq_Packet *p);
 void icq_TCPLinkOnConnect(icq_TCPLink *plink);
 

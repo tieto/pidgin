@@ -1,9 +1,18 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: icqlib.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: icqlib.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.49  2001/01/17 01:29:17  bills
+Rework chat and file session interfaces; implement socket notifications.
+
+Revision 1.48  2001/01/15 06:20:24  denis
+Cleanup.
+
+Revision 1.47  2000/12/19 21:29:51  bills
+actually return the link in icq_ICQLINKNew
 
 Revision 1.46  2000/12/19 06:00:07  bills
 moved members from ICQLINK to ICQLINK_private struct
@@ -17,121 +26,7 @@ chat, instead of using Bill all the time (hmm, where'd I get that from? :)
 
 Revision 1.43  2000/07/09 22:05:11  bills
 removed unnecessary functions
-
-Revision 1.42  2000/07/09 18:28:07  denis
-Initial memset() in icq_Init() replaced by callback's clearance.
-
-Revision 1.41  2000/06/15 01:50:39  bills
-removed *Seq functions
-
-Revision 1.40  2000/05/10 19:06:59  denis
-UDP outgoing packet queue was implemented.
-
-Revision 1.39  2000/05/03 18:12:36  denis
-Unfinished UDP queue was commented out.
-
-Revision 1.38  2000/04/10 16:36:04  denis
-Some more Win32 compatibility from Guillaume Rosanis <grs@mail.com>
-
-Revision 1.37  2000/04/06 16:38:04  denis
-icq_*Send*Seq() functions with specified sequence number were added.
-
-Revision 1.36  2000/04/05 14:37:02  denis
-Applied patch from "Guillaume R." <grs@mail.com> for basic Win32
-compatibility.
-
-Revision 1.35  2000/01/16 03:59:10  bills
-reworked list code so list_nodes don't need to be inside item structures,
-removed strlist code and replaced with generic list calls
-
-Revision 1.34  1999/12/27 16:06:32  bills
-cleanups
-
-Revision 1.33  1999/10/03 21:35:55  tim
-Fixed "url" and "descr" parameters order when sending a URL via TCP.
-
-Revision 1.32  1999/09/29 16:49:43  denis
-Host/network/icq byteorder systemized.
-icq_Init() cleaned up.
-
-Revision 1.31  1999/07/18 20:15:55  bills
-changed to use new byte-order functions & contact list functions
-
-Revision 1.30  1999/07/16 12:27:06  denis
-Other global variables moved to ICQLINK structure.
-Initialization of random number generator added in icq_Init()
-Cleaned up.
-
-Revision 1.29  1999/07/12 15:13:31  cproch
-- added definition of ICQLINK to hold session-specific global variabled
-  applications which have more than one connection are now possible
-- changed nearly every function defintion to support ICQLINK parameter
-
-Revision 1.28  1999/07/03 02:26:02  bills
-added new code to support thruSrv arg to SendMessage and SendURL
-
-Revision 1.27  1999/04/17 19:21:37  bills
-modified Send* Functions to return DWORD instead of WORD
-
-Revision 1.26  1999/04/14 14:48:18  denis
-Switched from icq_Log callback to icq_Fmt function.
-Cleanups for "strict" compiling (-ansi -pedantic)
-
-Revision 1.25  1999/04/05 13:14:57  denis
-Send messages and URLs to 'not in list' users fixed.
-
-Revision 1.24  1999/03/31 01:43:40  bills
-added TCP support to SendURL
-
-Revision 1.23  1999/03/30 22:47:44  lord
-list of countries now sorted.
-
-Revision 1.22  1999/03/28 03:18:22  bills
-enable tcp messaging in icq_SendMessage, uncommented icq_OurPort and
-icq_OurIp and fixed function names so icqlib compiles
-
-Revision 1.21  1999/03/25 22:16:43  bills
-added #include "util.h"
-
-Revision 1.20  1999/03/24 11:37:36  denis
-Underscored files with TCP stuff renamed.
-TCP stuff cleaned up
-Function names changed to corresponding names.
-icqlib.c splitted to many small files by subject.
-C++ comments changed to ANSI C comments.
-
-Revision 1.19  1999/03/22 20:51:28  bills
-added code in icq_HandleUserOnline to set/clear new struct entries in
-icq_ContactItem; added cleanup code in icq_HandleUserOffline for same
-
-Revision 1.18  1999/03/09 13:14:05  denis
-Cyrillic recoding removed from URLs
-
-Revision 1.17  1999/03/05 13:57:54  denis
-Some cosmetic changes...
-
-Revision 1.16  1998/12/08 16:00:59  denis
-Cleaned up a little before releasing
-
-Revision 1.15  1998/11/25 19:18:16  denis
-Added close icq_ProxySok in icq_Disconnect
-
-Revision 1.14  1998/11/25 09:48:49  denis
-icq_GetProxySok and icq_HandleProxyResponse methods added
-Connection terminated support added
-
-Revision 1.13  1998/11/19 12:22:48  denis
-SOCKS support cleaned a little
-icq_RecvUrl renamed to icq_RecvURL
-icq_ProxyAuth added for Username/Password Authentication
-URL/Description order inverted
-icq_Quit splitted to icq_Logout and icq_Disconnect
-icq_ProxyName and icq_ProxyPass range checking added
-
-Revision 1.12  1998/11/18 16:21:29  denis
-Fixed SOCKS5 proxy support
-
- */
+*/
 
 #include "icqlib.h"
 
@@ -163,9 +58,12 @@ Fixed SOCKS5 proxy support
 #include "udp.h"
 #include "tcp.h"
 #include "queue.h"
+#include "socketmanager.h"
 
 int icq_Russian = FALSE;
 BYTE icq_LogLevel = 0;
+
+void (*icq_SocketNotify)(int socket, int type, int status);
 
 DWORD icq_SendMessage(ICQLINK *link, DWORD uin, const char *text, BYTE thruSrv)
 {
@@ -216,14 +114,15 @@ DWORD icq_SendURL(ICQLINK *link, DWORD uin, const char *url, const char *descr, 
 }
 
 ICQLINK *icq_ICQLINKNew(DWORD uin, const char *password, const char *nick,
-  unsigned char useTCP)
+                        unsigned char useTCP)
 {
-  ICQLINK *link = (ICQLINK *)malloc(sizeof(ICQLINK));
-  link->d = (ICQLINK_private *)malloc(sizeof(ICQLINK_private));
+  ICQLINK *link = (ICQLINK*)malloc(sizeof(ICQLINK));
+  link->d = (ICQLINK_private*)malloc(sizeof(ICQLINK_private));
 
   srand(time(0L));
-
-/*   memset(link, 0, sizeof(ICQLINK)); */
+  /* initialize icq_SocketList on first call */
+  if (!icq_SocketList)
+    icq_SocketList = list_new();
 
   /* Initialize all callbacks */
   link->icq_Logged = 0L;
@@ -276,6 +175,7 @@ ICQLINK *icq_ICQLINKNew(DWORD uin, const char *password, const char *nick,
   link->d->icq_UDPSession = 0;
   icq_UDPQueueNew(link);
 
+  /* TCP stuff */
   icq_TCPInit(link);
   link->icq_UseTCP = useTCP;
 
@@ -316,17 +216,7 @@ in a loop waiting for server responses.
 *******************************/
 void icq_Main(ICQLINK *link)
 {
-  struct timeval tv;
-  fd_set readfds;
-
-  tv.tv_sec = 0;
-  tv.tv_usec = 0;
-  FD_ZERO(&readfds);
-  FD_SET(link->icq_UDPSok, &readfds);
-  select(link->icq_UDPSok+1, &readfds, 0L, 0L, &tv);
-  if(FD_ISSET(link->icq_UDPSok, &readfds))
-    icq_HandleServerResponse(link);
-  icq_TCPMain(link);
+  icq_SocketPoll();
 }
 
 /**********************************
@@ -343,7 +233,9 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
   struct sockaddr_in sin, prsin;  /* used to store inet addr stuff */
   struct hostent *host_struct; /* used in DNS llokup */
 
-  link->icq_UDPSok = socket(AF_INET, SOCK_DGRAM, 0);/* create the unconnected socket*/
+  /* create the unconnected socket*/
+  link->icq_UDPSok = icq_SocketNew(AF_INET, SOCK_DGRAM, 0);
+
   if(link->icq_UDPSok == -1)
   {
     icq_FmtLog(link, ICQ_LOG_FATAL, "Socket creation failed\n");
@@ -356,6 +248,8 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
   if(bind(link->icq_UDPSok, (struct sockaddr*)&sin, sizeof(struct sockaddr))<0)
   {
     icq_FmtLog(link, ICQ_LOG_FATAL, "Can't bind socket to free port\n");
+    icq_SocketDelete(link->icq_UDPSok);
+    link->icq_UDPSok = -1;
     return -1;
   }
   length = sizeof(sin);
@@ -378,7 +272,10 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
     link->icq_ProxyIP = ntohl(prsin.sin_addr.s_addr);
     prsin.sin_family = AF_INET; /* we're using the inet not appletalk*/
     prsin.sin_port = htons(link->icq_ProxyPort); /* port */
-    link->icq_ProxySok = socket(AF_INET, SOCK_STREAM, 0);/* create the unconnected socket*/
+
+    /* create the unconnected socket*/
+    link->icq_ProxySok = icq_SocketNew(AF_INET, SOCK_STREAM, 0);
+
     if(link->icq_ProxySok == -1)
     {
       icq_FmtLog(link, ICQ_LOG_FATAL, "[SOCKS] Socket creation failed\n");
@@ -409,11 +306,7 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
       if(res != 2 || buf[0] != 5 || buf[1] != 2) /* username/password authentication*/
       {
         icq_FmtLog(link, ICQ_LOG_FATAL, "[SOCKS] Authentication method incorrect\n");
-#ifdef _WIN32
-        closesocket(link->icq_ProxySok);
-#else
-        close(link->icq_ProxySok);
-#endif
+        icq_SocketDelete(link->icq_ProxySok);
         return -1;
       }
       buf[0] = 1; /* version of subnegotiation */
@@ -431,11 +324,7 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
       if(res != 2 || buf[0] != 1 || buf[1] != 0)
       {
         icq_FmtLog(link, ICQ_LOG_FATAL, "[SOCKS] Authorization failure\n");
-#ifdef _WIN32
-        closesocket(link->icq_ProxySok);
-#else
-        close(link->icq_ProxySok);
-#endif
+        icq_SocketDelete(link->icq_ProxySok);
         return -1;
       }
     }
@@ -444,11 +333,7 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
       if(res != 2 || buf[0] != 5 || buf[1] != 0) /* no authentication required */
       {
         icq_FmtLog(link, ICQ_LOG_FATAL, "[SOCKS] Authentication method incorrect\n");
-#ifdef _WIN32
-        closesocket(link->icq_ProxySok);
-#else
-        close(link->icq_ProxySok);
-#endif
+        icq_SocketDelete(link->icq_ProxySok);
         return -1;
       }
     }
@@ -501,11 +386,8 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
           icq_FmtLog(link, ICQ_LOG_FATAL, "[SOCKS] Unknown SOCKS server failure\n");
           break;
       }
-#ifdef _WIN32
-      closesocket(link->icq_ProxySok);
-#else
-      close(link->icq_ProxySok);
-#endif
+      icq_SocketDelete(link->icq_ProxySok);
+      link->icq_ProxySok = -1;
       return -1;
     }
   }
@@ -518,11 +400,7 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
       icq_FmtLog(link, ICQ_LOG_FATAL, "Can't find hostname: %s\n", hostname);
       if(link->icq_UseProxy)
       {
-#ifdef _WIN32
-        closesocket(link->icq_ProxySok);
-#else
-        close(link->icq_ProxySok);
-#endif
+        icq_SocketDelete(link->icq_ProxySok);
       }
       return -1;
     }
@@ -546,11 +424,7 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
     icq_FmtLog(link, ICQ_LOG_FATAL, "Connection refused\n");
     if(link->icq_UseProxy)
     {
-#ifdef _WIN32
-      closesocket(link->icq_ProxySok);
-#else
-      close(link->icq_ProxySok);
-#endif
+      icq_SocketDelete(link->icq_ProxySok);
     }
     return -1;
   }
@@ -558,23 +432,22 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
   getsockname(link->icq_UDPSok, (struct sockaddr*)&sin, &length);
   link->icq_OurIP = ntohl(sin.sin_addr.s_addr);
   link->icq_OurPort = ntohs(sin.sin_port);
+
+  /* sockets are ready to receive data - install handlers */
+  icq_SocketSetHandler(link->icq_UDPSok, ICQ_SOCKET_READ,
+    icq_HandleServerResponse, link);
+  if (link->icq_UseProxy)
+    icq_SocketSetHandler(link->icq_ProxySok, ICQ_SOCKET_READ,
+      icq_HandleProxyResponse, link);
   return link->icq_UDPSok;
 }
 
 void icq_Disconnect(ICQLINK *link)
 {
-#ifdef _WIN32
-  closesocket(link->icq_UDPSok);
-#else
-  close(link->icq_UDPSok);
-#endif
+  icq_SocketDelete(link->icq_UDPSok);
   if(link->icq_UseProxy)
   {
-#ifdef _WIN32
-    closesocket(link->icq_ProxySok);
-#else
-    close(link->icq_ProxySok);
-#endif
+    icq_SocketDelete(link->icq_ProxySok);
   }
   icq_UDPQueueFree(link);
 }

@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: contacts.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: contacts.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.2  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.3  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
+
+Revision 1.6  2001/01/16 00:10:13  denis
+Invisible list has been finished.
 
 Revision 1.5  2000/12/19 06:00:07  bills
 moved members from ICQLINK to ICQLINK_private struct
@@ -96,6 +99,13 @@ void icq_ContactSetVis(ICQLINK *link, DWORD cuin, BYTE vu)
     p->vis_list = vu;
 }
 
+void icq_ContactSetInvis(ICQLINK *link, DWORD cuin, BYTE vu)
+{
+  icq_ContactItem *p = icq_ContactFind(link, cuin);
+  if(p)
+    p->invis_list = vu;
+}
+
 icq_ContactItem *icq_ContactGetFirst(ICQLINK *link)
 {
   return list_first(link->d->icq_ContactList);
@@ -109,5 +119,4 @@ icq_ContactItem *icq_ContactGetNext(icq_ContactItem *pcontact)
     return p->next->item;
   else
     return 0L;
-
 }

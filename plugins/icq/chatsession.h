@@ -5,19 +5,6 @@
 #include "icq.h"
 #include "icqtypes.h"
 
-/* chat session statuses- request receiver */
-#define CHAT_STATUS_LISTENING    1
-#define CHAT_STATUS_CONNECTED    3
-#define CHAT_STATUS_WAIT_NAME    4
-#define CHAT_STATUS_WAIT_FONT    6
-
-/* chat session statuses- request sender */
-#define CHAT_STATUS_CONNECTING   2
-#define CHAT_STATUS_WAIT_ALLINFO 5
-
-/* once negotiation is complete, both sides enter ready state */
-#define CHAT_STATUS_READY        7
-
 /* chat session states:
 
    accepting chat request 
@@ -60,20 +47,8 @@
 			ICQ_NOTIFY_SUCCESS
 */
 
-typedef struct icq_ChatSession_s {
-
-  DWORD id;
-  int status;
-  ICQLINK *icqlink;
-
-  DWORD remote_uin;
-  char *remote_handle;
-
-} icq_ChatSession;
-
 icq_ChatSession *icq_ChatSessionNew(ICQLINK *);
 void icq_ChatSessionDelete(void *);
-void icq_ChatSessionClose(icq_ChatSession *);
 void icq_ChatSessionSetStatus(icq_ChatSession *, int);
 icq_ChatSession *icq_FindChatSession(ICQLINK *, DWORD);
 

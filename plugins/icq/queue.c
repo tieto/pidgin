@@ -1,9 +1,9 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: queue.c 1319 2000-12-19 10:08:29Z warmenhoven $
+$Id: queue.c 1442 2001-01-28 01:52:27Z warmenhoven $
 $Log$
-Revision 1.3  2000/12/19 10:08:29  warmenhoven
-Yay, new icqlib
+Revision 1.4  2001/01/28 01:52:27  warmenhoven
+icqlib 1.1.5
 
 Revision 1.12  2000/12/19 06:00:07  bills
 moved members from ICQLINK to ICQLINK_private struct
