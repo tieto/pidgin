@@ -3465,7 +3465,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 			data->entries = g_list_append(data->entries, spin);
 			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
-			gtk_label_set_mnemonic_widget(label, spin);
+			gtk_label_set_mnemonic_widget(GTK_LABEL(label), spin);
 		}
 		else
 		{
@@ -3490,7 +3490,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 
 			g_signal_connect(G_OBJECT(entry), "activate",
 							 G_CALLBACK(add_chat_cb), data);
-			gtk_label_set_mnemonic_widget(label, entry);
+			gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		}
 
 		g_free(pce);
