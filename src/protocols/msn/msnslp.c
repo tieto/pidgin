@@ -80,6 +80,8 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 	if (strlen(body) == 0)
 	{
 		/* ACK. Ignore it. */
+		gaim_debug_info("msn", "Received MSNSLP ACK\n");
+
 		return FALSE;
 	}
 
@@ -119,7 +121,7 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 	msn_message_set_attr(msg, "P2P-Dest",
 			msn_user_get_passport(msn_message_get_receiver(msg)));
 
-	if (msg->msnslp_header.session_id == 0)
+	if (msg->msnslp_header.session_id != 0)
 		msg->msnslp_footer.app_id = 1;
 
 	msn_switchboard_send_msg(slpsession->swboard, msg);
@@ -132,6 +134,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 									 const MsnObject *obj)
 {
 	MsnMessage *invite_msg;
+	long session_id;
 	char *msnobj_data;
 	char *msnobj_base64;
 	char *branch;
@@ -152,7 +155,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	if ((c = strchr(msnobj_base64, '=')) != NULL)
 		*c = '\0';
 
-	slpsession->session_id = rand() % 0xFFFFFF00 + 4;
+	session_id = rand() % 0xFFFFFF00 + 4;
 
 	branch = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
 							 rand() % 0xAAFF + 0x1111,
@@ -179,7 +182,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 		"SessionID: %ld\r\n"
 		"AppID: 1\r\n"
 		"Context: %s",
-		slpsession->session_id,
+		session_id,
 		msnobj_base64);
 
 	g_free(msnobj_base64);

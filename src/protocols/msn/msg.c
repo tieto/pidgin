@@ -421,7 +421,7 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 
 		if (body != NULL)
 		{
-			g_strlcpy(c, body, c - msg_start);
+			g_strlcpy(c, body, msg->size - (c - msg_start));
 
 			c += strlen(body);
 
