@@ -37,6 +37,7 @@ version 0.78 (05/28/2004):
 	  which was due to case-sensitive string comparisons (Gudmundur Olafsson)
 	* Fixed an MSN HTTP method bug where MSN would queue data indefinitely.
 	  (Andrew Wellington)
+	* All known MSN formatting bugs were fixed.
 	* Overly long messages and paging cell phones in MSN no longer cause
 	  disconnects (Felipe Contreras)
 	* Several bug fixes for MSN's MSNSLP and MSNObject support (Finlay Dobbie)
