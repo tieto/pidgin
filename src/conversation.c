@@ -1419,10 +1419,10 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 					b = gaim_find_buddy(account,
 							    gaim_account_get_username(account));
 
-					if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
-						who = gaim_get_buddy_alias(b);
-					else if (gaim_account_get_alias(account) != NULL)
+					if (gaim_account_get_alias(account) != NULL)
 						who = account->alias;
+					else if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
+						who = gaim_get_buddy_alias(b);
 					else if (gaim_connection_get_display_name(gc) != NULL)
 						who = gaim_connection_get_display_name(gc);
 					else
