@@ -526,6 +526,6 @@ void yahoo_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 			gaim_debug_error("yahoo",
 				   "Can't open buddy icon file!\n");
 	} else
-		gaim_debug_error("yahooo",
+		gaim_debug_error("yahoo",
 			   "Can't stat buddy icon file!\n");
 }
