@@ -21,7 +21,7 @@
 #    no pre and no post message
 # AIM: lbdash
 #
-# Updated by Christian Hammond, 20 August 2002
+# Updated by Christian Hammond, 20 August 2003
 # Changes:
 #  * Modified to work with the changed perl interface of gaim 0.68
 # AIM: ChipX86
