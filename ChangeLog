@@ -29,6 +29,7 @@ version 0.60:
 		- Preferences dialog
 		- SignOn Screen
 		- Conversation Window
+		- Chat Window
 		- GtkIMHtml (Ari Pollak, Christian Hammond)
 		- Buddy Icons
 		- IM Images
