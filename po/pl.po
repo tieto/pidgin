@@ -313,7 +313,7 @@ msgstr "Pobierz wiadomo¶æ Zajêty"
 
 #: src/protocols/oscar/oscar.c:2538
 msgid "Direct IM"
-msgstr "Bezpo¶redni IM"
+msgstr "Bezpo¶rednia IM"
 
 #: src/protocols/toc/toc.c:392
 #, c-format
@@ -605,13 +605,22 @@ msgid ""
 "online, you can talk to one of the Gaim developers for more assistance; "
 "their contact information is in the AUTHORS file in the Gaim source, or at "
 msgstr ""
-
+"Uspokój siê, pomoc jest tu¿ za rogiem. Pierwsz± rzecz±, której bêdziesz "
+"potrzebowa³ jest konto AIM; mo¿esz je dostaæ na http://aim.aol.com/. Po "
+"prostu kliknij przycisk mówi±cy \"Nowy u¿ytkownik\" i ju¿ mo¿esz utworzyæ "
+"nowe konto. Je¶li masz ju¿ konto, wprowad¼ nazwê u¿ytkownika i has³o w okno "
+"logowania, które pokazuje siê po starcie Gaim, i naci¶nij przycisk Zapisz siê. "
+"Gdy ju¿ jeste¶ dostêpny, mo¿esz porozmawiaæ z którym¶ z twórców w celu uzyskania "
+"wiêkszej ilo¶ci pomocnych rad; informacje na ich temat znajdziesz w pliku "
+"Authors w ¼ród³ach Gaim lub w "
 
 #: src/about.c:240
 msgid ""
 "contact.shtml. If you can't get online and still need more assistance, feel "
 "free to email us at gaim@marko.net. Thanks for using Gaim!"
 msgstr ""
+"pliku contact.shtml. Je¶li nie jeste¶ dostêpny a wci±¿ potrzebujesz pomocy, "
+"nie miej wstrêtu napisac do nas majla na adres gaim@marko.net. Dziêki za korzystanie z Gaim!"
 
 #: src/aim.c:123 src/buddy.c:2350
 msgid "Signoff"
@@ -1398,7 +1407,7 @@ msgstr "Nazwisko"
 #. Line 4
 #: src/dialogs.c:1300 src/dialogs.c:2161
 msgid "Maiden Name"
-msgstr ""
+msgstr "Nazwisko panieñskie"
 
 #. Line 5
 #: src/dialogs.c:1311 src/dialogs.c:2173
@@ -1775,7 +1784,7 @@ msgstr "Zamknij to okno"
 #: src/prefs.c:866 src/prefs.c:1001 src/prefs.c:1219 src/prefs.c:1503
 #: src/prefs.c:1709 src/prefs.c:2120
 msgid "All options take effect immediately unless otherwise noted."
-msgstr ""
+msgstr "Wszystkie opcje dzia³aj± od razu, chyba, ¿e napisano inaczej."
 
 #: src/prefs.c:210
 msgid "Miscellaneous"
@@ -2353,6 +2362,10 @@ msgid ""
 "not the same version I cannot safely tell you which one it was. Needless to "
 "say, it was not successfully loaded."
 msgstr ""
+"Próbowa³e¶ wczytaæ protokó³, który nie zosta³ skompilowany t± sam± wersj± "
+"¼ród³a co aplikacja. Niesczê¶liwie siê sk³ada, poniewa¿ nie jest to ta sama "
+"wersja i nie mogê powiedzieæ Ci, która to by³a. Co by nie gada³, protokó³ "
+"nie zosta³ za³adowany."
 
 #: src/prpl.c:72
 msgid "Protocol Error"
@@ -2384,6 +2397,8 @@ msgid ""
 "You cannot log this account in; you do not have the protocol it uses loaded, "
 "or the protocol does not have a login function."
 msgstr ""
+"Nie mo¿esz zalogowaæ siê na to konto; nie masz za³adowanego odpowiedniego "
+"protoko³u lub nie ma on funkcji logowania."
 
 #: src/server.c:52
 msgid "Login Error"
