@@ -353,6 +353,8 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 		if(prpl && prpl->get_info) {
 			menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Get Info"));
 			g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_info_cb), node);
+			image = gtk_image_new_from_stock(GAIM_STOCK_INFO, GTK_ICON_SIZE_MENU);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 		}
 
