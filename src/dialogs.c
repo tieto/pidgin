@@ -1185,6 +1185,8 @@ void show_new_bp(char *name)
                            GTK_SIGNAL_FUNC(do_new_bp), b);
         gtk_widget_show(b->messentry);
 
+	gtk_signal_connect(GTK_OBJECT(b->sendim), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->messentry);
+
 	b->command = gtk_check_button_new_with_label(_("Execute command on pounce")); 
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->command), FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), b->command, FALSE, FALSE, 0);
@@ -1203,6 +1205,9 @@ void show_new_bp(char *name)
         gtk_signal_connect(GTK_OBJECT(b->commentry), "activate",
                            GTK_SIGNAL_FUNC(do_new_bp), b);
         gtk_widget_show(b->commentry);
+
+	gtk_widget_set_sensitive(b->commentry, FALSE);
+	gtk_signal_connect(GTK_OBJECT(b->command), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->commentry);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
