@@ -1385,10 +1385,11 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
 			anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
 			pixbuf = gtk_smiley_tree_image(imhtml, sml, ws);
-			icon = gtk_image_new_from_animation(pixbuf);
-			g_object_unref(pixbuf);
-			gtk_widget_show(icon);
-			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
+			if(pixbuf){
+				icon = gtk_image_new_from_animation(pixbuf);
+				gtk_widget_show(icon);
+				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
+			}
 
 			c += smilelen;
 			pos += smilelen;
