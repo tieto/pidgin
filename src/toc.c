@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1122 $"
+#define REVISION "gaim:$Revision: 1123 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -527,8 +527,8 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			struct file_transfer *ft;
 
 			for (i = 0; i < 4; i++) {
-				sscanf(strtok(NULL, ":"), "%d", unk + i);
-				if (unk[1] == 10001) break;
+				sscanf(strtok(NULL, ":"), "%d", &unk[i]);
+				if (unk[i] == 10001) break;
 				messages[i] = frombase64(strtok(NULL, ":"));
 			}
 			tmp = frombase64(strtok(NULL, ":"));
