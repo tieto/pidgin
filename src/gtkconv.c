@@ -109,10 +109,6 @@ static char nick_colors[][8] = {
 
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
 
-#define SCALE(x) \
-	((gdk_pixbuf_animation_get_width(x) <= 48 &&  gdk_pixbuf_animation_get_height(x) <= 48) ? 48 : \
-	 (gdk_pixbuf_animation_get_width(x) > 75 && gdk_pixbuf_animation_get_height(x) > 75) ? 96 : 50)
-
 typedef struct
 {
 	GtkWidget *window;
@@ -2276,17 +2272,47 @@ update_tab_icon(GaimConversation *conv)
 	}
 }
 
+static void
+get_icon_scale_size(GdkPixbufAnimation *icon, GaimBuddyIconSpec *spec, int *width, int *height)
+{
+	*width = gdk_pixbuf_animation_get_width(icon);
+	*height = gdk_pixbuf_animation_get_height(icon);
+
+	/* this should eventually get smarter about preserving the aspect
+	 * ratio when scaling, but gimmie a break, I just woke up */
+	if(spec && spec->scale_rules & GAIM_ICON_SCALE_DISPLAY) {
+		if(*width < spec->min_width)
+			*width = spec->min_width;
+		else if(*width > spec->max_width)
+			*width = spec->max_width;
+
+		if(*height < spec->min_height)
+			*height = spec->min_height;
+		else if(*width  > spec->max_height)
+			*height = spec->max_height;
+	}
+
+	/* and now for some arbitrary sanity checks */
+	if(*width > 100)
+		*width = 100;
+	if(*height > 100)
+		*height = 100;
+}
+
 static gboolean
 redraw_icon(gpointer data)
 {
 	GaimConversation *conv = (GaimConversation *)data;
 	GaimGtkConversation *gtkconv;
+	GaimAccount *account;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	GdkPixbuf *buf;
 	GdkPixbuf *scale;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 	gint delay;
+	int scale_width, scale_height;
 
 	if (!g_list_find(gaim_get_ims(), conv)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "gtkconv",
@@ -2296,14 +2322,21 @@ redraw_icon(gpointer data)
 	}
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	account = gaim_conversation_get_account(conv);
+	if(account && account->gc)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
+	get_icon_scale_size(gtkconv->u.im->anim, prpl_info ? &prpl_info->icon_spec :
+			NULL, &scale_width, &scale_height);
+
+	/* this code is ugly, and scares me */
 	scale = gdk_pixbuf_scale_simple(buf,
-		MAX(gdk_pixbuf_get_width(buf) * SCALE(gtkconv->u.im->anim) /
+		MAX(gdk_pixbuf_get_width(buf) * scale_width /
 		    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),
-		MAX(gdk_pixbuf_get_height(buf) * SCALE(gtkconv->u.im->anim) /
+		MAX(gdk_pixbuf_get_height(buf) * scale_height /
 		    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
 		GDK_INTERP_NEAREST);
 
@@ -5405,7 +5438,10 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GdkPixbuf *scale;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
-	int sf = 0;
+	int scale_width, scale_height;
+
+	GaimAccount *account;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	GaimButtonStyle button_type;
 
@@ -5414,6 +5450,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_IM);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	account = gaim_conversation_get_account(conv);
+	if(account && account->gc)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 	remove_icon(gtkconv);
 
@@ -5498,11 +5537,12 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			start_anim(NULL, conv);
 	}
 
-	sf = SCALE(gtkconv->u.im->anim);
+	get_icon_scale_size(gtkconv->u.im->anim, prpl_info ? &prpl_info->icon_spec :
+			NULL, &scale_width, &scale_height);
 	scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * sf /
+				MAX(gdk_pixbuf_get_width(buf) * scale_width /
 				    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * sf /
+				MAX(gdk_pixbuf_get_height(buf) * scale_height /
 				    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
 				GDK_INTERP_NEAREST);
 
@@ -5536,7 +5576,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixmap(pm, bm);
-	gtk_widget_set_size_request(gtkconv->u.im->icon, sf, sf);
+	gtk_widget_set_size_request(gtkconv->u.im->icon, scale_width, scale_height);
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
 

@@ -451,13 +451,16 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 	GdkPixbufFormat *format;
 	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(account->protocol_id));
 	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
-      
+
 	format = gdk_pixbuf_get_file_info (path, &width, &height);
 	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
 	if (str_array_match(pixbuf_formats, prpl_formats) &&                                 /* This is an acceptable format AND */
-	    ((prpl_info->icon_spec.width > 0 && prpl_info->icon_spec.height > 0) ||            /* The prpl doesn't care about size OR*/
-	     (prpl_info->icon_spec.width == width && prpl_info->icon_spec.height == height))) { /* The icon is the correct size */
+		 (!(prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) ||                   /* The prpl doesn't scale before it sends OR */
+		  (prpl_info->icon_spec.min_width <= width &&
+		   prpl_info->icon_spec.max_width >= width &&
+		   prpl_info->icon_spec.min_height <= height &&
+		   prpl_info->icon_spec.max_height >= height))) {                                  /* The icon is the correct size */
 #endif
 		gaim_account_set_buddy_icon(account, path);
 #if GTK_CHECK_VERSION(2,4,0)
@@ -469,8 +472,21 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 		char *random   = g_strdup_printf("%x", g_random_int());
 		const char *dirname = gaim_buddy_icons_get_cache_dir();
 		char *filename = g_build_filename(dirname, random, NULL);
-		if (prpl_info->icon_spec.width > 0 && prpl_info->icon_spec.height > 0) {
-			scale = gdk_pixbuf_scale_simple (pixbuf, prpl_info->icon_spec.width, prpl_info->icon_spec.height, GDK_INTERP_HYPER);
+		if (!error && prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) {
+			int new_width = gdk_pixbuf_get_width(pixbuf);
+			int new_height = gdk_pixbuf_get_height(pixbuf);
+
+			if(new_width > prpl_info->icon_spec.max_width)
+				new_width = prpl_info->icon_spec.max_width;
+			else if(new_width < prpl_info->icon_spec.min_width)
+				new_width = prpl_info->icon_spec.min_width;
+			if(new_height > prpl_info->icon_spec.max_height)
+				new_height = prpl_info->icon_spec.max_height;
+			else if(new_height < prpl_info->icon_spec.min_height)
+				new_height = prpl_info->icon_spec.min_height;
+
+			scale = gdk_pixbuf_scale_simple (pixbuf, new_width, new_height,
+					GDK_INTERP_HYPER);
 			gdk_pixbuf_unref(pixbuf);
 			pixbuf = scale;
 		}

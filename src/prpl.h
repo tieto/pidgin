@@ -100,6 +100,12 @@ typedef enum
 
 } GaimConvImFlags;
 
+typedef enum {
+	GAIM_ICON_SCALE_DISPLAY = 0x01,		/**< We scale the icon when we display it */
+	GAIM_ICON_SCALE_SEND = 0x02			/**< We scale the icon before we send it to the server */
+} GaimIconScaleRules;
+
+
 /**
  * A description of a Buddy Icon specification.  This tells Gaim what kind of image file
  * it should give this prpl, and what kind of image file it should expect back.
@@ -109,12 +115,15 @@ typedef struct {
 	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported. 
 					     * The core nor the prpl will actually check to see if the data it's given matches this, it's entirely
 					     * up to the UI to do what it wants */
-	int width;                          /**< The width of this icon  */
-	int height;                         /**< The height of this icon */
+	int min_width;                          /**< The minimum width of this icon  */
+	int min_height;                         /**< The minimum height of this icon */
+	int max_width;                          /**< The maximum width of this icon  */
+	int max_height;                         /**< The maximum height of this icon */
+	GaimIconScaleRules scale_rules;		/**< How to stretch this icon */
 } GaimBuddyIconSpec;
 
 /* This #define exists just to make it easier to fill out the buddy icon field in he prpl info struct for protocols that couldn't care less. */
-#define NO_BUDDY_ICONS {NULL, 0, 0}
+#define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0}
 
 #include "blist.h"
 #include "proxy.h"

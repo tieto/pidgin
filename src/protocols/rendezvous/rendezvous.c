@@ -638,19 +638,22 @@ static void init_plugin(GaimPlugin *plugin)
 	GaimAccountOption *option;
 	char hostname[255];
 
-	prpl_info.api_version		= GAIM_PRPL_API_VERSION;
-	prpl_info.options			= OPT_PROTO_NO_PASSWORD;
-	prpl_info.icon_spec.format	= "jpeg";
-	prpl_info.icon_spec.width	= 0;
-	prpl_info.icon_spec.height	= 0;
-	prpl_info.list_icon			= rendezvous_prpl_list_icon;
-	prpl_info.list_emblems		= rendezvous_prpl_list_emblems;
-	prpl_info.status_text		= rendezvous_prpl_status_text;
-	prpl_info.tooltip_text		= rendezvous_prpl_tooltip_text;
-	prpl_info.login				= rendezvous_prpl_login;
-	prpl_info.close				= rendezvous_prpl_close;
-	prpl_info.send_im			= rendezvous_prpl_send_im;
-	prpl_info.set_away			= rendezvous_prpl_set_away;
+	prpl_info.api_version			= GAIM_PRPL_API_VERSION;
+	prpl_info.options				= OPT_PROTO_NO_PASSWORD;
+	prpl_info.icon_spec.format		= "jpeg";
+	prpl_info.icon_spec.min_width	= 0;
+	prpl_info.icon_spec.min_height	= 0;
+	prpl_info.icon_spec.max_width	= 0;
+	prpl_info.icon_spec.max_height	= 0;
+	prpl_info.icon_spec.stretch		= 0;
+	prpl_info.list_icon				= rendezvous_prpl_list_icon;
+	prpl_info.list_emblems			= rendezvous_prpl_list_emblems;
+	prpl_info.status_text			= rendezvous_prpl_status_text;
+	prpl_info.tooltip_text			= rendezvous_prpl_tooltip_text;
+	prpl_info.login					= rendezvous_prpl_login;
+	prpl_info.close					= rendezvous_prpl_close;
+	prpl_info.send_im				= rendezvous_prpl_send_im;
+	prpl_info.set_away				= rendezvous_prpl_set_away;
 
 	if (gethostname(hostname, 255) != 0) {
 		gaim_debug_warning("rendezvous", "Error %d when getting host name.  Using \"localhost.\"\n", errno);

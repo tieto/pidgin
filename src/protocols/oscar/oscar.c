@@ -7150,7 +7150,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
 	NULL,
 	NULL,
-	{"jpeg,gif,bmp,ico", 50, 50},
+	{"jpeg,gif,bmp,ico", 48, 48, 50, 50, GAIM_ICON_SCALE_DISPLAY},
 	oscar_list_icon,
 	oscar_list_emblems,
 	oscar_status_text,
