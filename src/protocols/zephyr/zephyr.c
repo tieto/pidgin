@@ -365,21 +365,20 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
-			if ((b = gaim_find_buddy(zgc->account, user)) == NULL) {
+
+                        if ((b = gaim_find_buddy(zgc->account, user)) == NULL) {
 				char *e = strchr(user, '@');
-				if (e) *e = '\0';
+                                if(e && !g_ascii_strcasecmp(e+1,gaim_zephyr_get_realm()) ) {
+                                        *e = '\0';
+                                }
 				b = gaim_find_buddy(zgc->account, user);
-			}
-			if (!b) {
-				free(user);
-				return;
-			}
-			if (pending_zloc(b->name)) {
+                        }
+			if ((b && pending_zloc(b->name)) || pending_zloc(user) ) {
 				ZLocations_t locs;
 				int one = 1;
 				GString *str = g_string_new("");
-				g_string_append_printf(str, _("<b>User:</b> %s<br>"), b->name);
-				if (b->alias)
+				g_string_append_printf(str, _("<b>User:</b> %s<br>"), b?b->name:user);
+				if (b && b->alias)
 					g_string_append_printf(str, _("<b>Alias:</b> %s<br>"), b->alias);
 				if (!nlocs) {
 					g_string_append_printf(str, _("<br>Hidden or not logged-in"));
