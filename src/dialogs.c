@@ -1150,6 +1150,9 @@ static gboolean current_is_deny = FALSE;
 static GtkWidget *allow_list = NULL;
 static GtkWidget *block_list = NULL;
 
+static GtkListStore *block_store = NULL;
+static GtkListStore *allow_store = NULL;
+
 static void set_deny_mode(GtkWidget *w, int data)
 {
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
@@ -1188,7 +1191,10 @@ static void des_deny_opt(GtkWidget *d, gpointer e)
 	deny_opt_menu = NULL;
 	current_is_deny = FALSE;
 	allow_list = NULL;
+	allow_store = NULL;
+
 	block_list = NULL;
+	block_store = NULL;
 }
 
 static void set_deny_type()
@@ -1217,50 +1223,47 @@ static void set_deny_type()
 
 void build_allow_list()
 {
-	GtkWidget *label;
-	GtkWidget *list_item;
 	GSList *p;
+	GtkListStore *ls;
+	GtkTreeIter iter;
 
 	if (!current_is_deny)
 		return;
 
 	p = current_deny_gc->permit;
 
-	gtk_list_remove_items(GTK_LIST(allow_list), GTK_LIST(allow_list)->children);
+	gtk_list_store_clear(GTK_LIST_STORE(allow_store));
 
 	while (p) {
-		label = gtk_label_new(p->data);
-		list_item = gtk_list_item_new();
-		gtk_container_add(GTK_CONTAINER(list_item), label);
-		gtk_object_set_user_data(GTK_OBJECT(list_item), p->data);
-		gtk_widget_show(label);
-		gtk_container_add(GTK_CONTAINER(allow_list), list_item);
-		gtk_widget_show(list_item);
+		ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(allow_list)));
+
+		gtk_list_store_append(ls, &iter);
+		gtk_list_store_set(ls, &iter, 0, p->data, -1);
+
 		p = p->next;
 	}
 }
 
+
 void build_block_list()
 {
-	GtkWidget *label;
-	GtkWidget *list_item;
 	GSList *d;
+	GtkListStore *ls;
+	GtkTreeIter iter;
 
 	if (!current_is_deny)
 		return;
 
 	d = current_deny_gc->deny;
 
-	gtk_list_remove_items(GTK_LIST(block_list), GTK_LIST(block_list)->children);
+	gtk_list_store_clear(GTK_LIST_STORE(block_store));
 
 	while (d) {
-		label = gtk_label_new(d->data);
-		list_item = gtk_list_item_new();
-		gtk_container_add(GTK_CONTAINER(list_item), label);
-		gtk_object_set_user_data(GTK_OBJECT(list_item), d->data);
-		gtk_widget_show(label);
-		gtk_container_add(GTK_CONTAINER(block_list), list_item);
-		gtk_widget_show(list_item);
+		ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(block_list)));
+
+		gtk_list_store_append(ls, &iter);
+		gtk_list_store_set(ls, &iter, 0, d->data, -1);
+
 		d = d->next;
 	}
 }
@@ -1325,32 +1328,66 @@ static void pref_deny_add(GtkWidget *button, gboolean permit)
 	show_add_perm(current_deny_gc, NULL, permit);
 }
 
+
+gchar *find_permdeny_by_name(GSList *l, char *who) {
+	gchar *name;
+	
+	while (l) {
+		name = (gchar *)l->data;
+		if (!strcmp(name, who)) {
+			return name;
+		}
+		
+		l = l->next;
+	}
+
+	return NULL;
+}
+
 static void pref_deny_rem(GtkWidget *button, gboolean permit)
 {
 	GList *i;
-	char *who;
+	gchar *who;
+	GtkTreeIter iter;
+	GtkTreeModel *mod;
+	GtkTreeSelection *sel;
+
+	if (permit) {
+		mod = gtk_tree_view_get_model(GTK_TREE_VIEW(allow_list));
+		sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(allow_list));
+	} else {
+		mod = gtk_tree_view_get_model(GTK_TREE_VIEW(block_list));
+		sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(block_list));
+	}
+
+	if (gtk_tree_selection_get_selected(sel, NULL, &iter))
+		gtk_tree_model_get(GTK_TREE_MODEL(mod), &iter, 0, &who, -1);
+	else {
+		return;
+	}
 
 	if (permit && !allow_list)
 		return;
+
 	if (!permit && !block_list)
 		return;
 
-	if (permit)
-		i = GTK_LIST(allow_list)->selection;
-	else
-		i = GTK_LIST(block_list)->selection;
-
-	if (!i)
-		return;
-	who = gtk_object_get_user_data(GTK_OBJECT(i->data));
 	if (permit) {
-		current_deny_gc->permit = g_slist_remove(current_deny_gc->permit, who);
-		serv_rem_permit(current_deny_gc, who);
-		build_allow_list();
+		char *name = find_permdeny_by_name(current_deny_gc->permit, who);
+
+		if (name) {
+			current_deny_gc->permit = g_slist_remove(current_deny_gc->permit, name);
+			serv_rem_deny(current_deny_gc, who);
+			build_allow_list();
+		}
 	} else {
-		current_deny_gc->deny = g_slist_remove(current_deny_gc->deny, who);
-		serv_rem_deny(current_deny_gc, who);
-		build_block_list();
+		char *name = find_permdeny_by_name(current_deny_gc->deny, who);
+
+		if (name) {
+			current_deny_gc->deny = g_slist_remove(current_deny_gc->deny, name);
+			serv_rem_deny(current_deny_gc, who);
+			build_block_list();
+		}
 	}
 
 	do_export(current_deny_gc);
@@ -1389,7 +1426,175 @@ static void destroy_privacy() {
 	privacy_win = NULL;
 }
 
-void show_privacy_options()
+void show_privacy_options() {
+	GtkWidget *pwin;
+	GtkWidget *box;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *vbox;
+	GtkWidget *sw;
+	GtkWidget *bbox;
+	GtkWidget *button;
+	GtkWidget *sep;
+	GtkWidget *close_button;
+	GtkSizeGroup *sg1 = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+	GtkSizeGroup *sg2 = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+	GtkListStore *ls;
+	GtkWidget *list;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+
+	current_deny_gc = connections->data;	/* this is safe because this screen will only be
+						   available when there are connections */
+	current_is_deny = TRUE;
+
+	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, TRUE, TRUE);
+	gtk_window_set_role(GTK_WINDOW(pwin), "privacy");
+	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
+	g_signal_connect(GTK_OBJECT(pwin), "destroy", G_CALLBACK(destroy_privacy), NULL);
+	gtk_widget_realize(pwin);
+
+	gtk_widget_set_usize(pwin, 0, 400);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_add(GTK_CONTAINER(pwin), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("Changes to privacy settings take effect immediately."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_widget_show(label);
+
+	deny_conn_hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), deny_conn_hbox, FALSE, FALSE, 0);
+	gtk_widget_show(deny_conn_hbox);
+
+	label = gtk_label_new(_("Set privacy for:"));
+	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	deny_opt_menu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), deny_opt_menu, FALSE, FALSE, 5);
+	g_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy", G_CALLBACK(des_deny_opt), NULL);
+	gtk_widget_show(deny_opt_menu);
+
+	build_deny_menu();
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, TRUE, TRUE, 5);
+	gtk_widget_show(hbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	deny_type = deny_opt(_("Allow all users to contact me"), 1, vbox, NULL);
+	gtk_size_group_add_widget(sg1, deny_type);
+	deny_type = deny_opt(_("Allow only the users below"), 3, vbox, deny_type);
+	gtk_size_group_add_widget(sg1, deny_type);
+	deny_type = deny_opt(_("Allow only users on my buddy list"), 5, vbox, deny_type);
+	gtk_size_group_add_widget(sg1, deny_type);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_widget_show(sw);
+
+	allow_store = gtk_list_store_new(1, G_TYPE_STRING);
+	allow_list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(allow_store));
+
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(NULL, rend, "text", 0, NULL);
+	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(allow_list), col);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(allow_list), FALSE);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), allow_list);
+	gtk_widget_show(allow_list);
+
+	build_allow_list();
+
+	bbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(bbox);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_size_group_add_widget(sg2, button);
+	gtk_widget_show(button);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), (void *)TRUE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+	gtk_size_group_add_widget(sg2, button);
+	gtk_widget_show(button);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), (void *)TRUE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	label = gtk_label_new("");
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5); /* FIXME: Bad temporary hack */
+	
+	deny_type = deny_opt(_("Deny all users"), 2, vbox, deny_type);
+	gtk_size_group_add_widget(sg1, deny_type);
+	deny_type = deny_opt(_("Block the users below"), 4, vbox, deny_type);
+	gtk_size_group_add_widget(sg1, deny_type);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_widget_show(sw);
+
+	block_store = gtk_list_store_new(1, G_TYPE_STRING);
+	block_list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(block_store));
+
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(NULL, rend, "text", 0, NULL);
+	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(block_list), col);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(block_list), FALSE);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), block_list);
+	gtk_widget_show(block_list);
+
+	build_block_list();
+
+	bbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(bbox);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_size_group_add_widget(sg2, button);
+	gtk_widget_show(button);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), FALSE);	
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+	gtk_size_group_add_widget(sg2, button);
+	gtk_widget_show(button);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), FALSE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	hbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
+	gtk_widget_show(hbox);
+	close_button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_widget_show(close_button);
+	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 0);
+	g_signal_connect_swapped(GTK_OBJECT(close_button), "clicked", G_CALLBACK(gtk_widget_destroy), pwin);
+
+	gtk_widget_show(pwin);
+	
+}
+
+void show_privacy_options_old()
 {
 	GtkWidget *pwin;
 	GtkWidget *box;
@@ -2418,7 +2623,8 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 
 	const char *who;
 	char *name;
-
+	GtkTreeIter iter;
+	GtkListStore *ls;
 
 	who = gtk_entry_get_text(GTK_ENTRY(p->entry));
 
