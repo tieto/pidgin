@@ -42,11 +42,20 @@ guint winprefs_options=0;
 /*
  *  PROTOS
  */
-extern GtkWidget *gaim_button(const char*, guint*, int, GtkWidget*);
 
 /*
  *  CODE
  */
+
+static GtkWidget *wgaim_button(const char *text, guint *options, int option, GtkWidget *page) {
+	GtkWidget *button;
+	button = gtk_check_button_new_with_mnemonic(text);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (*options & option));
+	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
+	g_object_set_data(G_OBJECT(button), "options", options);
+	gtk_widget_show(button);
+	return button;
+}
 
 static void write_options(FILE *f) {
 	fprintf(f, "options {\n");
@@ -138,8 +147,8 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	/* IM Convo trans options */
-	vbox =  make_frame (ret, _("Startup"));
-	button = gaim_button(_("_Start Gaim on Windows startup"), &winprefs_options, OPT_WGAIM_AUTOSTART, vbox);
+	vbox = gaim_gtk_make_frame (ret, _("Startup"));
+	button = wgaim_button(_("_Start Gaim on Windows startup"), &winprefs_options, OPT_WGAIM_AUTOSTART, vbox);
 	/* Set initial value */
 	if(open_run_key(&hKey, KEY_QUERY_VALUE)) {
 		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "Gaim", 0, NULL, NULL, NULL)) {

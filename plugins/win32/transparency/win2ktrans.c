@@ -75,12 +75,21 @@ GList *window_list = NULL;
  *  PROTOS
  */
 BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags)=NULL;
-extern GtkWidget *gaim_button(const char*, guint*, int, GtkWidget*);
 static void save_trans_prefs();
 
 /*
  *  CODE
  */
+static GtkWidget *wgaim_button(const char *text, guint *options, int option, GtkWidget *page) {
+	GtkWidget *button;
+	button = gtk_check_button_new_with_mnemonic(text);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (*options & option));
+	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
+	g_object_set_data(G_OBJECT(button), "options", options);
+	gtk_widget_show(button);
+	return button;
+}
+
 /* Set window transparency level */
 void set_wintrans(GtkWidget *window, int trans) {
 	if(MySetLayeredWindowAttributes) {
@@ -168,12 +177,15 @@ static void gaim_new_conversation(char *who) {
 	GList *wl, *wl1;
 	GtkWidget *vbox=NULL;
 	GtkWidget *win=NULL;
-	struct gaim_gtk_window *gaimwin;
-	struct gaim_conversation *c;
+	GaimConversation *c;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
 
 	c = gaim_find_conversation(who);
-	gaimwin = GAIM_GTK_WINDOW(c->window);
-	win = gaimwin->window;
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+	win = gtkwin->window;
 
 	/* check prefs to see if we want trans */
 	if ((trans_options & OPT_WGAIM_IMTRANS) &&
@@ -390,8 +402,8 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	/* IM Convo trans options */
-	imtransbox = make_frame (ret, _("IM Conversation Windows"));
-	button = gaim_button(_("_IM window transparency"), &trans_options, OPT_WGAIM_IMTRANS, imtransbox);
+	imtransbox = gaim_gtk_make_frame (ret, _("IM Conversation Windows"));
+	button = wgaim_button(_("_IM window transparency"), &trans_options, OPT_WGAIM_IMTRANS, imtransbox);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_IMTRANS);
 
 	trans_box =  gtk_vbox_new(FALSE, 18);
@@ -401,7 +413,7 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gaim_gtk_toggle_sensitive),  trans_box);
 	
-	button = gaim_button(_("_Show slider bar in IM window"), &trans_options, OPT_WGAIM_SHOW_IMTRANS, trans_box);
+	button = wgaim_button(_("_Show slider bar in IM window"), &trans_options, OPT_WGAIM_SHOW_IMTRANS, trans_box);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_SHOW_IMTRANS);
 
 	gtk_box_pack_start(GTK_BOX(imtransbox), trans_box, FALSE, FALSE, 5);
@@ -426,11 +438,11 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	gtk_box_pack_start(GTK_BOX(trans_box), hbox, FALSE, FALSE, 5);
 	
 	/* Buddy List trans options */
-	bltransbox = make_frame (ret, _("Buddy List Window"));
-	button = gaim_button(_("_Keep Buddy List window on top"), &trans_options, OPT_WGAIM_BUDDYWIN_ONTOP, bltransbox);
+	bltransbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
+	button = wgaim_button(_("_Keep Buddy List window on top"), &trans_options, OPT_WGAIM_BUDDYWIN_ONTOP, bltransbox);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_BUDDYWIN_ONTOP);
 
-	button = gaim_button(_("_Buddy List window transparency"), &trans_options, OPT_WGAIM_BLTRANS, bltransbox);
+	button = wgaim_button(_("_Buddy List window transparency"), &trans_options, OPT_WGAIM_BLTRANS, bltransbox);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_BLTRANS);
 
 	trans_box =  gtk_vbox_new(FALSE, 18);
