@@ -2,7 +2,6 @@ Makefile
 Makefile.in
 Makefile.in.in
 ChangeLog
-POTFILES
 Rules-quot
 cat-id-tbl.c
 stamp-cat-id
