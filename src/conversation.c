@@ -2281,7 +2281,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), FALSE);
 	state_lock = 0;
 
-	if (c->is_chat) {
+	if (!c->is_chat) {
 		viewer = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
 		            			NULL, _("Show Log Viewer"), _("Viewer"),
 						viewer_p, GTK_SIGNAL_FUNC(conv_show_log), GINT_TO_POINTER(c->name));
