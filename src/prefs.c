@@ -1857,8 +1857,8 @@ static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 	}
 	g_free(dw);
 	dw = NULL;
+	save_prefs();
 	return FALSE;
-
 }
 
 static void build_debug()
