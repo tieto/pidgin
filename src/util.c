@@ -2384,14 +2384,21 @@ gaim_str_seconds_to_string(guint secs)
 	const char *prefix = "";
 	guint days, hrs, mins;
 
+	gstr = g_string_new("");
+
+	if (secs < 60)
+	{
+		g_string_append_printf(gstr, "%d %s", secs,
+							   ngettext("second", "seconds", secs));
+		return g_string_free(gstr, FALSE);
+	}
+
 	days = secs / (60 * 60 * 24);
 	secs = secs % (60 * 60 * 24);
 	hrs  = secs / (60 * 60);
 	secs = secs % (60 * 60);
 	mins = secs / 60;
 	secs = secs % 60;
-
-	gstr = g_string_new("");
 
 	if (days > 0)
 	{
