@@ -6009,7 +6009,7 @@ msgstr "Ícones de contatos"
 
 #: src/gtkprefs.c:994
 msgid "Enable buddy icon a_nimation"
-msgstr "Ativr animação nos ícones de contato"
+msgstr "Ativar animação nos ícones de contato"
 
 #: src/gtkprefs.c:998
 msgid "Show _logins in window"
