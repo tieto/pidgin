@@ -98,13 +98,15 @@ static void create_joinchat_menu(GtkWidget *box)
 
 	while (c) {
 		g = (struct gaim_connection *)c->data;
+		c = c->next;
+		if (!g->prpl->join_chat)
+			continue;
 		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, (*g->prpl->name)());
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), g);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(joinchat_choose), g);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		gtk_widget_show(opt);
-		c = c->next;
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
@@ -125,6 +127,21 @@ void join_chat()
 	GtkWidget *cancel;
 	GtkWidget *label;
 	GtkWidget *opt;
+	GSList *c = connections;
+	struct gaim_connection *gc = NULL;
+
+	while (c) {
+		gc = c->data;
+		if (gc->prpl->join_chat)
+			break;
+		gc = NULL;
+		c = c->next;
+	}
+	if (gc == NULL) {
+		do_error_dialog("You are not currently signed on with any protocols the have "
+				"the ability to chat.", "Unable to chat");
+		return;
+	}
 
 	if (!joinchat) {
 		joinchat = gtk_window_new(GTK_WINDOW_DIALOG);
