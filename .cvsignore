@@ -3,7 +3,6 @@ libtool
 config.status
 intl
 ABOUT-NLS
-VERSION
 compile
 config.guess
 config.sub
