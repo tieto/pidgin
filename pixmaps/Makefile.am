@@ -15,7 +15,7 @@ EXTRA_DIST = admin_icon.xpm aimicon.xpm \
 	gnome/penguin-offline.png gnome/penguin-online.png \
 	daemon-buddyadd.xpm daemon-buddychat.xpm daemon-buddydel.xpm \
 	daemon-im.xpm daemon-info.xpm daemon-permadd.xpm \
-	daemon-permdel.xpm daemon.xpm
+	daemon-permdel.xpm daemon.xpm fontface.xpm
 	
 if GNOMEAPPLET
 gnomesysconf = `@GNOME_CONFIG@ --sysconfdir`
