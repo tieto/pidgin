@@ -403,6 +403,7 @@ AC_OUTPUT([Makefile
 	   pixmaps/protocols/oscar/Makefile
 	   pixmaps/protocols/napster/Makefile
 	   pixmaps/protocols/jabber/Makefile
+	   pixmaps/protocols/icq/Makefile
 	   pixmaps/protocols/irc/Makefile
 	   pixmaps/protocols/gg/Makefile
 	   pixmaps/smileys/Makefile
