@@ -1918,6 +1918,64 @@ gaim_url_fetch(const char *url, gboolean full,
 	}
 }
 
+char *
+gaim_url_decode(const char *str)
+{
+	static char buf[BUF_LEN];
+	int i, j = 0;
+	char *bum;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	for (i = 0; i < strlen(str); i++) {
+		char hex[3];
+
+		if (str[i] != '%')
+			buf[j++] = str[i];
+		else {
+			strncpy(hex, str + ++i, 2);
+			hex[2] = '\0';
+
+			/* i is pointing to the start of the number */
+			i++;
+
+			/*
+			 * Now it's at the end and at the start of the for loop
+			 * will be at the next character.
+			 */
+			buf[j++] = strtol(hex, NULL, 16);
+		}
+	}
+
+	buf[j] = '\0';
+
+	if (!g_utf8_validate(buf, -1, (const char **)&bum))
+		*bum = '\0';
+
+	return buf;
+}
+
+char *
+gaim_url_encode(const char *str)
+{
+	static char buf[BUF_LEN];
+	int i, j = 0;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	for (i = 0; i < strlen(str); i++) {
+		if (isalnum(str[i]))
+			buf[j++] = str[i];
+		else {
+			sprintf(buf + j, "%%%02x", (unsigned char)str[i]);
+			j += 3;
+		}
+	}
+
+	buf[j] = '\0';
+
+	return buf;
+}
 
 /**************************************************************************
  * UTF8 String Functions

@@ -172,7 +172,7 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 
 		g_snprintf(outparams, sizeof(outparams), "AL %s %s",
 				   msn_user_get_passport(pa->user),
-				   msn_url_encode(msn_user_get_name(pa->user)));
+				   gaim_url_encode(msn_user_get_name(pa->user)));
 
 		if (msn_servconn_send_command(session->notification_conn,
 									  "ADD", outparams) <= 0) {
@@ -200,7 +200,7 @@ msn_cancel_add_cb(MsnPermitAdd *pa)
 
 		g_snprintf(outparams, sizeof(outparams), "BL %s %s",
 				   msn_user_get_passport(pa->user),
-				   msn_url_encode(msn_user_get_name(pa->user)));
+				   gaim_url_encode(msn_user_get_name(pa->user)));
 
 		if (msn_servconn_send_command(session->notification_conn,
 									  "ADD", outparams) <= 0) {
@@ -325,9 +325,9 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	size_t s;
 
 	username =
-		g_strdup(msn_url_encode(gaim_account_get_username(session->account)));
+		g_strdup(gaim_url_encode(gaim_account_get_username(session->account)));
 	password =
-		g_strdup(msn_url_encode(gaim_account_get_password(session->account)));
+		g_strdup(gaim_url_encode(gaim_account_get_password(session->account)));
 
 	request_str = g_strdup_printf(
 		"GET %s HTTP/1.1\r\n"
@@ -428,7 +428,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 			if ((error = strstr(buffer, "cbtxt=")) != NULL)
 				error += strlen("cbtxt=");
 
-			error = msn_url_decode(error);
+			error = gaim_url_decode(error);
 		}
 
 
@@ -600,7 +600,7 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	 */
 	if (!g_ascii_strcasecmp(params[1], "OK"))
 	{
-		const char *friendly = msn_url_decode(params[3]);
+		const char *friendly = gaim_url_decode(params[3]);
 
 		/* OK */
 
@@ -658,7 +658,7 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		g_free(challenge_data);
 
 #if 0
-		passport_str = g_strdup(msn_url_decode(params[3]));
+		passport_str = g_strdup(gaim_url_decode(params[3]));
 
 		for (c = passport_str; *c != '\0'; c++)
 		{
@@ -888,7 +888,7 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	list     = params[1];
 	passport = params[3];
-	friend   = msn_url_decode(params[4]);
+	friend   = gaim_url_decode(params[4]);
 
 	if (param_count >= 6)
 		group_id = params[5];
@@ -939,7 +939,7 @@ adg_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	group_id = atoi(params[3]);
 
-	group_name = msn_url_decode(params[2]);
+	group_name = gaim_url_decode(params[2]);
 
 	group = msn_group_new(session, group_id, group_name);
 
@@ -1022,11 +1022,11 @@ bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 			}
 		}
 		else if (!strcmp(type, "PHH"))
-			msn_user_set_home_phone(user, msn_url_decode(value));
+			msn_user_set_home_phone(user, gaim_url_decode(value));
 		else if (!strcmp(type, "PHW"))
-			msn_user_set_work_phone(user, msn_url_decode(value));
+			msn_user_set_work_phone(user, gaim_url_decode(value));
 		else if (!strcmp(type, "PHM"))
-			msn_user_set_mobile_phone(user, msn_url_decode(value));
+			msn_user_set_mobile_phone(user, gaim_url_decode(value));
 	}
 
 	return TRUE;
@@ -1057,7 +1057,7 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	state    = params[1];
 	passport = params[2];
-	friend   = msn_url_decode(params[3]);
+	friend   = gaim_url_decode(params[3]);
 
 	user = msn_users_find_with_passport(session->users, passport);
 
@@ -1067,7 +1067,7 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (session->protocol_ver >= 9 && param_count == 6)
 	{
-		msnobj = msn_object_new_from_string(msn_url_decode(params[5]));
+		msnobj = msn_object_new_from_string(gaim_url_decode(params[5]));
 		msn_user_set_object(user, msnobj);
 	}
 
@@ -1121,13 +1121,13 @@ lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (session->protocol_ver >= 8)
 	{
 		group_id = atoi(params[0]);
-		name = msn_url_decode(params[1]);
+		name = gaim_url_decode(params[1]);
 	}
 	else
 	{
 		num_groups = atoi(params[3]);
 		group_id   = atoi(params[4]);
-		name       = msn_url_decode(params[5]);
+		name       = gaim_url_decode(params[5]);
 
 		if (num_groups == 0)
 			return TRUE;
@@ -1164,7 +1164,7 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 		int list_op;
 
 		passport   = params[0];
-		friend     = msn_url_decode(params[1]);
+		friend     = gaim_url_decode(params[1]);
 		list_op    = atoi(params[2]);
 		group_nums = params[3];
 
@@ -1332,7 +1332,7 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 		if (num_users > 0)
 		{
 			passport  = params[5];
-			friend    = msn_url_decode(params[6]);
+			friend    = gaim_url_decode(params[6]);
 		}
 
 		if (session->syncing_lists && session->lists_synced)
@@ -1478,7 +1478,7 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	state    = params[0];
 	passport = params[1];
-	friend   = msn_url_decode(params[2]);
+	friend   = gaim_url_decode(params[2]);
 
 	user = msn_users_find_with_passport(session->users, passport);
 
@@ -1488,7 +1488,7 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (session->protocol_ver >= 9 && param_count == 5)
 	{
-		msnobj = msn_object_new_from_string(msn_url_decode(params[4]));
+		msnobj = msn_object_new_from_string(gaim_url_decode(params[4]));
 		msn_user_set_object(user, msnobj);
 	}
 
@@ -1538,11 +1538,11 @@ prp_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (param_count == 4) {
 		if (!strcmp(type, "PHH"))
-			msn_user_set_home_phone(session->user, msn_url_decode(value));
+			msn_user_set_home_phone(session->user, gaim_url_decode(value));
 		else if (!strcmp(type, "PHW"))
-			msn_user_set_work_phone(session->user, msn_url_decode(value));
+			msn_user_set_work_phone(session->user, gaim_url_decode(value));
 		else if (!strcmp(type, "PHM"))
-			msn_user_set_mobile_phone(session->user, msn_url_decode(value));
+			msn_user_set_mobile_phone(session->user, gaim_url_decode(value));
 	}
 
 	return TRUE;
@@ -1556,7 +1556,7 @@ rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimConnection *gc = session->account->gc;
 	char *friend;
 
-	friend = msn_url_decode(params[3]);
+	friend = gaim_url_decode(params[3]);
 
 	gaim_connection_set_display_name(gc, friend);
 
@@ -1574,7 +1574,7 @@ reg_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	group_id = atoi(params[2]);
 
-	group_name = msn_url_decode(params[3]);
+	group_name = gaim_url_decode(params[3]);
 
 	group = msn_groups_find_with_id(session->groups, group_id);
 
@@ -1637,7 +1637,7 @@ rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 			friendly = passport;
 
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   passport, msn_url_encode(friendly),
+				   passport, gaim_url_encode(friendly),
 				   msn_group_get_id(group));
 
 		if (!msn_servconn_send_command(session->notification_conn,

@@ -72,7 +72,7 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	}
 
 	g_snprintf(outparams, sizeof(outparams), "%s %s",
-			   gaim_account_get_username(account), msn_url_encode(alias));
+			   gaim_account_get_username(account), gaim_url_encode(alias));
 
 	g_free(alias);
 
@@ -94,7 +94,7 @@ msn_set_prp(GaimConnection *gc, const char *type, const char *entry)
 		g_snprintf(outparams, sizeof(outparams), "%s  ", type);
 	else
 		g_snprintf(outparams, sizeof(outparams), "%s %s", type,
-				   msn_url_encode(entry));
+				   gaim_url_encode(entry));
 
 	if (!msn_servconn_send_command(session->notification_conn,
 								   "PRP", outparams)) {
@@ -1066,7 +1066,7 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 
 	if (new_group == NULL) {
 		g_snprintf(outparams, sizeof(outparams), "%s 0",
-				   msn_url_encode(new_group_name));
+				   gaim_url_encode(new_group_name));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADG", outparams)) {
@@ -1086,7 +1086,7 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   who, msn_url_encode(friendly),
+				   who, gaim_url_encode(friendly),
 				   msn_group_get_id(new_group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
@@ -1133,7 +1133,7 @@ msn_rename_group(GaimConnection *gc, const char *old_group_name,
 
 		g_snprintf(outparams, sizeof(outparams), "%d %s 0",
 				   msn_group_get_id(old_group),
-				   msn_url_encode(new_group_name));
+				   gaim_url_encode(new_group_name));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "REG", outparams)) {
@@ -1145,7 +1145,7 @@ msn_rename_group(GaimConnection *gc, const char *old_group_name,
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "%s 0",
-				   msn_url_encode(new_group_name));
+				   gaim_url_encode(new_group_name));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADG", outparams)) {

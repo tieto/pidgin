@@ -25,6 +25,8 @@
 
 #include "prpl.h"
 
+#define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
+
 enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_LOGON = 1,
 	YAHOO_SERVICE_LOGOFF,
@@ -83,7 +85,8 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_CHATADDINVITE = 0x9d,
 	YAHOO_SERVICE_CHATLOGOUT = 0xa0,
 	YAHOO_SERVICE_CHATPING,
-	YAHOO_SERVICE_COMMENT = 0xa8
+	YAHOO_SERVICE_COMMENT = 0xa8,
+	YAHOO_SERVICE_WEBLOGIN = 0x0226
 };
 
 enum yahoo_status {
@@ -100,6 +103,7 @@ enum yahoo_status {
 	YAHOO_STATUS_INVISIBLE = 12,
 	YAHOO_STATUS_CUSTOM = 99,
 	YAHOO_STATUS_IDLE = 999,
+	YAHOO_STATUS_WEBLOGIN = 0x5a55aa55,
 	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
 	YAHOO_STATUS_TYPING = 0x16
 };
@@ -117,6 +121,7 @@ struct yahoo_data {
 	gboolean chat_online;
 	gboolean in_chat;
 	char *chat_name;
+	char *auth;
 };
 
 struct yahoo_pair {

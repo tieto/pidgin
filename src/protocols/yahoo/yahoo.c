@@ -39,6 +39,8 @@
 #include "yahoochat.h"
 #include "md5.h"
 
+#define YAHOO_WEBMESSENGER
+
 extern char *yahoo_crypt(const char *, const char *);
 
 typedef struct
@@ -56,7 +58,11 @@ typedef struct
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 
+#ifdef YAHOO_WEBMESSENGER
+#define YAHOO_PROTO_VER 0x0065
+#else
 #define YAHOO_PROTO_VER 0x000b
+#endif
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
@@ -1490,7 +1496,6 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 	default:
 		msg = _("Unknown error.");
 	}
-
 	gaim_connection_error(gc, msg);
 }
 
@@ -1725,6 +1730,188 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
+#ifdef YAHOO_WEBMESSENGER
+static void yahoo_got_web_connected(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimConnection *gc = data;
+	struct yahoo_data *yd;
+	struct yahoo_packet *pkt;
+
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
+		close(source);
+		return;
+	}
+
+	if (source < 0) {
+		gaim_connection_error(gc, _("Unable to connect"));
+		return;
+	}
+
+	yd = gc->proto_data;
+	yd->fd = source;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, 0);
+
+	yahoo_packet_hash(pkt, 0, gaim_normalize(gaim_account_get_username(gaim_connection_get_account(gc))));
+	yahoo_packet_hash(pkt, 1, gaim_normalize(gaim_account_get_username(gaim_connection_get_account(gc))));
+	yahoo_packet_hash(pkt, 6, yd->auth);
+	yahoo_send_packet(yd, pkt);
+
+	yahoo_packet_free(pkt);
+	g_free(yd->auth);
+	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
+}
+
+static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimConnection *gc = data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	struct yahoo_data *yd = gc->proto_data;
+	char buf[1024], buf2[256], *i = buf, *r = buf2;
+	int len, o = 0;
+
+	len = read(source, buf, sizeof(buf));
+
+	if (len <= 0  || strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302"))) {
+		gaim_connection_error(gc, _("Unable to read"));
+		return;
+	}
+	
+	while ((i = strstr(i, "Set-Cookie: ")) && 0 < 2) {
+		i += strlen("Set-Cookie: "); 
+		for (;*i != ';'; r++, i++) {
+			*r = *i;
+		}
+		*r=';';
+		r++;
+		*r=' ';
+		r++;
+		o++;
+	}
+	/* Get rid of that "; " */
+	*(r-2) = '\0';
+	yd->auth = g_strdup(buf2);
+	gaim_input_remove(gc->inpa);
+	close(source);
+
+	/* Now we have our cookies to login with.  I'll go get the milk. */
+	if (gaim_proxy_connect(account, "wcs1.msg.sc5.yahoo.com",
+			       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+			       yahoo_got_web_connected, gc) != 0) {
+		gaim_connection_error(gc, _("Connection problem"));
+		return;
+	}	
+}
+
+static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimConnection *gc = data;
+	struct yahoo_data *yd = gc->proto_data;
+	if (source < 0) {
+		gaim_connection_error(gc, _("Unable to connect"));
+		return;
+	}
+	write(source, yd->auth, strlen(yd->auth));
+	g_free(yd->auth);
+	gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, yahoo_web_pending, gc);
+}
+
+static void yahoo_login_page_hash_iter(const char *key, const char *val, GString *url)
+{
+	if (!strcmp(key, "passwd"))
+		return;
+	url = g_string_append_c(url, '&');
+	url = g_string_append(url, key);
+	url = g_string_append_c(url, '=');
+	if (!strcmp(key, ".save") || !strcmp(key, ".js"))
+		url = g_string_append_c(url, '1');
+	else if (!strcmp(key, ".challenge"))
+		url = g_string_append(url, val);
+	else
+		url = g_string_append(url, gaim_url_encode(val));
+}
+
+static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
+{
+	GHashTable *hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	const char *c = buf, *d;
+	char name[64], value[64];
+	while ((c < (buf + len)) && (c = strstr(c, "<input "))) {
+		c = strstr(c, "name=\"") + strlen("name=\"");
+		for (d = name; *c!='"'; c++, d++) 
+			*d = *c;
+		*d = '\0';
+		d = strstr(c, "value=\"") + strlen("value=\"");
+		if (strchr(c, '>') < d)
+			break;
+		for (c = d, d = value; *c!='"'; c++, d++)
+			*d = *c;
+		*d = '\0';
+		g_hash_table_insert(hash, g_strdup(name), g_strdup(value));
+	}
+	return hash;
+}
+
+static void yahoo_login_page_cb(GaimConnection *gc, const char *buf, size_t len)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+	struct yahoo_data *yd = gc->proto_data;
+	const char *sn = gaim_account_get_username(account);
+	const char *pass = gaim_account_get_password(account);
+
+	GHashTable *hash = yahoo_login_page_hash(buf, len);
+	GString *url = g_string_new("GET /config/login?login=");
+	url = g_string_append(url, sn);
+	url = g_string_append(url, "&passwd=");
+	
+	char md5[33], *hashp = md5, *chal;
+	int i;
+	md5_byte_t result[16];
+	md5_state_t ctx;
+	md5_init(&ctx);
+	md5_append(&ctx, pass, strlen(pass));
+	md5_finish(&ctx, result);
+	for (i = 0; i < 16; ++i) {
+		g_snprintf(hashp, 3, "%02x", result[i]);
+		hashp += 2;
+	}
+	chal = g_strconcat(md5, g_hash_table_lookup(hash, ".challenge"), NULL);
+	md5_init(&ctx);
+	md5_append(&ctx, chal, strlen(chal));
+	md5_finish(&ctx, result);
+	hashp = md5;
+	for (i = 0; i < 16; ++i) {
+		g_snprintf(hashp, 3, "%02x", result[i]);
+		hashp += 2;
+	}
+	/*
+	md5_init(&ctx);
+	md5_append(&ctx, md5, strlen(md5));
+	md5_finish(&ctx, result);
+	hashp = md5;
+	for (i = 0; i < 16; ++i) {
+		g_snprintf(hashp, 3, "%02x", result[i]);
+		hashp += 2;
+	}
+	*/
+	g_free(chal);
+	
+	url = g_string_append(url, md5);
+	g_hash_table_foreach(hash, yahoo_login_page_hash_iter, url);
+	
+	url = g_string_append(url, "&.hash=1&.md5=1 HTTP/1.1\r\n"
+			      "Host: login.yahoo.com\r\n\r\n");
+	g_hash_table_destroy(hash);
+	
+	yd->auth = g_string_free(url, FALSE);
+	if (gaim_proxy_connect(account, "login.yahoo.com", 80, yahoo_got_cookies, gc) != 0) {
+		gaim_connection_error(gc, _("Connection problem"));
+		return;
+	}
+}
+
+#endif /* YAHOO_WEBMESSENGER */
+
 static void yahoo_login(GaimAccount *account) {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
@@ -1738,12 +1925,16 @@ static void yahoo_login(GaimAccount *account) {
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
+#ifndef YAHOO_WEBMESSENGER
 	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
 			  gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
 			  yahoo_got_connected, gc) != 0) {
 		gaim_connection_error(gc, _("Connection problem"));
 		return;
 	}
+#else
+	gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE, yahoo_login_page_cb, gc);
+#endif
 
 }
 

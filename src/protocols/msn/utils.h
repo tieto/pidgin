@@ -23,28 +23,6 @@
 #define _MSN_UTILS_H_
 
 /**
- * Decodes a URL into a plain string.
- *
- * This will change hex codes and such to their ascii equivalents.
- *
- * @param str The string to translate.
- *
- * @return The resulting string.
- */
-char *msn_url_decode(const char *str);
-
-/**
- * Encodes a URL into an escaped string.
- *
- * This will change non-alphanumeric characters to hex codes.
- *
- * @param str The string to translate.
- *
- * @return The resulting string.
- */
-char *msn_url_encode(const char *str);
-
-/**
  * Parses the MSN message formatting into a format compatible with Gaim.
  *
  * @param mime     The mime header with the formatting.

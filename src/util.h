@@ -454,9 +454,29 @@ void gaim_url_fetch(const char *url, gboolean full,
 					const char *user_agent, gboolean http11,
 					void (*cb)(void *, const char *, size_t),
 					void *data);
+/**
+ * Decodes a URL into a plain string.
+ *
+ * This will change hex codes and such to their ascii equivalents.
+ *
+ * @param str The string to translate.
+ *
+ * @return The resulting string.
+ */	
+char *gaim_url_decode(const char *str);
+
+/**
+ * Encodes a URL into an escaped string.
+ *
+ * This will change non-alphanumeric characters to hex codes.
+ *
+ * @param str The string to translate.
+ *
+ * @return The resulting string.
+ */
+char *gaim_url_encode(const char *str);
 
 /*@}*/
-
 
 /**************************************************************************
  * UTF8 String Functions
