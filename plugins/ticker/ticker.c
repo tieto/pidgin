@@ -261,7 +261,7 @@ G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
 G_MODULE_EXPORT void gaim_plugin_remove() {
 	while(tickerbuds) {
 		g_free(tickerbuds->data);
-		g_list_delete_link(tickerbuds, tickerbuds);
+		tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
 	}
 	gtk_widget_destroy(tickerwindow);
 }
