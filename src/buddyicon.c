@@ -75,7 +75,10 @@ gaim_buddy_icon_new(GaimAccount *account, const char *username,
 void
 gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 {
+	GaimConversation *conv;
+	GaimAccount *account;
 	GHashTable *icon_cache;
+	const char *username;
 
 	g_return_if_fail(icon != NULL);
 
@@ -85,6 +88,14 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 
 		return;
 	}
+
+	account  = gaim_buddy_icon_get_account(icon);
+	username = gaim_buddy_icon_get_username(icon);
+
+	conv = gaim_find_conversation_with_account(username, account);
+
+	if (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		gaim_conv_im_set_icon(GAIM_CONV_IM(conv), NULL);
 
 	icon_cache = g_hash_table_lookup(account_cache,
 									 gaim_buddy_icon_get_account(icon));
