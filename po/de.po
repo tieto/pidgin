@@ -915,7 +915,7 @@ msgstr "Holländisch; Flämisch"
 
 #: src/about.c:165
 msgid "Portuguese-Brazil"
-msgstr "Portugisich-Brasilien"
+msgstr "Prtugiesisch-Brasilien"
 
 #: src/about.c:166
 msgid "Romanian"
