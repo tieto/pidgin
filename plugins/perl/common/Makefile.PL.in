@@ -4,10 +4,10 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'Gaim',
-    'VERSION_FROM'	=> 'Gaim.pm', # finds $VERSION
+    'VERSION_FROM'	=> '@srcdir@/Gaim.pm', # finds $VERSION
     'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => 'Gaim.pm', # retrieve abstract from module
+      (ABSTRACT_FROM => '@srcdir@/Gaim.pm', # retrieve abstract from module
        AUTHOR     => 'Christian Hammond <chipx86@gnupdate.org>') : ()),
     'LIBS'		=> [''], # e.g., '-lm'
     'DEFINE'		=> '', # e.g., '-DHAVE_SOMETHING'
