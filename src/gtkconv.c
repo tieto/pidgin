@@ -2235,8 +2235,6 @@ update_send_as_selection(GaimWindow *win)
 	account = gaim_conversation_get_account(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 
-	g_return_val_if_fail(account != NULL, FALSE);
-
 	if (gtkwin->menu.send_as == NULL)
 		return FALSE;
 
