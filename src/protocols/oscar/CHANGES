@@ -1,6 +1,91 @@
 
 No release numbers
 ------------------
+ - Sat Sep  8 21:26:27 PDT 2001
+  - Minor bug directim_connect
+
+ - Sat Sep  8 20:18:34 PDT 2001
+  - Split up the ICBM Channel 2 handlers a bit more
+  - Add a stub parser for recieving buddy lists.  It will stay that way until
+      someone decides on a good API for passing lists like this to the client.
+      In case someone does, the same standard will be used for setbuddylist and
+      the as yet nonexistant support for server-side buddy lists.
+  - Make infochange work again. I still don't like it, but I don't want to 
+      fix it.
+
+ - Sat Sep  8 19:05:05 PDT 2001
+  - Redo ICQ login
+  - Fix search by email (oops).
+
+ - Sat Sep  8 17:07:09 PDT 2001
+  - Fix directim so you can do it more than once without crashing.
+   - This removes the connect/disconnect callbacks.  They were pointless, as
+       you can get the same information at a better spot by looking for when
+       aim_getcommand returns -1, just like is done for FLAP connections.
+   - (This was causing aim_conn_kill to be called twice for the same connect,
+       once in the client callback, and once more when aim_getcommand returned
+       the -1).
+  - Add aim_conn_(close|kill)_rend().  This is for destroying the cookie and
+     the internal data sections in one spot.
+  - Fix a bug in aim_connrst (and hence aim_logout()) that caused intdata/priv
+     to not be freed in those cases.  Evil.
+
+ - Sat Sep  8 07:32:27 PDT 2001
+  - Clean up ft.c slightly.  Direct IM now works.  In both directions.
+   - This could still use a lot more help.  It should use bstreams more.
+
+ - Sat Sep  8 00:55:46 PDT 2001
+  - Chatnav loop fix. (Err. I shouldn't code when I'm that tired.)
+  - Remove some things from BUGS
+  - Remove USE_MACROS from faimconfig.h.  Not used, and frivelous when it was.
+
+ - Fri Sep  7 21:18:51 PDT 2001
+  - Make icon field names uniform
+  - Add AIM_IMFLAGS_CUSTOMFEATURES.  This allows the client to send/recieve
+     the field in IMs that show client information.
+    - This can be used to identify other open source OSCAR clients, if any
+        one is interested.
+  - Increase the size of args->icbmflags to 32bits
+  - Make sure that extended-only flags are not set for aim_send_im()
+
+ - Fri Sep  7 19:59:43 PDT 2001
+  - Fix buddyicons. Yay! (checksums are 32bits all the time. duh.)
+
+ - Mon Sep  3 18:48:26 PDT 2001
+  - Reformat everything to use real tabs (and to my latest coding style)
+  - Abstract out the numerical data types to fu8/16/32_t for portability.
+  - AIM_FRAMETYPE_OSCAR -> AIM_FRAMETYPE_FLAP.  This makes more sense.
+  - aim_conn_t's FLAP sequence number was a signed int.  Oops.
+  - Get rid of the 'struct' on all types suffixed with _t.  That's been 
+     annoying me for a while.  They're all real typedefs now.
+     - Yes, client people are going to be rather annoyed by this.  But it 
+         doesn't stop there.  Keep reading.
+  - Make the 'struct aim_rxcblist_t' type local to rxhandlers.c.
+  - Combine the command_tx_struct and command_rx_struct into aim_frame_t.
+     - Mostly aim_frame_t is command_rx_struct.  For command_tx_struct, the
+         same structure is used, except where ->sent was, ->handled is now 
+         used.
+     - This makes things a lot easier, everywhere.
+     - Get rid of ->lock.  Pointless.  If libfaim is ever preemptible, it 
+         has much more important problems than that.
+  - Welcome to aim_bstream_t.  No more direct buffer accesses.  Anywhere.
+     - In fact I plan on getting rid of the aimutil macros completly.
+     - This isn't complete yet.  It will be better later.  Believe me.  Maybe
+         even make more sense.  
+     - More advanced and configurable boundschecking is coming, too.
+  - Clean up lots of stuff, everywhere.
+  - Rearrange the implementation of the TLV functions, saving lots of code.
+      - I'm rather pleased with the way some things got implemented with this,
+          particularly in places where TLVs contain TLVs.
+  - Get rid of aim_puttlv_() functions.  Those were gross. Use tlvchains.
+  - XOR login is temporarily broken.  I'll fix it someday. ("Someone" needs it.)
+  - Fix the return values of most everything -- OSCAR functions should all 
+      return 0 on sucess, negative errno on failure.
+  - There are several things braced with #ifdef MID_REWROTE_ALL_THE_CRAP.
+      Consider that code broken and nonfunctional for now.
+  - I think I may have broken buddy icons.  Remind me to fix that.
+  - Renovate faimtest substantially.  Reformat, split up, update to new types.
+
  - Wed Aug 29 16:59:24 PDT 2001
   - Pass up entire icon triplet (checksum/length/timestamp) in all cases
      that it is recieved.

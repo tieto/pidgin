@@ -18,68 +18,62 @@
 /*
  * Called from aim_session_init() to initialize the hash.
  */
-faim_internal void aim_initsnachash(struct aim_session_t *sess)
+faim_internal void aim_initsnachash(aim_session_t *sess)
 {
-  int i;
+	int i;
 
-  for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++) {
-    sess->snac_hash[i] = NULL;
-    faim_mutex_init(&sess->snac_hash_locks[i]);
-  }
+	for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++) {
+		sess->snac_hash[i] = NULL;
+		faim_mutex_init(&sess->snac_hash_locks[i]);
+	}
 
-  return;
+	return;
 }
 
-faim_internal unsigned long aim_cachesnac(struct aim_session_t *sess,
-					  const unsigned short family,
-					  const unsigned short type,
-					  const unsigned short flags,
-					  const void *data, const int datalen)
+faim_internal aim_snacid_t aim_cachesnac(aim_session_t *sess, const fu16_t family, const fu16_t type, const fu16_t flags, const void *data, const int datalen)
 {
-  struct aim_snac_t snac;
+	aim_snac_t snac;
 
-  snac.id = sess->snac_nextid++;
-  snac.family = family;
-  snac.type = type;
-  snac.flags = flags;
+	snac.id = sess->snacid_next++;
+	snac.family = family;
+	snac.type = type;
+	snac.flags = flags;
 
-  if (datalen) {
-    if (!(snac.data = malloc(datalen)))
-      return 0; /* er... */
-    memcpy(snac.data, data, datalen);
-  } else
-    snac.data = NULL;
+	if (datalen) {
+		if (!(snac.data = malloc(datalen)))
+			return 0; /* er... */
+		memcpy(snac.data, data, datalen);
+	} else
+		snac.data = NULL;
 
-  return aim_newsnac(sess, &snac);
+	return aim_newsnac(sess, &snac);
 }
 
 /*
  * Clones the passed snac structure and caches it in the
  * list/hash.
  */
-faim_internal unsigned long aim_newsnac(struct aim_session_t *sess,
-					struct aim_snac_t *newsnac) 
+faim_internal aim_snacid_t aim_newsnac(aim_session_t *sess, aim_snac_t *newsnac)
 {
-  struct aim_snac_t *snac = NULL;
-  int index;
+	aim_snac_t *snac;
+	int index;
 
-  if (!newsnac)
-    return 0;
+	if (!newsnac)
+		return 0;
 
-  if (!(snac = calloc(1, sizeof(struct aim_snac_t))))
-    return 0;
-  memcpy(snac, newsnac, sizeof(struct aim_snac_t));
-  snac->issuetime = time(&snac->issuetime);
-  snac->next = NULL;
+	if (!(snac = malloc(sizeof(aim_snac_t))))
+		return 0;
+	memcpy(snac, newsnac, sizeof(aim_snac_t));
+	snac->issuetime = time(NULL);
 
-  index = snac->id % FAIM_SNAC_HASH_SIZE;
+	index = snac->id % FAIM_SNAC_HASH_SIZE;
 
-  faim_mutex_lock(&sess->snac_hash_locks[index]);
-  snac->next = sess->snac_hash[index];
-  sess->snac_hash[index] = snac;
-  faim_mutex_unlock(&sess->snac_hash_locks[index]);
+	faim_mutex_lock(&sess->snac_hash_locks[index]);
+	snac->next = (aim_snac_t *)sess->snac_hash[index];
+	sess->snac_hash[index] = (void *)snac;
+	faim_mutex_unlock(&sess->snac_hash_locks[index]);
 
-  return(snac->id);
+	return snac->id;
 }
 
 /*
@@ -89,37 +83,24 @@ faim_internal unsigned long aim_newsnac(struct aim_session_t *sess,
  * The returned structure must be freed by the caller.
  *
  */
-faim_internal struct aim_snac_t *aim_remsnac(struct aim_session_t *sess, 
-					     u_long id) 
+faim_internal aim_snac_t *aim_remsnac(aim_session_t *sess, aim_snacid_t id) 
 {
-  struct aim_snac_t *cur = NULL;
-  int index;
+	aim_snac_t *cur, **prev;
+	int index;
 
-  index = id % FAIM_SNAC_HASH_SIZE;
+	index = id % FAIM_SNAC_HASH_SIZE;
 
-  faim_mutex_lock(&sess->snac_hash_locks[index]);
-  if (!sess->snac_hash[index])
-    ;
-  else if (sess->snac_hash[index]->id == id) {
-    cur = sess->snac_hash[index];
-    sess->snac_hash[index] = cur->next;
-  } else {
-    cur = sess->snac_hash[index];
-    while (cur->next) {
-      if (cur->next->id == id) {
-	struct aim_snac_t *tmp;
-	
-	tmp = cur->next;
-	cur->next = cur->next->next;
-	cur = tmp;
-	break;
-      }
-      cur = cur->next;
-    }
-  }
-  faim_mutex_unlock(&sess->snac_hash_locks[index]);
+	faim_mutex_lock(&sess->snac_hash_locks[index]);
+	for (prev = (aim_snac_t **)&sess->snac_hash[index]; (cur = *prev); ) {
+		if (cur->id == id) {
+			*prev = cur->next;
+			return cur;
+		} else
+			prev = &cur->next;
+	}
+	faim_mutex_unlock(&sess->snac_hash_locks[index]);
 
-  return cur;
+	return cur;
 }
 
 /*
@@ -129,49 +110,47 @@ faim_internal struct aim_snac_t *aim_remsnac(struct aim_session_t *sess,
  * maxage is the _minimum_ age in seconds to keep SNACs.
  *
  */
-faim_internal int aim_cleansnacs(struct aim_session_t *sess,
-				 int maxage)
+faim_internal void aim_cleansnacs(aim_session_t *sess, int maxage)
 {
-  int i;
+	int i;
 
-  for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++) {
-    struct aim_snac_t *cur, **prev;
-    time_t curtime;
+	for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++) {
+		aim_snac_t *cur, **prev;
+		time_t curtime;
 
-    faim_mutex_lock(&sess->snac_hash_locks[i]);
-    if (!sess->snac_hash[i]) {
-      faim_mutex_unlock(&sess->snac_hash_locks[i]);
-      continue;
-    }
+		faim_mutex_lock(&sess->snac_hash_locks[i]);
+		if (!sess->snac_hash[i]) {
+			faim_mutex_unlock(&sess->snac_hash_locks[i]);
+			continue;
+		}
 
-    curtime = time(NULL); /* done here in case we waited for the lock */
+		curtime = time(NULL); /* done here in case we waited for the lock */
 
-    for (prev = &sess->snac_hash[i]; (cur = *prev); ) {
-      if ((curtime - cur->issuetime) > maxage) {
+		for (prev = (aim_snac_t **)&sess->snac_hash[i]; (cur = *prev); ) {
+			if ((curtime - cur->issuetime) > maxage) {
 
-	*prev = cur->next;
+				*prev = cur->next;
 
-	/* XXX should we have destructors here? */
-	if (cur->data)
-	  free(cur->data);
-	free(cur);
+				/* XXX should we have destructors here? */
+				free(cur->data);
+				free(cur);
 
-      } else
-	prev = &cur->next;
-    }
+			} else
+				prev = &cur->next;
+		}
+		faim_mutex_unlock(&sess->snac_hash_locks[i]);
+	}
 
-    faim_mutex_unlock(&sess->snac_hash_locks[i]);
-  }
-
-  return 0;
+	return;
 }
 
-faim_internal int aim_putsnac(u_char *buf, int family, int subtype, int flags, u_long snacid)
+faim_internal int aim_putsnac(aim_bstream_t *bs, fu16_t family, fu16_t subtype, fu16_t flags, aim_snacid_t snacid)
 {
-  int curbyte = 0;
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(family&0xffff));
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(subtype&0xffff));
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(flags&0xffff));
-  curbyte += aimutil_put32(buf+curbyte, snacid);
-  return curbyte;
+
+	aimbs_put16(bs, family);
+	aimbs_put16(bs, subtype);
+	aimbs_put16(bs, flags);
+	aimbs_put32(bs, snacid);
+
+	return 10;
 }

@@ -14,161 +14,389 @@
 #endif
 
 /*
- * Since not all implementations support MSG_WAITALL, define
- * an alternate guarenteed read function...
- *
- * We keep recv() for systems that can do it because it means
- * a single system call for the entire packet, where read may
- * take more for a badly fragmented packet.
  *
  */
 faim_internal int aim_recv(int fd, void *buf, size_t count)
 {
-#ifdef MSG_WAITALL
-  return recv(fd, buf, count, MSG_WAITALL);
-#else
-  int left, ret, cur = 0; 
+	int left, cur; 
 
-  left = count;
+	for (cur = 0, left = count; left; ) {
+		int ret;
+		
+		ret = recv(fd, ((unsigned char *)buf)+cur, left, 0);
+		if (ret == -1)
+			return -1;
+		else if (ret == 0)
+			return cur;
 
-  while (left) {
-    ret = recv(fd, ((unsigned char *)buf)+cur, left, 0);
-    if (ret == -1)
-      return -1;
-    if (ret == 0)
-      return cur;
-    
-    cur += ret;
-    left -= ret;
-  }
+		cur += ret;
+		left -= ret;
+	}
 
-  return cur;
-#endif
+	return cur;
 }
+
+/*
+ * Read into a byte stream.  Will not read more than count, but may read
+ * less if there is not enough room in the stream buffer.
+ */
+faim_internal int aim_bstream_recv(aim_bstream_t *bs, int fd, size_t count)
+{
+	int red = 0;
+
+	if (!bs || (fd < 0) || (count < 0))
+		return -1;
+	
+	if (count > (bs->len - bs->offset))
+		count = bs->len - bs->offset; /* truncate to remaining space */
+
+	if (count) {
+
+		red = aim_recv(fd, bs->data + bs->offset, count);
+
+		if (red <= 0)
+			return -1;
+	}
+
+	bs->offset += red;
+
+	return red;
+}
+
+faim_internal int aim_bstream_init(aim_bstream_t *bs, fu8_t *data, int len)
+{
+	
+	if (!bs)
+		return -1;
+
+	bs->data = data;
+	bs->len = len;
+	bs->offset = 0;
+
+	return 0;
+}
+
+faim_internal int aim_bstream_empty(aim_bstream_t *bs)
+{
+	return bs->len - bs->offset;
+}
+
+faim_internal int aim_bstream_curpos(aim_bstream_t *bs)
+{
+	return bs->offset;
+}
+
+faim_internal int aim_bstream_setpos(aim_bstream_t *bs, int off)
+{
+
+	if (off > bs->len)
+		return -1;
+
+	bs->offset = off;
+
+	return off;
+}
+
+faim_internal void aim_bstream_rewind(aim_bstream_t *bs)
+{
+
+	aim_bstream_setpos(bs, 0);
+
+	return;
+}
+
+faim_internal int aim_bstream_advance(aim_bstream_t *bs, int n)
+{
+
+	if (aim_bstream_empty(bs) < n)
+		return 0; /* XXX throw an exception */
+
+	bs->offset += n;
+
+	return n;
+}
+
+faim_internal fu8_t aimbs_get8(aim_bstream_t *bs)
+{
+	
+	if (aim_bstream_empty(bs) < 1)
+		return 0; /* XXX throw an exception */
+	
+	bs->offset++;
+	
+	return aimutil_get8(bs->data + bs->offset - 1);
+}
+
+faim_internal fu16_t aimbs_get16(aim_bstream_t *bs)
+{
+	
+	if (aim_bstream_empty(bs) < 2)
+		return 0; /* XXX throw an exception */
+	
+	bs->offset += 2;
+	
+	return aimutil_get16(bs->data + bs->offset - 2);
+}
+
+faim_internal fu32_t aimbs_get32(aim_bstream_t *bs)
+{
+	
+	if (aim_bstream_empty(bs) < 4)
+		return 0; /* XXX throw an exception */
+	
+	bs->offset += 4;
+	
+	return aimutil_get32(bs->data + bs->offset - 4);
+}
+
+faim_internal int aimbs_put8(aim_bstream_t *bs, fu8_t v)
+{
+
+	if (aim_bstream_empty(bs) < 1)
+		return 0; /* XXX throw an exception */
+
+	bs->offset += aimutil_put8(bs->data + bs->offset, v);
+
+	return 1;
+}
+
+faim_internal int aimbs_put16(aim_bstream_t *bs, fu16_t v)
+{
+
+	if (aim_bstream_empty(bs) < 2)
+		return 0; /* XXX throw an exception */
+
+	bs->offset += aimutil_put16(bs->data + bs->offset, v);
+
+	return 2;
+}
+
+faim_internal int aimbs_put32(aim_bstream_t *bs, fu32_t v)
+{
+
+	if (aim_bstream_empty(bs) < 4)
+		return 0; /* XXX throw an exception */
+
+	bs->offset += aimutil_put32(bs->data + bs->offset, v);
+
+	return 1;
+}
+
+faim_internal int aimbs_getrawbuf(aim_bstream_t *bs, fu8_t *buf, int len)
+{
+
+	if (aim_bstream_empty(bs) < len)
+		return 0;
+
+	memcpy(buf, bs->data + bs->offset, len);
+	bs->offset += len;
+
+	return len;
+}
+
+faim_internal fu8_t *aimbs_getraw(aim_bstream_t *bs, int len)
+{
+	fu8_t *ob;
+
+	if (!(ob = malloc(len)))
+		return NULL;
+
+	if (aimbs_getrawbuf(bs, ob, len) < len) {
+		free(ob);
+		return NULL;
+	}
+
+	return ob;
+}
+
+faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
+{
+	char *ob;
+
+	if (!(ob = malloc(len+1)))
+		return NULL;
+
+	if (aimbs_getrawbuf(bs, ob, len) < len) {
+		free(ob);
+		return NULL;
+	}
+	
+	ob[len] = '\0';
+
+	return ob;
+}
+
+faim_internal int aimbs_putraw(aim_bstream_t *bs, const fu8_t *v, int len)
+{
+
+	if (aim_bstream_empty(bs) < len)
+		return 0; /* XXX throw an exception */
+
+	memcpy(bs->data + bs->offset, v, len);
+	bs->offset += len;
+
+	return len;
+}
+
+faim_internal int aimbs_putbs(aim_bstream_t *bs, aim_bstream_t *srcbs, int len)
+{
+
+	if (aim_bstream_empty(srcbs) < len)
+		return 0; /* XXX throw exception (underrun) */
+
+	if (aim_bstream_empty(bs) < len)
+		return 0; /* XXX throw exception (overflow) */
+
+	memcpy(bs->data + bs->offset, srcbs->data + srcbs->offset, len);
+	bs->offset += len;
+	srcbs->offset += len;
+
+	return len;
+}
+
+/**
+ * aim_frame_destroy - free aim_frame_t 
+ * @frame: the frame to free  
+ *
+ * returns -1 on error; 0 on success.  
+ *
+ */
+faim_internal void aim_frame_destroy(aim_frame_t *frame)
+{
+
+	free(frame->data.data); /* XXX aim_bstream_free */
+
+	if (frame->hdrtype == AIM_FRAMETYPE_OFT)
+		free(frame->hdr.oft.hdr2);
+	free(frame);
+	
+	return;
+} 
+
 
 /*
  * Grab a single command sequence off the socket, and enqueue
  * it in the incoming event queue in a seperate struct.
  */
-faim_export int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
+faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 {
-  unsigned char generic[6]; 
-  struct command_rx_struct *newrx = NULL;
+	fu8_t flaphdr_raw[6];
+	aim_bstream_t flaphdr;
+	aim_frame_t *newrx;
+	fu16_t payloadlen;
+	
+	if (!sess || !conn)
+		return 0;
 
-  if (!sess || !conn)
-    return 0;
+	if (conn->fd == -1)
+		return -1; /* its a aim_conn_close()'d connection */
 
-  if (conn->fd == -1)
-    return -1; /* its a aim_conn_close()'d connection */
+	if (conn->fd < 3)  /* can happen when people abuse the interface */
+		return 0;
 
-  if (conn->fd < 3)  /* can happen when people abuse the interface */
-    return 0;
+	if (conn->status & AIM_CONN_STATUS_INPROGRESS)
+		return aim_conn_completeconnect(sess, conn);
 
-  if (conn->status & AIM_CONN_STATUS_INPROGRESS)
-    return aim_conn_completeconnect(sess, conn);
+	/*
+	 * Rendezvous (client-client) connections do not speak
+	 * FLAP, so this function will break on them.
+	 */
+	if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) 
+		return aim_get_command_rendezvous(sess, conn);
+	else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
+		faimdprintf(sess, 0, "AIM_CONN_TYPE_RENDEZVOUS_OUT on fd %d\n", conn->fd);
+		return 0; 
+	}
 
-  /*
-   * Rendezvous (client-client) connections do not speak
-   * FLAP, so this function will break on them.
-   */
-  if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) 
-    return aim_get_command_rendezvous(sess, conn);
-  if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
-    faimdprintf(sess, 0, "out on fd %d\n", conn->fd);
-    return 0; 
-  }
+	aim_bstream_init(&flaphdr, flaphdr_raw, sizeof(flaphdr_raw));
 
-  /*
-   * Read FLAP header.  Six bytes:
-   *    
-   *   0 char  -- Always 0x2a
-   *   1 char  -- Channel ID.  Usually 2 -- 1 and 4 are used during login.
-   *   2 short -- Sequence number 
-   *   4 short -- Number of data bytes that follow.
-   */
-  faim_mutex_lock(&conn->active);
-  if (aim_recv(conn->fd, generic, 6) < 6){
-    aim_conn_close(conn);
-    faim_mutex_unlock(&conn->active);
-    return -1;
-  }
+	/*
+	 * Read FLAP header.  Six bytes:
+	 *    
+	 *   0 char  -- Always 0x2a
+	 *   1 char  -- Channel ID.  Usually 2 -- 1 and 4 are used during login.
+	 *   2 short -- Sequence number 
+	 *   4 short -- Number of data bytes that follow.
+	 */
+	faim_mutex_lock(&conn->active);
+	if (aim_bstream_recv(&flaphdr, conn->fd, 6) < 6) {
+		aim_conn_close(conn);
+		faim_mutex_unlock(&conn->active);
+		return -1;
+	}
 
-  /*
-   * This shouldn't happen unless the socket breaks, the server breaks,
-   * or we break.  We must handle it just in case.
-   */
-  if (generic[0] != 0x2a) {
-    faimdprintf(sess, 1, "Bad incoming data!");
-    aim_conn_close(conn);
-    faim_mutex_unlock(&conn->active);
-    return -1;
-  }	
+	aim_bstream_rewind(&flaphdr);
 
-  /* allocate a new struct */
-  if (!(newrx = (struct command_rx_struct *)malloc(sizeof(struct command_rx_struct)))) {
-    faim_mutex_unlock(&conn->active);
-    return -1;
-  }
-  memset(newrx, 0x00, sizeof(struct command_rx_struct));
+	/*
+	 * This shouldn't happen unless the socket breaks, the server breaks,
+	 * or we break.  We must handle it just in case.
+	 */
+	if (aimbs_get8(&flaphdr) != 0x2a) {
+		faimdprintf(sess, 0, "FLAP framing disrupted");
+		aim_conn_close(conn);
+		faim_mutex_unlock(&conn->active);
+		return -1;
+	}	
 
-  newrx->lock = 1;  /* lock the struct */
+	/* allocate a new struct */
+	if (!(newrx = (aim_frame_t *)malloc(sizeof(aim_frame_t)))) {
+		faim_mutex_unlock(&conn->active);
+		return -1;
+	}
+	memset(newrx, 0, sizeof(aim_frame_t));
 
-  /* we're doing OSCAR if we're here */
-  newrx->hdrtype = AIM_FRAMETYPE_OSCAR;
+	/* we're doing FLAP if we're here */
+	newrx->hdrtype = AIM_FRAMETYPE_FLAP;
+	
+	newrx->hdr.flap.type = aimbs_get8(&flaphdr);
+	newrx->hdr.flap.seqnum = aimbs_get16(&flaphdr);
+	payloadlen = aimbs_get16(&flaphdr);
 
-  /* store channel -- byte 2 */
-  newrx->hdr.oscar.type = (char) generic[1];
+	newrx->nofree = 0; /* free by default */
 
-  /* store seqnum -- bytes 3 and 4 */
-  newrx->hdr.oscar.seqnum = aimutil_get16(generic+2);
+	if (payloadlen) {
+		fu8_t *payload = NULL;
 
-  /* store commandlen -- bytes 5 and 6 */
-  newrx->commandlen = aimutil_get16(generic+4);
+		if (!(payload = (fu8_t *) malloc(payloadlen))) {
+			aim_frame_destroy(newrx);
+			faim_mutex_unlock(&conn->active);
+			return -1;
+		}
 
-  newrx->nofree = 0; /* free by default */
+		aim_bstream_init(&newrx->data, payload, payloadlen);
 
-  /* malloc for data portion */
-  if (!(newrx->data = (u_char *) malloc(newrx->commandlen))) {
-    free(newrx);
-    faim_mutex_unlock(&conn->active);
-    return -1;
-  }
+		/* read the payload */
+		if (aim_bstream_recv(&newrx->data, conn->fd, payloadlen) < payloadlen) {
+			free(payload);
+			aim_frame_destroy(newrx);
+			aim_conn_close(conn);
+			faim_mutex_unlock(&conn->active);
+			return -1;
+		}
+	} else
+		aim_bstream_init(&newrx->data, NULL, 0);
 
-  /* read the data portion of the packet */
-  if (aim_recv(conn->fd, newrx->data, newrx->commandlen) < newrx->commandlen){
-    free(newrx->data);
-    free(newrx);
-    aim_conn_close(conn);
-    faim_mutex_unlock(&conn->active);
-    return -1;
-  }
-  faim_mutex_unlock(&conn->active);
+	faim_mutex_unlock(&conn->active);
 
-  newrx->conn = conn;
+	aim_bstream_rewind(&newrx->data);
 
-  newrx->next = NULL;  /* this will always be at the bottom */
-  newrx->lock = 0; /* unlock */
+	newrx->conn = conn;
 
-  /* enqueue this packet */
-  if (sess->queue_incoming == NULL) {
-    sess->queue_incoming = newrx;
-  } else {
-    struct command_rx_struct *cur;
+	newrx->next = NULL;  /* this will always be at the bottom */
 
-    /*
-     * This append operation takes a while.  It might be faster
-     * if we maintain a pointer to the last entry in the queue
-     * and just update that.  Need to determine if the overhead
-     * to maintain that is lower than the overhead for this loop.
-     */
-    for (cur = sess->queue_incoming; cur->next; cur = cur->next)
-      ;
-    cur->next = newrx;
-  }
-  
-  newrx->conn->lastactivity = time(NULL);
+	if (!sess->queue_incoming)
+		sess->queue_incoming = newrx;
+	else {
+		aim_frame_t *cur;
 
-  return 0;  
+		for (cur = sess->queue_incoming; cur->next; cur = cur->next)
+			;
+		cur->next = newrx;
+	}
+
+	newrx->conn->lastactivity = time(NULL);
+
+	return 0;  
 }
 
 /*
@@ -182,55 +410,23 @@ faim_export int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *c
  * does not keep a pointer, it's lost forever.
  *
  */
-faim_export void aim_purge_rxqueue(struct aim_session_t *sess)
+faim_export void aim_purge_rxqueue(aim_session_t *sess)
 {
-  struct command_rx_struct *cur = NULL;
-  struct command_rx_struct *tmp;
+	aim_frame_t *cur, **prev;
 
-  if (sess->queue_incoming == NULL)
-    return;
-  
-  if (sess->queue_incoming->next == NULL) {
-    if (sess->queue_incoming->handled) {
-      tmp = sess->queue_incoming;
-      sess->queue_incoming = NULL;
+	for (prev = &sess->queue_incoming; (cur = *prev); ) {
+		if (cur->handled) {
 
-      if (!tmp->nofree) {
-	if (tmp->hdrtype == AIM_FRAMETYPE_OFT)
-	  free(tmp->hdr.oft.hdr2);
-	free(tmp->data);
-	free(tmp);
-      } else
-	tmp->next = NULL;
-    }
-    return;
-  }
+			*prev = cur->next;
+			
+			if (!cur->nofree)
+				aim_frame_destroy(cur);
 
-  for(cur = sess->queue_incoming; cur->next != NULL; ) {
-    if (cur->next->handled) {
-      tmp = cur->next;
-      cur->next = tmp->next;
-      if (!tmp->nofree) {
-	if (tmp->hdrtype == AIM_FRAMETYPE_OFT)
-	  free(tmp->hdr.oft.hdr2);
-	free(tmp->data);
-	free(tmp);
-      } else
-	tmp->next = NULL;
-    }	
-    cur = cur->next;
+		} else
+			prev = &cur->next;
+	}
 
-    /* 
-     * Be careful here.  Because of the way we just
-     * manipulated the pointer, cur may be NULL and 
-     * the for() will segfault doing the check unless
-     * we find this case first.
-     */
-    if (cur == NULL)	
-      break;
-  }
-
-  return;
+	return;
 }
 
 /*
@@ -240,13 +436,14 @@ faim_export void aim_purge_rxqueue(struct aim_session_t *sess)
  * XXX: this is something that was handled better in the old connection
  * handling method, but eh.
  */
-faim_internal void aim_rxqueue_cleanbyconn(struct aim_session_t *sess, struct aim_conn_t *conn)
+faim_internal void aim_rxqueue_cleanbyconn(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct command_rx_struct *currx;
+	aim_frame_t *currx;
 
-  for (currx = sess->queue_incoming; currx; currx = currx->next) {
-    if ((!currx->handled) && (currx->conn == conn))
-      currx->handled = 1;
-  }	
-  return;
+	for (currx = sess->queue_incoming; currx; currx = currx->next) {
+		if ((!currx->handled) && (currx->conn == conn))
+			currx->handled = 1;
+	}	
+	return;
 }
+

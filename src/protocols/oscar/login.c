@@ -12,109 +12,152 @@
 
 static int aim_encode_password(const char *password, unsigned char *encoded);
 
-faim_export int aim_sendflapver(struct aim_session_t *sess, struct aim_conn_t *conn)
+faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn)
 {
-	int curbyte=0;
+	aim_frame_t *fr;
 
-	struct command_tx_struct *newpacket;
-
-	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0001, 4)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4)))
 		return -ENOMEM;
 
-	newpacket->lock = 1;
+	aimbs_put32(&fr->data, 0x00000001);
 
-	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
+	aim_tx_enqueue(sess, fr);
 
-	newpacket->lock = 0;
-
-	return aim_tx_enqueue(sess, newpacket);
+	return 0;
 }
 
 /*
- * In AIM 3.5 protocol, the first stage of login is to request
- * login from the Authorizer, passing it the screen name
- * for verification.  If the name is invalid, a 0017/0003 
- * is spit back, with the standard error contents.  If valid,
- * a 0017/0007 comes back, which is the signal to send
- * it the main login command (0017/0002).  
+ * This is a bit confusing.
+ *
+ * Normal SNAC login goes like this:
+ *   - connect
+ *   - server sends flap version
+ *   - client sends flap version
+ *   - client sends screen name (17/6)
+ *   - server sends hash key (17/7)
+ *   - client sends auth request (17/2 -- aim_send_login)
+ *   - server yells
+ *
+ * XOR login (for ICQ) goes like this:
+ *   - connect
+ *   - server sends flap version
+ *   - client sends auth request which contains flap version (aim_send_login)
+ *   - server yells
+ *
+ * For the client API, we make them implement the most complicated version,
+ * and for the simpler version, we fake it and make it look like the more
+ * complicated process.
+ *
+ * This is done by giving the client a faked key, just so we can convince
+ * them to call aim_send_login right away, which will detect the session
+ * flag that says this is XOR login and ignore the key, sending an ICQ
+ * login request instead of the normal SNAC one.
+ *
+ * As soon as AOL makes ICQ log in the same way as AIM, this is /gone/.
+ *
+ * XXX This may cause problems if the client relies on callbacks only
+ * being called from the context of aim_rxdispatch()...
+ *
  */
-faim_export int aim_request_login(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn)
+static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
-	int curbyte;
-	struct command_tx_struct *newpacket;
+	aim_frame_t fr;
+	aim_rxcallback_t userfunc;
+	
+	sess->flags &= ~AIM_SESS_FLAGS_SNACLOGIN;
+	sess->flags |= AIM_SESS_FLAGS_XORLOGIN;
 
+	fr.conn = conn;
+	
+	if ((userfunc = aim_callhandler(sess, conn, 0x0017, 0x0007)))
+		userfunc(sess, &fr, "");
+
+	return 0;
+}
+
+/*
+ * In AIM 3.5 protocol, the first stage of login is to request login from the 
+ * Authorizer, passing it the screen name for verification.  If the name is 
+ * invalid, a 0017/0003 is spit back, with the standard error contents.  If 
+ * valid, a 0017/0007 comes back, which is the signal to send it the main 
+ * login command (0017/0002). 
+ *
+ * XXX make ICQ logins work again. 
+ */
+faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+{
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
+	
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	/*
-	 * For ICQ, we enable the ancient horrible login and stuff
-	 * a key packet into the queue to make it look like we got
-	 * a reply back. This is so the client doesn't know we're
-	 * really not doing MD5 login.
-	 *
-	 * This may sound stupid, but I'm not in the best of moods and 
-	 * I don't plan to keep support for this crap around much longer.
-	 * Its all AOL's fault anyway, really. I hate AOL.  Really.  They
-	 * always seem to be able to piss me off by doing the dumbest little
-	 * things.  Like disabling MD5 logins for ICQ UINs, or adding
-	 * purposefully wrong TLV lengths, or adding superfluous information 
-	 * to host strings, or... I'll stop.
-	 *
-	 */
-	if ((sn[0] >= '0') && (sn[0] <= '9')) {
-		struct command_rx_struct *newrx;
-		int i;
-
-		/* XXX Uhm why doesn't this use aim_tx_new? */
-		if (!(newrx = (struct command_rx_struct *)malloc(sizeof(struct command_rx_struct))))
-			return -ENOMEM;
-
-		memset(newrx, 0x00, sizeof(struct command_rx_struct));
-		newrx->lock = 1; 
-		newrx->hdrtype = AIM_FRAMETYPE_OSCAR;
-		newrx->hdr.oscar.type = 0x02;
-		newrx->hdr.oscar.seqnum = 0;
-		newrx->commandlen = 10+2+1;
-		newrx->nofree = 0; 
-
-		if (!(newrx->data = malloc(newrx->commandlen))) {
-			free(newrx);
-			return -ENOMEM;
-		}
-
-		i = aim_putsnac(newrx->data, 0x0017, 0x0007, 0x0000, 0x0000);
-		i += aimutil_put16(newrx->data+i, 0x01);
-		i += aimutil_putstr(newrx->data+i, "0", 1);
-
-		newrx->conn = conn;
-
-		newrx->next = sess->queue_incoming;
-		sess->queue_incoming = newrx;
-
-		newrx->lock = 0;
-
-		sess->flags &= ~AIM_SESS_FLAGS_SNACLOGIN;
-
-		return 0;
-	} 
+	if ((sn[0] >= '0') || (sn[0] <= '9'))
+		return goddamnicq(sess, conn, sn);
 
 	sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
 
 	aim_sendflapver(sess, conn);
 
-	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+2+2+strlen(sn))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn))))
 		return -ENOMEM;
 
-	newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0017, 0x0006, 0x0000, snacid);
 
-	curbyte  = aim_putsnac(newpacket->data, 0x0017, 0x0006, 0x0000, 0x00010000);
-	curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
+	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
+	aim_writetlvchain(&fr->data, &tl);
+	aim_freetlvchain(&tl);
 
-	newpacket->commandlen = curbyte;
-	newpacket->lock = 0;
+	aim_tx_enqueue(sess, fr);
 
-	return aim_tx_enqueue(sess, newpacket);
+	return 0;
+}
+
+/*
+ * Part two of the ICQ hack.  Note the ignoring of the key and clientinfo.
+ */
+static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *password)
+{
+	static const char clientstr[] = {"ICQ Inc. - Product of ICQ (TM) 2000b.4.65.1.3281.85"};
+	static const char lang[] = {"en"};
+	static const char country[] = {"us"};
+	aim_frame_t *fr;
+	aim_tlvlist_t *tl = NULL;
+	char *password_encoded;
+
+	if (!(password_encoded = (char *) malloc(strlen(password))))
+		return -ENOMEM;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 1152))) {
+		free(password_encoded);
+		return -ENOMEM;
+	}
+
+	aim_encode_password(password, password_encoded);
+
+	aimbs_put32(&fr->data, 0x00000001);
+	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
+	aim_addtlvtochain_raw(&tl, 0x0002, strlen(password), password_encoded);
+	aim_addtlvtochain_raw(&tl, 0x0003, strlen(clientstr), clientstr);
+	aim_addtlvtochain16(&tl, 0x0016, 0x010a);
+	aim_addtlvtochain16(&tl, 0x0017, 0x0004);
+	aim_addtlvtochain16(&tl, 0x0018, 0x0041);
+	aim_addtlvtochain16(&tl, 0x0019, 0x0001);
+	aim_addtlvtochain16(&tl, 0x001a, 0x0cd1);
+	aim_addtlvtochain32(&tl, 0x0014, 0x00000055);
+	aim_addtlvtochain_raw(&tl, 0x000f, strlen(lang), lang);
+	aim_addtlvtochain_raw(&tl, 0x000e, strlen(country), country);
+
+	aim_writetlvchain(&fr->data, &tl);
+
+	free(password_encoded);
+	aim_freetlvchain(&tl);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
 }
 
 /*
@@ -176,79 +219,62 @@ faim_export int aim_request_login(struct aim_session_t *sess, struct aim_conn_t 
  *   serverstore = 0x01
  *
  */
-faim_export int aim_send_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *password, struct client_info_s *clientinfo, char *key)
+faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *password, struct client_info_s *clientinfo, const char *key)
 {
-	int curbyte=0;
-	struct command_tx_struct *newpacket;
+	aim_frame_t *fr;
+	aim_tlvlist_t *tl = NULL;
+	fu8_t digest[16];
+	aim_snacid_t snacid;
 
 	if (!clientinfo || !sn || !password)
 		return -EINVAL;
 
-	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
+	if (sess->flags & AIM_SESS_FLAGS_XORLOGIN)
+		return goddamnicq2(sess, conn, sn, password);
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
-	newpacket->lock = 1;
+	if (sess->flags & AIM_SESS_FLAGS_XORLOGIN) {
+		fr->hdr.flap.type = 0x01;
 
-	newpacket->hdr.oscar.type = (sess->flags & AIM_SESS_FLAGS_SNACLOGIN)?0x02:0x01;
-
-	if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN)
-		curbyte = aim_putsnac(newpacket->data, 0x0017, 0x0002, 0x0000, 0x00010000);
-	else {
-		curbyte  = aimutil_put16(newpacket->data, 0x0000);
-		curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
+		/* Use very specific version numbers to further indicate hack */
+		clientinfo->major2 = 0x010a;
+		clientinfo->major = 0x0004;
+		clientinfo->minor = 0x003c;
+		clientinfo->minor2 = 0x0001;
+		clientinfo->build = 0x0cce;
+		clientinfo->unknown = 0x00000055;
 	}
 
-	curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
+	snacid = aim_cachesnac(sess, 0x0017, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0017, 0x0002, 0x0000, snacid);
 
-	if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN) {
-		unsigned char digest[16];
+	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
 
-		aim_encode_password_md5(password, key, digest);
-		curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0025, 16, (char *)digest);
-	} else { 
-		char *password_encoded;
+	aim_encode_password_md5(password, key, digest);
+	aim_addtlvtochain_raw(&tl, 0x0025, 16, digest);
 
-		password_encoded = (char *) malloc(strlen(password));
-		aim_encode_password(password, password_encoded);
-		curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0002, strlen(password), password_encoded);
-		free(password_encoded);
-	}
+	aim_addtlvtochain_raw(&tl, 0x0003, strlen(clientinfo->clientstring), clientinfo->clientstring);
+	aim_addtlvtochain16(&tl, 0x0016, (fu16_t)clientinfo->major2);
+	aim_addtlvtochain16(&tl, 0x0017, (fu16_t)clientinfo->major);
+	aim_addtlvtochain16(&tl, 0x0018, (fu16_t)clientinfo->minor);
+	aim_addtlvtochain16(&tl, 0x0019, (fu16_t)clientinfo->minor2);
+	aim_addtlvtochain16(&tl, 0x001a, (fu16_t)clientinfo->build);
+	aim_addtlvtochain_raw(&tl, 0x000e, strlen(clientinfo->country), clientinfo->country);
+	aim_addtlvtochain_raw(&tl, 0x000f, strlen(clientinfo->lang), clientinfo->lang);
+	aim_addtlvtochain16(&tl, 0x0009, 0x0015);
 
-	curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0003, strlen(clientinfo->clientstring), clientinfo->clientstring);
+	aim_writetlvchain(&fr->data, &tl);
 
-	if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN) {
+	aim_freetlvchain(&tl);
+	
+	aim_tx_enqueue(sess, fr);
 
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, (unsigned short)clientinfo->major2);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, (unsigned short)clientinfo->major);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, (unsigned short)clientinfo->minor);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, (unsigned short)clientinfo->minor2);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, (unsigned short)clientinfo->build);
-
-	} else {
-		/* Use very specific version numbers, to further indicate the hack. */
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x010a);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, 0x0004);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, 0x003c);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, 0x0001);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, 0x0cce);
-		curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, 0x00000055);
-	}
-
-	curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000e, strlen(clientinfo->country), clientinfo->country);
-	curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000f, strlen(clientinfo->lang), clientinfo->lang);
-
-	if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN) {
-		curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
-		curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
-	}
-
-	newpacket->commandlen = curbyte;
-	newpacket->lock = 0;
-
-	return aim_tx_enqueue(sess, newpacket);
+	return 0;
 }
 
-faim_export int aim_encode_password_md5(const char *password, const char *key, unsigned char *digest)
+faim_export int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
 {
 	md5_state_t state;
 
@@ -278,9 +304,9 @@ faim_export int aim_encode_password_md5(const char *password, const char *key, u
  * This is only used for the XOR method, not the better MD5 method.
  *
  */
-static int aim_encode_password(const char *password, unsigned char *encoded)
+static int aim_encode_password(const char *password, fu8_t *encoded)
 {
-	unsigned char encoding_table[] = {
+	fu8_t encoding_table[] = {
 #if 0 /* old v1 table */
 		0xf3, 0xb3, 0x6c, 0x99,
 		0x95, 0x3f, 0xac, 0xb6,
@@ -304,55 +330,51 @@ static int aim_encode_password(const char *password, unsigned char *encoded)
 /*
  * Generate an authorization response.  
  *
- * You probably don't want this unless you're writing an AIM server.
+ * You probably don't want this unless you're writing an AIM server. Which
+ * I hope you're not doing.  Because it's far more difficult than it looks.
  *
  */
-faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, 
-					   struct aim_conn_t *conn, 
-					   char *sn, int errorcode,
-					   char *errorurl, char *bosip, 
-					   char *cookie, char *email, 
-					   int regstatus)
+faim_export int aim_sendauthresp(aim_session_t *sess, aim_conn_t *conn, const char *sn, int errorcode, const char *errorurl, const char *bosip, const char *cookie, const char *email, int regstatus)
 {	
-	struct command_tx_struct *tx;
-	struct aim_tlvlist_t *tlvlist = NULL;
+	aim_tlvlist_t *tlvlist = NULL;
+	aim_frame_t *fr;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0004, 1152)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x04, 1152)))
 		return -ENOMEM;
 
-	tx->lock = 1;
-
 	if (sn)
-		aim_addtlvtochain_str(&tlvlist, 0x0001, sn, strlen(sn));
+		aim_addtlvtochain_raw(&tlvlist, 0x0001, strlen(sn), sn);
 	else
-		aim_addtlvtochain_str(&tlvlist, 0x0001, sess->sn, strlen(sess->sn));
+		aim_addtlvtochain_raw(&tlvlist, 0x0001, strlen(sess->sn), sess->sn);
 
 	if (errorcode) {
 		aim_addtlvtochain16(&tlvlist, 0x0008, errorcode);
-		aim_addtlvtochain_str(&tlvlist, 0x0004, errorurl, strlen(errorurl));
+		aim_addtlvtochain_raw(&tlvlist, 0x0004, strlen(errorurl), errorurl);
 	} else {
-		aim_addtlvtochain_str(&tlvlist, 0x0005, bosip, strlen(bosip));
-		aim_addtlvtochain_str(&tlvlist, 0x0006, cookie, AIM_COOKIELEN);
-		aim_addtlvtochain_str(&tlvlist, 0x0011, email, strlen(email));
-		aim_addtlvtochain16(&tlvlist, 0x0013, (unsigned short)regstatus);
+		aim_addtlvtochain_raw(&tlvlist, 0x0005, strlen(bosip), bosip);
+		aim_addtlvtochain_raw(&tlvlist, 0x0006, AIM_COOKIELEN, cookie);
+		aim_addtlvtochain_raw(&tlvlist, 0x0011, strlen(email), email);
+		aim_addtlvtochain16(&tlvlist, 0x0013, (fu16_t)regstatus);
 	}
 
-	tx->commandlen = aim_writetlvchain(tx->data, tx->commandlen, &tlvlist);
-	tx->lock = 0;
+	aim_writetlvchain(&fr->data, &tlvlist);
+	aim_freetlvchain(&tlvlist);
 
-	return aim_tx_enqueue(sess, tx);
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
 }
 
 /*
  * Generate a random cookie.  (Non-client use only)
  */
-faim_export int aim_gencookie(unsigned char *buf)
+faim_export int aim_gencookie(fu8_t *buf)
 {
 	int i;
 
 	srand(time(NULL));
 
-	for (i=0; i < AIM_COOKIELEN; i++)
+	for (i = 0; i < AIM_COOKIELEN; i++)
 		buf[i] = 1+(int) (256.0*rand()/(RAND_MAX+0.0));
 
 	return i;
@@ -361,102 +383,97 @@ faim_export int aim_gencookie(unsigned char *buf)
 /*
  * Send Server Ready.  (Non-client)
  */
-faim_export int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn)
+faim_export int aim_sendserverready(aim_session_t *sess, aim_conn_t *conn)
 {
-	struct command_tx_struct *tx;
-	int i;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+0x22)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+0x22)))
 		return -ENOMEM;
 
-	tx->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0001, 0x0003, 0x0000, NULL, 0);
 
-	i = aim_putsnac(tx->data, 0x0001, 0x0003, 0x0000, sess->snac_nextid++);
+	aim_putsnac(&fr->data, 0x0001, 0x0003, 0x0000, snacid);
+	aimbs_put16(&fr->data, 0x0001);
+	aimbs_put16(&fr->data, 0x0002);
+	aimbs_put16(&fr->data, 0x0003);
+	aimbs_put16(&fr->data, 0x0004);
+	aimbs_put16(&fr->data, 0x0006);
+	aimbs_put16(&fr->data, 0x0008);
+	aimbs_put16(&fr->data, 0x0009);
+	aimbs_put16(&fr->data, 0x000a);
+	aimbs_put16(&fr->data, 0x000b);
+	aimbs_put16(&fr->data, 0x000c);
+	aimbs_put16(&fr->data, 0x0013);
+	aimbs_put16(&fr->data, 0x0015);
 
-	i += aimutil_put16(tx->data+i, 0x0001);  
-	i += aimutil_put16(tx->data+i, 0x0002);
-	i += aimutil_put16(tx->data+i, 0x0003);
-	i += aimutil_put16(tx->data+i, 0x0004);
-	i += aimutil_put16(tx->data+i, 0x0006);
-	i += aimutil_put16(tx->data+i, 0x0008);
-	i += aimutil_put16(tx->data+i, 0x0009);
-	i += aimutil_put16(tx->data+i, 0x000a);
-	i += aimutil_put16(tx->data+i, 0x000b);
-	i += aimutil_put16(tx->data+i, 0x000c);
-	i += aimutil_put16(tx->data+i, 0x0013);
-	i += aimutil_put16(tx->data+i, 0x0015);
+	aim_tx_enqueue(sess, fr);
 
-	tx->commandlen = i;
-	tx->lock = 0;
-
-	return aim_tx_enqueue(sess, tx);
+	return 0;
 }
 
 
 /* 
  * Send service redirect.  (Non-Client)
  */
-faim_export unsigned long aim_sendredirect(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned short servid, char *ip, char *cookie)
+faim_export int aim_sendredirect(aim_session_t *sess, aim_conn_t *conn, fu16_t servid, const char *ip, const char *cookie)
 {	
-	struct command_tx_struct *tx;
-	struct aim_tlvlist_t *tlvlist = NULL;
-	int i;
+	aim_tlvlist_t *tlvlist = NULL;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
-	tx->lock = 1;
-
-	i = aim_putsnac(tx->data, 0x0001, 0x0005, 0x0000, 0x00000000);
+	snacid = aim_cachesnac(sess, 0x0001, 0x0005, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0001, 0x0005, 0x0000, snacid);
 
 	aim_addtlvtochain16(&tlvlist, 0x000d, servid);
-	aim_addtlvtochain_str(&tlvlist, 0x0005, ip, strlen(ip));
-	aim_addtlvtochain_str(&tlvlist, 0x0006, cookie, AIM_COOKIELEN);
+	aim_addtlvtochain_raw(&tlvlist, 0x0005, strlen(ip), ip);
+	aim_addtlvtochain_raw(&tlvlist, 0x0006, AIM_COOKIELEN, cookie);
 
-	tx->commandlen = aim_writetlvchain(tx->data+i, tx->commandlen-i, &tlvlist)+i;
+	aim_writetlvchain(&fr->data, &tlvlist);
 	aim_freetlvchain(&tlvlist);
 
-	tx->lock = 0;
+	aim_tx_enqueue(sess, fr);
 
-	return aim_tx_enqueue(sess, tx);
+	return 0;
 }
 
 
-static int hostonline(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int hostonline(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
-	unsigned short *families;
-	int famcount, i;
+	fu16_t *families;
+	int famcount;
 
-	famcount = datalen/2;
-
-	if (!(families = malloc(datalen)))
+	if (!(families = malloc(aim_bstream_empty(bs))))
 		return 0;
 
-	for (i = 0; i < famcount; i++)
-		families[i] = aimutil_get16(data+(i*2));
+	for (famcount = 0; aim_bstream_empty(bs); famcount++)
+		families[famcount] = aimbs_get16(bs);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, famcount, families);
 
 	free(families);
 
-	return ret;  
+	return ret; 
 }
 
-static int redirect(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int redirect(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	int serviceid;
-	unsigned char *cookie;
+	fu8_t *cookie;
 	char *ip;
 	aim_rxcallback_t userfunc;
-	struct aim_tlvlist_t *tlvlist;
+	aim_tlvlist_t *tlvlist;
 	char *chathack = NULL;
 	int chathackex = 0;
 	int ret = 0;
 
-	tlvlist = aim_readtlvchain(data, datalen);
+	tlvlist = aim_readtlvchain(bs);
 
 	if (!aim_gettlv(tlvlist, 0x000d, 1) ||
 			!aim_gettlv(tlvlist, 0x0005, 1) ||
@@ -542,7 +559,7 @@ static int redirect(struct aim_session_t *sess, aim_module_t *mod, struct comman
  */
 
 /* XXX parse this */
-static int rateresp(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int rateresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
 
@@ -552,33 +569,22 @@ static int rateresp(struct aim_session_t *sess, aim_module_t *mod, struct comman
 	return 0;
 }
 
-static int ratechange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int ratechange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
-	int i = 0, code;
-	unsigned long currentavg, maxavg;
-	unsigned long rateclass, windowsize, clear, alert, limit, disconnect;
+	fu16_t code, rateclass;
+	fu32_t currentavg, maxavg, windowsize, clear, alert, limit, disconnect;
 
-	code = aimutil_get16(data+i);
-	i += 2;
-
-	rateclass = aimutil_get16(data+i);
-	i += 2;
-
-	windowsize = aimutil_get32(data+i);
-	i += 4;
-	clear = aimutil_get32(data+i);
-	i += 4;
-	alert = aimutil_get32(data+i);
-	i += 4;
-	limit = aimutil_get32(data+i);
-	i += 4;
-	disconnect = aimutil_get32(data+i);
-	i += 4;
-	currentavg = aimutil_get32(data+i);
-	i += 4;
-	maxavg = aimutil_get32(data+i);
-	i += 4;
+	code = aimbs_get16(bs);
+	rateclass = aimbs_get16(bs);
+	
+	windowsize = aimbs_get32(bs);
+	clear = aimbs_get32(bs);
+	alert = aimbs_get32(bs);
+	limit = aimbs_get32(bs);
+	disconnect = aimbs_get32(bs);
+	currentavg = aimbs_get32(bs);
+	maxavg = aimbs_get32(bs);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		return userfunc(sess, rx, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
@@ -587,7 +593,7 @@ static int ratechange(struct aim_session_t *sess, aim_module_t *mod, struct comm
 }
 
 /* XXX parse this */
-static int selfinfo(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int selfinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
 
@@ -597,20 +603,18 @@ static int selfinfo(struct aim_session_t *sess, aim_module_t *mod, struct comman
 	return 0;
 }
 
-static int evilnotify(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	aim_rxcallback_t userfunc = NULL;
-	int i = 0;
-	unsigned short newevil;
+	aim_rxcallback_t userfunc;
+	fu16_t newevil;
 	struct aim_userinfo_s userinfo;
 
-	newevil = aimutil_get16(data);
-	i += 2;
-
 	memset(&userinfo, 0, sizeof(struct aim_userinfo_s));
+	
+	newevil = aimbs_get16(bs);
 
-	if (datalen-i)
-		i += aim_extractuserinfo(sess, data+i, &userinfo);
+	if (aim_bstream_empty(bs))
+		aim_extractuserinfo(sess, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		return userfunc(sess, rx, newevil, &userinfo);
@@ -618,13 +622,13 @@ static int evilnotify(struct aim_session_t *sess, aim_module_t *mod, struct comm
 	return 0;
 }
 
-static int motd(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int motd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
 	char *msg = NULL;
 	int ret = 0;
-	struct aim_tlvlist_t *tlvlist;
-	unsigned short id;
+	aim_tlvlist_t *tlvlist;
+	fu16_t id;
 
 	/*
 	 * Code.
@@ -636,13 +640,14 @@ static int motd(struct aim_session_t *sess, aim_module_t *mod, struct command_rx
 	 *   4 Nothing's wrong ("top o the world" -- normal)
 	 *
 	 */
-	id = aimutil_get16(data);
+	id = aimbs_get16(bs);
 
 	/* 
 	 * TLVs follow 
 	 */
-	if ((tlvlist = aim_readtlvchain(data+2, datalen-2)))
-		msg = aim_gettlv_str(tlvlist, 0x000b, 1);
+	tlvlist = aim_readtlvchain(bs);
+
+	msg = aim_gettlv_str(tlvlist, 0x000b, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, id, msg);
@@ -654,15 +659,19 @@ static int motd(struct aim_session_t *sess, aim_module_t *mod, struct command_rx
 	return ret;
 }
 
-static int hostversions(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
 	int vercount;
+	fu8_t *versions;
 
-	vercount = datalen/4;
+	vercount = aim_bstream_empty(bs)/4;
+	versions = aimbs_getraw(bs, aim_bstream_empty(bs));
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, vercount, data);
+		return userfunc(sess, rx, vercount, versions);
+
+	free(versions);
 
 	return 0;
 }
@@ -704,24 +713,18 @@ static int hostversions(struct aim_session_t *sess, aim_module_t *mod, struct co
  * Anyway, neener.  We win again.
  *
  */
-static int memrequest(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
-	unsigned long offset, len;
-	int i = 0;
-	struct aim_tlvlist_t *list;
-	char *modname = NULL;
+	fu32_t offset, len;
+	aim_tlvlist_t *list;
+	char *modname;
 
-	offset = aimutil_get32(data);
-	i += 4;
+	offset = aimbs_get32(bs);
+	len = aimbs_get32(bs);
+	list = aim_readtlvchain(bs);
 
-	len = aimutil_get32(data+4);
-	i += 4;
-
-	list = aim_readtlvchain(data+i, datalen-i);
-
-	if (aim_gettlv(list, 0x0001, 1))
-		modname = aim_gettlv_str(list, 0x0001, 1);
+	modname = aim_gettlv_str(list, 0x0001, 1);
 
 	faimdprintf(sess, 1, "data at 0x%08lx (%d bytes) of requested\n", offset, len, modname ? modname : "aim.exe");
 
@@ -734,7 +737,8 @@ static int memrequest(struct aim_session_t *sess, aim_module_t *mod, struct comm
 	return 0;
 }
 
-static void dumpbox(struct aim_session_t *sess, unsigned char *buf, int len)
+#if 0
+static void dumpbox(aim_session_t *sess, unsigned char *buf, int len)
 {
 	int i;
 
@@ -754,39 +758,42 @@ static void dumpbox(struct aim_session_t *sess, unsigned char *buf, int len)
 
 	return;
 }
+#endif
 
-faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned long offset, unsigned long len, const unsigned char *buf, unsigned char flag)
+faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t offset, fu32_t len, const fu8_t *buf, fu8_t flag)
 {
-	struct command_tx_struct *tx;
-	int i = 0;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
 	if (!sess || !conn)
 		return -EINVAL;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+2+16)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16)))
 		return -ENOMEM;
 
-	tx->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0001, 0x0020, 0x0000, NULL, 0);
 
-	i = aim_putsnac(tx->data, 0x0001, 0x0020, 0x0000, sess->snac_nextid++);
-	i += aimutil_put16(tx->data+i, 0x0010); /* md5 is always 16 bytes */
+	aim_putsnac(&fr->data, 0x0001, 0x0020, 0x0000, snacid);
+	aimbs_put16(&fr->data, 0x0010); /* md5 is always 16 bytes */
 
 	if ((flag == AIM_SENDMEMBLOCK_FLAG_ISHASH) && buf && (len == 0x10)) { /* we're getting a hash */
 
-		memcpy(tx->data+i, buf, 0x10);
-		i += 0x10;
+		aimbs_putraw(&fr->data, buf, 0x10); 
 
 	} else if (buf && (len > 0)) { /* use input buffer */
 		md5_state_t state;
+		md5_byte_t digest[0x10];
 
 		md5_init(&state);	
 		md5_append(&state, (const md5_byte_t *)buf, len);
-		md5_finish(&state, (md5_byte_t *)(tx->data+i));
-		i += 0x10;
+		md5_finish(&state, digest);
+
+		aimbs_putraw(&fr->data, (fu8_t *)digest, 0x10);
 
 	} else if (len == 0) { /* no length, just hash NULL (buf is optional) */
 		md5_state_t state;
-		unsigned char nil = '\0';
+		fu8_t nil = '\0';
+		md5_byte_t digest[0x10];
 
 		/*
 		 * These MD5 routines are stupid in that you have to have
@@ -795,8 +802,9 @@ faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *
 		 */
 		md5_init(&state);
 		md5_append(&state, (const md5_byte_t *)&nil, 0);
-		md5_finish(&state, (md5_byte_t *)(tx->data+i));
-		i += 0x10;
+		md5_finish(&state, digest);
+
+		aimbs_putraw(&fr->data, (fu8_t *)digest, 0x10);
 
 	} else {
 
@@ -810,62 +818,60 @@ faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *
 		if ((offset == 0x03ffffff) && (len == 0x03ffffff)) {
 
 #if 1 /* with "AnrbnrAqhfzcd" */
-			i += aimutil_put32(tx->data+i, 0x44a95d26);
-			i += aimutil_put32(tx->data+i, 0xd2490423);
-			i += aimutil_put32(tx->data+i, 0x93b8821f);
-			i += aimutil_put32(tx->data+i, 0x51c54b01);
+			aimbs_put32(&fr->data, 0x44a95d26);
+			aimbs_put32(&fr->data, 0xd2490423);
+			aimbs_put32(&fr->data, 0x93b8821f);
+			aimbs_put32(&fr->data, 0x51c54b01);
 #else /* no filename */
-			i += aimutil_put32(tx->data+i, 0x1df8cbae);
-			i += aimutil_put32(tx->data+i, 0x5523b839);
-			i += aimutil_put32(tx->data+i, 0xa0e10db3);
-			i += aimutil_put32(tx->data+i, 0xa46d3b39);
+			aimbs_put32(&fr->data, 0x1df8cbae);
+			aimbs_put32(&fr->data, 0x5523b839);
+			aimbs_put32(&fr->data, 0xa0e10db3);
+			aimbs_put32(&fr->data, 0xa46d3b39);
 #endif
 
 		} else if ((offset == 0x00001000) && (len == 0x00000000)) {
 
-			i += aimutil_put32(tx->data+i, 0xd41d8cd9);
-			i += aimutil_put32(tx->data+i, 0x8f00b204);
-			i += aimutil_put32(tx->data+i, 0xe9800998);
-			i += aimutil_put32(tx->data+i, 0xecf8427e);
+			aimbs_put32(&fr->data, 0xd41d8cd9);
+			aimbs_put32(&fr->data, 0x8f00b204);
+			aimbs_put32(&fr->data, 0xe9800998);
+			aimbs_put32(&fr->data, 0xecf8427e);
 
 		} else
 			faimdprintf(sess, 0, "sendmemblock: WARNING: unknown hash request\n");
 
 	}
 
-	tx->commandlen = i;
-	tx->lock = 0;
-	aim_tx_enqueue(sess, tx);
+	aim_tx_enqueue(sess, fr);
 
 	return 0;
 }
 
-static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
 	if (snac->subtype == 0x0003)
-		return hostonline(sess, mod, rx, snac, data, datalen);
+		return hostonline(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0005)
-		return redirect(sess, mod, rx, snac, data, datalen);
+		return redirect(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0007)
-		return rateresp(sess, mod, rx, snac, data, datalen);
+		return rateresp(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x000a)
-		return ratechange(sess, mod, rx, snac, data, datalen);
+		return ratechange(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x000f)
-		return selfinfo(sess, mod, rx, snac, data, datalen);
+		return selfinfo(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0010)
-		return evilnotify(sess, mod, rx, snac, data, datalen);
+		return evilnotify(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0013)
-		return motd(sess, mod, rx, snac, data, datalen);
+		return motd(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0018)
-		return hostversions(sess, mod, rx, snac, data, datalen);
+		return hostversions(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x001f)
-		return memrequest(sess, mod, rx, snac, data, datalen);
+		return memrequest(sess, mod, rx, snac, bs);
 
 	return 0;
 }
 
-faim_internal int general_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+faim_internal int general_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0001;

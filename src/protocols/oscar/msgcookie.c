@@ -27,29 +27,27 @@
  * in may be free'd, so don't count on its value after calling this!
  * 
  */
-faim_internal int aim_cachecookie(struct aim_session_t *sess,
-				  struct aim_msgcookie_t *cookie)
+faim_internal int aim_cachecookie(aim_session_t *sess, aim_msgcookie_t *cookie)
 {
-  struct aim_msgcookie_t *newcook;
+	aim_msgcookie_t *newcook;
 
-  if (!sess || !cookie)
-    return -1;
+	if (!sess || !cookie)
+		return -EINVAL;
 
-  if( (newcook = aim_checkcookie(sess, cookie->cookie, cookie->type)) ) {
-    if(newcook != cookie) {
-      aim_cookie_free(sess, newcook);
-    } else {
-      newcook->addtime = time(NULL);
-      return 1;
-    }
-  }
+	newcook = aim_checkcookie(sess, cookie->cookie, cookie->type);
+	
+	if (newcook == cookie) {
+		newcook->addtime = time(NULL);
+		return 1;
+	} else if (newcook)
+		aim_cookie_free(sess, newcook);
 
-  cookie->addtime = time(NULL);  
+	cookie->addtime = time(NULL);  
 
-  cookie->next = sess->msgcookies;
-  sess->msgcookies = cookie;
+	cookie->next = sess->msgcookies;
+	sess->msgcookies = cookie;
 
-  return 0;
+	return 0;
 }
 
 /**
@@ -62,23 +60,23 @@ faim_internal int aim_cachecookie(struct aim_session_t *sess,
  *
  * if found, returns the struct; if none found (or on error), returns NULL:
  */
-faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, unsigned char *cookie, int type)
+faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, fu8_t *cookie, int type)
 {
-  struct aim_msgcookie_t *cur, **prev;
+	aim_msgcookie_t *cur, **prev;
 
-  if (!cookie || !sess->msgcookies)
-    return NULL;
+	if (!cookie || !sess->msgcookies)
+		return NULL;
 
-  for (prev = &sess->msgcookies; (cur = *prev); ) {
-    if ((cur->type == type) && 
-	(memcmp(cur->cookie, cookie, 8) == 0)) {
-      *prev = cur->next;
-      return cur;
-    }
-    prev = &cur->next;
-  }
+	for (prev = &sess->msgcookies; (cur = *prev); ) {
+		if ((cur->type == type) && 
+				(memcmp(cur->cookie, cookie, 8) == 0)) {
+			*prev = cur->next;
+			return cur;
+		}
+		prev = &cur->next;
+	}
 
-  return NULL;
+	return NULL;
 }
 
 /**
@@ -91,21 +89,21 @@ faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *se
  * success.
  *
  */
-faim_internal struct aim_msgcookie_t *aim_mkcookie(unsigned char *c, int type, void *data) 
+faim_internal aim_msgcookie_t *aim_mkcookie(fu8_t *c, int type, void *data) 
 {
-  struct aim_msgcookie_t *cookie;
+	aim_msgcookie_t *cookie;
 
-  if (!c)
-    return NULL;
+	if (!c)
+		return NULL;
 
-  if (!(cookie = calloc(1, sizeof(struct aim_msgcookie_t))))
-    return NULL;
-  
-  cookie->data = data;
-  cookie->type = type;
-  memcpy(cookie->cookie, c, 8);
-  
-  return cookie;
+	if (!(cookie = calloc(1, sizeof(aim_msgcookie_t))))
+		return NULL;
+
+	cookie->data = data;
+	cookie->type = type;
+	memcpy(cookie->cookie, c, 8);
+
+	return cookie;
 }
 
 /**
@@ -119,28 +117,31 @@ faim_internal struct aim_msgcookie_t *aim_mkcookie(unsigned char *c, int type, v
  *
  */
 
-faim_internal struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *sess, 
-						      const unsigned char *cookie, 
-						      const int type)
+faim_internal aim_msgcookie_t *aim_checkcookie(aim_session_t *sess, const fu8_t *cookie, int type)
 {
-  struct aim_msgcookie_t *cur;
+	aim_msgcookie_t *cur;
 
-  for (cur = sess->msgcookies; cur; cur = cur->next) {
-    if ((cur->type == type) && 
-	(memcmp(cur->cookie, cookie, 8) == 0))
-      return cur;   
-  }
+	for (cur = sess->msgcookies; cur; cur = cur->next) {
+		if ((cur->type == type) && 
+				(memcmp(cur->cookie, cookie, 8) == 0))
+			return cur;   
+	}
 
-  return NULL;
+	return NULL;
 }
 
 #if 0 /* debugging feature */
-faim_internal int aim_dumpcookie(struct aim_msgcookie_t *cookie) 
+faim_internal int aim_dumpcookie(aim_msgcookie_t *cookie) 
 {
-  if(!cookie)
-    return -1;
-  printf("\tCookie at %p: %d/%s with %p, next %p\n", cookie, cookie->type, cookie->cookie, cookie->data, cookie->next);
-  return 0;
+
+	if (!cookie)
+		return -EINVAL;
+
+	printf("\tCookie at %p: %d/%s with %p, next %p\n", 
+			cookie, cookie->type, cookie->cookie, 
+			cookie->data, cookie->next);
+
+	return 0;
 }
 #endif
 
@@ -157,56 +158,39 @@ faim_internal int aim_dumpcookie(struct aim_msgcookie_t *cookie)
  * returns -1 on error, 0 on success.
  *
  */
-
-faim_internal int aim_cookie_free(struct aim_session_t *sess, 
-				  struct aim_msgcookie_t *cookie) 
+faim_internal int aim_cookie_free(aim_session_t *sess, aim_msgcookie_t *cookie) 
 {
-  struct aim_msgcookie_t *cur, **prev;
+	aim_msgcookie_t *cur, **prev;
 
-  if (!sess || !cookie)
-    return -1;
+	if (!sess || !cookie)
+		return -EINVAL;
 
-  if(!cookie)
-    return 0;
+	for (prev = &sess->msgcookies; (cur = *prev); ) {
+		if (cur == cookie)
+			*prev = cur->next;
+		else
+			prev = &cur->next;
+	}
 
-  for (prev = &sess->msgcookies; (cur = *prev); ) {
-    if (cur == cookie) {
-      *prev = cur->next;
-    } else
-      prev = &cur->next;
-  }
+	free(cookie->data);
+	free(cookie);
 
-  if(cookie->data)
-    free(cookie->data);
-
-  free(cookie);
-
-  return 0;
+	return 0;
 } 
 
-faim_internal int aim_msgcookie_gettype(int reqclass) {
-  /* XXX: hokey-assed. needs fixed. */
-  switch(reqclass) {
-  case AIM_CAPS_BUDDYICON:
-    return AIM_COOKIETYPE_OFTICON;
-    break;
-  case AIM_CAPS_VOICE:
-    return AIM_COOKIETYPE_OFTVOICE;
-    break;
-  case AIM_CAPS_IMIMAGE:
-    return AIM_COOKIETYPE_OFTIMAGE;
-    break;
-  case AIM_CAPS_CHAT:
-    return AIM_COOKIETYPE_CHAT;
-    break;
-  case AIM_CAPS_GETFILE:
-    return AIM_COOKIETYPE_OFTGET;
-    break;
-  case AIM_CAPS_SENDFILE:
-    return AIM_COOKIETYPE_OFTSEND;
-    break;
-  default:
-    return AIM_COOKIETYPE_UNKNOWN;
-    break;
-  }           
+/* XXX I hate switch */
+faim_internal int aim_msgcookie_gettype(int reqclass) 
+{
+	/* XXX: hokey-assed. needs fixed. */
+	switch(reqclass) {
+	case AIM_CAPS_BUDDYICON: return AIM_COOKIETYPE_OFTICON;
+	case AIM_CAPS_VOICE: return AIM_COOKIETYPE_OFTVOICE;
+	case AIM_CAPS_IMIMAGE: return AIM_COOKIETYPE_OFTIMAGE;
+	case AIM_CAPS_CHAT: return AIM_COOKIETYPE_CHAT;
+	case AIM_CAPS_GETFILE: return AIM_COOKIETYPE_OFTGET;
+	case AIM_CAPS_SENDFILE: return AIM_COOKIETYPE_OFTSEND;
+	default: return AIM_COOKIETYPE_UNKNOWN;
+	}           
 }
+
+

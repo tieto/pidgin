@@ -3,35 +3,14 @@ aim.h
 -----
   - Needs a bit of cleaning
 
-aim_auth.c
-----------
-  - Login doesn't take advantage of aim_conn constructs where it could
-  - Login should allow for multiple BOS connections
-
-aim_chat.c
-----------
-  - Needs to be implemented.
-
-aim_chatnav.c
--------------
-  - Needs to be implemented.
-
-aim_conn.c
-----------
-  - Does not work with proxies.
-
-aim_search.c
+search.c
 ------------
   - Still need aim_usersearch_name()
 
-aim_snac.c
+snac.c
 ----------
   - Should implement better SNAC handling
 
-aim_tlv.c
----------
-  - Newer TLV bulk-read routines most likely have leakage somewhere.
-
-aim_rxhandlers.c
+rxhandlers.c
 ----------------
   - Need a better solution than sleep()

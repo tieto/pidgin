@@ -8,47 +8,50 @@
 #define FAIM_INTERNAL
 #include <aim.h> 
 
-faim_export char *aim_chat_getname(struct aim_conn_t *conn)
+faim_export char *aim_chat_getname(aim_conn_t *conn)
 {
-  if (!conn)
-    return NULL;
-  if (conn->type != AIM_CONN_TYPE_CHAT)
-    return NULL;
+	
+	if (!conn)
+		return NULL;
+	
+	if (conn->type != AIM_CONN_TYPE_CHAT)
+		return NULL;
 
-  return (char *)conn->priv; /* yuck ! */
+	return (char *)conn->priv; /* yuck ! */
 }
 
-faim_export struct aim_conn_t *aim_chat_getconn(struct aim_session_t *sess, char *name)
+faim_export aim_conn_t *aim_chat_getconn(aim_session_t *sess, const char *name)
 {
-  struct aim_conn_t *cur;
-  
-  faim_mutex_lock(&sess->connlistlock);
-  for (cur = sess->connlist; cur; cur = cur->next) {
-    if (cur->type != AIM_CONN_TYPE_CHAT)
-      continue;
-    if (!cur->priv) {
-      faimdprintf(sess, 0, "faim: chat: chat connection with no name! (fd = %d)\n", cur->fd);
-      continue;
-    }
-    if (strcmp((char *)cur->priv, name) == 0)
-      break;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
+	aim_conn_t *cur;
 
-  return cur;
+	faim_mutex_lock(&sess->connlistlock);
+	for (cur = sess->connlist; cur; cur = cur->next) {
+		if (cur->type != AIM_CONN_TYPE_CHAT)
+			continue;
+		if (!cur->priv) {
+			faimdprintf(sess, 0, "faim: chat: chat connection with no name! (fd = %d)\n", cur->fd);
+			continue;
+		}
+		if (strcmp((char *)cur->priv, name) == 0)
+			break;
+	}
+	faim_mutex_unlock(&sess->connlistlock);
+
+	return cur;
 }
 
-faim_export int aim_chat_attachname(struct aim_conn_t *conn, char *roomname)
+faim_export int aim_chat_attachname(aim_conn_t *conn, const char *roomname)
 {
-  if (!conn || !roomname)
-    return -1;
 
-  if (conn->priv)
-    free(conn->priv);
+	if (!conn || !roomname)
+		return -EINVAL;
 
-  conn->priv = strdup(roomname);
+	if (conn->priv)
+		free(conn->priv);
 
-  return 0;
+	conn->priv = strdup(roomname);
+
+	return 0;
 }
 
 /*
@@ -63,331 +66,317 @@ faim_export int aim_chat_attachname(struct aim_conn_t *conn, char *roomname)
  *
  * XXX convert this to use tlvchains 
  */
-faim_export unsigned long aim_chat_send_im(struct aim_session_t *sess,
-					   struct aim_conn_t *conn, 
-					   unsigned short flags,
-					   const char *msg,
-					   int msglen)
+faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const char *msg, int msglen)
 {   
+	int i;
+	aim_frame_t *fr;
+	aim_msgcookie_t *cookie;
+	aim_snacid_t snacid;
+	fu8_t ckstr[8];
+	aim_tlvlist_t *otl = NULL, *itl = NULL;
 
-  int curbyte,i;
-  struct command_tx_struct *newpacket;
-  struct aim_msgcookie_t *cookie;
+	if (!sess || !conn || !msg || (msglen <= 0))
+		return 0;
 
-  if (!sess || !conn || !msg || (msglen <= 0))
-    return 0;
-  
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+		return -ENOMEM;
 
-  newpacket->lock = 1; /* lock struct */
+	snacid = aim_cachesnac(sess, 0x000e, 0x0005, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x000e, 0x0005, 0x0000, snacid);
 
-  curbyte  = 0;
-  curbyte += aim_putsnac(newpacket->data+curbyte, 
-			 0x000e, 0x0005, 0x0000, sess->snac_nextid);
 
-  /* 
-   * Generate a random message cookie 
-   */
-  for (i=0;i<8;i++)
-    curbyte += aimutil_put8(newpacket->data+curbyte, (u_char) rand());
+	/* 
+	 * Generate a random message cookie.
+	 *
+	 * XXX mkcookie should generate the cookie and cache it in one
+	 * operation to preserve uniqueness.
+	 *
+	 */
+	for (i = 0; i < sizeof(ckstr); i++)
+		aimutil_put8(ckstr+i, (fu8_t) rand());
 
-  cookie = aim_mkcookie(newpacket->data+curbyte-8, AIM_COOKIETYPE_CHAT, NULL);
-  cookie->data = strdup(conn->priv); /* chat hack dependent */
+	cookie = aim_mkcookie(ckstr, AIM_COOKIETYPE_CHAT, NULL);
+	cookie->data = strdup(conn->priv); /* chat hack dependent */
 
-  aim_cachecookie(sess, cookie);
+	aim_cachecookie(sess, cookie);
 
-  /*
-   * Channel ID. 
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
+	for (i = 0; i < sizeof(ckstr); i++)
+		aimbs_put8(&fr->data, ckstr[i]);
 
-  /*
-   * Type 1: Flag meaning this message is destined to the room.
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  
-  /*
-   * Type 6: Reflect
-   */
-  if (!(flags & AIM_CHATFLAGS_NOREFLECT)) {
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0006);
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  }
 
-  /*
-   * Type 7: Autoresponse
-   */
-  if (flags & AIM_CHATFLAGS_AWAY) {
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0007);
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  }
+	/*
+	 * Channel ID. 
+	 */
+	aimbs_put16(&fr->data, 0x0003);
 
-  /*
-   * Type 5: Message block.  Contains more TLVs.
-   *
-   * This could include other information... We just
-   * put in a message TLV however.  
-   * 
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0005);
-  curbyte += aimutil_put16(newpacket->data+curbyte, strlen(msg)+4);
 
-  /*
-   * SubTLV: Type 1: Message
-   */
-  curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(msg), msg);
-  
-  newpacket->commandlen = curbyte;
+	/*
+	 * Type 1: Flag meaning this message is destined to the room.
+	 */
+	aim_addtlvtochain_noval(&otl, 0x0001);
 
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
+	/*
+	 * Type 6: Reflect
+	 */
+	if (!(flags & AIM_CHATFLAGS_NOREFLECT))
+		aim_addtlvtochain_noval(&otl, 0x0006);
 
-  return (sess->snac_nextid++);
+	/*
+	 * Type 7: Autoresponse
+	 */
+	if (flags & AIM_CHATFLAGS_AWAY)
+		aim_addtlvtochain_noval(&otl, 0x0007);
+
+	/*
+	 * SubTLV: Type 1: Message
+	 */
+	aim_addtlvtochain_raw(&itl, 0x0001, strlen(msg), msg);
+
+	/*
+	 * Type 5: Message block.  Contains more TLVs.
+	 *
+	 * This could include other information... We just
+	 * put in a message TLV however.  
+	 * 
+	 */
+	aim_addtlvtochain_frozentlvlist(&otl, 0x0005, &itl);
+
+	aim_writetlvchain(&fr->data, &otl);
+	
+	aim_freetlvchain(&itl);
+	aim_freetlvchain(&otl);
+	
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+static int aim_addtlvtochain_chatroom(aim_tlvlist_t **list, fu16_t type, fu16_t exchange, const char *roomname, fu16_t instance)
+{
+	fu8_t *buf;
+	int buflen;
+	aim_bstream_t bs;
+
+	buflen = 2 + 1 + strlen(roomname) + 2;
+	
+	if (!(buf = malloc(buflen)))
+		return 0;
+
+	aim_bstream_init(&bs, buf, buflen);
+
+	aimbs_put16(&bs, exchange);
+	aimbs_put8(&bs, strlen(roomname));
+	aimbs_putraw(&bs, roomname, strlen(roomname));
+	aimbs_put16(&bs, instance);
+
+	aim_addtlvtochain_raw(list, type, aim_bstream_curpos(&bs), buf);
+
+	free(buf);
+
+	return 0;
 }
 
 /*
- * Join a room of name roomname.  This is the first
- * step to joining an already created room.  It's 
- * basically a Service Request for family 0x000e, 
- * with a little added on to specify the exchange
- * and room name.
- *
+ * Join a room of name roomname.  This is the first step to joining an 
+ * already created room.  It's basically a Service Request for 
+ * family 0x000e, with a little added on to specify the exchange and room 
+ * name.
  */
-faim_export unsigned long aim_chat_join(struct aim_session_t *sess,
-					struct aim_conn_t *conn, 
-					u_short exchange,
-					const char *roomname)
+faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exchange, const char *roomname, fu16_t instance)
 {
-  struct command_tx_struct *newpacket;
-  int i;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
+	
+	if (!sess || !conn || !roomname || !strlen(roomname))
+		return -EINVAL;
 
-  if (!sess || !conn || !roomname)
-    return 0;
-  
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+9+strlen(roomname)+2)))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+9+strlen(roomname)+2)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
-  
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0004, 0x0000, sess->snac_nextid);
 
-  i+= aimutil_put16(newpacket->data+i, 0x000e);
+	snacid = aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, roomname, strlen(roomname)+1);
+	aim_putsnac(&fr->data, 0x0001, 0x0004, 0x0000, snacid);
 
-  /* 
-   * this is techinally a TLV, but we can't use normal functions
-   * because we need the extraneous nulls and other weird things.
-   */
-  i+= aimutil_put16(newpacket->data+i, 0x0001);
-  i+= aimutil_put16(newpacket->data+i, 2+1+strlen(roomname)+2);
-  i+= aimutil_put16(newpacket->data+i, exchange);
-  i+= aimutil_put8(newpacket->data+i, strlen(roomname));
-  i+= aimutil_putstr(newpacket->data+i, roomname, strlen(roomname));
-  i+= aimutil_put16(newpacket->data+i, 0x0000); /* instance? */
+	/*
+	 * Requesting service chat (0x000e)
+	 */
+	aimbs_put16(&fr->data, 0x000e);
 
-  /*
-   * Chat hack.
-   *
-   * XXX: A problem occurs here if we request a channel
-   *      join but it fails....pendingjoin will be nonnull
-   *      even though the channel is never going to get a
-   *      redirect!
-   *
-   */
-  sess->pendingjoin = strdup(roomname);
-  sess->pendingjoinexchange = exchange;
+	aim_addtlvtochain_chatroom(&tl, 0x0001, exchange, roomname, instance);
+	aim_writetlvchain(&fr->data, &tl);
+	aim_freetlvchain(&tl);
 
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
+	/*
+	 * Chat hack.
+	 *
+	 * XXX: A problem occurs here if we request a channel
+	 *      join but it fails....pendingjoin will be nonnull
+	 *      even though the channel is never going to get a
+	 *      redirect!
+	 *
+	 */
+	sess->pendingjoin = strdup(roomname);
+	sess->pendingjoinexchange = exchange;
 
-  aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, roomname, strlen(roomname)+1);
+	aim_tx_enqueue(sess, fr);
 
-  return sess->snac_nextid;
+	return 0; 
 }
 
-faim_internal int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo)
+faim_internal int aim_chat_readroominfo(aim_bstream_t *bs, struct aim_chat_roominfo *outinfo)
 {
-  int namelen = 0;
-  int i = 0;
+	int namelen;
 
-  if (!buf || !outinfo)
-    return 0;
+	if (!bs || !outinfo)
+		return 0;
 
-  outinfo->exchange = aimutil_get16(buf+i);
-  i += 2;
+	outinfo->exchange = aimbs_get16(bs);
+	namelen = aimbs_get8(bs);
+	outinfo->name = aimbs_getstr(bs, namelen);
+	outinfo->instance = aimbs_get16(bs);
 
-  namelen = aimutil_get8(buf+i);
-  i += 1;
-
-  outinfo->name = (char *)malloc(namelen+1);
-  memcpy(outinfo->name, buf+i, namelen);
-  outinfo->name[namelen] = '\0';
-  i += namelen;
-
-  outinfo->instance = aimutil_get16(buf+i);
-  i += 2;
-  
-  return i;
+	return 0;
 }
 
-faim_export unsigned long aim_chat_clientready(struct aim_session_t *sess,
-					       struct aim_conn_t *conn)
+faim_export int aim_chat_clientready(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct command_tx_struct *newpacket;
-  int i;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 0x20)))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 0x20)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0001, 0x0002, 0x0000, snacid);
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0002, 0x0000, sess->snac_nextid);
+	aimbs_put16(&fr->data, 0x000e);
+	aimbs_put16(&fr->data, 0x0001);
 
-  i+= aimutil_put16(newpacket->data+i, 0x000e);
-  i+= aimutil_put16(newpacket->data+i, 0x0001);
+	aimbs_put16(&fr->data, 0x0004);
+	aimbs_put16(&fr->data, 0x0001);
 
-  i+= aimutil_put16(newpacket->data+i, 0x0004);
-  i+= aimutil_put16(newpacket->data+i, 0x0001);
+	aimbs_put16(&fr->data, 0x0001);
+	aimbs_put16(&fr->data, 0x0003);
 
-  i+= aimutil_put16(newpacket->data+i, 0x0001);
-  i+= aimutil_put16(newpacket->data+i, 0x0003);
+	aimbs_put16(&fr->data, 0x0004);
+	aimbs_put16(&fr->data, 0x0686);
 
-  i+= aimutil_put16(newpacket->data+i, 0x0004);
-  i+= aimutil_put16(newpacket->data+i, 0x0686);
+	aim_tx_enqueue(sess, fr);
 
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
-
-  return (sess->snac_nextid++);
+	return 0;
 }
 
-faim_export int aim_chat_leaveroom(struct aim_session_t *sess, char *name)
+faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name)
 {
-  struct aim_conn_t *conn;
+	aim_conn_t *conn;
 
-  if ((conn = aim_chat_getconn(sess, name)))
-    aim_conn_close(conn);
+	if (!(conn = aim_chat_getconn(sess, name)))
+		return -ENOENT;
 
-  if (!conn)
-    return -1;
-  return 0;
+	aim_conn_close(conn);
+
+	return 0;
 }
 
 /*
  * conn must be a BOS connection!
  */
-faim_export unsigned long aim_chat_invite(struct aim_session_t *sess,
-					  struct aim_conn_t *conn,
-					  char *sn,
-					  char *msg,
-					  u_short exchange,
-					  char *roomname,
-					  u_short instance)
+faim_export int aim_chat_invite(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *msg, fu16_t exchange, const char *roomname, fu16_t instance)
 {
-  struct command_tx_struct *newpacket;
-  int i,curbyte=0;
-  struct aim_msgcookie_t *cookie;
-  struct aim_invite_priv *priv;
+	int i;
+	aim_frame_t *fr;
+	aim_msgcookie_t *cookie;
+	struct aim_invite_priv *priv;
+	fu8_t ckstr[8];
+	aim_snacid_t snacid;
+	aim_tlvlist_t *otl = NULL, *itl = NULL;
+	fu8_t *hdr;
+	int hdrlen;
+	aim_bstream_t hdrbs;
+	
+	if (!sess || !conn || !sn || !msg || !roomname)
+		return -EINVAL;
 
-  if (!sess || !conn || !sn || !msg || !roomname)
-    return -1;
+	if (conn->type != AIM_CONN_TYPE_BOS)
+		return -EINVAL;
 
-  if (conn->type != AIM_CONN_TYPE_BOS)
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152+strlen(sn)+strlen(roomname)+strlen(msg))))
+		return -ENOMEM;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152+strlen(sn)+strlen(roomname)+strlen(msg))))
-    return -1;
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, sn, strlen(sn)+1);
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
-  newpacket->lock = 1;
 
-  curbyte = aim_putsnac(newpacket->data, 0x0004, 0x0006, 0x0000, sess->snac_nextid);
+	/*
+	 * Cookie
+	 */
+	for (i = 0; i < sizeof(ckstr); i++)
+		aimutil_put8(ckstr, (fu8_t) rand());
 
-  /*
-   * Cookie
-   */
-  for (i=0;i<8;i++)
-    curbyte += aimutil_put8(newpacket->data+curbyte, (u_char)rand());
+	/* XXX should be uncached by an unwritten 'invite accept' handler */
+	if ((priv = malloc(sizeof(struct aim_invite_priv)))) {
+		priv->sn = strdup(sn);
+		priv->roomname = strdup(roomname);
+		priv->exchange = exchange;
+		priv->instance = instance;
+	}
 
-  /* XXX this should get uncached by the unwritten 'invite accept' handler */
-  if(!(priv = calloc(sizeof(struct aim_invite_priv), 1)))
-    return -1;
-  priv->sn = strdup(sn);
-  priv->roomname = strdup(roomname);
-  priv->exchange = exchange;
-  priv->instance = instance;
+	if ((cookie = aim_mkcookie(ckstr, AIM_COOKIETYPE_INVITE, priv)))
+		aim_cachecookie(sess, cookie);
+	else
+		free(priv);
 
-  if(!(cookie = aim_mkcookie(newpacket->data+curbyte-8, AIM_COOKIETYPE_INVITE, priv)))
-    return -1;
-  aim_cachecookie(sess, cookie);
+	for (i = 0; i < sizeof(ckstr); i++)
+		aimbs_put8(&fr->data, ckstr[i]);
 
-  /*
-   * Channel (2)
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
 
-  /*
-   * Dest sn
-   */
-  curbyte += aimutil_put8(newpacket->data+curbyte, strlen(sn));
-  curbyte += aimutil_putstr(newpacket->data+curbyte, sn, strlen(sn));
+	/*
+	 * Channel (2)
+	 */
+	aimbs_put16(&fr->data, 0x0002);
 
-  /*
-   * TLV t(0005)
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0005);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x28+strlen(msg)+0x04+0x03+strlen(roomname)+0x02);
-  
-  /* 
-   * Unknown info
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x3131);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x3538);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x3446);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x4100);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x748f);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x2420);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x6287);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x11d1);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x8222);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x4445);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x5354);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  
-  /*
-   * TLV t(000a) -- Unknown
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x000a);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
-  
-  /*
-   * TLV t(000f) -- Unknown
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x000f);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  
-  /*
-   * TLV t(000c) -- Invitation message
-   */
-  curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000c, strlen(msg), msg);
+	/*
+	 * Dest sn
+	 */
+	aimbs_put8(&fr->data, strlen(sn));
+	aimbs_putraw(&fr->data, sn, strlen(sn));
 
-  /*
-   * TLV t(2711) -- Container for room information 
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x2711);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 3+strlen(roomname)+2);
-  curbyte += aimutil_put16(newpacket->data+curbyte, exchange);
-  curbyte += aimutil_put8(newpacket->data+curbyte, strlen(roomname));
-  curbyte += aimutil_putstr(newpacket->data+curbyte, roomname, strlen(roomname));
-  curbyte += aimutil_put16(newpacket->data+curbyte, instance);
+	/*
+	 * TLV t(0005)
+	 *
+	 * Everything else is inside this TLV.
+	 *
+	 * Sigh.  AOL was rather inconsistent right here.  So we have
+	 * to play some minor tricks.  Right inside the type 5 is some
+	 * raw data, followed by a series of TLVs.  
+	 *
+	 */
+	hdrlen = 2+8+16+6+4+4+strlen(msg)+4+2+1+strlen(roomname)+2;
+	hdr = malloc(hdrlen);
+	aim_bstream_init(&hdrbs, hdr, hdrlen);
+	
+	aimbs_put16(&hdrbs, 0x0000); /* Unknown! */
+	aimbs_putraw(&hdrbs, ckstr, sizeof(ckstr)); /* I think... */
+	aim_putcap(&hdrbs, AIM_CAPS_CHAT);
 
-  newpacket->commandlen = curbyte;
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
+	aim_addtlvtochain16(&itl, 0x000a, 0x0001);
+	aim_addtlvtochain_noval(&itl, 0x000f);
+	aim_addtlvtochain_raw(&itl, 0x000c, strlen(msg), msg);
+	aim_addtlvtochain_chatroom(&itl, 0x2711, exchange, roomname, instance);
+	aim_writetlvchain(&hdrbs, &itl);
+	
+	aim_addtlvtochain_raw(&otl, 0x0005, aim_bstream_curpos(&hdrbs), hdr);
 
-  return (sess->snac_nextid++);
+	aim_writetlvchain(&fr->data, &otl);
+
+	free(hdr);
+	aim_freetlvchain(&itl);
+	aim_freetlvchain(&otl);
+	
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
 }
 
 /*
@@ -399,43 +388,38 @@ faim_export unsigned long aim_chat_invite(struct aim_session_t *sess,
  *
  * SNAC 000e/0002
  */
-static int infoupdate(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	struct aim_userinfo_s *userinfo = NULL;
-	aim_rxcallback_t userfunc=NULL;	
-	int ret = 0, i = 0;
+	aim_rxcallback_t userfunc;
+	int ret = 0;
 	int usercount = 0;
-	unsigned char detaillevel = 0;
+	fu8_t detaillevel = 0;
 	char *roomname = NULL;
 	struct aim_chat_roominfo roominfo;
-	unsigned short tlvcount = 0;
-	struct aim_tlvlist_t *tlvlist;
+	fu16_t tlvcount = 0;
+	aim_tlvlist_t *tlvlist;
 	char *roomdesc = NULL;
-	unsigned short unknown_c9 = 0;
-	unsigned long creationtime = 0;
-	unsigned short maxmsglen = 0, maxvisiblemsglen = 0;
-	unsigned short unknown_d2 = 0, unknown_d5 = 0;
+	fu16_t unknown_c9 = 0;
+	fu32_t creationtime = 0;
+	fu16_t maxmsglen = 0, maxvisiblemsglen = 0;
+	fu16_t unknown_d2 = 0, unknown_d5 = 0;
 
-	i += aim_chat_readroominfo(data+i, &roominfo);
+	aim_chat_readroominfo(bs, &roominfo);
 
-	detaillevel = aimutil_get8(data+i);
-	i++;
+	detaillevel = aimbs_get8(bs);
 
 	if (detaillevel != 0x02) {
-		if (detaillevel == 0x01)
-			faimdprintf(sess, 0, "faim: chat_roomupdateinfo: detail level 1 not supported\n");
-		else
-			faimdprintf(sess, 0, "faim: chat_roomupdateinfo: unknown detail level %d\n", detaillevel);
+		faimdprintf(sess, 0, "faim: chat_roomupdateinfo: detail level %d not supported\n", detaillevel);
 		return 1;
 	}
 
-	tlvcount = aimutil_get16(data+i);
-	i += 2;
+	tlvcount = aimbs_get16(bs);
 
 	/*
 	 * Everything else are TLVs.
 	 */ 
-	tlvlist = aim_readtlvchain(data+i, datalen-i);
+	tlvlist = aim_readtlvchain(bs);
 
 	/*
 	 * TLV type 0x006a is the room name in Human Readable Form.
@@ -454,15 +438,18 @@ static int infoupdate(struct aim_session_t *sess, aim_module_t *mod, struct comm
 	 */
 	if (aim_gettlv(tlvlist, 0x0073, 1)) {	
 		int curoccupant = 0;
-		struct aim_tlv_t *tmptlv;
+		aim_tlv_t *tmptlv;
+		aim_bstream_t occbs;
 
 		tmptlv = aim_gettlv(tlvlist, 0x0073, 1);
 
 		/* Allocate enough userinfo structs for all occupants */
 		userinfo = calloc(usercount, sizeof(struct aim_userinfo_s));
 
-		for (i = 0; curoccupant < usercount; )
-			i += aim_extractuserinfo(sess, tmptlv->value+i, &userinfo[curoccupant++]);
+		aim_bstream_init(&occbs, tmptlv->value, tmptlv->length);
+
+		while (curoccupant < usercount)
+			aim_extractuserinfo(sess, &occbs, &userinfo[curoccupant++]);
 	}
 
 	/* 
@@ -563,24 +550,24 @@ static int infoupdate(struct aim_session_t *sess, aim_module_t *mod, struct comm
 	return ret;
 }
 
-static int userlistchange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-  struct aim_userinfo_s *userinfo = NULL;
-  aim_rxcallback_t userfunc;
-  int i = 0, curcount = 0, ret = 0;
+	struct aim_userinfo_s *userinfo = NULL;
+	aim_rxcallback_t userfunc;
+	int curcount = 0, ret = 0;
 
-  while (i < datalen) {
-    curcount++;
-    userinfo = realloc(userinfo, curcount * sizeof(struct aim_userinfo_s));
-    i += aim_extractuserinfo(sess, data+i, &userinfo[curcount-1]);
-  }
+	while (aim_bstream_empty(bs)) {
+		curcount++;
+		userinfo = realloc(userinfo, curcount * sizeof(struct aim_userinfo_s));
+		aim_extractuserinfo(sess, bs, &userinfo[curcount-1]);
+	}
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    ret = userfunc(sess, rx, curcount, userinfo);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, curcount, userinfo);
 
-  free(userinfo);
+	free(userinfo);
 
-  return ret;
+	return ret;
 }
 
 /*
@@ -606,118 +593,124 @@ static int userlistchange(struct aim_session_t *sess, aim_module_t *mod, struct 
  *       possibly others
  *  
  */
-static int incomingmsg(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int incomingmsg(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-  struct aim_userinfo_s userinfo;
-  aim_rxcallback_t userfunc=NULL;	
-  int ret = 0, i = 0;
-  unsigned char cookie[8];
-  int channel;
-  struct aim_tlvlist_t *outerlist;
-  char *msg = NULL;
-  struct aim_msgcookie_t *ck;
+	struct aim_userinfo_s userinfo;
+	aim_rxcallback_t userfunc;	
+	int ret = 0;
+	fu8_t *cookie;
+	fu16_t channel;
+	aim_tlvlist_t *otl;
+	char *msg = NULL;
+	aim_msgcookie_t *ck;
 
-  memset(&userinfo, 0x00, sizeof(struct aim_userinfo_s));
+	memset(&userinfo, 0, sizeof(struct aim_userinfo_s));
 
-  /*
-   * ICBM Cookie.  Cache it.
-   */ 
-  memcpy(cookie, data, 8);
-  i += 8;
+	/*
+	 * ICBM Cookie.  Uncache it.
+	 */
+	cookie = aimbs_getraw(bs, 8);
 
-  if ((ck = aim_uncachecookie(sess, cookie, AIM_COOKIETYPE_CHAT))) {
-    if (ck->data)
-      free(ck->data);
-    free(ck);
-  }
+	if ((ck = aim_uncachecookie(sess, cookie, AIM_COOKIETYPE_CHAT))) {
+		free(ck->data);
+		free(ck);
+	}
 
-  /*
-   * Channel ID
-   *
-   * Channels 1 and 2 are implemented in the normal ICBM
-   * parser.
-   *
-   * We only do channel 3 here.
-   *
-   */
-  channel = aimutil_get16(data+i);
-  i += 2;
+	/*
+	 * Channel ID
+	 *
+	 * Channels 1 and 2 are implemented in the normal ICBM
+	 * parser.
+	 *
+	 * We only do channel 3 here.
+	 *
+	 */
+	channel = aimbs_get16(bs);
 
-  if (channel != 0x0003) {
-    faimdprintf(sess, 0, "faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
-    return 0;
-  }
+	if (channel != 0x0003) {
+		faimdprintf(sess, 0, "faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
+		return 0;
+	}
 
-  /*
-   * Start parsing TLVs right away. 
-   */
-  outerlist = aim_readtlvchain(data+8+2, datalen-8-2);
-  
-  /*
-   * Type 0x0003: Source User Information
-   */
-  if (aim_gettlv(outerlist, 0x0003, 1)) {
-    struct aim_tlv_t *userinfotlv;
-    
-    userinfotlv = aim_gettlv(outerlist, 0x0003, 1);
-    aim_extractuserinfo(sess, userinfotlv->value, &userinfo);
-  }
+	/*
+	 * Start parsing TLVs right away. 
+	 */
+	otl = aim_readtlvchain(bs);
 
-  /*
-   * Type 0x0001: Unknown.
-   */
-  if (aim_gettlv(outerlist, 0x0001, 1))
-    ;
+	/*
+	 * Type 0x0003: Source User Information
+	 */
+	if (aim_gettlv(otl, 0x0003, 1)) {
+		aim_tlv_t *userinfotlv;
+		aim_bstream_t tbs;
 
-  /*
-   * Type 0x0005: Message Block.  Conains more TLVs.
-   */
-  if (aim_gettlv(outerlist, 0x0005, 1)) {
-    struct aim_tlvlist_t *innerlist;
-    struct aim_tlv_t *msgblock;
+		userinfotlv = aim_gettlv(otl, 0x0003, 1);
 
-    msgblock = aim_gettlv(outerlist, 0x0005, 1);
-    innerlist = aim_readtlvchain(msgblock->value, msgblock->length);
-      
-    /* 
-     * Type 0x0001: Message.
-     */	
-    if (aim_gettlv(innerlist, 0x0001, 1))
-      msg = aim_gettlv_str(innerlist, 0x0001, 1);
+		aim_bstream_init(&tbs, userinfotlv->value, userinfotlv->length);
+		aim_extractuserinfo(sess, &tbs, &userinfo);
+	}
 
-    aim_freetlvchain(&innerlist); 
-  }
+	/*
+	 * Type 0x0001: If present, it means it was a message to the 
+	 * room (as opposed to a whisper).
+	 */
+	if (aim_gettlv(otl, 0x0001, 1))
+		;
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    ret = userfunc(sess, rx, &userinfo, msg);
+	/*
+	 * Type 0x0005: Message Block.  Conains more TLVs.
+	 */
+	if (aim_gettlv(otl, 0x0005, 1)) {
+		aim_tlvlist_t *itl;
+		aim_tlv_t *msgblock;
+		aim_bstream_t tbs;
 
-  free(msg);
-  aim_freetlvchain(&outerlist);
+		msgblock = aim_gettlv(otl, 0x0005, 1);
+		aim_bstream_init(&tbs, msgblock->value, msgblock->length);
+		itl = aim_readtlvchain(&tbs);
 
-  return ret;
+		/* 
+		 * Type 0x0001: Message.
+		 */	
+		if (aim_gettlv(itl, 0x0001, 1))
+			msg = aim_gettlv_str(itl, 0x0001, 1);
+
+		aim_freetlvchain(&itl); 
+	}
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, &userinfo, msg);
+
+	free(cookie);
+	free(msg);
+	aim_freetlvchain(&otl);
+
+	return ret;
 }
 
-static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
-  if (snac->subtype == 0x0002)
-    return infoupdate(sess, mod, rx, snac, data, datalen);
-  else if ((snac->subtype == 0x0003) || (snac->subtype == 0x0004))
-    return userlistchange(sess, mod, rx, snac, data, datalen);
-  else if (snac->subtype == 0x0006)
-    return incomingmsg(sess, mod, rx, snac, data, datalen);
+	if (snac->subtype == 0x0002)
+		return infoupdate(sess, mod, rx, snac, bs);
+	else if ((snac->subtype == 0x0003) || (snac->subtype == 0x0004))
+		return userlistchange(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x0006)
+		return incomingmsg(sess, mod, rx, snac, bs);
 
-  return 0;
+	return 0;
 }
 
-faim_internal int chat_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+faim_internal int chat_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
-  mod->family = 0x000e;
-  mod->version = 0x0000;
-  mod->flags = 0;
-  strncpy(mod->name, "chat", sizeof(mod->name));
-  mod->snachandler = snachandler;
+	mod->family = 0x000e;
+	mod->version = 0x0000;
+	mod->flags = 0;
+	strncpy(mod->name, "chat", sizeof(mod->name));
+	mod->snachandler = snachandler;
 
-  return 0;
+	return 0;
 }
+
+

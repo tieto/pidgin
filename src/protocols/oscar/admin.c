@@ -3,180 +3,163 @@
 #include <aim.h>
 
 /* called for both reply and change-reply */
-static int infochange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int infochange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-  int i;
 
-  /*
-   * struct {
-   *    unsigned short perms;
-   *    unsigned short tlvcount;
-   *    aim_tlv_t tlvs[tlvcount];
-   *  } admin_info[n];
-   */
-  for (i = 0; i < datalen; ) {
-    int perms, tlvcount;
+	/*
+	 * struct {
+	 *    unsigned short perms;
+	 *    unsigned short tlvcount;
+	 *    aim_tlv_t tlvs[tlvcount];
+	 *  } admin_info[n];
+	 */
+	while (aim_bstream_empty(bs)) {
+		fu16_t perms, tlvcount;
 
-    perms = aimutil_get16(data+i);
-    i += 2;
+		perms = aimbs_get16(bs);
+		tlvcount = aimbs_get16(bs);
 
-    tlvcount = aimutil_get16(data+i);
-    i += 2;
+		while (tlvcount && aim_bstream_empty(bs)) {
+			aim_rxcallback_t userfunc;
+			fu16_t type, len;
+			fu8_t *val;
+			int str = 0;
 
-    while (tlvcount) {
-      aim_rxcallback_t userfunc;
-      struct aim_tlv_t *tlv;
-      int str = 0;
+			type = aimbs_get16(bs);
+			len = aimbs_get16(bs);
 
-      if ((aimutil_get16(data+i) == 0x0011) ||
-	  (aimutil_get16(data+i) == 0x0004))
-	str = 1;
+			if ((type == 0x0011) || (type == 0x0004))
+				str = 1;
 
-      if (str)
-	tlv = aim_grabtlvstr(data+i);
-      else
-	tlv = aim_grabtlv(data+i);
+			if (str)
+				val = aimbs_getstr(bs, len);
+			else
+				val = aimbs_getraw(bs, len);
 
-      /* XXX fix so its only called once for the entire packet */
-      if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-	userfunc(sess, rx, perms, tlv->type, tlv->length, tlv->value, str);
+			/* XXX fix so its only called once for the entire packet */
+			if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+				userfunc(sess, rx, (snac->subtype == 0x0005) ? 1 : 0, perms, type, len, val, str);
 
-      if (tlv)
-	i += 2+2+tlv->length;
+			free(val);
 
-      if (tlv && tlv->value)
-	free(tlv->value);
-      if (tlv)
-	free(tlv);
+			tlvcount--;
+		}
+	}
 
-      tlvcount--;
-    }
-  }
-
-  return 1;
+	return 1;
 }
 
-static int accountconfirm(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int accountconfirm(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-  aim_rxcallback_t userfunc;
-  int status;
+	aim_rxcallback_t userfunc;
+	fu16_t status;
 
-  status = aimutil_get16(data);
+	status = aimbs_get16(bs);
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    return userfunc(sess, rx, status);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		return userfunc(sess, rx, status);
 
-  return 0;
+	return 0;
 }
 
-static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
-  if ((snac->subtype == 0x0003) || (snac->subtype == 0x0005))
-    return infochange(sess, mod, rx, snac, data, datalen);
-  else if (snac->subtype == 0x0007)
-    return accountconfirm(sess, mod, rx, snac, data, datalen);
+	if ((snac->subtype == 0x0003) || (snac->subtype == 0x0005))
+		return infochange(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x0007)
+		return accountconfirm(sess, mod, rx, snac, bs);
 
-  return 0;
+	return 0;
 }
 
-faim_internal int admin_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+faim_internal int admin_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
-  mod->family = 0x0007;
-  mod->version = 0x0000;
-  mod->flags = 0;
-  strncpy(mod->name, "admin", sizeof(mod->name));
-  mod->snachandler = snachandler;
+	mod->family = 0x0007;
+	mod->version = 0x0000;
+	mod->flags = 0;
+	strncpy(mod->name, "admin", sizeof(mod->name));
+	mod->snachandler = snachandler;
 
-  return 0;
+	return 0;
 }
 
-faim_export unsigned long aim_auth_clientready(struct aim_session_t *sess,
-					       struct aim_conn_t *conn)
+faim_export int aim_auth_clientready(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct aim_tool_version tools[] = {
-    {0x0001, 0x0003,    AIM_TOOL_NEWWIN, 0x0361},
-    {0x0007, 0x0001,    AIM_TOOL_NEWWIN, 0x0361},
-  };
-  int i,j;
-  struct command_tx_struct *newpacket;
-  int toolcount = sizeof(tools)/sizeof(struct aim_tool_version);
+	static const struct aim_tool_version tools[] = {
+		{0x0001, 0x0003,    AIM_TOOL_NEWWIN, 0x0361},
+		{0x0007, 0x0001,    AIM_TOOL_NEWWIN, 0x0361},
+	};
+	int j;
+	aim_frame_t *tx;
+	int toolcount = sizeof(tools) / sizeof(struct aim_tool_version);
+	aim_snacid_t snacid;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
-    return -1;
+	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0002, 1152)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&tx->data, 0x0001, 0x0002, 0x0000, snacid);
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0002, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
+	for (j = 0; j < toolcount; j++) {
+		aimbs_put16(&tx->data, tools[j].group);
+		aimbs_put16(&tx->data, tools[j].version);
+		aimbs_put16(&tx->data, tools[j].tool);
+		aimbs_put16(&tx->data, tools[j].toolversion);
+	}
 
-  for (j = 0; j < toolcount; j++) {
-    i += aimutil_put16(newpacket->data+i, tools[j].group);
-    i += aimutil_put16(newpacket->data+i, tools[j].version);
-    i += aimutil_put16(newpacket->data+i, tools[j].tool);
-    i += aimutil_put16(newpacket->data+i, tools[j].toolversion);
-  }
+	aim_tx_enqueue(sess, tx);
 
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
-
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
-faim_export unsigned long aim_auth_changepasswd(struct aim_session_t *sess,
-						struct aim_conn_t *conn, 
-						char *new, char *current)
+faim_export int aim_auth_changepasswd(aim_session_t *sess, aim_conn_t *conn, const char *newpw, const char *curpw)
 {
-  struct command_tx_struct *newpacket;
-  int i;
+	aim_frame_t *tx;
+	aim_tlvlist_t *tl = NULL;
+	aim_snacid_t snacid;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+4+strlen(current)+4+strlen(new))))
-    return -1;
+	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+strlen(curpw)+4+strlen(newpw))))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
+	aim_putsnac(&tx->data, 0x0007, 0x0004, 0x0000, snacid);
 
-  i = aim_putsnac(newpacket->data, 0x0007, 0x0004, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
+	/* new password TLV t(0002) */
+	aim_addtlvtochain_raw(&tl, 0x0002, strlen(newpw), newpw);
 
-  /* new password TLV t(0002) */
-  i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(new), new);
+	/* current password TLV t(0012) */
+	aim_addtlvtochain_raw(&tl, 0x0012, strlen(curpw), curpw);
 
-  /* current password TLV t(0012) */
-  i += aim_puttlv_str(newpacket->data+i, 0x0012, strlen(current), current);
+	aim_writetlvchain(&tx->data, &tl);
+	aim_freetlvchain(&tl);
 
-  aim_tx_enqueue(sess, newpacket);
+	aim_tx_enqueue(sess, tx);
 
-  return sess->snac_nextid;
+	return 0;
 }
 
-faim_export unsigned long aim_auth_setversions(struct aim_session_t *sess,
-					       struct aim_conn_t *conn)
+faim_export int aim_auth_setversions(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct command_tx_struct *newpacket;
-  int i;
+	aim_frame_t *tx;
+	aim_snacid_t snacid;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + (4*2))))
-    return -1;
+	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 18)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
+	aim_putsnac(&tx->data, 0x0001, 0x0017, 0x0000, snacid);
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0017, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
+	aimbs_put16(&tx->data, 0x0001);
+	aimbs_put16(&tx->data, 0x0003);
 
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-  i += aimutil_put16(newpacket->data+i, 0x0003);
+	aimbs_put16(&tx->data, 0x0007);
+	aimbs_put16(&tx->data, 0x0001);
 
-  i += aimutil_put16(newpacket->data+i, 0x0007);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
+	aim_tx_enqueue(sess, tx);
 
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
 /*
@@ -187,10 +170,9 @@ faim_export unsigned long aim_auth_setversions(struct aim_session_t *sess,
  * get the TRIAL flag removed from your account.
  *
  */
-faim_export unsigned long aim_auth_reqconfirm(struct aim_session_t *sess,
-					      struct aim_conn_t *conn)
+faim_export int aim_auth_reqconfirm(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, 0x0007, 0x0006);
+	return aim_genericreq_n(sess, conn, 0x0007, 0x0006);
 }
 
 /*
@@ -199,49 +181,43 @@ faim_export unsigned long aim_auth_reqconfirm(struct aim_session_t *sess,
  * The only known valid tag is 0x0011 (email address).
  *
  */ 
-faim_export unsigned long aim_auth_getinfo(struct aim_session_t *sess,
-					   struct aim_conn_t *conn,
-					   unsigned short info)
+faim_export int aim_auth_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info)
 {
-  struct command_tx_struct *newpacket;
-  int i;
+	aim_frame_t *tx;
+	aim_snacid_t snacid;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + 4)))
-    return -1;
+	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 14)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0002, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&tx->data, 0x0007, 0x0002, 0x0000, snacid);
 
-  i = aim_putsnac(newpacket->data, 0x0007, 0x0002, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0002, 0x0002, 0x0000, NULL, 0);
+	aimbs_put16(&tx->data, info);
+	aimbs_put16(&tx->data, 0x0000);
 
-  i += aimutil_put16(newpacket->data+i, info);
-  i += aimutil_put16(newpacket->data+i, 0x0000);
+	aim_tx_enqueue(sess, tx);
 
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
-faim_export unsigned long aim_auth_setemail(struct aim_session_t *sess,
-					    struct aim_conn_t *conn, 
-					    char *newemail)
+faim_export int aim_auth_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail)
 {
-  struct command_tx_struct *newpacket;
-  int i;
+	aim_frame_t *tx;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+2+2+strlen(newemail))))
-    return -1;
+	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newemail))))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
+	aim_putsnac(&tx->data, 0x0007, 0x0004, 0x0000, snacid);
 
-  i = aim_putsnac(newpacket->data, 0x0007, 0x0004, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
+	aim_addtlvtochain_raw(&tl, 0x0011, strlen(newemail), newemail);
+	
+	aim_writetlvchain(&tx->data, &tl);
+	aim_freetlvchain(&tl);
+	
+	aim_tx_enqueue(sess, tx);
 
-  i += aim_puttlv_str(newpacket->data+i, 0x0011, strlen(newemail), newemail);
-
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }

@@ -15,6 +15,35 @@
 #include <netinet/in.h>
 #endif
 
+static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
+{
+
+	aim_rxqueue_cleanbyconn(sess, *deadconn);
+	aim_tx_cleanqueue(sess, *deadconn);
+
+	if ((*deadconn)->fd != -1) 
+		aim_conn_close(*deadconn);
+
+	/*
+	 * XXX ->priv should never be touched by the library. I know
+	 * it used to be, but I'm getting rid of all that.  Use
+	 * ->internal instead.
+	 */
+	if ((*deadconn)->priv)
+		free((*deadconn)->priv);
+
+	/*
+	 * This will free ->internal if it necessary...
+	 */
+	if ((*deadconn)->type == AIM_CONN_TYPE_RENDEZVOUS)
+		aim_conn_kill_rend(sess, *deadconn);
+
+	free(*deadconn);
+	deadconn = NULL;
+
+	return;
+}
+
 /**
  * aim_connrst - Clears out connection list, killing remaining connections.
  * @sess: Session to be cleared
@@ -22,21 +51,25 @@
  * Clears out the connection list and kills any connections left.
  *
  */
-static void aim_connrst(struct aim_session_t *sess)
+static void aim_connrst(aim_session_t *sess)
 {
-  faim_mutex_init(&sess->connlistlock);
-  if (sess->connlist) {
-    struct aim_conn_t *cur = sess->connlist, *tmp;
 
-    while(cur) {
-      tmp = cur->next;
-      aim_conn_close(cur);
-      free(cur);
-      cur = tmp;
-    }
-  }
-  sess->connlist = NULL;
-  return;
+	faim_mutex_init(&sess->connlistlock);
+
+	if (sess->connlist) {
+		aim_conn_t *cur = sess->connlist, *tmp;
+
+		while (cur) {
+			tmp = cur->next;
+			aim_conn_close(cur);
+			connkill_real(sess, &cur);
+			cur = tmp;
+		}
+	}
+
+	sess->connlist = NULL;
+
+	return;
 }
 
 /**
@@ -46,23 +79,24 @@ static void aim_connrst(struct aim_session_t *sess)
  * Initializes and/or resets a connection structure.
  *
  */
-static void aim_conn_init(struct aim_conn_t *deadconn)
+static void aim_conn_init(aim_conn_t *deadconn)
 {
-  if (!deadconn)
-    return;
 
-  deadconn->fd = -1;
-  deadconn->subtype = -1;
-  deadconn->type = -1;
-  deadconn->seqnum = 0;
-  deadconn->lastactivity = 0;
-  deadconn->forcedlatency = 0;
-  deadconn->handlerlist = NULL;
-  deadconn->priv = NULL;
-  faim_mutex_init(&deadconn->active);
-  faim_mutex_init(&deadconn->seqnum_lock);
-  
-  return;
+	if (!deadconn)
+		return;
+
+	deadconn->fd = -1;
+	deadconn->subtype = -1;
+	deadconn->type = -1;
+	deadconn->seqnum = 0;
+	deadconn->lastactivity = 0;
+	deadconn->forcedlatency = 0;
+	deadconn->handlerlist = NULL;
+	deadconn->priv = NULL;
+	faim_mutex_init(&deadconn->active);
+	faim_mutex_init(&deadconn->seqnum_lock);
+
+	return;
 }
 
 /**
@@ -72,28 +106,20 @@ static void aim_conn_init(struct aim_conn_t *deadconn)
  * Allocate a new empty connection structure.
  *
  */
-static struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
+static aim_conn_t *aim_conn_getnext(aim_session_t *sess)
 {
-  struct aim_conn_t *newconn, *cur;
+	aim_conn_t *newconn;
 
-  if (!(newconn = malloc(sizeof(struct aim_conn_t)))) 	
-    return NULL;
+	if (!(newconn = malloc(sizeof(aim_conn_t)))) 	
+		return NULL;
+	memset(newconn, 0, sizeof(aim_conn_t));
 
-  memset(newconn, 0, sizeof(struct aim_conn_t));
-  aim_conn_init(newconn);
-  newconn->next = NULL;
+	aim_conn_init(newconn);
 
-  faim_mutex_lock(&sess->connlistlock);
-  if (sess->connlist == NULL)
-    sess->connlist = newconn;
-  else {
-    for (cur = sess->connlist; cur->next; cur = cur->next)
-      ;
-    cur->next = newconn;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
+	newconn->next = sess->connlist;
+	sess->connlist = newconn;
 
-  return newconn;
+	return newconn;
 }
 
 /**
@@ -105,44 +131,27 @@ static struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
  * called from within libfaim.
  *
  */
-faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
+faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
 {
-  struct aim_conn_t *cur;
+	aim_conn_t *cur, **prev;
 
-  if (!deadconn || !*deadconn)	
-    return;
+	if (!deadconn || !*deadconn)	
+		return;
 
-  aim_tx_cleanqueue(sess, *deadconn);
+	for (prev = &sess->connlist; (cur = *prev); ) {
+		if (cur == *deadconn) {
+			*prev = cur->next;
+			break;
+		}
+		prev = &cur->next;
+	}
 
-  faim_mutex_lock(&sess->connlistlock);
-  if (sess->connlist == NULL)
-    ;
-  else if (sess->connlist->next == NULL) {
-    if (sess->connlist == *deadconn)
-      sess->connlist = NULL;
-  } else {
-    cur = sess->connlist;
-    while (cur->next) {
-      if (cur->next == *deadconn) {
-	cur->next = cur->next->next;
-	break;
-      }
-      cur = cur->next;
-    }
-  }
-  faim_mutex_unlock(&sess->connlistlock);
+	if (!cur)
+		return; /* oops */
 
-  /* XXX: do we need this for txqueue too? */
-  aim_rxqueue_cleanbyconn(sess, *deadconn);
+	connkill_real(sess, &cur);
 
-  if ((*deadconn)->fd != -1) 
-    aim_conn_close(*deadconn);
-  if ((*deadconn)->priv)
-    free((*deadconn)->priv);
-  free(*deadconn);
-  deadconn = NULL;
-
-  return;
+	return;
 }
 
 /**
@@ -153,21 +162,24 @@ faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **d
  *
  * This leaves everything untouched except for clearing the 
  * handler list and setting the fd to -1 (used to recognize
- * dead connections).
+ * dead connections).  It will also remove cookies if necessary.
  *
  */
-faim_export void aim_conn_close(struct aim_conn_t *deadconn)
+faim_export void aim_conn_close(aim_conn_t *deadconn)
 {
 
-  faim_mutex_destroy(&deadconn->active);
-  faim_mutex_destroy(&deadconn->seqnum_lock);
-  if (deadconn->fd >= 3)
-    close(deadconn->fd);
-  deadconn->fd = -1;
-  if (deadconn->handlerlist)
-    aim_clearhandlers(deadconn);
+	faim_mutex_destroy(&deadconn->active);
+	faim_mutex_destroy(&deadconn->seqnum_lock);
+	if (deadconn->fd >= 3)
+		close(deadconn->fd);
+	deadconn->fd = -1;
+	if (deadconn->handlerlist)
+		aim_clearhandlers(deadconn);
+	if (deadconn->type == AIM_CONN_TYPE_RENDEZVOUS)
+		aim_conn_close_rend((aim_session_t *)deadconn->sessv, deadconn);
 
-  return;
+
+	return;
 }
 
 /**
@@ -180,50 +192,48 @@ faim_export void aim_conn_close(struct aim_conn_t *deadconn)
  * type found.
  *
  */
-faim_export struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
-						int type)
+faim_export aim_conn_t *aim_getconn_type(aim_session_t *sess, int type)
 {
-  struct aim_conn_t *cur;
+	aim_conn_t *cur;
 
-  faim_mutex_lock(&sess->connlistlock);
-  for (cur = sess->connlist; cur; cur = cur->next) {
-    if ((cur->type == type) && !(cur->status & AIM_CONN_STATUS_INPROGRESS))
-      break;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
+	faim_mutex_lock(&sess->connlistlock);
+	for (cur = sess->connlist; cur; cur = cur->next) {
+		if ((cur->type == type) && 
+				!(cur->status & AIM_CONN_STATUS_INPROGRESS))
+			break;
+	}
+	faim_mutex_unlock(&sess->connlistlock);
 
-  return cur;
+	return cur;
 }
 
-faim_export struct aim_conn_t *aim_getconn_type_all(struct aim_session_t *sess,
-						    int type)
+faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *sess, int type)
 {
-  struct aim_conn_t *cur;
+	aim_conn_t *cur;
 
-  faim_mutex_lock(&sess->connlistlock);
-  for (cur = sess->connlist; cur; cur = cur->next) {
-    if (cur->type == type)
-      break;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
+	faim_mutex_lock(&sess->connlistlock);
+	for (cur = sess->connlist; cur; cur = cur->next) {
+		if (cur->type == type)
+			break;
+	}
+	faim_mutex_unlock(&sess->connlistlock);
 
-  return cur;
+	return cur;
 }
 
 /* If you pass -1 for the fd, you'll get what you ask for.  Gibberish. */
-faim_export struct aim_conn_t *aim_getconn_fd(struct aim_session_t *sess,
-					      int fd)
+faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
 {
-  struct aim_conn_t *cur;
+	aim_conn_t *cur;
 
-  faim_mutex_lock(&sess->connlistlock);
-  for (cur = sess->connlist; cur; cur = cur->next) {
-    if (cur->fd == fd)
-      break;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
+	faim_mutex_lock(&sess->connlistlock);
+	for (cur = sess->connlist; cur; cur = cur->next) {
+		if (cur->fd == fd)
+			break;
+	}
+	faim_mutex_unlock(&sess->connlistlock);
 
-  return cur;
+	return cur;
 }
 
 /**
@@ -237,161 +247,162 @@ faim_export struct aim_conn_t *aim_getconn_fd(struct aim_session_t *sess,
  * proxy settings, if present.  If no proxy is configured for
  * this session, the connection is done directly.
  *
+ * XXX this is really awful.
+ *
  */
-static int aim_proxyconnect(struct aim_session_t *sess, 
-			    char *host, unsigned short port,
-			    int *statusret)
+static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, fu32_t *statusret)
 {
-  int fd = -1;
+	int fd = -1;
 
-  if (strlen(sess->socksproxy.server)) { /* connecting via proxy */
-    int i;
-    unsigned char buf[512];
-    struct sockaddr_in sa;
-    struct hostent *hp;
-    char *proxy;
-    unsigned short proxyport = 1080;
+	if (strlen(sess->socksproxy.server)) { /* connecting via proxy */
+		int i;
+		unsigned char buf[512];
+		struct sockaddr_in sa;
+		struct hostent *hp;
+		char *proxy;
+		unsigned short proxyport = 1080;
 
-    for(i=0;i<(int)strlen(sess->socksproxy.server);i++) {
-      if (sess->socksproxy.server[i] == ':') {
-	proxyport = atoi(&(sess->socksproxy.server[i+1]));
-	break;
-      }
-    }
-    proxy = (char *)malloc(i+1);
-    strncpy(proxy, sess->socksproxy.server, i);
-    proxy[i] = '\0';
+		for(i=0;i<(int)strlen(sess->socksproxy.server);i++) {
+			if (sess->socksproxy.server[i] == ':') {
+				proxyport = atoi(&(sess->socksproxy.server[i+1]));
+				break;
+			}
+		}
 
-    if (!(hp = gethostbyname(proxy))) {
-      faimdprintf(sess, 0, "proxyconnect: unable to resolve proxy name\n");
-      *statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
-      return -1;
-    }
-    free(proxy);
+		proxy = (char *)malloc(i+1);
+		strncpy(proxy, sess->socksproxy.server, i);
+		proxy[i] = '\0';
 
-    memset(&sa.sin_zero, 0, 8);
-    sa.sin_port = htons(proxyport);
-    memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
-    sa.sin_family = hp->h_addrtype;
-  
-    fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
-    if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
-      faimdprintf(sess, 0, "proxyconnect: unable to connect to proxy\n");
-      close(fd);
-      return -1;
-    }
+		if (!(hp = gethostbyname(proxy))) {
+			faimdprintf(sess, 0, "proxyconnect: unable to resolve proxy name\n");
+			*statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
+			return -1;
+		}
+		free(proxy);
 
-    i = 0;
-    buf[0] = 0x05; /* SOCKS version 5 */
-    if (strlen(sess->socksproxy.username)) {
-      buf[1] = 0x02; /* two methods */
-      buf[2] = 0x00; /* no authentication */
-      buf[3] = 0x02; /* username/password authentication */
-      i = 4;
-    } else {
-      buf[1] = 0x01;
-      buf[2] = 0x00;
-      i = 3;
-    }
+		memset(&sa.sin_zero, 0, 8);
+		sa.sin_port = htons(proxyport);
+		memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
+		sa.sin_family = hp->h_addrtype;
 
-    if (write(fd, buf, i) < i) {
-      *statusret = errno;
-      close(fd);
-      return -1;
-    }
+		fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
+		if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
+			faimdprintf(sess, 0, "proxyconnect: unable to connect to proxy\n");
+			close(fd);
+			return -1;
+		}
 
-    if (read(fd, buf, 2) < 2) {
-      *statusret = errno;
-      close(fd);
-      return -1;
-    }
+		i = 0;
+		buf[0] = 0x05; /* SOCKS version 5 */
+		if (strlen(sess->socksproxy.username)) {
+			buf[1] = 0x02; /* two methods */
+			buf[2] = 0x00; /* no authentication */
+			buf[3] = 0x02; /* username/password authentication */
+			i = 4;
+		} else {
+			buf[1] = 0x01;
+			buf[2] = 0x00;
+			i = 3;
+		}
 
-    if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
-      *statusret = EINVAL;
-      close(fd);
-      return -1;
-    }
+		if (write(fd, buf, i) < i) {
+			*statusret = errno;
+			close(fd);
+			return -1;
+		}
 
-    /* check if we're doing username authentication */
-    if (buf[1] == 0x02) {
-      i  = aimutil_put8(buf, 0x01); /* version 1 */
-      i += aimutil_put8(buf+i, strlen(sess->socksproxy.username));
-      i += aimutil_putstr(buf+i, sess->socksproxy.username, strlen(sess->socksproxy.username));
-      i += aimutil_put8(buf+i, strlen(sess->socksproxy.password));
-      i += aimutil_putstr(buf+i, sess->socksproxy.password, strlen(sess->socksproxy.password));
-      if (write(fd, buf, i) < i) {
-	*statusret = errno;
-	close(fd);
-	return -1;
-      }
-      if (read(fd, buf, 2) < 2) {
-	*statusret = errno;
-	close(fd);
-	return -1;
-      }
-      if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
-	*statusret = EINVAL;
-	close(fd);
-	return -1;
-      }
-    }
+		if (read(fd, buf, 2) < 2) {
+			*statusret = errno;
+			close(fd);
+			return -1;
+		}
 
-    i  = aimutil_put8(buf, 0x05);
-    i += aimutil_put8(buf+i, 0x01); /* CONNECT */
-    i += aimutil_put8(buf+i, 0x00); /* reserved */
-    i += aimutil_put8(buf+i, 0x03); /* address type: host name */
-    i += aimutil_put8(buf+i, strlen(host));
-    i += aimutil_putstr(buf+i, host, strlen(host));
-    i += aimutil_put16(buf+i, port);
+		if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
+			*statusret = EINVAL;
+			close(fd);
+			return -1;
+		}
 
-    if (write(fd, buf, i) < i) {
-      *statusret = errno;
-      close(fd);
-      return -1;
-    }
-    if (read(fd, buf, 10) < 10) {
-      *statusret = errno;
-      close(fd);
-      return -1;
-    }
-    if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
-      *statusret = EINVAL;
-      close(fd);
-      return -1;
-    }
+		/* check if we're doing username authentication */
+		if (buf[1] == 0x02) {
+			i  = aimutil_put8(buf, 0x01); /* version 1 */
+			i += aimutil_put8(buf+i, strlen(sess->socksproxy.username));
+			i += aimutil_putstr(buf+i, sess->socksproxy.username, strlen(sess->socksproxy.username));
+			i += aimutil_put8(buf+i, strlen(sess->socksproxy.password));
+			i += aimutil_putstr(buf+i, sess->socksproxy.password, strlen(sess->socksproxy.password));
+			if (write(fd, buf, i) < i) {
+				*statusret = errno;
+				close(fd);
+				return -1;
+			}
+			if (read(fd, buf, 2) < 2) {
+				*statusret = errno;
+				close(fd);
+				return -1;
+			}
+			if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
+				*statusret = EINVAL;
+				close(fd);
+				return -1;
+			}
+		}
 
-  } else { /* connecting directly */
-    struct sockaddr_in sa;
-    struct hostent *hp;
+		i  = aimutil_put8(buf, 0x05);
+		i += aimutil_put8(buf+i, 0x01); /* CONNECT */
+		i += aimutil_put8(buf+i, 0x00); /* reserved */
+		i += aimutil_put8(buf+i, 0x03); /* address type: host name */
+		i += aimutil_put8(buf+i, strlen(host));
+		i += aimutil_putstr(buf+i, host, strlen(host));
+		i += aimutil_put16(buf+i, port);
 
-    if (!(hp = gethostbyname(host))) {
-      *statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
-      return -1;
-    }
+		if (write(fd, buf, i) < i) {
+			*statusret = errno;
+			close(fd);
+			return -1;
+		}
+		if (read(fd, buf, 10) < 10) {
+			*statusret = errno;
+			close(fd);
+			return -1;
+		}
+		if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
+			*statusret = EINVAL;
+			close(fd);
+			return -1;
+		}
 
-    memset(&sa, 0, sizeof(struct sockaddr_in));
-    sa.sin_port = htons(port);
-    memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
-    sa.sin_family = hp->h_addrtype;
-  
-    fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
+	} else { /* connecting directly */
+		struct sockaddr_in sa;
+		struct hostent *hp;
 
-    if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT)
-      fcntl(fd, F_SETFL, O_NONBLOCK); /* XXX save flags */
+		if (!(hp = gethostbyname(host))) {
+			*statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
+			return -1;
+		}
 
-    if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
-      if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT) {
-	if ((errno == EINPROGRESS) || (errno == EINTR)) {
-	  if (statusret)
-	    *statusret |= AIM_CONN_STATUS_INPROGRESS;
-	  return fd;
+		memset(&sa, 0, sizeof(struct sockaddr_in));
+		sa.sin_port = htons(port);
+		memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
+		sa.sin_family = hp->h_addrtype;
+
+		fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
+
+		if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT)
+			fcntl(fd, F_SETFL, O_NONBLOCK); /* XXX save flags */
+
+		if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
+			if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT) {
+				if ((errno == EINPROGRESS) || (errno == EINTR)) {
+					if (statusret)
+						*statusret |= AIM_CONN_STATUS_INPROGRESS;
+					return fd;
+				}
+			}
+			close(fd);
+			fd = -1;
+		}
 	}
-      }
-      close(fd);
-      fd = -1;
-    }
-  }
-  return fd;
+	return fd;
 }
 
 /**
@@ -407,35 +418,29 @@ static int aim_proxyconnect(struct aim_session_t *sess,
  * This function returns a pointer to the new aim_conn_t, or %NULL on
  * error
  */
-faim_internal struct aim_conn_t *aim_cloneconn(struct aim_session_t *sess,
-					       struct aim_conn_t *src)
+faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
 {
-  struct aim_conn_t *conn;
-    struct aim_rxcblist_t *cur;
+	aim_conn_t *conn;
 
-  if (!(conn = aim_conn_getnext(sess)))
-    return NULL;
+	if (!(conn = aim_conn_getnext(sess)))
+		return NULL;
 
-  faim_mutex_lock(&conn->active);
+	faim_mutex_lock(&conn->active);
 
-  conn->fd = src->fd;
-  conn->type = src->type;
-  conn->subtype = src->subtype;
-  conn->seqnum = src->seqnum;
-  conn->priv = src->priv;
-  conn->lastactivity = src->lastactivity;
-  conn->forcedlatency = src->forcedlatency;
-  conn->sessv = src->sessv;
+	conn->fd = src->fd;
+	conn->type = src->type;
+	conn->subtype = src->subtype;
+	conn->seqnum = src->seqnum;
+	conn->priv = src->priv;
+	conn->internal = src->internal;
+	conn->lastactivity = src->lastactivity;
+	conn->forcedlatency = src->forcedlatency;
+	conn->sessv = src->sessv;
+	aim_clonehandlers(sess, conn, src);
 
-  /* clone handler list */
-  for (cur = src->handlerlist; cur; cur = cur->next) {
-    aim_conn_addhandler(sess, conn, cur->family, cur->type, 
-			cur->handler, cur->flags);
-  }
+	faim_mutex_unlock(&conn->active);
 
-  faim_mutex_unlock(&conn->active);
-
-  return conn;
+	return conn;
 }
 
 /**
@@ -452,63 +457,62 @@ faim_internal struct aim_conn_t *aim_cloneconn(struct aim_session_t *sess,
  * FIXME: Return errors in a more sane way.
  *
  */
-faim_export struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
-					   int type, char *dest)
+faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type, const char *dest)
 {
-  struct aim_conn_t *connstruct;
-  int ret;
-  u_short port = FAIM_LOGIN_PORT;
-  char *host = NULL;
-  int i=0;
+	aim_conn_t *connstruct;
+	fu16_t port = FAIM_LOGIN_PORT;
+	char *host;
+	int i, ret;
 
-  if ((connstruct=aim_conn_getnext(sess))==NULL)
-    return NULL;
+	if (!(connstruct = aim_conn_getnext(sess)))
+		return NULL;
 
-  faim_mutex_lock(&connstruct->active);
+	faim_mutex_lock(&connstruct->active);
 
-  connstruct->sessv = (void *)sess;
-  connstruct->type = type;
+	connstruct->sessv = (void *)sess;
+	connstruct->type = type;
 
-  if (!dest) { /* just allocate a struct */
-    connstruct->fd = -1;
-    connstruct->status = 0;
-    faim_mutex_unlock(&connstruct->active);
-    return connstruct;
-  }
+	if (!dest) { /* just allocate a struct */
+		connstruct->fd = -1;
+		connstruct->status = 0;
+		faim_mutex_unlock(&connstruct->active);
+		return connstruct;
+	}
 
-  /* 
-   * As of 23 Jul 1999, AOL now sends the port number, preceded by a 
-   * colon, in the BOS redirect.  This fatally breaks all previous 
-   * libfaims.  Bad, bad AOL.
-   *
-   * We put this here to catch every case. 
-   *
-   */
+	/* 
+	 * As of 23 Jul 1999, AOL now sends the port number, preceded by a 
+	 * colon, in the BOS redirect.  This fatally breaks all previous 
+	 * libfaims.  Bad, bad AOL.
+	 *
+	 * We put this here to catch every case. 
+	 *
+	 */
 
-  for(i=0;i<(int)strlen(dest);i++) {
-    if (dest[i] == ':') {
-      port = atoi(&(dest[i+1]));
-      break;
-    }
-  }
-  host = (char *)malloc(i+1);
-  strncpy(host, dest, i);
-  host[i] = '\0';
+	for(i = 0; i < (int)strlen(dest); i++) {
+		if (dest[i] == ':') {
+			port = atoi(&(dest[i+1]));
+			break;
+		}
+	}
 
-  if ((ret = aim_proxyconnect(sess, host, port, &connstruct->status)) < 0) {
-    connstruct->fd = -1;
-    connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
-    free(host);
-    faim_mutex_unlock(&connstruct->active);
-    return connstruct;
-  } else
-    connstruct->fd = ret;
-  
-  faim_mutex_unlock(&connstruct->active);
+	host = (char *)malloc(i+1);
+	strncpy(host, dest, i);
+	host[i] = '\0';
 
-  free(host);
+	if ((ret = aim_proxyconnect(sess, host, port, &connstruct->status)) < 0) {
+		connstruct->fd = -1;
+		connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
+		free(host);
+		faim_mutex_unlock(&connstruct->active);
+		return connstruct;
+	} else
+		connstruct->fd = ret;
 
-  return connstruct;
+	faim_mutex_unlock(&connstruct->active);
+
+	free(host);
+
+	return connstruct;
 }
 
 /**
@@ -519,19 +523,19 @@ faim_export struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
  * connections in @sess.
  *
  */
-faim_export int aim_conngetmaxfd(struct aim_session_t *sess)
+faim_export int aim_conngetmaxfd(aim_session_t *sess)
 {
-  int j = 0;
-  struct aim_conn_t *cur;
+	int j;
+	aim_conn_t *cur;
 
-  faim_mutex_lock(&sess->connlistlock);
-  for (cur = sess->connlist; cur; cur = cur->next) {
-    if (cur->fd > j)
-      j = cur->fd;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
+	faim_mutex_lock(&sess->connlistlock);
+	for (cur = sess->connlist, j = 0; cur; cur = cur->next) {
+		if (cur->fd > j)
+			j = cur->fd;
+	}
+	faim_mutex_unlock(&sess->connlistlock);
 
-  return j;
+	return j;
 }
 
 /**
@@ -543,18 +547,20 @@ faim_export int aim_conngetmaxfd(struct aim_session_t *sess)
  * zero otherwise.
  *
  */
-faim_export int aim_conn_in_sess(struct aim_session_t *sess, struct aim_conn_t *conn)
+faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct aim_conn_t *cur;
+	aim_conn_t *cur;
 
-  faim_mutex_lock(&sess->connlistlock);
-  for(cur = sess->connlist; cur; cur = cur->next)
-    if(cur == conn) {
-      faim_mutex_unlock(&sess->connlistlock);
-      return 1;
-    }
-  faim_mutex_unlock(&sess->connlistlock);
-  return 0;
+	faim_mutex_lock(&sess->connlistlock);
+	for (cur = sess->connlist; cur; cur = cur->next) {
+		if (cur == conn) {
+			faim_mutex_unlock(&sess->connlistlock);
+			return 1;
+		}
+	}
+	faim_mutex_unlock(&sess->connlistlock);
+
+	return 0;
 }
 
 /**
@@ -575,126 +581,80 @@ faim_export int aim_conn_in_sess(struct aim_session_t *sess, struct aim_conn_t *
  * XXX: we could probably stand to do a little courser locking here.
  *
  */ 
-faim_export struct aim_conn_t *aim_select(struct aim_session_t *sess,
-					  struct timeval *timeout, 
-					  int *status)
+faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout, int *status)
 {
-  struct aim_conn_t *cur;
-  fd_set fds, wfds;
-  int maxfd = 0;
-  int i, haveconnecting = 0;
+	aim_conn_t *cur;
+	fd_set fds, wfds;
+	int maxfd, i, haveconnecting = 0;
 
-  faim_mutex_lock(&sess->connlistlock);
-  if (sess->connlist == NULL) {
-    faim_mutex_unlock(&sess->connlistlock);
-    *status = -1;
-    return NULL;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
-
-  FD_ZERO(&fds);
-  FD_ZERO(&wfds);
-  maxfd = 0;
-
-  faim_mutex_lock(&sess->connlistlock);
-  for (cur = sess->connlist; cur; cur = cur->next) {
-    if (cur->fd == -1) {
-      /* don't let invalid/dead connections sit around */
-      *status = 2;
-      faim_mutex_unlock(&sess->connlistlock);
-      return cur;
-    } else if (cur->status & AIM_CONN_STATUS_INPROGRESS) {
-      FD_SET(cur->fd, &wfds);
-      
-      haveconnecting++;
-    }
-    FD_SET(cur->fd, &fds);
-    if (cur->fd > maxfd)
-      maxfd = cur->fd;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
-
-  /* 
-   * If we have data waiting to be sent, return
-   *
-   * We have to not do this if theres at least one
-   * connection thats still connecting, since that connection
-   * may have queued data and this return would prevent
-   * the connection from ever completing!  This is a major
-   * inadequacy of the libfaim way of doing things.  It means
-   * that nothing can transmit as long as there's connecting
-   * sockets. Evil.
-   *
-   * But its still better than having blocking connects.
-   *
-   */
-  if (!haveconnecting && (sess->queue_outgoing != NULL)) {
-    *status = 1;
-    return NULL;
-  } 
-
-  if ((i = select(maxfd+1, &fds, &wfds, NULL, timeout))>=1) {
-    faim_mutex_lock(&sess->connlistlock);
-    for (cur = sess->connlist; cur; cur = cur->next) {
-      if ((FD_ISSET(cur->fd, &fds)) || 
-	  ((cur->status & AIM_CONN_STATUS_INPROGRESS) && 
-	   FD_ISSET(cur->fd, &wfds))) {
-	*status = 2;
+	faim_mutex_lock(&sess->connlistlock);
+	if (!sess->connlist) {
+		faim_mutex_unlock(&sess->connlistlock);
+		*status = -1;
+		return NULL;
+	}
 	faim_mutex_unlock(&sess->connlistlock);
-	return cur; /* XXX race condition here -- shouldnt unlock connlist */
-      }
-    }
-    *status = 0; /* shouldn't happen */
-  } else if ((i == -1) && (errno == EINTR)) /* treat interrupts as a timeout */
-    *status = 0;
-  else
-    *status = i; /* can be 0 or -1 */
 
-  faim_mutex_unlock(&sess->connlistlock);
+	FD_ZERO(&fds);
+	FD_ZERO(&wfds);
 
-  return NULL;  /* no waiting or error, return */
-}
+	faim_mutex_lock(&sess->connlistlock);
+	for (cur = sess->connlist, maxfd = 0; cur; cur = cur->next) {
+		if (cur->fd == -1) {
+			/* don't let invalid/dead connections sit around */
+			*status = 2;
+			faim_mutex_unlock(&sess->connlistlock);
+			return cur;
+		} else if (cur->status & AIM_CONN_STATUS_INPROGRESS) {
+			FD_SET(cur->fd, &wfds);
 
-/**
- * aim_conn_isready - Test if a connection is marked ready
- * @conn: Connection to test
- *
- * Returns true if the connection is ready, false otherwise.
- * Returns -1 if the connection is invalid.
- *
- * XXX: This is deprecated.
- *
- */
-faim_export int aim_conn_isready(struct aim_conn_t *conn)
-{
-  if (conn)
-    return (conn->status & 0x0001);
-  return -1;
-}
+			haveconnecting++;
+		}
+		FD_SET(cur->fd, &fds);
+		if (cur->fd > maxfd)
+			maxfd = cur->fd;
+	}
+	faim_mutex_unlock(&sess->connlistlock);
 
-/**
- * aim_conn_setstatus - Set the status of a connection
- * @conn: Connection
- * @status: New status
- *
- * @newstatus is %XOR'd with the previous value of the connection
- * status and returned.  Returns -1 if the connection is invalid.
- *
- * This isn't real useful.
- *
- */
-faim_export int aim_conn_setstatus(struct aim_conn_t *conn, int status)
-{
-  int val;
+	/* 
+	 * If we have data waiting to be sent, return
+	 *
+	 * We have to not do this if theres at least one
+	 * connection thats still connecting, since that connection
+	 * may have queued data and this return would prevent
+	 * the connection from ever completing!  This is a major
+	 * inadequacy of the libfaim way of doing things.  It means
+	 * that nothing can transmit as long as there's connecting
+	 * sockets. Evil.
+	 *
+	 * But its still better than having blocking connects.
+	 *
+	 */
+	if (!haveconnecting && sess->queue_outgoing) {
+		*status = 1;
+		return NULL;
+	} 
 
-  if (!conn)
-    return -1;
-  
-  faim_mutex_lock(&conn->active);
-  val = conn->status ^= status;
-  faim_mutex_unlock(&conn->active);
+	if ((i = select(maxfd+1, &fds, &wfds, NULL, timeout))>=1) {
+		faim_mutex_lock(&sess->connlistlock);
+		for (cur = sess->connlist; cur; cur = cur->next) {
+			if ((FD_ISSET(cur->fd, &fds)) || 
+					((cur->status & AIM_CONN_STATUS_INPROGRESS) && 
+					FD_ISSET(cur->fd, &wfds))) {
+				*status = 2;
+				faim_mutex_unlock(&sess->connlistlock);
+				return cur; /* XXX race condition here -- shouldnt unlock connlist */
+			}
+		}
+		*status = 0; /* shouldn't happen */
+	} else if ((i == -1) && (errno == EINTR)) /* treat interrupts as a timeout */
+		*status = 0;
+	else
+		*status = i; /* can be 0 or -1 */
 
-  return val;
+	faim_mutex_unlock(&sess->connlistlock);
+
+	return NULL;  /* no waiting or error, return */
 }
 
 /**
@@ -711,17 +671,18 @@ faim_export int aim_conn_setstatus(struct aim_conn_t *conn, int status)
  * backs off like the real rate limiting does.
  *
  */
-faim_export int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
+faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
 {
-  if (!conn)
-    return -1;
 
-  faim_mutex_lock(&conn->active);
-  conn->forcedlatency = newval;
-  conn->lastactivity = 0; /* reset this just to make sure */
-  faim_mutex_unlock(&conn->active);
+	if (!conn)
+		return -1;
 
-  return 0;
+	faim_mutex_lock(&conn->active);
+	conn->forcedlatency = newval;
+	conn->lastactivity = 0; /* reset this just to make sure */
+	faim_mutex_unlock(&conn->active);
+
+	return 0;
 }
 
 /**
@@ -738,27 +699,31 @@ faim_export int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
  * Set username and password to %NULL if not applicable.
  *
  */
-faim_export void aim_setupproxy(struct aim_session_t *sess, char *server, char *username, char *password)
+faim_export void aim_setupproxy(aim_session_t *sess, const char *server, const char *username, const char *password)
 {
-  /* clear out the proxy info */
-  if (!server || !strlen(server)) {
-    memset(sess->socksproxy.server, 0, sizeof(sess->socksproxy.server));
-    memset(sess->socksproxy.username, 0, sizeof(sess->socksproxy.username));
-    memset(sess->socksproxy.password, 0, sizeof(sess->socksproxy.password));
-    return;
-  }
+	/* clear out the proxy info */
+	if (!server || !strlen(server)) {
+		memset(sess->socksproxy.server, 0, sizeof(sess->socksproxy.server));
+		memset(sess->socksproxy.username, 0, sizeof(sess->socksproxy.username));
+		memset(sess->socksproxy.password, 0, sizeof(sess->socksproxy.password));
+		return;
+	}
 
-  strncpy(sess->socksproxy.server, server, sizeof(sess->socksproxy.server));
-  if (username && strlen(username)) 
-    strncpy(sess->socksproxy.username, username, sizeof(sess->socksproxy.username));
-  if (password && strlen(password))
-    strncpy(sess->socksproxy.password, password, sizeof(sess->socksproxy.password));
-  return;
+	strncpy(sess->socksproxy.server, server, sizeof(sess->socksproxy.server));
+	if (username && strlen(username)) 
+		strncpy(sess->socksproxy.username, username, sizeof(sess->socksproxy.username));
+	if (password && strlen(password))
+		strncpy(sess->socksproxy.password, password, sizeof(sess->socksproxy.password));
+
+	return;
 }
 
-static void defaultdebugcb(struct aim_session_t *sess, int level, const char *format, va_list va)
+static void defaultdebugcb(aim_session_t *sess, int level, const char *format, va_list va)
 {
-  vfprintf(stderr, format, va);
+
+	vfprintf(stderr, format, va);
+
+	return;
 }
 
 /**
@@ -770,74 +735,74 @@ static void defaultdebugcb(struct aim_session_t *sess, int level, const char *fo
  * Sets up the initial values for a session.
  *
  */
-faim_export void aim_session_init(struct aim_session_t *sess, unsigned long flags, int debuglevel)
+faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debuglevel)
 {
-  if (!sess)
-    return;
 
-  memset(sess, 0, sizeof(struct aim_session_t));
-  aim_connrst(sess);
-  sess->queue_outgoing = NULL;
-  sess->queue_incoming = NULL;
-  sess->pendingjoin = NULL;
-  sess->pendingjoinexchange = 0;
-  aim_initsnachash(sess);
-  sess->msgcookies = NULL;
-  sess->snac_nextid = 0x00000001;
+	if (!sess)
+		return;
 
-  sess->flags = 0;
-  sess->debug = debuglevel;
-  sess->debugcb = defaultdebugcb;
+	memset(sess, 0, sizeof(aim_session_t));
+	aim_connrst(sess);
+	sess->queue_outgoing = NULL;
+	sess->queue_incoming = NULL;
+	sess->pendingjoin = NULL;
+	sess->pendingjoinexchange = 0;
+	aim_initsnachash(sess);
+	sess->msgcookies = NULL;
+	sess->snacid_next = 0x00000001;
 
-  sess->modlistv = NULL;
+	sess->flags = 0;
+	sess->debug = debuglevel;
+	sess->debugcb = defaultdebugcb;
 
-  /*
-   * Default to SNAC login unless XORLOGIN is explicitly set.
-   */
-  if (!(flags & AIM_SESS_FLAGS_XORLOGIN))
-    sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
-  sess->flags |= flags;
+	sess->modlistv = NULL;
 
-  /*
-   * This must always be set.  Default to the queue-based
-   * version for back-compatibility.  
-   */
-  aim_tx_setenqueue(sess, AIM_TX_QUEUED, NULL);
+	/*
+	 * Default to SNAC login unless XORLOGIN is explicitly set.
+	 */
+	if (!(flags & AIM_SESS_FLAGS_XORLOGIN))
+		sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
+	sess->flags |= flags;
+
+	/*
+	 * This must always be set.  Default to the queue-based
+	 * version for back-compatibility.  
+	 */
+	aim_tx_setenqueue(sess, AIM_TX_QUEUED, NULL);
 
 
-  /*
-   * Register all the modules for this session...
-   */
-  aim__registermodule(sess, misc_modfirst); /* load the catch-all first */
-  aim__registermodule(sess, buddylist_modfirst);
-  aim__registermodule(sess, admin_modfirst);
-  aim__registermodule(sess, bos_modfirst);
-  aim__registermodule(sess, search_modfirst);
-  aim__registermodule(sess, stats_modfirst);
-  aim__registermodule(sess, auth_modfirst);
-  aim__registermodule(sess, msg_modfirst);
-  aim__registermodule(sess, chatnav_modfirst);
-  aim__registermodule(sess, chat_modfirst);
-  aim__registermodule(sess, locate_modfirst);
-  aim__registermodule(sess, general_modfirst);
+	/*
+	 * Register all the modules for this session...
+	 */
+	aim__registermodule(sess, misc_modfirst); /* load the catch-all first */
+	aim__registermodule(sess, buddylist_modfirst);
+	aim__registermodule(sess, admin_modfirst);
+	aim__registermodule(sess, bos_modfirst);
+	aim__registermodule(sess, search_modfirst);
+	aim__registermodule(sess, stats_modfirst);
+	aim__registermodule(sess, auth_modfirst);
+	aim__registermodule(sess, msg_modfirst);
+	aim__registermodule(sess, chatnav_modfirst);
+	aim__registermodule(sess, chat_modfirst);
+	aim__registermodule(sess, locate_modfirst);
+	aim__registermodule(sess, general_modfirst);
 
-  return;
+	return;
 }
 
 /**
  * aim_session_kill - Deallocate a session
  * @sess: Session to kill
  *
- *
  */
-faim_export void aim_session_kill(struct aim_session_t *sess)
+faim_export void aim_session_kill(aim_session_t *sess)
 {
 
-  aim_logoff(sess);
+	aim_logoff(sess);
 
-  aim__shutdownmodules(sess);
+	aim__shutdownmodules(sess);
 
-  return;
+	return;
 }
 
 /**
@@ -850,15 +815,15 @@ faim_export void aim_session_kill(struct aim_session_t *sess)
  * the value faimdprintf was called with.
  *
  */
-faim_export int aim_setdebuggingcb(struct aim_session_t *sess, faim_debugging_callback_t cb)
+faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_t cb)
 {
 
-  if (!sess)
-    return -1;
+	if (!sess)
+		return -1;
 
-  sess->debugcb = cb;
+	sess->debugcb = cb;
 
-  return 0;
+	return 0;
 }
 
 /**
@@ -870,76 +835,81 @@ faim_export int aim_setdebuggingcb(struct aim_session_t *sess, faim_debugging_ca
  * has yet to be called on it).
  *
  */
-faim_export int aim_conn_isconnecting(struct aim_conn_t *conn)
+faim_export int aim_conn_isconnecting(aim_conn_t *conn)
 {
-  if (!conn)
-    return 0;
-  return (conn->status & AIM_CONN_STATUS_INPROGRESS)?1:0;
+
+	if (!conn)
+		return 0;
+
+	return !!(conn->status & AIM_CONN_STATUS_INPROGRESS);
 }
 
-faim_export int aim_conn_completeconnect(struct aim_session_t *sess, struct aim_conn_t *conn)
+/*
+ * XXX this is nearly as ugly as proxyconnect().
+ */
+faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 {
-  fd_set fds, wfds;
-  struct timeval tv;
-  int res, error = ETIMEDOUT;
-  aim_rxcallback_t userfunc;
+	fd_set fds, wfds;
+	struct timeval tv;
+	int res, error = ETIMEDOUT;
+	aim_rxcallback_t userfunc;
 
-  if (!conn || (conn->fd == -1))
-    return -1;
+	if (!conn || (conn->fd == -1))
+		return -1;
 
-  if (!(conn->status & AIM_CONN_STATUS_INPROGRESS))
-    return -1;
+	if (!(conn->status & AIM_CONN_STATUS_INPROGRESS))
+		return -1;
 
-  FD_ZERO(&fds);
-  FD_SET(conn->fd, &fds);
-  FD_ZERO(&wfds);
-  FD_SET(conn->fd, &wfds);
-  tv.tv_sec = 0;
-  tv.tv_usec = 0;
+	FD_ZERO(&fds);
+	FD_SET(conn->fd, &fds);
+	FD_ZERO(&wfds);
+	FD_SET(conn->fd, &wfds);
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
 
-  if ((res = select(conn->fd+1, &fds, &wfds, NULL, &tv)) == -1) {
-    error = errno;
-    aim_conn_close(conn);
-    errno = error;
-    return -1;
-  } else if (res == 0) {
-    faimdprintf(sess, 0, "aim_conn_completeconnect: false alarm on %d\n", conn->fd);
-    return 0; /* hasn't really completed yet... */
-  } 
+	if ((res = select(conn->fd+1, &fds, &wfds, NULL, &tv)) == -1) {
+		error = errno;
+		aim_conn_close(conn);
+		errno = error;
+		return -1;
+	} else if (res == 0) {
+		faimdprintf(sess, 0, "aim_conn_completeconnect: false alarm on %d\n", conn->fd);
+		return 0; /* hasn't really completed yet... */
+	} 
 
-  if (FD_ISSET(conn->fd, &fds) || FD_ISSET(conn->fd, &wfds)) {
-    int len = sizeof(error);
+	if (FD_ISSET(conn->fd, &fds) || FD_ISSET(conn->fd, &wfds)) {
+		int len = sizeof(error);
 
-    if (getsockopt(conn->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
-      error = errno;
-  }
+		if (getsockopt(conn->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+			error = errno;
+	}
 
-  if (error) {
-    aim_conn_close(conn);
-    errno = error;
-    return -1;
-  }
+	if (error) {
+		aim_conn_close(conn);
+		errno = error;
+		return -1;
+	}
 
-  fcntl(conn->fd, F_SETFL, 0); /* XXX should restore original flags */
+	fcntl(conn->fd, F_SETFL, 0); /* XXX should restore original flags */
 
-  conn->status &= ~AIM_CONN_STATUS_INPROGRESS;
+	conn->status &= ~AIM_CONN_STATUS_INPROGRESS;
 
-  if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNCOMPLETE)))
-    userfunc(sess, NULL, conn);
+	if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNCOMPLETE)))
+		userfunc(sess, NULL, conn);
 
-  /* Flush out the queues if there was something waiting for this conn  */
-  aim_tx_flushqueue(sess);
+	/* Flush out the queues if there was something waiting for this conn  */
+	aim_tx_flushqueue(sess);
 
-  return 0;
+	return 0;
 }
 
-faim_export struct aim_session_t *aim_conn_getsess(struct aim_conn_t *conn)
+faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn)
 {
 
-  if (!conn)
-    return NULL;
+	if (!conn)
+		return NULL;
 
-  return (struct aim_session_t *)conn->sessv;
+	return (aim_session_t *)conn->sessv;
 }
 
 /*
@@ -948,12 +918,12 @@ faim_export struct aim_session_t *aim_conn_getsess(struct aim_conn_t *conn)
  * Closes -ALL- open connections.
  *
  */
-faim_export int aim_logoff(struct aim_session_t *sess)
+faim_export int aim_logoff(aim_session_t *sess)
 {
 
-  aim_connrst(sess);  /* in case we want to connect again */
+	aim_connrst(sess);  /* in case we want to connect again */
 
-  return 0;
+	return 0;
 
 }
 

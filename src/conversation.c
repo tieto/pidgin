@@ -415,6 +415,13 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		gtkspell_detach(GTK_TEXT(c->entry));
 
 	if (!c->is_chat) {
+		GSList *cn = connections;
+		while (cn) {
+			struct gaim_connection *gc = cn->data;
+			cn = cn->next;
+			if (gc->prpl->convo_closed)
+				(*gc->prpl->convo_closed)(gc, c->name);
+		}
 		remove_icon(c);
 		remove_checkbox(c);
 		if (display_options & OPT_DISP_ONE_WINDOW) {

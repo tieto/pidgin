@@ -22,11 +22,9 @@
  *  time.  
  *
  */
-faim_export unsigned long aim_bos_setidle(struct aim_session_t *sess,
-					  struct aim_conn_t *conn, 
-					  u_long idletime)
+faim_export int aim_bos_setidle(aim_session_t *sess, aim_conn_t *conn, fu32_t idletime)
 {
-  return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
+	return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
 }
 
 
@@ -56,70 +54,58 @@ faim_export unsigned long aim_bos_setidle(struct aim_session_t *sess,
  *   - Block the users below: Send an AIM_VISIBILITYCHANGE_DENYADD with
  *      the list of users to be blocked
  *
- *
+ * XXX ye gods.
  */
-faim_export unsigned long aim_bos_changevisibility(struct aim_session_t *sess,
-						   struct aim_conn_t *conn, 
-						   int changetype, 
-						   char *denylist)
+faim_export int aim_bos_changevisibility(aim_session_t *sess, aim_conn_t *conn, int changetype, const char *denylist)
 {
-  struct command_tx_struct *newpacket;
-  int packlen = 0;
-  u_short subtype;
+	aim_frame_t *fr;
+	int packlen = 0;
+	fu16_t subtype;
+	char *localcpy = NULL, *tmpptr = NULL;
+	int i;
+	int listcount;
+	aim_snacid_t snacid;
 
-  char *localcpy = NULL;
-  char *tmpptr = NULL;
-  int i,j;
-  int listcount;
+	if (!denylist)
+		return -EINVAL;
 
-  if (!denylist)
-    return 0;
+	if (changetype == AIM_VISIBILITYCHANGE_PERMITADD)
+		subtype = 0x05;
+	else if (changetype == AIM_VISIBILITYCHANGE_PERMITREMOVE)
+		subtype = 0x06;
+	else if (changetype == AIM_VISIBILITYCHANGE_DENYADD)
+		subtype = 0x07;
+	else if (changetype == AIM_VISIBILITYCHANGE_DENYREMOVE)
+		subtype = 0x08;
+	else
+		return -EINVAL;
 
-  localcpy = (char *) malloc(strlen(denylist)+1);
-  memcpy(localcpy, denylist, strlen(denylist)+1);
-  
-  listcount = aimutil_itemcnt(localcpy, '&');
-  packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
+	localcpy = strdup(denylist);
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen)))
-    return -1;
+	listcount = aimutil_itemcnt(localcpy, '&');
+	packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
 
-  newpacket->lock = 1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, packlen))) {
+		free(localcpy);
+		return -ENOMEM;
+	}
 
-  switch(changetype)
-    {
-    case AIM_VISIBILITYCHANGE_PERMITADD:    subtype = 0x05; break;
-    case AIM_VISIBILITYCHANGE_PERMITREMOVE: subtype = 0x06; break;
-    case AIM_VISIBILITYCHANGE_DENYADD:      subtype = 0x07; break;
-    case AIM_VISIBILITYCHANGE_DENYREMOVE:   subtype = 0x08; break;
-    default:
-      free(newpacket->data);
-      free(newpacket);
-      return 0;
-    }
+	snacid = aim_cachesnac(sess, 0x0009, subtype, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0009, subtype, 0x00, snacid);
 
-  /* We actually DO NOT send a SNAC ID with this one! */
-  aim_putsnac(newpacket->data, 0x0009, subtype, 0x00, 0);
- 
-  j = 10;  /* the next byte */
-  
-  for (i=0; (i < (listcount - 1)) && (i < 99); i++)
-    {
-      tmpptr = aimutil_itemidx(localcpy, i, '&');
+	for (i = 0; (i < (listcount - 1)) && (i < 99); i++) {
+		tmpptr = aimutil_itemidx(localcpy, i, '&');
 
-      newpacket->data[j] = strlen(tmpptr);
-      memcpy(&(newpacket->data[j+1]), tmpptr, strlen(tmpptr));
-      j += strlen(tmpptr)+1;
-      free(tmpptr);
-    }
-  free(localcpy);
+		aimbs_put8(&fr->data, strlen(tmpptr));
+		aimbs_putraw(&fr->data, tmpptr, strlen(tmpptr));
 
-  newpacket->lock = 0;
+		free(tmpptr);
+	}
+	free(localcpy);
 
-  aim_tx_enqueue(sess, newpacket);
+	aim_tx_enqueue(sess, fr);
 
-  return (sess->snac_nextid); /* dont increment */
-
+	return 0;
 }
 
 
@@ -136,63 +122,50 @@ faim_export unsigned long aim_bos_changevisibility(struct aim_session_t *sess,
  * XXX: I can't stress the TODO enough.
  *
  */
-faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *sess,
-					       struct aim_conn_t *conn, 
-					       char *buddy_list)
+faim_export int aim_bos_setbuddylist(aim_session_t *sess, aim_conn_t *conn, const char *buddy_list)
 {
-  int i, j;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int i, len = 0;
+	char *localcpy = NULL;
+	char *tmpptr = NULL;
 
-  struct command_tx_struct *newpacket;
+	if (!buddy_list || !(localcpy = strdup(buddy_list))) 
+		return -EINVAL;
 
-  int len = 0;
+	i = 0;
+	tmpptr = strtok(localcpy, "&");
+	while ((tmpptr != NULL) && (i < 150)) {
+		faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
+		len += 1+strlen(tmpptr);
+		i++;
+		tmpptr = strtok(NULL, "&");
+	}
 
-  char *localcpy = NULL;
-  char *tmpptr = NULL;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+len)))
+		return -ENOMEM;
 
-  len = 10; /* 10B SNAC headers */
+	snacid = aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, NULL, 0);
+	
+	aim_putsnac(&fr->data, 0x0003, 0x0004, 0x0000, snacid);
 
-  if (!buddy_list || !(localcpy = (char *) malloc(strlen(buddy_list)+1))) 
-    return -1;
-  strncpy(localcpy, buddy_list, strlen(buddy_list)+1);
+	strncpy(localcpy, buddy_list, strlen(buddy_list)+1);
+	i = 0;
+	tmpptr = strtok(localcpy, "&");
+	while ((tmpptr != NULL) & (i < 150)) {
+		faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
+		
+		aimbs_put8(&fr->data, strlen(tmpptr));
+		aimbs_putraw(&fr->data, tmpptr, strlen(tmpptr));
+		i++;
+		tmpptr = strtok(NULL, "&");
+	}
 
-  i = 0;
-  tmpptr = strtok(localcpy, "&");
-  while ((tmpptr != NULL) && (i < 150)) {
-    faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
-    len += 1+strlen(tmpptr);
-    i++;
-    tmpptr = strtok(NULL, "&");
-  }
-  faimdprintf(sess, 2, "*** send buddy list len: %d (%x)\n", len, len);
+	aim_tx_enqueue(sess, fr);
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, len)))
-    return -1;
+	free(localcpy);
 
-  newpacket->lock = 1;
-  
-  aim_putsnac(newpacket->data, 0x0003, 0x0004, 0x0000, 0);
-
-  j = 10;  /* the next byte */
-
-  strncpy(localcpy, buddy_list, strlen(buddy_list)+1);
-  i = 0;
-  tmpptr = strtok(localcpy, "&");
-  while ((tmpptr != NULL) & (i < 150)) {
-    faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
-    newpacket->data[j] = strlen(tmpptr);
-    memcpy(&(newpacket->data[j+1]), tmpptr, strlen(tmpptr));
-    j += 1+strlen(tmpptr);
-    i++;
-    tmpptr = strtok(NULL, "&");
-  }
-
-  newpacket->lock = 0;
-
-  aim_tx_enqueue(sess, newpacket);
-
-  free(localcpy);
-
-  return (sess->snac_nextid);
+	return 0;
 }
 
 /* 
@@ -202,49 +175,38 @@ faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *sess,
  *
  * 
  */
-faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess,
-					     struct aim_conn_t *conn, 
-					     const char *profile,
-					     const char *awaymsg,
-					     unsigned short caps)
+faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu16_t caps)
 {
-  struct command_tx_struct *newpacket;
-  int i = 0, tmp, caplen;
-  static const char defencoding[] = {"text/aolrtf; charset=\"us-ascii\""};
+	static const char defencoding[] = {"text/aolrtf; charset=\"us-ascii\""};
+	aim_frame_t *fr;
+	aim_tlvlist_t *tl = NULL;
+	aim_snacid_t snacid;
 
-  i = 10;
-  if (profile)
-    i += 4+strlen(defencoding)+4+strlen(profile);
-  if (awaymsg)
-    i += 4+strlen(defencoding)+4+strlen(awaymsg);
-  i += 4+512; /* for capabilities */
+	/* Build to packet first to get real length */
+	if (profile) {
+		aim_addtlvtochain_raw(&tl, 0x0001, strlen(defencoding), defencoding);
+		aim_addtlvtochain_raw(&tl, 0x0002, strlen(profile), profile);
+	}
+	
+	if (awaymsg) {
+		aim_addtlvtochain_raw(&tl, 0x0003, strlen(defencoding), defencoding);
+		aim_addtlvtochain_raw(&tl, 0x0004, strlen(awaymsg), awaymsg);
+	}
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, i)))
-    return -1;
+	aim_addtlvtochain_caps(&tl, 0x0005, caps);
 
-  i = aim_putsnac(newpacket->data, 0x0002, 0x004, 0x0000, sess->snac_nextid);
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_sizetlvchain(&tl))))
+		return -ENOMEM;
 
-  if (profile) {
-    i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen(defencoding), defencoding);
-    i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(profile), profile);
-  }
+	snacid = aim_cachesnac(sess, 0x0002, 0x0004, 0x0000, NULL, 0);
+	
+	aim_putsnac(&fr->data, 0x0002, 0x004, 0x0000, snacid);
+	aim_writetlvchain(&fr->data, &tl);
+	aim_freetlvchain(&tl);
 
-  if (awaymsg) {
-    i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen(defencoding), defencoding);
-    i += aim_puttlv_str(newpacket->data+i, 0x0004, strlen(awaymsg), awaymsg);
-  }
+	aim_tx_enqueue(sess, fr);
 
-  /* Capability information. */
- 
-  tmp = (i += aimutil_put16(newpacket->data+i, 0x0005));
-  i += aimutil_put16(newpacket->data+i, 0x0000); /* rewritten later */
-  i += (caplen = aim_putcap(newpacket->data+i, 512, caps));
-  aimutil_put16(newpacket->data+tmp, caplen); /* rewrite TLV size */
-
-  newpacket->commandlen = i;
-  aim_tx_enqueue(sess, newpacket);
-  
-  return (sess->snac_nextid++);
+	return 0;
 }
 
 /*
@@ -253,85 +215,75 @@ faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess,
  * Send Client Ready.  
  *
  */
-faim_export unsigned long aim_bos_clientready(struct aim_session_t *sess,
-					      struct aim_conn_t *conn)
+faim_export int aim_bos_clientready(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct aim_tool_version tools[] = {
-    {0x0001, 0x0003,    AIM_TOOL_WIN32, 0x0686},
-    {0x0002, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
-    {0x0003, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-    {0x0004, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-    {0x0006, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
-    {0x0008, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-    {0x0009, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
-    {0x000a, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-    {0x000b, 0x0001,    AIM_TOOL_WIN32, 0x0001}
-  };
-  int i,j;
-  struct command_tx_struct *newpacket;
-  int toolcount = sizeof(tools)/sizeof(struct aim_tool_version);
+	struct aim_tool_version tools[] = {
+		{0x0001, 0x0003,    AIM_TOOL_WIN32, 0x0686},
+		{0x0002, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
+		{0x0003, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+		{0x0004, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+		{0x0006, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
+		{0x0008, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+		{0x0009, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
+		{0x000a, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+		{0x000b, 0x0001,    AIM_TOOL_WIN32, 0x0001}
+	};
+	int j;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int toolcount = sizeof(tools)/sizeof(struct aim_tool_version);
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0001, 0x0002, 0x0000, snacid);
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0002, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
+	for (j = 0; j < toolcount; j++) {
+		aimbs_put16(&fr->data, tools[j].group);
+		aimbs_put16(&fr->data, tools[j].version);
+		aimbs_put16(&fr->data, tools[j].tool);
+		aimbs_put16(&fr->data, tools[j].toolversion);
+	}
 
-  for (j = 0; j < toolcount; j++) {
-    i += aimutil_put16(newpacket->data+i, tools[j].group);
-    i += aimutil_put16(newpacket->data+i, tools[j].version);
-    i += aimutil_put16(newpacket->data+i, tools[j].tool);
-    i += aimutil_put16(newpacket->data+i, tools[j].toolversion);
-  }
+	aim_tx_enqueue(sess, fr);
 
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
-
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
 /* 
  *  Request Rate Information.
  * 
  */
-faim_export unsigned long aim_bos_reqrate(struct aim_session_t *sess,
-					  struct aim_conn_t *conn)
+faim_export int aim_bos_reqrate(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, 0x0001, 0x0006);
+	return aim_genericreq_n(sess, conn, 0x0001, 0x0006);
 }
 
 /* 
  *  Rate Information Response Acknowledge.
  *
  */
-faim_export unsigned long aim_bos_ackrateresp(struct aim_session_t *sess,
-					      struct aim_conn_t *conn)
+faim_export int aim_bos_ackrateresp(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct command_tx_struct *newpacket;
-  int packlen = 20, i=0;
+	aim_frame_t *fr;	
+	aim_snacid_t snacid;
 
-  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen)))
-    return (sess->snac_nextid);
-  
-  newpacket->lock = 1;
+	if(!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+10)))
+		return -ENOMEM; 
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0008, 0x0000, 0);
-  i += aimutil_put16(newpacket->data+i, 0x0001); 
-  i += aimutil_put16(newpacket->data+i, 0x0002);
-  i += aimutil_put16(newpacket->data+i, 0x0003);
-  i += aimutil_put16(newpacket->data+i, 0x0004);
-  i += aimutil_put16(newpacket->data+i, 0x0005);
+	snacid = aim_cachesnac(sess, 0x0001, 0x0008, 0x0000, NULL, 0);
+	
+	aim_putsnac(&fr->data, 0x0001, 0x0008, 0x0000, snacid);
+	aimbs_put16(&fr->data, 0x0001); 
+	aimbs_put16(&fr->data, 0x0002);
+	aimbs_put16(&fr->data, 0x0003);
+	aimbs_put16(&fr->data, 0x0004);
+	aimbs_put16(&fr->data, 0x0005);
 
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
+	aim_tx_enqueue(sess, fr);
 
-  aim_tx_enqueue(sess, newpacket);
-
-  return (sess->snac_nextid);
+	return 0;
 }
 
 /* 
@@ -343,81 +295,58 @@ faim_export unsigned long aim_bos_ackrateresp(struct aim_session_t *sess,
  *  Bit 2:  Allows other AIM users to see how long you've been a member.
  *
  */
-faim_export unsigned long aim_bos_setprivacyflags(struct aim_session_t *sess,
-						  struct aim_conn_t *conn, 
-						  u_long flags)
+faim_export int aim_bos_setprivacyflags(aim_session_t *sess, aim_conn_t *conn, fu32_t flags)
 {
-  return aim_genericreq_l(sess, conn, 0x0001, 0x0014, &flags);
+	return aim_genericreq_l(sess, conn, 0x0001, 0x0014, &flags);
 }
 
 /*
  * aim_bos_reqpersonalinfo()
  *
- * Requests the current user's information. Can't go generic on this one
- * because aparently it uses SNAC flags.
- *
  */
-faim_export unsigned long aim_bos_reqpersonalinfo(struct aim_session_t *sess,
-						  struct aim_conn_t *conn)
+faim_export int aim_bos_reqpersonalinfo(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, 0x0001, 0x000e);
+	return aim_genericreq_n(sess, conn, 0x0001, 0x000e);
 }
 
-faim_export unsigned long aim_setversions(struct aim_session_t *sess,
-					  struct aim_conn_t *conn)
+faim_export int aim_setversions(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct command_tx_struct *newpacket;
-  int i;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	static const struct version {
+		fu16_t group;
+		fu16_t version;
+	} versions[] = {
+		{0x0001, 0x0003},
+		{0x0002, 0x0001},
+		{0x0003, 0x0001},
+		{0x0004, 0x0001},
+		{0x0006, 0x0001},
+		{0x0008, 0x0001},
+		{0x0009, 0x0001},
+		{0x000a, 0x0001},
+		{0x000b, 0x0002},
+		{0x000c, 0x0001},
+		{0x0013, 0x0001},
+		{0x0015, 0x0001},
+	};
+	int numversions = sizeof(versions) / sizeof(struct version);
+	int i;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + (4*16))))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + (4*numversions))))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0017, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0001, 0x0017, 0x0000, snacid);
+	for (i = 0; i < numversions; i++) {
+		aimbs_put16(&fr->data, versions[i].group);
+		aimbs_put16(&fr->data, versions[i].version);
+	}
 
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-  i += aimutil_put16(newpacket->data+i, 0x0003);
+	aim_tx_enqueue(sess, fr);
 
-  i += aimutil_put16(newpacket->data+i, 0x0002);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0003);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0004);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0006);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0008);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0009);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x000a);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x000b);
-  i += aimutil_put16(newpacket->data+i, 0x0002);
-
-  i += aimutil_put16(newpacket->data+i, 0x000c);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0013);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0015);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
 
@@ -427,11 +356,9 @@ faim_export unsigned long aim_setversions(struct aim_session_t *sess,
  * Service request. 
  *
  */
-faim_export unsigned long aim_bos_reqservice(struct aim_session_t *sess,
-			  struct aim_conn_t *conn, 
-			  u_short serviceid)
+faim_export int aim_bos_reqservice(aim_session_t *sess, aim_conn_t *conn, fu16_t serviceid)
 {
-  return aim_genericreq_s(sess, conn, 0x0001, 0x0004, &serviceid);
+	return aim_genericreq_s(sess, conn, 0x0001, 0x0004, &serviceid);
 }
 
 /*
@@ -441,10 +368,9 @@ faim_export unsigned long aim_bos_reqservice(struct aim_session_t *sess,
  * the connection alive.  Its not real necessary.
  *
  */
-faim_export unsigned long aim_bos_nop(struct aim_session_t *sess,
-				      struct aim_conn_t *conn)
+faim_export int aim_bos_nop(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, 0x0001, 0x0016);
+	return aim_genericreq_n(sess, conn, 0x0001, 0x0016);
 }
 
 /*
@@ -453,21 +379,16 @@ faim_export unsigned long aim_bos_nop(struct aim_session_t *sess,
  * No-op.  WinAIM 4.x sends these _every minute_ to keep
  * the connection alive.  
  */
-faim_export unsigned long aim_flap_nop(struct aim_session_t *sess,
-				       struct aim_conn_t *conn)
+faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn)
 {
-  struct command_tx_struct *newpacket;
+	aim_frame_t *fr;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0005, 0)))
-    return sess->snac_nextid;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x05, 0)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
-  newpacket->commandlen = 0;
-  newpacket->lock = 0;
+	aim_tx_enqueue(sess, fr);
 
-  aim_tx_enqueue(sess, newpacket);
-
-  return (sess->snac_nextid);
+	return 0;
 }
 
 /*
@@ -476,10 +397,9 @@ faim_export unsigned long aim_flap_nop(struct aim_session_t *sess,
  * Request BOS rights.
  *
  */
-faim_export unsigned long aim_bos_reqrights(struct aim_session_t *sess,
-					    struct aim_conn_t *conn)
+faim_export int aim_bos_reqrights(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, 0x0009, 0x0002);
+	return aim_genericreq_n(sess, conn, 0x0009, 0x0002);
 }
 
 /*
@@ -488,10 +408,9 @@ faim_export unsigned long aim_bos_reqrights(struct aim_session_t *sess,
  * Request Buddy List rights.
  *
  */
-faim_export unsigned long aim_bos_reqbuddyrights(struct aim_session_t *sess,
-						 struct aim_conn_t *conn)
+faim_export int aim_bos_reqbuddyrights(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, 0x0003, 0x0002);
+	return aim_genericreq_n(sess, conn, 0x0003, 0x0002);
 }
 
 /*
@@ -503,35 +422,27 @@ faim_export unsigned long aim_bos_reqbuddyrights(struct aim_session_t *sess,
  * returns -1 on error (couldn't alloc packet), 0 on success. 
  *
  */
-faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, const char *destsn, unsigned long flags)
+faim_export int aim_send_warning(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags)
 {
-	struct command_tx_struct *newpacket;
-	int curbyte;
-	unsigned short outflags = 0x0000;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	fu16_t outflags = 0x0000;
 
-	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 
-					strlen(destsn)+13)))
-		return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, strlen(destsn)+13)))
+		return -ENOMEM;
 
-	newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0004, 0x0008, 0x0000, destsn, strlen(destsn)+1);
 
-	curbyte  = 0;
-	curbyte += aim_putsnac(newpacket->data+curbyte,
-			0x0004, 0x0008, 0x0000, sess->snac_nextid);
+	aim_putsnac(&fr->data, 0x0004, 0x0008, 0x0000, snacid);
 
 	if (flags & AIM_WARN_ANON)
 		outflags |= 0x0001;
 
-	curbyte += aimutil_put16(newpacket->data+curbyte, outflags); 
-	curbyte += aimutil_put8(newpacket->data+curbyte, strlen(destsn));
-	curbyte += aimutil_putstr(newpacket->data+curbyte, destsn, strlen(destsn));
+	aimbs_put16(&fr->data, outflags); 
+	aimbs_put8(&fr->data, strlen(destsn));
+	aimbs_putraw(&fr->data, destsn, strlen(destsn));
 
-	newpacket->commandlen = curbyte;
-	newpacket->lock = 0;
-
-	aim_tx_enqueue(sess, newpacket);
-
-	aim_cachesnac(sess, 0x0004, 0x0008, 0x0000, destsn, strlen(destsn)+1);
+	aim_tx_enqueue(sess, fr);
 
 	return 0;
 }
@@ -541,10 +452,9 @@ faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *
  *
  * For aimdebugd.  If you don't know what it is, you don't want to.
  */
-faim_export unsigned long aim_debugconn_sendconnect(struct aim_session_t *sess,
-						    struct aim_conn_t *conn)
+faim_export int aim_debugconn_sendconnect(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEBUGCONN_CONNECT);
+	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEBUGCONN_CONNECT);
 }
 
 /*
@@ -559,102 +469,81 @@ faim_export unsigned long aim_debugconn_sendconnect(struct aim_session_t *sess,
  * back to the single.  I don't see any advantage to doing it either way.
  *
  */
-faim_internal unsigned long aim_genericreq_n(struct aim_session_t *sess,
-					     struct aim_conn_t *conn, 
-					     u_short family, u_short subtype)
+faim_internal int aim_genericreq_n(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype)
 {
-  struct command_tx_struct *newpacket;
+	aim_frame_t *fr;
+	aim_snacid_t snacid = 0x00000000;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10)))
-    return 0;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
 
-  aim_putsnac(newpacket->data, family, subtype, 0x0000, 0x00000000);
+	aim_tx_enqueue(sess, fr);
 
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
-faim_internal unsigned long aim_genericreq_n_snacid(struct aim_session_t *sess,
-						    struct aim_conn_t *conn, 
-						    unsigned short family, 
-						    unsigned short subtype)
+faim_internal int aim_genericreq_n_snacid(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype)
 {
-  struct command_tx_struct *newpacket;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10)))
-    return 0;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
 
-  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
+	aim_tx_enqueue(sess, fr);
 
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid++;
+	return 0;
 }
 
 /*
  *
  *
  */
-faim_internal unsigned long aim_genericreq_l(struct aim_session_t *sess,
-					     struct aim_conn_t *conn, 
-					     u_short family, u_short subtype, 
-					     u_long *longdata)
+faim_internal int aim_genericreq_l(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype, fu32_t *longdata)
 {
-  struct command_tx_struct *newpacket;
-  u_long newlong;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-  /* If we don't have data, there's no reason to use this function */
-  if (!longdata)
-    return aim_genericreq_n(sess, conn, family, subtype);
+	if (!longdata)
+		return aim_genericreq_n(sess, conn, family, subtype);
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+sizeof(u_long))))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4)))
+		return -ENOMEM; 
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
 
-  aim_putsnac(newpacket->data, family, subtype, 0x0000, 0x00000000);
+	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
+	aimbs_put32(&fr->data, *longdata);
 
-  /* copy in data */
-  newlong = htonl(*longdata);
-  memcpy(&(newpacket->data[10]), &newlong, sizeof(u_long));
+	aim_tx_enqueue(sess, fr);
 
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
-faim_internal unsigned long aim_genericreq_s(struct aim_session_t *sess,
-					     struct aim_conn_t *conn, 
-					     u_short family, u_short subtype, 
-					     u_short *shortdata)
+faim_internal int aim_genericreq_s(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype, fu16_t *shortdata)
 {
-  struct command_tx_struct *newpacket;
-  u_short newshort;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-  /* If we don't have data, there's no reason to use this function */
-  if (!shortdata)
-    return aim_genericreq_n(sess, conn, family, subtype);
+	if (!shortdata)
+		return aim_genericreq_n(sess, conn, family, subtype);
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+sizeof(u_short))))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2)))
+		return -ENOMEM; 
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
 
-  aim_putsnac(newpacket->data, family, subtype, 0x0000, 0x00000000);
+	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
+	aimbs_put16(&fr->data, *shortdata);
 
-  /* copy in data */
-  newshort = htons(*shortdata);
-  memcpy(&(newpacket->data[10]), &newshort, sizeof(u_short));
+	aim_tx_enqueue(sess, fr);
 
-  aim_tx_enqueue(sess, newpacket);
-
-  return sess->snac_nextid;
+	return 0;
 }
 
 /*
@@ -663,202 +552,169 @@ faim_internal unsigned long aim_genericreq_s(struct aim_session_t *sess,
  * Request Location services rights.
  *
  */
-faim_export unsigned long aim_bos_reqlocaterights(struct aim_session_t *sess,
-						  struct aim_conn_t *conn)
+faim_export int aim_bos_reqlocaterights(aim_session_t *sess, aim_conn_t *conn)
 {
-  return aim_genericreq_n(sess, conn, 0x0002, 0x0002);
+	return aim_genericreq_n(sess, conn, 0x0002, 0x0002);
 }
 
 /* 
  * Set directory profile data (not the same as aim_bos_setprofile!)
+ *
+ * privacy: 1 to allow searching, 0 to disallow.
  */
-faim_export unsigned long aim_setdirectoryinfo(struct aim_session_t *sess, struct aim_conn_t *conn, char *first, char *middle, char *last, char *maiden, char *nickname, char *street, char *city, char *state, char *zip, int country, unsigned short privacy) 
+faim_export int aim_setdirectoryinfo(aim_session_t *sess, aim_conn_t *conn, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy) 
 {
-  struct command_tx_struct *newpacket;
-  int packlen = 0, i = 0;
-
-  packlen += 2+2+2;
-
-  if(first) /* TLV 0001 */
-    packlen += (strlen(first) + 4);
-  if(middle) 
-    packlen += (strlen(middle) + 4);
-  if(last)
-    packlen += (strlen(last) + 4);
-  if(maiden)
-    packlen += (strlen(maiden) + 4);
-  if(nickname)
-    packlen += (strlen(nickname) + 4);
-  if(street)
-    packlen += (strlen(street) + 4);
-  if(state)
-    packlen += (strlen(state) + 4);
-  if(city)
-    packlen += (strlen(city) + 4);
-  if(zip)
-    packlen += (strlen(zip) + 4);
-    
-  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen+10)))
-    return -1;
-
-  newpacket->lock = 1;
-
-  i = aim_putsnac(newpacket->data, 0x0002, 0x0009, 0x0000, 0);
-
-  /* 000a/0002: privacy: 1 to allow search/disp, 0 to disallow */
-  i += aim_puttlv_16(newpacket->data+i, 0x000a, privacy);
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
 
 
-  if (first)
-    i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen(first), first);
-  if (middle)
-    i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen(middle), middle);
-  if (last)
-    i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(last), last);
-  if (maiden)
-    i += aim_puttlv_str(newpacket->data+i, 0x0004, strlen(maiden), maiden);
-  if (nickname)
-    i += aim_puttlv_str(newpacket->data+i, 0x000c, strlen(nickname), nickname);
-  if (street)
-    i += aim_puttlv_str(newpacket->data+i, 0x0021, strlen(street), street);
-  if (city)
-    i += aim_puttlv_str(newpacket->data+i, 0x0008, strlen(city), city);
-  if (state)
-    i += aim_puttlv_str(newpacket->data+i, 0x0007, strlen(state), state);
-  if (zip)
-    i += aim_puttlv_str(newpacket->data+i, 0x000d, strlen(zip), zip);
+	aim_addtlvtochain16(&tl, 0x000a, privacy);
 
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
+	if (first)
+		aim_addtlvtochain_raw(&tl, 0x0001, strlen(first), first);
+	if (last)
+		aim_addtlvtochain_raw(&tl, 0x0002, strlen(last), last);
+	if (middle)
+		aim_addtlvtochain_raw(&tl, 0x0003, strlen(middle), middle);
+	if (maiden)
+		aim_addtlvtochain_raw(&tl, 0x0004, strlen(maiden), maiden);
 
-  aim_tx_enqueue(sess, newpacket);
-   
-  return(sess->snac_nextid);
+	if (state)
+		aim_addtlvtochain_raw(&tl, 0x0007, strlen(state), state);
+	if (city)
+		aim_addtlvtochain_raw(&tl, 0x0008, strlen(city), city);
+
+	if (nickname)
+		aim_addtlvtochain_raw(&tl, 0x000c, strlen(nickname), nickname);
+	if (zip)
+		aim_addtlvtochain_raw(&tl, 0x000d, strlen(zip), zip);
+
+	if (street)
+		aim_addtlvtochain_raw(&tl, 0x0021, strlen(street), street);
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_sizetlvchain(&tl))))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0002, 0x0009, 0x0000, NULL, 0);
+	
+	aim_putsnac(&fr->data, 0x0002, 0x0009, 0x0000, snacid);
+	aim_writetlvchain(&fr->data, &tl);
+	aim_freetlvchain(&tl);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
 }
 
-faim_export unsigned long aim_setuserinterests(struct aim_session_t *sess, struct aim_conn_t *conn, char *interest1, char *interest2, char *interest3, char *interest4, char *interest5, unsigned short privacy)
+/* XXX pass these in better */
+faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy)
 {
-  struct command_tx_struct *newpacket;
-  int packlen = 0, i = 0;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
 
-  packlen += 2+2+2;
+	/* ?? privacy ?? */
+	aim_addtlvtochain16(&tl, 0x000a, privacy);
 
-  if(interest1)
-    packlen += (strlen(interest1) + 4);
-  if(interest2)
-    packlen += (strlen(interest2) + 4);
-  if(interest3)
-    packlen += (strlen(interest3) + 4);
-  if(interest4)
-    packlen += (strlen(interest4) + 4);
-  if(interest5)
-    packlen += (strlen(interest5) + 4) ;
+	if (interest1)
+		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest1), interest1);
+	if (interest2)
+		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest2), interest2);
+	if (interest3)
+		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest3), interest3);
+	if (interest4)
+		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest4), interest4);
+	if (interest5)
+		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest5), interest5);
 
-    
-  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen+10)))
-    return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_sizetlvchain(&tl))))
+		return -ENOMEM;
 
-  newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0002, 0x000f, 0x0000, NULL, 0);
 
-  i = aim_putsnac(newpacket->data, 0x0002, 0x000f, 0x0000, 0);
+	aim_putsnac(&fr->data, 0x0002, 0x000f, 0x0000, 0);
+	aim_writetlvchain(&fr->data, &tl);
+	aim_freetlvchain(&tl);
 
-  /* 000a/0002: 0000 ?? ?privacy? */
-  i += aim_puttlv_16(newpacket->data+i, 0x000a, privacy); 
+	aim_tx_enqueue(sess, fr);
 
-  if(interest1) 
-    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest1), interest1);
-  if(interest2) 
-    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest2), interest2);
-  if(interest3) 
-    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest3), interest3);
-  if(interest4) 
-    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest4), interest4);
-  if(interest5) 
-    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest1), interest5);
-
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
-    
-  aim_tx_enqueue(sess, newpacket);
-    
-  return(sess->snac_nextid);
+	return 0;
 }
 
-faim_export unsigned long aim_icq_setstatus(struct aim_session_t *sess,
-					    struct aim_conn_t *conn, 
-					    unsigned long status)
+faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t status)
 {
-  struct command_tx_struct *newpacket;
-  int i;
-  unsigned long data;
-  
-  data = 0x00030000 | status; /* yay for error checking ;^) */
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
+	fu32_t data;
 
-  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + 4)))
-    return -1;
+	data = 0x00030000 | status; /* yay for error checking ;^) */
 
-  newpacket->lock = 1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4)))
+		return -ENOMEM;
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x001e, 0x0000, 0x0000001e);
-  i += aim_puttlv_32(newpacket->data+i, 0x0006, data);
+	snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
+	
+	aim_addtlvtochain32(&tl, 0x0006, data);
+	aim_writetlvchain(&fr->data, &tl);
+	aim_freetlvchain(&tl);
+	
+	aim_tx_enqueue(sess, fr);
 
-  newpacket->commandlen = i;
-  newpacket->lock = 0;
-
-  aim_tx_enqueue(sess, newpacket);
-
-  return(sess->snac_nextid);
+	return 0;
 }
 
 /*
  * Should be generic enough to handle the errors for all families...
  *
  */
-static int generror(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int generror(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-  int ret = 0;
-  int error = 0;
-  aim_rxcallback_t userfunc;
-  struct aim_snac_t *snac2;
+	int ret = 0;
+	int error = 0;
+	aim_rxcallback_t userfunc;
+	aim_snac_t *snac2;
 
-  snac2 = aim_remsnac(sess, snac->id);
+	snac2 = aim_remsnac(sess, snac->id);
 
-  if (datalen)
-    error = aimutil_get16(data);
+	if (aim_bstream_empty(bs))
+		error = aimbs_get16(bs);
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    ret = userfunc(sess, rx, error, snac2?snac2->data:NULL);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, error, snac2 ? snac2->data : NULL);
 
-  if (snac2)
-    free(snac2->data);
-  free(snac2);
+	if (snac2)
+		free(snac2->data);
+	free(snac2);
 
-  return ret;
+	return ret;
 }
 
-static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
-  if (snac->subtype == 0x0001)
-    return generror(sess, mod, rx, snac, data, datalen);
-  else if ((snac->family == 0xffff) && (snac->subtype == 0xffff)) {
-    aim_rxcallback_t userfunc;
+	if (snac->subtype == 0x0001)
+		return generror(sess, mod, rx, snac, bs);
+	else if ((snac->family == 0xffff) && (snac->subtype == 0xffff)) {
+		aim_rxcallback_t userfunc;
 
-    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-      return userfunc(sess, rx);
-  }
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			return userfunc(sess, rx);
+	}
 
-  return 0;
+	return 0;
 }
 
-faim_internal int misc_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+faim_internal int misc_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
-  mod->family = 0xffff;
-  mod->version = 0x0000;
-  mod->flags = AIM_MODFLAG_MULTIFAMILY;
-  strncpy(mod->name, "misc", sizeof(mod->name));
-  mod->snachandler = snachandler;
+	mod->family = 0xffff;
+	mod->version = 0x0000;
+	mod->flags = AIM_MODFLAG_MULTIFAMILY;
+	strncpy(mod->name, "misc", sizeof(mod->name));
+	mod->snachandler = snachandler;
 
-  return 0;
+	return 0;
 }

@@ -11,76 +11,77 @@
  * it is still in a format parsable by extractuserinfo.
  *
  */
-static int buddychange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int buddychange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-  struct aim_userinfo_s userinfo;
-  aim_rxcallback_t userfunc;
+	struct aim_userinfo_s userinfo;
+	aim_rxcallback_t userfunc;
 
-  aim_extractuserinfo(sess, data, &userinfo);
+	aim_extractuserinfo(sess, bs, &userinfo);
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    return userfunc(sess, rx, &userinfo);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		return userfunc(sess, rx, &userinfo);
 
-  return 0;
+	return 0;
 }
 
-static int rights(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-  aim_rxcallback_t userfunc;
-  struct aim_tlvlist_t *tlvlist;
-  unsigned short maxbuddies = 0, maxwatchers = 0;
-  int ret = 0;
+	aim_rxcallback_t userfunc;
+	aim_tlvlist_t *tlvlist;
+	fu16_t maxbuddies = 0, maxwatchers = 0;
+	int ret = 0;
 
-  /* 
-   * TLVs follow 
-   */
-  if (!(tlvlist = aim_readtlvchain(data, datalen)))
-    return 0;
+	/* 
+	 * TLVs follow 
+	 */
+	tlvlist = aim_readtlvchain(bs);
 
-  /*
-   * TLV type 0x0001: Maximum number of buddies.
-   */
-  if (aim_gettlv(tlvlist, 0x0001, 1))
-    maxbuddies = aim_gettlv16(tlvlist, 0x0001, 1);
+	/*
+	 * TLV type 0x0001: Maximum number of buddies.
+	 */
+	if (aim_gettlv(tlvlist, 0x0001, 1))
+		maxbuddies = aim_gettlv16(tlvlist, 0x0001, 1);
 
-  /*
-   * TLV type 0x0002: Maximum number of watchers.
-   *
-   * XXX: what the hell is a watcher? 
-   *
-   */
-  if (aim_gettlv(tlvlist, 0x0002, 1))
-    maxwatchers = aim_gettlv16(tlvlist, 0x0002, 1);
-  
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    ret = userfunc(sess, rx, maxbuddies, maxwatchers);
+	/*
+	 * TLV type 0x0002: Maximum number of watchers.
+	 *
+	 * Watchers are other users who have you on their buddy
+	 * list.  (This is called the "reverse list" by a certain
+	 * other IM protocol.)
+	 * 
+	 */
+	if (aim_gettlv(tlvlist, 0x0002, 1))
+		maxwatchers = aim_gettlv16(tlvlist, 0x0002, 1);
 
-  aim_freetlvchain(&tlvlist);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, maxbuddies, maxwatchers);
 
-  return ret;  
+	aim_freetlvchain(&tlvlist);
+
+	return ret;  
 }
 
-static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
-  if (snac->subtype == 0x0003)
-    return rights(sess, mod, rx, snac, data, datalen);
-  else if ((snac->subtype == 0x000b) || (snac->subtype == 0x000c))
-    return buddychange(sess, mod, rx, snac, data, datalen);
+	if (snac->subtype == 0x0003)
+		return rights(sess, mod, rx, snac, bs);
+	else if ((snac->subtype == 0x000b) || (snac->subtype == 0x000c))
+		return buddychange(sess, mod, rx, snac, bs);
 
-  return 0;
+	return 0;
 }
 
-faim_internal int buddylist_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+faim_internal int buddylist_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
-  mod->family = 0x0003;
-  mod->version = 0x0000;
-  mod->flags = 0;
-  strncpy(mod->name, "buddylist", sizeof(mod->name));
-  mod->snachandler = snachandler;
+	mod->family = 0x0003;
+	mod->version = 0x0000;
+	mod->flags = 0;
+	strncpy(mod->name, "buddylist", sizeof(mod->name));
+	mod->snachandler = snachandler;
 
-  return 0;
+	return 0;
 }
 
 /*
@@ -91,30 +92,26 @@ faim_internal int buddylist_modfirst(struct aim_session_t *sess, aim_module_t *m
  * XXX this should just be an extension of setbuddylist()
  *
  */
-faim_export unsigned long aim_add_buddy(struct aim_session_t *sess,
-					struct aim_conn_t *conn, 
-					char *sn )
+faim_export int aim_add_buddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
-   struct command_tx_struct *newpacket;
-   int i;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-   if(!sn)
-     return -1;
+	if (!sn || !strlen(sn))
+		return -EINVAL;
 
-   if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+1+strlen(sn))))
-     return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
+		return -ENOMEM;
 
-   newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, sn, strlen(sn)+1);
+	aim_putsnac(&fr->data, 0x0003, 0x0004, 0x0000, snacid);
 
-   i = aim_putsnac(newpacket->data, 0x0003, 0x0004, 0x0000, sess->snac_nextid);
-   i += aimutil_put8(newpacket->data+i, strlen(sn));
-   i += aimutil_putstr(newpacket->data+i, sn, strlen(sn));
+	aimbs_put8(&fr->data, strlen(sn));
+	aimbs_putraw(&fr->data, sn, strlen(sn));
 
-   aim_tx_enqueue(sess, newpacket );
+	aim_tx_enqueue(sess, fr);
 
-   aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, sn, strlen(sn)+1);
-
-   return sess->snac_nextid;
+	return 0;
 }
 
 /*
@@ -122,30 +119,25 @@ faim_export unsigned long aim_add_buddy(struct aim_session_t *sess,
  * the same as setbuddylist() but with a different snac subtype).
  *
  */
-faim_export unsigned long aim_remove_buddy(struct aim_session_t *sess,
-					   struct aim_conn_t *conn, 
-					   char *sn )
+faim_export int aim_remove_buddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
-   struct command_tx_struct *newpacket;
-   int i;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
 
-   if(!sn)
-     return -1;
+	if (!sn || !strlen(sn))
+		return -EINVAL;
 
-   if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+1+strlen(sn))))
-     return -1;
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0002, 10+1+strlen(sn))))
+		return -ENOMEM;
 
-   newpacket->lock = 1;
+	snacid = aim_cachesnac(sess, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);
+	aim_putsnac(&fr->data, 0x0003, 0x0005, 0x0000, snacid);
 
-   i = aim_putsnac(newpacket->data, 0x0003, 0x0005, 0x0000, sess->snac_nextid);
+	aimbs_put8(&fr->data, strlen(sn));
+	aimbs_putraw(&fr->data, sn, strlen(sn));
 
-   i += aimutil_put8(newpacket->data+i, strlen(sn));
-   i += aimutil_putstr(newpacket->data+i, sn, strlen(sn));
+	aim_tx_enqueue(sess, fr);
 
-   aim_tx_enqueue(sess, newpacket);
-
-   aim_cachesnac(sess, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);
-
-   return sess->snac_nextid;
+	return 0;
 }
 

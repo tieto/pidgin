@@ -40,16 +40,6 @@
 #define FAIM_LOGIN_PORT 5190
 
 /*
- * The integer extraction/copying functions in aim_util.c have
- * both a function version and a macro version.  The macro 
- * version is suggested.  Since the function version is more
- * readable, I leave both around for reference.
- *
- * Default: defined.
- */
-#define AIMUTIL_USEMACROS
-
-/*
  * What type of synchronisation to use.
  * 
  * We don't actually use threads, but can use the POSIX mutex
@@ -83,7 +73,7 @@
 #define FAIM_SNAC_HASH_SIZE 16
 
 /*
- * If building on Win32,define WIN32_STATIC if you don't want
+ * If building on Win32, define WIN32_STATIC if you don't want
  * to compile libfaim as a DLL (and instead link it right into
  * your app).
  */

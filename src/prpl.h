@@ -130,6 +130,8 @@ struct prpl {
 	void (* keepalive)	(struct gaim_connection *);
 	void (* chat_set_topic) (struct gaim_connection *, int id, char *topic);
 
+	void (* convo_closed)   (struct gaim_connection *, char *who);
+
 	char *(* normalize)(const char *);
 };
 
