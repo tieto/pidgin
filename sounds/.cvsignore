@@ -1,0 +1,9 @@
+.libs
+Makefile.in
+Makefile
+.deps
+au2h
+BuddyArrive.h
+BuddyLeave.h
+Send.h
+Receive.h
