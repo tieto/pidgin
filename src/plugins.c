@@ -178,7 +178,7 @@ void load_plugin(char *filename) {
 	retval = (*gaim_plugin_init)(plug->handle);
 	sprintf(debug_buff, "loaded plugin returned %d\n", retval);
 	debug_print(debug_buff);
-	if (retval != 1) {
+	if (retval < 0) {
 		GList *c = callbacks;
 		struct gaim_callback *g;
 		while (c) {
