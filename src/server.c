@@ -463,8 +463,7 @@ void serv_add_buddies(GaimConnection *gc, GList *buddies)
 			prpl_info->add_buddies(gc, buddies);
 		else if (prpl_info->add_buddy) {
 			while (buddies) {
-				GaimBuddy *b = buddies->data;
-				prpl_info->add_buddy(gc, b->name, gaim_find_buddys_group(b));
+				prpl_info->add_buddy(gc, buddies->data, NULL);
 				buddies = buddies->next;
 			}
 		}
