@@ -143,7 +143,6 @@ typedef void (*dns_callback_t)(struct sockaddr *addr, size_t addrlen,
 typedef struct {
 	char *host;
 	int port;
-	int socktype;
 	dns_callback_t callback;
 	gpointer data;
 	gint inpa;
@@ -161,7 +160,6 @@ const int MAX_DNS_CHILDREN = 2;
 typedef struct {
 	char hostname[512];
 	int port;
-	int socktype;
 } dns_params_t;
 
 typedef struct {
@@ -169,6 +167,17 @@ typedef struct {
 	dns_callback_t callback;
 	gpointer data;
 } queued_dns_request_t;
+
+static void req_free(pending_dns_request_t *req)
+{
+	g_return_if_fail(req != NULL);
+	if(req->host)
+		g_free(req->host);
+	close(req->fd_in);
+	close(req->fd_out);
+	g_free(req);
+	number_of_dns_children--;
+}
 
 static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *dns_params)
 {
@@ -185,6 +194,7 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 	rc = write(req->fd_in, dns_params, sizeof(*dns_params));
 	if(rc<0) {
 		debug_printf("Error writing to DNS child %d: %s\n", req->dns_pid, strerror(errno));
+		close(req->fd_in);
 		return -1;
 	}
 	
@@ -207,23 +217,20 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond);
 static void release_dns_child(pending_dns_request_t *req)
 {
 	g_free(req->host);
+	req->host=NULL;
 
 	if(queued_requests && !g_queue_is_empty(queued_requests)) {
 		queued_dns_request_t *r = g_queue_pop_head(queued_requests);
 		req->host = g_strdup(r->params.hostname);
 		req->port = r->params.port;
-		req->socktype = r->params.socktype;
 		req->callback = r->callback;
 		req->data = r->data;
 
 		debug_printf("Processing queued DNS query for '%s' with child %d\n", req->host, req->dns_pid);
 
 		if(send_dns_request_to_child(req, &(r->params)) != 0) {
-			g_free(req->host);
-			g_free(req);
+			req_free(req);
 			req = NULL;
-			number_of_dns_children--;
-			
 			debug_printf("Intent of process queued query of '%s' failed, requeing...\n",
 				r->params.hostname);
 			g_queue_push_head(queued_requests, r);
@@ -276,11 +283,8 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		char message[1024];
 		g_snprintf(message, sizeof(message), "Error reading from DNS child: %s",strerror(errno));
 		debug_printf("%s\n",message);
-		close(req->fd_out);
 		req->callback(NULL, 0, req->data, message);
-		g_free(req->host);
-		g_free(req);
-		number_of_dns_children--;
+		req_free(req);
 		return;
 	}
 	if(rc==0) {
@@ -289,9 +293,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		close(req->fd_out);
 		debug_printf("%s\n",message);
 		req->callback(NULL, 0, req->data, message);
-		g_free(req->host);
-		g_free(req);
-		number_of_dns_children--;
+		req_free(req);
 		return;
 	}
 
@@ -343,7 +345,7 @@ static void cope_with_gdb_brokenness()
 #endif
 }
 
-int gaim_gethostbyname_async(const char *hostname, int port, int socktype, dns_callback_t callback, gpointer data)
+int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t callback, gpointer data)
 {
 	pending_dns_request_t *req = NULL;
 	dns_params_t dns_params;
@@ -351,7 +353,6 @@ int gaim_gethostbyname_async(const char *hostname, int port, int socktype, dns_c
 	strncpy(dns_params.hostname, hostname, sizeof(dns_params.hostname)-1);
 	dns_params.hostname[sizeof(dns_params.hostname)-1] = '\0';
 	dns_params.port = port;
-	dns_params.socktype = socktype;
 	
 	/* Is there a free available child? */
 	while(free_dns_children && !req) {
@@ -361,9 +362,8 @@ int gaim_gethostbyname_async(const char *hostname, int port, int socktype, dns_c
 		g_slist_free(l);
 		
 		if(send_dns_request_to_child(req, &dns_params) != 0) {
-			g_free(req);
+			req_free(req);
 			req = NULL;
-			number_of_dns_children--;
 			continue;
 		}
 		
@@ -452,7 +452,14 @@ int gaim_gethostbyname_async(const char *hostname, int port, int socktype, dns_c
 #ifdef HAVE_GETADDRINFO
 				g_snprintf(servname, sizeof(servname), "%d", dns_params.port);
 				memset(&hints,0,sizeof(hints));
-				hints.ai_socktype = dns_params.socktype;
+				
+				/* This is only used to convert a service
+				 * name to a port number. As we know we are
+				 * passing a number already, we know this
+				 * value will not be really used by the C
+				 * library.
+				 */
+				hints.ai_socktype = SOCK_STREAM;
 				rc = getaddrinfo(dns_params.hostname, servname, &hints, &res);
 				if(rc) {
 					write(child_out[1], &rc, sizeof(int));
@@ -531,7 +538,7 @@ static gboolean host_resolved(gpointer data)
 	return FALSE;
 }
 
-int gaim_gethostbyname_async(const char *hostname, int port, int socktype, dns_callback_t callback, gpointer data)
+int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t callback, gpointer data)
 {
 	struct sockaddr_in sin;
 	pending_dns_request_t *req;
@@ -1185,6 +1192,6 @@ int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
 			return -1;
 	}
 	
-	gaim_gethostbyname_async(connecthost, connectport, SOCK_STREAM, connection_host_resolved, phb);
+	gaim_gethostbyname_async(connecthost, connectport, connection_host_resolved, phb);
 	return 1;
 }
