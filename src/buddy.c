@@ -103,8 +103,9 @@ static struct buddy_show *find_buddy_show(struct group_show *gs, char *name);
 static int group_number(char *group);
 static int buddy_number(char *group, char *buddy);
 static struct group_show *new_group_show(char *group);
-static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy);
+static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy, char **xpm);
 static struct group_show *find_gs_by_bs(struct buddy_show *b);
+static void redo_buddy_list();
 
 void destroy_buddy()
 {
@@ -190,7 +191,10 @@ static void update_num_group(struct group_show *gs) {
 	int total = 0, on = 0;
 	char buf[256];
 
-	if (!g_slist_find(shows, gs)) return;
+	if (!g_slist_find(shows, gs)) {
+		debug_printf("update_num_group called for unfound group_show %s\n", gs->name);
+		return;
+	}
 
 	while (c) {
 		gc = (struct gaim_connection *)c->data;
@@ -259,55 +263,6 @@ gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
 #endif
 
 
-static void destroy_buddies(struct gaim_connection *gc) {
-	GSList *s = shows;
-	struct group_show *g;
-	GSList *m;
-	struct buddy_show *b;
-	gboolean remove_group;
-
-	while (s) {
-		remove_group = FALSE;
-		g = (struct group_show *)s->data;
-		m = g->members;
-		while (m) {
-			b = (struct buddy_show *)m->data;
-			if ((g_slist_length(b->connlist) == 1) && (b->connlist->data == gc)) {
-				if (b->log_timer > 0)
-					gtk_timeout_remove(b->log_timer);
-				b->log_timer = 0;
-				b->connlist = g_slist_remove(b->connlist, gc);
-				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
-				m = g->members = g_slist_remove(g->members, b);
-				if ((g->members == NULL) && (display_options & OPT_DISP_NO_MT_GRP)) {
-					shows = g_slist_remove(shows, g);
-					gtk_container_remove(GTK_CONTAINER(buddies), g->item);
-					g_free(g->name);
-					g_free(g);
-					m = NULL;
-					remove_group = TRUE;
-				} else
-					update_num_group(g);
-				g_free(b->name);
-				g_free(b->show);
-				g_free(b);
-			} else if (g_slist_find(b->connlist, gc)) {
-				if (g_slist_find(b->connlist, gc)) {
-					b->connlist = g_slist_remove(b->connlist, gc);
-					update_num_group(g);
-				}
-				m = g_slist_next(m);
-			} else
-				m = g_slist_next(m);
-		}
-		if (remove_group)
-			s = shows;
-		else
-			s = g_slist_next(s);
-	}
-}
-
-
 void signoff_all(GtkWidget *w, gpointer d)
 {
 	GSList *c = connections;
@@ -322,10 +277,10 @@ void signoff_all(GtkWidget *w, gpointer d)
 
 void signoff(struct gaim_connection *gc)
 {
-	destroy_buddies(gc);
 	plugin_event(event_signoff, gc, 0, 0, 0);
 	update_keepalive(gc, FALSE);
 	serv_close(gc);
+	redo_buddy_list();
 
 	if (connections) return;
 
@@ -651,11 +606,71 @@ static void redo_buddy_list() {
 	 * just have to go through and reorder everything. remember, nothing is going to
 	 * change connections, so we can assume that we don't have to change any user
 	 * data or anything. this is just a simple reordering. so calm down. */
+	/* note: we only have to do this if we want to strongly enforce order; however,
+	 * order doesn't particularly matter to the stability of the program. but, it's
+	 * kind of nice to have */
+	/* the easy way to implement this is just to go through shows and destroy all the
+	 * group_shows, then go through the connections and put everything back. though,
+	 * there are slight complications with that; most of them deal with timeouts and
+	 * people not seeing the login icon for the full 10 seconds. butt fuck them. */
 	GSList *s = shows;
-	struct group_show *g;
+	struct group_show *gs;
 	GSList *m;
-	struct buddy_show *b;
+	struct buddy_show *bs;
+	GSList *c = connections;
 	struct gaim_connection *gc;
+	GSList *gr;
+	struct group *g;
+	struct buddy *b;
+
+	while (s) {
+		gs = (struct group_show *)s->data;
+		s = g_slist_remove(s, gs);
+		m = gs->members;
+		gtk_container_remove(GTK_CONTAINER(buddies), gs->item);
+		while (m) {
+			bs = (struct buddy_show *)m->data;
+			m = g_slist_remove(m, bs);
+			if (bs->log_timer > 0)
+				gtk_timeout_remove(bs->log_timer);
+			g_free(bs->show);
+			g_free(bs->name);
+			g_free(bs);
+		}
+		g_free(gs->name);
+		g_free(gs);
+	}
+	shows = NULL;
+	while (c) {
+		gc = (struct gaim_connection *)c->data;
+		c = c->next;
+		gr = gc->groups;
+		while (gr) {
+			g = (struct group *)gr->data;
+			gr = gr->next;
+			gs = find_group_show(g->name);
+			if (!gs && !(display_options & OPT_DISP_NO_MT_GRP))
+				gs = new_group_show(g->name);
+			m = g->members;
+			while (m) {
+				b = (struct buddy *)m->data;
+				m = m->next;
+				if (b->present) {
+					if (!gs)
+						gs = new_group_show(g->name);
+					bs = find_buddy_show(gs, b->name);
+					if (!bs) {
+						if (gc->prpl->list_icon)
+							bs = new_buddy_show(gs, b,
+								(*gc->prpl->list_icon)(b->uc));
+						else
+							bs = new_buddy_show(gs, b, (char **)no_icon_xpm);
+					}
+					bs->connlist = g_slist_append(bs->connlist, gc);
+				}
+			}
+		}
+	}
 }
 
 static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *parent,
@@ -1393,14 +1408,16 @@ void do_bp_menu()
 static struct group_show *find_group_show(char *group) {
 	GSList *m = shows;
 	struct group_show *g = NULL;
+	char *who = g_strdup(normalize(group));
 
 	while (m) {
 		g = (struct group_show *)m->data;
-		if (!strcmp(g->name, group))
+		if (!strcasecmp(normalize(g->name), who))
 			break;
 		g = NULL;
 		m = m->next;
 	}
+	g_free(who);
 
 	return g;
 }
@@ -1412,7 +1429,7 @@ static struct buddy_show *find_buddy_show(struct group_show *gs, char *name) {
 
 	while (m) {
 		b = (struct buddy_show *)m->data;
-		if (!strcmp(normalize(b->name), who))
+		if (!strcasecmp(normalize(b->name), who))
 			break;
 		b = NULL;
 		m = m->next;
@@ -1509,7 +1526,7 @@ static struct group_show *new_group_show(char *group) {
 	return g;
 }
 
-static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy) {
+static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy, char **xpm) {
 	struct buddy_show *b = g_new0(struct buddy_show, 1);
 	GtkWidget *box;
 	GdkPixmap *pm;
@@ -1530,7 +1547,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	gtk_container_add(GTK_CONTAINER(b->item), box);
 	gtk_widget_show(box);
 
-	pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, (char **)login_icon_xpm);
+	pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
 	b->pix = gtk_pixmap_new(pm, bm);
 	gtk_box_pack_start(GTK_BOX(box), b->pix, FALSE, FALSE, 1);
 	gtk_widget_show(b->pix);
@@ -1588,6 +1605,8 @@ static gint log_timeout(struct buddy_show *b) {
 			g_free(g->name);
 			g_free(g);
 		}
+		gtk_timeout_remove(b->log_timer);
+		b->log_timer = 0;
 		g_free(b->name);
 		g_free(b->show);
 		g_free(b);
@@ -1609,9 +1628,9 @@ static gint log_timeout(struct buddy_show *b) {
 			BuddyTickerSetPixmap(b->name, pm, bm);
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
+		gtk_timeout_remove(b->log_timer);
+		b->log_timer = 0;
 	}
-	gtk_timeout_remove(b->log_timer);
-	b->log_timer = 0;
 	return 0;
 }
 
@@ -1753,7 +1772,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if ((gs = find_group_show(g->name)) == NULL)
 			gs = new_group_show(g->name);
 		if ((bs = find_buddy_show(gs, b->name)) == NULL)
-			bs = new_buddy_show(gs, b);
+			bs = new_buddy_show(gs, b, (char **)login_icon_xpm);
 		if (b->present == 1) {
 			play_sound(BUDDY_ARRIVE);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
@@ -1768,15 +1787,14 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
 			b->present = 2;
-			if (bs->log_timer > 0)
-				gtk_timeout_remove(bs->log_timer);
-			bs->log_timer = 0;
 			if (!g_slist_find(bs->connlist, gc))
 				bs->connlist = g_slist_append(bs->connlist, gc);
 			else
 				debug_printf("already got signon for %s from %s\n", b->name, gc->username);
-			update_num_group(gs);
+			if (bs->log_timer > 0)
+				gtk_timeout_remove(bs->log_timer);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
+			update_num_group(gs);
 			if (display_options & OPT_DISP_SHOW_LOGON) {
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
@@ -1811,11 +1829,12 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					      buddies that have already signed
 					      off */
 		play_sound(BUDDY_LEAVE);
+
 		bs->connlist = g_slist_remove(bs->connlist, gc);
-		update_num_group(gs);
 		if (bs->log_timer > 0)
 			gtk_timeout_remove(bs->log_timer);
 		bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
+		update_num_group(gs);
 		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, logout_icon_xpm);
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);

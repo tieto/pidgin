@@ -40,6 +40,41 @@
 #include "proxy.h"
 #include "gaim.h"
 
+#define TYPE_DATA 2 /* from toc.c */
+
+struct file_header {
+	char  magic[4];		/* 0 */
+	short hdrlen;		/* 4 */
+	short hdrtype;		/* 6 */
+	char  bcookie[8];	/* 8 */
+	short encrypt;		/* 16 */
+	short compress;		/* 18 */
+	short totfiles;		/* 20 */
+	short filesleft;	/* 22 */
+	short totparts;		/* 24 */
+	short partsleft;	/* 26 */
+	long  totsize;		/* 28 */
+	long  size;		/* 32 */
+	long  modtime;		/* 36 */
+	long  checksum;		/* 40 */
+	long  rfrcsum;		/* 44 */
+	long  rfsize;		/* 48 */
+	long  cretime;		/* 52 */
+	long  rfcsum;		/* 56 */
+	long  nrecvd;		/* 60 */
+	long  recvcsum;		/* 64 */
+	char  idstring[32];	/* 68 */
+	char  flags;		/* 100 */
+	char  lnameoffset;	/* 101 */
+	char  lsizeoffset;	/* 102 */
+	char  dummy[69];	/* 103 */
+	char  macfileinfo[16];	/* 172 */
+	short nencode;		/* 188 */
+	short nlanguage;	/* 190 */
+	char  name[64];		/* 192 */
+				/* 256 */
+};
+
 static void do_send_file(GtkWidget *, struct file_transfer *);
 static void do_get_file (GtkWidget *, struct file_transfer *);
 

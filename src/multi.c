@@ -33,6 +33,8 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
 
+#define LOGIN_STEPS 5
+
 GSList *connections;
 
 static GtkWidget *acctedit = NULL;
@@ -834,7 +836,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_widget_show(gc->meter);
 	}
 
-	gtk_progress_bar_update(GTK_PROGRESS_BAR(gc->progress), howfar / 5);
+	gtk_progress_bar_update(GTK_PROGRESS_BAR(gc->progress), howfar / LOGIN_STEPS);
 	gtk_statusbar_pop(GTK_STATUSBAR(gc->status), 1);
 	gtk_statusbar_push(GTK_STATUSBAR(gc->status), 1, message);
 }

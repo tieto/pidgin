@@ -72,6 +72,13 @@ struct oscar_data {
 	GSList *direct_ims;
 };
 
+struct chat_connection {
+	char *name;
+	int fd; /* this is redundant since we have the conn below */
+	struct aim_conn_t *conn;
+	int inpa;
+};
+
 struct direct_im {
 	struct gaim_connection *gc;
 	char name[80];
@@ -351,7 +358,7 @@ void oscar_login(struct aim_user *user) {
 	if (conn == NULL) {
 		debug_print(_("internal connection error\n"));
 		hide_login_progress(gc, _("Unable to login to AIM"));
-		serv_close(gc);
+		signoff(gc);
 		return;
 	} else if (conn->fd == -1) {
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
@@ -363,7 +370,7 @@ void oscar_login(struct aim_user *user) {
 			debug_print(debug_buff); debug_print("\n");
 			hide_login_progress(gc, debug_buff);
 		}
-		serv_close(gc);
+		signoff(gc);
 		return;
 	}
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
@@ -467,14 +474,14 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		set_user_state(offline);
 #endif
 		hide_login_progress(gc, _("Internal Error"));
-		serv_close(gc);
+		signoff(gc);
 		return -1;
 	} else if (bosconn->status & AIM_CONN_STATUS_CONNERR) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
 		hide_login_progress(gc, _("Could Not Connect"));
-		serv_close(gc);
+		signoff(gc);
 		return -1;
 	}
 

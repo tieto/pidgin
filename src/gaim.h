@@ -47,13 +47,6 @@
 	6.  actually done..
 */
 
-#define STATE_OFFLINE 0
-#define STATE_FLAPON 1
-#define STATE_SIGNON_REQUEST 2
-#define STATE_SIGNON_ACK 3
-#define STATE_CONFIG 4
-#define STATE_ONLINE 5
-
 #define BROWSER_NETSCAPE              0
 #define BROWSER_KFM                   1
 #define BROWSER_MANUAL                2
@@ -269,13 +262,6 @@ struct chat_room {
         int exchange;
 };
 
-struct chat_connection {
-	char *name;
-	int fd; /* this is redundant since we have the conn below */
-	struct aim_conn_t *conn;
-	int inpa;
-};
-
 struct debug_window {
 	GtkWidget *window;
 	GtkWidget *entry;
@@ -340,39 +326,6 @@ struct conversation {
 	gboolean is_chat;
 };
 
-struct file_header {
-	char  magic[4];		/* 0 */
-	short hdrlen;		/* 4 */
-	short hdrtype;		/* 6 */
-	char  bcookie[8];	/* 8 */
-	short encrypt;		/* 16 */
-	short compress;		/* 18 */
-	short totfiles;		/* 20 */
-	short filesleft;	/* 22 */
-	short totparts;		/* 24 */
-	short partsleft;	/* 26 */
-	long  totsize;		/* 28 */
-	long  size;		/* 32 */
-	long  modtime;		/* 36 */
-	long  checksum;		/* 40 */
-	long  rfrcsum;		/* 44 */
-	long  rfsize;		/* 48 */
-	long  cretime;		/* 52 */
-	long  rfcsum;		/* 56 */
-	long  nrecvd;		/* 60 */
-	long  recvcsum;		/* 64 */
-	char  idstring[32];	/* 68 */
-	char  flags;		/* 100 */
-	char  lnameoffset;	/* 101 */
-	char  lsizeoffset;	/* 102 */
-	char  dummy[69];	/* 103 */
-	char  macfileinfo[16];	/* 172 */
-	short nencode;		/* 188 */
-	short nlanguage;	/* 190 */
-	char  name[64];		/* 192 */
-				/* 256 */
-};
-
 struct file_transfer {
         GtkWidget *window;
         char *cookie;
@@ -390,22 +343,6 @@ struct file_transfer {
 	struct gaim_connection *gc;
 };
 
-struct sflap_hdr {
-	unsigned char ast;
-	unsigned char type;
-	unsigned short seqno;
-	unsigned short len;
-};
-
-struct signon {
-	unsigned int ver;
-	unsigned short tag;
-	unsigned short namelen;
-	char username[80];
-};
-
-#define LOGIN_STEPS 5
-
 #define CONVERSATION_TITLE "Gaim - Conversation with %s"
 #define LOG_CONVERSATION_TITLE "Gaim - Conversation with %s (logged)"
 
@@ -419,29 +356,12 @@ struct signon {
 
 /* These should all be runtime selectable */
 
-#define TOC_HOST "toc.oscar.aol.com"
-#define TOC_PORT 9898
-#define AUTH_HOST "login.oscar.aol.com"
-#define AUTH_PORT 5190
-#define LANGUAGE "english"
-
 #define MSG_LEN 2048
 /* The above should normally be the same as BUF_LEN,
  * but just so we're explictly asking for the max message
  * length. */
 #define BUF_LEN MSG_LEN
 #define BUF_LONG BUF_LEN * 2
-
-
-#define TYPE_SIGNON    1  
-#define TYPE_DATA      2
-#define TYPE_ERROR     3
-#define TYPE_SIGNOFF   4
-#define TYPE_KEEPALIVE 5
-
-#define FLAPON "FLAPON\r\n\r\n"
-
-#define ROAST "Tic/Toc"
 
 
 #define BUDDY_ARRIVE 0
@@ -465,10 +385,6 @@ extern char fontface[64];
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
 extern int smiley_array[FACE_TOTAL];
-
-/* Globals in network.c */
-
-/* Globals in toc.c */
 
 /* Globals in aim.c */
 extern GList *log_conversations;
@@ -657,6 +573,7 @@ extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_send(struct gaim_connection *, int, char *);
+extern void update_keepalive(struct gaim_connection *, gboolean);
 
 /* output from serv */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
@@ -695,24 +612,8 @@ extern void do_big(GtkWidget *, GtkWidget *);
 extern void set_font_face(char *, struct conversation *);
 extern void redo_convo_menus();
 
-/* Functions in network.c */
-extern unsigned int *get_address(char *);
-extern int connect_address(unsigned int, unsigned short);
-
-/* Functions in oscar.c */
-extern void oscar_login(struct aim_user *);
-extern void oscar_close(struct gaim_connection *);
-extern struct chat_connection *find_oscar_chat(struct gaim_connection *, char *name);
-extern void update_keepalive(struct gaim_connection *, gboolean);
-
 /* Functions in toc.c */
-extern void toc_close();
-extern void toc_login(struct aim_user *);
-extern int toc_wait_signon(struct gaim_connection *);
-extern char *toc_wait_config(struct gaim_connection *);
-extern int sflap_send(struct gaim_connection *, char *, int , int );
 extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
-
 
 /* Functions in buddy.c */
 extern void destroy_buddy();

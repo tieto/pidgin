@@ -3427,6 +3427,16 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 					html_strtok(tag, ' ');
 					while ((d = html_strtok(NULL, ' ')))
 					{
+						if (!strncasecmp(d, "style=", strlen("style=")))
+						{
+							d += strlen("style=");
+							if (*d == '\"') {
+								d++;
+								while (*d != '\0' && *d != '\"') d++;
+								if (*d == '\0')
+									html_strtok(tag, ' ');
+							}
+						}
 						if (!strncasecmp(d, "COLOR=", strlen("COLOR=")))
 						{
 							d += strlen("COLOR=");

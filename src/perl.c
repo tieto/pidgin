@@ -426,7 +426,7 @@ XS (XS_GAIM_command)
 		else signoff_all(NULL, NULL);
 	} else if (!strncasecmp(command, "away", 4)) {
 		char *message = SvPV(ST(1), junk);
-		struct away_message a;
+		static struct away_message a;
 		g_snprintf(a.message, sizeof(a.message), "%s", message);
 		do_away_message(NULL, &a);
 	} else if (!strncasecmp(command, "back", 4)) {
