@@ -1,6 +1,6 @@
 SUFFIXES = .c .so
 if GNOMEAPPLET
-CFLAGS += $(GTK_CFLAGS) -I../src -DUSE_APPLET
+CFLAGS += $(GTK_CFLAGS) $(GNOME_INCLUDEDIR) -I../src -DUSE_APPLET
 else
 CFLAGS += $(GTK_CFLAGS) -I../src
 endif
