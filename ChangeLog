@@ -3,11 +3,11 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 version 0.76cvs:
 	* WYSIWYG text input
 	* Chatroom list support (Tim Ringenbach)
-	* Improved accessibility support for screen readers and other 
+	* Improved accessibility support for screen readers and other
 	  accessibility tools (Marc Mulcahy)
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
 	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
-        * Yet Another IRC channel user duplication bugfix (Tim Ringenbach)
+	* Yet Another IRC channel user duplication bugfix (Tim Ringenbach)
 	* TCL Plugin API changed
 	* Tabs now stay green when they are supposed to (Etan Reisner)
 	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
