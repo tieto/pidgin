@@ -55,7 +55,7 @@ gint font_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 
 #define DIFF(a, b) (((a) > (b)) ? ((a) - (b)) : ((b) - (a)))
 #define COLOR_MOD  0x8000
-#define COLOR_DIFF 0x80
+#define COLOR_DIFF 0x800
 
 #define TYPE_TEXT     0
 #define TYPE_SMILEY   1
@@ -1598,6 +1598,7 @@ gtk_imhtml_set_defaults (GtkIMHtml *imhtml,
 		if (imhtml->default_bg_color)
 			gdk_color_free (imhtml->default_bg_color);
 		imhtml->default_bg_color = gdk_color_copy (bg_color);
+		gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window, imhtml->default_bg_color);
 	}
 }
 

@@ -3,6 +3,8 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.11.0-pre9:
 	* Can register Jabber accounts (load the Jabber plugin and click
 	  Register on the login window)
+	* GtkIMHtml handles themes (no background pixmaps though) (thanks
+	  decklin, mishan)
 
 version 0.11.0-pre8 (03/23/2001):
 	* Fixed a problem with MSN not detecting signoffs and buddy updates.
