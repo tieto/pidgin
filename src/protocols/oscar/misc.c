@@ -495,41 +495,45 @@ faim_export unsigned long aim_bos_reqbuddyrights(struct aim_session_t *sess,
 }
 
 /*
- * aim_send_warning(struct aim_session_t *sess, 
- *                  struct aim_conn_t *conn, char *destsn, int anon)
- * send a warning to destsn.
- * anon is anonymous or not;
- *  AIM_WARN_ANON anonymous
+ * Send a warning to destsn.
+ * 
+ * Flags:
+ *  AIM_WARN_ANON  Send as an anonymous (doesn't count as much)
  *
- * returns -1 on error (couldn't alloc packet), next snacid on success.
+ * returns -1 on error (couldn't alloc packet), 0 on success. 
  *
  */
-faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon)
+faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, const char *destsn, unsigned long flags)
 {
-  struct command_tx_struct *newpacket;
-  int curbyte;
+	struct command_tx_struct *newpacket;
+	int curbyte;
+	unsigned short outflags = 0x0000;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, strlen(destsn)+13)))
-    return -1;
+	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 
+					strlen(destsn)+13)))
+		return -1;
 
-  newpacket->lock = 1;
+	newpacket->lock = 1;
 
-  curbyte  = 0;
-  curbyte += aim_putsnac(newpacket->data+curbyte,
-                        0x0004, 0x0008, 0x0000, sess->snac_nextid);
+	curbyte  = 0;
+	curbyte += aim_putsnac(newpacket->data+curbyte,
+			0x0004, 0x0008, 0x0000, sess->snac_nextid);
 
-  curbyte += aimutil_put16(newpacket->data+curbyte, (anon & AIM_WARN_ANON)?1:0);
+	if (flags & AIM_WARN_ANON)
+		outflags |= 0x0001;
 
-  curbyte += aimutil_put8(newpacket->data+curbyte, strlen(destsn));
+	curbyte += aimutil_put16(newpacket->data+curbyte, outflags); 
+	curbyte += aimutil_put8(newpacket->data+curbyte, strlen(destsn));
+	curbyte += aimutil_putstr(newpacket->data+curbyte, destsn, strlen(destsn));
 
-  curbyte += aimutil_putstr(newpacket->data+curbyte, destsn, strlen(destsn));
+	newpacket->commandlen = curbyte;
+	newpacket->lock = 0;
 
-  newpacket->commandlen = curbyte;
-  newpacket->lock = 0;
+	aim_tx_enqueue(sess, newpacket);
 
-  aim_tx_enqueue(sess, newpacket);
+	aim_cachesnac(sess, 0x0004, 0x0008, 0x0000, destsn, strlen(destsn)+1);
 
-  return (sess->snac_nextid++);
+	return 0;
 }
 
 /*

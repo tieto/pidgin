@@ -1,6 +1,14 @@
 
 No release numbers
 ------------------
+ - Thu Aug  2 13:28:37 EDT 2001
+  - Uhm. Why does arcanejill think its in EDT?
+  - Cache the username on warnings so errors work right.
+  - Someday, I'm going to convert all of libfaim to that formatting style, too.
+
+ -  Wed Jun 27 00:13:20 EDT 2001
+  - Some comments about UNICODE in faimtest.
+
  - Fri Jun 15 17:51:27 EDT 2001
   - Make faimtest compile on RH7.1 (new gcc).
   - Add aim_conn_getsess()

@@ -546,7 +546,7 @@ faim_export struct aim_conn_t *aim_getconn_fd(struct aim_session_t *, int fd);
 
 #define AIM_WARN_ANON                     0x01
 
-faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon);
+faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, const char *destsn, unsigned long flags);
 faim_export unsigned long aim_bos_nop(struct aim_session_t *, struct aim_conn_t *);
 faim_export unsigned long aim_flap_nop(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_export unsigned long aim_bos_setidle(struct aim_session_t *, struct aim_conn_t *, u_long);

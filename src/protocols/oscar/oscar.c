@@ -2529,7 +2529,7 @@ static void oscar_set_away(struct gaim_connection *g, char *state, char *message
 
 static void oscar_warn(struct gaim_connection *g, char *name, int anon) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_send_warning(odata->sess, odata->conn, name, anon);
+	aim_send_warning(odata->sess, odata->conn, name, anon ? AIM_WARN_ANON : 0);
 }
 
 static void oscar_dir_search(struct gaim_connection *g, char *first, char *middle, char *last,
