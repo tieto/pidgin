@@ -47,6 +47,7 @@
 #include "pixmaps/away_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
+#include "pixmaps/wireless_icon.xpm"
 
 #define REVISION "penguin"
 
@@ -83,6 +84,7 @@
 #define UC_ADMIN	0x04
 #define UC_UNCONFIRMED	0x08
 #define UC_NORMAL	0x10
+#define UC_WIRELESS     0x20
 
 struct ft_request {
 	struct gaim_connection *gc;
@@ -645,6 +647,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		case 'O':
 			type |= UC_NORMAL;
 			break;
+		case 'C':
+			type |= UC_WIRELESS;
+			break;
 		default:
 			break;
 		}
@@ -1189,6 +1194,8 @@ static char **toc_list_icon(int uc)
 		return (char **)admin_icon_xpm;
 	if (uc & UC_UNCONFIRMED)
 		return (char **)dt_icon_xpm;
+	if (uc & UC_WIRELESS)
+		return (char **)wireless_icon_xpm;
 	return NULL;
 }
 
