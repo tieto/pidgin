@@ -47,10 +47,9 @@ SetDateSave on
 !define GAIM_STARTUP_RUN_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define GAIM_UNINST_EXE			"gaim-uninst.exe"
 
-!define GTK_VERSION			"2.2.1"
+!define GTK_VERSION			"2.2.2"
 !define GTK_REG_KEY			"SOFTWARE\GTK\2.0"
 !define GTK_DEFAULT_INSTALL_PATH	"$PROGRAMFILES\Common Files\GTK\2.0"
-!define GTK_INSTALL_VERIFIER		"lib\libgtk-win32-2.0-0.dll"
 !define GTK_RUNTIME_INSTALLER		"..\gtk_installer\gtk-runtime*.exe"
 !define GTK_THEME_DIR			"..\gtk_installer\gtk_themes"
 !define GTK_DEFAULT_THEME_GTKRC_DIR	"share\themes\Default\gtk-2.0"
@@ -272,10 +271,10 @@ Section $(GTK_SECTION_TITLE) SecGtk
     IfErrors gtk_install_error
       SetOverwrite on
       ClearErrors
-      CopyFiles /FILESONLY "$INSTDIR\lib\*.dll" $INSTDIR
+      CopyFiles /FILESONLY "$INSTDIR\bin\*.dll" $INSTDIR
       SetOverwrite off
       IfErrors gtk_install_error
-        Delete "$INSTDIR\lib\*.dll"
+        Delete "$INSTDIR\bin\*.dll"
         Goto done
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; end gtk_no_install_rights
@@ -302,7 +301,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
   gaim_hklm:
     ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
-    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\lib"
+    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\bin"
     WriteRegStr HKLM ${GAIM_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKLM ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
     WriteRegStr HKLM "${GAIM_UNINSTALL_KEY}" "DisplayName" $(GAIM_UNINSTALL_DESC)
@@ -335,11 +334,11 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     !endif
 
     ; If we don't have install rights and no hklm GTK install.. then Start in lnk property should
-    ; remain gaim dir.. otherwise it should be set to the GTK lib dir. (to avoid dll hell)
+    ; remain gaim dir.. otherwise it should be set to the GTK bin dir. (to avoid dll hell)
     StrCmp $R0 "NONE" 0 startin_gtk
       StrCmp $R1 "" startin_gaim
     startin_gtk:
-      SetOutPath "$R1\lib"     
+      SetOutPath "$R1\bin"
     startin_gaim:
     CreateDirectory "$SMPROGRAMS\Gaim"
     CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
@@ -848,35 +847,27 @@ Function DoWeNeedGtk
         Goto done
 
   good_version:
-    ; Just make sure we have it. There was a gtk+ uninstaller that 
-    ; left behind reg entries after uninstalling..
     StrCmp $5 "HKLM" have_hklm_gtk have_hkcu_gtk
       have_hkcu_gtk:
         ; Have HKCU version
         ReadRegStr $4 HKCU ${GTK_REG_KEY} "Path"
-        StrCpy $1 "$4\${GTK_INSTALL_VERIFIER}"
-        IfFileExists $1 good_version_verified
-          DeleteRegKey HKCU ${GTK_REG_KEY}
-          Goto no_gtk
+        Goto good_version_cont
 
       have_hklm_gtk:
         ReadRegStr $4 HKLM ${GTK_REG_KEY} "Path"
-        StrCpy $1 "$4\${GTK_INSTALL_VERIFIER}"
-        IfFileExists $1 good_version_verified
-          DeleteRegKey HKLM ${GTK_REG_KEY}
-          Goto no_gtk
+        Goto good_version_cont
 
-    good_version_verified:
+    good_version_cont:
       StrCpy $2 "0"
       Push $4  ; The path to existing GTK+
       Push $2
       Goto done
 
-    no_gtk:
-      StrCpy $2 "2"
-      Push $3 ; our rights
-      Push $2
-      Goto done
+  no_gtk:
+    StrCpy $2 "2"
+    Push $3 ; our rights
+    Push $2
+    Goto done
 
   done:
 FunctionEnd
