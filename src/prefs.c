@@ -385,14 +385,14 @@ GtkWidget *theme_page() {
 		gtk_tree_path_free(path);
 	}
 
-	col = gtk_tree_view_column_new_with_attributes ("Icon",
+	col = gtk_tree_view_column_new_with_attributes (_("Icon"),
 							rend,
 							"pixbuf", 0,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(view), col);
 
 	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes ("Description",
+	col = gtk_tree_view_column_new_with_attributes (_("Description"),
 							rend,
 							"markup", 1,
 							NULL);

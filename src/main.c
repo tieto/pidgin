@@ -360,7 +360,7 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
 
 	/* And now for the buttons */
-	button = gaim_pixbuf_button("Accounts", "accounts.png", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button(_("Accounts"), "accounts.png", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(account_editor), mainwindow);
@@ -370,13 +370,13 @@ void show_login()
 	gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
 #endif
 
-	button = gaim_pixbuf_button("Settings", "preferences.png", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button(_("Settings"), "preferences.png", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(show_prefs), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button("Sign On", "signon.png", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button(_("Sign On"), "signon.png", GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(dologin), mainwindow);

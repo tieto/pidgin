@@ -4,6 +4,7 @@ Name=Gaim
 Comment=Multi-protocol Instant Messaging Client
 Comment[es]=Cliente de mensajería instantánea multiprotocolo
 Comment[fr]=Client de messagerie instantanée multiprotocole
+Comment[de]=Multi-Protokoll Instant Messenger Client
 Exec=gaim
 Icon=gaim.png
 Terminal=false
