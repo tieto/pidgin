@@ -4336,7 +4336,7 @@ static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
 
 	hbits = g_list_find(hbits, start);
 
-	while (TRUE)
+	while (hbits)
 	{
 		hbit = hbits->data;	
 		if (hbit->font)
@@ -4349,5 +4349,8 @@ static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
 		hbits = hbits->next;
 	}
 
+	if (max_height == 0)
+		max_height = gdk_text_height(hbit->font, "C", 1);	
+		
 	return max_height;
 }
