@@ -150,7 +150,6 @@ GString*   gtk_imhtml_append_text      (GtkIMHtml *imhtml,
 void       gtk_imhtml_clear            (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_up          (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_down        (GtkIMHtml *imhtml);
-void       gtk_imhtml_to_bottom        (GtkIMHtml *imhtml);
 
 GtkIMHtmlScalable *gtk_imhtml_scalable_new();
 GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, gchar *filename);
