@@ -776,17 +776,17 @@ static gint insertname(gconstpointer one, gconstpointer two)
 	if (*a == '@') {
 		if (*b != '@')
 			return -1;
-		return (strcmp(a + 1, b + 1));
+		return (strcasecmp(a + 1, b + 1));
 	} else if (*a == '+') {
 		if (*b == '@')
 			return 1;
 		if (*b != '+')
 			return -1;
-		return (strcmp(a + 1, b + 1));
+		return (strcasecmp(a + 1, b + 1));
 	} else {
 		if (*b == '@' || *b == '+')
 			return 1;
-		return strcmp(a, b);
+		return strcasecmp(a, b);
 	}
 }
 
