@@ -4,7 +4,7 @@ if USE_PERL
 PERL_DIR = perl
 endif
 
-SUBDIRS = docklet gestures $(PERL_DIR) ticker
+SUBDIRS = docklet gaim-remote gestures $(PERL_DIR) ticker
 
 plugindir = $(libdir)/gaim
 
