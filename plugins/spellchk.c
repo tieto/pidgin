@@ -192,7 +192,7 @@ static int get_word(char *m, int word) {
 	for (pos = 0; pos < strlen(m) && count <= word; pos++) {
 		switch (state) {
 		case 0:
-			if (isalnum(m[pos])) {
+			if (!isspace(m[pos]) && !ispunct(m[pos])) {
 				count++;
 				state = 1;
 			} else if (m[pos] == '<')
@@ -201,7 +201,7 @@ static int get_word(char *m, int word) {
 		case 1:
 			if (m[pos] == '<')
 				state = 2;
-			else if (!isalnum(m[pos]))
+			else if (isspace(m[pos]) || ispunct(m[pos]))
 				state = 0;
 			break;
 		case 2:
