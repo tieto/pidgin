@@ -2098,6 +2098,46 @@ static void gaim_gtk_blist_tooltip_destroy()
 #endif
 }
 
+
+static gboolean gaim_gtk_blist_expand_timeout(GtkWidget *tv)
+{
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	GaimBlistNode *node;
+	GValue val = {0};
+	struct _gaim_gtk_blist_node *gtknode;
+
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
+		return FALSE;
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+	node = g_value_get_pointer(&val);
+
+	if(!GAIM_BLIST_NODE_IS_CONTACT(node))
+		return FALSE;
+
+	gtknode = node->ui_data;
+
+	if (!gtknode->contact_expanded) {
+		GtkTreeIter i;
+		
+		gaim_gtk_blist_expand_contact_cb(NULL, node);
+		
+		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
+		gdk_drawable_get_size(GDK_DRAWABLE(tv->window), &(gtkblist->contact_rect.width), NULL);
+		gtkblist->mouseover_contact = node;
+		gtk_tree_path_down (path);
+		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
+			GdkRectangle rect;
+			gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
+			gtkblist->contact_rect.height += rect.height;
+			gtk_tree_path_next(path);
+		}
+	}
+	gtk_tree_path_free(path);
+	return FALSE;
+}
+
 static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 {
 	GtkTreePath *path;
@@ -2129,40 +2169,6 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		return FALSE;
 
 	gtknode = node->ui_data;
-
-	if (node->child && GAIM_BLIST_NODE_IS_CONTACT(node) &&
-			(((GaimContact*)node)->online > 1 ||
-			 (gaim_blist_node_get_bool(node, "show_offline") &&
-			  ((GaimContact*)node)->currentsize > 1)) &&
-			!gtknode->contact_expanded &&
-			gaim_prefs_get_bool("/gaim/gtk/blist/auto_expand_contacts")) {
-		GtkTreeIter i;
-		gaim_gtk_blist_expand_contact_cb(NULL, node);
-		tooltip_top = TRUE; /* When the person expands, the new screennames will be below.
-							   We'll draw the tip above the cursor so that the user can see
-							   the included buddies */
-
-		while (gtk_events_pending())
-			gtk_main_iteration();
-
-		/* we check to see if we're still supposed to be moving, now that gtk events have
-		 * happened, and the mouse might not still be in the buddy list */
-		if(!gtkblist->timeout) {
-			gaim_gtk_blist_collapse_contact_cb(NULL, node);
-			return FALSE;
-		}
-
-		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
-		gdk_drawable_get_size(GDK_DRAWABLE(tv->window), &(gtkblist->contact_rect.width), NULL);
-		gtkblist->mouseover_contact = node;
-		gtk_tree_path_down (path);
-		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
-			GdkRectangle rect;
-			gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
-			gtkblist->contact_rect.height += rect.height;
-			gtk_tree_path_next(path);
-		}
-	}
 
 	gtk_tree_path_free(path);
 
@@ -2293,6 +2299,38 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	return FALSE;
 }
 
+static gboolean gaim_gtk_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_context,
+					      gint x, gint y, guint time, gpointer user_data)
+{
+	GtkTreePath *path;
+	int delay;
+
+	delay = 500;
+
+	if (gtkblist->drag_timeout) {
+		if ((y > gtkblist->tip_rect.y) && ((y - gtkblist->tip_rect.height) < gtkblist->tip_rect.y))
+			return FALSE;
+		/* We've left the cell.  Remove the timeout and create a new one below */
+		g_source_remove(gtkblist->drag_timeout);
+	}
+
+	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), x, y, &path, NULL, NULL, NULL);
+	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->tip_rect);
+
+	if (path)
+		gtk_tree_path_free(path);
+	gtkblist->drag_timeout = g_timeout_add(delay, (GSourceFunc)gaim_gtk_blist_expand_timeout, tv);
+
+	if (gtkblist->mouseover_contact) {
+		if ((y < gtkblist->contact_rect.y) || ((y - gtkblist->contact_rect.height) > gtkblist->contact_rect.y)) {
+			gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
+			gtkblist->mouseover_contact = NULL;
+		}
+	}
+
+	return FALSE;
+}
+
 static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gpointer null)
 {
 	GtkTreePath *path;
@@ -2335,6 +2373,12 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 		g_source_remove(gtkblist->timeout);
 		gtkblist->timeout = 0;
 	}
+	
+	if (gtkblist->drag_timeout) {
+		g_source_remove(gtkblist->drag_timeout);
+		gtkblist->drag_timeout = 0;
+	}
+
 	gaim_gtk_blist_tooltip_destroy();
 
 	if (gtkblist->mouseover_contact &&
@@ -3205,6 +3249,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
  	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
+	
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-motion", G_CALLBACK(gaim_gtk_blist_drag_motion_cb), NULL);
 
 	/* Tooltips */
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "motion-notify-event", G_CALLBACK(gaim_gtk_blist_motion_cb), NULL);
@@ -3798,9 +3844,12 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 		g_source_remove(gtkblist->refresh_timer);
 	if (gtkblist->timeout)
 		g_source_remove(gtkblist->timeout);
+	if (gtkblist->drag_timeout)
+		g_source_remove(gtkblist->drag_timeout);
 
 	gtkblist->refresh_timer = 0;
 	gtkblist->timeout = 0;
+	gtkblist->drag_timeout = 0;
 	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;
 	gtkblist->treemodel = NULL;
 	gtkblist->idle_column = NULL;
@@ -4517,7 +4566,6 @@ void gaim_gtk_blist_init(void)
 
 	/* Initialize prefs */
 	gaim_prefs_add_none("/gaim/gtk/blist");
-	gaim_prefs_add_bool("/gaim/gtk/blist/auto_expand_contacts", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);

@@ -71,6 +71,7 @@ struct _GaimGtkBuddyList {
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
 	guint      timeout;              /**< The timeout for the tooltip. */
+	guint      drag_timeout;         /**< The timeout for expanding contacts on drags */
 	GdkRectangle tip_rect;           /**< This is the bounding rectangle of the
 					      cell we're currently hovering over.  This is
 					      used for tooltips. */

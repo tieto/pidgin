@@ -14,7 +14,8 @@ version 2.0.0
 	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
 	* If Gaim is exited with the buddy list hidden in the docklet, it will
 	  remain hidden when Gaim is started again (Scott Shedden)
-	
+	* Contacts will auto-expand when dragging into the buddy list.
+
 	Bug fixes:
 	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)
 	* People using input methods can now use Enter again.
@@ -37,7 +38,7 @@ version 2.0.0
 	* Removed "Display remote nicknames if no alias is set"
 	* Removed "Show idle times" and "Show warning levels" from the buddy list
 	  defaulted to "Yes".
-
+	* Removed "Auto-expand contacts" default to "No".
 version 1.0.2 (10/19/2004):
 	Bug Fixes:
 	* MSN file transfers work on big endian machines (Jean-Francois Roy and

@@ -855,8 +855,6 @@ GtkWidget *list_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Display"));
 	gaim_gtk_prefs_checkbox(_("Show more buddy details"),
 			"/gaim/gtk/blist/show_buddy_icons", vbox);
-	gaim_gtk_prefs_checkbox(_("_Automatically expand contacts"),
-			"/gaim/gtk/blist/auto_expand_contacts", vbox);
 
 	gtk_widget_show_all(ret);
 
