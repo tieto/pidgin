@@ -664,6 +664,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 			ret = userfunc(sess, &fr, snptr, 0);
 	}
 
+	/* Is the second half of this really needed?  I'm skeptical. */
 	if ((payloadlength != 0) && (payloadlength != UINT_MAX)) {
 		char *msg;
 		int recvd = 0;

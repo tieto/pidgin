@@ -123,7 +123,6 @@ typedef struct
 static GtkWidget *invite_dialog = NULL;
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
-static void check_everything(GtkTextBuffer *buffer);
 static void set_toggle(GtkWidget *tb, gboolean active);
 static void move_next_tab(GaimConversation *conv);
 static void do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv);
@@ -343,14 +342,6 @@ insert_smiley_cb(GtkWidget *smiley, GaimConversation *conv)
 		close_smiley_dialog(smiley, conv);
 
 	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static gboolean
-entry_key_pressed_cb_1(GtkTextBuffer *buffer)
-{
-	check_everything(buffer);
-
-	return FALSE;
 }
 
 static void default_formatize(GaimConversation *conv) {
@@ -1258,7 +1249,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 }
 
 static gboolean
-entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
+entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 {
 	GaimConvWindow *win;
 	GaimConversation *conv;
@@ -1457,8 +1448,7 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			}
 
 			if (*buf) {
-				gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer,
-												 buf, -1);
+				gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), conv->account->protocol_id, buf);
 				g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
 			}
 		}
@@ -2359,22 +2349,6 @@ toggle_bg_color(GtkWidget *color, GaimConversation *conv)
 		cancel_bgcolor(color, conv);
 	else
 		gaim_gtk_advance_past(gtkconv, "<BODY BGCOLOR>", "</BODY>");
-}
-
-static void
-check_everything(GtkTextBuffer *buffer)
-{
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	conv = (GaimConversation *)g_object_get_data(G_OBJECT(buffer),
-														 "user_data");
-
-	g_return_if_fail(conv != NULL);
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	/* CONV TODO */
 }
 
 static void
@@ -3594,7 +3568,7 @@ setup_chat_pane(GaimConversation *conv)
 	/* Setup the scrolled window to put gtkimhtml in. */
 	gtkconv->sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(gtkconv->sw),
-								   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(gtkconv->sw),
 										GTK_SHADOW_IN);
 	gtk_paned_pack1(GTK_PANED(hpaned), gtkconv->sw, TRUE, TRUE);
@@ -3634,7 +3608,7 @@ setup_chat_pane(GaimConversation *conv)
 	/* Setup the list of users. */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(lbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
@@ -3740,13 +3714,8 @@ setup_chat_pane(GaimConversation *conv)
 				25));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
-	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
-							 G_CALLBACK(entry_key_pressed_cb_1),
-							 gtkconv->entry_buffer);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-					 G_CALLBACK(entry_key_pressed_cb_2), conv);
-	g_signal_connect(G_OBJECT(sw), "key_press_event",
-					 G_CALLBACK(entry_key_pressed_cb_2), conv);
+					 G_CALLBACK(entry_key_pressed_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 
@@ -3791,7 +3760,7 @@ setup_im_pane(GaimConversation *conv)
 	/* Setup the gtkimhtml widget. */
 	gtkconv->sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(gtkconv->sw),
-								   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(gtkconv->sw),
 										GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->sw, TRUE, TRUE, 0);
@@ -3844,13 +3813,8 @@ setup_im_pane(GaimConversation *conv)
 				25));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
-	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
-							 G_CALLBACK(entry_key_pressed_cb_1),
-							 gtkconv->entry_buffer);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-					 G_CALLBACK(entry_key_pressed_cb_2), conv);
-	g_signal_connect(G_OBJECT(sw), "key_press_event",
-					 G_CALLBACK(entry_key_pressed_cb_2), conv);
+					 G_CALLBACK(entry_key_pressed_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 

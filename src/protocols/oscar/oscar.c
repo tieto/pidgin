@@ -278,9 +278,10 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 /* for icons */
 static gboolean gaim_icon_timerfunc(gpointer data);
 
-/* prpl actions - remove this at some point */
+/* remove these at some point? */
 /* Because I don't like forward declarations?  I think that was why... */
 static void oscar_set_info(GaimConnection *gc, const char *text);
+static void oscar_set_away(GaimConnection *gc, const char *state, const char *message);
 
 static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->name);
@@ -3810,6 +3811,9 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	else
 		aim_locate_setcaps(od->sess, caps_aim);
 	oscar_set_info(gc, gc->account->user_info);
+
+	if (gc->away_state != NULL)
+		oscar_set_away(gc, gc->away_state, gc->away);
 
 	return 1;
 }

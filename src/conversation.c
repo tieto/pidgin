@@ -185,7 +185,7 @@ common_send(GaimConversation *conv, const char *message)
 	GaimConversationType type;
 	GaimConnection *gc;
 	GaimConversationUiOps *ops;
-	char *buffy = NULL;
+	char *displayed = NULL, *sent = NULL;
 	int plugin_return;
 	int err = 0;
 	GList *first;
@@ -212,38 +212,60 @@ common_send(GaimConversation *conv, const char *message)
 	if ((gc->flags & GAIM_CONNECTION_HTML) &&
 		gaim_prefs_get_bool("/core/conversations/send_urls_as_links")) {
 
-		buffy = gaim_markup_linkify(message);
+		displayed = gaim_markup_linkify(message);
 	}
 	else
-		buffy = g_strdup(message);
+		displayed = g_strdup(message);
 
 	plugin_return =
 		GPOINTER_TO_INT(gaim_signal_emit_return_1(
 			gaim_conversations_get_handle(),
-			(type == GAIM_CONV_IM
-			 ? "displaying-im-msg" : "displaying-chat-msg"),
-			gaim_conversation_get_account(conv), conv, &buffy));
+			(type == GAIM_CONV_IM ? "writing-im-msg" : "writing-chat-msg"),
+			gaim_conversation_get_account(conv), conv, &displayed));
 
-	if (buffy == NULL)
+	if (displayed == NULL)
 		return;
 
 	if (plugin_return) {
-		g_free(buffy);
+		g_free(displayed);
+		return;
+	}
+
+	gaim_signal_emit(gaim_conversations_get_handle(),
+		(type == GAIM_CONV_IM ? "wrote-im-msg" : "wrote-chat-msg"),
+		gaim_conversation_get_account(conv), conv, displayed);
+
+	sent = g_strdup(displayed);
+
+	plugin_return =
+		GPOINTER_TO_INT(gaim_signal_emit_return_1(
+			gaim_conversations_get_handle(), (type == GAIM_CONV_IM ?
+			"displaying-im-msg" : "displaying-chat-msg"),
+			gaim_conversation_get_account(conv), conv, &displayed));
+
+	if (displayed == NULL) {
+		g_free(sent);
+		return;
+	}
+
+	if (plugin_return) {
+		g_free(displayed);
+		g_free(sent);
 		return;
 	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 		(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-		gaim_conversation_get_account(conv), conv, buffy);
+		gaim_conversation_get_account(conv), conv, displayed);
 
 	if (type == GAIM_CONV_IM) {
 		GaimConvIm *im = GAIM_CONV_IM(conv);
 
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-im-msg",
 						 gaim_conversation_get_account(conv),
-						 gaim_conversation_get_name(conv), &buffy);
+						 gaim_conversation_get_name(conv), &sent);
 
-		if (buffy != NULL && buffy[0] != '\0') {
+		if (sent != NULL && sent[0] != '\0') {
 			GaimConvImFlags imflags = 0;
 			GaimMessageFlags msgflags = GAIM_MESSAGE_SEND;
 
@@ -253,10 +275,10 @@ common_send(GaimConversation *conv, const char *message)
 			}
 
 			err = serv_send_im(gc, gaim_conversation_get_name(conv),
-							    buffy, imflags);
+							    sent, imflags);
 
 			if (err > 0)
-				gaim_conv_im_write(im, NULL, buffy, msgflags, time(NULL));
+				gaim_conv_im_write(im, NULL, displayed, msgflags, time(NULL));
 
 			if (im->images != NULL) {
 				GSList *tempy;
@@ -276,19 +298,19 @@ common_send(GaimConversation *conv, const char *message)
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
 							 gaim_conversation_get_account(conv),
-							 gaim_conversation_get_name(conv), buffy);
+							 gaim_conversation_get_name(conv), sent);
 		}
 	}
 	else {
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-chat-msg",
-						 gaim_conversation_get_account(conv), &buffy,
+						 gaim_conversation_get_account(conv), &sent,
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 
-		if (buffy != NULL && buffy[0] != '\0') {
-			err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), buffy);
+		if (sent != NULL && sent[0] != '\0') {
+			err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), sent);
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-chat-msg",
-							 gaim_conversation_get_account(conv), buffy,
+							 gaim_conversation_get_account(conv), sent,
 							 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 		}
 	}
@@ -319,6 +341,9 @@ common_send(GaimConversation *conv, const char *message)
 			}
 		}
 	}
+
+	g_free(displayed);
+	g_free(sent);
 }
 
 static void
