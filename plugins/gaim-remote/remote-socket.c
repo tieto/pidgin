@@ -126,17 +126,17 @@ gaim_remote_session_read_packet(int fd)
 	GaimRemotePacket *p = g_new0(GaimRemotePacket, 1);
 	char *data = NULL;
 
-	if (!(read(fd, &p->type, sizeof(p->type)))) {
+	if ((read(fd, &p->type, sizeof(p->type))) != sizeof(p->type)) {
 		g_free(p);
 		return NULL;
 	}
 
-	if (!(read(fd, &p->subtype, sizeof(p->subtype)))) {
+	if ((read(fd, &p->subtype, sizeof(p->subtype))) != sizeof(p->subtype)) {
 		g_free(p);
 		return NULL;
 	}
 
-	if (!(read(fd, &p->length, sizeof(p->length)))) {
+	if ((read(fd, &p->length, sizeof(p->length))) != sizeof(p->length)) {
 		g_free(p);
 		return NULL;
 	}
@@ -144,7 +144,7 @@ gaim_remote_session_read_packet(int fd)
 	if (p->length) {
 		data = g_malloc(p->length);
 
-		if (!(read(fd, data, p->length))) {
+		if ((read(fd, data, p->length)) != p->length) {
 			g_free(p);
 			return NULL;
 		}
