@@ -50,6 +50,7 @@ struct debug_window *dw = NULL;
 static GtkWidget *prefs = NULL;
 
 static GtkWidget *gaim_button(const char *, guint *, int, GtkWidget *);
+static GtkWidget *blist_tab_radio(const char *, int, GtkWidget *, GtkWidget *);
 static void prefs_build_general();
 static void prefs_build_buddy();
 static void prefs_build_convo();
@@ -531,6 +532,8 @@ static void buddy_page()
 	GtkWidget *frame;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
+	GtkWidget *sep;
+	GtkWidget *opt;
 	GtkWidget *button;
 	GtkWidget *button2;
 
@@ -553,11 +556,29 @@ static void buddy_page()
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
 	gtk_widget_show(frame);
 
-	hbox = gtk_hbox_new(TRUE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), hbox);
 	gtk_widget_show(hbox);
 
-	vbox = gtk_vbox_new(FALSE, 5);
+	/* "Place blist tabs  */
+	vbox = gtk_vbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 5);
+	gtk_widget_show(vbox);
+
+	label = gtk_label_new(_("Tab Placement:"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);	
+	
+	opt = blist_tab_radio(_("Top"), ~(OPT_BLIST_BOTTOM_TAB), vbox, NULL);
+	opt = blist_tab_radio(_("Bottom"), OPT_BLIST_BOTTOM_TAB, vbox, opt);
+
+	sep = gtk_vseparator_new();
+	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	/* End of blist tab options */
+
+	vbox = gtk_vbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
@@ -568,19 +589,16 @@ static void buddy_page()
 #endif
 	gaim_button(_("Save Window Size/Position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
-	gtk_widget_show(vbox);
-
 	button2 =
 	    gaim_button(_("Show pictures on buttons"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
 	if (blist_options & OPT_BLIST_NO_BUTTONS)
 		gtk_widget_set_sensitive(button2, FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), button2);
+
 #ifdef USE_APPLET
 	gaim_button(_("Display Buddy List near applet"), &blist_options, OPT_BLIST_NEAR_APPLET, vbox);
 #endif
-
+	
 	frame = gtk_frame_new(_("Group Displays"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
 	gtk_widget_show(frame);
@@ -2697,6 +2715,7 @@ static void set_blist_option(GtkWidget *w, int option)
 
 	if ((option == OPT_BLIST_GREY_IDLERS) || (option == OPT_BLIST_SHOW_IDLETIME))
 		update_idle_times();
+
 }
 
 static void set_convo_option(GtkWidget *w, int option)
@@ -2822,6 +2841,38 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	gtk_widget_show(button);
 
 	return button;
+}
+
+static void blist_tab_opt(GtkWidget *widget, int option)
+{
+	/* Following general method of set_tab_opt()  */
+	int mask;
+	mask = (OPT_BLIST_BOTTOM_TAB);
+	
+	blist_options &= ~(mask);
+	blist_options |= (mask & option);	
+	
+	set_blist_tab();
+}
+
+static GtkWidget *blist_tab_radio(const char *label, int which, GtkWidget *box,GtkWidget *set) 
+{
+        GtkWidget *new_opt;
+
+        if(!set)
+                new_opt = gtk_radio_button_new_with_label (NULL, label);        
+	else
+                new_opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label); 
+        
+	gtk_box_pack_start(GTK_BOX(box), new_opt, FALSE, FALSE, 0);
+        gtk_signal_connect(GTK_OBJECT(new_opt), "clicked", 
+			GTK_SIGNAL_FUNC(blist_tab_opt), (void *)which);
+	gtk_widget_show(new_opt);
+
+        if ((blist_options & OPT_BLIST_BOTTOM_TAB) == (which & OPT_BLIST_BOTTOM_TAB))
+                gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(new_opt), TRUE);
+
+	return new_opt;        
 }
 
 void prefs_build_general()

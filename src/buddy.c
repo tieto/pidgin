@@ -497,6 +497,19 @@ void update_button_pix()
 	}
 }
 
+void set_blist_tab()
+{
+	GtkWidget *blist_notebook;
+
+	blist_notebook = buddypane->parent;  /* The "Online" Page */
+
+	debug_printf("blist_options = %d\n", blist_options);
+	if((blist_options & OPT_BLIST_BOTTOM_TAB))
+		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(blist_notebook), GTK_POS_BOTTOM);
+	else
+		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(blist_notebook), GTK_POS_TOP);
+
+}
 
 
 #ifdef USE_APPLET
@@ -2657,6 +2670,9 @@ void show_buddy_list()
 	label = gtk_label_new(_("Edit Buddies"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), editpane, label);
 
+	if(blist_options & OPT_BLIST_BOTTOM_TAB)
+		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_BOTTOM);
+	
 	gtk_widget_show_all(notebook);
 
 	/* Pack things in the vbox */

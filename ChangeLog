@@ -14,6 +14,7 @@ version 0.54
 	* Yahoo! can receive offline messages
 	* IRC can do DCC chat.
 	* IRC will convert HTML formatting to mIRC formatting.
+	* Buddylist tab placement option (Thanks Jason Willis)
 	
 version 0.53 (02/28/2002):
 	* Updated Polish Translation (thanks Przemyslaw Sulek)
