@@ -10,6 +10,7 @@ EXTRA_DIST = \
 	blist-signals.dox \
 	connection-signals.dox \
 	conversation-signals.dox \
+	plugin-ids.dox \
 	gaim.1.in \
 	gaim-remote.1.in
 
