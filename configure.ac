@@ -428,7 +428,7 @@ if test "x$enable_gnutls" != "xno"; then
 		if test "x$gnutls_libs" != "xno"; then
 			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GNUTLS])
 			AC_DEFINE(HAVE_SSL)
-			msg_ssl="GNUTLS"
+			msg_gnutls="GNUTLS"
 			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
 
 			enable_gnutls="yes"
@@ -454,7 +454,7 @@ AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 dnl #
 dnl # Check for NSS if it's specified, or if GNUTLS checks failed.
 dnl #
-if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
+if test "x$enable_nss" != "xno"; then
 
 	AC_ARG_WITH(nspr-includes,
 		[  --with-nspr-includes=PREFIX     Specify location of Mozilla nspr4 includes.],
@@ -494,7 +494,7 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 			AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
 			AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
 
-			msg_ssl="Mozilla NSS"
+			msg_nss="Mozilla NSS"
 			enable_nss="yes"
 		else
 			nss_manual_check="yes"
@@ -674,9 +674,9 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 				NSS_LIBS="-L$with_nss_libs $nsslibs"
 
 				if test "$enable_nss" = "static"; then
-					msg_ssl="Mozilla NSS (static)"
+					msg_nss="Mozilla NSS (static)"
 				else
-					msg_ssl="Mozilla NSS"
+					msg_nss="Mozilla NSS"
 				fi
 
 				enable_nss="yes"
@@ -700,6 +700,14 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 fi
 
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
+
+if test "x$msg_nss" != "x" -a "x$msg_gnutls" != "x"; then
+	msg_ssl="$msg_nss and $msg_gnutls"
+elif test "x$msg_nss" != "x"; then
+	msg_ssl=$msg_nss
+elif test "x$msg_gnutls" != "x"; then
+	msg_ssl=$msg_gnutls
+fi
 
 dnl Check for Tcl
 if test "$enable_tcl" = yes; then
@@ -964,7 +972,7 @@ echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo UI Library.................... : GTK 2.x
-echo SSL Library................... : $msg_ssl
+echo SSL Library/Libraries......... : $msg_ssl
 echo
 echo Build with Plugin support..... : $enable_plugins
 echo Build with Perl support....... : $enable_perl
