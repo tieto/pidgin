@@ -28,6 +28,7 @@ version 0.60:
 		- GtkIMHtml, sorta (Ari Pollak, Christian Hammond)
 		- Buddy Icons
 		- IM Images
+		- Alert Dialogs
 	* Notify.c plugin rewritten; check its configure dialog (Thanks,
 	  Etan Reisner)
 	* TOC no longer compiles statically by default--use OSCAR
@@ -38,6 +39,10 @@ version 0.60:
 	* Read proxy environment variables.  (Thanks, Christian Hammond)
 	* Fixed security vulnerability with manual browser option (Thanks,
 	  Robert McQueen)
+	* Added more IRC slash commands -- /W, /VERSION, /MODE -- and 
+	  other cool IRC enhancments (Thanks, Jonas Birmé)
+	* Add / Remove buddy menu item added to the chat users list
+	  (Thanks Jonas Birmé)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

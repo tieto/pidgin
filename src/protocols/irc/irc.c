@@ -605,6 +605,19 @@ static gboolean mode_has_arg(struct gaim_connection *gc, char sign, char mode)
 	return FALSE;
 }
 
+static void irc_chan_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *argstr, char *who)
+{
+	struct conversation *c = irc_find_chat(gc, room);
+	char buf[IRC_BUF_LEN];
+	char *nick = g_strndup(who, strchr(who, '!') - who);
+
+	g_snprintf(buf, sizeof(buf), "%s sets mode %c%c %s on %s", 
+		   nick, sign, mode, strlen(argstr) ? argstr : "",
+		   room);
+	g_free(nick);
+	write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL), -1);
+}
+
 static void irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *nick)
 {
 	struct conversation *c = irc_find_chat(gc, room);
@@ -664,6 +677,7 @@ static void handle_mode(struct gaim_connection *gc, char *word[], char *word_eol
 	char sign = *modes++;
 	int arg = 1;
 	char *argstr;
+	char *who = word[1];
 
 	if (!c)
 		return;
@@ -686,8 +700,47 @@ static void handle_mode(struct gaim_connection *gc, char *word[], char *word_eol
 				argstr = "";
 			if (strchr(id->nickmodes, *modes))
 				irc_user_mode(gc, chan, sign, *modes, argstr);
+			else if (strchr(who, '!'))				
+				irc_chan_mode(gc, chan, sign, *modes, argstr, who);
 		}
 		modes++;
+	}
+}
+
+static void handle_version(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
+{
+	struct irc_data *id = gc->proto_data;
+	char buf[IRC_BUF_LEN];
+	GString *str;
+
+	id->liststr = g_string_new("");
+
+	id->liststr = g_string_append(id->liststr, "<b>Version: </b>");
+	id->liststr = g_string_append(id->liststr, word_eol[4]);
+
+	str = decode_html(id->liststr->str);
+	g_show_info_text(gc, NULL, 2, str->str, NULL);
+	g_string_free(str, TRUE);
+	g_string_free(id->liststr, TRUE);
+	id->liststr = NULL;
+}
+
+static void handle_who(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
+{
+	struct irc_data *id = gc->proto_data;
+	char buf[IRC_BUF_LEN];
+
+	if (!id->in_whois) {
+		id->in_whois = TRUE;
+		id->liststr = g_string_new("");
+	}
+
+	switch (num) {
+	case 352:
+		g_snprintf(buf, sizeof(buf), "<b>%s</b> (%s@%s): %s<br>", 
+			   word[8], word[5], word[6], word_eol[11]);
+		id->liststr = g_string_append(id->liststr, buf);
+		break;
 	}
 }
 
@@ -730,9 +783,18 @@ static void handle_whois(struct gaim_connection *gc, char *word[], char *word_eo
 		default:
 			break;
 	}
-	
+
 	if (word_eol[5][0] == ':')
 		id->liststr = g_string_append(id->liststr, word_eol[5] + 1);
+	/* Nicer idle time output, by jonas@birme.se */
+	else if (isdigit(word_eol[5][0])) {
+		time_t idle = atol(word_eol[5]);
+		time_t signon = atol(strchr(word_eol[5], ' '));
+				
+		g_snprintf(tmp, sizeof(tmp), 
+			   "%ld seconds [signon: %s]", (idle / 1000), ctime(&signon));
+		id->liststr = g_string_append(id->liststr, tmp);
+	}
 	else
 		id->liststr = g_string_append(id->liststr, word_eol[5]);
 }
@@ -791,14 +853,16 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	case 312:
 	case 313:
 	case 317:
-	case 319:
+	case 319:		
 		handle_whois(gc, word, word_eol, n);
 		break;
 	case 322:
 		handle_roomlist(gc, word, word_eol);
 		break;
+	/* End of replies */
 	case 323:
 	case 318:
+	case 315:
 		if ((id->in_whois || id->in_list) && id->liststr) {
 			GString *str = decode_html(id->liststr->str);
 			g_show_info_text(gc, NULL, 2, str->str, NULL);
@@ -815,6 +879,12 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	case 332:
 		handle_topic(gc, text);
 		break;
+	case 351:
+		handle_version(gc, word, word_eol, n);
+		break;
+	case 352:
+		handle_who(gc, word, word_eol, n);
+		break;
 	case 353:
 		handle_names(gc, word[5], word_eol[6]);
 		break;
@@ -828,6 +898,15 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		do_error_dialog(_("There is no such IRC Server"), NULL, GAIM_ERROR);
 	case 431:
 		do_error_dialog(_("No IRC nickname given"), NULL, GAIM_ERROR);
+		break;
+	default:
+		if (n > 400 && n < 502) {
+			char errmsg[IRC_BUF_LEN];
+			char *errmsg1 = strrchr(text, ':');
+			g_snprintf(errmsg, sizeof(errmsg), "IRC Error %d", n);
+			if (errmsg)
+				do_error_dialog(errmsg, errmsg1+1, GAIM_ERROR);
+		}
 		break;
 	}
 }
@@ -990,7 +1069,7 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 	char *cmd;
 
 	/* Check for errors */
-
+	
 	if (*buf != ':') {
 		if (!strncmp(buf, "NOTICE ", 7))
 			buf += 7;
@@ -1182,7 +1261,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		d = g_strndup(idata->rxqueue, len);
 		g_strchomp(d);
 		debug_printf("IRC S: %s\n", d);
-
+		
 		idata->rxlen -= len;
 		if (idata->rxlen) {
 			char *tmp = g_strdup(e + 1);
@@ -1229,8 +1308,10 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	hostname[sizeof(hostname) - 1] = 0;
 	if (!*hostname)
 		g_snprintf(hostname, sizeof(hostname), "localhost");
-	g_snprintf(buf, sizeof(buf), "USER %s %s %s :Gaim (%s)\r\n",
-		   g_get_user_name(), hostname, gc->user->proto_opt[USEROPT_SERV], WEBSITE);
+	g_snprintf(buf, sizeof(buf), "USER %s %s %s :%s [Gaim (%s)]\r\n",
+		   g_get_user_name(), hostname, 
+		   gc->user->proto_opt[USEROPT_SERV], 
+		   gc->user->alias, WEBSITE);
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
@@ -1260,7 +1341,7 @@ static void irc_login(struct aim_user *user)
 	set_login_progress(gc, 2, buf);
 
 	idata->chantypes = g_strdup("#&!+");
-	idata->chanmodes = g_strdup("beI,k,l");
+	idata->chanmodes = g_strdup("beI,k,lnt");
 	idata->nickmodes = g_strdup("ohv");
 	idata->str = g_string_new("");
 
@@ -1280,7 +1361,12 @@ static void irc_close(struct gaim_connection *gc)
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	gchar buf[IRC_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "QUIT :Download Gaim [%s]\r\n", WEBSITE);
+	if (idata->str->len > 0) {
+		g_snprintf(buf, sizeof(buf), "QUIT :%s\r\n", idata->str->str);
+	} else {
+		g_snprintf(buf, sizeof(buf), 
+			   "QUIT :Download Gaim [%s]\r\n", WEBSITE);
+	}
 	irc_write(idata->fd, buf, strlen(buf));
 
 	if (idata->rxqueue)
@@ -1437,6 +1523,17 @@ static void set_mode(struct gaim_connection *gc, char *who, int sign, int mode, 
 	}
 }
 
+static void set_chan_mode(struct gaim_connection *gc, char *chan, char *mode_str)
+{
+	struct irc_data *id = gc->proto_data;
+	char buf[IRC_BUF_LEN];
+
+	if ((mode_str[0] == '-') || (mode_str[0] == '+')) {
+		g_snprintf(buf, sizeof(buf), "MODE %s %s\r\n", chan, mode_str);
+		irc_write(id->fd, buf, strlen(buf));
+	}
+}
+
 static int handle_command(struct gaim_connection *gc, char *who, char *what)
 {
 	char buf[IRC_BUF_LEN];
@@ -1516,6 +1613,9 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		set_mode(gc, who, '+', 'v', word);
 	} else if (!g_strcasecmp(pdibuf, "DEVOICE")) {
 		set_mode(gc, who, '-', 'v', word);
+	} else if (!g_strcasecmp(pdibuf, "MODE")) {
+		char *chan = who;
+		set_chan_mode(gc, chan, word_eol[2]);
 	} else if (!g_strcasecmp(pdibuf, "QUOTE")) {
 		if (!*word_eol[2]) {
 			g_free(what);
@@ -1587,6 +1687,16 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	} else if (!g_strcasecmp(pdibuf, "LIST")) {
 		g_snprintf(buf, sizeof(buf), "LIST\r\n");
 		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "QUIT")) {
+		char *reason = word_eol[2];
+		id->str = g_string_insert(id->str, 0, reason);
+		do_quit();
+	} else if (!g_strcasecmp(pdibuf, "VERSION")) {
+		g_snprintf(buf, sizeof(buf), "VERSION\r\n");
+		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "W")) {
+		g_snprintf(buf, sizeof(buf), "WHO *\r\n");
+		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "HELP")) {
 		struct conversation *c = NULL;
 		if (is_channel(gc, who)) {
@@ -1602,7 +1712,8 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 				 "WHOIS INVITE NICK LIST<BR>"
 				 "JOIN PART TOPIC KICK<BR>"
 				 "OP DEOP VOICE DEVOICE<BR>"
-				 "ME MSG QUOTE SAY</B>",
+				 "ME MSG QUOTE SAY QUIT<BR>"
+			         "MODE VERSION W</B>",
 				 WFLAG_NOLOG, NULL, time(NULL), -1);
 	} else {
 		struct conversation *c = NULL;
