@@ -16,6 +16,7 @@ version 0.11.0:
 	* Jabber got chat
 	* Log Viewer (courtesy BMiller)
 	* Can save conversation history
+	* Napster can kinda sorta download files sometimes :)
 
 version 0.11.0-pre4:
 	* ICQ upgraded to use icqlib 1.1.0

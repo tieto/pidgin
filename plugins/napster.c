@@ -422,7 +422,8 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 
 		req->progress = gtk_progress_bar_new();
 		gtk_progress_bar_update(GTK_PROGRESS_BAR(req->progress), 0);
-		gtk_progress_set_format_string(GTK_PROGRESS(req->progress), "%P %%");
+		gtk_progress_configure(GTK_PROGRESS(req->progress), 0, 0, (float)req->total/(float)1024);
+		gtk_progress_set_format_string(GTK_PROGRESS(req->progress), "%P%% (%VKB / %UKB)");
 		gtk_progress_set_show_text(GTK_PROGRESS(req->progress), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox), req->progress, FALSE, FALSE, 5);
 
@@ -538,13 +539,15 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 	int command;
 	gchar **res;
 
-	read(source, header, 4);
+	recv(source, header, 4, 0);
+//	read(source, header, 4);
 	len = header[0];
 	command = header[1];	
 
 	buf = (gchar *)g_malloc(sizeof(gchar) * (len + 1));
-	
-	read(source, buf, len);
+
+//	read(source, buf, len);
+	recv(source, buf, len, 0);
 
 	buf[len] = 0;
 	
@@ -742,7 +745,7 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 
 		int i, j;
 
-		for (i = 1, j = 0; buf[i] != '\"'; i++, j++)
+		for (i = 1, j = 0; ((buf[i] != '\"') && (buf[i] != 0)); i++, j++)
 		{
 			file[j] = buf[i];
 		}
@@ -896,7 +899,7 @@ static void nap_login(struct aim_user *user)
 	int i;
 	int status;
 
-	host = gethostbyname("64.124.41.175");
+	host = gethostbyname("64.124.41.187");
 
 	if (!host) {
 		hide_login_progress(gc, "Unable to resolve hostname");
