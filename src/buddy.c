@@ -314,7 +314,6 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	GValue val = { 0, };
 	GtkTreeIter iter;
 	GtkWidget *menu, *menuitem;
-	GtkWidget *image;
 	GtkTreeSelection *sel;
 	GList *list;
 	struct prpl *prpl;
@@ -331,46 +330,19 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	menu = gtk_menu_new();
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Add a Buddy"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gaim_gtk_blist_add_buddy_cb), node);
-		image = gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_MENU);
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-		
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Delete Group"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gaim_gtk_blist_remove_cb), node);
-		image = gtk_image_new_from_stock(GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU);
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Rename"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(show_rename_group), node);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		gaim_new_item_from_stock(menu, _("_Add a Buddy"), GTK_STOCK_ADD, G_CALLBACK(gaim_gtk_blist_add_buddy_cb), node, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE, G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("_Rename"), NULL, G_CALLBACK(show_rename_group), node, 0, 0, NULL);
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		/* Protocol specific options */
 		prpl = find_prpl(((struct buddy*)node)->account->protocol);
 
-		if(prpl && prpl->get_info) {
-			menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Get Info"));
-			g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_info_cb), node);
-			image = gtk_image_new_from_stock(GAIM_STOCK_INFO, GTK_ICON_SIZE_MENU);
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-		}
+		if (prpl && prpl->get_info)
+			gaim_new_item_from_stock(menu, _("_Get Info"), GAIM_STOCK_INFO, G_CALLBACK(gtk_blist_menu_info_cb), node, 0, 0, NULL);
 
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_IM"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_im_cb), node);
-		image = gtk_image_new_from_stock(GAIM_STOCK_IM, GTK_ICON_SIZE_MENU);
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("Add Buddy _Pounce"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_bp_cb), node);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("View _Log"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_showlog_cb), node);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		gaim_new_item_from_stock(menu, _("_IM"), GAIM_STOCK_IM, G_CALLBACK(gtk_blist_menu_im_cb), node, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL, G_CALLBACK(gtk_blist_menu_bp_cb), node, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("View _Log"), NULL, G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
 		if (prpl) {
 			list = prpl->buddy_menu(((struct buddy*)node)->account->gc, ((struct buddy*)node)->name);
@@ -385,19 +357,10 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 		}
 
 		plugin_event (event_draw_menu, menu, ((struct buddy *) node)->name);
+
 		gaim_separator(menu);
-
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Alias"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_alias_cb), node);
-		image = gtk_image_new_from_stock(GAIM_STOCK_EDIT, GTK_ICON_SIZE_MENU);
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Remove"));
-		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gaim_gtk_blist_remove_cb), node);
-		image = gtk_image_new_from_stock(GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU);
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		gaim_new_item_from_stock(menu, _("_Alias"), GAIM_STOCK_EDIT, G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE, G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
 	}
 	
 	gtk_widget_show_all(menu);
