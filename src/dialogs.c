@@ -3434,6 +3434,9 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 			/* take off the \n */
 			buf[strlen(buf) - 1] = '\0';
 
+		/* don't lose the thirtieth line of conversation. thanks FeRD */
+		g_string_append(string, buf);
+
 		if (i == 30) {
 			gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
 			g_string_free(string, TRUE);
@@ -3444,8 +3447,6 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 				gtk_main_iteration();
 			*/
 			i = 0;
-		} else {
-			g_string_append(string, buf);
 		}
 
 	}
