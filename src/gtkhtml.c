@@ -3098,20 +3098,34 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 	 *url = NULL;
 	gint intag = 0,
 	  wpos = 0,
-	  tpos = 0,
-	  colorv,
+	  tpos = 0;
+	static gint colorv,
 	  bold = 0,
 	  italic = 0,
 	  fixed = 0,
 	  uline = 0,
 	  strike = 0,
-	  title = 0;
-	gint height;
-	struct font_state *current,
+	  title = 0,
+	  height;
+	static struct font_state *current = NULL,
 	 *tmp;
-	struct font_state def_state = { 3, 0, 0, "", NULL, NULL, NULL };
+	static struct font_state def_state = { 3, 0, 0, "", NULL, NULL, NULL };
 
-	current = &def_state;
+	if (text == NULL) {
+		while (current->next)
+		{
+			if (current->ownbg)
+				g_free(current->bgcol);
+			if (current->owncolor)
+				g_free(current->color);
+			tmp = current;
+			current = current->next;
+			g_free(tmp);
+		}
+		return;
+	}
+
+	if (!current) current = &def_state;
 	map = gdk_window_get_colormap(html->html_area);
 	cfont = getfont(current->font, bold, italic, fixed, current->size);
 	c = text;
@@ -3476,16 +3490,6 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 			}
 		}
 		c++;
-	}
-	while (current->next)
-	{
-		if (current->ownbg)
-			g_free(current->bgcol);
-		if (current->owncolor)
-			g_free(current->color);
-		tmp = current;
-		current = current->next;
-		g_free(tmp);
 	}
 	ws[wpos] = 0;
 	tag[tpos] = 0;
@@ -4187,6 +4191,8 @@ void gtk_html_thaw(GtkHtml * html)
 
 	g_return_if_fail(html != NULL);
 	g_return_if_fail(GTK_IS_HTML(html));
+
+	gtk_html_append_text(html, NULL, 0);
 
 	html->frozen--;
 
