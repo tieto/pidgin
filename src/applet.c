@@ -47,7 +47,7 @@ gboolean applet_buddy_show = FALSE;
 GtkWidget *applet;
 static GtkWidget *icon;
 
-static GtkAllocation get_applet_pos(gboolean);
+static GtkAllocation *get_applet_pos(gboolean);
 static gint sizehint = 48;
 
 static GdkPixmap *get_applet_icon(const char *name)
@@ -172,8 +172,8 @@ void applet_show_login(AppletWidget *widget, gpointer data)
 {
 	show_login();
 	if (blist_options & OPT_BLIST_NEAR_APPLET) {
-		GtkAllocation a = get_applet_pos(FALSE);
-		gtk_widget_set_uposition(mainwindow, a.x, a.y);
+		GtkAllocation *a = get_applet_pos(FALSE);
+		gtk_widget_set_uposition(mainwindow, a->x, a->y);
 	}
 }
 
@@ -237,11 +237,11 @@ void remove_applet_away()
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
 }
 
-static GtkAllocation get_applet_pos(gboolean for_blist)
+static GtkAllocation *get_applet_pos(gboolean for_blist)
 {
 	gint x, y, pad;
 	GtkRequisition buddy_req, applet_req;
-	GtkAllocation result;
+	GtkAllocation *result = g_new0(GtkAllocation, 1);
 	GNOME_Panel_OrientType orient = applet_widget_get_panel_orient(APPLET_WIDGET(applet));
 	pad = 5;
 
@@ -258,39 +258,49 @@ static GtkAllocation get_applet_pos(gboolean for_blist)
 	}
 	applet_req = icon->requisition;
 
-	/* FIXME : we need to be smarter here */
 	switch (orient) {
 	case ORIENT_UP:
-		result.x = x;
-		result.y = y - (buddy_req.height + pad);
+		result->x = x;
+		result->y = y - (buddy_req.height + pad);
 		break;
 	case ORIENT_DOWN:
-		result.x = x;
-		result.y = y + applet_req.height + pad;
+		result->x = x;
+		result->y = y + applet_req.height + pad;
 		break;
 	case ORIENT_LEFT:
-		result.x = x - (buddy_req.width + pad);
-		result.y = y;
+		result->x = x - (buddy_req.width + pad);
+		result->y = y;
 		break;
 	case ORIENT_RIGHT:
-		result.x = x + applet_req.width + pad;
-		result.y = y;
+		result->x = x + applet_req.width + pad;
+		result->y = y;
 		break;
 	}
+
+	if (result->x < 0)
+		result->x = 0;
+	if (result->y < 0)
+		result->y = 0;
+	if (result->x > gdk_screen_width() - buddy_req.width)
+		result->x = gdk_screen_width() - buddy_req.width;
+	if (result->y > gdk_screen_height() - buddy_req.height)
+		result->y = gdk_screen_height() - buddy_req.height;
+
 	return result;
 }
 
 void createOnlinePopup()
 {
-	GtkAllocation al;
+	GtkAllocation *al;
 	if (blist)
 		gtk_widget_show(blist);
 	al = get_applet_pos(TRUE);
 	if (blist_options & OPT_BLIST_NEAR_APPLET)
-		gtk_widget_set_uposition(blist, al.x, al.y);
+		gtk_widget_set_uposition(blist, al->x, al->y);
 	else if (blist_options & OPT_BLIST_SAVED_WINDOWS)
 		gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
 					 blist_pos.y - blist_pos.yoff);
+	g_free(al);
 }
 
 void AppletClicked(GtkWidget *sender, GdkEventButton *ev, gpointer data)
