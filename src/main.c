@@ -276,7 +276,7 @@ static GList *combo_user_names()
 static void login_window_closed(GtkWidget *w, GdkEvent *ev, gpointer d)
 {
 	if(docklet_count) {
-#if _WIN32
+#ifdef _WIN32
 		wgaim_systray_minimize(mainwindow);
 #endif
 		gtk_widget_hide(mainwindow);
@@ -384,11 +384,6 @@ void show_login()
 					 G_CALLBACK(dologin), mainwindow);
 	g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(domiddleclick), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-#ifdef _WIN32
-	/* Register newly created window with systray module */
-	wgaim_created_loginwin(GTK_WIDGET(mainwindow));
-#endif
 
 	/* Now grab the focus that we need */
 	if (gaim_accounts) {
