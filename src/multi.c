@@ -260,7 +260,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			tmp = tmp->next;
 		}
 		if (u->opt_entries)
-			g_list_free(tmpusr.opt_entries);
+			g_list_free(u->opt_entries);
 		u->opt_entries = NULL;
 	} else {
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
