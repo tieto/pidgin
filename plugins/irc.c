@@ -76,7 +76,7 @@ static char *irc_name()
 }
 
 static void irc_get_info(struct gaim_connection *gc, char *who);
-	
+
 char *name()
 {
 	return "IRC";
@@ -175,42 +175,40 @@ static void irc_request_buddy_update(struct gaim_connection *gc)
 static void irc_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 {
 
-        struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
 	if (who[0] == '@' || who[0] == '+') {
 
-	  /* If the user trys to msg an op or a voice from the channel, the convo will try
-           * to send it to @nick or +nick... needless to say, this is undesirable.
-	   */
-	        who++;
+		/* If the user trys to msg an op or a voice from the channel, the convo will try
+		 * to send it to @nick or +nick... needless to say, this is undesirable.
+		 */
+		who++;
 	}
 
 	/* Before we actually send this, we should check to see if they're trying
 	 * To issue a command and handle it properly. */
 
-	if (message[0] == '/')
-	{
+	if (message[0] == '/') {
 		/* I'll change the implementation of this a little later :-) */
 		if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
 			/* We have /me!! We have /me!! :-) */
 
 			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 			strcpy(temp, message + 4);
-			g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%cACTION %s%c\n", who, '\001', temp, '\001');
+			g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%cACTION %s%c\n", who, '\001', temp,
+				   '\001');
 			g_free(temp);
-		} 
-		else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
+		} else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
 			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 			strcpy(temp, message + 7);
 			irc_get_info(gc, temp);
 			g_free(temp);
 
 			return;
-		}	
-				
-	}
-	else {
+		}
+
+	} else {
 		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%s\n", who, message);
 	}
 
@@ -300,7 +298,7 @@ static struct irc_channel *find_channel_by_id(struct gaim_connection *gc, int id
 
 static struct conversation *find_chat(struct gaim_connection *gc, char *name)
 {
-	GSList *bcs = gc->buddy_chats; 
+	GSList *bcs = gc->buddy_chats;
 	struct conversation *b = NULL;
 	char *chat = g_strdup(normalize(name));
 
@@ -320,10 +318,10 @@ static void irc_chat_leave(struct gaim_connection *gc, int id);
 static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 
-        struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	struct irc_channel *channel = NULL;
 	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	char **kick; 
+	char **kick;
 	gboolean is_command = FALSE;
 	/* First lets get our current channel */
 	channel = find_channel_by_id(gc, id);
@@ -339,77 +337,71 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 	/* Before we actually send this, we should check to see if they're trying
 	 * To issue a command and handle it properly. */
 
-	if (message[0] == '/')
-	  {
-	   
-	    if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
-	      /* We have /me!! We have /me!! :-) */
-	      
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 4);
-	      
-	      g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name, '\001', temp,
-			 '\001');
-	      g_free(temp);
-	    }
-	    else if ((g_strncasecmp(message, "/op ", 4) == 0) && (strlen(message) > 4)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 4);
-	      
-	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s +o %s\n", channel->name, temp);
-	      
-	      g_free(temp);
-	      is_command = TRUE;
-	      
-	    }
-	    else if ((g_strncasecmp(message, "/deop ", 6) == 0) && (strlen(message) > 6)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 6);
-	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s -o %s\n", channel->name, temp);
-	      
-	      g_free(temp);
-	      is_command = TRUE;
-		}
-	    
-	    else if ((g_strncasecmp(message, "/voice ", 7) == 0) && (strlen(message) > 7)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 7);
-	      
-	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s +v %s\n", channel->name, temp);
-	      
-	      g_free(temp);
-	      is_command = TRUE;
-	      
-	    }
-	    else if ((g_strncasecmp(message, "/devoice ", 9) == 0) && (strlen(message) > 9)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 6);
-	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s -v %s\n", channel->name, temp);
-	      
-	      g_free(temp);
-	      is_command = TRUE;
-	    }
-	    else if ((g_strncasecmp(message, "/mode ", 6) == 0) && (strlen(message) > 6)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 6);
-	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s %s\n", channel->name, temp);
-	      g_free(temp);
-	      is_command = TRUE;
-	    }
-	    
-	    else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      
-	      strcpy(temp, message + 7);
-	      irc_get_info(gc, temp);
-	      g_free(temp);
-	      is_command = TRUE;
-	      
-	    }	
+	if (message[0] == '/') {
 
-		else if (!g_strncasecmp(message, "/topic ", 7) && (strlen(message) > 7))
-		{
-			gchar *temp = (gchar *)g_malloc(IRC_BUF_LEN + 1);
+		if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
+			/* We have /me!! We have /me!! :-) */
+
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 4);
+
+			g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name,
+				   '\001', temp, '\001');
+			g_free(temp);
+		} else if ((g_strncasecmp(message, "/op ", 4) == 0) && (strlen(message) > 4)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 4);
+
+			g_snprintf(buf, IRC_BUF_LEN, "MODE #%s +o %s\n", channel->name, temp);
+
+			g_free(temp);
+			is_command = TRUE;
+
+		} else if ((g_strncasecmp(message, "/deop ", 6) == 0) && (strlen(message) > 6)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 6);
+			g_snprintf(buf, IRC_BUF_LEN, "MODE #%s -o %s\n", channel->name, temp);
+
+			g_free(temp);
+			is_command = TRUE;
+		}
+
+		else if ((g_strncasecmp(message, "/voice ", 7) == 0) && (strlen(message) > 7)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 7);
+
+			g_snprintf(buf, IRC_BUF_LEN, "MODE #%s +v %s\n", channel->name, temp);
+
+			g_free(temp);
+			is_command = TRUE;
+
+		} else if ((g_strncasecmp(message, "/devoice ", 9) == 0) && (strlen(message) > 9)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 6);
+			g_snprintf(buf, IRC_BUF_LEN, "MODE #%s -v %s\n", channel->name, temp);
+
+			g_free(temp);
+			is_command = TRUE;
+		} else if ((g_strncasecmp(message, "/mode ", 6) == 0) && (strlen(message) > 6)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 6);
+			g_snprintf(buf, IRC_BUF_LEN, "MODE #%s %s\n", channel->name, temp);
+			g_free(temp);
+			is_command = TRUE;
+		}
+
+		else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+
+			strcpy(temp, message + 7);
+			irc_get_info(gc, temp);
+			g_free(temp);
+			is_command = TRUE;
+
+		}
+
+		else if (!g_strncasecmp(message, "/topic ", 7) && (strlen(message) > 7)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 			strcpy(temp, message + 7);
 
 			/* Send the chat topic change request */
@@ -418,61 +410,62 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 			g_free(temp);
 			is_command = TRUE;
 		}
-	    
-	    else if (!g_strncasecmp(message, "/part", 5) && (strlen(message) == 5)) {
 
-	      /* If I'm not mistaken, the chat_leave command was coded under the
-	       * pretense that it would only occur when someone closed the window.
-	       * For this reason, the /part command will not close the window.  Nor
-	       * will the window close when the user is /kicked.  I'll let you decide
-	       * the best way to fix it--I'd imagine it'd just be a little line like
-	       * if (convo) close (convo), but I'll let you decide where to put it.
-	       */
+		else if (!g_strncasecmp(message, "/part", 5) && (strlen(message) == 5)) {
 
-	      irc_chat_leave(gc, id);
-	      is_command = TRUE;
-	      return;
+			/* If I'm not mistaken, the chat_leave command was coded under the
+			 * pretense that it would only occur when someone closed the window.
+			 * For this reason, the /part command will not close the window.  Nor
+			 * will the window close when the user is /kicked.  I'll let you decide
+			 * the best way to fix it--I'd imagine it'd just be a little line like
+			 * if (convo) close (convo), but I'll let you decide where to put it.
+			 */
+
+			irc_chat_leave(gc, id);
+			is_command = TRUE;
+			return;
 
 
-	    }
+		}
 
-	    else if (!g_strncasecmp(message, "/join ", 6) && (strlen(message) > 6)) {
-	      
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      
-	      strcpy(temp, message + 6);
+		else if (!g_strncasecmp(message, "/join ", 6) && (strlen(message) > 6)) {
 
-	    
-	      irc_join_chat(gc, 0, temp);
-	      g_free(temp);
-	      is_command = TRUE;
-	      return;
-	    }
-	    
-	    else if (!g_strncasecmp(message, "/raw ", 5) && (strlen(message) > 5)){
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 5);
-	      g_snprintf(buf, IRC_BUF_LEN, "%s\r\n", temp);
-	      g_free(temp);
-	      is_command = TRUE;
-	    }
-	    
-	    else if (!g_strncasecmp(message, "/quote ", 7) && (strlen(message) >7)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 7);
-	      g_snprintf(buf, IRC_BUF_LEN, "%s\r\n", temp);
-	      g_free(temp);
-	      is_command = TRUE;
-	    }
-	    
-	    else if (!g_strncasecmp(message, "/kick ", 6) && (strlen(message) > 6)) {
-	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-	      strcpy(temp, message + 6);
-	      kick =  g_strsplit(temp, " ", 2);
-	      g_snprintf(buf, IRC_BUF_LEN, "KICK #%s %s :%s\r\n", channel->name, kick[0], kick[1]);
-	      g_free(temp);
-	      is_command = TRUE;
-	    }
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+
+			strcpy(temp, message + 6);
+
+
+			irc_join_chat(gc, 0, temp);
+			g_free(temp);
+			is_command = TRUE;
+			return;
+		}
+
+		else if (!g_strncasecmp(message, "/raw ", 5) && (strlen(message) > 5)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 5);
+			g_snprintf(buf, IRC_BUF_LEN, "%s\r\n", temp);
+			g_free(temp);
+			is_command = TRUE;
+		}
+
+		else if (!g_strncasecmp(message, "/quote ", 7) && (strlen(message) > 7)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 7);
+			g_snprintf(buf, IRC_BUF_LEN, "%s\r\n", temp);
+			g_free(temp);
+			is_command = TRUE;
+		}
+
+		else if (!g_strncasecmp(message, "/kick ", 6) && (strlen(message) > 6)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 6);
+			kick = g_strsplit(temp, " ", 2);
+			g_snprintf(buf, IRC_BUF_LEN, "KICK #%s %s :%s\r\n", channel->name, kick[0],
+				   kick[1]);
+			g_free(temp);
+			is_command = TRUE;
+		}
 
 /* FIXME: I'll go back in and grab this later.   -- Rob */
 /*
@@ -521,24 +514,24 @@ I THOUGHT THIS WOULD WORK, BUT I WAS WRONG.  WOULD SOMEONE KINDLY FIX IT?
 	      is_command = TRUE;
 	    }
 */
-	    
-	  }
-	
+
+	}
+
 	else {
-	  g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%s\n", channel->name, message);
-	  
-	    }
-	
-	
+		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%s\n", channel->name, message);
+
+	}
+
+
 	write(idata->fd, buf, strlen(buf));
-	
+
 	/* Since AIM expects us to receive the message we send, we gotta fake it */
-	if (is_command==FALSE)
-	  serv_got_chat_in(gc, id, gc->username, 0, message, time((time_t)NULL));
-	
+	if (is_command == FALSE)
+		serv_got_chat_in(gc, id, gc->username, 0, message, time((time_t) NULL));
+
 	g_free(buf);
-	
-	
+
+
 }
 static struct conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
 {
@@ -592,7 +585,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	gchar buf[4096];
 	gchar **buf2;
 	struct irc_data *idata;
-	
+
 	idata = (struct irc_data *)gc->proto_data;
 
 
@@ -636,13 +629,12 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		res = g_strsplit(buf, " ", 7);
 
-		if (!strcmp(res[1], "311"))
-		{
+		if (!strcmp(res[1], "311")) {
 			char buf[8192];
 
 			g_snprintf(buf, 4096, "<b>Nick:</b> %s<br>"
-					"<b>Host:</b> %s@%s<br>"
-					"<b>Name:</b> %s<br>", res[3], res[4], res[5], res[7]+1);
+				   "<b>Host:</b> %s@%s<br>"
+				   "<b>Name:</b> %s<br>", res[3], res[4], res[5], res[7] + 1);
 
 			g_show_info_text(buf);
 		}
@@ -658,7 +650,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		res = g_strsplit(buf, " ", 5);
 
 		if (!strcmp(res[1], "301"))
-			serv_got_im(gc, res[3], res[4] + 1, 1, time((time_t)NULL));
+			serv_got_im(gc, res[3], res[4] + 1, 1, time((time_t) NULL));
 
 		g_strfreev(res);
 		return;
@@ -818,175 +810,175 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	}
 
 
-	if ((strstr(buf, " MODE ")) && (strstr(buf, "!")) && (strstr(buf, "+v") || strstr(buf, "-v") || strstr(buf, "-o") || strstr(buf, "+o")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
-	  
-	  gchar u_channel[128];
-	  gchar u_nick[128];
-	   
-	  gchar u_mode[5];
-	  char **people;
-	  gchar *temp, *temp_new;
-	 
-	  
-	  struct irc_channel *channel;
-	  int j;
-	  temp = NULL;
-	  temp_new = NULL;
+	if ((strstr(buf, " MODE ")) && (strstr(buf, "!"))
+	    && (strstr(buf, "+v") || strstr(buf, "-v") || strstr(buf, "-o") || strstr(buf, "+o"))
+	    && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+
+		gchar u_channel[128];
+		gchar u_nick[128];
+
+		gchar u_mode[5];
+		char **people;
+		gchar *temp, *temp_new;
 
 
-	  for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
-	    u_nick[j] = buf[i];
-	  }
-	  u_nick[j] = '\0';
-	  i++;
+		struct irc_channel *channel;
+		int j;
+		temp = NULL;
+		temp_new = NULL;
 
-	  for (j = 0; buf[i] != '#'; j++, i++) {
-	  }
-	  i++;
 
-	  for (j = 0; buf[i] != ' '; j++, i++) {
-	    u_channel[j] = buf[i];
-	  }
-	  
-	  u_channel[j] = '\0';
-	  i++;
-	  
-	  for (j = 0; buf[i] != ' '; j++, i++) {
-	    u_mode[j] = buf[i];
-	  }
-	  u_mode[j] = '\0';
-	  i++;
-	  
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
+		}
+		u_nick[j] = '\0';
+		i++;
 
-	  
-	  
-	  people = g_strsplit(buf + i, " ", 3);
-	  
-	  
-	  
-	  channel = find_channel_by_name(gc, u_channel);
-	  	  	  
-	  if (!channel) {
-	    return;
-	  }
-	  
-	  for (j = 0; j < strlen(u_mode) - 1 ; j++) 
-	    {
-	      
-	      	
-		  struct conversation *convo = NULL;
-		  convo = find_conversation_by_id(gc, channel->id);
-		  
-		  
-		  
-		  temp = (gchar *)g_malloc(strlen(people[j]) + 3);
-		  temp_new = (gchar *)g_malloc(strlen(people[j]) + 3);
-		  g_snprintf(temp, strlen(people[j]) + 2, "@%s", people[j]);
-		  
-		  if (u_mode[1] == 'v' && u_mode[0] == '+') {
-		    g_snprintf(temp_new, strlen(people[j]) + 2, "+%s", people[j]);
-		  }
-		  else if (u_mode[1] == 'o' && u_mode[0] == '+') {
-		    g_snprintf(temp_new, strlen(people[j]) + 2, "@%s", people[j]);
-		  }
+		for (j = 0; buf[i] != '#'; j++, i++) {
+		}
+		i++;
 
-		  else if (u_mode[0] == '-') {
-		    g_snprintf(temp_new, strlen(people[j]) + 1, "%s", people[j]);
-	       		  }
-		  
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_channel[j] = buf[i];
+		}
 
-		  
-		  rename_chat_buddy(convo, temp, temp_new);
-		  g_snprintf(temp, strlen(people[j]) + 2, "+%s", people[j]);
-		  rename_chat_buddy(convo, temp, temp_new);
-		  
-		  rename_chat_buddy(convo, people[j], temp_new);
-		  
-		  
-		  
-		    
-		
-	    }
-	  if (temp)
-	    g_free(temp);
-	  if (temp_new)
-	    g_free(temp_new);
-	  
-	  return;
+		u_channel[j] = '\0';
+		i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_mode[j] = buf[i];
+		}
+		u_mode[j] = '\0';
+		i++;
+
+
+
+
+		people = g_strsplit(buf + i, " ", 3);
+
+
+
+		channel = find_channel_by_name(gc, u_channel);
+
+		if (!channel) {
+			return;
+		}
+
+		for (j = 0; j < strlen(u_mode) - 1; j++) {
+
+
+			struct conversation *convo = NULL;
+			convo = find_conversation_by_id(gc, channel->id);
+
+
+
+			temp = (gchar *) g_malloc(strlen(people[j]) + 3);
+			temp_new = (gchar *) g_malloc(strlen(people[j]) + 3);
+			g_snprintf(temp, strlen(people[j]) + 2, "@%s", people[j]);
+
+			if (u_mode[1] == 'v' && u_mode[0] == '+') {
+				g_snprintf(temp_new, strlen(people[j]) + 2, "+%s", people[j]);
+			} else if (u_mode[1] == 'o' && u_mode[0] == '+') {
+				g_snprintf(temp_new, strlen(people[j]) + 2, "@%s", people[j]);
+			}
+
+			else if (u_mode[0] == '-') {
+				g_snprintf(temp_new, strlen(people[j]) + 1, "%s", people[j]);
+			}
+
+
+
+			rename_chat_buddy(convo, temp, temp_new);
+			g_snprintf(temp, strlen(people[j]) + 2, "+%s", people[j]);
+			rename_chat_buddy(convo, temp, temp_new);
+
+			rename_chat_buddy(convo, people[j], temp_new);
+
+
+
+
+
+		}
+		if (temp)
+			g_free(temp);
+		if (temp_new)
+			g_free(temp_new);
+
+		return;
 	}
-	
 
-	if ((strstr(buf, " KICK ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
-	  gchar u_channel[128];
-	  gchar u_nick[128];
-	  gchar u_comment[128];
-	  gchar u_who[128];
-	  
-	  int id;
-	  
-	  gchar *temp;
 
-	
+	if ((strstr(buf, " KICK ")) && (strstr(buf, "!")) && (buf[0] == ':')
+	    && (!strstr(buf, " NOTICE "))) {
+		gchar u_channel[128];
+		gchar u_nick[128];
+		gchar u_comment[128];
+		gchar u_who[128];
 
-	  struct irc_channel *channel;
-	  int j;
+		int id;
 
-	  temp = NULL;
+		gchar *temp;
 
-	  for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
-	    u_nick[j] = buf[i];
-	  }
-	  u_nick[j] = '\0';
-	  i++;
 
-	  for (j = 0; buf[i] != '#'; j++, i++) {
-	  }
-	  i++;
 
-	  for (j = 0; buf[i] != ' '; j++, i++) {
-	    u_channel[j] = buf[i];
-	  }
-	  
-	  u_channel[j] = '\0';
-	  i++;
+		struct irc_channel *channel;
+		int j;
 
-	  for (j = 0; buf[i] != ' '; j++, i++) {
-	    u_who[j] = buf[i];
-	  }
-	  u_who[j] = '\0';
-	  i++;
-	  i++;
-	  strcpy(u_comment, buf + i);
-	  g_strchomp(u_comment);
+		temp = NULL;
 
-	  channel = find_channel_by_name(gc, u_channel);
-	  
-	  if (!channel) {
-	    return;
-	  }
-	 
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
+		}
+		u_nick[j] = '\0';
+		i++;
 
-	  id = find_id_by_name(gc, u_channel);
-	  
-	
+		for (j = 0; buf[i] != '#'; j++, i++) {
+		}
+		i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_channel[j] = buf[i];
+		}
+
+		u_channel[j] = '\0';
+		i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_who[j] = buf[i];
+		}
+		u_who[j] = '\0';
+		i++;
+		i++;
+		strcpy(u_comment, buf + i);
+		g_strchomp(u_comment);
+
+		channel = find_channel_by_name(gc, u_channel);
+
+		if (!channel) {
+			return;
+		}
+
+
+		id = find_id_by_name(gc, u_channel);
+
+
 		if (g_strcasecmp(u_nick, gc->username) == 0) {
 
-		  /* It looks like you've been naughty! */
-	
+			/* It looks like you've been naughty! */
+
 			serv_got_chat_left(gc, channel->id);
 
 			idata->channels = g_list_remove(idata->channels, channel);
-		} 
-		else {
-		        struct conversation *convo = NULL;
+		} else {
+			struct conversation *convo = NULL;
 
 			/* Find their conversation window */
-		convo = find_conversation_by_id(gc, channel->id);
+			convo = find_conversation_by_id(gc, channel->id);
 
 			if (!convo) {
 				/* Some how the window doesn't exist. 
 				 * Let's get out of here */
-			  		return;
+				return;
 			}
 
 			/* And remove their name */
@@ -994,7 +986,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			 * so we'll just do a nice hack and remove nick and
 			 * @nick and +nick.  Truly wasteful.
 			 */
-			  
+
 			temp = (gchar *) g_malloc(strlen(u_who) + 3);
 			g_snprintf(temp, strlen(u_who) + 2, "@%s", u_who);
 			remove_chat_buddy(convo, temp);
@@ -1002,10 +994,10 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			temp = (gchar *) g_malloc(strlen(u_who) + 3);
 			g_snprintf(temp, strlen(u_who) + 2, "+%s", u_who);
 			remove_chat_buddy(convo, temp);
- 			remove_chat_buddy(convo, u_who);
-			
+			remove_chat_buddy(convo, u_who);
+
 			g_free(temp);
-			
+
 		}
 
 		/* Go Home! */
@@ -1023,9 +1015,10 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
 			u_nick[j] = buf[i];
 		}
-		u_nick[j] = 0; i++;
+		u_nick[j] = 0;
+		i++;
 
-		for (j = 0; buf[i] != '#'; j++,  i++) {
+		for (j = 0; buf[i] != '#'; j++, i++) {
 		}
 		i++;
 
@@ -1053,8 +1046,9 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 	}
 
-	
-	if ((strstr(buf, " JOIN ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+
+	if ((strstr(buf, " JOIN ")) && (strstr(buf, "!")) && (buf[0] == ':')
+	    && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
 		gchar u_nick[128];
@@ -1112,7 +1106,8 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 	}
 
-	if ((strstr(buf, " NICK ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+	if ((strstr(buf, " NICK ")) && (strstr(buf, "!")) && (buf[0] == ':')
+	    && (!strstr(buf, " NOTICE "))) {
 
 		gchar old[128];
 		gchar new[128];
@@ -1144,45 +1139,46 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			channel = templist->data;
 
 			convo = find_conversation_by_id(gc, channel->id);
-			
+
 			/* If the person is an op or voice, this won't work.
 			 * so we'll just do a nice hack and rename nick and
 			 * @nick and +nick.  Truly wasteful.
 			 */
-			
-			temp = (gchar *)g_malloc(strlen(old) + 5);
-			temp_new = (gchar *)g_malloc(strlen(new) + 5);
+
+			temp = (gchar *) g_malloc(strlen(old) + 5);
+			temp_new = (gchar *) g_malloc(strlen(new) + 5);
 			g_snprintf(temp_new, strlen(new) + 2, "@%s", new);
 			g_snprintf(temp, strlen(old) + 2, "@%s", old);
 			rename_chat_buddy(convo, temp, temp_new);
 			g_snprintf(temp, strlen(old) + 2, "+%s", old);
 			g_snprintf(temp_new, strlen(new) + 2, "+%s", new);
 			rename_chat_buddy(convo, temp, temp_new);
- 			rename_chat_buddy(convo, old, new);
+			rename_chat_buddy(convo, old, new);
 			if (temp)
-			  g_free(temp);
+				g_free(temp);
 			if (temp_new)
-			  g_free(temp_new);
-			
+				g_free(temp_new);
+
 			templist = templist->next;
 		}
 		return;
 	}
 
 
-	if ((strstr(buf, "QUIT ")) && (buf[0] == ':') && (strstr(buf, "!")) && (!strstr(buf, " NOTICE "))) {
-	      
+	if ((strstr(buf, "QUIT ")) && (buf[0] == ':') && (strstr(buf, "!"))
+	    && (!strstr(buf, " NOTICE "))) {
+
 		gchar u_nick[128];
 		gchar *temp;
 		GList *templist;
 
 		struct irc_channel *channel;
 		int j;
-		
 
-		temp  = NULL;
-		for (j = 0, i = 1 ; buf[i] != '!'; j++, i++) {
-		    u_nick[j] = buf[i];
+
+		temp = NULL;
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
 		}
 
 		u_nick[j] = '\0';
@@ -1194,12 +1190,12 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			channel = templist->data;
 
 			convo = find_conversation_by_id(gc, channel->id);
-			
+
 			/* If the person is an op or voice, this won't work.
 			 * so we'll just do a nice hack and remove nick and
 			 * @nick and +nick.  Truly wasteful.
 			 */
-			
+
 			temp = (gchar *) g_malloc(strlen(u_nick) + 2);
 			g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
 			remove_chat_buddy(convo, temp);
@@ -1207,23 +1203,24 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			temp = (gchar *) g_malloc(strlen(u_nick) + 2);
 			g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
 			remove_chat_buddy(convo, temp);
- 			remove_chat_buddy(convo, u_nick);
-			
-			
-			
+			remove_chat_buddy(convo, u_nick);
+
+
+
 			templist = templist->next;
 		}
 
-		 g_free(temp);
-		
+		g_free(temp);
+
 		return;
 	}
-	
-	  
 
-	if ((strstr(buf, " PART ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
-	        gchar u_channel[128];
+
+	if ((strstr(buf, " PART ")) && (strstr(buf, "!")) && (buf[0] == ':')
+	    && (!strstr(buf, " NOTICE "))) {
+
+		gchar u_channel[128];
 		gchar u_nick[128];
 		gchar *temp;
 		struct irc_channel *channel;
@@ -1241,70 +1238,69 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		i++;
 
-		for (j = 0;  buf[i] != ' '; j++, i++) {
-		  if (buf[i] == '\0') {
-		    break;
-		  }
-		  u_channel[j] = buf[i];
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			if (buf[i] == '\0') {
+				break;
+			}
+			u_channel[j] = buf[i];
 		}
 		u_channel[j] = '\0';
-		
-		 /* Now, lets check to see if it was US that was leaving.  
-		 * If so, do the correct thing by closing up all of our 
-		 * old channel stuff. Otherwise,
-		 * we should just print that someone left */
+
+		/* Now, lets check to see if it was US that was leaving.  
+		   * If so, do the correct thing by closing up all of our 
+		   * old channel stuff. Otherwise,
+		   * we should just print that someone left */
 
 		channel = find_channel_by_name(gc, u_channel);
 
 		if (!channel) {
-		  	return;
+			return;
 		}
-		
+
 		if (g_strcasecmp(u_nick, gc->username) == 0) {
-		  
-		  /* Looks like we're going to leave the channel for 
-		   * real now.  Let's create a valid channel structure 
-		   * and add it to our list */
-		  
-		  serv_got_chat_left(gc, channel->id);
-		  
-		  idata->channels = g_list_remove(idata->channels, channel);
-		} 
-		else {
-		  struct conversation *convo = NULL;
-		  
-		  /* Find their conversation window */
-		  convo = find_conversation_by_id(gc, channel->id);
-		  
-		  if (!convo) {
+
+			/* Looks like we're going to leave the channel for 
+			 * real now.  Let's create a valid channel structure 
+			 * and add it to our list */
+
+			serv_got_chat_left(gc, channel->id);
+
+			idata->channels = g_list_remove(idata->channels, channel);
+		} else {
+			struct conversation *convo = NULL;
+
+			/* Find their conversation window */
+			convo = find_conversation_by_id(gc, channel->id);
+
+			if (!convo) {
 				/* Some how the window doesn't exist. 
 				 * Let's get out of here */
-		    return;
-		  }
-		  
-		  /* And remove their name */
-		  /* If the person is an op or voice, this won't work.
-		   * so we'll just do a nice hack and remove nick and
-		   * @nick and +nick.  Truly wasteful.
-		   */
-		  
-		  temp = (gchar *) g_malloc(strlen(u_nick) + 3);
-		  g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
-		  remove_chat_buddy(convo, temp);
-		  g_free(temp);
-		  temp = (gchar *) g_malloc(strlen(u_nick) + 3);
-		  g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
-		  remove_chat_buddy(convo, temp);
-		  g_free(temp);
-		  remove_chat_buddy(convo, u_nick);
-		     
-		  
+				return;
+			}
+
+			/* And remove their name */
+			/* If the person is an op or voice, this won't work.
+			 * so we'll just do a nice hack and remove nick and
+			 * @nick and +nick.  Truly wasteful.
+			 */
+
+			temp = (gchar *) g_malloc(strlen(u_nick) + 3);
+			g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
+			remove_chat_buddy(convo, temp);
+			g_free(temp);
+			temp = (gchar *) g_malloc(strlen(u_nick) + 3);
+			g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
+			remove_chat_buddy(convo, temp);
+			g_free(temp);
+			remove_chat_buddy(convo, u_nick);
+
+
 		}
-		
+
 		/* Go Home! */
 		return;
 	}
-	
+
 	if ((strstr(buf, " NOTICE ")) && (buf[0] == ':')) {
 		gchar u_nick[128];
 		gchar u_host[255];
@@ -1351,9 +1347,9 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 				/* Someone's triyng to ping us.  Let's respond */
 				gchar u_arg[24];
 				gchar u_buf[200];
-				unsigned long tend= time((time_t *)NULL);
+				unsigned long tend = time((time_t *) NULL);
 				unsigned long tstart;
-				
+
 				printf("LA: %s\n", buf);
 
 				strcpy(u_arg, u_message + 6);
@@ -1361,7 +1357,8 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 				tstart = atol(u_arg);
 
-				g_snprintf(u_buf, sizeof(u_buf), "Ping Reply From %s: [%ld seconds]", u_nick, tend-tstart);
+				g_snprintf(u_buf, sizeof(u_buf), "Ping Reply From %s: [%ld seconds]",
+					   u_nick, tend - tstart);
 
 				do_error_dialog(u_buf, "Gaim IRC - Ping Reply");
 
@@ -1373,439 +1370,440 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 
 	if ((strstr(buf, " PRIVMSG ")) && (buf[0] == ':')) {
-	  gchar u_nick[128];
-	  gchar u_host[255];
-	  gchar u_command[32];
-	  gchar u_channel[128];
-	  gchar u_message[IRC_BUF_LEN];
-	  gboolean is_closing;	  
+		gchar u_nick[128];
+		gchar u_host[255];
+		gchar u_command[32];
+		gchar u_channel[128];
+		gchar u_message[IRC_BUF_LEN];
+		gboolean is_closing;
 
-	  int j;
-	  
-	  
-	  for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
-	    u_nick[j] = buf[i];
-	  }
-	  
-	  u_nick[j] = '\0';
-	  i++;
-	  
-	  for (j = 0; buf[i] != ' '; j++, i++) {
-	    u_host[j] = buf[i];
-	  }
-	  
-	  u_host[j] = '\0';
-	  i++;
-	  
-	  for (j = 0; buf[i] != ' '; j++, i++) {
-	    u_command[j] = buf[i];
-	  }
-	  
-	  u_command[j] = '\0';
-	  i++;
-	  
-	  for (j = 0; buf[i] != ':'; j++, i++) {
-	    u_channel[j] = buf[i];
-	  }
-	  
-	  u_channel[j - 1] = '\0';
-	  i++;
-	  
-	  
-	  /* Now that everything is parsed, the rest of this baby must be our message */
-	  strncpy(u_message, buf + i, IRC_BUF_LEN);
-	  
-	  /* Now, lets check the message to see if there's anything special in it */
-	  if (u_message[0] == '\001') {
-	    if (g_strncasecmp(u_message, "\001VERSION", 8) == 0) {
+		int j;
+
+
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
+		}
+
+		u_nick[j] = '\0';
+		i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_host[j] = buf[i];
+		}
+
+		u_host[j] = '\0';
+		i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_command[j] = buf[i];
+		}
+
+		u_command[j] = '\0';
+		i++;
+
+		for (j = 0; buf[i] != ':'; j++, i++) {
+			u_channel[j] = buf[i];
+		}
+
+		u_channel[j - 1] = '\0';
+		i++;
+
+
+		/* Now that everything is parsed, the rest of this baby must be our message */
+		strncpy(u_message, buf + i, IRC_BUF_LEN);
+
+		/* Now, lets check the message to see if there's anything special in it */
+		if (u_message[0] == '\001') {
+			if (g_strncasecmp(u_message, "\001VERSION", 8) == 0) {
 				/* Looks like we have a version request.  Let
 				 * us handle it thusly */
-	      
-	      g_snprintf(buf, IRC_BUF_LEN,
-			 "NOTICE %s :%cVERSION GAIM %s:The Pimpin Penguin AIM Clone:%s%c\n",
-			 u_nick, '\001', VERSION, WEBSITE, '\001');
-	      
-	      write(idata->fd, buf, strlen(buf));
-	      
+
+				g_snprintf(buf, IRC_BUF_LEN,
+					   "NOTICE %s :%cVERSION GAIM %s:The Pimpin Penguin AIM Clone:%s%c\n",
+					   u_nick, '\001', VERSION, WEBSITE, '\001');
+
+				write(idata->fd, buf, strlen(buf));
+
 				/* And get the heck out of dodge */
-	      return;
-	    }
-	    
-	    if ((g_strncasecmp(u_message, "\001PING ", 6) == 0) && (strlen(u_message) > 6)) {
+				return;
+			}
+
+			if ((g_strncasecmp(u_message, "\001PING ", 6) == 0) && (strlen(u_message) > 6)) {
 				/* Someone's triyng to ping us.  Let's respond */
-	      gchar u_arg[24];
-	      
-	      strcpy(u_arg, u_message + 6);
-	      u_arg[strlen(u_arg) - 1] = '\0';
-	      
-	      g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cPING %s%c\n", u_nick, '\001',
-			 u_arg, '\001');
-	      
-	      write(idata->fd, buf, strlen(buf));
-	      
+				gchar u_arg[24];
+
+				strcpy(u_arg, u_message + 6);
+				u_arg[strlen(u_arg) - 1] = '\0';
+
+				g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cPING %s%c\n", u_nick, '\001',
+					   u_arg, '\001');
+
+				write(idata->fd, buf, strlen(buf));
+
 				/* And get the heck out of dodge */
-	      return;
-	    }
-	    
-	    if (g_strncasecmp(u_message, "\001ACTION ", 8) == 0) {
+				return;
+			}
+
+			if (g_strncasecmp(u_message, "\001ACTION ", 8) == 0) {
 				/* Looks like we have an action. Let's parse it a little */
-	      strcpy(buf, u_message);
-	      
-	      strcpy(u_message, "/me ");
-	      for (j = 4, i = 8; buf[i] != '\001'; i++, j++) {
-		u_message[j] = buf[i];
-	      }
-	      u_message[j] = '\0';
-	    }
-	  }
+				strcpy(buf, u_message);
+
+				strcpy(u_message, "/me ");
+				for (j = 4, i = 8; buf[i] != '\001'; i++, j++) {
+					u_message[j] = buf[i];
+				}
+				u_message[j] = '\0';
+			}
+		}
 
 
-	  /* OK, It is a chat or IM message.  Here, let's translate the IRC formatting into
-	   * good ol' fashioned gtkimhtml style hypertext markup. */
+		/* OK, It is a chat or IM message.  Here, let's translate the IRC formatting into
+		 * good ol' fashioned gtkimhtml style hypertext markup. */
 
-	 
-	  is_closing = FALSE;
 
-	  while(strchr(u_message, '\002')) {         // \002 = ^B
-	    gchar *current;
-	    gchar *temp, *free_here;
-	    
-	    
-	    temp =  g_strdup(strchr(u_message, '\002'));
-	    free_here = temp; 
-	    temp++;
-	    
-	    current = strchr(u_message, '\002');
-	    *current = '<';
-	    current++;
-	    if (is_closing) {
-	      *current = '/';
-	      current++;
-	    }
-	    *current = 'b';
-	    current++;
-	    *current = '>';
-	    current++;
-	    
-	    
-	    while (*temp != '\0') {
-	      *current = *temp;
-	      current++;
-	      temp++;
-	    }
-	    *current = '\0';
-	    g_free(free_here);
+		is_closing = FALSE;
 
-	    is_closing = !is_closing;
-	  }
+		while (strchr(u_message, '\002')) {	/* \002 = ^B */
+			gchar *current;
+			gchar *temp, *free_here;
 
-	  is_closing = FALSE;
-	  while(strchr(u_message, '\037')) {         // \037 = ^_
-	    gchar *current;
-	    gchar *temp, *free_here;
-	         
-	          
-	    temp =  g_strdup(strchr(u_message, '\037'));
-	    free_here = temp;
-	    temp++;
-	    
-	    current = strchr(u_message, '\037');
-	    *current = '<';
-	    current++;
-	    if (is_closing) {
-	      *current = '/';
-	      current++;
-	    }
-	    *current = 'u';
-	    current++;
-	    *current = '>';
-	    current++;
-	    
-	    
-	    while (*temp != '\0') {
-	      *current = *temp;
-	      current++;
-	      temp++;
-	    }
-	    *current = '\0';
-	    g_free(free_here); 
-	    is_closing = !is_closing;
 
-	  }
+			temp = g_strdup(strchr(u_message, '\002'));
+			free_here = temp;
+			temp++;
 
-	  while(strchr(u_message, '\003')) {         // \003 = ^C
-	    
-	    /* This is color formatting.  IRC uses its own weird little system
-	     * that we must translate to HTML. */
-	    
-	    
-	    /* The format is something like this:
-	     *         ^C5 or ^C5,3
-	     * The number before the comma is the foreground color, after is the
-	     * background color.  Either number can be 1 or two digits.
-	     */
-	      
-	    gchar *current;
-	    gchar *temp, *free_here;
-	    gchar *font_tag, *body_tag;     
-	    int fg_color, bg_color;
-       
-	    temp =  g_strdup(strchr(u_message, '\003'));
-	    free_here = temp;
-	    temp++;
-	   
-	    fg_color = bg_color = -1; 	    
-	    body_tag = font_tag  = "";
-	    
-	    /* Parsing the color information: */
-	    do {
-	      if (!isdigit(*temp)) break;      // This translates to </font>
-	      fg_color = (int)(*temp - 48);
-	      temp++;
-	      if (isdigit(*temp)) {
-		fg_color = (fg_color * 10) + (int)(*temp - 48);   
-		temp++;
-	      }
-	      if (*temp != ',') break;
-	      temp++;
-	      if (!isdigit(*temp)) break;      // This translates to </font>
-	      bg_color = (int)(*temp - 48);
-	      temp++;
-	      if (isdigit(*temp)) {
-		bg_color = (bg_color * 10) + (int)(*temp - 48);   
-		temp++;
-	      } 
-	    }while (FALSE);
-	    
-	    if (fg_color > 15)
-	      fg_color = fg_color % 16;
-	    if (bg_color > 15)
-	      bg_color = bg_color % 16;
-	    
-	    switch (fg_color) {
-	    case -1:
-	      font_tag = "</font></body>";
-	      break;
-	    case 0:                    // WHITE
-	      font_tag = "<font color=\"#ffffff\">";
-	      /* If no background color is specified, we're going to make it black anyway.
-	       * That's probably what the sender anticipated the background color to be. 
-	       * White on white would be illegible.
-	       */
-	      if (bg_color == -1) {
-		body_tag = "<body bgcolor=\"#000000\">";
-	      }
-	      break;
-	    case 1:                    // BLACK
-	      font_tag = "<font color=\"#000000\">";
-	      break;
-	    case 2:                    // NAVY BLUE
-	      font_tag = "<font color=\"#000066\">";
-	      break;
-	    case 3:                    // GREEN
-	      font_tag = "<font color=\"#006600\">";
-	      break;
-	    case 4:                    // RED
-	      font_tag = "<font color=\"#ff0000\">";
-	      break;
-	    case 5:                    // MAROON
-	      font_tag = "<font color=\"#660000\">";
-	      break;
-	    case 6:                    // PURPLE
-	      font_tag = "<font color=\"#660066\">";
-	      break;
-	    case 7:                    // DISGUSTING PUKE COLOR
-	      font_tag = "<font color=\"#666600\">";
-	      break;
-	    case 8:                    // YELLOW
-	      font_tag = "<font color=\"#cccc00\">";
-	      break;
-	    case 9:                    // LIGHT GREEN
-	      font_tag = "<font color=\"#33cc33\">";
-	      break;
-	    case 10:                    // TEAL
-	      font_tag = "<font color=\"#00acac\">";
-	      break;
-	    case 11:                    // CYAN
-	      font_tag = "<font color=\"#00ccac\">";
-	      break;
-	    case 12:                    // BLUE
-	      font_tag = "<font color=\"#0000ff\">";
-	      break;
-	    case 13:                    // PINK
-	      font_tag = "<font color=\"#cc00cc\">";
-	      break;
-	    case 14:                    // GREY
-	      font_tag = "<font color=\"#666666\">";
-	      break;
-	    case 15:                    // SILVER
-	      font_tag = "<font color=\"#00ccac\">";
-	      break;
-	    }
-	      
-	    switch (bg_color) {
-	    case 0:                    // WHITE
-	      body_tag = "<body bgcolor=\"#ffffff\">";
-	      break;
-	    case 1:                    // BLACK
-	      body_tag = "<body bgcolor=\"#000000\">";
-	      break;
-	    case 2:                    // NAVY BLUE
-	      body_tag = "<body bgcolor=\"#000066\">";
-	      break;
-	    case 3:                    // GREEN
-	      body_tag = "<body bgcolor=\"#006600\">";
-	      break;
-	    case 4:                    // RED
-	      body_tag = "<body bgcolor=\"#ff0000\">";
-	      break;
-	    case 5:                    // MAROON
-	      body_tag = "<body bgcolor=\"#660000\">";
-	      break;
-	    case 6:                    // PURPLE
-	      body_tag = "<body bgcolor=\"#660066\">";
-	      break;
-	    case 7:                    // DISGUSTING PUKE COLOR
-	      body_tag = "<body bgcolor=\"#666600\">";
-	      break;
-	    case 8:                    // YELLOW
-	      body_tag = "<body bgcolor=\"#cccc00\">";
-	      break;
-	    case 9:                    // LIGHT GREEN
-	      body_tag = "<body bgcolor=\"#33cc33\">";
-	      break;
-	    case 10:                    // TEAL
-	      body_tag = "<body bgcolor=\"#00acac\">";
-	      break;
-	    case 11:                    // CYAN
-	      body_tag = "<body bgcolor=\"#00ccac\">";
-	      break;
-	    case 12:                    // BLUE
-	      body_tag = "<body bgcolor=\"#0000ff\">";
-	      break;
-	    case 13:                    // PINK
-	      body_tag = "<body bgcolor=\"#cc00cc\">";
-	      break;
-	    case 14:                    // GREY
-	      body_tag = "<body bgcolor=\"#666666\">";
-	      break;
-	    case 15:                    // SILVER
-	      body_tag = "<body bgcolor=\"#00ccac\">";
-	      break;
-	    }
-	      
-	    current = strchr(u_message, '\003');
-	    
-	    while (*body_tag != '\0') {
-	      *current = *body_tag;
-	      current++;
-	      body_tag++;
-	    }	    
-	    
-	    while (*font_tag != '\0') {
-	      *current = *font_tag;
-	      current++;
-	      font_tag++;
-	    }	    
+			current = strchr(u_message, '\002');
+			*current = '<';
+			current++;
+			if (is_closing) {
+				*current = '/';
+				current++;
+			}
+			*current = 'b';
+			current++;
+			*current = '>';
+			current++;
 
-	    while (*temp != '\0') {
-	      *current = *temp;
-	      current++;
-	      temp++;
-	    }
-	    *current = '\0';
-	    g_free(free_here); 
-	    is_closing = !is_closing;
 
-	  }
+			while (*temp != '\0') {
+				*current = *temp;
+				current++;
+				temp++;
+			}
+			*current = '\0';
+			g_free(free_here);
 
-	    while(strchr(u_message, '\017')) {         // \017 = ^O
-	    gchar *current;
-	    gchar *temp, *free_here;
-	         
-	          
-	    temp =  g_strdup(strchr(u_message, '\017'));
-	    free_here = temp;
-	    temp++;
-	    
-	    current = strchr(u_message, '\017');
-	    *current = '<';
-	    current++;
-	    *current = '/';
-	    current++;
-	    *current = 'b';
-	    current++;
-	    *current = '>';
-	    current++;
-	    *current = '<';
-	    current++;
-	    *current = '/';
-	    current++;
-	    *current = 'u';
-	    current++;
-	    *current = '>';
-	    current++;
-	       
-	    while (*temp != '\0') {
-	      *current = *temp;
-	      current++;
-	      temp++;
-	    }
-	    *current = '\0';
-	    g_free(free_here);
-	  }
-		  
-	  /* Let's check to see if we have a channel on our hands */
-	  if (u_channel[0] == '#') {
-	    /* Yup.  We have a channel */
-	    int id;
-	    
-	    id = find_id_by_name(gc, u_channel);
-	    if (id != -1) {
-	      serv_got_chat_in(gc, id, u_nick, 0, u_message, time((time_t)NULL));
-	      
-	    } 
-	    
-	  } else {
-	    /* Nope. Let's treat it as a private message */
-	    
-	    gchar *temp;
-	    temp = NULL;
-	    	    
-	    temp = (gchar *) g_malloc(strlen(u_nick) + 5);
-	    g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick); 
-	    
-	    
-	    /* If I get a message from SeanEgn, and I already have a window
-	     * open for him as @SeanEgn or +SeanEgn, this will keep it in the
-	     * same window.  Unfortunately, if SeanEgn loses his op status
-	     * (a sad thing indeed), the messages will still appear to come from
-	     * @SeanEgn, until that convo is closed.
-	     */
-	    
-	    if (find_conversation(temp)){ 
-	      serv_got_im(gc, temp, u_message, 0, time((time_t)NULL));
-	      g_free(temp);
-	      return; 
-	    }
-	    else {
-	      g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
-	      if (find_conversation(temp)) { 
-		serv_got_im(gc, temp, u_message, 0, time((time_t)NULL));
-		g_free(temp);
-		return; 
-	      }
-	      else {
-		g_free(temp);
-		serv_got_im(gc, u_nick, u_message, 0, time((time_t)NULL));
+			is_closing = !is_closing;
+		}
+
+		is_closing = FALSE;
+		while (strchr(u_message, '\037')) {	/* \037 = ^_ */
+			gchar *current;
+			gchar *temp, *free_here;
+
+
+			temp = g_strdup(strchr(u_message, '\037'));
+			free_here = temp;
+			temp++;
+
+			current = strchr(u_message, '\037');
+			*current = '<';
+			current++;
+			if (is_closing) {
+				*current = '/';
+				current++;
+			}
+			*current = 'u';
+			current++;
+			*current = '>';
+			current++;
+
+
+			while (*temp != '\0') {
+				*current = *temp;
+				current++;
+				temp++;
+			}
+			*current = '\0';
+			g_free(free_here);
+			is_closing = !is_closing;
+
+		}
+
+		while (strchr(u_message, '\003')) {	/* \003 = ^C */
+
+			/* This is color formatting.  IRC uses its own weird little system
+			 * that we must translate to HTML. */
+
+
+			/* The format is something like this:
+			 *         ^C5 or ^C5,3
+			 * The number before the comma is the foreground color, after is the
+			 * background color.  Either number can be 1 or two digits.
+			 */
+
+			gchar *current;
+			gchar *temp, *free_here;
+			gchar *font_tag, *body_tag;
+			int fg_color, bg_color;
+
+			temp = g_strdup(strchr(u_message, '\003'));
+			free_here = temp;
+			temp++;
+
+			fg_color = bg_color = -1;
+			body_tag = font_tag = "";
+
+			/* Parsing the color information: */
+			do {
+				if (!isdigit(*temp))
+					break;	/* This translates to </font> */
+				fg_color = (int)(*temp - 48);
+				temp++;
+				if (isdigit(*temp)) {
+					fg_color = (fg_color * 10) + (int)(*temp - 48);
+					temp++;
+				}
+				if (*temp != ',')
+					break;
+				temp++;
+				if (!isdigit(*temp))
+					break;	/* This translates to </font> */
+				bg_color = (int)(*temp - 48);
+				temp++;
+				if (isdigit(*temp)) {
+					bg_color = (bg_color * 10) + (int)(*temp - 48);
+					temp++;
+				}
+			} while (FALSE);
+
+			if (fg_color > 15)
+				fg_color = fg_color % 16;
+			if (bg_color > 15)
+				bg_color = bg_color % 16;
+
+			switch (fg_color) {
+			case -1:
+				font_tag = "</font></body>";
+				break;
+			case 0:	/* WHITE */
+				font_tag = "<font color=\"#ffffff\">";
+				/* If no background color is specified, we're going to make it black anyway.
+				 * That's probably what the sender anticipated the background color to be. 
+				 * White on white would be illegible.
+				 */
+				if (bg_color == -1) {
+					body_tag = "<body bgcolor=\"#000000\">";
+				}
+				break;
+			case 1:	/* BLACK */
+				font_tag = "<font color=\"#000000\">";
+				break;
+			case 2:	/* NAVY BLUE */
+				font_tag = "<font color=\"#000066\">";
+				break;
+			case 3:	/* GREEN */
+				font_tag = "<font color=\"#006600\">";
+				break;
+			case 4:	/* RED */
+				font_tag = "<font color=\"#ff0000\">";
+				break;
+			case 5:	/* MAROON */
+				font_tag = "<font color=\"#660000\">";
+				break;
+			case 6:	/* PURPLE */
+				font_tag = "<font color=\"#660066\">";
+				break;
+			case 7:	/* DISGUSTING PUKE COLOR */
+				font_tag = "<font color=\"#666600\">";
+				break;
+			case 8:	/* YELLOW */
+				font_tag = "<font color=\"#cccc00\">";
+				break;
+			case 9:	/* LIGHT GREEN */
+				font_tag = "<font color=\"#33cc33\">";
+				break;
+			case 10:	/* TEAL */
+				font_tag = "<font color=\"#00acac\">";
+				break;
+			case 11:	/* CYAN */
+				font_tag = "<font color=\"#00ccac\">";
+				break;
+			case 12:	/* BLUE */
+				font_tag = "<font color=\"#0000ff\">";
+				break;
+			case 13:	/* PINK */
+				font_tag = "<font color=\"#cc00cc\">";
+				break;
+			case 14:	/* GREY */
+				font_tag = "<font color=\"#666666\">";
+				break;
+			case 15:	/* SILVER */
+				font_tag = "<font color=\"#00ccac\">";
+				break;
+			}
+
+			switch (bg_color) {
+			case 0:	/* WHITE */
+				body_tag = "<body bgcolor=\"#ffffff\">";
+				break;
+			case 1:	/* BLACK */
+				body_tag = "<body bgcolor=\"#000000\">";
+				break;
+			case 2:	/* NAVY BLUE */
+				body_tag = "<body bgcolor=\"#000066\">";
+				break;
+			case 3:	/* GREEN */
+				body_tag = "<body bgcolor=\"#006600\">";
+				break;
+			case 4:	/* RED */
+				body_tag = "<body bgcolor=\"#ff0000\">";
+				break;
+			case 5:	/* MAROON */
+				body_tag = "<body bgcolor=\"#660000\">";
+				break;
+			case 6:	/* PURPLE */
+				body_tag = "<body bgcolor=\"#660066\">";
+				break;
+			case 7:	/* DISGUSTING PUKE COLOR */
+				body_tag = "<body bgcolor=\"#666600\">";
+				break;
+			case 8:	/* YELLOW */
+				body_tag = "<body bgcolor=\"#cccc00\">";
+				break;
+			case 9:	/* LIGHT GREEN */
+				body_tag = "<body bgcolor=\"#33cc33\">";
+				break;
+			case 10:	/* TEAL */
+				body_tag = "<body bgcolor=\"#00acac\">";
+				break;
+			case 11:	/* CYAN */
+				body_tag = "<body bgcolor=\"#00ccac\">";
+				break;
+			case 12:	/* BLUE */
+				body_tag = "<body bgcolor=\"#0000ff\">";
+				break;
+			case 13:	/* PINK */
+				body_tag = "<body bgcolor=\"#cc00cc\">";
+				break;
+			case 14:	/* GREY */
+				body_tag = "<body bgcolor=\"#666666\">";
+				break;
+			case 15:	/* SILVER */
+				body_tag = "<body bgcolor=\"#00ccac\">";
+				break;
+			}
+
+			current = strchr(u_message, '\003');
+
+			while (*body_tag != '\0') {
+				*current = *body_tag;
+				current++;
+				body_tag++;
+			}
+
+			while (*font_tag != '\0') {
+				*current = *font_tag;
+				current++;
+				font_tag++;
+			}
+
+			while (*temp != '\0') {
+				*current = *temp;
+				current++;
+				temp++;
+			}
+			*current = '\0';
+			g_free(free_here);
+			is_closing = !is_closing;
+
+		}
+
+		while (strchr(u_message, '\017')) {	/* \017 = ^O */
+			gchar *current;
+			gchar *temp, *free_here;
+
+
+			temp = g_strdup(strchr(u_message, '\017'));
+			free_here = temp;
+			temp++;
+
+			current = strchr(u_message, '\017');
+			*current = '<';
+			current++;
+			*current = '/';
+			current++;
+			*current = 'b';
+			current++;
+			*current = '>';
+			current++;
+			*current = '<';
+			current++;
+			*current = '/';
+			current++;
+			*current = 'u';
+			current++;
+			*current = '>';
+			current++;
+
+			while (*temp != '\0') {
+				*current = *temp;
+				current++;
+				temp++;
+			}
+			*current = '\0';
+			g_free(free_here);
+		}
+
+		/* Let's check to see if we have a channel on our hands */
+		if (u_channel[0] == '#') {
+			/* Yup.  We have a channel */
+			int id;
+
+			id = find_id_by_name(gc, u_channel);
+			if (id != -1) {
+				serv_got_chat_in(gc, id, u_nick, 0, u_message, time((time_t) NULL));
+
+			}
+
+		} else {
+			/* Nope. Let's treat it as a private message */
+
+			gchar *temp;
+			temp = NULL;
+
+			temp = (gchar *) g_malloc(strlen(u_nick) + 5);
+			g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
+
+
+			/* If I get a message from SeanEgn, and I already have a window
+			 * open for him as @SeanEgn or +SeanEgn, this will keep it in the
+			 * same window.  Unfortunately, if SeanEgn loses his op status
+			 * (a sad thing indeed), the messages will still appear to come from
+			 * @SeanEgn, until that convo is closed.
+			 */
+
+			if (find_conversation(temp)) {
+				serv_got_im(gc, temp, u_message, 0, time((time_t) NULL));
+				g_free(temp);
+				return;
+			} else {
+				g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
+				if (find_conversation(temp)) {
+					serv_got_im(gc, temp, u_message, 0, time((time_t) NULL));
+					g_free(temp);
+					return;
+				} else {
+					g_free(temp);
+					serv_got_im(gc, u_nick, u_message, 0, time((time_t) NULL));
+					return;
+				}
+			}
+		}
+
 		return;
-	      }
-	    }
-	  }
- 
-	  return;
 	}
-	
+
 	/* Let's parse PING requests so that we wont get booted for inactivity */
 
 	if (strncmp(buf, "PING :", 6) == 0) {
@@ -1896,8 +1894,8 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 	if (idata->fd != source)
 		idata->fd = source;
 
- 	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (%s)\n",
- 		   gc->username, g_get_user_name(), gc->user->proto_opt[USEROPT_SERV], WEBSITE);
+	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (%s)\n",
+		   gc->username, g_get_user_name(), gc->user->proto_opt[USEROPT_SERV], WEBSITE);
 
 	if (write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -1916,7 +1914,7 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 		do_import(NULL, gc);
 
 	/* we don't call this now because otherwise some IRC servers might not like us */
-	idata->timer = gtk_timeout_add(20000, (GtkFunction)irc_request_buddy_update, gc);
+	idata->timer = gtk_timeout_add(20000, (GtkFunction) irc_request_buddy_update, gc);
 }
 
 static void irc_login(struct aim_user *user)
@@ -1930,8 +1928,9 @@ static void irc_login(struct aim_user *user)
 	set_login_progress(gc, 2, buf);
 
 	idata->fd = proxy_connect(user->proto_opt[USEROPT_SERV],
-			user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : 6667,
-			irc_login_callback, gc);
+				  user->proto_opt[USEROPT_PORT][0] ? atoi(user->
+									  proto_opt[USEROPT_PORT]) :
+				  6667, irc_login_callback, gc);
 	if (!user->gc || (idata->fd < 0)) {
 		hide_login_progress(gc, "Unable to create socket");
 		signoff(gc);
@@ -1947,14 +1946,14 @@ static void irc_print_option(GtkEntry *entry, struct aim_user *user)
 
 	if (entrynum == USEROPT_SERV) {
 		g_snprintf(user->proto_opt[USEROPT_SERV],
-			sizeof(user->proto_opt[USEROPT_SERV]), "%s", gtk_entry_get_text(entry));
+			   sizeof(user->proto_opt[USEROPT_SERV]), "%s", gtk_entry_get_text(entry));
 	} else if (entrynum == USEROPT_PORT) {
 		g_snprintf(user->proto_opt[USEROPT_PORT],
-			sizeof(user->proto_opt[USEROPT_PORT]), "%s", gtk_entry_get_text(entry));
+			   sizeof(user->proto_opt[USEROPT_PORT]), "%s", gtk_entry_get_text(entry));
 	}
 }
 
-static void irc_user_opts(GtkWidget * book, struct aim_user *user)
+static void irc_user_opts(GtkWidget *book, struct aim_user *user)
 {
 	/* so here, we create the new notebook page */
 	GtkWidget *vbox;
@@ -2012,13 +2011,14 @@ static char **irc_list_icon(int uc)
 }
 
 /* Send out a ping request to the specified user */
-static void irc_send_ping(GtkObject * w, char *who)
+static void irc_send_ping(GtkObject *w, char *who)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	char buf[BUF_LEN];
 
-	g_snprintf(buf, BUF_LEN, "PRIVMSG %s :%cPING %ld%c\n", who, '\001', time((time_t *)NULL), '\001');
+	g_snprintf(buf, BUF_LEN, "PRIVMSG %s :%cPING %ld%c\n", who, '\001', time((time_t *) NULL),
+		   '\001');
 
 	write(idata->fd, buf, strlen(buf));
 }
@@ -2029,20 +2029,20 @@ static void irc_get_info(struct gaim_connection *gc, char *who)
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	char buf[BUF_LEN];
 
-	if (((who[0] == '@') || (who[0] == '+')) && (strlen(who)>1))
-		g_snprintf(buf, BUF_LEN, "WHOIS %s\n", who+1);
+	if (((who[0] == '@') || (who[0] == '+')) && (strlen(who) > 1))
+		g_snprintf(buf, BUF_LEN, "WHOIS %s\n", who + 1);
 	else
 		g_snprintf(buf, BUF_LEN, "WHOIS %s\n", who);
 	write(idata->fd, buf, strlen(buf));
 }
 
-static void irc_send_whois(GtkObject * w, char *who)
+static void irc_send_whois(GtkObject *w, char *who)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 	irc_get_info(gc, who);
 }
 
-static void irc_buddy_menu(GtkWidget * menu, struct gaim_connection *gc, char *who)
+static void irc_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
 {
 	GtkWidget *button;
 
@@ -2066,9 +2066,9 @@ static void irc_set_away(struct gaim_connection *gc, char *state, char *msg)
 	char buf[BUF_LEN];
 
 	if (msg)
-		g_snprintf(buf, BUF_LEN, "AWAY :%s\n", msg);		
+		g_snprintf(buf, BUF_LEN, "AWAY :%s\n", msg);
 	else
-		g_snprintf(buf, BUF_LEN, "AWAY\n");		
+		g_snprintf(buf, BUF_LEN, "AWAY\n");
 
 	write(idata->fd, buf, strlen(buf));
 }
@@ -2123,7 +2123,7 @@ static void irc_init(struct prpl *ret)
 	my_protocol = ret;
 }
 
-char *gaim_plugin_init(GModule * handle)
+char *gaim_plugin_init(GModule *handle)
 {
 	load_protocol(irc_init, sizeof(struct prpl));
 	return NULL;
