@@ -282,7 +282,8 @@ static void yahoo_close(struct gaim_connection *gc) {
 	if (gc->inpa)
 		gdk_input_remove(gc->inpa);
 	gc->inpa = -1;
-	yahoo_cmd_logoff(yd->ctxt);
+	if (yd->ctxt)
+		yahoo_cmd_logoff(yd->ctxt);
 	g_hash_table_foreach_remove(yd->hash, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->hash);
 	g_free(yd);
