@@ -944,7 +944,7 @@ static GList *groups_tree(struct gaim_connection *gc)
 			g = (struct group *)grp1->data;
 			tmp2 = g->name;
 			tmp = g_list_append(tmp, tmp2);
-			grp1 = g_slist_next(grp);
+			grp1 = g_slist_next(grp1);
 		}
 		g_slist_free(grp);
 	}
