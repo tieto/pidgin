@@ -16,6 +16,13 @@
 	authors will want to take note of the fact that the plugin api version
 	changed. A nice solid release for you all :-)
 
+	Ethan:  Once  again  I  thought  about doing some things and committed
+	things that other people did.  This development model is  awesome.   I
+	helped  Mark  refactor  some  stuff  and our collective code ownership
+	helped us utilize a coherent system metaphor during our pair  program-
+	ming  sessions.   It was extremely extreme.  Look for some hard crypto
+	lovin' from yet another crazy contributor in the near future...
+
 0.76 (04/01/2004):
 	Sean: Yeah, it's been a long time since the last release, and despite
 	what others may tell you, we were just really lazy.  This is pretty
