@@ -1744,7 +1744,7 @@ irc_parse_topic(struct gaim_connection *gc, char *nick,
                 char *word[], char *word_eol[])
 {
 	struct gaim_conversation *c = irc_find_chat(gc, word[3]);
-	char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
+	char *topic = irc_recv_convert(gc, *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4]);
 	char buf[IRC_BUF_LEN];
 
 	if (c) {
@@ -1754,6 +1754,7 @@ irc_parse_topic(struct gaim_connection *gc, char *nick,
 
 		gaim_conversation_write(c, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 	}
+	g_free(topic);
 }
 
 static gboolean
