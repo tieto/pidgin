@@ -17,6 +17,7 @@ plugins/mailchk.c
 plugins/notify.c
 plugins/perl/perl.c
 plugins/raw.c
+plugins/relnot.c
 plugins/signals-test.c
 plugins/simple.c
 plugins/spellchk.c

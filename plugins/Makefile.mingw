@@ -115,6 +115,7 @@ plugins: \
 		history.dll \
 	 	iconaway.dll \
 		idle.dll \
+		relnot.dll \
 		spellchk.dll \
 		statenotify.dll \
 		timestamp.dll

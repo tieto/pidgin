@@ -17,6 +17,7 @@ history_la_LDFLAGS     = -module -avoid-version
 iconaway_la_LDFLAGS    = -module -avoid-version
 idle_la_LDFLAGS        = -module -avoid-version
 notify_la_LDFLAGS      = -module -avoid-version
+relnot_la_LDFLAGS      = -module -avoid-version
 spellchk_la_LDFLAGS    = -module -avoid-version
 statenotify_la_LDFLAGS = -module -avoid-version
 timestamp_la_LDFLAGS   = -module -avoid-version
@@ -29,6 +30,7 @@ plugin_LTLIBRARIES = \
 	iconaway.la    \
 	idle.la        \
 	notify.la      \
+	relnot.la      \
 	spellchk.la    \
 	statenotify.la \
 	timestamp.la
@@ -38,6 +40,7 @@ history_la_SOURCES     = history.c
 iconaway_la_SOURCES    = iconaway.c
 idle_la_SOURCES        = idle.c
 notify_la_SOURCES      = notify.c
+relnot_la_SOURCES      = relnot.c
 spellchk_la_SOURCES    = spellchk.c
 statenotify_la_SOURCES = statenotify.c
 timestamp_la_SOURCES   = timestamp.c
