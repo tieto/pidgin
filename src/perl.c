@@ -510,7 +510,7 @@ XS (XS_GAIM_print_to_conv)
 	c = find_conversation(nick);
 	if (!c)
 		c = new_conversation(nick);
-	write_to_conv(c, what, WFLAG_SEND, NULL);
+	write_to_conv(c, what, WFLAG_SEND, NULL, time((time_t)NULL));
 	serv_send_im(c->gc, nick, what, atoi(isauto));
 }
 

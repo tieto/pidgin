@@ -957,7 +957,7 @@ static void oscar_directim_callback(gpointer data, gint source, GdkInputConditio
 
 	if (!(dim->cnv = find_conversation(dim->name))) dim->cnv = new_conversation(dim->name);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
-	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
+	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 
 	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
 			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
@@ -1317,7 +1317,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		va_end(ap);
 
 		g_snprintf(tmp, BUF_LONG, "%s", msg);
-		serv_got_im(gc, userinfo->sn, tmp, icbmflags & AIM_IMFLAGS_AWAY);
+		serv_got_im(gc, userinfo->sn, tmp, icbmflags & AIM_IMFLAGS_AWAY, time((time_t)NULL));
 		g_free(tmp);
 	} else if (channel == 2) {
 		struct aim_userinfo_s *userinfo;
@@ -1719,7 +1719,7 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 
 	tmp = g_malloc(BUF_LONG);
 	g_snprintf(tmp, BUF_LONG, "%s", msg);
-	serv_got_chat_in(gc, b->id, info->sn, 0, tmp);
+	serv_got_chat_in(gc, b->id, info->sn, 0, tmp, time((time_t)NULL));
 	g_free(tmp);
 
 	return 1;
@@ -2224,7 +2224,7 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, dim->conn);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), priv->sn);
-	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
+	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
 				gaim_directim_incoming, 0);
@@ -2254,7 +2254,7 @@ static int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_
 
 	debug_printf("Got DirectIM message from %s\n", priv->sn);
 
-	serv_got_im(gc, priv->sn, msg, 0);
+	serv_got_im(gc, priv->sn, msg, 0, time((time_t)NULL));
 
 	return 1;
 }
@@ -2282,7 +2282,7 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
 	if (dim->cnv)
-		write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
+		write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 
 	aim_conn_kill(sess, &conn);
 

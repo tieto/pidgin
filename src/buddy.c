@@ -1729,7 +1729,7 @@ void do_pounce(char *name, int when)
 						g_slist_index(connections, u->gc));
 				update_buttons_by_protocol(c);
 
-                        	write_to_conv(c, b->message, WFLAG_SEND, NULL);
+                        	write_to_conv(c, b->message, WFLAG_SEND, NULL, time((time_t)NULL));
                                 serv_send_im(u->gc, name, b->message, 0);
 			}
 			if (b->options & OPT_POUNCE_COMMAND)
@@ -2275,7 +2275,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				if (c) {
 					char tmp[1024];
 					g_snprintf(tmp, sizeof(tmp), _("%s logged in."), b->name);
-					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
+					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 				}
 			}
 			bs->sound = 2;
@@ -2327,7 +2327,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			if (c) {
 				char tmp[1024];
 				g_snprintf(tmp, sizeof(tmp), _("%s logged out."), b->name);
-				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
+				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 			}
 		}
 

@@ -165,7 +165,7 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 
 	g_free(tmp);
 
-	serv_got_im(gc, nick, buf, 0);
+	serv_got_im(gc, nick, buf, 0, tm ? tm : time((time_t)NULL));
 
 	return 1;
 }

@@ -828,7 +828,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 	if (!c->is_chat) {
 		buf3 = g_strdup(buf);
-		write_to_conv(c, buf3, WFLAG_SEND, NULL);
+		write_to_conv(c, buf3, WFLAG_SEND, NULL, time((time_t)NULL));
 		g_free(buf3);
 
 		serv_send_im(c->gc, c->name, buf, 0);
@@ -1266,7 +1266,7 @@ void check_everything(GtkWidget *entry)
 
 /* this is going to be interesting since the conversation could either be a
  * normal IM conversation or a chat window. but hopefully it won't matter */
-void write_to_conv(struct conversation *c, char *what, int flags, char *who)
+void write_to_conv(struct conversation *c, char *what, int flags, char *who, time_t mtime)
 {
 	char buf[BUF_LONG];
 	char *str;
@@ -1278,6 +1278,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	int gtk_font_options = 0;
 	GString *logstr;
 	char buf2[BUF_LONG];
+	char mdate[64];
+
+	strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
 
 	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
 
@@ -1313,13 +1316,14 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			who = b->show;
 	}
 
+	
 	if (flags & WFLAG_SYSTEM) {
 		if (general_options & OPT_DISP_SHOW_TIME)
-			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>", date(), what);
+			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>", mdate, what);
 		else
-			g_snprintf(buf, BUF_LONG, "<B>%s</B>", date(), what);
+			g_snprintf(buf, BUF_LONG, "<B>%s</B>", mdate, what);
 		g_snprintf(buf2, sizeof(buf2), "<FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B><BR>",
-			date(), what);
+			mdate, what);
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, 0);
 
@@ -1399,11 +1403,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 		if (general_options & OPT_DISP_SHOW_TIME)
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\">(%s) </FONT>"
-					"<B>%s</B></FONT> ", colour, date(), str);
+					"<B>%s</B></FONT> ", colour, mdate, str);
 		else
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s</B></FONT> ", colour, str);
 		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\"><!--(%s) --></FONT>"
-				"<B>%s</B></FONT> ", colour, date(), str);
+				"<B>%s</B></FONT> ", colour, mdate, str);
 
 		g_free(str);
 

@@ -311,7 +311,7 @@ void serv_chat_send(struct gaim_connection *g, int id, char *message)
 
 
 
-void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away)
+void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away, time_t mtime)
 {
 	struct conversation *cnv;
 	int new_conv = 0;
@@ -370,7 +370,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		if (cnv != NULL) {
 			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
-			write_to_conv(cnv, message, away | WFLAG_RECV, NULL);
+			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 		}
 
 	} else {
@@ -388,7 +388,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
 		}
-		write_to_conv(cnv, message, away | WFLAG_RECV, NULL);
+		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 	}
 
 
@@ -414,7 +414,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
 
 		if (cnv != NULL)
-			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL);
+			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL, mtime);
 		g_free(tmpmsg);
 	}
 }
@@ -723,7 +723,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 	g_free(b);
 }
 
-void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper, char *message)
+void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper, char *message, time_t mtime)
 {
 	int w;
 	GSList *bcs = g->buddy_chats;
@@ -752,7 +752,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	else
 		w = 0;
 
-	chat_write(b, who, w, message);
+	chat_write(b, who, w, message, mtime);
 }
 
 void send_keepalive(gpointer d)

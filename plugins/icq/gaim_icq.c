@@ -125,7 +125,8 @@ static void icq_msg_incoming(ICQLINK *link, unsigned long uin, unsigned char hou
 	char buf[256], *tmp = g_malloc(BUF_LONG);
 	g_snprintf(tmp, BUF_LONG, "%s", data);
 	g_snprintf(buf, sizeof buf, "%lu", uin);
-	serv_got_im(gc, buf, tmp, 0);
+	/* FIXME EWIC */
+	serv_got_im(gc, buf, tmp, 0, time((time_t)NULL));
 	g_free(tmp);
 }
 
@@ -180,7 +181,8 @@ static void icq_url_incoming(struct icq_link *link, unsigned long uin, unsigned 
 	char *msg = g_malloc(BUF_LONG), buf[256];
 	g_snprintf(msg, BUF_LONG, "<A HREF=\"%s\">%s</A>", url, descr);
 	g_snprintf(buf, 256, "%lu", uin);
-	serv_got_im(gc, buf, msg, 0);
+	/* FIXME EWIC */
+	serv_got_im(gc, buf, msg, 0, time((time_t)NULL));
 	g_free(msg);
 }
 
@@ -219,7 +221,8 @@ static void icq_web_pager(struct icq_link *link, unsigned char hour, unsigned ch
 	char *who = g_strdup_printf("ICQ Web Pager: %s (%s)", nick, email);
 	char *what = g_malloc(BUF_LONG);
 	g_snprintf(what, BUF_LONG, "%s", msg);
-	serv_got_im(gc, who, what, 0);
+	/* FIXME EWIC */
+	serv_got_im(gc, who, what, 0, time((time_t)NULL));
 	g_free(who);
 	g_free(what);
 }
@@ -231,7 +234,8 @@ static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned
 	char *who = g_strdup_printf("ICQ Mail Express: %s (%s)", nick, email);
 	char *what = g_malloc(BUF_LONG);
 	g_snprintf(what, BUF_LONG, "%s", msg);
-	serv_got_im(gc, who, what, 0);
+	/* FIXME EWIC */
+	serv_got_im(gc, who, what, 0, time((time_t)NULL));
 	g_free(who);
 	g_free(what);
 }

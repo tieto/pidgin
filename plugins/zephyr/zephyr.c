@@ -302,7 +302,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				len = MAX(BUF_LONG, strlen(buf2));
 				buf = g_malloc(len + 1);
 				g_snprintf(buf, len + 1, "%s", buf2);
-				serv_got_im(zgc, notice.z_sender, buf, 0);
+				serv_got_im(zgc, notice.z_sender, buf, 0, time((time_t)NULL));
 				g_free(buf);
 			}
 			g_free(buf2);

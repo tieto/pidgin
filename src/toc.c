@@ -411,7 +411,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		a = (away && (*away == 'T')) ? 1 : 0;
 
-		serv_got_im(gc, c, message, a);
+		serv_got_im(gc, c, message, a, time((time_t)NULL));
 	} else if (!strcasecmp(c, "UPDATE_BUDDY")) {
 		char *l, *uc;
 		int logged, evil, idle, type = 0;
@@ -484,7 +484,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		w = (whisper && (*whisper == 'T')) ? 1 : 0;
 
-		serv_got_chat_in(gc, id, who, w, m);
+		serv_got_chat_in(gc, id, who, w, m, time((time_t)NULL));
 	} else if (!strcasecmp(c, "CHAT_UPDATE_BUDDY")) {
 		int id;
 		char *in, *buddy;

@@ -32,9 +32,6 @@ THE CORE:
 		all of the custom messages, e.g. in Jabber it'd return "Away/" as one
 		of the states, and you'd see "Away" with a menu of all the away
 		messages you have.
-	Modify serv_got_im/serv_got_chat_in to take a time_t timestamp argument, as
-		well as write_to_conv to display the correct timestamp. Needed for
-		Yahoo, ICQ, Jabber, possibly others.
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies

@@ -509,7 +509,8 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			}
 
 			g_snprintf(m, sizeof(m), "%s", msg);
-			serv_got_im(GJ_GC(j), from, m, 0);
+			/* FIXME EWIC */
+			serv_got_im(GJ_GC(j), from, m, 0, time((time_t)NULL));
 
 			if (!same)
 				g_free(from);
@@ -562,12 +563,13 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 					msg = xmlnode_get_data(y);
 					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
 							p->from->resource, msg);
-					write_to_conv(b, buf, WFLAG_SYSTEM, NULL);
+					write_to_conv(b, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 				}
 			} else if (msg) {
 				char buf[8192];
 				g_snprintf(buf, sizeof(buf), "%s", msg);
-				serv_got_chat_in(GJ_GC(j), b->id, p->from->resource, 0, buf);
+				/* FIXME EWIC */
+				serv_got_chat_in(GJ_GC(j), b->id, p->from->resource, 0, buf, time((time_t)NULL));
 			}
 		/*
 		} else if (msg) {
@@ -702,7 +704,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 					char *msg = xmlnode_get_data(y);
 					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
 							p->from->resource, msg);
-					write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL);
+					write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 				}
 			}
 		}

@@ -570,7 +570,7 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 
 	if (command == 0xCD) {
 		res = g_strsplit(buf, " ", 1);
-		serv_got_im(gc, res[0], res[1], 0);
+		serv_got_im(gc, res[0], res[1], 0, time((time_t)NULL));
 		g_strfreev(res);
 		free(buf);
 		return;
@@ -643,7 +643,7 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 		channel = find_channel_by_name(gc, res[0]);
 
 		if (channel)
-			serv_got_chat_in(gc, channel->id, res[1], 0, res[2]);
+			serv_got_chat_in(gc, channel->id, res[1], 0, res[2], time((time_t)NULL));
 
 		g_strfreev(res);
 		free(buf);

@@ -345,7 +345,7 @@ gboolean meify(char *message)
 		return FALSE;
 }
 
-void chat_write(struct conversation *b, char *who, int flag, char *message)
+void chat_write(struct conversation *b, char *who, int flag, char *message, time_t mtime)
 {
 	GList *ignore = b->ignored;
 	char *str;
@@ -377,7 +377,7 @@ void chat_write(struct conversation *b, char *who, int flag, char *message)
 		g_free(str);
 	}
 
-	write_to_conv(b, message, flag, who);
+	write_to_conv(b, message, flag, who, mtime);
 }
 
 
@@ -411,7 +411,7 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 
 	g_snprintf(buf2, sizeof(buf2), "%s->%s", b->gc->username, who);
 
-	chat_write(b, buf2, WFLAG_WHISPER, buf);
+	chat_write(b, buf2, WFLAG_WHISPER, buf, time((time_t)NULL));
 
 	gtk_widget_grab_focus(GTK_WIDGET(b->entry));
 
@@ -542,7 +542,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), name);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 	}
 }
 
@@ -605,7 +605,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s is now known as %s"), old, new);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 	}
 }
 
@@ -648,7 +648,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s left the room."), buddy);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 	}
 }
 

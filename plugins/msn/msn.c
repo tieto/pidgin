@@ -523,7 +523,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		 * of course, the header. */
 
 		g_snprintf(rahc, sizeof(rahc), "%s", strstr(msgdata, "\r\n\r\n") + 4);
-		serv_got_im(gc, res[1], rahc, 0);
+		serv_got_im(gc, res[1], rahc, 0, time((time_t)NULL));
 
 		g_strfreev(res);
 		g_free(msgdata);

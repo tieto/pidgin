@@ -547,7 +547,7 @@ extern void show_about(GtkWidget *, void *);
 
 /* Functions in buddy_chat.c */
 extern void join_chat();
-extern void chat_write(struct conversation *, char *, int, char *);
+extern void chat_write(struct conversation *, char *, int, char *, time_t);
 extern void add_chat_buddy(struct conversation *, char *);
 extern void remove_chat_buddy(struct conversation *, char *);
 extern void show_new_buddy_chat(struct conversation *);
@@ -636,17 +636,17 @@ extern void update_keepalive(struct gaim_connection *, gboolean);
 
 /* output from serv */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
-extern void serv_got_im(struct gaim_connection *, char *, char *, int);
+extern void serv_got_im(struct gaim_connection *, char *, char *, int, time_t);
 extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, char *);
 extern void serv_got_joined_chat(struct gaim_connection *, int, char *);
 extern void serv_got_chat_left(struct gaim_connection *, int);
-extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *);
+extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *, time_t);
 
 /* Functions in conversation.c */
 extern void update_convo_add_button(struct conversation *);
 extern void write_html_with_smileys(GtkWidget *, GtkWidget *, char *);
-extern void write_to_conv(struct conversation *, char *, int, char *);
+extern void write_to_conv(struct conversation *, char *, int, char *, time_t);
 extern void show_conv(struct conversation *);
 extern struct conversation *new_conversation(char *);
 extern struct conversation *find_conversation(char *);

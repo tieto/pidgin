@@ -461,7 +461,7 @@ I THOUGHT THIS WOULD WORK, BUT I WAS WRONG.  WOULD SOMEONE KINDLY FIX IT?
 	
 	/* Since AIM expects us to receive the message we send, we gotta fake it */
 	if (is_command==FALSE)
-	  serv_got_chat_in(gc, id, gc->username, 0, message);
+	  serv_got_chat_in(gc, id, gc->username, 0, message, time((time_t)NULL));
 	
 	g_free(buf);
 	
@@ -586,7 +586,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		res = g_strsplit(buf, " ", 5);
 
 		if (!strcmp(res[1], "301"))
-			serv_got_im(gc, res[3], res[4] + 1, 1);
+			serv_got_im(gc, res[3], res[4] + 1, 1, time((time_t)NULL));
 
 		g_strfreev(res);
 	}
@@ -1100,11 +1100,11 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 			id = find_id_by_name(gc, u_channel);
 			if (id != -1) {
-				serv_got_chat_in(gc, id, u_nick, 0, u_message);
+				serv_got_chat_in(gc, id, u_nick, 0, u_message, time((time_t)NULL));
 			}
 		} else {
 			/* Nope. Let's treat it as a private message */
-			serv_got_im(gc, u_nick, u_message, 0);
+			serv_got_im(gc, u_nick, u_message, 0, time((time_t)NULL));
 		}
 
 		return;
