@@ -95,14 +95,6 @@ MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversations  PREFIX = gaim_conver
 PROTOTYPES: ENABLE
 
 Gaim::Conversation
-find(name)
-	const char *name
-CODE:
-	RETVAL = gaim_find_conversation(name);
-OUTPUT:
-	RETVAL
-
-Gaim::Conversation
 find_with_account(name, account)
 	const char *name
 	Gaim::Account account
