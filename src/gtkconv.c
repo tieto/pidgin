@@ -141,7 +141,6 @@ static void update_typing_icon(GaimConversation *conv);
 static gboolean update_send_as_selection(GaimConvWindow *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 static void save_convo(GtkWidget *save, GaimConversation *c);
-static void update_tab_icon(GaimConversation *conv);
 
 /**************************************************************************
  * Callbacks
@@ -2114,7 +2113,11 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	return TRUE;
 }
 
-static GdkPixbuf *get_tab_icon(GaimConversation *conv)
+/**************************************************************************
+ * A bunch of buddy icon functions
+ **************************************************************************/
+static GdkPixbuf *
+get_tab_icon(GaimConversation *conv)
 {
 	GaimAccount *account = gaim_conversation_get_account(conv);
 	const char *name = gaim_conversation_get_name(conv);
@@ -2140,6 +2143,203 @@ static GdkPixbuf *get_tab_icon(GaimConversation *conv)
 	}
 	return status;
 }
+
+static void
+update_tab_icon(GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+	GaimConvWindow *win = gaim_conversation_get_window(conv);
+	GaimAccount *account;
+	const char *name;
+	GdkPixbuf *status = NULL;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	name = gaim_conversation_get_name(conv);
+	account = gaim_conversation_get_account(conv);
+
+	status = get_tab_icon(conv);
+
+	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
+
+	if (gaim_conv_window_get_active_conversation(win) == conv && gtkconv->u.im->anim == NULL)
+		gtk_window_set_icon(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window), status);
+
+	if(status)
+		g_object_unref(status);
+}
+
+static gboolean
+redraw_icon(gpointer data)
+{
+	GaimConversation *conv = (GaimConversation *)data;
+	GaimGtkConversation *gtkconv;
+
+	GdkPixbuf *buf;
+	GdkPixbuf *scale;
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+	gint delay;
+
+	if (!g_list_find(gaim_get_ims(), conv)) {
+		gaim_debug(GAIM_DEBUG_WARNING, "gtkconv",
+				   "Conversation not found in redraw_icon. I think this "
+				   "is a bug.\n");
+		return FALSE;
+	}
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
+	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
+
+	scale = gdk_pixbuf_scale_simple(buf,
+		MAX(gdk_pixbuf_get_width(buf) * SCALE(gtkconv->u.im->anim) /
+		    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),
+		MAX(gdk_pixbuf_get_height(buf) * SCALE(gtkconv->u.im->anim) /
+		    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
+		GDK_INTERP_NEAREST);
+
+	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
+	g_object_unref(G_OBJECT(scale));
+	gtk_image_set_from_pixmap(GTK_IMAGE(gtkconv->u.im->icon), pm, bm);
+	g_object_unref(G_OBJECT(pm));
+	gtk_widget_queue_draw(gtkconv->u.im->icon);
+
+	if (bm)
+		g_object_unref(G_OBJECT(bm));
+
+	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
+
+	gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon, conv);
+
+	return FALSE;
+}
+
+static void
+start_anim(GtkObject *obj, GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+	int delay;
+
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
+		return;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim))
+		return;
+
+	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
+
+	if (gtkconv->u.im->anim)
+	    gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon,
+												  conv);
+}
+
+static void
+stop_anim(GtkObject *obj, GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
+		return;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if (gtkconv->u.im->icon_timer != 0)
+		g_source_remove(gtkconv->u.im->icon_timer);
+
+	gtkconv->u.im->icon_timer = 0;
+}
+
+static void
+toggle_icon_animate_cb(GtkWidget *w, GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
+		return;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtkconv->u.im->animate = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
+
+	if (gtkconv->u.im->animate)
+		start_anim(NULL, conv);
+	else
+		stop_anim(NULL, conv);
+}
+static void
+remove_icon(GaimGtkConversation *gtkconv)
+{
+	g_return_if_fail(gtkconv != NULL);
+
+	if (gtkconv->u.im->icon != NULL)
+		gtk_container_remove(GTK_CONTAINER(gtkconv->bbox),
+							 gtkconv->u.im->icon->parent->parent);
+
+	if (gtkconv->u.im->anim != NULL)
+		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
+
+	if (gtkconv->u.im->icon_timer != 0)
+		g_source_remove(gtkconv->u.im->icon_timer);
+
+	if (gtkconv->u.im->iter != NULL)
+		g_object_unref(G_OBJECT(gtkconv->u.im->iter));
+
+	gtkconv->u.im->icon_timer = 0;
+	gtkconv->u.im->icon = NULL;
+	gtkconv->u.im->anim = NULL;
+	gtkconv->u.im->iter = NULL;
+}
+
+static gboolean
+icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+	static GtkWidget *menu = NULL;
+	GtkWidget *button;
+
+	if (e->button != 3 || e->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	/*
+	 * If a menu already exists, destroy it before creating a new one,
+	 * thus freeing-up the memory it occupied.
+	 */
+	if (menu != NULL)
+		gtk_widget_destroy(menu);
+
+	menu = gtk_menu_new();
+
+	if (gtkconv->u.im->anim &&
+		!(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)))
+	{
+		gaim_new_check_item(menu, _("Animate"),
+							G_CALLBACK(toggle_icon_animate_cb), conv,
+							gtkconv->u.im->icon_timer);
+	}
+
+	button = gtk_menu_item_new_with_label(_("Hide Icon"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate",
+							 G_CALLBACK(remove_icon), gtkconv);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
+	gtk_widget_show(button);
+
+	gaim_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
+							 G_CALLBACK(gaim_gtk_save_icon_dialog), conv,
+							 0, 0, NULL);
+
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
+
+	return TRUE;
+}
+/**************************************************************************
+ * End of the bunch of buddy icon functions
+ **************************************************************************/
 
 /*
  * Makes sure all the menu items and all the buttons are hidden/shown and 
@@ -2354,6 +2554,24 @@ gray_stuff_out(GaimConversation *conv)
 }
 
 static void
+before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
+				gpointer user_data)
+{
+	GaimConvWindow *win;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+
+	win = (GaimConvWindow *)user_data;
+	conv = gaim_conv_window_get_active_conversation(win);
+
+	g_return_if_fail(conv != NULL);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	stop_anim(NULL, conv);
+}
+
+static void
 switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 				gpointer user_data)
 {
@@ -2386,6 +2604,13 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	gtk_check_menu_item_set_active(
 			GTK_CHECK_MENU_ITEM(gtkwin->menu.show_formatting_toolbar),
 			gtkconv->show_formatting_toolbar);
+
+	/*
+	 * We pause icons when they are not visible.  If this icon should 
+	 * be animated then start it back up again.lll
+	 */
+	if (gtkconv->u.im->animate)
+		start_anim(NULL, conv);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
@@ -4075,6 +4300,8 @@ gaim_gtk_new_window(GaimConvWindow *win)
 
 	gtk_widget_show(gtkwin->notebook);
 
+	g_signal_connect(G_OBJECT(gtkwin->notebook), "switch_page",
+					 G_CALLBACK(before_switch_conv_cb), win);
 	g_signal_connect_after(G_OBJECT(gtkwin->notebook), "switch_page",
 						   G_CALLBACK(switch_conv_cb), win);
 
@@ -5052,32 +5279,6 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 }
 
 static void
-update_tab_icon(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-	GaimConvWindow *win = gaim_conversation_get_window(conv);
-	GaimAccount *account;
-	const char *name;
-	GdkPixbuf *status = NULL;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	name = gaim_conversation_get_name(conv);
-	account = gaim_conversation_get_account(conv);
-
-	status = get_tab_icon(conv);
-
-	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
-
-	if (gaim_conv_window_get_active_conversation(win) == conv && gtkconv->u.im->anim == NULL)
-		gtk_window_set_icon(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window), status);
-
-	if(status)
-		g_object_unref(status);
-
-}
-
-static void
 gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 {
 	GaimConvWindow *win;
@@ -5224,167 +5425,6 @@ gaim_gtk_conversations_get_conv_ui_ops(void)
 /**************************************************************************
  * Public conversation utility functions
  **************************************************************************/
-static void
-remove_icon(GaimGtkConversation *gtkconv)
-{
-	g_return_if_fail(gtkconv != NULL);
-
-	if (gtkconv->u.im->icon != NULL)
-		gtk_container_remove(GTK_CONTAINER(gtkconv->bbox),
-							 gtkconv->u.im->icon->parent->parent);
-
-	if (gtkconv->u.im->anim != NULL)
-		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
-
-	if (gtkconv->u.im->icon_timer != 0)
-		g_source_remove(gtkconv->u.im->icon_timer);
-
-	if (gtkconv->u.im->iter != NULL)
-		g_object_unref(G_OBJECT(gtkconv->u.im->iter));
-
-	gtkconv->u.im->icon_timer = 0;
-	gtkconv->u.im->icon = NULL;
-	gtkconv->u.im->anim = NULL;
-	gtkconv->u.im->iter = NULL;
-}
-
-static gboolean
-redraw_icon(gpointer data)
-{
-	GaimConversation *conv = (GaimConversation *)data;
-	GaimGtkConversation *gtkconv;
-
-	GdkPixbuf *buf;
-	GdkPixbuf *scale;
-	GdkPixmap *pm;
-	GdkBitmap *bm;
-	gint delay;
-
-	if (!g_list_find(gaim_get_ims(), conv)) {
-		gaim_debug(GAIM_DEBUG_WARNING, "gtkconv",
-				   "Conversation not found in redraw_icon. I think this "
-				   "is a bug.\n");
-		return FALSE;
-	}
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
-	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
-
-	scale = gdk_pixbuf_scale_simple(buf,
-		MAX(gdk_pixbuf_get_width(buf) * SCALE(gtkconv->u.im->anim) /
-		    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),
-		MAX(gdk_pixbuf_get_height(buf) * SCALE(gtkconv->u.im->anim) /
-		    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
-		GDK_INTERP_NEAREST);
-
-	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
-	g_object_unref(G_OBJECT(scale));
-	gtk_image_set_from_pixmap(GTK_IMAGE(gtkconv->u.im->icon), pm, bm);
-	g_object_unref(G_OBJECT(pm));
-	gtk_widget_queue_draw(gtkconv->u.im->icon);
-
-	if (bm)
-		g_object_unref(G_OBJECT(bm));
-
-	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
-
-	gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon, conv);
-
-	return FALSE;
-}
-
-static void
-start_anim(GtkObject *obj, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-	int delay;
-
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim))
-		return;
-
-	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
-
-	if (gtkconv->u.im->anim)
-	    gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon,
-												  conv);
-}
-
-static void
-stop_anim(GtkObject *obj, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtkconv->u.im->icon_timer != 0)
-		g_source_remove(gtkconv->u.im->icon_timer);
-
-	gtkconv->u.im->icon_timer = 0;
-}
-
-static void
-toggle_icon_animate_cb(GtkWidget *w, GaimConversation *conv)
-{
-	if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
-		start_anim(NULL, conv);
-	else
-		stop_anim(NULL, conv);
-}
-
-static gboolean
-icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-	static GtkWidget *menu = NULL;
-	GtkWidget *button;
-
-	if (e->button != 3 || e->type != GDK_BUTTON_PRESS)
-		return FALSE;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	/*
-	 * If a menu already exists, destroy it before creating a new one,
-	 * thus freeing-up the memory it occupied.
-	 */
-	if (menu != NULL)
-		gtk_widget_destroy(menu);
-
-	menu = gtk_menu_new();
-
-	if (gtkconv->u.im->anim &&
-		!(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)))
-	{
-		gaim_new_check_item(menu, _("Animate"),
-							G_CALLBACK(toggle_icon_animate_cb), conv,
-							gtkconv->u.im->icon_timer);
-	}
-
-	button = gtk_menu_item_new_with_label(_("Hide Icon"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate",
-							 G_CALLBACK(remove_icon), gtkconv);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-	gtk_widget_show(button);
-
-	gaim_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
-							 G_CALLBACK(gaim_gtk_save_icon_dialog), conv,
-							 0, 0, NULL);
-
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
-
-	return TRUE;
-}
-
 void
 gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 {
@@ -5394,13 +5434,11 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	char filename[256];
 	FILE *file;
 	GError *err = NULL;
-	gboolean animate = TRUE;
 
 	GaimBuddy *buddy;
 
 	const void *data;
 	size_t len;
-	int delay;
 
 	GdkPixbuf *buf;
 
@@ -5417,9 +5455,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (gtkconv->u.im->icon_timer == 0 && gtkconv->u.im->icon != NULL)
-		animate = FALSE;
-
 	remove_icon(gtkconv);
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
@@ -5428,8 +5463,10 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	if (gaim_conversation_get_gc(conv) == NULL)
 		return;
 
-	if(gtkconv->u.im->anim)
+	if (gtkconv->u.im->anim)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
+	else
+		gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
 
 	if((buddy = gaim_find_buddy(gaim_conversation_get_account(conv),
 					gaim_conversation_get_name(conv))) != NULL) {
@@ -5469,7 +5506,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 		g_error_free(err);
 	}
 
-
 	if (!gtkconv->u.im->anim)
 		return;
 
@@ -5478,14 +5514,13 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)) {
 		gtkconv->u.im->iter = NULL;
-		delay = 0;
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 	} else {
 		gtkconv->u.im->iter =
 			gdk_pixbuf_animation_get_iter(gtkconv->u.im->anim, NULL);
 		buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
-		delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter);
-		delay = delay / 10;
+		if (gtkconv->u.im->animate)
+			start_anim(NULL, conv);
 	}
 
 	sf = SCALE(gtkconv->u.im->anim);
@@ -5495,10 +5530,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 				MAX(gdk_pixbuf_get_height(buf) * sf /
 				    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
 				GDK_INTERP_NEAREST);
-
-	if (delay)
-		gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon,
-												  conv);
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	g_object_unref(G_OBJECT(scale));
@@ -5521,11 +5552,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
 
-	if (!animate ||
-		!gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons")) {
-		stop_anim(NULL, conv);
-	}
-
 	g_object_unref(G_OBJECT(pm));
 
 	if (bm)
@@ -5535,35 +5561,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 	if(conv == gaim_conv_window_get_active_conversation(gaim_conversation_get_window(conv)))
 		gtk_window_set_icon(GTK_WINDOW(gtkwin->window), buf);
-}
-
-void
-gaim_gtkconv_update_font_buttons(void)
-{
-	GList *l;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	for (l = gaim_get_ims(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
-
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		if (gtkconv->toolbar.bold != NULL)
-			gtk_widget_set_sensitive(gtkconv->toolbar.bold,
-					!gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"));
-
-		if (gtkconv->toolbar.italic != NULL)
-			gtk_widget_set_sensitive(gtkconv->toolbar.italic,
-					!gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"));
-
-		if (gtkconv->toolbar.underline != NULL)
-			gtk_widget_set_sensitive(gtkconv->toolbar.underline,
-					!gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"));
-	}
 }
 
 void
@@ -5977,17 +5974,25 @@ animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
 							gpointer value, gpointer data)
 {
 	GList *l;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimConvWindow *win;
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
 		return;
 
-	if (value) {
-		for (l = gaim_get_ims(); l != NULL; l = l->next)
-			start_anim(NULL, (GaimConversation *)l->data);
+	/* Set the "animate" flag for each icon based on the new preference */
+	for (l = gaim_get_ims(); l != NULL; l = l->next) {
+		conv = (GaimConversation *)l->data;
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		gtkconv->u.im->animate = (gboolean)value;
 	}
-	else {
-		for (l = gaim_get_ims(); l != NULL; l = l->next)
-			stop_anim(NULL, (GaimConversation *)l->data);
+
+	/* Now either stop or start animation for the active conversation in each window */
+	for (l = gaim_get_windows(); l != NULL; l = l->next) {
+		win = (GaimConvWindow *)l->data;
+		conv = gaim_conv_window_get_active_conversation(win);
+		gaim_gtkconv_update_buddy_icon(conv);
 	}
 }
 
