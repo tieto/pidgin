@@ -2,13 +2,16 @@
 
 #include "connection.h"
 #include "debug.h"
+#include "pluginpref.h"
 #include "prpl.h"
 #include "signals.h"
+
 
 #define AUTORECON_PLUGIN_ID "core-autorecon"
 
 #define INITIAL 8000
 #define MAXTIME 2048000
+
 
 typedef struct {
 	int delay;
@@ -16,6 +19,46 @@ typedef struct {
 } GaimAutoRecon;
 
 static GHashTable *hash = NULL;
+
+
+#define AUTORECON_OPT  "/plugins/core/autorecon"
+#define OPT_HIDE_CONNECTED   AUTORECON_OPT "/hide_connected_error"
+#define OPT_HIDE_CONNECTING  AUTORECON_OPT "/hide_connecting_error"
+
+
+/* storage of original (old_ops) and modified (new_ops) ui ops to allow us to
+   intercept calls to report_disconnect */
+static GaimConnectionUiOps *old_ops = NULL;
+static GaimConnectionUiOps *new_ops = NULL;
+
+
+static void report_disconnect(GaimConnection *gc, const char *text) {
+
+	if(old_ops == NULL || old_ops->report_disconnect == NULL) {
+		/* there's nothing to call through to, so don't bother
+		   checking prefs */
+		return;
+
+	} else if(gc->state == GAIM_CONNECTED
+			&& gaim_prefs_get_bool(OPT_HIDE_CONNECTED)) {
+		/* this is a connected error, and we're hiding those */
+		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
+				"hid disconnect error message\n");
+		return;
+
+	} else if(gc->state == GAIM_CONNECTING
+			&& gaim_prefs_get_bool(OPT_HIDE_CONNECTING)) {
+		/* this is a connecting error, and we're hiding those */
+		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
+			"hid error message while connecting\n");
+		return;
+	}
+
+	/* if we haven't returned by now, then let's pass to the real
+	   function */
+	old_ops->report_disconnect(gc, text);
+}
+
 
 static gboolean do_signon(gpointer data) {
 	GaimAccount *account = data;
@@ -37,6 +80,7 @@ static gboolean do_signon(gpointer data) {
 
 	return FALSE;
 }
+
 
 static void reconnect(GaimConnection *gc, void *m) {
 	GaimAccount *account;
@@ -62,6 +106,7 @@ static void reconnect(GaimConnection *gc, void *m) {
 	}
 }
 
+
 static void
 free_auto_recon(gpointer data)
 {
@@ -73,17 +118,37 @@ free_auto_recon(gpointer data)
 	g_free(info);
 }
 
+
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
+
+	/* this was the suggested way to override a single function of the
+	real ui ops. However, there's a mild concern of having more than one
+	bit of code making a new ui op call-through copy. If plugins A and B
+	both override the ui ops (in that order), B thinks that the
+	overridden ui ops A created was the original. If A unloads first,
+	and swaps out and frees its overridden version, then B is calling
+	through to a free'd ui op. There needs to be a way to "stack up"
+	overridden ui ops or something... I have a good idea of how to write
+	such a creature if someone wants it done.  - siege 2004-04-20 */
+
+	/* get old ops, make a copy with a minor change */ 
+	old_ops = gaim_connections_get_ui_ops();
+	new_ops = (GaimConnectionUiOps *) g_memdup(old_ops,
+			sizeof(GaimConnectionUiOps));
+	new_ops->report_disconnect = report_disconnect;
+	gaim_connections_set_ui_ops(new_ops);
+
 	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
-								 free_auto_recon);
+			free_auto_recon);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
-						plugin, GAIM_CALLBACK(reconnect), NULL);
+			plugin, GAIM_CALLBACK(reconnect), NULL);
 
 	return TRUE;
 }
+
 
 static gboolean
 plugin_unload(GaimPlugin *plugin)
@@ -94,8 +159,37 @@ plugin_unload(GaimPlugin *plugin)
 	g_hash_table_destroy(hash);
 	hash = NULL;
 
+	gaim_connections_set_ui_ops(old_ops);
+	g_free(new_ops);
+	old_ops = new_ops = NULL;
+
 	return TRUE;
 }
+
+
+static GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin *plugin) {
+	GaimPluginPrefFrame *frame = gaim_plugin_pref_frame_new();
+	GaimPluginPref *pref;
+
+	pref = gaim_plugin_pref_new_with_label(_("Error Message Suppression"));
+        gaim_plugin_pref_frame_add(frame, pref);
+
+	pref = gaim_plugin_pref_new_with_name_and_label(OPT_HIDE_CONNECTED,
+		_("Hide Disconnect Errors"));
+	gaim_plugin_pref_frame_add(frame, pref);
+
+	pref = gaim_plugin_pref_new_with_name_and_label(OPT_HIDE_CONNECTING,
+		_("Hide Login Errors"));
+	gaim_plugin_pref_frame_add(frame, pref);
+
+	return frame;
+}
+
+
+static GaimPluginUiInfo pref_info = {
+	get_plugin_pref_frame
+};
+
 
 static GaimPluginInfo info =
 {
@@ -121,12 +215,18 @@ static GaimPluginInfo info =
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
-	NULL                                              /**< extra_info     */
+	NULL,                                             /**< extra_info     */
+	&pref_info                                        /**< prefs_info     */
 };
+
 
 static void
 init_plugin(GaimPlugin *plugin)
 {
+	gaim_prefs_add_none(AUTORECON_OPT);
+	gaim_prefs_add_bool(OPT_HIDE_CONNECTED, FALSE);
+	gaim_prefs_add_bool(OPT_HIDE_CONNECTING, FALSE);
 }
 
 GAIM_INIT_PLUGIN(autorecon, init_plugin, info)
+

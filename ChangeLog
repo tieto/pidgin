@@ -1,5 +1,13 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 0.78cvs
+	New Features:
+	* Option to suppress the disconnect notification when using
+	  the autoreconnect plugin (Christopher (siege) O'Brien)
+
+	Bug Fixes:
+
+
 version 0.77 (04/22/2004):
 	New Features:
 	* The System Log returns (Ka-Hing Cheung)
