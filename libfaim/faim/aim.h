@@ -62,6 +62,7 @@
 #define sleep Sleep
 #define socklen_t int /* this must be a POSIXy thing */
 #define snprintf _snprintf /* I'm not sure whats wrong with Microsoft here */
+#define close(x) closesocket(x) /* no comment */
 #endif
 
 #if defined(mach) && defined(__APPLE__)
