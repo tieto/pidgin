@@ -645,10 +645,8 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 
 		GET_NEXT(hash);
 		GET_NEXT(hash);
-	
-		md5_init(&st);
 
-		printf("Hashing: %s\n", hash);
+		md5_init(&st);
 		md5_append(&st, (const md5_byte_t *)hash, strlen(hash));
 		md5_append(&st, (const md5_byte_t *)"Q1P7W2E4J9R8U3S5", strlen("Q1P7W2E4J9R8U3S5"));
 		md5_finish(&st, di);
@@ -660,12 +658,11 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 		}
 
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-			printf("Couldnt write it");
-			return;
+			hide_login_progress(gc, "Unable to write to server");
+			signoff(gc);
 		}
 
 		debug_printf("\n");
-		
 	} else if (!g_strncasecmp(buf, "FLN", 3)) {
 		char *usr = buf;
 
