@@ -921,6 +921,37 @@ msn_request_user_display(MsnUser *user)
 	}
 	else
 	{
+		MsnObject *my_obj = NULL;
+		const char *filename = NULL;
+		gchar *data = NULL;
+		gsize len = 0;
+		const char *my_info = NULL;
+		GSList *sl;
+
+		gaim_debug_info("msn", "Requesting our own user display\n");
+
+		my_obj = msn_user_get_object(session->user);
+
+		if (my_obj != NULL)
+		{
+			filename = msn_object_get_real_location(my_obj);
+			my_info = msn_object_get_sha1c(my_obj);
+		}
+
+		if (filename != NULL)
+			g_file_get_contents(filename, &data, &len, NULL);
+
+		/* TODO: I think we need better buddy icon core functions. */
+		gaim_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
+		
+		sl = gaim_find_buddies(account, user->passport);
+
+		for (; sl != NULL; sl = sl->next)
+		{
+			GaimBuddy *buddy = (GaimBuddy *)sl->data;
+			gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
+		}
+
 		session->userlist->buddy_icon_window++;
 		msn_release_buddy_icon_request(session->userlist);
 	}
