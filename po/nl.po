@@ -1,1665 +1,2260 @@
-# Dutch translation for "Gaim".
-# Copyright (C) 2002  Free Software Foundation, Inc.
-# Floris Eshuis <f.eshuis@hccnet.nl>, 2001.
-# upgraded by Reinier Lamers <tux_rocker@planet.nl>, 2002
-#
+# Commentaar:
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.60\n"
-"POT-Creation-Date: 2002-08-25 23:43-0400\n"
-"PO-Revision-Date: 2002-03-02 16:25+0100\n"
-"Last-Translator: Reinier Lamers <tux_rocker@planet.nl>\n"
-"Language-Team: nl <nl@li.org>\n"
+"POT-Creation-Date: 2003-01-03 13:44+0100\n"
+"PO-Revision-Date: 2003-01-03 14:30+0100\n"
+"Last-Translator: Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>\n"
+"Language-Team: Dutch <vertaling@nl.linux.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Anjuta 0.1.7\n"
 
-#: plugins/chatlist.c:67 src/buddy_chat.c:272
-msgid "Buddy Chat"
-msgstr "Buddy Chat"
+#: plugins/docklet/docklet.c:119
+msgid "New..."
+msgstr "Nieuw..."
 
-#: plugins/chatlist.c:166 plugins/chatlist.c:168 plugins/chatlist.c:407
-#: plugins/chatlist.c:409
-#, fuzzy
-msgid "Gaim Chat"
-msgstr "Gaim - Chat"
-
-#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:317 src/buddy.c:2690
-#: src/buddy_chat.c:1325 src/buddy_chat.c:1422 src/buddy_chat.c:1452
-#: src/conversation.c:2919 src/dialogs.c:1541 src/dialogs.c:4292
-#: src/multi.c:1078 src/plugins.c:347 src/prpl.c:450 src/prpl.c:697
-#: src/server.c:1097
-msgid "Close"
-msgstr "Sluiten"
-
-#: plugins/chatlist.c:344
-#, fuzzy
-msgid "Chat Rooms"
-msgstr "Chat Opties"
-
-#: plugins/chatlist.c:363
-msgid "Refresh"
-msgstr ""
-
-#. Put the buttons in the box
-#: plugins/chatlist.c:364 src/buddy.c:489 src/buddy.c:2802
-#: src/buddy_chat.c:1457 src/conversation.c:2436 src/conversation.c:2934
-#: src/dialogs.c:971 src/dialogs.c:1153 src/dialogs.c:1492 src/dialogs.c:1526
-#: src/dialogs.c:2521 src/multi.c:1062
-msgid "Add"
-msgstr "Toevoegen"
-
-#: plugins/chatlist.c:365 src/buddy.c:491 src/buddy.c:2804
-#: src/buddy_chat.c:1459 src/conversation.c:2422 src/conversation.c:2931
-#: src/dialogs.c:1496 src/dialogs.c:1530
-msgid "Remove"
-msgstr "Verwijderen"
-
-#: plugins/chatlist.c:388
-msgid "List of available chats"
-msgstr ""
-
-#: plugins/chatlist.c:398
-msgid "List of subscribed chats"
-msgstr ""
-
-#: plugins/gtik.c:699
-msgid "Gnome Stock Ticker Properties"
-msgstr ""
-
-#: plugins/gtik.c:711
-msgid "Update Frequency in min"
-msgstr ""
-
-#: plugins/gtik.c:727
-msgid "Enter symbols delimited with \"+\" in the box below."
-msgstr ""
-
-#. OUTPUT FORMAT and SCROLL DIRECTION
-#: plugins/gtik.c:737
-msgid "Check this box to display only symbols and price:"
-msgstr ""
-
-#: plugins/gtik.c:738
-msgid "Check this box to scroll left to right:"
-msgstr ""
-
-#: plugins/gtik.c:974
-#, fuzzy
-msgid "(No"
-msgstr "Nee"
-
-#: plugins/gtik.c:975
-#, fuzzy
-msgid "Change"
-msgstr "Kanaal"
-
-#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1923
-msgid "Available"
-msgstr "Beschikbaar"
-
-#: src/protocols/gg/gg.c:72
-msgid "Available for friends only"
-msgstr "Alleen beschikbaar voor vrienden"
-
-#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1143 src/buddy.c:494
-#: src/buddy.c:2556 src/buddy.c:2701 src/prefs.c:812
+#: plugins/docklet/docklet.c:123 src/protocols/gg/gg.c:75
+#: src/protocols/jabber/jabber.c:1165 src/buddy.c:499 src/buddy.c:2532
+#: src/buddy.c:2662 src/prefs.c:731
 msgid "Away"
 msgstr "Afwezig"
 
+#: plugins/docklet/docklet.c:129 src/away.c:485
+msgid "Back"
+msgstr "Terug"
+
+#: plugins/docklet/docklet.c:138 src/multi.c:255
+msgid "Auto-login"
+msgstr "Auto-aanmelden"
+
+#: plugins/docklet/docklet.c:143 src/buddy.c:2648
+msgid "Signoff"
+msgstr "Afmelden"
+
+#: plugins/docklet/docklet.c:151
+msgid "Mute Sounds"
+msgstr "Geluiden dempen"
+
+#: plugins/docklet/docklet.c:156
+msgid "Accounts..."
+msgstr "Accounts..."
+
+#: plugins/docklet/docklet.c:157
+msgid "Preferences..."
+msgstr "Voorkeuren..."
+
+#: plugins/docklet/docklet.c:161
+msgid "About Gaim..."
+msgstr "Gaim info..."
+
+#: plugins/docklet/docklet.c:162 src/buddy.c:2652
+msgid "Quit"
+msgstr "Afsluiten"
+
+#: plugins/docklet/docklet.c:400
+msgid "Tray Icon Configuration"
+msgstr "Systeemvakpictogram Instellingen"
+
+#. toggle = gtk_check_button_new_with_mnemonic(_("_Automatically show buddy list on sign on"));
+#. gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), blist_options & OPT_BLIST_APP_BUDDY_SHOW);
+#. g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_blist_show), NULL);
+#. gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+#: plugins/docklet/docklet.c:409
+msgid "_Hide new messages until tray icon is clicked"
+msgstr "Nieuwe berichten _verbergen tot pictogram wordt aangeklikt"
+
+#: plugins/docklet/docklet.c:421
+msgid "Tray Icon"
+msgstr "Systeemvak pictogram"
+
+#: plugins/docklet/docklet.c:423 plugins/docklet/docklet.c:434
+msgid ""
+"Interacts with a System Tray applet (in GNOME or KDE, for example) to display "
+"the current status of Gaim, allow fast access to commonly used functions, and "
+"to toggle display of the buddy list or login window. Also allows messages to "
+"be queued until the icon is clicked, similar to ICQ (although the icon "
+"doesn't flash yet =)."
+msgstr ""
+"Communiceert met het Systeemvak (zit o.a. in GNOME en KDE) om op die manier "
+"de status van Gaim weer te geven, snel toegang te geven tot veelgebruikte "
+"functies en om het hoofdvenster te verbergen of juist weer te geven."
+
+#: plugins/docklet/docklet.c:424
+msgid "Robert McQueen &lt;robot101@debian.org>"
+msgstr "Robert McQueen &lt;robot101@debian.org>"
+
+#: plugins/docklet/docklet.c:430
+msgid "System Tray Icon"
+msgstr "Systeemvakpictogram"
+
+#: plugins/chatlist.c:68 src/buddy_chat.c:281
+msgid "Buddy Chat"
+msgstr "Chat met vrienden"
+
+#: plugins/chatlist.c:159 plugins/chatlist.c:161 plugins/chatlist.c:351
+#: plugins/chatlist.c:353
+msgid "Gaim Chat"
+msgstr "Gaim Chat"
+
+#: plugins/chatlist.c:302
+msgid "Chat Rooms"
+msgstr "Chatruimtes"
+
+#: plugins/chatlist.c:314
+msgid "Refresh"
+msgstr "Verversen"
+
+#. buttons
+#: plugins/chatlist.c:315 src/protocols/icq/gaim_icq.c:279
+#: src/protocols/oscar/oscar.c:2176 src/buddy.c:494 src/buddy.c:2760
+#: src/buddy_chat.c:908 src/buddy_chat.c:1588 src/conversation.c:2309
+#: src/conversation.c:2896 src/dialogs.c:2601 src/prpl.c:638
+msgid "Add"
+msgstr "Toevoegen"
+
+#: plugins/chatlist.c:316 src/buddy.c:496 src/buddy.c:2762
+#: src/buddy_chat.c:906 src/buddy_chat.c:1590 src/conversation.c:2293
+#: src/conversation.c:2890
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: plugins/chatlist.c:332
+msgid "List of available chats"
+msgstr "Lijst van beschikbare chatruimtes"
+
+#: plugins/chatlist.c:342
+msgid "List of subscribed chats"
+msgstr "Lijst van geabonneerde chatruimtes"
+
+#: plugins/gtik.c:719
+msgid "Gnome Stock Ticker Properties"
+msgstr "Eigenschappen van Gnome Aandelenticker"
+
+#: plugins/gtik.c:731
+msgid "Update Frequency in min"
+msgstr "Verversingsfrequentie in min"
+
+#: plugins/gtik.c:747
+msgid "Enter symbols delimited with \"+\" in the box below."
+msgstr "Geef symbolen, afgesloten met \"+\", in vak hieronder."
+
+#. OUTPUT FORMAT and SCROLL DIRECTION
+#: plugins/gtik.c:757
+msgid "Check this box to display only symbols and price:"
+msgstr "Deze optie aanvinken om alleen symbolen en prijs weer te geven:"
+
+#: plugins/gtik.c:758
+msgid "Check this box to scroll left to right:"
+msgstr "Deze optie aanvinken om van links naar rechts te schuiven:"
+
+#: plugins/gtik.c:994
+msgid "(No"
+msgstr "(Nee"
+
+#: plugins/gtik.c:995
+msgid "Change"
+msgstr "Veranderen"
+
+#: plugins/notify.c:344
+msgid "Unable to write to config file"
+msgstr "Kan niet naar configuratiebestand schrijven"
+
+#: plugins/notify.c:344
+msgid "Notify plugin"
+msgstr "Meldplugin"
+
+#: plugins/notify.c:507
+msgid "Notify For"
+msgstr "Melding geven voor"
+
+#: plugins/notify.c:508
+msgid "_IM windows"
+msgstr "_Berichtvensters"
+
+#: plugins/notify.c:513
+msgid "_Chat windows"
+msgstr "_Chatvensters"
+
+#. --------------
+#: plugins/notify.c:519
+msgid "Notification Methods"
+msgstr "Meldingmethode"
+
+#: plugins/notify.c:522
+msgid "Prepend _string into window title:"
+msgstr "_String om ervoor te plakken in venstertitel:"
+
+#: plugins/notify.c:531
+msgid "_Quote window title"
+msgstr "Venstertitel _citeren"
+
+#: plugins/notify.c:536
+msgid "Set Window Manager \"_URGENT\" Hint"
+msgstr "\"_URGENT\" (hoge prioriteit) doorgeven aan het vensterbeheer."
+
+#: plugins/notify.c:541
+msgid "Insert c_ount of new messages into window title"
+msgstr "Aantal _nieuwe berichten weergeven in venstertitel"
+
+#: plugins/notify.c:546
+msgid "_Notify even if conversation is in focus"
+msgstr "_Opmerking zelfs weergeven wanneer het gesprek reeds de aandacht heeft"
+
+#. --------------
+#: plugins/notify.c:552
+msgid "Notification Removal"
+msgstr "Meldingverwijdering"
+
+#: plugins/notify.c:553
+msgid "Remove when conversation window gains _focus"
+msgstr "Verwijderen wanneer het gespreksvenster de _aandacht krijgt"
+
+#: plugins/notify.c:558
+msgid "Remove when conversation window _receives click"
+msgstr "Verwijderen wanneer het gespreksvenster een _muisklik ontvangt"
+
+#: plugins/notify.c:563
+msgid "Remove when _typing in conversation window"
+msgstr "Verwijderen wanneer er ge_typt wordt in het gespreksvenster."
+
+#: plugins/notify.c:568
+msgid "Appl_y"
+msgstr "Toe_passen"
+
+#: plugins/autorecon.c:49 plugins/autorecon.c:60
+msgid "When you are kicked offline, this reconnects you."
+msgstr "Wanneer je offline wordt geschopt, herstelt dit de verbinding."
+
+#: plugins/autorecon.c:56
+msgid "Auto Reconnect"
+msgstr "Verbinding herstellen"
+
+#: plugins/timestamp.c:67
+msgid "Timestamp"
+msgstr "Tijd in gesprek"
+
+#: plugins/timestamp.c:69
+msgid "Adds iChat-style timestamps to conversations every 5 minutes."
+msgstr ""
+"Voegt op iChat-achtige manier iedere 5 minuten de tijd toe aan een gesprek."
+
+#: plugins/history.c:67
+msgid "History"
+msgstr "Geschiedenis"
+
+#: plugins/history.c:69
+msgid "Shows recently logged conversations in new conversations "
+msgstr "Geeft recente gesprekken weer in een nieuw gesprek"
+
+#: plugins/iconaway.c:47
+msgid "Iconify on away"
+msgstr "Minimaliseren bij afwezigheid"
+
+#: plugins/iconaway.c:49 plugins/iconaway.c:60
+msgid "Iconifies the away box and the buddy list when you go away."
+msgstr ""
+"Minimaliseert het afwezigheidsvenster en de vriendenlijst bij afwezigheid."
+
+#: plugins/iconaway.c:56
+msgid "Iconify On Away"
+msgstr "Minimaliseren bij afwezigheid"
+
+#: src/protocols/gg/gg.c:73 src/protocols/msn/msn.c:2352
+#: src/protocols/msn/msn.c:2457
+msgid "Available"
+msgstr "Beschikbaar"
+
 #: src/protocols/gg/gg.c:74
+msgid "Available for friends only"
+msgstr "Alleen beschikbaar voor vrienden"
+
+#: src/protocols/gg/gg.c:76
 msgid "Away for friends only"
 msgstr "Alleen afwezig voor vrienden"
 
-#: src/protocols/gg/gg.c:75
-#, fuzzy
+#: src/protocols/gg/gg.c:77
 msgid "Invisible"
 msgstr "Onzichtbaar"
 
-#: src/protocols/gg/gg.c:76
+#: src/protocols/gg/gg.c:78
 msgid "Invisible for friends only"
 msgstr "Alleen onzichtbaar voor vrienden"
 
-#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1139
+#: src/protocols/gg/gg.c:79 src/protocols/jabber/jabber.c:1161
 msgid "Unavailable"
 msgstr "Niet Beschikbaar"
 
-#: src/protocols/gg/gg.c:182
-#, fuzzy
+#: src/protocols/gg/gg.c:165
 msgid "Unable to resolve hostname."
-msgstr "Kan het bestand %s niet lezen."
+msgstr "Kan computernaam niet opzoeken."
 
-#: src/protocols/gg/gg.c:185
-#, fuzzy
+#: src/protocols/gg/gg.c:168
 msgid "Unable to connect to server."
-msgstr "Aanmelden niet mogelijk"
+msgstr "Kan geen verbinding maken met de computer."
 
-#: src/protocols/gg/gg.c:188
+#: src/protocols/gg/gg.c:171
 msgid "Invalid response from server."
-msgstr "Onjuist antwoord van server"
+msgstr "Ongeldig antwoord van server"
 
-#: src/protocols/gg/gg.c:191
-#, fuzzy
+#: src/protocols/gg/gg.c:174
 msgid "Error while reading from socket."
-msgstr "Fout bij het lezen van socket"
+msgstr "Fout opgetreden bij lezen van socket."
 
-#: src/protocols/gg/gg.c:194
-#, fuzzy
+#: src/protocols/gg/gg.c:177
 msgid "Error while writing to socket."
-msgstr "Fout bij het schrijven naar socket"
+msgstr "Fout opgetreden bij schrijven naar socket."
 
-#: src/protocols/gg/gg.c:197
-#, fuzzy
+#: src/protocols/gg/gg.c:180
 msgid "Authentication failed."
-msgstr "Identificatie mislukt"
+msgstr "Identificatie mislukt."
 
-#: src/protocols/gg/gg.c:200
+#: src/protocols/gg/gg.c:183
 msgid "Unknown Error Code."
-msgstr "Onbekende Foutcode"
+msgstr "Onbekende Foutcode."
 
-#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2054
+#: src/protocols/gg/gg.c:288 src/protocols/msn/msn.c:2507
 #, c-format
 msgid "Status: %s"
 msgstr "Status: %s"
 
-#: src/protocols/gg/gg.c:317
-msgid "Nick:"
-msgstr "Bijnaam:"
-
-#: src/protocols/gg/gg.c:318
-msgid "Gadu-Gadu User"
-msgstr "Gadu-Gadu Gebruiker"
-
-#: src/protocols/gg/gg.c:337
-#, fuzzy
+#: src/protocols/gg/gg.c:309
 msgid "Could not connect"
-msgstr "Kan geen verbinding maken"
+msgstr "Kon geen verbinding maken"
 
-#: src/protocols/gg/gg.c:344
-#, fuzzy
+#: src/protocols/gg/gg.c:316
 msgid "Unable to read socket"
-msgstr "Kan het bestand %s niet lezen."
+msgstr "Kan niet lezen van socket."
 
-#: src/protocols/gg/gg.c:455
-#, fuzzy
+#: src/protocols/gg/gg.c:429
 msgid "Unable to connect."
-msgstr "Kan geen directe verbinding openen"
+msgstr "Kan geen verbinding maken."
 
-#: src/protocols/gg/gg.c:465
+#: src/protocols/gg/gg.c:442
 msgid "Reading data"
-msgstr ""
+msgstr "Data wordt gelezen"
 
-#: src/protocols/gg/gg.c:468
+#: src/protocols/gg/gg.c:445
 msgid "Balancer handshake"
-msgstr ""
+msgstr "Balancer handshake"
 
-#: src/protocols/gg/gg.c:471
-#, fuzzy
+#: src/protocols/gg/gg.c:448
 msgid "Reading server key"
-msgstr "Wacht op antwoord..."
+msgstr "Serversleutel wordt gelezen"
 
-#: src/protocols/gg/gg.c:474
+#: src/protocols/gg/gg.c:451
 msgid "Exchanging key hash"
-msgstr ""
+msgstr "Sleutelhash wordt uitgewisseld"
 
-#: src/protocols/gg/gg.c:482
+#: src/protocols/gg/gg.c:460
 msgid "Critical error in GG library\n"
-msgstr ""
+msgstr "Kritieke fout in GaduGadu bibliotheek\n"
 
-#: src/protocols/gg/gg.c:521
-#, fuzzy
+#: src/protocols/gg/gg.c:480 src/protocols/gg/gg.c:580
+#, c-format
+msgid "Connect to %s failed"
+msgstr "Verbinding met %s verbroken"
+
+#: src/protocols/gg/gg.c:531
 msgid "Unable to ping server"
-msgstr "Aanmelden niet mogelijk"
+msgstr "Kan server niet pingen"
 
-#: src/protocols/gg/gg.c:533
-#, fuzzy
+#: src/protocols/gg/gg.c:543
 msgid "Send as message"
-msgstr "Verzend Bericht als"
+msgstr "Verstuur als bericht"
 
-#: src/protocols/gg/gg.c:541
+#: src/protocols/gg/gg.c:551
 msgid "Looking up GG server"
-msgstr "Bezig met vinden GG-server"
+msgstr "GG-server wordt opgezocht"
 
-#: src/protocols/gg/gg.c:544
+#: src/protocols/gg/gg.c:554
 msgid "Invalid Gadu-Gadu UIN specified"
 msgstr "Onjuiste Gadu-Gadu UIN opgegeven"
 
-#: src/protocols/gg/gg.c:570
-#, fuzzy, c-format
-msgid "Connect to %s failed"
-msgstr "Verbinding naar %s afgebroken"
-
-#: src/protocols/gg/gg.c:594
-#, fuzzy
+#: src/protocols/gg/gg.c:604
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
-msgstr "U probeert een bericht te sturen naar een onjuist Gadu-Gadu UIN!"
+msgstr "U probeert een bericht te verzenden naar een ongeldig GaduGadu UIN."
 
-#: src/protocols/gg/gg.c:657
+#: src/protocols/gg/gg.c:667
 msgid "Couldn't get search results"
-msgstr "Geen zoek resultaten gevonden"
+msgstr "Geen zoekresultaten gevonden"
 
-#: src/protocols/gg/gg.c:662
+#: src/protocols/gg/gg.c:672
 msgid "Gadu-Gadu Search Engine"
 msgstr "Gadu-Gadu Zoekmachine"
 
-#: src/protocols/gg/gg.c:687
+#: src/protocols/gg/gg.c:697
 msgid "Active"
 msgstr "Actief"
 
-#: src/protocols/gg/gg.c:688
-#, fuzzy
+#: src/protocols/gg/gg.c:698
 msgid "yes"
-msgstr "Ja"
+msgstr "ja"
 
-#: src/protocols/gg/gg.c:688
-#, fuzzy
+#: src/protocols/gg/gg.c:698
 msgid "no"
-msgstr "Nee"
+msgstr "nee"
 
-#: src/protocols/gg/gg.c:692
+#: src/protocols/gg/gg.c:702
 msgid "UIN"
 msgstr "UIN"
 
-#: src/protocols/gg/gg.c:696
-#, fuzzy
+#: src/protocols/gg/gg.c:706
 msgid "First name"
 msgstr "Voornaam"
 
-#: src/protocols/gg/gg.c:701
-#, fuzzy
+#: src/protocols/gg/gg.c:711
 msgid "Second Name"
-msgstr "Gebruikersnaam: "
+msgstr "Achternaam"
 
-#: src/protocols/gg/gg.c:705
+#: src/protocols/gg/gg.c:715
 msgid "Nick"
 msgstr "Bijnaam"
 
-#: src/protocols/gg/gg.c:712 src/protocols/gg/gg.c:715
+#: src/protocols/gg/gg.c:722 src/protocols/gg/gg.c:725
 msgid "Birth year"
-msgstr "Geboortedatum"
+msgstr "Geboortejaar"
 
-#: src/protocols/gg/gg.c:721 src/protocols/gg/gg.c:723
-#: src/protocols/gg/gg.c:725
+#: src/protocols/gg/gg.c:731 src/protocols/gg/gg.c:733
+#: src/protocols/gg/gg.c:735
 msgid "Sex"
 msgstr "Geslacht"
 
 #. Line 5
-#: src/protocols/gg/gg.c:729 src/dialogs.c:2050 src/dialogs.c:2758
+#: src/protocols/gg/gg.c:739 src/dialogs.c:2133 src/dialogs.c:2838
 msgid "City"
 msgstr "Stad"
 
-#: src/protocols/gg/gg.c:761
+#: src/protocols/gg/gg.c:771
 msgid "There is no Buddy List stored on the Gadu-Gadu server."
-msgstr ""
+msgstr "Er is geen Vriendenlijst opgeslagen op de GaduGadu-server."
 
-#: src/protocols/gg/gg.c:767
+#: src/protocols/gg/gg.c:777
 msgid "Couldn't Import Buddy List from Server"
-msgstr ""
+msgstr "Kon de vriendenlijst niet importeren van de server"
 
-#: src/protocols/gg/gg.c:814
+#: src/protocols/gg/gg.c:824
 msgid "Buddy List successfully transferred to Gadu-Gadu server"
-msgstr ""
+msgstr "Vriendenlijst is naar de GaduGadu-server gestuurd"
 
-#: src/protocols/gg/gg.c:819
+#: src/protocols/gg/gg.c:829
 msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
-msgstr ""
+msgstr "Kon de vriendenlijst niet versturen naar de GaduGadu-server"
 
-#: src/protocols/gg/gg.c:825
+#: src/protocols/gg/gg.c:835
 msgid "Buddy List successfully deleted from Gadu-Gadu server"
-msgstr ""
+msgstr "Vriendenlijst is verwijderd van de GaduGadu-server"
 
-#: src/protocols/gg/gg.c:830
+#: src/protocols/gg/gg.c:840
 msgid "Couldn't delete Buddy List from Gadu-Gadu server"
-msgstr ""
+msgstr "Kon de vriendenlijst niet verwijderen van de GaduGadu-server"
 
-#: src/protocols/gg/gg.c:836
-#, fuzzy
+#: src/protocols/gg/gg.c:846
 msgid "Password changed successfully"
-msgstr "Wachtwoord Veranderen Gelukt"
+msgstr "Wachtwoord veranderen gelukt"
 
-#: src/protocols/gg/gg.c:841
+#: src/protocols/gg/gg.c:851
 msgid "Password couldn't be changed"
-msgstr ""
+msgstr "Wachtwoord kon niet veranderd worden"
 
-#: src/protocols/gg/gg.c:952
+#: src/protocols/gg/gg.c:962
 msgid "Error communicating with Gadu-Gadu server"
-msgstr ""
+msgstr "Fout opgetreden bij communicatie met de GaduGadu-server"
 
-#: src/protocols/gg/gg.c:953
+#: src/protocols/gg/gg.c:963
 msgid ""
 "Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
+"Gaim kon niet aan uw verzoek voldoen wegens een communicatieprobleem met de "
+"GaduGadu HTTP-server. Probeert u het later nogmaals."
 
-#: src/protocols/gg/gg.c:980
+#: src/protocols/gg/gg.c:990
 msgid "Unable to import Gadu-Gadu buddy list"
-msgstr ""
+msgstr "Kon de GaduGadu vriendenlijst niet importeren"
 
-#: src/protocols/gg/gg.c:981
+#: src/protocols/gg/gg.c:991
 msgid ""
 "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
+"Gaim kon geen verbinding maken met de GaduGadu vriendenlijst-server. Probeert "
+"u het later nogmaals."
 
-#: src/protocols/gg/gg.c:1038
-#, fuzzy
+#: src/protocols/gg/gg.c:1048
 msgid "Couldn't export buddy list"
-msgstr "Buddy Lijst importeren"
+msgstr "Kan vriendenlijst niet exporteren"
 
-#: src/protocols/gg/gg.c:1039 src/protocols/gg/gg.c:1061
+#: src/protocols/gg/gg.c:1049 src/protocols/gg/gg.c:1071
 msgid ""
 "Gaim was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
+"Gaim kon geen verbinding maken met de vriendenlijst-server. Probeert u het "
+"later nogmaals."
 
-#: src/protocols/gg/gg.c:1060
+#: src/protocols/gg/gg.c:1070
 msgid "Unable to delete Gadu-Gadu buddy list"
-msgstr ""
+msgstr "Kan de GaduGadu vriendenlijst niet verwijderen"
 
-#: src/protocols/gg/gg.c:1108
-#, fuzzy
+#: src/protocols/gg/gg.c:1118
 msgid "Unable to access directory"
-msgstr "Kan geen directe verbinding openen"
+msgstr "Kan adresboek niet benaderen"
 
-#: src/protocols/gg/gg.c:1109
+#: src/protocols/gg/gg.c:1119
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
+"Gaim kon niet zoeken in het adresboek omdat de adresboek-server onbereikbaar "
+"is. Probeert u het later nogmaals."
 
-#: src/protocols/gg/gg.c:1141
-#, fuzzy
+#: src/protocols/gg/gg.c:1151
 msgid "Unable to change Gadu-Gadu password"
-msgstr "Kan bericht niet verzenden: Te groot"
+msgstr "Kon GaduGadu-wachtwoord niet veranderen"
 
-#: src/protocols/gg/gg.c:1142
+#: src/protocols/gg/gg.c:1152
 msgid ""
 "Gaim was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
+"Gaim kon uw wachtwoord niet veranderen wegens een communicatieprobleem met de "
+"GaduGadu-server. Probeert u het later nogmaals."
 
-#: src/protocols/gg/gg.c:1152 src/protocols/gg/gg.c:1169
-#, fuzzy
+#: src/protocols/gg/gg.c:1162 src/protocols/gg/gg.c:1179
 msgid "Directory Search"
-msgstr "Profiel"
+msgstr "Adresboek doorzoeken"
 
 #.
 #. } else if (!strcmp(act, _("Set Dir Info"))) {
 #. show_set_dir(gc);
 #.
-#: src/protocols/gg/gg.c:1154 src/protocols/gg/gg.c:1171
-#: src/protocols/jabber/jabber.c:3957 src/protocols/jabber/jabber.c:3970
-#: src/dialogs.c:2167
+#: src/protocols/gg/gg.c:1164 src/protocols/gg/gg.c:1181
+#: src/protocols/jabber/jabber.c:4148 src/protocols/jabber/jabber.c:4161
+#: src/dialogs.c:2249
 msgid "Change Password"
-msgstr "Verander Wachtwoord"
+msgstr "Wachtwoord veranderen"
 
-#: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
-#, fuzzy
+#: src/protocols/gg/gg.c:1166 src/protocols/gg/gg.c:1183
 msgid "Import Buddy List from Server"
-msgstr "Buddy Lijst importeren"
+msgstr "Vriendenlijst importeren van server"
 
-#: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
-#, fuzzy
+#: src/protocols/gg/gg.c:1168 src/protocols/gg/gg.c:1184
 msgid "Export Buddy List to Server"
-msgstr "Buddy Lijst importeren"
+msgstr "Vriendenlijst exporteren naar server"
 
-#: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
+#: src/protocols/gg/gg.c:1170 src/protocols/gg/gg.c:1185
 msgid "Delete Buddy List from Server"
-msgstr ""
+msgstr "Vriendenlijst verwijderen van server"
 
-#: src/protocols/gg/gg.c:1204
-#, fuzzy
+#: src/protocols/gg/gg.c:1214
 msgid "Unable to access user profile."
-msgstr "Kan het bestand %s niet lezen."
+msgstr "Kan het gebruikersprofiel niet benaderen."
 
-#: src/protocols/gg/gg.c:1205
+#: src/protocols/gg/gg.c:1215
 msgid ""
 "Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
+"Gaim kon het gebruikersprofiel niet benaderen wegens een communicatieprobleem "
+"met de adresboek-server. Probeert u het later nogmaals."
 
-#: src/protocols/icq/gaim_icq.c:233
+#: src/protocols/gg/gg.c:1293 src/protocols/icq/gaim_icq.c:511
+msgid "Nick:"
+msgstr "Bijnaam:"
+
+#: src/protocols/gg/gg.c:1294
+msgid "Gadu-Gadu User"
+msgstr "Gadu-Gadu Gebruiker"
+
+#: src/protocols/icq/gaim_icq.c:229
 msgid "Gaim encountered an error communicating with the ICQ server."
-msgstr ""
+msgstr "Gaim is een fout tegen gekomen bij de communicatie met de ICQ-server."
 
-#: src/protocols/icq/gaim_icq.c:308
-#, fuzzy
+#: src/protocols/icq/gaim_icq.c:279 src/protocols/irc/irc.c:1288
+#: src/protocols/oscar/oscar.c:2022 src/protocols/oscar/oscar.c:4638
+#: src/protocols/toc/toc.c:1987 src/buddy_chat.c:317 src/buddy_chat.c:401
+#: src/dialogs.c:2191 src/dialogs.c:2314 src/dialogs.c:2379 src/dialogs.c:2590
+#: src/dialogs.c:2772 src/dialogs.c:2949 src/dialogs.c:3016 src/dialogs.c:3649
+#: src/dialogs.c:3847 src/dialogs.c:4004 src/dialogs.c:4492 src/dialogs.c:5234
+#: src/multi.c:1040 src/multi.c:1139 src/multi.c:1457 src/prpl.c:280
+#: src/prpl.c:638
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1652
+#: src/protocols/msn/msn.c:1163 src/protocols/msn/msn.c:1318
+#: src/protocols/oscar/oscar.c:2122
+msgid "Authorize"
+msgstr "Toestemmen"
+
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1652
+#: src/protocols/msn/msn.c:1163 src/protocols/msn/msn.c:1318
+#: src/protocols/oscar/oscar.c:2122 src/protocols/oscar/oscar.c:2176
+#: src/dialogs.c:2589
+msgid "Deny"
+msgstr "Blokkeren"
+
+#: src/protocols/icq/gaim_icq.c:306
 msgid "Send message through server"
-msgstr "Verzend Bericht als: "
+msgstr "Verzend bericht via server"
 
-#: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:3045 src/protocols/oscar/oscar.c:3611
-#: src/protocols/toc/toc.c:1219
+#: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:2641
+#: src/protocols/jabber/jabber.c:3241 src/protocols/jabber/jabber.c:3274
+#: src/protocols/oscar/oscar.c:4677 src/protocols/oscar/oscar.c:4729
+#: src/protocols/toc/toc.c:1259
 msgid "Get Info"
-msgstr "Haal Info op"
+msgstr "Extra info"
 
-#: src/protocols/irc/irc.c:444 src/protocols/irc/irc.c:1783
-#, fuzzy, c-format
+#: src/protocols/icq/gaim_icq.c:512
+msgid "Gaim User"
+msgstr "Gaim gebruiker"
+
+#: src/protocols/irc/irc.c:199
+msgid ""
+"(There was an error converting this message.  Check the 'Encoding' option in "
+"the Account Editor)"
+msgstr ""
+"(Er is een fout opgetreden bij het converteren van het bericht. Controleer de "
+"optie 'Codering' in het account)"
+
+#: src/protocols/irc/irc.c:543 src/protocols/irc/irc.c:2351
+#, c-format
 msgid "DCC Chat with %s closed"
-msgstr "Directe verbinding met %s afgesloten"
+msgstr "DCC gesprek met %s afgesloten"
 
-#: src/protocols/irc/irc.c:572 src/protocols/irc/irc.c:1144
+#: src/protocols/irc/irc.c:719
+msgid "No topic is set"
+msgstr "Geen onderwerp ingesteld"
+
+#: src/protocols/irc/irc.c:739 src/protocols/irc/irc.c:1539
 #, c-format
 msgid "<B>%s has changed the topic to: %s</B>"
 msgstr "<B>%s heeft het onderwerp veranderd naar: %s</B>"
 
-#: src/protocols/irc/irc.c:825
-msgid "There is no such nick or channel on this IRC channel."
+#. RPL_REHASHING
+#: src/protocols/irc/irc.c:1089
+msgid "Rehashing server"
+msgstr "Server wordt opnieuw gehashed"
+
+#: src/protocols/irc/irc.c:1089 src/protocols/irc/irc.c:1439
+msgid "IRC Operator"
+msgstr "IRC Operator"
+
+#. ERR_NOSUCHNICK
+#: src/protocols/irc/irc.c:1092
+msgid "No such nick/channel"
+msgstr "Bijnaam/ruimte bestaat niet"
+
+#: src/protocols/irc/irc.c:1092 src/protocols/irc/irc.c:1095
+#: src/protocols/irc/irc.c:1097 src/protocols/irc/irc.c:1100
+#: src/protocols/irc/irc.c:1397
+msgid "IRC Error"
+msgstr "IRC fout"
+
+#. ERR_NOSUCHSERVER
+#: src/protocols/irc/irc.c:1095
+msgid "No such server"
+msgstr "Server bestaat niet"
+
+#. ERR_NONICKNAMEGIVEN
+#: src/protocols/irc/irc.c:1097
+msgid "No nickname given"
+msgstr "Geen bijnaam gegeven"
+
+#. ERR_NOPRIVILEGES
+#: src/protocols/irc/irc.c:1100
+msgid "You're not an IRC operator!"
+msgstr "U bent geen IRC operator!"
+
+#: src/protocols/irc/irc.c:1103
+msgid "That nick is already in use.  Please enter a new nick"
 msgstr ""
+"Die bijnaam wordt al gebruikt door iemand anders. Kies alstublieft een andere"
 
-#: src/protocols/irc/irc.c:828
-msgid "There is no such IRC Server"
-msgstr ""
+#: src/protocols/irc/irc.c:1250 src/protocols/irc/irc.c:1256
+#: src/protocols/irc/irc.c:1262 src/protocols/irc/irc.c:1276
+msgid "IRC CTCP info"
+msgstr "IRC CTCP info"
 
-#: src/protocols/irc/irc.c:830
-#, fuzzy
-msgid "No IRC nickname given"
-msgstr "Geen bijnaam opgegeven"
-
-#: src/protocols/irc/irc.c:976
+#: src/protocols/irc/irc.c:1287
 #, c-format
+msgid "%s would like to establish a DCC chat"
+msgstr "%s wil een DCC chat beginnen"
+
+#: src/protocols/irc/irc.c:1288
 msgid ""
-"%s has requested a DCC chat.  Would you like to establish the direct "
-"connection?"
+"This requires a direct connection to be established between the two "
+"computers.  Messages sent will not pass through the IRC server"
 msgstr ""
+"Dit vereist een directe verbinding tussen de twee computers. Berichten zullen "
+"niet via de IRC-server gaan."
 
-#: src/protocols/irc/irc.c:1001 src/protocols/msn/msn.c:315
-#, fuzzy
+#: src/protocols/irc/irc.c:1288 src/protocols/oscar/oscar.c:2022
+#: src/protocols/oscar/oscar.c:4638
+msgid "Connect"
+msgstr "Verbinden"
+
+#: src/protocols/irc/irc.c:1333 src/protocols/msn/msn.c:306
+#: src/protocols/msn/msn.c:1327 src/protocols/msn/msn.c:1343
+#: src/protocols/msn/msn.c:1828
 msgid "Unable to write"
-msgstr "Kan niet naar bestand %s schrijven."
+msgstr "Kan niet schrijven"
 
-#: src/protocols/irc/irc.c:1071
-#, fuzzy, c-format
-msgid "You have been kicked from %s:"
-msgstr "De verbinding met chat ruimte %s is verbroken"
+#: src/protocols/irc/irc.c:1395
+#, c-format
+msgid "You have been kicked from %s: %s"
+msgstr "U bent uit %s geschopt: %s"
 
-#: src/protocols/irc/irc.c:1076
+#: src/protocols/irc/irc.c:1400
 #, c-format
 msgid "Kicked by %s: %s"
-msgstr ""
+msgstr "Weg geschopt door %s: %s"
 
-#: src/protocols/irc/irc.c:1581
+#: src/protocols/irc/irc.c:1457 src/protocols/irc/irc.c:2660
+msgid "CTCP ClientInfo"
+msgstr "CTCP ClientInfo"
+
+#: src/protocols/irc/irc.c:1463 src/protocols/irc/irc.c:2666
+msgid "CTCP UserInfo"
+msgstr "CTCP Gebruikersinfo"
+
+#: src/protocols/irc/irc.c:1469 src/protocols/irc/irc.c:2672
+msgid "CTCP Version"
+msgstr "CTCP Versie"
+
+#: src/protocols/irc/irc.c:1489 src/protocols/irc/irc.c:2678
+msgid "CTCP Ping"
+msgstr "CTCP Ping"
+
+#: src/protocols/irc/irc.c:1969
+#, c-format
+msgid "Topic for %s is %s"
+msgstr "Onderwerp voor %s is %s"
+
+#: src/protocols/irc/irc.c:2061
 #, c-format
 msgid "You have left %s"
 msgstr "U heeft %s verlaten"
 
-#: src/protocols/irc/irc.c:1671
-#, fuzzy
-msgid "Channel:"
-msgstr "Kanaal"
+#: src/protocols/irc/irc.c:2062
+msgid "IRC Part"
+msgstr "IRC Deel"
 
-#: src/protocols/irc/irc.c:1675 src/multi.c:549
+#: src/protocols/irc/irc.c:2229
+msgid "Channel:"
+msgstr "Ruimte: "
+
+#: src/protocols/irc/irc.c:2233 src/aim.c:325 src/multi.c:641
 msgid "Password:"
 msgstr "Wachtwoord: "
 
-#: src/protocols/irc/irc.c:1856
-#, fuzzy
+#: src/protocols/irc/irc.c:2647
 msgid "DCC Chat"
-msgstr "Chat"
+msgstr "DCC gesprek"
 
-#: src/protocols/jabber/jabber.c:950
-#, fuzzy
+#: src/protocols/irc/irc.c:2718 src/protocols/jabber/jabber.c:2860
+#: src/protocols/msn/msn.c:2905 src/protocols/napster/napster.c:615
+msgid "Server:"
+msgstr "Server:"
+
+#: src/protocols/irc/irc.c:2724 src/protocols/jabber/jabber.c:4224
+#: src/protocols/msn/msn.c:2911 src/protocols/napster/napster.c:621
+msgid "Port:"
+msgstr "Poort:"
+
+#: src/protocols/irc/irc.c:2730
+msgid "Encoding:"
+msgstr "Codering:"
+
+#: src/protocols/jabber/jabber.c:972
 msgid "Unable to change password."
-msgstr "Kan bericht niet verzenden: Te groot"
+msgstr "Kan wachtwoord niet veranderen."
 
-#: src/protocols/jabber/jabber.c:951
+#: src/protocols/jabber/jabber.c:973
 msgid ""
 "The current password you entered is incorrect.  Your password has not been "
 "changed."
 msgstr ""
+"Het huidige wachtwoord wat u intikte is niet juist. Het wachtwoord zal niet "
+"veranderd worden."
 
-#: src/protocols/jabber/jabber.c:956
-#, fuzzy
+#: src/protocols/jabber/jabber.c:978
 msgid "Unable to change password"
-msgstr "Kan bericht niet verzenden: Te groot"
+msgstr "Kan wachtwoord niet veranderen"
 
-#: src/protocols/jabber/jabber.c:957
+#: src/protocols/jabber/jabber.c:979
 msgid ""
 "The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
+"Het nieuwe wachtwoord wat u intikte is hetzelfde als uw oude wachtwoord. Het "
+"wachtwoord zal niet veranderd worden."
 
-#: src/protocols/jabber/jabber.c:1117
+#: src/protocols/jabber/jabber.c:1139
 msgid "Unknown"
-msgstr ""
+msgstr "Onbekend"
 
-#: src/protocols/jabber/jabber.c:1145 src/protocols/jabber/jabber.c:1163
-#: src/buddy.c:2862
+#: src/protocols/jabber/jabber.c:1167 src/protocols/jabber/jabber.c:1185
+#: src/buddy.c:2795 src/multi.c:245
 msgid "Online"
 msgstr "Online"
 
-#: src/protocols/jabber/jabber.c:1147
+#: src/protocols/jabber/jabber.c:1169
 msgid "Extended Away"
-msgstr ""
+msgstr "Lang weg"
 
-#: src/protocols/jabber/jabber.c:1149
+#: src/protocols/jabber/jabber.c:1171
 msgid "Do Not Disturb"
-msgstr ""
+msgstr "Niet storen"
 
-#: src/protocols/jabber/jabber.c:1347
-#, fuzzy, c-format
+#: src/protocols/jabber/jabber.c:1368
+#, c-format
 msgid "Jabber Error %s"
-msgstr "Berichtfout"
+msgstr "Jabber fout %s"
 
-#: src/protocols/jabber/jabber.c:1459
+#: src/protocols/jabber/jabber.c:1474
 #, c-format
 msgid "Error %s: %s"
-msgstr ""
+msgstr "Fout %s: %s"
 
-#: src/protocols/jabber/jabber.c:1462
-#, fuzzy
+#: src/protocols/jabber/jabber.c:1477
 msgid "Unknown Error in presence"
-msgstr "Onbekende Foutcode"
+msgstr "Onbekende fout in aanwezigheid"
 
-#: src/protocols/jabber/jabber.c:1632
-#, fuzzy, c-format
+#: src/protocols/jabber/jabber.c:1647
+#, c-format
 msgid "The user %s wants to add you to their buddy list."
-msgstr ""
-"\n"
-"\n"
-"Wilt u ze toevoegen aan uw buddy lijst?"
+msgstr "De gebruiker %s wil u toevoegen aan zijn/haar vriendenlijst."
 
-#: src/protocols/jabber/jabber.c:1657
+#: src/protocols/jabber/jabber.c:1672
 #, c-format
 msgid ""
 "The Jabber user %s does not exist and was therefore not added to your roster."
 msgstr ""
+"De jabbergebruiker %s bestaat niet en is daarom niet toegevoegd aan uw "
+"rooster."
 
-#: src/protocols/jabber/jabber.c:1660
-#, fuzzy
+#: src/protocols/jabber/jabber.c:1675
 msgid "No such user."
-msgstr "Onjuiste server"
+msgstr "Gebruiker bestaat niet."
 
-#: src/protocols/jabber/jabber.c:1745 src/protocols/msn/msn.c:1114
-#: src/dialogs.c:926
+#: src/protocols/jabber/jabber.c:1757 src/protocols/msn/msn.c:1353
+#: src/dialogs.c:927
 msgid "Buddies"
-msgstr "Buddy's"
+msgstr "Vrienden"
 
-#: src/protocols/jabber/jabber.c:1808
-#, fuzzy
+#: src/protocols/jabber/jabber.c:1817
 msgid "Authenticating"
-msgstr "Identificatie mislukt"
+msgstr "Namm en wachtwoord worden gecontroleerd"
 
-#: src/protocols/jabber/jabber.c:1845
-#, fuzzy
+#: src/protocols/jabber/jabber.c:1854
 msgid "Unknown login error"
-msgstr "Onbekende Foutcode"
+msgstr "Onbekende aanmeldfout"
 
-#: src/protocols/jabber/jabber.c:2036
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2242
 msgid "Password successfully changed."
-msgstr "Wachtwoord Veranderen Gelukt"
+msgstr "Wachtwoord is veranderd."
 
-#: src/protocols/jabber/jabber.c:2080 src/protocols/jabber/jabber.c:3885
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2286 src/protocols/jabber/jabber.c:4076
 msgid "Connection lost"
 msgstr "Verbinding verbroken"
 
-#: src/protocols/jabber/jabber.c:2082 src/protocols/jabber/jabber.c:2114
-#: src/protocols/jabber/jabber.c:3887 src/protocols/jabber/jabber.c:3933
-#: src/protocols/msn/msn.c:1745 src/protocols/msn/msn.c:1774
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2288 src/protocols/jabber/jabber.c:2320
+#: src/protocols/jabber/jabber.c:4078 src/protocols/jabber/jabber.c:4124
+#: src/protocols/msn/msn.c:1978 src/protocols/msn/msn.c:2007
 msgid "Unable to connect"
-msgstr "Kan geen directe verbinding openen"
+msgstr "Kan geen verbinding maken"
 
-#: src/protocols/jabber/jabber.c:2088
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2294
 msgid "Connected"
-msgstr "Verbinding verbroken"
+msgstr "Verbonden"
 
-#: src/protocols/jabber/jabber.c:2091
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2297
 msgid "Requesting Authentication Method"
-msgstr "Identificatie mislukt"
+msgstr "Identificatiemethode wordt aangevraagd"
 
 #. we have no chats yet
-#: src/protocols/jabber/jabber.c:2109 src/protocols/msn/msn.c:1766
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2315 src/protocols/msn/msn.c:1999
 msgid "Connecting"
-msgstr "Verbinding verbroken"
+msgstr "Verbinding wordt gemaakt"
 
-#: src/protocols/jabber/jabber.c:2415
+#: src/protocols/jabber/jabber.c:2619
 #, c-format
 msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
 msgstr ""
+"De gebruiker %s is een ongeldig Jabber I.D. en is daarom niet toegevoegd."
 
-#: src/protocols/jabber/jabber.c:2417
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2621
 msgid "Jabber Error"
-msgstr "Berichtfout"
+msgstr "Jabber Fout"
 
-#: src/protocols/jabber/jabber.c:2652
+#: src/protocols/jabber/jabber.c:2856
 msgid "Room:"
 msgstr "Ruimte:"
 
-#: src/protocols/jabber/jabber.c:2656
-msgid "Server:"
-msgstr "Server:"
-
-#: src/protocols/jabber/jabber.c:2661
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2865
 msgid "Handle:"
-msgstr "Handle:"
+msgstr "Bijnaam: "
 
-#: src/protocols/jabber/jabber.c:2685
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2889
 msgid "Unable to join chat"
-msgstr "Kan geen directe verbinding openen"
+msgstr "Kan niet meedoen met chat"
 
-#: src/protocols/jabber/jabber.c:2718
-#, fuzzy
+#: src/protocols/jabber/jabber.c:2922
 msgid "Chats"
-msgstr "Chat"
+msgstr "Chats"
 
-#: src/protocols/jabber/jabber.c:3033
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3229
 msgid "View Error Msg"
-msgstr "Toon Logboek"
+msgstr "Foutmeldingen weergeven"
 
-#: src/protocols/jabber/jabber.c:3050 src/protocols/oscar/oscar.c:3624
-#: src/buddy_chat.c:889
+#: src/protocols/jabber/jabber.c:3246 src/protocols/oscar/oscar.c:4690
+#: src/buddy_chat.c:895
 msgid "Get Away Msg"
 msgstr "Haal afwezigheidsbericht op"
 
-#: src/protocols/jabber/jabber.c:3057
+#: src/protocols/jabber/jabber.c:3253
 msgid "Un-hide From"
-msgstr ""
+msgstr "Afzender weergeven"
 
-#: src/protocols/jabber/jabber.c:3060
+#: src/protocols/jabber/jabber.c:3256
 msgid "Temporarily Hide From"
-msgstr ""
+msgstr "Afzender tijdelijk verbergen"
 
-#: src/protocols/jabber/jabber.c:3078
+#: src/protocols/jabber/jabber.c:3279
 msgid "Remove From Roster"
-msgstr ""
+msgstr "Uit rooster verwijderen"
 
-#: src/protocols/jabber/jabber.c:3083
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3284
 msgid "Cancel Presence Notification"
-msgstr "Popup Melding"
+msgstr "Aanwezigheidsmelding annuleren"
 
-#: src/protocols/jabber/jabber.c:3285
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3477
 msgid "Full Name"
-msgstr "Voornaam"
+msgstr "Volledige naam"
 
-#: src/protocols/jabber/jabber.c:3286
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3478
 msgid "Family Name"
-msgstr "Voornaam"
+msgstr "Achternaam"
 
-#: src/protocols/jabber/jabber.c:3287
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3479
 msgid "Given Name"
-msgstr "Meisjesnaam"
+msgstr "Gegeven naam"
 
-#: src/protocols/jabber/jabber.c:3288
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3480
 msgid "Nickname"
 msgstr "Bijnaam"
 
-#: src/protocols/jabber/jabber.c:3289 src/dialogs.c:2951
+#: src/protocols/jabber/jabber.c:3481 src/dialogs.c:3029
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:3290
+#: src/protocols/jabber/jabber.c:3482
 msgid "Street Address"
-msgstr ""
+msgstr "Adres"
 
-#: src/protocols/jabber/jabber.c:3291
+#: src/protocols/jabber/jabber.c:3483
 msgid "Extended Address"
-msgstr ""
+msgstr "Adresbijvoeging"
 
-#: src/protocols/jabber/jabber.c:3292
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3484
 msgid "Locality"
-msgstr "ZLocate"
+msgstr "Localiteit"
 
-#: src/protocols/jabber/jabber.c:3293
+#: src/protocols/jabber/jabber.c:3485
 msgid "Region"
-msgstr ""
+msgstr "Regio"
 
-#: src/protocols/jabber/jabber.c:3294
+#: src/protocols/jabber/jabber.c:3486
 msgid "Postal Code"
-msgstr ""
+msgstr "Postcode"
 
 #. Line 7
-#: src/protocols/jabber/jabber.c:3295 src/dialogs.c:2072 src/dialogs.c:2780
+#: src/protocols/jabber/jabber.c:3487 src/dialogs.c:2155 src/dialogs.c:2860
 msgid "Country"
 msgstr "Land"
 
-#: src/protocols/jabber/jabber.c:3296
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3488
 msgid "Telephone"
-msgstr "Niets Selecteren"
+msgstr "Telefoon"
 
-#: src/protocols/jabber/jabber.c:3297 src/dialogs.c:2856
+#: src/protocols/jabber/jabber.c:3489 src/dialogs.c:2934
 msgid "Email"
 msgstr "E-mail"
 
-#: src/protocols/jabber/jabber.c:3298
+#: src/protocols/jabber/jabber.c:3490
 msgid "Organization Name"
-msgstr ""
+msgstr "Organisatie"
 
-#: src/protocols/jabber/jabber.c:3299
+#: src/protocols/jabber/jabber.c:3491
 msgid "Organization Unit"
-msgstr ""
+msgstr "Afdeling"
 
-#: src/protocols/jabber/jabber.c:3300
+#: src/protocols/jabber/jabber.c:3492
 msgid "Title"
 msgstr "Titel"
 
-#: src/protocols/jabber/jabber.c:3301
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3493
 msgid "Role"
-msgstr "Verwijderen"
+msgstr "Rol"
 
-#: src/protocols/jabber/jabber.c:3302
-#, fuzzy
+#: src/protocols/jabber/jabber.c:3494
 msgid "Birthday"
 msgstr "Geboortedatum"
 
-#: src/protocols/jabber/jabber.c:3303 src/dialogs.c:2959
+#: src/protocols/jabber/jabber.c:3495 src/dialogs.c:3037 src/prefs.c:985
 msgid "Description"
 msgstr "Beschrijving"
 
-#: src/protocols/jabber/jabber.c:3328
+#: src/protocols/jabber/jabber.c:3520
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
 msgstr ""
+"Alle items hieronder zijn optioneel. Geef alleen die informatie die u ook "
+"publiekelijk beschikbaar wilt hebben."
 
-#: src/protocols/jabber/jabber.c:3329
+#: src/protocols/jabber/jabber.c:3521
 msgid "User Identity"
-msgstr ""
+msgstr "Identiteit"
 
-#: src/protocols/jabber/jabber.c:3741
+#: src/protocols/jabber/jabber.c:3933
 msgid "Gaim - Edit Jabber vCard"
-msgstr ""
+msgstr "Gaim - Jabber vCard bewerken"
 
-#: src/protocols/jabber/jabber.c:3815
+#: src/protocols/jabber/jabber.c:4006
 msgid "Server Registration successful!"
-msgstr ""
+msgstr "Server-registratie voltooid!"
 
-#: src/protocols/jabber/jabber.c:3842
+#: src/protocols/jabber/jabber.c:4033
 msgid "Unknown registration error"
-msgstr ""
+msgstr "Onbekende registratiefout"
 
-#: src/protocols/jabber/jabber.c:3951 src/protocols/jabber/jabber.c:3966
-#, fuzzy
+#: src/protocols/jabber/jabber.c:4142 src/protocols/jabber/jabber.c:4157
 msgid "Set User Info"
-msgstr "Gebruikersinfo"
+msgstr "Gebruikersinfo instellen"
+
+#: src/protocols/msn/msn.c:221
+msgid "Syntax Error (probably a Gaim bug)"
+msgstr "Syntaxfout (waarschijnlijk een bug in Gaim)"
+
+#: src/protocols/msn/msn.c:224
+msgid "Invalid Parameter (probably a Gaim bug)"
+msgstr "Ongeldige parameter (waarschijnlijk een bug in Gaim)"
+
+#: src/protocols/msn/msn.c:227
+msgid "Invalid User"
+msgstr "Ongeldige gebruiker"
 
 #: src/protocols/msn/msn.c:230
-msgid "Syntax Error (probably a Gaim bug)"
-msgstr ""
+msgid "Fully Qualified Domain Name missing"
+msgstr "Geen geldige internetnaam (FQDN) aanwezig"
 
 #: src/protocols/msn/msn.c:233
-msgid "Invalid Parameter (probably a Gaim bug)"
-msgstr ""
+msgid "Already Login"
+msgstr "Reeds aangemeld"
 
 #: src/protocols/msn/msn.c:236
-#, fuzzy
-msgid "Invalid User"
-msgstr "van Gaim"
+msgid "Invalid Username"
+msgstr "Ongeldige gebruikersnaam"
 
 #: src/protocols/msn/msn.c:239
-msgid "Fully Qualified Domain Name missing"
-msgstr ""
+msgid "Invalid Friendly Name"
+msgstr "Ongeldige bijnaam"
 
 #: src/protocols/msn/msn.c:242
-msgid "Already Login"
-msgstr ""
+msgid "List Full"
+msgstr "Lijst is vol"
 
 #: src/protocols/msn/msn.c:245
-msgid "Invalid Username"
-msgstr ""
+msgid "Already there"
+msgstr "Staat er al"
 
 #: src/protocols/msn/msn.c:248
-#, fuzzy
-msgid "Invalid Friendly Name"
-msgstr "Meisjesnaam"
+msgid "Not on list"
+msgstr "Niet in de lijst"
 
 #: src/protocols/msn/msn.c:251
-msgid "List Full"
-msgstr ""
+msgid "User is offline"
+msgstr "Gebruiker is offline"
 
 #: src/protocols/msn/msn.c:254
-msgid "Already there"
-msgstr ""
+msgid "Already in the mode"
+msgstr "Reeds in die modus"
 
 #: src/protocols/msn/msn.c:257
-msgid "Not on list"
-msgstr ""
+msgid "Already in opposite list"
+msgstr "Reeds in de tegenovergestelde lijst"
 
 #: src/protocols/msn/msn.c:260
-msgid "User is offline"
-msgstr ""
+msgid "Switchboard failed"
+msgstr "Schakelserver fout"
 
 #: src/protocols/msn/msn.c:263
-msgid "Already in the mode"
-msgstr ""
-
-#: src/protocols/msn/msn.c:266
-msgid "Already in opposite list"
-msgstr ""
-
-#: src/protocols/msn/msn.c:269
-msgid "Switchboard failed"
-msgstr ""
-
-#: src/protocols/msn/msn.c:272
 msgid "Notify Transfer failed"
-msgstr ""
+msgstr "Melding overzetten mislukt"
 
-#: src/protocols/msn/msn.c:276
+#: src/protocols/msn/msn.c:267
 msgid "Required fields missing"
-msgstr ""
+msgstr "Niet alle verplichte velden zijn ingevuld"
 
-#: src/protocols/msn/msn.c:279
-#, fuzzy
+#: src/protocols/msn/msn.c:270 src/protocols/oscar/oscar.c:399
 msgid "Not logged in"
-msgstr "%s heeft zich aangemeld"
+msgstr "Niet aangemeld"
+
+#: src/protocols/msn/msn.c:274
+msgid "Internal server error"
+msgstr "Interne serverfout"
+
+#: src/protocols/msn/msn.c:277
+msgid "Database server error"
+msgstr "Database-server fout"
+
+#: src/protocols/msn/msn.c:280
+msgid "File operation error"
+msgstr "Bestandsfout"
 
 #: src/protocols/msn/msn.c:283
-#, fuzzy
-msgid "Internal server error"
-msgstr "Interne Fout"
-
-#: src/protocols/msn/msn.c:286
-msgid "Database server error"
-msgstr ""
-
-#: src/protocols/msn/msn.c:289
-#, fuzzy
-msgid "File operation error"
-msgstr "Interne verbindingsfout\n"
-
-#: src/protocols/msn/msn.c:292
-#, fuzzy
 msgid "Memory allocation error"
-msgstr "Fatale verbindingsgout!\n"
+msgstr "Geheugenfout"
+
+#: src/protocols/msn/msn.c:287
+msgid "Server busy"
+msgstr "Server bezig"
+
+#: src/protocols/msn/msn.c:290
+msgid "Server unavailable"
+msgstr "Server niet beschikbaar"
+
+#: src/protocols/msn/msn.c:293
+msgid "Peer Notification server down"
+msgstr "Meldingsserver is offline"
 
 #: src/protocols/msn/msn.c:296
-#, fuzzy
-msgid "Server busy"
-msgstr "Server:"
+msgid "Database connect error"
+msgstr "Database verbindingsprobleem"
 
 #: src/protocols/msn/msn.c:299
-#, fuzzy
-msgid "Server unavailable"
-msgstr "Niet Beschikbaar"
-
-#: src/protocols/msn/msn.c:302
-msgid "Peer Notification server down"
-msgstr ""
-
-#: src/protocols/msn/msn.c:305
-#, fuzzy
-msgid "Database connect error"
-msgstr "Interne verbindingsfout\n"
-
-#: src/protocols/msn/msn.c:308
 msgid "Server is going down (abandon ship)"
-msgstr ""
+msgstr "Server wordt uitgeschakeld (verlaat het schip!)"
+
+#: src/protocols/msn/msn.c:303
+msgid "Error creating connection"
+msgstr "Fout bij maken verbinding"
+
+#: src/protocols/msn/msn.c:309
+msgid "Session overload"
+msgstr "Sessie-overload"
 
 #: src/protocols/msn/msn.c:312
-#, fuzzy
-msgid "Error creating connection"
-msgstr "g003: Fout: Kan geen verbinding maken.\n"
+msgid "User is too active"
+msgstr "Gebruiker is te actief"
+
+#: src/protocols/msn/msn.c:315
+msgid "Too many sessions"
+msgstr "Te veel sessies"
 
 #: src/protocols/msn/msn.c:318
-msgid "Session overload"
-msgstr ""
+msgid "Not expected"
+msgstr "Niet verwacht"
 
 #: src/protocols/msn/msn.c:321
-msgid "User is too active"
-msgstr ""
-
-#: src/protocols/msn/msn.c:324
-#, fuzzy
-msgid "Too many sessions"
-msgstr "Te veel matches."
-
-#: src/protocols/msn/msn.c:327
-msgid "Not expected"
-msgstr ""
-
-#: src/protocols/msn/msn.c:330
 msgid "Bad friend file"
-msgstr ""
+msgstr "Onbegrijpelijk vriendenbestand"
 
-#: src/protocols/msn/msn.c:334
-#, fuzzy
+#: src/protocols/msn/msn.c:325
 msgid "Authentication failed"
 msgstr "Identificatie mislukt"
 
-#: src/protocols/msn/msn.c:337
-#, fuzzy
+#: src/protocols/msn/msn.c:328
 msgid "Not allowed when offline"
-msgstr "Geen geluid bij aanmelden"
+msgstr "Niet toegestaan tijdens offline-status"
 
-#: src/protocols/msn/msn.c:340
+#: src/protocols/msn/msn.c:331
 msgid "Not accepting new users"
-msgstr ""
+msgstr "Nieuwe gebruikers worden niet geaccepteerd"
 
-#: src/protocols/msn/msn.c:343
+#: src/protocols/msn/msn.c:334
 msgid "User unverified"
-msgstr ""
+msgstr "Gebruiker niet gecontroleerd"
 
-#: src/protocols/msn/msn.c:346
-#, fuzzy
+#: src/protocols/msn/msn.c:337
 msgid "Unknown Error Code"
-msgstr "Onbekende Foutcode"
+msgstr "Onbekende foutcode"
 
-#: src/protocols/msn/msn.c:558
+#: src/protocols/msn/msn.c:490
+#, c-format
+msgid "%s has closed the conversation window"
+msgstr "%s heeft het gespreksvenster gesloten"
+
+#: src/protocols/msn/msn.c:561
 msgid "An MSN message may not have been received."
-msgstr ""
+msgstr "Een MSN-bericht is misschien niet aangekomen."
 
-#: src/protocols/msn/msn.c:815
-#, fuzzy
+#: src/protocols/msn/msn.c:1058
 msgid "Gaim was unable to send an MSN message"
-msgstr "Gaim kon een bericht niet verzenden"
+msgstr "Gaim kon een MSN-bericht niet verzenden"
 
-#: src/protocols/msn/msn.c:816
+#: src/protocols/msn/msn.c:1059
 msgid ""
 "Gaim encountered an error communicating with the MSN switchboard server.  "
 "Please try again later."
 msgstr ""
+"Gaim heeft communicatieproblemen met de MSN schakelserver. Probeert u het "
+"later nogmaals."
 
-#: src/protocols/msn/msn.c:921
+#: src/protocols/msn/msn.c:1092 src/protocols/msn/msn.c:1111
+#: src/protocols/msn/msn.c:2282 src/protocols/msn/msn.c:2404
+#: src/protocols/msn/msn.c:2422 src/protocols/msn/msn.c:2542
+#: src/protocols/msn/msn.c:2555 src/protocols/msn/msn.c:2581
+#: src/protocols/msn/msn.c:2638 src/protocols/msn/msn.c:2656
+#: src/protocols/msn/msn.c:2691 src/protocols/msn/msn.c:2725
+#: src/protocols/msn/msn.c:2766 src/protocols/msn/msn.c:2773
+#: src/protocols/msn/msn.c:2786 src/protocols/msn/msn.c:2794
+#: src/protocols/msn/msn.c:2823 src/protocols/msn/msn.c:2832
+#: src/protocols/msn/msn.c:2845 src/protocols/msn/msn.c:2853
+msgid "Write error"
+msgstr "Schrijffout"
+
+#: src/protocols/msn/msn.c:1160
 #, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
-msgstr ""
+msgstr "De gebruiker %s (%s) wil %s toevoegen aan zijn/haar vriendenlijst."
 
-#: src/protocols/msn/msn.c:1078
+#: src/protocols/msn/msn.c:1210 src/protocols/msn/msn.c:1985
+msgid "Unable to write to server"
+msgstr "Kan niet naar server schrijven"
+
+#: src/protocols/msn/msn.c:1317
 #, c-format
 msgid "The user %s (%s) wants to add you to their buddy list"
-msgstr ""
+msgstr "De gebruiker %s (%s) wil u toevoegen aan zijn/haar vriendenlijst"
 
-#: src/protocols/msn/msn.c:1179
-#, fuzzy
+#: src/protocols/msn/msn.c:1418
 msgid "You have been disconnected. You have signed on from another location."
-msgstr "De verbinding met chat ruimte %s is verbroken"
+msgstr ""
+"De verbinding is verbroken. U heeft uzelf aangemeld vanaf een andere locatie."
 
-#: src/protocols/msn/msn.c:1439 src/protocols/msn/msn.c:1683
-#, fuzzy
+#: src/protocols/msn/msn.c:1553 src/protocols/msn/msn.c:1869
+msgid "Got invalid XFR\n"
+msgstr "Ongeldige XFR onvangen\n"
+
+#: src/protocols/msn/msn.c:1593
+msgid "Error transfering"
+msgstr "Fout bij bestandsoverdracht"
+
+#: src/protocols/msn/msn.c:1677 src/protocols/msn/msn.c:1916
 msgid "Error reading from server"
-msgstr "Fout bij het lezen van socket"
+msgstr "Fout bij inlezen van informatie van server"
 
-#: src/protocols/msn/msn.c:1572
+#: src/protocols/msn/msn.c:1761
+msgid "Unable to connect to Notification Server"
+msgstr "Kan geen verbinding maken met de meldingsserver"
+
+#: src/protocols/msn/msn.c:1768
+msgid "Unable to talk to Notification Server"
+msgstr "Kan niet communiceren met de meldingsserver"
+
+#: src/protocols/msn/msn.c:1784
+msgid "Protocol not supported"
+msgstr "Protocol niet ondersteund"
+
+#: src/protocols/msn/msn.c:1791
+msgid "Unable to request INF\n"
+msgstr "Kan geen INF aanvragen\n"
+
+#: src/protocols/msn/msn.c:1798
+msgid "Unable to login using MD5"
+msgstr "Kan niet aanmelden met MD5"
+
+#: src/protocols/msn/msn.c:1805
+msgid "Unable to send USR\n"
+msgstr "Kan geen USR sturen\n"
+
+#: src/protocols/msn/msn.c:1810
 msgid "Requesting to send password"
-msgstr ""
+msgstr "Wachtwoord-toestemming aangevraagd"
 
-#: src/protocols/msn/msn.c:1622
-#, fuzzy
+#: src/protocols/msn/msn.c:1856
 msgid "Unable to send password"
-msgstr "Kan bericht niet verzenden: Te groot"
+msgstr "Kan wachtwoord niet verzenden"
 
-#: src/protocols/msn/msn.c:1627
-#, fuzzy
+#: src/protocols/msn/msn.c:1861
 msgid "Password sent"
-msgstr "Wachtwoord:"
+msgstr "Wachtwoord verzonden"
 
-#: src/protocols/msn/msn.c:1752
-#, fuzzy
-msgid "Unable to write to server"
-msgstr "Aanmelden niet mogelijk"
+#: src/protocols/msn/msn.c:1890
+msgid "Unable to transfer"
+msgstr "Kan niet overzetten"
 
-#: src/protocols/msn/msn.c:1758
-#, fuzzy
+#: src/protocols/msn/msn.c:1898
+msgid "Unable to parse message"
+msgstr "Kan het bericht niet verwerken"
+
+#: src/protocols/msn/msn.c:1991
 msgid "Synching with server"
-msgstr "Verbinding maken met GG server"
+msgstr "Synchronisatie met server"
 
-#: src/protocols/msn/msn.c:1924
+#: src/protocols/msn/msn.c:2353 src/protocols/msn/msn.c:2380
 msgid "Away From Computer"
-msgstr ""
+msgstr "Weg van de computer"
 
-#: src/protocols/msn/msn.c:1925
+#: src/protocols/msn/msn.c:2354 src/protocols/msn/msn.c:2382
 msgid "Be Right Back"
-msgstr ""
+msgstr "Ben zo terug"
 
-#: src/protocols/msn/msn.c:1926
-#, fuzzy
+#: src/protocols/msn/msn.c:2355 src/protocols/msn/msn.c:2384
+#: src/protocols/msn/msn.c:2445
 msgid "Busy"
-msgstr "Buddy"
+msgstr "Bezig"
 
-#: src/protocols/msn/msn.c:1927
+#: src/protocols/msn/msn.c:2356 src/protocols/msn/msn.c:2386
 msgid "On The Phone"
-msgstr ""
+msgstr "Aan de telefoon"
 
-#: src/protocols/msn/msn.c:1928
+#: src/protocols/msn/msn.c:2357 src/protocols/msn/msn.c:2388
 msgid "Out To Lunch"
-msgstr ""
+msgstr "Aan het lunchen"
 
-#: src/protocols/msn/msn.c:1929
-#, fuzzy
+#: src/protocols/msn/msn.c:2358 src/protocols/msn/msn.c:2390
 msgid "Hidden"
-msgstr "Verstop Icon"
+msgstr "Onzichtbaar"
 
-#: src/protocols/msn/msn.c:2045
+#: src/protocols/msn/msn.c:2447
+msgid "Be right back"
+msgstr "Ben zo terug"
+
+#: src/protocols/msn/msn.c:2449
+msgid "Away from the computer"
+msgstr "Bij de computer vandaan"
+
+#: src/protocols/msn/msn.c:2451
+msgid "On the phone"
+msgstr "Aan de telefoon"
+
+#: src/protocols/msn/msn.c:2453
+msgid "Out to lunch"
+msgstr "Aan het lunchen"
+
+#: src/protocols/msn/msn.c:2455 src/prefs.c:748
+msgid "Idle"
+msgstr "Afwezig"
+
+#: src/protocols/msn/msn.c:2492
 msgid "Reset friendly name"
-msgstr ""
+msgstr "Bijnaam herstellen"
 
-#: src/protocols/msn/msn.c:2118
+#: src/protocols/msn/msn.c:2498 src/protocols/oscar/oscar.c:2574
+#: src/protocols/oscar/oscar.c:4703 src/buddy.c:2192
+msgid "Send File"
+msgstr "Bestanden Verzenden"
+
+#: src/protocols/msn/msn.c:2574
 msgid "New MSN friendly name too long."
-msgstr ""
+msgstr "Nieuwe MSN bijnaam is te lang."
 
-#: src/protocols/msn/msn.c:2133 src/protocols/msn/msn.c:2154
-#, fuzzy
+#: src/protocols/msn/msn.c:2589 src/protocols/msn/msn.c:2610
 msgid "Set Friendly Name"
-msgstr "Gebruikersnaam: "
+msgstr "Bijnaam instellen"
 
-#: src/protocols/msn/msn.c:2134
-#, fuzzy
+#: src/protocols/msn/msn.c:2590
 msgid "Set Friendly Name:"
-msgstr "Gebruikersnaam:"
+msgstr "Bijnaam instellen:"
 
-#: src/protocols/msn/msn.c:2135
+#: src/protocols/msn/msn.c:2591 src/protocols/msn/msn.c:2611
 msgid "Reset All Friendly Names"
-msgstr ""
+msgstr "Alle bijnamen opnieuw opvragen"
 
-#: src/protocols/msn/msn.c:2288
+#: src/protocols/msn/msn.c:2751
 #, c-format
 msgid ""
-"An MSN screenname must be in the form \"user@server.com\".  Perhaps you "
-"meant %s@hotmail.com.  No changes were made to your allow list."
+"An MSN screenname must be in the form \"user@server.com\".  Perhaps you meant "
+"%s@hotmail.com.  No changes were made to your allow list."
 msgstr ""
+"Een MSN gebruiker moet de vorm \"gebruiker@server.bla\" hebben. Misschien "
+"bedoelde u %s@hotmail.com. Er is niets veranderd aan de lijst."
 
-#: src/protocols/msn/msn.c:2291 src/protocols/msn/msn.c:2348
-#, fuzzy
+#: src/protocols/msn/msn.c:2754 src/protocols/msn/msn.c:2811
 msgid "Invalid MSN screenname"
-msgstr "Meisjesnaam"
+msgstr "Ongeldige MSN bijnaam"
 
-#: src/protocols/msn/msn.c:2345
+#: src/protocols/msn/msn.c:2808
 #, c-format
 msgid ""
-"An MSN screenname must be in the form \"user@server.com\".  Perhaps you "
-"meant %s@hotmail.com.  No changes were made to your block list."
+"An MSN screenname must be in the form \"user@server.com\".  Perhaps you meant "
+"%s@hotmail.com.  No changes were made to your block list."
 msgstr ""
+"Een MSN gebruiker moet de vorm \"gebruiker@server.bla\" hebben. Misschien "
+"bedoelde u %s@hotmail.com. Er is niets veranderd aan de lijst."
 
-#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3227
-#: src/protocols/toc/toc.c:1104
+#: src/protocols/napster/napster.c:464 src/protocols/oscar/oscar.c:4202
+#: src/protocols/toc/toc.c:1144
 msgid "Join what group:"
 msgstr "Welke groep binnengaan:"
 
-#: src/protocols/oscar/oscar.c:330
+#: src/protocols/oscar/oscar.c:395
+msgid "Invalid error"
+msgstr "Ongeldige fout"
+
+#: src/protocols/oscar/oscar.c:396
+msgid "Invalid SNAC"
+msgstr "Ongeldige SNAC"
+
+#: src/protocols/oscar/oscar.c:397
+msgid "Rate to host"
+msgstr "Frequentie naar host"
+
+#: src/protocols/oscar/oscar.c:398
+msgid "Rate to client"
+msgstr "Frequentie naar cliënt"
+
+#: src/protocols/oscar/oscar.c:400
+msgid "Service unavailable"
+msgstr "Service niet beschikbaar"
+
+#: src/protocols/oscar/oscar.c:401
+msgid "Service not defined"
+msgstr "Service niet gedefinieerd"
+
+#: src/protocols/oscar/oscar.c:402
+msgid "Obsolete SNAC"
+msgstr "Verouderde SNAC"
+
+#: src/protocols/oscar/oscar.c:403
+msgid "Not supported by host"
+msgstr "Niet ondersteund door host"
+
+#: src/protocols/oscar/oscar.c:404
+msgid "Not supported by client"
+msgstr "Niet ondersteund door cliënt"
+
+#: src/protocols/oscar/oscar.c:405
+msgid "Refused by client"
+msgstr "Gewegerd door cliënt"
+
+#: src/protocols/oscar/oscar.c:406
+msgid "Reply too big"
+msgstr "Antwoord te groot"
+
+#: src/protocols/oscar/oscar.c:407
+msgid "Responses lost"
+msgstr "Reacties verloren"
+
+#: src/protocols/oscar/oscar.c:408
+msgid "Request denied"
+msgstr "Aanvraag geweigerd"
+
+#: src/protocols/oscar/oscar.c:409
+msgid "Busted SNAC payload"
+msgstr "SNAC bagage kapot"
+
+#: src/protocols/oscar/oscar.c:410
+msgid "Insufficient rights"
+msgstr "Niet genoeg rechten"
+
+#: src/protocols/oscar/oscar.c:411
+msgid "In local permit/deny"
+msgstr "In lokale toestaan/weigeren"
+
+#: src/protocols/oscar/oscar.c:412
+msgid "Too evil (sender)"
+msgstr "Te kwaadaardig (afzender)"
+
+#: src/protocols/oscar/oscar.c:413
+msgid "Too evil (receiver)"
+msgstr "Te kwaadaardig (ontvanger)"
+
+#: src/protocols/oscar/oscar.c:414
+msgid "User temporarily unavailable"
+msgstr "Gebruiker tijdelijk niet beschikbaar"
+
+#: src/protocols/oscar/oscar.c:415
+msgid "No match"
+msgstr "Geen overeenkomstige resultaten"
+
+#: src/protocols/oscar/oscar.c:416
+msgid "List overflow"
+msgstr "Te grote lijst"
+
+#: src/protocols/oscar/oscar.c:417
+msgid "Request ambiguous"
+msgstr "Dubieuze aanvraag"
+
+#: src/protocols/oscar/oscar.c:418
+msgid "Queue full"
+msgstr "Wachtrij vol"
+
+#: src/protocols/oscar/oscar.c:419
+msgid "Not while on AOL"
+msgstr "Niet tijdens AOL"
+
+#: src/protocols/oscar/oscar.c:463
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "Directe verbinding met %s afgesloten"
 
-#: src/protocols/oscar/oscar.c:332
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:465
+#, c-format
 msgid "Direct IM with %s failed"
-msgstr "Directe verbinding met %s afgesloten"
+msgstr "Directe verbinding met %s mislukt"
 
-#: src/protocols/oscar/oscar.c:370
+#: src/protocols/oscar/oscar.c:503
 msgid "connection error (rend)\n"
 msgstr "Verbindingsfout!\n"
 
-#: src/protocols/oscar/oscar.c:381
+#: src/protocols/oscar/oscar.c:514
 msgid "major connection error\n"
 msgstr "Fatale verbindingsgout!\n"
 
-#: src/protocols/oscar/oscar.c:382 src/protocols/toc/toc.c:511
-#: src/protocols/toc/toc.c:524 src/protocols/toc/toc.c:590
+#: src/protocols/oscar/oscar.c:515 src/protocols/toc/toc.c:555
+#: src/protocols/toc/toc.c:568 src/protocols/toc/toc.c:634
 msgid "Disconnected."
 msgstr "Verbinding verbroken"
 
-#: src/protocols/oscar/oscar.c:394 src/protocols/toc/toc.c:761
+#: src/protocols/oscar/oscar.c:527 src/protocols/toc/toc.c:805
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "De verbinding met chat ruimte %s is verbroken"
+msgstr "De verbinding met chatruimte %s is verbroken"
 
-#: src/protocols/oscar/oscar.c:407
+#: src/protocols/oscar/oscar.c:540
 msgid "Chat is currently unavailable"
-msgstr "Chat is momenteel niet bereikbaar."
+msgstr "Chatruimte is momenteel niet bereikbaar."
 
-#: src/protocols/oscar/oscar.c:466 src/protocols/oscar/oscar.c:526
+#: src/protocols/oscar/oscar.c:561 src/protocols/oscar/oscar.c:1888
+msgid "Buddy canceled transfer"
+msgstr "Andere zijde heeft overdracht afgebroken"
+
+#: src/protocols/oscar/oscar.c:612 src/protocols/oscar/oscar.c:674
 msgid "Couldn't connect to host"
 msgstr "Kan geen verbinding maken met host"
 
-#: src/protocols/oscar/oscar.c:474
+#: src/protocols/oscar/oscar.c:620
 msgid "Password sent, waiting for response\n"
 msgstr "Wachtwoord verzonden, wacht op antwoord\n"
 
-#: src/protocols/oscar/oscar.c:507
+#: src/protocols/oscar/oscar.c:655
 msgid "internal connection error\n"
 msgstr "Interne verbindingsfout\n"
 
-#: src/protocols/oscar/oscar.c:508
+#: src/protocols/oscar/oscar.c:656
 msgid "Unable to login to AIM"
 msgstr "Aanmelden bij AIM niet mogelijk"
 
-#: src/protocols/oscar/oscar.c:513
+#: src/protocols/oscar/oscar.c:661
 #, c-format
 msgid "Signon: %s"
 msgstr "Aanmelding: %s"
 
-#: src/protocols/oscar/oscar.c:585
+#: src/protocols/oscar/oscar.c:743
 msgid "Signed off.\n"
 msgstr "Afgemeld.\n"
 
-#: src/protocols/oscar/oscar.c:604 src/protocols/oscar/oscar.c:729
+#: src/protocols/oscar/oscar.c:762 src/protocols/oscar/oscar.c:910
 msgid "Could Not Connect"
 msgstr "Kan geen verbinding maken"
 
-#: src/protocols/oscar/oscar.c:612
+#: src/protocols/oscar/oscar.c:770
 msgid "Connection established, cookie sent"
 msgstr "Verbinding hersteld, Cookie verzonden"
 
 #. Incorrect nick/password
-#: src/protocols/oscar/oscar.c:638 src/protocols/toc/toc.c:459
+#: src/protocols/oscar/oscar.c:811 src/protocols/toc/toc.c:503
 msgid "Incorrect nickname or password."
 msgstr "Ongeldige gebruikersnaam of wachtwoord."
 
 #. Suspended account
-#: src/protocols/oscar/oscar.c:643
+#: src/protocols/oscar/oscar.c:816
 msgid "Your account is currently suspended."
 msgstr "Uw Account is momenteel afgesloten"
 
+#. service temporarily unavailable
+#: src/protocols/oscar/oscar.c:820
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr "De AOL service is momenteel niet bereikbaar."
+
 #. connecting too frequently
-#: src/protocols/oscar/oscar.c:647
+#: src/protocols/oscar/oscar.c:824
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
-"U heeft zich te snel aan en afgemeld. Wacht 10 minuten en probeer het nog "
-"een keer. Als u verdergaat moet u nog langer wachten "
+"U heeft zich te snel aan en afgemeld. Wacht 10 minuten en probeer het nog een "
+"keer. Als u verdergaat moet u nog langer wachten "
 
 #. client too old
-#: src/protocols/oscar/oscar.c:652
-msgid "The client version you are using is too old. Please upgrade at "
-msgstr "Uw AIM Software is te oud. Haal een nieuwere versie op"
+#: src/protocols/oscar/oscar.c:829
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr ""
+"Het programma wat u gebruikt is te oud. Haal een nieuwe versie op bij %s"
 
-#: src/protocols/oscar/oscar.c:656 src/protocols/toc/toc.c:542
+#: src/protocols/oscar/oscar.c:834 src/protocols/toc/toc.c:586
 msgid "Authentication Failed"
 msgstr "Identificatie mislukt"
 
-#: src/protocols/oscar/oscar.c:678
+#: src/protocols/oscar/oscar.c:856
 msgid "Internal Error"
 msgstr "Interne Fout"
 
-#: src/protocols/oscar/oscar.c:767 src/protocols/oscar/oscar.c:792
-#, fuzzy
-msgid "Gaim was Unable to get a valid AIM login hash."
-msgstr "Gaim kon een bericht niet verzenden"
-
-#: src/protocols/oscar/oscar.c:768 src/protocols/oscar/oscar.c:793
-#: src/protocols/oscar/oscar.c:875
+#: src/protocols/oscar/oscar.c:949 src/protocols/oscar/oscar.c:976
+#: src/protocols/oscar/oscar.c:1060
+#, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check "
+"fixed.  Check %s for updates."
 msgstr ""
+"U wordt waarschijnlijk binnenkort afgemeld. U kunt misschien beter TOC "
+"gebruiken tot dit probleem is opgelost. Kijk op %s voor nieuwe versies."
 
-#: src/protocols/oscar/oscar.c:769 src/protocols/oscar/oscar.c:794
-#: src/protocols/oscar/oscar.c:876
-msgid " for updates."
-msgstr ""
+#: src/protocols/oscar/oscar.c:951 src/protocols/oscar/oscar.c:978
+msgid "Gaim was Unable to get a valid AIM login hash."
+msgstr "Gaim kon geen geldige AIM aanmeld-hash krijgen."
 
-#: src/protocols/oscar/oscar.c:874
-#, fuzzy
+#: src/protocols/oscar/oscar.c:1062
 msgid "Gaim was Unable to get valid login hash."
-msgstr "Gaim kon een bericht niet verzenden"
+msgstr "Gaim kon geen geldige aanmeld-hash krijgen."
 
-#: src/protocols/oscar/oscar.c:1250 src/protocols/oscar/oscar.c:3438
+#: src/protocols/oscar/oscar.c:1500 src/protocols/oscar/oscar.c:4504
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Direkte verbinding met %s hersteld"
 
-#: src/protocols/oscar/oscar.c:1506 src/protocols/oscar/oscar.c:2456
+#: src/protocols/oscar/oscar.c:1610
+msgid "Transfer timed out"
+msgstr "Tijd voor overdracht verlopen"
+
+#: src/protocols/oscar/oscar.c:1632
+msgid "Couldn't open listener to send file"
+msgstr "Kan luisteraar niet benaderen om bestand over te zenden"
+
+#: src/protocols/oscar/oscar.c:1633
+msgid "File transfer aborted"
+msgstr "Bestandsoverdracht afgebroken"
+
+#: src/protocols/oscar/oscar.c:1832 src/protocols/oscar/oscar.c:1852
+msgid "(There was an error receiving this message)"
+msgstr "(Er is een fout opgetreden bij het ontvangen van dit bericht)"
+
+#: src/protocols/oscar/oscar.c:2022
+msgid ""
+"This requires a direct connection between the two computers and is necessary "
+"for IM Images.  Because your IP address will be revealed, this may be "
+"considered a privacy risk."
+msgstr ""
+"Dit vereist een directe verbinding tussen de twee computers en is nodig voor "
+"IM berichten. Omdat je IP-adres bekend wordt kan dit worden opgevat als een "
+"inbreuk op de privacy."
+
+#: src/protocols/oscar/oscar.c:2118
 #, c-format
 msgid ""
-"The user %lu has denied your request to add them to your contact list for "
-"the following reason:\n"
+"The user %lu wants to add you to their buddy list for the following reason: "
 "%s"
 msgstr ""
+"De gebruiker %lu wil u toevoegen aan zijn/haar vriendenlijst om de volgende "
+"reden: %s"
 
-#: src/protocols/oscar/oscar.c:1506 src/protocols/oscar/oscar.c:2456
-#, fuzzy
+#: src/protocols/oscar/oscar.c:2118 src/protocols/oscar/oscar.c:2129
 msgid "No reason given."
-msgstr "Geen bijnaam opgegeven"
+msgstr "Geen reden gegeven."
 
-#: src/protocols/oscar/oscar.c:1507
-msgid "ICQ authorization denied."
-msgstr ""
+#: src/protocols/oscar/oscar.c:2122
+msgid "Authorization Request"
+msgstr "Identificatie-aanvraag"
 
-#: src/protocols/oscar/oscar.c:1513 src/protocols/oscar/oscar.c:2463
+#: src/protocols/oscar/oscar.c:2129
 #, c-format
-msgid "The user %lu has granted your request to add them to your contact list."
+msgid ""
+"The user %lu has denied your request to add them to your contact list for the "
+"following reason:\n"
+"%s"
 msgstr ""
+"De gebruiker %lu heeft uw aanvraag om hem/haar toe te voegen aan uw lijst "
+"geweigerd met de volgende reden:\n"
+"%s"
 
-#: src/protocols/oscar/oscar.c:1587
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2130
+msgid "ICQ authorization denied."
+msgstr "ICQ identificatie geweigerd."
+
+#. Someone has granted you authorization
+#: src/protocols/oscar/oscar.c:2136
+#, c-format
+msgid ""
+"The user %lu has granted your request to add them to your contact list."
+msgstr ""
+"De gebruiker %lu heeft toestemming gegeven. Hij/zij wordt toegevoegd aan uw "
+"vriendenlijst."
+
+#: src/protocols/oscar/oscar.c:2143
+#, c-format
+msgid ""
+"You have received an ICQ page\n"
+"\n"
+"From: %s [%s]\n"
+"%s"
+msgstr ""
+"U heeft een ICQ semafoonbericht ontvangen\n"
+"\n"
+"Afzender: %s [%s]\n"
+"%s"
+
+#: src/protocols/oscar/oscar.c:2151
+#, c-format
+msgid ""
+"You have received an ICQ email\n"
+"\n"
+"1=%s\n"
+"2=%s\n"
+"3=%s\n"
+"4=%s\n"
+"5=%s\n"
+"6=%s\n"
+msgstr ""
+"U heeft een ICQ e-mail ontvangen\n"
+"\n"
+"1=%s\n"
+"2=%s\n"
+"3=%s\n"
+"4=%s\n"
+"5=%s\n"
+"6=%s\n"
+
+#: src/protocols/oscar/oscar.c:2172
+#, c-format
+msgid "ICQ user %lu has sent you a contact: %s (%s)"
+msgstr "ICQ-gebruiker %lu heeft u een contact toegestuurd: %s (%s)"
+
+#: src/protocols/oscar/oscar.c:2176
+msgid "Do you want to add this contact to your Buddy List?"
+msgstr "Wilt u deze persoon toevoegen aan uw vriendenlijst?"
+
+#: src/protocols/oscar/oscar.c:2255
+#, c-format
 msgid "You missed %d message from %s because it was invalid."
-msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+msgstr "U heeft %d bericht van %s niet ontvangen omdat deze ongeldig was."
 
-#: src/protocols/oscar/oscar.c:1588
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2256
+#, c-format
 msgid "You missed %d messages from %s because they were invalid."
-msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+msgstr "U heeft %d berichten van %s niet ontvangen omdat deze ongeldig waren."
 
-#: src/protocols/oscar/oscar.c:1597
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2265
+#, c-format
 msgid "You missed %d message from %s because it was too large."
-msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+msgstr "U heeft %d bericht van %s niet ontvangen omdat deze te groot was."
 
-#: src/protocols/oscar/oscar.c:1598
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2266
+#, c-format
 msgid "You missed %d messages from %s because they were too large."
-msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+msgstr "U heeft %d berichten van %s niet ontvangen omdat deze te groot waren."
 
-#: src/protocols/oscar/oscar.c:1607
-#, fuzzy, c-format
-msgid "You missed %d message from %s because the rate limit has been exceeded."
+#: src/protocols/oscar/oscar.c:2275
+#, c-format
+msgid ""
+"You missed %d message from %s because the rate limit has been exceeded."
 msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+"U heeft %d bericht van %s niet ontvangen omdat deze te snel verzonden werd."
 
-#: src/protocols/oscar/oscar.c:1608
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2276
+#, c-format
 msgid ""
 "You missed %d messages from %s because the rate limit has been exceeded."
 msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+"U heeft %d berichten van %s niet ontvangen omdat deze te snel verzonden "
+"werden."
 
-#: src/protocols/oscar/oscar.c:1617
-#, fuzzy, c-format
-msgid "You missed %d message from %s because it was too evil."
+#: src/protocols/oscar/oscar.c:2285
+#, c-format
+msgid "You missed %d message from %s because he/she was too evil."
 msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+"U heeft %d bericht van %s niet ontvangen omdat deze te kwaadaardig was."
 
-#: src/protocols/oscar/oscar.c:1618
-#, fuzzy, c-format
-msgid "You missed %d messages from %s because they are too evil."
+#: src/protocols/oscar/oscar.c:2286
+#, c-format
+msgid "You missed %d messages from %s because he/she was too evil."
 msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+"U heeft %d bericht van %s niet ontvangen omdat deze te kwaadaardig was."
 
-#: src/protocols/oscar/oscar.c:1627
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2295
+#, c-format
 msgid "You missed %d message from %s because you are too evil."
-msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+msgstr "U heeft %d bericht van %s niet ontvangen omdat u te kwaadaardig bent."
 
-#: src/protocols/oscar/oscar.c:1628
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2296
+#, c-format
 msgid "You missed %d messages from %s because you are too evil."
 msgstr ""
-"Een bericht van %s is niet overgekomen omdat het te snel verzonden werd."
+"U heeft %d berichten van %s niet ontvangen omdat u te kwaadaardig bent."
 
-#: src/protocols/oscar/oscar.c:1636
-#, fuzzy, c-format
-msgid "You missed %d message from %s for unknown reasons."
-msgstr "Een bericht van %s is niet overgekomen, oorzaak onbekend"
-
-#: src/protocols/oscar/oscar.c:1637
-#, fuzzy, c-format
-msgid "You missed %d messages from %s for unknown reasons."
-msgstr "Een bericht van %s is niet overgekomen, oorzaak onbekend"
-
-#: src/protocols/oscar/oscar.c:1705
+#: src/protocols/oscar/oscar.c:2304
 #, c-format
-msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"
-msgstr ""
+msgid "You missed %d message from %s for an unknown reason."
+msgstr "U heeft %d bericht niet ontvangen van %s om onbekende redenen."
 
-#: src/protocols/oscar/oscar.c:1707
+#: src/protocols/oscar/oscar.c:2305
 #, c-format
-msgid "<B>Status:</B> %s<BR><HR><BR>%s<BR>"
-msgstr ""
+msgid "You missed %d messages from %s for an unknown reason."
+msgstr "U heeft %d berichten niet ontvangen van %s om onbekende redenen."
 
-#: src/protocols/oscar/oscar.c:1736
+#: src/protocols/oscar/oscar.c:2343
+#, c-format
+msgid "%s has declined to receive a file from %s.\n"
+msgstr "%s wil geen bestand ontvangen van %s.\n"
+
+#: src/protocols/oscar/oscar.c:2388
+#, c-format
+msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR>%s<BR>"
+msgstr "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR>%s<BR>"
+
+#: src/protocols/oscar/oscar.c:2390
+#, c-format
+msgid "<B>Status:</B> %s<BR><HR>%s<BR>"
+msgstr "<B>Status:</B> %s<BR><HR>%s<BR>"
+
+#: src/protocols/oscar/oscar.c:2446
 #, c-format
 msgid "SNAC threw error: %s\n"
-msgstr ""
+msgstr "SNAC threw fout: %s\n"
 
-#: src/protocols/oscar/oscar.c:1755
-#, fuzzy, c-format
-msgid "Your message to %s did not get sent: %s"
-msgstr "Het bericht is niet verzonden."
+#: src/protocols/oscar/oscar.c:2447
+msgid "Unknown error"
+msgstr "Onbekende fout"
 
-#: src/protocols/oscar/oscar.c:1756 src/protocols/oscar/oscar.c:1773
-#, fuzzy
+#: src/protocols/oscar/oscar.c:2470 src/protocols/oscar/oscar.c:2478
+#: src/protocols/oscar/oscar.c:2530
 msgid "No reason was given."
-msgstr "Geen bijnaam opgegeven"
+msgstr "Geen reden opgegeven."
 
-#: src/protocols/oscar/oscar.c:1772
+#. Data is assumed to be the destination sn.
+#: src/protocols/oscar/oscar.c:2477
 #, c-format
-msgid "User information for %s unavailable: %s"
-msgstr ""
+msgid "Your message to %s did not get sent:"
+msgstr "Uw bericht aan %s is niet verzonden:"
 
-# #: src/protocols/oscar/oscar.c:1771
-# #, c-format
-# msgid "User information for %s unavailable: %s"
-# msgstr "Gebruikersinformatie voor %s is niet toegankelijk"
-#: src/protocols/oscar/oscar.c:1802 src/buddy.c:2113
+#: src/protocols/oscar/oscar.c:2529
+#, c-format
+msgid "User information for %s unavailable:"
+msgstr "Gebruikersinformatie voor %s niet beschikbaar:"
+
+#: src/protocols/oscar/oscar.c:2559 src/buddy.c:2177
 msgid "Buddy Icon"
-msgstr "Buddy Icon"
+msgstr "Vriendplaatje"
 
-#: src/protocols/oscar/oscar.c:1805 src/buddy.c:2116
+#: src/protocols/oscar/oscar.c:2562 src/buddy.c:2180
 msgid "Voice"
 msgstr "Stem"
 
-#: src/protocols/oscar/oscar.c:1808 src/buddy.c:2119
+#: src/protocols/oscar/oscar.c:2565 src/buddy.c:2183
 msgid "IM Image"
 msgstr "IM Afbeelding"
 
-#: src/protocols/oscar/oscar.c:1811 src/buddy.c:495 src/buddy.c:2122
-#: src/buddy.c:2555
+#: src/protocols/oscar/oscar.c:2568 src/buddy.c:500 src/buddy.c:2186
+#: src/buddy.c:2531
 msgid "Chat"
 msgstr "Chat"
 
-#: src/protocols/oscar/oscar.c:1814 src/buddy.c:2125
+#: src/protocols/oscar/oscar.c:2571 src/buddy.c:2189
 msgid "Get File"
 msgstr "Bestanden Ophalen"
 
-#: src/protocols/oscar/oscar.c:1817 src/buddy.c:2128
-msgid "Send File"
-msgstr "Bestanden Verzenden"
-
-#: src/protocols/oscar/oscar.c:1821 src/buddy.c:2132
+#: src/protocols/oscar/oscar.c:2578 src/buddy.c:2196
 msgid "Games"
 msgstr "Spellen"
 
-#: src/protocols/oscar/oscar.c:1824 src/buddy.c:2135
+#: src/protocols/oscar/oscar.c:2581 src/buddy.c:2199
 msgid "Stocks"
 msgstr "Koersen"
 
-#: src/protocols/oscar/oscar.c:1827 src/buddy.c:2138
-#, fuzzy
+#: src/protocols/oscar/oscar.c:2584 src/buddy.c:2202
 msgid "Send Buddy List"
-msgstr "Buddy Lijst"
+msgstr "Vriendenlijst verzenden"
 
-#: src/protocols/oscar/oscar.c:1830 src/buddy.c:2141
+#: src/protocols/oscar/oscar.c:2587 src/buddy.c:2205
 msgid "EveryBuddy Bug"
-msgstr "Everybuddy Bug"
+msgstr "Everybuddy bug"
 
-#: src/protocols/oscar/oscar.c:1833 src/buddy.c:2144
-#, fuzzy
+#: src/protocols/oscar/oscar.c:2590 src/buddy.c:2208
 msgid "AP User"
-msgstr "Gebruiker"
+msgstr "AP-gebruiker"
 
-#: src/protocols/oscar/oscar.c:1836 src/buddy.c:2147
+#: src/protocols/oscar/oscar.c:2593 src/buddy.c:2211
 msgid "ICQ RTF"
-msgstr ""
+msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:1839 src/buddy.c:2150
+#: src/protocols/oscar/oscar.c:2596 src/buddy.c:2214
 msgid "Nihilist"
-msgstr ""
+msgstr "Nihilist"
 
-#: src/protocols/oscar/oscar.c:1842 src/buddy.c:2153
+#: src/protocols/oscar/oscar.c:2599 src/buddy.c:2217
 msgid "ICQ Server Relay"
-msgstr ""
+msgstr "ICQ Server Relay"
 
-#: src/protocols/oscar/oscar.c:1845 src/buddy.c:2156
+#: src/protocols/oscar/oscar.c:2602 src/buddy.c:2220
 msgid "ICQ Unknown"
-msgstr ""
+msgstr "ICQ onbekend"
 
-#: src/protocols/oscar/oscar.c:1848 src/buddy.c:2159
+#: src/protocols/oscar/oscar.c:2605 src/buddy.c:2223
 msgid "Trillian Encryption"
-msgstr ""
+msgstr "Trillian codering"
 
-#: src/protocols/oscar/oscar.c:1886
-#, fuzzy
+#: src/protocols/oscar/oscar.c:2657
 msgid ""
-"<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif"
-"\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG SRC="
-"\"dt_icon.gif\"> : Trial AIM User <br><IMG SRC=\"admin_icon.gif\"> : "
+"<I>Unable to display information because it was sent in an unknown "
+"encoding.</I>"
+msgstr ""
+"<I>Kan geen informatie weergeven omdat deze is verstuurd in een onbekende "
+"codering."
+
+#: src/protocols/oscar/oscar.c:2664
+msgid ""
+"<BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif\"> : "
+"Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG "
+"SRC=\"dt_icon.gif\"> : Trial AIM User <br><IMG SRC=\"admin_icon.gif\"> : "
 "Administrator <br><IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive "
 "Agent<br><IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"
 msgstr ""
-"<br><BODY BGCOLOR=WHITE><hr><I>Legenda:</I><br><br><IMG SRC=\"free_icon.gif"
-"\"> : Normale AIM gebruiker<br><IMG SRC=\"aol_icon.gif\"> : AOL Gebruiker "
-"<br><IMG SRC=\"dt_icon.gif\"> : Trial AIM gebruiker <br><IMG SRC="
-"\"admin_icon.gif\"> : Administrator"
+"<br><BODY BGCOLOR=WHITE><hr><I>Legenda:</I><br><br><IMG "
+"SRC=\"free_icon.gif\"> : Normale AIM gebruiker<br><IMG SRC=\"aol_icon.gif\"> : AOL gebruiker "
+"<br><IMG SRC=\"dt_icon.gif\"> : AIM testgebruiker <br><IMG "
+"SRC=\"admin_icon.gif\"> : Systeembeheerder <br><IMG SRC=\"ab_icon.gif\"> : "
+"ActiveBuddy Interactieve software <br><IMG SRC=\"wireless_icon.gif\"> : "
+"Draadloze gebruiker <br>"
 
-#: src/protocols/oscar/oscar.c:1914
-#, fuzzy, c-format
+#: src/protocols/oscar/oscar.c:2692
+#, c-format
 msgid ""
 "Username : <B>%s</B>  %s <BR>\n"
 "Warning Level : <B>%d %%</B><BR>\n"
 "%s%s%s<BR>\n"
-"<HR><BR>\n"
+"<HR>\n"
 msgstr ""
 "Gebruikersnaam : <B>%s</B>  %s <BR>\n"
-"%sWaarschuwings Niveau : <B>%d %%</B><BR>\n"
-"Aangemeld Sinds : <B>%s</B><BR>\n"
-"Minuten Afwezig : <B>%d</B>\n"
-"<BR>\n"
-"<HR><BR>\n"
+"Waarschuwingsniveau : <B>%d %%</B><BR>\n"
+"%s%s%s<BR>\n"
+"<HR>\n"
 
-#: src/protocols/oscar/oscar.c:1946
+#: src/protocols/oscar/oscar.c:2724
 msgid "<i>User has no away message</i>"
 msgstr "<i>Gebruiker heeft geen afwezigheidsbericht</i>"
 
-#: src/protocols/oscar/oscar.c:1958
-#, fuzzy
+#: src/protocols/oscar/oscar.c:2736
 msgid "Client Capabilities: "
-msgstr "Mogelijkheden: %s\n"
+msgstr "Mogelijkheden: "
 
-#: src/protocols/oscar/oscar.c:1966
+#: src/protocols/oscar/oscar.c:2744
 msgid "<i>No Information Provided</i>"
 msgstr "<i>Geen Informatie Gegeven</i>"
 
-#: src/protocols/oscar/oscar.c:1989
-#, fuzzy
+#: src/protocols/oscar/oscar.c:2769
 msgid "Your AIM connection may be lost."
-msgstr "Uw verbinding is verbroken"
+msgstr "Uw AIM-verbinding is misschien verbroken."
 
-#: src/protocols/oscar/oscar.c:2224
+#: src/protocols/oscar/oscar.c:3027
 msgid "Rate limiting error."
-msgstr ""
+msgstr "Snelheidsoverschrijding."
 
-#: src/protocols/oscar/oscar.c:2225
+#: src/protocols/oscar/oscar.c:3028
 msgid ""
 "The last message was not sent because you are over the rate limit.  Please "
 "wait 10 seconds and try again."
 msgstr ""
+"Uw laatste bericht is niet verzonden omdat deze te snel verzonden is. Wacht "
+"alstublieft 10 seconden en probeer het dan nogmaals."
 
-#: src/protocols/oscar/oscar.c:2457
-#, fuzzy
-msgid "ICQ Authorization denied"
-msgstr "Identificatie mislukt"
+#: src/protocols/oscar/oscar.c:3480
+msgid "Account Confirmation Requested"
+msgstr "Accountbevestiging aangevraagd"
 
-#: src/protocols/oscar/oscar.c:2464
-#, fuzzy
-msgid "ICQ Authorization Granted"
-msgstr "Identificatie mislukt"
+#: src/protocols/oscar/oscar.c:3507
+msgid "Error Changing Account Info"
+msgstr "Fout bij aanpassen van accountgegevens"
 
-#: src/protocols/oscar/oscar.c:2791
-#, fuzzy
+#: src/protocols/oscar/oscar.c:3510
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"differs from the original."
+msgstr ""
+"Fout 0x%04x: Kan weergave niet veranderen omdat aangevraagde gebruikersnaam "
+"is niet gelijk aan het origineel."
+
+#: src/protocols/oscar/oscar.c:3513
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"ends in a space."
+msgstr ""
+"Fout 0x%04x: Kan weergave niet veranderen omdat aangevraagde gebruikersnaam "
+"eindigt op een spatie."
+
+#: src/protocols/oscar/oscar.c:3516
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"is too long."
+msgstr ""
+"Fout 0x%04x: Kan weergave niet veranderen omdat aangevraagde gebruikersnaam "
+"te lang is."
+
+#: src/protocols/oscar/oscar.c:3519
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because there is already a "
+"request pending for this screen name."
+msgstr ""
+"Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres al is "
+"aangevraagd door een ander."
+
+#: src/protocols/oscar/oscar.c:3522
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address has "
+"too many screen names associated with it."
+msgstr ""
+"Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres reeds te veel "
+"gebruikersnamen toegewezen heeft gekregen."
+
+#: src/protocols/oscar/oscar.c:3525
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address is "
+"invalid."
+msgstr ""
+"Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres ongeldig is."
+
+#: src/protocols/oscar/oscar.c:3528
+#, c-format
+msgid "Error 0x%04x: Unknown error."
+msgstr "Fout 0x%04x: Onbekende fout."
+
+#: src/protocols/oscar/oscar.c:3538
+#, c-format
+msgid ""
+"Your screen name is currently formated as follows:\n"
+"%s"
+msgstr ""
+"Uw gebruikersnaam wordt op het moment als volgt weergegeven:\n"
+"%s"
+
+#: src/protocols/oscar/oscar.c:3539 src/protocols/oscar/oscar.c:3545
+msgid "Account Info"
+msgstr "Accountinformatie"
+
+#: src/protocols/oscar/oscar.c:3544
+#, c-format
+msgid "The email address for %s is %s"
+msgstr "Het e-mail adres vor %s is %s"
+
+#: src/protocols/oscar/oscar.c:3737
 msgid "Unable to set AIM profile."
-msgstr "Kan het bestand %s niet lezen."
+msgstr "Kan AIM-profiel niet instellen."
 
-#: src/protocols/oscar/oscar.c:2792
+#: src/protocols/oscar/oscar.c:3738
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
 "fully connected."
 msgstr ""
+"U heeft waarschijnlijk uw profiel aangepast voordat u volledig aangemeld was. "
+"Uw profiel is niet ingesteld. Probeert u het nogmaals wanneer u volledig "
+"aangemeld bent."
 
-#: src/protocols/oscar/oscar.c:2798
+#: src/protocols/oscar/oscar.c:3744
 #, c-format
 msgid ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
-"truncated and set it."
+"The maximum profile length of %d bytes has been exceeded.  Gaim has truncated "
+"and set it."
 msgstr ""
+"De maximale profiellengte van %d bytes is overschreden. Gaim heeft het "
+"afgebroken op deze lengte."
 
-#: src/protocols/oscar/oscar.c:2818
-#, fuzzy
+#: src/protocols/oscar/oscar.c:3781
 msgid "Unable to set AIM away message."
-msgstr "Gaim kon een bericht niet verzenden"
+msgstr "Kan geen AIM afwezigheidsbericht instellen."
 
-#: src/protocols/oscar/oscar.c:2819
+#: src/protocols/oscar/oscar.c:3782
 msgid ""
 "You have probably requested to set your away message before the login "
-"procedure completed.  You remain in a \"present\" state; try setting it "
-"again when you are fully connected."
+"procedure completed.  You remain in a \"present\" state; try setting it again "
+"when you are fully connected."
 msgstr ""
+"U heeft waarschijnlijk uw afwezigheidsbericht aangepast voordat u volledig "
+"aangemeld was. Uw afwezigheidsbericht is niet ingesteld. Probeert u het "
+"nogmaals wanneer u volledig aangemeld bent."
 
-#: src/protocols/oscar/oscar.c:2834
+#: src/protocols/oscar/oscar.c:3798
 #, c-format
 msgid ""
-"The away message length of %d bytes has been exceeded.  Gaim has truncated "
-"it and set you away."
+"The away message length of %d bytes has been exceeded.  Gaim has truncated it "
+"and set you away."
 msgstr ""
+"De lengte van %d bytes van het afwezigheidsbericht is overschreden. Gaim "
+"heeft het bericht afgebroken op deze lengte."
 
-#: src/protocols/oscar/oscar.c:3210
+#: src/protocols/oscar/oscar.c:4185
 #, c-format
 msgid ""
 "The maximum number of buddies allowed in your buddy list is %d, and you have "
 "%d.  Until you are below the limit, some buddies will not show up as online."
 msgstr ""
+"Het maximale aantal vrienden in uw lijst is %d, terwijl u %d heeft. Pas "
+"wanneer uw weer onder deze limiet zit zullen alle vrienden voorkomen in de "
+"online-lijst."
 
-#: src/protocols/oscar/oscar.c:3231 src/protocols/toc/toc.c:1108
+#: src/protocols/oscar/oscar.c:4206 src/protocols/toc/toc.c:1148
 msgid "Exchange:"
-msgstr ""
+msgstr "Uitwisselen:"
 
-#: src/protocols/oscar/oscar.c:3559
+#: src/protocols/oscar/oscar.c:4627
 msgid "Unable to open Direct IM"
 msgstr "Kan geen directe verbinding openen"
 
-#: src/protocols/oscar/oscar.c:3569
+#: src/protocols/oscar/oscar.c:4637
+#, c-format
+msgid "You have selected to open a Direct IM connection with %s."
+msgstr "U heeft ervoor gekozen om een directe verbinding te openen met %s."
+
+#: src/protocols/oscar/oscar.c:4638
+msgid ""
+"Because this reveals your IP address, it may be considered a privacy risk.  "
+"Do you wish to continue?"
+msgstr ""
+"Omdat dit uw IP-adres zichtbaar maakt voor de andere partij, kan het worden "
+"gezien als inbreuk op uw privacy. Wilt u doorgaan?"
+
+#: src/protocols/oscar/oscar.c:4652
 #, c-format
 msgid ""
-"You have selected to open a Direct IM connection with %s. Doing this will "
-"let them see your IP address, and may be a security risk. Do you wish to "
-"continue?"
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>Remote client does not support "
+"sending status messages.</I><BR>"
 msgstr ""
-"U heeft gekozen om een directe verbinding met %s te openen. Hierdoor kan hij/"
-"zij uw IP adres zien en dat kan een veiligheids risico zijn. Wilt u doorgaan?"
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>Programma heeft geen "
+"ondersteuning voor statusberichten.</I><BR>"
 
-#: src/protocols/oscar/oscar.c:3586
+#: src/protocols/oscar/oscar.c:4659
 #, c-format
 msgid ""
-"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not "
-"support sending status messages.</I><BR>"
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>User has no status "
+"message.</I><BR>"
 msgstr ""
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>Gebruiker heeft geen "
+"statusbericht.</I><BR>"
 
-#: src/protocols/oscar/oscar.c:3593
-#, c-format
-msgid ""
-"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message."
-"</I><BR>"
-msgstr ""
-
-#: src/protocols/oscar/oscar.c:3618
-#, fuzzy
+#: src/protocols/oscar/oscar.c:4684
 msgid "Get Status Msg"
-msgstr "Haal afwezigheidsbericht op"
+msgstr "Statusbericht tonen"
 
-#: src/protocols/oscar/oscar.c:3631
+#: src/protocols/oscar/oscar.c:4697
 msgid "Direct IM"
 msgstr "Direct bericht"
 
-#: src/protocols/oscar/oscar.c:3639
-#, fuzzy
+#: src/protocols/oscar/oscar.c:4711
 msgid "Get Capabilities"
-msgstr "Mogelijkheden: %s\n"
+msgstr "Mogelijkheden tonen"
 
-#: src/protocols/toc/toc.c:398
+#: src/protocols/toc/toc.c:442
 #, c-format
 msgid "Unable to write file %s."
 msgstr "Kan niet naar bestand %s schrijven."
 
-#: src/protocols/toc/toc.c:401
+#: src/protocols/toc/toc.c:445
 #, c-format
 msgid "Unable to read file %s."
 msgstr "Kan het bestand %s niet lezen."
 
-#: src/protocols/toc/toc.c:404
+#: src/protocols/toc/toc.c:448
 #, c-format
 msgid "Message too long, last %s bytes truncated."
 msgstr "Bericht te lang, laatste %s Bytes afgekort."
 
-#: src/protocols/toc/toc.c:407
+#: src/protocols/toc/toc.c:451
 #, c-format
 msgid "%s not currently logged in."
-msgstr "%s is niet ingelogd."
+msgstr "%s is niet aangemeld."
 
-#: src/protocols/toc/toc.c:410
+#: src/protocols/toc/toc.c:454
 #, c-format
 msgid "Warning of %s not allowed."
 msgstr "Waarschuwing van %s is niet toegestaan."
 
-#: src/protocols/toc/toc.c:413
+#: src/protocols/toc/toc.c:457
 msgid "A message has been dropped, you are exceeding the server speed limit."
 msgstr ""
 "Een bericht is verloren gegaan. U overschreidt de snelheid van de server."
 
-#: src/protocols/toc/toc.c:416
+#: src/protocols/toc/toc.c:460
 #, c-format
 msgid "Chat in %s is not available."
-msgstr "Chat in %s is niet toegankelijk."
+msgstr "Chatruimte in %s is niet beschikbaar."
 
-#: src/protocols/toc/toc.c:419
+#: src/protocols/toc/toc.c:463
 #, c-format
 msgid "You are sending messages too fast to %s."
 msgstr "U verzend te snel berichten naar %s."
 
-#: src/protocols/toc/toc.c:422
+#: src/protocols/toc/toc.c:466
 #, c-format
 msgid "You missed an IM from %s because it was too big."
 msgstr "Een Bericht van %s is niet overgekomen omdat het te groot was."
 
-#: src/protocols/toc/toc.c:425
+#: src/protocols/toc/toc.c:469
 #, c-format
 msgid "You missed an IM from %s because it was sent too fast."
 msgstr ""
 "Een Bericht van %s is niet overgekomen omdat het te snel verzonden werd."
 
-#: src/protocols/toc/toc.c:428
+#: src/protocols/toc/toc.c:472
 msgid "Failure."
 msgstr "Fout."
 
-#: src/protocols/toc/toc.c:431
+#: src/protocols/toc/toc.c:475
 msgid "Too many matches."
 msgstr "Te veel matches."
 
-#: src/protocols/toc/toc.c:434
+#: src/protocols/toc/toc.c:478
 msgid "Need more qualifiers."
 msgstr "Meer gegevens nodig."
 
-#: src/protocols/toc/toc.c:437
+#: src/protocols/toc/toc.c:481
 msgid "Dir service temporarily unavailable."
 msgstr "Profielen service is momenteel niet toegankelijk."
 
-#: src/protocols/toc/toc.c:440
+#: src/protocols/toc/toc.c:484
 msgid "Email lookup restricted."
 msgstr "Email zoekfunctie beperkt."
 
-#: src/protocols/toc/toc.c:443
+#: src/protocols/toc/toc.c:487
 msgid "Keyword ignored."
 msgstr "Sleutelwoord genegeerd."
 
-#: src/protocols/toc/toc.c:446
+#: src/protocols/toc/toc.c:490
 msgid "No keywords."
 msgstr "Geen sleutelwoorden."
 
-#: src/protocols/toc/toc.c:449
+#: src/protocols/toc/toc.c:493
 msgid "User has no directory information."
 msgstr "Deze gebruiker heeft geen profiel."
 
-#: src/protocols/toc/toc.c:453
+#: src/protocols/toc/toc.c:497
 msgid "Country not supported."
 msgstr "Land wordt niet ondersteund."
 
-#: src/protocols/toc/toc.c:456
+#: src/protocols/toc/toc.c:500
 #, c-format
 msgid "Failure unknown: %s."
 msgstr "Onbekende Fout: %s."
 
-#: src/protocols/toc/toc.c:462
+#: src/protocols/toc/toc.c:506
 msgid "The service is temporarily unavailable."
 msgstr "De service is momenteel niet bereikbaar."
 
-#: src/protocols/toc/toc.c:465
+#: src/protocols/toc/toc.c:509
 msgid "Your warning level is currently too high to log in."
 msgstr "Uw waarschuwingsniveau is momenteel te hoog om in te loggen."
 
-#: src/protocols/toc/toc.c:468
+#: src/protocols/toc/toc.c:512
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
@@ -1667,304 +2262,290 @@ msgstr ""
 "U hebt zich te snel aan en afgemeld. Wacht 10 Minuten en probeer het nog een "
 "keer."
 
-#: src/protocols/toc/toc.c:471
+#: src/protocols/toc/toc.c:515
 #, c-format
 msgid "An unknown signon error has occurred: %s."
 msgstr "Onbekende Aanmeldingsfout: %s."
 
-#: src/protocols/toc/toc.c:474
-#, fuzzy, c-format
+#: src/protocols/toc/toc.c:518
+#, c-format
 msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Een onbekende fout, %d, is opgetreden. Info: %s"
+msgstr "Onbekende fout %d opgetreden. Info: %s"
 
-#: src/protocols/toc/toc.c:491
+#: src/protocols/toc/toc.c:535
 msgid "Connection Closed"
 msgstr "Verbinding verbroken"
 
-#: src/protocols/toc/toc.c:529
+#: src/protocols/toc/toc.c:573
 msgid "Waiting for reply..."
 msgstr "Wacht op antwoord..."
 
-#: src/protocols/toc/toc.c:598
+#: src/protocols/toc/toc.c:642
 msgid "TOC has come back from its pause. You may now send messages again."
 msgstr "TOC werkt weer. U kunt nu weer berichten versturen."
 
-#: src/protocols/toc/toc.c:782
-#, fuzzy
+#: src/protocols/toc/toc.c:826
 msgid "Password Change Successful"
-msgstr "Wachtwoord Veranderen Gelukt"
+msgstr "Wachtwoord succesvol veranderd"
 
-#: src/protocols/toc/toc.c:785
+#: src/protocols/toc/toc.c:829
 msgid "TOC has sent a PAUSE command."
-msgstr ""
+msgstr "TOC heeft een PAUSE-opdracht verstuurd."
 
-#: src/protocols/toc/toc.c:785
-#, fuzzy
+#: src/protocols/toc/toc.c:829
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
-"is only temporary, please be patient."
+"if you send a message. Gaim will prevent anything from going through. This is "
+"only temporary, please be patient."
 msgstr ""
-"TOC heeft een PAUSE commando verstuurd. Als dit gebeurd negeert TOC ieder "
-"bericht dat verzonden wordt en het kan gebeuren dat uw verbinding verbroken "
-"wordt. Gaim verhindert dat dit gebeurd maar u kunt geen berichten verzenden. "
-"Dit is tijdelijk, wees even geduldig."
+"Wanneer dit gebeurt negeert TOC alle berichten die u stuurt, en wordt u "
+"misschien van het netwerk geschopt. Gaim voorkomt deze situatie door geen "
+"berichten door te geven. Dit is slechts een tijdelijke oplossing, wees "
+"geduldig."
 
-#: src/protocols/toc/toc.c:1225
+#: src/protocols/toc/toc.c:1265
 msgid "Get Dir Info"
 msgstr "Haal directory info op"
 
-#: src/protocols/toc/toc.c:1641 src/protocols/toc/toc.c:1683
-#: src/protocols/toc/toc.c:1888
-#, fuzzy
-msgid "Could not connect for transfer."
-msgstr "Kan niet verbinden voor transfer!"
+#: src/protocols/toc/toc.c:1445
+msgid "TOC Host:"
+msgstr "TOC Host:"
 
-#: src/protocols/toc/toc.c:1802
+#: src/protocols/toc/toc.c:1451
+msgid "TOC Port:"
+msgstr "TOC poort:"
+
+#: src/protocols/toc/toc.c:1578
+#, c-format
+msgid "Could not open %s for writing!"
+msgstr "Kon %s niet openen om naar te schrijven!"
+
+#: src/protocols/toc/toc.c:1656 src/protocols/toc/toc.c:1698
+#: src/protocols/toc/toc.c:1903
+msgid "Could not connect for transfer."
+msgstr "Kan niet verbinden voor overdracht."
+
+#: src/protocols/toc/toc.c:1817
 msgid "Could not connect for transfer!"
 msgstr "Kan niet verbinden voor transfer!"
 
-#: src/protocols/toc/toc.c:1832
+#: src/protocols/toc/toc.c:1847
 msgid "Could not write file header.  The file will not be transferred."
 msgstr ""
+"Kon koptekst van bestand niet instellen. Het bestand zal niet verzonden "
+"worden."
 
-#: src/protocols/toc/toc.c:1921
+#: src/protocols/toc/toc.c:1947
 msgid "Gaim - Save As..."
 msgstr "Gaim - Opslaan als..."
 
-#: src/protocols/toc/toc.c:1962
-#, fuzzy, c-format
+#: src/protocols/toc/toc.c:1979
+#, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgstr "%s vraagt %s, om bestand %d te accepteren: %s (%.2f %s)%s%s "
+msgstr "%s vraagt aan %s om %d bestand te accepteren: %s (%.2f %s)%s%s"
 
-#: src/protocols/toc/toc.c:1963
-#, fuzzy, c-format
+#: src/protocols/toc/toc.c:1980
+#, c-format
 msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr "%s vraagt %s, om bestand %d te accepteren: %s (%.2f %s)%s%s "
+msgstr "%s vraagt aan %s om %d bestanden te accepteren: %s (%.2f %s)%s%s"
 
-#: src/protocols/toc/toc.c:1968
+#: src/protocols/toc/toc.c:1985
 #, c-format
 msgid "%s requests you to send them a file"
 msgstr "%s vraagt u om een bestand te verzenden"
 
-#: src/protocols/yahoo/yahoo.c:594
-#, fuzzy
-msgid "Your Yahoo! message did not get sent."
-msgstr "Het bericht is niet verzonden."
+#: src/protocols/toc/toc.c:1987 src/prpl.c:276
+msgid "Accept"
+msgstr "Accepteren"
 
-#: src/protocols/zephyr/zephyr.c:841
+#: src/protocols/yahoo/yahoo.c:583
+msgid "Your Yahoo! message did not get sent."
+msgstr "Uw Yahoo! bericht is niet verzonden."
+
+#: src/protocols/yahoo/yahoo.c:1361
+msgid "Pager Host:"
+msgstr "Host semafoon:"
+
+#: src/protocols/yahoo/yahoo.c:1367
+msgid "Pager Port:"
+msgstr "Poort semafoon:"
+
+#: src/protocols/zephyr/zephyr.c:836
 msgid "ZLocate"
 msgstr "ZLocate"
 
-#: src/protocols/zephyr/zephyr.c:878
+#: src/protocols/zephyr/zephyr.c:876
 msgid "Class:"
 msgstr "Class"
 
-#: src/protocols/zephyr/zephyr.c:882
+#: src/protocols/zephyr/zephyr.c:880
 msgid "Instance:"
 msgstr "Instance"
 
-#: src/protocols/zephyr/zephyr.c:886
+#: src/protocols/zephyr/zephyr.c:884
 msgid "Recipient:"
 msgstr "Ontvanger"
 
-#: src/about.c:102
+#: src/about.c:75
 #, c-format
 msgid "About Gaim v%s"
-msgstr "Over Gaim v%s"
+msgstr "Gaim v%s info"
+
+#: src/about.c:111
+msgid ""
+"Gaim is a modular Instant Messaging client capable of using AIM, ICQ, Yahoo!, "
+"MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is written "
+"using Gtk+ and is licensed under the GPL.<BR><BR>"
+msgstr ""
+"Gaim is een modulair programma om expresberichten uit te wisselen via AIM, "
+"ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr en GaduGadu en dat allemaal "
+"tegelijk! Het is geschreven m.b.v. Gtk+ en wordt verspreid onder een "
+"GPL-licentie.<BR><BR>"
+
+#: src/about.c:121
+msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"3\">IRC:</FONT> #gaim op irc.freenode.net<BR><BR>"
+
+#: src/about.c:125
+msgid "<FONT SIZE=\"3\">Active Developers:</FONT><BR>"
+msgstr "<FONT SIZE=\"3\">Actieve Ontwikkelaars:</FONT><BR>"
+
+#: src/about.c:127
+msgid ""
+"  Rob Flynn (maintainer) &lt;<A "
+"HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>  Sean Egan (coder) &lt;<A "
+"HREF=\"mailto:bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR><BR>"
+msgstr ""
+"  Rob Flynn (maintainer) &lt;<A "
+"HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>  Sean Egan (coder) &lt;<A "
+"HREF=\"mailto:bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR><BR>"
 
 #: src/about.c:135
-#, fuzzy
+msgid "<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"
+msgstr "<FONT SIZE=\"3\">Gestoorde Patch-schrijvers:</FONT><BR>"
+
+#: src/about.c:143
+msgid "<FONT SIZE=\"3\">Win32 Port:</FONT><BR>"
+msgstr "<FONT SIZE=\"3\">Win32 versie:</FONT><BR>"
+
+#: src/about.c:150
+msgid "<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"
+msgstr "<FONT SIZE=\"3\">Ex ontwikkelaars:</FONT><BR>"
+
+#: src/about.c:152
 msgid ""
-"Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
-"Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
-"It is written using Gtk+ and is licensed under the GPL.\n"
-"\n"
-"URL: "
+"  Jim Duchek<BR>  Eric Warmenhoven &lt;<A "
+"HREF=\"mailto:warmenhoven@yahoo.com\">warmenhoven@yahoo.com</A>&gt;<BR>  Mark Spencer (original author) &lt;<A "
+"HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR><BR>"
 msgstr ""
-"Gaim is een Client gebaseerd op het AOL's Intstant Messenger protocol. Het "
-"is in Gtk+ geschreven en is uitgegeven onder de GPL.\n"
-"\n"
-"URL: "
+"  Jim Duchek<BR>  Eric Warmenhoven &lt;<A "
+"HREF=\"mailto:warmenhoven@yahoo.com\">warmenhoven@yahoo.com</A>&gt;<BR>  Mark Spencer (original author) &lt;<A "
+"HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR><BR>"
 
-#: src/about.c:137
-msgid ""
-"\n"
-"\n"
-"IRC: #gaim on irc.freenode.net"
-msgstr ""
+#: src/about.c:173 src/dialogs.c:4270 src/prpl.c:493 src/prpl.c:740
+#: src/server.c:1160
+msgid "Close"
+msgstr "Sluiten"
 
-#: src/about.c:147
-msgid ""
-"Active Developers\n"
-"====================\n"
-"Rob Flynn (maintainer) [ rob@marko.net ]\n"
-"Sean Egan (coder)      [ bj91704@binghamton.edu ]\n"
-"\n"
-"Crazy Patch Writers\n"
-"===================\n"
-"Benjamin Miller\n"
-"Decklin Foster\n"
-"Nathan Walp\n"
-"Mark Doliner\n"
-"\n"
-"Retired Developers\n"
-"===================\n"
-"Jim Duchek\n"
-"Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-"Mark Spencer (original author)   [ markster@marko.net ]"
-msgstr ""
-
-#. this makes the sizes not work.
-#. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-#. gtk_widget_grab_default(button);
-#: src/about.c:185
-msgid "Web Site"
-msgstr "Website"
-
-#: src/aim.c:150 src/buddy.c:2683
-msgid "Signoff"
-msgstr "Afmelden"
-
-#: src/aim.c:162
-#, fuzzy
+#: src/aim.c:165
 msgid "Please enter your login."
-msgstr "Vul je loginnaam in"
+msgstr "Geef uw gebruikersnaam."
 
-#: src/aim.c:260
+#: src/aim.c:284
 msgid "Gaim - Login"
 msgstr "Gaim - Aanmelden"
 
-#: src/aim.c:278
-msgid "Screen Name: "
+#: src/aim.c:307
+msgid "Screen Name:"
 msgstr "Gebruikersnaam:"
 
-#: src/aim.c:294
-msgid "Password: "
-msgstr "Wachtwoord:"
-
-#: src/aim.c:315 src/buddy.c:2687
-msgid "Quit"
-msgstr "Afsluiten"
-
-#: src/aim.c:320 src/aim.c:834 src/buddy.c:2713
-msgid "Accounts"
-msgstr "Accounts"
-
-#: src/aim.c:322 src/multi.c:915
-msgid "Signon"
-msgstr "Aanmelden"
-
-#: src/aim.c:354
-#, fuzzy
-msgid "About"
-msgstr "Over..."
-
-#: src/aim.c:355
-msgid "Options"
-msgstr "Opties"
-
-#: src/aim.c:357 src/aim.c:837 src/buddy.c:2733
-msgid "Plugins"
-msgstr "Plugins"
-
-#: src/aim.c:831 src/buddy.c:2725
-msgid "Preferences"
-msgstr "Instellingen"
-
-#: src/aim.c:841 src/multi.c:1481
-#, fuzzy
-msgid "Auto-login"
-msgstr "Automatisch Aanmelden"
-
-#: src/away.c:202
+#: src/away.c:188
 msgid "Gaim - Away!"
-msgstr "Gaim - Afwezig"
+msgstr "Gaim - Afwezig!"
 
-#: src/away.c:250
+#: src/away.c:235
 msgid "I'm Back!"
 msgstr "Ik ben terug!"
 
-#: src/away.c:266 src/away.c:346 src/away.c:520
-msgid "Back"
-msgstr "Terug"
-
-#: src/away.c:388
+#: src/away.c:353
 msgid "New Away Message"
-msgstr "Nieuw Afwezigheidsbericht"
+msgstr "Nieuw afwezigheidsbericht"
 
-#: src/away.c:408
+#: src/away.c:373
 msgid "Remove Away Message"
 msgstr "Afwezigheidsbericht verwijderen"
 
-#: src/away.c:596
+#: src/away.c:561
 msgid "Set All Away"
 msgstr "Zet alles op afwezig"
 
-#: src/buddy.c:490 src/buddy.c:2803 src/dialogs.c:981 src/dialogs.c:1128
+#: src/buddy.c:495 src/buddy.c:2761 src/dialogs.c:1137
 msgid "Group"
 msgstr "Groep"
 
-#: src/buddy.c:496 src/buddy.c:648 src/buddy.c:818 src/buddy.c:2553
-#: src/buddy_chat.c:864 src/buddy_chat.c:1281
+#: src/buddy.c:501 src/buddy.c:644 src/buddy.c:812 src/buddy.c:2529
+#: src/buddy_chat.c:869
 msgid "IM"
 msgstr "Bericht"
 
-#: src/buddy.c:497 src/buddy.c:2554 src/buddy_chat.c:880 src/buddy_chat.c:1289
-#: src/buddy_chat.c:1465 src/conversation.c:2952
+#: src/buddy.c:502 src/buddy.c:2530 src/buddy_chat.c:886 src/buddy_chat.c:1597
+#: src/conversation.c:2915
 msgid "Info"
 msgstr "Info"
 
-#. Put the buttons in the box
-#: src/buddy.c:653 src/buddy.c:823 src/dialogs.c:1120 src/dialogs.c:3851
-#: src/dialogs.c:3866
+#: src/buddy.c:649 src/buddy.c:817 src/dialogs.c:1127 src/dialogs.c:3833
+#: src/dialogs.c:3846
 msgid "Alias"
 msgstr "Alias"
 
-#: src/buddy.c:658 src/buddy.c:842
+#: src/buddy.c:654 src/buddy.c:836
 msgid "Add Buddy Pounce"
-msgstr "Buddy-Alarm toevoegen"
+msgstr "Vriend-alarm toevoegen"
 
-#: src/buddy.c:665 src/buddy.c:848
+#: src/buddy.c:661 src/buddy.c:842
 msgid "View Log"
-msgstr "Toon Logboek"
+msgstr "Logboek"
 
-#: src/buddy.c:805 src/buddy.c:836
+#: src/buddy.c:799 src/buddy.c:830
 msgid "Rename"
 msgstr "Naam wijzigen"
 
-#: src/buddy.c:830
+#: src/buddy.c:824
 msgid "Un-Alias"
 msgstr "Alias verwijderen"
 
-#: src/buddy.c:1709
+#: src/buddy.c:1683
 msgid "New Buddy Pounce"
-msgstr "Nieuw Buddy-Alarm"
+msgstr "Nieuw Vriend-alarm"
 
-#: src/buddy.c:1727
+#: src/buddy.c:1701
 msgid "Remove Buddy Pounce"
-msgstr "Buddy-Alarm verwijderen"
+msgstr "Vriend-alarm verwijderen"
 
-#: src/buddy.c:1755
+#: src/buddy.c:1730
+msgid "[no message]"
+msgstr "[geen bericht]"
+
+#: src/buddy.c:1732
 msgid "[Click to edit]"
-msgstr ""
+msgstr "[klik om te bewerken]"
 
-#: src/buddy.c:2238
+#: src/buddy.c:2299
 #, c-format
 msgid "Logged in: %s\n"
 msgstr "Aangemeld: %s\n"
 
-#: src/buddy.c:2250
+#: src/buddy.c:2311
 #, c-format
 msgid "Warnings: %d%%\n"
 msgstr "Waarschuwingen: %d%%\n"
 
-#: src/buddy.c:2262
+#: src/buddy.c:2323
 #, c-format
 msgid "Capabilities: %s\n"
 msgstr "Mogelijkheden: %s\n"
 
-#: src/buddy.c:2266
+#: src/buddy.c:2327
 #, c-format
 msgid ""
 "Alias: %s               \n"
@@ -1975,955 +2556,861 @@ msgstr ""
 "Gebruikersnaam: %s\n"
 "%s%s%s%s%s%s"
 
-#: src/buddy.c:2270
+#: src/buddy.c:2331
 msgid "Idle: "
 msgstr "Afwezig: "
 
-#: src/buddy.c:2339 src/buddy.c:2344
+#: src/buddy.c:2400 src/buddy.c:2405
 #, c-format
 msgid "%s logged in."
-msgstr "%s heeft zich aangemeld"
+msgstr "%s heeft zich aangemeld."
 
-#: src/buddy.c:2398 src/buddy.c:2403
+#: src/buddy.c:2459 src/buddy.c:2464
 #, c-format
 msgid "%s logged out."
-msgstr "%s heeft zich afgemeld"
+msgstr "%s heeft zich afgemeld."
 
-#: src/buddy.c:2588
+#: src/buddy.c:2562
 msgid "Information on selected Buddy"
-msgstr "Info over geselecteerde Buddy"
+msgstr "Info over geselecteerde vriend"
 
-#: src/buddy.c:2589 src/dialogs.c:736
+#: src/buddy.c:2563
 msgid "Send Instant Message"
 msgstr "Bericht verzenden"
 
-#: src/buddy.c:2590
+#: src/buddy.c:2564
 msgid "Start/join a Buddy Chat"
-msgstr "Buddy-Chat starten"
+msgstr "Chat starten of er aan meedoen"
 
-#: src/buddy.c:2591
+#: src/buddy.c:2565
 msgid "Activate Away Message"
-msgstr "Activeer afwezigheidsbericht"
+msgstr "Afwezigheidsberichten"
 
-#: src/buddy.c:2663
+#: src/buddy.c:2615
+msgid "Gaim - Buddy List"
+msgstr "Gaim - Vriendenlijst"
+
+#. The file menu
+#: src/buddy.c:2628 src/conversation.c:2039
 msgid "File"
 msgstr "Bestand"
 
-#: src/buddy.c:2667
-msgid "Add A Buddy"
-msgstr "Buddy toevoegen"
+#: src/buddy.c:2632
+msgid "_Add A Buddy"
+msgstr "Vriend _toevoegen"
 
-#: src/buddy.c:2669
-msgid "Join A Chat"
-msgstr "Chat binnengaan"
+#: src/buddy.c:2634
+msgid "_Join A Chat"
+msgstr "Chat _openen"
 
-#: src/buddy.c:2671
-msgid "New Instant Message"
-msgstr "Nieuw Bericht"
+#: src/buddy.c:2636
+msgid "_New Message"
+msgstr "_Nieuw bericht"
 
-#: src/buddy.c:2673 src/dialogs.c:798
-msgid "Get User Info"
-msgstr "Gebruikersinfo"
+#: src/buddy.c:2638
+msgid "_Get User Info"
+msgstr "_Gebruikersinfo"
 
-#: src/buddy.c:2678
+#: src/buddy.c:2643
 msgid "Import Buddy List"
-msgstr "Buddy Lijst importeren"
+msgstr "Vriendenlijst importeren"
 
-#: src/buddy.c:2696
+#: src/buddy.c:2650
+msgid "Hide"
+msgstr "Verbergen"
+
+#: src/buddy.c:2657
 msgid "Tools"
 msgstr "Systeem"
 
-#: src/buddy.c:2706
+#: src/buddy.c:2667
 msgid "Buddy Pounce"
-msgstr "Buddy-Alarm"
+msgstr "Vriend-alarm"
 
-#: src/buddy.c:2719
+#: src/buddy.c:2674
+msgid "_Accounts..."
+msgstr "_Accounts..."
+
+#: src/buddy.c:2677
+msgid "_Preferences..."
+msgstr "_Voorkeuren..."
+
+#: src/buddy.c:2683
 msgid "Protocol Actions"
-msgstr "Protocol Acties"
+msgstr "Protocol-extra's"
 
-#: src/buddy.c:2723
-msgid "Privacy"
-msgstr "Privacy"
+#: src/buddy.c:2687
+msgid "Pr_ivacy..."
+msgstr "Pr_ivacy..."
 
-#: src/buddy.c:2727
-msgid "View System Log"
-msgstr "Toon Systeemlog"
+#: src/buddy.c:2690
+msgid "_View System Log..."
+msgstr "_Systeemlogboek..."
 
-#: src/buddy.c:2739
-msgid "Perl"
-msgstr "Perl"
-
-#: src/buddy.c:2742
-msgid "Load Script"
-msgstr "Laad Script"
-
-#: src/buddy.c:2746
-msgid "Unload All Scripts"
-msgstr "Deactiveer alle scripts"
-
-#: src/buddy.c:2750
-msgid "List Scripts"
-msgstr "Toon Scripts"
-
-#: src/buddy.c:2758
+#: src/buddy.c:2695
 msgid "Help"
-msgstr "Help"
+msgstr "Hulp"
 
-#: src/buddy.c:2762
-#, fuzzy
+#: src/buddy.c:2699
 msgid "Online Help"
-msgstr "Online"
+msgstr "Online hulp"
 
-#: src/buddy.c:2763
-#, fuzzy
+#: src/buddy.c:2700
 msgid "Debug Window"
-msgstr "Debug venster tonen"
+msgstr "Debugvenster"
 
-#: src/buddy.c:2764
+#: src/buddy.c:2704
 msgid "About Gaim"
-msgstr "Over Gaim"
+msgstr "Gaim info"
 
-#: src/buddy.c:2782 src/prefs.c:1307
+#: src/buddy.c:2721 src/prefs.c:1395
 msgid "Buddy List"
-msgstr "Buddy Lijst"
+msgstr "Vriendenlijst"
 
-#: src/buddy.c:2835
+#: src/buddy.c:2772
 msgid "Add a new Buddy"
-msgstr "Buddy toevoegen"
+msgstr "Nieuwe vriend toevoegen"
 
-#: src/buddy.c:2836
+#: src/buddy.c:2773
 msgid "Add a new Group"
 msgstr "Nieuwe groep toevoegen"
 
-#: src/buddy.c:2837
+#: src/buddy.c:2774
 msgid "Remove selected Buddy/Group"
-msgstr "Geselecteerde Buddy/Groep verwijderen"
+msgstr "Geselecteerde vriend/groep verwijderen"
 
-#: src/buddy.c:2864
+#: src/buddy.c:2797
 msgid "Edit Buddies"
-msgstr "Buddy's Bewerken"
+msgstr "Bewerken"
 
-#: src/buddy.c:2907
-msgid "Gaim - Buddy List"
-msgstr "Gaim - Buddy Lijst"
-
-#: src/buddy_chat.c:265
+#: src/buddy_chat.c:275
 msgid "Join Chat"
-msgstr "Chat Binnengaan"
+msgstr "Chat openen"
 
-#: src/buddy_chat.c:283
+#: src/buddy_chat.c:292
 msgid "Join Chat As:"
 msgstr "Deelnemen aan chat als:"
 
-#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:451
-#: src/dialogs.c:541 src/dialogs.c:754 src/dialogs.c:855 src/dialogs.c:973
-#: src/dialogs.c:1149 src/dialogs.c:1899 src/dialogs.c:2104 src/dialogs.c:2228
-#: src/dialogs.c:2288 src/dialogs.c:2510 src/dialogs.c:2692 src/dialogs.c:2867
-#: src/dialogs.c:2938 src/dialogs.c:3601 src/dialogs.c:3853 src/dialogs.c:4034
-#: src/dialogs.c:4409 src/dialogs.c:4515 src/dialogs.c:5199 src/multi.c:781
-#: src/multi.c:911 src/prpl.c:162 src/prpl.c:236
-msgid "Cancel"
-msgstr "Annuleren"
-
-#: src/buddy_chat.c:309
+#: src/buddy_chat.c:313
 msgid "Join"
 msgstr "Deelnemen"
 
-#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1331
-#: src/buddy_chat.c:1421
+#: src/buddy_chat.c:402 src/buddy_chat.c:405 src/buddy_chat.c:1452
+#: src/buddy_chat.c:1547
 msgid "Invite"
 msgstr "Uitnodigen"
 
-#: src/buddy_chat.c:412 src/dialogs.c:1727 src/dialogs.c:3861
+#: src/buddy_chat.c:421 src/dialogs.c:1800 src/dialogs.c:3823
 msgid "Buddy"
-msgstr "Buddy"
+msgstr "Vriend"
 
-#: src/buddy_chat.c:417
+#: src/buddy_chat.c:426
 msgid "Message"
 msgstr "Bericht"
 
-#: src/buddy_chat.c:454
+#: src/buddy_chat.c:463
 msgid "Gaim - Invite Buddy Into Chat Room"
-msgstr "Gaim - Nodig Buddy uit in Chat Ruimte"
+msgstr "Gaim - Vriend uitnodigen in chatruimte"
 
-#: src/buddy_chat.c:871
+#: src/buddy_chat.c:876
 msgid "Un-Ignore"
 msgstr "Negeren Opheffen"
 
-#: src/buddy_chat.c:873 src/buddy_chat.c:1285 src/prefs.c:379
+#: src/buddy_chat.c:878 src/prefs.c:280
 msgid "Ignore"
 msgstr "Negeren"
 
 #. don't remove them from ignored in case they re-enter
-#: src/buddy_chat.c:936 src/buddy_chat.c:1048 src/buddy_chat.c:1511
-#: src/buddy_chat.c:1544
-#, fuzzy, c-format
+#: src/buddy_chat.c:954 src/buddy_chat.c:1093 src/buddy_chat.c:1659
+#: src/buddy_chat.c:1692
+#, c-format
 msgid "%d %s in room"
-msgstr "0 personen in ruimte"
+msgstr "%d %s in ruimte"
 
-# #: src/buddy_chat.c:936 src/buddy_chat.c:1048 src/buddy_chat.c:1511
-# #: src/buddy_chat.c:1544
-# #, c-format
-# msgid "%d %s in room"
-# msgstr "%d personen in ruimte"
-#: src/buddy_chat.c:944
+#: src/buddy_chat.c:963
 #, c-format
 msgid "%s entered the room."
 msgstr "%s is de ruimte binnengekomen."
 
-#: src/buddy_chat.c:1010
+#: src/buddy_chat.c:965
+#, c-format
+msgid "%s [<I>%s</I>] entered the room."
+msgstr "%s [<I>%s</I>] is de ruimte binnengekomen."
+
+#: src/buddy_chat.c:1044
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s heet nu %s"
 
-#: src/buddy_chat.c:1057
-#, fuzzy, c-format
+#: src/buddy_chat.c:1102
+#, c-format
 msgid "%s left the room (%s)."
-msgstr "%s is weggegaan"
+msgstr "%s is weggegaan (%s)."
 
-#: src/buddy_chat.c:1059
+#: src/buddy_chat.c:1104
 #, c-format
 msgid "%s left the room."
-msgstr "%s is weggegaan"
+msgstr "%s is weggegaan."
 
-#: src/buddy_chat.c:1158
+#: src/buddy_chat.c:1210
 msgid "Gaim - Group Chats"
-msgstr "Gaim - Groeps Chat"
+msgstr "Gaim - Chatruimtes"
 
-#: src/buddy_chat.c:1221
+#: src/buddy_chat.c:1290
 msgid "Topic:"
-msgstr "Onderwerp"
+msgstr "Onderwerp:"
 
-#: src/buddy_chat.c:1262
+#: src/buddy_chat.c:1329
 msgid "0 people in room"
 msgstr "0 personen in ruimte"
 
-#: src/buddy_chat.c:1336 src/buddy_chat.c:1420
-msgid "Whisper"
-msgstr "Fluisteren"
-
-#: src/buddy_chat.c:1341 src/buddy_chat.c:1418 src/buddy_chat.c:1467
-#: src/conversation.c:2963
+#: src/buddy_chat.c:1436 src/buddy_chat.c:1546 src/buddy_chat.c:1579
+#: src/conversation.c:2874
 msgid "Send"
 msgstr "Verzenden"
 
-#: src/buddy_chat.c:1461 src/conversation.c:2940
-msgid "Block"
-msgstr "Blokkeren"
-
-#: src/buddy_chat.c:1463 src/conversation.c:2946 src/dialogs.c:426
-#: src/dialogs.c:455
+#: src/buddy_chat.c:1594 src/conversation.c:2906
 msgid "Warn"
 msgstr "Waarschuwen"
 
-#: src/conversation.c:431
-msgid "Gaim - Save Conversation"
-msgstr "Gaim - Gesprek Opslaan"
+#: src/buddy_chat.c:1600 src/conversation.c:2925
+msgid "Block"
+msgstr "Blokkeren"
 
-#: src/conversation.c:492
-#, fuzzy
+#: src/conversation.c:443
 msgid "Gaim - Insert Image"
-msgstr "Gaim - IM gebruiker"
+msgstr "Gaim - Afbeelding invoegen"
 
-#: src/conversation.c:1336
-#, fuzzy
+#: src/conversation.c:1305
 msgid "Unable to send message.  The message is too large"
-msgstr "Kan bericht niet verzenden: Te groot"
+msgstr "Kan het bericht niet verzenden. Het bericht is te groot"
 
-#: src/conversation.c:1340
-#, fuzzy
+#: src/conversation.c:1309
 msgid "Unable to send message"
-msgstr "Kan bericht niet verzenden: Te groot"
+msgstr "Kan het bericht niet verzenden"
 
-#: src/conversation.c:1559
-#, c-format
-msgid "Currently at %d, "
-msgstr "Momenteel bij %d, "
+#: src/conversation.c:2043
+msgid "_Save Conversation"
+msgstr "Gesprek _opslaan"
 
-#: src/conversation.c:1567
-#, c-format
-msgid "Setting position to %d\n"
-msgstr "Zet Positie op %d\n"
+#: src/conversation.c:2045
+msgid "View _History"
+msgstr "_Geschiedenis bekijken"
 
-#: src/conversation.c:2217
-msgid "Bold Text"
-msgstr "Vette Tekst"
+#.
+#. c->sendfile_btn = gaim_new_item_from_pixbuf(menu, _("Send File"), "send-file-small.png", NULL, NULL, 0, 0, NULL);
+#: src/conversation.c:2052
+msgid "Insert _URL"
+msgstr "_URL invoegen"
 
-#: src/conversation.c:2217
-msgid "Bold"
-msgstr "Vet"
+#: src/conversation.c:2053
+msgid "Insert _Image"
+msgstr "_Afbeelding invoegen"
 
-#: src/conversation.c:2221
-msgid "Italics Text"
-msgstr "Cursieve Tekst"
+#: src/conversation.c:2058
+msgid "_Close"
+msgstr "_Sluiten"
 
-#: src/conversation.c:2222
-msgid "Italics"
-msgstr "Cursief"
+#: src/conversation.c:2063
+msgid "Options"
+msgstr "Opties"
 
-#: src/conversation.c:2225
-msgid "Underline Text"
-msgstr "Onderstreepte Tekst"
+#. Logging
+#: src/conversation.c:2068
+msgid "Enable _Logging"
+msgstr "_Logboek bijhouden"
 
-#: src/conversation.c:2226
-msgid "Underline"
-msgstr "Onderstrepen"
+#: src/conversation.c:2086
+msgid "Enable _Sounds"
+msgstr "_Geluiden inschakelen"
 
-#: src/conversation.c:2230
-msgid "Strike through Text"
-msgstr "Doorgehaalde Tekst"
+#: src/conversation.c:2598 src/conversation.c:2600 src/conversation.c:2611
+msgid " [TYPING]"
+msgstr " [TYPT]"
 
-#: src/conversation.c:2230
-msgid "Strike"
-msgstr "Doorhalen"
+#: src/conversation.c:2601 src/conversation.c:2603 src/conversation.c:2615
+msgid " [TYPED]"
+msgstr " [GETYPT]"
 
-#: src/conversation.c:2236
-msgid "Decrease font size"
-msgstr "Verklein lettertype"
-
-#: src/conversation.c:2236
-msgid "Small"
-msgstr "Klein"
-
-#: src/conversation.c:2239
-msgid "Normal font size"
-msgstr "Normale Letter Grootte"
-
-#: src/conversation.c:2239
-msgid "Normal"
-msgstr "Normaal"
-
-#: src/conversation.c:2242
-msgid "Increase font size"
-msgstr "Vergroot Lettertype"
-
-#: src/conversation.c:2242
-msgid "Big"
-msgstr "Groot"
-
-#: src/conversation.c:2249 src/dialogs.c:3253 src/dialogs.c:3277
-msgid "Select Font"
-msgstr "Selecteer lettertype "
-
-#: src/conversation.c:2250
-msgid "Font"
-msgstr "Lettertype"
-
-#: src/conversation.c:2253
-msgid "Text Color"
-msgstr "Tekstkleur"
-
-#: src/conversation.c:2254 src/conversation.c:2258 src/prefs.c:329
-msgid "Color"
-msgstr "Kleur"
-
-#: src/conversation.c:2258
-msgid "Background Color"
-msgstr "Achtergrondkleur"
-
-#: src/conversation.c:2265 src/dialogs.c:2932
-msgid "Insert Link"
-msgstr "Link invoegen"
-
-#: src/conversation.c:2266
-msgid "Link"
-msgstr "Link"
-
-#: src/conversation.c:2269
-msgid "Insert smiley face"
-msgstr "Voeg Smiley in"
-
-#: src/conversation.c:2269
-msgid "Smiley"
-msgstr "Smiley"
-
-#: src/conversation.c:2272
-#, fuzzy
-msgid "Insert IM Image"
-msgstr "IM Afbeelding"
-
-#: src/conversation.c:2272
-#, fuzzy
-msgid "Image"
-msgstr "IM Afbeelding"
-
-#: src/conversation.c:2279
-msgid "Enable logging"
-msgstr "Schakel logboek in"
-
-#: src/conversation.c:2280 src/prefs.c:1314
-msgid "Logging"
-msgstr "Logboek"
-
-#: src/conversation.c:2289
-msgid "Save Conversation"
-msgstr "Gesprek Opslaan"
-
-#: src/conversation.c:2290 src/dialogs.c:2108 src/dialogs.c:2292
-#: src/dialogs.c:3613 src/dialogs.c:4301 src/dialogs.c:5207
-msgid "Save"
-msgstr "Opslaan"
-
-#: src/conversation.c:2294
-msgid "Toggle Sound"
-msgstr ""
-
-#: src/conversation.c:2295
-msgid "Sound"
-msgstr "Geluid"
-
-#: src/conversation.c:2782
+#: src/conversation.c:2689
 msgid "Gaim - Conversations"
 msgstr "Gaim - Gesprekken"
 
-#: src/conversation.c:2869
+#: src/conversation.c:2802
 msgid "Send message as: "
-msgstr "Verzend Bericht als: "
+msgstr "Bericht verzenden als: "
 
-#: src/conversation.c:3533
+#: src/conversation.c:3426
 msgid "Gaim - Save Icon"
-msgstr "Gaim - Icon Opslaan"
+msgstr "Gaim - Vriendplaatje opslaan"
 
-#: src/conversation.c:3567
+#: src/conversation.c:3460
 msgid "Disable Animation"
-msgstr "Deactiveer Animatie"
+msgstr "Animatie uitschakelen"
 
-#: src/conversation.c:3578
+#: src/conversation.c:3467
 msgid "Enable Animation"
-msgstr "Activeer Animatie"
+msgstr "Animatie inschakelen"
 
-#: src/conversation.c:3584
+#: src/conversation.c:3473
 msgid "Hide Icon"
-msgstr "Verstop Icon"
+msgstr "Plaatje verbergen"
 
-#: src/conversation.c:3590
+#: src/conversation.c:3479
 msgid "Save Icon As..."
-msgstr "Sla Icon op als..."
+msgstr "Plaatje opslaan als..."
 
-#: src/dialogs.c:414
-msgid "Gaim - Warn user?"
-msgstr "Gaim - Gebruiker Waarschuwen?"
-
-#: src/dialogs.c:434
-#, c-format
-msgid "Do you really want to warn %s?"
-msgstr "Wilt u %s echt waarschuwen?"
-
-#: src/dialogs.c:439
-msgid "Warn anonymously?"
-msgstr "Anoniem waarschuwen?"
-
-#: src/dialogs.c:443
-msgid "Anonymous warnings are less harsh."
-msgstr "Anonieme waarschuwingen zijn weinig zinvol"
-
-#: src/dialogs.c:471
-#, c-format
-msgid "Removing '%s' from buddy list.\n"
-msgstr "Verwijder '%s' van de buddylijst.\n"
-
-#: src/dialogs.c:496
-#, fuzzy, c-format
-msgid "Gaim - Remove %s?"
-msgstr "Gaim - Buddy hernoemen"
-
-#: src/dialogs.c:509
-#, fuzzy
-msgid "Remove Buddy"
-msgstr "Buddy hernoemen"
-
-#: src/dialogs.c:519
+#: src/dialogs.c:424
 #, c-format
 msgid ""
-"You are about to remove '%s' from\n"
-"your buddy list. Do you want to continue?"
+"<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
+"\n"
+"This will increase %s's warning level and he or she will be subject to "
+"harsher rate limiting.\n"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
+"\n"
+"Dit zal %s zijn/haar waarschuwingsniveau verhogen en strengere regels zullen "
+"worden toegepast.\n"
 
-#: src/dialogs.c:531 src/prpl.c:166 src/prpl.c:240
-msgid "Accept"
-msgstr "Accepteren"
+#: src/dialogs.c:433
+msgid "Warn _anonymously?"
+msgstr "_Anoniem waarschuwen?"
 
-#. Build OK Button
-#: src/dialogs.c:674 src/dialogs.c:759 src/dialogs.c:860 src/dialogs.c:1903
-#: src/dialogs.c:2232 src/dialogs.c:2383 src/dialogs.c:2691 src/dialogs.c:2871
-#: src/dialogs.c:2937 src/dialogs.c:4414 src/dialogs.c:4520 src/multi.c:786
-msgid "OK"
-msgstr "OK"
+#: src/dialogs.c:440
+msgid "<b>Anonymous warnings are less severe.</b>"
+msgstr "<b>Anonieme waarschuwingen zijn minder erg.</b>"
 
-#: src/dialogs.c:726
-msgid "Gaim - IM user"
-msgstr "Gaim - IM gebruiker"
+#: src/dialogs.c:460
+#, c-format
+msgid "Removing '%s' from buddy list.\n"
+msgstr "'%s' wordt van de vriendenlijst verwijderd.\n"
 
-#: src/dialogs.c:743
-msgid "IM who:"
-msgstr "Verzend naar:"
+#: src/dialogs.c:708
+msgid "Please enter the screenname of the person you would like to IM.\n"
+msgstr ""
+"Geef alstublieft de bijnaam van de persoon met wie u een directe verbinding "
+"wilt.\n"
 
-#: src/dialogs.c:807
-msgid "User:"
-msgstr "Gebruiker:"
+#: src/dialogs.c:724 src/dialogs.c:818
+msgid "_Screenname:"
+msgstr "_Gebruikersnaam:"
 
-#: src/dialogs.c:816
-#, fuzzy
-msgid "Account:"
-msgstr "Account"
+#: src/dialogs.c:737 src/dialogs.c:831
+msgid "_Account:"
+msgstr "_Account:"
 
-#. Finish up
-#: src/dialogs.c:865
-msgid "Gaim - Get User Info"
-msgstr "Gaim - Gebruikersinfo"
+#: src/dialogs.c:806
+msgid ""
+"Please enter the screenname of the person whose info you would like to view.\n"
+msgstr ""
+"Geef alstublieft de bijnaam van de persoon waarvan u de informatie wilt "
+"opvragen.\n"
 
-#: src/dialogs.c:979
-msgid "Add Group"
-msgstr "Groep toevoegen"
-
-#: src/dialogs.c:1004
+#: src/dialogs.c:958
 msgid "Gaim - Add Group"
-msgstr "Gaim - Groep Toevoegen"
+msgstr "Gaim - Groep toevoegen"
 
-#: src/dialogs.c:1088
+#: src/dialogs.c:975
+msgid "Please enter the name of the group to be added.\n"
+msgstr "Geef alstublieft de naam van de toe te voegen groep.\n"
+
+#: src/dialogs.c:984 src/dialogs.c:4383
+msgid "_Group:"
+msgstr "_Groep:"
+
+#: src/dialogs.c:1076
 msgid "Gaim - Add Buddy"
-msgstr "Gaim - Buddy Toevoegen"
+msgstr "Gaim - Vriend toevoegen"
 
-#: src/dialogs.c:1100
-msgid "Add Buddy"
-msgstr "Buddy Toevoegen"
+#: src/dialogs.c:1095
+msgid ""
+"Please enter the screen name of the person you would like to add to your "
+"buddylist. You may optionally enter an alias, or nickname,  for the buddy. "
+"The alias will be displayed in place of the screen name whenever possible.\n"
+msgstr ""
+"Geef hier de gebruikersnaam van de persoon die u aan uw vriendenlijst zou "
+"willen toevoegen. U kunt ook een alias of bij bijnaam voor deze persoon "
+"opgeven. Deze alias wordt dan gebruikt in plaats van de echte naam (wanneer "
+"mogelijk).\n"
 
-#: src/dialogs.c:1110
-msgid "Contact"
-msgstr "Gebruiker"
+#: src/dialogs.c:1114
+msgid "Screen Name"
+msgstr "Gebruikersnaam"
 
 #. Set up stuff for the account box
-#: src/dialogs.c:1136
+#: src/dialogs.c:1146
 msgid "Add To"
-msgstr "Toevoegen Aan"
+msgstr "Toevoegen aan"
 
-#: src/dialogs.c:1431
-#, fuzzy
+#: src/dialogs.c:1479
 msgid "Gaim - Privacy"
-msgstr "Gaim - Afwezig"
+msgstr "Gaim - Privacy"
 
-#: src/dialogs.c:1443
-msgid "Privacy settings are affected immediately."
-msgstr ""
+#: src/dialogs.c:1490
+msgid "Changes to privacy settings take effect immediately."
+msgstr "Privacy-instellingen worden direct actief."
 
-#: src/dialogs.c:1451
+#: src/dialogs.c:1499
 msgid "Set privacy for:"
-msgstr "Zet privacy voor:"
+msgstr "Privacy instellen voor:"
 
-#: src/dialogs.c:1470
+#: src/dialogs.c:1516
 msgid "Allow all users to contact me"
 msgstr "Alle gebruikers mogen contact opnemen"
 
-#: src/dialogs.c:1471
+#: src/dialogs.c:1520
+msgid "Allow only users on my buddy list"
+msgstr "Alleen gebruikers uit mijn lijst toestaan"
+
+#: src/dialogs.c:1524
 msgid "Allow only the users below"
 msgstr "Alleen onderstaande gebruikers toestaan"
 
-#: src/dialogs.c:1473
-msgid "Allow List"
-msgstr "Toegestaan"
-
-#: src/dialogs.c:1504
+#: src/dialogs.c:1562
 msgid "Deny all users"
 msgstr "Alle Gebruikers Blokkeren"
 
-#: src/dialogs.c:1505
+#: src/dialogs.c:1566
 msgid "Block the users below"
 msgstr "Onderstaande gebruikers blokkeren"
 
-#: src/dialogs.c:1507
-msgid "Block List"
-msgstr "Geblokkeerd"
-
-#: src/dialogs.c:1560
+#: src/dialogs.c:1631
 msgid "Please enter a buddy to pounce."
-msgstr "Vul een buddy in om te alarmeren"
+msgstr "Vul een vriend in om een alarm voor in te stellen."
 
-#: src/dialogs.c:1696
+#: src/dialogs.c:1770
 msgid "Gaim - New Buddy Pounce"
-msgstr "Gaim - Nieuw Buddy-Alarm "
+msgstr "Gaim - Nieuw vriend-alarm "
 
 #. <pounce type="who">
-#: src/dialogs.c:1707
+#: src/dialogs.c:1780
 msgid "Pounce Who"
 msgstr "Wie Alarmeren"
 
-#: src/dialogs.c:1718
+#: src/dialogs.c:1791
 msgid "Account"
 msgstr "Account"
 
 #. </pounce type="who">
 #. <pounce type="when">
-#: src/dialogs.c:1744
+#: src/dialogs.c:1817
 msgid "Pounce When"
 msgstr "Wanneer Alermeren"
 
-#: src/dialogs.c:1754
+#: src/dialogs.c:1827
 msgid "Pounce on sign on"
 msgstr "Alermeren bij aanmelden"
 
-#: src/dialogs.c:1763
+#: src/dialogs.c:1836
 msgid "Pounce on return from away"
 msgstr "Alarmeren bij terugkeer van afwezigheid"
 
-#: src/dialogs.c:1772
+#: src/dialogs.c:1845
 msgid "Pounce on return from idle"
 msgstr "Alarmeren bij terugkeer van Inactief"
 
-#: src/dialogs.c:1781
-#, fuzzy
+#: src/dialogs.c:1854
 msgid "Pounce when buddy is typing to you"
-msgstr "Geluid als buddy zich aanmeldt"
+msgstr "Geef een melding wanneer een vriend iets aan het typen is"
 
 #. </pounce type="when">
 #. <pounce type="action">
-#: src/dialogs.c:1791
+#: src/dialogs.c:1864
 msgid "Pounce Action"
 msgstr "Alarm Actie"
 
-#: src/dialogs.c:1802
+#: src/dialogs.c:1875
 msgid "Open IM Window"
 msgstr "Open Berichtvenster"
 
-#: src/dialogs.c:1811
+#: src/dialogs.c:1884
 msgid "Popup Notification"
 msgstr "Popup Melding"
 
-#: src/dialogs.c:1820 src/prefs.c:395
+#: src/dialogs.c:1893 src/prefs.c:296
 msgid "Send Message"
 msgstr "Verstuur bericht"
 
-#: src/dialogs.c:1841
+#: src/dialogs.c:1914
 msgid "Execute command on pounce"
 msgstr "Commando uitvoeren bij alarm"
 
-#: src/dialogs.c:1863
+#: src/dialogs.c:1936
 msgid "Play sound on pounce"
 msgstr "Speel geluid af bij alarm"
 
 #. </pounce type="action">
-#: src/dialogs.c:1885
+#: src/dialogs.c:1958
 msgid "Save this pounce after activation"
 msgstr "Sla dit alarm op na activatie"
 
-#: src/dialogs.c:1971
+#: src/dialogs.c:1978
+msgid "_Save"
+msgstr "_Opslaan"
+
+#: src/dialogs.c:1984
+msgid "C_ancel"
+msgstr "_Annuleren"
+
+#: src/dialogs.c:2055
 msgid "Gaim - Set Dir Info"
 msgstr "Gaim - Profiel Wijzigen"
 
-#: src/dialogs.c:1980
+#: src/dialogs.c:2063
 msgid "Directory Info"
 msgstr "Directory Info"
 
-#: src/dialogs.c:2002
+#: src/dialogs.c:2085
 msgid "Allow Web Searches To Find Your Info"
 msgstr "Sta zoekopdrachten toe om uw info te vinden"
 
 #. Line 1
-#: src/dialogs.c:2005 src/dialogs.c:2710
+#: src/dialogs.c:2088 src/dialogs.c:2790
 msgid "First Name"
 msgstr "Voornaam"
 
 #. Line 2
-#: src/dialogs.c:2016 src/dialogs.c:2722
+#: src/dialogs.c:2099 src/dialogs.c:2802
 msgid "Middle Name"
 msgstr "Tweede Naam"
 
 #. Line 3
-#: src/dialogs.c:2028 src/dialogs.c:2734
+#: src/dialogs.c:2111 src/dialogs.c:2814
 msgid "Last Name"
 msgstr "Achternaam"
 
 #. Line 4
-#: src/dialogs.c:2039 src/dialogs.c:2746
+#: src/dialogs.c:2122 src/dialogs.c:2826
 msgid "Maiden Name"
 msgstr "Meisjesnaam"
 
 #. Line 6
-#: src/dialogs.c:2061 src/dialogs.c:2769
+#: src/dialogs.c:2144 src/dialogs.c:2849
 msgid "State"
 msgstr "Staat"
 
-#: src/dialogs.c:2126
+#: src/dialogs.c:2187 src/dialogs.c:2375 src/dialogs.c:3637 src/dialogs.c:4279
+#: src/dialogs.c:5242
+msgid "Save"
+msgstr "Opslaan"
+
+#: src/dialogs.c:2209
 msgid "New Passwords Do Not Match"
 msgstr "Nieuwe wachtwoorden zijn niet gelijk"
 
-#: src/dialogs.c:2131
+#: src/dialogs.c:2214
 msgid "Fill out all fields completely"
 msgstr "Vul alle velden voledig in"
 
-#: src/dialogs.c:2156
+#: src/dialogs.c:2239
 msgid "Gaim - Password Change"
 msgstr "Gaim - Wachtwoord Veranderen"
 
-#: src/dialogs.c:2186
+#: src/dialogs.c:2268
 msgid "Original Password"
 msgstr "Oud Wachtwoord"
 
-#: src/dialogs.c:2200
+#: src/dialogs.c:2282
 msgid "New Password"
 msgstr "Nieuw Wachtwoord"
 
-#: src/dialogs.c:2214
+#: src/dialogs.c:2296
 msgid "New Password (again)"
 msgstr "Nieuw Wachtwoord (herhalen)"
 
-#: src/dialogs.c:2255
+#. Build OK Button
+#: src/dialogs.c:2310 src/dialogs.c:2468 src/dialogs.c:2771 src/dialogs.c:2945
+#: src/dialogs.c:3015 src/dialogs.c:4497
+msgid "OK"
+msgstr "OK"
+
+#: src/dialogs.c:2338
 msgid "Gaim - Set User Info"
-msgstr "Gaim - Vul gebruikersinfo in"
+msgstr "Gaim - Gebruikersinfo instellen"
 
-#: src/dialogs.c:2367
+#: src/dialogs.c:2453
 msgid "Below are the results of your search: "
-msgstr "Het resultaat van uw zoek opdracht:"
+msgstr "Het resultaat van uw zoekopdracht:"
 
-#: src/dialogs.c:2500 src/dialogs.c:2507
+#: src/dialogs.c:2587
 msgid "Permit"
 msgstr "Toestaan"
 
-#: src/dialogs.c:2502 src/dialogs.c:2509
-msgid "Deny"
-msgstr "Blokkeren"
-
-#: src/dialogs.c:2546
+#: src/dialogs.c:2627
 msgid "Gaim - Add Permit"
 msgstr "Gaim - Toestemming toevoegen"
 
-#: src/dialogs.c:2548
+#: src/dialogs.c:2629
 msgid "Gaim - Add Deny"
 msgstr "Gaim - Blokkade toevoegen"
 
-#: src/dialogs.c:2608
+#: src/dialogs.c:2688
 msgid "Gaim - Log Conversation"
-msgstr "Gaim - Houd gesprek bij in logboek"
+msgstr "Gaim - Gesprek bijhouden in logboek"
 
-#: src/dialogs.c:2686 src/dialogs.c:2849
+#: src/dialogs.c:2766 src/dialogs.c:2927
 msgid "Search for Buddy"
-msgstr "Buddy Zoeken"
+msgstr "Vriend zoeken"
 
-#: src/dialogs.c:2814
+#: src/dialogs.c:2894
 msgid "Gaim - Find Buddy By Info"
-msgstr "Gaim - Zoek Buddy via info"
+msgstr "Gaim - Vriend zoeken via info"
 
-#: src/dialogs.c:2843
+#: src/dialogs.c:2921
 msgid "Gaim - Find Buddy By Email"
-msgstr "Gaim - Zoek Buddy via Email"
+msgstr "Gaim - Vriend zoeken via e-mail"
 
-#: src/dialogs.c:2983
+#: src/dialogs.c:3010
+msgid "Insert Link"
+msgstr "Verwijzing invoegen"
+
+#: src/dialogs.c:3061
 msgid "Gaim - Add URL"
-msgstr "Gaim - URL Toevoegen"
+msgstr "Gaim - URL toevoegen"
 
-#: src/dialogs.c:3097 src/dialogs.c:3118 src/dialogs.c:3172
+#: src/dialogs.c:3164 src/dialogs.c:3184
 msgid "Select Text Color"
-msgstr "Selecteer Tekstkleur"
+msgstr "Tekstkleur selecteren"
 
-#: src/dialogs.c:3151
+#: src/dialogs.c:3216 src/dialogs.c:3236
 msgid "Select Background Color"
-msgstr "Achtergrondkleur Selecteren"
+msgstr "Achtergrondkleur selecteren"
 
-#: src/dialogs.c:3354
+#: src/dialogs.c:3311 src/dialogs.c:3335
+msgid "Select Font"
+msgstr "Lettertype selecteren"
+
+#: src/dialogs.c:3412
 msgid "Import to:"
 msgstr "Importeren naar:"
 
-#: src/dialogs.c:3378
+#: src/dialogs.c:3436
 msgid "Gaim - Import Buddy List"
-msgstr "Gaim - Importeer Buddylijst"
+msgstr "Gaim - Vriendenlijst importeren"
 
 #. We shouldn't allow a blank title
-#: src/dialogs.c:3445
-#, fuzzy
+#: src/dialogs.c:3497
 msgid "You cannot save an away message with a blank title"
-msgstr "U moet iets invullen"
+msgstr "U kunt geen afwezigheidsbericht maken zonder titel"
 
-#: src/dialogs.c:3446
+#: src/dialogs.c:3498
 msgid ""
 "Please give the message a title, or choose \"Make Away\" to use without "
 "saving."
 msgstr ""
+"Geef het bericht een titel, of kies \"Gebruiken\" om te gebruiken zonder op "
+"te slaan."
 
 #. We shouldn't allow a blank message
-#: src/dialogs.c:3453
+#: src/dialogs.c:3505
 msgid "You cannot create an empty away message"
 msgstr "U kunt geen leeg bericht maken"
 
-#: src/dialogs.c:3521
+#: src/dialogs.c:3568
 msgid "Gaim - New away message"
 msgstr "Gaim - Nieuw afwezigheidsbericht"
 
-#: src/dialogs.c:3531
+#: src/dialogs.c:3577
 msgid "New away message"
 msgstr "Nieuw afwezigheidsbericht"
 
-#: src/dialogs.c:3544
+#: src/dialogs.c:3590
 msgid "Away title: "
 msgstr "Afwezig titel:"
 
-#: src/dialogs.c:3605
-msgid "Use"
-msgstr "Gebruik"
-
-#: src/dialogs.c:3609
+#: src/dialogs.c:3641
 msgid "Save & Use"
-msgstr "Opslaan en gebruiken"
+msgstr "Opslaan & gebruiken"
+
+#: src/dialogs.c:3645
+msgid "Use"
+msgstr "Gebruiken"
 
 #. show everything
-#: src/dialogs.c:3806
+#: src/dialogs.c:3779
 msgid "Smile!"
 msgstr "Lachen!"
 
-#: src/dialogs.c:3859
-msgid "Alias Buddy"
-msgstr "Alias voor Buddy"
-
-#: src/dialogs.c:3892
+#: src/dialogs.c:3868
 msgid "Gaim - Alias Buddy"
-msgstr "Gaim - Alias voor Buddy"
+msgstr "Gaim - Alias voor vriend"
 
-#: src/dialogs.c:3933 src/dialogs.c:3940
-#, fuzzy, c-format
+#: src/dialogs.c:3906 src/dialogs.c:3913
+#, c-format
 msgid "Couldn't write to %s."
-msgstr "Kan geen verbinding maken met host"
+msgstr "Kon niet schrijven naar %s."
 
-#: src/dialogs.c:3964
+#: src/dialogs.c:3937
 msgid "Gaim - Save Log File"
 msgstr "Gaim - Logboek opslaan"
 
-#: src/dialogs.c:3996
-#, fuzzy, c-format
+#: src/dialogs.c:3967
+#, c-format
 msgid "Couldn't remove file %s."
-msgstr "Kan configuratiebestand %s niet openen."
+msgstr "Kon het bestand %s niet verwijderen."
 
-#: src/dialogs.c:4024
+#: src/dialogs.c:3994
 msgid "Really clear log?"
 msgstr "Logboek opschonen?"
 
-#: src/dialogs.c:4039
+#: src/dialogs.c:4009
 msgid "Okay"
 msgstr "OK"
 
-#: src/dialogs.c:4210
+#: src/dialogs.c:4190
 msgid "Date"
 msgstr "Datum"
 
-#: src/dialogs.c:4273
+#: src/dialogs.c:4253
 msgid "Conversation"
 msgstr "Gesprek"
 
-#: src/dialogs.c:4296
+#: src/dialogs.c:4274
 msgid "Clear"
 msgstr "Opschonen"
 
-#: src/dialogs.c:4378
+#: src/dialogs.c:4357
 msgid "Gaim - Rename Group"
 msgstr "Gaim - Groep hernoemen"
 
-#: src/dialogs.c:4388
-msgid "Rename Group"
-msgstr "Groep hernoemen"
+#: src/dialogs.c:4374
+msgid "Please enter a new name for the selected group.\n"
+msgstr "Geef alstublieft de nieuwe naam voor deze groep.\n"
 
-#: src/dialogs.c:4395 src/dialogs.c:4501
+#: src/dialogs.c:4462
+msgid "Gaim - Rename Buddy"
+msgstr "Gaim - Vriend hernoemen"
+
+#: src/dialogs.c:4471
+msgid "Rename Buddy"
+msgstr "Vriend hernoemen"
+
+#: src/dialogs.c:4478
 msgid "New name:"
 msgstr "Nieuwe Naam:"
 
-#: src/dialogs.c:4484
-msgid "Gaim - Rename Buddy"
-msgstr "Gaim - Buddy hernoemen"
-
-#: src/dialogs.c:4494
-msgid "Rename Buddy"
-msgstr "Buddy hernoemen"
-
 #. Below is basically stolen from plugins.c
-#: src/dialogs.c:4578
+#: src/dialogs.c:4555
 msgid "Gaim - Select Perl Script"
 msgstr "Gaim - Selecteer Perl Script"
 
-#: src/gaimrc.c:1242
+#: src/gaimrc.c:1347
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Kan configuratiebestand %s niet openen."
 
-#: src/html.c:183
-#, fuzzy, c-format
+#: src/html.c:185
+#, c-format
 msgid "Received: '%s'\n"
 msgstr "Ontvangen: '%s'\n"
 
-#: src/html.c:221
+#: src/html.c:223
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Fout: Kan geen verbinding maken.\n"
 
-#: src/module.c:106 src/module.c:112
-#, fuzzy
-msgid "Gaim was unable to load your plugin."
-msgstr "Gaim kon een bericht niet verzenden"
+#: src/multi.c:235
+msgid "Screenname"
+msgstr "Gebruikersnaam"
 
-#: src/multi.c:454
+#: src/multi.c:263
+msgid "Protocol"
+msgstr "Protocol"
+
+#: src/multi.c:542
 msgid "Gaim - Load Buddy Icon"
-msgstr "Gaim - Buddy Icon Laden"
+msgstr "Gaim - Vriendplaatje laden"
 
-#: src/multi.c:497
+#: src/multi.c:585
 msgid "Buddy Icon File:"
-msgstr "Buddy Icon Bestand"
+msgstr "Vriendplaatje bestand"
 
-#: src/multi.c:508
+#: src/multi.c:598
 msgid "Browse"
 msgstr "Bladeren"
 
-#: src/multi.c:513 src/prefs.c:1066
+#: src/multi.c:603 src/prefs.c:1221
 msgid "Reset"
 msgstr "Wissen"
 
-#: src/multi.c:540
+#: src/multi.c:620
+msgid "Login Options"
+msgstr "Aanmeldopties"
+
+#: src/multi.c:630
 msgid "Screenname:"
 msgstr "Gebruikersnaam:"
 
-#: src/multi.c:559
-#, fuzzy
+#: src/multi.c:653
 msgid "Alias:"
-msgstr "Alias"
+msgstr "Alias:"
 
-#: src/multi.c:569
+#: src/multi.c:665
 msgid "Protocol:"
 msgstr "Protocol:"
 
-#: src/multi.c:574
+#: src/multi.c:672
 msgid "Remember Password"
 msgstr "Onthoud Wachtwoord"
 
-#: src/multi.c:575
+#: src/multi.c:673
 msgid "Auto-Login"
-msgstr "Automatisch Aanmelden"
+msgstr "Auto-aanmelden"
 
-#: src/multi.c:616
+#: src/multi.c:706
+msgid "User Options"
+msgstr "Gebruikersopties"
+
+#: src/multi.c:715
 msgid "New Mail Notifications"
 msgstr "Nieuwe Mail Meldingen "
 
-#: src/multi.c:706
+#: src/multi.c:767
+#, c-format
+msgid "%s Options"
+msgstr "%s Opties"
+
+#: src/multi.c:809
 msgid "Register with server"
-msgstr ""
+msgstr "Aanmelden bij server"
 
-#: src/multi.c:764
+#: src/multi.c:868
 msgid "Gaim - Modify Account"
-msgstr "Gaim - Wijzig Account "
+msgstr "Gaim - Account bewerken"
 
-#: src/multi.c:883
+#: src/multi.c:1013
 msgid "Enter Password"
 msgstr "Vul Wachtwoord in"
 
-#: src/multi.c:948
-msgid "TOC not found."
-msgstr ""
+#: src/multi.c:1024
+#, c-format
+msgid "Password for %s:"
+msgstr "Wachtwoord voor %s: "
 
-#: src/multi.c:949
+#: src/multi.c:1044
+msgid "Signon"
+msgstr "Aanmelden"
+
+#: src/multi.c:1077
+msgid "TOC not found."
+msgstr "TOC niet gevonden."
+
+#: src/multi.c:1078
 msgid ""
 "You have attempted to login an IM account using the TOC protocol.  Because "
 "this protocol is inferior to OSCAR, it is now compiled as a plugin by "
 "default.  To login, edit this account to use OSCAR or load the TOC plugin."
 msgstr ""
+"U probeert zich aan te melden m.b.v. het TOC-protocol. Omdat dit protocol "
+"inferieur is aan OSCAR, wat compatibel is, wordt TOC tegenwoordig als plugin "
+"meegeleverd. Om u aan te melden kunt u overschakelen naar OSCAR of de "
+"TOC-plugin laden."
 
-#: src/multi.c:955
-#, fuzzy
+#: src/multi.c:1084
 msgid "Protocol not found."
-msgstr "Protocol Acties"
+msgstr "Protocol niet gevonden."
 
-#: src/multi.c:956
+#: src/multi.c:1085
 msgid ""
 "You cannot log this account in; you do not have the protocol it uses loaded, "
 "or the protocol does not have a login function."
@@ -2931,772 +3418,770 @@ msgstr ""
 "U kunt zich niet aanmelden op dit account. U heeft de plugin niet geladen of "
 "het protocol heeft geen aanmeldings functie."
 
-#: src/multi.c:987
+#: src/multi.c:1138
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Wilt u %s echt verwijderen?"
 
-#: src/multi.c:1024
-msgid "Gaim - Account Editor"
-msgstr "Gaim - Account Editor"
-
-#: src/multi.c:1043
-msgid "Select All"
-msgstr "Alles Selecteren"
-
-#: src/multi.c:1048
-msgid "Select Autos"
-msgstr "Selecteer Auto's"
-
-#: src/multi.c:1052
-msgid "Select None"
-msgstr "Niets Selecteren"
-
-#: src/multi.c:1066
-msgid "Modify"
-msgstr "Bewerken"
-
-#: src/multi.c:1070
-msgid "Sign On/Off"
-msgstr "Aan/Afmelden"
-
-#: src/multi.c:1074
+#: src/multi.c:1139
 msgid "Delete"
 msgstr "Verwijderen"
 
-#: src/multi.c:1389
+#: src/multi.c:1187
+msgid "Gaim - Account Editor"
+msgstr "Gaim - Accounts"
+
+#: src/multi.c:1257
+msgid "_Modify"
+msgstr "Be_werken"
+
+#: src/multi.c:1308
+msgid "Done."
+msgstr "Klaar."
+
+#: src/multi.c:1448
+msgid "Signon: "
+msgstr "Aanmelding:"
+
+#: src/multi.c:1505
+msgid "Gaim Account Signon"
+msgstr "Gaim - Accounts aanmelden"
+
+#: src/multi.c:1517
+msgid "Cancel All"
+msgstr "Alles annuleren"
+
+#: src/multi.c:1574
 #, c-format
 msgid ""
 "%s\n"
 "%s: %s"
 msgstr ""
+"%s\n"
+"%s: %s"
 
-#: src/multi.c:1408
-#, fuzzy, c-format
+#: src/multi.c:1593
+#, c-format
 msgid "%s was unable to sign on"
-msgstr "Kan de aanmelding niet herstellen"
+msgstr "%s kon zich niet aanmelden"
 
-#: src/multi.c:1409
+#: src/multi.c:1594
 msgid "Signon Error"
 msgstr "Aanmeldingsfout"
 
-#: src/multi.c:1419
-#, fuzzy
+#: src/multi.c:1604
 msgid "Notice"
-msgstr "Stem"
+msgstr "Informatie"
 
-#: src/multi.c:1429
+#: src/multi.c:1614
 #, c-format
 msgid "%s has been signed off"
-msgstr ""
+msgstr "%s heeft zich afgemeld"
 
-#: src/multi.c:1430
-#, fuzzy
+#: src/multi.c:1615
 msgid "Connection Error"
-msgstr "Verbinding verbroken"
+msgstr "Verbindingfout"
 
-#: src/plugins.c:120
-msgid "Gaim - Plugin List"
-msgstr "Gaim - Plugin Lijst"
+#: src/perl.c:343
+msgid "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
+msgstr ""
+"GAIM::register niet aangeroepen met de juiste argumenten.  Lees de "
+"PERL-HOWTO."
 
-#: src/plugins.c:205
-msgid "Gaim - Plugins"
-msgstr "Gaim - Plugins"
-
-#. Left side: frame with list of plugin file names
-#: src/plugins.c:221
-#, fuzzy
-msgid "Loaded Plugins"
-msgstr "Plugins"
-
-#. Right side: frame with description and the filepath of plugin
-#: src/plugins.c:265
-#, fuzzy
-msgid "Selected Plugin"
-msgstr "Alles Selecteren"
-
-#: src/plugins.c:308
-msgid "Filepath:"
-msgstr "Bestandspad:"
-
-#: src/plugins.c:326
-msgid "Load"
-msgstr "Laden"
-
-#: src/plugins.c:329
-msgid "Load a plugin from a file"
-msgstr "Laad een plugin uit een bestand"
-
-#: src/plugins.c:331
-msgid "Configure"
-msgstr "Configureren"
-
-#: src/plugins.c:334
-msgid "Configure settings of the selected plugin"
-msgstr "Instellingen voor plugin"
-
-#: src/plugins.c:336
-msgid "Reload"
-msgstr "Herladen"
-
-#: src/plugins.c:340
-msgid "Reload the selected plugin"
-msgstr "Herlaadt de geselecteerde plugin "
-
-#: src/plugins.c:342
-msgid "Unload"
-msgstr "Uitschakelen"
-
-#: src/plugins.c:345
-msgid "Unload the selected plugin"
-msgstr "Deactiveer de geselecteerde plugin"
-
-#: src/plugins.c:350
-msgid "Close this window"
-msgstr "Dit venster sluiten"
-
-#: src/prefs.c:279
-#, fuzzy
+#: src/prefs.c:180
 msgid "Interface Options"
-msgstr "Algemene Instellingen"
+msgstr "Interface-instellingen"
 
 #. This shouldn't have to wait for user to click OK or APPLY or whatnot
 #. This really shouldn't be in preferences at all
-#: src/prefs.c:282
-#, fuzzy
-msgid "Show _Debug Window"
-msgstr "Debug venster tonen"
+#: src/prefs.c:183
+msgid "Show _debug window"
+msgstr "_Debugvenster weergeven"
 
-#: src/prefs.c:285
-#, fuzzy
-msgid "Use _borderless buttons"
-msgstr "Gebruik knoppen zonder rand"
+#: src/prefs.c:200
+msgid "Style"
+msgstr "Stijl"
+
+#: src/prefs.c:201
+msgid "_Bold"
+msgstr "_Vet"
+
+#: src/prefs.c:202
+msgid "_Italics"
+msgstr "_Cursief"
+
+#: src/prefs.c:203
+msgid "_Underline"
+msgstr "_Onderstrepen"
+
+#: src/prefs.c:204
+msgid "_Strikethough"
+msgstr "_Doorgehaalde Tekst"
+
+#: src/prefs.c:206
+msgid "Face"
+msgstr "Lettertype"
+
+#: src/prefs.c:209
+msgid "Use custo_m face"
+msgstr "Eigen lettertype gebruiken"
+
+#: src/prefs.c:221
+msgid "Use custom si_ze"
+msgstr "Afmeting instellen"
+
+#: src/prefs.c:228
+msgid "Color"
+msgstr "Kleur"
+
+#: src/prefs.c:233
+msgid "_Text color"
+msgstr "_Tekstkleur"
+
+#: src/prefs.c:249
+msgid "Bac_kground color"
+msgstr "Achtergrond_kleur"
+
+#: src/prefs.c:273 src/prefs.c:369 src/prefs.c:409
+msgid "Display"
+msgstr "Weergave"
+
+#: src/prefs.c:274
+msgid "Show graphical _smileys"
+msgstr "_Afbeeldingen weergeven"
+
+#: src/prefs.c:275
+msgid "Show _timestamp on messages"
+msgstr "_Tijd weergeven bij berichten"
+
+#: src/prefs.c:276
+msgid "Show _URLs as links"
+msgstr "_URL weergeven als verwijzing"
+
+#: src/prefs.c:278
+msgid "_Highlight misspelled words"
+msgstr "Verkeerd gespelde woorden laten _oplichten"
+
+#: src/prefs.c:281
+msgid "Ignore c_olors"
+msgstr "Kle_uren negeren"
+
+#: src/prefs.c:282
+msgid "Ignore font _faces"
+msgstr "Lettertype ne_geren"
+
+#: src/prefs.c:283
+msgid "Ignore font si_zes"
+msgstr "_Afmetingen negeren"
+
+#: src/prefs.c:297
+msgid "_Enter sends message"
+msgstr "_Enter verstuurt bericht"
+
+#: src/prefs.c:298
+msgid "C_ontrol-Enter sends message"
+msgstr "_CTRL-Enter verstuurt bericht"
+
+#: src/prefs.c:300
+msgid "Window Closing"
+msgstr "Sluiten van venster"
 
 #: src/prefs.c:301
-#, fuzzy
-msgid "Style"
-msgstr "Titel"
+msgid "E_scape closes window"
+msgstr "E_scape sluit het venster"
 
 #: src/prefs.c:302
-#, fuzzy
-msgid "_Bold"
-msgstr "Vet"
-
-#: src/prefs.c:303
-#, fuzzy
-msgid "_Italics"
-msgstr "Cursief"
-
-#: src/prefs.c:304
-#, fuzzy
-msgid "_Underline"
-msgstr "Onderstrepen"
+msgid "Control-_W closes window"
+msgstr "Control-_W sluit het venster"
 
 #: src/prefs.c:305
-#, fuzzy
-msgid "_Strikethough"
-msgstr "Doorgehaalde Tekst"
+msgid "Control-{B/I/U/S} inserts _HTML tags"
+msgstr "CTRL-{B/I/U/S} voegt _HTML in"
 
-#: src/prefs.c:307
-#, fuzzy
-msgid "Face"
-msgstr "Annuleren"
+#: src/prefs.c:306
+msgid "Control-(number) inserts _smileys"
+msgstr "CTRL-(nummer) voegt _smileys in"
 
-#: src/prefs.c:310
-#, fuzzy
-msgid "Use custo_m face"
-msgstr "Voeg Smiley in"
+#: src/prefs.c:318
+msgid "Buttons"
+msgstr "Knoppen"
+
+#: src/prefs.c:319
+msgid "_Hide IM/Info/Chat buttons"
+msgstr "IM/Info/Gespreksknoppen verbergen"
+
+#: src/prefs.c:320
+msgid "Show _pictures on buttons"
+msgstr "Afbeeldingen op _knoppen weergeven"
 
 #: src/prefs.c:322
-#, fuzzy
-msgid "Use custom si_ze"
-msgstr "Voeg Smiley in"
+msgid "Buddy List Window"
+msgstr "Vriendenlijst Venster"
+
+#: src/prefs.c:323
+msgid "_Save window size/position"
+msgstr "Vensterpositie/afmetingen op_slaan"
+
+#: src/prefs.c:324
+msgid "_Raise window on events"
+msgstr "Venster _optillen bij gebeurtenissen"
+
+#: src/prefs.c:326
+msgid "Group Display"
+msgstr "Groepen"
+
+#: src/prefs.c:327
+msgid "Hide _groups with no online buddies"
+msgstr "_Groepen zonder online vrienden verbergen"
+
+#: src/prefs.c:328
+msgid "Show _numbers in groups"
+msgstr "_Nummers weergeven bij groepen"
+
+#: src/prefs.c:330
+msgid "Buddy Display"
+msgstr "Vriendenlijst"
+
+#: src/prefs.c:331
+msgid "Show buddy type _icons"
+msgstr "Afbeelding voor vriend-t_ype weergeven"
+
+#: src/prefs.c:332
+msgid "Show _warning levels"
+msgstr "_Waarschuwingsniveau weergeven"
+
+#: src/prefs.c:333
+msgid "Show idle _times"
+msgstr "Afwezigheidstijd _weergeven"
 
 #: src/prefs.c:334
-#, fuzzy
-msgid "_Text color"
-msgstr "Tekstkleur"
+msgid "Grey i_dle buddies"
+msgstr "Vrienden die _afwezig zijn uitgrijzen"
 
-#: src/prefs.c:350
-#, fuzzy
-msgid "Bac_kground color"
-msgstr "Achtergrondkleur"
+#: src/prefs.c:351 src/prefs.c:393
+msgid "Window"
+msgstr "Venster"
 
-#: src/prefs.c:373 src/prefs.c:468 src/prefs.c:508
-#, fuzzy
-msgid "Display"
-msgstr "Buddyweergave"
+#: src/prefs.c:352 src/prefs.c:394
+msgid "Show _buttons as:"
+msgstr "_Knoppen weergeven als:"
 
-#: src/prefs.c:374
-#, fuzzy
-msgid "Show graphical _smileys"
-msgstr "Toon grafische smileys"
+#: src/prefs.c:353 src/prefs.c:395
+msgid "Pictures"
+msgstr "Afbeeldingen"
 
-#: src/prefs.c:375
-#, fuzzy
-msgid "Show _timestamp on messages"
-msgstr "Toon tijdweergave in berichten"
+#: src/prefs.c:354 src/prefs.c:396
+msgid "Text"
+msgstr "Tekst"
 
-#: src/prefs.c:376
-#, fuzzy
-msgid "Show _URLs as links"
-msgstr "Toon URL's als links"
+#: src/prefs.c:355 src/prefs.c:397
+msgid "Pictures and text"
+msgstr "Tekst en afbeeldingen"
 
-#: src/prefs.c:377
-#, fuzzy
-msgid "_Highlight misspelled words"
-msgstr "Onderstreep fout gespelde woorden"
+#: src/prefs.c:358 src/prefs.c:400
+msgid "New window _width:"
+msgstr "Nieuwe venster_breedte:"
 
-#: src/prefs.c:380
-#, fuzzy
-msgid "Ignore c_olors"
-msgstr "Kleuren negeren"
+#: src/prefs.c:359 src/prefs.c:401
+msgid "New window _height:"
+msgstr "Nieuwe venster_hoogte:"
 
-#: src/prefs.c:381
-#, fuzzy
-msgid "Ignore font _faces"
-msgstr "Lettertype negeren"
+#: src/prefs.c:360 src/prefs.c:402
+msgid "_Entry widget height:"
+msgstr "_Tekstinvoer hoogte:"
 
-#: src/prefs.c:382
-#, fuzzy
-msgid "Ignore font si_zes"
-msgstr "Lettergrootte negeren"
+#: src/prefs.c:361 src/prefs.c:403
+msgid "_Raise windows on events"
+msgstr "Venster _optillen bij gebeurtenissen"
 
-#: src/prefs.c:383
-#, fuzzy
-msgid "Ignore Ti_K Automated Messages"
-msgstr "Negeer automatische Tik berichten"
+#: src/prefs.c:362
+msgid "Hide window on _send"
+msgstr "Venster verbergen na ver_zenden"
 
-#: src/prefs.c:396
-#, fuzzy
-msgid "_Enter sends message"
-msgstr "Bericht verzenden met Enter"
+#: src/prefs.c:365
+msgid "Buddy Icons"
+msgstr "Vriendplaatjes"
 
-#: src/prefs.c:397
-#, fuzzy
-msgid "C_ontrol-Enter sends message"
-msgstr "Bericht verzenden met Control-Enter"
+#: src/prefs.c:366
+msgid "Hide buddy _icons"
+msgstr "Vriendplaatjes verbergen"
 
-#: src/prefs.c:399
-#, fuzzy
-msgid "Window Closing"
-msgstr "Berichtvenster"
+#: src/prefs.c:367
+msgid "Disable buddy icon a_nimation"
+msgstr "A_nimatie uitschakelen"
 
-#: src/prefs.c:400
-#, fuzzy
-msgid "E_scape closes window"
-msgstr "Venster sluiten met Esc"
+#: src/prefs.c:370
+msgid "Show _logins in window"
+msgstr "_Aanmeldingen weergeven in venster"
 
-#: src/prefs.c:401
-#, fuzzy
-msgid "Control-_W closes window"
-msgstr "Venster sluiten met Esc"
+#: src/prefs.c:372
+msgid "Typing Notification"
+msgstr "Type-melding"
 
-#: src/prefs.c:404
-#, fuzzy
-msgid "Control-{B/I/U/S} inserts _HTML tags"
-msgstr "HTML-tags invoegen met Ctrl-{B/I/U/S}"
+#: src/prefs.c:373
+msgid "Notify buddies that you are _typing to them"
+msgstr "Laat anderen weten dat je aan het _typen bent"
 
 #: src/prefs.c:405
-#, fuzzy
-msgid "Control-(number) inserts _smileys"
-msgstr "Smiley invoegen met Ctrl-(cijfer)"
+msgid "Tab Completion"
+msgstr "Tab auto-afmaken"
 
-#: src/prefs.c:417
-#, fuzzy
-msgid "Buttons"
-msgstr "Beneden"
+#: src/prefs.c:406
+msgid "_Tab-complete nicks"
+msgstr "_Tab-bijnamen afmaken"
 
-#: src/prefs.c:418
-#, fuzzy
-msgid "_Hide IM/Info/Chat buttons"
-msgstr "IM/Info/Chat knoppen verbergen"
+#: src/prefs.c:407
+msgid "_Old-style tab completion"
+msgstr "_Oude stijl van afmaken gebruiken"
 
-#: src/prefs.c:419
-#, fuzzy
-msgid "Show _pictures on buttons"
-msgstr "Knoppen met afbeeldingen tonen"
+#: src/prefs.c:410
+msgid "_Show people joining/leaving in window"
+msgstr "_Mensen die weggaan/binnenkomen weergeven in venster"
 
-#: src/prefs.c:421
-msgid "Buddy List Window"
-msgstr "Buddy Lijst Venster"
-
-#: src/prefs.c:422
-#, fuzzy
-msgid "_Save Window Size/Position"
-msgstr "Venstergrootte en -positie opslaan"
-
-#: src/prefs.c:423
-#, fuzzy
-msgid "_Raise Window on Events"
-msgstr "Haal venster omhoog bij gebeurtenissen"
-
-#: src/prefs.c:425
-#, fuzzy
-msgid "Group Display"
-msgstr "Groepenweergave"
-
-#: src/prefs.c:426
-#, fuzzy
-msgid "Hide _groups with no online buddies"
-msgstr "Verberg groepen waarin niemand online is"
+#: src/prefs.c:411
+msgid "Co_lorize screennames"
+msgstr "Geef bijnamen kle_uren"
 
 #: src/prefs.c:427
-#, fuzzy
-msgid "Show _numbers in groups"
-msgstr "Toon aantal leden van groepen"
-
-#: src/prefs.c:429
-#, fuzzy
-msgid "Buddy Display"
-msgstr "Buddyweergave"
-
-#: src/prefs.c:430
-#, fuzzy
-msgid "Show buddy type _icons"
-msgstr "Toon buddy type icons"
-
-#: src/prefs.c:431
-#, fuzzy
-msgid "Show _warning levels"
-msgstr "Toon waarschuwingsniveau"
-
-#: src/prefs.c:432
-#, fuzzy
-msgid "Show idle _times"
-msgstr "Toon inactieve tijd"
-
-#: src/prefs.c:433
-#, fuzzy
-msgid "Grey i_dle buddies"
-msgstr "Toon inactieve buddy's grijs"
-
-#: src/prefs.c:450 src/prefs.c:492
-#, fuzzy
-msgid "Window"
-msgstr "Berichtvenster"
-
-#: src/prefs.c:457 src/prefs.c:499
-#, fuzzy
-msgid "New window _width:"
-msgstr "Nieuwe vensterbreedte:"
-
-#: src/prefs.c:458 src/prefs.c:500
-#, fuzzy
-msgid "New window _height:"
-msgstr "Nieuwe vensterhoogte:"
-
-#: src/prefs.c:459 src/prefs.c:501
-#, fuzzy
-msgid "_Entry widget height:"
-msgstr "Hoogte van invoerveld:"
-
-#: src/prefs.c:460 src/prefs.c:502
-#, fuzzy
-msgid "_Raise windows on events"
-msgstr "Haal venster omhoog bij gebeurtenissen"
-
-#: src/prefs.c:461
-#, fuzzy
-msgid "Hide window on _send"
-msgstr "Verberg venster bij verzenden"
-
-#: src/prefs.c:464
-msgid "Buddy Icons"
-msgstr "Buddy Icons"
-
-#: src/prefs.c:465
-#, fuzzy
-msgid "Hide Buddy _Icons"
-msgstr "Verberg Buddy Icons"
-
-#: src/prefs.c:466
-#, fuzzy
-msgid "Disable Buddy Icon A_nimation"
-msgstr "Deactiveer Animatie"
-
-#: src/prefs.c:469
-#, fuzzy
-msgid "Show _logins in window"
-msgstr "Toon aanmeldingen in venster"
-
-#: src/prefs.c:471
-#, fuzzy
-msgid "Typing Notification"
-msgstr "Popup Melding"
-
-# L src/prefs.c:232
-#: src/prefs.c:472
-#, fuzzy
-msgid "Notify buddies that you are _typing to them"
-msgstr "Laat buddy's zien dat je tegen ze typt"
-
-#: src/prefs.c:504
-msgid "Tab Completion"
-msgstr "Titels in Tabs"
-
-#: src/prefs.c:505
-#, fuzzy
-msgid "_Tab-Complete Nicks"
-msgstr "Volledige namen in Tabs"
-
-#: src/prefs.c:506
-#, fuzzy
-msgid "_Old-Style Tab Completion"
-msgstr "Oude stijl tabs"
-
-#: src/prefs.c:509
-#, fuzzy
-msgid "_Show people joining/leaving in window"
-msgstr "Toon pesonen die weggaan of binnenkomen in venster"
-
-#: src/prefs.c:510
-msgid "Co_lorize screennames"
-msgstr ""
-
-#: src/prefs.c:526
 msgid "IM Tabs"
-msgstr ""
+msgstr "IM  Tabbladen"
 
-#: src/prefs.c:533
-#, fuzzy
+#: src/prefs.c:428 src/prefs.c:438 src/prefs.c:451
+msgid "Tab _placement:"
+msgstr "Tabblad_plaatsing:"
+
+#: src/prefs.c:429 src/prefs.c:439 src/prefs.c:452
+msgid "Top"
+msgstr "Boven"
+
+#: src/prefs.c:430 src/prefs.c:440 src/prefs.c:453
+msgid "Bottom"
+msgstr "Onder"
+
+#: src/prefs.c:431 src/prefs.c:441
+msgid "Left"
+msgstr "Links"
+
+#: src/prefs.c:432 src/prefs.c:442
+msgid "Right"
+msgstr "Rechts"
+
+#: src/prefs.c:434
 msgid ""
-"Show all _Instant Messages in one tabbed\n"
+"Show all _instant messages in one tabbed\n"
 "window"
-msgstr "Toon alle gesprekken in een venster met tabbladen"
+msgstr "Alle _gesprekken in een venster met tabbladen weergeven"
 
-#: src/prefs.c:534
-#, fuzzy
+#: src/prefs.c:435
 msgid "Show a_liases in tabs/titles"
-msgstr "Toon aliassen in tabs of titels"
+msgstr "_Bijnamen in tabbladen/titels weergeven"
 
-#: src/prefs.c:536
-#, fuzzy
+#: src/prefs.c:437
 msgid "Chat Tabs"
-msgstr "Chat"
+msgstr "Chat tabbladen"
 
-#: src/prefs.c:543
-#, fuzzy
+#: src/prefs.c:444
 msgid "Show all c_hats in one tabbed window"
-msgstr "Toon alle gesprekken in een venster met tabbladen"
+msgstr "Alle groepsgesprekken in een venster met tabbladen weergeven"
 
-#: src/prefs.c:546
+#: src/prefs.c:447
 msgid "Combined Tabs"
-msgstr ""
+msgstr "Combineer Tabbladen"
 
-#: src/prefs.c:547
-#, fuzzy
+#: src/prefs.c:448
 msgid ""
 "Show IMs and chats in _same tabbed\n"
 "window."
-msgstr "Toon gesprekken in hetzelfde venster met tabbladen"
+msgstr "Gesprekken en chats in het_zelfde venster plaatsen."
 
-#: src/prefs.c:549
-#, fuzzy
+#: src/prefs.c:450
 msgid "Buddy List Tabs"
-msgstr "Buddy Lijst"
+msgstr "Vriendenlijst tabbladen"
 
-#: src/prefs.c:570
+#: src/prefs.c:471
 msgid "Proxy Type"
 msgstr "Proxy Type"
 
-#: src/prefs.c:582
+#: src/prefs.c:472
+msgid "Proxy _type:"
+msgstr "Proxy_type:"
+
+#: src/prefs.c:473
+msgid "No proxy"
+msgstr "Geen proxy"
+
+#: src/prefs.c:483
 msgid "Proxy Server"
 msgstr "Proxy Server"
 
-#: src/prefs.c:595
-#, fuzzy
+#: src/prefs.c:496
 msgid "_Host"
-msgstr "Host"
+msgstr "_Server"
 
-#: src/prefs.c:609
+#: src/prefs.c:510
 msgid "Port"
 msgstr "Poort"
 
-#: src/prefs.c:625
-#, fuzzy
+#: src/prefs.c:526
 msgid "_User"
-msgstr "Gebruiker"
+msgstr "_Gebruiker"
 
-#: src/prefs.c:639
-#, fuzzy
+#: src/prefs.c:540
 msgid "Pa_ssword"
-msgstr "Wachtwoord"
+msgstr "_Wachtwoord"
 
-#: src/prefs.c:670
+#. Registered default browser is used by Windows
+#: src/prefs.c:577
 msgid "Browser Selection"
-msgstr ""
+msgstr "Browserselectie"
 
-#: src/prefs.c:697
-#, fuzzy
+#: src/prefs.c:578
+msgid "_Browser"
+msgstr "_Browser"
+
+#: src/prefs.c:582
+msgid "Manual"
+msgstr "Handmatig"
+
+#: src/prefs.c:606
 msgid "Browser Options"
-msgstr "Proxy Instellingen"
+msgstr "Browserinstellingen"
 
-#: src/prefs.c:698
-#, fuzzy
+#: src/prefs.c:607
 msgid "Open new _window by default"
-msgstr "Open standaard nieuw venster"
+msgstr "Open standaard een nieuw _venster"
 
-#: src/prefs.c:710
-#, fuzzy
+#: src/prefs.c:622
 msgid "Message Logs"
-msgstr "Berichten"
+msgstr "Gesprek-logboek"
 
-#: src/prefs.c:711
-#, fuzzy
-msgid "_Log all conversations"
-msgstr "Alle gesprekken loggen"
+#: src/prefs.c:623
+msgid "_Log all instant messages"
+msgstr "Alle gesprekken _opslaan"
 
-#: src/prefs.c:712
-#, fuzzy
+#: src/prefs.c:624
+msgid "Log all c_hats"
+msgstr "Alle _groepsgesprekken opslaan"
+
+#: src/prefs.c:625
 msgid "Strip _HTML from logs"
-msgstr "Verwijder HTML uit het logboek"
+msgstr "_HTML verwijderen uit logboeken"
 
-#: src/prefs.c:714
-#, fuzzy
+#: src/prefs.c:627
 msgid "System Logs"
-msgstr "Toon Systeemlog"
+msgstr "Systeemlogboek"
 
-#: src/prefs.c:715
-#, fuzzy
+#: src/prefs.c:628
 msgid "Log when buddies _sign on/sign off"
-msgstr "Log als buddy's zich aan/afmelden"
+msgstr "Aanmelden/afmelden opslaan"
 
-#: src/prefs.c:717
-#, fuzzy
+#: src/prefs.c:630
 msgid "Log when buddies become _idle/un-idle"
-msgstr "Log als buddy's inactief/actief worden"
+msgstr "Statusveranderingen opslaan"
 
-#: src/prefs.c:719
-#, fuzzy
+#: src/prefs.c:632
 msgid "Log when buddies go away/come _back"
-msgstr "Log als buddy's weggaan of terugkomen"
+msgstr "Opslaan wanneer anderen _weggaan of terugkomen"
 
-#: src/prefs.c:720
-#, fuzzy
+#: src/prefs.c:633
 msgid "Log your _own signons/idleness/awayness"
-msgstr "Log uw eigen aan/afmeldingen"
+msgstr "_Eigen statusveranderingen opslaan"
 
-#: src/prefs.c:722
-#, fuzzy
+#: src/prefs.c:635
 msgid "I_ndividual log file for each buddy's signons"
-msgstr "Eigen log voor elke buddy-aanmelding"
+msgstr "Iedere aanmelding beginnen met een nieuw bestand"
 
-#: src/prefs.c:749
+#: src/prefs.c:667
 msgid "Sound Options"
 msgstr "Geluidsinstellingen"
 
-#: src/prefs.c:750
-#, fuzzy
+#: src/prefs.c:668
 msgid "_No sounds when you log in"
-msgstr "Geen geluid bij aanmelden"
+msgstr "_Geen geluid wanneer u uzelf aanmeld"
 
-#: src/prefs.c:751
-#, fuzzy
+#: src/prefs.c:669
 msgid "_Sounds while away"
-msgstr "Geluid bij afwezigheid"
+msgstr "Geluiden wanneer u _weg bent"
 
-#: src/prefs.c:753
-#, fuzzy
+#: src/prefs.c:672
 msgid "Sound Method"
-msgstr "Geluiden"
+msgstr "Methode"
 
-#: src/prefs.c:777
+#: src/prefs.c:673
+msgid "_Method"
+msgstr "_Methode"
+
+#: src/prefs.c:676
+msgid "Console beep"
+msgstr "Terminal-pieptoon"
+
+#: src/prefs.c:686
+msgid "Internal"
+msgstr "Interne"
+
+#: src/prefs.c:687
+msgid "Command"
+msgstr "Opdracht"
+
+#: src/prefs.c:696
 #, c-format
 msgid ""
 "Sound c_ommand\n"
 "(%s for filename)"
 msgstr ""
+"Geluids_opdracht\n"
+"(%s voor bestandsnaam)"
+
+#: src/prefs.c:732
+msgid "_Sending messages removes away status"
+msgstr "_Verzenden van berichten verwijdert de afwezigheidsstatus"
+
+#: src/prefs.c:733
+msgid "_Queue new messages when away"
+msgstr "Berichten in de _wachtrij zetten tijdens afwezigheid"
+
+#: src/prefs.c:734
+msgid "_Ignore new conversations when away"
+msgstr "Nieuwe gesprekken _negeren tijdens afwezigheid"
+
+#: src/prefs.c:736
+msgid "Auto-response"
+msgstr "Auto-antwoord"
+
+#: src/prefs.c:739
+msgid "Seconds before _resending:"
+msgstr "Seconden voordat _opnieuw verzonden wordt:"
+
+#: src/prefs.c:741
+msgid "_Don't send auto-response"
+msgstr "_Geen auto-antwoord sturen"
+
+#: src/prefs.c:742
+msgid "_Only send auto-response when idle"
+msgstr "_Alleen auto-antwoord sturen tijdens afwezigheid"
+
+#: src/prefs.c:743
+msgid "Do_n't send auto-response in active conversations"
+msgstr "_Geen auto-antwoord sturen in actieve gesprekken"
+
+#: src/prefs.c:749
+msgid "Idle _time reporting:"
+msgstr "Afwezigheid _berekenen:"
+
+#: src/prefs.c:750
+msgid "None"
+msgstr "Niet"
+
+#: src/prefs.c:751
+msgid "Gaim usage"
+msgstr "Gebruik van gaim"
+
+#: src/prefs.c:754
+msgid "X usage"
+msgstr "Gebruik grafische omgeving (X)"
+
+#: src/prefs.c:756
+msgid "Windows usage"
+msgstr "Gebruik grafische omgeving (Windows)"
+
+#: src/prefs.c:763
+msgid "Auto-away"
+msgstr "Auto-afwezig"
+
+#: src/prefs.c:764
+msgid "Set away _when idle"
+msgstr "Status op afwezig zetten _wanneer ik niets doe"
+
+#: src/prefs.c:765
+msgid "_Minutes before setting away:"
+msgstr "_Minuten voor afwezig:"
+
+#: src/prefs.c:770
+msgid "Away m_essage:"
+msgstr "Afwezigheids_bericht:"
+
+#: src/prefs.c:804 src/prefs.c:892
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\" color=\"red\">%s</span>\n"
+"\n"
+"%s"
+msgstr ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\" color=\"red\">%s</span>\n"
+"\n"
+"%s"
+
+#: src/prefs.c:808 src/prefs.c:896
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"%s"
+msgstr ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"%s"
 
 #: src/prefs.c:813
-#, fuzzy
-msgid "_Sending messages removes away status"
-msgstr "Verzenden van bericht heft afwezigheid op"
-
-#: src/prefs.c:814
-#, fuzzy
-msgid "_Queue new messages when away"
-msgstr "Plaats berichten in wachtrij bij afwezigheid"
-
-#: src/prefs.c:815
-#, fuzzy
-msgid "_Ignore new conversations when away"
-msgstr "Negeer gesprekken tijdens afwezigheid"
-
-#: src/prefs.c:817
-#, fuzzy
-msgid "Auto-response"
-msgstr "Geen automatisch antwoord verzenden"
-
-#: src/prefs.c:820
-msgid "Seconds before _resending:"
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Written by:</span>\t%s\n"
+"<span weight=\"bold\">URL:</span>\t%s\n"
+"<span weight=\"bold\">File name:</span>\t%s"
 msgstr ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Geschreven door:</span>\t%s\n"
+"<span weight=\"bold\">URL:</span>\t%s\n"
+"<span weight=\"bold\">Bestandsnaam:</span>\t%s"
 
-#: src/prefs.c:822
-#, fuzzy
-msgid "_Don't send auto-response"
-msgstr "Geen automatisch antwoord verzenden"
-
-#: src/prefs.c:823
-#, fuzzy
-msgid "_Only send auto-response when idle"
+#: src/prefs.c:818
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Written by:</span>  %s\n"
+"<span weight=\"bold\">URL:</span>  %s\n"
+"<span weight=\"bold\">File name:</span>  %s"
 msgstr ""
-"Alleen automatisch antwoord\n"
-"verzenden wanneer u inactief bent"
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Geschreven door:</span>  %s\n"
+"<span weight=\"bold\">URL:</span>  %s\n"
+"<span weight=\"bold\">Bestandsnaam:</span>  %s"
 
-#: src/prefs.c:828
-#, fuzzy
-msgid "Idle"
-msgstr "Afwezig: "
+#: src/prefs.c:1003
+msgid "Details"
+msgstr "Details"
 
-#: src/prefs.c:839
-#, fuzzy
-msgid "Auto-away"
-msgstr "Afwezig"
-
-#: src/prefs.c:840
-msgid "Set away _when idle"
-msgstr ""
-
-#: src/prefs.c:954
+#: src/prefs.c:1108
 msgid "Gaim - Sound Configuration"
 msgstr "Gaim - Geluidsconfiguratie"
 
-#: src/prefs.c:1062
-#, fuzzy
+#: src/prefs.c:1217
 msgid "Test"
-msgstr "Alleen Tekst"
+msgstr "Test"
 
-#: src/prefs.c:1070
+#: src/prefs.c:1225
 msgid "Choose..."
 msgstr "Kies..."
 
-#: src/prefs.c:1239
-#, fuzzy
+#: src/prefs.c:1353
 msgid "_Edit"
-msgstr "Bewerken"
+msgstr "_Bewerken"
 
-#: src/prefs.c:1303
-#, fuzzy
+#: src/prefs.c:1391
 msgid "Interface"
-msgstr "Instance"
+msgstr "Interface"
 
-#: src/prefs.c:1304
-#, fuzzy
+#: src/prefs.c:1392
 msgid "Fonts"
-msgstr "Lettertype"
+msgstr "Lettertypes"
 
-#: src/prefs.c:1305
-#, fuzzy
+#: src/prefs.c:1393
 msgid "Message Text"
-msgstr "Bericht"
+msgstr "Berichttekst"
 
-#: src/prefs.c:1306
+#: src/prefs.c:1394
 msgid "Shortcuts"
-msgstr ""
+msgstr "Sneltoetsen"
 
-#: src/prefs.c:1308
+#: src/prefs.c:1396
 msgid "IM Window"
 msgstr "Berichtvenster"
 
-#: src/prefs.c:1309
-#, fuzzy
+#: src/prefs.c:1397
 msgid "Chat Window"
-msgstr "Groeps Chat Venster"
+msgstr "Chatvenster"
 
-#: src/prefs.c:1310
+#: src/prefs.c:1398
 msgid "Tabs"
-msgstr ""
+msgstr "Tabbladen"
 
-#: src/prefs.c:1311
+#: src/prefs.c:1399
 msgid "Proxy"
 msgstr "Proxy"
 
-#: src/prefs.c:1312
+#: src/prefs.c:1400
 msgid "Browser"
 msgstr "Browser"
 
-#: src/prefs.c:1315
+#: src/prefs.c:1402
+msgid "Logging"
+msgstr "Logboek"
+
+#: src/prefs.c:1403
 msgid "Sounds"
 msgstr "Geluiden"
 
-#: src/prefs.c:1316
-#, fuzzy
+#: src/prefs.c:1404
 msgid "Sound Events"
-msgstr "Geluiden"
+msgstr "Geluidsgebeurtenissen"
 
-#: src/prefs.c:1317
-#, fuzzy
+#: src/prefs.c:1405
 msgid "Away / Idle"
-msgstr "Afwezig titel:"
+msgstr "Afwezig"
 
-#: src/prefs.c:1318
+#: src/prefs.c:1406
 msgid "Away Messages"
 msgstr "Afwezigheid"
 
-#: src/prefs.c:1380
+#: src/prefs.c:1408
+msgid "Plugins"
+msgstr "Plugins"
+
+#: src/prefs.c:1447
 msgid "Gaim - Preferences"
 msgstr "Gaim - Voorkeuren"
 
-#: src/prefs.c:1519
-msgid "Gaim debug output window"
-msgstr "Gaim Debug output venster"
+#: src/prefs.c:1566
+msgid "Gaim - Debug Window"
+msgstr "Gaim - Debugvenster"
 
-#: src/prpl.c:70
-msgid "Incompatible protocol detected."
-msgstr ""
+#: src/prpl.c:100
+msgid "ICQ Protocol detected."
+msgstr "ICQ-protocol gedetecteerd."
 
-#: src/prpl.c:71
+#: src/prpl.c:101
 msgid ""
-"You have attempted to load a protocol which was not compiled from the same "
-"version of the source as this application was. Unfortunately, because it is "
-"not the same version I cannot safely tell you which one it was. Needless to "
-"say, it was not successfully loaded."
-msgstr ""
-"U hebt geprobeerd een protocol te laden dat een andere versie heeft dan dit "
-"programma. Omdat het niet dezelfde versie is als dit programma kan ik helaas "
-"niet zeggen welke het was maar werken zal het in ieder geval niet."
-
-#: src/prpl.c:85
-msgid "Libicq.so detected."
-msgstr ""
-
-#: src/prpl.c:86
-msgid ""
-"Gaim has loaded the ICQ plugin.  This plugin has been deprecated. As such, "
-"it was probably not compiled from the same version of the source as this "
+"Gaim has loaded the ICQ plugin.  This plugin has been deprecated. As such, it "
+"was probably not compiled from the same version of the source as this "
 "application was, and cannot be guaranteed to work.  It is recommended that "
 "you use the AIM/ICQ protocol to connect to ICQ"
 msgstr ""
+"Gaim heeft de ICQ-plugin geladen. Deze plugin wordt niet meer gebruikt. Het "
+"is daarom waarschijnlijk dat het om een oude versie van de plugin gaat, "
+"waardoor het misschien niet werkt. U kunt het beste gebruik maken van het "
+"AIM/ICQ protocol om gebruik te maken van uw ICQ-account."
 
-#: src/prpl.c:105
-#, c-format
-msgid "%s was using %s, which got removed. %s is now offline."
-msgstr "%s gebruikte %s, dat verwijderd is. %s is nu offline."
-
-#: src/prpl.c:145
-msgid "Accept?"
-msgstr "Accepteren?"
-
-#: src/prpl.c:211
+#: src/prpl.c:252
 msgid "Gaim - Prompt"
 msgstr "Gaim - Prompt"
 
-#: src/prpl.c:431
+#: src/prpl.c:453
+msgid "No Subject"
+msgstr "Geen onderwerp"
+
+#: src/prpl.c:474
 msgid "Gaim - New Mail"
 msgstr "Gaim - Nieuwe E-mail"
 
-#: src/prpl.c:457
+#: src/prpl.c:500
 msgid "Open Mail"
 msgstr "Open E-mail"
 
-#: src/prpl.c:582
-#, fuzzy, c-format
+#: src/prpl.c:626
+#, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
-msgstr "%s%s%s%s heeft %s tot buddy gemaakt"
+msgstr "%s%s%s%s heeft %s in zijn/haar vriendenlijst gezet%s%s%s"
 
-#: src/prpl.c:590
-#, fuzzy
+#: src/prpl.c:634
 msgid ""
 "\n"
 "\n"
@@ -3704,449 +4189,565 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Wilt u ze toevoegen aan uw buddy lijst?"
+"Wilt u hem of haar toevoegen aan uw vriendenlijst?"
 
-#: src/prpl.c:633
+#: src/prpl.c:677
 msgid ""
 "You do not currently have any protocols available that are able to register "
 "new accounts."
 msgstr ""
+"U heeft op het moment geen protocollen tot uw beschikking waarmee u een nieuw "
+"account kunt aanmaken."
 
-#: src/prpl.c:670
-#, fuzzy
+#: src/prpl.c:714
 msgid "Gaim - Registration"
-msgstr "Gaim - Gesprekken"
+msgstr "Gaim - Registratie"
 
-#: src/prpl.c:685
+#: src/prpl.c:728
 msgid "Registration Information"
-msgstr ""
+msgstr "Registratie-informatie"
 
-#: src/prpl.c:702
-#, fuzzy
+#: src/prpl.c:745
 msgid "Register"
-msgstr "Wissen"
+msgstr "Registreren"
 
-#: src/server.c:55
+#: src/server.c:56
 msgid "Please enter your password"
 msgstr "Vul uw wachtwoord in"
 
-#: src/server.c:610
+#: src/server.c:649
 #, c-format
 msgid "(%d messages)"
 msgstr "(%d berichten)"
 
-#: src/server.c:616
+#: src/server.c:655
 msgid "(1 message)"
 msgstr "(1 bericht)"
 
-#: src/server.c:901
+#: src/server.c:967
 msgid "Yes"
 msgstr "Ja"
 
-#: src/server.c:902
+#: src/server.c:968
 msgid "No"
 msgstr "Nee"
 
-#: src/server.c:1101
-#, fuzzy
+#: src/server.c:1164
 msgid "More Info"
-msgstr "Haal Info op"
-
-#: src/sound.c:63
-#, fuzzy
-msgid "Buddy logs in"
-msgstr "Buddy Icon"
-
-#: src/sound.c:64
-#, fuzzy
-msgid "Buddy logs out"
-msgstr "Geluid als buddy zich afmeldt"
-
-#: src/sound.c:65
-#, fuzzy
-msgid "Message received"
-msgstr "Geluid bij het ontvangen van een bericht"
-
-#: src/sound.c:66
-#, fuzzy
-msgid "Message received begins conversation"
-msgstr "Geluid bij starten van gesprek"
-
-#: src/sound.c:67
-#, fuzzy
-msgid "Message sent"
-msgstr "Berichten"
+msgstr "Meer info"
 
 #: src/sound.c:68
-msgid "Person enters chat"
-msgstr ""
+msgid "Buddy logs in"
+msgstr "Persoonlijk plaatje"
 
 #: src/sound.c:69
-msgid "Person leaves chat"
-msgstr ""
+msgid "Buddy logs out"
+msgstr "Een vriend meldt zich af"
 
 #: src/sound.c:70
-msgid "You talk in chat"
-msgstr ""
+msgid "Message received"
+msgstr "Bericht ontvangen"
 
 #: src/sound.c:71
-msgid "Others talk in chat"
-msgstr ""
+msgid "Message received begins conversation"
+msgstr "Ontvangen bericht begint een gesprek"
+
+#: src/sound.c:72
+msgid "Message sent"
+msgstr "Bericht verzonden"
+
+#: src/sound.c:73
+msgid "Person enters chat"
+msgstr "Persoon komt chatruimte binnen"
 
 #: src/sound.c:74
+msgid "Person leaves chat"
+msgstr "Persoon verlaat chatruimte"
+
+#: src/sound.c:75
+msgid "You talk in chat"
+msgstr "U praat in de chatruimte"
+
+#: src/sound.c:76
+msgid "Others talk in chat"
+msgstr "Anderen praten in de chatruimte"
+
+#: src/sound.c:79
 msgid "Someone says your name in chat"
-msgstr ""
+msgstr "Iemand zegt uw naam in de chatruimte"
 
-#, fuzzy
-#~ msgid "Gadu-Gadu Error"
-#~ msgstr "Gadu-Gadu Fout"
+#~ msgid "Accounts"
+#~ msgstr "Accounts"
 
-#, fuzzy
-#~ msgid "Gadu-Gadu Information"
-#~ msgstr "Gadu-Gadu Fout"
+#~ msgid "About"
+#~ msgstr "Info"
 
-#, fuzzy
-#~ msgid "Couldn't send http request"
-#~ msgstr "Kan de zoekopdracht niet versturen"
+#~ msgid "Gaim - Save Conversation"
+#~ msgstr "Gaim - Gesprek Opslaan"
 
-#~ msgid "Connect to search service failed (%s)"
-#~ msgstr "Verbinding met zoekmachine afgebroken (%s)"
+#~ msgid "Add Buddy"
+#~ msgstr "Vriend toevoegen"
 
-#, fuzzy
-#~ msgid "Changing Password failed (%s)"
-#~ msgstr "Verander Wachtwoord"
+#~ msgid "Contact"
+#~ msgstr "Gebruiker"
 
-#~ msgid "No such nick/channel"
-#~ msgstr "Bijnaam of kanaal bestaat niet"
+#~ msgid "Allow List"
+#~ msgstr "Toegestaan"
 
-#, fuzzy
-#~ msgid "IRC Error"
-#~ msgstr "IRC Fout"
+#~ msgid "Block List"
+#~ msgstr "Geblokkeerd"
 
-#~ msgid "No such server"
-#~ msgstr "Onjuiste server"
+#~ msgid "Rename Group"
+#~ msgstr "Groep hernoemen"
 
-#~ msgid "IRC Part"
-#~ msgstr "IRC Part"
+#~ msgid "You missed %d messages from %s because they are too evil."
+#~ msgstr ""
+#~ "U heeft %d berichten van %s niet ontvangen omdat deze te kwaadaardig "
+#~ "waren."
 
-#, fuzzy
-#~ msgid "Password Change Error!"
-#~ msgstr "Gaim - Wachtwoord Veranderen"
+#~ msgid "Docklet Configuration"
+#~ msgstr "Docklet-instellingen"
 
-#, fuzzy
-#~ msgid "Password Change"
-#~ msgstr "Gaim - Wachtwoord Veranderen"
+#~ msgid " for updates."
+#~ msgstr "Houd uw ogen open voor nieuwe versies."
 
-#, fuzzy
-#~ msgid "MSN Error"
-#~ msgstr "MSN Fout"
+#~ msgid "ICQ Authorization Granted"
+#~ msgstr "ICQ Identificatie toegestaan"
 
-#~ msgid "Chat Error!"
-#~ msgstr "Chat Fout!"
+#~ msgid "Alias Buddy"
+#~ msgstr "Alias voor vriend"
 
-#~ msgid "Gaim - Chat"
-#~ msgstr "Gaim - Chat"
-
-#~ msgid "Gaim - Error"
-#~ msgstr "Gaim - Fout"
-
-#, fuzzy
-#~ msgid "Gaim - Oscar SNAC Error"
-#~ msgstr "Gaim - Fout"
-
-# #: src/protocols/oscar/oscar.c:1753
-# #, c-format
-# msgid "Your message to %s did not get sent: %s"
-# msgstr "Je bericht naar %s is niet verzonden"
-#~ msgid "Reason unknown"
-#~ msgstr "Oorzaak onbekend"
-
-#~ msgid "AOL error"
-#~ msgstr "AOL fout"
-
-#~ msgid "Error"
-#~ msgstr "Fout"
-
-#, fuzzy
-#~ msgid "Gaim - Warning"
-#~ msgstr "Gaim - Gebruiker Waarschuwen?"
-
-#~ msgid "Chat Error"
-#~ msgstr "Chat Fout"
-
-#~ msgid "TOC Pause"
-#~ msgstr "TOC Pause"
-
-#~ msgid "Could not write file header!"
-#~ msgstr "Kan bestandsheader niet schrijven!"
-
-#~ msgid "Attempting to sign on...."
-#~ msgstr "Bezig met aanmelden...."
-
-#~ msgid "Offline. Click to bring up login box."
-#~ msgstr "Niet aangemeld. Klik voor login venster."
-
-#~ msgid "Away: %d pending."
-#~ msgstr "Afwezig %d hangend"
-
-#~ msgid "Away."
-#~ msgstr "Afwezig"
-
-#~ msgid "Can't create Gaim applet!"
-#~ msgstr "Kan de gaim applet niet aanmaken!"
-
-#~ msgid "About..."
-#~ msgstr "Over..."
-
-#~ msgid "Message Error"
-#~ msgstr "Berichtfout"
-
-#~ msgid "Unable to send message: Unknown reason"
-#~ msgstr "Kan bericht niet verzenden: Reden onbekend"
-
-#~ msgid "Buddy Pounce Error"
-#~ msgstr "Buddy-Alarm Fout"
-
-#~ msgid "Gaim - Change Password Error"
-#~ msgstr "Gaim - Fout bij wachtwoord hernoemen"
-
-#~ msgid "Unable to remove file %s - %s"
-#~ msgstr "Kan %s - %s niet verwijderen."
-
-#~ msgid "Preferences Error"
-#~ msgstr "Instellingsfout"
-
-#~ msgid "Plugin Error"
-#~ msgstr "Plugin Fout"
-
-#~ msgid "Login Error"
-#~ msgstr "Aanmeldings Fout"
-
-#~ msgid "Perl Scripts"
-#~ msgstr "Perl Scripts"
-
-#~ msgid "Select"
-#~ msgstr "Selecteer"
-
-#~ msgid "Automatically show buddy list on sign on"
-#~ msgstr "Automatisch buddylijst tonen bij aanmelden"
-
-#~ msgid "Display Buddy List near applet"
-#~ msgstr "Toon Buddy Lijst vlakbij applet"
-
-#~ msgid "Edit"
-#~ msgstr "Bewerken"
-
-#~ msgid "Protocol Error"
-#~ msgstr "Protocol Fout"
-
-#, fuzzy
-#~ msgid "Protocol Warning"
-#~ msgstr "Protocol Acties"
-
-#~ msgid "Disconnect"
-#~ msgstr "Verbinding Verbreken"
-
-#~ msgid "Warned"
-#~ msgstr "Gewaarschuwd"
-
-#~ msgid "Show Buddy Ticker"
-#~ msgstr "Buddy Ticker tonen"
+#~ msgid "Transparency"
+#~ msgstr "Doorzichtigheid"
 
 #~ msgid ""
-#~ "Relax, help is just around the corner. The first thing you'll need to do "
-#~ "is get an AIM account; you can get one from http://aim.aol.com/. Just "
-#~ "click the button that says \"New Users\" and you can create an account "
-#~ "that way. Once you have your account, enter the username and password "
-#~ "into the login window that comes up when you start Gaim, and click the "
-#~ "Signon button. Once you're online, you can talk to one of the Gaim "
-#~ "developers for more assistance; their contact information is in the "
-#~ "AUTHORS file in the Gaim source, or at "
+#~ "This plugin enables variable alpha transparency on conversation windows.\n"
+#~ "\n"
+#~ "* Note: This plugin requires Win2000 or WinXP."
 #~ msgstr ""
-#~ "Rustig... Hulp is makkelijk te vinden. Het eerste wat u moet doen is een "
-#~ "AIM account aanmaken. Dat kan op http://aim.aol.com/. Klik op de knop "
-#~ "\"New Users\" en daarmee kunt u een nieuw account aanmaken. Heeft u dat "
-#~ "eenmaal gedaan dan kunt u zich aanmelden door uw gekozen Gebruikersnaam "
-#~ "en wachtwoord in te vullen in het login venster dat vershijnt als u gaim "
-#~ "start. Klik op aanmelden en u kunt gesprekken voeren met andere AIM "
-#~ "gebruikers maar ook met enkele van de Gaim ontwikkelaars. Zie het AUTHORS "
-#~ "bestand of op "
+#~ "Deze plugin geeft u de mogelijkheid om doorzichtigheid van het "
+#~ "gespreksvenster in te stellen in windows.\n"
+#~ "\n"
+#~ "* Opmerking: Windows 2000 of XP vereist."
 
-#~ msgid "Help!"
-#~ msgstr "Help"
+#~ msgid "Rob Flynn &lt;rob@marko.net&gt;"
+#~ msgstr "Rob Flynn &lt;rob@marko.net&gt;"
 
-#~ msgid "Handshake"
-#~ msgstr "Handshake"
+#~ msgid "Opacity:"
+#~ msgstr "Ondoorzichtigheid:"
 
-#, fuzzy
-#~ msgid "Sending key"
-#~ msgstr "Verzend bestand"
+#~ msgid "Unkown"
+#~ msgstr "Onbekend"
 
-#~ msgid "Logging in %s\n"
-#~ msgstr "Bezig met aanmelden %s\n"
+#~ msgid "%s requests that %s accept a file: %s (%s)"
+#~ msgstr "%s vraagt aan %s om een bestand te accepteren: %s (%s)"
 
-#, fuzzy
-#~ msgid "Send offline message"
-#~ msgstr "Bericht Offline verzenden."
+#~ msgid "%s requests that %s accept %d files: %s (%s)"
+#~ msgstr "%s vraagt aan %s om %d bestanden te accepteren: %s (%s)"
 
-#~ msgid "Enable sounds"
-#~ msgstr "Activeer Geluiden"
+#~ msgid "File transfer to %s aborted."
+#~ msgstr "Bestandsoverdracht naar %s afgebroken."
 
-#~ msgid "All options take effect immediately unless otherwise noted."
-#~ msgstr "Alle opties hebben onmiddelijk effect tenzij anders aangegeven"
+#~ msgid "File transfer from %s aborted."
+#~ msgstr "Bestandsoverdracht van %s afgebroken."
 
-#~ msgid "Miscellaneous"
-#~ msgstr "Overig"
+#~ msgid "That file already exists; please choose another name."
+#~ msgstr "Dat bestand bestaat al. Kies alstublieft een andere."
 
-#~ msgid "Report Idle Times"
-#~ msgstr "Toon inactieve tijd"
+#~ msgid "File not found."
+#~ msgstr "Bestand niet gevonden."
 
-#~ msgid "None"
-#~ msgstr "Geen"
+#~ msgid "You may only choose one new directory."
+#~ msgstr "U mag slechts één nieuwe map kiezen."
 
-#~ msgid "X Use"
-#~ msgstr "van X"
+#~ msgid "Unable to create directory."
+#~ msgstr "Kan map niet aanmaken."
 
-#~ msgid "KFM"
-#~ msgstr "Konqueror"
+#~ msgid "Gaim - Open..."
+#~ msgstr "Gaim - Openen..."
 
-#~ msgid "Opera"
-#~ msgstr "Opera"
+#~ msgid "Could not open %s for reading: %s"
+#~ msgstr "Kon %s niet openen om van te lezen: %s"
 
-#~ msgid "Netscape"
-#~ msgstr "Netscape"
+#~ msgid "Invalid incoming filename component"
+#~ msgstr "Ongeldige inkomende bestandsnaamcomponent"
 
-#~ msgid "GNOME URL Handler"
-#~ msgstr "GNOME URL Handler"
+#~ msgid "Invalid incoming filename"
+#~ msgstr "Ongeldige inkomende bestandsnaam"
 
-#~ msgid "Manual"
-#~ msgstr "Handmatig"
+#~ msgid "File transfer from %s to %s completed successfully."
+#~ msgstr "Bestandsoverdracht van %s naar %s succesvol voltooid."
+
+#~ msgid "%d files transferred."
+#~ msgstr "%d bestand overgezonden."
 
 #~ msgid ""
-#~ "Not all protocols can use these proxy options. Please see the README file "
-#~ "for details."
+#~ "Usage: %s command [OPTIONS] [URI]\n"
+#~ "\n"
+#~ "    COMMANDS:\n"
+#~ "       uri                      Handle AIM:// URI\n"
+#~ "       info                     Show information about connected "
+#~ "accounts\n"
+#~ "       list                     Print buddy list\n"
+#~ "       ison                     Show presence state of your buddy\n"
+#~ "       convo                    Open a new conversation window\n"
+#~ "       send                     Send message\n"
+#~ "       add                      Add buddy to buddy list\n"
+#~ "       remove                   Remove buddy from list\n"
+#~ "       quit                     Close running copy of Gaim\n"
+#~ "\n"
+#~ "    OPTIONS:\n"
+#~ "       -m, --message=MESG       Message to send or show in conversation "
+#~ "window\n"
+#~ "       -t, --to=SCREENNAME      Select a target for command\n"
+#~ "       -p, --protocol=PROTO     Specify protocol to use\n"
+#~ "       -f, --from=SCREENNAME    Specify screenname to use\n"
+#~ "       -q, --quiet              Send message without showing a "
+#~ "conversation\n"
+#~ "                                window\n"
+#~ "       -h, --help               Show help for command\n"
 #~ msgstr ""
-#~ "Niet alle protocollen kunnen de proxy instellingen gebruiken. Zie het "
-#~ "README bestand voor info."
+#~ "Gebruik: %s opdracht [OPTIES] [URI]\n"
+#~ "\n"
+#~ "    opdrachten:\n"
+#~ "       uri                      AIM:// URI afhandelen\n"
+#~ "       info                     Informatie weergeven over actieve "
+#~ "accounts\n"
+#~ "       list                     Vriendenlijst weergeven\n"
+#~ "       ison                     Huidige status van vriend weergeven\n"
+#~ "       convo                    Open een nieuw gespreksvenster\n"
+#~ "       send                     Stuur bericht\n"
+#~ "       add                      Vriend toevoegen aan lijst\n"
+#~ "       remove                   Vriend verwijderen uit lijst\n"
+#~ "       quit                     Actieve versie van Gaim afsluiten\n"
+#~ "\n"
+#~ "    OPTIES:\n"
+#~ "       -m, --message=BERICHT       Bericht om te versturen of weer te "
+#~ "geven\n"
+#~ "       -t, --to=VRIEND      Doel voor opdracht\n"
+#~ "       -p, --protocol=PROTO     Te gebruiken protocol\n"
+#~ "       -f, --from=NAAM    Te gebruiken eigen naam\n"
+#~ "       -q, --quiet              Stuur bericht zonder gespreksvenster weer "
+#~ "te geven\n"
+#~ "       -h, --help               Hulp voor opdrach weergeven\n"
 
-#~ msgid "No Proxy"
-#~ msgstr "Geen Proxy"
+#~ msgid "_Raise Window on Events"
+#~ msgstr "Venster op_tillen wanneer er iets gebeurt"
 
-#~ msgid "SOCKS 4"
-#~ msgstr "SOCKS 4"
+#~ msgid "Windows Only"
+#~ msgstr "Alleen Windows-versie"
 
-#~ msgid "SOCKS 5"
-#~ msgstr "SOCKS 5"
+#~ msgid ""
+#~ "\n"
+#~ "Active Developers:\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Huidige ontwikkelaars:\n"
 
-#~ msgid "HTTP"
-#~ msgstr "HTTP"
+#~ msgid ""
+#~ "\n"
+#~ "Crazy Patch Writers:\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Gestoorde Patch-schrijvers:\n"
 
-#~ msgid "Buddy List Options"
-#~ msgstr "Buddy Lijst Instellingen"
+#~ msgid ""
+#~ "\n"
+#~ "Win32 Port:\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Win32 Versie:\n"
 
-#~ msgid "Conversation Options"
-#~ msgstr "Gespreksopties"
+#~ msgid ""
+#~ "\n"
+#~ "Retired Developers:\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Ex-ontwikkelaars:\n"
 
-#~ msgid "Keyboard Options"
-#~ msgstr "Toetsenbord-instellingen"
+#~ msgid "Web Site"
+#~ msgstr "Website"
 
-#~ msgid "F2 toggles timestamp display"
-#~ msgstr "Tijdweergave inschakelen met F2"
+#~ msgid "_Create"
+#~ msgstr "_Toevoegen"
 
-#~ msgid "Display and General Options"
-#~ msgstr "Weergave en Algemene Instellingen"
+#~ msgid "Gaim debug output window"
+#~ msgstr "Gaim Debug output venster"
 
-#~ msgid "IM Options"
-#~ msgstr "Bericht-instellingen"
+#~ msgid "Use _borderless buttons"
+#~ msgstr "Knoppen _zonder rand gebruiken"
 
-#~ msgid "Show buttons as: "
-#~ msgstr "Toon knoppen als:"
+#~ msgid "There is no such nick or channel on this IRC channel."
+#~ msgstr "Die naam bestaat hier niet."
 
-#~ msgid "Pictures And Text"
-#~ msgstr "Plaatjes en Tekst"
+#~ msgid "There is no such IRC Server"
+#~ msgstr "Die IRC-server bestaat niet"
 
-#~ msgid "Pictures"
-#~ msgstr "Alleen Plaatjes"
+#~ msgid ""
+#~ "%s has requested a DCC chat.  Would you like to establish the direct "
+#~ "connection?"
+#~ msgstr ""
+#~ "%s heeft een DCC gesprek aangevraagd. Wilt u een directe verbinding?"
 
-#~ msgid "Show all conversations in one tabbed window"
-#~ msgstr "Toon gesprekken in een venster met tabbladen"
+#~ msgid ""
+#~ "You have selected to open a Direct IM connection with %s. Doing this will "
+#~ "let them see your IP address, and may be a security risk. Do you wish to "
+#~ "continue?"
+#~ msgstr ""
+#~ "U heeft gekozen om een directe verbinding met %s te openen. Hierdoor kan "
+#~ "hij/zij uw IP adres zien en dat kan een veiligheids risico zijn. Wilt u "
+#~ "doorgaan?"
 
-#~ msgid "Window Sizes"
-#~ msgstr "Vensterafmetingen"
+#~ msgid ""
+#~ "Active Developers\n"
+#~ "====================\n"
+#~ "Rob Flynn (maintainer) [ rob@marko.net ]\n"
+#~ "Sean Egan (coder)      [ bj91704@binghamton.edu ]\n"
+#~ "\n"
+#~ "Crazy Patch Writers\n"
+#~ "===================\n"
+#~ "Benjamin Miller\n"
+#~ "Decklin Foster\n"
+#~ "Nathan Walp\n"
+#~ "Mark Doliner\n"
+#~ "\n"
+#~ "Retired Developers\n"
+#~ "===================\n"
+#~ "Jim Duchek\n"
+#~ "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
+#~ "Mark Spencer (original author)   [ markster@marko.net ]"
+#~ msgstr ""
+#~ "Actieve Ontwikkelaars\n"
+#~ "====================\n"
+#~ "Rob Flynn (beheerder) [ rob@marko.net ]\n"
+#~ "Sean Egan (programmeur)      [ bj91704@binghamton.edu ]\n"
+#~ "\n"
+#~ "Gestoorde patch-schrijvers\n"
+#~ "===================\n"
+#~ "Benjamin Miller\n"
+#~ "Decklin Foster\n"
+#~ "Nathan Walp\n"
+#~ "Mark Doliner\n"
+#~ "\n"
+#~ "Ex-ontwikkelaars\n"
+#~ "===================\n"
+#~ "Jim Duchek\n"
+#~ "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
+#~ "Mark Spencer (originele auteur)   [ markster@marko.net ]"
 
-#~ msgid "Tab Placement"
-#~ msgstr "Plaatsing van Tabs"
+#~ msgid "Password: "
+#~ msgstr "Wachtwoord:"
 
-#~ msgid "Top"
-#~ msgstr "Boven"
+#~ msgid "New Instant Message"
+#~ msgstr "Nieuw bericht"
 
-#~ msgid "Left"
-#~ msgstr "Links"
+#~ msgid "Whisper"
+#~ msgstr "Fluisteren"
 
-#~ msgid "Right"
-#~ msgstr "Rechts"
+#~ msgid "Currently at %d, "
+#~ msgstr "Momenteel bij %d, "
 
-#~ msgid "Show conversations in the same tabbed window"
-#~ msgstr "Toon gesprekken in hetzelfde venster met tabbladen"
+#~ msgid "Setting position to %d\n"
+#~ msgstr "Positie instellen op %d\n"
 
-#~ msgid "Font Options"
-#~ msgstr "Lettertypes"
+#~ msgid "Bold Text"
+#~ msgstr "Vette tekst"
 
-#~ msgid "Italic Text"
-#~ msgstr "Cursieve Tekst"
+#~ msgid "Bold"
+#~ msgstr "Vet"
 
-#~ msgid "Font Face for Text"
+#~ msgid "Italics Text"
+#~ msgstr "Cursieve tekst"
+
+#~ msgid "Italics"
+#~ msgstr "Cursief"
+
+#~ msgid "Underline Text"
+#~ msgstr "Onderstreepte tekst"
+
+#~ msgid "Underline"
+#~ msgstr "Onderstrepen"
+
+#~ msgid "Strike through Text"
+#~ msgstr "Doorgehaalde tekst"
+
+#~ msgid "Strike"
+#~ msgstr "Doorhalen"
+
+#~ msgid "Decrease font size"
+#~ msgstr "Verklein lettertype"
+
+#~ msgid "Small"
+#~ msgstr "Klein"
+
+#~ msgid "Normal font size"
+#~ msgstr "Normale lettergrootte"
+
+#~ msgid "Normal"
+#~ msgstr "Normaal"
+
+#~ msgid "Increase font size"
+#~ msgstr "Vergroot lettertype"
+
+#~ msgid "Big"
+#~ msgstr "Groot"
+
+#~ msgid "Font"
 #~ msgstr "Lettertype"
 
-#~ msgid "Font Size for Text"
-#~ msgstr "Lettergrootte"
+#~ msgid "Text Color"
+#~ msgstr "Tekstkleur"
 
-#~ msgid "Sound Player:"
-#~ msgstr "Geluidsafspeler:"
+#~ msgid "Background Color"
+#~ msgstr "Achtergrondkleur"
+
+#~ msgid "Link"
+#~ msgstr "Verwijzing"
+
+#~ msgid "Insert smiley face"
+#~ msgstr "Lachebekje invoegen"
+
+#~ msgid "Smiley"
+#~ msgstr "Lachebekje"
+
+#~ msgid "Image"
+#~ msgstr "Afbeelding"
+
+#~ msgid "Show Log Viewer"
+#~ msgstr "Logboek bekijken"
+
+#~ msgid "Viewer"
+#~ msgstr "Bekijken"
+
+#~ msgid "Toggle Sound"
+#~ msgstr "Geluid omschakelen"
+
+#~ msgid "Sound"
+#~ msgstr "Geluid"
+
+#~ msgid "Gaim - Warn user?"
+#~ msgstr "Gaim - Gebruiker waarschuwen?"
+
+#~ msgid "Do you really want to warn %s?"
+#~ msgstr "Wilt u %s echt waarschuwen?"
+
+#~ msgid "Gaim - Remove %s?"
+#~ msgstr "Gaim - %s verwijderen?"
+
+#~ msgid "IM who:"
+#~ msgstr "Verzend naar:"
+
+#~ msgid "User:"
+#~ msgstr "Gebruiker:"
+
+#~ msgid "Gaim - Get User Info"
+#~ msgstr "Gaim - Gebruikersinfo"
+
+#~ msgid "Add Group"
+#~ msgstr "Groep toevoegen"
+
+#~ msgid "Select All"
+#~ msgstr "Alles Selecteren"
+
+#~ msgid "Select Autos"
+#~ msgstr "Selecteer Auto's"
+
+#~ msgid "Select None"
+#~ msgstr "Niets Selecteren"
+
+#~ msgid "Sign On/Off"
+#~ msgstr "Aan/Afmelden"
+
+#~ msgid "Ignore Ti_K Automated Messages"
+#~ msgstr "Ti_K geautomatiseeerde berichten negeren"
+
+#~ msgid "Show protocol icons"
+#~ msgstr "Protocollen weergeven als afbeeldingen"
+
+#~ msgid "Libicq.so detected."
+#~ msgstr "Libicq.so gevonden."
+
+#~ msgid "Accept?"
+#~ msgstr "Accepteren?"
+
+#~ msgid "%s aborted the file transfer."
+#~ msgstr "%s kapt het overzenden af."
+
+#~ msgid "You must choose a directory."
+#~ msgstr "U moet een map kiezen."
+
+#~ msgid "File not found; please choose another."
+#~ msgstr "Bestand niet gevonden. Kies alstublieft een ander."
 
 #~ msgid ""
-#~ "Command to play sound files\n"
-#~ "(%s for filename; internal if empty)"
+#~ "You have attempted to load a protocol which was not compiled from the "
+#~ "same version of the source as this application was. Unfortunately, "
+#~ "because it is not the same version I cannot safely tell you which one it "
+#~ "was. Needless to say, it was not successfully loaded."
 #~ msgstr ""
-#~ "Commando voor het afspelen van geluid\n"
-#~ "(%s voor bestandsnaam, leeg laten voor\n"
-#~ "interne speler)"
+#~ "U hebt geprobeerd een protocol te laden dat een andere versie heeft dan "
+#~ "dit programma. Omdat het niet dezelfde versie is als dit programma kan ik "
+#~ "helaas niet zeggen welke het was maar werken zal het in ieder geval niet."
 
-#~ msgid "Events"
-#~ msgstr "Gebeurtenissen"
+#~ msgid "%s was using %s, which got removed. %s is now offline."
+#~ msgstr "%s gebruikte %s, wat verwijderd is. %s is nu offline."
 
-#~ msgid "Sound when message is sent"
-#~ msgstr "Geluid bij het verzenden van bericht"
+#~ msgid "Perl"
+#~ msgstr "Perl"
 
-#~ msgid "Sound in chat rooms when people enter"
-#~ msgstr "Geluid als iemand chatruimte binnenkomt"
+#~ msgid "Load Script"
+#~ msgstr "Laad Script"
 
-#~ msgid "Sound in chat rooms when people leave"
-#~ msgstr "Geluid als iemand uit chatruimte weggaat"
+#~ msgid "Unload All Scripts"
+#~ msgstr "Deactiveer alle scripts"
 
-#~ msgid "Sound in chat rooms when you talk"
-#~ msgstr "Geluid bij het praten in chatruimtes"
+#~ msgid "List Scripts"
+#~ msgstr "Toon Scripts"
 
-#~ msgid "Sound in chat rooms when others talk"
-#~ msgstr "Geluid in chat ruimtes als anderen praten"
+#~ msgid "Gaim was unable to load your plugin."
+#~ msgstr "Gaim kon uw plugin niet laden."
 
-#~ msgid "Time between sending auto-responses (in seconds):"
-#~ msgstr "Tijd tussen het verzenden van automatische antwoorden (seconden):"
+#~ msgid "Gaim - Plugin List"
+#~ msgstr "Gaim - Plugin Lijst"
 
-#~ msgid "Auto Away after"
-#~ msgstr "Automatisch afwezig na"
+#~ msgid "Gaim - Plugins"
+#~ msgstr "Gaim - Plugins"
 
-#~ msgid "minutes using"
-#~ msgstr "Minuten"
+#~ msgid "Loaded Plugins"
+#~ msgstr "Actieve Plugins"
 
-#~ msgid "Make Away"
-#~ msgstr "Toon Afwezig"
+#~ msgid "Selected Plugin"
+#~ msgstr "Plugin-informatie"
 
-#~ msgid "Privacy Options"
-#~ msgstr "Privacy-instellingen"
+#~ msgid "Filepath:"
+#~ msgstr "Bestandspad:"
 
-#~ msgid "General"
-#~ msgstr "Algemeen"
+#~ msgid "Load"
+#~ msgstr "Laden"
 
-#~ msgid "Conversations"
-#~ msgstr "Gesprekken"
+#~ msgid "Load a plugin from a file"
+#~ msgstr "Laad een plugin uit een bestand"
+
+#~ msgid "Configure"
+#~ msgstr "Configureren"
+
+#~ msgid "Configure settings of the selected plugin"
+#~ msgstr "Instellingen voor plugin"
+
+#~ msgid "Reload"
+#~ msgstr "Herladen"
+
+#~ msgid "Reload the selected plugin"
+#~ msgstr "Herlaadt de geselecteerde plugin "
+
+#~ msgid "Unload"
+#~ msgstr "Uitschakelen"
+
+#~ msgid "Unload the selected plugin"
+#~ msgstr "Deactiveer de geselecteerde plugin"
+
+#~ msgid "Close this window"
+#~ msgstr "Dit venster sluiten"
+
+#~ msgid "Remove Buddy"
+#~ msgstr "Buddy verwijderen"
