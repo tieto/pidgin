@@ -1,6 +1,10 @@
-version 0.75:
+version 0.76:
+
+version 0.75 (01/09/2004):
 	* TCL plugin loader now working. Thanks Daniel Atallah.
 	* Installer translations for: Danish.
+	* Updated GTK+ 2.2.4 build (rev b): Fixes Clipboard bug, and includes
+	  official move/size fix (Sizing responsiveness is a little slow).
 
 version 0.74 (11/25/2003):
 	* Installer translations for: Czech.
