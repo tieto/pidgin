@@ -4,6 +4,8 @@ version 0.67
 	* Brought back the message notification plugin (Brian Tarricone)
 	  You'll need to reconfigure your settings for this plugin
 	* IRC protocol plugin rewritten (Ethan Blanton)
+	* Protocol and status icons now optionally appear on tabs.
+	  (Etan Reisner)
 	* Various dialog rewrites (Jabber vCard, Add Group, Alias Chat,
 	  Rename Group, Privacy)
 	* Shows "hiptop" icon for AIM buddies using hiptop

@@ -1784,6 +1784,7 @@ void g_show_info_text(GaimConnection *gc, const char *who, int away, const char 
 
 		GAIM_DIALOG(b->window);
 		gtk_window_set_title(GTK_WINDOW(b->window), "Gaim");
+		gtk_window_set_role(GTK_WINDOW(b->window), "get_info");
 		gtk_container_set_border_width(GTK_CONTAINER(b->window), 5);
 		gtk_widget_realize(GTK_WIDGET(b->window));
 		g_signal_connect(G_OBJECT(b->window), "destroy", G_CALLBACK(info_dlg_free), b);

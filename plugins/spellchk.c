@@ -518,7 +518,7 @@ static GaimPluginInfo info =
 	VERSION,
 	N_("Replaces text in outgoing messages according to user-defined rules."),
 	N_("Replaces text in outgoing messages according to user-defined rules."),
-	"Eric Warmnenhoven <eric@warmenhoven.org>",
+	"Eric Warmenhoven <eric@warmenhoven.org>",
 	GAIM_WEBSITE,
 	plugin_load,
 	NULL,

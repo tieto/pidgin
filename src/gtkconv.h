@@ -143,6 +143,7 @@ struct _GaimGtkConversation
 	GtkWidget *send;
 	GtkWidget *info;
 	GtkWidget *close;
+	GtkWidget *icon;
 	GtkWidget *tab_label;
 	GtkSizeGroup *sg;
 

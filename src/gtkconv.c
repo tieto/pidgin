@@ -3816,6 +3816,8 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 	gboolean new_ui;
 	GaimConversationType conv_type;
 	const char *name;
+	struct buddy *b = NULL;
+	GaimAccount *account;
 
 	name      = gaim_conversation_get_name(conv);
 	conv_type = gaim_conversation_get_type(conv);
@@ -3952,6 +3954,16 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
 					 G_CALLBACK(close_conv_cb), conv);
 
+	/* Status icon. */
+	account = gaim_conversation_get_account(conv);
+	b = gaim_find_buddy(account, name);
+	if (b != NULL)
+		gtkconv->icon = gtk_image_new_from_pixbuf(
+										gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
+																									 GAIM_STATUS_ICON_SMALL));
+	else
+		gtkconv->icon = gtk_image_new();
+
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
 #if 0
@@ -3961,10 +3973,14 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 
 
 	/* Pack it all together. */
+	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
+		gtk_widget_show_all(gtkconv->icon);
+
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->tab_label, TRUE, TRUE, 0);
 	gtk_widget_show(gtkconv->tab_label);
-	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
 
+	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/close_on_tabs"))
 		gtk_widget_show_all(gtkconv->close);
 
@@ -4754,6 +4770,29 @@ gaim_gtkconv_set_title(GaimConversation *conv, const char *title)
 }
 
 static void
+update_tab_icon(GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+	GaimAccount *account;
+	const char *name;
+	struct buddy *b;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	name = gaim_conversation_get_name(conv);
+	account = gaim_conversation_get_account(conv);
+	b = gaim_find_buddy(account, name);
+
+	if (b != NULL)
+	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon),
+								gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
+																							 GAIM_STATUS_ICON_SMALL));
+	else {
+		g_object_unref(gtkconv->icon);
+		gtkconv->icon = gtk_image_new();
+	}
+}
+
+static void
 gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 {
 	GaimWindow *win;
@@ -4840,6 +4879,12 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
 
 		generate_send_as_items(win, NULL);
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
+			update_tab_icon(conv);
+	}
+	else if (type == GAIM_CONV_UPDATE_AWAY) {
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
+			update_tab_icon(conv);
 	}
 	else if(type == GAIM_CONV_UPDATE_ADD ||
 			type == GAIM_CONV_UPDATE_REMOVE) {
@@ -5491,8 +5536,31 @@ gaim_gtkconv_get_dest_tab_at_xy(GaimWindow *win, int x, int y)
 }
 
 static void
+icons_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
+						gpointer data)
+{
+	GList *l;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+
+	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
+		conv = (GaimConversation *)l->data;
+
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		if (value)
+			gtk_widget_show(gtkconv->icon);
+		else
+			gtk_widget_hide(gtkconv->icon);
+	}
+}
+
+static void
 close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
-					  gpointer data)
+						gpointer data)
 {
 	GList *l;
 	GaimConversation *conv;
@@ -5719,6 +5787,7 @@ gaim_gtk_conversation_init(void)
 {
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
+	gaim_prefs_add_bool("/gaim/gtk/conversations/icons_on_tabs", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_enter_sends", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/enter_sends", TRUE);
@@ -5773,6 +5842,8 @@ gaim_gtk_conversation_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
 
 	/* Connect callbacks. */
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/icons_on_tabs",
+								icons_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_smileys",

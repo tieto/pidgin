@@ -886,7 +886,7 @@ GtkWidget *conv_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *label;
-	GtkWidget *button, *close_checkbox;
+	GtkWidget *button, *close_checkbox, *icons_checkbox;
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
@@ -946,6 +946,17 @@ GtkWidget *conv_page() {
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
+
+	icons_checkbox = prefs_checkbox(_("Show status _icons on tabs."),
+									"/gaim/gtk/conversations/icons_on_tabs",
+									vbox);
+
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
+		gtk_widget_set_sensitive(GTK_WIDGET(icons_checkbox), FALSE);
+	}
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), icons_checkbox);
 
 	gtk_widget_show_all(ret);
 
