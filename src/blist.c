@@ -844,7 +844,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimGroup *g;
 	GaimBlistNode *gnode, *cnode, *bnode;
-	gboolean save = FALSE;
+	gboolean save = FALSE, empty_contact = FALSE;
 
 	g_return_if_fail(contact != NULL);
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CONTACT((GaimBlistNode*)contact));
@@ -896,14 +896,30 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 
 				g_hash_table_remove(gaimbuddylist->buddies, hb);
 
-				hb->group = gnode;
-				g_hash_table_replace(gaimbuddylist->buddies, hb, b);
+				if(!gaim_find_buddy_in_group(b->account, b->name, gnode)) {
+					hb->group = gnode;
+					g_hash_table_replace(gaimbuddylist->buddies, hb, b);
 
-				if(b->account->gc)
-					serv_move_buddy(b, (GaimGroup*)cnode->parent, g);
+					if(b->account->gc)
+						serv_move_buddy(b, (GaimGroup*)cnode->parent, g);
+				} else {
+					/* this buddy already exists in the group, so we're
+					 * gonna delete it instead */
+					g_free(hb->name);
+					g_free(hb);
+					if(b->account->gc)
+						serv_remove_buddy(b->account->gc, b->name, ((GaimGroup*)cnode->parent)->name);
+
+					if(!cnode->child->next)
+						empty_contact = TRUE;
+					gaim_blist_remove_buddy(b);
+				}
 			}
 		}
 	}
+
+	if(empty_contact)
+		return;
 
 
 	if(node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
