@@ -172,11 +172,9 @@ int toc_login(char *username, char *password)
 	g_snprintf(buf2, sizeof(buf2), "toc_init_done");
 	sflap_send(buf2, -1, TYPE_DATA);
 
-#if 0
 	g_snprintf(buf2, sizeof(buf2), "toc_set_caps %s",
 		   FILETRANS_UID);
 	sflap_send(buf2, -1, TYPE_DATA);
-#endif
 
         serv_finish_login();
 	return 0;
@@ -581,7 +579,6 @@ void toc_callback( gpointer          data,
                 serv_got_chat_invite(name, id, who, message);
 
 
-#if 0
         } else if (!strcasecmp(c, "RVOUS_PROPOSE")) {
                 /* File trans.  Yummy. */
                 char *user;
@@ -593,6 +590,7 @@ void toc_callback( gpointer          data,
                 int unk[4];
                 char *messages[4];
                 int subtype, files, totalsize;
+		int temp;
                 char *name;
                 char *tmp;
                 int i;
@@ -619,16 +617,27 @@ void toc_callback( gpointer          data,
                 subtype = tmp[1];
                 files = tmp[3]; /* These are fine */
 
-                totalsize = (tmp[4] << 24 & 0xff) |
-                        (tmp[5] << 16 & 0xff) |
-                        (tmp[6] << 8 & 0xff) |
-                        (tmp[7] & 0xff);
+		temp = tmp[4];
+		temp <<= 24;
+		temp &= 0xff000000;
+		totalsize = temp;
+		temp = tmp[5];
+		temp <<= 16;
+		temp &= 0x00ff0000;
+		totalsize |= temp;
+		temp = tmp[6];
+		temp <<= 8;
+		temp &= 0x0000ff00;
+		totalsize |= temp;
+		temp = tmp[7];
+		temp &= 0x000000ff;
+		totalsize |= temp;
 
                 name = tmp + 8;
 
                 ft = g_new0(struct file_transfer, 1);
 
-                ft->cookie = g_strdup(cookie);
+                ft->cookie = frombase64(cookie);
                 ft->ip = g_strdup(pip);
                 ft->port = port;
                 if (i)
@@ -645,7 +654,6 @@ void toc_callback( gpointer          data,
                         g_free(messages[i]);
                 
                 accept_file_dialog(ft);
-#endif
 	} else {
 		sprintf(debug_buff,"don't know what to do with %s\n", c);
 		debug_print(debug_buff);

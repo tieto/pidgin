@@ -41,7 +41,7 @@ static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
 static GtkWidget *linkdialog, *colordialog, *exportdialog, *importdialog, *logdialog;
 
-/*static void accept_callback(GtkWidget *widget, struct file_transfer *t);*/
+static void accept_callback(GtkWidget *widget, struct file_transfer *t);
 
 struct create_away {
         GtkWidget *window;
@@ -2193,8 +2193,6 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 }
 
-#if 0
-
 /*------------------------------------------------------------------------*/
 /*  The dialog for file requests                                          */
 /*------------------------------------------------------------------------*/
@@ -2249,7 +2247,7 @@ static char *put_32_int(gint i) {
 static int get_16_int(char *text)
 {
         int tmp = 0;
-	tmp = ((*text << 8) & 0xff);
+	tmp = ((*text << 8) & 0xff00);
 	text++;
 	tmp |= (*text & 0xff);
         text++;
@@ -2259,11 +2257,11 @@ static int get_16_int(char *text)
 static int get_32_int(char *text)
 {
         int tmp = 0;
-	tmp = ((*text << 24) & 0xff);
+	tmp = ((*text << 24) & 0xff000000);
 	text++;
-	tmp |= ((*text << 16) & 0xff);
+	tmp |= ((*text << 16) & 0xff0000);
 	text++;
-	tmp |= ((*text << 8) & 0xff);
+	tmp |= ((*text << 8) & 0xff00);
 	text++;
 	tmp |= (*text & 0xff);
         text++;
@@ -2276,21 +2274,14 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window));
 	char *buf;
 	char *header;
-	int hdrlen;
+	short hdrlen;
 	int read_rv;
-	char bmagic[5];
+	char bmagic[7];
 	struct sockaddr_in sin;
-	int rcv;
-        gint hdrtype, encrypt, compress, totfiles, filesleft;
-        gint totparts, partsleft, totsize, size, modtime, checksum;
-        gint rfrcsum, rfsize, cretime, rfcsum, nrecvd, recvcsum;
-        char *bcookie, *idstring;
-        char flags, lnameoffset, lsizeoffset, dummy;
-        char *macfileinfo;
-        gint nencode, nlanguage;
-        char *name;
+	guint32 rcv;
+	guint32 size;
         char *c;
-
+	GtkWidget *fw = NULL, *fbar = NULL, *label;
         
 	if (!(ft->f = fopen(file,"w"))) {
 		buf = g_malloc(BUF_LONG);
@@ -2318,9 +2309,7 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	ft->fd = socket(AF_INET, SOCK_STREAM, 0);
 	
 	if (ft->fd <= -1 || connect(ft->fd, (struct sockaddr_in *)&sin, sizeof(sin))) {
-	        g_free(buf);
 		return;
-		/*cancel */
 	}
 
 	rcv = 0;
@@ -2328,8 +2317,8 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	while (rcv != 6) {
 		read_rv = read(ft->fd, header + rcv, 6 - rcv);
 		if(read_rv < 0) {
+			close(ft->fd);
 			g_free(header);
-			g_free(buf);
 			return;
 		}
 		rcv += read_rv;
@@ -2337,21 +2326,33 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 			gtk_main_iteration();
 	}
 
-	strncpy(bmagic, header, 4);
-        bmagic[4] = 0;
+	strncpy(bmagic, header, 6);
+        bmagic[6] = 0;
 
-	hdrlen = ((header[4] << 8) & 0xff) | (header[5] & 0xff);
+	hdrlen = get_16_int(&header[4]);
+	hdrlen -= 6;
+	sprintf(debug_buff, "my header is %d\n", hdrlen);
+	debug_print(debug_buff);
+
+	hdrlen = 0;
+	hdrlen = header[4];
+	hdrlen <<= 8;
+	hdrlen |= header[5];
+	hdrlen -= 6;
+
+	sprintf(debug_buff, "header length %d\n", hdrlen);
+	debug_print(debug_buff);
 
 	g_free(header);
-	header = g_malloc(hdrlen+1);
+	header = g_malloc(hdrlen);
 
 	rcv = 0;
 
 	while (rcv != hdrlen) {
 		read_rv = read(ft->fd, header + rcv, hdrlen - rcv);
 		if(read_rv < 0) {
+			close(ft->fd);
 			g_free(header);
-			g_free(buf);
 			return;
 		}
 		rcv += read_rv;
@@ -2359,64 +2360,70 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 			gtk_main_iteration();
 	}
 
-	header[hdrlen] = 0;
-
         c = header;
 
+	header[0] = 2; header[1] = 2;
+	memcpy(header + 2, ft->cookie, 8);
+	memset(header + 62, 0, 32); strcpy(header + 62, "Gaim");
+	memset(header + 10, 0, 4);
+	header[20] = 1; header[21] = 0;
+	header[22] = header[20]; header[23] = header[21];
 
-        hdrtype = get_16_int(c);
-        bcookie = g_malloc(9);
-        strncpy(bcookie, c, 8);
-        c+=8;
-        bcookie[8] = 0;
+	sprintf(debug_buff, "sending confirmation\n");
+	debug_print(debug_buff);
+	write(ft->fd, bmagic, 6);
+	write(ft->fd, header, hdrlen);
 
-        encrypt = get_16_int(c); c+=2;
-        compress = get_16_int(c); c+=2;
-        totfiles = get_16_int(c); c+=2;
-        filesleft = get_16_int(c); c+=2;
-        totparts = get_16_int(c); c+=2;
-        partsleft = get_16_int(c); c+=2;
-        totsize = get_32_int(c); c+=4;
-        size = get_32_int(c); c+=4;
-        modtime = get_32_int(c); c+=4;
-        checksum = get_32_int(c); c+=4;
-        rfrcsum = get_32_int(c); c+=4;
-        rfsize = get_32_int(c); c+=4;
-        cretime = get_32_int(c); c+=4;
-        rfcsum = get_32_int(c); c+=4;
-        nrecvd = get_32_int(c); c+=4;
-        recvcsum = get_32_int(c); c+=4;
-        idstring = g_malloc(33);
-        strncpy(idstring, c, 32);
-        c+=32;
-        idstring[32] = 0;
-        flags = *c; c++;
-        lnameoffset = *c; c++;
-        lsizeoffset = *c; c++;
-        dummy = *c; c++;
-        
-        macfileinfo = g_malloc(70);
-        strncpy(macfileinfo, c, 69);
-        c+=69;
-        macfileinfo[69] = 0;
-        nencode = get_16_int(c); c+=2;
-        nlanguage = get_16_int(c); c+=2;
-        
-        name = g_strdup(c);
-
-
-        totparts = 1;
-        partsleft = 1;
-        rfsize = 0;
-
-
-        printf("Header type: %d\n", hdrtype);
-        printf("Encryption: %d\n", encrypt);
-        printf("Compress: %d\n", compress);
-        
-
-        
+	buf = g_malloc(1024);
+	rcv = 0;
 	
+	fw = gtk_dialog_new();
+	label = gtk_label_new("Receiving file");
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
+	gtk_widget_show(label);
+	fbar = gtk_progress_bar_new();
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), fbar, 0, 0, 5);
+	gtk_widget_show(fbar);
+	gtk_window_set_title(GTK_WINDOW(fw), "File Transfer");
+	gtk_widget_realize(fw);
+	aol_icon(fw->window);
+	gtk_widget_show(fw);
+
+	size = get_32_int(header + 22);
+	sprintf(debug_buff, "Receiving %d bytes\n", size);
+	debug_print(debug_buff);
+	/*
+	while (rcv != size) {
+		int i;
+		read_rv = read(ft->fd, buf, 1024);
+		if(read_rv < 0) {
+			close(ft->fd);
+			g_free(buf);
+			g_free(header);
+			return;
+		}
+		rcv += read_rv;
+		for (i = 0; i < read_rv; i++)
+			fprintf(ft->f, "%c", buf[i]);
+		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar),
+					(float)(rcv)/(float)(size));
+		while(gtk_events_pending())
+			gtk_main_iteration();
+	}
+	*/
+	gtk_widget_destroy(fw);
+	fclose(ft->f);
+	memset(header + 18, 0, 4);
+	header[94] = 0;
+	header[1] = 0x04;
+	memcpy(header+58, header+34, 4);
+	memcpy(header+54, header+22, 4);
+	write(ft->fd, bmagic, 6);
+	write(ft->fd, header, hdrlen);
+	close(ft->fd);
+
+	g_free(buf);
+	g_free(header);
 }
 
 
@@ -2506,6 +2513,7 @@ void accept_file_dialog(struct file_transfer *ft)
         gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
         
         if (ft->message) {
+		/* we'll do this later
                 text = gaim_new_layout();
                 sw = gtk_scrolled_window_new (NULL, NULL);
                 gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
@@ -2520,6 +2528,7 @@ void accept_file_dialog(struct file_transfer *ft)
                 gtk_widget_set_usize(sw, 250, 100);
 
                 gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 10);
+		*/
         }
         gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
 
@@ -2546,12 +2555,13 @@ void accept_file_dialog(struct file_transfer *ft)
 
 
 	if (ft->message) {
+		/* we'll do this later
 		while(gtk_events_pending())
 			gtk_main_iteration();
 		html_print(text, ft->message);
+		*/
 	}
 
 
 
 }
-#endif

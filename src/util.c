@@ -616,7 +616,7 @@ char *frombase64(char *text)
                 c++;
         }
 
-        g_realloc(out, len+1);
+        out = g_realloc(out, len+1);
         out[len] = 0;
         
         return out;
