@@ -2574,11 +2574,9 @@ void update_convo_font()
 
 #if USE_PIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <gdk-pixbuf/gdk-pixbuf-loader.h>
 
 #define SCALE(x) ((gdk_pixbuf_animation_get_width(x) <= 48 && gdk_pixbuf_animation_get_height(x) <= 48) \
 		 ? 48 : 50)
-#define SCALEBUF(x) ((gdk_pixbuf_get_width(x) <= 48 && gdk_pixbuf_get_height(x) <= 48) ? 48 : 50)
 
 static gboolean redraw_icon(gpointer data)
 {
@@ -2790,9 +2788,6 @@ void remove_icon(struct conversation *c)
 	if (c->anim)
 		gdk_pixbuf_animation_unref(c->anim);
 	c->anim = NULL;
-	if (c->unanim)
-		gdk_pixbuf_unref(c->unanim);
-	c->unanim = NULL;
 	if (c->icon_timer)
 		gtk_timeout_remove(c->icon_timer);
 	c->icon_timer = 0;
@@ -2803,11 +2798,16 @@ void remove_icon(struct conversation *c)
 void update_icon(struct conversation *c)
 {
 #if USE_PIXBUF
+	char filename[256];
+	FILE *file;
+
 	void *data;
 	int len;
 
+	GList *frames;
+	GdkPixbuf *buf;
+
 	GtkWidget *event;
-	GdkPixbufLoader *load;
 	GdkPixbuf *scale;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
@@ -2828,34 +2828,36 @@ void update_icon(struct conversation *c)
 	if (!data)
 		return;
 
-	load = gdk_pixbuf_loader_new();
-	gdk_pixbuf_loader_write(load, data, len);
-	c->anim = gdk_pixbuf_loader_get_animation(load);
+	/* this is such an evil hack, i don't know why i'm even considering it.
+	 * we'll do it differently when gdk-pixbuf-loader isn't leaky anymore. */
+	g_snprintf(filename, sizeof(filename), "%s/gaimicon-%s.%d", g_get_tmp_dir(), c->name, getpid());
+	file = fopen(filename, "w");
+	if (!file)
+		return;
+	fwrite(data, 1, len, file);
+	fclose(file);
 
-	if (c->anim) {
-		GList *frames = gdk_pixbuf_animation_get_frames(c->anim);
-		GdkPixbuf *buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-		sf = SCALE(c->anim);
-		scale = gdk_pixbuf_scale_simple(buf,
-						MAX(gdk_pixbuf_get_width(buf) * sf /
-						    gdk_pixbuf_animation_get_width(c->anim), 1),
-						MAX(gdk_pixbuf_get_height(buf) * sf /
-						    gdk_pixbuf_animation_get_height(c->anim), 1),
-						GDK_INTERP_NEAREST);
+	c->anim = gdk_pixbuf_animation_new_from_file(filename);
+	/* make sure we remove the file as soon as possible */
+	unlink(filename);
 
-		if (gdk_pixbuf_animation_get_num_frames(c->anim) > 1) {
-			int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
-			c->frame = 1;
-			c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
-		}
-	} else {
-		c->unanim = gdk_pixbuf_loader_get_pixbuf(load);
-		if (!c->unanim) {
-			gdk_pixbuf_loader_close(load);
-			return;
-		}
-		sf = SCALEBUF(c->unanim);
-		scale = gdk_pixbuf_scale_simple(c->unanim, sf, sf, GDK_INTERP_NEAREST);
+	if (!c->anim)
+		return;
+
+	frames = gdk_pixbuf_animation_get_frames(c->anim);
+	buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
+	sf = SCALE(c->anim);
+	scale = gdk_pixbuf_scale_simple(buf,
+					MAX(gdk_pixbuf_get_width(buf) * sf /
+					    gdk_pixbuf_animation_get_width(c->anim), 1),
+					MAX(gdk_pixbuf_get_height(buf) * sf /
+					    gdk_pixbuf_animation_get_height(c->anim), 1),
+					GDK_INTERP_NEAREST);
+
+	if (gdk_pixbuf_animation_get_num_frames(c->anim) > 1) {
+		int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
+		c->frame = 1;
+		c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 	}
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
@@ -2873,8 +2875,6 @@ void update_icon(struct conversation *c)
 	gdk_pixmap_unref(pm);
 	if (bm)
 		gdk_bitmap_unref(bm);
-
-	gdk_pixbuf_loader_close(load);
 #endif
 }
 
