@@ -4897,100 +4897,6 @@ gaim_gtkconv_update_font_face(struct gaim_conversation *conv)
 }
 
 void
-gaim_gtkconv_update_tabs(void)
-{
-	GList *l;
-	GtkPositionType pos;
-	struct gaim_window *win;
-	struct gaim_gtk_window *gtkwin;
-
-	pos = gaim_prefs_get_int("/gaim/gtk/conversations/tab_side");
-
-	for (l = gaim_get_windows(); l != NULL; l = l->next) {
-		win = (struct gaim_window *)l->data;
-
-		if (!GAIM_IS_GTK_WINDOW(win))
-			continue;
-
-		gtkwin = GAIM_GTK_WINDOW(win);
-
-		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(gtkwin->notebook), pos);
-	}
-}
-
-void
-gaim_gtkconv_update_chat_button_style()
-{
-	GList *l;
-	GaimConnection *g;
-	GtkWidget *parent;
-	GaimConversationType type = GAIM_CONV_CHAT;
-
-	for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
-		GSList *bcs;
-		struct gaim_conversation *conv;
-		struct gaim_gtk_conversation *gtkconv;
-		struct gaim_gtk_window *gtkwin;
-
-		g = (GaimConnection *)l->data;
-
-		for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
-			conv = (struct gaim_conversation *)bcs->data;
-
-			if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
-				continue;
-			
-			if (!GAIM_IS_GTK_CONVERSATION(conv))
-				continue;
-
-			gtkconv = GAIM_GTK_CONVERSATION(conv);
-			gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
-			parent  = gtk_widget_get_parent(gtkconv->send);
-
-			gtkconv->send =
-				gaim_gtk_change_text(_("Send"),
-									 gtkconv->send, GAIM_STOCK_SEND, type);
-			gtkconv->u.chat->invite =
-				gaim_gtk_change_text(_("Invite"),
-									 gtkconv->u.chat->invite,
-									 GAIM_STOCK_INVITE, type);
-
-			gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE,
-							 type);
-			gtk_box_pack_end(GTK_BOX(parent), gtkconv->u.chat->invite,
-							 FALSE, FALSE, 0);
-
-			g_signal_connect(G_OBJECT(gtkconv->send), "clicked",
-							 G_CALLBACK(send_cb), conv);
-			g_signal_connect(G_OBJECT(gtkconv->u.chat->invite), "clicked",
-							 G_CALLBACK(invite_cb), conv);
-
-			gtk_button_set_relief(GTK_BUTTON(gtkconv->send),
-								  GTK_RELIEF_NONE);
-			gtk_button_set_relief(GTK_BUTTON(gtkconv->u.chat->invite),
-								  GTK_RELIEF_NONE);
-
-			gaim_gtkconv_update_buttons_by_protocol(conv);
-		}
-	}
-}
-
-void
-gaim_gtkconv_update_im_button_style()
-{
-	GList *l;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-
-	for (l = gaim_get_ims(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		setup_im_buttons(conv, gtk_widget_get_parent(gtkconv->send));
-	}
-}
-
-void
 gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -5020,9 +4926,9 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 		gtk_widget_set_sensitive(gtkconv->send, TRUE);
-		if (win != NULL) {
+
+		if (win != NULL)
 			gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
-		}
 	}
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
@@ -5062,7 +4968,9 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		if (gc == NULL) {
-			gtk_widget_set_sensitive(gtkconv->u.chat->whisper, FALSE);
+			if (gtkconv->u.chat->whisper != NULL)
+				gtk_widget_set_sensitive(gtkconv->u.chat->whisper, FALSE);
+
 			gtk_widget_set_sensitive(gtkconv->u.chat->invite,  FALSE);
 
 			return;
@@ -5073,8 +4981,9 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
 		/* gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE); */
 
-		gtk_widget_set_sensitive(gtkconv->u.chat->whisper,
-								 (prpl_info->chat_whisper != NULL));
+		if (gtkconv->u.chat->whisper != NULL)
+			gtk_widget_set_sensitive(gtkconv->u.chat->whisper,
+									 (prpl_info->chat_whisper != NULL));
 
 		gtk_widget_set_sensitive(gtkconv->u.chat->invite,
 								 (prpl_info->chat_invite != NULL));
@@ -5330,10 +5239,42 @@ show_smileys_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
-						 gpointer data)
+tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
+				 gpointer data)
 {
-	gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
+	GList *l;
+	GtkPositionType pos;
+	struct gaim_window *win;
+	struct gaim_gtk_window *gtkwin;
+
+	pos = GPOINTER_TO_INT(value);
+
+	for (l = gaim_get_windows(); l != NULL; l = l->next) {
+		win = (struct gaim_window *)l->data;
+
+		if (!GAIM_IS_GTK_WINDOW(win))
+			continue;
+
+		gtkwin = GAIM_GTK_WINDOW(win);
+
+		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(gtkwin->notebook), pos);
+	}
+}
+
+static void
+im_button_type_pref_cb(const char *name, GaimPrefType type,
+					   gpointer value, gpointer data)
+{
+	GList *l;
+	struct gaim_conversation *conv;
+	struct gaim_gtk_conversation *gtkconv;
+
+	for (l = gaim_get_ims(); l != NULL; l = l->next) {
+		conv = (struct gaim_conversation *)l->data;
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		setup_im_buttons(conv, gtk_widget_get_parent(gtkconv->send));
+	}
 }
 
 static void
@@ -5352,6 +5293,73 @@ animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
 	else {
 		for (l = gaim_get_ims(); l != NULL; l = l->next)
 			stop_anim(NULL, (struct gaim_conversation *)l->data);
+	}
+}
+
+static void
+show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
+						 gpointer data)
+{
+	gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
+}
+
+void
+chat_button_type_pref_cb(const char *name, GaimPrefType type, gpointer value,
+						 gpointer data)
+{
+	GList *l;
+	GaimConnection *g;
+	GtkWidget *parent;
+	GaimConversationType conv_type = GAIM_CONV_CHAT;
+	GSList *bcs;
+	struct gaim_conversation *conv;
+	struct gaim_gtk_conversation *gtkconv;
+	struct gaim_gtk_window *gtkwin;
+
+	for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
+
+		g = (GaimConnection *)l->data;
+
+		for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
+			conv = (struct gaim_conversation *)bcs->data;
+
+			if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
+				continue;
+			
+			if (!GAIM_IS_GTK_CONVERSATION(conv))
+				continue;
+
+			gtkconv = GAIM_GTK_CONVERSATION(conv);
+			gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
+			parent  = gtk_widget_get_parent(gtkconv->send);
+
+			gtkconv->send =
+				gaim_gtk_change_text(_("Send"),
+									 gtkconv->send, GAIM_STOCK_SEND, conv_type);
+			gtkconv->u.chat->invite =
+				gaim_gtk_change_text(_("Invite"),
+									 gtkconv->u.chat->invite,
+									 GAIM_STOCK_INVITE, conv_type);
+
+			gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE,
+							 conv_type);
+			gtk_box_pack_end(GTK_BOX(parent), gtkconv->u.chat->invite,
+							 FALSE, FALSE, 0);
+
+			gtk_box_reorder_child(GTK_BOX(parent), gtkconv->send, 0);
+
+			g_signal_connect(G_OBJECT(gtkconv->send), "clicked",
+							 G_CALLBACK(send_cb), conv);
+			g_signal_connect(G_OBJECT(gtkconv->u.chat->invite), "clicked",
+							 G_CALLBACK(invite_cb), conv);
+
+			gtk_button_set_relief(GTK_BUTTON(gtkconv->send),
+								  GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(gtkconv->u.chat->invite),
+								  GTK_RELIEF_NONE);
+
+			gaim_gtkconv_update_buttons_by_protocol(conv);
+		}
 	}
 }
 
@@ -5424,10 +5432,21 @@ gaim_gtk_conversation_init(void)
 								show_timestamps_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/spellcheck",
 								spellcheck_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/tab_side",
+								tab_side_pref_cb, NULL);
 
+	
+	/* IM callbacks */
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/button_type",
+								im_button_type_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/animate_buddy_icons",
 								animate_buddy_icons_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/show_buddy_icons",
 								show_buddy_icons_pref_cb, NULL);
+
+
+	/* Chat callbacks */
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/chat/button_type",
+								chat_button_type_pref_cb, NULL);
 }
 
