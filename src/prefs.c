@@ -566,6 +566,42 @@ GtkWidget *list_page() {
 	return ret;
 }
 
+GtkWidget *conv_page() {
+	GtkWidget *ret;
+	GtkWidget *vbox;
+	GtkWidget *label;
+	GtkSizeGroup *sg;
+	GList *names = NULL;
+	int i;
+
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	vbox = make_frame(ret, _("Conversations"));
+
+	/* Build a list of names. */
+	for (i = 0; i < gaim_conv_placement_get_fnc_count(); i++) {
+		names = g_list_append(names, (char *)gaim_conv_placement_get_name(i));
+		names = g_list_append(names, GINT_TO_POINTER(i));
+	}
+
+	label = gaim_dropdown_from_list(vbox, _("_Placement:"),
+									&conv_placement_option, -1, names);
+
+	g_list_free(names);
+
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_size_group_add_widget(sg, label);
+
+	gaim_button(_("Show IMs and chats in _same tabbed window."),
+				&convo_options, OPT_CONVO_COMBINE, vbox);
+
+	gtk_widget_show_all(ret);
+
+	return ret;
+}
+
 GtkWidget *im_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -681,7 +717,6 @@ GtkWidget *tab_page() {
 	gtk_size_group_add_widget(sg, dd);
 
 	vbox = make_frame (ret, _("Tab Options"));
-	gaim_button(_("Show IMs and chats in _same tabbed window."), &convo_options, OPT_CONVO_COMBINE, vbox);
 	button = gaim_button(_("Show _close button on tabs."), &convo_options, OPT_CONVO_NO_X_ON_TAB, vbox);
 	convo_options ^= OPT_CONVO_NO_X_ON_TAB;
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(button), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)));
@@ -1665,7 +1700,7 @@ GtkTreeIter *prefs_notebook_add_page(char *text,
 }
 
 void prefs_notebook_init() {
-	GtkTreeIter p, c;
+	GtkTreeIter p, p2, c;
 #if USE_PLUGINS
 	GtkWidget *(*config)();
 	GList *l = plugins;
@@ -1677,9 +1712,10 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("IM Window"), NULL, im_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Chat Window"), NULL, chat_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Tabs"), NULL, tab_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &p2, &p, notebook_page++);
+	prefs_notebook_add_page(_("IMs"), NULL, im_page(), &c, &p2, notebook_page++);
+	prefs_notebook_add_page(_("Chats"), NULL, chat_page(), &c, &p2, notebook_page++);
+	prefs_notebook_add_page(_("Tabs"), NULL, tab_page(), &c, &p2, notebook_page++);
 	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, notebook_page++);
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
@@ -2275,17 +2311,17 @@ void dropdown_set(GtkObject *w, int *option)
 	} else if (option == (int*)&im_options) { 
 		if (clear == (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB))
 			gaim_gtkconv_update_tabs();
-			/* CONV XXX update_im_tabs(); */
 		else if (clear == (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM))
 			gaim_gtkconv_update_im_button_style();
 	} else if (option == (int*)&chat_options) {
 		if (clear == (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB))
 			gaim_gtkconv_update_tabs();
-			/* CONV XXX update_chat_tabs(); */
 		else if (clear == (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM))
 			gaim_gtkconv_update_chat_button_style();
 	} else if (option == (int*)&blist_options) {
 		set_blist_tab();
+	} else if (option == (int *)&conv_placement_option) {
+		gaim_conv_placement_set_active(conv_placement_option);
 	}
 }
 

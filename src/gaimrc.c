@@ -53,6 +53,7 @@ guint logging_options;
 guint blist_options;
 guint convo_options;
 guint im_options;
+guint conv_placement_option;
 guint chat_options;
 guint font_options;
 guint sound_options;
@@ -773,6 +774,9 @@ static void gaimrc_read_options(FILE *f)
 			convo_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "im_options")) {
 			im_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "conv_placement")) {
+			conv_placement_option = atoi(p->value[0]);
+			gaim_conv_placement_set_active(conv_placement_option);
 		} else if (!strcmp(p->option, "chat_options")) {
 			chat_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "font_options")) {
@@ -888,6 +892,7 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tblist_options { %u }\n", blist_options);
 	fprintf(f, "\tconvo_options { %u }\n", convo_options);
 	fprintf(f, "\tim_options { %u }\n", im_options);
+	fprintf(f, "\tconv_placement { %u }\n", conv_placement_option);
 	fprintf(f, "\tchat_options { %u }\n", chat_options);
 	fprintf(f, "\tfont_options { %u }\n", font_options);
 	fprintf(f, "\tsound_options { %u }\n", sound_options);
@@ -1216,6 +1221,8 @@ static void set_defaults()
 		OPT_CONVO_SHOW_TIME |
 		OPT_CONVO_SHOW_SMILEY |
 		OPT_CONVO_CHECK_SPELLING;
+
+	conv_placement_option = 0;
 
 	im_options =
 		OPT_IM_LOGON |

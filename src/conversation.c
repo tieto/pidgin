@@ -36,12 +36,22 @@
 #include "win32dep.h"
 #endif
 
+struct ConvPlacementData
+{
+	char *name;
+	gaim_conv_placement_fnc fnc;
+
+};
+
 #define SEND_TYPED_TIMEOUT 5000
 
 static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
 static GList *windows = NULL;
+static GList *conv_placement_fncs = NULL;
+static gaim_conv_placement_fnc place_conv = NULL;
+static int place_conv_index = -1;
 
 static gint
 insertname_compare(gconstpointer one, gconstpointer two)
@@ -770,6 +780,62 @@ gaim_get_windows(void)
 	return windows;
 }
 
+struct gaim_window *
+gaim_get_first_window_with_type(GaimConversationType type)
+{
+	GList *wins, *convs;
+	struct gaim_window *win;
+	struct gaim_conversation *conv;
+
+	if (type == GAIM_CONV_UNKNOWN)
+		return NULL;
+
+	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+		win = (struct gaim_window *)wins->data;
+
+		for (convs = gaim_window_get_conversations(win);
+			 convs != NULL;
+			 convs = convs->next) {
+
+			conv = (struct gaim_conversation *)convs->data;
+
+			if (gaim_conversation_get_type(conv) == type)
+				return win;
+		}
+	}
+
+	return NULL;
+}
+
+struct gaim_window *
+gaim_get_last_window_with_type(GaimConversationType type)
+{
+	GList *wins, *convs;
+	struct gaim_window *win;
+	struct gaim_conversation *conv;
+
+	if (type == GAIM_CONV_UNKNOWN)
+		return NULL;
+
+	for (wins = g_list_last(gaim_get_windows());
+		 wins != NULL;
+		 wins = wins->prev) {
+
+		win = (struct gaim_window *)wins->data;
+
+		for (convs = gaim_window_get_conversations(win);
+			 convs != NULL;
+			 convs = convs->next) {
+
+			conv = (struct gaim_conversation *)convs->data;
+
+			if (gaim_conversation_get_type(conv) == type)
+				return win;
+		}
+	}
+
+	return NULL;
+}
 
 /**************************************************************************
  * Conversation API
@@ -778,7 +844,6 @@ struct gaim_conversation *
 gaim_conversation_new(GaimConversationType type, const char *name)
 {
 	struct gaim_conversation *conv;
-	struct gaim_window *window;
 
 	if (type == GAIM_CONV_UNKNOWN)
 		return NULL;
@@ -830,19 +895,21 @@ gaim_conversation_new(GaimConversationType type, const char *name)
 	 * Create a window if one does not exist. If it does, use the last
 	 * created window.
 	 */
-	/* XXX */
-#if 0
-	if (windows == NULL || gaim_window_get_conversation_count(windows->data) == 2)
-#endif
-	if (windows == NULL)
-		window = gaim_window_new();
-	else
-		window = g_list_last(windows)->data;
+	if (windows == NULL) {
+		struct gaim_window *win;
 
-	gaim_window_add_conversation(window, conv);
+		win = gaim_window_new();
+		gaim_window_add_conversation(win, conv);
 
-	/* Ensure the window is visible. */
-	gaim_window_show(window);
+		/* Ensure the window is visible. */
+		gaim_window_show(win);
+	}
+	else {
+		if (place_conv == NULL)
+			gaim_conv_placement_set_active(0);
+
+		place_conv(conv);
+	}
 
 	plugin_event(event_new_conversation, name);
 
@@ -1945,4 +2012,257 @@ gaim_find_chat(struct gaim_connection *gc, int id)
 	}
 
 	return NULL;
+}
+
+/**************************************************************************
+ * Conversation placement functions
+ **************************************************************************/
+/* This one places conversations in the last made window. */
+static void
+conv_placement_last_created_win(struct gaim_conversation *conv)
+{
+	struct gaim_window *win;
+
+	if (convo_options & OPT_CONVO_COMBINE)
+		win = g_list_last(gaim_get_windows())->data;
+	else
+		win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
+
+	if (win == NULL) {
+		win = gaim_window_new();
+
+		gaim_window_add_conversation(win, conv);
+		gaim_window_show(win);
+	}
+	else
+		gaim_window_add_conversation(win, conv);
+}
+
+/* This one places each conversation in its own window. */
+static void
+conv_placement_new_window(struct gaim_conversation *conv)
+{
+	struct gaim_window *win;
+
+	win = gaim_window_new();
+
+	gaim_window_add_conversation(win, conv);
+
+	gaim_window_show(win);
+}
+
+/*
+ * This groups things by, well, group. Buddies from groups will always be
+ * grouped together, and a buddy from a group not belonging to any currently
+ * open windows will get a new window.
+ */
+static void
+conv_placement_by_group(struct gaim_conversation *conv)
+{
+	struct gaim_window *win;
+	GaimConversationType type;
+
+	type = gaim_conversation_get_type(conv);
+
+	if (type != GAIM_CONV_IM) {
+		win = gaim_get_last_window_with_type(type);
+
+		if (win == NULL)
+			conv_placement_new_window(conv);
+		else
+			gaim_window_add_conversation(win, conv);
+	}
+	else {
+		struct buddy *b;
+		struct group *grp = NULL;
+		GList *wins, *convs;
+
+		b = find_buddy(gaim_conversation_get_user(conv),
+					   gaim_conversation_get_name(conv));
+
+		if (b != NULL)
+			grp = find_group_by_buddy(b);
+
+		/* Go through the list of IMs and find one with this group. */
+		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+			struct gaim_window *win2;
+			struct gaim_conversation *conv2;
+			struct buddy *b2;
+			struct group *grp2 = NULL;
+
+			win2 = (struct gaim_window *)wins->data;
+
+			for (convs = gaim_window_get_conversations(win2);
+				 convs != NULL;
+				 convs = convs->next) {
+
+				conv2 = (struct gaim_conversation *)convs->data;
+
+				b2 = find_buddy(gaim_conversation_get_user(conv2),
+								gaim_conversation_get_name(conv2));
+
+				if (b2 != NULL)
+					grp2 = find_group_by_buddy(b2);
+
+				if ((grp == NULL && grp2 == NULL) ||
+					(grp != NULL && grp2 != NULL &&
+					 !strncmp(grp2->name, grp->name, 80))) {
+
+					gaim_window_add_conversation(win2, conv);
+
+					return;
+				}
+			}
+		}
+
+		/* Make a new window. */
+		conv_placement_new_window(conv);
+	}
+}
+
+static int
+add_conv_placement_fnc(const char *name, gaim_conv_placement_fnc fnc)
+{
+	struct ConvPlacementData *data;
+
+	data = g_malloc0(sizeof(struct ConvPlacementData));
+
+	data->name = g_strdup(name);
+	data->fnc  = fnc;
+
+	conv_placement_fncs = g_list_append(conv_placement_fncs, data);
+
+	return gaim_conv_placement_get_fnc_count() - 1;
+}
+
+static void
+ensure_default_funcs(void)
+{
+	if (conv_placement_fncs == NULL) {
+		add_conv_placement_fnc(_("Last created window"),
+							   conv_placement_last_created_win);
+		add_conv_placement_fnc(_("New window"),
+							   conv_placement_new_window);
+		add_conv_placement_fnc(_("By group"),
+							   conv_placement_by_group);
+	}
+}
+
+int
+gaim_conv_placement_add_fnc(const char *name, gaim_conv_placement_fnc fnc)
+{
+	if (name == NULL || fnc == NULL)
+		return -1;
+
+	if (conv_placement_fncs == NULL)
+		ensure_default_funcs();
+
+	return add_conv_placement_fnc(name, fnc);
+}
+
+void
+gaim_conv_placement_remove_fnc(int index)
+{
+	struct ConvPlacementData *data;
+	GList *node;
+
+	if (index < 0 || index > g_list_length(conv_placement_fncs))
+		return;
+
+	node = g_list_nth(conv_placement_fncs, index);
+	data = (struct ConvPlacementData *)node->data;
+
+	g_free(data->name);
+	g_free(data);
+
+	conv_placement_fncs = g_list_remove_link(conv_placement_fncs, node);
+	g_list_free_1(node);
+}
+
+int
+gaim_conv_placement_get_fnc_count(void)
+{
+	ensure_default_funcs();
+
+	return g_list_length(conv_placement_fncs);
+}
+
+const char *
+gaim_conv_placement_get_name(int index)
+{
+	struct ConvPlacementData *data;
+
+	ensure_default_funcs();
+
+	if (index < 0 || index > g_list_length(conv_placement_fncs))
+		return NULL;
+
+	data = g_list_nth_data(conv_placement_fncs, index);
+
+	if (data == NULL)
+		return NULL;
+
+	return data->name;
+}
+
+gaim_conv_placement_fnc
+gaim_conv_placement_get_fnc(int index)
+{
+	struct ConvPlacementData *data;
+
+	ensure_default_funcs();
+
+	if (index < 0 || index > g_list_length(conv_placement_fncs))
+		return NULL;
+
+	data = g_list_nth_data(conv_placement_fncs, index);
+
+	if (data == NULL)
+		return NULL;
+
+	return data->fnc;
+}
+
+int
+gaim_conv_placement_get_fnc_index(gaim_conv_placement_fnc fnc)
+{
+	struct ConvPlacementData *data;
+	GList *node;
+	int i;
+
+	ensure_default_funcs();
+
+	for (node = conv_placement_fncs, i = 0;
+		 node != NULL;
+		 node = node->next, i++) {
+
+		data = (struct ConvPlacementData *)node->data;
+
+		if (data->fnc == fnc)
+			return i;
+	}
+
+	return -1;
+}
+
+int
+gaim_conv_placement_get_active(void)
+{
+	return place_conv_index;
+}
+
+void
+gaim_conv_placement_set_active(int index)
+{
+	gaim_conv_placement_fnc fnc;
+
+	ensure_default_funcs();
+
+	fnc = gaim_conv_placement_get_fnc(index);
+
+	if (fnc == NULL)
+		return;
+
+	place_conv = fnc;
+	place_conv_index = index;
 }

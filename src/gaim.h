@@ -280,6 +280,8 @@ extern guint chat_options;
 #define OPT_CHAT_OLD_STYLE_TAB		0x00000100
 #define OPT_CHAT_COLORIZE               0x00000200
 
+extern guint conv_placement_option;
+
 extern guint font_options;
 #define OPT_FONT_BOLD			0x00000001
 #define OPT_FONT_ITALIC			0x00000002

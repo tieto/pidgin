@@ -224,6 +224,7 @@ struct gaim_conversation
 	void *ui_data;                           /**< UI-specific data.       */
 };
 
+typedef void (*gaim_conv_placement_fnc)(struct gaim_conversation *);
 
 /**************************************************************************/
 /** @name Conversation Window API                                         */
@@ -389,6 +390,24 @@ GList *gaim_window_get_conversations(const struct gaim_window *win);
  */
 GList *gaim_get_windows(void);
 
+/**
+ * Returns the first window containing a conversation of the specified type.
+ *
+ * @param type The conversation type.
+ *
+ * @return The window if found, or @c NULL if not found.
+ */
+struct gaim_window *gaim_get_first_window_with_type(GaimConversationType type);
+
+/**
+ * Returns the last window containing a conversation of the specified type.
+ *
+ * @param type The conversation type.
+ *
+ * @return The window if found, or @c NULL if not found.
+ */
+struct gaim_window *gaim_get_last_window_with_type(GaimConversationType type);
+
 /*@}*/
 
 /**************************************************************************/
@@ -471,17 +490,6 @@ void gaim_conversation_set_user(struct gaim_conversation *conv,
  */
 struct aim_user *gaim_conversation_get_user(
 		const struct gaim_conversation *conv);
-
-#if 0
-/**
- * Sets the specified conversation's gaim_connection.
- *
- * @param conv The conversation.
- * @param gc   The gaim_connection.
- */
-void gaim_conversation_set_gc(struct gaim_conversation *conv,
-							  struct gaim_connection *gc);
-#endif
 
 /**
  * Returns the specified conversation's gaim_connection.
@@ -1063,5 +1071,79 @@ void gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 struct gaim_conversation *gaim_find_chat(struct gaim_connection *gc, int id);
 
 /*@}*/
+
+/**************************************************************************/
+/** @name Conversation Placement Functions                                */
+/**************************************************************************/
+
+/**
+ * Adds a conversation placement function to the list of possible functions.
+ *
+ * @param name The name of the function.
+ * @param fnc  A pointer to the function.
+ *
+ * @return The index of this entry.
+ */
+int gaim_conv_placement_add_fnc(const char *name, gaim_conv_placement_fnc fnc);
+
+/**
+ * Removes a conversation placement function from the list of possible
+ * functions.
+ *
+ * @param index The index of the function.
+ */
+void gaim_conv_placement_remove_fnc(int index);
+
+/**
+ * Returns the number of conversation placement functions.
+ *
+ * @return The number of registered functions.
+ */
+int gaim_conv_placement_get_fnc_count(void);
+
+/**
+ * Returns the name of the conversation placement function at the
+ * specified index.
+ *
+ * @param index The index.
+ *
+ * @return The name of the function, or @c NULL if this index is out of
+ *         range.
+ */
+const char *gaim_conv_placement_get_name(int index);
+
+/**
+ * Returns a pointer to the conversation placement function at the
+ * specified index.
+ *
+ * @param index The index.
+ *
+ * @return A pointer to the function.
+ */
+gaim_conv_placement_fnc gaim_conv_placement_get_fnc(int index);
+
+/**
+ * Returns the index of the specified conversation placement function.
+ *
+ * @param fnc A pointer to the registered function.
+ *
+ * @return The index of the conversation, or -1 if the function is not
+ *         registered.
+ */
+int gaim_conv_placement_get_fnc_index(gaim_conv_placement_fnc fnc);
+
+/**
+ * Returns the index of the active conversation placement function.
+ *
+ * @param index The index of the active function.
+ */
+int gaim_conv_placement_get_active(void);
+
+/**
+ * Sets the active conversation placement function.
+ *
+ * @param index The index of the function.
+ */
+void gaim_conv_placement_set_active(int index);
 
 #endif /* _CONVERSATION_H_ */
