@@ -45,6 +45,7 @@
 #include "pixmaps/bgcolor.xpm"
 #include "pixmaps/fgcolor.xpm"
 #include "pixmaps/save.xpm"
+#include "proxy.h"
 
 struct debug_window *dw = NULL;
 static GtkWidget *prefs = NULL;
@@ -309,6 +310,170 @@ static void general_page()
 	} else {
 		gtk_widget_set_sensitive(new_window, TRUE);
 	}
+
+	gtk_widget_show(prefdialog);
+}
+
+#define PROXYHOST 0
+#define PROXYPORT 1
+#define PROXYTYPE 2
+#define PROXYUSER 3
+#define PROXYPASS 4
+
+static void proxy_print_option(GtkEntry *entry, int entrynum)
+{
+	     if (entrynum == PROXYHOST)
+		g_snprintf(proxyhost, sizeof(proxyhost), "%s", gtk_entry_get_text(entry));
+	else if (entrynum == PROXYPORT)
+		proxyport = atoi(gtk_entry_get_text(entry));
+	else if (entrynum == PROXYUSER)
+		g_snprintf(proxyuser, sizeof(proxyuser), "%s", gtk_entry_get_text(entry));
+	else if (entrynum == PROXYPASS)
+		g_snprintf(proxypass, sizeof(proxypass), "%s", gtk_entry_get_text(entry));
+	save_prefs();
+}
+
+static void proxy_print_optionrad(GtkRadioButton *entry, int entrynum)
+{
+	proxytype = entrynum;
+	save_prefs();
+}
+
+static void proxy_page()
+{
+	GtkWidget *parent;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+	GtkWidget *first, *opt;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("Proxy Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), vbox);
+	gtk_widget_show(vbox);
+
+	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	label = gtk_label_new(_("Not all protocols can use these proxy options. Please see the "
+				"README file for details."));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	first = gtk_radio_button_new_with_label(NULL, "No proxy");
+	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(first), "clicked",
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_NONE);
+	gtk_widget_show(first);
+	if (proxytype == PROXY_NONE)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked",
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_SOCKS4);
+	gtk_widget_show(opt);
+	if (proxytype == PROXY_SOCKS4)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked",
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_SOCKS5);
+	gtk_widget_show(opt);
+	if (proxytype == PROXY_SOCKS5)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked",
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_HTTP);
+	gtk_widget_show(opt);
+	if (proxytype == PROXY_HTTP)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYHOST);
+	gtk_entry_set_text(GTK_ENTRY(entry), proxyhost);
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYPORT);
+	if (proxyport) {
+		char buf[128];
+		g_snprintf(buf, sizeof(buf), "%d", proxyport);
+		gtk_entry_set_text(GTK_ENTRY(entry), buf);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy User:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYUSER);
+	gtk_entry_set_text(GTK_ENTRY(entry), proxyuser);
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Password:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYPASS);
+	gtk_entry_set_text(GTK_ENTRY(entry), proxypass);
+	gtk_widget_show(entry);
 
 	gtk_widget_show(prefdialog);
 }
@@ -914,7 +1079,7 @@ static void ref_list_callback(gpointer data, char *text) {
 
 static void refresh_list(GtkWidget *w, gpointer *m)
 {
-	grab_url(NULL, "http://www.aol.com/community/chat/allchats.html", ref_list_callback, NULL);
+	grab_url("http://www.aol.com/community/chat/allchats.html", ref_list_callback, NULL);
 }
 
 static void add_chat(GtkWidget *w, gpointer *m)
@@ -2479,12 +2644,18 @@ GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *pa
 
 void prefs_build_general()
 {
+	GtkCTreeNode *node;
 	char *text[1];
 
 	text[0] = _("General");
 	general_node = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), general_node, general_page);
+
+	text[0] = _("Proxy");
+	node = gtk_ctree_insert_node(GTK_CTREE(preftree), general_node, NULL,
+				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, proxy_page);
 
 	gtk_ctree_select(GTK_CTREE(preftree), general_node);
 }

@@ -19,6 +19,11 @@ Gaim will try to compile with Gnome features if you have Gnome on your
 system. If you don't have them, it will settle for simply GTK. If you
 don't want Gnome bits, ./configure --disable-gnome
 
+If you want to build as a GNOME applet:
+./configure --enable-panel ; make
+then su to root and run "make install". 
+Afterwards panel->Add applet->Network->Gaim should be there.
+
 Run:
 
 type "./gaim"
@@ -32,10 +37,10 @@ Then in the account editor, add a new account; the Protocol option menu
 should now have another option for the protocol that you loaded. Then you
 can sign that account on.
 
-If you want to build as a GNOME applet:
-./configure --enable-panel ; make
-then su to root and run "make install". 
-Afterwards panel->Add applet->Network->Gaim should be there.
+ICQ and Zephyr are currently the only two protocols that don't use the
+global proxy configuration; however, if you have the proxy set to use a
+SOCKS5 proxy, ICQ will use it. If the proxy options aren't robust enough
+for you there are several libraries that you can link gaim against.
 
 Notes:
 
@@ -53,8 +58,8 @@ The panel (if you made an applet) requires certain things to be in certain
 places, but the Makefile/configure script should figure things out for you.
 
 Send me bug reports.  The web page is http://gaim.sourceforge.net/and the ftp
-site is ftp://ftp.marko.net/pub/gaim. We also have a sourceforge page at
-http://sourceforge.net/projects/gaim/
+site is ftp://ftp.sourceforge.net/pub/sourceforge/gaim. We also have a
+sourceforge page at http://sourceforge.net/projects/gaim/
 
 Keep your eyes out for updates, and I'll try to keep the program maintained.
 Other contributors and patches are welcomed.  Please read the FAQ first.

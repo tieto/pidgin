@@ -65,12 +65,6 @@
 #define MSN_SIGNON_SENT_USR	0x0002
 
 #define USEROPT_HOTMAIL   0
-/* eventually, everything should probably use the same proxy setup, so we'll borrow this from TOC/IRC */
-#define USEROPT_PROXYSERV 2
-#define USEROPT_PROXYPORT 3
-#define USEROPT_PROXYTYPE 4
-#define USEROPT_USER      5
-#define USEROPT_PASS      6
 
 struct mod_usr_opt {
 	struct aim_user *user;
@@ -563,12 +557,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		mc->secret = g_strdup(res[4]);
 		mc->session = g_strdup(res[1]);
 
-		mc->fd = proxy_connect(address[0], atoi(address[1]),
-			gc->user->proto_opt[USEROPT_PROXYSERV],
-			atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
-			atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
-			gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
-			msn_answer_callback, mc);
+		mc->fd = proxy_connect(address[0], atoi(address[1]), msn_answer_callback, mc);
 		g_strfreev(address);
 		g_strfreev(res);
 		if (!user->gc || (mc->fd < 0)) {
@@ -611,12 +600,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		if (mc->inpa)
 			gdk_input_remove(mc->inpa);
 
-		mc->fd = proxy_connect(res[0], atoi(res[1]),
-			gc->user->proto_opt[USEROPT_PROXYSERV],
-			atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
-			atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
-			gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
-			msn_xfr_callback, mc);
+		mc->fd = proxy_connect(res[0], atoi(res[1]), msn_xfr_callback, mc);
 		g_strfreev(res);
 
 		return;
@@ -807,12 +791,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 		gc->inpa = 0;
 
 		/* Now we have the host and port */
-		md->fd = proxy_connect(res[0], atoi(res[1]),
-			gc->user->proto_opt[USEROPT_PROXYSERV],
-			atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
-			atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
-			gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
-			msn_login_callback, gc);
+		md->fd = proxy_connect(res[0], atoi(res[1]), msn_login_callback, gc);
 		if (!user->gc || (md->fd < 0)) {
 			g_strfreev(res);
 			hide_login_progress(gc, "Error connecting to server");
@@ -914,11 +893,7 @@ void msn_login(struct aim_user *user)
 	md->status = 0;
 
 	sprintf(gc->username, "%s", msn_normalize(gc->username));
-	md->fd = proxy_connect("messenger.hotmail.com", 1863,
-			user->proto_opt[USEROPT_PROXYSERV], atoi(user->proto_opt[USEROPT_PROXYPORT]),
-			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
-			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
-			msn_login_callback, gc);
+	md->fd = proxy_connect("messenger.hotmail.com", 1863, msn_login_callback, gc);
 	if (!user->gc || (md->fd < 0)) {
 		hide_login_progress(gc, "Error connecting to server");
 		signoff(gc);
@@ -1219,45 +1194,10 @@ static GtkWidget *msn_protoopt_button(const char *text, struct aim_user *u, int 
 	return button;
 }
 
-static void msn_print_option(GtkEntry *entry, struct aim_user *user)
-{
-	int entrynum;
-
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
-
-	if (entrynum == USEROPT_PROXYSERV) {
-		g_snprintf(user->proto_opt[USEROPT_PROXYSERV],
-			sizeof(user->proto_opt[USEROPT_PROXYSERV]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PROXYPORT) {
-		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
-			sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_USER) {
-		g_snprintf(user->proto_opt[USEROPT_USER],
-			   sizeof(user->proto_opt[USEROPT_USER]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PASS) {
-		g_snprintf(user->proto_opt[USEROPT_PASS],
-			   sizeof(user->proto_opt[USEROPT_PASS]), "%s", gtk_entry_get_text(entry));
-	}
-}
-
-static void msn_print_optionrad(GtkRadioButton* entry, struct aim_user *user)
-{
-	int entrynum;
-
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
-
-	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
-			sizeof(user->proto_opt[USEROPT_PROXYTYPE]), "%d", entrynum);
-}
-
 static void msn_user_opts(GtkWidget* book, struct aim_user *user)
 {
 	/* so here, we create the new notebook page */
 	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
-	GtkWidget *first, *opt;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -1265,121 +1205,6 @@ static void msn_user_opts(GtkWidget* book, struct aim_user *user)
 	gtk_widget_show(vbox);
 
 	msn_protoopt_button("Notify me of new HotMail",user,USEROPT_HOTMAIL,vbox);
-
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	first = gtk_radio_button_new_with_label(NULL, "No proxy");
-	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
-	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(msn_print_optionrad), user);
-	gtk_widget_show(first);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
-
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(msn_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(msn_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(msn_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYSERV);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(msn_print_option), user);
-	if (user->proto_opt[USEROPT_PROXYSERV][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYSERV]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYSERV]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(msn_print_option), user);
-	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy User:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_USER);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(msn_print_option), user);
-	if (user->proto_opt[USEROPT_USER][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_USER]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_USER]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Password:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PASS);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(msn_print_option), user);
-	if (user->proto_opt[USEROPT_PASS][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PASS]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PASS]);
-	}
-	gtk_widget_show(entry);
 }
 
 /* 

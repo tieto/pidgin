@@ -5,6 +5,7 @@
 #include "multi.h" /* needed for gaim_connection */
 #include "prpl.h"  /* needed for prpl */
 #include "gaim.h"  /* needed for every other damn thing */
+#include "proxy.h"
 
 #include "pixmaps/gnomeicu-online.xpm"
 #include "pixmaps/gnomeicu-away.xpm"
@@ -269,6 +270,9 @@ static void icq_login(struct aim_user *user) {
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
 	link->icq_RequestNotify = icq_req_not;
+
+	if (proxytype == PROXY_SOCKS5)
+		icq_SetProxy(link, proxyhost, proxyport, proxyuser[0], proxyuser, proxypass);
 
 	icq_ContactClear(id->link);
 	if (bud_list_cache_exists(gc))

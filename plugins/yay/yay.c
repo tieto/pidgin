@@ -49,12 +49,6 @@
 
 #include "pixmaps/cancel.xpm"
 
-#define USEROPT_PROXYHOST 2
-#define USEROPT_PROXYPORT 3
-#define USEROPT_PROXYTYPE 4
-#define USEROPT_USER      5
-#define USEROPT_PASS      6
-
 struct conn {
 	int socket;
 	int type;
@@ -377,18 +371,11 @@ static void yahoo_got_connected(gpointer data, gint source, GdkInputCondition co
 
 static int yahoo_connect_to(struct yahoo_session *sess, const char *host, int port, gpointer data) {
 	struct connect *con = g_new0(struct connect, 1);
-	struct gaim_connection *gc = sess->user_data;
 	int fd;
 
 	con->sess = sess;
 	con->data = data;
-	fd = proxy_connect((char *)host, port,
-				gc->user->proto_opt[USEROPT_PROXYHOST],
-				atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
-				atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
-				gc->user->proto_opt[USEROPT_USER],
-				gc->user->proto_opt[USEROPT_PASS],
-				yahoo_got_connected, con);
+	fd = proxy_connect((char *)host, port, yahoo_got_connected, con);
 	if (fd < 0) {
 		g_free(con);
 		return -1;
@@ -689,167 +676,6 @@ static GList *yahoo_actions() {
 	return m;
 }
 
-static void yahoo_print_option(GtkEntry *entry, struct aim_user *user)
-{
-	int entrynum;
-
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
-
-	if (entrynum == USEROPT_PROXYHOST) {
-		g_snprintf(user->proto_opt[USEROPT_PROXYHOST],
-			sizeof(user->proto_opt[USEROPT_PROXYHOST]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PROXYPORT) {
-		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
-			sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_USER) {
-		g_snprintf(user->proto_opt[USEROPT_USER],
-			   sizeof(user->proto_opt[USEROPT_USER]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PASS) {
-		g_snprintf(user->proto_opt[USEROPT_PASS],
-			   sizeof(user->proto_opt[USEROPT_PASS]), "%s", gtk_entry_get_text(entry));
-	}
-}
-
-static void yahoo_print_optionrad(GtkRadioButton * entry, struct aim_user *user)
-{
-	int entrynum;
-
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
-
-	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
-			sizeof(user->proto_opt[USEROPT_PROXYTYPE]), "%d", entrynum);
-}
-
-static void yahoo_user_opts(GtkWidget * book, struct aim_user *user)
-{
-	/* so here, we create the new notebook page */
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
-	GtkWidget *first, *opt;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Yahoo Options"));
-	gtk_widget_show(vbox);
-
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	first = gtk_radio_button_new_with_label(NULL, "No proxy");
-	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
-	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(yahoo_print_optionrad), user);
-	gtk_widget_show(first);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
-
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(yahoo_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(yahoo_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(yahoo_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYHOST);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_PROXYHOST][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYHOST]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYHOST]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy User:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_USER);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_USER][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_USER]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_USER]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Password:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PASS);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_PASS][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PASS]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PASS]);
-	}
-	gtk_widget_show(entry);
-}
-
 static struct prpl *my_protocol = NULL;
 
 void Yahoo_init(struct prpl *ret) {
@@ -861,7 +687,7 @@ void Yahoo_init(struct prpl *ret) {
 	ret->actions = yahoo_actions;
 	ret->do_action = yahoo_do_action;
 	ret->buddy_menu = yahoo_buddy_menu;
-	ret->user_opts = yahoo_user_opts;
+	ret->user_opts = NULL;
 	ret->login = yahoo_login;
 	ret->close = yahoo_close;
 	ret->send_im = yahoo_send_im;

@@ -37,9 +37,12 @@
 #define PROXY_SOCKS4 2
 #define PROXY_SOCKS5 3
 
-extern int proxy_connect(char *host, int port,
-			 char *proxyhost, int proxyport, int proxytype,
-			 char *user, char *pass,
-			 GdkInputFunction func, gpointer data);
+extern char proxyhost[128];
+extern int  proxyport;
+extern int  proxytype;
+extern char proxyuser[128];
+extern char proxypass[128];
+
+extern int proxy_connect(char *host, int port, GdkInputFunction func, gpointer data);
 
 #endif

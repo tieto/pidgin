@@ -34,6 +34,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "prpl.h"
+#include "proxy.h"
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
@@ -156,6 +157,8 @@ static int gaimrc_parse_tag(FILE *f)
 		return 5;
 	} else if (!strcmp(tag, "sound_files")) {
 		return 6;
+	} else if (!strcmp(tag, "proxy")) {
+		return 7;
 	}
 
 	return -1;
@@ -768,6 +771,47 @@ static void gaimrc_write_sounds(FILE *f)
 	fprintf(f, "}\n");
 }
 
+static void gaimrc_read_proxy(FILE *f)
+{
+	char buf[2048];
+	struct parse *p;
+
+	buf[0] = 0;
+
+	while (buf[0] != '}') {
+		if (buf[0] == '#')
+			continue;
+
+		if (!fgets(buf, sizeof(buf), f))
+			return;
+
+		p = parse_line(buf);
+
+		if (!strcmp(p->option, "host")) {
+			g_snprintf(proxyhost, sizeof(proxyhost), "%s", p->value[0]);
+		} else if (!strcmp(p->option, "port")) {
+			proxyport = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "type")) {
+			proxyport = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "user")) {
+			g_snprintf(proxyuser, sizeof(proxyuser), "%s", p->value[0]);
+		} else if (!strcmp(p->option, "pass")) {
+			g_snprintf(proxypass, sizeof(proxypass), "%s", p->value[0]);
+		}
+	}
+}
+
+static void gaimrc_write_proxy(FILE *f)
+{
+	fprintf(f, "proxy {\n");
+	fprintf(f, "\thost { %s }\n", proxyhost);
+	fprintf(f, "\tport { %d }\n", proxyport);
+	fprintf(f, "\ttype { %d }\n", proxytype);
+	fprintf(f, "\tuser { %s }\n", proxyuser);
+	fprintf(f, "\tport { %s }\n", proxypass);
+	fprintf(f, "}\n");
+}
+
 
 void set_defaults(int saveinfo)
 {
@@ -891,6 +935,9 @@ void load_prefs()
 			case 6:
 				gaimrc_read_sounds(f);
 				break;
+			case 7:
+				gaimrc_read_proxy(f);
+				break;
 			default:
 				/* NOOP */
 				break;
@@ -930,6 +977,7 @@ void save_prefs()
 #ifdef GAIM_PLUGINS
 		gaimrc_write_plugins(f);
 #endif
+		gaimrc_write_proxy(f);
 		fclose(f);
 		chmod(buf, S_IRUSR | S_IWUSR);
 	}

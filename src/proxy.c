@@ -40,13 +40,17 @@
 #include "gaim.h"
 #include "proxy.h"
 
+char proxyhost[128] = { 0 };
+int  proxyport = 0;
+int  proxytype = 0;
+char proxyuser[128] = { 0 };
+char proxypass[128] = { 0 };
+
 struct PHB {
 	GdkInputFunction func;
 	gpointer data;
 	char *host;
 	int port;
-	char *user;
-	char *pass;
 	gint inpa;
 };
 
@@ -157,10 +161,6 @@ static void http_canread(gpointer data, gint source, GdkInputCondition cond)
 	if ((memcmp(HTTP_GOODSTRING , inputline, strlen(HTTP_GOODSTRING )) == 0) ||
 	    (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
 		phb->func(phb->data, source, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -168,10 +168,6 @@ static void http_canread(gpointer data, gint source, GdkInputCondition cond)
 
 	close(source);
 	phb->func(phb->data, -1, GDK_INPUT_READ);
-	if (phb->user) {
-		g_free(phb->user);
-		g_free(phb->pass);
-	}
 	g_free(phb->host);
 	g_free(phb);
 	return;
@@ -189,10 +185,6 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -203,18 +195,14 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	if (send(source, cmd, strlen(cmd), 0) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
 	}
 
-	if (phb->user) {
+	if (proxyuser) {
 		char *t1, *t2;
-		t1 = g_strdup_printf("%s:%s", phb->user, phb->pass);
+		t1 = g_strdup_printf("%s:%s", proxyuser, proxypass);
 		t2 = tobase64(t1);
 		g_free(t1);
 		g_snprintf(cmd, sizeof(cmd), "Proxy-Authorization: Basic %s\r\n", t2);
@@ -222,8 +210,6 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 		if (send(source, cmd, strlen(cmd), 0) < 0) {
 			close(source);
 			phb->func(phb->data, -1, GDK_INPUT_READ);
-			g_free(phb->user);
-			g_free(phb->pass);
 			g_free(phb->host);
 			g_free(phb);
 			return;
@@ -234,10 +220,6 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	if (send(source, cmd, strlen(cmd), 0) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -246,10 +228,7 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, http_canread, phb);
 }
 
-static int proxy_connect_http(char *host, unsigned short port,
-			      char *proxyhost, unsigned short proxyport,
-			      char *user, char *pass,
-			      struct PHB *phb)
+static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 {
 	struct hostent *hp;
 	struct sockaddr_in sin;
@@ -274,10 +253,6 @@ static int proxy_connect_http(char *host, unsigned short port,
 
 	phb->host = g_strdup(host);
 	phb->port = port;
-	if (user && pass && user[0] && pass[0]) {
-		phb->user = g_strdup(user);
-		phb->pass = g_strdup(pass);
-	}
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
@@ -286,10 +261,6 @@ static int proxy_connect_http(char *host, unsigned short port,
 			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, http_canwrite, phb);
 		} else {
 			close(fd);
-			if (phb->user) {
-				g_free(phb->user);
-				g_free(phb->pass);
-			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -300,10 +271,6 @@ static int proxy_connect_http(char *host, unsigned short port,
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-			if (phb->user) {
-				g_free(phb->user);
-				g_free(phb->pass);
-			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -384,9 +351,7 @@ static void s4_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, s4_canread, phb);
 }
 
-static int proxy_connect_socks4(char *host, unsigned short port,
-				char *proxyhost, unsigned short proxyport,
-				struct PHB *phb)
+static int proxy_connect_socks4(char *host, unsigned short port, struct PHB *phb)
 {
 	struct sockaddr_in sin;
 	struct hostent *hp;
@@ -489,10 +454,6 @@ static void s5_sendconnect(gpointer data, gint source)
 	if (write(source, buf, (5 + strlen(phb->host) + 2)) < (5 + strlen(phb->host) + 2)) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -512,10 +473,6 @@ static void s5_readauth(gpointer data, gint source, GdkInputCondition cond)
 	if (read(source, buf, 2) < 2) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -524,10 +481,6 @@ static void s5_readauth(gpointer data, gint source, GdkInputCondition cond)
 	if ((buf[0] != 0x01) || (buf[1] == 0x00)) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -547,10 +500,6 @@ static void s5_canread(gpointer data, gint source, GdkInputCondition cond)
 	if (read(source, buf, 2) < 2) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -559,27 +508,21 @@ static void s5_canread(gpointer data, gint source, GdkInputCondition cond)
 	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
 	}
 
 	if (buf[1] == 0x02) {
-		unsigned int i = strlen(phb->user), j = strlen(phb->pass);
+		unsigned int i = strlen(proxyuser), j = strlen(proxypass);
 		buf[0] = 0x01; /* version 1 */
 		buf[1] = i;
-		memcpy(buf+2, phb->user, i);
+		memcpy(buf+2, proxyuser, i);
 		buf[2+i] = j;
-		memcpy(buf+2+i+1, phb->pass, j);
+		memcpy(buf+2+i+1, proxypass, j);
 		if (write(source, buf, 3+i+j) < 3+i+j) {
 			close(source);
 			phb->func(phb->data, -1, GDK_INPUT_READ);
-			g_free(phb->user);
-			g_free(phb->pass);
 			g_free(phb->host);
 			g_free(phb);
 			return;
@@ -604,10 +547,6 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -616,7 +555,7 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 
 	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
-	if (phb->user) {
+	if (proxyuser[0]) {
 		buf[1] = 0x02;	/* two methods */
 		buf[2] = 0x00;	/* no authentication */
 		buf[3] = 0x02;	/* username/password authentication */
@@ -631,10 +570,6 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 		debug_printf("unable to write\n");
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
-		if (phb->user) {
-			g_free(phb->user);
-			g_free(phb->pass);
-		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -643,10 +578,7 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, s5_canread, phb);
 }
 
-static int proxy_connect_socks5(char *host, unsigned short port,
-				char *proxyhost, unsigned short proxyport,
-				char *user, char *pass,
-				struct PHB *phb)
+static int proxy_connect_socks5(char *host, unsigned short port, struct PHB *phb)
 {
 	int fd = -1;
 	struct sockaddr_in sin;
@@ -669,10 +601,6 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 		return -1;
 	}
 
-	if (user && pass && user[0] && pass[0]) {
-		phb->user = g_strdup(user);
-		phb->pass = g_strdup(pass);
-	}
 	phb->host = g_strdup(host);
 	phb->port = port;
 
@@ -683,10 +611,6 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, s5_canwrite, phb);
 		} else {
 			close(fd);
-			if (phb->user) {
-				g_free(phb->user);
-				g_free(phb->pass);
-			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -697,10 +621,6 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-			if (phb->user) {
-				g_free(phb->user);
-				g_free(phb->pass);
-			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -712,10 +632,7 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 	return fd;
 }
 
-int proxy_connect(char *host, int port,
-		  char *proxyhost, int proxyport, int proxytype,
-		  char *user, char *pass,
-		  GdkInputFunction func, gpointer data)
+int proxy_connect(char *host, int port, GdkInputFunction func, gpointer data)
 {
 	struct PHB *phb = g_new0(struct PHB, 1);
 	phb->func = func;
@@ -731,11 +648,11 @@ int proxy_connect(char *host, int port,
 		 !proxyport || (proxyport == -1))
 		return proxy_connect_none(host, port, phb);
 	else if (proxytype == PROXY_HTTP)
-		return proxy_connect_http(host, port, proxyhost, proxyport, user, pass, phb);
+		return proxy_connect_http(host, port, phb);
 	else if (proxytype == PROXY_SOCKS4)
-		return proxy_connect_socks4(host, port, proxyhost, proxyport, phb);
+		return proxy_connect_socks4(host, port, phb);
 	else if (proxytype == PROXY_SOCKS5)
-		return proxy_connect_socks5(host, port, proxyhost, proxyport, user, pass, phb);
+		return proxy_connect_socks5(host, port, phb);
 
 	g_free(phb);
 	return -1;

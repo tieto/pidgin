@@ -591,7 +591,7 @@ extern void do_join_chat();
 
 /* Functions in html.c */
 extern struct g_url parse_url(char *);
-extern void grab_url(struct aim_user *, char *, void (*callback)(gpointer, char *), gpointer);
+extern void grab_url(char *, void (*callback)(gpointer, char *), gpointer);
 extern gchar *strip_html(gchar *);
 
 /* Functions in idle.c */

@@ -53,11 +53,6 @@
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
-#define USEROPT_PROXYHOST 2
-#define USEROPT_PROXYPORT 3
-#define USEROPT_PROXYTYPE 4
-#define USEROPT_USER      5
-#define USEROPT_PASS      6
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -473,10 +468,6 @@ static void oscar_login(struct aim_user *user) {
 					user->proto_opt[USEROPT_AUTH] : FAIM_LOGIN_SERVER,
 				 user->proto_opt[USEROPT_AUTHPORT][0] ?
 					atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
-				 user->proto_opt[USEROPT_PROXYHOST],
-				 atoi(user->proto_opt[USEROPT_PROXYPORT]),
-				 atoi(user->proto_opt[USEROPT_PROXYTYPE]),
-				 user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
 				 oscar_login_connect, gc);
 	if (!user->gc || (conn->fd < 0)) {
 		hide_login_progress(gc, _("Couldn't connect to host"));
@@ -668,12 +659,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	}
 	host = g_strndup(bosip, i);
 	bosconn->priv = g_memdup(cookie, AIM_COOKIELEN);
-	bosconn->fd = proxy_connect(host, port,
-				    gc->user->proto_opt[USEROPT_PROXYHOST],
-				    atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
-				    atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
-				    gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
-				    oscar_bos_connect, gc);
+	bosconn->fd = proxy_connect(host, port, oscar_bos_connect, gc);
 	g_free(host);
 	if (!user->gc || (bosconn->fd < 0)) {
 		if (bosconn->priv)
@@ -764,7 +750,6 @@ static void straight_to_hell(gpointer data, gint source, GdkInputCondition cond)
 
 int gaim_memrequest(struct aim_session_t *sess,
 		    struct command_rx_struct *command, ...) {
-	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	struct pieceofcrap *pos;
 	unsigned long offset, len;
@@ -819,12 +804,7 @@ int gaim_memrequest(struct aim_session_t *sess,
 	pos->len = len;
 	pos->modname = modname ? g_strdup(modname) : NULL;
 
-	fd = proxy_connect("gaim.sourceforge.net", 80,
-			   gc->user->proto_opt[USEROPT_PROXYHOST],
-			   atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
-			   atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
-			   gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
-			   straight_to_hell, pos);
+	fd = proxy_connect("gaim.sourceforge.net", 80, straight_to_hell, pos);
 	if (fd < 0) {
 		if (pos->modname)
 			g_free(pos->modname);
@@ -1019,7 +999,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	char *ip;
 	unsigned char *cookie;
 	struct gaim_connection *gc = sess->aux_data;
-	struct aim_user *user = gc->user;
 	struct aim_conn_t *tstconn;
 	int i;
 	char *host; int port = FAIM_LOGIN_PORT, fd;
@@ -1053,11 +1032,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
 
 		tstconn->priv = g_memdup(cookie, AIM_COOKIELEN);
-		fd = proxy_connect(host, port, user->proto_opt[USEROPT_PROXYHOST],
-				   atoi(user->proto_opt[USEROPT_PROXYPORT]),
-				   atoi(user->proto_opt[USEROPT_PROXYTYPE]),
-				   user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
-				   oscar_auth_connect, gc);
+		fd = proxy_connect(host, port, oscar_auth_connect, gc);
 		if (fd < 0) {
 			if (tstconn->priv)
 				g_free(tstconn->priv);
@@ -1079,11 +1054,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 
 		tstconn->priv = g_memdup(cookie, AIM_COOKIELEN);
-		fd = proxy_connect(host, port, user->proto_opt[USEROPT_PROXYHOST],
-				   atoi(user->proto_opt[USEROPT_PROXYPORT]),
-				   atoi(user->proto_opt[USEROPT_PROXYTYPE]),
-				   user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
-				   oscar_chatnav_connect, gc);
+		fd = proxy_connect(host, port, oscar_chatnav_connect, gc);
 		if (fd < 0) {
 			if (tstconn->priv)
 				g_free(tstconn->priv);
@@ -1117,11 +1088,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		ccon->show = extract_name(roomname);
 		
 		ccon->priv = g_memdup(cookie, AIM_COOKIELEN);
-		fd = proxy_connect(host, port, user->proto_opt[USEROPT_PROXYHOST],
-				   atoi(user->proto_opt[USEROPT_PROXYPORT]),
-				   atoi(user->proto_opt[USEROPT_PROXYTYPE]),
-				   user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
-				   oscar_chat_connect, ccon);
+		fd = proxy_connect(host, port, oscar_chat_connect, ccon);
 		if (fd < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chat server\n");
@@ -1278,13 +1245,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 		}
 	}
 	host = g_strndup(d->priv->ip, i);
-	dim->conn->fd = proxy_connect(host, port,
-				      gc->user->proto_opt[USEROPT_PROXYHOST],
-				      atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
-				      atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
-				      gc->user->proto_opt[USEROPT_USER],
-				      gc->user->proto_opt[USEROPT_PASS],
-				      oscar_directim_callback, dim);
+	dim->conn->fd = proxy_connect(host, port, oscar_directim_callback, dim);
 	g_free(host);
 	if (dim->conn->fd < 0) {
 		aim_conn_kill(od->sess, &dim->conn);
@@ -2775,29 +2736,7 @@ static void oscar_print_option(GtkEntry *entry, struct aim_user *user)
 	} else if (entrynum == USEROPT_AUTHPORT) {
 		g_snprintf(user->proto_opt[USEROPT_AUTHPORT],
 			   sizeof(user->proto_opt[USEROPT_AUTHPORT]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PROXYHOST) {
-		g_snprintf(user->proto_opt[USEROPT_PROXYHOST],
-			   sizeof(user->proto_opt[USEROPT_PROXYHOST]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PROXYPORT) {
-		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
-			   sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_USER) {
-		g_snprintf(user->proto_opt[USEROPT_USER],
-			   sizeof(user->proto_opt[USEROPT_USER]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PASS) {
-		g_snprintf(user->proto_opt[USEROPT_PASS],
-			   sizeof(user->proto_opt[USEROPT_PASS]), "%s", gtk_entry_get_text(entry));
 	}
-}
-
-static void oscar_print_optionrad(GtkRadioButton * entry, struct aim_user *user)
-{
-	int entrynum;
-
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
-
-	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
-		   sizeof(user->proto_opt[USEROPT_PROXYTYPE]), "%d", entrynum);
 }
 
 static void oscar_user_opts(GtkWidget *book, struct aim_user *user)
@@ -2807,7 +2746,6 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user)
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *entry;
-	GtkWidget *first, *opt;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -2851,121 +2789,6 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user)
 	} else
 		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
 
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	first = gtk_radio_button_new_with_label(NULL, "No proxy");
-	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
-	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
-	gtk_widget_show(first);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
-
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
-	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(oscar_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYHOST);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
-	if (user->proto_opt[USEROPT_PROXYHOST][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYHOST]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYHOST]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
-	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy User:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_USER);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
-	if (user->proto_opt[USEROPT_USER][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_USER]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_USER]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Proxy Password:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PASS);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(oscar_print_option), user);
-	if (user->proto_opt[USEROPT_PASS][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PASS]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PASS]);
-	}
 	gtk_widget_show(entry);
 }
 

@@ -212,7 +212,7 @@ static void grab_url_callback(gpointer dat, gint sock, GdkInputCondition cond)
 	g_free(gunk);
 }
 
-void grab_url(struct aim_user *user, char *url, void (*callback)(gpointer, char *), gpointer data)
+void grab_url(char *url, void (*callback)(gpointer, char *), gpointer data)
 {
 	int sock;
 	struct grab_url_data *gunk = g_new0(struct grab_url_data, 1);
@@ -222,22 +222,10 @@ void grab_url(struct aim_user *user, char *url, void (*callback)(gpointer, char 
 	gunk->url = g_strdup(url);
 	gunk->website = parse_url(url);
 
-	if (user) {
-		if ((sock = proxy_connect(gunk->website.address, gunk->website.port,
-					  user->proto_opt[2], atoi(user->proto_opt[3]),
-					  atoi(user->proto_opt[4]),
-					  user->proto_opt[5], user->proto_opt[6],
-					  grab_url_callback, gunk)) < 0) {
-			g_free(gunk->url);
-			g_free(gunk);
-			callback(data, g_strdup(_("g003: Error opening connection.\n")));
-		}
-	} else {
-		if ((sock = proxy_connect(gunk->website.address, gunk->website.port, NULL, 0, -1,
-						NULL, NULL, grab_url_callback, gunk)) < 0) {
-			g_free(gunk->url);
-			g_free(gunk);
-			callback(data, g_strdup(_("g003: Error opening connection.\n")));
-		}
+	if ((sock = proxy_connect(gunk->website.address, gunk->website.port,
+					grab_url_callback, gunk)) < 0) {
+		g_free(gunk->url);
+		g_free(gunk);
+		callback(data, g_strdup(_("g003: Error opening connection.\n")));
 	}
 }

@@ -2971,7 +2971,8 @@ void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean sho
 		while (mem) {
 			b = (struct buddy *)mem->data;
 			pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
-					  show ? ":" : "", show ? b->show : "");
+					  (show && strcmp(b->name, b->show)) ? ":" : "",
+					  (show && strcmp(b->name, b->show)) ? b->show : "");
 			mem = mem->next;
 		}
 		grp = g_slist_next(grp);

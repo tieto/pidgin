@@ -821,6 +821,16 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		}
 	}
 
+	quiet_set(c->bold, FALSE);
+	quiet_set(c->strike, FALSE);
+	quiet_set(c->italic, FALSE);
+	quiet_set(c->underline, FALSE);
+	quiet_set(c->font, FALSE);
+	quiet_set(c->fgcolorbtn, FALSE);
+	quiet_set(c->bgcolorbtn, FALSE);
+	quiet_set(c->link, FALSE);
+	gtk_widget_grab_focus(c->entry);
+
 	{
 		char *buffy = g_strdup(buf);
 		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
@@ -855,15 +865,6 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		/* no sound because we do that when we receive our message */
 	}
 
-	quiet_set(c->bold, FALSE);
-	quiet_set(c->strike, FALSE);
-	quiet_set(c->italic, FALSE);
-	quiet_set(c->underline, FALSE);
-	quiet_set(c->font, FALSE);
-	quiet_set(c->fgcolorbtn, FALSE);
-	quiet_set(c->bgcolorbtn, FALSE);
-	quiet_set(c->link, FALSE);
-
 	if (general_options & OPT_GEN_BACK_ON_IM) {
 		if (awaymessage != NULL) {
 			do_im_back();
@@ -872,7 +873,6 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		}
 	}
 
-	gtk_widget_grab_focus(c->entry);
 	g_free(buf2);
 	g_free(buf);
 }
