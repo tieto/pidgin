@@ -2198,58 +2198,62 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 	if (!md->permit && !md->deny)
 		return;
 
-	s = g_slist_nth(gc->permit, g_slist_length(md->permit));
-	while (s) {
-		char *who = s->data;
-		s = s->next;
-		if (!strchr(who, '@')) {
-			t = g_slist_append(t, who);
-			continue;
+	if (md->permit) {
+		s = g_slist_nth(gc->permit, g_slist_length(md->permit));
+		while (s) {
+			char *who = s->data;
+			s = s->next;
+			if (!strchr(who, '@')) {
+				t = g_slist_append(t, who);
+				continue;
+			}
+			g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
+			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+				hide_login_progress(gc, "Write error");
+				signoff(gc);
+				return;
+			}
 		}
-		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
-		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-			hide_login_progress(gc, "Write error");
-			signoff(gc);
-			return;
+		while (t) {
+			char *who = t->data;
+			gc->permit = g_slist_remove(gc->permit, who);
+			g_free(who);
+			t = t->next;
 		}
-	}
-	while (t) {
-		char *who = t->data;
-		gc->permit = g_slist_remove(gc->permit, who);
-		g_free(who);
-		t = t->next;
-	}
-	if (t)
-		g_slist_free(t);
+		if (t)
+			g_slist_free(t);
 	t = NULL;
 	g_slist_free(md->permit);
 	md->permit = NULL;
-
-	s = g_slist_nth(gc->deny, g_slist_length(md->deny));
-	while (s) {
-		char *who = s->data;
-		s = s->next;
-		if (!strchr(who, '@')) {
-			t = g_slist_append(t, who);
-			continue;
-		}
-		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
-		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-			hide_login_progress(gc, "Write error");
-			signoff(gc);
-			return;
-		}
 	}
-	while (t) {
-		char *who = t->data;
-		gc->deny = g_slist_remove(gc->deny, who);
-		g_free(who);
-		t = t->next;
-	}
-	if (t)
-		g_slist_free(t);
+	
+	if (md->deny) {
+		s = g_slist_nth(gc->deny, g_slist_length(md->deny));
+		while (s) {
+			char *who = s->data;
+			s = s->next;
+			if (!strchr(who, '@')) {
+				t = g_slist_append(t, who);
+				continue;
+			}
+			g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
+			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+				hide_login_progress(gc, "Write error");
+				signoff(gc);
+				return;
+			}
+		}
+		while (t) {
+			char *who = t->data;
+			gc->deny = g_slist_remove(gc->deny, who);
+			g_free(who);
+			t = t->next;
+		}
+		if (t)
+			g_slist_free(t);
 	g_slist_free(md->deny);
 	md->deny = NULL;
+	}
 }
 
 static void msn_add_permit(struct gaim_connection *gc, char *who)
