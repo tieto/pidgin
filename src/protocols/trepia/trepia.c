@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+/* XXX */
+#include "multi.h"
+
 #ifndef _WIN32
 # include <sys/socket.h>
 # include <sys/ioctl.h>
@@ -158,6 +161,64 @@ __get_mac_address(const char *ip)
 }
 #endif
 
+
+/**************************************************************************
+ * Callbacks
+ **************************************************************************/
+static void
+save_profile_cb(GaimConnection *gc, GaimRequestFields *fields)
+{
+
+}
+
+static void
+set_profile(GaimConnection *gc)
+{
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	fields = gaim_request_fields_new();
+
+	group = gaim_request_field_group_new(_("Basic Profile"));
+	gaim_request_fields_add_group(fields, group);
+
+	/* First Name */
+	field = gaim_request_field_string_new("firstname", _("First Name"), NULL,
+										  FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* Last Name */
+	field = gaim_request_field_string_new("lastname", _("Last Name"), NULL,
+										  FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* Gender */
+	field = gaim_request_field_choice_new("gender", _("Gender"), 0);
+	gaim_request_field_choice_add(field, _("Male"));
+	gaim_request_field_choice_add(field, _("Female"));
+	gaim_request_field_group_add_field(group, field);
+
+	/* Age */
+	field = gaim_request_field_int_new("age", _("Age"), 0);
+	gaim_request_field_group_add_field(group, field);
+
+	/* Homepage */
+	field = gaim_request_field_string_new("homepage", _("Homepage"), NULL,
+										  FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* E-Mail Address */
+	field = gaim_request_field_string_new("email", _("E-Mail Address"), NULL,
+										  FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(gc, NULL, _("Set your Trepia profile data."),
+						NULL, fields,
+						_("Save"), G_CALLBACK(save_profile_cb),
+						_("Cancel"), NULL, gc);
+}
+
 /**************************************************************************
  * Protocol Plugin ops
  **************************************************************************/
@@ -280,6 +341,21 @@ trepia_tooltip_text(struct buddy *b)
 	text[strlen(text) - 1] = '\0';
 
 	return text;
+}
+
+static GList *
+trepia_actions(GaimConnection *gc)
+{
+	GList *m = NULL;
+	struct proto_actions_menu *pam;
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Profile");
+	pam->callback = set_profile;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	return m;
 }
 
 static void
@@ -959,7 +1035,7 @@ static GaimPluginProtocolInfo prpl_info =
 	trepia_status_text,
 	trepia_tooltip_text,
 	NULL,
-	NULL,
+	trepia_actions,
 	NULL,
 	NULL,
 	trepia_login,
