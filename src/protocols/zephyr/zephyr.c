@@ -373,11 +373,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					away = TRUE;
 				else
 					away = FALSE;
-				len = MAX(BUF_LONG, strlen(buf2));
-				buf = g_malloc(len + 1);
-				g_snprintf(buf, len + 1, "%s", buf2);
-				serv_got_im(zgc, notice.z_sender, buf, 0, time((time_t)NULL));
-				g_free(buf);
+				serv_got_im(zgc, notice.z_sender, buf2, 0, time((time_t)NULL));
 			} else {
 				zephyr_triple *zt1, *zt2;
 				zt1 = new_triple(notice.z_class, notice.z_class_inst,
@@ -386,16 +382,12 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				if (!zt2) {
 					/* we shouldn't be subscribed to this message. ignore. */
 				} else {
-					len = MAX(BUF_LONG, strlen(buf2));
-					buf = g_malloc(len + 1);
-					g_snprintf(buf, len + 1, "%s", buf2);
 					if (!zt2->open) {
 						zt2->open = TRUE;
 						serv_got_joined_chat(zgc, zt2->id, zt2->name);
 					}
 					serv_got_chat_in(zgc, zt2->id, notice.z_sender, FALSE,
-								buf, time((time_t)NULL));
-					g_free(buf);
+								buf2, time((time_t)NULL));
 				}
 				free_triple(zt1);
 			}

@@ -2,30 +2,29 @@ THE CORE:
 	GPG Encryption of messages
 	Have plugin_event use varargs instead of void*
 	Separate core functions from UI stuff.
-		about.c, applet.[ch], away.c, buddy.c, conversation.c, convo.h,
-		dialogs.c, multi.c, gtk*, prefs.c, prpl.c, sound.c, ticker.c
+		about.c, applet.[ch], away.c, browser.c, buddy.c, conversation.c,
+		convo.h, dialogs.c, gtk*, plugins.c, prefs.c, prpl.c, sound.c,
+		ticker.c, ui.h
 			little to no work (mostly GTK)
 
-		gaimrc.c, html.c, list.c, proxy.[ch], prpl.h, server.c, util.c
+		core.[ch], html.c, list.c, module.c, multi.h, proxy.[ch], perl.c,
+		prpl.h, util.c
 			little to no work (mostly CORE)
+
+		buddy_chat.c, gaim.h, idle.c, multi.c, server.c
+			standard splitting (for idleness, core needs to be in
+			charge of gaim-use idleness)
 
 		aim.c - need to redo main() completely
 			- current main should be moved mostly to core
 			- GTK main should connect to core
-		browser.c - let the UI deal with this? little to no work.
-		buddy_chat.c - need to move out non-GTK functions. some work.
-		gaim.h - need to separate into core.h and ui.h.
-		idle.c - Need to figure out how to report idle times when there's
-			more than one UI
-		multi.h - need to separate GTK out of gaim_connection
-		perl.c - Uh. Might need to do some splitting.
-		plugins.c - Split the selection dialog with the loading/unloading
-			- Need to figure out how plugins are going to interact
-			  with UIs, though UIs are separate programs.
-	Need to create struct buddy_chat, move struct conversation's in_room and
-		ignored there, and copy id and name.
+		gaimrc.c - Need to figure out how to save UI preferences
+
+		Ideally at the end of this the prpls should only need to include
+		prpl.h and they'll get everything they need without anything
+		*cough*GTK*cough* that they don't.
+
 	Need to write the core side of the core-ui protocol
-	Need to add in core.c to deal with sockets, etc. (Already written)
 
 ----
 THE PROTOCOLS:
@@ -75,6 +74,11 @@ Napster:
 Zephyr:
 	God help us.
 
+Gadu-Gadu:
+	New User Registration
+	There's probably 100 other things but since I've hardly used the Windows
+		client before I'm not sure what any of them are
+
 Future Plugins? :
 	ICQ through Oscar plugin (ICQ2000) (requires hacking libfaim :-/)
 		this would allow us to send SMS messages.
@@ -101,6 +105,8 @@ GTK:
 		all of the custom messages, e.g. in Jabber it'd return "Away/" as one
 		of the states, and you'd see "Away" with a menu of all the away
 		messages you have.
+
+	Need to write the ui side of the core-ui protocol
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies

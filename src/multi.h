@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef _GAIMMULTI_H_
-#define _GAIMMULTI_H_
+#ifndef _MULTI_H_
+#define _MULTI_H_
 
-#include "gaim.h"
+#include "core.h"
 
 /* ok. now the fun begins. first we create a connection structure */
 struct gaim_connection {
@@ -107,4 +107,4 @@ void auto_login();
 void set_login_progress(struct gaim_connection *, float, char *);
 void hide_login_progress(struct gaim_connection *, char *);
 
-#endif /* _GAIMMULTI_H_ */
+#endif /* _MULTI_H_ */

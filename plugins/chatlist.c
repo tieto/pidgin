@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define AOL_SRCHSTR "/community/aimcheck.adp/url="
+
 struct chat_page {
 	GtkWidget *list1;
 	GtkWidget *list2;

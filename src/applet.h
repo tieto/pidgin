@@ -28,8 +28,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **
 **************************************************************/
-#ifndef _GAIMGNOMEAPPLETMGR_H_
-#define _GAIMGNOMEAPPLETMGR_H_
+#ifndef _APPLET_H_
+#define _APPLET_H_
 #ifdef USE_APPLET
 
 #include <gnome.h>
@@ -84,4 +84,4 @@ extern void applet_set_tooltips(char *);
 extern gboolean applet_buddy_show;
 
 #endif /*USE_APPLET*/
-#endif /*_GAIMGNOMEAPPLETMGR_H_*/
+#endif /*_APPLET_H_*/

@@ -36,6 +36,12 @@
 #include <errno.h>
 #include "proxy.h"
 
+struct g_url {
+	char address[255];
+	int port;
+        char page[255];
+};
+
 gchar *strip_html(gchar *text)
 {
 	int i, j, k;
@@ -68,7 +74,7 @@ gchar *strip_html(gchar *text)
 	return text2;
 }
 
-struct g_url parse_url(char *url)
+static struct g_url parse_url(char *url)
 {
 	struct g_url test;
 	char scan_info[255];

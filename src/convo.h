@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _GAIMCONVO_H_
-#define _GAIMCONVO_H_
+#ifndef _CONVO_H_
+#define _CONVO_H_
 
 #include <gtk/gtk.h>
 #include "gaim.h"
@@ -74,4 +74,4 @@ extern int close_callback(GtkWidget *, struct conversation *);
 
 extern gboolean meify(char *);
 
-#endif
+#endif /* _CONVO_H_ */

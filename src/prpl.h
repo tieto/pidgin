@@ -19,11 +19,15 @@
  *
  */
 
-#ifndef _GAIMPRPL_H_
-#define _GAIMPRPL_H_
+/* this file should be all that prpls need to include. therefore, by including
+ * this file, they should get glib, proxy, gaim_connection, prpl, etc. */
 
+#ifndef _PRPL_H_
+#define _PRPL_H_
+
+#include "core.h"
+#include "proxy.h"
 #include "multi.h"
-#include <stdio.h>
 
 #define PROTO_TOC	0
 #define PROTO_OSCAR	1
@@ -90,6 +94,12 @@ struct prpl {
 	GList *(* chat_info)(struct gaim_connection *);
 
 	/* all the server-related functions */
+
+	/* a lot of these (like get_dir) are protocol-dependent and should be removed. ones like
+	 * set_dir (which is also protocol-dependent) can stay though because there's a dialog
+	 * (i.e. the prpl says you can set your dir info, the ui shows a dialog and needs to call
+	 * set_dir in order to set it) */
+
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);
 	int  (* send_im)	(struct gaim_connection *, char *who, char *message, int away);
@@ -132,6 +142,7 @@ struct prpl {
 	int  (* chat_send)	(struct gaim_connection *, int id, char *message);
 	void (* keepalive)	(struct gaim_connection *);
 
+	/* this is really bad. */
 	void (* convo_closed)   (struct gaim_connection *, char *who);
 
 	char *(* normalize)(const char *);
@@ -157,4 +168,4 @@ extern void connection_has_mail(struct gaim_connection *, int, const char *, con
 extern void set_icon_data(struct gaim_connection *, char *, void *, int);
 extern void *get_icon_data(struct gaim_connection *, char *, int *);
 
-#endif
+#endif /* _PRPL_H_ */

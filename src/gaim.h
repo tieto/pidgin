@@ -19,23 +19,18 @@
  *
  */
 
-#ifndef _GAIM_GAIM_H_
-#define _GAIM_GAIM_H_
+#ifndef _GAIM_H_
+#define _GAIM_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <gtk/gtk.h>
-#include <time.h>
-#include <stdio.h>
-#ifdef USE_APPLET
-#include <applet-widget.h>
-#endif /* USE_APPLET */
-#ifdef USE_GNOME
-#include <gnome.h>
-#endif
-#include "multi.h"
+#include "core.h"
+#include "ui.h"
+/* CUI: when this is done being split, the only things below should be things
+ * both the core and the uis depend on e.g. the protocol definitions, etc, and
+ * it won't include core.h or ui.h (i.e. it'll mostly be #define's) */
 
 
 #define BROWSER_NETSCAPE              0
@@ -74,27 +69,7 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-#define PLUGIN_DIR ".gaim/plugins/"
-
 #define WEBSITE "http://gaim.sourceforge.net/"
-
-#define FACE_ANGEL 0
-#define FACE_BIGSMILE 1
-#define FACE_BURP 2
-#define FACE_CROSSEDLIPS 3
-#define FACE_CRY 4
-#define FACE_EMBARRASSED 5
-#define FACE_KISS 6
-#define FACE_MONEYMOUTH 7
-#define FACE_SAD 8
-#define FACE_SCREAM 9
-#define FACE_SMILE 10
-#define FACE_SMILE8 11
-#define FACE_THINK 12
-#define FACE_TONGUE 13
-#define FACE_WINK 14
-#define FACE_YELL 15
-#define FACE_TOTAL 16
 
 #ifndef USE_GNOME
 #ifdef ENABLE_NLS
@@ -110,8 +85,6 @@
 #  define _(x) (x)
 #endif
 #endif
-
-extern struct debug_window *dw;
 
 struct aim_user {
 	char username[64];
@@ -165,67 +138,6 @@ struct aim_user {
 
 #define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
 
-struct save_pos {
-        int x;
-        int y;
-        int width;
-        int height;
-	int xoff;
-	int yoff;
-};
-
-
-struct window_size {
-	int width;
-	int height;
-	int entry_height;
-};
-
-
-struct option_set {
-        int *options;
-        int option;
-};
-
-struct g_url {
-	char address[255];
-	int port;
-        char page[255];
-};
-
-enum gaim_event {
-	event_signon = 0,
-	event_signoff,
-	event_away,
-	event_back,
-	event_im_recv,
-	event_im_send,
-	event_buddy_signon,
-	event_buddy_signoff,
-	event_buddy_away,
-	event_buddy_back,
-	event_buddy_idle,
-	event_buddy_unidle,
-	event_blist_update,
-	event_chat_invited,
-	event_chat_join,
-	event_chat_leave,
-	event_chat_buddy_join,
-	event_chat_buddy_leave,
-	event_chat_recv,
-	event_chat_send,
-	event_warned,
-	event_error,
-	event_quit,
-	event_new_conversation,
-	event_set_info,
-	event_draw_menu,
-	event_im_displayed_sent,
-	event_im_displayed_rcvd,
-	event_chat_send_invite,
-	/* any others? it's easy to add... */
-};
-
 enum log_event {
 	log_signon = 0,
 	log_signoff,
@@ -234,44 +146,6 @@ enum log_event {
 	log_idle,
 	log_unidle,
 	log_quit
-};
-
-#ifdef GAIM_PLUGINS
-#include <gmodule.h>
-
-struct gaim_plugin {
-	GModule *handle;
-	char *name;
-	char *description;
-};
-
-struct gaim_callback {
-	GModule *handle;
-	enum gaim_event event;
-	void *function;
-	void *data;
-};
-
-extern GList *plugins;
-extern GList *callbacks;
-#endif
-
-#define EDIT_GC    0
-#define EDIT_GROUP 1
-#define EDIT_BUDDY 2
-
-struct buddy {
-	int edittype;
-	char name[80];
-	char show[80];
-        int present;
-	int evil;
-	time_t signon;
-	time_t idle;
-        int uc;
-	gushort caps; /* woohoo! */
-	void *proto_data; /* what a hack */
-	struct gaim_connection *gc; /* the connection it belongs to */
 };
 
 struct log_conversation {
@@ -320,22 +194,6 @@ struct away_message {
 	char name[80];
 	char message[2048];
 };
-
-struct group {
-	int edittype;
-	char name[80];
-	GSList *members;
-	struct gaim_connection *gc; /* the connection it belongs to */
-};
-
-struct debug_window {
-	GtkWidget *window;
-	GtkWidget *entry;
-};
-
-#if USE_PIXBUF
-#include <gdk-pixbuf/gdk-pixbuf.h>
-#endif
 
 /* struct buddy_chat went away and got merged with this. */
 struct conversation {
@@ -419,8 +277,6 @@ struct conversation {
 #define CONVERSATION_TITLE "%s - Gaim"
 #define LOG_CONVERSATION_TITLE "%s - Gaim (logged)"
 
-#define AOL_SRCHSTR "/community/aimcheck.adp/url="
-
 /* These should all be runtime selectable */
 
 #define MSG_LEN 2048
@@ -429,18 +285,6 @@ struct conversation {
  * length. */
 #define BUF_LEN MSG_LEN
 #define BUF_LONG BUF_LEN * 2
-
-
-#ifdef USE_APPLET
-extern GtkWidget *applet;
-#endif /* USE_APPLET */
-
-/* Globals in dialog.c */
-extern char fontface[64];
-extern int fontsize;
-extern GdkColor bgcolor;
-extern GdkColor fgcolor;
-extern int smiley_array[FACE_TOTAL];
 
 /* Globals in aim.c */
 extern GList *log_conversations;
@@ -452,30 +296,12 @@ extern int opt_away;
 extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
 
-/* Globals in buddy_chat.c */
-/* it is very important that you don't use this for anything.
- * its sole purpose is to allow all group chats to be in one
- * window. use struct gaim_connection's buddy_chats instead. */
-extern GList *chats;
-extern GtkWidget *all_chats;
-extern GtkWidget *chat_notebook;
-
-extern GtkWidget *joinchat;
-
 /* Globals in away.c */
 extern struct away_message *awaymessage;
 extern struct away_message *default_away;
 extern int auto_away;
 extern GtkWidget *awaymenu;
 extern GtkWidget *clistqueue; 
-
-/* Globals in prpl.c */
-extern GtkWidget *protomenu;
-
-/* Globals in buddy.c */
-extern GtkWidget *buddies;
-extern GtkWidget *bpmenu;
-extern GtkWidget *blist;
 
 extern guint misc_options;
 #define OPT_MISC_DEBUG			0x00000001
@@ -596,10 +422,6 @@ extern char web_command[2048];
 extern struct save_pos blist_pos;
 extern struct window_size conv_size, buddy_chat_size;
 
-/* Functions in about.c */
-extern void show_about(GtkWidget *, void *);
-extern void gaim_help(GtkWidget *, void *);
-
 /* Functions in buddy_chat.c */
 extern void join_chat();
 extern void chat_write(struct conversation *, char *, int, char *, time_t);
@@ -619,7 +441,6 @@ extern void do_join_chat();
 extern void chat_set_topic(struct conversation*, char*, char*);
 
 /* Functions in html.c */
-extern struct g_url parse_url(char *);
 extern void grab_url(char *, void (*callback)(gpointer, char *), gpointer);
 extern gchar *strip_html(gchar *);
 
@@ -659,7 +480,6 @@ extern char *str_to_utf8(unsigned char *);
 extern void serv_login(struct aim_user *);
 extern void serv_close(struct gaim_connection *);
 extern void serv_touch_idle(struct gaim_connection *);
-extern void serv_finish_login();
 extern int  serv_send_im(struct gaim_connection *, char *, char *, int);
 extern void serv_get_info(struct gaim_connection *, char *);
 extern void serv_get_dir(struct gaim_connection *, char *);
@@ -685,15 +505,6 @@ extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern int serv_chat_send(struct gaim_connection *, int, char *);
-
-/* output from serv */
-extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
-extern void serv_got_im(struct gaim_connection *, char *, char *, guint32, time_t);
-extern void serv_got_eviled(struct gaim_connection *, char *, int);
-extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char *, GList *);
-extern struct conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
-extern void serv_got_chat_left(struct gaim_connection *, int);
-extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *, time_t);
 
 /* Functions in conversation.c */
 extern void gaim_setup_imhtml(GtkWidget *);
@@ -758,23 +569,13 @@ extern void signoff(struct gaim_connection *);
 extern void signoff_all(gpointer, gpointer);
 extern void do_im_back();
 extern void set_buddy(struct gaim_connection *, struct buddy *);
-extern void add_category(char *);
 extern void build_edit_tree();
-extern void remove_person(struct group *, struct buddy *);
-extern void remove_category(struct group *);
 extern void do_pounce(struct gaim_connection *, char *, int);
 extern void do_bp_menu();
-extern struct buddy *find_buddy(struct gaim_connection *, char *);
-extern struct group *find_group(struct gaim_connection *, char *);
-extern struct group *find_group_by_buddy(struct gaim_connection *, char *);
-extern void remove_buddy(struct gaim_connection *, struct group *, struct buddy *);
-extern void ui_remove_buddy(struct gaim_connection *, struct group *, struct buddy *);
-extern struct buddy *add_buddy(struct gaim_connection *, char *, char *, char *);
 extern void ui_add_buddy(struct gaim_connection *, struct group *, struct buddy *);
-extern void remove_group(struct gaim_connection *, struct group *);
-extern void ui_remove_group(struct gaim_connection *, struct group *);
-extern struct group *add_group(struct gaim_connection *, char *);
+extern void ui_remove_buddy(struct gaim_connection *, struct group *, struct buddy *);
 extern void ui_add_group(struct gaim_connection *, struct group *);
+extern void ui_remove_group(struct gaim_connection *, struct group *);
 extern void toggle_buddy_pixmaps();
 extern void gaim_separator(GtkWidget *);
 extern void redo_buddy_list(); /* you really shouldn't call this function */
@@ -852,7 +653,6 @@ gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);
-extern void do_export(struct gaim_connection *);
 extern void show_warn_dialog(struct gaim_connection *, char *);
 extern GtkWidget *do_error_dialog(char *, char *);
 extern void show_im_dialog();
@@ -881,8 +681,6 @@ extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *,struct conversation *);
 extern void show_change_passwd(struct gaim_connection *);
-extern void do_import(struct gaim_connection *, char *);
-extern int bud_list_cache_exists(struct gaim_connection *);
 extern void show_smiley_dialog(struct conversation *, GtkWidget *);
 extern void close_smiley_dialog(GtkWidget *widget, struct conversation *c);
 extern void set_smiley_array(GtkWidget *widget, int smiley_type);
@@ -917,4 +715,4 @@ void BuddyTickerAddUser(char *, GdkPixmap *, GdkBitmap *);
 void BuddyTickerSetPixmap(char *, GdkPixmap *, GdkBitmap *);
 void BuddyTickerSignoff();
 
-#endif /* _GAIM_GAIM_H_ */
+#endif /* _GAIM_H_ */

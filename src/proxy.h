@@ -23,8 +23,8 @@
    prototype-ing stuff and redefine some net function to mask them
    with some kind of transparent layer */ 
 
-#ifndef _INC_PROXY_H
-#define _INC_PROXY_H
+#ifndef _PROXY_H_
+#define _PROXY_H_
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -54,4 +54,4 @@ extern void gaim_input_remove(gint);
 
 extern int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data);
 
-#endif
+#endif /* _PROXY_H_ */
