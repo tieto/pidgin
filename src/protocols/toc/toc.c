@@ -71,23 +71,23 @@ static GaimPlugin *my_protocol = NULL;
 #define FILE_GET_UID  "09461348-4C7F-11D1-8222-444553540000"
 #define GAMES_UID     "0946134a-4C7F-11D1-8222-444553540000"
 
-#define UC_AOL		0x02
-#define UC_ADMIN	0x04
+#define UC_AOL			0x02
+#define UC_ADMIN		0x04
 #define UC_UNCONFIRMED	0x08
-#define UC_NORMAL	0x10
-#define UC_WIRELESS     0x20
+#define UC_NORMAL		0x10
+#define UC_WIRELESS		0x20
 
 struct ft_request {
 	GaimConnection *gc;
-        char *user;
+	char *user;
 	char UID[2048];
-        char *cookie;
-        char *ip;
-        int port;
-        char *message;
-        char *filename;
+	char *cookie;
+	char *ip;
+	int port;
+	char *message;
+	char *filename;
 	int files;
-        int size;
+	int size;
 };
 
 struct buddy_icon {
@@ -133,27 +133,27 @@ static void accept_file_dialog(struct ft_request *);
 int toc_write(int fd, const void *buffer, int len)
 {
 #ifndef _WIN32
-       return write(fd, buffer, len);
+	return write(fd, buffer, len);
 #else
-       return send(fd, buffer, len, 0);
+	return send(fd, buffer, len, 0);
 #endif
 }
 
 int toc_read(int fd, void *buffer, int size)
 {
 #ifndef _WIN32
-       return read(fd, buffer, size);
+	return read(fd, buffer, size);
 #else
-       return recv(fd, buffer, size, 0);
+	return recv(fd, buffer, size, 0);
 #endif
 }
 
 int toc_soc_close( int fd )
 {
 #ifndef _WIN32
-       return close(fd);
+	return close(fd);
 #else
-       return closesocket(fd);
+	return closesocket(fd);
 #endif
 }
 
@@ -399,7 +399,7 @@ static int sflap_send(GaimConnection *gc, const char *buf, int olen, int type)
 
 	if (olen < 0) {
 		escaped = escape_message(buf);
-		len = strlen(buf);
+		len = strlen(escaped);
 	} else {
 		escaped = g_memdup(buf, olen);
 		len = olen;
@@ -507,87 +507,87 @@ static char *show_error_message()
 	char *w = strtok(NULL, ":");
 	static char buf[256];
 
-        switch(no) {
-        case 69:
-                g_snprintf(buf, sizeof(buf), _("Unable to write file %s."), w);
-                break;
-        case 169:
-                g_snprintf(buf, sizeof(buf), _("Unable to read file %s."), w);
-                break;
-        case 269:
-                g_snprintf(buf, sizeof(buf), _("Message too long, last %s bytes truncated."), w);
-                break;
-        case 901:
-                g_snprintf(buf, sizeof(buf), _("%s not currently logged in."), w);
-                break;
-        case 902:
-                g_snprintf(buf, sizeof(buf), _("Warning of %s not allowed."), w);
-                break;
-        case 903:
-                g_snprintf(buf, sizeof(buf), _("A message has been dropped, you are exceeding the server speed limit."));
-                break;
-        case 950:
-                g_snprintf(buf, sizeof(buf), _("Chat in %s is not available."), w);
-                break;
-        case 960:
-                g_snprintf(buf, sizeof(buf), _("You are sending messages too fast to %s."), w);
-                break;
-        case 961:
-                g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was too big."), w);
-                break;
-        case 962:
-                g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was sent too fast."), w);
-                break;
-        case 970:
-                g_snprintf(buf, sizeof(buf), _("Failure."));
-                break;
-        case 971:
-                g_snprintf(buf, sizeof(buf), _("Too many matches."));
-                break;
-        case 972:
-                g_snprintf(buf, sizeof(buf), _("Need more qualifiers."));
-                break;
-        case 973:
-                g_snprintf(buf, sizeof(buf), _("Dir service temporarily unavailable."));
-                break;
-        case 974:
-                g_snprintf(buf, sizeof(buf), _("Email lookup restricted."));
-                break;
-        case 975:
-                g_snprintf(buf, sizeof(buf), _("Keyword ignored."));
-                break;
-        case 976:
-                g_snprintf(buf, sizeof(buf), _("No keywords."));
-                break;
-        case 977:
-                g_snprintf(buf, sizeof(buf), _("User has no directory information."));
-                /* g_snprintf(buf, sizeof(buf), _("Language not supported.")); */
-                break;
-        case 978:
-                g_snprintf(buf, sizeof(buf), _("Country not supported."));
-                break;
-        case 979:
-                g_snprintf(buf, sizeof(buf), _("Failure unknown: %s."), w);
-                break;
-        case 980:
-                g_snprintf(buf, sizeof(buf), _("Incorrect nickname or password."));
-                break;
-        case 981:
-                g_snprintf(buf, sizeof(buf), _("The service is temporarily unavailable."));
-                break;
-        case 982:
-                g_snprintf(buf, sizeof(buf), _("Your warning level is currently too high to log in."));
-                break;
-        case 983:
-                g_snprintf(buf, sizeof(buf), _("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."));
-                break;
-                g_snprintf(buf, sizeof(buf), _("An unknown signon error has occurred: %s."), w);
-                break;
-        default:
-                g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occurred.  Info: %s"), no, w);
+	switch(no) {
+		case 69:
+			g_snprintf(buf, sizeof(buf), _("Unable to write file %s."), w);
+			break;
+		case 169:
+			g_snprintf(buf, sizeof(buf), _("Unable to read file %s."), w);
+			break;
+		case 269:
+			g_snprintf(buf, sizeof(buf), _("Message too long, last %s bytes truncated."), w);
+			break;
+		case 901:
+			g_snprintf(buf, sizeof(buf), _("%s not currently logged in."), w);
+			break;
+		case 902:
+			g_snprintf(buf, sizeof(buf), _("Warning of %s not allowed."), w);
+			break;
+		case 903:
+			g_snprintf(buf, sizeof(buf), _("A message has been dropped, you are exceeding the server speed limit."));
+			break;
+		case 950:
+			g_snprintf(buf, sizeof(buf), _("Chat in %s is not available."), w);
+			break;
+		case 960:
+			g_snprintf(buf, sizeof(buf), _("You are sending messages too fast to %s."), w);
+			break;
+		case 961:
+			g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was too big."), w);
+			break;
+		case 962:
+			g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was sent too fast."), w);
+			break;
+		case 970:
+			g_snprintf(buf, sizeof(buf), _("Failure."));
+			break;
+		case 971:
+			g_snprintf(buf, sizeof(buf), _("Too many matches."));
+			break;
+		case 972:
+			g_snprintf(buf, sizeof(buf), _("Need more qualifiers."));
+			break;
+		case 973:
+			g_snprintf(buf, sizeof(buf), _("Dir service temporarily unavailable."));
+			break;
+		case 974:
+			g_snprintf(buf, sizeof(buf), _("Email lookup restricted."));
+			break;
+		case 975:
+			g_snprintf(buf, sizeof(buf), _("Keyword ignored."));
+			break;
+		case 976:
+			g_snprintf(buf, sizeof(buf), _("No keywords."));
+			break;
+		case 977:
+			g_snprintf(buf, sizeof(buf), _("User has no directory information."));
+			/* g_snprintf(buf, sizeof(buf), _("Language not supported.")); */
+			break;
+		case 978:
+			g_snprintf(buf, sizeof(buf), _("Country not supported."));
+			break;
+		case 979:
+			g_snprintf(buf, sizeof(buf), _("Failure unknown: %s."), w);
+			break;
+		case 980:
+			g_snprintf(buf, sizeof(buf), _("Incorrect nickname or password."));
+			break;
+		case 981:
+			g_snprintf(buf, sizeof(buf), _("The service is temporarily unavailable."));
+			break;
+		case 982:
+			g_snprintf(buf, sizeof(buf), _("Your warning level is currently too high to log in."));
+			break;
+		case 983:
+			g_snprintf(buf, sizeof(buf), _("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."));
+			break;
+			g_snprintf(buf, sizeof(buf), _("An unknown signon error has occurred: %s."), w);
+			break;
+		default:
+			g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occurred.  Info: %s"), no, w);
 	}
 
-        return buf;
+ return buf;
 }
 
 static void toc_callback(gpointer data, gint source, GaimInputCondition condition)
@@ -1062,15 +1062,18 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 {
 	char *buf1, *buf2;
 
+gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", message);
 	buf1 = escape_text(message);
 	if (strlen(buf1) + 52 > MSG_LEN) {
 		g_free(buf1);
 		return -E2BIG;
 	}
 
+gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", buf1);
 	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", normalize(name), buf1, 
 						   ((flags & IM_FLAG_AWAY) ? " auto" : ""));
 	g_free(buf1);
+gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", buf2);
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	g_free(buf2);
 
@@ -2030,7 +2033,7 @@ static void accept_file_dialog(struct ft_request *ft) {
 			size /= 1024;
 			index++;
 		}
-	        g_snprintf(buf, sizeof(buf), 
+		g_snprintf(buf, sizeof(buf), 
 				ngettext(
 				"%s requests %s to accept %d file: %s (%.2f %s)%s%s",
 				"%s requests %s to accept %d files: %s (%.2f %s)%s%s",
