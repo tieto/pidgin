@@ -5369,32 +5369,6 @@ static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
 	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 }
 
-static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = gc->proto_data;
-	od->evilhack = g_slist_append(od->evilhack, g_strdup(normalize(who)));
-	if (od->icq) {
-		struct buddy *budlight = gaim_find_buddy(gc->account, who);
-		if (budlight)
-			if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
-					char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
-					g_show_info_text(gc, who, 2, dialog_msg, NULL);
-					free(state_msg);
-					free(dialog_msg);
-				}
-			else {
-				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-				char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR><I>User has no status message.</I><BR>"), who, state_msg);
-				g_show_info_text(gc, who, 2, dialog_msg, NULL);
-				free(state_msg);
-				free(dialog_msg);
-			}
-		else
-			do_error_dialog("Could not find contact in local list, therefore unable to request status message.\n", NULL, GAIM_ERROR);
-	} else
-		oscar_get_info(gc, who);
-}
-
 static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 #ifdef NOSSI
@@ -5531,7 +5505,7 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 #if 0
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Get Status Msg");
-		pbm->callback = oscar_get_away_msg;
+		pbm->callback = oscar_get_icqstatusmsg;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
 #endif

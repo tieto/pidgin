@@ -391,13 +391,14 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group, const
 {
 	if (g && g->prpl && old_group && new_name) {
 		GList *tobemoved = NULL;
-		GSList *original;
+		GaimBlistNode *b = ((GaimBlistNode*)old_group)->child;
 
-		/*		for (original=old_group->members; original; original=g_slist_next(original)) {
-			struct buddy *b = original->data;
-			if(b->account == g->account)
-				tobemoved = g_list_append(tobemoved, b->name);
-				} */
+		while (b) {
+			struct buddy *bd = (struct buddy *)b;
+			if (bd->account = g->account)
+				tobemoved = g_list_append(tobemoved, bd->name);
+			b = b->next;
+		}
 
 		if (g->prpl->rename_group) {
 			/* prpl's might need to check if the group already 
