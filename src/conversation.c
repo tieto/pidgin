@@ -1443,7 +1443,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				else
 					g_snprintf(str, 1024, "***%s", who);
 				if (flags & WFLAG_NICK)
-					strcpy(colour, "#ef7f00");
+					strcpy(colour, "#af7f00");
 				else
 					strcpy(colour, "#062585");
 			} else {
@@ -1453,7 +1453,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				else
 					g_snprintf(str, 1024, "%s:", who);
 				if (flags & WFLAG_NICK)
-					strcpy(colour, "#ef7f00");
+					strcpy(colour, "#af7f00");
 				else if (flags & WFLAG_RECV)
 					strcpy(colour, "#ff0000");
 				else if (flags & WFLAG_SEND)
