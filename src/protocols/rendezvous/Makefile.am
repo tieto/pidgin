@@ -5,7 +5,9 @@ pkgdir = $(libdir)/gaim
 
 RENDEZVOUSSOURCES = \
 	mdns.c \
+	mdns.h \
 	mdns_cache.c \
+	mdns_cache.h \
 	rendezvous.c
 
 AM_CFLAGS = $(st)
