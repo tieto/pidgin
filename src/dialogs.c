@@ -439,8 +439,8 @@ void show_warn_dialog(char *who)
 	gtk_widget_set_usize(warn, 75, 30);
 	gtk_widget_set_usize(cancel, 75, 30);
 
-	gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 5);
-        gtk_box_pack_end(GTK_BOX(bbox), cancel, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 
         g_snprintf(buf, 127, _("Do you really want to warn %s?"), who);
         label = gtk_label_new(buf);

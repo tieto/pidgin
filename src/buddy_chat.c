@@ -88,7 +88,7 @@ void join_chat()
 
 	if (!joinchat) {
 		joinchat = gtk_window_new(GTK_WINDOW_DIALOG);
-		gtk_widget_set_usize(joinchat, 300, 95);
+		gtk_widget_set_usize(joinchat, 300, 100);
 		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, FALSE, TRUE);
 		gtk_widget_show(joinchat);
 		bbox = gtk_hbox_new(TRUE, 10);
