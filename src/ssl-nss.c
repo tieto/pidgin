@@ -121,6 +121,7 @@ static void
 input_func(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimSslConnection *gsc = (GaimSslConnection *)data;
+#if 0
 	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
 	char *cp, *ip, *sp;
 	int op, kp0, kp1;
@@ -138,6 +139,7 @@ input_func(gpointer data, gint source, GaimInputCondition cond)
 	PR_Free(cp);
 	PR_Free(ip);
 	PR_Free(sp);
+#endif
 
 	gsc->input_func(gsc->user_data, gsc, cond);
 }
@@ -220,17 +222,14 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		gaim_debug_error("nss", "Handshake failed\n");
 
-		gaim_ssl_close((GaimSslConnection *)gsc);
+		gaim_ssl_close(gsc);
 
 		return;
 	}
 
-#if 0
-	gsc->input_func(gsc->user_data, (GaimSslConnection *)gsc,
-						 cond);
-#endif
-
-	input_func(gsc, source, cond);
+	gsc->inpa = gaim_input_add(gsc->fd,
+							   GAIM_INPUT_READ | GAIM_INPUT_WRITE,
+							   input_func, gsc);
 }
 
 static void
