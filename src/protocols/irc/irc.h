@@ -101,6 +101,7 @@ char *irc_format(struct irc_conn *irc, const char *format, ...);
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, char **args);

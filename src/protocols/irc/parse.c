@@ -77,6 +77,7 @@ static struct _irc_msg {
 	{ "404", "nt:", irc_msg_nosend },	/* Cannot send to chan		*/
 	{ "421", "nv:", irc_msg_unknown },	/* Unknown command		*/
 	{ "422", "nv:", irc_msg_endmotd },	/* No MOTD available		*/
+	{ "432", "vn:", irc_msg_badnick },	/* Erroneous nickname		*/
 	{ "433", "vn:", irc_msg_nickused },	/* Nickname already in use	*/
 	{ "438", "nn:", irc_msg_nochangenick },	/* Nick may not change		*/
 	{ "442", "nc:", irc_msg_notinchan },	/* Not in channel		*/
