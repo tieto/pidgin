@@ -3,13 +3,9 @@
 MODULE = Gaim::Account  PACKAGE = Gaim::Account  PREFIX = gaim_account_
 PROTOTYPES: ENABLE
 
-Gaim::Connection
+void
 gaim_account_connect(account)
 	Gaim::Account account
-CODE:
-	RETVAL = gaim_account_connect(account);
-OUTPUT:
-	RETVAL
 
 void
 gaim_account_disconnect(account)
