@@ -74,7 +74,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 
-%doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS
+%doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS COPYRIGHT
 %doc README ChangeLog
 %doc %{_mandir}/man1/*
 %doc %{_mandir}/man3*/*
