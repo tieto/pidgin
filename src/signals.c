@@ -24,6 +24,7 @@
 
 #include "debug.h"
 #include "signals.h"
+#include "value.h"
 
 typedef struct
 {
@@ -41,6 +42,10 @@ typedef struct
 	gulong id;
 
 	GaimSignalMarshalFunc marshal;
+
+	int num_values;
+	GaimValue **values;
+	GaimValue *ret_value;
 
 	GList *handlers;
 	size_t handler_count;
@@ -84,15 +89,27 @@ destroy_signal_data(GaimSignalData *signal_data)
 
 	g_list_free(signal_data->handlers);
 
+	if (signal_data->values != NULL)
+	{
+		int i;
+
+		for (i = 0; i < signal_data->num_values; i++)
+			gaim_value_destroy((GaimValue *)signal_data->values[i]);
+
+		g_free(signal_data->values);
+	}
+
 	g_free(signal_data);
 }
 
 gulong
 gaim_signal_register(void *instance, const char *signal,
-					 GaimSignalMarshalFunc marshal)
+					 GaimSignalMarshalFunc marshal,
+					 GaimValue *ret_value, int num_values, ...)
 {
 	GaimInstanceData *instance_data;
 	GaimSignalData *signal_data;
+	va_list args;
 
 	g_return_val_if_fail(instance != NULL, 0);
 	g_return_val_if_fail(signal   != NULL, 0);
@@ -119,6 +136,22 @@ gaim_signal_register(void *instance, const char *signal,
 	signal_data->id              = instance_data->next_signal_id;
 	signal_data->marshal         = marshal;
 	signal_data->next_handler_id = 1;
+	signal_data->ret_value       = ret_value;
+	signal_data->num_values      = num_values;
+
+	if (num_values > 0)
+	{
+		int i;
+
+		signal_data->values = g_new0(GaimValue *, num_values);
+
+		va_start(args, num_values);
+
+		for (i = 0; i < num_values; i++)
+			signal_data->values[i] = va_arg(args, GaimValue *);
+
+		va_end(args);
+	}
 
 	g_hash_table_insert(instance_data->signals,
 						g_strdup(signal), signal_data);
@@ -167,6 +200,38 @@ gaim_signals_unregister_by_instance(void *instance)
 	 * things registering and unregistering in the right order :)
 	 */
 	g_return_if_fail(found);
+}
+
+void
+gaim_signal_get_values(void *instance, const char *signal,
+					   GaimValue **ret_value,
+					   int *num_values, GaimValue ***values)
+{
+	GaimInstanceData *instance_data;
+	GaimSignalData *signal_data;
+
+	g_return_if_fail(instance   != NULL);
+	g_return_if_fail(signal     != NULL);
+	g_return_if_fail(num_values != NULL);
+	g_return_if_fail(values     != NULL);
+
+	/* Get the instance data */
+	instance_data =
+		(GaimInstanceData *)g_hash_table_lookup(instance_table, instance);
+
+	g_return_if_fail(instance_data != NULL);
+
+	/* Get the signal data */
+	signal_data =
+		(GaimSignalData *)g_hash_table_lookup(instance_data->signals, signal);
+
+	g_return_if_fail(signal_data != NULL);
+
+	*num_values = signal_data->num_values;
+	*values     = signal_data->values;
+
+	if (ret_value != NULL)
+		*ret_value = signal_data->ret_value;
 }
 
 static gulong

@@ -24,6 +24,7 @@
 #define _GAIM_SIGNAL_H_
 
 #include <glib.h>
+#include "value.h"
 
 #define GAIM_CALLBACK(func) ((GaimCallback)func)
 
@@ -43,15 +44,21 @@ extern "C" {
 /**
  * Registers a signal in an instance.
  *
- * @param instance The instance to register the signal for.
- * @param signal   The signal name.
- * @param marshal  The marshal function.
+ * @param instance  The instance to register the signal for.
+ * @param signal    The signal name.
+ * @param marshal   The marshal function.
+ * @param ret_value The return value type, or NULL for no return value.
+ * @param num_types The number of values to be passed to the callbacks.
+ * @param ...       The values to pass to the callbacks.
  *
  * @return The signal ID local to that instance, or 0 if the signal
  *         couldn't be registered.
+ *
+ * @see GaimValue
  */
 gulong gaim_signal_register(void *instance, const char *signal,
-							GaimSignalMarshalFunc marshal);
+							GaimSignalMarshalFunc marshal,
+							GaimValue *ret_value, int num_values, ...);
 
 /**
  * Unregisters a signal in an instance.
@@ -67,6 +74,18 @@ void gaim_signal_unregister(void *instance, const char *signal);
  * @param instance The instance to unregister the signal for.
  */
 void gaim_signals_unregister_by_instance(void *instance);
+
+/**
+ * Returns a list of value types used for a signal.
+ *
+ * @param instance   The instance the signal is registered to.
+ * @param signal     The signal.
+ * @param num_values The returned number of values.
+ * @param values     The returned list of values.
+ */
+void gaim_signal_get_values(void *instance, const char *signal,
+							GaimValue **ret_value,
+							int *num_values, GaimValue ***values);
 
 /**
  * Connects a signal handler to a signal for a particular object.

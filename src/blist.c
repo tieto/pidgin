@@ -2103,20 +2103,36 @@ gaim_blist_init(void)
 {
 	void *handle = gaim_blist_get_handle();
 
-	gaim_signal_register(handle, "buddy-away", gaim_marshal_VOID__POINTER);
-	gaim_signal_register(handle, "buddy-back", gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "buddy-away",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
+
+	gaim_signal_register(handle, "buddy-back",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(handle, "buddy-idle",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
 	gaim_signal_register(handle, "buddy-unidle",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(handle, "buddy-signed-on",
-						 gaim_marshal_VOID__POINTER);
-	gaim_signal_register(handle, "buddy-signed-off",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
 
-	gaim_signal_register(handle, "update-idle", gaim_marshal_VOID);
+	gaim_signal_register(handle, "buddy-signed-off",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
+
+	gaim_signal_register(handle, "update-idle", gaim_marshal_VOID, NULL, 0);
 }
 
 void

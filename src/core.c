@@ -64,7 +64,7 @@ gaim_core_init(const char *ui)
 	/* The signals subsystem is important and should be first. */
 	gaim_signals_init();
 
-	gaim_signal_register(core, "quitting", gaim_marshal_VOID);
+	gaim_signal_register(core, "quitting", gaim_marshal_VOID, NULL, 0);
 
 	/* Initialize all static protocols. */
 	static_proto_init();

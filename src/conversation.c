@@ -2621,61 +2621,166 @@ gaim_conversations_init(void)
 
 	/* Register signals */
 	gaim_signal_register(handle, "displaying-im-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER);
+						 gaim_marshal_BOOLEAN__POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "displayed-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "sending-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
+						 NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "sent-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
+						 NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "received-im-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER);
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 4,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "displaying-chat-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER_UINT);
+						 gaim_marshal_BOOLEAN__POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "displayed-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "sending-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT);
+						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_UINT));
+
 	gaim_signal_register(handle, "sent-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT);
+						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_UINT));
+
 	gaim_signal_register(handle, "received-chat-msg",
-				gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT,
+						 NULL, 4,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "conversation-switching",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
+
 	gaim_signal_register(handle, "conversation-switched",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "conversation-created",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
+
 	gaim_signal_register(handle, "deleting-conversation",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "buddy-typing",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "chat-buddy-joining",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "chat-buddy-joined",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "chat-buddy-leaving",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "chat-buddy-left",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "chat-inviting-user",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "chat-invited-user",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "chat-invited",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER,
+						 NULL, 4,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "chat-joined",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
+
 	gaim_signal_register(handle, "chat-left",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
 }
 
 void

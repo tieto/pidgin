@@ -1429,18 +1429,35 @@ gaim_accounts_init(void)
 	void *handle = gaim_accounts_get_handle();
 
 	gaim_signal_register(handle, "account-connecting",
-						 gaim_marshal_VOID__POINTER);
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT));
 
 	gaim_signal_register(handle, "account-away",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "account-setting-info",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "account-set-info",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "account-warned",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT);
+						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_UINT));
 }
 
 void
