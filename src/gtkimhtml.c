@@ -1701,7 +1701,8 @@ gtk_imhtml_get_color (const gchar *color)
 {
 	GdkColor c;
 
-	gdk_color_parse (color, &c);
+	if (!gdk_color_parse (color, &c))
+		return NULL;
 
 	return gdk_color_copy (&c);
 }
@@ -2333,8 +2334,13 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				intag = FALSE;
 				tpos = 0;
 
-				if (imhtml->img == NULL)
+				if (imhtml->img == NULL) {
+					ws [wpos] = 0;
+					strcat (ws, copy);
+					wpos = strlen (ws);
+					g_free (copy);
 					continue;
+				}
 
 				t = tag + strlen ("<IMG");
 				do {

@@ -1131,14 +1131,13 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	int gtk_font_options = 0;
 	GString *logstr;
 
+	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
+
 	if (display_options & OPT_DISP_IGNORE_COLOUR)
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COLOURS;
 
 	if (display_options & OPT_DISP_IGNORE_FONTS)
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_FONTS;
-
-	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
-	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_TITLE;
 
 	if (display_options & OPT_DISP_IGNORE_SIZES)
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_SIZES;
