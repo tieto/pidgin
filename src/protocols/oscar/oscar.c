@@ -141,6 +141,8 @@ struct oscar_direct_im {
 	int watcher;
 	aim_conn_t *conn;
 	gboolean connected;
+	gboolean gpc_pend;
+	gboolean killme;
 };
 
 struct ask_direct {
@@ -708,6 +710,10 @@ static void oscar_direct_im_destroy(OscarData *od, struct oscar_direct_im *dim)
 			   "destroying Direct IM for %s.\n", dim->name);
 
 	od->direct_ims = g_slist_remove(od->direct_ims, dim);
+	if (dim->gpc_pend) {
+		dim->killme = TRUE;
+		return;
+	}
 	if (dim->watcher)
 	gaim_input_remove(dim->watcher);
 	if (dim->conn) {
@@ -728,7 +734,7 @@ static void oscar_direct_im_disconnect(OscarData *od, struct oscar_direct_im *di
 
 	if (dim->connected)
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), dim->name);
-	else 
+	else
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), dim->name);
 
 	conv = gaim_find_conversation_with_account(dim->name, gaim_connection_get_account(dim->gc));
@@ -776,6 +782,12 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	socklen_t name_len = 1;
 
 	g_return_if_fail(gc != NULL);
+
+	dim->gpc_pend = FALSE;
+	if (dim->killme) {
+		oscar_direct_im_destroy(od, dim);
+		return;
+	}
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		oscar_direct_im_destroy(od, dim);
@@ -850,9 +862,11 @@ static void accept_direct_im_request(struct ask_direct *d) {
 	}
 	host = g_strndup(d->ip, i);
 	dim->conn->status |= AIM_CONN_STATUS_INPROGRESS;
+	dim->gpc_pend = TRUE;
 	rc = gaim_proxy_connect(gc->account, host, port, oscar_odc_callback, dim);
 	g_free(host);
 	if (rc < 0) {
+		dim->gpc_pend = FALSE;
 		oscar_direct_im_disconnect(od, dim);
 		destroy_direct_im_request(d);
 		return;

@@ -486,7 +486,7 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
 	hdrlen = 2+8+16+6+4+4+strlen(msg)+4+2+1+strlen(roomname)+2;
 	hdr = malloc(hdrlen);
 	aim_bstream_init(&hdrbs, hdr, hdrlen);
-	
+
 	aimbs_put16(&hdrbs, 0x0000); /* Unknown! */
 	aimbs_putraw(&hdrbs, ck, sizeof(ck)); /* I think... */
 	aim_putcap(&hdrbs, AIM_CAPS_CHAT);
@@ -592,7 +592,7 @@ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const f
  *
  * You'd think this would be in icq.c, but, well, I'm trying to stick with
  * the one-group-per-file scheme as much as possible.  This could easily
- * be an exception, since Rendezvous IMs are external of the Oscar core, 
+ * be an exception, since Rendezvous IMs are external of the Oscar core,
  * and therefore are undefined.  Really I just need to think of a good way to
  * make an interface similar to what AOL actually uses.  But I'm not using COM.
  *
@@ -700,10 +700,10 @@ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, co
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
-	/* 
-	 * Generate a random message cookie 
+	/*
+	 * Generate a random message cookie
 	 *
-	 * This cookie needs to be alphanumeric and NULL-terminated to be 
+	 * This cookie needs to be alphanumeric and NULL-terminated to be
 	 * TOC-compatible.
 	 *
 	 * XXX - have I mentioned these should be generated in msgcookie.c?
@@ -1736,7 +1736,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	memset(&args, 0, sizeof(args));
 
 	/*
-	 * There's another block of TLVs embedded in the type 5 here. 
+	 * There's another block of TLVs embedded in the type 5 here.
 	 */
 	block1 = aim_tlv_gettlv(tlvlist, 0x0005, 1);
 	aim_bstream_init(&bbs, block1->value, block1->length);
@@ -1745,14 +1745,14 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	 * First two bytes represent the status of the connection.
 	 *
 	 * 0 is a request, 1 is a cancel, 2 is an accept
-	 */ 
+	 */
 	args.status = aimbs_get16(&bbs);
 
 	/*
 	 * Next comes the cookie.  Should match the ICBM cookie.
 	 */
 	cookie2 = aimbs_getraw(&bbs, 8);
-	if (memcmp(cookie, cookie2, 8) != 0) 
+	if (memcmp(cookie, cookie2, 8) != 0)
 		faimdprintf(sess, 0, "rend: warning cookies don't match!\n");
 	memcpy(args.cookie, cookie2, 8);
 	free(cookie2);
