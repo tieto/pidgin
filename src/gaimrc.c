@@ -256,6 +256,12 @@ static void gaimrc_read_away(FILE *f)
 			default_away = g_slist_nth_data(away_messages, atoi(p->value[1]));
 		}
 	}
+	if (!away_messages) {
+		a = g_new0(struct away_message, 1);
+		g_snprintf(a->name, sizeof(a->name), "boring default");
+		g_snprintf(a->message, sizeof(a->message), "%s", BORING_DEFAULT_AWAY_MSG);
+		away_messages = g_slist_append(away_messages, a);
+	}
 }
 
 static void gaimrc_write_away(FILE *f)
@@ -956,15 +962,7 @@ static void gaimrc_write_proxy(FILE *f)
 static void set_defaults()
 {
 	int i;
-
-	if (aim_users) {
-		g_list_free(aim_users);
-		aim_users = NULL;
-	}
-	if (away_messages) {
-		g_slist_free(away_messages);
-		away_messages = NULL;
-	}
+	struct away_message *a;
 
 	misc_options =
 		OPT_MISC_BUDDY_TICKER |
@@ -1013,12 +1011,17 @@ static void set_defaults()
 	    OPT_SOUND_RECV |
 	    OPT_SOUND_SEND |
 	    OPT_SOUND_SILENT_SIGNON;
+
 	report_idle = IDLE_SCREENSAVER;
 	web_browser = BROWSER_NETSCAPE;
-	auto_away = 10;
-	default_away = NULL;
-
 	g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
+
+	auto_away = 10;
+	a = g_new0(struct away_message, 1);
+	g_snprintf(a->name, sizeof(a->name), "boring default");
+	g_snprintf(a->message, sizeof(a->message), "%s", BORING_DEFAULT_AWAY_MSG);
+	away_messages = g_slist_append(away_messages, a);
+	default_away = a;
 
 	blist_pos.width = 0;
 	blist_pos.height = 0;
@@ -1096,6 +1099,10 @@ void load_prefs()
 	} else if (opt_rcfile_arg) {
 		g_snprintf(buf, sizeof(buf), _("Could not open config file %s."), opt_rcfile_arg);
 		do_error_dialog(buf, _("Preferences Error"));
+		set_defaults();
+	} else {
+		set_defaults();
+		save_prefs();
 	}
 }
 
