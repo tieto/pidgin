@@ -6,6 +6,7 @@ WINGAIM:
 	sounds while away?	
 
 gtk2/new prefs
+	font buttons stay depressed after being clicked once, only raise when clicked a second time.
 	bug selecting people in channel user list? (this is a bug on all the gtk2 stuff) [ROB]
 	replace legend in info dialog with link to status icons page
 	buddy ticker stays around when you sign off - showing the buddies who were online
@@ -211,6 +212,7 @@ Yahoo:
 	voice chat
 
 MSN:
+	typing notification is broken in gtk1-stable
 	spaces in friendly names not always unescaped for display, and so displaying
 		as %20 (this may be fixed)
 	bug: some people recieve blank messages. clicking to ignore font faces
