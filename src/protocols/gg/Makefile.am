@@ -16,7 +16,7 @@ libgg_la_LDFLAGS = -module -avoid-version
 
 if STATIC_GG
 
-st = -DSTATIC
+st = -DGAIM_STATIC_PRPL
 noinst_LIBRARIES = libgg.a
 
 libgg_a_SOURCES = $(GGSOURCES)

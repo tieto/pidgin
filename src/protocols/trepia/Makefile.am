@@ -14,7 +14,7 @@ libtrepia_la_LDFLAGS = -module -avoid-version
 
 if STATIC_TREPIA
 
-st = -DSTATIC
+st = -DGAIM_STATIC_PRPL
 noinst_LIBRARIES = libtrepia.a
 libtrepia_a_SOURCES = $(TREPIASOURCES)
 libtrepia_a_CFLAGS  = $(AM_CFLAGS)

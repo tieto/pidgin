@@ -8,7 +8,7 @@ libnapster_la_LDFLAGS = -module -avoid-version
 
 if STATIC_NAPSTER
 
-st = -DSTATIC
+st = -DGAIM_STATIC_PRPL
 noinst_LIBRARIES     = libnapster.a
 libnapster_a_SOURCES = $(NAPSTERSOURCES)
 libnapster_a_CFLAGS  = $(AM_CFLAGS)

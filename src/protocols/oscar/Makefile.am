@@ -52,7 +52,7 @@ liboscar_la_LDFLAGS = -module -avoid-version
 
 if STATIC_OSCAR
 
-st = -DSTATIC
+st = -DGAIM_STATIC_PRPL
 noinst_LIBRARIES   = liboscar.a
 liboscar_a_SOURCES = $(OSCARSOURCES)
 liboscar_a_CFLAGS  = $(AM_CFLAGS)

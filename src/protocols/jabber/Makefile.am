@@ -38,7 +38,7 @@ libjabber_la_LDFLAGS = -module -avoid-version
 
 if STATIC_JABBER
 
-st = -DSTATIC
+st = -DGAIM_STATIC_PRPL
 noinst_LIBRARIES = libjabber.a
 pkg_LTLIBRARIES =
 
