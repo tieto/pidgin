@@ -3459,7 +3459,7 @@ static void oscar_change_email(struct gaim_connection *gc, char *email)
 
 static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
 	struct oscar_data *od = gc->proto_data;
-	if (!strcmp(normalize(nick), gc->username)) {
+	if (!strcmp(normalize(nick), normalize(gc->username))) {
 		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
 			od->setnick = TRUE;
 			od->newsn = g_strdup(nick);
