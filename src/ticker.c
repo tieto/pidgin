@@ -23,6 +23,7 @@
 
 #include <gtk/gtk.h>
 #include "gtkticker.h"
+#include <string.h>
 
 GtkWidget *tickerwindow = NULL;
 GtkWidget *ticker;

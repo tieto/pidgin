@@ -14,4 +14,4 @@ endif
 
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\"
 
-EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h
+EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h gtkticker.h
