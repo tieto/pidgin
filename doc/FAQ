@@ -216,7 +216,8 @@ means you'll make one UDP connection, and possibly very many TCP connections.
 
 3.6  MSN
 
-Rob?
+MSN is a weird TCP protocol written by Microsoft.  It requires multiple
+connections and is a real headache :).
 
 3.7  Jabber
 
@@ -231,8 +232,15 @@ Source IM server.
 
 3.8  Napster
 
-Rob?
-
+Napster is, as you know, the protocol used by that wonderful little program
+called napster.  You know the one!  It's what millions of college kids across
+america are using to sastisfy their longing for music :-D.  Anyways, gaim supports
+it.  It's kind of fiunky, though. Napster is a TCP protocol and only requires one
+connection to the server.  All file transfers, however, are explicitly client to
+client.  The plugin currently only supports one way file transfer (downloading)
+from people who are _not_ firewalled.  You can also send private messages to each
+other, join chat rooms, browse a user's files, and search.  More implementation
+coming soon.
 
 4  Problems
 
@@ -336,7 +344,9 @@ It is also the sound a Penguin Samurai makes :)
 
 6.10 What window manager/distribution/other crap do you use?
 
-Rob uses Red Hat, with Ximian GNOME on top. Rob?
+Rob uses Red Hat, with Ximian GNOME on top.  I dont really like Ximian but I like
+Gnome.  On top of my Ximian Gnome is Sawfish.  Eric hates saw fish.  I kinda of
+like it even though it makes me mad. 
 
 Eric uses debian woody. He uses Enlightenment as his window manager; though
 the only reason it would seem that Eric uses X at all is to support having
