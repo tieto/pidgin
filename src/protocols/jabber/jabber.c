@@ -56,7 +56,7 @@ static GaimPlugin *my_protocol = NULL;
 /* Confused? That makes three of us. -Robot101 */
 #define GC_GJ(x) ((gjconn)((struct jabber_data *)(x)->proto_data)->gjc)
 
-#define JABBER_CONNECT_STEPS 4
+#define JABBER_CONNECT_STEPS 5
 
 #define IQID_AUTH "__AUTH__"
 
