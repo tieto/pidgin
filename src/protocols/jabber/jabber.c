@@ -1710,6 +1710,9 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	/*
 	 * Add or remove a buddy?  Change buddy's alias or group?
 	 */
+	if(name)
+		name = utf8_to_str(name);
+
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
 		if ((b = find_buddy(GJ_GC(gjc), buddyname)) == NULL) {
 			debug_printf("adding buddy [4]: %s\n", buddyname);
@@ -1748,6 +1751,10 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {
 		jabber_remove_gaim_buddy(GJ_GC(gjc), buddyname);
 	}
+
+	if(name)
+		g_free(name);
+
 	g_free(buddyname);
 
 }
