@@ -72,6 +72,7 @@ PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
 			$(GAIM_PIXMAPS)/text_bigger.png \
 			$(GAIM_PIXMAPS)/text_normal.png \
 			$(GAIM_PIXMAPS)/text_smaller.png \
+			$(GAIM_PIXMAPS)/send-file-small.png
 
 PIXMAPS =		$(GAIM_PIXMAPS)/away.png \
 			$(GAIM_PIXMAPS)/connect.png \
