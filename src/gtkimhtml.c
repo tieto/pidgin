@@ -39,6 +39,8 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
 
+#include <pango/pango.h>
+
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
 #include "pixmaps/burp.xpm"
@@ -59,7 +61,7 @@
 #define MAX_FONT_SIZE 7
 
 #define POINT_SIZE(x) (_point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
-static gint _point_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
+static gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
 #define DEFAULT_PRE_FACE "courier"
 
@@ -273,7 +275,7 @@ struct _GtkIMHtmlBit {
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 
-	GdkFont *font;
+	PangoFontDescription *font;
 	GdkColor *fore;
 	GdkColor *back;
 	GdkColor *bg;
@@ -346,7 +348,7 @@ gtk_imhtml_finalize (GObject *object)
 		g_string_free (imhtml->selected_text, TRUE);
 
 	if (imhtml->default_font)
-		gdk_font_unref (imhtml->default_font);
+		pango_font_description_free (imhtml->default_font);
 	if (imhtml->default_fg_color)
 		gdk_color_free (imhtml->default_fg_color);
 	if (imhtml->default_bg_color)
@@ -355,7 +357,7 @@ gtk_imhtml_finalize (GObject *object)
 		gdk_color_free (imhtml->default_hl_color);
 	if (imhtml->default_hlfg_color)
 		gdk_color_free (imhtml->default_hlfg_color);
-	
+
 	gdk_cursor_destroy (imhtml->hand_cursor);
 	gdk_cursor_destroy (imhtml->arrow_cursor);
 
@@ -409,7 +411,8 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
-	imhtml->default_font = gdk_font_ref (gtk_style_get_font (widget->style));
+	imhtml->context = gtk_widget_get_pango_context(widget);
+	imhtml->default_font = pango_font_description_copy(pango_context_get_font_description(imhtml->context));
 
 	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
@@ -441,6 +444,66 @@ similar_colors (GdkColor *bg,
 	return FALSE;
 }
 
+/* This is an expensive function! Don't blame me. I only stole it from eel */
+static gint
+text_width(PangoContext *context, PangoFontDescription *desc,
+		   const char *text, gint len)
+{
+	PangoLayout *layout;
+	int width;
+
+	layout = pango_layout_new(context);
+	pango_layout_set_font_description(layout, desc);
+	pango_layout_set_text(layout, text, len);
+	pango_layout_get_pixel_size(layout, &width, NULL);
+
+	g_object_unref(G_OBJECT(layout));
+
+	return width;
+}
+
+static gint
+string_width(PangoContext *context, PangoFontDescription *desc,
+			 const char *text)
+{
+	return text_width(context, desc, text, -1);
+}
+
+static void
+set_layout_font(PangoLayout *layout, const char *text, guint len,
+				PangoFontDescription *desc)
+{
+	PangoAttribute *attr;
+	PangoAttrList  *list;
+
+	if (len == -1)
+		len = strlen(text);
+
+	attr = pango_attr_font_desc_new(desc);
+
+	attr->start_index = 0;
+	attr->end_index = len;
+
+	list = pango_attr_list_new();
+	pango_attr_list_insert(list, attr);
+
+	pango_layout_set_attributes(layout, list);
+	pango_attr_list_unref(list);
+
+	pango_layout_set_indent(layout, 0);
+	pango_layout_set_justify(layout, FALSE);
+	pango_layout_set_alignment(layout, PANGO_ALIGN_LEFT);
+}
+
+static gint
+get_layout_first_baseline(PangoLayout* layout)
+{
+	PangoLayoutIter* iter = pango_layout_get_iter(layout);
+	gint result = pango_layout_iter_get_baseline(iter) / PANGO_SCALE;
+	pango_layout_iter_free(iter);
+	return result;
+}
+
 static void
 draw_text (GtkIMHtml        *imhtml,
 	   struct line_info *line)
@@ -451,6 +514,8 @@ draw_text (GtkIMHtml        *imhtml,
 	GdkWindow *window = GTK_LAYOUT (imhtml)->bin_window;
 	gfloat xoff, yoff;
 	GdkColor *bg, *fg;
+	PangoLayout *layout;
+	PangoFontMetrics *metrics;
 	gchar *start = NULL, *end = NULL;
 
 	if (GTK_LAYOUT (imhtml)->freeze_count)
@@ -484,7 +549,7 @@ draw_text (GtkIMHtml        *imhtml,
 		gdk_color_alloc (cmap, bit->back);
 		gdk_gc_set_foreground (gc, bit->back);
 		gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff,
-				    gdk_string_width (bit->font, line->text), line->height);
+				    string_width (imhtml->context, bit->font, line->text), line->height);
 		bg = bit->back;
 	}
 
@@ -504,12 +569,12 @@ draw_text (GtkIMHtml        *imhtml,
 		if (start == NULL)
 			x = 0;
 		else
-			x = gdk_text_width (bit->font, line->text, start - line->text);
+			x = text_width (imhtml->context, bit->font, line->text, start - line->text);
 
 		if (end == NULL)
 			end = strchr(line->text, '\0');
 		
-		width = gdk_text_width (bit->font, line->text, end - line->text) - x;
+		width = text_width (imhtml->context, bit->font, line->text, end - line->text) - x;
 
 		gdk_gc_set_foreground (gc, imhtml->default_hl_color);
 		
@@ -538,56 +603,89 @@ draw_text (GtkIMHtml        *imhtml,
 		gdk_color_alloc (cmap, fg);
 		gdk_gc_set_foreground (gc, fg);
 	}
+	
+	metrics = pango_context_get_metrics(imhtml->context, bit->font, NULL);
 
 	if (start) {
 		int offset = 0;
-		gdk_draw_text (window, bit->font, gc, line->x - xoff,
-			       line->y - yoff + line->ascent, line->text, start - line->text);
-		offset = gdk_text_width(bit->font, line->text, start - line->text);
+
+		layout = gtk_widget_create_pango_layout(GTK_WIDGET(imhtml), NULL);
+		pango_layout_set_text(layout, line->text, start - line->text);
+		set_layout_font(layout, line->text, start - line->text, bit->font);
+		gdk_draw_layout(window, gc, line->x - xoff,
+						line->y - yoff + line->ascent -
+						get_layout_first_baseline(layout), layout);
+		g_object_unref(G_OBJECT(layout));
+
+		offset = text_width (imhtml->context, bit->font, line->text, start - line->text);
 		if (bit->underline || bit->url)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, 
 					    line->y - yoff + line->ascent + 1,
 					    offset, 1);
 		if (bit->strike)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff,
-					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
+					    line->y - yoff + line->ascent -
+						((pango_font_metrics_get_ascent(metrics) / PANGO_SCALE) / 2),
 					    offset, 1);
 		gdk_gc_set_foreground (gc, imhtml->default_hlfg_color);
-		gdk_draw_text (window, bit->font, gc, line->x - xoff + offset,
-			       line->y - yoff + line->ascent, start, end - start);
+
+		layout = gtk_widget_create_pango_layout(GTK_WIDGET(imhtml), NULL);
+		pango_layout_set_text(layout, start, end - start);
+		set_layout_font(layout, start, end - start, bit->font);
+		gdk_draw_layout(window, gc, line->x - xoff + offset,
+						line->y - yoff + line->ascent -
+						get_layout_first_baseline(layout), layout);
+		g_object_unref(G_OBJECT(layout));
+
 		if (bit->underline || bit->url)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset, 
 					    line->y - yoff + line->ascent + 1,
-					    gdk_text_width(bit->font, line->text, end - start), 1);
+					    text_width (imhtml->context, bit->font, line->text, end - start), 1);
 		if (bit->strike)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset,
-					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
-					    gdk_text_width(bit->font, line->text, end - start), 1);
-		offset = gdk_text_width(bit->font, line->text, end - line->text);
+					    line->y - yoff + line->ascent -
+						((pango_font_metrics_get_ascent(metrics) / PANGO_SCALE) / 2),
+					    text_width (imhtml->context, bit->font, line->text, end - start), 1);
+		offset = text_width (imhtml->context, bit->font, line->text, end - line->text);
 		gdk_gc_set_foreground (gc, fg);
-		gdk_draw_string (window, bit->font, gc, line->x - xoff + offset,
-			       line->y - yoff + line->ascent, end);
+
+		layout = gtk_widget_create_pango_layout(GTK_WIDGET(imhtml), end);
+		set_layout_font(layout, end, -1, bit->font);
+		gdk_draw_layout(window, gc, line->x - xoff + offset,
+						line->y - yoff + line->ascent -
+						get_layout_first_baseline(layout), layout);
+
+		g_object_unref(G_OBJECT(layout));
+
 		if (bit->underline || bit->url)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset, 
 					    line->y - yoff + line->ascent + 1,
-					    gdk_string_width(bit->font, end), 1);
+					    string_width (imhtml->context, bit->font, end), 1);
 		if (bit->strike)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset,
-					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
-					    gdk_string_width(bit->font, end), 1);
+					    line->y - yoff + line->ascent -
+						((pango_font_metrics_get_ascent(metrics) / PANGO_SCALE) / 2),
+					    string_width (imhtml->context, bit->font, end), 1);
 	} else {
-		gdk_draw_string (window, bit->font, gc, line->x - xoff,
-				 line->y - yoff + line->ascent, line->text);
-		
+		layout = gtk_widget_create_pango_layout(GTK_WIDGET(imhtml), line->text);
+		set_layout_font(layout, line->text, -1, bit->font);
+		gdk_draw_layout(window, gc, line->x - xoff,
+						line->y - yoff + line->ascent -
+						get_layout_first_baseline(layout), layout);
+		g_object_unref(G_OBJECT(layout));
+
 		if (bit->underline || bit->url)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff + line->ascent + 1,
-					    gdk_string_width (bit->font, line->text), 1);
+					    string_width (imhtml->context, bit->font, line->text), 1);
 		if (bit->strike)
 			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff,
-					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
-					    gdk_string_width (bit->font, line->text), 1);
+					    line->y - yoff + line->ascent -
+						((pango_font_metrics_get_ascent(metrics) / PANGO_SCALE) / 2),
+					    string_width (imhtml->context, bit->font, line->text), 1);
 	}
 		
+	pango_font_metrics_unref(metrics);
+
 	gdk_color_free (bg);
 	gdk_color_free (fg);
 
@@ -813,9 +911,6 @@ gtk_imhtml_style_set (GtkWidget *widget,
 	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
 	imhtml->default_hl_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->bg [GTK_STATE_SELECTED]);
 	imhtml->default_hlfg_color=gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_SELECTED]);
-	if (imhtml->default_font)
-		gdk_font_unref (imhtml->default_font);
-	imhtml->default_font = gdk_font_ref (gtk_style_get_font (widget->style));
 	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
 				   &widget->style->base [GTK_STATE_NORMAL]);
@@ -1014,7 +1109,8 @@ gtk_imhtml_select_none (GtkIMHtml *imhtml)
 }
 
 static gchar*
-get_position (struct line_info *chunk,
+get_position (GtkIMHtml *imhtml,
+		  struct line_info *chunk,
 	      gint              x,
 	      gboolean          smileys)
 {
@@ -1043,7 +1139,7 @@ get_position (struct line_info *chunk,
 		return text;
 
 	for (pos = text; *pos != '\0'; pos++) {
-		gint char_width = gdk_text_width (chunk->bit->font, pos, 1);
+		gint char_width = text_width (imhtml->context, chunk->bit->font, pos, 1);
 		if ((width > total) && (width <= total + char_width)) {
 			if (width < total + (char_width / 2))
 				return pos;
@@ -1188,7 +1284,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 			switch (selection) {
 			case 0:
 				if (COORDS_IN_CHUNK (startx, starty)) {
-					new_pos = get_position (chunk, startx, smileys);
+					new_pos = get_position (imhtml, chunk, startx, smileys);
 					if (!chunk->selected ||
 					    (chunk->sel_start != new_pos) ||
 					    (chunk->sel_end != NULL))
@@ -1206,7 +1302,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 
 				if (COORDS_IN_CHUNK (endx, endy)) {
 					if (got_start) {
-						new_pos = get_position (chunk, endx, smileys);
+						new_pos = get_position (imhtml, chunk, endx, smileys);
 						if (chunk->sel_end != new_pos)
 							redraw = TRUE;
 						if (chunk->sel_start > new_pos) {
@@ -1220,7 +1316,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 						if (mode == 1)
 							chunk_select_words (chunk);
 					} else {
-						new_pos = get_position (chunk, endx, smileys);
+						new_pos = get_position (imhtml, chunk, endx, smileys);
 						if ( !chunk->selected ||
 						    (chunk->sel_start != new_pos) ||
 						    (chunk->sel_end != NULL))
@@ -1247,7 +1343,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 				break;
 			case 1:
 				if (!got_start && COORDS_IN_CHUNK (startx, starty)) {
-					new_pos = get_position (chunk, startx, smileys);
+					new_pos = get_position (imhtml, chunk, startx, smileys);
 					if ( !chunk->selected ||
 					    (chunk->sel_end != new_pos) ||
 					    (chunk->sel_start != chunk->text))
@@ -1260,7 +1356,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 					if (mode == 1)
 						chunk_select_words (chunk);
 				} else if (!got_end && COORDS_IN_CHUNK (endx, endy)) {
-					new_pos = get_position (chunk, endx, smileys);
+					new_pos = get_position (imhtml, chunk, endx, smileys);
 					if ( !chunk->selected ||
 					    (chunk->sel_end != new_pos) ||
 					    (chunk->sel_start != chunk->text))
@@ -1326,7 +1422,7 @@ gtk_imhtml_select_in_chunk (GtkIMHtml *imhtml,
 	gboolean smileys = imhtml->smileys;
 	gboolean redraw = FALSE;
 
-	new_pos = get_position (chunk, endx, smileys);
+	new_pos = get_position (imhtml, chunk, endx, smileys);
 	if ((starty < chunk->y) ||
 	    ((starty < chunk->y + chunk->height) && (startx < endx))) {
 		if (chunk->sel_end != new_pos)
@@ -1988,170 +2084,42 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 #define ENCDNG 14
 
 static const gchar*
-gtk_imhtml_get_font_name (GdkFont *font)
+gtk_imhtml_get_font_name (PangoFontDescription *font)
 {
-	return gdk_x11_font_get_name(font);
+	return pango_font_description_get_family(font);
 }
 
-static GdkFont*
+static PangoFontDescription *
 gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		      gchar     *name,
 		      gboolean   bold,
 		      gboolean   italics,
 		      gint       fontsize)
 {
-	GdkFont *default_font = imhtml->default_font;
-	const gchar *default_name;
-	gchar **xnames;
-	gchar **pos;
-	gchar *tmp = NULL;
-	GdkFont *ret_font;
-	gchar *xname;
-	gchar **xflds;
-	gchar **newvals;
-	gchar **names = NULL;
-
-	char *italicstrings[] = {"i","o","*"};
-	int italicsind = 0, nameind = 0;
-	gboolean usebold = TRUE, usesize = TRUE, useregenc = TRUE;
+	PangoFontDescription *default_font = imhtml->default_font;
+	PangoFontDescription *ret_font;
 	
-	/* if we're not changing anything, use the default. this is the common case */
 	if (!name && !bold && !italics && !fontsize)
-		return gdk_font_ref (default_font);
+		return default_font;
+//		return pango_font_description_copy(default_font);
+
+	ret_font = pango_font_description_copy(default_font);
+
+	if (name)
+		pango_font_description_set_family(ret_font, name);
 	
-	/* base things off of the default font name */
-	default_name = gtk_imhtml_get_font_name (default_font);
-	/* the default font name can actually be several names separated by ','.
-	 * This is a fontset... used in foreign encodings. */
-	do {
-		xnames = g_strsplit (default_name, ",", -1);
-		for (pos = xnames; pos && *pos; pos++) {
-			gint i, j;
-			gchar fs[10];
-			gchar *garbage;
-			xname = *pos;
-			xname = g_strchomp (xname);
-			xname = g_strchug (xname);
-			
-			xflds = g_strsplit (xname, "-", -1);
-			
-			/* figure out if we have a valid name. i wish there were an
-			 * easier way for determining how many values g_strplit gave */
-			for (i = 0; xflds [i]; i++);
-			if (i != 15) {
-				int tmp;
-				newvals = g_malloc0 (16 * sizeof (gchar *));
-				newvals [0] = "";
-				for (tmp = 1; tmp < 15; tmp++)
-					newvals [tmp] = "*";
-			} else
-				newvals = g_memdup (xflds, 16 * sizeof (xflds));
-			
-			/* we force foundry as "*" because i hate them. i should give a better reason. */
-			newvals [FNDRY] = "*";
-			
-			/* if it's "*" then it defaults to (nil) anyway. some fonts don't want (nil) */
-			if ((i > ADSTYL) && !xflds [ADSTYL][0])
-				newvals [ADSTYL] = "*";
-			
-			/* If the font doesn't work the first time, we try it with 
-			 * registry and encoding as "*" */
-			if (!useregenc) {
-				newvals [RGSTRY] = "*";
-				newvals [ENCDNG] = "*";
-			}
-			/* right. */
-			if (usebold && bold)
-				newvals [WGHT] = "bold";
-			else if (!usebold)
-				newvals [WGHT] = "*";
-			
-			if (italics)
-				/* We'll try "i" "o" to get italics and then just use "*" */
-				newvals [SLANT] = italicstrings[italicsind];
-			
-			if (usesize && fontsize) {
-				g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (fontsize));
-				newvals [PTSZ] = fs;
-				newvals [PXLSZ] = "*";
-			} else if (!usesize) {
-				newvals [PTSZ] = "*";
-				newvals [PXLSZ] = "*";
-			}
-			
-			if (name) {
-				/* we got passed a name. it might be a list of names. */
-				gchar **tmp_nms = g_strsplit (name, ",", -1);
-				for (j = 0; tmp_nms [j]; j++);
-				names = g_new0 (char *, j + 2);
-				for (j = 0; tmp_nms [j]; j++)
-					names [j] = tmp_nms [j];
-				g_free (tmp_nms);
-				/* Put the default font on the array. */
-				if (i > FMLY) {
-					names [j] = g_strdup (xflds [FMLY]);
-				}
-				newvals [FMLY] = names[nameind];
-			} else if (i > FMLY) {
-				/* we didn't get a name. we come here if the gtk font name is valid */
-				names = g_new0 (gchar *, 2);
-				names [0] = g_strdup (xflds [FMLY]);
-			} else {
-				/* we got fucked */
-				names = g_new0 (gchar *, 2);
-				names [0] = g_strdup ("*");
-			}
-			if (!tmp)
-				tmp = g_strjoinv("-", newvals);
-			else {
-				/* We have to concat the xlfds in the fontset */ 
-				garbage = tmp;
-				tmp = g_strconcat(garbage, ",", 
-						  g_strjoinv ("-", newvals), NULL); 
-				g_free(garbage);
-			}
-			g_free (newvals);
-			g_strfreev (xflds);
-		}
-		g_strfreev (xnames);
-		
-		if (default_font->type == GDK_FONT_FONT) 
-			ret_font = gdk_font_load (tmp); 
-		else {
-			/* For some reason, fontsets must end with a single * as an xlfd */
-			ret_font = gdk_fontset_load (tmp); 
-		}
-		/* If the font didn't load, we change some of the xlfds one by one
-		 * to get the closest we can.  */
-		if (!ret_font) {
-			if (useregenc) {
-				useregenc = FALSE;
-			} else if (italics && italicsind != 2) {
-				useregenc = TRUE;
-				italicsind++;
-			} else if (bold && usebold) {
-				useregenc = TRUE;
-				italicsind=0;
-				usebold = FALSE;
-			} else if (usesize) {
-				useregenc = TRUE;        
-				italicsind = 0;
-				usebold = TRUE;
-				usesize = FALSE;
-			} else if (names && names[nameind++]) {
-				useregenc = TRUE;        
-				italicsind = 0;
-				usebold = TRUE;
-				usesize = TRUE;
-			} else {
-				ret_font = gdk_font_ref(default_font);
-			}
-		}
-		g_strfreev (names);
-		names = NULL;
-		g_free(tmp);
-		tmp=NULL;
-	} while (!ret_font); /* Loop with the new options */
+	if (italics)
+		pango_font_description_set_style(ret_font, PANGO_STYLE_ITALIC);
+
+	if (bold)
+		pango_font_description_set_weight(ret_font, PANGO_WEIGHT_BOLD);
+
+	if (fontsize)
+	{
+		pango_font_description_set_size(ret_font,
+										POINT_SIZE(fontsize) * PANGO_SCALE);
+	}
+
 	return ret_font;
 }
 	
@@ -2278,7 +2246,7 @@ gtk_imhtml_set_adjustments (GtkIMHtml     *imhtml,
 
 void
 gtk_imhtml_set_defaults (GtkIMHtml *imhtml,
-			 GdkFont   *font,
+			 PangoFontDescription   *font,
 			 GdkColor  *fg_color,
 			 GdkColor  *bg_color)
 {
@@ -2287,8 +2255,8 @@ gtk_imhtml_set_defaults (GtkIMHtml *imhtml,
 
 	if (font) {
 		if (imhtml->default_font)
-			gdk_font_unref (imhtml->default_font);
-		imhtml->default_font = gdk_font_ref (font);
+			pango_font_description_free(imhtml->default_font);
+		imhtml->default_font = pango_font_description_copy(font);
 	}
 
 	if (fg_color) {
@@ -2378,7 +2346,7 @@ backwards_update (GtkIMHtml    *imhtml,
 	struct line_info *li;
 	struct clickable *uw;
 	struct im_image *img;
-	
+
 	if (height > imhtml->llheight) {
 		diff = height - imhtml->llheight;
 
@@ -2424,12 +2392,15 @@ add_text_renderer (GtkIMHtml    *imhtml,
 {
 	struct line_info *li;
 	struct clickable *uw;
+	PangoFontMetrics *metrics;
 	gint width;
 
 	if (text)
-		width = gdk_string_width (bit->font, text);
+		width = string_width (imhtml->context, bit->font, text);
 	else
 		width = 0;
+
+	metrics = pango_context_get_metrics(imhtml->context, bit->font, NULL);
 
 	li = g_new0 (struct line_info, 1);
 	li->x = imhtml->x;
@@ -2437,7 +2408,7 @@ add_text_renderer (GtkIMHtml    *imhtml,
 	li->width = width;
 	li->height = imhtml->llheight;
 	if (text)
-		li->ascent = MAX (imhtml->llascent, bit->font->ascent);
+		li->ascent = MAX (imhtml->llascent, pango_font_metrics_get_ascent(metrics) / PANGO_SCALE);
 	else
 		li->ascent = 0;
 	li->text = text;
@@ -2456,6 +2427,8 @@ add_text_renderer (GtkIMHtml    *imhtml,
 
 	bit->chunks = g_list_append (bit->chunks, li);
 	imhtml->line = g_list_append (imhtml->line, li);
+
+	pango_font_metrics_unref(metrics);
 }
 
 static void
@@ -2498,11 +2471,14 @@ static void
 gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		     GtkIMHtmlBit *bit)
 {
+	PangoFontMetrics *metrics;
 	gint width, height;
 
 	g_return_if_fail (imhtml != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
 	g_return_if_fail (bit != NULL);
+
+	metrics = pango_context_get_metrics(imhtml->context, bit->font, NULL);
 
 	if ( ((bit->type == TYPE_TEXT) ||
 	    ((bit->type == TYPE_SMILEY) && !imhtml->smileys) ||
@@ -2513,12 +2489,12 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		gboolean seenspace = FALSE;
 		gchar *tmp;
 
-		height = bit->font->ascent + bit->font->descent;
-		width = gdk_string_width (bit->font, bit->text);
+		height = (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) / PANGO_SCALE;
+		width = string_width (imhtml->context, bit->font, bit->text);
 
 		if ((imhtml->x != 0) && ((imhtml->x + width) > imhtml->xsize)) {
 			gint remain = imhtml->xsize - imhtml->x;
-			while (gdk_text_width (bit->font, copy, pos) < remain) {
+			while (text_width (imhtml->context, bit->font, copy, pos) < remain) {
 				if (copy [pos] == ' ')
 					seenspace = TRUE;
 				pos++;
@@ -2528,7 +2504,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 
 				tmp = g_strndup (copy, pos);
 
-				backwards_update (imhtml, bit, height, bit->font->ascent);
+				backwards_update (imhtml, bit, height, pango_font_metrics_get_ascent(metrics) / PANGO_SCALE);
 				add_text_renderer (imhtml, bit, tmp);
 			} else
 				pos = 0;
@@ -2536,14 +2512,14 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 			new_line (imhtml);
 		}
 
-		backwards_update (imhtml, bit, height, bit->font->ascent);
+		backwards_update (imhtml, bit, height, pango_font_metrics_get_ascent(metrics) / PANGO_SCALE);
 
 		while (pos < strlen (bit->text)) {
-			width = gdk_string_width (bit->font, copy + pos);
+			width = string_width (imhtml->context, bit->font, copy + pos);
 			if (imhtml->x + width > imhtml->xsize) {
 				gint newpos = 0;
 				gint remain = imhtml->xsize - imhtml->x;
-				while (gdk_text_width (bit->font, copy + pos, newpos) < remain) {
+				while (text_width (imhtml->context, bit->font, copy + pos, newpos) < remain) {
 					if (copy [pos + newpos] == ' ')
 						seenspace = TRUE;
 					newpos++;
@@ -2558,7 +2534,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 				tmp = g_strndup (copy + pos, newpos);
 				pos += newpos;
 
-				backwards_update (imhtml, bit, height, bit->font->ascent);
+				backwards_update (imhtml, bit, height, pango_font_metrics_get_ascent(metrics) / PANGO_SCALE);
 				add_text_renderer (imhtml, bit, tmp);
 
 				seenspace = FALSE;
@@ -2566,7 +2542,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 			} else {
 				tmp = g_strdup (copy + pos);
 
-				backwards_update (imhtml, bit, height, bit->font->ascent);
+				backwards_update (imhtml, bit, height, pango_font_metrics_get_ascent(metrics) / PANGO_SCALE);
 				add_text_renderer (imhtml, bit, tmp);
 
 				pos = strlen (bit->text);
@@ -2636,6 +2612,8 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		new_line (imhtml);
 		add_text_renderer (imhtml, bit, NULL);
 	}
+
+	pango_font_metrics_unref(metrics);
 }
 
 void
@@ -2739,7 +2717,8 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 
 	if (((bit->type == TYPE_TEXT) || (bit->type == TYPE_SMILEY) || (bit->type == TYPE_COMMENT)) &&
 	    (bit->font == NULL))
-		bit->font = gdk_font_ref (imhtml->default_font);
+		bit->font = pango_font_description_copy (imhtml->default_font);
+//		bit->font = gdk_font_ref (imhtml->default_font);
 
 	if (bg != NULL)
 		bit->bg = gdk_color_copy (bg);
@@ -3539,7 +3518,8 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		if (bit->text)
 			g_free (bit->text);
 		if (bit->font)
-			gdk_font_unref (bit->font);
+			pango_font_description_free(bit->font);
+			//gdk_font_unref (bit->font);
 		if (bit->fore)
 			gdk_color_free (bit->fore);
 		if (bit->back)
