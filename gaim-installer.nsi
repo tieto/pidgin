@@ -44,6 +44,7 @@ SetDateSave on
 !define GAIM_REG_KEY			"SOFTWARE\gaim"
 !define GAIM_UNINSTALL_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Gaim"
 !define HKLM_APP_PATHS_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe"
+!define GAIM_STARTUP_RUN_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define GAIM_UNINST_EXE			"gaim-uninst.exe"
 
 !define GTK_VERSION			"2.2.1"
@@ -524,6 +525,10 @@ Section Uninstall
       SetShellVarContext "all"
 
   cont_uninstall:
+    ; The WinPrefs plugin may have left this behind..
+    DeleteRegValue HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim"
+    DeleteRegValue HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
+
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
     Delete "$INSTDIR\plugins\autorecon.dll"
