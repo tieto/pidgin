@@ -35,6 +35,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	user->userlist = userlist;
 
 	msn_user_set_passport(user, passport);
+	msn_user_set_store_name(user, store_name);
 
 	/*
 	 * XXX This seems to reset the friendly name from what it should be
