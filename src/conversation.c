@@ -1088,7 +1088,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_timeout_remove(c->type_again_timeout);
 			serv_send_typing(c->gc, c->name, NOT_TYPING);
 		}
-		else if (gdk_keyval_to_unicode(event->keyval) || event->keyval == GDK_BackSpace || event->keyval == GDK_Delete)  {
+		else if (gdk_keyval_to_unicode(event->keyval) || (strlen(txt) > 0 &&(event->keyval == GDK_BackSpace || event->keyval == GDK_Delete)))  {
 			if (key_is_typing && (strlen(txt) == 0 || (c->type_again != 0 && time(NULL) > c->type_again))) {
 				int timeout = serv_send_typing(c->gc, c->name, TYPING);
 				if (timeout)
