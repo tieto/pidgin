@@ -1605,6 +1605,9 @@ void serv_send_file(GaimConnection *gc, const char *who, const char *file)
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && prpl_info->send_file)
-		prpl_info->send_file(gc, who, file);
+	if (prpl_info && prpl_info->send_file) {
+		if (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who)) {
+			prpl_info->send_file(gc, who, file);
+		}
+	}
 }

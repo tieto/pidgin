@@ -3903,7 +3903,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Data is assumed to be the destination sn */
 	if (!gaim_conv_present_error(data, gaim_connection_get_account(gc), 
 				     (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Your message did not get sent."))) {
-		buf = g_strdup_printf(_("Your message to %s did not get sent:"), data);
+		buf = g_strdup_printf(_("Your message to %s did not get sent:"), data ? data : "(null)");
 		gaim_notify_error(sess->aux_data, NULL, buf,
 				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
 		g_free(buf);
