@@ -29,7 +29,7 @@ needed for connecting to signals and things. It's a good idea to remember it
 somehow.
 
 gaim_plugin_init should return an int. If the int it returns is anything other
-than 0, it is interpreted as an error, and gaim_plugin_error is called. See
+than 1, it is interpreted as an error, and gaim_plugin_error is called. See
 the ChangeLog file in this directory for more details, and error.c for an
 example.
 

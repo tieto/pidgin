@@ -25,7 +25,7 @@ char *gaim_plugin_error(int error) {
 	 * we just have to deal with what the error was (as defined by us)
 	 * and do any other clean-up stuff we need to do. */
 	switch (error) {
-	case 1:
+	case 0:
 		do_error_dialog("I'm calling the error myself", "MY BAD");
 		return NULL;
 	case 2:
