@@ -141,9 +141,7 @@ struct _GaimGtkChatPane
 {
 	GtkWidget *count;
 	GtkWidget *list;
-	GtkWidget *invite;
 	GtkWidget *topic_text;
-	GtkWidget *sep;
 };
 
 /**
@@ -165,10 +163,6 @@ struct _GaimGtkConversation
 	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
 
-	GtkWidget *add;
-	GtkWidget *remove;
-	GtkWidget *info;
-	GtkWidget *send;
 	GtkWidget *close; /* "x" on the tab */
 	GtkWidget *icon;
 	GtkWidget *tab_label;
@@ -176,7 +170,6 @@ struct _GaimGtkConversation
 	GtkWidget *menu_label;
 	GtkSizeGroup *sg;
 
-	GtkWidget *bbox;
 	GtkWidget *lower_hbox;
 
 	GtkWidget *toolbar;
@@ -229,18 +222,6 @@ void gaim_gtkconv_update_buddy_icon(GaimConversation *conv);
  * changed preferences.
  */
 void gaim_gtkconv_update_tabs(void);
-
-/**
- * Updates the button style on chat windows to reflect any
- * changed preferences.
- */
-void gaim_gtkconv_update_chat_button_style();
-
-/**
- * Updates the button style on IM windows to reflect any
- * changed preferences.
- */
-void gaim_gtkconv_update_im_button_style();
 
 /**
  * Updates conversation buttons by protocol.

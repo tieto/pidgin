@@ -886,20 +886,6 @@ GtkWidget *conv_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 
-	label = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
-					"/gaim/gtk/conversations/button_type",
-					_("Pictures"), GAIM_BUTTON_IMAGE,
-					_("Text"), GAIM_BUTTON_TEXT,
-					_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
-					_("None"), GAIM_BUTTON_NONE,
-					NULL);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
-#if 0
-	gaim_gtk_prefs_checkbox(_("Enable \"_slash\" commands"),
-			"/gaim/gtk/conversations/enable_commands", vbox);
-#endif
 	gaim_gtk_prefs_checkbox(_("Send unknown \"_slash\" commands as messages"),
 	                        "/gaim/gtk/conversations/passthrough_unknown_commands", vbox);
 
@@ -2357,9 +2343,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename("/gaim/gtk/conversations/use_custom_font",
 					  "/gaim/gtk/conversations/send_formatting");
 
-	gaim_prefs_rename("/gaim/gtk/conversations/im/button_type",
-			"/gaim/gtk/conversations/button_type");
-
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
 
 	/* Remove some no-longer-used prefs */
@@ -2370,6 +2353,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
 	gaim_prefs_remove("/gaim/gtk/blist/show_idle_time");
 	gaim_prefs_remove("/gaim/gtk/blist/show_warning_level");
+	gaim_prefs_remove("/gaim/gtk/conversations/im/button_type");
 	gaim_prefs_remove("/gaim/gtk/conversations/html_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");

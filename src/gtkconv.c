@@ -624,12 +624,6 @@ block_cb(GtkWidget *widget, GaimConversation *conv)
 }
 
 static void
-send_file_cb(GtkWidget *widget, GaimConversation *conv)
-{
-	serv_send_file(gaim_conversation_get_gc(conv), gaim_conversation_get_name(conv), NULL);
-}
-
-static void
 do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 {
 	const char *buddy, *message;
@@ -2675,12 +2669,6 @@ gray_stuff_out(GaimConversation *conv)
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		/* Show stuff that applies to IMs, hide stuff that applies to chats */
 
-		/* Deal with buttons */
-		gtk_widget_show(gtkconv->info);
-		gtk_widget_show(gtkconv->send);
-		gtk_widget_show(gtkconv->u.im->block);
-		gtk_widget_show(gtkconv->u.im->send_file);
-
 		/* Deal with menu items */
 		gtk_widget_show(gtkwin->menu.view_log);
 		gtk_widget_show(gtkwin->menu.send_file);
@@ -2694,24 +2682,15 @@ gray_stuff_out(GaimConversation *conv)
 		if (gaim_find_buddy(account, gaim_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
-			gtk_widget_show(gtkconv->add);
-			gtk_widget_hide(gtkconv->remove);
 		} else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
-			gtk_widget_hide(gtkconv->add);
-			gtk_widget_show(gtkconv->remove);
 		}
 
 		gtk_widget_show(gtkwin->menu.insert_link);
 		gtk_widget_show(gtkwin->menu.insert_image);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
-
-		/* Deal with buttons */
-		gtk_widget_show(gtkconv->info);
-		gtk_widget_show(gtkconv->send);
-		gtk_widget_show(gtkconv->u.chat->invite);
 
 		/* Deal with menu items */
 		gtk_widget_show(gtkwin->menu.view_log);
@@ -2727,14 +2706,10 @@ gray_stuff_out(GaimConversation *conv)
 			/* If the chat is NOT in the buddy list */
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
-			gtk_widget_show(gtkconv->add);
-			gtk_widget_hide(gtkconv->remove);
 		} else {
 			/* If the chat IS in the buddy list */
 			gtk_widget_hide(gtkwin->menu.add);
 			gtk_widget_show(gtkwin->menu.remove);
-			gtk_widget_hide(gtkconv->add);
-			gtk_widget_show(gtkconv->remove);
 		}
 
 		gtk_widget_show(gtkwin->menu.insert_link);
@@ -2749,29 +2724,6 @@ gray_stuff_out(GaimConversation *conv)
 	   ( (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT) ||
 	    !gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)) )) {
 		/* Account is online */
-
-		/* Deal with buttons */
-		gtk_widget_set_sensitive(gtkconv->info, (prpl_info->get_info != NULL));
-
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-		{
-			gtk_widget_set_sensitive(gtkconv->add, (prpl_info->add_buddy != NULL));
-			gtk_widget_set_sensitive(gtkconv->remove, (prpl_info->remove_buddy != NULL));
-			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->send_im != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.im->block, (prpl_info->add_deny != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.im->send_file,
-				(prpl_info->send_file && (!prpl_info->can_receive_file ||
-				 prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
-		}
-		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
-		{
-			/* Only allow adding/removing if this is a chat and not a conference */
-			gtk_widget_set_sensitive(gtkconv->add, (prpl_info->join_chat != NULL));
-			gtk_widget_set_sensitive(gtkconv->remove, (prpl_info->join_chat != NULL));
-			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->chat_send != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.chat->invite, (prpl_info->chat_invite != NULL));
-		}
-
 		/* Deal with the toolbar */
 		if (gc->flags & GAIM_CONNECTION_HTML) {
 			buttons = GTK_IMHTML_ALL;    /* Everything on */
@@ -2818,19 +2770,7 @@ gray_stuff_out(GaimConversation *conv)
 	} else {
 		/* Account is offline */
 		/* Or it's a chat that we've left. */
-
-		/* Deal with buttons */
-		gtk_widget_set_sensitive(gtkconv->add, FALSE);
-		gtk_widget_set_sensitive(gtkconv->remove, FALSE);
-		gtk_widget_set_sensitive(gtkconv->info, FALSE);
-		gtk_widget_set_sensitive(gtkconv->send, FALSE);
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-			gtk_widget_set_sensitive(gtkconv->u.im->block, FALSE);
-			gtk_widget_set_sensitive(gtkconv->u.im->send_file, FALSE);
-		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-			gtk_widget_set_sensitive(gtkconv->u.chat->invite, FALSE);
-		}
-
+		
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.send_file, FALSE);
@@ -3725,172 +3665,6 @@ setup_menubar(GaimConvWindow *win)
 	return gtkwin->menu.menubar;
 }
 
-GtkWidget *
-gaim_gtkconv_button_new(const char *icon, const char *text, const char *tooltip, GtkTooltips *tooltips, void *callback, void *data)
-{
-	GtkWidget *button;
-	int buttons;
-
-	buttons = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
-	button = gaim_pixbuf_button_from_stock(
-					(buttons == GAIM_BUTTON_IMAGE ? NULL : text),
-					(buttons == GAIM_BUTTON_TEXT ? NULL : icon),
-					GAIM_BUTTON_VERTICAL);
-	if (tooltip != NULL)
-		gtk_tooltips_set_tip(tooltips, button, tooltip, NULL);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	if (callback != NULL)
-		g_signal_connect(G_OBJECT(button), "clicked",
-						 G_CALLBACK(callback), data);
-
-	return button;
-}
-
-static void
-setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
-{
-	GaimConnection *gc;
-	GaimGtkConversation *gtkconv;
-	GaimGtkImPane *gtkim;
-	GaimButtonStyle button_type;
-	GList *children;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gtkim   = gtkconv->u.im;
-	gc      = gaim_conversation_get_gc(conv);
-
-	/* Remove anything else in our parent */
-	children = gtk_container_get_children(GTK_CONTAINER(parent));
-	while (children != NULL) {
-		if(children->data != gtkim->icon_container)
-			gtk_container_remove(GTK_CONTAINER(parent), children->data);
-		children = g_list_remove(children, children->data);
-	}
-
-	/* The buttons, from left to right */
-
-	/* Block button */
-	gtkim->block = gaim_gtkconv_button_new(GAIM_STOCK_BLOCK, _("Block"),
-									_("Block the user"),
-									gtkconv->tooltips, block_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkim->block, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkim->block);
-
-	/* Send File button */
-	gtkim->send_file = gaim_gtkconv_button_new(GAIM_STOCK_FILE_TRANSFER, _("Send File"),
-									_("Send a file to the user"),
-									gtkconv->tooltips, send_file_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkim->send_file, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkim->send_file);
-
-	/* Add button */
-	gtkconv->add = gaim_gtkconv_button_new(GTK_STOCK_ADD, _("Add"),
-									_("Add the user to your buddy list"),
-									gtkconv->tooltips, add_remove_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkconv->add, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->add);
-
-	/* Remove button */
-	gtkconv->remove = gaim_gtkconv_button_new(GTK_STOCK_REMOVE, _("Remove"),
-									_("Remove the user from your buddy list"),
-									gtkconv->tooltips, add_remove_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkconv->remove, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->remove);
-
-	/* Info button */
-	gtkconv->info = gaim_gtkconv_button_new(GAIM_STOCK_INFO, _("Info"),
-									_("Get the user's information"),
-									gtkconv->tooltips, info_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkconv->info, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->info);
-
-	/* Send button */
-	gtkconv->send = gaim_gtkconv_button_new(GAIM_STOCK_SEND, _("Send"),
-									_("Send message"),
-									gtkconv->tooltips, send_cb, conv);
-	gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE, 0);
-
-	/* Separator */
-	gtkim->sep2 = gtk_vseparator_new();
-	gtk_box_pack_end(GTK_BOX(parent), gtkim->sep2, FALSE, TRUE, 0);
-	gtk_widget_show(gtkim->sep2);
-
-	gaim_gtkconv_update_buttons_by_protocol(conv);
-
-	/* Check if the buttons should be visible or not */
-	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
-	if (button_type == GAIM_BUTTON_NONE)
-		gtk_widget_hide(parent);
-	else
-		gtk_widget_show(parent);
-}
-
-static void
-setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
-{
-	GaimConnection *gc;
-	GaimGtkConversation *gtkconv;
-	GaimGtkChatPane *gtkchat;
-	GaimButtonStyle button_type;
-	GList *children;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gtkchat = gtkconv->u.chat;
-	gc      = gaim_conversation_get_gc(conv);
-
-	/* Remove anything else in our parent */
-	children = gtk_container_get_children(GTK_CONTAINER(parent));
-	while (children != NULL) {
-		gtk_container_remove(GTK_CONTAINER(parent), children->data);
-		children = g_list_remove(children, children->data);
-	}
-
-	/* The buttons, from left to right */
-
-	/* Invite */
-	gtkchat->invite = gaim_gtkconv_button_new(GAIM_STOCK_INVITE, _("Invite"),
-									_("Invite a user"),
-									gtkconv->tooltips, invite_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkchat->invite, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkchat->invite);
-
-	/* Add button */
-	gtkconv->add = gaim_gtkconv_button_new(GTK_STOCK_ADD, _("Add"),
-									_("Add the chat to your buddy list"),
-									gtkconv->tooltips, add_remove_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkconv->add, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->add);
-
-	/* Remove button */
-	gtkconv->remove = gaim_gtkconv_button_new(GTK_STOCK_REMOVE, _("Remove"),
-									_("Remove the chat from your buddy list"),
-									gtkconv->tooltips, add_remove_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkconv->remove, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->remove);
-
-	/* Send button */
-	gtkconv->send = gaim_gtkconv_button_new(GAIM_STOCK_SEND, _("Send"),
-									_("Send message"),
-									gtkconv->tooltips, send_cb, conv);
-	gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->send);
-
-	/* Separator */
-	gtkchat->sep = gtk_vseparator_new();
-	gtk_box_pack_end(GTK_BOX(parent), gtkchat->sep, FALSE, TRUE, 0);
-	gtk_widget_show(gtkchat->sep);
-
-	gaim_gtkconv_update_buttons_by_protocol(conv);
-
-	/* Check if the buttons should be visible or not */
-	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
-	if (button_type == GAIM_BUTTON_NONE)
-		gtk_widget_hide(gtkconv->bbox);
-	else
-		gtk_widget_show(gtkconv->bbox);
-}
-
-
 static void topic_callback(GtkWidget *w, GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -4126,8 +3900,6 @@ setup_chat_pane(GaimConversation *conv)
 
 	gtk_widget_show(button);
 
-	gtkconv->info = button;
-
 	/* Setup the bottom half of the conversation window */
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, TRUE);
@@ -4166,17 +3938,11 @@ setup_chat_pane(GaimConversation *conv)
 
 	default_formatize(conv);
 
-	/* Setup the bottom button box. */
-	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->bbox, FALSE, FALSE, 0);
-	setup_chat_buttons(conv, gtkconv->bbox);
-
 	/*
 	 * Focus for chat windows should be as follows:
 	 * Tab title -> chat topic -> conversation scrollback -> user list ->
 	 *   user list buttons -> entry -> buttons at bottom
 	 */
-	focus_chain = g_list_prepend(focus_chain, gtkconv->bbox);
 	focus_chain = g_list_prepend(focus_chain, gtkconv->entry);
 	gtk_container_set_focus_chain(GTK_CONTAINER(vbox), focus_chain);
 
@@ -4272,19 +4038,13 @@ setup_im_pane(GaimConversation *conv)
 	 */
 	default_formatize(conv);
 
-	/* Setup the bottom button box. */
-	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->bbox, FALSE, FALSE, 0);
-	setup_im_buttons(conv, gtkconv->bbox);
-
 	gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
 	gtkconv->u.im->show_icon = TRUE;
 
 	/*
 	 * Focus for IM windows should be as follows:
-	 * Tab title -> conversation scrollback -> entry -> buttons at bottom
+	 * Tab title -> conversation scrollback -> entry
 	 */
-	focus_chain = g_list_prepend(focus_chain, gtkconv->bbox);
 	focus_chain = g_list_prepend(focus_chain, gtkconv->entry);
 	gtk_container_set_focus_chain(GTK_CONTAINER(vbox2), focus_chain);
 
@@ -5593,12 +5353,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 	int scale_width, scale_height;
-	GtkRequisition requisition;
 
 	GaimAccount *account;
 	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	GaimButtonStyle button_type;
 
 	GaimBuddyIcon *icon;
 
@@ -5722,19 +5479,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	if (bm)
 		g_object_unref(G_OBJECT(bm));
 
-	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
-	/* the button seems to get its size before the box, so... */
-	gtk_widget_size_request(gtkconv->send, &requisition);
-	if (button_type == GAIM_BUTTON_NONE || requisition.height * 1.5 < scale_height) {
-		gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox),
-						   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
-/*		gtk_box_reorder_child(GTK_BOX(gtkconv->lower_hbox), vbox, 0); */
-	} else {
-		gtk_box_pack_start(GTK_BOX(gtkconv->bbox),
-						   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
-		gtk_box_reorder_child(GTK_BOX(gtkconv->bbox),
-							  gtkconv->u.im->icon_container, 0);
-	}
+	gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox),
+			   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
 
 	gtk_widget_show(gtkconv->u.im->icon_container);
 	gtk_widget_show(frame);
@@ -6056,31 +5802,6 @@ show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 }
 
 static void
-button_type_pref_cb(const char *name, GaimPrefType type,
-					   gpointer value, gpointer data)
-{
-	GList *l;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-		switch (conv->type) {
-		case GAIM_CONV_IM:
-			setup_im_buttons(conv, gtkconv->bbox);
-			gaim_gtkconv_update_buddy_icon(conv);
-			break;
-		case GAIM_CONV_CHAT:
-			setup_chat_buttons(conv, gtkconv->bbox);
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-static void
 animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
 							gpointer value, gpointer data)
 {
@@ -6179,9 +5900,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/font_size", 3);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
-	gaim_prefs_add_int("/gaim/gtk/conversations/button_type",
-					   GAIM_BUTTON_TEXT_IMAGE);
-
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/gaim/gtk/conversations/chat");
@@ -6218,9 +5936,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/placement",
 			conv_placement_pref_cb, NULL);
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
-
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/button_type",
-								button_type_pref_cb, NULL);
 
 	/* IM callbacks */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/im/animate_buddy_icons",
