@@ -146,7 +146,10 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	e = tmp = g_strdup(msg);
+	if (msg)
+		e = tmp = g_strdup(msg);
+	else
+		return;
 
 	while ((c = strchr(e, '\033')) != NULL) {
 		*c++ = '\0';
