@@ -25,11 +25,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef _WIN32
 #include <sys/time.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#else
+#include <windows.h>
+#include <mmsystem.h>
+#endif
+
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -80,6 +87,7 @@ int sound_order[] = {
 	SND_CHAT_YOU_SAY, SND_CHAT_SAY, SND_CHAT_NICK, 0
 };
 
+#ifndef _WIN32
 static int check_dev(char *dev)
 {
 	struct stat stat_buf;
@@ -410,15 +418,13 @@ static int play_nas_file(char *file)
 }
 
 #endif
+#endif /* !_WIN32 */
 
 void play_file(char *filename)
 {
+#ifndef _WIN32
 	int pid;
-
-#ifdef _WIN32
-	return;
 #endif
-
 	if (sound_options & OPT_SOUND_BEEP) {
 		gdk_beep();
 		return;
@@ -427,7 +433,7 @@ void play_file(char *filename)
 	else if (sound_options & OPT_SOUND_NORMAL) {
 		debug_printf("attempting to play audio file with internal method -- this is unlikely to work\n");
 	}
-
+#ifndef _WIN32
 	pid = fork();
 
 	if (pid < 0)
@@ -476,21 +482,23 @@ void play_file(char *filename)
 
 		_exit(0);
 	}
+#else /* _WIN32 */
+	debug_printf("Playing %s\n", filename);
+	if (!PlaySound(filename, 0, SND_ASYNC | SND_FILENAME))
+		debug_printf("Error playing sound.");
+#endif
 }
 
 void play(unsigned char *data, int size)
 {
+#ifndef _WIN32
 	int pid;
-
-#ifdef _WIN32
-	return;
 #endif
-
 	if (sound_options & OPT_SOUND_BEEP) {
 		gdk_beep();
 		return;
 	}
-
+#ifndef _WIN32
 	else if ((sound_options & OPT_SOUND_CMD) && sound_cmd[0]) {
 		char command[4096];
 		FILE *child;
@@ -556,6 +564,10 @@ void play(unsigned char *data, int size)
 
 		_exit(0);
 	}
+#else /* _WIN32 */
+	if (!PlaySound(data, 0, SND_ASYNC | SND_MEMORY))
+	  debug_printf("Error playing sound.");
+#endif
 }
 
 extern int logins_not_muted;

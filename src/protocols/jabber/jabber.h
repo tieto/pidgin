@@ -16,6 +16,18 @@
  *  Jabber
  *  Copyright (C) 1998-1999 The Jabber Team http://jabber.org/
  */
+#ifndef _WIN32
+#include <syslog.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <strings.h>
+#include <unistd.h>
+#else
+#include <winsock.h>
+#include "win32dep.h"
+#endif
 
 #include <string.h>
 #include <stdlib.h>
@@ -27,13 +39,6 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdarg.h>
-#include <syslog.h>
-#include <strings.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <sys/time.h>
 #include <time.h>
 #include <ctype.h>

@@ -96,6 +96,11 @@ GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeIter plugin_iter;
 
+/*
+ * PROTOTYPES
+ */
+GtkTreeIter *prefs_notebook_add_page(char*, GdkPixbuf*, GtkWidget*, GtkTreeIter*, GtkTreeIter*, int);
+
 void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	int v;
 
@@ -211,7 +216,9 @@ static void apply_prefs()
 	proxytype = proxytype_new;
 	default_away = default_away_new;
 	fontsize = fontsize_new;
+#ifndef _WIN32	
 	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", sound_cmd_new);
+#endif
 	g_snprintf(web_command, sizeof(web_command), "%s", web_command_new);
 	memcpy(&conv_size, &conv_size_new, sizeof(struct window_size));
 	memcpy(&conv_size, &conv_size_new, sizeof(struct window_size));
@@ -653,7 +660,8 @@ GtkWidget *browser_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
+#ifndef _WIN32
+	/* Registered default browser is used by Windows */
 	vbox = make_frame (ret, _("Browser Selection"));
 	label = gaim_dropdown(vbox, "_Browser", &web_browser_new, -1,
 			      "Netscape", BROWSER_NETSCAPE,
@@ -682,10 +690,13 @@ GtkWidget *browser_page() {
 	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command_new);
 	gtk_signal_connect(GTK_OBJECT(browser_entry), "changed",
 			   GTK_SIGNAL_FUNC(browser_print_option), NULL);
-
+#endif /* end !_WIN32 */
 	vbox = make_frame (ret, _("Browser Options"));
-	gaim_button(_("Open new _window by default"), &misc_options_new, OPT_MISC_BROWSER_POPUP, vbox);
-
+	label = gaim_button(_("Open new _window by default"), &misc_options_new, OPT_MISC_BROWSER_POPUP, vbox);
+#ifdef _WIN32
+	/* Until I figure out how to implement this on windows */
+	gtk_widget_set_sensitive(label, FALSE);
+#endif
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -740,6 +751,7 @@ GtkWidget *sound_page() {
 	gaim_button(_("_No sounds when you log in"), &sound_options_new, OPT_SOUND_SILENT_SIGNON, vbox);
 	gaim_button(_("_Sounds while away"), &sound_options_new, OPT_SOUND_WHEN_AWAY, vbox);
 
+#ifndef _WIN32
 	vbox = make_frame (ret, _("Sound Method"));
 	dd = gaim_dropdown(vbox, "_Method", &sound_options_new, OPT_SOUND_BEEP |
 		      OPT_SOUND_ESD | OPT_SOUND_ARTSC | OPT_SOUND_NAS | OPT_SOUND_NORMAL |
@@ -779,7 +791,7 @@ GtkWidget *sound_page() {
 	gtk_widget_set_sensitive(sndcmd, (sound_options_new & OPT_SOUND_CMD));
 	gtk_box_pack_start(GTK_BOX(hbox), sndcmd, TRUE, TRUE, 5);
 	gtk_signal_connect(GTK_OBJECT(sndcmd), "focus_out_event", GTK_SIGNAL_FUNC(sound_cmd_yeah), NULL);
-
+#endif /* _WIN32 */
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -874,10 +886,18 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n"
 					       "%s"), plug->desc.name, plug->desc.version, plug->desc.description); 
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
-	g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n"
-				       "<span weight=\"bold\">Written by:</span>\t%s\n"
-				       "<span weight=\"bold\">URL:</span>\t%s\n"
-				       "<span weight=\"bold\">File name:</span>\t %s"),
+	g_snprintf(buf, sizeof(buf), 
+#ifndef _WIN32
+		   _("<span size=\"larger\">%s %s</span>\n\n"
+		     "<span weight=\"bold\">Written by:</span>\t%s\n"
+		     "<span weight=\"bold\">URL:</span>\t%s\n"
+		     "<span weight=\"bold\">File name:</span>\t%s"),
+#else
+		   _("<span size=\"larger\">%s %s</span>\n\n"
+		     "<span weight=\"bold\">Written by:</span>  %s\n"
+		     "<span weight=\"bold\">URL:</span>  %s\n"
+		     "<span weight=\"bold\">File name:</span>  %s"),
+#endif
 		   plug->desc.name, plug->desc.version, plug->desc.authors, plug->desc.url, plug->path);
 	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
 	g_value_unset (&val);
@@ -910,7 +930,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 					prefs_notebook_add_page(plug->desc.name, NULL, config(), plug->iter, &plugin_iter, notebook_page++);
 					if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(prefstree), &plugin_iter) == 1) {
 						/* Expand the tree for the first plugin added */
-						GtkTreePath *path2  = gtk_tree_model_get_path(prefstree, &plugin_iter);
+						GtkTreePath *path2  = gtk_tree_model_get_path(GTK_TREE_MODEL(prefstree), &plugin_iter);
 						gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v), path2, TRUE);
 						gtk_tree_path_free (path2);
 					}
@@ -1030,14 +1050,14 @@ static GtkWidget *plugin_page ()
 	plugin_description = gtk_label_new(NULL);
 	
 	vp = gtk_viewport_new(NULL, NULL);
-	gtk_viewport_set_shadow_type(vp, GTK_SHADOW_NONE);
+	gtk_viewport_set_shadow_type(GTK_VIEWPORT(vp), GTK_SHADOW_NONE);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
 
-	gtk_container_add(vp, plugin_description);
-	gtk_container_add(sw, vp);
+	gtk_container_add(GTK_CONTAINER(vp), plugin_description);
+	gtk_container_add(GTK_CONTAINER(sw), vp);
 
-	gtk_label_set_selectable(plugin_description, TRUE);  
-	gtk_label_set_line_wrap(plugin_description, TRUE);
+	gtk_label_set_selectable(GTK_LABEL(plugin_description), TRUE);  
+	gtk_label_set_line_wrap(GTK_LABEL(plugin_description), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(plugin_description), 0, 0);
 	gtk_misc_set_padding(GTK_MISC(plugin_description), 6, 6);
 	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Description")));
@@ -1048,14 +1068,14 @@ static GtkWidget *plugin_page ()
 	plugin_details = gtk_label_new(NULL);
 	
 	vp = gtk_viewport_new(NULL, NULL);
-	gtk_viewport_set_shadow_type(vp, GTK_SHADOW_NONE);
+	gtk_viewport_set_shadow_type(GTK_VIEWPORT(vp), GTK_SHADOW_NONE);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
 
-	gtk_container_add(vp, plugin_details);
-	gtk_container_add(sw, vp);
+	gtk_container_add(GTK_CONTAINER(vp), plugin_details);
+	gtk_container_add(GTK_CONTAINER(sw), vp);
 
-	gtk_label_set_selectable(plugin_details, TRUE);  
-	gtk_label_set_line_wrap(plugin_details, TRUE);
+	gtk_label_set_selectable(GTK_LABEL(plugin_details), TRUE);  
+	gtk_label_set_line_wrap(GTK_LABEL(plugin_details), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(plugin_details), 0, 0);
 	gtk_misc_set_padding(GTK_MISC(plugin_details), 6, 6);	
 	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Details")));
@@ -1171,7 +1191,7 @@ static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
 
-		g_snprintf(buf, BUF_LEN - 1, "%s/", last_sound_dir ? last_sound_dir : g_get_home_dir());
+		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S, last_sound_dir ? last_sound_dir : gaim_home_dir());
 
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
 
@@ -1519,8 +1539,10 @@ void show_prefs()
 	fontsize_new = fontsize;
 	web_browser_new = web_browser;
 	proxytype_new = proxytype;
+#ifndef _WIN32
 	g_snprintf(sound_cmd_new, sizeof(sound_cmd_new), "%s", sound_cmd);
-	g_snprintf(web_command_new, sizeof(web_command_new), "%s",
+#endif
+	g_snprintf(web_command_new, sizeof(web_command_new), "%s", 
 		   web_command ? web_command : "xterm -e lynx %%s");
 	g_snprintf(fontface_new, sizeof(fontface_new), fontface);
 	memcpy(&conv_size_new, &conv_size, sizeof(struct window_size));

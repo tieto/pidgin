@@ -385,8 +385,15 @@ extern void show_confirm_del(struct gaim_connection *, gchar *);
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in html.c */
+struct g_url {
+	char address[255];
+	int port;
+	char page[255];
+};
+
 extern void grab_url(char *, gboolean, void (*callback)(gpointer, char *), gpointer);
 extern gchar *strip_html(gchar *);
+struct g_url *parse_url(char *url);
 
 /* Functions in idle.c */
 extern gint check_idle(gpointer);
@@ -447,6 +454,7 @@ extern char *away_subs(char *, char *);
 extern char *stylize(gchar *, int);
 extern void show_usage (int, char *);
 extern int do_auto_login (char *);
+extern char *gaim_home_dir();
 extern char *gaim_user_dir();
 extern void strncpy_nohtml(gchar *, const gchar *, size_t);
 extern void strncpy_withhtml(gchar *, const gchar *, size_t);

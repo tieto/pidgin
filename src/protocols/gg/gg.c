@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3680 2002-10-06 00:39:02Z seanegan $
+ * $Id: gg.c 3753 2002-10-11 03:14:01Z robflynn $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -24,17 +24,22 @@
 #include <config.h>
 #endif
 
+#ifndef _WIN32
 #include <netdb.h>
 #include <unistd.h>
-#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#else
+#include <winsock.h>
+#endif
+
+#include <errno.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <ctype.h>
 #ifdef HAVE_LANGINFO_CODESET
@@ -50,6 +55,10 @@
 #include "prpl.h"
 #include "gaim.h"
 #include "proxy.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #include "pixmaps/protocols/gg/gg_suncloud.xpm"
 #include "pixmaps/protocols/gg/gg_sunred.xpm"
@@ -84,6 +93,10 @@
 #define AGG_HTTP_PASSWORD_CHANGE	5
 
 #define UC_NORMAL 2
+
+/* for win32 compatability */
+G_MODULE_IMPORT GSList *connections;
+
 
 struct agg_data {
 	struct gg_session *sess;
@@ -419,29 +432,38 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	gg_free_event(e);
 }
 
-static void login_callback(gpointer data, gint source, GaimInputCondition cond)
+void login_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct agg_data *gd = gc->proto_data;
 	struct gg_event *e;
 
-	if (!g_slist_find(connections, data)) {
+	debug_printf("GG login_callback...\n");
+	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
-
-	if (gd->sess->fd != source)
+	debug_printf("Found GG connection\n");
+	if (gd->sess->fd != source) {
 		gd->sess->fd = source;
-
+		debug_printf("Setting sess->fd to source\n");
+	}
 	if (source == -1) {
 		hide_login_progress(gc, _("Unable to connect."));
 		signoff(gc);
 		return;
 	}
-
-	if (gc->inpa == 0)
+	debug_printf("Source is valid.\n");
+	if (gc->inpa == 0) {
+		debug_printf("login_callback.. checking gc->inpa .. is 0.. setting fd watch\n");
 		gc->inpa = gaim_input_add(gd->sess->fd, GAIM_INPUT_READ, login_callback, gc);
-
+		debug_printf("Adding watch on fd\n"); 
+	}
+	debug_printf("Checking State.\n");
 	switch (gd->sess->state) {
 	case GG_STATE_READING_DATA:
 		set_login_progress(gc, 2, _("Reading data"));
@@ -456,9 +478,10 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		set_login_progress(gc, 5, _("Exchanging key hash"));
 		break;
 	default:
+		debug_printf("No State found\n");
 		break;
 	}
-
+	debug_printf("gg_watch_fd\n");
 	if (!(e = gg_watch_fd(gd->sess))) {
 		debug_printf("login_callback: gg_watch_fd failed - CRITICAL!\n");
 		hide_login_progress(gc, _("Critical error in GG library\n"));
@@ -466,6 +489,37 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
+	/* If we are GG_STATE_CONNECTING_GG then we still need to connect, as
+	   we could not use proxy_connect in libgg.c */
+	switch( gd->sess->state ) {
+	case GG_STATE_CONNECTING_GG:
+		{
+			struct in_addr ip;
+			char buf[256];
+			
+			/* Remove watch on initial socket - now that we have ip and port of login server */
+			gaim_input_remove(gc->inpa);
+
+			ip.s_addr = gd->sess->server_ip;
+			gd->sess->fd = proxy_connect(inet_ntoa(ip), gd->sess->port, login_callback, gc);
+			
+			if (gd->sess->fd < 0) {
+				g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), inet_ntoa(ip));
+				hide_login_progress(gc, buf);
+				signoff(gc);
+				return;
+			}
+			break;
+		}
+	case GG_STATE_READING_KEY:
+		/* Set new watch on login server ip */
+		if(gc->inpa)
+			gc->inpa = gaim_input_add(gd->sess->fd, GAIM_INPUT_READ, login_callback, gc);
+		debug_printf("Setting watch on connection with login server.\n"); 
+		break;
+	}/* end switch() */
+
+	debug_printf("checking gg_event\n");
 	switch (e->type) {
 	case GG_EVENT_NONE:
 		/* nothing */
@@ -490,9 +544,10 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		signoff(gc);
 		break;
 	default:
+		debug_printf("no gg_event\n");
 		break;
 	}
-
+	debug_printf("Returning from login_callback\n");
 	gg_free_event(e);
 }
 
@@ -837,16 +892,25 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 		debug_printf("search_callback: g_slist_find error\n");
 		gaim_input_remove(hdata->inpa);
 		g_free(hdata);
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
 	webdata = NULL;
 	len = 0;
-
+#ifndef _WIN32
 	while (read(source, &read_data, 1) > 0 || errno == EWOULDBLOCK) {
 		if (errno == EWOULDBLOCK) {
 			errno = 0;
+#else
+	while (recv(source, &read_data, 1, 0) > 0 || WSAEWOULDBLOCK == WSAGetLastError() ) {
+		if (WSAEWOULDBLOCK == WSAGetLastError()) {
+			WSASetLastError(0);
+#endif
 			continue;
 		}
 
@@ -862,7 +926,11 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 	webdata[len] = 0;
 
 	gaim_input_remove(hdata->inpa);
+#ifndef _WIN32
 	close(source);
+#else
+	closesocket(source);
+#endif
 
 	debug_printf("http_results: type %d, webdata [%s]\n", hdata->type, webdata);
 
@@ -905,7 +973,11 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 		debug_printf("http_req_callback: g_slist_find error\n");
 		g_free(request);
 		g_free(hdata);
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -927,10 +999,18 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 
 	g_free(request);
 
+#ifndef _WIN32
 	if (write(source, buf, strlen(buf)) < strlen(buf)) {
+#else
+	if (send(source, buf, strlen(buf), 0) < strlen(buf)) {
+#endif
 		g_free(buf);
 		g_free(hdata);
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		do_error_dialog(_("Error communicating with Gadu-Gadu server"),
 				_("Gaim was unable to complete your request due to a problem "
 				  "communicating to the Gadu-Gadu HTTP server.  Please try again "
@@ -1221,7 +1301,7 @@ static void agg_permit_deny_dummy(struct gaim_connection *gc, char *who)
 
 static struct prpl *my_protocol = NULL;
 
-void gg_init(struct prpl *ret)
+G_MODULE_EXPORT void gg_init(struct prpl *ret)
 {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_GADUGADU;
@@ -1272,7 +1352,7 @@ void gg_init(struct prpl *ret)
 
 #ifndef STATIC
 
-void *gaim_prpl_init(struct prpl *prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	gg_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;

@@ -461,8 +461,11 @@ static int ft_mkdir(const char *name) {
 /* Two functions, one recursive, just to make a directory.  Yuck. */
 static int ft_mkdir_help(char *dir) {
 	int ret;
-
+#ifndef _WIN32
 	ret = mkdir(dir, 0775);
+#else
+	ret = _mkdir(dir);
+#endif
 	if (ret) {
 		char *index = strrchr(dir, G_DIR_SEPARATOR);
 		if (!index)
@@ -471,7 +474,11 @@ static int ft_mkdir_help(char *dir) {
 		ret = ft_mkdir_help(dir);
 		*index = G_DIR_SEPARATOR;
 		if (!ret)
+#ifndef _WIN32
 			ret = mkdir(dir, 0775);
+#else
+			ret = _mkdir(dir);
+#endif
 	}
 
 	return ret;

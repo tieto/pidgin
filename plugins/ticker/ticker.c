@@ -31,6 +31,9 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "pixmaps/no_icon.xpm"
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 static GtkWidget *tickerwindow = NULL;
 static GtkWidget *ticker;
@@ -48,6 +51,10 @@ typedef struct {
 GList *tickerbuds = (GList *) NULL;
 gboolean userclose = FALSE;
 GtkWidget *msgw;
+
+/* for win32 compatability */
+G_MODULE_IMPORT GSList *connections;
+G_MODULE_IMPORT GtkWidget *blist;
 
 void BuddyTickerDestroyWindow( GtkWidget *window );
 void BuddyTickerCreateWindow( void );
@@ -372,7 +379,7 @@ void signon_cb(struct gaim_connection *gc, char *who) {
 }
 
 void signoff_cb(struct gaim_connection *gc) {
-	if (!connections->next) {
+	if (connections && !connections->next) {
 		gtk_widget_destroy(tickerwindow);
 		tickerwindow = NULL;
 		ticker = NULL;
@@ -401,7 +408,19 @@ void away_cb(struct gaim_connection *gc, char *who) {
 		gdk_bitmap_unref(bm);
 }
 
-char *gaim_plugin_init(GModule *h) {
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+G_MODULE_EXPORT char *name() {
+	return "Buddy Ticker";
+}
+
+G_MODULE_EXPORT char *description() {
+	return "Scrolls online buddies from your buddy list.";
+}
+
+G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
 	handle = h;
 	
 	gaim_signal_connect(h, event_buddy_signon, signon_cb, NULL);
@@ -414,11 +433,11 @@ char *gaim_plugin_init(GModule *h) {
 	return NULL;
 }
 
-void gaim_plugin_remove() {
-	gtk_widget_destroy(tickerwindow);
+G_MODULE_EXPORT void gaim_plugin_remove() {
+	BuddyTickerDestroyWindow(tickerwindow);
 }
 struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
+G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup("Ticker");
 	desc.version = g_strdup(VERSION);

@@ -86,17 +86,17 @@ static int last_id = 0;
 /* just for debugging
 static void handle_unknown(ZNotice_t notice)
 {
-	g_print("z_packet: %s\n", notice.z_packet);
-	g_print("z_version: %s\n", notice.z_version);
-	g_print("z_kind: %d\n", notice.z_kind);
-	g_print("z_class: %s\n", notice.z_class);
-	g_print("z_class_inst: %s\n", notice.z_class_inst);
-	g_print("z_opcode: %s\n", notice.z_opcode);
-	g_print("z_sender: %s\n", notice.z_sender);
-	g_print("z_recipient: %s\n", notice.z_recipient);
-	g_print("z_message: %s\n", notice.z_message);
-	g_print("z_message_len: %d\n", notice.z_message_len);
-	g_print("\n");
+	debug_printf("z_packet: %s\n", notice.z_packet);
+	debug_printf("z_version: %s\n", notice.z_version);
+	debug_printf("z_kind: %d\n", notice.z_kind);
+	debug_printf("z_class: %s\n", notice.z_class);
+	debug_printf("z_class_inst: %s\n", notice.z_class_inst);
+	debug_printf("z_opcode: %s\n", notice.z_opcode);
+	debug_printf("z_sender: %s\n", notice.z_sender);
+	debug_printf("z_recipient: %s\n", notice.z_recipient);
+	debug_printf("z_message: %s\n", notice.z_message);
+	debug_printf("z_message_len: %d\n", notice.z_message_len);
+	debug_printf("\n");
 }
 */
 
@@ -499,7 +499,7 @@ static void process_zsubs()
 	gchar *fname;
 	gchar buff[BUFSIZ];
 	
-	fname = g_strdup_printf("%s/.zephyr.subs", g_getenv("HOME"));
+	fname = g_strdup_printf("%s/.zephyr.subs", gaim_home_dir());
 	f = fopen(fname, "r");
 	if (f) {
 		char **triple;
@@ -566,7 +566,7 @@ static void process_anyone()
 	FILE *fd;
 	gchar buff[BUFSIZ], *filename;
 
-	filename = g_strconcat(g_get_home_dir(), "/.anyone", NULL);
+	filename = g_strconcat(gaim_home_dir(), "/.anyone", NULL);
 	if ((fd = fopen(filename, "r")) != NULL) {
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
@@ -623,7 +623,7 @@ static void write_zsubs()
 	char *fname;
 
 	char** triple;
-	fname = g_strdup_printf("%s/.zephyr.subs", g_get_home_dir());
+	fname = g_strdup_printf("%s/.zephyr.subs", gaim_home_dir());
 	fd = fopen(fname, "w");
 	
 	if (!fd) {
@@ -660,7 +660,7 @@ static void write_anyone()
 	char *ptr, *fname, *ptr2;
 	FILE *fd;
 
-	fname = g_strdup_printf("%s/.anyone", g_get_home_dir());
+	fname = g_strdup_printf("%s/.anyone", gaim_home_dir());
 	fd = fopen(fname, "w");
 	if (!fd) {
 		g_free(fname);

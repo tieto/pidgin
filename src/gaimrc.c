@@ -23,17 +23,24 @@
 #include <config.h>
 #endif
 #include <string.h>
+
+#ifndef _WIN32
 #include <sys/time.h>
+#include <unistd.h>
+#endif
 
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "gaim.h"
 #include "prpl.h"
 #include "proxy.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
@@ -51,12 +58,15 @@ guint sound_options;
 guint away_options;
 guint away_resend;
 
-int report_idle, web_browser;
+int report_idle;
+int web_browser;
 struct save_pos blist_pos;
 struct window_size conv_size, buddy_chat_size;
 char web_command[2048];
 char *sound_file[NUM_SOUNDS];
+#ifndef _WIN32
 char sound_cmd[2048];
+#endif
 
 struct parse {
 	char option[256];
@@ -831,7 +841,17 @@ static void gaimrc_read_options(FILE *f)
 
 	if (misc_options & OPT_MISC_BUDDY_TICKER) {
 #ifdef GAIM_PLUGINS
-		load_plugin(LIBDIR "/ticker.so");
+		gchar* buf;
+
+		buf = g_strconcat(LIBDIR, G_DIR_SEPARATOR_S, 
+#ifndef _WIN32
+				  "ticker.so",
+#else
+				  "ticker.dll",
+#endif
+				  NULL);
+		load_plugin(buf);
+		g_free(buf);
 #endif
 		misc_options &= ~OPT_MISC_BUDDY_TICKER;
 	} 
@@ -881,8 +901,9 @@ static void gaimrc_read_sounds(FILE *f)
 
 	for (i = 0; i < NUM_SOUNDS; i++)
 		sound_file[i] = NULL;
+#ifndef _WIN32
 	sound_cmd[0] = 0;
-
+#endif
 	while (buf[0] != '}') {
 		if (buf[0] == '#')
 			continue;
@@ -891,10 +912,12 @@ static void gaimrc_read_sounds(FILE *f)
 			return;
 
 		p = parse_line(buf, &parse_buffer);
-
+#ifndef _WIN32
 		if (!strcmp(p->option, "sound_cmd")) {
 			g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", p->value[0]);
-		} else if (!strncmp(p->option, "sound", strlen("sound"))) {
+		} else 
+#endif
+		if (!strncmp(p->option, "sound", strlen("sound"))) {
 			i = p->option[strlen("sound")] - 'A';
 
 			if (p->value[0][0])
@@ -912,7 +935,9 @@ static void gaimrc_write_sounds(FILE *f)
 			fprintf(f, "\tsound%c { %s }\n", i + 'A', sound_file[i]);
 		else
 			fprintf(f, "\tsound%c {  }\n", i + 'A');
+#ifndef _WIN32
 	fprintf(f, "\tsound_cmd { %s }\n", sound_cmd);
+#endif
 	fprintf(f, "}\n");
 }
 
@@ -1192,11 +1217,16 @@ void load_prefs()
 
 	if (opt_rcfile_arg)
 		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
-	else if (getenv("HOME"))
-		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
+	else if (gaim_home_dir())
+		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaimrc", gaim_home_dir());
 	else {
+#ifndef _WIN32
 		set_defaults();
 		return;
+#else
+		/* Pre Win 2000 there are no home dirs... */
+		g_snprintf(buf, sizeof(buf), "C:" G_DIR_SEPARATOR_S ".gaimrc");
+#endif
 	}
 
 	if ((f = fopen(buf, "r"))) {
@@ -1254,13 +1284,20 @@ void save_prefs()
 	FILE *f;
 	char buf[BUF_LONG];
 
-	if (opt_rcfile_arg)
+	if (opt_rcfile_arg) {
 		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
-	else if (getenv("HOME"))
-		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
-	else
+	}
+	else if (gaim_home_dir()) {
+		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaimrc", gaim_home_dir());
+	}
+	else {
+#ifndef _WIN32
 		return;
-
+#else
+	        /* Pre Win 2000, there are no home dirs.. */
+	        g_snprintf(buf, sizeof(buf), "C:" G_DIR_SEPARATOR_S ".gaimrc");
+#endif
+	}
 	if ((f = fopen(buf, "w"))) {
 		fprintf(f, "# .gaimrc v%d\n", 4);
 		gaimrc_write_users(f);
@@ -1273,8 +1310,12 @@ void save_prefs()
 #endif
 		gaimrc_write_proxy(f);
 		fclose(f);
+#ifndef _WIN32	
 		chmod(buf, S_IRUSR | S_IWUSR);
+#endif
 	}
+	else
+	  debug_printf("Error opening .gaimrc\n");
 }
 
 

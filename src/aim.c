@@ -23,20 +23,26 @@
 #include <config.h>
 #endif
 #ifdef GAIM_PLUGINS
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
 #endif /* GAIM_PLUGINS */
 #include <gtk/gtk.h>
+#ifdef _WIN32
+#include <winsock.h>
+#else
 #include <gdk/gdkx.h>
-#include <gdk/gdk.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/stat.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <errno.h>
 #include <sys/un.h>
 #include <sys/wait.h>
+#endif /* _WIN32 */
+#include <gdk/gdk.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -51,6 +57,9 @@
 #include "locale.h"
 #include "gtkspell.h"
 #include <getopt.h>
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 static gchar *aspell_cmd[] = { "aspell", "--sug-mode=fast","-a", NULL };
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
@@ -72,6 +81,9 @@ int opt_away = 0;
 char *opt_away_arg = NULL;
 char *opt_rcfile_arg = NULL;
 int opt_debug = 0;
+#ifdef _WIN32
+int opt_gdebug = 0;
+#endif
 
 #if HAVE_SIGNAL_H
 /*
@@ -243,6 +255,7 @@ void show_login()
 	}
 
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
 	gtk_window_set_wmclass(GTK_WINDOW(mainwindow), "login", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
 	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event",
@@ -427,6 +440,7 @@ void sighandler(int sig)
 }
 #endif
 
+#ifndef _WIN32
 static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer ud)
 {
 	guchar type;
@@ -480,16 +494,16 @@ static int ui_main()
 	GdkPixbuf *icon = NULL;
 
 	/* use the nice PNG icon for all the windows */
-	icon = gdk_pixbuf_new_from_file(DATADIR "/pixmaps/gaim.png",NULL);
+	icon = gdk_pixbuf_new_from_file(DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "gaim.png",NULL);
 	if (icon) {
 		icons = g_list_append(icons,icon);
 		gtk_window_set_default_icon_list(icons);
 		g_object_unref(G_OBJECT(icon));
 	} else {
-		debug_printf("Failed to load icon from %s/pixmaps/gaim.png\n",DATADIR);
+		debug_printf("Failed to load icon from %s" G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "gaim.png\n",DATADIR);
 	}
 
-	g_snprintf(name, sizeof(name), "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
+	g_snprintf(name, sizeof(name), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
 
 	UI_fd = gaim_connect_to_session(0);
 	if (UI_fd < 0)
@@ -499,6 +513,7 @@ static int ui_main()
 	g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, socket_readable, NULL);
 	return 0;
 }
+#endif /* _WIN32 */
 
 static void set_first_user(char *name)
 {
@@ -518,8 +533,35 @@ static void set_first_user(char *name)
 	save_prefs();
 }
 
+#ifdef _WIN32
+/* WIN32 print and log handlers */
+
+static void gaim_dummy_print( const gchar* string ) {
+        return;
+}
+
+static void gaim_dummy_log_handler (const gchar    *domain,
+				    GLogLevelFlags  flags,
+				    const gchar    *msg,
+				    gpointer        user_data) {
+        return;
+}
+
+static void gaim_log_handler (const gchar    *domain,
+			      GLogLevelFlags  flags,
+			      const gchar    *msg,
+			      gpointer        user_data) {
+        debug_printf("%s - %s\n", domain, msg);
+	g_log_default_handler(domain, flags, msg, user_data);
+}
+#endif
+
 /* FUCKING GET ME A TOWEL! */
+#ifdef _WIN32
+int gaim_main(int argc, char *argv[])
+#else
 int main(int argc, char *argv[])
+#endif
 {
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
@@ -672,7 +714,13 @@ int main(int argc, char *argv[])
 
 	/* scan command-line options */
 	opterr = 1;
-	while ((opt = getopt_long(argc, argv, "adhu:f:vn", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv,
+#ifndef _WIN32
+				  "adhu:f:vn", 
+#else
+				  "adghu:f:vn", 
+#endif
+				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
 			opt_user = 1;
@@ -696,6 +744,11 @@ int main(int argc, char *argv[])
 		case 'n':       /* don't autologin */
 			opt_nologin = 1;
 			break;
+#ifdef _WIN32
+		case 'g':       /* debug GTK and GLIB */
+			opt_gdebug = 1;
+			break;
+#endif
 		case '?':
 		default:
 			show_usage(1, argv[0]);
@@ -703,6 +756,42 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
+
+#ifdef _WIN32
+	/* We don't want a console window.. */
+	/*
+	 *  Any calls to the glib logging functions, result in a call to AllocConsole().
+	 *  ME and 98 will in such cases produce a console window (2000 not), despite
+	 *  being built as a windows app rather than a console app.  So we should either
+	 *  ignore messages by setting dummy log handlers, or redirect messages.
+	 *  This requires setting handlers for all domains (any lib which uses g_logging).
+	 */
+	
+	g_log_set_handler ("Gdk", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
+			   NULL);
+	g_log_set_handler ("Gtk", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
+			   NULL);
+	g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
+			   NULL);
+	g_log_set_handler ("GModule", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
+			   NULL);
+	g_log_set_handler ("GLib-GObject", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
+			   NULL);
+	g_log_set_handler ("GThread", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
+			   NULL);
+
+	/* g_print also makes a call to AllocConsole(), therefore a handler needs to be
+	   set here aswell */
+	if(!opt_debug)
+		g_set_print_handler( gaim_dummy_print );
+
+#endif
 
 	/* show help message */
 	if (opt_help) {
@@ -720,7 +809,9 @@ int main(int argc, char *argv[])
 #endif
 	load_prefs();
 	core_main();
+#ifndef _WIN32
 	ui_main();
+#endif
 
 	/* set the default username */
 	if (opt_user_arg != NULL) {
@@ -731,6 +822,7 @@ int main(int argc, char *argv[])
 
 	if (misc_options & OPT_MISC_DEBUG)
 		show_debug();
+#ifndef _WIN32
 	/*If ispell fails to start, try using aspell in ispell compatibitity mode.
 	  Gabber does this the same way -- lorien420@myrealbox.com*/
 	if (convo_options & OPT_CONVO_CHECK_SPELLING){
@@ -744,7 +836,7 @@ int main(int argc, char *argv[])
 			debug_printf("gtkspell started with ispell\n");
 		}
 	}
-
+#endif
 	static_proto_init();
 
 	/* deal with --login */
@@ -763,11 +855,16 @@ int main(int argc, char *argv[])
 		account_editor(NULL, NULL);
 	} else if ((do_login_ret == -1) && !connections)
 		show_login();
+#ifdef _WIN32
+	/* Various win32 initializations */
+	wgaim_init();
+#endif
 
 	gtk_main();
-
+#ifndef _WIN32
 	if (convo_options & OPT_CONVO_CHECK_SPELLING)
 		gtkspell_stop();
+#endif
 	core_quit();
 	/* don't need ui_quit here because ui doesn't create anything */
 

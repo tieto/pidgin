@@ -1,4 +1,4 @@
-/* $Id: libgg.c 2859 2001-12-05 09:48:56Z warmenhoven $ */
+/* $Id: libgg.c 3753 2002-10-11 03:14:01Z robflynn $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -18,23 +18,29 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
-#include <sys/time.h>
 #include <netdb.h>
+#include <pwd.h>
+#else
+#include <winsock.h>
+#include <fcntl.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/time.h>
 #include <errno.h>
 #ifndef _AIX
 #  include <string.h>
 #endif
 #include <stdarg.h>
-#include <pwd.h>
 #include <time.h>
 #ifdef sun
   #include <sys/filio.h>
@@ -45,11 +51,16 @@
 #endif
 #include "libgg.h"
 #include "config.h"
+#include "gaim.h"
+#include "proxy.h"
 
-int gg_debug_level = 0;
+int gg_debug_level = (GG_DEBUG_NET | GG_DEBUG_TRAFFIC | GG_DEBUG_DUMP | GG_DEBUG_FUNCTION | GG_DEBUG_MISC);
 int gg_http_use_proxy = 0;
 int gg_http_proxy_port = 0;
 char *gg_http_proxy_host = NULL;
+
+/* temp -Herman */
+static int ping_outstanding = 0;
 
 #ifndef lint 
 
@@ -57,7 +68,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 2859 2001-12-05 09:48:56Z warmenhoven $";
+= "$Id: libgg.c 3753 2002-10-11 03:14:01Z robflynn $";
 
 #endif 
 
@@ -95,6 +106,7 @@ static inline unsigned short fix16(unsigned short x)
 #endif
 }
 
+#ifndef _WIN32
 /*
  * gg_resolve() // funkcja wewnêtrzna
  *
@@ -149,6 +161,7 @@ int gg_resolve(int *fd, int *pid, char *hostname)
 
 	return 0;
 }
+#endif /*!_WIN32*/
 
 /*
  * gg_recv_packet() // funkcja wewnêtrzna
@@ -165,6 +178,7 @@ static void *gg_recv_packet(struct gg_session *sess)
 	struct gg_header h;
 	char *buf = NULL;
 	int ret = 0, offset, size = 0;
+	int sizeh = sizeof(struct gg_header);
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_recv_packet(...);\n");
 	
@@ -174,21 +188,41 @@ static void *gg_recv_packet(struct gg_session *sess)
 	}
 
 	if (sess->recv_left < 1) {
-		while (ret != sizeof(h)) {
-			ret = read(sess->fd, &h, sizeof(h));
-			gg_debug(GG_DEBUG_MISC, "-- header recv(..., %d) = %d\n", sizeof(h), ret);
-			if (ret < sizeof(h)) {
+		while (ret != sizeh) {
+#ifndef _WIN32
+			ret = read(sess->fd, &h, sizeh);
+			gg_debug(GG_DEBUG_MISC, "-- header recv(..., %d) = %d\n", sizeh, ret);
+			if (ret < sizeh) {
 				if (errno != EINTR) {
 					gg_debug(GG_DEBUG_MISC, "-- errno = %d (%s)\n", errno, strerror(errno));
 					return NULL;
 				}
 			}
+#else
+			ret = recv(sess->fd, (char*)&h, sizeh, 0);
+			gg_debug(GG_DEBUG_MISC, "-- header recv(..., %d) = %d\n", sizeh, ret);
+			if (ret < sizeh) {
+				/* connection has been gracefully closed */
+				if (ret == 0) {
+					gg_debug(GG_DEBUG_MISC, "Connection has been gracefully closed\n");
+					WSASetLastError(WSAEDISCON);
+					return NULL;
+				}
+				else if (ret == SOCKET_ERROR) {
+					if(WSAGetLastError() != WSAEINTR) {
+						gg_debug(GG_DEBUG_MISC, "-- socket error = %d\n", WSAGetLastError());
+						return NULL;
+					}
+				}
+				
+			}
+#endif
 		}
 
 		h.type = fix32(h.type);
 		h.length = fix32(h.length);
 	} else {
-		memcpy(&h, sess->recv_buf, sizeof(h));
+		memcpy(&h, sess->recv_buf, sizeh);
 	}
 
 	/* jakie¶ sensowne limity na rozmiar pakietu */
@@ -204,24 +238,29 @@ static void *gg_recv_packet(struct gg_session *sess)
 		offset = sess->recv_done;
 		buf = sess->recv_buf;
 	} else {
-		if (!(buf = malloc(sizeof(h) + h.length + 1))) {
+		if (!(buf = malloc(sizeh + h.length + 1))) {
 			gg_debug(GG_DEBUG_MISC, "-- not enough memory\n");
 			return NULL;
 		}
 
-		memcpy(buf, &h, sizeof(h));
+		memcpy(buf, &h, sizeh);
 
 		offset = 0;
 		size = h.length;
 	}
 
 	while (size > 0) {
-		ret = read(sess->fd, buf + sizeof(h) + offset, size);
+#ifndef _WIN32
+		ret = read(sess->fd, buf + sizeh + offset, size);
+#else
+		ret = recv(sess->fd, buf + sizeh + offset, size, 0);
+#endif
 		gg_debug(GG_DEBUG_MISC, "-- body recv(..., %d) = %d\n", size, ret);
 		if (ret > -1 && ret <= size) {
 			offset += ret;
 			size -= ret;
 		} else if (ret == -1) {	
+#ifndef _WIN32
 			gg_debug(GG_DEBUG_MISC, "-- errno = %d (%s)\n", errno, strerror(errno));
 			if (errno == EAGAIN) {
 				gg_debug(GG_DEBUG_MISC, "-- %d bytes received, %d left\n", offset, size);
@@ -235,6 +274,13 @@ static void *gg_recv_packet(struct gg_session *sess)
 				free(buf);
 				return NULL;
 			}
+#else
+			gg_debug(GG_DEBUG_MISC, "-- errno = %d\n", WSAGetLastError());
+			if (WSAGetLastError()!= WSAEINTR) {
+				free(buf);
+				return NULL;
+			}
+#endif
 		}
 	}
 
@@ -244,7 +290,7 @@ static void *gg_recv_packet(struct gg_session *sess)
 		int i;
 
 		gg_debug(GG_DEBUG_DUMP, ">> received packet (type=%.2x):", h.type);
-		for (i = 0; i < sizeof(h) + h.length; i++) 
+		for (i = 0; i < sizeh + h.length; i++) 
 			gg_debug(GG_DEBUG_DUMP, " %.2x", (unsigned char) buf[i]);
 		gg_debug(GG_DEBUG_DUMP, "\n");
 	}
@@ -306,9 +352,14 @@ static int gg_send_packet(int sock, int type, void *packet, int length, void *pa
 	}
 
 	plen = sizeof(struct gg_header) + length + payload_length;
-	
+#ifndef _WIN32
 	if ((res = write(sock, tmp, plen)) < plen) {
 		gg_debug(GG_DEBUG_MISC, "-- write() failed. res = %d, errno = %d (%s)\n", res, errno, strerror(errno));
+#else
+	if ((res = send(sock, tmp, plen, 0)) < plen) {
+		gg_debug(GG_DEBUG_MISC, "-- send() failed. res = %d, errno = %d\n", 
+			 res, (res == SOCKET_ERROR) ? WSAGetLastError() : 0);
+#endif
 		free(tmp);
 		return -1;
 	}
@@ -317,7 +368,7 @@ static int gg_send_packet(int sock, int type, void *packet, int length, void *pa
 	return 0;
 }
 
-
+#ifndef _WIN32
 /*
  * gg_login()
  *
@@ -419,6 +470,7 @@ struct gg_session *gg_login(uin_t uin, char *password, int async)
 
 	return sess;
 }
+#endif /*!_WIN32*/
 
 /* 
  * gg_free_session()
@@ -458,7 +510,11 @@ int gg_change_status(struct gg_session *sess, int status)
 	}
 
 	if (sess->state != GG_STATE_CONNECTED) {
+#ifndef _WIN32
 		errno = ENOTCONN;
+#else
+		WSASetLastError( WSAENOTCONN );
+#endif
 		return -1;
 	}
 
@@ -517,7 +573,11 @@ int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, unsi
 	}
 	
 	if (sess->state != GG_STATE_CONNECTED) {
+#ifndef _WIN32
 		errno = ENOTCONN;
+#else
+		WSASetLastError( WSAENOTCONN );
+#endif
 		return -1;
 	}
 
@@ -553,13 +613,24 @@ int gg_ping(struct gg_session *sess)
 	}
 
 	if (sess->state != GG_STATE_CONNECTED) {
+#ifndef _WIN32
 		errno = ENOTCONN;
+#else
+		WSASetLastError( WSAENOTCONN );
+#endif
 		return -1;
 	}
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_ping(...);\n");
-
-	return gg_send_packet(sess->fd, GG_PING, NULL, 0, NULL, 0);
+	
+	if(ping_outstanding) {
+		debug_printf("Trying to send ping, when we havn't been ponged on last ping\n");
+		return 1;
+	}
+	else {
+		ping_outstanding = 1;
+		return gg_send_packet(sess->fd, GG_PING, NULL, 0, NULL, 0);
+	}
 }
 
 /*
@@ -605,7 +676,11 @@ int gg_notify(struct gg_session *sess, uin_t *userlist, int count)
 	}
 	
 	if (sess->state != GG_STATE_CONNECTED) {
+#ifndef _WIN32
 		errno = ENOTCONN;
+#else
+		WSASetLastError( WSAENOTCONN );
+#endif
 		return -1;
 	}
 
@@ -650,7 +725,11 @@ int gg_add_notify(struct gg_session *sess, uin_t uin)
 	}
 
 	if (sess->state != GG_STATE_CONNECTED) {
+#ifndef _WIN32
 		errno = ENOTCONN;
+#else
+		WSASetLastError( WSAENOTCONN );
+#endif
 		return -1;
 	}
 	
@@ -682,7 +761,11 @@ int gg_remove_notify(struct gg_session *sess, uin_t uin)
 	}
 
 	if (sess->state != GG_STATE_CONNECTED) {
+#ifndef _WIN32
 		errno = ENOTCONN;
+#else
+		WSASetLastError( WSAENOTCONN );
+#endif
 		return -1;
 	}
 
@@ -785,7 +868,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 	if (h->type == GG_PONG) {
 		gg_debug(GG_DEBUG_MISC, "-- received a pong\n");
-
+		ping_outstanding = 0;
 		sess->last_pong = time(NULL);
 	}
 
@@ -812,7 +895,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 {
 	struct gg_event *e;
 	int res = 0;
+#ifndef _WIN32
 	int port;
+#endif
 
 	if (!sess) {
 		errno = EFAULT;
@@ -829,6 +914,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 	e->type = GG_EVENT_NONE;
 
 	switch (sess->state) {
+#ifndef _WIN32
+		/* Apparantly we will never be in this state as long as we are
+		   using proxy_connect instead of gg_login - Herman */
 		case GG_STATE_RESOLVING:
 		{
 			struct in_addr a;
@@ -887,7 +975,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				
 			break;
 		}
-
+#endif /* !_WIN32 */
 		case GG_STATE_CONNECTING:
 		{
 			char buf[1024];
@@ -895,10 +983,16 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			gg_debug(GG_DEBUG_MISC, "== GG_STATE_CONNECTING\n");
 
-			if (sess->async && (getsockopt(sess->fd, SOL_SOCKET, SO_ERROR, &res, &res_size) || res)) {
+			if (sess->async && (getsockopt(sess->fd, SOL_SOCKET, SO_ERROR, 
+#ifndef _WIN32
+						       &res, 
+#else
+						       (char*)&res,
+#endif
+						       &res_size) || res)) {
+#if 0
 				struct in_addr *addr = (struct in_addr*) &sess->server_ip;
 				gg_debug(GG_DEBUG_MISC, "-- http connection failed, errno = %d (%s), trying direct connection\n", res, strerror(res));
-
 				if ((sess->fd = gg_connect(addr, GG_DEFAULT_PORT, sess->async)) == -1) {
 				    gg_debug(GG_DEBUG_MISC, "-- connection failed, trying https connection\n");
 				    if ((sess->fd = gg_connect(addr, GG_HTTPS_PORT, sess->async)) == -1) {
@@ -913,20 +1007,26 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 				sess->state = GG_STATE_CONNECTING_GG;
 				sess->check = GG_CHECK_WRITE;
+#else
+				gg_debug(GG_DEBUG_MISC, "-- http connection failed, errno = %d\n", res);
+				e->type = GG_EVENT_CONN_FAILED;
+				e->event.failure = GG_FAILURE_CONNECTING;
+				sess->state = GG_STATE_IDLE;
+#endif
 				break;
 			}
 			
 			gg_debug(GG_DEBUG_MISC, "-- http connection succeded, sending query\n");
 
 			if (gg_http_use_proxy) {
-				snprintf(buf, sizeof(buf) - 1,
+				g_snprintf(buf, sizeof(buf) - 1,
 					"GET http://" GG_APPMSG_HOST "/appsvc/appmsg.asp?fmnumber=%lu HTTP/1.0\r\n"
 					"Host: " GG_APPMSG_HOST "\r\n"
 					"User-Agent: " GG_HTTP_USERAGENT "\r\n"
 					"Pragma: no-cache\r\n"
 					"\r\n", sess->uin);
 			} else {
-				snprintf(buf, sizeof(buf) - 1,
+				g_snprintf(buf, sizeof(buf) - 1,
 					"GET /appsvc/appmsg.asp?fmnumber=%lu HTTP/1.0\r\n"
 					"Host: " GG_APPMSG_HOST "\r\n"
 					"User-Agent: " GG_HTTP_USERAGENT "\r\n"
@@ -935,10 +1035,12 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			};
 
     			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-QUERY-----\n%s\n=> -----END-HTTP-QUERY-----\n", buf);
-	 
+#ifndef _WIN32
 			if (write(sess->fd, buf, strlen(buf)) < strlen(buf)) {
+#else
+			if (send(sess->fd, buf, strlen(buf), 0) < strlen(buf)) {
+#endif
 				gg_debug(GG_DEBUG_MISC, "-- sending query failed\n");
-
 				errno = EIO;
 				e->type = GG_EVENT_CONN_FAILED;
 				e->event.failure = GG_FAILURE_WRITING;
@@ -1010,8 +1112,10 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			a.s_addr = inet_addr(host);
 			sess->server_ip = a.s_addr;
-
-			if ((sess->fd = gg_connect(&a, port, sess->async)) == -1) {
+#if 0
+			/* We need to watch this non-blocking socket so lets use proxy_connect 
+			   in gg.c - Herman */
+			if((sess->fd = gg_connect(&a, port, sess->assync)) == -1) {
 				gg_debug(GG_DEBUG_MISC, "-- connection failed, trying https connection\n");
 				if ((sess->fd = gg_connect(&a, GG_HTTPS_PORT, sess->async)) == -1) {
 				    gg_debug(GG_DEBUG_MISC, "-- connection failed, errno = %d (%s)\n", errno, strerror(errno));
@@ -1022,7 +1126,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				    break;
 				}
 			}
-
+#else
+			sess->port = port;
+#endif
 			sess->state = GG_STATE_CONNECTING_GG;
 			sess->check = GG_CHECK_WRITE;
 		
@@ -1035,7 +1141,13 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			gg_debug(GG_DEBUG_MISC, "== GG_STATE_CONNECTING_GG\n");
 
-			if (sess->async && (getsockopt(sess->fd, SOL_SOCKET, SO_ERROR, &res, &res_size) || res)) {
+			if (sess->async && (getsockopt(sess->fd, SOL_SOCKET, SO_ERROR, 
+#ifndef _WIN32
+						       &res, 
+#else
+						       (char*)&res,
+#endif
+						       &res_size) || res)) {
 				struct in_addr *addr = (struct in_addr*) &sess->server_ip;
 
 				gg_debug(GG_DEBUG_MISC, "-- connection failed, trying https connection\n");
@@ -1068,8 +1180,11 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			gg_debug(GG_DEBUG_MISC, "== GG_STATE_READING_KEY\n");
 
 			if (!(h = gg_recv_packet(sess))) {
+#ifndef _WIN32
 				gg_debug(GG_DEBUG_MISC, "-- gg_recv_packet() failed. errno = %d (%s)\n", errno, strerror(errno));
-
+#else
+				gg_debug(GG_DEBUG_MISC, "-- gg_recv_packet() failed. errno = %d\n", WSAGetLastError());
+#endif
 				e->type = GG_EVENT_CONN_FAILED;
 				e->event.failure = GG_FAILURE_READING;
 				sess->state = GG_STATE_IDLE;

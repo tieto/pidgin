@@ -23,9 +23,15 @@
 #include <config.h>
 #endif
 #include "gtkimhtml.h"
+
+#ifndef _WIN32
 #include <X11/Xlib.h>
-#include <stdlib.h>
 #include <gdk/gdkx.h>
+#else
+#include <gdk/gdkwin32.h>
+#endif
+
+#include <stdlib.h>
 #include <gtk/gtk.h>
 #include <string.h>
 #include <ctype.h>
@@ -34,6 +40,12 @@
 #ifdef HAVE_LANGINFO_CODESET
 #include <langinfo.h>
 #include <locale.h>
+#endif
+
+#ifdef _WIN32
+/* GDK_SELECTION_PRIMARY is ignored win32 GTK */
+#undef GDK_SELECTION_PRIMARY
+#define GDK_SELECTION_PRIMARY GDK_SELECTION_CLIPBOARD
 #endif
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -1684,10 +1696,10 @@ save_img (GtkObject *object,
 	const gchar *filename;
 	FILE *f;
 	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(is->savedialog));
-	g_print("Saving %s\n", filename);
+	debug_printf("Saving %s\n", filename);
 	if (! (f=fopen(filename, "w"))) {
 		/* There should be some sort of dialog */
-		g_print("Could not open file for writing.\n");
+		debug_printf("Could not open file for writing.\n");
 		gtk_widget_destroy(is->savedialog);
 		g_free(is);
 		return;
@@ -2086,6 +2098,19 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 static const gchar*
 gtk_imhtml_get_font_name (PangoFontDescription *font)
 {
+#if 0
+#ifndef _WIN32
+	return gdk_x11_font_get_name(font);
+#else
+#if 0
+	/* win32 gdkfont.h says this is temporary - GTK 2.0.3 */
+	return 	gdk_font_full_name_get(font);
+#else
+	/* So i can build with GTK 2.0.6 */
+	return "-unknown-arial-normal-r-normal---18--108-120-120-p-0-microsoft-vietnamese-unknown-arial-normal-r-normal---18--108-120-120-p-0-microsoft-vietnamese27";
+#endif
+#endif
+#endif
 	return pango_font_description_get_family(font);
 }
 
@@ -3328,7 +3353,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 						if (!gdk_pixbuf_loader_write(load, imagedata, 
 									img->len, &err))
-							g_print("IM Image corrupt or unreadable.\n");
+							debug_printf("IM Image corrupt or unreadable.\n");
 						else 
 							imagepb = gdk_pixbuf_loader_get_pixbuf(load);
 						img->pb = imagepb;

@@ -1,0 +1,22 @@
+Notes on keeping GAIM OS independant
+------------------------------------
+
+General
+-------
+- Use G_DIR_SEPARATOR_S and G_DIR_SEPARATOR for paths
+
+- Use g_getenv, g_snprintf, g_vsnprintf
+
+- Use gaim_home_dir instead of g_get_home_dir or g_getenv("HOME")
+
+
+PLUGINS & PROTOS
+----------------
+
+- G_MODULE_EXPORT all functions which are to be accessed from outside the
+  scope of its "dll" or "so". (E.G. gaim_plugin_init)
+
+- G_MODULE_IMPORT all global variables which are located outside your
+  dynamic library. (E.G. connections)
+
+  (Not doing this will cause "Memory Access Violations" in Win32)

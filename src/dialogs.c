@@ -25,17 +25,22 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+#include <winsock.h>
+#else
 #include <sys/socket.h>
+#include <time.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
+
 #include <errno.h>
 #include <math.h>
 
@@ -43,6 +48,10 @@
 #include "gaim.h"
 #include "gtkimhtml.h"
 #include "prpl.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #include "pixmaps/gnome_preferences.xpm"
 #include "pixmaps/cancel.xpm"
@@ -2609,7 +2618,7 @@ void show_log_dialog(struct conversation *c)
 
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(c->log_dialog));
 
-		g_snprintf(buf, BUF_LEN - 1, "%s/%s.log", getenv("HOME"), normalize(c->name));
+		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.log", gaim_home_dir(), normalize(c->name));
 		gtk_object_set_user_data(GTK_OBJECT(c->log_dialog), "log dialog");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(c->log_dialog), buf);
 		gtk_signal_connect(GTK_OBJECT(c->log_dialog), "delete_event",
@@ -3365,7 +3374,7 @@ void show_import_dialog()
 
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(importdialog));
 
-		g_snprintf(buf, BUF_LEN - 1, "%s/", getenv("HOME"));
+		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(importdialog), buf);
 		gtk_signal_connect(GTK_OBJECT(importdialog), "destroy",
@@ -3885,9 +3894,8 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 
 	name = gtk_object_get_user_data(GTK_OBJECT(filesel));
 	tmp = gaim_user_dir();
-	g_snprintf(filename, PATHSIZE, "%s/logs/%s%s", tmp,
+	g_snprintf(filename, PATHSIZE, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
 		   name ? normalize(name) : "system", name ? ".log" : "");
-	g_free(tmp);
 
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
 	strncpy(path, file, PATHSIZE - 1);
@@ -3924,7 +3932,7 @@ static void show_save_log(GtkWidget *w, gchar *name)
 	GtkWidget *filesel;
 	gchar buf[BUF_LEN];
 
-	g_snprintf(buf, BUF_LEN - 1, "%s/%s%s", getenv("HOME"),
+	g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s%s", gaim_home_dir(),
 		   name ? normalize(name) : "system", name ? ".log" : "");
 
 	filesel = gtk_file_selection_new(_("Gaim - Save Log File"));
@@ -3953,9 +3961,8 @@ static void do_clear_log_file(GtkWidget *w, gchar *name)
 	char *tmp;
 
 	tmp = gaim_user_dir();
-	g_snprintf(filename, 256, "%s/logs/%s%s", tmp,
+	g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
 		   name ? normalize(name) : "system", name ? ".log" : "");
-	g_free(tmp);
 
 	if ((remove(filename)) == -1) {
 		g_snprintf(buf, 256, _("Couldn't remove file %s." ), filename);
@@ -4025,12 +4032,10 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 
 	if (view->name) {
 		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(view->name));
-		g_free(tmp);
+		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, normalize(view->name));
 	} else {
 		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s/logs/system", tmp);
-		g_free(tmp);
+		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "system", tmp);
 	}
 	if ((fp = fopen(filename, "r")) == NULL) {
 		g_snprintf(buf, BUF_LONG, "Couldn't open log file %s.", filename);
@@ -4174,8 +4179,7 @@ void show_log(char *nm)
 
 	if (name) {
 		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(name));
-		g_free(tmp);
+		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, normalize(name));
 		if ((fp = fopen(filename, "r")) == NULL) {
 			g_snprintf(buf, BUF_LONG, "Couldn't open log file %s", filename);
 			do_error_dialog(buf, strerror(errno), GAIM_ERROR);
@@ -4557,7 +4561,6 @@ void load_perl_script()
 	if (!perl_last_dir) {
 		temp = gaim_user_dir();
 		buf = g_strconcat(temp, G_DIR_SEPARATOR_S, NULL);
-		g_free(temp);
 	} else {
 		buf = g_strconcat(perl_last_dir, G_DIR_SEPARATOR_S, NULL);
 	}

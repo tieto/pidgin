@@ -22,15 +22,22 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#ifndef _WIN32
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/wait.h>
+#else
+#include <direct.h>
+#include <io.h>
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
-#include <sys/wait.h>
 #include <ctype.h>
 #ifdef HAVE_ICONV
 #include <iconv.h>
@@ -39,6 +46,16 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "gtkspell.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 1024
+#endif
+
+static char home_dir[MAXPATHLEN];
 
 char *full_date()
 {
@@ -334,7 +351,9 @@ FILE *open_gaim_log_file(char *name, int *flag)
 	char log_all_file[256];
 	struct stat st;
 	FILE *fd;
+#ifndef _WIN32
 	int res;
+#endif
 	gchar *gaim_dir;
 
 	buf = g_malloc(BUF_LONG);
@@ -344,6 +363,7 @@ FILE *open_gaim_log_file(char *name, int *flag)
 	/*  Dont log yourself */
 	strncpy(log_all_file, gaim_dir, 256);
 
+#ifndef _WIN32
 	stat(log_all_file, &st);
 	if (!S_ISDIR(st.st_mode))
 		unlink(log_all_file);
@@ -358,13 +378,12 @@ FILE *open_gaim_log_file(char *name, int *flag)
 			do_error_dialog(buf, NULL, GAIM_ERROR);
 			g_free(buf);
 			g_free(buf2);
-			g_free(gaim_dir);
 			return NULL;
 		}
 	} else
 		fclose(fd);
 
-	g_snprintf(log_all_file, 256, "%s/logs", gaim_dir);
+	g_snprintf(log_all_file, 256, "%s" G_DIR_SEPARATOR_S "logs", gaim_dir);
 
 	if (stat(log_all_file, &st) < 0)
 		*flag = 1;
@@ -380,15 +399,23 @@ FILE *open_gaim_log_file(char *name, int *flag)
 			do_error_dialog(buf, NULL, GAIM_ERROR);
 			g_free(buf);
 			g_free(buf2);
-			g_free(gaim_dir);
 			return NULL;
 		}
 	} else
 		fclose(fd);
+#else /* _WIN32 */
+	g_snprintf(log_all_file, 256, "%s" G_DIR_SEPARATOR_S "logs", gaim_dir);
 
+	if( _mkdir(log_all_file) < 0 && errno != EEXIST ) {
+	  g_snprintf(buf, BUF_LONG, "Unable to make directory %s for logging", log_all_file);
+	  do_error_dialog(buf, NULL, GAIM_ERROR);
+	  g_free(buf);
+	  g_free(buf2);
+	  return NULL;
+	}
+#endif
 
-
-	g_snprintf(log_all_file, 256, "%s/logs/%s", gaim_dir, name);
+	g_snprintf(log_all_file, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s", gaim_dir, name);
 	if (stat(log_all_file, &st) < 0)
 		*flag = 1;
 
@@ -398,7 +425,6 @@ FILE *open_gaim_log_file(char *name, int *flag)
 
 	g_free(buf);
 	g_free(buf2);
-	g_free(gaim_dir);
 	return fd;
 }
 
@@ -620,6 +646,7 @@ char *date()
 
 void clean_pid(void)
 {
+#ifndef _WIN32
 	int status;
 	pid_t pid, spell_pid;
 
@@ -633,6 +660,7 @@ void clean_pid(void)
 		sprintf(errmsg, "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
+#endif
 }
 
 struct aim_user *find_user(const char *name, int protocol)
@@ -879,12 +907,32 @@ GSList *message_split(char *message, int limit)
 	}
 }
 
+gchar *gaim_home_dir()
+{
+	if(g_get_home_dir())
+		return g_get_home_dir();
+	else
+#ifndef _WIN32
+		return NULL;
+#else
+		/* Win9x and WinME don't have a home dir */
+		return "C:";
+#endif
+
+}
+
 /* returns a string of the form ~/.gaim, where ~ is replaced by the user's home
- * dir. this string should be freed after it's used. Note that there is no
- * trailing slash after .gaim. */
+ * dir. Note that there is no trailing slash after .gaim. */
 gchar *gaim_user_dir()
 {
-	return g_strjoin(G_DIR_SEPARATOR_S, g_get_home_dir(), ".gaim", NULL);
+        if(gaim_home_dir()) {
+		strcpy( (char*)&home_dir, gaim_home_dir() );
+		strcat( (char*)&home_dir, G_DIR_SEPARATOR_S ".gaim" );
+		return (gchar*)&home_dir;
+	}
+	else {
+   	        return NULL;
+	}
 }
 
 /*
@@ -1243,11 +1291,24 @@ static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
 FILE *gaim_mkstemp(gchar **fpath)
 {
 	const gchar *tmpdir;
+#ifndef _WIN32
 	int fd;
+#endif
 	FILE *fp = NULL;
 
-	if((tmpdir = g_get_tmp_dir()) != NULL) {
-		if((*fpath = g_strdup_printf("%s/%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
+	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
+		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
+#ifdef _WIN32
+			char* result = _mktemp( *fpath );
+			if( result == NULL )
+				debug_printf("gaim_mkstemp: Problem creating the template\n");
+			else
+			{
+				if( (fp = fopen( result, "w+" )) == NULL ) {
+					debug_printf("Error: Couldn't fopen()in gaim_mkstemp():\n%s\n", result);
+				}
+			}
+#else
 			if((fd = mkstemp(*fpath)) == -1) {
 				debug_printf("Error: Couldn't make \"%s\", error: %d\n", *fpath, errno);
 			} else {
@@ -1256,6 +1317,7 @@ FILE *gaim_mkstemp(gchar **fpath)
 					debug_printf("Error: Couldn't fdopen(), error: %d\n", errno);
 				}
 			}
+#endif
 			if(!fp) {
 				g_free(*fpath);
 				*fpath = NULL;

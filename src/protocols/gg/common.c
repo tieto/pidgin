@@ -1,4 +1,4 @@
-/* $Id: common.c 3516 2002-08-29 01:47:15Z seanegan $ */
+/* $Id: common.c 3753 2002-10-11 03:14:01Z robflynn $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -20,21 +20,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef _WIN32
 #include <unistd.h>
-#include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <sys/time.h>
 #include <netdb.h>
+#include <sys/ioctl.h>
+#include <pwd.h>
+#include <sys/wait.h>
+#else
+#include <winsock.h>
+#endif
+#include <sys/time.h>
 #include <errno.h>
 #ifndef _AIX
 #  include <string.h>
 #endif
 #include <stdarg.h>
-#include <pwd.h>
 #include <time.h>
 #ifdef sun
   #include <sys/filio.h>
@@ -84,7 +87,7 @@ char *gg_alloc_sprintf(char *format, ...)
 
         va_start(ap, format);
 
-        if ((size = vsnprintf(buf, 0, format, ap)) < 1) {
+        if ((size = g_vsnprintf(buf, 0, format, ap)) < 1) {
                 size = 128;
                 do {
                         size *= 2;
@@ -93,14 +96,14 @@ char *gg_alloc_sprintf(char *format, ...)
                                 return NULL;
                         }
                         buf = tmp;
-                        res = vsnprintf(buf, size, format, ap);
+                        res = g_vsnprintf(buf, size, format, ap);
                 } while (res == size - 1);
         } else {
                 if (!(buf = malloc(size + 1)))
                         return NULL;
         }
 
-        vsnprintf(buf, size + 1, format, ap);
+        g_vsnprintf(buf, size + 1, format, ap);
 
         va_end(ap);
 
@@ -156,20 +159,31 @@ char *gg_get_line(char **ptr)
  */
 int gg_connect(void *addr, int port, int async)
 {
-	int sock, one = 1;
+	int sock, ret, one = 1;
 	struct sockaddr_in sin;
 	struct in_addr *a = addr;
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_connect(%s, %d, %d);\n", inet_ntoa(*a), port, async);
 	
 	if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-		gg_debug(GG_DEBUG_MISC, "-- socket() failed. errno = %d (%s)\n", errno, strerror(errno));
+		gg_debug(GG_DEBUG_MISC, "-- socket() failed. errno = %d" 
+#ifndef _WIN32
+			 " (%s)\n", errno, strerror(errno)
+#else
+		         "\n", WSAGetLastError()
+#endif
+		);
 		return -1;
 	}
 
 	if (async) {
+#ifndef _WIN32
 		if (ioctl(sock, FIONBIO, &one) == -1) {
 			gg_debug(GG_DEBUG_MISC, "-- ioctl() failed. errno = %d (%s)\n", errno, strerror(errno));
+#else
+		if (ioctlsocket(sock, FIONBIO, (unsigned long *)&one) == SOCKET_ERROR) {
+			gg_debug(GG_DEBUG_MISC, "-- ioctlsocket() failed. errno = %d\n", WSAGetLastError());
+#endif
 			return -1;
 		}
 	}
@@ -178,11 +192,22 @@ int gg_connect(void *addr, int port, int async)
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = a->s_addr;
 	
-	if (connect(sock, (struct sockaddr*) &sin, sizeof(sin)) == -1) {
+	if ((ret = connect(sock, (struct sockaddr*) &sin, sizeof(sin))) == -1) {
+#ifndef _WIN32
 		if (errno && (!async || errno != EINPROGRESS)) {
 			gg_debug(GG_DEBUG_MISC, "-- connect() failed. errno = %d (%s)\n", errno, strerror(errno));
 			return -1;
 		}
+#else
+		if (ret == SOCKET_ERROR) {
+			gg_debug(GG_DEBUG_MISC, "-- connect() SOCKET_ERROR: %d\n", WSAGetLastError());
+			if((WSAGetLastError() != WSAEWOULDBLOCK) && 
+			   (!async || WSAGetLastError() != WSAEINPROGRESS)) {
+				gg_debug(GG_DEBUG_MISC, "-- connect() failed. errno = %d\n", WSAGetLastError());
+				return -1;
+			}
+		}
+#endif
 		gg_debug(GG_DEBUG_MISC, "-- connect() in progress\n");
 	}
 	
@@ -208,11 +233,19 @@ void gg_read_line(int sock, char *buf, int length)
 	
 	for (; length > 1; buf++, length--) {
 		do {
+#ifndef _WIN32
 			if ((ret = read(sock, buf, 1)) == -1 && errno != EINTR) {
+#else
+			if ((ret = recv(sock, buf, 1, 0)) == SOCKET_ERROR && (WSAGetLastError() != WSAEINTR)) {
+#endif
 				*buf = 0;
 				return;
 			}
+#ifndef _WIN32
 		} while (ret == -1 && errno == EINTR);
+#else
+		} while (ret == SOCKET_ERROR && WSAGetLastError() == WSAEINTR);
+#endif
 
 		if (*buf == '\n') {
 			buf++;

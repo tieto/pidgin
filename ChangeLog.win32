@@ -1,0 +1,18 @@
+version 0.60 alpha 2 (10/9/02)
+	* Perl functionality added
+	* PNGs work
+	* Path issues fixed for Win9x
+	* Added g command line flag for logging of GTK and GLIB debugging.
+	* No more console in Win9x for glib logging (when not debugging).
+	* URL links now work.
+	* Plugins: autorecon, iconaway, spellchk and ticker now work.
+	* Language translations are working.
+	* Using GTK 2.0.6 (Some GTK bugs fixed since 2.0.3)
+	* Gadu-Gadu works
+	* gtkimhtml copying to clipboard works. Selecting text copies it to
+	  the clipboard.
+	* Gaim now minimizes to the system tray.
+	* Various other feature updates from the Gaim crew. Read ChangeLog :)
+
+version 0.60 alpha 1 (9/13/2002)
+	* Initial alpha release

@@ -25,7 +25,12 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include <direct.h>
+#include <io.h>
+#endif
 #include "gaim.h"
 #include "prpl.h"
 
@@ -668,14 +673,14 @@ gboolean bud_list_cache_exists(struct gaim_connection *gc)
 
 	file = gaim_user_dir();
 	if (file != (char *)NULL) {
-		g_snprintf(path, sizeof path, "%s/%s.%d.blist", file, g_screenname, gc->protocol);
+		g_snprintf(path, sizeof path, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, gc->protocol);
 		if (!stat(path, &sbuf)) {
 			debug_printf("%s exists.\n", path);
 			ret = TRUE;
 		} else {
 			char path2[PATHSIZE];
 			debug_printf("%s does not exist.\n", path);
-			g_snprintf(path2, sizeof path2, "%s/%s.blist", file, g_screenname);
+			g_snprintf(path2, sizeof path2, "%s" G_DIR_SEPARATOR_S "%s.blist", file, g_screenname);
 			if (!stat(path2, &sbuf)) {
 				debug_printf("%s exists, moving to %s\n", path2, path);
 				if (rename(path2, path))
@@ -684,7 +689,6 @@ gboolean bud_list_cache_exists(struct gaim_connection *gc)
 					ret = TRUE;
 			}
 		}
-		g_free(file);
 	}
 	g_free(g_screenname);
 	return ret;
@@ -706,8 +710,7 @@ void do_import(struct gaim_connection *gc, const char *filename)
 		char *file = gaim_user_dir();
 
 		if (file != (char *)NULL) {
-			sprintf(path, "%s/%s.%d.blist", file, g_screenname, gc->protocol);
-			g_free(file);
+			sprintf(path, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, gc->protocol);
 			g_free(g_screenname);
 		} else {
 			g_free(g_screenname);
@@ -787,25 +790,32 @@ void do_export(struct gaim_connection *g)
 	strcpy(buf, file);
 	dir = fopen(buf, "r");
 	if (!dir)
+#ifndef _WIN32
 		mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
+#else
+		_mkdir(buf);
+#endif
 	else
 		fclose(dir);
 
 	g_screenname = get_screenname_filename(g->username);
 
-	sprintf(path, "%s/%s.%d.blist", file, g_screenname, g->protocol);
+	sprintf(path, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, g->protocol);
 	if ((f = fopen(path, "w"))) {
 		debug_printf("writing %s\n", path);
 		toc_build_config(g, buf, 8192 - 1, TRUE);
 		fprintf(f, "%s\n", buf);
 		fclose(f);
+#ifdef _WIN32
+		_chmod(buf, _S_IWRITE);
+#else
 		chmod(path, S_IRUSR | S_IWUSR);
+#endif
 	} else {
 		debug_printf("unable to write %s\n", path);
 	}
 
 	g_free(g_screenname);
-	g_free(file);
 }
 
 static gboolean is_blocked(struct buddy *b)

@@ -23,7 +23,9 @@
 #include <config.h>
 #endif
 #ifdef GAIM_PLUGINS
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
 #endif /* GAIM_PLUGINS */
 #include <string.h>
 #include <stdio.h>
@@ -31,13 +33,24 @@
 #include <ctype.h>
 #include <math.h>
 #include <time.h>
-#include <unistd.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+#include <gdk/gdkwin32.h>
+#else
+#include <unistd.h>
+#include <gdk/gdkx.h>
+#endif
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include "prpl.h"
 #include "gaim.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 #include "pixmaps/login_icon.xpm"
 #include "pixmaps/logout_icon.xpm"
 #include "pixmaps/no_icon.xpm"
@@ -1619,6 +1632,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				}
 			}
 			if (b->options & OPT_POUNCE_COMMAND) {
+#ifndef _WIN32
 				int pid = fork();
 
 				if (pid == 0) {
@@ -1630,6 +1644,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 					execvp(args[0], args);
 					_exit(0);
 				}
+#endif /*_WIN32*/
 			}
 			if (b->options & OPT_POUNCE_SOUND) {
 				if (strlen(b->sound))
@@ -2853,6 +2868,13 @@ void make_buddy_list()
 	gtk_container_add(GTK_CONTAINER(tbox), edittree);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(tbox),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+#ifdef _WIN32
+	/* Set filter to enable win32 systray minimization */
+	gdk_window_add_filter (GTK_WIDGET(blist)->window,
+			       wgaim_window_filter,
+			       NULL);
+#endif
 }
 
 void show_buddy_list()

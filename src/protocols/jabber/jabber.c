@@ -20,23 +20,27 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
-
+#ifndef _WIN32
 #include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/utsname.h>
+#include <unistd.h>
+#else
+#include <winsock.h>
+#include "utsname.h"
+#endif
+
+#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <sys/socket.h>
-#include <sys/utsname.h>
 #include <sys/stat.h>
 #include "multi.h"
 #include "prpl.h"
@@ -50,12 +54,19 @@
 #include "jabber.h"
 #include "proxy.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 #include "pixmaps/protocols/jabber/available.xpm"
 #include "pixmaps/protocols/jabber/available-away.xpm"
 #include "pixmaps/protocols/jabber/available-chat.xpm"
 #include "pixmaps/protocols/jabber/available-xa.xpm"
 #include "pixmaps/protocols/jabber/available-dnd.xpm"
 #include "pixmaps/protocols/jabber/available-error.xpm"
+
+/* for win32 compatability */
+G_MODULE_IMPORT GSList *connections;
 
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
@@ -140,6 +151,7 @@ struct jabber_data {
 	time_t idle;
 	gboolean die;
 	GHashTable *buddies;
+	GSList *file_transfers;
 };
 
 /*
@@ -228,6 +240,8 @@ struct jabber_chat {
 #define STATE_EVT(arg) if(gjc->on_state) { (gjc->on_state)(gjc, (arg) ); }
 
 static void jabber_handlevcard(gjconn, xmlnode, char *);
+
+static char *jabber_normalize(const char *s);
 
 static char *create_valid_jid(const char *given, char *server, char *resource)
 {
@@ -492,7 +506,11 @@ static void gjab_stop(gjconn gjc)
 	gjab_send_raw(gjc, "</stream:stream>");
 	gjc->state = JCONN_STATE_OFF;
 	gjc->was_connected = 0;
+#ifndef _WIN32
 	close(gjc->fd);
+#else
+	closesocket(gjc->fd);
+#endif
 	gjc->fd = -1;
 	XML_ParserFree(gjc->parser);
 	gjc->parser = NULL;
@@ -535,7 +553,11 @@ static void gjab_send(gjconn gjc, xmlnode x)
 	if (gjc && gjc->state != JCONN_STATE_OFF) {
 		char *buf = xmlnode2str(x);
 		if (buf)
+#ifndef _WIN32
 			write(gjc->fd, buf, strlen(buf));
+#else
+			send(gjc->fd, buf, strlen(buf), 0);
+#endif
 		debug_printf("gjab_send: %s\n", buf);
 	}
 }
@@ -546,7 +568,11 @@ static void gjab_send_raw(gjconn gjc, const char *str)
 		/*
 		 * JFIXME: No error detection?!?!
 		 */
+#ifndef _WIN32
 		if(write(gjc->fd, str, strlen(str)) < 0) {
+#else
+		if(send(gjc->fd, str, strlen(str), 0) < 0) {
+#endif
 			fprintf(stderr, "DBG: Problem sending.  Error: %d\n", errno);
 			fflush(stderr);
 		}
@@ -636,8 +662,11 @@ static void gjab_recv(gjconn gjc)
 
 	if (!gjc || gjc->state == JCONN_STATE_OFF)
 		return;
-
+#ifndef _WIN32
 	if ((len = read(gjc->fd, buf, sizeof(buf) - 1)) > 0) {
+#else
+	if ((len = recv(gjc->fd, buf, sizeof(buf) - 1, 0)) > 0) {
+#endif
 		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 		buf[len] = '\0';
 		debug_printf("input (len %d): %s\n", len, buf);
@@ -727,7 +756,11 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 	gjconn gjc;
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -1901,12 +1934,194 @@ static void jabber_handletime(gjconn gjc, xmlnode iqnode) {
 	xmlnode_free(x);
 }
 
+struct jabber_file_transfer {
+	enum { JFT_SENDFILE_IN, JFT_SENDFILE_OUT } type;
+	struct file_transfer *xfer;
+	char *from;
+	struct g_url *url;
+	char *name;
+	GString *headers;
+
+	int len;
+	int fd;
+	int watcher;
+
+	gboolean sentreq;
+	gboolean newline;
+	gboolean startsaving;
+
+	struct gaim_connection *gc;
+};
+
+static struct jabber_file_transfer *find_jft_by_xfer(struct gaim_connection *gc,
+				struct file_transfer *xfer) {
+	GSList *g = ((struct jabber_data *)gc->proto_data)->file_transfers;
+	struct jabber_file_transfer *f = NULL;
+
+	while(g) {
+		f = (struct jabber_file_transfer *)g->data;
+		if(f->xfer == xfer)
+			break;
+		g = g->next;
+		f = NULL;
+	}
+
+	return f;
+}
+
+static void jabber_http_recv_callback(gpointer data, gint source, GaimInputCondition condition) {
+	struct jabber_file_transfer *jft = data;
+	char test;
+
+	jft->fd = source;
+	if(!jft->sentreq) {
+		char buf[1024];
+		g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n", jft->url->page, jft->url->address);
+		write(source, buf, strlen(buf));
+		fcntl(source, F_SETFL, O_NONBLOCK);
+		jft->sentreq = TRUE;
+		jft->watcher = gaim_input_add(source, GAIM_INPUT_READ, jabber_http_recv_callback,data);
+		return;
+	}
+
+	if(!jft->startsaving) {
+		if(read(source, &test, sizeof(test)) > 0 || errno == EWOULDBLOCK) {
+			if(errno == EWOULDBLOCK) {
+				errno = 0;
+				return;
+			}
+
+			jft->headers = g_string_append_c(jft->headers, test);
+			if(test == '\r')
+				return;
+			if(test == '\n') {
+				if(jft->newline) {
+					gchar *lenstr = strstr(jft->headers->str, "Content-Length: ");
+					if(lenstr) {
+						sscanf(lenstr, "Content-Length: %d", &jft->len);
+					}
+					jft->startsaving = TRUE;
+				} else
+					jft->newline = TRUE;
+				return;
+			}
+			jft->newline = FALSE;
+			return;
+		} else {
+			gaim_input_remove(jft->watcher);
+			close(source);
+			//FIXME: ft_cancel(NULL, jft->xfer);
+		}
+		return;
+	}
+
+	/* we've parsed the headers, gotten the size, all is good.  now we pass the reception of
+	 * the file off to the core, and leave it in it's capable...err...hands?? */
+	gaim_input_remove(jft->watcher);
+	jft->watcher = 0;
+	transfer_in_do(jft->xfer, jft->fd, jft->name, jft->len);
+}
+
+static void jabber_file_transfer_cancel(struct gaim_connection *gc, struct file_transfer *xfer) {
+	struct jabber_data *jd = gc->proto_data;
+	struct jabber_file_transfer *jft = find_jft_by_xfer(gc, xfer);\
+	xmlnode x,y;
+
+	jd->file_transfers = g_slist_remove(jd->file_transfers, jft);
+
+	gaim_input_remove(jft->watcher);
+	close(jft->fd);
+
+	x = xmlnode_new_tag("iq");
+	xmlnode_put_attrib(x, "type", "error");
+	xmlnode_put_attrib(x, "to", jft->from);
+	y = xmlnode_insert_tag(x, "error");
+	/* FIXME: need to handle other kinds of errors here */
+	xmlnode_put_attrib(y, "code", "406");
+	xmlnode_insert_cdata(y, "File Transfer Refused", -1);
+
+	gjab_send(jd->gjc, x);
+
+	xmlnode_free(x);
+
+	g_string_free(jft->headers, TRUE);
+	g_free(jft->from);
+	g_free(jft->url);
+	g_free(jft->name);
+
+	g_free(jft);
+}
+
+static void jabber_file_transfer_done(struct gaim_connection *gc, struct file_transfer *xfer) {
+	struct jabber_data *jd = gc->proto_data;
+	struct jabber_file_transfer *jft = find_jft_by_xfer(gc, xfer);
+	xmlnode x;
+
+	jd->file_transfers = g_slist_remove(jd->file_transfers, jft);
+
+	gaim_input_remove(jft->watcher);
+	close(jft->fd);
+
+	x = xmlnode_new_tag("iq");
+	xmlnode_put_attrib(x, "type", "result");
+	xmlnode_put_attrib(x, "to", jft->from);
+
+	gjab_send(jd->gjc, x);
+
+	xmlnode_free(x);
+
+	g_string_free(jft->headers, TRUE);
+	g_free(jft->from);
+	g_free(jft->url);
+	g_free(jft->name);
+
+	g_free(jft);
+}
+
+static void jabber_file_transfer_in(struct gaim_connection *gc, struct file_transfer *xfer, int offset) {
+	struct jabber_file_transfer *jft = find_jft_by_xfer(gc, xfer);
+
+	proxy_connect(jft->url->address, jft->url->port, jabber_http_recv_callback, jft);
+}
+
+static void jabber_handleoob(gjconn gjc, xmlnode iqnode) {
+	struct jabber_file_transfer *jft;
+	struct jabber_data *jd = GJ_GC(gjc)->proto_data;
+	char *msg = NULL;
+	xmlnode querynode = xmlnode_get_tag(iqnode, "query");
+	xmlnode urlnode,descnode;
+
+	if(!querynode)
+		return;
+	urlnode = xmlnode_get_tag(querynode, "url");
+	if(!urlnode)
+		return;
+	descnode = xmlnode_get_tag(querynode, "desc");
+	if(descnode)
+		msg = xmlnode_get_data(descnode);
+
+	jft = g_new0(struct jabber_file_transfer, 1);
+	jft->type = JFT_SENDFILE_IN;
+	jft->gc = GJ_GC(gjc);
+	jft->url = parse_url(xmlnode_get_data(urlnode));
+	jft->from = g_strdup(xmlnode_get_attrib(iqnode, "from"));
+	jft->name = g_strdup(g_strrstr(jft->url->page,"/"));
+	if (!jft->name)
+			jft->name = g_strdup(jft->url->page);
+	jft->headers = g_string_new("");
+	jft->len = -1;
+
+	jd->file_transfers = g_slist_append(jd->file_transfers, jft);
+
+	jft->xfer = transfer_in_add(GJ_GC(gjc), jft->from, jft->name, jft->len, 1, msg);
+}
+
 static void jabber_handlelast(gjconn gjc, xmlnode iqnode) {
-   	xmlnode x, querytag;
+	xmlnode x, querytag;
 	char *id, *from;
 	struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 	char idle_time[32];
-	
+
 	id = xmlnode_get_attrib(iqnode, "id");
 	from = xmlnode_get_attrib(iqnode, "from");
 
@@ -1979,6 +2194,8 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 			querynode = xmlnode_get_tag(p->x, "query");
 			if (NSCHECK(querynode, "jabber:iq:roster")) {
 				jabber_handlebuddy(gjc, xmlnode_get_firstchild(querynode));
+			} else if(NSCHECK(querynode, "jabber:iq:oob")) {
+				jabber_handleoob(gjc, p->x);
 			}
 		} else if (jpacket_subtype(p) == JPACKET__GET) {
 		   	xmlnode querynode;
@@ -2261,7 +2478,7 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 	xmlnode_insert_tag(y, "composing");
 
 	if (message && strlen(message)) {
-		char *utf8 = str_to_utf8(message);
+		char *utf8 = str_to_utf8((char*)message);
 		y = xmlnode_insert_tag(x, "body");
 		xmlnode_insert_cdata(y, utf8, -1);
 		g_free(utf8);
@@ -2748,7 +2965,7 @@ static void jabber_chat_invite(struct gaim_connection *gc, int id, const char *m
 	g_free(subject);
 
 	if (message && strlen(message)) {
-		char *utf8 = str_to_utf8(message);
+		char *utf8 = str_to_utf8((char*)message);
 		y = xmlnode_insert_tag(x, "body");
 		xmlnode_insert_cdata(y, utf8, -1);
 		g_free(utf8);
@@ -3960,7 +4177,7 @@ static GList *jabber_actions()
 
 static struct prpl *my_protocol = NULL;
 
-void jabber_init(struct prpl *ret)
+G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 {
 	/* the NULL's aren't required but they're nice to have */
 	struct proto_user_opt *puo;
@@ -4009,7 +4226,12 @@ void jabber_init(struct prpl *ret)
 	ret->send_typing = jabber_send_typing;
 	ret->convo_closed = jabber_convo_closed;
 	ret->rename_group = jabber_rename_group;
-       
+	ret->file_transfer_out = NULL; /* TODO */
+	ret->file_transfer_in = jabber_file_transfer_in;
+	ret->file_transfer_data_chunk = NULL; /* TODO */
+	ret->file_transfer_done = jabber_file_transfer_done;
+	ret->file_transfer_cancel = jabber_file_transfer_cancel;
+
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Port:");
 	puo->def = g_strdup("5222");
@@ -4021,7 +4243,7 @@ void jabber_init(struct prpl *ret)
 
 #ifndef STATIC
 
-void *gaim_prpl_init(struct prpl *prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	jabber_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;

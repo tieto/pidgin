@@ -18,6 +18,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 struct replace_words {
 	char *bad;
@@ -136,35 +139,7 @@ static void load_conf() {
 	free(ibuf);
 }
 
-char *gaim_plugin_init(GModule *handle) {
-	load_conf();
 
-	gaim_signal_connect(handle, event_im_send, substitute_words, NULL);
-	gaim_signal_connect(handle, event_chat_send, substitute_words, NULL);
-	return NULL;
-}
-
-void gaim_plugin_remove() {
-}
-
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Text replacement");
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Replaces text in outgoing messages according to user-defined rules.");
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
- 
-char *name() {
-	return "IM Spell Check";
-}
-
-char *description() {
-	return "Watches outgoing IM text and corrects common spelling errors.";
-}
 
 static int num_words(char *m) {
 	int count = 0;
@@ -358,7 +333,41 @@ static void good_changed() {
 	}
 }
 
-GtkWidget *gaim_plugin_config_gtk() {
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
+	load_conf();
+
+	gaim_signal_connect(handle, event_im_send, substitute_words, NULL);
+	gaim_signal_connect(handle, event_chat_send, substitute_words, NULL);
+	return NULL;
+}
+
+G_MODULE_EXPORT void gaim_plugin_remove() {
+}
+
+struct gaim_plugin_description desc; 
+G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("Text replacement");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup("Replaces text in outgoing messages according to user-defined rules.");
+	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
+}
+ 
+G_MODULE_EXPORT char *name() {
+	return "IM Spell Check";
+}
+
+G_MODULE_EXPORT char *description() {
+	return "Watches outgoing IM text and corrects common spelling errors.";
+}
+
+G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 	GtkWidget *ret, *vbox, *win;
 	GtkWidget *hbox;
 	GtkWidget *button;

@@ -1,15 +1,26 @@
 #include "config.h"
 
+#ifndef _WIN32
+#include <unistd.h>
+#else
+#include <winsock.h>
+#include <io.h>
+#endif
+
+
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <ctype.h>
 #include "gaim.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "md5.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #include "pixmaps/protocols/msn/msn_online.xpm"
 #include "pixmaps/protocols/msn/msn_away.xpm"
@@ -63,6 +74,9 @@
 #include "pixmaps/protocols/msn/msn_rainbow.xpm"
 #include "pixmaps/protocols/msn/msn_devil.xpm"
 #include "pixmaps/protocols/msn/msn_wink.xpm"
+
+/* for win32 compatability */
+G_MODULE_IMPORT GSList *connections;
 
 #define MSN_BUF_LEN 8192
 #define MIME_HEADER	"MIME-Version: 1.0\r\n" \
@@ -168,7 +182,11 @@ static char *msn_normalize(const char *s)
 static int msn_write(int fd, void *data, int len)
 {
 	debug_printf("MSN C: %s", data);
+#ifndef _WIN32
 	return write(fd, data, len);
+#else
+	return send(fd, data, len, 0);
+#endif
 }
 
 static char *url_decode(const char *msg)
@@ -444,7 +462,11 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 
 	if (ms->inpa)
 		gaim_input_remove(ms->inpa);
+#ifndef _WIN32
 	close(ms->fd);
+#else
+	closesocket(ms->fd);
+#endif
 	g_free(ms->rxqueue);
 	if (ms->msg)
 		g_free(ms->msguser);
@@ -695,9 +717,11 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 	/* This is really stupid and I hate to put this here. */
 	if (ms->fd != source)
 		ms->fd = source;
-
+#ifndef _WIN32
 	len = read(ms->fd, buf, sizeof(buf));
-
+#else
+	len = recv(ms->fd, buf, sizeof(buf), 0);
+#endif
 	if (len <= 0) {
 		msn_kill_switch(ms);
 		return;
@@ -773,7 +797,11 @@ static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
 	char buf[MSN_BUF_LEN];
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		g_free(ms->sessid);
 		g_free(ms->auth);
 		g_free(ms);
@@ -787,7 +815,11 @@ static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
 
 	g_snprintf(buf, sizeof(buf), "ANS %d %s %s %s\r\n", ++ms->trId, gc->username, ms->auth, ms->sessid);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
+#ifndef _WIN32
 		close(ms->fd);
+#else
+		closesocket(ms->fd);
+#endif
 		g_free(ms->sessid);
 		g_free(ms->auth);
 		g_free(ms);
@@ -805,7 +837,11 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition co
 	char buf[MSN_BUF_LEN];
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		if (g_slist_find(connections, gc)) {
 			msn_kill_switch(ms);
 			do_error_dialog(_("Gaim was unable to send an MSN message"),
@@ -1251,7 +1287,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		passport = tmp;
 		
-		snprintf(hippy, sizeof(hippy), "%s%lu%s", md->mspauth, time(NULL) - md->sl, gc->password);
+		g_snprintf(hippy, sizeof(hippy), "%s%lu%s", md->mspauth, time(NULL) - md->sl, gc->password);
 
 		md5_init(&st);
 		md5_append(&st, (const md5_byte_t *)hippy, strlen(hippy));
@@ -1268,32 +1304,35 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			g_free(md->passport);
 		}
 
-		fd = gaim_mkstemp(&(md->passport));
-		fprintf(fd, "<html>\n");
-		fprintf(fd, "<head>\n");
-		fprintf(fd, "<noscript>\n");
-		fprintf(fd, "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n");
-		fprintf(fd, "</noscript>\n");
-		fprintf(fd, "</head>\n\n");
+		if( (fd = gaim_mkstemp(&(md->passport))) == NULL ) {
+		  debug_printf("Error opening temp file\n"); 
+		}
+		else {
+		        fprintf(fd, "<html>\n");
+		        fprintf(fd, "<head>\n");
+		        fprintf(fd, "<noscript>\n");
+		        fprintf(fd, "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n");
+		        fprintf(fd, "</noscript>\n");
+		        fprintf(fd, "</head>\n\n");
 		
-		fprintf(fd, "<body onload=\"document.pform.submit(); \">\n");
-		fprintf(fd, "<form name=\"pform\" action=\"%s\" method=\"POST\">\n\n", passport);
-		fprintf(fd, "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n");
-		fprintf(fd, "<input type=\"hidden\" name=\"login\" value=\"%s\">\n", gc->username);
-		fprintf(fd, "<input type=\"hidden\" name=\"username\" value=\"%s\">\n", gc->username);
-		fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n", md->sid);
-		fprintf(fd, "<input type=\"hidden\" name=\"kv\" value=\"%s\">\n", md->kv);
-		fprintf(fd, "<input type=\"hidden\" name=\"id\" value=\"2\">\n");
-		fprintf(fd, "<input type=\"hidden\" name=\"sl\" value=\"%ld\">\n", time(NULL) - md->sl);
-		fprintf(fd, "<input type=\"hidden\" name=\"rru\" value=\"%s\">\n", rru);
-		fprintf(fd, "<input type=\"hidden\" name=\"auth\" value=\"%s\">\n", md->mspauth);
-		fprintf(fd, "<input type=\"hidden\" name=\"creds\" value=\"%s\">\n", sendbuf); // Digest me
-		fprintf(fd, "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n");
-		fprintf(fd, "<input type=\"hidden\" name=\"js\" value=\"yes\">\n");
-		fprintf(fd, "</form></body>\n");
-		fprintf(fd, "</html>\n");
-		fclose(fd);
-
+		        fprintf(fd, "<body onload=\"document.pform.submit(); \">\n");
+		        fprintf(fd, "<form name=\"pform\" action=\"%s\" method=\"POST\">\n\n", passport);
+		        fprintf(fd, "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n");
+		        fprintf(fd, "<input type=\"hidden\" name=\"login\" value=\"%s\">\n", gc->username);
+		        fprintf(fd, "<input type=\"hidden\" name=\"username\" value=\"%s\">\n", gc->username);
+			fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n", md->sid);
+			fprintf(fd, "<input type=\"hidden\" name=\"kv\" value=\"%s\">\n", md->kv);
+			fprintf(fd, "<input type=\"hidden\" name=\"id\" value=\"2\">\n");
+			fprintf(fd, "<input type=\"hidden\" name=\"sl\" value=\"%ld\">\n", time(NULL) - md->sl);
+			fprintf(fd, "<input type=\"hidden\" name=\"rru\" value=\"%s\">\n", rru);
+			fprintf(fd, "<input type=\"hidden\" name=\"auth\" value=\"%s\">\n", md->mspauth);
+			fprintf(fd, "<input type=\"hidden\" name=\"creds\" value=\"%s\">\n", sendbuf); // Digest me
+			fprintf(fd, "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n");
+			fprintf(fd, "<input type=\"hidden\" name=\"js\" value=\"yes\">\n");
+			fprintf(fd, "</form></body>\n");
+			fprintf(fd, "</html>\n");
+			fclose(fd);
+		}
 	} else if (!g_strncasecmp(buf, "SYN", 3)) {
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
 	} else if (!g_strncasecmp(buf, "XFR", 3)) {
@@ -1341,7 +1380,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			}
 			ms->auth = g_strdup(tmp);
 		} else {
+#ifndef _WIN32
 			close(md->fd);
+#else
+			closesocket(md->fd);
+#endif
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
 			md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
@@ -1431,8 +1474,11 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	int cont = 1;
 	int len;
 
+#ifndef _WIN32
 	len = read(md->fd, buf, sizeof(buf));
-
+#else
+	len = recv(md->fd, buf, sizeof(buf), 0);
+#endif
 	if (len <= 0) {
 		hide_login_progress_error(gc, _("Error reading from server"));
 		signoff(gc);
@@ -1508,7 +1554,11 @@ static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition
 	char buf[MSN_BUF_LEN];
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -1644,7 +1694,11 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		} else
 			port = 1863;
 
+#ifndef _WIN32
 		close(md->fd);
+#else
+		closesocket(md->fd);
+#endif
 		gaim_input_remove(md->inpa);
 		md->inpa = 0;
 		md->fd = 0;
@@ -1675,8 +1729,11 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 	int cont = 1;
 	int len;
 
+#ifndef _WIN32
 	len = read(md->fd, buf, sizeof(buf));
-
+#else
+	len = recv(md->fd, buf, sizeof(buf), 0);
+#endif
 	if (len <= 0) {
 		hide_login_progress(gc, _("Error reading from server"));
 		signoff(gc);
@@ -1730,7 +1787,11 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 	char buf[1024];
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -1777,7 +1838,11 @@ static void msn_login(struct aim_user *user)
 static void msn_close(struct gaim_connection *gc)
 {
 	struct msn_data *md = gc->proto_data;
+#ifndef _WIN32
 	close(md->fd);
+#else
+	closesocket(md->fd);
+#endif
 	if (md->inpa)
 		gaim_input_remove(md->inpa);
 	g_free(md->rxqueue);
@@ -2504,7 +2569,7 @@ GSList *msn_smiley_list()
 
 static struct prpl *my_protocol = NULL;
 
-void msn_init(struct prpl *ret)
+G_MODULE_EXPORT void msn_init(struct prpl *ret)
 {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_MSN;
@@ -2554,25 +2619,25 @@ void msn_init(struct prpl *ret)
 
 #ifndef STATIC
 
-void *gaim_prpl_init(struct prpl *prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	msn_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
-void gaim_plugin_remove()
+G_MODULE_EXPORT void gaim_plugin_remove()
 {
 	struct prpl *p = find_prpl(PROTO_MSN);
 	if (p == my_protocol)
 		unload_protocol(p);
 }
 
-char *name()
+G_MODULE_EXPORT char *name()
 {
 	return "MSN";
 }
 
-char *description()
+G_MODULE_EXPORT char *description()
 {
 	return PRPL_DESC("MSN");
 }

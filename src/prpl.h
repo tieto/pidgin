@@ -193,7 +193,7 @@ struct prpl {
 };
 
 extern GSList *protocols;
-extern prpl_accounts[];
+extern int prpl_accounts[];
 
 /* this is mostly just for aim.c, when it initializes the protocols */
 extern void static_proto_init();

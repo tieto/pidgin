@@ -454,7 +454,7 @@ static void sel_icon_dlg(GtkWidget *w, struct mod_user *u)
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), tmp);
 		g_free(tmp);
 	} else {
-		g_snprintf(buf, sizeof(buf), "%s/", g_get_home_dir());
+		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), buf);
 	}
 

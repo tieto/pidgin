@@ -47,6 +47,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 /* ------------------ Global Variables ----------------------- */
 
 GList *plugins = NULL;
@@ -88,8 +92,7 @@ void gaim_probe_plugins() {
 	gchar *path;
 	struct gaim_plugin_description *plugdes;
 	struct gaim_plugin *plug;
-	char userspace[128];
-	char *probedirs[] = {LIBDIR, &userspace, 0};
+	char *probedirs[3];
 	int l;
 #if GAIM_PLUGINS     
 	char *(*gaim_plugin_init)(GModule *);
@@ -100,14 +103,22 @@ void gaim_probe_plugins() {
 	GModule *handle;
 #endif
 
-	g_snprintf(userspace, sizeof(userspace), "%s" G_DIR_SEPARATOR_S ".gaim", g_get_home_dir());
+	probedirs[0] = LIBDIR;
+	probedirs[1] = gaim_user_dir();
+	probedirs[2] = 0;
 
 	for (l=0; probedirs[l]; l++) {
 		dir = g_dir_open(probedirs[l], 0, NULL);
 		if (dir) {
 			while ((file = g_dir_read_name(dir))) {
 #ifdef GAIM_PLUGINS
-				if (is_so_file(file, ".so") && g_module_supported()) {
+				if (is_so_file(file, 
+#ifndef _WIN32
+					       ".so"
+#else
+					       ".dll"
+#endif
+					       ) && g_module_supported()) {
 					path = g_build_filename(probedirs[l], file, NULL);
 					handle = g_module_open(path, 0);
 					if (!handle) {

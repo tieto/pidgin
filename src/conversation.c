@@ -23,22 +23,32 @@
 #include <config.h>
 #endif
 #include <string.h>
+#ifndef _WIN32
 #include <sys/time.h>
+#include <unistd.h>
+#include <gdk/gdkx.h>
+#include <X11/Xlib.h>
+#else
+#ifdef small
+#undef small
+#endif
+#endif /*_WIN32*/
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
 #include <gdk/gdkkeysyms.h>
 #include "convo.h"
 #include "gtkspell.h"
 #include "prpl.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #include "pixmaps/bold.xpm"
 #include "pixmaps/italic.xpm"
@@ -440,7 +450,7 @@ void save_convo(GtkWidget *save, struct conversation *c)
 {
 	char buf[BUF_LONG];
 	GtkWidget *window = gtk_file_selection_new(_("Gaim - Save Conversation"));
-	g_snprintf(buf, sizeof(buf), "%s/%s.log", g_get_home_dir(), normalize(c->name));
+	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log", gaim_home_dir(), normalize(c->name));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), c);
 	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
@@ -497,7 +507,7 @@ void insert_image(GtkWidget *save, struct conversation *c)
 {
 	char buf[BUF_LONG];
 	GtkWidget *window = gtk_file_selection_new(_("Gaim - Insert Image"));
-	g_snprintf(buf, sizeof(buf), "%s/", g_get_home_dir());
+	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), c);
 	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
@@ -1058,9 +1068,11 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		} else if (event->keyval == 'z') {
 			key_is_typing = FALSE;
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+#ifndef _WIN32
 			XIconifyWindow(GDK_DISPLAY(),
 				       GDK_WINDOW_XWINDOW(c->window->window),
 				       ((_XPrivDisplay)GDK_DISPLAY())->default_screen);		     
+#endif
 		}
 		
 
@@ -1360,8 +1372,14 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	if (err < 0) {
 		if (err == -E2BIG)
 			do_error_dialog(_("Unable to send message.  The message is too large"), NULL, GAIM_ERROR);
+#ifndef _WIN32
 		else if (err == -ENOTCONN)
 			debug_printf("Not yet connected\n");
+#else
+		else if (err == SOCKET_ERROR)
+			if( WSAENOTCONN == WSAGetLastError() )
+				debug_printf("Not yet connected\n");
+#endif
 		else
 			do_error_dialog(_("Unable to send message"), NULL, GAIM_ERROR);
 	} else {
@@ -3476,7 +3494,7 @@ static void save_icon(GtkObject *obj, struct conversation *c)
 
 	c->save_icon = gtk_file_selection_new(_("Gaim - Save Icon"));
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(c->save_icon));
-	g_snprintf(buf, BUF_LEN - 1, "%s/%s.icon", g_get_home_dir(), c->name);
+	g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.icon", gaim_home_dir(), c->name);
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(c->save_icon), buf);
 	gtk_signal_connect(GTK_OBJECT(c->save_icon), "delete_event",
 			   GTK_SIGNAL_FUNC(des_save_icon), c);
@@ -3613,7 +3631,7 @@ void update_icon(struct conversation *c)
 
 	/* this is such an evil hack, i don't know why i'm even considering it.
 	 * we'll do it differently when gdk-pixbuf-loader isn't leaky anymore. */
-	g_snprintf(filename, sizeof(filename), "%s/gaimicon-%s.%d", g_get_tmp_dir(), c->name, getpid());
+	g_snprintf(filename, sizeof(filename), "%s" G_DIR_SEPARATOR_S "gaimicon-%s.%d", g_get_tmp_dir(), c->name, getpid());
 	file = fopen(filename, "w");
 	if (!file)
 		return;

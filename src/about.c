@@ -81,7 +81,8 @@ void show_about(GtkWidget *w, void *null)
 	GdkBitmap *bm;
 	GtkWidget *hbox;
 	GtkWidget *button;
-	GtkWidget *text;
+	GtkWidget *view;
+	GtkTextBuffer *buffer;
 	GtkWidget *sw;
 
 	char abouttitle[45];
@@ -131,20 +132,44 @@ void show_about(GtkWidget *w, void *null)
 		gtk_box_pack_start(GTK_BOX(fbox), label, TRUE, TRUE, 0);
 		gtk_widget_show(label);
 
-		text = gtk_text_new(NULL, NULL);
+		view = gtk_text_view_new ();
 
-		gtk_text_insert (GTK_TEXT (text), NULL, NULL, NULL,
-                   _("Active Developers\n====================\nRob Flynn (maintainer) [ rob@marko.net ]\nSean Egan (coder)      [ bj91704@binghamton.edu ]\n\nCrazy Patch Writers\n===================\nBenjamin Miller\nDecklin Foster\nNathan Walp\nMark Doliner\n\nRetired Developers\n===================\nJim Duchek\nEric Warmenhoven                   [ warmenhoven@yahoo.com ]\nMark Spencer (original author)   [ markster@marko.net ]"), 394);
+		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+		gtk_text_buffer_set_text (buffer,
+					  "Active Developers\n"
+					  "=================\n"
+					  "Rob Flynn (maintainer)            [ rob@marko.net ]\n"
+					  "Sean Egan (coder)                 [ bj91704@binghamton.edu ]\n"
+					  "\n"
+					  "Crazy Patch Writers\n"
+					  "===================\n"
+					  "Benjamin Miller\n"
+					  "Decklin Foster\n"
+					  "Nathan Walp\n"
+					  "Mark Doliner\n"
+					  "\n"
+					  "WIN32 Port\n"
+					  "==========\n"
+					  "Herman Bloggs                     [ hermanator12002@yahoo.com ]\n" 
+					  "\n"
+					  "Retired Developers\n"
+					  "==================\n"
+					  "Jim Duchek\n"
+					  "Eric Warmenhoven                  [ warmenhoven@yahoo.com ]\n"
+					  "Mark Spencer (original author)    [ markster@marko.net ]\n"
+					  "\n",
+					  -1);
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
-		gtk_container_add(GTK_CONTAINER(sw), text);
+		gtk_container_add(GTK_CONTAINER(sw), view);
 		gtk_widget_set_usize(GTK_WIDGET(sw), -1, 150);
 		gtk_widget_show(sw);
 		
 		gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
-		gtk_widget_show(text);
+		gtk_widget_show(view);
 
 		/* Close Button */
 

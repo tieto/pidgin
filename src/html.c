@@ -25,22 +25,23 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifndef _WIN32
 #include <sys/time.h>
 #include <unistd.h>
-#include "gaim.h"
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#else
+#include <winsock.h>
+#include <io.h>
+#endif
+
+#include <sys/types.h>
 #include <fcntl.h>
 #include <errno.h>
+#include "gaim.h"
 #include "proxy.h"
-
-struct g_url {
-	char address[255];
-	int port;
-        char page[255];
-};
 
 gchar *strip_html(gchar *text)
 {
@@ -74,7 +75,7 @@ gchar *strip_html(gchar *text)
 	return text2;
 }
 
-static struct g_url *parse_url(char *url)
+struct g_url *parse_url(char *url)
 {
 	struct g_url *test = g_new0(struct g_url, 1);
 	char scan_info[255];
@@ -143,22 +144,37 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 
 	if (!gunk->sentreq) {
 		char buf[256];
+#ifdef _WIN32
+		int imode=1;
+#endif
 		g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.0\r\n\r\n", gunk->full ? "" : "/",
 			   gunk->full ? gunk->url : gunk->website->page);
 		debug_printf("Request: %s\n", buf);
+#ifdef _WIN32
+		send(sock, buf, strlen(buf), 0);
+		ioctlsocket(sock, FIONBIO, (unsigned long *)&imode);
+#else
 		write(sock, buf, strlen(buf));
 		fcntl(sock, F_SETFL, O_NONBLOCK);
+#endif
 		gunk->sentreq = TRUE;
 		gunk->inpa = gaim_input_add(sock, GAIM_INPUT_READ, grab_url_callback, dat);
 		return;
 	}
 
+#ifdef _WIN32
+	if (recv(sock, &data, 1, 0) > 0 || WSAEWOULDBLOCK == WSAGetLastError()) {
+		if (WSAEWOULDBLOCK == WSAGetLastError()) {	
+			WSASetLastError(0);
+			return;
+		}	
+#else
 	if (read(sock, &data, 1) > 0 || errno == EWOULDBLOCK) {
 		if (errno == EWOULDBLOCK) {
 			errno = 0;
 			return;
 		}
-
+#endif
 		if (!gunk->startsaving) {
 			if (data == '\r')
 				return;
@@ -175,15 +191,22 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 			gunk->webdata = g_realloc(gunk->webdata, gunk->len);
 			gunk->webdata[gunk->len - 1] = data;
 		}
+#ifdef _WIN32	
+	} else if (WSAETIMEDOUT == WSAGetLastError()) {
+#else
 	} else if (errno != ETIMEDOUT) {
-
+#endif
 		gunk->webdata = g_realloc(gunk->webdata, gunk->len + 1);
 		gunk->webdata[gunk->len] = 0;
 
 		debug_printf(_("Received: '%s'\n"), gunk->webdata);
 
 		gaim_input_remove(gunk->inpa);
+#ifdef _WIN32
+		closesocket(sock);
+#else
 		close(sock);
+#endif
 		gunk->callback(gunk->data, gunk->webdata);
 		if (gunk->webdata)
 			g_free(gunk->webdata);
@@ -192,7 +215,11 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 		g_free(gunk);
 	} else {
 		gaim_input_remove(gunk->inpa);
+#ifdef _WIN32
+		closesocket(sock);		
+#else	
 		close(sock);
+#endif
 		gunk->callback(gunk->data, NULL);
 		if (gunk->webdata)
 			g_free(gunk->webdata);

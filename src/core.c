@@ -27,10 +27,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+
+#ifdef _WIN32
+#include <winsock.h>
+#include <io.h>
+#else
 #include <sys/socket.h>
-#include <sys/stat.h>
 #include <sys/un.h>
 #include <unistd.h>
+#endif
+
+#include <sys/stat.h>
 #include <errno.h>
 #include <signal.h>
 #include <getopt.h>
@@ -39,6 +46,10 @@
 
 #include "gaim.h"
 #include "gaim-socket.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 static gint UI_fd = -1;
 int gaim_session = 0;
@@ -132,6 +143,7 @@ void UI_build_broadcast(guchar type, guchar subtype, ...)
 	g_free(data);
 }
 
+#ifndef _WIN32
 static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 {
 	struct gaim_cui_packet *p;
@@ -443,8 +455,9 @@ static gint open_socket()
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
 		mode_t m = umask(0177);
 		saddr.sun_family = AF_UNIX;
-		g_snprintf(saddr.sun_path, sizeof(saddr.sun_path), "%s/gaim_%s.%d",
-			   g_get_tmp_dir(), g_get_user_name(), gaim_session);
+
+		g_snprintf(saddr.sun_path, sizeof(saddr.sun_path), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
+				g_get_tmp_dir(), g_get_user_name(), gaim_session);
 		if (bind(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			listen(fd, 100);
 		else {
@@ -458,6 +471,7 @@ static gint open_socket()
 		g_log(NULL, G_LOG_LEVEL_CRITICAL, "Unable to open socket: %s", strerror(errno));
 	return fd;
 }
+#endif /*! _WIN32*/
 
 int core_main()
 {
@@ -465,6 +479,7 @@ int core_main()
 	GMainLoop *loop;
 	 */
 
+#ifndef _WIN32
 	GIOChannel *channel;
 
 	UI_fd = open_socket();
@@ -474,6 +489,32 @@ int core_main()
 	channel = g_io_channel_unix_new(UI_fd);
 	g_io_add_watch(channel, G_IO_IN, socket_readable, NULL);
 	g_io_channel_unref(channel);
+#endif
+
+#ifdef _WIN32
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	int err;
+
+	wVersionRequested = MAKEWORD( 2, 2 );
+
+	err = WSAStartup( wVersionRequested, &wsaData );
+	if ( err != 0 ) {
+		return 1;
+	}
+
+	/* Confirm that the winsock DLL supports 2.2 */
+	/* Note that if the DLL supports versions greater than
+	   2.2 in addition to 2.2, it will still return 2.2 in 
+	   wVersion since that is the version we requested. */
+
+	if ( LOBYTE( wsaData.wVersion ) != 2 ||
+			HIBYTE( wsaData.wVersion ) != 2 ) {
+		debug_printf("Could not find a usable WinSock DLL.  Oh well.\n");
+		WSACleanup( );
+		return 1;
+	}
+#endif /* _WIN32 */
 
 	/*
 	loop = g_main_new(TRUE);
@@ -485,9 +526,13 @@ int core_main()
 
 void core_quit()
 {
+#ifndef _WIN32
 	char buf[1024];
 	close(UI_fd);
-	sprintf(buf, "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
+	sprintf(buf, "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
 	unlink(buf);
 	debug_printf("Removed core\n");
+#else
+	WSACleanup( );
+#endif
 }

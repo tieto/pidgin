@@ -2,20 +2,16 @@
 #include "gaim.h"
 #include "prpl.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 #define INITIAL 8000
 #define MAXTIME 1024000
 
 static GHashTable *hash = NULL;
 
 static guint tim = 0;
-
-char *name() {
-	return "Auto Reconnect";
-}
-
-char *description() {
-	return "When you are kicked offline, this reconnects you.";
-}
 
 static gboolean do_signon(gpointer data) {
 	struct aim_user *u = data;
@@ -41,7 +37,19 @@ static void reconnect(struct gaim_connection *gc, void *m) {
 	}
 }
 
-char *gaim_plugin_init(GModule *handle) {
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+G_MODULE_EXPORT char *name() {
+	return "Auto Reconnect";
+}
+
+G_MODULE_EXPORT char *description() {
+	return "When you are kicked offline, this reconnects you.";
+}
+
+G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
 	hash = g_hash_table_new(g_int_hash, g_int_equal);
 
 	gaim_signal_connect(handle, event_signoff, reconnect, NULL);
@@ -49,7 +57,7 @@ char *gaim_plugin_init(GModule *handle) {
 	return NULL;
 }
 
-void gaim_plugin_remove() {
+G_MODULE_EXPORT void gaim_plugin_remove() {
 	if (tim)
 		g_source_remove(tim);
 	g_hash_table_destroy(hash);

@@ -30,9 +30,14 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#ifdef _WIN32
+#include <gdk/gdkwin32.h>
+#else
+#include <unistd.h>
+#include <gdk/gdkx.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 
 
@@ -40,7 +45,6 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
-#include <gdk/gdkx.h>
 #include "gaim.h"
 
 #ifndef _WIN32
@@ -652,8 +656,9 @@ void add_bookmark(GtkWidget *w, char *url)
 void add_bookmark(GtkWidget *w, char *url)
 {
 }
-void open_url_nw(GtkWidget *w, char *url)
+void open_url(GtkWidget *w, char *url)
 {
+	ShellExecute(NULL, NULL, url, NULL, ".\\", 0);
 }
 
 

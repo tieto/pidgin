@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: robflynn $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -118,7 +118,7 @@ static int get_localvarfile(bfr)
     char *envptr;
     struct passwd *pwd;
 
-    envptr = getenv("HOME");
+    envptr = gaim_home_dir();
     if (envptr)
 	(void) strcpy(bfr, envptr);
     else {

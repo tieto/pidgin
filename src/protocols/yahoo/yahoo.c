@@ -24,17 +24,21 @@
 #include "config.h"
 #endif
 
-
+#ifndef _WIN32
 #include <netdb.h>
 #include <unistd.h>
-#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#else
+#include <winsock.h>
+#endif
+
+#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <ctype.h>
 #include "multi.h"
@@ -43,7 +47,14 @@
 #include "proxy.h"
 #include "md5.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 extern char *yahoo_crypt(char *, char *);
+
+/* for win32 compatability */
+G_MODULE_IMPORT GSList *connections;
 
 #include "pixmaps/status-away.xpm"
 #include "pixmaps/status-here.xpm"
@@ -354,8 +365,11 @@ static int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
 	yahoo_packet_write(pkt, data + pos);
 
 	yahoo_packet_dump(data, len);
+#ifndef _WIN32
 	ret = write(yd->fd, data, len);
-
+#else
+	ret = send(yd->fd, data, len, 0);
+#endif
 	g_free(data);
 
 	return ret;
@@ -877,9 +891,19 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	char buf[1024];
 	int len;
 
+#ifndef _WIN32
 	len = read(yd->fd, buf, sizeof(buf));
+#else
+	len = recv(yd->fd, buf, sizeof(buf), 0);
+#endif
 
 	if (len <= 0) {
+#ifdef _WIN32
+	        if(len == SOCKET_ERROR)
+		  debug_printf("Error reading socket: %d\n", WSAGetLastError());
+		else if( len == 0 )
+		  debug_printf("Connection was gracefully closed.\n");
+#endif
 		hide_login_progress_error(gc, "Unable to read");
 		signoff(gc);
 		return;
@@ -941,7 +965,11 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	struct yahoo_packet *pkt;
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -1009,7 +1037,11 @@ static void yahoo_close(struct gaim_connection *gc) {
 	g_hash_table_foreach_remove(yd->games, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->games);
 	if (yd->fd >= 0)
+#ifndef _WIN32
 		close(yd->fd);
+#else
+		closesocket(yd->fd);
+#endif
 	if (yd->rxqueue)
 		g_free(yd->rxqueue);
 	yd->rxlen = 0;
@@ -1410,7 +1442,7 @@ GSList *yahoo_smiley_list()
 
 static struct prpl *my_protocol = NULL;
 
-void yahoo_init(struct prpl *ret) {
+G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_YAHOO;
 	ret->options = OPT_PROTO_MAIL_CHECK;
@@ -1448,7 +1480,7 @@ void yahoo_init(struct prpl *ret) {
 
 #ifndef STATIC
 
-void *gaim_prpl_init(struct prpl *prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	yahoo_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;

@@ -25,8 +25,13 @@
 
 #include <config.h>
 
-#include <fcntl.h>
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include <winsock.h>
+#endif
+
+#include <fcntl.h>
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
@@ -39,6 +44,10 @@
 #include "gaim.h"
 #include "proxy.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 #include "pixmaps/protocols/irc/irc_icon.xpm"
 
 #define IRC_BUF_LEN 4096
@@ -46,6 +55,10 @@
 
 #define USEROPT_SERV      0
 #define USEROPT_PORT      1
+
+/* for win32 compatability */
+G_MODULE_IMPORT GSList *connections;
+
 
 struct dcc_chat
 {
@@ -64,6 +77,7 @@ struct irc_file_transfer {
 		char *name;
 		int len;
 		int watcher;
+		int awatcher;
 		char ip[12];
 		int port;
 		int fd;
@@ -119,7 +133,11 @@ find_dcc_chat (struct gaim_connection *gc, char *nick)
 static int irc_write(int fd, char *data, int len)
 {
 	debug_printf("IRC C: %s", data);
+#ifndef _WIN32
 	return write(fd, data, len);
+#else
+	return send(fd, data, len, 0);
+#endif
 }
 
 static struct conversation *irc_find_chat(struct gaim_connection *gc, char *name)
@@ -435,7 +453,11 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	int n = 0, l;
 	struct conversation *convo;
 	debug_printf("THIS IS TOO MUCH EFFORT\n");
+#ifndef _WIN32
 	n = read (chat->fd, buffer, IRC_BUF_LEN);
+#else
+	n = recv (chat->fd, buffer, IRC_BUF_LEN, 0);
+#endif
 	if (n > 0)
 	  {
 		  
@@ -461,8 +483,6 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 }
 
 static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_transfer *ift) {
-	struct irc_data *id = (struct irc_data *)gc->proto_data;
-
 	/* Ok, we better be receiving some crap here boyeee */
 	if (transfer_in_do(ift->xfer, ift->fd, ift->name, ift->len)) {
 			gaim_input_remove(ift->watcher);
@@ -470,6 +490,19 @@ static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_tra
 	}
 }
 
+
+void irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition) {
+		struct irc_file_transfer *ift = data;
+		struct irc_data *id = (struct irc_data *)ift->gc->proto_data;
+		int len;
+		guint32 ack;
+		
+		printf("I got here.\n");
+		len = recv(source, (char *)&ack, 4, MSG_PEEK);
+		printf("Len is: %d\n", len);
+		printf("Ack is: %d\n", ack);
+		recv(source, (char *)&ack, 4, 0);
+}
 
 void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
 		struct irc_file_transfer *ift = data;
@@ -487,6 +520,8 @@ void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition
 				printf("Something bad happened here, bubba!");
 				return;
 		}
+		
+//		ift->awatcher = gaim_input_add(ift->fd, GAIM_INPUT_READ, irc_read_dcc_ack, ift);
 		
 		if (transfer_out_do(ift->xfer, ift->fd, 0)) {
 				gaim_input_remove(ift->watcher);
@@ -1323,7 +1358,11 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	gchar buf[1024];
 	gboolean off;
 
+#ifndef _WIN32
 	i = read(idata->fd, buf, 1024);
+#else
+	i = recv(idata->fd, buf, 1024, 0);
+#endif
 	if (i <= 0) {
 		hide_login_progress_error(gc, "Read error");
 		signoff(gc);
@@ -1374,7 +1413,11 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	char buf[IRC_BUF_LEN];
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -1490,7 +1533,11 @@ static void irc_close(struct gaim_connection *gc)
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
 
+#ifndef _WIN32
 	close(idata->fd);
+#else
+	closesocket(idata->fd);
+#endif
 	g_free(gc->proto_data);
 }
 
@@ -2011,7 +2058,6 @@ static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
 		ift->xfer = transfer_out_add(gc, ift->sn);
 }
 
-
 static struct irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc, 
 				struct file_transfer *xfer) {
 		
@@ -2030,7 +2076,6 @@ static struct irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc,
 }
 
 static void irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file_transfer *xfer, const char *data, int len) {
-	struct irc_data *id = (struct irc_data *)gc->proto_data;
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 	guint32 pos;
 	
@@ -2113,10 +2158,7 @@ static void irc_file_transfer_out (struct gaim_connection *gc, struct file_trans
 static void irc_file_transfer_in(struct gaim_connection *gc,
 				struct file_transfer *xfer, int offset) {
 
-	struct irc_data *id = (struct irc_data *)gc->proto_data;
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
-	struct sockaddr_in addr;
-	char *ip = (char *)malloc(32);
 
 	ift->xfer = xfer;
 	proxy_connect(ift->ip, ift->port, dcc_recv_callback, ift);
@@ -2149,7 +2191,7 @@ static void irc_start_chat(struct gaim_connection *gc, char *who) {
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_connected,
 			       chat);
-	snprintf (buf, sizeof buf, "\001DCC CHAT chat %s %d\001\n",
+	g_snprintf (buf, sizeof buf, "\001DCC CHAT chat %s %d\001\n",
 		  chat->ip_address, chat->port);
 	irc_send_im (gc, who, buf, -1, 0);
 }
@@ -2196,7 +2238,7 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 
 static struct prpl *my_protocol = NULL;
 
-void irc_init(struct prpl *ret)
+G_MODULE_EXPORT void irc_init(struct prpl *ret)
 {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_IRC;
@@ -2240,8 +2282,7 @@ void irc_init(struct prpl *ret)
 }
 
 #ifndef STATIC
-
-void *gaim_prpl_init(struct prpl* prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl* prpl)
 {
 	irc_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;

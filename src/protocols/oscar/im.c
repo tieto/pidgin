@@ -21,6 +21,10 @@
 #define FAIM_INTERNAL
 #include <aim.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 /*
  * Takes a msghdr (and a length) and returns a client type
  * code.  Note that this is *only a guess* and has a low likelihood
@@ -722,13 +726,18 @@ faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, cons
 	aimbs_put16(&fr->data, 2+2+4+strlen(filename)+4);
 
 	/* ? */
-	aimbs_put16(&fr->data, 0x0001);
+	aimbs_put16(&fr->data, (numfiles > 1) ? 0x0002 : 0x0001);
 	aimbs_put16(&fr->data, numfiles);
 	aimbs_put32(&fr->data, totsize);
 	aimbs_putraw(&fr->data, filename, strlen(filename));
 
 	/* ? */
 	aimbs_put32(&fr->data, 0x00000000);
+
+#if 0
+	/* from brian's patch (?) -- wtm */
+	aimbs_put32(&fr->data, 0x00030000);
+#endif
 
 	aim_tx_enqueue(sess, fr);
 
@@ -1526,6 +1535,30 @@ static void incomingim_ch2_icqserverrelay(aim_session_t *sess, aim_module_t *mod
 	return;
 }
 
+static void incomingim_ch2_sendfile_free(aim_session_t *sess, struct aim_incomingim_ch2_args *args)
+{
+	free(args->info.sendfile.filename);
+}
+
+static void incomingim_ch2_sendfile(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_bstream_t *servdata)
+{
+
+	args->destructor = (void *)incomingim_ch2_sendfile_free;
+
+	if (servdata) {
+		/* 0x0001 for one file, 0x0002 for multiple files. */
+		args->info.sendfile.multiple = aimbs_get16(servdata);
+		args->info.sendfile.totfiles = aimbs_get16(servdata);
+		args->info.sendfile.totsize = aimbs_get32(servdata);
+		args->info.sendfile.filename = aimbs_getstr(servdata,
+				servdata->len - (2+2+4+4));
+
+		aimbs_get32(servdata); /* 0x00030000 (?) */
+	}
+
+	return;
+}
+
 typedef void (*ch2_args_destructor_t)(aim_session_t *sess, struct aim_incomingim_ch2_args *args);
 
 static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, fu8_t *cookie)
@@ -1697,6 +1730,8 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 		incomingim_ch2_chat(sess, mod, rx, snac, userinfo, &args, sdbsptr);
 	else if (args.reqclass & AIM_CAPS_ICQSERVERRELAY)
 		incomingim_ch2_icqserverrelay(sess, mod, rx, snac, userinfo, &args, sdbsptr);
+	else if (args.reqclass & AIM_CAPS_SENDFILE)
+		incomingim_ch2_sendfile(sess, mod, rx, snac, userinfo, &args, sdbsptr);
 
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
@@ -1994,6 +2029,16 @@ static int clientautoresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	snlen = aimbs_get8(bs);
 	sn = aimbs_getstr(bs, snlen);
 	reason = aimbs_get16(bs);
+
+	if (channel == 2) {
+		/* File transfer declined. */
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			ret = userfunc(sess, rx, channel, sn, reason, ck);
+
+		free(sn);
+		free(ck);
+		return ret;
+	}
 
 	switch (reason) {
 		case 0x0003: { /* ICQ status message.  Maybe other stuff too, you never know with these people. */

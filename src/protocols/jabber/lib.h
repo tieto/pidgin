@@ -1,3 +1,21 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+
+#ifndef _WIN32
+#include <syslog.h>
+#include <strings.h>
+#include <sys/param.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#else
+#include <winsock.h>
+#include <stdlib.h>
+#include "win32dep.h"
+#endif
 
 #include <string.h>
 #include <stdlib.h>
@@ -8,14 +26,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
-#include <syslog.h>
-#include <strings.h>
-#include <unistd.h>
-#include <sys/param.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <sys/time.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -151,11 +161,9 @@ int pool_size(pool p); /* returns total bytes allocated in this pool */
 #define NETSOCKET_CLIENT 1
 #define NETSOCKET_UDP 2
 
-#ifndef WIN32
 int make_netsocket(u_short port, char *host, int type);
 struct in_addr *make_addr(char *host);
 int set_fd_close_on_exec(int fd, int flag);
-#endif
 
 
 /* --------------------------------------------------------- */

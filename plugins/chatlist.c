@@ -10,6 +10,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #define AOL_SRCHSTR "aim:GoChat?RoomName="
 
@@ -293,7 +296,7 @@ static void parent_destroy()
 	parent = NULL;
 }
 
-GtkWidget *gaim_plugin_config_gtk()
+G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 {
 	GtkWidget *ret, *vbox;
 	GtkWidget *list1, *list2;
@@ -390,14 +393,14 @@ static void handle_signon(struct gaim_connection *gc)
 	setup_buddy_chats();
 }
 
-char *gaim_plugin_init(GModule *m)
+G_MODULE_EXPORT char *gaim_plugin_init(GModule *m)
 {
 	restore_chat_prefs();
 	gaim_signal_connect(m, event_signon, handle_signon, NULL);
 	return NULL;
 }
 
-void gaim_plugin_remove()
+G_MODULE_EXPORT void gaim_plugin_remove()
 {
 	if (parent)
 		gtk_widget_destroy(parent);
@@ -428,12 +431,12 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 	return &desc;
 }
 
-char *name()
+G_MODULE_EXPORT char *name()
 {
 	return "Chat List";
 }
 
-char *description()
+G_MODULE_EXPORT char *description()
 {
 	return "Allows you to add chat rooms to your buddy list. Click the configure button to choose"
 		" which rooms.";

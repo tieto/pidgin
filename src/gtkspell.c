@@ -19,9 +19,15 @@
 #include <gtk/gtk.h>
 
 #include <sys/types.h>
+
+#ifndef _WIN32
 #include <sys/wait.h>
 #include <sys/time.h>
-#include <unistd.h>   
+#include <unistd.h>
+#else
+#include <io.h>
+#endif   
+
 #include <stdio.h>    
 #include <signal.h>
 #include <ctype.h>
@@ -163,15 +169,18 @@ static char *readresponse() {
 
 
 void gtkspell_stop() {
+#ifndef _WIN32
 	if (gtkspell_running()) {
 		kill(spell_pid, SIGHUP); 
 		spell_pid = 0;
 		close(fd_read[0]);
 		close(fd_write[1]);
 	}
+#endif
 }
 
 int gtkspell_start(char *path, char * args[]) {
+#ifndef _WIN32
 	int fd_error[2];
 
 	if (gtkspell_running()) {
@@ -268,6 +277,7 @@ int gtkspell_start(char *path, char * args[]) {
 	/* put ispell into terse mode.  
 	 * this makes it not respond on correctly spelled words. */
 	writetext("!\n");
+#endif /*!_WIN32*/
 	return 0;
 }
 

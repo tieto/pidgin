@@ -21,23 +21,36 @@
 
 #include <config.h>
 
+#ifndef _WIN32
 #include <netdb.h>
 #include <unistd.h>
-#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#else
+#include <winsock.h>
+#endif
+
+#include <errno.h>
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
 #include "proxy.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 #include "pixmaps/protocols/napster/napster.xpm"
+
+/* for win32 compatability */
+G_MODULE_IMPORT GSList *connections;
 
 #define NAP_BUF_LEN 4096
 
@@ -71,9 +84,15 @@ static void nap_write_packet(struct gaim_connection *gc, unsigned short command,
 
 	size = strlen(message);
 
+#ifndef _WIN32
 	write(ndata->fd, &size, 2);
 	write(ndata->fd, &command, 2);
 	write(ndata->fd, message, size);
+#else
+	send(ndata->fd, (char*)&size, 2, 0);
+	send(ndata->fd, (char*)&command, 2, 0);
+	send(ndata->fd, message, size, 0);
+#endif
 }
 
 static int nap_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
@@ -156,7 +175,13 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	gchar **res;
 	int i;
 
-	if (recv(source, header, 4, 0) != 4) {
+	if (recv(source,
+#ifndef _WIN32
+		 header,
+#else
+		 (char*)header,
+#endif
+		 4, 0) != 4) {
 		hide_login_progress(gc, "Unable to read");
 		signoff(gc);
 		return;
@@ -358,12 +383,19 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 	unsigned short header[2];
 	int len;
 	int command;
-
+#ifndef _WIN32
 	read(source, header, 4);
+#else
+	recv(source, (char*)header, 4, 0);
+#endif
 	len = header[0];
 	command = header[1];	
 
+#ifndef _WIN32
 	read(source, buf, len);
+#else
+	recv(source, buf, len, 0);
+#endif
 	buf[len] = 0;
 
 	/* If we have some kind of error, get outta here */
@@ -372,7 +404,11 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 		do_error_dialog(buf, NULL, GAIM_ERROR);
 		gaim_input_remove(ndata->inpa);
 		ndata->inpa = 0;
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		signoff(gc);
 		return;
 	}
@@ -405,7 +441,11 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	char buf[NAP_BUF_LEN];
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -551,7 +591,7 @@ static char** nap_list_icon(int uc)
 
 static struct prpl *my_protocol = NULL;
 
-void napster_init(struct prpl *ret)
+G_MODULE_EXPORT void napster_init(struct prpl *ret)
 {
 	struct proto_user_opt *puo;
 	ret->add_buddies = nap_add_buddies;
@@ -615,7 +655,7 @@ void napster_init(struct prpl *ret)
 
 #ifndef STATIC
 
-void *gaim_prpl_init(struct prpl *prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	napster_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;

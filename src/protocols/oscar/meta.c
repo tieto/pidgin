@@ -7,6 +7,10 @@
 #define FAIM_INTERNAL
 #include <aim.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 faim_export char *aim_getbuilddate(void)
 {
 	return AIM_BUILDDATE;

@@ -500,7 +500,7 @@ faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, const 
 
 	/* Look up the parent group */
 	if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, gn, AIM_SSI_TYPE_GROUP))) {
-		aim_ssi_addgroups(sess, conn, &gn, 1);
+		aim_ssi_addgroups(sess, conn, (const char **)&gn, 1);
 		if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, gn, AIM_SSI_TYPE_GROUP)))
 			return -ENOMEM;
 	}

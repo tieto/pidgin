@@ -1,0 +1,106 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Gaim Plugins 
+#
+
+#
+# PATHS
+#
+
+GAIM_PLUGINS := 	.
+GAIM_TOP :=		..
+GTK_TOP :=		../../win32-dev/gtk_2_0
+OSCAR_ROOT :=		../src/protocols/oscar
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+TICKER :=		./ticker
+
+##
+## VARIABLE DEFINITIONS
+##
+
+VERSION := $(shell cat $(GAIM_TOP)/VERSION)
+
+# Compiler Options
+
+CC = gcc.exe
+
+CFLAGS = -O2 -Wall -Werror -mno-cygwin -fnative-struct
+
+DEFINES = 	-DGTK_ENABLE_BROKEN -DVERSION=\"$(VERSION)\"
+
+.SUFFIXES:
+.SUFFIXES: .c .dll
+
+##
+## INCLUDE  MAKEFILES
+##
+
+
+##
+## INCLUDE PATHS
+##
+
+INCLUDE_PATHS +=	-I$(OSCAR_ROOT) \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/gtk-2.0 \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(GAIM_TOP) \
+			-I$(GAIM_TOP)/src \
+			-I$(GAIM_TOP)/src/win32
+
+
+LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(GAIM_TOP)/src
+
+
+##
+## LIBRARIES
+##
+
+LIBS = -lgtk-win32-2.0 -lglib-2.0 -lgdk-win32-2.0 -lgobject-2.0 -lgmodule-2.0 -lintl -lws2_32 -liberty -lgaim
+
+##
+## RULES
+##
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all clean
+
+all: plugins
+	$(MAKE) -C $(TICKER) -f Makefile.mingw
+
+install:
+	cp $(GAIM_PLUGINS)/*.dll $(GAIM_PLUGINS)/*.pl $(GAIM_INSTALL_DIR)/plugins
+	$(MAKE) -C $(TICKER) -f Makefile.mingw install
+
+#
+# BUILD Plugin
+#
+
+.c.dll:
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o tmp$@.o -c $<
+	dlltool -D $@ -z $@.def tmp$@.o
+	gcc -mdll -o junk.tmp -Wl,--base-file,$@.base tmp$@.o $(LIB_PATHS) $(LIBS)
+	dlltool -D $@ -b $@.base -e $@.exp -d $@.def
+	gcc -mdll -o $@ tmp$@.o -Wl,$@.exp $(LIB_PATHS) $(LIBS)
+	rm -rf $@.base $@.def $@.exp junk.tmp
+
+plugins: autorecon.dll iconaway.dll spellchk.dll
+
+
+##
+## CLEAN RULES
+##
+
+clean:
+	rm -rf *.o
+	rm -rf *.dll
+	$(MAKE) -C $(TICKER) -f Makefile.mingw clean

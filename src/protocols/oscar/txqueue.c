@@ -10,6 +10,8 @@
 
 #ifndef _WIN32
 #include <sys/socket.h>
+#else
+#include "win32dep.h"
 #endif
 
 /*
@@ -24,7 +26,7 @@
  * chan = channel for FLAP, hdrtype for OFT
  *
  */
-faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8_t framing, fu8_t chan, int datalen)
+faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8_t framing, fu16_t chan, int datalen)
 {
 	aim_frame_t *fr;
 

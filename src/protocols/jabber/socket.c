@@ -148,6 +148,7 @@ struct in_addr *make_addr(char *host)
     return NULL;
 }
 
+#ifndef _WIN32
 /* Sets a file descriptor to close on exec.  "flag" is 1 to close on exec, 0 to
  * leave open across exec.
  * -- EJB 7/31/2000
@@ -166,4 +167,5 @@ int set_fd_close_on_exec(int fd, int flag)
         return 0;
     return fcntl(fd,F_SETFL,(long)newflags);
 }
+#endif
 

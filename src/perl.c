@@ -35,20 +35,32 @@
 #ifdef USE_PERL
 
 #define group perl_group
-
+#ifdef _WIN32
+/* This took me an age to figure out.. without this __declspec(dllimport)
+ * will be ignored.
+ */
+#define HASATTRIBUTE
+#endif
 #include <EXTERN.h>
 #ifndef _SEM_SEMUN_UNDEFINED
 #define HAS_UNION_SEMUN
 #endif
 #include <perl.h>
 #include <XSUB.h>
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #undef PACKAGE
 #include <stdio.h>
+#ifndef _WIN32
 #include <dirent.h>
+#else
+/* We're using perl's win32 port of this */
+#define dirent direct
+#endif
 #include <string.h>
 
 #undef group
@@ -60,6 +72,9 @@ extern void boot_DynaLoader _((CV * cv)); /* perl is so wacky */
 #undef _
 #ifdef DEBUG
 #undef DEBUG
+#endif
+#ifdef _WIN32
+#undef pipe
 #endif
 #include "gaim.h"
 #include "prpl.h"
@@ -185,11 +200,11 @@ execute_perl(char *function, char *args)
 
         sv = GvSV(gv_fetchpv("@", TRUE, SVt_PV));
         if (SvTRUE(sv)) {
-                snprintf(buf, 512, "Perl error: %s\n", SvPV(sv, count));
+                g_snprintf(buf, 512, "Perl error: %s\n", SvPV(sv, count));
                 debug_printf(buf);
                 POPs;
         } else if (count != 1) {
-                snprintf(buf, 512, "Perl error: expected 1 value from %s, "
+                g_snprintf(buf, 512, "Perl error: expected 1 value from %s, "
                         "got: %d\n", function, count);
                 debug_printf(buf);
         } else {

@@ -1,14 +1,18 @@
-#include "../config.h"
+#define GAIM_PLUGINS
 #include "gaim.h"
 
 #include <gtk/gtk.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 void *handle;
 
-extern GtkWidget *imaway;
-extern GtkWidget *blist;
-extern GtkWidget *all_chats;
-extern GtkWidget *all_convos;
+G_MODULE_IMPORT GtkWidget *imaway;
+G_MODULE_IMPORT GtkWidget *blist;
+G_MODULE_IMPORT GtkWidget *all_chats;
+G_MODULE_IMPORT GtkWidget *all_convos;
 
 #ifdef USE_APPLET
 extern void applet_destroy_buddy();
@@ -25,7 +29,11 @@ void iconify_windows(struct gaim_connection *gc, char *state, char *message, voi
 		gtk_window_iconify(GTK_WINDOW(all_chats));
 }
 
-char *gaim_plugin_init(GModule *h) {
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
 	handle = h;
 
 	gaim_signal_connect(handle, event_away, iconify_windows, NULL);
@@ -34,7 +42,7 @@ char *gaim_plugin_init(GModule *h) {
 }
 
 struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
+G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup("Iconify on away");
 	desc.version = g_strdup(VERSION);
@@ -44,10 +52,10 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 	return &desc;
 }
  
-char *name() {
+G_MODULE_EXPORT char *name() {
 	return "Iconify On Away";
 }
 
-char *description() {
+G_MODULE_EXPORT char *description() {
 	return "Iconifies the away box and the buddy list when you go away.";
 }

@@ -25,14 +25,13 @@
 #include <errno.h>
 #include <time.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#include <io.h>
-#else
+#ifndef _WIN32
 #include <sys/time.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#else
+#include <winsock.h>
 #endif
 
 /* XXX adjust these based on autoconf-detected platform */
@@ -41,14 +40,6 @@ typedef unsigned short fu16_t;
 typedef unsigned long fu32_t;
 typedef fu32_t aim_snacid_t;
 typedef fu16_t flap_seqnum_t;
-
-/* Portability stuff (DMP) */
-
-#ifdef _WIN32
-#define sleep(x) Sleep((x)*1000)
-#define snprintf _snprintf /* I'm not sure whats wrong with Microsoft here */
-#define close(x) closesocket(x) /* no comment */
-#endif
 
 #if defined(mach) && defined(__APPLE__)
 #define gethostbyname(x) gethostbyname2(x, AF_INET) 
@@ -707,6 +698,7 @@ struct aim_filetransfer_priv {
 	int state;
 	struct aim_fileheader_t fh;
 };
+#define OFT_TIMEOUT (60)
 
 struct aim_chat_roominfo {
 	unsigned short exchange;
@@ -866,6 +858,12 @@ struct aim_incomingim_ch2_args {
 			fu32_t bgcolor;
 			const char *rtfmsg;
 		} rtfmsg;
+		struct {
+			fu16_t multiple;
+			fu16_t totfiles;
+			fu32_t totsize;
+			char *filename;
+		} sendfile;
 	} info;
 	void *destructor; /* used internally only */
 };
@@ -893,15 +891,18 @@ faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, const char *dests
 faim_export aim_conn_t *aim_directim_connect(aim_session_t *, const char *sn, const char *addr, const fu8_t *cookie);
 
 faim_export int aim_send_im_ch2_geticqmessage(aim_session_t *sess, const char *sn, int type);
-faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *, const char *destsn, const char *filename, fu16_t numfiles, fu32_t totsize);
+faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *, const char *destsn, const char *filename, fu16_t numfiles, fu32_t totsize, char *cookret);
 faim_export int aim_send_im_ch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message);
 
 faim_export int aim_mtn_send(aim_session_t *sess, fu16_t type1, char *sn, fu16_t type2);
 
 faim_export aim_conn_t *aim_getfile_initiate(aim_session_t *sess, aim_conn_t *conn, const char *destsn);
 faim_export int aim_oft_getfile_request(aim_session_t *sess, aim_conn_t *conn, const char *name, int size);
+faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn,
+		const char *name, int filesdone, int numfiles, int size,
+		int totsize);
 faim_export int aim_oft_getfile_ack(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_oft_getfile_end(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_oft_end(aim_session_t *sess, aim_conn_t *conn);
 
 /* aim_info.c */
 #define AIM_CAPS_BUDDYICON      0x00000001
@@ -964,7 +965,11 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur);
 #define AIM_TRANSFER_DENY_DECLINE 0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING 0x0002
 faim_export int aim_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, unsigned short code);
-faim_export aim_conn_t *aim_accepttransfer(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *cookie, const fu8_t *ip, fu16_t listingfiles, fu16_t listingtotsize, fu16_t listingsize, fu32_t listingchecksum, fu16_t rendid);
+faim_export aim_conn_t *aim_accepttransfer(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *cookie, const fu8_t *ip, fu16_t port, fu16_t rendid, ...);
+faim_export int aim_canceltransfer(aim_session_t *sess, aim_conn_t *conn,
+		                const char *cookie, const char *sn, int rendid);
+faim_export fu32_t aim_update_checksum(aim_session_t *sess, aim_conn_t *conn,
+		                const unsigned char *buffer, int bufferlen);
 
 faim_export int aim_getinfo(aim_session_t *, aim_conn_t *, const char *, unsigned short);
 faim_export int aim_sendbuddyoncoming(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *info);

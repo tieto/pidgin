@@ -25,24 +25,34 @@
 #include <config.h>
 #endif
 
-
+#ifndef _WIN32
 #include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#else
+#include <winsock.h>
+#endif
+
+#include <errno.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
+#include <signal.h>
+
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
 #include "aim.h"
 #include "proxy.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #include "pixmaps/protocols/oscar/ab.xpm"
 #include "pixmaps/protocols/oscar/admin_icon.xpm"
@@ -73,7 +83,12 @@
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
-static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE;
+/* For win32 compatability */
+G_MODULE_IMPORT GSList *connections;
+G_MODULE_IMPORT int report_idle;
+
+static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON |
+	AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE;
 
 /* Set AIM caps, because Gaim can still do them over ICQ and 
  * Winicq doesn't mind. */
@@ -104,6 +119,7 @@ struct oscar_data {
 
 	GSList *oscar_chats;
 	GSList *direct_ims;
+	GSList *file_transfers;
 	GSList *hasicons;
 	GHashTable *supports_tn;
 
@@ -155,6 +171,22 @@ struct ask_direct {
 	char ip[64];
 	fu8_t cookie[8];
 };
+
+struct oscar_file_transfer {
+	enum { OFT_SENDFILE_IN, OFT_SENDFILE_OUT } type;
+	aim_conn_t *conn;
+	struct file_transfer *xfer;
+	char *sn;
+	char ip[64];
+	fu16_t port;
+	fu8_t cookie[8];
+	int totsize;
+	int filesdone;
+	int totfiles;
+	int watcher;
+};
+
+static struct oscar_file_transfer *oft_listening;
 
 struct icon_req {
 	char *user;
@@ -242,6 +274,55 @@ static struct chat_connection *find_oscar_chat_by_conn(struct gaim_connection *g
 	return c;
 }
 
+/* XXX there must be a better way than this.... -- wtm */
+static struct oscar_file_transfer *find_oft_by_conn(struct gaim_connection *gc,
+		aim_conn_t *conn) {
+	GSList *g = ((struct oscar_data *)gc->proto_data)->file_transfers;
+	struct oscar_file_transfer *f = NULL;
+
+	while (g) {
+		f = (struct oscar_file_transfer *)g->data;
+		if (f->conn == conn)
+			break;
+		g = g->next;
+		f = NULL;
+	}
+
+	return f;
+}
+
+static struct oscar_file_transfer *find_oft_by_xfer(struct gaim_connection *gc,
+		struct file_transfer *xfer) {
+	GSList *g = ((struct oscar_data *)gc->proto_data)->file_transfers;
+	struct oscar_file_transfer *f = NULL;
+
+	while (g) {
+		f = (struct oscar_file_transfer *)g->data;
+		if (f->xfer == xfer)
+			break;
+		g = g->next;
+		f = NULL;
+	}
+
+	return f;
+}
+
+static struct oscar_file_transfer *find_oft_by_cookie(struct gaim_connection *gc,
+		const char *cookie) {
+	GSList *g = ((struct oscar_data *)gc->proto_data)->file_transfers;
+	struct oscar_file_transfer *f = NULL;
+
+	while (g) {
+		f = (struct oscar_file_transfer *)g->data;
+		if (!strncmp(f->cookie, cookie, 8))
+			break;
+		g = g->next;
+		f = NULL;
+	}
+
+	return f;
+}
+
 static int gaim_parse_auth_resp  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_login      (aim_session_t *, aim_frame_t *, ...);
 static int gaim_handle_redirect  (aim_session_t *, aim_frame_t *, ...);
@@ -290,6 +371,14 @@ static int gaim_directim_incoming(aim_session_t *, aim_frame_t *, ...);
 static int gaim_directim_typing  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_update_ui       (aim_session_t *, aim_frame_t *, ...);
 
+static int oscar_file_transfer_do(aim_session_t *, aim_frame_t *, ...);
+static void oscar_file_transfer_disconnect(aim_session_t *,
+		aim_conn_t *);
+static void oscar_cancel_transfer(struct gaim_connection *,
+		struct file_transfer *);
+static int oscar_sendfile_request(aim_session_t *sess,
+		struct oscar_file_transfer *oft);
+
 static char *msgerrreason[] = {
 	"Invalid error",
 	"Invalid SNAC",
@@ -318,6 +407,26 @@ static char *msgerrreason[] = {
 	"Not while on AOL"
 };
 static int msgerrreasonlen = 25;
+
+static void oscar_file_transfer_disconnect(aim_session_t *sess,
+		aim_conn_t *conn) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_file_transfer *oft = find_oft_by_conn(gc,
+			conn);
+
+	od->file_transfers = g_slist_remove(od->file_transfers, oft);
+
+	if (oft->watcher) {
+		gaim_input_remove(oft->watcher);
+		oft->watcher = 0;
+	}
+	
+	aim_conn_kill(sess, &conn);
+
+	g_free(oft->sn);
+	g_free(oft);
+}
 
 static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	struct gaim_connection *gc = sess->aux_data;
@@ -425,6 +534,13 @@ static void oscar_callback(gpointer data, gint source,
 				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 					if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
 						gaim_directim_disconnect(odata->sess, conn);
+					else if (conn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
+						struct oscar_file_transfer *oft = find_oft_by_conn(gc, conn);
+						if (oft) {
+							transfer_abort(oft->xfer, _("Buddy canceled transfer"));
+						}
+						oscar_file_transfer_disconnect(odata->sess, conn);
+					}
 					else {
 						debug_printf("No handler for rendezvous disconnect (%d).\n",
 								source);
@@ -463,7 +579,11 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	aim_conn_t *conn;
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -559,6 +679,13 @@ static void oscar_close(struct gaim_connection *gc) {
 		odata->direct_ims = g_slist_remove(odata->direct_ims, n);
 		g_free(n);
 	}
+	while (odata->file_transfers) {
+		struct oscar_file_transfer *n = odata->file_transfers->data;
+		if (n->watcher > 0)
+			gaim_input_remove(n->watcher);
+		odata->file_transfers = g_slist_remove(odata->file_transfers, n);
+		g_free(n);
+	}
 	while (odata->hasicons) {
 		struct icon_req *n = odata->hasicons->data;
 		g_free(n->user);
@@ -603,7 +730,11 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	aim_conn_t *bosconn;
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -621,6 +752,33 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ,
 			oscar_callback, bosconn);
 	set_login_progress(gc, 4, _("Connection established, cookie sent"));
+}
+
+static void oscar_ask_send_file(struct gaim_connection *gc, char *destsn) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_file_transfer *oft = oft_listening;
+
+	/* Kludge:  if we try to send a file to a client that doesn't
+	 * support it, the BOS server sends us back an error without
+	 * any information identifying which transfer was aborted.  So
+	 * we only allow one sendfile request at a time, to ensure that
+	 * the transfer referenced by an error is unambiguous.  It's ugly,
+	 * but what else can we do? -- wtm
+	 */
+	if (oft) {
+		do_error_dialog(_("Sorry, you already have an outgoing transfer pending.  Due to limitations of the Oscar protocol, only one outgoing transfer request is permitted at a time."), NULL, GAIM_ERROR);
+	}
+	else {
+		struct oscar_file_transfer *oft = g_new0(struct oscar_file_transfer,
+				1);
+
+		oft->type = OFT_SENDFILE_OUT;
+		oft->sn = g_strdup(destsn);
+
+		od->file_transfers = g_slist_append(od->file_transfers, oft);
+
+		oft->xfer = transfer_out_add(gc, oft->sn);
+	}
 }
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -770,7 +928,11 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 	int x = 0;
 	unsigned char m[17];
 
+#ifndef _WIN32
 	while (read(pos->fd, &in, 1) == 1) {
+#else
+	while (recv(pos->fd, &in, 1, 0) == 1) {
+#endif
 		if (in == '\n')
 			x++;
 		else if (in != '\r')
@@ -784,18 +946,30 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 				_("You may be disconnected shortly.  You may want to use TOC until "
 				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
 		gaim_input_remove(pos->inpa);
+#ifndef _WIN32
 		close(pos->fd);
+#else
+		closesocket(pos->fd);
+#endif
 		g_free(pos);
 		return;
 	}
+#ifndef _WIN32
 	read(pos->fd, m, 16);
+#else
+	recv(pos->fd, m, 16, 0);
+#endif
 	m[16] = '\0';
 	debug_printf("Sending hash: ");
 	for (x = 0; x < 16; x++)
 		debug_printf("%02x ", (unsigned char)m[x]);
 	debug_printf("\n");
 	gaim_input_remove(pos->inpa);
+#ifndef _WIN32
 	close(pos->fd);
+#else
+	closesocket(pos->fd);
+#endif
 	aim_sendmemblock(od->sess, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
 	g_free(pos);
 }
@@ -817,7 +991,11 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 	g_snprintf(buf, sizeof(buf), "GET " AIMHASHDATA
 			"?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
+#ifndef _WIN32
 	write(pos->fd, buf, strlen(buf));
+#else
+	send(pos->fd, buf, strlen(buf), 0);
+#endif
 	if (pos->modname)
 		g_free(pos->modname);
 	pos->inpa = gaim_input_add(pos->fd, GAIM_INPUT_READ, damn_you, pos);
@@ -959,7 +1137,11 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 	aim_conn_t *tstconn;
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -987,7 +1169,11 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 	aim_conn_t *tstconn;
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		return;
 	}
 
@@ -1016,7 +1202,11 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 	aim_conn_t *tstconn;
 
 	if (!g_slist_find(connections, gc)) {
+#ifndef _WIN32
 		close(source);
+#else
+		closesocket(source);
+#endif
 		g_free(ccon->show);
 		g_free(ccon->name);
 		g_free(ccon);
@@ -1278,6 +1468,193 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 				      oscar_callback, dim->conn);
 }
 
+static int oscar_sendfile_out_done(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	aim_conn_t *conn;
+	const char *cook;
+	struct oscar_file_transfer *oft;
+
+	va_start(ap, fr);
+	conn = va_arg(ap, aim_conn_t *);
+	cook = va_arg(ap, const char *);
+	va_end(ap);
+
+	oft = find_oft_by_cookie(gc, cook);
+	if (oft->filesdone == oft->totfiles)
+		oscar_file_transfer_disconnect(sess, conn);
+	else 
+		/* Send header for next file */
+		oscar_sendfile_request(sess, oft);
+
+	return 0;
+}
+
+/* Called once for each file before sending the raw data. */
+static int oscar_sendfile_request(aim_session_t *sess,
+		struct oscar_file_transfer *oft) {
+	char *name;
+	int size;
+
+	transfer_get_file_info(oft->xfer, &size, &name);
+	aim_oft_sendfile_request(sess, oft->conn, name, oft->filesdone,
+			oft->totfiles, size, oft->totsize);
+
+	return 0;
+}
+
+static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_file_transfer *oft;
+	va_list ap;
+	aim_conn_t *conn, *listenerconn;
+
+	alarm(0); /* reset timeout alarm */
+	va_start(ap, fr);
+	conn = va_arg(ap, aim_conn_t *);
+	listenerconn = va_arg(ap, aim_conn_t *);
+	va_end(ap);
+
+	oft = find_oft_by_conn(gc, listenerconn);
+	oft->conn = conn;
+	/* Stop watching listener conn; watch transfer conn instead */
+	gaim_input_remove(oft->watcher);
+	aim_conn_kill(sess, &listenerconn);
+	/* We no longer need to block other outgoing transfers. */
+	oft_listening = NULL;
+
+	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
+			AIM_CB_OFT_GETFILEFILESEND,
+			oscar_file_transfer_do,
+			0);
+	aim_conn_addhandler(sess, conn,
+			AIM_CB_FAM_OFT,
+			AIM_CB_OFT_GETFILECOMPLETE,
+			oscar_sendfile_out_done,
+			0);
+	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
+			oscar_callback, oft->conn);
+
+	oscar_sendfile_request(sess, oft);
+
+	return 0;
+}
+
+void oscar_sendfile_timeout(int sig)
+{
+	struct oscar_file_transfer *oft = oft_listening;
+
+	if (oft) {
+		aim_session_t *sess = aim_conn_getsess(oft->conn);
+		aim_conn_t *bosconn;
+		{
+			/* XXX is this valid? is there a better way? -- wtm */
+			struct gaim_connection *gc = sess->aux_data;
+			struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+			bosconn = odata->conn;
+		}
+
+		oft_listening = NULL;
+		aim_canceltransfer(sess, bosconn, oft->cookie,
+				oft->sn, AIM_CAPS_SENDFILE);
+
+		transfer_abort(oft->xfer, _("Transfer timed out"));
+		oscar_file_transfer_disconnect(sess, oft->conn);
+	}
+}
+
+/* Called once at the beginning of an outgoing transfer session. */
+static void oscar_start_transfer_out(struct gaim_connection *gc,
+		struct file_transfer *xfer, const char *name, int totfiles,
+		int totsize) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+
+	oft->xfer = xfer;
+	oft->totsize = totsize;
+	oft->totfiles = totfiles;
+	oft->filesdone = 0;
+	oft_listening = oft;
+
+	oft->conn = aim_sendfile_initiate(od->sess, oft->sn,
+			name, totfiles, oft->totsize, oft->cookie);
+	if (!oft->conn) {
+		do_error_dialog(_("Couldn't open listener to send file"),
+				_("File transfer aborted"),
+				GAIM_ERROR);
+		return;
+	}
+
+	{
+		/* XXX is there a good glib-oriented way of doing this?
+		 * -- wtm */
+		struct sigaction act;
+		act.sa_handler = oscar_sendfile_timeout;
+		act.sa_flags = SA_ONESHOT;
+		sigemptyset (&act.sa_mask);
+		sigaction(SIGALRM, &act, NULL);
+		alarm(OFT_TIMEOUT);
+	}
+
+	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
+			AIM_CB_OFT_GETFILEINITIATE,
+			oscar_sendfile_accepted,
+			0);
+	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
+			oscar_callback, oft->conn);
+}
+
+static void oscar_transfer_data_chunk(struct gaim_connection *gc,
+		struct file_transfer *xfer, const char *buf, int len)
+{
+	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+	aim_session_t *sess = aim_conn_getsess(oft->conn);
+
+	if (oft->type == OFT_SENDFILE_IN)
+		aim_update_checksum(sess, oft->conn, buf, len);
+}
+
+static void oscar_start_transfer_in(struct gaim_connection *gc,
+		struct file_transfer *xfer, int offset) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+
+	oft->xfer = xfer;
+	oft->conn = aim_accepttransfer(od->sess, od->conn, oft->sn,
+			oft->cookie, oft->ip,
+			oft->port,
+			AIM_CAPS_SENDFILE);
+	if (!oft->conn) {
+		char *buf = g_strdup_printf("Couldn't connect to remote host");
+		do_error_dialog(buf, NULL, GAIM_ERROR);
+		g_free(buf);
+		return;
+	}
+
+	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
+			AIM_CB_OFT_GETFILEFILEREQ, oscar_file_transfer_do,
+			0);
+
+	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
+			oscar_callback, oft->conn);
+}
+
+static void oscar_cancel_transfer(struct gaim_connection *gc,
+		struct file_transfer *xfer) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+
+	if (oft->type == OFT_SENDFILE_IN)
+		aim_denytransfer(od->sess, oft->sn, oft->cookie,
+				AIM_TRANSFER_DENY_DECLINE);
+
+	od->file_transfers = g_slist_remove(od->file_transfers, oft);
+	aim_conn_kill(od->sess, &oft->conn);
+	g_free(oft->sn);
+	g_free(oft);
+}
+
 static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -1428,8 +1805,26 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	debug_printf("rendezvous status %d (%s)\n", args->status, userinfo->sn);
 
-	if (args->status != AIM_RENDEZVOUS_PROPOSE)
+	
+	if (args->status == AIM_RENDEZVOUS_CANCEL) {
+		struct oscar_file_transfer *oft;
+		oft = find_oft_by_cookie(gc, args->cookie);
+		if (oft) {
+			transfer_abort(oft->xfer, _("Buddy canceled transfer"));
+			oscar_file_transfer_disconnect(sess, oft->conn);
+		}
+		return 0;
+	}
+	else if (args->status == AIM_RENDEZVOUS_ACCEPT) {
+		/* The user accepted our transfer request, but we don't
+		 * really need to do anything yet.
+		 * -- wtm
+		 */
+		return 0;
+	}
+	else if (args->status != AIM_RENDEZVOUS_PROPOSE) {
 		return 1;
+	}
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
 		char *name = extract_name(args->info.chat.roominfo.name);
@@ -1446,6 +1841,39 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		if (name)
 			g_free(name);
 	} else if (args->reqclass & AIM_CAPS_SENDFILE) {
+		struct oscar_file_transfer *oft;
+
+		if (!args->verifiedip) {
+			/* It seems that Trillian sends a message
+			 * with no file data during multiple-file
+			 * transfers.
+			 */
+			debug_printf("sendfile: didn't get any data\n");
+			return -1;
+		}
+
+		oft = g_new0(struct oscar_file_transfer, 1);
+
+		debug_printf("%s (%s) requests to send a file to %s\n",
+				userinfo->sn, args->verifiedip, gc->username);
+		
+		oft->type = OFT_SENDFILE_IN;
+		oft->sn = g_strdup(userinfo->sn);
+		strncpy(oft->ip, args->verifiedip, sizeof(oft->ip));
+		oft->port = args->port;
+		memcpy(oft->cookie, args->cookie, 8);
+
+		{ /* XXX ugly... */
+			struct gaim_connection *gc = sess->aux_data;
+			struct oscar_data *od = gc->proto_data;
+			od->file_transfers = g_slist_append(od->file_transfers, oft);
+		}
+
+		oft->xfer = transfer_in_add(gc, userinfo->sn, 
+				args->info.sendfile.filename,
+				args->info.sendfile.totsize,
+				args->info.sendfile.totfiles,
+				args->msg);
 	} else if (args->reqclass & AIM_CAPS_GETFILE) {
 	} else if (args->reqclass & AIM_CAPS_VOICE) {
 	} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
@@ -1745,6 +2173,34 @@ static char *gaim_icq_status(int state) {
 		return g_strdup_printf("Online");
 }
 
+static int gaim_parse_clientauto_rend(aim_session_t *sess,
+		const char *who, int reason, const char *cookie) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_file_transfer *oft;
+	char *buf;
+
+	switch (reason) {
+		case 3: /* Decline sendfile. */
+			oft = find_oft_by_cookie(gc, cookie);
+
+			if (oft) {
+				buf = g_strdup_printf(_("%s has declined to receive a file from %s.\n"),
+						who, gc->username);
+				alarm(0); /* reset timeout alarm */
+				oft_listening = NULL;
+				transfer_abort(oft->xfer, buf);
+				g_free(buf);
+				oscar_file_transfer_disconnect(sess, oft->conn);
+			}
+			break;
+		default:
+			debug_printf("Received an unknown rendezvous client auto-response from %s.  Type 0x%04x\n", who, reason);
+
+	}
+
+	return 0;
+}
+
 static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
@@ -1755,6 +2211,14 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	chan = (fu16_t)va_arg(ap, unsigned int);
 	who = va_arg(ap, char *);
 	reason = (fu16_t)va_arg(ap, unsigned int);
+
+	if (chan == 2) {
+		char *cookie = va_arg(ap, char *);
+		va_end(va);
+
+		return gaim_parse_clientauto_rend(sess, who, reason,
+				cookie);
+	}
 
 	switch(reason) {
 		case 0x0003: { /* Reply from an ICQ status message request */
@@ -1827,11 +2291,26 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *destn;
 	fu16_t reason;
 	char buf[1024];
+	struct oscar_file_transfer *oft = oft_listening;
 
 	va_start(ap, fr);
 	reason = (fu16_t)va_arg(ap, unsigned int);
 	destn = va_arg(ap, char *);
 	va_end(ap);
+
+	if (oft) {
+		/* If we try to send a file but it isn't supported, then
+		 * we get this error without any information identifying
+		 * the failed connection.  So we can only have one outgoing
+		 * transfer at a time.  Ugh. -- wtm
+		 */
+		oft_listening = NULL;
+		transfer_abort(oft->xfer,
+				(reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."));
+
+		oscar_file_transfer_disconnect(sess, oft->conn);
+		return 1;
+	}
 
 	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), destn);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
@@ -2806,7 +3285,12 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	} else if (len != -1) {
 		/* Trying to send an IM image outside of a direct connection. */
 		oscar_ask_direct_im(gc, name);
+#ifndef _WIN32
 		return -ENOTCONN;
+#else
+		WSASetLastError( WSAENOTCONN );
+		return SOCKET_ERROR;
+#endif
 	}
 	if (imflags & IM_FLAG_AWAY) {
 		ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
@@ -3538,6 +4022,80 @@ static char **oscar_list_icon(int uc) {
 	return NULL;
 }
 
+void oscar_transfer_nextfile(struct gaim_connection *gc,
+		struct file_transfer *xfer) {
+	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+	aim_conn_t *conn = oft->conn;
+	aim_session_t *sess = aim_conn_getsess(conn);
+
+	oft->filesdone++;
+	oft->watcher = gaim_input_add(conn->fd, GAIM_INPUT_READ,
+			oscar_callback, conn);
+
+	/* If this is an incoming sendfile transfer, we send an OK
+	 * message to the sender; if this is an outgoing sendfile, we
+	 * will get an OK from the receiver that will be handled in
+	 * oscar_sendfile_out_done(), so we don't need to do anything
+	 * yet.
+	 */
+
+	if (oft->type == OFT_SENDFILE_IN)
+		aim_oft_end(sess, conn);
+}
+
+void oscar_transfer_done(struct gaim_connection *gc,
+		struct file_transfer *xfer) {
+	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+	aim_conn_t *conn = oft->conn;
+	aim_session_t *sess = aim_conn_getsess(conn);
+
+	oft->filesdone++;
+	if (oft->type == OFT_SENDFILE_IN) {
+		aim_oft_end(sess, conn);
+		oscar_file_transfer_disconnect(sess, conn);
+	}
+	else if (oft->type == OFT_SENDFILE_OUT) { 
+#if 0
+		/* Wait for response before closing connection. */
+		oft->watcher = gaim_input_add(conn->fd, GAIM_INPUT_READ,
+				oscar_callback, conn);
+#else	
+		oscar_file_transfer_disconnect(sess, conn);
+#endif
+	}
+}
+
+static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	aim_conn_t *conn;
+	struct oscar_file_transfer *oft;
+
+	va_start(ap, fr);
+	conn = va_arg(ap, aim_conn_t *);
+
+	oft = find_oft_by_conn(gc, conn);
+
+	/* Don't use the regular input handler for the raw data. */
+	gaim_input_remove(oft->watcher);
+	oft->watcher = 0;
+
+	if (oft->type == OFT_SENDFILE_IN) {
+		const char *name = va_arg(ap, const char *);
+		int size = va_arg(ap, int);
+		if (transfer_in_do(oft->xfer, conn->fd, name, size))
+			oscar_file_transfer_disconnect(sess, oft->conn);
+	}
+	else {
+		int offset = va_arg(ap, int);
+		if (transfer_out_do(oft->xfer, conn->fd, offset))
+			oscar_file_transfer_disconnect(sess, oft->conn);
+	}
+	va_end(ap);
+
+	return 0;
+}
+
 static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
@@ -3766,6 +4324,12 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
 		}
+			
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Send File");
+		pbm->callback = oscar_ask_send_file;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
 	}
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
@@ -4015,7 +4579,7 @@ static void oscar_convo_closed(struct gaim_connection *gc, char *who)
 
 static struct prpl *my_protocol = NULL;
 
-void oscar_init(struct prpl *ret) {
+G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_OSCAR;
 	ret->options = OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
@@ -4043,6 +4607,12 @@ void oscar_init(struct prpl *ret) {
 	ret->add_buddies = oscar_add_buddies;
 	ret->group_buddy = oscar_move_buddy;
 	ret->rename_group = oscar_rename_group;
+	ret->file_transfer_cancel = oscar_cancel_transfer;
+	ret->file_transfer_in = oscar_start_transfer_in;
+	ret->file_transfer_out = oscar_start_transfer_out;
+	ret->file_transfer_data_chunk = oscar_transfer_data_chunk;
+	ret->file_transfer_nextfile = oscar_transfer_nextfile;
+	ret->file_transfer_done = oscar_transfer_done;
 	ret->remove_buddy = oscar_remove_buddy;
 	ret->remove_buddies = oscar_remove_buddies;
 	ret->add_permit = oscar_add_permit;
@@ -4077,7 +4647,7 @@ void oscar_init(struct prpl *ret) {
 
 #ifndef STATIC
 
-void *gaim_prpl_init(struct prpl *prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	oscar_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
