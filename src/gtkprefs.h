@@ -107,4 +107,9 @@ GtkWidget *gaim_gtk_prefs_dropdown_from_list(GtkWidget *page,
 		const gchar * title, GaimPrefType type, const char *key,
 		GList *menuitems);
 
+/**
+ * Rename legacy prefs and delete some that no longer exist.
+ */
+void gaim_gtk_prefs_update_old();
+
 #endif /* _GAIM_GTK_PREFS_H_ */
