@@ -2263,14 +2263,10 @@ conv_placement_last_created_win(GaimConversation *conv)
 {
 	GaimConvWindow *win;
 
-#if 0 /* Last-minute prefslash */
 	if (gaim_prefs_get_bool("/core/conversations/combine_chat_im"))
 		win = g_list_last(gaim_get_windows())->data;
 	else
 		win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
-#else
-	win = g_list_last(gaim_get_windows())->data;
-#endif
 
 	if (win == NULL) {
 		win = gaim_conv_window_new();
@@ -2358,7 +2354,9 @@ conv_placement_by_group(GaimConversation *conv)
 
 			group2 = conv_get_group(conv2);
 
-			if (group == group2)
+			if ((gaim_prefs_get_bool("/core/conversations/combine_chat_im") ||
+				 type == gaim_conversation_get_type(conv2)) &&
+				group == group2)
 			{
 				gaim_conv_window_add_conversation(win2, conv);
 
@@ -2396,7 +2394,9 @@ conv_placement_by_account(GaimConversation *conv)
 		{
 			conv2 = (GaimConversation *)convs->data;
 
-			if (account == gaim_conversation_get_account(conv2))
+			if ((gaim_prefs_get_bool("/core/conversations/combine_chat_im") ||
+				 type == gaim_conversation_get_type(conv2)) &&
+				account == gaim_conversation_get_account(conv2))
 			{
 				gaim_conv_window_add_conversation(win2, conv);
 				return;
@@ -2407,8 +2407,6 @@ conv_placement_by_account(GaimConversation *conv)
 	/* Make a new window. */
 	conv_placement_new_window(conv);
 }
-
-#if 0 /* I don't like this */
 
 static void
 conv_placement_by_number(GaimConversation *conv)
@@ -2450,8 +2448,6 @@ conv_placement_by_number(GaimConversation *conv)
 		}
 	}
 }
-
-#endif
 
 static ConvPlacementData *
 get_conv_placement_data(const char *id)
@@ -2496,6 +2492,8 @@ ensure_default_funcs(void)
 							   conv_placement_by_group);
 		add_conv_placement_fnc("account", _("By account"),
 							   conv_placement_by_account);
+		add_conv_placement_fnc("number", _("By conversation count"),
+		                       conv_placement_by_number);
 	}
 }
 
