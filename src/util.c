@@ -796,6 +796,9 @@ gchar *strdup_withhtml(const gchar *src)
 	gchar *sp, *dest;
 	gulong destsize;
 
+	if(!src)
+		return NULL;
+
 	/*
 	 * All we need do is multiply the number of newlines by 3 (the
 	 * additional length of "<BR>" over "\n"), account for the
