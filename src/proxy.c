@@ -501,7 +501,7 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 		freeaddrinfo(tmp);
 		write(child_out, &zero, sizeof(zero));
 #else
-		if (!inet_aton(hostname, &sin.sin_addr)) {
+		if (!inet_aton(dns_params->hostname, &sin.sin_addr)) {
 			struct hostent *hp;
 			if (!(hp = gethostbyname(dns_params->hostname))) {
 				write(child_out, &h_errno, sizeof(int));
