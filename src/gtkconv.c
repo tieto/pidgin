@@ -2830,6 +2830,7 @@ tab_complete(GaimConversation *conv)
 	int most_matched = -1;
 	char *entered, *partial = NULL;
 	char *text;
+	char *nick_partial;
 	GList *matches = NULL;
 	GList *nicks = NULL;
 
@@ -2852,8 +2853,10 @@ tab_complete(GaimConversation *conv)
 	/* if we're at the end of ": " we need to move back 2 spaces */
 	start = strlen(text) - 1;
 
-	if (strlen(text) >= 2 && !strncmp(&text[start-1], ": ", 2))
+	if (strlen(text) >= 2 && !strncmp(&text[start-1], ": ", 2)) {
 		gtk_text_iter_backward_chars(&word_start, 2);
+		start-=2;
+	}
 
 	/* find the start of the word that we're tabbing */
 	while (start >= 0 && text[start] != ' ') {
@@ -2874,27 +2877,22 @@ tab_complete(GaimConversation *conv)
 		}
 	}
 
-	if (!strlen(entered)) {
+	if (!g_utf8_strlen(entered, -1)) {
 		g_free(entered);
 		return;
 	}
+
+	nick_partial = g_malloc(strlen(entered)+1);
 
 	for (nicks = gaim_conv_chat_get_users(chat);
 		 nicks != NULL;
 		 nicks = nicks->next) {
 
 		char *nick = nicks->data;
-		/* this checks to see if the current nick could be a completion */
-		if (g_ascii_strncasecmp(nick, entered, strlen(entered))) {
-			if (g_ascii_strncasecmp(nick + 1, entered, strlen(entered))) {
-				if (g_ascii_strncasecmp(nick + 2, entered, strlen(entered)))
-					continue;
-				else
-					nick += 2;
-			}
-			else
-				nick++;
-		}
+
+		g_utf8_strncpy(nick_partial, nick, strlen(entered));
+		if(gaim_utf8_strcasecmp(nick_partial, entered))
+			continue;
 
 		/* if we're here, it's a possible completion */
 
@@ -2926,6 +2924,7 @@ tab_complete(GaimConversation *conv)
 				gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer,
 												 nick, -1);
 
+			g_free(nick_partial);
 			g_free(entered);
 
 			return;
@@ -2941,14 +2940,22 @@ tab_complete(GaimConversation *conv)
 			partial = g_strdup(nick);
 		}
 		else if (most_matched) {
-			while (g_ascii_strncasecmp(nick, partial, most_matched))
-				most_matched--;
+			char *tmp = g_strdup(nick);
 
-			partial[most_matched] = 0;
+			while (gaim_utf8_strcasecmp(tmp, partial)) {
+				partial[most_matched] = '\0';
+				if(most_matched < strlen(tmp))
+					tmp[most_matched] = '\0';
+				most_matched--;
+			}
+
+			g_free(tmp);
 		}
 
 		matches = g_list_append(matches, nick);
 	}
+
+	g_free(nick_partial);
 
 	/* we're only here if we're doing new style */
 
