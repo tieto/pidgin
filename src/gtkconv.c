@@ -5405,14 +5405,20 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	         type == GAIM_CONV_UPDATE_UNSEEN ||
 	         type == GAIM_CONV_UPDATE_TITLE)
 	{
-		const char *title;
+		char *title;
 		GaimConvIm *im = NULL;
+		GaimConnection *gc = gaim_conversation_get_gc(conv);
 		char color[8];
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 			im = GAIM_CONV_IM(conv);
 
-		title = gaim_conversation_get_title(conv);
+		if (!gc || ((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		                && gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv))))
+			title = g_strdup_printf("(%s)", gaim_conversation_get_title(conv));
+
+		else
+			title = g_strdup(gaim_conversation_get_title(conv));
 
 		*color = '\0';
 
@@ -5463,6 +5469,8 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			if (conv == gaim_conv_window_get_active_conversation(win))
 				gtk_window_set_title(GTK_WINDOW(gtkwin->window), title);
 		}
+
+		g_free(title);
 	}
 	else if (type == GAIM_CONV_UPDATE_TOPIC)
 	{
@@ -5482,6 +5490,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		gray_stuff_out(gaim_conv_window_get_active_conversation(win));
 		generate_send_as_items(win, NULL);
 		update_tab_icon(conv);
+		gaim_conversation_autoset_title(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_AWAY)
 	{
@@ -5490,6 +5499,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_UPDATE_ADD || type == GAIM_CONV_UPDATE_REMOVE ||
 	         type == GAIM_CONV_UPDATE_CHATLEFT)
 	{
+		gaim_conversation_autoset_title(conv);
 		gray_stuff_out(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_ICON)

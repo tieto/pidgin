@@ -5,6 +5,8 @@ version 0.80cvs:
 	* Support for the Epiphany web browser (Leonardo Serra)
 	* Status messages in Gadu-Gadu (Andrew (proton) Wellington)
 	* Ability to send files from the conversation window (Daniel Atallah)
+	* Parentheses are now displayed around the title and tabs of
+	  conversations from offline accounts or parted chats.
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9
