@@ -424,14 +424,21 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}
 	else if (strstr(buffer, "HTTP/1.1 401 Unauthorized") != NULL)
 	{
-		const char *error;
+		const char *error, *c;
+		char *temp;
 
 		if ((error = strstr(buffer, "WWW-Authenticate")) != NULL)
 		{
 			if ((error = strstr(error, "cbtxt=")) != NULL)
 			{
 				error += strlen("cbtxt=");
-				error = gaim_url_decode(error);
+
+				if ((c = strchr(error, '\n')) == NULL)
+					c = error + strlen(error);
+
+				temp = g_strndup(error, c - error);
+				error = gaim_url_decode(temp);
+				g_free(temp);
 			}
 		}
 
