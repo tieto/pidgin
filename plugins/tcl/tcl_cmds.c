@@ -76,14 +76,14 @@ static gboolean tcl_validate_gc(GaimConnection *gc)
 int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
-	char *cmds[] = { "alias", "connect", "connection", "disconnect", "find",
+	const char *cmds[] = { "alias", "connect", "connection", "disconnect", "find",
 			 "handle", "isconnected", "list",
 			 "protocol", "username", NULL };
 	enum { CMD_ACCOUNT_ALIAS, CMD_ACCOUNT_CONNECT, CMD_ACCOUNT_CONNECTION,
 	       CMD_ACCOUNT_DISCONNECT, CMD_ACCOUNT_FIND, CMD_ACCOUNT_HANDLE,
 	       CMD_ACCOUNT_ISCONNECTED, CMD_ACCOUNT_LIST,
 	       CMD_ACCOUNT_PROTOCOL, CMD_ACCOUNT_USERNAME } cmd;
-	char *listopts[] = { "-all", "-online", NULL };
+	const char *listopts[] = { "-all", "-online", NULL };
 	enum { CMD_ACCOUNTLIST_ALL, CMD_ACCOUNTLIST_ONLINE } listopt;
 	const char *alias;
 	GList *cur;
@@ -244,7 +244,7 @@ static GaimBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj *
 int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *list, *tclgroup, *tclgrouplist, *tclcontact, *tclcontactlist, *tclbud, **elems, *result;
-	char *cmds[] = { "alias", "handle", "info", "list", NULL };
+	const char *cmds[] = { "alias", "handle", "info", "list", NULL };
 	enum { CMD_BUDDY_ALIAS, CMD_BUDDY_HANDLE, CMD_BUDDY_INFO, CMD_BUDDY_LIST } cmd;
 	GaimBuddyList *blist;
 	GaimBlistNode *node, *gnode, *bnode;
@@ -389,7 +389,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
-	char *cmds[] = { "account", "displayname", "handle", "list", NULL };
+	const char *cmds[] = { "account", "displayname", "handle", "list", NULL };
 	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
 	int error;
 	GList *cur;
@@ -455,13 +455,13 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *list, *elem, *result = Tcl_GetObjResult(interp);
-	char *cmds[] = { "find", "handle", "list", "new", "write", NULL };
+	const char *cmds[] = { "find", "handle", "list", "new", "write", NULL };
 	enum { CMD_CONV_FIND, CMD_CONV_HANDLE, CMD_CONV_LIST, CMD_CONV_NEW, CMD_CONV_WRITE } cmd;
-	char *styles[] = { "send", "recv", "system", NULL };
+	const char *styles[] = { "send", "recv", "system", NULL };
 	enum { CMD_CONV_WRITE_SEND, CMD_CONV_WRITE_RECV, CMD_CONV_WRITE_SYSTEM } style;
-	char *findopts[] = { "-account", NULL };
+	const char *findopts[] = { "-account", NULL };
 	enum { CMD_CONV_FIND_ACCOUNT } findopt;
-	char *newopts[] = { "-chat", "-im" };
+	const char *newopts[] = { "-chat", "-im" };
 	enum { CMD_CONV_NEW_CHAT, CMD_CONV_NEW_IM } newopt;
 	GaimConversation *convo;
 	GaimAccount *account;
@@ -612,7 +612,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 int tcl_cmd_core(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp);
-	char *cmds[] = { "handle", "quit", NULL };
+	const char *cmds[] = { "handle", "quit", NULL };
 	enum { CMD_CORE_HANDLE, CMD_CORE_QUIT } cmd;
 	int error;
 
@@ -648,7 +648,7 @@ int tcl_cmd_debug(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 {
 	char *category, *message;
 	int lev;
-	char *levels[] = { "-misc", "-info", "-warning", "-error", NULL };
+	const char *levels[] = { "-misc", "-info", "-warning", "-error", NULL };
 	GaimDebugLevel levelind[] = { GAIM_DEBUG_MISC, GAIM_DEBUG_INFO, GAIM_DEBUG_WARNING, GAIM_DEBUG_ERROR };
 	int error;
 
@@ -672,7 +672,7 @@ int tcl_cmd_debug(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 int tcl_cmd_notify(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	int error, type;
-	char *opts[] = { "-error", "-warning", "-info", NULL };
+	const char *opts[] = { "-error", "-warning", "-info", NULL };
 	GaimNotifyMsgType optind[] = { GAIM_NOTIFY_MSG_ERROR, GAIM_NOTIFY_MSG_WARNING, GAIM_NOTIFY_MSG_INFO };
 	char *title, *msg1, *msg2;
 
@@ -702,7 +702,7 @@ int tcl_cmd_notify(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result, *list, *elem, **elems;
-	char *cmds[] = { "get", "set", "type", NULL };
+	const char *cmds[] = { "get", "set", "type", NULL };
 	enum { CMD_PREFS_GET, CMD_PREFS_SET, CMD_PREFS_TYPE } cmd;
 	/* char *types[] = { "none", "boolean", "int", "string", "stringlist", NULL }; */
 	/* enum { TCL_PREFS_NONE, TCL_PREFS_BOOL, TCL_PREFS_INT, TCL_PREFS_STRING, TCL_PREFS_STRINGLIST } type; */
@@ -857,7 +857,7 @@ int tcl_cmd_send_im(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 
 int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	char *cmds[] = { "connect", "disconnect", NULL };
+	const char *cmds[] = { "connect", "disconnect", NULL };
 	enum { CMD_SIGNAL_CONNECT, CMD_SIGNAL_DISCONNECT } cmd;
 	struct tcl_signal_handler *handler;
 	Tcl_Obj **elems, *result = Tcl_GetObjResult(interp);
