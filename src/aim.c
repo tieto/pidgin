@@ -611,9 +611,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!opt_acct)
-		auto_login();
-
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 					"prefs", _("Preferences"), show_prefs, NULL);
@@ -627,6 +624,9 @@ int main(int argc, char *argv[])
 
 	update_pixmaps();
 
+	if (!opt_acct)
+		auto_login();
+
 	applet_widget_gtk_main();
 #else
 
@@ -634,6 +634,9 @@ int main(int argc, char *argv[])
 		account_editor(NULL, NULL);
 	} else if (do_login_ret == -1)
 		show_login();
+
+	if (!opt_acct)
+		auto_login();
 
 	gtk_main();
 
