@@ -67,7 +67,7 @@ extern int wgaim_fcntl(int socket, int command, int val);
 #define fcntl( fd, command, val ) \
 wgaim_fcntl( fd, command, val )
 
-#define open( args... ) _open( ## args )
+#define open( args... ) _open( args )
 
 /* arpa/inet.h */
 extern int wgaim_inet_aton(const char *name, struct in_addr *addr);
