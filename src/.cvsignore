@@ -8,3 +8,4 @@ gaim.def
 gaim.lib
 gaim.dll
 .*.swp
+*.lo
