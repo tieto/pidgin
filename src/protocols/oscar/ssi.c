@@ -654,11 +654,11 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 		next = cur->next;
 		if (!cur->name) {
 			if (cur->type == AIM_SSI_TYPE_BUDDY)
-				aim_ssi_delbuddy(sess, conn, cur->name, NULL);
+				aim_ssi_delbuddy(sess, conn, NULL, NULL);
 			else if (cur->type == AIM_SSI_TYPE_PERMIT)
-				aim_ssi_delpermit(sess, conn, cur->name);
+				aim_ssi_delpermit(sess, conn, NULL);
 			else if (cur->type == AIM_SSI_TYPE_DENY)
-				aim_ssi_deldeny(sess, conn, cur->name);
+				aim_ssi_deldeny(sess, conn, NULL);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(sess->ssi.local, cur->gid, 0x0000)))) {
 			aim_ssi_addbuddy(sess, conn, cur->name, "orphans", NULL, NULL, NULL, 0);
 			aim_ssi_delbuddy(sess, conn, cur->name, NULL);
@@ -681,9 +681,6 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 	/* Check if the master group is empty */
 	if ((cur = aim_ssi_itemlist_find(sess->ssi.local, 0x0000, 0x0000)) && (!cur->data))
 		aim_ssi_itemlist_del(&sess->ssi.local, cur);
-
-	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
 
 	return 0;
 }
@@ -802,7 +799,7 @@ faim_export int aim_ssi_delbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
 {
 	struct aim_ssi_item *del;
 
-	if (!sess || !conn || !name)
+	if (!sess || !conn)
 		return -EINVAL;
 
 	/* Find the buddy */

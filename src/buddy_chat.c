@@ -293,19 +293,19 @@ join_chat()
 		bbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 
-		/* Cancel button. */
-		cancel = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL,
-											 GAIM_BUTTON_HORIZONTAL);
-		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
-		g_signal_connect(G_OBJECT(cancel), "clicked",
-						 G_CALLBACK(destroy_join_chat), joinchat);
-
 		/* Join button. */
 		join = gaim_pixbuf_button_from_stock(_("Join"), GTK_STOCK_JUMP_TO,
-											 GAIM_BUTTON_HORIZONTAL);
+							 GAIM_BUTTON_HORIZONTAL);
 		gtk_box_pack_end(GTK_BOX(bbox), join, FALSE, FALSE, 0);
 		g_signal_connect(G_OBJECT(join), "clicked",
-						 G_CALLBACK(do_join_chat), NULL);
+				 G_CALLBACK(do_join_chat), NULL);
+		/* Cancel button. */
+		cancel = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL,
+							 GAIM_BUTTON_HORIZONTAL);
+		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
+		g_signal_connect(G_OBJECT(cancel), "clicked",
+				 G_CALLBACK(destroy_join_chat), joinchat);
+
 	}
 
 	gtk_widget_show_all(joinchat);
