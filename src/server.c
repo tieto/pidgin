@@ -876,8 +876,8 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 
 	gc->evil = lev;
 
-	g_snprintf(buf2, sizeof(buf2), "%s has just been warned by %s.\nYour new warning level is %d%%",
-		   gc->username, ((name == NULL)? "an anonymous person" : name), lev);
+	g_snprintf(buf2, sizeof(buf2), _("%s has just been warned by %s.\nYour new warning level is %d%%"),
+		   gc->username, ((name == NULL)? _("an anonymous person") : name), lev);
 
 	do_error_dialog(buf2, NULL, GAIM_INFO);
 }
@@ -964,10 +964,10 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char
 	plugin_event(event_chat_invited, g, who, name, message);
 
 	if (message)
-		g_snprintf(buf2, sizeof(buf2), "User '%s' invites %s to buddy chat room: '%s'\n%s", who,
+		g_snprintf(buf2, sizeof(buf2), _("User '%s' invites %s to buddy chat room: '%s'\n%s"), who,
 			   g->username, name, message);
 	else
-		g_snprintf(buf2, sizeof(buf2), "User '%s' invites %s to buddy chat room: '%s'\n", who,
+		g_snprintf(buf2, sizeof(buf2), _("User '%s' invites %s to buddy chat room: '%s'\n"), who,
 			   g->username, name);
 
 	d = gtk_dialog_new();
@@ -987,7 +987,7 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char
 	gtk_object_set_user_data(GTK_OBJECT(d), data);
 
 
-	gtk_window_set_title(GTK_WINDOW(d), "Buddy chat invite");
+	gtk_window_set_title(GTK_WINDOW(d), _("Buddy chat invite"));
 	g_signal_connect(GTK_OBJECT(nobtn), "clicked", G_CALLBACK(close_invite), d);
 	g_signal_connect(GTK_OBJECT(yesbtn), "clicked", G_CALLBACK(chat_invite_callback), d);
 

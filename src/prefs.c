@@ -905,12 +905,12 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	plug = g_value_get_pointer(&val);
 	
 	if (plug->error[0]) 
-		g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n"
+		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
 					       "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-					       "%s"), plug->desc.name, plug->desc.version, plug->error, plug->desc.description); 
+					       "%s", plug->desc.name, plug->desc.version, plug->error, plug->desc.description); 
 	else
-		g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n"
-					       "%s"), plug->desc.name, plug->desc.version, plug->desc.description); 
+		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
+					       "%s", plug->desc.name, plug->desc.version, plug->desc.description); 
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	g_snprintf(buf, sizeof(buf), 
 #ifndef _WIN32
@@ -993,12 +993,12 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 #endif
 	gdk_window_set_cursor(prefs->window, NULL);
 	if (plug->error[0]) 
-		g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n"
+		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
 					       "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-					       "%s"), plug->desc.name, plug->desc.version, plug->error, plug->desc.description); 
+					       "%s", plug->desc.name, plug->desc.version, plug->error, plug->desc.description); 
 	else
-		g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n"
-					       "%s"), plug->desc.name, plug->desc.version, plug->desc.description); 
+		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
+					       "%s", plug->desc.name, plug->desc.version, plug->desc.description); 
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, plug->handle, -1);
 	

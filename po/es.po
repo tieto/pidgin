@@ -92,7 +92,7 @@ msgstr ""
 
 #: plugins/docklet/docklet.c:490
 msgid "Robert McQueen &lt;robot101@debian.org>"
-msgstr ""
+msgstr "Robert McQueen &lt;robot101@debian.org>"
 
 #  Me pareció que "bandeja" no suen bien todavía, no es común. Veremos si se
 #  populariza esa traducción en el resto de Gnome. nl.
@@ -139,9 +139,10 @@ msgstr "Lista de conversaciones disponibles"
 msgid "List of subscribed chats"
 msgstr "Lista de conversaciones subscritas"
 
+# Y esto cómo se traduce?
 #: plugins/gtik.c:719
 msgid "Gnome Stock Ticker Properties"
-msgstr ""
+msgstr "Propiedades de \"Gnome Stock Ticker\""
 
 #: plugins/gtik.c:731
 msgid "Update Frequency in min"
@@ -274,7 +275,7 @@ msgstr "Iconificar en ausencia"
 msgid "Iconifies the away box and the buddy list when you go away."
 msgstr ""
 "Iconifica la cajita de ausencia y la lista de amigos cuando usted está "
-"ausente"
+"ausente."
 
 #: plugins/iconaway.c:61
 msgid "Iconify On Away"
@@ -879,7 +880,7 @@ msgstr "Error Jabber %s"
 #: src/protocols/jabber/jabber.c:1477
 #, c-format
 msgid "Error %s: %s"
-msgstr ""
+msgstr "Error %s: %s"
 
 #: src/protocols/jabber/jabber.c:1480
 msgid "Unknown Error in presence"
@@ -1206,14 +1207,15 @@ msgstr "El servidor está apagándose (Sálvese quien pueda)"
 msgid "Error creating connection"
 msgstr "Error al crear la conexión"
 
+# En verdad traduje el error como figura en
+# "http://www.hypothetic.org/docs/msn/basics.php" -NL.
 #: src/protocols/msn/msn.c:313
 msgid "Session overload"
-msgstr ""
+msgstr "La sesión está sobrecargada"
 
 #: src/protocols/msn/msn.c:316
-#, fuzzy
 msgid "User is too active"
-msgstr "El usuario no está conectado"
+msgstr "El usuario está demasiado activo"
 
 #: src/protocols/msn/msn.c:319
 msgid "Too many sessions"
@@ -1512,9 +1514,8 @@ msgid "Insufficient rights"
 msgstr "Derechos insuficientes"
 
 #: src/protocols/oscar/oscar.c:423
-#, fuzzy
 msgid "In local permit/deny"
-msgstr "Añadir amigo a autorizar/negar"
+msgstr "En la lista local de autorizar/negar"
 
 #: src/protocols/oscar/oscar.c:424
 msgid "Too evil (sender)"
@@ -1546,7 +1547,7 @@ msgstr "Cola llena"
 
 #: src/protocols/oscar/oscar.c:431
 msgid "Not while on AOL"
-msgstr ""
+msgstr "No mientras sea AOL"
 
 #: src/protocols/oscar/oscar.c:475
 #, c-format
@@ -1650,14 +1651,12 @@ msgstr ""
 "resuelva.  Monitoree %s para novedades."
 
 #: src/protocols/oscar/oscar.c:974 src/protocols/oscar/oscar.c:1003
-#, fuzzy
 msgid "Gaim was Unable to get a valid AIM login hash."
-msgstr "Gaim no pudo enviar el mensaje"
+msgstr "Gaim no pudo obtener un \"hash\" de login AIM válido."
 
 #: src/protocols/oscar/oscar.c:1087
-#, fuzzy
 msgid "Gaim was Unable to get valid login hash."
-msgstr "Gaim no pudo enviar el mensaje"
+msgstr "Gaim no pudo un \"hash\" de login válido."
 
 #: src/protocols/oscar/oscar.c:1524 src/protocols/oscar/oscar.c:4729
 #, c-format
@@ -1687,6 +1686,9 @@ msgid ""
 "for IM Images.  Because your IP address will be revealed, this may be "
 "considered a privacy risk."
 msgstr ""
+"Esto requiere una conexión directa entre las dos computadoras y es "
+"necesario para Imágenes de IM.  Como su dirección IP será revelada, puede "
+"considerarse esto como un riesgo a su privacidad."
 
 #: src/protocols/oscar/oscar.c:2109
 #, c-format
@@ -1999,6 +2001,8 @@ msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
 "differs from the original."
 msgstr ""
+"Error 0x%04x: No se puede darle formato al nombre de usuario porque el "
+"nombre de usuario pedido difiere del original."
 
 #: src/protocols/oscar/oscar.c:3596
 #, c-format
@@ -2006,6 +2010,8 @@ msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
 "ends in a space."
 msgstr ""
+"Error 0x%04x: No se puede darle formato al nombre de usuario porque el "
+"nombre de usuario pedido termina con un espacio."
 
 #: src/protocols/oscar/oscar.c:3599
 #, c-format
@@ -2013,6 +2019,8 @@ msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
 "is too long."
 msgstr ""
+"Error 0x%04x: No se puede darle formato al nombre de usuario porque el "
+"nombre de usuario pedido es demasiado largo."
 
 #: src/protocols/oscar/oscar.c:3602
 #, c-format
@@ -2020,6 +2028,8 @@ msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
+"Error 0x%04x: No se puede cambiar la dirección de correo electrónico "
+"porque ya existe una solicitud pendiente para este nombre de usuario."
 
 #: src/protocols/oscar/oscar.c:3605
 #, c-format
@@ -2027,6 +2037,9 @@ msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
+"Error 0x%04x: No se puede cambiar la dirección de correo electrónico "
+"porque la dirección dada ya tiene demasiados nombres de usuarios "
+"asociados."
 
 #: src/protocols/oscar/oscar.c:3608
 #, c-format
@@ -2034,6 +2047,8 @@ msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
+"Error 0x%04x: No se puede cambiar la dirección de correo electrónico "
+"porque la dirección dada es inválida."
 
 #: src/protocols/oscar/oscar.c:3611
 #, c-format
@@ -2078,6 +2093,8 @@ msgid ""
 "The maximum profile length of %d bytes has been exceeded.  Gaim has "
 "truncated and set it."
 msgstr ""
+"El largo máximo para un perfil (%d bytes) ha sido excedido.  Gaim "
+"lo aplicó truncado."
 
 #: src/protocols/oscar/oscar.c:3863
 msgid "Unable to set AIM away message."
@@ -2089,6 +2106,9 @@ msgid ""
 "procedure completed.  You remain in a \"present\" state; try setting it "
 "again when you are fully connected."
 msgstr ""
+"Usted probablemente solicitó establecer su mensaje de ausencia antes de "
+"que finalice el proceso de conexión.  Usted quedará en un estado "
+"\"presente\", intente volver a aplicarlo cuando esté conectado del todo."
 
 #: src/protocols/oscar/oscar.c:3880
 #, c-format
@@ -2105,6 +2125,9 @@ msgid ""
 "The maximum number of buddies allowed in your buddy list is %d, and you have "
 "%d.  Until you are below the limit, some buddies will not show up as online."
 msgstr ""
+"El número máximo de contactos permitidos en la lista es de %d, y usted "
+"tiene %d.  Mientras no esté por debajo del límite,  algunos contactos no "
+"aparecerán como conectados."
 
 #: src/protocols/oscar/oscar.c:4320
 #, c-format
@@ -2422,13 +2445,12 @@ msgid "Your Yahoo! message did not get sent."
 msgstr "Su mensaje Yahoo! no se envió."
 
 #: src/protocols/yahoo/yahoo.c:1361
-#, fuzzy
 msgid "Pager Host:"
-msgstr "Host Proxy:"
+msgstr "Nombre DNS del \"Pager\":"
 
 #: src/protocols/yahoo/yahoo.c:1367
 msgid "Pager Port:"
-msgstr ""
+msgstr "Port del \"Pager\":"
 
 #: src/protocols/zephyr/zephyr.c:836
 msgid "ZLocate"
@@ -2967,6 +2989,10 @@ msgid ""
 "This will increase %s's warning level and he or she will be subject to "
 "harsher rate limiting.\n"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">¿Avisar a %s?</span>\n"
+"\n"
+"Esto incrementará el nivel de aviso de %s y él o ella estará sujeto a "
+"un límite en su tasa de mensajes más duro.\n"
 
 #: src/dialogs.c:432
 msgid "Warn _anonymously?"
@@ -3512,7 +3538,6 @@ msgid "Reset"
 msgstr "Resetear"
 
 #: src/multi.c:622
-#, fuzzy
 msgid "Login Options"
 msgstr "Opciones de Conexión"
 
@@ -3580,6 +3605,10 @@ msgid ""
 "this protocol is inferior to OSCAR, it is now compiled as a plugin by "
 "default.  To login, edit this account to use OSCAR or load the TOC plugin."
 msgstr ""
+"Usted intentó conectarse a una cuenta usando el protocolo TOC.  Como "
+"este protocolo es inferior a OSCAR, ahora se lo compila como un plugin "
+"por omisión.  Para conectarse, edite esta cuenta para usar OSCAR o cargue "
+"el plugin de TOC."
 
 #: src/multi.c:1086
 msgid "Protocol not found."
@@ -3845,7 +3874,7 @@ msgstr "Mostrar los _botones como:"
 
 #: src/prefs.c:364 src/prefs.c:406
 msgid "Pictures"
-msgstr "Dibujos"
+msgstr "Imágenes"
 
 #: src/prefs.c:365 src/prefs.c:407
 msgid "Text"
@@ -3853,7 +3882,7 @@ msgstr "Texto"
 
 #: src/prefs.c:366 src/prefs.c:408
 msgid "Pictures and text"
-msgstr "Dibujos y texto"
+msgstr "Imágenes y texto"
 
 #: src/prefs.c:369 src/prefs.c:411
 msgid "New window _width:"
@@ -3897,26 +3926,23 @@ msgstr "Notificación de Tipeo"
 
 #: src/prefs.c:384
 msgid "Notify buddies that you are _typing to them"
-msgstr "Notificar a los amigos cuando les este e_scribiendo"
+msgstr "Notificar a los amigos cuando les esté e_scribiendo"
 
 #: src/prefs.c:416
 msgid "Tab Completion"
 msgstr "Tabulador"
 
 #: src/prefs.c:417
-#, fuzzy
 msgid "_Tab-complete nicks"
-msgstr "Tabulador completa los Apodos"
+msgstr "_Tab completa los apodos"
 
 #: src/prefs.c:418
-#, fuzzy
 msgid "_Old-style tab completion"
-msgstr "Tabulador al estilo antiguo"
+msgstr "Tab al estilo _antiguo"
 
 #: src/prefs.c:421
-#, fuzzy
 msgid "_Show people joining/leaving in window"
-msgstr "Mostrar la gente que se conecta/desconecta en la ventana"
+msgstr "_Mostrar la gente que se conecta/desconecta en la ventana"
 
 #: src/prefs.c:422
 msgid "Co_lorize screennames"
@@ -4337,9 +4363,9 @@ msgid "Gaim - Prompt"
 msgstr "Gaim - Preguntar"
 
 #: src/prpl.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%s has mail from %s: %s"
-msgstr "Ha sido expulsado de %s: %s"
+msgstr "%s tiene correo de %s: %s"
 
 #: src/prpl.c:485
 msgid "No Subject"

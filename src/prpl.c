@@ -664,9 +664,9 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		   msg ? msg : "",
 		   find_buddy(gc, ga->who) ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));
 	if (find_buddy(gc, ga->who))
-		do_error_dialog(buf, NULL, GAIM_INFO);
+		do_error_dialog(buf, _("Gaim - Information"), GAIM_INFO);
 	else
-		do_ask_dialog(buf, NULL, ga, _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
+		do_ask_dialog(buf, _("Gaim - Confirm"), ga, _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
 }
 
 static GtkWidget *regdlg = NULL;

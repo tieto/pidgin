@@ -1123,9 +1123,9 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 	GtkWidget *image;
 
 	if (icon == NULL)
-		menuitem = gtk_menu_item_new_with_mnemonic(_(str));
+		menuitem = gtk_menu_item_new_with_mnemonic(str);
 	else 
-		menuitem = gtk_image_menu_item_new_with_mnemonic(_(str));
+		menuitem = gtk_image_menu_item_new_with_mnemonic(str);
 
 	if (menu)
 		gtk_menu_append(GTK_MENU(menu), menuitem);
