@@ -26,6 +26,9 @@
 
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
+#ifdef DEBUG
+#undef DEBUG
+#endif
 #endif
 #undef PACKAGE
 
@@ -53,6 +56,9 @@ extern void xs_init _((void));
 extern void boot_DynaLoader _((CV * cv)); /* perl is so wacky */
 
 #undef _
+#ifdef DEBUG
+#undef DEBUG
+#endif
 #include "gaim.h"
 
 struct perlscript {
