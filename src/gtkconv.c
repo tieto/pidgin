@@ -1731,7 +1731,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Left) ||
 		(event->keyval == GDK_Right) ||
 		(event->keyval == GDK_Home) ||
-		(event->keyval == GDK_End))
+		(event->keyval == GDK_End) ||
+		(event->keyval == GDK_Tab) ||
+		(event->keyval == GDK_ISO_Left_Tab))
 			return FALSE;
 
 	if (event->type == GDK_KEY_RELEASE)
@@ -2741,13 +2743,11 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	/*
 	 * We pause icons when they are not visible.  If this icon should
-	 * be animated then start it back up again.lll
+	 * be animated then start it back up again.
 	 */
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
 		(gtkconv->u.im->animate))
 		start_anim(NULL, conv);
-
-	gtk_widget_grab_focus(gtkconv->entry);
 
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
 			     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
@@ -4500,7 +4500,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 		gaim_gtkconv_update_buddy_icon(conv);
 
-	/* Add this pane to the conversations notebook. */
+	/* Add this pane to the conversation's notebook. */
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby);
 	gtk_notebook_set_menu_label(GTK_NOTEBOOK(gtkwin->notebook),
 								tab_cont, menu_tabby);
