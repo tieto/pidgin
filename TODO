@@ -8,6 +8,8 @@ WINGAIM:
 	sounds while away?	
 
 gtk2/new prefs
+	when a conversation has been manually resized, it should not be 
+		resized to the default on: 1)buddy icon. 2)im image 3)new tab
 	blist shortcuts apparently not working
 	better gtk2-ified icons: maybe a send icon? review the ones we're using now. do they make sense?
 	sound player preference not being saved
