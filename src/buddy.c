@@ -578,7 +578,15 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 	char *warning = NULL, *idletime = NULL;
 
 	if (prpl->tooltip_text) {
+		const char *end;
 		statustext = prpl->tooltip_text(b);
+
+		if(statustext && !g_utf8_validate(statustext, -1, &end)) {
+			char *new = g_strndup(statustext,
+					g_utf8_pointer_to_offset(statustext, end));
+			g_free(statustext);
+			statustext = new;
+		}
 	}
 
 	if (b->idle) {
@@ -820,6 +828,14 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 
 	if (prpl->status_text) {
 		char *tmp = prpl->status_text(b);
+		const char *end;
+
+		if(tmp && !g_utf8_validate(tmp, -1, &end)) {
+			char *new = g_strndup(tmp,
+					g_utf8_pointer_to_offset(tmp, end));
+			g_free(tmp);
+			tmp = new;
+		}
 
 		if(tmp) {
 			g_strdelimit(tmp, "\n", ' ');
@@ -942,7 +958,6 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_widget_set_size_request(sw, 200, 200);
 
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
