@@ -33,6 +33,7 @@ gaim_SOURCES =	about.c \
 		gtkft.h \
 		gtkimhtml.c \
 		gtkimhtml.h \
+		gtklist.h \
 		gtkutils.c \
 		gtkutils.h \
 		html.c \
