@@ -55,15 +55,13 @@ gevo_add_buddy(GaimAccount *account, const char *group_name,
 GList *
 gevo_get_groups(void)
 {
-	GList *tmp = NULL;
-	char *tmp2;
+	GList *list = NULL;
 	GaimGroup *g;
 	GaimBlistNode *gnode;
 
 	if (gaim_get_blist()->root == NULL)
 	{
-		tmp2 = g_strdup(_("Buddies"));
-		tmp  = g_list_append(tmp, tmp2);
+		list  = g_list_append(list, _("Buddies"));
 	}
 	else
 	{
@@ -73,14 +71,13 @@ gevo_get_groups(void)
 		{
 			if (GAIM_BLIST_NODE_IS_GROUP(gnode))
 			{
-				g    = (GaimGroup *)gnode;
-				tmp2 = g->name;
-				tmp  = g_list_append(tmp, tmp2);
+				g = (GaimGroup *)gnode;
+				list = g_list_append(list, g->name);
 			}
 		}
 	}
 
-	return tmp;
+	return list;
 }
 
 EContactField
@@ -126,21 +123,18 @@ gevo_prpl_is_supported(GaimAccount *account, GaimBuddy *buddy)
 }
 
 gboolean
-gevo_load_addressbook(EBook **book, GError **error)
+gevo_load_addressbook(const gchar* uri, EBook **book, GError **error)
 {
 	gboolean result = FALSE;
 
 	g_return_val_if_fail(book != NULL, FALSE);
 
-#if EBOOK_CHECK_VERSION(0, 0, 94)
-	*book = e_book_new_system_addressbook(NULL);
+	if (uri == NULL)
+		*book = e_book_new_system_addressbook(NULL);
+	else
+		*book = e_book_new_from_uri(uri, error);
 
 	result = e_book_open(*book, FALSE, NULL);
-#else
-	*book = e_book_new();
-
-	result = e_book_load_local_addressbook(*book, error);
-#endif
 
 	if (!result && *book != NULL)
 	{

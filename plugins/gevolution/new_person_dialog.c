@@ -54,6 +54,7 @@ delete_win_cb(GtkWidget *w, GdkEvent *event, GevoNewPersonDialog *dialog)
 {
 	gtk_widget_destroy(dialog->win);
 
+	g_object_unref(dialog->book);
 	g_free(dialog);
 
 	return 0;
@@ -84,7 +85,6 @@ static void
 add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 {
 	EContact *contact = NULL;
-	EBook *book;
 	const char *screenname;
 	const char *firstname;
 	const char *lastname;
@@ -106,14 +106,6 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 
 	if (*firstname || *lastname)
 	{
-		if (!gevo_load_addressbook(&book, NULL))
-		{
-			gaim_debug_error("evolution",
-							 "Error retrieving default addressbook\n");
-
-			return;
-		}
-
 		if (dialog->contact == NULL)
 		{
 			char *file_as;
@@ -175,7 +167,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 
 		if (new_contact)
 		{
-			if (!e_book_add_contact(book, contact, NULL))
+			if (!e_book_add_contact(dialog->book, contact, NULL))
 			{
 				gaim_debug_error("evolution", "Error adding contact to book\n");
 
@@ -186,7 +178,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 		}
 		else
 		{
-			if (!e_book_commit_contact(book, contact, NULL))
+			if (!e_book_commit_contact(dialog->book, contact, NULL))
 			{
 				gaim_debug_error("evolution", "Error adding contact to book\n");
 
@@ -226,9 +218,10 @@ select_account_cb(GObject *w, GaimAccount *account,
 }
 
 void
-gevo_new_person_dialog_show(EContact *contact, GaimAccount *account,
-							const char *username, const char *group,
-							GaimBuddy *buddy, gboolean person_only)
+gevo_new_person_dialog_show(EBook *book, EContact *contact,
+							GaimAccount *account, const char *username,
+							const char *group, GaimBuddy *buddy,
+							gboolean person_only)
 {
 	GevoNewPersonDialog *dialog;
 	GtkWidget *vbox, *vbox2;
@@ -240,6 +233,7 @@ gevo_new_person_dialog_show(EContact *contact, GaimAccount *account,
 	GtkSizeGroup *sg, *sg2;
 	const char *str;
 
+	g_return_if_fail(book);
 	g_return_if_fail(!person_only || (person_only && buddy));
 
 	dialog = g_new0(GevoNewPersonDialog, 1);
@@ -247,6 +241,8 @@ gevo_new_person_dialog_show(EContact *contact, GaimAccount *account,
 	dialog->account = account;
 	dialog->person_only = person_only;
 	dialog->buddy = buddy;
+	dialog->book = book;
+	g_object_ref(book);
 
 	dialog->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(dialog->win), "new_person");

@@ -14,7 +14,8 @@ gevolution_la_SOURCES = \
 	gevolution.c \
 	gevolution.h \
 	gevo-util.c \
-	new_person_dialog.c
+	new_person_dialog.c \
+	eds-utils.c
 
 endif
 

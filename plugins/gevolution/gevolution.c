@@ -232,7 +232,7 @@ load_timeout(gpointer data)
 
 	timer = 0;
 
-	if (!gevo_load_addressbook(&book, NULL))
+	if (!gevo_load_addressbook(NULL, &book, NULL))
 		return FALSE;
 
 	query = e_book_query_any_field_contains("");

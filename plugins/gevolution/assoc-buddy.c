@@ -31,6 +31,7 @@
 
 #include <stdlib.h>
 #include <bonobo/bonobo-main.h>
+#include <gtk/gtk.h>
 
 enum
 {
@@ -44,75 +45,18 @@ delete_win_cb(GtkWidget *w, GdkEvent *event, GevoAssociateBuddyDialog *dialog)
 {
 	gtk_widget_destroy(dialog->win);
 
-	g_list_foreach(dialog->contacts, (GFunc)g_free, NULL);
-
 	if (dialog->contacts != NULL)
+	{
+		g_list_foreach(dialog->contacts, (GFunc)g_object_unref, NULL);
 		g_list_free(dialog->contacts);
+	}
 
 	g_object_unref(dialog->book);
+	gevo_addrbooks_model_unref(dialog->addrbooks);
 
 	g_free(dialog);
 
 	return 0;
-}
-
-static void
-populate_address_books(GevoAssociateBuddyDialog *dialog)
-{
-	GtkWidget *item;
-	GtkWidget *menu;
-#if notyet
-	ESourceList *addressbooks;
-	GSList *groups, *g;
-#endif
-
-	menu =
-		gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->addressbooks_menu));
-
-	item = gtk_menu_item_new_with_label(_("Local Addressbook"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-#if notyet
-	if (!e_book_get_addressbooks(&addressbooks, NULL))
-	{
-		gaim_debug_error("evolution",
-						 "Unable to fetch list of address books.\n");
-
-		item = gtk_menu_item_new_with_label(_("None"));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-
-		return;
-	}
-
-	groups = e_source_list_peek_groups(addressbooks);
-
-	if (groups == NULL)
-	{
-		item = gtk_menu_item_new_with_label(_("None"));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-
-		return;
-	}
-
-	for (g = groups; g != NULL; g = g->next)
-	{
-		GSList *sources, *s;
-
-		sources = e_source_group_peek_sources(g->data);
-
-		for (s = sources; s != NULL; s = s->next)
-		{
-			ESource *source = E_SOURCE(s->data);
-
-			item = gtk_menu_item_new_with_label(e_source_peek_name(source));
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-			gtk_widget_show(item);
-		}
-	}
-#endif
 }
 
 static void
@@ -184,18 +128,33 @@ add_columns(GevoAssociateBuddyDialog *dialog)
 }
 
 static void
-populate_treeview(GevoAssociateBuddyDialog *dialog)
+populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 {
-	EBookQuery *query;
 	EBook *book;
+	EBookQuery *query;
 	const char *prpl_id;
 	gboolean status;
 	GList *cards, *c;
 
-	if (!gevo_load_addressbook(&book, NULL))
+	if (dialog->book != NULL)
+	{
+		g_object_unref(dialog->book);
+		dialog->book = NULL;
+	}
+
+	if (dialog->contacts != NULL)
+	{
+		g_list_foreach(dialog->contacts, (GFunc) g_object_unref, NULL);
+		g_list_free(dialog->contacts);
+		dialog->contacts = NULL;
+	}
+
+	gtk_list_store_clear(dialog->model);
+
+	if (!gevo_load_addressbook(uri, &book, NULL))
 	{
 		gaim_debug_error("evolution",
-						 "Error retrieving default addressbook\n");
+						 "Error retrieving addressbook\n");
 
 		return;
 	}
@@ -275,9 +234,25 @@ populate_treeview(GevoAssociateBuddyDialog *dialog)
 }
 
 static void
+addrbook_change_cb(GtkComboBox *combo, GevoAssociateBuddyDialog *dialog)
+{
+	GtkTreeIter iter;
+	const char *esource_uri;
+
+	if (!gtk_combo_box_get_active_iter(combo, &iter))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(dialog->addrbooks), &iter,
+					   ADDRBOOK_COLUMN_URI, &esource_uri,
+					   -1);
+
+	populate_treeview(dialog, esource_uri);
+}
+
+static void
 new_person_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 {
-	gevo_new_person_dialog_show(NULL, dialog->buddy->account,
+	gevo_new_person_dialog_show(dialog->book, NULL, dialog->buddy->account,
 								dialog->buddy->name, NULL, dialog->buddy,
 								TRUE);
 
@@ -315,14 +290,12 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 		return; /* XXX */
 
 	list = e_contact_get(contact, protocol_field);
-
 	list = g_list_append(list, g_strdup(dialog->buddy->name));
 
 	e_contact_set(contact, protocol_field, list);
+
 	if (!e_book_commit_contact(dialog->book, contact, NULL))
-	{
 		gaim_debug_error("evolution", "Error adding contact to book\n");
-	}
 
 	/* Free the list. */
 	g_list_foreach(list, (GFunc)g_free, NULL);
@@ -341,10 +314,10 @@ gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *bbox;
-	GtkWidget *menu;
 	GtkWidget *sep;
 	GtkWidget *disclosure;
 	GtkTreeSelection *selection;
+	GtkCellRenderer *cell;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
@@ -383,17 +356,19 @@ gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
 	gtk_widget_show(label);
 
 	/* Addressbooks */
-	dialog->addressbooks_menu = gtk_option_menu_new();
-	menu = gtk_menu_new();
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(dialog->addressbooks_menu), menu);
+	dialog->addrbooks = gevo_addrbooks_model_new();
 
-	populate_address_books(dialog);
+	dialog->addrbooks_combo = gtk_combo_box_new_with_model(dialog->addrbooks);
+	cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dialog->addrbooks_combo),
+							   cell, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dialog->addrbooks_combo),
+								   cell,
+								   "text", ADDRBOOK_COLUMN_NAME,
+								   NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), dialog->addrbooks_combo, FALSE, FALSE, 0);
+	gtk_widget_show(dialog->addrbooks_combo);
 
-	gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->addressbooks_menu), 0);
-
-	gtk_box_pack_start(GTK_BOX(hbox), dialog->addressbooks_menu,
-					   FALSE, FALSE, 0);
-	gtk_widget_show(dialog->addressbooks_menu);
 
 	/* Search field */
 	dialog->search_field = gtk_entry_new();
@@ -426,8 +401,8 @@ gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
 									   G_TYPE_STRING, G_TYPE_POINTER);
 
 	/* Now for the treeview */
-	dialog->treeview =
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
+	dialog->treeview = gtk_tree_view_new_with_model(
+			GTK_TREE_MODEL(dialog->model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->treeview), TRUE);
 	gtk_container_add(GTK_CONTAINER(sw), dialog->treeview);
 	gtk_widget_show(dialog->treeview);
@@ -441,7 +416,14 @@ gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
 
 	add_columns(dialog);
 
-	populate_treeview(dialog);
+	/*
+	 * Catch addressbook selection and populate treeview with the first
+	 * addressbook
+	 */
+	gevo_addrbooks_model_populate( dialog->addrbooks );
+	g_signal_connect(G_OBJECT(dialog->addrbooks_combo), "changed",
+					 G_CALLBACK(addrbook_change_cb), dialog);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->addrbooks_combo), 0);
 
 	/* Add the disclosure */
 	disclosure = gaim_disclosure_new(_("Show user details"),

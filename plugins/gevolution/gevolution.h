@@ -33,9 +33,20 @@
 
 #include <libebook/e-book.h>
 
-#if !EBOOK_CHECK_VERSION(0, 0, 95)
-# include <libebook/e-book-async.h>
-#endif
+enum
+{
+	ADDRBOOK_COLUMN_NAME,
+	ADDRBOOK_COLUMN_URI,
+	NUM_ADDRBOOK_COLUMNS
+};
+
+typedef struct
+{
+	GtkListStore *sources;
+	EBook *active_book;
+	GList *contacts;
+
+} GevoAddrbooksSelector;
 
 typedef struct
 {
@@ -46,13 +57,14 @@ typedef struct
 
 	GtkWidget *win;
 	GtkWidget *treeview;
-	GtkWidget *addressbooks_menu;
+	GtkWidget *addrbooks_combo;
 	GtkWidget *search_field;
 	GtkWidget *group_combo;
 	GtkWidget *select_button;
 	GtkWidget *account_optmenu;
 	GtkListStore *model;
 
+	GtkTreeModel *addrbooks;
 	GList *contacts;
 
 } GevoAddBuddyDialog;
@@ -64,6 +76,7 @@ typedef struct
 	GaimAccount *account;
 	GaimBuddy *buddy;
 
+	EBook *book;
 	EContact *contact;
 
 	GtkWidget *win;
@@ -87,12 +100,13 @@ typedef struct
 
 	GtkWidget *win;
 	GtkWidget *treeview;
-	GtkWidget *addressbooks_menu;
+	GtkWidget *addrbooks_combo;
 	GtkWidget *search_field;
 	GtkWidget *assoc_button;
 	GtkWidget *imhtml;
 	GtkListStore *model;
 
+	GtkTreeModel *addrbooks;
 	GList *contacts;
 
 } GevoAssociateBuddyDialog;
@@ -104,9 +118,10 @@ void gevo_add_buddy_dialog_add_person(GevoAddBuddyDialog *dialog,
 									  const char *name, GaimAccount *account,
 									  const char *screenname);
 
-void gevo_new_person_dialog_show(EContact *contact, GaimAccount *account,
-								 const char *username, const char *group,
-								 GaimBuddy *buddy, gboolean person_only);
+void gevo_new_person_dialog_show(EBook *book, EContact *contact,
+								 GaimAccount *account, const char *username,
+								 const char *group, GaimBuddy *buddy,
+								 gboolean person_only);
 
 void gevo_add_buddy(GaimAccount *account, const char *group_name,
 					const char *screenname, const char *alias);
@@ -114,8 +129,13 @@ GList *gevo_get_groups(void);
 
 EContactField gevo_prpl_get_field(GaimAccount *account, GaimBuddy *buddy);
 gboolean gevo_prpl_is_supported(GaimAccount *account, GaimBuddy *buddy);
-gboolean gevo_load_addressbook(EBook **book, GError **error);
+gboolean gevo_load_addressbook(const gchar *uri, EBook **book, GError **error);
 
 GevoAssociateBuddyDialog *gevo_associate_buddy_dialog_new(GaimBuddy *buddy);
+
+
+GtkTreeModel *gevo_addrbooks_model_new(void);
+void gevo_addrbooks_model_unref(GtkTreeModel *model);
+void gevo_addrbooks_model_populate(GtkTreeModel *model);
 
 #endif /* _GEVOLUTION_H_ */
