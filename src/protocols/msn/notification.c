@@ -425,17 +425,12 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 	char *friend;
 	char msg[MSN_BUF_LEN];
 
-	list = params[1];
+	list     = params[1];
+	passport = params[3];
+	friend   = msn_url_decode(params[4]);
 
-	if (!strcmp(params[0], "0")) {
-		passport = params[3];
-		friend = msn_url_decode(params[4]);
-	}
-	else {
-		passport = params[2];
-		friend   = msn_url_decode(params[3]);
-		group_id = params[4];
-	}
+	if (param_count >= 6)
+		group_id = params[5];
 
 	if (!g_ascii_strcasecmp(list, "FL")) {
 		user = msn_user_new(session, passport, NULL);
