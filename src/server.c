@@ -621,6 +621,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			qm->gc = gc;
 			qm->tm = mtime;
 			qm->flags = WFLAG_SEND | WFLAG_AUTO;
+			qm->len = -1;
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
 			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL,

@@ -88,6 +88,8 @@ struct oscar_data {
 	gboolean reqemail;
 	gboolean setemail;
 	char *email;
+	gboolean setnick;
+	char *newsn;
 	gboolean chpass;
 	char *oldp;
 	char *newp;
@@ -2073,6 +2075,13 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 		od->newp = NULL;
 		od->chpass = FALSE;
 	}
+	if (od->setnick) {
+		debug_printf("formatting screenname\n");
+		aim_admin_setnick(sess, fr->conn, od->newsn);
+		g_free(od->newsn);
+		od->newsn = NULL;
+		od->setnick = FALSE;
+	}
 	if (od->conf) {
 		debug_printf("confirming account\n");
 		aim_admin_reqconfirm(sess, fr->conn);
@@ -2986,6 +2995,21 @@ static void oscar_change_email(struct gaim_connection *gc, char *email)
 	}
 }
 
+static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
+	struct oscar_data *od = gc->proto_data;
+	if (!strcmp(normalize(nick), gc->username)) {
+		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
+			od->setnick = TRUE;
+			od->newsn = g_strdup(nick);
+			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+		} else {
+			aim_admin_setnick(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH), nick);
+		}
+	} else {
+		do_error_dialog("The new formatting is invalid.", "Gaim");
+	}
+}
+
 static void oscar_do_action(struct gaim_connection *gc, char *act)
 {
 	struct oscar_data *od = gc->proto_data;
@@ -2995,6 +3019,9 @@ static void oscar_do_action(struct gaim_connection *gc, char *act)
 		show_set_info(gc);
 	} else if (!strcmp(act, "Change Password")) {
 		show_change_passwd(gc);
+	} else if (!strcmp(act, "Format Screenname")) {
+		do_prompt_dialog("New screenname formatting:", 
+				 gc->displayname, gc, oscar_format_screenname, NULL);
 	} else if (!strcmp(act, "Confirm Account")) {
 		if (!conn) {
 			od->conf = TRUE;
@@ -3021,6 +3048,7 @@ static GList *oscar_actions()
 	m = g_list_append(m, "Set User Info");
 	m = g_list_append(m, NULL);
 	m = g_list_append(m, "Change Password");
+	m = g_list_append(m, "Format Screenname");
 	m = g_list_append(m, "Confirm Account");
 	m = g_list_append(m, "Display Current Registered Address");
 	m = g_list_append(m, "Change Current Registered Address");

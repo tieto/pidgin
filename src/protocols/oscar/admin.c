@@ -173,3 +173,25 @@ faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const 
 	return 0;
 }
 
+faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const char *newnick)
+{
+	aim_frame_t *tx;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
+
+	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newnick))))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
+	aim_putsnac(&tx->data, 0x0007, 0x0004, 0x0000, snacid);
+
+	aim_addtlvtochain_raw(&tl, 0x0001, strlen(newnick), newnick);
+	
+	aim_writetlvchain(&tx->data, &tl);
+	aim_freetlvchain(&tl);
+	
+	aim_tx_enqueue(sess, tx);
+
+
+	return 0;
+}

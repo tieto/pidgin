@@ -73,7 +73,6 @@ void purge_away_queue()
 			cnv = new_conversation(qm->name);
 		if (g_slist_index(connections, qm->gc) >= 0)
 			set_convo_gc(cnv, qm->gc);
-
 		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
 
 		message_queue = g_slist_remove(message_queue, qm);

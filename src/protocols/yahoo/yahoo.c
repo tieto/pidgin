@@ -405,11 +405,8 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 			break;
 		case 60: /* no clue */
 			 break;
-		case 16: /* Maybe this does more.  Maybe it doesn't. */
-			do_error_dialog("This version of the Yahoo! Messenger plugin is no longer"
-					"being supported.  The latest version of Gaim is available"
-					"at " WEBSITE ".\n\nYou may be disconnected shortly.",
-					"Gaim -- Yahoo! Error");
+		case 16: /* Custom error message */
+			do_error_dialog(pair->value, "Gaim -- Yahoo! Error");
 			break;
 		default:
 			debug_printf("unknown status key %d\n", pair->key);

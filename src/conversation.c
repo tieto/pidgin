@@ -2867,15 +2867,19 @@ static gboolean redraw_icon(gpointer data)
 						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
 						    gdk_pixbuf_animation_get_height(c->anim), 1),
 						GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &src, NULL, 0);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &src, &bm, 100);
 		gdk_pixbuf_unref(scale);
-		gtk_pixmap_get(GTK_PIXMAP(c->icon), &pm, &bm);
+		gtk_pixmap_get(GTK_PIXMAP(c->icon), &pm, NULL);
 		gc = gdk_gc_new(pm);
-		gdk_draw_pixmap(pm, gc, src, 0, 0,
-				MAX(gdk_pixbuf_frame_get_x_offset(frame) * SCALE(c->anim) /
-				    gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_frame_get_y_offset(frame) * SCALE(c->anim) /
-				    gdk_pixbuf_animation_get_height(c->anim), 1), -1, -1);
+		gdk_gc_set_clip_mask(gc, bm);
+
+		gdk_gc_set_clip_origin(gc, gdk_pixbuf_frame_get_x_offset(frame) *
+				       SCALE(c->anim)/gdk_pixbuf_get_width(scale),  
+				       gdk_pixbuf_frame_get_y_offset(frame));   
+		gdk_draw_pixmap(pm, gc, src, 0, 0, gdk_pixbuf_frame_get_x_offset(frame)*
+				SCALE(c->anim)/gdk_pixbuf_get_width(scale),
+				gdk_pixbuf_frame_get_y_offset(frame),-1,-1);
+		
 		gdk_pixmap_unref(src);
 		gtk_widget_queue_draw(c->icon);
 		gdk_gc_unref(gc);
@@ -2888,7 +2892,7 @@ static gboolean redraw_icon(gpointer data)
 						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
 						    gdk_pixbuf_animation_get_height(c->anim), 1),
 						GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 		gdk_pixbuf_unref(scale);
 		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
 		gdk_pixmap_unref(pm);
@@ -2904,7 +2908,7 @@ static gboolean redraw_icon(gpointer data)
 						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
 						    gdk_pixbuf_animation_get_height(c->anim), 1),
 						GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 		gdk_pixbuf_unref(scale);
 		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
 		gdk_pixmap_unref(pm);

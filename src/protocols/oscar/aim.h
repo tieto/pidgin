@@ -841,7 +841,7 @@ faim_export int aim_oft_getfile_end(aim_session_t *sess, aim_conn_t *conn);
 #define AIM_CAPS_SENDBUDDYLIST  0x00000100
 #define AIM_CAPS_GAMES2         0x00000200
 #define AIM_CAPS_ICQ            0x00000400
-#define AIM_CAPS_ABINTERNAL     0x00000800
+#define AIM_CAPS_APINFO         0x00000800
 #define AIM_CAPS_ICQRTF		0x00001000
 #define AIM_CAPS_EMPTY		0x00002000
 #define AIM_CAPS_ICQSERVERRELAY 0x00004000
@@ -938,6 +938,7 @@ faim_export int aim_admin_changepasswd(aim_session_t *, aim_conn_t *, const char
 faim_export int aim_admin_reqconfirm(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info);
 faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail);
+faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const char *newnick);
 
 /* aim_buddylist.c */
 faim_export int aim_add_buddy(aim_session_t *, aim_conn_t *, const char *);
