@@ -214,7 +214,7 @@ void do_away_menu()
 			list_item = gtk_list_item_new();
 			gtk_container_add(GTK_CONTAINER(list_item), label);
 			gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked), a);
-			gtk_signal_connect(GTK_OBJECT(list_item), "deselect", GTK_SIGNAL_FUNC(away_list_unclicked), a);
+/*			gtk_signal_connect(GTK_OBJECT(list_item), "deselect", GTK_SIGNAL_FUNC(away_list_unclicked), a);*/
 			gtk_object_set_user_data(GTK_OBJECT(list_item), a);
 
 			gtk_widget_show(label);

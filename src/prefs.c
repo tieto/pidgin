@@ -41,6 +41,7 @@
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/palette.xpm"
+#include "pixmaps/save.xpm"
 
 struct debug_window *dw = NULL;
 static GtkWidget *prefs = NULL;
@@ -1134,13 +1135,12 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 {
 	gchar buffer[2048];
 	guint text_len;
-
+	
 	cur_message = a;
-
+	
 	/* Get proper Length */
 	text_len = gtk_text_get_length(GTK_TEXT(away_text));
-	edited_message = gtk_editable_get_chars(GTK_EDITABLE(away_text), 0, text_len);
-
+	
 	/* Clear the Box */
 	gtk_text_set_point(GTK_TEXT(away_text), 0 );
 	gtk_text_forward_delete (GTK_TEXT(away_text), text_len);
@@ -1149,16 +1149,31 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 	strcpy(buffer, a->message);
 	gtk_text_insert(GTK_TEXT(away_text), NULL, NULL, NULL, buffer, -1);
 }
-
+/*
 void away_list_unclicked(GtkWidget *widget, struct away_message *a)
 {
 	if (prefs_away_list == NULL)
+	{
+		g_print("early return from away_list_unclicked\n");
 		return;
+	}
+
+	g_print("away_list_unclicked\n");
+	g_print("setting '%s' to '%s'\n", a->name, edited_message);
 	strcpy(a->message, edited_message);
 	save_prefs();
 	
 	/* point edited_message to the new text */
+/*	edited_message = gtk_editable_get_chars(GTK_EDITABLE(away_text), 0, -1);
+	g_print("edited_message now equals '%s'\n", edited_message);
+}
+*/
+void save_away_message(GtkWidget *widget, void *dummy)
+{
+	/* grab the current message */
 	edited_message = gtk_editable_get_chars(GTK_EDITABLE(away_text), 0, -1);
+	strcpy(cur_message->message, edited_message);
+	save_prefs();
 }
 
 void remove_away_message(GtkWidget *widget, void *dummy)
@@ -1243,6 +1258,10 @@ static void away_page()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(remove_away_message), NULL);
 	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
 
+	button = picture_button(prefs, _("Save"), save_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(save_away_message), NULL);
+	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
+	
 	if (awy != NULL) {
 		a = (struct away_message *)awy->data;
 		g_snprintf(buffer, sizeof(buffer), "%s", a->message);
@@ -1255,7 +1274,7 @@ static void away_page()
 		list_item = gtk_list_item_new();
                 gtk_container_add(GTK_CONTAINER(list_item), label);
                 gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked), a);
-                gtk_signal_connect(GTK_OBJECT(list_item), "deselect", GTK_SIGNAL_FUNC(away_list_unclicked), a);
+/*                gtk_signal_connect(GTK_OBJECT(list_item), "deselect", GTK_SIGNAL_FUNC(away_list_unclicked), a);*/
                 gtk_object_set_user_data(GTK_OBJECT(list_item), a);
 
                 gtk_widget_show(label);
