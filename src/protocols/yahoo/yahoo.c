@@ -1424,6 +1424,11 @@ static char *yahoo_tooltip_text(GaimBuddy *b)
 	return ret;
 }
 
+static void yahoo_addbuddyfrommenu_cb(GaimConnection *gc, const char *who)
+{
+	yahoo_add_buddy(gc, who, NULL);
+}
+
 static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 {
 	GList *m = NULL;
@@ -1437,7 +1442,7 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 	if (!f) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Add Buddy");
-		pbm->callback = yahoo_add_buddy;
+		pbm->callback = yahoo_addbuddyfrommenu_cb;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
 
