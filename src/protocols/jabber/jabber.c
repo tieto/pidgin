@@ -1022,7 +1022,7 @@ static void jabber_change_passwd(struct gaim_connection *gc, const char *old, co
 /*
  * Return pointer to jabber_buddy_data if buddy found.  Create if necessary.
  */
-static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, char *buddy)
+static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, char *buddy, gboolean create)
 {
 	struct jabber_data *jd = gc->proto_data;
 	gpointer val;
@@ -1036,12 +1036,14 @@ static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, c
 		g_free(realwho);
 		return (struct jabber_buddy_data *)val;
 
-	} else {
+	} else if (create) {
 		struct jabber_buddy_data *jbd = g_new0(struct jabber_buddy_data, 1);
 		jbd->invisible = JABBER_NOT_INVIS;
 		g_hash_table_insert(jd->buddies, g_strdup(realwho), jbd);
 		g_free(realwho);
 		return jbd;
+	} else {
+		return NULL;
 	}
 }
 
@@ -1053,7 +1055,7 @@ static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, c
 static jab_res_info jabber_find_resource(struct gaim_connection *gc, char *who)
 {
 	GSList *resources;
-	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, who);
+	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, who, FALSE);
 	jab_res_info jri = NULL;
 	char *res = strstr(who, "/");
 
@@ -1092,7 +1094,7 @@ static void jabber_track_resource(struct gaim_connection *gc,
 				  int priority,
 				  int state)
 {
-	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy);
+	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy, TRUE);
 
 	if(jbd) {
 		char *who;
@@ -1120,7 +1122,7 @@ static void jabber_track_resource(struct gaim_connection *gc,
  */
 static void jabber_remove_resource(struct gaim_connection *gc, char *buddy, char *res)
 {
-	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy);
+	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy, FALSE);
 	if(jbd) {
 		char *who;
 		jab_res_info jri;
@@ -1219,11 +1221,7 @@ static char *jabber_get_convo_thread(gjconn gjc, char *name)
 		if(jri->thread_id)
 			ct = g_strdup(jri->thread_id);
 	}
-	if(!ct) {
-		char buf[1024];
-		snprintf(buf, sizeof(buf), "%s%d", name, (int)time(NULL));
-		ct = g_strdup(shahash(buf));
-	}
+
 	return ct;
 }
 
@@ -1269,8 +1267,6 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 
 	if ((y = xmlnode_get_tag(p->x, "thread")))
 		thread_id = xmlnode_get_data(y);
-	if(!thread_id)
-		thread_id = "";
 
 	y = xmlnode_get_firstchild(p->x);
 
@@ -1457,7 +1453,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		return;
 	}
 
-	jbd = jabber_find_buddy(GJ_GC(gjc), buddy);
+	jbd = jabber_find_buddy(GJ_GC(gjc), buddy, TRUE);
 
 	if(jbd->error_msg) {
 		g_free(jbd->error_msg);
@@ -1806,7 +1802,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {
 		jabber_remove_gaim_buddy(GJ_GC(gjc), buddyname);
 	}
-	if(b && (jbd = jabber_find_buddy(b->account->gc, buddyname)) != NULL) {
+	if(b && (jbd = jabber_find_buddy(b->account->gc, buddyname, TRUE)) != NULL) {
 		jbd->subscription = JABBER_SUB_NONE;
 		if(!strcasecmp(sub, "to"))
 			jbd->subscription |= JABBER_SUB_TO;
@@ -2713,7 +2709,7 @@ static void jabber_invisible_to_buddy_common(struct gaim_connection *gc, char *n
 	char *realwho;
 
 	if((realwho = get_realwho(gjc, name, FALSE, NULL)) != NULL) {
-		struct jabber_buddy_data *jbd = jabber_find_buddy(gc, realwho);
+		struct jabber_buddy_data *jbd = jabber_find_buddy(gc, realwho, TRUE);
 		xmlnode g = xmlnode_new_tag("presence");
 
 		xmlnode_put_attrib(g, "to", realwho);
@@ -2799,25 +2795,18 @@ static const char *jabber_list_icon(struct gaim_account *a, struct buddy *b)
 
 static void jabber_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
-	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name);
+	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name, FALSE);
 
-	if(jbd) {
-		if (jbd->error_msg)
+	if(!GAIM_BUDDY_IS_ONLINE(b)) {
+		if (jbd && jbd->error_msg)
 			*nw = "error";
-		if ((jbd->subscription & JABBER_SUB_BOTH) != JABBER_SUB_BOTH) {
-			if(jbd->subscription & JABBER_SUB_PENDING)
-				*ne = "pending";
-			else if(jbd->subscription & JABBER_SUB_FROM)
-				*ne = "sub_from";
-			else if(jbd->subscription & JABBER_SUB_TO)
-				*ne = "sub_to";
-			else
-				*ne = "sub_none";
-		}
-	}
 
-	if (b->present == GAIM_BUDDY_OFFLINE) {
-		*se = "offline";
+		if(jbd && (jbd->subscription & JABBER_SUB_PENDING ||
+				!(jbd->subscription & JABBER_SUB_TO)))
+			*se = "notauthorized";
+		else
+			*se = "offline";
+
 	} else {
 		switch (b->uc) {
 		case UC_AWAY:
@@ -3152,7 +3141,7 @@ static void jabber_get_error_msg(struct gaim_connection *gc, char *who) {
 		return;
 	}
 
-	jbd = jabber_find_buddy(gc, realwho);
+	jbd = jabber_find_buddy(gc, realwho, TRUE);
 
 	*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
 	*ap++ = g_strdup_printf("<B>Error:</B> %s<BR>\n", jbd->error_msg);
@@ -3173,7 +3162,7 @@ static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
 	int num_resources;
 	gaim_jid gjid;
 	char *buddy = get_realwho(gjc, who, FALSE, &gjid);
-	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy);
+	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy, TRUE);
 	gchar **str_arr;
 	gchar **ap;
 	gchar *realwho, *final;
@@ -3255,12 +3244,13 @@ static void jabber_get_cb_away_msg(struct gaim_connection *gc, int cid, char *wh
 
 static char *jabber_tooltip_text(struct buddy *b)
 {
+	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name, FALSE);
 	jab_res_info jri = jabber_find_resource(b->account->gc, b->name);
+	char *ret = NULL;
 	if(jri) {
 		char *stripped = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
 					b->name));
 		char *text = NULL;
-		char *ret;
 		if(stripped)
 			text = g_markup_escape_text(stripped, strlen(stripped));
 		ret = g_strdup_printf(_("<b>Status:</b> %s%s%s"),
@@ -3271,17 +3261,20 @@ static char *jabber_tooltip_text(struct buddy *b)
 			g_free(stripped);
 			g_free(text);
 		}
-		return ret;
+	} else if(jbd && (jbd->subscription & JABBER_SUB_PENDING ||
+				!(jbd->subscription & JABBER_SUB_TO))) {
+		ret = g_strdup(_("<b>Status:</b> Not Authorized"));
 	}
-	return NULL;
+	return ret;
 }
 
 static char *jabber_status_text(struct buddy *b)
 {
+	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name, FALSE);
+	char *ret = NULL;
 	if (b->uc & UC_UNAVAILABLE) {
 		char *stripped = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
 					b->name));
-		char *ret;
 		if(!stripped) {
 			jab_res_info jri = jabber_find_resource(b->account->gc, b->name);
 			if(jri)
@@ -3289,9 +3282,11 @@ static char *jabber_status_text(struct buddy *b)
 		}
 		ret = g_markup_escape_text(stripped, strlen(stripped));
 		g_free(stripped);
-		return ret;
+	} else if(jbd && (jbd->subscription & JABBER_SUB_PENDING ||
+				!(jbd->subscription & JABBER_SUB_TO))) {
+		ret = g_strdup(_("Not Authorized"));
 	}
-	return NULL;
+	return ret;
 }
 
 static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
@@ -3309,7 +3304,7 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 	} else {
 		gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 		char *realwho = get_realwho(gjc, who, FALSE, NULL);
-		struct jabber_buddy_data *jbd = jabber_find_buddy(gc, realwho);
+		struct jabber_buddy_data *jbd = jabber_find_buddy(gc, realwho, FALSE);
 
 		g_free(realwho);
 

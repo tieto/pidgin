@@ -395,19 +395,26 @@ static void gaim_gtk_blist_show_empty_groups_cb(gpointer data, guint action, Gtk
 
 static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_action,
 		GtkWidget *checkitem) {
-	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
-	gdk_window_set_cursor(gtkblist->window->window, cursor);
-	while (gtk_events_pending())
-		gtk_main_iteration();
+	if(gtkblist->window->window) {
+		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+		gdk_window_set_cursor(gtkblist->window->window, cursor);
+		while (gtk_events_pending())
+			gtk_main_iteration();
+		gdk_cursor_unref(cursor);
+	}
+
 	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(checkitem)))
 		blist_options |= OPT_BLIST_SHOW_OFFLINE;
 	else
 		blist_options &= ~OPT_BLIST_SHOW_OFFLINE;
 	save_prefs();
-	gdk_cursor_unref(cursor);
-	cursor = gdk_cursor_new(GDK_LEFT_PTR);
-	gdk_window_set_cursor(gtkblist->window->window, cursor);
-	gdk_cursor_unref(cursor);
+
+	if(gtkblist->window->window) {
+		GdkCursor *cursor = gdk_cursor_new(GDK_LEFT_PTR);
+		gdk_window_set_cursor(gtkblist->window->window, cursor);
+		gdk_cursor_unref(cursor);
+	}
+
 	gaim_gtk_blist_refresh(gaim_get_blist());
 }
 
@@ -1003,24 +1010,25 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 	if (b->evil > 0)
 		warning = g_strdup_printf(_("Warned (%d%%) "), b->evil);
 
+	if(!GAIM_BUDDY_IS_ONLINE(b) && !statustext)
+		statustext = g_strdup("Offline ");
+
 	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS && !selected) {
 		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n"
-					"<span color='dim grey' size='smaller'>%s%s%s%s</span>",
+					"<span color='dim grey' size='smaller'>%s%s%s</span>",
 					esc,
 					statustext != NULL ? statustext : "",
-					idletime != NULL ? idletime : "", 
-					warning != NULL ? warning : "",
-					!GAIM_BUDDY_IS_ONLINE(b) ? _("Offline ") : "");
+					idletime != NULL ? idletime : "",
+					warning != NULL ? warning : "");
 	} else if (statustext == NULL && idletime == NULL && warning == NULL && GAIM_BUDDY_IS_ONLINE(b)) {
 		text = g_strdup(esc);
 	} else {
 		text = g_strdup_printf("%s\n"
-				       "<span %s size='smaller'>%s%s%s%s</span>", esc,
+				       "<span %s size='smaller'>%s%s%s</span>", esc,
 				       selected ? "" : "color='dim grey'",
 				       statustext != NULL ? statustext :  "",
 				       idletime != NULL ? idletime : "", 
-				       warning != NULL ? warning : "",
-				       !GAIM_BUDDY_IS_ONLINE(b) ? _("Offline ") : "");
+				       warning != NULL ? warning : "");
 	}
 	if (idletime)
 		g_free(idletime);
