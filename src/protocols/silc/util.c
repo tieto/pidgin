@@ -283,23 +283,25 @@ void silcgaim_show_public_key(SilcGaim sg,
 
 	s = g_string_new("");
 	if (ident->realname)
-		g_string_append_printf(s, "%s: \t%s\n", _("Real Name"), ident->realname);
+		/* Hint for translators: Please check the tabulator width here and in 
+		   the next strings (short strings: 2 tabs, longer strings 1 tab, 
+		   sum: 3 tabs or 24 characters) */
+		g_string_append_printf(s, _("Real Name: \t%s\n"), ident->realname);
 	if (ident->username)
-		g_string_append_printf(s, "%s: \t%s\n", _("User Name"), ident->username);
+		g_string_append_printf(s, _("User Name: \t%s\n"), ident->username);
 	if (ident->email)
-		g_string_append_printf(s, "%s: \t\t%s\n", _("EMail"), ident->email);
+		g_string_append_printf(s, _("EMail: \t\t%s\n"), ident->email);
 	if (ident->host)
-		g_string_append_printf(s, "%s: \t%s\n", _("Host Name"), ident->host);
+		g_string_append_printf(s, _("Host Name: \t%s\n"), ident->host);
 	if (ident->org)
-		g_string_append_printf(s, "%s: \t%s\n", _("Organization"), ident->org);
+		g_string_append_printf(s, _("Organization: \t%s\n"), ident->org);
 	if (ident->country)
-		g_string_append_printf(s, "%s: \t%s\n", _("Country"), ident->country);
-	g_string_append_printf(s, "%s: \t\t%s\n", _("Algorithm"), public_key->name);
-	g_string_append_printf(s, "%s: \t", _("Key Length"));
-	g_string_append_printf(s, _("%d bits"), (int)key_len);
-	g_string_append_printf(s, "\n\n");
-	g_string_append_printf(s, "%s:\n%s\n\n", _("Public Key Fingerprint"), fingerprint);
-	g_string_append_printf(s, "%s:\n%s", _("Public Key Babbleprint"), babbleprint);
+		g_string_append_printf(s, _("Country: \t%s\n"), ident->country);
+	g_string_append_printf(s, _("Algorithm: \t\t%s\n"), public_key->name);
+	g_string_append_printf(s, _("Key Length: \t%d bits\n"), (int)key_len);
+	g_string_append_printf(s, "\n");
+	g_string_append_printf(s, _("Public Key Fingerprint:\n%s\n\n"), fingerprint);
+	g_string_append_printf(s, _("Public Key Babbleprint:\n%s"), babbleprint);
 
 	buf = g_string_free(s, FALSE);
 

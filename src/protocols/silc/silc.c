@@ -1176,7 +1176,7 @@ silcgaim_register_commands(void)
 	gaim_cmd_register("whois", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc",
-			silcgaim_cmd_whois, _("whois &lt;nick&gt;:  View nick's informationc"));
+			silcgaim_cmd_whois, _("whois &lt;nick&gt;:  View nick's information"));
 	gaim_cmd_register("invite", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_chat_invite,

@@ -119,7 +119,7 @@ static struct _irc_user_cmd {
 	{ "mode", ":", irc_cmd_mode, N_("mode &lt;nick|channel&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a channel or user mode.") },
 	{ "msg", "t:", irc_cmd_privmsg, N_("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as opposed to a channel).") },
 	{ "names", "c", irc_cmd_names, N_("names [channel]:  List the users currently in a channel.") },
-	{ "nick", "n", irc_cmd_nick, N_("nick &lt;new nick name&gt;:  Change your nick name.") },
+	{ "nick", "n", irc_cmd_nick, N_("nick &lt;new nickname&gt;:  Change your nickname.") },
 	{ "op", ":", irc_cmd_op, N_("op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You must be a channel operator to do this.") },
 	{ "operwall", ":", irc_cmd_wallops, N_("operwall &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
 	{ "part", "c:", irc_cmd_part, N_("part [room] [message]:  Leave the current channel, or a specified channel, with an optional message.") },
