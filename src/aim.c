@@ -45,6 +45,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "prpl.h"
 #include "gaim.h"
 #include "pixmaps/logo.xpm"
 #if HAVE_SIGNAL_H
@@ -224,7 +225,9 @@ void show_login()
 #ifdef GAIM_PLUGINS
 	GtkWidget *plugs;
 #endif
+#ifndef NO_MULTI
 	GtkWidget *accts;
+#endif
 	GtkWidget *signon;
 	GtkWidget *cancel;
 	GtkWidget *reg;
@@ -253,7 +256,9 @@ void show_login()
 	gtk_widget_realize(mainwindow);
 
 	signon   = gtk_button_new_with_label(_("Signon"));
+#ifndef NO_MULTI
 	accts    = gtk_button_new_with_label(_("Accounts"));
+#endif
 	cancel   = gtk_button_new_with_label(_("Cancel"));
 	reg      = gtk_button_new_with_label(_("Register"));
 	options  = gtk_button_new_with_label(_("Options"));
@@ -269,7 +274,9 @@ void show_login()
 	if (display_options & OPT_DISP_COOL_LOOK)
 	{
 		gtk_button_set_relief(GTK_BUTTON(signon), GTK_RELIEF_NONE);
+#ifndef NO_MULTI
 		gtk_button_set_relief(GTK_BUTTON(accts), GTK_RELIEF_NONE);
+#endif
 		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
@@ -282,8 +289,10 @@ void show_login()
 	/* Clicking the button initiates a login */
 	gtk_signal_connect(GTK_OBJECT(signon), "clicked",
 			   GTK_SIGNAL_FUNC(dologin), mainwindow);
+#ifndef NO_MULTI
 	gtk_signal_connect(GTK_OBJECT(accts), "clicked",
 			   GTK_SIGNAL_FUNC(account_editor), mainwindow);
+#endif
 	gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
 			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 	/* Allow user to change prefs before logging in */
@@ -315,7 +324,9 @@ void show_login()
 	sbox = gtk_vbox_new(TRUE, 5);
 	
 	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 0);
+#ifndef NO_MULTI
 	gtk_box_pack_start(GTK_BOX(bbox), accts, TRUE, TRUE, 0);
+#endif
 	gtk_box_pack_start(GTK_BOX(bbox), signon, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
@@ -349,7 +360,9 @@ void show_login()
 	gtk_widget_show(signon);
 	gtk_widget_show(cancel);
 	gtk_widget_show(reg);
+#ifndef NO_MULTI
 	gtk_widget_show(accts);
+#endif
 	gtk_widget_show(bbox);
 	gtk_widget_show(hbox);
 	gtk_widget_show(sbox);

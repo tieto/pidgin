@@ -1325,7 +1325,6 @@ gint log_timeout(char *name)
         b->log_timer = 0;
 			
 	if (!b->present) {
-		int count = 0;
 		gtk_widget_hide(b->item);
 		g = find_group_by_buddy(name);
 		if (GTK_TREE_ITEM(g->item)->expanded) {
@@ -1903,7 +1902,9 @@ void show_buddy_list()
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_change_passwd), NULL);
 	gtk_widget_show(menuitem);
+#ifndef NO_MULTI
         gaim_new_item_with_pixmap(menu, _("Accounts"), add_small_xpm, GTK_SIGNAL_FUNC(account_editor));
+#endif
 	gaim_seperator(menu);
 
         gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm, GTK_SIGNAL_FUNC(show_prefs));

@@ -28,7 +28,8 @@ gaim_applet_SOURCES =	about.c \
 			ticker.c \
 			toc.c \
 			util.c
-gaim_applet_DEPENDENCIES = ../libfaim/libfaim.a
+gaim_applet_DEPENDENCIES = ../libfaim/libfaim.a @LIBOBJS@
+gaim_applet_LDADD = @LDADD@ @LIBOBJS@
 else
 bin_PROGRAMS = gaim
 gaim_SOURCES =	about.c \
@@ -59,10 +60,21 @@ gaim_SOURCES =	about.c \
 		ticker.c \
 		toc.c \
 		util.c
-gaim_DEPENDENCIES = ../libfaim/libfaim.a
+gaim_DEPENDENCIES = ../libfaim/libfaim.a @LIBOBJS@
+gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
 
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" $(DEBUG_CFLAGS)
 LDFLAGS += $(DEBUG_LDFLAGS)
 
-EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h gtkticker.h convo.h multi.h prpl.h
+EXTRA_DIST =	convo.h \
+		gaim.h \
+		getopt.c \
+		getopt.h \
+		getopt1.c \
+		gtkhtml.h \
+		gtkticker.h \
+		gnome_applet_mgr.h \
+		multi.h \
+		prpl.h \
+		proxy.h
