@@ -153,22 +153,9 @@ gaim_connection_disconnect(GaimConnection *gc)
 
 		gaim_request_close_with_handle(gc);
 		gaim_notify_close_with_handle(gc);
-
-		/* XXX UI stuff! */
-		update_privacy_connections();
 	}
 
 	gaim_connection_destroy(gc);
-
-	/* XXX More UI stuff! */
-	if (connections != NULL)
-		return;
-
-	/* XXX destroy_all_dialogs(); */
-
-	gaim_blist_destroy();
-
-	/* XXX show_login(); */
 }
 
 /*

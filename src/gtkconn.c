@@ -225,8 +225,20 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc,
 		const char *reason)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
+
+	update_privacy_connections();
+
 	if(meter)
 		kill_meter(meter, _("Done."));
+
+	if (gaim_connections_get_all() != NULL)
+		return;
+
+	destroy_all_dialogs();
+
+	gaim_blist_destroy();
+
+	show_login();
 }
 
 static void gaim_gtk_connection_notice(GaimConnection *gc,
