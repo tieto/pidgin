@@ -13,7 +13,6 @@ EXTRA_DIST = \
 		README.mingw \
 		VERSION \
 		plugins/Makefile.mingw \
-		plugins/win32/ssl/Makefile.mingw \
 		plugins/win32/transparency/Makefile.mingw \
 		plugins/win32/transparency/win2ktrans.c \
 		plugins/win32/winprefs/gtkappbar.c \

@@ -27,12 +27,13 @@ Gaim allows you to talk to anyone using a variety of messaging
 protocols, including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, 
 MSN Messenger, Jabber, Gadu-Gadu, Napster, and Zephyr.  These 
 protocols are implemented using a modular, easy to use design.  
-To use a protocol, just load the plugin for it.
+To use a protocol, just add an account using the account editor.
 
 Gaim supports many common features of other clients, as well as many 
-unique features, such as perl scripting and C plugins.
+unique features, such as perl scripting, TCL scripting and C plugins.
 
-Gaim is NOT affiliated with or endorsed by AOL.
+Gaim is NOT affiliated with or endorsed by America Online, Inc., 
+Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
 %description devel
 

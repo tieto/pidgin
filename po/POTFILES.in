@@ -36,7 +36,6 @@ src/about.c
 src/account.c
 src/away.c
 src/blist.c
-src/browser.c
 src/buddy_chat.c
 src/connection.c
 src/conversation.c
@@ -112,7 +111,6 @@ src/protocols/jabber/parser.c
 src/protocols/jabber/presence.c
 src/protocols/jabber/roster.c
 src/protocols/jabber/win32/posix.uname.c
-src/protocols/jabber/xmlnode.c
 src/protocols/msn/dispatch.c
 src/protocols/msn/error.c
 src/protocols/msn/ft.c
