@@ -1054,6 +1054,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			b->friend = g_strdup(friend);
 			md->fl = g_slist_append(md->fl, b);
 		} else if (!g_strcasecmp(which, "AL") && pos) {
+			char *dupl;
+			if ((dupl = g_slist_find_custom(gc->deny, who, strcmp))) {
+				debug_printf("moving from deny to permit: %s", who);
+				gc->deny = g_slist_remove(gc->deny, dupl);
+			}
 			gc->permit = g_slist_append(gc->permit, g_strdup(who));
 		} else if (!g_strcasecmp(which, "BL") && pos) {
 			gc->deny = g_slist_append(gc->deny, g_strdup(who));
@@ -2204,8 +2209,13 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 		s = g_slist_nth(gc->permit, g_slist_length(md->permit));
 		while (s) {
 			char *who = s->data;
+			char *dupl;
 			s = s->next;
 			if (!strchr(who, '@')) {
+				t = g_slist_append(t, who);
+				continue;
+			}
+			if ((dupl = g_slist_find(md->deny, who))) {
 				t = g_slist_append(t, who);
 				continue;
 			}
@@ -2233,8 +2243,13 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 		s = g_slist_nth(gc->deny, g_slist_length(md->deny));
 		while (s) {
 			char *who = s->data;
+			char *dupl;
 			s = s->next;
 			if (!strchr(who, '@')) {
+				t = g_slist_append(t, who);
+				continue;
+			}
+			if ((dupl = g_slist_find(md->deny, who))) {
 				t = g_slist_append(t, who);
 				continue;
 			}
@@ -2262,6 +2277,7 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 {
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
+	char *dupl;
 
 	if (!strchr(who, '@')) {
 		do_error_dialog(_("Invalid name"), _("MSN Error"));
@@ -2270,6 +2286,16 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 		return;
 	}
 
+	if ((dupl = g_slist_find(gc->deny, who))) {
+		debug_printf("MSN: Moving %s from BL to AL\n", who);
+		gc->deny = g_slist_remove(gc->deny, dupl);
+		g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
+			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+				hide_login_progress(gc, "Write error");
+				signoff(gc);
+				return;
+			}
+	}
 	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -2289,19 +2315,40 @@ static void msn_rem_permit(struct gaim_connection *gc, char *who)
 		signoff(gc);
 		return;
 	}
+	
+	g_slist_append(gc->deny, who);
+	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
 }
 
 static void msn_add_deny(struct gaim_connection *gc, char *who)
 {
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
-
+	char *dupl;
+	
 	if (!strchr(who, '@')) {
 		do_error_dialog(_("Invalid name"), _("MSN Error"));
 		gc->deny = g_slist_remove(gc->deny, who);
 		g_free(who);
 		return;
 	}
+
+	if ((dupl = g_slist_find(gc->permit, who))) {
+		debug_printf("MSN: Moving %s from AL to BL\n", who);
+		gc->permit = g_slist_remove(gc->permit, dupl);
+		g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			hide_login_progress(gc, "Write error");
+			signoff(gc);
+			return;
+		}
+	}
+		
 
 	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
@@ -2317,6 +2364,14 @@ static void msn_rem_deny(struct gaim_connection *gc, char *who)
 	char buf[MSN_BUF_LEN];
 
 	g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+	
+	g_slist_append(gc->permit, who);
+	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
