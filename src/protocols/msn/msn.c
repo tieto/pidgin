@@ -1637,6 +1637,11 @@ static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
 	mft->xfer = transfer_out_add(gc, mft->sn);
 }
 #endif
+static const char *msn_status_text(struct buddy *b) {
+	if (b->uc & UC_UNAVAILABLE)
+		return msn_get_away_text(b->uc >> 1);
+	return NULL;
+}
 
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
@@ -1656,12 +1661,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 		return m;
 #endif
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	g_snprintf(buf, sizeof(buf), _("Status: %s"), msn_get_away_text(b->uc >> 1));
-	pbm->label = buf;
-	pbm->callback = NULL;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+
 
 	return m;
 }
@@ -2006,6 +2006,7 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->send_im = msn_send_im;
 	ret->send_typing = msn_send_typing;
 	ret->away_states = msn_away_states;
+	ret->status_text = msn_status_text;
 	ret->set_away = msn_set_away;
 	ret->set_idle = msn_set_idle;
 	ret->add_buddy = msn_add_buddy;
