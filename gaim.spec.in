@@ -93,7 +93,7 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
-- Fri May 31 2002 Rob Flynn <rob@marko.net> (0.59 release)
+* Fri May 31 2002 Rob Flynn <rob@marko.net> (0.59 release)
 - Hungarian translation added (Thanks, Sutto Zoltan)
 - Swedish translation updated (Thanks, Christian Rose)
 - Spanish translation updated (Thanks, Alex)
