@@ -469,7 +469,6 @@ void do_remove_buddy(GtkWidget *w, struct buddy *b)
 	serv_remove_buddy(b->gc, b->name, g->name);
 	remove_buddy(gc, g, b);
 	do_export(gc);
-	build_edit_tree();
 
 	cv = find_conversation(b->name);
 

@@ -1089,6 +1089,9 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	}
 
 
+	/*
+	 * Add or remove a buddy?
+	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
 		if ((b = find_buddy(GJ_GC(gjc), buddyname)) == NULL) {
 			debug_printf("adding buddy [4]: %s\n", buddyname);
@@ -1096,12 +1099,6 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				name ? name : buddyname);
 			do_export(GJ_GC(gjc));
 		}
-	/*
-	 * TBD: this is what we *would* do if we could.  But the
-	 * remove_buddy() code doesn't update the UI.  And if the
-	 * user selects and tries to remove a buddy already removed
-	 * via here: *ka-boom*!
-	 *
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {
 		if ((b = find_buddy(GJ_GC(gjc), buddyname)) != NULL) {
 			struct group *group;
@@ -1112,7 +1109,6 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 			remove_buddy(GJ_GC(gjc), group, b);
 			do_export(GJ_GC(gjc));
 		}
-	 */
 	}
 	g_free(buddyname);
 

@@ -3172,7 +3172,10 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	
 	if (!(dim = find_direct_im(od, sn)))
 		return 1;
-	gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
+	if (dim->watcher) {
+		gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
+		dim->watcher = 0;
+	}
 	while (gtk_events_pending())
 		gtk_main_iteration();
 	

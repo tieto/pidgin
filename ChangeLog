@@ -1,7 +1,9 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.55:
-
+	* Better Jabber list management when using multiple
+	  resources (Thanks Jim Seymour)
+	
 version 0.54 (03/14/2002):
 	* Compiles without GdkPixbuf again
 	* GtkIMHtml will refresh when you set a new GTK+ theme

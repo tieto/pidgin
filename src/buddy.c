@@ -833,6 +833,20 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 }
 
 
+/*
+ * Find and remove CTree node associated with buddylist entry
+ */
+static void ui_remove_buddy_node(struct group *rem_g, struct buddy *rem_b)
+{
+	GtkCTreeNode *gnode = NULL, *bnode;
+
+	if((gnode = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, rem_g)) != NULL &&
+		(bnode = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), gnode, rem_b)) != NULL)
+	{
+		gtk_ctree_remove_node(GTK_CTREE(edittree), bnode);
+	}
+}
+
 void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy *rem_b)
 {
 	struct conversation *c;
@@ -870,6 +884,10 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 	c = find_conversation(rem_b->name);
 	if (c)
 		update_buttons_by_protocol(c);
+
+	/* Remove CTree node for buddy */
+	ui_remove_buddy_node(rem_g, rem_b);
+
 }
 
 void ui_remove_group(struct gaim_connection *gc, struct group *rem_g)
@@ -1284,7 +1302,6 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 			gct = b->gc;
 			serv_remove_buddy(b->gc, b->name, g->name);
 			remove_buddy(b->gc, g, b);
-			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
 			do_export(gct);
 		} else if (*type == EDIT_GROUP) {
 			struct gaim_connection *gc = ((struct group *)type)->gc;
