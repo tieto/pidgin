@@ -4,7 +4,7 @@ version 0.10.0:
 	problems that creates, the plugins now have the same CFLAGS and LIBS.
 	The plugins also have PLUGIN_LIBS which can be passed at make time.
 	This makes things like #ifdef USE_APPLET and #ifdef USE_PERL much more
-	reliable.
+	reliable. (#include "config.h" in order to get all the #defines)
 
 version 0.9.20:
 	It's 3 am the night before finals, it's obviously a good time to hack

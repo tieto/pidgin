@@ -1079,6 +1079,7 @@ static void sound_page()
 #endif
 	gaim_button(_("No sounds when you log in"), &sound_options, OPT_SOUND_SILENT_SIGNON, box);
 	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, box);
+	gaim_button(_("Beep instead of playing sound"), &sound_options, OPT_SOUND_BEEP, box);
 
 	gtk_widget_show(prefdialog);
 }

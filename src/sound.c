@@ -242,6 +242,11 @@ void play(unsigned char *data, int size)
 	if (pid < 0)
 		return;
         else if (pid == 0) {
+		if (sound_options & OPT_SOUND_BEEP) {
+			gdk_beep();
+			_exit(0);
+		}
+
 #ifdef ESD_SOUND
                 /* ESD is our player of choice.  Are we OK to
                  * go there? */

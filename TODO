@@ -1,6 +1,4 @@
 --- STUFF FOR 0.10.1 RELEASE ---
-	Third sound option for people without soundcards who still want
-		sound events.  Make a PC Speaker Beep (^G / Char 7)
 	Execute Command on Buddy Pounce
 	Redesign the Foreground/Background color options under preferences.
 	Add ability to conersaton window to allow changing of foreground/
