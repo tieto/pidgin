@@ -630,52 +630,51 @@ void show_ee_dialog(int ee)
 
 void show_im_dialog()
 {
-	GtkWidget *button;
-	GtkWidget *imentry;
-        GtkWidget *vbox;
-        GtkWidget *ebox;
-        GtkWidget *bbox;
-        GtkWidget *label;
+        GtkWidget *mainbox;
 	GtkWidget *frame;
 	GtkWidget *fbox;
+        GtkWidget *bbox;
+	GtkWidget *button;
+	GtkWidget *imentry;
+        GtkWidget *label;
 
         if (!imdialog) {
 
                 imdialog = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_wmclass(GTK_WINDOW(imdialog), "imdialog",
                                        "Gaim");
-		gtk_widget_set_usize(imdialog, 255, 105);
-		gtk_container_border_width(GTK_CONTAINER(imdialog), 5);
-		gtk_window_set_policy(GTK_WINDOW(imdialog), FALSE, FALSE, TRUE);
-		gtk_widget_show(imdialog);
+		gtk_window_set_policy(GTK_WINDOW(imdialog), FALSE, TRUE, TRUE);
+                gtk_widget_realize(imdialog);
 
-		bbox = gtk_hbox_new(TRUE, 10);
-                vbox = gtk_vbox_new(FALSE, 5);
-                ebox = gtk_hbox_new(FALSE, 2);
-		fbox = gtk_vbox_new(TRUE, 10);
+                mainbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
+		gtk_container_add(GTK_CONTAINER(imdialog), mainbox);
 
 		frame = gtk_frame_new(_("Send Instant Message"));
+                gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
 	
-		imentry = gtk_entry_new();
-
-		button = picture_button(imdialog, _("OK"), ok_xpm);
-		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(do_im), imentry);
+		bbox = gtk_hbox_new(FALSE, 5);
+                gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 
 		button = picture_button(imdialog, _("Cancel"), cancel_xpm);
-		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked",
 				   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
 
+		button = picture_button(imdialog, _("OK"), ok_xpm);
+		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked",
+				   GTK_SIGNAL_FUNC(do_im), imentry);
+
+		fbox = gtk_hbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+		gtk_container_add(GTK_CONTAINER(frame), fbox);
+
                 label = gtk_label_new(_("IM who:"));
-                gtk_box_pack_start(GTK_BOX(ebox), label, TRUE, TRUE, 10);
-                gtk_widget_show(label);
+                gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
 
-                gtk_box_pack_start(GTK_BOX(ebox), imentry, TRUE, TRUE, 10);
-
-                gtk_box_pack_start(GTK_BOX(vbox), ebox, FALSE, FALSE, 5);
-                gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+		imentry = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(fbox), imentry, TRUE, TRUE, 0);
 
                 /* Handle closes right */
 		gtk_signal_connect(GTK_OBJECT(imentry), "activate",
@@ -684,73 +683,62 @@ void show_im_dialog()
                                    GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
 
 		/* Finish up */
-                gtk_widget_show(ebox);
-                gtk_widget_show(imentry);
-                gtk_widget_show(bbox);
-                gtk_widget_show(vbox);
-		gtk_widget_show(fbox);
-		gtk_widget_show(frame);
-		gtk_container_add(GTK_CONTAINER(frame), vbox);
-		gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
 		gtk_window_set_title(GTK_WINDOW(imdialog), _("Gaim - IM user"));
-                gtk_container_add(GTK_CONTAINER(imdialog), fbox);
                 gtk_widget_grab_focus(imentry);
-                gtk_widget_realize(imdialog);
 		
 		aol_icon(imdialog->window);
-
         }
-        gtk_widget_show(imdialog);
+        gtk_widget_show_all(imdialog);
 }
 
 void show_info_dialog()
 {
-	GtkWidget *button;
-	GtkWidget *infoentry;
-        GtkWidget *vbox;
-        GtkWidget *ebox;
-        GtkWidget *bbox;
-        GtkWidget *label;
+        GtkWidget *mainbox;
 	GtkWidget *frame;
 	GtkWidget *fbox;
+        GtkWidget *bbox;
+	GtkWidget *button;
+	GtkWidget *infoentry;
+        GtkWidget *label;
 
         if (!infodialog) {
 
                 infodialog = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_wmclass(GTK_WINDOW(infodialog), "infodialog",
                                        "Gaim");
-		gtk_widget_set_usize(infodialog, 255, 105);
-		gtk_container_border_width(GTK_CONTAINER(infodialog), 5);
-		gtk_window_set_policy(GTK_WINDOW(infodialog), FALSE, FALSE, TRUE);
-		gtk_widget_show(infodialog);
+		gtk_window_set_policy(GTK_WINDOW(infodialog), FALSE, TRUE, TRUE);
+                gtk_widget_realize(infodialog);
 
-		bbox = gtk_hbox_new(TRUE, 10);
-                vbox = gtk_vbox_new(FALSE, 5);
-                ebox = gtk_hbox_new(FALSE, 2);
-		fbox = gtk_vbox_new(TRUE, 10);
+                mainbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
+		gtk_container_add(GTK_CONTAINER(infodialog), mainbox);
 
 		frame = gtk_frame_new(_("Get User Info"));
+                gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
 	
-		infoentry = gtk_entry_new();
-
-		button = picture_button(infodialog, _("OK"), ok_xpm);
-		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(do_info), infoentry);
-
+		bbox = gtk_hbox_new(FALSE, 5);
+                gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
+	
 		button = picture_button(infodialog, _("Cancel"), cancel_xpm);
-		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked",
 				   GTK_SIGNAL_FUNC(destroy_dialog), infodialog);
 
+		button = picture_button(infodialog, _("OK"), ok_xpm);
+		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked",
+				   GTK_SIGNAL_FUNC(do_info), infoentry);
+
+		fbox = gtk_hbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+		gtk_container_add(GTK_CONTAINER(frame), fbox);
+
                 label = gtk_label_new(_("User:"));
-                gtk_box_pack_start(GTK_BOX(ebox), label, TRUE, TRUE, 10);
+                gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
                 gtk_widget_show(label);
 
-                gtk_box_pack_start(GTK_BOX(ebox), infoentry, TRUE, TRUE, 10);
-
-                gtk_box_pack_start(GTK_BOX(vbox), ebox, FALSE, FALSE, 5);
-                gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+		infoentry = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(fbox), infoentry, TRUE, TRUE, 10);
 
                 /* Handle closes right */
 		gtk_signal_connect(GTK_OBJECT(infoentry), "activate",
@@ -759,23 +747,12 @@ void show_info_dialog()
                                    GTK_SIGNAL_FUNC(destroy_dialog), infodialog);
 
 		/* Finish up */
-                gtk_widget_show(ebox);
-                gtk_widget_show(infoentry);
-                gtk_widget_show(bbox);
-                gtk_widget_show(vbox);
-		gtk_widget_show(fbox);
-		gtk_widget_show(frame);
-		gtk_container_add(GTK_CONTAINER(frame), vbox);
-		gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
 		gtk_window_set_title(GTK_WINDOW(infodialog), _("Gaim - Get User Info"));
-                gtk_container_add(GTK_CONTAINER(infodialog), fbox);
                 gtk_widget_grab_focus(infoentry);
-                gtk_widget_realize(infodialog);
 		
 		aol_icon(infodialog->window);
-
         }
-        gtk_widget_show(infodialog);
+	gtk_widget_show_all(infodialog);
 }
 
 
@@ -938,24 +915,22 @@ void show_add_group(struct gaim_connection *gc)
 
 void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 {
+        GtkWidget *mainbox;
+	GtkWidget *frame;
+        GtkWidget *table;
+	GtkWidget *bbox;
 	GtkWidget *cancel;
 	GtkWidget *add;
 	GtkWidget *label;
-	GtkWidget *bbox;
-	GtkWidget *vbox;
-        GtkWidget *topbox;
-        GtkWidget *topbox1;
-        GtkWidget *topbox2;
-	GtkWidget *frame;
 
         struct addbuddy *a = g_new0(struct addbuddy, 1);
 	a->gc = gc;
-        
+
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(a->window), "add_buddy", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
         gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
-	gtk_container_set_border_width(GTK_CONTAINER(a->window), 5);
+
 	gtk_widget_realize(a->window);
         aol_icon(a->window->window);
         gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
@@ -964,75 +939,61 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 			   GTK_SIGNAL_FUNC(free_dialog), a);
 	dialogwindows = g_list_prepend(dialogwindows, a->window);
 
+        mainbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
+        gtk_container_add(GTK_CONTAINER(a->window), mainbox);
+
 	frame = gtk_frame_new(_("Add Buddy"));
-        gtk_container_add(GTK_CONTAINER(a->window), frame);
+        gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-        vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-        gtk_widget_show(vbox);
-
-        topbox = gtk_hbox_new(FALSE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-        gtk_widget_show(topbox);
+        table = gtk_table_new(3, 2, FALSE);
+        gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+        gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_container_add(GTK_CONTAINER(frame), table);
 
         label = gtk_label_new(_("Buddy"));
-        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-        gtk_widget_show(label);
+        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
         a->entry = gtk_entry_new();
-        gtk_box_pack_end(GTK_BOX(topbox), a->entry, FALSE, FALSE, 5);
+        gtk_table_attach_defaults(GTK_TABLE(table), a->entry, 1, 2, 0, 1);
         gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
         if (buddy != NULL)
                 gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
         gtk_signal_connect(GTK_OBJECT(a->entry), "activate",
                            GTK_SIGNAL_FUNC(do_add_buddy), a);
-        gtk_widget_show(a->entry);
-
-        topbox1 = gtk_hbox_new(FALSE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox), topbox1, TRUE, TRUE, 5);
-        gtk_widget_show(topbox1);
 
         label = gtk_label_new(_("Alias"));
-        gtk_box_pack_start(GTK_BOX(topbox1), label, FALSE, FALSE, 5);
-        gtk_widget_show(label);
+        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 
         a->entry_for_alias = gtk_entry_new();
-        gtk_box_pack_end(GTK_BOX(topbox1), a->entry_for_alias, FALSE, FALSE, 5);
-        gtk_widget_show(a->entry_for_alias);
-
-        topbox2 = gtk_hbox_new(FALSE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox), topbox2, TRUE, TRUE, 5);
-        gtk_widget_show(topbox2);
+        gtk_table_attach_defaults(GTK_TABLE(table), a->entry_for_alias, 1, 2, 1, 2);
 
         label = gtk_label_new(_("Group"));
-        gtk_box_pack_start(GTK_BOX(topbox2), label, FALSE, FALSE, 5);
-        gtk_widget_show(label);
+        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
 
         a->combo = gtk_combo_new();
-        gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(gc ? gc : connections->data));
+        gtk_combo_set_popdown_strings(GTK_COMBO(a->combo),
+                groups_tree(gc ? gc : connections->data));
         if (group != NULL)
                 gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
-        gtk_box_pack_end(GTK_BOX(topbox2), a->combo, FALSE, FALSE, 5);
-        gtk_widget_show(a->combo);
+        gtk_table_attach_defaults(GTK_TABLE(table), a->combo, 1, 2, 2, 3);
 
-	bbox = gtk_hbox_new(TRUE, 10);
-        gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
-        gtk_widget_show(bbox);
-
-	add = picture_button(a->window, _("Add"), add_xpm);
-        gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
-        gtk_signal_connect(GTK_OBJECT(add), "clicked",
-                           GTK_SIGNAL_FUNC(do_add_buddy), a);
-        gtk_widget_show(add);
+	bbox = gtk_hbox_new(FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(mainbox), bbox, TRUE, TRUE, 0);
 
 	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
-        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
         gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), a->window);
-        gtk_widget_show(cancel);
+
+	add = picture_button(a->window, _("Add"), add_xpm);
+        gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 0);
+        gtk_signal_connect(GTK_OBJECT(add), "clicked",
+                           GTK_SIGNAL_FUNC(do_add_buddy), a);
 	
-	gtk_widget_show(a->window);
+	gtk_widget_show_all(a->window);
 }
 
 

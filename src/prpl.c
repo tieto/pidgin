@@ -101,42 +101,40 @@ static int rem_win(GtkObject *a, GtkWidget *b) {
 void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
 {
 	GtkWidget *window;
-	GtkWidget *box;
+	GtkWidget *vbox;
 	GtkWidget *label;
 	GtkWidget *hbox;
 	GtkWidget *button;
 
 	window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "accept", "Gaim");
-	gtk_window_set_policy(GTK_WINDOW(window), 0, 0, 1);
-	gtk_window_set_title(GTK_WINDOW(window), _("Accept?"));
+	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
+        gtk_window_set_title(GTK_WINDOW(window), _("Accept?"));
 	gtk_widget_realize(window);
 	aol_icon(window->window);
 	if (dont)
 		gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(dont), data);
 
-	box = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(window), box);
-	gtk_widget_show(box);
+	vbox = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
 
 	label = gtk_label_new(text);
-	gtk_box_pack_start(GTK_BOX(box), label, 0, 0, 5);
-	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), hbox, 0, 0, 1);
-	gtk_widget_show(hbox);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	button = picture_button(window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_win), window);
 
 	button = picture_button(window, _("Accept"), ok_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(button), data);
 	if (doit)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(doit), data);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(rem_win), window);
 
-	button = picture_button(window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_win), window);
-
-	gtk_widget_show(window);
+	gtk_widget_show_all(window);
 }
