@@ -75,12 +75,17 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 	auth = xmlnode_new("auth");
 	xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
-	if(digest_md5) {
+	if(0 && digest_md5) {
 		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
 		/*
 	} else if(plain) {
 		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
+		xmlnode_insert_data(auth, "\0", 1);
+		xmlnode_insert_data(auth, js->user->node, -1);
+		xmlnode_insert_data(auth, "\0", 1);
+		xmlnode_insert_data(auth, gaim_account_get_password(js->gc->account),
+				-1);
 		js->auth_type = JABBER_AUTH_PLAIN;
 		*/
 	} else {
@@ -135,7 +140,20 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	if(!type) {
 		return;
 	} else if(!strcmp(type, "error")) {
-		/* XXX: handle error */
+		/* XXX: still need to handle XMPP-style errors */
+		xmlnode *error;
+		char *buf, *err_txt = NULL;
+		const char *code = NULL;
+		if((error = xmlnode_get_child(packet, "error"))) {
+			code = xmlnode_get_attrib(error, "code");
+			err_txt = xmlnode_get_data(error);
+		}
+		buf = g_strdup_printf("%s%s%s", code ? code : "", code ? ": " : "",
+				err_txt ? err_txt : _("Unknown Error"));
+		gaim_connection_error(js->gc, buf);
+		if(err_txt)
+			g_free(err_txt);
+		g_free(buf);
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {

@@ -163,17 +163,20 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	if(type && !strcasecmp(type, "error")) {
+		const char *code = NULL;
+		char *err_txt = NULL;
+
 		state = JABBER_STATE_ERROR;
 		if((y = xmlnode_get_child(packet, "error")) != NULL) {
 			/* XXX: need to handle new XMPP-style errors */
-			char *txt = xmlnode_get_data(y);
-			jb->error_msg = g_strdup_printf(_("%s (Code %s)"),
-					txt ? txt : "Error", xmlnode_get_attrib(y, "code"));
-			if(txt)
-				g_free(txt);
-		} else {
-			jb->error_msg = g_strdup(_("Unknown Error in presence"));
+			code = xmlnode_get_attrib(y, "code");
+			err_txt = xmlnode_get_data(y);
 		}
+		jb->error_msg = g_strdup_printf("%s%s%s", code ? code : "",
+				code ? ": " : "", err_txt ? err_txt :
+				_("Unknown Error in presence"));
+		if(err_txt)
+			g_free(err_txt);
 	} else if(type && !strcasecmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
 		char *msg = g_strdup_printf(_("The user %s wants to add you to their buddy list."), from);
