@@ -86,9 +86,11 @@ void cancel_logon(void)
 {
 #ifdef USE_APPLET
 	applet_buddy_show = FALSE;
-	signoff();
+	if (running)
+		serv_close();
 	running = FALSE;
-        gtk_widget_hide(mainwindow);
+	if (mainwindow)
+		gtk_widget_hide(mainwindow);
 #else
 #ifdef GAIM_PLUGINS
 	GList *c;

@@ -318,7 +318,8 @@ void AppletClicked( GtkWidget *sender, GdkEventButton *ev, gpointer data ){
 		applet_buddy_show = FALSE;
 	  	switch( MRI_user_status ){
 			case offline:
-				gtk_widget_hide(mainwindow);
+				if (mainwindow)
+					gtk_widget_hide(mainwindow);
 				break;
 			case online:
 			case away:
