@@ -993,10 +993,6 @@ im_cb(GtkWidget *widget, GaimConversation *conv)
 	else
 		return;
 
-	if (*name == '@') name++;
-	if (*name == '%') name++;
-	if (*name == '+') name++;
-
 	account = gaim_conversation_get_account(conv);
 
 	conv2 = gaim_find_conversation_with_account(name, account);
@@ -1185,10 +1181,6 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &who, -1);
-
-	if (*who == '@') who++;
-	if (*who == '%') who++;
-	if (*who == '+') who++;
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(conv, who);
@@ -2845,13 +2837,7 @@ tab_complete(GaimConversation *conv)
 		char *nick = nicks->data;
 		/* this checks to see if the current nick could be a completion */
 		if (g_ascii_strncasecmp(nick, entered, strlen(entered))) {
-			if (*nick != '+' && *nick != '@' && *nick != '%')
-				continue;
-
 			if (g_ascii_strncasecmp(nick + 1, entered, strlen(entered))) {
-				if (nick[0] != '@' || nick[1] != '+')
-					continue;
-
 				if (g_ascii_strncasecmp(nick + 2, entered, strlen(entered)))
 					continue;
 				else
@@ -2874,10 +2860,6 @@ tab_complete(GaimConversation *conv)
 						 : gaim_conv_chat_get_users(chat));
 
 				nick = nicks->data;
-
-				if (*nick == '@') nick++;
-				if (*nick == '%') nick++;
-				if (*nick == '+') nick++;
 			}
 
 			gtk_text_buffer_get_start_iter(gtkconv->entry_buffer,
