@@ -49,6 +49,7 @@ extern int  proxyport;
 extern int  proxytype;
 extern char proxyuser[128];
 extern char proxypass[128];
+extern guint proxy_info_is_from_gaimrc;
 
 typedef enum {
 	GAIM_INPUT_READ = 1 << 0,

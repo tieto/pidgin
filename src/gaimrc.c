@@ -57,6 +57,13 @@ guint font_options;
 guint sound_options;
 guint away_options;
 guint away_resend;
+static guint is_loading_prefs = 0;
+static guint request_save_prefs = 0;
+static guint is_saving_prefs = 0;
+static guint request_load_prefs = 0;
+guint proxy_info_is_from_gaimrc = 1; /* Only save proxy info if it
+				      * was loaded from the file
+				      * or otherwise explicitly requested */
 
 int report_idle;
 int web_browser;
@@ -77,7 +84,7 @@ static struct parse *parse_line(char *line, struct parse *p)
 {
 	char *c = line;
 	int inopt = 1, inval = 0, curval = -1;
-	int optlen = 0, vallen = 0;
+	int optlen = 0, vallen = 0, last_non_space = 0;
 	int x;
 
 	for (x = 0; x < MAX_VALUES; x++) {
@@ -109,12 +116,13 @@ static struct parse *parse_line(char *line, struct parse *p)
 				p->value[curval][vallen] = *c;
 
 				vallen++;
+				last_non_space = vallen;
 				c++;
 				continue;
 			} else if (*c == '}') {
 				/* } that isn't escaped should end this chunk of data, and
 				 * should have a space before it.. */
-				p->value[curval][vallen - 1] = 0;
+				p->value[curval][last_non_space] = 0;
 				inval = 0;
 				c++;
 				continue;
@@ -122,6 +130,8 @@ static struct parse *parse_line(char *line, struct parse *p)
 				p->value[curval][vallen] = *c;
 
 				vallen++;
+				if (! isspace(*c))
+					last_non_space = vallen;
 				c++;
 				continue;
 			}
@@ -129,7 +139,7 @@ static struct parse *parse_line(char *line, struct parse *p)
 			/* i really don't think this if ever succeeds, but i'm
 			 * not brave enough to take it out... */ 
 			if (*(c - 1) == '\\') {
-				p->value[curval][vallen - 1] = *c;
+				p->value[curval][vallen] = *c;
 				c++;
 				continue;
 			} else {
@@ -137,9 +147,11 @@ static struct parse *parse_line(char *line, struct parse *p)
 				 * piece of data and should have a space after it.. */
 				curval++;
 				vallen = 0;
+				last_non_space = vallen;
 				inval = 1;
 				c++;
-				c++;
+				while (*c && isspace(*c))
+				  c++;
 				continue;
 			}
 		}
@@ -504,7 +516,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 
 	while (strncmp(buf, "\t\t}", 3)) {
 		if (strlen(buf) > 3)
-			strcat(u->user_info, &buf[3]);
+			strcat(u->user_info, buf + 3);
 
 		if (!fgets(buf, sizeof(buf), f)) {
 			return u;
@@ -964,21 +976,31 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 	int  port = 0;
 	int  len  = 0;
 
+	host[0] = '\0';
+	user[0] = '\0';
+	pass[0] = '\0';
+
+	debug_printf("gaimrc_parse_proxy_uri(%s)\n", proxy);
+
 	if ((c = strchr(proxy, ':')) == NULL)
 	{
+	  debug_printf("no uri detected\n");
 		/* No URI detected. */
 		return FALSE;
 	}
 
 	len = c - proxy;
 
-	if (!strncmp(proxy, "http", len))
+	if (!strncmp(proxy, "http://", len + 3))
 		proxytype = PROXY_HTTP;
 	else
 		return FALSE;
 
+	debug_printf("found http proxy\n");
 	/* Get past "://" */
 	c += 3;
+
+	debug_printf("looking at %s\n", c);
 
 	for (;;)
 	{
@@ -997,21 +1019,21 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 			 * If not, host.
 			 */
 			if (strchr(c, '@') != NULL)
-				strcmp(user, buffer);
+				strcpy(user, buffer);
 			else
-				strcmp(host, buffer);
+				strcpy(host, buffer);
 		}
 		else if (*c == '@')
 		{
-			if (user == NULL)
-				strcmp(user, buffer);
+			if (user[0] == '\0')
+				strcpy(user, buffer);
 			else
-				strcmp(pass, buffer);
+				strcpy(pass, buffer);
 		}
 		else if (*c == '/' || *c == '\0')
 		{
-			if (host == NULL)
-				strcmp(host, buffer);
+			if (host[0] == '\0')
+				strcpy(host, buffer);
 			else
 				port = atoi(buffer);
 
@@ -1023,22 +1045,25 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 	}
 
 	/* NOTE: HTTP_PROXY takes precendence. */
-	if (host)
+	if (host[0])
 		strcpy(proxyhost, host);
 	else
 		*proxyhost = '\0';
 
-	if (user)
+	if (user[0])
 		strcpy(proxyuser, user);
 	else
 		*proxyuser = '\0';
 
-	if (pass)
+	if (pass[0])
 		strcpy(proxypass, pass);
 	else
 		*proxypass = '\0';
 	
 	proxyport = port;
+
+	debug_printf("host '%s'\nuser '%s'\npassword '%s'\nport %d\n",
+		proxyhost, proxyuser, proxypass, proxyport);
 
 	return TRUE;
 }
@@ -1051,6 +1076,7 @@ static void gaimrc_read_proxy(FILE *f)
 
 	buf[0] = 0;
 	proxyhost[0] = 0;
+	debug_printf("gaimrc_read_proxy\n");
 
 	while (buf[0] != '}') {
 		if (buf[0] == '#')
@@ -1062,26 +1088,37 @@ static void gaimrc_read_proxy(FILE *f)
 		p = parse_line(buf, &parse_buffer);
 
 		if (!strcmp(p->option, "host")) {
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s", p->value[0]);
+			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
+				   p->value[0]);
+			debug_printf("set proxyhost %s\n", proxyhost);
 		} else if (!strcmp(p->option, "port")) {
 			proxyport = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "type")) {
 			proxytype = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "user")) {
-			g_snprintf(proxyuser, sizeof(proxyuser), "%s", p->value[0]);
+			g_snprintf(proxyuser, sizeof(proxyuser), "%s",
+				   p->value[0]);
 		} else if (!strcmp(p->option, "pass")) {
-			g_snprintf(proxypass, sizeof(proxypass), "%s", p->value[0]);
+			g_snprintf(proxypass, sizeof(proxypass), "%s",
+				   p->value[0]);
 		}
 	}
-	if (!proxyhost[0]) {
+	if (proxyhost[0])
+		proxy_info_is_from_gaimrc = 1;
+	else if (!proxyhost[0]) {
+	  
 		gboolean getVars = TRUE;
+		proxy_info_is_from_gaimrc = 0;
 		
 		if (g_getenv("HTTP_PROXY"))
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s", g_getenv("HTTP_PROXY"));
+			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
+				   g_getenv("HTTP_PROXY"));
 		else if (g_getenv("http_proxy"))
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s", g_getenv("http_proxy"));
+			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
+				   g_getenv("http_proxy"));
 		else if (g_getenv("HTTPPROXY"))
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s", g_getenv("HTTPPROXY"));
+			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
+				   g_getenv("HTTPPROXY"));
 
 		if (*proxyhost != '\0')
 			getVars = !gaimrc_parse_proxy_uri(proxyhost);
@@ -1096,18 +1133,24 @@ static void gaimrc_read_proxy(FILE *f)
 				proxyport = atoi(g_getenv("HTTPPROXYPORT"));
 
 			if (g_getenv("HTTP_PROXY_USER"))
-				g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTP_PROXY_USER"));
+				g_snprintf(proxyuser, sizeof(proxyuser), "%s",
+					   g_getenv("HTTP_PROXY_USER"));
 			else if (g_getenv("http_proxy_user"))
-				g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("http_proxy_user"));
+				g_snprintf(proxyuser, sizeof(proxyuser), "%s",
+					   g_getenv("http_proxy_user"));
 			else if (g_getenv("HTTPPROXYUSER"))
-				g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTPPROXYUSER"));
+				g_snprintf(proxyuser, sizeof(proxyuser), "%s",
+					   g_getenv("HTTPPROXYUSER"));
 
 			if (g_getenv("HTTP_PROXY_PASS"))
-				g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTP_PROXY_PASS"));
+				g_snprintf(proxypass, sizeof(proxypass), "%s",
+					   g_getenv("HTTP_PROXY_PASS"));
 			else if (g_getenv("http_proxy_pass"))
-				g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("http_proxy_pass"));
+				g_snprintf(proxypass, sizeof(proxypass), "%s",
+					   g_getenv("http_proxy_pass"));
 			else if (g_getenv("HTTPPROXYPASS"))
-				g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTPPROXYPASS"));
+				g_snprintf(proxypass, sizeof(proxypass), "%s",
+					   g_getenv("HTTPPROXYPASS"));
 
 			
 			if (proxyhost[0])
@@ -1121,12 +1164,20 @@ static void gaimrc_write_proxy(FILE *f)
 	char *str;
 
 	fprintf(f, "proxy {\n");
-	fprintf(f, "\thost { %s }\n", proxyhost);
-	fprintf(f, "\tport { %d }\n", proxyport);
-	fprintf(f, "\ttype { %d }\n", proxytype);
-	fprintf(f, "\tuser { %s }\n", proxyuser);
-	fprintf(f, "\tpass { %s }\n", (str = escape_text2(proxypass)));
-	free(str);
+	if (proxy_info_is_from_gaimrc) {
+		fprintf(f, "\thost { %s }\n", proxyhost);
+		fprintf(f, "\tport { %d }\n", proxyport);
+		fprintf(f, "\ttype { %d }\n", proxytype);
+		fprintf(f, "\tuser { %s }\n", proxyuser);
+		fprintf(f, "\tpass { %s }\n", (str = escape_text2(proxypass)));
+		free(str);
+	} else {
+		fprintf(f, "\thost { %s }\n", "");
+		fprintf(f, "\tport { %d }\n", 0);
+		fprintf(f, "\ttype { %d }\n", 0);
+		fprintf(f, "\tuser { %s }\n", "");
+		fprintf(f, "\tpass { %s }\n", "");
+	}
 	fprintf(f, "}\n");
 }
 
@@ -1224,6 +1275,12 @@ void load_prefs()
 	FILE *f;
 	char buf[1024];
 	int ver = 0;
+	debug_printf("load_prefs\n");
+	if (is_saving_prefs) {
+		request_load_prefs = 1;
+		debug_printf("currently saving, will request load\n");
+		return;
+	}
 
 	if (opt_rcfile_arg)
 		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
@@ -1235,13 +1292,17 @@ void load_prefs()
 	}
 
 	if ((f = fopen(buf, "r"))) {
+		is_loading_prefs = 1;
+		debug_printf("start load_prefs\n");
 		fgets(buf, sizeof(buf), f);
 		sscanf(buf, "# .gaimrc v%d", &ver);
 		if ((ver <= 3) || (buf[0] != '#'))
 			set_defaults();
 
 		while (!feof(f)) {
-			switch (gaimrc_parse_tag(f)) {
+			int tag = gaimrc_parse_tag(f);
+			debug_printf("starting read tag %d\n", tag);
+			switch (tag) {
 			case -1:
 				/* Let the loop end, EOF */
 				break;
@@ -1272,8 +1333,16 @@ void load_prefs()
 				/* NOOP */
 				break;
 			}
+			debug_printf("ending read tag %d\n", tag);
 		}
 		fclose(f);
+		is_loading_prefs = 0;
+		debug_printf("end load_prefs\n");
+		if (request_save_prefs) {
+			debug_printf("saving prefs on request\n");
+			save_prefs();
+			request_save_prefs = 0;
+		}
 	} else if (opt_rcfile_arg) {
 		g_snprintf(buf, sizeof(buf), _("Could not open config file %s."), opt_rcfile_arg);
 		do_error_dialog(buf, NULL, GAIM_ERROR);
@@ -1288,6 +1357,12 @@ void save_prefs()
 {
 	FILE *f;
 	char buf[BUF_LONG];
+	debug_printf("enter save_prefs\n");
+	if (is_loading_prefs) {
+		request_save_prefs = 1;
+		debug_printf("currently loading, will request save\n");
+		return;
+	}
 
 	if (opt_rcfile_arg) {
 		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
@@ -1299,6 +1374,7 @@ void save_prefs()
 		return;
 	}
 	if ((f = fopen(buf, "w"))) {
+		is_saving_prefs = 1;
 		fprintf(f, "# .gaimrc v%d\n", 4);
 		gaimrc_write_users(f);
 		gaimrc_write_options(f);
@@ -1312,9 +1388,16 @@ void save_prefs()
 		fclose(f);
 
 		chmod(buf, S_IRUSR | S_IWUSR);
+		is_saving_prefs = 0;
 	}
 	else
 	  debug_printf("Error opening .gaimrc\n");
+	if (request_load_prefs) {
+		debug_printf("loading prefs on request\n");
+		load_prefs();
+		request_load_prefs = 0;
+	}
+	debug_printf("exit save_prefs\n");
 }
 
 

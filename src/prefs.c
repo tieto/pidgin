@@ -124,6 +124,8 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 		g_snprintf(proxyuser, sizeof(proxyuser), "%s", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
 		g_snprintf(proxypass, sizeof(proxypass), "%s", gtk_entry_get_text(entry));
+	proxy_info_is_from_gaimrc = 1; /* If the user specifies it, we want
+					  to save it */
 }
 
 
