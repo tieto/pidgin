@@ -4392,7 +4392,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 
 	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
-		gaim_prefs_get_bool("/gaim/gtk/sound/silent_focus") && has_focus)) {
+		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
 		if (flags & GAIM_MESSAGE_RECV) {
 			if (gtkconv->u.im->a_virgin &&
 				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/first_im_recv")) {
@@ -4429,7 +4429,7 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 
 	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
-		gaim_prefs_get_bool("/gaim/gtk/sound/silent_focus") && has_focus)) {
+		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
 		if (!(flags & GAIM_MESSAGE_WHISPER) && (flags & GAIM_MESSAGE_SEND))
 			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
 		else if (flags & GAIM_MESSAGE_RECV) {

@@ -1536,8 +1536,8 @@ GtkWidget *sound_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Sound Options"));
 	gaim_gtk_prefs_checkbox(_("_No sounds when you log in"),
 				   "/gaim/gtk/sound/silent_signon", vbox);
-	gaim_gtk_prefs_checkbox(_("Play sounds when conversation has _focus"),
-				   "/gaim/gtk/sound/silent_focus", vbox);
+	gaim_gtk_prefs_checkbox(_("Sounds when conversation has _focus"),
+				   "/gaim/gtk/sound/conv_focus", vbox);
 	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
 				   "/core/sound/while_away", vbox);
 
