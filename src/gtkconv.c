@@ -3004,7 +3004,9 @@ setup_chat_pane(struct gaim_conversation *conv)
 	gtk_paned_pack1(GTK_PANED(hpaned), gtkconv->sw, TRUE, TRUE);
 
 	gtk_widget_set_size_request(gtkconv->sw,
-								buddy_chat_size.width, buddy_chat_size.height);
+			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_width"),
+			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_height"));
+
 	gtk_widget_show(gtkconv->sw);
 
 	/* Setup gtkihmtml. */
@@ -3136,7 +3138,8 @@ setup_chat_pane(struct gaim_conversation *conv)
 
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
-								MAX(buddy_chat_size.entry_height, 25));
+			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"),
+				25));
 
 	/* Connect the signal handlers. */
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
@@ -3195,7 +3198,9 @@ setup_im_pane(struct gaim_conversation *conv)
 										GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->sw, TRUE, TRUE, 0);
 
-	gtk_widget_set_size_request(gtkconv->sw, conv_size.width, conv_size.height);
+	gtk_widget_set_size_request(gtkconv->sw,
+			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_width"),
+			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_height"));
 	gtk_widget_show(gtkconv->sw);
 
 	gtkconv->imhtml = gtk_imhtml_new(NULL, NULL);
@@ -3232,7 +3237,8 @@ setup_im_pane(struct gaim_conversation *conv)
 
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
-								MAX(conv_size.entry_height, 25));
+			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"),
+				25));
 
 	/* Connect the signal handlers. */
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",

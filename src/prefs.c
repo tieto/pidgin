@@ -95,19 +95,24 @@ void gaim_prefs_init() {
 	gaim_prefs_connect_callback("/", prefs_save_cb, NULL);
 
 	gaim_prefs_add_none("/core");
+	gaim_prefs_add_none("/plugins");
+	gaim_prefs_add_none("/plugins/core");
+	gaim_prefs_add_none("/plugins/lopl");
+	gaim_prefs_add_none("/plugins/prpl");
 
 	/* XXX: this is where you would want to put prefs declarations */
 
 	/* Away */
 	gaim_prefs_add_none("/core/away");
-	gaim_prefs_add_bool("/core/away/queue_messages", FALSE);
 	gaim_prefs_add_bool("/core/away/away_when_idle", TRUE);
+	gaim_prefs_add_int("/core/away/mins_before_away", 1);
 
 	/* Away -> Auto Response */
 	gaim_prefs_add_none("/core/away/auto_response");
 	gaim_prefs_add_bool("/core/away/auto_response/enabled", TRUE);
 	gaim_prefs_add_bool("/core/away/auto_response/in_active_conv", TRUE);
 	gaim_prefs_add_bool("/core/away/auto_response/idle_only", FALSE);
+	gaim_prefs_add_int("/core/away/auto_response/sec_before_resend", 60);
 
 	/* Buddies */
 	gaim_prefs_add_none("/core/buddies");
