@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1467 $"
+#define REVISION "gaim:$Revision: 1469 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -359,7 +359,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		g_snprintf(snd, sizeof snd, "toc_init_done");
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
-		g_snprintf(snd, sizeof snd, "toc_set_caps %s", FILE_SEND_UID);
+		g_snprintf(snd, sizeof snd, "toc_set_caps %s %s", FILE_SEND_UID, FILE_GET_UID);
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
 		return;
@@ -633,7 +633,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 				" total size of %ld bytes.\n", user, vip, port, files, totalsize);
 			accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
-			/* they want us to send a file
+			/* they want us to send a file */
 			int unk[4], i;
 			char *messages[4], *tmp;
 			struct ft_request *ft;
@@ -663,7 +663,6 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 				g_free(messages[i]);
 
 			accept_file_dialog(ft);
-			*/
 		} else if (!strcmp(uuid, VOICE_UID)) {
 			/* oh goody. voice over ip. fun stuff. */
 		} else if (!strcmp(uuid, B_ICON_UID)) {
@@ -1295,6 +1294,8 @@ struct file_transfer {
 	long size;
 
 	GtkWidget *window;
+	int files;
+	char *filename;
 	FILE *file;
 	int recvsize;
 
@@ -1344,10 +1345,12 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 	if (cond & GDK_INPUT_EXCEPTION) {
 		gdk_input_remove(ft->inpa);
 		close(source);
+		g_free(ft->filename);
 		g_free(ft->user);
 		g_free(ft->ip);
 		g_free(ft->cookie);
-		fclose(ft->file);
+		if (ft->file)
+			fclose(ft->file);
 		g_free(ft);
 		return;
 	}
@@ -1366,6 +1369,39 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 		debug_header(ft);
 		write(source, ft, 256);
 
+		if (ft->files == 1) {
+			ft->file = fopen(ft->filename, "w");
+			if (!ft->file) {
+				buf = g_strdup_printf("Could not open %s for writing!", ft->filename);
+				do_error_dialog(buf, _("Error"));
+				g_free(buf);
+				gdk_input_remove(ft->inpa);
+				close(source);
+				g_free(ft->filename);
+				g_free(ft->user);
+				g_free(ft->ip);
+				g_free(ft->cookie);
+				g_free(ft);
+			}
+		} else {
+			buf = g_strdup_printf("%s/%s", ft->filename, ft->hdr.name);
+			ft->file = fopen(buf, "w");
+			g_free(buf);
+			if (!ft->file) {
+				buf = g_strdup_printf("Could not open %s/%s for writing!", ft->filename,
+						ft->hdr.name);
+				do_error_dialog(buf, _("Error"));
+				g_free(buf);
+				gdk_input_remove(ft->inpa);
+				close(source);
+				g_free(ft->filename);
+				g_free(ft->user);
+				g_free(ft->ip);
+				g_free(ft->cookie);
+				g_free(ft);
+			}
+		}
+
 		return;
 	}
 
@@ -1377,7 +1413,8 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 		g_free(ft->user);
 		g_free(ft->ip);
 		g_free(ft->cookie);
-		fclose(ft->file);
+		if (ft->file)
+			fclose(ft->file);
 		g_free(ft);
 		return;
 	}
@@ -1394,19 +1431,16 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 		ft->hdr.flags = 0;
 		write(source, ft, 256);
 		ft->recvsize = 0;
-		if (ft->hdr.filesleft != 0) {
-			char *msg = g_strdup_printf("%s tried to send you more than one file, but"
-					" currently that is not possible.", ft->user);
-			do_error_dialog(msg, "Error");
-			g_free(msg);
-		}
-		gdk_input_remove(ft->inpa);
-		close(source);
-		g_free(ft->user);
-		g_free(ft->ip);
-		g_free(ft->cookie);
 		fclose(ft->file);
-		g_free(ft);
+		if (ft->hdr.filesleft == 0) {
+			gdk_input_remove(ft->inpa);
+			close(source);
+			g_free(ft->filename);
+			g_free(ft->user);
+			g_free(ft->ip);
+			g_free(ft->cookie);
+			g_free(ft);
+		}
 	}
 }
 
@@ -1420,17 +1454,14 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft) {
 	if (file_is_dir(dirname, old_ft->window))
 		return;
 	ft = g_new0(struct file_transfer, 1);
-	ft->file = fopen(dirname, "w");
-	if (!ft->file) {
-		do_error_dialog(_("Could not open file for writing!"), _("Error"));
-		g_free(ft);
-		gtk_widget_destroy(old_ft->window);
-		return;
-	}
-
+	if (old_ft->files == 1)
+		ft->filename = g_strdup(dirname);
+	else
+		ft->filename = g_dirname(dirname);
 	ft->cookie = g_strdup(old_ft->cookie);
 	ft->user = g_strdup(old_ft->user);
 	ft->ip = g_strdup(old_ft->ip);
+	ft->files = old_ft->files;
 	ft->port = old_ft->port;
 	ft->gc = old_ft->gc;
 	user = ft->gc->user;
@@ -1447,6 +1478,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft) {
 			  atoi(user->proto_opt[USEROPT_PROXYTYPE]));
 	if (fd < 0) {
 		do_error_dialog(_("Could not connect for transfer!"), _("Error"));
+		g_free(ft->filename);
 		g_free(ft->cookie);
 		g_free(ft->user);
 		g_free(ft->ip);
@@ -1477,6 +1509,7 @@ static void toc_accept_ft(gpointer a, struct ft_request *fr) {
 	ft->cookie = g_strdup(fr->cookie);
 	ft->ip = g_strdup(fr->ip);
 	ft->port = fr->port;
+	ft->files = fr->files;
 
 	ft->window = window = gtk_file_selection_new(_("Gaim - Save As..."));
 	g_snprintf(buf, sizeof(buf), "%s/%s", g_get_home_dir(), fr->filename ? fr->filename : "");
