@@ -81,6 +81,10 @@ wgaim_gettimeofday( ## timeval ##, ## timezone ## )
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
 
+extern int wgaim_rename(const char *oldname, const char *newname);
+#define rename( oldname, newname ) \
+wgaim_rename( ## oldname ##, ## newname ## )
+
 /* sys/stat.h */
 #define mkdir(a,b) _mkdir((a))
 #define fchmod(a,b)

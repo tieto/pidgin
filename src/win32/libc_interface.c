@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/timeb.h>
+#include <sys/stat.h>
 #include <time.h>
 #include "libc_internal.h"
 
@@ -290,4 +291,53 @@ int wgaim_gettimeofday(struct timeval *p, struct timezone *z) {
 	}
 
 	return res;
+}
+
+/* stdio.h */
+
+int wgaim_rename (const char *oldname, const char *newname) {
+	struct _stat oldstat, newstat;
+
+	if(_stat(oldname, &oldstat) == 0) {
+		/* newname exists */
+		if(_stat(newname, &newstat) == 0) {
+			/* oldname is a dir */
+			if(_S_ISDIR(oldstat.st_mode)) {
+				if(!_S_ISDIR(newstat.st_mode)) {
+					return rename(oldname, newname);
+				}
+				/* newname is a dir */
+				else {
+					/* This is not quite right.. If newname is empty and
+					   is not a sub dir of oldname, newname should be
+					   deleted and oldname should be renamed.
+					*/
+					debug_printf("Warning: wgaim_rename does not behave here as it should\n");
+					return rename(oldname, newname);
+				}
+			}
+			/* oldname is not a dir */
+			else {
+				/* newname is a dir */
+				if(_S_ISDIR(newstat.st_mode)) {
+					errno = EISDIR;
+					return -1;
+				}
+				/* newname is not a dir */
+				else {
+					remove(newname);
+					rename(oldname, newname);
+				}
+			}
+		}
+		/* newname doesn't exist */
+		else
+			return rename(oldname, newname);
+	}
+	else {
+		/* oldname doesn't exist */
+		errno = ENOENT;
+		return -1;
+	}
+
 }
