@@ -31,7 +31,7 @@ distcheck-hook: plugins/perl/common/Gaim.pm
 appsdir = $(datadir)/applications
 apps_DATA = gaim.desktop
 
-SUBDIRS = sounds plugins pixmaps doc po intl src
+SUBDIRS = doc intl pixmaps plugins po sounds src
 
 docs: Doxyfile
 	@doxygen
