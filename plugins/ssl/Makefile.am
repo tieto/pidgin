@@ -22,6 +22,7 @@ endif # PLUGINS
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir)/src \
 	$(DEBUG_CFLAGS) \
