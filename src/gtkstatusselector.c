@@ -260,18 +260,23 @@ get_selected_data(GaimGtkStatusSelector *selector, const char **text, const char
 	*status_type_id = g_object_get_data(G_OBJECT(item), GAIM_SELECTOR_STATUS_TYPE_ID);
 	return TRUE;
 #endif
-	return FALSE;
 }
 
 /*
- * TODO: Get rid of the duplication in this function and
- * insert_text_timeout_cb()
+ * TODO: Is it possible to remove of the duplication in this
+ *       function and insert_text_timeout_cb()?
  */
 static void
 status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 {
 	const char *status_type_id = NULL;
 	const char *text = NULL;
+
+	/* Reset the status selector */
+	if (selector->priv->entry_timer != 0)
+		gaim_timeout_remove(selector->priv->entry_timer);
+	gtk_widget_hide(selector->priv->frame);
+	gtk_widget_set_sensitive(selector->priv->frame, FALSE);
 
 	if (!get_selected_data(selector, &text, &status_type_id))
 		return;
@@ -292,7 +297,7 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 		 */
 		GList *l;
 		GtkTextBuffer *buffer;
-		gboolean allow_message = FALSE;
+		gboolean has_message = FALSE;
 
 		buffer =
 			gtk_text_view_get_buffer(GTK_TEXT_VIEW(selector->priv->entry));
@@ -307,79 +312,76 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 				continue;
 
-			status_type = gaim_account_get_status_type(account,
-								   status_type_id);
+			status_type = gaim_account_get_status_type(account, status_type_id);
 
 			if (status_type == NULL)
 				continue;
 
 			if (gaim_status_type_get_attr(status_type, "message") != NULL)
 			{
-				allow_message = TRUE;
+				has_message = TRUE;
 			}
 			else
 			{
-				gaim_account_set_status(account,
-							status_type_id, TRUE,
-							NULL);
+				gaim_account_set_status(account, status_type_id, TRUE, NULL);
 			}
 		}
 
-		if (allow_message)
+		if (has_message)
 		{
 			gtk_widget_show(selector->priv->frame);
+			gtk_widget_set_sensitive(selector->priv->frame, TRUE);
 			key_press_cb(NULL, NULL, selector);
 		}
-		else
-			gtk_widget_hide(selector->priv->frame);
 	}
 }
 
+/**
+ * This is used to set the message of the selected status.  It
+ * is triggered after the user has stopped typing in the little box.
+ * It just goes through and, if the selected status type for any
+ * given online/enabled account requires a message, then it sets
+ * that status with the entered message.
+ */
 static gboolean
 insert_text_timeout_cb(gpointer data)
 {
 	GaimGtkStatusSelector *selector = (GaimGtkStatusSelector *)data;
 	const char *status_type_id;
 	const char *text;
+	gchar *message;
+	GList *l;
+
+	gtk_widget_set_sensitive(selector->priv->frame, FALSE);
 
 	if (!get_selected_data(selector, &text, &status_type_id))
 		return FALSE;
 
 	if (status_type_id == NULL)
+		return FALSE;
+
+	message = gtk_imhtml_get_markup(GTK_IMHTML(selector->priv->entry));
+
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
 	{
-		if (!strcmp(text, _("New Status")))
+		GaimAccount *account = (GaimAccount*)l->data;
+		GaimStatusType *status_type;
+
+		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
+			continue;
+
+		status_type = gaim_account_get_status_type(account,
+		              status_type_id);
+
+		if (status_type == NULL)
+			continue;
+
+		if (gaim_status_type_get_attr(status_type, "message") != NULL)
 		{
-			gaim_gtk_status_editor_show(NULL);
-		}
-	}
-	else
-	{
-		gchar *message;
-		GList *l;
-
-		message = gtk_imhtml_get_markup(GTK_IMHTML(selector->priv->entry));
-
-		for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
-		{
-			GaimAccount *account = (GaimAccount*)l->data;
-			GaimStatusType *status_type;
-
-			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
-				continue;
-
-			status_type = gaim_account_get_status_type(account,
-			              status_type_id);
-
-			if (status_type == NULL)
-				continue;
-
-			if (gaim_status_type_get_attr(status_type, "message") != NULL)
-			{
-				gaim_account_set_status(account,
-				                        status_type_id, TRUE,
-				                        "message", message,
-				                        NULL);
-			}
+			gaim_account_set_status(account,
+			                        status_type_id, TRUE,
+			                        "message", message,
+			                        NULL);
 		}
 	}
 
@@ -401,8 +403,9 @@ key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer user_data)
 		gaim_timeout_remove(selector->priv->entry_timer);
 	}
 
-	selector->priv->entry_timer = gaim_timeout_add(3000, insert_text_timeout_cb,
-											 selector);
+	selector->priv->entry_timer = gaim_timeout_add(3000,
+												  insert_text_timeout_cb,
+												  selector);
 
 	return FALSE;
 }
