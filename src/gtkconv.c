@@ -37,6 +37,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "request.h"
 #include "sound.h"
 #include "util.h"
 
@@ -141,16 +142,14 @@ static void save_convo(GtkWidget *save, GaimConversation *c);
  * Callbacks
  **************************************************************************/
 static void
-do_save_convo(GObject *obj, GtkWidget *wid)
+do_save_convo(GtkWidget *wid)
 {
-	GaimConversation *c = g_object_get_data(obj, "gaim_conversation");
+	GaimConversation *c = g_object_get_data(GTK_FILE_SELECTION(wid)->ok_button,
+											"gaim_conversation");
 	const char *filename;
 	FILE *fp;
 
 	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
-
-	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(wid)))
-		return;
 
 	if (!((gaim_conversation_get_type(c) != GAIM_CONV_CHAT &&
 		   g_list_find(gaim_get_ims(), c)) ||
@@ -171,6 +170,23 @@ do_save_convo(GObject *obj, GtkWidget *wid)
 	fclose(fp);
 }
 
+static void
+do_check_save_convo(GObject *obj, GtkWidget *wid)
+{
+	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
+
+	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(wid)))
+		return;
+
+	if(g_file_test(filename, G_FILE_TEST_EXISTS)){
+		gaim_request_yes_no(NULL, NULL, _("That file already exists"),
+							_("Would you like to overwrite it?"), 1, wid,
+							G_CALLBACK(do_save_convo), NULL);
+	}
+	else
+		do_save_convo(wid);
+}
+	
 static void
 do_insert_image_cb(GObject *obj, GtkWidget *wid)
 {
@@ -2746,7 +2762,7 @@ save_convo(GtkWidget *save, GaimConversation *c)
 	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
 			"gaim_conversation", c);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-			   "clicked", G_CALLBACK(do_save_convo), window);
+			   "clicked", G_CALLBACK(do_check_save_convo), window);
 	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
 				  "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
 	gtk_widget_show(window);
