@@ -23,7 +23,7 @@
 #include <unistd.h>
 #include "gaim.h"
 #include "gtkpounce.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "prpl.h"
 #include "sound.h"
 

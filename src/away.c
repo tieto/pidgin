@@ -31,7 +31,7 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "gtkimhtml.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "plugin.h"
 
 GtkWidget *imaway = NULL;

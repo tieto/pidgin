@@ -27,7 +27,7 @@
 #include "multi.h"
 #include "gaim.h"
 #include "conversation.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "gaim-disclosure.h"
 
 #ifdef _WIN32

@@ -36,7 +36,7 @@
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
 #include "gaim.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "gtkplugin.h"
 #include "prpl.h"
 #include "proxy.h"

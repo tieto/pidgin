@@ -47,7 +47,7 @@
 #include "prpl.h"
 #include "sound.h"
 #include "gaim.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "gtkpounce.h"
 #include "gtkft.h"
 

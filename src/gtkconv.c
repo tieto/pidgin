@@ -43,7 +43,7 @@
 #include "gtkimhtml.h"
 #include "dnd-hints.h"
 #include "sound.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 
 #ifdef _WIN32
 #include "win32dep.h"

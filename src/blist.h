@@ -1,5 +1,5 @@
 /**
- * @file list.h Buddy List API
+ * @file blist.h Buddy List API
  * @ingroup core
  *
  * gaim

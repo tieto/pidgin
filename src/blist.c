@@ -35,7 +35,7 @@
 #include <ctype.h>
 #include "gaim.h"
 #include "prpl.h"
-#include "list.h"
+#include "blist.h"
 
 #ifdef _WIN32
 #include "win32dep.h"

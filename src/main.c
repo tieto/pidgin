@@ -50,7 +50,7 @@
 #include "sound.h"
 #include "gaim.h"
 #include "gaim-socket.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "gtkdebug.h"
 #if HAVE_SIGNAL_H
 #include <signal.h>

@@ -48,7 +48,7 @@
 #include "gaim.h"
 #include "gtkimhtml.h"
 #include "prpl.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 
 #ifdef _WIN32
 #include "win32dep.h"

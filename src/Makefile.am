@@ -6,6 +6,8 @@ EXTRA_DIST = \
 SUBDIRS = protocols
 
 CORESOURCES = \
+	blist.c \
+	blist.h \
 	conversation.c \
 	conversation.h \
 	core.c \
@@ -36,7 +38,6 @@ gaim_SOURCES = \
 	about.c \
 	away.c \
 	browser.c \
-	buddy.c \
 	buddy_chat.c \
 	dialogs.c \
 	dnd-hints.c \
@@ -48,6 +49,8 @@ gaim_SOURCES = \
 	gaimrc.c \
 	gtkcellrendererprogress.c \
 	gtkcellrendererprogress.h \
+	gtkblist.c \
+	gtkblist.h \
 	gtkconv.c \
 	gtkconv.h \
 	gtkdebug.c \
@@ -56,7 +59,6 @@ gaim_SOURCES = \
 	gtkft.h \
 	gtkimhtml.c \
 	gtkimhtml.h \
-	gtklist.h \
 	gtkplugin.c \
 	gtkplugin.h \
 	gtkpounce.c \
@@ -65,8 +67,6 @@ gaim_SOURCES = \
 	gtkutils.h \
 	html.c \
 	idle.c \
-	list.c \
-	list.h \
 	log.c \
 	main.c \
 	md5.c \

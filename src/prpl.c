@@ -21,7 +21,7 @@
 
 #include "gaim.h"
 #include "gtkutils.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "prpl.h"
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -1,5 +1,5 @@
 /**
- * @file gtklist.h GTK+ Buddy List API
+ * @file gtkblist.h GTK+ Buddy List API
  * @ingroup gtkui
  *
  * gaim

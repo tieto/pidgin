@@ -27,7 +27,7 @@
 #endif
 
 #include "core.h"
-#include "list.h"
+#include "blist.h"
 #include "ui.h"
 #include "util.h"
 
