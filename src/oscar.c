@@ -20,8 +20,6 @@
  *
  */
 
-#ifndef DYNAMIC_OSCAR
-
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
 #endif
@@ -50,6 +48,12 @@
 #include "pixmaps/away_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
+
+/* constants to identify proto_opts */
+#define USEROPT_AUTH      0
+#define USEROPT_AUTHPORT  1
+#define USEROPT_SOCKSHOST 2
+#define USEROPT_SOCKSPORT 3
 
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
@@ -303,6 +307,7 @@ void oscar_login(struct aim_user *user) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
 	char buf[256];
+	char *finalauth = NULL;
 	struct gaim_connection *gc = new_gaim_conn(PROTO_OSCAR, user->username, user->password);
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
 	gc->user = user;
@@ -311,18 +316,42 @@ void oscar_login(struct aim_user *user) {
 	debug_print(debug_buff);
 
 	sess = g_new0(struct aim_session_t, 1);
+
 	aim_session_init(sess, AIM_SESS_FLAGS_NONBLOCKCONNECT);
+
+	if (user->proto_opt[USEROPT_SOCKSHOST][0]) {
+		char *finalproxy;
+		if (user->proto_opt[USEROPT_SOCKSPORT][0])
+			finalproxy = g_strconcat(user->proto_opt[USEROPT_SOCKSHOST], ":",
+					user->proto_opt[USEROPT_SOCKSPORT], NULL);
+		else
+			finalproxy = g_strdup(user->proto_opt[USEROPT_SOCKSHOST]);
+		aim_setupproxy(sess, finalproxy, NULL, NULL);
+		g_free(finalproxy);
+	}
+
+	if (user->proto_opt[USEROPT_AUTH][0]) {
+		if (user->proto_opt[USEROPT_AUTHPORT][0])
+			finalauth = g_strconcat(user->proto_opt[USEROPT_AUTH], ":",
+					user->proto_opt[USEROPT_AUTHPORT], NULL);
+		else
+			finalauth = g_strdup(user->proto_opt[USEROPT_AUTH]);
+	}
+
 	/* we need an immediate queue because we don't use a while-loop to
 	 * see if things need to be sent. */
 	sess->tx_enqueue = &aim_tx_enqueue__immediate;
 	odata->sess = sess;
 
-	sprintf(buf, _("Looking up %s"), FAIM_LOGIN_SERVER);
+	sprintf(buf, _("Looking up %s"), finalauth ? finalauth : FAIM_LOGIN_SERVER);
 	set_login_progress(gc, 1, buf);
 	/* this creates a possible race condition, but hey, what can you do */
 	while (gtk_events_pending())
 		gtk_main_iteration();
-	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, FAIM_LOGIN_SERVER);
+	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, finalauth ? finalauth : FAIM_LOGIN_SERVER);
+
+        if (finalauth)
+                g_free(finalauth);
 
 	if (conn == NULL) {
 		debug_print(_("internal connection error\n"));
@@ -1680,11 +1709,129 @@ static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	g_free(n);
 }
 
+
+/* weeee */
+static void oscar_print_option(GtkEntry *entry, struct aim_user *user) {
+        int entrynum;
+
+        entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
+ 
+	if (entrynum == USEROPT_AUTH) {
+		g_snprintf(user->proto_opt[USEROPT_AUTH],
+                           sizeof(user->proto_opt[USEROPT_AUTH]), 
+                           "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_AUTHPORT) {
+		g_snprintf(user->proto_opt[USEROPT_AUTHPORT], 
+                           sizeof(user->proto_opt[USEROPT_AUTHPORT]), 
+                           "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_SOCKSHOST) {
+		g_snprintf(user->proto_opt[USEROPT_SOCKSHOST], 
+                           sizeof(user->proto_opt[USEROPT_SOCKSHOST]), 
+                           "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_SOCKSPORT) {
+		g_snprintf(user->proto_opt[USEROPT_SOCKSPORT], 
+                           sizeof(user->proto_opt[USEROPT_SOCKSPORT]), 
+                           "%s", gtk_entry_get_text(entry));
+        } 
+}
+
+static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
+	/* so here, we create the new notebook page */
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+			gtk_label_new("OSCAR Options"));
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Authorizer:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTH);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_AUTH][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTH]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTH]);
+	} else
+		gtk_entry_set_text(GTK_ENTRY(entry), "login.oscar.aol.com");
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Authorizer Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)1);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_AUTHPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHPORT]);
+	} else
+		gtk_entry_set_text(GTK_ENTRY(entry), "5190");
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("SOCKS5 Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSHOST);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_SOCKSHOST][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSHOST]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSHOST]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("SOCKS5 Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(oscar_print_option), user);
+	if (user->proto_opt[USEROPT_SOCKSPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSPORT]);
+	}
+	gtk_widget_show(entry);
+}
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->action_menu = oscar_action_menu;
+	ret->user_opts = oscar_user_opts;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;
@@ -1714,5 +1861,3 @@ void oscar_init(struct prpl *ret) {
 	ret->chat_send = oscar_chat_send;
 	ret->keepalive = oscar_keepalive;
 }
-
-#endif

@@ -264,10 +264,16 @@ static void generate_options(struct aim_user *, GtkWidget *);
 static void set_prot(GtkWidget *opt, int proto)
 {
 	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
-	if (u) {
+	if (u && (u->tmp_protocol != proto)) {
+		int i;
+		for (i = 0; i < 6; i++)
+			u->proto_opt[i][0] = '\0';
 		u->tmp_protocol = proto;
 		generate_options(u, u->main);
-	} else {
+	} else if (tmpusr.tmp_protocol != proto) {
+		int i;
+		for (i = 0; i < 6; i++)
+			tmpusr.proto_opt[i][0] = '\0';
 		tmpusr.tmp_protocol = tmpusr.protocol = proto;
 		generate_options(NULL, newmain);
 	}

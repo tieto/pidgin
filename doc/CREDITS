@@ -12,6 +12,10 @@ Mark Spencer      <IM: markster97>		markster@marko.net
 
 Other Contributors:
 
+Adam Fritzler (mid)
+	Wrote libfaim, and added stuff to oscar.c to let people use
+	a proxy with libfaim.
+
 Thanks to Torrey Searle for the spell checking code that
 accompanies the gtk_text box :)
 
