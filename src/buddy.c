@@ -395,7 +395,11 @@ void pressed_ticker(char *buddy)
 void pressed_info(GtkWidget *widget, struct buddy *b)
 {
         serv_get_info(b->name);
+}
 
+void pressed_alias(GtkWidget *widget, struct buddy *b)
+{
+	alias_dialog(b);
 }
 
 void pressed_dir_info(GtkWidget *widget, struct buddy *b)
@@ -437,6 +441,12 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 		button = gtk_menu_item_new_with_label(_("Info"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_info), b);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+
+		button = gtk_menu_item_new_with_label(_("Alias"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(pressed_alias), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -806,7 +816,7 @@ void build_edit_tree()
 	
 }
 
-struct buddy *add_buddy(char *group, char *buddy)
+struct buddy *add_buddy(char *group, char *buddy, char *show)
 {
 	struct buddy *b;
 	struct group *g;
@@ -832,6 +842,8 @@ struct buddy *add_buddy(char *group, char *buddy)
         b->item = gtk_tree_item_new();
 
 	g_snprintf(b->name, sizeof(b->name), "%s", buddy);
+	g_snprintf(b->show, sizeof(b->show), "%s", show ? (show[0] ? show : buddy) : buddy);
+		
         g->members = g_list_append(g->members, b);
 
 
@@ -1407,7 +1419,7 @@ void set_buddy(struct buddy *b)
 		} else
 			caps[0] = '\0';
 		
-                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s%s%s"), b->name, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime, ((b->idle) ? "\n" : ""), caps);
+                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s%s%s"), b->show, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime, ((b->idle) ? "\n" : ""), caps);
 
 		gtk_tooltips_set_tip(tips, GTK_WIDGET(b->item), infotip, "");
 
@@ -1437,8 +1449,8 @@ void set_buddy(struct buddy *b)
 			play_sound(BUDDY_ARRIVE);
 			b->present = 2;
 
-			who = g_malloc(sizeof(b->name) + 10);
-			strcpy(who, b->name);
+			who = g_malloc(sizeof(b->show) + 10);
+			strcpy(who, b->show);
 			gtk_label_set(GTK_LABEL(b->label), who);
 			g_free(who);
 

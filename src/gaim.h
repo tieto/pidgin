@@ -196,6 +196,7 @@ extern GList *callbacks;
 
 struct buddy {
 	char name[80];
+	char show[80];
 	GtkWidget *item;
 	GtkWidget *label;
 	GtkWidget *pix;
@@ -399,7 +400,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 715 $"
+#define REVISION "gaim:$Revision: 720 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -603,7 +604,7 @@ extern void serv_remove_buddy(char *);
 extern void serv_add_permit(char *);
 extern void serv_add_deny(char *);
 extern void serv_set_permit_deny();
-extern void serv_build_config(char *, int);
+extern void serv_build_config(char *, int, gboolean);
 extern void serv_save_config();
 extern void serv_warn(char *, int);
 extern void serv_set_dir(char *, char *, char *, char *, char *, char *, char *, int);
@@ -686,7 +687,7 @@ extern void update_button_pix();
 extern void update_all_buddies();
 extern void show_buddy_list();
 extern void refresh_buddy_window();
-extern void toc_build_config(char *, int len);
+extern void toc_build_config(char *, int len, gboolean);
 extern void signoff();
 extern void do_im_back();
 extern void set_buddy(struct buddy *);
@@ -702,7 +703,7 @@ extern struct buddy *find_buddy(char *);
 extern struct group *find_group(char *);
 extern struct group *find_group_by_buddy(char *);
 extern void remove_buddy(struct group *, struct buddy *);
-extern struct buddy *add_buddy(char *, char *);
+extern struct buddy *add_buddy(char *, char *, char *);
 extern void remove_group(struct group *);
 extern void update_lagometer(int);
 
@@ -757,6 +758,7 @@ extern void save_prefs();
 
 
 /* Functions in dialogs.c */
+extern void alias_dialog(struct buddy *);
 extern void do_export(GtkWidget *, void *);
 extern void show_warn_dialog(char *);
 extern void do_error_dialog(char *, char *);

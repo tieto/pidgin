@@ -827,7 +827,7 @@ char *toc_wait_config()
 		return NULL;
 }
 
-void toc_build_config(char *s, int len)
+void toc_build_config(char *s, int len, gboolean show)
 {
 	GList *grp = groups;
 	GList *mem;
@@ -848,7 +848,8 @@ void toc_build_config(char *s, int len)
 		mem = g->members;
 		while(mem) {
 			b = (struct buddy *)mem->data;
-			pos += g_snprintf(&s[pos], len - pos, "b %s\n", b->name);
+			pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
+					show ? ":" : "", show ? b->show : "");
 			mem = mem->next;
 		}
 		grp = grp ->next;
@@ -897,8 +898,19 @@ permit = NULL;
 				add_group(current);
 				how_many++;
 			} else if (*c == 'b' && !find_buddy(c+2)) {
-				add_buddy(current, c+2);
+				char nm[80], sw[80], *tmp = c+2;
+				int i = 0;
+				while (*tmp != ':' && *tmp)
+					nm[i++] = *tmp++;
+				if (*tmp == ':') *tmp++ = '\0';
+				nm[i] = '\0';
+				i = 0;
+				while (*tmp) sw[i++] = *tmp++;
+				sw[i] = '\0';
+				if (!find_buddy(nm))
+					add_buddy(current, nm, sw);
 				how_many++;
+				
 				bud = g_list_append(bud, c+2);
 			} else if (*c == 'p') {
 				GList *d = permit;

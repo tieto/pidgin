@@ -487,8 +487,8 @@ void serv_warn(char *name, int anon)
 	}
 }
 
-void serv_build_config(char *buf, int len) {
-	toc_build_config(buf, len);
+void serv_build_config(char *buf, int len, gboolean show) {
+	toc_build_config(buf, len, show);
 }
 
 
@@ -497,7 +497,7 @@ void serv_save_config()
 	if (!USE_OSCAR) {
 		char *buf = g_malloc(BUF_LONG);
 		char *buf2 = g_malloc(MSG_LEN);
-		serv_build_config(buf, BUF_LONG / 2);
+		serv_build_config(buf, BUF_LONG / 2, FALSE);
 		g_snprintf(buf2, MSG_LEN, "toc_set_config {%s}", buf);
 	        sflap_send(buf2, -1, TYPE_DATA);
 		g_free(buf2);

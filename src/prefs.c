@@ -464,8 +464,7 @@ static void set_permit(GtkWidget *w, int *data)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
 		permdeny = (int)data;
 	        if (blist) {
-			/* We don't save this 'at home', it's on the server.
-			 * So, we gotta resend the config to the server. */
+			do_export(0, 0);
 			serv_save_config();
 			/* we do this here because we can :) */
 			serv_set_permit_deny();

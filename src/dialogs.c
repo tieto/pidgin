@@ -71,6 +71,9 @@ int smiley_array[FACE_TOTAL];
 static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
 static GtkWidget *exportdialog, *importdialog;
+static GtkWidget *aliasdlg = NULL;
+static GtkWidget *aliasentry = NULL;
+static GtkWidget *aliasname = NULL;
 
 struct create_away {
         GtkWidget *window;
@@ -326,6 +329,12 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 
 	if (dest == importdialog)
 		importdialog = NULL;
+
+	if (dest == aliasdlg) {
+		aliasdlg = NULL;
+		aliasentry = NULL;
+		aliasname = NULL;
+	}
 
         dialogwindows = g_list_remove(dialogwindows, dest);
         gtk_widget_destroy(dest);
@@ -766,7 +775,7 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
         c = find_conversation(who);
 
-        add_buddy(grp, who);
+        add_buddy(grp, who, NULL);
 
         if (c != NULL) {
 		GtkWidget *parent = c->add_button->parent;
@@ -893,7 +902,7 @@ void show_add_group()
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
 	gtk_widget_show(frame);
-        gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
+        gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Group"));
         gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
         gtk_container_add(GTK_CONTAINER(a->window), frame);
@@ -2614,7 +2623,7 @@ void do_export(GtkWidget *w, void *dummy)
 			return;
 	}
         if ((f = fopen(path,"w"))) {
-                serv_build_config(buf, 8192 - 1);
+                serv_build_config(buf, 8192 - 1, TRUE);
                 fprintf(f, "%s\n", buf);
                 fclose(f);
                 chmod(buf, S_IRUSR | S_IWUSR);
@@ -3079,4 +3088,111 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	c->smiley_dialog = dialog;
 		
 	return;
+}
+
+static void do_alias(GtkWidget *w, gpointer n)
+{
+	char *name, *who;
+	struct buddy *b;
+	name = g_strdup(gtk_entry_get_text(GTK_ENTRY(aliasentry)));
+	if ((b = find_buddy(name)) == NULL) {
+		g_free(name);
+		destroy_dialog(aliasdlg, aliasdlg);
+		return;
+	}
+	g_snprintf(b->show, sizeof(b->show), "%s", gtk_entry_get_text(GTK_ENTRY(aliasname)));
+	do_export(0, 0);
+	who = g_malloc(sizeof(b->show) + 10);
+	strcpy(who, b->show);
+	gtk_label_set(GTK_LABEL(b->label), who);
+	g_free(who);
+	set_buddy(b);
+	g_free(name);
+	destroy_dialog(aliasdlg, aliasdlg);
+}
+
+void alias_dialog(struct buddy *b)
+{
+	GtkWidget *frame;
+	GtkWidget *vbox;
+	GtkWidget *bbox;
+	GtkWidget *cancel;
+	GtkWidget *add;
+	GtkWidget *label;
+        GtkWidget *topbox;
+
+	if (aliasdlg) {
+		gtk_entry_set_text(GTK_ENTRY(aliasentry), b->name);
+		gtk_widget_show(aliasdlg);
+		return;
+	}
+
+        aliasdlg = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_policy(GTK_WINDOW(aliasdlg), FALSE, FALSE, TRUE);
+	gtk_widget_show(aliasdlg);
+	dialogwindows = g_list_prepend(dialogwindows, aliasdlg);
+
+	bbox = gtk_hbox_new(TRUE, 10);
+        topbox = gtk_hbox_new(FALSE, 5);
+        vbox = gtk_vbox_new(FALSE, 5);
+
+        aliasentry = gtk_entry_new();
+	aliasname = gtk_entry_new();
+        /* Put the buttons in the box */
+
+	add = picture_button(aliasdlg, _("Add"), add_xpm);
+
+	cancel = picture_button(aliasdlg, _("Cancel"), cancel_xpm);
+
+        gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_label(GTK_FRAME(frame), _("Alias Buddy"));
+
+        label = gtk_label_new(_("Buddy"));
+        gtk_widget_show(label);
+        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(topbox), aliasentry, FALSE, FALSE, 5);
+	label = gtk_label_new(_("Alias"));
+	gtk_widget_show(label);
+        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(topbox), aliasname, FALSE, FALSE, 5);
+
+	gtk_entry_set_text(GTK_ENTRY(aliasentry), b->name);
+	gtk_entry_set_text(GTK_ENTRY(aliasname), b->show);
+
+        /* And the boxes in the box */
+        gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
+
+        /* Handle closes right */
+        gtk_signal_connect(GTK_OBJECT(aliasdlg), "destroy",
+                           GTK_SIGNAL_FUNC(destroy_dialog), aliasdlg);
+        gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
+                           GTK_SIGNAL_FUNC(destroy_dialog), aliasdlg);
+        gtk_signal_connect(GTK_OBJECT(add), "clicked",
+                           GTK_SIGNAL_FUNC(do_alias), NULL);
+        gtk_signal_connect(GTK_OBJECT(aliasentry), "activate",
+                           GTK_SIGNAL_FUNC(do_alias), NULL);
+	gtk_signal_connect(GTK_OBJECT(aliasname), "activate",
+			   GTK_SIGNAL_FUNC(do_alias), NULL);
+        /* Finish up */
+        gtk_widget_show(add);
+        gtk_widget_show(cancel);
+        gtk_widget_show(aliasentry);
+        gtk_widget_show(aliasname);
+        gtk_widget_show(topbox);
+        gtk_widget_show(bbox);
+        gtk_widget_show(vbox);
+	gtk_widget_show(frame);
+        gtk_window_set_title(GTK_WINDOW(aliasdlg), _("Gaim - Alias Buddy"));
+        gtk_window_set_focus(GTK_WINDOW(aliasdlg), aliasentry);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+        gtk_container_add(GTK_CONTAINER(aliasdlg), frame);
+	gtk_container_set_border_width(GTK_CONTAINER(aliasdlg), 5);
+        gtk_widget_realize(aliasdlg);
+        aol_icon(aliasdlg->window);
+
+	gtk_widget_show(aliasdlg);
 }
