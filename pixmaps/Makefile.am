@@ -3,27 +3,28 @@ EXTRA_DIST =	about_menu.png \
 		accounts.png \
 		accounts-menu.png \
 		add.xpm				\
-		angel.xpm			\
+		angel.png			\
 		arrow_down.xpm			\
 		arrow_right.xpm			\
 		away.png			\
 		away_big.xpm			\
-		bigsmile.xpm			\
+		bigsmile.png			\
 		block.xpm			\
 		broken.xpm			\
-		burp.xpm			\
+		burp.png			\
 		cancel.xpm			\
 		change-bgcolor-small.png \
 		change-fgcolor-small.png \
 		close.xpm			\
+		cool.png			\
 		connect.png			\
-		crazy4.xpm			\
-		crossedlips.xpm			\
-		cry.xpm				\
-		download.xpm			\
+		crazy.png			\
+		crossedlips.png 		\
+		cry.png				\
+		download.png			\
 		edit.png			\
-		embarrassed.xpm			\
-		farted.xpm			\
+		embarrassed.png			\
+		farted.png			\
 		fontface2.xpm			\
 		gaim.png			\
 		gaim_cool.png			\
@@ -40,30 +41,29 @@ EXTRA_DIST =	about_menu.png \
 		insert-link-small.png \
 		insert-smiley-small.png \
 		join.xpm			\
-		kiss.xpm			\
+		kiss.png			\
 		login_icon.xpm			\
 		logo.png		\
 		logo.xpm			\
 		logout_icon.xpm			\
-		luke03.xpm			\
-		moneymouth.xpm			\
-		mrt.xpm				\
+		luke.png			\
+		moneymouth.png			\
+		mrt.png				\
 		msgpend.png			\
 		msgunread.png			\
 		no_icon.xpm			\
 		offline.png			\
 		ok.xpm				\
-		oneeye.xpm			\
+		oneeye.png			\
 		online.png			\
 		panic.xpm			\
 		preferences.png	\
 		refresh.xpm			\
-		sad.xpm				\
+		sad.png				\
 		save.xpm			\
-		scream.xpm			\
+		scream.png			\
 		signon.png \
-		smile.xpm			\
-		smile8.xpm			\
+		smile.png			\
 		status-away.xpm			\
 		status-game.xpm			\
 		status-here.xpm			\
@@ -76,12 +76,12 @@ EXTRA_DIST =	about_menu.png \
 		text_bigger.png			\
 		text_normal.png	\
 		text_smaller.png		\
-		think.xpm			\
+		think.png			\
 		tmp_send.xpm			\
-		tongue.xpm			\
-		warn.xpm			\
-		wink.xpm			\
-		yell.xpm			
+		tongue.png			\
+		warn.png			\
+		wink.png			\
+		yell.png			
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
@@ -92,6 +92,11 @@ gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning
 
 gaimmenupixdir = $(datadir)/pixmaps/gaim/menus
 gaimmenupix_DATA = insert-image-small.png about_menu.png import-menu.png accounts-menu.png insert-link-small.png
+
+gaimsmileypixdir = $(datadir)/pixmaps/gaim/smileys/default
+gaimsmileypix_DATA =    luke.png oneeye.png crazy.png mrt.png download.png farted.png \
+			smile.png sad.png wink.png tongue.png scream.png kiss.png yell.png cool.png moneymouth.png burp.png embarrassed.png cry.png \
+			think.png crossedlips.png bigsmile.png angel.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png logo.png

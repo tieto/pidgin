@@ -54,15 +54,6 @@
 #include "win32dep.h"
 #endif
 
-/*#include "pixmaps/save_small.xpm"*/
-
-#include "pixmaps/luke03.xpm"
-#include "pixmaps/oneeye.xpm"
-#include "pixmaps/crazy4.xpm"
-#include "pixmaps/mrt.xpm"
-#include "pixmaps/download.xpm"
-#include "pixmaps/farted.xpm"
-
 int state_lock = 0;
 
 GdkPixmap *dark_icon_pm = NULL;
@@ -98,15 +89,89 @@ static void update_smilies(struct conversation *c);
 
 void gaim_setup_imhtml_smileys(GtkWidget *imhtml)
 {
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:-)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O-)", oneeye_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:)", crazy4_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:-)", crazy4_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-o)))", mrt_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-O)))", mrt_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "8-|)", download_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-]", farted_xpm);
+	/* This is ugly right now--it will get better when the themable smileys come */
+	
+
+	char *filename;
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "smile.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":)", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-)", NULL, filename);	
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "sad.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":(", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-(", NULL, filename);	
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "wink.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ";)", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ";-)", NULL, filename);	
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "tounge.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-p", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-P", NULL, filename);	
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "scream.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "=-O", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "=-o", NULL, filename);			
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "kiss.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-*", NULL, filename);
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "yell.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:o", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:O", NULL, filename);
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "cool.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "8-)", NULL, filename);
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "moneymouth.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-$", NULL, filename);	
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "burp.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-!", NULL, filename);		
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "embarrassed.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-[", NULL, filename);		
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "cry.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":'(", NULL, filename);	
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "think.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-/", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-\\", NULL, filename);
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "crossedlips.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-x", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-X", NULL, filename); 
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "bigsmile.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-d", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-D", NULL, filename); 	
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "angel.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O:-)", NULL, filename);	
+
+
+	/* "Secret" smileys */
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "luke.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:)", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:-)", NULL, filename);
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "oneeye.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O-)", NULL, filename);
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "crazy.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:)", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:-)", NULL, filename);
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "mrt.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-o)))", NULL, filename);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-O)))", NULL, filename);
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "download.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "8-|)", NULL, filename);
+	
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "farted.png", NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-]", NULL, filename);
 }
 
 void gaim_setup_imhtml(GtkWidget *imhtml)
@@ -1797,6 +1862,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 	int unhighlight = 0;
+	char *withfonttag;
 
 	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
 		return;
@@ -1959,8 +2025,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		g_free(str);
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, -1, 0);
-
-		logstr = gtk_imhtml_append_text(GTK_IMHTML(c->text), what, length, gtk_font_options);
+		
+		withfonttag = g_strdup_printf("<font sml=\"%s\">%s</font>", c->gc->prpl->name, what);
+		logstr = gtk_imhtml_append_text(GTK_IMHTML(c->text), withfonttag, length, gtk_font_options);
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", -1, 0);
 
@@ -1999,10 +2066,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 			if (logging_options & OPT_LOG_STRIP_HTML) {
 				t1 = strip_html(buf);
-				t2 = strip_html(what);
+				t2 = strip_html(withfonttag);
 			} else {
 				t1 = html_logize(buf);
-				t2 = html_logize(what);
+				t2 = html_logize(withfonttag);
 			}
 			fd = open_log_file(nm, c->is_chat);
 			if (fd) {
@@ -2018,7 +2085,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			g_free(t2);
 			g_free(nm);
 		}
+		
+		g_free(withfonttag);	
 	}
+
 
 	if (!(flags & WFLAG_NOLOG) && ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
 								   (!c->is_chat && (im_options & OPT_IM_POPUP))))
@@ -3594,7 +3664,7 @@ void update_smilies(struct conversation *c)
 			struct _prpl_smiley *smile =
 				(struct _prpl_smiley *)smilies->data;
 
-			gtk_imhtml_associate_smiley(GTK_IMHTML(c->text), smile->key, smile->xpm);
+			//gtk_imhtml_associate_smiley(GTK_IMHTML(c->text), smile->key, smile->xpm);
 			smilies = g_slist_next(smilies);
 		}
 	} else {

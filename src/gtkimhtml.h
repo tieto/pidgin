@@ -49,6 +49,8 @@ struct _GtkIMHtml {
 	gboolean comments, smileys;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
+	GHashTable *smiley_data;
+	GtkSmileyTree *default_smilies;
 };
 
 struct _GtkIMHtmlClass {
@@ -85,8 +87,9 @@ void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 					GtkIMHtmlImage    handler);
 
 void       gtk_imhtml_associate_smiley (GtkIMHtml        *imhtml,
+					gchar            *sml,
 					gchar            *text,
-					gchar           **xpm);
+					gchar            *path);
 
 void 	   gtk_imhtml_init_smileys     (GtkIMHtml *imhtml);
 
