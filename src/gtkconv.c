@@ -480,6 +480,26 @@ add_remove_cb(GtkWidget *widget, GaimConversation *conv)
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
 
+static void chat_do_info(GaimConversation *conv, const char *who)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc;
+
+	if ((gc = gaim_conversation_get_gc(conv))) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+		/*
+		 * If there are special needs for getting info on users in
+		 * buddy chat "rooms"...
+		 */
+		if (prpl_info->get_cb_info != NULL)
+			prpl_info->get_cb_info(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), who);
+		else
+			prpl_info->get_info(gc, who);
+	}
+}
+
+
 static void
 info_cb(GtkWidget *widget, GaimConversation *conv)
 {
@@ -510,7 +530,7 @@ info_cb(GtkWidget *widget, GaimConversation *conv)
 		else
 			return;
 
-		serv_get_info(gaim_conversation_get_gc(conv), name);
+		chat_do_info(conv, name);
 	}
 }
 
@@ -1074,25 +1094,11 @@ menu_chat_im_cb(GtkWidget *w, GaimConversation *conv)
 static void
 menu_chat_info_cb(GtkWidget *w, GaimConversation *conv)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimConnection *gc;
 	char *who;
 
-	gc = gaim_conversation_get_gc(conv);
 	who = g_object_get_data(G_OBJECT(w), "user_data");
 
-	if (gc != NULL) {
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		/*
-		 * If there are special needs for getting info on users in
-		 * buddy chat "rooms"...
-		 */
-		if (prpl_info->get_cb_info != NULL)
-			prpl_info->get_cb_info(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), who);
-		else
-			prpl_info->get_info(gc, who);
-	}
+	chat_do_info(conv, who);
 }
 
 static void
