@@ -822,7 +822,6 @@ GtkWidget *messages_page() {
 	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
 			"/gaim/gtk/conversations/spellcheck", vbox);
 #endif
-#if 1 /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Ignore"));
 	gaim_gtk_prefs_checkbox(_("Ignore c_olors"),
 							"/gaim/gtk/conversations/ignore_colors", vbox);
@@ -830,10 +829,6 @@ GtkWidget *messages_page() {
 							"/gaim/gtk/conversations/ignore_fonts", vbox);
 	gaim_gtk_prefs_checkbox(_("Ignore font si_zes"),
 							"/gaim/gtk/conversations/ignore_font_sizes", vbox);
-#else
-	gaim_gtk_prefs_checkbox(_("_Ignore formatting on incoming messages"),
-			"/gaim/gtk/conversations/ignore_formatting", vbox);
-#endif
 
 	vbox = gaim_gtk_make_frame (ret, _("Default Formatting"));
 
@@ -1005,7 +1000,6 @@ GtkWidget *conv_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 
-#if 1 /* PREFSLASH04 */
 	label = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 					"/gaim/gtk/conversations/button_type",
 					_("Pictures"), GAIM_BUTTON_IMAGE,
@@ -1015,7 +1009,6 @@ GtkWidget *conv_page() {
 					NULL);
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-#endif /* PREFSLASH04 */
 
 	gaim_gtk_prefs_checkbox(_("Enable \"_slash\" commands"),
 			"/gaim/gtk/conversations/enable_commands", vbox);
@@ -1810,11 +1803,12 @@ GtkWidget *away_page() {
 	gaim_gtk_prefs_checkbox(_("_Queue new messages when away"),
 				   "/gaim/gtk/away/queue_messages", vbox);
 
-	vbox = gaim_gtk_make_frame (ret, _("Auto-response"));
-	gaim_gtk_prefs_checkbox(_("_Send auto-response"),
-				  "/core/away/auto_response/enabled", vbox);
-	gaim_gtk_prefs_checkbox(_("_Only send auto-response when idle"),
-				  "/core/away/auto_response/idle_only", vbox);
+	label = gaim_gtk_prefs_dropdown(vbox, _("_Auto-reply:"),
+		GAIM_PREF_STRING, "/core/away/auto_reply",
+		_("Never"), "never",
+		_("Only when away"), "away",
+		_("Only when away and idle"), "awayidle",
+		NULL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle _time reporting:"),
@@ -1873,18 +1867,6 @@ GtkWidget *away_page() {
 
 	return ret;
 }
-
-#if 0
-static GtkWidget *
-protocol_page() {
-	GtkWidget *ret;
-
-	ret = gtk_label_new(NULL);
-	gtk_widget_show(ret);
-
-	return ret;
-}
-#endif
 
 static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
 
@@ -2750,11 +2732,6 @@ void gaim_gtk_prefs_update_old() {
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
-#if 0 /* PREFSLASH04 */
-	gaim_prefs_remove("/gaim/gtk/conversations/ignore_colors");
-	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
-	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
-#endif
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
