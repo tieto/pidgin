@@ -1190,6 +1190,7 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *list;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
+	GtkWidget *tabby;
 
 	char buf[BUF_LONG];
 
@@ -1246,7 +1247,19 @@ void show_new_buddy_chat(struct conversation *b)
 
 		cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(cont), 5);
-		gtk_notebook_append_page(GTK_NOTEBOOK(chat_notebook), cont, gtk_label_new(b->name));
+
+		tabby = gtk_hbox_new(FALSE, 0);
+		b->close = gtk_button_new();
+		gtk_container_add(GTK_CONTAINER(b->close), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
+		gtk_button_set_relief(GTK_BUTTON(b->close), GTK_RELIEF_NONE);
+		b->tab_label = gtk_label_new(b->name);
+
+		gtk_signal_connect(GTK_OBJECT(b->close), "clicked", GTK_SIGNAL_FUNC(close_callback), b);
+
+		gtk_box_pack_start(GTK_BOX(tabby), b->close, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(tabby), b->tab_label, FALSE, FALSE, 0);
+		gtk_widget_show_all(tabby);
+		gtk_notebook_append_page(GTK_NOTEBOOK(chat_notebook), cont, tabby);
 		gtk_widget_show(cont);
 	} else {
 		win = gtk_window_new(GTK_WINDOW_TOPLEVEL);

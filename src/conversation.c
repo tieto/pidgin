@@ -2562,8 +2562,7 @@ void update_buttons_by_protocol(struct conversation *c)
 
 void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointer data)
 {
-	GtkWidget *label = gtk_notebook_get_tab_label(notebook,
-			gtk_notebook_get_nth_page(notebook, page_num));
+	GtkWidget *label = NULL;
 	GtkStyle *style;
 	struct conversation *c;
 	
@@ -2581,6 +2580,12 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		c = g_list_nth_data(chats, page_num);
 	if (c && c->window && c->entry)
 		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
+	
+	label = c->tab_label;
+
+	if (!label)
+		return;
+
 	if (!GTK_WIDGET_REALIZED(label))
 		return;
 	style = gtk_style_new();
@@ -2626,9 +2631,7 @@ void update_convo_status(struct conversation *c) {
 			    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
 			g_list_length(conversations) : 0;
 		GList *ws = (c->is_chat ? chats : conversations);
-		GtkWidget *label = gtk_notebook_get_tab_label(notebook,
-							      gtk_notebook_get_nth_page(notebook,
-											offs + g_list_index(ws, c)));
+		GtkWidget *label = c->tab_label;
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
@@ -2722,6 +2725,7 @@ void show_conv(struct conversation *c)
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *menubar;
+	GtkWidget *tabby;
 
 	c->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -2794,7 +2798,19 @@ void show_conv(struct conversation *c)
 		cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(cont), 5);
 		/* this doesn't matter since we're resetting the name once we're out of the if */
-		gtk_notebook_insert_page(GTK_NOTEBOOK(convo_notebook), cont, gtk_label_new(c->name),
+/*		gtk_notebook_insert_page(GTK_NOTEBOOK(convo_notebook), cont, gtk_label_new(c->name),*/
+		tabby = gtk_hbox_new(FALSE, 0);
+		c->close = gtk_button_new();
+		gtk_container_add(GTK_CONTAINER(c->close), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
+		gtk_button_set_relief(GTK_BUTTON(c->close), GTK_RELIEF_NONE);
+		c->tab_label = gtk_label_new(c->name);
+
+		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
+
+		gtk_box_pack_start(GTK_BOX(tabby), c->close, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(tabby), c->tab_label, FALSE, FALSE, 0);
+		gtk_widget_show_all(tabby);
+		gtk_notebook_insert_page(GTK_NOTEBOOK(convo_notebook), cont, tabby,
 				g_list_index(conversations, c));
 		gtk_widget_show(cont);
 	} else {
@@ -3255,7 +3271,7 @@ void set_convo_title(struct conversation *c)
 	if (im_options & OPT_IM_ONE_WINDOW) {
 		nb = GTK_NOTEBOOK(convo_notebook);
 		index = g_list_index(conversations, c);
-		gtk_notebook_set_tab_label_text(nb, gtk_notebook_get_nth_page(nb, index), text);
+		gtk_label_set_text(GTK_LABEL(c->tab_label), text);
 	} else {
 		char buf[256];
 		if ((find_log_info(c->name)) || (c->is_chat && (logging_options & OPT_LOG_CHATS))

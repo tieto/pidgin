@@ -167,9 +167,9 @@ struct conversation {
         int id;
 	GtkWidget *count;
 	GtkWidget *list;
-	GtkWidget *whisper;
+	GtkWidget *whisper; 
 	GtkWidget *invite;
-	GtkWidget *close;
+	GtkWidget *close; 
 	GtkWidget *topic_text;
 
 	/* something to distinguish */
@@ -184,6 +184,8 @@ struct conversation {
 
 	GtkTextBuffer *entry_buffer;
 	GtkWidget     *entry;
+
+	GtkWidget *tab_label;
 };
 
 struct log_conversation {
