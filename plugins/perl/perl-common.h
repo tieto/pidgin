@@ -40,6 +40,6 @@ SV *gaim_perl_sv_from_value(const GaimValue *value);
 
 void *gaim_perl_data_from_sv(GaimValue *value, SV *sv);
 SV *gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
-							void **copy_arg);
+							void ***copy_arg);
 
 #endif /* _GAIM_PERL_COMMON_H_ */

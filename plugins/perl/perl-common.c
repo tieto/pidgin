@@ -370,7 +370,7 @@ gaim_perl_data_from_sv(GaimValue *value, SV *sv)
 		case GAIM_TYPE_ULONG:   return (void *)SvUV(sv);
 		case GAIM_TYPE_INT64:   return (void *)SvIV(sv);
 		case GAIM_TYPE_UINT64:  return (void *)SvUV(sv);
-		case GAIM_TYPE_STRING:  return (void *)SvPV(sv, na);
+		case GAIM_TYPE_STRING:  return g_strdup((void *)SvPV(sv, na));
 		case GAIM_TYPE_POINTER: return (void *)SvIV(sv);
 		case GAIM_TYPE_BOXED:   return (void *)SvIV(sv);
 
@@ -407,7 +407,7 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 
 SV *
 gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
-						void **copy_arg)
+						void ***copy_arg)
 {
 	if (gaim_value_is_outgoing(value))
 	{
@@ -420,49 +420,50 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
 				return gaim_perl_sv_from_subtype(value, *(void **)*copy_arg);
 
 			case GAIM_TYPE_BOOLEAN:
-				if ((*copy_arg = va_arg(*args, gboolean *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, gboolean *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(gboolean *)*copy_arg);
 
 			case GAIM_TYPE_INT:
-				if ((*copy_arg = va_arg(*args, int *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, int *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(int *)*copy_arg);
 
 			case GAIM_TYPE_UINT:
-				if ((*copy_arg = va_arg(*args, unsigned int *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, unsigned int *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(unsigned int *)*copy_arg);
 
 			case GAIM_TYPE_LONG:
-				if ((*copy_arg = va_arg(*args, long *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, long *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(long *)*copy_arg);
 
 			case GAIM_TYPE_ULONG:
-				if ((*copy_arg = va_arg(*args, unsigned long *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args,
+												unsigned long *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(unsigned long *)*copy_arg);
 
 			case GAIM_TYPE_INT64:
-				if ((*copy_arg = va_arg(*args, gint64 *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, gint64 *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(gint64 *)*copy_arg);
 
 			case GAIM_TYPE_UINT64:
-				if ((*copy_arg = va_arg(*args, guint64 *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, guint64 *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(guint64 *)*copy_arg);
 
 			case GAIM_TYPE_STRING:
-				if ((*copy_arg = va_arg(*args, char **)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, char **)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVGChar(*(char **)*copy_arg);
@@ -544,7 +545,7 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
 				if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
 					return &PL_sv_undef;
 
-				return newSVGChar(*copy_arg);
+				return newSVGChar(*(char **)*copy_arg);
 
 			case GAIM_TYPE_POINTER:
 				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)

@@ -61,6 +61,8 @@ perl_timeout_cb(gpointer data)
 	return 0;
 }
 
+typedef void *DATATYPE;
+
 static void *
 perl_signal_cb(va_list args, void *data)
 {
@@ -71,7 +73,8 @@ perl_signal_cb(va_list args, void *data)
 	int value_count;
 	GaimValue *ret_value, **values;
 	SV **sv_args;
-	void **copy_args;
+	DATATYPE **copy_args;
+	STRLEN na;
 
 	dSP;
 	ENTER;
@@ -81,12 +84,13 @@ perl_signal_cb(va_list args, void *data)
 	gaim_signal_get_values(handler->instance, handler->signal,
 						   &ret_value, &value_count, &values);
 
-	sv_args   = g_new(SV *,   value_count);
-	copy_args = g_new(void *, value_count);
+	sv_args   = g_new(SV *,    value_count);
+	copy_args = g_new(void **, value_count);
 
 	for (i = 0; i < value_count; i++)
 	{
-		sv_args[i] = gaim_perl_sv_from_vargs(values[i], &args, &copy_args[i]);
+		sv_args[i] = sv_2mortal(gaim_perl_sv_from_vargs(values[i],
+														&args, &copy_args[i]));
 
 		XPUSHs(sv_args[i]);
 	}
@@ -97,7 +101,7 @@ perl_signal_cb(va_list args, void *data)
 
 	if (ret_value != NULL)
 	{
-		count = call_sv(handler->callback, G_SCALAR);
+		count = call_sv(handler->callback, G_EVAL | G_SCALAR);
 
 		SPAGAIN;
 
@@ -107,18 +111,82 @@ perl_signal_cb(va_list args, void *data)
 			ret_val = gaim_perl_data_from_sv(ret_value, POPs);
 	}
 	else
+	{
 		call_sv(handler->callback, G_SCALAR);
+
+		SPAGAIN;
+	}
+
+	if (SvTRUE(ERRSV))
+	{
+		gaim_debug_error("perl", "Perl function exited abnormally: %s\n",
+						 SvPV(ERRSV, na));
+	}
 
 	/* See if any parameters changed. */
 	for (i = 0; i < value_count; i++)
 	{
 		if (gaim_value_is_outgoing(values[i]))
 		{
+			switch (gaim_value_get_type(values[i]))
+			{
+				case GAIM_TYPE_BOOLEAN:
+					*((gboolean *)copy_args[i]) = SvIV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_INT:
+					*((int *)copy_args[i]) = SvIV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_UINT:
+					*((unsigned int *)copy_args[i]) = SvUV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_LONG:
+					*((long *)copy_args[i]) = SvIV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_ULONG:
+					*((unsigned long *)copy_args[i]) = SvUV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_INT64:
+					*((gint64 *)copy_args[i]) = SvIV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_UINT64:
+					*((guint64 *)copy_args[i]) = SvUV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_STRING:
+					gaim_debug_misc("perl", "Copying over %s\n",
+									*((char **)copy_args[i]));
+					g_free(*((char **)copy_args[i]));
+					*((char **)copy_args[i]) = g_strdup(SvPV(sv_args[i], na));
+					gaim_debug_misc("perl", "New value: %s\n",
+									*((char **)copy_args[i]));
+					break;
+
+				case GAIM_TYPE_POINTER:
+					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
+					break;
+
+				case GAIM_TYPE_BOXED:
+					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
+					break;
+
+				default:
+					break;
+			}
+
+#if 0
 			*((void **)copy_args[i]) = gaim_perl_data_from_sv(values[i],
 															  sv_args[i]);
+#endif
 		}
 	}
 
+	PUTBACK;
 	FREETMPS;
 	LEAVE;
 
