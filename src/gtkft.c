@@ -572,6 +572,9 @@ gaim_gtkxfer_cancel(struct gaim_xfer *xfer)
 	struct gaim_gtkxfer_ui_data *data;
 	GdkPixbuf *pixbuf;
 
+	if (xfer_dialog == NULL)
+		return;
+
 	data = (struct gaim_gtkxfer_ui_data *)xfer->ui_data;
 
 	pixbuf = gtk_widget_render_icon(xfer_dialog->window,
