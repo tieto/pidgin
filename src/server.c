@@ -94,6 +94,11 @@ static void update_keepalive(struct gaim_connection *gc, gboolean on)
 	}
 }
 
+static gboolean delayed_unload(void *handle) {
+	g_module_close(handle);
+	return FALSE;
+}
+
 void serv_close(struct gaim_connection *gc)
 {
 	struct prpl *prpl;
@@ -123,7 +128,8 @@ void serv_close(struct gaim_connection *gc)
 		debug_printf("Prpl %s is now being used by %d accounts\n", prpl->name, prpl_accounts[prpl->protocol]);
 		if (prpl_accounts[prpl->protocol] == 0) { /* We don't need this protocol anymore */
 			debug_printf("Throwing out prpl %s\n", prpl->name);
-			g_module_close(prpl->plug->handle);
+			unload_protocol(prpl);
+			g_timeout_add(0,delayed_unload, prpl->plug->handle);
 			prpl->plug->handle = NULL;
 		}
 	}
