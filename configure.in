@@ -365,7 +365,6 @@ AC_OUTPUT([Makefile
 	   pixmaps/protocols/napster/Makefile
 	   pixmaps/protocols/jabber/Makefile
 	   pixmaps/protocols/irc/Makefile
-	   pixmaps/protocols/icq/Makefile
 	   pixmaps/protocols/gg/Makefile
 	   pixmaps/smileys/Makefile
 	   pixmaps/smileys/default/Makefile
