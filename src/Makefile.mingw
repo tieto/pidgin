@@ -111,6 +111,7 @@ DLL_C_SRC =		about.c \
 			gtkutils.c \
 			html.c \
 			idle.c \
+			imgstore.c \
 			log.c \
 			main.c \
 			md5.c \
