@@ -51,9 +51,12 @@ static int gaim_parse_offgoing   (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_incoming_im(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_misses     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_user_info  (struct aim_session_t *, struct command_rx_struct *, ...);
-static int gaim_parse_unknown    (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_motd       (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_chatnav_info     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_chat_join        (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_chat_leave       (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
 
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
@@ -62,11 +65,7 @@ static void oscar_callback(gpointer data, gint source,
 	struct timeval tv;
 	int selstat;
 
-	/* FIXME : There's gotta be a better way of getting this to not
-	 * either hang until a message is received or only update every
-	 * 2 seconds. If someone can tell me what it is, let me know. */
-	tv.tv_sec = 2;
-	tv.tv_usec = 0;
+	tv.tv_sec = 0; tv.tv_usec = 0;
 	conn = aim_select(sess, &tv, &selstat);
 
 	switch(selstat) {
@@ -89,9 +88,13 @@ static void oscar_callback(gpointer data, gint source,
 			aim_tx_flushqueue(sess);
 			break;
 		case 2: /* incoming data pending */
-			if (aim_get_command(sess, conn) < 0)
+			if (aim_get_command(sess, conn) < 0) {
 				debug_print("connection error!\n");
-			else
+				signoff();
+				hide_login_progress("Disconnected.");
+				aim_logoff(sess);
+				gdk_input_remove(inpa);
+			} else
 				aim_rxdispatch(sess);
 			break;
 	}
@@ -145,6 +148,7 @@ int oscar_login(char *username, char *password) {
 				gaim_auth_server_ready, 0);
 	aim_send_login(sess, conn, username, password, &info);
 
+	gaim_conn = conn;
 	inpa = gdk_input_add(conn->fd,
 				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, sess);
@@ -244,8 +248,8 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATECHANGE, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_CTN, AIM_CB_CTN_DEFAULT, gaim_parse_unknown, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEFAULT, gaim_parse_unknown, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_CTN, AIM_CB_CTN_DEFAULT, aim_parse_unknown, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEFAULT, aim_parse_unknown, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 
 	aim_auth_sendcookie(sess, bosconn, sess->logininfo.cookie);
@@ -282,7 +286,13 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_chatnav_reqrights(sess, command->conn);
 		break;
 	case AIM_CONN_TYPE_CHAT:
-		/* FIXME */
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
+		aim_bos_reqrate(sess, command->conn);
+		aim_bos_ackrateresp(sess, command->conn);
+		aim_chat_clientready(sess, command->conn);
 		break;
 	default: /* huh? */
 		break;
@@ -361,7 +371,17 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		debug_print("chatnav: connected\n");
 		break;
 	case 0xe: /* Chat */
-		/* FIXME */
+		{
+		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, ip);
+		char *roomname = va_arg(ap, char *);
+		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR) {
+			debug_print("unable to connect to chat server\n");
+			return 1;
+		}
+		aim_chat_attachname(tstconn, roomname);
+		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
+		aim_auth_sendcookie(sess, tstconn, cookie);
+		}
 		break;
 	default: /* huh? */
 		sprintf(debug_buff, "got redirect for unknown service 0x%04x\n",
@@ -378,6 +398,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 int gaim_parse_oncoming(struct aim_session_t *sess,
 			struct command_rx_struct *command, ...) {
 	struct aim_userinfo_s *info;
+	time_t time_idle;
 	int type = 0;
 
 	va_list ap;
@@ -394,8 +415,14 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 	if (info->class & AIM_CLASS_AWAY)
 		type |= UC_UNAVAILABLE;
 
+	if (info->idletime) {
+		time(&time_idle);
+		time_idle -= info->idletime*60;
+	} else
+		time_idle = 0;
+
 	serv_got_update(info->sn, 1, info->warnlevel, info->onlinesince,
-			info->idletime, type);
+			time_idle, type);
 
 	return 1;
 }
@@ -445,19 +472,78 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 
 int gaim_parse_misses(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
-	/* FIXME */
+	u_short family;
+	u_short subtype;
+
+	char buf[2048], buf2[256];
+	sprintf(buf2, "Gaim - Error");
+	buf[0] = 0;
+
+	family  = aimutil_get16(command->data+0);
+	subtype = aimutil_get16(command->data+2);
+
+	switch (family) {
+/*	case 0x0001:
+		if (subtype == 0x000a)
+			sprintf(buf, "You are sending messages too fast.");
+		break;
+*/	case 0x0002:
+		if (subtype == 0x0001)
+			sprintf(buf, "Unknown SNAC error (I'm hungry)");
+		break;
+	case 0x0004:
+		if (subtype == 0x0001)
+			sprintf(buf, "User is not online.");
+		else if (subtype == 0x000a)
+			sprintf(buf, "A message has been dropped.");
+		break;
+	}
+
+	if (buf[0] != 0)
+		do_error_dialog(buf, buf2);
+
 	return 1;
 }
 
 int gaim_parse_user_info(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
-	/* FIXME */
-	return 1;
-}
+	struct aim_userinfo_s *info;
+	char *prof_enc = NULL, *prof = NULL;
 
-int gaim_parse_unknown(struct aim_session_t *sess,
-		       struct command_rx_struct *command, ...) {
-	/* FIXME */
+	va_list ap;
+	va_start(ap, command);
+	info = va_arg(ap, struct aim_userinfo_s *);
+	prof_enc = va_arg(ap, char *);
+	prof = va_arg(ap, char *);
+	va_end(ap);
+	sprintf(debug_buff, "userinfo: sn: %s\n", info->sn);
+	debug_print(debug_buff);
+	sprintf(debug_buff, "userinfo: warnings: %d\n", info->warnlevel);
+	debug_print(debug_buff);
+	sprintf(debug_buff, "userinfo: class: ");
+	debug_print(debug_buff);
+	if (info->class & 0x0001)
+		debug_print("TRIAL ");
+	if (info->class & 0x0002)
+		debug_print("HUH? ");
+	if (info->class & 0x0004)
+		debug_print("AOL ");
+	if (info->class & 0x0008)
+		debug_print("HUH? ");
+	if (info->class & 0x0010)
+		debug_print("FREE");
+	debug_print("\n");
+	sprintf(debug_buff, "userinfo: member since: %lu\n", info->membersince);
+	debug_print(debug_buff);
+	sprintf(debug_buff, "userinfo: online since: %lu\n", info->onlinesince);
+	debug_print(debug_buff);
+	sprintf(debug_buff, "userinfo: idle time: %d\n", info->idletime);
+	debug_print(debug_buff);
+	sprintf(debug_buff, "userinfo: profile encoding: %s\n", prof_enc ?
+						prof_enc : "[none]");
+	debug_print(debug_buff);
+	sprintf(debug_buff, "userinfo: profile: %s\n", prof ? prof : "[none]");
+	debug_print(debug_buff);
 	return 1;
 }
 
@@ -483,4 +569,29 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 	/* FIXME */
 	return 1;
 }
+
+int gaim_chat_join(struct aim_session_t *sess,
+		   struct command_rx_struct *command, ...) {
+	/* FIXME */
+	return 1;
+}
+
+int gaim_chat_leave(struct aim_session_t *sess,
+		    struct command_rx_struct *command, ...) {
+	/* FIXME */
+	return 1;
+}
+
+int gaim_chat_info_update(struct aim_session_t *sess,
+			  struct command_rx_struct *command, ...) {
+	/* FIXME */
+	return 1;
+}
+
+int gaim_chat_incoming_msg(struct aim_session_t *sess,
+			   struct command_rx_struct *command, ...) {
+	/* FIXME */
+	return 1;
+}
+
 #endif /* USE_OSCAR */

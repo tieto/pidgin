@@ -171,6 +171,8 @@ void serv_get_info(char *name)
 #ifndef USE_OSCAR
         g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
         sflap_send(buf, -1, TYPE_DATA);
+#else
+	aim_getinfo(gaim_sess, gaim_conn, name);
 #endif
 }
 
@@ -206,6 +208,9 @@ void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 	sprintf(debug_buff,"Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden, city, state, country);
 	debug_print(debug_buff);
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	if (strlen(email))
+		aim_usersearch_address(gaim_sess, gaim_conn, email);
 #endif
 }
 
@@ -219,6 +224,9 @@ void serv_set_away(char *message)
         else
                 g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	aim_bos_setprofile(gaim_sess, gaim_conn, current_user->user_info,
+				message, AIM_CAPS_CHAT);
 #endif
 }
 
@@ -228,6 +236,13 @@ void serv_set_info(char *info)
 #ifndef USE_OSCAR
 	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", info);
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	if (awaymessage)
+		aim_bos_setprofile(gaim_sess, gaim_conn, info,
+					awaymessage->message, AIM_CAPS_CHAT);
+	else
+		aim_bos_setprofile(gaim_sess, gaim_conn, info,
+					NULL, AIM_CAPS_CHAT);
 #endif
 }
 
@@ -355,6 +370,8 @@ void serv_set_idle(int time)
 #ifndef USE_OSCAR
 	g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
 	sflap_send(buf, -1, TYPE_DATA);
+#else
+	aim_bos_setidle(gaim_sess, gaim_conn, time);
 #endif
 }
 

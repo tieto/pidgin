@@ -1,3 +1,16 @@
+Sat May 20 09:56:16 UTC 2000 EWarmenhoven
+	- That 2 second delay in updates is gone, and I think it's actually
+	  faster than the TOC code now.
+	- I figured out why it was segfaulting. I'm stupid sometimes.
+	- I figured out why the idle times were appearing bizarrely. Once
+	  again, I'm stupid sometimes.
+	- You can now be idle
+	- You can now get a user's info (sort of - use the debug window) (still
+	  no away messages though....)
+	- You can now be away
+	- You can now set your info (but not your dir info - yet)
+	- I think it's almost at a point where it's ready for use.
+
 Sat May 20 06:29:31 UTC 2000 EWarmenhoven
 	- You can add and remove buddies now. It also tries to retrieve the
 	  buddy list using the .gaimbdcache list, and saves it the same way
