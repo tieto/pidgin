@@ -71,9 +71,9 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
 			}
 			if((jbr = jabber_buddy_find_resource(jb, NULL))) {
-				gaim_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status);
+				gaim_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
 			} else {
-				gaim_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg);
+				gaim_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
 			}
 		}
 	}
@@ -431,10 +431,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
 			if(!jbr || jbr == found_jbr) {
-				gaim_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status);
+				gaim_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
 			}
 		} else {
-			gaim_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status);
+			gaim_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
 		g_free(buddy_name);
 	}

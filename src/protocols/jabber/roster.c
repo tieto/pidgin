@@ -278,7 +278,7 @@ void jabber_roster_add_buddy(GaimConnection *gc, GaimBuddy *buddy,
 	} else if((jbr =jabber_buddy_find_resource(jb, NULL))) {
 		gaim_prpl_got_user_status(gc->account, who,
 				jabber_buddy_state_get_status_id(jbr->state),
-				"priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status);
+				"priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
 	}
 
 	g_free(my_bare_jid);
