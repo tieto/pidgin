@@ -62,6 +62,7 @@ struct _GtkIMHtml {
 	guint tip_timer;
 
 	GList *scalables;
+	GdkRectangle old_rect;
 };
 
 struct _GtkIMHtmlClass {

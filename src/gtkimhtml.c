@@ -56,7 +56,7 @@
 static gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer user_data);
 static gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer user_data);
 
-static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gpointer user_data);
+static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpointer user_data);
 static gint gtk_imhtml_tip (gpointer data);
 
 
@@ -1395,14 +1395,12 @@ gtk_imhtml_tip (gpointer data)
 	return FALSE;
 }
 
-static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gpointer user_data)
+static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpointer user_data)
 {
-	static GdkRectangle old_rect = {0,0,0,0};
 	GdkRectangle rect;
 
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
-
-	if(old_rect.width && (old_rect.width != rect.width || old_rect.height != rect.height)){
+	if(widget->old_rect.width != rect.width || widget->old_rect.height != rect.height){
 		GList *iter = GTK_IMHTML(widget)->scalables;
 
 		while(iter){
@@ -1413,7 +1411,7 @@ static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gp
 		}
 	}
 
-	old_rect = rect;
+	widget->old_rect = rect;
 	return FALSE;
 }
 
@@ -1502,9 +1500,7 @@ GtkIMHtmlScalable *gaim_hr_new()
 
 void gaim_hr_scale(GtkIMHtmlScalable *scale, int width, int height)
 {
-	/* FIXME: we need to figure out why this causes infinite looping
 	gtk_widget_set_size_request(((gaim_hr *)scale)->sep, width, 2);
-	*/
 }
 
 void gaim_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
