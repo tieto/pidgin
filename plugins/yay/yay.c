@@ -263,6 +263,9 @@ static void yahoo_login(struct aim_user *user) {
 	account_online(gc);
 	serv_finish_login(gc);
 
+	if (bud_list_cache_exists(gc))
+		do_import(NULL, gc);
+
 	gc->inpa = gdk_input_add(ctxt->sockfd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				yahoo_callback, gc);
 }
