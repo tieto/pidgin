@@ -84,6 +84,7 @@ C_SRC =			admin.c		\
 			invite.c	\
 			locate.c	\
 			misc.c		\
+			md5.c		\
 			msgcookie.c	\
 			odir.c		\
 			popups.c	\

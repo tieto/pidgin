@@ -81,6 +81,7 @@ DLL_C_SRC =	\
 			accountopt.c \
 			blist.c \
 			buddyicon.c \
+			cipher.c \
 			cmds.c \
 			connection.c \
 			conversation.c \
@@ -122,7 +123,6 @@ DLL_C_SRC =	\
 			idle.c \
 			imgstore.c \
 			log.c \
-			md5.c \
 			network.c \
 			notify.c \
 			plugin.c \
@@ -136,7 +136,6 @@ DLL_C_SRC =	\
 			roomlist.c \
 			savedstatuses.c \
 			server.c \
-			sha.c \
 			signals.c \
 			sound.c \
 			sslconn.c \
