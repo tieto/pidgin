@@ -1735,7 +1735,6 @@ static gboolean blist_safe_to_write = FALSE;
 
 GaimGroup *blist_parser_group = NULL;
 GaimContact *blist_parser_contact = NULL;
-static char *blist_parser_group_name = NULL;
 static char *blist_parser_account_name = NULL;
 static int blist_parser_account_protocol = 0;
 static char *blist_parser_chat_alias = NULL;
@@ -1783,15 +1782,15 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "blist")) {
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BLIST));
 	} else if(!strcmp(element_name, "group")) {
+		char *name = NULL;
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_GROUP));
 		for(i=0; attribute_names[i]; i++) {
 			if(!strcmp(attribute_names[i], "name")) {
-				g_free(blist_parser_group_name);
-				blist_parser_group_name = g_strdup(attribute_values[i]);
+				name = attribute_values[i];
 			}
 		}
-		if(blist_parser_group_name) {
-			blist_parser_group = gaim_group_new(blist_parser_group_name);
+		if(name) {
+			blist_parser_group = gaim_group_new(name);
 			gaim_blist_add_group(blist_parser_group,
 					gaim_blist_get_last_sibling(gaimbuddylist->root));
 		}
@@ -1887,23 +1886,20 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "group")) {
 		if(blist_parser_group_settings) {
-			GaimGroup *g = gaim_find_group(blist_parser_group_name);
-			g_hash_table_destroy(g->settings);
-			g->settings = blist_parser_group_settings;
+			g_hash_table_destroy(blist_parser_group->settings);
+			blist_parser_group->settings = blist_parser_group_settings;
 		}
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 		blist_parser_group_settings = NULL;
 		blist_parser_group = NULL;
-		blist_parser_group_name = NULL;
 	} else if(!strcmp(element_name, "chat")) {
 		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			GaimBlistChat *chat = gaim_blist_chat_new(account,
 					blist_parser_chat_alias, blist_parser_chat_components);
-			GaimGroup *g = gaim_find_group(blist_parser_group_name);
-			gaim_blist_add_chat(chat,g,
-					gaim_blist_get_last_child((GaimBlistNode*)g));
+			gaim_blist_add_chat(chat,blist_parser_group,
+					gaim_blist_get_last_child((GaimBlistNode*)blist_parser_group));
 			if(blist_parser_chat_settings) {
 				g_hash_table_destroy(chat->settings);
 				chat->settings = blist_parser_chat_settings;

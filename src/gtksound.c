@@ -311,10 +311,11 @@ GaimSoundUiOps *gaim_get_gtk_sound_ui_ops(void)
 
 static void _pref_sound_method_changed(const char *name, GaimPrefType type,
 		gpointer val, gpointer data) {
-	sound_initialized = TRUE;
-
 	if(type != GAIM_PREF_STRING || strcmp(name, "/gaim/gtk/sound/method"))
 		return;
+
+	sound_initialized = TRUE;
+
 #ifdef USE_AO
 	ao_driver = -1;
 
