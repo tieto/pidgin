@@ -19,9 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <glib.h>
-#include <glib/gprintf.h>
-
 #include "internal.h"
 
 #include "account.h"
@@ -64,7 +61,7 @@ static void rendezvous_buddy_free(gpointer data)
 	g_free(rb);
 }
 
-/*
+/**
  * Extract the "user@host" name from a full presence domain
  * of the form "user@host._presence._tcp.local"
  *
@@ -127,6 +124,7 @@ static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, con
 
 	serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
 	gaim_blist_remove_buddy(b);
+	/* XXX - This results in incorrect group counts--needs to be fixed in the core */
 }
 
 static void rendezvous_removeallfromlocal(GaimConnection *gc)
@@ -214,6 +212,8 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 		g_free(rb->msg);
 		rb->msg = g_strdup(tmp1);
 	}
+
+	/* XXX - Use the TTL value of the rr to cause this data to expire */
 }
 
 /*
@@ -354,15 +354,12 @@ static void rendezvous_prpl_login(GaimAccount *account)
 
 	rd = g_new0(RendezvousData, 1);
 	rd->buddies = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, rendezvous_buddy_free);
-
 	gc->proto_data = rd;
 
 	gaim_connection_update_progress(gc, _("Preparing Buddy List"), 0, RENDEZVOUS_CONNECT_STEPS);
-
 	rendezvous_removeallfromlocal(gc);
 
 	gaim_connection_update_progress(gc, _("Connecting"), 1, RENDEZVOUS_CONNECT_STEPS);
-
 	rd->fd = mdns_establish_socket();
 	if (rd->fd == -1) {
 		gaim_connection_error(gc, _("Unable to login to rendezvous"));
@@ -370,7 +367,6 @@ static void rendezvous_prpl_login(GaimAccount *account)
 	}
 
 	gc->inpa = gaim_input_add(rd->fd, GAIM_INPUT_READ, rendezvous_callback, gc);
-
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 
 	mdns_query(rd->fd, "_presence._tcp.local");

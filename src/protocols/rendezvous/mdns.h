@@ -26,13 +26,7 @@
 #ifndef _MDNS_H_
 #define _MDNS_H_
 
-#include <errno.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-
+#include "internal.h"
 #include "debug.h"
 
 /*
