@@ -371,8 +371,8 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				g_free(f->msg);
 				f->msg = NULL;
 			}
-			if (f->status == YAHOO_STATUS_AVAILABLE)
-				f->idle = 0;
+
+			f->sms = 0;
 			break;
 		case 19: /* custom message */
 			if (f) {
@@ -1697,13 +1697,11 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 
 	if (msg) {
 		yd->current_status = YAHOO_STATUS_CUSTOM;
-		gc->away = g_strdup(msg);
+		gc->away = g_strndup(msg, YAHOO_MAX_STATUS_MESSAGE_LENGTH);
 	} else if (state) {
 		gc->away = g_strdup("");
 		if (!strcmp(state, _("Available"))) {
 			yd->current_status = YAHOO_STATUS_AVAILABLE;
-			g_free(gc->away);
-			gc->away = NULL;
 		} else if (!strcmp(state, _("Be Right Back"))) {
 			yd->current_status = YAHOO_STATUS_BRB;
 		} else if (!strcmp(state, _("Busy"))) {
@@ -1724,14 +1722,12 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 			yd->current_status = YAHOO_STATUS_STEPPEDOUT;
 		} else if (!strcmp(state, _("Invisible"))) {
 			yd->current_status = YAHOO_STATUS_INVISIBLE;
-		} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
+		} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) { /* this should never happen? */
 			if (gc->is_idle) {
 				yd->current_status = YAHOO_STATUS_IDLE;
 			} else {
 				yd->current_status = YAHOO_STATUS_AVAILABLE;
 			}
-			g_free(gc->away);
-			gc->away = NULL;
 		}
 	} else if (gc->is_idle) {
 		yd->current_status = YAHOO_STATUS_IDLE;
@@ -1743,11 +1739,16 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 		service = YAHOO_SERVICE_ISBACK;
 	else
 		service = YAHOO_SERVICE_ISAWAY;
-	pkt = yahoo_packet_new(service, yd->current_status, 0);
+
+	pkt = yahoo_packet_new(service, YAHOO_STATUS_AVAILABLE, 0);
 	g_snprintf(s, sizeof(s), "%d", yd->current_status);
 	yahoo_packet_hash(pkt, 10, s);
-	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
-		yahoo_packet_hash(pkt, 19, msg);
+
+	if ((yd->current_status == YAHOO_STATUS_CUSTOM) && gc->away)
+		yahoo_packet_hash(pkt, 19, gc->away);
+
+	if ((yd->current_status != YAHOO_STATUS_AVAILABLE) &&
+	    (yd->current_status != YAHOO_STATUS_IDLE)) {
 		if (gc->is_idle)
 			yahoo_packet_hash(pkt, 47, "2");
 		else
@@ -1764,14 +1765,12 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	struct yahoo_packet *pkt = NULL;
 
 	if (idle && yd->current_status == YAHOO_STATUS_AVAILABLE) {
-		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_IDLE, 0);
+		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_AVAILABLE, 0);
 		yd->current_status = YAHOO_STATUS_IDLE;
 	} else if (!idle && yd->current_status == YAHOO_STATUS_IDLE) {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_AVAILABLE, 0);
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
-	} else if (idle && gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
-		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_IDLE, 0);
-	} else if (!idle && gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
+	} else {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_AVAILABLE, 0);
 	}
 
@@ -1785,7 +1784,14 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 				yahoo_packet_hash(pkt, 47, "2");
 			else
 				yahoo_packet_hash(pkt, 47, "1"); /* fixme when available messages are possible */
+		} else if (idle && (yd->current_status != YAHOO_STATUS_AVAILABLE) &&
+			   (yd->current_status != YAHOO_STATUS_IDLE)) {
+			yahoo_packet_hash(pkt, 47, "2");
+		} else if (!idle && (yd->current_status != YAHOO_STATUS_AVAILABLE) &&
+			   (yd->current_status != YAHOO_STATUS_IDLE)) {
+			yahoo_packet_hash(pkt, 47, "1");
 		}
+
 		yahoo_send_packet(yd, pkt);
 		yahoo_packet_free(pkt);
 	}

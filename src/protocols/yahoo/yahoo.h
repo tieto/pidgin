@@ -74,6 +74,7 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_IGNORECONTACT,    /* > 1, 7, 13 < 1, 66, 13, 0*/
 	YAHOO_SERVICE_REJECTCONTACT,
 	YAHOO_SERVICE_GROUPRENAME = 0x89, /* > 1, 65(new), 66(0), 67(old) */
+	/* YAHOO_SERVICE_??? = 0x8A, */
 	YAHOO_SERVICE_CHATONLINE = 0x96, /* > 109(id), 1, 6(abcde) < 0,1*/
 	YAHOO_SERVICE_CHATGOTO,
 	YAHOO_SERVICE_CHATJOIN, /* > 1 104-room 129-1600326591 62-2 */
@@ -138,6 +139,8 @@ struct yahoo_friend { /* we'll call them friends, so we don't confuse them with 
 	int away;
 	gboolean sms;
 };
+
+#define YAHOO_MAX_STATUS_MESSAGE_LENGTH (56)
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id);
 void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value);
