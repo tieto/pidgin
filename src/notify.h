@@ -176,8 +176,8 @@ void *gaim_notify_formatted(void *handle, const char *title,
 							const char *text, GCallback cb, void *user_data);
 
 /**
-	* Displays user information with formatted text, passing information giving
-    * the connection and username from which the user information came.
+ * Displays user information with formatted text, passing information giving
+ * the connection and username from which the user information came.
  *
  * The text is essentially a stripped-down format of HTML, the same that
  * IMs may send.

@@ -394,8 +394,8 @@ gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
 						 const char *secondary, const char *text,
 						 GCallback cb, void *user_data)
 {
-	return (gaim_gtk_notify_formatted(title, primary, secondary,
-									  text, cb, user_data));
+	return gaim_gtk_notify_formatted(title, primary, secondary,
+									  text, cb, user_data);
 }
 
 static void
