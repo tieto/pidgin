@@ -460,7 +460,7 @@ FILE *open_system_log_file(char *name)
 
 char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" "0123456789+/";
 
-
+/* XXX Find bug */
 char *tobase64(const char *text)
 {
 	char *out = NULL;

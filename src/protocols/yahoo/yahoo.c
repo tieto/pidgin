@@ -41,6 +41,7 @@
 #include "prpl.h"
 #include "gaim.h"
 #include "proxy.h"
+#include "md5.h"
 
 extern char *yahoo_crypt(char *, char *);
 
@@ -82,7 +83,7 @@ extern char *yahoo_crypt(char *, char *);
 #define USEROPT_MAIL 0
 
 #define USEROPT_PAGERHOST 3
-#define YAHOO_PAGER_HOST "cs.yahoo.com"
+#define YAHOO_PAGER_HOST "scs.yahoo.com"
 #define USEROPT_PAGERPORT 4
 #define YAHOO_PAGER_PORT 5050
 
@@ -122,7 +123,9 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_GAMEMSG = 0x2a,
 	YAHOO_SERVICE_FILETRANSFER = 0x46,
 	YAHOO_SERVICE_NOTIFY = 0x4B,
+	YAHOO_SERVICE_AUTHRESP = 0x54,
 	YAHOO_SERVICE_LIST = 0x55,
+	YAHOO_SERVICE_AUTH = 0x57,
 	YAHOO_SERVICE_ADDBUDDY = 0x83,
 	YAHOO_SERVICE_REMBUDDY = 0x84
 };
@@ -392,14 +395,20 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 				account_online(gc);
 				serv_finish_login(gc);
 				g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", pair->value);
-				do_import(gc, NULL);
 				yd->logged_in = TRUE;
 
-				/* this requests the list. i have a feeling that this is very evil */
-				newpkt = yahoo_packet_new(YAHOO_SERVICE_LIST, YAHOO_STATUS_OFFLINE, 0);
-				yahoo_send_packet(yd, newpkt);
-				yahoo_packet_free(newpkt);
-			}
+				/* this requests the list. i have a feeling that this is very evil
+				 *
+				 * scs.yahoo.com sends you the list before this packet without  it being 
+				 * requested
+				 *
+				 * do_import(gc, NULL);
+				 * newpkt = yahoo_packet_new(YAHOO_SERVICE_LIST, YAHOO_STATUS_OFFLINE, 0);
+				 * yahoo_send_packet(yd, newpkt);
+				 * yahoo_packet_free(newpkt);
+				 */
+
+				}
 			break;
 		case 8: /* how many online buddies we have */
 			break;
@@ -426,7 +435,7 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 				gamestate = YAHOO_STATUS_GAME;
 			if (state == YAHOO_STATUS_AVAILABLE)
 				serv_got_update(gc, name, 1, 0, 0, 0, gamestate, 0);
-			else
+			else 
 				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate, 0);
 			if (state == YAHOO_STATUS_CUSTOM) {
 				gpointer val = g_hash_table_lookup(yd->hash, name);
@@ -470,6 +479,7 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 		if (pair->key != 87)
 			continue;
 
+		do_import(gc, NULL);
 		lines = g_strsplit(pair->value, "\n", -1);
 		for (tmp = lines; *tmp; tmp++) {
 			split = g_strsplit(*tmp, ":", 2);
@@ -666,6 +676,197 @@ static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *
 	} else
 		connection_has_mail(gc, count, NULL, NULL, "http://mail.yahoo.com/");
 }
+/* This is the y64 alphabet... it's like base64, but has a . and a _ */
+char base64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._";
+
+/* This is taken from Sylpheed by Hiroyuki Yamamoto.  We have our own tobase64 function
+ * in util.c, but it has a bug I don't feel like finding right now ;) */
+void to_y64(unsigned char *out, const unsigned char *in, int inlen)
+     /* raw bytes in quasi-big-endian order to base 64 string (NUL-terminated) */
+{
+	for (; inlen >= 3; inlen -= 3)
+		{
+			*out++ = base64digits[in[0] >> 2];
+			*out++ = base64digits[((in[0] << 4) & 0x30) | (in[1] >> 4)];
+			*out++ = base64digits[((in[1] << 2) & 0x3c) | (in[2] >> 6)];
+			*out++ = base64digits[in[2] & 0x3f];
+			in += 3;
+		}
+	if (inlen > 0)
+		{
+			unsigned char fragment;
+
+			*out++ = base64digits[in[0] >> 2];
+			fragment = (in[0] << 4) & 0x30;
+			if (inlen > 1)
+				fragment |= in[1] >> 4;
+			*out++ = base64digits[fragment];
+			*out++ = (inlen < 2) ? '-' : base64digits[(in[1] << 2) & 0x3c];
+			*out++ = '-';
+		}
+	*out = '\0';
+}
+
+static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *pkt)
+{
+	char *seed = NULL;
+	char *sn   = NULL;
+	GSList *l = pkt->hash;
+	struct yahoo_data *yd = gc->proto_data;
+	
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+		if (pair->key == 94)
+			seed = pair->value;
+		if (pair->key == 1)
+			sn = pair->value;
+		l = l->next;
+	}
+	
+	if (seed) {
+		struct yahoo_packet *pack;
+	
+		/* So, Yahoo has stopped supporting its older clients in India, and undoubtedly
+		 * will soon do so in the rest of the world.
+		 * 
+		 * The new clients use this authentication method.  I warn you in advance, it's
+		 * bizzare, convoluted, inordinately complicated.  It's also no more secure than
+		 * crypt() was.  The only purpose this scheme could serve is to prevent third
+		 * part clients from connecting to their servers.
+		 *
+		 * Sorry, Yahoo.
+		 */
+		
+		md5_byte_t result[16];
+		md5_state_t ctx;
+		char *crypt_result;
+		char *password_hash = g_malloc(25);
+		char *crypt_hash = g_malloc(25);
+		char *hash_string_p = g_malloc(50 + strlen(sn));
+		char *hash_string_c = g_malloc(50 + strlen(sn));
+		
+		int ordering;
+		char checksum;
+		
+		char sv;
+		
+		char *result6 = g_malloc(25);
+		char *result96 = g_malloc(25);
+
+		sv = seed[15];
+		checksum = sv % 16;
+
+		/* I bet there's some really cool mathematical pattern here if I looked hard enough.
+		 * But, this works. */
+		switch (checksum) {
+		case 1:
+		case 6:
+		case 9:
+		case 14:
+			
+			checksum = seed[9];
+			break;
+		case 3:
+		case 11:
+			checksum = seed[1];
+			break;
+		case 4:
+		case 12:
+			checksum = seed[3];
+			break;
+		case 5:
+		case 8:
+		case 13:
+		case 0:
+			checksum = seed[7];
+			break;
+		}
+		checksum = seed[checksum % 16];
+		
+		ordering = sv % 8;
+
+		md5_init(&ctx);
+		md5_append(&ctx, gc->password, strlen(gc->password));
+		md5_finish(&ctx, result);
+		to_y64(password_hash, result, 16);
+		
+		md5_init(&ctx);
+		crypt_result = yahoo_crypt(gc->password, "$1$_2S43d5f$");  
+		md5_append(&ctx, crypt_result, strlen(crypt_result));
+		md5_finish(&ctx, result);
+		to_y64(crypt_hash, result, 16);
+		
+		/* I bet there's a nice pattern here, too. */
+		switch (ordering) {
+		case 1:
+		case 6:
+			g_snprintf(hash_string_p, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, gc->username, seed, password_hash);
+			g_snprintf(hash_string_c, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, gc->username, seed, crypt_hash);
+			break;
+		case 2:
+		case 7:
+			g_snprintf(hash_string_p, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, seed, password_hash, gc->username);
+			g_snprintf(hash_string_c, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, seed, crypt_hash, gc->username);
+			break;			
+		case 3:
+			g_snprintf(hash_string_p, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, gc->username, password_hash, seed);
+			g_snprintf(hash_string_c, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, gc->username, crypt_hash, seed);
+			break;			
+		case 4:
+			g_snprintf(hash_string_p, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, gc->username, password_hash, seed);
+			g_snprintf(hash_string_c, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, gc->username, crypt_hash, seed);
+			break;	
+		case 0:
+		case 5:
+			g_snprintf(hash_string_p, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, password_hash, gc->username, seed);
+			g_snprintf(hash_string_c, strlen(sn) + 50,
+				   "%c%s%s%s", checksum, crypt_hash, gc->username, seed);
+			break;		
+		}
+
+		debug_printf("\nPassword: %s\n", hash_string_p);
+		debug_printf("Crypt:    %s\n\n", hash_string_c);
+
+		md5_init(&ctx);  
+		md5_append(&ctx, hash_string_p, strlen(hash_string_c));
+		md5_finish(&ctx, result);
+		to_y64(result6, result, 16);
+
+		md5_init(&ctx);  
+		md5_append(&ctx, hash_string_c, strlen(hash_string_c));
+		md5_finish(&ctx, result);
+		to_y64(result96, result, 16);
+
+		md5_init(&ctx);
+		md5_append(&ctx, gc->password, strlen(gc->password));
+		md5_finish(&ctx, result);
+		to_y64(password_hash, result, 16);
+
+		pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, YAHOO_STATUS_AVAILABLE, 0);
+		yahoo_packet_hash(pack, 0, gc->username);
+		yahoo_packet_hash(pack, 6, result6);
+		yahoo_packet_hash(pack, 96, result96);
+		yahoo_packet_hash(pack, 1, gc->username);
+		
+		yahoo_send_packet(yd, pack);
+		
+		g_free(password_hash);
+		g_free(crypt_hash);
+		g_free(hash_string_p);
+		g_free(hash_string_c);
+
+		yahoo_packet_free(pack);
+	}
+}
 
 static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet *pkt)
 {
@@ -694,6 +895,9 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 		break;
 	case YAHOO_SERVICE_LIST:
 		yahoo_process_list(gc, pkt);
+		break;
+	case YAHOO_SERVICE_AUTH:
+		yahoo_process_auth(gc, pkt);
 		break;
 	default:
 		debug_printf("unhandled service 0x%02x\n", pkt->service);
@@ -785,12 +989,9 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	yd = gc->proto_data;
 	yd->fd = source;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_LOGON, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 0, gc->username);
 	yahoo_packet_hash(pkt, 1, gc->username);
-	yahoo_packet_hash(pkt, 6, yahoo_crypt(gc->password, "$1$_2S43d5f$"));
-
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
@@ -808,15 +1009,16 @@ static void yahoo_login(struct aim_user *user) {
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
 
+#if 0
 	if (!g_strncasecmp(user->proto_opt[USEROPT_PAGERHOST], "scs.yahoo.com", strlen("scs.yahoo.com"))) {
-		/* As of this morning, Yahoo is no longer supporting its server at scs.yahoo.com
-		 * I don't like to edit the preferences in a prpl, but we'll keep this here
-		 * for a while until everybody's happy again. -5 Feb 2002*/
+		/* Figured out the new auth method */
 		debug_printf("Setting new Yahoo! server.\n");
 		g_snprintf(user->proto_opt[USEROPT_PAGERHOST], strlen("cs.yahoo.com") + 1, "cs.yahoo.com");
 		save_prefs();
 	}
-	    
+	
+#endif /* 0 */
+    
        	if (proxy_connect(user->proto_opt[USEROPT_PAGERHOST][0] ?
 				user->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
 			   user->proto_opt[USEROPT_PAGERPORT][0] ?
