@@ -671,8 +671,6 @@ init_plugin(GaimPlugin *plugin)
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
 
-	info.dependencies = g_list_append(info.dependencies, "core-ssl");
-
 	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
