@@ -859,7 +859,6 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 		if (bs) {
 			if (g_slist_find(bs->connlist, gc)) {
 				bs->connlist = g_slist_remove(bs->connlist, gc);
-				update_num_group(gs);
 				if (!g_slist_length(bs->connlist)) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
@@ -879,6 +878,8 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 				}
 			}
 		}
+		if (gs)
+			update_num_group(gs);
 	}
 
 	c = find_conversation(rem_b->name);
