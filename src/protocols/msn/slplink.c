@@ -150,11 +150,14 @@ msn_slplink_find_slp_call(MsnSlpLink *slplink, const char *id)
 	GList *l;
 	MsnSlpCall *slpcall;
 
+	if (!id)
+		return NULL;
+
 	for (l = slplink->slp_calls; l != NULL; l = l->next)
 	{
 		slpcall = l->data;
 
-		if (!strcmp(slpcall->id, id))
+		if (slpcall->id && !strcmp(slpcall->id, id))
 			return slpcall;
 	}
 
