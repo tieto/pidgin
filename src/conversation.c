@@ -1183,8 +1183,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 						write_to_conv(c, bigbuf, WFLAG_SEND, NULL, time(NULL), length);
 					else
 						write_to_conv(c, buffy, WFLAG_SEND, NULL, time(NULL), -1);
-					if (c->makesound && (sound_options & OPT_SOUND_SEND))
-						play_sound(SEND);
+					if (c->makesound)
+						play_sound(SND_SEND);
 					if (im_options & OPT_IM_POPDOWN)
 						gtk_widget_hide(c->window);
 					
@@ -1196,8 +1196,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 				err =serv_send_im(c->gc, c->name, buffy, -1, imflags);
 				if (err > 0) { 
 					write_to_conv(c, buf, WFLAG_SEND, NULL, time(NULL), -1);
-					if (c->makesound && (sound_options & OPT_SOUND_SEND))
-						play_sound(SEND);
+					if (c->makesound)
+						play_sound(SND_SEND);
 					if (im_options & OPT_IM_POPDOWN)
 						gtk_widget_hide(c->window);
 				}

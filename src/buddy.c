@@ -1559,7 +1559,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				if (strlen(b->sound))
 					play_file(b->sound);
 				else
-					play_sound(POUNCE_DEFAULT);
+					play_sound(SND_POUNCE_DEFAULT);
 			}
 
 			if (!(b->options & OPT_POUNCE_SAVE))
@@ -2155,7 +2155,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		}
 		if (b->present == 1) {
 			if (bs->sound != 2)
-				play_sound(BUDDY_ARRIVE);
+				play_sound(SND_BUDDY_ARRIVE);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 							  NULL, (char **)login_icon_xpm);
 			gtk_widget_hide(bs->pix);
@@ -2218,7 +2218,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				   buddies that have already signed
 				   off */
 		if (bs->sound != 1)
-			play_sound(BUDDY_LEAVE);
+			play_sound(SND_BUDDY_LEAVE);
 
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		update_num_group(gs);

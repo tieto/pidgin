@@ -1484,6 +1484,8 @@ static void test_sound(GtkWidget *button, int snd)
 	guint32 tmp_sound = sound_options;
 	if (!(sound_options & OPT_SOUND_WHEN_AWAY))
 		sound_options ^= OPT_SOUND_WHEN_AWAY;
+	if (!(sound_options & sounds[snd].opt))
+		sound_options ^= sounds[snd].opt;
 	play_sound(snd);
 	sound_options = tmp_sound;
 }
@@ -1525,7 +1527,7 @@ static void sel_sound(GtkWidget *button, int snd)
 	gdk_window_raise(sounddialog->window);
 }
 
-static void sound_entry(char *label, int opt, GtkWidget *box, int snd)
+static void sound_entry(GtkWidget *box, int snd)
 {
 	GtkWidget *hbox;
 	GtkWidget *entry;
@@ -1535,7 +1537,7 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd)
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	gaim_button(label, &sound_options, opt, hbox);
+	gaim_button(sounds[snd].label, &sound_options, sounds[snd].opt, hbox);
 
 	button = gtk_button_new_with_label(_("Test"));
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 3);
@@ -1599,7 +1601,7 @@ static void sound_page()
 	GtkWidget *omenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
-	int i=1, driver=0;
+	int i=1, driver=0, j;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -1648,7 +1650,7 @@ static void sound_page()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new(_("Sound Player:"));
+	label = gtk_label_new(_("Sound method"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
@@ -1718,15 +1720,11 @@ static void sound_page()
 	gtk_box_pack_start(GTK_BOX(hbox), omenu, FALSE, FALSE, 5);
 	gtk_widget_show_all(omenu);
 
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
-
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new(_("Command to play sound files\n(%s for filename)"));
+	label = gtk_label_new(_("Sound command\n(%s for filename)"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
@@ -1738,7 +1736,7 @@ static void sound_page()
 	gtk_widget_set_sensitive(sndcmd, (OPT_SOUND_CMD & sound_options));
 	gtk_widget_show(sndcmd);
 
-	frame = gtk_frame_new(_("Events"));
+	frame = gtk_frame_new(_("Sound played when:"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
 	gtk_widget_show(frame);
 
@@ -1746,26 +1744,20 @@ static void sound_page()
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	sound_entry(_("Sound when buddy logs in"), OPT_SOUND_LOGIN, vbox, BUDDY_ARRIVE);
-	sound_entry(_("Sound when buddy logs out"), OPT_SOUND_LOGOUT, vbox, BUDDY_LEAVE);
+	for (j=0; j < NUM_SOUNDS; j++) {
+		/* no entry for the buddy pounce sound, it's configurable per-pounce */
+		if (j == SND_POUNCE_DEFAULT)
+			continue;
 
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
+		/* seperators before SND_RECEIVE and SND_CHAT_JOIN */
+		if ((j == SND_RECEIVE) || (j == SND_CHAT_JOIN)) {
+			sep = gtk_hseparator_new();
+			gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 5);
+			gtk_widget_show(sep);
+		}
 
-	sound_entry(_("Sound when received message begins conversation"), OPT_SOUND_FIRST_RCV, vbox,
-		    FIRST_RECEIVE);
-	sound_entry(_("Sound when message is received"), OPT_SOUND_RECV, vbox, RECEIVE);
-	sound_entry(_("Sound when message is sent"), OPT_SOUND_SEND, vbox, SEND);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
-
-	sound_entry(_("Sound in chat rooms when people enter"), OPT_SOUND_CHAT_JOIN, vbox, CHAT_JOIN);
-	sound_entry(_("Sound in chat rooms when people leave"), OPT_SOUND_CHAT_PART, vbox, CHAT_LEAVE);
-	sound_entry(_("Sound in chat rooms when you talk"), OPT_SOUND_CHAT_YOU_SAY, vbox, CHAT_YOU_SAY);
-	sound_entry(_("Sound in chat rooms when others talk"), OPT_SOUND_CHAT_SAY, vbox, CHAT_SAY);
+		sound_entry(vbox, j);
+	}
 
 	gtk_widget_show(prefdialog);
 }

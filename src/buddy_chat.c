@@ -706,16 +706,16 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 	if (!(flag & WFLAG_WHISPER)) {
 		str = g_strdup(normalize (who));
 		if (!g_strcasecmp(str, normalize(b->gc->username))) {
-			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
-				play_sound(CHAT_YOU_SAY);
+			if (b->makesound)
+				play_sound(SND_CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
 		} else if (!g_strcasecmp(str, normalize(b->gc->displayname))) {
-			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
-				play_sound(CHAT_YOU_SAY);
+			if (b->makesound)
+				play_sound(SND_CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
 		} else {
-			if (b->makesound && (sound_options & OPT_SOUND_CHAT_SAY))
-				play_sound(CHAT_SAY);
+			if (b->makesound)
+				play_sound(SND_CHAT_SAY);
 			flag |= WFLAG_RECV;
 		}
 		g_free(str);
@@ -923,8 +923,8 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 		   g_list_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
-	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
-		play_sound(CHAT_JOIN);
+	if (b->makesound)
+		play_sound(SND_CHAT_JOIN);
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), name);
@@ -1035,8 +1035,8 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 		   g_list_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
-	if (b->makesound && (sound_options & OPT_SOUND_CHAT_PART))
-		play_sound(CHAT_LEAVE);
+	if (b->makesound)
+		play_sound(SND_CHAT_LEAVE);
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		if (reason && *reason)

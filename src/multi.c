@@ -37,6 +37,7 @@
 #include "pixmaps/tb_redo.xpm"
 #include "pixmaps/tb_undo.xpm"
 #include "pixmaps/tb_refresh.xpm"
+#include "pixmaps/no_icon.xpm"
 
 #define LOGIN_STEPS 5
 
@@ -88,6 +89,13 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 
 	return gc;
 }
+
+struct meter_window {
+		GtkWidget *window;
+		GtkTable *table;
+		gint rows;
+		gint active_count;
+	} *meter_win = NULL;
 
 void destroy_gaim_conn(struct gaim_connection *gc)
 {
@@ -1032,11 +1040,43 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 
 struct signon_meter {
 	struct gaim_connection *gc;
-	GtkWidget *window;
+	GtkWidget *button;
 	GtkWidget *progress;
 	GtkWidget *status;
 };
 static GSList *meters = NULL;
+
+GtkWidget* create_meter_pixmap (GtkWidget *widget, struct gaim_connection *gc)
+{
+	GdkColormap *colormap;
+	GdkPixmap *gdkpixmap;
+	GdkBitmap *mask;
+	GtkWidget *pixmap;
+	GtkStyle *style;
+	char **xpm; 
+	
+	style = gtk_widget_get_style( widget );
+	
+	if (gc->prpl->list_icon)
+		if (gc->prpl->protocol ==  PROTO_OSCAR) 
+			/* This is such a bad hack to get the right icon
+			 * for OSCAR.  But it's pretty */
+			if (isdigit(*gc->username))
+				xpm = gc->prpl->list_icon(0);
+			else
+				xpm = gc->prpl->list_icon(0x10);
+		else 
+			xpm = gc->prpl->list_icon (0);
+	if (xpm == NULL)
+		xpm = (char **)no_icon_xpm;
+	
+	gdkpixmap = gdk_pixmap_create_from_xpm_d(widget->window, &mask, &style->bg[GTK_STATE_NORMAL], xpm);
+			
+	pixmap = gtk_pixmap_new (gdkpixmap, mask);
+	gdk_pixmap_unref (gdkpixmap);
+	gdk_bitmap_unref (mask);
+	return pixmap;
+}
 
 static struct signon_meter *find_signon_meter(struct gaim_connection *gc)
 {
@@ -1049,6 +1089,19 @@ static struct signon_meter *find_signon_meter(struct gaim_connection *gc)
 	return NULL;
 }
 
+void kill_meter(struct signon_meter *meter) {
+	gtk_widget_set_sensitive (meter->button, FALSE);
+	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), 1);
+	gtk_statusbar_pop(GTK_STATUSBAR(meter->status), 1);
+	gtk_statusbar_push(GTK_STATUSBAR(meter->status), 1, "Done.");
+	meter_win->active_count--;
+	if (meter_win->active_count == 0) {
+		gtk_widget_destroy(meter_win->window);
+		g_free (meter_win);
+		meter_win = NULL;
+		}
+}
+
 void account_online(struct gaim_connection *gc)
 {
 	int i;
@@ -1056,7 +1109,7 @@ void account_online(struct gaim_connection *gc)
 
 	/* first we hide the login progress meter */
 	if (meter) {
-		gtk_widget_destroy(meter->window);
+		kill_meter(meter);
 		meters = g_slist_remove(meters, meter);
 		g_free(meter);
 	}
@@ -1122,7 +1175,7 @@ void account_offline(struct gaim_connection *gc)
 	int i;
 	struct signon_meter *meter = find_signon_meter(gc);
 	if (meter) {
-		gtk_widget_destroy(meter->window);
+		kill_meter(meter);
 		meters = g_slist_remove(meters, meter);
 		g_free(meter);
 	}
@@ -1161,6 +1214,63 @@ static gint meter_destroy(GtkWidget *window, GdkEvent *evt, struct signon_meter 
 	return TRUE;
 }
 
+static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget *widget, GtkTable *table, gint *rows)
+{
+	GtkWidget *graphic;
+	GtkWidget *label;
+	GtkWidget *nest_vbox;
+	GString *name_to_print;
+	struct signon_meter *meter;
+	
+	name_to_print = g_string_new(gc->username);
+	
+	meter = g_new0(struct signon_meter, 1);
+	
+	(*rows)++;
+	gtk_table_resize (table, *rows, 4);
+	
+	graphic = create_meter_pixmap( widget , gc);
+	
+	nest_vbox = gtk_vbox_new (FALSE, 0);
+	
+	name_to_print = g_string_prepend(name_to_print, "Signon: ");
+	label = gtk_label_new (name_to_print->str);
+	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+		
+	meter->status = gtk_statusbar_new();
+	gtk_widget_set_usize(meter->status, 250, 0);
+	
+	meter->progress = gtk_progress_bar_new ();
+	
+	meter->button = gtk_button_new_with_label ("Cancel");
+	gtk_signal_connect (GTK_OBJECT (meter->button), "clicked", GTK_SIGNAL_FUNC (cancel_signon), meter);
+		
+	gtk_table_attach (GTK_TABLE (table), graphic, 0, 1, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach (GTK_TABLE (table), nest_vbox, 1, 2, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+		gtk_box_pack_start (GTK_BOX (nest_vbox), GTK_WIDGET (label), FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (nest_vbox), GTK_WIDGET (meter->status), FALSE, FALSE, 0);
+	gtk_table_attach (GTK_TABLE (table), meter->progress, 2, 3, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach (GTK_TABLE (table), meter->button, 3, 4, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
+
+	gtk_widget_show_all (GTK_WIDGET (meter_win->window));
+	
+	meter_win->active_count++;
+	
+	return meter;
+}
+
+static void loop_cancel () {
+	GSList *m = meters;
+	struct signon_meter *meter = NULL;
+	
+	while (m) {
+		meter = (struct signon_meter *) (m->data);
+		meter->gc->wants_to_die = TRUE;
+		signoff((struct gaim_connection *) meter->gc);
+		m = meters;
+		}
+	}
+
 void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
@@ -1168,49 +1278,47 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 
+	if (!meter_win) {
+		GtkWidget *cancel_button;
+		GtkWidget *vbox;
+		GString *name;
+						
+		meter_win = g_new0(struct meter_window, 1);
+		meter_win->rows=0;
+			
+		meter_win->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		GAIM_DIALOG(meter_win->window);
+		gtk_window_set_policy(GTK_WINDOW(meter_win->window), 0, 0, 1);
+		gtk_window_set_wmclass(GTK_WINDOW(meter_win->window), "signon", "Gaim");
+		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
+		gtk_window_set_title (GTK_WINDOW (meter_win->window), "Gaim Account Signon");
+		gtk_widget_realize(meter_win->window);
+		aol_icon(meter_win->window->window);
+		
+		vbox = gtk_vbox_new (FALSE, 0);
+		gtk_container_add (GTK_CONTAINER (meter_win->window), GTK_WIDGET (vbox));
+
+		meter_win->table = (GtkTable *) gtk_table_new (1 , 4, FALSE);
+		gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (meter_win->table), FALSE, FALSE, 0);
+		gtk_container_set_border_width (GTK_CONTAINER (meter_win->table), 5);
+		gtk_table_set_row_spacings (GTK_TABLE (meter_win->table), 5);
+		gtk_table_set_col_spacings (GTK_TABLE (meter_win->table), 10);
+	
+		cancel_button = gtk_button_new_with_label ("Cancel All");
+    	gtk_signal_connect_object (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC (loop_cancel), NULL);
+		gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (cancel_button), FALSE, FALSE, 0);
+	
+		gtk_signal_connect (GTK_OBJECT (meter_win->window), "delete_event", GTK_SIGNAL_FUNC (meter_destroy), NULL);
+		}
+	
 	if (!meter) {
-		GtkWidget *box, *label, *button;
 		char buf[256];
 
-		meter = g_new0(struct signon_meter, 1);
+		meter = register_meter(gc, GTK_WIDGET (meter_win->window), GTK_TABLE (meter_win->table), (gint *)  &meter_win->rows);
 		meter->gc = gc;
 		meters = g_slist_append(meters, meter);
 
-		GAIM_DIALOG(meter->window);
-		gtk_window_set_policy(GTK_WINDOW(meter->window), 0, 0, 1);
-		gtk_window_set_wmclass(GTK_WINDOW(meter->window), "signon", "Gaim");
-		gtk_container_set_border_width(GTK_CONTAINER(meter->window), 5);
 		g_snprintf(buf, sizeof(buf), "%s Signing On (using %s)", gc->username, gc->prpl->name());
-		gtk_window_set_title(GTK_WINDOW(meter->window), buf);
-		gtk_signal_connect(GTK_OBJECT(meter->window), "delete_event",
-				   GTK_SIGNAL_FUNC(meter_destroy), meter);
-		gtk_widget_realize(meter->window);
-		aol_icon(meter->window->window);
-
-		box = gtk_vbox_new(FALSE, 5);
-		gtk_container_add(GTK_CONTAINER(meter->window), box);
-		gtk_widget_show(box);
-
-		label = gtk_label_new(buf);
-		gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
-		gtk_widget_show(label);
-
-		meter->progress = gtk_progress_bar_new();
-		gtk_widget_set_usize(meter->progress, 150, 0);
-		gtk_box_pack_start(GTK_BOX(box), meter->progress, FALSE, FALSE, 0);
-		gtk_widget_show(meter->progress);
-
-		meter->status = gtk_statusbar_new();
-		gtk_widget_set_usize(meter->status, 150, 0);
-		gtk_box_pack_start(GTK_BOX(box), meter->status, FALSE, FALSE, 0);
-		gtk_widget_show(meter->status);
-
-		button = gtk_button_new_with_label(_("Cancel"));
-		gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_signon), meter);
-		gtk_widget_show(button);
-
-		gtk_widget_show(meter->window);
 	}
 
 	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), howfar / LOGIN_STEPS);
@@ -1262,7 +1370,7 @@ static void hide_login_progress_common(struct gaim_connection *gc,
 	kicks = g_slist_append(kicks, k);
 	gtk_signal_connect(GTK_OBJECT(k->dlg), "destroy", GTK_SIGNAL_FUNC(set_kick_null), k);
 	if (meter) {
-		gtk_widget_destroy(meter->window);
+		kill_meter(meter);
 		meters = g_slist_remove(meters, meter);
 		g_free(meter);
 	}

@@ -69,7 +69,7 @@ static gboolean check_timeout(gpointer data)
 	}
 
 	if (count & NEW_MAIL)
-		play_sound(POUNCE_DEFAULT);
+		play_sound(SND_POUNCE_DEFAULT);
 
 	if (count & UNREAD_MAIL)
 		gtk_label_set_text(GTK_LABEL(mail), "You have new mail!");

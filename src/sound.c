@@ -52,6 +52,22 @@
 #include "sounds/Receive.h"
 #include "sounds/RedAlert.h"
 
+/* label and opt are null for the buddy pounce because it's configured *
+ * per pounce. NULL option means it doesn't get displayed in the sound *
+ * preferences box */
+struct sound_struct sounds[NUM_SOUNDS] = {
+	N_("Buddy logs in"), OPT_SOUND_LOGIN, BuddyArrive, sizeof(BuddyArrive),
+	N_("Buddy logs out"), OPT_SOUND_LOGOUT, BuddyLeave, sizeof(BuddyLeave),
+	N_("Message recieved begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive),
+	N_("Message recieved"), OPT_SOUND_RECV, Receive, sizeof(Receive),
+	N_("Message sent"), OPT_SOUND_SEND, Send, sizeof(Send),
+	N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, BuddyArrive, sizeof(BuddyArrive),
+	N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave),
+	N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, Send, sizeof(Send),
+	N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, Receive, sizeof(Receive),
+	NULL, NULL, &RedAlert, sizeof(RedAlert)
+};
+
 static int check_dev(char *dev)
 {
 	struct stat stat_buf;
@@ -396,6 +412,10 @@ void play_file(char *filename)
 		return;
 	}
 
+	else if (sound_options & OPT_SOUND_NORMAL) {
+		debug_printf("attempting to play audio file with internal method -- this is unlikely to work");
+	}
+
 	pid = fork();
 
 	if (pid < 0)
@@ -522,98 +542,23 @@ extern int logins_not_muted;
 
 void play_sound(int sound)
 {
-
 	if (awaymessage && !(sound_options & OPT_SOUND_WHEN_AWAY))
 		return;
 
-	switch (sound) {
-	case BUDDY_ARRIVE:
-		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted) {
-			if (sound_file[BUDDY_ARRIVE]) {
-				play_file(sound_file[BUDDY_ARRIVE]);
-			} else {
-				play(BuddyArrive, sizeof(BuddyArrive));
-			}
-		}
-		break;
-	case BUDDY_LEAVE:
-		if (sound_options & OPT_SOUND_LOGOUT) {
-			if (sound_file[BUDDY_LEAVE]) {
-				play_file(sound_file[BUDDY_LEAVE]);
-			} else {
-				play(BuddyLeave, sizeof(BuddyLeave));
-			}
-		}
-		break;
-	case FIRST_RECEIVE:
-		if (sound_options & OPT_SOUND_FIRST_RCV) {
-			if (sound_file[FIRST_RECEIVE]) {
-				play_file(sound_file[FIRST_RECEIVE]);
-			} else {
-				play(Receive, sizeof(Receive));
-			}
-		}
-		break;
-	case RECEIVE:
-		if (sound_options & OPT_SOUND_RECV) {
-			if (sound_file[RECEIVE]) {
-				play_file(sound_file[RECEIVE]);
-			} else {
-				play(Receive, sizeof(Receive));
-			}
-		}
-		break;
-	case SEND:
-		if (sound_options & OPT_SOUND_SEND) {
-			if (sound_file[SEND]) {
-				play_file(sound_file[SEND]);
-			} else {
-				play(Send, sizeof(Send));
-			}
-		}
-		break;
-	case CHAT_JOIN:
-		if (sound_options & OPT_SOUND_CHAT_JOIN) {
-			if (sound_file[CHAT_JOIN]) {
-				play_file(sound_file[CHAT_JOIN]);
-			} else {
-				play(BuddyArrive, sizeof(BuddyArrive));
-			}
-		}
-		break;
-	case CHAT_LEAVE:
-		if (sound_options & OPT_SOUND_CHAT_PART) {
-			if (sound_file[CHAT_LEAVE]) {
-				play_file(sound_file[CHAT_LEAVE]);
-			} else {
-				play(BuddyLeave, sizeof(BuddyLeave));
-			}
-		}
-		break;
-	case CHAT_YOU_SAY:
-		if (sound_options & OPT_SOUND_CHAT_YOU_SAY) {
-			if (sound_file[CHAT_YOU_SAY]) {
-				play_file(sound_file[CHAT_YOU_SAY]);
-			} else {
-				play(Send, sizeof(Send));
-			}
-		}
-		break;
-	case CHAT_SAY:
-		if (sound_options & OPT_SOUND_CHAT_SAY) {
-			if (sound_file[CHAT_SAY]) {
-				play_file(sound_file[CHAT_SAY]);
-			} else {
-				play(Receive, sizeof(Receive));
-			}
-		}
-		break;
-	case POUNCE_DEFAULT:
-		if (sound_file[POUNCE_DEFAULT]) {
-			play_file(sound_file[POUNCE_DEFAULT]);
+	if ((sound == SND_BUDDY_ARRIVE) && !logins_not_muted)
+		return;
+
+	if (sound >= NUM_SOUNDS) {
+		debug_printf("sorry old fruit... can't say I know that sound: ", sound);
+		return;
+	}
+
+	/* check NULL for sounds that don't have an option, ie buddy pounce */
+	if ((sound_options & sounds[sound].opt) || (sounds[sound].opt == NULL)) {
+		if (sound_file[sound]) {
+			play_file(sound_file[sound]);
 		} else {
-			play(RedAlert, sizeof(RedAlert));
+			play(sounds[sound].snd, sounds[sound].snd_size);
 		}
-		break;
 	}
 }

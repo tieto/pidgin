@@ -584,9 +584,9 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 				set_convo_gc(cnv, gc);
 			}
 			if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
-				play_sound(FIRST_RECEIVE);
-			else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
-				play_sound(RECEIVE);
+				play_sound(SND_FIRST_RECEIVE);
+			else if (cnv->makesound)
+				play_sound(SND_RECEIVE);
 
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
 		}
@@ -645,9 +645,9 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			set_convo_gc(cnv, gc);
 		}
 		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
-			play_sound(FIRST_RECEIVE);
-		else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
-			play_sound(RECEIVE);
+			play_sound(SND_FIRST_RECEIVE);
+		else if (cnv->makesound)
+			play_sound(SND_RECEIVE);
 
 		set_convo_name(cnv, name);
 

@@ -279,18 +279,28 @@ extern guint sound_options;
 #define OPT_SOUND_ESD			0x00010000
 #define OPT_SOUND_CMD			0x00020000
 
-#define BUDDY_ARRIVE 0
-#define BUDDY_LEAVE 1
-#define RECEIVE 2
-#define FIRST_RECEIVE 3
-#define SEND 4
-#define CHAT_JOIN 5
-#define CHAT_LEAVE 6
-#define CHAT_YOU_SAY 7
-#define CHAT_SAY 8
-#define POUNCE_DEFAULT 9
+/* remember to also change the struct in sound.c */
+#define SND_BUDDY_ARRIVE 0
+#define SND_BUDDY_LEAVE 1
+#define SND_RECEIVE 2
+#define SND_FIRST_RECEIVE 3
+#define SND_SEND 4
+#define SND_CHAT_JOIN 5
+#define SND_CHAT_LEAVE 6
+#define SND_CHAT_YOU_SAY 7
+#define SND_CHAT_SAY 8
+#define SND_POUNCE_DEFAULT 9
 #define NUM_SOUNDS 10
 extern char *sound_file[NUM_SOUNDS];
+
+/* global sound struct */
+struct sound_struct {
+	char *label;
+	guint opt;
+	unsigned char *snd;
+	size_t snd_size;
+};
+extern struct sound_struct sounds[];
 
 extern guint away_options;
 #define OPT_AWAY_DISCARD		0x00000001
