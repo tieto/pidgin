@@ -2101,11 +2101,13 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	GtkTreeIter iter;
 	GaimBlistNode *node;
 	GValue val = {0};
-	int scr_w,scr_h, w, h, x, y;
+	int scr_w, scr_h, w, h, x, y, mon_num;
 	PangoLayout *layout;
 	gboolean tooltip_top = FALSE;
 	char *tooltiptext = NULL;
 	struct _gaim_gtk_blist_node *gtknode;
+	GdkRectangle mon_size;
+	GdkScreen *screen = NULL;
 #ifdef WANT_DROP_SHADOW
 	GdkWindowAttr attr;
 #endif
@@ -2211,9 +2213,15 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(layout, 300000);
 	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
-	scr_w = gdk_screen_width();
-	scr_h = gdk_screen_height();
 	pango_layout_get_size (layout, &w, &h);
+
+	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
+	mon_num = gdk_screen_get_monitor_at_point(screen, x, y);
+	gdk_screen_get_monitor_geometry(screen, mon_num, &mon_size);
+
+	scr_w = mon_size.width + mon_size.x;
+	scr_h = mon_size.height + mon_size.y;
+
 	w = PANGO_PIXELS(w) + 8;
 	h = PANGO_PIXELS(h) + 8;
 
@@ -2222,7 +2230,12 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	w = w + 38;
 	h = MAX(h, 38);
 
-	gdk_window_get_pointer(NULL, &x, &y, NULL);
+	if( w > mon_size.width )
+	  w = mon_size.width - 10;
+
+	if( h > mon_size.height )
+	  h = mon_size.height - 10;
+
 	if (GTK_WIDGET_NO_WINDOW(gtkblist->window))
 		y+=gtkblist->window->allocation.y;
 
@@ -2233,18 +2246,18 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	else
 		y = y + 6;
 
-	if (y < 0)
-		y = 0;
+	if (y < mon_size.y)
+		y = mon_size.y;
 
-	if (y != 0) {
+	if (y != mon_size.y) {
 		if ((x + w) > scr_w)
 			x -= (x + w + 5) - scr_w;
-		else if (x < 0)
-			x = 0;
+		else if (x < mon_size.x)
+			x = mon_size.x;
 	} else {
 		x -= (w / 2 + 10);
-		if (x < 0)
-			x += w + 15;
+		if (x < mon_size.x)
+			x = mon_size.x;
 	}
 
 	g_object_unref (layout);
