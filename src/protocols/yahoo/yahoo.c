@@ -1303,7 +1303,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	 */
 	
 	memcpy(&magic_key_char[0], comparison_src, 4);
-	memcpy(&magic_4, comparison_src, 4);
+	magic_4 = magic_key_char[0] | (magic_key_char[1]<<8) | (magic_key_char[2]<<16) | (magic_key_char[3]<<24);
 	
 	/* 
 	 * Magic: Phase 4.  Determine what function to use later by getting outside/inside
@@ -1356,7 +1356,10 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		updated_key = yahoo_auth_finalCountdown(magic_4, 0x60, y, x);
 		updated_key = yahoo_auth_finalCountdown(updated_key, 0x60, y, x);
 		
-		memcpy(&magic_key_char[0], &updated_key, 4);
+		magic_key_char[0] = updated_key & 0xff;
+		magic_key_char[1] = (updated_key >> 8) & 0xff;
+		magic_key_char[2] = (updated_key >> 16) & 0xff;
+		magic_key_char[3] = (updated_key >> 24) & 0xff;
 	} 
 	
 /* Get password and crypt hashes as per usual.
