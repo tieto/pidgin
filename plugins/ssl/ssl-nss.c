@@ -51,6 +51,26 @@ typedef struct
 static const PRIOMethods *_nss_methods = NULL;
 static PRDescIdentity _identity;
 
+static void 
+ssl_nss_init_nss(void)
+{
+	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
+	NSS_NoDB_Init(NULL);
+
+	/* TODO: Fix this so autoconf does the work trying to find this lib. */
+	SECMOD_AddNewModule("Builtins",
+#ifndef _WIN32
+                            LIBDIR "/libnssckbi.so",
+#else
+                            "nssckbi.dll",
+#endif
+                            0, 0);
+	NSS_SetDomesticPolicy();
+
+	_identity = PR_GetUniqueIdentity("Gaim");
+	_nss_methods = PR_GetDefaultIOMethods();
+}
+
 static SECStatus
 ssl_auth_cert(void *arg, PRFileDesc *socket, PRBool checksig,
 			  PRBool is_server)
@@ -122,23 +142,7 @@ ssl_bad_cert(void *arg, PRFileDesc *socket)
 static gboolean
 ssl_nss_init(void)
 {
-	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
-	NSS_NoDB_Init(NULL);
-
-	/* TODO: Fix this so autoconf does the work trying to find this lib. */
-	SECMOD_AddNewModule("Builtins",
-#ifndef _WIN32
-                            LIBDIR "/libnssckbi.so",
-#else
-                            "nssckbi.dll",
-#endif
-                            0, 0);
-	NSS_SetDomesticPolicy();
-
-	_identity = PR_GetUniqueIdentity("Gaim");
-	_nss_methods = PR_GetDefaultIOMethods();
-
-	return TRUE;
+   return TRUE;
 }
 
 static void
@@ -265,8 +269,12 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 #ifdef HAVE_NSS
-	gaim_ssl_set_ops(&ssl_ops);
+	if (!gaim_ssl_get_ops()) {
+		gaim_ssl_set_ops(&ssl_ops);
+	}
 
+   /* Init NSS now, so others can use it even if sslconn never does */
+   ssl_nss_init_nss();
 	return TRUE;
 #else
 	return FALSE;
@@ -277,7 +285,9 @@ static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 #ifdef HAVE_NSS
-	gaim_ssl_set_ops(NULL);
+	if (gaim_ssl_get_ops() == &ssl_ops) {
+		gaim_ssl_set_ops(NULL);
+	}
 #endif
 
 	return TRUE;

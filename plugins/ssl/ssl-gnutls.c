@@ -40,16 +40,20 @@ typedef struct
 
 static gnutls_certificate_client_credentials xcred;
 
-static gboolean
-ssl_gnutls_init(void)
+static void
+ssl_gnutls_init_gnutls(void)
 {
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
 	gnutls_certificate_set_x509_trust_file(xcred, "ca.pem",
 										   GNUTLS_X509_FMT_PEM);
+}
 
-	return TRUE;
+static gboolean
+ssl_gnutls_init(void)
+{
+   return TRUE;
 }
 
 static void
@@ -177,8 +181,12 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 #ifdef HAVE_GNUTLS
-	gaim_ssl_set_ops(&ssl_ops);
+	if (!gaim_ssl_get_ops()) {
+		gaim_ssl_set_ops(&ssl_ops);
+	}
 
+   /* Init GNUTLS now so others can use it even if sslconn never does */
+   ssl_gnutls_init_gnutls();
 	return TRUE;
 #else
 	return FALSE;
@@ -189,7 +197,9 @@ static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 #ifdef HAVE_GNUTLS
-	gaim_ssl_set_ops(NULL);
+	if (gaim_ssl_get_ops() == &ssl_ops) {
+		gaim_ssl_set_ops(NULL);
+	}
 #endif
 
 	return TRUE;
