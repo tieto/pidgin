@@ -631,7 +631,87 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 
 	return 0;
 }
-#else /* __unix__ */
+
+elif defined _WIN32 /* end __unix__ */
+
+/* Note: The below win32 implementation is actually platform independent.
+   Perhaps this can be used in place of the above platform dependent code.
+*/ 
+
+typedef struct _dns_tdata {
+	char *hostname;
+	int port;
+	dns_callback_t callback;
+	gpointer data;
+	GSList *hosts;
+	char *errmsg;
+} dns_tdata;
+
+static gboolean dns_main_thread_cb(gpointer data) {
+	dns_tdata *td = (dns_tdata*)data;
+	td->callback(td->hosts, td->data, td->errmsg);
+	g_free(td->hostname);
+	g_free(td);
+	return FALSE;
+}
+
+static gpointer dns_thread(gpointer data) {
+	struct sockaddr_in sin;
+	dns_tdata *td = (dns_tdata*)data;
+	struct hostent *hp;
+
+	if(!(hp = gethostbyname(td->hostname)))
+		goto failure;
+	memset(&sin, 0, sizeof(struct sockaddr_in));
+	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+	sin.sin_family = hp->h_addrtype;
+	sin.sin_port = htons(td->port);
+
+	td->hosts = g_slist_append(td->hosts, GINT_TO_POINTER(sizeof(sin)));
+	td->hosts = g_slist_append(td->hosts, g_memdup(&sin, sizeof(sin)));
+	/* back to main thread */
+	g_idle_add(dns_main_thread_cb, td);
+	return 0;
+ failure:
+	g_free(td->hostname);
+	g_free(td);
+	return 0;
+} 
+
+int gaim_gethostbyname_async(const char *hostname, int port,
+							  dns_callback_t callback, gpointer data) {
+	dns_tdata *td;
+	struct sockaddr_in sin;
+	GError* err = NULL;
+
+	if(inet_aton(hostname, &sin.sin_addr)) {
+		GSList *hosts = NULL;
+		sin.sin_family = AF_INET;
+		sin.sin_port = htons(port);
+		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
+		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
+		callback(hosts, data, NULL);
+		return 0;
+	}
+
+	gaim_debug_info("dns", "DNS Lookup for: %s\n", hostname);
+	td = g_new0(dns_tdata, 1);
+	td->hostname = g_strdup(hostname);
+	td->port = port;
+	td->callback = callback;
+	td->data = data;
+
+	if(!g_thread_create(dns_thread, td, FALSE, &err)) {
+		gaim_debug_error("dns", "DNS thread create failure: %s\n", err?err->message:"");
+		g_error_free(err);
+		g_free(td->hostname);
+		g_free(td);
+		return -1;
+	}
+	return 0;
+}
+
+#else /* not __unix__ or _WIN32 */
 
 typedef struct {
 	gpointer data;
@@ -682,7 +762,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 	return 0;
 }
 
-#endif /* __unix__ */
+#endif /* not __unix__ or _WIN32 */
 
 static void
 no_one_calls(gpointer data, gint source, GaimInputCondition cond)
@@ -1638,6 +1718,10 @@ gaim_proxy_init(void)
 								proxy_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/core/proxy/password",
 								proxy_pref_cb, NULL);
+#ifdef _WIN32
+	if(!g_thread_supported())
+		g_thread_init(NULL);
+#endif
 }
 
 void *
