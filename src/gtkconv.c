@@ -359,6 +359,29 @@ me_command_cb(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
+static GaimCmdRet
+debug_command_cb(GaimConversation *conv,
+                 const char *cmd, char **args, char **error)
+{
+	char *tmp, *markup;
+	GaimCmdStatus status;
+
+	if (!g_ascii_strcasecmp(args[0], "version")) {
+		tmp = g_strdup_printf(_("me is using Gaim v%s."), VERSION);
+		markup = gaim_escape_html(tmp);
+
+		status = gaim_cmd_do_command(conv, tmp, markup, error);
+
+		g_free(tmp);
+		g_free(markup);
+		return status;
+	} else {
+		gaim_conversation_write(conv, NULL, _("Supported debug options are:  version"),
+		                        GAIM_MESSAGE_NO_LOG|GAIM_MESSAGE_ERROR, time(NULL));
+		return GAIM_CMD_STATUS_OK;
+	}
+}
+
 static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
@@ -396,15 +419,22 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 				case GAIM_CMD_STATUS_OK:
 					return;
 				case GAIM_CMD_STATUS_NOT_FOUND:
-					gaim_conversation_write(conv, "", _("No such command"),
+					gaim_conversation_write(conv, "", _("No such command. If you didn't mean "
+					                                    "to type a command, you can turn "
+					                                    "commands off from Tools->"
+					                                    "Preferences->Interface->Conversation"
+					                                    "->Enable \"slash\" commands."),
 							GAIM_MESSAGE_SYSTEM, time(NULL));
 					return;
 				case GAIM_CMD_STATUS_WRONG_ARGS:
-					gaim_conversation_write(conv, "", _("Syntax error"),
+					gaim_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
+					                                    "to that command. If you didn't mean to type a command, "
+				                                            "you can turn commands off from Tools->Preferences->"
+					                                    "Interface->Conversation->Enable \"slash\" commands."),
 							GAIM_MESSAGE_SYSTEM, time(NULL));
 					return;
 				case GAIM_CMD_STATUS_FAILED:
-					gaim_conversation_write(conv, "", error ? error : _("Command failed"),
+					gaim_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
 							GAIM_MESSAGE_SYSTEM, time(NULL));
 					if(error)
 						g_free(error);
@@ -5995,7 +6025,9 @@ gaim_gtk_conversations_init(void)
 	 gaim_cmd_register("me", "S", GAIM_CMD_P_DEFAULT,
                         GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
                         me_command_cb, _("Send an IRC style action to a buddy or chat."));
-
+	 gaim_cmd_register("debug", "w", GAIM_CMD_P_DEFAULT,
+                        GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+                        debug_command_cb, _("Send various debug information to the current conversation."));
 }
 
 void
