@@ -5,6 +5,7 @@ intl
 ABOUT-NLS
 config.guess
 config.sub
+Doxyfile
 ltconfig
 ltmain.sh
 install-sh
