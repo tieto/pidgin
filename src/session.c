@@ -294,6 +294,10 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	session_managed = TRUE;
 	gdk_set_sm_client_id(client_id);
 
+	tmp = g_get_current_dir();
+	session_set_string(session, SmCurrentDirectory, tmp);
+	g_free(tmp);
+
 	tmp = g_strdup_printf("%d", (int) getpid());
 	session_set_string(session, SmProcessID, tmp);
 	g_free(tmp);
@@ -312,6 +316,9 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	cmd[1] = NULL;
 	session_set_array(session, SmCloneCommand, cmd);
 
+	/* this is currently useless, but gnome-session warns 'the following applications will not
+	   save their current status' bla bla if we don't have it and the user checks 'Save Session'
+	   when they log out */
 	cmd[1] = "-v";
 	cmd[2] = NULL;
 	session_set_array(session, SmDiscardCommand, cmd);
