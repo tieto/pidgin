@@ -58,6 +58,7 @@
 GaimPlugin *handle = NULL;
 static struct docklet_ui_ops *ui_ops = NULL;
 static enum docklet_status status = offline;
+gboolean online_account_supports_chat = FALSE;
 #if 0 /* XXX CUI */
 #ifdef _WIN32
 __declspec(dllimport) GSList *unread_message_queue;
@@ -125,6 +126,7 @@ docklet_menu_leave(GtkWidget *menu, GdkEventCrossing *event, void *data)
 static void docklet_menu() {
 	static GtkWidget *menu = NULL;
 	GtkWidget *entry;
+	GtkWidget *menuitem;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
@@ -139,7 +141,8 @@ static void docklet_menu() {
 			break;
 		default:
 			gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(gaim_gtkdialogs_im), NULL, 0, 0, NULL);
-			gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(gaim_gtk_blist_joinchat_show), NULL, 0, 0, NULL);
+			menuitem = gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(gaim_gtk_blist_joinchat_show), NULL, 0, 0, NULL);
+			gtk_widget_set_sensitive(menuitem, online_account_supports_chat);
 			break;
 	}
 
@@ -266,11 +269,12 @@ docklet_blink_icon()
 static gboolean
 docklet_update_status()
 {
+	GList *c;
 	enum docklet_status oldstatus;
 
 	oldstatus = status;
 
-	if (gaim_connections_get_all()) {
+	if ((c = gaim_connections_get_all())) {
 #if 0 /* XXX NEW STATUS */
 		if (unread_message_queue) {
 			status = online_pending;
@@ -287,6 +291,15 @@ docklet_update_status()
 			status = online_connecting;
 		} else {
 			status = online;
+		}
+		/* Check if any online accounts support chats */
+		while (c != NULL) {
+			GaimConnection *gc = c->data;
+			if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL) {
+				online_account_supports_chat = TRUE;
+				break;
+			}
+			c = c->next;
 		}
 	} else {
 		if (gaim_connections_get_connecting()) {
