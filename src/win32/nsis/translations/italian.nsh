@@ -44,8 +44,8 @@ LangString GTK_INSTALL_ERROR				${LANG_ITALIAN} "Errore di installazione di GTK+
 LangString GTK_BAD_INSTALL_PATH			${LANG_ITALIAN} "Il percorso scelto non può essere raggiunto o creato."
 
 ; GTK+ Themes section
-LangString GTK_NO_THEME_INSTALL_RIGHTS		${LANG_ITALIAN} "Non hai il permesso di installare un tema GTK+."
+LangString GTK_NO_THEME_INSTALL_RIGHTS		${LANG_ITALIAN} "Non hai il permesso per installare un tema GTK+."
 
 ; Uninstall Section Prompts
-LangString un.GAIM_UNINSTALL_ERROR_1         	${LANG_ITALIAN} "Il programma di disinstallazione non è in grado di trovare le voci di registro per Gaim.$\rProbabilmente un altro utente ha installato questa applicazione."
-LangString un.GAIM_UNINSTALL_ERROR_2         	${LANG_ITALIAN} "Non hai il permesso di disinstallare questa applicazione."
+LangString un.GAIM_UNINSTALL_ERROR_1         	${LANG_ITALIAN} "Il programma di rimozione non è in grado di trovare le voci di registro per Gaim.$\rProbabilmente un altro utente ha installato questa applicazione."
+LangString un.GAIM_UNINSTALL_ERROR_2         	${LANG_ITALIAN} "Non hai il permesso per rimuovere questa applicazione."
