@@ -549,7 +549,7 @@ static void do_pass_dlg(struct aim_user *u)
 		gtk_widget_show(u->passprmt);
 		return;
 	}
-	u->passprmt = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	u->passprmt = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(u->passprmt), "password", "Gaim");
 	gtk_container_border_width(GTK_CONTAINER(u->passprmt), 5);
 	gtk_signal_connect(GTK_OBJECT(u->passprmt), "destroy", GTK_SIGNAL_FUNC(pass_des), u);
@@ -807,7 +807,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		GtkWidget *box, *label, *button;
 		char buf[256];
 
-		gc->meter = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gc->meter = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_policy(GTK_WINDOW(gc->meter), 0, 0, 1);
 		gtk_window_set_wmclass(GTK_WINDOW(gc->meter), "signon", "Gaim");
 		gtk_container_set_border_width(GTK_CONTAINER(gc->meter), 5);
