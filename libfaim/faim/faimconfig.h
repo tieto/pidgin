@@ -108,9 +108,12 @@
  * 
  * Default: defined on Linux, otherwise undefined
  */
+/*
 #ifdef __linux__
 #define FAIM_USEPTHREADS
 #endif
+*/
+#define FAIM_USEPTHREADS
 
 #endif /* __FAIMCONFIG_H__ */
 
