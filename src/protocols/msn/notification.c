@@ -1348,6 +1348,24 @@ syn_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (session->protocol_ver >= 8)
 	{
+		if (param_count == 2)
+		{
+			char buf[256];
+
+			/*
+			 * This can happen if we sent a SYN with an up-to-date
+			 * buddy list revision, but we send 0 to get a full list.
+			 * So, error out.
+			 */
+			snprintf(buf, sizeof(buf),
+				_("Your MSN buddy list for %s is temporarily unavailable. "
+				  "Please wait and try again."),
+				gaim_acocunt_get_username(session->account));
+			gaim_connection_error(gc, buf);
+
+			return FALSE;
+		}
+
 		session->total_users  = atoi(params[2]);
 		session->total_groups = atoi(params[3]);
 
