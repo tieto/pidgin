@@ -2926,7 +2926,8 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 
 		file = gaim_user_dir();
 		if ( file != (char *) NULL ) {
-			sprintf( path, "%s/%s.%d.blist", file, g_screenname, gc->protocol);
+			sprintf( path, "%s/%s.%d.blist", file, g_screenname,
+					(gc->protocol == PROTO_OSCAR) ? PROTO_TOC : gc->protocol);
 			g_free(file);
 		} else {
 			return;
