@@ -763,15 +763,33 @@ static GtkItemFactoryEntry blist_menu[] =
 
 static char *gaim_get_tooltip_text(GaimBlistNode *node)
 {
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	char *text = NULL;
 
 	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		struct chat *chat = (struct chat *)node;
+		char *name = NULL;
+
+		if(chat->alias) {
+			name = g_markup_escape_text(chat->alias, -1);
+		} else {
+			struct proto_chat_entry *pce;
+			GList *parts;
+			prpl = gaim_find_prpl(chat->account->protocol);
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+			parts = prpl_info->chat_info(chat->account->gc);
+			pce = parts->data;
+			name = g_markup_escape_text(g_hash_table_lookup(chat->components,
+						pce->identifier), -1);
+			g_list_free(parts);
+		}
+
 		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>",
-				chat->alias);
+				name);
+		g_free(name);
 	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		GaimPlugin *prpl;
-		GaimPluginProtocolInfo *prpl_info = NULL;
 		struct buddy *b = (struct buddy *)node;
 		char *statustext = NULL;
 		char *aliastext = NULL, *nicktext = NULL;
@@ -1686,20 +1704,33 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 	if (GAIM_BLIST_NODE_IS_CHAT(node) && ((struct chat*)node)->account->gc) {
 		GdkPixbuf *status;
-		char *mark;
+		struct chat *chat = (struct chat *)node;
+		char *name;
 
 		status = gaim_gtk_blist_get_status_icon(node,
 							blist_options & OPT_BLIST_SHOW_ICONS ? GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL);
-		mark = g_markup_escape_text(((struct chat*)node)->alias, -1);
+		if(chat->alias) {
+			name = g_markup_escape_text(chat->alias, -1);
+		} else {
+			struct proto_chat_entry *pce;
+			GList *parts;
+
+			parts = GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
+			pce = parts->data;
+			name = g_markup_escape_text(g_hash_table_lookup(chat->components,
+						pce->identifier), -1);
+			g_list_free(parts);
+		}
+
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_COLUMN, status,
 				   STATUS_ICON_VISIBLE_COLUMN, TRUE,
-				   NAME_COLUMN, mark,
+				   NAME_COLUMN, name,
 				   NODE_COLUMN, node,
 				   -1);
 
-		g_free(mark);
+		g_free(name);
 		if (status != NULL)
 			g_object_unref(status);
 	} else if(GAIM_BLIST_NODE_IS_CHAT(node) && !((struct chat *)node)->account->gc) {

@@ -203,11 +203,13 @@ void gaim_blist_alias_chat(struct chat *chat, const char *alias)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
-	if(!alias || !strlen(alias))
-		return;
-
 	g_free(chat->alias);
-	chat->alias = g_strdup(alias);
+
+	if(alias && strlen(alias))
+		chat->alias = g_strdup(alias);
+	else
+		chat->alias = NULL;
+
 	if(ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)chat);
 }
@@ -247,12 +249,13 @@ struct chat *gaim_chat_new(struct gaim_account *account, const char *alias, GHas
 	struct chat *chat;
 	struct gaim_blist_ui_ops *ops;
 
-	if(!alias || !strlen(alias) || !components)
+	if(!components)
 		return NULL;
 
 	chat = g_new0(struct chat, 1);
 	chat->account = account;
-	chat->alias = g_strdup(alias);
+	if(alias && strlen(alias))
+		chat->alias = g_strdup(alias);
 	chat->components = components;
 
 	((GaimBlistNode*)chat)->type = GAIM_BLIST_CHAT_NODE;
@@ -1215,7 +1218,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "chat")) {
 		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
-		if(account && blist_parser_chat_alias) {
+		if(account) {
 			struct chat *chat = gaim_chat_new(account, blist_parser_chat_alias, blist_parser_chat_components);
 			struct group *g = gaim_find_group(blist_parser_group_name);
 			gaim_blist_add_chat(chat,g,NULL);
@@ -1560,13 +1563,17 @@ static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 				} else if(GAIM_BLIST_NODE_IS_CHAT(bnode)) {
 					struct chat *chat = (struct chat *)bnode;
 					if(!exp_acct || chat->account == exp_acct) {
-						char *chat_alias = g_markup_escape_text(chat->alias, -1);
 						char *acct_name = g_markup_escape_text(chat->account->username, -1);
 						fprintf(file, "\t\t\t<chat protocol=\"%d\" account=\"%s\">\n", chat->account->protocol, acct_name);
-						fprintf(file, "\t\t\t\t<alias>%s</alias>\n", chat_alias);
+						if(chat->alias) {
+							char *chat_alias = g_markup_escape_text(chat->alias, -1);
+							fprintf(file, "\t\t\t\t<alias>%s</alias>\n", chat_alias);
+							g_free(chat_alias);
+						}
 						g_hash_table_foreach(chat->components,
 								blist_print_chat_components, file);
 						fprintf(file, "\t\t\t</chat>\n");
+						g_free(acct_name);
 					}
 				}
 			}

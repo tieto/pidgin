@@ -1229,8 +1229,10 @@ static void do_add_chat(GtkWidget *w, struct addchat *ac) {
 		gaim_blist_add_group(group, NULL);
 	}
 
-	gaim_blist_add_chat(chat, group, NULL);
-	gaim_blist_save();
+	if(chat) {
+		gaim_blist_add_chat(chat, group, NULL);
+		gaim_blist_save();
+	}
 
 	gtk_widget_destroy(ac->window);
 	g_list_free(ac->entries);
@@ -1252,6 +1254,7 @@ static void do_add_chat_resp(GtkWidget *w, int resp, struct addchat *ac) {
 static void rebuild_addchat_entries(struct addchat *ac) {
 	GList *list, *tmp;
 	struct proto_chat_entry *pce;
+	gboolean focus = TRUE;
 
 	while(GTK_BOX(ac->entries_box)->children)
 		gtk_container_remove(GTK_CONTAINER(ac->entries_box),
@@ -1295,6 +1298,11 @@ static void rebuild_addchat_entries(struct addchat *ac) {
 
 			if(pce->def)
 				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
+
+			if(focus) {
+				gtk_widget_grab_focus(entry);
+				focus = FALSE;
+			}
 
 			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
 
@@ -1420,6 +1428,12 @@ void show_add_chat(struct gaim_account *account, struct group *group) {
 
 	create_online_account_menu_for_add_chat(ac);
 
+	ac->entries_box = gtk_vbox_new(FALSE, 5);
+    gtk_container_set_border_width(GTK_CONTAINER(ac->entries_box), 0);
+	gtk_box_pack_start(GTK_BOX(vbox), ac->entries_box, TRUE, TRUE, 0);
+
+	rebuild_addchat_entries(ac);
+
 	rowbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
 
@@ -1430,12 +1444,6 @@ void show_add_chat(struct gaim_account *account, struct group *group) {
 
 	ac->alias_entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(rowbox), ac->alias_entry, TRUE, TRUE, 0);
-
-	ac->entries_box = gtk_vbox_new(FALSE, 5);
-    gtk_container_set_border_width(GTK_CONTAINER(ac->entries_box), 0);
-	gtk_box_pack_start(GTK_BOX(vbox), ac->entries_box, TRUE, TRUE, 0);
-
-	rebuild_addchat_entries(ac);
 
 	rowbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
@@ -1453,8 +1461,6 @@ void show_add_chat(struct gaim_account *account, struct group *group) {
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(ac->group_combo)->entry), group->name);
 
 	g_signal_connect(G_OBJECT(ac->window), "response", G_CALLBACK(do_add_chat_resp), ac);
-
-	gtk_widget_grab_focus(ac->alias_entry);
 
 	gtk_widget_show_all(ac->window);
 }
@@ -3569,10 +3575,8 @@ static void do_alias_chat(GtkWidget *w, int resp, struct chat *chat)
 	if(resp == GTK_RESPONSE_OK) {
 		GtkWidget *entry = g_object_get_data(G_OBJECT(w), "alias_entry");
 		const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
-		if(text && strlen(text)) {
-			gaim_blist_alias_chat(chat, text);
-			gaim_blist_save();
-		}
+		gaim_blist_alias_chat(chat, text);
+		gaim_blist_save();
 	}
 	gtk_widget_destroy(w);
 }
