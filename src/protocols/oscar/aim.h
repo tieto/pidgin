@@ -704,8 +704,8 @@ struct aim_incomingim_ch2_args {
   } info;
 };
 
-faim_export unsigned long aim_send_im_ext(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_sendimext_args *args);
-faim_export unsigned long aim_send_im(struct aim_session_t *, struct aim_conn_t *, const char *destsn, unsigned short flags, const char *msg);
+faim_export int aim_send_im_ext(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_sendimext_args *args);
+faim_export int aim_send_im(struct aim_session_t *, struct aim_conn_t *, const char *destsn, unsigned short flags, const char *msg);
 faim_export int aim_send_icon(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn, const unsigned char *icon, int iconlen, time_t stamp, unsigned short iconsum);
 faim_export unsigned short aim_iconsum(const unsigned char *buf, int buflen);
 faim_export int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);

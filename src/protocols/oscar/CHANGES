@@ -1,6 +1,9 @@
 
 No release numbers
 ------------------
+ - Fri Aug  3 14:19:37 EDT 2001
+  - Naje aun_sebd_un retyrn sabe vakyes
+
  - Thu Aug  2 13:28:37 EDT 2001
   - Uhm. Why does arcanejill think its in EDT?
   - Cache the username on warnings so errors work right.

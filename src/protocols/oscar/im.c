@@ -115,145 +115,149 @@ faim_export unsigned short aim_iconsum(const unsigned char *buf, int buflen)
  * "Horizontal Ellipsis", or 133 in in ASCII8).
  *
  */
-faim_export unsigned long aim_send_im_ext(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_sendimext_args *args)
+faim_export int aim_send_im_ext(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_sendimext_args *args)
 {
-  int curbyte,i;
-  struct command_tx_struct *newpacket;
+	int curbyte,i;
+	struct command_tx_struct *newpacket;
 
-  if (!sess || !conn || !args)
-    return -1;
+	if (!sess || !conn || !args)
+	       	return -EINVAL;
 
-  if (!args->msg || (args->msglen <= 0))
-    return -1;
+	if (!args->msg || (args->msglen <= 0))
+		return -EINVAL;
 
-  if (args->msglen >= MAXMSGLEN)
-    return -1;
+	if (args->msglen >= MAXMSGLEN)
+		return -E2BIG;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, args->msglen+512)))
-    return -1;
+	if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, args->msglen+512)))
+		return -ENOMEM;
 
-  newpacket->lock = 1; /* lock struct */
+	newpacket->lock = 1; /* lock struct */
 
-  curbyte  = 0;
-  curbyte += aim_putsnac(newpacket->data+curbyte, 
-			 0x0004, 0x0006, 0x0000, sess->snac_nextid);
+	curbyte  = 0;
+	curbyte += aim_putsnac(newpacket->data+curbyte, 
+				0x0004, 0x0006, 0x0000, sess->snac_nextid);
 
-  /* 
-   * Generate a random message cookie 
-   *
-   * We could cache these like we do SNAC IDs.  (In fact, it 
-   * might be a good idea.)  In the message error functions, 
-   * the 8byte message cookie is returned as well as the 
-   * SNAC ID.
-   *
-   */
-  for (i = 0; i < 8; i++)
-    curbyte += aimutil_put8(newpacket->data+curbyte, (u_char) rand());
+	/* 
+	 * Generate a random message cookie 
+	 *
+	 * We could cache these like we do SNAC IDs.  (In fact, it 
+	 * might be a good idea.)  In the message error functions, 
+	 * the 8byte message cookie is returned as well as the 
+	 * SNAC ID.
+	 *
+	 */
+	for (i = 0; i < 8; i++) {
+		curbyte += aimutil_put8(newpacket->data+curbyte, 
+					(unsigned char) rand());
+	}
 
-  /*
-   * Channel ID
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte,0x0001);
+	/*
+	 * Channel ID
+	 */
+	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
 
-  /* 
-   * Destination SN (prepended with byte length)
-   */
-  curbyte += aimutil_put8(newpacket->data+curbyte, strlen(args->destsn));
-  curbyte += aimutil_putstr(newpacket->data+curbyte, args->destsn, strlen(args->destsn));
+	/*
+	 * Destination SN (prepended with byte length)
+	 */
+	curbyte += aimutil_put8(newpacket->data+curbyte, strlen(args->destsn));
+	curbyte += aimutil_putstr(newpacket->data+curbyte, 
+					args->destsn, strlen(args->destsn));
 
-  /*
-   * metaTLV start.
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
-  curbyte += aimutil_put16(newpacket->data+curbyte, args->msglen + 0x10);
+	/*
+	 * metaTLV start.
+	 */
+	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
+	curbyte += aimutil_put16(newpacket->data+curbyte, args->msglen + 0x10);
 
-  /*
-   * Flag data / ICBM Parameters?
-   *
-   * I don't know what these are...
-   *
-   */
-  curbyte += aimutil_put8(newpacket->data+curbyte, 0x05);
-  curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
+	/*
+	 * Flag data / ICBM Parameters?
+	 *
+	 * I don't know what these are...
+	 *
+	 */
+	curbyte += aimutil_put8(newpacket->data+curbyte, 0x05);
+	curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
 
-  /* number of bytes to follow */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0004);
-  curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
-  curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
-  curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
-  curbyte += aimutil_put8(newpacket->data+curbyte, 0x02);
+	/* number of bytes to follow */
+	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0004);
+	curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
+	curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
+	curbyte += aimutil_put8(newpacket->data+curbyte, 0x01);
+	curbyte += aimutil_put8(newpacket->data+curbyte, 0x02);
 
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0101);
+	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0101);
 
-  /* 
-   * Message block length.
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, args->msglen + 0x04);
+	/* 
+	 * Message block length.
+	 */
+	curbyte += aimutil_put16(newpacket->data+curbyte, args->msglen + 0x04);
 
-  /*
-   * Character set.
-   */
-  if (args->flags & AIM_IMFLAGS_UNICODE)
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
-  else if (args->flags & AIM_IMFLAGS_ISO_8859_1)
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
-  else
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
+	/*
+	 * Character set.
+	 */
+	if (args->flags & AIM_IMFLAGS_UNICODE)
+		curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
+	else if (args->flags & AIM_IMFLAGS_ISO_8859_1)
+		curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
+	else
+		curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
 
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
+	curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
 
-  /*
-   * Message.  Not terminated.
-   */
-  curbyte += aimutil_putstr(newpacket->data+curbyte, args->msg, args->msglen);
+	/*
+	 * Message.  Not terminated.
+	 */
+	curbyte += aimutil_putstr(newpacket->data+curbyte, 
+					args->msg, args->msglen);
 
-  /*
-   * Set the Request Acknowledge flag.  
-   */
-  if (args->flags & AIM_IMFLAGS_ACK) {
-    curbyte += aimutil_put16(newpacket->data+curbyte,0x0003);
-    curbyte += aimutil_put16(newpacket->data+curbyte,0x0000);
-  }
+	/*
+	 * Set the Request Acknowledge flag.  
+	 */
+	if (args->flags & AIM_IMFLAGS_ACK) {
+		curbyte += aimutil_put16(newpacket->data+curbyte,0x0003);
+		curbyte += aimutil_put16(newpacket->data+curbyte,0x0000);
+	}
   
-  /*
-   * Set the Autoresponse flag.
-   */
-  if (args->flags & AIM_IMFLAGS_AWAY) {
-    curbyte += aimutil_put16(newpacket->data+curbyte,0x0004);
-    curbyte += aimutil_put16(newpacket->data+curbyte,0x0000);
-  }
-  
-  /*
-   * Set the Buddy Icon Requested flag.
-   */
-  if (args->flags & AIM_IMFLAGS_BUDDYREQ) {
-    curbyte += aimutil_put16(newpacket->data+curbyte,0x0009);
-    curbyte += aimutil_put16(newpacket->data+curbyte,0x0000);
-  }
+	/*
+	 * Set the Autoresponse flag.
+	 */
+	if (args->flags & AIM_IMFLAGS_AWAY) {
+		curbyte += aimutil_put16(newpacket->data+curbyte,0x0004);
+		curbyte += aimutil_put16(newpacket->data+curbyte,0x0000);
+	}
 
-  /*
-   * Set the I HAVE A REALLY PURTY ICON flag (with timestamp).
-   */
-  if (args->flags & AIM_IMFLAGS_HASICON) {
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0008);
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x000c);
-    curbyte += aimutil_put32(newpacket->data+curbyte, args->iconlen);
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
-    curbyte += aimutil_put16(newpacket->data+curbyte, args->iconsum);
-    curbyte += aimutil_put32(newpacket->data+curbyte, args->iconstamp);
-  }
+	/*
+	 * Set the Buddy Icon Requested flag.
+	 */
+	if (args->flags & AIM_IMFLAGS_BUDDYREQ) {
+		curbyte += aimutil_put16(newpacket->data+curbyte,0x0009);
+		curbyte += aimutil_put16(newpacket->data+curbyte,0x0000);
+	}
 
-  newpacket->commandlen = curbyte;
-  newpacket->lock = 0;
+	/*
+	 * Set the I HAVE A REALLY PURTY ICON flag (with timestamp).
+	 */
+	if (args->flags & AIM_IMFLAGS_HASICON) {
+		curbyte += aimutil_put16(newpacket->data+curbyte, 0x0008);
+		curbyte += aimutil_put16(newpacket->data+curbyte, 0x000c);
+		curbyte += aimutil_put32(newpacket->data+curbyte, args->iconlen);
+		curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
+		curbyte += aimutil_put16(newpacket->data+curbyte, args->iconsum);
+		curbyte += aimutil_put32(newpacket->data+curbyte, args->iconstamp);
+	}
 
-  aim_tx_enqueue(sess, newpacket);
+	newpacket->commandlen = curbyte;
+	newpacket->lock = 0;
+
+	aim_tx_enqueue(sess, newpacket);
 
 #if 1 /* XXX do this with autoconf or something... */
-  aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
-  aim_cleansnacs(sess, 60); /* clean out all SNACs over 60sec old */
+	aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
+	aim_cleansnacs(sess, 60); /* clean out all SNACs over 60sec old */
 #endif
 
-  return sess->snac_nextid;
+	return 0;
 }
 
 /*
@@ -266,16 +270,16 @@ faim_export unsigned long aim_send_im_ext(struct aim_session_t *sess, struct aim
  * that requires an explicit message length.  Use aim_send_im_ext().
  *
  */
-faim_export unsigned long aim_send_im(struct aim_session_t *sess, struct aim_conn_t *conn, const char *destsn, unsigned short flags, const char *msg)
+faim_export int aim_send_im(struct aim_session_t *sess, struct aim_conn_t *conn, const char *destsn, unsigned short flags, const char *msg)
 {
-  struct aim_sendimext_args args;
+	struct aim_sendimext_args args;
 
-  args.destsn = destsn;
-  args.flags = flags;
-  args.msg = msg;
-  args.msglen = strlen(msg);
+	args.destsn = destsn;
+	args.flags = flags;
+	args.msg = msg;
+	args.msglen = strlen(msg);
 
-  return aim_send_im_ext(sess, conn, &args);
+	return aim_send_im_ext(sess, conn, &args);
 }
 
 faim_export int aim_send_icon(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn, const unsigned char *icon, int iconlen, time_t stamp, unsigned short iconsum)

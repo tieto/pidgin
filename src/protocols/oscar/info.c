@@ -539,20 +539,30 @@ faim_export int aim_0002_000b(struct aim_session_t *sess, struct aim_conn_t *con
   return 0;
 }
 
+/*
+ * Normally contains:
+ *   t(0001)  - short containing max profile length (value = 1024)
+ *   t(0002)  - short - unknown (value = 16) [max MIME type length?]
+ *   t(0003)  - short - unknown (value = 7)
+ */
 static int rights(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  struct aim_tlvlist_t *tlvlist;
-  aim_rxcallback_t userfunc;
-  int ret = 0;
+	struct aim_tlvlist_t *tlvlist;
+	aim_rxcallback_t userfunc;
+	int ret = 0;
+	unsigned short maxsiglen = 0;
 
-  tlvlist = aim_readtlvchain(data, datalen);
+	tlvlist = aim_readtlvchain(data, datalen);
 
-  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-    ret = userfunc(sess, rx);
+	if (aim_gettlv(tlvlist, 0x0001, 1))
+		maxsiglen = aim_gettlv16(tlvlist, 0x0001, 1);
 
-  aim_freetlvchain(&tlvlist);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, maxsiglen);
 
-  return ret;
+	aim_freetlvchain(&tlvlist);
+
+	return ret;
 }
 
 static int userinfo(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
