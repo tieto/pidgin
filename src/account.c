@@ -991,6 +991,7 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 						gboolean active, ...)
 {
 	GaimStatus *status;
+	GaimStatusType *status_type;
 	va_list args;
 
 	g_return_if_fail(account   != NULL);
@@ -1010,6 +1011,17 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 	va_start(args, active);
 	gaim_status_set_active_with_attrs(status, active, args);
 	va_end(args);
+
+	/*
+	 * If this account should be connected, but is not, then connect.
+	 */
+	status_type = gaim_status_get_type(status);
+	if (active &&
+		(gaim_status_type_get_primitive(status_type) != GAIM_STATUS_OFFLINE) &&
+		!gaim_account_is_connected(account))
+	{
+		gaim_account_connect(account, status);
+	}
 }
 
 void

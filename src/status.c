@@ -775,6 +775,8 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 	gboolean changed = FALSE;
 	const gchar *id;
 
+	g_return_if_fail(status != NULL);
+
 	if (!active && gaim_status_is_exclusive(status))
 	{
 		gaim_debug_error("status",
@@ -782,8 +784,6 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 				   gaim_status_get_id(status));
 		return;
 	}
-
-	g_return_if_fail(status != NULL);
 
 	if (status->active != active)
 		changed = TRUE;
@@ -798,7 +798,7 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 		if (value == NULL)
 		{
 			gaim_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
-							   "not supported.\n", id, status->title);
+							   "not supported.\n", id, status->type->name);
 			/* Skip over the data and move on to the next attribute */
 			va_arg(args, void *);
 			continue;

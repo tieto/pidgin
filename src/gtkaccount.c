@@ -2044,10 +2044,26 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 	if (enabled) {
 		gaim_account_disconnect(account);
 	} else {
-		GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-		const char *type = gtk_gaim_status_box_get_active_type(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
-		const char *message = gtk_gaim_status_box_get_message(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
-		gaim_account_set_status(account, type, TRUE, "message", message, NULL);
+		GaimGtkBuddyList *gtkblist;
+		const char *type;
+		GaimStatus *status;
+		GaimStatusType *status_type;
+
+		gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+		type = gtk_gaim_status_box_get_active_type(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
+		status = gaim_account_get_status(account, type);
+		status_type = gaim_status_get_type(status);
+
+		if (gaim_status_type_get_attr(status_type, "message") != NULL)
+		{
+			const char *message;
+			message = gtk_gaim_status_box_get_message(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
+			gaim_account_set_status(account, type, TRUE, "message", message, NULL);
+		}
+		else
+		{
+			gaim_account_set_status(account, type, TRUE, NULL);
+		}
 	}
 
 	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
