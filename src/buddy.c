@@ -1772,6 +1772,9 @@ create_prpl_icon(struct gaim_account *account)
 		unref_protocol(prpl);
 	}
 
+	if (!protoname)
+		return NULL;
+
 	/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and 
 	   then it will look up protoname from the theme */
 	if (!strcmp(protoname, "aim")) {
