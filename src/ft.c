@@ -147,6 +147,7 @@ gaim_xfer_request_accepted(struct gaim_xfer *xfer, char *filename)
 			return;
 		}
 
+		gaim_xfer_set_filename(xfer, filename);
 		gaim_xfer_set_size(xfer, sb.st_size);
 	}
 	else {
