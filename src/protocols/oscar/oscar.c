@@ -2521,7 +2521,8 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("info%s: perms = %d, type = %x, length = %d, val = %s\n",
 			change ? " change" : "", perms, type, length, str ? val : "(not string)");
 
-	if ((type == 0x0011) && str) {
+	/* XXX Do something for other types too. */
+	if ((type == 0x0011) && str && length) {
 		g_snprintf(buf, sizeof(buf), "The email address for %s is %s", gc->username, val);
 		do_error_dialog(buf, "Email");
 	}
