@@ -551,6 +551,7 @@ im_cb(GtkWidget *widget, struct gaim_conversation *conv)
 		return;
 
 	if (*name == '@') name++;
+	if (*name == '%') name++;
 	if (*name == '+') name++;
 
 	account = gaim_conversation_get_account(conv);
@@ -712,6 +713,10 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &who, -1);
+
+	if (*who == '@') who++;
+	if (*who == '%') who++;
+	if (*who == '+') who++;
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		struct gaim_conversation *c;
@@ -2239,7 +2244,7 @@ tab_complete(struct gaim_conversation *conv)
 		char *nick = nicks->data;
 		/* this checks to see if the current nick could be a completion */
 		if (g_strncasecmp(nick, entered, strlen(entered))) {
-			if (nick[0] != '+' && nick[0] != '@')
+			if (*nick != '+' && *nick != '@' && *nick != '%')
 				continue;
 
 			if (g_strncasecmp(nick + 1, entered, strlen(entered))) {
@@ -2270,6 +2275,7 @@ tab_complete(struct gaim_conversation *conv)
 				nick = nicks->data;
 
 				if (*nick == '@') nick++;
+				if (*nick == '%') nick++;
 				if (*nick == '+') nick++;
 			}
 

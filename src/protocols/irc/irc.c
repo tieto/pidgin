@@ -759,7 +759,7 @@ irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char
 	struct gaim_conversation *c = irc_find_chat(gc, room);
 	GList *r;
 
-	if (mode != 'o' && mode != 'v')
+	if (mode != 'o' && mode != 'v' && mode != 'h')
 		return;
 
 	if (!c)
@@ -767,33 +767,52 @@ irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char
 
 	r = gaim_chat_get_users(GAIM_CHAT(c));
 	while (r) {
-		gboolean op = FALSE, voice = FALSE;
+		gboolean op = FALSE, halfop = FALSE, voice = FALSE;
 		char *who = r->data;
+
 		if (*who == '@') {
 			op = TRUE;
 			who++;
 		}
+
+		if (*who == '%') {
+			halfop = TRUE;
+			who++;
+		}
+
 		if (*who == '+') {
 			voice = TRUE;
 			who++;
 		}
+
 		if (!strcmp(who, nick)) {
 			char *tmp, buf[IRC_BUF_LEN];
+
 			if (mode == 'o') {
 				if (sign == '-')
 					op = FALSE;
 				else
 					op = TRUE;
 			}
+
+			if (mode == 'h') {
+				if (sign == '-')
+					halfop = FALSE;
+				else
+					halfop = TRUE;
+			}
+
 			if (mode == 'v') {
 				if (sign == '-')
 					voice = FALSE;
 				else
 					voice = TRUE;
 			}
+
 			tmp = g_strdup(r->data);
-			g_snprintf(buf, sizeof(buf), "%s%s%s", op ? "@" : "",
-				   voice ? "+" : "", nick);
+			g_snprintf(buf, sizeof(buf), "%s%s%s",
+					   (op ? "@" : (halfop ? "%" : "")),
+					   voice ? "+" : "", nick);
 			gaim_chat_rename_user(GAIM_CHAT(c), tmp, buf);
 			g_free(tmp);
 			return;
@@ -1114,6 +1133,8 @@ irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct gaim_conversatio
 			char *who = r->data;
 			if (*who == '@')
 				who++;
+			if (*who == '%')
+				who++;
 			if (*who == '+')
 				who++;
 			if (!g_strcasecmp(who, nick)) {
@@ -1153,6 +1174,8 @@ irc_change_name(struct gaim_connection *gc, char *old, char *new)
 			char *who = r->data;
 			int n = 0;
 			if (*who == '@')
+				buf[n++] = *who++;
+			if (*who == '%')
 				buf[n++] = *who++;
 			if (*who == '+')
 				buf[n++] = *who++;
@@ -1632,6 +1655,8 @@ irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
 	while (r) {
 		char *who = r->data;
 		if (*who == '@')
+			who++;
+		if (*who == '%')
 			who++;
 		if (*who == '+')
 			who++;
@@ -2291,7 +2316,7 @@ irc_chat_invite(struct gaim_connection *gc, int idn, const char *message, const 
 static int 
 irc_send_im(struct gaim_connection *gc, char *who, char *what, int len, int flags)
 {
-	if (*who == '@' || *who == '+')
+	if (*who == '@' || *who == '%' || *who == '+')
 		return send_msg(gc, who + 1, what);
 	return send_msg(gc, who, what);
 }
@@ -2709,6 +2734,8 @@ irc_get_info(struct gaim_connection *gc, char *who)
 	char buf[IRC_BUF_LEN];
 
 	if (*who == '@')
+		who++;
+	if (*who == '%')
 		who++;
 	if (*who == '+')
 		who++;

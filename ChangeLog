@@ -69,6 +69,7 @@ version 0.60:
 	  Mark Doliner)
 	* DCC File Receive support for IRC.
 	* Optional password on IRC accounts. (Thanks, Christian Hammond)
+	* Added half-op support.
 
 	Jabber:
 	* Jabber invisibility and permanently cancel sending on-
