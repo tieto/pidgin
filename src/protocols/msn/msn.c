@@ -1619,7 +1619,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 				g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
 				strcat(sendbuf, buf2);
 			}
-			strcat(sendbuf, "\n");
+			strcat(sendbuf, "\r\n");
 
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 				hide_login_progress(gc, _("Unable to send password"));
