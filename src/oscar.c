@@ -41,6 +41,9 @@
 #include <aim.h>
 #include "gnome_applet_mgr.h"
 
+#include "pixmaps/cancel.xpm"
+#include "pixmaps/ok.xpm"
+
 static int inpa = -1;
 static int paspa = -1;
 static int cnpa = -1;
@@ -548,6 +551,115 @@ int gaim_parse_offgoing(struct aim_session_t *sess,
 	return 1;
 }
 
+static void accept_directim(GtkWidget *w, GtkWidget *m)
+{
+	struct aim_conn_t *newconn;
+	struct aim_directim_priv *priv;
+	int watcher;
+
+	priv = (struct aim_directim_priv *)gtk_object_get_user_data(GTK_OBJECT(m));
+	gtk_widget_destroy(m);
+
+	if (!(newconn = aim_directim_connect(gaim_sess, gaim_conn, priv))) {
+		debug_print("imimage: could not connect\n");
+		return;
+	}
+
+	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
+	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
+
+	watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+				oscar_callback, newconn);
+
+	sprintf(debug_buff, "DirectIM: connected to %s\n", priv->sn);
+	debug_print(debug_buff);
+
+	serv_got_imimage(priv->sn, priv->cookie, priv->ip, newconn, watcher);
+
+	g_free(priv);
+}
+
+static void cancel_directim(GtkWidget *w, GtkWidget *m)
+{
+	gtk_widget_destroy(m);
+}
+
+static void directim_dialog(struct aim_directim_priv *priv)
+{
+	GtkWidget *window;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *yes;
+	GtkWidget *no;
+	GtkWidget *button;
+	GdkBitmap *mask;
+	GdkPixmap *pm;
+	GtkWidget *image;
+	char buf[BUF_LONG];
+
+	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_title(GTK_WINDOW(window), _("Accept Direct IM?"));
+	gtk_widget_realize(window);
+	aol_icon(window->window);
+	gtk_object_set_user_data(GTK_OBJECT(window), (void *)priv);
+
+	vbox = gtk_vbox_new(TRUE, 5);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+	gtk_widget_show(vbox);
+
+	sprintf(buf,  _("%s has requested to directly connect to your computer. "
+			"Do you accept?"), priv->sn);
+	label = gtk_label_new(buf);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
+	gtk_widget_show(label);
+
+	hbox = gtk_hbox_new(TRUE, 10);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	yes = gtk_button_new();
+	gtk_box_pack_start(GTK_BOX(hbox), yes, FALSE, FALSE, 5);
+	gtk_widget_show(yes);
+
+	button = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(yes), button);
+	gtk_widget_show(button);
+
+	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, ok_xpm);
+	image = gtk_pixmap_new(pm, mask);
+	gtk_box_pack_start(GTK_BOX(button), image, FALSE, FALSE, 2);
+	gtk_widget_show(image);
+
+	label = gtk_label_new(_("Accept"));
+	gtk_box_pack_end(GTK_BOX(button), label, FALSE, FALSE, 2);
+	gtk_widget_show(label);
+
+	no = gtk_button_new();
+	gtk_box_pack_end(GTK_BOX(hbox), no, FALSE, FALSE, 5);
+	gtk_widget_show(no);
+
+	button = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(no), button);
+	gtk_widget_show(button);
+
+	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, cancel_xpm);
+	image = gtk_pixmap_new(pm, mask);
+	gtk_box_pack_start(GTK_BOX(button), image, FALSE, FALSE, 2);
+	gtk_widget_show(image);
+
+	label = gtk_label_new(_("Cancel"));
+	gtk_box_pack_end(GTK_BOX(button), label, FALSE, FALSE, 2);
+	gtk_widget_show(label);
+
+	gtk_signal_connect(GTK_OBJECT(yes), "clicked",
+			   GTK_SIGNAL_FUNC(accept_directim), window);
+	gtk_signal_connect(GTK_OBJECT(no), "clicked",
+			   GTK_SIGNAL_FUNC(cancel_directim), window);
+
+	gtk_widget_show(window);
+}
+
 int gaim_parse_incoming_im(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
 	int channel;
@@ -599,7 +711,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			/* bah */
 		} else if (rendtype & AIM_CAPS_IMIMAGE) {
 			/* DirectIM stuff */
-			struct aim_directim_priv *priv;
+			struct aim_directim_priv *priv, *priv2;
 			struct aim_conn_t *newconn;
 			int watcher;
 
@@ -610,23 +722,11 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			sprintf(debug_buff, "DirectIM request from %s (%s)\n", userinfo->sn, priv->ip);
 			debug_print(debug_buff);
 
-			/* FIXME : prompt user to see if they really want to do this */
-
-			if (!(newconn = aim_directim_connect(sess, command->conn, priv))) {
-				debug_print("imimage: could not connect\n");
-				return 1;
-			}
-
-			aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
-			aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
-
-			watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-						oscar_callback, newconn);
-
-			sprintf(debug_buff, "DirectIM: connected to %s\n", userinfo->sn);
-			debug_print(debug_buff);
-
-			serv_got_imimage(priv->sn, priv->cookie, priv->ip, newconn, watcher);
+			priv2 = g_new0(struct aim_directim_priv, 1);
+			strcpy(priv2->cookie, priv->cookie);
+			strcpy(priv2->sn, priv->sn);
+			strcpy(priv2->ip, priv->ip);
+			directim_dialog(priv2);
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);

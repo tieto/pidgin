@@ -3477,6 +3477,24 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 				ws[wpos++] = ' ';
 				c += 5;
 			}
+			else if (!strncasecmp(c, "&copy;", 6))
+			{
+				ws[wpos++] = '©';
+				c += 5;
+			}
+			else if (*(c + 1) == '#')
+			{
+				int pound = 0;
+				debug_print("got &#;\n");
+				if (sscanf(c, "&#%d;", &pound) > 0) {
+					ws[wpos++] = (char)pound;
+					c += 2;
+					while (isdigit(*c)) c++;
+					if (*c != ';') c--;
+				} else {
+					ws[wpos++] = *c;
+				}
+			}
 			else
 			{
 				ws[wpos++] = *c;
