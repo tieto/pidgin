@@ -190,6 +190,8 @@ static void update_num_group(struct group_show *gs) {
 	int total = 0, on = 0;
 	char buf[256];
 
+	if (!g_slist_find(shows, gs)) return;
+
 	while (c) {
 		gc = (struct gaim_connection *)c->data;
 		g = find_group(gc, gs->name);
