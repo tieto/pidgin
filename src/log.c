@@ -257,19 +257,19 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 }
 
 #if 0 /* Maybe some other time. */
-/**************** 
+/****************
  ** XML LOGGER **
  ****************/
 
 static const char *str_from_msg_type (GaimMessageFlags type)
 {
-		
+
 		return "";
-	
+
 }
 
-static void xml_logger_write(GaimLog *log, 
-			     GaimMessageFlags type, 
+static void xml_logger_write(GaimLog *log,
+			     GaimMessageFlags type,
 			     const char *from, time_t time, const char *message)
 {
 	char date[64];
@@ -287,31 +287,31 @@ static void xml_logger_write(GaimLog *log,
 		FILE *file;
 
 		strftime(date, sizeof(date), "%F.%H%M%S.xml", localtime(&log->time));
-		
+
 		dir = g_build_filename(ud, "logs", NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		g_free(dir);
-		dir = g_build_filename(ud, "logs", 
+		dir = g_build_filename(ud, "logs",
 				       prpl, NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		g_free(dir);
-		dir = g_build_filename(ud, "logs", 
+		dir = g_build_filename(ud, "logs",
 				       prpl, guy, NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);	      
-		dir = g_build_filename(ud, "logs", 
+		g_free(dir);
+		dir = g_build_filename(ud, "logs",
 				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-						 
+
 		char *filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
-		
+
 		file = fopen(dir, "r");
 		if(!file)
 			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		else
 			fclose(file);
-		
+
 		log->logger_data = fopen(filename, "a");
 		if (!log->logger_data) {
 			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
@@ -319,30 +319,30 @@ static void xml_logger_write(GaimLog *log,
 		}
 		fprintf(log->logger_data, "<?xml version='1.0' encoding='UTF-8' ?>\n"
 			"<?xml-stylesheet href='file:///usr/src/web/htdocs/log-stylesheet.xsl' type='text/xml' ?>\n");
-		
+
 		strftime(date, sizeof(date), "%F %T", localtime(&log->time));
 		fprintf(log->logger_data, "<conversation time='%s' screenname='%s' protocol='%s'>\n",
 			date, log->name, prpl);
 	}
-	
+
 	strftime(date, sizeof(date), "%T", localtime(&time));
 	gaim_markup_html_to_xhtml(message, &xhtml, NULL);
 	if (from)
-		fprintf(log->logger_data, "<message %s %s from='%s' time='%s'>%s</message>\n", 
-			str_from_msg_type(type), 
+		fprintf(log->logger_data, "<message %s %s from='%s' time='%s'>%s</message>\n",
+			str_from_msg_type(type),
 			type & GAIM_MESSAGE_SEND ? "direction='sent'" :
 			type & GAIM_MESSAGE_RECV ? "direction='received'" : "",
 			from, date, xhtml);
 	else
-		fprintf(log->logger_data, "<message %s %s time='%s'>%s</message>\n", 
-			str_from_msg_type(type), 
+		fprintf(log->logger_data, "<message %s %s time='%s'>%s</message>\n",
+			str_from_msg_type(type),
 			type & GAIM_MESSAGE_SEND ? "direction='sent'" :
 			type & GAIM_MESSAGE_RECV ? "direction='received'" : "",
-			date, xhtml);	
+			date, xhtml):
 	fflush(log->logger_data);
 	g_free(xhtml);
-} 	    
- 
+}
+
  static void xml_logger_finalize(GaimLog *log)
 {
 	if (log->logger_data) {
@@ -351,7 +351,7 @@ static void xml_logger_write(GaimLog *log,
 		log->logger_data = NULL;
 	}
 }
-	       
+
 static GList *xml_logger_list(const char *sn, GaimAccount *account)
 {
 	return log_lister_common(sn, account, ".xml", &xml_logger);
