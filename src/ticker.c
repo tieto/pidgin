@@ -35,20 +35,25 @@ typedef struct {
 } TickerData;
 
 static GList *tickerbuds = (GList *) NULL;
+static gboolean userclose = FALSE;
 
 void BuddyTickerDestroyWindow( GtkWidget *window );
 void BuddyTickerCreateWindow( void );
 void BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm );
 void BuddyTickerRemoveUser( char *name );
 void BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm );
+void BuddyTickerClearList( void );
+void BuddyTickerSignOff( void );
 GList * BuddyTickerFindUser( char *name );
 
 void
 BuddyTickerDestroyWindow( GtkWidget *window )
 {
+	BuddyTickerClearList();
         gtk_ticker_stop_scroll( GTK_TICKER( ticker ) );
 	gtk_widget_destroy( window );	
 	ticker = tickerwindow = (GtkWidget *) NULL;
+	userclose = TRUE;
 }
 
 void
@@ -77,6 +82,13 @@ BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 {
 	GtkWidget *hbox, *label, *pmap;
 	TickerData *p;
+	GList *q;
+
+	if ( userclose == TRUE )
+		return;
+	q = (GList *) BuddyTickerFindUser( name );
+	if ( q != (GList *) NULL )
+		return;
 
 	BuddyTickerCreateWindow();
 	p = (TickerData *) malloc( sizeof( TickerData ) );
@@ -105,6 +117,8 @@ BuddyTickerRemoveUser( char *name )
 	GList *p = (GList *) BuddyTickerFindUser( name );
 	TickerData *data = (TickerData *) p->data;
 
+	if ( userclose == TRUE )
+		return;
 	if ( data ) {
 		gtk_ticker_remove( GTK_TICKER( ticker ), data->hbox );
 		tickerbuds = g_list_remove( tickerbuds, data );
@@ -115,9 +129,13 @@ BuddyTickerRemoveUser( char *name )
 void
 BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm )
 {
-	GList *p = (GList *) BuddyTickerFindUser( name );
-	TickerData *data = (TickerData *) p->data;
+	GList *p; 
+	TickerData *data;
 
+	if ( userclose == TRUE )
+		return;
+	p = (GList *) BuddyTickerFindUser( name );
+	data = (TickerData *) p->data;
 	if ( data->pix == (GtkWidget *) NULL ) {
 		data->pix = gtk_pixmap_new( pm, bm );
 		gtk_box_pack_start_defaults( GTK_BOX( data->hbox ), data->pix );
@@ -145,14 +163,7 @@ BuddyTickerFindUser( char *name )
 int
 BuddyTickerLogonTimeout( gpointer data )
 {
-	char *name = (char *) data;
-
-	GList *p = (GList *) BuddyTickerFindUser( name );
-	TickerData *q = (TickerData *) p->data;
-
-	if ( q ) {
-		
-	}
+	// XXX
 
 	return FALSE;
 }
@@ -162,7 +173,38 @@ BuddyTickerLogoutTimeout( gpointer data )
 {
 	char *name = (char *) data;
 
+	if ( userclose == TRUE )
+		return FALSE;
 	BuddyTickerRemoveUser( name );
 
 	return FALSE;
 }
+
+void
+BuddyTickerSignoff( void )
+{
+	GList *p = tickerbuds;
+	TickerData *q;
+
+	while ( p ) {
+		q = (TickerData *) p->data;
+		BuddyTickerRemoveUser( q->buddy ); 
+		p = tickerbuds;
+	}
+	userclose = FALSE;
+}
+
+void
+BuddyTickerClearList( void )
+{
+	GList *p = tickerbuds;
+	TickerData *q;
+
+	while ( p ) {
+		q = (TickerData *) p->data;
+		p = g_list_remove( p, p->data );
+	}
+	tickerbuds = (GList *) NULL;
+}
+
+

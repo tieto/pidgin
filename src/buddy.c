@@ -374,6 +374,7 @@ void signoff()
 #else
         show_login();
 #endif /* USE_APPLET */
+	BuddyTickerSignoff();
 }
 
 void handle_click_group(GtkWidget *widget, GdkEventButton *event, gpointer func_data)
