@@ -230,7 +230,7 @@ static void yahoo_login(struct aim_user *user) {
 
 	yahoo_get_config(ctxt);
 
-	if (yahoo_cmd_logon(ctxt, YAHOO_STATUS_AVAILABLE)) {
+	if (!yahoo_cmd_logon(ctxt, YAHOO_STATUS_AVAILABLE)) {
 		debug_printf("Yahoo: Unable to login\n");
 		hide_login_progress(gc, "Unable to login");
 		signoff(gc);
