@@ -1,11 +1,11 @@
-#define GAIM_PLUGINS
-
-#include <gtk/gtk.h>
+//#include <gtk/gtk.h>
 #include <time.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
 #include "gaim.h"
+
+#define GAIMINC_PLUGIN_ID "core-gaiminc"
 
 void echo_hi(void *m) {
 	/* this doesn't do much, just lets you know who we are :) */
@@ -37,47 +37,62 @@ void reverse(struct gaim_connection *gc, char **who, char **message, void *m) {
 void bud(struct gaim_connection *gc, char *who, void *m) {
 	/* whenever someone comes online, it sends them a message. if i
 	 * cared more, i'd make it so it popped up on your screen too */
-	serv_send_im(gc, who, "Hello!", 0);
+	serv_send_im(gc, who, "Hello!", -1, 0);
 }
 
-char *gaim_plugin_init(GModule *handle) {
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
 	/* this is for doing something fun when we sign on */
-	gaim_signal_connect(handle, event_signon, echo_hi, NULL);
+	gaim_signal_connect(plugin, event_signon, echo_hi, NULL);
 
 	/* this is for doing something fun when we get a message */
-	gaim_signal_connect(handle, event_im_recv, reverse, NULL);
+	gaim_signal_connect(plugin, event_im_recv, reverse, NULL);
 
 	/* this is for doing something fun when a buddy comes online */
-	gaim_signal_connect(handle, event_buddy_signon, bud, NULL);
+	gaim_signal_connect(plugin, event_buddy_signon, bud, NULL);
 
-	return NULL;
+	return TRUE;
 }
 
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = GAIM_PLUGIN_API_VERSION;
-	desc.name = g_strdup("Demonstration");
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(
-                "This is a really cool plugin that does a lot of stuff:\n"
-		"- It tells you who wrote the program when you log in\n"
-		"- It reverses all incoming text\n"
-		"- It sends a message to people on your list immediately"
-		" when they sign on";);
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	GAIMINC_PLUGIN_ID,                                /**< id             */
+	N_("Gaim Demonstration Plugin"),                  /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("An example plugin that does stuff - see the description."),
+	                                                  /**  description    */
+	N_("This is a really cool plugin that does a lot of stuff:\n"
+	   "- It tells you who wrote the program when you log in\n"
+	   "- It reverses all incoming text\n"
+	   "- It sends a message to people on your list immediately"
+	   " when they sign on"),
+	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	NULL,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
 
-
-char *name() {
-	return "Gaim Demonstration Plugin";
-}
-
-char *description() {
-	return "This is a really cool plugin that does a lot of stuff:\n"
-		"- It tells you who wrote the program when you log in\n"
-		"- It reverses all incoming text\n"
-		"- It sends a message to people on your list immediately"
-		" when they sign on";
-}
+GAIM_INIT_PLUGIN(gaiminc, __init_plugin, info);

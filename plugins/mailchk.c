@@ -1,10 +1,13 @@
 #include "gaim.h"
+#include "gtkplugin.h"
+#include "blist.h"
+#include "gtkblist.h"
 #include "sound.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#define MAILCHK_PLUGIN_ID "core-mailchk"
+#define MAILCHK_PLUGIN_ID "gtk-mailchk"
 
 #define ANY_MAIL    0x01
 #define UNREAD_MAIL 0x02
@@ -41,7 +44,7 @@ static gint check_mail()
 	return ret;
 }
 
-static void maildes()
+static void destroy_cb()
 {
 	mail = NULL;
 }
@@ -49,22 +52,23 @@ static void maildes()
 static gboolean check_timeout(gpointer data)
 {
 	gint count = check_mail();
-
+	struct gaim_buddy_list *list = gaim_get_blist();
 	if (count == -1)
 		return FALSE;
 
-	if (!blist)
+	if (!list || !GAIM_GTK_BLIST(list))
 		return TRUE;
 
 	if (!mail) {
 		/* guess we better build it then :P */
-		GList *tmp = gtk_container_get_children(GTK_CONTAINER(blist));
-		GtkWidget *vbox2 = (GtkWidget *)tmp->data;
+		//GList *tmp = gtk_container_get_children(GTK_CONTAINER(GAIM_GTK_BLIST(list)));
+		//GtkWidget *vbox2 = (GtkWidget *)tmp->data;
+		GtkWidget *vbox = (GtkWidget *)(GAIM_GTK_BLIST(list)->vbox);
 
 		mail = gtk_label_new("No mail messages.");
-		gtk_box_pack_start(GTK_BOX(vbox2), mail, FALSE, FALSE, 0);
-		gtk_box_reorder_child(GTK_BOX(vbox2), mail, 1);
-		g_signal_connect(GTK_OBJECT(mail), "destroy", G_CALLBACK(maildes), NULL);
+		gtk_box_pack_start(GTK_BOX(vbox), mail, FALSE, FALSE, 0);
+		gtk_box_reorder_child(GTK_BOX(vbox), mail, 1);
+		g_signal_connect(GTK_OBJECT(mail), "destroy", G_CALLBACK(destroy_cb), NULL);
 		gtk_widget_show(mail);
 	}
 
@@ -81,32 +85,46 @@ static gboolean check_timeout(gpointer data)
 	return TRUE;
 }
 
-static void mail_signon(struct gaim_connection *gc)
+static void signon_cb(struct gaim_connection *gc)
 {
-	if (blist && !timer)
+	struct gaim_buddy_list *list = gaim_get_blist();
+	if (list && GAIM_GTK_BLIST(list) && !timer)
 		timer = g_timeout_add(2000, check_timeout, NULL);
 }
 
-static void mail_signoff(struct gaim_connection *gc)
+static void signoff_cb(struct gaim_connection *gc)
 {
-	if (!blist && timer) {
+	struct gaim_buddy_list *list = gaim_get_blist();
+	if ((!list || !GAIM_GTK_BLIST(list)) && timer) {
 		g_source_remove(timer);
 		timer = 0;
 	}
 }
 
-char *gaim_plugin_init(GModule *m)
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+static gboolean
+plugin_load(GaimPlugin *plugin)
 {
-	if (!check_timeout(NULL))
-		return "Could not read $MAIL or /var/spool/mail/$USER";
-	if (blist)
+	struct gaim_buddy_list *list = gaim_get_blist();
+	if (!check_timeout(NULL)) {
+		gaim_debug(GAIM_DEBUG_WARNING, "mailchk", "Could not read $MAIL or /var/spool/mail/$USER");
+		return FALSE;
+	}
+
+	if (list && GAIM_GTK_BLIST(list))
 		timer = g_timeout_add(2000, check_timeout, NULL);
-	gaim_signal_connect(m, event_signon, mail_signon, NULL);
-	gaim_signal_connect(m, event_signoff, mail_signoff, NULL);
-	return NULL;
+
+	gaim_signal_connect(plugin, event_signon, signon_cb, NULL);
+	gaim_signal_connect(plugin, event_signoff, signoff_cb, NULL);
+
+	return TRUE;
 }
 
-void gaim_plugin_remove()
+static gboolean
+plugin_unload(GaimPlugin *plugin)
 {
 	if (timer)
 		g_source_remove(timer);
@@ -114,25 +132,40 @@ void gaim_plugin_remove()
 	if (mail)
 		gtk_widget_destroy(mail);
 	mail = NULL;
+
+	return TRUE;
 }
 
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = GAIM_PLUGIN_API_VERSION;
-	desc.name = g_strdup("Mail Checker");
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Checks for new local mail.");
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
-
-char *name()
+static GaimPluginInfo info =
 {
-	return "Mail Check";
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	MAILCHK_PLUGIN_ID,                                /**< id             */
+	N_("Mail Checker"),                               /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Checks for new local mail."),
+	                                                  /**  description    */
+	N_("Checks for new local mail."),
+	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
 
-char *description()
-{
-	return "Checks for new local mail";
-}
+GAIM_INIT_PLUGIN(mailchk, __init_plugin, info);

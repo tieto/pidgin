@@ -1,4 +1,4 @@
-/* tester.c
+/* events.c
  *
  * test every callback, print to stdout
  *
@@ -8,7 +8,7 @@
  *
  */
 
-#define GAIM_PLUGINS
+#define EVENTTEST_PLUGIN_ID "core-eventtest"
 #include "gaim.h"
 
 static void evt_signon(struct gaim_connection *gc, void *data)
@@ -148,7 +148,7 @@ static void evt_im_displayed_sent(struct gaim_connection *gc, char *who, char **
 
 static void evt_im_displayed_rcvd(struct gaim_connection *gc, char *who, char *what, guint32 flags, time_t time, void *data)
 {
-	printf("event_im_displayed_rcvd: %s %s %s %s\n", who, what, flags, time);
+	printf("event_im_displayed_rcvd: %s %s %u %u\n", who, what, flags, time);
 }
 
 static void evt_chat_send_invite(struct gaim_connection *gc, int id, char *who, char **msg, void *data)
@@ -161,7 +161,7 @@ static evt_got_typing(struct gaim_connection *gc, char *who, void *data)
 	printf("event_got_typing: %s\n", who);
 }
 
-static evt_del_conversation(struct conversation *c, void *data)
+static evt_del_conversation(struct gaim_conversation *c, void *data)
 {
 	printf("event_del_conversation\n");
 }
@@ -171,57 +171,77 @@ static evt_connecting(struct gaim_account *u, void *data)
 	printf("event_connecting\n");
 }
 
-char *gaim_plugin_init(GModule *h)
+
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+static gboolean
+plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(h, event_signon,			evt_signon, NULL);
-	gaim_signal_connect(h, event_signoff,			evt_signoff, NULL);
-	gaim_signal_connect(h, event_away,				evt_away, NULL);
-	gaim_signal_connect(h, event_back,				evt_back, NULL);
-	gaim_signal_connect(h, event_im_recv,			evt_im_recv, NULL);
-	gaim_signal_connect(h, event_im_send,			evt_im_send, NULL);
-	gaim_signal_connect(h, event_buddy_signon,		evt_buddy_signon, NULL);
-	gaim_signal_connect(h, event_buddy_signoff,		evt_buddy_signoff, NULL);
-	gaim_signal_connect(h, event_buddy_away,		evt_buddy_away, NULL);
-	gaim_signal_connect(h, event_buddy_back,		evt_buddy_back, NULL);
-	gaim_signal_connect(h, event_chat_invited,		evt_chat_invited, NULL);
-	gaim_signal_connect(h, event_chat_join,			evt_chat_join, NULL);
-	gaim_signal_connect(h, event_chat_leave,		evt_chat_leave, NULL);
-	gaim_signal_connect(h, event_chat_buddy_join,	evt_chat_buddy_join, NULL);
-	gaim_signal_connect(h, event_chat_buddy_leave,	evt_chat_buddy_leave, NULL);
-	gaim_signal_connect(h, event_chat_recv,			evt_chat_recv, NULL);
-	gaim_signal_connect(h, event_chat_send,			evt_chat_send, NULL);
-	gaim_signal_connect(h, event_warned,			evt_warned, NULL);
-	gaim_signal_connect(h, event_error,				evt_error, NULL);
-	gaim_signal_connect(h, event_quit,				evt_quit, NULL);
-	gaim_signal_connect(h, event_new_conversation,	evt_new_conversation, NULL);
-	gaim_signal_connect(h, event_set_info,			evt_set_info, NULL);
-	gaim_signal_connect(h, event_draw_menu,			evt_draw_menu, NULL);
-	gaim_signal_connect(h, event_im_displayed_sent,	evt_im_displayed_sent, NULL);
-	gaim_signal_connect(h, event_im_displayed_rcvd, evt_im_displayed_rcvd, NULL);
-	gaim_signal_connect(h, event_chat_send_invite,	evt_chat_send_invite, NULL);
-	gaim_signal_connect(h, event_got_typing, 		evt_got_typing, NULL);
-	gaim_signal_connect(h, event_del_conversation,	evt_del_conversation, NULL);
-	gaim_signal_connect(h, event_connecting,		evt_connecting, NULL);
-	return NULL;
+	gaim_signal_connect(plugin, event_signon,		evt_signon, NULL);
+	gaim_signal_connect(plugin, event_signoff,		evt_signoff, NULL);
+	gaim_signal_connect(plugin, event_away,		evt_away, NULL);
+	gaim_signal_connect(plugin, event_back,		evt_back, NULL);
+	gaim_signal_connect(plugin, event_im_recv,		evt_im_recv, NULL);
+	gaim_signal_connect(plugin, event_im_send,		evt_im_send, NULL);
+	gaim_signal_connect(plugin, event_buddy_signon,	evt_buddy_signon, NULL);
+	gaim_signal_connect(plugin, event_buddy_signoff,	evt_buddy_signoff, NULL);
+	gaim_signal_connect(plugin, event_buddy_away,	evt_buddy_away, NULL);
+	gaim_signal_connect(plugin, event_buddy_back,	evt_buddy_back, NULL);
+	gaim_signal_connect(plugin, event_chat_invited,	evt_chat_invited, NULL);
+	gaim_signal_connect(plugin, event_chat_join,		evt_chat_join, NULL);
+	gaim_signal_connect(plugin, event_chat_leave,	evt_chat_leave, NULL);
+	gaim_signal_connect(plugin, event_chat_buddy_join,	evt_chat_buddy_join, NULL);
+	gaim_signal_connect(plugin, event_chat_buddy_leave,	evt_chat_buddy_leave, NULL);
+	gaim_signal_connect(plugin, event_chat_recv,		evt_chat_recv, NULL);
+	gaim_signal_connect(plugin, event_chat_send,		evt_chat_send, NULL);
+	gaim_signal_connect(plugin, event_warned,		evt_warned, NULL);
+	gaim_signal_connect(plugin, event_error,		evt_error, NULL);
+	gaim_signal_connect(plugin, event_quit,		evt_quit, NULL);
+	gaim_signal_connect(plugin, event_new_conversation,	evt_new_conversation, NULL);
+	gaim_signal_connect(plugin, event_set_info,		evt_set_info, NULL);
+	gaim_signal_connect(plugin, event_draw_menu,		evt_draw_menu, NULL);
+	gaim_signal_connect(plugin, event_im_displayed_sent,	evt_im_displayed_sent, NULL);
+	gaim_signal_connect(plugin, event_im_displayed_rcvd, evt_im_displayed_rcvd, NULL);
+	gaim_signal_connect(plugin, event_chat_send_invite,	evt_chat_send_invite, NULL);
+	gaim_signal_connect(plugin, event_got_typing, 	evt_got_typing, NULL);
+	gaim_signal_connect(plugin, event_del_conversation,	evt_del_conversation, NULL);
+	gaim_signal_connect(plugin, event_connecting,	evt_connecting, NULL);
+
+	return TRUE;
 }
 
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = GAIM_PLUGIN_API_VERSION;
-	desc.name = g_strdup("Event Tester");
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Test to see that all plugin events are working properly.");
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	EVENTTEST_PLUGIN_ID,                              /**< id             */
+	N_("Event Test"),                                 /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Test to see that all events are working properly."),
+	                                                  /**  description    */
+	N_("Test to see that all events are working properly."),
+	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
 
-char *name()
-{
-	return "Event Test";
-}
-
-char *description()
-{
-	return "Test to see that all events are working properly.";
-}
+GAIM_INIT_PLUGIN(eventtester, __init_plugin, info);

@@ -9,7 +9,7 @@
 #include <string.h>
 #include <ctype.h>
 
-static void *handle;
+#define FILECTL_PLUGIN_ID "core-filectl"
 static int check;
 static time_t mtime;
 
@@ -107,36 +107,6 @@ void run_commands() {
 	mtime = finfo.st_mtime;
 }
 
-char *gaim_plugin_init(GModule *h) {
-	handle = h;
-	init_file();
-	check = g_timeout_add(5000, check_file, NULL);
-	return NULL;
-}
-
-void gaim_plugin_remove() {
-	g_source_remove(check);
-}
-
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = GAIM_PLUGIN_API_VERSION;
-	desc.name = g_strdup("Gaim File Control");
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Allows you to control Gaim by entering commands in aa file.");
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
- 
-char *name() {
-	return "Gaim File Control";
-}
-
-char *description() {
-	return "Allows you to control gaim by entering commands in a file.";
-}
-
 /* check to see if the size of the file is > 0. if so, run commands */
 void init_file() {
 	/* most of this was taken from Bash v2.04 by the FSF */
@@ -199,3 +169,57 @@ char *getarg(char *line, int which, int remain) {
 	free(arr);
 	return val;
 }
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	init_file();
+	check = g_timeout_add(5000, check_file, NULL);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	g_source_remove(check);
+
+	return TRUE;
+}
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	FILECTL_PLUGIN_ID,                                /**< id             */
+	N_("Gaim File Control"),                          /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Allows you to control Gaim by entering commands in a file."),
+	                                                  /**  description    */
+	N_("Allows you to control Gaim by entering commands in a file."),
+	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(filectl, __init_plugin, info);
