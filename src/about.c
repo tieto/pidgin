@@ -72,7 +72,7 @@ void show_about(GtkWidget *w, void *null)
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About GAIM v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
 		gtk_container_border_width(GTK_CONTAINER(about), 2);
-		gtk_widget_set_usize(about, 535, 390);
+		gtk_widget_set_usize(about, 535, 430);
 
 		gtk_widget_show(about);
         	aol_icon(about->window);
@@ -95,6 +95,7 @@ void show_about(GtkWidget *w, void *null)
 "Rob Flynn <rflynn@blueridge.net> <IM: RobFlynn> (Maintainer)\n"
 "Eric Warmenhoven <warmenhoven@yahoo.com> <IM: EWarmenhoven> (Second in Command)\n"
 "Syd Logan (Designated Driver and Super Hacker *OoOoO*)\n"
+"Todd Kulesza <fflewddur@linuxfreak.com> - Misc Code and Caffeine Consumer\n"
 "Jim Duchek <jimduchek@ou.edu> <IM:Zilding> (Former Maintainer)\n" 
 "Mark Spencer <markster@marko.net> <IM: Markster97> (Original Author)\n" 
 "\n"
