@@ -147,6 +147,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "send conversion error: %s\n", err->message);
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Sending raw, which probably isn't right\n");
 		utf8 = g_strdup(string);
+		g_error_free(err);
 	}
 	
 	return utf8;
@@ -163,6 +164,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	if (err) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "recv conversion error: %s\n", err->message);
 		utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
+		g_error_free(err);
 	}
 	
 	return utf8;

@@ -197,6 +197,7 @@ static gchar *zephyr_recv_convert(char *string, int len)
 		if (err) {
 			gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "recv conversion error: %s\n", err->message);
 			utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
+			g_error_free(err);
 		}
 
 		return utf8;
