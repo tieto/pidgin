@@ -1758,7 +1758,7 @@ void g_show_info_text(char *info)
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	gtk_widget_set_usize(sw, 300, 250);
 	gtk_imhtml_set_img_handler(GTK_IMHTML(text), info_img_handler);
-	gaim_setup_imhtml(GTK_IMHTML(text));
+	gaim_setup_imhtml(text);
 
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
@@ -3704,7 +3704,7 @@ show_log (char *name)
 	layout = gtk_imhtml_new(NULL, NULL);
 	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", open_url_nw, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
-	gaim_setup_imhtml(GTK_IMHTML(layout));
+	gaim_setup_imhtml(layout);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);

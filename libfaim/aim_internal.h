@@ -108,9 +108,8 @@ struct aim_tool_version {
 
 faim_internal int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 
-extern u_char aim_caps[8][16];
 faim_internal unsigned short aim_getcap(struct aim_session_t *sess, unsigned char *capblock, int buflen);
-faim_internal int aim_putcap(unsigned char *capblock, int buflen, u_short caps);
+faim_internal int aim_putcap(unsigned char *capblock, int buflen, unsigned short caps);
 
 faim_internal int aim_cachecookie(struct aim_session_t *sess, struct aim_msgcookie_t *cookie);
 faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, unsigned char *cookie, int type);

@@ -140,8 +140,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	GtkWidget *vbox;
 	char *buf2;
 	char buf[BUF_LONG];
-	GList *cnv = conversations;
-	struct conversation *c;
 
 	if (!blist)
 		return;

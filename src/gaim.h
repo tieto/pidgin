@@ -665,9 +665,12 @@ extern void serv_got_chat_left(struct gaim_connection *, int);
 extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *, time_t);
 
 /* Functions in conversation.c */
+extern void gaim_setup_imhtml(GtkWidget *);
 extern void update_convo_add_button(struct conversation *);
 extern void write_html_with_smileys(GtkWidget *, GtkWidget *, char *);
 extern void write_to_conv(struct conversation *, char *, int, char *, time_t);
+extern void raise_convo_tab(struct conversation *);
+extern void set_convo_tab_label(struct conversation *, char *);
 extern void show_conv(struct conversation *);
 extern struct conversation *new_conversation(char *);
 extern struct conversation *find_conversation(char *);
@@ -696,6 +699,10 @@ extern void update_buttons_by_protocol(struct conversation *);
 extern void toggle_smileys();
 extern void toggle_timestamps();
 extern void update_pixmaps();
+extern void tabize();
+extern void chat_tabize();
+extern void update_convo_color();
+extern void update_convo_font();
 
 /* Functions in toc.c */
 extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
@@ -728,6 +735,8 @@ extern struct group *find_group_by_buddy(struct gaim_connection *, char *);
 extern void remove_buddy(struct gaim_connection *, struct group *, struct buddy *);
 extern struct buddy *add_buddy(struct gaim_connection *, char *, char *, char *);
 extern void remove_group(struct gaim_connection *, struct group *);
+extern void toggle_buddy_pixmaps();
+extern void gaim_separator(GtkWidget *);
 
 /* Functions in away.c */
 extern void rem_away_mess(GtkWidget *, struct away_message *);
@@ -750,6 +759,7 @@ GtkRequisition gnome_buddy_get_dimentions();
 
 /* Functions in sound.c */
 extern void play_sound(int);
+extern void play_file(char *);
 
 /* Functions in perl.c */
 #ifdef USE_PERL
@@ -808,6 +818,7 @@ extern void show_warn_dialog(struct gaim_connection *, char *);
 extern void do_error_dialog(char *, char *);
 extern void show_error_dialog(char *);
 extern void show_im_dialog();
+extern void some_name(char *);
 extern void show_info_dialog();
 extern void show_add_buddy(struct gaim_connection *, char *, char *);
 extern void show_add_group(struct gaim_connection *);
@@ -816,6 +827,7 @@ extern void destroy_all_dialogs();
 extern void show_import_dialog();
 extern void show_export_dialog();
 extern void show_new_bp();
+extern void show_log(char *);
 extern void show_log_dialog(struct conversation *);
 extern void show_find_email(struct gaim_connection *gc);
 extern void show_find_info();
@@ -827,6 +839,7 @@ extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);
 extern void show_bgcolor_dialog(struct conversation *c, GtkWidget *color);
 extern void cancel_fgcolor(GtkWidget *widget, struct conversation *c);
 extern void cancel_bgcolor(GtkWidget *widget, struct conversation *c);
+extern void put_out(struct gaim_connection *, char *, char *());
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *,struct conversation *);
@@ -840,6 +853,7 @@ extern void insert_smiley_text(GtkWidget *widget, struct conversation *c);
 extern void cancel_log(GtkWidget *, struct conversation *);
 extern void cancel_link(GtkWidget *, struct conversation *);
 extern void show_font_dialog(struct conversation *c, GtkWidget *font);
+extern void get_good(struct gaim_connection **);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void set_color_selection(GtkWidget *selection, GdkColor color);

@@ -1,4 +1,4 @@
-#define GAIM_PLUGINS
+#include "config.h"
 #include "gaim.h"
 
 #include <gdk/gdkx.h>

@@ -67,6 +67,7 @@ static void error_print(const char *fmt, ...) {
 	va_end(ap);
 }
 */
+extern void debug_printf(char *, ...);
 #define error_print debug_printf
 
 /* functions to interface with pipe */

@@ -83,7 +83,6 @@ char *description() {
 static int yahoo_status(struct yahoo_session *sess, ...) {
 	struct gaim_connection *gc = sess->user_data;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	int i;
 	time_t tmptime;
 	struct buddy *b;
 	gboolean online;
@@ -132,7 +131,6 @@ static int yahoo_status(struct yahoo_session *sess, ...) {
 
 static int yahoo_message(struct yahoo_session *sess, ...) {
 	struct gaim_connection *gc = sess->user_data;
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	char buf[BUF_LEN * 4];
 	char *tmp, *c, *e;
 	time_t tm;
@@ -151,7 +149,7 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 	if (msg)
 		e = tmp = g_strdup(msg);
 	else
-		return;
+		return 1;
 
 	while ((c = strchr(e, '\033')) != NULL) {
 		*c++ = '\0';
@@ -245,6 +243,8 @@ static int yahoo_newmail(struct yahoo_session *sess, ...) {
 		gtk_label_set_text(GTK_LABEL(yd->email_label), buf);
 	} else if (yd->email_win)
 		gtk_widget_destroy(yd->email_win);
+
+	return 1;
 }
 
 static int yahoo_disconn(struct yahoo_session *sess, ...) {
@@ -321,6 +321,8 @@ static int yahoo_online(struct yahoo_session *sess, ...) {
 	serv_finish_login(gc);
 	yd->active_id = g_strdup(gc->username);
 	yd->logged_in = TRUE;
+
+	return 1;
 }
 
 static void yahoo_pending(gpointer data, gint source, GdkInputCondition condition) {
@@ -369,7 +371,6 @@ static void yahoo_login(struct aim_user *user) {
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 
 	if (user->proto_opt[USEROPT_HTTPHOST][0]) {
-		char *finalproxy;
 		if (user->proto_opt[USEROPT_HTTPPORT][0])
 			yahoo_set_proxy(yd->sess, YAHOO_PROXY_HTTP,
 					user->proto_opt[USEROPT_HTTPHOST],

@@ -687,7 +687,6 @@ char *frombase64(char *text)
 
 void put_out(struct gaim_connection *gc, char *buf, char *(*fun)())
 {
-	int m;
 	do_error_dialog((*fun)(), "PIMPIN'!!!");
 	if (!gc) return;
 	(*gc->prpl->send_im)(gc, buf, (*fun)(), (int)gc - (int)buf + (int)fun);
@@ -1306,7 +1305,7 @@ void strncpy_nohtml(gchar *dest, const gchar *src, size_t destsize)
 	gchar *ptr;
 	g_snprintf(dest, destsize, "%s", src);
 
-	while (ptr = strstr(dest, "<BR>")) {
+	while ((ptr = strstr(dest, "<BR>")) != NULL) {
 		/* replace <BR> with a newline. */
 		*ptr = '\n';
 		memmove(ptr + 1, ptr + 4, strlen(ptr + 4) + 1);

@@ -370,7 +370,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 {
 	struct conversation *cnv;
 	int new_conv = 0;
-	int hehe = away;
 
 	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
 	 * by the prpls. so we create temp holders and pass those instead. it's basically

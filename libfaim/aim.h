@@ -649,14 +649,17 @@ faim_export int aim_oft_getfile_ack(struct aim_session_t *sess, struct aim_conn_
 faim_export int aim_oft_getfile_end(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 /* aim_info.c */
-#define AIM_CAPS_BUDDYICON 0x01
-#define AIM_CAPS_VOICE 0x02
-#define AIM_CAPS_IMIMAGE 0x04
-#define AIM_CAPS_CHAT 0x08
-#define AIM_CAPS_GETFILE 0x10
-#define AIM_CAPS_SENDFILE 0x20
-#define AIM_CAPS_GAMES 0x40
-#define AIM_CAPS_SAVESTOCKS 0x80
+#define AIM_CAPS_BUDDYICON      0x0001
+#define AIM_CAPS_VOICE          0x0002
+#define AIM_CAPS_IMIMAGE        0x0004
+#define AIM_CAPS_CHAT           0x0008
+#define AIM_CAPS_GETFILE        0x0010
+#define AIM_CAPS_SENDFILE       0x0020
+#define AIM_CAPS_GAMES          0x0040
+#define AIM_CAPS_SAVESTOCKS     0x0080
+#define AIM_CAPS_SENDBUDDYLIST  0x0100
+#define AIM_CAPS_GAMES2         0x0200
+#define AIM_CAPS_LAST           0x8000
 
 faim_export int aim_0002_000b(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn);
 

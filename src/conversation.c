@@ -78,8 +78,10 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 /*------------------------------------------------------------------------*/
 
 
-void gaim_setup_imhtml(GtkIMHtml *imhtml)
+void gaim_setup_imhtml(GtkWidget *imhtml)
 {
+	g_return_if_fail(imhtml != NULL);
+	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 	if (!(display_options & OPT_DISP_SHOW_SMILEY))
 		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
 	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
@@ -696,7 +698,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				GList *cnv = g_list_nth(ws,
 						gtk_notebook_get_current_page(
 							GTK_NOTEBOOK(notebook)));
-				struct conversation *d;
+				struct conversation *d = NULL;
 				while (cnv) {
 					d = cnv->data;
 					if (d->unseen)
@@ -1335,7 +1337,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		if (general_options & OPT_DISP_SHOW_TIME)
 			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>", mdate, what);
 		else
-			g_snprintf(buf, BUF_LONG, "<B>%s</B>", mdate, what);
+			g_snprintf(buf, BUF_LONG, "<B>%s</B>", what);
 		g_snprintf(buf2, sizeof(buf2), "<FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B><BR>",
 			mdate, what);
 
@@ -2058,7 +2060,7 @@ void show_conv(struct conversation *c)
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	if (display_options & OPT_DISP_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
-	gaim_setup_imhtml(GTK_IMHTML(text));
+	gaim_setup_imhtml(text);
 	gtk_widget_show(text);
 
 	vbox2 = gtk_vbox_new(FALSE, 5);

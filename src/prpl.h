@@ -136,6 +136,7 @@ void load_protocol(proto_init, int);
 void unload_protocol(struct prpl *);
 
 struct prpl *find_prpl(int);
+void do_proto_menu();
 
 void register_user(gpointer, gpointer);
 void prepare_regbox_for_next();

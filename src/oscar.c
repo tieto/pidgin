@@ -42,7 +42,7 @@
 #include "gaim.h"
 #include "aim.h"
 
-#include "pixmaps/cancel.xpm"
+/*#include "pixmaps/cancel.xpm"*/
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/aol_icon.xpm"
 #include "pixmaps/away_icon.xpm"
@@ -145,6 +145,7 @@ static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
 	return m;
 }
 
+/*
 static struct getfile_transfer *find_getfile_transfer(struct oscar_data *od, struct aim_conn_t *conn) {
 	GSList *g = od->getfiles;
 	struct getfile_transfer *n = NULL;
@@ -159,6 +160,7 @@ static struct getfile_transfer *find_getfile_transfer(struct oscar_data *od, str
 
 	return n;
 }
+*/
 
 struct chat_connection *find_oscar_chat(struct gaim_connection *gc, int id) {
 	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
@@ -636,7 +638,7 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 			return;
 		}
 		g_snprintf(buf, sizeof(buf), "GET http://gaim.sourceforge.net/aim_data.php3?"
-				"offset=%d&len=%d&modname=%s HTTP/1.0\n\n",
+				"offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 				pos->offset, pos->len, pos->modname ? pos->modname : "");
 		write(pos->conn->fd, buf, strlen(buf));
 		if (pos->modname)
@@ -689,7 +691,7 @@ int gaim_memrequest(struct aim_session_t *sess,
 	if (len == 0) {
 		aim_sendmemblock(sess, command->conn, offset, len, NULL,
 				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
-		return;
+		return 1;
 	}
 
 	pos = g_new0(struct pieceofcrap, 1);
@@ -713,7 +715,7 @@ void some_name(char *buf)
 	x[1] = htonl(0x6d656e68);
 	x[2] = htonl(0x6f76656e);
 	x[3] = 0;
-	g_snprintf(buf, 16, "%s", x);
+	g_snprintf(buf, 16, "%s", (char *)x);
 }
 
 int gaim_parse_login(struct aim_session_t *sess,
@@ -2589,25 +2591,21 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 }
 
 static void oscar_add_permit(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (gc->permdeny != 3) return;
 	oscar_set_permit_deny(gc);
 }
 
 static void oscar_add_deny(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (gc->permdeny != 4) return;
 	oscar_set_permit_deny(gc);
 }
 
 static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (gc->permdeny != 3) return;
 	oscar_set_permit_deny(gc);
 }
 
 static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (gc->permdeny != 4) return;
 	oscar_set_permit_deny(gc);
 }

@@ -453,7 +453,9 @@ int main(int argc, char *argv[])
 
 #if HAVE_SIGNAL_H
 	/* Let's not violate any PLA's!!!! */
+#ifndef DEBUG
 	signal(SIGSEGV, sighandler);
+#endif
 	signal(SIGHUP, sighandler);
 	signal(SIGINT, sighandler);
 	signal(SIGPIPE, SIG_IGN);

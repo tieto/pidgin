@@ -82,7 +82,7 @@ gint check_idle(struct gaim_connection *gc)
 	} else if (gc->is_auto_away && idle_time < 60 * auto_away) {
 		if (gc->is_auto_away == 2) {
 			gc->is_auto_away = 0;
-			return;
+			return TRUE;
 		}
 		gc->is_auto_away = 0;
 		if (awaymessage == NULL) {

@@ -54,112 +54,101 @@ faim_export int aim_getinfo(struct aim_session_t *sess,
 /*
  * Capability blocks.  
  */
-u_char aim_caps[8][16] = {
+static const struct {
+  unsigned short flag;
+  unsigned char data[16];
+} aim_caps[] = {
   
-  /* Buddy icon */
-  {0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1, 
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  {AIM_CAPS_BUDDYICON,
+   {0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1, 
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
   
-  /* Voice */
-  {0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1, 
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
-  
-  /* IM image */
-  {0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1, 
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
-  
-  /* Chat */
-  {0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1, 
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
-  
-  /* Get file */
-  {0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
-  
-  /* Send file */
-  {0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1, 
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  {AIM_CAPS_VOICE,
+   {0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1, 
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-  /* Saves stock portfolios */
-  {0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  {AIM_CAPS_IMIMAGE,
+   {0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1, 
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+  
+  {AIM_CAPS_CHAT,
+   {0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1, 
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+  
+  {AIM_CAPS_GETFILE,
+   {0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-  /* Games */
-  {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+  {AIM_CAPS_SENDFILE,
+   {0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1, 
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+  {AIM_CAPS_SAVESTOCKS,
+   {0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+  /*
+   * Indeed, there are two of these.  The former appears
+   * to be correct, but in some versions of winaim, the
+   * second one is set.  Either they forgot to fix endianness,
+   * or they made a typo. It really doesn't matter which.
+   */
+  {AIM_CAPS_GAMES,
+   {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+  {AIM_CAPS_GAMES2,
+   {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+    0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+  {AIM_CAPS_SENDBUDDYLIST,
+   {0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
+    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+  {AIM_CAPS_LAST}
 };
 
 faim_internal unsigned short aim_getcap(struct aim_session_t *sess, unsigned char *capblock, int buflen)
 {
-  u_short ret = 0;
-  int y;
+  unsigned short flags;
+  int i;
   int offset = 0;
   int identified;
 
-  while (offset < buflen) {
-    identified = 0;
-    for(y=0; y < (sizeof(aim_caps)/0x10); y++) {
-      if (memcmp(&aim_caps[y], capblock+offset, 0x10) == 0) {
-	switch(y) {
-	case 0: ret |= AIM_CAPS_BUDDYICON; identified++; break;
-	case 1: ret |= AIM_CAPS_VOICE; identified++; break;
-	case 2: ret |= AIM_CAPS_IMIMAGE; identified++; break;
-	case 3: ret |= AIM_CAPS_CHAT; identified++; break;
-	case 4: ret |= AIM_CAPS_GETFILE; identified++; break;
-	case 5: ret |= AIM_CAPS_SENDFILE; identified++; break;
-	case 6: ret |= AIM_CAPS_GAMES; identified++; break;
-	case 7: ret |= AIM_CAPS_SAVESTOCKS; identified++; break;
-	}
+  for (offset = 0, flags = 0; offset < buflen; offset += 0x0010) {
+
+    for (i = 0, identified = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++) {
+
+      if (memcmp(&aim_caps[i].data, capblock+offset, 0x10) == 0) {
+	flags |= aim_caps[i].flag;
+	identified++;
+	break; /* should only match once... */
       }
-    }
-    if (!identified) {
-      faimdprintf(sess, 0, "unknown capability!\n");
-      ret |= 0xff00;
+
     }
 
-    offset += 0x10;
-  } 
-  return ret;
+    if (!identified)
+      faimdprintf(sess, 0, "unknown capability!\n");
+
+  }
+
+  return flags;
 }
 
-faim_internal int aim_putcap(unsigned char *capblock, int buflen, u_short caps)
+faim_internal int aim_putcap(unsigned char *capblock, int buflen, unsigned short caps)
 {
-  int offset = 0;
+  int offset, i;
 
   if (!capblock)
-    return -1;
+    return 0;
 
-  if ((caps & AIM_CAPS_BUDDYICON) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[0], sizeof(aim_caps[0]));
-    offset += sizeof(aim_caps[1]);
-  }
-  if ((caps & AIM_CAPS_VOICE) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[1], sizeof(aim_caps[1]));
-    offset += sizeof(aim_caps[1]);
-  }
-  if ((caps & AIM_CAPS_IMIMAGE) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[2], sizeof(aim_caps[2]));
-    offset += sizeof(aim_caps[2]);
-  }
-  if ((caps & AIM_CAPS_CHAT) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[3], sizeof(aim_caps[3]));
-    offset += sizeof(aim_caps[3]);
-  }
-  if ((caps & AIM_CAPS_GETFILE) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[4], sizeof(aim_caps[4]));
-    offset += sizeof(aim_caps[4]);
-  }
-  if ((caps & AIM_CAPS_SENDFILE) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[5], sizeof(aim_caps[5]));
-    offset += sizeof(aim_caps[5]);
-  }
-  if ((caps & AIM_CAPS_GAMES) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[6], sizeof(aim_caps[6]));
-    offset += sizeof(aim_caps[6]);
-  }
-  if ((caps & AIM_CAPS_SAVESTOCKS) && (offset < buflen)) {
-    memcpy(capblock+offset, aim_caps[7], sizeof(aim_caps[7]));
-    offset += sizeof(aim_caps[7]);
+  for (i = 0, offset = 0; 
+       !(aim_caps[i].flag & AIM_CAPS_LAST) && (offset < buflen); i++) {
+
+    if (caps & aim_caps[i].flag) {
+      memcpy(capblock+offset, aim_caps[i].data, 16);
+      offset += 16;
+    }
+
   }
 
   return offset;

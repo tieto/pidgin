@@ -113,7 +113,7 @@ static gboolean update_applet(){
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_offline_pm,
 				icon_offline_bm );
-		applet_set_tooltips(_("Offilne. Click to bring up login box."));
+		applet_set_tooltips(_("Offline. Click to bring up login box."));
 	} else if (!awaymessage) {
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_online_pm,
@@ -298,9 +298,6 @@ void AppletClicked( GtkWidget *sender, GdkEventButton *ev, gpointer data ){
 gint init_applet_mgr(int argc, char *argv[]) {
 	GtkWidget *vbox;
 	
-	GtkStyle *label_style;
-	GdkFont *label_font = NULL;
-
         applet_widget_init("GAIM",VERSION,argc,argv,NULL,0,NULL);
         
         /*init imlib for graphics*/ 

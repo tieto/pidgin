@@ -50,12 +50,12 @@
 
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
-#include "pixmaps/export_small.xpm"
+/*#include "pixmaps/export_small.xpm"*/
 #if defined(GAIM_PLUGINS) || defined(USE_PERL)
 #include "pixmaps/plugins_small.xpm"
 #endif
 #include "pixmaps/prefs_small.xpm"
-#include "pixmaps/search_small.xpm"
+/*#include "pixmaps/search_small.xpm"*/
 #ifdef USE_APPLET
 #include "pixmaps/close_small.xpm"
 #else
@@ -2145,7 +2145,7 @@ static void update_idle_time(struct buddy_show *bs) {
 	char infotip[2048];
 	char warn[256];
 	char caps[256];
-	char *sotime, *itime;
+	char *sotime = NULL, *itime;
 
 	time(&t);
 	if (!bs->connlist) return;

@@ -813,15 +813,19 @@ faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *
       faimdprintf(sess, 0, "sendmemblock: WARNING: sending bad hash... you will be disconnected soon...\n");
 
     /* 
-     * This data is correct for AIM 3.5.1670, offset 0x1004, length 4 
+     * This data is correct for AIM 3.5.1670, offset 0x1000, length 0 
      *
      * Using this block is as close to "legal" as you can get without
      * using an AIM binary.
+     *
+     * For the moment, this is the MD5 hash of nothing.  Yes, that's
+     * right.  Nothing.  AOL is smart.
+     *
      */
-    i += aimutil_put32(tx->data+i, 0x92bd6757);
-    i += aimutil_put32(tx->data+i, 0x3722cbd3);
-    i += aimutil_put32(tx->data+i, 0x2b048ab9);
-    i += aimutil_put32(tx->data+i, 0xd0b1e4ab);
+    i += aimutil_put32(tx->data+i, 0xd41d8cd9);
+    i += aimutil_put32(tx->data+i, 0x8f00b204);
+    i += aimutil_put32(tx->data+i, 0xe9800998);
+    i += aimutil_put32(tx->data+i, 0xecf8427e);
 
   }
 

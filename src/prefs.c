@@ -1171,7 +1171,6 @@ static void font_page()
 	GtkWidget *parent;
 	GtkWidget *box;
 	GtkWidget *label;
-	GtkWidget *sep;
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *select;
@@ -1534,7 +1533,6 @@ static void sound_page()
 }
 
 static struct away_message *cur_message;
-static char *edited_message;
 static GtkWidget *away_text;
 static GtkWidget *make_away_button = NULL;;
 
@@ -1770,7 +1768,7 @@ static void away_page()
 
 	away_text = gtk_imhtml_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(sw2), away_text);
-	gaim_setup_imhtml(GTK_IMHTML(away_text));
+	gaim_setup_imhtml(away_text);
 	gtk_widget_show(away_text);
 
 	bot = gtk_hbox_new(FALSE, 0);
@@ -2473,25 +2471,12 @@ GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *pa
 
 void prefs_build_general()
 {
-	GtkCTreeNode *node;
 	char *text[1];
 
 	text[0] = _("General");
 	general_node = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), general_node, general_page);
-
-	/*
-	text[0] = _("Browser");
-	node = gtk_ctree_insert_node(GTK_CTREE(preftree), general_node, NULL,
-				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, browser_page);
-
-	text[0] = _("Logging");
-	node = gtk_ctree_insert_node(GTK_CTREE(preftree), general_node, NULL,
-				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, logging_page);
-	*/
 
 	gtk_ctree_select(GTK_CTREE(preftree), general_node);
 }
@@ -2521,13 +2506,6 @@ void prefs_build_convo()
 	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
 				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, im_page);
-
-	/*
-	text[0] = _("Chat Window");
-	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
-				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, chat_page);
-	*/
 
 	text[0] = _("Font Options");
 	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,

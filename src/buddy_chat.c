@@ -873,7 +873,7 @@ void show_new_buddy_chat(struct conversation *b)
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	if (display_options & OPT_DISP_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
-	gaim_setup_imhtml(GTK_IMHTML(text));
+	gaim_setup_imhtml(text);
 	gtk_widget_show(text);
 
 	lbox = gtk_vbox_new(FALSE, 5);
