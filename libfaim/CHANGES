@@ -1,6 +1,13 @@
 
 No release numbers
 ------------------
+ - Fri Jun 15 17:51:27 EDT 2001
+  - Make faimtest compile on RH7.1 (new gcc).
+  - Add aim_conn_getsess()
+  - Add aim_getconn_type_all() and aim_getconn_fd().
+  - Make aim_connrst() and aim_conn_getnext() static to conn.c.
+  - Why does arcanejill think she is in EDT? Oh well.
+
  - Thu Jun 14 17:37:47 PDT 2001
   - Rearrange aim_setprofile().  It will now let you _not_ send a profile,
       if you really want to (pass NULL).  Note that this is quite different

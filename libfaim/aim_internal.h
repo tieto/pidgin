@@ -83,8 +83,6 @@ faim_internal struct aim_snac_t *aim_remsnac(struct aim_session_t *, u_long id);
 faim_internal int aim_cleansnacs(struct aim_session_t *, int maxage);
 faim_internal int aim_putsnac(u_char *, int, int, int, u_long);
 
-faim_internal void aim_connrst(struct aim_session_t *);
-faim_internal struct aim_conn_t *aim_conn_getnext(struct aim_session_t *);
 faim_internal struct aim_conn_t *aim_cloneconn(struct aim_session_t *sess, struct aim_conn_t *src);
 
 faim_internal int aim_oft_buildheader(unsigned char *,struct aim_fileheader_t *);

@@ -103,7 +103,6 @@ struct chat_connection {
 	int id;
 	struct gaim_connection *gc; /* i hate this. */
 	struct conversation *cnv; /* bah. */
-	gpointer priv; /* don't ask. */
 };
 
 struct direct_im {
@@ -159,18 +158,6 @@ struct icon_req {
 	int timer;
 };
 #endif
-
-static gpointer memdup(gconstpointer mem, guint size)
-{
-	gpointer new_mem;
-
-	if (mem) {
-		new_mem = malloc(size);
-		memcpy(new_mem, mem, size);
-		return new_mem;
-	} else
-		return NULL;
-}
 
 static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
 	GSList *d = od->direct_ims;
@@ -263,31 +250,6 @@ static struct chat_connection *find_oscar_chat_by_conn(struct gaim_connection *g
 	return c;
 }
 
-static struct gaim_connection *find_gaim_conn_by_oscar_conn(struct aim_conn_t *conn) {
-	GSList *g = connections;
-	struct gaim_connection *c = NULL;
-	struct aim_conn_t *s;
-	while (g) {
-		c = (struct gaim_connection *)g->data;
-		if (c->protocol != PROTO_OSCAR) {
-			c = NULL;
-			g = g->next;
-			continue;
-		}
-		s = ((struct oscar_data *)c->proto_data)->sess->connlist;
-		while (s) {
-			if (conn == s)
-				break;
-			s = s->next;
-		}
-		if (s) break;
-		g = g->next;
-		c = NULL;
-	}
-
-	return c;
-}
-
 static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_login      (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_server_ready     (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -356,13 +318,14 @@ static int msgerrreasonlen = 25;
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
 	struct aim_conn_t *conn = (struct aim_conn_t *)data;
-	struct gaim_connection *gc = find_gaim_conn_by_oscar_conn(conn);
+	struct aim_session_t *sess = aim_conn_getsess(conn);
+	struct gaim_connection *gc = sess ? sess->aux_data : NULL;
 	struct oscar_data *odata;
 
 	if (!gc) {
-	  /* gc is null. we return, else we seg SIGSEG on next line. */
-	  debug_printf("oscar callback for closed connection (1).\n");
-	  return;
+		/* gc is null. we return, else we seg SIGSEG on next line. */
+		debug_printf("oscar callback for closed connection (1).\n");
+		return;
 	}
       
 	odata = (struct oscar_data *)gc->proto_data;
@@ -468,7 +431,7 @@ static void oscar_login_connect(gpointer data, gint source, GdkInputCondition co
 
 	odata = gc->proto_data;
 	sess = odata->sess;
-	conn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
+	conn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
 
 	if (source < 0) {
 		hide_login_progress(gc, _("Couldn't connect to host"));
@@ -476,14 +439,9 @@ static void oscar_login_connect(gpointer data, gint source, GdkInputCondition co
 		return;
 	}
 
-	if (conn->fd != source)
-		conn->fd = source;
-
-	aim_request_login(sess, conn, gc->username);
-
+	aim_conn_completeconnect(sess, conn);
 	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, conn);
-
 	debug_printf(_("Password sent, waiting for response\n"));
 }
 
@@ -522,16 +480,18 @@ static void oscar_login(struct aim_user *user) {
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
 
+	conn->status |= AIM_CONN_STATUS_INPROGRESS;
 	conn->fd = proxy_connect(user->proto_opt[USEROPT_AUTH][0] ?
 					user->proto_opt[USEROPT_AUTH] : FAIM_LOGIN_SERVER,
 				 user->proto_opt[USEROPT_AUTHPORT][0] ?
 					atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
 				 oscar_login_connect, gc);
-	if (!user->gc || (conn->fd < 0)) {
+	if (conn->fd < 0) {
 		hide_login_progress(gc, _("Couldn't connect to host"));
 		signoff(gc);
 		return;
 	}
+	aim_request_login(sess, conn, gc->username);
 }
 
 static void oscar_close(struct gaim_connection *gc) {
@@ -599,23 +559,15 @@ static void oscar_bos_connect(gpointer data, gint source, GdkInputCondition cond
 
 	odata = gc->proto_data;
 	sess = odata->sess;
-	bosconn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
+	bosconn = odata->conn;
 
 	if (source < 0) {
-		if (bosconn->priv)
-			g_free(bosconn->priv);
-		bosconn->priv = NULL;
 		hide_login_progress(gc, _("Could Not Connect"));
 		signoff(gc);
 		return;
 	}
 
-	if (bosconn->fd != source)
-		bosconn->fd = source;
-
-	aim_auth_sendcookie(sess, bosconn, bosconn->priv);
-	free(bosconn->priv);
-	bosconn->priv = NULL;
+	aim_conn_completeconnect(sess, bosconn);
 	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, bosconn);
 	set_login_progress(gc, 4, _("Connection established, cookie sent"));
@@ -750,17 +702,15 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		}
 	}
 	host = g_strndup(bosip, i);
-	bosconn->priv = memdup(cookie, AIM_COOKIELEN);
+	bosconn->status |= AIM_CONN_STATUS_INPROGRESS;
 	bosconn->fd = proxy_connect(host, port, oscar_bos_connect, gc);
 	g_free(host);
-	if (!user->gc || (bosconn->fd < 0)) {
-		if (bosconn->priv)
-			g_free(bosconn->priv);
-		bosconn->priv = NULL;
+	if (bosconn->fd < 0) {
 		hide_login_progress(gc, _("Could Not Connect"));
 		signoff(gc);
 		return -1;
 	}
+	aim_auth_sendcookie(sess, bosconn, cookie);
 	return 1;
 }
 
@@ -823,9 +773,6 @@ static void straight_to_hell(gpointer data, gint source, GdkInputCondition cond)
 		g_free(pos);
 		return;
 	}
-
-	if (pos->fd != source)
-		pos->fd = source;
 
 	g_snprintf(buf, sizeof(buf), "GET " AIMHASHDATA
 			"?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
@@ -1016,23 +963,15 @@ static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition 
 
 	odata = gc->proto_data;
 	sess = odata->sess;
-	tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_CHATNAV);
+	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_CHATNAV);
 
 	if (source < 0) {
-		if (tstconn->priv)
-			g_free(tstconn->priv);
-		tstconn->priv = NULL;
 		aim_conn_kill(sess, &tstconn);
 		debug_printf("unable to connect to chatnav server\n");
 		return;
 	}
 
-	if (tstconn->fd != source)
-		tstconn->fd = source;
-
-	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
-	free(tstconn->priv);
-	tstconn->priv = NULL;
+	aim_conn_completeconnect(sess, tstconn);
 	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
@@ -1052,23 +991,15 @@ static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition con
 
 	odata = gc->proto_data;
 	sess = odata->sess;
-	tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
+	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
 
 	if (source < 0) {
-		if (tstconn->priv)
-			g_free(tstconn->priv);
-		tstconn->priv = NULL;
 		aim_conn_kill(sess, &tstconn);
 		debug_printf("unable to connect to authorizer\n");
 		return;
 	}
 
-	if (tstconn->fd != source)
-		tstconn->fd = source;
-
-	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
-	free(tstconn->priv);
-	tstconn->priv = NULL;
+	aim_conn_completeconnect(sess, tstconn);
 	odata->paspa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
@@ -1084,7 +1015,6 @@ static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition con
 
 	if (!g_slist_find(connections, gc)) {
 		close(source);
-		g_free(ccon->priv);
 		g_free(ccon->show);
 		g_free(ccon->name);
 		g_free(ccon);
@@ -1097,25 +1027,20 @@ static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition con
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		g_free(ccon->priv);
 		g_free(ccon->show);
 		g_free(ccon->name);
 		g_free(ccon);
 		return;
 	}
 
-	if (ccon->fd != source)
-		ccon->fd = tstconn->fd = source;
-
+	aim_conn_completeconnect(sess, ccon->conn);
 	ccon->inpa = gdk_input_add(tstconn->fd,
 			GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, tstconn);
 	odata->oscar_chats = g_slist_append(odata->oscar_chats, ccon);
 	aim_chat_attachname(tstconn, ccon->name);
-	aim_auth_sendcookie(sess, tstconn, ccon->priv);
-	g_free(ccon->priv);
-	ccon->priv = NULL;
 }
+
 int gaim_handle_redirect(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	va_list ap;
@@ -1128,7 +1053,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	int i;
 	char *host;
 	int port;
-	int fd;
 
 	port = user->proto_opt[USEROPT_AUTHPORT][0] ?
 		atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
@@ -1161,18 +1085,15 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0005, gaim_info_change, 0);
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
 
-		tstconn->priv = memdup(cookie, AIM_COOKIELEN);
-		fd = proxy_connect(host, port, oscar_auth_connect, gc);
-		if (fd < 0) {
-			if (tstconn->priv)
-				g_free(tstconn->priv);
-			tstconn->priv = NULL;
+		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
+		tstconn->fd = proxy_connect(host, port, oscar_auth_connect, gc);
+		if (tstconn->fd < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to reconnect with authorizer\n");
 			g_free(host);
 			return 1;
 		}
-		tstconn->fd = fd;
+		aim_auth_sendcookie(sess, tstconn, cookie);
 		break;
 	case 0xd: /* ChatNav */
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, NULL);
@@ -1183,18 +1104,15 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		}
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 
-		tstconn->priv = memdup(cookie, AIM_COOKIELEN);
-		fd = proxy_connect(host, port, oscar_chatnav_connect, gc);
-		if (fd < 0) {
-			if (tstconn->priv)
-				g_free(tstconn->priv);
-			tstconn->priv = NULL;
+		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
+		tstconn->fd = proxy_connect(host, port, oscar_chatnav_connect, gc);
+		if (tstconn->fd < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chatnav server\n");
 			g_free(host);
 			return 1;
 		}
-		tstconn->fd = fd;
+		aim_auth_sendcookie(sess, tstconn, cookie);
 		break;
 	case 0xe: /* Chat */
 		{
@@ -1217,19 +1135,18 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		ccon->exchange = exchange;
 		ccon->show = extract_name(roomname);
 		
-		ccon->priv = memdup(cookie, AIM_COOKIELEN);
-		fd = proxy_connect(host, port, oscar_chat_connect, ccon);
-		if (fd < 0) {
+		ccon->conn->status |= AIM_CONN_STATUS_INPROGRESS;
+		ccon->conn->fd = proxy_connect(host, port, oscar_chat_connect, ccon);
+		if (ccon->conn->fd < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chat server\n");
 			g_free(host);
-			g_free(ccon->priv);
 			g_free(ccon->show);
 			g_free(ccon->name);
 			g_free(ccon);
 			return 1;
 		}
-		ccon->fd = tstconn->fd = fd;
+		aim_auth_sendcookie(sess, tstconn, cookie);
 		debug_printf("Connected to chat room %s exchange %d\n", roomname, exchange);
 		}
 		break;
@@ -1316,18 +1233,22 @@ static void oscar_directim_callback(gpointer data, gint source, GdkInputConditio
 	struct oscar_data *od = gc->proto_data;
 	char buf[256];
 
-	if (source < 0) {
-		od->direct_ims = g_slist_remove(od->direct_ims, dim);
+	if (!g_slist_find(connections, gc)) {
 		g_free(dim);
 		return;
 	}
 
-	if (dim->conn->fd != source)
-		dim->conn->fd = source;
+	if (source < 0) {
+		g_free(dim);
+		return;
+	}
 
+	aim_conn_completeconnect(od->sess, dim->conn);
 	if (!(dim->cnv = find_conversation(dim->name))) dim->cnv = new_conversation(dim->name);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+
+	od->direct_ims = g_slist_append(od->direct_ims, dim);
 
 	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
 			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
@@ -1375,6 +1296,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 		}
 	}
 	host = g_strndup(d->priv->ip, i);
+	dim->conn->status |= AIM_CONN_STATUS_INPROGRESS;
 	dim->conn->fd = proxy_connect(host, port, oscar_directim_callback, dim);
 	g_free(host);
 	if (dim->conn->fd < 0) {
@@ -1383,8 +1305,6 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 		cancel_direct_im(w, d);
 		return TRUE;
 	}
-
-	od->direct_ims = g_slist_append(od->direct_ims, dim);
 
 	cancel_direct_im(w, d);
 

@@ -22,7 +22,7 @@
  * Clears out the connection list and kills any connections left.
  *
  */
-faim_internal void aim_connrst(struct aim_session_t *sess)
+static void aim_connrst(struct aim_session_t *sess)
 {
   faim_mutex_init(&sess->connlistlock);
   if (sess->connlist) {
@@ -72,7 +72,7 @@ static void aim_conn_init(struct aim_conn_t *deadconn)
  * Allocate a new empty connection structure.
  *
  */
-faim_internal struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
+static struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
 {
   struct aim_conn_t *newconn, *cur;
 
@@ -191,6 +191,38 @@ faim_export struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
       break;
   }
   faim_mutex_unlock(&sess->connlistlock);
+
+  return cur;
+}
+
+faim_export struct aim_conn_t *aim_getconn_type_all(struct aim_session_t *sess,
+						    int type)
+{
+  struct aim_conn_t *cur;
+
+  faim_mutex_lock(&sess->connlistlock);
+  for (cur = sess->connlist; cur; cur = cur->next) {
+    if (cur->type == type)
+      break;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+
+  return cur;
+}
+
+/* If you pass -1 for the fd, you'll get what you ask for.  Gibberish. */
+faim_export struct aim_conn_t *aim_getconn_fd(struct aim_session_t *sess,
+					      int fd)
+{
+  struct aim_conn_t *cur;
+
+  faim_mutex_lock(&sess->connlistlock);
+  for (cur = sess->connlist; cur; cur = cur->next) {
+    if (cur->fd == fd)
+      break;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+
   return cur;
 }
 
@@ -393,6 +425,7 @@ faim_internal struct aim_conn_t *aim_cloneconn(struct aim_session_t *sess,
   conn->priv = src->priv;
   conn->lastactivity = src->lastactivity;
   conn->forcedlatency = src->forcedlatency;
+  conn->sessv = src->sessv;
 
   /* clone handler list */
   for (cur = src->handlerlist; cur; cur = cur->next) {
@@ -432,7 +465,8 @@ faim_export struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
     return NULL;
 
   faim_mutex_lock(&connstruct->active);
-  
+
+  connstruct->sessv = (void *)sess;
   connstruct->type = type;
 
   if (!dest) { /* just allocate a struct */
@@ -897,6 +931,15 @@ faim_export int aim_conn_completeconnect(struct aim_session_t *sess, struct aim_
   aim_tx_flushqueue(sess);
 
   return 0;
+}
+
+faim_export struct aim_session_t *aim_conn_getsess(struct aim_conn_t *conn)
+{
+
+  if (!conn)
+    return NULL;
+
+  return (struct aim_session_t *)conn->sessv;
 }
 
 /*

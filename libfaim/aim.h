@@ -260,6 +260,7 @@ struct aim_conn_t {
   struct aim_rxcblist_t *handlerlist;
   faim_mutex_t active; /* lock around read/writes */
   faim_mutex_t seqnum_lock; /* lock around ->seqnum changes */
+  void *sessv;
   struct aim_conn_t *next;
 };
 
@@ -514,6 +515,7 @@ faim_export int aim_conn_setlatency(struct aim_conn_t *conn, int newval);
 faim_export int aim_conn_addhandler(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short type, aim_rxcallback_t newhandler, u_short flags);
 faim_export int aim_clearhandlers(struct aim_conn_t *conn);
 
+faim_export struct aim_session_t *aim_conn_getsess(struct aim_conn_t *conn);
 faim_export void aim_conn_close(struct aim_conn_t *deadconn);
 faim_export struct aim_conn_t *aim_newconn(struct aim_session_t *, int type, char *dest);
 faim_export int aim_conngetmaxfd(struct aim_session_t *);
@@ -529,6 +531,8 @@ faim_export void aim_session_init(struct aim_session_t *, unsigned long flags, i
 faim_export void aim_session_kill(struct aim_session_t *);
 faim_export void aim_setupproxy(struct aim_session_t *sess, char *server, char *username, char *password);
 faim_export struct aim_conn_t *aim_getconn_type(struct aim_session_t *, int type);
+faim_export struct aim_conn_t *aim_getconn_type_all(struct aim_session_t *, int type);
+faim_export struct aim_conn_t *aim_getconn_fd(struct aim_session_t *, int fd);
 
 /* aim_misc.c */
 
