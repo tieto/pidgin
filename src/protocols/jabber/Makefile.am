@@ -1,5 +1,7 @@
-EXTRA_DIST = win32/posix.uname.c \
-			 win32/utsname.h
+EXTRA_DIST = \
+		Makefile.mingw \
+		win32/posix.uname.c \
+		win32/utsname.h
 
 pkgdir = $(libdir)/gaim
 

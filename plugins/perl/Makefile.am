@@ -57,7 +57,8 @@ common_sources = \
 
 EXTRA_DIST = \
 	Makefile.mingw \
-	$(common_sources)
+	common/Makefile.mingw \
+	$(common_sources) 
 
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \

@@ -1,3 +1,6 @@
+EXTRA_DIST = \
+		Makefile.mingw
+
 plugindir = $(libdir)/gaim
 
 ssl_la_LDFLAGS        = -module -avoid-version

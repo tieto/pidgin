@@ -53,7 +53,8 @@ EXTRA_DIST = \
 	signals-test.c \
 	simple.c \
 	gaim.pl \
-	fortuneprofile.pl
+	fortuneprofile.pl \
+	Makefile.mingw
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \

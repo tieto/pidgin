@@ -47,7 +47,8 @@ EXTRA_DIST = \
                 gaim_msgpend_4bit_16.ico	\
                 gaim_msgunread_4bit_16.ico	\
                 gaim_offline.ico		\
-                gaim_offline_4bit_16.ico
+                gaim_offline_4bit_16.ico	\
+		gaim_blank_4bit_16.ico
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
