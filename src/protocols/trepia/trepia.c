@@ -599,7 +599,7 @@ __start_element_handler(GMarkupParseContext *context,
 		*data->type = *element_name;
 	}
 	else {
-		data->tag = g_strdup(element_name);
+		data->tag = g_strdup(element_name); /* XXX - Make sure this is freed */
 	}
 }
 
@@ -683,7 +683,7 @@ __parse_message(const char *buf, TrepiaMessageType *type, GHashTable **info)
 	}
 
 	g_markup_parse_context_free(context);
-
+	g_free(parser_data);
 	*info = keys;
 
 	return 0;

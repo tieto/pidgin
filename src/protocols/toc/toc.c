@@ -120,7 +120,7 @@ struct signon {
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
 
-#define TOC_CONNECT_STEPS 3
+#define TOC_CONNECT_STEPS 4
 
 static void toc_login_callback(gpointer, gint, GaimInputCondition);
 static void toc_callback(gpointer, gint, GaimInputCondition);
@@ -353,22 +353,26 @@ char *escape_text(const char *msg)
 	/* Copy the string */
 	i = 0;
 	j = 0;
-	while (msg[i++]) {
+	while (msg[i]) {
 		switch (msg[i]) {
 		case '\n':
-			ret[j++] = '<';
-			ret[j++] = 'B';
-			ret[j++] = 'R';
-			ret[j++] = '>';
+			ret[j] = '<';
+			ret[j+1] = 'B';
+			ret[j+2] = 'R';
+			ret[j+3] = '>';
+			j += 4;
 			break;
 		case '{':
 		case '}':
 		case '\\':
 		case '"':
-			ret[j++] = '\\';
+			ret[j] = '\\';
+			j++;
 		default:
-			ret[j++] = msg[i];
+			ret[j] = msg[i];
+			j++;
 		}
+		i++;
 	}
 	ret[j] = '\0';
 
@@ -1025,19 +1029,20 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 static int toc_send_im(GaimConnection *gc, const char *name, const char *message, int len, int flags)
 {
-	char buf[BUF_LEN * 2];
-	char *tmp;
+	char *buf1, *buf2;
 
-	tmp = escape_text(message);
-	if (strlen(tmp) + 52 > MSG_LEN) {
-		g_free(tmp);
+	buf1 = escape_text(message);
+	if (strlen(buf1) + 52 > MSG_LEN) {
+		g_free(buf1);
 		return -E2BIG;
 	}
-	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
-		   tmp, ((flags & IM_FLAG_AWAY) ? " auto" : ""));
-	sflap_send(gc, buf, -1, TYPE_DATA);
-	
-	g_free(tmp);
+
+	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", normalize(name), buf1, 
+						   ((flags & IM_FLAG_AWAY) ? " auto" : ""));
+	g_free(buf1);
+	sflap_send(gc, buf2, -1, TYPE_DATA);
+	g_free(buf2);
+
 	return 1;
 }
 
