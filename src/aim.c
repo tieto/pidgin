@@ -552,7 +552,7 @@ static void set_first_user(char *name)
 /* FUCKING GET ME A TOWEL! */
 int main(int argc, char *argv[])
 {
-	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, do_login_ret = -1;
+	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
@@ -572,6 +572,8 @@ int main(int argc, char *argv[])
 		 "[MESG]"},
 		{"login", 'l', POPT_ARG_STRING, NULL, 'l',
 		 "Automatically login (optional argument NAME specifies account(s) to use)", "[NAME]"},
+		{"loginwin", 'n', POPT_ARG_NONE, &opt_nologin, 'n',
+		 "Don't automatically login; show login window",  NULL},
 		{"user", 'u', POPT_ARG_STRING, &opt_user_arg, 'u',
 		 "Use account NAME", "NAME"},
 		{"file", 'f', POPT_ARG_STRING, &opt_rcfile_arg, 'f',
@@ -586,6 +588,7 @@ int main(int argc, char *argv[])
 		/*{"away", optional_argument, NULL, 'w'}, */
 		{"help", no_argument, NULL, 'h'},
 		/*{"login", optional_argument, NULL, 'l'}, */
+		{"loginwin", no_argument, NULL, 'n'},
 		{"user", required_argument, NULL, 'u'},
 		{"file", required_argument, NULL, 'f'},
 		{"debug", no_argument, NULL, 'd'},
@@ -733,7 +736,7 @@ int main(int argc, char *argv[])
 #else
 	opterr = 1;
 #endif
-	while ((opt = getopt_long(argc, argv, "adhu:f:v", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "adhu:f:vn", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
 			opt_user = 1;
@@ -753,6 +756,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'h':	/* help */
 			opt_help = 1;
+			break;
+		case 'n':       /* don't autologin */
+			opt_nologin = 1;
 			break;
 #ifndef USE_GNOME
 		case '?':
@@ -843,7 +849,7 @@ int main(int argc, char *argv[])
 	applet_widget_gtk_main();
 #else
 
-	if (!opt_acct)
+	if (!opt_acct && !opt_nologin)
 		auto_login();
 
 	if (opt_acct) {
