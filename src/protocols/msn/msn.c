@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <netdb.h>
 #include "gaim.h"
 #include "prpl.h"
 #include "proxy.h"
