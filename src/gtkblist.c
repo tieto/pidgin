@@ -380,7 +380,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		gaim_new_item_from_stock(menu, _("_Add a Buddy"), GTK_STOCK_ADD, G_CALLBACK(gaim_gtk_blist_add_buddy_cb), node, 0, 0, NULL);
-		gaim_new_item_from_stock(menu, _("_Add a Chat"), GTK_STOCK_ADD, G_CALLBACK(gaim_gtk_blist_add_chat_cb), node, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD, G_CALLBACK(gaim_gtk_blist_add_chat_cb), node, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE, G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Rename"), NULL, G_CALLBACK(show_rename_group), node, 0, 0, NULL);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
@@ -737,8 +737,8 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Show Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
-	{ N_("/Buddies/_Add a Buddy..."), NULL, gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ N_("/Buddies/_Add a Chat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
+	{ N_("/Buddies/_Add a Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
+	{ N_("/Buddies/Add a C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add a _Group..."), NULL, show_add_group, 0, NULL},
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Signoff"), "<CTL>D", signoff_all, 0, "<StockItem>", GAIM_STOCK_SIGN_OFF },
@@ -761,7 +761,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window..."), NULL, toggle_debug, 0, NULL },
-	{ N_("/Help/_About..."), NULL, show_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
+	{ N_("/Help/_About..."), "<CTL>F1", show_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
 };
 
 /*********************************************************
