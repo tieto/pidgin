@@ -2217,7 +2217,9 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Enable _Sounds"));
 	c->makesound = 1;
 	gtk_signal_connect(GTK_OBJECT(menuitem), "toggled", GTK_SIGNAL_FUNC(toggle_sound), c);
+	state_lock = 1;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), TRUE);
+	state_lock = 0;
 	gtk_menu_append(GTK_MENU(menu), menuitem);
 
 
