@@ -17,7 +17,6 @@ gaim_applet_SOURCES =	about.c \
 			gtkticker.c \
 			html.c \
 			idle.c \
-			md5.c \
 			multi.c \
 			perl.c \
 			plugins.c \
@@ -48,7 +47,6 @@ gaim_SOURCES =	about.c \
 		gtkticker.c \
 		html.c \
 		idle.c \
-		md5.c \
 		multi.c \
 		perl.c \
 		plugins.c \
@@ -78,7 +76,6 @@ EXTRA_DIST =	applet.h \
 		gtkimhtml.h \
 		gtkspell.h \
 		gtkticker.h \
-		md5.h \
 		multi.h \
 		prpl.h \
 		proxy.h
