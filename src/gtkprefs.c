@@ -2353,7 +2353,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
 	gaim_prefs_remove("/gaim/gtk/blist/show_idle_time");
 	gaim_prefs_remove("/gaim/gtk/blist/show_warning_level");
-	gaim_prefs_remove("/gaim/gtk/conversations/im/button_type");
+	gaim_prefs_remove("/gaim/gtk/conversations/button_type");
 	gaim_prefs_remove("/gaim/gtk/conversations/html_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
