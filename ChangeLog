@@ -4,6 +4,10 @@ version 0.72
 	* Added a search feature to conversations.
 	* Fixed a crash in the Add Chat dialog when selecting an
 	  account that doesn't support chats. Closes bug #821606.
+	* Fixed a bug where new MSN accounts without buddies added wouldn't
+	  connect.
+	* Fixed a crash when deleting an account that has IMs or chats open.
+	  Closes bug #821630.
 	* If SSL is not enabled, MSN will load, but error on connect.
 	* Disable Jabber SASL auth until the standard stabilizes
 	* Czech translation updated (Stanislav Brabec, Miloslav Trmac)

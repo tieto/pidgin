@@ -153,6 +153,8 @@ gaim_account_new(const char *username, const char *protocol_id)
 void
 gaim_account_destroy(GaimAccount *account)
 {
+	GList *l;
+
 	g_return_if_fail(account != NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "account",
@@ -163,6 +165,14 @@ gaim_account_destroy(GaimAccount *account)
 
 	gaim_debug(GAIM_DEBUG_INFO, "account",
 			   "Continuing to destroy account %p\n", account);
+
+	for (l = gaim_get_conversations(); l != NULL; l = l->next)
+	{
+		GaimConversation *conv = (GaimConversation *)l->data;
+
+		if (gaim_conversation_get_account(conv) == account)
+			gaim_conversation_set_account(conv, NULL);
+	}
 
 	if (account->username    != NULL) g_free(account->username);
 	if (account->alias       != NULL) g_free(account->alias);
