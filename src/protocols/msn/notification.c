@@ -581,6 +581,9 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 	passport  = params[5];
 	friend    = msn_url_decode(params[6]);
 
+	if (session->lists_synced)
+		return TRUE;
+
 	if (!g_ascii_strcasecmp(type, "FL") && user_num != 0) {
 		/* These are users on our contact list. */
 		MsnUser *user;
@@ -716,6 +719,8 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 			serv_got_alias(gc, (char *)msn_user_get_passport(user),
 						   (char *)msn_user_get_name(user));
 		}
+
+		session->lists_synced = TRUE;
 	}
 
 	return TRUE;
