@@ -1264,11 +1264,10 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 
 		if (md->passport) {
 			unlink(md->passport);
-			free(md->passport);
+			g_free(md->passport);
 		}
-		md->passport = tempnam(NULL, NULL);
 
-		fd = fopen(md->passport, "w");
+		fd = gaim_mkstemp(&(md->passport));
 		fprintf(fd, "<html>\n");
 		fprintf(fd, "<head>\n");
 		fprintf(fd, "<noscript>\n");
@@ -1780,7 +1779,7 @@ static void msn_close(struct gaim_connection *gc)
 		g_free(md->msguser);
 	if (md->passport) {
 		unlink(md->passport);
-      		free(md->passport);
+      		g_free(md->passport);
 	}
 	while (md->switches)
 		msn_kill_switch(md->switches->data);
