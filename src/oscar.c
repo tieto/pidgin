@@ -1606,6 +1606,8 @@ static gboolean redraw_anim(gpointer data)
 	GdkPixbufFrame *frame;
 	GdkPixbuf *buf;
 	GdkPixmap *pm; GdkBitmap *bm;
+	GdkPixmap *src;
+	GdkGC *gc;
 
 	if (!ir->cnv || !g_list_find(conversations, ir->cnv)) {
 		debug_printf("I think this is a bug.\n");
@@ -1615,35 +1617,34 @@ static gboolean redraw_anim(gpointer data)
 	frames = gdk_pixbuf_animation_get_frames(ir->anim);
 	frame = g_list_nth_data(frames, ir->curframe);
 	buf = gdk_pixbuf_frame_get_pixbuf(frame);
-	gtk_pixmap_get(GTK_PIXMAP(ir->pix), &pm, &bm);
 	switch (gdk_pixbuf_frame_get_action(frame)) {
-		case GDK_PIXBUF_FRAME_RETAIN: {
-			GdkPixmap *src;
-			GdkGC *gc = gdk_gc_new(pm);
+		case GDK_PIXBUF_FRAME_RETAIN:
 			gdk_pixbuf_render_pixmap_and_mask(buf, &src, NULL, 0);
+			gtk_pixmap_get(GTK_PIXMAP(ir->pix), &pm, &bm);
+			gc = gdk_gc_new(pm);
 			gdk_draw_pixmap(pm, gc, src, 0, 0,
 					gdk_pixbuf_frame_get_x_offset(frame),
 					gdk_pixbuf_frame_get_y_offset(frame),
 					-1, -1);
 			gdk_pixmap_unref(src);
-			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
 			gtk_widget_queue_draw(ir->pix);
 			gdk_gc_unref(gc);
-					      }
 			break;
 		case GDK_PIXBUF_FRAME_DISPOSE:
 			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
+			gdk_pixmap_unref(pm);
+			gdk_bitmap_unref(bm);
 			break;
 		case GDK_PIXBUF_FRAME_REVERT:
 			frame = frames->data;
 			buf = gdk_pixbuf_frame_get_pixbuf(frame);
 			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
+			gdk_pixmap_unref(pm);
+			gdk_bitmap_unref(bm);
 			break;
 	}
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(bm);
 	ir->curframe = (ir->curframe + 1) % g_list_length(frames);
 	delay = gdk_pixbuf_frame_get_delay_time(frame);
 	ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
