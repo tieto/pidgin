@@ -3267,7 +3267,8 @@ static void start_anim(GtkObject *obj, struct conversation *c)
 	frames = gdk_pixbuf_animation_get_frames(c->anim);
 	frame = g_list_nth_data(frames, c->frame);
 	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
-	c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+	if (c->anim)
+	    c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 }
 
 static int des_save_icon(GtkObject *obj, GdkEvent *e, struct conversation *c)
@@ -3522,6 +3523,8 @@ void set_anim()
 {
 #if USE_PIXBUF
 	GList *c = conversations;
+	if (im_options & OPT_IM_HIDE_ICONS)
+		return;
 	while (c) {
 		if(im_options & OPT_IM_NO_ANIMATION)
 			stop_anim(NULL, c->data);
