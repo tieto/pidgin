@@ -694,7 +694,6 @@ void info_callback(GtkWidget *w, struct conversation *c)
 
 		serv_get_info(c->gc, name);
 
-		g_free(name);
 	} else {
 		serv_get_info(c->gc, c->name);
 		gtk_widget_grab_focus(c->entry);

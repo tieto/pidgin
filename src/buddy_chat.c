@@ -1143,8 +1143,6 @@ void im_callback(GtkWidget *w, struct conversation *b)
 	}
 
 	set_convo_gc(c, b->gc);
-
-	g_free(name);
 }
 
 void ignore_callback(GtkWidget *w, struct conversation *b)
@@ -1175,8 +1173,6 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 	}
 
 	add_chat_buddy_common(b, name, pos);
-
-	g_free(name);
 }
 
 void show_new_buddy_chat(struct conversation *b)
