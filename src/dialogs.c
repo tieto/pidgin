@@ -272,14 +272,34 @@ static int g_sendemail(char *name, char *email, int uname, int sname, char *coun
 
 static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct conversation *c)
 {
+	gchar *object_data;
 	dialogwindows = g_list_remove(dialogwindows, w);
 	gtk_widget_destroy(w);
 	
-	if (GTK_IS_COLOR_SELECTION_DIALOG(w))
-		c->color_dialog = NULL;
-	if (GTK_IS_FONT_SELECTION_DIALOG(w))
-		c->font_dialog = NULL;
+	object_data = gtk_object_get_user_data(GTK_OBJECT(w));
 
+	if (GTK_IS_COLOR_SELECTION_DIALOG(w))
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->palette), FALSE);
+		set_state_lock(0);
+		c->color_dialog = NULL;
+	}
+	else if (GTK_IS_FONT_SELECTION_DIALOG(w))
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->font), FALSE);
+		set_state_lock(0);
+		c->font_dialog = NULL;
+	}
+	else if (!g_strcasecmp(object_data, "smiley dialog"))
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->smiley), FALSE);
+		set_state_lock(0);
+		c->smiley_dialog = NULL;
+	}
+	
 	return FALSE;
 }
 
@@ -2925,8 +2945,8 @@ static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char **xp
 	button = gtk_toolbar_append_element(GTK_TOOLBAR(bar), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, NULL, NULL, tpm, GTK_SIGNAL_FUNC(set_smiley_array), (int *)face);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	/* these look really weird with borders */
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 }
 	
 void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
@@ -2985,6 +3005,10 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	gtk_container_add(GTK_CONTAINER(dialog), vbox);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
+	/* connect signals */
+	gtk_object_set_user_data(GTK_OBJECT(dialog), "smiley dialog");
+	gtk_signal_connect(GTK_OBJECT(dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
+	
 	/* show everything */
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
