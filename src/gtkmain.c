@@ -125,6 +125,7 @@ dologin_named(const char *name)
 	return ret;
 }
 
+#if HAVE_SIGNAL_H
 static void
 clean_pid(void)
 {
@@ -143,7 +144,6 @@ clean_pid(void)
 #endif
 }
 
-#if HAVE_SIGNAL_H
 void
 sighandler(int sig)
 {
@@ -180,9 +180,7 @@ sighandler(int sig)
 		break;
 	case SIGCHLD:
 		clean_pid();
-#if HAVE_SIGNAL_H
 		signal(SIGCHLD, sighandler);    /* restore signal catching on this one! */
-#endif
 		break;
 	default:
 		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
