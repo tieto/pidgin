@@ -167,7 +167,7 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>", _("Spanish"), " (es)</b> - Javier Fernández-Sanguino Peña &lt;<a href=\"mailto: jfs@debian.org\">jfs@debian.org</a>&gt;<br>"
 				"  <b>", _("Finnish"), " (fi)</b> - Arto Alakulju &lt;<a href=\"mailto: arto@alakulju.net\">arto@alakulju.net</a>&gt;<br>"
 				"  <b>", _("French"), " (fr)</b> - Éric Boumaour &lt;<a href=\"mailto: zongo_fr@users.sourceforge.net\">zongo_fr@users.sourceforge.net</a>&gt;<br>"
-				"  <b>", _("Hindi"), " (hi)</b> - Guntupalli Karunakar &lt;<a href=\"mailto: karunakar@freedomink.org\">karunakar@freedomink.org</a>&gt;<br>"
+				"  <b>", _("Hindi"), " (hi)</b> - Ravishankar Shrivastava &lt;<a href=\"mailto: raviratlami@yahoo.com\">raviratlami@yahoo.com</a>&gt;<br>"
 				"  <b>", _("Hungarian"), " (hu)</b> - Zoltan Sutto &lt;<a href=\"mailto: suttozoltan@chello.hu\">suttozoltan@chello.hu</a>&gt;<br>"
 				"  <b>", _("Italian"), " (it)</b> - Claudio Satriano &lt;<a href=\"mailto: satriano@na.infn.it\">satriano@na.infn.it</a>&gt;<br>"
 				"  <b>", _("Korean"), " (ko)</b> - Kyung-uk Son &lt;<a href=\"mailto: vvs740@chol.com\">vvs740@chol.com</a>&gt;<br>"
