@@ -1286,7 +1286,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char *str;
 	FILE *fd;
 	char colour[10];
-	char *clr;
 	struct buddy *b;
 	int gtk_font_options = 0;
 	GString *logstr;
