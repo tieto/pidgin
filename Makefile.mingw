@@ -101,8 +101,6 @@ SOUNDS =		$(GAIM_SOUNDS)/leave.wav \
 			$(GAIM_SOUNDS)/send.wav \
 			$(GAIM_SOUNDS)/arrive.wav
 
-GTKRC_ENGINES =		$(GTKRC_TOP)/libnativewin.dll
-
 
 ##
 ## Don't forget to change STATIC_PROTO_INIT, in config.h.mingw if you 
@@ -157,10 +155,6 @@ install: all
 	cp -R $(GTK_LIBS)/gtk-2.0/2.0.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
 	cp -R $(GTK_LIBS)/pango $(GAIM_INSTALL_DIR)/lib
 	cp -R $(GTK_TOP)/etc $(GAIM_INSTALL_DIR)
-	mkdir -p $(GAIM_INSTALL_DIR)/share/themes/NativeWin/gtk-2.0
-	cp $(GTKRC_TOP)/nativewin.gtkrc $(GAIM_INSTALL_DIR)/share/themes/NativeWin/gtk-2.0/gtkrc
-	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0/2.0.0/engines
-	cp $(GTKRC_ENGINES) $(GAIM_INSTALL_DIR)/lib/gtk-2.0/2.0.0/engines
 	cp $(GAIM_SRC)/win32/themes/gtkrc $(GAIM_INSTALL_DIR)/etc/gtk-2.0
 
 installer:
