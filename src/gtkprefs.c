@@ -2714,7 +2714,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/grey_idle_buddies", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_buttons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_group_count", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
