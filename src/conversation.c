@@ -55,6 +55,7 @@
 #include "pixmaps/wood.xpm"
 #include "pixmaps/save_small.xpm"
 #include "pixmaps/speaker.xpm"
+#include "pixmaps/speaker_mute.xpm"
 #include "pixmaps/image_icon.xpm"
 
 #include "pixmaps/luke03.xpm"
@@ -385,6 +386,20 @@ void toggle_loggle(GtkWidget *loggle, struct conversation *c)
 		show_log_dialog(c);
 	else
 		cancel_log(NULL, c);
+}
+
+void toggle_sound(GtkWidget *widget, struct conversation *c)
+{
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+  
+	c->makesound = !c->makesound;
+	
+	pm = gdk_pixmap_create_from_xpm_d(c->window->window, &bm, &c->window->style->white, 
+					  c->makesound ? speaker_xpm : speaker_mute_xpm);
+	gtk_pixmap_set(GTK_PIXMAP(c->speaker_p), pm, bm);
+	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(bm);
 }
 
 static void do_save_convo(GtkObject *obj, GtkWidget *wid)
@@ -2229,10 +2244,8 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					     GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					     NULL, NULL, _("Enable sounds"),
-					     _("Sound"), speaker_p, GTK_SIGNAL_FUNC(set_option),
-					     &c->makesound);
-	c->makesound = 0;
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(speaker), TRUE);
+					     _("Sound"), speaker_p, GTK_SIGNAL_FUNC(toggle_sound), c);
+	c->makesound = 1;
 
 	/* use a slicker look if the user wants to */
 	if (misc_options & OPT_MISC_COOL_LOOK) {
@@ -2286,6 +2299,8 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	c->font = font;
 	c->smiley = smiley;
 	c->imagebtn = image;
+	c->speaker = speaker;
+	c->speaker_p = speaker_p;
 
 	gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_ALL)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->bold, ((font_options & OPT_FONT_BOLD)) ? FALSE : TRUE);
