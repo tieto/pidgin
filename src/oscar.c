@@ -951,6 +951,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition 
 
 	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
 	g_free(tstconn->priv);
+	tstconn->priv = NULL;
 	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
@@ -977,6 +978,7 @@ static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition con
 
 	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
 	g_free(tstconn->priv);
+	tstconn->priv = NULL;
 	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
@@ -1008,6 +1010,7 @@ static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition con
 	aim_chat_attachname(tstconn, ccon->name);
 	aim_auth_sendcookie(sess, tstconn, ccon->priv);
 	g_free(ccon->priv);
+	ccon->priv = NULL;
 }
 int gaim_handle_redirect(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
@@ -1058,6 +1061,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		if (fd < 0) {
 			if (tstconn->priv)
 				g_free(tstconn->priv);
+			tstconn->priv = NULL;
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to reconnect with authorizer\n");
 			g_free(host);
@@ -1083,6 +1087,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		if (fd < 0) {
 			if (tstconn->priv)
 				g_free(tstconn->priv);
+			tstconn->priv = NULL;
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chatnav server\n");
 			g_free(host);
