@@ -2327,7 +2327,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/_Away"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/P_rotocol Actions"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/Tools/Account Ac_tions"), NULL, NULL, 0, "<Branch>" },
 	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
 	{ N_("/Tools/_File Transfers"), NULL, gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
