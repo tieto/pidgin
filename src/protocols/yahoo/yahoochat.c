@@ -398,16 +398,14 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
-	if (!room)
-		return;
 
-	if (yd->chat_name && gaim_utf8_strcasecmp(room, yd->chat_name))
+	if (room && yd->chat_name && gaim_utf8_strcasecmp(room, yd->chat_name))
 		yahoo_chat_leave(gc, room,
 				gaim_connection_get_display_name(gc), FALSE);
 
 	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
 
-	if ((!c || gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) && members &&
+	if (room && (!c || gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) && members &&
 	   ((g_list_length(members) > 1) ||
 	     !g_ascii_strcasecmp(members->data, gaim_connection_get_display_name(gc)))) {
 		if (c && gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) {

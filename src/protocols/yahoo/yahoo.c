@@ -103,6 +103,20 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 
 		struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
 
+		/* this is weird, and in one of the chat packets, and causes us
+		 * think all the values are keys and all the keys are values after
+		 * this point if we don't handle it */
+		if (data[pos] == '\0') {
+			while (pos + 1 < len) {
+				if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
+					break;
+				pos++;
+			}
+			pos += 2;
+			g_free(pair);
+			continue;
+		}
+
 		x = 0;
 		while (pos + 1 < len) {
 			if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
@@ -241,6 +255,8 @@ int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
 
 	yahoo_packet_dump(data, len);
 	ret = write(yd->fd, data, len);
+	if (ret != len)
+		gaim_debug_warning("yahoo", "Only wrote %d of %d bytes!", ret, len);
 	g_free(data);
 
 	return ret;

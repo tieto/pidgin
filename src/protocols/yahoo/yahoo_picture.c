@@ -232,8 +232,10 @@ void yahoo_send_picture_info(GaimConnection *gc, const char *who)
 	struct yahoo_packet *pkt;
 	char *buf;
 
-	if (!yd->picture_url)
+	if (!yd->picture_url) {
+		gaim_debug_warning("yahoo", "Attempted to send picture info without a picture\n");
 		return;
+	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
