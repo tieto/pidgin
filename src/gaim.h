@@ -75,7 +75,7 @@
 #define WFLAG_FILERECV 16
 #define WFLAG_SYSTEM 32
 
-#define AUTO_RESPONSE "<AUTO-REPLY> : "
+#define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
 #define PLUGIN_DIR ".gaim/plugins/"
 
