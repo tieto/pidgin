@@ -1985,7 +1985,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	}
 
 	/* Open file */
-	file = fopen(filename_temp, "w");
+	file = fopen(filename_temp, "wb");
 	if (file == NULL)
 	{
 		gaim_debug_error("util", "Error opening file %s for writing: %s\n",
