@@ -688,6 +688,12 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		/* we're not away. this is easy. if the convo window doesn't exist, create and update
 		 * it (if it does exist it was updated earlier), then play a sound indicating we've
 		 * received it and then display it. easy. */
+		
+		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
+			play_sound(SND_FIRST_RECEIVE);
+		else if (cnv->makesound)
+			play_sound(SND_RECEIVE);
+		
 		if (away_options & OPT_AWAY_QUEUE_UNREAD && !find_conversation(name)) {
 			/* We're gonna queue it up and wait for the user to ask for it... probably
 			 * by clicking the docklet or windows tray icon. */
@@ -705,11 +711,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 				cnv = new_conversation(name);
 				set_convo_gc(cnv, gc);
 			}
-			if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
-				play_sound(SND_FIRST_RECEIVE);
-			else if (cnv->makesound)
-				play_sound(SND_RECEIVE);
-			
+						
 			set_convo_name(cnv, name);
 			
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
