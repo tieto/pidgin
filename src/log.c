@@ -348,8 +348,6 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 		char *dir;
 		char *filename, *path;
 
-		printf("%s\n", acct_name);
-
 		if (log->type == GAIM_LOG_CHAT) {
 			target = g_strdup_printf("%s.chat", gaim_normalize(log->account,
 															   log->name));
