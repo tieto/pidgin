@@ -75,7 +75,7 @@ make prefix=$RPM_BUILD_ROOT%{prefix} sysconfdir=$RPM_BUILD_ROOT%{sysconfdir} ins
 %files applet
 %defattr(-,root,root)
 %attr(755,root,root) %{prefix}/bin/gaim_applet
-%doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog doc/PERL-HOWTO
+%doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog plugins/PERL-HOWTO
 %{prefix}/lib/gaim/*
 %{prefix}/share/locale/*/*/*
 %{prefix}/share/sounds/gaim/*
