@@ -381,8 +381,6 @@ FILE *open_log_file (char *name)
         } else
                 fclose(fd);
 
-	/* FIXME: we need to figure out which directory to log things to. for now, it's just going
-	 * to have to be ~/.gaim/logs :-P */
         g_snprintf(log_all_file, 256, "%s/.gaim/logs", getenv("HOME"));
 
         if (stat(log_all_file, &st) < 0)
@@ -404,7 +402,6 @@ FILE *open_log_file (char *name)
                 fclose(fd);
 
         
-	/* same FIXME as above; need to find better dir than ~/.gaim/logs */
         g_snprintf(log_all_file, 256, "%s/.gaim/logs/%s.log", getenv("HOME"), normalize(name));
 
         if (stat(log_all_file, &st) < 0)
