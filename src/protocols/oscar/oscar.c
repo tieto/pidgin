@@ -3281,40 +3281,77 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	debug_printf("account confirmation returned status 0x%04x (%s)\n", status,
-			status ? "email sent" : "unknown");
-	if (status) {
+			status ? "unknown" : "email sent");
+	if (!status) {
 		g_snprintf(msg, sizeof(msg), "You should receive an email asking to confirm %s.",
 				gc->username);
-		do_error_dialog("Account confirmation requested.", msg, GAIM_INFO);
+		do_error_dialog("Account Confirmation Requested", msg, GAIM_INFO);
 	}
 
 	return 1;
 }
 
 static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
-	int change, str;
-	fu16_t perms, type, length;
-	char *val;
-	va_list ap;
-	char buf[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	fu16_t perms, err;
+	char *url, *sn, *email;
+	int change;
 
 	va_start(ap, fr);
 	change = va_arg(ap, int);
 	perms = (fu16_t)va_arg(ap, unsigned int);
-	type = (fu16_t)va_arg(ap, unsigned int);
-	length = (fu16_t)va_arg(ap, unsigned int);
-	val = va_arg(ap, char *);
-	str = va_arg(ap, int);
+	err = (fu16_t)va_arg(ap, unsigned int);
+	url = va_arg(ap, char *);
+	sn = va_arg(ap, char *);
+	email = va_arg(ap, char *);
 	va_end(ap);
 
-	debug_printf("info%s: perms = %d, type = %x, length = %d, val = %s\n",
-			change ? " change" : "", perms, type, length, str ? val : "(not string)");
+	debug_printf("account info: because of %s, perms=0x%04x, err=0x%04x, url=%s, sn=%s, email=%s\n",
+		change ? "change" : "request", perms, err, url, sn, email);
 
-	/* XXX Do something for other types too. */
-	if ((type == 0x0011) && str && length) {
-		g_snprintf(buf, sizeof(buf), "The email address for %s is %s", gc->username, val);
-		do_error_dialog(buf, NULL, GAIM_INFO);
+	if (err && url) {
+		char *dialog_msg;
+		char *dialog_top = g_strdup_printf(_("Error Changing Account Info"));
+		switch (err) {
+			case 0x0001: {
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name differs from the original."), err);
+			} break;
+			case 0x0006: {
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name ends in a space."), err);
+			} break;
+			case 0x000b: {
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name is too long."), err);
+			} break;
+			case 0x001d: {
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."), err);
+			} break;
+			case 0x0021: {
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."), err);
+			} break;
+			case 0x0023: {
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because the given address is invalid."), err);
+			} break;
+			default: {
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
+			} break;
+		}
+		do_error_dialog(dialog_top, dialog_msg, GAIM_ERROR);
+		g_free(dialog_top);
+		g_free(dialog_msg);
+		return 1;
+	}
+
+	if (sn) {
+		char *dialog_msg = g_strdup_printf(_("Your screen name is currently formated as follows:\n%s"), sn);
+		do_error_dialog("Account Info", dialog_msg, GAIM_INFO);
+		g_free(dialog_msg);
+	}
+
+	if (email) {
+		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"), gc->username, email);
+		do_error_dialog("Account Info", dialog_msg, GAIM_INFO);
+		g_free(dialog_msg);
 	}
 
 	return 1;

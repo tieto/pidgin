@@ -1,5 +1,8 @@
 /*
- * Deals with the authorizer (group 0x0017=23, and old-style non-SNAC login).
+ * Family 0x0017 - Authentication.
+ *
+ * Deals with the authorizer for SNAC-based login, and also old-style 
+ * non-SNAC login.
  *
  */
 
@@ -474,6 +477,11 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	if (aim_gettlv(tlvlist, 0x0049, 1))
 		; /* no idea what this is */
 
+	/*
+	 * URL to change password.
+	 */
+	if (aim_gettlv(tlvlist, 0x0054, 1))
+		info.chpassurl = aim_gettlv_str(tlvlist, 0x0054, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
 		ret = userfunc(sess, rx, &info);
@@ -482,6 +490,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	free(info.bosip);
 	free(info.errorurl);
 	free(info.email);
+	free(info.chpassurl);
 	free(info.latestrelease.name);
 	free(info.latestrelease.url);
 	free(info.latestrelease.info);
@@ -540,4 +549,3 @@ faim_internal int auth_modfirst(aim_session_t *sess, aim_module_t *mod)
 
 	return 0;
 }
-

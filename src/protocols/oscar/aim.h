@@ -555,6 +555,7 @@ struct aim_authresp_info {
 	char *email;
 	char *bosip;
 	fu8_t *cookie;
+	char *chpassurl;
 	struct aim_clientrelease latestrelease;
 	struct aim_clientrelease latestbeta;
 };
@@ -611,7 +612,7 @@ faim_export aim_conn_t *aim_getconn_type(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
 
-/* aim_misc.c */
+/* misc.c */
 
 #define AIM_VISIBILITYCHANGE_PERMITADD    0x05
 #define AIM_VISIBILITYCHANGE_PERMITREMOVE 0x06
@@ -657,7 +658,7 @@ faim_export unsigned short aim_fingerprintclient(unsigned char *msghdr, int len)
 #define AIM_RATE_CODE_CLEARLIMIT 0x0004
 faim_export int aim_ads_requestads(aim_session_t *sess, aim_conn_t *conn);
 
-/* aim_im.c */
+/* im.c */
 
 struct aim_fileheader_t {
 #if 0
@@ -903,7 +904,7 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn,
 faim_export int aim_oft_getfile_ack(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_oft_end(aim_session_t *sess, aim_conn_t *conn);
 
-/* aim_info.c */
+/* info.c */
 #define AIM_CAPS_BUDDYICON      0x00000001
 #define AIM_CAPS_VOICE          0x00000002
 #define AIM_CAPS_IMIMAGE        0x00000004
@@ -1137,7 +1138,7 @@ struct aim_emailinfo {
 faim_export int aim_email_sendcookies(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_email_activate(aim_session_t *sess, aim_conn_t *conn);
 
-/* aim_util.c */
+/* util.c */
 /*
  * These are really ugly.  You'd think this was LISP.  I wish it was.
  *
@@ -1202,7 +1203,7 @@ faim_export int aim_sncmp(const char *sn1, const char *sn2);
 /* for libc's that dont have it */
 faim_export char *aim_strsep(char **pp, const char *delim);
 
-/* aim_meta.c */
+/* meta.c */
 faim_export char *aim_getbuilddate(void);
 faim_export char *aim_getbuildtime(void);
 faim_export int aim_getbuildstring(char *buf, int buflen);

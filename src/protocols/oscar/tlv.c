@@ -183,11 +183,11 @@ faim_internal int aim_sizetlvchain(aim_tlvlist_t **list)
 }
 
 /**
- * aim_addtlvtochain_str - Add a string to a TLV chain
+ * aim_addtlvtochain_raw - Add a string to a TLV chain
  * @list: Desination chain (%NULL pointer if empty)
- * @type: TLV type
- * @str: String to add
- * @len: Length of string to add (not including %NULL)
+ * @t: TLV type
+ * @l: Length of string to add (not including %NULL)
+ * @v: String to add
  *
  * Adds the passed string as a TLV element of the passed type
  * to the TLV chain.
