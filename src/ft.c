@@ -293,7 +293,7 @@ gaim_xfer_get_remote_port(const struct gaim_xfer *xfer)
 void
 gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed)
 {
-	if(xfer == NULL)
+	if (xfer == NULL)
 		return;
 
 	xfer->completed = completed;
@@ -329,7 +329,7 @@ gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size)
 	if (xfer == NULL)
 		return;
 
-	if(xfer->size == 0)
+	if (xfer->size == 0)
 		xfer->bytes_remaining = size - xfer->bytes_sent;
 
 	xfer->size = size;
@@ -436,7 +436,7 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 
 		r = read(xfer->fd, *buffer, s);
 
-		if(r == 0)
+		if (r == 0)
 			gaim_xfer_set_completed(xfer, TRUE);
 	}
 
@@ -493,11 +493,9 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 
 	g_free(buffer);
 
-	if (r < 0)
-		return;
-
-	if(gaim_xfer_get_size(xfer) > 0)
+	if (gaim_xfer_get_size(xfer) > 0)
 		xfer->bytes_remaining -= r;
+
 	xfer->bytes_sent += r;
 
 	if (xfer->ops.ack != NULL)
