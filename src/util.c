@@ -1150,13 +1150,23 @@ gaim_markup_linkify(const char *text)
 	const char *c, *t, *q = NULL;
 	char *tmp;
 	char url_buf[BUF_LEN * 4];
+	gboolean inside_html = FALSE;
 	GString *ret = g_string_new("");
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
 
 	c = text;
 	while (*c) {
-		if(!q && (*c == '\"' || *c == '\'')) {
-			q = c;
+		if(inside_html) {
+			if(*c == '>') {
+				inside_html = FALSE;
+			} else if(!q && (*c == '\"' || *c == '\'')) {
+				q = c;
+			} else if(q) {
+				if(*c == *q)
+					q = NULL;
+			}
+		} else if(*c == '<') {
+			inside_html = TRUE;
 		} else if (!g_ascii_strncasecmp(c, "<A", 2)) {
 			while (1) {
 				if (!g_ascii_strncasecmp(c, "/A>", 3)) {
@@ -1336,9 +1346,6 @@ gaim_markup_linkify(const char *text)
 
 				t++;
 			}
-		} else if(q) {
-			if(*c == *q)
-				q = NULL;
 		}
 
 		if (*c == 0)
