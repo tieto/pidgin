@@ -470,7 +470,7 @@ static gint find_icon_data(gconstpointer a, gconstpointer b)
 
 void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 {
-	struct icon_data tmp = { gc, who, NULL, 0 };
+	struct icon_data tmp = { gc, normalize(who), NULL, 0 };
 	GList *l = g_list_find_custom(icons, &tmp, find_icon_data);
 	struct icon_data *id = l ? l->data : NULL;
 
@@ -486,7 +486,7 @@ void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 		id = g_new0(struct icon_data, 1);
 		icons = g_list_append(icons, id);
 		id->gc = gc;
-		id->who = g_strdup(who);
+		id->who = g_strdup(normalize(who));
 	} else {
 		return;
 	}
@@ -518,7 +518,7 @@ void remove_icon_data(struct gaim_connection *gc)
 
 void *get_icon_data(struct gaim_connection *gc, char *who, int *len)
 {
-	struct icon_data tmp = { gc, who, NULL, 0 };
+	struct icon_data tmp = { gc, normalize(who), NULL, 0 };
 	GList *l = g_list_find_custom(icons, &tmp, find_icon_data);
 	struct icon_data *id = l ? l->data : NULL;
 
