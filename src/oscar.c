@@ -779,11 +779,35 @@ static void delete_direct_im(gpointer w, struct direct_im *d) {
 	g_free(d);
 }
 
+static void oscar_directim_callback(gpointer data, gint source, GdkInputCondition condition) {
+	struct direct_im *dim = data;
+	struct gaim_connection *gc = dim->gc;
+	struct oscar_data *od = gc->proto_data;
+	char buf[256];
+
+	if (!(dim->cnv = find_conversation(dim->name))) dim->cnv = new_conversation(dim->name);
+	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s established</B>"), dim->name);
+	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
+
+	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
+			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
+
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
+				gaim_directim_incoming, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT,
+				gaim_directim_disconnect, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
+				gaim_directim_typing, 0);
+
+	gdk_input_remove(dim->watcher);
+	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, dim->conn);
+}
+
 static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
-	char buf[256];
 
 	debug_printf("Accepted DirectIM.\n");
 
@@ -796,31 +820,16 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	dim->gc = d->gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", d->sn);
 
-	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 	if ((dim->conn = aim_directim_connect(od->sess, od->conn, d->priv)) == NULL) {
 		od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 		g_free(dim);
 		cancel_direct_im(w, d);
 		return TRUE;
 	}
-	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
-
-	if (!(dim->cnv = find_conversation(d->sn))) dim->cnv = new_conversation(d->sn);
-	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s established</B>"), d->sn);
-	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
-
-	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
-			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
 
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
-	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-					oscar_callback, dim->conn);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
-				gaim_directim_incoming, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT,
-				gaim_directim_disconnect, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
-				gaim_directim_typing, 0);
+
+	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_WRITE, oscar_directim_callback, dim);
 
 	cancel_direct_im(w, d);
 
@@ -1016,6 +1025,20 @@ static int gaim_getfile_disconnect(struct aim_session_t *sess, struct command_rx
 	return 1;
 }
 
+static void oscar_getfile_callback(gpointer data, gint source, GdkInputCondition condition) {
+	struct getfile_transfer *gf = data;
+	struct gaim_connection *gc = gf->gc;
+	struct oscar_data *od = gc->proto_data;
+
+	gdk_input_remove(gf->gip);
+	gf->gip = gdk_input_add(source, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, gf->conn);
+
+	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILEREQ, gaim_getfile_filereq, 0);
+	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILESEND, gaim_getfile_filesend, 0);
+	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILECOMPLETE, gaim_getfile_complete, 0);
+	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEDISCONNECT, gaim_getfile_disconnect, 0);
+}
+
 static void do_getfile(GtkObject *obj, struct ask_getfile *g) {
 	GtkWidget *w = gtk_object_get_user_data(obj);
 	char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(w));
@@ -1062,7 +1085,6 @@ static void do_getfile(GtkObject *obj, struct ask_getfile *g) {
 	rewind(file);
 
 	aim_oft_registerlisting(od->sess, file, "");
-	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 	if ((newconn = aim_accepttransfer(od->sess, od->conn, g->sn, g->cookie, g->ip, file, AIM_CAPS_GETFILE)) == NULL) {
 		od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 		do_error_dialog(_("Error connecting for transfer"), _("GetFile Error"));
@@ -1072,17 +1094,12 @@ static void do_getfile(GtkObject *obj, struct ask_getfile *g) {
 		gtk_widget_destroy(w);
 		return;
 	}
-	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 
 	gtk_widget_destroy(w);
 
-	gf->gip = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
 	od->getfiles = g_slist_append(od->getfiles, gf);
 	gf->conn = newconn;
-	aim_conn_addhandler(od->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILEREQ, gaim_getfile_filereq, 0);
-	aim_conn_addhandler(od->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILESEND, gaim_getfile_filesend, 0);
-	aim_conn_addhandler(od->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILECOMPLETE, gaim_getfile_complete, 0);
-	aim_conn_addhandler(od->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEDISCONNECT, gaim_getfile_disconnect, 0);
+	gf->gip = gdk_input_add(newconn->fd, GDK_INPUT_WRITE, oscar_getfile_callback, gf);
 }
 
 static int accept_getfile(gpointer w, struct ask_getfile *g) {
