@@ -420,16 +420,20 @@ static void gjab_connected(gpointer data, gint source, GdkInputCondition cond)
 {
 	xmlnode x;
 	char *t, *t2;
-	struct gaim_connection *gc = data;;
+	struct gaim_connection *gc = data;
+	struct jabber_data *jd;
 	gjconn j;
-
-	if (source == -1) {
-		STATE_EVT(JCONN_STATE_OFF)
-		return;
-	}
 
 	if (!g_slist_find(connections, gc)) {
 		close(source);
+		return;
+	}
+
+	jd = gc->proto_data;
+	j = jd->jc;
+
+	if (source == -1) {
+		STATE_EVT(JCONN_STATE_OFF)
 		return;
 	}
 
