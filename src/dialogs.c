@@ -1814,6 +1814,23 @@ alias_dialog_blist_chat(GaimChat *chat)
 }
 
 static void
+alias_contact_cb(GaimContact *contact, const char *new_alias)
+{
+	gaim_contact_set_alias(contact, new_alias);
+	gaim_blist_save();
+}
+
+void
+alias_dialog_contact(GaimContact *contact)
+{
+	gaim_request_input(NULL, _("Alias Contact"), _("Alias contact"),
+			_("Please enter an aliased name for this contact."),
+			contact->alias, FALSE, FALSE,
+			_("OK"), G_CALLBACK(alias_contact_cb),
+			_("Cancel"), NULL, contact);
+}
+
+static void
 alias_buddy_cb(GaimBuddy *buddy, GaimRequestFields *fields)
 {
 	const char *alias;

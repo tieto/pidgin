@@ -757,12 +757,20 @@ GaimContact *gaim_contact_new()
 
 void gaim_contact_set_alias(GaimContact* contact, const char *alias)
 {
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+
 	g_return_if_fail(contact != NULL);
 
 	if(contact->alias)
 		g_free(contact->alias);
 
-	contact->alias = g_strdup(alias);
+	if(alias && *alias)
+		contact->alias = g_strdup(alias);
+	else
+		contact->alias = NULL;
+
+	if (ops)
+		ops->update(gaimbuddylist, (GaimBlistNode*)contact);
 }
 
 const char *gaim_contact_get_alias(GaimContact* contact)
@@ -1156,16 +1164,10 @@ const char *gaim_get_buddy_alias_only(GaimBuddy *b) {
 
 const char *  gaim_get_buddy_alias (GaimBuddy *buddy)
 {
-	GaimContact *contact;
 	const char *ret;
 
 	if(!buddy)
 		return _("Unknown");
-
-	contact = (GaimContact*)((GaimBlistNode*)buddy)->parent;
-
-	if(contact && contact->alias)
-		return contact->alias;
 
 	ret= gaim_get_buddy_alias_only(buddy);
 
@@ -1936,14 +1938,13 @@ static void parse_contact(GaimGroup *group, xmlnode *cnode)
 {
 	GaimContact *contact = gaim_contact_new();
 	xmlnode *x;
+	const char *alias;
 
 	gaim_blist_add_contact(contact, group,
 			gaim_blist_get_last_child((GaimBlistNode*)group));
 
-	if((x = xmlnode_get_child(cnode, "alias"))) {
-		char *alias = xmlnode_get_data(x);
+	if((alias = xmlnode_get_attrib(cnode, "alias"))) {
 		gaim_contact_set_alias(contact, alias);
-		g_free(alias);
 	}
 
 	for(x = cnode->child; x; x = x->next) {
