@@ -65,8 +65,8 @@ Gaim - Perl extension the Gaim instant messenger.
 
 =head1 ABSTRACT
 
-This module provides the interface for using perl scripts as plugins
-in Gaim.
+  This module provides the interface for using perl scripts as plugins
+  in Gaim.
 
 =head1 DESCRIPTION
 
@@ -78,6 +78,36 @@ accounts, the buddy list, gaim signals, and more.
 The API for the perl interface is very similar to that of the Gaim C
 API, which can be viewed at http://gaim.sourceforge.net/api/ or in
 the header files in the Gaim source tree.
+
+=head1 FUNCTIONS
+
+=over
+
+=item @accounts = Gaim::accounts
+
+Returns a list of all accounts, online or offline.
+
+=item @chats = Gaim::chats
+
+Returns a list of all chats currently open.
+
+=item @connections = Gaim:connections
+
+Returns a list of all active connections.
+
+=item @conversations = Gaim::conversations
+
+Returns a list of all conversations, both IM and chat, currently open.
+
+=item @conv_windows = Gaim::conv_windows
+
+Returns a list of all conversation windows currently open.
+
+=item @ims = Gaim::ims
+
+Returns a list of all instant messages currently open.
+
+=back
 
 =head1 SEE ALSO
 

@@ -1,0 +1,185 @@
+/** @page perl-howto Perl Scripting HOWTO
+
+<h2>Perl Scripting HOWTO</h2>
+
+
+<h3>Introduction</h3>
+
+ Perl is the first scripting language compatible with Gaim, and has been a
+ valuable aid to developers wishing to write scripts to modify the behavior
+ of their favorite instant messenger. A perl script acts like a normal
+ plugin, and appears in the list of plugins in Gaim's preferences pane.
+ Until now, they have been very basic, and consisted of only a few
+ functions. However, with the latest changes to Gaim's perl API, a much
+ larger part of Gaim is now open. In time, even such things as Gtk+
+ preference panes for perl scripts will be possible.
+
+<h3>Writing your first perl script</h3>
+
+ Enough of that. You want to know how to write a perl script, right?
+
+ First off, we're going to assume here that you are familiar with perl. Perl
+ scripts in Gaim are just normal perl scripts, which happen to use Gaim's
+ loadable perl module.
+
+ Now, you're going to want to place your script in $HOME/.gaim/plugins/.
+ That's the place where all plugins and scripts go, regardless of language.
+
+ The first thing you're going to write in your script is the necessary code
+ to actually register and initialize your script, which looks something like
+ this:
+
+
+ @code
+ use Gaim;
+
+ %PLUGIN_INFO = (
+     perl_api_version => 2,
+     name             => "Your Plugin's Name",
+     version          => "0.1",
+     summary          => "Brief summary of your plugin.",
+     description      => "Detailed description of what your plugin does.",
+     author           => "Your Name <email@address>",
+     url              => "http://yoursite.com/",
+
+     load             => "plugin_load",
+     unload           => "plugin_unload"
+ )
+
+ sub plugin_init {
+     return %PLUGIN_INFO;
+ }
+
+ sub plugin_load {
+     my $plugin = shift;
+ }
+
+ sub plugin_unload {
+     my $plugin = shift;
+ }
+ @endcode
+
+
+ The first thing you see is a hash called @c @%PLUGIN_INFO. It contains
+ the basic information on your plugin. In the future, additional fields
+ may be allowed, such as ones to setup a Gtk+ preferences pane.
+
+ The @c plugin_init function is required in all perl scripts. Its job
+ is to return the @c @%PLUGIN_INFO hash, which Gaim will use to register
+ and initialize your plugin.
+
+ The @c plugin_load function is called when the user loads your plugin
+ from the preferences, or on startup. It is passed one variable, which
+ is a handle to the plugin. This must be used when registering signal
+ handlers or timers.
+
+ The @c plugin_unload function is called when the user is unloading your
+ plugin. Its job is to clean up anything that must be dealt with before
+ unloading, such as removing temporary files or saving configuration
+ information. It does @em not have to unregister signal handlers or timers,
+ as Gaim will do that for you.
+
+ @warning Do @b NOT put any executable code outside of these functions
+          or your own user-defined functions. Variable declarations are
+          okay, as long as they're set to be local. Bad Things (TM) can
+          happen if you don't follow this simple instruction.
+
+
+ <h3>Timeouts</h3>
+
+ One feature useful to many perl plugin writers are timeouts. Timeouts allow
+ code to be ran after a specified number of seconds, and are rather
+ simple to setup. Here's one way of registering a timeout.
+
+
+ @code
+ sub timeout_cb {
+     my $data = shift;
+
+     Gaim::debug_info("my perl plugin",
+                      "Timeout callback called! data says: $data\n");
+ }
+
+ sub plugin_load {
+     my $plugin = shift;
+
+     # Start a timeout for 5 seconds.
+     Gaim::timeout_add($plugin, 5, \&timeout_cb, "Hello!");
+ }
+ @endcode
+
+
+ Here's another way of calling a timeout:
+
+
+ @code
+ sub plugin_load {
+     my $plugin = shift;
+
+     # Start a timeout for 5 seconds.
+     Gaim::timeout_add($plugin, 5,
+         sub {
+             my $data = shift;
+
+             Gaim::debug_info("my perl plugin",
+                              "Timeout callback called! data says: $data\n");
+         }, "Hello!");
+  }
+  @endcode
+
+
+  A timeout automatically unregisters when it reaches 0 (which is also
+  when the callback is called). If you want a timeout to call a function
+  every specified number of seconds, just re-register the timeout
+  at the end of the callback.
+
+  The data parameter is optional. If you don't have data to pass to the
+  callback, simply omit the parameter.
+
+
+  <h3>Signals</h3>
+
+  Signals are how gaim plugins get events. There are a number of
+  @ref Signals signals available.
+
+  A signal is registered by connecting a signal name owned by an
+  instance handle to a callback on the plugin handle. This is best
+  illustrated with an example.
+
+
+  @code
+  sub connection_signed_on_cb {
+      my ($gc, $data) = @_;
+      my $account = $gc->get_account();
+
+      Gaim::debug_info("my perl plugin",
+                       "Account " . $account->get_username() . " signed on.\n");
+  }
+
+  sub plugin_load {
+      my $plugin = shift;
+      my $data = "";
+
+      Gaim::signal_connect(Gaim::Connections::handle, "signed-on",
+                           $plugin, \&signed_on_cb, $data);
+  }
+  @endcode
+
+
+  Like timeouts, the callback can be an embedded subroutine, and also
+  like timeouts, the data parameter can be omitted.
+
+
+  <h3>Notes</h3>
+
+  The API in perl is very similar to Gaim's C API. The functions have been
+  gathered into packages, but most are the same, and the documentation can
+  be a big help at times.
+
+
+  <h3>Resources</h3>
+
+  @see Signals
+  @see Perl API Reference
+*/
+// vim: syntax=c tw=75 et
