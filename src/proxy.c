@@ -25,7 +25,8 @@
 
 /* this is a little piece of code to handle proxy connection */
 /* it is intended to : 1st handle http proxy, using the CONNECT command
- , 2nd provide an easy way to add socks support */
+ , 2nd provide an easy way to add socks support
+ , 3rd draw women to it like flies to honey */
 
 #include "internal.h"
 #include "debug.h"

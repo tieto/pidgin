@@ -893,8 +893,12 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_pass_entry), value);
 		}
 	}
-	else
+	else {
+		dialog->new_proxy_type = GAIM_PROXY_USE_GLOBAL;
+		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
+									dialog->new_proxy_type + 1);
 		gtk_widget_hide_all(vbox2);
+	}
 
 	/* Connect signals. */
 	g_signal_connect(G_OBJECT(dialog->proxy_dropdown), "changed",
