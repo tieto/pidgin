@@ -1938,7 +1938,27 @@ void show_color_dialog(GtkWidget *entry, GtkWidget *color)
 
 #define PATHSIZE 1024
 
-/* if dummy is 0, save to ~/.gaimbdcache_screenname */
+/* see if a buddy list cache file for this user exists */
+
+gboolean
+bud_list_cache_exists( void )
+{
+	gboolean ret = FALSE;
+	char path[PATHSIZE];
+	char *file;
+	struct stat sbuf;
+	extern char g_screenname[];
+
+	file = getenv( "HOME" );
+	if ( file != (char *) NULL ) {
+	       	sprintf( path, "%s/.gaimbdcache_%s", file, g_screenname );
+		if ( !stat(path, &sbuf) ) 
+			ret = TRUE;
+	}
+	return ret;
+}
+
+/* if dummy is 0, save to ~/.gaimbdcache_screenname. Else, let user choose */
 
 void do_export(GtkWidget *w, void *dummy)
 {
@@ -2008,7 +2028,8 @@ void show_export_dialog()
 
 }
 
-/* if dummy is 0, then import from ~/.gaimbdcache_screenname */
+/* if dummy is 0, then import from ~/.gaimbdcache_screenname, else let user
+   choose */
 
 void do_import(GtkWidget *w, void *dummy)
 {

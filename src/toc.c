@@ -900,5 +900,7 @@ void parse_toc_buddy_list(char *config)
 
 	if ( how_many == 0 ) {
 		do_import( (GtkWidget *) NULL, 0 );
+	} else if ( bud_list_cache_exists() == FALSE ) {
+		do_export( (GtkWidget *) NULL, 0 );	
 	}
  }
