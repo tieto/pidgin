@@ -56,6 +56,7 @@ struct gaim_gtk_buddy_list {
 		*buddy_icon_column;
 
 	GtkWidget *bbox;                /**< A Button Box. */
+	GtkTooltips *tooltips;           /**< Tooltips for the buttons. */
 
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 

@@ -259,6 +259,7 @@ static void gaim_gtk_blist_add_buddy_cb()
 		show_add_buddy(NULL, NULL, NULL, NULL);
 	}
 }
+
 static void
 gaim_gtk_blist_remove_cb (GtkWidget *w, GaimBlistNode *node) 
 {
@@ -1138,7 +1139,6 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkTreeViewColumn *column;
 	GtkWidget *sw;
 	GtkWidget *button;
-	GtkTooltips *tooltips;
 	GtkSizeGroup *sg;
 	GtkTreeSelection *selection;
 	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -1260,7 +1260,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	/**************************** Button Box **************************************/
 	/* add this afterwards so it doesn't force up the width of the window         */
 
-	tooltips = gtk_tooltips_new();
+	gtkblist->tooltips = gtk_tooltips_new();
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gtkblist->bbox = gtk_hbox_new(TRUE, 0);
@@ -1273,7 +1273,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_im_cb),
 			 gtkblist->treeview);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(tooltips), button, _("Send an Instant Message to the selected buddy"), NULL);
+	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Send a message to the selected buddy"), NULL);
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("Get Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
@@ -1282,7 +1282,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_info_cb),
 			 gtkblist->treeview);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(tooltips), button, _("Get information on the selected buddy"), NULL);
+	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Get information on the selected buddy"), NULL);
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
@@ -1290,7 +1290,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_chat_cb), NULL);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(tooltips), button, _("Join a chat room"), NULL);
+	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Join a chat room"), NULL);
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("Away"), GAIM_STOCK_AWAY, GAIM_BUTTON_VERTICAL);
@@ -1298,11 +1298,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_away_cb), NULL);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(tooltips), button, _("Set an away message"), NULL);
+	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Set an away message"), NULL);
 	gtk_widget_show(button);
-
-	/* we're done setting tooltips */
-	gtk_object_sink(GTK_OBJECT(tooltips));
 
 	/* this will show the right image/label widgets for us */
 	gaim_gtk_blist_update_toolbar();
@@ -1653,6 +1650,7 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 		return;
 
 	gtk_widget_destroy(gtkblist->window);
+	gtk_object_sink(GTK_OBJECT(gtkblist->tooltips));
 
 	if (gtkblist->refresh_timer)
 		g_source_remove(gtkblist->refresh_timer);
