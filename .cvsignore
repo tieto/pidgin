@@ -3,6 +3,7 @@ libtool
 config.status
 intl
 ABOUT-NLS
+compile
 config.guess
 config.sub
 Doxyfile
