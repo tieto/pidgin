@@ -3276,8 +3276,12 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 	GtkWidget *tab_cont;
 	GtkWidget *tabby;
 	gboolean new_ui;
+	GaimConversationType conv_type;
+	const char *name;
 
-	gtkwin = GAIM_GTK_WINDOW(win);
+	name      = gaim_conversation_get_name(conv);
+	conv_type = gaim_conversation_get_type(conv);
+	gtkwin    = GAIM_GTK_WINDOW(win);
 
 	if (conv->ui_data != NULL) {
 		gtkconv = (struct gaim_gtk_conversation *)conv->ui_data;
@@ -3294,12 +3298,12 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 		gtkconv->tooltips = gtk_tooltips_new();
 
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		if (conv_type == GAIM_CONV_CHAT) {
 			gtkconv->u.chat = g_malloc0(sizeof(struct gaim_gtk_chat_pane));
 
 			pane = setup_chat_pane(conv);
 		}
-		else if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		else if (conv_type == GAIM_CONV_IM) {
 			gtkconv->u.im = g_malloc0(sizeof(struct gaim_gtk_im_pane));
 			gtkconv->u.im->a_virgin = TRUE;
 
@@ -3307,10 +3311,10 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		}
 
 		if (pane == NULL) {
-			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+			if (conv_type == GAIM_CONV_CHAT) {
 				g_free(gtkconv->u.chat);
 			}
-			else if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+			else if (conv_type == GAIM_CONV_IM) {
 				g_free(gtkconv->u.im);
 			};
 
@@ -3318,6 +3322,37 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 			conv->ui_data = NULL;
 
 			return;
+		}
+
+		/*
+		 * Write the New Conversation log string.
+		 *
+		 * This should probably be elsewhere, but then, logging should
+		 * be moved out in some way, either via plugin or via a new API.
+		 */
+		if (gaim_conversation_is_logging(conv) &&
+			conv_type != GAIM_CONV_MISC) {
+
+			FILE *fd;
+			char filename[256];
+
+			g_snprintf(filename, sizeof(filename), "%s%s", name,
+					   (conv_type == GAIM_CONV_CHAT ? ".chat" : ""));
+
+			fd = open_log_file(filename, (conv_type == GAIM_CONV_CHAT));
+
+			if (fd) {
+				if (!(logging_options & OPT_LOG_STRIP_HTML))
+					fprintf(fd,
+							"<HR><BR><H3 Align=Center> "
+							"---- New Conversation @ %s ----</H3><BR>\n",
+							full_date());
+				else
+					fprintf(fd, "---- New Conversation @ %s ----\n",
+							full_date());
+
+				fclose(fd);
+			}
 		}
 
 		/* Setup the container for the tab. */
