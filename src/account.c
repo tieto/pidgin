@@ -1297,6 +1297,7 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 
 	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
 		esc = g_markup_escape_text(user_info, -1);
+                gaim_str_strip_cr(esc);
 		fprintf(fp, "  <userinfo>%s</userinfo>\n", esc);
 		g_free(esc);
 	}
