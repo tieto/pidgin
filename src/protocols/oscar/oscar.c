@@ -757,7 +757,7 @@ static void oscar_close(GaimConnection *gc) {
 		gaim_input_remove(od->emlpa);
 	if (od->icopa > 0)
 		gaim_input_remove(od->icopa);
-	if (od->icopa > 0)
+	if (od->icontimer > 0)
 		g_source_remove(od->icontimer);
 	if (od->getblisttimer)
 		g_source_remove(od->getblisttimer);
