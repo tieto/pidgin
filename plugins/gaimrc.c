@@ -207,7 +207,7 @@ gaimrc_set_color(GtkWidget *widget, gpointer data)
 	int subscript = GPOINTER_TO_INT(data);
 
 	g_snprintf(title, sizeof(title), _("Select Color for %s"),
-	           color_names[GPOINTER_TO_INT(data)]);
+	           _(color_names[GPOINTER_TO_INT(data)]));
 	color_dialog = gtk_color_selection_dialog_new(_("Select Color"));
 	g_signal_connect(G_OBJECT(color_dialog), "response",
 	                 G_CALLBACK(gaimrc_color_response), data);
@@ -244,7 +244,7 @@ gaimrc_set_font(GtkWidget *widget, gpointer data)
 	int subscript = GPOINTER_TO_INT(data);
 
 	g_snprintf(title, sizeof(title), _("Select Font for %s"),
-	           font_names[subscript]);
+	           _(font_names[subscript]));
 	font_dialog = gtk_font_selection_dialog_new(title);
 	g_signal_connect(G_OBJECT(font_dialog), "response",
 	                 G_CALLBACK(gaimrc_font_response), data);
