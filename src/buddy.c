@@ -1129,6 +1129,9 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 		gtknode->timer = 0;
 	}
 
+	if(gtkblist->selected_node == node)
+		gtkblist->selected_node = NULL;
+
 	if (get_iter_from_node(node, &iter)) {
 		gtk_tree_store_remove(gtkblist->treemodel, &iter);
 		if(GAIM_BLIST_NODE_IS_BUDDY(node) && gaim_blist_get_group_online_count((struct group *)node->parent) == 0) {
