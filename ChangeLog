@@ -48,6 +48,8 @@ version 0.76cvs:
 	* TCL Plugin API changed
 	* The mobile icon on MSN users is now removed when the person disables
 	  mobile paging (Stu Tomlinson)
+	* Removing invalid buddies in MSN with a space in their name no longer
+	  causes a disconnect (Stu Tomlinson)
 	* Multiple MSN chats should now work (Robert Mibus)
 	* Conversation placement by account now works correctly with both
 	  chats and IMs, and takes the Combine Chats and IMs option into
