@@ -60,6 +60,12 @@
 #define MSN_SIGNON_GOT_XFR	0x0001
 #define MSN_SIGNON_SENT_USR	0x0002
 
+struct msn_ask_add_permit {
+	struct gaim_connection *gc;
+	char *user;
+	char *friendly;
+};
+
 struct msn_data {
 	int fd;
 
@@ -86,6 +92,19 @@ GSList *msn_connections = NULL;
 
 unsigned long long globalc = 0;
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition);
+static void msn_add_permit(struct gaim_connection *gc, char *who);
+
+void msn_accept_add_permit(gpointer w, struct msn_ask_add_permit *ap)
+{
+	msn_add_permit(ap->gc, ap->user);
+}
+
+void msn_cancel_add_permit(gpointer w, struct msn_ask_add_permit *ap)
+{
+	g_free(ap->user);
+	g_free(ap->friendly);
+	g_free(ap);
+}
 
 void free_msn_conn(struct msn_conn *mc)
 {
@@ -584,6 +603,28 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 
 		return;
 	}
+	else if (!strncmp("ADD ", buf, 4))
+	{
+		char **res;
+
+		res = g_strsplit(buf, " ", 0);
+
+		if (!strcasecmp(res[2], "RL"))
+		{
+			struct msn_ask_add_permit *ap = g_new0(struct msn_ask_add_permit, 1);
+
+			snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], res[5]);
+
+			ap->user = g_strdup(res[4]);
+			ap->friendly = g_strdup(res[5]);
+			ap->gc = gc;
+
+			do_ask_dialog(buf, ap, (GtkFunction) msn_accept_add_permit, (GtkFunction) msn_cancel_add_permit);
+		}
+
+		g_strfreev(res);
+		return;
+	}
 	else if (!strncmp("FLN ", buf, 4))
 	{
 		/* Someone signed off */
@@ -875,11 +916,66 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 	}
 	else
 	{
-		g_snprintf(buf, MSN_BUF_LEN, "MSG %d N %d\r\n%s%s", trId(md), strlen(message) + strlen(MIME_HEADER), MIME_HEADER, message);
+		g_snprintf(buf, MSN_BUF_LEN, "MSG %d N %d\r\n%s%s", trId(md), 
+				strlen(message) + strlen(MIME_HEADER), MIME_HEADER, message);
 
 		msn_write(mc->fd, buf);
 	}
 
+}
+
+static void msn_add_buddy(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	snprintf(buf, MSN_BUF_LEN, "ADD %d FL %s %s\n", trId(md), who, who);
+	msn_write(md->fd, buf);
+}
+
+static void msn_remove_buddy(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	snprintf(buf, MSN_BUF_LEN, "REM %d FL %s\n", trId(md), who);
+	msn_write(md->fd, buf);
+}
+
+static void msn_rem_permit(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	snprintf(buf, MSN_BUF_LEN, "REM %d AL %s\n", trId(md), who);
+	msn_write(md->fd, buf);
+}
+
+static void msn_add_permit(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	snprintf(buf, MSN_BUF_LEN, "ADD %d AL %s %s\n", trId(md), who, who);
+	msn_write(md->fd, buf);
+}
+
+static void msn_rem_deny(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	snprintf(buf, MSN_BUF_LEN, "REM %d BL %s\n", trId(md), who);
+	msn_write(md->fd, buf);
+}
+
+static void msn_add_deny(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	snprintf(buf, MSN_BUF_LEN, "ADD %d BL %s %s\n", trId(md), who, who);
+	msn_write(md->fd, buf);
 }
 
 static char **msn_list_icon(int uc)
@@ -913,13 +1009,13 @@ void msn_init(struct prpl *ret)
 	ret->dir_search = NULL;
 	ret->set_idle = NULL;
 	ret->change_passwd = NULL;
-	ret->add_buddy = NULL;
+	ret->add_buddy = msn_add_buddy;
 	ret->add_buddies = NULL;
-	ret->remove_buddy = NULL;
-	ret->add_permit = NULL;
-	ret->rem_permit = NULL;
-	ret->add_deny = NULL;
-	ret->rem_deny = NULL;
+	ret->remove_buddy = msn_remove_buddy;
+	ret->add_permit = msn_add_permit;
+	ret->rem_permit = msn_rem_permit;
+	ret->add_deny = msn_add_deny;
+	ret->rem_deny = msn_rem_deny;
 	ret->warn = NULL;
 	ret->accept_chat = NULL;
 	ret->join_chat = NULL;
