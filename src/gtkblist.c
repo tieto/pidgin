@@ -2368,7 +2368,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Add C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, gaim_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Buddies/_Signoff"), "<CTL>D", gaim_connections_disconnect_all, 0, "<StockItem>", GAIM_STOCK_SIGN_OFF },
+	{ N_("/Buddies/_Log Out"), "<CTL>D", gaim_connections_disconnect_all, 0, "<StockItem>", GAIM_STOCK_SIGN_OFF },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
 	/* Tools */
