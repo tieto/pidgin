@@ -1349,11 +1349,10 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		GaimGroup *group = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
+		GaimAccount *account;
 		char *protocol = NULL;
 		char *username = NULL;
 		char *alias = NULL;
-		char *contact_str;
-		char *c, *s;
 
 		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget),
 											  x, y, &path, &position))
@@ -1383,96 +1382,9 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			}
 		}
 
-		contact_str = g_strndup(sd->data, sd->length);
-
-		s = contact_str;
-
-		while (*s != '\r' && *s != '\n' && *s != '\0')
+		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+										&protocol, &username, &alias))
 		{
-			char *key, *value;
-
-			key = s;
-
-			/* Grab the key */
-			while (*s != '\r' && *s != '\n' && *s != '\0' && *s != ' ')
-				s++;
-
-			if (*s == '\r') s++;
-
-			if (*s == '\n')
-			{
-				s++;
-				continue;
-			}
-
-			if (*s != '\0') *s++ = '\0';
-
-			/* Clear past any whitespace */
-			while (*s != '\0' && *s == ' ')
-				s++;
-
-			/* Now let's grab until the end of the line. */
-			value = s;
-
-			while (*s != '\r' && *s != '\n' && *s != '\0')
-				s++;
-
-			if (*s == '\r') *s++ = '\0';
-			if (*s == '\n') *s++ = '\0';
-
-			if ((c = strchr(key, ':')) != NULL)
-			{
-				if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
-					username = g_strdup(value);
-				else if (!g_ascii_strcasecmp(key, "X-IM-Protocol:"))
-					protocol = g_strdup(value);
-				else if (!g_ascii_strcasecmp(key, "X-IM-Alias:"))
-					alias = g_strdup(value);
-			}
-		}
-
-		if (username != NULL && protocol != NULL)
-		{
-			GaimAccount *account = NULL;
-			GList *l;
-			const char *protoname;
-
-			for (l = gaim_connections_get_all(); l != NULL; l = l->next)
-			{
-				GaimConnection *gc = (GaimConnection *)l->data;
-				account = gaim_connection_get_account(gc);
-
-				protoname =
-					GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->list_icon(account,
-																   NULL);
-
-				if (!strcmp(protoname, protocol))
-					break;
-
-				account = NULL;
-			}
-
-			/* Special case for AIM and ICQ */
-			if (account == NULL && (!strcmp(protocol, "aim") ||
-									!strcmp(protocol, "icq")))
-			{
-
-				for (l = gaim_connections_get_all(); l != NULL; l = l->next)
-				{
-					GaimConnection *gc = (GaimConnection *)l->data;
-					account = gaim_connection_get_account(gc);
-
-					protoname =
-						GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->list_icon(account,
-																	   NULL);
-
-					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
-						break;
-
-					account = NULL;
-				}				
-			}
-
 			if (account == NULL)
 			{
 				gaim_notify_error(NULL, NULL,
@@ -1490,8 +1402,6 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		if (username != NULL) g_free(username);
 		if (protocol != NULL) g_free(protocol);
 		if (alias    != NULL) g_free(alias);
-
-		g_free(contact_str);
 
 		if (path != NULL)
 			gtk_tree_path_free(path);

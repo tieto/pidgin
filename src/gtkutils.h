@@ -313,4 +313,25 @@ gboolean gaim_gtk_save_accels(gpointer data);
  */
 void gaim_gtk_load_accels();
 
+/**
+ * Parses an application/x-im-contact MIME message and returns the
+ * data inside.
+ *
+ * @param msg          The MIME message.
+ * @param all_accounts If TRUE, check all compatible accounts, online or
+ *                     offline. If FALSE, check only online accounts.
+ * @param ret_account  The best guess at a compatible protocol,
+ *                     based on ret_protocol. If NULL, no account was found.
+ * @param ret_protocol The returned protocol type.
+ * @param ret_username The returned username.
+ * @param ret_alias    The returned alias.
+ *
+ * @return TRUE if the message was parsed for the minimum necessary data.
+ *         FALSE otherwise.
+ */
+gboolean gaim_gtk_parse_x_im_contact(const char *msg, gboolean all_accounts,
+									 GaimAccount **ret_account,
+									 char **ret_protocol, char **ret_username,
+									 char **ret_alias);
+
 #endif /* _GAIM_GTK_UTILS_H_ */

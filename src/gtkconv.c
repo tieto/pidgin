@@ -3778,7 +3778,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	GaimConvWindow *win = conv->window;
 	GaimConversation *c;
 
-	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
+	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
+	{
 		GaimBlistNode *n = NULL;
 		GaimBuddy *b;
 		memcpy(&n, sd->data, sizeof(n));
@@ -3793,6 +3794,32 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
 
 		gaim_conv_window_add_conversation(win, c);
+	}
+	else if (sd->target == gdk_atom_intern("application/x-im-contact", FALSE))
+	{
+		char *protocol = NULL;
+		char *username = NULL;
+		GaimAccount *account;
+
+		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+										&protocol, &username, NULL))
+		{
+			if (account == NULL)
+			{
+				gaim_notify_error(NULL, NULL,
+					_("You are not currently signed on with an account that "
+					  "can add that buddy."), NULL);
+			}
+			else
+			{
+				gaim_conversation_new(GAIM_CONV_IM, account, username);
+			}
+		}
+
+		if (username != NULL) g_free(username);
+		if (protocol != NULL) g_free(protocol);
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
 }
 
@@ -3944,8 +3971,9 @@ static const GtkTargetEntry te[] =
 {
 	{"text/plain", 0, 0},
 	{"text/uri-list", 0, 1},
-	{"GAIM_BLIST_NODE", 0, 2},
-	{"STRING", 0, 3}
+	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, 2},
+	{"STRING", 0, 3},
+	{"application/x-im-contact", 0, 4}
 };
 
 static void

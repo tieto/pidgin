@@ -1140,3 +1140,186 @@ gaim_gtk_load_accels(gpointer data)
 	gtk_accel_map_load(filename);
 	g_free(filename);
 }
+
+gboolean
+gaim_gtk_parse_x_im_contact(const char *msg, gboolean all_accounts,
+							GaimAccount **ret_account, char **ret_protocol,
+							char **ret_username, char **ret_alias)
+{
+	char *protocol = NULL;
+	char *username = NULL;
+	char *alias    = NULL;
+	char *str;
+	char *c, *s;
+	gboolean valid;
+
+	g_return_val_if_fail(msg          != NULL, FALSE);
+	g_return_val_if_fail(ret_protocol != NULL, FALSE);
+	g_return_val_if_fail(ret_username != NULL, FALSE);
+
+	s = str = g_strdup(msg);
+
+	while (*s != '\r' && *s != '\n' && *s != '\0')
+	{
+		char *key, *value;
+
+		key = s;
+
+		/* Grab the key */
+		while (*s != '\r' && *s != '\n' && *s != '\0' && *s != ' ')
+			s++;
+
+		if (*s == '\r') s++;
+
+		if (*s == '\n')
+		{
+			s++;
+			continue;
+		}
+
+		if (*s != '\0') *s++ = '\0';
+
+		/* Clear past any whitespace */
+		while (*s != '\0' && *s == ' ')
+			s++;
+
+		/* Now let's grab until the end of the line. */
+		value = s;
+
+		while (*s != '\r' && *s != '\n' && *s != '\0')
+			s++;
+
+		if (*s == '\r') *s++ = '\0';
+		if (*s == '\n') *s++ = '\0';
+
+		if ((c = strchr(key, ':')) != NULL)
+		{
+			if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
+				username = g_strdup(value);
+			else if (!g_ascii_strcasecmp(key, "X-IM-Protocol:"))
+				protocol = g_strdup(value);
+			else if (!g_ascii_strcasecmp(key, "X-IM-Alias:"))
+				alias = g_strdup(value);
+		}
+	}
+
+	if (username != NULL && protocol != NULL)
+	{
+		valid = TRUE;
+
+		*ret_username = username;
+		*ret_protocol = protocol;
+
+		if (ret_alias != NULL)
+			*ret_alias = alias;
+
+		/* Check for a compatible account. */
+		if (ret_account != NULL)
+		{
+			GList *list;
+			GaimAccount *account = NULL;
+			GList *l;
+			const char *protoname;
+
+			if (all_accounts)
+				list = gaim_accounts_get_all();
+			else
+				list = gaim_connections_get_all();
+
+			for (l = list; l != NULL; l = l->next)
+			{
+				GaimConnection *gc;
+				GaimPluginProtocolInfo *prpl_info = NULL;
+				GaimPlugin *plugin;
+
+				if (all_accounts)
+				{
+					account = (GaimAccount *)l->data;
+
+					plugin = gaim_plugins_find_with_id(
+						gaim_account_get_protocol_id(account));
+
+					if (plugin == NULL)
+					{
+						account = NULL;
+
+						continue;
+					}
+
+					prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+				}
+				else
+				{
+					gc = (GaimConnection *)l->data;
+					account = gaim_connection_get_account(gc);
+
+					prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+				}
+
+				protoname = prpl_info->list_icon(account, NULL);
+
+				if (!strcmp(protoname, protocol))
+					break;
+
+				account = NULL;
+			}
+
+			/* Special case for AIM and ICQ */
+			if (account == NULL && (!strcmp(protocol, "aim") ||
+									!strcmp(protocol, "icq")))
+			{
+				for (l = list; l != NULL; l = l->next)
+				{
+					GaimConnection *gc;
+					GaimPluginProtocolInfo *prpl_info = NULL;
+					GaimPlugin *plugin;
+
+					if (all_accounts)
+					{
+						account = (GaimAccount *)l->data;
+
+						plugin = gaim_plugins_find_with_id(
+							gaim_account_get_protocol_id(account));
+
+						if (plugin == NULL)
+						{
+							account = NULL;
+
+							continue;
+						}
+
+						prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+					}
+					else
+					{
+						gc = (GaimConnection *)l->data;
+						account = gaim_connection_get_account(gc);
+
+						prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+					}
+
+					protoname = prpl_info->list_icon(account, NULL);
+
+					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
+						break;
+
+					account = NULL;
+				}
+			}
+
+			*ret_account = account;
+		}
+	}
+	else
+	{
+		valid = FALSE;
+
+		if (username != NULL) g_free(username);
+		if (protocol != NULL) g_free(protocol);
+		if (alias    != NULL) g_free(alias);
+	}
+
+	g_free(str);
+
+	return valid;
+}
