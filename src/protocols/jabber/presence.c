@@ -254,17 +254,22 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			if(!code)
 				code = "";
-			if(!text)
-				text = g_strdup(_("Unable to join chat"));
 
-			buf = g_strdup_printf("Error %s joining chat %s: %s",
-					code, from, text);
+			if(chat->conv) {
+				if(!text)
+					text = g_strdup(_("Unknown error"));
+				buf = g_strdup_printf("Error %s in chat %s: %s",
+						code, from, text);
+				serv_got_chat_left(js->gc, chat->id);
+			} else {
+				if(!text)
+					text = g_strdup(_("Unable to join chat"));
+				buf = g_strdup_printf("Error %s joining chat %s: %s",
+						code, from, text);
+			}
 			gaim_notify_error(js->gc, _("Error"), _("Error"), buf);
 			g_free(text);
 			g_free(buf);
-
-			if(chat->conv)
-				serv_got_chat_left(js->gc, chat->id);
 
 			jabber_chat_destroy(chat);
 			jabber_id_free(jid);
