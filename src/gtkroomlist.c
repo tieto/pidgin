@@ -354,15 +354,16 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 		dialog->account = first_account;
 	else
 		dialog->account = account;
+
 	/* accounts dropdown list */
-	account_hbox = gtk_hbox_new(FALSE, 0);
+	account_hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, FALSE, FALSE, 0);
 	gtk_widget_show(account_hbox);
 
 	label = gtk_label_new(NULL);
-	gtk_box_pack_start(GTK_BOX(account_hbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(account_hbox), label, FALSE, FALSE, 0);
 	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_widget_show(label);
 
 	dialog->account_widget = gaim_gtk_account_option_menu_new(dialog->account, FALSE,
