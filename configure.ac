@@ -351,7 +351,7 @@ if test "x$enable_xss" = "xyes" ; then
 	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_LIBS $X_EXTRA_LIBS -lXss"],[],[-lX11 -lXext -lm])
 	if test \! "$XSS_LIBS" = "no"; then
 		oldCPPFLAGS="$CPPFLAGS"
-		CPPFLAGS="$CPPFLAGS -I$x_includes"
+		CPPFLAGS="$CPPFLAGS $x_incpath_add"
 		AC_TRY_COMPILE([
 #include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
@@ -379,7 +379,7 @@ if test "x$enable_sm" = "xyes"; then
 	AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [$x_libpath_add -lICE])
 	if test "$found_sm_lib" = "true"; then
 		oldCPPFLAGS="$CPPFLAGS"
-		CPPFLAGS="$CPPFLAGS -I$x_includes"
+		CPPFLAGS="$CPPFLAGS $x_incpath_add"
 		AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="$x_libpath_add -lSM -lICE" enable_sm=yes)
 		CPPFLAGS="$oldCPPFLAGS"
 	fi
