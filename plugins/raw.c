@@ -5,7 +5,7 @@
 #undef MAX
 #undef MIN
 #endif
-#include "jabber/jabber.h"
+#include "protocols/jabber/jabber.h"
 
 static GtkWidget *window = NULL;
 static GtkWidget *optmenu = NULL;

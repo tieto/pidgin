@@ -246,6 +246,9 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	GtkCTreeNode *c;
 	char buf[256];
 
+	if (!strcmp(b->show, prevname))
+		g_snprintf(b->show, sizeof(b->show), "%s", b->name);
+
 	/* well you shouldn't be calling this if nothing changed. duh. */
 	do_export(b->gc);
 
