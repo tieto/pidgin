@@ -16,7 +16,7 @@
  *	Do not use the Gnome Stock Ticker for making investment decisions, 
  *      it is for informational purposes only.
  *
- *      Modified by EricWarmenhoven to become a gaim plugin. There was little
+ *      Modified by EWarmenhoven to become a gaim plugin. There was little
  *      enough that needed to be changed that I can't really claim any credit.
  *      (you need to add -lghttp to the GTK_LIBS part of the Makefile)
  *      TODO: config, saving info

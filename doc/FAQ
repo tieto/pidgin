@@ -65,7 +65,7 @@ graham crackers, whatever.
 1.2  Where are my log files stored?
 
 Your logs are stored in $HOME/.gaim/logs/. They had previously been stored in
-$HOME/.gaim/YourScreenName/ (e.g. $HOME/.gaim/EricWarmenhoven).
+$HOME/.gaim/YourScreenName/ (e.g. $HOME/.gaim/EWarmenhoven).
 
 1.3  What are GtkHTML and GtkIMHtml, and why not just use GNOME's GtkHTML?
 
@@ -309,7 +309,7 @@ I'll give you advice, but other than that, no (unless you'd like to pay me).
 
 6.3  I have money. I need software written. Can you help?
 
-Oh yes. Our email addresses are warmenhoven@yahoo.com (EricWarmenhoven) and
+Oh yes. Our email addresses are warmenhoven@yahoo.com (EWarmenhoven) and
 rob@marko.net (RobFlynn).
 
 6.4  I have hardware here that's not being used. Can you use it?
