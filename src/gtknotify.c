@@ -542,19 +542,20 @@ gaim_gtk_notify_uri(const char *uri)
 
 		if (place == GAIM_BROWSER_NEW_WINDOW)
 		{
-			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\","
-											 "new-window)\"",
+			remote_command = g_strdup_printf("%s -a firefox -remote "
+											 "\"openURL(\"%s\",new-window)\"",
 											 web_browser, uri);
 		}
 		else if (place == GAIM_BROWSER_NEW_TAB)
 		{
-			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\","
-											 "new-tab)\"",
+			remote_command = g_strdup_printf("%s -a firefox -remote "
+											 "\"openURL(\"%s\",new-tab)\"",
 											 web_browser, uri);
 		}
 		else if (place == GAIM_BROWSER_CURRENT)
 		{
-			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\")\"",
+			remote_command = g_strdup_printf("%s -a firefox -remote "
+											 "\"openURL(\"%s\")\"",
 											 web_browser, uri);
 		}
 	}
