@@ -1280,7 +1280,7 @@ static GList *get_available_browsers()
 			browsers = g_list_prepend(browsers,
 									  possible_browsers[i].command);
 			browsers = g_list_prepend(browsers, _(possible_browsers[i].name));
-			if(!strcmp(possible_browsers[i].command, browser_setting))
+			if(browser_setting && !strcmp(possible_browsers[i].command, browser_setting))
 				browser_setting = NULL;
 		}
 	}
