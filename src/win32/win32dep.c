@@ -136,34 +136,6 @@ char* wgaim_escape_dirsep( char* filename ) {
 	return ret;
 }
 
-/*
- * This is a hack to circumvent the conflict between the
- * windows behaviour of gtk_window_get_pos and gtk_window_move, which
- * exists in GTK+ v2.2.0.  GTK+ documentation explains the following
- * should be true for gtk_window_get_pos:
- *   This function returns the position you need to pass to
- *   gtk_window_move() to keep window in its current position.
- * This is false (for windows). gtk_window_get_pos returns
- * client coords, whereas gtk_window_move accepts non-client coords.
- * Our solution, until this is fixed, is to anticipate the offset and
- * adjust the coordinates passed to gtk_window_move.
- */
-void wgaim_gtk_window_move(GtkWindow *window, gint x, gint y) {
-	LONG style,  extended_style;
-	RECT trect;
-	HWND hWnd;
-
-	if(!GTK_WIDGET_REALIZED(GTK_WIDGET(window)))
-		gtk_widget_realize(GTK_WIDGET(window));
-	hWnd = GDK_WINDOW_HWND(GTK_WIDGET(window)->window);
-	style = GetWindowLong(hWnd, GWL_STYLE);
-	extended_style = GetWindowLong (hWnd, GWL_EXSTYLE);
-	GetClientRect (hWnd, &trect);
-	AdjustWindowRectEx (&trect, style, FALSE, extended_style);
-	gtk_window_move(window, x + (-1 * trect.left), y + (-1 * trect.top));
-}
-
-
 /* Determine whether the specified dll contains the specified procedure.
    If so, load it (if not already loaded). */
 FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
