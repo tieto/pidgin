@@ -23,6 +23,7 @@
  *
  */
 #include <windows.h>
+#include <io.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <winuser.h>
@@ -72,7 +73,6 @@ HINSTANCE gaimdll_hInstance = 0;
 /*
  *  PROTOS
  */
-
 BOOL (*MyFlashWindowEx)(PFLASHWINFO pfwi)=NULL;
 FARPROC wgaim_find_and_loadproc(char*, char*);
 extern void wgaim_gtkspell_init();
@@ -356,7 +356,7 @@ void wgaim_set_locale() {
         LCID lcid;
 
         /* Check if user set LANG env var */
-        if((locale = g_getenv("LANG"))) {
+        if((locale = (char*)g_getenv("LANG"))) {
                 gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Using locale set by the LANG env var.\n");
                 goto finish;
         }
@@ -367,7 +367,7 @@ void wgaim_set_locale() {
 					 0,  KEY_QUERY_VALUE, &hkey)) {
                 BYTE data[10];
                 DWORD ds = 10;
-                if(ERROR_SUCCESS == RegQueryValueEx(hkey, "Installer Language", 0, NULL, &data, &ds)) {
+                if(ERROR_SUCCESS == RegQueryValueEx(hkey, "Installer Language", 0, NULL, (LPBYTE)&data, &ds)) {
 			gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Using locale set by the installer\n");
                         if((locale = wgaim_lcid_to_posix(atoi(data))))
                                 goto finish;

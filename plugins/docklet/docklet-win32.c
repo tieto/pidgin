@@ -63,16 +63,16 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 
 	switch(msg) {
 	case WM_CREATE:
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "WM_CREATE\n");
+		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "WM_CREATE\n");
 		taskbarRestartMsg = RegisterWindowMessage("TaskbarCreated");
 		break;
 		
 	case WM_TIMER:
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "WM_TIMER\n");
+		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "WM_TIMER\n");
 		break;
 
 	case WM_DESTROY:
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "WM_DESTROY\n");
+		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "WM_DESTROY\n");
 		break;
 
 	case WM_TRAYMESSAGE:

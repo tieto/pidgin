@@ -76,14 +76,14 @@
 #  include <unistd.h>
 # endif
 #endif
+#include "debug.h"
 #include "untar.h"
 
-extern void debug_printf(char * fmt, ...);
-
 #define mkdir(a,b) _mkdir((a))
-#define untar_error( error, args... ) debug_printf( "UNTAR ERROR: " ## error ## , ## args )
-#define untar_warning( warning, args... ) debug_printf( "UNTAR WARNING: " ## warning ## , ## args )
-
+#define untar_error( error, args... )      gaim_debug(GAIM_DEBUG_ERROR, "untar", ## error ## , ## args )
+#define untar_warning( warning, args... )  gaim_debug(GAIM_DEBUG_WARNING, "untar", ## warning ## , ## args )
+#define untar_verbose( args... )           gaim_debug(GAIM_DEBUG_INFO, "untar", ## args )
+ 
 #define WSIZE	32768	/* size of decompression buffer */
 #define TSIZE	512	/* size of a "tape" block */
 #define CR	13	/* carriage-return character */
@@ -492,17 +492,17 @@ static int untar_block(Uchar_t *blk) {
 
 		/* list the file */
 		if (VERBOSE)
-			debug_printf("%c %s",
+			untar_verbose("%c %s",
 				ISREGULAR(*tblk) ? '-' : ("hlcbdp"[(tblk)->type - '1']),
 				nbuf);
 		else if (!QUIET)
-			debug_printf("%s\n", nbuf);
+			untar_verbose("%s\n", nbuf);
 
 		/* if link, then do the link-or-copy thing */
 		if (tblk->type == '1' || tblk->type == '2')
 		{
 			if (VERBOSE)
-				debug_printf(" -> %s\n", tblk->linkto);
+				untar_verbose(" -> %s\n", tblk->linkto);
 			if (!LISTING)
 				linkorcopy(tblk->linkto, nbuf, tblk->type == '2');
 			outsize = 0L;
@@ -527,7 +527,7 @@ static int untar_block(Uchar_t *blk) {
 			else
 				n2 = " ignored";
 			if (VERBOSE)
-				debug_printf("%s\n", n2);
+				untar_verbose("%s\n", n2);
 			return 1;
 		}
 
@@ -535,7 +535,7 @@ static int untar_block(Uchar_t *blk) {
 		if (!ISREGULAR(*tblk))
 		{
 			if (VERBOSE)
-				debug_printf(" ignored\n");
+				untar_verbose(" ignored\n");
 			outsize = 0L;
 			return 1;
 		}
@@ -543,7 +543,7 @@ static int untar_block(Uchar_t *blk) {
 		/* print file statistics */
 		if (VERBOSE)
 		{
-			debug_printf(" (%ld byte%s, %ld tape block%s)\n",
+			untar_verbose(" (%ld byte%s, %ld tape block%s)\n",
 				outsize,
 				outsize == 1 ? "" : "s",
 				(outsize + TSIZE - 1) / TSIZE,

@@ -28,9 +28,8 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <gtkspell/gtkspell.h>
+#include "debug.h"
 #include "win32dep.h"
-
-extern void debug_printf(char * fmt, ...);
 
 /* GTKSPELL DUMMY FUNCS */
 GtkSpell* wgtkspell_new_attach(GtkTextView *view,
@@ -83,11 +82,11 @@ void wgaim_gtkspell_init() {
 			    int mark = strlen(buffer);
 			    strcat(buffer, "\\aspell-15.dll");
 			    if(_access( buffer, 0 ) < 0)
-				    debug_printf("Couldn't find aspell-15.dll\n");
+				    gaim_debug(GAIM_DEBUG_WARNING, "wspell", "Couldn't find aspell-15.dll\n");
 			    else {
 				    char* tmp=NULL;
 				    buffer[mark] = '\0';
-				    debug_printf("Found Aspell in %s\n", buffer);
+				    gaim_debug(GAIM_DEBUG_INFO, "wspell", "Found Aspell in %s\n", buffer);
 				    /* Add path to Aspell dlls to PATH */
 				    tmp = g_malloc0(strlen(getenv("PATH")) + strlen(buffer) + 7);
 				    sprintf(tmp, "PATH=%s;%s", getenv("PATH"), buffer);
@@ -97,7 +96,7 @@ void wgaim_gtkspell_init() {
 			    }
 		    }
 		    else {
-			    debug_printf("Couldn't find path for Aspell\n");
+			    gaim_debug(GAIM_DEBUG_WARNING, "wspell", "Couldn't find path for Aspell\n");
 		    }
 		    RegCloseKey(hKey);
 	    }

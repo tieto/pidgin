@@ -30,12 +30,12 @@
 #include <sys/timeb.h>
 #include <sys/stat.h>
 #include <time.h>
+#include "debug.h"
 #include "libc_internal.h"
 
 /*
  *  PROTOS
  */
-extern void debug_printf(char * fmt, ...);
 
 /*
  *  LOCALS
@@ -57,7 +57,7 @@ static int wgaim_is_socket( int fd ) {
 		if( error == WSAENOTSOCK )
 			return FALSE;
 		else {
-			debug_printf("wgaim_read: getsockopt returned error: %d\n", error);
+                        gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "wgaim_is_socket: getsockopt returned error: %d\n", error);
 			return FALSE;
 		}
 	}
@@ -135,7 +135,7 @@ int wgaim_fcntl(int socket, int command, int val) {
 		return 0;
 	}
 	default:
-		debug_printf("wgaim_fcntl: Unsupported command\n");
+                gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "wgaim_fcntl: Unsupported command\n");
 		return -1;
 	}/*end switch*/
 }
@@ -329,7 +329,7 @@ int wgaim_rename (const char *oldname, const char *newname) {
 					   is not a sub dir of oldname, newname should be
 					   deleted and oldname should be renamed.
 					*/
-					debug_printf("Warning: wgaim_rename does not behave here as it should\n");
+					gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "wgaim_rename does not behave here as it should\n");
 					return rename(oldname, newname);
 				}
 			}
