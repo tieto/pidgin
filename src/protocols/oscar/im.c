@@ -640,7 +640,7 @@ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, co
 
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_putraw(&hdrbs, ck, 8);
-	aim_putcap(&hdrbs, AIM_CAPS_IMIMAGE);
+	aim_putcap(&hdrbs, AIM_CAPS_DIRECTIM);
 
 	aim_addtlvtochain16(&itl, 0x000a, 0x0001);
 	aim_addtlvtochain_raw(&itl, 0x0003, 4, ip);

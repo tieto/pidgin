@@ -61,8 +61,8 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE;
-static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE;
+static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE;
+static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE;
 
 static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static fu8_t features_icq[] = {0x01, 0x06};
@@ -2395,7 +2395,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
 									  userinfo->sn, args->info.icon.icon,
 									  args->info.icon.length);
-	} else if (args->reqclass & AIM_CAPS_IMIMAGE) {
+	} else if (args->reqclass & AIM_CAPS_DIRECTIM) {
 		struct ask_direct *d = g_new0(struct ask_direct, 1);
 		char buf[256];
 
@@ -3087,60 +3087,63 @@ static char *caps_string(guint caps)
 	} else while (bit <= AIM_CAPS_LAST) {
 		if (bit & caps) {
 			switch (bit) {
-			case 0x1:
+			case AIM_CAPS_BUDDYICON:
 				tmp = _("Buddy Icon");
 				break;
-			case 0x2:
+			case AIM_CAPS_VOICE:
 				tmp = _("Voice");
 				break;
-			case 0x4:
+			case AIM_CAPS_DIRECTIM:
 				tmp = _("Direct IM");
 				break;
-			case 0x8:
+			case AIM_CAPS_CHAT:
 				tmp = _("Chat");
 				break;
-			case 0x10:
+			case AIM_CAPS_GETFILE:
 				tmp = _("Get File");
 				break;
-			case 0x20:
+			case AIM_CAPS_SENDFILE:
 				tmp = _("Send File");
 				break;
-			case 0x40:
-			case 0x200:
+			case AIM_CAPS_GAMES:
+			case AIM_CAPS_GAMES2:
 				tmp = _("Games");
 				break;
-			case 0x80:
+			case AIM_CAPS_SAVESTOCKS:
 				tmp = _("Add-Ins");
 				break;
-			case 0x100:
+			case AIM_CAPS_SENDBUDDYLIST:
 				tmp = _("Send Buddy List");
 				break;
-			case 0x400:
+			case AIM_CAPS_ICQ:
 				tmp = _("EveryBuddy Bug");
 				break;
-			case 0x800:
+			case AIM_CAPS_APINFO:
 				tmp = _("AP User");
 				break;
-			case 0x1000:
+			case AIM_CAPS_ICQRTF:
 				tmp = _("ICQ RTF");
 				break;
-			case 0x2000:
+			case AIM_CAPS_EMPTY:
 				tmp = _("Nihilist");
 				break;
-			case 0x4000:
+			case AIM_CAPS_ICQSERVERRELAY:
 				tmp = _("ICQ Server Relay");
 				break;
-			case 0x8000:
-				tmp = _("ICQ Unknown");
+			case AIM_CAPS_ICQUTF8OLD:
+				tmp = _("Old ICQ UTF8");
 				break;
-			case 0x10000:
+			case AIM_CAPS_TRILLIANCRYPT:
 				tmp = _("Trillian Encryption");
 				break;
-			case 0x20000:
+			case AIM_CAPS_ICQUTF8:
 				tmp = _("ICQ UTF8");
 				break;
 			case AIM_CAPS_HIPTOP:
 				tmp = _("Hiptop");
+				break;
+			case AIM_CAPS_SECUREIM:
+				tmp = _("Secure IM");
 				break;
 			default:
 				tmp = NULL;
@@ -5927,7 +5930,7 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 			bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 
 		if (b && bi && aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who) && GAIM_BUDDY_IS_ONLINE(b)) {
-			if (bi->caps & AIM_CAPS_IMIMAGE) {
+			if (bi->caps & AIM_CAPS_DIRECTIM) {
 				pbm = g_new0(struct proto_buddy_menu, 1);
 				pbm->label = _("Direct IM");
 				pbm->callback = oscar_ask_direct_im;

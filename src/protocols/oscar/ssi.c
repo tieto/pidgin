@@ -1,9 +1,9 @@
 /*
  * Family 0x0013 - Server-Side/Stored Information.
  *
- * Relatively new facility that allows storing of certain types of information,
- * such as a users buddy list, permit/deny list, and permit/deny preferences, 
- * to be stored on the server, so that they can be accessed from any client.
+ * Relatively new facility that allows certain types of information, such as 
+ * a user's buddy list, permit/deny list, and permit/deny preferences, to be 
+ * stored on the server, so that they can be accessed from any client.
  *
  * We keep 2 copies of SSI data:
  * 1) An exact copy of what is stored on the AIM servers.
@@ -11,7 +11,7 @@
  *    between this and the exact copy to keep them in sync.
  *
  * All the "aim_ssi_itemlist_bleh" functions near the top just modify the list 
- * that is given to them (eg. they don't send SNACs).
+ * that is given to them (i.e. they don't send SNACs).
  *
  * The SNAC sending and receiving functions are lower down in the file, and 
  * they're simpler.  They are in the order of the subtypes they deal with, 
