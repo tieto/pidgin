@@ -736,6 +736,9 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 	GtkWidget *item;
 	GList *l;
 
+	if(!menu)
+		return;
+
 	for (l = gtk_container_get_children(GTK_CONTAINER(menu));
 		 l != NULL;
 		 l = l->next) {
@@ -743,7 +746,7 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 		gtk_widget_destroy(GTK_WIDGET(l->data));
 	}
 	g_list_free(l);
-	
+
 	/* "New Buddy Pounce" */
 	item = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);

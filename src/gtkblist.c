@@ -3065,17 +3065,17 @@ static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpoint
 	g_timeout_add(0, (GSourceFunc)do_selection_changed, new_selection);
 }
 
-static void insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIter *iter)
+static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIter *iter)
 {
 	GtkTreeIter parent_iter, cur, *curptr = NULL;
 	struct _gaim_gtk_blist_node *gtknode = node->ui_data;
 	GtkTreePath *newpath;
 
 	if(!gtknode || !iter)
-		return;
+		return FALSE;
 
 	if(node->parent && !get_iter_from_node(node->parent, &parent_iter))
-		return;
+		return FALSE;
 
 	if(get_iter_from_node(node, &cur))
 		curptr = &cur;
@@ -3115,6 +3115,7 @@ static void insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIter *i
 		}
 	}
 
+	return TRUE;
 }
 
 static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node)
@@ -3134,7 +3135,8 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		char *mark, *esc;
 		GtkTreeIter iter;
 
-		insert_node(list, node, &iter);
+		if(!insert_node(list, node, &iter))
+			return;
 
 		esc = g_markup_escape_text(group->name, -1);
 		if(gaim_prefs_get_bool("/gaim/gtk/blist/show_group_count")) {
@@ -3246,7 +3248,8 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")))) {
 		GtkTreeIter iter;
 
-		insert_node(list, node, &iter);
+		if(!insert_node(list, node, &iter))
+			return;
 
 		if(gtknode->contact_expanded) {
 			GdkPixbuf *status;
@@ -3298,7 +3301,9 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")))) {
 		GtkTreeIter iter;
 
-		insert_node(list, node, &iter);
+		if(!insert_node(list, node, &iter))
+			return;
+
 		buddy_node(buddy, &iter, node);
 
 	} else {
@@ -3323,7 +3328,8 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 		GdkPixbuf *status;
 		char *mark;
 
-		insert_node(list, node, &iter);
+		if(!insert_node(list, node, &iter))
+			return;
 
 		status = gaim_gtk_blist_get_status_icon(node,
 				(gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons") ?

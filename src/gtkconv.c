@@ -5354,13 +5354,13 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		{
 			strcpy(color, "#314E6C");
 		}
-		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_EVENT)
-		{
-			strcpy(color, "#868272");
-		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT)
 		{
 			strcpy(color, "#DF421E");
+		}
+		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_EVENT)
+		{
+			strcpy(color, "#868272");
 		}
 
 		if (*color != '\0')
