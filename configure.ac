@@ -34,7 +34,7 @@ AC_STRUCT_TM
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS(strdup strstr atexit getaddrinfo)
+AC_CHECK_FUNCS(strdup strstr atexit)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long , ,
 AC_LIBOBJ(getopt)
@@ -44,6 +44,15 @@ AC_LIBOBJ(getopt1))
 dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
 				         [AC_ERROR(inet_aton not found)])])
+AC_CHECK_LIB(nsl, gethostent)
+AC_CHECK_FUNC(socket, , 
+              [AC_CHECK_LIB(socket, socket, , [AC_ERROR([socket not found])])])
+dnl If all goes well, by this point the previous two checks will have
+dnl pulled in -lsocket and -lnsl if we need them.
+AC_CHECK_FUNC(getaddrinfo, [AC_DEFINE([HAVE_GETADDRINFO], [1],
+                                      [Define to 1 if you have the getaddrinfo function.])],
+              [AC_CHECK_LIB(socket, getaddrinfo,
+                            [AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lsnl $LIBS"], , , -lnsl)])
 
 dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
@@ -344,8 +353,6 @@ AC_C_BIGENDIAN
 dnl checks for jabber
 dnl AC_CHECK_SIZEOF(short)
 AC_CHECK_FUNCS(snprintf connect)
-AC_CHECK_LIB(socket, socket)
-AC_CHECK_LIB(nsl, gethostent)
 
 dnl checks for zephyr
 AC_DEFINE(ZEPHYR_INT32, long, [Size of an int32.])
