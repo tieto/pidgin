@@ -915,7 +915,6 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 			close(md->fd);
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
-			md->fd = 0;
 			md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
 		}
 	} else if (isdigit(*buf)) {

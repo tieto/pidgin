@@ -3,6 +3,9 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.44:
 	* More sane scaling of buddy icons (intelligently scale to
 	  either 48x48 or 50x50 depending on icon)
+	* Have you ever had it happen where you cancel a login and
+	  Gaim starts using all the available processing power? I
+	  think I fixed that.
 
 version 0.43:
 	* Updated German Translation (thanks Daniel Seifert)
