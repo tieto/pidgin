@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: seanegan $
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -31,6 +31,9 @@ Code_t ZReceiveNotice(notice, from)
 	return (retval);
 
     nextq = Z_GetFirstComplete();
+
+    if (!nextq)
+	    return (ENOMEM);
 
     len = nextq->packet_len;
     

@@ -674,7 +674,7 @@ static gboolean pending_zloc(zephyr_account *zephyr,char *who)
 static void message_failed(GaimConnection *gc, ZNotice_t notice, struct sockaddr_in from)
 {
 	if (g_ascii_strcasecmp(notice.z_class, "message")) {
-		gchar* chat_failed = g_strdup_printf(_("Unable send to chat %s,%s,%s"),notice.z_class,notice.z_class_inst,notice.z_recipient);
+		gchar* chat_failed = g_strdup_printf(_("Unable to send to chat %s,%s,%s"),notice.z_class,notice.z_class_inst,notice.z_recipient);
 		gaim_notify_error(gc,"",chat_failed,NULL);
 		g_free(chat_failed);
 	} else {
