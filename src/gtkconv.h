@@ -117,7 +117,6 @@ struct _GaimGtkImPane
 	GdkPixbufAnimation *anim;
 	GdkPixbufAnimationIter *iter;
 	guint32 icon_timer;
-	GtkWidget *saveicon;
 };
 
 /**
@@ -171,7 +170,6 @@ struct _GaimGtkConversation
 	struct
 	{
 		GtkWidget *image;
-		GtkWidget *savelog;
 		GtkWidget *search;
 
 	} dialogs;

@@ -30,6 +30,7 @@
 #include "prefs.h"
 #include "proxy.h"
 #include "prpl.h"
+#include "request.h"
 #include "sound.h"
 #include "util.h"
 #include "network.h"
@@ -61,13 +62,11 @@ static GtkWidget *tree_v = NULL;
 
 
 static int sound_row_sel = 0;
-static char *last_sound_dir = NULL;
 static GtkWidget *preflabel;
 static GtkWidget *prefsnotebook;
 static GtkTreeStore *prefstree;
 
 
-static GtkWidget *sounddialog = NULL;
 static GtkWidget *sound_entry = NULL;
 static GtkWidget *away_text = NULL;
 static GtkListStore *smiley_theme_store = NULL;
@@ -363,6 +362,9 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	GList *l;
 	GaimPlugin *plug;
 
+	/* Close any "select sound" request dialogs */
+	gaim_request_close_with_handle(prefs);
+
 	gaim_plugins_unregister_probe_notify_cb(update_plugin_list);
 
 	prefs = NULL;
@@ -372,8 +374,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs_away_menu = NULL;
 	notebook_page = 0;
 	smiley_theme_store = NULL;
-	if(sounddialog)
-		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
 	prefs_away_store = NULL;
 
@@ -1538,96 +1538,62 @@ test_sound(GtkWidget *button, gpointer i_am_NULL)
 	g_free(pref);
 }
 
+/*
+ * Resets a sound file back to default.
+ */
 static void
 reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 {
-	char *pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
-			gaim_gtk_sound_get_event_option(sound_row_sel));
+	gchar *pref;
 
-	/* This just resets a sound file back to default */
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+						   gaim_gtk_sound_get_event_option(sound_row_sel));
 	gaim_prefs_set_string(pref, "");
 	g_free(pref);
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
 }
 
-void close_sounddialog(GtkWidget *w, GtkWidget *w2)
+static void
+sound_chosen_cb(void *user_data, const char *filename)
 {
+	gchar *pref;
+	int sound;
 
-	GtkWidget *dest;
-
-	if (!GTK_IS_WIDGET(w2))
-		dest = w;
-	else
-		dest = w2;
-
-	sounddialog = NULL;
-
-	gtk_widget_destroy(dest);
-}
-
-void do_select_sound(GtkWidget *w, gpointer data)
-{
-	const char *file;
-	char *pref;
-	int snd;
-
-	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
-	snd = GPOINTER_TO_INT(data);
-
-	/* If they type in a directory, change there */
-	if (gaim_gtk_check_if_dir(file, GTK_FILE_SELECTION(sounddialog)))
-		return;
+	sound = GPOINTER_TO_INT(user_data);
 
 	/* Set it -- and forget it */
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
-			gaim_gtk_sound_get_event_option(snd));
-	gaim_prefs_set_string(pref, file);
+						   gaim_gtk_sound_get_event_option(sound));
+	gaim_prefs_set_string(pref, filename);
 	g_free(pref);
 
-	/* Set our text entry */
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), file);
-
-	/* Close the window! It's getting cold in here! */
-	close_sounddialog(NULL, sounddialog);
-
-	if (last_sound_dir)
-		g_free(last_sound_dir);
-	last_sound_dir = g_path_get_dirname(file);
+	/*
+	 * If the sound we just changed is still the currently selected
+	 * sound, then update the box showing the file name.
+	 */
+	if (sound == sound_row_sel)
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), filename);
 }
 
-static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
+static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 {
-	char *buf = g_malloc(BUF_LEN);
+	gchar *pref;
+	const char *filename;
 
-	if (!sounddialog) {
-		sounddialog = gtk_file_selection_new(_("Sound Selection"));
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+						   gaim_gtk_sound_get_event_option(sound_row_sel));
+	filename = gaim_prefs_get_string(pref);
+	g_free(pref);
 
-		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
+	if (*filename == '\0')
+		filename = NULL;
 
-		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S, last_sound_dir ? last_sound_dir : gaim_home_dir());
-
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
-
-		g_signal_connect(G_OBJECT(sounddialog), "destroy",
-						 G_CALLBACK(close_sounddialog), sounddialog);
-
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
-						 "clicked",
-						 G_CALLBACK(do_select_sound), GINT_TO_POINTER(sound_row_sel));
-
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
-						 "clicked",
-						 G_CALLBACK(close_sounddialog), sounddialog);
-	}
-
-	g_free(buf);
-	gtk_widget_show(sounddialog);
-	gdk_window_raise(sounddialog->window);
+	gaim_request_file(prefs, _("Sound Selection"), filename, FALSE,
+					  G_CALLBACK(sound_chosen_cb), NULL, GINT_TO_POINTER(sound_row_sel));
 }
 
-
-static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
+static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	GValue val = { 0, };
 	const char *file;
@@ -1645,8 +1611,6 @@ static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	if (sound_entry)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	g_value_unset (&val);
-	if (sounddialog)
-		gtk_widget_destroy(sounddialog);
 }
 
 GtkWidget *sound_page() {
@@ -1816,7 +1780,7 @@ GtkWidget *sound_page() {
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
 	button = gtk_button_new_with_label(_("Choose..."));
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(sel_sound), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 	gtk_widget_show_all(ret);
 
