@@ -3390,6 +3390,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 		b16 = tobase16(iconcsum, iconcsumlen);
 		b = gaim_find_buddy(gc->account, sn);
 		gaim_buddy_set_setting(b, "icon_checksum", b16);
+		gaim_blist_save();
 		free(b16);
 	}
 
@@ -4081,7 +4082,12 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	if (dim)
-		aim_odc_send_typing(od->sess, dim->conn, typing);
+		if (typing == TYPING)
+			aim_odc_send_typing(od->sess, dim->conn, 0x0002);
+		else if (typing == TYPED)
+			aim_odc_send_typing(od->sess, dim->conn, 0x0001);
+		else
+			aim_odc_send_typing(od->sess, dim->conn, 0x0000);
 	else {
 		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(name));
 		if (bi && bi->typingnot) {
@@ -4106,7 +4112,10 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
 		/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
-		ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0);
+		if (imflags & IM_FLAG_AWAY)
+			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0, 1);
+		else
+			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0, 0);
 	} else if (len != -1) {
 		/* Trying to send an IM image outside of a direct connection. */
 		oscar_ask_direct_im(gc, name);
@@ -5232,22 +5241,27 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
-	va_list ap;
-	char *msg, *sn;
-	int len, encoding;
 	struct gaim_connection *gc = sess->aux_data;
+	int imflags = 0;
+	va_list ap;
+	char *sn, *msg;
+	int len, encoding, isawaymsg;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
 	msg = va_arg(ap, char *);
 	len = va_arg(ap, int);
 	encoding = va_arg(ap, int);
+	isawaymsg = va_arg(ap, int);
 	va_end(ap);
 
 	debug_printf("Got DirectIM message from %s\n", sn);
 
+	if (isawaymsg)
+		imflags |= IM_FLAG_AWAY;
+
 	/* XXX - I imagine Paco-Paco will want to do some voodoo with the encoding here */
-	serv_got_im(gc, sn, msg, 0, time(NULL), len);
+	serv_got_im(gc, sn, msg, imflags, time(NULL), len);
 
 	return 1;
 }
@@ -5263,11 +5277,13 @@ static int gaim_odc_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	typing = va_arg(ap, int);
 	va_end(ap);
 
-	if (typing) {
+	if (typing == 0x0002) {
 		/* I had to leave this. It's just too funny. It reminds me of my sister. */
 		debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
 		serv_got_typing(gc, sn, 0, TYPING);
-	} else
+	} else if (typing == 0x0001)
+		serv_got_typing(gc, sn, 0, TYPED);
+	else
 		serv_got_typing_stopped(gc, sn);
 	return 1;
 }

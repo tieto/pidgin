@@ -306,7 +306,8 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
  *
  * @param sess The session.
  * @param conn The already-connected ODC connection.
- * @param typing If true, notify user has started typing; if false, notify user has stopped.
+ * @param typing If 0x0002, sends a "typing" message, 0x0001 sends "typed," and 
+ *        0x0000 sends "stopped."
  * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing)
@@ -320,7 +321,7 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, 0)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0001, 0)))
 		return -ENOMEM;
 	memcpy(fr->hdr.rend.magic, "ODC2", 4);
 	fr->hdr.rend.hdrlen = hdrlen;
@@ -345,8 +346,12 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 	aimbs_put16(hdrbs, 0x0000);
 	aimbs_put16(hdrbs, 0x0000);
 
-	/* flags -- 0x000e for "started typing", 0x0002 for "stopped typing */
-	aimbs_put16(hdrbs, ( typing ? 0x000e : 0x0002));
+	if (typing == 0x0002)
+		aimbs_put16(hdrbs, 0x0002 | 0x0008);
+	else if (typing == 0x0001)
+		aimbs_put16(hdrbs, 0x0002 | 0x0004);
+	else
+		aimbs_put16(hdrbs, 0x0002);
 
 	aimbs_put16(hdrbs, 0x0000);
 	aimbs_put16(hdrbs, 0x0000);
@@ -380,9 +385,10 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
  * @param msg Null-terminated string to send.
  * @param len The length of the message to send, including binary data.
  * @param encoding 0 for ascii, 2 for Unicode, 3 for ISO 8859-1.
+ * @param isawaymsg 0 if this is not an auto-response, 1 if it is.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *msg, int len, int encoding)
+faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *msg, int len, int encoding, int isawaymsg)
 {
 	aim_frame_t *fr;
 	aim_bstream_t *hdrbs;
@@ -419,8 +425,8 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 	aimbs_put16(hdrbs, 0x0000);
 	aimbs_put16(hdrbs, 0x0000);
 
-	/* flags -- 0x000e for "started typing", 0x0002 for "stopped typing, 0x0000 for message */
-	aimbs_put16(hdrbs, 0x0000);
+	/* flags - used for typing notification and to mark if this is an away message */
+	aimbs_put16(hdrbs, 0x0000 | isawaymsg);
 
 	aimbs_put16(hdrbs, 0x0000);
 	aimbs_put16(hdrbs, 0x0000);
@@ -624,6 +630,7 @@ faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, con
 static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr, aim_bstream_t *bs)
 {
 	aim_frame_t fr;
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu32_t payloadlength;
 	fu16_t flags, encoding;
@@ -647,54 +654,48 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 
 	faimdprintf(sess, 2, "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
 
-	if (flags & 0x0002) {
-		int ret = 0;
-
-		if (flags & 0x000c) {
-			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
-				ret = userfunc(sess, &fr, snptr, 1);
-			return ret;
-		}
-
+	if (flags & 0x0008) {
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+			ret = userfunc(sess, &fr, snptr, 2);
+	} else if (flags & 0x0004) {
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+			ret = userfunc(sess, &fr, snptr, 1);
+	} else {
 		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
 			ret = userfunc(sess, &fr, snptr, 0);
+	}
 
-		return ret;
-
-	} else if (((flags & 0x000f) == 0x0000) && payloadlength) {
-		char *msg, *msg2;
-		int ret = 0;
+	if (payloadlength) {
+		char *msg;
 		int recvd = 0;
-		int i;
+		int i, isawaymsg;
+
+		isawaymsg = flags & 0x0001;
 
 		if (!(msg = calloc(1, payloadlength+1)))
-			return -1;
-		msg2 = msg;
-		
+			return -ENOMEM;
+
 		while (payloadlength - recvd) {
 			if (payloadlength - recvd >= 1024)
-				i = aim_recv(conn->fd, msg2, 1024);
+				i = aim_recv(conn->fd, &msg[recvd], 1024);
 			else 
-				i = aim_recv(conn->fd, msg2, payloadlength - recvd);
+				i = aim_recv(conn->fd, &msg[recvd], payloadlength - recvd);
 			if (i <= 0) {
 				free(msg);
 				return -1;
 			}
 			recvd = recvd + i;
-			msg2 = msg2 + i;
 			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
-				userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
+				ret = userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
 		}
 		
-		if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING)) )
-			ret = userfunc(sess, &fr, snptr, msg, payloadlength, encoding);
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING)))
+			ret = userfunc(sess, &fr, snptr, msg, payloadlength, encoding, isawaymsg);
 
 		free(msg);
-
-		return ret;
 	}
 
-	return 0;
+	return ret;
 }
 
 /**

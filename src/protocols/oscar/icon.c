@@ -73,6 +73,7 @@ static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		return userfunc(sess, rx, sn, iconcsum, iconcsumlen, icon, iconlen);
 
+	free(sn);
 	free(iconcsum);
 	free(icon);
 
