@@ -885,6 +885,7 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	sess->ssi.items = NULL;
 	sess->ssi.timestamp = (time_t)0;
 
+	sess->authinfo = NULL;
 	sess->emailinfo = NULL;
 
 	/*

@@ -173,7 +173,6 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	faimdprintf(sess, 1, "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
 	if (cmd == 0x0041) { /* offline message */
-		fu16_t msglen;
 		struct aim_icq_offlinemsg msg;
 		aim_rxcallback_t userfunc;
 

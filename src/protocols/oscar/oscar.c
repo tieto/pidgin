@@ -3156,7 +3156,8 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_icq_reqofflinemsgs(sess);
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
-	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_EMAIL);
+	if (sess->authinfo->email)
+		aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_EMAIL);
 
 	if (!odata->icq) {
 		debug_printf("ssi: requesting ssi list\n");

@@ -348,10 +348,11 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 {
 	aim_tlvlist_t *tlvlist;
 	aim_rxcallback_t userfunc;
-	struct aim_authresp_info info;
+	struct aim_authresp_info *info;
 	int ret = 0;
 
-	memset(&info, 0, sizeof(info));
+	info = (struct aim_authresp_info *)malloc(sizeof(struct aim_authresp_info));
+	memset(info, 0, sizeof(struct aim_authresp_info));
 
 	/*
 	 * Read block of TLVs.  All further data is derived
@@ -364,8 +365,8 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 */
 	memset(sess->sn, 0, sizeof(sess->sn));
 	if (aim_gettlv(tlvlist, 0x0001, 1)) {
-		info.sn = aim_gettlv_str(tlvlist, 0x0001, 1);
-		strncpy(sess->sn, info.sn, sizeof(sess->sn));
+		info->sn = aim_gettlv_str(tlvlist, 0x0001, 1);
+		strncpy(sess->sn, info->sn, sizeof(sess->sn));
 	}
 
 	/*
@@ -373,15 +374,15 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * have an error url.
 	 */
 	if (aim_gettlv(tlvlist, 0x0008, 1)) 
-		info.errorcode = aim_gettlv16(tlvlist, 0x0008, 1);
+		info->errorcode = aim_gettlv16(tlvlist, 0x0008, 1);
 	if (aim_gettlv(tlvlist, 0x0004, 1))
-		info.errorurl = aim_gettlv_str(tlvlist, 0x0004, 1);
+		info->errorurl = aim_gettlv_str(tlvlist, 0x0004, 1);
 
 	/*
 	 * BOS server address.
 	 */
 	if (aim_gettlv(tlvlist, 0x0005, 1))
-		info.bosip = aim_gettlv_str(tlvlist, 0x0005, 1);
+		info->bosip = aim_gettlv_str(tlvlist, 0x0005, 1);
 
 	/*
 	 * Authorization cookie.
@@ -391,19 +392,21 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 
 		tmptlv = aim_gettlv(tlvlist, 0x0006, 1);
 
-		info.cookie = tmptlv->value;
+		info->cookie = tmptlv->value;
 	}
 
 	/*
 	 * The email address attached to this account
-	 *   Not available for ICQ logins.
+	 *   Not available for ICQ or @mac.com logins.
+	 *   If you receive this TLV, then you are allowed to use 
+	 *   family 0x0018 to check the status of your email.
 	 */
 	if (aim_gettlv(tlvlist, 0x0011, 1))
-		info.email = aim_gettlv_str(tlvlist, 0x0011, 1);
+		info->email = aim_gettlv_str(tlvlist, 0x0011, 1);
 
 	/*
 	 * The registration status.  (Not real sure what it means.)
-	 *   Not available for ICQ logins.
+	 *   Not available for ICQ or @mac.com logins.
 	 *
 	 *   1 = No disclosure
 	 *   2 = Limited disclosure
@@ -412,29 +415,31 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * This has to do with whether your email address is available
 	 * to other users or not.  AFAIK, this feature is no longer used.
 	 *
+	 * Means you can use the admin family? (0x0007)
+	 *
 	 */
 	if (aim_gettlv(tlvlist, 0x0013, 1))
-		info.regstatus = aim_gettlv16(tlvlist, 0x0013, 1);
+		info->regstatus = aim_gettlv16(tlvlist, 0x0013, 1);
 
 	if (aim_gettlv(tlvlist, 0x0040, 1))
-		info.latestbeta.build = aim_gettlv32(tlvlist, 0x0040, 1);
+		info->latestbeta.build = aim_gettlv32(tlvlist, 0x0040, 1);
 	if (aim_gettlv(tlvlist, 0x0041, 1))
-		info.latestbeta.url = aim_gettlv_str(tlvlist, 0x0041, 1);
+		info->latestbeta.url = aim_gettlv_str(tlvlist, 0x0041, 1);
 	if (aim_gettlv(tlvlist, 0x0042, 1))
-		info.latestbeta.info = aim_gettlv_str(tlvlist, 0x0042, 1);
+		info->latestbeta.info = aim_gettlv_str(tlvlist, 0x0042, 1);
 	if (aim_gettlv(tlvlist, 0x0043, 1))
-		info.latestbeta.name = aim_gettlv_str(tlvlist, 0x0043, 1);
+		info->latestbeta.name = aim_gettlv_str(tlvlist, 0x0043, 1);
 	if (aim_gettlv(tlvlist, 0x0048, 1))
 		; /* no idea what this is */
 
 	if (aim_gettlv(tlvlist, 0x0044, 1))
-		info.latestrelease.build = aim_gettlv32(tlvlist, 0x0044, 1);
+		info->latestrelease.build = aim_gettlv32(tlvlist, 0x0044, 1);
 	if (aim_gettlv(tlvlist, 0x0045, 1))
-		info.latestrelease.url = aim_gettlv_str(tlvlist, 0x0045, 1);
+		info->latestrelease.url = aim_gettlv_str(tlvlist, 0x0045, 1);
 	if (aim_gettlv(tlvlist, 0x0046, 1))
-		info.latestrelease.info = aim_gettlv_str(tlvlist, 0x0046, 1);
+		info->latestrelease.info = aim_gettlv_str(tlvlist, 0x0046, 1);
 	if (aim_gettlv(tlvlist, 0x0047, 1))
-		info.latestrelease.name = aim_gettlv_str(tlvlist, 0x0047, 1);
+		info->latestrelease.name = aim_gettlv_str(tlvlist, 0x0047, 1);
 	if (aim_gettlv(tlvlist, 0x0049, 1))
 		; /* no idea what this is */
 
@@ -442,22 +447,18 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * URL to change password.
 	 */
 	if (aim_gettlv(tlvlist, 0x0054, 1))
-		info.chpassurl = aim_gettlv_str(tlvlist, 0x0054, 1);
+		info->chpassurl = aim_gettlv_str(tlvlist, 0x0054, 1);
+
+	/*
+	 * Unknown.  Seen on an @mac.com screen name with value of 0x003f
+	 */
+	if (aim_gettlv(tlvlist, 0x0055, 1))
+		;
+
+	sess->authinfo = info;
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
-		ret = userfunc(sess, rx, &info);
-
-	free(info.sn);
-	free(info.bosip);
-	free(info.errorurl);
-	free(info.email);
-	free(info.chpassurl);
-	free(info.latestrelease.name);
-	free(info.latestrelease.url);
-	free(info.latestrelease.info);
-	free(info.latestbeta.name);
-	free(info.latestbeta.url);
-	free(info.latestbeta.info);
+		ret = userfunc(sess, rx, info);
 
 	aim_freetlvchain(&tlvlist);
 
@@ -488,6 +489,24 @@ static int keyparse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	return ret;
 }
 
+static void auth_shutdown(aim_session_t *sess, aim_module_t *mod)
+{
+	if (sess->authinfo) {
+		free(sess->authinfo->sn);
+		free(sess->authinfo->bosip);
+		free(sess->authinfo->errorurl);
+		free(sess->authinfo->email);
+		free(sess->authinfo->chpassurl);
+		free(sess->authinfo->latestrelease.name);
+		free(sess->authinfo->latestrelease.url);
+		free(sess->authinfo->latestrelease.info);
+		free(sess->authinfo->latestbeta.name);
+		free(sess->authinfo->latestbeta.url);
+		free(sess->authinfo->latestbeta.info);
+		free(sess->authinfo);
+	}
+}
+
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
@@ -507,6 +526,7 @@ faim_internal int auth_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->flags = 0;
 	strncpy(mod->name, "auth", sizeof(mod->name));
 	mod->snachandler = snachandler;
+	mod->shutdown = auth_shutdown;
 
 	return 0;
 }

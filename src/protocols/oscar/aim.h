@@ -377,6 +377,7 @@ typedef struct aim_session_s {
 		aim_frame_t *holding_queue;
 	} ssi;
 
+	struct aim_authresp_info *authinfo;
 	struct aim_emailinfo *emailinfo;
 
 	/* Connection information */
