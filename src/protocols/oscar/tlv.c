@@ -570,8 +570,9 @@ faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const fu16_t type)
  * @param list Destination chain.
  * @param type TLV type to add.
  * @param t1 The TLV chain you want to write.
- * @return The number of bytes that would be needed to
- *         write the passed TLV chain to a data buffer.
+ * @return The number of bytes written to the destination TLV chain.
+ *         0 is returned if there was an error or if the destination
+ *         TLV chain has length 0.
  */
 faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl)
 {
@@ -717,7 +718,7 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const fu16_t type)
 }
 
 /**
- * aim_tlvlist_write - Write a TLV chain into a data buffer.
+ * Write a TLV chain into a data buffer.
  *
  * Copies a TLV chain into a raw data buffer, writing only the number
  * of bytes specified. This operation does not free the chain; 
@@ -728,7 +729,7 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const fu16_t type)
  *
  * @param bs Input bstream
  * @param list Source TLV chain
- * @return Return 0 if there is not enough buffer, otherwise return 1.
+ * @return Return 0 if the destination bstream is too small.
  */
 faim_internal int aim_tlvlist_write(aim_bstream_t *bs, aim_tlvlist_t **list)
 {
