@@ -779,6 +779,7 @@ void show_usage(int mode, char *name)
 		       "                      name of away message to use)\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use)\n"
+		       "  -n, --loginwin      don't automatically login; show login window\n"
 		       "  -u, --user=NAME     use account NAME\n"
 		       "  -f, --file=FILE     use FILE as config\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
@@ -1319,6 +1320,7 @@ const char *handle_uri(char *uri) {
 		}
 		
 		c = new_conversation(who);
+		set_convo_gc(c, gc);
 		g_free(who);
 		if (what) {
 			int finish;
