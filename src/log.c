@@ -560,7 +560,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	gaim_markup_html_to_xhtml(message, &msg_fixed, NULL);
 
 	if(log->type == GAIM_LOG_SYSTEM){
-		strftime(date, sizeof(date), "%c", localtime(&time));
+		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&time));
 		fprintf(data->file, "---- %s @ %s ----<br/>\n", msg_fixed, date);
 	} else {
 		strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
@@ -749,7 +749,7 @@ static void txt_logger_write(GaimLog *log,
  	stripped = gaim_markup_strip_html(message);
   
  	if(log->type == GAIM_LOG_SYSTEM){
- 		strftime(date, sizeof(date), "%c", localtime(&time));
+ 		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&time));
  		fprintf(data->file, "---- %s @ %s ----\n", stripped, date);
  	} else {
  		strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
