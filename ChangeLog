@@ -15,6 +15,8 @@ version 0.77cvs
 	* Save Conversation works again (Kevin Stange)
 	* The Clear button in privacy works (Robert Mibus)
 	* MSN error reporting works again (Stu Tomlinson)
+	* MSN e-mail notifications should no longer cause Gaim to crash
+	  (Felipe Contreras)
 	* All away messages should now show up in tooltips
 	* Removing zephyr buddies no longer crashes (Arun A. Tharuvai)
 
