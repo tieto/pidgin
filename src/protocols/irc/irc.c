@@ -1263,7 +1263,7 @@ irc_xfer_ack(struct gaim_xfer *xfer)
 
 	pos = htonl(gaim_xfer_get_bytes_sent(xfer));
 
-	gaim_xfer_write(xfer, (char *)&pos, 4);
+	write(xfer->fd, (char *)&pos, 4);
 }
 
 static void 
@@ -1364,33 +1364,6 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 
 		/* Now perform the request! */
 		gaim_xfer_request(xfer);
-
-#if 0
-		if (xfer != NULL) {
-			struct irc_file_transfer *ift;
-			gaim_xfer_set_read_fnc(xfer,   irc_xfer_read);
-			gaim_xfer_set_cancel_fnc(xfer, irc_xfer_cancel);
-
-			gaim_xfer_set_ack_fnc(xfer, irc_xfer_ack);
-
-			ift = g_new0(struct irc_file_transfer, 1);
-
-			strncpy(ift->ip, send_args[3], sizeof(ift->ip));
-			ift->type = IFT_SENDFILE_IN;
-			ift->sn   = g_strdup(nick);
-			ift->gc   = gc;
-			ift->port = atoi(send_args[4]);
-			ift->len  = atoi(send_args[5]);
-			ift->name = g_strdup(send_args[2]);
-			ift->cur  = 0;
-			ift->xfer = xfer;
-
-			xfer->data = ift;
-
-
-			gaim_xfer_start(xfer, -1, send_args[3], atoi(send_args[4]));
-		}
-#endif
 	}
 
 	/*write_to_conv(c, out, WFLAG_SYSTEM, NULL, time(NULL), -1);*/
