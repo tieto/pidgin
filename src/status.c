@@ -103,7 +103,7 @@ static void
 schedule_status_save()
 {
 	if (!status_save_timer)
-		status_save_timer = g_timeout_add(5000, status_save_cb, NULL);
+		status_save_timer = gaim_timeout_add(5000, status_save_cb, NULL);
 }
 
 static void

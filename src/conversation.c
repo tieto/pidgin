@@ -1581,8 +1581,7 @@ gaim_conv_im_start_typing_timeout(GaimConvIm *im, int timeout)
 	conv = gaim_conv_im_get_conversation(im);
 	name = gaim_conversation_get_name(conv);
 
-	im->typing_timeout = g_timeout_add_full(G_PRIORITY_DEFAULT_IDLE,
-		timeout * 1000, reset_typing, conv, NULL);
+	im->typing_timeout = gaim_timeout_add(timeout * 1000, reset_typing, conv);
 }
 
 void
@@ -1626,8 +1625,8 @@ gaim_conv_im_start_type_again_timeout(GaimConvIm *im)
 {
 	g_return_if_fail(im != NULL);
 
-	im->type_again_timeout = g_timeout_add(SEND_TYPED_TIMEOUT, send_typed,
-										   gaim_conv_im_get_conversation(im));
+	im->type_again_timeout = gaim_timeout_add(SEND_TYPED_TIMEOUT, send_typed,
+											  gaim_conv_im_get_conversation(im));
 }
 
 void

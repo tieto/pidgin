@@ -26,6 +26,7 @@
 #define _GAIM_PROXY_H_
 
 #include <glib.h>
+#include "eventloop.h"
 
 /**
  * A type of proxy connection.
@@ -42,16 +43,6 @@ typedef enum
 } GaimProxyType;
 
 /**
- * An input condition.
- */
-typedef enum
-{
-	GAIM_INPUT_READ  = 1 << 0,  /**< A read condition.  */
-	GAIM_INPUT_WRITE = 1 << 1   /**< A write condition. */
-
-} GaimInputCondition;
-
-/**
  * Information on proxy settings.
  */
 typedef struct
@@ -64,8 +55,6 @@ typedef struct
 	char *password;       /**< The password.    */
 
 } GaimProxyInfo;
-
-typedef void (*GaimInputFunction)(gpointer, gint, GaimInputCondition);
 
 
 #include "account.h"
@@ -203,26 +192,6 @@ GaimProxyInfo *gaim_global_proxy_get_info(void);
  * Initializes the proxy subsystem.
  */
 void gaim_proxy_init(void);
-
-/**
- * Adds an input handler.
- *
- * @param source    The input source.
- * @param cond      The condition type.
- * @param func      The callback function for data.
- * @param user_data User-specified data.
- *
- * @return The resulting handle.
- */
-gint gaim_input_add(int source, GaimInputCondition cond,
-					GaimInputFunction func, gpointer user_data);
-
-/**
- * Removes an input handler.
- *
- * @param handle The handle of the input handler.
- */
-void gaim_input_remove(gint handle);
 
 /**
  * Makes a connection to the specified host and port.

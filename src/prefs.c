@@ -79,7 +79,7 @@ static gboolean prefs_save_callback(gpointer who_cares) {
 
 static void schedule_prefs_save() {
 	if(!prefs_save_timer)
-		prefs_save_timer = g_timeout_add(5000, prefs_save_callback, NULL);
+		prefs_save_timer = gaim_timeout_add(5000, prefs_save_callback, NULL);
 }
 
 static void prefs_save_cb(const char *name, GaimPrefType type, gpointer val,

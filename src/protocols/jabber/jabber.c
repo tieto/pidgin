@@ -438,7 +438,7 @@ conn_close_cb(gpointer data)
 static void
 jabber_connection_schedule_close(JabberStream *js)
 {
-	g_timeout_add(0, conn_close_cb, js);
+	gaim_timeout_add(0, conn_close_cb, js);
 }
 
 static void

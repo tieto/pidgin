@@ -336,7 +336,7 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 			if (stat(gaim_account_get_buddy_icon(account), &st) == 0)
 				slpsession->remaining_size = st.st_size;
 
-			slpsession->send_timer = g_timeout_add(10, send_cb, slpsession);
+			slpsession->send_timer = gaim_timeout_add(10, send_cb, slpsession);
 		}
 		else
 			return send_error_500(slpsession, call_id, msg);

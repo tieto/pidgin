@@ -24,6 +24,7 @@
 
 #include "core.h"
 #include "debug.h"
+#include "eventloop.h"
 
 extern char *opt_rcfile_arg;
 
@@ -45,8 +46,8 @@ gboolean session_managed = FALSE;
 
 /* ICE belt'n'braces stuff */
 
-static gboolean ice_process_messages(GIOChannel *channel, GIOCondition condition,
-	      gpointer data) {
+static void ice_process_messages(gpointer data, gint fd,
+								 GaimInputCondition condition) {
 	IceConn connection = (IceConn)data;
 	IceProcessMessagesStatus status;
 
@@ -64,41 +65,28 @@ static gboolean ice_process_messages(GIOChannel *channel, GIOCondition condition
 		gaim_debug(GAIM_DEBUG_INFO, NULL, "done.\n");
 
 		/* cancel the handler */
-		return FALSE;
+		gaim_input_remove(IceConnectionNumber(connection));
 	}
-
-	/* live to see another day */
-	return TRUE;
 }
 
 static void ice_connection_watch(IceConn connection, IcePointer client_data,
 	      Bool opening, IcePointer *watch_data) {
-	guint input_id;
-
 	if (opening) {
-		GIOChannel *channel;
-
 		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 				   "Handling new ICE connection... ");
 
 		/* ensure ICE connection is not passed to child processes */
 		fcntl(IceConnectionNumber(connection), F_SETFD, FD_CLOEXEC);
 
-		/* get glib to watch the connection for us */
-		channel = g_io_channel_unix_new(IceConnectionNumber(connection));
-		input_id = g_io_add_watch(channel, G_IO_IN | G_IO_ERR,
-			     ice_process_messages, connection);
-		g_io_channel_unref(channel);
-
-		/* store the input ID as a pointer for when it closes */
-		*watch_data = (IcePointer)GUINT_TO_POINTER(input_id);
+		/* watch the connection */
+		gaim_input_add(IceConnectionNumber(connection), GAIM_INPUT_READ,
+					   ice_process_messages, connection);
 	} else {
 		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 				   "Handling closed ICE connection... ");
 
-		/* get the input ID back and stop watching it */
-		input_id = GPOINTER_TO_UINT((gpointer) *watch_data);
-		g_source_remove(input_id);
+		/* stop watching it */
+		gaim_input_remove(IceConnectionNumber(connection));
 	}
 
 	gaim_debug(GAIM_DEBUG_INFO, NULL, "done.\n");

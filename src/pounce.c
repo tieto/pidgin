@@ -112,7 +112,7 @@ static void
 schedule_pounces_save(void)
 {
 	if (!pounces_save_timer)
-		pounces_save_timer = g_timeout_add(5000, pounces_save_cb, NULL);
+		pounces_save_timer = gaim_timeout_add(5000, pounces_save_cb, NULL);
 }
 
 GaimPounce *

@@ -387,7 +387,7 @@ void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, c
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 
 	irc_blist_timeout(irc);
-	irc->timer = g_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+	irc->timer = gaim_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
 void irc_msg_nochan(struct irc_conn *irc, const char *name, const char *from, char **args)

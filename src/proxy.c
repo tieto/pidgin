@@ -36,9 +36,6 @@
 #include "proxy.h"
 #include "util.h"
 
-#define GAIM_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
-#define GAIM_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
-
 static GaimProxyInfo *global_proxy_info = NULL;
 
 static int opt_debug = 0;
@@ -52,13 +49,6 @@ struct PHB {
 	GaimProxyInfo *gpi;
 	GaimAccount *account;
 };
-
-typedef struct _GaimIOClosure {
-	GaimInputFunction function;
-	guint result;
-	gpointer data;
-
-} GaimIOClosure;
 
 const char* socks5errors[] = {
 	"succeeded\n",
@@ -194,69 +184,6 @@ gaim_global_proxy_get_info(void)
 /**************************************************************************
  * Proxy API
  **************************************************************************/
-static void gaim_io_destroy(gpointer data)
-{
-	g_free(data);
-}
-
-static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
-{
-	GaimIOClosure *closure = data;
-	GaimInputCondition gaim_cond = 0;
-
-	if (condition & GAIM_READ_COND)
-		gaim_cond |= GAIM_INPUT_READ;
-	if (condition & GAIM_WRITE_COND)
-		gaim_cond |= GAIM_INPUT_WRITE;
-
-#if 0
-	gaim_debug(GAIM_DEBUG_MISC, "proxy",
-			   "CLOSURE: callback for %d, fd is %d\n",
-			   closure->result, g_io_channel_unix_get_fd(source));
-#endif
-
-	closure->function(closure->data, g_io_channel_unix_get_fd(source), gaim_cond);
-
-	return TRUE;
-}
-
-gint gaim_input_add(gint source, GaimInputCondition condition, GaimInputFunction function, gpointer data)
-{
-	GaimIOClosure *closure = g_new0(GaimIOClosure, 1);
-	GIOChannel *channel;
-	GIOCondition cond = 0;
-
-	closure->function = function;
-	closure->data = data;
-
-	if (condition & GAIM_INPUT_READ)
-		cond |= GAIM_READ_COND;
-	if (condition & GAIM_INPUT_WRITE)
-		cond |= GAIM_WRITE_COND;
-
-	channel = g_io_channel_unix_new(source);
-	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-					      gaim_io_invoke, closure, gaim_io_destroy);
-
-#if 0
-	gaim_debug(GAIM_DEBUG_MISC, "proxy",
-			   "CLOSURE: adding input watcher %d for fd %d\n",
-			   closure->result, source);
-#endif
-
-	g_io_channel_unref(channel);
-	return closure->result;
-}
-
-void gaim_input_remove(gint tag)
-{
-	/* gaim_debug(GAIM_DEBUG_MISC, "proxy",
-	              "CLOSURE: removing input watcher %d\n", tag); */
-	if (tag > 0)
-		g_source_remove(tag);
-}
-
-
 typedef void (*dns_callback_t)(GSList *hosts, gpointer data,
 		const char *error_message);
 
@@ -727,7 +654,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 	req->addrlen = sizeof(sin);
 	req->data = data;
 	req->callback = callback;
-	g_timeout_add(10, host_resolved, req);
+	gaim_timeout_add(10, host_resolved, req);
 	return 0;
 }
 
@@ -738,16 +665,28 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct PHB *phb = data;
 	unsigned int len;
-	int error=0;
+	int error=0, ret;
 
 	gaim_debug(GAIM_DEBUG_INFO, "proxy", "Connected.\n");
 
 	len = sizeof(error);
 
-	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-/*	if (ret < 0 || error != 0) { */
-		/* The fourth parameter above isn't really "error", is it? */
-		/* if(ret==0) errno = error; */
+	/*
+	 * getsockopt after a non-blocking connect returns -1 if something is
+	 * really messed up (bad descriptor, usually). Otherwise, it returns 0 and
+	 * error holds what connect would have returned if it blocked until now.
+	 * Thus, error == 0 is success, error == EINPROGRESS means "try again",
+	 * and anything else is a real error.
+	 *
+	 * (error == EINPROGRESS can happen after a select because the kernel can
+	 * be overly optimistic sometimes. select is just a hint that you might be
+	 * able to do something.)
+	 */
+	ret = getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len);
+	if (ret == 0 && error == EINPROGRESS)
+		return; // we'll be called again later
+	if (ret < 0 || error != 0) {
+		if(ret==0) errno = error;
 		close(source);
 		gaim_input_remove(phb->inpa);
 
@@ -835,7 +774,7 @@ proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		}
 		fcntl(fd, F_SETFL, 0);
 		phb->port = fd;	/* bleh */
-		g_timeout_add(50, clean_connect, phb);	/* we do this because we never
+		gaim_timeout_add(50, clean_connect, phb);	/* we do this because we never
 							   want to call our callback
 							   before we return. */
 	}

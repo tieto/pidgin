@@ -60,10 +60,10 @@ void gaim_core_quit(void);
 
 /**
  * Calls gaim_core_quit().  This can be used as the function 
- * passed to g_timeout_add() when you want to shutdown Gaim 
+ * passed to gaim_timeout_add() when you want to shutdown Gaim 
  * in a specified amount of time.  When shutting down Gaim 
  * from a plugin, you must use this with a timeout value of 0: 
- *   g_timeout_add(0, gaim_core_quitcb, NULL);
+ *   gaim_timeout_add(0, gaim_core_quitcb, NULL);
  * This is ensures that code from your plugin is not being 
  * executed when gaim_core_quit() is called.  Otherwise you 
  * would get a core dump after gaim_core_quit() executes and 
@@ -78,28 +78,6 @@ gboolean gaim_core_quit_cb(gpointer unused);
  * @return The version of the core library.
  */
 const char *gaim_core_get_version(void);
-
-/**
- * Returns whether or not there are any mainloop events pending.
- *
- * @return TRUE if there are mainloop events pending. FALSE otherwise.
- */
-gboolean gaim_core_mainloop_events_pending(void);
-
-/**
- * Iterates once through the gaim mainloop.
- *
- * This is in actuality a wrapper around glib's mainloop iteration
- * function, but provides a nice, healthy level of abstraction.
- *
- * All UIs not using glib must call this in a timer.
- */
-void gaim_core_mainloop_iteration(void);
-
-/**
- * Iterates through all remaining events in the mainloop.
- */
-void gaim_core_mainloop_finish_events(void);
 
 /**
  * Returns the ID of the UI that is using the core.

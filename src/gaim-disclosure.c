@@ -192,7 +192,7 @@ do_animation (GaimDisclosure *disclosure,
 	}
 
 	disclosure->priv->direction = opening ? 1 : -1;
-	disclosure->priv->expand_id = g_timeout_add (50, expand_collapse_timeout, disclosure);
+	disclosure->priv->expand_id = gaim_timeout_add (50, expand_collapse_timeout, disclosure);
 }
 
 static void

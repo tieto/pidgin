@@ -685,8 +685,8 @@ static void zephyr_login(GaimAccount *account)
 	process_anyone();
 	process_zsubs();
 
-	nottimer = g_timeout_add(100, check_notify, NULL);
-	loctimer = g_timeout_add(20000, check_loc, NULL);
+	nottimer = gaim_timeout_add(100, check_notify, NULL);
+	loctimer = gaim_timeout_add(20000, check_loc, NULL);
 }
 
 static void write_zsubs()

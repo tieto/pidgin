@@ -159,25 +159,6 @@ gaim_core_get_version(void)
 	return VERSION;
 }
 
-gboolean
-gaim_core_mainloop_events_pending(void)
-{
-	return g_main_context_pending(g_main_context_default());
-}
-
-void
-gaim_core_mainloop_iteration(void)
-{
-	g_main_context_iteration(g_main_context_default(), FALSE);
-}
-
-void
-gaim_core_mainloop_finish_events(void)
-{
-	while (gaim_core_mainloop_events_pending())
-		gaim_core_mainloop_iteration();
-}
-
 const char *
 gaim_core_get_ui(void)
 {

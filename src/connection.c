@@ -482,7 +482,7 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 			ops->disconnected(gc);
 	}
 
-	gc->disconnect_timeout = g_timeout_add(0, gaim_connection_disconnect_cb,
+	gc->disconnect_timeout = gaim_timeout_add(0, gaim_connection_disconnect_cb,
 			gaim_connection_get_account(gc));
 }
 

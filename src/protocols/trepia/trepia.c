@@ -911,6 +911,11 @@ _parse_data(TrepiaSession *session, char *buf)
 					serv_got_update(session->gc, username, 1, 0, 0, 0, 0);
 				}
 
+				/*
+				 * XXX
+				 * This does nothing when using a non-gtk event loop.
+				 * What is it supposed to accomplish anyway?
+				 */
 				ctx = g_main_context_default();
 
 				while (g_main_context_pending(ctx))

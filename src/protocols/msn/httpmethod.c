@@ -78,7 +78,7 @@ start_timer(MsnServConn *servconn)
 	stop_timer(servconn);
 
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Starting timer\n");
-	servconn->http_data->timer = g_timeout_add(5000, http_poll, servconn);
+	servconn->http_data->timer = gaim_timeout_add(5000, http_poll, servconn);
 }
 
 size_t

@@ -87,7 +87,7 @@ static void update_keepalive(GaimConnection *gc, gboolean on)
 {
 	if (on && !gc->keep_alive) {
 		gaim_debug(GAIM_DEBUG_INFO, "server", "allowing NOP\n");
-		gc->keep_alive = g_timeout_add(60000, send_keepalive, gc);
+		gc->keep_alive = gaim_timeout_add(60000, send_keepalive, gc);
 	} else if (!on && gc->keep_alive > 0) {
 		gaim_debug(GAIM_DEBUG_INFO, "server", "removing NOP\n");
 		g_source_remove(gc->keep_alive);
@@ -154,7 +154,7 @@ void serv_finish_login(GaimConnection *gc)
 	if (gc->idle_timer > 0)
 		g_source_remove(gc->idle_timer);
 
-	gc->idle_timer = g_timeout_add(20000, check_idle, gc);
+	gc->idle_timer = gaim_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);
 
 	/* Move this hack into toc.c */
@@ -219,7 +219,7 @@ struct last_auto_response *get_last_auto_response(GaimConnection *gc, const char
 
 	/* because we're modifying or creating a lar, schedule the
 	 * function to expire them as the pref dictates */
-	g_timeout_add((gaim_prefs_get_int("/core/away/auto_response/sec_before_resend") + 1) * 1000,
+	gaim_timeout_add((gaim_prefs_get_int("/core/away/auto_response/sec_before_resend") + 1) * 1000,
 			expire_last_auto_responses, NULL);
 
 	tmp = last_auto_responses;

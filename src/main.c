@@ -27,6 +27,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "eventloop.h"
 #include "ft.h"
 #include "log.h"
 #include "notify.h"
@@ -42,6 +43,7 @@
 #include "gtkconn.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"
+#include "gtkeventloop.h"
 #include "gtkft.h"
 #include "gtknotify.h"
 #include "gtkplugin.h"
@@ -128,7 +130,7 @@ void gaim_setup(GaimConnection *gc)
 			g_source_remove(snd_tmout);
 		}
 		gaim_gtk_sound_set_login_mute(TRUE);
-		snd_tmout = g_timeout_add(10000, sound_timeout, NULL);
+		snd_tmout = gaim_timeout_add(10000, sound_timeout, NULL);
 	}
 }
 
@@ -814,6 +816,7 @@ int main(int argc, char *argv[])
         wgaim_init(hint);
 #endif
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
+	gaim_eventloop_set_ui_ops(gaim_gtk_eventloop_get_ui_ops());
 
 	if (!gaim_core_init(GAIM_GTK_UI)) {
 		fprintf(stderr,

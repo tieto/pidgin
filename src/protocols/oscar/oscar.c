@@ -1464,7 +1464,7 @@ static int conninitdone_icon(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->icontimer)
 		g_source_remove(od->icontimer);
-	od->icontimer = g_timeout_add(100, gaim_icon_timerfunc, gc);
+	od->icontimer = gaim_timeout_add(100, gaim_icon_timerfunc, gc);
 
 	return 1;
 }
@@ -1883,7 +1883,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 				od->requesticon = g_slist_append(od->requesticon, g_strdup(gaim_normalize(gc->account, info->sn)));
 				if (od->icontimer)
 					g_source_remove(od->icontimer);
-				od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
+				od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
 			}
 		}
 		g_free(b16);
@@ -3497,7 +3497,7 @@ static int gaim_icon_error(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->icontimer)
 		g_source_remove(od->icontimer);
-	od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
+	od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
 
 	return 1;
 }
@@ -3545,7 +3545,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->icontimer)
 		g_source_remove(od->icontimer);
-	od->icontimer = g_timeout_add(250, gaim_icon_timerfunc, gc);
+	od->icontimer = gaim_timeout_add(250, gaim_icon_timerfunc, gc);
 
 	return 1;
 }
@@ -4862,7 +4862,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
 						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
-		od->getblisttimer = g_timeout_add(300000, gaim_ssi_rerequestdata, od->sess);
+		od->getblisttimer = gaim_timeout_add(300000, gaim_ssi_rerequestdata, od->sess);
 	}
 
 	/* Activate SSI */
@@ -5844,8 +5844,6 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
 		dim->watcher = 0;
 	}
-	/* XXX is this really necessary? */
-	gaim_core_mainloop_finish_events();
 
 	c = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
 	if (c != NULL)

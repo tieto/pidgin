@@ -448,7 +448,7 @@ void wgaim_conv_im_blink(GtkWidget *window) {
 		WGAIM_FLASH_INFO *finfo = g_new0(WGAIM_FLASH_INFO, 1);
 
 		/* Start Flashing window */
-		finfo->t_handle = g_timeout_add(1000, 
+		finfo->t_handle = gaim_timeout_add(1000, 
 						flash_window_cb, 
 						GDK_WINDOW_HWND(window->window));
 		finfo->sig_handler = g_signal_connect(G_OBJECT(window), 

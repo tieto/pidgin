@@ -70,6 +70,8 @@ CORESOURCES = \
 	core.h \
 	debug.c \
 	debug.h \
+	eventloop.c \
+	eventloop.h \
 	ft.c \
 	ft.h \
 	imgstore.c \
@@ -145,6 +147,8 @@ gaim_SOURCES = \
 	gtkconv.h \
 	gtkdebug.c \
 	gtkdebug.h \
+	gtkeventloop.c \
+	gtkeventloop.h \
 	gtkft.c \
 	gtkft.h \
 	gtkimhtml.c \

@@ -297,7 +297,7 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 	if(do_something) {
 		if(buddy->timer > 0)
 			g_source_remove(buddy->timer);
-		buddy->timer = g_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
+		buddy->timer = gaim_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
 
 		gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 		if (ops)
