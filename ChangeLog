@@ -12,7 +12,9 @@ version 2.0.0
 	  palette
 	* Yahoo! has the following new "/" commands:  /join, /buzz
 	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
-
+	* If Gaim is exited with the buddy list hidden in the docklet, it will
+	  remain hidden when Gaim is started again (Scott Shedden)
+	
 	Bug fixes:
 	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)
 	* People using input methods can now use Enter again.
@@ -137,7 +139,7 @@ version 0.81 (08/05/2004):
 	  Radchenko)
 	* Visual display of ops/voice/halfops/so on in Chats (Stu Tomlinson)
 	* Tab completion of slash commands in Chats (Stu Tomlinson)
-	* gaim-remote can now manipulate status (István Váradi)
+	* gaim-remote can now manipulate status (Istv?V?di)
 	* The text messages of Yahoo Audibles are now displayed, although
 	  the audio and graphics are not.
 	* Yahoo! away messages can be 255 characters long now
@@ -149,7 +151,7 @@ version 0.81 (08/05/2004):
 		* Fixed duplicate root folder bug
 		* Fixed bug with folder ordering (on a first time login
 		  folders were being added in reverse order).
-	* Use ISO date format for the system log (Eduardo Pérez)
+	* Use ISO date format for the system log (Eduardo Pé²¥z)
 	* Long buddy lists with irc should cause flooding disconnects less
 	  (Stu Tomlinson)
 	* Better smiley substitution
@@ -193,7 +195,7 @@ version 0.80 (07/15/2004):
 	* Parentheses are now displayed around the title and tabs of
 	  conversations from offline accounts or parted chats.
 	* Zephyr typing notification (Arun A Tharuvai)
-	* Account dialog's columns are resizable (Eduardo Pérez)
+	* Account dialog's columns are resizable (Eduardo Pé²¥z)
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9
