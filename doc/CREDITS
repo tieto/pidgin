@@ -39,7 +39,8 @@ David <IM: CrazyDavy>
 S D Erle
 	Writing a cool perl script to translate WinAIM lists to gaim
 BMiller
-	Translating perl code to C so gaim can import lists itself
+	A good collection of stuff. %n for away messages, import winaim
+	lists, pic/text/pic+text for buttons, among others
 
 ergofobe:
 	GNOME Url handler patch
