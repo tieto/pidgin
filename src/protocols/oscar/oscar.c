@@ -3538,8 +3538,9 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
-			if (info->email2[i] && info->email2[i][0])
+			if (info->email2[i] && info->email2[i][0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Email Address:</b> <a href=\"mailto:", info->email2[i], "\">", info->email2[i], "</a>", NULL);  g_free(tmp);
+			}
 		}
 	}
 	if (info->mobile && info->mobile[0]) {
@@ -5481,6 +5482,10 @@ static fu32_t parse_encoding(const char *enc)
 	char *charset;
 
 	/* If anything goes wrong, fall back on ASCII and print a message */
+	if (enc == NULL) {
+		debug_printf("Encoding was null, that's odd\n");
+		return 0;
+	}
 	charset = strstr(enc, "charset=");
 	if (charset == NULL) {
 		debug_printf("No charset specified for info, assuming ASCII\n");
