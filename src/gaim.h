@@ -401,7 +401,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 794 $"
+#define REVISION "gaim:$Revision: 807 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -748,6 +748,7 @@ extern void gaim_signal_connect(void *, enum gaim_event, void *, void *);
 extern void gaim_signal_disconnect(void *, enum gaim_event, void *);
 extern void gaim_plugin_unload(void *);
 #endif
+extern char *event_name(enum gaim_event);
 extern void plugin_event(enum gaim_event, void *, void *, void *);
 
 /* Functions in prefs.c */
