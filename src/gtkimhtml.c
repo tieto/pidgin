@@ -1120,6 +1120,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		}
 	}
 	g_free (ws);
+	if(bg)
+		g_free(bg);
 	if (!(options & GTK_IMHTML_NO_SCROLL))
 		gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (imhtml), mark,
 					      0, TRUE, 0.0, 1.0);

@@ -70,7 +70,7 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	GSList *lst = smiley_themes;
 	char *dirname;
 	gboolean old=FALSE;
-	
+
 	while (lst) {
 		struct smiley_theme *thm = lst->data;
 		if (!strcmp(thm->path, file)) {
@@ -80,13 +80,14 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 		}
 		lst = lst->next;
 	}
+
+	if (!f)
+		return NULL;
 	if (!theme) {
 		theme = g_new0(struct smiley_theme, 1);
 		theme->path = g_strdup(file);
 	}
-	if (!f)
-		return NULL;
-	
+
 	dirname = g_path_get_dirname(file);
 	if (load) {
 		if (current_smiley_theme) {
@@ -113,24 +114,24 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 		}
 		current_smiley_theme = theme;
 	}
-	
-	
+
+
 	while (!feof(f)) {
 		if (!fgets(buf, sizeof(buf), f)) {
 			break;
 		}
-				
-		if (buf[0] == '#' || buf[0] == '\0') 
+
+		if (buf[0] == '#' || buf[0] == '\0')
 			continue;
-		
+
 		i = buf;
 		while (isspace(*i))
 			i++;
-		
+
 		if (*i == '[' && strchr(i, ']') && load) {
 			struct smiley_list *child = g_new0(struct smiley_list, 1);
 			child->sml = g_strndup(i+1, (int)strchr(i, ']') - (int)i - 1);
-			if (theme->list) 
+			if (theme->list)
 				list->next = child;
 			else
 				theme->list = child;
@@ -150,8 +151,7 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 		} else if (load && list) {
 			gboolean hidden;
 			char *sfile = NULL;
-			GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
-			
+
 			if (*i == '!' && *(i + 1) == ' ') {
 				hidden = TRUE;
 				i = i + 2;
@@ -159,31 +159,31 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 			while  (*i) {
 				char l[64];
 				int li = 0;
-				while (!isspace(*i)) 
+				while (!isspace(*i))
 					l[li++] = *(i++);
 				if (!sfile) {
 					l[li] = 0;
 					sfile = g_build_filename(dirname, l, NULL);
 				} else {
 					l[li] = 0;
-					smiley = g_new0(GtkIMHtmlSmiley, 1);
+					GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
 					smiley->file = sfile;
 					smiley->smile = g_strdup(l);
 					list->smileys = g_slist_append(list->smileys, smiley);
 				}
-				while (isspace(*i)) 
+				while (isspace(*i))
 					i++;
-				
+
 			}
 		}
 	}
 
 	if (load) {
 		GList *cnv;
-		
+
 		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 			struct gaim_conversation *conv = cnv->data;
-			
+
 			if (GAIM_IS_GTK_CONVERSATION(conv))
 				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
 		}

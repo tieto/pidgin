@@ -2444,32 +2444,33 @@ setup_menubar(struct gaim_window *win)
 {
 	struct gaim_gtk_window *gtkwin;
 	GtkWidget *hb;
-	GtkItemFactory *item_factory;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
 	/* Create the handle box. */
 	hb = gtk_handle_box_new();
 
-	item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", NULL);
+	gtkwin->menu.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
+			"<main>", NULL);
 
-	gtk_item_factory_set_translate_func (item_factory,
+	gtk_item_factory_set_translate_func (gtkwin->menu.item_factory,
 					     item_factory_translate_func,
 					     NULL, NULL);
-	
-	gtk_item_factory_create_items(item_factory, menu_item_count,
+
+	gtk_item_factory_create_items(gtkwin->menu.item_factory, menu_item_count,
 								  menu_items, win);
 
-	gtkwin->menu.menubar = gtk_item_factory_get_widget(item_factory, "<main>");
-	gtkwin->menu.view_history = gtk_item_factory_get_widget(item_factory,
+	gtkwin->menu.menubar = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
+			"<main>");
+	gtkwin->menu.view_history = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			"/Conversation/View History...");
-	gtkwin->menu.insert_link = gtk_item_factory_get_widget(item_factory,
+	gtkwin->menu.insert_link = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			"/Conversation/Insert URL...");
-	gtkwin->menu.insert_image = gtk_item_factory_get_widget(item_factory,
+	gtkwin->menu.insert_image = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			"/Conversation/Insert Image...");
-	gtkwin->menu.logging = gtk_item_factory_get_widget(item_factory,
+	gtkwin->menu.logging = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			"/Options/Enable Logging");
-	gtkwin->menu.sounds = gtk_item_factory_get_widget(item_factory,
+	gtkwin->menu.sounds = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			"/Options/Enable Sounds");
 
 	generate_send_as_items(win, NULL);
@@ -3251,6 +3252,8 @@ gaim_gtk_destroy_window(struct gaim_window *win)
 
 	gaim_gtk_set_state_lock(FALSE);
 
+	g_object_unref(G_OBJECT(gtkwin->menu.item_factory));
+
 	g_free(gtkwin);
 	win->ui_data = NULL;
 }
@@ -3621,6 +3624,8 @@ gaim_gtkconv_destroy(struct gaim_conversation *conv)
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		g_free(gtkconv->u.chat);
 	}
+
+	g_object_unref(G_OBJECT(gtkconv->tooltips));
 
 	g_free(gtkconv);
 }

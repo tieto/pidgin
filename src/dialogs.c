@@ -3532,6 +3532,7 @@ static struct away_message *save_away_message(struct create_away *ca)
 
 int check_away_mess(struct create_away *ca, int type)
 {
+	char *msg;
 	if ((strlen(gtk_entry_get_text(GTK_ENTRY(ca->entry))) == 0) && (type == 1)) {
 		/* We shouldn't allow a blank title */
 		do_error_dialog(_("You cannot save an away message with a blank title"), 
@@ -3540,11 +3541,15 @@ int check_away_mess(struct create_away *ca, int type)
 		return 0;
 	}
 
-	if (!gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE) && (type <= 1)) {
+	msg = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
+
+	if (!msg && (type <= 1)) {
 		/* We shouldn't allow a blank message */
 		do_error_dialog(_("You cannot create an empty away message"), NULL, GAIM_ERROR);
 		return 0;
 	}
+
+	g_free(msg);
 
 	return 1;
 }

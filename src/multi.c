@@ -274,9 +274,11 @@ static void add_columns(GtkWidget *treeview)
 												NULL);
 
 	/* Data */
+	/*
 	column = gtk_tree_view_column_new();
-//	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	gtk_tree_view_column_set_visible(column, FALSE);
+	*/
 }
 
 static GtkWidget *generate_list()

@@ -53,6 +53,8 @@ struct gaim_gtk_window
 		GtkWidget *sounds;
 		GtkWidget *send_as;
 
+		GtkItemFactory *item_factory;
+
 	} menu;
 
 	/* Tab dragging stuff. */
