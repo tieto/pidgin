@@ -19,6 +19,7 @@
  *
  */
 #include "internal.h"
+#include "debug.h"
 #include "ft.h"
 #include "util.h"
 
@@ -107,7 +108,11 @@ static size_t jabber_oob_xfer_read(char **buffer, GaimXfer *xfer) {
 			}
 		jox->newline = FALSE;
 		return 0;
+	} else {
+		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "Read error on oob xfer!\n");
+		gaim_xfer_cancel_local(xfer);
 	}
+
 	return 0;
 }
 
