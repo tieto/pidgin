@@ -648,7 +648,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
-		if (display_options & OPT_DISP_ONE_WINDOW) {
+		if (!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW)) {
 			if (event->keyval == '[') {
 				gtk_notebook_prev_page(GTK_NOTEBOOK(convo_notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
@@ -696,8 +696,9 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
-	} else if ((display_options & OPT_DISP_ONE_WINDOW) && (event->state & GDK_MOD1_MASK) &&
-			isdigit(event->keyval) && (event->keyval > '0')) {
+	} else if (!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW) &&
+			(event->state & GDK_MOD1_MASK) && isdigit(event->keyval) &&
+			(event->keyval > '0')) {
 		gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook), event->keyval - '1');
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 	}
