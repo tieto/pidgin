@@ -106,6 +106,73 @@ static void process_hotmail_msg(struct gaim_connection *gc, gchar *msgdata);
 void msn_des_win(GtkWidget *a, GtkWidget *b);
 void msn_newmail_dialog(const char *text);
 
+char tochar(char *h)
+{
+	char alphabet[] = "0123456789abcdef";
+	char tmp;
+	char b;
+	int v = 0;
+	int i;
+
+	for (i = strlen(h); i > 0; i--)
+	{
+		tmp = tolower(h[strlen(h) - i]);
+
+		if (tmp >= '0' && tmp <= '9')
+			b = tmp - '0';
+		else if (tmp >= 'a' && tmp <= 'f')
+			b = (tmp - 'a') + 10;
+
+		if (i > 1)
+			v =+ ((i-1) * 16) * b;
+		else
+			v += b;
+	}
+
+	return v;
+}
+
+char *url_decode(char *text)
+{
+	static char newtext[MSN_BUF_LEN];
+	char *buf;
+	int c = 0;
+	int i = 0;
+	int j = 0;
+
+	for (i = 0; i < strlen(text); i++)
+	{
+		if (text[i] == '%')
+			c++;
+	}
+
+	buf = (char *)malloc(strlen(text) + c + 1);
+
+	for (i = 0, j = 0 ; text[i] != 0; i++)
+	{
+		if (text[i] != '%')
+		{
+			buf[j++] = text[i];
+		}
+		else
+		{
+			char hex[3];
+			hex[0] = text[++i];
+			hex[1] = text[++i];
+			hex[2] = 0;
+
+			buf[j++] = tochar(hex);
+		}
+	}
+
+	for (i = 0; i < strlen(buf); i++)
+		newtext[i] = buf[i];
+
+	free(buf);
+
+	return newtext;
+}
+
 void msn_accept_add_permit(gpointer w, struct msn_ask_add_permit *ap)
 {
 	msn_add_permit(ap->gc, ap->user);
@@ -227,7 +294,7 @@ void msn_add_request(struct gaim_connection *gc, char *buf)
 		snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], res[5]);
 
 		ap->user = g_strdup(res[4]);
-		ap->friendly = g_strdup(res[5]);
+		ap->friendly = url_decode(res[5]);
 		ap->gc = gc;
 
 		do_ask_dialog(buf, ap, (GtkFunction) msn_accept_add_permit, (GtkFunction) msn_cancel_add_permit);
@@ -767,7 +834,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 			}
 			else
 			{
-				md->friendly = g_strdup(res[4]);
+				md->friendly = url_decode(res[4]);
 
 				/* Ok, ok.  Your account is FINALLY online.  Ya think Microsoft
 				 * could have had any more steps involved? */
