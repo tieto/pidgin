@@ -309,6 +309,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	char *buffy = g_strdup(message);
 	char *angel = g_strdup(name);
 	int plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, 0);
+
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
 			g_free(buffy);
@@ -344,6 +345,9 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 				new_conv = 1;
 				cnv = new_conversation(name);
 			}
+		}
+		else {
+			return;
 		}
 		if (cnv != NULL) {
 			play_sound(RECEIVE);
