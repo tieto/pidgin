@@ -76,8 +76,8 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 
 DLL_C_SRC =		about.c \
 			away.c \
+			blist.c \
 			browser.c \
-			buddy.c \
 			buddy_chat.c \
 			conversation.c \
 			core.c \
@@ -88,6 +88,7 @@ DLL_C_SRC =		about.c \
 			ft.c \
 			gaim-disclosure.c \
 			gaimrc.c \
+			gtkblist.c \
 			gtkconv.c \
 			gtkcellrendererprogress.c \
 			gtkdebug.c \
@@ -98,7 +99,6 @@ DLL_C_SRC =		about.c \
 			gtkutils.c \
 			html.c \
 			idle.c \
-			list.c \
 			log.c \
 			main.c \
 			md5.c \

@@ -183,9 +183,6 @@ enum log_event {
 
 #define OPT_POUNCE_NOTIFY	0x200
 
-#define CONVERSATION_TITLE "%s - Gaim"
-#define LOG_CONVERSATION_TITLE "%s - Gaim (logged)"
-
 /* These should all be runtime selectable */
 
 #define MSG_LEN 2048
@@ -195,7 +192,7 @@ enum log_event {
 #define BUF_LEN MSG_LEN
 #define BUF_LONG BUF_LEN * 2
 
-/* Globals in aim.c */
+/* Globals in main.c */
 extern int opt_away;
 extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
@@ -204,9 +201,9 @@ extern int opt_debug;
 extern guint misc_options;
 #define OPT_MISC_DEBUG			0x00000001
 #define OPT_MISC_BROWSER_POPUP		0x00000002
-#define OPT_MISC_BUDDY_TICKER           0x00000004
-#define OPT_MISC_STEALTH_TYPING         0x00000010
-#define OPT_MISC_USE_SERVER_ALIAS		0x00000020
+#define OPT_MISC_BUDDY_TICKER		0x00000004
+#define OPT_MISC_STEALTH_TYPING		0x00000010
+#define OPT_MISC_USE_SERVER_ALIAS	0x00000020
 
 extern guint logging_options;
 #define OPT_LOG_CONVOS			0x00000001
@@ -313,7 +310,7 @@ extern guint sound_options;
 
 extern guint away_options;
 #define OPT_AWAY_BACK_ON_IM		0x00000002
-/* #define OPT_AWAY_TIK_HACK		0x00000004 */
+/* #define OPT_AWAY_TOMBSTONE		0x00000004 */
 #define OPT_AWAY_AUTO			0x00000008
 #define OPT_AWAY_NO_AUTO_RESP		0x00000010
 #define OPT_AWAY_QUEUE			0x00000020
@@ -332,10 +329,10 @@ extern char web_command[2048];
 extern struct save_pos blist_pos;
 extern struct window_size conv_size, buddy_chat_size;
 
-/* Functions in aim.c */
+/* Functions in main.c */
 extern void do_quit();
 
-/* Functions in buddy.c */
+/* Functions in gtkblist.c */
 extern void signoff(struct gaim_connection *);
 
 /* Functions in buddy_chat.c */

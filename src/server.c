@@ -793,26 +793,6 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		message = g_memdup(msg, len);
 	}
 
-#if 0
-	/*
-	 * TiK, using TOC, sends an automated message in order to get your
-	 * away message. Now, this is one of the biggest hacks I think I've
-	 * seen. But, in order to be nice to TiK, we're going to give users
-	 * the option to ignore it.
-	 */
-	if ((away_options & OPT_AWAY_TIK_HACK) && gc->away &&
-		strlen(gc->away) && (len < 0) &&
-
-	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
-		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
-		serv_send_im(gc, name, tmpmsg, -1, IM_FLAG_AWAY);
-		g_free(tmpmsg);
-		g_free(name);
-		g_free(message);
-		return;
-	}
-#endif
-
 	/*
 	 * If you can't figure this out, stop reading right now.
 	 * "We're not worthy! We're not worthy!"

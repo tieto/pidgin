@@ -24,7 +24,7 @@
 #include <gmodule.h>
 #include "gaim.h"
 #include "gtkplugin.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 #include "win32dep.h"
 
 /*

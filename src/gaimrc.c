@@ -839,7 +839,7 @@ static struct replace gen_replace[] = {
 { /* OPT_GEN_BACK_ON_IM */		0x00020000,  &away_options, OPT_AWAY_BACK_ON_IM },
 { /* OPT_GEN_CTL_CHARS */		0x00080000, &convo_options, OPT_CONVO_CTL_CHARS },
 #if 0
-{ /* OPT_GEN_TIK_HACK */		0x00100000,  &away_options, OPT_AWAY_TIK_HACK },
+{ /* OPT_GEN_TOMBSTONE */		0x00100000,  &away_options, OPT_AWAY_TOMBSTONE },
 #endif
 { /* OPT_GEN_CTL_SMILEYS */		0x00200000, &convo_options, OPT_CONVO_CTL_SMILEYS },
 { /* OPT_GEN_AUTO_AWAY */		0x00800000,  &away_options, OPT_AWAY_AUTO },

@@ -12,7 +12,7 @@
 #include "win32dep.h"
 #include "MinimizeToTray.h"
 #include "ui.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 
 /*
  *  DEFINES, MACROS & DATA TYPES
