@@ -645,7 +645,7 @@ gboolean meify(char *message, int len)
 	if (!*c)
 		return FALSE;
 	if (!g_strncasecmp(c, "/me ", 4)) {
-		memmove(c, c + 4, len - 4);
+		memmove(c, c + 4, len - 3);
 		return TRUE;
 	} else
 		return FALSE;
