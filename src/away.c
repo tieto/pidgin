@@ -55,6 +55,20 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 {
 	if (imaway) {
 		GtkWidget *tmp = imaway;
+		/*GSList *templist = message_queue;
+
+		while (templist)
+		{
+			struct queued_message *qm = (struct queued_message *)templist->data;
+
+			free(qm->message);
+
+			message_queue = g_slist_remove(message_queue, qm);
+
+			free(qm);
+		}
+		*/
+		
 		imaway = NULL;
 		gtk_widget_destroy(tmp);
 		if (w != tmp)

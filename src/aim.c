@@ -68,6 +68,7 @@ GList *buddy_pounces = NULL;
 GSList *away_messages = NULL;
 GList *conversations = NULL;
 GList *chat_rooms = NULL;
+GSList *message_queue = NULL;
 
 GtkWidget *mainwindow = NULL;
 

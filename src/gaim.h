@@ -268,6 +268,13 @@ struct buddy_pounce {
 	int options;
 };
 
+struct queued_message {
+	char name[80];
+	char *message;
+	time_t tm;
+	struct gaim_connection *gc;
+};
+
 struct away_message {
 	char name[80];
 	char message[2048];
@@ -528,11 +535,12 @@ extern int logging_options;
 #define OPT_USR_KEEPALV		0x00000002
 #define OPT_USR_REM_PASS	0x00000004
 
-#define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://www.marko.net/gaim\">http://www.marko.net/gaim</A>."
+#define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
 
 extern int report_idle;
 extern int web_browser;
 extern GList *aim_users;
+extern GSList *message_queue;
 extern char sound_cmd[2048];
 extern char web_command[2048];
 extern struct save_pos blist_pos;
