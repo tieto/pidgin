@@ -70,7 +70,7 @@ struct _GaimEventLoopUiOps
 	 * Removes an input handler.
 	 * @see gaim_input_remove, g_source_remove
 	 */
-	void (*input_remove)(guint handle);
+	guint (*input_remove)(guint handle);
 };
 
 /**************************************************************************/
@@ -117,7 +117,7 @@ guint gaim_input_add(int fd, GaimInputCondition cond,
  * @param handle The handle of the input handler. Note that this is the return
  * value from gaim_input_add, <i>not</i> the file descriptor.
  */
-void gaim_input_remove(guint handle);
+guint gaim_input_remove(guint handle);
 
 /*@}*/
 

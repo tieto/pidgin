@@ -50,7 +50,7 @@ gaim_input_add(int source, GaimInputCondition condition, GaimInputFunction func,
 	return ops->input_add(source, condition, func, user_data);
 }
 
-void
+guint
 gaim_input_remove(guint tag)
 {
 	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
