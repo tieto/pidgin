@@ -15,5 +15,5 @@ libfaim_a_SOURCES = aim_auth.c aim_buddylist.c aim_chat.c aim_chatnav.c \
 		    aim_meta.c aim_misc.c aim_rxhandlers.c aim_rxqueue.c \
 		    aim_search.c aim_snac.c aim_tlv.c aim_txqueue.c aim_util.c
 
-CFLAGS += $(GAIM_CFLAGS) -I../src -DAIM_BUILDDATE=\"`date +%Y%m%e`\" -DAIM_BUILDTIME=\"`date +%H%M%S`\"
+CFLAGS += $(GAIM_CFLAGS) -I../src -DAIM_BUILDDATE=\"`date +%Y%m%d`\" -DAIM_BUILDTIME=\"`date +%H%M%S`\"
 
