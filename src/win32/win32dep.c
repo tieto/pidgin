@@ -308,6 +308,8 @@ void wgaim_init(void) {
 	 */
 	if(!wgaim_set_idlehooks())
 		debug_printf("Failed to initialize idle tracker\n");
+
+	wgaim_gtkspell_init();
 }
 
 /* Windows Cleanup */
