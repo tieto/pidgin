@@ -601,7 +601,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
 			gaim_chat_write(GAIM_CHAT(convo), from, what, flags, time(NULL));
 		else
-			gaim_im_write(GAIM_IM(convo), from, what, -1, flags, time(NULL));
+			gaim_im_write(GAIM_IM(convo), from, what, flags, time(NULL));
 		break;
 	}
 
@@ -849,7 +849,7 @@ int tcl_cmd_send_im(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	who = Tcl_GetString(objv[2]);
 	text = Tcl_GetString(objv[3]);
 
-	serv_send_im(gc, who, text, -1, 0);
+	serv_send_im(gc, who, text, 0);
 
 	return TCL_OK;
 }

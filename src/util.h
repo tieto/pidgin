@@ -314,12 +314,37 @@ gchar *gaim_strreplace(const gchar *string, const gchar *delimiter,
 					   const gchar *replacement);
 
 /**
+ * This is like strstr, except that it ignores ASCII case in
+ * searching for the substring.
+ *
+ * @param haystack The string to search in.
+ * @param needle   The substring to find.
+ * @return the location of the substring if found, or NULL if not
+ */
+const char *gaim_strcasestr(const char *haystack, const char *needle);
+
+/**
  * Returns a string representing a filesize in the appropriate
  * units (MB, KB, GB, etc.)
  *
  * @param size The size
  */
 char *gaim_get_size_string(size_t size);
+
+/**
+ * Finds a HTML tag matching the given name, locating its start
+ * and end, and storing its attributes in a GData hash table.
+ * The names of the attributes are lower-cased in the hash table,
+ * and the name of the tag is case insensitive.
+ *
+ * @param needle	the name of the tag
+ * @param haystack	the null-delimited string to search in
+ * @param start		a pointer to the start of the tag if found
+ * @param end		a pointer to the end of the tag if found
+ * @param attributes	the attributes, if the tag was found
+ * @return TRUE if the tag was found
+ */
+gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const char **start, const char **end, GData **attributes);
 
 #ifdef __cplusplus
 }

@@ -144,15 +144,20 @@ void       gtk_imhtml_show_smileys     (GtkIMHtml *imhtml, gboolean show);
 
 void       gtk_imhtml_show_comments    (GtkIMHtml *imhtml, gboolean show);
 
-GString*   gtk_imhtml_append_text      (GtkIMHtml *imhtml,
-					const gchar *text, gint len, GtkIMHtmlOptions  options);
+#define    gtk_imhtml_append_text(x, y, z) \
+ gtk_imhtml_append_text_with_images(x, y, z, NULL)
+
+GString*   gtk_imhtml_append_text_with_images (GtkIMHtml *imhtml,
+					       const gchar *text,
+					       GtkIMHtmlOptions options,
+					       GSList *images);
 
 void       gtk_imhtml_clear            (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_up          (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_down        (GtkIMHtml *imhtml);
 
 GtkIMHtmlScalable *gtk_imhtml_scalable_new();
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, gchar *filename);
+GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename);
 void gtk_imhtml_image_free(GtkIMHtmlScalable *);
 void gtk_imhtml_image_scale(GtkIMHtmlScalable *, int, int);
 void gtk_imhtml_image_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);

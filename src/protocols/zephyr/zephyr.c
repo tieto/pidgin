@@ -369,7 +369,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
                             !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL")) {
 				if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
 					flags |= GAIM_IM_AUTO_RESP;
-				serv_got_im(zgc, notice.z_sender, buf2, flags, time(NULL), -1);
+				serv_got_im(zgc, notice.z_sender, buf2, flags, time(NULL));
 			} else {
 				zephyr_triple *zt1, *zt2;
 				zt1 = new_triple(notice.z_class, notice.z_class_inst,
@@ -789,7 +789,7 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 	return 0;
 }
 
-static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, int len, GaimImFlags flags) {
+static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, GaimImFlags flags) {
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;

@@ -514,7 +514,7 @@ static gboolean
 options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 {
 	if (data == NULL)
-		return;
+		return FALSE;
 
 	if (!strcmp(data, "method_string")) {
 		gaim_prefs_set_string("/plugins/gtk/X11/notify/title_string", gtk_entry_get_text(GTK_ENTRY(widget)));

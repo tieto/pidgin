@@ -779,7 +779,6 @@ void
 gaim_plugins_probe(const char *ext)
 {
 #ifdef GAIM_PLUGINS
-	GList *l, *l_next;
 	GDir *dir;
 	const gchar *file;
 	gchar *path;

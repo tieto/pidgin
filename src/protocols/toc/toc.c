@@ -740,7 +740,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		a = (away && (*away == 'T')) ? GAIM_IM_AUTO_RESP : 0;
 
-		serv_got_im(gc, c, message, a, time(NULL), -1);
+		serv_got_im(gc, c, message, a, time(NULL));
 	} else if (!g_ascii_strcasecmp(c, "UPDATE_BUDDY")) {
 		char *l, *uc, *tmp;
 		int logged, evil, idle, type = 0;
@@ -1059,7 +1059,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static int toc_send_im(GaimConnection *gc, const char *name, const char *message, int len, GaimImFlags flags)
+static int toc_send_im(GaimConnection *gc, const char *name, const char *message, GaimImFlags flags)
 {
 	char *buf1, *buf2;
 
@@ -1089,7 +1089,7 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 	 * that length is passed to sflap_send().
 	 */
 
-	if (len + 52 > MSG_LEN) {
+	if (strlen(buf1) + 52 > MSG_LEN) {
 		g_free(buf1);
 		return -E2BIG;
 	}

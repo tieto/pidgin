@@ -61,8 +61,8 @@ static void historize(GaimConversation *c)
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp2, strlen(tmp2), options);
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<br>", -1, options);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp2, options);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<br>", options);
 	gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->imhtml)->text_buffer, &
 end);
 	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0, 0,

@@ -478,7 +478,7 @@ msn_close(GaimConnection *gc)
 
 static int
 msn_send_im(GaimConnection *gc, const char *who, const char *message,
-			int len, GaimImFlags flags)
+			GaimImFlags flags)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
@@ -525,7 +525,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		 */
 		serv_got_typing_stopped(gc, (char *)who);
 		serv_got_im(gc, who, message, flags,
-					time(NULL), -1);
+					time(NULL));
 	}
 
 	return 1;

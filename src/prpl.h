@@ -92,7 +92,8 @@ typedef enum
  */
 typedef enum
 {
-	GAIM_IM_AUTO_RESP = 0x01    /**< Auto response.    */
+	GAIM_IM_AUTO_RESP = 0x0001,    /**< Auto response.    */
+	GAIM_IM_IMAGES    = 0x0002     /**< Contains images.  */
 } GaimImFlags;
 
 /**
@@ -241,7 +242,7 @@ struct _GaimPluginProtocolInfo
 	void (*login)(GaimAccount *);
 	void (*close)(GaimConnection *);
 	int  (*send_im)(GaimConnection *, const char *who,
-					const char *message, int len,
+					const char *message,
 					GaimImFlags flags);
 	void (*set_info)(GaimConnection *, const char *info);
 	int  (*send_typing)(GaimConnection *, const char *name, int typing);

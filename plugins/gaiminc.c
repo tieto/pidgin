@@ -43,7 +43,7 @@ bud(struct gaim_connection *gc, char *who, void *m)
 {
 	/* whenever someone comes online, it sends them a message. if i
 	 * cared more, i'd make it so it popped up on your screen too */
-	serv_send_im(gc, who, "Hello!", -1, 0);
+	serv_send_im(gc, who, "Hello!", 0);
 }
 
 /*

@@ -21,6 +21,7 @@
 #include "blist.h"
 #include "conversation.h"
 #include "debug.h"
+#include "imgstore.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
@@ -180,8 +181,6 @@ common_send(GaimConversation *conv, const char *message)
 	GaimConnection *gc;
 	GaimConversationUiOps *ops;
 	char *buf, *buf2, *buffy = NULL;
-	gulong length = 0;
-	gboolean binary = FALSE;
 	int plugin_return;
 	int limit;
 	int err = 0;
@@ -261,133 +260,34 @@ common_send(GaimConversation *conv, const char *message)
 						 gaim_conversation_get_name(conv), &buffy);
 
 		if (buffy != NULL) {
-			int imflags = 0;
+			GaimImFlags imflags = 0;
+			GaimMessageFlags msgflags = GAIM_MESSAGE_SEND;
 
-			if (conv->u.im->images != NULL) {
-				int id = 0, offset = 0;
-				char *bigbuf = NULL;
-				GSList *tmplist;
-
-				for (tmplist = conv->u.im->images;
-					 tmplist != NULL;
-					 tmplist = tmplist->next) {
-
-					char *img_filename = (char *)tmplist->data;
-					FILE *imgfile;
-					char *filename, *c;
-					struct stat st;
-					char imgtag[1024];
-
-					id++;
-
-					if (stat(img_filename, &st) != 0) {
-						gaim_debug(GAIM_DEBUG_ERROR, "conversation",
-								   "Could not stat image %s\n",
-								   img_filename);
-
-						continue;
-					}
-
-					/*
-					 * Here we check to make sure the user still wants to send
-					 * the image. He may have deleted the <img> tag in which
-					 * case we don't want to send the binary data.
-					 */
-					filename = img_filename;
-
-					while ((c = strchr(filename, '/')) != NULL)
-						filename = c + 1;
-
-					g_snprintf(imgtag, sizeof(imgtag),
-							   "<IMG SRC=\"file://%s\" ID=\"%d\" "
-							   "DATASIZE=\"%d\">",
-							   filename, id, (int)st.st_size);
-
-					if (strstr(buffy, imgtag) == 0) {
-						gaim_debug(GAIM_DEBUG_ERROR, "conversation",
-								   "Not sending image: %s\n", img_filename);
-						continue;
-					}
-
-					if (!binary) {
-						length = strlen(buffy) + strlen("<BINARY></BINARY>");
-						bigbuf = g_malloc(length + 1);
-						g_snprintf(bigbuf,
-								   strlen(buffy) + strlen("<BINARY> ") + 1,
-								   "%s<BINARY>", buffy);
-
-						offset = strlen(buffy) + strlen("<BINARY>");
-						binary = TRUE;
-					}
-
-					g_snprintf(imgtag, sizeof(imgtag),
-							   "<DATA ID=\"%d\" SIZE=\"%d\">",
-							   id, (int)st.st_size);
-
-					length += strlen(imgtag) + st.st_size + strlen("</DATA>");
-
-					bigbuf = g_realloc(bigbuf, length + 1);
-
-					if ((imgfile = fopen(img_filename, "r")) == NULL) {
-						gaim_debug(GAIM_DEBUG_ERROR, "conversation",
-								   "Could not open image %s\n", img_filename);
-						continue;
-					}
-
-					strncpy(bigbuf + offset, imgtag, strlen(imgtag) + 1);
-
-					offset += strlen(imgtag);
-					offset += fread(bigbuf + offset, 1, st.st_size, imgfile);
-
-					fclose(imgfile);
-
-					strncpy(bigbuf + offset, "</DATA>",
-							strlen("</DATA>") + 1);
-
-					offset += strlen("</DATA>");
-				}
-
-				if (binary) {
-					strncpy(bigbuf + offset, "</BINARY>",
-							strlen("<BINARY>") + 1);
-
-					err = serv_send_im(gc, gaim_conversation_get_name(conv),
-									   bigbuf, length, imflags);
-				}
-				else
-					err = serv_send_im(gc, gaim_conversation_get_name(conv),
-									   buffy, -1, imflags);
-
-				if (err > 0) {
-					GSList *tempy;
-
-					for (tempy = conv->u.im->images;
-						 tempy != NULL;
-						 tempy = tempy->next) {
-
-						g_free(tempy->data);
-					}
-
-					g_slist_free(conv->u.im->images);
-					conv->u.im->images = NULL;
-
-					if (binary)
-						gaim_im_write(im, NULL, bigbuf, length,
-									  GAIM_MESSAGE_SEND, time(NULL));
-					else
-						gaim_im_write(im, NULL, buffy, -1, GAIM_MESSAGE_SEND,
-									  time(NULL));
-				}
-
-				if (binary)
-					g_free(bigbuf);
+			if (im->images != NULL) {
+				imflags |= GAIM_IM_IMAGES;
+				msgflags |= GAIM_MESSAGE_IMAGES;
 			}
-			else {
-				err = serv_send_im(gc, gaim_conversation_get_name(conv),
-								   buffy, -1, imflags);
 
-				if (err > 0)
-					gaim_im_write(im, NULL, buf, -1, GAIM_MESSAGE_SEND, time(NULL));
+			err = serv_send_im(gc, gaim_conversation_get_name(conv),
+							    buffy, imflags);
+
+			if (err > 0)
+				gaim_im_write(im, NULL, buf, msgflags, time(NULL));
+
+			if (im->images != NULL) {
+				GSList *tempy;
+				int image;
+
+				for (tempy = im->images;
+					 tempy != NULL;
+					 tempy = tempy->next) {
+
+					image = GPOINTER_TO_INT(tempy->data);
+					gaim_imgstore_unref(image);
+				}
+
+				g_slist_free(im->images);
+				im->images = NULL;
 			}
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
@@ -1040,14 +940,18 @@ gaim_conversation_destroy(GaimConversation *conv)
 	conversations = g_list_remove(conversations, conv);
 
 	if (conv->type == GAIM_CONV_IM) {
-		GSList *snode;
+		GSList *tempy;
+		int image;
 
 		gaim_im_stop_typing_timeout(conv->u.im);
 		gaim_im_stop_type_again_timeout(conv->u.im);
 
-		for (snode = conv->u.im->images; snode != NULL; snode = snode->next) {
-			if (snode->data != NULL)
-				g_free(snode->data);
+		for (tempy = conv->u.im->images;
+			 tempy != NULL;
+			 tempy = tempy->next) {
+
+			image = GPOINTER_TO_INT(tempy->data);
+			gaim_imgstore_unref(image);
 		}
 
 		g_slist_free(conv->u.im->images);
@@ -1432,7 +1336,7 @@ gaim_find_conversation_with_account(const char *name,
 
 void
 gaim_conversation_write(GaimConversation *conv, const char *who,
-						const char *message, size_t length, GaimMessageFlags flags,
+						const char *message, GaimMessageFlags flags,
 						time_t mtime)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -1504,7 +1408,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		}
 	}
 
-	ops->write_conv(conv, who, message, length, flags, mtime);
+	ops->write_conv(conv, who, message, flags, mtime);
 
 	win = gaim_conversation_get_window(conv);
 
@@ -1710,7 +1614,7 @@ gaim_im_update_typing(GaimIm *im)
 
 void
 gaim_im_write(GaimIm *im, const char *who, const char *message,
-			  size_t len, GaimMessageFlags flags, time_t mtime)
+			  GaimMessageFlags flags, time_t mtime)
 {
 	GaimConversation *c;
 
@@ -1721,9 +1625,9 @@ gaim_im_write(GaimIm *im, const char *who, const char *message,
 
 	/* Raise the window, if specified in prefs. */
 	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL)
-		c->ui_ops->write_im(c, who, message, len, flags, mtime);
+		c->ui_ops->write_im(c, who, message, flags, mtime);
 	else
-		gaim_conversation_write(c, who, message, -1, flags, mtime);
+		gaim_conversation_write(c, who, message, flags, mtime);
 }
 
 void
@@ -1943,7 +1847,7 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 	if (conv->ui_ops != NULL && conv->ui_ops->write_chat != NULL)
 		conv->ui_ops->write_chat(conv, who, message, flags, mtime);
 	else
-		gaim_conversation_write(conv, who, message, -1, flags, mtime);
+		gaim_conversation_write(conv, who, message, flags, mtime);
 }
 
 void
@@ -1986,7 +1890,7 @@ gaim_chat_add_user(GaimChat *chat, const char *user, const char *extra_msg)
 					   _("%s [<I>%s</I>] entered the room."),
 					   user, extra_msg);
 
-		gaim_conversation_write(conv, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
@@ -2070,7 +1974,7 @@ gaim_chat_rename_user(GaimChat *chat, const char *old_user,
 		g_snprintf(tmp, sizeof(tmp),
 				   _("%s is now known as %s"), old_user, new_user);
 
-		gaim_conversation_write(conv, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 
@@ -2114,7 +2018,7 @@ gaim_chat_remove_user(GaimChat *chat, const char *user, const char *reason)
 		else
 			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
 
-		gaim_conversation_write(conv, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-left",
@@ -2189,7 +2093,7 @@ gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason)
 
 			g_snprintf(tmp, sizeof(tmp), _(" left the room (%s)."), reason);
 
-			gaim_conversation_write(conv, NULL, tmp, -1,
+			gaim_conversation_write(conv, NULL, tmp,
 									GAIM_MESSAGE_SYSTEM, time(NULL));
 		}
 	}

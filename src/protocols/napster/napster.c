@@ -129,7 +129,7 @@ static int nap_do_irc_style(GaimConnection *gc, const char *message, const char 
 }
 
 /* 205 - MSG_CLIENT_PRIVMSG */
-static int nap_send_im(GaimConnection *gc, const char *who, const char *message, int len, GaimImFlags flags)
+static int nap_send_im(GaimConnection *gc, const char *who, const char *message, GaimImFlags flags)
 {
 
 	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {
@@ -284,7 +284,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 205: /* MSG_CLIENT_PRIVMSG */
 		res = g_strsplit(buf, " ", 2);
-		serv_got_im(gc, res[0], res[1], 0, time(NULL), -1);
+		serv_got_im(gc, res[0], res[1], 0, time(NULL));
 		g_strfreev(res);
 		break;
 
@@ -305,7 +305,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 214: /* MSG_SERVER_STATS */
 		res = g_strsplit(buf, " ", 3);
 		buf2 = g_strdup_printf(_("users: %s, files: %s, size: %sGB"), res[0], res[1], res[2]);
-		serv_got_im(gc, "server", buf2, 0, time(NULL), -1);
+		serv_got_im(gc, "server", buf2, 0, time(NULL));
 		g_free(buf2);
 		g_strfreev(res);
 		break;
@@ -343,7 +343,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 404: /* MSG_SERVER_NOSUCH */
 		/* abused by opennap servers to broadcast stuff */
-		serv_got_im(gc, "server", buf, 0, time(NULL), -1);
+		serv_got_im(gc, "server", buf, 0, time(NULL));
 		break;
 
 	case 405: /* MSG_SERVER_JOIN_ACK */
@@ -380,7 +380,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 603: /* MSG_CLIENT_WHOIS */
 		buf2 = g_strdup_printf(_("%s requested your information"), buf);
-		serv_got_im(gc, "server", buf2, 0, time(NULL), -1);
+		serv_got_im(gc, "server", buf2, 0, time(NULL));
 		g_free(buf2);
 		break;
 
@@ -394,16 +394,16 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 621:
 	case 622: /* MSG_CLIENT_MOTD */
 		/* also replaces MSG_SERVER_MOTD, so we should display it */
-		serv_got_im(gc, "motd", buf, 0, time(NULL), -1);
+		serv_got_im(gc, "motd", buf, 0, time(NULL));
 		break;
 
 	case 627: /* MSG_CLIENT_WALLOP */
 		/* abused by opennap server maintainers to broadcast stuff */
-		serv_got_im(gc, "wallop", buf, 0, time(NULL), -1);
+		serv_got_im(gc, "wallop", buf, 0, time(NULL));
 		break;
 
 	case 628: /* MSG_CLIENT_ANNOUNCE */
-		serv_got_im(gc, "announce", buf, 0, time(NULL), -1);
+		serv_got_im(gc, "announce", buf, 0, time(NULL));
 		break;
 
 	case 748: /* MSG_SERVER_GHOST */
@@ -416,7 +416,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 751: /* MSG_CLIENT_PING */
 		buf2 = g_strdup_printf(_("%s requested a PING"), buf);
-		serv_got_im(gc, "server", buf2, 0, time(NULL), -1);
+		serv_got_im(gc, "server", buf2, 0, time(NULL));
 		g_free(buf2);
 		/* send back a pong */
 		/* MSG_CLIENT_PONG */

@@ -88,7 +88,7 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 
 	gc = gaim_account_get_connection(irc->account);
 	if (gc)
-		serv_got_im(gc, args[1], args[2], GAIM_IM_AUTO_RESP, time(NULL), -1);
+		serv_got_im(gc, args[1], args[2], GAIM_IM_AUTO_RESP, time(NULL));
 }
 
 void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -289,7 +289,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
 				gaim_chat_write(GAIM_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			else
-				gaim_im_write(GAIM_IM(convo), "", msg, -1, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+				gaim_im_write(GAIM_IM(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			g_free(msg);
 			g_free(irc->nameconv);
 			irc->nameconv = NULL;
@@ -369,7 +369,7 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 			gaim_chat_write(GAIM_CHAT(convo), args[1], _("no such channel"),
 					GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		else
-			gaim_im_write(GAIM_IM(convo), args[1], _("User is not logged in"), -1,
+			gaim_im_write(GAIM_IM(convo), args[1], _("User is not logged in"),
 				      GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
@@ -726,7 +726,7 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 		if (gaim_conversation_get_type (convo) == GAIM_CONV_CHAT)
 			gaim_chat_write(GAIM_CHAT(convo), "PONG", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		else
-			gaim_im_write(GAIM_IM(convo), "PONG", msg, -1, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+			gaim_im_write(GAIM_IM(convo), "PONG", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		gc = gaim_account_get_connection(irc->account);
 		if (!gc) {
@@ -765,9 +765,9 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 	}
 
 	if (!gaim_utf8_strcasecmp(args[0], gaim_connection_get_display_name(gc))) {
-		serv_got_im(gc, nick, msg, 0, time(NULL), -1);
+		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else if (notice) {
-		serv_got_im(gc, nick, msg, 0, time(NULL), -1);
+		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
 		convo = gaim_find_conversation_with_account(args[0], irc->account);
 		if (convo)

@@ -853,6 +853,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_OPT_TAG ("SPAN");
 	VALID_TAG ("/SPAN");
 	VALID_TAG ("BR/"); /* hack until gtkimhtml handles things better */
+	VALID_TAG ("IMG");
 
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
@@ -995,10 +996,10 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 
 
 
-GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
-				 const gchar      *text,
-				 gint              len,
-				 GtkIMHtmlOptions  options)
+GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
+					     const gchar      *text,
+					     GtkIMHtmlOptions  options,
+					     GSList           *images)
 {
 	gint pos = 0;
 	GString *str = NULL;
@@ -1009,6 +1010,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	gchar *tag;
 	gchar *url = NULL;
 	gchar *bg = NULL;
+	gint len;
 	gint tlen, smilelen, wpos=0;
 	gint type;
 	const gchar *c;
@@ -1033,11 +1035,9 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	g_return_val_if_fail (imhtml != NULL, NULL);
 	g_return_val_if_fail (GTK_IS_IMHTML (imhtml), NULL);
 	g_return_val_if_fail (text != NULL, NULL);
-	g_return_val_if_fail (len != 0, NULL);
-	
+
 	c = text;
-	if (len == -1)
-		len = strlen(text);
+	len = strlen(text);
 	ws = g_malloc(len + 1);
 	ws[0] = 0;
 
@@ -1154,7 +1154,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					ws[wpos] = '\n';
 					wpos++;
 					NEW_BIT (NEW_TEXT_BIT);
-					break;	
+					break;
 				case 26:        /* HR */
 				case 42:        /* HR (opt) */
 					ws[wpos++] = '\n';
@@ -1196,16 +1196,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 37:	/* FONT */
 				case 38:	/* HEAD */
 				case 39:	/* /HEAD */
-					break; 
-				case 40:        /* BINARY */
-					NEW_BIT (NEW_TEXT_BIT);
-					while (pos < len && g_ascii_strncasecmp("</BINARY>", c, strlen("</BINARY>"))) {
-						c++;
-						pos++;
-					}
-					c = c - tlen; /* Because it will add this later */
-					break;
-				case 41:        /* /BINARY */
+				case 40:	/* BINARY */
+				case 41:	/* /BINARY */
 					break;
 				case 43:	/* FONT (opt) */
 					{
@@ -1290,53 +1282,25 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					}
 					break;
 				case 46:	/* IMG (opt) */
+				case 59:	/* IMG */
 					{
-						gchar *src = gtk_imhtml_get_html_opt (tag, "SRC=");
-						gchar *id = gtk_imhtml_get_html_opt (tag, "ID=");
-						gchar *datasize = gtk_imhtml_get_html_opt (tag, "DATASIZE=");
-						gint im_len = datasize?atoi(datasize):0;
+						GdkPixbuf *img = NULL;
+						const gchar *filename = NULL;
 
-						if (src && id && im_len && im_len <= len - pos) {
-							/* This is an embedded IM image, or is it? */
-							char *tmp = NULL;
-							const char *alltext;
-							guchar *imagedata = NULL;
-
-							GdkPixbufLoader *load;
-							GdkPixbuf *imagepb = NULL;
-							GError *error = NULL;
-
-							tmp = g_strdup_printf("<DATA ID=\"%s\" SIZE=\"%s\">", id, datasize);
-							alltext = strstr(c, tmp);
-							imagedata = g_memdup(alltext + strlen(tmp), im_len);
-
-							g_free(tmp);
-
-							load = gdk_pixbuf_loader_new();
-							if (!gdk_pixbuf_loader_write(load, imagedata, im_len, &error)){
-								fprintf(stderr, "IM Image corrupted or unreadable.: %s\n", error->message);
-							} else {
-								imagepb = gdk_pixbuf_loader_get_pixbuf(load);
-								if (imagepb) {
-									scalable = gtk_imhtml_image_new(imagepb, g_strdup(src));
-									NEW_BIT(NEW_SCALABLE_BIT);
-									g_object_unref(imagepb);
-								}
-							}
-
-							gdk_pixbuf_loader_close(load, NULL);
-
-
-							g_free(imagedata);
-							g_free(id);
-							g_free(datasize);
-							g_free(src);
-
-							break;
+						if (images && images->data) {
+							img = images->data;
+							images = images->next;
+							filename = g_object_get_data(G_OBJECT(img), "filename");
+							g_object_ref(G_OBJECT(img));
+						} else {
+							img = gtk_widget_render_icon(GTK_WIDGET(imhtml),
+							    GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_BUTTON,
+							    "gtkimhtml-missing-image");
 						}
-						g_free(id);
-						g_free(datasize);
-						g_free(src);
+
+						scalable = gtk_imhtml_image_new(img, filename);
+						NEW_BIT(NEW_SCALABLE_BIT);
+						g_object_unref(G_OBJECT(img));
 					}
 				case 47:	/* P (opt) */
 				case 48:	/* H3 (opt) */
@@ -1346,7 +1310,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 56:	/* SPAN */
 				case 57:	/* /SPAN */
 					break;
-				case 59:	/* comment */
+				case 60:	/* comment */
 					NEW_BIT (NEW_TEXT_BIT);
 					if (imhtml->show_comments)
 						wpos = g_snprintf (ws, len, "%s", tag);
@@ -1533,7 +1497,7 @@ void gtk_imhtml_page_down (GtkIMHtml *imhtml)
 }
 
 /* GtkIMHtmlScalable, gtk_imhtml_image, gtk_imhtml_hr */
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, gchar *filename)
+GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename)
 {
 	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlImage));
 	GtkImage *image = GTK_IMAGE(gtk_image_new_from_pixbuf(img));
@@ -1547,7 +1511,7 @@ GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, gchar *filename)
 	im_image->width = gdk_pixbuf_get_width(img);
 	im_image->height = gdk_pixbuf_get_height(img);
 	im_image->mark = NULL;
-	im_image->filename = filename;
+	im_image->filename = filename ? g_strdup(filename) : NULL;
 
 	g_object_ref(img);
 	return GTK_IMHTML_SCALABLE(im_image);
@@ -1668,7 +1632,8 @@ static void gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
 {
 	GtkWidget *sel = gtk_file_selection_new(_("Save Image"));
 
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(sel), image->filename);
+	if (image->filename)
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sel), image->filename);
 	g_object_set_data(G_OBJECT(sel), "GtkIMHtmlImage", image);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sel)->ok_button), "clicked",
 					 G_CALLBACK(write_img_to_file), sel);
@@ -1718,7 +1683,8 @@ void gtk_imhtml_image_free(GtkIMHtmlScalable *scale)
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
 
 	g_object_unref(image->pixbuf);
-	g_free(image->filename);
+	if (image->filename)
+		g_free(image->filename);
 	g_free(scale);
 }
 

@@ -682,7 +682,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 				strip_linefeed(msg);
 				m = yahoo_codes_to_html(msg);
-				serv_got_im(gc, from, m, 0, tm, -1);
+				serv_got_im(gc, from, m, 0, tm);
 				g_free(m);
 
 				tm = time(NULL);
@@ -1645,7 +1645,7 @@ static GList *yahoo_actions(GaimConnection *gc) {
 	return m;
 }
 
-static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, int len, GaimImFlags flags)
+static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, GaimImFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);

@@ -940,6 +940,31 @@ gchar *gaim_strreplace(const gchar *string, const gchar *delimiter, const gchar 
 	return ret;
 }
 
+const char *gaim_strcasestr(const char *haystack, const char *needle) {
+	size_t hlen, nlen;
+	const char *tmp, *ret;
+
+	g_return_val_if_fail(haystack != NULL, NULL);
+	g_return_val_if_fail(needle != NULL, NULL);
+
+	hlen = strlen(haystack);
+	nlen = strlen(needle);
+	tmp = haystack,
+	ret = NULL;
+
+	g_return_val_if_fail(hlen > 0, NULL);
+	g_return_val_if_fail(nlen > 0, NULL);
+
+	while (*tmp && !ret) {
+		if (!g_ascii_strncasecmp(needle, tmp, nlen))
+			ret = tmp;
+		else
+			tmp++;
+	}
+
+	return ret;
+}
+
 char *gaim_get_size_string(size_t size)
 {
 	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
@@ -962,4 +987,139 @@ char *gaim_get_size_string(size_t size)
 
 		return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
 	}
+}
+
+gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const char **start, const char **end, GData **attributes) {
+	GData *attribs;
+	const char *cur = haystack;
+	char *name = NULL;
+	gboolean found = FALSE;
+	gboolean in_tag = FALSE;
+	gboolean in_attr = FALSE;
+	gboolean in_quotes = FALSE;
+	size_t needlelen = strlen(needle);
+
+	g_datalist_init(&attribs);
+
+	while (*cur && !found) {
+		if (in_tag) {
+			if (in_quotes) {
+				const char *close = cur;
+
+				while (*close && *close != '"')
+					close++;
+
+				/* if we got the close quote, store the value and carry on from    *
+				 * after it. if we ran to the end of the string, point to the NULL *
+				 * and we're outta here */
+				if (*close) {
+					/* only store a value if we have an attribute name */
+					if (name) {
+						size_t len = close - cur;
+						char *val = g_strndup(cur, len);
+
+						g_datalist_set_data_full(&attribs, name, val, g_free);
+						g_free(name);
+						name = NULL;
+					}
+
+					in_quotes = FALSE;
+					cur = close + 1;
+				} else {
+					cur = close;
+				}
+			} else if (in_attr) {
+				const char *close = cur;
+
+				while (*close && *close != '>' && *close != '"' && *close != ' ' && *close != '=')
+					close++;
+
+				/* if we got the equals, store the name of the attribute. if we got
+				 * the quote, save the attribute and go straight to quote mode.
+				 * otherwise the tag closed or we reached the end of the string,
+				 * so we can get outta here */
+				switch (*close) {
+				case '"':
+					in_quotes = TRUE;
+				case '=':
+					{
+						size_t len = close - cur;
+
+						/* don't store a blank attribute name */
+						if (len) {
+							if (name)
+								g_free(name);
+							name = g_ascii_strdown(cur, len);
+						}
+
+						in_attr = FALSE;
+						cur = close + 1;
+						break;
+					}
+				case ' ':
+				case '>':
+					in_attr = FALSE;
+				default:
+					cur = close;
+					break;
+				}
+			} else {
+				switch (*cur) {
+				case ' ':
+					/* swallow extra spaces inside tag */
+					while (*cur && *cur == ' ') cur++;
+					in_attr = TRUE;
+					break;
+				case '>':
+					found = TRUE;
+					*end = cur;
+					break;
+				case '"':
+					in_quotes = TRUE;
+				default:
+					cur++;
+					break;
+				}
+			}
+		} else {
+			/* if we hit a < followed by the name of our tag... */
+			if (*cur == '<' && !g_ascii_strncasecmp(cur + 1, needle, needlelen)) {
+				*start = cur;
+				cur = cur + needlelen + 1;
+
+				/* if we're pointing at a space or a >, we found the right tag. if *
+				 * we're not, we've found a longer tag, so we need to skip to the  *
+				 * >, but not being distracted by >s inside quotes.                */
+				if (*cur == ' ' || *cur == '>') {
+					in_tag = TRUE;
+				} else {
+					while (*cur && *cur != '"' && *cur != '>') {
+						if (*cur == '"') {
+							cur++;
+							while (*cur && *cur != '"')
+								cur++;
+						} else {
+							cur++;
+						}
+					}
+				}
+			} else {
+				cur++;
+			}
+		}
+	}
+
+	/* clean up any attribute name from a premature termination */
+	if (name)
+		g_free(name);
+
+	if (found) {
+		*attributes = attribs;
+	} else {
+		*start = NULL;
+		*end = NULL;
+		*attributes = NULL;
+	}
+
+	return found;
 }

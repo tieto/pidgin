@@ -76,7 +76,7 @@ void run_commands() {
 			c = find_conversation(arg1);
 			if (!c) c = gaim_conversation_new(GAIM_CONV_IM, arg1);
 			write_to_conv(c, arg2, WFLAG_SEND, NULL, time(NULL), -1);
-			serv_send_im(c->gc, arg1, arg2, -1, 0);
+			serv_send_im(c->gc, arg1, arg2, 0);
 			free(arg1);
 			free(arg2);
 		} else if (!strncasecmp(command, "away", 4)) {

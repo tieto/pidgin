@@ -40,7 +40,7 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
 	if (gaim_conversation_get_type(convo) == GAIM_CONV_IM)
-		gaim_im_write(GAIM_IM(convo), "", buf, -1, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_im_write(GAIM_IM(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	else
 		gaim_chat_write(GAIM_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	g_free(buf);
@@ -145,7 +145,7 @@ int irc_cmd_help(struct irc_conn *irc, const char *cmd, const char *target, cons
 						    "AWAY JOIN ME MODE<BR>"
 						    "MSG NICK OPERWALL PING<BR>"
 						    "QUERY QUIT QUOTE UMODE<BR>"
-						    "WALLOPS WHOIS"), -1, GAIM_MESSAGE_NO_LOG, time(NULL));
+						    "WALLOPS WHOIS"), GAIM_MESSAGE_NO_LOG, time(NULL));
 	}
 
 	return 0;
@@ -413,7 +413,7 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 		gc = gaim_account_get_connection(irc->account);
 		irc_cmd_privmsg(irc, cmd, target, args);
 		gaim_im_write(GAIM_IM(convo), gaim_connection_get_display_name(gc),
-			      args[1], -1, GAIM_MESSAGE_SEND, time(NULL));
+			      args[1], GAIM_MESSAGE_SEND, time(NULL));
 	}
 
 	return 0;

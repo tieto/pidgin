@@ -30,7 +30,7 @@ gaim_im_write(im, who, message, flags)
 	const char *message
 	int flags
 CODE:
-	gaim_im_write(im, who, message, -1, flags, time(NULL));
+	gaim_im_write(im, who, message, flags, time(NULL));
 
 void
 gaim_im_send(im, message)

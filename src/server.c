@@ -258,7 +258,7 @@ void flush_last_auto_responses(GaimConnection *gc)
 }
 
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,
-				 int len, GaimImFlags imflags)
+				 GaimImFlags imflags)
 {
 	GaimConversation *c;
 	int val = -EINVAL;
@@ -270,7 +270,7 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	c = gaim_find_conversation_with_account(name, gc->account);
 
 	if (prpl_info && prpl_info->send_im)
-		val = prpl_info->send_im(gc, name, message, len, imflags);
+		val = prpl_info->send_im(gc, name, message, imflags);
 
 	if (!(imflags & GAIM_IM_AUTO_RESP))
 		serv_touch_idle(gc);
@@ -835,10 +835,10 @@ int find_queue_total_by_name(char *name)
  * sure to follow along, kids
  */
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 GaimImFlags imflags, time_t mtime, gint len)
+				 GaimImFlags imflags, time_t mtime)
 {
 	GaimConversation *cnv;
-	GaimMessageFlags auto_resp;
+	GaimMessageFlags msgflags;
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
@@ -852,41 +852,32 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	/*
 	 * Plugin stuff. we pass a char ** but we don't want to pass what's
 	 * been given us by the prpls. So we create temp holders and pass
-	 * those instead. It's basically just to avoid segfaults. Of course,
-	 * if the data is binary, plugins don't see it. Bitch all you want;
-	 * I really don't want you to be dealing with it.
+	 * those instead. It's basically just to avoid segfaults.
 	 */
-	if (len < 0) {
-		buffy = g_malloc(MAX(strlen(msg) + 1, BUF_LONG));
-		strcpy(buffy, msg);
-		angel = g_strdup(who);
+	buffy = g_malloc(MAX(strlen(msg) + 1, BUF_LONG));
+	strcpy(buffy, msg);
+	angel = g_strdup(who);
 
-		plugin_return = GPOINTER_TO_INT(
-			gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-									  "received-im-msg", gc->account,
-									  &angel, &buffy, &imflags));
+	plugin_return = GPOINTER_TO_INT(
+		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
+								  "received-im-msg", gc->account,
+								  &angel, &buffy, &imflags));
 
-		if (!buffy || !angel || plugin_return) {
-			if (buffy)
-				g_free(buffy);
-			if (angel)
-				g_free(angel);
-			return;
-		}
-		name = angel;
-		message = buffy;
-	} else {
-		name = g_strdup(who);
-		message = g_memdup(msg, len);
+	if (!buffy || !angel || plugin_return) {
+		if (buffy)
+			g_free(buffy);
+		if (angel)
+			g_free(angel);
+		return;
 	}
+	name = angel;
+	message = buffy;
 
 	/*
 	 * If you can't figure this out, stop reading right now.
 	 * "We're not worthy! We're not worthy!"
 	 */
-	if (len < 0 &&
-		gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
-
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
 		buffy = linkify_text(message);
 		g_free(message);
 		message = buffy;
@@ -896,12 +887,15 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * Um. When we call gaim_conversation_write with the message we received,
 	 * it's nice to pass whether or not it was an auto-response. So if it
 	 * was an auto-response, we set the appropriate flag. This is just so
-	 * prpls don't have to know about GAIM_MESSAGE_* (though some do anyway)
+	 * prpls don't have to know about GAIM_MESSAGE_* (though some do anyway).
+	 * We also need to preserve the flag that tells the UI to look for the
+	 * associated images.
 	 */
+	msgflags = GAIM_MESSAGE_RECV;
 	if (imflags & GAIM_IM_AUTO_RESP)
-		auto_resp = GAIM_MESSAGE_AUTO_RESP;
-	else
-		auto_resp = 0;
+		msgflags |= GAIM_MESSAGE_AUTO_RESP;
+	if (imflags & GAIM_IM_IMAGES)
+		msgflags |= GAIM_MESSAGE_IMAGES;
 
 	/*
 	 * Alright. Two cases for how to handle this. Either we're away or
@@ -940,11 +934,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
+			qm->message = g_strdup(message);
 			qm->account = gc->account;
 			qm->tm = mtime;
-			qm->flags = GAIM_MESSAGE_RECV | auto_resp;
-			qm->len = len;
+			qm->flags = msgflags;
 			message_queue = g_slist_append(message_queue, qm);
 
 			row = find_queue_row_by_name(qm->name);
@@ -979,8 +972,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
-			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
-						  GAIM_MESSAGE_RECV | auto_resp, mtime);
+			gaim_im_write(GAIM_IM(cnv), NULL, message, msgflags, mtime);
 		}
 
 		/*
@@ -1026,7 +1018,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
-		serv_send_im(gc, name, away_subs(tmpmsg, alias), -1, GAIM_IM_AUTO_RESP);
+		serv_send_im(gc, name, away_subs(tmpmsg, alias), GAIM_IM_AUTO_RESP);
 		if (!cnv && awayqueue &&
 			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 
@@ -1038,11 +1030,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP;
-			qm->len = -1;
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
 			gaim_im_write(GAIM_IM(cnv), NULL, away_subs(tmpmsg, alias),
-						  len, GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP, mtime);
+						  GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP, mtime);
 
 		g_free(tmpmsg);
 	} else {
@@ -1070,16 +1061,14 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->message = g_strdup(message);
 			qm->account = gc->account;
 			qm->tm = mtime;
-			qm->flags = GAIM_MESSAGE_RECV | auto_resp;
-			qm->len = len;
+			qm->flags = msgflags;
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		}
 		else {
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
-			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
-						  GAIM_MESSAGE_RECV | auto_resp, mtime);
+			gaim_im_write(GAIM_IM(cnv), NULL, message, msgflags, mtime);
 			gaim_window_flash(gaim_conversation_get_window(cnv));
 		}
 	}
@@ -1156,7 +1145,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					char *tmp = g_strdup_printf(_("%s logged in."),
 												gaim_get_buddy_alias(b));
 
-					gaim_conversation_write(c, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM,
+					gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM,
 											time(NULL));
 					g_free(tmp);
 				}
@@ -1168,7 +1157,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					qm->account = gc->account;
 					qm->tm = time(NULL);
 					qm->flags = GAIM_MESSAGE_SYSTEM;
-					qm->len = -1;
 					message_queue = g_slist_append(message_queue, qm);
 				}
 			}
@@ -1183,7 +1171,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 					char *tmp = g_strdup_printf(_("%s logged out."),
 												gaim_get_buddy_alias(b));
-					gaim_conversation_write(c, NULL, tmp, -1,
+					gaim_conversation_write(c, NULL, tmp,
 											GAIM_MESSAGE_SYSTEM, time(NULL));
 					g_free(tmp);
 				} else if (awayqueue && find_queue_total_by_name(b->name)) {
@@ -1194,7 +1182,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					qm->account = gc->account;
 					qm->tm = time(NULL);
 					qm->flags = GAIM_MESSAGE_SYSTEM;
-					qm->len = -1;
 					message_queue = g_slist_append(message_queue, qm);
 				}
 			}
@@ -1576,6 +1563,6 @@ void serv_got_popup(const char *msg, const char *u, int wid, int hei)
 
 	gtk_widget_show_all(window);
 
-	gtk_imhtml_append_text(GTK_IMHTML(text), msg, -1, GTK_IMHTML_NO_NEWLINE);
+	gtk_imhtml_append_text(GTK_IMHTML(text), msg, GTK_IMHTML_NO_NEWLINE);
 }
 

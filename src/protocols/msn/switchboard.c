@@ -157,7 +157,7 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 
 		if (*buf != '\0' && (conv = gaim_find_conversation_with_account(user, account)) != NULL) {
-			gaim_conversation_write(conv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM,
+			gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM,
 									time(NULL));
 		}
 
@@ -352,7 +352,7 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(swboard->chat)),
 						 servconn->msg_passport, 0, body, time(NULL));
 	else
-		serv_got_im(gc, servconn->msg_passport, body, 0, time(NULL), -1);
+		serv_got_im(gc, servconn->msg_passport, body, 0, time(NULL));
 
 	g_free(body);
 
@@ -633,7 +633,9 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	char *buf;
 	size_t len;
 	int ret;
+#if 0
 	FILE *fp;
+#endif
 
 	g_return_val_if_fail(swboard != NULL, FALSE);
 	g_return_val_if_fail(msg     != NULL, FALSE);

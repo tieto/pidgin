@@ -84,7 +84,6 @@ struct queued_message {
 	time_t tm;
 	GaimAccount *account;
 	GaimMessageFlags flags;
-	int len;
 };
 
 struct smiley_theme {

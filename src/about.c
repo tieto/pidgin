@@ -89,15 +89,15 @@ void show_about(GtkWidget *w, void *data)
 				  _("Gaim is a modular Instant Messaging client capable of "
 					  "using AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, "
 					  "Zephyr, and Gadu-Gadu all at once.  It is written using "
-					  "Gtk+ and is licensed under the GPL.<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
+					  "Gtk+ and is licensed under the GPL.<BR><BR>"), GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				"<FONT SIZE=\"3\">URL:</FONT> <A HREF=\"" GAIM_WEBSITE "\">"
-				GAIM_WEBSITE "</A><BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
+				GAIM_WEBSITE "</A><BR><BR>", GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_("<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"
-				"<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
+				"<BR><BR>"), GTK_IMHTML_NO_SCROLL);
 
 		/* Active Developers */
 		str = g_strconcat(
@@ -116,7 +116,7 @@ void show_about(GtkWidget *w, void *data)
 			"  Ethan 'Paco-Paco' Blanton (", _("developer"), ")<br>"
 			"  Luke 'LSchiere' Schierer (", _("support"), ")<BR>"
 			"<BR>", NULL);
-		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
 
 		/* Crazy Patch Writers */
@@ -128,7 +128,7 @@ void show_about(GtkWidget *w, void *data)
 			"  Robert 'Robot101' McQueen<BR>"
 			"  Tim 'marv' Ringenbach<br>"
 			"<BR>", NULL);
-		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
 
 		/* Just because */
@@ -136,7 +136,7 @@ void show_about(GtkWidget *w, void *data)
 			"<FONT SIZE=\"3\">", "Just Because", ":</FONT><BR>"
 			"  Rachel Shelton (Vampire & Dark Lord)<br>"
 			"<BR>", NULL);
-		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
 
 		/* Retired Developers */
@@ -154,7 +154,7 @@ void show_about(GtkWidget *w, void *data)
 				"  Syd Logan (", _("hacker and designated driver [lazy bum]"), 
 				")<BR>"
 				"<BR>", NULL);
-		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
 
 		/* Current Translators */
@@ -181,7 +181,7 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>", _("Simplified Chinese"), " (zh_CN)</b> - Funda Wang &lt;<a href=\"mailto: fundawang@linux.net.cn\">fundawang@linux.net.cn</a>&gt;<br>"
 				"  <b>", _("Traditional Chinese"), " (zh_TW)</b> - Ambrose C. Li &lt;<a href=\"mailto: acli@ada.dhs.org\">acli@ada.dhs.org</a>&gt;, Paladin R. Liu &lt;<a href=\"mailto: paladin@ms1.hinet.net\">paladin@ms1.hinet.net</a>&gt;<br>"
 				"<BR>", NULL);
-		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
 
 		/* Past Translators */
@@ -205,7 +205,7 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>", _("Swedish"), " (sv)</b> - Christian Rose<br>"
 				"  <b>", _("Chinese"), " (zh_CN, zh_TW)</b> - Hashao, Rocky S. Lee<br>"
 				"<BR>", NULL);
-		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);

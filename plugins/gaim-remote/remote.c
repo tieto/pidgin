@@ -434,7 +434,7 @@ message_handler(struct UI *ui, guchar subtype, gchar *data)
 			pos += len;
 
 			memcpy(&flags, data + pos, sizeof(flags));
-			serv_send_im(gc, who, msg, -1, flags);
+			serv_send_im(gc, who, msg, flags);
 
 			g_free(who);
 			g_free(msg);

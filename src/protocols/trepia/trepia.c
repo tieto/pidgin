@@ -728,7 +728,7 @@ _parse_data(TrepiaSession *session, char *buf)
 				serv_got_im(session->gc,
 							trepia_profile_get_login(profile),
 							(char *)g_hash_table_lookup(info, "b"),
-							0, time(NULL), -1);
+							0, time(NULL));
 				break;
 
 			case TREPIA_MEMBER_UPDATE:
@@ -1174,7 +1174,7 @@ trepia_close(GaimConnection *gc)
 
 static int
 trepia_send_im(GaimConnection *gc, const char *who, const char *message,
-			int len, GaimImFlags flags)
+			GaimImFlags flags)
 {
 	TrepiaSession *session = gc->proto_data;
 	TrepiaProfile *profile;

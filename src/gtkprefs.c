@@ -2114,9 +2114,9 @@ static void away_message_sel_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 	gtk_imhtml_clear(GTK_IMHTML(away_text));
 	strncpy(buffer, am->message, BUF_LONG);
 	tmp = stylize(buffer, BUF_LONG);
-	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, -1, GTK_IMHTML_NO_TITLE |
+	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
-	gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", -1, GTK_IMHTML_NO_TITLE |
+	gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", GTK_IMHTML_NO_TITLE |
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 	g_free(tmp);
 	g_value_unset (&val);

@@ -32,6 +32,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "ft.h"
+#include "imgstore.h"
 #include "multi.h"
 #include "notify.h"
 #include "privacy.h"
@@ -270,7 +271,7 @@ static int gaim_ssi_gotadded     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_odc_initiate     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_odc_incoming     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_odc_typing       (aim_session_t *, aim_frame_t *, ...);
-static int gaim_update_ui        (aim_session_t *, aim_frame_t *, ...);
+static int gaim_odc_update_ui    (aim_session_t *, aim_frame_t *, ...);
 
 /* for file transfer */
 static int oscar_sendfile_estblsh(aim_session_t *, aim_frame_t *, ...);
@@ -480,7 +481,7 @@ static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 
 	cnv = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
 	if (cnv)
-		gaim_conversation_write(cnv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(cnv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	gaim_conversation_update_progress(cnv, 0);
 
@@ -1912,7 +1913,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	if (getpeername(source, &name, &name_len) == 0) {
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 		dim->connected = TRUE;
-		gaim_conversation_write(cnv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(cnv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
 	
@@ -2136,7 +2137,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
 				gaim_odc_typing, 0);
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER,
-			        gaim_update_ui, 0);
+			        gaim_odc_update_ui, 0);
 	for (i = 0; i < (int)strlen(d->ip); i++) {
 		if (d->ip[i] == ':') {
 			port = atoi(&(d->ip[i+1]));
@@ -2267,7 +2268,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	/* strip_linefeed(tmp); */
-	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL), -1);
+	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
 	g_free(tmp);
 
 	return 1;
@@ -2583,9 +2584,9 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				gchar *uin = g_strdup_printf("%u", args->uin);
 				if (t) { /* This is an offline message */
 					/* I think this timestamp is in UTC, or something */
-					serv_got_im(gc, uin, msg2[0], 0, t, -1);
+					serv_got_im(gc, uin, msg2[0], 0, t);
 				} else { /* This is a message from MacICQ/Miranda */
-					serv_got_im(gc, uin, msg2[0], 0, time(NULL), -1);
+					serv_got_im(gc, uin, msg2[0], 0, time(NULL));
 				}
 				g_free(uin);
 			}
@@ -2595,7 +2596,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			if (i >= 2) {
 				gchar *uin = g_strdup_printf("%u", args->uin);
 				gchar *message = g_strdup_printf("<A HREF=\"%s\">%s</A>", msg2[1], msg2[0]);
-				serv_got_im(gc, uin, message, 0, time(NULL), -1);
+				serv_got_im(gc, uin, message, 0, time(NULL));
 				g_free(uin);
 				g_free(message);
 			}
@@ -3057,6 +3058,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+#if 0
 static char *images(int flags) {
 	static char buf[1024];
 	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s%s%s",
@@ -3069,7 +3071,7 @@ static char *images(int flags) {
 			(flags & AIM_FLAG_WIRELESS) ? "<IMG SRC=\"wireless_icon.gif\">" : "");
 	return buf;
 }
-
+#endif
 
 static char *caps_string(guint caps)
 {
@@ -3207,7 +3209,9 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"%s"
 			"%s\n"
 			"<hr>\n"),
-			info->sn, images(info->flags),
+			info->sn,
+			/* images(info->flags), */
+			"",
 			(int)((info->warnlevel/10.0) + 0.5),
 			onlinesince ? onlinesince : "",
 			membersince ? membersince : "",
@@ -4276,8 +4280,9 @@ static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
 	return 0;
 }
 static void oscar_ask_direct_im(GaimConnection *gc, const char *name);
+static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimImFlags);
 
-static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, int len, GaimImFlags imflags) {
+static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimImFlags imflags) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	int ret = 0;
@@ -4287,12 +4292,8 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
-		/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
-		if (imflags & GAIM_IM_AUTO_RESP)
-			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0, 1);
-		else
-			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0, 0);
-	} else if (len != -1) {
+		ret = gaim_odc_send_im(od->sess, dim->conn, message, imflags);
+	} else if (imflags & GAIM_IM_IMAGES) {
 		/* Trying to send an IM image outside of a direct connection. */
 		oscar_ask_direct_im(gc, name);
 		ret = -ENOTCONN;
@@ -5625,16 +5626,21 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	dim->connected = TRUE;
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), sn);
 	g_free(sn);
-	gaim_conversation_write(cnv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
+	gaim_conversation_write(cnv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_odc_incoming, 0);
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_odc_typing, 0);
-	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER, gaim_update_ui, 0);
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER, gaim_odc_update_ui, 0);
 
 	return 1;
 }
 
-static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
+/*
+ * This is called when each chunk of an image is received.  It can be used to 
+ * update a progress bar, or to eat lots of dry cat food.  Wet cat food is 
+ * nasty, you sicko.
+ */
+static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *sn;
 	double percent;
@@ -5654,10 +5660,11 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
 		dim->watcher = 0;
 	}
+	/* XXX is this really necessary? */
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-	c = gaim_find_conversation(sn);
+	c = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
 	if (c != NULL)
 		gaim_conversation_update_progress(c, percent);
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
@@ -5666,20 +5673,53 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+/*
+ * This is called after a direct IM has been received in its entirety.  This 
+ * function is passed a long chunk of data which contains the IM with any 
+ * data chunks (images) appended to it.
+ *
+ * This function rips out all the data chunks and creates an imgstore for 
+ * each one.  In order to do this, it first goes through the IM and takes 
+ * out all the IMG tags.  When doing so, it rewrites the original IMG tag 
+ * with one compatable with the imgstore Gaim core code. For each one, we 
+ * then read in chunks of data from the end of the message and actually 
+ * create the img store using the given data.
+ *
+ * For somewhat easy reference, here's a sample message
+ * (without the whitespace and asterisks):
+ *
+ * <HTML><BODY BGCOLOR="#ffffff">
+ *     <FONT LANG="0">
+ *     This is a really stupid picture:<BR>
+ *     <IMG SRC="Sample.jpg" ID="1" WIDTH="283" HEIGHT="212" DATASIZE="9894"><BR>
+ *     Yeah it is<BR>
+ *     Here is another one:<BR>
+ *     <IMG SRC="Soap Bubbles.bmp" ID="2" WIDTH="256" HEIGHT="256" DATASIZE="65978">   
+ *     </FONT>
+ * </BODY></HTML>
+ * <BINARY>
+ *     <DATA ID="1" SIZE="9894">datadatadatadata</DATA>
+ *     <DATA ID="2" SIZE="65978">datadatadatadata</DATA>
+ * </BINARY>
+ */
 static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimImFlags imflags = 0;
+	GString *newmsg = g_string_new("");
+	GSList *images = NULL;
 	va_list ap;
-	char *sn, *msg;
-	int len, encoding, isawaymsg;
+	const char *sn, *msg, *msgend, *binary;
+	size_t len;
+	int encoding, isawaymsg;
 
 	va_start(ap, fr);
-	sn = va_arg(ap, char *);
-	msg = va_arg(ap, char *);
-	len = va_arg(ap, int);
+	sn = va_arg(ap, const char *);
+	msg = va_arg(ap, const char *);
+	len = va_arg(ap, size_t);
 	encoding = va_arg(ap, int);
 	isawaymsg = va_arg(ap, int);
 	va_end(ap);
+	msgend = msg + len;
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "Got DirectIM message from %s\n", sn);
@@ -5687,8 +5727,91 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (isawaymsg)
 		imflags |= GAIM_IM_AUTO_RESP;
 
+	/* message has a binary trailer */
+	if ((binary = gaim_strcasestr(msg, "<binary>"))) {
+		GData *attribs;
+		const char *tmp, *start, *end, *last = NULL;
+
+		tmp = msg;
+
+		/* for each valid image tag... */
+		while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
+			const char *id, *src, *datasize;
+			const char *tag = NULL, *data = NULL;
+			size_t size;
+			int imgid = 0;
+
+			/* update the location of the last img tag */
+			last = end;
+
+			/* grab attributes */
+			id       = g_datalist_get_data(&attribs, "id");
+			src      = g_datalist_get_data(&attribs, "src");
+			datasize = g_datalist_get_data(&attribs, "datasize");
+
+			/* if we have id & datasize, build the data tag */
+			if (id && datasize)
+				tag = g_strdup_printf("<data id=\"%s\" size=\"%s\">", id, datasize);
+
+			/* if we have a tag, find the start of the data */
+			if (tag && (data = gaim_strcasestr(binary, tag)))
+				data += strlen(tag);
+
+			/* check the data is here and store it */
+			if (data + (size = atoi(datasize)) <= msgend)
+				imgid = gaim_imgstore_add(data, size, src);
+
+			/* if we have a stored image... */
+			if (imgid) {
+				/* append the message up to the tag */
+				newmsg = g_string_append_len(newmsg, tmp, start - tmp);
+
+				/* write the new image tag */
+				g_string_append_printf(newmsg, "<IMG ID=\"%d\">", imgid);
+
+				/* and record the image number */
+				images = g_slist_append(images, GINT_TO_POINTER(imgid));
+			} else {
+				/* otherwise, copy up to the end of the tag */
+				newmsg = g_string_append_len(newmsg, tmp, (end + 1) - tmp);
+			}
+
+			/* clear the attribute list */
+			g_datalist_clear(&attribs);
+
+			/* continue from the end of the tag */
+			tmp = end + 1;
+		}
+
+		/* append any remaining message data (without the > :-) */
+		if (last++ && (last < binary))
+			newmsg = g_string_append_len(newmsg, last, binary - last);
+
+		/* set the flag if we caught any images */
+		if (images)
+			imflags |= GAIM_IM_IMAGES;
+	} else {
+		g_string_append_len(newmsg, msg, len);
+	}
+
 	/* XXX - I imagine Paco-Paco will want to do some voodoo with the encoding here */
-	serv_got_im(gc, sn, msg, imflags, time(NULL), len);
+	serv_got_im(gc, sn, newmsg->str, imflags, time(NULL));
+
+	/* free up the message */
+	g_string_free(newmsg, TRUE);
+
+	/* unref any images we allocated */
+	if (images) {
+		GSList *tmp;
+		int id;
+
+		for (tmp = images; tmp != NULL; tmp = tmp->next) {
+			id = GPOINTER_TO_INT(tmp->data);
+			gaim_imgstore_unref(id);
+		}
+
+		g_slist_free(images);
+	}
 
 	return 1;
 }
@@ -5714,6 +5837,91 @@ static int gaim_odc_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	else
 		serv_got_typing_stopped(gc, sn);
 	return 1;
+}
+
+static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *message, GaimImFlags imflags) {
+	char *buf;
+	size_t len;
+	int ret;
+
+	if (imflags & GAIM_IM_IMAGES) {
+		GString *msg = g_string_new("");
+		GString *data = g_string_new("<BINARY>");
+		GData *attribs;
+		const char *tmp, *start, *end, *last = NULL;
+		int oscar_id = 0;
+
+		tmp = message;
+
+		/* for each valid IMG tag... */
+		while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
+			GaimStoredImage *image = NULL;
+			const char *id;
+
+			last = end;
+			id = g_datalist_get_data(&attribs, "id");
+
+			/* ... if it refers to a valid gaim image ... */
+			if (id && (image = gaim_imgstore_get(atoi(id)))) {
+				/* ... append the message from start to the tag ... */
+				msg = g_string_append_len(msg, tmp, start - tmp);
+				oscar_id++;
+
+				/* ... insert a new img tag with the oscar id ... */
+				if (image->filename)
+					g_string_append_printf(msg,
+						"<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
+						image->filename, oscar_id, image->size);
+				else
+					g_string_append_printf(msg,
+						"<IMG ID=\"%d\" DATASIZE=\"%d\">",
+						oscar_id, image->size);
+
+				/* ... and append the data to the binary section ... */
+				g_string_append_printf(data, "<DATA ID=\"%d\" SIZE=\"%d\">",
+					oscar_id, image->size);
+				data = g_string_append_len(data, image->data, image->size);
+				data = g_string_append(data, "</DATA>");
+			} else {
+				/* ... otherwise, allow the possibly invalid img tag through. */
+				/* should we do something else? */
+				msg = g_string_append_len(msg, tmp, (end + 1) - tmp);
+			}
+
+			g_datalist_clear(&attribs);
+
+			/* continue from the end of the tag */
+			tmp = end + 1;
+		}
+
+		/* append any remaining message data (without the > :-) */
+		if (last++ && *last)
+			msg = g_string_append(msg, last);
+
+		/* if we inserted any images in the binary section, append it */
+		if (oscar_id) {
+			msg = g_string_append_len(msg, data->str, data->len);
+			msg = g_string_append(msg, "</BINARY>");
+		}
+
+		len = msg->len;
+		buf = msg->str;
+		g_string_free(msg, FALSE);
+		g_string_free(data, TRUE);
+	} else {
+		len = strlen(message);
+		buf = g_memdup(message, len+1);
+	}
+
+	/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
+	if (imflags & GAIM_IM_AUTO_RESP)
+		ret =  aim_odc_send_im(sess, conn, buf, len, 0, 1);
+	else
+		ret =  aim_odc_send_im(sess, conn, buf, len, 0, 0);
+
+	g_free(buf);
+
+	return ret;
 }
 
 struct ask_do_dir_im {

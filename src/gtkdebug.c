@@ -319,7 +319,7 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 
 		g_free(cat_s);
 
-		gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, -1, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
 
 		g_free(s);
 	}

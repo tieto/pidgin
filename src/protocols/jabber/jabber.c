@@ -1481,7 +1481,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 				jabber_track_convo_thread(gjc, from, thread_id);
 				if (gaim_find_conversation_with_account(from, GJ_GC(gjc)->account))
 					serv_got_im(GJ_GC(gjc), from, m, flags,
-						time_sent, -1);
+						time_sent);
 				else {
 					if(p->from->user) {
 						from = g_strdup_printf("%s@%s", p->from->user,
@@ -1490,7 +1490,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 						/* server message? */
 						from = g_strdup(p->from->server);
 					}
-					serv_got_im(GJ_GC(gjc), from, m, flags, time_sent, -1);
+					serv_got_im(GJ_GC(gjc), from, m, flags, time_sent);
 					g_free(from);
 				}
 			}
@@ -2603,7 +2603,7 @@ static void insert_message(xmlnode x, const char *message, gboolean use_xhtml) {
 	g_free(xhtml);
 }
 
-static int jabber_send_im(GaimConnection *gc, const char *who, const char *message, int len, GaimImFlags flags)
+static int jabber_send_im(GaimConnection *gc, const char *who, const char *message, GaimImFlags flags)
 {
 	xmlnode x, y;
 	char *thread_id = NULL;

@@ -1874,19 +1874,19 @@ void g_show_info_text(GaimConnection *gc, const char *who, int away, const char 
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
 		linkifyinated = linkify_text(info);
-		gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, -1, options);
+		gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, options);
 		g_free(linkifyinated);
 	} else
-		gtk_imhtml_append_text(GTK_IMHTML(b->text), info, -1, options);
+		gtk_imhtml_append_text(GTK_IMHTML(b->text), info, options);
 
 	va_start(ap, info);
 	while ((more_info = va_arg(ap, char *)) != NULL) {
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
 			linkifyinated = linkify_text(more_info);
-			gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, -1, options);
+			gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, options);
 			g_free(linkifyinated);
 		} else
-			gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, -1, options);
+			gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, options);
 	}
 	va_end(ap);
 
@@ -3270,7 +3270,7 @@ static void log_show_convo(struct view_log *view)
 		g_string_append(string, buf);
 
 		if (i == 30) {
-			gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, -1, view->options);
+			gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
 			g_string_free(string, TRUE);
 			string = g_string_new("");
 			/* you can't have these anymore. if someone clicks on another item while one is
@@ -3282,8 +3282,8 @@ static void log_show_convo(struct view_log *view)
 		}
 
 	}
-	gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, -1, view->options);
-	gtk_imhtml_append_text(GTK_IMHTML(view->layout), "<BR>", -1, view->options);
+	gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
+	gtk_imhtml_append_text(GTK_IMHTML(view->layout), "<BR>", view->options);
 
 	gtk_widget_set_sensitive(view->bbox, TRUE);
 	g_signal_handler_disconnect(G_OBJECT(view->window), block);

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7326 2003-09-07 23:47:00Z chipx86 $
+ * $Id: gg.c 7538 2003-09-27 19:17:21Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -315,7 +315,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			imsg = charset_convert(e->event.msg.message, "CP1250", "UTF-8");
 			strip_linefeed(imsg);
 			/* e->event.msg.time - we don't know what this time is for */
-			serv_got_im(gc, user, imsg, 0, time(NULL), -1);
+			serv_got_im(gc, user, imsg, 0, time(NULL));
 			g_free(imsg);
 		}
 		break;
@@ -560,7 +560,7 @@ static void agg_close(GaimConnection *gc)
 	g_free(gc->proto_data);
 }
 
-static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, int len, GaimImFlags flags)
+static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, GaimImFlags flags)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	gchar *imsg;

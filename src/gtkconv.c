@@ -30,9 +30,11 @@
 #endif
 
 #include <gdk/gdkkeysyms.h>
+#include <locale.h>
 
 #include "debug.h"
 #include "html.h"
+#include "imgstore.h"
 #include "log.h"
 #include "multi.h"
 #include "notify.h"
@@ -195,29 +197,37 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
 	GaimIm *im;
-	const char *name;
-	const char *filename;
-	char *buf;
-	struct stat st;
+	char *name, *filename;
+	char *buf, *data;
+	size_t size;
+	GError *error;
 	int id;
 
 	conv    = g_object_get_data(G_OBJECT(wid), "user_data");
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	im      = GAIM_IM(conv);
-	name    = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
-	id      = g_slist_length(im->images) + 1;
+	name    = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid)));
 
-	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(wid)))
+	if (!name) {
+		gtk_widget_destroy(gtkconv->dialogs.image);
+		gtkconv->dialogs.image = NULL;
 		return;
+	}
 
-	gtk_widget_destroy(wid);
-
-	if (!name)
+	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(wid))) {
+		g_free(name);
 		return;
+	}
 
-	if (stat(name, &st) != 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",
-				   "Could not stat image %s\n", name);
+	gtk_widget_destroy(gtkconv->dialogs.image);
+	gtkconv->dialogs.image = NULL;
+
+	if (!g_file_get_contents(name, &data, &size, &error)) {
+		gaim_notify_error(NULL, NULL, error->message, NULL);
+
+		g_error_free(error);
+		g_free(name);
+
 		return;
 	}
 
@@ -225,12 +235,26 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	while (strchr(filename, '/'))
 		filename = strchr(filename, '/') + 1;
 
-	buf = g_strdup_printf("<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
-						  filename, id, (int)st.st_size);
-	im->images = g_slist_append(im->images, g_strdup(name));
-	gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer),
-									 buf, -1);
+	id = gaim_imgstore_add(data, size, filename);
+	g_free(data);
+
+	if (!id) {
+		buf = g_strdup_printf(_("Failed to store image: %s\n"), name);
+		gaim_notify_error(NULL, NULL, buf, NULL);
+
+		g_free(buf);
+		g_free(name);
+
+		return;
+	}
+
+	im->images = g_slist_append(im->images, GINT_TO_POINTER(id));
+
+	buf = g_strdup_printf("<IMG ID=\"%d\" SRC=\"file://%s\">", id, filename);
+	gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), buf, -1);
 	g_free(buf);
+
+	g_free(name);
 
 	set_toggle(gtkconv->toolbar.image, FALSE);
 }
@@ -2700,7 +2724,7 @@ tab_complete(GaimConversation *conv)
 			matches = g_list_remove(matches, matches->data);
 		}
 
-		gaim_conversation_write(conv, NULL, addthis, -1, GAIM_MESSAGE_NO_LOG,
+		gaim_conversation_write(conv, NULL, addthis, GAIM_MESSAGE_NO_LOG,
 								time(NULL));
 		gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, partial, -1);
 		g_free(addthis);
@@ -4220,7 +4244,7 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 
 static void
 gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
-					  const char *message, size_t len, GaimMessageFlags flags,
+					  const char *message, GaimMessageFlags flags,
 					  time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
@@ -4251,7 +4275,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 
 	gtkconv->u.im->a_virgin = FALSE;
 
-	gaim_conversation_write(conv, who, message, len, flags, mtime);
+	gaim_conversation_write(conv, who, message, flags, mtime);
 }
 
 static void
@@ -4287,12 +4311,12 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 		gaim_window_raise(gaim_conversation_get_window(conv));
 	}
 
-	gaim_conversation_write(conv, who, message, -1, flags, mtime);
+	gaim_conversation_write(conv, who, message, flags, mtime);
 }
 
 static void
 gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
-						const char *message, size_t length, GaimMessageFlags flags,
+						const char *message, GaimMessageFlags flags,
 						time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
@@ -4300,6 +4324,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	GaimConnection *gc;
 	int gtk_font_options = 0;
 	GString *log_str;
+	GSList *images = NULL;
 	FILE *fd;
 	char buf[BUF_LONG];
 	char buf2[BUF_LONG];
@@ -4308,9 +4333,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	char *str;
 	char *with_font_tag;
 	char *sml_attrib = NULL;
-
-	if(length == -1)
-		length = strlen(message) + 1;
+	size_t length = strlen(message) + 1;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gc = gaim_conversation_get_gc(conv);
@@ -4327,6 +4350,67 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gaim_window_show(win);
 	}
 
+	if (flags & GAIM_MESSAGE_IMAGES) {
+		GData *attribs;
+		GdkPixbuf *broken;
+		const char *tmp, *start, *end;
+
+		broken = gtk_widget_render_icon(GTK_WIDGET(gtkconv->imhtml),
+				GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_BUTTON,
+				"gaim-missing-image");
+
+		tmp = message;
+		while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
+			GaimStoredImage *image = NULL;
+			GdkPixbufLoader *loader;
+			GError *error = NULL;
+			char *id = NULL;
+
+			tmp = end + 1;
+
+			id = g_datalist_get_data(&attribs, "id");
+
+			if (id)
+				image = gaim_imgstore_get(atoi(id));
+
+			g_datalist_clear(&attribs);
+
+			if (!image) {
+				g_object_ref(G_OBJECT(broken));
+				images = g_slist_append(images, broken);
+				continue;
+			}
+
+			loader = gdk_pixbuf_loader_new();
+
+			if (!gdk_pixbuf_loader_write(loader, image->data, image->size, &error)) {
+				if (error) {
+					gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",
+							"Failed to make pixbuf for IM Image: %s\n",
+							error->message);
+					g_error_free(error);
+				}
+				g_object_ref(G_OBJECT(broken));
+				images = g_slist_append(images, broken);
+			} else {
+				GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+				if (pixbuf) {
+					if (image->filename)
+						g_object_set_data_full(G_OBJECT(pixbuf), "filename",
+								g_strdup(image->filename), g_free);
+					g_object_ref(G_OBJECT(pixbuf));
+					images = g_slist_append(images, pixbuf);
+				} else {
+					g_object_ref(G_OBJECT(broken));
+					images = g_slist_append(images, broken);
+				}
+			}
+
+			gdk_pixbuf_loader_close(loader, NULL);
+		}
+
+		g_object_unref(G_OBJECT(broken));
+	}
 
 	if(time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
 		strftime(mdate, sizeof(mdate), "%Y-%m-%d %H:%M:%S", localtime(&mtime));
@@ -4367,7 +4451,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				   "<!--(%s) --><B>%s</B><BR>",
 				   mdate, message);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, -1, 0);
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf2, 0, images);
 
 		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 			char *t1 = strip_html(buf);
@@ -4419,7 +4503,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				   "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>",
 				   message);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, -1, 0);
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf, 0, images);
 	}
 	else {
 		char *new_message = g_memdup(message, length);
@@ -4498,7 +4582,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, -1, 0);
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf2, 0, images);
 
 		if(gc){
 			char *pre = g_strdup_printf("<font %s>", sml_attrib ? sml_attrib : "");
@@ -4518,12 +4602,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		else
 			with_font_tag = g_memdup(new_message, length);
 
-		log_str = gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
-										 with_font_tag, length, gtk_font_options);
+		log_str = gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
+										 with_font_tag, gtk_font_options, images);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", -1, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
 
-		/* XXX This needs to be updated for the new length argument. */
 		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 			char *t1, *t2;
 
@@ -4553,7 +4636,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			g_free(t2);
 		}
 
-		/* XXX This needs to be updated for the new length argument. */
 		if (gaim_conversation_is_logging(conv)) {
 			char *t1, *t2;
 			char nm[256];
@@ -4597,6 +4679,17 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	if(sml_attrib)
 		g_free(sml_attrib);
+
+	if (images) {
+		GSList *tmp = images;
+		GdkPixbuf *pixbuf;
+		while (tmp) {
+			pixbuf = tmp->data;
+			g_object_unref(G_OBJECT(pixbuf));
+			tmp = tmp->next;
+		}
+		g_slist_free(images);
+	}
 }
 
 static void

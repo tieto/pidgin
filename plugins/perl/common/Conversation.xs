@@ -80,7 +80,7 @@ gaim_conversation_write(conv, who, message, flags)
 	const char *message
 	int flags
 CODE:
-	gaim_conversation_write(conv, who, message, -1, flags, time(NULL));
+	gaim_conversation_write(conv, who, message, flags, time(NULL));
 
 Gaim::Conversation::IM
 gaim_conversation_get_im_data(conv)

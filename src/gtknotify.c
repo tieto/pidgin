@@ -329,7 +329,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	options ^= GTK_IMHTML_NO_NEWLINE;
 	options ^= GTK_IMHTML_NO_SCROLL;
 
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), text, -1, options);
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), text, options);
 
 	/* Show the window */
 	gtk_widget_show(window);

@@ -78,7 +78,7 @@ static void dequeue_message(GtkTreeIter *iter)
 				else
 					gaim_conversation_set_account(cnv, account);
 
-				gaim_im_write(GAIM_IM(cnv), NULL, qm->message, qm->len,
+				gaim_im_write(GAIM_IM(cnv), NULL, qm->message,
 						qm->flags, qm->tm);
 				g_free(qm->message);
 				g_free(qm);
@@ -118,7 +118,7 @@ void purge_away_queue(GSList **queue)
 		else
 			gaim_conversation_set_account(cnv, account);
 
-		gaim_im_write(GAIM_IM(cnv), NULL, qm->message, -1, qm->flags, qm->tm);
+		gaim_im_write(GAIM_IM(cnv), NULL, qm->message, qm->flags, qm->tm);
 
 		g_free(qm->message);
 		g_free(qm);
@@ -228,10 +228,10 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	gaim_setup_imhtml(awaytext);
 	gtk_widget_show(awaytext);
 	buf = stylize(a->message, BUF_LONG);
-	gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, -1, GTK_IMHTML_NO_TITLE |
+	gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, GTK_IMHTML_NO_TITLE |
 			GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 	g_free(buf);
-	gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>", -1,
+	gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>",
 			GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_COMMENTS |
 			GTK_IMHTML_NO_SCROLL);
 
