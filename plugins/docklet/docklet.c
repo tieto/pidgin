@@ -58,7 +58,6 @@ static GtkWidget *image = NULL;
 static GtkIconFactory *icon_factory = NULL;
 static enum docklet_status status;
 static enum docklet_status icon;
-static guint blinker = 0;
 
 static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
 	mute_sounds = GTK_CHECK_MENU_ITEM(toggle)->active;
@@ -76,8 +75,7 @@ static void docklet_toggle_queue(GtkWidget *widget, void *data) {
 
 static void docklet_flush_queue() {
 	if (unread_message_queue) {
-		purge_away_queue(unread_message_queue);
-		unread_message_queue = NULL;
+		purge_away_queue(&unread_message_queue);
 	}
 }
 
@@ -279,7 +277,7 @@ static gboolean docklet_update_status() {
 
 		/* and schedule the blinker function if messages are pending */
 		if (status == online_pending || status == away_pending) {
-			blinker = g_timeout_add(500, docklet_blink_icon, NULL);
+			g_timeout_add(500, docklet_blink_icon, &docklet);
 		}
 	}
 
@@ -291,6 +289,16 @@ static void docklet_embedded(GtkWidget *widget, void *data) {
 	docklet_add();
 }
 
+static void docklet_remove_callbacks() {
+	debug_printf("Tray Icon: removing callbacks");
+
+	while (g_source_remove_by_user_data(&docklet)) {
+		debug_printf(".");
+	}
+
+	debug_printf("\n");
+}
+
 static void docklet_destroyed(GtkWidget *widget, void *data) {
 	debug_printf("Tray Icon: destroyed\n");
 
@@ -298,18 +306,15 @@ static void docklet_destroyed(GtkWidget *widget, void *data) {
 
 	docklet_flush_queue();
 
-	if (blinker) {
-		g_source_remove(blinker);
-		blinker = 0;
-	}
+	docklet_remove_callbacks();
 
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
 
-	g_idle_add(docklet_create, NULL);
+	g_idle_add(docklet_create, &docklet);
 }
 
-static gboolean docklet_create(void *data) {
+static gboolean docklet_create() {
 	GtkWidget *box;
 
 	if (docklet) {
@@ -350,7 +355,7 @@ static void gaim_signoff(struct gaim_connection *gc, void *data) {
 	/* do this when idle so that if the prpl was connecting
 	   and was cancelled, we register that connecting_count
 	   has returned to 0 */
-	g_idle_add(docklet_update_status, NULL);
+	g_idle_add(docklet_update_status, &docklet);
 }
 
 static void gaim_connecting(struct aim_user *user, void *data) {
@@ -362,10 +367,12 @@ static void gaim_away(struct gaim_connection *gc, char *state, char *message, vo
 	docklet_update_status();
 }
 
-static void gaim_im_displayed_recv(struct gaim_connection *gc, char **who, char **what, void *data) {
+static void gaim_im_recv(struct gaim_connection *gc, char **who, char **what, void *data) {
 	/* if message queuing while away is enabled, this event could be the first
-	   message so we need to see if the status (and hence icon) needs changing */
-	docklet_update_status();
+	   message so we need to see if the status (and hence icon) needs changing.
+	   do this when idle so that all message processing is completed, queuing
+	   etc, before we run. */
+	g_idle_add(docklet_update_status, &docklet);
 }
 
 /* static void gaim_buddy_signon(struct gaim_connection *gc, char *who, void *data) {
@@ -418,7 +425,7 @@ char *gaim_plugin_init(GModule *handle) {
 	gaim_signal_connect(handle, event_signoff, gaim_signoff, NULL);
 	gaim_signal_connect(handle, event_connecting, gaim_connecting, NULL);
 	gaim_signal_connect(handle, event_away, gaim_away, NULL);
-	gaim_signal_connect(handle, event_im_displayed_rcvd, gaim_im_displayed_recv, NULL);
+	gaim_signal_connect(handle, event_im_recv, gaim_im_recv, NULL);
 /*	gaim_signal_connect(handle, event_buddy_signon, gaim_buddy_signon, NULL);
 	gaim_signal_connect(handle, event_buddy_signoff, gaim_buddy_signoff, NULL);
 	gaim_signal_connect(handle, event_buddy_away, gaim_buddy_away, NULL);
@@ -435,10 +442,7 @@ void gaim_plugin_remove() {
 
 	docklet_flush_queue();
 
-	if (blinker) {
-		g_source_remove(blinker);
-		blinker = 0;
-	}
+	docklet_remove_callbacks();
 
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_destroyed), NULL);
 	gtk_widget_destroy(GTK_WIDGET(docklet));

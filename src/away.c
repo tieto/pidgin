@@ -53,30 +53,33 @@ static void destroy_im_away()
 	imaway = NULL;
 }
 
-void purge_away_queue(GSList *queue)
+void purge_away_queue(GSList **queue)
 {
+	GSList *q = *queue;
+	struct queued_message *qm;
 	struct conversation *cnv;
 
-	gtk_clist_freeze(GTK_CLIST(clistqueue));
-	gtk_clist_clear(GTK_CLIST(clistqueue));
-
-	while (queue) {
-		struct queued_message *qm = queue->data;
+	while (q) {
+		qm = q->data;
 
 		cnv = find_conversation(qm->name);
 		if (!cnv)
 			cnv = new_conversation(qm->name);
+
 		if (g_slist_index(connections, qm->gc) >= 0)
 			set_convo_gc(cnv, qm->gc);
-		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
 
-		queue = g_slist_remove(queue, qm);
+		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
 
 		g_free(qm->message);
 		g_free(qm);
+
+		q->data = NULL;
+		q = q->next;
 	}
 
-	gtk_clist_thaw(GTK_CLIST(clistqueue));
+	g_slist_free(*queue);
+	*queue = NULL;
 }
 
 void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data) {
@@ -134,7 +137,8 @@ void toggle_away_queue()
 	} else {
 		gtk_widget_hide(clistqueue);
 		gtk_widget_hide(clistqueuesw);
-		purge_away_queue(message_queue);
+		gtk_clist_clear(GTK_CLIST(clistqueue));
+		purge_away_queue(&message_queue);
 	}
 }
 
@@ -143,7 +147,12 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 	if (imaway) {
 		GtkWidget *tmp = imaway;
 
-		purge_away_queue(message_queue);
+		gtk_clist_freeze(GTK_CLIST(clistqueue));
+		gtk_clist_clear(GTK_CLIST(clistqueue));
+
+		purge_away_queue(&message_queue);
+
+		gtk_clist_thaw(GTK_CLIST(clistqueue));
 
 		imaway = NULL;
 		gtk_widget_destroy(tmp);
