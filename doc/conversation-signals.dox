@@ -87,6 +87,8 @@ gboolean (*received_im_msg)(GaimAccount *account, char **sender, char **message,
    sender, the message, or the flags by modifying the pointer to the
    strings and integer. This can also be used to cancel a message by
    returning @c TRUE.
+  @note
+   Make sure to free @a *sender and @a *message before you replace them!
   @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
   @param account The account the message was received on.
   @param sender  A pointer to the username of the sender.
@@ -95,137 +97,179 @@ gboolean (*received_im_msg)(GaimAccount *account, char **sender, char **message,
 
  @signaldef displaying-chat-msg
   @signalproto
-void (*displaying-chat-msg)(GaimConversation *conv);
+gboolean (*displaying_chat_msg)(GaimAccount *account, char **message);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted just before a message is displayed in a chat.
+   @a message is a pointer to a string, so the plugin can replace the
+   message that will be displayed. This can also be used to cancel displaying
+   a message by returning @c TRUE.
+  @note
+   Make sure to free @a *message before you replace it!
+  @param account The account the message is being displayed on.
+  @param message A pointer to the message that will be displayed.
+  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
  @endsignaldef
 
  @signaldef displayed-chat-msg
   @signalproto
-void (*displayed-chat-msg)(GaimConversation *conv);
+void (*displayed_chat_msg)(GaimAccount *account, const char *message);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted after a message is displayed in a chat conversation.
+  @param account The account the message was displayed on.
+  @param message The message that was displayed.
  @endsignaldef
 
  @signaldef sending-chat-msg
   @signalproto
-void (*sending-chat-msg)(GaimConversation *conv);
+void (*sending_chat_msg)(GaimAccount *account, char **message, int id);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted before sending a message to a chat. @a message is a pointer to the
+   message string, so the plugin can replace the message before being sent.
+  @note
+   Make sure to free @a *message before you replace it!
+  @param account The account the message is being sent on.
+  @param message A pointer to the message that will be sent.
+  @param id      The ID of the chat.
  @endsignaldef
 
  @signaldef sent-chat-msg
   @signalproto
-void (*sent-chat-msg)(GaimConversation *conv);
+void (*sent_chat_msg)(GaimAccount *account, const char *message, int id);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted after sending a message to a chat.
+  @param account The account the message was sent on.
+  @param message The message that was sent.
+  @param id      The ID of the chat.
  @endsignaldef
 
  @signaldef received-chat-msg
   @signalproto
-void (*received-chat-msg)(GaimConversation *conv);
+gboolean (*received_chat_msg)(GaimAccount *account, char **sender, char **message, int id);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a chat message is received. The callback can replace the
+   name of the sender or the messageby modifying the pointer to the
+   strings. This can also be used to cancel displaying a message by
+   returning @c TRUE.
+  @note
+   Make sure to free @a *sender and @a *message before you replace them!
+  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
+  @param account The account the message was received on.
+  @param sender  A pointer to the username of the sender.
+  @param message A pointer to the message that was sent.
+  @param id      The ID of the chat.
  @endsignaldef
 
  @signaldef conversation-switching
   @signalproto
-void (*conversation-switching)(GaimConversation *conv);
+void (*conversation_switching)(GaimConversation *old_conv, GaimConversation *new_conv);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a window is about to switch from one conversation to
+   another.
+  @param old_conv The old active conversation.
+  @param new_conv The soon-to-be active conversation
  @endsignaldef
 
  @signaldef conversation-switched
   @signalproto
-void (*conversation-switched)(GaimConversation *conv);
+void (*conversation_switched)(GaimConversation *old_conv, GaimConversation *new_conv);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a window switched from one conversation to another.
+  @param old_conv The old active conversation.
+  @param new_conv The now active conversation.
  @endsignaldef
 
  @signaldef conversation-created
   @signalproto
-void (*conversation-created)(GaimConversation *conv);
+void (*conversation_created)(GaimConversation *conv);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a new conversation is created.
+  @param conv The new conversation.
  @endsignaldef
 
  @signaldef deleting-conversation
   @signalproto
-void (*deleting-conversation)(GaimConversation *conv);
+void (*deleting_conversation)(GaimConversation *conv);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted just before a conversation is to be destroyed.
+  @param conv The conversation that's about to be destroyed.
  @endsignaldef
 
  @signaldef buddy-typing
   @signalproto
-void (*buddy-typing)(GaimConversation *conv);
+void (*buddy_typing)(GaimConversation *conv);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a buddy starts typing in a conversation window.
+  @param conv The IM conversation a buddy is typing in.
  @endsignaldef
 
  @signaldef chat-buddy-joining
   @signalproto
-void (*chat-buddy-joining)(GaimConversation *conv);
+void (*chat_buddy_joining)(GaimConversation *conv, const char *name);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a buddy is joining a chat, before the list of
+   users in the chat updates to include the new user.
+  @param conv The chat conversation.
+  @param name The name of the user that is joining the conversation.
  @endsignaldef
 
  @signaldef chat-buddy-joined
   @signalproto
-void (*chat-buddy-joined)(GaimConversation *conv);
+void (*chat_buddy_joined)(GaimConversation *conv, const char *name);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a buddy joined a chat, after the users list is updated.
+  @param conv The chat conversation.
  @endsignaldef
 
  @signaldef chat-buddy-leaving
   @signalproto
-void (*chat-buddy-leaving)(GaimConversation *conv);
+void (*chat_buddy_leaving)(GaimConversation *conv, const char *name, const char *reason);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a user is leaving a chat, before the user list is updated.
+   This may include an optional reason why the user is leaving.
+  @param conv   The chat conversation.
+  @param name   The name of the user that is leaving the chat.
+  @param reason The optional reason why the user is leaving.
  @endsignaldef
 
  @signaldef chat-buddy-left
   @signalproto
-void (*chat-buddy-left)(GaimConversation *conv);
+void (*chat_buddy_left)(GaimConversation *conv, const char *name, const char *reason);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a user leaves a chat, after the user list is updated.
+   This may include an optional reason why the user is leaving.
+  @param conv   The chat conversation.
+  @param name   The name of the user that left the chat.
+  @param reason The optional reason why the user left the chat.
  @endsignaldef
 
  @signaldef chat-inviting-user
   @signalproto
-void (*chat-inviting-user)(GaimConversation *conv);
+void (*chat_inviting_user)(GaimConversation *conv, const char *name, char **invite_message);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a user is being invited to the chat. The callback can
+   replace the invite message to the invitee by modifying the pointer to
+   the invite message.
+  @note
+   Make sure to free @a *invite_message before you replace it!
+  @param conv           The chat conversation.
+  @param name           The name of the user being invited.
+  @param invite_message A pointer to the reason why a user is being
+                        invited.
  @endsignaldef
 
  @signaldef chat-invited-user
