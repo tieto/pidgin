@@ -2284,7 +2284,7 @@ generate_send_as_items(GaimWindow *win, GaimConversation *deleted_conv)
 			conv = (GaimConversation *)convs->data;
 			account = gaim_conversation_get_account(conv);
 
-			if (account->gc == NULL) {
+			if (account != NULL && account->gc == NULL) {
 				found_offline = TRUE;
 				break;
 			}
@@ -2395,8 +2395,7 @@ generate_send_as_items(GaimWindow *win, GaimConversation *deleted_conv)
 
 		account = gaim_conversation_get_account(conv);
 
-
-		if (account && (account->gc == NULL)) {
+		if (account != NULL && account->gc == NULL) {
 			if (first_offline && found_online) {
 				menuitem = gtk_separator_menu_item_new();
 				gtk_widget_show(menuitem);
