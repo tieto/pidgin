@@ -1799,6 +1799,14 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		return gdk_font_ref (imhtml->default_font);
 
 	if (!choice) {
+		for (i = 0; fontnames [i]; i++)
+			if (!g_strcasecmp (fontnames [i], DEFAULT_FONT_NAME))
+				break;
+		if (fontnames [i])
+			choice = g_strdup (DEFAULT_FONT_NAME);
+	}
+
+	if (!choice) {
 		if (imhtml->default_font)
 			return gdk_font_ref (imhtml->default_font);
 		return gdk_fontset_load ("-*-*-*-*-*-*-*-*-*-*-*-*-*-*,*");
