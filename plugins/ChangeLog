@@ -24,7 +24,7 @@ version 0.9.20:
 
 	There is a new event, event_quit, which signifies that gaim has exited
 	correctly (i.e. didn't segfault). Also, after this event is called, all
-	plugins are removed, and their gaim_plugin_init function is called.
+	plugins are removed, and their gaim_plugin_remove function is called.
 	This behavior is different from previous versions; however, it is the
 	proper way of doing things, and should have no effect on current
 	plugins. The reason event_quit exists despite plugins being removed at

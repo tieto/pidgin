@@ -138,6 +138,12 @@ event_chat_buddy_join:
 	'room' is the room the person joined.
 	'who' is the screenname of the person who joined.
 
+	This is also triggered upon entering the room for every person in the
+	room, including yourself. (E.g. if you join a room that already had 3
+	people in it this will be called 4 times, once for each of them and
+	once again for you. You will not always be the last one this is called
+	for though.)
+
 event_chat_buddy_leave:
 	char *room, char *who
 
