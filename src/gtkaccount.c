@@ -244,7 +244,7 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 static void
 icon_filesel_choose_cb(GtkWidget *widget, gint response, AccountPrefsDialog *dialog)
 {
-	char *filename;
+	char *filename, *current_folder;
 
 	if (response != GTK_RESPONSE_ACCEPT) {
 		if (response == GTK_RESPONSE_CANCEL)
@@ -254,22 +254,35 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, AccountPrefsDialog *dia
 	}
 
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog->icon_filesel));
+	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog->icon_filesel));
+	if (current_folder != NULL) {
+		gaim_prefs_set_string("/gaim/gtk/filelocations/last_icon_folder", current_folder);
+		g_free(current_folder);
+	}
+
 #else /* FILECHOOSER */
 static void
 icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	char *filename;
+	char *filename, *current_folder;
 
 	filename = g_strdup(gtk_file_selection_get_filename(
-			GTK_FILE_SELECTION(dialog->icon_filesel)));
+				GTK_FILE_SELECTION(dialog->icon_filesel)));
 
 	/* If they typed in a directory, change there */
 	if (gaim_gtk_check_if_dir(filename,
-			GTK_FILE_SELECTION(dialog->icon_filesel)))
+				GTK_FILE_SELECTION(dialog->icon_filesel)))
 	{
 		g_free(filename);
 		return;
 	}
+
+	current_folder = g_path_get_dirname(filename);
+	if (current_folder != NULL) {
+		gaim_prefs_set_string("/gaim/gtk/filelocations/last_icon_folder", current_folder);
+		g_free(current_folder);
+	}
+
 #endif /* FILECHOOSER */
 
 	if (dialog->icon_path)
@@ -367,12 +380,14 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	GtkWidget *tv;
 	GtkTreeSelection *sel;
 #endif /* FILECHOOSER */
+	const char *current_folder;
 
 	if (dialog->icon_filesel != NULL) {
 		gtk_window_present(GTK_WINDOW(dialog->icon_filesel));
 		return;
 	}
 
+	current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_icon_folder");
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	dialog->icon_filesel = gtk_file_chooser_dialog_new(_("Buddy Icon"),
 									GTK_WINDOW(dialog->window),
@@ -381,22 +396,14 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 									GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 									NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog->icon_filesel), GTK_RESPONSE_ACCEPT);
-
-
-	/*  I removed code to set the current path to the current icon in the old file selector so I figure
-	 * it shouldn't be here either.  The reason is because the icon will potentially converted and won't
-	 * be anything near what the user selected last time (which is the advantage to doing it this way. 
-	 * The solution is to create a new pref to specify the last chosen buddy icon.  This would also have the
-	 * advantage (?) of not being account-specific. 
-	if (dialog->icon_path != NULL)
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog->icon_filesel),
-			dialog->icon_path);
-	*/
+	if ((current_folder != NULL) && (*current_folder != '\0'))
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog->icon_filesel),
+											current_folder);
 
 	dialog->icon_preview = gtk_image_new();
 	dialog->icon_text = gtk_label_new(NULL);
 	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel), 
+	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel),
 					    GTK_WIDGET(dialog->icon_preview));
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "update-preview",
 					 G_CALLBACK(icon_preview_change_cb), dialog);
@@ -407,6 +414,9 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	dialog->icon_filesel = gtk_file_selection_new(_("Buddy Icon"));
 	dialog->icon_preview = gtk_image_new();
 	dialog->icon_text = gtk_label_new(NULL);
+	if ((current_folder != NULL) && (*current_folder != '\0'))
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->icon_filesel),
+										current_folder);
 
 	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
 	hbox = gtk_hbox_new(FALSE, 6);

@@ -2293,6 +2293,12 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_none("/gaim/gtk/plugins");
 	gaim_prefs_add_string_list("/gaim/gtk/plugins/loaded", NULL);
 
+	/* File locations */
+	gaim_prefs_add_none("/gaim/gtk/filelocations");
+	gaim_prefs_add_string("/gaim/gtk/filelocations/last_save_folder", "");
+	gaim_prefs_add_string("/gaim/gtk/filelocations/last_open_folder", "");
+	gaim_prefs_add_string("/gaim/gtk/filelocations/last_icon_folder", "");
+
 	/* Smiley Themes */
 	gaim_prefs_add_none("/gaim/gtk/smileys");
 	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "default");
