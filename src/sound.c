@@ -44,10 +44,6 @@
 #include <esd.h>
 #endif
 
-#ifdef ARTSC_SOUND
-#include <artsc.h>
-#endif
-
 #ifdef NAS_SOUND
 #include <audio/audiolib.h>
 #endif
@@ -62,18 +58,18 @@ gboolean mute_sounds = 0;
  * it has no option bit, set it to 0. the order here has to match *
  * the defines in gaim.h.                               -Robot101 */
 struct sound_struct sounds[NUM_SOUNDS] = {
-	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "arrive.wav"},
-	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "leave.wav"},
-	{N_("Message received"), OPT_SOUND_RECV, "receive.wav"},
-	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, "receive.wav"},
-	{N_("Message sent"), OPT_SOUND_SEND, "send.wav"},
-	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "arrive.wav"},
-	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "leave.wav"},
-	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, "send.wav"},
-	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, "receive.wav"},
+	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "BuddyArrive.wav"},
+	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "BuddyLeave.wav"},
+	{N_("Message received"), OPT_SOUND_RECV, "Receive.wav"},
+	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, "Receive.wav"},
+	{N_("Message sent"), OPT_SOUND_SEND, "Send.wav"},
+	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "BuddyArrive.wav"},
+	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "BuddyLeave.wav"},
+	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, "Send.wav"},
+	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, "Receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
-	{NULL, 0, "redalert.wav"},
-	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, "redalert.wav"}
+	{NULL, 0, "RedAlert.wav"},
+	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, "RedAlert.wav"}
 };
 int sound_order[] = {
 	SND_BUDDY_ARRIVE, SND_BUDDY_LEAVE,
@@ -158,64 +154,6 @@ static int can_play_esd()
 }
 
 #endif
-
-#ifdef ARTSC_SOUND
-
-static int can_play_artsc()
-{
-	int error;
-
-	error = arts_init();
-	if (error < 0)
-		return 0;
-
-	return 1;
-}
-
-static int artsc_play_file(char *file)
-{
-	struct stat stat_buf;
-	unsigned char *buf = NULL;
-	int result = 0;
-	int fd = -1;
-
-	if (!can_play_artsc())
-		return 0;
-
-	fd = open(file, O_RDONLY);
-	if (fd < 0)
-		return 0;
-
-	if (fstat(fd, &stat_buf)) {
-		close(fd);
-		return 0;
-	}
-
-	if (!stat_buf.st_size) {
-		close(fd);
-		return 0;
-	}
-
-	buf = g_malloc(stat_buf.st_size);
-	if (!buf) {
-		close(fd);
-		return 0;
-	}
-
-	if (read(fd, buf, stat_buf.st_size) < 0) {
-		g_free(buf);
-		close(fd);
-		return 0;
-	}
-
-	result = play_artsc(buf, stat_buf.st_size);
-
-	g_free(buf);
-	close(fd);
-	return result;
-}
-
-#endif /* ARTSC_SOUND */
 
 #ifdef NAS_SOUND
 
@@ -318,12 +256,14 @@ void play_file(char *filename)
 		}
 #endif
 
-#ifdef ARTSC_SOUND
 		else if (sound_options & OPT_SOUND_ARTSC) {
-			if (artsc_play_file(filename))
-				_exit(0);
+			char *args[3];
+			args[0] = "artsplay";
+			args[1] = filename;
+			args[2] = NULL;
+			execvp(args[0], args);
+			_exit(0);
 		}
-#endif
 
 #ifdef NAS_SOUND
 		else if (sound_options & OPT_SOUND_NAS) {

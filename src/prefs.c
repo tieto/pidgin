@@ -670,9 +670,7 @@ GtkWidget *sound_page() {
 #ifdef ESD_SOUND
 		      "ESD", OPT_SOUND_ESD,
 #endif /* ESD_SOUND */
-#ifdef ARTSC_SOUND
 		      "ArtsC", OPT_SOUND_ARTSC,
-#endif /* ARTSC_SOUND */
 #ifdef NAS_SOUND
 		      "NAS", OPT_SOUND_NAS,
 #endif /* NAS_SOUND */
