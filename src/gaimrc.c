@@ -829,13 +829,13 @@ static void gaimrc_read_options(FILE *f)
 					display_options & OPT_DISP_SHOW_SMILEY);
 			gaim_prefs_set_bool("/core/conversations/chat/show_join",
 					display_options & OPT_DISP_CHAT_LOGON);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/im/button_type",
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/button_type",
 					((display_options & OPT_DISP_CONV_BUTTON_XPM)
 					 ? ((display_options & OPT_DISP_CONV_BUTTON_TEXT)
 						 ? GAIM_BUTTON_TEXT_IMAGE : GAIM_BUTTON_IMAGE)
 					 : ((display_options & OPT_DISP_CONV_BUTTON_TEXT)
 						 ? GAIM_BUTTON_TEXT : GAIM_BUTTON_NONE)));
-			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/button_type",
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/button_type",
 					((display_options & OPT_DISP_CHAT_BUTTON_XPM)
 					 ? ((display_options & OPT_DISP_CHAT_BUTTON_TEXT)
 						 ? GAIM_BUTTON_TEXT_IMAGE : GAIM_BUTTON_IMAGE)
