@@ -54,6 +54,7 @@ EXTRA_DIST = \
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	-DVERSION=\"$(VERSION)\" \
+	-DDATADIR=\"$(datadir)\" \
 	$(DEBUG_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 
