@@ -32,83 +32,82 @@
 #endif
 #ifdef USE_APPLET
 #include <string.h>
-#include <gdk_imlib.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <libart_lgpl/art_affine.h>
+#include <libart_lgpl/art_rgb_affine.h>
+#include <libart_lgpl/art_rgb_rgba_affine.h>
 #include "gaim.h"
 #include "applet.h"
+#include "pixmaps/aimicon.xpm"
 
 static int connecting = 0;
 
 gboolean applet_buddy_show = FALSE;
-GtkWidget *applet_popup = NULL;
 
 GtkWidget *applet;
-GtkWidget *appletframe;
-
-GtkWidget *icon;
-GdkPixmap *icon_offline_pm = NULL;
-GdkPixmap *icon_offline_bm = NULL;
-
-GdkPixmap *icon_online_pm = NULL;
-GdkPixmap *icon_online_bm = NULL;
-
-GdkPixmap *icon_connect_pm = NULL;
-GdkPixmap *icon_connect_bm = NULL;
-
-GdkPixmap *icon_msg_pending_pm = NULL;
-GdkPixmap *icon_msg_pending_bm = NULL;
-
-GdkPixmap *icon_away_pm = NULL;
-GdkPixmap *icon_away_bm = NULL;
+static GtkWidget *icon;
 
 static GtkAllocation get_applet_pos(gboolean);
-gint sizehint = 48;
+static gint sizehint = 48;
 
-static gboolean load_applet_icon(const char *name, int height, int width, GdkPixmap **pm, GdkBitmap **bm)
+static GdkPixmap *get_applet_icon(const char *name)
 {
-	gboolean result = TRUE;
+	GdkPixmap *cache;
+	GdkGC *gc;
 	char *path;
-	GdkImlibImage *im;
+	GdkPixbuf *pb;
+	guchar *dst, *p;
+	double affine[6];
+	int r,g,b,i;
+
+	cache = gdk_pixmap_new(applet->window, sizehint, sizehint,
+			gtk_widget_get_visual(applet)->depth); 
+	gc = gdk_gc_new(cache);
+	gdk_gc_copy(gc, applet->style->bg_gc[GTK_WIDGET_STATE(applet)]);
 
 	path = gnome_pixmap_file(name);
+	pb = gdk_pixbuf_new_from_file(path);
+	g_free(path);
+	if (!pb)
+		return NULL;
 
-	im = gdk_imlib_load_image(path);
-
-	if ((*pm) != NULL)
-		gdk_imlib_free_pixmap((*pm));
-
-	if (im != NULL) {
-		gdk_imlib_render(im, width, height);
-
-		(*pm) = gdk_imlib_move_image(im);
-		(*bm) = gdk_imlib_move_mask(im);
-
-	} else {
-		result = FALSE;
-		debug_printf(_("file not found: %s\n"), path);
+	dst = g_new0(guchar, sizehint*sizehint*3);
+	r = applet->style->bg[GTK_WIDGET_STATE(applet)].red>>8;
+	g = applet->style->bg[GTK_WIDGET_STATE(applet)].green>>8;
+	b = applet->style->bg[GTK_WIDGET_STATE(applet)].blue>>8;
+	p = dst;
+	for (i = 0; i < 48*48; i++) {
+		*p++ = r;
+		*p++ = g;
+		*p++ = b;
 	}
 
-	free(path);
-	return result;
-}
+	art_affine_identity(affine);
+	art_rgb_rgba_affine(dst, 0, 0, sizehint, sizehint, sizehint * 3,
+			gdk_pixbuf_get_pixels(pb),
+			gdk_pixbuf_get_width(pb), gdk_pixbuf_get_height(pb),
+			gdk_pixbuf_get_rowstride(pb), affine, ART_FILTER_NEAREST, NULL);
 
-#ifdef HAVE_PANEL_PIXEL_SIZE
-static void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
-{
-	sizehint = size;
-	update_pixmaps();
+	gdk_pixbuf_unref(pb);
+	gdk_draw_rgb_image(cache, gc, 0, 0, sizehint, sizehint,
+			GDK_RGB_DITHER_NORMAL, dst, sizehint * 3);
+	g_free(dst);
+
+	gdk_gc_unref(gc);
+	return cache;
 }
-#endif
 
 static gboolean update_applet()
 {
 	char buf[BUF_LONG];
 	GSList *c = connections;
+	GdkPixmap *newpix;
 
 	if (connecting) {
-		gtk_pixmap_set(GTK_PIXMAP(icon), icon_connect_pm, icon_connect_bm);
+		newpix = get_applet_icon(GAIM_GNOME_CONNECT_ICON);
 		applet_set_tooltips(_("Attempting to sign on...."));
 	} else if (!connections) {
-		gtk_pixmap_set(GTK_PIXMAP(icon), icon_offline_pm, icon_offline_bm);
+		newpix = get_applet_icon(GAIM_GNOME_OFFLINE_ICON);
 		applet_set_tooltips(_("Offline. Click to bring up login box."));
 	} else if (awaymessage) {
 		int dsr = 0;
@@ -125,16 +124,16 @@ static gboolean update_applet()
 		}
 
 		if (dsr) {
-			gtk_pixmap_set(GTK_PIXMAP(icon), icon_msg_pending_pm, icon_msg_pending_bm);
+			newpix = get_applet_icon(GAIM_GNOME_MSG_PENDING_ICON);
 			g_snprintf(buf, sizeof(buf), _("Away: %d pending."), dsr);
 		} else {
-			gtk_pixmap_set(GTK_PIXMAP(icon), icon_away_pm, icon_away_bm);
+			newpix = get_applet_icon(GAIM_GNOME_AWAY_ICON);
 			g_snprintf(buf, sizeof(buf), _("Away."));
 		}
 
 		applet_set_tooltips(buf);
 	} else {
-		gtk_pixmap_set(GTK_PIXMAP(icon), icon_online_pm, icon_online_bm);
+		newpix = get_applet_icon(GAIM_GNOME_ONLINE_ICON);
 		g_snprintf(buf, sizeof buf, "Online: ");
 		while (c) {
 			strcat(buf, ((struct gaim_connection *)c->data)->username);
@@ -145,25 +144,22 @@ static gboolean update_applet()
 		applet_set_tooltips(buf);
 	}
 
+	if (newpix) {
+		gtk_pixmap_set(GTK_PIXMAP(icon), newpix, NULL);
+		gdk_pixmap_unref(newpix);
+	}
+
 	return TRUE;
 }
 
-void update_pixmaps()
+#ifdef HAVE_PANEL_PIXEL_SIZE
+static void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
 {
-	load_applet_icon(GAIM_GNOME_OFFLINE_ICON, (sizehint - 1), (sizehint - 1),
-			 &icon_offline_pm, &icon_offline_bm);
-	load_applet_icon(GAIM_GNOME_CONNECT_ICON, (sizehint - 1), (sizehint - 1),
-			 &icon_connect_pm, &icon_connect_bm);
-	load_applet_icon(GAIM_GNOME_ONLINE_ICON, (sizehint - 1), (sizehint - 1),
-			 &icon_online_pm, &icon_online_bm);
-	load_applet_icon(GAIM_GNOME_AWAY_ICON, (sizehint - 1), (sizehint - 1),
-			 &icon_away_pm, &icon_away_bm);
-	load_applet_icon(GAIM_GNOME_MSG_PENDING_ICON, (sizehint - 1), (sizehint - 1),
-			 &icon_msg_pending_pm, &icon_msg_pending_bm);
+	sizehint = size;
+	gtk_widget_set_usize(icon, sizehint, sizehint);
 	update_applet();
-	gtk_widget_set_usize(appletframe, sizehint, sizehint);
 }
-
+#endif
 
 extern GtkWidget *mainwindow;
 void applet_show_login(AppletWidget *widget, gpointer data)
@@ -243,7 +239,7 @@ static GtkAllocation get_applet_pos(gboolean for_blist)
 	GNOME_Panel_OrientType orient = applet_widget_get_panel_orient(APPLET_WIDGET(applet));
 	pad = 5;
 
-	gdk_window_get_position(gtk_widget_get_parent_window(appletframe), &x, &y);
+	gdk_window_get_position(gtk_widget_get_parent_window(icon), &x, &y);
 	if (for_blist) {
 		if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
 			buddy_req.width = blist_pos.width;
@@ -254,7 +250,7 @@ static GtkAllocation get_applet_pos(gboolean for_blist)
 	} else {
 		buddy_req = mainwindow->requisition;
 	}
-	applet_req = appletframe->requisition;
+	applet_req = icon->requisition;
 
 	/* FIXME : we need to be smarter here */
 	switch (orient) {
@@ -320,7 +316,7 @@ void AppletClicked(GtkWidget *sender, GdkEventButton *ev, gpointer data)
 
 gint init_applet_mgr(int argc, char *argv[])
 {
-	GtkWidget *vbox;
+	GdkPixmap *pm;
 
 	applet_widget_init("GAIM", VERSION, argc, argv, NULL, 0, NULL);
 
@@ -333,43 +329,16 @@ gint init_applet_mgr(int argc, char *argv[])
 	if (!applet)
 		g_error(_("Can't create GAIM applet!"));
 	gtk_widget_set_events(applet, gtk_widget_get_events(applet) | GDK_BUTTON_PRESS_MASK);
+	gtk_widget_realize(applet);
 
-	appletframe = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(appletframe), GTK_SHADOW_NONE);
-#ifdef HAVE_PANEL_PIXEL_SIZE
-	gtk_widget_set_usize(appletframe, 5, 5);
-#else
-	gtk_widget_set_usize(appletframe, 48, 48);
-#endif
-
-	/*load offline icon */
-	load_applet_icon(GAIM_GNOME_OFFLINE_ICON, 32, 32, &icon_offline_pm, &icon_offline_bm);
-
-	/*load connecting icon */
-	load_applet_icon(GAIM_GNOME_CONNECT_ICON, 32, 32, &icon_connect_pm, &icon_connect_bm);
-
-	/*load online icon */
-	load_applet_icon(GAIM_GNOME_ONLINE_ICON, 32, 32, &icon_online_pm, &icon_online_bm);
-
-	/*load away icon */
-	load_applet_icon(GAIM_GNOME_AWAY_ICON, 32, 32, &icon_away_pm, &icon_away_bm);
-
-	/*load msg_pending icon */
-	load_applet_icon(GAIM_GNOME_ONLINE_ICON, 32, 32, &icon_msg_pending_pm, &icon_msg_pending_bm);
-
-	icon = gtk_pixmap_new(icon_offline_pm, icon_offline_bm);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), icon, FALSE, TRUE, 0);
-
-	update_applet();
-
-	gtk_container_add(GTK_CONTAINER(appletframe), vbox);
-	applet_widget_add(APPLET_WIDGET(applet), appletframe);
-
-	gtk_widget_show(vbox);
-	gtk_widget_show(appletframe);
+	pm = get_applet_icon(GAIM_GNOME_OFFLINE_ICON);
+	if (!pm)
+		pm = gdk_pixmap_create_from_xpm_d(applet->window, NULL,
+				&applet->style->bg[GTK_WIDGET_STATE(applet)], aimicon_xpm);
+	icon = gtk_pixmap_new(pm, NULL);
+	gtk_widget_set_usize(icon, sizehint, sizehint);
+	gdk_pixmap_unref(pm);
+	applet_widget_add(APPLET_WIDGET(applet), icon);
 
 	applet_widget_register_stock_callback(APPLET_WIDGET(applet),
 					      "about",

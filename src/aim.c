@@ -748,8 +748,6 @@ int main(int argc, char *argv[])
 					"plugins", _("Plugins"), GTK_SIGNAL_FUNC(show_plugins), NULL);
 #endif /* GAIM_PLUGINS */
 
-	update_pixmaps();
-
 	if (!opt_acct)
 		auto_login();
 
