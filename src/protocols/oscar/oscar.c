@@ -2358,7 +2358,13 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	}
 
-	/* gaim_str_strip_cr(tmp); */
+	/* If the message came from an ICQ user then escape any HTML */
+	if (isdigit(userinfo->sn[0])) {
+		gchar *tmp2 = gaim_escape_html(tmp);
+		g_free(tmp);
+		tmp = tmp2;
+	}
+
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
 	g_free(tmp);
 
@@ -2676,6 +2682,14 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x01: { /* MacICQ message or basic offline message */
 			if (i >= 1) {
 				gchar *uin = g_strdup_printf("%u", args->uin);
+				gchar *tmp;
+
+				/* If the message came from an ICQ user then escape any HTML */
+				if (isdigit(userinfo->sn[0]))
+					tmp = gaim_escape_html(msg2[0]);
+				else
+					tmp = g_strdup(msg2[0]);
+
 				if (t) { /* This is an offline message */
 					/* I think this timestamp is in UTC, or something */
 					serv_got_im(gc, uin, msg2[0], 0, t);
@@ -2683,6 +2697,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					serv_got_im(gc, uin, msg2[0], 0, time(NULL));
 				}
 				g_free(uin);
+				g_free(tmp);
 			}
 		} break;
 
