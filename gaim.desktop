@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Gaim
 Comment=Multi-protocol Instant Messaging Client
+Comment[it]=Client Multi-Protocollo per Messaggi Immediati
 Comment[es]=Cliente de mensajería instantánea multiprotocolo
 Comment[fr]=Client de messagerie instantanée multiprotocole
 Comment[de]=Multi-Protokoll Instant Messenger Client
