@@ -14,12 +14,11 @@ version 0.77cvs
 	* Plugins can now add menu items to the buddy context menu
 	  (Christopher O'Brien)
 	* Plugins can now add preferences (Gary Kramlich)
+	* The TOC protocol is no longer built by default. The plugin is not
+	  being properly tested and is no longer officially supported.
 
 	Bug Fixes:
-	* Formatting in the Log viewer is fixed
-	* TOC has been removed from the default build list. I do not support
-	  it, as no one is making sure that the updated code to keep it
-	  compiling actually works, nor is anyone fixing bugs in it.
+	* Formatting in the Log viewer is fixed (Kevin Stange)
 	* Save Conversation works again (Kevin Stange)
 	* The Clear button in privacy works (Robert Mibus)
 	* MSN error reporting works again (Stu Tomlinson)
