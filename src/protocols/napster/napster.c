@@ -440,6 +440,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 static void nap_login(struct aim_user *user)
 {
 	struct gaim_connection *gc = new_gaim_conn(user);
+	gc->proto_data = g_new0(struct nap_data, 1);
 
 	if (proxy_connect(user->proto_opt[USEROPT_NAPSERVER][0] ? user->proto_opt[USEROPT_NAPSERVER] : NAP_SERVER,
 			       user->proto_opt[USEROPT_NAPPORT][0] ? atoi(user->proto_opt[USEROPT_NAPPORT]) : NAP_PORT,
