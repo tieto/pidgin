@@ -2,12 +2,12 @@
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2001.
 #
-# $Id: sv.po 2850 2001-12-03 06:25:29Z robflynn $
+# $Id: sv.po 2989 2002-02-22 23:48:23Z robflynn $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
-"POT-Creation-Date: 2001-11-15 02:19-0800\n"
+"POT-Creation-Date: 2002-02-17 12:41-0800\n"
 "PO-Revision-Date: 2001-12-02 19:44+0100\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -15,364 +15,443 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/protocols/gg/gg.c:68
-msgid "Available"
-msgstr "Tillgänglig"
-
-#: src/protocols/gg/gg.c:69
-msgid "Available for friends only"
-msgstr "Tillgänglig endast för vänner"
-
-#: src/applet.c:291 src/buddy.c:478 src/buddy.c:2283 src/buddy.c:2419
-#: src/protocols/gg/gg.c:70
-msgid "Away"
-msgstr "Frånvarande"
-
-#: src/protocols/gg/gg.c:71
-msgid "Away for friends only"
-msgstr "Frånvarande endast för vänner"
-
-#: src/protocols/gg/gg.c:72
-msgid "Invisible"
-msgstr "Osynlig"
-
-#: src/protocols/gg/gg.c:73
-msgid "Invisible for friends only"
-msgstr "Osynlig endast för vänner"
-
-#: src/protocols/gg/gg.c:74
-msgid "Unavailable"
-msgstr "Otillgänglig"
-
-#: src/protocols/gg/gg.c:168
+#: src/protocols/gg/gg.c:182
 msgid "Unable to resolve hostname."
 msgstr "Kan inte slå upp värdnamnet."
 
-#: src/protocols/gg/gg.c:171
+#: src/protocols/gg/gg.c:185
 msgid "Unable to connect to server."
 msgstr "Kan inte ansluta till servern."
 
-#: src/protocols/gg/gg.c:174
+#: src/protocols/gg/gg.c:188
 msgid "Invalid response from server."
 msgstr "Ogiltigt svar från servern."
 
-#: src/protocols/gg/gg.c:177
+#: src/protocols/gg/gg.c:191
 msgid "Error while reading from socket."
 msgstr "Fel vid läsning från uttag (socket)."
 
-#: src/protocols/gg/gg.c:180
+#: src/protocols/gg/gg.c:194
 msgid "Error while writting to socket."
 msgstr "Fel vid skrivning till uttag (socket)."
 
-#: src/protocols/gg/gg.c:183
+#: src/protocols/gg/gg.c:197
 msgid "Authentification failed."
 msgstr "Autentisering misslyckades."
 
-#: src/protocols/gg/gg.c:186
+#: src/protocols/gg/gg.c:200
 msgid "Unknown Error Code."
 msgstr "Okänd felkod."
 
-#: src/protocols/gg/gg.c:191 src/protocols/gg/gg.c:599
-#: src/protocols/gg/gg.c:698 src/protocols/gg/gg.c:840
-#: src/protocols/gg/gg.c:877 src/protocols/gg/gg.c:921
-msgid "Gadu-Gadu Error"
-msgstr "Gadu-Gadu-fel"
-
-#: src/protocols/gg/gg.c:311
+#: src/protocols/gg/gg.c:302
 #, c-format
 msgid "Status: %s"
 msgstr "Status: %s"
 
-#: src/protocols/gg/gg.c:326
+#: src/protocols/gg/gg.c:317
 msgid "Nick:"
 msgstr "Smeknamn:"
 
-#: src/protocols/gg/gg.c:327
+#: src/protocols/gg/gg.c:318
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu-användare"
 
-#: src/protocols/gg/gg.c:462
+#: src/protocols/gg/gg.c:337
+#, fuzzy
+msgid "Could not connect"
+msgstr "Kunde inte ansluta"
+
+#: src/protocols/gg/gg.c:344
+#, fuzzy
+msgid "Unable to read socket"
+msgstr "Kan inte läsa filen %s."
+
+#: src/protocols/gg/gg.c:455
 msgid "Unable to connect."
 msgstr "Kan inte ansluta."
 
-#: src/protocols/gg/gg.c:473
-msgid "Handshake"
-msgstr "Handskakning"
+#: src/protocols/gg/gg.c:465
+msgid "Reading data"
+msgstr ""
 
-#: src/protocols/gg/gg.c:475
-msgid "Connecting to GG server"
-msgstr "Ansluter till GG-servern"
+#: src/protocols/gg/gg.c:468
+msgid "Balancer handshake"
+msgstr ""
 
-#: src/protocols/gg/gg.c:478
-msgid "Waiting for server key"
+#: src/protocols/gg/gg.c:471
+#, fuzzy
+msgid "Reading server key"
 msgstr "Väntar på servernyckeln"
 
-#: src/protocols/gg/gg.c:480
-msgid "Sending key"
-msgstr "Skickar nyckel"
+#: src/protocols/gg/gg.c:474
+msgid "Exchanging key hash"
+msgstr ""
 
-#: src/protocols/gg/gg.c:537
+#: src/protocols/gg/gg.c:482
+msgid "Critical error in GG library\n"
+msgstr ""
+
+#: src/protocols/gg/gg.c:521
+#, fuzzy
+msgid "Unable to ping server"
+msgstr "Kan inte ansluta till servern."
+
+#: src/protocols/gg/gg.c:533
 msgid "Send as message"
 msgstr "Skicka som meddelande"
 
-#: src/protocols/gg/gg.c:545
+#: src/protocols/gg/gg.c:541
 msgid "Looking up GG server"
 msgstr "Slår upp GG-server"
 
-#: src/protocols/gg/gg.c:548
+#: src/protocols/gg/gg.c:544
 msgid "Invalid Gadu-Gadu UIN specified"
 msgstr "Ogiltigt Gadu-Gadu-UIN angivet"
 
-#: src/protocols/gg/gg.c:575
+#: src/protocols/gg/gg.c:570
 #, c-format
 msgid "Connect to %s failed"
 msgstr "Anslutning till %s misslyckades"
 
-#: src/protocols/gg/gg.c:598
+#: src/protocols/gg/gg.c:594
 msgid "You are trying to send message to invalid Gadu-Gadu UIN!"
 msgstr "Du försöker att skicka ett meddelande till ett ogiltigt Gadu-Gadu-UIN!"
 
+#: src/protocols/gg/gg.c:595 src/protocols/gg/gg.c:657
+#: src/protocols/gg/gg.c:762 src/protocols/gg/gg.c:768
+#: src/protocols/gg/gg.c:821 src/protocols/gg/gg.c:833
+#: src/protocols/gg/gg.c:845 src/protocols/gg/gg.c:956
+#: src/protocols/gg/gg.c:984 src/protocols/gg/gg.c:1043
+#: src/protocols/gg/gg.c:1066 src/protocols/gg/gg.c:1116
+#: src/protocols/gg/gg.c:1149 src/protocols/gg/gg.c:1214
+msgid "Gadu-Gadu Error"
+msgstr "Gadu-Gadu-fel"
+
 # src/message.c:76
-#: src/protocols/gg/gg.c:698
+#: src/protocols/gg/gg.c:657
 msgid "Couldn't get search results"
 msgstr "Kunde inte få tag i sökresultat"
 
-#: src/protocols/gg/gg.c:703
+#: src/protocols/gg/gg.c:662
 msgid "Gadu-Gadu Search Engine"
 msgstr "Gadu-Gadu-sökmotor"
 
-#: src/protocols/gg/gg.c:730
+#: src/protocols/gg/gg.c:687
 msgid "Active"
 msgstr "Aktiv"
 
-#: src/protocols/gg/gg.c:731
+#: src/protocols/gg/gg.c:688
 msgid "yes"
 msgstr "ja"
 
-#: src/protocols/gg/gg.c:731
+#: src/protocols/gg/gg.c:688
 msgid "no"
 msgstr "nej"
 
-#: src/protocols/gg/gg.c:735
+#: src/protocols/gg/gg.c:692
 msgid "UIN"
 msgstr "UIN"
 
-#: src/protocols/gg/gg.c:739
+#: src/protocols/gg/gg.c:696
 msgid "First name"
 msgstr "Förnamn"
 
-#: src/protocols/gg/gg.c:744
+#: src/protocols/gg/gg.c:701
 msgid "Second Name"
 msgstr "Efternamn"
 
-#: src/protocols/gg/gg.c:748
+#: src/protocols/gg/gg.c:705
 msgid "Nick"
 msgstr "Smeknamn"
 
-#: src/protocols/gg/gg.c:755 src/protocols/gg/gg.c:758
+#: src/protocols/gg/gg.c:712 src/protocols/gg/gg.c:715
 msgid "Birth year"
 msgstr "Födelseår"
 
-#: src/protocols/gg/gg.c:764 src/protocols/gg/gg.c:766
-#: src/protocols/gg/gg.c:768
+#: src/protocols/gg/gg.c:721 src/protocols/gg/gg.c:723
+#: src/protocols/gg/gg.c:725
 msgid "Sex"
 msgstr "Kön"
 
 #. Line 5
-#: src/dialogs.c:1385 src/dialogs.c:2068 src/protocols/gg/gg.c:772
+#: src/dialogs.c:1501 src/dialogs.c:2205 src/protocols/gg/gg.c:729
 msgid "City"
 msgstr "Ort"
 
+#: src/protocols/gg/gg.c:761
+msgid "There is no Buddy List stored on server. Sorry!"
+msgstr ""
+
+#: src/protocols/gg/gg.c:768
+msgid "Couldn't Import Buddies List from Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:815
+msgid "Buddies List sucessfully transfered into Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:816 src/protocols/gg/gg.c:828
 #: src/protocols/gg/gg.c:840
-msgid "Couldn't send search request"
+#, fuzzy
+msgid "Gadu-Gadu Information"
+msgstr "Gadu-Gadu-fel"
+
+#: src/protocols/gg/gg.c:821
+msgid "Couldn't transfer Buddies List into Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:827
+msgid "Buddies List sucessfully deleted from Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:833
+msgid "Couldn't delete Buddies List from Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:839
+#, fuzzy
+msgid "Password changed sucessfully"
+msgstr "Lösenordsändring lyckades"
+
+#: src/protocols/gg/gg.c:845
+msgid "Password couldn't be changed"
+msgstr ""
+
+#: src/protocols/gg/gg.c:956
+#, fuzzy
+msgid "Couldn't send http request"
 msgstr "Kunde inte skicka sökförfrågan"
 
-#: src/protocols/gg/gg.c:876 src/protocols/gg/gg.c:920
+#: src/protocols/gg/gg.c:982
+#, c-format
+msgid "Buddies List import from Server failed (%s)"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1041
+#, c-format
+msgid "Buddies List export to Server failed (%s)"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1064
+#, c-format
+msgid "Deletion of Buddies List from Server failed (%s)"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1114 src/protocols/gg/gg.c:1212
 #, c-format
 msgid "Connect to search service failed (%s)"
 msgstr "Anslutning till söktjänsten misslyckades (%s)"
 
-#: src/protocols/gg/gg.c:886 src/protocols/gg/gg.c:895
+#: src/protocols/gg/gg.c:1147
+#, fuzzy, c-format
+msgid "Changing Password failed (%s)"
+msgstr "Byt lösenord"
+
+#: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1175
 msgid "Directory Search"
 msgstr "Katalogsökning"
 
-#: src/protocols/icq/gaim_icq.c:305
+#: src/dialogs.c:1618 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+msgid "Change Password"
+msgstr "Byt lösenord"
+
+#: src/protocols/gg/gg.c:1162 src/protocols/gg/gg.c:1179
+#, fuzzy
+msgid "Import Buddies List from Server"
+msgstr "Importera kompislista"
+
+#: src/protocols/gg/gg.c:1164 src/protocols/gg/gg.c:1180
+#, fuzzy
+msgid "Export Buddies List to Server"
+msgstr "Importera kompislista"
+
+#: src/protocols/gg/gg.c:1166 src/protocols/gg/gg.c:1181
+msgid "Delete Buddies List from Server"
+msgstr ""
+
+#: src/protocols/icq/gaim_icq.c:308
 msgid "Send message through server"
 msgstr "Skicka meddelande genom servern"
 
-#: src/protocols/icq/gaim_icq.c:466 src/protocols/irc/irc.c:1493
-#: src/protocols/jabber/jabber.c:1644 src/protocols/oscar/oscar.c:2621
-#: src/protocols/toc/toc.c:1200
+#: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1538
+#: src/protocols/jabber/jabber.c:2021 src/protocols/oscar/oscar.c:2847
+#: src/protocols/toc/toc.c:1201
 msgid "Get Info"
 msgstr "Hämta information"
 
-#: src/protocols/irc/irc.c:428 src/protocols/irc/irc.c:920
+#: src/protocols/irc/irc.c:429 src/protocols/irc/irc.c:962
 #, c-format
 msgid "<B>%s has changed the topic to: %s</B>"
 msgstr "<B>%s har bytt ämne till: %s</B>"
 
-#: src/protocols/irc/irc.c:662
+#: src/protocols/irc/irc.c:682
 msgid "No such nick/channel"
 msgstr "Inget sådant smeknamn/kanal"
 
-#: src/protocols/irc/irc.c:662 src/protocols/irc/irc.c:665
-#: src/protocols/irc/irc.c:667 src/protocols/irc/irc.c:856
+#: src/protocols/irc/irc.c:682 src/protocols/irc/irc.c:685
+#: src/protocols/irc/irc.c:687 src/protocols/irc/irc.c:891
 msgid "IRC Error"
 msgstr "IRC-fel"
 
-#: src/protocols/irc/irc.c:665
+#: src/protocols/irc/irc.c:685
 msgid "No such server"
 msgstr "Ingen sådan server"
 
-#: src/protocols/irc/irc.c:667
+#: src/protocols/irc/irc.c:687
 msgid "No nickname given"
 msgstr "Inget smeknamn är angivet"
 
-#: src/protocols/irc/irc.c:799
+#: src/protocols/irc/irc.c:819
 msgid "Unable to write"
 msgstr "Kan inte skriva"
 
-#: src/protocols/irc/irc.c:854
+#: src/protocols/irc/irc.c:889
 #, c-format
 msgid "You have been kicked from %s: %s"
 msgstr "Du har sparkats ut från %s: %s"
 
-#: src/protocols/irc/irc.c:1324
+#: src/protocols/irc/irc.c:894
+#, c-format
+msgid "Kicked by %s: %s"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1357
 #, c-format
 msgid "You have left %s"
 msgstr "Du har lämnat %s"
 
-#: src/protocols/irc/irc.c:1325
+#: src/protocols/irc/irc.c:1358
 msgid "IRC Part"
 msgstr "IRC-lämnande"
 
-#: src/protocols/irc/irc.c:1398
+#: src/protocols/irc/irc.c:1443
 msgid "Channel:"
 msgstr "Kanal:"
 
-#: src/multi.c:506 src/protocols/irc/irc.c:1402
+#: src/multi.c:522 src/protocols/irc/irc.c:1447
 msgid "Password:"
 msgstr "Lösenord:"
 
-#: src/protocols/jabber/jabber.c:1352
+#: src/protocols/jabber/jabber.c:1692
 msgid "Room:"
 msgstr "Rum:"
 
-#: src/protocols/jabber/jabber.c:1356
+#: src/protocols/jabber/jabber.c:1696
 msgid "Server:"
 msgstr "Server:"
 
-#: src/protocols/jabber/jabber.c:1361
+#: src/protocols/jabber/jabber.c:1701
 msgid "Handle:"
 msgstr "Handtag:"
 
-#: src/protocols/msn/msn.c:566 src/protocols/msn/msn.c:1689
-#: src/protocols/msn/msn.c:1722
+#: src/buddy_chat.c:875 src/protocols/jabber/jabber.c:2026
+#: src/protocols/oscar/oscar.c:2854
+msgid "Get Away Msg"
+msgstr "Frånvaromeddelande"
+
+#: src/protocols/msn/msn.c:653 src/protocols/msn/msn.c:1909
+#: src/protocols/msn/msn.c:1942
 msgid "MSN Error"
 msgstr "MSN-fel"
 
-#: src/protocols/msn/msn.c:566
+#: src/protocols/msn/msn.c:653
 msgid "Gaim was unable to send a message"
 msgstr "Gaim kunde inte skicka ett meddelande"
 
-#: src/protocols/msn/msn.c:1689 src/protocols/msn/msn.c:1722
+#: src/protocols/msn/msn.c:960
+#, fuzzy
+msgid "You have been disconnected. You have signed on from another location."
+msgstr "Du har blivit frånkopplad från chattrummet %s."
+
+#: src/protocols/msn/msn.c:1909 src/protocols/msn/msn.c:1942
 msgid "Invalid name"
 msgstr "Ogiltigt namn"
 
-#: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:2319
-#: src/protocols/toc/toc.c:1087
+#: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:2536
+#: src/protocols/toc/toc.c:1088
 msgid "Join what group:"
 msgstr "Gå in i vilken grupp:"
 
-#: src/protocols/oscar/oscar.c:295
+#: src/protocols/oscar/oscar.c:305
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "Direktmeddelande med %s stängd"
 
-#: src/protocols/oscar/oscar.c:331
+#: src/protocols/oscar/oscar.c:341
 msgid "connection error (rend)\n"
 msgstr "anslutningssfel (rend)\n"
 
-#: src/protocols/oscar/oscar.c:342
+#: src/protocols/oscar/oscar.c:352
 msgid "major connection error\n"
 msgstr "stort anslutningsfel\n"
 
-#: src/protocols/oscar/oscar.c:343 src/protocols/toc/toc.c:511
-#: src/protocols/toc/toc.c:521 src/protocols/toc/toc.c:587
+#: src/protocols/oscar/oscar.c:353 src/protocols/toc/toc.c:509
+#: src/protocols/toc/toc.c:522 src/protocols/toc/toc.c:588
 msgid "Disconnected."
 msgstr "Frånkopplad."
 
-#: src/protocols/oscar/oscar.c:355 src/protocols/toc/toc.c:755
+#: src/protocols/oscar/oscar.c:365 src/protocols/toc/toc.c:756
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Du har blivit frånkopplad från chattrummet %s."
 
-#: src/protocols/oscar/oscar.c:356
+#: src/protocols/oscar/oscar.c:366
 msgid "Chat Error!"
 msgstr "Chattfel!"
 
-#: src/protocols/oscar/oscar.c:366
+#: src/protocols/oscar/oscar.c:378
 msgid "Chat is currently unavailable"
 msgstr "Chatt är inte tillgängligt för tillfället"
 
-#: src/protocols/oscar/oscar.c:367
+#: src/protocols/oscar/oscar.c:379
 msgid "Gaim - Chat"
 msgstr "Gaim - Chatt"
 
-#: src/protocols/oscar/oscar.c:426 src/protocols/oscar/oscar.c:488
+#: src/protocols/oscar/oscar.c:438 src/protocols/oscar/oscar.c:498
 msgid "Couldn't connect to host"
 msgstr "Kunde inte ansluta till värden"
 
-#: src/protocols/oscar/oscar.c:434
+#: src/protocols/oscar/oscar.c:446
 msgid "Password sent, waiting for response\n"
 msgstr "Lösenord skickat, väntar på svar\n"
 
-#: src/protocols/oscar/oscar.c:445
-#, c-format
-msgid "Logging in %s\n"
-msgstr "Loggar in %s\n"
-
-#: src/protocols/oscar/oscar.c:450
-msgid "Send offline message"
-msgstr "Skickar frånkopplat meddelande"
-
-#: src/protocols/oscar/oscar.c:469
+#: src/protocols/oscar/oscar.c:479
 msgid "internal connection error\n"
 msgstr "internt anslutningsfel\n"
 
-#: src/protocols/oscar/oscar.c:470
+#: src/protocols/oscar/oscar.c:480
 msgid "Unable to login to AIM"
 msgstr "Kan inte logga in till AIM"
 
-#: src/protocols/oscar/oscar.c:475
+#: src/protocols/oscar/oscar.c:485
 #, c-format
 msgid "Signon: %s"
 msgstr "Inloggning: %s"
 
-#: src/protocols/oscar/oscar.c:531
+#: src/protocols/oscar/oscar.c:557
 msgid "Signed off.\n"
 msgstr "Loggade ut.\n"
 
-#: src/protocols/oscar/oscar.c:550 src/protocols/oscar/oscar.c:668
+#: src/protocols/oscar/oscar.c:576 src/protocols/oscar/oscar.c:696
 msgid "Could Not Connect"
 msgstr "Kunde inte ansluta"
 
-#: src/protocols/oscar/oscar.c:558
+#: src/protocols/oscar/oscar.c:584
 msgid "Connection established, cookie sent"
 msgstr "Anslutning etablerad, kaka skickad"
 
 #. Incorrect nick/password
-#: src/protocols/oscar/oscar.c:584 src/protocols/toc/toc.c:459
+#: src/protocols/oscar/oscar.c:610 src/protocols/toc/toc.c:457
 msgid "Incorrect nickname or password."
 msgstr "Felaktigt smeknamn eller lösenord."
 
 #. Suspended account
-#: src/protocols/oscar/oscar.c:589
+#: src/protocols/oscar/oscar.c:615
 msgid "Your account is currently suspended."
 msgstr "Ditt konto är avstängt för tillfället."
 
 #. connecting too frequently
-#: src/protocols/oscar/oscar.c:593
+#: src/protocols/oscar/oscar.c:619
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -381,79 +460,200 @@ msgstr ""
 "prova igen. Om du fortsätter att försöka kommer du att få vänta ännu längre."
 
 #. client too old
-#: src/protocols/oscar/oscar.c:598
+#: src/protocols/oscar/oscar.c:624
 msgid "The client version you are using is too old. Please upgrade at "
 msgstr "Versionen av klienten du använder är för gammal. Uppgradera på "
 
-#: src/protocols/oscar/oscar.c:602 src/protocols/toc/toc.c:539
+#: src/protocols/oscar/oscar.c:628 src/protocols/toc/toc.c:540
 msgid "Authentication Failed"
 msgstr "Autentisering misslyckades"
 
-#: src/protocols/oscar/oscar.c:624
+#: src/protocols/oscar/oscar.c:650
 msgid "Internal Error"
 msgstr "Internt fel"
 
-#: src/protocols/oscar/oscar.c:1184 src/protocols/oscar/oscar.c:2525
+#: src/protocols/oscar/oscar.c:1204 src/protocols/oscar/oscar.c:2744
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Direktmeddelande med %s etablerat"
 
 # Detta är felrapporterat
-#: src/protocols/oscar/oscar.c:1423
-#, c-format
-msgid "You missed %d message%s from %s because %s invalid."
+#: src/protocols/oscar/oscar.c:1454
+#, fuzzy, c-format
+msgid "You missed %d message from %s because it was invalid."
 msgstr "Du missade %d meddelanden%.0s från %s eftersom %s är ogiltig."
 
-#: src/protocols/oscar/oscar.c:1433
-#, c-format
-msgid "You missed %d message%s from %s because %s too large."
+# Detta är felrapporterat
+#: src/protocols/oscar/oscar.c:1455
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because they were invalid."
+msgstr "Du missade %d meddelanden%.0s från %s eftersom %s är ogiltig."
+
+#: src/protocols/oscar/oscar.c:1464
+#, fuzzy, c-format
+msgid "You missed %d message from %s because it was too large."
 msgstr "Du missade %d meddelanden%.0s från %s eftersom %s är för stor."
 
-#: src/protocols/oscar/oscar.c:1443
-#, c-format
-msgid ""
-"You missed %d message%s from %s because the rate limit has been exceeded."
+#: src/protocols/oscar/oscar.c:1465
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because they were too large."
+msgstr "Du missade %d meddelanden%.0s från %s eftersom de är för hemska."
+
+#: src/protocols/oscar/oscar.c:1474
+#, fuzzy, c-format
+msgid "You missed %d message from %s because the rate limit has been exceeded."
 msgstr ""
 "Du missade %d meddelanden%.0s från %s eftersom frekvensgränsen har "
 "överskridits."
 
-#: src/protocols/oscar/oscar.c:1452
-#, c-format
-msgid "You missed %d message%s from %s because they are too evil."
+#: src/protocols/oscar/oscar.c:1475
+#, fuzzy, c-format
+msgid ""
+"You missed %d messages from %s because the rate limit has been exceeded."
+msgstr ""
+"Du missade %d meddelanden%.0s från %s eftersom frekvensgränsen har "
+"överskridits."
+
+#: src/protocols/oscar/oscar.c:1484
+#, fuzzy, c-format
+msgid "You missed %d message from %s because it was too evil."
 msgstr "Du missade %d meddelanden%.0s från %s eftersom de är för hemska."
 
-#: src/protocols/oscar/oscar.c:1461
-#, c-format
-msgid "You missed %d message%s from %s because you are too evil."
+#: src/protocols/oscar/oscar.c:1485
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because they are too evil."
+msgstr "Du missade %d meddelanden%.0s från %s eftersom de är för hemska."
+
+#: src/protocols/oscar/oscar.c:1494
+#, fuzzy, c-format
+msgid "You missed %d message from %s because you are too evil."
 msgstr "Du missade %d meddelanden%0.s från %s eftersom du är för hemsk."
 
-#: src/protocols/oscar/oscar.c:1469
-#, c-format
-msgid "You missed %d message%s from %s for unknown reasons."
+#: src/protocols/oscar/oscar.c:1495
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because you are too evil."
+msgstr "Du missade %d meddelanden%0.s från %s eftersom du är för hemsk."
+
+#: src/protocols/oscar/oscar.c:1503
+#, fuzzy, c-format
+msgid "You missed %d message from %s for unknown reasons."
 msgstr "Du missade %d meddelanden%0.s från %s på grund av okända orsaker."
 
-#: src/dialogs.c:2808 src/dialogs.c:2814 src/protocols/oscar/oscar.c:1475
-#: src/protocols/oscar/oscar.c:1507 src/protocols/oscar/oscar.c:1525
-#: src/protocols/yahoo/yahoo.c:500
+#: src/protocols/oscar/oscar.c:1504
+#, fuzzy, c-format
+msgid "You missed %d messages from %s for unknown reasons."
+msgstr "Du missade %d meddelanden%0.s från %s på grund av okända orsaker."
+
+#: src/dialogs.c:2949 src/dialogs.c:2955 src/protocols/oscar/oscar.c:1509
+#: src/protocols/oscar/oscar.c:1547 src/protocols/oscar/oscar.c:1565
+#: src/protocols/oscar/oscar.c:1994 src/protocols/yahoo/yahoo.c:501
 msgid "Gaim - Error"
 msgstr "Gaim - Fel"
 
-#: src/protocols/oscar/oscar.c:1505
+#: src/protocols/oscar/oscar.c:1526
+#, c-format
+msgid "SNAC threw error: %s\n"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1528
+#, fuzzy
+msgid "Gaim - Oscar SNAC Error"
+msgstr "Gaim - Fel"
+
+#: src/protocols/oscar/oscar.c:1545
 #, c-format
 msgid "Your message to %s did not get sent: %s"
 msgstr "Ditt meddelande till %s skickades inte: %s"
 
-#: src/protocols/oscar/oscar.c:1506 src/protocols/oscar/oscar.c:1524
+#: src/protocols/oscar/oscar.c:1546 src/protocols/oscar/oscar.c:1564
 msgid "Reason unknown"
 msgstr "Okänd orsak"
 
-#: src/protocols/oscar/oscar.c:1523
+#: src/protocols/oscar/oscar.c:1563
 #, c-format
 msgid "User information for %s unavailable: %s"
 msgstr "Användarinformation för %s är inte tillgänglig: %s"
 
-#: src/protocols/oscar/oscar.c:1565
-#, c-format
+#: src/buddy.c:1906 src/protocols/oscar/oscar.c:1591
+msgid "Buddy Icon"
+msgstr "Kompisikon"
+
+#: src/buddy.c:1909 src/protocols/oscar/oscar.c:1594
+msgid "Voice"
+msgstr "Röst"
+
+#: src/buddy.c:1912 src/protocols/oscar/oscar.c:1597
+msgid "IM Image"
+msgstr "Snabbmeddelandebild"
+
+#: src/buddy.c:488 src/buddy.c:1915 src/buddy.c:2343 src/prefs.c:2837
+#: src/protocols/oscar/oscar.c:1600
+msgid "Chat"
+msgstr "Chatt"
+
+#: src/buddy.c:1918 src/protocols/oscar/oscar.c:1603
+msgid "Get File"
+msgstr "Hämta fil"
+
+#: src/buddy.c:1921 src/protocols/oscar/oscar.c:1606
+msgid "Send File"
+msgstr "Skicka fil"
+
+#: src/buddy.c:1925 src/protocols/oscar/oscar.c:1610
+msgid "Games"
+msgstr "Spel"
+
+#: src/buddy.c:1928 src/protocols/oscar/oscar.c:1613
+msgid "Stocks"
+msgstr "Aktier"
+
+#: src/buddy.c:1931 src/protocols/oscar/oscar.c:1616
+#, fuzzy
+msgid "Send Buddy List"
+msgstr "Kompislista"
+
+#: src/buddy.c:1934 src/protocols/oscar/oscar.c:1619
+msgid "EveryBuddy Bug"
+msgstr "EveryBuddy-fel"
+
+#: src/buddy.c:1937 src/protocols/oscar/oscar.c:1622
+#, fuzzy
+msgid "AP User"
+msgstr "Användare"
+
+#: src/buddy.c:1940 src/protocols/oscar/oscar.c:1625
+msgid "ICQ RTF"
+msgstr ""
+
+#: src/buddy.c:1943 src/protocols/oscar/oscar.c:1628
+msgid "Nihilist"
+msgstr ""
+
+#: src/buddy.c:1946 src/protocols/oscar/oscar.c:1631
+msgid "ICQ Server Relay"
+msgstr ""
+
+#: src/buddy.c:1949 src/protocols/oscar/oscar.c:1634
+msgid "ICQ Unknown"
+msgstr ""
+
+#: src/buddy.c:1952 src/protocols/oscar/oscar.c:1637
+msgid "Trillian Encryption"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1674
+msgid ""
+"<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG "
+"SRC=\"free_icon.gif\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL "
+"User <br><IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br><IMG "
+"SRC=\"admin_icon.gif\"> : Administrator"
+msgstr ""
+"<br><BODY BGCOLOR=WHITE><hr><I>Förklaring:</I><br><br><IMG "
+"SRC=\"free_icon.gif\"> : Vanlig AIM-användare<br><IMG SRC=\"aol_icon.gif\"> "
+": AOL-användare <br><IMG SRC=\"dt_icon.gif\"> : AIM-försöksanvändare "
+"<br><IMG SRC=\"admin_icon.gif\"> : Administratör"
+
+#: src/protocols/oscar/oscar.c:1686
 msgid ""
 "Username : <B>%s</B>  %s <BR>\n"
 "%sWarning Level : <B>%d %%</B><BR>\n"
@@ -469,51 +669,50 @@ msgstr ""
 "<BR>\n"
 "<HR><BR>\n"
 
-#: src/protocols/oscar/oscar.c:1576
-msgid ""
-"<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif"
-"\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG SRC="
-"\"dt_icon.gif\"> : Trial AIM User <br><IMG SRC=\"admin_icon.gif\"> : "
-"Administrator"
-msgstr ""
-"<br><BODY BGCOLOR=WHITE><hr><I>Förklaring:</I><br><br><IMG SRC=\"free_icon."
-"gif\"> : Vanlig AIM-användare<br><IMG SRC=\"aol_icon.gif\"> : AOL-användare "
-"<br><IMG SRC=\"dt_icon.gif\"> : AIM-försöksanvändare <br><IMG SRC="
-"\"admin_icon.gif\"> : Administratör"
-
-#: src/protocols/oscar/oscar.c:1586
-msgid "<i>No Information Provided</i>"
-msgstr "<i>Ingen information tillhandahållen</i>"
-
-#: src/protocols/oscar/oscar.c:1587
+#: src/protocols/oscar/oscar.c:1714
 msgid "<i>User has no away message</i>"
 msgstr "<i>Användaren har inget frånvaromeddelande</i>"
 
-#: src/protocols/oscar/oscar.c:1612
+#: src/protocols/oscar/oscar.c:1726
+#, fuzzy
+msgid "Client Capabilities: "
+msgstr "Kapabiliteter: %s\n"
+
+#: src/protocols/oscar/oscar.c:1734
+msgid "<i>No Information Provided</i>"
+msgstr "<i>Ingen information tillhandahållen</i>"
+
+#: src/protocols/oscar/oscar.c:1757
 msgid "Your connection may be lost."
 msgstr "Din anslutning kan vara borta."
 
-#: src/protocols/oscar/oscar.c:1613
+#: src/protocols/oscar/oscar.c:1758
 msgid "AOL error"
 msgstr "AOL-fel"
 
-#: src/dialogs.c:3341 src/protocols/oscar/oscar.c:2062
-#: src/protocols/oscar/oscar.c:2599 src/protocols/toc/toc.c:1545
-#: src/protocols/toc/toc.c:1562 src/protocols/toc/toc.c:1622
-#: src/protocols/toc/toc.c:1664 src/protocols/toc/toc.c:1783
-#: src/protocols/toc/toc.c:1813 src/protocols/toc/toc.c:1869
+#: src/protocols/oscar/oscar.c:1993
+msgid ""
+"The last message was not sent because you are over the rate limit. Please "
+"wait 10 seconds and try again."
+msgstr ""
+
+#: src/dialogs.c:3482 src/protocols/oscar/oscar.c:2267
+#: src/protocols/oscar/oscar.c:2818 src/protocols/toc/toc.c:1546
+#: src/protocols/toc/toc.c:1563 src/protocols/toc/toc.c:1623
+#: src/protocols/toc/toc.c:1665 src/protocols/toc/toc.c:1784
+#: src/protocols/toc/toc.c:1814 src/protocols/toc/toc.c:1870
 msgid "Error"
 msgstr "Fel"
 
-#: src/protocols/oscar/oscar.c:2323 src/protocols/toc/toc.c:1091
+#: src/protocols/oscar/oscar.c:2540 src/protocols/toc/toc.c:1092
 msgid "Exchange:"
 msgstr "Växel:"
 
-#: src/protocols/oscar/oscar.c:2599
+#: src/protocols/oscar/oscar.c:2818
 msgid "Unable to open Direct IM"
 msgstr "Kan inte öppna direktmeddelande"
 
-#: src/protocols/oscar/oscar.c:2609
+#: src/protocols/oscar/oscar.c:2828
 #, c-format
 msgid ""
 "You have selected to open a Direct IM connection with %s. Doing this will "
@@ -524,114 +723,115 @@ msgstr ""
 "kommer att låta dem se din IP-adress, och kan vara en säkerhetsrisk. Vill du "
 "fortsätta?"
 
-#: src/protocols/oscar/oscar.c:2627
-msgid "Get Away Msg"
-msgstr "Frånvaromeddelande"
-
-#: src/protocols/oscar/oscar.c:2634
+#: src/protocols/oscar/oscar.c:2861
 msgid "Direct IM"
 msgstr "Direktmeddelande"
 
-#: src/protocols/toc/toc.c:398
+#: src/protocols/oscar/oscar.c:2869
+#, fuzzy
+msgid "Get Capabilities"
+msgstr "Kapabiliteter: %s\n"
+
+#: src/protocols/toc/toc.c:396
 #, c-format
 msgid "Unable to write file %s."
 msgstr "Kan inte skriva filen %s."
 
-#: src/protocols/toc/toc.c:401
+#: src/protocols/toc/toc.c:399
 #, c-format
 msgid "Unable to read file %s."
 msgstr "Kan inte läsa filen %s."
 
-#: src/protocols/toc/toc.c:404
+#: src/protocols/toc/toc.c:402
 #, c-format
 msgid "Message too long, last %s bytes truncated."
 msgstr "Meddelandet är för långt, de sista %s byten klipptes bort."
 
-#: src/protocols/toc/toc.c:407
+#: src/protocols/toc/toc.c:405
 #, c-format
 msgid "%s not currently logged in."
 msgstr "%s är inte inloggad för tillfället."
 
-#: src/protocols/toc/toc.c:410
+#: src/protocols/toc/toc.c:408
 #, c-format
 msgid "Warning of %s not allowed."
 msgstr "Varning för %s är inte tillåten."
 
-#: src/protocols/toc/toc.c:413
+#: src/protocols/toc/toc.c:411
 msgid "A message has been dropped, you are exceeding the server speed limit."
 msgstr "Ett meddelande har kastats, du överskrider serverns hastighetsgräns."
 
-#: src/protocols/toc/toc.c:416
+#: src/protocols/toc/toc.c:414
 #, c-format
 msgid "Chat in %s is not available."
 msgstr "Chatt i %s är inte tillgänglig."
 
-#: src/protocols/toc/toc.c:419
+#: src/protocols/toc/toc.c:417
 #, c-format
 msgid "You are sending messages too fast to %s."
 msgstr "Du skickar meddelanden för snabbt till %s."
 
-#: src/protocols/toc/toc.c:422
+#: src/protocols/toc/toc.c:420
 #, c-format
 msgid "You missed an IM from %s because it was too big."
 msgstr "Du missade ett snabbmeddelande från %s eftersom det var för stort."
 
-#: src/protocols/toc/toc.c:425
+#: src/protocols/toc/toc.c:423
 #, c-format
 msgid "You missed an IM from %s because it was sent too fast."
 msgstr ""
 "Du missade ett snabbmeddelande från %s eftersom det skickades för snabbt."
 
-#: src/protocols/toc/toc.c:428
+#: src/protocols/toc/toc.c:426
 msgid "Failure."
 msgstr "Misslyckande."
 
-#: src/protocols/toc/toc.c:431
+#: src/protocols/toc/toc.c:429
 msgid "Too many matches."
 msgstr "För många träffar."
 
-#: src/protocols/toc/toc.c:434
+#: src/protocols/toc/toc.c:432
 msgid "Need more qualifiers."
 msgstr "Behöver fler kvalificerare."
 
-#: src/protocols/toc/toc.c:437
+#: src/protocols/toc/toc.c:435
 msgid "Dir service temporarily unavailable."
 msgstr "Katalogtjänsten är tillfälligt onåbar."
 
-#: src/protocols/toc/toc.c:440
+#: src/protocols/toc/toc.c:438
 msgid "Email lookup restricted."
 msgstr "E-postuppslagning är begränsad."
 
-#: src/protocols/toc/toc.c:443
+#: src/protocols/toc/toc.c:441
 msgid "Keyword ignored."
 msgstr "Nyckelordet ignorerades."
 
-#: src/protocols/toc/toc.c:446
+#: src/protocols/toc/toc.c:444
 msgid "No keywords."
 msgstr "Inga nyckelord."
 
-#: src/protocols/toc/toc.c:449
+#: src/protocols/toc/toc.c:447
 msgid "User has no directory information."
 msgstr "Användaren har ingen kataloginformation."
 
-#: src/protocols/toc/toc.c:453
+#: src/protocols/toc/toc.c:451
 msgid "Country not supported."
 msgstr "Landet stöds inte."
 
-#: src/protocols/toc/toc.c:456
+#: src/protocols/toc/toc.c:454
 #, c-format
 msgid "Failure unknown: %s."
 msgstr "Okänt misslyckande: %s."
 
-#: src/protocols/toc/toc.c:462
+#: src/protocols/toc/toc.c:460
 msgid "The service is temporarily unavailable."
 msgstr "Tjänsten är tillfälligt onåbar."
 
-#: src/protocols/toc/toc.c:465
+#: src/protocols/toc/toc.c:463
 msgid "Your warning level is currently too high to log in."
 msgstr "Din varningsnivå är för tillfället för hög för att logga in."
 
-#: src/protocols/toc/toc.c:468
+#: src/protocols/toc/toc.c:466
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
@@ -639,46 +839,46 @@ msgstr ""
 "Du har anslutit och kopplat ifrån för många gånger. Vänta tio minuter och "
 "prova igen. Om du fortsätter att försöka kommer du att få vänta ännu längre."
 
-#: src/protocols/toc/toc.c:471
+#: src/protocols/toc/toc.c:469
 #, c-format
 msgid "An unknown signon error has occurred: %s."
 msgstr "Ett okänt inloggningsfel har inträffat: %s."
 
-#: src/protocols/toc/toc.c:474
+#: src/protocols/toc/toc.c:472
 #, c-format
 msgid "An unknown error, %d, has occured.  Info: %s"
 msgstr "Ett okänt fel, %d, har inträffat. Information: %s"
 
-#: src/protocols/toc/toc.c:491
+#: src/protocols/toc/toc.c:489
 msgid "Connection Closed"
 msgstr "Anslutningen stängd"
 
-#: src/protocols/toc/toc.c:526
+#: src/protocols/toc/toc.c:527
 msgid "Waiting for reply..."
 msgstr "Väntar på svar..."
 
-#: src/protocols/toc/toc.c:595
+#: src/protocols/toc/toc.c:596
 msgid "TOC has come back from its pause. You may now send messages again."
 msgstr ""
 "TOC har kommit tillbaka från dess paus. Du kan nu skicka meddelanden igen."
 
-#: src/protocols/toc/toc.c:596
+#: src/protocols/toc/toc.c:597
 msgid "TOC Resume"
 msgstr "TOC-återupptagning"
 
-#: src/protocols/toc/toc.c:757
+#: src/protocols/toc/toc.c:758
 msgid "Chat Error"
 msgstr "Chattfel"
 
-#: src/protocols/toc/toc.c:776
+#: src/protocols/toc/toc.c:777
 msgid "Password Change Successeful"
 msgstr "Lösenordsändring lyckades"
 
-#: src/dialogs.c:1491 src/protocols/toc/toc.c:776
+#: src/dialogs.c:1607 src/protocols/toc/toc.c:777
 msgid "Gaim - Password Change"
 msgstr "Gaim - Lösenordsändring"
 
-#: src/protocols/toc/toc.c:779
+#: src/protocols/toc/toc.c:780
 msgid ""
 "TOC has sent a PAUSE command. When this happens, TOC ignores any messages "
 "sent to it, and may kick you off if you send a message. Gaim will prevent "
@@ -689,63 +889,68 @@ msgstr ""
 "meddelande. Gaim kommer att förhindra att något går igenom. Detta är endast "
 "tillfälligt, håll ut."
 
-#: src/protocols/toc/toc.c:782
+#: src/protocols/toc/toc.c:783
 msgid "TOC Pause"
 msgstr "TOC-paus"
 
-#: src/protocols/toc/toc.c:1206
+#: src/protocols/toc/toc.c:1207
 msgid "Get Dir Info"
 msgstr "Hämta kataloginformation"
 
-#: src/protocols/toc/toc.c:1622 src/protocols/toc/toc.c:1664
-#: src/protocols/toc/toc.c:1783 src/protocols/toc/toc.c:1869
+#: src/protocols/toc/toc.c:1623 src/protocols/toc/toc.c:1665
+#: src/protocols/toc/toc.c:1784 src/protocols/toc/toc.c:1870
 msgid "Could not connect for transfer!"
 msgstr "Kunde inte ansluta för överföring!"
 
-#: src/protocols/toc/toc.c:1813
+#: src/protocols/toc/toc.c:1814
 msgid "Could not write file header!"
 msgstr "Kunde inte skriva filhuvud!"
 
-#: src/protocols/toc/toc.c:1902
+#: src/protocols/toc/toc.c:1903
 msgid "Gaim - Save As..."
 msgstr "Gaim - Spara som..."
 
-#: src/protocols/toc/toc.c:1941
-#, c-format
-msgid "%s requests %s to accept %d file%s: %s (%.2f %s)%s%s"
+#: src/protocols/toc/toc.c:1944
+#, fuzzy, c-format
+msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgstr "%s ber %s att acceptera %d filer%.0s: %s (%.2f %s)%s%s"
 
-#: src/protocols/toc/toc.c:1946
+#: src/protocols/toc/toc.c:1945
+#, fuzzy, c-format
+msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+msgstr "%s ber %s att acceptera %d filer%.0s: %s (%.2f %s)%s%s"
+
+#: src/protocols/toc/toc.c:1950
 #, c-format
 msgid "%s requests you to send them a file"
 msgstr "%s ber att du ska skicka dem en fil"
 
-#: src/protocols/yahoo/yahoo.c:500
+#: src/protocols/yahoo/yahoo.c:501
 msgid "Your message did not get sent."
 msgstr "Ditt meddelande skickades inte."
 
-#: src/protocols/zephyr/zephyr.c:778
+#: src/protocols/zephyr/zephyr.c:802
 msgid "ZLocate"
 msgstr "ZLocate"
 
-#: src/protocols/zephyr/zephyr.c:815
+#: src/protocols/zephyr/zephyr.c:839
 msgid "Class:"
 msgstr "Klass:"
 
-#: src/protocols/zephyr/zephyr.c:819
+#: src/protocols/zephyr/zephyr.c:843
 msgid "Instance:"
 msgstr "Instans:"
 
-#: src/protocols/zephyr/zephyr.c:823
+#: src/protocols/zephyr/zephyr.c:847
 msgid "Recipient:"
 msgstr "Mottagare:"
 
-#: src/about.c:94
+#: src/about.c:93
 #, c-format
 msgid "About Gaim v%s"
 msgstr "Om Gaim v%s"
 
-#: src/about.c:127
+#: src/about.c:126
 msgid ""
 "Gaim is a client that supports AOL's Instant Messenger protocol. It is "
 "written\n"
@@ -758,157 +963,124 @@ msgstr ""
 "\n"
 "URL: "
 
-#: src/about.c:128
-msgid ""
-"\n"
-"\n"
-"IRC: #gaim on irc.openprojects.net"
-msgstr ""
-"\n"
-"\n"
-"IRC: #gaim på irc.openprojects.net"
-
 #: src/about.c:137
 msgid ""
-"Rob Flynn (maintainer)               rob@marko.net\n"
-"Eric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n"
+"Active Developers\n"
+"====================\n"
+"Rob Flynn (maintainer) [ rob@marko.net ]\n"
+"Sean Egan (coder)      [ bj91704@binghamton.edu ]\n"
 "\n"
+"Crazy Patch Writers\n"
+"===================\n"
 "Benjamin Miller\n"
 "Decklin Foster\n"
-"Sean Egan\n"
+"\n"
+"Retired Developers\n"
+"===================\n"
 "Jim Duchek\n"
-"Mark Spencer (original author)   markster@marko.net"
+"Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
+"Mark Spencer (original author)   [ markster@marko.net ]"
 msgstr ""
-"Rob Flynn (ansvarig)                  rob@marko.net\n"
-"Eric Warmenhoven (huvudprogrammerare) warmenhoven@yahoo.com\n"
-"\n"
-"Benjamin Miller\n"
-"Decklin Foster\n"
-"Sean Egan\n"
-"Jim Duchek\n"
-"Mark Spencer (ursprunglig författare) markster@marko.net"
 
-#: src/about.c:148 src/about.c:213 src/aim.c:295 src/buddy.c:2408
-#: src/buddy_chat.c:1301 src/buddy_chat.c:1398 src/buddy_chat.c:1428
-#: src/conversation.c:2293 src/dialogs.c:447 src/dialogs.c:3634
-#: src/multi.c:1002 src/plugins.c:277 src/prefs.c:2416 src/prpl.c:438
+#: src/about.c:155 src/aim.c:296 src/buddy.c:2469 src/buddy_chat.c:1311
+#: src/buddy_chat.c:1408 src/buddy_chat.c:1438 src/conversation.c:2417
+#: src/dialogs.c:563 src/dialogs.c:3777 src/multi.c:1026 src/plugins.c:277
+#: src/prefs.c:2496 src/prpl.c:438 src/prpl.c:679 src/server.c:991
 msgid "Close"
 msgstr "Stäng"
 
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 #. gtk_widget_grab_default(button);
-#: src/about.c:168
+#: src/about.c:175
 msgid "Web Site"
 msgstr "Webbplats"
 
-#: src/about.c:223
-msgid ""
-"Relax, help is just around the corner. The first thing you'll need to do is "
-"get an AIM account; you can get one from http://aim.aol.com/. Just click the "
-"button that says \"New Users\" and you can create an account that way. Once "
-"you have your account, enter the username and password into the login window "
-"that comes up when you start Gaim, and click the Signon button. Once you're "
-"online, you can talk to one of the Gaim developers for more assistance; "
-"their contact information is in the AUTHORS file in the Gaim source, or at "
-msgstr ""
-"Slappna av, hjälp finns runt hörnet. Det första som du måste göra är att "
-"skaffa ett AIM-konto. Du kan skaffa ett från http://aim.aol.com/. Klicka "
-"bara på knappen som säger \"Nya användare\" så kan du skapa ett konto på det "
-"sättet. När du väl har ett konto anger du användarnamnet och lösenordet i "
-"inloggningsfönstret som kommer upp när du startar Gaim, och klickar på "
-"inloggningsknappen. När du väl är ansluten kan du prata med en av Gaim-"
-"utvecklarna för mer hjälp. Deras kontaktinformation finns i filen AUTHORS i "
-"Gaim-källkoden, eller på "
-
-#: src/about.c:234
-msgid ""
-"contactinfo.php. If you can't get online and still need more assistance, "
-"feel free to email us at gaim@marko.net. Thanks for using Gaim!"
-msgstr ""
-"contactinfo.php. Om du inte kan ansluta och behöver mer hjälp, kan du skicka "
-"e-post till oss på gaim@marko.net. Tack för att du använder Gaim!"
-
-#: src/aim.c:128 src/buddy.c:2401
+#: src/aim.c:129 src/buddy.c:2462
 msgid "Signoff"
 msgstr "Logga ut"
 
-#: src/aim.c:140
+#: src/aim.c:141
 msgid "Please enter your logon"
 msgstr "Ange ditt inloggningsnamn"
 
-#: src/aim.c:140 src/multi.c:1231 src/server.c:53
+#: src/aim.c:141 src/multi.c:1276 src/server.c:55
 msgid "Signon Error"
 msgstr "Inloggningsfel"
 
-#: src/aim.c:238
+#: src/aim.c:239
 msgid "Gaim - Login"
 msgstr "Gaim - Inloggning"
 
-#: src/aim.c:256
+#: src/aim.c:257
 msgid "Screen Name: "
 msgstr "Skärmnamn: "
 
-#: src/aim.c:272
+#: src/aim.c:273
 msgid "Password: "
 msgstr "Lösenord: "
 
-#: src/aim.c:293 src/buddy.c:2405
+#: src/aim.c:294 src/buddy.c:2466
 msgid "Quit"
 msgstr "Avsluta"
 
-#: src/aim.c:298 src/aim.c:745 src/buddy.c:2431
+#: src/aim.c:299 src/aim.c:755 src/buddy.c:2492
 msgid "Accounts"
 msgstr "Konton"
 
-#: src/aim.c:300 src/multi.c:854
+#: src/aim.c:301 src/multi.c:878
 msgid "Signon"
 msgstr "Inloggning"
 
-#: src/aim.c:332
-msgid "Help!"
-msgstr "Hjälp!"
+#: src/aim.c:333
+#, fuzzy
+msgid "About"
+msgstr "Om..."
 
 # src/menus.c:311
-#: src/aim.c:333 src/prefs.c:1525 src/prefs.c:1800
+#: src/aim.c:334 src/prefs.c:1580 src/prefs.c:1854
 msgid "Options"
 msgstr "Alternativ"
 
 #. Left side: frame with list of plugin file names
-#: src/aim.c:335 src/aim.c:748 src/buddy.c:2449 src/plugins.c:192
+#: src/aim.c:336 src/aim.c:758 src/buddy.c:2510 src/plugins.c:192
 msgid "Plugins"
 msgstr "Insticksmoduler"
 
-#: src/aim.c:742 src/buddy.c:2441
+#: src/aim.c:752 src/buddy.c:2502
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: src/applet.c:197
+#: src/applet.c:199
 msgid "Attempting to sign on...."
 msgstr "Försöker att logga in..."
 
-#: src/applet.c:200
+#: src/applet.c:202
 msgid "Offline. Click to bring up login box."
 msgstr "Frånkopplad. Klicka för att ta fram inloggningsrutan."
 
-#: src/applet.c:216
+#: src/applet.c:218
 #, c-format
 msgid "Away: %d pending."
 msgstr "Frånvarande: %d väntar."
 
-#: src/applet.c:219
+#: src/applet.c:221
 msgid "Away."
 msgstr "Frånvarande."
 
-#: src/applet.c:294 src/away.c:387
+#: src/applet.c:293 src/buddy.c:487 src/buddy.c:2344 src/buddy.c:2480
+msgid "Away"
+msgstr "Frånvarande"
+
+#: src/applet.c:296 src/away.c:389
 msgid "New Away Message"
 msgstr "Nytt frånvaromeddelande:"
 
-#: src/applet.c:441
+#: src/applet.c:443
 msgid "Can't create Gaim applet!"
 msgstr "Kan inte skapa Gaim-panelprogram!"
 
-#: src/applet.c:462
+#: src/applet.c:464
 msgid "About..."
 msgstr "Om..."
 
@@ -916,137 +1088,100 @@ msgstr "Om..."
 msgid "Gaim - Away!"
 msgstr "Gaim - Frånvarande!"
 
-#: src/away.c:249
+#: src/away.c:251
 msgid "I'm Back!"
 msgstr "Jag är tillbaka!"
 
 # src/menus.c:327
-#: src/away.c:265 src/away.c:345 src/away.c:519
+#: src/away.c:267 src/away.c:347 src/away.c:521
 msgid "Back"
 msgstr "Bakåt"
 
-#: src/away.c:407
+#: src/away.c:409
 msgid "Remove Away Message"
 msgstr "Ta bort frånvaromeddelande"
 
-#: src/away.c:595
+#: src/away.c:597
 msgid "Set All Away"
 msgstr "Ställ in alla frånvarande"
 
 #. Put the buttons in the box
-#: src/buddy.c:473 src/buddy.c:2518 src/buddy_chat.c:1433
-#: src/conversation.c:1934 src/conversation.c:2308 src/dialogs.c:765
-#: src/dialogs.c:949 src/dialogs.c:1831 src/multi.c:986 src/prefs.c:1914
-#: src/prefs.c:2256 src/prefs.c:2290
+#: src/buddy.c:482 src/buddy.c:2579 src/buddy_chat.c:1443
+#: src/conversation.c:2043 src/conversation.c:2432 src/dialogs.c:881
+#: src/dialogs.c:1065 src/dialogs.c:1968 src/multi.c:1010 src/prefs.c:1990
+#: src/prefs.c:2332 src/prefs.c:2366
 msgid "Add"
 msgstr "Lägg till"
 
-#: src/buddy.c:474 src/buddy.c:2519 src/dialogs.c:775 src/dialogs.c:922
+#: src/buddy.c:483 src/buddy.c:2580 src/dialogs.c:891 src/dialogs.c:1038
 msgid "Group"
 msgstr "Grupp"
 
-#: src/buddy.c:475 src/buddy.c:2520 src/buddy_chat.c:1435
-#: src/conversation.c:1920 src/conversation.c:2305 src/prefs.c:1928
-#: src/prefs.c:2260 src/prefs.c:2294
+#: src/buddy.c:484 src/buddy.c:2581 src/buddy_chat.c:1445
+#: src/conversation.c:2029 src/conversation.c:2429 src/prefs.c:2004
+#: src/prefs.c:2336 src/prefs.c:2370
 msgid "Remove"
 msgstr "Ta bort"
 
-#: src/buddy.c:479 src/buddy.c:1898 src/buddy.c:2282 src/prefs.c:2741
-msgid "Chat"
-msgstr "Chatt"
-
-#: src/buddy.c:480 src/buddy.c:616 src/buddy.c:759 src/buddy.c:2280
-#: src/buddy_chat.c:820 src/buddy_chat.c:1257
+#: src/buddy.c:489 src/buddy.c:627 src/buddy.c:774 src/buddy.c:2341
+#: src/buddy_chat.c:850 src/buddy_chat.c:1267
 msgid "IM"
 msgstr "Snabbmeddelande"
 
-#: src/buddy.c:481 src/buddy.c:2281 src/buddy_chat.c:836 src/buddy_chat.c:1265
-#: src/buddy_chat.c:1441 src/conversation.c:2326
+#: src/buddy.c:490 src/buddy.c:2342 src/buddy_chat.c:866 src/buddy_chat.c:1275
+#: src/buddy_chat.c:1451 src/conversation.c:2450
 msgid "Info"
 msgstr "Information"
 
 #. Put the buttons in the box
-#: src/buddy.c:621 src/buddy.c:764 src/dialogs.c:914 src/dialogs.c:3195
-#: src/dialogs.c:3210
+#: src/buddy.c:632 src/buddy.c:779 src/dialogs.c:1030 src/dialogs.c:3336
+#: src/dialogs.c:3351
 msgid "Alias"
 msgstr "Alias"
 
-#: src/buddy.c:626 src/buddy.c:783
+#: src/buddy.c:637 src/buddy.c:798
 msgid "Add Buddy Pounce"
 msgstr "Lägg till kompisanfall"
 
-#: src/buddy.c:633 src/buddy.c:789
+#: src/buddy.c:644 src/buddy.c:804
 msgid "View Log"
 msgstr "Visa logg"
 
-#: src/buddy.c:748 src/buddy.c:777
+#: src/buddy.c:761 src/buddy.c:792
 msgid "Rename"
 msgstr "Byt namn"
 
-#: src/buddy.c:771
+#: src/buddy.c:786
 msgid "Un-Alias"
 msgstr "Avaliasera"
 
-#: src/buddy.c:1476 src/buddy.c:2424
+#: src/buddy.c:1493 src/buddy.c:2485
 msgid "Buddy Pounce"
 msgstr "Kompisanfall"
 
-#: src/buddy.c:1548
+#: src/buddy.c:1565
 msgid "New Buddy Pounce"
 msgstr "Nytt kompisanfall"
 
-#: src/buddy.c:1566
+#: src/buddy.c:1583
 msgid "Remove Buddy Pounce"
 msgstr "Ta bort kompisanfall"
 
-#: src/buddy.c:1889
-msgid "Buddy Icon"
-msgstr "Kompisikon"
-
-#: src/buddy.c:1892
-msgid "Voice"
-msgstr "Röst"
-
-#: src/buddy.c:1895
-msgid "IM Image"
-msgstr "Snabbmeddelandebild"
-
-#: src/buddy.c:1901
-msgid "Get File"
-msgstr "Hämta fil"
-
-#: src/buddy.c:1904
-msgid "Send File"
-msgstr "Skicka fil"
-
-#: src/buddy.c:1908
-msgid "Games"
-msgstr "Spel"
-
-#: src/buddy.c:1911
-msgid "Stocks"
-msgstr "Aktier"
-
-#: src/buddy.c:1914
-msgid "EveryBuddy Bug"
-msgstr "EveryBuddy-fel"
-
-#: src/buddy.c:1985
+#: src/buddy.c:2029
 #, c-format
 msgid "Logged in: %s\n"
 msgstr "Inloggad: %s\n"
 
-#: src/buddy.c:1997
-#, c-format
+#: src/buddy.c:2041
 msgid "Warnings: %d%%\n"
 msgstr "Varningar: %d%%\n"
 
-#: src/buddy.c:2009
+#: src/buddy.c:2053
 #, c-format
 msgid "Capabilities: %s\n"
 msgstr "Kapabiliteter: %s\n"
 
-#: src/buddy.c:2013
+#: src/buddy.c:2057
 #, c-format
 msgid ""
 "Alias: %s               \n"
@@ -1057,121 +1192,121 @@ msgstr ""
 "Skärmnamn: %s\n"
 "%s%s%s%s%s%s"
 
-#: src/buddy.c:2017
+#: src/buddy.c:2061
 msgid "Idle: "
 msgstr "Inaktivitet: "
 
-#: src/buddy.c:2087
+#: src/buddy.c:2132 src/buddy.c:2136
 #, c-format
 msgid "%s logged in."
 msgstr "%s loggade in."
 
-#: src/buddy.c:2142
+#: src/buddy.c:2195 src/buddy.c:2199
 #, c-format
 msgid "%s logged out."
 msgstr "%s loggade ut."
 
-#: src/buddy.c:2315
+#: src/buddy.c:2376
 msgid "Information on selected Buddy"
 msgstr "Information om vald kompis"
 
-#: src/buddy.c:2316 src/dialogs.c:572
+#: src/buddy.c:2377 src/dialogs.c:688
 msgid "Send Instant Message"
 msgstr "Skicka snabbmeddelande"
 
-#: src/buddy.c:2317
+#: src/buddy.c:2378
 msgid "Start/join a Buddy Chat"
 msgstr "Starta/gå in i en kompischatt"
 
-#: src/buddy.c:2318
+#: src/buddy.c:2379
 msgid "Activate Away Message"
 msgstr "Aktivera frånvaromeddelande"
 
-#: src/buddy.c:2381
+#: src/buddy.c:2442
 msgid "File"
 msgstr "Arkiv"
 
-#: src/buddy.c:2385
+#: src/buddy.c:2446
 msgid "Add A Buddy"
 msgstr "Lägg till en kompis"
 
-#: src/buddy.c:2387
+#: src/buddy.c:2448
 msgid "Join A Chat"
 msgstr "Gå in i en chatt"
 
-#: src/buddy.c:2389
+#: src/buddy.c:2450
 msgid "New Instant Message"
 msgstr "Nytt snabbmeddelande"
 
-#: src/buddy.c:2391 src/dialogs.c:624
+#: src/buddy.c:2452 src/dialogs.c:740
 msgid "Get User Info"
 msgstr "Hämta användarinformation"
 
-#: src/buddy.c:2396
+#: src/buddy.c:2457
 msgid "Import Buddy List"
 msgstr "Importera kompislista"
 
-#: src/buddy.c:2414
+#: src/buddy.c:2475
 msgid "Tools"
 msgstr "Verktyg"
 
-#: src/buddy.c:2437
+#: src/buddy.c:2498
 msgid "Protocol Actions"
 msgstr "Protokollåtgärder"
 
-#: src/buddy.c:2443
+#: src/buddy.c:2504
 msgid "View System Log"
 msgstr "Visa systemlogg"
 
-#: src/buddy.c:2455
+#: src/buddy.c:2516
 msgid "Perl"
 msgstr "Perl"
 
-#: src/buddy.c:2458
+#: src/buddy.c:2519
 msgid "Load Script"
 msgstr "Läs in skript"
 
-#: src/buddy.c:2462
+#: src/buddy.c:2523
 msgid "Unload All Scripts"
 msgstr "Glöm alla skript"
 
-#: src/buddy.c:2466
+#: src/buddy.c:2527
 msgid "List Scripts"
 msgstr "Lista skript"
 
-#: src/buddy.c:2474
+#: src/buddy.c:2535
 msgid "Help"
 msgstr "Hjälp"
 
-#: src/buddy.c:2479
+#: src/buddy.c:2540
 msgid "About Gaim"
 msgstr "Om Gaim"
 
-#: src/buddy.c:2498 src/prefs.c:2720
+#: src/buddy.c:2559 src/prefs.c:2816
 msgid "Buddy List"
 msgstr "Kompislista"
 
-#: src/buddy.c:2551
+#: src/buddy.c:2612
 msgid "Add a new Buddy"
 msgstr "Lägg till en ny kompis"
 
-#: src/buddy.c:2552
+#: src/buddy.c:2613
 msgid "Add a new Group"
 msgstr "Lägg till en ny grupp"
 
-#: src/buddy.c:2553
+#: src/buddy.c:2614
 msgid "Remove selected Buddy/Group"
 msgstr "Ta bort vald kompis/grupp"
 
-#: src/buddy.c:2578
+#: src/buddy.c:2639
 msgid "Online"
 msgstr "Ansluten"
 
-#: src/buddy.c:2580
+#: src/buddy.c:2641
 msgid "Edit Buddies"
 msgstr "Redigera kompisar"
 
-#: src/buddy.c:2620
+#: src/buddy.c:2681
 msgid "Gaim - Buddy List"
 msgstr "Gaim - Kompislista"
 
@@ -1187,13 +1322,13 @@ msgstr "Kompischatt"
 msgid "Join Chat As:"
 msgstr "Gå in i chatt som:"
 
-#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:420
-#: src/dialogs.c:590 src/dialogs.c:648 src/dialogs.c:767 src/dialogs.c:945
-#: src/dialogs.c:1234 src/dialogs.c:1439 src/dialogs.c:1563 src/dialogs.c:1623
-#: src/dialogs.c:1820 src/dialogs.c:2002 src/dialogs.c:2177 src/dialogs.c:2248
-#: src/dialogs.c:2940 src/dialogs.c:3197 src/dialogs.c:3378 src/dialogs.c:3747
-#: src/dialogs.c:3852 src/multi.c:720 src/multi.c:850 src/multi.c:1184
-#: src/prpl.c:150 src/prpl.c:224
+#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:444
+#: src/dialogs.c:535 src/dialogs.c:706 src/dialogs.c:764 src/dialogs.c:883
+#: src/dialogs.c:1061 src/dialogs.c:1350 src/dialogs.c:1555 src/dialogs.c:1679
+#: src/dialogs.c:1739 src/dialogs.c:1957 src/dialogs.c:2139 src/dialogs.c:2314
+#: src/dialogs.c:2385 src/dialogs.c:3081 src/dialogs.c:3338 src/dialogs.c:3519
+#: src/dialogs.c:3890 src/dialogs.c:3996 src/dialogs.c:4642 src/multi.c:744
+#: src/multi.c:874 src/multi.c:1208 src/prpl.c:150 src/prpl.c:224
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -1201,17 +1336,17 @@ msgstr "Avbryt"
 msgid "Join"
 msgstr "Anslut"
 
-#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1307
-#: src/buddy_chat.c:1397
+#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1317
+#: src/buddy_chat.c:1407
 msgid "Invite"
 msgstr "Bjud in"
 
-#: src/buddy_chat.c:412 src/dialogs.c:1114 src/dialogs.c:3205
+#: src/buddy_chat.c:412 src/dialogs.c:1230 src/dialogs.c:3346
 msgid "Buddy"
 msgstr "Kompis"
 
 # src/sidebar.c:103
-#: src/buddy_chat.c:417 src/prefs.c:1879
+#: src/buddy_chat.c:417 src/prefs.c:1953
 msgid "Message"
 msgstr "Meddelande"
 
@@ -1219,628 +1354,651 @@ msgstr "Meddelande"
 msgid "Gaim - Invite Buddy Into Chat Room"
 msgstr "Gaim - Bjud in kompis till chattrum"
 
-#: src/buddy_chat.c:827
+#: src/buddy_chat.c:857
 msgid "Un-Ignore"
 msgstr "Avignorera"
 
-#: src/buddy_chat.c:829 src/buddy_chat.c:1261
+#: src/buddy_chat.c:859 src/buddy_chat.c:1271
 msgid "Ignore"
 msgstr "Ignorera"
 
 #. don't remove them from ignored in case they re-enter
-#: src/buddy_chat.c:873 src/buddy_chat.c:993
+#: src/buddy_chat.c:922 src/buddy_chat.c:1034 src/buddy_chat.c:1497
+#: src/buddy_chat.c:1530
 #, c-format
 msgid "%d %s in room"
 msgstr "%d %s i rummet"
 
-#: src/buddy_chat.c:881
+#: src/buddy_chat.c:930
 #, c-format
 msgid "%s entered the room."
 msgstr "%s kom in i rummet."
 
-#: src/buddy_chat.c:955
+#: src/buddy_chat.c:996
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s är nu känd som %s"
 
-#: src/buddy_chat.c:1001
+#: src/buddy_chat.c:1043
+#, fuzzy, c-format
+msgid "%s left the room (%s)."
+msgstr "%s lämnade rummet."
+
+#: src/buddy_chat.c:1045
 #, c-format
 msgid "%s left the room."
 msgstr "%s lämnade rummet."
 
-#: src/buddy_chat.c:1136
+#: src/buddy_chat.c:1144
 msgid "Gaim - Group Chats"
 msgstr "Gaim - Gruppchatter"
 
-#: src/buddy_chat.c:1197
+#: src/buddy_chat.c:1207
 msgid "Topic:"
 msgstr "Ämne:"
 
-#: src/buddy_chat.c:1238
+#: src/buddy_chat.c:1248
 msgid "0 people in room"
 msgstr "0 personer i rummet"
 
-#: src/buddy_chat.c:1312 src/buddy_chat.c:1396
+#: src/buddy_chat.c:1322 src/buddy_chat.c:1406
 msgid "Whisper"
 msgstr "Viska"
 
-#: src/buddy_chat.c:1317 src/buddy_chat.c:1394 src/buddy_chat.c:1443
-#: src/conversation.c:2337
+#: src/buddy_chat.c:1327 src/buddy_chat.c:1404 src/buddy_chat.c:1453
+#: src/conversation.c:2461
 msgid "Send"
 msgstr "Skicka"
 
-#: src/buddy_chat.c:1437 src/conversation.c:2314
+#: src/buddy_chat.c:1447 src/conversation.c:2438
 msgid "Block"
 msgstr "Blockera"
 
-#: src/buddy_chat.c:1439 src/conversation.c:2320 src/dialogs.c:391
-#: src/dialogs.c:416
+#: src/buddy_chat.c:1449 src/conversation.c:2444 src/dialogs.c:419
+#: src/dialogs.c:448
 msgid "Warn"
 msgstr "Varna"
 
-#: src/conversation.c:387
+#: src/conversation.c:392
 msgid "Gaim - Save Conversation"
 msgstr "Gaim - Spara konversation"
 
-#: src/conversation.c:544
-#, c-format
-msgid "Removing '%s' from buddylist.\n"
-msgstr "Ta bort \"%s\" från kompislistan.\n"
-
-#: src/conversation.c:925
+#: src/conversation.c:1037
 msgid "Unable to send message: too large"
 msgstr "Kan inte skicka meddelande: för stort"
 
-#: src/conversation.c:925 src/conversation.c:927
+#: src/conversation.c:1037 src/conversation.c:1039
 msgid "Message Error"
 msgstr "Meddelandefel"
 
-#: src/conversation.c:927
+#: src/conversation.c:1039
 msgid "Unable to send message: Unknown reason"
 msgstr "Kan inte skicka meddelande: Okänd orsak"
 
-#: src/conversation.c:1146
+#: src/conversation.c:1258
 #, c-format
 msgid "Currently at %d, "
 msgstr "För närvarande %d, "
 
-#: src/conversation.c:1154
+#: src/conversation.c:1266
 #, c-format
 msgid "Setting position to %d\n"
 msgstr "Ställer in positionen till %d\n"
 
-#: src/conversation.c:1725 src/prefs.c:1233
+#: src/conversation.c:1832 src/prefs.c:1274
 msgid "Bold Text"
 msgstr "Gör texten fet"
 
-#: src/conversation.c:1725
+#: src/conversation.c:1832
 msgid "Bold"
 msgstr "Fet"
 
-#: src/conversation.c:1729
+#: src/conversation.c:1836
 msgid "Italics Text"
 msgstr "Gör texten kursiv"
 
-#: src/conversation.c:1730
+#: src/conversation.c:1837
 msgid "Italics"
 msgstr "Kursiv"
 
-#: src/conversation.c:1733 src/prefs.c:1245
+#: src/conversation.c:1840 src/prefs.c:1286
 msgid "Underline Text"
 msgstr "Understryk text"
 
-#: src/conversation.c:1734
+#: src/conversation.c:1841
 msgid "Underline"
 msgstr "Understrykning"
 
-#: src/conversation.c:1738 src/prefs.c:1251
+#: src/conversation.c:1845 src/prefs.c:1292
 msgid "Strike through Text"
 msgstr "Genomstryk text"
 
-#: src/conversation.c:1738
+#: src/conversation.c:1845
 msgid "Strike"
 msgstr "Genomstrykning"
 
-#: src/conversation.c:1744
+#: src/conversation.c:1851
 msgid "Decrease font size"
 msgstr "Minska typsnittsstorleken"
 
-#: src/conversation.c:1744
+#: src/conversation.c:1851
 msgid "Small"
 msgstr "Liten"
 
-#: src/conversation.c:1747
+#: src/conversation.c:1854
 msgid "Normal font size"
 msgstr "Normal typsnittsstorlek"
 
-#: src/conversation.c:1747
+#: src/conversation.c:1854
 msgid "Normal"
 msgstr "Normal"
 
-#: src/conversation.c:1750
+#: src/conversation.c:1857
 msgid "Increase font size"
 msgstr "Öka typsnittsstorleken"
 
-#: src/conversation.c:1750
+#: src/conversation.c:1857
 msgid "Big"
 msgstr "Stor"
 
-#: src/conversation.c:1757 src/dialogs.c:2628 src/dialogs.c:2647
+#: src/conversation.c:1864 src/dialogs.c:2756 src/dialogs.c:2780
 msgid "Select Font"
 msgstr "Välj typsnitt"
 
-#: src/conversation.c:1758
+#: src/conversation.c:1865
 msgid "Font"
 msgstr "Typsnitt"
 
-#: src/conversation.c:1761 src/prefs.c:1281
+#: src/conversation.c:1868 src/prefs.c:1322
 msgid "Text Color"
 msgstr "Textfärg"
 
-#: src/conversation.c:1762 src/conversation.c:1766
+#: src/conversation.c:1869 src/conversation.c:1873
 msgid "Color"
 msgstr "Färg"
 
-#: src/conversation.c:1766 src/prefs.c:1299
+#: src/conversation.c:1873 src/prefs.c:1340
 msgid "Background Color"
 msgstr "Bakgrundsfärg"
 
-#: src/conversation.c:1773 src/dialogs.c:2242
+#: src/conversation.c:1880 src/dialogs.c:2379
 msgid "Insert Link"
 msgstr "Infoga länk"
 
-#: src/conversation.c:1774
+#: src/conversation.c:1881
 msgid "Link"
 msgstr "Länk"
 
-#: src/conversation.c:1777
+#: src/conversation.c:1884
 msgid "Insert smiley face"
 msgstr "Infoga smiley"
 
-#: src/conversation.c:1777
+#: src/conversation.c:1884
 msgid "Smiley"
 msgstr "Smiley"
 
-#: src/conversation.c:1784
+#: src/conversation.c:1891
 msgid "Enable logging"
 msgstr "Använd loggning"
 
-#: src/conversation.c:1785 src/prefs.c:244
+#: src/conversation.c:1892 src/prefs.c:244
 msgid "Logging"
 msgstr "Loggning"
 
-#: src/conversation.c:1794
+#: src/conversation.c:1901
 msgid "Save Conversation"
 msgstr "Spara konversation"
 
 # src/menus.c:280
-#: src/conversation.c:1795 src/dialogs.c:1443 src/dialogs.c:1627
-#: src/dialogs.c:2952 src/dialogs.c:3643
+#: src/conversation.c:1902 src/dialogs.c:1559 src/dialogs.c:1743
+#: src/dialogs.c:3093 src/dialogs.c:3786 src/dialogs.c:4649
 msgid "Save"
 msgstr "Spara"
 
-#: src/conversation.c:1799
+#: src/conversation.c:1906
 msgid "Enable sounds"
 msgstr "Använd ljud"
 
-#: src/conversation.c:1800
+#: src/conversation.c:1907
 msgid "Sound"
 msgstr "Ljud"
 
-#: src/conversation.c:2166
+#: src/conversation.c:2290
 msgid "Gaim - Conversations"
 msgstr "Gaim - Konversationer"
 
-#: src/conversation.c:2253
+#: src/conversation.c:2377
 msgid "Send message as: "
 msgstr "Skicka meddelande som: "
 
-#: src/conversation.c:2742
+#: src/conversation.c:2986
 msgid "Gaim - Save Icon"
 msgstr "Gaim - Spara ikon"
 
-#: src/conversation.c:2769
+#: src/conversation.c:3013
 msgid "Disable Animation"
 msgstr "Använd inte animering"
 
-#: src/conversation.c:2774
+#: src/conversation.c:3018
 msgid "Enable Animation"
 msgstr "Använd animation"
 
-#: src/conversation.c:2780
+#: src/conversation.c:3024
 msgid "Hide Icon"
 msgstr "Dölj ikon"
 
-#: src/conversation.c:2786
+#: src/conversation.c:3030
 msgid "Save Icon As..."
 msgstr "Spara ikon som..."
 
-#: src/dialogs.c:379
+#: src/dialogs.c:407
 msgid "Gaim - Warn user?"
 msgstr "Gaim - Varna användare?"
 
-#: src/dialogs.c:399
+#: src/dialogs.c:427
 #, c-format
 msgid "Do you really want to warn %s?"
 msgstr "Vill du verkligen varna %s?"
 
-#: src/dialogs.c:404
+#: src/dialogs.c:432
 msgid "Warn anonymously?"
 msgstr "Varna anonymt?"
 
-#: src/dialogs.c:408
+#: src/dialogs.c:436
 msgid "Anonymous warnings are less harsh."
 msgstr "Anonyma varningar är mindre barska."
 
+#: src/dialogs.c:464
+#, c-format
+msgid "Removing '%s' from buddylist.\n"
+msgstr "Ta bort \"%s\" från kompislistan.\n"
+
+#: src/dialogs.c:490
+#, fuzzy, c-format
+msgid "Gaim - Remove %s?"
+msgstr "Gaim - Byt namn på gruppen"
+
+#: src/dialogs.c:503
+#, fuzzy
+msgid "Remove Buddy"
+msgstr "Byt namn på kompis"
+
+#: src/dialogs.c:513
+#, c-format
+msgid ""
+"You are about to remove '%s' from\n"
+"your buddylist. Do you want to continue?"
+msgstr ""
+
+#: src/dialogs.c:525 src/prpl.c:154 src/prpl.c:228
+msgid "Accept"
+msgstr "Acceptera"
+
 #. Build OK Button
-#: src/dialogs.c:516 src/dialogs.c:595 src/dialogs.c:653 src/dialogs.c:1238
-#: src/dialogs.c:1567 src/dialogs.c:1680 src/dialogs.c:2001 src/dialogs.c:2181
-#: src/dialogs.c:2247 src/dialogs.c:3752 src/dialogs.c:3857 src/multi.c:725
+#: src/dialogs.c:632 src/dialogs.c:711 src/dialogs.c:769 src/dialogs.c:1354
+#: src/dialogs.c:1683 src/dialogs.c:1830 src/dialogs.c:2138 src/dialogs.c:2318
+#: src/dialogs.c:2384 src/dialogs.c:3895 src/dialogs.c:4001 src/multi.c:749
 msgid "OK"
 msgstr "OK"
 
-#: src/dialogs.c:562
+#: src/dialogs.c:678
 msgid "Gaim - IM user"
 msgstr "Gaim - Snabbmeddelandeanvändare"
 
-#: src/dialogs.c:579
+#: src/dialogs.c:695
 msgid "IM who:"
 msgstr "Snabbmeddelande till vem:"
 
-#: src/dialogs.c:631
+#: src/dialogs.c:747
 msgid "User:"
 msgstr "Användare:"
 
 #. Finish up
-#: src/dialogs.c:658
+#: src/dialogs.c:774
 msgid "Gaim - Get User Info"
 msgstr "Gaim - Hämta användarinformation"
 
-#: src/dialogs.c:720
+#: src/dialogs.c:836
 msgid "Buddies"
 msgstr "Kompisar"
 
-#: src/dialogs.c:773
+#: src/dialogs.c:889
 msgid "Add Group"
 msgstr "Lägg till grupp"
 
-#: src/dialogs.c:798
+#: src/dialogs.c:914
 msgid "Gaim - Add Group"
 msgstr "Gaim - Lägg till grupp"
 
-#: src/dialogs.c:882
+#: src/dialogs.c:998
 msgid "Gaim - Add Buddy"
 msgstr "Gaim - Lägg till kompis"
 
-#: src/dialogs.c:894
+#: src/dialogs.c:1010
 msgid "Add Buddy"
 msgstr "Lägg till kompis"
 
-#: src/dialogs.c:904
+#: src/dialogs.c:1020
 msgid "Contact"
 msgstr "Kontakt"
 
 #. Set up stuff for the account box
-#: src/dialogs.c:932
+#: src/dialogs.c:1048
 msgid "Add To"
 msgstr "Lägg till i"
 
-#: src/dialogs.c:967
+#: src/dialogs.c:1083
 msgid "Please enter a buddy to pounce."
 msgstr "Ange en kompis att anfalla."
 
-#: src/dialogs.c:967
+#: src/dialogs.c:1083
 msgid "Buddy Pounce Error"
 msgstr "Kompisanfallsfel"
 
-#: src/dialogs.c:1083
+#: src/dialogs.c:1199
 msgid "Gaim - New Buddy Pounce"
 msgstr "Gaim - Nytt kompisanfall"
 
 #. <pounce type="who">
-#: src/dialogs.c:1094
+#: src/dialogs.c:1210
 msgid "Pounce Who"
 msgstr "Anfall vem"
 
-#: src/dialogs.c:1105
+#: src/dialogs.c:1221
 msgid "Account"
 msgstr "Konto"
 
 #. </pounce type="who">
 #. <pounce type="when">
-#: src/dialogs.c:1129
+#: src/dialogs.c:1245
 msgid "Pounce When"
 msgstr "Anfall när"
 
-#: src/dialogs.c:1139
+#: src/dialogs.c:1255
 msgid "Pounce on sign on"
 msgstr "Anfall vid inloggning"
 
-#: src/dialogs.c:1144
+#: src/dialogs.c:1260
 msgid "Pounce on return from away"
 msgstr "Anfall vid återkomst från frånvaro"
 
-#: src/dialogs.c:1150
+#: src/dialogs.c:1266
 msgid "Pounce on return from idle"
 msgstr "Anfall vid återkomst från inaktivitet"
 
 #. </pounce type="when">
 #. <pounce type="action">
-#: src/dialogs.c:1162
+#: src/dialogs.c:1278
 msgid "Pounce Action"
 msgstr "Anfallsåtgärd"
 
-#: src/dialogs.c:1173
+#: src/dialogs.c:1289
 msgid "Open IM Window"
 msgstr "Öppna snabbmeddelandefönster"
 
-#: src/dialogs.c:1178
+#: src/dialogs.c:1294
 msgid "Popup Notification"
 msgstr "Visa notifiering"
 
-#: src/dialogs.c:1183
+#: src/dialogs.c:1299
 msgid "Send Message"
 msgstr "Skicka meddelande"
 
-#: src/dialogs.c:1196
+#: src/dialogs.c:1312
 msgid "Execute command on pounce"
 msgstr "Kör kommando vid anfall"
 
-#: src/dialogs.c:1209
+#: src/dialogs.c:1325
 msgid "Play sound on pounce"
 msgstr "Spela ljud vid anfall"
 
 #. </pounce type="action">
-#: src/dialogs.c:1224
+#: src/dialogs.c:1340
 msgid "Save this pounce after activation"
 msgstr "Spara detta anfall efter aktivering"
 
-#: src/dialogs.c:1306
+#: src/dialogs.c:1422
 msgid "Gaim - Set Dir Info"
 msgstr "Gaim - Ställ in kataloginformation"
 
-#: src/dialogs.c:1315
+#: src/dialogs.c:1431
 msgid "Directory Info"
 msgstr "Kataloginformation"
 
-#: src/dialogs.c:1337
+#: src/dialogs.c:1453
 msgid "Allow Web Searches To Find Your Info"
 msgstr "Tillåt webbtjänster att hitta din information"
 
 #. Line 1
-#: src/dialogs.c:1340 src/dialogs.c:2020
+#: src/dialogs.c:1456 src/dialogs.c:2157
 msgid "First Name"
 msgstr "Förnamn"
 
 #. Line 2
-#: src/dialogs.c:1351 src/dialogs.c:2032
+#: src/dialogs.c:1467 src/dialogs.c:2169
 msgid "Middle Name"
 msgstr "Andranamn"
 
 #. Line 3
-#: src/dialogs.c:1363 src/dialogs.c:2044
+#: src/dialogs.c:1479 src/dialogs.c:2181
 msgid "Last Name"
 msgstr "Efternamn"
 
 #. Line 4
-#: src/dialogs.c:1374 src/dialogs.c:2056
+#: src/dialogs.c:1490 src/dialogs.c:2193
 msgid "Maiden Name"
 msgstr "Flicknamn"
 
 #. Line 6
-#: src/dialogs.c:1396 src/dialogs.c:2079
+#: src/dialogs.c:1512 src/dialogs.c:2216
 msgid "State"
 msgstr "Delstat"
 
 #. Line 7
-#: src/dialogs.c:1407 src/dialogs.c:2090
+#: src/dialogs.c:1523 src/dialogs.c:2227
 msgid "Country"
 msgstr "Land"
 
-#: src/dialogs.c:1461
+#: src/dialogs.c:1577
 msgid "New Passwords Do Not Match"
 msgstr "Nya lösenorden stämmer inte överens"
 
-#: src/dialogs.c:1461 src/dialogs.c:1466
+#: src/dialogs.c:1577 src/dialogs.c:1582
 msgid "Gaim - Change Password Error"
 msgstr "Gaim - Fel vid lösenordsbyte"
 
-#: src/dialogs.c:1466
+#: src/dialogs.c:1582
 msgid "Fill out all fields completely"
 msgstr "Fyll i alla fält helt"
 
-#: src/dialogs.c:1502
-msgid "Change Password"
-msgstr "Byt lösenord"
-
-#: src/dialogs.c:1521
+#: src/dialogs.c:1637
 msgid "Original Password"
 msgstr "Gammalt lösenord"
 
-#: src/dialogs.c:1535
+#: src/dialogs.c:1651
 msgid "New Password"
 msgstr "Nytt lösenord"
 
-#: src/dialogs.c:1549
+#: src/dialogs.c:1665
 msgid "New Password (again)"
 msgstr "Nytt lösenord (igen)"
 
-#: src/dialogs.c:1590
+#: src/dialogs.c:1706
 msgid "Gaim - Set User Info"
 msgstr "Gaim - Ställ in användarinformation"
 
-#: src/dialogs.c:1685
+#: src/dialogs.c:1814
 msgid "Below are the results of your search: "
 msgstr "Nedan är resultaten från din sökning: "
 
-#: src/dialogs.c:1810 src/dialogs.c:1817
+#: src/dialogs.c:1947 src/dialogs.c:1954
 msgid "Permit"
 msgstr "Tillåt"
 
-#: src/dialogs.c:1812 src/dialogs.c:1819
+#: src/dialogs.c:1949 src/dialogs.c:1956
 msgid "Deny"
 msgstr "Neka"
 
-#: src/dialogs.c:1856
+#: src/dialogs.c:1993
 msgid "Gaim - Add Permit"
 msgstr "Gaim - Lägg till tillåtelse"
 
-#: src/dialogs.c:1858
+#: src/dialogs.c:1995
 msgid "Gaim - Add Deny"
 msgstr "Gaim - Lägg till nekan"
 
-#: src/dialogs.c:1918
+#: src/dialogs.c:2055
 msgid "Gaim - Log Conversation"
 msgstr "Gaim - Logga konversation"
 
-#: src/dialogs.c:1996 src/dialogs.c:2159
+#: src/dialogs.c:2133 src/dialogs.c:2296
 msgid "Search for Buddy"
 msgstr "Sök efter kompis"
 
-#: src/dialogs.c:2124
+#: src/dialogs.c:2261
 msgid "Gaim - Find Buddy By Info"
 msgstr "Gaim - Sök kompis efter information"
 
-#: src/dialogs.c:2153
+#: src/dialogs.c:2290
 msgid "Gaim - Find Buddy By Email"
 msgstr "Gaim - Sök kompis efter e-post"
 
-#: src/dialogs.c:2166
+#: src/dialogs.c:2303
 msgid "Email"
 msgstr "E-post"
 
-#: src/dialogs.c:2261
+#: src/dialogs.c:2398
 msgid "URL"
 msgstr "URL"
 
 #. Right side: frame with description and the filepath of plugin
-#: src/dialogs.c:2269 src/plugins.c:211
+#: src/dialogs.c:2406 src/plugins.c:211
 msgid "Description"
 msgstr "Beskrivning"
 
-#: src/dialogs.c:2293
+#: src/dialogs.c:2430
 msgid "Gaim - Add URL"
 msgstr "Gaim - Lägg till URL"
 
-#: src/dialogs.c:2444 src/dialogs.c:2465 src/dialogs.c:2519
+#: src/dialogs.c:2581 src/dialogs.c:2602 src/dialogs.c:2656
 msgid "Select Text Color"
 msgstr "Välj textfärg"
 
-#: src/dialogs.c:2498
+#: src/dialogs.c:2635
 msgid "Select Background Color"
 msgstr "Välj bakgrundsfärg"
 
-#: src/dialogs.c:2722
+#: src/dialogs.c:2857
 msgid "Import to:"
 msgstr "Importera till:"
 
-#: src/dialogs.c:2746
+#: src/dialogs.c:2881
 msgid "Gaim - Import Buddy List"
 msgstr "Gaim - Importera kompislista"
 
 #. We shouldn't allow a blank title
-#: src/dialogs.c:2807
+#: src/dialogs.c:2948
 msgid "You cannot create an away message with a blank title"
 msgstr "Du kan inte skapa ett frånvaromeddelande med en tom titel"
 
 #. We shouldn't allow a blank message
-#: src/dialogs.c:2814
+#: src/dialogs.c:2955
 msgid "You cannot create an empty away message"
 msgstr "Kunde inte skapa ett tomt frånvaromeddelande"
 
-#: src/dialogs.c:2882
+#: src/dialogs.c:3023
 msgid "Gaim - New away message"
 msgstr "Gaim - Nytt frånvaromeddelande"
 
-#: src/dialogs.c:2892
+#: src/dialogs.c:3033
 msgid "New away message"
 msgstr "Nytt frånvaromeddelande"
 
-#: src/dialogs.c:2905
+#: src/dialogs.c:3046
 msgid "Away title: "
 msgstr "Frånvarotitel: "
 
-#: src/dialogs.c:2944
+#: src/dialogs.c:3085
 msgid "Use"
 msgstr "Använd"
 
-#: src/dialogs.c:2948
+#: src/dialogs.c:3089
 msgid "Save & Use"
 msgstr "Spara och använd"
 
 #. show everything
-#: src/dialogs.c:3151
+#: src/dialogs.c:3292
 msgid "Smile!"
 msgstr "Le!"
 
-#: src/dialogs.c:3203
+#: src/dialogs.c:3344
 msgid "Alias Buddy"
 msgstr "Aliaskompis"
 
-#: src/dialogs.c:3236
+#: src/dialogs.c:3377
 msgid "Gaim - Alias Buddy"
 msgstr "Gaim - Aliaskompis"
 
-#: src/dialogs.c:3308
+#: src/dialogs.c:3449
 msgid "Gaim - Save Log File"
 msgstr "Gaim - Spara loggfil"
 
-#: src/dialogs.c:3340
+#: src/dialogs.c:3481
 #, c-format
 msgid "Unable to remove file %s - %s"
 msgstr "Kan inte ta bort filen %s - %s"
 
-#: src/dialogs.c:3368
+#: src/dialogs.c:3509
 msgid "Really clear log?"
 msgstr "Vill du verkligen tömma loggen?"
 
-#: src/dialogs.c:3383
+#: src/dialogs.c:3524
 msgid "Okay"
 msgstr "Okej"
 
-#: src/dialogs.c:3554
+#: src/dialogs.c:3695
 msgid "Date"
 msgstr "Datum"
 
-#: src/dialogs.c:3617
+#: src/dialogs.c:3758
 msgid "Conversation"
 msgstr "Konversation"
 
-#: src/dialogs.c:3638
+#: src/dialogs.c:3781
 msgid "Clear"
 msgstr "Töm"
 
-#: src/dialogs.c:3716
+#: src/dialogs.c:3859
 msgid "Gaim - Rename Group"
 msgstr "Gaim - Byt namn på gruppen"
 
-#: src/dialogs.c:3726
+#: src/dialogs.c:3869
 msgid "Rename Group"
 msgstr "Byt namn på gruppen"
 
-#: src/dialogs.c:3733 src/dialogs.c:3838
+#: src/dialogs.c:3876 src/dialogs.c:3982
 msgid "New name:"
 msgstr "Nytt namn:"
 
-#: src/dialogs.c:3821
+#: src/dialogs.c:3965
 msgid "Gaim - Rename Buddy"
 msgstr "Gaim - Byt namn på kompis"
 
-#: src/dialogs.c:3831
+#: src/dialogs.c:3975
 msgid "Rename Buddy"
 msgstr "Byt namn på kompis"
 
 #. Below is basically stolen from plugins.c
-#: src/dialogs.c:3915
+#: src/dialogs.c:4059
 msgid "Gaim - Select Perl Script"
 msgstr "Gaim - Välj Perlskript"
 
-#: src/gaimrc.c:1107
+#: src/gaimrc.c:1113
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Kunde inte öppna konfigurationsfilen %s."
 
-#: src/gaimrc.c:1108
+#: src/gaimrc.c:1114
 msgid "Preferences Error"
 msgstr "Inställningsfel"
 
@@ -1853,91 +2011,101 @@ msgstr "Mottog: \"%s\"\n"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Fel vid öppnande av anslutning.\n"
 
-#: src/multi.c:411
+#: src/multi.c:427
 msgid "Gaim - Load Buddy Icon"
 msgstr "Gaim - Läs in kompisikon"
 
-#: src/multi.c:454
+#: src/multi.c:470
 msgid "Buddy Icon File:"
 msgstr "Fil med kompisikon:"
 
-#: src/multi.c:465
+#: src/multi.c:481
 msgid "Browse"
 msgstr "Bläddra"
 
-#: src/multi.c:470 src/prefs.c:1457
+#: src/multi.c:486 src/prefs.c:1512
 msgid "Reset"
 msgstr "Återställ"
 
-#: src/multi.c:497
+#: src/multi.c:513
 msgid "Screenname:"
 msgstr "Skärmnamn:"
 
-#: src/multi.c:517
+#: src/multi.c:533
 msgid "Protocol:"
 msgstr "Protokoll:"
 
-#: src/multi.c:522
+#: src/multi.c:538
 msgid "Remember Password"
 msgstr "Kom ihåg lösenord"
 
-#: src/multi.c:523
+#: src/multi.c:539
 msgid "Auto-Login"
 msgstr "Logga in automatiskt"
 
-#: src/multi.c:563
+#: src/multi.c:579
 msgid "New Mail Notifications"
 msgstr "Notifieringar vid ny e-post"
 
-#: src/multi.c:703
+#: src/multi.c:727
 msgid "Gaim - Modify Account"
 msgstr "Gaim - Ändra konto"
 
-#: src/multi.c:822
+#: src/multi.c:846
 msgid "Enter Password"
 msgstr "Ange lösenord"
 
-#: src/multi.c:911
+#: src/multi.c:935
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Är du säker på att du vill ta bort %s?"
 
-#: src/multi.c:948
+#: src/multi.c:972
 msgid "Gaim - Account Editor"
 msgstr "Gaim - Kontoredigerare"
 
-#: src/multi.c:967
+#: src/multi.c:991
 msgid "Select All"
 msgstr "Markera alla"
 
-#: src/multi.c:972
+#: src/multi.c:996
 msgid "Select Autos"
 msgstr "Markera automatiskt"
 
-#: src/multi.c:976
+#: src/multi.c:1000
 msgid "Select None"
 msgstr "Markera inga"
 
-#: src/multi.c:990
+#: src/multi.c:1014
 msgid "Modify"
 msgstr "Modifera"
 
-#: src/multi.c:994
+#: src/multi.c:1018
 msgid "Sign On/Off"
 msgstr "Logga in/ut"
 
-#: src/multi.c:998
+#: src/multi.c:1022
 msgid "Delete"
 msgstr "Ta bort"
 
-#: src/multi.c:1226
+#: src/multi.c:1256
 #, c-format
 msgid ""
 "%s\n"
-"%s was unable to sign on: %s"
+"%s: %s"
+msgstr ""
+
+#: src/multi.c:1275
+#, fuzzy, c-format
+msgid "%s was unable to sign on"
 msgstr ""
 "%s\n"
 "%s kunde inte logga in: %s"
+
+#: src/multi.c:1286
+#, fuzzy
+msgid "Notice"
+msgstr "Röst"
 
 #: src/perl.c:856
 msgid "Perl Scripts"
@@ -1995,9 +2163,9 @@ msgstr "Stäng detta fönster"
 msgid "General Options"
 msgstr "Allmänna inställningar"
 
-#: src/prefs.c:198 src/prefs.c:372 src/prefs.c:538 src/prefs.c:639
-#: src/prefs.c:868 src/prefs.c:1003 src/prefs.c:1221 src/prefs.c:1521
-#: src/prefs.c:1796 src/prefs.c:2207
+#: src/prefs.c:198 src/prefs.c:373 src/prefs.c:539 src/prefs.c:640
+#: src/prefs.c:893 src/prefs.c:1037 src/prefs.c:1262 src/prefs.c:1576
+#: src/prefs.c:1850 src/prefs.c:2283
 msgid "All options take effect immediately unless otherwise noted."
 msgstr "Alla ändringar börjar gälla omedelbart såvida inte annat anges."
 
@@ -2087,14 +2255,18 @@ msgid "GNOME URL Handler"
 msgstr "GNOME:s URL-hanterare"
 
 #: src/prefs.c:295
+msgid "Galeon"
+msgstr ""
+
+#: src/prefs.c:296
 msgid "Manual"
 msgstr "Manuell"
 
-#: src/prefs.c:364
+#: src/prefs.c:365
 msgid "Proxy Options"
 msgstr "Proxyalternativ"
 
-#: src/prefs.c:376
+#: src/prefs.c:377
 msgid ""
 "Not all protocols can use these proxy options. Please see the README file "
 "for details."
@@ -2102,339 +2274,362 @@ msgstr ""
 "Inte alla protokoll kan använda dessa proxyalternativ. Se filen README för "
 "detaljer."
 
-#: src/prefs.c:381
+#: src/prefs.c:382
 msgid "Proxy Type"
 msgstr "Proxytyp"
 
-#: src/prefs.c:393
-msgid "No Proxy"
-msgstr "Ingen proxy"
-
-#: src/prefs.c:405
-msgid "SOCKS 4"
-msgstr "SOCKS 4"
-
-#: src/prefs.c:415
-msgid "SOCKS 5"
-msgstr "SOCKS 5"
-
-#: src/prefs.c:424
-msgid "HTTP"
-msgstr "HTTP"
-
-#: src/prefs.c:433
+#: src/prefs.c:394
 msgid "Proxy Server"
 msgstr "Proxyserver"
 
-#: src/prefs.c:451
+#: src/prefs.c:397
+msgid "No Proxy"
+msgstr "Ingen proxy"
+
+#: src/prefs.c:409
+msgid "SOCKS 4"
+msgstr "SOCKS 4"
+
+#: src/prefs.c:419
+msgid "SOCKS 5"
+msgstr "SOCKS 5"
+
+#: src/prefs.c:428
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/prefs.c:452
 msgid "Host"
 msgstr "Värd"
 
-#: src/prefs.c:467
+#: src/prefs.c:468
 msgid "Port"
 msgstr "Port"
 
-#: src/prefs.c:484
+#: src/prefs.c:485
 msgid "User"
 msgstr "Användare"
 
-#: src/prefs.c:500
+#: src/prefs.c:501
 msgid "Password"
 msgstr "Lösenord"
 
-#: src/prefs.c:530
+#: src/prefs.c:531
 msgid "Buddy List Options"
 msgstr "Alternativ för kompislista"
 
-#: src/prefs.c:542
+#: src/prefs.c:543
 msgid "Buddy List Window"
 msgstr "Kompislistefönster"
 
-#: src/prefs.c:554
+#: src/prefs.c:555
 msgid "Hide IM/Info/Chat buttons"
 msgstr "Dölj snabbmeddelande-/info-/chattknappar"
 
-#: src/prefs.c:556
+#: src/prefs.c:557
 msgid "Automatically show buddy list on sign on"
 msgstr "Visa automatiskt kompislista vid inloggning"
 
-#: src/prefs.c:559
+#: src/prefs.c:560
 msgid "Save Window Size/Position"
 msgstr "Spara fönsterstorlek/position"
 
-#: src/prefs.c:566
+#: src/prefs.c:567
 msgid "Show pictures on buttons"
 msgstr "Visa bilder på knappar"
 
-#: src/prefs.c:571
+#: src/prefs.c:572
 msgid "Display Buddy List near applet"
 msgstr "Visa kompislista nära panelprogrammet"
 
-#: src/prefs.c:574
+#: src/prefs.c:575
 msgid "Group Displays"
 msgstr "Gruppvisningar"
 
-#: src/prefs.c:586
+#: src/prefs.c:587
 msgid "Hide groups with no online buddies"
 msgstr "Dölj grupper med inga anslutna kompisar"
 
-#: src/prefs.c:592
+#: src/prefs.c:593
 msgid "Show numbers in groups"
 msgstr "Visa nummer i grupper"
 
-#: src/prefs.c:594
+#: src/prefs.c:595
 msgid "Buddy Displays"
 msgstr "Kompisvisningar"
 
-#: src/prefs.c:606
+#: src/prefs.c:607
 msgid "Show buddy type icons"
 msgstr "Visa kompistypikoner"
 
-#: src/prefs.c:607
+#: src/prefs.c:608
 msgid "Show warning levels"
 msgstr "Visa varningsnivåer"
 
-#: src/prefs.c:613
+#: src/prefs.c:614
 msgid "Show idle times"
 msgstr "Visa inaktivitetstider"
 
-#: src/prefs.c:614
+#: src/prefs.c:615
 msgid "Grey idle buddies"
 msgstr "Färga inaktiva kompisar gråa"
 
-#: src/prefs.c:631
+#: src/prefs.c:632
 msgid "Conversation Options"
 msgstr "Konversationsalternativ"
 
-#: src/prefs.c:643
+#: src/prefs.c:644
 msgid "Keyboard Options"
 msgstr "Tangentbordsalternativ"
 
-#: src/prefs.c:655
+#: src/prefs.c:656
 msgid "Enter sends message"
 msgstr "Retur skickar meddelande"
 
-#: src/prefs.c:656
+#: src/prefs.c:657
 msgid "Control-Enter sends message"
 msgstr "Control-Retur skickar meddelande"
 
-#: src/prefs.c:657
+#: src/prefs.c:658
 msgid "Escape closes window"
 msgstr "Escape stänger fönster"
 
-#: src/prefs.c:663
+#: src/prefs.c:664
 msgid "Control-{B/I/U/S} inserts HTML tags"
 msgstr "Control-{B/I/U/S} infogar HTML-taggar"
 
-#: src/prefs.c:664
+#: src/prefs.c:665
 msgid "Control-(number) inserts smileys"
 msgstr "Control-(nummer) infogar smileys"
 
-#: src/prefs.c:665
+#: src/prefs.c:666
 msgid "F2 toggles timestamp display"
 msgstr "F2 slår på/av tidsstämpelvisningen"
 
-#: src/prefs.c:667
+#: src/prefs.c:668
 msgid "Display and General Options"
 msgstr "Visnings- och allmänna inställningar"
 
-#: src/prefs.c:679
+#: src/prefs.c:680
 msgid "Show graphical smileys"
 msgstr "Visa grafiska smileys"
 
-#: src/prefs.c:680
+#: src/prefs.c:681
 msgid "Show timestamp on messages"
 msgstr "Visa tidsstämpel på meddelanden"
 
-#: src/prefs.c:681
+#: src/prefs.c:682
 msgid "Show URLs as links"
 msgstr "Visa URL:er som länkar"
 
-#: src/prefs.c:682
+#: src/prefs.c:683
 msgid "Highlight misspelled words"
 msgstr "Markera felstavade ord"
 
-#: src/prefs.c:683 src/prefs.c:1818
+#: src/prefs.c:684 src/prefs.c:1872
 msgid "Sending messages removes away status"
 msgstr "Att skicka meddelanden tar bort frånvarostatus"
 
-#: src/prefs.c:684 src/prefs.c:1826
+#: src/prefs.c:685 src/prefs.c:1885
 msgid "Queue new messages when away"
 msgstr "Kölägg nya meddelanden vid frånvaro"
 
-#: src/prefs.c:690
+#: src/prefs.c:691
 msgid "Ignore colors"
 msgstr "Ignorera färger"
 
-#: src/prefs.c:691
+#: src/prefs.c:692
 msgid "Ignore font faces"
 msgstr "Ignorera typsnittsvarianter"
 
-#: src/prefs.c:692
+#: src/prefs.c:693
 msgid "Ignore font sizes"
 msgstr "Ignorera typsnittsstorlekar"
 
-#: src/prefs.c:693
+#: src/prefs.c:694
 msgid "Ignore TiK Automated Messages"
 msgstr "Ignorera automatiserade TiK-meddelanden"
 
-#: src/prefs.c:694 src/prefs.c:1816
+#: src/prefs.c:695 src/prefs.c:1870
 msgid "Ignore new conversations when away"
 msgstr "Ignorera nya konversationer vid frånvaro"
 
-#: src/prefs.c:860
+#: src/prefs.c:884
 msgid "IM Options"
 msgstr "Snabbmeddelandealternativ"
 
-#: src/prefs.c:872 src/prefs.c:2736
+#: src/prefs.c:897 src/prefs.c:2832
 msgid "IM Window"
 msgstr "Snabbmeddelandefönster"
 
-#: src/prefs.c:888 src/prefs.c:1023
+#: src/prefs.c:913 src/prefs.c:1057
 msgid "Show buttons as: "
 msgstr "Visa knappar som: "
 
-#: src/prefs.c:892 src/prefs.c:1028
+#: src/prefs.c:917 src/prefs.c:1062
 msgid "Pictures And Text"
 msgstr "Bilder och text"
 
-#: src/prefs.c:893 src/prefs.c:1030
+#: src/prefs.c:918 src/prefs.c:1064
 msgid "Pictures"
 msgstr "Bilder"
 
-#: src/prefs.c:894 src/prefs.c:1031
+#: src/prefs.c:919 src/prefs.c:1065
 msgid "Text"
 msgstr "Text"
 
-#: src/prefs.c:905
+#: src/prefs.c:930
 msgid "Show all conversations in one tabbed window"
 msgstr "Visa alla konversationer i ett fönster med flikar"
 
-#: src/prefs.c:907 src/prefs.c:1044
+#: src/prefs.c:932
+#, fuzzy
+msgid "Show chats in the same tabbed window"
+msgstr "Visa alla chattar i ett fönster med flikar"
+
+#: src/prefs.c:939 src/prefs.c:1085
 msgid "Raise windows on events"
 msgstr "Höj fönster vid händelser"
 
-#: src/prefs.c:908
+#: src/prefs.c:940
 msgid "Show logins in window"
 msgstr "Visa inloggningar i fönster"
 
-#: src/prefs.c:910 src/prefs.c:1047
+#: src/prefs.c:941
+msgid "Show aliases in tabs/titles"
+msgstr ""
+
+#: src/prefs.c:942
+#, fuzzy
+msgid "Hide window on send"
+msgstr "Höj fönster vid händelser"
+
+#: src/prefs.c:944 src/prefs.c:1088
 msgid "Window Sizes"
 msgstr "Fönsterstorlekar"
 
-#: src/prefs.c:918 src/prefs.c:1055
+#: src/prefs.c:952 src/prefs.c:1096
 msgid "New window width:"
 msgstr "Ny fönsterbredd:"
 
-#: src/prefs.c:919 src/prefs.c:1056
+#: src/prefs.c:953 src/prefs.c:1097
 msgid "New window height:"
 msgstr "Ny fönsterhöjd:"
 
-#: src/prefs.c:920 src/prefs.c:1057
+#: src/prefs.c:954 src/prefs.c:1098
 msgid "Entry widget height:"
 msgstr "Häjd på postwidget:"
 
-#: src/prefs.c:922 src/prefs.c:1059
+#: src/prefs.c:956 src/prefs.c:1100
 msgid "Tab Placement"
 msgstr "Flikplacering"
 
-#: src/prefs.c:942 src/prefs.c:1079
+#: src/prefs.c:976 src/prefs.c:1120
 msgid "Top"
 msgstr "Överst"
 
-#: src/prefs.c:944 src/prefs.c:1081
+#: src/prefs.c:978 src/prefs.c:1122
 msgid "Bottom"
 msgstr "Nederst"
 
-#: src/prefs.c:951 src/prefs.c:1088
+#: src/prefs.c:985 src/prefs.c:1129
 msgid "Left"
 msgstr "Vänster"
 
-#: src/prefs.c:953 src/prefs.c:1090
+#: src/prefs.c:987 src/prefs.c:1131
 msgid "Right"
 msgstr "Höger"
 
-#: src/prefs.c:957
+#: src/prefs.c:991
 msgid "Buddy Icons"
 msgstr "Kompisikoner"
 
-#: src/prefs.c:969
+#: src/prefs.c:1003
 msgid "Hide Buddy Icons"
 msgstr "Dölj kompisikoner"
 
-#: src/prefs.c:995
+#: src/prefs.c:1029
 msgid "Chat Options"
 msgstr "Chattalternativ"
 
-#: src/prefs.c:1007
+#: src/prefs.c:1041
 msgid "Group Chat Window"
 msgstr "Gruppchatfönster"
 
-#: src/prefs.c:1042
+#: src/prefs.c:1076
 msgid "Show all chats in one tabbed window"
 msgstr "Visa alla chattar i ett fönster med flikar"
 
-#: src/prefs.c:1045
+#: src/prefs.c:1078
+#, fuzzy
+msgid "Show conversations in the same tabbed window"
+msgstr "Visa alla konversationer i ett fönster med flikar"
+
+#: src/prefs.c:1086
 msgid "Show people joining/leaving in window"
 msgstr "Visa personer som går in/lämnar i fönstret"
 
-#: src/prefs.c:1093
+#: src/prefs.c:1134
 msgid "Tab Completion"
 msgstr "Tabbkomplettering"
 
-#: src/prefs.c:1105
+#: src/prefs.c:1146
 msgid "Tab-Complete Nicks"
 msgstr "Tabbkomplettera smeknamn"
 
-#: src/prefs.c:1111
+#: src/prefs.c:1152
 msgid "Old-Style Tab Completion"
 msgstr "Gammaldags tabbkomplettering"
 
-#: src/prefs.c:1213 src/prefs.c:2746
+#: src/prefs.c:1254 src/prefs.c:2842
 msgid "Font Options"
 msgstr "Typsnittsalternativ"
 
-#: src/prefs.c:1239
+#: src/prefs.c:1280
 msgid "Italic Text"
 msgstr "Kursiv text"
 
-#: src/prefs.c:1283 src/prefs.c:1301 src/prefs.c:1323
+#: src/prefs.c:1324 src/prefs.c:1342 src/prefs.c:1364
 msgid "Select"
 msgstr "Markera"
 
-#: src/prefs.c:1321
+#: src/prefs.c:1362
 msgid "Font Face for Text"
 msgstr "Typsnitt för text"
 
-#: src/prefs.c:1336
+#: src/prefs.c:1377
 msgid "Font Size for Text"
 msgstr "Typsnittsstorlek för text"
 
-#: src/prefs.c:1422
+#: src/prefs.c:1472
 msgid "Gaim - Sound Configuration"
 msgstr "Gaim - Ljudkonfiguration"
 
-#: src/prefs.c:1462
+#: src/prefs.c:1507
+msgid "Play"
+msgstr ""
+
+#: src/prefs.c:1517
 msgid "Choose..."
 msgstr "Välj..."
 
-#: src/prefs.c:1513
+#: src/prefs.c:1568
 msgid "Sound Options"
 msgstr "Ljudalternativ"
 
-#: src/prefs.c:1541
+#: src/prefs.c:1596
 msgid "No sounds when you log in"
 msgstr "Inga ljud när du loggar in"
 
-#: src/prefs.c:1547 src/prefs.c:1817
+#: src/prefs.c:1602 src/prefs.c:1871
 msgid "Sounds while away"
 msgstr "Ljud då du är frånvarande"
 
-#: src/prefs.c:1557
+#: src/prefs.c:1612
 msgid "Sound Player:"
 msgstr "Ljudspelare:"
 
-#: src/prefs.c:1626
+#: src/prefs.c:1681
 #, c-format
 msgid ""
 "Command to play sound files\n"
@@ -2443,135 +2638,144 @@ msgstr ""
 "Kommando för att spela ljudfiler\n"
 "(%s för filnamn; internt om tomt)"
 
-#: src/prefs.c:1637
+#: src/prefs.c:1692
 msgid "Events"
 msgstr "Händelser"
 
-#: src/prefs.c:1645
+#: src/prefs.c:1700
 msgid "Sound when buddy logs in"
 msgstr "Ljud då kompis loggar in"
 
-#: src/prefs.c:1646
+#: src/prefs.c:1701
 msgid "Sound when buddy logs out"
 msgstr "Ljud då kompis loggar ut"
 
-#: src/prefs.c:1652
+#: src/prefs.c:1707
 msgid "Sound when received message begins conversation"
 msgstr "Ljud då mottaget meddelande inleder konversationen"
 
-#: src/prefs.c:1654
+#: src/prefs.c:1709
 msgid "Sound when message is received"
 msgstr "Ljud då meddelande mottas"
 
-#: src/prefs.c:1655
+#: src/prefs.c:1710
 msgid "Sound when message is sent"
 msgstr "Ljud då meddelande skickas"
 
-#: src/prefs.c:1661
+#: src/prefs.c:1716
 msgid "Sound in chat rooms when people enter"
 msgstr "Ljud i chattrum då personer kommer in"
 
-#: src/prefs.c:1662
+#: src/prefs.c:1717
 msgid "Sound in chat rooms when people leave"
 msgstr "Ljud i chattrum då personer lämnar"
 
-#: src/prefs.c:1663
+#: src/prefs.c:1718
 msgid "Sound in chat rooms when you talk"
 msgstr "Ljud i chattrum då du pratar"
 
-#: src/prefs.c:1664
+#: src/prefs.c:1719
 msgid "Sound in chat rooms when others talk"
 msgstr "Ljud i chattrum då andra pratar"
 
-#: src/prefs.c:1788 src/prefs.c:2768
+#: src/prefs.c:1842 src/prefs.c:2864
 msgid "Away Messages"
 msgstr "Frånvaromeddelanden"
 
-#: src/prefs.c:1825
+#: src/prefs.c:1879
 msgid "Don't send auto-response"
 msgstr "Skicka inte automatiskt svar"
 
-#: src/prefs.c:1836
+#: src/prefs.c:1880
+#, fuzzy
+msgid "Only send auto-response when idle"
+msgstr "Skicka inte automatiskt svar"
+
+#: src/prefs.c:1895
+msgid "Time between sending auto-responses (in seconds):"
+msgstr ""
+
+#: src/prefs.c:1910
 msgid "Auto Away after"
 msgstr "Automatiskt frånvarande efter"
 
-#: src/prefs.c:1850
+#: src/prefs.c:1924
 msgid "minutes using"
 msgstr "minuters användning"
 
-#: src/prefs.c:1863
+#: src/prefs.c:1937
 msgid "Messages"
 msgstr "Meddelanden"
 
-#: src/prefs.c:1875
+#: src/prefs.c:1949
 msgid "Title"
 msgstr "Titel"
 
-#: src/prefs.c:1918
+#: src/prefs.c:1994
 msgid "Edit"
 msgstr "Redigera"
 
-#: src/prefs.c:1922
+#: src/prefs.c:1998
 msgid "Make Away"
 msgstr "Gör frånvarande"
 
-#: src/prefs.c:2199
+#: src/prefs.c:2275
 msgid "Privacy Options"
 msgstr "Ostördhetsalternativ"
 
-#: src/prefs.c:2215
+#: src/prefs.c:2291
 msgid "Set privacy for:"
 msgstr "Ställ in ostördhet för:"
 
-#: src/prefs.c:2234
+#: src/prefs.c:2310
 msgid "Allow all users to contact me"
 msgstr "Tillåt alla användare att kontakta mig"
 
-#: src/prefs.c:2235
+#: src/prefs.c:2311
 msgid "Allow only the users below"
 msgstr "Tillåt endast användarna nedan"
 
-#: src/prefs.c:2237
+#: src/prefs.c:2313
 msgid "Allow List"
 msgstr "Tillåtelselista"
 
-#: src/prefs.c:2268
+#: src/prefs.c:2344
 msgid "Deny all users"
 msgstr "Neka alla användare"
 
-#: src/prefs.c:2269
+#: src/prefs.c:2345
 msgid "Block the users below"
 msgstr "Blockera användarna nedan"
 
-#: src/prefs.c:2271
+#: src/prefs.c:2347
 msgid "Block List"
 msgstr "Blockera lista"
 
-#: src/prefs.c:2366
+#: src/prefs.c:2442
 msgid "Gaim - Preferences"
 msgstr "Gaim - Egenskaper"
 
-#: src/prefs.c:2445
+#: src/prefs.c:2525
 msgid "Gaim debug output window"
 msgstr "Gaim-felsökningsutdatafönster"
 
-#: src/prefs.c:2702
+#: src/prefs.c:2798
 msgid "General"
 msgstr "Allmänt"
 
-#: src/prefs.c:2707
+#: src/prefs.c:2803
 msgid "Proxy"
 msgstr "Proxyserver"
 
-#: src/prefs.c:2731
+#: src/prefs.c:2827
 msgid "Conversations"
 msgstr "Konversationer"
 
-#: src/prefs.c:2757
+#: src/prefs.c:2853
 msgid "Sounds"
 msgstr "Ljud"
 
-#: src/prefs.c:2779
+#: src/prefs.c:2875
 msgid "Privacy"
 msgstr "Persondataskydd"
 
@@ -2604,10 +2808,6 @@ msgstr "Koppla från"
 msgid "Accept?"
 msgstr "Acceptera?"
 
-#: src/prpl.c:154 src/prpl.c:228
-msgid "Accept"
-msgstr "Acceptera"
-
 #: src/prpl.c:199
 msgid "Gaim - Prompt"
 msgstr "Gaim - Prompt"
@@ -2635,11 +2835,31 @@ msgstr ""
 "\n"
 "Vill du lägga till dem till din kompislista?"
 
-#: src/server.c:53
+#: src/prpl.c:615
+msgid ""
+"You do not currently have any protocols available that are able to register "
+"new accounts."
+msgstr ""
+
+#: src/prpl.c:652
+#, fuzzy
+msgid "Gaim - Registration"
+msgstr "Gaim - Konversationer"
+
+#: src/prpl.c:667
+msgid "Registration Information"
+msgstr ""
+
+#: src/prpl.c:684
+#, fuzzy
+msgid "Register"
+msgstr "Återställ"
+
+#: src/server.c:55
 msgid "Please enter your password"
 msgstr "Ange ditt lösenord"
 
-#: src/server.c:60
+#: src/server.c:62
 msgid ""
 "You cannot log this account in; you do not have the protocol it uses loaded, "
 "or the protocol does not have a login function."
@@ -2647,33 +2867,124 @@ msgstr ""
 "Du kan inte logga in detta konto. Du har inte det protokoll som det använder "
 "inläst, eller protokollet har inte inloggningsfunktionen."
 
-#: src/server.c:62
+#: src/server.c:64
 msgid "Login Error"
 msgstr "Inloggningsfel"
 
-#: src/server.c:535
+#: src/server.c:550
 #, c-format
 msgid "(%d messages)"
 msgstr "(%d meddelanden)"
 
-#: src/server.c:541
+#: src/server.c:556
 msgid "(1 message)"
 msgstr "(1 meddelande)"
 
-#: src/server.c:756
+#: src/server.c:747
 msgid "Warned"
 msgstr "Varnad"
 
-#: src/server.c:827
+#: src/server.c:818
 msgid "Yes"
 msgstr "Ja"
 
-#: src/server.c:828
+#: src/server.c:819
 msgid "No"
 msgstr "Nej"
 
+#: src/server.c:995
+#, fuzzy
+msgid "More Info"
+msgstr "Hämta information"
+
+#~ msgid "Available"
+#~ msgstr "Tillgänglig"
+
+#~ msgid "Available for friends only"
+#~ msgstr "Tillgänglig endast för vänner"
+
+#~ msgid "Away for friends only"
+#~ msgstr "Frånvarande endast för vänner"
+
+#~ msgid "Invisible"
+#~ msgstr "Osynlig"
+
+#~ msgid "Invisible for friends only"
+#~ msgstr "Osynlig endast för vänner"
+
+#~ msgid "Unavailable"
+#~ msgstr "Otillgänglig"
+
+#~ msgid "Handshake"
+#~ msgstr "Handskakning"
+
+#~ msgid "Connecting to GG server"
+#~ msgstr "Ansluter till GG-servern"
+
+#~ msgid "Sending key"
+#~ msgstr "Skickar nyckel"
+
+#~ msgid "Logging in %s\n"
+#~ msgstr "Loggar in %s\n"
+
+#~ msgid "Send offline message"
+#~ msgstr "Skickar frånkopplat meddelande"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "IRC: #gaim on irc.openprojects.net"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "IRC: #gaim på irc.openprojects.net"
+
+#~ msgid ""
+#~ "Rob Flynn (maintainer)               rob@marko.net\n"
+#~ "Eric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n"
+#~ "\n"
+#~ "Benjamin Miller\n"
+#~ "Decklin Foster\n"
+#~ "Sean Egan\n"
+#~ "Jim Duchek\n"
+#~ "Mark Spencer (original author)   markster@marko.net"
+#~ msgstr ""
+#~ "Rob Flynn (ansvarig)                  rob@marko.net\n"
+#~ "Eric Warmenhoven (huvudprogrammerare) warmenhoven@yahoo.com\n"
+#~ "\n"
+#~ "Benjamin Miller\n"
+#~ "Decklin Foster\n"
+#~ "Sean Egan\n"
+#~ "Jim Duchek\n"
+#~ "Mark Spencer (ursprunglig författare) markster@marko.net"
+
+#~ msgid ""
+#~ "Relax, help is just around the corner. The first thing you'll need to do is "
+#~ "get an AIM account; you can get one from http://aim.aol.com/. Just click the "
+#~ "button that says \"New Users\" and you can create an account that way. Once "
+#~ "you have your account, enter the username and password into the login window "
+#~ "that comes up when you start Gaim, and click the Signon button. Once you're "
+#~ "online, you can talk to one of the Gaim developers for more assistance; "
+#~ "their contact information is in the AUTHORS file in the Gaim source, or at "
+#~ msgstr ""
+#~ "Slappna av, hjälp finns runt hörnet. Det första som du måste göra är att "
+#~ "skaffa ett AIM-konto. Du kan skaffa ett från http://aim.aol.com/. Klicka "
+#~ "bara på knappen som säger \"Nya användare\" så kan du skapa ett konto på det "
+#~ "sättet. När du väl har ett konto anger du användarnamnet och lösenordet i "
+#~ "inloggningsfönstret som kommer upp när du startar Gaim, och klickar på "
+#~ "inloggningsknappen. När du väl är ansluten kan du prata med en av "
+#~ "Gaim-utvecklarna för mer hjälp. Deras kontaktinformation finns i filen "
+#~ "AUTHORS i Gaim-källkoden, eller på "
+
+#~ msgid ""
+#~ "contactinfo.php. If you can't get online and still need more assistance, "
+#~ "feel free to email us at gaim@marko.net. Thanks for using Gaim!"
+#~ msgstr ""
+#~ "contactinfo.php. Om du inte kan ansluta och behöver mer hjälp, kan du skicka "
+#~ "e-post till oss på gaim@marko.net. Tack för att du använder Gaim!"
+
+#~ msgid "Help!"
+#~ msgstr "Hjälp!"
+
 #~ msgid "Error while writing to socket."
 #~ msgstr "Fel vid skrivande till uttag (socket)."
-
-#~ msgid "Password Change Successful"
-#~ msgstr "Lösenordsändring lyckades"
