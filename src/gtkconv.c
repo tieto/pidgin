@@ -180,6 +180,8 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 	struct gaim_window *win = (struct gaim_window *)d;
 
 	gaim_window_destroy(win);
+
+	return TRUE;
 }
 
 static gint
@@ -188,6 +190,8 @@ close_conv_cb(GtkWidget *w, gpointer d)
 	struct gaim_conversation *conv = (struct gaim_conversation *)d;
 
 	gaim_conversation_destroy(conv);
+
+	return TRUE;
 }
 
 static void
@@ -1167,7 +1171,7 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		else if (event->keyval == 'z') {
 			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
 			
-#ifdef _WIN32
+#ifndef _WIN32
 			XIconifyWindow(GDK_DISPLAY(),
 						   GDK_WINDOW_XWINDOW(gtkwin->window->window),
 						   ((_XPrivDisplay)GDK_DISPALY())->default_screen);
