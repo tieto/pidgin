@@ -9,6 +9,7 @@ version 0.11.0:
 	* Ability to independently set accounts as away
 	* Can use all away states for ICQ, Yahoo (N/A, Be Right Back, etc.)
 	* Fixed hanging trees
+	* Can close windows by hitting 'Esc' (optional)
 
 version 0.11.0-pre4:
 	* ICQ upgraded to use icqlib 1.1.0

@@ -460,6 +460,7 @@ extern int general_options;
 #define OPT_GEN_CTL_SMILEYS       0x00200000
 /* #define OPT_GEN_KEEPALIVE         0x00400000 now OPT_USR_KEEPALV */
 #define OPT_GEN_AUTO_AWAY	  0x00800000
+#define OPT_GEN_ESC_CAN_CLOSE     0x01000000
 
 extern int display_options;
 #define OPT_DISP_SHOW_TIME        0x00000001

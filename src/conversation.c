@@ -480,7 +480,12 @@ void info_callback(GtkWidget *w, struct conversation *c)
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct conversation *c)
 {
 	int pos;
-	if (event->keyval == GDK_Return) {
+	if (event->keyval == GDK_Escape) {
+		if (general_options & OPT_GEN_ESC_CAN_CLOSE) {
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			gtk_widget_destroy(c->window);
+		}
+	} else if (event->keyval == GDK_Return) {
 		if (!(event->state & GDK_SHIFT_MASK)
 		    && (general_options & OPT_GEN_ENTER_SENDS)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);

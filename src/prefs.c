@@ -241,6 +241,7 @@ static void convo_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Enter sends message"), &general_options, OPT_GEN_ENTER_SENDS, box);
+	gaim_button(_("Escape closes window"), &general_options, OPT_GEN_ESC_CAN_CLOSE, box);
 	gaim_button(_("Control-{B/I/U/S} inserts HTML tags"), &general_options, OPT_GEN_CTL_CHARS, box);
 	gaim_button(_("Control-(number) inserts smileys"), &general_options, OPT_GEN_CTL_SMILEYS, box);
 
