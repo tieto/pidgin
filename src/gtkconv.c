@@ -1709,7 +1709,11 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	win = (struct gaim_window *)user_data;
 
-	conv    = gaim_window_get_conversation_at(win, page_num);
+	conv = gaim_window_get_conversation_at(win, page_num);
+
+	if (conv == NULL)
+		return;
+
 	gc      = gaim_conversation_get_gc(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
