@@ -310,9 +310,9 @@ static gchar *rendezvous_prpl_tooltip_text(GaimBuddy *b)
 
 	if (rb->msg != NULL) {
 		if (rb->status == UC_UNAVAILABLE)
-			g_string_append_printf(ret, _("<b>Away Message</b>: %s\n"), rb->msg);
+			g_string_append_printf(ret, _("<b>Away</b>: %s\n"), rb->msg);
 		else
-			g_string_append_printf(ret, _("<b>Available Message</b>: %s\n"), rb->msg);
+			g_string_append_printf(ret, _("<b>Available</b>: %s\n"), rb->msg);
 	}
 
 	/* XXX - Fix blist.c so we can prepend the \n's rather than appending them */
