@@ -1016,7 +1016,8 @@ gaim_presence_destroy(GaimPresence *presence)
 
 		presence->u.buddy.ref_count--;
 
-		g_return_if_fail(presence->u.buddy.ref_count == 0);
+		if(presence->u.buddy.ref_count != 0)
+			return;
 
 		key.account = presence->u.buddy.account;
 		key.name    = presence->u.buddy.name;
@@ -1031,9 +1032,6 @@ gaim_presence_destroy(GaimPresence *presence)
 		if (presence->u.chat.user != NULL)
 			g_free(presence->u.chat.user);
 	}
-
-	if (buddy_presences != NULL)
-		g_hash_table_destroy(buddy_presences);
 
 	if (presence->statuses != NULL)
 		g_list_free(presence->statuses);
@@ -1580,6 +1578,9 @@ gaim_statuses_init(void)
 void
 gaim_statuses_uninit(void)
 {
+	if(buddy_presences != NULL)
+		g_hash_table_destroy(buddy_presences);
+	buddy_presences = NULL;
 }
 
 void
