@@ -1457,6 +1457,10 @@ static void msn_add_buddy(struct gaim_connection *gc, char *name)
 	char buf[MSN_BUF_LEN];
 	GSList *l = md->fl;
 
+	if (who[0] == '@')
+		/* how did this happen? */
+		return;
+
 	while (l) {
 		struct msn_buddy *b = l->data;
 		if (!g_strcasecmp(who, b->user))
