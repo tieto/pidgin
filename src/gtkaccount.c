@@ -184,8 +184,10 @@ static void
 set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 						  AccountPrefsDialog *dialog)
 {
-	if ((dialog->plugin = gaim_find_prpl(protocol)) != NULL)
+	if ((dialog->plugin = gaim_find_prpl(protocol)) != NULL) {
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+		dialog->protocol = dialog->prpl_info->protocol;
+	}
 
 	dialog->protocol_id = dialog->plugin->info->id;
 
