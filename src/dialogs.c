@@ -1910,6 +1910,11 @@ void show_color_dialog(GtkWidget *entry, GtkWidget *color)
 
 		colordialog = gtk_color_selection_dialog_new("Select Text Color");
                 colorsel = GTK_COLOR_SELECTION_DIALOG(colordialog)->colorsel;
+		
+		/* XXX: Modality is evil, but we need it until we have
+		 * per-conversation color dialogs */
+
+		gtk_window_set_modal(GTK_WINDOW(colordialog), TRUE);
 
                 gtk_object_set_user_data(GTK_OBJECT(colorsel), entry);
 		

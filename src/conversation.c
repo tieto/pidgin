@@ -554,7 +554,7 @@ static void advance_past(GtkWidget *entry, char *pre, char *post)
 	if (s2)
 		pos = s2 - s + strlen(post);
 	else
-		pos=-1;
+		pos=strlen(s);
 	sprintf(debug_buff,"Setting position to %d\n",pos);
 	debug_print(debug_buff);
 	gtk_editable_set_position(GTK_EDITABLE(entry), pos);
