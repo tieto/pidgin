@@ -2230,14 +2230,25 @@ conv_placement_last_created_win(GaimConversation *conv)
 {
 	GaimConvWindow *win;
 
-#if 0 /* Last-minute prefslash */
-	if (gaim_prefs_get_bool("/core/conversations/combine_chat_im"))
-		win = g_list_last(gaim_get_windows())->data;
-	else
-		win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
-#else
 	win = g_list_last(gaim_get_windows())->data;
-#endif
+
+	if (win == NULL) {
+		win = gaim_conv_window_new();
+
+		gaim_conv_window_add_conversation(win, conv);
+		gaim_conv_window_show(win);
+	}
+	else
+		gaim_conv_window_add_conversation(win, conv);
+}
+
+/* This one places conversations in the last made window of the same type. */
+static void
+conv_placement_last_created_win_type(GaimConversation *conv)
+{
+	GaimConvWindow *win;
+
+	win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
 
 	if (win == NULL) {
 		win = gaim_conv_window_new();
@@ -2375,51 +2386,6 @@ conv_placement_by_account(GaimConversation *conv)
 	conv_placement_new_window(conv);
 }
 
-#if 0 /* PREFSLASH04 */
-
-static void
-conv_placement_by_number(GaimConversation *conv)
-{
-	GaimConvWindow *win = NULL;
-
-	if (gaim_prefs_get_bool("/core/conversations/combine_chat_im"))
-		win = g_list_last(gaim_get_windows())->data;
-	else
-		win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
-
-	if (win == NULL) {
-		win = gaim_conv_window_new();
-
-		gaim_conv_window_add_conversation(win, conv);
-		gaim_conv_window_show(win);
-	} else {
-		int max_count = gaim_prefs_get_int("/gaim/gtk/conversations/placement_number");
-		int count = gaim_conv_window_get_conversation_count(win);
-
-		if (count < max_count)
-			gaim_conv_window_add_conversation(win, conv);
-		else {
-			GList *l = NULL;
-
-			for (l = gaim_get_windows(); l != NULL; l = l->next) {
-				win = (GaimConvWindow *)l->data;
-
-				count = gaim_conv_window_get_conversation_count(win);
-				if (count < max_count) {
-					gaim_conv_window_add_conversation(win, conv);
-					return;
-				}
-			}
-			win = gaim_conv_window_new();
-
-			gaim_conv_window_add_conversation(win, conv);
-			gaim_conv_window_show(win);
-		}
-	}
-}
-
-#endif
-
 static ConvPlacementData *
 get_conv_placement_data(const char *id)
 {
@@ -2457,6 +2423,8 @@ ensure_default_funcs(void)
 	{
 		add_conv_placement_fnc("last", _("Last created window"),
 							   conv_placement_last_created_win);
+		add_conv_placement_fnc("im_chat", _("Separate IM and Chat windows"),
+							   conv_placement_last_created_win_type);
 		add_conv_placement_fnc("new", _("New window"),
 							   conv_placement_new_window);
 		add_conv_placement_fnc("group", _("By group"),
@@ -2603,7 +2571,6 @@ gaim_conversations_init(void)
 	/* Conversations */
 	gaim_prefs_add_none("/core/conversations");
 	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
-	gaim_prefs_add_bool("/core/conversations/combine_chat_im", FALSE);
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/core/conversations/chat");

@@ -25,23 +25,6 @@
 #include "gtkplugin.h"
 
 static void
-conv_placement_last_created_win_split(GaimConversation *conv)
-{
-	GaimConvWindow *win;
-
-	win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
-
-	if (win == NULL) {
-		win = gaim_conv_window_new();
-
-		gaim_conv_window_add_conversation(win, conv);
-		gaim_conv_window_show(win);
-	}
-	else
-		gaim_conv_window_add_conversation(win, conv);
-}
-
-static void
 conv_placement_by_number(GaimConversation *conv)
 {
 	GaimConvWindow *win = NULL;
@@ -82,8 +65,6 @@ conv_placement_by_number(GaimConversation *conv)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_conv_placement_add_fnc("im_chat", _("Separate IM and Chat windows"),
-							   &conv_placement_last_created_win_split);
 	gaim_conv_placement_add_fnc("number", _("By conversation count"),
 							   &conv_placement_by_number);
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
@@ -93,7 +74,6 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	gaim_conv_placement_remove_fnc("im_chat");
 	gaim_conv_placement_remove_fnc("number");
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 	return TRUE;

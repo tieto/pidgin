@@ -1005,11 +1005,6 @@ GtkWidget *conv_page() {
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
 		gtk_widget_set_sensitive(vbox2, FALSE);
 
-#if 0 /* PREFSLASH04 */
-	gaim_gtk_prefs_checkbox(_("Show IMs and chats in _same tabbed window"),
-							"/core/conversations/combine_chat_im", vbox2);
-#endif
-
 	gaim_gtk_prefs_checkbox(_("Show _close button on tabs"),
 							"/gaim/gtk/conversations/close_on_tabs", vbox2);
 
@@ -1024,17 +1019,11 @@ GtkWidget *conv_page() {
 	gtk_size_group_add_widget(sg, label);
 
 	names = gaim_conv_placement_get_options();
-	label = gaim_gtk_prefs_dropdown_from_list(vbox2, _("New window _placement:"),
+	label = gaim_gtk_prefs_dropdown_from_list(vbox2, _("New conversation _placement:"),
 			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	g_list_free(names);
-
-#if 0 /* PREFSLASH04 */
- 	label = gaim_gtk_prefs_labeled_spin_button(vbox2, _("Number of conversations per window:"),
-	                                           "/gaim/gtk/conversations/placement_number",
-	                                           1, 50, sg);
-#endif
 
 	gtk_widget_show_all(ret);
 
