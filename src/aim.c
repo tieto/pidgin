@@ -87,6 +87,7 @@ void cancel_logon(void)
 #ifdef USE_APPLET
 	applet_buddy_show = FALSE;
 	signoff();
+	running = FALSE;
         gtk_widget_hide(mainwindow);
 #else
 #ifdef GAIM_PLUGINS
