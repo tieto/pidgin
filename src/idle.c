@@ -119,7 +119,7 @@ gint check_idle(gpointer data)
 		return TRUE;
 	}
 
-	if (idle_time > IDLEMARK && !gc->is_idle) {
+	if (idle_time >= IDLEMARK && !gc->is_idle) {
 		debug_printf("setting %s idle %d seconds\n", gc->username, idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
