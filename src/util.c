@@ -64,6 +64,8 @@ gint badchar(char c)
                 return 1;
         if (c == '\n')
                 return 1;
+	if (c == '<')
+		return 1;
         return 0;
 
 
