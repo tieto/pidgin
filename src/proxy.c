@@ -459,7 +459,7 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 			}
 			if (rc==0) {
 				if (show_debug)
-					fprintf(stderr,"dns[%d]: Ops, father has gone, wait for me, wait...!\n", getpid());
+					fprintf(stderr,"dns[%d]: Oops, father has gone, wait for me, wait...!\n", getpid());
 				_exit(0);
 			}
 			if (dns_params->hostname[0] == '\0') {
