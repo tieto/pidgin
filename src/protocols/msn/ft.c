@@ -24,7 +24,6 @@
 
 #ifdef _WIN32
 #include "win32dep.h"
-__declspec(dllimport) GList *connections;
 #endif
 
 static struct gaim_xfer *
@@ -375,7 +374,7 @@ msn_msnftp_connect(gpointer data, gint source, GaimInputCondition cond)
 	account   = gaim_xfer_get_account(xfer);
 	xfer_data = (struct msn_xfer_data *)xfer->data;
 
-	if (source == -1 || !g_slist_find(connections, account->gc)) {
+	if (source == -1 || !g_slist_find(gaim_connections_get_all(), account->gc)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
 				   "MSNFTP: Error establishing connection\n");
 		close(source);

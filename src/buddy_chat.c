@@ -351,7 +351,7 @@ join_chat()
 		gtk_container_set_border_width(GTK_CONTAINER(jc_vbox), 0);
 
 #else
-		joinchatgc = connections->data;
+		joinchatgc = gaim_connections_get_all()->data;
 #endif
 		rebuild_jc();
 		/* buttons */
