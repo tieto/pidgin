@@ -162,6 +162,7 @@ struct gaim_gtk_conversation
 		GtkWidget *font;
 		GtkWidget *smiley;
 		GtkWidget *link;
+		GtkWidget *image;
 		GtkWidget *log;
 
 	} dialogs;

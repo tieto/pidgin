@@ -142,7 +142,7 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	struct stat st;
 	int id;
 
-	conv    = g_object_get_data(obj, "user_data");
+	conv    = g_object_get_data(G_OBJECT(wid), "user_data");
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	im      = GAIM_IM(conv);
 	name    = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
@@ -196,6 +196,16 @@ close_conv_cb(GtkWidget *w, gpointer d)
 }
 
 static void
+cancel_insert_image_cb(GtkWidget *unused, struct gaim_gtk_conversation *gtkconv)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image), FALSE);
+
+	if (gtkconv->dialogs.image)
+		gtk_widget_destroy(gtkconv->dialogs.image);
+	gtkconv->dialogs.image = NULL;
+}
+
+static void
 insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
@@ -209,17 +219,19 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 
-		g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-				"user_data", conv);
+		g_object_set_data(G_OBJECT(window), "user_data", conv);
 		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
 				"clicked", G_CALLBACK(do_insert_image_cb), window);
-		g_signal_connect_swapped(
-				G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
-				"clicked", G_CALLBACK(gtk_widget_destroy), window);
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+						 "clicked", G_CALLBACK(cancel_insert_image_cb), gtkconv);
 
 		gtk_widget_show(window);
+		gtkconv->dialogs.image = window;
 	} else {
 		gtk_widget_grab_focus(gtkconv->entry);
+		if(gtkconv->dialogs.image)
+			gtk_widget_destroy(gtkconv->dialogs.image);
+		gtkconv->dialogs.image = NULL;
 	}
 }
 
@@ -290,8 +302,12 @@ static void
 menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	struct gaim_window *win = (struct gaim_window *)data;
+	struct gaim_gtk_conversation *gtkconv;
 
-	insert_image_cb(NULL, gaim_window_get_active_conversation(win));
+	gtkconv = GAIM_GTK_CONVERSATION(gaim_window_get_active_conversation(win));
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
+		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image)));
 }
 
 static void
