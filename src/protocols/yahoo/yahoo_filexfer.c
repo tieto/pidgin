@@ -391,7 +391,7 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (pkt->service == YAHOO_SERVICE_P2PFILEXFER) {
-		if (strcmp("FILEXFER", service) != 0) {
+		if (service && (strcmp("FILEXFER", service) != 0)) {
 			gaim_debug_misc("yahoo", "unhandled service 0x%02x", pkt->service);
 			return;
 		}
