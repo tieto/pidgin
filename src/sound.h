@@ -1,5 +1,6 @@
 /**
  * @file sound.h Sound API
+ * @ingroup core
  *
  * gaim
  *
