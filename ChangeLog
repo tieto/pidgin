@@ -8,6 +8,8 @@ version 0.69
 	* Yahoo now shows people using the java chat client (Tim Ringenbach)
 	* Yahoo chat and conference (Tim Rigenbach)
 	* Yahoo ignore support (Jesse Farmer (farmerje))
+	* Yahoo idle times displayed, long buddy lists work, sms users, 
+	  and other improvements (Tim Ringenbach)
 	* The accounts window now shows offline accounts as greyed out, and
 	  online accounts as colored.
 	* Fixed the text replacement plugin.
