@@ -133,12 +133,14 @@ static struct gaim_pref *add_pref(GaimPrefType type, const char *name) {
 	struct gaim_pref *parent;
 	struct gaim_pref *me;
 	struct gaim_pref *sibling;
-	char *my_name = g_path_get_basename(name);
+	char *my_name;
 
 	parent = find_pref_parent(name);
 
 	if(!parent)
 		return NULL;
+
+	my_name = g_path_get_basename(name);
 
 	for(sibling = parent->first_child; sibling; sibling = sibling->sibling) {
 		if(!strcmp(sibling->name, my_name)) {
