@@ -621,11 +621,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			struct buddy *b;
 
 			qm = g_new0(struct queued_message, 1);
-			if (OPT_IM_ALIAS_TAB) {
-				b = find_buddy(gc, name);
-				g_snprintf(qm->name, sizeof(qm->name), "%s", b ? b->show : name);
-			}
-			else
 				g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
 			qm->gc = gc;
