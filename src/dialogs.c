@@ -2336,6 +2336,8 @@ void do_color(GtkWidget *widget, GtkColorSelection *colorsel)
 	text_color.red = ((guint16)(color[0]*65535))>>8;
 	text_color.green = ((guint16)(color[1]*65535))>>8;
 	text_color.blue = ((guint16)(color[2]*65535))>>8;
+	c->fgcol = text_color;
+	c->hasfg = 1;
 	
 	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green, text_color.blue);
 	surround(c->entry, open_tag, "</FONT>");

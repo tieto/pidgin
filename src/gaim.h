@@ -278,7 +278,9 @@ struct conversation {
 	char fontface[128];
 	int hasfont;
 	GdkColor bgcol;
+	int hasbg;
 	GdkColor fgcol;
+	int hasfg;
 
 	/* stuff used just for IM */
 	GtkWidget *add_button;
@@ -397,7 +399,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 707 $"
+#define REVISION "gaim:$Revision: 709 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

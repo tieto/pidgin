@@ -578,12 +578,12 @@ void send_callback(GtkWidget *widget, struct conversation *c)
                 strcpy(buf, buf2);
         }
 
-	if (font_options & OPT_FONT_FGCOL) {
+	if ((font_options & OPT_FONT_FGCOL) || c->hasfg) {
 		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", c->fgcol.red, c->fgcol.green, c->fgcol.blue, buf);
 		strcpy(buf, buf2);
 	}
 
-	if (font_options & OPT_FONT_BGCOL) {
+	if ((font_options & OPT_FONT_BGCOL) || c->hasbg) {
 		g_snprintf(buf2, BUF_LONG, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", c->bgcol.red, c->bgcol.green, c->bgcol.blue, buf);
 		strcpy(buf, buf2);
 	}
@@ -1116,13 +1116,18 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
                 if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
                         char *t1;
+			char nm[256];
 
                         if (general_options & OPT_GEN_STRIP_HTML) {
                                 t1 = strip_html(what);
                         } else {
                                 t1 = what;
                         }
-                        fd = open_log_file(c->name);
+			if (c->is_chat)
+				g_snprintf(nm, 256, "%s.chat", c->name);
+			else
+				g_snprintf(nm, 256, "%s", c->name);
+                        fd = open_log_file(nm);
                         fprintf(fd, "%s\n", t1);
                         fclose(fd);
                         if (general_options & OPT_GEN_STRIP_HTML) {
@@ -1589,7 +1594,9 @@ void show_conv(struct conversation *c)
 	sprintf(c->fontface, "%s", fontface);
 	c->hasfont = 0;
 	c->bgcol = bgcolor;
+	c->hasbg = 0;
 	c->fgcol = fgcolor;
+	c->hasfg = 0;
 	
 	gtk_container_add(GTK_CONTAINER(win), paned);
         gtk_container_border_width(GTK_CONTAINER(win), 10);
