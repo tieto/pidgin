@@ -796,7 +796,8 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 
 static void prefs_end_element_handler(GMarkupParseContext *context,
 		const gchar *element_name, gpointer user_data, GError **error) {
-	if(!strcmp(element_name, "pref")) {
+	if(prefs_stack && !strcmp(element_name, "pref")) {
+		g_free(prefs_stack->data);
 		prefs_stack = g_list_delete_link(prefs_stack, prefs_stack);
 	}
 }

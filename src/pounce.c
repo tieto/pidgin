@@ -672,6 +672,7 @@ gaim_pounces_load(void)
 		gaim_debug(GAIM_DEBUG_ERROR, "pounces",
 				   "Error reading pounces: %s\n", error->message);
 
+		g_free(filename);
 		g_error_free(error);
 
 		pounces_loaded = TRUE;
@@ -686,6 +687,7 @@ gaim_pounces_load(void)
 	if (!g_markup_parse_context_parse(context, contents, length, NULL)) {
 		g_markup_parse_context_free(context);
 		g_free(contents);
+		g_free(filename);
 
 		pounces_loaded = TRUE;
 
@@ -698,6 +700,7 @@ gaim_pounces_load(void)
 
 		g_markup_parse_context_free(context);
 		g_free(contents);
+		g_free(filename);
 		pounces_loaded = TRUE;
 
 		return FALSE;
@@ -705,7 +708,6 @@ gaim_pounces_load(void)
 
 	g_markup_parse_context_free(context);
 	g_free(contents);
-
 	g_free(filename);
 
 	pounces_loaded = TRUE;

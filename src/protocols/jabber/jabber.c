@@ -1040,6 +1040,7 @@ static struct jabber_buddy_data* jabber_find_buddy(GaimConnection *gc, const cha
 		g_free(realwho);
 		return jbd;
 	} else {
+		g_free(realwho);
 		return NULL;
 	}
 }

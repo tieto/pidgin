@@ -322,6 +322,8 @@ struct gaim_parse_tag {
 									char *unescaped = g_strndup(q+1, o-q-1); \
 									char *escaped = g_markup_escape_text(unescaped, -1); \
 									g_string_append_printf(innards, "%c%s%c", *q, escaped, *q); \
+									g_free(unescaped); \
+									g_free(escaped); \
 									q = NULL; \
 								} else if(*c == '\\') { \
 									o++; \
