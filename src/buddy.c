@@ -1265,6 +1265,10 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 		gtknode->timer = 0;
 	}
 
+	/* For some reason, we're called before we have a buddy list sometimes */
+	if(!gtkblist)
+		return;
+
 	if(gtkblist->selected_node == node)
 		gtkblist->selected_node = NULL;
 
