@@ -688,7 +688,7 @@ void show_im_dialog()
 	if (!imdialog) {
 		info = g_new0(struct getuserinfo, 1);
 		info->gc = connections->data;
-		imdialog = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, 
+		imdialog = gtk_dialog_new_with_buttons("Gaim - New Message", blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
 						       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(imdialog), GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER(imdialog), 6);
@@ -764,8 +764,6 @@ void show_im_dialog()
 		}
 		
 		g_signal_connect(G_OBJECT(imdialog), "response", G_CALLBACK(do_im), info);
-		
-		dialogwindows = g_list_prepend(dialogwindows, imdialog->window);
 	}
 	
 	gtk_widget_show_all(imdialog);
@@ -788,7 +786,7 @@ void show_info_dialog()
 	g_free(filename);
 	info->gc = connections->data;
 
-	window = gtk_dialog_new_with_buttons("", blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
+	window = gtk_dialog_new_with_buttons("Gaim - Get User Info", blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
@@ -3473,12 +3471,10 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	GtkWidget *hbox;
 	GtkWidget *titlebox;
 	GtkWidget *tbox;
-	GtkWidget *sw;
 	GtkWidget *label;
 	GtkWidget *frame;
 	GtkWidget *fbox;
 	GtkWidget *button;
-	GtkTextBuffer *buffer;
 
 	struct create_away *ca = g_new0(struct create_away, 1);
 
@@ -3721,7 +3717,6 @@ void alias_dialog_bud(struct buddy *b)
 	GtkWidget *bbox;
 	GtkWidget *cancel;
 	static GtkWidget *add = NULL;
-	const char *name = g_malloc(80);
 	GtkWidget *label;
 	GtkWidget *topbox;
 	static int a, c;
@@ -5243,4 +5238,3 @@ void show_set_vcard(MultiEntryDlg *b)
 /*------------------------------------------------------------------------*/
 /*  End dialog for setting v-card info                                    */
 /*------------------------------------------------------------------------*/
-
