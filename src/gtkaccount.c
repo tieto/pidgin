@@ -562,8 +562,8 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			 height < prpl_info->icon_spec.min_height ||
 			 height > prpl_info->icon_spec.max_height))
 		{
-			int new_width = gdk_pixbuf_get_width(pixbuf);
-			int new_height = gdk_pixbuf_get_height(pixbuf);
+			int new_width = width;
+			int new_height = height;
 
 			if(new_width > prpl_info->icon_spec.max_width)
 				new_width = prpl_info->icon_spec.max_width;
@@ -573,6 +573,14 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 				new_height = prpl_info->icon_spec.max_height;
 			else if(new_height < prpl_info->icon_spec.min_height)
 				new_height = prpl_info->icon_spec.min_height;
+
+			/* preserve aspect ratio */
+			if ((double)height * (double)new_width >
+				(double)width * (double)new_height) {
+					new_width = 0.5 + (double)width * (double)new_height / (double)height;
+			} else {
+					new_height = 0.5 + (double)height * (double)new_width / (double)width;
+			}
 
 			scale = gdk_pixbuf_scale_simple (pixbuf, new_width, new_height,
 					GDK_INTERP_HYPER);
@@ -606,6 +614,9 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			 * FALSE if an error was set. */
 			if (gdk_pixbuf_save (pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
 					break;
+			gaim_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i], error->message);
+			g_error_free(error);
+			error = NULL;
 		}
 		g_strfreev(prpl_formats);
 		if (!error) {
