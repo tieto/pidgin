@@ -593,6 +593,7 @@ GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
 	}
 	if (filename) {
 		img = gtk_image_new_from_file(filename);
+		g_free(filename);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	}
 	d = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT);

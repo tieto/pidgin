@@ -826,6 +826,8 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		
 		yahoo_send_packet(yd, pack);
 		
+		g_free(result6);
+		g_free(result96);
 		g_free(password_hash);
 		g_free(crypt_hash);
 		g_free(hash_string_p);

@@ -691,7 +691,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		
 		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
 			play_sound(SND_FIRST_RECEIVE);
-		else if (cnv->makesound)
+		else if (cnv && cnv->makesound)
 			play_sound(SND_RECEIVE);
 		
 		if (away_options & OPT_AWAY_QUEUE_UNREAD && !find_conversation(name)) {
