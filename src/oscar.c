@@ -140,6 +140,8 @@ static void oscar_callback(gpointer data, gint source,
 					signoff();
 					hide_login_progress(_("Disconnected."));
 					auth_failed();
+				} else {
+					aim_conn_kill(gaim_sess, &conn);
 				}
 			}
 		}
