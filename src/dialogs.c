@@ -2366,8 +2366,8 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	memcpy(header + 2, ft->cookie, 8);
 	memset(header + 62, 0, 32); strcpy(header + 62, "Gaim");
 	memset(header + 10, 0, 4);
+	header[18] = 1; header[19] = 0;
 	header[20] = 1; header[21] = 0;
-	header[22] = header[20]; header[23] = header[21];
 
 	sprintf(debug_buff, "sending confirmation\n");
 	debug_print(debug_buff);
@@ -2378,7 +2378,10 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	rcv = 0;
 	
 	fw = gtk_dialog_new();
-	label = gtk_label_new("Receiving file");
+	buf = g_malloc(2048);
+	snprintf(buf, 2048, "Receiving %s from %s (%d bytes)", ft->filename,
+			ft->user, ft->size);
+	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
 	gtk_widget_show(label);
 	fbar = gtk_progress_bar_new();
@@ -2390,13 +2393,16 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	gtk_widget_show(fw);
 
 	size = get_32_int(header + 22);
-	sprintf(debug_buff, "Receiving %d bytes\n", size);
+	sprintf(debug_buff, "Receiving %s from %s (%d bytes)\n", ft->filename,
+			ft->user, ft->size);
 	debug_print(debug_buff);
-	/*
-	while (rcv != size) {
+
+	while (rcv != ft->size) {
 		int i;
-		read_rv = read(ft->fd, buf, 1024);
+		int remain = size - rcv > 1024 ? 1024 : size - rcv;
+		read_rv = read(ft->fd, buf, remain);
 		if(read_rv < 0) {
+			fclose(ft->f);
 			close(ft->fd);
 			g_free(buf);
 			g_free(header);
@@ -2405,12 +2411,15 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 		rcv += read_rv;
 		for (i = 0; i < read_rv; i++)
 			fprintf(ft->f, "%c", buf[i]);
+		snprintf(buf, 2048, "Receiving %s from %s (%d / %d bytes)",
+				header + 186, ft->user, rcv, ft->size);
+		gtk_label_set_text(GTK_LABEL(label), buf);
 		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar),
-					(float)(rcv)/(float)(size));
+					(float)(rcv)/(float)(ft->size));
 		while(gtk_events_pending())
 			gtk_main_iteration();
 	}
-	*/
+
 	gtk_widget_destroy(fw);
 	fclose(ft->f);
 	memset(header + 18, 0, 4);
