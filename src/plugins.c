@@ -543,9 +543,6 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 	GList *c = callbacks;
 	struct gaim_callback *g;
 
-	sprintf(debug_buff, "callback %d\n", event);
-	debug_print(debug_buff);
-
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (g->event == event && g->function != NULL) {
@@ -705,7 +702,7 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 		default:
 			break;
 	}
-	sprintf(debug_buff, "perl event %d: %s\n", event, buf);
+	sprintf(debug_buff, "event %d: %s\n", event, buf);
 	debug_print(debug_buff);
 	perl_event(event, buf);
 #endif
