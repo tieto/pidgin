@@ -190,8 +190,13 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 	case YAHOO_SERVICE_LOGOFF:
 	case YAHOO_SERVICE_ISAWAY:
 	case YAHOO_SERVICE_ISBACK:
-	case YAHOO_SERVICE_NEWCONTACT:
 		yahoo_parse_status(sess, pkt);
+		break;
+	case YAHOO_SERVICE_NEWCONTACT:
+		if (yahoo_makeint(pkt->msgtype) == 3)
+			yahoo_parse_message(sess, pkt);
+		else
+			yahoo_parse_status(sess, pkt);
 		break;
 	case YAHOO_SERVICE_IDACT:
 		CALLBACK(sess, YAHOO_HANDLE_ACTIVATE, pkt->content);
