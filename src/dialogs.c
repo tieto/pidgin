@@ -4177,10 +4177,11 @@ static void do_rename_group(struct group *g, const char *new_name)
 
 void show_rename_group(GtkWidget *unused, struct group *g)
 {
-	gaim_request_input(NULL, _("Rename Group"), _("New Group Name:\n"),
-					   NULL, g->name, FALSE, FALSE,
-					   GTK_STOCK_OK, G_CALLBACK(do_rename_group),
-					   GTK_STOCK_CANCEL, NULL, g);
+	gaim_request_input(NULL, _("Rename Group"), _("New group name"),
+					   _("Please enter a new name for the selected group."),
+					   g->name, FALSE, FALSE,
+					   _("OK"), G_CALLBACK(do_rename_group),
+					   _("Cancel"), NULL, g);
 }
 
 GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *icon)
