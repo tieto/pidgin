@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1380 $"
+#define REVISION "gaim:$Revision: 1393 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -337,9 +337,8 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		g_snprintf(snd, sizeof snd, "toc_init_done");
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
-		g_snprintf(snd, sizeof snd, "toc_set_caps %s %s %s %s %s %s %s",
-			   FILE_SEND_UID, FILE_GET_UID, B_ICON_UID, IMAGE_UID, VOICE_UID,
-			   STOCKS_UID, GAMES_UID);
+		g_snprintf(snd, sizeof snd, "toc_set_caps %s %s",
+			   FILE_SEND_UID, FILE_GET_UID);
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
 		return;

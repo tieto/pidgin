@@ -55,9 +55,7 @@
 #define USEROPT_SOCKSHOST 2
 #define USEROPT_SOCKSPORT 3
 
-int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
-		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON |
-		AIM_CAPS_GAMES | AIM_CAPS_SAVESTOCKS;
+int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_GETFILE;
 
 struct oscar_data {
 	struct aim_session_t *sess;

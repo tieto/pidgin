@@ -153,10 +153,10 @@ faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
       }
     }
     if (!identified) {
-      printf("faim: unknown capability ");
+      faimdprintf(1, "faim: unknown capability ");
       for (y = 0; y < 0x10; y++)
-        printf("%02x ", capblock[offset+y]);
-      printf("\n");
+        faimdprintf(2, "%02x ", capblock[offset+y]);
+      faimdprintf(1, "\n");
       ret |= 0xff00;
     }
 
@@ -378,7 +378,7 @@ faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinf
 	
 	outinfo->capabilities = aim_getcap(buf+i+4, len);
 	if (outinfo->capabilities & 0xff00)
-          printf("%s\n", outinfo->sn);
+          faimdprintf(2, "%s\n", outinfo->sn);
       }
       break;
       
