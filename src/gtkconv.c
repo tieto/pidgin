@@ -103,11 +103,9 @@ int fontsize = 3;
 
 static GtkWidget *invite_dialog = NULL;
 
-static volatile gboolean state_lock = FALSE;
-
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void check_everything(GtkTextBuffer *buffer);
-static void quiet_set(GtkWidget *tb, gboolean active);
+static void set_toggle(GtkWidget *tb, gboolean active);
 static void move_next_tab(struct gaim_conversation *conv);
 static void do_bold(GtkWidget *bold, struct gaim_gtk_conversation *gtkconv);
 static void do_italic(GtkWidget *italic, struct gaim_gtk_conversation *gtkconv);
@@ -123,7 +121,7 @@ static GList *generate_invite_user_names(struct gaim_connection *gc);
 static void add_chat_buddy_common(struct gaim_conversation *conv,
 								  const char *name, int pos);
 static void tab_complete(struct gaim_conversation *conv);
-static void update_send_as_selection(struct gaim_window *win);
+static gboolean update_send_as_selection(struct gaim_window *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
 /**************************************************************************
@@ -199,9 +197,6 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 	char buf[BUF_LONG];
 	GtkWidget *window;
 
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	window = gtk_file_selection_new(_("Gaim - Insert Image"));
@@ -218,19 +213,14 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 
 	gtk_widget_show(window);
 
-	gaim_gtk_set_state_lock(TRUE);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
 								FALSE);
-	gaim_gtk_set_state_lock(FALSE);
 }
 
 static void
 insert_link_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
-
-	if (gaim_gtk_is_state_locked())
-		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -248,9 +238,6 @@ static void
 insert_smiley_cb(GtkWidget *smiley, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
-
-	if (gaim_gtk_is_state_locked())
-		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -315,9 +302,6 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 	struct gaim_window *win = (struct gaim_window *)data;
 	struct gaim_conversation *conv;
 
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	conv = gaim_window_get_active_conversation(win);
 
 	gaim_conversation_set_logging(conv, !gaim_conversation_is_logging(conv));
@@ -330,10 +314,11 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 	struct gaim_conversation *conv;
 	struct gaim_gtk_conversation *gtkconv;
 
-	if (gaim_gtk_is_state_locked())
+	conv    = gaim_window_get_active_conversation(win);
+
+	if(!conv)
 		return;
 
-	conv    = gaim_window_get_active_conversation(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gtkconv->make_sound = !gtkconv->make_sound;
@@ -363,13 +348,14 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	buf2 = gtk_text_buffer_get_text(gtkconv->entry_buffer,
 									&start_iter, &end_iter, FALSE);
 
-	quiet_set(gtkconv->toolbar.bold,        FALSE);
-	quiet_set(gtkconv->toolbar.italic,      FALSE);
-	quiet_set(gtkconv->toolbar.underline,   FALSE);
-	quiet_set(gtkconv->toolbar.normal_size, FALSE);
-	quiet_set(gtkconv->toolbar.fgcolor,     FALSE);
-	quiet_set(gtkconv->toolbar.bgcolor,     FALSE);
-	quiet_set(gtkconv->toolbar.link,        FALSE);
+	set_toggle(gtkconv->toolbar.bold,        FALSE);
+	set_toggle(gtkconv->toolbar.italic,      FALSE);
+	set_toggle(gtkconv->toolbar.underline,   FALSE);
+	set_toggle(gtkconv->toolbar.normal_size, FALSE);
+	set_toggle(gtkconv->toolbar.font,        FALSE);
+	set_toggle(gtkconv->toolbar.fgcolor,     FALSE);
+	set_toggle(gtkconv->toolbar.bgcolor,     FALSE);
+	set_toggle(gtkconv->toolbar.link,        FALSE);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
@@ -701,7 +687,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	gc      = account->gc;
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
-	
+
 	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
 								  event->x, event->y, &path, &column, &x, &y);
 
@@ -1062,11 +1048,9 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			switch (event->keyval) {
 				case 'i':
 				case 'I':
-					quiet_set(gtkconv->toolbar.italic,
+					set_toggle(gtkconv->toolbar.italic,
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.italic)));
-
-					do_italic(gtkconv->toolbar.italic, gtkconv);
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
@@ -1074,11 +1058,9 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 				case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
 				case 'U':
-					quiet_set(gtkconv->toolbar.underline,
+					set_toggle(gtkconv->toolbar.underline,
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.underline)));
-					
-					do_underline(gtkconv->toolbar.underline, gtkconv);
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
@@ -1086,11 +1068,9 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 				case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
 				case 'B':
-					quiet_set(gtkconv->toolbar.bold,
+					set_toggle(gtkconv->toolbar.bold,
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.bold)));
-					
-					do_bold(gtkconv->toolbar.bold, gtkconv);
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
@@ -1112,7 +1092,9 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					break;
 
 				case '0':
-					do_normal(NULL, gtkconv);
+					set_toggle(gtkconv->toolbar.normal_size,
+						!gtk_toggle_button_get_active(
+							GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size)));
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
@@ -1120,11 +1102,9 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 				case 'f':
 				case 'F':
-					quiet_set(gtkconv->toolbar.normal_size,
+					set_toggle(gtkconv->toolbar.font,
 						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size)));
-
-					toggle_font(gtkconv->toolbar.normal_size, conv);
+							GTK_TOGGLE_BUTTON(gtkconv->toolbar.font)));
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
@@ -1258,9 +1238,6 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	struct gaim_window *win = g_object_get_data(m, "user_data");
 	struct gaim_account *account = g_object_get_data(m, "gaim_account");
 	struct gaim_conversation *conv;
-
-	if (gaim_gtk_is_state_locked())
-		return;
 
 	conv = gaim_window_get_active_conversation(win);
 
@@ -1516,7 +1493,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 
 	if (gtkwin->in_drag) {
 		debug_printf("Already in the middle of a window "
-					 "drag at tab_press_cb\n");
+				"drag at tab_press_cb\n");
 		return FALSE;
 	}
 
@@ -1711,9 +1688,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	struct gaim_gtk_window *gtkwin;
 	struct gaim_connection *gc;
 
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	win = (struct gaim_window *)user_data;
 
 	conv = gaim_window_get_conversation_at(win, page_num);
@@ -1738,7 +1712,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 			(gc && gc->prpl->options & OPT_PROTO_IM_IMAGE));
 
 		if (gtkwin->menu.send_as != NULL)
-			update_send_as_selection(win);
+			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 	}
 	else {
 		gtk_widget_set_sensitive(gtkwin->menu.view_history, FALSE);
@@ -1748,15 +1722,11 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 			gtk_widget_hide(gtkwin->menu.send_as);
 	}
 
-	gaim_gtk_set_state_lock(TRUE);
-
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.logging),
 								   gaim_conversation_is_logging(conv));
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.sounds),
 								   gtkconv->make_sound);
-
-	gaim_gtk_set_state_lock(FALSE);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
@@ -1770,9 +1740,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 static void
 do_bold(GtkWidget *bold, struct gaim_gtk_conversation *gtkconv)
 {
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(bold)))
 		gaim_gtk_surround(gtkconv, "<B>", "</B>");
 	else
@@ -1784,9 +1751,6 @@ do_bold(GtkWidget *bold, struct gaim_gtk_conversation *gtkconv)
 static void
 do_italic(GtkWidget *italic, struct gaim_gtk_conversation *gtkconv)
 {
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(italic)))
 		gaim_gtk_surround(gtkconv, "<I>", "</I>");
 	else
@@ -1798,9 +1762,6 @@ do_italic(GtkWidget *italic, struct gaim_gtk_conversation *gtkconv)
 static void
 do_underline(GtkWidget *underline, struct gaim_gtk_conversation *gtkconv)
 {
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(underline)))
 		gaim_gtk_surround(gtkconv, "<U>", "</U>");
 	else
@@ -1812,9 +1773,6 @@ do_underline(GtkWidget *underline, struct gaim_gtk_conversation *gtkconv)
 static void
 do_small(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
 {
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	gaim_gtk_surround(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
 
 	gtk_widget_grab_focus(gtkconv->entry);
@@ -1823,9 +1781,6 @@ do_small(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
 static void
 do_normal(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
 {
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	gaim_gtk_surround(gtkconv, "<FONT SIZE=\"3\">", "</FONT>");
 
 	gtk_widget_grab_focus(gtkconv->entry);
@@ -1834,9 +1789,6 @@ do_normal(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
 static void
 do_big(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
 {
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	gaim_gtk_surround(gtkconv, "<FONT SIZE=\"5\">", "</FONT>");
 
 	gtk_widget_grab_focus(gtkconv->entry);
@@ -1846,9 +1798,6 @@ static void
 toggle_font(GtkWidget *font, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
-
-	if (gaim_gtk_is_state_locked())
-		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -1865,9 +1814,6 @@ toggle_fg_color(GtkWidget *color, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
 
-	if (gaim_gtk_is_state_locked())
-		return;
-
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color)))
@@ -1882,9 +1828,6 @@ static void
 toggle_bg_color(GtkWidget *color, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
-
-	if (gaim_gtk_is_state_locked())
-		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -1914,18 +1857,16 @@ check_everything(GtkTextBuffer *buffer)
 }
 
 static void
-quiet_set(GtkWidget *tb, gboolean active)
+set_toggle(GtkWidget *tb, gboolean active)
 {
-	gaim_gtk_set_state_lock(TRUE);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(tb), active);
-	gaim_gtk_set_state_lock(FALSE);
 }
 
 static void
 got_typing_keypress(struct gaim_conversation *conv, gboolean first)
 {
 	struct gaim_im *im;
-	
+
 	/*
 	 * We know we got something, so we at least have to make sure we don't
 	 * send TYPED any time soon.
@@ -1952,7 +1893,7 @@ got_typing_keypress(struct gaim_conversation *conv, gboolean first)
 	}
 }
 
-static void
+static gboolean
 update_send_as_selection(struct gaim_window *win)
 {
 	struct gaim_account *account;
@@ -1964,23 +1905,21 @@ update_send_as_selection(struct gaim_window *win)
 	conv = gaim_window_get_active_conversation(win);
 
 	if (conv == NULL)
-		return;
+		return FALSE;
 
 	account   = gaim_conversation_get_account(conv);
 	gtkwin = GAIM_GTK_WINDOW(win);
 
 	if (account == NULL)
-		return;
+		return FALSE;
 
 	if (gtkwin->menu.send_as == NULL)
-		return;
+		return FALSE;
 
 	gtk_widget_show(gtkwin->menu.send_as);
 
 	menu = gtk_menu_item_get_submenu(
 		GTK_MENU_ITEM(gtkwin->menu.send_as));
-
-	gaim_gtk_set_state_lock(TRUE);
 
 	for (child = gtk_container_get_children(GTK_CONTAINER(menu));
 		 child != NULL;
@@ -1995,8 +1934,7 @@ update_send_as_selection(struct gaim_window *win)
 			break;
 		}
 	}
-
-	gaim_gtk_set_state_lock(FALSE);
+	return FALSE;
 }
 
 static void
@@ -2111,7 +2049,7 @@ generate_send_as_items(struct gaim_window *win,
 		g_object_set_data(G_OBJECT(menuitem), "user_data", win);
 		g_object_set_data(G_OBJECT(menuitem), "gaim_account", gc->account);
 
-		g_signal_connect(G_OBJECT(menuitem), "activate",
+		g_signal_connect_after(G_OBJECT(menuitem), "activate",
 						 G_CALLBACK(menu_conv_sel_send_cb), NULL);
 
 		gtk_widget_show(menuitem);
@@ -2797,6 +2735,19 @@ build_conv_toolbar(struct gaim_conversation *conv)
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
 
+	/* Font Face */
+
+	button = gaim_pixbuf_toolbar_button_from_stock(GTK_STOCK_SELECT_FONT);
+	gtk_size_group_add_widget(sg, button);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_tooltips_set_tip(gtkconv->tooltips, button,
+			_("Font Face"), NULL);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+			G_CALLBACK(toggle_font), conv);
+
+	gtkconv->toolbar.font = button;
+
 	/* Foreground Color */
 	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_FGCOLOR);
 	gtk_size_group_add_widget(sg, button);
@@ -3319,11 +3270,7 @@ gaim_gtk_destroy_window(struct gaim_window *win)
 {
 	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
 
-	gaim_gtk_set_state_lock(TRUE);
-
 	gtk_widget_destroy(gtkwin->window);
-
-	gaim_gtk_set_state_lock(FALSE);
 
 	g_object_unref(G_OBJECT(gtkwin->menu.item_factory));
 
@@ -3533,7 +3480,7 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		g_object_unref(gtkconv->tab_cont);
 
 	if (gaim_window_get_conversation_count(win) == 1)
-		update_send_as_selection(win);
+		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 }
 
 static void
@@ -3552,11 +3499,7 @@ gaim_gtk_remove_conversation(struct gaim_window *win,
 	g_object_ref(gtkconv->tab_cont);
 	gtk_object_sink(GTK_OBJECT(gtkconv->tab_cont));
 
-	gaim_gtk_set_state_lock(TRUE);
-
 	gtk_notebook_remove_page(GTK_NOTEBOOK(gtkwin->notebook), index);
-
-	gaim_gtk_set_state_lock(FALSE);
 
 	/* If this window is setup with an inactive gc, regenerate the menu. */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
@@ -4204,7 +4147,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 		gaim_gtkconv_update_buddy_icon(conv);
 		gaim_gtkconv_update_buttons_by_protocol(conv);
 
-		update_send_as_selection(win);
+		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 
 		smiley_themeize(gtkconv->imhtml);
 	}
@@ -4295,18 +4238,6 @@ gaim_get_gtk_conversation_ui_ops(void)
 /**************************************************************************
  * Public conversation utility functions
  **************************************************************************/
-void
-gaim_gtk_set_state_lock(gboolean lock)
-{
-	state_lock = lock;
-}
-
-gboolean
-gaim_gtk_is_state_locked(void)
-{
-	return state_lock;
-}
-
 void
 gaim_gtkconv_toggle_smileys(void)
 {

@@ -279,7 +279,6 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct gaim_conver
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (GTK_IS_COLOR_SELECTION_DIALOG(w)) {
-		gaim_gtk_set_state_lock(TRUE);
 		if (w == gtkconv->dialogs.fg_color) {
 			gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor), FALSE);
@@ -289,24 +288,17 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct gaim_conver
 				GTK_TOGGLE_BUTTON(gtkconv->toolbar.bgcolor), FALSE);
 			gtkconv->dialogs.bg_color = NULL;
 		}
-		gaim_gtk_set_state_lock(FALSE);
 	} else if (GTK_IS_FONT_SELECTION_DIALOG(w)) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size), FALSE);
-		gaim_gtk_set_state_lock(FALSE);
+			GTK_TOGGLE_BUTTON(gtkconv->toolbar.font), FALSE);
 		gtkconv->dialogs.font = NULL;
 	} else if (!g_strcasecmp(object_data, "smiley dialog")) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
 									FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 		gtkconv->dialogs.smiley = NULL;
 	} else if (!g_strcasecmp(object_data, "log dialog")) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->toolbar.log),
 									   FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 		gtkconv->dialogs.log = NULL;
 	}
 
@@ -2609,10 +2601,8 @@ void cancel_log(GtkWidget *widget, struct gaim_conversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (gtkconv->toolbar.log) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->toolbar.log),
 									   FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 	}
 
 	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.log);
@@ -2942,14 +2932,12 @@ void cancel_link(GtkWidget *widget, struct gaim_conversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (gtkconv->toolbar.link) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
 									FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 	}
 
-	destroy_dialog(NULL, gtkconv->toolbar.link);
-	gtkconv->toolbar.link = NULL;
+	destroy_dialog(NULL, gtkconv->dialogs.link);
+	gtkconv->dialogs.link = NULL;
 }
 
 void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
@@ -2977,10 +2965,8 @@ void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
 	}
 
 	if (gtkconv->toolbar.link) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
 									FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 	}
 
 	gtkconv->dialogs.link = NULL;
@@ -3096,10 +3082,8 @@ void cancel_fgcolor(GtkWidget *widget, struct gaim_conversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (gtkconv->toolbar.fgcolor && widget) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor),
 									FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 	}
 
 	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.fg_color);
@@ -3114,10 +3098,8 @@ void cancel_bgcolor(GtkWidget *widget, struct gaim_conversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (gtkconv->toolbar.bgcolor && widget) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.bgcolor),
 									FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 	}
 
 	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.bg_color);
@@ -3291,11 +3273,9 @@ void cancel_font(GtkWidget *widget, struct gaim_conversation *c)
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	if (gtkconv->toolbar.normal_size && widget) {
-		gaim_gtk_set_state_lock(TRUE);
+	if (gtkconv->toolbar.font && widget) {
 		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size), FALSE);
-		gaim_gtk_set_state_lock(FALSE);
+			GTK_TOGGLE_BUTTON(gtkconv->toolbar.font), FALSE);
 	}
 
 	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.font);
@@ -3701,10 +3681,8 @@ void close_smiley_dialog(GtkWidget *widget, struct gaim_conversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (gtkconv->toolbar.smiley) {
-		gaim_gtk_set_state_lock(TRUE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
 									FALSE);
-		gaim_gtk_set_state_lock(FALSE);
 	}
 	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.smiley);
 	gtk_widget_destroy(gtkconv->dialogs.smiley);

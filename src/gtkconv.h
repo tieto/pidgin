@@ -134,13 +134,14 @@ struct gaim_gtk_conversation
 	struct
 	{
 		GtkWidget *toolbar;
-		
+
 		GtkWidget *bold;
 		GtkWidget *italic;
 		GtkWidget *underline;
 
 		GtkWidget *normal_size;
 
+		GtkWidget *font;
 		GtkWidget *fgcolor;
 		GtkWidget *bgcolor;
 
@@ -148,7 +149,7 @@ struct gaim_gtk_conversation
 		GtkWidget *link;
 		GtkWidget *smiley;
 		GtkWidget *log;
-	
+
 	} toolbar;
 
 	struct
@@ -198,20 +199,6 @@ struct gaim_window_ui_ops *gaim_get_gtk_window_ui_ops(void);
  * @return The GTK conversation operations structure.
  */
 struct gaim_conversation_ui_ops *gaim_get_gtk_conversation_ui_ops(void);
-
-/**
- * Sets a lock on the update state.
- *
- * @param lock The lock state.
- */
-void gaim_gtk_set_state_lock(gboolean lock);
-
-/**
- * Returns the lock state.
- *
- * @return The lock state.
- */
-gboolean gaim_gtk_is_state_locked(void);
 
 /**
  * Toggles the display of smileys.
