@@ -982,3 +982,19 @@ gboolean gaim_prefs_load() {
 	return TRUE;
 }
 
+void gaim_prefs_update_old() {
+	/* Rename some old prefs */
+	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
+	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
+	gaim_prefs_rename("/core/conversations/placement",
+					  "/gaim/gtk/conversations/placement");  
+	gaim_prefs_rename_boolean_toggle("/gaim/gtk/sound/silent_signon",
+									 "/gaim/gtk/sound/signon");
+
+	/* Remove some no-longer-used prefs */
+	gaim_prefs_remove("/core/conversations/im/show_login");
+	gaim_prefs_remove("/core/conversations/send_urls_as_links");
+	gaim_prefs_remove("/gaim/gtk/conversations/im/hide_on_send");
+	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
+	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
+}

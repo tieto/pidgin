@@ -240,6 +240,11 @@ gboolean gaim_prefs_load();
  */
 void gaim_prefs_sync();
 
+/**
+ * Rename legacy prefs and delete some that no longer exist.
+ */
+void gaim_prefs_update_old();
+
 /*@}*/
 
 #ifdef __cplusplus
