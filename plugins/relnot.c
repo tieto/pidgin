@@ -79,6 +79,7 @@ version_fetch_cb(void *ud, const char *data, size_t len)
 			NULL, NULL);
 
 	g_string_free(message, TRUE);
+	g_free(cur_ver);
 }
 
 static void
