@@ -20,6 +20,7 @@
  */
 #include "internal.h"
 #include "debug.h"
+#include "imgstore.h"
 #include "multi.h"
 #include "notify.h"
 #include "request.h"
@@ -714,6 +715,25 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
 			} else if(text && !strcmp(child->name, "DESC")) {
 				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
 						_("Description"), text);
+			} else if(!strcmp(child->name, "PHOTO") ||
+					!strcmp(child->name, "LOGO")) {
+				if((child2 = xmlnode_get_child(child, "BINVAL"))) {
+					char *data, *text2;
+					int size, imgid;
+					if((text2 = xmlnode_get_data(child2))) {
+						frombase64(text2, &data, &size);
+
+						imgid = gaim_imgstore_add(data, size, "logo.png");
+						g_string_append_printf(info_text,
+								"<b>%s:</b> <img id='%d' /><br/>",
+								strcmp(child->name, "PHOTO")  == 0 ?
+								_("Photo") : _("Logo"),
+								imgid);
+
+						g_free(data);
+						g_free(text2);
+					}
+				}
 			}
 			g_free(text);
 		}
