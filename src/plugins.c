@@ -725,8 +725,11 @@ char *event_name(enum gaim_event event)
 	case event_draw_menu:
 		sprintf(buf, "event_draw_menu");
 		break;
-	case event_im_displayed:
-		sprintf(buf, "event_im_displayed");
+	case event_im_displayed_sent:
+		sprintf(buf, "event_im_displayed_sent");
+		break;
+	case event_im_displayed_rcvd:
+		sprintf(buf, "event_im_displayed_rcvd");
 		break;
 	default:
 		sprintf(buf, "event_unknown");
@@ -780,7 +783,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 
 				/* struct gaim_connection *, char *, char ** */
 			case event_im_send:
-			case event_im_displayed:
+			case event_im_displayed_sent:
 			case event_chat_send:
 				{
 					void (*function)(struct gaim_connection *, char *, char **,
@@ -829,6 +832,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_chat_buddy_leave:
 			case event_away:
 			case event_back:
+			case event_im_displayed_rcvd:
 				{
 					void (*function)(struct gaim_connection *, char *, char *,
 							  void *) = g->function;
@@ -957,7 +961,12 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 	case event_draw_menu:
 		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 		break;
-	case event_im_displayed:
+	case event_im_displayed_sent:
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s",
+			   ((struct gaim_connection *)arg1)->username, (char *)arg2,
+			   *(char **)arg3 ? *(char **)arg3 : "(null)");
+		break;
+	case event_im_displayed_rcvd:
 		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s",
 			   ((struct gaim_connection *)arg1)->username, (char *)arg2,
 			   (char *)arg3 ? (char *)arg3 : "(null)");

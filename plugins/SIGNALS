@@ -25,7 +25,8 @@ enum gaim_event {
 	event_new_conversation,
 	event_set_info,
 	event_draw_menu,
-	event_im_displayed
+	event_im_displayed_sent,
+	event_im_displayed_rcvd
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -268,7 +269,7 @@ event_draw_menu:
 	'menu' is the menu that is about to be displayed.
 	'name' is the name of the buddy that was clicked.
 
-event_im_displayed:
+event_im_displayed_sent:
 	struct gaim_connection *gc, char *who, char **what
 
 	This is called after what you send is displayed but before it's
@@ -276,12 +277,23 @@ event_im_displayed:
 	in an IM window, first it gets passed to event_im_send handlers,
 	then it gets displayed, then it gets passed to these handlers, and
 	then it gets sent over the wire. This is useful for when you want
-	to encrypt something on the way out, or when you want to send a
-	response and have it displayed after what triggered the response.
+	to encrypt something on the way out.
 
-	'gc' is the connection the message was received on.
-	'who' is who sent the message.
+	'gc' is the connection the message is sent on.
+	'who' is who the message is for.
 	'what' is what was sent. It's expected that you modify this. If
 	you set *what to NULL the message won't be sent, but the preferred
 	way of doing this is to attach to event_im_send so that it really
 	won't be displayed at all.
+
+event_im_displayed_rcvd:
+	struct gaim_connection *gc, char *who, char *what
+
+	This is called after what you receive is displayed. This is useful
+	for displaying an autoresponse after the message that triggered it.
+	There are a bunch of things that are odd about this, especially
+	when dealing with being away, so be careful.
+
+	'gc' is the connection the message was received on.
+	'who' is who sent the message.
+	'what' is what was sent.

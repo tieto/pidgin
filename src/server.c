@@ -396,14 +396,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	struct conversation *cnv;
 	int new_conv = 0;
 
-	/* we should update the conversation window buttons and menu, if it exists. */
-	cnv = find_conversation(name);
-	if (cnv)
-		set_convo_gc(cnv, gc);
-	/* we do the new_conv check here in case any plugins decide to create it */
-	else
-		new_conv = 1;
-
 	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
 	 * by the prpls. so we create temp holders and pass those instead. it's basically
 	 * just to avoid segfaults. */
@@ -418,10 +410,16 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			g_free(angel);
 		return;
 	}
-	g_snprintf(message, strlen(message) + 1, "%s", buffy);
-	g_free(buffy);
-	g_snprintf(name, strlen(name) + 1, "%s", angel);
-	g_free(angel);
+	name = angel;
+	message = buffy;
+
+	/* we should update the conversation window buttons and menu, if it exists. */
+	cnv = find_conversation(name);
+	if (cnv)
+		set_convo_gc(cnv, gc);
+	/* we do the new_conv check here in case any plugins decide to create it */
+	else
+		new_conv = 1;
 
 	/* TiK, using TOC, sends an automated message in order to get your away message. Now,
 	 * this is one of the biggest hacks I think I've seen. But, in order to be nice to
@@ -431,6 +429,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
 		serv_send_im(gc, name, tmpmsg, 1);
 		g_free(tmpmsg);
+		g_free(name);
+		g_free(message);
 		return;
 	}
 
@@ -497,8 +497,11 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			/* ok, so we're not queuing it. well then, we'll try to handle it normally.
 			 * Some people think that ignoring it is a perfectly acceptible way to handle
 			 * it. i think they're on crack, but hey, that's why it's optional. */
-			if (general_options & OPT_GEN_DISCARD_WHEN_AWAY)
+			if (general_options & OPT_GEN_DISCARD_WHEN_AWAY) {
+				g_free(name);
+				g_free(message);
 				return;
+			}
 
 			/* ok, so we're not ignoring it. make sure the conversation exists and is
 			 * updated (partly handled above already), play the receive sound (sound.c
@@ -518,8 +521,11 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 		/* regardless of whether we queue it or not, we should send an auto-response. That is,
 		 * of course, unless the horse.... no wait. */
-		if ((general_options & OPT_GEN_NO_AUTO_RESP) || !strlen(gc->away))
+		if ((general_options & OPT_GEN_NO_AUTO_RESP) || !strlen(gc->away)) {
+			g_free(name);
+			g_free(message);
 			return;
+		}
 
 		/* this used to be based on the conversation window. but um, if you went away, and
 		 * someone sent you a message and got your auto-response, and then you closed the
@@ -533,8 +539,11 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			qar->sent_away = 0;
 			away_time_queue = g_slist_append(away_time_queue, qar);
 		}
-		if ((t - qar->sent_away) < 120)
+		if ((t - qar->sent_away) < 120) {
+			g_free(name);
+			g_free(message);
 			return;
+		}
 		qar->sent_away = t;
 
 		/* apply default fonts and colors */
@@ -567,6 +576,10 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 	}
+
+	plugin_event(event_im_displayed_rcvd, gc, name, message, 0);
+	g_free(name);
+	g_free(message);
 }
 
 

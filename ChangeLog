@@ -9,8 +9,10 @@ version 0.11.0:
 	* Added Russian Translation
 	* Can select which protocols are compiled statically
 	  (e.g.: ./configure --with-static-prpls=oscar,jabber)
-	* New plugin event: event_im_displayed. Use this to change
-	  the message after it's displayed (e.g. encrypt it)
+	* New plugin events: event_im_displayed_sent and
+	  event_im_displayed_rcvd. Use these to change messages after
+	  they're displayed (e.g. encrypt sent messages, or send
+	  auto-responses and have them display locally properly)
 
 version 0.11.0-pre14 (06/17/2001):
 	* Fixed a segfault with Oscar's account confirmation

@@ -856,7 +856,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		write_to_conv(c, buf, WFLAG_SEND, NULL, time((time_t)NULL));
 
 		buffy = g_strdup(buf);
-		plugin_event(event_im_displayed, c->gc, c->name, &buffy, 0);
+		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy, 0);
 		if (buffy) {
 			serv_send_im(c->gc, c->name, buffy, 0);
 			g_free(buffy);
