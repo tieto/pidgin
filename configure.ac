@@ -167,11 +167,11 @@ if test "x$enable_gnome" = "xyes" ; then
 fi
 
 if test "x$enable_gnome" != "xyes" -a "x$enable_gtk2" != "xyes" ; then
-	AM_PATH_GLIB(1.2.3,,AC_MSG_ERROR([
+	AM_PATH_GLIB(1.2.5,,AC_MSG_ERROR([
 *** GLib is required to build Gaim; please make sure you have the GLib
 *** development headers installed. The latest version of GLib is
 *** always available at http://www.gtk.org/.]))
-	AM_PATH_GTK(1.2.3,,AC_MSG_ERROR([
+	AM_PATH_GTK(1.2.5,,AC_MSG_ERROR([
 *** GTK+ is required to build Gaim; please make sure you have the GTK+
 *** development headers installed. The latest version of GTK+ is
 *** always available at http://www.gtk.org/.]))

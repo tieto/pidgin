@@ -7,17 +7,22 @@ Jim Duchek <jimduchek@ou.edu> IM: Zilding (former maintainer)
 Mark Spencer <markster@marko.net>
 
 Gaim is an IM client that supports many protocols, including AIM, ICQ,
-MSN, IRC, and Jabber. Gaim is NOT endorsed by, nor affiliated with, AOL
-nor any other company in ANY way.
+MSN, IRC, and Jabber. Gaim is NOT endorsed by, nor affiliated with,
+AOL nor any other company in ANY way.
 
-* Build:
 
-./configure ; make 
-for the stock version.  ./configure --help to see what option you can get.
-You need to use gmake, BSD make will not work.
+BUILD
+=====
 
-You need GTK 1.2.3.  I don't wanna hear about it, if you can't get it to
-work under a lower version.
+Read the 'INSTALL' file for more detailed directions.
+
+Gaim uses the standard ./configure ; make. You need to use gmake, BSD
+make probably won't work. Remember, run ./configure --help to see what
+build options are available.
+
+In order to compile Gaim, you need to have GTK+ 1.2.5 installed (as
+well as the development files!). The configure script will fail if you
+don't. You can get it from http://www.gtk.org/.
 
 Gaim will try to compile with Gnome features if you have Gnome on your
 system. If you don't have them, it will settle for simply GTK. If you
@@ -25,62 +30,177 @@ don't want Gnome bits, ./configure --disable-gnome
 
 If you want to build as a GNOME applet:
 ./configure --enable-panel ; make
-then su to root and run "make install". 
+then su to root and run "make install".
 Afterwards panel->Add applet->Network->Gaim should be there.
 
-* Run:
 
-type "./gaim"
+RUN
+===
 
-To use the other services (such as Yahoo and IRC) which are available as
-plugins:
+You should run 'make install' as root to make sure plugins and other files
+get installed into locations they want to be in. Once you've done that,
+you only need to run 'gaim'.
+
+To use the other services (such as Yahoo and IRC) which are available
+as plugins:
+
 They are installed in $libdir/gaim, which usually is either /usr/lib/gaim
 or /usr/local/lib/gaim, and should have a somewhat descriptive name (e.g.
 libyahoo.so or irc.so). Load those plugins using the normal plugin dialog.
 Then in the account editor, add a new account; the Protocol option menu
-should now have another option for the protocol that you loaded. Then you
-can sign that account on.
+should now have another option for the protocol that you loaded. Then
+you can sign that account on.
 
-ICQ and Zephyr are currently the only two protocols that don't use the
-global proxy configuration; however, if you have the proxy set to use a
-SOCKS5 proxy, ICQ will use it. If the proxy options aren't robust enough
-for you there are several libraries that you can link gaim against.
+Read below for protocol-specific information.
 
-* Plugins:
+
+PLUGINS
+=======
 
 If you do not wish to enable the plugin support within Gaim, run the
 ./configure script with the --disable-plugins option and recompile your
 source code.  This will prevent the ability to load plugins.
 
-'make install' puts the plugins in $PREFIX/lib/gaim (PREFIX being what you
-specified when you ./configure'd - it defaults to /usr/local). Gaim looks
-for the plugins in that directory by default, but they do not have to be
-there to use them. Also, plugins have a .so extension by default, though
-they do not have to.
+'make install' puts the plugins in $PREFIX/lib/gaim (PREFIX being what
+you specified when you ./configure'd - it defaults to /usr/local). Gaim
+looks for the plugins in that directory by default, but they do not have
+to be there to use them. Also, plugins have a .so extension by default,
+though they do not have to.
 
-* Notes:
+To build a plugin from a .c file, put it in the plugins/ directory in
+the source and run 'make filename.so', e.g. if you have the .c file
+'kickass.c', put it in the plugins/ directory, and from that directory,
+run 'make kickass.so'.
 
-This should now compile under Solaris, Digital Unix, Irix, etc w/o a
-problem.
 
-This compiles without warnings on Linux-x86 2.2.10 glibc2.1, GTK 1.2.3 system.
-If you get warnings on something else, let me know and I'll check it out.
-If you get errors, upgrade to the latest GTK-1.2 before bothering me.
+NOTES
+=====
 
-The resulting executable is standalone, so you can put it in /usr/bin or
-whatever.
+If you manually set a command for your browser or sound player options,
+make sure to put double-quotes around the "%s", otherwise bad things may
+happen.
 
-The panel (if you made an applet) requires certain things to be in certain
-places, but the Makefile/configure script should figure things out for you.
+If you come across a bug, please report it to http://gaim.sf.net/bug.php3.
 
-If you set a command for your browser or your sound player, make sure to put
-quotes around the %s where appropriate; otherwise, bad things could happen.
-Remember, you did it to yourself.
+There always seems to be some iffy-ness by a lot of people about
+whether to use the CVS version or stick with a stable release. Use the
+CVS version. If you need a version that you know is reliable, then keep
+your favorite one in case of an emergency. But for the most part, gaim
+is not mission-critical software, and if you can help us find a few bugs
+before we release, all the better. (Also, CVS tends to be more stable
+than releases, since we get 10 or 12 bug reports right after we make a
+release, and all those bugs are fixed within a day or two usually.) Read
+http://gaim.sf.net/cvs.php for more information.
 
-Send me bug reports.  The web page is http://gaim.sourceforge.net/and the ftp
-site is ftp://ftp.sourceforge.net/pub/sourceforge/gaim. We also have a
-sourceforge page at http://sourceforge.net/projects/gaim/
 
-Keep your eyes out for updates, and I'll try to keep the program maintained.
-Other contributors and patches are welcomed.  Please read the FAQ first. You
-can come ask questions in #gaim on irc.openprojects.net.
+PROTOCOL INFORMATION
+====================
+
+Each protocol is hacked by both Rob and Eric, though there is one person
+that kind of "owns" a protocol (mostly indicating that they were the
+person that originally wrote it). Their name will be next to the protocol;
+they're the people to complain to when something doesn't work ;).
+
+
+TOC (Rob)
+===
+
+You shouldn't use TOC, you should use Oscar instead. TOC can sync your
+buddy list with the server (if it's not too long), and can respond to file
+transfer requests (both sending and receiving). Other than that, there's
+nothing it can do that Oscar can't, yet. The TOC protocol doesn't allow
+retrieval of away messages; isn't capable of sending or receiving buddy
+icons; it also can't make file transfer requests.
+
+
+Oscar (Eric)
+=====
+
+Oscar is the default protocol. It is recommended that you use Oscar for
+both AIM and ICQ, as TOC isn't very featureful and the old ICQ protocol no
+longer works.
+
+For AIM, Oscar can get people's away messages. It can request and accept
+Direct IM connections, but it cannot yet transfer files through this (or
+through any other means). It can send and receive buddy icons if you have
+GdkPixbuf.
+
+For ICQ, it supports nearly everything that the old ICQ plugin supported,
+which isn't much. To use Oscar for ICQ, enter your ICQ UIN as the
+screenname. The default host/port will work.
+
+
+Yahoo (Eric)
+=====
+
+Yahoo is currently using the new YMSG protocol that newer official Yahoo
+clients are using. This protocol is much better than the old one, and
+tends to be somewhat more reliable. However, the Yahoo service is still
+flaky at best. Group chats aren't supported yet.
+
+
+IRC (Eric)
+===
+
+There are three ways to join an IRC chat room. The first is the File->Join
+A Chat menu option in the Buddy List window. The second is the "Chat"
+button at the bottom of the buddy list. The third is to type "/join #name"
+in an IM window where the "Send Message As" menu is set to your IRC
+account. There are other / commands that work in IM and Chat windows for
+IRC, /help will give you a list of them.
+
+
+MSN (Eric)
+===
+
+With MSN you can join a conversation with several people, but you can't
+invite people from the IM window yet.
+
+
+ICQ (Eric)
+===
+
+The ICQ plugin is deprecated and will probably be removed soon. The
+protocol only marginally works. You should use Oscar for ICQ.
+
+
+Jabber (Eric)
+======
+
+Transports aren't currently supported at all, though if you have a
+transport already subscribed Gaim will use it (you can't add or remove
+transports though). In order to use a server other than jabber.org, set
+your username to include the server, e.g. warmenhoven@mycompany.com. This
+is the actual format of the Jabber ID anyway; Jabber is email with online
+notification.
+
+
+Napster (Rob)
+=======
+
+Heh.  Ok, so I (Rob) am on crack!  Gaim can sign on/off of Napster,
+add/remove people to your hotlist (buddylist) as well as chat privately
+and in chat rooms.  You can search for files and browse a list of other
+user's files.  You can currently download files as long as the person
+you're retrieving files from is not firewalled.
+
+
+Zephyr (Eric)
+======
+
+Let me start off by saying how much I really despise Zephyr. They do a
+lot of things that make me realize why this never caught on. For those
+of you who are unfortunate enough to feel compelling need to use this,
+gaim now has a Zephyr plugin. It can currently sign on/off, handles
+presence/buddy lists (it even imports your .anyone file!), and can
+send/receive personal messages. A lot of stuff is missing, this is just
+a real rough first stab at it.
+
+
+Gadu-Gadu (Eric)
+=========
+
+I really shouldn't be taking credit for Gadu-Gadu, I'm just the person who
+commits the patches that Arkadiusz Miskiewicz gives me. Gadu-Gadu is an IM
+system most similar to ICQ that is quite popular in Poland. It can manage
+your server-side buddy list through the Protocol Actions menu.

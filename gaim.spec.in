@@ -17,7 +17,7 @@ Url:		http://gaim.sf.net/
 Source:		%{name}-%{version}.tar.gz
 Packager:	Rob Flynn <rob@marko.net>
 BuildRoot:	/var/tmp/%{name}-%{version}-root
-Requires:	gtk+ >= 1.2.3
+Requires:	gtk+ >= 1.2.5
 
 %description
 Gaim is NOT affiliated with or endorsed by AOL.
@@ -38,7 +38,7 @@ to other chat services such as Yahoo!, ICQ, and IRC.
 %package applet
 Summary:	A Gnome client compatible with AOL's 'Instant Messenger'
 Group:		Applications/Internet
-Requires:	gtk+ >= 1.2.3
+Requires:	gtk+ >= 1.2.5
 
 %description applet
 Gaim allows you to talk to anyone using AOL's 
