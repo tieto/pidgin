@@ -1537,12 +1537,12 @@ __init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Pager Host"), "server",
+	option = gaim_account_option_string_new(_("Pager host"), "server",
 											YAHOO_PAGER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_int_new(_("Pager Port"), "port",
+	option = gaim_account_option_int_new(_("Pager port"), "port",
 										 YAHOO_PAGER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);

@@ -2077,11 +2077,11 @@ __init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("TOC Host"), "server", TOC_HOST);
+	option = gaim_account_option_string_new(_("TOC host"), "server", TOC_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_int_new(_("TOC Host"), "port", TOC_PORT);
+	option = gaim_account_option_int_new(_("TOC port"), "port", TOC_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

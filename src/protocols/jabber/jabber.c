@@ -4432,7 +4432,7 @@ __init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_string_new(_("Connect Server"),
+	option = gaim_account_option_string_new(_("Connect server"),
 											"connect_server", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);

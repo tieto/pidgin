@@ -6104,12 +6104,12 @@ __init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Auth Host"), "server",
+	option = gaim_account_option_string_new(_("Auth host"), "server",
 											"login.oscar.aol.com");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_int_new(_("Auth Port"), "port", 5190);
+	option = gaim_account_option_int_new(_("Auth port"), "port", 5190);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

@@ -1212,7 +1212,7 @@ __init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Login Server"), "server",
+	option = gaim_account_option_string_new(_("Login server"), "server",
 											MSN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
