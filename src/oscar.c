@@ -61,24 +61,24 @@ static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_stru
 
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
-	struct aim_session_t *sess = (struct aim_session_t *)data;
+	struct aim_conn_t *conn = (struct aim_conn_t *)data;
 
 	if (condition & GDK_INPUT_EXCEPTION) {
 		signoff();
 		hide_login_progress("Disconnected.");
-		aim_logoff(sess);
+		aim_logoff(gaim_sess);
 		gdk_input_remove(inpa);
 		return;
 	}
 	if (condition & GDK_INPUT_READ) {
-		if (aim_get_command(sess, gaim_conn) < 0) {
+		if (aim_get_command(gaim_sess, conn) < 0) {
 			debug_print("connection error!\n");
 			signoff();
 			hide_login_progress("Disconnected.");
-			aim_logoff(sess);
+			aim_logoff(gaim_sess);
 			gdk_input_remove(inpa);
 		} else {
-			aim_rxdispatch(sess);
+			aim_rxdispatch(gaim_sess);
 		}
 	}
 }
@@ -136,9 +136,8 @@ int oscar_login(char *username, char *password) {
 				gaim_auth_server_ready, 0);
 	aim_send_login(sess, conn, username, password, &info);
 
-	gaim_conn = conn;
 	inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-			oscar_callback, sess);
+			oscar_callback, conn);
 
 	u = find_user(username);
 
@@ -226,7 +225,6 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		hide_login_progress("Could Not Connect");
 		return -1;
 	}
-	gaim_conn = bosconn;
 
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ACK, AIM_CB_ACK_ACK, NULL, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, gaim_server_ready, 0);
@@ -246,8 +244,9 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 
 	aim_auth_sendcookie(sess, bosconn, sess->logininfo.cookie);
+	gaim_conn = bosconn;
 	inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-			oscar_callback, sess);
+			oscar_callback, bosconn);
 	set_login_progress(4, "Connection established, cookie sent");
 	return 1;
 }
@@ -324,6 +323,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_bos_clientready(sess, command->conn);
 
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
+		aim_conn_setlatency(command->conn, 1);
 
 		debug_print("Roger that, all systems go\n");
 #ifdef USE_APPLET
@@ -347,8 +347,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		gaim_setup();
 		if (bud_list_cache_exists())
 			do_import(NULL, 0);
-
-		aim_conn_setlatency(command->conn, 1);
 
 		break;
 	case 0x7: /* Authorizer */

@@ -77,6 +77,14 @@ to it in the middle of a session there don't seem to be any problems.
 "Allow anyone" works all the time (?) and "Deny some" doesn't work some of the
 time. That's a bug.
 
+- Sometimes signing on doesn't work completely correctly. (If you want a bad
+fix for it, comment out the lines where it imports your buddy list in oscar.c,
+and import it manually.)
+
+- If you receive a message that's too large, gaim segfaults. I haven't watched
+this in gdb or gotten a backtrace on it, so I'm not exactly sure what the
+problem is.
+
 - Gaim/TOC can do file transfers, but Gaim/Faim cannot. This is not because
 there is any difference in the two protocols as far as the actual transfer is
 concerned. The only thing preventing this is it is currently not possible to

@@ -1,4 +1,10 @@
 
+Wed May 31 19:15:38 UTC 2000 EWarmenhoven
+	- Signon works better; oscar_callback takes an aim_conn_t instead of an
+	  aim_session_t now to try and prevent reported connection errors.
+	- Setting the latency before creating the buddy list seems to remove
+	  some signon problems, especially if you have a larger buddy list.
+
 Wed May 31 02:50:36 UTC 2000 EWarmenhoven
 	- Good fun things here. Sometimes I think Adam does things just to make
 	  it difficult for me, I swear (j/k :) ).
