@@ -1697,7 +1697,30 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		}
 #endif
 
-		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
+		/*
+		 * Quickly convert it to eight bit format, replacing 
+		 * non-ASCII UNICODE characters with their equivelent 
+		 * HTML entity.
+		 */
+		if (args->icbmflags & AIM_IMFLAGS_UNICODE) {
+			int i;
+			
+			for (i = 0, tmp[0] = '\0'; i < args->msglen; i += 2) {
+				unsigned short uni;
+				
+				uni = ((args->msg[i] & 0xff) << 8) | (args->msg[i+1] & 0xff);
+
+				if ((uni < 128) || ((uni >= 160) && (uni <= 255))) { /* ISO 8859-1 */
+					
+					g_snprintf(tmp+strlen(tmp), sizeof(tmp)-strlen(tmp), "%c", uni);
+					
+				} else { /* something else, do UNICODE entity */
+					g_snprintf(tmp+strlen(tmp), sizeof(tmp)-strlen(tmp), "&#%04x;", uni);
+				}
+			}
+		} else
+			g_snprintf(tmp, BUF_LONG, "%s", args->msg);
+
 		serv_got_im(gc, userinfo->sn, tmp, args->icbmflags & AIM_IMFLAGS_AWAY, time(NULL));
 		g_free(tmp);
 	} else if (channel == 2) {
