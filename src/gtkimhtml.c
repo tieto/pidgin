@@ -227,7 +227,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->show_comments = TRUE;
 
 	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, gtk_smiley_tree_destroy);
+			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
@@ -1251,7 +1251,7 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
 	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, gtk_smiley_tree_destroy);
+			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 }
 void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
@@ -1377,23 +1377,21 @@ gtk_imhtml_tip (gpointer data)
 
 static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gpointer user_data)
 {
-	static GdkRectangle old_rect = {0, 0, 0, 0};
-    GdkRectangle rect;
+	static int old_width = 0, old_height = 0;
 
-    gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
-
-	if(old_rect.width && (old_rect.width != rect.width || old_rect.height != rect.height)){
+	if(old_width && (old_width != alloc->width || old_height != alloc->height)){
 		GList *iter = GTK_IMHTML(widget)->scalables;
-		
+
 		while(iter){
 			GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(iter->data);
-			scale->scale(scale, rect.width, rect.height);
+			scale->scale(scale, alloc->width, alloc->height);
 
 			iter = iter->next;
 		}
 	}
 
-	old_rect = rect;
+	old_width = alloc->width;
+	old_height = alloc->height;
 	return FALSE;
 }
 
