@@ -9,6 +9,9 @@ version 0.82:
 	  causes a crash
 	* Delayed messages and system messages no longer cause
 	  sound events to be triggered (Nathan Fredrickson)
+	* Remotely canceled file transfers in MSN are now noticed, so that we
+	  don't accidentally cancel the file transfer and crash Gaim
+	  (Felipe Contreras).
 
 version 0.81 (08/05/2004):
 	New Features:

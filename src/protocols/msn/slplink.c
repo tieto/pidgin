@@ -631,6 +631,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer)
 	msn_slp_call_init(slpcall, MSN_SLPCALL_DC);
 
 	slpcall->session_init_cb = send_file_cb;
+	slpcall->end_cb = msn_xfer_end_cb;
 	slpcall->progress_cb = msn_xfer_progress_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;

@@ -43,5 +43,6 @@ void msn_xfer_completed_cb(MsnSlpCall *slpcall,
 						   const char *body, long long size);
 
 void msn_xfer_cancel(GaimXfer *xfer);
+void msn_xfer_end_cb(MsnSlpCall *slpcall);
 
 #endif /* _MSN_SLP_H_ */
