@@ -895,25 +895,18 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 	struct proto_buddy_menu *pbm;
 	JabberStream *js = gc->proto_data;
 	JabberBuddy *jb = jabber_buddy_find(js, name, TRUE);
-	GList *resources;
-	gboolean has_file_xfer = FALSE;
 
 	if(!jb)
 		return m;
 
-	for(resources = jb->resources; resources; resources = resources->next) {
-		JabberBuddyResource *jbr = resources->data;
-		if(jbr->capabilities & JABBER_CAP_SI_FILE_XFER)
-			has_file_xfer = TRUE;
-	}
+	/* XXX: should check capability once we know we want to send
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Send File");
+	pbm->callback = jabber_buddy_ask_send_file;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	if(has_file_xfer) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Send File");
-		pbm->callback = jabber_buddy_ask_send_file;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
-	}
+	*/
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	if(jb->invisible & JABBER_INVIS_BUDDY) {

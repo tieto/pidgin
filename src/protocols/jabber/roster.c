@@ -259,21 +259,26 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 {
 	JabberStream *js = gc->proto_data;
 	char *who;
-	GSList *buddies;
+	GSList *groups = NULL;
 	JabberBuddy *jb;
 
 	if(!js->roster_parsed)
 		return;
 
-	who = jabber_get_bare_jid(name);
+	if(!(who = jabber_get_bare_jid(name)))
+		return;
 
-	buddies = gaim_find_buddies(gc->account, who);
+	jb = jabber_buddy_find(js, name, FALSE);
+
+	if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
+		groups = g_slist_append(groups, grp->name);
+	}
 
 	jabber_roster_update(js, who, NULL);
 
-	jb = jabber_buddy_find(js, name, FALSE);
 	if(!jb || !(jb->subscription & JABBER_SUB_TO))
 		jabber_presence_subscription_set(js, who, "subscribe");
+
 	g_free(who);
 }
 

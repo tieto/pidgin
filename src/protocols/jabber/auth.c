@@ -129,6 +129,8 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	gboolean digest = FALSE;
 	const char *pw = gaim_account_get_password(js->gc->account);
 
+	/* XXX: check for an <iq type='error' /> */
+
 	query = xmlnode_get_child(packet, "query");
 	if(js->stream_id && xmlnode_get_child(query, "digest")) {
 		digest = TRUE;

@@ -254,13 +254,17 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		SUPPORT_FEATURE("jabber:iq:time")
 		SUPPORT_FEATURE("jabber:iq:version")
 		SUPPORT_FEATURE("jabber:x:conference")
+		/*
 		SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
+		*/
 		SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
 		SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
 		SUPPORT_FEATURE("http://jabber.org/protocol/muc")
 		SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
+		/*
 		SUPPORT_FEATURE("http://jabber.org/protocol/si")
 		SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
+		*/
 
 		jabber_iq_send(iq);
 	}else if(!strcmp(type, "result")) {
