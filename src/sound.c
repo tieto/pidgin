@@ -48,6 +48,22 @@
 #include "sounds/Send.h"
 #include "sounds/Receive.h"
 
+static int check_dev(char *dev)
+{
+	struct stat stat_buf;
+	uid_t user = getuid();
+	gid_t group = getgid(); 
+	if (stat(dev, &stat_buf))
+		return 0;
+	if (user == stat_buf.st_uid && stat_buf.st_mode & S_IWUSR)
+		return 1;
+	if (group == stat_buf.st_gid && stat_buf.st_mode & S_IWGRP)
+		return 1;
+	if (stat_buf.st_mode & S_IWOTH)
+		return 1;
+	return 0;
+}
+
 
 static void play_audio(char *data, int size)
 {
@@ -62,18 +78,7 @@ static void play_audio(char *data, int size)
 
 static int can_play_audio()
 {
-	struct stat stat_buf;
-	uid_t user = getuid();
-	gid_t group = getgid(); 
-	if (stat("/dev/audio", &stat_buf))
-		return 0;
-	if (user == stat_buf.st_uid && stat_buf.st_mode & S_IWUSR)
-		return 1;
-	if (group == stat_buf.st_gid && stat_buf.st_mode & S_IWGRP)
-		return 1;
-	if (stat_buf.st_mode & S_IWOTH)
-		return 1;
-	return 0;
+	return check_dev("/dev/audio");
 }
 
 
@@ -135,6 +140,8 @@ static int play_esd(unsigned char *data, int size)
 static int can_play_esd()
 {
 	esd_format_t format = ESD_BITS16 | ESD_STREAM | ESD_PLAY | ESD_MONO;
+
+	if (!check_dev("/dev/dsp")) return 0;
 	
         esd_fd = esd_play_stream(format, 8012, NULL, "gaim");
 
