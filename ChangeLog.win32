@@ -1,5 +1,8 @@
+version 0.72:
+
 version 0.71 (10/09/2003):
 	* Gtk-wimp theme removed.
+	* Installer translations for: Portuguese.
 
 version 0.70 (09/28/2003):
 	* Fixed an icon caching bug which showed up after gaim's data dir was
