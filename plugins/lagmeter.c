@@ -99,8 +99,7 @@ static gint send_lag() {
 				g_free(buf);
 			} else
 				serv_send_im(my_gc, my_gc->username, m, 1);
-		} else if ((my_gc->protocol <= PROTO_OSCAR || my_gc->protocol == PROTO_IRC)
-				&& strcmp(my_gc->username, my_gc->displayname))
+		} else if (my_gc->protocol == PROTO_IRC && strcmp(my_gc->username, my_gc->displayname))
 			serv_send_im(my_gc, my_gc->displayname, m, 1);
 		else
 			serv_send_im(my_gc, my_gc->username, m, 1);
