@@ -54,6 +54,7 @@ struct yahoo_data {
 	GHashTable *hash;
 	GtkWidget *email_win;
 	GtkWidget *email_label;
+	char *active_id;
 };
 
 static char *yahoo_name() {
@@ -306,6 +307,8 @@ static void yahoo_login(struct aim_user *user) {
 		}
 	}
 
+	yd->active_id = g_strdup(gc->username);
+
 	gc->inpa = gdk_input_add(ctxt->sockfd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				yahoo_callback, gc);
 }
@@ -325,13 +328,14 @@ static void yahoo_close(struct gaim_connection *gc) {
 		yahoo_cmd_logoff(yd->ctxt);
 	g_hash_table_foreach_remove(yd->hash, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->hash);
+	g_free(yd->active_id);
 	g_free(yd);
 }
 
 static void yahoo_send_im(struct gaim_connection *gc, char *who, char *message, int away) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 
-	yahoo_cmd_msg(yd->ctxt, gc->username, who, message);
+	yahoo_cmd_msg(yd->ctxt, yd->active_id, who, message);
 }
 
 static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {
@@ -437,7 +441,7 @@ static void gyahoo_add_buddy(struct gaim_connection *gc, char *name) {
 	}
 
 	if (group)
-		yahoo_add_buddy(yd->ctxt, name, gc->username, group, "");
+		yahoo_add_buddy(yd->ctxt, name, yd->active_id, group, "");
 }
 
 static void yahoo_add_buddies(struct gaim_connection *gc, GList *buddies) {
@@ -461,7 +465,7 @@ static void gyahoo_remove_buddy(struct gaim_connection *gc, char *name) {
 	}
 
 	if (group)
-		yahoo_remove_buddy(yd->ctxt, name, gc->username, group, "");
+		yahoo_remove_buddy(yd->ctxt, name, yd->active_id, group, "");
 }
 
 static char **yahoo_list_icon(int uc) {
@@ -511,6 +515,30 @@ static GList *yahoo_away_states() {
 	return m;
 }
 
+static void yahoo_act_id(gpointer data, char *entry) {
+	struct gaim_connection *gc = data;
+	struct yahoo_data *yd = gc->proto_data;
+
+	yahoo_cmd_activate_id(yd->ctxt, entry);
+	if (yd->active_id)
+		g_free(yd->active_id);
+	yd->active_id = g_strdup(entry);
+}
+
+static void yahoo_do_action(struct gaim_connection *gc, char *act) {
+	if (!strcmp(act, "Activate ID")) {
+		do_prompt_dialog("Activate which ID:", gc, yahoo_act_id, NULL);
+	}
+}
+
+static GList *yahoo_actions() {
+	GList *m = NULL;
+
+	m = g_list_append(m, "Activate ID");
+
+	return m;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Yahoo_init(struct prpl *ret) {
@@ -519,6 +547,8 @@ void Yahoo_init(struct prpl *ret) {
 	ret->name = yahoo_name;
 	ret->list_icon = yahoo_list_icon;
 	ret->away_states = yahoo_away_states;
+	ret->actions = yahoo_actions;
+	ret->do_action = yahoo_do_action;
 	ret->buddy_menu = yahoo_buddy_menu;
 	ret->user_opts = NULL;
 	ret->login = yahoo_login;

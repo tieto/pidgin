@@ -36,6 +36,14 @@ static struct prpl *regprpl = NULL;
 
 GtkWidget *protomenu = NULL;
 
+struct _prompt {
+	GtkWidget *window;
+	GtkWidget *entry;
+	void (*doit)(void *, char *);
+	void (*dont)(void *);
+	void *data;
+};
+
 struct prpl *find_prpl(int prot)
 {
 	GSList *e = protocols;
@@ -155,6 +163,74 @@ void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
 	if (doit)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(doit), data);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(rem_win), window);
+
+	gtk_widget_show_all(window);
+}
+
+static void des_prompt(GtkWidget *w, struct _prompt *p)
+{
+	if (p->dont)
+		(p->dont)(p->data);
+	gtk_widget_destroy(p->window);
+	g_free(p);
+}
+
+static void act_prompt(GtkWidget *w, struct _prompt *p)
+{
+	if (p->doit)
+		(p->doit)(p->data, gtk_entry_get_text(GTK_ENTRY(p->entry)));
+	gtk_widget_destroy(p->window);
+}
+
+void do_prompt_dialog(const char *text, void *data, void *doit, void *dont)
+{
+	GtkWidget *window;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+	GtkWidget *button;
+	struct _prompt *p;
+
+	p = g_new0(struct _prompt, 1);
+	p->data = data;
+	p->doit = doit;
+	p->dont = dont;
+
+	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	p->window = window;
+	gtk_window_set_wmclass(GTK_WINDOW(window), "prompt", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
+	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Prompt"));
+	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_prompt), p);
+	gtk_widget_realize(window);
+	aol_icon(window->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(text);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(act_prompt), p);
+	p->entry = entry;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	button = picture_button(window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_win), window);
+
+	button = picture_button(window, _("Accept"), ok_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(act_prompt), p);
 
 	gtk_widget_show_all(window);
 }

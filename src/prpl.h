@@ -124,4 +124,5 @@ void register_user(gpointer, gpointer);
 void prepare_regbox_for_next();
 
 void do_ask_dialog(const char *, void *, void *, void *);
+void do_prompt_dialog(const char *, void *, void *, void *);
 #endif
