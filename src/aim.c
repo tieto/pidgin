@@ -417,10 +417,9 @@ int main(int argc, char *argv[])
 	int opt;
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_user = 0, opt_login = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
+	int i;
 
 #ifdef USE_GNOME
-	int i;
-	poptContext popt_context;
 	struct poptOption popt_options[] = {
 		{"acct", 'a', POPT_ARG_NONE, &opt_acct, 'a',
 		 "Display account editor window", NULL},
@@ -434,18 +433,17 @@ int main(int argc, char *argv[])
 		 "Use FILE as config", "FILE"},
 		{0, 0, 0, 0, 0, 0, 0}
 	};
-#else
+#endif /* USE_GNOME */
 	struct option long_options[] = {
 		{"acct", no_argument, NULL, 'a'},
-		{"away", optional_argument, NULL, 'w'},
+		/*{"away", optional_argument, NULL, 'w'},*/
 		{"help", no_argument, NULL, 'h'},
-		{"login", optional_argument, NULL, 'l'},
+		/*{"login", optional_argument, NULL, 'l'},*/
 		{"user", required_argument, NULL, 'u'},
 		{"file", required_argument, NULL, 'f'},
 		{"version", no_argument, NULL, 'v'},
 		{0, 0, 0, 0}
 	};
-#endif /* USE_GNOME */
 
 
 #ifdef ENABLE_NLS
@@ -466,7 +464,7 @@ int main(int argc, char *argv[])
 
 #ifdef USE_APPLET
 	init_applet_mgr(argc, argv);
-#elif defined USE_GNOME
+#else
 	for (i = 0; i < argc; i++) {
 		/* --login option */
 		if (strstr(argv[i], "--l") == argv[i]) {
@@ -475,6 +473,10 @@ int main(int argc, char *argv[])
 			if ((equals = strchr(argv[i], '=')) != NULL) {
 				/* --login=NAME */
 				opt_login_arg = g_strdup(equals + 1);
+				if (strlen (opt_login_arg) == 0) {
+					g_free (opt_login_arg);
+					opt_login_arg = NULL;
+				}
 			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
 				/* --login NAME */
 				opt_login_arg = g_strdup(argv[i + 1]);
@@ -502,6 +504,10 @@ int main(int argc, char *argv[])
 			if ((equals = strchr(argv[i], '=')) != NULL) {
 				/* --away=MESG */
 				opt_away_arg = g_strdup (equals+1);
+				if (strlen (opt_away_arg) == 0) {
+					g_free (opt_away_arg);
+					opt_away_arg = NULL;
+				}
 			} else if (i+1 < argc && argv[i+1][0] != '-') {
 				/* --away MESG */
 				opt_away_arg = g_strdup (argv[i+1]);
@@ -522,53 +528,29 @@ int main(int argc, char *argv[])
 			}
 			strcpy(argv[i], " ");
 		}
-		/* --file option */
-		else if (strstr (argv[i], "--fi") == argv[i]) {
-			char *equals;
-			if ((equals = strchr(argv[i], '=')) != NULL) {
-				/* --file=FILE */
-				opt_rcfile_arg = g_strdup (equals+1);
-			} else if (i+1 < argc && argv[i+1][0] != '-') {
-				/* --file FILE */
-				opt_rcfile_arg = g_strdup (argv[i+1]);
-				strcpy (argv[i+1], " ");
-			}
-			strcpy (argv[i], " ");
-		}
-		/* -f option */
-		else if (strstr (argv[i], "-f") == argv[i]) {
-			if (strlen (argv[i]) > 2) {
-				/* -fFILE */
-				opt_rcfile_arg = g_strdup (argv[i]+2);
-			} else if (i+1 < argc && argv[i+1][0] != '-') {
-				/* -f FILE */
-				opt_rcfile_arg = g_strdup (argv[i+1]);
-				strcpy (argv[i+1], " ");
-			}
-			strcpy(argv[i], " ");
-		}
 	}
+	/*
+	if (opt_login) {
+		printf ("--login given with arg %s\n",
+			opt_login_arg ? opt_login_arg : "NULL");
+		exit(0);
+	}
+	*/
 
+#ifdef USE_GNOME
 	gnome_init_with_popt_table(PACKAGE, VERSION, argc, argv, popt_options, 0, NULL);
 #else
 	gtk_init(&argc, &argv);
+#endif
 
 	/* scan command-line options */
 	opterr = 1;
-	while ((opt = getopt_long(argc, argv, "ahl::w::u:f::v",
+	while ((opt = getopt_long(argc, argv, "ahu:f:v",
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
 			opt_user = 1;
 			opt_user_arg = g_strdup(optarg);
-			break;
-		case 'l':
-			opt_login = 1;
-			opt_login_arg = g_strdup(optarg);
-			break;
-		case 'w':
-			opt_away = 1;
-			opt_away_arg = g_strdup (optarg);
 			break;
 		case 'a':	/* account editor */
 			opt_acct = 1;
@@ -590,7 +572,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-#endif /* USE_GNOME */
+#endif /* USE_APPLET */
 
 	/* show help message */
 	if (opt_help) {
