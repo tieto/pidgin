@@ -377,10 +377,10 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, GtkClipboard *clipboard)
 	str = g_string_append(str, text);
 	g_free(text);
 	
-	if (!gtk_text_iter_equal(&start, &last);
-	gtk_clipboard_set_text(clipboard ? clipboard :  
-			       gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
-			       str->str, str->len);
+	if (!gtk_text_iter_equal(&start, &last))
+		gtk_clipboard_set_text(clipboard ? clipboard :  
+				       gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
+				       str->str, str->len);
 	g_string_free(str, TRUE);
 }
 
