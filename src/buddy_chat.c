@@ -138,7 +138,7 @@ void join_chat()
 		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
 		gtk_container_add(GTK_CONTAINER(joinchat), mainbox);
 
-		frame = gtk_frame_new(_("Send Instant Message"));
+		frame = gtk_frame_new(_("Buddy Chat"));
                 gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
 	
 		fbox = gtk_vbox_new(FALSE, 5);
