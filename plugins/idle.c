@@ -18,7 +18,7 @@ static GaimConnection *gc = NULL;
 
 static void set_idle(GtkWidget *button, GtkWidget *spinner) {
 	time_t t;
-	int tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 0, G_MAXSHORT);
+	int tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 0, G_MAXUSHORT);
 	GaimAccount *account;
 
 	if (!gc)
@@ -83,7 +83,7 @@ get_config_frame(GaimPlugin *plugin)
 	label = gtk_label_new(_("idle for"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-	adj = (GtkAdjustment *)gtk_adjustment_new(10, 0, G_MAXINT, 1, 0, 0);
+	adj = (GtkAdjustment *)gtk_adjustment_new(10, 0, G_MAXUSHORT, 1, 0, 0);
 	spinner = gtk_spin_button_new(adj, 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
 
