@@ -47,6 +47,7 @@ version 0.81cvs:
 	  another location (Stu Tomlinson)
 	* On Solaris, chatting in IRC using the UTF-8 charset no longer gives
 	  a "conversion failed" error for every message (Arvind Samptur)
+	* ICQ offline messages should have the correct timestamp (Dave West)
 
 version 0.80 (07/15/2004):
 	New Features:

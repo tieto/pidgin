@@ -3506,7 +3506,9 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				tmp = gaim_escape_html(msg2[0]);
 
 				if (t) { /* This is an offline message */
-					/* I think this timestamp is in UTC, or something */
+					/* The timestamp is UTC-ish, so we need to get the offset */
+					tzset();
+					t -= timezone;
 					serv_got_im(gc, uin, tmp, 0, t);
 				} else { /* This is a message from MacICQ/Miranda */
 					serv_got_im(gc, uin, tmp, 0, time(NULL));
