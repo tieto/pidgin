@@ -512,6 +512,7 @@ extern void play_file(char *);
 /* Fucnctions in util.c */
 extern GtkWidget *gaim_pixmap(char *, char *);
 extern GdkPixbuf *gaim_pixbuf(char *, char *);
+extern GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);
 extern GtkWidget *gaim_new_item_with_pixmap(GtkWidget *, const char *, char **, GtkSignalFunc, gpointer, guint, guint, char *);
 extern GtkWidget *gaim_new_item_from_stock(GtkWidget *, const char *, const char *, GtkSignalFunc, gpointer, guint, guint, char *);
 extern GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *, const char *, char *, GtkSignalFunc, gpointer, guint, guint, char *);
