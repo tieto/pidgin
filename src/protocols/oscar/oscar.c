@@ -698,8 +698,8 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 {
 	OscarData *od;
 	GaimAccount *account;
-	GaimPresence *presence;
-	GaimStatus *status;
+	GaimPresence *presence = NULL;
+	GaimStatus *status = NULL;
 	GaimGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
@@ -2147,7 +2147,7 @@ static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
 	gboolean can_receive = FALSE;
 	OscarData *od = gc->proto_data;
 
-	if (!od->icq) {
+	if (od != NULL && !od->icq) {
 		aim_userinfo_t *userinfo;
 		userinfo = aim_locate_finduserinfo(od->sess, who);
 		if (userinfo && userinfo->capabilities & AIM_CAPS_SENDFILE)
