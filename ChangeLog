@@ -22,11 +22,12 @@ version 0.71
 	  longer attempt to load the same, possibly incompatible plugins
 	  (Robert McQueen)
 	* Implemented another new Yahoo! authentication method
+	* Fixed a bug displaying Chinese MSN messages (Ambrose C. LI).
 	* Massive core/UI splitting.
 	* Re-write of Jabber protocol plugin
 	* Conversation API changes.
-	* Some plugins must be updated due to code variable changes, 
-	  function name changes, and change of behavior for certain 
+	* Some plugins must be updated due to code variable changes,
+	  function name changes, and change of behavior for certain
 	  functions.
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)

@@ -502,7 +502,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		msg = msn_message_new();
 		msn_message_set_receiver(msg, user);
 		msn_message_set_attr(msg, "X-MMS-IM-Format",
-							 "FN=Arial; EF=; CO=0; PF=0");
+							 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
 		msn_message_set_body(msg, message);
 
 		if (swboard != NULL) {
@@ -1006,7 +1006,8 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 	send = gaim_str_add_cr(message);
 
 	msg = msn_message_new();
-	msn_message_set_attr(msg, "X-MMS-IM-Format", "FN=Arial; EF=; CO=0; PF=0");
+	msn_message_set_attr(msg, "X-MMS-IM-Format",
+						 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
 	msn_message_set_body(msg, send);
 
 	g_free(send);
