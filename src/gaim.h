@@ -19,6 +19,9 @@
  *
  */
 
+#include <gtk/gtk.h>
+#include <time.h>
+#include <stdio.h>
 #ifdef USE_APPLET
 #include <applet-widget.h>
 #endif /* USE_APPLET */
@@ -124,6 +127,25 @@ struct gaim_plugin {
 	char  *description;
 	void  *handle;
 };
+
+enum gaim_event {
+	event_signon = 0,
+	event_signoff,
+	event_im_recv,
+	event_im_send,
+	event_buddy_signon,
+	event_buddy_signoff,
+	/* any others? it's easy to add... */
+};
+
+struct gaim_callback {
+	void *handle;
+	enum gaim_event event;
+	void *function;
+	void *data;
+};
+
+extern GList *callbacks;
 #endif
 
 struct buddy {
@@ -268,7 +290,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 100 $"
+#define REVISION "gaim:$Revision: 104 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -543,6 +565,8 @@ extern void play_sound(int);
 extern void load_plugin  (GtkWidget *, gpointer);
 extern void unload_plugin(GtkWidget *, gpointer);
 extern void show_plugins (GtkWidget *, gpointer);
+extern void gaim_signal_connect(void *, enum gaim_event, void *, void *);
+extern void gaim_signal_disconnect(void *, enum gaim_event, void *);
 #endif
 
 /* Functions in prefs.c */

@@ -153,6 +153,23 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 			 signoff,
 			 NULL);
 #endif
+
+#ifdef GAIM_PLUGINS
+	 {
+		 GList *c = callbacks;
+		 struct gaim_callback *g;
+		 void (*function)(void *);
+		 while (c) {
+			 g = (struct gaim_callback *)c->data;
+			 if (g->event == event_signon && g->function != NULL) {
+				 function = g->function;
+				 (*function)(g->data);
+			 }
+			 c = c->next;
+		 }
+	 }
+#endif
+
 	 running = FALSE;
 	 return;
 }

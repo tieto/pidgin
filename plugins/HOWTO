@@ -3,7 +3,7 @@ Ok, this howto is going to be really short and sweet and to the point.
 First off, before you do anything else, in all of the files for your plugin,
 put the lines
 
-#define GAIM_PLUGIN
+#define GAIM_PLUGINS
 #include "gaim.h"
 
 I mean this. Without this, all kinds of things will not work correctly. If you
@@ -14,13 +14,19 @@ Now that you've put that there, make sure gaim.h is in your include path.
 
 Ok, now you're ready to write the plugin.
 
-The only function that is required is gaim_plugin_init(). This gets called as
-soon as it gets loaded (sort of - man dlopen for more details). If your
-function never returns, it will crash gaim! If your plugin uses up all the
-memory in the system, it will crash gaim! Once your plugin gets loaded, it
-effectively becomes a part of gaim, and anything that goes wrong will look
+The only function that is required is gaim_plugin_init(void *). This gets
+called as soon as it gets loaded (sort of - man dlopen for more details). If
+your function never returns, it will crash gaim! If your plugin uses up all
+the memory in the system, it will crash gaim! Once your plugin gets loaded,
+it effectively becomes a part of gaim, and anything that goes wrong will look
 like it is a problem with gaim itself. I write bugfree code! :) Therefore, it
-is your problem, not mine.
+is your problem, not mine. (I'm usually nice and willing to help you with your
+problems though.)
+
+The void * that gets passed to gaim_plugin_init is the handle for the plugin.
+DO NOT CHANGE THIS POINTER! Bad things will happen. You've been warned. It's
+needed for connecting to signals and things. It's a good idea to remember it
+somehow.
 
 You can basically do anything you want in the plugin. You can make function
 calls, change public widgets, display new widgets, things like that. But the

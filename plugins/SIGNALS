@@ -10,21 +10,35 @@ enum gaim_event {
 To add a signal handler, call the fuction gaim_signal_connect with the
 following arguments:
 
-enum gaim_event, void *, void *
+void *, enum gaim_event, void *, void *
 
-The first arg is hopefully obvious.
-The second arg is a pointer to a function that takes various args
+The first arg is the handle that was passed to gaim_signal_init. You did
+	save it, right?
+The second arg is hopefully obvious.
+The third arg is a pointer to a function that takes various args
 	depending on which event you're dealing with.
-The third arg is any data you want to send to your function, as a final
+The fourth arg is any data you want to send to your function, as a final
 	argument.
+
+To remove a signal handler, call the function gaim_signal_disconnect with the
+following arguments:
+
+void *, enum gaim_event, void *
+
+The first arg is the handle that was passed to gaim_signal_init.
+The second arg is hopefully obvious.
+The third arg is a pointer to the function you attached.
+
+Note that it deletes *all* functions matching the function you pass, not just
+one. Sorry, that's just the way it works.
 
 So here are the args that get passed to your functions in various events:
 
 event_signon:
-	char *name
+	(none)
 
-	'name' is your username. (Note that this can be returned through
-		other methods.)
+	Note that you can get the username (which would probably be the only
+	useful information here) from other places. (Read gaim.h for details).
 
 event_signoff:
 	(none)
@@ -37,6 +51,8 @@ event_im_recv:
 		message they sent.
 	
 	Note that you can modify these values. (You are encouraged to do so!)
+	Note that *other* plugins can also modify these values, so you should
+	check that they are not NULL, and try not to leave them as NULL.
 
 event_im_send:
 	char **who, char **text

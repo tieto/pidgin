@@ -304,6 +304,21 @@ extern enum gaim_user_states MRI_user_status;
 void signoff()
 {
 	GList *mem;
+
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_signoff && g->function != NULL) {
+			function = g->function;
+			(*function)(g->data);
+		}
+		c = c->next;
+	}
+#endif
+
         while(groups) {
 		mem = ((struct group *)groups->data)->members;
 		while(mem) {
@@ -1359,6 +1374,20 @@ void set_buddy(struct buddy *b)
                 
 
                 if (!GTK_WIDGET_VISIBLE(b->item)) {
+#ifdef GAIM_PLUGINS
+			GList *c = callbacks;
+			struct gaim_callback *g;
+			void (*function)(char *, void *);
+			while (c) {
+				g = (struct gaim_callback *)c->data;
+				if (g->event == event_buddy_signon &&
+						g->function != NULL) {
+					function = g->function;
+					(*function)(b->name, g->data);
+				}
+				c = c->next;
+			}
+#endif
 			
 			play_sound(BUDDY_ARRIVE);
 
@@ -1437,6 +1466,20 @@ void set_buddy(struct buddy *b)
 
 	} else {
 		if (GTK_WIDGET_VISIBLE(b->item)) {
+#ifdef GAIM_PLUGINS
+			GList *c = callbacks;
+			struct gaim_callback *g;
+			void (*function)(char *, void *);
+			while (c) {
+				g = (struct gaim_callback *)c->data;
+				if (g->event == event_buddy_signoff &&
+						g->function != NULL) {
+					function = g->function;
+					(*function)(b->name, g->data);
+				}
+				c = c->next;
+			}
+#endif
 			play_sound(BUDDY_LEAVE);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 				NULL, (gchar **)logout_icon_xpm);

@@ -44,7 +44,11 @@
 
 #include <dlfcn.h>
 
-/* ------------------ Local Variables -------------------------*/
+/* ------------------ Global Variables ----------------------- */
+
+GList *callbacks = NULL;
+
+/* ------------------ Local Variables ------------------------ */
 
 static GtkWidget *plugin_dialog = NULL;
 static GList     *plugins = NULL;
@@ -53,11 +57,14 @@ static GtkWidget *pluglist;
 static GtkWidget *plugtext;
 static GtkWidget *plugwindow;
 
-/* --------------- Function Declarations -------------------- */
+/* --------------- Function Declarations --------------------- */
 
        void load_plugin  (GtkWidget *, gpointer);
        void unload_plugin(GtkWidget *, gpointer);
        void show_plugins (GtkWidget *, gpointer);
+
+       void gaim_signal_connect   (void *, enum gaim_event, void *, void *);
+       void gaim_signal_disconnect(void *, enum gaim_event, void *);
 
 static void destroy_plugins  (GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
@@ -140,7 +147,7 @@ void load_which_plugin(GtkWidget *w, gpointer data) {
 	}
 
 	plugins = g_list_append(plugins, plug);
-	(*gaim_plugin_init)();
+	(*gaim_plugin_init)(plug->handle);
 
 	cfunc = dlsym(plug->handle, "name");
 	if ((error = dlerror()) == NULL)
@@ -299,6 +306,8 @@ void unload(GtkWidget *w, gpointer data) {
 	struct gaim_plugin *p;
 	void (*gaim_plugin_remove)();
 	char *error;
+	GList *c = callbacks;
+	struct gaim_callback *g;
 
 	i = GTK_LIST(pluglist)->selection;
 
@@ -309,6 +318,14 @@ void unload(GtkWidget *w, gpointer data) {
 	gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
 	if ((error = dlerror()) == NULL)
 		(*gaim_plugin_remove)();
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->handle == p->handle) {
+			callbacks = g_list_remove(callbacks, c);
+			g_free(g);
+		}
+		c = c->next;
+	}
 	dlclose(p->handle);
 
 	plugins = g_list_remove(plugins, p);
@@ -332,6 +349,30 @@ void hide_plugins(GtkWidget *w, gpointer data) {
 	if (plugwindow)
 		gtk_widget_destroy(plugwindow);
 	plugwindow = NULL;
+}
+
+void gaim_signal_connect(void *handle, enum gaim_event which,
+			 void *func, void *data) {
+	struct gaim_callback *call = g_malloc(sizeof *call);
+	call->handle = handle;
+	call->event = which;
+	call->function = func;
+	call->data = data;
+
+	callbacks = g_list_append(callbacks, call);
+}
+
+void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
+	GList *c = callbacks;
+	struct gaim_callback *g = NULL;
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (handle == g->handle && func == g->function) {
+			callbacks = g_list_remove(callbacks, g);
+			g_free(g);
+		}
+		c = c->next;
+	}
 }
 
 #endif /* GAIM_PLUGINS */
