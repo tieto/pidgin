@@ -106,6 +106,7 @@ typedef struct
 			GList *items;
 			GHashTable *item_data;
 			GList *selected;
+			GHashTable *selected_table;
 
 			gboolean multiple_selection;
 
@@ -778,6 +779,17 @@ void gaim_request_field_list_clear_selected(GaimRequestField *field);
  */
 void gaim_request_field_list_set_selected(GaimRequestField *field,
 										  GList *items);
+
+/**
+ * Returns whether or not a particular item is selected in a list field.
+ *
+ * @param field The field.
+ * @param item  The item.
+ *
+ * @return TRUE if the item is selected. FALSE otherwise.
+ */
+gboolean gaim_request_field_list_is_selected(const GaimRequestField *field,
+											 const char *item);
 
 /**
  * Returns a list of selected items in a list field.

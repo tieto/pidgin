@@ -683,6 +683,9 @@ create_list_field(GaimRequestField *field)
 						   0, gaim_request_field_list_get_data(field, text),
 						   1, text,
 						   -1);
+
+		if (gaim_request_field_list_is_selected(field, text))
+			gtk_tree_selection_select_iter(sel, &iter);
 	}
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);

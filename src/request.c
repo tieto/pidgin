@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "request.h"
+#include "debug.h"
 
 static GaimRequestUiOps *request_ui_ops = NULL;
 static GList *handles = NULL;
@@ -301,6 +302,7 @@ gaim_request_field_destroy(GaimRequestField *field)
 		}
 
 		g_hash_table_destroy(field->u.list.item_data);
+		g_hash_table_destroy(field->u.list.selected_table);
 	}
 
 	g_free(field);
@@ -663,6 +665,9 @@ gaim_request_field_list_new(const char *id, const char *text)
 	field->u.list.item_data = g_hash_table_new_full(g_str_hash, g_str_equal,
 													g_free, NULL);
 
+	field->u.list.selected_table =
+		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
 	return field;
 }
 
@@ -717,8 +722,20 @@ gaim_request_field_list_add_selected(GaimRequestField *field, const char *item)
 	g_return_if_fail(item  != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
 
+	if (!gaim_request_field_list_get_multi_select(field) &&
+		field->u.list.selected != NULL)
+	{
+		gaim_debug_warning("request",
+						   "More than one item added to non-multi-select "
+						   "field %s\n",
+						   gaim_request_field_get_id(field));
+		return;
+	}
+
 	field->u.list.selected = g_list_append(field->u.list.selected,
 										   g_strdup(item));
+
+	g_hash_table_insert(field->u.list.selected_table, g_strdup(item), NULL);
 }
 
 void
@@ -733,18 +750,53 @@ gaim_request_field_list_clear_selected(GaimRequestField *field)
 		g_list_free(field->u.list.selected);
 		field->u.list.selected = NULL;
 	}
+
+	g_hash_table_destroy(field->u.list.selected_table);
+
+	field->u.list.selected_table =
+		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
 void
 gaim_request_field_list_set_selected(GaimRequestField *field, GList *items)
 {
+	GList *l;
+
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(items != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
 
 	gaim_request_field_list_clear_selected(field);
 
+	if (!gaim_request_field_list_get_multi_select(field) &&
+		g_list_length(items) > 1)
+	{
+		gaim_debug_warning("request",
+						   "More than one item added to non-multi-select "
+						   "field %s\n",
+						   gaim_request_field_get_id(field));
+		return;
+	}
+
 	field->u.list.selected = items;
+
+	for (l = field->u.list.selected; l != NULL; l = l->next)
+	{
+		g_hash_table_insert(field->u.list.selected_table,
+							g_strdup((char *)l->data), NULL);
+	}
+}
+
+gboolean
+gaim_request_field_list_is_selected(const GaimRequestField *field,
+									const char *item)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(item  != NULL, FALSE);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, FALSE);
+
+	return g_hash_table_lookup_extended(field->u.list.selected_table,
+										item, NULL, NULL);
 }
 
 const GList *
