@@ -69,6 +69,7 @@ struct mod_account {
 	/* stuff for modify window */
 	GtkWidget *mod;
 	GtkWidget *main;
+	GtkWidget *disc_box;
 	GtkWidget *name;
 	GtkWidget *alias;
 	GtkWidget *pwdbox;
@@ -536,7 +537,7 @@ static void set_prot(GtkWidget *opt, int proto)
 
 		generate_login_options(ma, ma->main);
 		generate_user_options(ma, ma->main);
-		generate_protocol_options(ma, ma->main);
+		generate_protocol_options(ma, ma->disc_box);
 	}
 }
 
@@ -703,6 +704,7 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 
 	frame = make_frame(box, _("Login Options"));
 	ma->login_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_box_reorder_child(GTK_BOX(box), ma->login_frame, 0);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -840,6 +842,7 @@ static void generate_user_options(struct mod_account *ma, GtkWidget *box)
 
 	frame = make_frame(box, _("User Options"));
 	ma->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_box_reorder_child(GTK_BOX(box), ma->user_frame, 1);
 	gtk_widget_show_all(ma->user_frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -904,6 +907,7 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 
 	/* BLEH */
 	ma->proto_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_box_reorder_child(GTK_BOX(box), ma->proto_frame, 0);
 	gtk_widget_show_all(ma->proto_frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -1202,7 +1206,7 @@ static void show_acct_mod(struct gaim_account *a)
 	disc = gaim_disclosure_new(_("Show more options"), _("Show fewer options"));
 	gtk_box_pack_start(GTK_BOX(ma->main), disc, FALSE, FALSE, 0);
 	gtk_widget_show(disc);
-	dbox = gtk_vbox_new(FALSE, 12);
+	ma->disc_box = dbox = gtk_vbox_new(FALSE, 12);
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), 6);
 	gtk_box_pack_start(GTK_BOX(ma->main), dbox, FALSE, FALSE, 0);
 	gaim_disclosure_set_container(GAIM_DISCLOSURE(disc), dbox);
