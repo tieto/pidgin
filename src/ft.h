@@ -453,7 +453,7 @@ void gaim_xfer_cancel_remote(struct gaim_xfer *xfer);
 /**
  * Displays a file transfer-related error message.
  *
- * This is a wrapper around do_error_dialog(), which automatically
+ * This is a wrapper around gaim_notify_error(), which automatically
  * specifies a title ("File transfer to <i>user</i> aborted" or
  * "File Transfer from <i>user</i> aborted").
  *
