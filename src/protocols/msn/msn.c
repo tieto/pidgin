@@ -2108,8 +2108,15 @@ static void msn_convo_closed(struct gaim_connection *gc, char *who)
 {
 	struct msn_switchboard *ms = msn_find_switch(gc, who);
 
-	if (ms)
+	if (ms) {
+		char sendbuf[256];
+
+		g_snprintf(sendbuf, sizeof(sendbuf), "BYE %s\r\n", gc->username);
+
+		msn_write(ms->fd, sendbuf, strlen(sendbuf));
+
 		msn_kill_switch(ms);
+	}
 }
 
 static void msn_keepalive(struct gaim_connection *gc)
