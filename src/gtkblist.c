@@ -3442,7 +3442,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_column_set_expand (column, TRUE);
-	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END);
+	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 
