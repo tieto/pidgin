@@ -11,8 +11,12 @@ else
 SUBDIRS = yay icq msn
 endif
 
-plugin_DATA = autorecon.so iconaway.so irc.so notify.so spellchk.so lagmeter.so napster.so
+prpls = irc.so napster.so
+plugin_DATA = $(prpls) autorecon.so iconaway.so notify.so spellchk.so lagmeter.so
 plugindir = $(libdir)/gaim
+
+$(plugin_DATA): $(top_srcdir)/src/gaim.h
+$(prpls): $(top_srcdir)/src/prpl.h
 
 clean distclean:
 	$(RM) $(plugin_DATA)
