@@ -388,11 +388,11 @@ msn_list_icon(GaimAccount *a, GaimBuddy *b)
 }
 
 static void
-msn_list_emblems(GaimBuddy *b, char **se, char **sw,
-				 char **nw, char **ne)
+msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
+				 const char **nw, const char **ne)
 {
 	MsnUser *user;
-	char *emblems[4] = { NULL, NULL, NULL, NULL };
+	const char *emblems[4] = { NULL, NULL, NULL, NULL };
 	int away_type = MSN_AWAY_TYPE(b->uc);
 	int i = 0;
 

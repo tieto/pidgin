@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10846 2004-09-04 05:36:32Z marv_sf $
+ * $Id: gg.c 10849 2004-09-05 06:29:51Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1617,7 +1617,8 @@ static const char *agg_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "gadu-gadu";
 }
 
-static void agg_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
+static void agg_list_emblems(GaimBuddy *b, const char **se, const char **sw,
+							 const char **nw, const char **ne)
 {
 	GaimPresence *presence = gaim_buddy_get_presence(b);
 

@@ -40,7 +40,7 @@
 static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
 
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b);
-static void irc_blist_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne);
+static void irc_blist_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne);
 static GList *irc_status_types(GaimAccount *account);
 static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
@@ -139,7 +139,7 @@ static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b)
 	return "irc";
 }
 
-static void irc_blist_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
+static void irc_blist_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
 	if (b->present == GAIM_BUDDY_OFFLINE)
 		*se = "offline";
