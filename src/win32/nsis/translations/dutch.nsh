@@ -5,10 +5,15 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Vincent van Adrighem <vincent@dirck.mine.nu>
+;;  Version 2
 ;;
 
 ; Startup GTK+ check
 LangString GTK_INSTALLER_NEEDED			${LANG_DUTCH} "De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_VERSION} of nieuwer van de GTK+ runtime-omgeving"
+
+; License Page
+LangString GAIM_LICENSE_BUTTON			${LANG_DUTCH} "Volgende >"
+LangString GAIM_LICENSE_BOTTOM_TEXT			${LANG_DUTCH} "$(^Name) wordt uitgegeven onder de GPL licentie. Deze licentie wordt hier slechts ter informatie aangeboden. $_CLICK"
 
 ; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_DUTCH} "Gaim Instant Messaging Client (vereist)"
@@ -26,13 +31,11 @@ LangString GTK_WIMP_THEME_DESC			${LANG_DUTCH} "GTK-Wimp (Windows impersonator) 
 LangString GTK_BLUECURVE_THEME_DESC			${LANG_DUTCH} "Het Bluecurve thema (standaardthema voor RedHat Linux)."
 LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_DUTCH} "Het Lighthouseblue thema."
 
-; Extra GTK+ Dir Selector Page
-LangString GTK_PAGE_TITLE				${LANG_DUTCH} "Kies installatiemap"
-LangString GTK_PAGE_SUBTITLE				${LANG_DUTCH} "Kies de map waarin GTK+ geïnstalleerd moet worden"
-LangString GTK_PAGE_INSTALL_MSG1			${LANG_DUTCH} "Setup zal GTK+ in de volgende map installeren"
-LangString GTK_PAGE_INSTALL_MSG2			${LANG_DUTCH} "Om te installeren in een andere map klikt u op Bladeren en selecteert u een andere map. Klik op Volgende om door te gaan."
-LangString GTK_PAGE_UPGRADE_MSG1			${LANG_DUTCH} "Setup zal de in deze map gevonden GTK+ bijwerken"
+; GTK+ Directory Page
 LangString GTK_UPGRADE_PROMPT				${LANG_DUTCH} "Er is een oude versie van GTK+ gevonden. Wilt u deze bijwerken?$\rLet op: Gaim werkt misschien niet als u dit niet doet."
+
+; Installer Finish Page
+LangString GAIM_FINISH_VISIT_WEB_SITE		${LANG_DUTCH} "Neem een kijkje op de Windows Gaim webpagina"
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_DUTCH} "Gaim (alleen verwijderen)"
