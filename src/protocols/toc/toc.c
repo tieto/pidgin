@@ -2101,7 +2101,7 @@ static void accept_file_dialog(struct ft_request *ft) {
 	}
 
 	gaim_request_accept_cancel(ft->gc, NULL, buf, NULL, 
-								GAIM_DEFAULT_ACTION_NONE, ft,
+							   GAIM_DEFAULT_ACTION_NONE, ft,
 							   G_CALLBACK(toc_accept_ft),
 							   G_CALLBACK(toc_reject_ft));
 }
