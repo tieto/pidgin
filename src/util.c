@@ -820,7 +820,7 @@ char *away_subs(char *msg, char *name)
 					break;
 				case 'd':
 					/* append date */
-					strftime(tmp, 20, "%D", tme);
+					strftime(tmp, 20, "%m%d%Y", tme);
 					strcpy(cpy + cnt, tmp);
 					cnt += strlen(tmp);
 					c++;
