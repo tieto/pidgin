@@ -85,7 +85,6 @@ static void icq_logged_off(ICQLINK *link) {
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
 		hide_login_progress(gc, "Unable to connect");
-		g_free(id);
 		signoff(gc);
 		return;
 	}
@@ -253,7 +252,6 @@ static void icq_login(struct aim_user *user) {
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
 		hide_login_progress(gc, "Unable to connect");
-		g_free(id);
 		signoff(gc);
 		return;
 	}
@@ -272,8 +270,10 @@ static void icq_login(struct aim_user *user) {
 static void icq_close(struct gaim_connection *gc) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
-	gtk_timeout_remove(id->tcp_timer);
-	gdk_input_remove(gc->inpa);
+	if (id->tcp_timer > 0)
+		gtk_timeout_remove(id->tcp_timer);
+	if (gc->inpa > 0)
+		gdk_input_remove(gc->inpa);
 	icq_Logout(id->link);
 	icq_Disconnect(id->link);
 	icq_ICQLINKDelete(id->link);
