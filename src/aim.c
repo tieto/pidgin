@@ -382,7 +382,14 @@ void sighandler(int sig)
 		break;
 	case SIGSEGV:
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
-				"Please notify the gaim maintainers by reporting a bug at\n"
+				"This is a bug in the software and has happened through\n"
+				"no fault of your own.\n\n"
+				"It is possible that this bug is already fixed in CVS.\n"
+				"You can get a tarball of CVS from the Gaim website, at\n"
+				WEBSITE "gaim-CVS.tar.gz.\n\n"
+				"If you are already using CVS, or can reproduce the crash\n"
+				"using the CVS version, please notify the gaim maintainers\n"
+				"by reporting a bug at\n"
 				WEBSITE "bug.php3\n\n"
 				"Please make sure to specify what you were doing at the time,\n"
 				"and post the backtrace from the core file. If you do not know\n"
