@@ -85,8 +85,7 @@ msn_parse_format(const char *mime)
 {
 	char *cur;
 	GString *ret = g_string_new(NULL);
-	guint colorbuf;
-	unsigned char *colors = (unsigned char *)(&colorbuf);
+	unsigned int colors[3];
 
 	cur = strstr(mime, "FN=");
 
@@ -115,11 +114,27 @@ msn_parse_format(const char *mime)
 	cur = strstr(mime, "CO=");
 
 	if (cur && (*(cur = cur + 3) != ';')) {
-		if (sscanf (cur, "%x;", &colorbuf) == 1) {
+		int i;
+
+		i = sscanf(cur, "%02x%02x%02x;", &colors[0], &colors[1], &colors[2]);
+
+		if (i > 0) {
 			char tag[64];
+
+			if (i == 1) {
+				colors[2] = colors[0];
+				colors[1] = 0;
+				colors[0] = 0;
+			}
+			else if (i == 2) {
+				colors[2] = colors[1];
+				colors[1] = colors[0];
+				colors[0] = 0;
+			}
+
 			g_snprintf(tag, sizeof(tag),
 					   "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">",
-					   colors[0], colors[1], colors[2]);
+					   colors[2], colors[1], colors[0]);
 
 			ret = g_string_append(ret, tag);
 		}
