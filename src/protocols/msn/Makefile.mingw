@@ -71,6 +71,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 C_SRC =			dispatch.c \
 			error.c \
 			group.c \
+			httpmethod.c \
 			msg.c \
 			msn.c \
 			msnobject.c \
