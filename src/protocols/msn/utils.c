@@ -80,33 +80,38 @@ msn_url_encode(const char *str)
 	return buf;
 }
 
-char *
-msn_parse_format(const char *mime)
+void
+msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 {
 	char *cur;
-	GString *ret = g_string_new(NULL);
+	GString *pre  = g_string_new(NULL);
+	GString *post = g_string_new(NULL);
 	unsigned int colors[3];
+
+	if (pre_ret  != NULL) *pre_ret  = NULL;
+	if (post_ret != NULL) *post_ret = NULL;
 
 	cur = strstr(mime, "FN=");
 
 	if (cur && (*(cur = cur + 3) != ';')) {
-		ret = g_string_append(ret, "<FONT FACE=\"");
+		pre = g_string_append(pre, "<FONT FACE=\"");
 
 		while (*cur && *cur != ';') {
-			ret = g_string_append_c(ret, *cur);
+			pre = g_string_append_c(pre, *cur);
 			cur++;
 		}
 
-		ret = g_string_append(ret, "\">");
+		pre = g_string_append(pre, "\">");
+		post = g_string_prepend(post, "</FONT>");
 	}
-	
+
 	cur = strstr(mime, "EF=");
 
 	if (cur && (*(cur = cur + 3) != ';')) {
 		while (*cur && *cur != ';') {
-			ret = g_string_append_c(ret, '<');
-			ret = g_string_append_c(ret, *cur);
-			ret = g_string_append_c(ret, '>');
+			pre = g_string_append_c(pre, '<');
+			pre = g_string_append_c(pre, *cur);
+			pre = g_string_append_c(pre, '>');
 			cur++;
 		}
 	}
@@ -136,12 +141,20 @@ msn_parse_format(const char *mime)
 					   "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">",
 					   colors[2], colors[1], colors[0]);
 
-			ret = g_string_append(ret, tag);
+			pre = g_string_append(pre, tag);
+			post = g_string_prepend(post, "</FONT>");
 		}
 	}
 
-	cur = msn_url_decode(ret->str);
-	g_string_free(ret, TRUE);
+	cur = msn_url_decode(pre->str);
+	g_string_free(pre, TRUE);
 
-	return cur;
+	if (pre_ret != NULL)
+		*pre_ret = cur;
+
+	cur = msn_url_decode(post->str);
+	g_string_free(post, TRUE);
+
+	if (post_ret != NULL)
+		*post_ret = cur;
 }

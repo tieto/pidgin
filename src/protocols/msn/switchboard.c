@@ -293,7 +293,6 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	MsnSwitchBoard *swboard = servconn->data;
 	char *body;
 	const char *value;
-	char *format;
 	int flags = 0;
 
 	body = g_strdup(msn_message_get_body(msg));
@@ -309,9 +308,14 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	}
 
 	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL) {
-		format = msn_parse_format(value);
+		char *pre_format, *post_format;
 
-		body = g_strdup_printf("%s%s", format, body);
+		msn_parse_format(value, &pre_format, &post_format);
+
+		body = g_strdup_printf("%s%s%s", pre_format, body, post_format);
+
+		g_free(pre_format);
+		g_free(post_format);
 	}
 
 	if (swboard->chat != NULL)

@@ -47,10 +47,12 @@ char *msn_url_encode(const char *str);
 /**
  * Parses the MSN message formatting into a format compatible with Gaim.
  *
- * @param mime The mime header with the formatting.
+ * @param mime     The mime header with the formatting.
+ * @param pre_ret  The returned prefix string.
+ * @param post_ret The returned postfix string.
  *
  * @return The new message.
  */
-char *msn_parse_format(const char *mime);
+void msn_parse_format(const char *mime, char **pre_ret, char **post_ret);
 
 #endif /* _MSN_UTILS_H_ */
