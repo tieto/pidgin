@@ -394,7 +394,8 @@ gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textle
 	 * just copy it.
 	 */
 	if (utf8 == NULL) {
-		if (!g_utf8_validate(text, textlen, NULL))
+		if (textlen != 0 && *text != '\0'
+                    && !g_utf8_validate(text, textlen, NULL))
 			utf8 = g_strdup(_("(There was an error converting this message.  The buddy you are speaking to most likely has a buggy client.)"));
 		else
 			utf8 = g_strndup(text, textlen);
