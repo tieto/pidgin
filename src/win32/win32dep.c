@@ -110,13 +110,13 @@ static gboolean flash_window_cb(gpointer data) {
 	return TRUE;
 }
 
-static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
+static int halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
         if(MyFlashWindowEx) {
                 HWND hWnd = data;
                 FLASHWINFO info;
 
                 if(!IsWindow(hWnd))
-                        return;
+                        return 0;
                 memset(&info, 0, sizeof(FLASHWINFO));
 		info.cbSize = sizeof(FLASHWINFO);
 		info.hwnd = hWnd;
@@ -134,6 +134,7 @@ static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer 
                 gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");
                 g_free(finfo);
         }
+	return 0;
 }
 
 static void load_winver_specific_procs(void) {
