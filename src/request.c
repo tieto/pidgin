@@ -692,6 +692,26 @@ gaim_request_field_list_add(GaimRequestField *field, const char *item)
 }
 
 void
+gaim_request_field_list_add_selected(GaimRequestField *field, const char *item)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(item  != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+
+	field->u.list.selected =
+		g_list_append(field->u.list.selected, g_strdup(item));
+}
+
+void
+gaim_request_field_list_clear_selected(GaimRequestField *field)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+
+	gaim_request_field_list_set_selected(field, NULL);
+}
+
+void
 gaim_request_field_list_set_selected(GaimRequestField *field, GList *items)
 {
 	g_return_if_fail(field != NULL);
