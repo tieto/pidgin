@@ -67,10 +67,12 @@ static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
 
 static void cancel_all () {
 	GSList *m = meter_win ? meter_win->meters : NULL;
+	struct signon_meter *meter;
 
 	while (m) {
-		cancel_signon(NULL, m->data);
-		m = meter_win ? meter_win->meters : NULL;
+		meter = m->data;
+		cancel_signon(NULL, meter);
+		m = m->next;
 	}
 }
 
@@ -82,9 +84,11 @@ static gint meter_destroy(GtkWidget *window, GdkEvent *evt, struct signon_meter 
 static struct signon_meter *find_signon_meter(GaimConnection *gc)
 {
 	GSList *m = meter_win ? meter_win->meters : NULL;
+	struct signon_meter *meter;
 
 	while (m) {
-		if (((struct signon_meter *)m->data)->account == gc->account)
+		meter = m->data;
+		if (meter->account == gaim_connection_get_account(gc))
 			return m->data;
 		m = m->next;
 	}
