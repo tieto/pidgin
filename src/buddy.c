@@ -1986,6 +1986,16 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 	return g;
 }
 
+void hide_buddy_list() {
+	#ifdef USE_APPLET
+	applet_destroy_buddy();
+#else
+	XIconifyWindow(GDK_DISPLAY(),
+			GDK_WINDOW_XWINDOW(blist->window),
+			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+#endif
+}
+
 static gint log_timeout(struct buddy_show *b)
 {
 	/* this part is really just a bad hack because of a bug I can't find */

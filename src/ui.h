@@ -349,6 +349,7 @@ extern void toggle_buddy_pixmaps();
 extern void gaim_separator(GtkWidget *);
 extern void redo_buddy_list(); /* you really shouldn't call this function */
 extern void set_blist_tab();
+extern void hide_buddy_list();
 
 /* Functions in buddy_chat.c */
 extern void join_chat();

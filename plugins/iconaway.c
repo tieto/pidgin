@@ -20,14 +20,8 @@ void iconify_windows(struct gaim_connection *gc, char *state, char *message, voi
 		return;
 	XIconifyWindow(GDK_DISPLAY(),
 			GDK_WINDOW_XWINDOW(imaway->window),
-			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
-#ifdef USE_APPLET
-	applet_destroy_buddy();
-#else
-	XIconifyWindow(GDK_DISPLAY(),
-			GDK_WINDOW_XWINDOW(blist->window),
-			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
-#endif
+		       ((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+	hide_buddy_list();
 	if (all_convos)
 		XIconifyWindow(GDK_DISPLAY(),
 				GDK_WINDOW_XWINDOW(all_convos->window),

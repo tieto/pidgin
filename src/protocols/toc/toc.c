@@ -1003,9 +1003,12 @@ static void toc_set_away(struct gaim_connection *g, char *state, char *message)
 		g_free (g->away);
 	g->away = NULL;
 	if (message) {
+		char *tmp = g_malloc(strlen(message) * 4 + 1);
+		strcpy(tmp, message);
 		g->away = g_strdup (message);
-		escape_text(message);
-		g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
+		escape_text(tmp);
+		g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", tmp);
+		g_free(tmp);
 	} else
 		g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
 	sflap_send(g, buf, -1, TYPE_DATA);
