@@ -30,6 +30,7 @@
 #include <ctype.h>
 #include "conversation.h"
 #include "gaim.h"
+#include "multi.h"
 #include "prpl.h"
 #include "notify.h"
 #include "prefs.h"

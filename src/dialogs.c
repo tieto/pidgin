@@ -51,6 +51,7 @@
 #include "gtkblist.h"
 #include "notify.h"
 #include "prefs.h"
+#include "multi.h"
 
 #ifdef _WIN32
 #include "win32dep.h"

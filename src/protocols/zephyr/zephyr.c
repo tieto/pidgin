@@ -32,6 +32,7 @@
 #include <errno.h>
 #include "gaim.h"
 #include "prpl.h"
+#include "multi.h"
 #include "zephyr/zephyr.h"
 
 extern Code_t ZGetLocations(ZLocations_t *, int *);

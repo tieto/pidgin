@@ -64,9 +64,9 @@ typedef enum
 
 } GaimProtocol;
 
-#include "core.h"
+#include "blist.h"
 #include "proxy.h"
-#include "multi.h"
+#include "plugin.h"
 
 /** Default protocol plugin description */
 #define GAIM_PRPL_DESC(x) \

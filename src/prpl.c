@@ -22,6 +22,7 @@
 #include "gaim.h"
 #include "gtkutils.h"
 #include "gtkblist.h"
+#include "multi.h"
 #include "prpl.h"
 #include "notify.h"
 #include <sys/types.h>

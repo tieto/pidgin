@@ -46,6 +46,11 @@
 #include "gtkblist.h"
 #include "notify.h"
 #include "prefs.h"
+#include "gtkconv.h"
+#include "gaim.h"
+#include "ui.h"
+#include "debug.h"
+#include "multi.h"
 
 #ifdef _WIN32
 #include "win32dep.h"

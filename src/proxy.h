@@ -37,7 +37,6 @@
 
 #include <glib.h>
 
-#include "core.h"
 #include "account.h"
 
 /**

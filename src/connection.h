@@ -29,7 +29,6 @@ typedef struct _GaimConnection GaimConnection;
 
 #include "account.h"
 #include "plugin.h"
-#include "multi.h"
 
 typedef enum
 {

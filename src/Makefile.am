@@ -65,6 +65,8 @@ gaim_SOURCES = \
 	gtkcellrendererprogress.h \
 	gtkblist.c \
 	gtkblist.h \
+	gtkconn.c \
+	gtkconn.h \
 	gtkconv.c \
 	gtkconv.h \
 	gtkdebug.c \
@@ -93,8 +95,6 @@ gaim_SOURCES = \
 	main.c \
 	md5.c \
 	md5.h \
-	multi.c \
-	multi.h \
 	privacy.h \
 	session.c \
 	socket.c \

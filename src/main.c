@@ -56,6 +56,7 @@
 #include "notify.h"
 #include "gtkaccount.h"
 #include "gtkblist.h"
+#include "gtkconn.h"
 #include "gtkdebug.h"
 #include "gtknotify.h"
 #include "gtkrequest.h"
@@ -892,6 +893,7 @@ int main(int argc, char *argv[])
 	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
 	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
 	gaim_set_sound_ui_ops(gaim_get_gtk_sound_ui_ops());
+	gaim_set_connection_ui_ops(gaim_get_gtk_connection_ui_ops());
 
 	gaim_proxy_init();
 	gaim_sound_init();

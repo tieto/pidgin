@@ -20,6 +20,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+#include <gtk/gtk.h>
+
 #include "gtkaccount.h"
 #include "account.h"
 #include "accountopt.h"
@@ -28,8 +31,9 @@
 #include "stock.h"
 #include "gtkblist.h"
 #include "gaim-disclosure.h"
+#include "gaim.h"
 
-#ifdef _WIN32       
+#ifdef _WIN32
 # include <gdk/gdkwin32.h>
 #else
 # include <unistd.h>

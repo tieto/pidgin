@@ -33,6 +33,8 @@
 
 #include "prpl.h"
 #include "notify.h"
+#include "gaim.h"
+#include "multi.h"
 
 #ifdef _WIN32
 #include "wspell.h"

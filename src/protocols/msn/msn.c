@@ -27,6 +27,7 @@
 #include "session.h"
 #include "state.h"
 #include "utils.h"
+#include "multi.h"
 
 #define BUDDY_ALIAS_MAXLEN 388
 

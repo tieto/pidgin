@@ -42,7 +42,11 @@
 #include <netdb.h>
 #endif
 
+#include "gaim.h"
+#include "account.h"
 #include "blist.h"
+#include "conversation.h"
+#include "connection.h"
 #include "debug.h"
 #include "md5.h"
 #include "proxy.h"

@@ -32,8 +32,10 @@
 #include <glib.h>
 
 #include "account.h"
+#include "debug.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "util.h"
 
 typedef enum
 {

@@ -24,6 +24,8 @@
 #ifndef _GAIM_CONVERSATION_H_
 #define _GAIM_CONVERSATION_H_
 
+#include "account.h"
+
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
@@ -83,9 +85,6 @@ enum _GaimConvUpdateType
 	GAIM_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
 	GAIM_CONV_UPDATE_AWAY      /**< The other user went away.                */
 };
-
-/* Yeah, this has to be included here. Ugh. */
-#include "gaim.h"
 
 /**
  * Conversation window operations.

@@ -47,7 +47,6 @@ struct buddy;
 
 
 #include "debug.h"
-#include "multi.h"
 #include "conversation.h"
 #include "ft.h"
 #include "privacy.h"

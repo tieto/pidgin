@@ -32,7 +32,6 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include "core.h"
-#include "multi.h"
 #include "gtkconv.h"
 #include "pounce.h"
 #include "gtkft.h"

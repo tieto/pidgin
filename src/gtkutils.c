@@ -46,6 +46,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "prefs.h"
 #include "prpl.h"
+#include "gaim.h"
 #include "ui.h"
 #include "notify.h"
 
