@@ -1519,11 +1519,11 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		}
 		update_idle_time(bs);
 	} else {
-		play_sound(BUDDY_LEAVE);
 		gs = find_group_show(g->name);
+		if (!gs) return;
 		bs = find_buddy_show(gs, b->name);
-		if (!bs)
-			return;
+		if (!bs) return;
+		play_sound(BUDDY_LEAVE);
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		if (bs->log_timer > 0)
 			gtk_timeout_remove(bs->log_timer);
