@@ -3678,16 +3678,6 @@ setup_chat_pane(GaimConversation *conv)
 
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 5);
 		gtk_widget_show(gtkchat->topic_text);
-
-		/*
-		 * We probably shouldn't need this.  When switching tabs to a chat 
-		 * window focus is supposed to go to the entry box, but for some 
-		 * reason it's going to the topic entry box.
-		 */
-		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_press_event",
-							   G_CALLBACK(refocus_entry_cb), gtkconv);
-		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_release_event",
-							   G_CALLBACK(refocus_entry_cb), gtkconv);
 	}
 
 	/* Setup the horizontal pane. */
@@ -4292,6 +4282,9 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		gtkconv->show_formatting_toolbar = gaim_prefs_get_bool(
 				"/gaim/gtk/conversations/show_formatting_toolbar");
 
+		g_signal_connect_swapped(G_OBJECT(pane), "focus",
+					G_CALLBACK(gtk_widget_grab_focus),
+					gtkconv->entry);
 	}
 
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 5);
