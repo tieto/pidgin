@@ -527,10 +527,9 @@ int aim_parse_msgerror_middle(struct aim_session_t *sess,
   snacid = aimutil_get32(command->data+6);
   snac = aim_remsnac(sess, snacid);
 
-  if (!snac)
-    {
-      printf("faim: msgerr: got an ICBM-failed error on an unknown SNAC ID! (%08lx)\n", snacid);
-    }
+  if (!snac) {
+    printf("faim: msgerr: got an ICBM-failed error on an unknown SNAC ID! (%08lx)\n", snacid);
+  }
 
   /*
    * Call client.
@@ -541,8 +540,10 @@ int aim_parse_msgerror_middle(struct aim_session_t *sess,
   else
     ret = 0;
   
-  free(snac->data);
-  free(snac);
+  if (snac) {
+    free(snac->data);
+    free(snac);
+  }
 
   return ret;
 }
