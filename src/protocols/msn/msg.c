@@ -235,6 +235,7 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	{
 		char header[48];
 		char footer[4];
+		size_t body_len;
 
 		msg->msnslp_message = TRUE;
 
@@ -242,7 +243,14 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 
 		tmp += 48;
 
-		msg->body = g_memdup(tmp, msg->size - (tmp - msg_base) + 1);
+		body_len = msg->size - (tmp - msg_base);
+		gaim_debug_misc("msn", "Body len = %d\n", body_len);
+		msg->body = g_malloc(body_len + 1);
+
+		if (body_len > 0)
+			memcpy(msg->body, tmp, body_len);
+
+		msg->body[body_len] = '\0';
 
 		tmp++;
 
