@@ -178,6 +178,7 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, no_one_calls, phb);
 		} else {
+			debug_printf("connect failed (errno %d)\n", errno);
 			close(fd);
 			g_free(phb);
 			return -1;
