@@ -83,7 +83,7 @@ struct smiley_theme {
 	struct smiley_list *list;
 };
 
-/* Globals in aim.c */
+/* Globals in maim.c */
 extern GtkWidget *mainwindow;
 extern int docklet_count;
 
@@ -94,18 +94,9 @@ extern GtkWidget *awaymenu;
 extern GtkWidget *awayqueue;
 extern GtkListStore *awayqueuestore;
 
-/* Globals in dialog.c */
-extern char fontxfld[256];
-extern GtkWidget *fgcseld;
-extern GtkWidget *bgcseld;
-
-/* Globals in session.c */
-extern gboolean session_managed;
-
 /* Globals in themes.c */
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
-
 
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);
@@ -131,22 +122,7 @@ extern void show_im_dialog();
 extern void show_info_dialog();
 extern void show_log_dialog();
 extern void destroy_all_dialogs();
-extern void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color);
-extern void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color);
-extern void cancel_fgcolor(GtkWidget *widget, GaimConversation *c);
-extern void cancel_bgcolor(GtkWidget *widget, GaimConversation *c);
 extern void create_away_mess(GtkWidget *, void *);
-extern void dialog_link_show(GaimConversation *);
-extern void dialog_link_destroy(GaimConversation *);
-extern void set_smiley_array(GtkWidget *widget, int smiley_type);
-extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
-extern void cancel_font(GtkWidget *widget, GaimConversation *c);
-extern void destroy_fontsel(GtkWidget *w, gpointer d);
-
-/* Functions in server.c */
-/* server.c is in desperate need need of a split */
-/* pizza pizza */
-extern int find_queue_total_by_name(char *);
 
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *, gchar *);
