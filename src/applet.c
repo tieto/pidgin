@@ -115,7 +115,6 @@ static gboolean update_applet()
 
 		if ((away_options & OPT_AWAY_QUEUE) && message_queue) {
 			GSList *m = message_queue;
-			int dsr = 0;
 			while (m) {
 				struct queued_message *qm = m->data;
 				if (qm->flags & WFLAG_RECV)
