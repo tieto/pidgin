@@ -283,7 +283,7 @@ void (*chat_inviting_user)(GaimConversation *conv, const char *name,
 
  @signaldef chat-invited-user
   @signalproto
-void (*chat-invited-user)(GaimConversation *conv, const char *name,
+void (*chat_invited_user)(GaimConversation *conv, const char *name,
                           const char *invite_message);
   @endsignalproto
   @signaldesc
@@ -295,7 +295,7 @@ void (*chat-invited-user)(GaimConversation *conv, const char *name,
 
  @signaldef chat-invited
   @signalproto
-void (*chat-invited)(GaimAccount *account, const char *inviter,
+void (*chat_invited)(GaimAccount *account, const char *inviter,
                      const char *invite, const char *invite_message);
   @endsignalproto
   @signaldesc
@@ -308,7 +308,7 @@ void (*chat-invited)(GaimAccount *account, const char *inviter,
 
  @signaldef chat-joined
   @signalproto
-void (*chat-joined)(GaimConversation *conv);
+void (*chat_joined)(GaimConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted when an account joins a chat room.
@@ -317,7 +317,7 @@ void (*chat-joined)(GaimConversation *conv);
 
  @signaldef chat-left
   @signalproto
-void (*chat-left)(GaimConversation *conv);
+void (*chat_left)(GaimConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted when an account leaves a chat room.
