@@ -25,6 +25,9 @@
 
 #include "prpl.h"
 
+#define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
+#define YAHOO_XFER_PORT 80
+
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
 enum yahoo_service { /* these are easier to see in hex */
@@ -122,6 +125,9 @@ struct yahoo_data {
 	gboolean in_chat;
 	char *chat_name;
 	char *auth;
+	char *cookie_y;
+	char *cookie_t;
+	int session_id;
 };
 
 struct yahoo_pair {
@@ -147,9 +153,38 @@ struct yahoo_friend { /* we'll call them friends, so we don't confuse them with 
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (48)
 
+#ifdef YAHOO_WEBMESSENGER
+#define YAHOO_PROTO_VER 0x0065
+#else
+#define YAHOO_PROTO_VER 0x000b
+#endif
+
+#define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
+
+/* sometimes i wish prpls could #include things from other prpls. then i could just
+ * use the routines from libfaim and not have to admit to knowing how they work. */
+#define yahoo_put16(buf, data) ( \
+		(*(buf) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+1) = (unsigned char)(data)&0xff),  \
+		2)
+#define yahoo_get16(buf) ((((*(buf))<<8)&0xff00) + ((*((buf)+1)) & 0xff))
+#define yahoo_put32(buf, data) ( \
+		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
+		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
+		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+3) = (unsigned char)(data)&0xff), \
+		4)
+#define yahoo_get32(buf) ((((*(buf))<<24)&0xff000000) + \
+		(((*((buf)+1))<<16)&0x00ff0000) + \
+		(((*((buf)+2))<< 8)&0x0000ff00) + \
+		(((*((buf)+3)    )&0x000000ff)))
+
+
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id);
 void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value);
 int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt);
+void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data);
+int yahoo_packet_length(struct yahoo_packet *pkt);
 void yahoo_packet_free(struct yahoo_packet *pkt);
 
 /* util.c */

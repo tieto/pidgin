@@ -37,6 +37,7 @@
 #include "sha.h"
 #include "yahoo.h"
 #include "yahoochat.h"
+#include "yahoo_filexfer.h"
 #include "md5.h"
 
 extern char *yahoo_crypt(const char *, const char *);
@@ -56,13 +57,6 @@ typedef struct
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 
-#ifdef YAHOO_WEBMESSENGER
-#define YAHOO_PROTO_VER 0x0065
-#else
-#define YAHOO_PROTO_VER 0x000b
-#endif
-
-#define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
 static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *);
 
@@ -105,7 +99,7 @@ void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value)
 	pkt->hash = g_slist_append(pkt->hash, pair);
 }
 
-static int yahoo_packet_length(struct yahoo_packet *pkt)
+int yahoo_packet_length(struct yahoo_packet *pkt)
 {
 	GSList *l;
 
@@ -127,24 +121,6 @@ static int yahoo_packet_length(struct yahoo_packet *pkt)
 
 	return len;
 }
-
-/* sometimes i wish prpls could #include things from other prpls. then i could just
- * use the routines from libfaim and not have to admit to knowing how they work. */
-#define yahoo_put16(buf, data) ( \
-		(*(buf) = (unsigned char)((data)>>8)&0xff), \
-		(*((buf)+1) = (unsigned char)(data)&0xff),  \
-		2)
-#define yahoo_get16(buf) ((((*(buf))<<8)&0xff00) + ((*((buf)+1)) & 0xff))
-#define yahoo_put32(buf, data) ( \
-		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
-		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
-		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
-		(*((buf)+3) = (unsigned char)(data)&0xff), \
-		4)
-#define yahoo_get32(buf) ((((*(buf))<<24)&0xff000000) + \
-		(((*((buf)+1))<<16)&0x00ff0000) + \
-		(((*((buf)+2))<< 8)&0x0000ff00) + \
-		(((*((buf)+3)    )&0x000000ff)))
 
 static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 {
@@ -200,7 +176,7 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 	}
 }
 
-static void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
+void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
 {
 	GSList *l = pkt->hash;
 	int pos = 0;
@@ -507,6 +483,39 @@ static void yahoo_do_group_cleanup(gpointer key, gpointer value, gpointer user_d
 	}
 }
 
+static char *_getcookie(char *rawcookie)
+{
+	char *cookie = NULL;
+	char *tmpcookie;
+	char *cookieend;
+
+	if (strlen(rawcookie) < 2)
+		return NULL;
+	tmpcookie = g_strdup(rawcookie+2);
+	cookieend = strchr(tmpcookie, ';');
+
+	if (cookieend)
+		*cookieend = '\0';
+
+	cookie = g_strdup(tmpcookie);
+	g_free(tmpcookie);
+
+	return cookie;
+}
+
+static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
+{
+	if (c[0] == 'Y') {
+		if (yd->cookie_y)
+			g_free(yd->cookie_y);
+   		yd->cookie_y = _getcookie(c);
+	} else if (c[0] == 'T') {
+		if (yd->cookie_t)
+			g_free(yd->cookie_t);
+		yd->cookie_t = _getcookie(c);
+	}
+}
+
 static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
@@ -524,6 +533,9 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	char **buddies;
 	char **tmp, **bud;
 
+	if (pkt->id)
+		yd->session_id = pkt->id;
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		l = l->next;
@@ -540,6 +552,9 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 				yd->tmp_serv_ilist = g_string_new(pair->value);
 			else
 				g_string_append(yd->tmp_serv_ilist, pair->value);
+			break;
+		case 59: /* cookies, yum */
+			yahoo_process_cookie(yd, pair->value);
 			break;
 		}
 	}
@@ -1626,6 +1641,10 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_COMMENT:
 		yahoo_process_chat_message(gc, pkt);
 		break;
+	case YAHOO_SERVICE_P2PFILEXFER:
+	case YAHOO_SERVICE_FILETRANSFER:
+		yahoo_process_filetransfer(gc, pkt);
+		break;
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
@@ -1949,6 +1968,11 @@ static void yahoo_close(GaimConnection *gc) {
 	if (yd->chat_name)
 		g_free(yd->chat_name);
 
+	if (yd->cookie_y)
+		g_free(yd->cookie_y);
+	if (yd->cookie_t)
+		g_free(yd->cookie_t);
+
 	if (yd->fd >= 0)
 		close(yd->fd);
 
@@ -2181,6 +2205,13 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Initiate Conference");
 	pbm->callback = yahoo_initiate_conference;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	/* FIXME: remove this when the ui does it for us. */
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Send File");
+	pbm->callback = yahoo_ask_send_file;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
@@ -2886,6 +2917,12 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_group,
 	yahoo_packet_free(pkt);
 }
 
+static gboolean yahoo_has_send_file(GaimConnection *gc, const char *who)
+{
+	return TRUE;
+}
+
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -2940,7 +2977,14 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* buddy_free */
 	NULL, /* convo_closed */
 	NULL, /* normalize */
-	NULL /* set_buddy_icon */
+	NULL, /* set_buddy_icon */
+	NULL, /* void (*remove_group)(GaimConnection *gc, const char *group);*/
+	NULL, /* char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who); */
+#if 0
+	yahoo_ask_send_file,
+	yahoo_send_file,
+	yahoo_has_send_file
+#endif
 };
 
 static GaimPluginInfo info =
@@ -2984,6 +3028,13 @@ init_plugin(GaimPlugin *plugin)
 										 YAHOO_PAGER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
+
+	option = gaim_account_option_string_new(_("File transfer host"), "xfer_host", YAHOO_XFER_HOST);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 	my_protocol = plugin;
 
 	yahoo_init_colorht();

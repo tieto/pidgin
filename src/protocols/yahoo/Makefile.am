@@ -9,7 +9,9 @@ YAHOOSOURCES = \
 	yahoochat.h \
 	yahoo.c \
 	yahoochat.c \
-	util.c
+	util.c \
+	yahoo_filexfer.h \
+	yahoo_filexfer.c
 
 AM_CFLAGS = $(st)
 
