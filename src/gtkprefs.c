@@ -812,13 +812,12 @@ GtkWidget *hotkeys_page() {
 GtkWidget *list_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-	GtkWidget *button, *warn_checkbox, *idle_checkbox;
 	GList *l= NULL;
 	GSList *sl;
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-	
-	
+
+
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Sorting"));
 
 	for (sl = gaim_gtk_blist_sort_methods; sl != NULL; sl = sl->next) {
@@ -851,27 +850,14 @@ GtkWidget *list_page() {
 				  "/gaim/gtk/blist/show_group_count", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Display"));
-	button = prefs_checkbox(_("Show buddy _icons"),
-						   "/gaim/gtk/blist/show_buddy_icons", vbox);
-	warn_checkbox = prefs_checkbox(_("Show _warning levels"),
-								   "/gaim/gtk/blist/show_warning_level", vbox);
-
-	idle_checkbox = prefs_checkbox(_("Show idle _times"),
-								   "/gaim/gtk/blist/show_idle_time", vbox);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), warn_checkbox);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), idle_checkbox);
-
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
-
-		gtk_widget_set_sensitive(GTK_WIDGET(warn_checkbox), FALSE);
-		gtk_widget_set_sensitive(GTK_WIDGET(idle_checkbox), FALSE);
-	}
-
+	prefs_checkbox(_("Show buddy _icons"),
+			"/gaim/gtk/blist/show_buddy_icons", vbox);
+	prefs_checkbox(_("Show _warning levels"),
+			"/gaim/gtk/blist/show_warning_level", vbox);
+	prefs_checkbox(_("Show idle _times"),
+			"/gaim/gtk/blist/show_idle_time", vbox);
 	prefs_checkbox(_("Dim i_dle buddies"),
-				  "/gaim/gtk/blist/grey_idle_buddies", vbox);
+			"/gaim/gtk/blist/grey_idle_buddies", vbox);
 
 	gtk_widget_show_all(ret);
 
