@@ -29,7 +29,7 @@ perl_la_DEPENDENCIES = \
 .libs/DynaLoader.a:
 	@if [ ! -d .libs ]; then mkdir .libs; fi
 	@rm -f .libs/DynaLoader.a
-	@if [ x$(DYNALOADER_H) = x ]; then \
+	@if [ x$(DYNALOADER_A) = x ]; then \
 		touch .libs/DynaLoader.a; \
 	else \
 		$(LN_S) $(DYNALOADER_A) .libs/DynaLoader.a; \
