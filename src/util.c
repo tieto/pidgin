@@ -1942,7 +1942,7 @@ int gaim_build_dir (const char *path, int mode)
 static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
 
 FILE *
-gaim_mkstemp(char **fpath)
+gaim_mkstemp(char **fpath, gboolean binary)
 {
 	const gchar *tmpdir;
 #ifndef _WIN32
@@ -1961,7 +1961,7 @@ gaim_mkstemp(char **fpath)
 						   "Problem creating the template\n");
 			else
 			{
-				if( (fp = fopen( result, "w+" )) == NULL ) {
+				if( (fp = fopen( result, binary?"wb+":"w+")) == NULL ) {
 					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
 							   "Couldn't fopen() %s\n", result);
 				}

@@ -387,11 +387,12 @@ int gaim_build_dir(const char *path, int mode);
  * done, as well as freeing the space pointed to by @a path with
  * g_free().
  *
- * @param path The returned path to the temp file.
+ * @param path   The returned path to the temp file.
+ * @param binary Text or binary, for platforms where it matters.
  *
  * @return A file pointer to the temporary file, or @c NULL on failure.
  */
-FILE *gaim_mkstemp(char **path);
+FILE *gaim_mkstemp(char **path, gboolean binary);
 
 /**
  * Checks if the given program name is valid and executable.

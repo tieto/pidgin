@@ -778,7 +778,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		g_free(session->passport_info.file);
 	}
 
-	if ((fd = gaim_mkstemp(&session->passport_info.file)) == NULL)
+	if ((fd = gaim_mkstemp(&session->passport_info.file, FALSE)) == NULL)
 	{
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
 				   "Error opening temp passport file: %s\n",

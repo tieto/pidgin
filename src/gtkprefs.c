@@ -530,7 +530,7 @@ theme_got_url(void *data, const char *themedata, size_t len)
 	FILE *f;
 	gchar *path;
 
-	f = gaim_mkstemp(&path);
+	f = gaim_mkstemp(&path, TRUE);
 	fwrite(themedata, len, 1, f);
 	fclose(f);
 
