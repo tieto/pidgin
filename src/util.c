@@ -63,6 +63,7 @@ gint badchar(char c)
 	case '\n':
 	case '<':
 	case '>':
+	case '"':
 		return 1;
 	default:
 		return 0;
