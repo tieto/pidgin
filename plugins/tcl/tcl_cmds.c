@@ -254,13 +254,13 @@ static GaimBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj *
 
 int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *list, *tclgroup, *tclgrouplist, *tclbud, **elems, *result;
+	Tcl_Obj *list, *tclgroup, *tclgrouplist, *tclcontact, *tclcontactlist, *tclbud, **elems, *result;
 	char *cmds[] = { "alias", "handle", "info", "list", NULL };
 	enum { CMD_BUDDY_ALIAS, CMD_BUDDY_HANDLE, CMD_BUDDY_INFO, CMD_BUDDY_LIST } cmd;
 	struct gaim_buddy_list *blist;
-	GaimBlistNode *node, *gnode;
+	GaimBlistNode *node, *gnode, *bnode;
 	GaimAccount *account;
-	GaimBuddy *bnode;
+	GaimBuddy *bud;
 	GaimBlistChat *cnode;
 	int error, all = 0, count;
 
@@ -345,14 +345,32 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			tclgrouplist = Tcl_NewListObj(0, NULL);
 			for (node = gnode->child; node != NULL; node = node->next) {
 				switch (node->type) {
-				case GAIM_BLIST_BUDDY_NODE:
-					bnode = (GaimBuddy *)node;
-					if (!all && !gaim_account_is_connected(bnode->account))
-						continue;
-					tclbud = Tcl_NewListObj(0, NULL);
-					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj("buddy", -1));
-					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(bnode->name, -1));
-					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewIntObj((int)bnode->account));
+				case GAIM_BLIST_CONTACT_NODE:
+					tclcontact = Tcl_NewListObj(0, NULL);
+					Tcl_IncrRefCount(tclcontact);
+					Tcl_ListObjAppendElement(interp, tclcontact, Tcl_NewStringObj("contact", -1));
+					tclcontactlist = Tcl_NewListObj(0, NULL);
+					Tcl_IncrRefCount(tclcontactlist);
+					count = 0;
+					for (bnode = node->child; bnode != NULL; bnode = bnode ->next) {
+						if (bnode->type != GAIM_BLIST_BUDDY_NODE)
+							continue;
+						bud = (GaimBuddy *)bnode;
+						if (!all && !gaim_account_is_connected(bud->account))
+							continue;
+						count++;
+						tclbud = Tcl_NewListObj(0, NULL);
+						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj("buddy", -1));
+						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(bud->name, -1));
+						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewIntObj((int)bud->account));
+						Tcl_ListObjAppendElement(interp, tclcontactlist, tclbud);
+					}
+					if (count) {
+						Tcl_ListObjAppendElement(interp, tclcontact, tclcontactlist);
+						Tcl_ListObjAppendElement(interp, tclgrouplist, tclcontact);
+					}
+					Tcl_DecrRefCount(tclcontact);
+					Tcl_DecrRefCount(tclcontactlist);
 					break;
 				case GAIM_BLIST_CHAT_NODE:
 					cnode = (GaimBlistChat *)node;
@@ -362,11 +380,12 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj("chat", -1));
 					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(cnode->alias, -1));
 					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewIntObj((int)cnode->account));
+					Tcl_ListObjAppendElement(interp, tclgrouplist, tclbud);
 					break;
 				default:
+					gaim_debug(GAIM_DEBUG_WARNING, "tcl", "Unexpected buddy type %d", node->type);
 					continue;
 				}
-				Tcl_ListObjAppendElement(interp, tclgrouplist, tclbud);
 			}
 			Tcl_ListObjAppendElement(interp, tclgroup, tclgrouplist);
 			Tcl_ListObjAppendElement(interp, list, tclgroup);
