@@ -1403,7 +1403,7 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 
-	filesel = gtk_file_selection_new(title ? title : _(""));
+	filesel = gtk_file_selection_new(title ? title : "");
 	cur_dir = g_get_current_dir();
 	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S, cur_dir);
 	init_str = g_build_filename(tmp, filename, NULL);
