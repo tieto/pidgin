@@ -106,12 +106,12 @@ get_plugin_pref_frame(GaimPlugin *plugin) {
 
 	frame = gaim_plugin_pref_frame_new();
 
-	ppref = gaim_plugin_pref_new_with_label("Conversation Placement");
+	ppref = gaim_plugin_pref_new_with_label(_("Conversation Placement"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
 									"/plugins/gtk/extplacement/placement_number",
-									"Number of conversations per window");
+									_("Number of conversations per window"));
 	gaim_plugin_pref_set_bounds(ppref, 1, 50);
 	gaim_plugin_pref_frame_add(frame, ppref);
 

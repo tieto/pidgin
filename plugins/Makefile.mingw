@@ -115,6 +115,7 @@ install:
 
 plugins: \
 		autorecon.dll \
+		extplacement.dll \
 		history.dll \
 	 	iconaway.dll \
 		idle.dll \
