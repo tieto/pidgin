@@ -1448,6 +1448,8 @@ gaim_markup_linkify(const char *text)
 					if ((*(t - 1) == ')' && (inside_paren > 0))) {
 						t--;
 					}
+					if (!g_ascii_strncasecmp(t - 6, "&quot;", 6))
+						t -= 6;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
 					tmpurlbuf = gaim_unescape_html(url_buf);
