@@ -854,14 +854,20 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
 						 time(NULL));
 		if (swboard->conv == NULL)
+		{
 			swboard->conv = gaim_find_chat(gc, swboard->chat_id);
+			swboard->flag |= MSN_SB_FLAG_IM;
+		}
 	}
 	else
 	{
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
 		if (swboard->conv == NULL)
+		{
 			swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_IM,
 									passport, gaim_connection_get_account(gc));
+			swboard->flag |= MSN_SB_FLAG_IM;
+		}
 	}
 
 	g_free(body_final);
