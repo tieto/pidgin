@@ -736,8 +736,8 @@ static void jabber_close(GaimConnection *gc)
 		close(js->fd);
 	}
 
-	g_markup_parse_context_free(js->context);
-
+	if(js->context)
+		g_markup_parse_context_free(js->context);
 	if(js->callbacks)
 		g_hash_table_destroy(js->callbacks);
 	if(js->buddies)
@@ -746,7 +746,8 @@ static void jabber_close(GaimConnection *gc)
 		g_hash_table_destroy(js->chats);
 	if(js->stream_id)
 		g_free(js->stream_id);
-	jabber_id_free(js->user);
+	if(js->user)
+		jabber_id_free(js->user);
 	g_free(js);
 }
 
