@@ -61,9 +61,6 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
-
 #ifndef INET6_ADDRSTRLEN
 #define INET6_ADDRSTRLEN 46
 #endif
@@ -1247,7 +1244,7 @@ handle_privmsg(GaimConnection *gc, char *to, char *nick, char *msg)
 
 static void 
 dcc_chat_init(struct dcc_chat *data) {
-	if (g_slist_find(connections, data->gc)) {
+	if (g_list_find(gaim_connections_get_all(), data->gc)) {
 		proxy_connect(data->gc->account, data->ip_address, data->port, dcc_chat_callback, data);
 	} else {
 		g_free(data);
@@ -1256,7 +1253,7 @@ dcc_chat_init(struct dcc_chat *data) {
 
 static void 
 dcc_chat_cancel(struct dcc_chat *data){
-	if (g_slist_find(connections, data->gc) && find_dcc_chat(data->gc, data->nick)) {
+	if (g_list_find(gaim_connections_get_all(), data->gc) && find_dcc_chat(data->gc, data->nick)) {
 		dcc_chat_list = g_slist_remove(dcc_chat_list, data); 
 		gaim_input_remove (data->inpa);
 		close (data->fd);
@@ -1881,7 +1878,7 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	const char *charset = gaim_account_get_string(account, "charset", "UTF-8");
 	GError *err = NULL;
 	
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -2542,7 +2539,7 @@ irc_chat_send(GaimConnection *gc, int id, char *what)
 		return -EINVAL;
 	if (send_msg(gc, c->name, what) > 0)
 		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)),
-		gaim_connection_get_display_name(gc), 0, what, time(NULL));
+			(char *)gaim_connection_get_display_name(gc), 0, what, time(NULL));
 	return 0;
 }
 
