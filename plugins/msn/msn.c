@@ -751,6 +751,38 @@ static void msn_close (struct gaim_connection *gc) {
 	
 }
 
+static void msn_set_away(struct gaim_connection *gc, char *msg) {
+	struct msn_data *mdata = (struct msn_data *)gc->proto_data;
+	time_t trId = time((time_t *)NULL);
+	gchar buf[4096];
+
+	if (msg) {
+		g_snprintf(buf, 4096, "CHG %d AWY\n", trId);
+	} else if (gc->is_idle) {
+		g_snprintf(buf, 4096, "CHG %d IDL\n", trId);
+	} else {
+		g_snprintf(buf, 4096, "CHG %d NLN\n", trId);
+	}
+
+	write(mdata->fd, buf, strlen(buf));
+		
+}
+
+static void msn_set_idle(struct gaim_connection *gc, int idle) {
+	struct msn_data *mdata = (struct msn_data *)gc->proto_data;
+	time_t trId = time((time_t *)NULL);
+	gchar buf[4096];
+
+	if (idle) {
+		g_snprintf(buf, 4096, "CHG %d IDL\n", trId);
+	} else {
+		g_snprintf(buf, 4096, "CHG %d NLN\n", trId);
+	}
+
+	write(mdata->fd, buf, strlen(buf));
+		
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret) {
@@ -764,12 +796,12 @@ void msn_init(struct prpl *ret) {
 	ret->send_im = msn_send_im;
 	ret->set_info = NULL;
 	ret->get_info = NULL;
-	ret->set_away = NULL;
+	ret->set_away = msn_set_away;
 	ret->get_away_msg = NULL;
 	ret->set_dir = NULL;
 	ret->get_dir = NULL;
 	ret->dir_search = NULL;
-	ret->set_idle = NULL;
+	ret->set_idle = msn_set_idle;
 	ret->change_passwd = NULL;
 	ret->add_buddy = msn_add_buddy;
 	ret->add_buddies = NULL;
