@@ -3514,10 +3514,9 @@ setup_chat_pane(GaimConversation *conv)
 	GtkWidget *vbox, *hbox;
 	GtkWidget *lbox, *bbox;
 	GtkWidget *label;
-	GtkWidget *sw2;
 	GtkWidget *list;
 	GtkWidget *button;
-	GtkWidget *frame;
+	GtkWidget *sw;
 	GtkListStore *ls;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
@@ -3600,12 +3599,12 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_show(gtkchat->count);
 
 	/* Setup the list of users. */
-	sw2 = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw2), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(lbox), sw2, TRUE, TRUE, 0);
-	gtk_widget_show(sw2);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(lbox), sw, TRUE, TRUE, 0);
+	gtk_widget_show(sw);
 
 	ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), 1,
@@ -3636,7 +3635,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	gtkchat->list = list;
 
-	gtk_container_add(GTK_CONTAINER(sw2), list);
+	gtk_container_add(GTK_CONTAINER(sw), list);
 
 	/* Setup the user list toolbar. */
 	bbox = gtk_hbox_new(TRUE, 5);
@@ -3689,36 +3688,37 @@ setup_chat_pane(GaimConversation *conv)
 					   FALSE, FALSE, 0);
 
 	/* Setup the entry widget. */
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+										GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
 	gtkconv->entry_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
-	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
 	gaim_setup_imhtml(gtkconv->entry);
+	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
 	default_formatize(conv);
-
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"),
 				25));
+	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
-	/* Connect the signal handlers. */
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
 							 G_CALLBACK(entry_key_pressed_cb_1),
 							 gtkconv->entry_buffer);
-	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
-						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 					 G_CALLBACK(entry_key_pressed_cb_2), conv);
+	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
+						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 
-	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(gtkconv->entry));
+	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
 
 	/* Setup the bottom button box. */
@@ -3739,7 +3739,7 @@ setup_im_pane(GaimConversation *conv)
 	GtkWidget *paned;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
-	GtkWidget *frame;
+	GtkWidget *sw;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkim   = gtkconv->u.im;
@@ -3778,7 +3778,6 @@ setup_im_pane(GaimConversation *conv)
 			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
 
 	gaim_setup_imhtml(gtkconv->imhtml);
-
 	gtk_widget_show(gtkconv->imhtml);
 
 	vbox2 = gtk_vbox_new(FALSE, 5);
@@ -3791,21 +3790,24 @@ setup_im_pane(GaimConversation *conv)
 					   FALSE, FALSE, 0);
 
 	/* Setup the entry widget. */
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+										GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
+	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
-	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
-	gaim_setup_imhtml(gtkconv->entry);
-	default_formatize(conv);
 	gtkconv->entry_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
+	gaim_setup_imhtml(gtkconv->entry);
+	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
+	default_formatize(conv);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"),
 				25));
+	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
 							 G_CALLBACK(entry_key_pressed_cb_1),
@@ -3823,7 +3825,7 @@ setup_im_pane(GaimConversation *conv)
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 
-	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(gtkconv->entry));
+	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
 
 	gtkconv->bbox = gtk_hbox_new(FALSE, 5);

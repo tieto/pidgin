@@ -1217,12 +1217,9 @@ void su_away_mess(GtkWidget *widget, struct create_away *ca)
 
 void create_away_mess(GtkWidget *widget, void *dummy)
 {
-	GtkWidget *hbox;
-	GtkWidget *titlebox;
-	GtkWidget *tbox;
+	GtkWidget *vbox, *hbox;
 	GtkWidget *label;
-	GtkWidget *frame;
-	GtkWidget *fbox;
+	GtkWidget *sw;
 	GtkWidget *button;
 
 	struct create_away *ca = g_new0(struct create_away, 1);
@@ -1230,35 +1227,42 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	/* Set up window */
 	GAIM_DIALOG(ca->window);
 	gtk_widget_set_size_request(ca->window, -1, 250);
-	gtk_container_set_border_width(GTK_CONTAINER(ca->window), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(ca->window), 6);
 	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("New away message"));
 	g_signal_connect(G_OBJECT(ca->window), "delete_event",
 			   G_CALLBACK(destroy_dialog), ca->window);
 
-	tbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
+	/*
+	 * This would be higgy... but I think it's pretty ugly  --Mark
+	 * If you want to use this, make sure you add the vbox to the hbox below
+	 */
+	/*
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 12);
+	gtk_container_add(GTK_CONTAINER(ca->window), hbox);
+	*/
 
-	frame = gtk_frame_new(_("New away message"));
-	gtk_box_pack_start(GTK_BOX(tbox), frame, TRUE, TRUE, 0);
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(ca->window), vbox);
 
-	fbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-	gtk_container_add(GTK_CONTAINER(frame), fbox);
-
-	titlebox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(fbox), titlebox, FALSE, FALSE, 0);
+	/* Away message title */
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Away title: "));
-	gtk_box_pack_start(GTK_BOX(titlebox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	ca->entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(titlebox), ca->entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), ca->entry, TRUE, TRUE, 0);
 	gtk_widget_grab_focus(ca->entry);
 
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(fbox), frame, TRUE, TRUE, 0);
+	/* Away message text */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 	ca->text = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
@@ -1266,7 +1270,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(ca->text));
 
-	gtk_container_add(GTK_CONTAINER(frame), ca->text);
+	gtk_container_add(GTK_CONTAINER(sw), ca->text);
 
 	if (dummy) {
 		struct away_message *amt;
@@ -1291,7 +1295,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	}
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	button = gaim_pixbuf_button_from_stock(_("Save"), GTK_STOCK_SAVE, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(save_away_mess), ca);
