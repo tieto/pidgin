@@ -1,38 +1,38 @@
 THE CORE:
-	Status labels in buddy list (mostly just for yahoo/msn)
-	Transparency for GtkIMHtml
-	Rewrite the HTML parser in GtkIMHtml
 	GPG Encryption of messages
 	Have plugin_event use varargs instead of void*
-	Better way of showing away state - and possibly in main window
-	Moving GTK/GDK and related things out of the prpls
-		TOC: file transfer (move into the core)
-	Away needs to be modified to include "show" and "status", i.e. you can have
-		an away state, and an away message. This is exactly what ICQ does -
-		you're "N/A" (show in Jabber) and your away message is "I'm gone."
-		(status in Jabber). Since it only applies to ICQ and Jabber (and
-		actually, currently only Jabber, since icqlib doesn't handle away
-		messages yet), there should be some way of indicating that it can
-		do both without breaking the others. My suggestion is to put "/" at
-		the end of the "state", and when that's there, have it be a menu with
-		all of the custom messages, e.g. in Jabber it'd return "Away/" as one
-		of the states, and you'd see "Away" with a menu of all the away
-		messages you have.
-	IRC has /list, Jabber has jabber:iq:browse, AIM has what's currently in the
-		"Chat Rooms" options. We should have a way (besides the prefs window)
-		of showing all the rooms available for each account/protocol (what's a
-		good way to do this? IRC it varies based on who you're connected as,
-		Jabber you need a connection to retrieve the list, and AIM you can get
-		it while you're offline.)
+	Separate core functions from UI stuff.
+		about.c, applet.[ch], away.c, conversation.c, convo.h, multi.c,
+		gtk*, prefs.c, prpl.c, sound.c, ticker.c
+			little to no work (mostly GTK)
 
-	Syd is cool and gave all of these ideas:
-		Have multiple tickers in the same window, one for buddies
-			like it is now, one for who just came online/offline
-			(scrolled faster possibly because that doesn't
-			happen very often), etc.
-		Have tooltips on the passing buddies on the ticker
-		Have a stock ticker (a plugin could easily make use of
-			GtkTicker)
+		gaimrc.c, html.c, proxy.[ch], prpl.h, server.c, util.c
+			little to no work (mostly CORE)
+
+		aim.c - need to redo main() completely
+			- current main should be moved mostly to core
+			- GTK main should connect to core
+		browser.c - let the UI deal with this? little to no work.
+		buddy.c - need to split into buddy.c and list.c
+			- buddy.c handles add/remove/rename/alias buddies
+			- list.c handles drawing the buddy list for GTK
+		buddy_chat.c - need to move out non-GTK functions. some work.
+		dialogs.c - need to move import/export out of here and into buddy.c
+		gaim.h - need to separate into core.h and ui.h.
+		idle.c - Need to figure out how to report idle times when there's
+			more than one UI
+		multi.h - need to separate GTK out of gaim_connection
+		perl.c - Uh. Might need to do some splitting.
+		plugins.c - Split the selection dialog with the loading/unloading
+			- Need to figure out how plugins are going to interact
+			  with UIs, though UIs are separate programs.
+	Need to create struct buddy_chat, move struct conversation's in_room and
+		ignored there, and copy id and name.
+	Need to write the core side of the core-ui protocol
+	Need to add in core.c to deal with sockets, etc. (Already written)
+
+----
+THE PROTOCOLS:
 
 TOC:
 	Other RVOUS Actions
@@ -51,21 +51,25 @@ ICQ:
 	New User Registration
 
 MSN:
+	Need to make it so txqueue is a GSList* of char* instead of char*, so
+		that you can "send" more than one message before you're
+		actually connected. This is actually a bug that it doesn't do
+		this already.
+	Need some way of indicating "invite" in IM window
 	File Transfer
 
 IRC:
-	Actions (e.g. /op)
-	File transfer?  Maybe later?
+	/whois, /ban, /kickban, /list, /names
+	DCC
+	CTCP
 
 Jabber:
 	Jabber Transports (having them show up on the buddy list should be
 		fairly easy; having an appropriate right-click menu for
 		them should also be somewhat easy. Providing a UI for adding
 		transports should be rather difficult.)
-	New Chat Method (?)
 	Rework how subscriptions are handled
 	Browsing
-	Stop using libjabber
 	New User Registration
 
 Napster:
@@ -79,6 +83,37 @@ Future Plugins? :
 	ICQ through Oscar plugin (ICQ2000) (requires hacking libfaim :-/)
 		this would allow us to send SMS messages.
 	Hotline (Or is this a waste of time?.  Ill decide soon enough, heh)
+
+----
+THE UIS:
+
+GTK:
+	Transparency for GtkIMHtml
+	Rewrite the HTML parser in GtkIMHtml
+	Moving GTK/GDK and related things out of the prpls
+		TOC: file transfer (move into the core)
+	Status labels in buddy list (mostly just for yahoo/msn)
+	Better way of showing away state - and possibly in main window
+	Away needs to be modified to include "show" and "status", i.e. you can have
+		an away state, and an away message. This is exactly what ICQ does -
+		you're "N/A" (show in Jabber) and your away message is "I'm gone."
+		(status in Jabber). Since it only applies to ICQ and Jabber (and
+		actually, currently only Jabber, since icqlib doesn't handle away
+		messages yet), there should be some way of indicating that it can
+		do both without breaking the others. My suggestion is to put "/" at
+		the end of the "state", and when that's there, have it be a menu with
+		all of the custom messages, e.g. in Jabber it'd return "Away/" as one
+		of the states, and you'd see "Away" with a menu of all the away
+		messages you have.
+
+	Syd is cool and gave all of these ideas:
+		Have multiple tickers in the same window, one for buddies
+			like it is now, one for who just came online/offline
+			(scrolled faster possibly because that doesn't
+			happen very often), etc.
+		Have tooltips on the passing buddies on the ticker
+		Have a stock ticker (a plugin could easily make use of
+			GtkTicker)
 
 
 Then, of course, are all the Bugs that need to be fixed
