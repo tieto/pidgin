@@ -39,7 +39,7 @@ use Gaim;
 
     load             => "plugin_load",
     unload           => "plugin_unload"
-)
+);
 
 sub plugin_init {
     return %PLUGIN_INFO;
