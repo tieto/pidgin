@@ -2202,12 +2202,12 @@ static void deny_page()
 	GtkWidget *bbox;
 	GtkWidget *button;
 
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
 	current_deny_gc = connections->data;	/* this is safe because this screen will only be
 						   available when there are connections */
 	current_is_deny = TRUE;
-
-	parent = prefdialog->parent;
-	gtk_widget_destroy(prefdialog);
 
 	prefdialog = gtk_frame_new(_("Privacy Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);

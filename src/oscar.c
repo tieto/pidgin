@@ -3274,9 +3274,11 @@ static void oscar_remove_convo(struct gaim_connection *gc, struct conversation *
 	if (!h || !ir->data)
 		return;
 	
-	gtk_container_remove(GTK_CONTAINER(ir->cnv->bbox), ir->pix);
-	ir->pix = NULL;
-	ir->cnv = NULL;
+	if (ir->cnv && ir->pix) {
+		gtk_container_remove(GTK_CONTAINER(ir->cnv->bbox), ir->pix);
+		ir->pix = NULL;
+		ir->cnv = NULL;
+	}
 	
 	if (ir->anim) {
 		gdk_pixbuf_animation_unref(ir->anim);
