@@ -665,6 +665,21 @@ GaimContact *gaim_contact_new()
 	return c;
 }
 
+void gaim_contact_set_alias(GaimContact* contact, const char *alias)
+{
+	g_return_if_fail(contact != NULL);
+
+	if(contact->alias)
+		g_free(contact->alias);
+
+	contact->alias = g_strdup(alias);
+}
+
+const char *gaim_contact_get_alias(GaimContact* contact)
+{
+	return contact ? contact->alias : NULL;
+}
+
 GaimGroup *gaim_group_new(const char *name)
 {
 	GaimGroup *g = gaim_find_group(name);
@@ -894,9 +909,8 @@ void gaim_blist_remove_buddy (GaimBuddy *buddy)
 		node->next->prev = node->prev;
 	if(cnode->child == node) {
 		cnode->child = node->next;
-		if(!cnode->child)
-			gaim_blist_remove_contact((GaimContact*)cnode);
 	}
+
 
 	hb.name = normalize(buddy->name);
 	hb.account = buddy->account;
@@ -911,6 +925,9 @@ void gaim_blist_remove_buddy (GaimBuddy *buddy)
 	g_free(buddy->name);
 	g_free(buddy->alias);
 	g_free(buddy);
+
+	if(!cnode->child)
+		gaim_blist_remove_contact((GaimContact*)cnode);
 }
 
 void  gaim_blist_remove_chat (GaimBlistChat *chat)
@@ -1029,12 +1046,20 @@ const char *gaim_get_buddy_alias_only(GaimBuddy *b) {
 
 const char *  gaim_get_buddy_alias (GaimBuddy *buddy)
 {
-	const char *ret = gaim_get_buddy_alias_only(buddy);
+	GaimContact *contact;
+	const char *ret;
 
-	if(!ret)
-		return buddy ? buddy->name : _("Unknown");
+	if(!buddy)
+		return _("Unknown");
 
-	return ret;
+	contact = (GaimContact*)((GaimBlistNode*)buddy)->parent;
+
+	if(contact && contact->alias)
+		return contact->alias;
+
+	ret= gaim_get_buddy_alias_only(buddy);
+
+	return ret ? ret : buddy->name;
 }
 
 const char *gaim_blist_chat_get_name(GaimBlistChat *chat)
@@ -1758,12 +1783,25 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 					gaim_blist_get_last_sibling(gaimbuddylist->root));
 		}
 	} else if(!strcmp(element_name, "contact")) {
+		char *alias = NULL;
 		tag_stack = g_list_prepend(tag_stack,
 				GINT_TO_POINTER(BLIST_TAG_CONTACT));
+
+		for(i=0; attribute_names[i]; i++) {
+			if(!strcmp(attribute_names[i], "alias")) {
+				g_free(alias);
+				alias = g_strdup(attribute_values[i]);
+			}
+		}
 
 		blist_parser_contact = gaim_contact_new();
 		gaim_blist_add_contact(blist_parser_contact, blist_parser_group,
 				gaim_blist_get_last_sibling(((GaimBlistNode*)blist_parser_group)->child));
+
+		if(alias) {
+			gaim_contact_set_alias(blist_parser_contact, alias);
+			g_free(alias);
+		}
 	} else if(!strcmp(element_name, "chat")) {
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_CHAT));
 		for(i=0; attribute_names[i]; i++) {
@@ -2210,7 +2248,14 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 			g_hash_table_foreach(group->settings, blist_print_group_settings, file);
 			for(cnode = gnode->child; cnode; cnode = cnode->next) {
 				if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
-					fprintf(file, "\t\t\t<contact>\n");
+					GaimContact *contact = (GaimContact*)cnode;
+					fprintf(file, "\t\t\t<contact");
+					if(contact->alias) {
+						char *alias = g_markup_escape_text(contact->alias, -1);
+						fprintf(file, " alias=\"%s\"", alias);
+						g_free(alias);
+					}
+					fprintf(file, ">\n");
 
 					for(bnode = cnode->child; bnode; bnode = bnode->next) {
 						if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {

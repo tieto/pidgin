@@ -105,10 +105,11 @@ struct _GaimBuddy {
  * A contact.  This contains everything Gaim will ever need to know about a contact.
  */
 struct _GaimContact {
-	GaimBlistNode node;						/**< The node that this contact inherits from. */
-	int totalsize;			       /**< The number of buddies in this contact */
-	int currentsize;		       /**< The number of buddies in this contact corresponding to online accounts */
-	int online;			       /**< The number of buddies in this contact who are currently online */
+	GaimBlistNode node;		/**< The node that this contact inherits from. */
+	char *alias;            /**< The user-set alias of the contact */
+	int totalsize;		    /**< The number of buddies in this contact */
+	int currentsize;	    /**< The number of buddies in this contact corresponding to online accounts */
+	int online;			    /**< The number of buddies in this contact who are currently online */
 };
 
 
@@ -406,6 +407,22 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
  * @return The highest priority buddy
  */
 GaimBuddy *gaim_contact_get_priority_buddy(GaimContact *contact);
+
+/**
+ * Sets the alias for a contact.
+ *
+ * @param contact  The contact
+ * @param alias    The alias to set, or NULL to unset
+ */
+void gaim_contact_set_alias(GaimContact *contact, const char *alias);
+
+/**
+ * Gets the alias for a contact.
+ *
+ * @param contact  The contact
+ * @return  The alias, or NULL if it is not set.
+ */
+const char *gaim_contact_get_alias(GaimContact *contact);
 
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
