@@ -142,65 +142,61 @@ u_long aim_bos_setbuddylist(struct aim_session_t *sess,
 
   struct command_tx_struct *newpacket;
 
-  int packet_login_phase3c_hi_b_len = 0;
+  int len = 0;
 
   char *localcpy = NULL;
   char *tmpptr = NULL;
 
-  packet_login_phase3c_hi_b_len = 16; /* 16b for FLAP and SNAC headers */
+  len = 10; /* 10B SNAC headers */
 
-  /* bail out if we can't make the packet */
-  if (!buddy_list) {
+  if (!buddy_list || !(localcpy = (char *) malloc(strlen(buddy_list)+1))) 
     return -1;
-  }
-
-  localcpy = (char *) malloc(strlen(buddy_list)+1);
-  memcpy(localcpy, buddy_list, strlen(buddy_list)+1);
+  strncpy(localcpy, buddy_list, strlen(buddy_list)+1);
 
   i = 0;
   tmpptr = strtok(localcpy, "&");
-  while ((tmpptr != NULL) && (i < 100))
-    {
+  while ((tmpptr != NULL) && (i < 150)) {
 #if debug > 0
-      printf("---adding %s (%d)\n", tmpptr, strlen(tmpptr));
+    printf("---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
 #endif
-      packet_login_phase3c_hi_b_len += strlen(tmpptr)+1;
-      i++;
-      tmpptr = strtok(NULL, "&");
-    }
+    len += 1+strlen(tmpptr);
+    i++;
+    tmpptr = strtok(NULL, "&");
+  }
 #if debug > 0
-  printf("*** send buddy list len: %d (%x)\n", packet_login_phase3c_hi_b_len, packet_login_phase3c_hi_b_len);
+  printf("*** send buddy list len: %d (%x)\n", len, len);
 #endif
-  free(localcpy);
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packet_login_phase3c_hi_b_len - 6)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, len)))
     return -1;
 
   newpacket->lock = 1;
   
-  aim_putsnac(newpacket->data, 0x0003, 0x0004, 0x0000, sess->snac_nextid);
+  aim_putsnac(newpacket->data, 0x0003, 0x0004, 0x0000, 0);
 
   j = 10;  /* the next byte */
 
+  strncpy(localcpy, buddy_list, strlen(buddy_list)+1);
   i = 0;
-  tmpptr = strtok(buddy_list, "&");
-  while ((tmpptr != NULL) & (i < 100))
-    {
+  tmpptr = strtok(localcpy, "&");
+  while ((tmpptr != NULL) & (i < 150)) {
 #if debug > 0
-      printf("---adding %s (%d)\n", tmpptr, strlen(tmpptr));
+    printf("---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
 #endif
-      newpacket->data[j] = strlen(tmpptr);
-      memcpy(&(newpacket->data[j+1]), tmpptr, strlen(tmpptr));
-      j += strlen(tmpptr)+1;
-      i++;
-      tmpptr = strtok(NULL, "&");
-    }
+    newpacket->data[j] = strlen(tmpptr);
+    memcpy(&(newpacket->data[j+1]), tmpptr, strlen(tmpptr));
+    j += 1+strlen(tmpptr);
+    i++;
+    tmpptr = strtok(NULL, "&");
+  }
 
   newpacket->lock = 0;
 
   aim_tx_enqueue(sess, newpacket);
 
-  return (sess->snac_nextid++);
+  free(localcpy);
+
+  return (sess->snac_nextid);
 }
 
 /* 
@@ -283,7 +279,8 @@ u_long aim_bos_clientready(struct aim_session_t *sess,
      0x00, 0x01,   
      0x00, 0x03, 
      0x00, 0x04, 
-     0x06, 0x86,  
+     0x07, 0xda,  
+
      0x00, 0x02, 
      0x00, 0x01,  
      0x00, 0x04, 
@@ -292,7 +289,8 @@ u_long aim_bos_clientready(struct aim_session_t *sess,
      0x00, 0x03, 
      0x00, 0x01,  
      0x00, 0x04, 
-     0x00, 0x01, 
+     0x00, 0x01,
+ 
      0x00, 0x04, 
      0x00, 0x01, 
      0x00, 0x04,
@@ -357,28 +355,23 @@ u_long aim_bos_ackrateresp(struct aim_session_t *sess,
 			   struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
-  int packlen = 18, i=0;
+  int packlen = 20, i=0;
 
-  if (conn->type != AIM_CONN_TYPE_BOS)
-    packlen += 2;
-
-  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)));
+  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)))
+    return (sess->snac_nextid);
   
   newpacket->lock = 1;
 
-  i = aim_putsnac(newpacket->data, 0x0001, 0x0008, 0x0000, sess->snac_nextid);
+  i = aim_putsnac(newpacket->data, 0x0001, 0x0008, 0x0000, 0);
   i += aimutil_put16(newpacket->data+i, 0x0001); 
   i += aimutil_put16(newpacket->data+i, 0x0002);
   i += aimutil_put16(newpacket->data+i, 0x0003);
   i += aimutil_put16(newpacket->data+i, 0x0004);
+  i += aimutil_put16(newpacket->data+i, 0x0005);
   
-  if (conn->type != AIM_CONN_TYPE_BOS) {
-    i += aimutil_put16(newpacket->data+i, 0x0005);
-  }
-
   aim_tx_enqueue(sess, newpacket);
 
-  return (sess->snac_nextid++);
+  return (sess->snac_nextid);
 }
 
 /* 
@@ -407,22 +400,7 @@ u_long aim_bos_setprivacyflags(struct aim_session_t *sess,
 u_long aim_bos_reqpersonalinfo(struct aim_session_t *sess,
 			       struct aim_conn_t *conn)
 {
-  struct command_tx_struct *newpacket;
-  
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 12)))
-    return -1;
-
-  newpacket->lock = 1;
-
-  aim_putsnac(newpacket->data, 0x000a, 0x0001, 0x000e /* huh? */, sess->snac_nextid);
-  
-  newpacket->data[10] = 0x0d;
-  newpacket->data[11] = 0xda;
-
-  newpacket->lock = 0;
-  aim_tx_enqueue(sess, newpacket);
-
-  return (sess->snac_nextid++);
+  return aim_genericreq_n(sess, conn, 0x0001, 0x000e);
 }
 
 u_long aim_setversions(struct aim_session_t *sess,
@@ -431,7 +409,7 @@ u_long aim_setversions(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10 + (4*11))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10 + (4*12))))
     return -1;
 
   newpacket->lock = 1;
@@ -466,6 +444,9 @@ u_long aim_setversions(struct aim_session_t *sess,
   i += aimutil_put16(newpacket->data+i, 0x0002);
 
   i += aimutil_put16(newpacket->data+i, 0x000c);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0013);
   i += aimutil_put16(newpacket->data+i, 0x0001);
 
   i += aimutil_put16(newpacket->data+i, 0x0015);
@@ -694,3 +675,31 @@ u_long aim_bos_reqicbmparaminfo(struct aim_session_t *sess,
   return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
 }
 
+/*
+ * Add ICBM parameter? Huh?
+ */
+unsigned long aim_addicbmparam(struct aim_session_t *sess,
+			       struct aim_conn_t *conn)
+{
+  struct command_tx_struct *newpacket;
+  int packlen = 10+16, i=0;
+
+  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)))
+    return (sess->snac_nextid);
+  
+  newpacket->lock = 1;
+
+  i = aim_putsnac(newpacket->data, 0x0004, 0x0002, 0x0000, sess->snac_nextid);
+  i += aimutil_put16(newpacket->data+i, 0x0000); 
+  i += aimutil_put16(newpacket->data+i, 0x0000);
+  i += aimutil_put16(newpacket->data+i, 0x0003);
+  i += aimutil_put16(newpacket->data+i, 0x1f40);
+  i += aimutil_put16(newpacket->data+i, 0x03e7);
+  i += aimutil_put16(newpacket->data+i, 0x03e7);
+  i += aimutil_put16(newpacket->data+i, 0x0000); 
+  i += aimutil_put16(newpacket->data+i, 0x0000); 
+  
+  aim_tx_enqueue(sess, newpacket);
+
+  return (sess->snac_nextid);
+}

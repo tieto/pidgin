@@ -1,6 +1,16 @@
 
 No release numbers
 ------------------
+ - Fri Sep  1 23:34:28 UTC 2000
+   - Switched the read()s in rxqueue to use recv()
+     - Should fix the big message problem and the big buddy list problem
+   - Changed some values around in aim_misc to match winaim4.1
+   - Added aim_addicbmparm. dunno what it does
+   - Cleanup the login process in faimtest (can now login in less than 2sec)
+
+ - Fri Sep  1 00:13:04 UTC 2000
+   - Avoid zero-length mallocs in aim_tlv
+
  - Thu Aug 31 23:40:23 UTC 2000
    - Threw in aim_select modification from nicolas
    - Remove stray debugging printf in aim_tlv

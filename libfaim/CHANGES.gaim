@@ -1,4 +1,13 @@
 
+Sat Sep  2 02:35:34 UTC 2000 EWarmenhoven
+	- very good news. the very-long-message DOS against libfaim was fixed.
+	  libfaim users can now send and receive Very Long Messages. GtkHTML
+	  has problems drawing them, but resizing seems to help.
+	- the fix also makes long buddy lists a non-issue.
+	- oh yeah, the login process was changed so it should go quicker now.
+	  and we don't request ads at all, so not even your packet sniffer can
+	  pick up the gifs.
+
 Mon Aug 28 05:02:39 UTC 2000 EWarmenhoven
 	- libfaim gets warnings. no blocking, just warnings.
 

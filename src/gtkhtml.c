@@ -2896,6 +2896,9 @@ static void gtk_html_add_text(GtkHtml * html,
 	 * HTK_SCROLLED_WINDOW(GTK_WIDGET(layout)->parent)->vscrollbar->allocation.width) - 8; 
 	 */
 
+	/* FIXME: gtk_text_measure can overflow if the text is too long. hopefully that will
+	 * never happen though. but it is very possible. NOTE: this is not a buffer overflow,
+	 * it just means it won't display text properly. */
 	while (gdk_text_measure(cfont, text, num) > maxwidth)
 	{
 		if (num > 1)
@@ -3107,7 +3110,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 	GdkColormap *map;
 	GdkFont *cfont;
 	GdkRectangle area;
-	char ws[BUF_LONG],
+	char *ws,
 	  tag[BUF_LONG],
 	 *c,
 	 *url = NULL;
@@ -3151,6 +3154,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 	cfont = getfont(current->font, bold, italic, fixed, current->size);
 	c = text;
 
+	ws = g_malloc(strlen(text) + 2);
 
 	while (*c)
 	{
@@ -3594,6 +3598,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 */	}
 
 
+	g_free(ws);
 
 	gdk_window_get_size(html->html_area, NULL, &height);
 	area.height = height;

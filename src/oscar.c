@@ -88,6 +88,8 @@ static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_msgack     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_ratechange (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_evilnotify (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_bosrights        (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_rateresp         (struct aim_session_t *, struct command_rx_struct *, ...);
 
 static int gaim_directim_incoming(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_directim_typing  (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -305,6 +307,8 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		return -1;
 	}
 
+	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0003, gaim_bosrights, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0007, gaim_rateresp, 0); /* rate info */
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ACK, AIM_CB_ACK_ACK, NULL, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, gaim_server_ready, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATEINFO, NULL, 0);
@@ -352,11 +356,8 @@ int gaim_server_ready(struct aim_session_t *sess,
 	static int id = 1;
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
-		aim_bos_reqrate(sess, command->conn);
-		aim_bos_ackrateresp(sess, command->conn);
-		aim_bos_setprivacyflags(sess, command->conn, AIM_PRIVFLAGS_ALLOWIDLE | AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
-		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_ADS);
-		aim_bos_setgroupperm(sess, command->conn, AIM_CLASS_ALLUSERS);
+		aim_setversions(sess, command->conn);
+		aim_bos_reqrate(sess, command->conn); /* request rate info */
 		debug_print("done with BOS ServerReady\n");
 		break;
 	case AIM_CONN_TYPE_CHATNAV:
@@ -402,47 +403,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	cookie    = va_arg(ap, char *);
 
 	switch(serviceid) {
-	case 0x0005: /* Ads */
-		debug_print("Received Ads, finishing login\n");
-		aim_bos_setprofile(sess, command->conn, current_user->user_info,
-					NULL, gaim_caps);
-		aim_seticbmparam(sess, command->conn);
-		aim_conn_setlatency(command->conn, 1);
-
-		gtk_widget_hide(mainwindow);
-		show_buddy_list();
-#ifdef USE_APPLET
-		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-			refresh_buddy_window();
-			createOnlinePopup();
-			applet_buddy_show = TRUE;
-		} else {
-			gtk_widget_hide(blist);
-			applet_buddy_show = FALSE;
-		}
-		set_user_state(online);
-#else
-		refresh_buddy_window();
-#endif
-
-		serv_finish_login();
-		gaim_setup();
-
-		/* I'm sufficiently convinced that this is not the problem with
-		 * signing on, because it happens no matter where I place it. */
-		if (bud_list_cache_exists())
-			do_import(NULL, 0);
-
-		debug_print("buddy list loaded\n");
-
-		setup_buddy_chats();
-
-		aim_bos_clientready(sess, command->conn);
-		debug_print("Roger that, all systems go\n");
-
-		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
-
-		break;
 	case 0x7: /* Authorizer */
 		debug_print("Reconnecting with authorizor...\n");
 		{
@@ -993,6 +953,70 @@ int gaim_parse_evilnotify(struct aim_session_t *sess, struct command_rx_struct *
 	va_end(ap);
 
 	serv_got_eviled(sn, 0);
+
+	return 1;
+}
+
+int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	switch (command->conn->type) {
+	case AIM_CONN_TYPE_BOS:
+		aim_bos_ackrateresp(sess, command->conn);
+		aim_bos_reqpersonalinfo(sess, command->conn);
+		aim_bos_reqlocaterights(sess, command->conn);
+		aim_bos_setprofile(sess, command->conn, current_user->user_info,
+					NULL, gaim_caps);
+		aim_bos_reqbuddyrights(sess, command->conn);
+
+		gtk_widget_hide(mainwindow);
+		show_buddy_list();
+
+#ifdef USE_APPLET
+		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
+			refresh_buddy_window();
+			createOnlinePopup();
+			applet_buddy_show = TRUE;
+		} else {
+			gtk_widget_hide(blist);
+			applet_buddy_show = FALSE;
+		}
+		set_user_state(online);
+#else
+		refresh_buddy_window();
+#endif
+
+		serv_finish_login();
+		gaim_setup();
+
+		if (bud_list_cache_exists())
+			do_import(NULL, 0);
+
+		debug_print("buddy list loaded\n");
+
+		setup_buddy_chats();
+
+		aim_addicbmparam(sess, command->conn);
+		aim_bos_reqicbmparaminfo(sess, command->conn);
+
+		aim_bos_reqrights(sess, command->conn);
+		aim_bos_setgroupperm(sess, command->conn, AIM_CLASS_ALLUSERS);
+		aim_bos_setprivacyflags(sess, command->conn, AIM_PRIVFLAGS_ALLOWIDLE |
+							     AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
+
+		break;
+	default:
+		sprintf(debug_buff, "got rate response for unhandled connection type %04x\n",
+				command->conn->type);
+		debug_print(debug_buff);
+		break;
+	}
+
+	return 1;
+}
+
+int gaim_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	aim_bos_clientready(sess, command->conn);
+
+	aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 
 	return 1;
 }

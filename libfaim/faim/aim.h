@@ -510,6 +510,7 @@ u_long aim_bos_reqrights(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqbuddyrights(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqlocaterights(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
+unsigned long aim_addicbmparam(struct aim_session_t *sess,struct aim_conn_t *conn);
 u_long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 struct aim_fileheader_t *aim_getlisting(struct aim_session_t*);
