@@ -313,7 +313,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_chat_destroy(chat);
 			} else {
 				gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
-						real_jid);
+						NULL);
 			}
 		} else {
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))

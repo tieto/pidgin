@@ -260,7 +260,7 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 					data->values = g_slist_prepend(data->values, value);
 
 					gaim_request_field_list_add(field, lbl, value);
-					if(g_list_find_custom(selected, value, g_str_equal))
+					if(g_list_find_custom(selected, value, (GCompareFunc)strcmp))
 						gaim_request_field_list_add_selected(field, lbl);
 				}
 				gaim_request_field_group_add_field(group, field);
