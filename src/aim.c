@@ -577,7 +577,7 @@ int main(int argc, char *argv[])
 #ifndef USE_GNOME
 		case '?':
 		default:
-			show_usage(0, argv[0]);
+			show_usage(1, argv[0]);
 			return 0;
 			break;
 #endif
