@@ -251,8 +251,10 @@ void delete_conversation(struct conversation *c)
 		gtk_widget_destroy(c->link_dialog);
 	if (c->log_dialog)
 		gtk_widget_destroy(c->log_dialog);
+#if USE_PIXBUF
 	if (c->save_icon)
 		gtk_widget_destroy(c->save_icon);
+#endif
 	g_string_free(c->history, TRUE);
 	g_free(c);
 }
