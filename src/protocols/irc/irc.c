@@ -327,11 +327,7 @@ static int irc_im_send(GaimConnection *gc, const char *who, const char *what, Ga
 	else
 		args[0] = who;
 	args[1] = what;
-#if 0
-	if (*what == '/') {
-		return irc_parse_cmd(irc, who, what + 1);
-	}
-#endif
+
 	irc_cmd_privmsg(irc, "msg", NULL, args);
 	return 1;
 }

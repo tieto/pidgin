@@ -90,7 +90,6 @@ char *irc_mirc2txt(const char *string);
 void irc_register_commands(void);
 void irc_msg_table_build(struct irc_conn *irc);
 void irc_parse_msg(struct irc_conn *irc, char *input);
-int irc_parse_cmd(struct irc_conn *irc, const char *target, const char *cmdstr);
 char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, const char *msg, int notice);
 char *irc_format(struct irc_conn *irc, const char *format, ...);
 

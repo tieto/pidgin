@@ -550,63 +550,6 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	g_free(from);
 }
 
-int irc_parse_cmd(struct irc_conn *irc, const char *target, const char *cmdstr)
-{
-	const char *cur, *end, *fmt; 
-	char *tmp, *cmd, **args;
-	struct _irc_user_cmd *cmdent;
-	guint i;
-	int ret;
-
-	cur = cmdstr;
-	end = strchr(cmdstr, ' ');
-	if (!end)
-		end = cur + strlen(cur);
-
-	tmp = g_strndup(cur, end - cur);
-	cmd = g_utf8_strdown(tmp, -1);
-	g_free(tmp);
-
-	if ((cmdent = g_hash_table_lookup(irc->cmds, cmd)) == NULL) {
-		ret = irc_cmd_default(irc, cmd, target, &cmdstr);
-		g_free(cmd);
-		return ret;
-	}
-
-	args = g_new0(char *, strlen(cmdent->format));
-	for (cur = end, fmt = cmdent->format, i = 0; fmt[i] && *cur++; i++) {
-		switch (fmt[i]) {
-		case 'v':
-			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			args[i] = g_strndup(cur, end - cur);
-			cur += end - cur;
-			break;
-		case 't':
-		case 'n':
-		case 'c':
-			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			args[i] = g_strndup(cur, end - cur);
-			cur += end - cur;
-			break;
-		case ':':
-		case '*':
-			args[i] = g_strdup(cur);
-			cur = cur + strlen(cur);
-			break;
-		default:
-			gaim_debug(GAIM_DEBUG_ERROR, "irc", "invalid command format character '%c'\n", fmt[i]);
-			break;
-		}
-	}
-	ret = (cmdent->cb)(irc, cmd, target, (const char **)args);
-	for (i = 0; i < strlen(cmdent->format); i++)
-		g_free(args[i]);
-	g_free(args);
-
-	g_free(cmd);
-	return ret;
-}
-
 static void irc_parse_error_cb(struct irc_conn *irc, char *input)
 {
 	gaim_debug(GAIM_DEBUG_WARNING, "irc", "Unrecognized string: %s\n", input);
