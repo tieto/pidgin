@@ -94,7 +94,9 @@ DLL_C_SRC =		about.c \
 			gtkdebug.c \
 			gtkft.c \
 			gtkimhtml.c \
+			gtknotify.c \
 			gtkplugin.c \
+			gtkprefs.c \
 			gtkpounce.c \
 			gtkutils.c \
 			html.c \
@@ -103,6 +105,7 @@ DLL_C_SRC =		about.c \
 			main.c \
 			md5.c \
 			multi.c \
+			notify.c \
 			plugin.c \
 			pounce.c \
 			prefs.c \
