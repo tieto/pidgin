@@ -3,7 +3,7 @@ EXTRA_DIST = PROTOCOL
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
-libtoc_la_LDFLAGS = -avoid-version
+libtoc_la_LDFLAGS = -module -avoid-version
 
 if STATIC_TOC
 

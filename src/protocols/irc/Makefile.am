@@ -3,7 +3,7 @@ EXTRA_DIST = PROTOCOL
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
-libirc_la_LDFLAGS = -avoid-version
+libirc_la_LDFLAGS = -module -avoid-version
 
 if STATIC_IRC
 

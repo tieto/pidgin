@@ -3,7 +3,7 @@ EXTRA_DIST = protocol.txt
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
-libgg_la_LDFLAGS = -avoid-version
+libgg_la_LDFLAGS = -module -avoid-version
 
 if STATIC_GG
 

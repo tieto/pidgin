@@ -4,7 +4,7 @@ EXTRA_DIST = aim.h aim_cbtypes.h aim_internal.h faimconfig.h md5.h README \
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -DAIM_BUILDDATE=\"`date +%Y%m%d`\" -DAIM_BUILDTIME=\"`date +%H%M%S`\" -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
-liboscar_la_LDFLAGS =	-avoid-version
+liboscar_la_LDFLAGS =	-module -avoid-version
 
 if STATIC_OSCAR
 

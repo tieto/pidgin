@@ -3,7 +3,7 @@ EXTRA_DIST = PROTOCOL md5.h
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
-libmsn_la_LDFLAGS = -avoid-version
+libmsn_la_LDFLAGS = -module -avoid-version
 
 if STATIC_MSN
 
