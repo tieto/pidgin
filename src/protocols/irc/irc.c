@@ -355,22 +355,21 @@ static void irc_set_away(GaimConnection *gc, const char *state, const char *msg)
 	irc_cmd_away(irc, "away", NULL, args);
 }
 
-static void irc_add_buddy(GaimConnection *gc, const char *who, GaimGroup *group)
+static void irc_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
 	struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
-	ib->name = g_strdup(who);
+	ib->name = g_strdup(buddy->name);
 	g_hash_table_insert(irc->buddies, ib->name, ib);
 
 	irc_blist_timeout(irc);
 }
 
-static void irc_remove_buddy(GaimConnection *gc, const char *who, const char *group)
+static void irc_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
-	g_hash_table_remove(irc->buddies, who);
+	g_hash_table_remove(irc->buddies, buddy->name);
 }
-
 
 static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
 {

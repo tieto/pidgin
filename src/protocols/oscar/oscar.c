@@ -4332,7 +4332,6 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 		b16 = gaim_base16_encode(iconcsum, iconcsumlen);
 		if (b16) {
 			gaim_blist_node_set_string((GaimBlistNode*)b, "icon_checksum", b16);
-			gaim_blist_save();
 			g_free(b16);
 		}
 	}
@@ -4931,7 +4930,6 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 		serv_got_alias(gc, who, utf8);
 		if ((b = gaim_find_buddy(gc->account, who))) {
 			gaim_blist_node_set_string((GaimBlistNode*)b, "servernick", utf8);
-			gaim_blist_save();
 		}
 		g_free(utf8);
 	}
@@ -5510,50 +5508,43 @@ static void oscar_warn(GaimConnection *gc, const char *name, int anon) {
 	aim_im_warn(od->sess, od->conn, name, anon ? AIM_WARN_ANON : 0);
 }
 
-static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) {
+static void oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimBuddy *b;
 
-	if (g == NULL) {
-		/* If we were called from oscar_add_buddies... */
-		b = gaim_find_buddy(gaim_connection_get_account(gc), name);
-		g = gaim_find_buddys_group(b);
-	} else
-		b = gaim_find_buddy_in_group(gaim_connection_get_account(gc), name, g);
-
-	if (!aim_snvalid(name)) {
+	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
 
 		/* Remove from local list */
-		gaim_blist_remove_buddy(b);
+		gaim_blist_remove_buddy(buddy);
 
 		return;
 	}
 
 #ifdef NOSSI
-	aim_buddylist_addbuddy(od->sess, od->conn, name);
+	aim_buddylist_addbuddy(od->sess, od->conn, buddy->name);
 #else
-	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_exists(od->sess->ssi.local, name))) {
-		if (b && g) {
+	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))) {
+		if (buddy && group) {
 			gaim_debug_info("oscar",
-					   "ssi: adding buddy %s to group %s\n", name, g->name);
-			aim_ssi_addbuddy(od->sess, b->name, g->name, gaim_get_buddy_alias_only(b), NULL, NULL, 0);
+					   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
+			aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
 		}
 	}
 #endif
 
 	if (od->icq)
-		aim_icq_getalias(od->sess, name);
+		aim_icq_getalias(od->sess, buddy->name);
 }
 
-static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
+static void oscar_add_buddies(GaimConnection *gc, GList *buddies, GList *groups) {
 	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
 	char buf[MSG_LEN];
 	int n=0;
+
 	while (buddies) {
 		if (n > MSG_LEN - 18) {
 			aim_buddylist_set(od->sess, od->conn, buf);
@@ -5564,39 +5555,53 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 	}
 	aim_buddylist_set(od->sess, od->conn, buf);
 #else
+
 	if (od->sess->ssi.received_data) {
-		while (buddies) {
-			oscar_add_buddy(gc, buddies->data, NULL);
-			buddies = buddies->next;
+		GList *curb = buddies;
+		GList *curg = groups;
+		while ((curb != NULL) && (curg != NULL)) {
+			GaimBuddy *buddy = curb->data;
+			GaimGroup *group = curg->data;
+			oscar_add_buddy(gc, buddy, group);
+			curb = curb->next;
+			curg = curg->next;
 		}
 	}
 #endif
 }
 
-static void oscar_remove_buddy(GaimConnection *gc, const char *name, const char *group) {
+static void oscar_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 	OscarData *od = (OscarData *)gc->proto_data;
+
 #ifdef NOSSI
-	aim_buddylist_removebuddy(od->sess, od->conn, name);
+	aim_buddylist_removebuddy(od->sess, od->conn, buddy->name);
 #else
 	if (od->sess->ssi.received_data) {
 		gaim_debug_info("oscar",
-				   "ssi: deleting buddy %s from group %s\n", name, group);
-		aim_ssi_delbuddy(od->sess, name, group);
+				   "ssi: deleting buddy %s from group %s\n", buddy->name, group->name);
+		aim_ssi_delbuddy(od->sess, buddy->name, group->name);
 	}
 #endif
 }
 
-static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, const char *group) {
+static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, GList *groups) {
 	OscarData *od = (OscarData *)gc->proto_data;
+
 #ifdef NOSSI
-	GList *cur;
-	for (cur=buddies; cur; cur=cur->next)
-		aim_buddylist_removebuddy(od->sess, od->conn, cur->data);
+	for (cur = buddies; cur != NULL; cur = cur->next) {
+		GaimBuddy *buddy = cur->data;
+		aim_buddylist_removebuddy(od->sess, od->conn, buddy->name);
+	}
 #else
 	if (od->sess->ssi.received_data) {
-		while (buddies) {
-			oscar_remove_buddy(gc, buddies->data, group);
-			buddies = buddies->next;
+		GList *curb = buddies;
+		GList *curg = groups;
+		while ((curb != NULL) && (curg != NULL)) {
+			GaimBuddy *buddy = curb->data;
+			GaimGroup *group = curg->data;
+			oscar_remove_buddy(gc, buddy, group);
+			curb = curb->next;
+			curg = curg->next;
 		}
 	}
 #endif
@@ -5624,19 +5629,28 @@ static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *
 	}
 }
 
-static void oscar_rename_group(GaimConnection *gc, const char *old_group, const char *new_group, GList *members) {
+static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGroup *group, GList *moved_buddies) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->sess->ssi.received_data) {
-		if (aim_ssi_itemlist_finditem(od->sess->ssi.local, new_group, NULL, AIM_SSI_TYPE_GROUP)) {
-			oscar_remove_buddies(gc, members, old_group);
-			oscar_add_buddies(gc, members);
+		if (aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, NULL, AIM_SSI_TYPE_GROUP)) {
+			GList *cur, *groups = NULL;
+
+			/* Make a list of what the groups each buddy is in */
+			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
+				GaimBlistNode *node = cur->data;
+				groups = g_list_append(groups, node->parent);
+			}
+
+			oscar_remove_buddies(gc, moved_buddies, groups);
+			oscar_add_buddies(gc, moved_buddies, groups);
+			g_list_free(groups);
 			gaim_debug_info("oscar",
-					   "ssi: moved all buddies from group %s to %s\n", old_group, new_group);
+					   "ssi: moved all buddies from group %s to %s\n", old_name, group->name);
 		} else {
-			aim_ssi_rename_group(od->sess, old_group, new_group);
+			aim_ssi_rename_group(od->sess, old_name, group->name);
 			gaim_debug_info("oscar",
-					   "ssi: renamed group %s to %s\n", old_group, new_group);
+					   "ssi: renamed group %s to %s\n", old_name, group->name);
 		}
 	}
 }
@@ -5843,7 +5857,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						}
 
 						gaim_debug_info("oscar",
-								   "ssi: adding b %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
+								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
 						gaim_blist_add_buddy(b, NULL, g, NULL);
 					}
 					if (!aim_sncmp(curitem->name, account->username)) {
@@ -6004,7 +6018,7 @@ static int gaim_ssi_parseadd(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 
 		gaim_debug_info("oscar",
-				   "ssi: adding b %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
+				   "ssi: adding buddy %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 	}
 	g_free(gname_utf8);

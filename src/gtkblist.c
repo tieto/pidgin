@@ -532,8 +532,6 @@ static void gtk_blist_menu_autojoin_cb(GtkWidget *w, GaimChat *chat)
 {
 	gaim_blist_node_set_bool((GaimBlistNode*)chat, "gtk-autojoin",
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
-
-	gaim_blist_save();
 }
 
 static void gtk_blist_menu_join_cb(GtkWidget *w, GaimChat *chat)
@@ -903,7 +901,6 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		gaim_blist_node_set_bool(node, "collapsed", FALSE);
-		gaim_blist_save();
 	}
 }
 
@@ -917,7 +914,6 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		gaim_blist_node_set_bool(node, "collapsed", TRUE);
-		gaim_blist_save();
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_gtk_blist_collapse_contact_cb(NULL, node);
 	}
@@ -1889,8 +1885,6 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 
 			gtk_tree_path_free(path);
 			gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
-
-			gaim_blist_save();
 		}
 	}
 	else if (sd->target == gdk_atom_intern("application/x-im-contact",
@@ -2333,9 +2327,11 @@ static void
 rename_group_cb(GaimGroup *g, const char *new_name)
 {
 	gaim_blist_rename_group(g, new_name);
-	gaim_blist_save();
 }
 
+/*
+ * Should disallow empty group names.
+ */
 static void
 show_rename_group(GtkWidget *unused, GaimGroup *g)
 {
@@ -3864,22 +3860,25 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 
 		b = gaim_buddy_new(data->account, who, whoalias);
 		gaim_blist_add_buddy(b, NULL, g, NULL);
-		serv_add_buddy(gaim_account_get_connection(data->account), who, g);
+		serv_add_buddy(gaim_account_get_connection(data->account), b);
 
 		/*
+		 * XXX
 		 * It really seems like it would be better if the call to serv_add_buddy()
 		 * and gaim_conversation_update() were done in blist.c, possibly in the
 		 * gaim_blist_add_buddy() function.  Maybe serv_add_buddy() should be
 		 * renamed to gaim_blist_add_new_buddy() or something, and have it call
 		 * gaim_blist_add_buddy() after it creates it.  --Mark
+		 *
+		 * No that's not good.  blist.c should only deal with adding nodes to the
+		 * local list.  We need a new, non-gtk file that calls both serv_add_buddy
+		 * and gaim_blist_add_buddy().  Or something.  --Mark
 		 */
 
 		if (c != NULL) {
 			gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
 			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
 		}
-
-		gaim_blist_save();
 	}
 
 	gtk_widget_destroy(data->window);
@@ -4056,7 +4055,6 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 	if (chat != NULL)
 	{
 		gaim_blist_add_chat(chat, group, NULL);
-		gaim_blist_save();
 	}
 
 	gtk_widget_destroy(data->window);
@@ -4335,11 +4333,10 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 static void
 add_group_cb(GaimConnection *gc, const char *group_name)
 {
-	GaimGroup *g;
+	GaimGroup *group;
 
-	g = gaim_group_new(group_name);
-	gaim_blist_add_group(g, NULL);
-	gaim_blist_save();
+	group = gaim_group_new(group_name);
+	gaim_blist_add_group(group, NULL);
 }
 
 void

@@ -1136,16 +1136,6 @@ trepia_send_im(GaimConnection *gc, const char *who, const char *message,
 }
 
 static void
-trepia_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
-{
-}
-
-static void
-trepia_rem_buddy(GaimConnection *gc, const char *who, const char *group)
-{
-}
-
-static void
 trepia_buddy_free(GaimBuddy *b)
 {
 	if (b->proto_data != NULL) {
@@ -1226,9 +1216,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,	/* set_away */
 	NULL,	/* set_idle */
 	NULL,	/* change_passwd */
-	trepia_add_buddy,
+	NULL,	/* add_buddy */
 	NULL,	/* add_buddies */
-	trepia_rem_buddy,
+	NULL,	/* rem_buddy */
 	NULL,	/* remove_buddies */
 	NULL,	/* add_permit */
 	NULL,	/* add_deny */

@@ -311,7 +311,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 	if (gc->state == GAIM_CONNECTED) {
 		GaimBlistNode *gnode,*cnode,*bnode;
 		GList *wins;
-		GList *add_buds=NULL;
+		GList *add_buds = NULL;
 		GaimAccount *account = gaim_connection_get_account(gc);
 
 		/* Set the time the account came online */
@@ -377,7 +377,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 					b = (GaimBuddy *)bnode;
 					if(b->account == gc->account) {
-						add_buds = g_list_append(add_buds, b->name);
+						add_buds = g_list_append(add_buds, b);
 					}
 				}
 			}

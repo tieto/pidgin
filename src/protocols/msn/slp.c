@@ -763,7 +763,6 @@ got_user_display(MsnSlpCall *slpcall,
 	{
 		GaimBuddy *buddy = (GaimBuddy *)sl->data;
 		gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
-		gaim_blist_save();
 	}
 }
 

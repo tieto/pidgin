@@ -220,8 +220,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	if (old_icon != NULL)
 		unlink(old_icon);
 
-	gaim_blist_node_set_string((GaimBlistNode*)buddy, "buddy_icon", filename);
-	gaim_blist_save();
+	gaim_blist_node_set_string((GaimBlistNode *)buddy, "buddy_icon", filename);
 
 	g_free(filename);
 }

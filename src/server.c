@@ -24,7 +24,6 @@
 #include "conversation.h"
 #include "debug.h"
 #include "log.h"
-#include "multi.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
@@ -41,6 +40,7 @@
 #include "ui.h"
 
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
+#define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
 static void add_idle_buddy(GaimBuddy *buddy);
 static void remove_idle_buddy(GaimBuddy *buddy);
@@ -286,15 +286,15 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	return val;
 }
 
-void serv_get_info(GaimConnection *g, const char *name)
+void serv_get_info(GaimConnection *gc, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (g && prpl_info && prpl_info->get_info)
-		prpl_info->get_info(g, name);
+	if (gc && prpl_info && prpl_info->get_info)
+		prpl_info->get_info(gc, name);
 }
 
 void serv_set_away(GaimConnection *gc, const char *state, const char *message)
@@ -354,50 +354,50 @@ void serv_set_away_all(const char *message)
 	}
 }
 
-void serv_set_info(GaimConnection *g, const char *info)
+void serv_set_info(GaimConnection *gc, const char *info)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimAccount *account;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) &&
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) &&
 		prpl_info->set_info) {
 
-		account = gaim_connection_get_account(g);
+		account = gaim_connection_get_account(gc);
 
 		if (gaim_signal_emit_return_1(gaim_accounts_get_handle(),
 									  "account-setting-info", account, info))
 			return;
 
-		prpl_info->set_info(g, info);
+		prpl_info->set_info(gc, info);
 
 		gaim_signal_emit(gaim_accounts_get_handle(),
 						 "account-set-info", account, info);
 	}
 }
 
-void serv_change_passwd(GaimConnection *g, const char *orig, const char *new)
+void serv_change_passwd(GaimConnection *gc, const char *orig, const char *new)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->change_passwd)
-		prpl_info->change_passwd(g, orig, new);
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->change_passwd)
+		prpl_info->change_passwd(gc, orig, new);
 }
 
-void serv_add_buddy(GaimConnection *g, const char *name, GaimGroup *group)
+void serv_add_buddy(GaimConnection *gc, GaimBuddy *buddy)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->add_buddy)
-		prpl_info->add_buddy(g, name, group);
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->add_buddy)
+		prpl_info->add_buddy(gc, buddy, gaim_find_buddys_group(buddy));
 }
 
 void serv_add_buddies(GaimConnection *gc, GList *buddies)
@@ -408,37 +408,77 @@ void serv_add_buddies(GaimConnection *gc, GList *buddies)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && g_list_find(gaim_connections_get_all(), gc)) {
+		GList *cur, *groups = NULL;
+
+		/* Make a list of what the groups each buddy is in */
+		for (cur = buddies; cur != NULL; cur = cur->next) {
+			GaimBlistNode *node = cur->data;
+			groups = g_list_append(groups, node->parent);
+		}
+
 		if (prpl_info->add_buddies)
-			prpl_info->add_buddies(gc, buddies);
+			prpl_info->add_buddies(gc, buddies, groups);
 		else if (prpl_info->add_buddy) {
-			while (buddies) {
-				prpl_info->add_buddy(gc, buddies->data, NULL);
-				buddies = buddies->next;
+			GList *curb = buddies;
+			GList *curg = groups;
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy(gc, curb->data, curg->data);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+
+		g_list_free(groups);
+	}
+}
+
+
+void serv_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (buddy->idle > 0)
+		remove_idle_buddy(buddy);
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->remove_buddy)
+		prpl_info->remove_buddy(gc, buddy, group);
+}
+
+void serv_remove_buddies(GaimConnection *gc, GList *buddies, GList *groups)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (!g_list_find(gaim_connections_get_all(), gc))
+		return;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc)) {
+		if (prpl_info->remove_buddies) {
+			GList *curb;
+			for (curb = buddies; curb != NULL; curb = curb->next) {
+				GaimBuddy *buddy = curb->data;
+				if (buddy->idle > 0)
+					remove_idle_buddy(buddy);
+			}
+			prpl_info->remove_buddies(gc, buddies, groups);
+		} else {
+			GList *curb = buddies;
+			GList *curg = groups;
+			while ((curb != NULL) && (curg != NULL)) {
+				serv_remove_buddy(gc, curb->data, curg->data);
+				curb = curb->next;
+				curg = curg->next;
 			}
 		}
 	}
 }
 
-
-void serv_remove_buddy(GaimConnection *g, const char *name, const char *group)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimBuddy *buddy;
-
-	buddy = gaim_find_buddy(gaim_connection_get_account(g), name);
-
-	if (buddy->idle > 0)
-		remove_idle_buddy(buddy);
-
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
-
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->remove_buddy)
-		prpl_info->remove_buddy(g, name, group);
-}
-
-void
-serv_remove_group(GaimConnection *gc, const char *name)
+void serv_remove_group(GaimConnection *gc, GaimGroup *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -448,30 +488,7 @@ serv_remove_group(GaimConnection *gc, const char *name)
 	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) &&
 		prpl_info->remove_group)
 	{
-		prpl_info->remove_group(gc, name);
-	}
-}
-
-void serv_remove_buddies(GaimConnection *gc, GList *g, const char *group)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (!g_list_find(gaim_connections_get_all(), gc))
-		return;
-
-	if (!gc->prpl)
-		return;		/* how the hell did that happen? */
-
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (prpl_info->remove_buddies)
-		prpl_info->remove_buddies(gc, g, group);
-	else {
-		while (g) {
-			serv_remove_buddy(gc, g->data, group);
-			g = g->next;
-		}
+		prpl_info->remove_group(gc, group);
 	}
 }
 
@@ -524,7 +541,8 @@ serv_got_alias(GaimConnection *gc, const char *who, const char *alias)
  * Move a buddy from one group to another on server.
  *
  * Note: For now we'll not deal with changing gc's at the same time, but
- * it should be possible.  Probably needs to be done, someday.
+ * it should be possible.  Probably needs to be done, someday.  Although,
+ * the UI for that would be difficult, because groups are Gaim-wide.
  */
 void serv_move_buddy(GaimBuddy *b, GaimGroup *og, GaimGroup *ng)
 {
@@ -543,44 +561,32 @@ void serv_move_buddy(GaimBuddy *b, GaimGroup *og, GaimGroup *ng)
 /*
  * Rename a group on server roster/list.
  */
-void serv_rename_group(GaimConnection *g, GaimGroup *old_group,
-					   const char *new_name)
+void serv_rename_group(GaimConnection *gc, const char *old_name,
+					   GaimGroup *group, GList *moved_buddies)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && old_group && new_name) {
-		GList *tobemoved = NULL;
-		GaimBlistNode *cnode, *bnode;
-
-		for(cnode = ((GaimBlistNode*)old_group)->child; cnode; cnode = cnode->next) {
-			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for(bnode = cnode->child; bnode; bnode = bnode->next) {
-				GaimBuddy *b;
-				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (GaimBuddy*)bnode;
-
-				if(b->account == g->account)
-					tobemoved = g_list_append(tobemoved, b->name);
-
-			}
-
-		}
-
+	if (prpl_info && old_name && group && strcmp(old_name, group->name)) {
 		if (prpl_info->rename_group) {
 			/* prpl's might need to check if the group already
 			 * exists or not, and handle that differently */
-			prpl_info->rename_group(g, old_group->name, new_name, tobemoved);
+			prpl_info->rename_group(gc, old_name, group, moved_buddies);
 		} else {
-			serv_remove_buddies(g, tobemoved, old_group->name);
-			serv_add_buddies(g, tobemoved);
-		}
+			GList *cur, *groups = NULL;
 
-		g_list_free(tobemoved);
+			/* Make a list of what the groups each buddy is in */
+			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
+				GaimBlistNode *node = cur->data;
+				groups = g_list_append(groups, node->parent);
+			}
+
+			serv_remove_buddies(gc, moved_buddies, groups);
+			g_list_free(groups);
+			serv_add_buddies(gc, moved_buddies);
+		}
 	}
 }
 
@@ -1148,7 +1154,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	/* store things how THEY want it... */
 	if (strcmp(name, b->name)) {
 		gaim_blist_rename_buddy(b, name);
-		gaim_blist_save();
 	}
 
 	old_idle = b->idle;

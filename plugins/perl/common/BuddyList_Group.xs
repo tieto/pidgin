@@ -53,17 +53,6 @@ OUTPUT:
 	RETVAL
 
 void
-gaim_group_set_setting(group, key, value)
-	Gaim::BuddyList::Group group
-	const char *key
-	const char *value
-
-const char *
-gaim_group_get_setting(group, key)
-	Gaim::BuddyList::Group group
-	const char *key
-
-void
 buddies(group)
 	Gaim::BuddyList::Group group
 PREINIT:

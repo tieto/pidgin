@@ -40,7 +40,6 @@
 #include "debug.h"
 #include "imgstore.h"
 #include "log.h"
-#include "multi.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"

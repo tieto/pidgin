@@ -237,12 +237,10 @@ struct _GaimPluginProtocolInfo
 	void (*set_idle)(GaimConnection *, int idletime);
 	void (*change_passwd)(GaimConnection *, const char *old_pass,
 						  const char *new_pass);
-	void (*add_buddy)(GaimConnection *, const char *name, GaimGroup *group);
-	void (*add_buddies)(GaimConnection *, GList *buddies);
-	void (*remove_buddy)(GaimConnection *, const char *name,
-						const char *group);
-	void (*remove_buddies)(GaimConnection *, GList *buddies,
-						   const char *group);
+	void (*add_buddy)(GaimConnection *, GaimBuddy *buddy, GaimGroup *group);
+	void (*add_buddies)(GaimConnection *, GList *buddies, GList *groups);
+	void (*remove_buddy)(GaimConnection *, GaimBuddy *buddy, GaimGroup *group);
+	void (*remove_buddies)(GaimConnection *, GList *buddies, GList *groups);
 	void (*add_permit)(GaimConnection *, const char *name);
 	void (*add_deny)(GaimConnection *, const char *name);
 	void (*rem_permit)(GaimConnection *, const char *name);
@@ -275,8 +273,8 @@ struct _GaimPluginProtocolInfo
 						const char *old_group, const char *new_group);
 
 	/* rename a group on a server list/roster */
-	void (*rename_group)(GaimConnection *, const char *old_group,
-						 const char *new_group, GList *members);
+	void (*rename_group)(GaimConnection *, const char *old_name,
+						 GaimGroup *group, GList *moved_buddies);
 
 	void (*buddy_free)(GaimBuddy *);
 
@@ -286,7 +284,7 @@ struct _GaimPluginProtocolInfo
 
 	void (*set_buddy_icon)(GaimConnection *, const char *filename);
 
-	void (*remove_group)(GaimConnection *gc, const char *group);
+	void (*remove_group)(GaimConnection *gc, GaimGroup *group);
 
 	char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who);
 

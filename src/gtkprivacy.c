@@ -244,7 +244,6 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 
 	dialog->account->perm_deny = new_type;
 	serv_set_permit_deny(gaim_account_get_connection(dialog->account));
-	gaim_blist_save();
 
 	gtk_widget_hide(dialog->allow_widget);
 	gtk_widget_hide(dialog->block_widget);

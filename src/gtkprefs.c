@@ -32,7 +32,6 @@
 #include "prpl.h"
 #include "sound.h"
 #include "util.h"
-#include "multi.h"
 #include "network.h"
 
 #include "gtkblist.h"

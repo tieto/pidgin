@@ -22,8 +22,6 @@
 #include "gtkinternal.h"
 
 #include "debug.h"
-#include "log.h"
-#include "multi.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
@@ -31,13 +29,10 @@
 #include "status.h"
 #include "util.h"
 
-#include "gtkblist.h"
-#include "gtkconv.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
-#include "gtkprefs.h"
-#include "gtkutils.h"
 #include "gtklog.h"
+#include "gtkutils.h"
 #include "stock.h"
 
 #include "ui.h"
@@ -200,107 +195,106 @@ static void
 do_remove_chat(GaimChat *chat)
 {
 	gaim_blist_remove_chat(chat);
-	gaim_blist_save();
 }
 
 static void
-do_remove_buddy(GaimBuddy *b)
+do_remove_buddy(GaimBuddy *buddy)
 {
-	GaimGroup *g;
-	GaimConversation *c;
+	GaimGroup *group;
+	GaimConversation *conv;
 	gchar *name;
 	GaimAccount *account;
 
-	if (!b)
+	if (!buddy)
 		return;
 
-	g = gaim_find_buddys_group(b);
-	name = g_strdup(b->name); /* b->name is a crasher after remove_buddy */
-	account = b->account;
+	group = gaim_find_buddys_group(buddy);
+	name = g_strdup(buddy->name); /* b->name is a crasher after remove_buddy */
+	account = buddy->account;
 
 	gaim_debug(GAIM_DEBUG_INFO, "blist",
-			   "Removing '%s' from buddy list.\n", b->name);
-	serv_remove_buddy(b->account->gc, name, g->name);
-	gaim_blist_remove_buddy(b);
-	gaim_blist_save();
+			   "Removing '%s' from buddy list.\n", buddy->name);
+	/* XXX - Should remove from blist first... then call serv_remove_buddy()? */
+	serv_remove_buddy(buddy->account->gc, buddy, group);
+	gaim_blist_remove_buddy(buddy);
 
-	c = gaim_find_conversation_with_account(name, account);
+	conv = gaim_find_conversation_with_account(name, account);
 
-	if (c != NULL)
-		gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+	if (conv != NULL)
+		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
 
 	g_free(name);
 }
 
-static void do_remove_contact(GaimContact *c)
+static void do_remove_contact(GaimContact *contact)
 {
 	GaimBlistNode *bnode, *cnode;
-	GaimGroup *g;
+	GaimGroup *group;
 
-	if(!c)
+	if (!contact)
 		return;
 
-	cnode = (GaimBlistNode *)c;
-	g = (GaimGroup*)cnode->parent;
-	for(bnode = cnode->child; bnode; bnode = bnode->next) {
-		GaimBuddy *b = (GaimBuddy*)bnode;
-		if(b->account->gc)
-			serv_remove_buddy(b->account->gc, b->name, g->name);
+	cnode = (GaimBlistNode *)contact;
+	group = (GaimGroup*)cnode->parent;
+	for (bnode = cnode->child; bnode; bnode = bnode->next) {
+		GaimBuddy *buddy = (GaimBuddy*)bnode;
+		if (gaim_account_is_connected(buddy->account))
+			serv_remove_buddy(buddy->account->gc, buddy, group);
 	}
-	gaim_blist_remove_contact(c);
+	gaim_blist_remove_contact(contact);
 }
 
-void do_remove_group(GaimGroup *g)
+void do_remove_group(GaimGroup *group)
 {
 	GaimBlistNode *cnode, *bnode;
 
-	cnode = ((GaimBlistNode*)g)->child;
+	cnode = ((GaimBlistNode*)group)->child;
 
-	while(cnode) {
-		if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+	while (cnode) {
+		if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
 			bnode = cnode->child;
 			cnode = cnode->next;
-			while(bnode) {
-				GaimBuddy *b;
-				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-					GaimConversation *c;
-                                        b = (GaimBuddy*)bnode;
+			while (bnode) {
+				GaimBuddy *buddy;
+				if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+					GaimConversation *conv;
+					buddy = (GaimBuddy*)bnode;
 					bnode = bnode->next;
-					c = gaim_find_conversation_with_account(b->name, b->account);
-					if(gaim_account_is_connected(b->account)) {
-						serv_remove_buddy(b->account->gc, b->name, g->name);
-						gaim_blist_remove_buddy(b);
-						if(c)
-							gaim_conversation_update(c,
+					conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
+					if (gaim_account_is_connected(buddy->account)) {
+						serv_remove_buddy(buddy->account->gc, buddy, group);
+						gaim_blist_remove_buddy(buddy);
+						if (conv)
+							gaim_conversation_update(conv,
 									GAIM_CONV_UPDATE_REMOVE);
 					}
 				} else {
 					bnode = bnode->next;
 				}
 			}
-		} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+		} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
 			GaimChat *chat = (GaimChat *)cnode;
 			cnode = cnode->next;
-			if(gaim_account_is_connected(chat->account))
+			if (gaim_account_is_connected(chat->account))
 				gaim_blist_remove_chat(chat);
 		} else {
 			cnode = cnode->next;
 		}
 	}
 
-	gaim_blist_remove_group(g);
-	gaim_blist_save();
+	gaim_blist_remove_group(group);
 }
 
-void show_confirm_del(GaimBuddy *b)
+void show_confirm_del(GaimBuddy *buddy)
 {
 	char *text;
-	if (!b)
+
+	if (!buddy)
 		return;
 
-	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"), b->name);
+	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"), buddy->name);
 
-	gaim_request_action(NULL, NULL, _("Remove Buddy"), text, -1, b, 2,
+	gaim_request_action(NULL, NULL, _("Remove Buddy"), text, -1, buddy, 2,
 						_("Remove Buddy"), G_CALLBACK(do_remove_buddy),
 						_("Cancel"), NULL);
 
@@ -320,33 +314,33 @@ void show_confirm_del_blist_chat(GaimChat *chat)
 	g_free(text);
 }
 
-void show_confirm_del_group(GaimGroup *g)
+void show_confirm_del_group(GaimGroup *group)
 {
 	char *text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
-			       g->name);
+			       group->name);
 
-	gaim_request_action(NULL, NULL, _("Remove Group"), text, -1, g, 2,
+	gaim_request_action(NULL, NULL, _("Remove Group"), text, -1, group, 2,
 						_("Remove Group"), G_CALLBACK(do_remove_group),
 						_("Cancel"), NULL);
 
 	g_free(text);
 }
 
-void show_confirm_del_contact(GaimContact *c)
+void show_confirm_del_contact(GaimContact *contact)
 {
-	GaimBuddy *b = gaim_contact_get_priority_buddy(c);
+	GaimBuddy *buddy = gaim_contact_get_priority_buddy(contact);
 
-	if(!b)
+	if (!buddy)
 		return;
 
-	if(((GaimBlistNode*)c)->child == (GaimBlistNode*)b &&
-			!((GaimBlistNode*)b)->next) {
-		show_confirm_del(b);
+	if (((GaimBlistNode*)contact)->child == (GaimBlistNode*)buddy &&
+			!((GaimBlistNode*)buddy)->next) {
+		show_confirm_del(buddy);
 	} else {
 		char *text = g_strdup_printf(_("You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"),
-			       b->name, c->totalsize - 1);
+			       buddy->name, contact->totalsize - 1);
 
-		gaim_request_action(NULL, NULL, _("Remove Contact"), text, -1, c, 2,
+		gaim_request_action(NULL, NULL, _("Remove Contact"), text, -1, contact, 2,
 				_("Remove Contact"), G_CALLBACK(do_remove_contact),
 				_("Cancel"), NULL);
 
@@ -359,11 +353,8 @@ static gboolean show_ee_dialog(const char *ee)
 	GtkWidget *window;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GaimGtkBuddyList *gtkblist;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_COOL, GTK_ICON_SIZE_DIALOG);
 	gchar *norm = gaim_strreplace(ee, "rocksmyworld", "");
-
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	label = gtk_label_new(NULL);
 	if (!strcmp(norm, "zilding"))
@@ -398,7 +389,7 @@ static gboolean show_ee_dialog(const char *ee)
 	if (strlen(gtk_label_get_label(GTK_LABEL(label))) <= 0)
 		return FALSE;
 
-	window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, GTK_WINDOW(gtkblist->window), 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
 
@@ -805,7 +796,6 @@ static void
 alias_chat_cb(GaimChat *chat, const char *new_alias)
 {
 	gaim_blist_alias_chat(chat, new_alias);
-	gaim_blist_save();
 }
 
 void
@@ -822,7 +812,6 @@ static void
 alias_contact_cb(GaimContact *contact, const char *new_alias)
 {
 	gaim_contact_set_alias(contact, new_alias);
-	gaim_blist_save();
 }
 
 void
@@ -840,7 +829,6 @@ alias_buddy_cb(GaimBuddy *buddy, const char *alias)
 {
 	gaim_blist_alias_buddy(buddy, (alias != NULL && *alias != '\0') ? alias : NULL);
 	serv_alias_buddy(buddy);
-	gaim_blist_save();
 }
 
 void

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9806 2004-05-23 17:27:45Z thekingant $
+ * $Id: gg.c 10088 2004-06-15 02:37:27Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -326,7 +326,6 @@ static void agg_load_buddy_list(GaimConnection *gc, char *buddylist)
 			}
 			b = gaim_buddy_new(gc->account, name, strlen(show) ? show : NULL);
 			gaim_blist_add_buddy(b,NULL,g,NULL);
-			gaim_blist_save();
 
 			userlist_size++;
 			userlist = g_renew(uin_t, userlist, userlist_size);
@@ -346,12 +345,12 @@ static void agg_load_buddy_list(GaimConnection *gc, char *buddylist)
 	}
 }
 
-static void agg_save_buddy_list (GaimConnection *gc, char *existlist)
+static void agg_save_buddy_list(GaimConnection *gc, char *existlist)
 {
+    struct agg_data *gd = (struct agg_data *)gc->proto_data;
     GaimBlistNode *gnode, *cnode, *bnode;
     char *buddylist = g_strdup(existlist ? existlist : "");
     char *ptr;
-    struct agg_data *gd = (struct agg_data *)gc->proto_data;
 
     for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		GaimGroup *g = (GaimGroup *)gnode;
@@ -781,38 +780,39 @@ static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, Gai
 	return 1;
 }
 
-static void agg_add_buddy(GaimConnection *gc, const char *who, GaimGroup *group)
+static void agg_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
-	if (invalid_uin(who))
+	if (invalid_uin(buddy->name))
 		return;
-	gg_add_notify(gd->sess, strtol(who, (char **)NULL, 10));
+	gg_add_notify(gd->sess, strtol(buddy->name, (char **)NULL, 10));
 	agg_save_buddy_list(gc, NULL);
 }
 
-static void agg_rem_buddy(GaimConnection *gc, const char *who, const char *group)
+static void agg_rem_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
-	if (invalid_uin(who))
+	if (invalid_uin(buddy->name))
 		return;
-	gg_remove_notify(gd->sess, strtol(who, (char **)NULL, 10));
+	gg_remove_notify(gd->sess, strtol(buddy->name, (char **)NULL, 10));
 	agg_save_buddy_list(gc, NULL);
 }
 
-static void agg_add_buddies(GaimConnection *gc, GList *whos)
+static void agg_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	uin_t *userlist = NULL;
 	int userlist_size = 0;
 
-	while (whos) {
-		if (!invalid_uin(whos->data)) {
+	while (buddies) {
+		GaimBuddy *buddy = buddies->data;
+		if (!invalid_uin(buddy->name)) {
 			userlist_size++;
 			userlist = g_renew(uin_t, userlist, userlist_size);
 			userlist[userlist_size - 1] =
-			    (uin_t) strtol((char *)whos->data, (char **)NULL, 10);
+			    (uin_t) strtol(buddy->name, (char **)NULL, 10);
 		}
-		whos = g_list_next(whos);
+		buddies = g_list_next(buddies);
 	}
 
 	if (userlist) {
@@ -844,6 +844,7 @@ static void search_results(GaimConnection *gc, gchar *webdata)
 	j = 0;
 
 	/* Parse array */
+	/* XXX - Make this use a GString */
 	for (i = 0; webdata_tbl[i] != NULL; i++) {
 		gchar *p, *oldibuf;
 		static gchar *ibuf;
@@ -1519,8 +1520,8 @@ static void agg_group_buddy (GaimConnection *gc, const char *who,
     g_free(newdata);
 }
 
-static void agg_rename_group (GaimConnection *gc, const char *old_group,
-		     const char *new_group, GList *members)
+static void agg_rename_group (GaimConnection *gc, const char *old_name,
+		     GaimGroup *group, GList *moved_buddies)
 {
     agg_save_buddy_list(gc, NULL);
 }

@@ -26,21 +26,6 @@ CODE:
 OUTPUT:
 	RETVAL
 
-void
-gaim_chat_set_setting(chat, key, value)
-	Gaim::BuddyList::Chat chat
-	const char *key
-	const char *value
-
-const char *
-gaim_chat_get_setting(chat, key)
-	Gaim::BuddyList::Chat chat
-	const char *key
-CODE:
-	RETVAL = gaim_chat_get_setting(chat, key);
-OUTPUT:
-	RETVAL
-
 Gaim::Account
 get_account(chat)
 	Gaim::BuddyList::Chat chat

@@ -28,15 +28,15 @@ void jabber_roster_request(JabberStream *js);
 
 void jabber_roster_parse(JabberStream *js, xmlnode *packet);
 
-void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
-		GaimGroup *grp);
+void jabber_roster_add_buddy(GaimConnection *gc, GaimBuddy *buddy,
+		GaimGroup *group);
 void jabber_roster_alias_change(GaimConnection *gc, const char *name,
 		const char *alias);
 void jabber_roster_group_change(GaimConnection *gc, const char *name,
 		const char *old_group, const char *new_group);
-void jabber_roster_group_rename(GaimConnection *gc, const char *old_group,
-		const char *new_group, GList *members);
-void jabber_roster_remove_buddy(GaimConnection *gc, const char *name,
-		const char *group);
+void jabber_roster_group_rename(GaimConnection *gc, const char *old_name,
+		GaimGroup *group, GList *moved_buddies);
+void jabber_roster_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
+		GaimGroup *group);
 
 #endif /* _GAIM_JABBER_ROSTER_H_ */

@@ -376,18 +376,19 @@ static void icq_keepalive(struct gaim_connection *gc) {
 	icq_KeepAlive(id->link);
 }
 
-static void icq_add_buddy(struct gaim_connection *gc, const char *who) {
+static void icq_add_buddy(struct gaim_connection *gc, GaimBuddy *buddy) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
-	icq_ContactAdd(id->link, atol(who));
-	icq_ContactSetVis(id->link, atol(who), TRUE);
+	icq_ContactAdd(id->link, atol(buddy->name));
+	icq_ContactSetVis(id->link, atol(buddy->name), TRUE);
 }
 
-static void icq_add_buddies(struct gaim_connection *gc, GList *whos) {
+static void icq_add_buddies(struct gaim_connection *gc, GList *buddies) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
-	while (whos) {
-		icq_ContactAdd(id->link, atol(whos->data));
-		icq_ContactSetVis(id->link, atol(whos->data), TRUE);
-		whos = whos->next;
+	while (buddies) {
+		Gaimbuddy *buddy = buddies->data;
+		icq_ContactAdd(id->link, atol(buddy->name));
+		icq_ContactSetVis(id->link, atol(buddy->name), TRUE);
+		buddies = buddies->next;
 	}
 }
 

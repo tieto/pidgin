@@ -802,7 +802,7 @@ msn_set_idle(GaimConnection *gc, int idle)
 }
 
 static void
-msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
+msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	MsnSession *session;
 	MsnUserList *userlist;
@@ -810,7 +810,7 @@ msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 
 	session = gc->proto_data;
 	userlist = session->userlist;
-	who = msn_normalize(gc->account, name);
+	who = msn_normalize(gc->account, buddy->name);
 
 	if (group != NULL)
 		gaim_debug_info("msn", "msn_add_buddy: %s, %s\n", who, group->name);
@@ -823,17 +823,18 @@ msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 	{
 		gaim_debug_info("msn", "Too many buddies\n");
 		/* Buddy list full */
-		/* TODO: gaim should be notifyied of this */
+		/* TODO: gaim should be notified of this */
 		return;
 	}
 #endif
 
+	/* XXX - Would group ever be NULL here?  I don't think so... */
 	msn_userlist_add_buddy(userlist, who, MSN_LIST_FL,
 						   group ? group->name : NULL);
 }
 
 static void
-msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
+msn_rem_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	MsnSession *session;
 	MsnUserList *userlist;
@@ -841,7 +842,8 @@ msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
 	session = gc->proto_data;
 	userlist = session->userlist;
 
-	msn_userlist_rem_buddy(userlist, who, MSN_LIST_FL, group_name);
+	/* XXX - Does buddy->name need to be msn_normalize'd here?  --KingAnt */
+	msn_userlist_rem_buddy(userlist, buddy->name, MSN_LIST_FL, group->name);
 }
 
 static void
@@ -1037,8 +1039,8 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 }
 
 static void
-msn_rename_group(GaimConnection *gc, const char *old_group_name,
-				 const char *new_group_name, GList *members)
+msn_rename_group(GaimConnection *gc, const char *old_name,
+				 GaimGroup *group, GList *moved_buddies)
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
@@ -1047,9 +1049,9 @@ msn_rename_group(GaimConnection *gc, const char *old_group_name,
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
-	enc_new_group_name = gaim_url_encode(new_group_name);
+	enc_new_group_name = gaim_url_encode(group->name);
 
-	old_gid = msn_userlist_find_group_id(session->userlist, old_group_name);
+	old_gid = msn_userlist_find_group_id(session->userlist, old_name);
 
 	if (old_gid >= 0)
 	{
@@ -1112,7 +1114,7 @@ msn_set_buddy_icon(GaimConnection *gc, const char *filename)
 }
 
 static void
-msn_remove_group(GaimConnection *gc, const char *name)
+msn_remove_group(GaimConnection *gc, GaimGroup *group)
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
@@ -1121,7 +1123,7 @@ msn_remove_group(GaimConnection *gc, const char *name)
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
-	if ((group_id = msn_userlist_find_group_id(session->userlist, name)) >= 0)
+	if ((group_id = msn_userlist_find_group_id(session->userlist, group->name)) >= 0)
 	{
 		msn_cmdproc_send(cmdproc, "RMG", "%d", group_id);
 	}

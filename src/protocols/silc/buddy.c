@@ -1322,41 +1322,15 @@ silcgaim_add_buddy_i(GaimConnection *gc, GaimBuddy *b, gboolean init)
 	silc_buffer_free(attrs);
 }
 
-void silcgaim_add_buddy(GaimConnection *gc, const char *name, GaimGroup *grp)
+void silcgaim_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
-	GaimBuddy *b;
-
-	b = gaim_find_buddy_in_group(gc->account, name, grp);
-	if (!b)
-	  return;
-
-	silcgaim_add_buddy_i(gc, b, FALSE);
+	silcgaim_add_buddy_i(gc, buddy, FALSE);
 }
 
-void silcgaim_add_buddies(GaimConnection *gc, GList *buddies)
+void silcgaim_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
+			   GaimGroup *group)
 {
-	while (buddies) {
-		GaimBuddy *b;
-		b = gaim_find_buddy(gc->account, buddies->data);
-		if (!b)
-			continue;
-		silcgaim_add_buddy_i(gc, b, TRUE);
-		buddies = buddies->next;
-	}
-}
-
-void silcgaim_remove_buddy(GaimConnection *gc, const char *name,
-			   const char *group)
-{
-	GaimBuddy *b;
-	GaimGroup *g;
-
-	g = gaim_find_group(group);
-	b = gaim_find_buddy_in_group(gc->account, name, g);
-	if (!b)
-		return;
-
-	silc_free(b->proto_data);
+	silc_free(buddy->proto_data);
 }
 
 void silcgaim_idle_set(GaimConnection *gc, int idle)

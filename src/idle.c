@@ -36,7 +36,6 @@
 #include "connection.h"
 #include "debug.h"
 #include "log.h"
-#include "multi.h"
 #include "prefs.h"
 #include "prpl.h"
 #include "signals.h"

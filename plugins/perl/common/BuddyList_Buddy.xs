@@ -94,14 +94,3 @@ CODE:
 	RETVAL = gaim_find_buddys_group(buddy);
 OUTPUT:
 	RETVAL
-
-void
-gaim_buddy_set_setting(buddy, key, value)
-	Gaim::BuddyList::Buddy buddy
-	const char *key
-	const char *value
-
-const char *
-gaim_buddy_get_setting(buddy, key)
-	Gaim::BuddyList::Buddy buddy
-	const char *key

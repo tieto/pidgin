@@ -1482,7 +1482,6 @@ gaim_accounts_delete(GaimAccount *account)
 			}
 		}
 	}
-	gaim_blist_save();
 
 	/* Remove this account's pounces */
 	gaim_pounce_destroy_all_by_account(account);

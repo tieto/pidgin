@@ -141,24 +141,25 @@ static int nap_send_im(GaimConnection *gc, const char *who, const char *message,
 }
 
 /* 207 - MSG_CLIENT_ADD_HOTLIST */
-static void nap_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
+static void nap_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
-	nap_write_packet(gc, 207, "%s", name);
+	nap_write_packet(gc, 207, "%s", buddy->name);
 }
 
 /* 208 - MSG_CLIENT_ADD_HOTLIST_SEQ */
-static void nap_add_buddies(GaimConnection *gc, GList *buddies)
+static void nap_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
 {
 	while (buddies) {
-		nap_write_packet(gc, 208, "%s", (char *)buddies->data);
-		buddies = buddies -> next;
+		GaimBuddy *buddy = buddies->data;
+		nap_write_packet(gc, 208, "%s", buddy->name);
+		buddies = buddies->next;
 	}
 }
 
 /* 303 - MSG_CLIENT_REMOVE_HOTLIST */
-static void nap_remove_buddy(GaimConnection *gc, const char *name, const char *group)
+static void nap_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
-	nap_write_packet(gc, 303, "%s", name);
+	nap_write_packet(gc, 303, "%s", buddy->name);
 }
 
 /* 400 - MSG_CLIENT_JOIN */

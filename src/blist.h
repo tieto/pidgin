@@ -569,7 +569,7 @@ GaimBuddy *gaim_find_buddy_in_group(GaimAccount *account, const char *name,
 		GaimGroup *group);
 
 /**
- * Finds all buddies struct given a screenname and an account
+ * Finds all GaimBuddy structs given a screenname and an account
  *
  * @param name    The buddy's screenname
  * @param account The account this buddy belongs to
@@ -677,9 +677,10 @@ int gaim_blist_get_group_online_count(GaimGroup *group);
 
 /*@{*/
 /**
- * Saves the buddy list to file
+ * Force an immediate write of the buddy list.  Normally the buddy list is
+ * saved automatically a few seconds after a change is made.
  */
-void gaim_blist_save();
+void gaim_blist_sync();
 
 /**
  * Parses the toc-style buddy list used in older versions of Gaim and for SSI in toc.c
@@ -789,79 +790,6 @@ const char *gaim_blist_node_get_string(GaimBlistNode *node, const char *key);
  * @param key   The name of the setting
  */
 void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key);
-
-/**
- * Associates some data with the group in the xml buddy list
- *
- * @param g      The group the data is associated with
- * @param key    The key used to retrieve the data
- * @param value  The data to set
- * @deprecated   Replaced by gaim_blist_node_set_bool(), gaim_blist_node_set_int()
- * 		 and gaim_blist_node_set_string() to enable types and consolidate functionality.
- * 		 This function is scheduled to be removed in the near future.
- */
-void gaim_group_set_setting(GaimGroup *g, const char *key, const char *value);
-
-/**
- * Retrieves data from the XML buddy list set by gaim_group_set_setting())
- *
- * @param g      The group to retrieve data from
- * @param key    The key to retrieve the data with
- * @return       The associated data or NULL if no data is associated
- * @deprecated   Replaced by gaim_blist_node_get_bool(), gaim_blist_node_get_int()
- * 		 and gaim_blist_node_get_string() to enable types and consolidate functionality.
- * 		 This function is scheduled to be removed in the near future.
- */
-const char *gaim_group_get_setting(GaimGroup *g, const char *key);
-
-/**
- * Associates some data with the chat in the xml buddy list
- *
- * @param c      The chat the data is associated with
- * @param key    The key used to retrieve the data
- * @param value  The data to set
- * @deprecated   Replaced by gaim_blist_node_set_bool(), gaim_blist_node_set_int()
- * 		 and gaim_blist_node_set_string() to enable types and consolidate functionality.
- * 		 This function is scheduled to be removed in the near future.
- */
-void gaim_chat_set_setting(GaimChat *c, const char *key, const char *value);
-
-/**
- * Retrieves data from the XML buddy list set by gaim_chat_set_setting())
- *
- * @param c      The chat to retrieve data from
- * @param key    The key to retrieve the data with
- *
- * @return       The associated data or NULL if no data is associated
- * @deprecated   Replaced by gaim_blist_node_get_bool(), gaim_blist_node_get_int()
- * 		 and gaim_blist_node_get_string() to enable types and consolidate functionality.
- * 		 This function is scheduled to be removed in the near future.
- */
-const char *gaim_chat_get_setting(GaimChat *c, const char *key);
-
-/**
- * Associates some data with the buddy in the xml buddy list
- *
- * @param b      The buddy the data is associated with
- * @param key    The key used to retrieve the data
- * @param value  The data to set
- * @deprecated   Replaced by gaim_blist_node_set_bool(), gaim_blist_node_set_int()
- * 		 and gaim_blist_node_set_string() to enable types and consolidate functionality.
- * 		 This function is scheduled to be removed in the near future.
- */
-void gaim_buddy_set_setting(GaimBuddy *b, const char *key, const char *value);
-
-/**
- * Retrieves data from the XML buddy list set by gaim_buddy_set_setting())
- *
- * @param b      The buddy to retrieve data from
- * @param key    The key to retrieve the data with
- * @return       The associated data or NULL if no data is associated
- * @deprecated   Replaced by gaim_blist_node_get_bool(), gaim_blist_node_get_int()
- * 		 and gaim_blist_node_get_string() to enable types and consolidate functionality.
- * 		 This function is scheduled to be removed in the near future.
- */
-const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
 
 /*@}*/
 

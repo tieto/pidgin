@@ -630,7 +630,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				serv_got_alias(js->gc, from, text);
 				if(b) {
 					gaim_blist_node_set_string((GaimBlistNode*)b, "servernick", text);
-					gaim_blist_save();
 				}
 				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 						_("Nickname"), text);

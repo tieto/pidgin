@@ -567,9 +567,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	struct signon so;
 	char buf[8 * 1024], *c;
 	char snd[BUF_LEN * 2];
-
 	const char *username = gaim_account_get_username(account);
 	char *password;
+	GaimBuddy *buddy;
 
 	/* there's data waiting to be read, so read it. */
 	if (wait_reply(gc, buf, 8 * 1024) <= 0) {
@@ -647,7 +647,10 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		 * Add me to my buddy list so that we know the time when
 		 * the server thinks I signed on.
 		 */
-		serv_add_buddy(gc, username, NULL);
+		buddy = gaim_buddy_new(account, username, NULL);
+		/* XXX - Pick a group to add to */
+		/* gaim_blist_add(buddy, NULL, g, NULL); */
+		serv_add_buddy(gc, buddy);
 
 		/* Client sends TOC toc_init_done message */
 		gaim_debug(GAIM_DEBUG_INFO, "toc",
@@ -1185,52 +1188,56 @@ static void toc_change_passwd(GaimConnection *g, const char *orig, const char *n
 }
 
 static void
-toc_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
+toc_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", gaim_normalize(gc->account, name));
+	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", gaim_normalize(gc->account, buddy->name));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
 
-static void toc_add_buddies(GaimConnection *gc, GList *buddies)
+static void toc_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
 {
 	char buf[BUF_LEN * 2];
 	int n;
+	GList *cur;
 
 	n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
-	while (buddies) {
-		if (strlen(gaim_normalize(gc->account, buddies->data)) + n + 32 > MSG_LEN) {
+	for (cur = buddies; cur != NULL; cur = cur->next) {
+		GaimBuddy *buddy = cur->data;
+
+		if (strlen(gaim_normalize(gc->account, buddy->name)) + n + 32 > MSG_LEN) {
 			sflap_send(gc, buf, -1, TYPE_DATA);
 			n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(gc->account, buddies->data));
-		buddies = buddies->next;
+		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(gc->account, buddy->name));
 	}
 	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
-static void toc_remove_buddy(GaimConnection *gc, const char *name, const char *group)
+static void toc_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", gaim_normalize(gc->account, name));
+	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", gaim_normalize(gc->account, buddy->name));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
 
-static void toc_remove_buddies(GaimConnection *gc, GList *buddies, const char *group)
+static void toc_remove_buddies(GaimConnection *gc, GList *buddies, GList *groups)
 {
 	char buf[BUF_LEN * 2];
 	int n;
+	GList *cur;
 
 	n = g_snprintf(buf, sizeof(buf), "toc_remove_buddy");
-	while (buddies) {
-		if (strlen(gaim_normalize(gc->account, buddies->data)) + n + 32 > MSG_LEN) {
+	for (cur = buddies; cur != NULL; cur = cur->next) {
+		GaimBuddy *buddy = cur->data;
+
+		if (strlen(gaim_normalize(gc->account, buddy->name)) + n + 32 > MSG_LEN) {
 			sflap_send(gc, buf, -1, TYPE_DATA);
 			n = g_snprintf(buf, sizeof(buf), "toc_remove_buddy");
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(gc->account, buddies->data));
-		buddies = buddies->next;
+		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(gc->account, buddy->name));
 	}
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	toc_set_config(gc);

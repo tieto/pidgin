@@ -2430,15 +2430,15 @@ novell_chat_send(GaimConnection * gc, int id, const char *text)
 }
 
 static void
-novell_add_buddy(GaimConnection * gc, const char *name, GaimGroup * group)
+novell_add_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup * group)
 {
-	GaimBuddy *buddy;
 	NMFolder *folder = NULL;
 	NMContact *contact;
 	NMUser *user;
 	NMERR_T rc = NM_OK;
+	const char *alias;
 
-	if (gc == NULL || name == NULL || group == NULL)
+	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
 	user = (NMUser *) gc->proto_data;
@@ -2446,21 +2446,17 @@ novell_add_buddy(GaimConnection * gc, const char *name, GaimGroup * group)
 		return;
 
 	contact = nm_create_contact();
-	nm_contact_set_dn(contact, name);
+	nm_contact_set_dn(contact, buddy->name);
 
 	/* Remove the GaimBuddy (we will add it back after adding it
 	 * to the server side list). Save the alias if there is one.
 	 */
-	buddy = gaim_find_buddy_in_group(user->client_data, name, group);
-	if (buddy) {
-		const char *alias = gaim_get_buddy_alias(buddy);
+	alias = gaim_get_buddy_alias(buddy);
+	if (alias && strcmp(alias, buddy->name))
+		nm_contact_set_display_name(contact, alias);
 
-		if (alias && strcmp(alias, name))
-			nm_contact_set_display_name(contact, gaim_get_buddy_alias(buddy));
-		gaim_blist_remove_buddy(buddy);
-		buddy = NULL;
-	}
-
+	gaim_blist_remove_buddy(buddy);
+	buddy = NULL;
 
 	folder = nm_find_folder(user, group->name);
 	if (folder) {
@@ -2481,7 +2477,7 @@ novell_add_buddy(GaimConnection * gc, const char *name, GaimGroup * group)
 }
 
 static void
-novell_remove_buddy(GaimConnection * gc, const char *name, const char *group_name)
+novell_remove_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	NMContact *contact;
 	NMFolder *folder;
@@ -2489,13 +2485,13 @@ novell_remove_buddy(GaimConnection * gc, const char *name, const char *group_nam
 	const char *dn;
 	NMERR_T rc = NM_OK;
 
-	if (gc == NULL || name == NULL || group_name == NULL)
+	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
 	user = (NMUser *) gc->proto_data;
-	if (user && (dn = nm_lookup_dn(user, name))) {
+	if (user && (dn = nm_lookup_dn(user, buddy->name))) {
 
-		folder = nm_find_folder(user, group_name);
+		folder = nm_find_folder(user, group->name);
 		if (folder) {
 			contact = nm_folder_find_contact(folder, dn);
 			if (contact) {
@@ -2513,17 +2509,17 @@ novell_remove_buddy(GaimConnection * gc, const char *name, const char *group_nam
 }
 
 static void
-novell_remove_group(GaimConnection * gc, const char *name)
+novell_remove_group(GaimConnection * gc, GaimGroup *group)
 {
 	NMUser *user;
 	NMERR_T rc = NM_OK;
 
-	if (gc == NULL || name == NULL)
+	if (gc == NULL || group == NULL)
 		return;
 
 	user = (NMUser *) gc->proto_data;
 	if (user) {
-		NMFolder *folder = nm_find_folder(user, name);
+		NMFolder *folder = nm_find_folder(user, group->name);
 
 		if (folder) {
 			rc = nm_send_remove_folder(user, folder,
@@ -2632,21 +2628,21 @@ novell_group_buddy(GaimConnection * gc,
 
 static void
 novell_rename_group(GaimConnection * gc, const char *old_name,
-					const char *new_name, GList * tobemoved)
+					GaimGroup *group, GList *moved_buddies)
 {
 	NMERR_T rc = NM_OK;
 	NMFolder *folder;
 	NMUser *user;
 
-	if (gc == NULL || old_name == NULL || new_name == NULL || tobemoved == NULL) {
+	if (gc == NULL || old_name == NULL || group == NULL || moved_buddies == NULL) {
 		return;
 	}
 
 	user = gc->proto_data;
 	if (user) {
 		/* Does new folder exist already? */
-		if (nm_find_folder(user, new_name)) {
-			/* Gaim currently calls novell_group_buddy() for
+		if (nm_find_folder(user, group->name)) {
+			/* Gaim currently calls novell_group_buddy()
 			 * for all buddies in the group, so we don't
 			 * need to worry about this situation.
 			 */
@@ -2656,7 +2652,7 @@ novell_rename_group(GaimConnection * gc, const char *old_name,
 		folder = nm_find_folder(user, old_name);
 
 		if (folder) {
-			rc = nm_send_rename_folder(user, folder, new_name,
+			rc = nm_send_rename_folder(user, folder, group->name,
 									   _rename_folder_resp_cb, NULL);
 			_check_for_disconnect(user, rc);
 		}

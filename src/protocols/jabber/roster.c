@@ -195,8 +195,6 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			add_gaim_buddies_in_groups(js, jid, name, groups);
 		}
 	}
-
-	gaim_blist_save();
 }
 
 static void jabber_roster_update(JabberStream *js, const char *name,
@@ -246,8 +244,8 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	jabber_iq_send(iq);
 }
 
-void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
-		GaimGroup *grp)
+void jabber_roster_add_buddy(GaimConnection *gc, GaimBuddy *buddy,
+		GaimGroup *group)
 {
 	JabberStream *js = gc->proto_data;
 	char *who;
@@ -259,13 +257,13 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 	if(!js->roster_parsed)
 		return;
 
-	if(!(who = jabber_get_bare_jid(name)))
+	if(!(who = jabber_get_bare_jid(buddy->name)))
 		return;
 
-	jb = jabber_buddy_find(js, name, FALSE);
+	jb = jabber_buddy_find(js, buddy->name, FALSE);
 
 	if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
-		groups = g_slist_append(groups, grp->name);
+		groups = g_slist_append(groups, group->name);
 	}
 
 	jabber_roster_update(js, who, groups);
@@ -318,39 +316,41 @@ void jabber_roster_group_change(GaimConnection *gc, const char *name,
 	g_slist_free(groups);
 }
 
-void jabber_roster_group_rename(GaimConnection *gc, const char *old_group,
-		const char *new_group, GList *members)
+void jabber_roster_group_rename(GaimConnection *gc, const char *old_name,
+		GaimGroup *group, GList *moved_buddies)
 {
 	GList *l;
-	if(old_group && new_group && strcmp(old_group, new_group)) {
-		for(l = members; l; l = l->next) {
-			jabber_roster_group_change(gc, l->data, old_group, new_group);
-		}
+	for(l = moved_buddies; l; l = l->next) {
+		GaimBuddy *buddy = l->data;
+		jabber_roster_group_change(gc, buddy->name, old_name, group->name);
 	}
 }
 
-void jabber_roster_remove_buddy(GaimConnection *gc, const char *name, const char *group) {
-	GSList *buddies = gaim_find_buddies(gc->account, name);
+void jabber_roster_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
+		GaimGroup *group) {
+	GSList *buddies = gaim_find_buddies(gc->account, buddy->name);
 	GSList *groups = NULL;
-	GaimGroup *g = gaim_find_group(group);
-	GaimBuddy *b = gaim_find_buddy_in_group(gc->account, name, g);
 
-	buddies = g_slist_remove(buddies, b);
+	buddies = g_slist_remove(buddies, buddy);
 	if(g_slist_length(buddies)) {
+		GaimBuddy *tmpbuddy;
+		GaimGroup *tmpgroup;
+
 		while(buddies) {
-			b = buddies->data;
-			g = gaim_find_buddys_group(b);
-			groups = g_slist_append(groups, g->name);
-			buddies = g_slist_remove(buddies, b);
+			tmpbuddy = buddies->data;
+			tmpgroup = gaim_find_buddys_group(tmpbuddy);
+			groups = g_slist_append(groups, tmpgroup->name);
+			buddies = g_slist_remove(buddies, tmpbuddy);
 		}
-		jabber_roster_update(gc->proto_data, name, groups);
+
+		jabber_roster_update(gc->proto_data, buddy->name, groups);
 	} else {
 		JabberIq *iq = jabber_iq_new_query(gc->proto_data, JABBER_IQ_SET,
 				"jabber:iq:roster");
 		xmlnode *query = xmlnode_get_child(iq->node, "query");
 		xmlnode *item = xmlnode_new_child(query, "item");
 
-		xmlnode_set_attrib(item, "jid", name);
+		xmlnode_set_attrib(item, "jid", buddy->name);
 		xmlnode_set_attrib(item, "subscription", "remove");
 
 		jabber_iq_send(iq);

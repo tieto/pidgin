@@ -23,7 +23,6 @@
 #include "internal.h"
 #include "conversation.h"
 #include "debug.h"
-#include "multi.h"
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"

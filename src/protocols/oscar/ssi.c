@@ -266,7 +266,7 @@ faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list
  * @param gn The group name of the desired item.
  * @param bn The buddy name of the desired item.
  * @param type The type of the desired item.
- * @return Return a pointer to the item if found, else return NULL;
+ * @return Return a pointer to the item if found, else return NULL.
  */
 faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *sn, fu16_t type)
 {
