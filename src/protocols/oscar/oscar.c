@@ -3406,7 +3406,8 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 		b = gaim_find_buddy(gc->account, sn);
 		gaim_buddy_set_setting(b, "icon_checksum", b16);
 		gaim_blist_save();
-		free(b16);
+		if(b16)
+			free(b16);
 	}
 
 	cur = od->requesticon;

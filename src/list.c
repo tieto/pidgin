@@ -1200,9 +1200,16 @@ void gaim_blist_load() {
 
 static void blist_print_buddy_settings(gpointer key, gpointer data,
 		gpointer user_data) {
-	char *key_val = g_markup_escape_text(key, -1);
-	char *data_val = g_markup_escape_text(data, -1);
+	char *key_val;
+	char *data_val;
 	FILE *file = user_data;
+
+	if(!key || !data)
+		return;
+
+	key_val = g_markup_escape_text(key, -1);
+	data_val = g_markup_escape_text(data, -1);
+
 	fprintf(file, "\t\t\t\t\t<setting name=\"%s\">%s</setting>\n", key_val,
 			data_val);
 	g_free(key_val);
