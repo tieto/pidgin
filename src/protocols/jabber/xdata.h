@@ -1,5 +1,5 @@
 /**
- * @file jutil.h utility functions
+ * @file xdata.h utility functions
  *
  * gaim
  *

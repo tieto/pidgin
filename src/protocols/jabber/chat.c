@@ -290,11 +290,13 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 	xmlnode *query, *x;
 	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *from = xmlnode_get_attrib(packet, "from");
+	char *msg;
 	JabberChat *chat;
 	JabberID *jid;
 
 	if(!type || !from)
 		return;
+
 
 
 	if(!strcmp(type, "result")) {
@@ -325,10 +327,35 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 				return;
 			}
 		}
-	} else {
-		/* XXX: handle errors */
+	} else if(!strcmp(type, "error")) {
+		xmlnode *errnode = xmlnode_get_child(packet, "error");
+		const char *code = NULL;
+		char *code_txt = NULL;
+		char *msg;
+		char *text = NULL;
+
+		if(errnode) {
+			code = xmlnode_get_attrib(errnode, "code");
+			text = xmlnode_get_data(errnode);
+		}
+
+		if(code)
+			code_txt = g_strdup_printf(_(" (Code %s)"), code);
+
+		msg = g_strdup_printf("%s%s", text ? text : "", code_txt ? code_txt : "");
+		gaim_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
+
+		g_free(msg);
+		if(code_txt)
+			g_free(code_txt);
+
+		return;
 	}
 
+	msg = g_strdup_printf("Unable to configure room %s", from);
+
+	gaim_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
+	g_free(msg);
 
 }
 

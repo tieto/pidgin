@@ -76,6 +76,7 @@ src/protocols/jabber/parser.c
 src/protocols/jabber/presence.c
 src/protocols/jabber/roster.c
 src/protocols/jabber/si.c
+src/protocols/jabber/xdata.c
 src/protocols/msn/dispatch.c
 src/protocols/msn/error.c
 src/protocols/msn/httpmethod.c
