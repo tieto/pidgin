@@ -530,7 +530,8 @@ static void chat_press_ign(GtkWidget *obj, struct conversation *b)
 
 static void chat_press_info(GtkObject *obj, struct conversation *b)
 {
-	(*b->gc->prpl->get_info)(b->gc, gtk_object_get_user_data(obj));
+	if (b->gc)
+		(*b->gc->prpl->get_info)(b->gc, gtk_object_get_user_data(obj));
 }
 
 static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conversation *b)
@@ -553,7 +554,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		if (b->gc->prpl->get_info) {
+		if (b->gc && b->gc->prpl->get_info) {
 			button = gtk_menu_item_new_with_label(_("Info"));
 			gtk_signal_connect(GTK_OBJECT(button), "activate",
 					   GTK_SIGNAL_FUNC(chat_press_info), b);
