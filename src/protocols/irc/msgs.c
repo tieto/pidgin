@@ -459,7 +459,7 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
 			return;
-		nick = gaim_markup_escape_text(args[1], -1);
+		nick = g_markup_escape_text(args[1], -1);
 		gaim_notify_error(gc, NULL, _("No such nick or channel"), nick);
 		g_free(nick);
 	}
