@@ -801,8 +801,10 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 			account = gaim_connection_get_account(gc);
 		}
 
-		if (check_account_func && !check_account_func(account))
+		if (check_account_func && !check_account_func(account)) {
+			i--;
 			continue;
+		}
 
 		plugin = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
@@ -832,7 +834,8 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 				                                GDK_INTERP_BILINEAR);
 
-				if (!gaim_account_is_connected(account))
+				if (!gaim_account_is_connected(account) && show_all &&
+						gaim_connections_get_all())
 					gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 
 				image = gtk_image_new_from_pixbuf(scale);
