@@ -4,8 +4,6 @@ version 0.60:
 	Core:
 	* Auto-loading protocol plugins.
 	* Plugins dialog and perl script menu merged into preferences.
-	* Login all auto-login accounts from login window. (Thanks, 
-	  Etan Reisner)
 	* Don't auto-login if an existing Gaim session is already
 	  running.
 	* Moved "privacy preferences" to Tools menu.
@@ -14,6 +12,8 @@ version 0.60:
 	* Added support for automake 1.6.
 	* aim:// URI's supported with gaim-remote command.
 	* Quit Gaim remotely with gaim-remote. (Thanks, John Silvestri)
+	* Added rudimentary support for X11R6 session management. (Thanks, 
+	  Robert McQueen)
 
 	Plugins:
 	* Docklet plugin--replaces the old GNOME applet.  You'll need the
