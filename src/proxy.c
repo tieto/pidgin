@@ -321,7 +321,7 @@ static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 
 	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
 
-	if (!(sin = gaim_gethostbyname(proxyhost, port))) {
+	if (!(sin = gaim_gethostbyname(proxyhost, proxyport))) {
 		g_free(phb);
 		return -1;
 	}
@@ -440,7 +440,7 @@ static int proxy_connect_socks4(char *host, unsigned short port, struct PHB *phb
 
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", host, port, proxyhost, proxyport);
 
-	if (!(sin = gaim_gethostbyname(proxyhost, port))) {
+	if (!(sin = gaim_gethostbyname(proxyhost, proxyport))) {
 		g_free(phb);
 		return -1;
 	}
@@ -663,7 +663,7 @@ static int proxy_connect_socks5(char *host, unsigned short port, struct PHB *phb
 
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", host, port, proxyhost, proxyport);
 
-	if (!(sin = gaim_gethostbyname(proxyhost, port))) {
+	if (!(sin = gaim_gethostbyname(proxyhost, proxyport))) {
 		g_free(phb);
 		return -1;
 	}
