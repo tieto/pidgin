@@ -877,9 +877,10 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 	b->in_room = NULL;
 	b->id = id;
 	b->gc = gc;
+	b->send_history = g_list_append(NULL, NULL);
 	b->history = g_string_new("");
 	g_snprintf(b->name, 80, "%s", name);
-
+	
 	if ((logging_options & OPT_LOG_ALL) || find_log_info(b->name)) {
 		FILE *fd;
 		char *filename;
