@@ -316,7 +316,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				xmlnode *invite = xmlnode_get_child(child, "invite");
 				if(invite) {
 					xmlnode *reason, *password;
-					const char *jid = xmlnode_get_attrib(child, "from");
+					const char *jid = xmlnode_get_attrib(invite, "from");
 					g_free(jm->to);
 					jm->to = jm->from;
 					jm->from = g_strdup(jid);
