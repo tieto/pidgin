@@ -187,21 +187,28 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 
 		gchar *esc_s, *cat_s, *ts_s, *s;
 
-		if (category == NULL)
+		if (category == NULL) {
 			cat_s = g_strdup("");
-		else
+			ts_s = g_strdup("");
+		}
+		else {
 			cat_s = g_strdup_printf("<b>%s:</b> ", category);
 
-		if (debug_win->timestamps) {
-			gchar mdate[64];
-			time_t mtime = time(NULL);
+			/*
+			 * If the category is not NULL, then do timestamps.
+			 * This IS right. :)
+			 */
+			if (debug_win->timestamps) {
+				gchar mdate[64];
+				time_t mtime = time(NULL);
 
-			strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+				strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
 
-			ts_s = g_strdup_printf("(%s) ", mdate);
+				ts_s = g_strdup_printf("(%s) ", mdate);
+			}
+			else
+				ts_s = g_strdup("");
 		}
-		else
-			ts_s = g_strdup("");
 
 		esc_s = g_markup_escape_text(arg_s, -1);
 
