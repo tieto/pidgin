@@ -5582,14 +5582,6 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	} else {
 		struct buddy *b = gaim_find_buddy(gc->account, who);
 
-		if (!b || (b->uc & UC_UNAVAILABLE)) {
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Get Away Msg");
-			pbm->callback = oscar_get_away_msg;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
-		}
-
 		if ((aim_sncmp(gc->username, who)) && b->present) {
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label = _("Direct IM");
