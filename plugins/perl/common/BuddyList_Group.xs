@@ -68,10 +68,15 @@ buddies(group)
 	Gaim::BuddyList::Group group
 PREINIT:
 	GaimBlistNode *node;
+	GaimBlistNode *contact;
 	GaimBlistNode *_group = (GaimBlistNode *)group;
 PPCODE:
-	for (node = _group->child; node != NULL; node = node->next)
+	for (contact = _group->child; contact != NULL; contact = contact->next)
 	{
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(node,
-			"Gaim::BuddyList::Buddy")));
+		for (node = contact->child; node != NULL; node = node->next)
+		{
+			XPUSHs(sv_2mortal(gaim_perl_bless_object(node,
+				"Gaim::BuddyList::Buddy")));
+		}
 	}
+
