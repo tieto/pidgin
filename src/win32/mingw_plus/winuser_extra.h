@@ -27,10 +27,4 @@ typedef struct {
     DWORD dwTimeout;
 } FLASHWINFO, *PFLASHWINFO;
 
-/*
- *  PROTOS
- */
-/* From MS user32.lib (mingw 1.1 dosn't have it) */
-extern BOOL FlashWindowEx(PFLASHWINFO pfwi);
-
 #endif /* _WINUSER_EXTRA_H_ */
