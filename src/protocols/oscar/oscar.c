@@ -464,7 +464,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu1
 		charsetstr2 = "UTF-8";
 	} else if (charset == AIM_CHARSET_ASCII) {
 		/* Should just be "ASCII" */
-		charsetstr1 = "ISO-8859-1";
+		charsetstr1 = "ASCII";
 		charsetstr2 = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	} else if (charset == 0x000d) {
 		/* Mobile AIM client on a Nokia 3100 and an LG VX6000 */
