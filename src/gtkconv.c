@@ -5974,15 +5974,15 @@ html_shortcuts_pref_cb(const char *name, GaimPrefType type,
 	GList *l;
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
-	
+
 	for(l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
-		
+
 		if(!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
-		
+
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
-		
+
 		gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
 								  (gboolean)GPOINTER_TO_INT(value));
 	}
@@ -5995,16 +5995,16 @@ smiley_shortcuts_pref_cb(const char *name, GaimPrefType type,
 	GList *l;
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
-	
+
 	for(l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
-		
+
 		if(!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
-		
+
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
-		
-		gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry), 
+
+		gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
 									(gboolean)GPOINTER_TO_INT(value));
 	}
 }
