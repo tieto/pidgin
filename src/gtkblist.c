@@ -2508,7 +2508,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		if(accounttext)
 			g_free(accounttext);
 	}
-
+	gaim_signal_emit(GAIM_GTK_BLIST(gaim_get_blist()),
+			 "drawing-tooltip", node, &text);
 	return text;
 }
 
@@ -2912,6 +2913,17 @@ static void gaim_gtk_blist_new_list(GaimBuddyList *blist)
 
 	gtkblist = g_new0(GaimGtkBuddyList, 1);
 	blist->ui_data = gtkblist;
+
+	/* Register some of our own. */
+	gaim_signal_register(gtkblist, "drawing-menu",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_BOXED, "GtkMenu"),
+			     gaim_value_new(GAIM_TYPE_SUBTYPE,
+					    GAIM_SUBTYPE_BLIST_BUDDY));
+	gaim_signal_register(gtkblist, "drawing-tooltip",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
+			     gaim_value_new_outgoing(GAIM_TYPE_STRING));
 
 	/* All of these signal handlers are for the "Raise on Events" option */
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on",
