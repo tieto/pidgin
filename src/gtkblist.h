@@ -196,5 +196,9 @@ void gaim_gtk_blist_setup_sort_methods();
  */
 void gaim_gtk_blist_update_protocol_actions();
 
+/**
+ * Shows the join chat dialog
+ */
+void gaim_gtk_blist_show_join_chat(void);
 
 #endif /* _GAIM_GTK_LIST_H_ */

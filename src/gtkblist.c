@@ -775,8 +775,8 @@ do_joinchat(GtkWidget *dialog, int id, GaimGtkJoinChatData *info)
 	g_free(info);
 }
 
-static void
-join_chat(void)
+void
+gaim_gtk_blist_show_join_chat(void)
 {
 	GtkWidget *hbox, *vbox;
 	GtkWidget *rowbox;
@@ -893,7 +893,7 @@ static void gtk_blist_button_chat_cb(GtkWidget *w, GtkTreeView *tv)
 			return;
 		}
 	}
-	join_chat();
+	gaim_gtk_blist_show_join_chat();
 }
 
 static void gtk_blist_button_away_cb(GtkWidget *w, gpointer data)
@@ -2219,7 +2219,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
-	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", join_chat, 0, "<StockItem>", GAIM_STOCK_CHAT },
+	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", gaim_gtk_blist_show_join_chat, 0, "<StockItem>", GAIM_STOCK_CHAT },
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", show_info_dialog, 0, "<StockItem>", GAIM_STOCK_INFO },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
