@@ -66,8 +66,8 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-#define SEND_COLOR "#0d005d"
-#define RECV_COLOR "#fd4100"
+#define SEND_COLOR "#16569E"
+#define RECV_COLOR "#A82F2F"
 
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
@@ -170,7 +170,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 	{
-		if (w == gtkconv->sw && (gaim_conv_window_get_conversation_count(win) == 1))
+		if (w == gtkconv->imhtml && (gaim_conv_window_get_conversation_count(win) == 1))
 		{
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
 			if (saveheight)
@@ -181,7 +181,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
 	{
-		if (w == gtkconv->sw && (gaim_conv_window_get_conversation_count(win) == 1))
+		if (w == gtkconv->imhtml && (gaim_conv_window_get_conversation_count(win) == 1))
 		{
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
 			if (saveheight)
@@ -3972,7 +3972,7 @@ setup_chat_pane(GaimConversation *conv)
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GtkWidget *vpaned, *hpaned;
-	GtkWidget *vbox, *hbox, *frame, *vbox2, *sep;
+	GtkWidget *vbox, *hbox, *frame;
 	GtkWidget *lbox, *bbox;
 	GtkWidget *label;
 	GtkWidget *list;
@@ -4027,30 +4027,19 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show(hpaned);
 
-	/* Setup the scrolled window to put gtkimhtml in. */
-	gtkconv->sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(gtkconv->sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(gtkconv->sw),
-										GTK_SHADOW_IN);
-	gtk_paned_pack1(GTK_PANED(hpaned), gtkconv->sw, TRUE, TRUE);
-
-	gtk_widget_set_size_request(gtkconv->sw,
-			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_width"),
-			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_height"));
-
-	g_signal_connect(G_OBJECT(gtkconv->sw), "size-allocate",
-					 G_CALLBACK(size_allocate_cb), conv);
-
-	gtk_widget_show(gtkconv->sw);
-
 	/* Setup gtkihmtml. */
-	gtkconv->imhtml = gtk_imhtml_new(NULL, NULL);
+	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
 	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
-	gtk_container_add(GTK_CONTAINER(gtkconv->sw), gtkconv->imhtml);
-
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
+	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
+	gtk_widget_show(frame);
+
+	gtk_widget_set_size_request(gtkconv->imhtml,
+			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_width"),
+			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_height"));
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
+					 G_CALLBACK(size_allocate_cb), conv);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
@@ -4058,9 +4047,6 @@ setup_chat_pane(GaimConversation *conv)
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
-
-	gaim_setup_imhtml(gtkconv->imhtml);
-	gtk_widget_show(gtkconv->imhtml);
 
 	/* Build the right pane. */
 	lbox = gtk_vbox_new(FALSE, 6);
@@ -4160,9 +4146,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	gtkconv->info = button;
 
-	/* Build the toolbar. */
-	frame = gtk_frame_new(NULL);
-
+	/* Setup the bottom half of the conversation window */
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
@@ -4175,47 +4159,18 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox, TRUE, TRUE, 0);
 	gtk_widget_show(vbox);
 
-	frame = gtk_frame_new(NULL);
+	/* Setup the toolbar, entry widget and all signals */
+	frame = gaim_gtk_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), vbox2);
-	gtk_widget_show_all(frame);
+	gtk_widget_show(frame);
 
-	gtkconv->toolbar = gtk_imhtmltoolbar_new();
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar, FALSE, FALSE, 0);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox2), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
-
-	/* Setup the entry widget.
-	 * We never show the horizontal scrollbar because it was causing weird
-	 * lockups when typing text just as you type the character that would 
-	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
-	 */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-					    GTK_SHADOW_NONE);
-	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
-
-	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
-
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 								 gaim_account_get_protocol_name(conv->account));
-	gtkconv->entry_buffer =
-		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	gaim_setup_imhtml(gtkconv->entry);
-	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
-	default_formatize(conv);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry),
-								GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"));
+	gtkconv->entry_buffer =
+		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
@@ -4227,13 +4182,7 @@ setup_chat_pane(GaimConversation *conv)
 	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
 					 G_CALLBACK(size_allocate_cb), conv);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
-	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(gtkconv->toolbar),
-							 gtkconv->entry);
-
-	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
-	gtk_widget_show(gtkconv->entry);
+	default_formatize(conv);
 
 	/* Setup the bottom button box. */
 	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
@@ -4257,42 +4206,37 @@ setup_im_pane(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	GaimGtkImPane *gtkim;
+	GtkWidget *frame;
 	GtkWidget *paned;
-	GtkWidget *vbox, *sep;
-	GtkWidget *vbox2, *vbox3, *frame;
-	GtkWidget *sw;
+	GtkWidget *vbox;
+	GtkWidget *vbox2;
 	GList *focus_chain = NULL;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkim   = gtkconv->u.im;
 
-	/* Setup the outer pane. */
+	/* Setup the outer pane */
 	paned = gtk_vpaned_new();
 	gtk_widget_show(paned);
 
-	/* Setup the top part of the pane. */
+	/* Setup the top part of the pane */
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
-	/* Setup the gtkimhtml widget. */
-	gtkconv->sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(gtkconv->sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(gtkconv->sw),
-										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->sw, TRUE, TRUE, 0);
+	/* Setup the gtkimhtml widget */
+	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
+	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
+	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
 
-	gtk_widget_set_size_request(gtkconv->sw,
+	gtk_widget_set_size_request(gtkconv->imhtml,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_width"),
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_height"));
-	g_signal_connect(G_OBJECT(gtkconv->sw), "size-allocate",
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
 					 G_CALLBACK(size_allocate_cb), conv);
-	gtk_widget_show(gtkconv->sw);
-
-	gtkconv->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
-	gtk_container_add(GTK_CONTAINER(gtkconv->sw), gtkconv->imhtml);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
@@ -4301,19 +4245,11 @@ setup_im_pane(GaimConversation *conv)
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
-	gaim_setup_imhtml(gtkconv->imhtml);
-	gtk_widget_show(gtkconv->imhtml);
+	/* Setup the bottom half of the conversation window */
 	vbox2 = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, TRUE);
 	gtk_widget_show(vbox2);
 
-	/* Setup the entry widget.
-	 * We never show the horizontal scrollbar because it was causing weird
-	 * lockups when typing text just as you type the character that would
-	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
-	 */
 	gtkconv->lower_hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->lower_hbox, TRUE, TRUE, 0);
 	gtk_widget_show(gtkconv->lower_hbox);
@@ -4322,42 +4258,18 @@ setup_im_pane(GaimConversation *conv)
 	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	/* Setup the toolbar, entry widget and all signals */
+	frame = gaim_gtk_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
-	vbox3 = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), vbox3);
-	gtk_widget_show_all(frame);
+	gtk_widget_show(frame);
 
-	/* Build the toolbar. */
-	gtkconv->toolbar = gtk_imhtmltoolbar_new();
-	gtk_box_pack_start(GTK_BOX(vbox3), gtkconv->toolbar, FALSE, FALSE, 0);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox3), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_NONE);
-	gtk_box_pack_start(GTK_BOX(vbox3), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
-
-	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
-
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 								 gaim_account_get_protocol_name(conv->account));
-	gtkconv->entry_buffer =
-		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	gaim_setup_imhtml(gtkconv->entry);
-	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry),
-								GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"));
+	gtkconv->entry_buffer =
+		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
@@ -4373,13 +4285,6 @@ setup_im_pane(GaimConversation *conv)
 	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
 					 G_CALLBACK(delete_text_cb), conv);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
-
-	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
-	gtk_widget_show(gtkconv->entry);
-	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(gtkconv->toolbar),
-							 gtkconv->entry);
 	/* had to move this after the imtoolbar is attached so that the
 	 * signals get fired to toggle the buttons on the toolbar as well.
 	 */
@@ -5732,7 +5637,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_IM);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	
+
 	if (!gtkconv->u.im->show_icon)
 		return;
 

@@ -53,6 +53,7 @@
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
+#include "gtkimhtmltoolbar.h"
 #include "gtkutils.h"
 
 guint accels_save_timer = 0;
@@ -92,6 +93,75 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 	smiley_themeize(imhtml);
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
+}
+
+GtkWidget *
+gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret)
+{
+	GtkWidget *frame;
+	GtkWidget *imhtml;
+	GtkWidget *sep;
+	GtkWidget *sw;
+	GtkWidget *toolbar;
+	GtkWidget *vbox;
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_widget_show(frame);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
+
+	if (editable) {
+		toolbar = gtk_imhtmltoolbar_new();
+		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+		gtk_widget_show(toolbar);
+
+		sep = gtk_hseparator_new();
+		gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+		gtk_widget_show(sep);
+	}
+
+	/*
+	 * We never show the horizontal scrollbar in editable imhtmls becuase
+	 * it was causing weird lockups when typing text just as you type the
+	 * character that would cause both scrollbars to appear.  Definitely
+	 * seems like a gtk bug to me.
+	 */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	if (editable)
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+									   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	else
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+									   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_widget_show(sw);
+
+	imhtml = gtk_imhtml_new(NULL, NULL);
+	gtk_imhtml_set_editable(GTK_IMHTML(imhtml), editable);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
+	if (editable && gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(imhtml));
+	gtk_widget_show(imhtml);
+
+	if (editable) {
+		gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), imhtml);
+		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(toolbar), "default");
+	}
+	gaim_setup_imhtml(imhtml);
+
+	gtk_container_add(GTK_CONTAINER(sw), imhtml);
+
+	if (imhtml_ret != NULL)
+		*imhtml_ret = imhtml;
+
+	if (toolbar_ret != NULL)
+		*toolbar_ret = toolbar;
+
+	return frame;
 }
 
 void
@@ -137,7 +207,7 @@ gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
 
 		sensitivity = GTK_WIDGET_IS_SENSITIVE(element);
 
-		gtk_widget_set_sensitive(element, !sensitivity);	
+		gtk_widget_set_sensitive(element, !sensitivity);
 	}
 }
 

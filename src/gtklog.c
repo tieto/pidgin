@@ -70,10 +70,10 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
 	GList *logs;
 	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
-	
+
 	if (lv->search)
 		g_free(lv->search);
-	
+
        	gtk_tree_store_clear(lv->treestore);
 	if (strlen(search_term) == 0) {/* reset the tree */
 		populate_log_tree(lv);
@@ -81,14 +81,14 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 		gtk_imhtml_search_clear(GTK_IMHTML(lv->imhtml));
 		return;
 	}
-	
+
 	lv->search = g_strdup(search_term);
-	
+
 	gdk_window_set_cursor(lv->window->window, cursor);
 	while (gtk_events_pending())
 		gtk_main_iteration();
 	gdk_cursor_unref(cursor);
-	
+
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
 		char *read = gaim_log_read((GaimLog*)logs->data, NULL);
 		if (gaim_strcasestr(read, search_term)) {
@@ -103,11 +103,11 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 			gtk_tree_store_append (lv->treestore, &iter, NULL);
 			gtk_tree_store_set(lv->treestore, &iter,
 					   0, title,
-					   1, log, -1);	
+					   1, log, -1);
 		}
 	}
-	
-	
+
+
 	cursor = gdk_cursor_new(GDK_LEFT_PTR);
 	gdk_window_set_cursor(lv->window->window, cursor);
 	gdk_cursor_unref(cursor);
@@ -189,13 +189,13 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	title = title_utf8;
 	gtk_window_set_title(GTK_WINDOW(viewer->window), title);
 	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
-       	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read, 
-			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL | 
+       	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
+			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
 			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
 
 	if (viewer->search)
 		gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
-	
+
 	g_free(read);
 	g_free(title);
 }
@@ -218,32 +218,32 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 	GList *logs = lv->logs;
 	while (logs) {
 		GaimLog *log = logs->data;
-		
+
 		strftime(month, sizeof(month), "%B %Y", localtime(&log->time));
 		strftime(title, sizeof(title), "%c", localtime(&log->time));
-		
+
 		/* do utf8 conversions */
 		utf8_tmp = gaim_utf8_try_convert(month);
 		strncpy(month, utf8_tmp, sizeof(month));
 		utf8_tmp = gaim_utf8_try_convert(title);
 		strncpy(title, utf8_tmp, sizeof(title));
 		g_free(utf8_tmp);
-		
+
 		if (strncmp(month, prev_top_month, sizeof(month)) != 0) {
 			/* top level */
 			gtk_tree_store_append(lv->treestore, &toplevel, NULL);
 			gtk_tree_store_set(lv->treestore, &toplevel, 0, month, 1, NULL, -1);
-			
+
 			/* sub */
 			gtk_tree_store_append(lv->treestore, &child, &toplevel);
 			gtk_tree_store_set(lv->treestore, &child, 0, title, 1, log, -1);
-			
+
 			strncpy(prev_top_month, month, sizeof(prev_top_month));
 		} else {
 			gtk_tree_store_append(lv->treestore, &child, &toplevel);
 			gtk_tree_store_set(lv->treestore, &child, 0, title, 1, log, -1);
 		}
-		   
+
 		logs = logs->next;
 	}
 }
@@ -276,12 +276,12 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	g_hash_table_insert(log_viewers, ht, lv);
 
 	/* Window ***********/
-	lv->window = gtk_dialog_new_with_buttons(screenname, NULL, 0, 
+	lv->window = gtk_dialog_new_with_buttons(screenname, NULL, 0,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	gtk_container_set_border_width (GTK_CONTAINER(lv->window), 6);
 	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
-	g_signal_connect(G_OBJECT(lv->window), "response", 
+	g_signal_connect(G_OBJECT(lv->window), "response",
 					 G_CALLBACK(destroy_cb), ht);
 
 	hbox = gtk_hbox_new(FALSE, 6);
@@ -311,7 +311,7 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	pane = gtk_hpaned_new();
 	gtk_container_set_border_width(GTK_CONTAINER(pane), 6);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), pane, TRUE, TRUE, 0);
-	
+
 	/* List *************/
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
@@ -343,7 +343,7 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	gtk_container_add(GTK_CONTAINER(sw), lv->imhtml);
 	gaim_setup_imhtml(lv->imhtml);
 	gtk_widget_set_size_request(lv->imhtml, 320, 200);
-		
+
 	/* Search box **********/
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -392,12 +392,12 @@ void gaim_gtk_syslog_show()
 	syslog_viewer->logs = g_list_sort(syslog_viewer->logs, gaim_log_compare);
 
 	/* Window ***********/
-	syslog_viewer->window = gtk_dialog_new_with_buttons(_("System Log"), NULL, 0, 
+	syslog_viewer->window = gtk_dialog_new_with_buttons(_("System Log"), NULL, 0,
 						 GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	gtk_container_set_border_width (GTK_CONTAINER(syslog_viewer->window), 6);
 	gtk_dialog_set_has_separator(GTK_DIALOG(syslog_viewer->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(syslog_viewer->window)->vbox), 0);
-	g_signal_connect(G_OBJECT(syslog_viewer->window), "response", 
+	g_signal_connect(G_OBJECT(syslog_viewer->window), "response",
 					 G_CALLBACK(destroy_cb), NULL);
 
 	hbox = gtk_hbox_new(FALSE, 6);
@@ -418,7 +418,7 @@ void gaim_gtk_syslog_show()
 	gtk_container_set_border_width(GTK_CONTAINER(pane), 6);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(syslog_viewer->window)->vbox), pane,
 					   TRUE, TRUE, 0);
-	
+
 	/* List *************/
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
@@ -470,5 +470,5 @@ void gaim_gtk_syslog_show()
 			  syslog_viewer);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	gtk_widget_show_all(syslog_viewer->window);	
+	gtk_widget_show_all(syslog_viewer->window);
 }

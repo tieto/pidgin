@@ -67,6 +67,24 @@ extern guint accels_save_timer;
 void gaim_setup_imhtml(GtkWidget *imhtml);
 
 /**
+ * Create an GtkIMHtml widget and associated GtkIMHtmlToolbar widget.  This
+ * functions puts both widgets in a nice GtkFrame.  They're separate by an
+ * attractive GtkSeparator.
+ *
+ * @param editable TRUE if this imhtml should be editable.  If this is FALSE,
+ *        then the toolbar will NOT be created.  If this imthml should be
+ *        read-only at first, but may become editable later, then pass in
+ *        TRUE here and then manually call gtk_imhtml_set_editable() later.
+ * @param imhtml_ret A pointer to a pointer to a GtkWidget.  This pointer
+ *        will be set to the imhtml when this function exits.
+ * @param toolbar_ret A pointer to a pointer to a GtkWidget.  If editable is
+ *        TRUE then this will be set to the toolbar when this function exits.
+ *        Otherwise this will be set to NULL.
+ * @return The GtkFrame containing the toolbar and imhtml.
+ */
+GtkWidget *gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret);
+
+/**
  * Toggles the sensitivity of a widget.
  *
  * @param widget    @c NULL. Used for signal handlers.

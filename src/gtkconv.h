@@ -177,7 +177,6 @@ struct _GaimGtkConversation
 	GtkSizeGroup *sg;
 
 	GtkWidget *bbox;
-	GtkWidget *sw;
 	GtkWidget *lower_hbox;
 
 	GtkWidget *toolbar;

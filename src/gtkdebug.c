@@ -228,7 +228,7 @@ debug_window_new(void)
 	DebugWindow *win;
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
-	GtkWidget *sw;
+	GtkWidget *frame;
 	GtkWidget *button;
 	GtkWidget *image;
 	int width, height;
@@ -299,20 +299,10 @@ debug_window_new(void)
 									timestamps_pref_cb, button);
 	}
 
-	/* Now our scrolled window... */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-
-	/* ... which has a gtkimhtml in it. */
-	win->text = gtk_imhtml_new(NULL, NULL);
-
-	gtk_container_add(GTK_CONTAINER(sw), win->text);
-
-	/* Pack it in... Not like that, sicko. */
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	/* Add the gtkimhtml */
+	frame = gaim_gtk_create_imhtml(FALSE, &win->text, NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
 
 	gtk_widget_show_all(win->window);
 
