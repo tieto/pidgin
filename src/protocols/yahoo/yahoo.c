@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#define YAHOO_WEBMESSENGER
 
 #include "internal.h"
 
@@ -2110,7 +2109,6 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
-#ifndef YAHOO_WEBMESSENGER
 static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -2139,9 +2137,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
-#endif
 
-#ifdef YAHOO_WEBMESSENGER
 static void yahoo_got_web_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -2322,9 +2318,6 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 	}
 }
 
-#endif /* YAHOO_WEBMESSENGER */
-
-#ifndef YAHOO_WEBMESSENGER
 static void yahoo_server_check(GaimAccount *account)
 {
 	const char *server;
@@ -2344,7 +2337,6 @@ static void yahoo_picture_check(GaimAccount *account)
 	yahoo_set_buddy_icon(gc, buddyicon);
 }
 
-#endif
 
 static void yahoo_login(GaimAccount *account) {
 	GaimConnection *gc = gaim_account_get_connection(account);
@@ -2361,8 +2353,6 @@ static void yahoo_login(GaimAccount *account) {
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
-#ifndef YAHOO_WEBMESSENGER
-
 	yahoo_server_check(account);
 	yahoo_picture_check(account);
 
@@ -2377,6 +2367,7 @@ static void yahoo_login(GaimAccount *account) {
 			return;
 		}
 	} else {
+#ifndef YAHOO_WEBMESSENGER
 		yd->jp = FALSE;
 		if (gaim_proxy_connect(account,
 		                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
@@ -2386,11 +2377,13 @@ static void yahoo_login(GaimAccount *account) {
 			gaim_connection_error(gc, _("Connection problem"));
 			return;
 		}
-	}
 #else
-	gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
-	               yahoo_login_page_cb, gc);
+		yd->wm = TRUE;
+		gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
+		               yahoo_login_page_cb, gc);
 #endif
+	}
+
 
 }
 
@@ -2665,12 +2658,13 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	GaimBlistNodeAction *act;
 
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
+	struct yahoo_data *yd = gc->proto_data;
 	static char buf2[1024];
 	YahooFriend *f;
 
 	f = yahoo_friend_find(gc, buddy->name);
 
-	if (!f) {
+	if (!f && !yd->wm) {
 		act = gaim_blist_node_action_new(_("Add Buddy"),
 				yahoo_addbuddyfrommenu_cb, NULL);
 		m = g_list_append(m, act);
@@ -2681,9 +2675,11 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 		return NULL;
 	}
 
-	act = gaim_blist_node_action_new(_("Join in Chat"),
-			yahoo_chat_goto_menu, NULL);
-	m = g_list_append(m, act);
+	if (!yd->wm) {
+		act = gaim_blist_node_action_new(_("Join in Chat"),
+				yahoo_chat_goto_menu, NULL);
+		m = g_list_append(m, act);
+	}
 
 	act = gaim_blist_node_action_new(_("Initiate Conference"),
 			yahoo_initiate_conference, NULL);
@@ -2957,19 +2953,23 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 static GList *yahoo_away_states(GaimConnection *gc)
 {
 	GList *m = NULL;
+	struct yahoo_data *yd = gc->proto_data;
 
 	m = g_list_append(m, _("Available"));
-	m = g_list_append(m, _("Be Right Back"));
-	m = g_list_append(m, _("Busy"));
-	m = g_list_append(m, _("Not At Home"));
-	m = g_list_append(m, _("Not At Desk"));
-	m = g_list_append(m, _("Not In Office"));
-	m = g_list_append(m, _("On The Phone"));
-	m = g_list_append(m, _("On Vacation"));
-	m = g_list_append(m, _("Out To Lunch"));
-	m = g_list_append(m, _("Stepped Out"));
+	if (!yd->wm) {
+		m = g_list_append(m, _("Be Right Back"));
+		m = g_list_append(m, _("Busy"));
+		m = g_list_append(m, _("Not At Home"));
+		m = g_list_append(m, _("Not At Desk"));
+		m = g_list_append(m, _("Not In Office"));
+		m = g_list_append(m, _("On The Phone"));
+		m = g_list_append(m, _("On Vacation"));
+		m = g_list_append(m, _("Out To Lunch"));
+		m = g_list_append(m, _("Stepped Out"));
+	}
 	m = g_list_append(m, _("Invisible"));
-	m = g_list_append(m, GAIM_AWAY_CUSTOM);
+	if (!yd->wm)
+		m = g_list_append(m, GAIM_AWAY_CUSTOM);
 
 	return m;
 }

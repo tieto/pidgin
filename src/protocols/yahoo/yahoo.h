@@ -27,6 +27,8 @@
 
 #include "prpl.h"
 
+#define YAHOO_WEBMESSENGER
+
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
@@ -166,6 +168,7 @@ struct yahoo_data {
 	char *cookie_t;
 	int session_id;
 	gboolean jp;
+	gboolean wm;
 	/* picture aka buddy icon stuff */
 	char *picture_url;
 	int picture_checksum;
