@@ -34,6 +34,7 @@
 #include "signals.h"
 #include "status.h"
 #include "util.h"
+#include "xmlnode.h"
 
 typedef enum
 {
@@ -1353,197 +1354,196 @@ gaim_accounts_load()
 }
 
 static void
-write_setting(gpointer key, gpointer value, gpointer user_data)
+setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 {
-	GaimAccountSetting *setting;
 	const char *name;
-	FILE *fp;
+	GaimAccountSetting *setting;
+	xmlnode *node, *child;
+	char buf[20];
 
-	setting = (GaimAccountSetting *)value;
 	name    = (const char *)key;
-	fp      = (FILE *)user_data;
+	setting = (GaimAccountSetting *)value;
+	node    = (xmlnode *)user_data;
+
+	child = xmlnode_new("setting");
+	xmlnode_set_attrib(child, "name", name);
 
 	if (setting->type == GAIM_PREF_INT) {
-		fprintf(fp, "   <setting name='%s' type='int'>%d</setting>\n",
-				name, setting->value.integer);
+		xmlnode_set_attrib(child, "type", "int");
+		snprintf(buf, sizeof(buf), "%d", setting->value.integer);
+		xmlnode_insert_data(child, buf, -1);
 	}
 	else if (setting->type == GAIM_PREF_STRING && setting->value.string != NULL) {
-		fprintf(fp, "   <setting name='%s' type='string'>%s</setting>\n",
-				name, setting->value.string);
+		xmlnode_set_attrib(child, "type", "string");
+		xmlnode_insert_data(child, setting->value.string, -1);
 	}
 	else if (setting->type == GAIM_PREF_BOOLEAN) {
-		fprintf(fp, "   <setting name='%s' type='bool'>%d</setting>\n",
-				name, setting->value.bool);
+		xmlnode_set_attrib(child, "type", "bool");
+		snprintf(buf, sizeof(buf), "%d", setting->value.bool);
+		xmlnode_insert_data(child, buf, -1);
 	}
+
+	xmlnode_insert_child(node, child);
 }
 
 static void
-write_ui_setting_list(gpointer key, gpointer value, gpointer user_data)
+ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 {
-	GHashTable *table;
 	const char *ui;
-	FILE *fp;
+	GHashTable *table;
+	xmlnode *node, *child;
 
-	table = (GHashTable *)value;
 	ui    = (const char *)key;
-	fp    = (FILE *)user_data;
+	table = (GHashTable *)value;
+	node  = (xmlnode *)user_data;
 
-	fprintf(fp, "  <settings ui='%s'>\n", ui);
-	g_hash_table_foreach(table, write_setting, fp);
-	fprintf(fp, "  </settings>\n");
+	child = xmlnode_new("settings");
+	xmlnode_set_attrib(child, "ui", ui);
+	g_hash_table_foreach(table, setting_to_xmlnode, child);
+
+	xmlnode_insert_child(node, child);
 }
 
-static void
-gaim_accounts_write(FILE *fp, GaimAccount *account)
+static xmlnode *
+proxy_settings_to_xmlnode(GaimProxyInfo *proxy_info)
 {
-	GaimProxyInfo *proxy_info;
+	xmlnode *node, *child;
 	GaimProxyType proxy_type;
-	const char *password, *alias, *user_info, *buddy_icon;
-	char *esc;
+	const char *value;
+	int int_value;
+	char buf[20];
 
-	fprintf(fp, " <account>\n");
-	fprintf(fp, "  <protocol>%s</protocol>\n", account->protocol_id);
-	esc = g_markup_escape_text(gaim_account_get_username(account), -1);
-	fprintf(fp, "  <name>%s</name>\n", esc);
-	g_free(esc);
+	proxy_type = gaim_proxy_info_get_type(proxy_info);
+
+	node = xmlnode_new("proxy");
+
+	child = xmlnode_new_child_with_data(node, "type",
+			(proxy_type == GAIM_PROXY_USE_GLOBAL ? "global" :
+			 proxy_type == GAIM_PROXY_NONE       ? "none"   :
+			 proxy_type == GAIM_PROXY_HTTP       ? "http"   :
+			 proxy_type == GAIM_PROXY_SOCKS4     ? "socks4" :
+			 proxy_type == GAIM_PROXY_SOCKS5     ? "socks5" :
+			 proxy_type == GAIM_PROXY_USE_ENVVAR ? "envvar" : "unknown"), -1);
+
+	if (proxy_type != GAIM_PROXY_USE_GLOBAL &&
+		proxy_type != GAIM_PROXY_NONE &&
+		proxy_type != GAIM_PROXY_USE_ENVVAR)
+	{
+		if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
+			child = xmlnode_new_child_with_data(node, "host", value, -1);
+
+		if ((int_value = gaim_proxy_info_get_port(proxy_info)) != 0)
+		{
+			snprintf(buf, sizeof(buf), "%d", int_value);
+			child = xmlnode_new_child_with_data(node, "port", buf, -1);
+		}
+
+		if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
+			child = xmlnode_new_child_with_data(node, "username", value, -1);
+
+		if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
+			child = xmlnode_new_child_with_data(node, "password", value, -1);
+	}
+
+	return node;
+}
+
+static xmlnode *
+account_to_xmlnode(GaimAccount *account)
+{
+	xmlnode *node, *child;
+	const char *tmp;
+	GaimProxyInfo *proxy_info;
+
+	node = xmlnode_new("account");
+
+	child = xmlnode_new("protocol");
+	xmlnode_insert_data(child, gaim_account_get_protocol_id(account), -1);
+	xmlnode_insert_child(node, child);
+
+	child = xmlnode_new("name");
+	xmlnode_insert_data(child, gaim_account_get_username(account), -1);
+	xmlnode_insert_child(node, child);
 
 	if (gaim_account_get_remember_password(account) &&
-		(password = gaim_account_get_password(account)) != NULL) {
-		esc = g_markup_escape_text(password, -1);
-		fprintf(fp, "  <password>%s</password>\n", esc);
-		g_free(esc);
+		((tmp = gaim_account_get_password(account)) != NULL))
+	{
+		child = xmlnode_new("password");
+		xmlnode_insert_data(child, tmp, -1);
+		xmlnode_insert_child(node, child);
 	}
 
-	if ((alias = gaim_account_get_alias(account)) != NULL) {
-		esc = g_markup_escape_text(alias, -1);
-		fprintf(fp, "  <alias>%s</alias>\n", esc);
-		g_free(esc);
+	if ((tmp = gaim_account_get_alias(account)) != NULL)
+	{
+		child = xmlnode_new("alias");
+		xmlnode_insert_data(child, tmp, -1);
+		xmlnode_insert_child(node, child);
 	}
 
-	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
-		esc = g_markup_escape_text(user_info, -1);
-                gaim_str_strip_cr(esc);
-		fprintf(fp, "  <userinfo>%s</userinfo>\n", esc);
-		g_free(esc);
+	if ((tmp = gaim_account_get_user_info(account)) != NULL)
+	{
+		/* TODO: Do we need to call gaim_str_strip_cr(tmp) here? */
+		child = xmlnode_new("userinfo");
+		xmlnode_insert_data(child, tmp, -1);
+		xmlnode_insert_child(node, child);
 	}
 
-	if ((buddy_icon = gaim_account_get_buddy_icon(account)) != NULL) {
-		esc = g_markup_escape_text(buddy_icon, -1);
-		fprintf(fp, "  <buddyicon>%s</buddyicon>\n", esc);
-		g_free(esc);
+	if ((tmp = gaim_account_get_buddy_icon(account)) != NULL)
+	{
+		child = xmlnode_new("buddyicon");
+		xmlnode_insert_data(child, tmp, -1);
+		xmlnode_insert_child(node, child);
 	}
 
-	fprintf(fp, "  <settings>\n");
-	g_hash_table_foreach(account->settings, write_setting, fp);
-	fprintf(fp, "  </settings>\n");
+	child = xmlnode_new("settings");
+	g_hash_table_foreach(account->settings, setting_to_xmlnode, child);
+	xmlnode_insert_child(node, child);
 
-	g_hash_table_foreach(account->ui_settings, write_ui_setting_list, fp);
+	g_hash_table_foreach(account->ui_settings, ui_setting_to_xmlnode, node);
 
 	if ((proxy_info = gaim_account_get_proxy_info(account)) != NULL)
 	{
-		const char *value;
-		int int_value;
-
-		proxy_type = gaim_proxy_info_get_type(proxy_info);
-
-		fprintf(fp, "  <proxy>\n");
-		fprintf(fp, "   <type>%s</type>\n",
-				(proxy_type == GAIM_PROXY_USE_GLOBAL ? "global" :
-				 proxy_type == GAIM_PROXY_NONE       ? "none"   :
-				 proxy_type == GAIM_PROXY_HTTP       ? "http"   :
-				 proxy_type == GAIM_PROXY_SOCKS4     ? "socks4" :
-				 proxy_type == GAIM_PROXY_SOCKS5     ? "socks5" :
-				 proxy_type == GAIM_PROXY_USE_ENVVAR ? "envvar" : "unknown"));
-
-		if (proxy_type != GAIM_PROXY_USE_GLOBAL &&
-			proxy_type != GAIM_PROXY_NONE &&
-			proxy_type != GAIM_PROXY_USE_ENVVAR) {
-			if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
-				fprintf(fp, "   <host>%s</host>\n", value);
-
-			if ((int_value = gaim_proxy_info_get_port(proxy_info)) != 0)
-				fprintf(fp, "   <port>%d</port>\n", int_value);
-
-			if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
-				fprintf(fp, "   <username>%s</username>\n", value);
-
-			if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
-				fprintf(fp, "   <password>%s</password>\n", value);
-		}
-
-		fprintf(fp, "  </proxy>\n");
+		child = proxy_settings_to_xmlnode(proxy_info);
+		xmlnode_insert_child(node, child);
 	}
 
-	fprintf(fp, " </account>\n");
+	return node;
+}
+
+static xmlnode *
+accounts_to_xmlnode(void)
+{
+	xmlnode *node, *child;
+	GList *cur;
+
+	node = xmlnode_new("accounts");
+	xmlnode_set_attrib(node, "version", "1.0");
+
+	for (cur = gaim_accounts_get_all(); cur != NULL; cur = cur->next)
+	{
+		child = account_to_xmlnode(cur->data);
+		xmlnode_insert_child(node, child);
+	}
+
+	return node;
 }
 
 void
 gaim_accounts_sync(void)
 {
-	FILE *fp;
-	struct stat st;
-	const char *user_dir = gaim_user_dir();
-	char *filename;
-	char *filename_real;
+	xmlnode *node;
+	char *data;
 
 	if (!accounts_loaded) {
-		gaim_debug_error("accounts",
-				   "Writing accounts to disk.\n");
-		schedule_accounts_save();
-		return;
+		gaim_debug_error("accounts", "Attempted to save accounts before they "
+						 "were read!\n");
 	}
 
-	if (user_dir == NULL)
-		return;
-
-	gaim_debug_info("accounts", "Writing accounts to disk.\n");
-
-	fp = fopen(user_dir, "r");
-
-	if (fp == NULL)
-		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	else
-		fclose(fp);
-
-	filename = g_build_filename(user_dir, "accounts.xml.save", NULL);
-
-	if ((fp = fopen(filename, "w")) != NULL) {
-		GList *l;
-
-		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
-		fprintf(fp, "<accounts>\n");
-
-		for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
-			gaim_accounts_write(fp, l->data);
-
-		fprintf(fp, "</accounts>\n");
-
-		fclose(fp);
-		chmod(filename, S_IRUSR | S_IWUSR);
-	}
-	else {
-		gaim_debug_error("accounts", "Unable to write %s\n",
-				   filename);
-		g_free(filename);
-		return;
-	}
-
-	if (stat(filename, &st) || (st.st_size == 0)) {
-		gaim_debug_error("accounts", "Failed to save accounts\n");
-		unlink(filename);
-		g_free(filename);
-		return;
-	}
-
-	filename_real = g_build_filename(user_dir, "accounts.xml", NULL);
-
-	if (rename(filename, filename_real) < 0) {
-		gaim_debug_error("accounts", "Error renaming %s to %s\n",
-				   filename, filename_real);
-	}
-
-	g_free(filename);
-	g_free(filename_real);
+	node = accounts_to_xmlnode();
+	data = xmlnode_to_formatted_str(node, NULL);
+	gaim_util_write_data_to_file("accounts.xml", data, -1);
+	g_free(data);
+	xmlnode_free(node);
 }
 
 void

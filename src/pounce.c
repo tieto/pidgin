@@ -875,7 +875,7 @@ gaim_pounces_sync(void)
 		GList *l;
 
 		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
-		fprintf(fp, "<pounces>\n");
+		fprintf(fp, "<pounces version='1.0'>\n");
 
 		for (l = gaim_pounces_get_all(); l != NULL; l = l->next)
 			gaim_pounces_write(fp, l->data);

@@ -64,9 +64,9 @@ struct _GaimSavedStatusSub
 	char *message;
 };
 
-static GList *saved_statuses = NULL;
-gboolean have_read_saved_statuses = FALSE;
-static guint statuses_save_timer = 0;
+static GList   *saved_statuses = NULL;
+static guint    statuses_save_timer = 0;
+static gboolean statuses_loaded = FALSE;
 
 /**************************************************************************
 * Helper functions
@@ -165,7 +165,7 @@ statuses_to_xmlnode(void)
 	GList *cur;
 
 	node = xmlnode_new("statuses");
-	xmlnode_set_attrib(node, "version", "1");
+	xmlnode_set_attrib(node, "version", "1.0");
 
 	for (cur = saved_statuses; cur != NULL; cur = cur->next)
 	{
@@ -179,20 +179,20 @@ statuses_to_xmlnode(void)
 static void
 sync_statuses(void)
 {
-	xmlnode *statuses;
+	xmlnode *node;
 	char *data;
 
-	if (!have_read_saved_statuses) {
+	if (!statuses_loaded) {
 		gaim_debug_error("status", "Attempted to save statuses before they "
 						 "were read!\n");
 		return;
 	}
 
-	statuses = statuses_to_xmlnode();
-	data = xmlnode_to_formatted_str(statuses, NULL);
+	node = statuses_to_xmlnode();
+	data = xmlnode_to_formatted_str(node, NULL);
 	gaim_util_write_data_to_file("status.xml", data, -1);
 	g_free(data);
-	xmlnode_free(statuses);
+	xmlnode_free(node);
 }
 
 static gboolean
@@ -416,7 +416,7 @@ load_statuses(void)
 
 	g_return_if_fail(user_dir != NULL);
 
-	have_read_saved_statuses = TRUE;
+	statuses_loaded = TRUE;
 
 	filename = g_build_filename(user_dir, "status.xml", NULL);
 

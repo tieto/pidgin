@@ -2360,8 +2360,8 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct)
 	GList *accounts;
 	GaimBlistNode *gnode;
 
-	fprintf(file, "<?xml version='1.0' encoding='UTF-8' ?>\n");
-	fprintf(file, "<gaim version=\"1\">\n");
+	fprintf(file, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
+	fprintf(file, "<gaim version='1.0'>\n");
 	fprintf(file, "\t<blist>\n");
 
 	for (gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {

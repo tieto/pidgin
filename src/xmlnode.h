@@ -59,6 +59,19 @@ typedef struct _xmlnode
 xmlnode *xmlnode_new(const char *name);
 
 /**
+ * Creates a new xmlnode and inserts data into it.
+ *
+ * @param name The name of the node.
+ * @param data The data to insert.
+ * @param size The size of the data to insert.  If data is
+ *             null-terminated you can pass in -1.
+ *
+ * @return The new node.
+ */
+xmlnode *xmlnode_new_with_data(const char *name,
+							   const char *data, size_t size);
+
+/**
  * Creates a new xmlnode child.
  *
  * @param parent The parent node.
@@ -67,6 +80,20 @@ xmlnode *xmlnode_new(const char *name);
  * @return The new child node.
  */
 xmlnode *xmlnode_new_child(xmlnode *parent, const char *name);
+
+/**
+ * Creates a new xmlnode child and inserts data into it.
+ *
+ * @param parent The parent node.
+ * @param name   The name of the child node.
+ * @param data   The data to insert.
+ * @param size   The size of the data to insert.  If data is
+ *               null-terminated you can pass in -1.
+ *
+ * @return The new child node.
+ */
+xmlnode *xmlnode_new_child_with_data(xmlnode *parent, const char *name,
+									 const char *data, size_t size);
 
 /**
  * Inserts a node into a node as a child.

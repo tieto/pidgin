@@ -198,5 +198,4 @@ check_idle(gpointer data)
 	}
 
 	return TRUE;
-
 }

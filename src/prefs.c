@@ -740,8 +740,8 @@ static void gaim_prefs_write(FILE *f, struct gaim_pref *pref, int depth) {
 	if(!pref) {
 		pref = &prefs;
 
-		fprintf(f, "<?xml version='1.0' encoding='UTF-8' ?>\n");
-		fprintf(f, "<pref name='/'");
+		fprintf(f, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
+		fprintf(f, "<pref version='1.0' name='/'");
 	} else {
 		for(i=0; i<depth; i++)
 			fprintf(f, "\t");

@@ -38,6 +38,7 @@ static xmlnode*
 new_node(const char *name, XMLNodeType type)
 {
 	xmlnode *node = g_new0(xmlnode, 1);
+
 	if(name)
 		node->name = g_strdup(name);
 	node->type = type;
@@ -53,7 +54,23 @@ xmlnode_new(const char *name)
 	return new_node(name, XMLNODE_TYPE_TAG);
 }
 
-xmlnode *xmlnode_new_child(xmlnode *parent, const char *name)
+xmlnode*
+xmlnode_new_with_data(const char *name, const char *data, size_t size)
+{
+	xmlnode *node;
+
+	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(size != 0, NULL);
+
+	node = new_node(name, XMLNODE_TYPE_TAG);
+	xmlnode_insert_data(node, data, size);
+
+	return node;
+}
+
+xmlnode *
+xmlnode_new_child(xmlnode *parent, const char *name)
 {
 	xmlnode *node;
 
@@ -61,6 +78,25 @@ xmlnode *xmlnode_new_child(xmlnode *parent, const char *name)
 	g_return_val_if_fail(name != NULL, NULL);
 
 	node = new_node(name, XMLNODE_TYPE_TAG);
+
+	xmlnode_insert_child(parent, node);
+
+	return node;
+}
+
+xmlnode *
+xmlnode_new_child_with_data(xmlnode *parent, const char *name,
+							const char *data, size_t size)
+{
+	xmlnode *node;
+
+	g_return_val_if_fail(parent != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(size != 0, NULL);
+
+	node = new_node(name, XMLNODE_TYPE_TAG);
+	xmlnode_insert_data(node, data, size);
 
 	xmlnode_insert_child(parent, node);
 
@@ -162,7 +198,8 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 	return NULL;
 }
 
-void xmlnode_free(xmlnode *node)
+void
+xmlnode_free(xmlnode *node)
 {
 	xmlnode *x, *y;
 
@@ -243,7 +280,8 @@ xmlnode_get_data(xmlnode *node)
 	return g_string_free(str, FALSE);
 }
 
-static gchar *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
+static gchar *
+xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 {
 	GString *text = g_string_new("");
 	xmlnode *c;
@@ -313,11 +351,15 @@ static gchar *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting
 	return g_string_free(text, FALSE);
 }
 
-gchar *xmlnode_to_str(xmlnode *node, int *len) {
+gchar *
+xmlnode_to_str(xmlnode *node, int *len)
+{
 	return xmlnode_to_str_helper(node, len, FALSE, 0);
 }
 
-gchar *xmlnode_to_formatted_str(xmlnode *node, int *len) {
+gchar *
+xmlnode_to_formatted_str(xmlnode *node, int *len)
+{
 	gchar *xml, *xml_with_declaration;
 
 	xml = xmlnode_to_str_helper(node, len, TRUE, 0);
@@ -395,7 +437,8 @@ static GMarkupParser xmlnode_parser = {
 };
 
 
-xmlnode *xmlnode_from_str(const char *str, size_t size)
+xmlnode *
+xmlnode_from_str(const char *str, size_t size)
 {
 	struct _xmlnode_parser_data *xpd = g_new0(struct _xmlnode_parser_data, 1);
 	xmlnode *ret;
@@ -418,7 +461,8 @@ xmlnode *xmlnode_from_str(const char *str, size_t size)
 	return ret;
 }
 
-xmlnode *xmlnode_copy(xmlnode *src)
+xmlnode *
+xmlnode_copy(xmlnode *src)
 {
 	xmlnode *ret;
 	xmlnode *child;
@@ -451,7 +495,9 @@ xmlnode *xmlnode_copy(xmlnode *src)
 	return ret;
 }
 
-xmlnode *xmlnode_get_next_twin(xmlnode *node) {
+xmlnode *
+xmlnode_get_next_twin(xmlnode *node)
+{
 	xmlnode *sibling;
 	const char *ns = xmlnode_get_attrib(node, "xmlns");
 
@@ -470,4 +516,3 @@ xmlnode *xmlnode_get_next_twin(xmlnode *node) {
 
 	return NULL;
 }
-
