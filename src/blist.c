@@ -870,6 +870,57 @@ struct group *gaim_find_group(const char *name)
 	}
 	return NULL;
 }
+
+struct chat *
+gaim_blist_find_chat(GaimAccount *account, const char *name)
+{
+	char *chat_name;
+	struct chat *chat;
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	struct proto_chat_entry *pce;
+	GaimBlistNode *node, *group;
+	GList *parts;
+
+	g_return_val_if_fail(gaim_get_blist() != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	for (group = gaimbuddylist->root; group != NULL; group = group->next) {
+		for (node = group->child; node != NULL; node = node->next) {
+			if (GAIM_BLIST_NODE_IS_CHAT(node)) {
+
+				chat = (struct chat *)node;
+
+				prpl = gaim_find_prpl(gaim_account_get_protocol(chat->account));
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+				parts = prpl_info->chat_info(
+					gaim_account_get_connection(chat->account));
+
+				pce = parts->data;
+				chat_name = g_hash_table_lookup(chat->components,
+												pce->identifier);
+
+				if (chat->account == account &&
+					name != NULL && !strcmp(chat_name, name)) {
+
+					return chat;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
+struct group *
+gaim_blist_chat_get_group(struct chat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return (struct group *)(((GaimBlistNode *)chat)->parent);
+}
+
 struct group *gaim_find_buddys_group(struct buddy *buddy)
 {
 	if (!buddy)

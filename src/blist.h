@@ -433,6 +433,24 @@ GSList *gaim_find_buddies(GaimAccount *account, const char *name);
 struct group *gaim_find_group(const char *name);   
 
 /**
+ * Finds a chat by name.
+ *
+ * @param name The chat's name.
+ *
+ * @return The chat, or @c NULL if the chat does not exist.
+ */
+struct chat *gaim_blist_find_chat(GaimAccount *account, const char *name);
+
+/**
+ * Returns the group of which the chat is a member.
+ *
+ * @param chat The chat.
+ *
+ * @return The parent group, or @c NULL if the chat is not in a group.
+ */
+struct group *gaim_blist_chat_get_group(struct chat *chat);
+
+/**
  * Returns the group of which the buddy is a member.
  *
  * @param buddy   The buddy

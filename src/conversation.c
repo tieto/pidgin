@@ -2220,15 +2220,7 @@ conv_placement_by_group(GaimConversation *conv)
 
 	type = gaim_conversation_get_type(conv);
 
-	if (type != GAIM_CONV_IM) {
-		win = gaim_get_last_window_with_type(type);
-
-		if (win == NULL)
-			conv_placement_new_window(conv);
-		else
-			gaim_window_add_conversation(win, conv);
-	}
-	else {
+	if (type == GAIM_CONV_IM) {
 		struct buddy *b;
 		struct group *grp = NULL;
 		GList *wins, *convs;
@@ -2270,6 +2262,58 @@ conv_placement_by_group(GaimConversation *conv)
 
 		/* Make a new window. */
 		conv_placement_new_window(conv);
+	}
+	else if (type == GAIM_CONV_CHAT) {
+		struct chat *chat;
+		struct group *group = NULL;
+		GList *wins, *convs;
+
+		chat = gaim_blist_find_chat(gaim_conversation_get_account(conv),
+									gaim_conversation_get_name(conv));
+
+		if (chat != NULL)
+			group = gaim_blist_chat_get_group(chat);
+
+		/* Go through the list of chats and find one with this group. */
+		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+			GaimWindow *win2;
+			GaimConversation *conv2;
+			struct chat *chat2;
+			struct group *group2 = NULL;
+
+			win2 = (GaimWindow *)wins->data;
+
+			for (convs = gaim_window_get_conversations(win2);
+				 convs != NULL;
+				 convs = convs->next) {
+
+				conv2 = (GaimConversation *)convs->data;
+
+				chat2 = gaim_blist_find_chat(
+					gaim_conversation_get_account(conv2),
+					gaim_conversation_get_name(conv2));
+
+				if (chat2 != NULL)
+					group2 = gaim_blist_chat_get_group(chat2);
+
+				if (group == group2) {
+					gaim_window_add_conversation(win2, conv);
+
+					return;
+				}
+			}
+		}
+
+		/* Make a new window. */
+		conv_placement_new_window(conv);
+	}
+	else {
+		win = gaim_get_last_window_with_type(type);
+
+		if (win == NULL)
+			conv_placement_new_window(conv);
+		else
+			gaim_window_add_conversation(win, conv);
 	}
 }
 
