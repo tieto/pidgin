@@ -2320,7 +2320,7 @@ void gaim_gtk_prefs_update_old() {
 
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
 	gaim_prefs_rename("/gaim/gtk/conversations/ignore_colors", "/gaim/gtk/conversations/ignore_formatting");
-	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/plugins/gtk/x11/notify/method/raise");
+	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method/raise");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
