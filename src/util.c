@@ -1042,6 +1042,13 @@ gaim_markup_strip_html(const char *str)
 	{
 		if (str2[i] == '<')
 		{
+			if (strncasecmp(str2 + i, "<br>", 4) == 0)
+			{
+				str2[j++] = '\n';
+				i = i + 3;
+				continue;
+			}
+
 			k = i + 1;
 
 			if(g_ascii_isspace(str2[k]))
@@ -1077,6 +1084,27 @@ gaim_markup_strip_html(const char *str)
 		    str2[j++] = '\"';
 		    i = i + 5;
 		    continue;
+		}
+
+		if (str2[i] == '&' && strncasecmp(str2 + i, "&amp;", 5) == 0)
+		{
+			str2[j++] = '&';
+			i = i + 4;
+			continue;
+		}
+
+		if (str2[i] == '&' && strncasecmp(str2 + i, "&lt;", 4) == 0)
+		{
+			str2[j++] = '<';
+			i = i + 3;
+			continue;
+		}
+
+		if (str2[i] == '&' && strncasecmp(str2 + i, "&gt;", 4) == 0)
+		{
+			str2[j++] = '>';
+			i = i + 3;
+			continue;
 		}
 
 		if (visible)

@@ -689,7 +689,7 @@ static GList *txt_logger_list(const char *sn, GaimAccount *account)
 
 static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 {
-	char *read, *minus_header;
+	char *read, *minus_header, *minus_header2;
 	struct generic_logger_data *data = log->logger_data;
 	*flags = 0;
 	if (!data || !data->path)
@@ -701,7 +701,9 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		else
 			minus_header = g_strdup(minus_header + 1);
 		g_free(read);
-		return minus_header;
+		minus_header2 = gaim_escape_html(minus_header);
+		g_free(minus_header);
+		return minus_header2;
 	}
         return g_strdup(_("<font color=\"red\"><b>Could not read file: %s</b></font>"));
 }
