@@ -2911,6 +2911,7 @@ static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char **xp
 	dpm = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, xpm);
 	tpm = gtk_pixmap_new(dpm, mask);
 	gtk_widget_show(tpm);
+	gdk_pixmap_unref(dpm);
 	button = gtk_toolbar_append_element(GTK_TOOLBAR(bar), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, NULL, NULL, tpm, GTK_SIGNAL_FUNC(set_smiley_array), (int *)face);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
 

@@ -1429,6 +1429,20 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	}
 	
 	gtk_widget_show(toolbar);
+
+	gdk_pixmap_unref(link_i);
+	gdk_pixmap_unref(palette_i);
+	gdk_pixmap_unref(wood_i);
+	gdk_pixmap_unref(speaker_i);
+	gdk_pixmap_unref(strike_i);
+	gdk_pixmap_unref(bold_i);
+	gdk_pixmap_unref(italic_i);
+	gdk_pixmap_unref(underline_i);
+	gdk_pixmap_unref(small_i);
+	gdk_pixmap_unref(normal_i);
+	gdk_pixmap_unref(big_i);
+	gdk_pixmap_unref(font_i);
+	gdk_pixmap_unref(smiley_i);
 	
 	c->bold = bold;
 	c->strike = strike;
