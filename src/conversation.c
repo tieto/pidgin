@@ -3441,13 +3441,20 @@ static void save_icon(GtkObject *obj, struct conversation *c)
 
 static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation *c)
 {
-	GtkWidget *menu;
+	static GtkWidget *menu = NULL;
 	GtkWidget *button;
 
 	if (e->button != 3)
 		return FALSE;
 	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
+
+	/*
+	 * If a menu already exists, destroy it before creating a new one,
+	 * thus freeing-up the memory it occupied.
+	 */
+	if(menu)
+		gtk_widget_destroy(menu);
 
 	menu = gtk_menu_new();
 

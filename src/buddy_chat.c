@@ -846,8 +846,15 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 			c = new_conversation(gtk_object_get_user_data(obj));
 		set_convo_gc(c, b->gc);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
-		GtkWidget *menu;
+		static GtkWidget *menu = NULL;
 		GtkWidget *button;
+
+		/*
+		 * If a menu already exists, destroy it before creating a new one,
+		 * thus freeing-up the memory it occupied.
+		 */
+		if(menu)
+			gtk_widget_destroy(menu);
 
 		menu = gtk_menu_new();
 

@@ -1764,8 +1764,17 @@ gtk_imhtml_button_press_event (GtkWidget      *widget,
 			uw = click->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height)) {
-				GtkWidget *menu = gtk_menu_new ();
+				static GtkWidget *menu = NULL;
 				GtkWidget *button;
+
+				/*
+				 * If a menu already exists, destroy it before creating a new one,
+				 * thus freeing-up the memory it occupied.
+				 */
+				if(menu)
+					gtk_widget_destroy(menu);
+
+				menu = gtk_menu_new();
 
 				if (uw->bit->url) {
 					button = gtk_menu_item_new_with_label ("Open URL");
