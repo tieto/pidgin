@@ -309,6 +309,7 @@ static void buddy_page()
 	GtkWidget *parent;
 	GtkWidget *box;
 	GtkWidget *label;
+	GtkWidget *sep;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -327,9 +328,20 @@ static void buddy_page()
 	gaim_button(_("Show numbers in groups"), &display_options, OPT_DISP_SHOW_GRPNUM, box);
 	gaim_button(_("Show idle times"), &display_options, OPT_DISP_SHOW_IDLETIME, box);
 	gaim_button(_("Show buddy type icons"), &display_options, OPT_DISP_SHOW_PIXMAPS, box);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
 	gaim_button(_("Hide IM/Info/Chat buttons"), &display_options, OPT_DISP_NO_BUTTONS, box);
 	gaim_button(_("Show pictures on buttons"), &display_options, OPT_DISP_SHOW_BUTTON_XPM, box);
 	gaim_button(_("Use Daemon pictures"), &display_options, OPT_DISP_DEVIL_PIXMAPS, box);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	gaim_button(_("Save Window Size/Position"), &general_options, OPT_GEN_SAVED_WINDOWS, box);
 
 	gtk_widget_show(prefdialog);
 }
@@ -609,6 +621,13 @@ static void convo_page()
 	gaim_button(_("Ignore incoming colors"), &display_options, OPT_DISP_IGNORE_COLOUR, box);
 	gaim_button(_("Ignore white backgrounds"), &display_options, OPT_DISP_IGN_WHITE, box);
 	gaim_button(_("Show timestamp on messages"), &display_options, OPT_DISP_SHOW_TIME, box);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	gaim_button(_("Log all conversations"), &general_options, OPT_GEN_LOG_ALL, box);
+	gaim_button(_("Strip HTML from logs"), &general_options, OPT_GEN_STRIP_HTML, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
