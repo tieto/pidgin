@@ -69,5 +69,4 @@ endif
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	$(GLIB_CFLAGS) \
-	$(GTK_CFLAGS) \
 	$(DEBUG_CFLAGS)
