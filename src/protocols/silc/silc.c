@@ -43,19 +43,19 @@ silcgaim_away_states(GaimAccount *account)
 	GaimStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, SILCGAIM_STATUS_ID_OFFLINE, _("Offline"), FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new(GAIM_STATUS_ONLINE, "offline", _("Online"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_ONLINE, SILCGAIM_STATUS_ID_ONLINE, _("Online"), FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, "hyper", _("Hyper Active"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, SILCGAIM_STATUS_ID_HYPER, _("Hyper Active"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away", _("Away"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, SILCGAIM_STATUS_ID_AWAY, _("Away"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "busy", _("Busy"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, SILCGAIM_STATUS_ID_BUSY, _("Busy"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "indisposed", _("Indisposed"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, SILCGAIM_STATUS_ID_INDISPOSED, _("Indisposed"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "page", _("Wake Me Up"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, SILCGAIM_STATUS_ID_PAGE, _("Wake Me Up"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
 	return types;

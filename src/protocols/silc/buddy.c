@@ -732,7 +732,7 @@ silcgaim_add_buddy_pk_no(SilcGaimBuddyRes r)
 			  _("You cannot receive buddy notifications until you "
 			    "import his/her public key.  You can use the Get Public Key "
 			    "command to get the public key."));
-	gaim_blist_update_buddy_presence(r->b, FALSE);
+	gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_OFFLINE, NULL);
 }
 
 static void
@@ -771,7 +771,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 			   "%s" G_DIR_SEPARATOR_S "clientkeys" G_DIR_SEPARATOR_S "clientkey_%s.pub",
 			   silcgaim_silcdir(), fingerprint);
 		gaim_blist_node_set_string((GaimBlistNode *)b, "public-key", filename);
-		gaim_blist_update_buddy_presence(r->b, FALSE);
+		gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_OFFLINE, NULL);
 		silc_free(fingerprint);
 		silc_free(r->offline_pk);
 		silc_free(r);
@@ -962,8 +962,8 @@ silcgaim_add_buddy_save(bool success, void *context)
 		   silcgaim_silcdir(), fingerprint);
 	gaim_blist_node_set_string((GaimBlistNode *)b, "public-key", filename);
 
-	/* Update online status on the buddy list */
-	gaim_blist_update_buddy_presence(b, TRUE);
+	/* Update online status */
+	gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_ONLINE, NULL);
 
 	/* Finally, start watching this user so we receive its status
 	   changes from the server */

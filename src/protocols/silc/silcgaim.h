@@ -44,6 +44,15 @@
 
 #define SILCGAIM_PRVGRP 0x001fffff
 
+/* Status IDs */
+#define SILCGAIM_STATUS_ID_OFFLINE	"offline"
+#define SILCGAIM_STATUS_ID_ONLINE	"online"
+#define SILCGAIM_STATUS_ID_HYPER	"hyper"
+#define SILCGAIM_STATUS_ID_AWAY		"away"
+#define SILCGAIM_STATUS_ID_BUSY		"busy"
+#define SILCGAIM_STATUS_ID_INDISPOSED "indisposed"
+#define SILCGAIM_STATUS_ID_PAGE		"page"
+
 typedef struct {
 	unsigned long id;
 	const char *channel;
