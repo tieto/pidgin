@@ -469,41 +469,52 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 
 void tab_complete(struct conversation *c)
 {
-	int pos = GTK_OLD_EDITABLE(c->entry)->current_pos;
-	int start = pos;
+	GtkTextIter cursor, word_start, start_buffer;
+	int start;
 	int most_matched = -1;
 	char *entered, *partial = NULL;
 	char *text;
 	GList *matches = NULL;
-	GList *nicks = c->in_room;
+	GList *nicks = NULL;
+
+	gtk_text_buffer_get_start_iter(c->entry_buffer, &start_buffer);
+	gtk_text_buffer_get_iter_at_mark(c->entry_buffer, &cursor,
+					 gtk_text_buffer_get_insert(c->entry_buffer));
+	word_start = cursor;
 
 	/* if there's nothing there just return */
-	if (!start)
+	if (!gtk_text_iter_compare(&cursor, &start_buffer))
 		return;
 	
-	text = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, pos);
+	text = gtk_text_buffer_get_text(c->entry_buffer, &start_buffer, &cursor, FALSE);
 
 	/* if we're at the end of ": " we need to move back 2 spaces */
-	if (start >= 2 && text[start - 1] == ' ' && text[start - 2] == ':')
-		start -= 2;
-	
-	/* find the start of the word that we're tabbing */
-	while (start > 0 && text[start - 1] != ' ')
-		start--;
+	start = strlen(text)-1;
+	if (strlen(text)>=2 && !strncmp(&text[start-1], ": ", 2)) {
+		gtk_text_iter_backward_chars(&word_start, 2);
+	}
 
-	entered = text + start;
+	/* find the start of the word that we're tabbing */
+	while (start >= 0 && text[start] != ' ') {
+		gtk_text_iter_backward_char(&word_start);
+		start--;
+	}
+	g_free(text);
+
+	entered = gtk_text_buffer_get_text(c->entry_buffer, &word_start, &cursor, FALSE);
 	if (chat_options & OPT_CHAT_OLD_STYLE_TAB) {
 		if (strlen(entered) >= 2 && !strncmp(": ", entered + strlen(entered) - 2, 2))
 			entered[strlen(entered) - 2] = 0;
 	}
-		
+
 	if (!strlen(entered)) {
-		g_free(text);
+		g_free(entered);
 		return;
 	}
 
 	debug_printf("checking tab-completion for %s\n", entered);
 
+	nicks = c->in_room;
 	while (nicks) {
 		char *nick = nicks->data;
 		/* this checks to see if the current nick could be a completion */
@@ -531,7 +542,7 @@ void tab_complete(struct conversation *c)
 
 		/* if we're doing old-style, just fill in the completion */
 		if (chat_options & OPT_CHAT_OLD_STYLE_TAB) {
-		        gtk_editable_delete_text(GTK_EDITABLE(c->entry), start, pos);
+		        gtk_text_buffer_delete(c->entry_buffer, &word_start, &cursor);
 			if (strlen(nick) == strlen(entered)) {
 				nicks = nicks->next ? nicks->next : c->in_room;
 				nick = nicks->data;
@@ -541,24 +552,17 @@ void tab_complete(struct conversation *c)
 					nick++;
 			}
 
-			if (start == 0) {
+			gtk_text_buffer_get_start_iter(c->entry_buffer, &start_buffer);
+			gtk_text_buffer_get_iter_at_mark(c->entry_buffer, &cursor,
+							 gtk_text_buffer_get_insert(c->entry_buffer));
+			if (!gtk_text_iter_compare(&cursor, &start_buffer)) {
 				char *tmp = g_strdup_printf("%s: ", nick);
-				int t = start;
-				gtk_editable_insert_text(GTK_EDITABLE(c->entry), tmp, strlen(tmp), &start);
-				if (t == start) {
-					t = start + strlen(tmp);
-					gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
-				}
+				gtk_text_buffer_insert_at_cursor(c->entry_buffer, tmp, -1);
 				g_free(tmp);
 			} else {
-				int t = start;
-				gtk_editable_insert_text(GTK_EDITABLE(c->entry), nick, strlen(nick), &start);
-				if (t == start) {
-					t = start + strlen(nick);
-					gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
-				}
+				gtk_text_buffer_insert_at_cursor(c->entry_buffer, nick, -1);
 			}
-			g_free(text);
+			g_free(entered);
 			return;
 		}
 
@@ -581,30 +585,27 @@ void tab_complete(struct conversation *c)
 	/* if there weren't any matches, return */
 	if (!matches) {
 		/* if matches isn't set partials won't be either */
-		g_free(text);
+		g_free(entered);
 		return;
 	}
 	
-	gtk_editable_delete_text(GTK_EDITABLE(c->entry), start, pos);
+	gtk_text_buffer_delete(c->entry_buffer, &word_start, &cursor);
 	if (!matches->next) {
 		/* there was only one match. fill it in. */
-		if (start == 0) {
+		gtk_text_buffer_get_start_iter(c->entry_buffer, &start_buffer);
+		gtk_text_buffer_get_iter_at_mark(c->entry_buffer, &cursor,
+						 gtk_text_buffer_get_insert(c->entry_buffer));
+		if (!gtk_text_iter_compare(&cursor, &start_buffer)) {
 			char *tmp = g_strdup_printf("%s: ", (char *)matches->data);
-			int t = start;
-			gtk_editable_insert_text(GTK_EDITABLE(c->entry), tmp, strlen(tmp), &start);
-			if (t == start) {
-				t = start + strlen(tmp);
-				gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
-			}
+			gtk_text_buffer_insert_at_cursor(c->entry_buffer, tmp, -1);
 			g_free(tmp);
 		} else {
-			gtk_editable_insert_text(GTK_EDITABLE(c->entry), matches->data, strlen(matches->data), &start);
+			gtk_text_buffer_insert_at_cursor(c->entry_buffer, matches->data, -1);
 		}
 		matches = g_list_remove(matches, matches->data);
 	} else {
 		/* there were lots of matches, fill in as much as possible and display all of them */
 		char *addthis = g_malloc0(1);
-		int t = start;
 		while (matches) {
 			char *tmp = addthis;
 			addthis = g_strconcat(tmp, matches->data, " ", NULL);
@@ -612,15 +613,11 @@ void tab_complete(struct conversation *c)
 			matches = g_list_remove(matches, matches->data);
 		}
 		write_to_conv(c, addthis, WFLAG_NOLOG, NULL, time(NULL), -1);
-		gtk_editable_insert_text(GTK_EDITABLE(c->entry), partial, strlen(partial), &start);
-		if (t == start) {
-			t = start + strlen(partial);
-			gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
-		}
+		gtk_text_buffer_insert_at_cursor(c->entry_buffer, partial, -1);
 		g_free(addthis);
 	}
-	
-	g_free(text);
+
+	g_free(entered);
 	g_free(partial);
 }
 
@@ -1180,6 +1177,8 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *win;
 	GtkWidget *cont;
 	GtkWidget *text;
+	/*GtkWidget *close;*/
+	GtkWidget *frame;
 	GtkWidget *chatentry;
 	GtkWidget *lbox;
 	GtkWidget *bbox;
@@ -1383,7 +1382,17 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, TRUE, FALSE);
 	gtk_widget_show(vbox);
 
-	chatentry = gtk_text_new(NULL, NULL);
+	toolbar = build_conv_toolbar(b);
+	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(frame), TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+	
+	b->entry_buffer = gtk_text_buffer_new(NULL);
+	g_object_set_data(G_OBJECT(b->entry_buffer), "user_data", b);
+	chatentry = gtk_text_view_new_with_buffer(b->entry_buffer);
 	b->entry = chatentry;
 	if (!(chat_options & OPT_CHAT_ONE_WINDOW))
 		gtk_window_set_focus(GTK_WINDOW(b->window), b->entry);
@@ -1391,23 +1400,18 @@ void show_new_buddy_chat(struct conversation *b)
 
 	b->makesound = 1; /* Need to do this until we get a menu */
 
-	toolbar = build_conv_toolbar(b);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-
-	gtk_object_set_user_data(GTK_OBJECT(chatentry), b);
-	gtk_text_set_editable(GTK_TEXT(chatentry), TRUE);
-	gtk_text_set_word_wrap(GTK_TEXT(chatentry), TRUE);
-	gtk_signal_connect(GTK_OBJECT(chatentry), "activate", GTK_SIGNAL_FUNC(send_callback), b);
-	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback),
-			   b);
-	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed),
-			   chatentry);
-	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_attach(GTK_TEXT(chatentry));
-	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 0);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->entry), GTK_WRAP_WORD);
+	g_signal_connect(G_OBJECT(b->entry), "key_press_event", G_CALLBACK(keypress_callback), b);
+	g_signal_connect_after(G_OBJECT(b->entry), "button_press_event", 
+			       G_CALLBACK(stop_rclick_callback), NULL);
+	g_signal_connect_swapped(G_OBJECT(chatentry), "key_press_event", 
+				 G_CALLBACK(entry_key_pressed), chatentry);
+	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(chatentry));
 	gtk_widget_set_usize(chatentry, buddy_chat_size.width, MAX(buddy_chat_size.entry_height, 25));
 	gtk_window_set_focus(GTK_WINDOW(win), chatentry);
 	gtk_widget_show(chatentry);
+	/*if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_attach(GTK_TEXT(chatentry));*/
 
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);

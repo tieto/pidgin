@@ -38,7 +38,6 @@ GAIM-REMOTE:
 	need a doc written up for gaim-remote on usage
 
 PORTABILITY/i18n
-input widget
 icq i18n
 info dialog
 irc (patch pending?)

@@ -102,7 +102,7 @@ struct conversation {
 	char name[80];
 	GtkWidget *toolbar;
 	GtkWidget *text;
-	GtkWidget *entry;
+//	GtkWidget *entry;
 	GtkWidget *italic;
 	GtkWidget *bold;
 	GtkWidget *underline;
@@ -181,6 +181,9 @@ struct conversation {
 	guint32 icon_timer;
 	GdkPixbufAnimationIter *iter;
 	GtkWidget *save_icon;
+
+	GtkTextBuffer *entry_buffer;
+	GtkWidget     *entry;
 };
 
 struct log_conversation {
@@ -383,23 +386,23 @@ extern void show_conv(struct conversation *);
 void set_convo_name(struct conversation *c, const char *nname);
 extern struct conversation *new_conversation(char *);
 extern void delete_conversation(struct conversation *);
-extern void surround(GtkWidget *, char *, char *);
+extern void surround(struct conversation *, char *, char *);
 extern int is_logging(char *);
 extern void set_state_lock(int);
 extern void rm_log(struct log_conversation *);
 extern struct log_conversation *find_log_info(char *);
-extern void remove_tags(GtkWidget *, char *);
+extern void remove_tags(struct conversation *, char *);
 extern void update_log_convs();
 extern void update_transparency();
 extern void update_font_buttons();
 extern void toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
-extern void do_bold(GtkWidget *, GtkWidget *);
-extern void do_italic(GtkWidget *, GtkWidget *);
-extern void do_underline(GtkWidget *, GtkWidget *);
-extern void do_strike(GtkWidget *, GtkWidget *);
-extern void do_small(GtkWidget *, GtkWidget *);
-extern void do_normal(GtkWidget *, GtkWidget *);
-extern void do_big(GtkWidget *, GtkWidget *);
+extern void do_bold(GtkWidget *, struct conversation *);
+extern void do_italic(GtkWidget *, struct conversation *);
+extern void do_underline(GtkWidget *, struct conversation *);
+extern void do_strike(GtkWidget *, struct conversation *);
+extern void do_small(GtkWidget *, struct conversation *);
+extern void do_normal(GtkWidget *, struct conversation *);
+extern void do_big(GtkWidget *, struct conversation *);
 extern void set_font_face(char *, struct conversation *);
 extern void redo_convo_menus();
 extern void convo_menu_remove(struct gaim_connection *);

@@ -2844,7 +2844,7 @@ void do_add_link(GtkWidget *widget, struct linkdlg *b)
 	showtext = gtk_entry_get_text(GTK_ENTRY(b->text));
 
 	g_snprintf(open_tag, 2048, "<A HREF=\"%s\">%s", urltext, showtext);
-	surround(b->entry, open_tag, "</A>");
+/* FIXME	surround(b, open_tag, "</A>");*/
 
 	g_free(open_tag);
 	destroy_dialog(NULL, b->window);
@@ -2927,7 +2927,7 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 		gtk_window_set_focus(GTK_WINDOW(c->link_dialog), b->url);
 		b->window = c->link_dialog;
 		b->toggle = linky;
-		b->entry = c->entry;
+/* FIXME		b->entry_view = c->entry_view;*/
 		gtk_widget_realize(c->link_dialog);
 
 	}
@@ -2989,7 +2989,7 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c->hasfg = 1;
 	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green,
 		   text_color.blue);
-	surround(c->entry, open_tag, "</FONT>");
+	surround(c, open_tag, "</FONT>");
 	debug_printf("#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
 	g_free(open_tag);
 	cancel_fgcolor(NULL, c);
@@ -3016,7 +3016,7 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c->hasbg = 1;
 	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green,
 		   text_color.blue);
-	surround(c->entry, open_tag, "</BODY>");
+	surround(c, open_tag, "</BODY>");
 	debug_printf("#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
 	g_free(open_tag);
 	cancel_bgcolor(NULL, c);
@@ -3562,26 +3562,9 @@ void set_smiley_array(GtkWidget *widget, int smiley_type)
 
 void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 {
-	char *smiley_text;
-
-	smiley_text = strdup(current_smiley);
-
-	/* surround(c->entry, smiley_text, ""); */
-
-	if (GTK_OLD_EDITABLE(c->entry)->has_selection) {
-		int finish = GTK_OLD_EDITABLE(c->entry)->selection_end_pos;
-		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
-					 smiley_text, strlen(smiley_text), &finish);
-	} else {
-		int pos = GTK_OLD_EDITABLE(c->entry)->current_pos;
-		gtk_editable_insert_text(GTK_EDITABLE(c->entry), smiley_text, strlen(smiley_text), &pos);
-	}
-
-	g_free(smiley_text);
-
+	gtk_text_buffer_insert_at_cursor(c->entry_buffer,
+					 current_smiley, -1);
 	close_smiley_dialog(NULL, c);
-
-	return;
 }
 
 static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char **xpm, GtkWidget *win,

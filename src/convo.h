@@ -56,21 +56,22 @@ extern void add_callback(GtkWidget *, struct conversation *);
 /* now both */
 extern int set_dispstyle (int);
 extern void info_callback(GtkWidget *, struct conversation *);
-extern void do_bold(GtkWidget *, GtkWidget *);
-extern void do_italic(GtkWidget *, GtkWidget *);
-extern void do_underline(GtkWidget *, GtkWidget *);
-extern void do_strike(GtkWidget *, GtkWidget *);
-extern void do_small(GtkWidget *, GtkWidget *);
-extern void do_normal(GtkWidget *, GtkWidget *);
-extern void do_big(GtkWidget *, GtkWidget *);
+extern void do_bold(GtkWidget *, struct conversation *);
+extern void do_italic(GtkWidget *, struct conversation *);
+extern void do_underline(GtkWidget *, struct conversation *);
+extern void do_strike(GtkWidget *, struct conversation *);
+extern void do_small(GtkWidget *, struct conversation *);
+extern void do_normal(GtkWidget *, struct conversation *);
+extern void do_big(GtkWidget *, struct conversation *);
 extern void toggle_font(GtkWidget *, struct conversation *);
 extern void toggle_color(GtkWidget *, struct conversation *);
 extern void toggle_loggle(GtkWidget *, struct conversation *);
 extern void insert_smiley(GtkWidget *, struct conversation *);
 /* sound is handled by set_option */
 extern gboolean keypress_callback(GtkWidget *, GdkEventKey *, struct conversation *);
+extern gboolean stop_rclick_callback(GtkWidget *, GdkEventButton *, gpointer);
 extern void check_spelling( GtkEditable *, gchar *, gint, gint *, gpointer);
-extern int entry_key_pressed(GtkWidget *, GtkWidget *);
+extern int entry_key_pressed(GtkTextBuffer *);
 
 extern void convo_switch(GtkNotebook *, GtkWidget *, gint, gpointer);
 extern gint delete_all_convo(GtkWidget *, GdkEventAny *, gpointer);

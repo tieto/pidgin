@@ -1304,8 +1304,7 @@ const char *handle_uri(char *uri) {
 		g_free(who);
 		if (what) {
 			int finish;
-			gtk_editable_insert_text(GTK_EDITABLE(c->entry),
-					 what, strlen(what), &finish);
+			gtk_text_buffer_insert_at_cursor(c->entry_buffer, what, -1);
 			g_free(what);
 		}
 	} else if (!g_strncasecmp(uri, "aim:addbuddy?", strlen("aim:addbuddy?"))) {

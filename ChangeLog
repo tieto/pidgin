@@ -36,6 +36,7 @@ version 0.60:
 		- Alert Dialogs
 		- GtkIMHtml tooltips Pangonated
 		- About Dialog (Nathan Walp)
+		- i18n capable text input widget (thanks paco-paco, david odin, etc)
 	* Notify.c plugin rewritten; check its configure dialog (Thanks,
 	  Etan Reisner)
 	* TOC no longer compiles statically by default--use OSCAR

@@ -79,8 +79,9 @@ int fontsize = 3;
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
 
-void check_everything(GtkWidget *entry);
+void check_everything(GtkTextBuffer *buffer);
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct conversation *c);
+gboolean stop_rclick_callback(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
 static void update_icon(struct conversation *);
 static void remove_icon(struct conversation *);
@@ -440,7 +441,6 @@ static void do_insert_image(GtkObject *obj, GtkWidget *wid)
 	struct conversation *c = gtk_object_get_user_data(obj);
 	const char *name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 	const char *filename;
-	int pos;
 	char *buf;
 	struct stat st;
 	int id = g_slist_length(c->images) + 1;
@@ -465,16 +465,8 @@ static void do_insert_image(GtkObject *obj, GtkWidget *wid)
 	buf = g_strdup_printf ("<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
 			       filename, id, (int)st.st_size);
 	c->images = g_slist_append(c->images, g_strdup(name));
-
-	if (GTK_OLD_EDITABLE(c->entry)->has_selection) {
-		int finish = GTK_OLD_EDITABLE(c->entry)->selection_end_pos;
-		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
-					 buf, strlen(buf), &finish);
-	} else {
-		pos = GTK_OLD_EDITABLE(c->entry)->current_pos;
-		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
-					 buf, strlen(buf), &pos);
-	}
+	gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(c->entry_buffer),
+					 buf, -1);
 	g_free(buf);
 }
 
@@ -520,8 +512,8 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 
 	debug_printf("conversation close callback\n");
 
-	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_detach(GTK_TEXT(c->entry));
+/*	if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_detach(GTK_TEXT(c->entry));*/
 
 	if (!c->is_chat) {
 		GSList *cn = connections;
@@ -625,7 +617,7 @@ void set_font_face(char *newfont, struct conversation *c)
 	c->hasfont = 1;
 
 	pre_fontface = g_strconcat("<FONT FACE=\"", c->fontface, "\">", NULL);
-	surround(c->entry, pre_fontface, "</FONT>");
+	surround(c, pre_fontface, "</FONT>");
 	gtk_widget_grab_focus(c->entry);
 	g_free(pre_fontface);
 }
@@ -821,14 +813,13 @@ gboolean send_typed(gpointer data)
 	if (c && c->gc && c->name) {
 		c->type_again = 1;
 		serv_send_typing(c->gc, c->name, TYPED);
+		debug_printf("typed...\n");
 	}
 	return FALSE;
 }
 
-gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct conversation *c)
+gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event, struct conversation *c)
 {
-	int pos;
-
 	if (event->keyval == GDK_Escape) {
 		if (convo_options & OPT_CONVO_ESC_CAN_CLOSE) {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
@@ -847,47 +838,36 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->comments);
 	} else if ((event->keyval == GDK_Return) || (event->keyval == GDK_KP_Enter)) {
 		if ((event->state & GDK_CONTROL_MASK) && (convo_options & OPT_CONVO_CTL_ENTER)) {
-			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
+			send_callback(NULL, c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			return TRUE;
 		} else if (!(event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) && (convo_options & OPT_CONVO_ENTER_SENDS)) {
-			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
+			send_callback(NULL, c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			return TRUE;
 		} else {
-			int oldpos;
-			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			oldpos = pos = gtk_editable_get_position(GTK_EDITABLE(entry));
-			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
-			if (oldpos == pos)
-				gtk_editable_set_position(GTK_EDITABLE(entry), pos + 1);
-			return TRUE;
+			return FALSE;
 		}
 	} else if ((event->state & GDK_CONTROL_MASK) && (event->keyval == 'm')) {
-		int oldpos;
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-		oldpos = pos = gtk_editable_get_position(GTK_EDITABLE(entry));
-		gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
-		if (oldpos == pos)
-			gtk_editable_set_position(GTK_EDITABLE(entry), pos + 1);
+		gtk_text_buffer_insert_at_cursor(c->entry_buffer, "\n", 1);
 	} else if (event->state & GDK_CONTROL_MASK) {
-		int pos = 0;
 		switch (event->keyval) {
 		case GDK_Up:
 			if (!c->send_history)
 				break;
 			if (!c->send_history->prev) {
+				GtkTextIter start, end;
 				if (c->send_history->data)
 					g_free(c->send_history->data);
-				c->send_history->data = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+				gtk_text_buffer_get_start_iter(c->entry_buffer, &start);
+				gtk_text_buffer_get_end_iter(c->entry_buffer, &end);
+				c->send_history->data = gtk_text_buffer_get_text(c->entry_buffer,
+										 &start, &end, FALSE);
 			} 
 			if (c->send_history->next && c->send_history->next->data) {
 				c->send_history = c->send_history->next;
-				gtk_editable_delete_text (GTK_EDITABLE(entry),0,-1);
-				gtk_editable_insert_text(GTK_EDITABLE(entry), 
-							 c->send_history->data, 
-							 strlen(c->send_history->data),
-							 &pos);
+				gtk_text_buffer_set_text(c->entry_buffer, c->send_history->data, -1);
 			}
 			
 			break;
@@ -897,10 +877,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			if (c->send_history->prev) {
 			  c->send_history = c->send_history->prev;
 				if (c->send_history->data) {
-					gtk_editable_delete_text (GTK_EDITABLE(entry),0,-1);
-					gtk_editable_insert_text (GTK_EDITABLE(entry), c->send_history->data, 
-								  strlen(c->send_history->data), &pos);
-				
+					gtk_text_buffer_set_text(c->entry_buffer, c->send_history->data, -1);
 				}
 			}
 			break;
@@ -911,7 +888,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			case 'I':
 				quiet_set(c->italic,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->italic)));
-				do_italic(c->italic, c->entry);
+				do_italic(c->italic, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case 'u':	/* ctl-u is GDK_Clear, which clears the line */
@@ -919,27 +896,27 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				quiet_set(c->underline,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON
 									(c->underline)));
-				do_underline(c->underline, c->entry);
+				do_underline(c->underline, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case 'b':	/* ctl-b is GDK_Left, which moves backwards */
 			case 'B':
 				quiet_set(c->bold,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->bold)));
-				do_bold(c->bold, c->entry);
+				do_bold(c->bold, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case '-':
-				do_small(NULL, c->entry);
+				do_small(NULL, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case '=':
 			case '+':
-				do_big(NULL, c->entry);
+				do_big(NULL, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;	
 			case '0':
-				do_normal(NULL, c->entry);
+				do_normal(NULL, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case 'f':
@@ -1005,15 +982,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				break;
 			}
 			if (buf[0]) {
-				if (GTK_OLD_EDITABLE(c->entry)->has_selection) {
-					int finish = GTK_OLD_EDITABLE(c->entry)->selection_end_pos;
-					gtk_editable_insert_text(GTK_EDITABLE(c->entry),
-								 buf, strlen(buf), &finish);
-				} else {
-					pos = GTK_OLD_EDITABLE(c->entry)->current_pos;
-					gtk_editable_insert_text(GTK_EDITABLE(c->entry),
-								 buf, strlen(buf), &pos);
-				}
+				gtk_text_buffer_insert_at_cursor(c->entry_buffer, buf, -1);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
@@ -1070,6 +1039,20 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 	return FALSE;
 }
 
+/* This guy just kills a single right click from being propagated any 
+ * further.  I have no idea *why* we need this, but we do ...  It 
+ * prevents right clicks on the GtkTextView in a convo dialog from
+ * going all the way down to the notebook.  I suspect a bug in 
+ * GtkTextView, but I'm not ready to point any fingers yet. */
+gboolean stop_rclick_callback(GtkWidget *widget, GdkEventButton *event, gpointer data)
+{
+	if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
+		/* right single click */
+		g_signal_stop_emission_by_name(G_OBJECT(widget), "button_press_event");
+		return TRUE;
+	}
+}
+
 static void got_typing_keypress(struct conversation *c, gboolean first) {
 	/* we know we got something, so we at least have to make sure we don't send
 	 * TYPED any time soon */
@@ -1088,9 +1071,8 @@ static void got_typing_keypress(struct conversation *c, gboolean first) {
 	}
 }
 
-void delete_text_callback(GtkEditable *editable, gint start_pos, gint end_pos, gpointer user_data) {
+void delete_text_callback(GtkTextBuffer *textbuffer, GtkTextIter *start_pos, GtkTextIter *end_pos, gpointer user_data) {
 	struct conversation *c = user_data;
-	gchar *contents;
 
 	if(!c)
 		return;
@@ -1098,8 +1080,7 @@ void delete_text_callback(GtkEditable *editable, gint start_pos, gint end_pos, g
 	if (misc_options & OPT_MISC_STEALTH_TYPING)
 		return;
 
-	contents = gtk_editable_get_chars(editable, 0, -1);
-	if(start_pos == 0 && (end_pos == strlen(contents) || end_pos == -1)) {
+	if(gtk_text_iter_is_start(start_pos) && gtk_text_iter_is_end(end_pos)) {
 		if(c->type_again_timeout)
 			gtk_timeout_remove(c->type_again_timeout);
 		serv_send_typing(c->gc, c->name, NOT_TYPING);
@@ -1107,12 +1088,10 @@ void delete_text_callback(GtkEditable *editable, gint start_pos, gint end_pos, g
 		/* we're deleting, but not all of it, so it counts as typing */
 		got_typing_keypress(c, FALSE);
 	}
-	g_free(contents);
 }
 
-void insert_text_callback(GtkEditable *editable, gchar *new_text, gint new_text_length, gint *position, gpointer user_data) {
+void insert_text_callback(GtkTextBuffer *textbuffer, GtkTextIter *position, gchar *new_text, gint new_text_length, gpointer user_data) {
 	struct conversation *c = user_data;
-	gchar *contents;
 
 	if(!c)
 		return;
@@ -1120,9 +1099,7 @@ void insert_text_callback(GtkEditable *editable, gchar *new_text, gint new_text_
 	if (misc_options & OPT_MISC_STEALTH_TYPING)
 		return;
 
-	contents = gtk_editable_get_chars(editable, 0, -1);
-	got_typing_keypress(c, (*position == 0 && strlen(contents) == 0));
-	g_free(contents);
+	got_typing_keypress(c, (gtk_text_iter_is_start(position) && gtk_text_iter_is_end(position)));
 }
 
 void send_callback(GtkWidget *widget, struct conversation *c)
@@ -1132,12 +1109,14 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	gulong length=0;
 	int err = 0;
 	GList *first;
+	GtkTextIter start_iter, end_iter;
 
 	if (!c->gc)
 		return;
 
-
-	buf2 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
+	gtk_text_buffer_get_start_iter(c->entry_buffer, &start_iter);
+	gtk_text_buffer_get_end_iter(c->entry_buffer, &end_iter);
+	buf2 = gtk_text_buffer_get_text(c->entry_buffer, &start_iter, &end_iter, FALSE);
 	limit = 32 * 1024;	/* you shouldn't be sending more than 32k in your messages. that's a book. */
 	buf = g_malloc(limit);
 	g_snprintf(buf, limit, "%s", buf2);
@@ -1223,7 +1202,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 			return;
 		}
 		if (plugin_return) {
-			gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
+			gtk_text_buffer_set_text(c->entry_buffer, "", -1);
 			g_free(buffy);
 			g_free(buf2);
 			g_free(buf);
@@ -1362,7 +1341,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		else
 			do_error_dialog(_("Unable to send message"), NULL, GAIM_ERROR);
 	} else {
-		gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
+		gtk_text_buffer_set_text(c->entry_buffer, "", -1);
 
 		if ((err > 0) && (away_options & OPT_AWAY_BACK_ON_IM)) {
 			if (awaymessage != NULL) {
@@ -1374,9 +1353,9 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	}
 }
 
-int entry_key_pressed(GtkWidget *w, GtkWidget *entry)
+gboolean entry_key_pressed(GtkTextBuffer *buffer)
 {
-	check_everything(w);
+	check_everything(buffer);
 	return FALSE;
 }
 
@@ -1384,15 +1363,18 @@ int entry_key_pressed(GtkWidget *w, GtkWidget *entry)
 /*  HTML-type stuff                                                       */
 /*------------------------------------------------------------------------*/
 
-int count_tag(GtkWidget *entry, char *s1, char *s2)
+int count_tag(GtkTextBuffer *buffer, char *s1, char *s2)
 {
 	char *p1, *p2;
 	int res = 0;
-	char *tmp, *tmpo, h;
-	tmpo = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	h = tmpo[GTK_OLD_EDITABLE(entry)->current_pos];
-	tmpo[GTK_OLD_EDITABLE(entry)->current_pos] = '\0';
-	tmp = tmpo;
+	GtkTextIter start, end;
+	char *tmp, *tmpo;
+
+	gtk_text_buffer_get_start_iter(buffer, &start);
+	gtk_text_buffer_get_iter_at_mark(buffer, &end,
+					 gtk_text_buffer_get_insert(buffer));
+  
+	tmp = tmpo = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
 	do {
 		p1 = strstr(tmp, s1);
 		p2 = strstr(tmp, s2);
@@ -1414,50 +1396,57 @@ int count_tag(GtkWidget *entry, char *s1, char *s2)
 			}
 		}
 	} while (p1 || p2);
-	tmpo[GTK_OLD_EDITABLE(entry)->current_pos] = h;
 	g_free(tmpo);
 	return res;
 }
 
 
-int invert_tags(GtkWidget *entry, char *s1, char *s2, int really)
+gboolean invert_tags(GtkTextBuffer *buffer, char *s1, char *s2, gboolean really)
 {
-	int start = GTK_OLD_EDITABLE(entry)->selection_start_pos;
-	int finish = GTK_OLD_EDITABLE(entry)->selection_end_pos;
-	char *s;
+	GtkTextIter start1, start2, end1, end2;
+	char *b1, *b2;
 
-	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	if (!g_strncasecmp(&s[start], s1, strlen(s1)) &&
-	    !g_strncasecmp(&s[finish - strlen(s2)], s2, strlen(s2))) {
-		if (really) {
-			gtk_editable_delete_text(GTK_EDITABLE(entry), start, start + strlen(s1));
-			gtk_editable_delete_text(GTK_EDITABLE(entry), finish - strlen(s2) - strlen(s1),
-						 finish - strlen(s1));
+	if (gtk_text_buffer_get_selection_bounds(buffer, &start1, &end2)) {
+		start2 = start1; end1 = end2;
+		if (!gtk_text_iter_forward_chars(&start2, strlen(s1)))
+			return FALSE;
+		if (!gtk_text_iter_backward_chars(&end1, strlen(s2)))
+			return FALSE;
+		b1 = gtk_text_buffer_get_text(buffer, &start1, &start2, FALSE);
+		b2 = gtk_text_buffer_get_text(buffer, &end1, &end2, FALSE);
+		if (!g_strncasecmp(b1, s1, strlen(s1)) &&
+		    !g_strncasecmp(b2, s2, strlen(s2))) {
+			if (really) {
+				GtkTextMark *m_end1, *m_end2;
+ 
+				m_end1= gtk_text_buffer_create_mark(buffer, "m1", &end1, TRUE);
+				m_end2= gtk_text_buffer_create_mark(buffer, "m2", &end2, TRUE);
+
+				gtk_text_buffer_delete(buffer, &start1, &start2);
+				gtk_text_buffer_get_iter_at_mark(buffer, &end1, m_end1);
+				gtk_text_buffer_get_iter_at_mark(buffer, &end2, m_end2);
+				gtk_text_buffer_delete(buffer, &end1, &end2);
+				gtk_text_buffer_delete_mark(buffer, m_end1);
+				gtk_text_buffer_delete_mark(buffer, m_end2);
+			}
+			 g_free(b1); g_free(b2);
+			return TRUE;
 		}
-		g_free(s);
-		return 1;
+		g_free(b1);g_free(b2);
 	}
-	g_free(s);
-	return 0;
+	return FALSE;
 }
 
 
-void remove_tags(GtkWidget *entry, char *tag)
+void remove_tags(struct conversation *c, char *tag)
 {
-	char *s, *t;
-	int start = GTK_OLD_EDITABLE(entry)->selection_start_pos;
-	int finish = GTK_OLD_EDITABLE(entry)->selection_end_pos;
-	int temp;
-	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	t = s;
+	GtkTextIter start, end, m_start, m_end;
 
-	if (start > finish) {
-		temp = start;
-		start = finish;
-		finish = temp;
-	}
+	if (!gtk_text_buffer_get_selection_bounds(c->entry_buffer,
+						  &start, &end))
+		return;
 
-	if (strstr(tag, "<FONT SIZE=")) {
+	/* FIXMEif (strstr(tag, "<FONT SIZE=")) {
 		while ((t = strstr(t, "<FONT SIZE="))) {
 			if (((t - s) < finish) && ((t - s) >= start)) {
 				gtk_editable_delete_text(GTK_EDITABLE(entry), (t - s),
@@ -1468,19 +1457,12 @@ void remove_tags(GtkWidget *entry, char *tag)
 			} else
 				t++;
 		}
-	} else {
-		while ((t = strstr(t, tag))) {
-			if (((t - s) < finish) && ((t - s) >= start)) {
-				gtk_editable_delete_text(GTK_EDITABLE(entry), (t - s),
-							 (t - s) + strlen(tag));
-				g_free(s);
-				s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-				t = s;
-			} else
-				t++;
+	} else*/ {
+		while (gtk_text_iter_forward_search(&start, tag, 0, &m_start, &m_end, &end)) {
+			gtk_text_buffer_delete(c->entry_buffer, &m_start, &m_end);
+			gtk_text_buffer_get_selection_bounds(c->entry_buffer, &start, &end);
 		}
 	}
-	g_free(s);
 }
 
 static char *html_logize(char *p)
@@ -1524,72 +1506,57 @@ static char *html_logize(char *p)
 	return buffer_start;
 }
 
-void surround(GtkWidget *entry, char *pre, char *post)
+void surround(struct conversation *c, char *pre, char *post)
 {
-	int temp, pos = GTK_OLD_EDITABLE(entry)->current_pos;
-	int dummy;
-	int start, finish;
+	GtkTextIter start, end;
+	GtkTextMark *mark_start, *mark_end;
 
-	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
+/*	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
 		gtkspell_detach(GTK_TEXT(entry));
-	}
+	}*/
 
-	if (GTK_OLD_EDITABLE(entry)->has_selection) {
-		remove_tags(entry, pre);
-		remove_tags(entry, post);
-		start = GTK_OLD_EDITABLE(entry)->selection_start_pos;
-		finish = GTK_OLD_EDITABLE(entry)->selection_end_pos;
-		if (start > finish) {
-			dummy = finish;
-			finish = start;
-			start = dummy;
-		}
-		dummy = start;
-		gtk_editable_insert_text(GTK_EDITABLE(entry), pre, strlen(pre), &dummy);
-		dummy = finish + strlen(pre);
-		gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
-		gtk_editable_select_region(GTK_EDITABLE(entry), start,
-					   finish + strlen(pre) + strlen(post));
+	if (gtk_text_buffer_get_selection_bounds(c->entry_buffer, &start, &end)) {
+		remove_tags(c, pre);
+		remove_tags(c, post);
+
+		mark_start = gtk_text_buffer_create_mark(c->entry_buffer, "m1", &start, TRUE);
+		mark_end = gtk_text_buffer_create_mark(c->entry_buffer, "m2", &end, FALSE);
+		gtk_text_buffer_insert(c->entry_buffer, &start, pre, -1);
+		gtk_text_buffer_get_selection_bounds(c->entry_buffer, &start, &end);
+		gtk_text_buffer_insert(c->entry_buffer, &end, post, -1);
+		gtk_text_buffer_get_iter_at_mark(c->entry_buffer, &start, mark_start);
+		gtk_text_buffer_move_mark_by_name(c->entry_buffer, "selection_bound", &start);
 	} else {
-		temp = pos;
-		gtk_editable_insert_text(GTK_EDITABLE(entry), pre, strlen(pre), &pos);
-		if (temp == pos) {
-			dummy = pos + strlen(pre);
-			gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
-			gtk_editable_set_position(GTK_EDITABLE(entry), dummy);
-		} else {
-			dummy = pos;
-			gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
-			gtk_editable_set_position(GTK_EDITABLE(entry), pos);
-		}
+		gtk_text_buffer_insert(c->entry_buffer, &start, pre, -1);
+		gtk_text_buffer_insert(c->entry_buffer, &start, post, -1);
+		mark_start = gtk_text_buffer_get_insert(c->entry_buffer);
+		gtk_text_buffer_get_iter_at_mark(c->entry_buffer, &start, mark_start);
+		gtk_text_iter_backward_chars(&start, strlen(post));
+		gtk_text_buffer_place_cursor(c->entry_buffer, &start);
 	}
 
-	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
+/*	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
 		gtkspell_attach(GTK_TEXT(entry));
-	}
+	}*/
 
-	gtk_widget_grab_focus(entry);
+	gtk_widget_grab_focus(c->entry);
 }
 
-void advance_past(GtkWidget *entry, char *pre, char *post)
+void advance_past(struct conversation *c, char *pre, char *post)
 {
-	char *s, *s2;
-	int pos;
-	if (invert_tags(entry, pre, post, 1))
+	GtkTextIter current_pos, start, end;
+
+	if (invert_tags(c->entry_buffer, pre, post, 1))
 		return;
-	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	pos = GTK_OLD_EDITABLE(entry)->current_pos;
-	debug_printf(_("Currently at %d, "), pos);
-	s2 = strstr(&s[pos], post);
-	if (s2) {
-		pos = s2 - s + strlen(post);
-	} else {
-		gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &pos);
-	}
-	g_free(s);
-	debug_printf(_("Setting position to %d\n"), pos);
-	gtk_editable_set_position(GTK_EDITABLE(entry), pos);
-	gtk_widget_grab_focus(entry);
+
+	gtk_text_buffer_get_iter_at_mark(c->entry_buffer, &current_pos,
+					 gtk_text_buffer_get_insert(c->entry_buffer));
+	if (gtk_text_iter_forward_search(&current_pos, post, 0, &start, &end, NULL))
+		gtk_text_buffer_place_cursor(c->entry_buffer, &end);
+	else
+		gtk_text_buffer_insert_at_cursor(c->entry_buffer, post, -1);
+
+	gtk_widget_grab_focus(c->entry);
 }
 
 void toggle_fg_color(GtkWidget *color, struct conversation *c)
@@ -1601,7 +1568,7 @@ void toggle_fg_color(GtkWidget *color, struct conversation *c)
 	else if (c->fg_color_dialog)
 		cancel_fgcolor(color, c);
 	else
-		advance_past(c->entry, "<FONT COLOR>", "</FONT>");
+		advance_past(c, "<FONT COLOR>", "</FONT>");
 }
 
 void toggle_bg_color(GtkWidget *color, struct conversation *c)
@@ -1613,7 +1580,7 @@ void toggle_bg_color(GtkWidget *color, struct conversation *c)
 	else if (c->bg_color_dialog)
 		cancel_bgcolor(color, c);
 	else
-		advance_past(c->entry, "<BODY BGCOLOR>", "</BODY>");
+		advance_past(c, "<BODY BGCOLOR>", "</BODY>");
 }
 
 void toggle_font(GtkWidget *font, struct conversation *c)
@@ -1625,7 +1592,7 @@ void toggle_font(GtkWidget *font, struct conversation *c)
 	else if (c->font_dialog)
 		cancel_font(font, c);
 	else
-		advance_past(c->entry, "<FONT FACE>", "</FONT>");
+		advance_past(c, "<FONT FACE>", "</FONT>");
 }
 
 void insert_link_cb(GtkWidget *w, struct conversation *c)
@@ -1644,143 +1611,144 @@ void toggle_link(GtkWidget *linky, struct conversation *c)
 	else if (c->link_dialog)
 		cancel_link(c->link, c);
 	else
-		advance_past(c->entry, "<A HREF>", "</A>");
+		advance_past(c, "<A HREF>", "</A>");
 
 	gtk_widget_grab_focus(c->entry);
 }
 
-void do_strike(GtkWidget *strike, GtkWidget *entry)
+void do_strike(GtkWidget *strike, struct conversation *c)
 {
 	if (state_lock)
 		return;
 
 	if (GTK_TOGGLE_BUTTON(strike)->active)
-		surround(entry, "<STRIKE>", "</STRIKE>");
+		surround(c, "<STRIKE>", "</STRIKE>");
 	else
-		advance_past(entry, "<STRIKE>", "</STRIKE>");
+		advance_past(c, "<STRIKE>", "</STRIKE>");
 
+	gtk_widget_grab_focus(c->entry);
 }
 
-void do_bold(GtkWidget *bold, GtkWidget *entry)
+void do_bold(GtkWidget *bold, struct conversation *c)
 {
 	if (state_lock)
 		return;
 	if (GTK_TOGGLE_BUTTON(bold)->active)
-		surround(entry, "<B>", "</B>");
+		surround(c, "<B>", "</B>");
 	else
-		advance_past(entry, "<B>", "</B>");
+		advance_past(c, "<B>", "</B>");
 
-	gtk_widget_grab_focus(entry);
+	gtk_widget_grab_focus(c->entry);
 }
 
-void do_underline(GtkWidget *underline, GtkWidget *entry)
+void do_underline(GtkWidget *underline, struct conversation *c)
 {
 	if (state_lock)
 		return;
 	if (GTK_TOGGLE_BUTTON(underline)->active)
-		surround(entry, "<U>", "</U>");
+		surround(c, "<U>", "</U>");
 	else
-		advance_past(entry, "<U>", "</U>");
+		advance_past(c, "<U>", "</U>");
 
-	gtk_widget_grab_focus(entry);
+	gtk_widget_grab_focus(c->entry);
 }
 
-void do_italic(GtkWidget *italic, GtkWidget *entry)
+void do_italic(GtkWidget *italic, struct conversation *c)
 {
 	if (state_lock)
 		return;
 	if (GTK_TOGGLE_BUTTON(italic)->active)
-		surround(entry, "<I>", "</I>");
+		surround(c, "<I>", "</I>");
 	else
-		advance_past(entry, "<I>", "</I>");
+		advance_past(c, "<I>", "</I>");
 
-	gtk_widget_grab_focus(entry);
+	gtk_widget_grab_focus(c->entry);
 }
 
 /* html code to modify font sizes must all be the same length, */
 /* currently set to 15 chars */
 
-void do_small(GtkWidget *small, GtkWidget *entry)
+void do_small(GtkWidget *small, struct conversation *c)
 {
 	if (state_lock)
 		return;
 
-	surround(entry, "<FONT SIZE=\"1\">", "</FONT>");
+	surround(c, "<FONT SIZE=\"1\">", "</FONT>");
 
-	gtk_widget_grab_focus(entry);
+	gtk_widget_grab_focus(c->entry);
 }
 
-void do_normal(GtkWidget *normal, GtkWidget *entry)
+void do_normal(GtkWidget *normal, struct conversation *c)
 {
 	if (state_lock)
 		return;
 
-	surround(entry, "<FONT SIZE=\"3\">", "</FONT>");
+	surround(c, "<FONT SIZE=\"3\">", "</FONT>");
 
-	gtk_widget_grab_focus(entry);
+	gtk_widget_grab_focus(c->entry);
 }
 
-void do_big(GtkWidget *big, GtkWidget *entry)
+void do_big(GtkWidget *big, struct conversation *c)
 {
 	if (state_lock)
 		return;
 
-	surround(entry, "<FONT SIZE=\"5\">", "</FONT>");
+	surround(c, "<FONT SIZE=\"5\">", "</FONT>");
 
-	gtk_widget_grab_focus(entry);
+	gtk_widget_grab_focus(c->entry);
 }
 
-void check_everything(GtkWidget *entry)
+void check_everything(GtkTextBuffer *buffer)
 {
 	struct conversation *c;
 
-	c = (struct conversation *)gtk_object_get_user_data(GTK_OBJECT(entry));
+	c = (struct conversation *)g_object_get_data(G_OBJECT(buffer), "user_data");
 	if (!c)
 		return;
-	if (invert_tags(entry, "<B>", "</B>", 0))
+	if (invert_tags(c->entry_buffer, "<B>", "</B>", 0))
 		quiet_set(c->bold, TRUE);
-	else if (count_tag(entry, "<B>", "</B>"))
+	else if (count_tag(c->entry_buffer, "<B>", "</B>"))
 		quiet_set(c->bold, TRUE);
 	else
 		quiet_set(c->bold, FALSE);
-	if (invert_tags(entry, "<I>", "</I>", 0))
+	if (invert_tags(c->entry_buffer, "<I>", "</I>", 0))
 		quiet_set(c->italic, TRUE);
-	else if (count_tag(entry, "<I>", "</I>"))
+	else if (count_tag(c->entry_buffer, "<I>", "</I>"))
 		quiet_set(c->italic, TRUE);
 	else
 		quiet_set(c->italic, FALSE);
 
-	if (invert_tags(entry, "<FONT COLOR", "</FONT>", 0))
+	if (invert_tags(c->entry_buffer, "<FONT COLOR", "</FONT>", 0))
 		quiet_set(c->fgcolorbtn, TRUE);
-	else if (count_tag(entry, "<FONT COLOR", "</FONT>"))
+	else if (count_tag(c->entry_buffer, "<FONT COLOR", "</FONT>"))
 		quiet_set(c->fgcolorbtn, TRUE);
 	else
 		quiet_set(c->fgcolorbtn, FALSE);
 
-	if (invert_tags(entry, "<BODY BGCOLOR", "</BODY>", 0))
+	if (invert_tags(c->entry_buffer, "<BODY BGCOLOR", "</BODY>", 0))
 		quiet_set(c->bgcolorbtn, TRUE);
-	else if (count_tag(entry, "<BODY BGCOLOR", "</BODY>"))
+	else if (count_tag(c->entry_buffer, "<BODY BGCOLOR", "</BODY>"))
 		quiet_set(c->bgcolorbtn, TRUE);
 	else
 		quiet_set(c->bgcolorbtn, FALSE);
 
-	if (invert_tags(entry, "<FONT FACE", "</FONT>", 0))
+	if (invert_tags(c->entry_buffer, "<FONT FACE", "</FONT>", 0))
 		quiet_set(c->font, TRUE);
-	else if (count_tag(entry, "<FONT FACE", "</FONT>"))
+	else if (count_tag(c->entry_buffer, "<FONT FACE", "</FONT>"))
 		quiet_set(c->font, TRUE);
 	else
 		quiet_set(c->font, FALSE);
 
-	if (invert_tags(entry, "<A HREF", "</A>", 0))
+	if (invert_tags(c->entry_buffer, "<A HREF", "</A>", 0))
 		quiet_set(c->link, TRUE);
-	else if (count_tag(entry, "<A HREF", "</A>"))
+	else if (count_tag(c->entry_buffer, "<A HREF", "</A>"))
 		quiet_set(c->link, TRUE);
 	else
 		quiet_set(c->link, FALSE);
 
-	if (invert_tags(entry, "<U>", "</U>", 0))
+	if (invert_tags(c->entry_buffer, "<U>", "</U>", 0))
 		quiet_set(c->underline, TRUE);
-	else if (count_tag(entry, "<U>", "</U>"))
+	else if (count_tag(c->entry_buffer, "<U>", "</U>"))
 		quiet_set(c->underline, TRUE);
 	else
 		quiet_set(c->underline, FALSE);
@@ -2249,21 +2217,21 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		button = gaim_pixbuf_toolbar_button_from_stock("gtk-bold");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_bold), c->entry);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_bold), c);
 		c->bold = button; /* We should remember this */
 
 		/* Italic */
 		button = gaim_pixbuf_toolbar_button_from_stock("gtk-italic");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_italic), c->entry);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_italic), c);
 		c->italic = button; /* We should remember this */
 
 		/* Underline */
 		button = gaim_pixbuf_toolbar_button_from_stock("gtk-underline");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_underline), c->entry);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_underline), c);
 		c->underline = button; /* We should remember this */
 
 		/* Sep */
@@ -2274,20 +2242,20 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		button = gaim_pixbuf_toolbar_button_from_file("text_bigger.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_big), c->entry);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_big), c);
 		
 		/* Normal Font Size */
 		button = gaim_pixbuf_toolbar_button_from_file("text_normal.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_normal), c->entry);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_normal), c);
 		c->font = button; /* We should remember this */
 		
 		/* Decrease font size */
 		button = gaim_pixbuf_toolbar_button_from_file("text_smaller.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_small), c->entry);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_small), c);
 
 		/* Sep */
 		sep = gtk_vseparator_new();
@@ -2753,6 +2721,7 @@ void show_conv(struct conversation *c)
 	GtkWidget *warn;
 	GtkWidget *block;
 	/*GtkWidget *close;*/
+	GtkWidget *frame;
 	GtkWidget *entry;
 	GtkWidget *bbox;
 	GtkWidget *vbox;
@@ -2904,29 +2873,38 @@ void show_conv(struct conversation *c)
 	gtk_box_pack_start(GTK_BOX(vbox2), c->lbox, FALSE, FALSE, 0);
 	gtk_widget_show(c->lbox);
 
-	entry = gtk_text_new(NULL, NULL);
+	toolbar = build_conv_toolbar(c);
+	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 0);
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+	
+	c->entry_buffer = gtk_text_buffer_new(NULL);
+	g_object_set_data(G_OBJECT(c->entry_buffer), "user_data", c);
+	entry = gtk_text_view_new_with_buffer(c->entry_buffer);
 	c->entry = entry;
 	if (!(im_options & OPT_IM_ONE_WINDOW))
 		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 
-	toolbar = build_conv_toolbar(c);
-	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 0);
-
-	gtk_object_set_user_data(GTK_OBJECT(entry), c);
-	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
-	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(c->entry), GTK_WRAP_WORD);
 
 	gtk_widget_set_usize(entry, conv_size.width - 20, MAX(conv_size.entry_height, 25));
 
-	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback), c);
-	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
-	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(insert_text_callback), c);
-	gtk_signal_connect(GTK_OBJECT(entry), "delete-text", GTK_SIGNAL_FUNC(delete_text_callback), c);
-	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed),
-			   entry);
-	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_attach(GTK_TEXT(c->entry));
-	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 0);
+	g_signal_connect_swapped(G_OBJECT(c->entry), "key_press_event",
+				 G_CALLBACK(entry_key_pressed), c->entry_buffer);
+	g_signal_connect(G_OBJECT(c->entry), "key_press_event", G_CALLBACK(keypress_callback), c);
+	g_signal_connect_after(G_OBJECT(c->entry), "button_press_event", 
+			       G_CALLBACK(stop_rclick_callback), NULL);
+	g_signal_connect(G_OBJECT(c->entry_buffer), "insert_text",
+			   G_CALLBACK(insert_text_callback), c);
+	g_signal_connect(G_OBJECT(c->entry_buffer), "delete_range",
+			   G_CALLBACK(delete_text_callback), c);
+
+/*	if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_attach(GTK_TEXT(c->entry));*/
+	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(entry));
 	gtk_widget_show(entry);
 
 	c->bbox = bbox = gtk_hbox_new(FALSE, 5);
@@ -3045,10 +3023,10 @@ void toggle_spellchk()
 
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
-		if (convo_options & OPT_CONVO_CHECK_SPELLING)
+/*		if (convo_options & OPT_CONVO_CHECK_SPELLING)
 			gtkspell_attach(GTK_TEXT(c->entry));
 		else
-			gtkspell_detach(GTK_TEXT(c->entry));
+			gtkspell_detach(GTK_TEXT(c->entry));*/
 		cnv = cnv->next;
 	}
 
@@ -3057,10 +3035,10 @@ void toggle_spellchk()
 		cht = gc->buddy_chats;
 		while (cht) {
 			c = (struct conversation *)cht->data;
-			if (convo_options & OPT_CONVO_CHECK_SPELLING)
+/*			if (convo_options & OPT_CONVO_CHECK_SPELLING)
 				gtkspell_attach(GTK_TEXT(c->entry));
 			else
-				gtkspell_detach(GTK_TEXT(c->entry));
+				gtkspell_detach(GTK_TEXT(c->entry));*/
 			cht = cht->next;
 		}
 		con = con->next;
