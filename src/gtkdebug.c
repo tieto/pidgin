@@ -237,7 +237,7 @@ debug_window_new(void)
 	height = gaim_prefs_get_int("/gaim/gtk/debug/height");
 
 	GAIM_DIALOG(win->window);
-	gaim_debug(GAIM_DEBUG_INFO, "gtkdebug", "Setting dimensions to %d, %d\n",
+	gaim_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
 			   width, height);
 
 	gtk_window_set_default_size(GTK_WINDOW(win->window), width, height);

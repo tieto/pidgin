@@ -562,7 +562,7 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 
 	if (status == NULL)
 	{
-		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
+		gaim_debug_error("accounts",
 				   "Invalid status ID %s for account %s (%s)\n",
 				   status_id, gaim_account_get_username(account),
 				   gaim_account_get_protocol_id(account));
@@ -1204,7 +1204,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			else if (!strcmp(buffer, "envvar"))
 				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_USE_ENVVAR);
 			else
-				gaim_debug(GAIM_DEBUG_ERROR, "account",
+				gaim_debug_error("account",
 						   "Invalid proxy type found when loading account "
 						   "information for %s\n",
 						   gaim_account_get_username(data->account));
@@ -1308,7 +1308,7 @@ gaim_accounts_load()
 	}
 
 	if (!g_file_get_contents(filename, &contents, &length, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
+		gaim_debug_error("accounts",
 				   "Error reading accounts: %s\n", error->message);
 		g_error_free(error);
 		g_free(filename);
@@ -1332,7 +1332,7 @@ gaim_accounts_load()
 	}
 
 	if (!g_markup_parse_context_end_parse(context, NULL)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Error parsing %s\n",
+		gaim_debug_error("accounts", "Error parsing %s\n",
 				   filename);
 		g_markup_parse_context_free(context);
 		g_free(contents);
@@ -1484,7 +1484,7 @@ gaim_accounts_sync(void)
 	char *filename_real;
 
 	if (!accounts_loaded) {
-		gaim_debug(GAIM_DEBUG_WARNING, "accounts",
+		gaim_debug_error("accounts",
 				   "Writing accounts to disk.\n");
 		schedule_accounts_save();
 		return;
@@ -1493,7 +1493,7 @@ gaim_accounts_sync(void)
 	if (user_dir == NULL)
 		return;
 
-	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Writing accounts to disk.\n");
+	gaim_debug_info("accounts", "Writing accounts to disk.\n");
 
 	fp = fopen(user_dir, "r");
 
@@ -1519,7 +1519,7 @@ gaim_accounts_sync(void)
 		chmod(filename, S_IRUSR | S_IWUSR);
 	}
 	else {
-		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Unable to write %s\n",
+		gaim_debug_error("accounts", "Unable to write %s\n",
 				   filename);
 		g_free(filename);
 		return;
@@ -1528,7 +1528,7 @@ gaim_accounts_sync(void)
 	filename_real = g_build_filename(user_dir, "accounts.xml", NULL);
 
 	if (rename(filename, filename_real) < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Error renaming %s to %s\n",
+		gaim_debug_error("accounts", "Error renaming %s to %s\n",
 				   filename, filename_real);
 	}
 
@@ -1638,7 +1638,7 @@ gaim_accounts_reorder(GaimAccount *account, size_t new_index)
 	index = g_list_index(accounts, account);
 
 	if (index == -1) {
-		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
+		gaim_debug_error("accounts",
 				   "Unregistered account (%s) discovered during reorder!\n",
 				   gaim_account_get_username(account));
 		return;
