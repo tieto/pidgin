@@ -2255,14 +2255,29 @@ static void away_message_sel_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 
 }
 
+static void away_edit_sel (GtkWidget *dummy, void *tv)
+{
+	struct away_message *amt;
+	GtkTreeIter iter;
+	GtkListStore *ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(tv)));
+	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	GValue val = { 0, };
+
+	/* Get the pointer to the away message and pass that */
+	if (! gtk_tree_selection_get_selected (sel, (GtkTreeModel**)&ls, &iter))
+		return;
+	gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
+	amt = g_value_get_pointer (&val);
+	create_away_mess(NULL, amt);
+}
+
 static gboolean away_message_click_cb(GtkWidget *tv, GdkEventButton *event, gpointer null)
 {
 	/* Only respond to double click on button 1 */
 	if ((event->button != 1) || (event->type != GDK_2BUTTON_PRESS))
 		return FALSE;
 
-	/* Show the edit away message dialog */
-	create_away_mess(NULL, tv);
+	away_edit_sel (NULL, tv);
 
 	return FALSE;
 }
@@ -2360,7 +2375,7 @@ GtkWidget *away_message_page() {
 	button = gaim_pixbuf_button_from_stock(_("_Edit"), GAIM_STOCK_EDIT, GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(create_away_mess), event_view);
+					 G_CALLBACK(away_edit_sel), event_view);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ret);

@@ -2,6 +2,7 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.82:
 	New Features:
+	* Ability to edit your current away message (Rhett Robinson)
 	* Topics in the conversation window (not the topic field at the
 	  top) with URLs will now appear as links (Stu Tomlinson)
 	* File transfers appear in the file transfer window when they

@@ -210,9 +210,11 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 void do_away_message(GtkWidget *w, struct away_message *a)
 {
 	GtkWidget *back;
+	GtkWidget *edit;
 	GtkWidget *awaytext;
 	GtkWidget *sw;
 	GtkWidget *vbox;
+	GtkWidget *hbox;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
 	char *buf;
@@ -236,6 +238,10 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	gtk_container_add(GTK_CONTAINER(imaway), vbox);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
+	gtk_widget_show(hbox);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER,
@@ -292,13 +298,20 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_widget_show(awayqueue);
 	}
 
+	awaymessage = a;
+
+	edit = gaim_pixbuf_button_from_stock(_("Edit This Message"), GTK_STOCK_CONVERT, GAIM_BUTTON_HORIZONTAL);
+	gtk_box_pack_start(GTK_BOX(hbox), edit, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(edit), "clicked", G_CALLBACK(create_away_mess), awaymessage);
+	gtk_widget_show(edit);
+
 	back = gaim_pixbuf_button_from_stock(_("I'm Back!"), GTK_STOCK_JUMP_TO, GAIM_BUTTON_HORIZONTAL);
-	gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), back, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(back), "clicked", G_CALLBACK(do_im_back), imaway);
 	gtk_window_set_focus(GTK_WINDOW(imaway), back);
 	gtk_widget_show(back);
 
-	awaymessage = a;
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	gtk_widget_show(imaway);
 	serv_set_away_all(awaymessage->message);
@@ -872,16 +885,8 @@ create_away_mess(GtkWidget *widget, void *dummy)
 	focus_chain = g_list_append(focus_chain, sw);
 
 	if (dummy) {
-		struct away_message *amt;
-		GtkTreeIter iter;
-		GtkListStore *ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(dummy)));
-		GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(dummy));
-		GValue val = { 0, };
-
-		if (! gtk_tree_selection_get_selected (sel, (GtkTreeModel**)&ls, &iter))
-			return;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
-		amt = g_value_get_pointer (&val);
+		/* If anything is passed here, it is an away_message pointer */
+		struct away_message *amt = (struct away_message *) dummy ;
 		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(ca->text), amt->message, 0, NULL);
 		ca->mess = amt;
