@@ -63,6 +63,7 @@ static GtkWidget *plugwindow;
 
 static GtkWidget *config = NULL;
 static guint confighandle = 0;
+static char *last_dir = NULL;
 
 /* --------------- Function Declarations --------------------- */
 
@@ -92,7 +93,6 @@ static void destroy_plugins(GtkWidget *w, gpointer data) {
 static void load_file(GtkWidget *w, gpointer data)
 {
 	gchar *buf;
-	FILE *fd;
  
 	if (plugin_dialog) {
 		gtk_widget_show(plugin_dialog);
@@ -105,12 +105,11 @@ static void load_file(GtkWidget *w, gpointer data)
 	gtk_file_selection_hide_fileop_buttons(
 					GTK_FILE_SELECTION(plugin_dialog));
 
-	buf = g_strconcat(g_get_home_dir(), G_DIR_SEPARATOR_S, PLUGIN_DIR, NULL);
-	fd = fopen(buf, "r");
-	if (!fd)
-		mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
+	if (!last_dir)
+		/* someone fix me please, how do we get the dir from configure? */
+		buf = g_strdup("/usr/local/lib/gaim/");
 	else
-		fclose(fd);
+		buf = g_strconcat(last_dir, G_DIR_SEPARATOR_S, NULL);
 
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(plugin_dialog), buf);
 	gtk_file_selection_complete(GTK_FILE_SELECTION(plugin_dialog), "*.so");
@@ -163,6 +162,10 @@ void load_plugin(char *filename) {
 			PLUGIN_DIR, filename, NULL);
 	else
 		plug->filename = g_strdup(filename);
+
+	if (last_dir)
+		g_free(last_dir);
+	last_dir = g_dirname(plug->filename);
 
 	debug_printf("Loading %s\n", filename);
 	/* do NOT `OR' with RTLD_GLOBAL, otherwise plugins may conflict
