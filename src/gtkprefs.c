@@ -1484,9 +1484,6 @@ GtkWidget *away_page() {
 	prefs_checkbox(_("Send auto-response in active conversations"),
 				  "/core/away/auto_response/in_active_conv", vbox);
 
-	auto_resp_pref_id = gaim_prefs_connect_callback("/core/away/auto_response/enabled",
-												  auto_resp_changed_cb, hbox);
-
 	if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))
 		gtk_widget_set_sensitive(hbox, FALSE);
 
