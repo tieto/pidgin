@@ -11,11 +11,11 @@ Source:     %{name}-%{version}.tar.gz
 Packager:   Rob Flynn <rob@marko.net>
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 %if "%{_vendor}" != "MandrakeSoft"
-Requires:   gtk2 >= 2.0.0
-BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig
+Requires:   gtk2 >= 2.0.0, mozilla-nss
+BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
 %else
-Requires:   gtk+2.0 >= 2.0.0
-BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig
+Requires:   gtk+2.0 >= 2.0.0, libnss3
+BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, libnss3-devel
 %endif
 
 %package devel
@@ -73,7 +73,7 @@ rm -rf %{buildroot}
 %doc doc/the_penguin.txt doc/CREDITS doc/FAQ NEWS COPYING AUTHORS
 %doc README ChangeLog
 %doc %{_mandir}/man1/*
-%doc %{_mandir}/man3/*
+%doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/gaim
 %attr(755, root, root) %{_libdir}/gaim/*
