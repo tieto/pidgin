@@ -1626,11 +1626,11 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
 					 (prof && *prof) ? away_subs(prof, gc->username) : NULL,
+					 (prof && *prof) ? "<BR><HR><BR>" : NULL,
 					 NULL);
 		}
 	} else {
 		g_show_info_text(gc, info->sn, 1,
-				 "<BR><HR><BR>",
 				 (prof && *prof) ? away_subs(prof, gc->username) :
 					_("<i>No Information Provided</i>"),
 				 legend,
