@@ -241,6 +241,7 @@ static char *escape_text2(const char *msg)
 		case '}':
 		case '\\':
 		case '"':
+		case ' ':
 			woo[cnt++] = '\\';
 			/* Fall through */
 		default:
