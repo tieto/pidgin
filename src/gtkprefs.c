@@ -934,24 +934,21 @@ GtkWidget *list_page() {
 }
 
 static void
-conversation_placement_cb(const char *name, GaimPrefType type, gpointer value,
+conversation_usetabs_cb(const char *name, GaimPrefType type, gpointer value,
                           gpointer data)
 {
-	const char *placement = value;
+	gboolean usetabs = (gboolean)value;
 
-	if (strcmp(placement, "new"))
-		gtk_widget_set_sensitive(GTK_WIDGET(data), FALSE);
-	else
+	if (usetabs)
 		gtk_widget_set_sensitive(GTK_WIDGET(data), TRUE);
+	else
+		gtk_widget_set_sensitive(GTK_WIDGET(data), FALSE);
 }
 
 GtkWidget *conv_page() {
 	GtkWidget *ret;
-	GtkWidget *vbox;
+	GtkWidget *vbox, *vbox2;
 	GtkWidget *label;
-	GtkWidget *close_checkbox;
-	GtkWidget *tabs_checkbox, *tab_placement;
-	/* GtkWidget *same_checkbox, *icons_checkbox; */
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
@@ -961,14 +958,6 @@ GtkWidget *conv_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 
-	names = gaim_conv_placement_get_options();
-
-	label = gaim_gtk_prefs_dropdown_from_list(vbox, _("_Placement:"),
-			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
-	g_list_free(names);
-
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_size_group_add_widget(sg, label);
 #if 1 /* PREFSLASH04 */
 	label = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 					"/gaim/gtk/conversations/button_type",
@@ -977,96 +966,75 @@ GtkWidget *conv_page() {
 					_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
 					_("None"), GAIM_BUTTON_NONE,
 					NULL);
-
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 #endif /* PREFSLASH04 */
 
- 	label = gaim_gtk_prefs_labeled_spin_button(vbox, _("Number of conversations per window"),
-	                                           "/gaim/gtk/conversations/placement_number",
-	                                           1, 50, sg);
-	if (strcmp("number",
-		   gaim_prefs_get_string("/gaim/gtk/conversations/placement")))
-		gtk_widget_set_sensitive(label, FALSE);
-	else
-		gtk_widget_set_sensitive(label, TRUE);
-
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
-
-	gaim_gtk_prefs_checkbox(_("Show a_liases in tabs/titles"),
+	gaim_gtk_prefs_checkbox(_("Show _aliases in tabs/titles"),
 			"/core/conversations/use_alias_for_title", vbox);
-
-	gaim_gtk_prefs_checkbox(_("Enable _Commands"),
-			"/gaim/gtk/conversations/enable_commands", vbox);
-
-	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
-			"/gaim/gtk/conversations/raise_on_events", vbox);
-
-	/* XXX This caption totally sucks but I can't break the string freeze. */
-	gaim_gtk_prefs_checkbox(_("Co_lorize screen names"),
-			"/gaim/gtk/conversations/chat/color_nicks", vbox);
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
-	gaim_gtk_prefs_checkbox(_("Enable buddy icon a_nimation"),
+	gaim_gtk_prefs_checkbox(_("Enable buddy ic_on animation"),
 			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
-	gaim_gtk_prefs_checkbox(_("Notify buddies that you are _typing to them"),
+	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
+			"/gaim/gtk/conversations/raise_on_events", vbox);
+	gaim_gtk_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/core/conversations/im/send_typing", vbox);
+	gaim_gtk_prefs_checkbox(_("Enable \"_slash\" commands"),
+			"/gaim/gtk/conversations/enable_commands", vbox);
+	gaim_gtk_prefs_checkbox(_("Use _multi-colored screen names in chats"),
+			"/gaim/gtk/conversations/chat/color_nicks", vbox);
 
-	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
+	/* All the tab options! */
+	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
 
-	tabs_checkbox = gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
+	gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
-	if (strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/placement"), "new"))
-		gtk_widget_set_sensitive(tabs_checkbox, FALSE);
-	
-#if 0 /* Overzealous last-minute prefslashing */
-	same_checkbox = gaim_gtk_prefs_checkbox(_("Show IMs and chats in _same tabbed window"),
-						"/core/conversations/combine_chat_im", vbox);
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
-		gtk_widget_set_sensitive(GTK_WIDGET(same_checkbox), FALSE);
-	}
 
-	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
-			 G_CALLBACK(gaim_gtk_toggle_sensitive), same_checkbox);
+	/*
+	 * Connect a signal to the above preference.  When conversations are not
+	 * shown in a tabbed window then all tabbing options should be disabled.
+	 */
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
+	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/tabs",
+	                                                conversation_usetabs_cb,
+	                                                vbox2);
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
+		gtk_widget_set_sensitive(vbox2, FALSE);
+
+#if 0 /* PREFSLASH04 */
+	gaim_gtk_prefs_checkbox(_("Show IMs and chats in _same tabbed window"),
+							"/core/conversations/combine_chat_im", vbox2);
 #endif
 
-	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
-	                                                conversation_placement_cb,
-	                                                tabs_checkbox);
+	gaim_gtk_prefs_checkbox(_("Show _close button on tabs"),
+							"/gaim/gtk/conversations/close_on_tabs", vbox2);
 
-	close_checkbox = gaim_gtk_prefs_checkbox(_("Show _close button on tabs"),
-									"/gaim/gtk/conversations/close_on_tabs",
-									vbox);
-
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
-		gtk_widget_set_sensitive(GTK_WIDGET(close_checkbox), FALSE);
-	}
-
-	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
-
-	tab_placement = gtk_hbox_new(FALSE, 0);
-
-	label = gaim_gtk_prefs_dropdown(tab_placement, _("_Tab Placement:"), GAIM_PREF_INT,
+	label = gaim_gtk_prefs_dropdown(vbox2, _("Tab p_lacement:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/tab_side",
 			_("Top"), GTK_POS_TOP,
 			_("Bottom"), GTK_POS_BOTTOM,
 			_("Left"), GTK_POS_LEFT,
 			_("Right"), GTK_POS_RIGHT,
 			NULL);
-
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	gtk_box_pack_start(GTK_BOX(vbox), tab_placement, FALSE, FALSE, 0);
+	names = gaim_conv_placement_get_options();
+	label = gaim_gtk_prefs_dropdown_from_list(vbox2, _("New window _placement:"),
+			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
+	gtk_size_group_add_widget(sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	g_list_free(names);
 
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
-		gtk_widget_set_sensitive(GTK_WIDGET(tab_placement), FALSE);
-	}
-
-	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), tab_placement);
+#if 0 /* PREFSLASH04 */
+ 	label = gaim_gtk_prefs_labeled_spin_button(vbox2, _("Number of conversations per window:"),
+	                                           "/gaim/gtk/conversations/placement_number",
+	                                           1, 50, sg);
+#endif
 
 	gtk_widget_show_all(ret);
 

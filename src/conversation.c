@@ -847,10 +847,12 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	gaim_conversation_autoset_title(conv);
 
 	/*
-	 * Create a window if one does not exist. If it does, use the last
-	 * created window.
+	 * Place the conversation somewhere.  If there are no conversation
+	 * windows open, or if tabbed conversations are not enabled, then
+	 * place the conversation in a new window by itself.  Otherwise use
+	 * the chosen conversation placement function.
 	 */
-	if (windows == NULL)
+	if ((windows == NULL) || (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")))
 	{
 		GaimConvWindow *win;
 
@@ -2408,7 +2410,7 @@ conv_placement_by_account(GaimConversation *conv)
 	conv_placement_new_window(conv);
 }
 
-#if 0 /* I don't like this */
+#if 0 /* PREFSLASH04 */
 
 static void
 conv_placement_by_number(GaimConversation *conv)
