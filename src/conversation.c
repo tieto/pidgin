@@ -65,23 +65,23 @@ insertname_compare(gconstpointer one, gconstpointer two)
 	if (*a == '@') {
 		if (*b != '@') return -1;
 
-		return strcasecmp(a + 1, b + 1);
+		return g_ascii_strcasecmp(a + 1, b + 1);
 
 	} else if (*a == '%') {
 		if (*b != '%') return -1;
 
-		return strcasecmp(a + 1, b + 1);
+		return g_ascii_strcasecmp(a + 1, b + 1);
 
 	} else if (*a == '+') {
 		if (*b == '@') return  1;
 		if (*b != '+') return -1;
 
-		return strcasecmp(a + 1, b + 1);
+		return g_ascii_strcasecmp(a + 1, b + 1);
 
 	} else if (*b == '@' || *b == '%' || *b == '+')
 		return 1;
 
-	return strcasecmp(a, b);
+	return g_ascii_strcasecmp(a, b);
 }
 
 static gboolean

@@ -35,6 +35,8 @@
 
 #include "zephyr/zephyr.h"
 
+#include <strings.h>
+
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);
 extern Code_t ZUnsetLocation();

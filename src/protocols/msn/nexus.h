@@ -18,4 +18,4 @@ void msn_nexus_connect(MsnNexus *nexus);
 MsnNexus *msn_nexus_new(MsnSession *session);
 void msn_nexus_destroy(MsnNexus *nexus);
 
-#endif // _MSN_NEXUS_H_
+#endif /* _MSN_NEXUS_H_ */

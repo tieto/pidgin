@@ -84,13 +84,13 @@ static int nap_do_irc_style(GaimConnection *gc, const char *message, const char 
 
 	res = g_strsplit(message, " ", 2);
 
-	if (!strcasecmp(res[0], "/ME")) { /* MSG_CLIENT_PUBLIC */
+	if (!g_ascii_strcasecmp(res[0], "/ME")) { /* MSG_CLIENT_PUBLIC */
 		nap_write_packet(gc, 824, "%s \"%s\"", name, res[1]);
 
-	} else if (!strcasecmp(res[0], "/MSG")) { /* MSG_CLIENT_PUBLIC */
+	} else if (!g_ascii_strcasecmp(res[0], "/MSG")) { /* MSG_CLIENT_PUBLIC */
 		nap_write_packet(gc, 205, "%s", res[1]);
 
-	} else if (!strcasecmp(res[0], "/JOIN")) { /* join chatroom MSG_CLIENT_JOIN */
+	} else if (!g_ascii_strcasecmp(res[0], "/JOIN")) { /* join chatroom MSG_CLIENT_JOIN */
 		if (!res[1]) {
 			g_strfreev(res);
 			return 1;
@@ -100,19 +100,19 @@ static int nap_do_irc_style(GaimConnection *gc, const char *message, const char 
 		else
 			nap_write_packet(gc, 400, "%s", res[1]);
 
-	} else if (!strcasecmp(res[0], "/PART")) { /* partchatroom MSG_CLIENT_PART */
+	} else if (!g_ascii_strcasecmp(res[0], "/PART")) { /* partchatroom MSG_CLIENT_PART */
 		nap_write_packet(gc, 401, "%s", res[1] ? res[1] : name);
 
-	} else if (!strcasecmp(res[0], "/TOPIC")) { /* set topic MSG_SERVER_TOPIC */
+	} else if (!g_ascii_strcasecmp(res[0], "/TOPIC")) { /* set topic MSG_SERVER_TOPIC */
 		nap_write_packet(gc, 410, "%s", res[1] ? res[1] : name);
 
-	} else if (!strcasecmp(res[0], "/WHOIS")) { /* whois request MSG_CLIENT_WHOIS */
+	} else if (!g_ascii_strcasecmp(res[0], "/WHOIS")) { /* whois request MSG_CLIENT_WHOIS */
 		nap_write_packet(gc, 603, "%s", res[1]);
 
-	} else if (!strcasecmp(res[0], "/PING")) { /* send ping MSG_CLIENT_PING */
+	} else if (!g_ascii_strcasecmp(res[0], "/PING")) { /* send ping MSG_CLIENT_PING */
 		nap_write_packet(gc, 751, "%s", res[1]);
 
-	} else if (!strcasecmp(res[0], "/KICK")) { /* kick asswipe MSG_CLIENT_KICK */
+	} else if (!g_ascii_strcasecmp(res[0], "/KICK")) { /* kick asswipe MSG_CLIENT_KICK */
 		nap_write_packet(gc, 829, "%s", res[1]);
 
 	} else {

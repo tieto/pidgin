@@ -826,9 +826,9 @@ static unsigned int yahoo_auth_typefourfive(unsigned int challenge, int divisor,
 
 	for (i = 0; i < 32; i++)
 	{
-		unsigned char	buffer = yahoo_auth_read45(initial, i);		// Find the location in the challenge to put the 1/0 bit
-		int				mask = ~(1 << buffer);						// so that we can do a replace of our current value.
-		int				new_value = (challenge >> i) & 1;			// Is this bit 1 or 0?
+		unsigned char	buffer = yahoo_auth_read45(initial, i);		/* Find the location in the challenge to put the 1/0 bit */
+		int				mask = ~(1 << buffer);						/* so that we can do a replace of our current value. */
+		int				new_value = (challenge >> i) & 1;			/* Is this bit 1 or 0? */
 
 		final_value = (final_value & mask) | (new_value << buffer);
 	}

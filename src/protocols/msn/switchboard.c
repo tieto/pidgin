@@ -646,7 +646,9 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	char *buf;
 	size_t len;
 	int ret;
+#if 0
 	FILE *fp;
+#endif
 
 	g_return_val_if_fail(swboard != NULL, FALSE);
 	g_return_val_if_fail(msg     != NULL, FALSE);
