@@ -934,8 +934,6 @@ static void gaimrc_read_options(FILE *f)
 					convo_options & OPT_CONVO_IGNORE_SIZES);
 			gaim_prefs_set_bool("/core/conversations/combine_chat_im",
 					convo_options & OPT_CONVO_COMBINE);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/ctrl_w_closes",
-					convo_options & OPT_CONVO_CTL_W_CLOSES);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/close_on_tabs",
 					!(convo_options & OPT_CONVO_NO_X_ON_TAB));
 		} else if (!strcmp(p->option, "im_options")) {

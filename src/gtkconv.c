@@ -1142,10 +1142,10 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		if (!(event->state & GDK_CONTROL_MASK))
 			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
 	}
-	else if (event->keyval == GDK_F2 &&
-			 gaim_prefs_get_bool("/gaim/gtk/conversations/f2_toggles_timestamps")) {
-		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-								 !GTK_IMHTML(gtkconv->imhtml)->comments);
+	else if (event->keyval == GDK_F2) {
+
+		gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
+			!gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
 	}
 	else if (event->keyval == GDK_Return || event->keyval == GDK_KP_Enter) {
 		if ((event->state & GDK_CONTROL_MASK) &&
@@ -1327,11 +1327,11 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			g_string_free(conv->history, TRUE);
 			conv->history = g_string_new("");
 		}
-		else if (event->keyval == 'w' &&
-				 gaim_prefs_get_bool("/gaim/gtk/conversations/ctrl_w_closes")) {
-
+		else if (event->keyval == 'w') {
 			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
+
 			gaim_conversation_destroy(conv);
+
 			return TRUE;
 		}
 		else if (event->keyval == 'n') {
@@ -5689,8 +5689,6 @@ gaim_gtk_conversation_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_enter_sends", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/enter_sends", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/escape_closes", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_w_closes", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/f2_toggles_timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_strikethrough", FALSE);

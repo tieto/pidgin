@@ -798,8 +798,6 @@ GtkWidget *hotkeys_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Window Closing"));
 	prefs_checkbox(_("_Escape closes window"),
 				  "/gaim/gtk/conversations/escape_closes", vbox);
-	prefs_checkbox(_("Control-_W closes window"),
-				  "/gaim/gtk/conversations/ctrl_w_closes", vbox);
 
 	vbox = gaim_gtk_make_frame(ret, _("Insertions"));
 	prefs_checkbox(_("Control-{B/I/U/S} inserts _HTML tags"),
@@ -1424,8 +1422,8 @@ GtkWidget *sound_page() {
 				   "/core/sound/while_away", vbox);
 
 #ifndef _WIN32
-	vbox = gaim_gtk_make_frame (ret, _("Sound Method:"));
-	dd = prefs_dropdown(vbox, _("_Method"), GAIM_PREF_STRING,
+	vbox = gaim_gtk_make_frame (ret, _("Sound Method"));
+	dd = prefs_dropdown(vbox, _("_Method:"), GAIM_PREF_STRING,
 						"/gaim/gtk/sound/method",
 						_("Console beep"), "beep",
 #ifdef USE_AO
