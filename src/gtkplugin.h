@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTK_PLUGIN_H_
-#define _GAIM_GTK_PLUGIN_H_
+#ifndef _GAIM_GTKPLUGIN_H_
+#define _GAIM_GTKPLUGIN_H_
 
 #include "plugin.h"
 
@@ -66,4 +66,4 @@ GtkWidget *gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin);
  */
 void gaim_gtk_plugins_save(void);
 
-#endif /* _GAIM_GTK_PLUGIN_H_ */
+#endif /* _GAIM_GTKPLUGIN_H_ */

@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTK_NOTIFY_H_
-#define _GAIM_GTK_NOTIFY_H_
+#ifndef _GAIM_GTKNOTIFY_H_
+#define _GAIM_GTKNOTIFY_H_
 
 #include "notify.h"
 
@@ -34,4 +34,4 @@
  */
 GaimNotifyUiOps *gaim_gtk_notify_get_ui_ops(void);
 
-#endif /* _GAIM_GTK_NOTIFY_H_ */
+#endif /* _GAIM_GTKNOTIFY_H_ */

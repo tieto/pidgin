@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTK_ACCOUNT_H_
-#define _GAIM_GTK_ACCOUNT_H_
+#ifndef _GAIM_GTKACCOUNT_H_
+#define _GAIM_GTKACCOUNT_H_
 
 #include "account.h"
 
@@ -78,4 +78,4 @@ void gaim_gtk_account_init(void);
  */
 void gaim_gtk_account_uninit(void);
 
-#endif /* _GAIM_GTK_ACCOUNT_H_ */
+#endif /* _GAIM_GTKACCOUNT_H_ */

@@ -36,7 +36,6 @@
 #include "conversation.h"
 #include "notify.h"
 #include "util.h"
-#include "multi.h"
 #include "internal.h"
 
 #include "yahoo.h"

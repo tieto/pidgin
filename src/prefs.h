@@ -22,9 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifndef _PREFS_H_
-#define _PREFS_H_
+#ifndef _GAIM_PREFS_H_
+#define _GAIM_PREFS_H_
 
 #include <glib.h>
 
@@ -259,4 +258,4 @@ void gaim_prefs_update_old();
 }
 #endif
 
-#endif /* _PREFS_H_ */
+#endif /* _GAIM_PREFS_H_ */

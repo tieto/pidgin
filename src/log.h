@@ -22,7 +22,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #ifndef _GAIM_LOG_H_
 #define _GAIM_LOG_H_
 

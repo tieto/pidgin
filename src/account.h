@@ -24,8 +24,8 @@
  *
  * @see @ref account-signals
  */
-#ifndef _GAIM_ACCOUNTS_H_
-#define _GAIM_ACCOUNTS_H_
+#ifndef _GAIM_ACCOUNT_H_
+#define _GAIM_ACCOUNT_H_
 
 #include <glib.h>
 
@@ -664,4 +664,4 @@ void gaim_accounts_uninit(void);
 }
 #endif
 
-#endif /* _GAIM_ACCOUNTS_H_ */
+#endif /* _GAIM_ACCOUNT_H_ */

@@ -21,7 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "imgstore.h"
-#include "multi.h"
+#include "prpl.h"
 #include "notify.h"
 #include "request.h"
 #include "util.h"

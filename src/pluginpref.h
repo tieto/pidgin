@@ -23,8 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _PLUGIN_PREF_H_
-#define _PLUGIN_PREF_H_
+#ifndef _GAIM_PLUGINPREF_H_
+#define _GAIM_PLUGINPREF_H_
 
 typedef struct _GaimPluginPrefFrame		GaimPluginPrefFrame;
 typedef struct _GaimPluginPref			GaimPluginPref;
@@ -221,4 +221,4 @@ unsigned int gaim_plugin_pref_get_max_length(GaimPluginPref *pref);
 }
 #endif
 
-#endif /* _PLUGIN_PREF_H_ */
+#endif /* _GAIM_PLUGINPREF_H_ */

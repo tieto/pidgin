@@ -20,9 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifndef _GAIM_SOCKET_H_
-#define _GAIM_SOCKET_H_
+#ifndef _GAIM_GAIM_SOCKET_H_
+#define _GAIM_GAIM_SOCKET_H_
 
 struct gaim_cui_packet {
 	guchar type;
@@ -43,4 +42,4 @@ void cui_packet_append_char(struct gaim_cui_packet *p, char c);
 void cui_packet_append_raw(struct gaim_cui_packet *p, char *str, int len);
 
 
-#endif /* _GAIM_SOCKET_H_ */
+#endif /* _GAIM_GAIM_SOCKET_H_ */

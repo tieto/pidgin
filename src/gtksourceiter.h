@@ -19,9 +19,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
-#ifndef __GTK_SOURCE_ITER_H__
-#define __GTK_SOURCE_ITER_H__
+#ifndef _GAIM_GTKSOURCEITER_H_
+#define _GAIM_GTKSOURCEITER_H_
 
 #include <gtk/gtktextiter.h>
 
@@ -53,4 +52,4 @@ gboolean gtk_source_iter_find_matching_bracket 	(GtkTextIter         *iter);
 
 G_END_DECLS
 
-#endif /* __GTK_SOURCE_ITER_H__ */
+#endif /* _GAIM_GTKSOURCEITER_H_ */

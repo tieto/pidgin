@@ -22,14 +22,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-#ifndef _GTKDIALOGS_H_
-#define _GTKDIALOGS_H_
+#ifndef _GAIM_GTKDIALOGS_H_
+#define _GAIM_GTKDIALOGS_H_
 
 #include "account.h"
 #include "conversation.h"
 
 #include "gtkinternal.h"
+
+/* Functions in gtkdialogs.c (these should actually stay in this file) */
+void alias_dialog_bud(GaimBuddy *);
+void alias_dialog_contact(GaimContact *);
+void alias_dialog_blist_chat(GaimChat *);
+void show_warn_dialog(GaimConnection *, const char *);
+void gaim_gtkdialogs_new_im(GaimAccount *, const char *);
+void show_im_dialog();
+void show_info_dialog();
+void show_log_dialog();
+void destroy_all_dialogs();
+void create_away_mess(GtkWidget *, void *);
+void show_confirm_del(GaimBuddy *);
+void show_confirm_del_group(GaimGroup *);
+void show_confirm_del_blist_chat(GaimChat *);
+void show_confirm_del_contact(GaimContact *);
 
 /**
  * Our UI's identifier.
@@ -115,18 +130,6 @@ extern void toggle_away_queue();
 extern void purge_away_queue(GSList**);
 extern void do_im_back(GtkWidget *w, GtkWidget *x);
 
-/* Functions in dialogs.c */
-extern void alias_dialog_bud(GaimBuddy *);
-extern void alias_dialog_contact(GaimContact *);
-extern void alias_dialog_blist_chat(GaimChat *);
-extern void show_warn_dialog(GaimConnection *, const char *);
-extern void gaim_gtkdialogs_new_im(GaimAccount *, const char *);
-extern void show_im_dialog();
-extern void show_info_dialog();
-extern void show_log_dialog();
-extern void destroy_all_dialogs();
-extern void create_away_mess(GtkWidget *, void *);
-
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *, gchar *);
 extern void session_end();
@@ -137,4 +140,4 @@ extern void smiley_theme_probe();
 extern void load_smiley_theme(const char *file, gboolean load);
 extern GSList *get_proto_smileys(const char *id);
 
-#endif /* _GTKDIALOGS_H_ */
+#endif /* _GAIM_GTKDIALOGS_H_ */

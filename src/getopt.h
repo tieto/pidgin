@@ -18,8 +18,8 @@
    along with this program; if not, write to the Free Software
    Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-#ifndef _GETOPT_H
-#define _GETOPT_H 1
+#ifndef _GAIM_GETOPT_H_
+#define _GAIM_GETOPT_H_
 
 #ifdef	__cplusplus
 extern "C" {
@@ -129,4 +129,4 @@ extern int _getopt_internal ();
 }
 #endif
 
-#endif /* _GETOPT_H */
+#endif /* _GAIM_GETOPT_H_ */

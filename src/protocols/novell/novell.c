@@ -30,7 +30,6 @@
 #include "request.h"
 #include "network.h"
 #include "privacy.h"
-#include "multi.h"
 
 #define DEFAULT_PORT			8300
 #define NOVELL_CONNECT_STEPS	4

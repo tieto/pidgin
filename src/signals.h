@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_SIGNAL_H_
-#define _GAIM_SIGNAL_H_
+#ifndef _GAIM_SIGNALS_H_
+#define _GAIM_SIGNALS_H_
 
 #include <glib.h>
 #include "value.h"
@@ -264,4 +264,4 @@ void gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER(
 }
 #endif
 
-#endif /* _GAIM_SIGNAL_H_ */
+#endif /* _GAIM_SIGNALS_H_ */

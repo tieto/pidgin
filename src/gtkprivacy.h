@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTK_PRIVACY_H_
-#define _GAIM_GTK_PRIVACY_H_
+#ifndef _GAIM_GTKPRIVACY_H_
+#define _GAIM_GTKPRIVACY_H_
 
 #include "privacy.h"
 
@@ -79,4 +79,4 @@ void gaim_gtk_request_add_block(GaimAccount *account, const char *name);
  */
 GaimPrivacyUiOps *gaim_gtk_privacy_get_ui_ops(void);
 
-#endif /* _GAIM_GTK_PRIVACY_H_ */
+#endif /* _GAIM_GTKPRIVACY_H_ */

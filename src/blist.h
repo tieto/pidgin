@@ -22,11 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#ifndef _GAIM_BLIST_H_
+#define _GAIM_BLIST_H_
 
 /* I can't believe I let ChipX86 inspire me to write good code. -Sean */
-
-#ifndef _BLIST_H_
-#define _BLIST_H_
 
 #include <glib.h>
 
@@ -878,4 +877,4 @@ void gaim_blist_uninit(void);
 }
 #endif
 
-#endif /* _BLIST_H_ */
+#endif /* _GAIM_BLIST_H_ */

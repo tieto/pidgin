@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTK_POUNCE_H_
-#define _GAIM_GTK_POUNCE_H_
+#ifndef _GAIM_GTKPOUNCE_H_
+#define _GAIM_GTKPOUNCE_H_
 
 #include "pounce.h"
 
@@ -49,4 +49,4 @@ void gaim_gtkpounce_menu_build(GtkWidget *menu);
  */
 void gaim_gtk_pounces_init(void);
 
-#endif /* _GAIM_GTK_POUNCE_H_ */
+#endif /* _GAIM_GTKPOUNCE_H_ */

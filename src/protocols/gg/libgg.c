@@ -1,4 +1,4 @@
-/* $Id: libgg.c 10513 2004-08-04 18:27:09Z lschiere $ */
+/* $Id: libgg.c 10574 2004-08-08 05:38:02Z thekingant $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -64,16 +64,13 @@ int gg_http_use_proxy = 0;
 int gg_http_proxy_port = 0;
 char *gg_http_proxy_host = NULL;
 
-/* temp -Herman */
-static int ping_outstanding = 0;
-
 #ifndef lint 
 
 static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 10513 2004-08-04 18:27:09Z lschiere $";
+= "$Id: libgg.c 10574 2004-08-08 05:38:02Z thekingant $";
 
 #endif 
 
@@ -1126,7 +1123,6 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 	    case GG_PONG:
 	    {
 		gg_debug(GG_DEBUG_MISC, "-- received a pong\n");
-		ping_outstanding = 0;
 		sess->last_pong = time(NULL);
 		break;
 	    }

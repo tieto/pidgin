@@ -24,7 +24,6 @@
 #include "accountopt.h"
 #include "conversation.h"
 #include "debug.h"
-#include "multi.h"
 #include "notify.h"
 #include "proxy.h"
 #include "prpl.h"

@@ -95,6 +95,16 @@ typedef struct {
 #include "proxy.h"
 #include "plugin.h"
 
+struct proto_chat_entry {
+	char *label;
+	char *identifier;
+	char *def;
+	gboolean is_int;
+	int min;
+	int max;
+	gboolean secret;
+};
+
 /**
  * Protocol options
  *

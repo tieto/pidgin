@@ -22,9 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-#ifndef _GAIM_GTK_LIST_H_
-#define _GAIM_GTK_LIST_H_
+#ifndef _GAIM_GTKBLIST_H_
+#define _GAIM_GTKBLIST_H_
 
 #include "blist.h"
 
@@ -236,4 +235,4 @@ void gaim_gtk_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc,
  */
 void gaim_gtk_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *node);
 
-#endif /* _GAIM_GTK_LIST_H_ */
+#endif /* _GAIM_GTKBLIST_H_ */

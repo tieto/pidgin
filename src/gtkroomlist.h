@@ -22,9 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-#ifndef _GAIM_GTK_ROOMLIST_H_
-#define _GAIM_GTK_ROOMLIST_H_
+#ifndef _GAIM_GTKROOMLIST_H_
+#define _GAIM_GTKROOMLIST_H_
 
 #include "roomlist.h"
 
@@ -65,4 +64,4 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new(void);
  */
 GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account);
 
-#endif /* _GAIM_GTK_ROOMLIST_H_ */
+#endif /* _GAIM_GTKROOMLIST_H_ */

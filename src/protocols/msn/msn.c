@@ -34,7 +34,7 @@
 #include "session.h"
 #include "state.h"
 #include "utils.h"
-#include "multi.h"
+#include "prpl.h"
 #include "util.h"
 
 #include "switchboard.h"

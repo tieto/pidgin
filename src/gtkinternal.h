@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTK_INTERNAL_H_
-#define _GAIM_GTK_INTERNAL_H_
+#ifndef _GAIM_GTKINTERNAL_H_
+#define _GAIM_GTKINTERNAL_H_
 
 #include "internal.h"
 
@@ -39,4 +39,4 @@
 # define GAIM_ALERT_TITLE "Gaim"
 #endif
 
-#endif /* _GAIM_GTK_INTERNAL_H_ */
+#endif /* _GAIM_GTKINTERNAL_H_ */

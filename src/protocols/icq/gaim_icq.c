@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "icq.h"   /* well, we're doing ICQ, right? */
 #include "gaim.h"  /* needed for every other damn thing */
-#include "multi.h" /* needed for gaim_connection */
 #include "prpl.h"  /* needed for prpl */
 #include "proxy.h"
 

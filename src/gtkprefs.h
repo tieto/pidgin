@@ -23,8 +23,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _GAIM_GTK_PREFS_H_
-#define _GAIM_GTK_PREFS_H_
+#ifndef _GAIM_GTKPREFS_H_
+#define _GAIM_GTKPREFS_H_
+
 #include "prefs.h"
 
 /* XXX These should go. */
@@ -127,4 +128,4 @@ GtkWidget *gaim_gtk_prefs_dropdown_from_list(GtkWidget *page,
  */
 void gaim_gtk_prefs_update_old();
 
-#endif /* _GAIM_GTK_PREFS_H_ */
+#endif /* _GAIM_GTKPREFS_H_ */

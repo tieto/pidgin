@@ -20,9 +20,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-#ifndef __GTK_IMHTML_H
-#define __GTK_IMHTML_H
+#ifndef _GAIM_GTKIMHTML_H_
+#define _GAIM_GTKIMHTML_H_
 
 #include <gdk/gdk.h>
 #include <gtk/gtktextview.h>
@@ -721,4 +720,4 @@ char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *st
 }
 #endif
 
-#endif
+#endif /* _GAIM_GTKIMHTML_H_ */

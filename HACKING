@@ -221,13 +221,6 @@ module.c:
   setting up plugin event handlers, and contains the plugin_event method
   that gaim calls on events.
 
-multi.c:
-  This is the file that tries to take care of most of the major issues
-  with multiple connections. The best function in here by far is the
-  account_editor(). auto_login() is also in here (I'm just reading multi.h
-  now...). account_editor is really the only function that the UI needs
-  to be concerned with.
-
 prefs.c:
 	Read the documentation on this file. This handles the backend
 	side of prefs.

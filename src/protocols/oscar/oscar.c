@@ -35,7 +35,6 @@
 #include "debug.h"
 #include "ft.h"
 #include "imgstore.h"
-#include "multi.h"
 #include "network.h"
 #include "notify.h"
 #include "privacy.h"

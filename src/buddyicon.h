@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_ICON_H_
-#define _GAIM_ICON_H_
+#ifndef _GAIM_BUDDYICON_H_
+#define _GAIM_BUDDYICON_H_
 
 typedef struct _GaimBuddyIcon GaimBuddyIcon;
 
@@ -239,4 +239,4 @@ void gaim_buddy_icons_uninit();
 
 /*@}*/
 
-#endif /* _GAIM_ICON_H_ */
+#endif /* _GAIM_BUDDYICON_H_ */

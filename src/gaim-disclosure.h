@@ -19,9 +19,8 @@
  *  Foundation, Inc., 59 Temple Street #330, Boston, MA 02111-1307, USA.
  *
  */
-
-#ifndef __GAIM_DISCLOSURE_H__
-#define __GAIM_DISCLOSURE_H__
+#ifndef __GAIM_GAIM_DISCLOSURE_H__
+#define __GAIM_GAIM_DISCLOSURE_H__
 
 #include "eventloop.h"
 

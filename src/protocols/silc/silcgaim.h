@@ -25,7 +25,6 @@
 #include "account.h"
 #include "accountopt.h"
 #include "debug.h"
-#include "multi.h"
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"

@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTK_UTILS_H_
-#define _GAIM_GTK_UTILS_H_
+#ifndef _GAIM_GTKUTILS_H_
+#define _GAIM_GTKUTILS_H_
 
 #include "gtkconv.h"
 #include "gtkinternal.h"
@@ -352,4 +352,4 @@ void gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 												gboolean *push_in,
 												gpointer user_data);
 
-#endif /* _GAIM_GTK_UTILS_H_ */
+#endif /* _GAIM_GTKUTILS_H_ */

@@ -111,7 +111,6 @@ gaim_coreheaders = \
 	imgstore.h \
 	log.h \
 	md5.h \
-	multi.h \
 	network.h \
 	notify.h \
 	plugin.h \

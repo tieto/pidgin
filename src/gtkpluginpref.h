@@ -23,8 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _GTK_PLUGIN_PREF_H_
-#define _GTK_PLUGIN_PREF_H_
+#ifndef _GAIM_GTKPLUGINPREF_H_
+#define _GAIM_GTKPLUGINPREF_H_
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -50,4 +50,4 @@ GtkWidget *gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame);
 }
 #endif
 
-#endif /* _GTK_PLUGIN_PREF_H_ */
+#endif /* _GAIM_GTKPLUGINPREF_H_ */

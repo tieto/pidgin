@@ -18,9 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifndef __GTK_CELL_RENDERER_PROGRESS_H__
-#define __GTK_CELL_RENDERER_PROGRESS_H__
+#ifndef _GAIM_GTKCELLRENDERERPROGRESS_H_
+#define _GAIM_GTKCELLRENDERERPROGRESS_H_
 
 #include <gtk/gtkcellrenderer.h>
 
@@ -59,4 +58,4 @@ typedef struct _GtkCellRendererProgressClass GtkCellRendererProgressClass;
 }
 #endif /* __cplusplus */
 
-#endif /* __GTK_CELL_RENDERER_PROGRESS_H__ */
+#endif /* _GAIM_GTKCELLRENDERERPROGRESS_H_ */

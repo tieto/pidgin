@@ -22,9 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-#ifndef _GAIM_GTK_CONVERSATION_H_
-#define _GAIM_GTK_CONVERSATION_H_
+#ifndef _GAIM_GTKCONVERSATION_H_
+#define _GAIM_GTKCONVERSATION_H_
 
 #include "conversation.h"
 
@@ -316,4 +315,4 @@ void gaim_gtk_conversations_uninit(void);
 
 /*@}*/
 
-#endif /* _GAIM_GTK_CONVERSATION_H_ */
+#endif /* _GAIM_GTKCONVERSATION_H_ */

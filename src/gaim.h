@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
 #ifndef _GAIM_H_
 #define _GAIM_H_
 
@@ -36,12 +35,6 @@ extern int opt_debug;
 extern GSList *message_queue;
 extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
-
-/* Functions in dialogs.c */
-extern void show_confirm_del(GaimBuddy *);
-extern void show_confirm_del_group(GaimGroup *);
-extern void show_confirm_del_blist_chat(GaimChat *);
-extern void show_confirm_del_contact(GaimContact *);
 
 /* Functions in idle.c */
 extern gint check_idle(gpointer);

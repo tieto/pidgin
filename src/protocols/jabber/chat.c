@@ -20,7 +20,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "multi.h" /* for proto_chat_entry */
+#include "prpl.h" /* for proto_chat_entry */
 #include "notify.h"
 #include "request.h"
 #include "roomlist.h"
