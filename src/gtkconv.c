@@ -1045,6 +1045,26 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+menu_timestamps_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+
+	conv = gaim_conv_window_get_active_conversation(win);
+
+	if (!conv)
+		return;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtkconv->show_timestamps =
+		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
+		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
+}
+
+static void
 chat_do_im(GaimConversation *conv, const char *who)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -1581,12 +1601,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			case GDK_Page_Down:
 				gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
-				return TRUE;
-				break;
-
-			case GDK_F2:
-				gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
-					!gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
 				return TRUE;
 				break;
 
@@ -2645,6 +2659,9 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 			GTK_CHECK_MENU_ITEM(gtkwin->menu.show_formatting_toolbar),
 			gtkconv->show_formatting_toolbar);
 
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.show_timestamps),
+				       gtkconv->show_timestamps);
+
 	/*
 	 * We pause icons when they are not visible.  If this icon should
 	 * be animated then start it back up again.lll
@@ -3275,6 +3292,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Show Formatting _Toolbar"), NULL, menu_toolbar_cb, 0, "<CheckItem>" },
+	{ N_("/Options/Show T_imestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>" },
 };
 
 static const int menu_item_count =
@@ -3376,6 +3394,9 @@ setup_menubar(GaimConvWindow *win)
 	gtkwin->menu.show_formatting_toolbar =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Options/Show Formatting Toolbar"));
+	gtkwin->menu.show_timestamps =
+		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
+									N_("/Options/Show Timestamps"));
 
 	generate_send_as_items(win, NULL);
 
@@ -4329,6 +4350,12 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		if (gtkconv->show_formatting_toolbar)
 			gtk_widget_show(gtkconv->toolbar);
+
+		gtkconv->show_timestamps = gaim_prefs_get_bool(
+				"/gaim/gtk/conversations/show_timestamps");
+
+		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
+				gtkconv->show_timestamps);
 
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
 								 G_CALLBACK(gtk_widget_grab_focus),

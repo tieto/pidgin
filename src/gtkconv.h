@@ -69,6 +69,7 @@ struct _GaimGtkWindow
 		GtkWidget *logging;
 		GtkWidget *sounds;
 		GtkWidget *show_formatting_toolbar;
+		GtkWidget *show_timestamps;
 
 		GtkWidget *send_as;
 
@@ -130,6 +131,7 @@ struct _GaimGtkConversation
 {
 	gboolean make_sound;
 	gboolean show_formatting_toolbar;
+	gboolean show_timestamps;
 
 	GtkTooltips *tooltips;
 
