@@ -110,17 +110,16 @@ static gboolean
 __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 			  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	char buf[MSN_BUF_LEN];
 
-	if (isdigit(*command)) {
-		hide_login_progress(gc, (char *)msn_error_get_text(atoi(command)));
-	}
-	else
-		hide_login_progress(gc, _("Unable to parse message."));
+	g_snprintf(buf, sizeof(buf), "MSN Error: %s\n",
+			   (isdigit(*command)
+				? msn_error_get_text(atoi(command))
+				: "Unable to parse message."));
 
-	signoff(gc);
+	do_error_dialog(buf, NULL, GAIM_ERROR);
 
-	return FALSE;
+	return TRUE;
 }
 
 
@@ -440,19 +439,31 @@ __lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	struct group *g;
 	const char *name;
 	int group_num, num_groups, group_id;
+	gint *group_id_1, *group_id_2;
 
 	group_num  = atoi(params[2]);
 	num_groups = atoi(params[3]);
 	group_id   = atoi(params[4]);
 	name       = msn_url_decode(params[5]);
 
+	if (num_groups == 0)
+		return TRUE;
+
 	if (group_num == 1) {
-		session->groups = g_hash_table_new_full(g_int_hash, g_int_equal,
-												NULL, g_free);
+		session->group_names = g_hash_table_new_full(g_int_hash, g_int_equal,
+													 g_free, g_free);
+		session->group_ids = g_hash_table_new_full(g_str_hash, g_str_equal,
+												   g_free, g_free);
 	}
 
-	g_hash_table_insert(session->groups, GINT_TO_POINTER(group_id),
-						g_strdup(name));
+	group_id_1 = g_new(gint, 1);
+	group_id_2 = g_new(gint, 1);
+
+	*group_id_1 = group_id;
+	*group_id_2 = group_id;
+
+	g_hash_table_insert(session->group_names, group_id_1, g_strdup(name));
+	g_hash_table_insert(session->group_ids, g_strdup(name), group_id_2);
 
 	if ((g = gaim_find_group(name)) == NULL) {
 		g = gaim_group_new(name);
@@ -585,8 +596,8 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 				group_id = msn_user_get_group_id(user);
 
 				if (group_id > -1) {
-					group_name = g_hash_table_lookup(session->groups,
-							GINT_TO_POINTER(group_id));
+					group_name = g_hash_table_lookup(session->group_names,
+													 &group_id);
 				}
 
 				if (group_name == NULL) {
@@ -670,6 +681,31 @@ __rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 	friend = msn_url_decode(params[2]);
 
 	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
+
+	return TRUE;
+}
+
+static gboolean
+__reg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	MsnSession *session = servconn->session;
+	gint *group_id;
+	char *group_name;
+
+	group_id = g_new(gint, 1);
+	*group_id = atoi(params[2]);
+
+	group_name = msn_url_decode(params[3]);
+
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Renamed group %s to %s\n",
+			   g_hash_table_lookup(session->group_names, group_id),
+			   group_name);
+
+	g_hash_table_replace(session->group_names, group_id, g_strdup(group_name));
+
+	g_hash_table_remove(session->group_ids, group_name);
+	g_hash_table_insert(session->group_ids, group_name, group_id);
 
 	return TRUE;
 }
@@ -973,7 +1009,7 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 		notification->fd = source;
 
 	if (!msn_servconn_send_command(notification, "VER",
-								   "MSNP6 MSNP5 MSNP4 CVR0")) {
+								   "MSNP7 MSNP6 MSNP5 MSNP4 CVR0")) {
 		hide_login_progress(gc, _("Unable to write to server"));
 		signoff(gc);
 		return FALSE;
@@ -1027,6 +1063,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "QNG",       __blank_cmd);
 		msn_servconn_register_command(notification, "QRY",       __blank_cmd);
 		msn_servconn_register_command(notification, "REA",       __rea_cmd);
+		msn_servconn_register_command(notification, "REG",       __reg_cmd);
 		msn_servconn_register_command(notification, "REM",       __blank_cmd);
 		msn_servconn_register_command(notification, "RNG",       __rng_cmd);
 		msn_servconn_register_command(notification, "SYN",       __blank_cmd);

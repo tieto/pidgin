@@ -58,6 +58,9 @@ msn_session_destroy(MsnSession *session)
 	while (session->lists.forward)
 		msn_user_destroy(session->lists.forward->data);
 
+	if (session->group_ids)   g_hash_table_destroy(session->group_ids);
+	if (session->group_names) g_hash_table_destroy(session->group_names);
+
 	g_slist_free(session->lists.allow);
 	g_slist_free(session->lists.block);
 

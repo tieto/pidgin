@@ -45,7 +45,8 @@ struct _MsnSession
 	MsnUsers *users;
 
 	GList *switches;
-	GHashTable *groups;
+	GHashTable *group_names; /* ID -> name */
+	GHashTable *group_ids;   /* Name -> ID */
 
 	struct
 	{

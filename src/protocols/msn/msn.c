@@ -748,6 +748,44 @@ msn_keepalive(struct gaim_connection *gc)
 }
 
 static void
+msn_group_buddy(struct gaim_connection *gc, const char *who,
+				const char *old_group, const char *new_group)
+{
+	
+}
+
+static void
+msn_rename_group(struct gaim_connection *gc, const char *old_group,
+				 const char *new_group, GList *members)
+{
+	MsnSession *session = gc->proto_data;
+	char outparams[MSN_BUF_LEN];
+	int *group_id;
+
+	if (g_hash_table_lookup_extended(session->group_ids, old_group,
+									 NULL, (gpointer)&group_id)) {
+		g_snprintf(outparams, sizeof(outparams), "%d %s 0",
+				   *group_id, msn_url_encode(new_group));
+
+		if (!msn_servconn_send_command(session->notification_conn,
+									   "REG", outparams)) {
+			hide_login_progress(gc, _("Write error"));
+			signoff(gc);
+		}
+	}
+	else {
+		g_snprintf(outparams, sizeof(outparams), "%s 0",
+				   msn_url_encode(new_group));
+
+		if (!msn_servconn_send_command(session->notification_conn,
+									   "ADG", outparams)) {
+			hide_login_progress(gc, _("Write error"));
+			signoff(gc);
+		}
+	}
+}
+
+static void
 msn_buddy_free(struct buddy *b)
 {
 	if (b->proto_data != NULL)
@@ -833,8 +871,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
-	NULL,
+	msn_group_buddy,
+	msn_rename_group,
 	msn_buddy_free,
 	msn_convo_closed,
 	msn_normalize
