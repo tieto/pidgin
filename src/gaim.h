@@ -139,6 +139,9 @@ struct aim_user {
 	/* stuff for password prompt */
 	GtkWidget *passprmt;
 	GtkWidget *passentry;
+
+	/* when you get kicked offline, only show one dialog */
+	GtkWidget *kick_dlg;
 };
 
 struct save_pos {
@@ -815,7 +818,7 @@ gint sort_awaymsg_list(gconstpointer, gconstpointer);
 extern void alias_dialog_bud(struct buddy *);
 extern void do_export(struct gaim_connection *);
 extern void show_warn_dialog(struct gaim_connection *, char *);
-extern void do_error_dialog(char *, char *);
+extern GtkWidget *do_error_dialog(char *, char *);
 extern void show_error_dialog(char *);
 extern void show_im_dialog();
 extern void some_name(char *);

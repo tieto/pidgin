@@ -470,6 +470,7 @@ void signoff_all(GtkWidget *w, gpointer d)
 
 	while (c) {
 		g = (struct gaim_connection *)c->data;
+		g->wants_to_die = TRUE;
 		signoff(g);
 		c = connections;
 	}

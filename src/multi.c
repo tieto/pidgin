@@ -613,6 +613,7 @@ static void acct_signin(GtkWidget *w, gpointer d)
 				serv_login(u);
 			}
 		} else {
+			u->gc->wants_to_die = TRUE;
 			signoff(u->gc);
 		}
 	}
@@ -627,8 +628,10 @@ static void del_acct(GtkWidget *w, gpointer d)
 	if (row != -1) {
 		u = g_list_nth_data(aim_users, row);
 		if (u) {
-			if (u->gc)
+			if (u->gc) {
+				u->gc->wants_to_die = TRUE;
 				signoff(u->gc);
+			}
 			aim_users = g_list_remove(aim_users, u);
 			save_prefs();
 		}
@@ -784,6 +787,7 @@ void auto_login()
 
 static void cancel_signon(GtkWidget *button, struct gaim_connection *gc)
 {
+	gc->wants_to_die = TRUE;
 	signoff(gc);
 }
 
@@ -843,11 +847,20 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 	gtk_statusbar_push(GTK_STATUSBAR(gc->status), 1, message);
 }
 
+static void set_kick_null(GtkObject *obj, struct aim_user *u)
+{
+	u->kick_dlg = NULL;
+}
+
 void hide_login_progress(struct gaim_connection *gc, char *why)
 {
 	char buf[2048];
 	sprintf(buf, _("%s\n%s was unable to sign on: %s"), full_date(), gc->username, why);
-	do_error_dialog(buf, _("Signon Error"));
+	if (gc->user->kick_dlg)
+		gtk_widget_destroy(gc->user->kick_dlg);
+	gc->user->kick_dlg = do_error_dialog(buf, _("Signon Error"));
+	gtk_signal_connect(GTK_OBJECT(gc->user->kick_dlg), "destroy",
+			   GTK_SIGNAL_FUNC(set_kick_null), gc->user);
 	if (gc->meter)
 		gtk_widget_destroy(gc->meter);
 	gc->meter = NULL;

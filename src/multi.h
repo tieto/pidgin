@@ -72,6 +72,7 @@ struct gaim_connection {
 	int is_auto_away;
 
 	int evil;
+	gboolean wants_to_die; /* defaults to FALSE */
 };
 
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */

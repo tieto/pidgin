@@ -420,7 +420,7 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 /*  The dialog for getting an error                                       */
 /*------------------------------------------------------------------------*/
 
-void
+GtkWidget*
 do_error_dialog(char *message, char *title)
 {
         GtkWidget *d;
@@ -451,6 +451,7 @@ do_error_dialog(char *message, char *title)
 	aol_icon(d->window);
 
 	gtk_widget_show(d);
+	return d;
 }
 
 
