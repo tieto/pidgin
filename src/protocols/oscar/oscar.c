@@ -833,6 +833,31 @@ oscar_xfer_end(struct gaim_xfer *xfer)
 static void
 oscar_xfer_cancel_send(struct gaim_xfer *xfer)
 {
+	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+	aim_conn_t *conn;
+
+	debug_printf("AAA - in oscar_xfer_cancel_send\n");
+	if (!(xfer_data = xfer->data))
+		return;
+
+	if ((conn = xfer_data->conn)) {
+		aim_session_t *sess;
+		if ((sess = conn->sessv))
+			if (xfer_data->cookie && xfer->who)
+				aim_im_sendch2_sendfile_cancel(sess, xfer_data->cookie, xfer->who, AIM_CAPS_SENDFILE);
+	}
+
+	g_free(xfer_data->clientip);
+	g_free(xfer_data->clientip2);
+
+	if ((gc = xfer_data->gc))
+		if ((od = gc->proto_data))
+			od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+
+	g_free(xfer_data);
+	xfer->data = NULL;
 }
 
 static void
@@ -843,7 +868,7 @@ oscar_xfer_cancel_recv(struct gaim_xfer *xfer)
 	struct oscar_xfer_data *xfer_data;
 	aim_conn_t *conn;
 
-	debug_printf("AAA - in oscar_xfer_cancel\n");
+	debug_printf("AAA - in oscar_xfer_cancel_recv\n");
 	if (!(xfer_data = xfer->data))
 		return;
 

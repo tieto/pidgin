@@ -996,7 +996,7 @@ struct aim_filetransfer_priv {
 	struct aim_fileheader_t fh;
 };
 
-faim_export fu32_t aim_oft_checksum_chunk(const unsigned char *buffer, int bufferlen, fu32_t prevcheck);
+faim_export fu32_t aim_oft_checksum_chunk(const fu8_t *buffer, int bufferlen, fu32_t prevcheck);
 faim_export fu32_t aim_oft_checksum_file(char *filename);
 faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur);
 faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing);
