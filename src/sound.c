@@ -333,7 +333,7 @@ void play_file(char *filename)
 #endif
 
 #ifdef NAS_SOUND
-		if (play_nas_file(filenae))
+		if (play_nas_file(filename))
 			_exit(0);
 #endif
 
