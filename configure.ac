@@ -153,11 +153,17 @@ if test "x$enable_gnome" != "xyes" ; then
 fi
 CFLAGS="$CFLAGS $GTK_CFLAGS"
 
-if test "x$enable_panel" = "xyes" ; then
+dnl if test "x$enable_panel" = "xyes" ; then
 	dnl Things moved with the new versoin of Orbit. Thanks for
 	dnl telling me, Dan.  This should fix them.
-	CFLAGS="$CFLAGS $ORBIT_CFLAGS"
-fi
+	dnl
+	dnl The gnome-config script should pick this up and affect GNOME_ variables
+	dnl correctly. Thus, this check is not needed; if it fails, it is because of
+	dnl a broken installation or that your appletsConf.sh file is not updated
+	dnl for the new orbit installation. Gaim shouldn't need to do this.
+	dnl
+	dnl CFLAGS="$CFLAGS $ORBIT_CFLAGS"
+dnl fi
 
 use_pixbuf=no
 if test "x$enable_pixbuf" = "xyes" ; then
