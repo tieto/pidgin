@@ -394,7 +394,7 @@ echo Build with ArtsC............ : $enable_artsc
 echo
 echo Print debugging messages.... : $enable_debug
 echo
-echo Gaim will be installed in $prefix/bin.
+eval eval echo Gaim will be installed in $bindir.
 if test "x$gaimpath" != "x" ; then
 	echo Warning: You have an old copy of gaim at $gaimpath.
 fi
