@@ -7,6 +7,8 @@ version 0.11.0:
 	* user configurable sounds
 	* scroll bar now functions properly in chat room user lists
 	* X-Idle support added (thanks bmiller and bryner)
+	* small change in the way away messages are displayed
+	  (Thanks Ryan C. Gordon)
 
 version 0.10.3 (10/09/2000):
 	* Segfault when viewing user info fixed
