@@ -1098,7 +1098,7 @@ static void event_page()
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new(_("Command to play sound files (%s for filename; internal if empty):"));
+	label = gtk_label_new(_("Command to play sound files (%s for filename; internal if empty)"));
 
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
