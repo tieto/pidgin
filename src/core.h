@@ -34,6 +34,10 @@ typedef struct
 
 } GaimCoreUiOps;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Initializes the core of gaim.
  *
@@ -89,6 +93,10 @@ void gaim_set_core_ui_ops(GaimCoreUiOps *ops);
  * @return The core's UI ops structure.
  */
 GaimCoreUiOps *gaim_get_core_ui_ops(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_CORE_H_ */
 
