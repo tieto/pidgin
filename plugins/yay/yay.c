@@ -87,7 +87,8 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 				struct yahoo_buddy *bud = *buddy;
 
 				if (!strcasecmp(rec->id, bud->id))
-					b = add_buddy(gc, bud->group, bud->id, bud->id);
+					if (!find_buddy(gc, bud->id))
+						b = add_buddy(gc, bud->group, bud->id, bud->id);
 			}
 			if (!b)
 				continue; /* ???!!! */
@@ -246,6 +247,13 @@ static void yahoo_login(struct aim_user *user) {
 		return;
 	}
 
+	debug_printf("Yahoo: logged in %s\n", gc->username);
+	account_online(gc);
+	serv_finish_login(gc);
+
+	if (bud_list_cache_exists(gc))
+		do_import(NULL, gc);
+
 	if (ctxt->buddies) {
 		struct yahoo_buddy **buddies;
 		
@@ -258,13 +266,6 @@ static void yahoo_login(struct aim_user *user) {
 			if (!b) add_buddy(gc, bud->group, bud->id, bud->id);
 		}
 	}
-
-	debug_printf("Yahoo: logged in %s\n", gc->username);
-	account_online(gc);
-	serv_finish_login(gc);
-
-	if (bud_list_cache_exists(gc))
-		do_import(NULL, gc);
 
 	gc->inpa = gdk_input_add(ctxt->sockfd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				yahoo_callback, gc);
