@@ -115,6 +115,7 @@ install: all
 	mkdir -p $(GAIM_INSTALL_DIR)/plugins
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/dialogs
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/buttons
+	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/menus
 	$(MAKE) -C $(PO) -f Makefile.mingw install
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw install
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw install
