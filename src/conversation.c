@@ -2056,7 +2056,7 @@ void show_conv(struct conversation *c)
 		if (!all_convos) {
 			win = all_convos = c->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
-			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, FALSE);
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
 			aol_icon(win->window);
