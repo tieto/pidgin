@@ -77,6 +77,8 @@ static GtkTooltips *tooltips = NULL;
 
 static GtkWidget *config = NULL;
 static guint confighandle = 0;
+static GtkWidget *reload = NULL;
+static GtkWidget *unload = NULL;
 static char *last_dir = NULL;
 
 /* --------------- Function Declarations --------------------- */
@@ -99,7 +101,7 @@ static void plugin_reload(struct gaim_plugin *p);
 static void destroy_plugins(GtkWidget *, gpointer);
 static void load_file(GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
-static void unload(GtkWidget *, gpointer);
+static void unload_plugin(GtkWidget *, gpointer);
 static void unload_immediate(GModule *);
 static void list_clicked(GtkWidget *, struct gaim_plugin *);
 static void update_show_plugins();
@@ -261,8 +263,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	GtkWidget *scrolledwindow;
 	GtkWidget *label;
 	GtkWidget *add;
-	GtkWidget *reload;
-	GtkWidget *remove;
 	GtkWidget *close;
 
 	if (plugwindow)
@@ -361,14 +361,15 @@ void show_plugins(GtkWidget *w, gpointer data)
 	gtk_tooltips_set_tip(tooltips, config, _("Configure settings of the selected plugin"), "");
 
 	reload = picture_button(plugwindow, _("Reload"), refresh_xpm);
+	gtk_widget_set_sensitive(reload, FALSE);
 	gtk_signal_connect(GTK_OBJECT(reload), "clicked", GTK_SIGNAL_FUNC(plugin_reload_cb), NULL);
 	gtk_box_pack_start(GTK_BOX(bothbox), reload, TRUE, TRUE, 0);
 	gtk_tooltips_set_tip(tooltips, reload, _("Reload the selected plugin"), "");
 
-	remove = picture_button(plugwindow, _("Unload"), gnome_remove_xpm);
-	gtk_signal_connect(GTK_OBJECT(remove), "clicked", GTK_SIGNAL_FUNC(unload), pluglist);
-	gtk_box_pack_start(GTK_BOX(bothbox), remove, TRUE, TRUE, 0);
-	gtk_tooltips_set_tip(tooltips, remove, _("Unload the selected plugin"), "");
+	unload = picture_button(plugwindow, _("Unload"), gnome_remove_xpm);
+	gtk_signal_connect(GTK_OBJECT(unload), "clicked", GTK_SIGNAL_FUNC(unload_plugin), pluglist);
+	gtk_box_pack_start(GTK_BOX(bothbox), unload, TRUE, TRUE, 0);
+	gtk_tooltips_set_tip(tooltips, unload, _("Unload the selected plugin"), "");
 
 	close = picture_button(plugwindow, _("Close"), cancel_xpm);
 	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(hide_plugins), NULL);
@@ -379,7 +380,7 @@ void show_plugins(GtkWidget *w, gpointer data)
 	gtk_widget_show(plugwindow);
 }
 
-void update_show_plugins()
+static void update_show_plugins()
 {
 	GList *plugs = plugins;
 	struct gaim_plugin *p;
@@ -409,9 +410,21 @@ void update_show_plugins()
 
 		plugs = g_list_next(plugs);
 	}
+
+	/* Clear the display if nothing's selected */
+	if (GTK_LIST(pluglist)->selection == NULL) {
+		guint text_len = gtk_text_get_length(GTK_TEXT(plugtext));
+		gtk_text_set_point(GTK_TEXT(plugtext), 0);
+		gtk_text_forward_delete(GTK_TEXT(plugtext), text_len);
+		gtk_entry_set_text(GTK_ENTRY(plugentry), "");
+
+		gtk_widget_set_sensitive(config, FALSE);
+		gtk_widget_set_sensitive(reload, FALSE);
+		gtk_widget_set_sensitive(unload, FALSE);
+	}
 }
 
-void unload(GtkWidget *w, gpointer data)
+static void unload_plugin(GtkWidget *w, gpointer data)
 {
 	GList *i;
 	struct gaim_plugin *p;
@@ -459,7 +472,7 @@ static void unload_for_real(void *handle)
 	save_prefs();
 }
 
-void unload_immediate(GModule *handle)
+static void unload_immediate(GModule *handle)
 {
 	unload_for_real(handle);
 	g_module_close(handle);
@@ -523,7 +536,7 @@ static void plugin_reload(struct gaim_plugin *p)
 	}
 }
 
-void list_clicked(GtkWidget *w, struct gaim_plugin *p)
+static void list_clicked(GtkWidget *w, struct gaim_plugin *p)
 {
 	gchar *temp;
 	guint text_len;
@@ -552,9 +565,12 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p)
 		confighandle = 0;
 		gtk_widget_set_sensitive(config, FALSE);
 	}
+
+	gtk_widget_set_sensitive(reload, TRUE);
+	gtk_widget_set_sensitive(unload, TRUE);
 }
 
-void hide_plugins(GtkWidget *w, gpointer data)
+static void hide_plugins(GtkWidget *w, gpointer data)
 {
 	if (plugwindow)
 		gtk_widget_destroy(plugwindow);
