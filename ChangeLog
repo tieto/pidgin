@@ -139,7 +139,7 @@ version 0.81 (08/05/2004):
 	  Radchenko)
 	* Visual display of ops/voice/halfops/so on in Chats (Stu Tomlinson)
 	* Tab completion of slash commands in Chats (Stu Tomlinson)
-	* gaim-remote can now manipulate status (Istv?V?di)
+	* gaim-remote can now manipulate status (István Váradi)
 	* The text messages of Yahoo Audibles are now displayed, although
 	  the audio and graphics are not.
 	* Yahoo! away messages can be 255 characters long now
