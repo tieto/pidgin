@@ -1641,6 +1641,8 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 		strcpy(gc->user->proto_opt[USEROPT_CHARSET], "ISO-8859-1");
 	}
 	
+	g_free(test);
+	
 	if (idata->fd != source)
 		idata->fd = source;
 
