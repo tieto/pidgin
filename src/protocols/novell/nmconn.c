@@ -1,22 +1,20 @@
 /*
  * nmconn.c
  *
- * Copyright © 2004 Unpublished Work of Novell, Inc. All Rights Reserved.
+ * Copyright (c) 2004 Novell, Inc. All Rights Reserved.
  *
- * THIS WORK IS AN UNPUBLISHED WORK OF NOVELL, INC. NO PART OF THIS WORK MAY BE
- * USED, PRACTICED, PERFORMED, COPIED, DISTRIBUTED, REVISED, MODIFIED,
- * TRANSLATED, ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED,
- * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
- * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
- * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
  *
- * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
- * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
- * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
- * FROM [GAIM] AS PART OF SUCH A REPUBLICATION, YOU HAVE ALL RIGHTS AND LICENSES
- * GRANTED BY [GAIM] UNDER THE GPL.  IN CONNECTION WITH SUCH A REPUBLICATION, IF
- * ANYTHING IN THIS NOTICE CONFLICTS WITH THE TERMS OF THE GPL, SUCH TERMS
- * PREVAIL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  *
  */
 
@@ -310,7 +308,7 @@ nm_write_fields(NMConn * conn, NMField * fields)
 				case NMFIELD_TYPE_UTF8:
 				case NMFIELD_TYPE_DN:
 
-					value = url_escape_string((char *) field->value);
+					value = url_escape_string((char *) field->ptr_value);
 					bytes_to_send = g_snprintf(buffer, sizeof(buffer),
 											   "&val=%s", value);
 					if (bytes_to_send > (int)sizeof(buffer)) {
@@ -330,7 +328,7 @@ nm_write_fields(NMConn * conn, NMField * fields)
 				case NMFIELD_TYPE_ARRAY:
 				case NMFIELD_TYPE_MV:
 
-					val = nm_count_fields((NMField *) field->value);
+					val = nm_count_fields((NMField *) field->ptr_value);
 					bytes_to_send = g_snprintf(buffer, sizeof(buffer),
 											   "&val=%u", val);
 					ret = nm_tcp_write(conn, buffer, bytes_to_send);
@@ -368,7 +366,7 @@ nm_write_fields(NMConn * conn, NMField * fields)
 			if (field->type == NMFIELD_TYPE_ARRAY ||
 				field->type == NMFIELD_TYPE_MV) {
 
-				rc = nm_write_fields(conn, (NMField *) field->value);
+				rc = nm_write_fields(conn, (NMField *) field->ptr_value);
 
 			}
 		}
@@ -421,9 +419,9 @@ nm_send_request(NMConn * conn, char *cmd, NMField * fields, NMRequest ** req)
 		if (request) {
 			char *str = g_strdup_printf("%d", ++(conn->trans_id));
 
-			request = nm_add_field(request, NM_A_SZ_TRANSACTION_ID, 0,
-								   NMFIELD_METHOD_VALID, 0,
-								   (guint32) str, NMFIELD_TYPE_UTF8);
+			request = nm_field_add_pointer(request, NM_A_SZ_TRANSACTION_ID, 0,
+										   NMFIELD_METHOD_VALID, 0,
+										   str, NMFIELD_TYPE_UTF8);
 		}
 	}
 
@@ -493,11 +491,8 @@ nm_read_header(NMConn * conn)
 		rc = read_line(conn, buffer, sizeof(buffer));
 	}
 
-	if (rc == NM_OK && rtn_code == 301) {
-		conn->use_ssl = TRUE;
-		conn->redirect = TRUE;
-		rc = NMERR_SSL_REDIRECT;
-	}
+	if (rc == NM_OK && rtn_code == 301)
+		rc = NMERR_SERVER_REDIRECT;
 
 	return rc;
 }
@@ -522,11 +517,11 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 		}
 
 		/* Read the field type, method, and tag */
-		rc = nm_read_all(conn, &type, sizeof(type));
+		rc = nm_read_all(conn, (char *)&type, sizeof(type));
 		if (rc != NM_OK || type == 0)
 			break;
 
-		rc = nm_read_all(conn, &method, sizeof(method));
+		rc = nm_read_all(conn, (char *)&method, sizeof(method));
 		if (rc != NM_OK)
 			break;
 
@@ -556,8 +551,8 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 					break;
 			}
 
-			*fields = nm_add_field(*fields, tag, 0, method, 0,
-								   (guint32) sub_fields, type);
+			*fields = nm_field_add_pointer(*fields, tag, 0, method,
+									   0, sub_fields, type);
 
 			sub_fields = NULL;
 
@@ -580,8 +575,8 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 				if (rc != NM_OK)
 					break;
 
-				*fields = nm_add_field(*fields, tag, 0, method, 0,
-									   (guint32) str, type);
+				*fields = nm_field_add_pointer(*fields, tag, 0, method,
+											   0, str, type);
 				str = NULL;
 			}
 
@@ -592,7 +587,8 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 			if (rc != NM_OK)
 				break;
 
-			*fields = nm_add_field(*fields, tag, 0, method, 0, val, type);
+			*fields = nm_field_add_number(*fields, tag, 0, method,
+										  0, val, type);
 		}
 
 	} while ((type != 0) && (count != 0));

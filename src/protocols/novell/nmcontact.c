@@ -1,22 +1,20 @@
 /*
  * nmcontact.c
  *
- * Copyright © 2004 Unpublished Work of Novell, Inc. All Rights Reserved.
+ * Copyright (c) 2004 Novell, Inc. All Rights Reserved.
  *
- * THIS WORK IS AN UNPUBLISHED WORK OF NOVELL, INC. NO PART OF THIS WORK MAY BE
- * USED, PRACTICED, PERFORMED, COPIED, DISTRIBUTED, REVISED, MODIFIED,
- * TRANSLATED, ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED,
- * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
- * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
- * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
  *
- * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
- * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
- * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
- * FROM [GAIM] AS PART OF SUCH A REPUBLICATION, YOU HAVE ALL RIGHTS AND LICENSES
- * GRANTED BY [GAIM] UNDER THE GPL.  IN CONNECTION WITH SUCH A REPUBLICATION, IF
- * ANYTHING IN THIS NOTICE CONFLICTS WITH THE TERMS OF THE GPL, SUCH TERMS
- * PREVAIL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  *
  */
 
@@ -84,7 +82,7 @@ nm_create_contact_from_fields(NMField * fields)
 	NMContact *contact;
 	NMField *field;
 
-	if ( fields == NULL || fields->tag == NULL || fields->value == 0 ||
+	if ( fields == NULL || fields->tag == NULL || fields->ptr_value == 0 ||
 		 strcmp(fields->tag, NM_A_FA_CONTACT) )
 	{
 		return NULL;
@@ -92,40 +90,40 @@ nm_create_contact_from_fields(NMField * fields)
 
 	contact = nm_create_contact();
 
-	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->value))) {
+	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			contact->id = atoi((char *) field->value);
-
-	}
-
-	if ((field = nm_locate_field(NM_A_SZ_PARENT_ID, (NMField *) fields->value))) {
-
-		if (field->value)
-			contact->parent_id = atoi((char *) field->value);
+		if (field->ptr_value)
+			contact->id = atoi((char *) field->ptr_value);
 
 	}
 
-	if ((field =
-		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->value))) {
+	if ((field = nm_locate_field(NM_A_SZ_PARENT_ID, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			contact->seq = atoi((char *) field->value);
+		if (field->ptr_value)
+			contact->parent_id = atoi((char *) field->ptr_value);
 
 	}
 
 	if ((field =
-		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->value))) {
+		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			contact->display_name = g_strdup((char *) field->value);
+		if (field->ptr_value)
+			contact->seq = atoi((char *) field->ptr_value);
 
 	}
 
-	if ((field = nm_locate_field(NM_A_SZ_DN, (NMField *) fields->value))) {
+	if ((field =
+		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			contact->dn = g_strdup((char *) field->value);
+		if (field->ptr_value)
+			contact->display_name = g_strdup((char *) field->ptr_value);
+
+	}
+
+	if ((field = nm_locate_field(NM_A_SZ_DN, (NMField *) fields->ptr_value))) {
+
+		if (field->ptr_value)
+			contact->dn = g_strdup((char *) field->ptr_value);
 
 	}
 
@@ -137,50 +135,50 @@ nm_contact_update_list_properties(NMContact * contact, NMField * fields)
 {
 	NMField *field;
 
-	if (contact == NULL || fields == NULL || fields->value == 0)
+	if (contact == NULL || fields == NULL || fields->ptr_value == 0)
 		return;
 
-	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->value))) {
+	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			contact->id = atoi((char *)field->value);
-
-	}
-
-	if ((field = nm_locate_field(NM_A_SZ_PARENT_ID, (NMField *) fields->value))) {
-
-		if (field->value)
-			contact->parent_id = atoi((char *) field->value);
+		if (field->ptr_value)
+			contact->id = atoi((char *)field->ptr_value);
 
 	}
 
-	if ((field =
-		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->value))) {
+	if ((field = nm_locate_field(NM_A_SZ_PARENT_ID, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			contact->seq = atoi((char *) field->value);
+		if (field->ptr_value)
+			contact->parent_id = atoi((char *) field->ptr_value);
 
 	}
 
 	if ((field =
-		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->value))) {
+		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->ptr_value))) {
 
-		if (field->value) {
+		if (field->ptr_value)
+			contact->seq = atoi((char *) field->ptr_value);
+
+	}
+
+	if ((field =
+		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->ptr_value))) {
+
+		if (field->ptr_value) {
 			if (contact->display_name)
 				g_free(contact->display_name);
 
-			contact->display_name = g_strdup((char *) field->value);
+			contact->display_name = g_strdup((char *) field->ptr_value);
 		}
 
 	}
 
-	if ((field = nm_locate_field(NM_A_SZ_DN, (NMField *) fields->value))) {
+	if ((field = nm_locate_field(NM_A_SZ_DN, (NMField *) fields->ptr_value))) {
 
-		if (field->value) {
+		if (field->ptr_value) {
 			if (contact->dn)
 				g_free(contact->dn);
 
-			contact->dn = g_strdup((char *) field->value);
+			contact->dn = g_strdup((char *) field->ptr_value);
 		}
 
 	}
@@ -194,29 +192,23 @@ nm_contact_to_fields(NMContact * contact)
 	if (contact == NULL)
 		return NULL;
 
-	fields = nm_add_field(fields, NM_A_SZ_OBJECT_ID, 0, NMFIELD_METHOD_VALID, 0,
-						  (guint32) g_strdup_printf("%d", contact->id),
-						  NMFIELD_TYPE_UTF8);
+	fields = nm_field_add_pointer(fields, NM_A_SZ_OBJECT_ID, 0, NMFIELD_METHOD_VALID, 0,
+								  g_strdup_printf("%d", contact->id), NMFIELD_TYPE_UTF8);
 
-	fields = nm_add_field(fields, NM_A_SZ_PARENT_ID, 0, NMFIELD_METHOD_VALID, 0,
-						  (guint32) g_strdup_printf("%d", contact->parent_id),
-						  NMFIELD_TYPE_UTF8);
+	fields = nm_field_add_pointer(fields, NM_A_SZ_PARENT_ID, 0, NMFIELD_METHOD_VALID, 0,
+								  g_strdup_printf("%d", contact->parent_id), NMFIELD_TYPE_UTF8);
 
-	fields =
-		nm_add_field(fields, NM_A_SZ_SEQUENCE_NUMBER, 0, NMFIELD_METHOD_VALID, 0,
-					 (guint32) g_strdup_printf("%d", contact->seq),
-					 NMFIELD_TYPE_UTF8);
+	fields = nm_field_add_pointer(fields, NM_A_SZ_SEQUENCE_NUMBER, 0, NMFIELD_METHOD_VALID, 0,
+								  g_strdup_printf("%d", contact->seq), NMFIELD_TYPE_UTF8);
 
 	if (contact->display_name != NULL) {
-		fields =
-			nm_add_field(fields, NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_METHOD_VALID, 0,
-						 (guint32) g_strdup(contact->display_name),
-						 NMFIELD_TYPE_UTF8);
+		fields = nm_field_add_pointer(fields, NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_METHOD_VALID, 0,
+									  g_strdup(contact->display_name), NMFIELD_TYPE_UTF8);
 	}
 
 	if (contact->dn != NULL) {
-		fields = nm_add_field(fields, NM_A_SZ_DN, 0, NMFIELD_METHOD_VALID, 0,
-							  (guint32) g_strdup(contact->dn), NMFIELD_TYPE_UTF8);
+		fields = nm_field_add_pointer(fields, NM_A_SZ_DN, 0, NMFIELD_METHOD_VALID, 0,
+									  g_strdup(contact->dn), NMFIELD_TYPE_UTF8);
 	}
 
 	return fields;
@@ -466,29 +458,29 @@ nm_create_folder_from_fields(NMField * fields)
 	NMField *field;
 	NMFolder *folder;
 
-	if (fields == NULL || fields->value == 0)
+	if (fields == NULL || fields->ptr_value == 0)
 		return NULL;
 
 	folder = g_new0(NMFolder, 1);
 
-	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->value))) {
+	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			folder->id = atoi((char *) field->value);
+		if (field->ptr_value)
+			folder->id = atoi((char *) field->ptr_value);
 	}
 
 	if ((field =
-		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->value))) {
+		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			folder->seq = atoi((char *) field->value);
+		if (field->ptr_value)
+			folder->seq = atoi((char *) field->ptr_value);
 	}
 
 	if ((field =
-		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->value))) {
+		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			folder->name = g_strdup((char *) field->value);
+		if (field->ptr_value)
+			folder->name = g_strdup((char *) field->ptr_value);
 	}
 
 	folder->ref_count = 1;
@@ -503,25 +495,21 @@ nm_folder_to_fields(NMFolder * folder)
 	if (folder == NULL)
 		return NULL;
 
-	fields = nm_add_field(fields, NM_A_SZ_OBJECT_ID, 0, NMFIELD_METHOD_VALID, 0,
-						  (guint32) g_strdup_printf("%d", folder->id),
-						  NMFIELD_TYPE_UTF8);
+	fields = nm_field_add_pointer(fields, NM_A_SZ_OBJECT_ID, 0, NMFIELD_METHOD_VALID, 0,
+								  g_strdup_printf("%d", folder->id), NMFIELD_TYPE_UTF8);
 
-	fields = nm_add_field(fields, NM_A_SZ_PARENT_ID, 0, NMFIELD_METHOD_VALID, 0,
-						  (guint32) g_strdup("0"), NMFIELD_TYPE_UTF8);
+	fields = nm_field_add_pointer(fields, NM_A_SZ_PARENT_ID, 0, NMFIELD_METHOD_VALID, 0,
+								  g_strdup("0"), NMFIELD_TYPE_UTF8);
 
-	fields = nm_add_field(fields, NM_A_SZ_TYPE, 0, NMFIELD_METHOD_VALID, 0,
-						  (guint32) g_strdup("1"), NMFIELD_TYPE_UTF8);
+	fields = nm_field_add_pointer(fields, NM_A_SZ_TYPE, 0, NMFIELD_METHOD_VALID, 0,
+								  g_strdup("1"), NMFIELD_TYPE_UTF8);
 
-	fields =
-		nm_add_field(fields, NM_A_SZ_SEQUENCE_NUMBER, 0, NMFIELD_METHOD_VALID, 0,
-					 (guint32) g_strdup_printf("%d", folder->seq),
-					 NMFIELD_TYPE_UTF8);
+	fields = nm_field_add_pointer(fields, NM_A_SZ_SEQUENCE_NUMBER, 0, NMFIELD_METHOD_VALID, 0,
+								  g_strdup_printf("%d", folder->seq), NMFIELD_TYPE_UTF8);
 
 	if (folder->name != NULL) {
-		fields =
-			nm_add_field(fields, NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_METHOD_VALID, 0,
-						 (guint32) g_strdup(folder->name), NMFIELD_TYPE_UTF8);
+		fields = nm_field_add_pointer(fields, NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_METHOD_VALID, 0,
+									  g_strdup(folder->name), NMFIELD_TYPE_UTF8);
 	}
 
 
@@ -533,32 +521,32 @@ nm_folder_update_list_properties(NMFolder * folder, NMField * fields)
 {
 	NMField *field;
 
-	if (folder == NULL || fields == NULL || fields->value == 0)
+	if (folder == NULL || fields == NULL || fields->ptr_value == 0)
 		return;
 
-	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->value))) {
+	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->ptr_value))) {
 
-		if (field->value)
-			folder->id = atoi((char *) field->value);
-
-	}
-
-	if ((field =
-		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->value))) {
-
-		if (field->value)
-			folder->seq = atoi((char *) field->value);
+		if (field->ptr_value)
+			folder->id = atoi((char *) field->ptr_value);
 
 	}
 
 	if ((field =
-		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->value))) {
+		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->ptr_value))) {
 
-		if (field->value) {
+		if (field->ptr_value)
+			folder->seq = atoi((char *) field->ptr_value);
+
+	}
+
+	if ((field =
+		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->ptr_value))) {
+
+		if (field->ptr_value) {
 			if (folder->name)
 				g_free(folder->name);
 
-			folder->name = g_strdup((char *) field->value);
+			folder->name = g_strdup((char *) field->ptr_value);
 		}
 
 	}
@@ -707,7 +695,6 @@ nm_folder_remove_contact(NMFolder * folder, NMContact * contact)
 		return;
 
 	node = folder->contacts;
-
 	while (node) {
 		if (contact->id == ((NMContact *) (node->data))->id) {
 			folder->contacts = g_slist_remove(folder->contacts, node->data);
@@ -841,6 +828,27 @@ nm_folder_find_contact_by_userid(NMFolder * folder, const char *userid)
 }
 
 NMContact *
+nm_folder_find_contact_by_display_id(NMFolder * folder, const char *display_id)
+{
+	int cnt, i;
+	NMContact *tmp, *contact = NULL;
+
+	if (folder == NULL || display_id == NULL)
+		return NULL;
+
+	cnt = nm_folder_get_contact_count(folder);
+	for (i = 0; i < cnt; i++) {
+		tmp = nm_folder_get_contact(folder, i);
+		if (tmp && nm_utf8_str_equal(nm_contact_get_display_id(tmp), display_id)) {
+			contact = tmp;
+			break;
+		}
+	}
+
+	return contact;
+}
+
+NMContact *
 nm_folder_find_contact(NMFolder * folder, const char *dn)
 {
 	int cnt, i;
@@ -946,7 +954,7 @@ _add_contacts(NMUser * user, NMFolder * folder, NMField * fields)
 
 		/* Update the user record cache */
 		if ((details = nm_locate_field(NM_A_FA_USER_DETAILS,
-									   (NMField *) locate->value))) {
+									   (NMField *) locate->ptr_value))) {
 			user_record = nm_find_user_record(user, nm_contact_get_dn(contact));
 			if (user_record == NULL) {
 				user_record = nm_create_user_record_from_fields(details);

@@ -1,21 +1,20 @@
 /*
  * nmfield.c
  *
- * Copyright © 2004 Unpublished Work of Novell, Inc. All Rights Reserved.
+ * Copyright (c) 2004 Novell, Inc. All Rights Reserved.
  *
- * THIS WORK IS AN UNPUBLISHED WORK OF NOVELL, INC. NO PART OF THIS WORK MAY BE
- * USED, PRACTICED, PERFORMED, COPIED, DISTRIBUTED, REVISED, MODIFIED, TRANSLATED,
- * ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED, RECAST, TRANSFORMED
- * OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL, INC. ANY USE OR
- * EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT THE PERPETRATOR
- * TO CRIMINAL AND CIVIL LIABILITY.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
  *
- * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH THIS
- * WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND LICENSES
- * THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY FROM [GAIM]
- * AS PART OF SUCH A REPUBLICATION, YOU HAVE ALL RIGHTS AND LICENSES GRANTED BY
- * [GAIM] UNDER THE GPL.  IN CONNECTION WITH SUCH A REPUBLICATION, IF ANYTHING IN
- * THIS NOTICE CONFLICTS WITH THE TERMS OF THE GPL, SUCH TERMS PREVAIL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  *
  */
 
@@ -38,25 +37,33 @@ static void _copy_field_value(NMField * dest, NMField * src);
 /* Create a string from a value -- for debugging */
 static char *_value_to_string(NMField * field);
 
-NMField *
-nm_add_field(NMField * fields, char *tag, guint32 size, guint8 method,
-			 guint8 flags, guint32 value, guint8 type)
+static NMField *
+_add_blank_field(NMField *fields, guint32 count)
 {
-	guint32 count, new_len;
-	NMField *field = NULL;
+	guint32 new_len;
 
 	if (fields == NULL) {
 		fields = g_new0(NMField, 10);
 		fields->len = 10;
-		count = 0;
 	} else {
-		count = nm_count_fields(fields);
 		if (fields->len < count + 2) {
 			new_len = count + 10;
 			fields = g_realloc(fields, new_len * sizeof(NMField));
 			fields->len = new_len;
 		}
 	}
+	return fields;
+}
+
+NMField *
+nm_field_add_number(NMField * fields, const char *tag, guint32 size, guint8 method,
+					guint8 flags, guint32 value, guint8 type)
+{
+	guint32 count;
+	NMField *field;
+
+	count = nm_count_fields(fields);
+	fields = _add_blank_field(fields, count);
 
 	field = &(fields[count]);
 	field->tag = g_strdup(tag);
@@ -70,6 +77,34 @@ nm_add_field(NMField * fields, char *tag, guint32 size, guint8 method,
 	field = &((fields)[count + 1]);
 	field->tag = NULL;
 	field->value = 0;
+	field->ptr_value = NULL;
+
+	return fields;
+}
+
+NMField *
+nm_field_add_pointer(NMField * fields, const char *tag, guint32 size, guint8 method,
+					 guint8 flags, gpointer value, guint8 type)
+{
+	guint32 count;
+	NMField *field = NULL;
+
+	count = nm_count_fields(fields);
+	fields = _add_blank_field(fields, count);
+
+	field = &(fields[count]);
+	field->tag = g_strdup(tag);
+	field->size = size;
+	field->method = method;
+	field->flags = flags;
+	field->ptr_value = value;
+	field->type = type;
+
+	/* Null terminate the field array */
+	field = &((fields)[count + 1]);
+	field->tag = NULL;
+	field->value = 0;
+	field->ptr_value = NULL;
 
 	return fields;
 }
@@ -126,25 +161,25 @@ _free_field_value(NMField * field)
 		return;
 
 	switch (field->type) {
-	case NMFIELD_TYPE_BINARY:
-	case NMFIELD_TYPE_UTF8:
-	case NMFIELD_TYPE_DN:
-		if ((gpointer) field->value != NULL) {
-			g_free((gpointer) field->value);
-		}
-		break;
+		case NMFIELD_TYPE_BINARY:
+		case NMFIELD_TYPE_UTF8:
+		case NMFIELD_TYPE_DN:
+			if (field->ptr_value != NULL) {
+				g_free(field->ptr_value);
+			}
+			break;
 
-	case NMFIELD_TYPE_ARRAY:
-	case NMFIELD_TYPE_MV:
-		nm_free_fields((NMField **) & field->value);
-		break;
+		case NMFIELD_TYPE_ARRAY:
+		case NMFIELD_TYPE_MV:
+			nm_free_fields((NMField **)&field->ptr_value);
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
 
 	field->size = 0;
-	field->value = 0;
+	field->ptr_value = NULL;
 }
 
 NMField *
@@ -204,30 +239,28 @@ _copy_field_value(NMField * dest, NMField * src)
 {
 	dest->type = src->type;
 	switch (dest->type) {
-	case NMFIELD_TYPE_UTF8:
-	case NMFIELD_TYPE_DN:
-		if (src->size == 0 && src->value != 0) {
-			src->size = strlen((char *) src->value) + 1;
-		}
-		/* fall through */
-	case NMFIELD_TYPE_BINARY:
-		if (src->size != 0 && src->value != 0) {
-			dest->value = (guint32) g_new0(char, src->size);
+		case NMFIELD_TYPE_UTF8:
+		case NMFIELD_TYPE_DN:
+			if (src->size == 0 && src->ptr_value != NULL) {
+				src->size = strlen((char *) src->ptr_value) + 1;
+			}
+			/* fall through */
+		case NMFIELD_TYPE_BINARY:
+			if (src->size != 0 && src->ptr_value != NULL) {
+				dest->ptr_value = g_new0(char, src->size);
+				memcpy(dest->ptr_value, src->ptr_value, src->size);
+			}
+			break;
 
-			memcpy((gpointer) dest->value, (gpointer) src->value, src->size);
-		}
-		break;
+		case NMFIELD_TYPE_ARRAY:
+		case NMFIELD_TYPE_MV:
+			dest->ptr_value = nm_copy_field_array((NMField *)src->ptr_value);
+			break;
 
-	case NMFIELD_TYPE_ARRAY:
-	case NMFIELD_TYPE_MV:
-		dest->value = 0;
-		dest->value = (guint32) nm_copy_field_array((NMField *) src->value);
-		break;
-
-	default:
-		/* numeric value */
-		dest->value = src->value;
-		break;
+		default:
+			/* numeric value */
+			dest->value = src->value;
+			break;
 	}
 
 	dest->size = src->size;
@@ -273,7 +306,7 @@ nm_print_fields(NMField * fields)
 	while (field->tag != NULL) {
 		if (field->type == NMFIELD_TYPE_ARRAY || field->type == NMFIELD_TYPE_MV) {
 			printf("Subarray START: %s Method = %d\n", field->tag, field->method);
-			nm_print_fields((NMField *) field->value);
+			nm_print_fields((NMField *) field->ptr_value);
 			printf("Subarray END: %s\n", field->tag);
 		} else {
 			str = _value_to_string(field);
@@ -296,12 +329,11 @@ _value_to_string(NMField * field)
 
 	/* This is a single value attribute */
 	if (((field->type == NMFIELD_TYPE_UTF8) ||
-		 (field->type == NMFIELD_TYPE_DN)) && (field->value != 0)) {
-		value = g_strdup((const char *) field->value);
-	} else if (field->type == NMFIELD_TYPE_BINARY && field->value != 0) {
+		 (field->type == NMFIELD_TYPE_DN)) && (field->ptr_value != NULL)) {
+		value = g_strdup((const char *) field->ptr_value);
+	} else if (field->type == NMFIELD_TYPE_BINARY && field->ptr_value != NULL) {
 		value = g_new0(char, field->size);
-
-		memcpy(value, (const char *) field->value, field->size);
+		memcpy(value, (const char *) field->ptr_value, field->size);
 	} else if (field->type == NMFIELD_TYPE_BOOL) {
 		if (field->value) {
 			value = g_strdup(NM_FIELD_TRUE);

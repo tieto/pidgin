@@ -1,22 +1,20 @@
 /*
  * nmuser.h
  *
- * Copyright © 2004 Unpublished Work of Novell, Inc. All Rights Reserved.
+ * Copyright (c) 2004 Novell, Inc. All Rights Reserved.
  *
- * THIS WORK IS AN UNPUBLISHED WORK OF NOVELL, INC. NO PART OF THIS WORK MAY BE
- * USED, PRACTICED, PERFORMED, COPIED, DISTRIBUTED, REVISED, MODIFIED,
- * TRANSLATED, ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED,
- * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
- * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
- * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
  *
- * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
- * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
- * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
- * FROM [GAIM] AS PART OF SUCH A REPUBLICATION, YOU HAVE ALL RIGHTS AND LICENSES
- * GRANTED BY [GAIM] UNDER THE GPL.  IN CONNECTION WITH SUCH A REPUBLICATION, IF
- * ANYTHING IN THIS NOTICE CONFLICTS WITH THE TERMS OF THE GPL, SUCH TERMS
- * PREVAIL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  *
  */
 
@@ -106,6 +104,12 @@ struct _NMUser
 	/* Called when we receive an event */
 	nm_event_cb evt_callback;
 
+	/* Privacy settings */
+	gboolean privacy_locked;
+	gboolean default_deny;
+	GSList *allow_list;
+	GSList *deny_list;
+
 	/* Pending requests. If we need to go to the server to more info
 	 * before processing a request we will queue it up and process when
 	 * we get a response
@@ -122,7 +126,6 @@ struct _NMUser
 
 };
 
-
 #define	NM_STATUS_UNKNOWN			0
 #define	NM_STATUS_OFFLINE			1
 #define NM_STATUS_AVAILABLE			2
@@ -137,11 +140,40 @@ struct _NMUser
 #define NMERR_TCP_WRITE						(NMERR_BASE + 0x0002)
 #define NMERR_TCP_READ						(NMERR_BASE + 0x0003)
 #define NMERR_PROTOCOL						(NMERR_BASE + 0x0004)
-#define NMERR_SSL_REDIRECT					(NMERR_BASE + 0x0005)
+#define NMERR_SERVER_REDIRECT				(NMERR_BASE + 0x0005)
 #define NMERR_CONFERENCE_NOT_FOUND 			(NMERR_BASE + 0x0006)
 #define NMERR_CONFERENCE_NOT_INSTANTIATED 	(NMERR_BASE + 0x0007)
 #define NMERR_FOLDER_EXISTS					(NMERR_BASE + 0x0008)
 
+/* Errors that are returned from the server */
+#define NMERR_SERVER_BASE			 	0xD100L
+#define NMERR_ACCESS_DENIED			 	(NMERR_SERVER_BASE + 0x0006)
+#define NMERR_NOT_SUPPORTED          	(NMERR_SERVER_BASE + 0x000A)
+#define NMERR_PASSWORD_EXPIRED       	(NMERR_SERVER_BASE + 0x000B)
+#define NMERR_PASSWORD_INVALID       	(NMERR_SERVER_BASE + 0x000C)
+#define NMERR_USER_NOT_FOUND         	(NMERR_SERVER_BASE + 0x000D)
+#define NMERR_USER_DISABLED          	(NMERR_SERVER_BASE + 0x0010)
+#define NMERR_DIRECTORY_FAILURE      	(NMERR_SERVER_BASE + 0x0011)
+#define NMERR_HOST_NOT_FOUND		 	(NMERR_SERVER_BASE + 0x0019)
+#define NMERR_ADMIN_LOCKED           	(NMERR_SERVER_BASE + 0x001C)
+#define NMERR_DUPLICATE_PARTICIPANT  	(NMERR_SERVER_BASE + 0x001F)
+#define NMERR_SERVER_BUSY            	(NMERR_SERVER_BASE + 0x0023)
+#define NMERR_OBJECT_NOT_FOUND       	(NMERR_SERVER_BASE + 0x0024)
+#define NMERR_DIRECTORY_UPDATE       	(NMERR_SERVER_BASE + 0x0025)
+#define NMERR_DUPLICATE_FOLDER       	(NMERR_SERVER_BASE + 0x0026)
+#define NMERR_DUPLICATE_CONTACT      	(NMERR_SERVER_BASE + 0x0027)
+#define NMERR_USER_NOT_ALLOWED       	(NMERR_SERVER_BASE + 0x0028)
+#define NMERR_TOO_MANY_CONTACTS      	(NMERR_SERVER_BASE + 0x0029)
+#define NMERR_CONFERENCE_NOT_FOUND_2   	(NMERR_SERVER_BASE + 0x002B)
+#define NMERR_TOO_MANY_FOLDERS       	(NMERR_SERVER_BASE + 0x002C)
+#define NMERR_SERVER_PROTOCOL        	(NMERR_SERVER_BASE + 0x0030)
+#define NMERR_CONVERSATION_INVITE		(NMERR_SERVER_BASE + 0x0035)
+#define NMERR_USER_BLOCKED	         	(NMERR_SERVER_BASE + 0x0039)
+#define NMERR_MASTER_ARCHIVE_MISSING 	(NMERR_SERVER_BASE + 0x003A)
+#define NMERR_PASSWORD_EXPIRED_2     	(NMERR_SERVER_BASE + 0x0042)
+#define NMERR_CREDENTIALS_MISSING   	(NMERR_SERVER_BASE + 0x0046)
+#define NMERR_AUTHENTICATION_FAILED		(NMERR_SERVER_BASE + 0x0049)
+#define NMERR_EVAL_CONNECTION_LIMIT		(NMERR_SERVER_BASE + 0x004A)
 
 /**
  *	Initialize the user that we are going to login to the system as.
@@ -207,10 +239,11 @@ NMERR_T nm_send_set_status(NMUser * user, int status, const char *text,
  *
  *	The response data sent to the callback will be NULL.
  *
- *  @param	user		The logged in User
- *	@param	conference	Conference to create
- *	@param	callback	Function to call when we get the response from the server
- *	@param	data		User defined data to be passed to the callback function
+ *  @param	user			 The logged in User
+ *	@param	conference		 Conference to create
+ *	@param	add_participants Add participant list on create?
+ *	@param	callback		 Function to call when we get the response from the server
+ *	@param	data			 User defined data to be passed to the callback function
  *
  *	@return	NM_OK if successfully sent, error otherwise
  */
@@ -264,6 +297,41 @@ NMERR_T nm_send_join_conference(NMUser * user, NMConference * conference,
 NMERR_T nm_send_reject_conference(NMUser * user, NMConference * conference,
 								  nm_response_cb callback, gpointer data);
 
+
+/**
+ *	Send a conference invitation to the server.
+ *
+ *	The response data sent to the callback will be NULL.
+ *
+ *  @param	user		The logged in User
+ *	@param	conference	Conference the user is rejecting
+ *  @param  user_record The user to invite
+ *  @param  message		The invite message if there is one, NULL otherwise
+ *	@param	callback	Function to call when we get the response from the server
+ *	@param	data		User defined data to be passed to the callback function
+ *
+ *
+ *	@return	NM_OK if successfully sent, error otherwise
+ */
+NMERR_T nm_send_conference_invite(NMUser *user, NMConference *conference, NMUserRecord *user_record,
+								  const char *message, nm_response_cb callback, gpointer data);
+
+/**
+ *	Get details for a more than one user from the server.
+ *
+ *	The response data sent to the callback will be an NMUserRecord which should be
+ *  freed with nm_release_user_record
+ *
+ *  @param	user		The logged in User
+ *	@param	names		Link list of user id's or dn's
+ *	@param	callback	Function to call when we get the response from the server
+ *	@param	data		User defined data to be passed to the callback function
+ *
+ *	@return	NM_OK if successfully sent, error otherwise
+ */
+NMERR_T nm_send_multiple_get_details(NMUser * user, GSList *names,
+									 nm_response_cb callback, gpointer data);
+
 /**
  *	Get details for a user from the server.
  *
@@ -279,23 +347,6 @@ NMERR_T nm_send_reject_conference(NMUser * user, NMConference * conference,
  */
 NMERR_T nm_send_get_details(NMUser * user, const char *name,
 							nm_response_cb callback, gpointer data);
-
-/**
- *	Get details for multiple users from the server.
- *
- *	The response data to the callback will be a list of NMUserRecord, which should be
- *	freed (each user record should be released with nm_release_user_record and the
- *  list should be freed)
- *
- *  @param	user		The logged in User
- *	@param	name		Userid or DN of the user to look up
- *	@param	callback	Function to call when we get the response from the server
- *	@param	data		User defined data to be passed to the callback function
- *
- *	@return	NM_OK if successfully sent, error otherwise
- */
-NMERR_T nm_send_multiple_get_details(NMUser *user, GSList *names,
-									 nm_response_cb callback, gpointer data);
 
 /**
  *	Send a message.
@@ -464,6 +515,50 @@ NMERR_T nm_send_get_status(NMUser * user, NMUserRecord * user_record,
 						   nm_response_cb callback, gpointer data);
 
 /**
+ *	Send a request to add an item to the allow or deny list.
+ *
+ *  @param	user		The logged in User
+ *	@param	who			The userid or DN of the user to add to list
+ *  @param	allow_list	TRUE if adding to allow list, FALSE if adding to deny list
+ *	@param	callback	Function to call when we get the response from the server
+ *  @param	data		User defined data
+ *
+ *	@return	NM_OK if successfully sent, error otherwise
+ */
+NMERR_T
+nm_send_create_privacy_item(NMUser *user, const char *who, gboolean is_allowed,
+							nm_response_cb callback, gpointer data);
+
+/**
+ *	Send a request to remove an item from the allow or deny list.
+ *
+ *  @param	user		The logged in User
+ *	@param	who			The userid or DN of the user to add to list
+ *  @param	allow_list	TRUE if removing from allow list, FALSE if removing from deny list
+ *	@param	callback	Function to call when we get the response from the server
+ *  @param	data		User defined data
+ *
+ *	@return	NM_OK if successfully sent, error otherwise
+ */
+NMERR_T
+nm_send_remove_privacy_item(NMUser *user, const char *dn, gboolean allow_list,
+							nm_response_cb callback, gpointer data);
+
+/**
+ *	Send a request to change the default privacy setting to deny all or allow all
+ *
+ *  @param	user			The logged in User
+ *	@param	default_deny	TRUE if default should be changed to deny all
+ *	@param	callback		Function to call when we get the response from the server
+ *  @param	data			User defined data
+ *
+ *	@return	NM_OK if successfully sent, error otherwise
+ */
+NMERR_T
+nm_send_set_privacy_default(NMUser *user, gboolean default_deny,
+							nm_response_cb callback, gpointer data);
+
+/**
  *	Reads a response/event from the server and processes it.
  *
  *  @param	user	The logged in User
@@ -519,6 +614,8 @@ nm_event_cb nm_user_get_event_callback(NMUser * user);
 
 NMConn *nm_user_get_conn(NMUser * user);
 
+gboolean nm_user_is_privacy_locked(NMUser *user);
+
 /** Some utility functions **/
 
 /**
@@ -565,5 +662,14 @@ gboolean nm_utf8_str_equal(gconstpointer str1, gconstpointer str2);
  *
  */
 char *nm_typed_to_dotted(const char *typed);
+
+/**
+ *      Return a string representation of the error code.
+ *
+ *      @param  error           NMERR_T to convert to string
+ *
+ *      @return String representation.
+ */
+const char *nm_error_to_string (NMERR_T err);
 
 #endif

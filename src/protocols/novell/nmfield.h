@@ -1,22 +1,20 @@
 /*
  * nmfield.h
  *
- * Copyright © 2004 Unpublished Work of Novell, Inc. All Rights Reserved.
+ * Copyright (c) 2004 Novell, Inc. All Rights Reserved.
  *
- * THIS WORK IS AN UNPUBLISHED WORK OF NOVELL, INC. NO PART OF THIS WORK MAY BE
- * USED, PRACTICED, PERFORMED, COPIED, DISTRIBUTED, REVISED, MODIFIED,
- * TRANSLATED, ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED,
- * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
- * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
- * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
  *
- * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
- * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
- * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
- * FROM [GAIM] AS PART OF SUCH A REPUBLICATION, YOU HAVE ALL RIGHTS AND LICENSES
- * GRANTED BY [GAIM] UNDER THE GPL.  IN CONNECTION WITH SUCH A REPUBLICATION, IF
- * ANYTHING IN THIS NOTICE CONFLICTS WITH THE TERMS OF THE GPL, SUCH TERMS
- * PREVAIL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  *
  */
 
@@ -28,19 +26,13 @@
 typedef struct NMField_t
 {
 	char *tag;				/* Field tag */
-
 	guint8 method;			/* Method of the field */
-
 	guint8 flags;			/* Flags */
-
 	guint8 type;			/* Type of value */
-
 	guint32 size;			/* Size of value if binary */
-
-	guint32 value;			/* Value of field */
-
+	guint32 value;			/* Value of a numeric field */
+	gpointer ptr_value;		/* Value of a string or sub array field */
 	guint32 len;			/* Length of the array */
-
 } NMField;
 
 /* Field types */
@@ -120,6 +112,12 @@ typedef struct NMField_t
 #define	NM_A_SZ_AUTH_ATTRIBUTE			"NM_A_SZ_AUTH_ATTRIBUTE"
 #define	NM_A_UD_KEEPALIVE				"NM_A_UD_KEEPALIVE"
 #define NM_A_SZ_USER_AGENT				"NM_A_SZ_USER_AGENT"
+#define NM_A_BLOCKING					"nnmBlocking"
+#define NM_A_BLOCKING_DENY_LIST			"nnmBlockingDenyList"
+#define NM_A_BLOCKING_ALLOW_LIST		"nnmBlockingAllowList"
+#define	NM_A_SZ_BLOCKING_ALLOW_ITEM		"NM_A_SZ_BLOCKING_ALLOW_ITEM"
+#define	NM_A_SZ_BLOCKING_DENY_ITEM		"NM_A_SZ_BLOCKING_DENY_ITEM"
+#define NM_A_LOCKED_ATTR_LIST			"nnmLockedAttrList"
 
 #define NM_PROTOCOL_VERSION		 		2
 
@@ -139,9 +137,12 @@ typedef struct NMField_t
 guint32 nm_count_fields(NMField * fields);
 
 /**
- * Add a field to the field array. NOTE: field array that is passed
- * in may be realloced so you should use the returned field array pointer
- * not the passed in pointer after calling this function.
+ * Add a field to the field array. The field should be of type NMFIELD_TYPE_UTF8,
+ * NMFIELD_TYPE_DN, NMFIELD_TYPE_ARRAY, or NMFIELD_TYPE_MV
+ *
+ * NOTE: field array that is passed in may be realloc'd so you should use
+ * the returned field array pointer not the passed in pointer after calling
+ * this function.
  *
  * @param fields	Field array
  * @param tag		Tag for the new field
@@ -154,8 +155,29 @@ guint32 nm_count_fields(NMField * fields);
  * @return			Pointer to the updated field array
  *
  */
-NMField *nm_add_field(NMField * fields, char *tag, guint32 size, guint8 method,
-					  guint8 flags, guint32 value, guint8 type);
+NMField *nm_field_add_pointer(NMField *fields, const char *tag, guint32 size, guint8 method,
+							  guint8 flags, gpointer value, guint8 type);
+
+/**
+ * Add a numeric field to the field array.
+ *
+ * NOTE: field array that is passed in may be realloc'd so you should use
+ * the returned field array pointer not the passed in pointer after calling
+ * this function.
+ *
+ * @param fields	Field array
+ * @param tag		Tag for the new field
+ * @param size		Size of the field value (if type = binary)
+ * @param method	Field method (see method defines above)
+ * @param flags		Flags for new field
+ * @param value		The value of the field
+ * @param type		The type of the field value
+ *
+ * @return			Pointer to the updated field array
+ *
+ */
+NMField *nm_field_add_number(NMField *fields, const char *tag, guint32 size, guint8 method,
+							 guint8 flags, guint32 value, guint8 type);
 
 /**
  * Recursively free an array of fields and set pointer to NULL.

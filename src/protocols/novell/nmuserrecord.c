@@ -1,22 +1,20 @@
 /*
  * nmuserrecord.c
  *
- * Copyright © 2004 Unpublished Work of Novell, Inc. All Rights Reserved.
+ * Copyright (c) 2004 Novell, Inc. All Rights Reserved.
  *
- * THIS WORK IS AN UNPUBLISHED WORK OF NOVELL, INC. NO PART OF THIS WORK MAY BE
- * USED, PRACTICED, PERFORMED, COPIED, DISTRIBUTED, REVISED, MODIFIED,
- * TRANSLATED, ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED,
- * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
- * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
- * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
  *
- * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
- * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
- * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
- * FROM [GAIM] AS PART OF SUCH A REPUBLICATION, YOU HAVE ALL RIGHTS AND LICENSES
- * GRANTED BY [GAIM] UNDER THE GPL.  IN CONNECTION WITH SUCH A REPUBLICATION, IF
- * ANYTHING IN THIS NOTICE CONFLICTS WITH THE TERMS OF THE GPL, SUCH TERMS
- * PREVAIL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  *
  */
 
@@ -70,24 +68,24 @@ _get_attribute_value(NMField *field)
 {
 	char *value = NULL;
 
-	if (field->value == 0)
+	if (field->ptr_value == NULL)
 		return NULL;
 
 	if (field->type == NMFIELD_TYPE_UTF8 || field->type == NMFIELD_TYPE_DN) {
 
-		value = (char *)field->value;
+		value = (char *)field->ptr_value;
 
 	} else if (field->type == NMFIELD_TYPE_MV) {
 
 		/* Need to handle multi-valued returns, for now
 		 * just pick the first value and return it
 		 */
-		NMField *tmp = (NMField *)field->value;
+		NMField *tmp = (NMField *)field->ptr_value;
 		if ((tmp != NULL) &&
 			((tmp->type == NMFIELD_TYPE_UTF8) ||
 			(tmp->type == NMFIELD_TYPE_DN))) {
 
-			value = (char *)tmp->value;
+			value = (char *)tmp->ptr_value;
 
 		} else {
 			return NULL;
@@ -115,16 +113,16 @@ nm_create_user_record_from_fields(NMField * details)
 	}
 
 	if (details->type == NMFIELD_TYPE_ARRAY) {
-		if (details->value == 0)
+		if (details->ptr_value == NULL)
 			return NULL;
-		fields = (NMField *) details->value;
+		fields = (NMField *) details->ptr_value;
 	}
 
 	user_record = nm_create_user_record();
 
 	if ((field = nm_locate_field(NM_A_SZ_AUTH_ATTRIBUTE, fields))) {
 
-		if (field->value) {
+		if (field->ptr_value) {
 			user_record->display_id = _get_attribute_value(field);
 			user_record->auth_attr = TRUE;
 		}
@@ -132,50 +130,50 @@ nm_create_user_record_from_fields(NMField * details)
 
 	if ((field = nm_locate_field(NM_A_SZ_DN, fields))) {
 
-		if (field->value) {
+		if (field->ptr_value) {
 			user_record->dn = _get_attribute_value(field);
 		}
 	}
 
 	if ((field = nm_locate_field("CN", fields))) {
 
-		if (field->value) {
+		if (field->ptr_value) {
 			user_record->cn = _get_attribute_value(field);
 		}
 	}
 
 	if ((field = nm_locate_field("Given Name", fields))) {
 
-		if (field->value) {
+		if (field->ptr_value) {
 			user_record->fname = _get_attribute_value(field);
 		}
 	}
 
 	if ((field = nm_locate_field("Surname", fields))) {
 
-		if (field->value) {
+		if (field->ptr_value) {
 			user_record->lname = _get_attribute_value(field);
 		}
 	}
 
 	if ((field = nm_locate_field("Full Name", fields))) {
 
-		if (field->value) {
+		if (field->ptr_value) {
 			user_record->full_name = _get_attribute_value(field);
 		}
 	}
 
 	if ((field = nm_locate_field(NM_A_SZ_STATUS, fields))) {
 
-		if (field->value)
-			user_record->status = atoi((char *) field->value);
+		if (field->ptr_value)
+			user_record->status = atoi((char *) field->ptr_value);
 
 	}
 
 	if ((field = nm_locate_field(NM_A_SZ_MESSAGE_BODY, fields))) {
 
-		if (field->value)
-			user_record->status_text = g_strdup((char *) field->value);
+		if (field->ptr_value)
+			user_record->status_text = g_strdup((char *) field->ptr_value);
 
 	}
 
@@ -495,7 +493,7 @@ nm_user_record_get_property_count(NMUserRecord * user_record)
 	if (user_record && user_record->fields) {
 		locate = nm_locate_field(NM_A_FA_INFO_DISPLAY_ARRAY,
 								 (NMField *) user_record->fields);
-		if (locate && (fields = (NMField *) (locate->value))) {
+		if (locate && (fields = (NMField *) (locate->ptr_value))) {
 			count = (int) nm_count_fields(fields);
 		}
 	}
@@ -511,13 +509,13 @@ nm_user_record_get_property(NMUserRecord * user_record, int index)
 	if (user_record && user_record->fields) {
 		locate = nm_locate_field(NM_A_FA_INFO_DISPLAY_ARRAY,
 								 (NMField *) user_record->fields);
-		if (locate && (fields = (NMField *) (locate->value))) {
+		if (locate && (fields = (NMField *) (locate->ptr_value))) {
 			int max = nm_count_fields(fields);
 
 			if (index < max) {
 				if (user_record) {
 					field = &fields[index];
-					if (field && field->tag && field->value) {
+					if (field && field->tag && field->ptr_value) {
 						property = g_new0(NMProperty, 1);
 						property->tag = g_strdup(field->tag);
 						property->value = _get_attribute_value(field);

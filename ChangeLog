@@ -12,8 +12,13 @@ version 0.78cvs
 	* The history plugin now shows history for chats in addition to IMs
 	* Menu item to view log (Tom Samstag)
 	* Conversation and Chat sizes automatically saved (Stu Tomlinson)
+	* Added support for Novell privacy settings (Mike Stoddard of Novell)
+	* Added ability to initiate multi-user conferences (chats) in Novell (Mike
+	  Stoddard of Novell)
 
 	Bug Fixes:
+	* Novell 64bit fixes, better error messages, and buddy list sync fixes
+	  (Mike Stoddard of Novell)
 	* Compiles again with gcc 2.96 (Ignacio J. Elia)
 	* Gtk2.0 compatibility fixes (Tim Ringenbach)
 	* Massive rewrite of MSN support, which should fix a number of issues

@@ -1,22 +1,20 @@
 /*
  * novell.c
  *
- * Copyright © 2004 Unpublished Work of Novell, Inc. All Rights Reserved.
+ * Copyright (c) 2004 Novell, Inc. All Rights Reserved.
  *
- * THIS WORK IS AN UNPUBLISHED WORK OF NOVELL, INC. NO PART OF THIS WORK MAY BE
- * USED, PRACTICED, PERFORMED, COPIED, DISTRIBUTED, REVISED, MODIFIED,
- * TRANSLATED, ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED,
- * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
- * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
- * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
  *
- * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
- * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
- * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
- * FROM [GAIM] AS PART OF SUCH A REPUBLICATION, YOU HAVE ALL RIGHTS AND LICENSES
- * GRANTED BY [GAIM] UNDER THE GPL.  IN CONNECTION WITH SUCH A REPUBLICATION, IF
- * ANYTHING IN THIS NOTICE CONFLICTS WITH THE TERMS OF THE GPL, SUCH TERMS
- * PREVAIL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  *
  */
 
@@ -31,11 +29,15 @@
 #include "sslconn.h"
 #include "request.h"
 #include "network.h"
+#include "privacy.h"
+#include "multi.h"
 
 #define DEFAULT_PORT			8300
 #define NOVELL_CONNECT_STEPS	4
 
 static GaimPlugin *my_protocol = NULL;
+
+static gboolean set_permit = FALSE;
 
 static gboolean
 _is_disconnect_error(NMERR_T err);
@@ -59,7 +61,16 @@ static void
 _add_gaim_buddies(NMUser * user);
 
 static void
+_sync_contact_list(NMUser *user);
+
+static void
+_sync_privacy_lists(NMUser *user);
+
+static void
 _show_info(GaimConnection * gc, NMUserRecord * user_record);
+
+const char *
+_get_conference_name(int id);
 
 /*******************************************************************************
  * Response callbacks
@@ -92,17 +103,12 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				gaim_account_set_alias(user->client_data, alias);
 		}
 
+		_sync_contact_list(user);
+		_sync_privacy_lists(user);
+
 		/* Tell Gaim that we are connected */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
 		serv_finish_login(gc);
-
-		/* Sync the contact list. This is pretty simplistic right now,
-		 * we just remove all of the GaimBuddy from the client side list
-		 * for this account and then add in all of the contacts from the
-		 * server side list.
-		 */
-		_remove_gaim_buddies(user);
-		_add_gaim_buddies(user);
 
 		rc = nm_send_set_status(user, NM_STATUS_AVAILABLE, NULL, NULL, NULL,
 								NULL);
@@ -110,7 +116,8 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 
 	} else {
 
-		char *err = g_strdup_printf(_("Login failed (0x%X)."), ret_code);
+		char *err = g_strdup_printf(_("Login failed (%s)."),
+					    nm_error_to_string (ret_code));
 
 		gaim_connection_error(gc, err);
 		g_free(err);
@@ -223,8 +230,8 @@ _get_details_resp_send_msg(NMUser * user, NMERR_T ret_code,
 		gc = gaim_account_get_connection(user->client_data);
 		if (gc != NULL) {
 			char *err = g_strdup_printf(_("Unable to send message."
-										  " Could not get details for user (0x%X)."),
-										ret_code);
+										  " Could not get details for user (%s)."),
+						    nm_error_to_string (ret_code));
 
 			gaim_notify_error(gc, NULL, err, NULL);
 			g_free(err);
@@ -368,8 +375,8 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 		char *err;
 
 		err =
-			g_strdup_printf(_("Unable to add %s to your buddy list (0x%X)."),
-							name, ret_code);
+			g_strdup_printf(_("Unable to add %s to your buddy list (%s)."),
+					name, nm_error_to_string (ret_code));
 		gaim_notify_error(gc, NULL, err, NULL);
 		g_free(err);
 
@@ -394,8 +401,8 @@ _send_message_resp_cb(NMUser * user, NMERR_T ret_code,
 		gc = gaim_account_get_connection(user->client_data);
 
 		/* TODO: Improve this! message to who or for what conference? */
-		err = g_strdup_printf(_("Unable to send message (0x%X)."),
-							  ret_code);
+		err = g_strdup_printf(_("Unable to send message (%s)."),
+				      nm_error_to_string (ret_code));
 		gaim_notify_error(gc, NULL, err, NULL);
 		g_free(err);
 	}
@@ -453,6 +460,28 @@ _rename_folder_resp_cb(NMUser * user, NMERR_T ret_code,
 	}
 }
 
+static void
+_sendinvite_resp_cb(NMUser *user, NMERR_T ret_code,
+					gpointer resp_data, gpointer user_data)
+{
+	char *err;
+	GaimConnection *gc;
+
+	if (user == NULL)
+		return;
+
+	if (ret_code != NM_OK) {
+		gc = gaim_account_get_connection(user->client_data);
+		err = g_strdup_printf(_("Unable to invite user (%s)."), nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+
+		gaim_debug(GAIM_DEBUG_INFO, "novell",
+				   "_sendinvite_resp_cb(): rc = 0x%x\n", ret_code);
+	}
+
+}
+
 /* If the createconf was successful attempt to send the message,
  * otherwise display an error message to the user.
  */
@@ -483,12 +512,13 @@ _createconf_resp_send_msg(NMUser * user, NMERR_T ret_code,
 
 			if (name)
 				err = g_strdup_printf(_("Unable to send message to %s."
-										" Could not create the conference (0x%X)."),
-									  name, ret_code);
+										" Could not create the conference (%s)."),
+						      name,
+						      nm_error_to_string (ret_code));
 			else
 				err = g_strdup_printf(_("Unable to send message."
-										" Could not create the conference (0x%X)."),
-									  ret_code);
+										" Could not create the conference (%s)."),
+						      nm_error_to_string (ret_code));
 
 			gaim_notify_error(gc, NULL, err, NULL);
 			g_free(err);
@@ -517,7 +547,7 @@ _create_folder_resp_move_contact(NMUser * user, NMERR_T ret_code,
 		return;
 	}
 
-	if (ret_code == NM_OK || ret_code == 0xD126) {
+	if (ret_code == NM_OK || ret_code == NMERR_DUPLICATE_FOLDER) {
 		new_folder = nm_find_folder(user, folder_name);
 		if (new_folder) {
 
@@ -535,10 +565,10 @@ _create_folder_resp_move_contact(NMUser * user, NMERR_T ret_code,
 		GaimConnection *gc = gaim_account_get_connection(user->client_data);
 		char *err = g_strdup_printf(_("Unable to move user %s"
 									  " to folder %s in the server side list."
-									  " Error while creating folder (0x%X)."),
-									nm_contact_get_dn(contact),
-									folder_name,
-									ret_code);
+									  " Error while creating folder (%s)."),
+					    nm_contact_get_dn(contact),
+					    folder_name,
+					    nm_error_to_string (ret_code));
 
 		gaim_notify_error(gc, NULL, err, NULL);
 		g_free(err);
@@ -569,7 +599,7 @@ _create_folder_resp_add_contact(NMUser * user, NMERR_T ret_code,
 		return;
 	}
 
-	if (ret_code == NM_OK || ret_code == 0xD126) {
+	if (ret_code == NM_OK || ret_code == NMERR_DUPLICATE_FOLDER) {
 		folder = nm_find_folder(user, folder_name);
 		if (folder) {
 
@@ -582,8 +612,8 @@ _create_folder_resp_add_contact(NMUser * user, NMERR_T ret_code,
 		const char *name = nm_contact_get_dn(contact);
 		char *err =
 			g_strdup_printf(_("Unable to add %s to your buddy list."
-							 " Error creating folder in server side list (0x%X)."),
-							name, ret_code);
+					  " Error creating folder in server side list (%s)."),
+					name, nm_error_to_string (ret_code));
 
 		gaim_notify_error(gc, NULL, err, NULL);
 
@@ -602,8 +632,7 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 	GaimConnection *gc;
 	NMUserRecord *ur;
 	NMConference *conference = user_data;
-	const char *name;
-	char *conf_name;
+	const char *name, *conf_name;
 	int i, count;
 
 	if (user == NULL || conference == NULL)
@@ -612,8 +641,7 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 	gc = gaim_account_get_connection(user->client_data);
 
 	if (ret_code == NM_OK) {
-		conf_name = g_strdup_printf(_("GroupWise Conference %d"),
-									++user->conference_count);
+		conf_name = _get_conference_name(++user->conference_count);
 		chat = serv_got_joined_chat(gc, user->conference_count, conf_name);
 		if (chat) {
 
@@ -628,7 +656,6 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 				}
 			}
 		}
-		g_free(conf_name);
 	}
 }
 
@@ -656,14 +683,320 @@ _get_details_resp_show_info(NMUser * user, NMERR_T ret_code,
 	} else {
 		gc = gaim_account_get_connection(user->client_data);
 		err =
-			g_strdup_printf(_("Could not get details for user %s (0x%X)."), name,
-							ret_code);
+			g_strdup_printf(_("Could not get details for user %s (%s)."),
+					name, nm_error_to_string (ret_code));
 		gaim_notify_error(gc, NULL, err, NULL);
 		g_free(err);
 	}
 
 	if (name)
 		g_free(name);
+}
+
+/* Handle get details response add to privacy list */
+static void
+_get_details_resp_add_privacy_item(NMUser *user, NMERR_T ret_code,
+								   gpointer resp_data, gpointer user_data)
+{
+	GaimConnection *gc;
+	NMUserRecord *user_record = resp_data;
+	char *err;
+	gboolean allowed = (gboolean)user_data;
+	const char *display_id;
+
+	if (user == NULL)
+		return;
+
+	gc = gaim_account_get_connection(user->client_data);
+	display_id = nm_user_record_get_display_id(user_record);
+
+	if (ret_code == NM_OK) {
+
+		if (allowed) {
+
+			if (!g_slist_find_custom(gc->account->permit,
+									 display_id, (GCompareFunc)nm_utf8_strcasecmp)) {
+				gaim_privacy_permit_add(gc->account, display_id, TRUE);
+			}
+
+		} else {
+
+			if (!g_slist_find_custom(gc->account->permit,
+									 display_id, (GCompareFunc)nm_utf8_strcasecmp)) {
+				gaim_privacy_deny_add(gc->account, display_id, TRUE);
+			}
+		}
+
+	} else {
+
+		err = g_strdup_printf(_("Unable to add user to privacy list (%s)."),
+							  nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+
+	}
+}
+
+/* Handle response to create privacy item request */
+static void
+_create_privacy_item_deny_resp_cb(NMUser *user, NMERR_T ret_code,
+								  gpointer resp_data, gpointer user_data)
+{
+	GaimConnection *gc;
+	NMUserRecord *user_record;
+	char *who = user_data;
+	char *err;
+	NMERR_T rc = NM_OK;
+	const char *display_id = NULL;
+
+	if (user == NULL)
+		return;
+
+	gc = gaim_account_get_connection(user->client_data);
+
+	if (ret_code == NM_OK) {
+
+		user_record = nm_find_user_record(user, who);
+		if (user_record)
+			display_id = nm_user_record_get_display_id(user_record);
+
+		if (display_id) {
+
+			if (!g_slist_find_custom(gc->account->deny,
+									 display_id, (GCompareFunc)nm_utf8_strcasecmp)) {
+
+				gaim_privacy_deny_add(gc->account, display_id, TRUE);
+			}
+
+		} else {
+			rc = nm_send_get_details(user, who,
+									 _get_details_resp_add_privacy_item,
+									 (gpointer)FALSE);
+			_check_for_disconnect(user, rc);
+		}
+	} else {
+
+		err = g_strdup_printf(_("Unable to add %s to deny list (%s)."),
+							  who, nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+
+	}
+
+	if (who)
+		g_free(who);
+
+}
+
+/* Handle response to create privacy item request */
+static void
+_create_privacy_item_permit_resp_cb(NMUser *user, NMERR_T ret_code,
+									gpointer resp_data, gpointer user_data)
+{
+	GaimConnection *gc;
+	NMUserRecord *user_record;
+	char *who = user_data;
+	char *err;
+	NMERR_T rc = NM_OK;
+	const char *display_id = NULL;
+
+	if (user == NULL)
+		return;
+
+	gc = gaim_account_get_connection(user->client_data);
+
+	if (ret_code == NM_OK) {
+
+		user_record = nm_find_user_record(user, who);
+		if (user_record)
+			display_id = nm_user_record_get_display_id(user_record);
+
+		if (display_id) {
+
+			if (!g_slist_find_custom(gc->account->permit,
+									 display_id,
+									 (GCompareFunc)nm_utf8_strcasecmp)) {
+
+				gaim_privacy_permit_add(gc->account, display_id, TRUE);
+			}
+
+		} else {
+			rc = nm_send_get_details(user, who,
+									 _get_details_resp_add_privacy_item,
+									 (gpointer)TRUE);
+			_check_for_disconnect(user, rc);
+		}
+
+	} else {
+
+		err = g_strdup_printf(_("Unable to add %s to permit list (%s)."), who,
+							  nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+
+	}
+
+	if (who)
+		g_free(who);
+}
+
+static void
+_get_details_send_privacy_create(NMUser *user, NMERR_T ret_code,
+								 gpointer resp_data, gpointer user_data)
+{
+	NMERR_T rc = NM_OK;
+	GaimConnection *gc;
+	NMUserRecord *user_record = resp_data;
+	char *err;
+	gboolean allowed = (gboolean)user_data;
+	const char *dn, *display_id;
+
+	if (user == NULL)
+		return;
+
+	gc = gaim_account_get_connection(user->client_data);
+	dn = nm_user_record_get_dn(user_record);
+	display_id = nm_user_record_get_display_id(user_record);
+
+	if (ret_code == NM_OK) {
+
+		if (allowed) {
+			rc = nm_send_create_privacy_item(user, dn, TRUE,
+											 _create_privacy_item_permit_resp_cb,
+											 g_strdup(display_id));
+			_check_for_disconnect(user, rc);
+
+		} else {
+			rc = nm_send_create_privacy_item(user, dn, FALSE,
+											 _create_privacy_item_deny_resp_cb,
+											 g_strdup(display_id));
+			_check_for_disconnect(user, rc);
+		}
+
+	} else {
+
+		err = g_strdup_printf(_("Unable to add user to privacy list (%s)."),
+							  nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+
+	}
+}
+
+static void
+_remove_privacy_item_resp_cb(NMUser *user, NMERR_T ret_code,
+									gpointer resp_data, gpointer user_data)
+{
+	GaimConnection *gc;
+	char *who = user_data;
+	char *err;
+
+	if (user == NULL)
+		return;
+
+	if (ret_code != NM_OK) {
+
+		gc = gaim_account_get_connection(user->client_data);
+		err = g_strdup_printf(_("Unable to remove %s from privacy list (%s)."), who,
+							  nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+	}
+
+	if (who)
+		g_free(who);
+}
+
+static void
+_set_privacy_default_resp_cb(NMUser *user, NMERR_T ret_code,
+									gpointer resp_data, gpointer user_data)
+{
+	GaimConnection *gc;
+	char *err;
+
+	if (user == NULL)
+		return;
+
+	if (ret_code != NM_OK) {
+
+		gc = gaim_account_get_connection(user->client_data);
+		err = g_strdup_printf(_("Unable to change server side privacy settings (%s)."),
+							  nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+
+	}
+}
+
+/* Handle get details response add to privacy list */
+static void
+_get_details_resp_send_invite(NMUser *user, NMERR_T ret_code,
+							  gpointer resp_data, gpointer user_data)
+{
+	NMERR_T rc = NM_OK;
+	GaimConnection *gc;
+	NMUserRecord *user_record = resp_data;
+	char *err;
+	const char *display_id;
+	GSList *cnode;
+	NMConference *conference;
+	gpointer chat;
+	long id = (long) user_data;
+
+	if (user == NULL)
+		return;
+
+	gc = gaim_account_get_connection(user->client_data);
+	display_id = nm_user_record_get_display_id(user_record);
+
+	if (ret_code == NM_OK) {
+
+		for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
+			conference = cnode->data;
+			if (conference && (chat = nm_conference_get_data(conference))) {
+				if (gaim_conv_chat_get_id(GAIM_CONV_CHAT(chat)) == id) {
+					rc = nm_send_conference_invite(user, conference, user_record,
+												   NULL, _sendinvite_resp_cb, NULL);
+					_check_for_disconnect(user, rc);
+					break;
+				}
+			}
+		}
+
+	} else {
+
+		err = g_strdup_printf(_("Unable to invite user (%s)."), nm_error_to_string(ret_code));
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+
+	}
+}
+
+static void
+_createconf_resp_send_invite(NMUser * user, NMERR_T ret_code,
+							  gpointer resp_data, gpointer user_data)
+{
+	NMERR_T rc = NM_OK;
+	NMConference *conference = resp_data;
+	NMUserRecord *user_record = user_data;
+	GaimConnection *gc;
+	char *err;
+
+	if (user == NULL)
+		return;
+
+
+
+	if (ret_code == NM_OK) {
+		rc = nm_send_conference_invite(user, conference, user_record,
+									   NULL, _sendinvite_resp_cb, NULL);
+		_check_for_disconnect(user, rc);
+	} else {
+		err = g_strdup_printf(_("Unable to create conference (%s)."), nm_error_to_string(ret_code));
+		gc = gaim_account_get_connection(user->client_data);
+		gaim_notify_error(gc, NULL, err, NULL);
+		g_free(err);
+	}
 }
 
 /*******************************************************************************
@@ -802,8 +1135,7 @@ _send_message(NMUser * user, NMMessage * message)
 			nm_release_message(message);
 
 		} else {
-			rc = nm_send_create_conference(user, conf,
-										   _createconf_resp_send_msg, message);
+			rc = nm_send_create_conference(user, conf, _createconf_resp_send_msg, message);
 			_check_for_disconnect(user, rc);
 		}
 	}
@@ -843,11 +1175,11 @@ _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 	serv_got_update(gc, buddy->name, loggedin, 0, 0, idle, gstatus);
 }
 
-/* Iterate through the cached Gaim buddy list and remove all buddies
- * for this account.
+/* Iterate through the cached Gaim buddy list and remove buddies
+ * that are not in the server side list.
  */
 static void
-_remove_gaim_buddies(NMUser * user)
+_remove_gaim_buddies(NMUser *user)
 {
 	GaimBlistNode *gnode;
 	GaimBlistNode *cnode;
@@ -857,6 +1189,7 @@ _remove_gaim_buddies(NMUser * user)
 	GaimBuddyList *blist;
 	GSList *rem_list = NULL;
 	GSList *l;
+	NMFolder *folder = NULL;
 
 	if ((blist = gaim_get_blist())) {
 		for (gnode = blist->root; gnode; gnode = gnode->next) {
@@ -871,7 +1204,11 @@ _remove_gaim_buddies(NMUser * user)
 						continue;
 					buddy = (GaimBuddy *) bnode;
 					if (buddy->account == user->client_data) {
-						rem_list = g_slist_append(rem_list, buddy);
+						folder = nm_find_folder(user, group->name);
+						if (folder == NULL ||
+							!nm_folder_find_contact_by_display_id(folder, buddy->name)) {
+							rem_list = g_slist_append(rem_list, buddy);
+						}
 					}
 				}
 			}
@@ -899,6 +1236,14 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 	const char *name = NULL;
 	int status = 0;
 
+	/* Does the Gaim group exist already? */
+	group = gaim_find_group(nm_folder_get_name(folder));
+
+	if (group == NULL) {
+		group = gaim_group_new(nm_folder_get_name(folder));
+		gaim_blist_add_group(group, NULL);
+	}
+
 	/* Get each contact for this folder */
 	cnt = nm_folder_get_contact_count(folder);
 	for (i = 0; i < cnt; i++) {
@@ -907,17 +1252,15 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 
 			name = nm_contact_get_display_id(contact);
 			if (name) {
-				/* Add it to the gaim buddy list */
-				buddy = gaim_buddy_new(user->client_data,
-									   name,
-									   nm_contact_get_display_name(contact));
 
-				/* Does the Gaim group exist already? */
-				group = gaim_find_group(nm_folder_get_name(folder));
+				buddy = gaim_find_buddy_in_group(user->client_data, name, group);
+				if (buddy == NULL) {
+					/* Add it to the gaim buddy list */
+					buddy = gaim_buddy_new(user->client_data,
+										   name,
+										   nm_contact_get_display_name(contact));
 
-				if (group == NULL) {
-					group = gaim_group_new(nm_folder_get_name(folder));
-					gaim_blist_add_group(group, NULL);
+					gaim_blist_add_buddy(buddy, NULL, group, NULL);
 				}
 
 				/* Set the initial status for the buddy */
@@ -926,8 +1269,6 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 					status = nm_user_record_get_status(user_record);
 					text = nm_user_record_get_status_text(user_record);
 				}
-
-				gaim_blist_add_buddy(buddy, NULL, group, NULL);
 				_update_buddy_status(buddy, status, time(0));
 
 				/* Save the new buddy as part of the contact object */
@@ -941,7 +1282,6 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 			break;
 		}
 	}
-
 }
 
 /* Add all of the server side contacts to the Gaim buddy list. */
@@ -966,6 +1306,111 @@ _add_gaim_buddies(NMUser * user)
 
 		/* Add contacts for the root folder */
 		_add_contacts_to_gaim_blist(user, root_folder);
+	}
+}
+
+static void
+_sync_contact_list(NMUser *user)
+{
+	/* Remove all buddies from the local list that are
+	 * not in the server side list and add all buddies
+	 * from the server side list that are not in
+	 * the local list
+	 */
+	_remove_gaim_buddies(user);
+	_add_gaim_buddies(user);
+}
+
+static void
+_sync_privacy_lists(NMUser *user)
+{
+	GSList *node = NULL, *rem_list = NULL;
+	GaimConnection *gc;
+	const char *name, *dn;
+	NMUserRecord *user_record;
+
+	if (user == NULL)
+		return;
+
+	gc = gaim_account_get_connection(user->client_data);
+	if (gc == NULL)
+		return;
+
+	/* Set the Gaim privacy setting */
+	if (user->default_deny) {
+		if (user->allow_list == NULL) {
+			gc->account->perm_deny = GAIM_PRIVACY_DENY_ALL;
+		} else {
+			gc->account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
+		}
+	} else {
+		if (user->deny_list == NULL) {
+			gc->account->perm_deny = GAIM_PRIVACY_ALLOW_ALL;
+		} else {
+			gc->account->perm_deny = GAIM_PRIVACY_DENY_USERS;
+		}
+	}
+
+	/* Add stuff */
+	for (node = user->allow_list; node; node = node->next) {
+		user_record = nm_find_user_record(user, (char *)node->data);
+		if (user_record)
+			name = nm_user_record_get_display_id(user_record);
+		else
+			name =(char *)node->data;
+
+		if (!g_slist_find_custom(gc->account->permit,
+								 name, (GCompareFunc)nm_utf8_strcasecmp)) {
+			gaim_privacy_permit_add(gc->account, name , TRUE);
+		}
+	}
+
+	for (node = user->deny_list; node; node = node->next) {
+		user_record = nm_find_user_record(user, (char *)node->data);
+		if (user_record)
+			name = nm_user_record_get_display_id(user_record);
+		else
+			name =(char *)node->data;
+
+		if (!g_slist_find_custom(gc->account->deny,
+								 name, (GCompareFunc)nm_utf8_strcasecmp)) {
+			gaim_privacy_deny_add(gc->account, name, TRUE);
+		}
+	}
+
+
+	/*  Remove stuff */
+	for (node = gc->account->permit; node; node = node->next) {
+		dn = nm_lookup_dn(user, (char *)node->data);
+		if (dn != NULL &&
+			!g_slist_find_custom(user->allow_list,
+								 dn, (GCompareFunc)nm_utf8_strcasecmp)) {
+			rem_list = g_slist_append(rem_list, node->data);
+		}
+	}
+
+	if (rem_list) {
+		for (node = rem_list; node; node = node->next) {
+			gaim_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
+		}
+		g_free(rem_list);
+		rem_list = NULL;
+	}
+
+	for (node = gc->account->deny; node; node = node->next) {
+		dn = nm_lookup_dn(user, (char *)node->data);
+		if (dn != NULL &&
+			!g_slist_find_custom(user->deny_list,
+								 dn, (GCompareFunc)nm_utf8_strcasecmp)) {
+			rem_list = g_slist_append(rem_list, node->data);
+		}
+	}
+
+	if (rem_list) {
+		for (node = rem_list; node; node = node->next) {
+			gaim_privacy_deny_remove(gc->account, (char *)node->data, TRUE);
+		}
+		g_slist_free(rem_list);
 	}
 }
 
@@ -1073,6 +1518,59 @@ _reject_conference_cb(GSList * parms)
 	g_slist_free(parms);
 }
 
+static void
+_initiate_conference_cb(GaimConnection *gc, const char *who)
+{
+	NMUser *user;
+	const char *conf_name;
+	GaimConversation *chat = NULL;
+	NMUserRecord *user_record;
+	NMConference *conference;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	/* We should already have a userrecord for the buddy */
+	user_record = nm_find_user_record(user, who);
+	if (user_record == NULL)
+		return;
+
+	conf_name = _get_conference_name(++user->conference_count);
+	chat = serv_got_joined_chat(gc, user->conference_count, conf_name);
+	if (chat) {
+
+		conference = nm_create_conference(NULL);
+		nm_conference_set_data(conference, (gpointer) chat);
+		nm_send_create_conference(user, conference, _createconf_resp_send_invite, user_record);
+		nm_release_conference(conference);
+	}
+}
+
+const char *
+_get_conference_name(int id)
+{
+	static char *name = NULL;
+
+	if (name)
+		g_free(name);
+
+	name = g_strdup_printf(_("GroupWise Conference %d"), id);
+
+	return name;
+}
+
+void
+_show_privacy_locked_error(GaimConnection *gc, NMUser *user)
+{
+	char *err;
+
+	err = g_strdup_printf(_("Unable to change server side privacy settings (%s)."),
+						  nm_error_to_string(NMERR_ADMIN_LOCKED));
+	gaim_notify_error(gc, NULL, err, NULL);
+	g_free(err);
+}
+
 /*******************************************************************************
  * Connect and recv callbacks
  ******************************************************************************/
@@ -1104,6 +1602,7 @@ novell_ssl_recv_cb(gpointer data, GaimSslConnection * gsc,
 	if (rc != NM_OK) {
 
 		if (_is_disconnect_error(rc)) {
+
 			gaim_connection_error(gc,
 								  _("Error communicating with server."
 									" Closing connection."));
@@ -1111,8 +1610,8 @@ novell_ssl_recv_cb(gpointer data, GaimSslConnection * gsc,
 
 			char *error;
 
-			error = g_strdup_printf(_("Error processing event or response."
-									  " (0x%X)"), rc);
+			error = g_strdup_printf(_("Error processing event or response (%s)."),
+									nm_error_to_string (rc));
 			gaim_notify_error(gc, NULL, error, NULL);
 			g_free(error);
 
@@ -1282,6 +1781,26 @@ _evt_conference_left(NMUser * user, NMEvent * event)
 }
 
 static void
+_evt_conference_invite_notify(NMUser * user, NMEvent * event)
+{
+	GaimConversation *gconv;
+	NMConference *conference;
+	NMUserRecord *user_record = NULL;
+	char *str = NULL;
+
+	user_record = nm_find_user_record(user, nm_event_get_source(event));
+	conference = nm_event_get_conference(event);
+	if (user_record && conference) {
+		gconv = nm_conference_get_data(conference);
+		str = g_strdup_printf(_("%s has been invited to this conversation."),
+							  nm_user_record_get_display_id(user_record));
+		gaim_conversation_write(gconv, NULL, str,
+								GAIM_MESSAGE_SYSTEM, time(NULL));
+		g_free(str);
+	}
+}
+
+static void
 _evt_conference_invite(NMUser * user, NMEvent * event)
 {
 	NMUserRecord *ur;
@@ -1330,7 +1849,8 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 	NMConference *conference = NULL;
 	NMUserRecord *ur = NULL;
 	const char *name;
-	char *conf_name;
+	const char *conf_name;
+	GList *list = NULL;
 
 	gc = gaim_account_get_connection(user->client_data);
 	if (gc == NULL)
@@ -1342,11 +1862,9 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 		if (nm_conference_get_participant_count(conference) == 2 && chat == NULL) {
 			ur = nm_conference_get_participant(conference, 0);
 			if (ur) {
-				conf_name = g_strdup_printf(_("GroupWise Conference %d"),
-											++user->conference_count);
+				conf_name = _get_conference_name(++user->conference_count);
 				chat =
 					serv_got_joined_chat(gc, user->conference_count, conf_name);
-				g_free(conf_name);
 				if (chat) {
 
 					nm_conference_set_data(conference, (gpointer) chat);
@@ -1362,7 +1880,10 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 			ur = nm_find_user_record(user, nm_event_get_source(event));
 			if (ur) {
 				name = nm_user_record_get_display_id(ur);
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL);
+				list = gaim_conv_chat_get_users(GAIM_CONV_CHAT(chat));
+				if (!g_list_find_custom(list, name, (GCompareFunc)nm_utf8_strcasecmp)) {
+					gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL);
+				}
 			}
 		}
 	}
@@ -1504,7 +2025,7 @@ _event_callback(NMUser * user, NMEvent * event)
 			/* Someone else has been invited to join a
 			 * conference that we are currently a part of
 			 */
-			/* TODO: show the invite notify in chat window */
+			_evt_conference_invite_notify(user, event);
 			break;
 		case NMEVT_CONFERENCE_INVITE:
 			/* We have been invited to join a conference */
@@ -1661,8 +2182,7 @@ novell_send_im(GaimConnection * gc, const char *name,
 			 * have to finish sending the message when we
 			 * get the response with the new conference guid.
 			 */
-			rc = nm_send_create_conference(user, conf,
-										   _createconf_resp_send_msg, message);
+			rc = nm_send_create_conference(user, conf, _createconf_resp_send_msg, message);
 			_check_for_disconnect(user, rc);
 
 			done = FALSE;
@@ -1786,6 +2306,44 @@ novell_chat_leave(GaimConnection * gc, int id)
 	serv_got_chat_left(gc, id);
 }
 
+void
+novell_chat_invite(GaimConnection *gc, int id,
+				   const char *message, const char *who)
+{
+	NMConference *conference;
+	NMUser *user;
+	GaimConversation *chat;
+	GSList *cnode;
+	NMERR_T rc = NM_OK;
+	NMUserRecord *user_record = NULL;
+
+	if (gc == NULL)
+		return;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	user_record = nm_find_user_record(user, who);
+	if (user_record == NULL) {
+		rc = nm_send_get_details(user, who, _get_details_resp_send_invite, (gpointer)id);
+		_check_for_disconnect(user, rc);
+		return;
+	}
+
+	for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
+		conference = cnode->data;
+		if (conference && (chat = nm_conference_get_data(conference))) {
+			if (gaim_conv_chat_get_id(GAIM_CONV_CHAT(chat)) == id) {
+				rc = nm_send_conference_invite(user, conference, user_record,
+											   message, _sendinvite_resp_cb, NULL);
+				_check_for_disconnect(user, rc);
+				break;
+			}
+		}
+	}
+}
+
 static int
 novell_chat_send(GaimConnection * gc, int id, const char *text)
 {
@@ -1814,7 +2372,14 @@ novell_chat_send(GaimConnection * gc, int id, const char *text)
 
 				nm_message_set_conference(message, conference);
 
-				rc = nm_send_message(user, message, _send_message_resp_cb);
+				/* check to see if the conference is instatiated yet */
+				if (!nm_conference_is_instantiated(conference)) {
+					nm_message_add_ref(message);
+					nm_send_create_conference(user, conference, _createconf_resp_send_msg, message);
+				} else {
+					rc = nm_send_message(user, message, _send_message_resp_cb);
+				}
+
 				nm_release_message(message);
 
 				if (!_check_for_disconnect(user, rc)) {
@@ -1840,6 +2405,7 @@ novell_chat_send(GaimConnection * gc, int id, const char *text)
 			}
 		}
 	}
+
 
 	/* The conference was not found, must be closed */
 	chat = gaim_find_chat(gc, id);
@@ -2342,6 +2908,386 @@ novell_set_away(GaimConnection * gc, const char *state, const char *msg)
 		g_free(text);
 }
 
+static void
+novell_add_permit(GaimConnection *gc, const char *who)
+{
+	NMUser *user;
+	NMERR_T rc = NM_OK;
+	const char *name = who;
+
+	if (gc == NULL || who == NULL)
+		return;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	/* Remove first -- we will add it back in when we get
+	 * the okay from the server
+	 */
+	gaim_privacy_permit_remove(gc->account, who, TRUE);
+
+	if (nm_user_is_privacy_locked(user)) {
+		_show_privacy_locked_error(gc, user);
+		_sync_privacy_lists(user);
+		return;
+	}
+
+	/* Work around for problem with un-typed, dotted contexts */
+	if (strchr(who, '.')) {
+		const char *dn = nm_lookup_dn(user, who);
+		if (dn == NULL) {
+			rc = nm_send_get_details(user, who, _get_details_send_privacy_create,
+									 (gpointer)TRUE);
+			_check_for_disconnect(user, rc);
+			return;
+		} else {
+			name = dn;
+		}
+	}
+
+	rc = nm_send_create_privacy_item(user, name, TRUE,
+									 _create_privacy_item_permit_resp_cb,
+									 g_strdup(who));
+	_check_for_disconnect(user, rc);
+}
+
+static void
+novell_add_deny(GaimConnection *gc, const char *who)
+{
+	NMUser *user;
+	NMERR_T rc = NM_OK;
+	const char *name = who;
+
+	if (gc == NULL || who == NULL)
+		return;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	/* Remove first -- we will add it back in when we get
+	 * the okay from the server
+	 */
+	gaim_privacy_deny_remove(gc->account, who, TRUE);
+
+	if (nm_user_is_privacy_locked(user)) {
+		_show_privacy_locked_error(gc, user);
+		_sync_privacy_lists(user);
+		return;
+	}
+
+	/* Work around for problem with un-typed, dotted contexts */
+	if (strchr(who, '.')) {
+		const char *dn = nm_lookup_dn(user, who);
+		if (dn == NULL) {
+			rc = nm_send_get_details(user, who, _get_details_send_privacy_create,
+									 (gpointer)FALSE);
+			_check_for_disconnect(user, rc);
+			return;
+		} else {
+			name = dn;
+		}
+	}
+
+	rc = nm_send_create_privacy_item(user, name, FALSE,
+									 _create_privacy_item_deny_resp_cb,
+									 g_strdup(who));
+	_check_for_disconnect(user, rc);
+}
+
+static void
+novell_rem_permit(GaimConnection *gc, const char *who)
+{
+	NMUser *user;
+	NMERR_T rc = NM_OK;
+	const char *dn = NULL;
+
+	if (gc == NULL || who == NULL)
+		return;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	if (nm_user_is_privacy_locked(user)) {
+		_show_privacy_locked_error(gc, user);
+		_sync_privacy_lists(user);
+		return;
+	}
+
+	dn = nm_lookup_dn(user, who);
+	if (dn == NULL)
+		dn = who;
+
+	rc = nm_send_remove_privacy_item(user, dn, TRUE,
+									 _remove_privacy_item_resp_cb,
+									 g_strdup(who));
+	_check_for_disconnect(user, rc);
+}
+
+static void
+novell_rem_deny(GaimConnection *gc, const char *who)
+{
+	NMUser *user;
+	NMERR_T rc = NM_OK;
+	const char *dn = NULL;
+
+	if (gc == NULL || who == NULL)
+		return;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	if (nm_user_is_privacy_locked(user)) {
+		_show_privacy_locked_error(gc, user);
+		_sync_privacy_lists(user);
+		return;
+	}
+
+	dn = nm_lookup_dn(user, who);
+	if (dn == NULL)
+		dn = who;
+
+	rc = nm_send_remove_privacy_item(user, dn, FALSE,
+									 _remove_privacy_item_resp_cb,
+									 g_strdup(who));
+	_check_for_disconnect(user, rc);
+}
+
+static void
+novell_set_permit_deny(GaimConnection *gc)
+{
+	NMERR_T rc = NM_OK;
+	const char *dn, *name = NULL;
+	NMUserRecord *user_record = NULL;
+	GSList *node = NULL, *copy = NULL;
+	NMUser *user;
+	int i, j, num_contacts, num_folders;
+	NMContact *contact;
+	NMFolder *folder = NULL;
+
+	if (gc == NULL)
+		return;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	if (set_permit == FALSE) {
+		set_permit = TRUE;
+		return;
+	}
+
+	if (nm_user_is_privacy_locked(user)) {
+		_show_privacy_locked_error(gc, user);
+		_sync_privacy_lists(user);
+		return;
+	}
+
+	switch (gc->account->perm_deny) {
+
+		case GAIM_PRIVACY_ALLOW_ALL:
+			rc = nm_send_set_privacy_default(user, FALSE,
+											 _set_privacy_default_resp_cb, NULL);
+			_check_for_disconnect(user, rc);
+
+			/* clear server side deny list */
+			if (rc == NM_OK) {
+				copy = g_slist_copy(user->deny_list);
+				for (node = copy; node && node->data; node = node->next) {
+					rc = nm_send_remove_privacy_item(user, (const char *)node->data,
+													 FALSE, NULL, NULL);
+					if (_check_for_disconnect(user, rc))
+						break;
+				}
+				g_slist_free(copy);
+				g_slist_free(user->deny_list);
+				user->deny_list = NULL;
+			}
+			break;
+
+		case GAIM_PRIVACY_DENY_ALL:
+			rc = nm_send_set_privacy_default(user, TRUE,
+											 _set_privacy_default_resp_cb, NULL);
+			_check_for_disconnect(user, rc);
+
+			/* clear server side allow list */
+			if (rc == NM_OK) {
+				copy = g_slist_copy(user->allow_list);
+				for (node = copy; node && node->data; node = node->next) {
+					rc = nm_send_remove_privacy_item(user, (const char *)node->data,
+													 TRUE, NULL, NULL);
+					if (_check_for_disconnect(user, rc))
+						break;
+				}
+				g_slist_free(copy);
+				g_slist_free(user->allow_list);
+				user->allow_list = NULL;
+			}
+			break;
+
+		case GAIM_PRIVACY_ALLOW_USERS:
+
+			rc = nm_send_set_privacy_default(user, TRUE,
+											 _set_privacy_default_resp_cb, NULL);
+			_check_for_disconnect(user, rc);
+
+			/* sync allow lists */
+			if (rc == NM_OK) {
+
+				for (node = user->allow_list; node; node = node->next) {
+					user_record = nm_find_user_record(user, (char *)node->data);
+					if (user_record) {
+						name = nm_user_record_get_display_id(user_record);
+
+						if (!g_slist_find_custom(gc->account->permit,
+												 name, (GCompareFunc)nm_utf8_strcasecmp)) {
+							gaim_privacy_permit_add(gc->account, name , TRUE);
+						}
+					}
+				}
+
+				for (node = gc->account->permit; node; node = node->next) {
+					name = NULL;
+					dn = nm_lookup_dn(user, (char *)node->data);
+					if (dn) {
+						user_record = nm_find_user_record(user, dn);
+						name = nm_user_record_get_display_id(user_record);
+
+						if (!g_slist_find_custom(user->allow_list,
+												 dn, (GCompareFunc)nm_utf8_strcasecmp)) {
+							rc = nm_send_create_privacy_item(user, dn, TRUE,
+															 _create_privacy_item_deny_resp_cb,
+															 g_strdup(dn));
+						}
+					} else {
+						gaim_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
+					}
+				}
+			}
+			break;
+
+		case GAIM_PRIVACY_DENY_USERS:
+
+			/* set to default allow */
+			rc = nm_send_set_privacy_default(user, FALSE,
+											 _set_privacy_default_resp_cb, NULL);
+			_check_for_disconnect(user, rc);
+
+			/* sync deny lists */
+			if (rc == NM_OK) {
+
+				for (node = user->deny_list; node; node = node->next) {
+					user_record = nm_find_user_record(user, (char *)node->data);
+					if (user_record) {
+						name = nm_user_record_get_display_id(user_record);
+
+						if (!g_slist_find_custom(gc->account->deny,
+												 name, (GCompareFunc)nm_utf8_strcasecmp)) {
+							gaim_privacy_deny_add(gc->account, name , TRUE);
+						}
+					}
+				}
+
+				for (node = gc->account->deny; node; node = node->next) {
+
+					name = NULL;
+					dn = nm_lookup_dn(user, (char *)node->data);
+					if (dn) {
+						user_record = nm_find_user_record(user, dn);
+						name = nm_user_record_get_display_id(user_record);
+
+						if (!g_slist_find_custom(user->deny_list,
+												 dn, (GCompareFunc)nm_utf8_strcasecmp)) {
+							rc = nm_send_create_privacy_item(user, dn, FALSE,
+															 _create_privacy_item_deny_resp_cb,
+															 g_strdup(name));
+						}
+					} else {
+						gaim_privacy_deny_remove(gc->account, (char *)node->data, TRUE);
+					}
+				}
+
+			}
+			break;
+
+		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+
+			/* remove users from allow list that are not in buddy list */
+			copy = g_slist_copy(user->allow_list);
+			for (node = copy; node && node->data; node = node->next) {
+				if (!nm_find_contacts(user, node->data)) {
+					rc = nm_send_remove_privacy_item(user, (const char *)node->data,
+													 TRUE, NULL, NULL);
+					if (_check_for_disconnect(user, rc))
+						return;
+				}
+			}
+			g_slist_free(copy);
+
+			/* add all buddies to allow list */
+			num_contacts = nm_folder_get_contact_count(user->root_folder);
+			for (i = 0; i < num_contacts; i++) {
+				contact = nm_folder_get_contact(user->root_folder, i);
+				dn = nm_contact_get_dn(contact);
+				if (dn && !g_slist_find_custom(user->allow_list,
+											   dn, (GCompareFunc)nm_utf8_strcasecmp))
+				{
+					rc = nm_send_create_privacy_item(user, dn, TRUE,
+													 _create_privacy_item_deny_resp_cb,
+													 g_strdup(dn));
+					if (_check_for_disconnect(user, rc))
+						return;
+				}
+
+			}
+
+			num_folders = nm_folder_get_subfolder_count(user->root_folder);
+			for (i = 0; i < num_folders; i++) {
+				folder = nm_folder_get_subfolder(user->root_folder, i);
+				num_contacts = nm_folder_get_contact_count(folder);
+				for (j = 0; j < num_contacts; j++) {
+					contact = nm_folder_get_contact(folder, j);
+					dn = nm_contact_get_dn(contact);
+					if (dn && !g_slist_find_custom(user->allow_list,
+												   dn, (GCompareFunc)nm_utf8_strcasecmp))
+					{
+						rc = nm_send_create_privacy_item(user, dn, TRUE,
+														 _create_privacy_item_deny_resp_cb,
+														 g_strdup(dn));
+						if (_check_for_disconnect(user, rc))
+							return;
+					}
+				}
+			}
+
+			/* set to default deny */
+			rc = nm_send_set_privacy_default(user, TRUE,
+											 _set_privacy_default_resp_cb, NULL);
+			if (_check_for_disconnect(user, rc))
+				break;
+
+			break;
+	}
+}
+
+static GList *
+novell_buddy_menu(GaimConnection *gc, const char *who)
+{
+	GList *list = NULL;
+	struct proto_buddy_menu *pbm;
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Initiate _Chat");
+	pbm->callback = _initiate_conference_cb;
+	pbm->gc = gc;
+	list = g_list_append(list, pbm);
+
+	return list;
+}
+
 static GaimPluginProtocolInfo prpl_info = {
 	GAIM_PRPL_API_VERSION,
 	0,
@@ -2353,7 +3299,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_tooltip_text,
 	novell_away_states,
 	NULL,						/* prpl_actions */
-	NULL,						/* buddy_menu */
+	novell_buddy_menu,
 	NULL,						/* chat_info */
 	novell_login,
 	novell_close,
@@ -2371,15 +3317,15 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,						/* add_buddies */
 	novell_remove_buddy,
 	NULL,						/* remove_buddies */
-	NULL,						/* add_permit */
-	NULL,						/* add_deny */
-	NULL,						/* rem_permit */
-	NULL,						/* rem_deny */
-	NULL,						/* set_permit_deny */
+	novell_add_permit,
+	novell_add_deny,
+	novell_rem_permit,
+	novell_rem_deny,
+	novell_set_permit_deny,
 	NULL,						/* warn */
 	NULL,						/* join_chat */
 	NULL,						/* reject_chat ?? */
-	NULL,						/* chat_invite */
+	novell_chat_invite,			/* chat_invite */
 	novell_chat_leave,
 	NULL,						/* chat_whisper */
 	novell_chat_send,
