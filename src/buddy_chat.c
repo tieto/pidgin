@@ -1010,11 +1010,7 @@ void show_new_buddy_chat(struct conversation *b)
 }
 
 void chat_set_topic(struct conversation *b, char* who, char* topic) {
-
-	debug_printf("event_chat_topic: \"%s\" \"%s\" %s\n", b->name, who, topic);
-
 	gtk_entry_set_text(GTK_ENTRY(b->topic_text), topic);
-
 }
 
 
