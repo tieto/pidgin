@@ -882,6 +882,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		if(user) {
 			gaim_privacy_permit_add(user, blist_parser_buddy_name);
 		}
+		g_free(blist_parser_buddy_name);
 		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
 	} else if(!strcmp(element_name, "block")) {
 		struct aim_user *user = find_user(blist_parser_account_name,
@@ -889,6 +890,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		if(user) {
 			gaim_privacy_deny_add(user, blist_parser_buddy_name);
 		}
+		g_free(blist_parser_buddy_name);
 		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
 	} else if(!strcmp(element_name, "ignore")) {
 		/* we'll apparently do something with this later */
