@@ -1819,7 +1819,7 @@ static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 /*
- * We are sending a file to someone else.  They have just acknowledged out 
+ * We are sending a file to someone else.  They have just acknowledged our 
  * prompt, so we want to start sending data like there's no tomorrow.
  */
 static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
