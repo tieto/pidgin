@@ -93,7 +93,6 @@ struct _GaimGtkImPane
 {
 	GtkWidget *warn;
 	GtkWidget *block;
-	GtkWidget *add;
 	GtkWidget *sep1;
 	GtkWidget *sep2;
 	GtkWidget *check;
@@ -142,9 +141,11 @@ struct _GaimGtkConversation
 	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
 
-	GtkWidget *send;
+	GtkWidget *add;
+	GtkWidget *remove;
 	GtkWidget *info;
-	GtkWidget *close;
+	GtkWidget *send;
+	GtkWidget *close; /* "x" on the tab */
 	GtkWidget *icon;
 	GtkWidget *tab_label;
 	GtkWidget *menu_icon;

@@ -1484,6 +1484,12 @@ gaim_conversation_update_progress(GaimConversation *conv, float percent)
 		ops->update_progress(conv, percent);
 }
 
+/*
+ * TODO: Need to make sure calls to this function happen in the core 
+ * instead of the UI.  That way UIs have less work to do, and the 
+ * core/UI split is cleaner.  Also need to make sure this is called 
+ * when chats are added/removed from the blist.
+ */
 void
 gaim_conversation_update(GaimConversation *conv, GaimConvUpdateType type)
 {
