@@ -710,16 +710,42 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 	js->roomlist = NULL;
 }
 
+static void roomlist_cancel_cb(JabberStream *js, const char *server) {
+	if(js->roomlist) {
+		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
+		gaim_roomlist_unref(js->roomlist);
+		js->roomlist = NULL;
+	}
+}
+
 static void roomlist_ok_cb(JabberStream *js, const char *server)
 {
 	JabberIq *iq;
-	GList *fields = NULL;
-	GaimRoomlistField *f;
+
+	if(!js->roomlist)
+		return;
 
 	if(!server || !*server) {
 		gaim_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
 		return;
 	}
+
+	gaim_roomlist_set_in_progress(js->roomlist, TRUE);
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+
+	xmlnode_set_attrib(iq->node, "to", server);
+
+	jabber_iq_set_callback(iq, roomlist_disco_result_cb, NULL);
+
+	jabber_iq_send(iq);
+}
+
+GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc)
+{
+	JabberStream *js = gc->proto_data;
+	GList *fields = NULL;
+	GaimRoomlistField *f;
 
 	if(js->roomlist)
 		gaim_roomlist_unref(js->roomlist);
@@ -737,26 +763,13 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 
 	gaim_roomlist_set_fields(js->roomlist, fields);
 
-	gaim_roomlist_set_in_progress(js->roomlist, TRUE);
-
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
-
-	xmlnode_set_attrib(iq->node, "to", server);
-
-	jabber_iq_set_callback(iq, roomlist_disco_result_cb, NULL);
-
-	jabber_iq_send(iq);
-}
-
-GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc)
-{
-	JabberStream *js = gc->proto_data;
 
 	gaim_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
 			_("Select a conference server to query"),
 			js->chat_servers ? js->chat_servers->data : "conference.jabber.org",
 			FALSE, FALSE, NULL,
-			_("Find Rooms"), G_CALLBACK(roomlist_ok_cb), _("Cancel"), NULL, js);
+			_("Find Rooms"), GAIM_CALLBACK(roomlist_ok_cb),
+			_("Cancel"), GAIM_CALLBACK(roomlist_cancel_cb), js);
 
 	return js->roomlist;
 }
