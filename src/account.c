@@ -705,7 +705,7 @@ free_parser_data(gpointer user_data)
 	AccountParserData *data = user_data;
 
 	if (data->buffer != NULL)
-		g_free(data->buffer);
+		g_string_free(data->buffer, TRUE);
 
 	if (data->setting_name != NULL)
 		g_free(data->setting_name);

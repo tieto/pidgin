@@ -30,6 +30,23 @@
 
 typedef struct
 {
+	GString *buffer;
+
+	GaimPounce *pounce;
+	GaimPounceEvent events;
+
+	char *ui_name;
+	char *pouncee;
+	char *protocol_id;
+	char *event_type;
+	char *action_name;
+	char *param_name;
+	char *account_name;
+
+} PounceParserData;
+
+typedef struct
+{
 	char *name;
 
 	gboolean enabled;
@@ -38,10 +55,21 @@ typedef struct
 
 } GaimPounceActionData;
 
+typedef struct
+{
+	char *ui;
+	GaimPounceCb cb;
+	void (*new_pounce)(GaimPounce *);
+	void (*free_pounce)(GaimPounce *);
 
-static GList   *pounces = NULL;
-static guint    pounces_save_timer = 0;
-static gboolean pounces_loaded = FALSE;
+} GaimPounceHandler;
+
+
+static GHashTable *pounce_handlers = NULL;
+static GList      *pounces = NULL;
+static guint       pounces_save_timer = 0;
+static gboolean    pounces_loaded = FALSE;
+
 
 static GaimPounceActionData *
 find_action_data(const GaimPounce *pounce, const char *name)
@@ -86,16 +114,15 @@ schedule_pounces_save(void)
 
 GaimPounce *
 gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
-				const char *pouncee, GaimPounceEvent event,
-				GaimPounceCb cb, void *data, void (*free)(void *))
+				const char *pouncee, GaimPounceEvent event)
 {
 	GaimPounce *pounce;
+	GaimPounceHandler *handler;
 
 	g_return_val_if_fail(ui_type != NULL, NULL);
 	g_return_val_if_fail(pouncer != NULL, NULL);
 	g_return_val_if_fail(pouncee != NULL, NULL);
 	g_return_val_if_fail(event   != 0,    NULL);
-	g_return_val_if_fail(cb      != NULL, NULL);
 
 	pounce = g_new0(GaimPounce, 1);
 
@@ -103,12 +130,14 @@ gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
 	pounce->pouncer  = pouncer;
 	pounce->pouncee  = g_strdup(pouncee);
 	pounce->events   = event;
-	pounce->callback = cb;
-	pounce->data     = data;
-	pounce->free     = free;
 
 	pounce->actions  = g_hash_table_new_full(g_str_hash, g_str_equal,
 											 g_free, free_action_data);
+
+	handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
+
+	if (handler != NULL && handler->new_pounce != NULL)
+		handler->new_pounce(pounce);
 
 	pounces = g_list_append(pounces, pounce);
 
@@ -118,7 +147,11 @@ gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
 void
 gaim_pounce_destroy(GaimPounce *pounce)
 {
+	GaimPounceHandler *handler;
+
 	g_return_if_fail(pounce != NULL);
+
+	handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
 
 	pounces = g_list_remove(pounces, pounce);
 
@@ -127,8 +160,8 @@ gaim_pounce_destroy(GaimPounce *pounce)
 
 	g_hash_table_destroy(pounce->actions);
 
-	if (pounce->free != NULL && pounce->data != NULL)
-		pounce->free(pounce->data);
+	if (handler != NULL && handler->free_pounce != NULL)
+		handler->free_pounce(pounce);
 
 	g_free(pounce);
 
@@ -327,6 +360,7 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 					GaimPounceEvent events)
 {
 	GaimPounce *pounce;
+	GaimPounceHandler *handler;
 	GList *l, *l_next;
 
 	g_return_if_fail(pouncer != NULL);
@@ -341,8 +375,10 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
 			!strcmp(gaim_pounce_get_pouncee(pounce), pouncee)) {
 
-			if (pounce->callback != NULL) {
-				pounce->callback(pounce, events, gaim_pounce_get_data(pounce));
+			handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
+
+			if (handler != NULL && handler->cb != NULL) {
+				handler->cb(pounce, events, gaim_pounce_get_data(pounce));
 
 				if (!gaim_pounce_get_save(pounce))
 					gaim_pounce_destroy(pounce);
@@ -376,9 +412,299 @@ gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
 	return NULL;
 }
 
+/* XML Stuff */
+static void
+free_parser_data(gpointer user_data)
+{
+	PounceParserData *data = user_data;
+
+	if (data->buffer != NULL)
+		g_string_free(data->buffer, TRUE);
+
+	if (data->ui_name      != NULL) g_free(data->ui_name);
+	if (data->pouncee      != NULL) g_free(data->pouncee);
+	if (data->protocol_id  != NULL) g_free(data->protocol_id);
+	if (data->event_type   != NULL) g_free(data->event_type);
+	if (data->action_name  != NULL) g_free(data->action_name);
+	if (data->param_name   != NULL) g_free(data->param_name);
+	if (data->account_name != NULL) g_free(data->account_name);
+
+	g_free(data);
+}
+
+static void
+start_element_handler(GMarkupParseContext *context,
+					  const gchar *element_name,
+					  const gchar **attribute_names,
+					  const gchar **attribute_values,
+					  gpointer user_data, GError **error)
+{
+	PounceParserData *data = user_data;
+	GHashTable *atts;
+	int i;
+
+	atts = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	for (i = 0; attribute_names[i] != NULL; i++) {
+		g_hash_table_insert(atts, g_strdup(attribute_names[i]),
+							g_strdup(attribute_values[i]));
+	}
+
+	if (data->buffer != NULL) {
+		g_string_free(data->buffer, TRUE);
+		data->buffer = NULL;
+	}
+
+	if (!strcmp(element_name, "pounce")) {
+		const char *ui = g_hash_table_lookup(atts, "ui");
+
+		if (ui == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "pounce",
+					   "Unset 'ui' parameter for pounce!\n");
+		}
+		else
+			data->ui_name = g_strdup(ui);
+
+		data->events = 0;
+	}
+	else if (!strcmp(element_name, "account")) {
+		const char *protocol_id = g_hash_table_lookup(atts, "protocol");
+
+		if (protocol_id == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "pounce",
+					   "Unset 'protocol' parameter for account!\n");
+		}
+		else
+			data->protocol_id = g_strdup(protocol_id);
+	}
+	else if (!strcmp(element_name, "event")) {
+		const char *type = g_hash_table_lookup(atts, "type");
+
+		if (type == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "pounce",
+					   "Unset 'type' parameter for event!\n");
+		}
+		else
+			data->event_type = g_strdup(type);
+	}
+	else if (!strcmp(element_name, "action")) {
+		const char *type = g_hash_table_lookup(atts, "type");
+
+		if (type == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "pounce",
+					   "Unset 'type' parameter for action!\n");
+		}
+		else
+			data->action_name = g_strdup(type);
+	}
+	else if (!strcmp(element_name, "param")) {
+		const char *param_name = g_hash_table_lookup(atts, "name");
+
+		if (param_name == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "pounce",
+					   "Unset 'name' parameter for param!\n");
+		}
+		else
+			data->param_name = g_strdup(param_name);
+	}
+
+	g_hash_table_destroy(atts);
+}
+
+static void
+end_element_handler(GMarkupParseContext *context, const gchar *element_name,
+					gpointer user_data,  GError **error)
+{
+	PounceParserData *data = user_data;
+	gchar *buffer = NULL;
+
+	if (data->buffer != NULL) {
+		buffer = g_string_free(data->buffer, FALSE);
+		data->buffer = NULL;
+	}
+
+	if (!strcmp(element_name, "account")) {
+		data->account_name = g_strdup(buffer);
+	}
+	else if (!strcmp(element_name, "pouncee")) {
+		data->pouncee = g_strdup(buffer);
+	}
+	else if (!strcmp(element_name, "event")) {
+		if (!strcmp(data->event_type, "sign-on"))
+			data->events |= GAIM_POUNCE_SIGNON;
+		else if (!strcmp(data->event_type, "sign-off"))
+			data->events |= GAIM_POUNCE_SIGNOFF;
+		else if (!strcmp(data->event_type, "away"))
+			data->events |= GAIM_POUNCE_AWAY;
+		else if (!strcmp(data->event_type, "return-from-away"))
+			data->events |= GAIM_POUNCE_AWAY_RETURN;
+		else if (!strcmp(data->event_type, "idle"))
+			data->events |= GAIM_POUNCE_IDLE;
+		else if (!strcmp(data->event_type, "return-from-idle"))
+			data->events |= GAIM_POUNCE_IDLE_RETURN;
+		else if (!strcmp(data->event_type, "typing"))
+			data->events |= GAIM_POUNCE_TYPING;
+		else if (!strcmp(data->event_type, "stop-typing"))
+			data->events |= GAIM_POUNCE_TYPING_STOPPED;
+
+		g_free(data->event_type);
+		data->event_type = NULL;
+	}
+	else if (!strcmp(element_name, "action")) {
+		gaim_pounce_action_set_enabled(data->pounce, data->action_name, TRUE);
+
+		g_free(data->action_name);
+		data->action_name = NULL;
+	}
+	else if (!strcmp(element_name, "param")) {
+		gaim_pounce_action_set_attribute(data->pounce, data->action_name,
+										 data->param_name, buffer);
+
+		g_free(data->param_name);
+		data->param_name = NULL;
+	}
+	else if (!strcmp(element_name, "events")) {
+		GList *l;
+		GaimAccount *account;
+		GaimProtocol protocol = -1;
+
+		for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
+			GaimPlugin *plugin = (GaimPlugin *)l->data;
+
+			if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
+				if (!strcmp(plugin->info->id, data->protocol_id)) {
+					protocol = GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol;
+
+					break;
+				}
+			}
+		}
+
+		account = gaim_accounts_find(data->account_name, protocol);
+
+		g_free(data->account_name);
+		g_free(data->protocol_id);
+
+		data->account_name = NULL;
+		data->protocol_id  = NULL;
+
+		if (account == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "pounce",
+					   "Account for pounce not found!\n");
+		}
+		else {
+			gaim_debug(GAIM_DEBUG_INFO, "pounce",
+					   "Creating pounce: %s, %s\n", data->ui_name,
+					   data->pouncee);
+
+			data->pounce = gaim_pounce_new(data->ui_name, account,
+										   data->pouncee, data->events);
+		}
+
+		g_free(data->pouncee);
+		data->pouncee = NULL;
+	}
+	else if (!strcmp(element_name, "pounce")) {
+		data->pounce = NULL;
+		data->events = 0;
+
+		if (data->ui_name      != NULL) g_free(data->ui_name);
+		if (data->pouncee      != NULL) g_free(data->pouncee);
+		if (data->protocol_id  != NULL) g_free(data->protocol_id);
+		if (data->event_type   != NULL) g_free(data->event_type);
+		if (data->action_name  != NULL) g_free(data->action_name);
+		if (data->param_name   != NULL) g_free(data->param_name);
+		if (data->account_name != NULL) g_free(data->account_name);
+
+		data->ui_name      = NULL;
+		data->pounce       = NULL;
+		data->protocol_id  = NULL;
+		data->event_type   = NULL;
+		data->action_name  = NULL;
+		data->param_name   = NULL;
+		data->account_name = NULL;
+	}
+
+	if (buffer != NULL)
+		g_free(buffer);
+}
+
+static void
+text_handler(GMarkupParseContext *context, const gchar *text,
+			 gsize text_len, gpointer user_data, GError **error)
+{
+	PounceParserData *data = user_data;
+
+	if (data->buffer == NULL)
+		data->buffer = g_string_new_len(text, text_len);
+	else
+		g_string_append_len(data->buffer, text, text_len);
+}
+
+static GMarkupParser pounces_parser =
+{
+	start_element_handler,
+	end_element_handler,
+	text_handler,
+	NULL,
+	NULL
+};
+
 gboolean
 gaim_pounces_load(void)
 {
+	gchar *filename = g_build_filename(gaim_user_dir(), "pounces.xml", NULL);
+	gchar *contents = NULL;
+	gsize length;
+	GMarkupParseContext *context;
+	GError *error = NULL;
+	PounceParserData *parser_data;
+
+	if (filename == NULL) {
+		pounces_loaded = TRUE;
+		return FALSE;
+	}
+
+	if (!g_file_get_contents(filename, &contents, &length, &error)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "pounces",
+				   "Error reading pounces: %s\n", error->message);
+
+		g_error_free(error);
+
+		pounces_loaded = TRUE;
+		return FALSE;
+	}
+
+	parser_data = g_new0(PounceParserData, 1);
+
+	context = g_markup_parse_context_new(&pounces_parser, 0,
+										 parser_data, free_parser_data);
+
+	if (!g_markup_parse_context_parse(context, contents, length, NULL)) {
+		g_markup_parse_context_free(context);
+		g_free(contents);
+
+		pounces_loaded = TRUE;
+
+		return FALSE;
+	}
+
+	if (!g_markup_parse_context_end_parse(context, NULL)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "pounces", "Error parsing %s\n",
+				   filename);
+
+		g_markup_parse_context_free(context);
+		g_free(contents);
+		pounces_loaded = TRUE;
+
+		return FALSE;
+	}
+
+	g_markup_parse_context_free(context);
+	g_free(contents);
+
+	g_free(filename);
+
 	pounces_loaded = TRUE;
 
 	return TRUE;
@@ -444,21 +770,21 @@ gaim_pounces_write(FILE *fp, GaimPounce *pounce)
 	fprintf(fp, "  <events>\n");
 
 	if (events & GAIM_POUNCE_SIGNON)
-		fprintf(fp, "   <event type='sign-on'>\n");
+		fprintf(fp, "   <event type='sign-on'/>\n");
 	if (events & GAIM_POUNCE_SIGNOFF)
-		fprintf(fp, "   <event type='sign-off'>\n");
+		fprintf(fp, "   <event type='sign-off'/>\n");
 	if (events & GAIM_POUNCE_AWAY)
-		fprintf(fp, "   <event type='away'>\n");
+		fprintf(fp, "   <event type='away'/>\n");
 	if (events & GAIM_POUNCE_AWAY_RETURN)
-		fprintf(fp, "   <event type='return-from-away'>\n");
+		fprintf(fp, "   <event type='return-from-away'/>\n");
 	if (events & GAIM_POUNCE_IDLE)
-		fprintf(fp, "   <event type='idle'>\n");
+		fprintf(fp, "   <event type='idle'/>\n");
 	if (events & GAIM_POUNCE_IDLE_RETURN)
-		fprintf(fp, "   <event type='return-from-idle'>\n");
+		fprintf(fp, "   <event type='return-from-idle'/>\n");
 	if (events & GAIM_POUNCE_TYPING)
-		fprintf(fp, "   <event type='start-typing'>\n");
+		fprintf(fp, "   <event type='start-typing'/>\n");
 	if (events & GAIM_POUNCE_TYPING_STOPPED)
-		fprintf(fp, "   <event type='stop-typing'>\n");
+		fprintf(fp, "   <event type='stop-typing'/>\n");
 
 	fprintf(fp, "  </events>\n");
 	fprintf(fp, "  <actions>\n");
@@ -530,8 +856,52 @@ gaim_pounces_sync(void)
 	g_free(filename_real);
 }
 
+void
+gaim_pounces_register_handler(const char *ui, GaimPounceCb cb,
+							  void (*new_pounce)(GaimPounce *pounce),
+							  void (*free_pounce)(GaimPounce *pounce))
+{
+	GaimPounceHandler *handler;
+
+	g_return_if_fail(ui != NULL);
+	g_return_if_fail(cb != NULL);
+
+	handler = g_new0(GaimPounceHandler, 1);
+
+	handler->ui          = g_strdup(ui);
+	handler->cb          = cb;
+	handler->new_pounce  = new_pounce;
+	handler->free_pounce = free_pounce;
+
+	g_hash_table_insert(pounce_handlers, g_strdup(ui), handler);
+}
+
+void
+gaim_pounces_unregister_handler(const char *ui)
+{
+	g_return_if_fail(ui != NULL);
+
+	g_hash_table_remove(pounce_handlers, ui);
+}
+
 GList *
 gaim_pounces_get_all(void)
 {
 	return pounces;
+}
+
+static void
+free_pounce_handler(gpointer user_data)
+{
+	GaimPounceHandler *handler = (GaimPounceHandler *)user_data;
+
+	g_free(handler->ui);
+	g_free(handler);
+}
+
+void
+gaim_pounces_init(void)
+{
+	pounce_handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
+											g_free, free_pounce_handler);
 }

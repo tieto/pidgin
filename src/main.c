@@ -42,6 +42,7 @@
 #include "gtkdebug.h"
 #include "gtkft.h"
 #include "gtknotify.h"
+#include "gtkpounce.h"
 #include "gtkprefs.h"
 #include "gtkrequest.h"
 #include "gtksound.h"
@@ -855,8 +856,10 @@ int main(int argc, char *argv[])
 	gaim_conversation_init();
 	gaim_proxy_init();
 	gaim_sound_init();
+	gaim_pounces_init();
 
 	gaim_gtk_conversation_init();
+	gaim_gtk_pounces_init();
 
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();

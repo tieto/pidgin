@@ -26,18 +26,6 @@
 #include "pounce.h"
 
 /**
- * Creates a GTK-specific pounce.
- *
- * @param pouncer The account that will pounce.
- * @param pouncee The buddy to pounce on.
- * @param events  The event(s) to pounce on.
- *
- * @return The new buddy pounce.
- */
-GaimPounce *gaim_gtkpounce_new(GaimAccount *pouncer, const char *pouncee,
-							   GaimPounceEvent events);
-
-/**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
  * @param buddy      The optional buddy to pounce on.
@@ -51,5 +39,10 @@ void gaim_gtkpounce_dialog_show(struct buddy *buddy, GaimPounce *cur_pounce);
  * @param menu The menu to add to.
  */
 void gaim_gtkpounce_menu_build(GtkWidget *menu);
+
+/**
+ * Initializes the GTK+ pounces subsystem.
+ */
+void gaim_gtk_pounces_init(void);
 
 #endif /* _GAIM_GTK_POUNCE_H_ */

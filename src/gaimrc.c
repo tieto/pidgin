@@ -1647,7 +1647,7 @@ load_pounces()
 
 		old_pounce_opts_to_new(ph->options, &events, &actions);
 
-		pounce = gaim_gtkpounce_new(account, ph->name, events);
+		pounce = gaim_pounce_new(GAIM_GTK_UI, account, ph->name, events);
 
 		gaim_pounce_action_set_enabled(pounce, "open-window",
 			(actions & GAIM_GTKPOUNCE_OPEN_WIN));

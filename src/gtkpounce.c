@@ -219,7 +219,8 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	if (*sound   == '\0') sound   = NULL;
 
 	if (dialog->pounce == NULL) {
-		dialog->pounce = gaim_gtkpounce_new(dialog->account, name, events);
+		dialog->pounce = gaim_pounce_new(GAIM_GTK_UI, dialog->account,
+										 name, events);
 	}
 	else {
 		gaim_pounce_set_events(dialog->pounce, events);
@@ -250,6 +251,8 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->save_pounce)));
 
 	delete_win_cb(NULL, NULL, dialog);
+
+	gaim_pounces_sync();
 
 	/* Rebuild the pounce menu */
 	blist = gaim_get_blist();
@@ -314,134 +317,6 @@ pounce_user_menu(GaimGtkPounceDialog *dialog)
 	gtk_option_menu_set_history(GTK_OPTION_MENU(opt_menu), place);
 
 	return opt_menu;
-}
-
-static void
-pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
-{
-	GaimConversation *conv;
-	GaimAccount *account;
-	const char *pouncee;
-
-	pouncee = gaim_pounce_get_pouncee(pounce);
-	account = gaim_pounce_get_pouncer(pounce);
-
-	if (gaim_pounce_action_is_enabled(pounce, "open-window")) {
-		conv = gaim_find_conversation(pouncee);
-
-		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
-	}
-
-	if (gaim_pounce_action_is_enabled(pounce, "popup-notify")) {
-		char tmp[1024];
-
-		g_snprintf(tmp, sizeof(tmp),
-				   (events & GAIM_POUNCE_TYPING) ? _("%s has started typing to you") :
-				   (events & GAIM_POUNCE_SIGNON) ? _("%s has signed on") :
-				   (events & GAIM_POUNCE_IDLE_RETURN) ? _("%s has returned from being idle") :
-				   (events & GAIM_POUNCE_AWAY_RETURN) ? _("%s has returned from being away") :
-				   (events & GAIM_POUNCE_TYPING_STOPPED) ? _("%s has stopped typing to you") :
-				   (events & GAIM_POUNCE_SIGNOFF) ? _("%s has signed off") :
-				   (events & GAIM_POUNCE_IDLE) ? _("%s has become idle") :
-				   (events & GAIM_POUNCE_AWAY) ? _("%s has gone away.") :
-				   _("Unknown pounce event. Please report this!"),
-				   pouncee);
-
-		gaim_notify_info(NULL, NULL, tmp, NULL);
-	}
-
-	if (gaim_pounce_action_is_enabled(pounce, "send-message")) {
-		const char *message;
-
-		message = gaim_pounce_action_get_attribute(pounce, "send-message",
-												   "message");
-
-		if (message != NULL) {
-			conv = gaim_find_conversation(pouncee);
-
-			if (conv == NULL)
-				conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
-
-			gaim_conversation_write(conv, NULL, message, -1,
-									WFLAG_SEND, time(NULL));
-
-			serv_send_im(account->gc, (char *)pouncee, (char *)message, -1, 0);
-		}
-	}
-
-#ifndef _WIN32
-	if (gaim_pounce_action_is_enabled(pounce, "execute-command")) {
-		const char *command;
-
-		command = gaim_pounce_action_get_attribute(pounce, "execute-command",
-												   "command");
-
-		if (command != NULL) {
-			int pid = fork();
-
-			if (pid == 0) {
-				char *args[4];
-
-				args[0] = "sh";
-				args[1] = "-c";
-				args[2] = (char *)command;
-				args[3] = NULL;
-
-				execvp(args[0], args);
-
-				_exit(0);
-			}
-		}
-	}
-#endif /* _WIN32 */
-
-	if (gaim_pounce_action_is_enabled(pounce, "play-sound")) {
-		const char *sound;
-
-		sound = gaim_pounce_action_get_attribute(pounce, "play-sound",
-												 "sound");
-
-		if (sound != NULL)
-			gaim_sound_play_file(sound);
-		else
-			gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
-	}
-}
-
-static void
-free_pounce(void *data)
-{
-	struct gaim_buddy_list *blist;
-	struct gaim_gtk_buddy_list *gtkblist;
-
-	/* Rebuild the pounce menu */
-	blist = gaim_get_blist();
-
-	if (GAIM_IS_GTK_BLIST(blist))
-	{
-		gtkblist = GAIM_GTK_BLIST(blist);
-
-		gaim_gtkpounce_menu_build(gtkblist->bpmenu);
-	}
-}
-
-GaimPounce *
-gaim_gtkpounce_new(GaimAccount *pouncer, const char *pouncee,
-				   GaimPounceEvent events)
-{
-	GaimPounce *pounce;
-
-	pounce = gaim_pounce_new(GAIM_GTK_UI, pouncer, pouncee, events,
-							 pounce_cb, NULL, free_pounce);
-
-	gaim_pounce_action_register(pounce, "open-window");
-	gaim_pounce_action_register(pounce, "popup-notify");
-	gaim_pounce_action_register(pounce, "send-message");
-	gaim_pounce_action_register(pounce, "execute-command");
-	gaim_pounce_action_register(pounce, "play-sound");
-
-	return pounce;
 }
 
 void
@@ -729,8 +604,8 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(cancel_cb), dialog);
 
-	/* OK button */
-	button = gtk_button_new_from_stock(GTK_STOCK_OK);
+	/* Save button */
+	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 	
@@ -910,3 +785,129 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 	fill_menu(menu, G_CALLBACK(edit_pounce_cb));
 }
 
+static void
+pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
+{
+	GaimConversation *conv;
+	GaimAccount *account;
+	const char *pouncee;
+
+	pouncee = gaim_pounce_get_pouncee(pounce);
+	account = gaim_pounce_get_pouncer(pounce);
+
+	if (gaim_pounce_action_is_enabled(pounce, "open-window")) {
+		conv = gaim_find_conversation(pouncee);
+
+		if (conv == NULL)
+			conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
+	}
+
+	if (gaim_pounce_action_is_enabled(pounce, "popup-notify")) {
+		char tmp[1024];
+
+		g_snprintf(tmp, sizeof(tmp),
+				   (events & GAIM_POUNCE_TYPING) ? _("%s has started typing to you") :
+				   (events & GAIM_POUNCE_SIGNON) ? _("%s has signed on") :
+				   (events & GAIM_POUNCE_IDLE_RETURN) ? _("%s has returned from being idle") :
+				   (events & GAIM_POUNCE_AWAY_RETURN) ? _("%s has returned from being away") :
+				   (events & GAIM_POUNCE_TYPING_STOPPED) ? _("%s has stopped typing to you") :
+				   (events & GAIM_POUNCE_SIGNOFF) ? _("%s has signed off") :
+				   (events & GAIM_POUNCE_IDLE) ? _("%s has become idle") :
+				   (events & GAIM_POUNCE_AWAY) ? _("%s has gone away.") :
+				   _("Unknown pounce event. Please report this!"),
+				   pouncee);
+
+		gaim_notify_info(NULL, NULL, tmp, NULL);
+	}
+
+	if (gaim_pounce_action_is_enabled(pounce, "send-message")) {
+		const char *message;
+
+		message = gaim_pounce_action_get_attribute(pounce, "send-message",
+												   "message");
+
+		if (message != NULL) {
+			conv = gaim_find_conversation(pouncee);
+
+			if (conv == NULL)
+				conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
+
+			gaim_conversation_write(conv, NULL, message, -1,
+									WFLAG_SEND, time(NULL));
+
+			serv_send_im(account->gc, (char *)pouncee, (char *)message, -1, 0);
+		}
+	}
+
+#ifndef _WIN32
+	if (gaim_pounce_action_is_enabled(pounce, "execute-command")) {
+		const char *command;
+
+		command = gaim_pounce_action_get_attribute(pounce, "execute-command",
+												   "command");
+
+		if (command != NULL) {
+			int pid = fork();
+
+			if (pid == 0) {
+				char *args[4];
+
+				args[0] = "sh";
+				args[1] = "-c";
+				args[2] = (char *)command;
+				args[3] = NULL;
+
+				execvp(args[0], args);
+
+				_exit(0);
+			}
+		}
+	}
+#endif /* _WIN32 */
+
+	if (gaim_pounce_action_is_enabled(pounce, "play-sound")) {
+		const char *sound;
+
+		sound = gaim_pounce_action_get_attribute(pounce, "play-sound",
+												 "sound");
+
+		if (sound != NULL)
+			gaim_sound_play_file(sound);
+		else
+			gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
+	}
+}
+
+static void
+free_pounce(GaimPounce *pounce)
+{
+	struct gaim_buddy_list *blist;
+	struct gaim_gtk_buddy_list *gtkblist;
+
+	/* Rebuild the pounce menu */
+	blist = gaim_get_blist();
+
+	if (GAIM_IS_GTK_BLIST(blist))
+	{
+		gtkblist = GAIM_GTK_BLIST(blist);
+
+		gaim_gtkpounce_menu_build(gtkblist->bpmenu);
+	}
+}
+
+static void
+new_pounce(GaimPounce *pounce)
+{
+	gaim_pounce_action_register(pounce, "open-window");
+	gaim_pounce_action_register(pounce, "popup-notify");
+	gaim_pounce_action_register(pounce, "send-message");
+	gaim_pounce_action_register(pounce, "execute-command");
+	gaim_pounce_action_register(pounce, "play-sound");
+}
+
+void
+gaim_gtk_pounces_init(void)
+{
+	gaim_pounces_register_handler(GAIM_GTK_UI, pounce_cb, new_pounce,
+								  free_pounce);
+}

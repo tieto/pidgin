@@ -69,9 +69,6 @@ struct _GaimPounce
 
 	gboolean save;                /**< Whether or not the pounce should
 	                                   be saved after activation. */
-	GaimPounceCb callback;        /**< The callback function to call when the
-	                                   event is triggered.        */
-	void (*free)(void *data);     /**< The data free function.    */
 	void *data;                   /**< Pounce-specific data.      */
 };
 
@@ -82,16 +79,11 @@ struct _GaimPounce
  * @param pouncer The account that will pounce.
  * @param pouncee The buddy to pounce on.
  * @param event   The event(s) to pounce on.
- * @param cb      The callback function to call when the pounce is triggered.
- * @param data    Pounce-specific data.
- * @param free    The function to free the pounce-specific data.
  *
  * @return The new buddy pounce structure.
  */
-GaimPounce *gaim_pounce_new(const char *ui_type,
-							GaimAccount *pouncer, const char *pouncee,
-							GaimPounceEvent event, GaimPounceCb cb,
-							void *data, void (*free)(void *));
+GaimPounce *gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
+							const char *pouncee, GaimPounceEvent event);
 
 /**
  * Destroys a buddy pounce.
@@ -263,6 +255,12 @@ void gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 GaimPounce *gaim_find_pounce(const GaimAccount *pouncer,
 							 const char *pouncee, GaimPounceEvent events);
 
+
+/**
+ * Initializes the pounces subsystem.
+ */
+void gaim_pounces_init(void);
+
 /**
  * Loads the pounces.
  */
@@ -272,6 +270,25 @@ gboolean gaim_pounces_load(void);
  * Force an immediate write of pounces.
  */
 void gaim_pounces_sync(void);
+
+/**
+ * Registers a pounce handler for a UI.
+ *
+ * @param ui          The UI name.
+ * @param cb          The callback function.
+ * @param new_pounce  The function called when a pounce is created.
+ * @param free_pounce The function called when a pounce is freed.
+ */
+void gaim_pounces_register_handler(const char *ui, GaimPounceCb cb,
+								   void (*new_pounce)(GaimPounce *pounce),
+								   void (*free_pounce)(GaimPounce *pounce));
+
+/**
+ * Unregisters a pounce handle for a UI.
+ *
+ * @param ui The UI name.
+ */
+void gaim_pounces_unregister_handler(const char *ui);
 
 /**
  * Returns a list of all registered buddy pounces.
