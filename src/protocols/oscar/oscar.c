@@ -46,14 +46,15 @@
 #include "aim.h"
 #include "md5.h"
 
-#define AIM_ICQ_STATUS_ID_ONLINE	"online"
-#define AIM_ICQ_STATUS_ID_AWAY		"away"
-#define AIM_ICQ_STATUS_ID_DND		"dnd"
-#define AIM_ICQ_STATUS_ID_NA		"na"
-#define AIM_ICQ_STATUS_ID_OCCUPIED	"occupied"
-#define AIM_ICQ_STATUS_ID_FREE4CHAT	"free4chat"
-#define AIM_ICQ_STATUS_ID_INVISIBLE	"invisible"
-#define AIM_ICQ_STATUS_ID_CUSTOM	"custom"
+#define OSCAR_STATUS_ID_INVISIBLE	"invisible"
+#define OSCAR_STATUS_ID_OFFLINE		"offline"
+#define OSCAR_STATUS_ID_ONLINE		"online"
+#define OSCAR_STATUS_ID_AWAY		"away"
+#define OSCAR_STATUS_ID_DND			"dnd"
+#define OSCAR_STATUS_ID_NA			"na"
+#define OSCAR_STATUS_ID_OCCUPIED	"occupied"
+#define OSCAR_STATUS_ID_FREE4CHAT	"free4chat"
+#define OSCAR_STATUS_ID_CUSTOM		"custom"
 
 #define UC_UNAVAILABLE	0x01
 #define UC_AOL			0x02
@@ -2980,7 +2981,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gc->login_time_official = signon;
 	}
 
-	serv_got_update(gc, info->sn, TRUE, (info->warnlevel/10.0) + 0.5, signon, time_idle, type);
+	/* STATUS - time_idle is idle time, type is type, info->warnlevel/10.0 is warning level */
+	serv_got_update(gc, info->sn, TRUE, signon);
 
 	return 1;
 }
@@ -3002,7 +3004,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_update(gc, info->sn, FALSE, 0, 0, 0, 0);
+	serv_got_update(gc, info->sn, FALSE, 0);
 
 	g_hash_table_remove(od->buddyinfo, gaim_normalize(gc->account, info->sn));
 
@@ -6818,9 +6820,36 @@ oscar_status_types(GaimAccount *account)
 
 	is_icq = aim_sn_is_icq(gaim_account_get_username(account));
 
+	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, OSCAR_STATUS_ID_INVISIBLE, _("Invisible"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
 
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, OSCAR_STATUS_ID_OFFLINE, _("Offline"), FALSE, FALSE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, OSCAR_STATUS_ID_ONLINE, _("Online"), FALSE, FALSE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_AWAY, _("Away"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_DND, _("Do Not Disturb"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_NA, _("Not Available"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_OCCUPIED, _("Occupied"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_FREE4CHAT, _("Free For Chat"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
 
 	return status_types;
+
+	/*
+	 * Do something with:
+	 * #define OSCAR_STATUS_ID_CUSTOM		"custom"
+	 */
 
 #if 0 /* STATUS - old stuff that should be removed */
 	if (od->icq) {

@@ -264,9 +264,10 @@ gaim_xfer_ask_recv(GaimXfer *xfer)
 			serv_got_im(gaim_account_get_connection(xfer->account),
 								 xfer->who, xfer->message, 0, time(NULL));
 
-		gaim_request_accept_cancel(xfer, NULL, buf, NULL, 0, xfer,
-					   G_CALLBACK(gaim_xfer_choose_file),
-					   G_CALLBACK(cancel_recv_cb));
+		gaim_request_accept_cancel(xfer, NULL, buf, NULL,
+								  GAIM_DEFAULT_ACTION_NONE, xfer,
+								  G_CALLBACK(gaim_xfer_choose_file),
+								  G_CALLBACK(cancel_recv_cb));
 
 		g_free(buf);
 	} else
@@ -303,9 +304,10 @@ gaim_xfer_ask_accept(GaimXfer *xfer)
 					 "Remote host: %s\nRemote port: %d"),
 				       gaim_xfer_get_remote_ip(xfer),
 				       gaim_xfer_get_remote_port(xfer));
-	gaim_request_accept_cancel(xfer, NULL, buf, buf2, 0, xfer,
-				   G_CALLBACK(ask_accept_ok),
-				   G_CALLBACK(ask_accept_cancel));
+	gaim_request_accept_cancel(xfer, NULL, buf, buf2,
+							   GAIM_DEFAULT_ACTION_NONE, xfer,
+							   G_CALLBACK(ask_accept_ok),
+							   G_CALLBACK(ask_accept_cancel));
 	g_free(buf);
 	g_free(buf2);
 }
