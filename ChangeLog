@@ -1161,7 +1161,7 @@ version 0.9.12 (03/25/2000):
 	* All of the major and I believe all of the minor memory leaks are 
 	  now fixed
 	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me)
-	
+
 version 0.9.11 (03/22/2000):
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
 	* Another memory leak fix
@@ -1216,7 +1216,7 @@ version 0.9.7  (08/08/1999):
 	* Multiple browser support, some Netscape buggies fixed.
 	* Permit/Deny preferences moved to 'Permit' pane on buddylist.
 	* Fixed problem with _, ', and \ in passwords
-	  
+
 version 0.9.6  (08/01/1999):
 	* Fixed 'log all conversation' segfault
 	* Added NAS support

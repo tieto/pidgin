@@ -145,7 +145,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberID *jid;
 	JabberChat *chat;
 	JabberBuddy *jb;
-	JabberBuddyResource *jbr = FALSE;
+	JabberBuddyResource *jbr = NULL;
 	GaimBuddy *b;
 	char *buddy_name;
 	int state = 0;
@@ -351,10 +351,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					status);
 		}
 
-		if(!jbr)
-			jbr = jabber_buddy_find_resource(jb, jid->resource);
-
-		if(jbr)
+		if((jbr = jabber_buddy_find_resource(jb, NULL)))
 			serv_got_update(js->gc, buddy_name, 1, 0, b->signon, b->idle,
 					jbr->state);
 		else
