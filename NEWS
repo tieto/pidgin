@@ -1,4 +1,5 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
+
 0.65 (07/14/2003):
 	Rob: Wooo! We're finally ready for 0.65.  Are you guys excited?  I
 	haven't worked on anything in this release, either.  I've been
@@ -61,6 +62,12 @@
 	will be	and its probly a good idea for you to take a second look 
 	through preferences again anyway, alot of you are starting to 
 	forget that things are optional again. :-)
+
+	Nathan: I think I did something for this release a while ago.  I've
+	got a mailbox full of commit emails, and some have my name on them,
+	so I must have done something, right?  Probably some minor jabber stuff,
+	and lots of crazy bugfixes.  It was a team effort, I'd like to thank the
+	academy, our producer Rob Flynn, and of course all the fans. You rock.
 
 0.64 (05/29/2003):
 	Rob: I didn't do anything this release either.  We're under a crunch
