@@ -676,9 +676,9 @@ void show_info_select_account(GtkObject *w, struct gaim_connection *gc)
 	info->gc = gc;
 }
 
-static void im_dialog_set_ok_sensitive(GtkWidget *entry, gpointer data) {
+static void dialog_set_ok_sensitive(GtkWidget *entry, GtkWidget *dlg) {
 	const char *txt = gtk_entry_get_text(GTK_ENTRY(entry));
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(imdialog), GTK_RESPONSE_OK,
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(dlg), GTK_RESPONSE_OK,
 			(*txt != '\0'));
 }
 
@@ -742,7 +742,7 @@ void show_im_dialog()
 		gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
 		g_signal_connect(G_OBJECT(info->entry), "changed",
-				G_CALLBACK(im_dialog_set_ok_sensitive), NULL);
+				G_CALLBACK(dialog_set_ok_sensitive), imdialog);
 
 		if (connections->next) {
 
@@ -808,12 +808,14 @@ void show_info_dialog()
 	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), 12);
 	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), 6);
-		
+
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(window), GTK_RESPONSE_OK,
+			FALSE);
+
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 		
@@ -837,6 +839,9 @@ void show_info_dialog()
 	gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
 	gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
+
+	g_signal_connect(G_OBJECT(info->entry), "changed",
+			G_CALLBACK(dialog_set_ok_sensitive), window);
 	
 	if (connections->next) {
 
