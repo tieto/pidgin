@@ -64,6 +64,8 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      install
 
 rm -f $RPM_BUILD_ROOT/%{_libdir}/perl5/*/*/perllocal.pod
+strip %{buildroot}%{_libdir}/{*.so*,%{name}/*.so} || :
+
 
 %clean
 rm -rf %{buildroot}
