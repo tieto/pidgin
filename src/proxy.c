@@ -33,6 +33,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -118,6 +119,25 @@ void gaim_input_remove(gint tag)
 		g_source_remove(tag);
 }
 
+static struct sockaddr_in *gaim_gethostbyname(char *host, int port)
+{
+	static struct sockaddr_in sin;
+
+	if (!inet_aton(host, &sin.sin_addr)) {
+		struct hostent *hp;
+		if (!(hp = gethostbyname(host))) {
+			return NULL;
+		}
+		memset(&sin, 0, sizeof(struct sockaddr_in));
+		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+		sin.sin_family = hp->h_addrtype;
+	} else
+		sin.sin_family = AF_INET;
+	sin.sin_port = htons(port);
+
+	return &sin;
+}
+
 static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct PHB *phb = data;
@@ -151,31 +171,25 @@ static gboolean clean_connect(gpointer data)
 
 static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 {
-	struct sockaddr_in sin;
-	struct hostent *hp;
+	struct sockaddr_in *sin;
 	int fd = -1;
 
 	debug_printf("connecting to %s:%d with no proxy\n", host, port);
 
-	if (!(hp = gethostbyname(host))) {
+	if (!(sin = gaim_gethostbyname(host, port))) {
 		debug_printf("gethostbyname failed\n");
 		g_free(phb);
 		return -1;
 	}
 
-	memset(&sin, 0, sizeof(struct sockaddr_in));
-	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-	sin.sin_family = hp->h_addrtype;
-	sin.sin_port = htons(port);
-
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+	if ((fd = socket(sin->sin_family, SOCK_STREAM, 0)) < 0) {
 		debug_printf("unable to create socket\n");
 		g_free(phb);
 		return -1;
 	}
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, no_one_calls, phb);
@@ -302,23 +316,17 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 {
-	struct hostent *hp;
-	struct sockaddr_in sin;
+	struct sockaddr_in *sin;
 	int fd = -1;
 
 	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
 
-	if (!(hp = gethostbyname(proxyhost))) {
+	if (!(sin = gaim_gethostbyname(proxyhost, port))) {
 		g_free(phb);
 		return -1;
 	}
 
-	memset(&sin, 0, sizeof(struct sockaddr_in));
-	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-	sin.sin_family = hp->h_addrtype;
-	sin.sin_port = htons(proxyport);
-
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+	if ((fd = socket(sin->sin_family, SOCK_STREAM, 0)) < 0) {
 		g_free(phb);
 		return -1;
 	}
@@ -327,7 +335,7 @@ static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 	phb->port = port;
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, http_canwrite, phb);
@@ -427,23 +435,17 @@ static void s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 static int proxy_connect_socks4(char *host, unsigned short port, struct PHB *phb)
 {
-	struct sockaddr_in sin;
-	struct hostent *hp;
+	struct sockaddr_in *sin;
 	int fd = -1;
 
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", host, port, proxyhost, proxyport);
 
-	if (!(hp = gethostbyname(proxyhost))) {
+	if (!(sin = gaim_gethostbyname(proxyhost, port))) {
 		g_free(phb);
 		return -1;
 	}
 
-	memset(&sin, 0, sizeof(struct sockaddr_in));
-	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-	sin.sin_family = hp->h_addrtype;
-	sin.sin_port = htons(proxyport);
-
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+	if ((fd = socket(sin->sin_family, SOCK_STREAM, 0)) < 0) {
 		g_free(phb);
 		return -1;
 	}
@@ -452,7 +454,7 @@ static int proxy_connect_socks4(char *host, unsigned short port, struct PHB *phb
 	phb->port = port;
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s4_canwrite, phb);
@@ -656,23 +658,17 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 static int proxy_connect_socks5(char *host, unsigned short port, struct PHB *phb)
 {
+	struct sockaddr_in *sin;
 	int fd = -1;
-	struct sockaddr_in sin;
-	struct hostent *hp;
 
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", host, port, proxyhost, proxyport);
 
-	if (!(hp = gethostbyname(proxyhost))) {
+	if (!(sin = gaim_gethostbyname(proxyhost, port))) {
 		g_free(phb);
 		return -1;
 	}
 
-	memset(&sin, 0, sizeof(struct sockaddr_in));
-	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-	sin.sin_family = hp->h_addrtype;
-	sin.sin_port = htons(proxyport);
-
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+	if ((fd = socket(sin->sin_family, SOCK_STREAM, 0)) < 0) {
 		g_free(phb);
 		return -1;
 	}
@@ -681,7 +677,7 @@ static int proxy_connect_socks5(char *host, unsigned short port, struct PHB *phb
 	phb->port = port;
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s5_canwrite, phb);
