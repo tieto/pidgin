@@ -276,7 +276,7 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 	fcntl(source, F_SETFL, 0);
 
-	g_snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\nHost = %s:%d\r\n", phb->host, phb->port,
+	g_snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n", phb->host, phb->port,
 		   phb->host, phb->port);
 	if (send(source, cmd, strlen(cmd), 0) < 0) {
 		close(source);
