@@ -2624,7 +2624,6 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu16_t infotype;
 	fu32_t flags;
 	char header[BUF_LONG];
-	char legend[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 	GSList *l = od->evilhack;
@@ -2658,19 +2657,6 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	if (!od->icq) {
-		g_snprintf(legend, sizeof legend,
-				_("<BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
-				"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
-				"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
-				"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
-				"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
-				"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"
-				"<IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"));
-	} else {
-		legend[0] = 0;
-	}
-		
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		onlinesince = g_strdup_printf("Online Since : <B>%s</B><BR>\n",
 					asctime(localtime(&info->onlinesince)));
@@ -2720,8 +2706,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_show_info_text(gc, info->sn, 2,
 					 header,
 					 (utf8 && *utf8) ? away_subs(utf8, gc->username) :
-					 _("<i>User has no away message</i>"),
-					 legend, NULL);
+					 _("<i>User has no away message</i>"), NULL);
 		} else {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
@@ -2735,13 +2720,11 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 				"<i>", _("Client Capabilities: "),
 				caps_string(info->capabilities),
 				"</i>",
-				legend,
 				NULL);
 	} else {
 		g_show_info_text(gc, info->sn, 1,
 				 (utf8 && *utf8) ? away_subs(utf8, gc->username) :
 				 _("<i>No Information Provided</i>"),
-				 legend,
 				 NULL);
 	}
 
