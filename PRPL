@@ -1,0 +1,70 @@
+Protocol Plugins. What EveryBuddy should have been.
+
+Protocol Plugins are easier than GUI plugins. This is because there is necessarily a limited set
+of server functions; protocols are limited. What a programmer can do with a UI is limitless.
+
+In order to design a framework for which Protocol Plugins can work, we must first think about
+which protocols can be pluginized. (Henceforth PRPL will stand for both the Protocol Plugin
+system and an individual Protocol Plugin.)
+
+Oscar. TOC. Yahoo. MSN. ICQ. FTP. IRC.
+
+There is a longer list. Note that FTP is in the list presented. FTP has basic functions similar
+to those of the others. The basic functions that must be performed are:
+
+Sign on. (log in)
+Sign off.
+Send and receive messages.
+
+There really isn't much more to it than that. There are, then, additional functions that some
+protocols implement:
+
+Chat.
+File Transfer.
+Away/Idle. (states)
+Directory Info.
+
+Before PRPL there was a slight abstraction in the code. The UI simply needed to call serv_login,
+and that function would decide between the protocols, which function to call. It did that with
+an if-elseif-else series.
+
+With PRPL, each PRPL is stored in a struct. The structs are then kept in a GSList. The serv_
+functions then simply need to search the GSList for the correct protocol, and call the desired
+function. The struct holds void * references to the desired functions. serv_* simply needs to
+call that function. (Even better, each connection has a reference to the PRPL struct it uses;
+this will reduce search time.)
+
+A new PRPL can be loaded at any time. They can be either static or dynamic code. When a new
+protocol is loaded, gaim will call its protocol_init function, which is expected to return a
+pointer to the aforementioned struct. If it returns NULL, the PRPL will not be loaded. (This is
+not entirely true and needs to be modified in the code to work similarly to how it's decscribed
+here.)
+
+Each PRPL needs to have a unique identifier. In the pre-PRPL system TOC was 0 and Oscar was 1.
+This identifier can be found in prpl.h. They are pre-assigned. PROTO_TOC is still 0, PROTO_OSCAR
+is still 1. The protocol_init function is expected to set the struct's protocol member to the
+appropriate value. If you want to write a new PRPL for gaim, please email one of the maintainers
+with the name of the protocol. We'll then reserve a number for it. Please do not use a number
+that has not been assigned to your protocol, not even for testing purposes.
+
+The addition of PRPL to gaim means that gaim now supports multiple connections and multiple (and
+dynamically loadable) protocols.
+
+======
+
+In order to test that PRPL was working with as little work as possible I made Oscar a plugin. In
+order to use Oscar as a plugin, first recompile gaim with the make variable DEBUG_CFLAGS set to
+-DDYNAMIC_OSCAR, e.g.
+
+/usr/src/gaim $ make DEBUG_CFLAGS=-DDYNAMIC_OSCAR
+
+This will then remove Oscar support from the code (though it will still link with libfaim. However,
+gaim does not need to link to libfaim itself). Making the Oscar plugin is straight-forward; simply
+make oscar.so in the plugins directory, e.g.
+
+/usr/src/gaim/plugins $ make oscar.so
+
+You will then be presented with a gaim binary in src/gaim and the Oscar plugin in plugins/oscar.so.
+Simply load the oscar.so file from the normal plugin window. This will set up everything necessary.
+You may unload the plugin at any time, but the protocol will still be loaded. This may or may not
+be a problem and may or may not be fixed at a later point in time.

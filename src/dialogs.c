@@ -1153,6 +1153,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 		save_prefs();
 
 		if (gc) {
+			g_snprintf(gc->user_info, sizeof(gc->user_info), "%s", junk);
 			buf = g_malloc(strlen(junk) * 4);
 			if (!buf) {
 				buf = g_malloc(1);
@@ -1609,11 +1610,9 @@ void show_set_info()
 	gtk_text_set_word_wrap(GTK_TEXT(b->text), TRUE);
 	gtk_text_set_editable(GTK_TEXT(b->text), TRUE);
 	gtk_widget_set_usize(b->text, 350, 100);
-	/* is this necessary?
-	if (users)
+	if (aim_users)
 		gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL,
-				((struct aim_user *)users->data)->user_info, -1);
-	*/
+				((struct aim_user *)aim_users->data)->user_info, -1);
 
 	gtk_widget_show(b->text);
 

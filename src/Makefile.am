@@ -21,6 +21,7 @@ gaim_applet_SOURCES =	about.c \
 			plugins.c \
 			prefs.c \
 			proxy.c \
+			prpl.c \
 			rvous.c \
 			server.c \
 			sound.c \
@@ -51,6 +52,7 @@ gaim_SOURCES =	about.c \
 		plugins.c \
 		prefs.c \
 		proxy.c \
+		prpl.c \
 		rvous.c \
 		server.c \
 		sound.c \
@@ -63,4 +65,4 @@ endif
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" $(DEBUG_CFLAGS)
 LDFLAGS += $(DEBUG_LDFLAGS)
 
-EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h gtkticker.h convo.h multi.h
+EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h gtkticker.h convo.h multi.h prpl.h

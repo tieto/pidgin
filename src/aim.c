@@ -368,6 +368,8 @@ int main(int argc, char *argv[])
 #else
         
 
+	static_proto_init();
+
         show_login();
 	auto_login();
         gtk_main();

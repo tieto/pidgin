@@ -408,12 +408,6 @@ void unload(GtkWidget *w, gpointer data) {
 	gaim_plugin_unload(p->handle);
 }
 
-static void remove_callback(struct gaim_plugin *p) {
-	gtk_timeout_remove(p->remove);
-	dlclose(p->handle);
-	g_free(p);
-}
-
 /* gaim_plugin_unload serves 2 purposes: 1. so plugins can unload themselves
  * 					 2. to make my life easier */
 void gaim_plugin_unload(void *handle) {
@@ -456,11 +450,11 @@ void gaim_plugin_unload(void *handle) {
 			c = g_list_next(c);
 		}
 	}
-	/* remove callbacks later (this will g_free p) */
-	p->remove = gtk_timeout_add(5000, (GtkFunction)remove_callback, p);
 
 	plugins = g_list_remove(plugins, p);
 	g_free(p->filename);
+	/* we don't dlclose(p->handle) in case if we still need code from the plugin later */
+	g_free(p);
 	if (config) gtk_widget_set_sensitive(config, 0);
 	update_show_plugins();
 	save_prefs();
@@ -504,7 +498,7 @@ void hide_plugins(GtkWidget *w, gpointer data) {
 
 void gaim_signal_connect(void *handle, enum gaim_event which,
 			 void *func, void *data) {
-	struct gaim_callback *call = g_malloc(sizeof *call);
+	struct gaim_callback *call = g_new0(struct gaim_callback, 1);
 	call->handle = handle;
 	call->event = which;
 	call->function = func;

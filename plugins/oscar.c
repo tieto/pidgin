@@ -20,8 +20,6 @@
  *
  */
 
-#ifndef DYNAMIC_OSCAR
-
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
 #endif
@@ -1312,6 +1310,14 @@ static char *oscar_name() {
 	return "Oscar";
 }
 
+char *name() {
+	return "Oscar";
+}
+
+char *description() {
+	return "Allows gaim to use the Oscar protocol";
+}
+
 static void oscar_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
 	struct conversation *cnv = find_conversation(name);
 	if (cnv && cnv->is_direct) {
@@ -1518,4 +1524,7 @@ struct prpl *oscar_init() {
 	return ret;
 }
 
-#endif
+int gaim_plugin_init(void *handle) {
+	protocols = g_slist_append(protocols, oscar_init());
+	return 0;
+}

@@ -1,9 +1,7 @@
-LDFLAGS += $(LIBS) -ggdb -shared
+LDFLAGS += $(LDADD) $(LIBS) -ggdb -shared
 SUFFIXES = .c .so
 .c.so:
 	$(CC) $(CFLAGS) -I../src -DVERSION=\"$(VERSION)\" -fPIC -DPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
-
-
 
 #if PLUGINS
 #plugin_DATA = autorecon.so iconaway.so notify.so spellchk.so lagmeter.so

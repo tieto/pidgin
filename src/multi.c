@@ -20,6 +20,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
@@ -49,6 +50,7 @@ struct gaim_connection *new_gaim_conn(int proto, char *username, char *password)
 {
 	struct gaim_connection *gc = g_new0(struct gaim_connection, 1);
 	gc->protocol = proto;
+	gc->prpl = find_prpl(proto);
 	g_snprintf(gc->username, sizeof(gc->username), "%s", username);
 	g_snprintf(gc->password, sizeof(gc->password), "%s", password);
 	gc->keepalive = -1;
@@ -122,15 +124,11 @@ static gint acctedit_close(GtkWidget *w, gpointer d)
 
 static char *proto_name(int proto)
 {
-	switch (proto) {
-		case PROTO_TOC:
-			return "TOC";
-		case PROTO_OSCAR:
-			return "Oscar";
-		default:
-			/* PRPL */
-			return "Other";
-	}
+	struct prpl *p = find_prpl(proto);
+	if (p && p->name)
+		return (*p->name)();
+	else
+		return "Unknown";
 }
 
 static GtkWidget *generate_list()
@@ -228,7 +226,6 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			return;
 		}
 		u = g_new0(struct aim_user, 1);
-		u->protocol = PROTO_TOC;
 		g_snprintf(u->username, sizeof(u->username), "%s", txt);
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.pass));
 		g_snprintf(u->password, sizeof(u->password), "%s", txt);
@@ -269,6 +266,8 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
+	GSList *p = protocols;
+	struct prpl *e;
 
 	/* PRPL: should we set some way to update these when new protocols get added? */
 	optmenu = gtk_option_menu_new();
@@ -277,18 +276,19 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
 
 	menu = gtk_menu_new();
 
-	/* PRPL: we need to have some way of getting all the plugin names, etc */
-	opt = gtk_menu_item_new_with_label("TOC");
-	gtk_object_set_user_data(GTK_OBJECT(opt), u);
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_prot), (void *)PROTO_TOC);
-	gtk_menu_append(GTK_MENU(menu), opt);
-	gtk_widget_show(opt);
-
-	opt = gtk_menu_item_new_with_label("Oscar");
-	gtk_object_set_user_data(GTK_OBJECT(opt), u);
-	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_prot), (void *)PROTO_OSCAR);
-	gtk_menu_append(GTK_MENU(menu), opt);
-	gtk_widget_show(opt);
+	while (p) {
+		e = (struct prpl *)p->data;
+		if (e->name)
+			opt = gtk_menu_item_new_with_label((*e->name)());
+		else
+			opt = gtk_menu_item_new_with_label("Unknown");
+		gtk_object_set_user_data(GTK_OBJECT(opt), u);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate",
+				   GTK_SIGNAL_FUNC(set_prot), (void *)e->protocol);
+		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_widget_show(opt);
+		p = p->next;
+	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 	u->tmp_protocol = u->protocol;

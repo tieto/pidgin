@@ -1,4 +1,4 @@
-bin_PROGRAMS = au2h
+noinst_PROGRAMS = au2h
 
 au2h_SOURCES = au2h.c
 

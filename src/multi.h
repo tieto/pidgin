@@ -34,6 +34,7 @@ struct gaim_connection {
 	/* we need to do either oscar or TOC */
 	/* we make this as an int in case if we want to add more protocols later */
 	int protocol;
+	struct prpl *prpl;
 
 	/* let's do the oscar-specific stuff first since i know it better */
 	struct aim_session_t *oscar_sess;

@@ -35,11 +35,12 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/socket.h>
+#include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 990 $"
+#define REVISION "gaim:$Revision: 991 $"
 
 
 static unsigned int peer_ver=0;
@@ -932,3 +933,188 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 		do_export( (GtkWidget *) NULL, 0 );	
 	}
  }
+
+static char *toc_name() {
+	return "TOC";
+}
+
+static void toc_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
+	char buf[MSG_LEN - 7];
+
+	escape_text(message);
+	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
+			message, ((away) ? " auto" : ""));
+	sflap_send(gc, buf, -1, TYPE_DATA);
+}
+
+static void toc_get_info(struct gaim_connection *g, char *name) {
+	char buf[MSG_LEN];
+	g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_get_dir(struct gaim_connection *g, char *name) {
+	char buf[MSG_LEN];
+	g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_set_dir(struct gaim_connection *g, char *first, char *middle, char *last,
+			char *maiden, char *city, char *state, char *country, int web) {
+	char buf2[BUF_LEN*4], buf[BUF_LEN];
+	g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
+			middle, last, maiden, city, state, country,
+			(web == 1) ? "Y" : "");
+	escape_text(buf2);
+	g_snprintf(buf, sizeof(buf), "toc_set_dir %s", buf2);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_dir_search(struct gaim_connection *g, char *first, char *middle, char *last,
+			char *maiden, char *city, char *state, char *country, char *email) {
+	char buf[BUF_LONG];
+	g_snprintf(buf, sizeof(buf)/2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle,
+			last, maiden, city, state, country, email);
+	sprintf(debug_buff,"Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden,
+			city, state, country);
+	debug_print(debug_buff);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_set_away(struct gaim_connection *g, char *message) {
+	char buf[MSG_LEN];
+	if (message) {
+		escape_text(message);
+		g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
+	} else
+		g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_set_info(struct gaim_connection *g, char *info) {
+	char buf[MSG_LEN];
+	escape_text(info);
+	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", info);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_change_passwd(struct gaim_connection *g, char *orig, char *new) {
+	char buf[MSG_LEN];
+	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
+	sflap_send(g, buf, strlen(buf), TYPE_DATA);
+}
+
+static void toc_add_buddy(struct gaim_connection *g, char *name) {
+	char buf[1024]; 
+	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_add_buddies(struct gaim_connection *g, GList *buddies) {
+	char buf[MSG_LEN];
+	int n;
+
+	n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
+	while (buddies) {
+		if (strlen(normalize(buddies->data)) > MSG_LEN - n - 16) {
+			sflap_send(g, buf, -1, TYPE_DATA);
+			n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
+		}
+		n += g_snprintf(buf + n, sizeof(buf)-n, " %s", normalize(buddies->data));
+		buddies = buddies->next;
+	}
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_remove_buddy(struct gaim_connection *g, char *name) {
+	char buf[1024]; 
+	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_set_idle(struct gaim_connection *g, int time) {
+	char buf[256];
+	g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_warn(struct gaim_connection *g, char *name, int anon) {
+	char send[256];
+	g_snprintf(send, 255, "toc_evil %s %s", name, ((anon) ? "anon" : "norm"));
+	sflap_send(g, send, -1, TYPE_DATA);
+}
+
+static void toc_accept_chat(struct gaim_connection *g, int i) {
+	char buf[256];
+	g_snprintf(buf, 255, "toc_chat_accept %d",  i);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_join_chat(struct gaim_connection *g, int exchange, char *name) {
+	char buf[BUF_LONG];
+	g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_chat_invite(struct gaim_connection *g, int id, char *message, char *name) {
+	char buf[BUF_LONG];
+	g_snprintf(buf, sizeof(buf)/2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_chat_leave(struct gaim_connection *g, int id) {
+	char buf[256];
+	g_snprintf(buf, 255, "toc_chat_leave %d",  id);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_chat_whisper(struct gaim_connection *g, int id, char *who, char *message) {
+	char buf2[MSG_LEN];
+	g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
+	sflap_send(g, buf2, -1, TYPE_DATA);
+}
+
+static void toc_chat_send(struct gaim_connection *g, int id, char *message) {
+	char buf[MSG_LEN];
+	escape_text(message);
+	g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"",id, message);
+	sflap_send(g, buf, -1, TYPE_DATA);
+}
+
+static void toc_keepalive(struct gaim_connection *gc) {
+	sflap_send(gc, "", 0, TYPE_KEEPALIVE);
+}
+
+struct prpl *toc_init() {
+        struct prpl *ret = g_new0(struct prpl, 1);
+
+        ret->protocol = PROTO_TOC;
+        ret->name = toc_name;
+        ret->login = toc_login;
+        ret->close = toc_close;
+        ret->send_im = toc_send_im;
+        ret->set_info = toc_set_info;
+        ret->get_info = toc_get_info;
+        ret->set_away = toc_set_away;
+        ret->get_away_msg = NULL;
+        ret->set_dir = toc_set_dir;
+        ret->get_dir = toc_get_dir;
+        ret->dir_search = toc_dir_search;
+        ret->set_idle = toc_set_idle;
+        ret->change_passwd = toc_change_passwd;
+        ret->add_buddy = toc_add_buddy;
+        ret->add_buddies = toc_add_buddies;
+        ret->remove_buddy = toc_remove_buddy;
+        ret->add_permit = NULL; /* FIXME */
+        ret->add_deny = NULL;
+        ret->warn = toc_warn;
+        ret->accept_chat = toc_accept_chat;
+        ret->join_chat = toc_join_chat;
+        ret->chat_invite = toc_chat_invite;
+        ret->chat_leave = toc_chat_leave;
+        ret->chat_whisper = toc_chat_whisper;
+        ret->chat_send = toc_chat_send;
+	ret->keepalive = toc_keepalive;
+
+        return ret;
+}
