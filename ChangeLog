@@ -121,22 +121,8 @@ version 0.60:
 	* Updated desktop and window icons (Thanks, Robert McQueen)
 	* Switch the .desktop file to the new KDE/GNOME common vfolder 
 	  format (Thanks, Robert McQueen)
-	* GTK2 Goodness:
-		- Account editor (rewritten by Christian Hammond)
-		- Preferences dialog (rewritten by Sean Egan)
-		- SignOn Screen (rewritten by Rob Flynn)
-		- Conversation Window
-		- Chat Window (sort of: needs menu bar, tooltips)
-		- GtkIMHtml (Ari Pollak, Christian Hammond)
-		- Buddy Icons
-		- IM Images
-		- Alert Dialogs
-		- GtkIMHtml tooltips Pangonated
-		- About Dialog (Nathan Walp)
-		- i18n capable text input widget (Thanks Ethan Blanton, 
-		  David Odin, etc)
-		- Privacy dialog
-		- Various Dialogs (Send New Message, Add Buddy, Rename Group)
+	* Removed all deprecated GTK calls.  Now 100% GTK 2. (Thanks Nathan
+	  Walp, Christian Hammond, Ari Pollak, Ethan Blanton)
 	* Read proxy environment variables. (Thanks, Christian Hammond)
 	* Fixed security vulnerability with manual browser option (Thanks,
 	  Robert McQueen)
