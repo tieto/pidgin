@@ -6,26 +6,26 @@ SILCSOURCES = silc.c silcgaim.h buddy.c chat.c ft.c ops.c pk.c util.c
 
 AM_CFLAGS = $(st)
 
-libsilc_la_LDFLAGS = -module -avoid-version
+libsilcgaim_la_LDFLAGS = -module -avoid-version
 
 if STATIC_SILC
 
 st = -DGAIM_STATIC_PRPL $(SILC_INCLUDES)
-noinst_LIBRARIES = libsilc.a
+noinst_LIBRARIES = libsilcgaim.a
 pkg_LTLIBRARIES =
 
-libsilc_a_SOURCES = $(SILCSOURCES)
-libsilc_a_CFLAGS  = $(AM_CFLAGS)
-libsilc_a_LIBADD  = $(SILC_LIBS)
+libsilcgaim_a_SOURCES = $(SILCSOURCES)
+libsilcgaim_a_CFLAGS  = $(AM_CFLAGS)
+libsilcgaim_a_LIBADD  = $(SILC_LIBS)
 
 else
 
 st = $(SILC_INCLUDES)
-pkg_LTLIBRARIES = libsilc.la
+pkg_LTLIBRARIES = libsilcgaim.la
 noinst_LIBRARIES =
 
-libsilc_la_SOURCES = $(SILCSOURCES)
-libsilc_la_LIBADD  = $(SILC_LIBS)
+libsilcgaim_la_SOURCES = $(SILCSOURCES)
+libsilcgaim_la_LIBADD  = $(SILC_LIBS)
 
 endif
 
