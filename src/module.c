@@ -34,6 +34,8 @@
 #include <config.h>
 #endif
 
+#include "gaim.h"
+
 #ifdef GAIM_PLUGINS
 
 #include <string.h>
@@ -45,7 +47,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "gaim.h"
 
 /* ------------------ Global Variables ----------------------- */
 
