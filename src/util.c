@@ -961,7 +961,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short show
 	pixmap = gtk_pixmap_new(pm, mask);
 	gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
 
-	if (showtext == TRUE)
+	if (showtext)
 	{
 		label = gtk_label_new(text);
 		gtk_widget_show(label);
