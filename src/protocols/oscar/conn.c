@@ -1000,6 +1000,8 @@ faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 	if (!(conn->status & AIM_CONN_STATUS_INPROGRESS))
 		return -1;
 
+	fcntl(conn->fd, F_SETFL, 0);
+
 	conn->status &= ~AIM_CONN_STATUS_INPROGRESS;
 
 	if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNCOMPLETE)))

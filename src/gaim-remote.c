@@ -25,6 +25,7 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <string.h>
+#include <locale.h>
 #include "gaim-socket.h"
 
 void show_remote_usage(char *name)
