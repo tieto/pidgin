@@ -227,13 +227,13 @@ default_formatize(GaimConversation *conv)
 	{
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
 			gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
-
+		
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
 			gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
 			gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
-
+		
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font") ||
 			c->has_font)
 		{
@@ -3787,7 +3787,6 @@ setup_im_pane(GaimConversation *conv)
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	gaim_setup_imhtml(gtkconv->entry);
 	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
-	default_formatize(conv);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry),
 								GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
@@ -3811,6 +3810,10 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(gtkconv->entry);
 	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(gtkconv->toolbar),
 							 gtkconv->entry);
+	/* had to move this after the imtoolbar is attached so that the
+	 * signals get fired to toggle the buttons on the toolbar as well.
+	 */
+	default_formatize(conv);
 
 	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->bbox, FALSE, FALSE, 0);

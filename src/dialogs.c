@@ -797,6 +797,10 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_imhtml_set_editable(GTK_IMHTML(ca->text), TRUE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
 
+	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(ca->text),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
+	gtk_imhtml_html_shortcuts(GTK_IMHTML(ca->text),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(ca->text));
 	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(ca->toolbar), ca->text);
