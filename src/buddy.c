@@ -210,7 +210,8 @@ void update_all_buddies()
                         if (b->present || !GTK_WIDGET_VISIBLE(b->item))
 				set_buddy(b);
 
-			if (b->present) count++;
+			if (b->present || GTK_WIDGET_VISIBLE(b->item))
+				count++;
 
                         mem = mem->next;
                 }
@@ -500,7 +501,7 @@ void remove_buddy(struct group *rem_g, struct buddy *rem_b)
 	mem = delg->members;
 	while (mem && !count) {
 		b = (struct buddy *)mem->data;
-		if (b->present) count++;
+		if (b->present || GTK_WIDGET_VISIBLE(b->item)) count++;
 		mem = mem->next;
 	}
 	if (!count && (display_options & OPT_DISP_NO_MT_GRP))
@@ -745,7 +746,7 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 			int count = 0;
 			while (mem && !count) {
 				bt = (struct buddy *)mem->data;
-				if (bt->present) count++;
+				if (bt->present || GTK_WIDGET_VISIBLE(b->item)) count++;
 				mem = mem->next;
 			}
 			if (!count && (display_options & OPT_DISP_NO_MT_GRP))
@@ -1344,7 +1345,7 @@ gint log_timeout(char *name)
 		mem = g->members;
 		while (mem) {
 			b = (struct buddy *)mem->data;
-                        if (b->present) {
+                        if (b->present || GTK_WIDGET_VISIBLE(b->item)) {
 				count++;
 				break;
 			}
