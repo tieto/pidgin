@@ -987,6 +987,7 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
 				   "Received an XFR SB request when there's no unused "
 				   "switchboards!\n");
+		return FALSE;
 	}
 
 	msn_switchboard_set_auth_key(swboard, params[4]);
