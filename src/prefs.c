@@ -64,6 +64,7 @@ static struct window_size conv_size_new, buddy_chat_size_new;
 char fontface_new[128];
 char fontface[128];
 
+GtkWidget *tree_v = NULL;
 GtkWidget *prefs_away_list = NULL;
 GtkWidget *prefs_away_menu = NULL;
 GtkWidget *preftree = NULL;
@@ -105,6 +106,7 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 		sound_file_new[v] = NULL;
 		}
 	}
+	tree_v = NULL;
 	sound_entry = NULL;
 	browser_entry = NULL;
 	debugbutton = NULL;
@@ -906,6 +908,12 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				if (g_module_symbol(plug->handle, "gaim_plugin_config_gtk", (gpointer *)&config)) {
 					plug->iter = g_new0(GtkTreeIter, 1);
 					prefs_notebook_add_page(plug->desc.name, NULL, config(), plug->iter, &plugin_iter, notebook_page++);
+					if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(prefstree), &plugin_iter) == 1) {
+						/* Expand the tree for the first plugin added */
+						GtkTreePath *path2  = gtk_tree_model_get_path(prefstree, &plugin_iter);
+						gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v), path2, TRUE);
+						gtk_tree_path_free (path2);
+					}
 				}
 			}
 #else
@@ -1476,7 +1484,6 @@ void show_prefs()
 	GtkWidget *vbox, *vbox2;
 	GtkWidget *hbox;
 	GtkWidget *frame;
-	GtkWidget *tree_v;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *cell;
 	GtkTreeSelection *sel;
