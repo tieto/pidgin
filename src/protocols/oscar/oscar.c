@@ -2978,6 +2978,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (time_idle > 0)
 		gaim_prpl_got_user_idle(account, info->sn, TRUE, time_idle);
+	else
+		gaim_prpl_got_user_idle(account, info->sn, FALSE, 0);
 
 	return 1;
 }

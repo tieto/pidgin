@@ -991,7 +991,7 @@ static GList *jabber_status_types(GaimAccount *account)
 	/*
 	if(js->protocol_version == JABBER_PROTO_0_9)
 		m = g_list_append(m, _("Invisible"));
-		*/
+	*/
 
 	return types;
 }

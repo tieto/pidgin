@@ -3101,7 +3101,7 @@ static GList *yahoo_status_types(GaimAccount *account)
 		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available-wm",
 		                                       "Available With Message", TRUE, TRUE, FALSE,
 		                                       "message", _("Message"),
-		                                       gaim_value_new(GAIM_TYPE_STRING));
+		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 		types = g_list_append(types, type);
 
 
@@ -3135,7 +3135,7 @@ static GList *yahoo_status_types(GaimAccount *account)
 		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away",
 		                                       "Away", TRUE, TRUE, FALSE,
 		                                       "message", _("Message"),
-		                                       gaim_value_new(GAIM_TYPE_STRING));
+		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 		types = g_list_append(types, type);
 	}
 	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, "invisible", _("Invisible"), TRUE);

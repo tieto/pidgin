@@ -2173,7 +2173,7 @@ static GList *zephyr_status_types(GaimAccount *account)
 
 	type = gaim_status_type_new_with_attrs(
 					       GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, FALSE,
-					       "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+					       "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	return types;

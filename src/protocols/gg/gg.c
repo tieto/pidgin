@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10849 2004-09-05 06:29:51Z faceprint $
+ * $Id: gg.c 10926 2004-09-10 19:51:52Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -274,43 +274,43 @@ static GList *agg_status_types(GaimAccount *account)
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_AVAILABLE, "available", AGG_STATUS_AVAIL,
 		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_AWAY, "away", AGG_STATUS_BUSY,
 		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_HIDDEN, "invisible", AGG_STATUS_INVISIBLE,
 		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_AVAILABLE, "available-friends", AGG_STATUS_AVAIL_FRIENDS,
 		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_AWAY, "away-friends", AGG_STATUS_BUSY_FRIENDS,
 		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_HIDDEN, "invisible-friends", AGG_STATUS_INVISIBLE,
 		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_UNAVAILABLE, "unavailable", AGG_STATUS_NOT_AVAIL,
 		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	return types;

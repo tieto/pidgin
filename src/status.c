@@ -171,8 +171,8 @@ static GHashTable *buddy_presences = NULL;
  **************************************************************************/
 GaimStatusType *
 gaim_status_type_new_full(GaimStatusPrimitive primitive, const char *id,
-		const char *name, gboolean saveable,
-		gboolean user_settable, gboolean independent)
+						  const char *name, gboolean saveable,
+						  gboolean user_settable, gboolean independent)
 {
 	GaimStatusType *status_type;
 
@@ -194,7 +194,7 @@ gaim_status_type_new_full(GaimStatusPrimitive primitive, const char *id,
 
 GaimStatusType *
 gaim_status_type_new(GaimStatusPrimitive primitive, const char *id,
-		const char *name, gboolean user_settable)
+					 const char *name, gboolean user_settable)
 {
 	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, NULL);
 	g_return_val_if_fail(id        != NULL,              NULL);
@@ -905,8 +905,8 @@ gaim_presence_new(GaimPresenceContext context)
 	presence->context = context;
 
 	presence->status_table =
-	g_hash_table_new_full(g_str_hash, g_str_equal,
-	g_free, (GFreeFunc)gaim_status_destroy);
+		g_hash_table_new_full(g_str_hash, g_str_equal,
+							  g_free, (GFreeFunc)gaim_status_destroy);
 
 	return presence;
 }
@@ -915,6 +915,7 @@ GaimPresence *
 gaim_presence_new_for_account(GaimAccount *account)
 {
 	GaimPresence *presence;
+
 	g_return_val_if_fail(account != NULL, NULL);
 
 	presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_ACCOUNT);

@@ -93,7 +93,7 @@ static void rendezvous_addtolocal(GaimConnection *gc, const char *name, const ch
 	b = gaim_buddy_new(account, name, NULL);
 	/* gaim_blist_node_set_flag(b, GAIM_BLIST_NODE_FLAG_NO_SAVE); */
 	gaim_blist_add_buddy(b, NULL, g, NULL);
-	serv_got_update(gc, b->name, TRUE, 0);
+	gaim_prpl_got_user_status(account, b->name, "online", NULL);
 
 #if 0
 	RendezvousBuddy *rb;
@@ -123,7 +123,7 @@ static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, con
 	if (b == NULL)
 		return;
 
-	serv_got_update(gc, b->name, FALSE, 0);
+	gaim_prpl_got_user_status(account, b->name, "offline", NULL);
 	gaim_blist_remove_buddy(b);
 	/* XXX - This results in incorrect group counts--needs to be fixed in the core */
 	/* XXX - We also need to call remove_idle_buddy() in server.c for idle buddies */ 
@@ -155,7 +155,7 @@ static void rendezvous_removeallfromlocal(GaimConnection *gc)
 					b = (GaimBuddy *)bnode;
 					if (b->account != account)
 						continue;
-					serv_got_update(gc, b->name, FALSE, 0);
+					gaim_prpl_got_user_status(account, b->name, "offline", NULL);
 					gaim_blist_remove_buddy(b);
 				}
 			}
@@ -241,11 +241,12 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 				rb->idle += 978307200; /* convert to seconds-since-epoch */
 			}
 			rb->status = UC_IDLE;
+			gaim_prpl_got_user_idle(account, b->name, TRUE, rb->idle);
 		} else if (!strcmp(node1->value, "dnd")) {
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
 		}
-		serv_got_update(gc, name, TRUE, 0);
+		gaim_prpl_got_user_status(account, b->name, "online", NULL);
 		/* XXX - Idle time is rb->idle and status is rb->status */
 	}
 
