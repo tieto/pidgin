@@ -529,9 +529,8 @@ gtk_imhtml_select_none (GtkIMHtml *imhtml)
 
 			if (chunk->selected) {
 				chunk->selected = FALSE;
-				chunk->sel_start = chunk->sel_end = NULL;
-				gdk_window_clear_area (GTK_LAYOUT (imhtml)->bin_window,
-						       chunk->x, chunk->y, chunk->width, chunk->height);
+				chunk->sel_start = chunk->text;
+				chunk->sel_end = NULL;
 				if (DRAW_IMG (bit))
 					draw_img (imhtml, chunk);
 				else
@@ -749,8 +748,8 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 					got_end = TRUE;
 				} else {
 					if ( !chunk->selected ||
-					    (chunk->sel_end != new_pos) ||
-					    (chunk->sel_start != NULL))
+					    (chunk->sel_end != NULL) ||
+					    (chunk->sel_start != chunk->text))
 						redraw = TRUE;
 					chunk->selected = TRUE;
 					chunk->sel_start = chunk->text;
@@ -759,9 +758,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 
 				break;
 			case 2:
-				if ( chunk->selected ||
-				    (chunk->sel_start != chunk->text) ||
-				    (chunk->sel_end != NULL))
+				if (chunk->selected)
 					redraw = TRUE;
 				chunk->selected = FALSE;
 				chunk->sel_start = chunk->text;
@@ -774,8 +771,6 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 								       chunk, smileys);
 
 			if (redraw) {
-				gdk_window_clear_area (GTK_LAYOUT (imhtml)->bin_window,
-						       chunk->x, chunk->y, chunk->width, chunk->height);
 				if (DRAW_IMG (bit))
 					draw_img (imhtml, chunk);
 				else
@@ -1705,319 +1700,10 @@ static GdkColor *
 gtk_imhtml_get_color (const gchar *color)
 {
 	GdkColor c;
-	gboolean valid = TRUE;
 
-	g_return_val_if_fail (color != NULL, NULL);
+	gdk_color_parse (color, &c);
 
-	c.red = 0; c.green = 0; c.blue = 0;
-
-	if (!g_strcasecmp (color, "aliceblue")) {
-		c.red = 0xf000; c.green = 0xf800; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "antiquewhite")) {
-		c.red = 0xfa00; c.green = 0xeb00; c.blue = 0xd700;
-	} else if (!g_strcasecmp (color, "aqua")) {
-		c.red = 0; c.green = 0xff00; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "aquamarine")) {
-		c.red = 0; c.green = 0xff00; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "azure")) {
-		c.red = 0xf000; c.green = 0xff00; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "beige")) {
-		c.red = 0xf500; c.green = 0xf500; c.blue = 0xdc00;
-	} else if (!g_strcasecmp (color, "bisque")) {
-		c.red = 0xff00; c.green = 0xe400; c.blue = 0xc400;
-	} else if (!g_strcasecmp (color, "black")) {
-		c.red = 0; c.green = 0; c.blue = 0;
-	} else if (!g_strcasecmp (color, "blanchedalmond")) {
-		c.red = 0xff00; c.green = 0xeb00; c.blue = 0xcd00;
-	} else if (!g_strcasecmp (color, "blue")) {
-		c.red = 0; c.green = 0; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "blueviolet")) {
-		c.red = 0; c.green = 0; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "brown")) {
-		c.red = 0xa500; c.green = 0x2a00; c.blue = 0x2a00;
-	} else if (!g_strcasecmp (color, "burlywood")) {
-		c.red = 0xde00; c.green = 0xb800; c.blue = 0x8700;
-	} else if (!g_strcasecmp (color, "cadetblue")) {
-		c.red = 0x5f00; c.green = 0x9e00; c.blue = 0xa000;
-	} else if (!g_strcasecmp (color, "chartreuse")) {
-		c.red = 0x7f00; c.green = 0xff00; c.blue = 0;
-	} else if (!g_strcasecmp (color, "chocolate")) {
-		c.red = 0xd200; c.green = 0x6900; c.blue = 0x1e00;
-	} else if (!g_strcasecmp (color, "coral")) {
-		c.red = 0xff00; c.green = 0x7f00; c.blue = 0x5000;
-	} else if (!g_strcasecmp (color, "cornflowerblue")) {
-		c.red = 0x6400; c.green = 0x9500; c.blue = 0xed00;
-	} else if (!g_strcasecmp (color, "cornsilk")) {
-		c.red = 0xff00; c.green = 0xf800; c.blue = 0xdc00;
-	} else if (!g_strcasecmp (color, "crimson")) {
-		c.red = 0xdc00; c.green = 0x1400; c.blue = 0x3c00;
-	} else if (!g_strcasecmp (color, "cyan")) {
-		c.red = 0; c.green = 0xff00; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "darkblue")) {
-		c.red = 0; c.green = 0; c.blue = 0x8b00;
-	} else if (!g_strcasecmp (color, "darkcyan")) {
-		c.red = 0; c.green = 0x8b00; c.blue = 0x8b00;
-	} else if (!g_strcasecmp (color, "darkgoldenrod")) {
-		c.red = 0xb800; c.green = 0x8600; c.blue = 0x0b00;
-	} else if (!g_strcasecmp (color, "darkgray")) {
-		c.red = 0xa900; c.green = 0xa900; c.blue = 0xa900;
-	} else if (!g_strcasecmp (color, "darkgreen")) {
-		c.red = 0; c.green = 0x6400; c.blue = 0;
-	} else if (!g_strcasecmp (color, "darkkhaki")) {
-		c.red = 0xbd00; c.green = 0xb700; c.blue = 0x6b00;
-	} else if (!g_strcasecmp (color, "darkmagenta")) {
-		c.red = 0x8b00; c.green = 0; c.blue = 0x8b00;
-	} else if (!g_strcasecmp (color, "darkolivegreen")) {
-		c.red = 0x5500; c.green = 0x6b00; c.blue = 0x2f00;
-	} else if (!g_strcasecmp (color, "darkorange")) {
-		c.red = 0xff00; c.green = 0x8c00; c.blue = 0;
-	} else if (!g_strcasecmp (color, "darkorchid")) {
-		c.red = 0x9900; c.green = 0x3200; c.blue = 0xcc00;
-	} else if (!g_strcasecmp (color, "darkred")) {
-		c.red = 0x8b00; c.green = 0; c.blue = 0;
-	} else if (!g_strcasecmp (color, "darksalmon")) {
-		c.red = 0xe900; c.green = 0x9600; c.blue = 0x7a00;
-	} else if (!g_strcasecmp (color, "darkseagreen")) {
-		c.red = 0x8f00; c.green = 0xbc00; c.blue = 0x8f00;
-	} else if (!g_strcasecmp (color, "darkslateblue")) {
-		c.red = 0x4800; c.green = 0x3d00; c.blue = 0x8b00;
-	} else if (!g_strcasecmp (color, "darkslategray")) {
-		c.red = 0x2f00; c.green = 0x4f00; c.blue = 0x4f00;
-	} else if (!g_strcasecmp (color, "darkturquoise")) {
-		c.red = 0; c.green = 0xce00; c.blue = 0xd100;
-	} else if (!g_strcasecmp (color, "darkviolet")) {
-		c.red = 0x9400; c.green = 0; c.blue = 0xd300;
-	} else if (!g_strcasecmp (color, "deeppink")) {
-		c.red = 0xff00; c.green = 0x1400; c.blue = 0x9300;
-	} else if (!g_strcasecmp (color, "deepskyblue")) {
-		c.red = 0; c.green = 0xbf00; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "dimgray")) {
-		c.red = 0x6900; c.green = 0x6900; c.blue = 0x6900;
-	} else if (!g_strcasecmp (color, "dodgerblue")) {
-		c.red = 0x1e00; c.green = 0x9000; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "firebrick")) {
-		c.red = 0xb200; c.green = 0x2200; c.blue = 0x2200;
-	} else if (!g_strcasecmp (color, "floralwhite")) {
-		c.red = 0xff00; c.green = 0xfa00; c.blue = 0xf000;
-	} else if (!g_strcasecmp (color, "forestgreen")) {
-		c.red = 0x2200; c.green = 0x8b00; c.blue = 0x2200;
-	} else if (!g_strcasecmp (color, "fuchsia")) {
-		c.red = 0xff00; c.green = 0; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "gainsboro")) {
-		c.red = 0xdc00; c.green = 0xdc00; c.blue = 0xdc00;
-	} else if (!g_strcasecmp (color, "ghostwhite")) {
-		c.red = 0xf800; c.green = 0xf800; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "gold")) {
-		c.red = 0xff00; c.green = 0xd700; c.blue = 0;
-	} else if (!g_strcasecmp (color, "goldenrod")) {
-		c.red = 0xff00; c.green = 0xd700; c.blue = 0;
-	} else if (!g_strcasecmp (color, "gray")) {
-		c.red = 0x8000; c.green = 0x8000; c.blue = 0x8000;
-	} else if (!g_strcasecmp (color, "green")) {
-		c.red = 0; c.green = 0x8000; c.blue = 0;
-	} else if (!g_strcasecmp (color, "greenyellow")) {
-		c.red = 0; c.green = 0x8000; c.blue = 0;
-	} else if (!g_strcasecmp (color, "honeydew")) {
-		c.red = 0xf000; c.green = 0xff00; c.blue = 0xf000;
-	} else if (!g_strcasecmp (color, "hotpink")) {
-		c.red = 0xff00; c.green = 0x6900; c.blue = 0xb400;
-	} else if (!g_strcasecmp (color, "indianred")) {
-		c.red = 0xcd00; c.green = 0x5c00; c.blue = 0x5c00;
-	} else if (!g_strcasecmp (color, "indigo")) {
-		c.red = 0x4b00; c.green = 0; c.blue = 0x8200;
-	} else if (!g_strcasecmp (color, "ivory")) {
-		c.red = 0xff00; c.green = 0xff00; c.blue = 0xf000;
-	} else if (!g_strcasecmp (color, "khaki")) {
-		c.red = 0xf000; c.green = 0xe600; c.blue = 0x8c00;
-	} else if (!g_strcasecmp (color, "lavender")) {
-		c.red = 0xe600; c.green = 0xe600; c.blue = 0xfa00;
-	} else if (!g_strcasecmp (color, "lavenderblush")) {
-		c.red = 0xe600; c.green = 0xe600; c.blue = 0xfa00;
-	} else if (!g_strcasecmp (color, "lawngreen")) {
-		c.red = 0x7c00; c.green = 0xfc00; c.blue = 0;
-	} else if (!g_strcasecmp (color, "lemonchiffon")) {
-		c.red = 0xff00; c.green = 0xfa00; c.blue = 0xcd00;
-	} else if (!g_strcasecmp (color, "lightblue")) {
-		c.red = 0xad00; c.green = 0xd800; c.blue = 0xe600;
-	} else if (!g_strcasecmp (color, "lightcoral")) {
-		c.red = 0xf000; c.green = 0x8000; c.blue = 0x8000;
-	} else if (!g_strcasecmp (color, "lightcyan")) {
-		c.red = 0xe000; c.green = 0xff00; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "lightgoldenrodyellow")) {
-		c.red = 0xfa00; c.green = 0xfa00; c.blue = 0xd200;
-	} else if (!g_strcasecmp (color, "lightgreen")) {
-		c.red = 0x9000; c.green = 0xee00; c.blue = 0x9000;
-	} else if (!g_strcasecmp (color, "lightgray")) {
-		c.red = 0xd300; c.green = 0xd300; c.blue = 0xd300;
-	} else if (!g_strcasecmp (color, "lightpink")) {
-		c.red = 0xff00; c.green = 0xb600; c.blue = 0xc100;
-	} else if (!g_strcasecmp (color, "lightsalmon")) {
-		c.red = 0xff00; c.green = 0xa000; c.blue = 0x7a00;
-	} else if (!g_strcasecmp (color, "lightseagreen")) {
-		c.red = 0x2000; c.green = 0xb200; c.blue = 0xaa00;
-	} else if (!g_strcasecmp (color, "lightskyblue")) {
-		c.red = 0x8700; c.green = 0xce00; c.blue = 0xfa00;
-	} else if (!g_strcasecmp (color, "lightslategray")) {
-		c.red = 0x7700; c.green = 0x8800; c.blue = 0x9900;
-	} else if (!g_strcasecmp (color, "lightsteelblue")) {
-		c.red = 0xb000; c.green = 0xc400; c.blue = 0xde00;
-	} else if (!g_strcasecmp (color, "lightyellow")) {
-		c.red = 0xff00; c.green = 0xff00; c.blue = 0xe000;
-	} else if (!g_strcasecmp (color, "lime")) {
-		c.red = 0; c.green = 0xff00; c.blue = 0;
-	} else if (!g_strcasecmp (color, "limegreen")) {
-		c.red = 0; c.green = 0xff00; c.blue = 0;
-	} else if (!g_strcasecmp (color, "linen")) {
-		c.red = 0xfa00; c.green = 0xf000; c.blue = 0xe600;
-	} else if (!g_strcasecmp (color, "magenta")) {
-		c.red = 0xff00; c.green = 0; c.blue = 0xff00;
-	} else if (!g_strcasecmp (color, "maroon")) {
-		c.red = 0x8000; c.green = 0; c.blue = 0;
-	} else if (!g_strcasecmp (color, "mediumaquamarine")) {
-		c.red = 0x6600; c.green = 0xcd00; c.blue = 0xaa00;
-	} else if (!g_strcasecmp (color, "mediumblue")) {
-		c.red = 0; c.green = 0; c.blue = 0xcd00;
-	} else if (!g_strcasecmp (color, "mediumorchid")) {
-		c.red = 0xba00; c.green = 0x5500; c.blue = 0xd300;
-	} else if (!g_strcasecmp (color, "mediumpurple")) {
-		c.red = 0x93; c.green = 0x7000; c.blue = 0xdb00;
-	} else if (!g_strcasecmp (color, "mediumseagreen")) {
-		c.red = 0x3c00; c.green = 0xb300; c.blue = 0x7100;
-	} else if (!g_strcasecmp (color, "mediumslateblue")) {
-		c.red = 0x7b00; c.green = 0x6800; c.blue = 0xee00;
-	} else if (!g_strcasecmp (color, "mediumspringgreen")) {
-		c.red = 0; c.green = 0xfa00; c.blue = 0x9a00;
-	} else if (!g_strcasecmp (color, "mediumturquoise")) {
-		c.red = 0x4800; c.green = 0xd100; c.blue = 0xcc00;
-	} else if (!g_strcasecmp (color, "mediumvioletred")) {
-		c.red = 0xc700; c.green = 0x1500; c.blue = 0x8500;
-	} else if (!g_strcasecmp (color, "midnightblue")) {
-		c.red = 0x1900; c.green = 0x1900; c.blue = 0x7000;
-	} else if (!g_strcasecmp (color, "mintcream")) {
-		c.red = 0xf500; c.green = 0xff00; c.blue = 0xfa00;
-	} else if (!g_strcasecmp (color, "mistyrose")) {
-		c.red = 0xff00; c.green = 0xe400; c.blue = 0xe100;
-	} else if (!g_strcasecmp (color, "moccasin")) {
-		c.red = 0xff00; c.green = 0xe400; c.blue = 0xb500;
-	} else if (!g_strcasecmp (color, "navajowhite")) {
-		c.red = 0xff00; c.green = 0xde00; c.blue = 0xad00;
-	} else if (!g_strcasecmp (color, "navy")) {
-		c.red = 0; c.green = 0x8000; c.blue = 0;
-	} else if (!g_strcasecmp (color, "oldlace")) {
-		c.red = 0xfd00; c.green = 0xf500; c.blue = 0xe600;
-	} else if (!g_strcasecmp (color, "olive")) {
-		c.red = 0x8000; c.green = 0x8000; c.blue = 0;
-	} else if (!g_strcasecmp (color, "olivedrab")) {
-		c.red = 0x8000; c.green = 0x8000; c.blue = 0;
-	} else if (!g_strcasecmp (color, "orange")) {
-		c.red = 0xff00; c.green = 0xa500; c.blue = 0;
-	} else if (!g_strcasecmp (color, "orangered")) {
-		c.red = 0xff00; c.green = 0xa500; c.blue = 0;
-	} else if (!g_strcasecmp (color, "orchid")) {
-		c.red = 0xda00; c.green = 0x7000; c.blue = 0xd600;
-	} else if (!g_strcasecmp (color, "palegoldenrod")) {
-		c.red = 0xee00; c.green = 0xe800; c.blue = 0xaa00;
-	} else if (!g_strcasecmp (color, "palegreen")) {
-		c.red = 0x9800; c.green = 0xfb00; c.blue = 0x9800;
-	} else if (!g_strcasecmp (color, "paleturquoise")) {
-		c.red = 0xaf00; c.green = 0xee00; c.blue = 0xee00;
-	} else if (!g_strcasecmp (color, "palevioletred")) {
-		c.red = 0xdb00; c.green = 0x7000; c.blue = 0x9300;
-	} else if (!g_strcasecmp (color, "papayawhip")) {
-		c.red = 0xff00; c.green = 0xef00; c.blue = 0xd500;
-	} else if (!g_strcasecmp (color, "peachpuff")) {
-		c.red = 0xff00; c.green = 0xda00; c.blue = 0xb900;
-	} else if (!g_strcasecmp (color, "peru")) {
-		c.red = 0xcd00; c.green = 0x8500; c.blue = 0x3f00;
-	} else if (!g_strcasecmp (color, "pink")) {
-		c.red = 0xff00; c.green = 0xc000; c.blue = 0xcb00;
-	} else if (!g_strcasecmp (color, "plum")) {
-		c.red = 0xdd00; c.green = 0xa000; c.blue = 0xdd00;
-	} else if (!g_strcasecmp (color, "powderblue")) {
-		c.red = 0xb000; c.green = 0xe000; c.blue = 0xe600;
-	} else if (!g_strcasecmp (color, "purple")) {
-		c.red = 0x8000; c.green = 0; c.blue = 0x8000;
-	} else if (!g_strcasecmp (color, "red")) {
-		c.red = 0xff00; c.green = 0; c.blue = 0;
-	} else if (!g_strcasecmp (color, "rosybrown")) {
-		c.red = 0xbc00; c.green = 0x8f00; c.blue = 0x8f00;
-	} else if (!g_strcasecmp (color, "royalblue")) {
-		c.red = 0x4100; c.green = 0x6900; c.blue = 0xe100;
-	} else if (!g_strcasecmp (color, "saddlebrown")) {
-		c.red = 0x8b00; c.green = 0x4500; c.blue = 0x1300;
-	} else if (!g_strcasecmp (color, "salmon")) {
-		c.red = 0xfa00; c.green = 0x8000; c.blue = 0x7200;
-	} else if (!g_strcasecmp (color, "sandybrown")) {
-		c.red = 0xf400; c.green = 0xa400; c.blue = 0x6000;
-	} else if (!g_strcasecmp (color, "seagreen")) {
-		c.red = 0x2e00; c.green = 0x8b00; c.blue = 0x5700;
-	} else if (!g_strcasecmp (color, "seashell")) {
-		c.red = 0xff00; c.green = 0xf500; c.blue = 0xee00;
-	} else if (!g_strcasecmp (color, "sienna")) {
-		c.red = 0xa000; c.green = 0x5200; c.blue = 0x2d00;
-	} else if (!g_strcasecmp (color, "silver")) {
-		c.red = 0xc000; c.green = 0xc000; c.blue = 0xc000;
-	} else if (!g_strcasecmp (color, "skyblue")) {
-		c.red = 0x8700; c.green = 0xce00; c.blue = 0xeb00;
-	} else if (!g_strcasecmp (color, "slateblue")) {
-		c.red = 0x6a00; c.green = 0x5a00; c.blue = 0xcd00;
-	} else if (!g_strcasecmp (color, "slategray")) {
-		c.red = 0x7000; c.green = 0x8000; c.blue = 0x9000;
-	} else if (!g_strcasecmp (color, "springgreen")) {
-		c.red = 0; c.green = 0xff00; c.blue = 0x7f00;
-	} else if (!g_strcasecmp (color, "steelblue")) {
-		c.red = 0x4600; c.green = 0x8200; c.blue = 0xb400;
-	} else if (!g_strcasecmp (color, "teal")) {
-		c.red = 0; c.green = 0x8000; c.blue = 0x8000;
-	} else if (!g_strcasecmp (color, "thistle")) {
-		c.red = 0xd800; c.green = 0xbf00; c.blue = 0xd800;
-	} else if (!g_strcasecmp (color, "tomato")) {
-		c.red = 0xff00; c.green = 0x6300; c.blue = 0x4700;
-	} else if (!g_strcasecmp (color, "turquoise")) {
-		c.red = 0x4000; c.green = 0xe000; c.blue = 0xd000;
-	} else if (!g_strcasecmp (color, "violet")) {
-		c.red = 0xee00; c.green = 0x8200; c.blue = 0xee00;
-	} else if (!g_strcasecmp (color, "wheat")) {
-		c.red = 0xf500; c.green = 0xde00; c.blue = 0xb300;
-	} else if (!g_strcasecmp (color, "white")) {
-		c.red = 0xfe00; c.green = 0xfe00; c.blue = 0xfe00;
-	} else if (!g_strcasecmp (color, "whitesmoke")) {
-		c.red = 0xfe00; c.green = 0xfe00; c.blue = 0xfe00;
-	} else if (!g_strcasecmp (color, "yellow")) {
-		c.red = 0xff00; c.green = 0xff00; c.blue = 0;
-	} else if (!g_strcasecmp (color, "yellowgreen")) {
-		c.red = 0xff00; c.green = 0xff00; c.blue = 0;
-	} else {
-		const gchar *hex;
-		guint32 value;
-
-		if (color [0] == '#')
-			hex = color + 1;
-		else
-			hex = color;
-
-		if (strlen (hex) == 6) {
-			gint i = 0;
-			for ( ; i < 6; i++)
-				if (!isxdigit ((gint) hex [i]))
-					break;
-			if (i == 6) {
-				sscanf (hex, "%x", &value);
-				c.red = (value & 0xff0000) >> 8;
-				c.green = value & 0xff00;
-				c.blue = (value & 0xff) << 8;
-			} else {
-				valid = FALSE;
-			}
-		} else {
-			valid = FALSE;
-		}
-	}
-
-	if (valid)
-		return gdk_color_copy (&c);
-
-	return NULL;
+	return gdk_color_copy (&c);
 }
 
 static gint
