@@ -1081,6 +1081,39 @@ gaim_presence_add_presence(GaimPresence *presence, const GList *source_list)
 		gaim_presence_add_status(presence, (GaimStatus *)l->data);
 }
 
+/*
+ * TODO: Should we g_return_if_fail(active == status_id->active); ?
+ *
+ * TODO: If a buddy signed on or off, should we do any of the following?
+ *       (Note: We definitely need to do some of this somewhere, I'm just 
+ *        not sure if here is the correct place.)
+ *
+ *           char *tmp = g_strdup_printf(_("%s logged in."), alias);
+ *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+ *           g_free(tmp);
+ *
+ *           GaimLog *log = gaim_account_get_log(account);
+ *           char *tmp = g_strdup_printf(_("%s signed on"), alias);
+ *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
+ *           g_free(tmp);
+ *
+ *           gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE); 
+ *
+ *           char *tmp = g_strdup_printf(_("%s logged out."), alias);
+ *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+ *           g_free(tmp); 
+ *
+ *           char *tmp = g_strdup_printf(_("%s signed off"), alias);
+ *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
+ *           g_free(tmp);
+ *
+ *           serv_got_typing_stopped(gc, name);
+ *
+ *           gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE); 
+ *
+ *           gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
+ *
+ */
 void
 gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 		gboolean active)

@@ -215,7 +215,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 
 	str = g_string_sized_new(4096);
 
-	g_string_append(str, 
+	g_string_append(str,
 					_("Gaim is a modular messaging client capable of using "
 					  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, "
 					  "Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
@@ -319,7 +319,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
 	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
-	
+
 	/* Close Button */
 	bbox = gtk_hbutton_box_new();
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
