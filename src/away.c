@@ -65,6 +65,28 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 	plugin_event(event_back, 0, 0, 0, 0);
 }
 
+
+/*
+ * rcg10312000 This could be more robust, but it works for my current
+ *  goal: to remove those annoying <BR> tags.  :)
+ */
+static void strncpy_nohtml(gchar *dest, const gchar *src, size_t destsize)
+{
+	gchar *ptr;
+	g_snprintf(dest, destsize, "%s", src);
+
+	while (1) {
+		ptr = strstr(dest, "<BR>");
+		if (ptr == NULL)  /* done? */
+			return;
+
+			/* replace <BR> with a newline. */
+		*ptr = '\n';
+		memmove(ptr + 1, ptr + 4, strlen(ptr + 4) + 1);
+	}
+}
+
+
 void do_away_message(GtkWidget *w, struct away_message *a)
 {
 	GtkWidget *back;
@@ -102,8 +124,13 @@ void do_away_message(GtkWidget *w, struct away_message *a)
                 vbox = gtk_vbox_new(FALSE, 5);
 
 		awaytext = gtk_text_new(NULL, NULL);
+
+		/* rcg10312000 Convert basic HTML (<BR>, etc) to plain text.
 		g_snprintf(buf, sizeof(buf), "%s", a->message);
-                vscrollbar = gtk_vscrollbar_new(GTK_TEXT(awaytext)->vadj);
+		*/
+		strncpy_nohtml(buf, a->message, sizeof (buf));
+
+        vscrollbar = gtk_vscrollbar_new(GTK_TEXT(awaytext)->vadj);
 		gtk_widget_show(vscrollbar);
 		gtk_widget_set_usize(awaytext, 225, 75);
                 gtk_text_set_word_wrap(GTK_TEXT(awaytext), TRUE);
