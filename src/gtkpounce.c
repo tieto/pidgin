@@ -243,8 +243,6 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 
 	delete_win_cb(NULL, NULL, dialog);
 
-	gaim_pounces_sync();
-
 	/* Rebuild the pounce menu */
 	blist = gaim_get_blist();
 

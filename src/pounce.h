@@ -289,11 +289,6 @@ GaimPounce *gaim_find_pounce(const GaimAccount *pouncer,
 gboolean gaim_pounces_load(void);
 
 /**
- * Force an immediate write of pounces.
- */
-void gaim_pounces_sync(void);
-
-/**
  * Registers a pounce handler for a UI.
  *
  * @param ui          The UI name.

@@ -1334,7 +1334,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* Buddy Icon */
 	value = dialog->icon_path;
 	gaim_account_set_buddy_icon(dialog->account, value);
-	
+
 	/* Remember Password */
 	gaim_account_set_remember_password(dialog->account,
 			gtk_toggle_button_get_active(

@@ -70,9 +70,13 @@ typedef struct
 
 static GHashTable *pounce_handlers = NULL;
 static GList      *pounces = NULL;
-static guint       pounces_save_timer = 0;
+static guint       save_timer = 0;
 static gboolean    pounces_loaded = FALSE;
 
+
+/*********************************************************************
+ * Private utility functions                                         *
+ *********************************************************************/
 
 static GaimPounceActionData *
 find_action_data(const GaimPounce *pounce, const char *name)
@@ -99,362 +103,162 @@ free_action_data(gpointer data)
 	g_free(action_data);
 }
 
-static gboolean
-pounces_save_cb(gpointer unused)
-{
-	gaim_pounces_sync();
-	pounces_save_timer = 0;
 
+/*********************************************************************
+ * Writing to disk                                                   *
+ *********************************************************************/
+
+static void
+action_parameter_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
+{
+	const char *name, *param_value;
+	xmlnode *node, *child;
+
+	name        = (const char *)key;
+	param_value = (const char *)value;
+	node        = (xmlnode *)user_data;
+
+	child = xmlnode_new_child(node, "param");
+	xmlnode_set_attrib(child, "name", name);
+	xmlnode_insert_data(child, param_value, -1);
+}
+
+static void
+action_parameter_list_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
+{
+	const char *action;
+	GaimPounceActionData *action_data;
+	xmlnode *node, *child;
+
+	action      = (const char *)key;
+	action_data = (GaimPounceActionData *)value;
+	node        = (xmlnode *)user_data;
+
+	if (!action_data->enabled)
+		return;
+
+	child = xmlnode_new_child(node, "action");
+	xmlnode_set_attrib(child, "type", action);
+
+	g_hash_table_foreach(action_data->atts, action_parameter_to_xmlnode, child);
+}
+
+static void
+add_event_to_xmlnode(xmlnode *node, const char *type)
+{
+	xmlnode *child;
+
+	child = xmlnode_new_child(node, "event");
+	xmlnode_set_attrib(child, "type", type);
+}
+
+static xmlnode *
+pounce_to_xmlnode(GaimPounce *pounce)
+{
+	xmlnode *node, *child;
+	GaimAccount *pouncer;
+	GaimPounceEvent events;
+
+	pouncer = gaim_pounce_get_pouncer(pounce);
+	events  = gaim_pounce_get_events(pounce);
+
+	node = xmlnode_new("pounce");
+	xmlnode_set_attrib(node, "ui", pounce->ui_type);
+
+	child = xmlnode_new_child(node, "account");
+	xmlnode_set_attrib(child, "protocol", pouncer->protocol_id);
+	xmlnode_insert_data(child, gaim_account_get_username(pouncer), -1);
+
+	child = xmlnode_new_child(node, "pouncee");
+	xmlnode_insert_data(child, gaim_pounce_get_pouncee(pounce), -1);
+
+	/* Write pounce events */
+	child = xmlnode_new_child(node, "events");
+	if (events & GAIM_POUNCE_SIGNON)
+		add_event_to_xmlnode(child, "sign-on");
+	if (events & GAIM_POUNCE_SIGNOFF)
+		add_event_to_xmlnode(child, "sign-off");
+	if (events & GAIM_POUNCE_AWAY)
+		add_event_to_xmlnode(child, "away");
+	if (events & GAIM_POUNCE_AWAY_RETURN)
+		add_event_to_xmlnode(child, "return-from-away");
+	if (events & GAIM_POUNCE_IDLE)
+		add_event_to_xmlnode(child, "idle");
+	if (events & GAIM_POUNCE_IDLE_RETURN)
+		add_event_to_xmlnode(child, "return-from-idle");
+	if (events & GAIM_POUNCE_TYPING)
+		add_event_to_xmlnode(child, "start-typing");
+	if (events & GAIM_POUNCE_TYPING_STOPPED)
+		add_event_to_xmlnode(child, "stop-typing");
+
+	/* Write pounce actions */
+	child = xmlnode_new_child(node, "actions");
+	g_hash_table_foreach(pounce->actions, action_parameter_list_to_xmlnode, child);
+
+	if (gaim_pounce_get_save(pounce))
+		child = xmlnode_new_child(node, "save");
+
+	return node;
+}
+
+static xmlnode *
+pounces_to_xmlnode(void)
+{
+	xmlnode *node, *child;
+	GList *cur;
+
+	node = xmlnode_new("pounces");
+	xmlnode_set_attrib(node, "version", "1.0");
+
+	for (cur = gaim_pounces_get_all(); cur != NULL; cur = cur->next)
+	{
+		child = pounce_to_xmlnode(cur->data);
+		xmlnode_insert_child(node, child);
+	}
+
+	return node;
+}
+
+static void
+sync_pounces(void)
+{
+	xmlnode *node;
+	char *data;
+
+	if (!pounces_loaded)
+	{
+		gaim_debug_error("pounce", "Attempted to save buddy pounces before "
+						 "they were read!\n");
+		return;
+	}
+
+	node = pounces_to_xmlnode();
+	data = xmlnode_to_formatted_str(node, NULL);
+	gaim_util_write_data_to_file("pounces.xml", data, -1);
+	g_free(data);
+	xmlnode_free(node);
+}
+
+static gboolean
+save_cb(gpointer data)
+{
+	sync_pounces();
+	save_timer = 0;
 	return FALSE;
 }
 
 static void
 schedule_pounces_save(void)
 {
-	if (!pounces_save_timer)
-		pounces_save_timer = gaim_timeout_add(5000, pounces_save_cb, NULL);
+	if (save_timer == 0)
+		save_timer = gaim_timeout_add(5000, save_cb, NULL);
 }
 
-GaimPounce *
-gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
-				const char *pouncee, GaimPounceEvent event)
-{
-	GaimPounce *pounce;
-	GaimPounceHandler *handler;
 
-	g_return_val_if_fail(ui_type != NULL, NULL);
-	g_return_val_if_fail(pouncer != NULL, NULL);
-	g_return_val_if_fail(pouncee != NULL, NULL);
-	g_return_val_if_fail(event   != 0,    NULL);
+/*********************************************************************
+ * Reading from disk                                                 *
+ *********************************************************************/
 
-	pounce = g_new0(GaimPounce, 1);
-
-	pounce->ui_type  = g_strdup(ui_type);
-	pounce->pouncer  = pouncer;
-	pounce->pouncee  = g_strdup(pouncee);
-	pounce->events   = event;
-
-	pounce->actions  = g_hash_table_new_full(g_str_hash, g_str_equal,
-											 g_free, free_action_data);
-
-	handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
-
-	if (handler != NULL && handler->new_pounce != NULL)
-		handler->new_pounce(pounce);
-
-	pounces = g_list_append(pounces, pounce);
-
-	return pounce;
-}
-
-void
-gaim_pounce_destroy(GaimPounce *pounce)
-{
-	GaimPounceHandler *handler;
-
-	g_return_if_fail(pounce != NULL);
-
-	handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
-
-	pounces = g_list_remove(pounces, pounce);
-
-	if (pounce->ui_type != NULL) g_free(pounce->ui_type);
-	if (pounce->pouncee != NULL) g_free(pounce->pouncee);
-
-	g_hash_table_destroy(pounce->actions);
-
-	if (handler != NULL && handler->free_pounce != NULL)
-		handler->free_pounce(pounce);
-
-	g_free(pounce);
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_destroy_all_by_account(GaimAccount *account)
-{
-	GaimAccount *pouncer;
-	GaimPounce *pounce;
-	GList *l, *l_next;
-
-	g_return_if_fail(account != NULL);
-
-	for (l = gaim_pounces_get_all(); l != NULL; l = l_next) {
-		pounce = (GaimPounce *)l->data;
-		l_next = l->next;
-
-		pouncer = gaim_pounce_get_pouncer(pounce);
-		if (pouncer == account)
-			gaim_pounce_destroy(pounce);
-	}
-}
-
-void
-gaim_pounce_set_events(GaimPounce *pounce, GaimPounceEvent events)
-{
-	g_return_if_fail(pounce != NULL);
-	g_return_if_fail(pounce != GAIM_POUNCE_NONE);
-
-	pounce->events = events;
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_set_pouncer(GaimPounce *pounce, GaimAccount *pouncer)
-{
-	g_return_if_fail(pounce  != NULL);
-	g_return_if_fail(pouncer != NULL);
-
-	pounce->pouncer = pouncer;
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_set_pouncee(GaimPounce *pounce, const char *pouncee)
-{
-	g_return_if_fail(pounce  != NULL);
-	g_return_if_fail(pouncee != NULL);
-
-	if (pounce->pouncee != NULL)
-		g_free(pounce->pouncee);
-
-	pounce->pouncee = (pouncee == NULL ? NULL : g_strdup(pouncee));
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_set_save(GaimPounce *pounce, gboolean save)
-{
-	g_return_if_fail(pounce != NULL);
-
-	pounce->save = save;
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_action_register(GaimPounce *pounce, const char *name)
-{
-	GaimPounceActionData *action_data;
-
-	g_return_if_fail(pounce != NULL);
-	g_return_if_fail(name   != NULL);
-
-	if (g_hash_table_lookup(pounce->actions, name) != NULL)
-		return;
-
-	action_data = g_new0(GaimPounceActionData, 1);
-
-	action_data->name    = g_strdup(name);
-	action_data->enabled = FALSE;
-	action_data->atts    = g_hash_table_new_full(g_str_hash, g_str_equal,
-												 g_free, g_free);
-
-	g_hash_table_insert(pounce->actions, g_strdup(name), action_data);
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_action_set_enabled(GaimPounce *pounce, const char *action,
-							   gboolean enabled)
-{
-	GaimPounceActionData *action_data;
-
-	g_return_if_fail(pounce != NULL);
-	g_return_if_fail(action != NULL);
-
-	action_data = find_action_data(pounce, action);
-
-	g_return_if_fail(action_data != NULL);
-
-	action_data->enabled = enabled;
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_action_set_attribute(GaimPounce *pounce, const char *action,
-								 const char *attr, const char *value)
-{
-	GaimPounceActionData *action_data;
-
-	g_return_if_fail(pounce != NULL);
-	g_return_if_fail(action != NULL);
-	g_return_if_fail(attr   != NULL);
-
-	action_data = find_action_data(pounce, action);
-
-	g_return_if_fail(action_data != NULL);
-
-	if (value == NULL)
-		g_hash_table_remove(action_data->atts, attr);
-	else
-		g_hash_table_insert(action_data->atts, g_strdup(attr),
-							g_strdup(value));
-
-	schedule_pounces_save();
-}
-
-void
-gaim_pounce_set_data(GaimPounce *pounce, void *data)
-{
-	g_return_if_fail(pounce != NULL);
-
-	pounce->data = data;
-}
-
-GaimPounceEvent
-gaim_pounce_get_events(const GaimPounce *pounce)
-{
-	g_return_val_if_fail(pounce != NULL, GAIM_POUNCE_NONE);
-
-	return pounce->events;
-}
-
-GaimAccount *
-gaim_pounce_get_pouncer(const GaimPounce *pounce)
-{
-	g_return_val_if_fail(pounce != NULL, NULL);
-
-	return pounce->pouncer;
-}
-
-const char *
-gaim_pounce_get_pouncee(const GaimPounce *pounce)
-{
-	g_return_val_if_fail(pounce != NULL, NULL);
-
-	return pounce->pouncee;
-}
-
-gboolean
-gaim_pounce_get_save(const GaimPounce *pounce)
-{
-	g_return_val_if_fail(pounce != NULL, FALSE);
-
-	return pounce->save;
-}
-
-gboolean
-gaim_pounce_action_is_enabled(const GaimPounce *pounce, const char *action)
-{
-	GaimPounceActionData *action_data;
-
-	g_return_val_if_fail(pounce != NULL, FALSE);
-	g_return_val_if_fail(action != NULL, FALSE);
-
-	action_data = find_action_data(pounce, action);
-
-	g_return_val_if_fail(action_data != NULL, FALSE);
-
-	return action_data->enabled;
-}
-
-const char *
-gaim_pounce_action_get_attribute(const GaimPounce *pounce,
-								 const char *action, const char *attr)
-{
-	GaimPounceActionData *action_data;
-
-	g_return_val_if_fail(pounce != NULL, NULL);
-	g_return_val_if_fail(action != NULL, NULL);
-	g_return_val_if_fail(attr   != NULL, NULL);
-
-	action_data = find_action_data(pounce, action);
-
-	g_return_val_if_fail(action_data != NULL, NULL);
-
-	return g_hash_table_lookup(action_data->atts, attr);
-}
-
-void *
-gaim_pounce_get_data(const GaimPounce *pounce)
-{
-	g_return_val_if_fail(pounce != NULL, NULL);
-
-	return pounce->data;
-}
-
-void
-gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
-					GaimPounceEvent events)
-{
-	GaimPounce *pounce;
-	GaimPounceHandler *handler;
-	GList *l, *l_next;
-	char *norm_pouncee;
-
-	g_return_if_fail(pouncer != NULL);
-	g_return_if_fail(pouncee != NULL);
-	g_return_if_fail(events  != GAIM_POUNCE_NONE);
-
-	norm_pouncee = g_strdup(gaim_normalize(pouncer, pouncee));
-
-	for (l = gaim_pounces_get_all(); l != NULL; l = l_next)
-	{
-		pounce = (GaimPounce *)l->data;
-		l_next = l->next;
-
-		if ((gaim_pounce_get_events(pounce) & events) &&
-			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!gaim_utf8_strcasecmp(gaim_normalize(pouncer, gaim_pounce_get_pouncee(pounce)),
-								  norm_pouncee))
-		{
-			handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
-
-			if (handler != NULL && handler->cb != NULL)
-			{
-				handler->cb(pounce, events, gaim_pounce_get_data(pounce));
-
-				if (!gaim_pounce_get_save(pounce))
-					gaim_pounce_destroy(pounce);
-			}
-		}
-	}
-
-	g_free(norm_pouncee);
-}
-
-GaimPounce *
-gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
-				 GaimPounceEvent events)
-{
-	GaimPounce *pounce = NULL;
-	GList *l;
-	char *norm_pouncee;
-
-	g_return_val_if_fail(pouncer != NULL, NULL);
-	g_return_val_if_fail(pouncee != NULL, NULL);
-	g_return_val_if_fail(events  != GAIM_POUNCE_NONE, NULL);
-
-	norm_pouncee = g_strdup(gaim_normalize(pouncer, pouncee));
-
-	for (l = gaim_pounces_get_all(); l != NULL; l = l->next)
-	{
-		pounce = (GaimPounce *)l->data;
-
-		if ((gaim_pounce_get_events(pounce) & events) &&
-			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!gaim_utf8_strcasecmp(gaim_normalize(pouncer, gaim_pounce_get_pouncee(pounce)),
-								  norm_pouncee))
-		{
-			break;
-		}
-
-		pounce = NULL;
-	}
-
-	g_free(norm_pouncee);
-
-	return pounce;
-}
-
-/* XML Stuff */
 static void
 free_parser_data(gpointer user_data)
 {
@@ -750,164 +554,349 @@ gaim_pounces_load(void)
 	return TRUE;
 }
 
-static void
-write_action_parameter(gpointer key, gpointer value, gpointer user_data)
+
+GaimPounce *
+gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
+				const char *pouncee, GaimPounceEvent event)
 {
-	const char *name, *param_value;
-	FILE *fp;
+	GaimPounce *pounce;
+	GaimPounceHandler *handler;
 
-	param_value = (const char *)value;
-	name        = (const char *)key;
-	fp          = (FILE *)user_data;
+	g_return_val_if_fail(ui_type != NULL, NULL);
+	g_return_val_if_fail(pouncer != NULL, NULL);
+	g_return_val_if_fail(pouncee != NULL, NULL);
+	g_return_val_if_fail(event   != 0,    NULL);
 
-	fprintf(fp, "    <param name='%s'>%s</param>\n", name, param_value);
-}
+	pounce = g_new0(GaimPounce, 1);
 
-static void
-write_action_parameter_list(gpointer key, gpointer value, gpointer user_data)
-{
-	GaimPounceActionData *action_data;
-	const char *action;
-	FILE *fp;
+	pounce->ui_type  = g_strdup(ui_type);
+	pounce->pouncer  = pouncer;
+	pounce->pouncee  = g_strdup(pouncee);
+	pounce->events   = event;
 
-	action_data = (GaimPounceActionData *)value;
-	action      = (const char *)key;
-	fp          = (FILE *)user_data;
+	pounce->actions  = g_hash_table_new_full(g_str_hash, g_str_equal,
+											 g_free, free_action_data);
 
-	if (!action_data->enabled)
-		return;
+	handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
 
-	fprintf(fp, "   <action type='%s'", action);
+	if (handler != NULL && handler->new_pounce != NULL)
+		handler->new_pounce(pounce);
 
-	if (g_hash_table_size(action_data->atts) == 0) {
-		fprintf(fp, "/>\n");
-	}
-	else {
-		fprintf(fp, ">\n");
+	pounces = g_list_append(pounces, pounce);
 
-		g_hash_table_foreach(action_data->atts, write_action_parameter, fp);
+	schedule_pounces_save();
 
-		fprintf(fp, "   </action>\n");
-	}
-}
-
-static void
-gaim_pounces_write(FILE *fp, GaimPounce *pounce)
-{
-	GaimAccount *pouncer;
-	GaimPounceEvent events;
-	char *pouncer_name;
-
-	pouncer = gaim_pounce_get_pouncer(pounce);
-	events  = gaim_pounce_get_events(pounce);
-
-	pouncer_name = g_markup_escape_text(gaim_account_get_username(pouncer), -1);
-
-	fprintf(fp, " <pounce ui='%s'>\n", pounce->ui_type);
-	fprintf(fp, "  <account protocol='%s'>%s</account>\n",
-			pouncer->protocol_id, pouncer_name);
-	fprintf(fp, "  <pouncee>%s</pouncee>\n", gaim_pounce_get_pouncee(pounce));
-	fprintf(fp, "  <events>\n");
-
-	if (events & GAIM_POUNCE_SIGNON)
-		fprintf(fp, "   <event type='sign-on'/>\n");
-	if (events & GAIM_POUNCE_SIGNOFF)
-		fprintf(fp, "   <event type='sign-off'/>\n");
-	if (events & GAIM_POUNCE_AWAY)
-		fprintf(fp, "   <event type='away'/>\n");
-	if (events & GAIM_POUNCE_AWAY_RETURN)
-		fprintf(fp, "   <event type='return-from-away'/>\n");
-	if (events & GAIM_POUNCE_IDLE)
-		fprintf(fp, "   <event type='idle'/>\n");
-	if (events & GAIM_POUNCE_IDLE_RETURN)
-		fprintf(fp, "   <event type='return-from-idle'/>\n");
-	if (events & GAIM_POUNCE_TYPING)
-		fprintf(fp, "   <event type='start-typing'/>\n");
-	if (events & GAIM_POUNCE_TYPING_STOPPED)
-		fprintf(fp, "   <event type='stop-typing'/>\n");
-
-	fprintf(fp, "  </events>\n");
-	fprintf(fp, "  <actions>\n");
-
-	g_hash_table_foreach(pounce->actions, write_action_parameter_list, fp);
-
-	fprintf(fp, "  </actions>\n");
-
-	if (gaim_pounce_get_save(pounce))
-		fprintf(fp, "  <save/>\n");
-
-	fprintf(fp, " </pounce>\n");
-
-	g_free(pouncer_name);
+	return pounce;
 }
 
 void
-gaim_pounces_sync(void)
+gaim_pounce_destroy(GaimPounce *pounce)
 {
-	FILE *fp;
-	struct stat st;
-	const char *user_dir = gaim_user_dir();
-	char *filename;
-	char *filename_real;
+	GaimPounceHandler *handler;
 
-	if (!pounces_loaded) {
-		gaim_debug(GAIM_DEBUG_WARNING, "pounces",
-				   "Writing pounces to disk.\n");
-		schedule_pounces_save();
-		return;
+	g_return_if_fail(pounce != NULL);
+
+	handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
+
+	pounces = g_list_remove(pounces, pounce);
+
+	if (pounce->ui_type != NULL) g_free(pounce->ui_type);
+	if (pounce->pouncee != NULL) g_free(pounce->pouncee);
+
+	g_hash_table_destroy(pounce->actions);
+
+	if (handler != NULL && handler->free_pounce != NULL)
+		handler->free_pounce(pounce);
+
+	g_free(pounce);
+
+	schedule_pounces_save();
+}
+
+void
+gaim_pounce_destroy_all_by_account(GaimAccount *account)
+{
+	GaimAccount *pouncer;
+	GaimPounce *pounce;
+	GList *l, *l_next;
+
+	g_return_if_fail(account != NULL);
+
+	for (l = gaim_pounces_get_all(); l != NULL; l = l_next)
+	{
+		pounce = (GaimPounce *)l->data;
+		l_next = l->next;
+
+		pouncer = gaim_pounce_get_pouncer(pounce);
+		if (pouncer == account)
+			gaim_pounce_destroy(pounce);
 	}
+}
 
-	if (user_dir == NULL)
+void
+gaim_pounce_set_events(GaimPounce *pounce, GaimPounceEvent events)
+{
+	g_return_if_fail(pounce != NULL);
+	g_return_if_fail(pounce != GAIM_POUNCE_NONE);
+
+	pounce->events = events;
+
+	schedule_pounces_save();
+}
+
+void
+gaim_pounce_set_pouncer(GaimPounce *pounce, GaimAccount *pouncer)
+{
+	g_return_if_fail(pounce  != NULL);
+	g_return_if_fail(pouncer != NULL);
+
+	pounce->pouncer = pouncer;
+
+	schedule_pounces_save();
+}
+
+void
+gaim_pounce_set_pouncee(GaimPounce *pounce, const char *pouncee)
+{
+	g_return_if_fail(pounce  != NULL);
+	g_return_if_fail(pouncee != NULL);
+
+	if (pounce->pouncee != NULL)
+		g_free(pounce->pouncee);
+
+	pounce->pouncee = (pouncee == NULL ? NULL : g_strdup(pouncee));
+
+	schedule_pounces_save();
+}
+
+void
+gaim_pounce_set_save(GaimPounce *pounce, gboolean save)
+{
+	g_return_if_fail(pounce != NULL);
+
+	pounce->save = save;
+
+	schedule_pounces_save();
+}
+
+void
+gaim_pounce_action_register(GaimPounce *pounce, const char *name)
+{
+	GaimPounceActionData *action_data;
+
+	g_return_if_fail(pounce != NULL);
+	g_return_if_fail(name   != NULL);
+
+	if (g_hash_table_lookup(pounce->actions, name) != NULL)
 		return;
 
-	gaim_debug(GAIM_DEBUG_INFO, "pounces", "Writing pounces to disk.\n");
+	action_data = g_new0(GaimPounceActionData, 1);
 
-	fp = fopen(user_dir, "r");
+	action_data->name    = g_strdup(name);
+	action_data->enabled = FALSE;
+	action_data->atts    = g_hash_table_new_full(g_str_hash, g_str_equal,
+												 g_free, g_free);
 
-	if (fp == NULL)
-		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+	g_hash_table_insert(pounce->actions, g_strdup(name), action_data);
+
+	schedule_pounces_save();
+}
+
+void
+gaim_pounce_action_set_enabled(GaimPounce *pounce, const char *action,
+							   gboolean enabled)
+{
+	GaimPounceActionData *action_data;
+
+	g_return_if_fail(pounce != NULL);
+	g_return_if_fail(action != NULL);
+
+	action_data = find_action_data(pounce, action);
+
+	g_return_if_fail(action_data != NULL);
+
+	action_data->enabled = enabled;
+
+	schedule_pounces_save();
+}
+
+void
+gaim_pounce_action_set_attribute(GaimPounce *pounce, const char *action,
+								 const char *attr, const char *value)
+{
+	GaimPounceActionData *action_data;
+
+	g_return_if_fail(pounce != NULL);
+	g_return_if_fail(action != NULL);
+	g_return_if_fail(attr   != NULL);
+
+	action_data = find_action_data(pounce, action);
+
+	g_return_if_fail(action_data != NULL);
+
+	if (value == NULL)
+		g_hash_table_remove(action_data->atts, attr);
 	else
-		fclose(fp);
+		g_hash_table_insert(action_data->atts, g_strdup(attr),
+							g_strdup(value));
 
-	filename = g_build_filename(user_dir, "pounces.xml.save", NULL);
+	schedule_pounces_save();
+}
 
-	if ((fp = fopen(filename, "w")) != NULL) {
-		GList *l;
+void
+gaim_pounce_set_data(GaimPounce *pounce, void *data)
+{
+	g_return_if_fail(pounce != NULL);
 
-		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
-		fprintf(fp, "<pounces version='1.0'>\n");
+	pounce->data = data;
 
-		for (l = gaim_pounces_get_all(); l != NULL; l = l->next)
-			gaim_pounces_write(fp, l->data);
+	schedule_pounces_save();
+}
 
-		fprintf(fp, "</pounces>\n");
+GaimPounceEvent
+gaim_pounce_get_events(const GaimPounce *pounce)
+{
+	g_return_val_if_fail(pounce != NULL, GAIM_POUNCE_NONE);
 
-		fclose(fp);
-		chmod(filename, S_IRUSR | S_IWUSR);
+	return pounce->events;
+}
+
+GaimAccount *
+gaim_pounce_get_pouncer(const GaimPounce *pounce)
+{
+	g_return_val_if_fail(pounce != NULL, NULL);
+
+	return pounce->pouncer;
+}
+
+const char *
+gaim_pounce_get_pouncee(const GaimPounce *pounce)
+{
+	g_return_val_if_fail(pounce != NULL, NULL);
+
+	return pounce->pouncee;
+}
+
+gboolean
+gaim_pounce_get_save(const GaimPounce *pounce)
+{
+	g_return_val_if_fail(pounce != NULL, FALSE);
+
+	return pounce->save;
+}
+
+gboolean
+gaim_pounce_action_is_enabled(const GaimPounce *pounce, const char *action)
+{
+	GaimPounceActionData *action_data;
+
+	g_return_val_if_fail(pounce != NULL, FALSE);
+	g_return_val_if_fail(action != NULL, FALSE);
+
+	action_data = find_action_data(pounce, action);
+
+	g_return_val_if_fail(action_data != NULL, FALSE);
+
+	return action_data->enabled;
+}
+
+const char *
+gaim_pounce_action_get_attribute(const GaimPounce *pounce,
+								 const char *action, const char *attr)
+{
+	GaimPounceActionData *action_data;
+
+	g_return_val_if_fail(pounce != NULL, NULL);
+	g_return_val_if_fail(action != NULL, NULL);
+	g_return_val_if_fail(attr   != NULL, NULL);
+
+	action_data = find_action_data(pounce, action);
+
+	g_return_val_if_fail(action_data != NULL, NULL);
+
+	return g_hash_table_lookup(action_data->atts, attr);
+}
+
+void *
+gaim_pounce_get_data(const GaimPounce *pounce)
+{
+	g_return_val_if_fail(pounce != NULL, NULL);
+
+	return pounce->data;
+}
+
+void
+gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
+					GaimPounceEvent events)
+{
+	GaimPounce *pounce;
+	GaimPounceHandler *handler;
+	GList *l, *l_next;
+	char *norm_pouncee;
+
+	g_return_if_fail(pouncer != NULL);
+	g_return_if_fail(pouncee != NULL);
+	g_return_if_fail(events  != GAIM_POUNCE_NONE);
+
+	norm_pouncee = g_strdup(gaim_normalize(pouncer, pouncee));
+
+	for (l = gaim_pounces_get_all(); l != NULL; l = l_next)
+	{
+		pounce = (GaimPounce *)l->data;
+		l_next = l->next;
+
+		if ((gaim_pounce_get_events(pounce) & events) &&
+			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
+			!gaim_utf8_strcasecmp(gaim_normalize(pouncer, gaim_pounce_get_pouncee(pounce)),
+								  norm_pouncee))
+		{
+			handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
+
+			if (handler != NULL && handler->cb != NULL)
+			{
+				handler->cb(pounce, events, gaim_pounce_get_data(pounce));
+
+				if (!gaim_pounce_get_save(pounce))
+					gaim_pounce_destroy(pounce);
+			}
+		}
 	}
-	else {
-		gaim_debug(GAIM_DEBUG_ERROR, "pounces", "Unable to write %s\n",
-				   filename);
-		g_free(filename);
-		return;
+
+	g_free(norm_pouncee);
+}
+
+GaimPounce *
+gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
+				 GaimPounceEvent events)
+{
+	GaimPounce *pounce = NULL;
+	GList *l;
+	char *norm_pouncee;
+
+	g_return_val_if_fail(pouncer != NULL, NULL);
+	g_return_val_if_fail(pouncee != NULL, NULL);
+	g_return_val_if_fail(events  != GAIM_POUNCE_NONE, NULL);
+
+	norm_pouncee = g_strdup(gaim_normalize(pouncer, pouncee));
+
+	for (l = gaim_pounces_get_all(); l != NULL; l = l->next)
+	{
+		pounce = (GaimPounce *)l->data;
+
+		if ((gaim_pounce_get_events(pounce) & events) &&
+			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
+			!gaim_utf8_strcasecmp(gaim_normalize(pouncer, gaim_pounce_get_pouncee(pounce)),
+								  norm_pouncee))
+		{
+			break;
+		}
+
+		pounce = NULL;
 	}
 
-	if (stat(filename, &st) || (st.st_size == 0)) {
-		gaim_debug_error("pounces", "Failed to save pounces\n");
-		unlink(filename);
-		g_free(filename);
-		return;
-	}
+	g_free(norm_pouncee);
 
-	filename_real = g_build_filename(user_dir, "pounces.xml", NULL);
-
-	if (rename(filename, filename_real) < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "pounces", "Error renaming %s to %s\n",
-				   filename, filename_real);
-	}
-
-	g_free(filename);
-	g_free(filename_real);
+	return pounce;
 }
 
 void
@@ -987,9 +976,9 @@ gaim_pounces_get_handle(void)
 void
 gaim_pounces_init(void)
 {
+	void *handle       = gaim_pounces_get_handle();
 	void *blist_handle = gaim_blist_get_handle();
 	void *conv_handle  = gaim_conversations_get_handle();
-	void *handle       = gaim_pounces_get_handle();
 
 	pounce_handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, free_pounce_handler);
@@ -1022,10 +1011,11 @@ gaim_pounces_init(void)
 void
 gaim_pounces_uninit()
 {
-	if (pounces_save_timer != 0) {
-		gaim_timeout_remove(pounces_save_timer);
-		pounces_save_timer = 0;
-		gaim_pounces_sync();
+	if (save_timer != 0)
+	{
+		gaim_timeout_remove(save_timer);
+		save_timer = 0;
+		sync_pounces();
 	}
 
 	gaim_signals_disconnect_by_handle(gaim_pounces_get_handle());
