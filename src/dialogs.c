@@ -604,50 +604,61 @@ static void do_info(GtkWidget *widget, struct getuserinfo *info)
 
 void show_ee_dialog(int ee)
 {
-	GtkWidget *ok;
+	GtkWidget *window;
+	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *box;
-	GtkWidget *eedialog;
-
-	GAIM_DIALOG(eedialog);
-	gtk_widget_realize(eedialog);
-	ok = picture_button(eedialog, _("OK"), ok_xpm);
-	box = gtk_vbox_new(FALSE, 10);
-
-	if (ee == 0)
-		label = gtk_label_new("Amazing!  Simply Amazing!");
-	else if (ee == 1)
-		label = gtk_label_new("Pimpin\' Penguin Style! *Waddle Waddle*");
-	else if (ee == 2)
-		label = gtk_label_new("You should be me.  I'm so cute!");
-	else if (ee == 3)
-		label = gtk_label_new("Now that's what I like!");
-	else if (ee == 4)
-		label = gtk_label_new("Ahh, and excellent choice!");
-	else  if (ee == 5)
-		label = gtk_label_new("Everytime you click my name, an angel gets its wings.");
-	else if (ee == 6)
-		label = gtk_label_new("This sunflower seed taste like pizza.");
-	else if (ee == 7)
-		label = gtk_label_new("Hey!  I was in that tumbleweed!");
-	else
-		label = gtk_label_new("I'm not anything.");
 	
-	gtk_widget_show(label);
-	gtk_widget_show(ok);
+	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_cool.png", NULL);
+	GtkWidget *img = gtk_image_new_from_file(filename);
+	
+	label = gtk_label_new(NULL);
+	if (ee == 0)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"purple\">Amazing!  Simply Amazing!</span>");
+	else if (ee == 1)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"#1f6bad\">Pimpin\' Penguin Style! *Waddle Waddle*</span>");
+	else if (ee == 2)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				      "<span weight=\"bold\" size=\"large\" foreground=\"blue\">You should be me.  I'm so cute!</span>");
+	else if (ee == 3)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"orange\">Now that's what I like!</span>");
+	else if (ee == 4)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"brown\">Ahh, and excellent choice!</span>");
+	else  if (ee == 5)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"#009900\">Everytime you click my name, an angel gets its wings.</span>");
+	else if (ee == 6)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"red\">This sunflower seed taste like pizza.</span>");
+	else if (ee == 7)
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"#6364B1\">Hey!  I was in that tumbleweed!</span>");
+	else
+		gtk_label_set_markup(GTK_LABEL(label), 
+				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
+	
+	window = gtk_dialog_new_with_buttons("", GTK_WINDOW(blist), GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
+	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
+	
+	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), 6);
 
-	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 10);
-	gtk_box_pack_start(GTK_BOX(box), ok, FALSE, FALSE, 10);
-
-	gtk_widget_show(box);
-
-	gtk_container_add(GTK_CONTAINER(eedialog), box);
-	gtk_window_set_title(GTK_WINDOW(eedialog), "Gaim - SUPRISE!");
-
-	gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), eedialog);
-	gtk_widget_realize(eedialog);
-
-	gtk_widget_show(eedialog);
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	
+	gtk_widget_show_all(window);
 }
 
 void show_im_dialog()
