@@ -387,9 +387,8 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 
 	plugins = g_list_remove(plugins, plugin);
 
-	/* XXX */
-	if (plugin->info != NULL && plugin->info->type == GAIM_PLUGIN_PROTOCOL)
-		return;
+	if (plugin->info != NULL && plugin->info->dependencies != NULL)
+		g_list_free(plugin->info->dependencies);
 
 	if (plugin->native_plugin) {
 
@@ -436,9 +435,6 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 		if (loader_info->destroy != NULL)
 			loader_info->destroy(plugin);
 	}
-
-	if (plugin->info != NULL && plugin->info->dependencies != NULL)
-		g_list_free(plugin->info->dependencies);
 
 	if (plugin->path  != NULL) g_free(plugin->path);
 	if (plugin->error != NULL) g_free(plugin->error);
@@ -496,8 +492,6 @@ void
 gaim_plugins_destroy_all(void)
 {
 #ifdef GAIM_PLUGINS
-
-	gaim_plugins_unload_all();
 
 	while (plugins != NULL)
 		gaim_plugin_destroy(plugins->data);
