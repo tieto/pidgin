@@ -23,7 +23,7 @@
 #include "../config.h"
 #endif
 #ifdef USE_APPLET
-#include "gnome_applet_mgr.h"
+#include "applet.h"
 #include <gnome.h>
 #else
 #ifdef USE_GNOME

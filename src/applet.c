@@ -34,18 +34,12 @@
 #include <string.h>
 #include <gdk_imlib.h>
 #include "gaim.h"
-#include "gnome_applet_mgr.h"
+#include "applet.h"
 
-enum gaim_user_states MRI_user_status; 
+static int connecting = 0;
 
 gboolean applet_buddy_show = FALSE;
 GtkWidget *applet_popup = NULL;
-
-/*
-gchar GAIM_GNOME_OFFLINE_ICON[255] = GAIM_GNOME_PENGUIN_OFFLINE;
-gchar GAIM_GNOME_CONNECT_ICON[255] = GAIM_GNOME_PENGUIN_CONNECT;
-gchar GAIM_GNOME_ONLINE_ICON[255] = GAIM_GNOME_PENGUIN_ONLINE;
-*/
 
 GtkWidget *applet;
 GtkWidget *appletframe;
@@ -111,22 +105,19 @@ static gboolean update_applet(){
 	char buf[BUF_LONG];
 	GSList *c = connections;
 
-	switch( MRI_user_status ){
-	case offline:
-		gtk_pixmap_set( GTK_PIXMAP(icon),
-				icon_offline_pm,
-				icon_offline_bm );
-		gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
-		applet_set_tooltips(_("Offilne. Click to bring up login box."));
-		break;
-	case signing_on:
+	if (connecting) {
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_connect_pm,
 				icon_connect_bm );   
 		gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
 		applet_set_tooltips(_("Attempting to sign on...."));
-		break;
-	case online:
+	} else if (!connections) {
+		gtk_pixmap_set( GTK_PIXMAP(icon),
+				icon_offline_pm,
+				icon_offline_bm );
+		gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
+		applet_set_tooltips(_("Offilne. Click to bring up login box."));
+	} else if (!awaymessage) {
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_online_pm,
 				icon_online_bm );                
@@ -138,30 +129,17 @@ static gboolean update_applet(){
 			if (c) strcat(buf, ", ");
 		}
 		applet_set_tooltips(buf);
-		break;
-	case away:
+	} else {
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_online_pm,
 				icon_online_bm );   
 		gtk_label_set( GTK_LABEL(status_label), _("Away") );
-		break;
 	}
 
 	return TRUE;
 }
 
 void update_pixmaps() {
-	/*
-	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
-		sprintf(GAIM_GNOME_OFFLINE_ICON, "%s",  GAIM_GNOME_DEVIL_OFFLINE);
-		sprintf(GAIM_GNOME_CONNECT_ICON, "%s",  GAIM_GNOME_DEVIL_CONNECT);
-		sprintf(GAIM_GNOME_ONLINE_ICON, "%s",  GAIM_GNOME_DEVIL_ONLINE);
-	} else {
-		sprintf(GAIM_GNOME_OFFLINE_ICON, "%s",  GAIM_GNOME_PENGUIN_OFFLINE);
-		sprintf(GAIM_GNOME_CONNECT_ICON, "%s",  GAIM_GNOME_PENGUIN_CONNECT);
-		sprintf(GAIM_GNOME_ONLINE_ICON, "%s",  GAIM_GNOME_PENGUIN_ONLINE);
-	}
-	*/
 	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, (sizehint-16), (sizehint-12),
 			&icon_offline_pm, &icon_offline_bm );
 	load_applet_icon( GAIM_GNOME_CONNECT_ICON, (sizehint-16), (sizehint-12),
@@ -317,27 +295,16 @@ void AppletClicked( GtkWidget *sender, GdkEventButton *ev, gpointer data ){
         
 	if(applet_buddy_show) {
 		applet_buddy_show = FALSE;
-	  	switch( MRI_user_status ){
-			case offline:
-				if (mainwindow)
-					gtk_widget_hide(mainwindow);
-				break;
-			case online:
-			case away:
-				applet_destroy_buddy(0, 0, 0);
-				break;
-		}     
+		if (!connections && mainwindow)
+			gtk_widget_hide(mainwindow);
+		else
+			gtk_widget_hide(blist);
 	} else {
 		applet_buddy_show = TRUE;
-		switch( MRI_user_status ){
-			case offline:
-				applet_show_login( APPLET_WIDGET(applet), NULL );
-				break;
-			case online:
-			case away:
-				createOnlinePopup();
-				break;
-		}
+		if (!connections)
+			applet_show_login( APPLET_WIDGET(applet), NULL );
+		else
+			createOnlinePopup();
 	}
 }
 
@@ -441,7 +408,10 @@ gint init_applet_mgr(int argc, char *argv[]) {
 }
 
 void set_user_state( enum gaim_user_states state ){
-	MRI_user_status = state; 
+	if (state == signing_on)
+		connecting++;
+	else if ((state == away || state == online) && connecting > 0)
+		connecting--;
 	update_applet();
 }
 

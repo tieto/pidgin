@@ -25,7 +25,7 @@
 #ifdef USE_APPLET
 #include <gnome.h>
 #include <applet-widget.h>
-#include "gnome_applet_mgr.h"
+#include "applet.h"
 #endif /* USE_APPLET */
 #ifdef GAIM_PLUGINS
 #include <dlfcn.h>

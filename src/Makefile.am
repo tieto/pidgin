@@ -2,6 +2,7 @@ if GNOMEAPPLET
 bin_PROGRAMS = gaim_applet
 gaim_applet_SOURCES =	about.c \
 			aim.c \
+			applet.c \
 			away.c \
 			browser.c \
 			buddy.c \
@@ -9,7 +10,6 @@ gaim_applet_SOURCES =	about.c \
 			conversation.c \
 			dialogs.c \
 			gaimrc.c \
-			gnome_applet_mgr.c \
 			gtkhtml.c \
 			gtkspell.c \
 			gtkticker.c \
@@ -34,6 +34,7 @@ else
 bin_PROGRAMS = gaim
 gaim_SOURCES =	about.c \
 		aim.c \
+		applet.c \
 		away.c \
 		browser.c \
 		buddy.c \
@@ -41,7 +42,6 @@ gaim_SOURCES =	about.c \
 		conversation.c \
 		dialogs.c \
 		gaimrc.c \
-		gnome_applet_mgr.c \
 		gtkhtml.c \
 		gtkspell.c \
 		gtkticker.c \

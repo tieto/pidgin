@@ -41,7 +41,6 @@
 #include "prpl.h"
 #include "gaim.h"
 #include "aim.h"
-#include "gnome_applet_mgr.h"
 
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/admin_icon.xpm"
@@ -508,9 +507,6 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		}
 		debug_printf("Login Error Code 0x%04x\n", errorcode);
 		debug_printf("Error URL: %s\n", errurl);
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif
 		signoff(gc);
 		return 0;
 	}
@@ -535,16 +531,10 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, bosip);
 	if (bosconn == NULL) {
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif
 		hide_login_progress(gc, _("Internal Error"));
 		signoff(gc);
 		return -1;
 	} else if (bosconn->status & AIM_CONN_STATUS_CONNERR) {
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif
 		hide_login_progress(gc, _("Could Not Connect"));
 		signoff(gc);
 		return -1;

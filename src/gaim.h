@@ -790,9 +790,6 @@ extern void open_url(GtkWidget *, char *);
 extern void open_url_nw(GtkWidget *, char *);
 extern void add_bookmark(GtkWidget *, char *);
 
-/* functions for appletmgr */
-extern char * getConfig();
-
 /* fucntions in ticker.c */
 void SetTickerPrefs();
 void BuddyTickerSignOff();

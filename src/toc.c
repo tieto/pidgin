@@ -38,7 +38,6 @@
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
-#include "gnome_applet_mgr.h"
 #include "proxy.h"
 
 #include "pixmaps/admin_icon.xpm"
@@ -47,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1262 $"
+#define REVISION "gaim:$Revision: 1271 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
