@@ -60,10 +60,6 @@ completely libfaim's fault though.
 works great, if I do, it occasionally works, but not well. I've commented it out
 (again - I swear, this is the most on-again-off-again feature).
 
-- There are a lot of problems with panel support (funny that I'm supporting the
-panel code, and the oscar code I wrote doesn't work well with it). I think this
-is related to oscar_callback being funny.
-
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
