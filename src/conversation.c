@@ -3252,11 +3252,13 @@ static gboolean redraw_icon(gpointer data)
 		gdk_gc_set_clip_mask(gc, bm);
 
 		gdk_gc_set_clip_origin(gc, gdk_pixbuf_frame_get_x_offset(frame) *
-				       SCALE(c->anim)/gdk_pixbuf_get_width(scale),  
-				       gdk_pixbuf_frame_get_y_offset(frame));   
+				       SCALE(c->anim)/gdk_pixbuf_animation_get_width(c->anim),  
+				       gdk_pixbuf_frame_get_y_offset(frame) *
+				       SCALE(c->anim)/gdk_pixbuf_animation_get_height(c->anim));   
 		gdk_draw_pixmap(pm, gc, src, 0, 0, gdk_pixbuf_frame_get_x_offset(frame)*
-				SCALE(c->anim)/gdk_pixbuf_get_width(scale),
-				gdk_pixbuf_frame_get_y_offset(frame),-1,-1);
+				SCALE(c->anim)/gdk_pixbuf_animation_get_width(c->anim),
+				gdk_pixbuf_frame_get_y_offset(frame) * 
+				SCALE(c->anim)/gdk_pixbuf_animation_get_height(c->anim),-1,-1);
 		
 		gdk_pixmap_unref(src);
 		if (bm)
