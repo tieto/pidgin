@@ -152,9 +152,9 @@ void serv_finish_login()
 
 void serv_send_im(char *name, char *message, int away)
 {
+#ifndef USE_OSCAR
 	char buf[MSG_LEN - 7];
 
-#ifndef USE_OSCAR
         g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
                    message, ((away) ? " auto" : ""));
 	sflap_send(buf, strlen(buf), TYPE_DATA);
@@ -167,8 +167,8 @@ void serv_send_im(char *name, char *message, int away)
 
 void serv_get_info(char *name)
 {
-        char buf[MSG_LEN];
 #ifndef USE_OSCAR
+        char buf[MSG_LEN];
         g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
         sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -178,8 +178,8 @@ void serv_get_info(char *name)
 
 void serv_get_away_msg(char *name)
 {
-	char buf[MSG_LEN];
 #ifndef USE_OSCAR
+	char buf[MSG_LEN];
 	/* HAHA! TOC doesn't have this yet */
 #else
 	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_AWAYMESSAGE);
@@ -188,8 +188,8 @@ void serv_get_away_msg(char *name)
 
 void serv_get_dir(char *name)
 {
-        char buf[MSG_LEN];
 #ifndef USE_OSCAR
+        char buf[MSG_LEN];
         g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
         sflap_send(buf, -1, TYPE_DATA);
 #endif
@@ -198,8 +198,8 @@ void serv_get_dir(char *name)
 void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
-	char buf2[BUF_LEN*4], buf[BUF_LEN];
 #ifndef USE_OSCAR
+	char buf2[BUF_LEN*4], buf[BUF_LEN];
 	g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
 		   middle, last, maiden, city, state, country,
 		   (web == 1) ? "Y" : "");
@@ -212,8 +212,8 @@ void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 		     char *city, char *state, char *country, char *email)
 {
-	char buf[BUF_LONG];
 #ifndef USE_OSCAR
+	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf)/2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle, last, maiden, city, state, country, email);
 	sprintf(debug_buff,"Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden, city, state, country);
 	debug_print(debug_buff);
@@ -227,8 +227,8 @@ void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 
 void serv_set_away(char *message)
 {
-        char buf[MSG_LEN];
 #ifndef USE_OSCAR
+        char buf[MSG_LEN];
         if (message)
                 g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
         else
@@ -242,8 +242,8 @@ void serv_set_away(char *message)
 
 void serv_set_info(char *info)
 {
-	char buf[MSG_LEN];
 #ifndef USE_OSCAR
+	char buf[MSG_LEN];
 	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", info);
 	sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -267,8 +267,8 @@ void serv_change_passwd(char *orig, char *new) {
 
 void serv_add_buddy(char *name)
 {
-	char buf[1024];
 #ifndef USE_OSCAR
+	char buf[1024];
 	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -278,10 +278,10 @@ void serv_add_buddy(char *name)
 
 void serv_add_buddies(GList *buddies)
 {
+#ifndef USE_OSCAR
 	char buf[MSG_LEN];
         int n, num = 0;
 
-#ifndef USE_OSCAR
         n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
         while(buddies) {
                 if (num == 20) {
@@ -306,8 +306,8 @@ void serv_add_buddies(GList *buddies)
 
 void serv_remove_buddy(char *name)
 {
-	char buf[1024];
 #ifndef USE_OSCAR
+	char buf[1024];
 	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -317,8 +317,8 @@ void serv_remove_buddy(char *name)
 
 void serv_add_permit(char *name)
 {
-	char buf[1024];
 #ifndef USE_OSCAR
+	char buf[1024];
 	g_snprintf(buf, sizeof(buf), "toc_add_permit %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -330,8 +330,8 @@ void serv_add_permit(char *name)
 
 void serv_add_deny(char *name)
 {
-	char buf[1024];
 #ifndef USE_OSCAR
+	char buf[1024];
 	g_snprintf(buf, sizeof(buf), "toc_add_deny %s", normalize(name));
 	sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -343,11 +343,11 @@ void serv_add_deny(char *name)
 
 void serv_set_permit_deny()
 {
+#ifndef USE_OSCAR
 	char buf[MSG_LEN];
 	int at;
 	GList *list;
 
-#ifndef USE_OSCAR
         /* FIXME!  We flash here. */
         if (permdeny == 1 || permdeny == 3) {
         	g_snprintf(buf, sizeof(buf), "toc_add_permit");
@@ -403,8 +403,8 @@ void serv_set_permit_deny()
 
 void serv_set_idle(int time)
 {
-	char buf[256];
 #ifndef USE_OSCAR
+	char buf[256];
 	g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
 	sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -458,8 +458,8 @@ void serv_accept_chat(int i)
 
 void serv_join_chat(int exchange, char *name)
 {
-        char buf[BUF_LONG];
 #ifndef USE_OSCAR
+        char buf[BUF_LONG];
         g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
         sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -469,8 +469,8 @@ void serv_join_chat(int exchange, char *name)
 
 void serv_chat_invite(int id, char *message, char *name)
 {
-        char buf[BUF_LONG];
 #ifndef USE_OSCAR
+        char buf[BUF_LONG];
         g_snprintf(buf, sizeof(buf)/2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
         sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -520,8 +520,8 @@ void serv_chat_leave(int id)
 
 void serv_chat_whisper(int id, char *who, char *message)
 {
-        char buf2[MSG_LEN];
 #ifndef USE_OSCAR
+        char buf2[MSG_LEN];
         g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
         sflap_send(buf2, -1, TYPE_DATA);
 #else
@@ -532,8 +532,8 @@ void serv_chat_whisper(int id, char *who, char *message)
 
 void serv_chat_send(int id, char *message)
 {
-        char buf[MSG_LEN];
 #ifndef USE_OSCAR
+        char buf[MSG_LEN];
         g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"",id, message);
         sflap_send(buf, -1, TYPE_DATA);
 #else
@@ -931,8 +931,8 @@ void serv_got_chat_in(int id, char *who, int whisper, char *message)
 
 void serv_rvous_accept(char *name, char *cookie, char *uid)
 {
-	char buf[MSG_LEN];
 #ifndef USE_OSCAR
+	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_accept %s %s %s", normalize(name),
 			cookie, uid);
 	sflap_send(buf, strlen(buf), TYPE_DATA);
@@ -941,8 +941,8 @@ void serv_rvous_accept(char *name, char *cookie, char *uid)
 
 void serv_rvous_cancel(char *name, char *cookie, char *uid)
 {
-	char buf[MSG_LEN];
 #ifndef USE_OSCAR
+	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
 			cookie, uid);
 	sflap_send(buf, strlen(buf), TYPE_DATA);

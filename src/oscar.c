@@ -312,6 +312,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 					NULL, AIM_CAPS_CHAT);
 
 		aim_bos_clientready(sess, command->conn);
+		aim_conn_setlatency(command->conn, 1);
 
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 
