@@ -1727,6 +1727,10 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
 
+	if (gc != NULL) {
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
+	}
+
 	/* Update the menubar */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		gtk_widget_set_sensitive(gtkwin->menu.view_history, TRUE);
@@ -1962,6 +1966,9 @@ update_send_as_selection(struct gaim_window *win)
 
 	user   = gaim_conversation_get_user(conv);
 	gtkwin = GAIM_GTK_WINDOW(win);
+
+	if (gtkwin->menu.send_as == NULL)
+		return;
 
 	username = (user->gc == NULL ? user->username : user->gc->username);
 
@@ -4696,6 +4703,9 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 		if (gaim_window_get_active_conversation(win) == conv) {
 			gtk_widget_set_sensitive(gtkwin->menu.insert_link, FALSE);
 		}
+	}
+	else {
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
 	}
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
