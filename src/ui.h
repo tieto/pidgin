@@ -54,15 +54,6 @@
 
 #define DEFAULT_FONT_FACE "Helvetica"
 
-#define BROWSER_NETSCAPE              0
-#define BROWSER_KONQ                  1
-#define BROWSER_MANUAL                2
-/*#define BROWSER_INTERNAL              3*/
-#define BROWSER_GNOME                 4
-#define BROWSER_OPERA                 5	
-#define BROWSER_GALEON                6
-#define BROWSER_MOZILLA               7
-
 #define FACE_ANGEL 0
 #define FACE_BIGSMILE 1
 #define FACE_BURP 2

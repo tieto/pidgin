@@ -81,7 +81,7 @@
 #define OPT_BLIST_SHOW_WARN		0x00000200
 #define OPT_BLIST_GREY_IDLERS		0x00000400
 #define OPT_BLIST_POPUP                 0x00001000
-#define OPT_BLIST_SHOW_ICONS            0x00002000 
+#define OPT_BLIST_SHOW_ICONS            0x00002000
 #define OPT_BLIST_SHOW_OFFLINE          0x00004000
 
 #define OPT_CONVO_ENTER_SENDS		0x00000001
@@ -161,6 +161,16 @@
 #define IDLE_GAIM        1
 #define IDLE_SCREENSAVER 2
 
+#define BROWSER_NETSCAPE              0
+#define BROWSER_KONQ                  1
+#define BROWSER_MANUAL                2
+/*#define BROWSER_INTERNAL              3*/
+#define BROWSER_GNOME                 4
+#define BROWSER_OPERA                 5 
+#define BROWSER_GALEON                6
+#define BROWSER_MOZILLA               7
+
+
 static guint misc_options;
 static guint logging_options;
 static guint blist_options;
@@ -180,11 +190,6 @@ static guint prefs_initial_load = 0;
 guint proxy_info_is_from_gaimrc = 1; /* Only save proxy info if it
 				      * was loaded from the file
 				      * or otherwise explicitly requested */
-
-static int web_browser;
-static struct save_pos blist_pos;
-static struct window_size conv_size, buddy_chat_size;
-static char web_command[2048] = "";
 
 static GdkColor fgcolor;
 static GdkColor bgcolor;
@@ -232,7 +237,7 @@ static struct parse *parse_line(char *line, struct parse *p)
 			c++;
 			continue;
 		}
-		
+
 		if (inopt) {
 			if ((*c < 'a' || *c > 'z') && *c != '_' && (*c < 'A' || *c > 'Z')) {
 				inopt = 0;
@@ -826,6 +831,21 @@ static void gaimrc_read_options(FILE *f)
 								(blist_options & OPT_BLIST_SHOW_ICONS));
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_offline_buddies",
 								(blist_options & OPT_BLIST_SHOW_OFFLINE));
+			if(blist_options & OPT_BLIST_SHOW_BUTTON_XPM) {
+				if(blist_options & OPT_BLIST_NO_BUTTON_TEXT)
+					gaim_prefs_set_int("/gaim/gtk/blist/button_style",
+							GAIM_BUTTON_IMAGE);
+				else
+					gaim_prefs_set_int("/gaim/gtk/blist/button_style",
+							GAIM_BUTTON_TEXT_IMAGE);
+			} else {
+				if(blist_options & OPT_BLIST_NO_BUTTON_TEXT)
+					gaim_prefs_set_int("/gaim/gtk/blist/button_style",
+							GAIM_BUTTON_NONE);
+				else
+					gaim_prefs_set_int("/gaim/gtk/blist/button_style",
+							GAIM_BUTTON_TEXT);
+			}
 		} else if (!strcmp(p->option, "convo_options")) {
 			convo_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/enter_sends",
@@ -936,24 +956,61 @@ static void gaimrc_read_options(FILE *f)
 					break;
 			}
 		} else if (!strcmp(p->option, "web_browser")) {
-			web_browser = atoi(p->value[0]);
+			/* XXX: someone check and make sure I did these right */
+			switch(atoi(p->value[0])) {
+				case BROWSER_NETSCAPE:
+					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
+							"netscape");
+					break;
+				case BROWSER_KONQ:
+					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
+							"kfmclient");
+					break;
+				case BROWSER_MANUAL:
+					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
+							"manual");
+					break;
+				case BROWSER_GNOME:
+					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
+							"gnome");
+					break;
+				case BROWSER_OPERA:
+					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
+							"opera");
+					break;
+				case BROWSER_GALEON:
+					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
+							"galeon");
+					break;
+				case BROWSER_MOZILLA:
+				default:
+					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
+							"mozilla");
+					break;
+			}
 		} else if (!strcmp(p->option, "web_command")) {
-			strcpy(web_command, p->value[0]);
+			gaim_prefs_set_string("/gaim/gtk/browsers/command", p->value[0]);
 		} else if (!strcmp(p->option, "smiley_theme")) {
 			load_smiley_theme(p->value[0], TRUE);
 		} else if (!strcmp(p->option, "conv_size")) {
-			conv_size.width = atoi(p->value[0]);
-			conv_size.height = atoi(p->value[1]);
-			conv_size.entry_height = atoi(p->value[2]);
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width",
+					atoi(p->value[0]));
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height",
+					atoi(p->value[1]));
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_right",
+					atoi(p->value[2]));
 		} else if (!strcmp(p->option, "buddy_chat_size")) {
-			buddy_chat_size.width = atoi(p->value[0]);
-			buddy_chat_size.height = atoi(p->value[1]);
-			buddy_chat_size.entry_height = atoi(p->value[2]);
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width",
+					atoi(p->value[0]));
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height",
+					atoi(p->value[1]));
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_right",
+					atoi(p->value[2]));
 		} else if (!strcmp(p->option, "blist_pos")) {
-			blist_pos.x = atoi(p->value[0]);
-			blist_pos.y = atoi(p->value[1]);
-			blist_pos.width = atoi(p->value[2]);
-			blist_pos.height = atoi(p->value[3]);
+			gaim_prefs_set_int("/gaim/gtk/blist/x", atoi(p->value[0]));
+			gaim_prefs_set_int("/gaim/gtk/blist/y", atoi(p->value[1]));
+			gaim_prefs_set_int("/gaim/gtk/blist/width", atoi(p->value[2]));
+			gaim_prefs_set_int("/gaim/gtk/blist/height", atoi(p->value[3]));
 		} else if (!strcmp(p->option, "sort_method")) {
 			gaim_prefs_set_string("/gaim/gtk/blist/sort_type", p->value[0]);
 		}
@@ -965,22 +1022,6 @@ static void gaimrc_read_options(FILE *f)
 					| OPT_SOUND_ARTS | OPT_SOUND_NAS | OPT_SOUND_CMD))) {
 		sound_options |= OPT_SOUND_NORMAL;
 		gaim_sound_change_output_method();
-	}
-
-	if (conv_size.width == 0 &&
-	    conv_size.height == 0 &&
-	    conv_size.entry_height == 0) {
-		conv_size.width = 410;
-		conv_size.height = 160;
-		conv_size.entry_height = 50;
-	}
-
-	if (buddy_chat_size.width == 0 &&
-	    buddy_chat_size.height == 0 &&
-	    buddy_chat_size.entry_height == 0) {
-		buddy_chat_size.width = 410;
-		buddy_chat_size.height = 160;
-		buddy_chat_size.entry_height = 50;
 	}
 
 	if (read_general) {

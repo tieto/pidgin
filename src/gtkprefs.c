@@ -1209,20 +1209,19 @@ static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpoin
 	return FALSE;
 }
 
-static GList *get_available_browsers() 
+static GList *get_available_browsers()
 {
 	struct browser {
 		char *name;
 		char *command;
-		int id; 
 	};
 
 	static struct browser possible_browsers[] = {
-		{N_("Konqueror"), "kfmclient", BROWSER_KONQ},
-		{N_("Opera"), "opera", BROWSER_OPERA}, 
-		{N_("Galeon"), "galeon", BROWSER_GALEON},
-		{N_("Netscape"), "netscape", BROWSER_NETSCAPE},
-		{N_("Mozilla"), "mozilla", BROWSER_MOZILLA},
+		{N_("Konqueror"), "kfmclient"},
+		{N_("Opera"), "opera"},
+		{N_("Galeon"), "galeon"},
+		{N_("Netscape"), "netscape"},
+		{N_("Mozilla"), "mozilla"},
 	};
 	static const int num_possible_browsers = 5;
 
@@ -1234,7 +1233,7 @@ static GList *get_available_browsers()
 
 	for (i = 0; i < num_possible_browsers; i++) {
 		if (program_is_valid(possible_browsers[i].command)) {
-			browsers = g_list_prepend(browsers, 
+			browsers = g_list_prepend(browsers,
 									  possible_browsers[i].command);
 			browsers = g_list_prepend(browsers, _(possible_browsers[i].name));
 		}
