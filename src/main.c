@@ -827,6 +827,8 @@ int main(int argc, char *argv[])
 		gaim_prefs_sync();
 	}
 
+	gaim_prefs_rename_old();
+
 	/* load plugins we had when we quit */
 	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
 

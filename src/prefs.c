@@ -163,6 +163,8 @@ get_path_basename(const char *name)
 static char *pref_full_name(struct gaim_pref *pref) {
 	GString *name;
 	struct gaim_pref *parent;
+	char *ret;
+
 	if(!pref)
 		return NULL;
 
@@ -176,8 +178,9 @@ static char *pref_full_name(struct gaim_pref *pref) {
 		name = g_string_prepend_c(name, '/');
 		name = g_string_prepend(name, parent->name);
 	}
+	ret = name->str;
 	g_string_free(name, FALSE);
-	return name->str;
+	return ret;
 }
 
 static struct gaim_pref *find_pref(const char *name)
@@ -316,6 +319,9 @@ void remove_pref(struct gaim_pref *pref) {
 	if(!pref || pref == &prefs)
 		return;
 
+	while(pref->first_child)
+		remove_pref(pref->first_child);
+
 	if(pref->parent->first_child == pref) {
 		pref->parent->first_child = pref->sibling;
 	} else {
@@ -326,6 +332,8 @@ void remove_pref(struct gaim_pref *pref) {
 	}
 
 	name = pref_full_name(pref);
+
+	gaim_debug(GAIM_DEBUG_INFO, "prefs", "removing pref %s\n", name);
 
 	g_hash_table_remove(prefs_hash, name);
 	g_free(name);
@@ -339,16 +347,9 @@ void remove_pref(struct gaim_pref *pref) {
 
 void gaim_prefs_remove(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
-	struct gaim_pref *child, *child2;
 
 	if(!pref)
 		return;
-	child = pref->first_child;
-	while(child) {
-		child2 = child;
-		child = child->sibling;
-		remove_pref(child2);
-	}
 
 	remove_pref(pref);
 }
@@ -569,6 +570,44 @@ GList *gaim_prefs_get_string_list(const char *name) {
 		ret = g_list_append(ret, g_strdup(tmp->data));
 
 	return ret;
+}
+
+void gaim_prefs_rename(const char *oldname, const char *newname) {
+	struct gaim_pref *oldpref, *newpref;
+
+	oldpref = find_pref(oldname);
+	newpref = find_pref(newname);
+
+	/* it's already been renamed, call off the dogs */
+	if(!oldpref)
+		return;
+
+	g_return_if_fail(newpref != NULL); /* the new one needs to be created */
+	g_return_if_fail(oldpref->type == newpref->type);
+	g_return_if_fail(oldpref->first_child == NULL); /* can't rename parents */
+
+	switch(oldpref->type) {
+		case GAIM_PREF_NONE:
+			break;
+		case GAIM_PREF_BOOLEAN:
+			gaim_prefs_set_bool(newname, oldpref->value.boolean);
+			break;
+		case GAIM_PREF_INT:
+			gaim_prefs_set_int(newname, oldpref->value.integer);
+			break;
+		case GAIM_PREF_STRING:
+			gaim_prefs_set_string(newname, oldpref->value.string);
+			break;
+		case GAIM_PREF_STRING_LIST:
+			gaim_prefs_set_string_list(newname, oldpref->value.stringlist);
+			break;
+	}
+
+	remove_pref(oldpref);
+}
+
+void gaim_prefs_rename_old() {
+	/* This doesn't actually do anything yet, but it will */
 }
 
 guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpointer data)

@@ -107,6 +107,14 @@ void gaim_prefs_add_string_list(const char *name, GList *value);
 void gaim_prefs_remove(const char *name);
 
 /**
+ * Rename a pref
+ *
+ * @param oldname The old name of the pref
+ * @param newname The new name for the pref
+ */
+void gaim_prefs_rename(const char *oldname, const char *newname);
+
+/**
  * Remove all prefs.
  */
 void gaim_prefs_destroy();
@@ -216,6 +224,11 @@ gboolean gaim_prefs_load();
  * Force an immediate write of preferences
  */
 void gaim_prefs_sync();
+
+/**
+ * Rename legacy prefs
+ */
+void gaim_prefs_rename_old();
 
 /*@}*/
 
