@@ -1589,6 +1589,10 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				   NODE_COLUMN, node,
 				   -1);
 
+		if (blist_options & OPT_BLIST_POPUP &&
+				((struct buddy *)node)->present == GAIM_BUDDY_SIGNING_OFF)
+			gtk_window_present(GTK_WINDOW(gtkblist->window));
+
 		g_free(mark);
 		if (idle)
 			g_free(idle);
@@ -1603,8 +1607,6 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && !new_entry) {
 		gaim_gtk_blist_remove(list, node);
-		if (blist_options & OPT_BLIST_POPUP)
-			gtk_window_present(GTK_WINDOW(gtkblist->window));
 	}
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
 
