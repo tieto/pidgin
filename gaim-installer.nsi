@@ -140,6 +140,7 @@ SetDateSave on
   !insertmacro MUI_LANGUAGE "Romanian"
   !insertmacro MUI_LANGUAGE "Russian"
   !insertmacro MUI_LANGUAGE "Serbian"
+  !insertmacro MUI_LANGUAGE "Slovenian"
   !insertmacro MUI_LANGUAGE "Finnish"
   !insertmacro MUI_LANGUAGE "Swedish"
 
@@ -171,6 +172,7 @@ SetDateSave on
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "RUSSIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\russian.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SERBIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SIMPCHINESE"	"${GAIM_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SLOVENIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\slovenian.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SPANISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\spanish.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SWEDISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\swedish.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "TRADCHINESE"	"${GAIM_NSIS_INCLUDE_PATH}\translations\trad-chinese.nsh"

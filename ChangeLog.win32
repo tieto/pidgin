@@ -1,6 +1,7 @@
 version 0.78 (05/28/2004):
-    * Win32 transparency plugin  now preserves transparency when
-	  dragging conversation tabs (Kevin Stange)
+	* Win32 transparency plugin now preserves transparency when dragging
+	  conversation tabs (Kevin Stange).
+	* Installer translations for: Slovenian.
 
 version 0.77 (04/22/2004):
 

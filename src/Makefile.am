@@ -48,6 +48,7 @@ EXTRA_DIST = \
 		win32/nsis/translations/russian.nsh \
 		win32/nsis/translations/serbian-latin.nsh \
 		win32/nsis/translations/simp-chinese.nsh \
+		win32/nsis/translations/slovenian.nsh \
 		win32/nsis/translations/spanish.nsh \
 		win32/nsis/translations/swedish.nsh \
 		win32/nsis/translations/trad-chinese.nsh \
