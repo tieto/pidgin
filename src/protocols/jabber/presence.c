@@ -82,8 +82,9 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 }
 
 
-void jabber_presence_send(GaimConnection *gc, GaimStatus *status)
+void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 {
+	GaimConnection *gc = account->gc;
 	JabberStream *js = gc->proto_data;
 	xmlnode *presence, *x, *photo;
 	char *stripped = NULL;
@@ -533,24 +534,25 @@ void jabber_presence_subscription_set(JabberStream *js, const char *who, const c
 
 void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, const char **msg, int *priority)
 {
-	const char *status_id;
+	const char *status_id = NULL;
+
+	*state = JABBER_BUDDY_STATE_UNKNOWN;
+	*msg = NULL;
+	*priority = 0;
 
 	if(!status) {
-		*state = JABBER_BUDDY_STATE_UNKNOWN;
-		*msg = NULL;
-		*priority = 0;
-		return;
+		*state = JABBER_BUDDY_STATE_UNAVAILABLE;
+	} else {
+		if(state) {
+			status_id = gaim_status_get_id(status);
+			*state = jabber_buddy_status_id_get_state(status_id);
+		}
+
+		if(msg)
+			*msg = gaim_status_get_attr_string(status, "message");
+
+		if(priority)
+			*priority = gaim_status_get_attr_int(status, "priority");
 	}
-
-	if(state) {
-		status_id = gaim_status_get_id(status);
-		*state = jabber_buddy_status_id_get_state(status_id);
-	}
-
-	if(msg)
-		*msg = gaim_status_get_attr_string(status, "message");
-
-	if(priority)
-		*priority = gaim_status_get_attr_int(status, "priority");
 
 }

@@ -26,7 +26,7 @@
 #include "jabber.h"
 #include "xmlnode.h"
 
-void jabber_presence_send(GaimConnection *gc, GaimStatus *status);
+void jabber_presence_send(GaimAccount *account, GaimStatus *status);
 xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority);
 void jabber_presence_parse(JabberStream *js, xmlnode *packet);
 void jabber_presence_subscription_set(JabberStream *js, const char *who,

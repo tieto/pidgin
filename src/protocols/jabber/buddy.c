@@ -424,7 +424,7 @@ void jabber_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 
 	gpresence = gaim_account_get_presence(gc->account);
 	status = gaim_presence_get_active_status(gpresence);
-	jabber_presence_send(gc, status);
+	jabber_presence_send(gc->account, status);
 }
 
 /*

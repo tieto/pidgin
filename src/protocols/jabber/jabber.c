@@ -742,7 +742,7 @@ static void jabber_close(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-	jabber_presence_send(gc, NULL); /* XXX: FIXME: EEK! */
+	jabber_presence_send(gc->account, NULL);
 	jabber_send_raw(js, "</stream:stream>", -1);
 
 	if(js->gsc) {
@@ -814,7 +814,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			jabber_roster_request(js);
 			gpresence = gaim_account_get_presence(js->gc->account);
 			status = gaim_presence_get_active_status(gpresence);
-			jabber_presence_send(js->gc, status);
+			jabber_presence_send(js->gc->account, status);
 			jabber_disco_items_server(js);
 			serv_finish_login(js->gc);
 			break;
@@ -1528,7 +1528,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	NULL,							/* set_away */
+	jabber_presence_send,			/* set_away */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */
