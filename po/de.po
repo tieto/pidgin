@@ -15,8 +15,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.19\n"
-"POT-Creation-Date: 2003-02-19 16:23+0100\n"
-"PO-Revision-Date: 2003-02-19 22:31+0100\n"
+"POT-Creation-Date: 2003-02-20 10:09+0100\n"
+"PO-Revision-Date: 2003-02-20 10:14+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: de <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -78,7 +78,7 @@ msgstr "_Beenden"
 
 #: plugins/docklet/docklet.c:480
 msgid "Tray Icon Configuration"
-msgstr "Gaim - Klang-Konfiguration"
+msgstr "Tray-Icon Konfiguration"
 
 #. toggle = gtk_check_button_new_with_mnemonic(_("_Automatically show buddy list on sign on"));
 #. gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), blist_options & OPT_BLIST_APP_BUDDY_SHOW);
@@ -108,6 +108,22 @@ msgstr ""
 #: plugins/docklet/docklet.c:504
 msgid "Robert McQueen &lt;robot101@debian.org>"
 msgstr "Robert McQueen &lt;robot101@debian.org>"
+
+#: plugins/ticker/ticker.c:96
+msgid "Gaim - Buddy Ticker"
+msgstr "Gaim - Buddy-Ticker"
+
+#: plugins/ticker/ticker.c:414 plugins/ticker/ticker.c:440
+msgid "Buddy Ticker"
+msgstr "Buddy-Ticker"
+
+#: plugins/ticker/ticker.c:418
+msgid "A horizontal scrolling version of the buddy list"
+msgstr "Eine horizontal scrollende Version der Buddy-Liste"
+
+#: plugins/ticker/ticker.c:442
+msgid "A horizontal scrolling version of the buddy list."
+msgstr "Eine horizontal scrollende Version der Buddy-Liste."
 
 #: plugins/autorecon.c:58
 msgid "Autoreconnect"
@@ -314,11 +330,11 @@ msgstr "Entfernung von Benachrichtigungen"
 
 #: plugins/notify.c:657
 msgid "Remove when conversation window gains _focus"
-msgstr "Entferne, wenn das Gesprächsfenster den Focus verliert"
+msgstr "Entferne, wenn das Gesprächsfenster den _Focus verliert"
 
 #: plugins/notify.c:662
 msgid "Remove when conversation window _receives click"
-msgstr "Entferne, wenn das Gesprächsfenster geklickt wird"
+msgstr "Entfe_rne, wenn das Gesprächsfenster geklickt wird"
 
 #: plugins/notify.c:667
 msgid "Remove when _typing in conversation window"
@@ -327,6 +343,39 @@ msgstr "Entferne, wenn im Gesprächsfenster ge_tippt wird"
 #: plugins/notify.c:672
 msgid "Appl_y"
 msgstr "_Anwenden"
+
+#: plugins/spellchk.c:395 plugins/spellchk.c:404
+msgid "Text replacement"
+msgstr "Text-Platzierung:"
+
+#: plugins/spellchk.c:397 plugins/spellchk.c:408
+msgid "Replaces text in outgoing messages according to user-defined rules."
+msgstr ""
+"Ersetzt Text in ausgehenden Nachrichten durch benutzerdefinierte Regeln."
+
+#: plugins/spellchk.c:425
+msgid "Text Replacements"
+msgstr "Text-Ersetzung:"
+
+#: plugins/spellchk.c:447
+msgid "You type"
+msgstr "Sie tippen"
+
+#: plugins/spellchk.c:459
+msgid "You send"
+msgstr "Sie sendeten"
+
+#: plugins/spellchk.c:485
+msgid "Add a new text replacement"
+msgstr "Füge neue Textersetzung hinzu"
+
+#: plugins/spellchk.c:492
+msgid "You _type:"
+msgstr "Sie _tippen:"
+
+#: plugins/spellchk.c:506
+msgid "You _send:"
+msgstr "Sie _sendeten:"
 
 #: plugins/timestamp.c:72
 msgid "iChat Timestamp"
@@ -348,6 +397,42 @@ msgstr "Zeitstempel"
 msgid "Adds iChat-style timestamps to conversations every N minutes."
 msgstr "Fügt iChat-ähnliche Zeitstempel alle N Minuten in die Gespräche ein"
 
+#. Configuration frame
+#: plugins/gestures/gestures.c:212
+msgid "Mouse Gestures Configuration"
+msgstr "Maus-Gestik Konfiguration"
+
+#: plugins/gestures/gestures.c:219
+msgid "Middle mouse button"
+msgstr "Mittlerer Mausbutton"
+
+#: plugins/gestures/gestures.c:224
+msgid "Right mouse button"
+msgstr "Rechter Mausbutton"
+
+#. "Visual gesture display" checkbox
+#: plugins/gestures/gestures.c:236
+msgid "_Visual gesture display"
+msgstr "_Visuelle Gestik-Anzeige"
+
+#: plugins/gestures/gestures.c:252 plugins/gestures/gestures.c:270
+msgid "Mouse Gestures"
+msgstr "Maus-Gestiken"
+
+#: plugins/gestures/gestures.c:255 plugins/gestures/gestures.c:276
+msgid ""
+"Allows support for mouse gestures in conversation windows.\n"
+"\n"
+"Drag down and then to the right to close a conversation.\n"
+"Drag up and then to the left to switch to the previous conversation.\n"
+"Drag up and then to the right to switch to the next conversation."
+msgstr ""
+"Erlaubt die Unterstützung von Maus-Gestiken im Gesprächsfenster.\n"
+"\n"
+"Herunterziehen und dann nach rechts, um ein Gespräch zu beenden.\n"
+"Hochziehen und dann links, um auf ein voriges Gespräch zu wechseln.\n"
+"Hochziehen und dann rechts, um zum nächsten Gespräche zu wechseln."
+
 #: src/protocols/gg/gg.c:74 src/protocols/msn/msn.c:1509
 #: src/protocols/msn/msn.c:1612
 msgid "Available"
@@ -363,7 +448,7 @@ msgstr "Nur für Freunde abwesend"
 
 #: src/protocols/gg/gg.c:78 src/protocols/oscar/oscar.c:2474
 #: src/protocols/oscar/oscar.c:3952 src/protocols/oscar/oscar.c:3980
-#: src/protocols/oscar/oscar.c:5098 src/protocols/yahoo/yahoo.c:1045
+#: src/protocols/oscar/oscar.c:5098
 msgid "Invisible"
 msgstr "Unsichtbar"
 
@@ -668,8 +753,8 @@ msgstr ""
 #: src/buddy_chat.c:303 src/dialogs.c:483 src/dialogs.c:2189
 #: src/dialogs.c:2312 src/dialogs.c:2377 src/dialogs.c:2540 src/dialogs.c:2737
 #: src/dialogs.c:2914 src/dialogs.c:3675 src/dialogs.c:3889 src/dialogs.c:4054
-#: src/dialogs.c:4550 src/dialogs.c:5294 src/multi.c:1157 src/multi.c:1512
-#: src/prpl.c:311 src/prpl.c:673 src/server.c:1030
+#: src/dialogs.c:4550 src/dialogs.c:5294 src/gtkft.c:1065 src/multi.c:1157
+#: src/multi.c:1512 src/prpl.c:311 src/prpl.c:673 src/server.c:1030
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -897,7 +982,7 @@ msgstr "DCC-Chat"
 msgid "Server:"
 msgstr "Server:"
 
-#: src/protocols/irc/irc.c:2810 src/protocols/jabber/jabber.c:4194
+#: src/protocols/irc/irc.c:2810 src/protocols/jabber/jabber.c:4200
 #: src/protocols/msn/msn.c:2033 src/protocols/napster/napster.c:618
 msgid "Port:"
 msgstr "Port:"
@@ -936,8 +1021,7 @@ msgstr "Unbekannt"
 
 #: src/protocols/jabber/jabber.c:1175 src/protocols/jabber/jabber.c:1193
 #: src/protocols/oscar/oscar.c:2476 src/protocols/oscar/oscar.c:3963
-#: src/protocols/oscar/oscar.c:5092 src/protocols/yahoo/yahoo.c:1047
-#: src/buddy.c:2672 src/multi.c:253
+#: src/protocols/oscar/oscar.c:5092 src/buddy.c:2672 src/multi.c:253
 msgid "Online"
 msgstr "Online"
 
@@ -1182,7 +1266,7 @@ msgstr "Unbekannter Fehler bei der Anmeldung"
 msgid "Set User Info"
 msgstr "Benutzer-Info setzen"
 
-#: src/protocols/jabber/jabber.c:4200
+#: src/protocols/jabber/jabber.c:4194
 msgid "Connect Server:"
 msgstr "Verbindungsserver:"
 
@@ -1433,12 +1517,11 @@ msgid "Away From Computer"
 msgstr "Weg vom Computer"
 
 #: src/protocols/msn/msn.c:1511 src/protocols/msn/msn.c:1539
-#: src/protocols/yahoo/yahoo.c:1027
 msgid "Be Right Back"
 msgstr "Komme gleich wieder"
 
 #: src/protocols/msn/msn.c:1512 src/protocols/msn/msn.c:1541
-#: src/protocols/msn/msn.c:1600 src/protocols/yahoo/yahoo.c:1029
+#: src/protocols/msn/msn.c:1600
 msgid "Busy"
 msgstr "Beschäftigt"
 
@@ -1447,7 +1530,6 @@ msgid "On The Phone"
 msgstr "Am Telefon"
 
 #: src/protocols/msn/msn.c:1514 src/protocols/msn/msn.c:1545
-#: src/protocols/yahoo/yahoo.c:1041
 msgid "Out To Lunch"
 msgstr "Beim Essen"
 
@@ -1515,6 +1597,27 @@ msgstr ""
 "Ein MSN Benutzername muß in der Form \"benutzer@server.com\" vorliegen. "
 "Vielleicht meinten Sie %s@hotmail.com. An Ihrer Liste der blockierten "
 "Benutzer wurden keine Änderungen vorgenommen."
+
+#: src/protocols/msn/switchboard.c:104
+#, c-format
+msgid "%s has closed the conversation window"
+msgstr "%s hat das Gesprächsfenster geschlossen"
+
+#: src/protocols/msn/switchboard.c:181
+msgid "An MSN message may not have been received."
+msgstr "Eine MSN Nachricht wurde evtl. nicht empfangen."
+
+#: src/protocols/msn/switchboard.c:411
+msgid "Gaim was unable to send an MSN message"
+msgstr "Gaim konnte die MSN Nachricht nicht senden"
+
+#: src/protocols/msn/switchboard.c:412
+msgid ""
+"Gaim encountered an error communicating with the MSN switchboard server.  "
+"Please try again later."
+msgstr ""
+"Gaim stellte einen Fehler bei der Kommunikation mit dem MSN-Zentralserver "
+"fest.< Bitte versuchen Sie es später nochmal."
 
 #: src/protocols/napster/napster.c:461 src/protocols/oscar/oscar.c:4499
 #: src/protocols/toc/toc.c:1139
@@ -2252,11 +2355,11 @@ msgstr ""
 msgid "Authorization Given"
 msgstr "Authorisierung wurde gegeben"
 
-#: src/protocols/oscar/oscar.c:4397
+#: src/protocols/oscar/oscar.c:4397 src/gtkft.c:971
 msgid "Yes"
 msgstr "Ja"
 
-#: src/protocols/oscar/oscar.c:4397
+#: src/protocols/oscar/oscar.c:4397 src/gtkft.c:972
 msgid "No"
 msgstr "Nein"
 
@@ -2602,7 +2705,7 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr ""
 "Konnte keinen Datei-Kopf schreiben. Die Datei wurde nicht übermittelt. "
 
-#: src/protocols/toc/toc.c:1940
+#: src/protocols/toc/toc.c:1940 src/gtkft.c:1011
 msgid "Gaim - Save As..."
 msgstr "Gaim - Speichern unter..."
 
@@ -2618,37 +2721,14 @@ msgstr[1] "%s bittet %s %d Dateien zu akzeptieren: %s (%.2f %s)%s%s"
 msgid "%s requests you to send them a file"
 msgstr "%s bittet Sie eine Datei zu senden"
 
-#: src/protocols/toc/toc.c:1983 src/prpl.c:307 src/server.c:1030
+#: src/protocols/toc/toc.c:1983 src/gtkft.c:1064 src/prpl.c:307
+#: src/server.c:1030
 msgid "Accept"
 msgstr "Akzeptieren"
 
 #: src/protocols/yahoo/yahoo.c:582
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ihre Yahoo!-Nachricht wurde nicht verschickt."
-
-#: src/protocols/yahoo/yahoo.c:1031
-msgid "Not At Home"
-msgstr "Nicht zu Hause"
-
-#: src/protocols/yahoo/yahoo.c:1033
-msgid "Not At Desk"
-msgstr "Nicht am Tisch"
-
-#: src/protocols/yahoo/yahoo.c:1035
-msgid "Not In Office"
-msgstr "Nicht im Büro"
-
-#: src/protocols/yahoo/yahoo.c:1037
-msgid "On Phone"
-msgstr "Am Telefon"
-
-#: src/protocols/yahoo/yahoo.c:1039
-msgid "On Vacation"
-msgstr "Im Urlaub"
-
-#: src/protocols/yahoo/yahoo.c:1043
-msgid "Stepped Out"
-msgstr "Herausgegangen"
 
 #: src/protocols/yahoo/yahoo.c:1141
 msgid "Activate ID"
@@ -2759,6 +2839,27 @@ msgstr "Abwesenheits-Mitteilung löschen"
 #: src/away.c:608
 msgid "Set All Away"
 msgstr "Alle auf Abwesend setzen"
+
+#: src/browser.c:413 src/browser.c:439
+msgid ""
+"Communication with the browser failed.  Please close all windows and try "
+"again."
+msgstr ""
+"Kommunikation mit dem Browser gescheitert. Bitte schließen Sie alle Fenster "
+"und versuchen Sie es erneut."
+
+#: src/browser.c:567
+msgid ""
+"Unable to launch your browser because the 'Manual' browser command has been "
+"chosen, but no command has been set."
+msgstr ""
+"Konnte den Browser nicht aufrufen, da der 'Manuell'-Browser gewählt, aber "
+"kein Kommando gesetzt wurde."
+
+#: src/browser.c:579
+#, c-format
+msgid "There was an error launching your chosen browser: %s"
+msgstr "Es gab einen Fehler beim Aufrug des gewählten Browsers: %s"
 
 #: src/buddy.c:391 src/buddy.c:2638 src/dialogs.c:1136
 msgid "Group"
@@ -3603,6 +3704,27 @@ msgstr "Dateitransfer zu %s wurde abgebrochen.\n"
 msgid "File transfer from %s aborted.\n"
 msgstr "Dateitransfer zu %s wurde abgebrochen.\n"
 
+#: src/gaim-remote.c:32
+#, c-format
+msgid ""
+"Usage: %s command [OPTIONS] [URI]\n"
+"\n"
+"    COMMANDS:\n"
+"       uri                      Handle AIM: URI\n"
+"       quit                     Close running copy of Gaim\n"
+"\n"
+"    OPTIONS:\n"
+"       -h, --help [commmand]    Show help for command\n"
+msgstr ""
+"Benutzung: %s Kommando [OPTIONEN] [URI]\n"
+"\n"
+"    Kommandos:\n"
+"       uri                      Behandle AIM: URI\n"
+"       quit                     Schließe eine laufende Instanz von Gaim\n"
+"\n"
+"    OPTIONEN:\n"
+"       -h, --help [Kommando]    Zeige Hilfe zum Kommando\n"
+
 #: src/gaimrc.c:265 src/gaimrc.c:1250
 msgid "boring default"
 msgstr "langweiliger Standard"
@@ -3649,6 +3771,44 @@ msgstr "_Nachricht"
 #: src/gtkconv.c:2044
 msgid "_Send As"
 msgstr "Ab_schicken als"
+
+#. Conversation menu
+#: src/gtkconv.c:2403
+msgid "/_Conversation"
+msgstr "/_Unterhaltung"
+
+#: src/gtkconv.c:2404
+msgid "/Conversation/_Save As..."
+msgstr "/Unterhaltung/_Speichern als..."
+
+#: src/gtkconv.c:2406
+msgid "/Conversation/View _History..."
+msgstr "/Unterhaltung/Betrachte _History"
+
+#: src/gtkconv.c:2408
+msgid "/Conversation/Insert _URL..."
+msgstr "/Unterhaltung/Füge _URL ein..."
+
+#: src/gtkconv.c:2410
+msgid "/Conversation/Insert _Image..."
+msgstr "/Unterhaltung/Füge B_ild ein ..."
+
+#: src/gtkconv.c:2413
+msgid "/Conversation/_Close"
+msgstr "/Unterhaltung/S_chließen"
+
+#. Options
+#: src/gtkconv.c:2417
+msgid "/_Options"
+msgstr "/_Optionen"
+
+#: src/gtkconv.c:2418
+msgid "/Options/Enable _Logging"
+msgstr "/Optionen/Scha_lte Mittschnitt ein"
+
+#: src/gtkconv.c:2419
+msgid "/Options/Enable _Sounds"
+msgstr "/Optionen/_Schalte Klänge ein"
 
 #. From right to left...
 #. Send button
@@ -3787,6 +3947,119 @@ msgstr "Icon verbergen"
 #: src/gtkconv.c:4437
 msgid "Save Icon As..."
 msgstr "Icon speichern unter..."
+
+#: src/gtkft.c:103
+msgid "Calculating..."
+msgstr "Berechne..."
+
+#: src/gtkft.c:106
+msgid "Unknown."
+msgstr "Unbekannt."
+
+#: src/gtkft.c:143
+#, c-format
+msgid "%.2f KB/s"
+msgstr "%.2f KB/s"
+
+#: src/gtkft.c:218
+msgid "<b>Receiving From:</b>"
+msgstr "<b>Empfange von:</b>"
+
+#: src/gtkft.c:221
+msgid "<b>Sending To:</b>"
+msgstr "<b>Sende zu:</b>"
+
+#: src/gtkft.c:445
+msgid "Progress"
+msgstr "Fortschritt"
+
+#: src/gtkft.c:452
+msgid "Filename"
+msgstr "Dateiname"
+
+#: src/gtkft.c:459
+msgid "Size"
+msgstr "Größe"
+
+#: src/gtkft.c:466
+msgid "Remaining"
+msgstr "Verbleibend"
+
+#: src/gtkft.c:496
+msgid "Filename:"
+msgstr "Dateiname:"
+
+#: src/gtkft.c:497
+msgid "Status:"
+msgstr "Status:"
+
+#: src/gtkft.c:498
+msgid "Speed:"
+msgstr "Geschwindigkeit:"
+
+#: src/gtkft.c:499
+msgid "Time Elapsed:"
+msgstr "Zeit verstrichen:"
+
+#: src/gtkft.c:500
+msgid "Time Remaining:"
+msgstr "Zeit verbleibend:"
+
+#: src/gtkft.c:566
+msgid "File Transfers"
+msgstr "Dateitransfers"
+
+#: src/gtkft.c:594
+msgid "_Keep the dialog open"
+msgstr "_Lasse den Dialog offen"
+
+#: src/gtkft.c:604
+msgid "_Clear finished transfers"
+msgstr "Lö_sche beendete Transfers"
+
+#. "Download Details" arrow
+#: src/gtkft.c:613
+msgid "Show download details"
+msgstr "Zeige Download-Details"
+
+#: src/gtkft.c:614
+msgid "Hide download details"
+msgstr "Verstecke Download-Details"
+
+#. Pause button
+#: src/gtkft.c:656
+msgid "_Pause"
+msgstr "_Pause"
+
+#. Resume button
+#: src/gtkft.c:666
+msgid "_Resume"
+msgstr "Fo_rtsetzen"
+
+#: src/gtkft.c:968
+msgid "That file already exists. Would you like to overwrite it?"
+msgstr "Diese Datei existiert bereits. Möchten Sie die Datei überschreiben?"
+
+#: src/gtkft.c:985
+msgid "That file does not exist."
+msgstr "Diese Datei existiert nicht."
+
+#: src/gtkft.c:1009
+msgid "Gaim - Open..."
+msgstr "Gaim - Öffnen..."
+
+#: src/gtkft.c:1058
+#, c-format
+msgid "%s wants to send you %s (%s)"
+msgstr "%s möchte Ihnen %s (%s) senden"
+
+#: src/gtkimhtml.c:307
+msgid "_Copy Link Location"
+msgstr "_Kopiere den Link"
+
+#: src/gtkimhtml.c:314
+msgid "_Open Link in Browser"
+msgstr "Ö_ffne Link um Browser"
 
 #: src/gtkutils.c:315
 msgid "Gaim - Save Icon"
@@ -5105,3 +5378,20 @@ msgstr "Kein Raumname angegeben"
 msgid "Invalid AIM URI"
 msgstr "Ungültiger SNAC"
 
+#~ msgid "Not At Home"
+#~ msgstr "Nicht zu Hause"
+
+#~ msgid "Not At Desk"
+#~ msgstr "Nicht am Tisch"
+
+#~ msgid "Not In Office"
+#~ msgstr "Nicht im Büro"
+
+#~ msgid "On Phone"
+#~ msgstr "Am Telefon"
+
+#~ msgid "On Vacation"
+#~ msgstr "Im Urlaub"
+
+#~ msgid "Stepped Out"
+#~ msgstr "Herausgegangen"

@@ -2,12 +2,14 @@ plugins/docklet/docklet.c
 plugins/ticker/ticker.c
 plugins/autorecon.c
 plugins/chatlist.c
+plugins/gtik.c
 plugins/history.c
 plugins/iconaway.c
 plugins/idle.c
 plugins/notify.c
 plugins/spellchk.c
 plugins/timestamp.c
+plugins/gestures/gestures.c
 src/protocols/gg/gg.c
 src/protocols/icq/gaim_icq.c
 src/protocols/irc/irc.c
