@@ -13,14 +13,13 @@
  * be called to free the dynamic substructures.
  *
  */
-faim_export struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
+faim_export struct aim_tlvlist_t *aim_readtlvchain(const unsigned char *buf, const int maxlen)
 {
   int pos;
   struct aim_tlvlist_t *list;
   struct aim_tlvlist_t *cur;
   
-  u_short type;
-  u_short length;
+  unsigned short type, length;
 
   if (!buf)
     return NULL;
@@ -156,7 +155,7 @@ faim_export int aim_sizetlvchain(struct aim_tlvlist_t **list)
  * to the TLV chain.
  *
  */
-faim_export int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len)
+faim_export int aim_addtlvtochain_str(struct aim_tlvlist_t **list, const unsigned short type, const char *str, const int len)
 {
   struct aim_tlvlist_t *newtlv;
   struct aim_tlvlist_t *cur;
@@ -196,7 +195,7 @@ faim_export int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned shor
  * Adds a two-byte unsigned integer to a TLV chain.
  *
  */
-faim_export int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val)
+faim_export int aim_addtlvtochain16(struct aim_tlvlist_t **list, const unsigned short type, const unsigned short val)
 {
   struct aim_tlvlist_t *newtl;
   struct aim_tlvlist_t *cur;
@@ -236,7 +235,7 @@ faim_export int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short 
  * Adds a four-byte unsigned integer to a TLV chain.
  *
  */
-faim_export int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val)
+faim_export int aim_addtlvtochain32(struct aim_tlvlist_t **list, const unsigned short type, const unsigned long val)
 {
   struct aim_tlvlist_t *newtl;
   struct aim_tlvlist_t *cur;
@@ -289,7 +288,7 @@ faim_export int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short 
  *      %AIM_CAPS_SENDFILE    Supports Send File functions
  *
  */
-faim_export int aim_addtlvtochain_caps(struct aim_tlvlist_t **list, unsigned short type, unsigned short caps)
+faim_export int aim_addtlvtochain_caps(struct aim_tlvlist_t **list, const unsigned short type, const unsigned short caps)
 {
   unsigned char buf[128]; /* icky fixed length buffer */
   struct aim_tlvlist_t *newtl;
@@ -330,7 +329,7 @@ faim_export int aim_addtlvtochain_caps(struct aim_tlvlist_t **list, unsigned sho
  * Adds a TLV with a zero length to a TLV chain.
  *
  */
-faim_internal int aim_addtlvtochain_noval(struct aim_tlvlist_t **list, unsigned short type)
+faim_internal int aim_addtlvtochain_noval(struct aim_tlvlist_t **list, const unsigned short type)
 {
   struct aim_tlvlist_t *newtlv;
   struct aim_tlvlist_t *cur;
@@ -369,7 +368,7 @@ faim_internal int aim_addtlvtochain_noval(struct aim_tlvlist_t **list, unsigned 
  * by the chain structures.
  *
  */
-faim_export int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list)
+faim_export int aim_writetlvchain(unsigned char *buf, int buflen, struct aim_tlvlist_t **list)
 {
   int goodbuflen = 0;
   int i = 0;
@@ -411,7 +410,7 @@ faim_export int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t 
  * in a chain.
  *
  */
-faim_export struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *list, u_short type, int nth)
+faim_export struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *list, const unsigned short type, const int nth)
 {
   int i;
   struct aim_tlvlist_t *cur;
@@ -441,7 +440,7 @@ faim_export struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *list, u_short typ
  * dynamic buffer and must be freed by the caller.
  *
  */
-faim_export char *aim_gettlv_str(struct aim_tlvlist_t *list, u_short type, int nth)
+faim_export char *aim_gettlv_str(struct aim_tlvlist_t *list, const unsigned short type, const int nth)
 {
   struct aim_tlv_t *tlv;
   char *newstr;
@@ -466,7 +465,7 @@ faim_export char *aim_gettlv_str(struct aim_tlvlist_t *list, u_short type, int n
  * 8bit integer instead of an aim_tlv_t. 
  *
  */
-faim_internal unsigned char aim_gettlv8(struct aim_tlvlist_t *list, unsigned short type, int num)
+faim_internal unsigned char aim_gettlv8(struct aim_tlvlist_t *list, const unsigned short type, const int num)
 {
   struct aim_tlv_t *tlv;
 
@@ -485,7 +484,7 @@ faim_internal unsigned char aim_gettlv8(struct aim_tlvlist_t *list, unsigned sho
  * 16bit integer instead of an aim_tlv_t. 
  *
  */
-faim_internal unsigned short aim_gettlv16(struct aim_tlvlist_t *list, unsigned short type, int num)
+faim_internal unsigned short aim_gettlv16(struct aim_tlvlist_t *list, const unsigned short type, const int num)
 {
   struct aim_tlv_t *tlv;
 
@@ -504,7 +503,7 @@ faim_internal unsigned short aim_gettlv16(struct aim_tlvlist_t *list, unsigned s
  * 32bit integer instead of an aim_tlv_t. 
  *
  */
-faim_internal unsigned long aim_gettlv32(struct aim_tlvlist_t *list, unsigned short type, int num)
+faim_internal unsigned long aim_gettlv32(struct aim_tlvlist_t *list, const unsigned short type, const int num)
 {
   struct aim_tlv_t *tlv;
 
@@ -525,7 +524,7 @@ faim_internal unsigned long aim_gettlv32(struct aim_tlvlist_t *list, unsigned sh
  * must be freed by the caller if non-%NULL.
  *
  */
-faim_export struct aim_tlv_t *aim_grabtlv(u_char *src)
+faim_export struct aim_tlv_t *aim_grabtlv(const unsigned char *src)
 {
   struct aim_tlv_t *dest = NULL;
 
@@ -537,10 +536,10 @@ faim_export struct aim_tlv_t *aim_grabtlv(u_char *src)
   dest->length = src[2] << 8;
   dest->length += src[3];
 
-  dest->value = (u_char *) malloc(dest->length*sizeof(u_char));
-  memset(dest->value, 0, dest->length*sizeof(u_char));
+  dest->value = (unsigned char *) malloc(dest->length);
+  memset(dest->value, 0, dest->length);
 
-  memcpy(dest->value, &(src[4]), dest->length*sizeof(u_char));
+  memcpy(dest->value, &(src[4]), dest->length);
   
   return dest;
 }
@@ -558,7 +557,7 @@ faim_export struct aim_tlv_t *aim_grabtlv(u_char *src)
  * must be freed by the caller if non-%NULL.
  *
  */
-faim_export struct aim_tlv_t *aim_grabtlvstr(u_char *src)
+faim_export struct aim_tlv_t *aim_grabtlvstr(const unsigned char *src)
 {
   struct aim_tlv_t *dest = NULL;
 
@@ -570,10 +569,10 @@ faim_export struct aim_tlv_t *aim_grabtlvstr(u_char *src)
   dest->length = src[2] << 8;
   dest->length += src[3];
 
-  dest->value = (u_char *) malloc((dest->length+1)*sizeof(u_char));
-  memset(dest->value, 0, (dest->length+1)*sizeof(u_char));
+  dest->value = (unsigned char *) malloc(dest->length+1);
+  memset(dest->value, 0, dest->length+1);
 
-  memcpy(dest->value, &(src[4]), dest->length*sizeof(u_char));
+  memcpy(dest->value, src+4, dest->length);
   dest->value[dest->length] = '\0';
 
   return dest;
@@ -591,7 +590,7 @@ faim_export struct aim_tlv_t *aim_grabtlvstr(u_char *src)
  * still be called by the caller to free the structure.
  *
  */
-faim_export int aim_puttlv(u_char *dest, struct aim_tlv_t *newtlv)
+faim_export int aim_puttlv(unsigned char *dest, struct aim_tlv_t *newtlv)
 {
   int i=0;
 
@@ -651,7 +650,7 @@ faim_export int aim_freetlv(struct aim_tlv_t **oldtlv)
  * Writes a TLV with a one-byte integer value portion.
  *
  */
-faim_export int aim_puttlv_8(unsigned char *buf, unsigned short t, unsigned char  v)
+faim_export int aim_puttlv_8(unsigned char *buf, const unsigned short t, const unsigned char  v)
 {
   int curbyte=0;
 
@@ -671,12 +670,12 @@ faim_export int aim_puttlv_8(unsigned char *buf, unsigned short t, unsigned char
  * Writes a TLV with a two-byte integer value portion.
  *
  */
-faim_export int aim_puttlv_16(u_char *buf, u_short t, u_short v)
+faim_export int aim_puttlv_16(unsigned char *buf, const unsigned short t, const unsigned short v)
 {
   int curbyte=0;
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(t&0xffff));
-  curbyte += aimutil_put16(buf+curbyte, (u_short)0x0002);
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(v&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)(t&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)0x0002);
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)(v&0xffff));
   return curbyte;
 }
 
@@ -689,12 +688,12 @@ faim_export int aim_puttlv_16(u_char *buf, u_short t, u_short v)
  * Writes a TLV with a four-byte integer value portion.
  *
  */
-faim_export int aim_puttlv_32(u_char *buf, u_short t, u_long v)
+faim_export int aim_puttlv_32(unsigned char *buf, const unsigned short t, const unsigned long v)
 {
   int curbyte=0;
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(t&0xffff));
-  curbyte += aimutil_put16(buf+curbyte, (u_short)0x0004);
-  curbyte += aimutil_put32(buf+curbyte, (u_long)(v&0xffffffff));
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)(t&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)0x0004);
+  curbyte += aimutil_put32(buf+curbyte, (unsigned long)(v&0xffffffff));
   return curbyte;
 }
 
@@ -710,13 +709,13 @@ faim_export int aim_puttlv_32(u_char *buf, u_short t, u_long v)
  * include the terminating NULL.)
  *
  */
-faim_export int aim_puttlv_str(u_char *buf, u_short t, int l, char *v)
+faim_export int aim_puttlv_str(unsigned char *buf, const unsigned short t, const int l, const char *v)
 {
   int curbyte;
   
   curbyte  = 0;
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(t&0xffff));
-  curbyte += aimutil_put16(buf+curbyte, (u_short)(l&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)(t&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)(l&0xffff));
   if (v)
     memcpy(buf+curbyte, (unsigned char *)v, l);
   curbyte += l;

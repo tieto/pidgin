@@ -24,7 +24,11 @@
  * chan = channel for OSCAR, hdrtype for OFT
  *
  */
-faim_internal struct command_tx_struct *aim_tx_new(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned char framing, int chan, int datalen)
+faim_internal struct command_tx_struct *aim_tx_new(struct aim_session_t *sess, 
+						   struct aim_conn_t *conn, 
+						   unsigned char framing, 
+						   int chan, 
+						   int datalen)
 {
   struct command_tx_struct *newtx;
 
@@ -158,7 +162,9 @@ static int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_
   return 0;
 }
 
-faim_export int aim_tx_setenqueue(struct aim_session_t *sess, int what,  int (*func)(struct aim_session_t *, struct command_tx_struct *))
+faim_export int aim_tx_setenqueue(struct aim_session_t *sess, 
+				  int what,  
+				  int (*func)(struct aim_session_t *, struct command_tx_struct *))
 {
   if (!sess)
     return -1;
@@ -429,3 +435,31 @@ faim_export void aim_tx_purgequeue(struct aim_session_t *sess)
   }
   return;
 }
+
+/**
+ * aim_tx_cleanqueue - get rid of packets waiting for tx on a dying conn
+ * @sess: session
+ * @conn: connection that's dying
+ *
+ * for now this simply marks all packets as sent and lets them
+ * disappear without warning.
+ *
+ * doesn't respect command_tx_struct locks.
+ */
+
+faim_export int aim_tx_cleanqueue(struct aim_session_t *sess, struct aim_conn_t *conn)
+{
+  struct command_tx_struct *cur = NULL;
+
+  if(!sess || !conn)
+    return -1;
+
+  /* we don't respect locks here */
+  for(cur = sess->queue_outgoing; cur; cur = cur->next)
+    if(cur->conn == conn)
+      cur->sent = 1;
+  
+  return 0;
+}
+    
+      

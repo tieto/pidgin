@@ -112,6 +112,8 @@ faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **d
   if (!deadconn || !*deadconn)	
     return;
 
+  aim_tx_cleanqueue(sess, *deadconn);
+
   faim_mutex_lock(&sess->connlistlock);
   if (sess->connlist == NULL)
     ;
@@ -540,7 +542,8 @@ faim_export int aim_conn_in_sess(struct aim_session_t *sess, struct aim_conn_t *
  *
  */ 
 faim_export struct aim_conn_t *aim_select(struct aim_session_t *sess,
-					  struct timeval *timeout, int *status)
+					  struct timeval *timeout, 
+					  int *status)
 {
   struct aim_conn_t *cur;
   fd_set fds, wfds;
@@ -568,6 +571,7 @@ faim_export struct aim_conn_t *aim_select(struct aim_session_t *sess,
       return cur;
     } else if (cur->status & AIM_CONN_STATUS_INPROGRESS) {
       FD_SET(cur->fd, &wfds);
+      
       haveconnecting++;
     }
     FD_SET(cur->fd, &fds);

@@ -532,6 +532,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		}
 		debug_printf("Login Error Code 0x%04x\n", errorcode);
 		debug_printf("Error URL: %s\n", errurl);
+		aim_conn_kill(sess, &command->conn);
 		signoff(gc);
 		return 0;
 	}
@@ -2109,19 +2110,23 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 
 static int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
-	char *sn = NULL, *msg = NULL;
+	char *msg = NULL;
 	struct aim_conn_t *conn;
+	struct aim_directim_priv *priv;
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, command);
 	conn = va_arg(ap, struct aim_conn_t *);
-	sn = va_arg(ap, char *);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	debug_printf("Got DirectIM message from %s\n", sn);
+	if (!(priv = conn->priv)) {
+		return -1;
+	}
 
-	serv_got_im(gc, sn, msg, 0);
+	debug_printf("Got DirectIM message from %s\n", priv->sn);
+
+	serv_got_im(gc, priv->sn, msg, 0);
 
 	return 1;
 }
@@ -2158,14 +2163,19 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 
 static int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
-	char *sn;
+	struct aim_conn_t *conn;
+	struct aim_directim_priv *priv;
 
 	va_start(ap, command);
-	sn = va_arg(ap, char *);
+	conn = va_arg(ap, struct aim_conn_t *);
 	va_end(ap);
 
+	if (!(priv = conn->priv)) {
+		return -1;
+	}
+
 	/* I had to leave this. It's just too funny. It reminds me of my sister. */
-	debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
+	debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", priv->sn);
 
 	return 1;
 }

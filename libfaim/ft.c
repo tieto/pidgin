@@ -998,7 +998,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
    faim_mutex_unlock(&conn->active);
    aim_conn_close(conn);
    return -1;
-   }
+ }
  hdrtype = aimutil_get16(hdr);
 
  switch (hdrtype) {
@@ -1019,7 +1019,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
    snptr = (char *)hdr+38;
    strncpy(priv->sn, snptr, MAXSNLEN);
 
-   faimdprintf(sess, 2, "faim: OFT frame: %04x / %04x / %04x / %s\n", hdrtype, payloadlength, flags, snptr);
+   faimdprintf(sess, 2, "faim: OFT frame: %04x / %04x / %04x / %s\n", hdrtype, payloadlength, flags, priv->sn);
 
    free(hdr);
    hdr = NULL;
@@ -1027,7 +1027,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
    if (flags == 0x000e) { 
      faim_mutex_unlock(&conn->active);
      if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)) )
-       return userfunc(sess, NULL, snptr);
+       return userfunc(sess, NULL, conn);
    } else {
 
      if ((flags == 0x0000) && payloadlength) { 
@@ -1049,12 +1049,12 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
 
        faim_mutex_unlock(&conn->active);
        msg[payloadlength] = 0x00;
-       faimdprintf(sess, 2, "faim: directim: %s/%04x/%04x/%s\n", snptr, payloadlength, flags, msg);
+       faimdprintf(sess, 2, "faim: directim: %s/%04x/%04x/%s\n", priv->sn, payloadlength, flags, msg);
 
        if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING)) )
-	 i = userfunc(sess, NULL, conn, snptr, msg);
+	 i = userfunc(sess, NULL, conn, msg);
        else {
-	  faimdprintf(sess, 0, "directim: %s/%04x/%04x/%s\n", snptr, payloadlength, flags, msg);
+	  faimdprintf(sess, 0, "directim: %s/%04x/%04x/%s\n", priv->sn, payloadlength, flags, msg);
 	 i = 1;
        }
 
@@ -1348,7 +1348,8 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
    int i;
    struct aim_fileheader_t *fh;
 
-   fh = aim_oft_getfh(hdr);
+   if(!(fh = aim_oft_getfh(hdr)))
+     return -1;
 
    free(hdr);
    hdr = NULL;
@@ -1378,6 +1379,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
    break;
  } 
  } /* switch */
+
  if (hdr) {
     faimdprintf(sess, 0, "hdr wasn't freed by a rendezvous switch case (hdrtype: %0x04x)!\n", hdrtype);
    free(hdr);
