@@ -1161,10 +1161,12 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		
 		times++;
 	}
-	
+
 	/* Dump magic key into a char for SHA1 action. */
-	 	
-	memcpy(&magic_key_char[0], &value, sizeof(int));
+	magic_key_char[0] = value & 0xff;
+	magic_key_char[1] = (value >> 8) & 0xff;
+	magic_key_char[2] = (value >> 16) & 0xff;
+	magic_key_char[3] = (value >> 24) & 0xff;
 
 	/* Get password and crypt hashes as per usual. */
 	md5_init(&ctx);
