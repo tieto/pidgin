@@ -7,14 +7,14 @@ EXTRA_DIST = \
 	dnd.png \
 	extendedaway.png \
 	female.png \
-	founder.svg \
+	founder.png \
 	freeforchat.png \
 	gadu-gadu.png \
 	game.png \
-	halfop.svg \
+	halfop.png \
 	hiptop.png \
 	icq.png \
-	ignored.svg \
+	ignored.png \
 	invisible.png \
 	irc.png \
 	jabber.png \
@@ -28,12 +28,12 @@ EXTRA_DIST = \
 	novell.png \
 	occupied.png \
 	offline.png \
-	op.svg \
+	op.png \
 	rendezvous.png \
 	secure.png \
 	silc.png \
 	trepia.png \
-	voice.svg \
+	voice.png \
 	wireless.png \
 	yahoo.png \
 	zephyr.png

@@ -3255,15 +3255,15 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 	char *image = NULL;
 
 	if (flags & GAIM_CBFLAGS_FOUNDER) {
-		image = g_strdup("founder.svg");
+		image = g_strdup("founder.png");
 	} else if (flags & GAIM_CBFLAGS_OP) {
-		image = g_strdup("op.svg");
+		image = g_strdup("op.png");
 	} else if (flags & GAIM_CBFLAGS_HALFOP) {
-		image = g_strdup("halfop.svg");
+		image = g_strdup("halfop.png");
 	} else if (flags & GAIM_CBFLAGS_VOICE) {
-		image = g_strdup("voice.svg");
+		image = g_strdup("voice.png");
 	} else if ((!flags) && gaim_conv_chat_is_user_ignored(chat, name)) {
-		image = g_strdup("ignored.svg");
+		image = g_strdup("ignored.png");
 	}
 	if (image) {
 		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", image, NULL);
@@ -3275,7 +3275,7 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 		scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
 		g_object_unref(pixbuf);
 		if (flags && gaim_conv_chat_is_user_ignored(chat, name)) {
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "ignored.svg", NULL);
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "ignored.png", NULL);
 			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 			g_free(filename);
 			scale2 = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
