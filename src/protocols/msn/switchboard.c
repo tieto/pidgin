@@ -174,15 +174,15 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 	else
 	{
-		const char *username;
+		char *username;
 		GaimConversation *conv;
 		GaimBuddy *b;
 		char *str = NULL;
 
 		if ((b = gaim_find_buddy(account, user)) != NULL)
-			username = gaim_get_buddy_alias(b);
+			username = gaim_escape_html(gaim_get_buddy_alias(b));
 		else
-			username = user;
+			username = gaim_escape_html(user);
 
 		if (cmd->param_count == 2 && atoi(cmd->params[1]) == 1)
 		{
@@ -211,6 +211,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		}
 
 		msn_switchboard_disconnect(swboard);
+		g_free(username);
 	}
 }
 
