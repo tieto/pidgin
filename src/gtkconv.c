@@ -5169,6 +5169,102 @@ gaim_gtkconv_has_focus(GaimConversation *conv)
 	return has_focus;
 }
 
+static gboolean
+gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
+{
+	GaimGtkConversation *gtkconv;
+	GtkIMHtmlSmiley *smiley;
+	GdkPixbufLoader *loader;
+	const char *sml;
+
+	if (conv == NULL || smile == NULL) {
+		return FALSE;
+	}
+
+	sml = gaim_account_get_protocol_name(conv->account); /* XXX this sucks */
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
+
+	/* TODO: implement changing a custom smiley in the middle of a conversation */
+
+	if (smiley) {
+		return FALSE;
+	}
+
+
+	loader = gdk_pixbuf_loader_new();
+
+	/* this is wrong, this file ought not call g_new on GtkIMHtmlSmiley */
+	/* Let gtk_imhtml have a gtk_imhtml_smiley_new function, and let
+	   GtkIMHtmlSmiley by opque */
+	smiley = g_new0(GtkIMHtmlSmiley, 1);
+	smiley->file   = NULL;
+	smiley->smile  = g_strdup(smile);
+	smiley->loader = loader;
+
+	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
+	if (smiley->icon)
+		g_object_ref(G_OBJECT(smiley->icon));
+
+	gtk_imhtml_associate_smiley(GTK_IMHTML(gtkconv->imhtml), sml, smiley);
+	
+	return TRUE;
+}
+
+static void 
+gaim_gtkconv_custom_smiley_write(GaimConversation *conv, const char *smile,
+                                      const char * data, gint64 size)
+{
+	GaimGtkConversation *gtkconv;
+	GtkIMHtmlSmiley *smiley;
+	GdkPixbufLoader *loader;	
+	const char *sml;
+
+	sml = gaim_account_get_protocol_name(conv->account);
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
+
+	if (!smiley) 
+		return;
+	
+	loader = smiley->loader;
+	if (!loader) 
+		return;
+
+	gdk_pixbuf_loader_write(loader, data, size, NULL);
+}
+
+static void
+gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
+{
+	GaimGtkConversation *gtkconv;
+	GtkIMHtmlSmiley *smiley;
+	GdkPixbufLoader *loader;
+	const char *sml;
+
+	g_return_if_fail(conv  != NULL);
+	g_return_if_fail(smile != NULL);
+
+	sml = gaim_account_get_protocol_name(conv->account);
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
+
+	if (!smiley) 
+		return;
+
+	loader = smiley->loader;
+
+	if (!loader) 
+		return;
+	
+	gaim_debug_info("gtkconv", "About to close the smiley pixbuf\n");
+
+	gdk_pixbuf_loader_close(loader, NULL);
+	g_object_unref(G_OBJECT(loader));
+	smiley->loader = NULL;
+}
+
+
 static void
 gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 {
@@ -5320,6 +5416,9 @@ static GaimConversationUiOps conversation_ui_ops =
 	gaim_gtkconv_chat_update_user,   /* chat_update_user     */
 	NULL,                            /* update_progress      */
 	gaim_gtkconv_has_focus,          /* has_focus            */
+	gaim_gtkconv_custom_smiley_add,  /* custom_smiley_add */
+	gaim_gtkconv_custom_smiley_write, /* custom_smiley_write */
+	gaim_gtkconv_custom_smiley_close, /* custom_smiley_close */
 	gaim_gtkconv_updated             /* updated              */
 };
 

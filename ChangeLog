@@ -20,6 +20,7 @@ version 2.0.0
 	* Add a "Last Seen" field to tooltips for buddies in your buddy
 	  list (Richard Laager)
 	* Buddy icons in buddy list tooltips (Felipe Contreras)
+	* Custom smileys for MSN (maquina)
 
 	Bug fixes:
 	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)

@@ -199,6 +199,14 @@ struct _GaimConversationUiOps
 
 	gboolean (*has_focus)(GaimConversation *conv);
 
+	/* Custom Smileys */
+	gboolean (*custom_smiley_add)(GaimConversation *conv, const char *smile);
+	void (*custom_smiley_write)(GaimConversation *conv, const char *smile,
+	                            const char * data, gint64 size);
+	void (*custom_smiley_close)(GaimConversation *conv, const char *smile);
+
+
+
 	/* Events */
 	void (*updated)(GaimConversation *conv, GaimConvUpdateType type);
 
@@ -1032,6 +1040,47 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
  * @param message The message to send.
  */
 void gaim_conv_im_send(GaimConvIm *im, const char *message);
+
+/**
+ * Adds a smiley to the conversation's smiley tree.
+ *
+ * @param conv The conversation to associate the smiley with.
+ * @param smile The text associated with the smiley
+ * @param cksum_type The type of checksum.
+ * @param chksum The checksum, as a NUL terminated base64 string.
+ * @return      @c TRUE if an icon is excepted, else FALSE. Note that
+ *              it is an error to never call gaim_conv_custom_smiley_close if
+ *              this function returns @c TRUE, but an error to call it if
+ *              @c FALSE is returned.
+ */
+
+gboolean gaim_conv_custom_smiley_add(GaimConversation *conv, const char *smile,
+                                      const char *cksum_type, const char *chksum);
+
+
+/**
+ * Updates the image associated with the current smiley.
+ *
+ * @param conv The conversation associated with the smiley.
+ * @param smile The text associated with the smiley.
+ * @param data The actual image data.
+ * @param size The length of the data.
+ */
+
+void gaim_conv_custom_smiley_write(GaimConversation *conv,
+                                   const char *smile, const char * data,
+                                   gint64 size);
+
+/**
+ * Close the custom smiley, all data has been written with
+ * gaim_conv_custom_smiley_write, and it is no longer valid
+ * to call that function on that smiley.
+ *
+ * @param conv The gaim conversation associated with the smiley.
+ * @param smile The text associated with the smiley
+ */
+
+void gaim_conv_custom_smiley_close(GaimConversation *conv, const char *smile);
 
 /*@}*/
 

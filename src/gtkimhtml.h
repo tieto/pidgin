@@ -149,6 +149,7 @@ struct _GtkIMHtmlSmiley {
 	gchar *file;
 	GdkPixbufAnimation *icon;
 	gboolean hidden;
+	GdkPixbufLoader *loader;
 };
 
 struct _GtkIMHtmlScalable {
@@ -244,6 +245,18 @@ GType gtk_imhtml_get_type(void);
  * @return The GTK IM/HTML widget created.
  */
 GtkWidget *gtk_imhtml_new(void *, void *);
+
+/**
+ * Returns the smiley object associated with the text.
+ *
+ * @param imhtml The GTK IM/HTML.
+ * @param sml    The name of the smiley category.
+ * @param text   The text associated with the smiley.
+ */
+
+GtkIMHtmlSmiley *gtk_imhtml_smiley_get(GtkIMHtml * imhtml,
+                                        const gchar * sml, const gchar * text);
+
 
 /**
  * Associates a smiley with a GTK IM/HTML.

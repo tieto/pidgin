@@ -1755,6 +1755,51 @@ gaim_conv_im_send(GaimConvIm *im, const char *message)
 	common_send(gaim_conv_im_get_conversation(im), message);
 }
 
+gboolean
+gaim_conv_custom_smiley_add(GaimConversation *conv, const char *smile,
+                            const char *cksum_type, const char *chksum)
+{
+	if (conv == NULL || smile == NULL || !*smile) {
+		return FALSE;
+	}
+
+	/* TODO: check if the icon is in the cache and return false if so */
+	/* TODO: add an icon cache (that doesn't suck) */
+	if (conv->ui_ops != NULL && conv->ui_ops->custom_smiley_add !=NULL) {
+		return conv->ui_ops->custom_smiley_add(conv, smile);
+	} else {
+		gaim_debug_info("conversation", "Could not find add custom smiley function");
+		return FALSE;
+	}
+
+}
+
+void
+gaim_conv_custom_smiley_write(GaimConversation *conv, const char *smile,
+                                   const char * data, gint64 size)
+{
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(smile != NULL && *smile);
+
+	if (conv->ui_ops != NULL && conv->ui_ops->custom_smiley_write != NULL)
+		conv->ui_ops->custom_smiley_write(conv, smile, data, size);
+	else
+		gaim_debug_info("conversation", "Could not find the smiley write function");
+}
+
+void
+gaim_conv_custom_smiley_close(GaimConversation *conv, const char *smile)
+{
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(smile != NULL && *smile);
+
+	if (conv->ui_ops != NULL && conv->ui_ops->custom_smiley_close != NULL)
+		conv->ui_ops->custom_smiley_close(conv, smile);
+	else
+		gaim_debug_info("conversation", "Could not find custom smiley close function");
+}
+
+
 /**************************************************************************
  * Chat Conversation API
  **************************************************************************/

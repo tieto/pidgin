@@ -1530,10 +1530,10 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	return (*len > 0);
 }
 
-GdkPixbufAnimation *
-gtk_smiley_tree_image (GtkIMHtml     *imhtml,
-		       const gchar   *sml,
-		       const gchar   *text)
+GtkIMHtmlSmiley *
+gtk_imhtml_smiley_get(GtkIMHtml *imhtml,
+	const gchar *sml,
+	const gchar *text)
 {
 	GtkSmileyTree *t;
 	const gchar *x = text;
@@ -1544,31 +1544,49 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 
 
 	if (t == NULL)
-		return sml ? gtk_smiley_tree_image(imhtml, NULL, text) : NULL;
+		return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
 
 	while (*x) {
 		gchar *pos;
 
 		if (!t->values) {
-			return sml ? gtk_smiley_tree_image(imhtml, NULL, text) : NULL;
+			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
 		}
 
 		pos = strchr (t->values->str, *x);
 		if (pos) {
 			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		} else {
-			return sml ? gtk_smiley_tree_image(imhtml, NULL, text) : NULL;
+			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
 		}
 		x++;
 	}
 
-	if (!t->image->file)
+	return t->image;
+}
+
+GdkPixbufAnimation *
+gtk_smiley_tree_image (GtkIMHtml     *imhtml,
+		       const gchar   *sml,
+		       const gchar   *text)
+{
+
+	GtkIMHtmlSmiley *smiley;
+
+	smiley = gtk_imhtml_smiley_get(imhtml,sml,text);
+
+	if (!smiley) 
 		return NULL;
 
-	if (!t->image->icon)
-		t->image->icon = gdk_pixbuf_animation_new_from_file(t->image->file, NULL);
-
-	return t->image->icon;
+	if (!smiley->icon && smiley->file) {
+		smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
+	} else if (!smiley->icon && smiley->loader) {
+		smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+		if (smiley->icon)
+			g_object_ref(G_OBJECT(smiley->icon));
+	}
+	
+	return smiley->icon;
 }
 
 #define VALID_TAG(x)	if (!g_ascii_strncasecmp (string, x ">", strlen (x ">"))) {	\
@@ -3839,19 +3857,31 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GtkTextChildAnchor *anchor;
 	char *unescaped = gaim_unescape_html(smiley);
 
-	if (imhtml->format_functions & GTK_IMHTML_SMILEY)
-	{
+	if (imhtml->format_functions & GTK_IMHTML_SMILEY) {
 		annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
-		if(annipixbuf) {
-			if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
+		if (annipixbuf) {
+			if (gdk_pixbuf_animation_is_static_image(annipixbuf)) {
 				pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
-				if(pixbuf)
+				if (pixbuf)
 					icon = gtk_image_new_from_pixbuf(pixbuf);
 			} else {
 				icon = gtk_image_new_from_animation(annipixbuf);
 			}
 		}
 	}
+#if 0
+	else {
+		GtkIMHtmlSmiley *imhtml_smiley;
+
+		if (imhtml_smiley->loader) { ; }
+		icon = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
+		imhtml_smiley = gtk_get_imhtml_smiley(imhtml, sml, unescaped);
+		if (!imhtml_smiley) {
+			gaim_debug_info("gtkimhtml", "geezz couldnt find smiley struct\n");
+		}
+		imhtml_smiley->orphan = g_slist_append(imhtml_smiley->orphan, icon);
+	}
+#endif
 
 	if (icon) {
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);

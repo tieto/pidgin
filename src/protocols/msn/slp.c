@@ -739,18 +739,24 @@ void
 got_emoticon(MsnSlpCall *slpcall,
 			 const char *data, long long size)
 {
-	gaim_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
 
-#if 0
-	serv_got_smiley(slpcall->slplink->session->account->gc, 
-		slpcall->slplink->remote_user, slpcall->data_info, data, size);
-#endif
-
-#if 0
 	GaimConversation *conv;
-	GaimConnection *gc = slpsession->swboard->servconn->session->account->gc;
-	serv_got_smiley(gc, info, data, size);
-#endif
+	GaimConnection *gc;
+	const char *who;
+
+	gc = slpcall->slplink->session->account->gc;
+	who = slpcall->slplink->remote_user;
+	
+	conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, who, gc->account);
+
+	/* FIXME: it would be better if we wrote the data as we received it
+	          instead of all at once, calling write multiple times and
+	          close once at the very end
+	*/
+	gaim_conv_custom_smiley_write(conv, slpcall->data_info, data, size);
+	gaim_conv_custom_smiley_close(conv, slpcall->data_info );
+ 
+	gaim_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
 }
 
 void
@@ -763,6 +769,9 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *smile;
 	const char *who;
 
+	GaimConversation *conversation;
+	GaimConnection *gc;
+
 	session = cmdproc->servconn->session;
 
 	tokens = g_strsplit(msg->body, "\t", 2);
@@ -774,7 +783,13 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	slplink = msn_session_get_slplink(session, who);
 
-	msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
+	gc = slplink->session->account->gc;
+
+	conversation = gaim_find_conversation_with_account(GAIM_CONV_ANY, who, gc->account);
+
+	if (gaim_conv_custom_smiley_add(conversation, smile, "sha1" /* i think it's a sha1 checksum? */, "base64 encoded checksum here, shx should fix this!")) {
+		msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
+	}
 
 	g_strfreev(tokens);
 }
