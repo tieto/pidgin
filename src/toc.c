@@ -150,12 +150,12 @@ int toc_login(char *username, char *password)
 	make_buddy();
 	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
                 gnome_buddy_show();
-                parse_toc_buddy_list(config);
+                parse_toc_buddy_list(config, 0);
 		createOnlinePopup();
                 set_applet_draw_open();
         } else {
                 gnome_buddy_hide();
-                parse_toc_buddy_list(config);
+                parse_toc_buddy_list(config, 0);
                 set_applet_draw_closed();
         }
 
@@ -165,7 +165,7 @@ int toc_login(char *username, char *password)
 #else
         gtk_widget_hide(mainwindow);
 	show_buddy_list();
-        parse_toc_buddy_list(config);
+        parse_toc_buddy_list(config, 0);
         refresh_buddy_window();
 #endif
         
@@ -848,7 +848,7 @@ void toc_build_config(char *s, int len)
         }
 }
 
-void parse_toc_buddy_list(char *config)
+void parse_toc_buddy_list(char *config, int from_do_import)
 {
 	char *c;
         char current[256];
@@ -903,7 +903,7 @@ void parse_toc_buddy_list(char *config)
 	/* perhaps the server dropped the buddy list, try importing from
            cache */
 
-	if ( how_many == 0 ) {
+	if ( how_many == 0 && !from_do_import ) {
 		do_import( (GtkWidget *) NULL, 0 );
 	} else if ( bud_list_cache_exists() == FALSE ) {
 		do_export( (GtkWidget *) NULL, 0 );	

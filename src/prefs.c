@@ -404,7 +404,7 @@ void build_prefs()
 	gaim_button("Show Lag-O-Meter", &general_options, OPT_GEN_SHOW_LAGMETER, genbox);
         gaim_button("Save some window size/positions", &general_options, OPT_GEN_SAVED_WINDOWS, genbox);
         gaim_button("Ignore new conversations when away", &general_options, OPT_GEN_DISCARD_WHEN_AWAY, genbox);
-	gaim_button("Automagically check for new releases", &general_options, OPT_GEN_CHECK_VERSIONS, genbox);
+/*	gaim_button("Automagically check for new releases", &general_options, OPT_GEN_CHECK_VERSIONS, genbox); */
 	gaim_button("Automagically highlight misspelled words", &general_options, OPT_GEN_CHECK_SPELLING, genbox);
 	if (!dw && (general_options & OPT_GEN_DEBUG))
 		general_options = general_options ^ OPT_GEN_DEBUG;

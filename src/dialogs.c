@@ -2211,7 +2211,7 @@ void do_import(GtkWidget *w, void *dummy)
 		grp = grp2;
         }
         
-        parse_toc_buddy_list(buf);
+        parse_toc_buddy_list(buf, 1);
 
         serv_save_config();
         

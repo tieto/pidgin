@@ -339,7 +339,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 263 $"
+#define REVISION "gaim:$Revision: 306 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -571,7 +571,7 @@ extern int toc_login(char *, char *);
 extern int toc_wait_signon(void);
 extern char *toc_wait_config(void);
 extern int sflap_send(char *, int , int );
-extern void parse_toc_buddy_list(char *);
+extern void parse_toc_buddy_list(char *, int);
 
 
 /* Functions in buddy.c */

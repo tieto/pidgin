@@ -488,11 +488,6 @@ int main(int argc, char *argv[])
         set_defaults();
         load_prefs();
 
-	if (general_options & OPT_GEN_CHECK_VERSIONS)
-	{
-		check_gaim_versions();
-	}
-
 	if (general_options & OPT_GEN_DEBUG)
 		show_debug(NULL);
 
