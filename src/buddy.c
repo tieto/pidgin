@@ -204,17 +204,6 @@ static void gtk_blist_button_info_cb(GtkWidget *w, GtkTreeView *tv)
 	show_info_dialog();
 }
 
-/*------------------------------------------------------------------------*/
-/*  The dialog for getting buddy info from main menu                      */
-/*------------------------------------------------------------------------*/
-
-void show_info_dialog_from_menu()
-{
-	GtkTreeView *tv = GTK_TREE_VIEW(gtkblist->treeview);
-
-	gtk_blist_button_info_cb(NULL, tv);
-}
-
 static void gtk_blist_button_chat_cb(GtkWidget *w, gpointer data)
 {
 	/* FIXME: someday, we can check to see if we've selected a chat node */
@@ -687,7 +676,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Buddies/New _Instant Message..."), "<CTL>I", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", join_chat, 0, "<StockItem>", GAIM_STOCK_CHAT },
-	{ N_("/Buddies/Get _User Info..."), "<CTL>J", show_info_dialog_from_menu, 0, "<StockItem>", GAIM_STOCK_INFO },
+	{ N_("/Buddies/Get _User Info..."), "<CTL>J", show_info_dialog, 0, "<StockItem>", GAIM_STOCK_INFO },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Show Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
