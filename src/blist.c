@@ -1458,7 +1458,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 	}
 }
 
-static void parse_toc_buddy_list(GaimAccount *account, char *config)
+void gaim_blist_parse_toc_buddy_list(GaimAccount *account, char *config)
 {
 	char *c;
 	char current[256];
@@ -1833,7 +1833,7 @@ static void do_import(GaimAccount *account, const char *filename)
 	if (buf) {
 		buf = g_string_prepend(buf, "toc_set_config {");
 		buf = g_string_append(buf, "}\n");
-		parse_toc_buddy_list(account, buf->str);
+		gaim_blist_parse_toc_buddy_list(account, buf->str);
 		g_string_free(buf, TRUE);
 	}
 }

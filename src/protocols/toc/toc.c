@@ -717,7 +717,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		}
 	} else if (!g_ascii_strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
-		parse_toc_buddy_list(gc->account, c);
+		gaim_blist_parse_toc_buddy_list(gc->account, c);
 	} else if (!g_ascii_strcasecmp(c, "NICK")) {
 		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
