@@ -541,6 +541,9 @@ char *normalize(const char *s)
 	tmp = g_utf8_strdown(buf, -1);
 	g_snprintf(buf, sizeof(buf), "%s", tmp);
 	g_free(tmp);
+	tmp = g_utf8_normalize(buf, -1, G_NORMALIZE_DEFAULT);
+	g_snprintf(buf, sizeof(buf), "%s", tmp);
+	g_free(tmp);
 
 	return buf;
 }

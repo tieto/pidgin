@@ -65,6 +65,21 @@ static GaimBlistNode *gaim_blist_get_last_child(GaimBlistNode *node)
 	return gaim_blist_get_last_sibling(node->child);
 }
 
+struct _gaim_hbuddy {
+	char *name;
+	struct gaim_account *account;
+};
+
+static guint _gaim_blist_hbuddy_hash (struct _gaim_hbuddy *hb)
+{
+	return g_str_hash(hb->name);
+}
+
+static guint _gaim_blist_hbuddy_equal (struct _gaim_hbuddy *hb1, struct _gaim_hbuddy *hb2)
+{
+	return ((!strcmp(hb1->name, hb2->name)) && hb1->account == hb2->account);
+}
+
 /*****************************************************************************
  * Public API functions                                                      *
  *****************************************************************************/
@@ -74,6 +89,9 @@ struct gaim_buddy_list *gaim_blist_new()
 	struct gaim_buddy_list *gbl = g_new0(struct gaim_buddy_list, 1);
 
 	gbl->ui_ops = gaim_get_blist_ui_ops();
+
+	gbl->buddies = g_hash_table_new ((GHashFunc)_gaim_blist_hbuddy_hash, 
+					 (GEqualFunc)_gaim_blist_hbuddy_equal);
 
 	if (gbl->ui_ops != NULL && gbl->ui_ops->new_list != NULL)
 		gbl->ui_ops->new_list(gbl);
@@ -348,6 +366,7 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 	GaimBlistNode *n = node, *bnode = (GaimBlistNode*)buddy;
 	struct group *g = group;
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	struct _gaim_hbuddy *hb;
 	gboolean save = FALSE;
 
 	if (!n) {
@@ -394,6 +413,18 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		((GaimBlistNode*)buddy)->next = NULL;
 		((GaimBlistNode*)buddy)->prev = NULL;
 		((GaimBlistNode*)buddy)->parent = (GaimBlistNode*)g;
+	}
+
+	hb = g_malloc(sizeof(struct _gaim_hbuddy));
+	hb->name = g_strdup(normalize(buddy->name));
+	hb->account = buddy->account;
+
+	if (g_hash_table_lookup(gaimbuddylist->buddies, (gpointer)hb)) {
+		/* This guy already exists */
+		g_free(hb->name);
+		g_free(hb);
+	} else {
+		g_hash_table_insert(gaimbuddylist->buddies, (gpointer)hb, (gpointer)buddy);
 	}
 
 	if (ops)
@@ -481,6 +512,8 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 
 	GaimBlistNode *gnode, *node = (GaimBlistNode*)buddy;
 	struct group *group;
+	struct _gaim_hbuddy hb, *key;
+	struct buddy *val;
 
 	gnode = node->parent;
 	group = (struct group *)gnode;
@@ -491,6 +524,14 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
+
+	hb.name = normalize(buddy->name);
+	hb.account = buddy->account;
+	if (g_hash_table_lookup_extended(gaimbuddylist->buddies, &hb, (gpointer *)&key, (gpointer *)&val)) {
+		g_hash_table_remove(gaimbuddylist->buddies, &hb);
+		g_free(key->name);
+		g_free(key);
+	}
 
 	ops->remove(gaimbuddylist, node);
 	g_hash_table_destroy(buddy->settings);
@@ -579,29 +620,17 @@ char *  gaim_get_buddy_alias (struct buddy *buddy)
 
 struct buddy *gaim_find_buddy(struct gaim_account *account, const char *name)
 {
-	GaimBlistNode *group;
-	GaimBlistNode *buddy;
-	char *norm_name = g_strdup(normalize(name));
+	struct buddy *buddy;
+	struct _gaim_hbuddy hb;
 
 	if (!gaimbuddylist)
 		return NULL;
 
-	group = gaimbuddylist->root;
-	while (group) {
-		buddy = group->child;
-		while (buddy) {
-			if(GAIM_BLIST_NODE_IS_BUDDY(buddy)) {
-				if (!gaim_utf8_strcasecmp(normalize(((struct buddy*)buddy)->name), norm_name) && account == ((struct buddy*)buddy)->account) {
-					g_free(norm_name);
-					return (struct buddy*)buddy;
-				}
-			}
-			buddy = buddy->next;
-		}
-		group = group->next;
-	}
-	g_free(norm_name);
-	return NULL;
+	hb.name = normalize(name);
+	hb.account = account;
+	buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb);
+
+	return buddy;
 }
 
 struct group *gaim_find_group(const char *name)
