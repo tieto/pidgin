@@ -1639,6 +1639,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 	bi->signon = info->onlinesince ? info->onlinesince : (info->sessionlen + time(NULL));
 	bi->caps = caps;
+	bi->typingnot = FALSE;
+	bi->ico_informed = FALSE;
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
 			time_idle, type);
@@ -1647,9 +1649,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
-	aim_userinfo_t *info;
-	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	aim_userinfo_t *info;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
