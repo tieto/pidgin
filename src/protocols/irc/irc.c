@@ -64,7 +64,8 @@ struct irc_data {
 	gboolean six_modes;
 
 	gboolean in_whois;
-	GString *whois_str;
+	gboolean in_list;
+	GString *liststr;
 };
 
 static char *irc_name()
@@ -558,40 +559,54 @@ static void handle_whois(struct gaim_connection *gc, char *word[], char *word_eo
 
 	if (!id->in_whois) {
 		id->in_whois = TRUE;
-		id->whois_str = g_string_new("");
+		id->liststr = g_string_new("");
 	} else {
 		/* I can't decide if we should have one break or two */
-		id->whois_str = g_string_append(id->whois_str, "<BR>");
+		id->liststr = g_string_append(id->liststr, "<BR>");
 		id->in_whois = TRUE;
 	}
 
 	switch (num) {
 		case 311:
-			id->whois_str = g_string_append(id->whois_str, "<b>User: </b>");
+			id->liststr = g_string_append(id->liststr, "<b>User: </b>");
 			break;
 		case 312:
-			id->whois_str = g_string_append(id->whois_str, "<b>Server: </b>");
+			id->liststr = g_string_append(id->liststr, "<b>Server: </b>");
 			break;
 		case 313:
 			g_snprintf(tmp, sizeof(tmp), "<b>IRC Operator:</b> %s ", word[4]);
-			id->whois_str = g_string_append(id->whois_str, tmp);
+			id->liststr = g_string_append(id->liststr, tmp);
 			break;
 
 		case 317:
-			id->whois_str = g_string_append(id->whois_str, "<b>Idle Time: </b>");
+			id->liststr = g_string_append(id->liststr, "<b>Idle Time: </b>");
 			break;
 		case 319:
-			id->whois_str = g_string_append(id->whois_str, "<b>Channels: </b>");
+			id->liststr = g_string_append(id->liststr, "<b>Channels: </b>");
 			break;
 		default:
 			break;
 	}
 	
 	if (word_eol[5][0] == ':')
-		id->whois_str = g_string_append(id->whois_str, word_eol[5] + 1);
+		id->liststr = g_string_append(id->liststr, word_eol[5] + 1);
 	else
-		id->whois_str = g_string_append(id->whois_str, word_eol[5]);
+		id->liststr = g_string_append(id->liststr, word_eol[5]);
+}
 
+static void handle_roomlist(struct gaim_connection *gc, char *word[], char *word_eol[])
+{
+	struct irc_data *id = gc->proto_data;
+
+	if (!id->in_list) {
+		id->in_list = TRUE;
+		id->liststr = g_string_new("");
+	} else {
+		id->liststr = g_string_append(id->liststr, "<BR>");
+		id->in_list = TRUE;
+	}
+
+	id->liststr = g_string_append(id->liststr, word_eol[4]);
 }
 
 static void process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
@@ -617,12 +632,12 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		break;
 	case 301:
 		if (id->in_whois) {
-			id->whois_str = g_string_append(id->whois_str, "<BR><b>Away: </b>");
+			id->liststr = g_string_append(id->liststr, "<BR><b>Away: </b>");
 
 			if (word_eol[5][0] == ':')
-				id->whois_str = g_string_append(id->whois_str, word_eol[5] + 1);
+				id->liststr = g_string_append(id->liststr, word_eol[5] + 1);
 			else
-				id->whois_str = g_string_append(id->whois_str, word_eol[5]);
+				id->liststr = g_string_append(id->liststr, word_eol[5]);
 		} else
 			irc_got_im(gc, word[4], word_eol[5], IM_FLAG_AWAY, time(NULL));
 		break;
@@ -636,14 +651,19 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	case 319:
 		handle_whois(gc, word, word_eol, n);
 		break;
+	case 322:
+		handle_roomlist(gc, word, word_eol);
+		break;
+	case 323:
 	case 318:
-		if (id->in_whois && id->whois_str) {
-			GString *str = decode_html(id->whois_str->str);
+		if ((id->in_whois || id->in_list) && id->liststr) {
+			GString *str = decode_html(id->liststr->str);
 			g_show_info_text(gc, NULL, 2, str->str, NULL);
 			g_string_free(str, TRUE);
-			g_string_free(id->whois_str, TRUE);
-			id->whois_str = NULL;
+			g_string_free(id->liststr, TRUE);
+			id->liststr = NULL;
 			id->in_whois = FALSE;
+			id->in_list = FALSE;
 		}
 		break;
 	case 324:
@@ -1089,8 +1109,8 @@ static void irc_close(struct gaim_connection *gc)
 	g_free(idata->nickmodes);
 
 	g_string_free(idata->str, TRUE);
-	if (idata->whois_str)
-		g_string_free(idata->whois_str, TRUE);
+	if (idata->liststr)
+		g_string_free(idata->liststr, TRUE);
 
 	if (idata->timer)
 		g_source_remove(idata->timer);
@@ -1334,6 +1354,9 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	} else if (!g_strcasecmp(pdibuf, "WHOIS")) {
 		g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "LIST")) {
+		g_snprintf(buf, sizeof(buf), "LIST\r\n");
+		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "HELP")) {
 		struct conversation *c = NULL;
 		if (is_channel(gc, who)) {
@@ -1344,7 +1367,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		if (!c)
 			return -EINVAL;
 		write_to_conv(c, "<B>Currently supported commands:<BR>"
-				 "JOIN PART TOPIC WHOIS<BR>"
+				 "JOIN PART LIST TOPIC WHOIS<BR>"
 				 "OP DEOP VOICE DEVOICE KICK<BR>"
 				 "NICK ME MSG QUOTE SAY</B>",
 				 WFLAG_NOLOG, NULL, time(NULL));
