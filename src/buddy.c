@@ -290,6 +290,12 @@ void update_button_pix()
 	        adjust_pic(addpermbutton, _("Add"), (gchar **)permadd_xpm);
 	        adjust_pic(rempermbutton, _("Remove"), (gchar **)permdel_xpm);
 	}
+	gtk_widget_hide(addbutton->parent);
+	gtk_widget_show(addbutton->parent);
+	gtk_widget_hide(chatbutton->parent);
+	gtk_widget_show(chatbutton->parent);
+	gtk_widget_hide(addpermbutton->parent);
+	gtk_widget_show(addpermbutton->parent);
 }
 
 
