@@ -1771,8 +1771,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	if (args->icbmflags & AIM_IMFLAGS_UNICODE) {
 		int i, j;
 		GError *err = NULL;
-		FILE *fp;
-		
+
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "UCS-2BE", &j, &i, &err);
 		if (err)
 		  debug_printf("Unicode IM conversion: %s\n", err->message);
