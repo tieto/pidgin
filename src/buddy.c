@@ -2458,7 +2458,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	return menuitem;
 }
 
-GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xpm, GtkSignalFunc sf,
+GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xpm, GtkSignalFunc sf, gpointer data,
 				     guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
@@ -2473,7 +2473,7 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 		gtk_menu_append(GTK_MENU(menu), menuitem);
 	if (sf)
 		/* passing 1 is necessary so if we sign off closing the account editor doesn't exit */
-		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, (void *)1);
+		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
 	gtk_widget_show(menuitem);
 
 	/* Create our container */
@@ -2568,7 +2568,16 @@ void build_imchat_box(gboolean on)
 	}
 }
 
-
+extern GtkWidget *debugbutton;
+void clicked_debug (GtkWidget *widg, gpointer pntr)
+{	
+	if (debugbutton)
+		gtk_button_clicked(GTK_BUTTON(debugbutton));
+	else {
+		misc_options ^= OPT_MISC_DEBUG;
+		show_debug();
+	}
+}
 
 void show_buddy_list()
 {
@@ -2624,30 +2633,30 @@ void show_buddy_list()
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	gaim_new_item_with_pixmap(menu, _("Add A Buddy"), add_small_xpm,
-				  GTK_SIGNAL_FUNC(add_buddy_callback), 'b', GDK_CONTROL_MASK, "Ctl+B");
+				  GTK_SIGNAL_FUNC(add_buddy_callback), NULL,  'b', GDK_CONTROL_MASK, "Ctl+B");
 	gaim_new_item_with_pixmap(menu, _("Join A Chat"), pounce_small_xpm,
-				  GTK_SIGNAL_FUNC(chat_callback), 'c', GDK_CONTROL_MASK, "Ctl+C");
+				  GTK_SIGNAL_FUNC(chat_callback), NULL, 'c', GDK_CONTROL_MASK, "Ctl+C");
 	gaim_new_item_with_pixmap(menu, _("New Instant Message"), send_small_xpm,
-				  GTK_SIGNAL_FUNC(show_im_dialog), 'i', GDK_CONTROL_MASK, "Ctl+I");
+				  GTK_SIGNAL_FUNC(show_im_dialog), NULL, 'i', GDK_CONTROL_MASK, "Ctl+I");
 	gaim_new_item_with_pixmap(menu, _("Get User Info"), search_small_xpm,
-				  GTK_SIGNAL_FUNC(show_info_dialog), 'j', GDK_CONTROL_MASK, "Ctl+J");
+				  GTK_SIGNAL_FUNC(show_info_dialog), NULL, 'j', GDK_CONTROL_MASK, "Ctl+J");
 
 	gaim_separator(menu);
 
 	gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm,
-				  GTK_SIGNAL_FUNC(import_callback), 0, 0, 0);
+				  GTK_SIGNAL_FUNC(import_callback), NULL, 0, 0, 0);
 	/*gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,
 	   GTK_SIGNAL_FUNC(show_export_dialog), 0, 0, 0); */
 	gaim_separator(menu);
 	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_menu_xpm,
-				  GTK_SIGNAL_FUNC(signoff_all), 'd', GDK_CONTROL_MASK, "Ctl+D");
+				  GTK_SIGNAL_FUNC(signoff_all), (void*)1, 'd', GDK_CONTROL_MASK, "Ctl+D");
 
 #ifndef USE_APPLET
 	gaim_new_item_with_pixmap(menu, _("Quit"), exit_small_xpm,
-				  GTK_SIGNAL_FUNC(do_quit), 'q', GDK_CONTROL_MASK, "Ctl+Q");
+				  GTK_SIGNAL_FUNC(do_quit), NULL, 'q', GDK_CONTROL_MASK, "Ctl+Q");
 #else
 	gaim_new_item_with_pixmap(menu, _("Close"), close_small_xpm,
-				  GTK_SIGNAL_FUNC(applet_destroy_buddy), 'x', GDK_CONTROL_MASK, "Ctl+X");
+				  GTK_SIGNAL_FUNC(applet_destroy_buddy), NULL, 'x', GDK_CONTROL_MASK, "Ctl+X");
 #endif
 
 	menu = gtk_menu_new();
@@ -2657,12 +2666,12 @@ void show_buddy_list()
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	awaymenu = gtk_menu_new();
-	menuitem = gaim_new_item_with_pixmap(menu, _("Away"), away_small_xpm, NULL, 0, 0, 0);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Away"), away_small_xpm, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), awaymenu);
 	do_away_menu();
 
 	bpmenu = gtk_menu_new();
-	menuitem = gaim_new_item_with_pixmap(menu, _("Buddy Pounce"), pounce_small_xpm, NULL, 0, 0, 0);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Buddy Pounce"), pounce_small_xpm, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), bpmenu);
 	do_bp_menu();
 
@@ -2670,30 +2679,30 @@ void show_buddy_list()
 
 #ifndef NO_MULTI
 	gaim_new_item_with_pixmap(menu, _("Accounts"), add_small_xpm,
-				  GTK_SIGNAL_FUNC(account_editor), 'a', GDK_CONTROL_MASK, "Ctl+A");
+				  GTK_SIGNAL_FUNC(account_editor), NULL, 'a', GDK_CONTROL_MASK, "Ctl+A");
 #endif
 
 	protomenu = gtk_menu_new();
 	menuitem =
-	    gaim_new_item_with_pixmap(menu, _("Protocol Actions"), prefs_small_xpm, NULL, 0, 0, 0);
+	    gaim_new_item_with_pixmap(menu, _("Protocol Actions"), prefs_small_xpm, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), protomenu);
 	do_proto_menu();
 
 	gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm,
-				  GTK_SIGNAL_FUNC(show_prefs), 'p', GDK_CONTROL_MASK, "Ctl+P");
+				  GTK_SIGNAL_FUNC(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
 	gaim_new_item_with_pixmap(menu, _("View System Log"), prefs_small_xpm,
-				  GTK_SIGNAL_FUNC(show_syslog), 0, 0, 0);
+				  GTK_SIGNAL_FUNC(show_syslog), NULL, 0, 0, 0);
 
 	gaim_separator(menu);
 
 #ifdef GAIM_PLUGINS
-	gaim_new_item_with_pixmap(menu, _("Plugins"), plugins_small_xpm, GTK_SIGNAL_FUNC(show_plugins),
+	gaim_new_item_with_pixmap(menu, _("Plugins"), plugins_small_xpm, GTK_SIGNAL_FUNC(show_plugins), NULL,
 				  0, 0, 0);
 #endif
 #ifdef USE_PERL
 	perlmenu = gtk_menu_new();
 	gtk_widget_show(perlmenu);
-	menuitem = gaim_new_item_with_pixmap(menu, _("Perl"), plugins_small_xpm, NULL, 0, 0, 0);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Perl"), plugins_small_xpm, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), perlmenu);
 	gtk_widget_show(menuitem);
 	menuitem = gtk_menu_item_new_with_label(_("Load Script"));
@@ -2717,8 +2726,11 @@ void show_buddy_list()
 	gtk_menu_item_right_justify(GTK_MENU_ITEM(menuitem));
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
-	gaim_new_item_with_pixmap(menu, _("About Gaim"), about_small_xpm, show_about, GDK_F1, 0, NULL);
-
+	gaim_new_item_with_pixmap(menu, _("Online Help"), add_small_xpm, GTK_SIGNAL_FUNC(open_url), WEBSITE"documentation.php", GDK_F1, 0, NULL);
+	gaim_new_item_with_pixmap(menu, _("Debug Window"), search_small_xpm, GTK_SIGNAL_FUNC(clicked_debug), NULL, 0, 0, NULL);
+	gaim_new_item_with_pixmap(menu, _("About Gaim"), about_small_xpm, GTK_SIGNAL_FUNC(show_about), NULL, GDK_F1, GDK_CONTROL_MASK, NULL);
+	
+	
 	gtk_widget_show(menubar);
 
 	vbox = gtk_vbox_new(FALSE, 0);

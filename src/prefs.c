@@ -64,8 +64,8 @@ static void set_font_option(GtkWidget *w, int option);
 
 static GtkWidget *sounddialog = NULL;
 static GtkWidget *prefdialog = NULL;
-static GtkWidget *debugbutton = NULL;
 static GtkWidget *tickerbutton = NULL;
+GtkWidget *debugbutton = NULL;
 
 extern GtkWidget *tickerwindow;
 extern void BuddyTickerShow();
