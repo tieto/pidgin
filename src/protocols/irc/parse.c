@@ -104,6 +104,7 @@ static struct _irc_user_cmd {
 	char *format;
 	IRCCmdCallback cb;
 } _irc_cmds[] = {
+	{ "action", ":", irc_cmd_ctcp_action },
 	{ "away", ":", irc_cmd_away },
 	{ "deop", ":", irc_cmd_op },
 	{ "devoice", ":", irc_cmd_op },
