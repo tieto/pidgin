@@ -1571,7 +1571,6 @@ void away_message_sel(GtkTreeSelection *sel, GtkTreeModel *model)
 void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
         struct away_message *am;
 	GtkTreeIter iter;
-	GtkTreePath *path;
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
 	GtkTreeModel *model = GTK_TREE_MODEL(prefs_away_store);
 	GValue val = { 0, };
@@ -1582,10 +1581,6 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 	am = g_value_get_pointer (&val);
 	gtk_imhtml_clear(GTK_IMHTML(away_text));
 	rem_away_mess(NULL, am);
-	gtk_list_store_remove(prefs_away_store, &iter);
-	path = gtk_tree_path_new_first();
-	gtk_tree_selection_select_path(sel, path);
-	gtk_tree_path_free(path);
 }
 
 GtkWidget *away_message_page() {
