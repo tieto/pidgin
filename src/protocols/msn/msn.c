@@ -989,18 +989,20 @@ msn_keepalive(struct gaim_connection *gc)
 
 static void
 msn_group_buddy(struct gaim_connection *gc, const char *who,
-				const char *old_group, const char *new_group)
+				const char *old_group_name, const char *new_group_name)
 {
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
-	gint *old_group_id, *new_group_id;
+	MsnGroup *old_group, *new_group;
 
-	old_group_id = g_hash_table_lookup(session->group_ids, old_group);
-	new_group_id = g_hash_table_lookup(session->group_ids, new_group);
+	old_group = msn_groups_find_with_name(session->groups, old_group_name);
+	new_group = msn_groups_find_with_name(session->groups, new_group_name);
 
-	if (new_group_id == NULL) {
+	gaim_debug(GAIM_DEBUG_MISC, "msn", "new_group = %p\n", new_group);
+
+	if (new_group == NULL) {
 		g_snprintf(outparams, sizeof(outparams), "%s 0",
-				   msn_url_encode(new_group));
+				   msn_url_encode(new_group_name));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADG", outparams)) {
@@ -1010,12 +1012,18 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 		}
 
 		/* I hate this. So much. */
-		session->moving_buddy = TRUE;
-		session->dest_group_name = g_strdup(new_group);
+		session->moving_buddy    = TRUE;
+		session->dest_group_name = g_strdup(new_group_name);
+		session->old_group       = old_group;
+
+		session->moving_user =
+			msn_users_find_with_passport(session->users, who);
+
+		msn_user_ref(session->moving_user);
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   who, who, *new_group_id);
+				   who, who, msn_group_get_id(new_group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {
@@ -1025,9 +1033,9 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 		}
 	}
 
-	if (old_group_id != NULL) {
+	if (old_group != NULL) {
 		g_snprintf(outparams, sizeof(outparams), "FL %s %d",
-				   who, *old_group_id);
+				   who, msn_group_get_id(old_group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "REM", outparams)) {
@@ -1035,36 +1043,55 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 			signoff(gc);
 			return;
 		}
+
+		if (msn_users_get_count(msn_group_get_users(old_group)) <= 0) {
+			g_snprintf(outparams, sizeof(outparams), "%d",
+					   msn_group_get_id(old_group));
+
+			if (!msn_servconn_send_command(session->notification_conn,
+										   "RMG", outparams)) {
+
+				hide_login_progress(gc, _("Write error"));
+				signoff(gc);
+				return;
+			}
+		}
 	}
 }
 
 static void
-msn_rename_group(struct gaim_connection *gc, const char *old_group,
-				 const char *new_group, GList *members)
+msn_rename_group(struct gaim_connection *gc, const char *old_group_name,
+				 const char *new_group_name, GList *members)
 {
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
-	int *group_id;
+	MsnGroup *old_group;
 
-	if (g_hash_table_lookup_extended(session->group_ids, old_group,
-									 NULL, (gpointer)&group_id)) {
+	if ((old_group = msn_groups_find_with_name(session->groups,
+											   old_group_name)) != NULL) {
+
 		g_snprintf(outparams, sizeof(outparams), "%d %s 0",
-				   *group_id, msn_url_encode(new_group));
+				   msn_group_get_id(old_group),
+				   msn_url_encode(new_group_name));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "REG", outparams)) {
 			hide_login_progress(gc, _("Write error"));
 			signoff(gc);
+			return;
 		}
+
+		msn_group_set_name(old_group, new_group_name);
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "%s 0",
-				   msn_url_encode(new_group));
+				   msn_url_encode(new_group_name));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADG", outparams)) {
 			hide_login_progress(gc, _("Write error"));
 			signoff(gc);
+			return;
 		}
 	}
 }

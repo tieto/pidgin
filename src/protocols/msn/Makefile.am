@@ -9,6 +9,8 @@ MSNSOURCES = \
 	dispatch.h \
 	error.c \
 	error.h \
+	group.c \
+	group.h \
 	md5.h \
 	msg.c \
 	msg.h \

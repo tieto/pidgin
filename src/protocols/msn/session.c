@@ -36,7 +36,8 @@ msn_session_new(struct gaim_account *account, const char *server, int port)
 	session->dispatch_server = g_strdup(server);
 	session->dispatch_port   = port;
 
-	session->users = msn_users_new();
+	session->users  = msn_users_new();
+	session->groups = msn_groups_new();
 
 	return session;
 }
@@ -58,12 +59,10 @@ msn_session_destroy(MsnSession *session)
 	while (session->lists.forward)
 		msn_user_destroy(session->lists.forward->data);
 
-	if (session->group_ids)   g_hash_table_destroy(session->group_ids);
-	if (session->group_names) g_hash_table_destroy(session->group_names);
-
 	g_slist_free(session->lists.allow);
 	g_slist_free(session->lists.block);
 
+	msn_groups_destroy(session->groups);
 	msn_users_destroy(session->users);
 
 	g_free(session->passport_info.kv);

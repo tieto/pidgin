@@ -27,6 +27,7 @@ typedef struct _MsnSession MsnSession;
 #include "servconn.h"
 #include "switchboard.h"
 #include "user.h"
+#include "group.h"
 
 struct _MsnSession
 {
@@ -44,10 +45,9 @@ struct _MsnSession
 	unsigned int trId;
 
 	MsnUsers *users;
+	MsnGroups *groups;
 
 	GList *switches;
-	GHashTable *group_names; /* ID -> name */
-	GHashTable *group_ids;   /* Name -> ID */
 
 	struct
 	{
@@ -77,6 +77,8 @@ struct _MsnSession
 	/* For moving buddies from one group to another. Ugh. */
 	gboolean moving_buddy;
 	char *dest_group_name;
+	MsnUser *moving_user;
+	MsnGroup *old_group;
 };
 
 /**

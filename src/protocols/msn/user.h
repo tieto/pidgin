@@ -59,8 +59,15 @@ struct _MsnUser
  */
 struct _MsnUsers
 {
-	GList *users; /** The list of users. */
+	size_t count; /**< The number of users. */
+
+	GList *users; /**< The list of users.   */
 };
+
+/**************************************************************************/
+/** @name User API                                                        */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Creates a new user structure.
@@ -220,6 +227,13 @@ void msn_user_set_client_caps(MsnUser *user, GHashTable *info);
  */
 GHashTable *msn_user_get_client_caps(const MsnUser *user);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name User List API                                                   */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Creates a new MsnUsers structure.
  *
@@ -251,6 +265,15 @@ void msn_users_add(MsnUsers *users, MsnUser *user);
 void msn_users_remove(MsnUsers *users, MsnUser *user);
 
 /**
+ * Returns the number of users in a users list.
+ *
+ * @param users The users list.
+ * 
+ * @return The number of users.
+ */
+size_t msn_users_get_count(const MsnUsers *users);
+
+/**
  * Finds a user with the specified passport.
  *
  * @param users    A list of users.
@@ -259,5 +282,7 @@ void msn_users_remove(MsnUsers *users, MsnUser *user);
  * @return The user if found, or @c NULL otherwise.
  */
 MsnUser *msn_users_find_with_passport(MsnUsers *users, const char *passport);
+
+/*@}*/
 
 #endif /* _MSN_USER_H_ */

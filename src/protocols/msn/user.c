@@ -29,26 +29,19 @@ msn_user_new(MsnSession *session, const char *passport, const char *name)
 
 	user = msn_users_find_with_passport(session->users, passport);
 
-	if (user != NULL) {
-		if (name != NULL)
-			msn_user_set_name(user, name);
+	if (user == NULL) {
+		user = g_new0(MsnUser, 1);
 
-		msn_user_ref(user);
+		user->session = session;
 
-		return user;
+		msn_user_set_passport(user, passport);
+		msn_user_set_group_id(user, -1);
+
+		msn_users_add(session->users, user);
 	}
-
-	user = g_new0(MsnUser, 1);
-
-	user->session = session;
 
 	if (name != NULL)
 		msn_user_set_name(user, name);
-
-	msn_user_set_passport(user, passport);
-	msn_user_set_group_id(user, -1);
-
-	msn_users_add(session->users, user);
 
 	msn_user_ref(user);
 
@@ -254,10 +247,17 @@ msn_users_new(void)
 void
 msn_users_destroy(MsnUsers *users)
 {
+	GList *l, *l_next = NULL;
+
 	g_return_if_fail(users != NULL);
 
-	while (users->users != NULL)
-		msn_user_destroy(users->users->data);
+	for (l = users->users; l != NULL; l = l_next) {
+		l_next = l->next;
+
+		msn_user_destroy(l->data);
+
+		users->users = g_list_remove(users->users, l->data);
+	}
 
 	/* See if we've leaked anybody. */
 	while (users->users != NULL) {
@@ -276,15 +276,27 @@ msn_users_add(MsnUsers *users, MsnUser *user)
 	g_return_if_fail(user != NULL);
 
 	users->users = g_list_append(users->users, user);
+
+	users->count++;
 }
 
 void
 msn_users_remove(MsnUsers *users, MsnUser *user)
 {
 	g_return_if_fail(users != NULL);
-	g_return_if_fail(user != NULL);
+	g_return_if_fail(user  != NULL);
 
 	users->users = g_list_remove(users->users, user);
+
+	users->count--;
+}
+
+size_t
+msn_users_get_count(const MsnUsers *users)
+{
+	g_return_val_if_fail(users != NULL, 0);
+
+	return users->count;
 }
 
 MsnUser *

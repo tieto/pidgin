@@ -45,40 +45,55 @@ __add_buddy(MsnServConn *servconn, MsnUser *user)
 	MsnSession *session = servconn->session;
 	struct gaim_connection *gc = session->account->gc;
 	struct buddy *b;
+	MsnGroup *group = NULL;
+	struct group *g = NULL;
+	int group_id;
+
+	group_id = msn_user_get_group_id(user);
+
+	if (group_id > -1)
+		group = msn_groups_find_with_id(session->groups, group_id);
+
+	if (group == NULL) {
+		GList *l;
+		gaim_debug(GAIM_DEBUG_WARNING, "msn",
+				   "Group ID %d for user %s was not defined.\n",
+				   group_id, msn_user_get_passport(user));
+
+		/* Find a group that we can stick this guy into. Lamer. */
+		l = msn_groups_get_list(session->groups);
+
+		if (l != NULL) {
+			group = l->data;
+
+			msn_user_set_group_id(user, msn_group_get_id(group));
+		}
+	}
+
+	if (group == NULL ||
+		(g = gaim_find_group(msn_group_get_name(group))) == NULL) {
+
+		gaim_debug(GAIM_DEBUG_ERROR, "msn",
+				   "Group '%s' appears in server-side "
+				   "buddy list, but not here!",
+				   msn_group_get_name(group));
+	}
+
+	if (group != NULL)
+		msn_group_add_user(group, user);
+
+	if (g == NULL) {
+		/* Should never happen. */
+
+		if ((g = gaim_find_group(_("Buddies"))) == NULL) {
+			g = gaim_group_new(_("Buddies"));
+			gaim_blist_add_group(g, NULL);
+		}
+	}
 
 	b = gaim_find_buddy(gc->account, msn_user_get_passport(user));
 
 	if (b == NULL) {
-		struct group *g = NULL;
-		const char *group_name = NULL;
-		int group_id;
-
-		group_id = msn_user_get_group_id(user);
-
-		if (group_id > -1) {
-			group_name = g_hash_table_lookup(session->group_names,
-											 &group_id);
-		}
-
-		if (group_name == NULL) {
-			gaim_debug(GAIM_DEBUG_WARNING, "msn",
-					   "Group ID %d for user %s was not defined.\n",
-					   group_id, msn_user_get_passport(user));
-		}
-		else if ((g = gaim_find_group(group_name)) == NULL) {
-			gaim_debug(GAIM_DEBUG_ERROR, "msn",
-					   "Group '%s' appears in server-side "
-					   "buddy list, but not here!",
-					   group_name);
-		}
-
-		if (g == NULL) {
-			if ((g = gaim_find_group(_("Buddies"))) == NULL) {
-				g = gaim_group_new(_("Buddies"));
-				gaim_blist_add_group(g, NULL);
-			}
-		}
-
 		b = gaim_buddy_new(gc->account,
 						   msn_user_get_passport(user), NULL);
 
@@ -420,7 +435,9 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 	friend = msn_url_decode(params[4]);
 
 	if (!g_ascii_strcasecmp(list, "FL")) {
-		user = msn_user_new(session, passport, friend);
+		user = msn_user_new(session, passport, NULL);
+
+		msn_user_set_group_id(user, atoi(params[5]));
 
 		__add_buddy(servconn, user);
 
@@ -455,20 +472,18 @@ static gboolean
 __adg_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
+	MsnGroup *group;
 	MsnSession *session = servconn->session;
-	gint *group_id;
+	gint group_id;
 	char *group_name;
 
-	group_id = g_new(gint, 1);
-	*group_id = atoi(params[3]);
+	group_id = atoi(params[3]);
 
 	group_name = msn_url_decode(params[2]);
 
-	gaim_debug(GAIM_DEBUG_INFO, "msn", "Added group %s (id %d)\n",
-			   group_name, group_id);
+	group = msn_group_new(session, group_id, group_name);
 
-	g_hash_table_insert(session->group_ids, group_name, group_id);
-	g_hash_table_insert(session->group_names, group_id, g_strdup(group_name));
+	msn_groups_add(session->groups, group);
 
 	return TRUE;
 }
@@ -592,10 +607,10 @@ __lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
+	MsnGroup *group;
 	struct group *g;
 	const char *name;
 	int group_num, num_groups, group_id;
-	gint *group_id_1, *group_id_2;
 
 	group_num  = atoi(params[2]);
 	num_groups = atoi(params[3]);
@@ -605,24 +620,12 @@ __lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (num_groups == 0)
 		return TRUE;
 
-	if (group_num == 1) {
-		session->group_names = g_hash_table_new_full(g_int_hash, g_int_equal,
-													 g_free, g_free);
-		session->group_ids = g_hash_table_new_full(g_str_hash, g_str_equal,
-												   g_free, g_free);
-	}
-
-	group_id_1 = g_new(gint, 1);
-	group_id_2 = g_new(gint, 1);
-
-	*group_id_1 = group_id;
-	*group_id_2 = group_id;
-
 	if (!strcmp(name, "~"))
 		name = _("Buddies");
 
-	g_hash_table_insert(session->group_names, group_id_1, g_strdup(name));
-	g_hash_table_insert(session->group_ids, g_strdup(name), group_id_2);
+	group = msn_group_new(session, group_id, name);
+
+	msn_groups_add(session->groups, group);
 
 	if ((g = gaim_find_group(name)) == NULL) {
 		g = gaim_group_new(name);
@@ -837,8 +840,6 @@ __rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	friend = msn_url_decode(params[3]);
 
-	gaim_debug(GAIM_DEBUG_INFO, "msn", "Setting friendly name to %s\n",
-			   friend);
 	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 
 	return TRUE;
@@ -849,22 +850,21 @@ __reg_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	gint *group_id;
+	MsnGroup *group;
+	int group_id;
 	char *group_name;
 
-	group_id = g_new(gint, 1);
-	*group_id = atoi(params[2]);
+	group_id = atoi(params[2]);
 
 	group_name = msn_url_decode(params[3]);
 
+	group = msn_groups_find_with_id(session->groups, group_id);
+
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Renamed group %s to %s\n",
-			   g_hash_table_lookup(session->group_names, group_id),
-			   group_name);
+			   msn_group_get_name(group), group_name);
 
-	g_hash_table_replace(session->group_names, group_id, g_strdup(group_name));
-
-	g_hash_table_remove(session->group_ids, group_name);
-	g_hash_table_insert(session->group_ids, group_name, group_id);
+	if (group != NULL)
+		msn_group_set_name(group, group_name);
 
 	return TRUE;
 }
@@ -877,34 +877,80 @@ __rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	/* I hate this. */
 	if (session->moving_buddy) {
+		MsnGroup *group, *old_group;
 		struct gaim_connection *gc = session->account->gc;
 		const char *passport = params[3];
 		char outparams[MSN_BUF_LEN];
-		int *group_id;
 
-		group_id = g_hash_table_lookup(session->group_ids,
-									   session->dest_group_name);
+		group = msn_groups_find_with_name(session->groups,
+										  session->dest_group_name);
 
-		g_free(session->dest_group_name);
-		session->dest_group_name = NULL;
+		old_group = session->old_group;
+
 		session->moving_buddy = FALSE;
+		session->old_group    = NULL;
 
-		if (group_id == NULL) {
+		if (group == NULL) {
 			gaim_debug(GAIM_DEBUG_ERROR, "msn",
 					   "Still don't have a group ID for %s while moving %s!\n",
 					   session->dest_group_name, passport);
+
+			g_free(session->dest_group_name);
+			session->dest_group_name = NULL;
+
 			return TRUE;
 		}
 
+		g_free(session->dest_group_name);
+		session->dest_group_name = NULL;
+
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   passport, passport, *group_id);
+				   passport, passport, msn_group_get_id(group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {
 			hide_login_progress(gc, _("Write error"));
 			signoff(gc);
+			return FALSE;
+		}
+
+		if (old_group != NULL)
+			msn_group_remove_user(old_group, session->moving_user);
+
+		msn_user_unref(session->moving_user);
+
+		session->moving_user = NULL;
+
+		if (old_group != NULL &&
+			msn_users_get_count(msn_group_get_users(old_group)) <= 0) {
+
+			g_snprintf(outparams, sizeof(outparams), "%d",
+					   msn_group_get_id(old_group));
+
+			if (!msn_servconn_send_command(session->notification_conn,
+										   "RMG", outparams)) {
+
+				hide_login_progress(gc, _("Write error"));
+				signoff(gc);
+				return FALSE;
+			}
 		}
 	}
+
+	return TRUE;
+}
+
+static gboolean
+__rmg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	MsnSession *session = servconn->session;
+	MsnGroup *group;
+
+	group = msn_groups_find_with_id(session->groups, atoi(params[2]));
+
+	if (group != NULL)
+		msn_groups_remove(session->groups, group);
 
 	return TRUE;
 }
@@ -1354,7 +1400,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "REA",       __rea_cmd);
 		msn_servconn_register_command(notification, "REG",       __reg_cmd);
 		msn_servconn_register_command(notification, "REM",       __rem_cmd);
-		msn_servconn_register_command(notification, "RMG",       __blank_cmd);
+		msn_servconn_register_command(notification, "RMG",       __rmg_cmd);
 		msn_servconn_register_command(notification, "RNG",       __rng_cmd);
 		msn_servconn_register_command(notification, "SYN",       __blank_cmd);
 		msn_servconn_register_command(notification, "URL",       __url_cmd);
