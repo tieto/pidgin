@@ -81,6 +81,21 @@ GtkWidget *gaim_gtk_prefs_labeled_spin_button(GtkWidget *page,
 		const gchar *title, char *key, int min, int max, GtkSizeGroup *sg);
 
 /**
+ * Add a new entry representing a string preference
+ *
+ * @param page  The page to which the entry will be added
+ * @param title The text to be displayed as the entry label
+ * @param key   The key of the string pref that will be represented by the entry
+ * @param sg    If not NULL, the size group to which the entry will be added
+ *
+ * @return      An hbox containing both the label and the entry.  Can be used to set
+ *               the widgets to sensitive or insensitive based on the value of a
+ *               checkbox.
+ */
+GtkWidget *gaim_gtk_prefs_labeled_entry(GtkWidget *page, const gchar *title,
+										char *key, GtkSizeGroup *sg);
+
+/**
  * Add a new dropdown representing a preference of the specified type
  *
  * @param page  The page to which the dropdown will be added

@@ -153,6 +153,50 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 }
 
 static void
+entry_set(GtkEntry *entry, gpointer data) {
+	char *key = (char*)data;
+
+	gaim_prefs_set_string(key, gtk_entry_get_text(entry));
+}
+
+GtkWidget *
+gaim_gtk_prefs_labeled_entry(GtkWidget *page, const gchar *title, char *key,
+							 GtkSizeGroup *sg)
+{
+	GtkWidget *hbox, *label, *entry;
+	const gchar *value;
+
+	value = gaim_prefs_get_string(key);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new_with_mnemonic(title);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(entry), value);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(entry_set), (char*)key);
+	gtk_widget_show(entry);
+
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+
+	if(sg) {
+		gtk_size_group_add_widget(sg, label);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	}
+
+	gaim_set_accessible_label(entry, label);
+
+	return hbox;
+}
+
+static void
 dropdown_set(GObject *w, const char *key)
 {
 	const char *str_value;
