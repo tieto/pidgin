@@ -7,3 +7,4 @@ BuddyArrive.h
 BuddyLeave.h
 Send.h
 Receive.h
+RedAlert.h

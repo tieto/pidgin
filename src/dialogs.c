@@ -134,6 +134,8 @@ struct addbp {
 	GtkWidget *p_unidle;
 	GtkWidget *save;
 	GtkWidget *menu;
+	GtkWidget *sound;
+	GtkWidget *soundentry;
 
 	struct aim_user *user;
 };
@@ -1014,6 +1016,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	g_snprintf(bp->name, 80, "%s", gtk_entry_get_text(GTK_ENTRY(b->nameentry)));
 	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
 	g_snprintf(bp->command, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->commentry)));
+	g_snprintf(bp->sound, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->soundentry)));
 	g_snprintf(bp->pouncer, 80, "%s", b->user->username);
 
 	bp->protocol = b->user->protocol;
@@ -1028,6 +1031,9 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	
 	if (GTK_TOGGLE_BUTTON(b->command)->active)
 		bp->options |= OPT_POUNCE_COMMAND;
+	
+	if (GTK_TOGGLE_BUTTON(b->sound)->active)
+		bp->options |= OPT_POUNCE_SOUND;
 	
 	if (GTK_TOGGLE_BUTTON(b->p_signon)->active)
 		bp->options |= OPT_POUNCE_SIGNON;
@@ -1175,7 +1181,7 @@ void show_new_bp(char *name)
 	gtk_box_pack_start(GTK_BOX(vbox), b->openwindow, FALSE, FALSE, 0);
 	gtk_widget_show(b->openwindow);
 	
-	b->sendim = gtk_check_button_new_with_label(_("Send IM on pounce")); 
+	b->sendim = gtk_check_button_new_with_label(_("Send IM on pounce"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), b->sendim, FALSE, FALSE, 0);
 	gtk_widget_show(b->sendim);
@@ -1217,6 +1223,28 @@ void show_new_bp(char *name)
 
 	gtk_widget_set_sensitive(b->commentry, FALSE);
 	gtk_signal_connect(GTK_OBJECT(b->command), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->commentry);
+	
+	b->sound = gtk_check_button_new_with_label(_("Play sound on pounce"));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sound), FALSE);
+	gtk_box_pack_start(GTK_BOX(vbox), b->sound, FALSE, FALSE, 0);
+	gtk_widget_show(b->sound);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Sound:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+				gtk_widget_show(label);
+
+	b->soundentry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), b->soundentry, TRUE, TRUE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->soundentry), "activate",
+				GTK_SIGNAL_FUNC(do_new_bp), b);
+	gtk_widget_show(b->soundentry);
+
+	gtk_widget_set_sensitive(b->soundentry, FALSE);
+	gtk_signal_connect(GTK_OBJECT(b->sound), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->soundentry);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);

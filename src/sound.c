@@ -48,6 +48,7 @@
 #include "sounds/BuddyLeave.h"
 #include "sounds/Send.h"
 #include "sounds/Receive.h"
+#include "sounds/RedAlert.h"
 
 static int check_dev(char *dev)
 {
@@ -482,6 +483,13 @@ void play_sound(int sound)
 			} else {
 				play(Receive, sizeof(Receive));
 			}
+		}
+		break;
+	case POUNCE_DEFAULT:
+		if (sound_file[POUNCE_DEFAULT]) {
+			play_file(sound_file[POUNCE_DEFAULT]);
+		} else {
+			play(RedAlert, sizeof(RedAlert));
 		}
 		break;
 	}

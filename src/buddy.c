@@ -1482,6 +1482,13 @@ void do_pounce(char *name, int when)
 					gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
 				}
 			}
+			if (b->options & OPT_POUNCE_SOUND)
+			{
+				if(strlen(b->sound))
+					play_file(b->sound); //play given sound
+				else
+					play_sound(POUNCE_DEFAULT); //play default sound
+			}
                         
 			if (!(b->options & OPT_POUNCE_SAVE))
 				rem_bp(NULL, b);

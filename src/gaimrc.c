@@ -281,6 +281,8 @@ static void gaimrc_read_pounce(FILE *f)
 			g_snprintf(b->pouncer, sizeof(b->pouncer), "%s", p->value[4]);
 			b->protocol = atoi(p->value[5]);
 
+			g_snprintf(b->sound, sizeof(b->sound), "%s", p->value[6]);
+			
 			filter_break(b->message);
 			buddy_pounces = g_list_append(buddy_pounces, b);
 		}
@@ -295,7 +297,7 @@ static void gaimrc_write_pounce(FILE *f)
 	fprintf(f, "pounce {\n");
 
 	while (pnc) {
-		char *str1, *str2, *str3;
+		char *str1, *str2, *str3, *str4;
 
 		b = (struct buddy_pounce *)pnc->data;
 
@@ -312,14 +314,21 @@ static void gaimrc_write_pounce(FILE *f)
 			str3 = malloc(1);
 			str3[0] = 0;
 		}
+		if (strlen(b->sound))
+			str4 = escape_text2(b->sound);
+		else {
+			str4 = malloc(1);
+			str4[0] = 0;
+		}
 
-		fprintf(f, "\tentry { %s } { %s } { %s } { %d } { %s } { %d }\n",
-			str1, str2, str3, b->options, b->pouncer, b->protocol);
+		fprintf(f, "\tentry { %s } { %s } { %s } { %d } { %s } { %d } { %s }\n",
+			str1, str2, str3, b->options, b->pouncer, b->protocol, str4);
 
 		/* escape_text2 uses malloc(), so we don't want to g_free these */
 		free(str1);
 		free(str2);
 		free(str3);
+		free(str4);
 
 		pnc = pnc->next;
 	}

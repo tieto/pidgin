@@ -262,6 +262,7 @@ struct log_conversation {
 #define OPT_POUNCE_POPUP    0x001
 #define OPT_POUNCE_SEND_IM  0x002
 #define OPT_POUNCE_COMMAND  0x004
+#define OPT_POUNCE_SOUND		0x008
 
 #define OPT_POUNCE_SIGNON   0x010
 #define OPT_POUNCE_UNAWAY   0x020
@@ -273,6 +274,7 @@ struct buddy_pounce {
         char name[80];
         char message[2048];
 	char command[2048];
+	char sound[2048];
 	
 	char pouncer[80];
 	int protocol;
@@ -392,7 +394,8 @@ struct conversation {
 #define CHAT_LEAVE 6
 #define CHAT_YOU_SAY 7
 #define CHAT_SAY 8
-#define NUM_SOUNDS 9
+#define POUNCE_DEFAULT 9
+#define NUM_SOUNDS 10
 
 
 #ifdef USE_APPLET
