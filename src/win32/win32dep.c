@@ -330,13 +330,98 @@ void wgaim_systray_maximize( GtkWidget *window ) {
 	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
 }
 
+char* wgaim_lcid_to_posix(LCID lcid) {
+        switch(lcid) {
+        case 1026: return "bg"; /* bulgarian */
+        case 1027: return "ca"; /* catalan */
+        case 1050: return "hr"; /* croation */
+        case 1029: return "cs"; /* czech */
+        case 1030: return "da"; /* danaish */
+        case 1043: return "nl"; /* dutch - netherlands */
+        case 1033: return "en"; /* english - us */
+        case 1035: return "fi"; /* finish */
+        case 1036: return "fr"; /* french - france */
+        case 1031: return "de"; /* german - germany */
+        case 1032: return "el"; /* greek */
+        case 1037: return "he"; /* hebrew */
+        case 1038: return "hu"; /* hungarian */
+        case 1040: return "it"; /* italian - italy */
+        case 1041: return "ja"; /* japanese */
+        case 1042: return "ko"; /* korean */
+        case 1063: return "lt"; /* lithuanian */
+        case 1071: return "mk"; /* macedonian */
+        case 1045: return "pl"; /* polish */
+        case 2070: return "pt"; /* portuguese - portugal */
+        case 1046: return "pt_BR"; /* portuguese - brazil */
+        case 1048: return "ro"; /* romanian - romania */
+        case 1049: return "ru"; /* russian - russia */
+        case 2074: return "sr@Latn"; /* serbian - latin */
+        case 3098: return "sr"; /* serbian - cyrillic */
+        case 2052: return "zh_CN"; /* chinese - china (simple) */
+        case 1051: return "sk"; /* slovak */
+        case 1060: return "sl"; /* slovenian */
+        case 1034: return "es"; /* spanish */
+        case 1053: return "sv"; /* swedish */
+        case 1054: return "th"; /* thai */
+        case 1028: return "zh_TW"; /* chinese - taiwan (traditional) */
+        case 1055: return "tr"; /* turkish */
+        case 1058: return "uk"; /* ukrainian */
+        default:
+                gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Could not find posix code for LCID: %d\n", lcid);
+                return NULL;
+        }
+}
+
+/* Determine and set Gaim locale as follows (in order of priority):
+   - Check LANG env var
+   - Check NSIS Installer Language reg value
+   - Use default user locale
+*/
+void wgaim_set_locale() {
+        HKEY hkey;
+	char* locale=NULL;
+        char envstr[25];
+        LCID lcid;
+
+        /* Check if user set LANG env var */
+        if((locale = g_getenv("LANG"))) {
+                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Using locale set by the LANG env var.\n");
+                goto finish;
+        }
+
+        /* Check reg key set at install time */
+        if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER, 
+                                         "SOFTWARE\\gaim", 
+					 0,  KEY_QUERY_VALUE, &hkey)) {
+                BYTE data[10];
+                DWORD ds = 10;
+                if(ERROR_SUCCESS == RegQueryValueEx(hkey, "Installer Language", 0, NULL, &data, &ds)) {
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Using locale set by the installer\n");
+                        if((locale = wgaim_lcid_to_posix(atoi(data))))
+                                goto finish;
+		}
+        }
+
+        lcid = GetUserDefaultLCID();
+        if((locale = wgaim_lcid_to_posix(lcid)))
+                goto finish;
+
+        finish:
+        if(!locale)
+                locale = "en";
+
+        sprintf(envstr, "LANG=%s", locale);
+        if(putenv(envstr)<0)
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
+
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Locale set to: %s\n", locale);
+}
 
 /* Windows Initializations */
 
 void wgaim_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
-	char* locale=0;
 	char newenv[128];
 	char* drmingw;
 
@@ -367,15 +452,9 @@ void wgaim_init(void) {
 		WSACleanup( );
 	}
 
-	/* get default locale */
-	locale = g_win32_getlocale();
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Language profile used: %s\n", locale);
-
-	/* Aspell config */
-	sprintf(newenv, "LANG=%s", locale);
-	if(putenv(newenv)<0)
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
-	g_free(locale);
+        /* Set locale - determines which translations to user, and which
+           aspell dictionary to use */
+        wgaim_set_locale();
 
 	/* Disable PANGO UNISCRIBE (for GTK 2.2.0). This may not be necessary in the
 	   future because there will most likely be a check to see if we need this,
