@@ -65,6 +65,7 @@ gaim_SOURCES =	about.c \
 		stock.h \
 		themes.c \
 		util.c \
+		util.h \
 		ui.h
 
 gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
