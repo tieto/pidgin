@@ -31,7 +31,8 @@ static int bhide_icon;
 /*
  *  GLOBALS
  */
-HINSTANCE g_hInstance = 0;
+HINSTANCE gaimexe_hInstance = 0;
+HINSTANCE gaimdll_hInstance = 0;
 
 /*
  *  STATIC CODE
@@ -46,7 +47,7 @@ static void ShowNotifyIcon(HWND hWnd,BOOL bAdd)
 	nid.uID=0;
 	nid.uFlags=NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage=WM_TRAYMESSAGE;
-	nid.hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
+	nid.hIcon=LoadIcon(gaimexe_hInstance,MAKEINTRESOURCE(IDI_ICON2));
 	lstrcpy(nid.szTip,TEXT(GAIM_SYSTRAY_HINT));
 	
 	if(bAdd)
@@ -77,6 +78,8 @@ static GdkFilterReturn traymsg_filter_func( GdkXEvent *xevent, GdkEvent *event, 
 /*
  *  PUBLIC CODE
  */
+
+/* Determine Gaim Paths during Runtime */
 
 char* wgaim_install_dir(void) {
 	HMODULE hmod;
@@ -114,6 +117,8 @@ char* wgaim_locale_dir(void) {
 	return (char*)&locale_dir;
 }
 
+/* Systray related routines */
+
 GdkFilterReturn wgaim_window_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data)
 {
 	MSG *msg = (MSG*)xevent;
@@ -137,9 +142,31 @@ GdkFilterReturn wgaim_window_filter( GdkXEvent *xevent, GdkEvent *event, gpointe
 	return GDK_FILTER_CONTINUE;
 }
 
+/* Windows Initializations */
+
 void wgaim_init(void) {
+	char* locale=0;
+	char newenv[128];
+
 	/* Filter to catch systray events */
 	gdk_add_client_message_filter (GDK_POINTER_TO_ATOM (WM_TRAYMESSAGE),
 				       traymsg_filter_func,
 				       NULL);
+	/* get default locale */
+	locale = g_win32_getlocale();
+	debug_printf("Language profile used: %s\n", locale);
+
+	/*
+	 *  Aspell config
+	 */
+	/* Set LANG env var */
+	sprintf(newenv, "LANG=%s", locale);
+	if(putenv(newenv)<0)
+		debug_printf("putenv failed\n");
+	g_free(locale);
+}
+
+BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
+	gaimdll_hInstance = hinstDLL;
+	return TRUE;
 }
