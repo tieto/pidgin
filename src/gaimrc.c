@@ -829,9 +829,7 @@ static void gaimrc_read_options(FILE *f)
 		away_resend = 120;
 
 	if (misc_options & OPT_MISC_BUDDY_TICKER) {
-		char *tickerplugin = g_build_filename(LIBDIR, "ticker.so", NULL);
-		load_plugin(tickerplugin);
-		g_free(tickerplugin);
+		load_plugin(LIBDIR "/ticker.so");
 		misc_options &= ~OPT_MISC_BUDDY_TICKER;
 	} 
 }

@@ -559,6 +559,58 @@ static void netscape_command(char *command)
 
 }
 
+#if !GTK_CHECK_VERSION(1,3,0)
+/* From Glib 2.0 */
+/**
+            * g_shell_quote:
+            * @unquoted_string: a literal string
+            * 
+            * Quotes a string so that the shell (/bin/sh) will interpret the
+            * quoted string to mean @unquoted_string. If you pass a filename to
+            * the shell, for example, you should first quote it with this
+            * function.  The return value must be freed with g_free(). The
+            * quoting style used is undefined (single or double quotes may be
+            * used).
+            * 
+            * Return value: quoted string
+**/
+gchar*
+g_shell_quote (const gchar *unquoted_string)
+{
+	/* We always use single quotes, because the algorithm is cheesier.
+	 * We could use double if we felt like it, that might be more
+	 * human-readable.
+	 */      
+	const gchar *p;
+	GString *dest;
+           
+	g_return_val_if_fail (unquoted_string != NULL, NULL);
+             
+	dest = g_string_new ("'");
+           
+	p = unquoted_string;
+           
+	/* could speed this up a lot by appending chunks of text at a
+	 * time.
+	 */
+	while (*p)
+		{
+			/* Replace literal ' with a close ', a \', and a open ' */
+			if (*p == '\'')
+				g_string_append (dest, "'\\''");
+			else
+				g_string_append_c (dest, *p);
+			++p;
+		}
+	/* close the quote */
+	g_string_append_c (dest, '\'');
+             
+	p = dest->str;
+	g_string_free (dest, FALSE);
+	return p;
+}
+#endif
+
 void open_url(GtkWidget *w, char *url)
 {
 
@@ -584,7 +636,7 @@ void open_url(GtkWidget *w, char *url)
 		if (pid == 0) {
 			char *args[4];
 			char command[1024];
-
+			
 			if (web_browser == BROWSER_OPERA) {
 				args[0] = "opera";
 				args[1] = "-newwindow";
@@ -610,7 +662,9 @@ void open_url(GtkWidget *w, char *url)
 				args[1] = url;
 				args[2] = NULL;
 			} else if (web_browser == BROWSER_MANUAL) {
-				g_snprintf(command, sizeof(command), web_command, url);
+				char *quoted = g_shell_quote(command);
+				g_snprintf(command, sizeof(command), web_command, quoted);
+				g_free(quoted);
 				args[0] = "sh";
 				args[1] = "-c";
 				args[2] = command;
