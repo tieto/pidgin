@@ -457,12 +457,26 @@ static struct conversation *find_chat(struct gaim_connection *gc, char *name)
 	return b;
 }
 
+static gboolean find_chat_buddy(struct conversation *b, char *name)
+{
+	GList *m = b->in_room;
+
+	while (m) {
+		if (!strcasecmp(m->data, name))
+			return TRUE;
+		m = m->next;
+	}
+
+	return FALSE;
+}
+
 static void jabber_handlemessage(gjconn j, jpacket p)
 {
 	xmlnode y;
 	gboolean same = TRUE;
 
 	char *from = NULL, *msg = NULL, *type = NULL;
+	char m[BUF_LONG * 2];
 
 	type = xmlnode_get_attrib(p->x, "type");
 
@@ -481,7 +495,8 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			same = FALSE;
 		}
 
-		serv_got_im(GJ_GC(j), from, msg, 0);
+		g_snprintf(m, sizeof(m), "%s", msg);
+		serv_got_im(GJ_GC(j), from, m, 0);
 
 		if (!same)
 			g_free(from);
@@ -524,9 +539,17 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			}
 		}
 		if (p->from->resource) {
-			if (!y)
-				add_chat_buddy(b, p->from->resource);
-			else if (msg)
+			if (!y) {
+				if (!find_chat_buddy(b, p->from->resource))
+					add_chat_buddy(b, p->from->resource);
+				else if ((y = xmlnode_get_tag(p->x, "status"))) {
+					char buf[8192];
+					msg = xmlnode_get_data(y);
+					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
+							p->from->resource, msg);
+					write_to_conv(b, buf, WFLAG_SYSTEM, NULL);
+				}
+			} else if (msg)
 				serv_got_chat_in(GJ_GC(j), b->id, p->from->resource, 0, msg);
 		/*
 		} else if (msg) {
@@ -653,7 +676,15 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				jd->existing_chats = g_slist_remove(jd->existing_chats, bcs->data);
 				serv_got_chat_left(GJ_GC(j), cnv->id);
 			} else {
-				add_chat_buddy(cnv, who->resource);
+				if (!find_chat_buddy(cnv, who->resource))
+					add_chat_buddy(cnv, who->resource);
+				else if ((y = xmlnode_get_tag(p->x, "status"))) {
+					char buf[8192];
+					char *msg = xmlnode_get_data(y);
+					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
+							p->from->resource, msg);
+					write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL);
+				}
 			}
 		}
 	}
