@@ -56,9 +56,9 @@ struct gaim_connection {
 	/* stuff needed for per-connection idle times */
 	guint idle_timer;
 	time_t login_time;
+	time_t login_time_official;
 	time_t lastsent;
 	int is_idle;
-	time_t correction_time;
 
 	char *away;		/* set by protos, is NULL when not away, or set *
 				 * to "" or a custom message when away */

@@ -2998,7 +2998,7 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	if (bi) {
 		gchar *yay;
 		char *caps = caps_string(bi->caps);
-		char *tstr = sec_to_text(time(NULL) - bi->signon);
+		char *tstr = sec_to_text(time(NULL) - bi->signon + gc->login_time_official - gc->login_time);
 		yay = g_strdup_printf(_("<b>Logged In:</b> %s%s%s"), tstr, 
 				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
 		free(tstr);
@@ -3519,7 +3519,9 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gc->evil = info->warnlevel/10;
-	/* gc->correction_time = (info->onlinesince - gc->login_time); */
+
+	if (info->onlinesince)
+		gc->login_time_official = info->onlinesince;
 
 	return 1;
 }

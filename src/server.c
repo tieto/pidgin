@@ -857,7 +857,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 		char *tmp = g_strdup(normalize(name));
 		if (!gaim_utf8_strcasecmp(tmp, normalize(gc->username))) {
 			gc->evil = evil;
-			gc->correction_time = (signon - gc->login_time);
+			gc->login_time_official = signon;
 			/*update_idle_times();*/
 		}
 		g_free(tmp);
