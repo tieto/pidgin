@@ -45,17 +45,17 @@ typedef struct _GtkTicker        GtkTicker;
 typedef struct _GtkTickerClass   GtkTickerClass;
 typedef struct _GtkTickerChild   GtkTickerChild;
 
-// XXX children move from right to left, should be able to go other way
+/* XXX children move from right to left, should be able to go other way */
 
 struct _GtkTicker
 {
   GtkContainer container;
-  guint interval;	// how often to scootch
-  guint spacing;	// inter-child horizontal spacing
-  guint scootch;	// how many pixels to move each scootch
-  gint timer;		// timer object
-  guint total;		// total width of widgets
-  guint width;		// width of containing window
+  guint interval;	/* how often to scootch */
+  guint spacing;	/* inter-child horizontal spacing */
+  guint scootch;	/* how many pixels to move each scootch */
+  gint timer;		/* timer object */
+  guint total;		/* total width of widgets */
+  guint width;		/* width of containing window */
   gboolean dirty;
   GList *children;	
 };

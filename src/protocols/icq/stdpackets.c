@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: stdpackets.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: stdpackets.c 2400 2001-09-28 23:45:19Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -104,7 +104,7 @@ icq_Packet *icq_TCPCreateAwayReqPacket(icq_TCPLink *plink, WORD statusMode)
   icq_Packet *p=icq_TCPCreateStdPacket(
     plink,
     ICQ_TCP_MESSAGE,
-    statusMode,           //one of the icq_tcp_msg_read... constants
+    statusMode,           /* one of the icq_tcp_msg_read... constants */
     "",
     0, /* status */
     0);   
