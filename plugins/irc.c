@@ -43,6 +43,8 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
 
+#include "pixmaps/free_icon.xpm"
+
 #define IRC_BUF_LEN 4096
 
 
@@ -455,6 +457,9 @@ void irc_callback ( struct gaim_connection * gc ) {
 			/* We shouldnt play with ourselves */
 			if (g_strcasecmp(buf2[i], gc->username) != 0) {
 				/* Add the person to the list */
+
+				/* FIXME: These really should be in alphabetical order and OPS and Voice first */
+
 				add_chat_buddy(convo, buf2[i]);
 			}
 		}
@@ -675,6 +680,68 @@ void irc_callback ( struct gaim_connection * gc ) {
 		/* Go Home! */
 		return;
 	}
+	
+	if ( (strstr(buf, " NOTICE ")) && (buf[0] == ':')) {
+		gchar u_nick[128];
+		gchar u_host[255];
+		gchar u_command[32];
+		gchar u_channel[128];
+		gchar u_message[IRC_BUF_LEN];
+		int j;
+		int msgcode = 0;
+
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
+		}
+
+		u_nick[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_host[j] = buf[i];
+		}
+
+		u_host[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_command[j] = buf[i];
+		}
+
+		u_command[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != ':'; j++, i++) {
+			u_channel[j] = buf[i];
+		}
+
+		u_channel[j-1] = '\0'; i++;
+
+
+		/* Now that everything is parsed, the rest of this baby must be our message */
+		strncpy(u_message, buf + i, IRC_BUF_LEN);
+
+		/* Now, lets check the message to see if there's anything special in it */
+		if (u_message[0] == '\001') {
+			if ((g_strncasecmp(u_message, "\001PING ", 6) == 0) && (strlen(u_message) > 6)) {
+				/* Someone's triyng to ping us.  Let's respond */
+				gchar u_arg[24];
+				gchar u_buf[200];
+
+				strcpy(u_arg, u_message + 6);
+				u_arg[strlen(u_arg)-1] = '\0';
+
+				/* FIXME: We should keep track of pings we send.  We should store
+				 * the serial # and the time so that we can accurately report which
+				 * pings are turning, etc */
+
+				g_snprintf(u_buf, sizeof(u_buf), "Ping Reply From %s", u_nick);
+				
+				do_error_dialog(u_buf, "Gaim IRC - Ping Reply");
+			
+				return;
+			}
+		}
+
+	}
+	
 	
 	if ( (strstr(buf, " PRIVMSG ")) && (buf[0] == ':')) {
 		gchar u_nick[128];
@@ -971,11 +1038,42 @@ static void irc_user_opts(GtkWidget *book, struct aim_user *user) {
 	gtk_widget_show(entry);
 }
 
+static char **irc_list_icon(int uc) {
+	return free_icon_xpm;
+}
+
+/* Send out a ping request to the specified user */
+void irc_send_ping(GtkObject *w, char *who) {
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	char buf[BUF_LEN];
+	unsigned int serial = 2391271;
+
+	g_snprintf(buf, BUF_LEN, "PRIVMSG %s :%cPING %d%c\n", who, '\001', serial, '\001');
+
+	write(idata->fd, buf, strlen(buf));	
+}
+
+
+static void irc_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+	GtkWidget *button;
+	
+	button = gtk_menu_item_new_with_label("Ping");
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			GTK_SIGNAL_FUNC(irc_send_ping), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+}
+
+
 static struct prpl *my_protocol = NULL;
 
 void irc_init(struct prpl *ret) {
 	ret->protocol = PROTO_IRC;
 	ret->name = irc_name;
+	ret->list_icon = irc_list_icon;
+	ret->action_menu = irc_action_menu;
 	ret->user_opts = irc_user_opts;
 	ret->login = irc_login;
 	ret->close = irc_close;
