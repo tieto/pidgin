@@ -4,7 +4,7 @@ version 0.50:
 	* Updated polish translation (Thanks Przemyslaw Sulek)
 	* Able to import GnomeICU contact lists
 	* Galeon as browser option (Thanks Rob McQueen)
-	* IRC /list
+	* IRC /list, /invite (Thanks Sean Egan)
 	* Added swedish translation (Thanks Christian Rose)
 	* Option to have IMs and Chats tabbed in same window
 
