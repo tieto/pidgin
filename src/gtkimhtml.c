@@ -3455,10 +3455,12 @@ void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
 		str[47] = '\0';
 
 		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &color, NULL);
-		if (color)
+		if (color) {
 			imhtml->edit.link = linktag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "foreground-gdk", color, "underline", PANGO_UNDERLINE_SINGLE, NULL);
-		else
+			gdk_color_free(color);
+		} else {
 			imhtml->edit.link = linktag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
+		}
 		g_object_set_data_full(G_OBJECT(linktag), "link_url", g_strdup(url), g_free);
 		g_signal_connect(G_OBJECT(linktag), "event", G_CALLBACK(tag_event), NULL);
 
