@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9537 2004-04-23 17:24:19Z lschiere $
+ * $Id: gg.c 9558 2004-04-24 12:19:43Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1503,7 +1503,7 @@ static void agg_permit_deny_dummy(GaimConnection *gc, const char *who)
 	/* It's implemented on client side because GG server doesn't support this */
 }
 
-static void agg_group_buddy (GaimConnection * gc, const char *who,
+static void agg_group_buddy (GaimConnection *gc, const char *who,
 			const char *old_group, const char *new_group)
 {
     GaimBuddy *buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
@@ -1576,9 +1576,17 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
 	agg_group_buddy,
 	agg_rename_group,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL,
 	NULL,
 	NULL
