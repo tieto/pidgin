@@ -91,22 +91,6 @@ struct _GtkSmileyTree {
 	gchar **image;
 };
 
-static gchar*
-getcharset ()
-{
-	static gchar charset [64];
-#ifdef HAVE_LANGINFO_CODESET
-	gchar *ch = nl_langinfo (CODESET);
-	if (!g_strncasecmp (ch, "iso-", 4))
-		g_snprintf (charset, sizeof (charset), "iso%s", ch + 4);
-	else
-		g_snprintf (charset, sizeof (charset), ch);
-#else
-	g_snprintf (charset, sizeof (charset), "iso8859-*");
-#endif
-	return charset;
-}
-
 static GtkSmileyTree*
 gtk_smiley_tree_new ()
 {
@@ -1862,20 +1846,16 @@ gtk_imhtml_get_font_name (GdkFont *font)
 #endif
 }
 
-#define TRY_FONT	{ \
-				gchar *tmp = g_strjoinv ("-", newvals); \
-				GdkFont *ret_font; \
-				if (default_font->type == GDK_FONT_FONT) \
-					ret_font = gdk_font_load (tmp); \
-				else \
-					ret_font = gdk_fontset_load (tmp); \
-				g_free (tmp); \
-				if (ret_font) { \
-					g_strfreev (xflds); \
-					g_strfreev (names); \
-					g_strfreev (csvals); \
-					return ret_font; \
-				} \
+#define TRY_FONT	tmp = g_strjoinv ("-", newvals); \
+			if (default_font->type == GDK_FONT_FONT) \
+				ret_font = gdk_font_load (tmp); \
+			else \
+				ret_font = gdk_fontset_load (tmp); \
+			g_free (tmp); \
+			if (ret_font) { \
+				g_strfreev (xflds); \
+				g_strfreev (names); \
+				return ret_font; \
 			}
 
 
@@ -1894,8 +1874,9 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 	gint i;
 	gchar **names;
 	gchar fs[10];
-	gchar *charset;
-	gchar **csvals;
+
+	gchar *tmp;
+	GdkFont *ret_font;
 
 	if (!name && !bold && !italics && !fontsize)
 		return gdk_font_ref (default_font);
@@ -1908,8 +1889,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 #define ITALICS 4
 #define SIZE 6
 #define PTSZ 7
-#define REG 13
-#define ENC 14
 #define END 15
 
 	if (name)
@@ -1918,8 +1897,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		names = g_new0 (gchar *, 2);
 		names [0] = g_strdup (xflds [NAME]);
 	}
-	charset = getcharset ();
-	csvals = g_strsplit (charset, "-", 2);
 
 	for (i = 0; xflds [i]; i++)
 		newvals [i] = xflds [i];
@@ -1933,8 +1910,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		newvals [SIZE] = fs;
 		newvals [PTSZ] = "";
 	}
-	newvals [REG] = csvals [0];
-	newvals [ENC] = csvals [1];
 	newvals [END] = NULL;
 
 	TRY_FONT;
@@ -1983,7 +1958,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 
 	g_strfreev (xflds);
 	g_strfreev (names);
-	g_strfreev (csvals);
 
 	return gdk_font_ref (default_font);
 }
