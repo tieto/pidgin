@@ -2846,13 +2846,10 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 #endif
 	}
 
-	if (gaim_presence_is_idle(presence) &&
-		gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time"))
-	{
+	if (gaim_presence_is_idle(presence)) {
 		time_t idle_secs = gaim_presence_get_idle_time(presence);
 
-		if (idle_secs > 0)
-		{
+		if (idle_secs > 0) {
 			int ihrs, imin;
 
 			time(&t);
@@ -2870,9 +2867,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 
 	warning_level = gaim_presence_get_warning_level(presence);
 
-	if (warning_level > 0 &&
-		gaim_prefs_get_bool("/gaim/gtk/blist/show_warning_level"))
-	{
+	if (warning_level > 0) {
 		warning = g_strdup_printf(_("Warned (%d%%) "), warning_level);
 	}
 
@@ -3048,10 +3043,8 @@ void gaim_gtk_blist_update_columns()
 		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
 		gtk_tree_view_column_set_visible(gtkblist->warning_column, FALSE);
 	} else {
-		gtk_tree_view_column_set_visible(gtkblist->idle_column,
-				gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time"));
-		gtk_tree_view_column_set_visible(gtkblist->warning_column,
-				gaim_prefs_get_bool("/gaim/gtk/blist/show_warning_level"));
+		gtk_tree_view_column_set_visible(gtkblist->idle_column, TRUE);
+		gtk_tree_view_column_set_visible(gtkblist->warning_column, TRUE);
 		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, FALSE);
 	}
 }
@@ -3210,13 +3203,13 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 
 	rend = gtk_cell_renderer_text_new();
-	gtkblist->warning_column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->warning_column);
+	gtkblist->idle_column = gtk_tree_view_column_new_with_attributes("Idle", rend, "markup", IDLE_COLUMN, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->idle_column);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
-	gtkblist->idle_column = gtk_tree_view_column_new_with_attributes("Idle", rend, "markup", IDLE_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->idle_column);
+	gtkblist->warning_column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->warning_column);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_pixbuf_new();
@@ -3262,21 +3255,12 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	}
 
 	/* start the refresh timer */
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") ||
-		gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
-
-		gtkblist->refresh_timer = g_timeout_add(30000,
-				(GSourceFunc)gaim_gtk_blist_refresh_timer, list);
-	}
-
+	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
+	
 	handle = gaim_gtk_blist_get_handle();
 
 	/* things that affect how buddies are displayed */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
-			_prefs_change_redo_list, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_warning_level",
-			_prefs_change_redo_list, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_idle_time",
 			_prefs_change_redo_list, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_empty_groups",
 			_prefs_change_redo_list, NULL);
@@ -3289,10 +3273,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* things that affect what columns are displayed */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
-			gaim_gtk_blist_update_columns, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_idle_time",
-			gaim_gtk_blist_update_columns, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_warning_level",
 			gaim_gtk_blist_update_columns, NULL);
 
 	/* menus */
@@ -3363,15 +3343,7 @@ gaim_gtk_blist_update_refresh_timeout()
 	blist = gaim_get_blist();
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") ||
-		gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
-
-		gtkblist->refresh_timer = g_timeout_add(30000,
-				(GSourceFunc)gaim_gtk_blist_refresh_timer, blist);
-	} else {
-		g_source_remove(gtkblist->refresh_timer);
-		gtkblist->refresh_timer = 0;
-	}
+	gtkblist->refresh_timer = g_timeout_add(30000,(GSourceFunc)gaim_gtk_blist_refresh_timer, blist);
 }
 
 static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
@@ -4512,9 +4484,7 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/auto_expand_contacts", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/list_visible", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "alphabetical");
 	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
