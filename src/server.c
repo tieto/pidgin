@@ -34,6 +34,9 @@
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
+#ifdef USE_APPLET
+#include "applet.h"
+#endif
 
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
