@@ -31,6 +31,7 @@
  * for the UI so that people can name their away messages when they save them. So these
  * are really a UI function and struct away_message should be removed from the core. */
 /* WTF?  How does having a title for something mean that it is part of the UI? */
+#if 0 /* XXX CUI */
 struct away_message {
 	char name[80];
 	char message[2048];
@@ -49,5 +50,6 @@ extern void toggle_away_queue();
 extern void purge_away_queue(GSList **);
 extern void do_im_back(GtkWidget *, GtkWidget *);
 void create_away_mess(GtkWidget *, void *);
+#endif
 
 #endif /* _GAIM_AWAY_H_ */

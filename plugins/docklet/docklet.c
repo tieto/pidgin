@@ -58,11 +58,13 @@
 GaimPlugin *handle = NULL;
 static struct docklet_ui_ops *ui_ops = NULL;
 static enum docklet_status status = offline;
+#if 0 /* XXX CUI */
 #ifdef _WIN32
 __declspec(dllimport) GSList *unread_message_queue;
 __declspec(dllimport) GSList *away_messages;
 __declspec(dllimport) struct away_message *awaymessage;
 __declspec(dllimport) GSList *message_queue;
+#endif
 #endif
 
 /* private functions */
@@ -86,6 +88,7 @@ docklet_auto_login()
 }
 
 #ifdef _WIN32
+#if 0 /* XXX NEW STATUS */
 /* This is workaround for a bug in windows GTK+. Clicking outside of the
    parent menu (including on a submenu-item) close the whole menu before
    the "activate" event is thrown for the given submenu-item. Fixed by
@@ -103,6 +106,7 @@ docklet_menu_create_away_mess(GtkWidget *widget, GdkEventButton *event, gpointer
 	create_away_mess(widget, user_data);
 	return FALSE;
 }
+#endif
 
 /* This is a workaround for a bug in windows GTK+. Clicking outside of the
    menu does not get rid of it, so instead we get rid of it as soon as the
@@ -146,6 +150,7 @@ static void docklet_menu() {
 		case online:
 		case online_connecting:
 		case online_pending: {
+#if 0 /* XXX NEW STATUS */
 			GtkWidget *docklet_awaymenu;
 			GSList *awy = NULL;
 			struct away_message *a = NULL;
@@ -181,12 +186,15 @@ static void docklet_menu() {
 			entry = gtk_menu_item_new_with_label(_("Away"));
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(entry), docklet_awaymenu);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
+#endif
 			} break;
 		case away:
 		case away_pending:
+#if 0 /* XXX NEW STATUS */
 			entry = gtk_menu_item_new_with_label(_("Back"));
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_im_back), NULL);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
+#endif
 			break;
 	}
 
@@ -261,6 +269,7 @@ docklet_update_status()
 	oldstatus = status;
 
 	if (gaim_connections_get_all()) {
+#if 0 /* XXX NEW STATUS */
 		if (unread_message_queue) {
 			status = online_pending;
 		} else if (awaymessage) {
@@ -270,6 +279,9 @@ docklet_update_status()
 				status = away;
 			}
 		} else if (gaim_connections_get_connecting()) {
+#else
+		if (gaim_connections_get_connecting()) {
+#endif
 			status = online_connecting;
 		} else {
 			status = online;
@@ -296,15 +308,17 @@ docklet_update_status()
 	return FALSE; /* for when we're called by the glib idle handler */
 }
 
-void
+#if 0 /* XXX CUI */
+static void
 docklet_flush_queue()
 {
 	if (unread_message_queue) {
 		purge_away_queue(&unread_message_queue);
 	}
 }
+#endif
 
-void
+static void
 docklet_remove_callbacks()
 {
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "removing callbacks");
@@ -323,11 +337,15 @@ docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
+#if 0 /* XXX CUI */
 			if (unread_message_queue) {
 				docklet_flush_queue();
 			} else {
+#endif
 				gaim_gtk_blist_docklet_toggle();
+#if 0 /* XXX CUI */
 			}
+#endif
 			break;
 		case 2:
 			switch (status) {
@@ -361,7 +379,9 @@ docklet_remove(gboolean visible)
 	if (visible)
 		gaim_gtk_blist_docklet_remove();
 
+#if 0 /* XXX CUI */
 	docklet_flush_queue();
+#endif
 }
 
 void
@@ -428,7 +448,9 @@ gaim_new_conversation(GaimConversation *conv, void *data)
    plugin is unloaded, when quitting */
 static void gaim_quit_cb() {
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "dealing with queued messages on exit\n");
+#if 0 /* XXX CUI */
 	docklet_flush_queue();
+#endif
 }
 
 
