@@ -76,12 +76,7 @@ G_MODULE_IMPORT int report_idle;
 G_MODULE_IMPORT GSList *groups;
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE;
-
-/* Set AIM caps, because Gaim can still do them over ICQ and 
- * Winicq doesn't mind. */
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8;
-/* static int caps_icq = AIM_CAPS_ICQ; */
-/* What does AIM_CAPS_ICQ actually mean? -SE */
 
 static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static fu8_t features_icq[] = {0x01, 0x06};
@@ -2788,7 +2783,10 @@ static char *caps_string(guint caps)
 	static char buf[512], *tmp;
 	int count = 0, i = 0;
 	guint bit = 1;
-	while (bit <= 0x10000) {
+
+	if (!caps) {
+		strncpy(buf, _("<i>none advertised</i>"), sizeof(buf));
+	} else while (bit <= 0x10000) {
 		if (bit & caps) {
 			switch (bit) {
 			case 0x1:
@@ -2839,6 +2837,9 @@ static char *caps_string(guint caps)
 				break;
 			case 0x10000:
 				tmp = _("Trillian Encryption");
+				break;
+			case 0x20000:
+				tmp = _("ICQ UTF8");
 				break;
 			default:
 				tmp = NULL;
