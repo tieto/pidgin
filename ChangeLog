@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.64
+version 0.64 (05/29/2003):
 	* Buddy list sorting in buddy list preferences.
 	* Improved debug window with timestamps and pause buttons.
 	* New core/ui split notification and request APIs.

@@ -73,6 +73,20 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu May 29 2003 Rob Flynn <rob@marko.net> (0.64 release)
+- Buddy list sorting in buddy list preferences.
+- Improved debug window with timestamps and pause buttons.
+- New core/ui split notification and request APIs.
+- New mail notification dialog.
+- Several bug fixes in MSN.
+- Conversation window buddy icon bugs were fixed.
+- Buddy list sorting in buddy list preferences.
+- Improved debug window with timestamps and pause buttons.
+- New core/ui split notification and request APIs.
+- New mail notification dialog.
+- Several bug fixes in MSN.
+- Conversation window buddy icon bugs were fixed.
+										 
 * Sat May 17 2003 Rob Flynn <rob@marko.net> (0.63 release)
 - A rewrite of the plugin API. Plugin authors will need to change their code based off the changes found in other plugins.
 - Perl script support is now provided in the perl plugin.

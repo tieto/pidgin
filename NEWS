@@ -1,6 +1,16 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
 0.64 (05/29/2003)
+	Sean: Unlike every other time we say, "the next release will be loaded
+	with cool new features, this time, we really mean it. In fact, they're
+	already in CVS (don't use CVS).  The only obvious new feature for 0.64
+	is buddy list sorting.  This has been much requested and can be set in
+	the buddy list preferences.  You can sort by name, by status, and even
+	by log file size--putting people you talk to most at the top.  Plugins
+	can even easily add their own sorting methods.  It's all very cool.  I
+	want to thank Luke and Ha-King for their initial work on it.  And yes,
+	I did make my entire NEWS entry justified on purpose.
+
 	Christian: I have a few new goodies in 0.64, but they're mostly
 	back-end stuff that people like us care about. The things that most
 	of you will like the most is that almost all of the reported MSN
