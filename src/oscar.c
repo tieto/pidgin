@@ -632,11 +632,13 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	char *latestrelease = NULL, *latestbeta = NULL;
 	char *latestreleaseurl = NULL, *latestbetaurl = NULL;
 	char *latestreleaseinfo = NULL, *latestbetainfo = NULL;
-	int i; char *host; int port = FAIM_LOGIN_PORT;
+	int i; char *host; int port;
 	struct aim_user *user;
 
 	struct gaim_connection *gc = sess->aux_data;
 	user = gc->user;
+	port = user->proto_opt[USEROPT_AUTHPORT][0] ?
+		atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
 
 	va_start(ap, command);
 	sn = va_arg(ap, char *);
@@ -1121,9 +1123,15 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	char *ip;
 	unsigned char *cookie;
 	struct gaim_connection *gc = sess->aux_data;
+	struct aim_user *user = gc->user;
 	struct aim_conn_t *tstconn;
 	int i;
-	char *host; int port = FAIM_LOGIN_PORT, fd;
+	char *host;
+	int port;
+	int fd;
+
+	port = user->proto_opt[USEROPT_AUTHPORT][0] ?
+		atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
 
 	va_start(ap, command);
 	serviceid = va_arg(ap, int);
