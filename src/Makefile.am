@@ -38,7 +38,8 @@ EXTRA_DIST = \
 		win32/nsis/translations/portuguese-br.nsh \
 		win32/nsis/translations/serbian-latin.nsh \
 		win32/nsis/translations/simp-chinese.nsh \
-		win32/nsis/translations/swedish.nsh
+		win32/nsis/translations/swedish.nsh \
+		win32/nsis/translations/trad-chinese.nsh
 
 SUBDIRS = protocols
 
