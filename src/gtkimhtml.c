@@ -280,7 +280,7 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	}
 	
 	if(tip){
-		if (GTK_IMHTML(imhtml)->editable)
+		if (!GTK_IMHTML(imhtml)->editable)
 			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT, 
 							       gtk_imhtml_tip, imhtml);
