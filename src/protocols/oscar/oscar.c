@@ -68,14 +68,6 @@
 #define UC_NORMAL	0x10
 #define UC_AB		0x20
 
-#define ICQ_ONLINE	0x0000
-#define ICQ_AWAY	0x0001
-#define ICQ_DND		0x0002
-#define ICQ_NA		0x0004
-#define ICQ_OCCUPIED	0x0010
-#define ICQ_CHAT	0x0020
-#define ICQ_INVISIBLE	0x0100
-
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
 static int gaim_caps = AIM_CAPS_CHAT |
@@ -247,6 +239,7 @@ static int gaim_icbm_param_info  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_genericerr (aim_session_t *, aim_frame_t *, ...);
 static int gaim_memrequest       (aim_session_t *,  aim_frame_t*, ...);
 static int server_ready_bos      (aim_session_t *,  aim_frame_t*, ...);
+static int gaim_selfinfo         (aim_session_t *,  aim_frame_t*, ...);
 
 static int gaim_directim_initiate  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_directim_incoming  (aim_session_t *, aim_frame_t *, ...);
@@ -679,6 +672,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0003, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x001f, gaim_memrequest, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0001, 0x000f, gaim_selfinfo, 0);
 
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
 	for (i = 0; i < (int)strlen(bosip); i++) {
@@ -1172,7 +1166,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} else {
 		if (info->icqinfo.status) {
 			type = (info->icqinfo.status << 6);
-			if (!(info->icqinfo.status & ICQ_CHAT))
+			if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT))
 				type |= UC_UNAVAILABLE;
 		}
 		debug_printf("icq status: %d\n", info->icqinfo.status);
@@ -1925,6 +1919,21 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
+	va_list ap;
+	aim_userinfo_t *info;
+	struct gaim_connection *gc = sess->aux_data;
+
+	va_start(ap, fr);
+	info = va_arg(ap, aim_userinfo_t *);
+	va_end(ap);
+
+	gc->evil = info->warnlevel/10;
+	gc->correction_time = (info->onlinesince - gc->login_time);
+
+	return 1;
+}
+
 static int rateresp_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
@@ -2236,31 +2245,31 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 		gc->away = NULL;
 
 	if (!strcmp(state, "Online"))
-		aim_icq_setstatus(od->sess, od->conn, ICQ_ONLINE);
+		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
 	else if (!strcmp(state, "Away")) {
-		aim_icq_setstatus(od->sess, od->conn, ICQ_AWAY);
+		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
 		gc->away = "";
 	} else if (!strcmp(state, "Do Not Disturb")) {
-		aim_icq_setstatus(od->sess, od->conn, ICQ_DND);
+		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_DND);
 		gc->away = "";
 	} else if (!strcmp(state, "Not Available")) {
-		aim_icq_setstatus(od->sess, od->conn, ICQ_NA);
+		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
 		gc->away = "";
 	} else if (!strcmp(state, "Occupied")) {
-		aim_icq_setstatus(od->sess, od->conn, ICQ_OCCUPIED);
+		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_OCCUPIED);
 		gc->away = "";
 	} else if (!strcmp(state, "Free For Chat")) {
-		aim_icq_setstatus(od->sess, od->conn, ICQ_CHAT);
+		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
 		gc->away = "";
 	} else if (!strcmp(state, "Invisible")) {
-		aim_icq_setstatus(od->sess, od->conn, ICQ_INVISIBLE);
+		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_INVISIBLE);
 		gc->away = "";
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 		if (message) {
-			aim_icq_setstatus(od->sess, od->conn, ICQ_NA);
+			aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
 			gc->away = "";
 		} else {
-			aim_icq_setstatus(od->sess, od->conn, ICQ_ONLINE);
+			aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
 		}
 	}
 }
@@ -2455,17 +2464,17 @@ static char **oscar_list_icon(int uc) {
 		return (char **)icon_online_xpm;
 	if (uc & 0x7fc0) {
 		uc >>= 6;
-		if (uc & ICQ_AWAY)
+		if (uc & AIM_ICQ_STATE_AWAY)
 			return icon_away_xpm;
-		if (uc & ICQ_DND)
+		if (uc & AIM_ICQ_STATE_DND)
 			return icon_dnd_xpm;
-		if (uc & ICQ_NA)
+		if (uc & AIM_ICQ_STATE_NA)
 			return icon_na_xpm;
-		if (uc & ICQ_OCCUPIED)
+		if (uc & AIM_ICQ_STATE_OCCUPIED)
 			return icon_occ_xpm;
-		if (uc & ICQ_CHAT)
+		if (uc & AIM_ICQ_STATE_CHAT)
 			return icon_ffc_xpm;
-		if (uc & ICQ_INVISIBLE)
+		if (uc & AIM_ICQ_STATE_INVISIBLE)
 			return icon_offline_xpm;
 		return icon_online_xpm;
 	}
@@ -2804,7 +2813,7 @@ static struct prpl *my_protocol = NULL;
 
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
-	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME | OPT_PROTO_BUDDY_ICON;
+	ret->options = OPT_PROTO_HTML | OPT_PROTO_BUDDY_ICON;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;

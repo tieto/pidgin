@@ -602,13 +602,15 @@ static int ratechange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	return 0;
 }
 
-/* XXX parse this */
 static int selfinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
+	aim_userinfo_t userinfo;
+
+	aim_extractuserinfo(sess, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx);
+		return userfunc(sess, rx, &userinfo);
 
 	return 0;
 }

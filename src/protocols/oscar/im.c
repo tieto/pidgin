@@ -1383,14 +1383,6 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	channel = aimbs_get16(bs);
 
 	/*
-	 * Technically Channel 3 in chat could be done here too.
-	 */
-	if ((channel != 0x01) && (channel != 0x02)) {
-		faimdprintf(sess, 0, "icbm: ICBM received on an unsupported channel.  Ignoring.\n (chan = %04x)", channel);
-		return 0;
-	}
-
-	/*
 	 * Extract the standard user info block.
 	 *
 	 * Note that although this contains TLVs that appear contiguous
@@ -1434,6 +1426,9 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		 * Free up the TLV chain.
 		 */
 		aim_freetlvchain(&tlvlist);
+	} else {
+		faimdprintf(sess, 0, "icbm: ICBM received on an unsupported channel.  Ignoring.\n (chan = %04x)", channel);
+		return 0;
 	}
 
 	return ret;

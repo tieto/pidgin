@@ -642,7 +642,7 @@ faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, cons
 	return 0;
 }
 
-faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t status)
+faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;

@@ -372,6 +372,15 @@ typedef struct aim_session_s {
 #define AIM_SESS_FLAGS_XORLOGIN        0x00000002
 #define AIM_SESS_FLAGS_NONBLOCKCONNECT 0x00000004
 
+/* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
+#define AIM_ICQ_STATE_ONLINE    0x0000
+#define AIM_ICQ_STATE_AWAY      0x0001
+#define AIM_ICQ_STATE_DND       0x0002
+#define AIM_ICQ_STATE_NA        0x0004
+#define AIM_ICQ_STATE_OCCUPIED  0x0010
+#define AIM_ICQ_STATE_CHAT      0x0020
+#define AIM_ICQ_STATE_INVISIBLE 0x0100
+
 /*
  * AIM User Info, Standard Form.
  */
@@ -567,7 +576,7 @@ faim_export int aim_bos_reqlocaterights(aim_session_t *, aim_conn_t *);
 faim_export int aim_setversions(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_setdirectoryinfo(aim_session_t *sess, aim_conn_t *conn, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);
 faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy);
-faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t status);
+faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status);
 
 faim_export struct aim_fileheader_t *aim_getlisting(aim_session_t *sess, FILE *);
 

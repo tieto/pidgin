@@ -1,6 +1,21 @@
 
 No release numbers
 ------------------
+ - Sun Oct 14 19:45:54 PDT 2001
+  - Fix aim_icq_setstatus
+  - Minor touchups
+  - Parse 1/f (selfinfo)
+  - Add ICQ status defines
+
+ - Wed Oct  3 11:07:22 PDT 2001
+  - Fix awful bug in ft listenestablish.
+  - struct aim_userinfo_s becomes aim_userinfo_t.
+      - I haven't decided what to do with this.  I like it in its current
+          form to an extent, but it is also not flexible enough.  But it would
+          become too complex and cumbersome if I were to do it more flexibly.
+      - Also added a few accessor functions that should be used instead of
+          directly accessing the struct, particularly for the capabilities.
+
  - Wed Sep 19 18:50:34 PDT 2001
   - Remove non-standard default features from aim_send_im_ext.
     - Sadly, AOL 5.0 ignores messages with non-standard features.  Once
