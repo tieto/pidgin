@@ -558,6 +558,10 @@ static void generate_user_options(struct mod_user *u, GtkWidget *box)
 		gtk_widget_hide(u->checkmail);
 	if (!(p->options & OPT_PROTO_BUDDY_ICON))
 		gtk_widget_hide(u->iconsel);
+
+	if ((p->options & OPT_PROTO_BUDDY_ICON) || (p->options & OPT_PROTO_MAIL_CHECK))
+		return;
+	gtk_widget_hide(u->user_frame);
 }
 
 static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
