@@ -7,7 +7,9 @@ version 0.9.20:
 	* Simplified Chinese translation added (zh_CN)
 	* Korean translation added (kr)
 	* Run-time OSCAR support
-	* Added a first version of buddy list ticker 
+	* Added buddy list ticker (See prefs/Appearance). Clicking on a
+	  name will cause a new or previous IM window to display for 
+	  that screenname 
 
 version 0.9.19 (06/09/2000):
 	* Graphical Smiley Faces
