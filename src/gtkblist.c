@@ -1488,6 +1488,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 			gtk_main_iteration();
 
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
+		gdk_drawable_get_size(GDK_DRAWABLE(tv->window), &(gtkblist->contact_rect.width), NULL);
 		gtkblist->mouseover_contact = node;
 		gtk_tree_path_down (path);
 		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
@@ -1651,9 +1652,11 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 #endif
 		gtkblist->tipwindow = NULL;
 	}
-	
-	if (gtkblist->mouseover_contact) {
-		gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
+
+	if (gtkblist->mouseover_contact && 
+	    !((e->x > gtkblist->contact_rect.x) && (e->x < (gtkblist->contact_rect.x + gtkblist->contact_rect.width)) &&
+	      (e->y > gtkblist->contact_rect.y) && (e->y < (gtkblist->contact_rect.y + gtkblist->contact_rect.height)))) {
+		    gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
 		gtkblist->mouseover_contact = NULL;
 	}
 }
