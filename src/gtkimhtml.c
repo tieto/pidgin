@@ -70,7 +70,7 @@ static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, g
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
 #define MAX_FONT_SIZE 7
 #define POINT_SIZE(x) (options & GTK_IMHTML_USE_POINTSIZE ? x : _point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
-static gdouble _point_sizes [] = { .5, .75, 1, 1.5, 2, 3, 4};
+static gdouble _point_sizes [] = { .75, .85, 1, 1.2, 1.7, 2.5, 3.5};
 
 enum {
 	TARGET_HTML,
