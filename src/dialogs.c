@@ -2750,6 +2750,22 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 /*  The dialog for import/export                                          */
 /*------------------------------------------------------------------------*/
 
+static gchar *get_screenname_filename(const char *name)
+{
+	gchar **split;
+	gchar *good;
+	int i;
+
+	split = g_strsplit(name, G_DIR_SEPARATOR_S, -1);
+	good = g_strjoinv(NULL, split);
+	g_strfreev(split);
+
+	for (i = 0; i < strlen(good); i++)
+		good[i] = toupper(good[i]);
+
+	return good;
+}
+
 /* see if a buddy list cache file for this user exists */
 
 gboolean
@@ -2759,12 +2775,10 @@ bud_list_cache_exists(struct gaim_connection *gc)
 	char path[PATHSIZE];
 	char *file;
 	struct stat sbuf;
-	char g_screenname[64];
+	char *g_screenname;
 	int i;
 
-	for (i = 0; i < strlen(gc->username); i++)
-		g_screenname[i] = toupper(gc->username[i]);
-	g_screenname[i] = '\0';
+	g_screenname = get_screenname_filename(gc->username);
 
 	file = gaim_user_dir();
 	if ( file != (char *) NULL ) {
@@ -2787,6 +2801,7 @@ bud_list_cache_exists(struct gaim_connection *gc)
 		}
 		g_free(file);
 	}
+	g_free(g_screenname);
 	return ret;
 }
 
@@ -2822,7 +2837,7 @@ void do_export(GtkWidget *w, void *dummy)
 	} else {
 		GSList *c = connections;
 		struct gaim_connection *g;
-		char g_screenname[64];
+		char *g_screenname;
 		int i;
 
 		file = gaim_user_dir();
@@ -2838,9 +2853,8 @@ void do_export(GtkWidget *w, void *dummy)
 			while (c) {
 				g = (struct gaim_connection *)c->data;
 
-				for (i = 0; i < strlen(g->username); i++)
-					g_screenname[i] = toupper(g->username[i]);
-				g_screenname[i] = '\0';
+				g_screenname = get_screenname_filename(g->username);
+
 				sprintf(path, "%s/%s.%d.blist", file, g_screenname,
 						(g->protocol == PROTO_OSCAR) ? PROTO_TOC : g->protocol);
 				if ((f = fopen(path,"w"))) {
@@ -2852,6 +2866,8 @@ void do_export(GtkWidget *w, void *dummy)
 				} else {
 					debug_printf("unable to write %s\n", path);
 				}
+
+				g_free(g_screenname);
 
 				c = c->next;
 			}
@@ -2903,7 +2919,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
         char *first = g_malloc(64);
 	char *file;
 	char path[PATHSIZE];
-	char g_screenname[64];
+	char *g_screenname;
 	int i;
         FILE *f;
 	gboolean from_dialog = FALSE;
@@ -2920,16 +2936,16 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 		gc = connections->data;
 		from_dialog = TRUE;
 	} else {
-		for (i = 0; i < strlen(gc->username); i++)
-			g_screenname[i] = toupper(gc->username[i]);
-		g_screenname[i] = '\0';
+		g_screenname = get_screenname_filename(gc->username);
 
 		file = gaim_user_dir();
 		if ( file != (char *) NULL ) {
 			sprintf( path, "%s/%s.%d.blist", file, g_screenname,
 					(gc->protocol == PROTO_OSCAR) ? PROTO_TOC : gc->protocol);
 			g_free(file);
+			g_free(g_screenname);
 		} else {
+			g_free(g_screenname);
 			return;
 		}
 	}

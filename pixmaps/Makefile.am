@@ -6,6 +6,7 @@ EXTRA_DIST =	about_small.xpm			\
 		aimicon2.xpm			\
 		angel.xpm			\
 		aol_icon.xpm			\
+		available.xpm			\
 		away.xpm			\
 		away_icon.xpm			\
 		away_small.xpm			\

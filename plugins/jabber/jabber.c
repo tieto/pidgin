@@ -49,6 +49,8 @@
 #include "gaim.h"
 #include <jabber/jabber.h>
 
+#include "pixmaps/available.xpm"
+
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
 
@@ -439,8 +441,10 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 
   debug_printf("jabber: presence: %s, %s %s\n", to, from, type);
 
-  if (!(b = find_buddy(GJ_GC(j), from)))
-          add_buddy(GJ_GC(j), "Extra", from, from);
+  if (!(b = find_buddy(GJ_GC(j), from))) {
+          add_buddy(GJ_GC(j), "Buddies", from, from);
+	  do_export(NULL, NULL);
+  }
 
   if (type && (strcasecmp(type, "unavailable") == 0))
           serv_got_update(GJ_GC(j), from, 0, 0, 0, 0, 0, 0);
@@ -481,6 +485,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
                                         if (!(b = find_buddy(GJ_GC(j), jid))) {
                                                 debug_printf("adding buddy: %s\n", jid);
                                                 b = add_buddy(GJ_GC(j), groupname, jid, name?name:jid);
+						do_export(0, 0);
                                         } else {
                                                 debug_printf("updating buddy: %s/%s\n", jid, name);
                                                 g_snprintf(b->name, sizeof(b->name), "%s", jid);
@@ -493,7 +498,8 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
                 } else {
                         struct buddy *b;
                         if (!(b = find_buddy(GJ_GC(j), jid))) {
-                                b = add_buddy(GJ_GC(j), "Extra", jid, name?name:jid);
+                                b = add_buddy(GJ_GC(j), "Buddies", jid, name?name:jid);
+				do_export(0, 0);
                         }
                 }
 
@@ -523,7 +529,6 @@ static void jabber_handlepacket(gjconn j, jpacket p)
                   querynode = xmlnode_get_tag(p->x, "query");
                   xmlns = xmlnode_get_attrib(querynode, "xmlns");
 
-                  /* XXX this just doesn't look right */
                   if (!xmlns || NSCHECK(querynode, NS_AUTH)) {
                           debug_printf("auth success\n");
                           
@@ -578,11 +583,11 @@ static void jabber_handlestate(gjconn j, int state)
           break;
   case JCONN_STATE_CONNECTED:
           debug_printf("jabber: connected.\n");
-          set_login_progress(GJ_GC(j), 1, "Connected");
+          set_login_progress(GJ_GC(j), 3, "Connected");
           break;
   case JCONN_STATE_ON:
           debug_printf("jabber: logging in...\n");
-          set_login_progress(GJ_GC(j), 1, "Logging in...");
+          set_login_progress(GJ_GC(j), 5, "Logging in...");
           gjab_auth(j);
           break;
   default:
@@ -596,14 +601,11 @@ static void jabber_login(struct aim_user *user) {
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 
 	set_login_progress(gc, 1, "Connecting");
-	while (gtk_events_pending())
-		gtk_main_iteration();
 
         if (!(jd->jc = gjab_new(user->username, user->password, gc))) {
 		debug_printf("jabber: unable to connect (jab_new failed)\n");
 		hide_login_progress(gc, "Unable to connect");
 		signoff(gc);
-		g_free(jd);
                 return;
         }
 
