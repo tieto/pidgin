@@ -1351,6 +1351,11 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
 
+	debug_printf("rendezvous status %d (%s)\n", args->status, userinfo->sn);
+
+	if (args->status != AIM_RENDEZVOUS_PROPOSE)
+		return 1;
+
 	if (args->reqclass & AIM_CAPS_CHAT) {
 		char *name = extract_name(args->info.chat.roominfo.name);
 		int *exch = g_new0(int, 1);
@@ -1361,7 +1366,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		serv_got_chat_invite(gc,
 				     name ? name : args->info.chat.roominfo.name,
 				     userinfo->sn,
-				     args->info.chat.msg,
+				     (char *)args->msg,
 				     m);
 		if (name)
 			g_free(name);
@@ -1376,11 +1381,11 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		char buf[256];
 
 		debug_printf("%s received direct im request from %s (%s)\n",
-				gc->username, userinfo->sn, args->info.imimage.ip);
+				gc->username, userinfo->sn, args->verifiedip);
 
 		d->gc = gc;
 		d->sn = g_strdup(userinfo->sn);
-		strncpy(d->ip, args->info.imimage.ip, sizeof(d->ip));
+		strncpy(d->ip, args->verifiedip, sizeof(d->ip));
 		memcpy(d->cookie, args->cookie, 8);
 		g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.",
 				userinfo->sn, gc->username);

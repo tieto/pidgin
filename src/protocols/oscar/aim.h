@@ -776,10 +776,23 @@ struct aim_incomingim_ch1_args {
 	fu16_t charsubset;
 };
 
+/* Valid values for channel 2 args->status */
+#define AIM_RENDEZVOUS_PROPOSE 0x0000
+#define AIM_RENDEZVOUS_CANCEL  0x0001
+#define AIM_RENDEZVOUS_ACCEPT  0x0002
+
 struct aim_incomingim_ch2_args {
 	fu8_t cookie[8];
 	fu16_t reqclass;
 	fu16_t status;
+	fu16_t errorcode;
+	const char *clientip;
+	const char *clientip2;
+	const char *verifiedip;
+	fu16_t port;
+	const char *msg; /* invite message or file description */
+	const char *encoding;
+	const char *language;
 	union {
 		struct {
 			fu32_t checksum;
@@ -788,30 +801,15 @@ struct aim_incomingim_ch2_args {
 			fu8_t *icon;
 		} icon;
 		struct {
-			fu32_t implementme;
-		} voice;
-		struct {
-			fu8_t ip[22]; /* xxx.xxx.xxx.xxx:xxxxx\0 */
-		} imimage;
-		struct {
-			char *msg;
-			char *encoding;
-			char *lang;
-		struct aim_chat_roominfo roominfo;
+			struct aim_chat_roominfo roominfo;
 		} chat;
-		struct {
-			char *ip;
-			unsigned char *cookie;
-		} getfile;
-		struct {
-			fu32_t implementme;
-		} sendfile;
 		struct {
 			fu32_t fgcolor;
 			fu32_t bgcolor;
 			const char *rtfmsg;
 		} rtfmsg;
 	} info;
+	void *destructor; /* used internally only */
 };
 
 faim_export int aim_send_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
