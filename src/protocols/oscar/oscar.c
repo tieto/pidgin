@@ -397,7 +397,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	if (utf8 == NULL) {
 		if (textlen != 0 && *text != '\0'
                     && !g_utf8_validate(text, textlen, NULL))
-			utf8 = g_strdup(_("(There was an error converting this message.  The buddy you are speaking to most likely has a buggy client.)"));
+			utf8 = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking to most likely has a buggy client.)"));
 		else
 			utf8 = g_strndup(text, textlen);
 	}
@@ -406,52 +406,81 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 }
 
 static gchar *
-gaim_plugin_oscar_parse_im_part(GaimAccount *account, const char *sourcesn, fu16_t charset, fu16_t charsubset, fu8_t *data, fu16_t datalen)
+gaim_plugin_oscar_convert_to_utf8(const fu8_t *data, fu16_t datalen, const char *charsetstr, gboolean fallback)
 {
 	gchar *ret = NULL;
-	const gchar *charsetstr;
 	GError *err = NULL;
 
-	gaim_debug_misc("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%hd\n", charset, charsubset, datalen);
+	if ((charsetstr == NULL) || (*charsetstr == '\0'))
+		return NULL;
+
+	if (strcasecmp("UTF-8", charsetstr)) {
+		if (fallback)
+			ret = g_convert_with_fallback(data, datalen, "UTF-8", charsetstr, "?", NULL, NULL, &err);
+		else
+			ret = g_convert(data, datalen, "UTF-8", charsetstr, NULL, NULL, &err);
+		if (err != NULL) {
+			gaim_debug_warning("oscar", "Conversation from %s failed: %s.\n",
+							   charsetstr, err->message);
+			g_error_free(err);
+		}
+	} else {
+		if (g_utf8_validate(data, datalen, NULL))
+			ret = g_strndup(data, datalen);
+		else
+			gaim_debug_warning("oscar", "String is not valid UTF-8.\n");
+	}
+
+	return ret;
+}
+
+/*
+ * We try decoding using two different character sets.  The charset
+ * specified in the IM determines the order in which we attempt to
+ * decode.  We do this because there are lots of broken ICQ clients
+ * that don't correctly send non-ASCII messages.  And if Gaim isn't
+ * able to deal with that crap, then people complain like banshees.
+ * charsetstr1 is always set to what the correct encoding should be.
+ */
+static gchar *
+gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu16_t charset, fu16_t charsubset, fu8_t *data, fu16_t datalen)
+{
+	gchar *ret = NULL;
+	const gchar *charsetstr1, *charsetstr2;
+
+	gaim_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%hd\n", charset, charsubset, datalen);
 
 	if ((datalen == 0) || (data == NULL))
 		return NULL;
 
-	if (charset == AIM_CHARSET_UNICODE)
-		charsetstr = "UCS-2BE";
-	else if (charset == AIM_CHARSET_CUSTOM)
-		/* If this is ICQ then use the character set is specified in
-		 * account settings, otherwise use ISO-8859-1 */
+	if (charset == AIM_CHARSET_UNICODE) {
+		charsetstr1 = "UCS-2BE";
+		charsetstr2 = "UTF-8";
+	} else if (charset == AIM_CHARSET_CUSTOM) {
 		if ((sourcesn != NULL) && isdigit(sourcesn[0]))
-			charsetstr = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+			charsetstr1 = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
-			charsetstr = "ISO-8859-1";
-	else if (charset == AIM_CHARSET_ASCII)
-		charsetstr = "UTF-8";
-	else if (charset == 0x000d)
+			charsetstr1 = "ISO-8859-1";
+		charsetstr2 = "UTF-8";
+	} else if (charset == AIM_CHARSET_ASCII) {
+		/* Should just be "ASCII" */
+		charsetstr1 = "ISO-8859-1";
+		charsetstr2 = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+	} else if (charset == 0x000d) {
 		/* Mobile AIM client on a Nokia 3100 and an LG VX6000 */
-		charsetstr = "UTF-8";
-	else
+		charsetstr1 = "ISO-8859-1";
+		charsetstr2 = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+	} else {
 		/* Unknown, hope for valid UTF-8... */
-		charsetstr = "UTF-8";
-
-	if ((*charsetstr != '\0') && strcasecmp("UTF-8", charsetstr)) {
-		ret = g_convert(data, datalen, "UTF-8", charsetstr, NULL, NULL, &err);
-		if (err != NULL) {
-			gaim_debug_warning("oscar", "Conversation from %s failed: %s.  Will attempt to use as UTF-8.\n",
-							   charsetstr, err->message);
-			g_error_free(err);
-		}
+		charsetstr1 = "UTF-8";
+		charsetstr2 = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	}
 
-	if (ret == NULL) {
-		if (g_utf8_validate(data, datalen, NULL)) {
-			ret = g_strndup(data, datalen);
-		} else {
-			gaim_debug_warning("oscar", "Received invalid UTF-8.\n");
-			ret = g_strdup(_("(There was an error receiving this message)"));
-		}
-	}
+	ret = gaim_plugin_oscar_convert_to_utf8(data, datalen, charsetstr1, FALSE);
+	if (ret == NULL)
+		ret = gaim_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
+	if (ret == NULL)
+		ret = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking to most likely has a buggy client.)"));
 
 	return ret;
 }
@@ -476,29 +505,19 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	}
 
 	/*
-	 * If we're sending to an ICQ user, and they have are advertising the
-	 * UNICODE capability, then attempt to send as UCS-2BE.
+	 * If we're sending to an ICQ user, and they are advertising the
+	 * Unicode capability, then attempt to send as UCS-2BE.
 	 */
 	if ((destsn != NULL) && isdigit(destsn[0]))
 		userinfo = aim_locate_finduserinfo(od->sess, destsn);
 
 	if ((userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_ICQUTF8)) {
-		*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, msglen, &err);
+		*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, msglen, NULL);
 		if (*msg != NULL) {
 			*charset = AIM_CHARSET_UNICODE;
 			*charsubset = 0x0000;
 			return;
 		}
-
-		gaim_debug_error("oscar", "Error converting a unicode message: %s\n", err->message);
-		g_error_free(err);
-
-		gaim_debug_error("oscar", "This should NEVER happen!  Sending UTF-8 text flagged as ASCII.\n");
-		*msg = g_strdup(from);
-		*msglen = strlen(*msg);
-		*charset = AIM_CHARSET_ASCII;
-		*charsubset = 0x0000;
-		return;
 	}
 
 	/*
@@ -526,7 +545,7 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 		return;
 	}
 
-	gaim_debug_error("oscar", "Error converting a unicode message: %s\n", err->message);
+	gaim_debug_error("oscar", "Error converting a Unicode message: %s\n", err->message);
 	g_error_free(err);
 
 	gaim_debug_error("oscar", "This should NEVER happen!  Sending UTF-8 text flagged as ASCII.\n");
@@ -3228,7 +3247,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	message = g_string_new("");
 	curpart = args->mpmsg.parts;
 	while (curpart != NULL) {
-		tmp = gaim_plugin_oscar_parse_im_part(account, userinfo->sn, curpart->charset, curpart->charsubset,
+		tmp = gaim_plugin_oscar_decode_im_part(account, userinfo->sn, curpart->charset, curpart->charsubset,
 											curpart->data, curpart->datalen);
 		if (tmp != NULL) {
 			g_string_append(message, tmp);
@@ -3581,15 +3600,16 @@ static void gaim_icq_buddyadd(struct name_data *data) {
 
 static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args, time_t t) {
 	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	gchar **msg1, **msg2;
-	GError *err = NULL;
 	int i, numtoks;
 
 	if (!args->type || !args->msg || !args->uin)
 		return 1;
 
 	gaim_debug_info("oscar",
-			   "Received a channel 4 message of type 0x%02hhx.\n", args->type);
+					"Received a channel 4 message of type 0x%02hhx.\n",
+					args->type);
 
 	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
 	msg1 = g_strsplit(args->msg, "\376", 0);
@@ -3597,13 +3617,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
 		gaim_str_strip_cr(msg1[i]);
-		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
-		if (err) {
-			gaim_debug_error("oscar",
-					   "Error converting a string from ISO-8859-1 to "
-					   "UTF-8 in oscar ICBM channel 4 parsing\n");
-			g_error_free(err);
-		}
+		msg2[i] = gaim_plugin_oscar_decode_im_part(account, "1", AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
 	}
 	msg2[i] = NULL;
 
