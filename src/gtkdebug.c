@@ -47,8 +47,6 @@ typedef struct
 	gboolean timestamps;
 	gboolean paused;
 
-	guint timestamps_handle;
-
 } DebugWindow;
 
 static char debug_fg_colors[][8] = {
@@ -70,8 +68,7 @@ struct _find {
 static gint
 debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 {
-	if (debug_win->timestamps_handle != 0)
-		gaim_prefs_disconnect_callback(debug_win->timestamps_handle);
+	gaim_prefs_disconnect_by_handle(gaim_gtk_debug_get_handle());
 
 	/* If the "Save Log" dialog is open then close it */
 	gaim_request_close_with_handle(debug_win);
@@ -298,9 +295,8 @@ debug_window_new(void)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
 						gaim_prefs_get_bool("/gaim/gtk/debug/timestamps"));
 
-		win->timestamps_handle =
-			gaim_prefs_connect_callback("/gaim/gtk/debug/timestamps",
-										timestamps_pref_cb, button);
+		gaim_prefs_connect_callback(gaim_gtk_debug_get_handle(), "/gaim/gtk/debug/timestamps",
+									timestamps_pref_cb, button);
 	}
 
 	/* Now our scrolled window... */
@@ -404,7 +400,7 @@ gaim_gtk_debug_init(void)
 	gaim_prefs_add_int("/gaim/gtk/debug/width",  450);
 	gaim_prefs_add_int("/gaim/gtk/debug/height", 250);
 
-	gaim_prefs_connect_callback("/gaim/gtk/debug/enabled",
+	gaim_prefs_connect_callback(NULL, "/gaim/gtk/debug/enabled",
 								debug_enabled_cb, NULL);
 
 #define REGISTER_G_LOG_HANDLER(name) \
@@ -535,3 +531,11 @@ gaim_gtk_debug_get_ui_ops(void)
 {
 	return &ops;
 }
+
+void *
+gaim_gtk_debug_get_handle() {
+	static int handle;
+
+	return &handle;
+}
+

@@ -439,8 +439,6 @@ map_shadow_windows (gpointer data)
 /**************** END WEIRD DROP SHADOW STUFF ***********************************/
 #endif
 
-static GSList *blist_prefs_callbacks = NULL;
-
 /***************************************************
  *              Callbacks                          *
  ***************************************************/
@@ -3096,6 +3094,7 @@ static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
 
 static void gaim_gtk_blist_show(GaimBuddyList *list)
 {
+	void *handle;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
 	GtkWidget *sw;
@@ -3184,7 +3183,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 										 dte, 5,
 										 GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
-  	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
+ 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
 
 	/* Tooltips */
@@ -3266,61 +3265,39 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 				(GSourceFunc)gaim_gtk_blist_refresh_timer, list);
 	}
 
+	handle = gaim_gtk_blist_get_handle();
+
 	/* things that affect how buddies are displayed */
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/grey_idle_buddies",
-					_prefs_change_redo_list, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_buddy_icons",
-					_prefs_change_redo_list, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_warning_level",
-					_prefs_change_redo_list, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_idle_time",
-					_prefs_change_redo_list, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_empty_groups",
-					_prefs_change_redo_list, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_offline_buddies",
-					_prefs_change_redo_list, NULL)));
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/grey_idle_buddies",
+			_prefs_change_redo_list, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
+			_prefs_change_redo_list, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_warning_level",
+			_prefs_change_redo_list, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_idle_time",
+			_prefs_change_redo_list, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_empty_groups",
+			_prefs_change_redo_list, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_offline_buddies",
+			_prefs_change_redo_list, NULL);
 
 	/* sorting */
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/sort_type",
-					_prefs_change_sort_method, NULL)));
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/sort_type",
+			_prefs_change_sort_method, NULL);
 
 	/* things that affect what columns are displayed */
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_buddy_icons",
-					gaim_gtk_blist_update_columns, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_idle_time",
-					gaim_gtk_blist_update_columns, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_warning_level",
-					gaim_gtk_blist_update_columns, NULL)));
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
+			gaim_gtk_blist_update_columns, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_idle_time",
+			gaim_gtk_blist_update_columns, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_warning_level",
+			gaim_gtk_blist_update_columns, NULL);
 
 	/* menus */
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/sound/mute",
-					gaim_gtk_blist_mute_pref_cb, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/sound/method",
-					gaim_gtk_blist_sound_method_pref_cb, NULL)));
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/sound/mute",
+			gaim_gtk_blist_mute_pref_cb, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/sound/method",
+			gaim_gtk_blist_sound_method_pref_cb, NULL);
 
 	/* Setup some gaim signal handlers. */
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
@@ -3334,7 +3311,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gtkblist, GAIM_CALLBACK(plugin_changed_cb), NULL);
 
 	/* emit our created signal */
-	gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-created", list);
+	gaim_signal_emit(handle, "gtkblist-created", list);
 }
 
 /* XXX: does this need fixing? */
@@ -3823,10 +3800,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	awaymenu = NULL;
 	gtkblist = NULL;
 
-	while(blist_prefs_callbacks) {
-		gaim_prefs_disconnect_callback(GPOINTER_TO_INT(blist_prefs_callbacks->data));
-		blist_prefs_callbacks = g_slist_remove(blist_prefs_callbacks, blist_prefs_callbacks->data);
-	}
+	gaim_prefs_disconnect_by_handle(gaim_gtk_blist_get_handle());
 }
 
 static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)

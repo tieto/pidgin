@@ -304,7 +304,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none("/plugins/gtk/X11/gestures");
 	gaim_prefs_add_bool("/plugins/gtk/X11/gestures/visual", FALSE);
 
-	gaim_prefs_connect_callback("/plugins/gtk/X11/gestures/visual",
+	gaim_prefs_connect_callback(plugin, "/plugins/gtk/X11/gestures/visual",
 								visual_pref_cb, NULL);
 }
 

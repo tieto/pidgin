@@ -30,6 +30,13 @@
 /*@{*/
 
 /**
+ * Get the handle for the GTK+ sound system.
+ *
+ * @return the handle to the sound system
+ */
+void *gaim_gtk_sound_get_handle();
+
+/**
  * Gets GTK Sound UI opsA
  *
  * @return UI operations struct

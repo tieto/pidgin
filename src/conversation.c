@@ -2731,9 +2731,9 @@ gaim_conversations_init(void)
 	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
 
 	/* Connect callbacks for changed preferences */
-	gaim_prefs_connect_callback("/core/conversations/use_alias_for_title",
+	gaim_prefs_connect_callback(handle, "/core/conversations/use_alias_for_title",
 			update_titles_pref_cb, NULL);
-	gaim_prefs_connect_callback("/core/buddies/use_server_alias",
+	gaim_prefs_connect_callback(handle, "/core/buddies/use_server_alias",
 			update_titles_pref_cb, NULL);
 
 

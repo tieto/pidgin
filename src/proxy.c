@@ -1601,6 +1601,8 @@ proxy_pref_cb(const char *name, GaimPrefType type, gpointer value,
 void
 gaim_proxy_init(void)
 {
+	void *handle;
+
 	/* Initialize a default proxy info struct. */
 	global_proxy_info = gaim_proxy_info_new();
 
@@ -1613,14 +1615,23 @@ gaim_proxy_init(void)
 	gaim_prefs_add_string("/core/proxy/password", "");
 
 	/* Setup callbacks for the preferences. */
-	gaim_prefs_connect_callback("/core/proxy/type",
+	handle = gaim_proxy_get_handle();
+	gaim_prefs_connect_callback(handle, "/core/proxy/type",
 								proxy_pref_cb, NULL);
-	gaim_prefs_connect_callback("/core/proxy/host",
+	gaim_prefs_connect_callback(handle, "/core/proxy/host",
 								proxy_pref_cb, NULL);
-	gaim_prefs_connect_callback("/core/proxy/port",
+	gaim_prefs_connect_callback(handle, "/core/proxy/port",
 								proxy_pref_cb, NULL);
-	gaim_prefs_connect_callback("/core/proxy/username",
+	gaim_prefs_connect_callback(handle, "/core/proxy/username",
 								proxy_pref_cb, NULL);
-	gaim_prefs_connect_callback("/core/proxy/password",
+	gaim_prefs_connect_callback(handle, "/core/proxy/password",
 								proxy_pref_cb, NULL);
+}
+
+void *
+gaim_proxy_get_handle()
+{
+	static int handle;
+
+	return &handle;
 }

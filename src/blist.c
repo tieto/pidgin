@@ -197,7 +197,7 @@ GaimBuddyList *gaim_blist_new()
 	if (gbl->ui_ops != NULL && gbl->ui_ops->new_list != NULL)
 		gbl->ui_ops->new_list(gbl);
 
-	gaim_prefs_connect_callback("/core/buddies/use_server_alias",
+	gaim_prefs_connect_callback(gaim_blist_get_handle(), "/core/buddies/use_server_alias",
 								blist_pref_cb, NULL);
 
 	return gbl;

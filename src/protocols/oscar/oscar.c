@@ -107,7 +107,6 @@ struct _OscarData {
 	guint icontimer;
 	guint getblisttimer;
 	guint getinfotimer;
-	guint recentbuddies_cbid;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -1731,7 +1730,7 @@ static void oscar_login(GaimAccount *account) {
 	sess->aux_data = gc;
 
 	/* Connect to core Gaim signals */
-	od->recentbuddies_cbid = gaim_prefs_connect_callback("/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
+	gaim_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
 
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 	if (conn == NULL) {
@@ -1813,7 +1812,7 @@ static void oscar_close(GaimConnection *gc) {
 		gaim_timeout_remove(od->getblisttimer);
 	if (od->getinfotimer > 0)
 		gaim_timeout_remove(od->getinfotimer);
-	gaim_prefs_disconnect_callback(od->recentbuddies_cbid);
+	gaim_prefs_disconnect_by_handle(gc);
 
 	aim_session_kill(od->sess);
 	g_free(od->sess);

@@ -118,7 +118,7 @@ static void gaim_gtk_sound_init(void)
 	ao_initialize();
 #endif /* USE_AO */
 
-	gaim_prefs_connect_callback("/gaim/gtk/sound/method",
+	gaim_prefs_connect_callback(gaim_gtk_sound_get_handle(), "/gaim/gtk/sound/method",
 			_pref_sound_method_changed, NULL);
 }
 
@@ -404,4 +404,11 @@ char *gaim_gtk_sound_get_event_label(GaimSoundEventID event)
 		return NULL;
 
 	return sounds[event].label;
+}
+
+void *gaim_gtk_sound_get_handle()
+{
+	static int handle;
+
+	return &handle;
 }

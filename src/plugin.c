@@ -443,6 +443,8 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	/* I suppose this is the right place to call this... */
 	gaim_signal_emit(gaim_plugins_get_handle(), "plugin-unload", plugin);
 
+	gaim_prefs_disconnect_by_handle(plugin);
+
 	return TRUE;
 #else
 	return TRUE;

@@ -889,6 +889,13 @@ GaimStatus *gaim_statuses_find_stored(const GaimStatusType *status_type,
 									  const char *id);
 
 /**
+ * Get the handle for the status subsystem.
+ *
+ * @return the handle to the status subsystem
+ */
+void *gaim_statuses_get_handle();
+
+/**
  * Initializes the status subsystem.
  */
 void gaim_statuses_init(void);

@@ -346,7 +346,7 @@ void gaim_log_init(void)
 	gaim_log_logger_add(&html_logger);
 	gaim_log_logger_add(&txt_logger);
 	gaim_log_logger_add(&old_logger);
-	gaim_prefs_connect_callback("/core/logging/format",
+	gaim_prefs_connect_callback(NULL, "/core/logging/format",
 				    logger_pref_cb, NULL);
 	gaim_prefs_trigger_callback("/core/logging/format");
 

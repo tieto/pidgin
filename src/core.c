@@ -70,10 +70,12 @@ gaim_core_init(const char *ui)
 
 	gaim_signal_register(core, "quitting", gaim_marshal_VOID, NULL, 0);
 
+	/* The prefs subsystem needs to be initialized before static protocols
+	 * for protocol prefs to work. */
+	gaim_prefs_init();
+
 	/* Initialize all static protocols. */
 	static_proto_init();
-
-	gaim_prefs_init();
 
 	if (ops != NULL)
 	{

@@ -74,15 +74,6 @@ static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeIter proto_iter, plugin_iter;
 
-static guint browser_pref1_id = 0;
-static guint browser_pref2_id = 0;
-static guint proxy_pref_id = 0;
-static guint sound_pref1_id = 0;
-static guint sound_pref2_id = 0;
-static guint sound_pref3_id = 0;
-static guint auto_resp_pref_id = 0;
-static guint placement_pref_id = 0;
-
 /*
  * PROTOTYPES
  */
@@ -368,6 +359,9 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 	gaim_plugins_unregister_probe_notify_cb(update_plugin_list);
 
+	/* Unregister callbacks. */
+	gaim_prefs_disconnect_by_handle(prefs);
+
 	prefs = NULL;
 	tree_v = NULL;
 	sound_entry = NULL;
@@ -377,16 +371,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	smiley_theme_store = NULL;
 	g_object_unref(G_OBJECT(prefs_away_store));
 	prefs_away_store = NULL;
-
-	/* Unregister callbacks. */
-	gaim_prefs_disconnect_callback(browser_pref1_id);
-	gaim_prefs_disconnect_callback(browser_pref2_id);
-	gaim_prefs_disconnect_callback(proxy_pref_id);
-	gaim_prefs_disconnect_callback(sound_pref1_id);
-	gaim_prefs_disconnect_callback(sound_pref2_id);
-	gaim_prefs_disconnect_callback(sound_pref3_id);
-	gaim_prefs_disconnect_callback(auto_resp_pref_id);
-	gaim_prefs_disconnect_callback(placement_pref_id);
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
@@ -1027,9 +1011,8 @@ GtkWidget *conv_page() {
 	 */
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
-	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/tabs",
-	                                                conversation_usetabs_cb,
-	                                                vbox2);
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/conversations/tabs",
+	                            conversation_usetabs_cb, vbox2);
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
 		gtk_widget_set_sensitive(vbox2, FALSE);
 
@@ -1172,8 +1155,8 @@ GtkWidget *network_page() {
 
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
 	}
-	proxy_pref_id = gaim_prefs_connect_callback("/core/proxy/type",
-						    proxy_changed_cb, prefs_proxy_frame);
+	gaim_prefs_connect_callback(prefs, "/core/proxy/type",
+								proxy_changed_cb, prefs_proxy_frame);
 
 	table = gtk_table_new(4, 2, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
@@ -1367,8 +1350,8 @@ GtkWidget *browser_page() {
 
 		if (!strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
 			gtk_widget_set_sensitive(hbox, FALSE);
-		browser_pref1_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
-													  browser_changed1_cb, hbox);
+		gaim_prefs_connect_callback(prefs, "/gaim/gtk/browsers/browser",
+									browser_changed1_cb, hbox);
 	}
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -1383,8 +1366,8 @@ GtkWidget *browser_page() {
 
 	if (strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
 		gtk_widget_set_sensitive(hbox, FALSE);
-	browser_pref2_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
-												  browser_changed2_cb, hbox);
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/browsers/browser",
+								browser_changed2_cb, hbox);
 
 	gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
 
@@ -1674,8 +1657,8 @@ GtkWidget *sound_page() {
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
 					"custom"));
-	sound_pref1_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
-												  sound_changed1_cb, hbox);
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+								sound_changed1_cb, hbox);
 
 	gaim_set_accessible_label (entry, label);
 #endif /* _WIN32 */
@@ -1689,8 +1672,8 @@ GtkWidget *sound_page() {
 #ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
 			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
-	sound_pref2_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
-												  sound_changed2_cb, vbox);
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+								sound_changed2_cb, vbox);
 #endif
 
 	vbox = gaim_gtk_make_frame(ret, _("Sound Events"));
@@ -1786,8 +1769,8 @@ GtkWidget *sound_page() {
 #ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
 			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
-	sound_pref3_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
-												  sound_changed2_cb, vbox);
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+								sound_changed2_cb, vbox);
 #endif
 
 	return ret;
@@ -2682,7 +2665,7 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "default");
 
 	/* Smiley Callbacks */
-	gaim_prefs_connect_callback("/gaim/gtk/smileys/theme",
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 }
 

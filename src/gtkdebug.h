@@ -33,6 +33,13 @@
 void gaim_gtk_debug_init(void);
 
 /**
+ * Get the handle for the GTK+ debug system.
+ *
+ * @return the handle to the debug system
+ */
+void *gaim_gtk_debug_get_handle();
+
+/**
  * Shows the debug window.
  */
 void gaim_gtk_debug_window_show(void);

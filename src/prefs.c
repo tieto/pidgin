@@ -44,6 +44,7 @@ struct pref_cb {
 	GaimPrefCallback func;
 	gpointer data;
 	guint id;
+	void *handle;
 };
 
 struct gaim_pref {
@@ -96,7 +97,7 @@ static void prefs_save_cb(const char *name, GaimPrefType type, gpointer val,
 void gaim_prefs_init() {
 	prefs_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	gaim_prefs_connect_callback("/", prefs_save_cb, NULL);
+	gaim_prefs_connect_callback(NULL, "/", prefs_save_cb, NULL);
 
 	gaim_prefs_add_none("/core");
 	gaim_prefs_add_none("/plugins");
@@ -634,7 +635,7 @@ void gaim_prefs_rename(const char *oldname, const char *newname) {
 
 void gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname) {
 		struct gaim_pref *oldpref, *newpref;
-		
+
 		gaim_debug_info("prefs", "Attempting to rename and toggle %s to %s\n", oldname, newname);
 
 		oldpref = find_pref(oldname);
@@ -648,14 +649,14 @@ void gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname) 
 		g_return_if_fail(oldpref->type == newpref->type);
 		g_return_if_fail(oldpref->type == GAIM_PREF_BOOLEAN);
 		g_return_if_fail(oldpref->first_child == NULL); /* can't rename parents */
-		
+
 		gaim_prefs_set_bool(newname, !(oldpref->value.boolean));
 
 		remove_pref(oldpref);
 
 }
 
-guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpointer data)
+guint gaim_prefs_connect_callback(void *handle, const char *name, GaimPrefCallback func, gpointer data)
 {
 	struct gaim_pref *pref;
 	struct pref_cb *cb;
@@ -670,13 +671,14 @@ guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpoin
 	cb->func = func;
 	cb->data = data;
 	cb->id = ++cb_id;
+	cb->handle = handle;
 
 	pref->callbacks = g_slist_append(pref->callbacks, cb);
 
 	return cb->id;
 }
 
-gboolean disco_callback_helper(struct gaim_pref *pref, guint callback_id) {
+static gboolean disco_callback_helper(struct gaim_pref *pref, guint callback_id) {
 	GSList *cbs;
 	struct gaim_pref *child;
 
@@ -702,6 +704,33 @@ gboolean disco_callback_helper(struct gaim_pref *pref, guint callback_id) {
 
 void gaim_prefs_disconnect_callback(guint callback_id) {
 	disco_callback_helper(&prefs, callback_id);
+}
+
+static void disco_callback_helper_handle(struct gaim_pref *pref, void *handle) {
+	GSList *cbs;
+	struct gaim_pref *child;
+
+	if(!pref)
+		return;
+
+	cbs = pref->callbacks;
+	while (cbs != NULL) {
+		struct pref_cb *cb = cbs->data;
+		if(cb->handle == handle) {
+			pref->callbacks = g_slist_remove(pref->callbacks, cb);
+			g_free(cb);
+			cbs = pref->callbacks;
+		} else
+			cbs = cbs->next;
+	}
+
+	for(child = pref->first_child; child; child = child->sibling)
+		disco_callback_helper_handle(child, handle);
+}
+
+void gaim_prefs_disconnect_by_handle(void *handle) {
+	g_return_if_fail(handle != NULL);
+	disco_callback_helper_handle(&prefs, handle);
 }
 
 static void gaim_prefs_write(FILE *f, struct gaim_pref *pref, int depth) {

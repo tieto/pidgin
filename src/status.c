@@ -1533,9 +1533,18 @@ gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
 		return FALSE;
 }
 
+void *
+gaim_statuses_get_handle() {
+	static int handle;
+
+	return &handle;
+}
+
 void
 gaim_statuses_init(void)
 {
+	void *handle = gaim_statuses_get_handle;
+
 	gaim_prefs_add_none("/core/status");
 	gaim_prefs_add_none("/core/status/scores");
 
@@ -1552,22 +1561,22 @@ gaim_statuses_init(void)
 	gaim_prefs_add_int("/core/status/scores/idle",
 			primitive_scores[SCORE_IDLE]);
 
-	gaim_prefs_connect_callback("/core/status/scores/offline",
+	gaim_prefs_connect_callback(handle, "/core/status/scores/offline",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(GAIM_STATUS_OFFLINE));
-	gaim_prefs_connect_callback("/core/status/scores/available",
+	gaim_prefs_connect_callback(handle, "/core/status/scores/available",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
-	gaim_prefs_connect_callback("/core/status/scores/hidden",
+	gaim_prefs_connect_callback(handle, "/core/status/scores/hidden",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(GAIM_STATUS_HIDDEN));
-	gaim_prefs_connect_callback("/core/status/scores/away",
+	gaim_prefs_connect_callback(handle, "/core/status/scores/away",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(GAIM_STATUS_AWAY));
-	gaim_prefs_connect_callback("/core/status/scores/extended_away",
+	gaim_prefs_connect_callback(handle, "/core/status/scores/extended_away",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(GAIM_STATUS_EXTENDED_AWAY));
-	gaim_prefs_connect_callback("/core/status/scores/idle",
+	gaim_prefs_connect_callback(handle, "/core/status/scores/idle",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
 

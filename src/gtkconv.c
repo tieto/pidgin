@@ -6397,34 +6397,34 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
 
 	/* Connect callbacks. */
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/escape_closes",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/escape_closes",
 								escape_closes_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/close_on_tabs",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_timestamps",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_timestamps",
 								show_timestamps_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/html_shortcuts",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/html_shortcuts",
 								html_shortcuts_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/smiley_shortcuts",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/smiley_shortcuts",
 								smiley_shortcuts_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_formatting_toolbar",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_formatting_toolbar",
 								show_formatting_toolbar_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/spellcheck",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/spellcheck",
 								spellcheck_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/tab_side",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/tab_side",
 								tab_side_pref_cb, NULL);
 
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/placement",
 			conv_placement_pref_cb, NULL);
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/button_type",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/button_type",
 								button_type_pref_cb, NULL);
 
 	/* IM callbacks */
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/animate_buddy_icons",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/im/animate_buddy_icons",
 								animate_buddy_icons_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/show_buddy_icons",
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/im/show_buddy_icons",
 								show_buddy_icons_pref_cb, NULL);
 
 
