@@ -136,16 +136,47 @@ static void accept_callback(GtkWidget *widget, struct file_transfer *ft)
 	g_free(fname);
 }
 
+static int write_file_header(int fd, struct file_header *header) {
+	char buf[257];
+	memcpy(buf +   0, &header->magic,	 4);
+	memcpy(buf +   4, &header->hdrlen,	 2);
+	memcpy(buf +   6, &header->hdrtype,	 2);
+	memcpy(buf +   8, &header->bcookie,	 8);
+	memcpy(buf +  16, &header->encrypt,	 2);
+	memcpy(buf +  18, &header->compress,	 2);
+	memcpy(buf +  20, &header->totfiles,	 2);
+	memcpy(buf +  22, &header->filesleft,	 2);
+	memcpy(buf +  24, &header->totparts,	 2);
+	memcpy(buf +  26, &header->partsleft,	 2);
+	memcpy(buf +  28, &header->totsize,	 4);
+	memcpy(buf +  32, &header->size,	 4);
+	memcpy(buf +  36, &header->modtime,	 4);
+	memcpy(buf +  40, &header->checksum,	 4);
+	memcpy(buf +  44, &header->rfrcsum,	 4);
+	memcpy(buf +  48, &header->rfsize,	 4);
+	memcpy(buf +  52, &header->cretime,	 4);
+	memcpy(buf +  56, &header->rfcsum,	 4);
+	memcpy(buf +  60, &header->nrecvd,	 4);
+	memcpy(buf +  64, &header->recvcsum,	 4);
+	memcpy(buf +  68, &header->idstring,	32);
+	memcpy(buf + 100, &header->flags,	 1);
+	memcpy(buf + 101, &header->lnameoffset,	 1);
+	memcpy(buf + 102, &header->lsizeoffset,	 1);
+	memcpy(buf + 103, &header->dummy,	69);
+	memcpy(buf + 172, &header->macfileinfo,	16);
+	memcpy(buf + 188, &header->nencode,	 2);
+	memcpy(buf + 190, &header->nlanguage,	 2);
+	memcpy(buf + 192, &header->name,	64);
+	return write(fd, buf, 256);
+}
+
 static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 {
 	char *send = g_malloc(256);
 	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window));
 	char *buf;
-	char *header;
-	short hdrlen;
+	struct file_header *header = g_new0(struct file_header, 1);
 	int read_rv;
-	char bmagic[7];
-	struct sockaddr_in sin;
 	guint32 rcv;
         char *c;
 	int cont = 1;
@@ -157,6 +188,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
                 g_snprintf(buf, BUF_LONG / 2, "Error writing file %s", file);
 		do_error_dialog(buf, "Error");
 		g_free(buf);
+		g_free(header);
 		ft->accepted = 0;
 		accept_callback(NULL, ft);
 		return;
@@ -172,81 +204,43 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	g_free(send);
 
 	
+	ft->fd = connect_address(inet_addr(ft->ip), ft->port);
 
-        sin.sin_addr.s_addr = inet_addr(ft->ip);
-        sin.sin_family = AF_INET;
-	sin.sin_port = htons(ft->port);
-	
-	ft->fd = socket(AF_INET, SOCK_STREAM, 0);
-	
-	if (ft->fd <= -1 || connect(ft->fd, (struct sockaddr *)&sin, sizeof(sin))) {
+	if (ft->fd <= -1) {
+		g_free(header);
+		fclose(ft->f);
+		free_ft(ft);
 		return;
 	}
 
-	rcv = 0;
-	header = g_malloc(6);
-	while (rcv != 6) {
-		read_rv = read(ft->fd, header + rcv, 6 - rcv);
-		if(read_rv < 0) {
-			close(ft->fd);
-			g_free(header);
-			free_ft(ft);
-			return;
-		}
-		rcv += read_rv;
-		while(gtk_events_pending())
-			gtk_main_iteration();
+	read_rv = read(ft->fd, header, 256);
+	if(read_rv < 0) {
+		close(ft->fd);
+		fclose(ft->f);
+		g_free(header);
+		free_ft(ft);
+		return;
 	}
 
-	strncpy(bmagic, header, 6);
-        bmagic[6] = 0;
-
-	hdrlen = 0;
-	hdrlen |= (header[4] << 8) & 0xff00;
-	hdrlen |= (header[5] << 0) & 0x00ff;
-	hdrlen -= 6;
-
-	sprintf(debug_buff, "header length %d\n", hdrlen);
+	sprintf(debug_buff, "header length %d\n", header->hdrlen);
 	debug_print(debug_buff);
 
-	g_free(header);
-	header = g_malloc(hdrlen);
-
-	rcv = 0;
-
-	while (rcv != hdrlen) {
-		read_rv = read(ft->fd, header + rcv, hdrlen - rcv);
-		if(read_rv < 0) {
-			close(ft->fd);
-			g_free(header);
-			free_ft(ft);
-			return;
-		}
-		rcv += read_rv;
-		while(gtk_events_pending())
-			gtk_main_iteration();
-	}
-
-	c = header;
-
-	header[0] = 2; header[1] = 2;
+	header->hdrtype = 0x202;
 	
 	buf = frombase64(ft->cookie);
-	memcpy(header + 2, buf, 8);
+	memcpy(header->bcookie, buf, 8);
 	g_free(buf);
-	memset(header + 62, 0, 32); strcpy(header + 62, "Gaim");
-	memset(header + 10, 0, 4);
-	header[18] = 1; header[19] = 0;
-	header[20] = 1; header[21] = 0;
+	snprintf(header->idstring, 32, "Gaim");
+	header->encrypt = 0; header->compress = 0;
+	header->totparts = 1; header->partsleft = 1;
 
 	sprintf(debug_buff, "sending confirmation\n");
 	debug_print(debug_buff);
-	write(ft->fd, bmagic, 6);
-	write(ft->fd, header, hdrlen);
+	write_file_header(ft->fd, header);
 
-	buf = g_malloc(1024);
+	buf = g_malloc(2048);
 	rcv = 0;
-	
+
 	fw = gtk_dialog_new();
 	buf = g_malloc(2048);
 	snprintf(buf, 2048, "Receiving %s from %s", ft->filename, ft->user);
@@ -274,6 +268,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 
 	while (rcv != ft->size && cont) {
 		int i;
+		float pcnt = ((float)rcv)/((float)ft->size);
 		int remain = ft->size - rcv > 1024 ? 1024 : ft->size - rcv;
 		read_rv = recv(ft->fd, buf, remain, O_NONBLOCK);
 		if(read_rv < 0) {
@@ -287,13 +282,8 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		rcv += read_rv;
 		for (i = 0; i < read_rv; i++)
 			fprintf(ft->f, "%c", buf[i]);
-		snprintf(buf, 2048, "Receiving %s from %s",
-				header + 186, ft->user);
-		gtk_label_set_text(GTK_LABEL(label), buf);
-		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar),
-					(float)(rcv)/(float)(ft->size));
-		sprintf(buf, "%d / %d K (%2.0f %%)", rcv/1024, ft->size/1024,
-				100*((float)rcv)/((float)ft->size));
+		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar), pcnt);
+		sprintf(buf, "%d / %d K (%2.0f %%)", rcv/1024, ft->size/1024, 100*pcnt);
 		gtk_label_set_text(GTK_LABEL(pct), buf);
 		while(gtk_events_pending())
 			gtk_main_iteration();
@@ -308,16 +298,19 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		sflap_send(buf, strlen(buf), TYPE_DATA);
 		close(ft->fd);
 		free_ft(ft);
+		g_free(header);
 		return;
 	}
 
-	memset(header + 18, 0, 4);
-	header[94] = 0;
-	header[1] = 0x04;
-	memcpy(header+58, header+34, 4);
-	memcpy(header+54, header+22, 4);
-	write(ft->fd, bmagic, 6);
-	write(ft->fd, header, hdrlen);
+	sprintf(debug_buff, "Download complete.\n");
+	debug_print(debug_buff);
+
+	header->hdrtype = 0x402;
+	header->totparts = 0; header->partsleft = 0;
+	header->flags = 0;
+	header->recvcsum = header->checksum;
+	header->nrecvd = header->totsize;
+	write_file_header(ft->fd, header);
 	close(ft->fd);
 
 	g_free(buf);
@@ -386,21 +379,21 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	debug_print(debug_buff);
 	fhdr->magic[0] = 'O'; fhdr->magic[1] = 'F';
 	fhdr->magic[2] = 'T'; fhdr->magic[3] = '2';
-	fhdr->hdrlen = 256;
-	fhdr->hdrtype = 0x1108;
+	fhdr->hdrlen = htons(256);
+	fhdr->hdrtype = htons(0x1108);
 	snprintf(fhdr->bcookie, 8, "%s", buf);
 	g_free(buf);
 	fhdr->encrypt = 0;
 	fhdr->compress = 0;
-	fhdr->totfiles = 1;
-	fhdr->filesleft = 1;
-	fhdr->totparts = 1;
-	fhdr->partsleft = 1;
-	fhdr->totsize = (long)st.st_size; /* combined size of all files */
+	fhdr->totfiles = htons(1);
+	fhdr->filesleft = htons(1);
+	fhdr->totparts = htons(1);
+	fhdr->partsleft = htons(1);
+	fhdr->totsize = htonl((long)st.st_size); /* combined size of all files */
 	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
-	fhdr->size = 30 + strlen(c); /* size of listing.txt */
-	fhdr->modtime = time(NULL); /* time since UNIX epoch */
-	fhdr->checksum = 0x89f70000; /* ? this is the only thing i have wrong */
+	fhdr->size = htonl(30 + strlen(c)); /* size of listing.txt */
+	fhdr->modtime = htonl(time(NULL)); /* time since UNIX epoch */
+	fhdr->checksum = htonl(0x89f70000); /* ? */
 	fhdr->rfrcsum = 0;
 	fhdr->rfsize = 0;
 	fhdr->cretime = 0;
@@ -416,7 +409,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->nencode = 0;
 	fhdr->nlanguage = 0;
 	snprintf(fhdr->name, 64, "listing.txt");
-	read_rv = write(ft->fd, fhdr, 256);
+	read_rv = write_file_header(ft->fd, fhdr);
 	if (read_rv <= -1) {
 		sprintf(debug_buff, "Couldn't write opening header\n");
 		debug_print(debug_buff);
@@ -435,33 +428,27 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 		return;
 	}
 
-	/* 3. send listing file */
+	/* 3. qend listing file */
 	/* mm/dd/yyyy hh:mm sizesize name.ext\r\n */
 	/* creation date ^ */
 	sprintf(debug_buff, "Sending file\n");
 	debug_print(debug_buff);
-	rcv = 0;
 	buf = g_malloc(ft->size + 1);
 	fortime = localtime(&st.st_ctime);
-	snprintf(buf, ft->size + 1, "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
+	snprintf(buf, ntohl(fhdr->size) + 1, "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
 			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 			fortime->tm_hour + 1, fortime->tm_min + 1,
 			st.st_size, c);
-	sprintf(debug_buff, "Sending listing.txt to %s\n", ft->user);
+	sprintf(debug_buff, "Sending listing.txt (%ld bytes) to %s\n",
+			ntohl(fhdr->size) + 1, ft->user);
 	debug_print(debug_buff);
 
-	while (rcv != ft->size) {
-		int remain = st.st_size - rcv > 1024 ? 1024 : st.st_size - rcv;
-		read_rv = write(ft->fd, buf + rcv, remain);
-		if (read_rv <= -1) {
-			sprintf(debug_buff, "Could not send file, wrote %d\n", rcv);
-			debug_print(debug_buff);
-			close(ft->fd);
-			return;
-		}
-		rcv += read_rv;
-		while(gtk_events_pending())
-			gtk_main_iteration();
+	read_rv = write(ft->fd, buf, ntohl(fhdr->size));
+	if (read_rv <= -1) {
+		sprintf(debug_buff, "Could not send file, wrote %d\n", rcv);
+		debug_print(debug_buff);
+		close(ft->fd);
+		return;
 	}
 
 	/* 4. receive header */
@@ -475,9 +462,19 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 		return;
 	}
 
-	fclose(ft->f);
-	close(ft->fd);
-	g_free(fhdr);
+	/* 5. wait to see if we're sending it */
+	/* read_rv = read(ft->fd, fhdr, 256);
+	 * if (read_rv <= -1 !! connection_is_closed()) { // uh huh
+	 * 	clean_up();
+	 * 	return();
+	 * }
+	 */
+
+	/* 6. send the file */
+
+	/* 7. receive closing header */
+
+	/* done */
 }
 
 void accept_file_dialog(struct file_transfer *ft)

@@ -32,7 +32,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/socket.h>
-#include <pthread.h>
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
@@ -608,8 +607,6 @@ void toc_callback( gpointer          data,
 
 		if (!strcmp(uuid, FILE_SEND_UID)) {
 			/* we're getting a file */
-			pthread_t thread;
-
 	                for (i=0; i<4; i++) {
 	                        sscanf(strtok(NULL, ":"), "%d", &unk[i]);
 	                        if (unk[i] == 10001)
@@ -647,11 +644,7 @@ void toc_callback( gpointer          data,
 	                for (i--; i >= 0; i--)
 	                        g_free(messages[i]);
                 
-			gdk_threads_enter();
-	                pthread_create(&thread, NULL, 
-				       (void*(*)(void*))accept_file_dialog, ft);
-			pthread_detach(thread);
-			gdk_threads_leave();
+			accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* we're sending a file */
 	                for (i=0; i<4; i++) {
