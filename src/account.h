@@ -39,27 +39,28 @@ enum
 
 struct _GaimAccount
 {
-	char *username;             /**< The username.               */
-	char *alias;                /**< The current alias.          */
-	char *password;             /**< The account password.       */
-	char *user_info;            /**< User information.           */
+	char *username;             /**< The username.                 */
+	char *alias;                /**< The current alias.            */
+	char *password;             /**< The account password.         */
+	char *user_info;            /**< User information.             */
 
-	char *buddy_icon;           /**< The buddy icon.             */
+	char *buddy_icon;           /**< The buddy icon.               */
 
-	gboolean remember_pass;     /**< Remember the password.      */
+	gboolean remember_pass;     /**< Remember the password.        */
 
-	char *protocol_id;          /**< The ID of the protocol.     */
+	char *protocol_id;          /**< The ID of the protocol.       */
 
-	GaimConnection *gc;         /**< The connection handle.      */
+	GaimConnection *gc;         /**< The connection handle.        */
 
-	GHashTable *settings;       /**< Protocol-specific settings. */
-	GHashTable *ui_settings;    /**< UI-specific settings.       */
+	GHashTable *settings;       /**< Protocol-specific settings.   */
+	GHashTable *ui_settings;    /**< UI-specific settings.         */
 
-	GaimProxyInfo *proxy_info;  /**< Proxy information.          */
+	char *ip;                   /**< The IP address for transfers. */
+	GaimProxyInfo *proxy_info;  /**< Proxy information.            */
 
-	GSList *permit;             /**< Permit list.                */
-	GSList *deny;               /**< Deny list.                  */
-	int perm_deny;              /**< The permit/deny setting.    */
+	GSList *permit;             /**< Permit list.                  */
+	GSList *deny;               /**< Deny list.                    */
+	int perm_deny;              /**< The permit/deny setting.      */
 };
 
 #ifdef __cplusplus
@@ -195,6 +196,15 @@ void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
  */
 void gaim_account_set_auto_login(GaimAccount *account, const char *ui,
 								 gboolean value);
+
+/**
+ * Sets the public IP address the account will use for such things
+ * as file transfer.
+ *
+ * @param account The account.
+ * @param ip      The IP address.
+ */
+void gaim_account_set_public_ip(GaimAccount *account, const char *ip);
 
 /**
  * Sets the account's proxy information.
@@ -383,6 +393,15 @@ gboolean gaim_account_get_check_mail(const GaimAccount *account);
  */
 gboolean gaim_account_get_auto_login(const GaimAccount *account,
 									 const char *ui);
+
+/**
+ * Returns the account's public IP address.
+ *
+ * @param account The account.
+ *
+ * @return The IP address.
+ */
+const char *gaim_account_get_public_ip(const GaimAccount *account);
 
 /**
  * Returns the account's proxy information.

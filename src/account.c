@@ -37,6 +37,7 @@ typedef enum
 	TAG_ALIAS,
 	TAG_USERINFO,
 	TAG_BUDDYICON,
+	TAG_PUBLIC_IP,
 	TAG_SETTING,
 	TAG_TYPE,
 	TAG_HOST,
@@ -333,6 +334,19 @@ gaim_account_set_auto_login(GaimAccount *account, const char *ui,
 }
 
 void
+gaim_account_set_public_ip(GaimAccount *account, const char *ip)
+{
+	g_return_if_fail(account != NULL);
+
+	if (account->ip != NULL)
+		g_free(account->ip);
+
+	account->ip = (ip == NULL ? NULL : g_strdup(ip));
+
+	schedule_accounts_save();
+}
+
+void
 gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info)
 {
 	g_return_if_fail(account != NULL);
@@ -600,6 +614,14 @@ gaim_account_get_auto_login(const GaimAccount *account, const char *ui)
 	return gaim_account_get_ui_bool(account, ui, "auto-login", FALSE);
 }
 
+const char *
+gaim_account_get_public_ip(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return account->ip;
+}
+
 GaimProxyInfo *
 gaim_account_get_proxy_info(const GaimAccount *account)
 {
@@ -788,6 +810,8 @@ start_element_handler(GMarkupParseContext *context,
 		data->tag = TAG_USERINFO;
 	else if (!strcmp(element_name, "buddyicon"))
 		data->tag = TAG_BUDDYICON;
+	else if (!strcmp(element_name, "public-ip"))
+		data->tag = TAG_PUBLIC_IP;
 	else if (!strcmp(element_name, "proxy")) {
 		data->in_proxy = TRUE;
 
@@ -875,6 +899,10 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	else if (data->tag == TAG_BUDDYICON) {
 		if (*buffer != '\0')
 			gaim_account_set_buddy_icon(data->account, buffer);
+	}
+	else if (data->tag == TAG_PUBLIC_IP) {
+		if (*buffer != '\0')
+			gaim_account_set_public_ip(data->account, buffer);
 	}
 	else if (data->tag == TAG_TYPE) {
 		if (data->in_proxy) {
@@ -1080,7 +1108,7 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 {
 	GaimProxyInfo *proxy_info;
 	GaimProxyType proxy_type;
-	const char *password, *alias, *user_info, *buddy_icon;
+	const char *password, *alias, *user_info, *buddy_icon, *ip;
 	char *esc;
 
 	fprintf(fp, " <account>\n");
@@ -1112,6 +1140,10 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 		esc = g_markup_escape_text(buddy_icon, -1);
 		fprintf(fp, "  <buddyicon>%s</buddyicon>\n", esc);
 		g_free(esc);
+	}
+
+	if ((ip = gaim_account_get_public_ip(account)) != NULL) {
+		fprintf(fp, "  <public-ip>%s</public-ip>\n", ip);
 	}
 
 	fprintf(fp, "  <settings>\n");
