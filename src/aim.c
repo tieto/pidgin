@@ -398,10 +398,6 @@ void sighandler(int sig)
 			"RobFlynn and they can instruct you).\n");
 		abort();
 		break;
-	case SIGPIPE:
-		/* FIXME: we should be checking to see which connection died. maybe add
-		 * something to struct prpl to have it check its connections? */
-		break;
 	default:
 		gtk_main_quit();
 		exit(0);
@@ -453,7 +449,7 @@ int main(int argc, char *argv[])
 	signal(SIGSEGV, sighandler);
 	signal(SIGHUP, sighandler);
 	signal(SIGINT, sighandler);
-	signal(SIGPIPE, sighandler);
+	signal(SIGPIPE, SIG_IGN);
 #endif
 
 
