@@ -177,7 +177,7 @@ GtkWidget *interface_page() {
 	vbox = make_frame(ret, _("Interface Options"));
 	/* This shouldn't have to wait for user to click OK or APPLY or whatnot */
 	/* This really shouldn't be in preferences at all */
-	debugbutton = gaim_button(_("Show _Debug Window"), &misc_options, OPT_MISC_DEBUG, vbox);
+	debugbutton = gaim_button(_("Show _debug window"), &misc_options, OPT_MISC_DEBUG, vbox);
 
 
 	gtk_widget_show_all(ret);
@@ -317,8 +317,8 @@ GtkWidget *list_page() {
 	gaim_button(_("Show _pictures on buttons"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
 
 	vbox = make_frame (ret, _("Buddy List Window"));
-	gaim_button(_("_Save Window Size/Position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
-	gaim_button(_("_Raise Window on Events"), &blist_options, OPT_BLIST_POPUP, vbox);
+	gaim_button(_("_Save window size/position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
+	gaim_button(_("_Raise window on events"), &blist_options, OPT_BLIST_POPUP, vbox);
 
 	vbox = make_frame (ret, _("Group Display"));
 	gaim_button(_("Hide _groups with no online buddies"), &blist_options, OPT_BLIST_NO_MT_GRP, vbox);
@@ -360,8 +360,8 @@ GtkWidget *im_page() {
 	gtk_widget_show (vbox);
 
 	vbox = make_frame (ret, _("Buddy Icons"));
-	gaim_button(_("Hide Buddy _Icons"), &im_options, OPT_IM_HIDE_ICONS, vbox);
-	gaim_button(_("Disable Buddy Icon A_nimation"), &im_options, OPT_IM_NO_ANIMATION, vbox);
+	gaim_button(_("Hide buddy _icons"), &im_options, OPT_IM_HIDE_ICONS, vbox);
+	gaim_button(_("Disable buddy icon a_nimation"), &im_options, OPT_IM_NO_ANIMATION, vbox);
 
 	vbox = make_frame (ret, _("Display"));
 	gaim_button(_("Show _logins in window"), &im_options, OPT_IM_LOGON, vbox);
@@ -391,7 +391,7 @@ GtkWidget *chat_page() {
 	dd = gaim_dropdown(vbox, "Show _buttons as:", &chat_options, OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM,
 			   "Pictures", OPT_CHAT_BUTTON_XPM,
 			   "Text", OPT_CHAT_BUTTON_TEXT,
-			   "Pictures and Text", OPT_CHAT_BUTTON_XPM | OPT_CHAT_BUTTON_TEXT, NULL);
+			   "Pictures and text", OPT_CHAT_BUTTON_XPM | OPT_CHAT_BUTTON_TEXT, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
 	gaim_labeled_spin_button(vbox, _("New window _width:"), &buddy_chat_size.width, 25, 9999, sg);
@@ -400,8 +400,8 @@ GtkWidget *chat_page() {
 	gaim_button(_("_Raise windows on events"), &chat_options, OPT_CHAT_POPUP, vbox);
 
 	vbox = make_frame (ret, _("Tab Completion"));
-	gaim_button(_("_Tab-Complete Nicks"), &chat_options, OPT_CHAT_TAB_COMPLETE, vbox);
-	gaim_button(_("_Old-Style Tab Completion"), &chat_options, OPT_CHAT_OLD_STYLE_TAB, vbox);
+	gaim_button(_("_Tab-complete nicks"), &chat_options, OPT_CHAT_TAB_COMPLETE, vbox);
+	gaim_button(_("_Old-style tab completion"), &chat_options, OPT_CHAT_OLD_STYLE_TAB, vbox);
 
 	vbox = make_frame (ret, _("Display"));
 	gaim_button(_("_Show people joining/leaving in window"), &chat_options, OPT_CHAT_LOGON, vbox);
@@ -422,17 +422,17 @@ GtkWidget *tab_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("IM Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _Placement:", &im_options, OPT_IM_SIDE_TAB | OPT_IM_BR_TAB,
+	dd = gaim_dropdown(vbox, "Tab _placement:", &im_options, OPT_IM_SIDE_TAB | OPT_IM_BR_TAB,
 		      "Top", 0,
 		      "Bottom", OPT_IM_BR_TAB,
 		      "Left", OPT_IM_SIDE_TAB,
 		      "Right", OPT_IM_BR_TAB | OPT_IM_SIDE_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
-	gaim_button(_("Show all _Instant Messages in one tabbed\nwindow"), &im_options, OPT_IM_ONE_WINDOW, vbox);
+	gaim_button(_("Show all _instant messages in one tabbed\nwindow"), &im_options, OPT_IM_ONE_WINDOW, vbox);
 	gaim_button(_("Show a_liases in tabs/titles"), &im_options, OPT_IM_ALIAS_TAB, vbox);
 
 	vbox = make_frame (ret, _("Chat Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _Placement:", &chat_options, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
+	dd = gaim_dropdown(vbox, "Tab _placement:", &chat_options, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
 			   "Top", 0,
 			   "Bottom", OPT_CHAT_BR_TAB,
 			   "Left", OPT_CHAT_SIDE_TAB,
@@ -445,7 +445,7 @@ GtkWidget *tab_page() {
 	gaim_button(_("Show IMs and chats in _same tabbed\nwindow."), &convo_options, OPT_CONVO_COMBINE, vbox);
 
 	vbox = make_frame (ret, _("Buddy List Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _Placement:", &blist_options, OPT_BLIST_BOTTOM_TAB,
+	dd = gaim_dropdown(vbox, "Tab _placement:", &blist_options, OPT_BLIST_BOTTOM_TAB,
 		      "Top", 0,
 		      "Bottom", OPT_BLIST_BOTTOM_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
@@ -466,8 +466,8 @@ GtkWidget *proxy_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Proxy Type"));
-	gaim_dropdown(vbox, "Proxy _Type:", &proxytype, -1,
-		      "No Proxy", PROXY_NONE,
+	gaim_dropdown(vbox, "Proxy _type:", &proxytype, -1,
+		      "No proxy", PROXY_NONE,
 		      "SOCKS 4", PROXY_SOCKS4,
 		      "SOCKS 5", PROXY_SOCKS5,
 		      "HTTP", PROXY_HTTP, NULL);
@@ -617,7 +617,7 @@ GtkWidget *logging_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Message Logs"));
-	gaim_button(_("_Log all Instant Messages"), &logging_options, OPT_LOG_CONVOS, vbox);
+	gaim_button(_("_Log all instant messages"), &logging_options, OPT_LOG_CONVOS, vbox);
 	gaim_button(_("Log all c_hats"), &logging_options, OPT_LOG_CHATS, vbox);
 	gaim_button(_("Strip _HTML from logs"), &logging_options, OPT_LOG_STRIP_HTML, vbox);
 
@@ -670,7 +670,7 @@ GtkWidget *sound_page() {
 	dd = gaim_dropdown(vbox, "_Method", &sound_options, OPT_SOUND_BEEP |
 		      OPT_SOUND_ESD | OPT_SOUND_ARTSC | OPT_SOUND_NAS | OPT_SOUND_NORMAL |
 		      OPT_SOUND_CMD,
-		      "Console Beep", OPT_SOUND_BEEP,
+		      "Console beep", OPT_SOUND_BEEP,
 #ifdef ESD_SOUND
 		      "ESD", OPT_SOUND_ESD,
 #endif /* ESD_SOUND */
@@ -739,14 +739,14 @@ GtkWidget *away_page() {
 		gtk_widget_set_sensitive(hbox, FALSE);
 
 	vbox = make_frame (ret, _("Idle"));
-	dd = gaim_dropdown(vbox, "Idle _Time Reporting:", &report_idle, -1,
+	dd = gaim_dropdown(vbox, "Idle _time reporting:", &report_idle, -1,
 			   "None", IDLE_NONE,
-			   "Gaim Usage", IDLE_GAIM,
+			   "Gaim usage", IDLE_GAIM,
 #ifdef USE_SCREENSAVER
 #ifndef _WIN32
-			   "X Usage", IDLE_SCREENSAVER,
+			   "X usage", IDLE_SCREENSAVER,
 #else
-			   "Windows Usage", IDLE_SCREENSAVER,
+			   "Windows usage", IDLE_SCREENSAVER,
 #endif
 #endif
 			   NULL);
