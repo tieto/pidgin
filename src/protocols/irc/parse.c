@@ -176,12 +176,12 @@ char *irc_mirc2html(const char *string)
 	const char *cur, *end;
 	char fg[3] = "\0\0", bg[3] = "\0\0";
 	int fgnum, bgnum;
-	int font = 0, bold = 0;
+	int font = 0, bold = 0, underline = 0;
 	GString *decoded = g_string_sized_new(strlen(string));
 
 	cur = string;
 	do {
-		end = strpbrk(cur, "\002\003\007\017\026");
+		end = strpbrk(cur, "\002\003\007\017\026\037");
 
 		decoded = g_string_append_len(decoded, cur, end ? end - cur : strlen(cur));
 		cur = end ? end : cur + strlen(cur);
@@ -230,6 +230,16 @@ char *irc_mirc2html(const char *string)
 				decoded = g_string_append_c(decoded, '>');
 			}
 			break;
+		case '\037':
+			cur++;
+			if (!underline) {
+				decoded = g_string_append(decoded, "<U>");
+				underline = TRUE;
+			} else {
+				decoded = g_string_append(decoded, "</U>");
+				underline = TRUE;
+			}
+			break;
 		case '\007':
 		case '\026':
 			cur++;
@@ -239,7 +249,9 @@ char *irc_mirc2html(const char *string)
 			/* fallthrough */
 		case '\000':
 			if (bold)
-				decoded = g_string_append(decoded, "</BOLD>");
+				decoded = g_string_append(decoded, "</B>");
+			if (underline)
+				decoded = g_string_append(decoded, "</U>");
 			if (font)
 				decoded = g_string_append(decoded, "</FONT>");
 			break;
@@ -257,6 +269,10 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 	const char *cur = msg + 1;
 	char *buf, *ctcp;
 	time_t timestamp;
+
+	/* Note that this is NOT correct w.r.t. multiple CTCPs in one
+	 * message and low-level quoting ... but if you want that crap,
+	 * use a real IRC client. */
 
 	if (msg[0] != '\001' || msg[strlen(msg) - 1] != '\001')
 		return g_strdup(msg);
