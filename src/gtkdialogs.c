@@ -170,6 +170,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	GtkTextIter iter;
 	GString *str;
 	int i;
+	AtkObject *obj;
 
 	if (about != NULL) {
 		gtk_window_present(GTK_WINDOW(about));
@@ -191,6 +192,8 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 	logo = gtk_image_new_from_stock(GAIM_STOCK_LOGO, gtk_icon_size_from_name(GAIM_ICON_SIZE_LOGO));
+	obj = gtk_widget_get_accessible(logo);
+	atk_object_set_description(obj, "Gaim " VERSION);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = gaim_gtk_create_imhtml(FALSE, &text, NULL);
