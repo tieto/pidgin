@@ -1,5 +1,5 @@
 /**
- * @file gtkimhtml.h GTK+ Gaim IM rendering component
+ * @file gtkimhtml.h GTK+ IM/HTML rendering component
  * @ingroup gtkui
  *
  * Copyright (C) 2000, Eric Warmenhoven <warmenhoven@yahoo.com>
@@ -36,14 +36,16 @@ extern "C" {
 #define GTK_IMHTML_CLASS(klass)    (GTK_CHECK_CLASS_CAST ((klass), GTK_TYPE_IMHTML, GtkIMHtmlClass))
 #define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
 #define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
+#define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
 
-typedef gchar** (*GtkIMHtmlImage) (gchar *url);
-
-typedef struct _GtkSmileyTree  GtkSmileyTree;
-typedef struct _GtkIMHtmlSmiley GtkIMHtmlSmiley;
-
-typedef struct _GtkIMHtml      GtkIMHtml;
-typedef struct _GtkIMHtmlClass GtkIMHtmlClass;
+typedef struct _GtkIMHtml			GtkIMHtml;
+typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
+typedef struct _GtkIMHtmlFontDetail	GtkIMHtmlFontDetail;	/* The five elements contained in a FONT tag */
+typedef struct _GtkSmileyTree		GtkSmileyTree;
+typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
+typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
+typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
+typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 
 struct _GtkIMHtml {
 	GtkTextView text_view;
@@ -69,7 +71,21 @@ struct _GtkIMHtml {
 struct _GtkIMHtmlClass {
 	GtkTextViewClass parent_class;
 
-	void (*url_clicked) (GtkIMHtml *, const gchar *);
+	void (*url_clicked)(GtkIMHtml *, const gchar *);
+};
+
+struct _GtkIMHtmlFontDetail {
+	gushort size;
+	gchar *face;
+	gchar *fore;
+	gchar *back;
+	gchar *sml;
+};
+
+struct _GtkSmileyTree {
+	GString *values;
+	GtkSmileyTree **children;
+	GtkIMHtmlSmiley *image;
 };
 
 struct _GtkIMHtmlSmiley {
@@ -79,62 +95,13 @@ struct _GtkIMHtmlSmiley {
 	gboolean hidden;
 };
 
-typedef enum
-{
-	GTK_IMHTML_NO_COLOURS   = 1 << 0,
-	GTK_IMHTML_NO_FONTS     = 1 << 1,
-	GTK_IMHTML_NO_COMMENTS  = 1 << 2,
-	GTK_IMHTML_NO_TITLE     = 1 << 3,
-	GTK_IMHTML_NO_NEWLINE   = 1 << 4,
-	GTK_IMHTML_NO_SIZES	= 1 << 5,
-	GTK_IMHTML_NO_SCROLL	= 1 << 6,
-	GTK_IMHTML_RETURN_LOG	= 1 << 7,
-	GTK_IMHTML_USE_POINTSIZE = 1 << 8
-} GtkIMHtmlOptions;
-
-GtkType    gtk_imhtml_get_type         (void);
-GtkWidget* gtk_imhtml_new              (void *, void *);
-
-void       gtk_imhtml_set_adjustments  (GtkIMHtml        *imhtml,
-					GtkAdjustment    *hadj,
-					GtkAdjustment    *vadj);
-
-void       gtk_imhtml_associate_smiley (GtkIMHtml        *imhtml,
-					gchar            *sml,
-					GtkIMHtmlSmiley  *smiley);
-
-void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml);
-
-void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
-					gboolean          show);
-
-void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
-					gboolean          show);
-
-GString*   gtk_imhtml_append_text      (GtkIMHtml        *imhtml,
-					const gchar      *text,
-					gint              len,
-					GtkIMHtmlOptions  options);
-
-void       gtk_imhtml_clear            (GtkIMHtml        *imhtml);
-
-void       gtk_imhtml_page_up          (GtkIMHtml        *imhtml);
-
-void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml);
-void       gtk_imhtml_to_bottom        (GtkIMHtml        *imhtml);
-
-/* GtkIMHtmlScalable, gaim_im_image, and gaim_hr */
-
-typedef struct _GtkIMHtmlScalable GtkIMHtmlScalable;
-#define GTK_IMHTML_SCALABLE(x) ((GtkIMHtmlScalable *)x)
-
-struct _GtkIMHtmlScalable{
+struct _GtkIMHtmlScalable {
 	void (*scale)(struct _GtkIMHtmlScalable *, int, int);
 	void (*add_to)(struct _GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 	void (*free)(struct _GtkIMHtmlScalable *);
 };
 
-typedef struct {
+struct _GtkIMHtmlImage {
 	GtkIMHtmlScalable scalable;
 	GtkImage *image;
 	GdkPixbuf *pixbuf;
@@ -142,30 +109,59 @@ typedef struct {
 	gchar *filename;
 	int width;
 	int height;
-} gaim_im_image;
+};
 
-typedef struct {
+struct _GtkIMHtmlHr {
 	GtkIMHtmlScalable scalable;
 	GtkWidget *sep;
-} gaim_hr;
+};
+
+typedef enum {
+	GTK_IMHTML_NO_COLOURS    = 1 << 0,
+	GTK_IMHTML_NO_FONTS      = 1 << 1,
+	GTK_IMHTML_NO_COMMENTS   = 1 << 2,
+	GTK_IMHTML_NO_TITLE      = 1 << 3,
+	GTK_IMHTML_NO_NEWLINE    = 1 << 4,
+	GTK_IMHTML_NO_SIZES      = 1 << 5,
+	GTK_IMHTML_NO_SCROLL     = 1 << 6,
+	GTK_IMHTML_RETURN_LOG    = 1 << 7,
+	GTK_IMHTML_USE_POINTSIZE = 1 << 8
+} GtkIMHtmlOptions;
+
+GtkType    gtk_imhtml_get_type         (void);
+GtkWidget* gtk_imhtml_new              (void *, void *);
+
+void       gtk_imhtml_set_adjustments  (GtkIMHtml *imhtml,
+					GtkAdjustment *hadj,
+					GtkAdjustment *vadj);
+
+void       gtk_imhtml_associate_smiley (GtkIMHtml *imhtml,
+					gchar *sml, GtkIMHtmlSmiley *smiley);
+
+void       gtk_imhtml_remove_smileys   (GtkIMHtml *imhtml);
+
+void       gtk_imhtml_show_smileys     (GtkIMHtml *imhtml, gboolean show);
+
+void       gtk_imhtml_show_comments    (GtkIMHtml *imhtml, gboolean show);
+
+GString*   gtk_imhtml_append_text      (GtkIMHtml *imhtml,
+					const gchar *text, gint len, GtkIMHtmlOptions  options);
+
+void       gtk_imhtml_clear            (GtkIMHtml *imhtml);
+void       gtk_imhtml_page_up          (GtkIMHtml *imhtml);
+void       gtk_imhtml_page_down        (GtkIMHtml *imhtml);
+void       gtk_imhtml_to_bottom        (GtkIMHtml *imhtml);
 
 GtkIMHtmlScalable *gtk_imhtml_scalable_new();
+GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, gchar *filename);
+void gtk_imhtml_image_free(GtkIMHtmlScalable *);
+void gtk_imhtml_image_scale(GtkIMHtmlScalable *, int, int);
+void gtk_imhtml_image_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 
-GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img, gchar *filename);
-
-void gaim_im_image_free(GtkIMHtmlScalable *);
-
-void gaim_im_image_scale(GtkIMHtmlScalable *, int, int);
-
-void gaim_im_image_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
-
-GtkIMHtmlScalable *gaim_hr_new();
-
-void gaim_hr_free(GtkIMHtmlScalable *);
-
-void gaim_hr_scale(GtkIMHtmlScalable *, int, int);
-
-void gaim_hr_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
+GtkIMHtmlScalable *gtk_imhtml_hr_new();
+void gtk_imhtml_hr_free(GtkIMHtmlScalable *);
+void gtk_imhtml_hr_scale(GtkIMHtmlScalable *, int, int);
+void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 
 
 #ifdef __cplusplus

@@ -812,18 +812,17 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 
 gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel)
 {
-	struct stat st;
-	char *name;
+	char *dirname;
 
-	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
+	if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
 		/* append a / if needed */
 		if (path[strlen(path) - 1] != '/') {
-			name = g_strconcat(path, "/", NULL);
+			dirname = g_strconcat(path, "/", NULL);
 		} else {
-			name = g_strdup(path);
+			dirname = g_strdup(path);
 		}
-		gtk_file_selection_set_filename(filesel, name);
-		g_free(name);
+		gtk_file_selection_set_filename(filesel, dirname);
+		g_free(dirname);
 		return TRUE;
 	}
 
