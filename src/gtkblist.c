@@ -2030,6 +2030,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 							gaim_debug(GAIM_DEBUG_ERROR, "conv dnd", "%s\n",
 								   (converr ? converr->message :
 								    "g_filename_from_uri error"));
+							g_error_free(converr);
 							return;
 						}
 						file = g_strchomp(file);

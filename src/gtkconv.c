@@ -599,7 +599,7 @@ info_cb(GtkWidget *widget, GaimConversation *conv)
 		sel   = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
 
 		if (gtk_tree_selection_get_selected(sel, NULL, &iter))
-			gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &name, -1);
+			gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &name, -1);
 		else
 			return;
 
@@ -633,7 +633,6 @@ static void
 send_file_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	serv_send_file(gaim_conversation_get_gc(conv), gaim_conversation_get_name(conv), NULL);
-	
 }
 
 static void
@@ -1311,7 +1310,7 @@ chat_im_button_cb(GtkWidget *widget, GaimConversation *conv)
 	sel   = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
 
 	if (gtk_tree_selection_get_selected(sel, NULL, &iter))
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &name, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &name, -1);
 	else
 		return;
 
@@ -1338,7 +1337,7 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 	sel   = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
 
 	if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &name, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &name, -1);
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 	}
 	else
@@ -1457,7 +1456,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
-	
+
 	if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
 		button = gtk_menu_item_new_with_label(_("Un-Ignore"));
 	else
@@ -1536,7 +1535,7 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimConversation *conv)
 	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &who, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 	menu = create_chat_menu (conv, who, prpl_info, gc);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
 				   gaim_gtk_treeview_popup_menu_position_func, widget,
@@ -1582,7 +1581,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list))), path);
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
-	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &who, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(conv, who);
@@ -3459,6 +3458,30 @@ generate_invite_user_names(GaimConnection *gc)
 	return tmp;
 }
 
+static GdkPixbuf *
+get_chat_user_status_icon(GaimConvChat *chat, const char *name)
+{
+	GdkPixbuf *pixbuf, *scale;
+	char *filename;
+
+	/* Eventually this should compose the pixbuf based on user status (op, voice, etc.)
+	 * and ignored status and any other fancy things we want to show. For now though,
+	 * it's just ignored users that have the privilege of an icon */
+
+	if(gaim_conv_chat_is_user_ignored(chat, name)) {
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "ignored.svg", NULL);
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
+		if (!pixbuf)
+			return NULL;
+		scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
+		g_object_unref(pixbuf);
+		return scale;
+	}
+
+	return NULL;
+}
+
 static void
 add_chat_buddy_common(GaimConversation *conv, const char *name, int pos)
 {
@@ -3467,6 +3490,7 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, int pos)
 	GaimConvChat *chat;
 	GtkTreeIter iter;
 	GtkListStore *ls;
+	GdkPixbuf *pixbuf;
 
 	chat    = GAIM_CONV_CHAT(conv);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -3474,11 +3498,12 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, int pos)
 
 	ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list)));
 
+	pixbuf = get_chat_user_status_icon(chat, name);
+
 	gtk_list_store_append(ls, &iter);
-	gtk_list_store_set(ls, &iter, 0,
-					   (gaim_conv_chat_is_user_ignored(chat, name) ? "X" : " "),
-					   1, name, -1);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), 1,
+	gtk_list_store_set(ls, &iter, CHAT_USERS_ICON_COLUMN, pixbuf,
+					   CHAT_USERS_NAME_COLUMN, name, -1);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), CHAT_USERS_NAME_COLUMN,
 										 GTK_SORT_ASCENDING);
 }
 
@@ -3735,7 +3760,7 @@ setup_menubar(GaimConvWindow *win)
 	gtkwin->menu.send_file =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Conversation/Send File..."));
-				
+
 	gtkwin->menu.add_pounce =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Conversation/Add Buddy Pounce..."));
@@ -4155,26 +4180,29 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(lbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
-	ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), 1,
+	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), CHAT_USERS_NAME_COLUMN,
 										 GTK_SORT_ASCENDING);
 
 	list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
 
-	rend = gtk_cell_renderer_text_new();
+	rend = gtk_cell_renderer_pixbuf_new();
+
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
-												   "text", 0, NULL);
-	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
+												   "pixbuf", CHAT_USERS_ICON_COLUMN, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), conv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), conv);
 
+	rend = gtk_cell_renderer_text_new();
+
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
-												   "text", 1, NULL);
+												   "text", CHAT_USERS_NAME_COLUMN, NULL);
 	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
@@ -4520,6 +4548,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				gaim_debug(GAIM_DEBUG_ERROR, "conv dnd", "%s\n",
 					   (converr ? converr->message :
 					    "g_filename_from_uri error"));
+				g_error_free(converr);
 				return;
 			}
 			file = g_strchomp(file);
@@ -5436,7 +5465,7 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 			while (f != 0) {
 				char *val;
 
-				gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &val, -1);
+				gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, -1);
 
 				if (!gaim_utf8_strcasecmp(old_name, val)) {
 					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
@@ -5494,7 +5523,7 @@ gaim_gtkconv_chat_remove_user(GaimConversation *conv, const char *user)
 			while (f != 0) {
 				char *val;
 
-				gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &val, -1);
+				gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, -1);
 
 				if (!gaim_utf8_strcasecmp(user, val))
 					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
@@ -5560,7 +5589,7 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 					char *val;
 
 					gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-									   1, &val, -1);
+									   CHAT_USERS_NAME_COLUMN, &val, -1);
 
 					if (!gaim_utf8_strcasecmp((char *)l->data, val))
 						gtk_list_store_remove(GTK_LIST_STORE(model), &iter);

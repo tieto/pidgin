@@ -12,6 +12,7 @@ EXTRA_DIST = \
 	game.png \
 	hiptop.png \
 	icq.png \
+	ignored.svg \
 	invisible.png \
 	irc.png \
 	jabber.png \

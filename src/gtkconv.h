@@ -28,6 +28,12 @@
 
 #include "conversation.h"
 
+enum {
+	CHAT_USERS_ICON_COLUMN,
+	CHAT_USERS_NAME_COLUMN,
+	CHAT_USERS_COLUMNS
+};
+
 /**************************************************************************
  * @name Structures
  **************************************************************************/
