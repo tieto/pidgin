@@ -427,7 +427,7 @@ map_shadow_windows (gpointer data)
 	gdk_window_move_resize (blist->east_shadow,
 				x + widget->allocation.width, MAX(0,y),
 				5, MIN(widget->allocation.height, gdk_screen_height()));
-	
+
 	gdk_window_move_resize (blist->south_shadow,
 				MAX(0,x), y + widget->allocation.height,
 				MIN(widget->allocation.width + 5, gdk_screen_width()), 5);
@@ -2017,13 +2017,13 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 				GtkTreeIter iter;
 				GaimBlistNode *node;
 				GValue val = {0};
-				
+
 				gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 							&iter, path);
 				gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
 							  &iter, NODE_COLUMN, &val);
 				node = g_value_get_pointer(&val);
-				
+
 				if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CONTACT(node)) {
 					GaimBuddy *b = GAIM_BLIST_NODE_IS_BUDDY(node) ? (GaimBuddy*)node : gaim_contact_get_priority_buddy((GaimContact*)node);
 					gaim_dnd_file_manage(sd, b->account, b->name);
@@ -2031,7 +2031,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 				} else {
 					gtk_drag_finish(dc, FALSE, FALSE, t);
 				}
-			}	
+			}
 	}
 }
 
@@ -2120,9 +2120,9 @@ static gboolean gaim_gtk_blist_expand_timeout(GtkWidget *tv)
 
 	if (!gtknode->contact_expanded) {
 		GtkTreeIter i;
-		
+
 		gaim_gtk_blist_expand_contact_cb(NULL, node);
-		
+
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
 		gdk_drawable_get_size(GDK_DRAWABLE(tv->window), &(gtkblist->contact_rect.width), NULL);
 		gtkblist->mouseover_contact = node;
@@ -2373,7 +2373,7 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 		g_source_remove(gtkblist->timeout);
 		gtkblist->timeout = 0;
 	}
-	
+
 	if (gtkblist->drag_timeout) {
 		g_source_remove(gtkblist->drag_timeout);
 		gtkblist->drag_timeout = 0;

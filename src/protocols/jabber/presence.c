@@ -89,13 +89,19 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 
 void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 {
-	GaimConnection *gc = account->gc;
-	JabberStream *js = gc->proto_data;
+	GaimConnection *gc = NULL;
+	JabberStream *js = NULL;
 	xmlnode *presence, *x, *photo;
 	char *stripped = NULL;
 	const char *msg;
 	JabberBuddyState state;
 	int priority;
+
+	if(!account) return ;
+	gc = account->gc;
+
+	if(!gc) return ;
+	js= gc->proto_data;
 
 	gaim_status_to_jabber(status, &state, &msg, &priority);
 
