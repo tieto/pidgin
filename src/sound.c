@@ -54,6 +54,10 @@
 
 #include "gaim.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 gboolean mute_sounds = 0;
 
 /* description, option bit, default sound file                    *
