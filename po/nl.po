@@ -1,14 +1,15 @@
 # Dutch translation for "Gaim".
-# Copyright (C) YEAR Free Software Foundation, Inc.
+# Copyright (C) 2002  Free Software Foundation, Inc.
 # Floris Eshuis <f.eshuis@hccnet.nl>, 2001.
+# upgraded by Reinier Lamers <tux_rocker@planet.nl>, 2002
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2001-11-09 15:51+0100\n"
-"PO-Revision-Date: 2001-11-09 15:53+0100\n"
-"Last-Translator: Floris Eshuis <f.eshuis@hccnet.nl>\n"
+"PO-Revision-Date: 2002-03-02 16:25+0100\n"
+"Last-Translator: Reinier Lamers <tux_rocker@planet.nl>\n"
 "Language-Team: nl <nl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
@@ -28,8 +29,8 @@ msgid ""
 "\n"
 "URL: "
 msgstr ""
-"Gaim is een Client gebaseerd op het AOL's Intstant messenger protocol. "
-"Het is in Gtk+ geschreven en is onder de GPL uitgegeven.\n"
+"Gaim is een Client gebaseerd op het AOL's Intstant Messenger protocol. "
+"Het is in Gtk+ geschreven en is uitgegeven onder de GPL.\n"
 "\n"
 "URL: "
 
@@ -54,7 +55,7 @@ msgstr "Sluiten"
 
 #: src/about.c:168
 msgid "Web Site"
-msgstr "Web Site"
+msgstr "Website"
 
 #: src/about.c:223
 msgid ""
@@ -66,7 +67,7 @@ msgid ""
 "online, you can talk to one of the Gaim developers for more assistance; "
 "their contact information is in the AUTHORS file in the Gaim source, or at "
 msgstr ""
-"Rustig.. Hulp is makkelijk te vinden. Het eerste wat u moet doen is een AIM "
+"Rustig... Hulp is makkelijk te vinden. Het eerste wat u moet doen is een AIM "
 "account aanmaken. Dat kan op http://aim.aol.com/. Klik op de knop "
 "\"New Users\" en daarmee kunt u een nieuw account aanmaken. Heeft u dat "
 "eenmaal gedaan dan kunt u zich aanmelden door uw gekozen Gebruikersnaam en "
@@ -84,7 +85,7 @@ msgstr "Vul je loginnaam in"
 
 #: src/aim.c:140 src/multi.c:1231 src/server.c:53
 msgid "Signon Error"
-msgstr "Aanmeldings fout"
+msgstr "Aanmeldingsfout"
 
 #: src/aim.c:238
 msgid "Gaim - Login"
@@ -92,11 +93,11 @@ msgstr "Gaim - Aanmelden"
 
 #: src/aim.c:256
 msgid "Screen Name: "
-msgstr "Gebruikersnaam"
+msgstr "Gebruikersnaam:"
 
 #: src/aim.c:272
 msgid "Password: "
-msgstr "Wachtwoord"
+msgstr "Wachtwoord:"
 
 #: src/aim.c:293 src/buddy.c:2400
 msgid "Quit"
@@ -124,7 +125,7 @@ msgstr "Plugins"
 
 #: src/aim.c:742 src/buddy.c:2436
 msgid "Preferences"
-msgstr "Voorkeuren"
+msgstr "Instellingen"
 
 #: src/protocols/gg/gg.c:68
 msgid "Available"
@@ -186,14 +187,14 @@ msgstr "Identificatie mislukt"
 
 #: src/protocols/gg/gg.c:186
 msgid "Unknown Error Code."
-msgstr "Onbekende Fout Code"
+msgstr "Onbekende Foutcode"
 
 #: src/protocols/gg/gg.c:191 src/protocols/gg/gg.c:597
 #: src/protocols/gg/gg.c:696 src/protocols/gg/gg.c:838
 #: src/protocols/gg/gg.c:875 src/protocols/gg/gg.c:919
 #, fuzzy
 msgid "Gadu-Gadu Error"
-msgstr "Gadu-Gadu - Fout"
+msgstr "Gadu-Gadu Fout"
 
 #: src/protocols/gg/gg.c:311
 #, c-format
@@ -234,7 +235,7 @@ msgstr "Verzend bestand"
 
 #: src/protocols/gg/gg.c:543
 msgid "Looking up GG server"
-msgstr ""
+msgstr "Bezig met vinden GG-server"
 
 #: src/protocols/gg/gg.c:546
 msgid "Invalid Gadu-Gadu UIN specified"
@@ -255,7 +256,7 @@ msgstr "Geen zoek resultaten gevonden"
 
 #: src/protocols/gg/gg.c:701
 msgid "Gadu-Gadu Search Engine"
-msgstr "Gadu-Gadu Zoek Machine"
+msgstr "Gadu-Gadu Zoekmachine"
 
 #: src/protocols/gg/gg.c:728
 msgid "Active"
@@ -291,7 +292,7 @@ msgstr "Bijnaam"
 
 #: src/protocols/gg/gg.c:753 src/protocols/gg/gg.c:756
 msgid "Birth year"
-msgstr "Geboorte datum"
+msgstr "Geboortedatum"
 
 #: src/protocols/gg/gg.c:762 src/protocols/gg/gg.c:764
 #: src/protocols/gg/gg.c:766
@@ -305,12 +306,12 @@ msgstr "Stad"
 
 #: src/protocols/gg/gg.c:838
 msgid "Couldn't send search request"
-msgstr "Kan de zoek opdracht niet versturen"
+msgstr "Kan de zoekopdracht niet versturen"
 
 #: src/protocols/gg/gg.c:874 src/protocols/gg/gg.c:918
 #, c-format
 msgid "Connect to search service failed (%s)"
-msgstr "Verbinding met zoek machine afgebroken (%s)"
+msgstr "Verbinding met zoekmachine afgebroken (%s)"
 
 #: src/protocols/gg/gg.c:884 src/protocols/gg/gg.c:893
 #, fuzzy
@@ -335,13 +336,13 @@ msgstr "<B>%s heeft het onderwerp veranderd naar: %s</B>"
 
 #: src/protocols/irc/irc.c:659
 msgid "No such nick/channel"
-msgstr "Onjuiste bijnaam/kanaal"
+msgstr "Bijnaam of kanaal bestaat niet"
 
 #: src/protocols/irc/irc.c:659 src/protocols/irc/irc.c:662
 #: src/protocols/irc/irc.c:664 src/protocols/irc/irc.c:879
 #, fuzzy
 msgid "IRC Error"
-msgstr "Chat Fout"
+msgstr "IRC Fout"
 
 #: src/protocols/irc/irc.c:662
 msgid "No such server"
@@ -400,7 +401,7 @@ msgstr "MSN Fout"
 #: src/protocols/msn/msn.c:566
 #, fuzzy
 msgid "Gaim was unable to send a message"
-msgstr "Gaim kon geen bericht verzenden"
+msgstr "Gaim kon een bericht niet verzenden"
 
 #: src/protocols/napster/napster.c:444 src/protocols/oscar/oscar.c:2338
 #: src/protocols/toc/toc.c:1086
@@ -457,11 +458,11 @@ msgstr "Bezig met aanmelden %s\n"
 
 #: src/protocols/oscar/oscar.c:463
 msgid "internal connection error\n"
-msgstr "Interne verbindings fout\n"
+msgstr "Interne verbindingsfout\n"
 
 #: src/protocols/oscar/oscar.c:464
 msgid "Unable to login to AIM"
-msgstr "Aanmelden niet mogelijk"
+msgstr "Aanmelden bij AIM niet mogelijk"
 
 #: src/protocols/oscar/oscar.c:469
 #, c-format
@@ -605,7 +606,7 @@ msgstr "<i>Geen Informatie Gegeven</i>"
 
 #: src/protocols/oscar/oscar.c:1635
 msgid "<i>User has no away message</i>"
-msgstr "<i>Gebruiker heeft geen afwezigheids bericht</i>"
+msgstr "<i>Gebruiker heeft geen afwezigheidsbericht</i>"
 
 #: src/protocols/oscar/oscar.c:1660
 msgid "Your connection may be lost."
@@ -643,7 +644,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:2646
 msgid "Get Away Msg"
-msgstr "Haal afwezigeids bericht op"
+msgstr "Haal afwezigheidsbericht op"
 
 #: src/protocols/oscar/oscar.c:2653
 msgid "Direct IM"
@@ -743,7 +744,7 @@ msgstr "Onbekende Fout: %s."
 
 #: src/protocols/toc/toc.c:461
 msgid "The service is temporarily unavailable."
-msgstr "De Service it momenteel niet bereikbaar."
+msgstr "De service is momenteel niet bereikbaar."
 
 #: src/protocols/toc/toc.c:464
 msgid "Your warning level is currently too high to log in."
@@ -789,7 +790,7 @@ msgstr "Chat Fout"
 
 #: src/protocols/toc/toc.c:775
 msgid "Password Change Successeful"
-msgstr "Wachtwoord Veranderen Succesvol"
+msgstr "Wachtwoord Veranderen Gelukt"
 
 #: src/dialogs.c:1490 src/protocols/toc/toc.c:775
 msgid "Gaim - Password Change"
@@ -801,10 +802,10 @@ msgid ""
 "sent to it, and may kick you off if you send a message. Gaim will prevent "
 "anything from going through. This is only temporary, please be patient."
 msgstr ""
-"TOC heeft een PAUSE commando verstuurd. Als dit gebeurd negeerd TOC ieder "
+"TOC heeft een PAUSE commando verstuurd. Als dit gebeurd negeert TOC ieder "
 "bericht dat verzonden wordt en het kan gebeuren dat uw verbinding verbroken "
-"wordt Gaim verhinderdt dat dit gebeurd maar u kunt geen berichten verzenden. "
-"Dit is tijdelijk heeft u dus geduld."
+"wordt. Gaim verhindert dat dit gebeurd maar u kunt geen berichten verzenden. "
+"Dit is tijdelijk, wees even geduldig."
 
 #: src/protocols/toc/toc.c:781
 msgid "TOC Pause"
@@ -821,7 +822,7 @@ msgstr "Kan niet verbinden voor transfer!"
 
 #: src/protocols/toc/toc.c:1811
 msgid "Could not write file header!"
-msgstr "Kan bestandskop niet schrijven!"
+msgstr "Kan bestandsheader niet schrijven!"
 
 #: src/protocols/toc/toc.c:1900
 msgid "Gaim - Save As..."
@@ -885,11 +886,11 @@ msgstr "Afwezig"
 
 #: src/applet.c:294 src/away.c:387
 msgid "New Away Message"
-msgstr "Nieuw Afwezigheids bericht"
+msgstr "Nieuw Afwezigheidsbericht"
 
 #: src/applet.c:441
 msgid "Can't create Gaim applet!"
-msgstr "Kan de gaim applet niet maken!"
+msgstr "Kan de gaim applet niet aanmaken!"
 
 #: src/applet.c:458
 msgid "About..."
@@ -909,7 +910,7 @@ msgstr "Terug"
 
 #: src/away.c:407
 msgid "Remove Away Message"
-msgstr "Afwezigheids bericht verwijderen"
+msgstr "Afwezigheidsbericht verwijderen"
 
 #: src/away.c:595
 msgid "Set All Away"
@@ -1064,7 +1065,7 @@ msgstr "Buddy-Chat starten"
 
 #: src/buddy.c:2313
 msgid "Activate Away Message"
-msgstr "Aktiveer afwezigheids melding"
+msgstr "Activeer afwezigheidsbericht"
 
 #: src/buddy.c:2376
 msgid "File"
@@ -1100,7 +1101,7 @@ msgstr "Protocol Acties"
 
 #: src/buddy.c:2438
 msgid "View System Log"
-msgstr "Toon Systeem Log"
+msgstr "Toon Systeemlog"
 
 #: src/buddy.c:2450
 msgid "Perl"
@@ -1112,7 +1113,7 @@ msgstr "Laad Script"
 
 #: src/buddy.c:2457
 msgid "Unload All Scripts"
-msgstr "Deactiveer Scripts"
+msgstr "Deactiveer alle scripts"
 
 #: src/buddy.c:2461
 msgid "List Scripts"
@@ -1262,7 +1263,7 @@ msgstr "Gaim - Gesprek Opslaan"
 #: src/conversation.c:542
 #, c-format
 msgid "Removing '%s' from buddylist.\n"
-msgstr "Verwijder '%s' van de Buddylijst.\n"
+msgstr "Verwijder '%s' van de buddylijst.\n"
 
 #: src/conversation.c:925
 msgid "Unable to send message: too large"
@@ -1270,7 +1271,7 @@ msgstr "Kan bericht niet verzenden: Te groot"
 
 #: src/conversation.c:925 src/conversation.c:927
 msgid "Message Error"
-msgstr "Bericht Fout"
+msgstr "Berichtfout"
 
 #: src/conversation.c:927
 msgid "Unable to send message: Unknown reason"
@@ -1352,7 +1353,7 @@ msgstr "Lettertype"
 
 #: src/conversation.c:1761 src/prefs.c:1281
 msgid "Text Color"
-msgstr "Tekst Kleur"
+msgstr "Tekstkleur"
 
 #: src/conversation.c:1762 src/conversation.c:1766
 msgid "Color"
@@ -1380,7 +1381,7 @@ msgstr "Smiley"
 
 #: src/conversation.c:1784
 msgid "Enable logging"
-msgstr "Schakel Logboek In"
+msgstr "Schakel logboek in"
 
 #: src/conversation.c:1785 src/prefs.c:244
 msgid "Logging"
@@ -1438,7 +1439,7 @@ msgstr "Gaim - Gebruiker Waarschuwen?"
 #: src/dialogs.c:398
 #, c-format
 msgid "Do you really want to warn %s?"
-msgstr "Wilt u de gebruiker waarschuwen?"
+msgstr "Wilt u %s echt waarschuwen?"
 
 #: src/dialogs.c:403
 msgid "Warn anonymously?"
@@ -1456,7 +1457,7 @@ msgstr "OK"
 
 #: src/dialogs.c:561
 msgid "Gaim - IM user"
-msgstr "Gaim - IM bebruiker"
+msgstr "Gaim - IM gebruiker"
 
 #: src/dialogs.c:578
 msgid "IM who:"
@@ -1540,7 +1541,7 @@ msgstr "Alarm Actie"
 
 #: src/dialogs.c:1172
 msgid "Open IM Window"
-msgstr "Open Bericht Venser"
+msgstr "Open Berichtvenster"
 
 #: src/dialogs.c:1177
 msgid "Popup Notification"
@@ -1572,7 +1573,7 @@ msgstr "Directory Info"
 
 #: src/dialogs.c:1336
 msgid "Allow Web Searches To Find Your Info"
-msgstr "Sta zoek opdrachten toe om uw info te vinden"
+msgstr "Sta zoekopdrachten toe om uw info te vinden"
 
 #: src/dialogs.c:1339 src/dialogs.c:2017
 msgid "First Name"
@@ -1604,7 +1605,7 @@ msgstr "Land"
 
 #: src/dialogs.c:1460
 msgid "New Passwords Do Not Match"
-msgstr "Het nieuwe wachtwoord is niet gelijk"
+msgstr "Nieuwe wachtwoorden zijn niet gelijk"
 
 #: src/dialogs.c:1460 src/dialogs.c:1465
 msgid "Gaim - Change Password Error"
@@ -1656,11 +1657,11 @@ msgstr "Gaim - Toestemming toevoegen"
 
 #: src/dialogs.c:1855
 msgid "Gaim - Add Deny"
-msgstr "Gaim - Blokade toevoegen"
+msgstr "Gaim - Blokkade toevoegen"
 
 #: src/dialogs.c:1915
 msgid "Gaim - Log Conversation"
-msgstr "Gaim - Houdt gesprek bij in logboek"
+msgstr "Gaim - Houd gesprek bij in logboek"
 
 #: src/dialogs.c:1993 src/dialogs.c:2156
 msgid "Search for Buddy"
@@ -1692,7 +1693,7 @@ msgstr "Gaim - URL Toevoegen"
 
 #: src/dialogs.c:2441 src/dialogs.c:2462 src/dialogs.c:2516
 msgid "Select Text Color"
-msgstr "Selecteer Tekst Kleur"
+msgstr "Selecteer Tekstkleur"
 
 #: src/dialogs.c:2495
 msgid "Select Background Color"
@@ -1704,7 +1705,7 @@ msgstr "Importeren naar:"
 
 #: src/dialogs.c:2743
 msgid "Gaim - Import Buddy List"
-msgstr "Gaim - Importeer Buddy Lijst"
+msgstr "Gaim - Importeer Buddylijst"
 
 #: src/dialogs.c:2804
 msgid "You cannot create an away message with a blank title"
@@ -1720,11 +1721,11 @@ msgstr "U kunt geen leeg bericht maken"
 
 #: src/dialogs.c:2879
 msgid "Gaim - New away message"
-msgstr "Gaim - Nieuw afwezigheids bericht"
+msgstr "Gaim - Nieuw afwezigheidsbericht"
 
 #: src/dialogs.c:2889
 msgid "New away message"
-msgstr "Nieuw afwezigheids bericht"
+msgstr "Nieuw afwezigheidsbericht"
 
 #: src/dialogs.c:2902
 msgid "Away title: "
@@ -1810,11 +1811,11 @@ msgstr "Gaim - Selecteer Perl Script"
 #: src/gaimrc.c:1107
 #, c-format
 msgid "Could not open config file %s."
-msgstr "Kan configuratie bestand %s niet openen."
+msgstr "Kan configuratiebestand %s niet openen."
 
 #: src/gaimrc.c:1108
 msgid "Preferences Error"
-msgstr "Instellings Fout"
+msgstr "Instellingsfout"
 
 #: src/html.c:183
 #, c-format
@@ -1859,7 +1860,7 @@ msgstr "Protocol:"
 
 #: src/multi.c:522
 msgid "Remember Password"
-msgstr "Onthoudt Wachtwoord"
+msgstr "Onthoud Wachtwoord"
 
 #: src/multi.c:523
 msgid "Auto-Login"
@@ -1931,7 +1932,7 @@ msgstr "Gaim - Plugins"
 
 #: src/plugins.c:238
 msgid "Filepath:"
-msgstr "Bestands Pad"
+msgstr "Bestandspad:"
 
 #: src/plugins.c:256
 msgid "Load"
@@ -1939,7 +1940,7 @@ msgstr "Laden"
 
 #: src/plugins.c:259
 msgid "Load a plugin from a file"
-msgstr "Laad een Plugin uit een bestand"
+msgstr "Laad een plugin uit een bestand"
 
 #: src/plugins.c:261
 msgid "Configure"
@@ -1947,7 +1948,7 @@ msgstr "Configureren"
 
 #: src/plugins.c:264
 msgid "Configure settings of the selected plugin"
-msgstr "Instellingen voor Plugin"
+msgstr "Instellingen voor plugin"
 
 #: src/plugins.c:266
 msgid "Reload"
@@ -1999,6 +2000,10 @@ msgstr "Debug venster tonen"
 msgid "Report Idle Times"
 msgstr "Toon inactieve tijd"
 
+#L src/prefs.c:232
+msgid "Notify buddies that you are typing to them"
+msgstr "Laat buddy's zien dat je tegen ze typt"
+
 #: src/prefs.c:238
 msgid "None"
 msgstr "Geen"
@@ -2025,7 +2030,7 @@ msgstr "Log als buddy's zich aan/afmelden"
 
 #: src/prefs.c:261
 msgid "Log when buddies become idle/un-idle"
-msgstr "Log als buddy's in/actief worden"
+msgstr "Log als buddy's inactief/actief worden"
 
 #: src/prefs.c:263
 msgid "Log when buddies go away/come back"
@@ -2037,7 +2042,7 @@ msgstr "Log uw eigen aan/afmeldingen"
 
 #: src/prefs.c:266
 msgid "Individual log file for each buddy's signons"
-msgstr "Eigen logbestand voor elke buddy aanmelding"
+msgstr "Eigen log voor elke buddy-aanmelding"
 
 #: src/prefs.c:269
 msgid "Browser"
@@ -2137,7 +2142,7 @@ msgstr "Automatisch buddylijst tonen bij aanmelden"
 
 #: src/prefs.c:559
 msgid "Save Window Size/Position"
-msgstr "Venster grootte en positie opslaan"
+msgstr "Venstergrootte en -positie opslaan"
 
 #: src/prefs.c:566
 msgid "Show pictures on buttons"
@@ -2149,7 +2154,7 @@ msgstr "Toon Buddy Lijst vlakbij applet"
 
 #: src/prefs.c:574
 msgid "Group Displays"
-msgstr "Groepen weergave"
+msgstr "Groepenweergave"
 
 #: src/prefs.c:586
 msgid "Hide groups with no online buddies"
@@ -2161,7 +2166,7 @@ msgstr "Toon aantal leden van groepen"
 
 #: src/prefs.c:594
 msgid "Buddy Displays"
-msgstr "Buddy weergave"
+msgstr "Buddyweergave"
 
 #: src/prefs.c:606
 msgid "Show buddy type icons"
@@ -2169,7 +2174,7 @@ msgstr "Toon buddy type icons"
 
 #: src/prefs.c:607
 msgid "Show warning levels"
-msgstr "Toon waarschuwings niveau"
+msgstr "Toon waarschuwingsniveau"
 
 #: src/prefs.c:613
 msgid "Show idle times"
@@ -2177,39 +2182,39 @@ msgstr "Toon inactieve tijd"
 
 #: src/prefs.c:614
 msgid "Grey idle buddies"
-msgstr "Toon Inactieve Buddy's grijs"
+msgstr "Toon inactieve buddy's grijs"
 
 #: src/prefs.c:631
 msgid "Conversation Options"
-msgstr "Gespreks Opties"
+msgstr "Gespreksopties"
 
 #: src/prefs.c:643
 msgid "Keyboard Options"
-msgstr "Instellingen Toetsenbord"
+msgstr "Toetsenbord-instellingen"
 
 #: src/prefs.c:655
 msgid "Enter sends message"
-msgstr "Enter verzendt het bericht"
+msgstr "Bericht verzenden met Enter"
 
 #: src/prefs.c:656
 msgid "Control-Enter sends message"
-msgstr "Ctrl-Enter verzendt het bericht"
+msgstr "Bericht verzenden met Control-Enter"
 
 #: src/prefs.c:657
 msgid "Escape closes window"
-msgstr "Esc sluit het venster"
+msgstr "Venster sluiten met Esc"
 
 #: src/prefs.c:663
 msgid "Control-{B/I/U/S} inserts HTML tags"
-msgstr "Ctrl-{B/I/U/S} voegt HTML tags in"
+msgstr "HTML-tags invoegen met Ctrl-{B/I/U/S}"
 
 #: src/prefs.c:664
 msgid "Control-(number) inserts smileys"
-msgstr "Ctrl-(cijfer) voegt Smiley in"
+msgstr "Smiley invoegen met Ctrl-(cijfer)"
 
 #: src/prefs.c:665
 msgid "F2 toggles timestamp display"
-msgstr "F2 schakeld Tijdweergave in"
+msgstr "Tijdweergave inschakelen met F2"
 
 #: src/prefs.c:667
 msgid "Display and General Options"
@@ -2217,7 +2222,7 @@ msgstr "Weergave en Algemene Instellingen"
 
 #: src/prefs.c:679
 msgid "Show graphical smileys"
-msgstr "Toon Grafische smileys"
+msgstr "Toon grafische smileys"
 
 #: src/prefs.c:680
 msgid "Show timestamp on messages"
@@ -2261,11 +2266,11 @@ msgstr "Negeer gesprekken tijdens afwezigheid"
 
 #: src/prefs.c:860
 msgid "IM Options"
-msgstr "Instellingen Berichten"
+msgstr "Bericht-instellingen"
 
 #: src/prefs.c:872 src/prefs.c:2735
 msgid "IM Window"
-msgstr "Bericht venster"
+msgstr "Berichtvenster"
 
 #: src/prefs.c:888 src/prefs.c:1023
 msgid "Show buttons as: "
@@ -2287,6 +2292,10 @@ msgstr "Alleen Tekst"
 msgid "Show all conversations in one tabbed window"
 msgstr "Toon gesprekken in een venster met tabbladen"
 
+#: src/prefs.c:941
+msgid "Show chats in the same tabbed window"
+msgstr "Toon gesprekken in hetzelfde venster met tabbladen"
+
 #: src/prefs.c:907 src/prefs.c:1044
 msgid "Raise windows on events"
 msgstr "Haal venster omhoog bij gebeurtenissen"
@@ -2295,9 +2304,17 @@ msgstr "Haal venster omhoog bij gebeurtenissen"
 msgid "Show logins in window"
 msgstr "Toon aanmeldingen in venster"
 
+#: src/prefs.c:950
+msgid "Show aliases in tabs/titles"
+msgstr "Toon aliassen in tabs of titels"
+
+#: src/prefs.c:951
+msgid "Hide window on send"
+msgstr "Verberg venster bij verzenden"
+
 #: src/prefs.c:910 src/prefs.c:1047
 msgid "Window Sizes"
-msgstr "Venster Afmetingen"
+msgstr "Vensterafmetingen"
 
 #: src/prefs.c:918 src/prefs.c:1055
 msgid "New window width:"
@@ -2309,7 +2326,7 @@ msgstr "Nieuwe vensterhoogte:"
 
 #: src/prefs.c:920 src/prefs.c:1057
 msgid "Entry widget height:"
-msgstr ""
+msgstr "Hoogte van invoerveld:"
 
 #: src/prefs.c:922 src/prefs.c:1059
 msgid "Tab Placement"
@@ -2337,7 +2354,7 @@ msgstr "Buddy Icons"
 
 #: src/prefs.c:969
 msgid "Hide Buddy Icons"
-msgstr "Verberg Buddy Incons"
+msgstr "Verberg Buddy Icons"
 
 #: src/prefs.c:995
 msgid "Chat Options"
@@ -2349,11 +2366,15 @@ msgstr "Groeps Chat Venster"
 
 #: src/prefs.c:1042
 msgid "Show all chats in one tabbed window"
-msgstr "Toon alle gesprekken in een venster met tabs"
+msgstr "Toon alle gesprekken in een venster met tabbladen"
+
+#: src/prefs.c:1087
+msgid "Show conversations in the same tabbed window"
+msgstr "Toon gesprekken in hetzelfde venster met tabbladen"
 
 #: src/prefs.c:1045
 msgid "Show people joining/leaving in window"
-msgstr "Toon pesonen die wegaan of binnenkomen in venster"
+msgstr "Toon pesonen die weggaan of binnenkomen in venster"
 
 #: src/prefs.c:1093
 msgid "Tab Completion"
@@ -2361,7 +2382,7 @@ msgstr "Titels in Tabs"
 
 #: src/prefs.c:1105
 msgid "Tab-Complete Nicks"
-msgstr "Voledige namen in Tabs"
+msgstr "Volledige namen in Tabs"
 
 #: src/prefs.c:1111
 msgid "Old-Style Tab Completion"
@@ -2389,7 +2410,7 @@ msgstr "Lettergrootte"
 
 #: src/prefs.c:1422
 msgid "Gaim - Sound Configuration"
-msgstr "Gaim - Geluids Configuratie"
+msgstr "Gaim - Geluidsconfiguratie"
 
 #: src/prefs.c:1462
 msgid "Choose..."
@@ -2397,7 +2418,7 @@ msgstr "Kies..."
 
 #: src/prefs.c:1513
 msgid "Sound Options"
-msgstr "Geluids Instellingen"
+msgstr "Geluidsinstellingen"
 
 #: src/prefs.c:1541
 msgid "No sounds when you log in"
@@ -2409,7 +2430,7 @@ msgstr "Geluid bij afwezigheid"
 
 #: src/prefs.c:1557
 msgid "Sound Player:"
-msgstr "Geluids Afspeler"
+msgstr "Geluidsafspeler:"
 
 #: src/prefs.c:1626
 #, c-format
@@ -2418,7 +2439,8 @@ msgid ""
 "(%s for filename; internal if empty)"
 msgstr ""
 "Commando voor het afspelen van geluid\n"
-"(%s voor bestandnaam, laat leeg voor intern\n)"
+"(%s voor bestandsnaam, leeg laten voor\n"
+"interne speler)"
 
 #: src/prefs.c:1637
 msgid "Events"
@@ -2426,11 +2448,11 @@ msgstr "Gebeurtenissen"
 
 #: src/prefs.c:1645
 msgid "Sound when buddy logs in"
-msgstr "Geluid als buddy zich aanmeld"
+msgstr "Geluid als buddy zich aanmeldt"
 
 #: src/prefs.c:1646
 msgid "Sound when buddy logs out"
-msgstr "Geluid als buddy zich afmeld"
+msgstr "Geluid als buddy zich afmeldt"
 
 #: src/prefs.c:1652
 msgid "Sound when received message begins conversation"
@@ -2438,7 +2460,7 @@ msgstr "Geluid bij starten van gesprek"
 
 #: src/prefs.c:1654
 msgid "Sound when message is received"
-msgstr "Geluid bij ontvangen bericht"
+msgstr "Geluid bij het ontvangen van een bericht"
 
 #: src/prefs.c:1655
 msgid "Sound when message is sent"
@@ -2446,15 +2468,15 @@ msgstr "Geluid bij het verzenden van bericht"
 
 #: src/prefs.c:1661
 msgid "Sound in chat rooms when people enter"
-msgstr "Geluid bij het binnengaan van chatruimte"
+msgstr "Geluid als iemand chatruimte binnenkomt"
 
 #: src/prefs.c:1662
 msgid "Sound in chat rooms when people leave"
-msgstr "Geluid bij het weggaan van chatruimte"
+msgstr "Geluid als iemand uit chatruimte weggaat"
 
 #: src/prefs.c:1663
 msgid "Sound in chat rooms when you talk"
-msgstr "Geluid bij het praten in chat ruimtes"
+msgstr "Geluid bij het praten in chatruimtes"
 
 #: src/prefs.c:1664
 msgid "Sound in chat rooms when others talk"
@@ -2462,11 +2484,20 @@ msgstr "Geluid in chat ruimtes als anderen praten"
 
 #: src/prefs.c:1787 src/prefs.c:2767
 msgid "Away Messages"
-msgstr "Afwezigheids bericht"
+msgstr "Afwezigheid"
 
 #: src/prefs.c:1824
 msgid "Don't send auto-response"
 msgstr "Geen automatisch antwoord verzenden"
+
+#: src/prefs.c:1889
+msgid "Only send auto-response when idle"
+msgstr "Alleen automatisch antwoord\n"
+       "verzenden wanneer u inactief bent"
+
+#: src/prefs.c:1904
+msgid "Time between sending auto-responses (in seconds):"
+msgstr "Tijd tussen het verzenden van automatische antwoorden (seconden):"
 
 #: src/prefs.c:1835
 msgid "Auto Away after"
@@ -2494,7 +2525,7 @@ msgstr "Toon Afwezig"
 
 #: src/prefs.c:2198
 msgid "Privacy Options"
-msgstr "Privacy Instellingen"
+msgstr "Privacy-instellingen"
 
 #: src/prefs.c:2214
 msgid "Set privacy for:"
@@ -2518,7 +2549,7 @@ msgstr "Alle Gebruikers Blokkeren"
 
 #: src/prefs.c:2268
 msgid "Block the users below"
-msgstr "Onderstaande gebruikers blokeren"
+msgstr "Onderstaande gebruikers blokkeren"
 
 #: src/prefs.c:2270
 msgid "Block List"
@@ -2559,10 +2590,10 @@ msgid ""
 "not the same version I cannot safely tell you which one it was. Needless to "
 "say, it was not successfully loaded."
 msgstr ""
-"U heeft geprobeerd een protocol te laden die niet met deze versie is "
-"gecompileerd. Omdat het niet dezelfde versie is als bij dit programma wordt "
-"gebruikt kan ik helaas niet zeggen welke het was maar werken zal het "
-"waarschijnlijk niet."
+"U hebt geprobeerd een protocol te laden dat een andere versie heeft dan "
+"dit programma. Omdat het niet dezelfde versie is als dit programma "
+"kan ik helaas niet zeggen welke het was maar werken zal het in ieder "
+"geval niet."
 
 #: src/prpl.c:74
 msgid "Protocol Error"
@@ -2635,7 +2666,7 @@ msgstr "(%d berichten)"
 
 #: src/server.c:541
 msgid "(1 message)"
-msgstr "(1 Bericht)"
+msgstr "(1 bericht)"
 
 #: src/server.c:756
 msgid "Warned"
