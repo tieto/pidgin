@@ -2414,7 +2414,7 @@ void show_prefs()
 	prefs_build_away();
 	prefs_build_deny();
 
-	//general_page();
+	/* general_page(); */
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);

@@ -820,20 +820,20 @@ char *away_subs(char *msg, char *name)
 			if (*(c + 1)) {
 				switch (*(c + 1)) {
 				case 'n':
-					// append name
+					/* append name */
 					strcpy(cpy + cnt, name);
 					cnt += strlen(name);
 					c++;
 					break;
 				case 'd':
-					// append date
+					/* append date */
 					strftime(tmp, 20, "%D", tme);
 					strcpy(cpy + cnt, tmp);
 					cnt += strlen(tmp);
 					c++;
 					break;
 				case 't':
-					// append time
+					/* append time */
 					strftime(tmp, 20, "%r", tme);
 					strcpy(cpy + cnt, tmp);
 					cnt += strlen(tmp);

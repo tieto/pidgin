@@ -193,8 +193,8 @@ void show_about(GtkWidget *w, void *null)
 		}
 
 		/* this makes the sizes not work. */
-		//GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-		//gtk_widget_grab_default(button);
+		/* GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT); */
+		/* gtk_widget_grab_default(button); */
 
 		button = picture_button(about, _("Web Site"), about_small_xpm);
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);

@@ -866,7 +866,7 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 		update_buttons_by_protocol(c);
         g_free(delb);
 
-	// flush buddy list to cache
+	/* flush buddy list to cache */
 
 	do_export(gc);
 }
@@ -903,7 +903,7 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 	}
 	g_free(delg);
 
-        // flush buddy list to cache
+        /* flush buddy list to cache */
 
         do_export(gc);
 }

@@ -138,7 +138,7 @@ BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 
 	p->ebox = gtk_event_box_new();
 
-	// click detection
+	/* click detection */
 
         gtk_widget_set_events (p->ebox, GDK_BUTTON_PRESS_MASK);
         gtk_signal_connect (GTK_OBJECT (p->ebox), "button_press_event",

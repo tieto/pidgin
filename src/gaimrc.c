@@ -78,7 +78,7 @@ static struct parse *parse_line(char *line)
 			continue;
 		}
 		if (inopt) {
-			//   if ((*c < 'a' || *c > 'z') && *c != '_') {
+			/*   if ((*c < 'a' || *c > 'z') && *c != '_') { */
 			if ((*c < 'a' || *c > 'z') && *c != '_' && (*c < 'A' || *c > 'Z')) {
 				inopt = 0;
 				p.option[optlen] = 0;
