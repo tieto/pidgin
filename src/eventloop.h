@@ -57,14 +57,14 @@ struct _GaimEventLoopUiOps
 	 * Adds an input handler.
 	 * @see gaim_input_add, g_io_add_watch_full
 	 */
-	gint (*input_add)(int source, GaimInputCondition cond,
-					  GaimInputFunction func, gpointer user_data);
+	guint (*input_add)(int fd, GaimInputCondition cond,
+					   GaimInputFunction func, gpointer user_data);
 
 	/**
 	 * Removes an input handler.
 	 * @see gaim_input_remove, g_source_remove
 	 */
-	void (*input_remove)(gint handle);
+	void (*input_remove)(guint handle);
 };
 
 /**************************************************************************/
@@ -85,7 +85,7 @@ guint gaim_timeout_add(guint interval, GSourceFunc function, gpointer data);
 /**
  * Adds an input handler.
  *
- * @param source    The input source.
+ * @param fd        The input file descriptor.
  * @param cond      The condition type.
  * @param func      The callback function for data.
  * @param user_data User-specified data.
@@ -93,15 +93,16 @@ guint gaim_timeout_add(guint interval, GSourceFunc function, gpointer data);
  * @return The resulting handle.
  * @see g_io_add_watch_full
  */
-gint gaim_input_add(int source, GaimInputCondition cond,
-					GaimInputFunction func, gpointer user_data);
+guint gaim_input_add(int fd, GaimInputCondition cond,
+					 GaimInputFunction func, gpointer user_data);
 
 /**
  * Removes an input handler.
  *
- * @param handle The handle of the input handler.
+ * @param handle The handle of the input handler. Note that this is the return
+ * value from gaim_input_add, <i>not</i> the file descriptor.
  */
-void gaim_input_remove(gint handle);
+void gaim_input_remove(guint handle);
 
 /*@}*/
 

@@ -46,31 +46,38 @@ gboolean session_managed = FALSE;
 
 /* ICE belt'n'braces stuff */
 
+struct ice_connection_info {
+	IceConn connection;
+	guint input_id;
+};
+
 static void ice_process_messages(gpointer data, gint fd,
 								 GaimInputCondition condition) {
-	IceConn connection = (IceConn)data;
+	struct ice_connection_info *conninfo = (struct ice_connection_info*) data;
 	IceProcessMessagesStatus status;
 
 	/* please don't block... please! */
-	status = IceProcessMessages(connection, NULL, NULL);
+	status = IceProcessMessages(conninfo->connection, NULL, NULL);
 
 	if (status == IceProcessMessagesIOError) {
 		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 				   "ICE IO error, closing connection... ");
 
 		/* IO error, please disconnect */
-		IceSetShutdownNegotiation(connection, False);
-		IceCloseConnection(connection);
+		IceSetShutdownNegotiation(conninfo->connection, False);
+		IceCloseConnection(conninfo->connection);
 
 		gaim_debug(GAIM_DEBUG_INFO, NULL, "done.\n");
 
 		/* cancel the handler */
-		gaim_input_remove(IceConnectionNumber(connection));
+		gaim_input_remove(conninfo->input_id);
 	}
 }
 
 static void ice_connection_watch(IceConn connection, IcePointer client_data,
 	      Bool opening, IcePointer *watch_data) {
+	struct ice_connection_info *conninfo = NULL;
+
 	if (opening) {
 		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 				   "Handling new ICE connection... ");
@@ -78,15 +85,21 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
 		/* ensure ICE connection is not passed to child processes */
 		fcntl(IceConnectionNumber(connection), F_SETFD, FD_CLOEXEC);
 
+		conninfo = g_new(struct ice_connection_info, 1);
+		conninfo->connection = connection;
+
 		/* watch the connection */
-		gaim_input_add(IceConnectionNumber(connection), GAIM_INPUT_READ,
-					   ice_process_messages, connection);
+		conninfo->input_id = gaim_input_add(IceConnectionNumber(connection), GAIM_INPUT_READ,
+											ice_process_messages, conninfo);
+		*watch_data = conninfo;
 	} else {
 		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 				   "Handling closed ICE connection... ");
 
-		/* stop watching it */
-		gaim_input_remove(IceConnectionNumber(connection));
+		/* get the input ID back and stop watching it */
+		conninfo = (struct ice_connection_info*) *watch_data;
+		gaim_input_remove(conninfo->input_id);
+		g_free(conninfo);
 	}
 
 	gaim_debug(GAIM_DEBUG_INFO, NULL, "done.\n");

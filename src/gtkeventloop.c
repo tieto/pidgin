@@ -63,7 +63,7 @@ static gboolean gaim_gtk_io_invoke(GIOChannel *source, GIOCondition condition, g
 	return TRUE;
 }
 
-static gint gaim_gtk_input_add(gint source, GaimInputCondition condition, GaimInputFunction function,
+static guint gaim_gtk_input_add(gint fd, GaimInputCondition condition, GaimInputFunction function,
 							   gpointer data)
 {
 	GaimGtkIOClosure *closure = g_new0(GaimGtkIOClosure, 1);
@@ -78,21 +78,21 @@ static gint gaim_gtk_input_add(gint source, GaimInputCondition condition, GaimIn
 	if (condition & GAIM_INPUT_WRITE)
 		cond |= GAIM_GTK_WRITE_COND;
 
-	channel = g_io_channel_unix_new(source);
+	channel = g_io_channel_unix_new(fd);
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      gaim_gtk_io_invoke, closure, gaim_gtk_io_destroy);
 
 #if 0
 	gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE: adding input watcher %d for fd %d\n",
-			   closure->result, source);
+			   closure->result, fd);
 #endif
 
 	g_io_channel_unref(channel);
 	return closure->result;
 }
 
-static void gaim_gtk_input_remove(gint tag)
+static void gaim_gtk_input_remove(guint tag)
 {
 	/* gaim_debug(GAIM_DEBUG_MISC, "proxy",
 	              "CLOSURE: removing input watcher %d\n", tag); */
