@@ -1699,23 +1699,6 @@ void gaim_blist_remove_account(GaimAccount *account)
 	}
 }
 
-static gchar *get_screenname_filename(const char *name)
-{
-	gchar **split;
-	gchar *good;
-	gchar *ret;
-
-	split = g_strsplit(name, G_DIR_SEPARATOR_S, -1);
-	good = g_strjoinv(NULL, split);
-	g_strfreev(split);
-
-	ret = g_utf8_strup(good, -1);
-
-	g_free(good);
-
-	return ret;
-}
-
 gboolean gaim_group_on_account(GaimGroup *g, GaimAccount *account)
 {
 	GaimBlistNode *cnode, *bnode;
@@ -2002,7 +1985,6 @@ static gboolean gaim_blist_read(const char *filename)
 
 void gaim_blist_load()
 {
-	GList *accts;
 	char *user_dir = gaim_user_dir();
 	char *filename;
 	char *msg;
