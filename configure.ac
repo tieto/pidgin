@@ -589,7 +589,7 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 			AC_MSG_RESULT("")
 
 			if test "x$with_nspr_includes" != "x"; then
-				CPPFLAGS="$CPPFLAGS -I$with_nspr_includs -I$with_nss_includes"
+				CPPFLAGS="$CPPFLAGS -I$with_nspr_includes -I$with_nss_includes"
 			else
 				CPPFLAGS="$CPPFLAGS -I$with_nss_includes"
 			fi
