@@ -32,6 +32,7 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "notify.h"
+#include "prefs.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -213,8 +214,11 @@ common_send(struct gaim_conversation *conv, const char *message)
 
 	buf2 = g_malloc(limit);
 
-	if (gc->flags & OPT_CONN_HTML && convo_options & OPT_CONVO_SEND_LINKS)
-		buffy =linkify_text(buf);
+	if ((gc->flags & OPT_CONN_HTML) &&
+		gaim_prefs_get_bool("/core/conversations/send_urls_as_links")) {
+
+		buffy = linkify_text(buf);
+	}
 	else
 		buffy = g_strdup(buf);
 

@@ -97,6 +97,8 @@ void gaim_prefs_init() {
 	gaim_prefs_add_none("/core");
 
 	/* XXX: this is where you would want to put prefs declarations */
+	gaim_prefs_add_none("/core/conversations");
+	gaim_prefs_add_bool("/core/conversations/send_urls_as_links", TRUE);
 }
 
 static char *pref_full_name(struct gaim_pref *pref) {

@@ -38,6 +38,7 @@
 #include "sound.h"
 #include "pounce.h"
 #include "notify.h"
+#include "prefs.h"
 
 void serv_login(struct gaim_account *account)
 {
@@ -813,7 +814,9 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 	 * If you can't figure this out, stop reading right now.
 	 * "We're not worthy! We're not worthy!"
 	 */
-	if ((len < 0) && (convo_options & OPT_CONVO_SEND_LINKS)) {
+	if (len < 0 &&
+		gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
+
 		buffy = linkify_text(message);
 		g_free(message);
 		message = buffy;
@@ -1369,7 +1372,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who,
 
 
 
-	if (convo_options & OPT_CONVO_SEND_LINKS)
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/urls_as_links"))
 		buf = linkify_text(message);
 	else
 		buf = g_strdup(message);

@@ -68,7 +68,7 @@ static GtkWidget *sound_entry = NULL;
 static GtkWidget *away_text = NULL;
 static GtkListStore *smiley_theme_store = NULL;
 GtkWidget *prefs_proxy_frame = NULL;
-GtkWidget *gaim_button(const char *, guint *, int, GtkWidget *);
+static GtkWidget *gaim_button(const char *, guint *, int, GtkWidget *);
 GtkWidget *gaim_labeled_spin_button(GtkWidget *, const gchar *, int*, int, int, GtkSizeGroup *);
 static GtkWidget *gaim_dropdown(GtkWidget *, const gchar *, int *, int, ...);
 static GtkWidget *gaim_dropdown_from_list(GtkWidget *, const gchar *, int *, int, GList *); 
@@ -461,6 +461,33 @@ static void update_color(GtkWidget *w, GtkWidget *pic)
 	g_object_unref(style);
 }
 
+static void
+set_bool_pref(GtkWidget *w, const char *key)
+{
+	gaim_prefs_set_bool(key,
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
+}
+
+static GtkWidget *
+pref_checkbox(const char *text, char *key, GtkWidget *page)
+{
+	GtkWidget *button;
+
+	button = gtk_check_button_new_with_mnemonic(text);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
+								 gaim_prefs_get_bool(key));
+
+	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(set_bool_pref), key);
+
+	gtk_widget_show(button);
+
+	return button;
+}
+
+
 GtkWidget *font_page() {
 	GtkWidget *ret;
 	GtkWidget *button;
@@ -553,7 +580,9 @@ GtkWidget *messages_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
 	gaim_button(_("Show graphical _smileys"), &convo_options, OPT_CONVO_SHOW_SMILEY, vbox);
 	gaim_button(_("Show _timestamp on messages"), &convo_options, OPT_CONVO_SHOW_TIME, vbox);
-	gaim_button(_("Show _URLs as links"), &convo_options, OPT_CONVO_SEND_LINKS, vbox);
+	pref_checkbox(_("Show _URLs as links"),
+				  "/gaim/gtk/conversations/show_urls_as_links", vbox);
+
 #ifdef USE_GTKSPELL
 	gaim_button(_("_Highlight misspelled words"), &convo_options, OPT_CONVO_CHECK_SPELLING, vbox);
 #endif
@@ -674,8 +703,10 @@ GtkWidget *conv_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	gaim_button(_("Show IMs and chats in _same tabbed window."),
+	gaim_button(_("Show IMs and chats in _same tabbed window"),
 				&convo_options, OPT_CONVO_COMBINE, vbox);
+	pref_checkbox(_("Send _URLs as Links"),
+				  "/core/conversations/send_urls_as_links", vbox);
 
 	gtk_widget_show_all(ret);
 
@@ -2099,7 +2130,7 @@ static void set_away_option(GtkWidget *w, int option)
 		toggle_away_queue();
 }
 
-GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *page)
+static GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *page)
 {
 	GtkWidget *button;
 	button = gtk_check_button_new_with_mnemonic(text);
@@ -2497,5 +2528,13 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
 	gaim_prefs_add_int("/gaim/gtk/debug/width",  400);
 	gaim_prefs_add_int("/gaim/gtk/debug/height", 150);
+
+	/* Conversations */
+	gaim_prefs_add_none("/gaim/gtk/conversations");
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
+
+	/* Smiley Themes */
+	gaim_prefs_add_none("/gaim/gtk/smilies");
+	gaim_prefs_add_string("/gaim/gtk/smilies/theme", "");
 }
 
