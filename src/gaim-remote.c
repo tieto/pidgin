@@ -20,7 +20,7 @@
  */
 
 #include "gaim.h"
-#include "getopt.h"
+#include <getopt.h>
 #include "gaim-socket.h"
 
 void show_remote_usage(char *name) 

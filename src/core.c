@@ -443,7 +443,7 @@ static gint open_socket()
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
 		mode_t m = umask(0177);
 		saddr.sun_family = AF_UNIX;
-		g_snprintf(saddr.sun_path, 108, "%s/gaim_%s.%d",
+		g_snprintf(saddr.sun_path, sizeof(saddr.sun_path), "%s/gaim_%s.%d",
 			   g_get_tmp_dir(), g_get_user_name(), gaim_session);
 		if (bind(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			listen(fd, 100);

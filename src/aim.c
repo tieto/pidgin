@@ -481,25 +481,6 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	return TRUE;
 }
 
-static int open_socket(char *name)
-{
-	struct sockaddr_un saddr;
-	gint fd;
-
-	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
-		saddr.sun_family = AF_UNIX;
-		g_snprintf(saddr.sun_path, 108, "%s", name);
-		if (connect(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
-			return fd;
-		else
-			debug_printf("Failed to assign %s to a socket (Error: %s)\n",
-					saddr.sun_path, strerror(errno));
-	} else
-		debug_printf("Unable to open socket: %s\n", strerror(errno));
-	close(fd);
-	return -1;
-}
-
 static int ui_main()
 {
 	GIOChannel *channel;
@@ -520,7 +501,7 @@ static int ui_main()
 
 	g_snprintf(name, sizeof(name), "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
 
-	UI_fd = open_socket(name);
+	UI_fd = gaim_connect_to_session(0);
 	if (UI_fd < 0)
 		return 1;
 
