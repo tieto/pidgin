@@ -1676,6 +1676,8 @@ static gint gtk_html_button_press(GtkWidget * widget, GdkEventButton * event)
 
 		if (html->selected_text)
 		{
+			gboolean forcedraw = FALSE;
+			hbits = html->html_bits;
 			g_free(html->selected_text);
 			html->selected_text = NULL;
 			html->start_sel = NULL;
@@ -1685,9 +1687,11 @@ static gint gtk_html_button_press(GtkWidget * widget, GdkEventButton * event)
 			while (hbits)
 			{
 				hb = (GtkHtmlBit *) hbits->data;
-				if (hb->was_selected)
+				if (hb->was_selected || forcedraw) {
 					gtk_html_draw_bit(html, hb, 1);
-				hbits = hbits->prev;
+					forcedraw = TRUE;
+				}
+				hbits = hbits->next;
 			}
 			hbits = g_list_last(html->html_bits);
 		}
