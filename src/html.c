@@ -329,9 +329,26 @@ struct gaim_parse_tag {
 };
 
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
-						char *o = strchr(c+1, '<'); \
-						char *p = strchr(c+1, '>'); \
-						if(p && (!o || p < o)) { \
+						const char *o = c + 1; \
+						const char *p = NULL, *q = NULL, *r = NULL; \
+						while(*o) { \
+							if(!q && (*o == '\"' || *o == '\'') ) { \
+								q = o; \
+							} else if(q) { \
+								if(*o == *q) { \
+									q = NULL; \
+								} else if(*c == '\\') { \
+									o++; \
+								} \
+							} else if(*o == '<') { \
+								r = o; \
+							} else if(*o == '>') { \
+								p = o; \
+								break; \
+							} \
+							o++; \
+						} \
+						if(p && !r) { \
 							if(*(p-1) != '/') { \
 								struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1); \
 								pt->src_tag = x; \
@@ -371,25 +388,9 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 	GString *xhtml = g_string_new("");
 	GString *plain = g_string_new("");
 	GList *tags = NULL, *tag;
-	const char *q = NULL, *c = html;
+	const char *c = html;
 	while(*c) {
-		if(!q && (*c == '\"' || *c == '\'')) {
-			q = c;
-			xhtml = g_string_append_c(xhtml, *c);
-			plain = g_string_append_c(plain, *c);
-			c++;
-		} else if(q) {
-			if(*c == *q) {
-				q = NULL;
-			} else if(*c == '\\') {
-				xhtml = g_string_append_c(xhtml, *c);
-				plain = g_string_append_c(plain, *c);
-				c++;
-			}
-			xhtml = g_string_append_c(xhtml, *c);
-			plain = g_string_append_c(plain, *c);
-			c++;
-		} else if(*c == '<') {
+		if(*c == '<') {
 			if(*(c+1) == '/') { /* closing tag */
 				tag = tags;
 				while(tag) {
