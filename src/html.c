@@ -102,8 +102,7 @@ char *grab_url(char *url)
         int sock;
         int len;
 	int datalen = 0;
-	struct hostent *host;
-	struct sockaddr_in site;
+	struct in_addr *host;
 	char buf[256];
 	char data;
         FILE *sockfile;
@@ -112,17 +111,16 @@ char *grab_url(char *url)
 
         website = parse_url(url);
 
+	/*
 	host = gethostbyname(website.address);
 	if (!host) { return g_strdup("g001: Error resolving host\n"); }
 
-	site.sin_family = AF_INET;
-	site.sin_addr.s_addr = *(long *)(host->h_addr);
-	site.sin_port = htons(website.port);
-
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock < 0) { return g_strdup("g002: Socket Error\n"); }
-
-	if (connect(sock, (struct sockaddr *)&site, sizeof(site)))
+	if ((sock = connect_address(inet_addr(host->h_addr), website.port)) <= -1)
+		return g_strdup("g003: Error opening connection.\n");
+	*/
+	host = (struct in_addr *)get_address(website.address);
+	if (!host) { return g_strdup("g001: Error resolving host\n"); }
+	if ((sock = connect_address(host->s_addr, website.port)) < 0)
 		return g_strdup("g003: Error opening connection.\n");
 
 	sockfile = fdopen(sock, "r+");

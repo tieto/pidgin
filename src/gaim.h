@@ -105,6 +105,8 @@ struct prefs_data {
         GtkWidget *login_port_entry;
         GtkWidget *http_proxy_host_entry;
         GtkWidget *http_proxy_port_entry;
+        GtkWidget *socks_proxy_host_entry;
+        GtkWidget *socks_proxy_port_entry;
 
 };
 
@@ -337,7 +339,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 259 $"
+#define REVISION "gaim:$Revision: 263 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

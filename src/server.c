@@ -377,23 +377,27 @@ void serv_set_permit_deny()
 	sflap_send(buf, -1, TYPE_DATA);
 #else
 	/* oscar requires us to do everyone at once (?) */
-/* FIXME : there's nothing wrong with this code, but it causes the entire buddy
+/* FIXME : there's something wrong with this code, it causes the entire buddy
  * list to update, and can cause other people's buddy lists to improperly update
-	list = permit; at = 0;
-	while (list) {
-		at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
-		list = list->next;
+	if (!(permdeny == 1 || permdeny == 3)) {
+		list = permit; at = 0;
+		while (list) {
+			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
+			list = list->next;
+		}
+		aim_bos_changevisibility(gaim_sess, gaim_conn,
+				AIM_VISIBILITYCHANGE_PERMITADD, buf);
+	} else {
+		list = deny; at = 0;
+		if (list == NULL) return;
+		while (list) {
+			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
+			list = list->next;
+		}
+		aim_bos_changevisibility(gaim_sess, gaim_conn,
+				AIM_VISIBILITYCHANGE_DENYADD, buf);
 	}
-	aim_bos_changevisibility(gaim_sess, gaim_conn,
-			AIM_VISIBILITYCHANGE_PERMITADD, buf);
-	list = deny; at = 0;
-	while (list) {
-		at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
-		list = list->next;
-	}
-	aim_bos_changevisibility(gaim_sess, gaim_conn,
-			AIM_VISIBILITYCHANGE_DENYADD, buf);
-*/
+ */
 #endif
 }
 

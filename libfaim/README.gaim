@@ -33,7 +33,6 @@ Getting users' info
 Getting users' away messages (PLEASE do not use oscar/libfaim just because of
 	this, gaim with libfaim is still really buggy, none of you will listen
 	to me anyway)
-Telling the server who's on your permit/deny lists (buggy)
 Chat:
  - joining rooms
  - leaving rooms
@@ -50,6 +49,7 @@ Chat:
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.
+Telling the server who's on your permit/deny lists (buggy)
 
 KNOWN ISSUES
 ============
@@ -57,79 +57,27 @@ KNOWN ISSUES
 You can receive more messages in less time with TOC than with libfaim. It's not
 completely libfaim's fault though.
 
-- Signing on every once in a while acts really bizarrely for me. Maybe it's just
-me. I think it has something to do with the horrible lack of error checking and
-recovery on gaim's part.
+- It's possible that if the server negotiations don't happen fast enough, it'll
+look like you're trying to sign in twice (and in fact you will be). It doesn't
+seem to negatively affect anything, but it will when people start using it. (I
+think this may actually be related to the auto_recon plugin.) (FIXME for this is
+marked in aim.c)
 
 - Adding or removing people to your permit/deny lists causes the server to tell
 you everyone on your buddy list signed off and then immediately signed in again.
 While you won't ever see that it happens (other than everyone will suddenly have
 the guy-in-the-door icon), you'll hear it. Be warned. (This also happens at
-sign-on, because the list gets built, even if you don't have a list.)
+sign-on, because the list gets built, even if you don't have a list.) I've
+commented it out because it was causing too many problems. (FIXME for this is
+marked in server.c)
 
-- It doesn't set the current_user in .gaimrc correctly, so the users listed in
-there will get really warped. Don't worry, it's just a problem with the .gaimrc,
-but it's an annoying one.
+- There are a lot of problems with panel support (funny that I'm supporting the
+panel code, and the oscar code I wrote doesn't work well with it).
 
 - Oh, yeah, by the way, it'll eat up all your CPU. (Someone please fix this,
 there's a nice FIXME near the top of oscar.c that says what the problem is.)
 
-HOW TO HELP
-===========
-So here's what you can do in order to help gaim use libfaim. There are basically
-3 steps:
-
-1) In server.c, find an #ifndef USE_OSCAR tag that doesn't have a corresponding
-#else. Find it in a good fun function that you want to implement. Basically
-copy the code from the TOC side for the Oscar side. For example:
-
-void serv_send_im(char *name, char *message, int away)
-{
-	char buf[MSG_LEN - 7];
-
-#ifndef USE_OSCAR
-	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),		   message, ((away) ? " auto" : ""));
-	sflap_send(buf, strlen(buf), TYPE_DATA);
-#endif
-	if (!away)
-		serv_touch_idle();
-}
-
-becomes:
-
-void serv_send_im(char *name, char *message, int away)
-{
-        char buf[MSG_LEN - 7];
-
-#ifndef USE_OSCAR
-        g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
-	           message, ((away) ? " auto" : ""));
-	sflap_send(buf, strlen(buf), TYPE_DATA);
-#else
-	oscar_send_im(name, message, away);
-#endif
-	if (!away)
-		serv_touch_idle();
-}
-
-2) Edit gaim.h to add the new function (you'll see a list of them in there)
-
-3) Edit oscar.c to implement the new function
-
-Most of the functions you're going to need to call use a session and connection
-structure. These are kept (globally) in oscar.c as gaim_sess and gaim_conn. For
-example, from above:
-
-void oscar_send_im(char *name, char *msg, int away) {
-	if (away)
-		aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, msg);
-	else
-		aim_send_im(gaim_sess, gaim_conn, name, 0, msg);
-}
-
-That should be all that's needed.
-
-There are also FIXME's scattered about oscar.c. Grep around for those, figure
+- There are also FIXME's scattered about oscar.c. Grep around for those, figure
 out what needs to be fixed, do that sort of thing. :) (Fixing the things listed
 in KNOWN ISSUES above, or any other bugs you happen to find, is a very good use
 of your time.) (You didn't hear that from me.)

@@ -177,7 +177,6 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
         case PROXY_SOCKS: /* Socks v4 proxy (? I'm not a proxy hacker) */
 		/* this is going to be a cross between the HTTP proxy code
 		 * above and the TiK proxy code, translated from tcl->C */
-		/*
 		{
 			struct hostent *hostinfo;
 			unsigned short shortport = proxy_port;
@@ -196,24 +195,38 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
 		debug_print(debug_buff);
 		if ((ret = connect(sockfd,(struct sockaddr *)&name,sizeof(name)))<0)
 			return(ret);
-*/
+
 		/* here's where it's no longer http proxy and is now tik */
-/*		{
+		{
 			char cmd[80];
 			char *inputline;
+                        unsigned short realport=((struct sockaddr_in *)serv_addr)->sin_port;
+                        unsigned long realhost=((struct sockaddr_in *)serv_addr)->sin_addr.s_addr;
 
-			snprintf(cmd, 80, "\0x4\0x1%d%d%d%d%d", toc_port,
-					toc_server_1,
-					toc_server_2, /* the second part of the
-							 ip address: 1.this.1.1
-						      *//*
-					toc_server_3,
-					toc_server_4);
-                        if (send(sockfd,cmd,strlen(cmd),0)<0)
+			cmd[0] = 4; cmd[0] = 1;
+			memcpy(cmd + 2, &realport, 2);
+			memcpy(cmd + 4, &realhost, 4);
+			cmd[8] = 0;
+                        if (send(sockfd,cmd,8,0)<0)
                                 return(-1);
                         if (proxy_recv_line(sockfd,&inputline) < 0) {
                                 return(-1);
-                        }*/
+                        }
+			if (inputline[1] != 90) {
+				sprintf(debug_buff, "request failed: %d\n",
+						inputline[1]);
+				debug_print(debug_buff);
+				if (inputline[1] == 91)
+					do_error_dialog("The SOCKS proxy denied"
+							"your request.",
+							"Gaim - Proxy Error");
+				else
+					do_error_dialog("Unknown SOCKS error.",
+							"Gaim - Proxy Error");
+				return -1;
+			}
+		}
+		return ret;
                 break;
         default:
                 fprintf(stderr,"Unknown proxy type : %d.\n",proxy_type);

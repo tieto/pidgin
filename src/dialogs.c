@@ -162,8 +162,7 @@ static int g_sendemail(char *name, char *email, int uname, int sname, char *coun
 {
 	static char email_data[2000];
 	int sock;
-	struct hostent *host;
-	struct sockaddr_in site;
+	struct in_addr *host;
 /*	char data[3]; */
 	FILE *sockfile;
 	char uname_output;
@@ -189,25 +188,14 @@ static int g_sendemail(char *name, char *email, int uname, int sname, char *coun
 		system(buf);
 	}
 	
-	host = gethostbyname(REG_SRVR);
+	host = (struct in_addr *)get_address(REG_SRVR);
 	if (!host) 
 	{
 		printf("Error Resolving Mail Server.\n");
 		return -1;
 	}
 
-	site.sin_family = AF_INET;
-	site.sin_addr.s_addr = *(long *)(host->h_addr);
-	site.sin_port = htons(REG_PORT);
-
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock < 0)
-	{
-		printf("Socket Error.\n");
-		return -1;
-	}
-	
-	if (connect(sock, (struct sockaddr *)&site, sizeof(site)))
+	if ((sock = connect_address(host->s_addr, REG_PORT)) < 0)
 	{
 		printf("Error Connecting to Socket.\n");
 		return -1;

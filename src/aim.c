@@ -157,6 +157,8 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 	if (running) return;
 	running = TRUE;
 
+	/* libfaim FIXME : serv_login only starts the process. it's not over
+	 * after serv_login gets called */
         if (serv_login(username, password) < 0) {
 		running = FALSE;
                 return;

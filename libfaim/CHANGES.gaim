@@ -1,4 +1,13 @@
 
+Tue May 23 03:32:26 UTC 2000 EWarmenhoven
+	- I commented out the code to tell the server who's on your permit or
+	  deny lists. I coded that part seriously wrong.
+	- un-#ifndef'd rvous.c, so theoretically, once libfaim supports file
+	  transfer (et al.) it should be relatively easy to add the code for
+	  it.
+	- Placed FIXME's throughout the code to try to signal problems
+	- Other touch-ups (not worth mentioning)
+
 Mon May 22 19:02:19 UTC 2000 EWarmenhoven
 	- Able to be invited to join a chat room
 

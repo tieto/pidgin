@@ -106,6 +106,7 @@ int oscar_login(char *username, char *password) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
 	struct client_info_s info = {"Gaim/Faim", 3, 5, 1670, "us", "en"};
+	struct aim_user *u;
 	char buf[256];
 
 	sess = g_new0(struct aim_session_t, 1);
@@ -155,12 +156,14 @@ int oscar_login(char *username, char *password) {
 				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, sess);
 
-	if (!current_user) {
-		current_user = g_new0(struct aim_user, 1);
-		g_snprintf(current_user->username, sizeof(current_user->username),
-				DEFAULT_INFO);
-		aim_users = g_list_append(aim_users, current_user);
+	u = find_user(username);
+
+	if (!u) {
+		u = g_new0(struct aim_user, 1);
+		g_snprintf(u->username, sizeof(u->username), DEFAULT_INFO);
+		aim_users = g_list_append(aim_users, u);
 	}
+	current_user = u;
 	g_snprintf(current_user->username, sizeof(current_user->username),
 				"%s", username);
 	g_snprintf(current_user->password, sizeof(current_user->password),
@@ -412,9 +415,9 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 
 	if (info->class & AIM_CLASS_TRIAL)
 		type |= UC_UNCONFIRMED;
-	if (info->class & AIM_CLASS_AOL)
+	else if (info->class & AIM_CLASS_AOL)
 		type |= UC_AOL;
-	if (info->class & AIM_CLASS_FREE)
+	else if (info->class & AIM_CLASS_FREE)
 		type |= UC_NORMAL;
 	if (info->class & AIM_CLASS_AWAY)
 		type |= UC_UNAVAILABLE;
@@ -490,6 +493,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		} else if (rendtype == 1) {
 			/* FIXME : voice chat */
 		}
+		/* libfaim doesn't do file transfer yet, from what i can tell */
 	}
 
 	return 1;
