@@ -414,6 +414,8 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		((struct group *)bnode->parent)->totalsize--;
 		if (buddy->account->gc)
 			((struct group *)bnode->parent)->currentsize--;
+		if (buddy->present)
+			((struct group *)bnode->parent)->online--;
 
 		if(bnode->next)
 			bnode->next->prev = bnode->prev;
@@ -440,6 +442,8 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		((struct group *)n->parent)->totalsize++;
 		if (buddy->account->gc)
 			((struct group *)n->parent)->currentsize++;
+		if (buddy->present)
+			((struct group *)n->parent)->online++;
 	} else {
 		((GaimBlistNode*)g)->child = (GaimBlistNode*)buddy;
 		((GaimBlistNode*)buddy)->next = NULL;
@@ -448,6 +452,8 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		g->totalsize++;
 		if (buddy->account->gc)
 			g->currentsize++;
+		if (buddy->present)
+			g->online++;
 	}
 
 	hb = g_malloc(sizeof(struct _gaim_hbuddy));
