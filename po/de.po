@@ -15,8 +15,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
-"POT-Creation-Date: 2003-07-20 14:37+0200\n"
-"PO-Revision-Date: 2003-07-20 12:55+0200\n"
+"POT-Creation-Date: 2003-07-23 10:05+0200\n"
+"PO-Revision-Date: 2003-07-23 10:05+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: de <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,7 @@ msgstr "Zurück"
 msgid "Mute Sounds"
 msgstr "Klänge"
 
-#: plugins/docklet/docklet.c:170 src/gtkft.c:557
+#: plugins/docklet/docklet.c:170 src/gtkft.c:559
 msgid "File Transfers"
 msgstr "Dateitransfers"
 
@@ -123,16 +123,16 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-msgid "Gaim Instant Messenger"
-msgstr "Gaim Instant Messenger"
+msgid "Gaim"
+msgstr "Gaim"
 
 #: plugins/docklet/docklet-win32.c:45
-msgid "Gaim Instant Messenger - Signed off"
-msgstr "Gaim Instant Messenger - Abgemeldet"
+msgid "Gaim - Signed off"
+msgstr "Gaim - Fortgegangen"
 
 #: plugins/docklet/docklet-win32.c:46
-msgid "Gaim Instant Messenger - Away"
-msgstr "Gaim Instant Messenger - Fortgegangen"
+msgid "Gaim - Away"
+msgstr "Gaim - Fortgegangen"
 
 #. *< api_version
 #. *< type
@@ -729,8 +729,8 @@ msgstr "Optionen spezifisch für Windows-Gaim."
 #: plugins/perl/perl.c:410
 msgid "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
 msgstr ""
-"GAIM::registen wurde nicht mit den richtigen Argumenten aufgerufen. Lesen "
-"SIe das PERL-HOWTO."
+"GAIM::register wurde nicht mit den richtigen Argumenten aufgerufen.  Lesen "
+"Sie das PERL-HOWTO."
 
 #. *< api_version
 #. *< type
@@ -1175,13 +1175,13 @@ msgstr ""
 "Kodierungs-Option im Acount-Editor"
 
 # Direct IM erwähnen?
-#: src/protocols/irc/irc.c:488 src/protocols/irc/irc.c:2608
+#: src/protocols/irc/irc.c:488 src/protocols/irc/irc.c:2585
 #, c-format
 msgid "DCC Chat with %s closed"
 msgstr "DCC-Chat mit %s geschlossen"
 
 # Direct IM erwähnen?
-#: src/protocols/irc/irc.c:541 src/protocols/irc/irc.c:2617
+#: src/protocols/irc/irc.c:541 src/protocols/irc/irc.c:2594
 #, c-format
 msgid "DCC Chat with %s established"
 msgstr "DCC-Chat mit %s hergestellt"
@@ -1205,7 +1205,7 @@ msgid "User"
 msgstr "Benutzer"
 
 #. Splits
-#: src/protocols/irc/irc.c:923 src/protocols/irc/irc.c:3031
+#: src/protocols/irc/irc.c:923 src/protocols/irc/irc.c:3012
 #: src/protocols/jabber/jabber.c:4418 src/protocols/napster/napster.c:639
 msgid "Server"
 msgstr "Server"
@@ -1322,19 +1322,19 @@ msgstr "Sie wurden hinausgeworfen von %s: %s"
 msgid "Kicked by %s: %s"
 msgstr "Hinausgeworfen durch %s: %s"
 
-#: src/protocols/irc/irc.c:1664 src/protocols/irc/irc.c:2918
+#: src/protocols/irc/irc.c:1664 src/protocols/irc/irc.c:2899
 msgid "CTCP ClientInfo"
 msgstr "CTCP Client-Information"
 
-#: src/protocols/irc/irc.c:1670 src/protocols/irc/irc.c:2924
+#: src/protocols/irc/irc.c:1670 src/protocols/irc/irc.c:2905
 msgid "CTCP UserInfo"
 msgstr "CTCP Benutzer-Info"
 
-#: src/protocols/irc/irc.c:1676 src/protocols/irc/irc.c:2930
+#: src/protocols/irc/irc.c:1676 src/protocols/irc/irc.c:2911
 msgid "CTCP Version"
 msgstr "CTCP-Version"
 
-#: src/protocols/irc/irc.c:1704 src/protocols/irc/irc.c:2936
+#: src/protocols/irc/irc.c:1704 src/protocols/irc/irc.c:2917
 msgid "CTCP Ping"
 msgstr "CTCP-Ping"
 
@@ -1407,7 +1407,7 @@ msgstr "Kanal:"
 msgid "Password:"
 msgstr "Paßwort:"
 
-#: src/protocols/irc/irc.c:2905
+#: src/protocols/irc/irc.c:2886
 msgid "DCC Chat"
 msgstr "DCC-Chat"
 
@@ -1421,18 +1421,18 @@ msgstr "DCC-Chat"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/irc/irc.c:3011 src/protocols/irc/irc.c:3013
+#: src/protocols/irc/irc.c:2992 src/protocols/irc/irc.c:2994
 msgid "IRC Protocol Plugin"
 msgstr "IRC-Protokoll Plugin"
 
 #. Account Options
-#: src/protocols/irc/irc.c:3035 src/protocols/jabber/jabber.c:4425
+#: src/protocols/irc/irc.c:3016 src/protocols/jabber/jabber.c:4425
 #: src/protocols/msn/msn.c:1260 src/protocols/napster/napster.c:644
 #: src/protocols/trepia/trepia.c:1377 src/gtkprefs.c:1145
 msgid "Port"
 msgstr "Port"
 
-#: src/protocols/irc/irc.c:3039
+#: src/protocols/irc/irc.c:3020
 msgid "Encoding"
 msgstr "Kodierung:"
 
@@ -4040,24 +4040,24 @@ msgstr ""
 msgid "Group not removed"
 msgstr "Gruppe nicht entfernt"
 
-#: src/blist.c:947
+#: src/blist.c:964
 msgid "Invalid Groupname"
 msgstr "Ungültiger Gruppenname"
 
-#: src/blist.c:1703
+#: src/blist.c:1720
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr ""
 "Ein Fehler wurde beim Parsen Ihrer Buddy-Liste festgestellt.  Die Liste "
 "wurde nicht geladen."
 
-#: src/blist.c:1705
+#: src/blist.c:1722
 msgid "Buddy List Error"
 msgstr "Buddy-Listen Fehler"
 
 #. rob wants to inform the user that their buddy lists are
 #. * being converted
-#: src/blist.c:1713
+#: src/blist.c:1730
 #, c-format
 msgid ""
 "Gaim is converting your old buddy lists to a new format, which will now be "
@@ -4066,7 +4066,7 @@ msgstr ""
 "Gaim konvertiert Ihre alte Buddy-Liste in ein neues Format, welchen nun "
 "unter %s gespeichert wird"
 
-#: src/blist.c:1716
+#: src/blist.c:1733
 msgid "Converting Buddy List"
 msgstr "Buddy-Liste konvertieren"
 
@@ -4627,22 +4627,22 @@ msgstr "Gruppe umbenennen"
 msgid "Please enter a new name for the selected group.\n"
 msgstr "Bitte geben Sie einen neuen Namen für die ausgewählte Gruppe ein.\n"
 
-#: src/ft.c:121
+#: src/ft.c:123
 #, c-format
 msgid "%s is not a valid filename.\n"
 msgstr "%s ist kein gültiger Dateiname.\n"
 
-#: src/ft.c:135
+#: src/ft.c:137
 #, c-format
 msgid "%s was not found.\n"
 msgstr "%s wurde nicht gefunden.\n"
 
-#: src/ft.c:727
+#: src/ft.c:693
 #, c-format
 msgid "File transfer to %s aborted.\n"
 msgstr "Dateitransfer zu %s wurde abgebrochen.\n"
 
-#: src/ft.c:729
+#: src/ft.c:695
 #, c-format
 msgid "File transfer from %s aborted.\n"
 msgstr "Dateitransfer zu %s wurde abgebrochen.\n"
@@ -5569,11 +5569,11 @@ msgstr "Icon speichern unter..."
 msgid "%.2f KB/s"
 msgstr "%.2f KB/s"
 
-#: src/gtkft.c:201
+#: src/gtkft.c:200
 msgid "<b>Receiving From:</b>"
 msgstr "<b>Empfange von:</b>"
 
-#: src/gtkft.c:204
+#: src/gtkft.c:203
 msgid "<b>Sending To:</b>"
 msgstr "<b>Sende zu:</b>"
 
@@ -5613,34 +5613,34 @@ msgstr "Zeit verstrichen:"
 msgid "Time Remaining:"
 msgstr "Zeit verbleibend:"
 
-#: src/gtkft.c:586
+#: src/gtkft.c:588
 msgid "_Keep the dialog open"
 msgstr "_Lasse den Dialog offen"
 
-#: src/gtkft.c:596
+#: src/gtkft.c:598
 msgid "_Clear finished transfers"
 msgstr "_Entferne beendete Transfers"
 
 #. "Download Details" arrow
-#: src/gtkft.c:605
+#: src/gtkft.c:607
 msgid "Show download details"
 msgstr "Zeige Download-Details"
 
-#: src/gtkft.c:606
+#: src/gtkft.c:608
 msgid "Hide download details"
 msgstr "Verstecke Download-Details"
 
 #. Pause button
-#: src/gtkft.c:648 src/stock.c:86
+#: src/gtkft.c:650 src/stock.c:86
 msgid "_Pause"
 msgstr "_Pause"
 
 #. Resume button
-#: src/gtkft.c:658
+#: src/gtkft.c:660
 msgid "_Resume"
 msgstr "Fo_rtsetzen"
 
-#: src/gtkft.c:1013
+#: src/gtkft.c:1011
 msgid "That file does not exist."
 msgstr "Diese Datei existiert nicht."
 
@@ -6935,17 +6935,26 @@ msgstr "Gaim konnte Ihr Plugin nicht laden."
 msgid "Custom"
 msgstr "Benutzerdefiniert"
 
-#: src/gtkdebug.c:142
+#: src/gtkdebug.c:133
 msgid "Debug Window"
 msgstr "Debug-Fenster"
 
-#: src/gtkdebug.c:182
+#: src/gtkdebug.c:173
 msgid "Pause"
 msgstr "Pause"
 
-#: src/gtkdebug.c:188
+#: src/gtkdebug.c:179
 msgid "Timestamps"
 msgstr "Zeitstempel"
+
+#~ msgid "Gaim Instant Messenger"
+#~ msgstr "Gaim Instant Messenger"
+
+#~ msgid "Gaim Instant Messenging - Signed off"
+#~ msgstr "Gaim Instant Messenger - Abgemeldet"
+
+#~ msgid "Gaim Instant Messenging - Away"
+#~ msgstr "Gaim Instant Messenger - Fortgegangen"
 
 #~ msgid "Availalbe"
 #~ msgstr "Online"

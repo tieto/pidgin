@@ -3,7 +3,8 @@
 ;;
 ;;  German language strings for the Windows Gaim NSIS installer.
 ;;  Windows Code page: 1252
-;;  Author: bjoern@cs.tu-berlin.de
+;;
+;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2003.
 ;;
 
 ; Startup GTK+ check
