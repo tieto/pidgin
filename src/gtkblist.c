@@ -4775,7 +4775,7 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		for (n = node->child; n; n = n->next)
-			log_size += gaim_log_get_total_size(((GaimBuddy*)(n))->name, ((GaimBuddy*)(n))->account);
+			log_size += gaim_log_get_total_size(GAIM_LOG_IM, ((GaimBuddy*)(n))->name, ((GaimBuddy*)(n))->account);
 		buddy_name = gaim_contact_get_alias((GaimContact*)node);
 	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		/* we don't have a reliable way of getting the log filename
@@ -4804,7 +4804,7 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 
 		if(GAIM_BLIST_NODE_IS_CONTACT(n)) {
 			for (n2 = n->child; n2; n2 = n2->next)
-				this_log_size += gaim_log_get_total_size(((GaimBuddy*)(n2))->name, ((GaimBuddy*)(n2))->account);
+				this_log_size += gaim_log_get_total_size(GAIM_LOG_IM, ((GaimBuddy*)(n2))->name, ((GaimBuddy*)(n2))->account);
 			this_buddy_name = gaim_contact_get_alias((GaimContact*)n);
 		} else {
 			this_buddy_name = NULL;

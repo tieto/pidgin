@@ -252,7 +252,7 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	}
 
 	lv = g_new0(GaimGtkLogViewer, 1);
-	lv->logs = logs = gaim_log_get_logs(screenname, account);
+	lv->logs = logs = gaim_log_get_logs(GAIM_LOG_IM, screenname, account);
 	g_hash_table_insert(log_viewers, ht, lv);
 
 	/* Window ***********/

@@ -21,14 +21,23 @@
 static void historize(GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
+	GaimConversationType convtype;
 	char *history = NULL;
 	guint flags;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
-	GList *logs = gaim_log_get_logs(gaim_conversation_get_name(c),
-			gaim_conversation_get_account(c));
+	GList *logs = NULL;
+
+	convtype = gaim_conversation_get_type(c);
+	if (convtype == GAIM_CONV_IM)
+		logs = gaim_log_get_logs(GAIM_LOG_IM,
+				gaim_conversation_get_name(c), gaim_conversation_get_account(c));
+	else if (convtype == GAIM_CONV_CHAT)
+		logs = gaim_log_get_logs(GAIM_LOG_CHAT,
+				gaim_conversation_get_name(c), gaim_conversation_get_account(c));
 
 	if (!logs)
 		return;
+
 	history = gaim_log_read((GaimLog*)logs->data, &flags);
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 	if (flags & GAIM_LOG_READ_NO_NEWLINE)
@@ -37,6 +46,7 @@ static void historize(GaimConversation *c)
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
 	gtk_imhtml_scroll_to_end(GTK_IMHTML(gtkconv->imhtml));
 	g_free(history);
+
 	while (logs) {
 		GaimLog *log = logs->data;
 		GList *logs2;
@@ -45,7 +55,6 @@ static void historize(GaimConversation *c)
 		g_list_free_1(logs);
 		logs = logs2;
 	}
-	
 }
 
 static gboolean

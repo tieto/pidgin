@@ -132,7 +132,7 @@ static void _gaim_logsize_user_free_key(struct _gaim_logsize_user *lu)
 	g_free(lu);
 }
 
-int gaim_log_get_total_size(const char *name, GaimAccount *account)
+int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *account)
 {
 	int size;
 	GSList *n;
@@ -150,9 +150,9 @@ int gaim_log_get_total_size(const char *name, GaimAccount *account)
 			GaimLogLogger *logger = n->data;
 
 			if(logger->total_size){
-				size += (logger->total_size)(name, account);
+				size += (logger->total_size)(type, name, account);
 			} else if(logger->list) {
-				GList *logs = (logger->list)(name, account);
+				GList *logs = (logger->list)(type, name, account);
 				int this_size = 0;
 
 				while (logs) {
@@ -196,12 +196,13 @@ static void logger_pref_cb(const char *name, GaimPrefType type,
 }
 
 
-GaimLogLogger *gaim_log_logger_new(void(*create)(GaimLog *),
-				   void(*write)(GaimLog *, GaimMessageFlags, const char *,
-						time_t, const char *),
-				   void(*finalize)(GaimLog *), GList*(*list)(const char*, GaimAccount*),
-				   char*(*read)(GaimLog*, GaimLogReadFlags*),
-				   int(*size)(GaimLog*))
+GaimLogLogger *gaim_log_logger_new(
+				void(*create)(GaimLog *),
+				void(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
+				void(*finalize)(GaimLog *),
+				GList*(*list)(GaimLogType type, const char*, GaimAccount*),
+				char*(*read)(GaimLog*, GaimLogReadFlags*),
+				int(*size)(GaimLog*))
 {
 	GaimLogLogger *logger = g_new0(GaimLogLogger, 1);
 	logger->create = create;
@@ -268,7 +269,7 @@ gint gaim_log_compare(gconstpointer y, gconstpointer z)
 	return b->time - a->time;
 }
 
-GList *gaim_log_get_logs(const char *name, GaimAccount *account)
+GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *account)
 {
 	GList *logs = NULL;
 	GSList *n;
@@ -276,7 +277,7 @@ GList *gaim_log_get_logs(const char *name, GaimAccount *account)
 		GaimLogLogger *logger = n->data;
 		if (!logger->list)
 			continue;
-		logs = g_list_concat(logs, logger->list(name, account));
+		logs = g_list_concat(logs, logger->list(type, name, account));
 	}
 
 	return g_list_sort(logs, gaim_log_compare);
@@ -329,31 +330,34 @@ struct generic_logger_data {
 	FILE *file;
 };
 
-static GList *log_lister_common(const char *screenname, GaimAccount *account, const char *ext, GaimLogLogger *logger)
+static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount *account, const char *ext, GaimLogLogger *logger)
 {
 	GDir *dir;
 	GList *list = NULL;
 	const char *filename;
 	char *me;
-
 	const char *prpl;
 	char *path;
 
 	if(!account)
 		return NULL;
 
-	me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
+	if (type == GAIM_LOG_CHAT)
+		me = g_strdup_printf("%s.chat", gaim_normalize(account, gaim_account_get_username(account)));
+	else
+		me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
 
 	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
 	prpl = GAIM_PLUGIN_PROTOCOL_INFO
 		(gaim_find_prpl(gaim_account_get_protocol_id(account)))->list_icon(account, NULL);
-	path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, screenname), NULL);
+	path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, name), NULL);
 	g_free(me);
 
 	if (!(dir = g_dir_open(path, 0, NULL))) {
 		g_free(path);
 		return NULL;
 	}
+
 	while ((filename = g_dir_read_name(dir))) {
 		if (gaim_str_has_suffix(filename, ext) &&
 				strlen(filename) == 17 + strlen(ext)) {
@@ -361,7 +365,7 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 			struct generic_logger_data *data;
 			time_t stamp = gaim_str_to_time(filename, FALSE);
 
-			log = gaim_log_new(GAIM_LOG_IM, screenname, account, stamp);
+			log = gaim_log_new(type, name, account, stamp);
 			log->logger = logger;
 			log->logger_data = data = g_new0(struct generic_logger_data, 1);
 			data->path = g_build_filename(path, filename, NULL);
@@ -415,6 +419,12 @@ static void xml_logger_write(GaimLog *log,
 		char *dir;
 		FILE *file;
 
+		if (log->type == GAIM_LOG_CHAT) {
+			char *chat = g_strdup_printf("%s.chat", guy);
+			g_free(guy);
+			guy = chat;
+		}
+
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
 
 		dir = g_build_filename(ud, "logs",
@@ -467,9 +477,9 @@ static void xml_logger_write(GaimLog *log,
 	}
 }
 
-static GList *xml_logger_list(const char *sn, GaimAccount *account)
+static GList *xml_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return log_lister_common(sn, account, ".xml", &xml_logger);
+	return log_lister_common(type, sn, account, ".xml", &xml_logger);
 }
 
 static GaimLogLogger xml_logger =  {
@@ -595,14 +605,14 @@ static void html_logger_finalize(GaimLog *log)
 	}
 }
 
-static GList *html_logger_list(const char *sn, GaimAccount *account)
+static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return log_lister_common(sn, account, ".html", &html_logger);
+	return log_lister_common(type, sn, account, ".html", &html_logger);
 }
 
 static GList *html_logger_list_syslog(GaimAccount *account)
 {
-	return log_lister_common(".system", account, ".html", &html_logger);
+	return log_lister_common(GAIM_LOG_SYSTEM, ".system", account, ".html", &html_logger);
 }
 
 static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
@@ -688,22 +698,23 @@ static void txt_logger_write(GaimLog *log,
 		 * creating a new file there would result in empty files in the case
 		 * that you open a convo with someone, but don't say anything.
 		 *
-		 * The log is also not system log. Because if it is, data would be
-		 * created in txt_logger_create
+		 * The log is also not a system log. Because if it is, data would
+		 * be created in txt_logger_create
 		 */
 		char *ud = gaim_user_dir();
-		char *filename;
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
 		char *chat;
 		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
 			(gaim_find_prpl(gaim_account_get_protocol_id(log->account)))->list_icon(log->account, NULL);
 		char *dir;
+		char *filename;
 
 		if (log->type == GAIM_LOG_CHAT) {
 			chat = g_strdup_printf("%s.chat", guy);
 			g_free(guy);
 			guy = chat;
 		}
+
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.txt", localtime(&log->time));
 
 		dir = g_build_filename(ud, "logs",
@@ -781,14 +792,14 @@ static void txt_logger_finalize(GaimLog *log)
 	}
 }
 
-static GList *txt_logger_list(const char *sn, GaimAccount *account)
+static GList *txt_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return log_lister_common(sn, account, ".txt", &txt_logger);
+	return log_lister_common(type, sn, account, ".txt", &txt_logger);
 }
 
 static GList *txt_logger_list_syslog(GaimAccount *account)
 {
-	return log_lister_common(".system", account, ".txt", &txt_logger);
+	return log_lister_common(GAIM_LOG_SYSTEM, ".system", account, ".txt", &txt_logger);
 }
 
 static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
@@ -867,7 +878,7 @@ struct old_logger_data {
 	int length;
 };
 
-static GList *old_logger_list(const char *sn, GaimAccount *account)
+static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
 	FILE *file;
 	char buf[BUF_LONG];
@@ -993,7 +1004,7 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	return list;
 }
 
-static int old_logger_total_size(const char *name, GaimAccount *account)
+static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount *account)
 {
 	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, name));
 	char *pathstr = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
