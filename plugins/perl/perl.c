@@ -1284,7 +1284,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 	gboolean status = TRUE;
 
 	perl_construct(prober);
-	perl_parse(prober, NULL, 2, argv, NULL);
+	perl_parse(prober, xs_init, 2, argv, NULL);
 	
 	{
 		dSP;
