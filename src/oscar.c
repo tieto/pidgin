@@ -1720,10 +1720,10 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 
 				if ((uni < 128) || ((uni >= 160) && (uni <= 255))) { /* ISO 8859-1 */
 					
-					g_snprintf(tmp+strlen(tmp), sizeof(tmp)-strlen(tmp), "%c", uni);
+					g_snprintf(tmp+strlen(tmp), BUF_LONG-strlen(tmp), "%c", uni);
 					
 				} else { /* something else, do UNICODE entity */
-					g_snprintf(tmp+strlen(tmp), sizeof(tmp)-strlen(tmp), "&#%04x;", uni);
+					g_snprintf(tmp+strlen(tmp), BUF_LONG-strlen(tmp), "&#%04x;", uni);
 				}
 			}
 		} else
