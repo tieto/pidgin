@@ -422,9 +422,10 @@ static GaimPluginInfo info =
 	N_("Transparency"),                               /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP."),
+	N_("Variable Transparency for the buddy list and conversations."),
 	                                                  /**  description    */
-	N_("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP."),
+	N_("This plugin enables variable alpha transparency on conversation windows and the buddy list.\n\n"
+           "* Note: This plugin requires Win2000 or WinXP."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",      /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
