@@ -5494,7 +5494,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	/* The buddy icon code needs badly to be fixed. */
 	buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
-	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), buf);
+	if(conv == gaim_conv_window_get_active_conversation(gaim_conversation_get_window(conv)))
+		gtk_window_set_icon(GTK_WINDOW(gtkwin->window), buf);
 }
 
 void
