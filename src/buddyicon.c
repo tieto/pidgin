@@ -32,6 +32,31 @@ static GHashTable *account_cache = NULL;
 static char       *cache_dir     = NULL;
 static gboolean    icon_caching  = TRUE;
 
+static GaimBuddyIcon *
+gaim_buddy_icon_create(GaimAccount *account, const char *username)
+{
+	GaimBuddyIcon *icon;
+	GHashTable *icon_cache;
+
+	icon = g_new0(GaimBuddyIcon, 1);
+
+	gaim_buddy_icon_set_account(icon,  account);
+	gaim_buddy_icon_set_username(icon, username);
+
+	icon_cache = g_hash_table_lookup(account_cache, account);
+
+	if (icon_cache == NULL)
+	{
+		icon_cache = g_hash_table_new(g_str_hash, g_str_equal);
+
+		g_hash_table_insert(account_cache, account, icon_cache);
+	}
+
+	g_hash_table_insert(icon_cache,
+	                   (char *)gaim_buddy_icon_get_username(icon), icon);
+	return icon;
+}
+
 GaimBuddyIcon *
 gaim_buddy_icon_new(GaimAccount *account, const char *username,
 					void *icon_data, size_t icon_len)
@@ -46,26 +71,7 @@ gaim_buddy_icon_new(GaimAccount *account, const char *username,
 	icon = gaim_buddy_icons_find(account, username);
 
 	if (icon == NULL)
-	{
-		GHashTable *icon_cache;
-
-		icon = g_new0(GaimBuddyIcon, 1);
-
-		gaim_buddy_icon_set_account(icon,  account);
-		gaim_buddy_icon_set_username(icon, username);
-
-		icon_cache = g_hash_table_lookup(account_cache, account);
-
-		if (icon_cache == NULL)
-		{
-			icon_cache = g_hash_table_new(g_str_hash, g_str_equal);
-
-			g_hash_table_insert(account_cache, account, icon_cache);
-		}
-
-		g_hash_table_insert(icon_cache,
-							(char *)gaim_buddy_icon_get_username(icon), icon);
-	}
+		icon = gaim_buddy_icon_create(account, username);
 
 	gaim_buddy_icon_ref(icon);
 	gaim_buddy_icon_set_data(icon, icon_data, icon_len);
@@ -335,19 +341,44 @@ gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
 }
 
 GaimBuddyIcon *
-gaim_buddy_icons_find(const GaimAccount *account, const char *username)
+gaim_buddy_icons_find(GaimAccount *account, const char *username)
 {
 	GHashTable *icon_cache;
+	GaimBuddyIcon *ret = NULL;
 
 	g_return_val_if_fail(account  != NULL, NULL);
 	g_return_val_if_fail(username != NULL, NULL);
 
 	icon_cache = g_hash_table_lookup(account_cache, account);
 
-	if (icon_cache == NULL)
-		return NULL;
+	if ((icon_cache == NULL) || ((ret = g_hash_table_lookup(icon_cache, username)) == NULL)) {
+		const char *file;
+		struct stat st;
+		GaimBuddy *b = gaim_find_buddy(account, username);
 
-	return g_hash_table_lookup(icon_cache, username);
+		if (!b)
+			return NULL;
+
+		if ((file = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon")) == NULL)
+			return NULL;
+
+		if (!stat(file, &st)) {
+			FILE *f = fopen(file, "rb");
+			if (f) {
+				char *data = g_malloc(st.st_size);
+				fread(data, 1, st.st_size, f);
+				fclose(f);
+				ret = gaim_buddy_icon_create(account, username);
+				gaim_buddy_icon_ref(ret);
+				gaim_buddy_icon_set_data(ret, data, st.st_size);
+				gaim_buddy_icon_unref(ret);
+				g_free(data);
+				return ret;
+			}
+		}
+	}
+
+	return ret;
 }
 
 void

@@ -182,7 +182,7 @@ void gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
  *
  * @return The icon data if found, or @c NULL if not found.
  */
-GaimBuddyIcon *gaim_buddy_icons_find(const GaimAccount *account,
+GaimBuddyIcon *gaim_buddy_icons_find(GaimAccount *account,
 									 const char *username);
 
 /**
