@@ -1,6 +1,7 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.9.16:
+	* Paned buddy chat window
 
 version 0.9.15: (05/06/2000)
 	* Plugin support enabled by default (oops)
