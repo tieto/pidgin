@@ -954,6 +954,7 @@ void redo_buddy_list()
 			}
 		}
 	}
+	update_idle_times();
 }
 
 static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *parent,
