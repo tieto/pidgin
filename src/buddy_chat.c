@@ -1233,7 +1233,7 @@ void show_new_buddy_chat(struct conversation *b)
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(chat_notebook), TRUE);
 			gtk_notebook_popup_enable(GTK_NOTEBOOK(chat_notebook));
 			gtk_container_add(GTK_CONTAINER(win), testidea);
-			g_signal_connect(GTK_OBJECT(chat_notebook), "switch-page",
+			g_signal_connect_after(GTK_OBJECT(chat_notebook), "switch-page",
 					   G_CALLBACK(convo_switch), NULL);
 			gtk_widget_show(chat_notebook);
 		} else
@@ -1255,6 +1255,8 @@ void show_new_buddy_chat(struct conversation *b)
 		gtk_box_pack_start(GTK_BOX(tabby), b->close, FALSE, FALSE, 0);
 		gtk_widget_show_all(tabby);
 		gtk_notebook_append_page(GTK_NOTEBOOK(chat_notebook), cont, tabby);
+		gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(chat_notebook), cont,
+				b->name);
 		gtk_widget_show(cont);
 	} else {
 		win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1393,8 +1395,10 @@ void show_new_buddy_chat(struct conversation *b)
 	g_object_set_data(G_OBJECT(b->entry_buffer), "user_data", b);
 	chatentry = gtk_text_view_new_with_buffer(b->entry_buffer);
 	b->entry = chatentry;
-	if (!(chat_options & OPT_CHAT_ONE_WINDOW))
-		gtk_window_set_focus(GTK_WINDOW(b->window), b->entry);
+	if (!(chat_options & OPT_CHAT_ONE_WINDOW)
+			|| ((gtk_notebook_get_current_page(GTK_NOTEBOOK(chat_notebook)) == 0)
+				&& (b = g_list_nth_data(chats, 0))))
+		gtk_widget_grab_focus(b->entry);
 
 
 	b->makesound = 1; /* Need to do this until we get a menu */
