@@ -1242,6 +1242,8 @@ static gboolean gaim_gtk_blist_refresh_timer(struct gaim_buddy_list *list)
 {
 	GaimBlistNode *group, *buddy;
 
+	gaim_debug(GAIM_DEBUG_INFO, "refresh_timer", "called\n");
+
 	for(group = list->root; group; group = group->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(group))
 			continue;
@@ -1506,7 +1508,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gaim_gtk_blist_update_toolbar();
 
 	/* start the refresh timer */
-	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
+	if (blist_options & (OPT_BLIST_SHOW_IDLETIME | OPT_BLIST_SHOW_ICONS))
+		gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
 }
 
 void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
@@ -1520,6 +1523,25 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
 		for(buddy = group->child; buddy; buddy = buddy->next) {
 			gaim_gtk_blist_update(list, buddy);
 		}
+	}
+}
+
+void
+gaim_gtk_blist_update_refresh_timeout()
+{
+	struct gaim_buddy_list *blist;
+	struct gaim_gtk_buddy_list *gtkblist;
+
+	gaim_debug(GAIM_DEBUG_INFO, "update_refresh_timeout", "called\n");
+
+	blist = gaim_get_blist();
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+
+	if (blist_options & (OPT_BLIST_SHOW_IDLETIME | OPT_BLIST_SHOW_ICONS)) {
+		gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, blist);
+	} else {
+		g_source_remove(gtkblist->refresh_timer);
+		gtkblist->refresh_timer = 0;
 	}
 }
 
