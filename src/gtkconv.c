@@ -4129,11 +4129,13 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 			style->fg[GTK_STATE_ACTIVE].red   = 0x3131;
 			style->fg[GTK_STATE_ACTIVE].green = 0x4E4E;
 			style->fg[GTK_STATE_ACTIVE].blue  = 0x6C6C;
+			style->fg[GTK_STATE_NORMAL] = style->fg[GTK_STATE_ACTIVE];
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT) {
 			style->fg[GTK_STATE_ACTIVE].red   = 0xDFDF;
 			style->fg[GTK_STATE_ACTIVE].green = 0x4242;
 			style->fg[GTK_STATE_ACTIVE].blue  = 0x1E1E;
+			style->fg[GTK_STATE_NORMAL] = style->fg[GTK_STATE_ACTIVE];
 		}
 
 		gtk_widget_set_style(gtkconv->tab_label, style);
