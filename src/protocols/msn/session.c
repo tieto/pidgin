@@ -66,6 +66,11 @@ msn_session_destroy(MsnSession *session)
 
 	msn_users_destroy(session->users);
 
+	g_free(session->passport_info.kv);
+	g_free(session->passport_info.sid);
+	g_free(session->passport_info.mspauth);
+	g_free(session->passport_info.file);
+
 	g_free(session);
 }
 

@@ -232,7 +232,6 @@ extern void ui_add_group(struct group *);
 extern void ui_remove_group(struct group *);
 extern void toggle_buddy_pixmaps();
 extern void gaim_separator(GtkWidget *);
-extern void redo_buddy_list(); /* you really shouldn't call this function */
 extern void set_blist_tab();
 extern void hide_buddy_list();
 extern void unhide_buddy_list();

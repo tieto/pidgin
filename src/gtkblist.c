@@ -1329,7 +1329,6 @@ void gaim_gtk_blist_setup_sort_methods()
 
 static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 {
-	GtkItemFactory *ift;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
 	GtkWidget *sw;
@@ -1365,21 +1364,21 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW (gtkblist->window), accel_group);
 	g_object_unref(accel_group);
-	ift = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<GaimMain>", accel_group);
-	gtk_item_factory_set_translate_func (ift,
+	gtkblist->ift = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<GaimMain>", accel_group);
+	gtk_item_factory_set_translate_func (gtkblist->ift,
 					     item_factory_translate_func,
 					     NULL, NULL);
-	gtk_item_factory_create_items(ift, sizeof(blist_menu) / sizeof(*blist_menu),
+	gtk_item_factory_create_items(gtkblist->ift, sizeof(blist_menu) / sizeof(*blist_menu),
 				      blist_menu, NULL);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtk_item_factory_get_widget(ift, "<GaimMain>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtk_item_factory_get_widget(gtkblist->ift, "<GaimMain>"), FALSE, FALSE, 0);
 
-	awaymenu = gtk_item_factory_get_widget(ift, N_("/Tools/Away"));
+	awaymenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Away"));
 	do_away_menu();
 
-	gtkblist->bpmenu = gtk_item_factory_get_widget(ift, N_("/Tools/Buddy Pounce"));
+	gtkblist->bpmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounce"));
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 
-	protomenu = gtk_item_factory_get_widget(ift, N_("/Tools/Protocol Actions"));
+	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Protocol Actions"));
 	do_proto_menu();
 
 	/****************************** GtkTreeView **********************************/
@@ -1462,9 +1461,9 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
 	 */
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Buddies/Show Offline Buddies"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Offline Buddies"))),
 			blist_options & OPT_BLIST_SHOW_OFFLINE);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Buddies/Show Empty Groups"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Empty Groups"))),
 			!(blist_options & OPT_BLIST_NO_MT_GRP));
 
 	/* OK... let's show this bad boy. */
@@ -1718,8 +1717,6 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 			if (((struct buddy*)node)->present != GAIM_BUDDY_OFFLINE || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc)) {
 				GtkTreeIter groupiter;
-				GaimBlistNode *oldersibling;
-				GtkTreeIter oldersiblingiter;
 				char *collapsed = gaim_group_get_setting((struct group *)node->parent, "collapsed");
 
 				if(node->parent &&
@@ -1947,6 +1944,7 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 	gtkblist->idle_column = NULL;
 	gtkblist->warning_column = gtkblist->buddy_icon_column = NULL;
 	gtkblist->bbox = gtkblist->tipwindow = NULL;
+	g_object_unref(G_OBJECT(gtkblist->ift));
 	protomenu = NULL;
 	awaymenu = NULL;
 	gtkblist = NULL;

@@ -56,6 +56,7 @@ struct gaim_gtk_buddy_list {
 		*warning_column, 
 		*buddy_icon_column;
 
+	GtkItemFactory *ift;
 	GtkWidget *bpmenu;              /**< The buddy pounce menu. */
 
 	GtkWidget *bbox;                /**< A Button Box. */
