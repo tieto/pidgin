@@ -126,7 +126,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		
 		/* Handle closes right */
 		gtk_signal_connect(GTK_OBJECT(imaway), "destroy",
-			   GTK_SIGNAL_FUNC(destroy_im_away), imaway);
+			   GTK_SIGNAL_FUNC(do_im_back), imaway);
 		gtk_signal_connect(GTK_OBJECT(back), "clicked",
 			   GTK_SIGNAL_FUNC(do_im_back), imaway);
 
