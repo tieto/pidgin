@@ -338,7 +338,7 @@ void gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
  * @param fnc  The acknowledge function.
  */
 void gaim_xfer_set_ack_fnc(struct gaim_xfer *xfer,
-						   void (*fnc)(struct gaim_xfer *));
+		void (*fnc)(struct gaim_xfer *, const char *, size_t));
 
 /**
  * Sets the transfer initialization function for the file transfer.

@@ -379,7 +379,7 @@ gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
 
 void
 gaim_xfer_set_ack_fnc(struct gaim_xfer *xfer,
-					  void (*fnc)(struct gaim_xfer *))
+			  void (*fnc)(struct gaim_xfer *, const char *, size_t))
 {
 	if (xfer == NULL)
 		return;
