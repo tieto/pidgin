@@ -93,6 +93,7 @@ struct oscar_data {
 	gboolean icq;
 	GSList *evilhack;
 	guint icontimer;
+	guint getblisttimer;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -748,6 +749,8 @@ static void oscar_close(GaimConnection *gc) {
 		gaim_input_remove(od->icopa);
 	if (od->icontimer)
 		g_source_remove(od->icontimer);
+	if (od->getblisttimer)
+		g_source_remove(od->getblisttimer);
 	aim_session_kill(od->sess);
 	g_free(od->sess);
 	od->sess = NULL;
@@ -4704,6 +4707,12 @@ static void oscar_rename_group(GaimConnection *g, const char *old_group, const c
 	}
 }
 
+static gboolean gaim_ssi_rerequestdata(gpointer data) {
+	aim_session_t *sess = data;
+	aim_ssi_reqdata(sess, sess->ssi.timestamp, sess->ssi.numitems);
+	return FALSE;
+}
+
 static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
@@ -4719,13 +4728,13 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
 						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
+		od->getblisttimer = g_timeout_add(300000, gaim_ssi_rerequestdata, od->sess);
 	}
 
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
 	/* Make sure your privacy setting/invisibility is set how you want it before this! */
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
-			   "ssi: activating server-stored buddy list\n");
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: activating server-stored buddy list\n");
 	aim_ssi_enable(od->sess);
 
 	return 1;
