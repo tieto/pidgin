@@ -110,13 +110,30 @@ static gboolean flash_window_cb(gpointer data) {
 	return TRUE;
 }
 
-static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, WGAIM_FLASH_INFO *finfo) {
-	/* Stop flashing and remove filter */
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Removing timeout\n");
-	g_source_remove(finfo->t_handle);
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Disconnecting signal handler\n");
-	g_signal_handler_disconnect(G_OBJECT(widget),finfo->sig_handler);
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");
+static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
+        if(MyFlashWindowEx) {
+                HWND hWnd = data;
+                FLASHWINFO info;
+
+                if(!IsWindow(hWnd))
+                        return;
+                memset(&info, 0, sizeof(FLASHWINFO));
+		info.cbSize = sizeof(FLASHWINFO);
+		info.hwnd = hWnd;
+		info.dwFlags = FLASHW_STOP;
+		info.dwTimeout = 0;
+		MyFlashWindowEx(&info);
+        }
+        else {
+                WGAIM_FLASH_INFO *finfo = data;        
+                /* Stop flashing and remove filter */
+                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Removing timeout\n");
+                g_source_remove(finfo->t_handle);
+                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Disconnecting signal handler\n");
+                g_signal_handler_disconnect(G_OBJECT(widget),finfo->sig_handler);
+                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");
+                g_free(finfo);
+        }
 }
 
 static void load_winver_specific_procs(void) {
@@ -276,8 +293,7 @@ static void wgaim_debug_print(GaimDebugLevel level, const char *category, const 
         g_free(str);
 }
 
-static GaimDebugUiOps ops = 
-{
+static GaimDebugUiOps ops =  {
 	wgaim_debug_print
 };
 
@@ -414,12 +430,18 @@ void wgaim_conv_im_blink(GtkWidget *window) {
                 return;
 	if(MyFlashWindowEx) {
 		FLASHWINFO info;
+                if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
+                        return;
                 memset(&info, 0, sizeof(FLASHWINFO));
 		info.cbSize = sizeof(FLASHWINFO);
 		info.hwnd = GDK_WINDOW_HWND(window->window);
-		info.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
+		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
 		info.dwTimeout = 0;
 		MyFlashWindowEx(&info);
+                /* Stop flashing when window receives focus */
+                g_signal_connect(G_OBJECT(window), 
+                                 "focus-in-event", 
+                                 G_CALLBACK(halt_flash_filter), info.hwnd);
 	}
 	else {
 		WGAIM_FLASH_INFO *finfo = g_new0(WGAIM_FLASH_INFO, 1);
