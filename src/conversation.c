@@ -1669,6 +1669,12 @@ void redo_convo_menus()
 	while (c) {
 		C = (struct conversation *)c->data;
 		create_convo_menu(C);
+
+		if (connections)
+			C->gc = (struct gaim_connection *)connections->data;
+		else
+			C->gc = NULL;
+
 		c = c->next;
 	}
 }

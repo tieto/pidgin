@@ -641,6 +641,7 @@ void account_offline(struct gaim_connection *gc)
 	u = find_user(gc->username);
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "No");
+	redo_convo_menus();
 }
 
 void auto_login()
