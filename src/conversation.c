@@ -321,7 +321,10 @@ void insert_smiley(GtkWidget *widget, struct conversation *c)
 	if (state_lock)
 		return;
 		
-	show_smiley_dialog(c, NULL);
+	if (c->smiley_dialog)
+		close_smiley_dialog(widget, c);
+	else
+		show_smiley_dialog(c, NULL);
 		
 	return;
 }
@@ -756,6 +759,8 @@ void toggle_color(GtkWidget *color, struct conversation *c)
                 return;
 	if (GTK_TOGGLE_BUTTON(color)->active)
 		show_color_dialog(c, color);
+	else if (c->color_dialog)
+		cancel_color(color, c);
 	else
 		advance_past(c->entry, "<FONT COLOR>", "</FONT>" );
 }
@@ -766,10 +771,10 @@ void toggle_font(GtkWidget *font, struct conversation *c)
 		return;
 	if (GTK_TOGGLE_BUTTON(font)->active)
 		show_font_dialog(c, font);
+	else if (c->font_dialog)
+		cancel_font(font, c);
 	else
 		advance_past(c->entry, "<FONT FACE>", "</FONT>");
-	
-	return;
 }
 
 void do_link(GtkWidget *linky, GtkWidget *entry)
