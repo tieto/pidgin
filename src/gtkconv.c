@@ -407,16 +407,15 @@ static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
-	char *buf, *buf2;
-	int limit;
+	char *buf;
 	GaimConnection *gc = gaim_conversation_get_gc(conv);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	
 	if (gc && gc->flags & GAIM_CONNECTION_HTML)
-		buf2 = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
+		buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 	else
-		buf2 = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry));
+		buf = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry));
 
 	/*	set_toggle(gtkconv->toolbar.bold,        FALSE);
 	set_toggle(gtkconv->toolbar.italic,      FALSE);
@@ -430,13 +429,6 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	set_toggle(gtkconv->toolbar.link,        FALSE);
 	*/
 	gtk_widget_grab_focus(gtkconv->entry);
-
-	limit = 32 * 1024; /* This will be done again in gaim_conv_im_send. *shrug* */
-
-	buf = g_malloc(limit);
-	strncpy(buf, buf2, limit);
-
-	g_free(buf2);
 
 	if (strlen(buf) == 0) {
 		g_free(buf);
