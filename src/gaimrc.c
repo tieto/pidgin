@@ -807,6 +807,8 @@ static void gaimrc_read_options(FILE *f)
 			web_browser = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "web_command")) {
 			strcpy(web_command, p->value[0]);
+		} else if (!strcmp(p->option, "smiley_theme")) {
+			load_smiley_theme(p->value[0], TRUE);
 		} else if (!strcmp(p->option, "conv_size")) {
 			conv_size.width = atoi(p->value[0]);
 			conv_size.height = atoi(p->value[1]);
@@ -904,6 +906,8 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\treport_idle { %d }\n", report_idle);
 	fprintf(f, "\tweb_browser { %d }\n", web_browser);
 	fprintf(f, "\tweb_command { %s }\n", web_command);
+	if (current_smiley_theme)
+		fprintf(f, "\tsmiley_theme { %s }\n", current_smiley_theme->path);
 	fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d }\n",
 		blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height);
 	fprintf(f, "\tconv_size { %d } { %d } { %d }\n",

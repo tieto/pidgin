@@ -266,6 +266,17 @@ struct mod_user {
 	GtkWidget *register_user;
 };
 
+struct smiley_theme {
+	char *path;
+	char *name;
+	char *desc;
+	char *icon;
+	char *author;
+	
+	struct smiley_list *list;
+};
+
+
 #define EDIT_GC    0
 #define EDIT_GROUP 1
 #define EDIT_BUDDY 2
@@ -319,6 +330,11 @@ extern gboolean session_managed;
 
 /* Globals in sound.c */
 extern gboolean mute_sounds;
+
+/* Globals in themes.c */
+extern struct smiley_theme *current_smiley_theme;
+extern GSList *smiley_themes;
+
 
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);

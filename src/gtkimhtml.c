@@ -1015,7 +1015,13 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 	GtkIMHtmlImage    handler){}
 
-void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml){}
+void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml) 
+{ 
+	g_hash_table_destroy(imhtml->smiley_data);
+	gtk_smiley_tree_destroy(imhtml->default_smilies);
+	imhtml->smiley_data = g_hash_table_new (g_str_hash, g_str_equal);
+	imhtml->default_smilies = gtk_smiley_tree_new();
+}
 void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
 					gboolean          show)
 {

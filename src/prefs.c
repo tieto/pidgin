@@ -198,6 +198,99 @@ GtkWidget *interface_page() {
 	return ret;
 }
 
+static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
+	GtkTreeIter  iter;
+	char *filename;
+	GValue val = { 0, };
+	
+	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
+		return;
+	gtk_tree_model_get_value (model, &iter, 2, &val);
+	filename = g_value_get_string(&val);
+	load_smiley_theme(filename, TRUE);
+	g_value_unset (&val);
+}
+
+GtkWidget *theme_page() {
+	GtkWidget *ret;
+	GtkWidget *sw;
+	GSList *themes = smiley_themes;
+	GtkTreeIter iter;
+	GtkWidget *view;
+	GtkListStore *ls;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkTreePath *path;
+	GtkListStore *store;
+	GdkPixbuf *pixbuf;
+	int ind =0;
+
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+
+	sw = gtk_scrolled_window_new(NULL,NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+
+	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
+	store = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+	while (themes) {
+		struct smiley_theme *theme = themes->data;
+		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
+						    "<span size='smaller' foreground='gray'>%s</span>",
+						    theme->name, theme->author, theme->desc);; 
+		gtk_list_store_append (store, &iter);
+		pixbuf = gdk_pixbuf_new_from_file(theme->icon, NULL);
+		
+		gtk_list_store_set(store, &iter,
+				   0, pixbuf,
+				   1, description,
+				   2, theme->path,
+				   -1);
+		g_free(description);
+		themes = themes->next;
+		if (current_smiley_theme && !strcmp(theme->path, current_smiley_theme->path)) {
+			/* path = gtk_tree_path_new_from_indices(ind); */
+			char *iwishihadgtk2_2 = g_strdup_printf("%d", ind);
+			path = gtk_tree_path_new_from_string(iwishihadgtk2_2);
+			g_free(iwishihadgtk2_2);
+		}
+		ind++;
+	}
+	
+	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(store));
+	
+	rend = gtk_cell_renderer_pixbuf_new();
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+	
+	gtk_tree_selection_select_path(sel, path);
+	gtk_tree_path_free(path);
+
+	col = gtk_tree_view_column_new_with_attributes ("Icon",
+							rend,
+							"pixbuf", 0,
+							NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(view), col);
+
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes ("Description",
+							rend,
+							"markup", 1,
+							NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(view), col);
+	g_object_unref(G_OBJECT(store));
+	gtk_container_add(GTK_CONTAINER(sw), view);
+
+	g_signal_connect (G_OBJECT (sel), "changed",
+			  G_CALLBACK (smiley_sel),
+			  NULL);
+
+
+	gtk_widget_show_all(ret);
+	return ret;
+}
+
 GtkWidget *font_page() {
 	GtkWidget *ret;
 	GtkWidget *button;
@@ -1400,6 +1493,7 @@ void prefs_notebook_init() {
 	struct gaim_plugin *plug;
 #endif
 	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Themes"), NULL, theme_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
