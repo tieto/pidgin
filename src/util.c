@@ -1235,7 +1235,7 @@ GSList *message_split(char *message, int limit) {
 
 void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 {
-	gchar *sp = g_strdup(src), *dp = dest;
+	gchar *sp =src, *dp = dest;
 
 	while (dp < dest+destsize) {
                 if (*sp == '\n' && dp < dest+destsize-4) {
@@ -1244,6 +1244,4 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
                 }
                 else *dp++ = *sp++;
 	}
-
-	g_free(sp);
 }
