@@ -298,6 +298,24 @@ static struct irc_channel *find_channel_by_id(struct gaim_connection *gc, int id
 	return NULL;
 }
 
+static struct conversation *find_chat(struct gaim_connection *gc, char *name)
+{
+	GSList *bcs = gc->buddy_chats; 
+	struct conversation *b = NULL;
+	char *chat = g_strdup(normalize(name));
+
+	while (bcs) {
+		b = bcs->data;
+		if (!strcasecmp(normalize(b->name), chat))
+			break;
+		b = NULL;
+		bcs = bcs->next;
+	}
+
+	g_free(chat);
+	return b;
+}
+
 static void irc_chat_leave(struct gaim_connection *gc, int id);
 static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 {
@@ -388,6 +406,18 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 	      is_command = TRUE;
 	      
 	    }	
+
+		else if (!g_strncasecmp(message, "/topic ", 7) && (strlen(message) > 7))
+		{
+			gchar *temp = (gchar *)g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 7);
+
+			/* Send the chat topic change request */
+			serv_chat_set_topic(gc, id, temp);
+
+			g_free(temp);
+			is_command = TRUE;
+		}
 	    
 	    else if (!g_strncasecmp(message, "/part", 5) && (strlen(message) == 5)) {
 
@@ -979,6 +1009,47 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		}
 
 		/* Go Home! */
+		return;
+	}
+
+	if ((strstr(buf, " TOPIC ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+
+		gchar u_channel[128];
+		gchar u_nick[128];
+		gchar u_topic[128];
+		int j;
+		struct conversation *chatroom = NULL;
+
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
+		}
+		u_nick[j] = 0; i++;
+
+		for (j = 0; buf[i] != '#'; j++,  i++) {
+		}
+		i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			if (buf[i] == '\0')
+				break;
+
+			u_channel[j] = buf[i];
+		}
+
+		for (j = 0; buf[i] != ':'; j++, i++) {
+		}
+		i++;
+
+		strcpy(u_topic, buf + i);
+		g_strchomp(u_topic);
+
+		chatroom = find_chat(gc, u_channel);
+
+		if (!chatroom)
+			return;
+
+		chat_set_topic(chatroom, u_nick, u_topic);
+
 		return;
 	}
 
@@ -2002,13 +2073,31 @@ static void irc_fake_buddy(struct gaim_connection *gc, char *who)
 	 * show up */
 }
 
+static void irc_chat_set_topic(struct gaim_connection *gc, int id, char *topic)
+{
+	struct irc_channel *ic = NULL;
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	char buf[BUF_LEN];
 
+	ic = find_channel_by_id(gc, id);
+
+	/* If we ain't in no channel, foo, gets outta da kitchen beeyotch */
+	if (!ic)
+		return;
+
+	/* Prepare our command */
+	g_snprintf(buf, BUF_LEN, "TOPIC #%s :%s\n", ic->name, topic);
+
+	/* And send it */
+	write(idata->fd, buf, strlen(buf));
+}
 
 static struct prpl *my_protocol = NULL;
 
 static void irc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_IRC;
+	ret->options = OPT_PROTO_CHAT_TOPIC;
 	ret->name = irc_name;
 	ret->list_icon = irc_list_icon;
 	ret->buddy_menu = irc_buddy_menu;
@@ -2023,7 +2112,7 @@ static void irc_init(struct prpl *ret)
 	ret->set_away = irc_set_away;
 	ret->add_buddy = irc_fake_buddy;
 	ret->remove_buddy = irc_fake_buddy;
-
+	ret->chat_set_topic = irc_chat_set_topic;
 	my_protocol = ret;
 }
 
