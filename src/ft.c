@@ -31,6 +31,7 @@ static GaimXferUiOps *xfer_ui_ops = NULL;
 GaimXfer *
 gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 {
+	const char *ip;
 	GaimXfer *xfer;
 	GaimXferUiOps *ui_ops;
 
@@ -44,6 +45,12 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	xfer->account = account;
 	xfer->who     = g_strdup(who);
 	xfer->ui_ops  = gaim_get_xfer_ui_ops();
+
+	if ((ip = gaim_account_get_public_ip(account)) != NULL)
+		ip = gaim_prefs_get_string("/core/ft/public_ip");
+
+	if (ip != NULL && *ip != '\0')
+		xfer->local_ip = g_strdup(ip);
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
