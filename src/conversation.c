@@ -2033,8 +2033,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 	}
 
-	if (!flags & WFLAG_NOLOG && ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
-				     (!c->is_chat && (im_options & OPT_IM_POPUP))))
+	if (!(flags & WFLAG_NOLOG) && ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
+								   (!c->is_chat && (im_options & OPT_IM_POPUP))))
 		gdk_window_show(c->window->window);
 
 	/* tab highlighting */
