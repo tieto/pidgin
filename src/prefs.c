@@ -82,6 +82,9 @@ static GtkTreeIter plugin_iter;
 GtkTreeIter *prefs_notebook_add_page(char*, GdkPixbuf*, GtkWidget*, GtkTreeIter*, GtkTreeIter*, int);
 
 void delete_prefs(GtkWidget *asdf, void *gdsa) {
+	GList *l = plugins;
+	struct gaim_plugin *plug;
+	
 	save_prefs();
 	prefs = NULL;
 	tree_v = NULL;
@@ -93,6 +96,14 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	if(sounddialog)
 		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
+	while(l) {
+		plug = l->data;
+		if(plug->iter) {
+			g_free(plug->iter);
+			plug->iter = NULL;
+		}
+		l = l->next;
+	}
 }
 
 GtkWidget *preflabel;
