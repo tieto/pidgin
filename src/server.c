@@ -485,7 +485,7 @@ void serv_join_chat(int exchange, char *name)
 	sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
 	debug_print(debug_buff);
 	/* aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_CHATNAV); */
-	aim_chatnav_createroom(gaim_sess, aim_getconn_type(gaim_sess, AIM_CONN_TYPE_CHATNAV), name, 0x0004);
+	/* aim_chatnav_createroom(gaim_sess, aim_getconn_type(gaim_sess, AIM_CONN_TYPE_CHATNAV), name, 0x0004); */
 	aim_chat_join(gaim_sess, gaim_conn, 0x0004, name);
 #endif
 }
