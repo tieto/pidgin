@@ -148,8 +148,6 @@ struct save_pos {
         int y;
         int width;
         int height;
-        int xoff;
-        int yoff;
 };
 
 

@@ -244,7 +244,7 @@ static GtkAllocation get_applet_pos(gboolean for_blist) {
 	GNOME_Panel_OrientType orient = applet_widget_get_panel_orient( APPLET_WIDGET(applet) );
 	pad = 5;
 
-	gdk_window_get_position(gtk_widget_get_parent_window(appletframe), &x, &y);
+	gdk_window_get_root_origin(gtk_widget_get_parent_window(appletframe), &x, &y);
 	if (for_blist) {
 	        if (general_options & OPT_GEN_SAVED_WINDOWS) {
 			buddy_req.width = blist_pos.width;
@@ -286,7 +286,7 @@ void createOnlinePopup(){
         if (general_options & OPT_GEN_NEAR_APPLET)
                 gtk_widget_set_uposition ( blist, al.x, al.y );
         else if (general_options & OPT_GEN_SAVED_WINDOWS)
-                gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff, blist_pos.y - blist_pos.yoff);
+                gtk_widget_set_uposition(blist, blist_pos.x, blist_pos.y);
 }
 
 void AppletClicked( GtkWidget *sender, GdkEventButton *ev, gpointer data ){
