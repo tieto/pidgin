@@ -922,8 +922,6 @@ static void gaimrc_read_options(FILE *f)
 						 ? GAIM_BUTTON_NONE : GAIM_BUTTON_TEXT)));
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
 					display_options & OPT_DISP_IGNORE_COLOUR);
-			gaim_prefs_set_bool("/core/conversations/im/show_login",
-					display_options & OPT_DISP_SHOW_LOGON);
 			gaim_prefs_set_bool("/core/conversations/chat/show_join",
 					display_options & OPT_DISP_CHAT_LOGON);
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/button_type",
@@ -1020,8 +1018,6 @@ static void gaimrc_read_options(FILE *f)
 
 			gaim_prefs_set_bool("/gaim/gtk/conversations/im/raise_on_events",
 					im_options & OPT_IM_POPUP);
-			gaim_prefs_set_bool("/core/conversations/im/show_login",
-					im_options & OPT_IM_LOGON);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/im/button_type",
 					((im_options & OPT_IM_BUTTON_XPM)
 					 ? ((im_options & OPT_IM_BUTTON_TEXT)

@@ -2620,7 +2620,6 @@ gaim_conversations_init(void)
 
 	/* Conversations -> IM */
 	gaim_prefs_add_none("/core/conversations/im");
-	gaim_prefs_add_bool("/core/conversations/im/show_login", TRUE);
 	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
 
 	gaim_prefs_connect_callback("/core/conversations/use_alias_for_title",

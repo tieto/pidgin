@@ -991,11 +991,6 @@ GtkWidget *im_page() {
 	gaim_gtk_prefs_checkbox(_("Enable buddy icon a_nimation"),
 			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
 
-#if 0 /* PREFSLASH04 */
-	vbox = gaim_gtk_make_frame (ret, _("Display"));
-	gaim_gtk_prefs_checkbox(_("Show _logins in window"),
-			"/core/conversations/im/show_login", vbox);
-#endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Typing Notification"));
 	gaim_gtk_prefs_checkbox(_("Notify buddies that you are _typing to them"),
 			"/core/conversations/im/send_typing", vbox);
