@@ -1519,7 +1519,7 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
@@ -1536,4 +1536,4 @@ __init_plugin(GaimPlugin *plugin)
 	my_protocol = plugin;
 }
 
-GAIM_INIT_PLUGIN(yahoo, __init_plugin, info);
+GAIM_INIT_PLUGIN(yahoo, init_plugin, info);

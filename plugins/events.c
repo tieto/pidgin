@@ -240,8 +240,8 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(eventtester, __init_plugin, info);
+GAIM_INIT_PLUGIN(eventtester, init_plugin, info);

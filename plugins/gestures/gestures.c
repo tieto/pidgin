@@ -294,7 +294,7 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	gaim_prefs_add_none("/plugins/gtk");
 	gaim_prefs_add_none("/plugins/gtk/X11");
@@ -305,4 +305,4 @@ __init_plugin(GaimPlugin *plugin)
 								visual_pref_cb, NULL);
 }
 
-GAIM_INIT_PLUGIN(gestures, __init_plugin, info);
+GAIM_INIT_PLUGIN(gestures, init_plugin, info);

@@ -4406,7 +4406,7 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
@@ -4431,4 +4431,4 @@ __init_plugin(GaimPlugin *plugin)
 	my_protocol = plugin;
 }
 
-GAIM_INIT_PLUGIN(jabber, __init_plugin, info);
+GAIM_INIT_PLUGIN(jabber, init_plugin, info);

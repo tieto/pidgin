@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6304 2003-06-14 23:21:02Z chipx86 $
+ * $Id: gg.c 6360 2003-06-18 06:01:15Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1373,7 +1373,7 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
@@ -1385,4 +1385,4 @@ __init_plugin(GaimPlugin *plugin)
 	my_protocol = plugin;
 }
 
-GAIM_INIT_PLUGIN(gg, __init_plugin, info);
+GAIM_INIT_PLUGIN(gg, init_plugin, info);

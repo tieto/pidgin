@@ -632,7 +632,7 @@ static GaimPluginInfo info =
 	&prpl_info                                        /**< extra_info     */
 };
 
-static void __init_plugin(GaimPlugin *plugin)
+static void init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
@@ -648,4 +648,4 @@ static void __init_plugin(GaimPlugin *plugin)
 	my_protocol = plugin;
 }
 
-GAIM_INIT_PLUGIN(napster, __init_plugin, info);
+GAIM_INIT_PLUGIN(napster, init_plugin, info);

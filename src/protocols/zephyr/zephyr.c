@@ -1042,9 +1042,9 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	my_protocol = plugin;
 }
 
-GAIM_INIT_PLUGIN(zephyr, __init_plugin, info);
+GAIM_INIT_PLUGIN(zephyr, init_plugin, info);

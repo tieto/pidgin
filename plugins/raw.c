@@ -164,9 +164,9 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	me = plugin;
 }
 
-GAIM_INIT_PLUGIN(raw, __init_plugin, info);
+GAIM_INIT_PLUGIN(raw, init_plugin, info);
