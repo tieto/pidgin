@@ -91,6 +91,8 @@ struct oscar_data {
 	GSList *direct_ims;
 	GSList *getfiles;
 	GSList *hasicons;
+
+        gboolean killme;
 };
 
 struct chat_connection {
@@ -351,6 +353,8 @@ static void oscar_callback(gpointer data, gint source,
 		} else {
 			if (aim_get_command(odata->sess, conn) >= 0) {
 				aim_rxdispatch(odata->sess);
+                                if (odata->killme)
+                                        signoff(gc);
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(odata->sess, AIM_CONN_TYPE_BOS))) {
@@ -588,6 +592,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	struct aim_user *user;
 
 	struct gaim_connection *gc = sess->aux_data;
+        struct oscar_data *od = gc->proto_data;
 	user = gc->user;
 	port = user->proto_opt[USEROPT_AUTHPORT][0] ?
 		atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
@@ -642,8 +647,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		}
 		debug_printf("Login Error Code 0x%04x\n", errorcode);
 		debug_printf("Error URL: %s\n", errurl);
-		aim_conn_kill(sess, &command->conn);
-		signoff(gc);
+		od->killme = TRUE;
 		return 1;
 	}
 
@@ -667,8 +671,8 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, NULL);
 	if (bosconn == NULL) {
 		hide_login_progress(gc, _("Internal Error"));
-		signoff(gc);
-		return 1;
+		od->killme = TRUE;
+		return 0;
 	}
 
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0003, gaim_bosrights, 0);
@@ -710,8 +714,8 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	g_free(host);
 	if (bosconn->fd < 0) {
 		hide_login_progress(gc, _("Could Not Connect"));
-		signoff(gc);
-		return 1;
+		od->killme = TRUE;
+		return 0;
 	}
 	aim_auth_sendcookie(sess, bosconn, cookie);
 	gdk_input_remove(gc->inpa);
