@@ -236,6 +236,12 @@ static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned
 	g_free(what);
 }
 
+static void icq_req_not(struct icq_link *link, unsigned long id, int type, int arg, void *data) {
+	if (type == ICQ_NOTIFY_FAILED)
+		do_error_dialog("Failure in sending packet", "ICQ error");
+	return;
+}
+
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
@@ -262,6 +268,7 @@ static void icq_login(struct aim_user *user) {
 	link->icq_WrongPassword = icq_wrong_passwd;
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
+	link->icq_RequestNotify = icq_req_not;
 
 	icq_ContactClear(id->link);
 	if (bud_list_cache_exists(gc))
