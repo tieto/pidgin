@@ -22,7 +22,6 @@
  */
 #include "gtkinternal.h"
 
-#include "debug.h"
 #include "prefs.h"
 
 #include "gtkrequest.h"
@@ -107,8 +106,6 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 {
 	const char *value;
 
-	gaim_debug(GAIM_DEBUG_MISC, "gtkrequest", "field_string_focus_out_cb\n");
-
 	if (gaim_request_field_string_is_multiline(field)) {
 		GtkTextBuffer *buffer;
 		GtkTextIter start_iter, end_iter;
@@ -123,8 +120,6 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 	else
 		value = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	gaim_debug(GAIM_DEBUG_MISC, "gtkrequest", "'%s' = '%s'\n",
-			   gaim_request_field_get_id(field), value);
 	gaim_request_field_string_set_value(field,
 			(*value == '\0' ? NULL : value));
 
