@@ -447,7 +447,6 @@ void build_prefs()
         gtk_box_pack_start(GTK_BOX(applet_page), appletbox, TRUE, TRUE, 5);
 
 	gaim_button(_("Automatically Show Buddy List"), &general_options, OPT_GEN_APP_BUDDY_SHOW, appletbox);
-	gaim_button(_("Sounds go through GNOME"), &sound_options, OPT_SOUND_THROUGH_GNOME, appletbox);
 	gaim_button(_("Buddy list displays near the applet"), &general_options, OPT_GEN_NEAR_APPLET, appletbox);
 
 	gtk_widget_show(appletbox);
@@ -678,6 +677,7 @@ void build_prefs()
 	label = gtk_label_new(_("Sounds"));
 	gtk_widget_show(label);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), sound_page, label);
+	gaim_button(_("Sounds go through GNOME"), &sound_options, OPT_SOUND_THROUGH_GNOME, sound_page);
         gaim_button(_("Sound when buddy logs in"), &sound_options, OPT_SOUND_LOGIN, sound_page);
 	gaim_button(_("Sound when buddy logs out"), &sound_options, OPT_SOUND_LOGOUT, sound_page);
         gaim_button(_("Sound when message is received"), &sound_options, OPT_SOUND_RECV, sound_page);

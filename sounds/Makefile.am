@@ -31,3 +31,9 @@ if DISTRIB
 gaimdistribdir = $(datadir)/sounds/gaim
 gaimdistrib_DATA = $(EXTRA_DIST)
 endif
+
+if GNOMEBITS
+bitsdata = `@GNOME_CONFIG@ --datadir`
+bitssoundsdir = $(bitsdata)/sounds/gaim
+bitssounds_DATA = $(EXTRA_DIST)
+endif

@@ -49,7 +49,7 @@ as the regular application but takes less desktop space.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix}
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-gnome
 make
 if [ -d $RPM_BUILD_ROOT ]; then rm -r $RPM_BUILD_ROOT; fi;
 mkdir -p $RPM_BUILD_ROOT%{prefix}
@@ -70,6 +70,7 @@ make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
 %{prefix}/share/pixmaps/gaim.xpm
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
 
+
 %files applet
 %defattr(-,root,root)
 %attr(755,root,root) %{prefix}/bin/gaim_applet
@@ -80,6 +81,9 @@ make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
 %{prefix}/share/pixmaps/gaim.xpm
 %{prefix}/share/pixmaps/gaim/gnome/*
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
+/etc/CORBA/servers/*
+%{prefix}/share/applets/Network/*
+/etc/sound/events/*
 
 %clean
 rm -r $RPM_BUILD_ROOT

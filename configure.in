@@ -80,11 +80,14 @@ if test "x$enable_gnome" = "xyes" ; then
 				CFLAGS="$CFLAGS $GNOME_CFLAGS"
 				LIBS="$LIBS `$gnomepath gnomeui --libs 2>/dev/null`"
 				AC_DEFINE(USE_GNOME)
+				GNOME_CONFIG="$gnomepath"
+				AC_SUBST(GNOME_CONFIG)
 				AC_PATH_PROG(gaimpath, gaim)
 			fi
 		fi
 	fi
 fi
+AM_CONDITIONAL(GNOMEBITS, test "x$enable_gnome" = "xyes")
 
 if test "x$enable_gnome" != "xyes" ; then
 	AM_PATH_GLIB(1.2.0)

@@ -15,9 +15,30 @@ gaim_DESKTOP = gaim_applet.desktop
 gaimdesktopdir = $(gnomedata)/applets/Network
 gaimdesktop_DATA = $(gaim_DESKTOP)
 
-gaim_SOUND = gaim_applet.soundlist
+gaim_SOUND = gaim.soundlist
 gaimsounddir = $(gnomesysconf)/sound/events
 gaimsound_DATA = $(gaim_SOUND)
+
+endif
+
+if DISTRIB
+
+distribgnorbadir = $(sysconfdir)/CORBA/servers
+distribgnorba_DATA = gaim_applet.gnorba
+
+distribdesktopdir = $(datadir)/applets/Network
+distribdesktop_DATA = gaim_applet.desktop
+
+distribsounddir = $(sysconfdir)/sound/events
+distribsound_DATA = gaim.soundlist
+
+endif
+
+if GNOMEBITS
+
+bitssysconf = `@GNOME_CONFIG@ --sysconfdir`
+bitssounddir = $(bitssysconf)/sound/events
+bitssound_DATA = gaim.soundlist
 
 endif
 

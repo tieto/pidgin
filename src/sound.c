@@ -266,8 +266,8 @@ void play(unsigned char *data, int size)
 
 extern int logins_not_muted;
 
-#ifdef USE_APPLET
-void applet_play_sound(int sound)
+#ifdef USE_GNOME
+void gnome_play_sound(int sound)
 #else
 void play_sound(int sound)
 #endif
@@ -301,43 +301,43 @@ void play_sound(int sound)
        }
 }
 
-#ifdef USE_APPLET
+#ifdef USE_GNOME
 
 #include <gnome.h>
 void play_sound(int sound)
 {
 
 	if (!(sound_options & OPT_SOUND_THROUGH_GNOME)) {
-		applet_play_sound(sound);
+		gnome_play_sound(sound);
 		return;
 	}
 
 	switch(sound) {
 	case BUDDY_ARRIVE:
 		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted)
-			gnome_triggers_do("", "program", "gaim_applet", "login", NULL);
+			gnome_triggers_do("", "program", "gaim", "login", NULL);
 		break;
 	case BUDDY_LEAVE:
 		if (sound_options & OPT_SOUND_LOGOUT)
-			gnome_triggers_do("", "program", "gaim_applet", "leave", NULL);
+			gnome_triggers_do("", "program", "gaim", "leave", NULL);
 		break;
 	case SEND:
 		if (sound_options & OPT_SOUND_SEND)
-			gnome_triggers_do("", "program", "gaim_applet", "send", NULL);
+			gnome_triggers_do("", "program", "gaim", "send", NULL);
 		break;
         case FIRST_RECEIVE:
 		if (sound_options & OPT_SOUND_FIRST_RCV)
-			gnome_triggers_do("", "program", "gaim_applet", "recv", NULL);
+			gnome_triggers_do("", "program", "gaim", "recv", NULL);
 		break;
         case RECEIVE:
 		if (sound_options & OPT_SOUND_RECV)
-			gnome_triggers_do("", "program", "gaim_applet", "recv", NULL);
+			gnome_triggers_do("", "program", "gaim", "recv", NULL);
 		break;
 	case AWAY:
 		if (sound_options & OPT_SOUND_WHEN_AWAY)
-			gnome_triggers_do("", "program", "gaim_applet", "recv", NULL);
+			gnome_triggers_do("", "program", "gaim", "recv", NULL);
 		break;
        }
 }
 
-#endif /* USE_APPLET */
+#endif /* USE_GNOME */
