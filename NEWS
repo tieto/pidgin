@@ -9,8 +9,8 @@
 	Sean: I committed my news after Rob.  I'm cooler than Nathan (by far) but
 	not as cool as Rob.  So I go here.  Actually, I didn't do anything since 
 	0.60 other than commit some other peoples patches.  The one from Dave Camp
-	is cool.  How 'bout this snow?  Isn't that crazy?  Oh, and thanks to everyone
-	who wished me a happy birthday.
+	is cool.  How 'bout this snow?  Isn't that crazy?  Oh, and thanks to
+	everyone who wished me a happy birthday.
 
 	Nathan: You want frequent releases?  You got 'em ;-)  Chip wrote some
 	cool new pounce stuff, and things shouldn't get weird when you drag
@@ -27,8 +27,8 @@
 	Luke: Okay, i'm probly the least cool, so I'll go last. I committed a few 
 	patches from other people here, nothing earth shattering though. The biggest
 	thing in this release is the group re-ordering bug fix, having that fixed 
-	will make for fewwer questions. Get used to using releases people, we want to
-	use cvs for actual development :-).
+	will make for fewwer questions. Get used to using releases people, we want
+	to use cvs for actual development :-).
 
 	Mark: I didn't want to write any news without actually having done 
 	anything, so I fixed a meaningless compile warning.  Boo-yeah.
