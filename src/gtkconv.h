@@ -180,7 +180,7 @@ struct gaim_gtk_conversation
 	(gaim_window_get_ops(win) == gaim_get_gtk_window_ops())
 
 #define GAIM_IS_GTK_CONVERSATION(conv) \
-	(gaim_conversation_get_ops(win) == gaim_get_gtk_conversation_ops())
+	(gaim_conversation_get_ops(conv) == gaim_get_gtk_conversation_ops())
 
 /**************************************************************************
  * @name GTK+ Conversation API
