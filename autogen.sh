@@ -69,6 +69,7 @@ if [ $GETTEXT_VER -eq 11 ]; then
 
 	# Now restore the things that brain-dead gettext modified.
 	[ -e configure.in~ ] && mv -f configure.in~ configure.in
+	[ -e configure.ac~ ] && mv -f configure.ac~ configure.ac
 	[ -e Makefile.am~ ]  && mv -f Makefile.am~  Makefile.am
 	rm -rf m4
 	mv -f m4~ m4
