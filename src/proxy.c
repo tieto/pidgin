@@ -158,6 +158,7 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 	debug_printf("connecting to %s:%d with no proxy\n", host, port);
 
 	if (!(hp = gethostbyname(host))) {
+		debug_printf("gethostbyname failed\n");
 		g_free(phb);
 		return -1;
 	}
@@ -168,6 +169,7 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 	sin.sin_port = htons(port);
 
 	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+		debug_printf("unable to create socket\n");
 		g_free(phb);
 		return -1;
 	}
@@ -189,6 +191,7 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 		debug_printf("Connect didn't block\n");
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+			debug_printf("getsockopt failed\n");
 			close(fd);
 			g_free(phb);
 			return -1;
