@@ -260,7 +260,16 @@ XS (XS_AIM_get_info)
 
 XS (XS_AIM_print)
 {
-	/* FIXME */
+	char *title;
+	char *message;
+	int junk;
+	dXSARGS;
+	items = 0;
+
+	title = SvPV(ST(0), junk);
+	message = SvPV(ST(1), junk);
+	do_error_dialog(message, title);
+	XSRETURN(0);
 }
 
 XS (XS_AIM_buddy_list)

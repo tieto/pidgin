@@ -807,7 +807,8 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 				  info->warnlevel,
 				  asctime(localtime(&info->onlinesince)),
 				  info->idletime,
-				  prof);
+				  infotype == AIM_GETINFO_GENERALINFO ? prof :
+		  		   away_subs(prof, current_user->username));
 	g_show_info_text(buf);
 
 	return 1;

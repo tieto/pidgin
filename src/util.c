@@ -837,3 +837,54 @@ void spell_checker(GtkWidget * text)
 
 }
 
+/* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
+   or time */
+char *away_subs(char *msg, char *name)
+{
+	char *c;
+	static char cpy[BUF_LONG];
+	int cnt=0;
+	time_t t = time(0);
+	struct tm *tme = localtime(&t);
+	char tmp[20];
+
+	cpy[0] = '\0';
+	c = msg;
+	while(*c) {
+		switch(*c) {
+		case '%':
+			if (*(c+1)) {
+				switch (*(c+1)) {
+				case 'n':
+					// append name
+					strcpy (cpy+cnt, name);
+					cnt += strlen(name);
+					c++;
+					break;
+				case 'd':
+					// append date
+					strftime (tmp, 20, "%D", tme);
+					strcpy (cpy+cnt, tmp);
+					cnt += strlen(tmp);
+					c++;
+					break;
+				case 't':
+					// append time
+					strftime (tmp, 20, "%r", tme);
+					strcpy (cpy+cnt, tmp);
+					cnt += strlen(tmp);
+					c++;
+					break;
+				default:
+					cpy[cnt++]=*c;
+				}
+			}
+			break;
+		default:
+			cpy[cnt++]=*c;
+		}
+		c++;
+	}
+	cpy[cnt]='\0';
+	return(cpy);
+}

@@ -733,13 +733,13 @@ void serv_got_im(char *name, char *message, int away)
 		strcpy(tmpmsg, awaymessage->message);
 		escape_text(tmpmsg);
 		escape_message(tmpmsg);
-                serv_send_im(name, tmpmsg, 1);
+                serv_send_im(name, away_subs(tmpmsg, name), 1);
 
                 if (is_idle == -1)
 			is_idle = 1;
 		
                 if (cnv != NULL)
-			write_to_conv(cnv, awaymessage->message, WFLAG_SEND | WFLAG_AUTO, NULL);
+			write_to_conv(cnv, away_subs(awaymessage->message, name), WFLAG_SEND | WFLAG_AUTO, NULL);
         }
 }
 
