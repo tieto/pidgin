@@ -229,6 +229,51 @@ void irc_chat_send( struct gaim_connection *gc, int id, char *message) {
 	g_free(buf);	
 }
 
+struct conversation * find_conversation_by_id( struct gaim_connection * gc, int id) {
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	GSList *bc = gc->buddy_chats;
+	struct conversation *b = NULL;
+
+	while (bc) {
+		b = (struct conversation *)bc->data;
+		if (id == b->id) {
+			break;
+		}
+		bc = bc->next;
+		b = NULL;
+	}
+
+	if (!b) {
+		return NULL;
+	}
+
+	return b;
+}
+
+struct conversation * find_conversation_by_name( struct gaim_connection * gc, char *name) {
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	GSList *bc = gc->buddy_chats;
+	struct conversation *b = NULL;
+
+	while (bc) {
+		b = (struct conversation *)bc->data;
+
+		if (g_strcasecmp(name, b->name) == 0) {
+			break;
+		}
+		bc = bc->next;
+		b = NULL;
+	}
+
+	if (!b) {
+		return NULL;
+	}
+
+	return b;
+}
+
+
+
 void irc_callback ( struct gaim_connection * gc ) {
 
 	int i = 0;
@@ -256,9 +301,76 @@ void irc_callback ( struct gaim_connection * gc ) {
 	/* And remove that damned trailing \n */
 	g_strchomp(buf);
 
-	/* For now, lets display everything to the console too. Im such a bitch */
+	/* For now, lets display everything to the console too. Im such 
+	 * a bitch */
 	printf("IRC:'%'s\n", buf);
 
+
+	/* Parse the list of names that we receive when we first sign on to
+	 * a channel */
+
+	if (((strstr(buf, " 353 ")) && (!strstr(buf, "PRIVMSG")) &&
+	     (!strstr(buf, "NOTICE")))) {
+		gchar u_host[255];
+		gchar u_command[32];
+		gchar u_channel[128];
+		gchar u_names[IRC_BUF_LEN + 1];
+		struct conversation *convo = NULL;
+		int j;
+
+		for (j = 0, i = 0; buf[i] != ' '; j++, i++) {
+			u_host[j] = buf[i];
+		}
+
+		u_host[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_command[j] = buf[i];
+		}
+
+		u_command[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != '#'; j++, i++) {
+		}
+		i++;
+		
+		for (j = 0; buf[i] != ':'; j++, i++) {
+			u_channel[j] = buf[i];
+		}
+
+		u_channel[j-1] = '\0'; i++;
+
+		while ((buf[i] == ' ') || (buf[i] == ':')) {
+			i++;
+		}
+
+		strcpy(u_names, buf + i);
+	
+		buf2 = g_strsplit(u_names, " ", 0);
+		
+		/* Let's get our conversation window */
+		convo = find_conversation_by_name(gc, u_channel);
+
+		if (!convo) {
+			return;
+		}
+			
+		/* Now that we've parsed the hell out of this big
+		 * mess, let's try to split up the names properly */
+
+		for (i = 0; buf2[i] != NULL; i++) {
+			/* We shouldnt play with ourselves */
+			if (g_strcasecmp(buf2[i], gc->username) != 0) {
+				/* Add the person to the list */
+				add_chat_buddy(convo, buf2[i]);
+			}
+		}
+	
+		return;
+		
+	}
+
+	
 	if ( (strstr(buf, " JOIN ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
@@ -281,8 +393,9 @@ void irc_callback ( struct gaim_connection * gc ) {
 	
 		strcpy(u_channel, buf+i);
 
-		/* Looks like we're going to join the channel for real now.  Let's create
-		 * a valid channel structure and add it to our list.  Let's make sure that
+		/* Looks like we're going to join the channel for real 
+		 * now.  Let's create a valid channel structure and add 
+		 * it to our list.  Let's make sure that
 		 * we are not already in a channel first */
 
 		channel = find_channel_by_name(gc, u_channel);
@@ -297,11 +410,18 @@ void irc_callback ( struct gaim_connection * gc ) {
 	
 			idata->channels = g_list_append(idata->channels, channel);
 
+			printf("Started channel with ID %d\n", chat_id);
 			serv_got_joined_chat(gc, chat_id, u_channel);	
-			printf("IIII: I joined '%s' with a strlen() of '%d'\n", u_channel, strlen(u_channel));
 		} else {
-			/* Someone else joined. */
-			printf("%s has joined #%s\n", u_nick, u_channel);
+			struct conversation *convo = NULL;
+			
+			/* Someone else joined. Find their conversation
+			 * window */
+			convo = find_conversation_by_id(gc, channel->id);
+
+			/* And add their name to it */
+			add_chat_buddy(convo, u_nick);
+			
 		}
 
 		return;
@@ -332,31 +452,45 @@ void irc_callback ( struct gaim_connection * gc ) {
 		strcpy(u_channel, buf+i);
 
 
-		/* Now, lets check to see if it was US that was leaving.  If so, do the
-		 * correct thing by closing up all of our old channel stuff. Otherwise,
+		/* Now, lets check to see if it was US that was leaving.  
+		 * If so, do the correct thing by closing up all of our 
+		 * old channel stuff. Otherwise,
 		 * we should just print that someone left */
+
+		channel = find_channel_by_name(gc, u_channel);
+
+		if (!channel) {
+			return;
+		}
 
 		if (g_strcasecmp(u_nick, gc->username) == 0) {
 	
-			/* Looks like we're going to join the channel for real now.  Let's create
-			 * a valid channel structure and add it to our list */
-
-			channel = find_channel_by_name(gc, u_channel);
-
-			if (!channel) {
-				return;
-			}
+			/* Looks like we're going to leave the channel for 
+			 * real now.  Let's create a valid channel structure 
+			 * and add it to our list */
 
 			serv_got_chat_left(gc, channel->id);
 
 			idata->channels = g_list_remove(idata->channels, channel);
 			g_free(channel);	
-			return;
+		} else {
+			struct conversation *convo = NULL;
+			
+			/* Find their conversation window */
+			convo = find_conversation_by_id(gc, channel->id);
+
+			if (!convo) {
+				/* Some how the window doesn't exist. 
+				 * Let's get out of here */
+				return ;
+			}
+		
+			/* And remove their name */
+			remove_chat_buddy(convo, u_nick);
+
 		}
 
-		/* Otherwise, lets just say someone left */
-		printf("%s has left #%s\n", u_nick, u_channel);
-
+		/* Go Home! */
 		return;
 	}
 	
