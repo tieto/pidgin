@@ -659,12 +659,14 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
 			g_free(aliastext);
 		}
+		#if 0
 		if (b->idle > 0) {
 			char *idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
 			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"),
 					idletime);
 			g_free(idletime);
 		}
+		#endif
 		if (statustext) {
 			g_string_append_printf(s, "%s<br>", statustext);
 			g_free(statustext);

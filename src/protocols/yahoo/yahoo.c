@@ -2949,61 +2949,56 @@ int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
 	return 0;
 }
 
-static void yahoo_set_away(GaimConnection *gc, const char *state, const char *msg)
+static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 {
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 	int service;
 	char s[4];
+	const char *id;
 	char *conv_msg = NULL;
 	char *conv_msg2 = NULL;
+	gboolean away = FALSE; /* only for YAHOO_STATUS_CUSTOM */
 
-	if (gc->away) {
-		g_free(gc->away);
-		gc->away = NULL;
-	}
+	id = gaim_status_get_id(status);
 
-	if (msg) {
+	if (!strcmp(id, "available")) {
+		yd->current_status = YAHOO_STATUS_AVAILABLE;
+	} else if (!strcmp(id, "berightback")) {
+		yd->current_status = YAHOO_STATUS_BRB;
+	} else if (!strcmp(id, "busy")) {
+		yd->current_status = YAHOO_STATUS_BUSY;
+	} else if (!strcmp(id, "notathome")) {
+		yd->current_status = YAHOO_STATUS_NOTATHOME;
+	} else if (!strcmp(id,"notatdesk")) {
+		yd->current_status = YAHOO_STATUS_NOTATDESK;
+	} else if (!strcmp(id, "notinoffice")) {
+		yd->current_status = YAHOO_STATUS_NOTINOFFICE;
+	} else if (!strcmp(id, "onthephone")) {
+		yd->current_status = YAHOO_STATUS_ONPHONE;
+	} else if (!strcmp(id, "onvacation")) {
+		yd->current_status = YAHOO_STATUS_ONVACATION;
+	} else if (!strcmp(id, "outtolunch")) {
+		yd->current_status = YAHOO_STATUS_OUTTOLUNCH;
+	} else if (!strcmp(id, "steppedout")) {
+		yd->current_status = YAHOO_STATUS_STEPPEDOUT;
+	} else if (!strcmp(id, "invisible")) {
+		yd->current_status = YAHOO_STATUS_INVISIBLE;
+	} else if (!strcmp(id, "away")) {
 		yd->current_status = YAHOO_STATUS_CUSTOM;
-		gc->away = g_strndup(msg, YAHOO_MAX_STATUS_MESSAGE_LENGTH);
-	} else if (state) {
-		gc->away = g_strdup("");
-		if (!strcmp(state, _("Available"))) {
-			yd->current_status = YAHOO_STATUS_AVAILABLE;
-		} else if (!strcmp(state, _("Be Right Back"))) {
-			yd->current_status = YAHOO_STATUS_BRB;
-		} else if (!strcmp(state, _("Busy"))) {
-			yd->current_status = YAHOO_STATUS_BUSY;
-		} else if (!strcmp(state, _("Not At Home"))) {
-			yd->current_status = YAHOO_STATUS_NOTATHOME;
-		} else if (!strcmp(state, _("Not At Desk"))) {
-			yd->current_status = YAHOO_STATUS_NOTATDESK;
-		} else if (!strcmp(state, _("Not In Office"))) {
-			yd->current_status = YAHOO_STATUS_NOTINOFFICE;
-		} else if (!strcmp(state, _("On The Phone"))) {
-			yd->current_status = YAHOO_STATUS_ONPHONE;
-		} else if (!strcmp(state, _("On Vacation"))) {
-			yd->current_status = YAHOO_STATUS_ONVACATION;
-		} else if (!strcmp(state, _("Out To Lunch"))) {
-			yd->current_status = YAHOO_STATUS_OUTTOLUNCH;
-		} else if (!strcmp(state, _("Stepped Out"))) {
-			yd->current_status = YAHOO_STATUS_STEPPEDOUT;
-		} else if (!strcmp(state, _("Invisible"))) {
-			yd->current_status = YAHOO_STATUS_INVISIBLE;
-		} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) { /* this should never happen? */
-			if (gc->is_idle) {
-				yd->current_status = YAHOO_STATUS_IDLE;
-			} else {
-				yd->current_status = YAHOO_STATUS_AVAILABLE;
-			}
-		}
-	} else if (gc->is_idle) {
+		away = TRUE;
+	} else if (!strcmp(id, "avaiablewm")) {
+		yd->current_status = YAHOO_STATUS_CUSTOM;
+		away = FALSE;
+	} else if (gc->is_idle) { /* i think this is broken */
 		yd->current_status = YAHOO_STATUS_IDLE;
 	} else {
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
 	}
 
-	if (yd->current_status == YAHOO_STATUS_AVAILABLE)
+	if (yd->current_status == YAHOO_STATUS_AVAILABLE ||
+	   ((yd->current_status == YAHOO_STATUS_CUSTOM) && !away))
 		service = YAHOO_SERVICE_ISBACK;
 	else
 		service = YAHOO_SERVICE_ISAWAY;
@@ -3012,30 +3007,33 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	g_snprintf(s, sizeof(s), "%d", yd->current_status);
 	yahoo_packet_hash(pkt, 10, s);
 
-	if ((yd->current_status == YAHOO_STATUS_CUSTOM) && gc->away) {
-		conv_msg = yahoo_string_encode(gc, gc->away, NULL);
-		conv_msg2 = gaim_unescape_html(conv_msg);
+	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
+		const char *msg = gaim_status_get_attr_string(status, "message");
+		conv_msg = yahoo_string_encode(gc, msg, NULL);
+		conv_msg2 = gaim_markup_strip_html(conv_msg);
 		yahoo_packet_hash(pkt, 19, conv_msg2);
-	}
 
-	if ((yd->current_status != YAHOO_STATUS_AVAILABLE) &&
-	    (yd->current_status != YAHOO_STATUS_IDLE)) {
 		if (gc->is_idle)
 			yahoo_packet_hash(pkt, 47, "2");
-		else
+		else if (away)
 			yahoo_packet_hash(pkt, 47, "1");
+		else
+			yahoo_packet_hash(pkt, 47, "0");
+	} else if (gc->is_idle) {
+		yahoo_packet_hash(pkt, 47, "2");
 	}
 
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
-	if (conv_msg)
-		g_free(conv_msg);
-	if (conv_msg2)
-		g_free(conv_msg2);
+
+	g_free(conv_msg);
+	g_free(conv_msg2);
 }
 
 static void yahoo_set_idle(GaimConnection *gc, int idle)
 {
+#if 0
+/* this is complicated, since it interacts with other statuses */
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	char *msg = NULL, *msg2 = NULL;
@@ -3077,6 +3075,7 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		g_free(msg);
 	if (msg2)
 		g_free(msg2);
+#endif
 }
 
 static GList *yahoo_status_types(GaimAccount *account)
@@ -3398,7 +3397,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* set info */
 	yahoo_send_typing,
 	yahoo_get_info,
-	yahoo_set_away,
+	yahoo_set_status,
 	yahoo_set_idle,
 	NULL, /* change_passwd*/
 	yahoo_add_buddy,
