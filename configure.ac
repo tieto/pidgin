@@ -587,14 +587,22 @@ if test "$enable_tcl" = yes; then
 		enable_tcl=no
 	else
 		. $TCLCONFIG
-		eval "TCL_LIB_SPEC=\"$TCL_LIB_SPEC\""
-		AC_MSG_CHECKING([for Tcl linkability])
-		oldLIBS=$LIBS
-		LIBS="$LIBS $TCL_LIB_SPEC"
-		AC_TRY_LINK([#include <tcl.h>], [Tcl_Interp *interp; Tcl_Init(interp)],
-			    [AC_MSG_RESULT([yes]);enable_tcl=yes],
-			    [AC_MSG_RESULT([no]);enable_tcl=no])
-		LIBS="$oldLIBS"
+		AC_MSG_CHECKING([Tcl version compatability])
+		if test "$TCL_MAJOR_VERSION" -lt 8 -o "$TCL_MINOR_VERSION" -lt 2; then
+			AC_MSG_RESULT([bad, $TCL_VERSION found but 8.3 required])
+			enable_tcl=no
+		else
+			AC_MSG_RESULT([ok, $TCL_VERSION])
+			eval "TCL_LIB_SPEC=\"$TCL_LIB_SPEC\""
+			AC_MSG_CHECKING([for Tcl linkability])
+			oldLIBS=$LIBS
+			LIBS="$LIBS $TCL_LIB_SPEC"
+			AC_TRY_LINK([#include <tcl.h>],
+				    [Tcl_Interp *interp; Tcl_Init(interp)],
+		 		    [AC_MSG_RESULT([yes]);enable_tcl=yes],
+		 		    [AC_MSG_RESULT([no]);enable_tcl=no])
+			LIBS="$oldLIBS"
+		fi
 	fi
 fi
 
