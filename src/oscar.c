@@ -317,7 +317,7 @@ void oscar_login(struct aim_user *user) {
 	char *finalauth = NULL;
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
-	gc->user = user;
+	odata->create_exchange = 0;
 
 	sprintf(debug_buff, _("Logging in %s\n"), user->username);
 	debug_print(debug_buff);
@@ -1046,15 +1046,8 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			debug_print(debug_buff);
 			sprintf(debug_buff, "chat info: \tExchange List: (%d total)\n", exchangecount);
 			debug_print(debug_buff);
-			while (i < exchangecount) {
-				sprintf(debug_buff, "chat info: \t\t%x: %s (%s/%s)\n",
-						exchanges[i].number,
-						exchanges[i].name ? exchanges[i].name : "NULL",
-						exchanges[i].charset1 ? exchanges[i].charset1 : "NULL",
-						exchanges[i].lang1 ? exchanges[i].lang1 : "NULL");
-				debug_print(debug_buff);
-				i++;
-			}
+			while (i < exchangecount)
+				debug_printf("chat info: \t\t%d\n", exchanges[i++].number);
 			if (odata->create_exchange) {
 				sprintf(debug_buff, "creating room %s\n", odata->create_name);
 				debug_print(debug_buff);
