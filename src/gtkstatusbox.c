@@ -112,6 +112,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	char *text, *title;
 	char aa_color[8];
 	GdkPixbuf *pixbuf;
+	GtkTreePath *path;
 
 	GtkStyle *style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
@@ -158,7 +159,9 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 			   TITLE_COLUMN, title,
 			   DESC_COLUMN, status_box->desc, 
 			   TYPE_COLUMN, NULL, -1);
-	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), gtk_tree_path_new_from_string("0"));
+	path = gtk_tree_path_new_from_string("0");
+	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
+	gtk_tree_path_free(path);
 
 	g_free(text);
 }
