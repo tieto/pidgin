@@ -2650,13 +2650,14 @@ gaim_conversations_init(void)
 						 gaim_value_new(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "received-chat-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER,
 						 gaim_value_new(GAIM_TYPE_BOOLEAN), 4,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
 						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
 						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
-						 gaim_value_new(GAIM_TYPE_UINT));
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "conversation-switching",
 						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
