@@ -45,6 +45,13 @@ typedef struct
 
 } MsnMobileData;
 
+typedef struct
+{
+	GaimConnection *gc;
+	char *name;
+
+} MsnGetInfoData;
+
 static void
 msn_act_id(GaimConnection *gc, const char *entry)
 {
@@ -1217,16 +1224,20 @@ msn_remove_group(GaimConnection *gc, const char *name)
 static void
 msn_got_info(void *data, const char *url_text, size_t len)
 {
-	GaimConnection *gc = (GaimConnection *)data;
+	MsnGetInfoData *info_data = (MsnGetInfoData *)data;
 	char *stripped, *p, *q;
 	char buf[1024];
 	char *user_url = NULL;
 	gboolean found;
+	gboolean has_info = FALSE;
 	char *url_buffer;
+
+	gaim_debug_info("msn", "In msn_got_info\n");
 
 	if (url_text == NULL || strcmp(url_text, "") == 0)
 	{
-		gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
+		gaim_notify_formatted(info_data->gc, NULL,
+			_("Buddy Information"), NULL,
 			_("<html><body><b>Error retrieving profile</b></body></html>"),
 			  NULL, NULL);
 
@@ -1280,35 +1291,56 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	/* Nuke the html, it's easier than trying to parse the horrid stuff */
 	stripped = gaim_markup_strip_html(url_buffer);
 
+	gaim_debug_misc("msn", "stripped = %p\n", stripped);
+	gaim_debug_misc("msn", "url_buffer = %p\n", url_buffer);
+
 	/* Gonna re-use the memory we've already got for url_buffer */
 	strcpy(url_buffer, "<html><body>\n");
 
 	/* Extract their Name and put it in */
-	gaim_markup_extract_info_field(stripped, url_buffer, "\tName", 0, "\t",
-								   '\n', "Undisclosed", _("Name"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+			"\tName", 0, "\t", '\n', "Undisclosed", _("Name"), 0, NULL);
+
+	if (found)
+		has_info = TRUE;
 
 	/* Extract their Age and put it in */
-	gaim_markup_extract_info_field(stripped, url_buffer, "\tAge", 0, "\t",
-								   '\n', "Undisclosed", _("Age"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer, "\tAge",
+			0, "\t", '\n', "Undisclosed", _("Age"), 0, NULL);
+
+	if (found)
+		has_info = TRUE;
 
 	/* Extract their Gender and put it in */
-	gaim_markup_extract_info_field(stripped, url_buffer, "\tGender", 6, "\t",
-								   '\n', "Undisclosed", _("Gender"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer, "\tGender",
+			6, "\t", '\n', "Undisclosed", _("Gender"), 0, NULL);
+
+	if (found)
+		has_info = TRUE;
 
 	/* Extract their MaritalStatus and put it in */
-	gaim_markup_extract_info_field(stripped, url_buffer, "\tMaritalStatus",
-								   0, "\t", '\n', "Undisclosed",
-								   _("Marital Status"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+			"\tMaritalStatus", 0, "\t", '\n', "Undisclosed",
+			_("Marital Status"), 0, NULL);
+
+	if (found)
+		has_info = TRUE;
 
 	/* Extract their Location and put it in */
-	gaim_markup_extract_info_field(stripped, url_buffer, "\tLocation", 0,
-								   "\t", '\n', "Undisclosed", _("Location"),
-								   0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+			"\tLocation", 0, "\t", '\n', "Undisclosed", _("Location"),
+			0, NULL);
+
+	if (found)
+		has_info = TRUE;
 
 	/* Extract their Occupation and put it in */
-	gaim_markup_extract_info_field(stripped, url_buffer, "\t Occupation", 6,
-								   "\t", '\n', "Undisclosed", _("Occupation"),
-								   0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+			"\t Occupation", 6, "\t", '\n', "Undisclosed", _("Occupation"),
+			0, NULL);
+
+	if (found)
+		has_info = TRUE;
 
 	/*
 	 * The fields, 'A Little About Me', 'Favorite Things', 'Hobbies
@@ -1351,6 +1383,9 @@ msn_got_info(void *data, const char *url_text, size_t len)
 				_("A Little About Me"), 0, NULL);
 	}
 
+	if (found)
+		has_info = TRUE;
+
 	/* Check if they have Favorite Things */
 	found = gaim_markup_extract_info_field(stripped, url_buffer,
 				"Favorite Things", 1, "Hobbies and Interests", '\n', NULL,
@@ -1377,6 +1412,9 @@ msn_got_info(void *data, const char *url_text, size_t len)
 				_("Favorite Things"), 0, NULL);
 	}
 
+	if (found)
+		has_info = TRUE;
+
 	/* Check if they have Hobbies and Interests */
 	found = gaim_markup_extract_info_field(stripped, url_buffer,
 			"Hobbies and Interests", 1, "Favorite Quote", '\n', NULL,
@@ -1396,6 +1434,9 @@ msn_got_info(void *data, const char *url_text, size_t len)
 				_("Hobbies and Interests"), 0, NULL);
 	}
 
+	if (found)
+		has_info = TRUE;
+
 	/* Check if they have Favorite Quote */
 	found = gaim_markup_extract_info_field(stripped, url_buffer,
 			"Favorite Quote", 1, "My Homepage\tTake a look", '\n', NULL,
@@ -1408,10 +1449,16 @@ msn_got_info(void *data, const char *url_text, size_t len)
 				_("Favorite Quote"), 0, NULL);
 	}
 
+	if (found)
+		has_info = TRUE;
+
 	/* Extract the last updated date and put it in */
-	gaim_markup_extract_info_field(stripped, url_buffer,
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
 			"\tlast updated:", 1, "\n", '\n', NULL, _("Last Updated"),
 			0, NULL);
+
+	if (found)
+		has_info = TRUE;
 
 	/* If we were able to fetch a homepage url earlier, stick it in there */
 	if (user_url != NULL)
@@ -1421,26 +1468,54 @@ msn_got_info(void *data, const char *url_text, size_t len)
 				   _("Homepage"), user_url, user_url);
 
 		strcat(url_buffer, buf);
+
+		g_free(user_url);
+
+		has_info = TRUE;
 	}
 
 	/* Finish it off, and show it to them */
 	strcat(url_buffer, "</body></html>\n");
 
-	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
-						  url_buffer, NULL, NULL);
+	if (has_info)
+	{
+		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"),
+							  NULL, url_buffer, NULL, NULL);
+	}
+	else
+	{
+		char primary[256];
+
+		g_snprintf(primary, sizeof(primary),
+				   _("User information for %s unavailable"), info_data->name);
+		gaim_notify_error(info_data->gc, NULL, primary,
+						  _("The user's profile is empty."));
+	}
 
 	g_free(stripped);
 	g_free(url_buffer);
+
+	g_free(info_data->name);
+	g_free(info_data);
 }
 
 static void
 msn_get_info(GaimConnection *gc, const char *name)
 {
-	char url[256];
-	g_snprintf(url, sizeof url, "%s%s", PROFILE_URL, name);
+	MsnGetInfoData *data;
+	char *url;
+
+	data       = g_new0(MsnGetInfoData, 1);
+	data->gc   = gc;
+	data->name = g_strdup(name);
+
+	url = g_strdup_printf("%s%s", PROFILE_URL, name);
+
 	gaim_url_fetch(url, FALSE,
 				   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)", TRUE,
-				   msn_got_info, gc);
+				   msn_got_info, data);
+
+	g_free(url);
 }
 
 static GaimPluginProtocolInfo prpl_info =
