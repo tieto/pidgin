@@ -2521,12 +2521,17 @@ void update_buttons_by_protocol(struct conversation *c)
 		else
 			gtk_widget_set_sensitive(c->send, TRUE);
 		if (c->gc->prpl->options & OPT_PROTO_IM_IMAGE) {
-			gtk_widget_set_sensitive(c->imagebtn, TRUE);
-			gtk_widget_set_sensitive(c->image_menubtn, TRUE);
+			if (c->imagebtn)
+				gtk_widget_set_sensitive(c->imagebtn, TRUE);
+			if (c->image_menubtn)
+				gtk_widget_set_sensitive(c->image_menubtn, TRUE);
 		}
 		else {
-			gtk_widget_set_sensitive(c->image_menubtn, FALSE);
-			gtk_widget_set_sensitive(c->imagebtn, FALSE);
+			
+			if (c->image_menubtn)
+				gtk_widget_set_sensitive(c->image_menubtn, FALSE);
+			if (c->imagebtn)
+				gtk_widget_set_sensitive(c->imagebtn, FALSE);
 		}
 	}
 
