@@ -42,6 +42,19 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h signal.h)
 
+dnl Check for SILC includes
+AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR
+                          Compile the SILC plugin against includes in DIR ], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
+SILC_INCLUDES=""
+if test "$ac_silc_includes" != "no"; then
+	SILC_INCLUDES="-I$ac_silc_includes"
+fi
+CPPFLAGS_save="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $SILC_INCLUDES"
+AC_CHECK_HEADER(silcincludes.h, , [static_silc=no, dynamic_silc=no])
+CPPFLAGS="$CPPFLAGS_save"
+AC_SUBST(SILC_INCLUDES)
+
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_STRUCT_TM
@@ -92,6 +105,17 @@ AC_TRY_COMPILE([
 		AC_DEFINE(socklen_t, int, [socklen_t size])
 	])
 ])
+
+dnl check for SILC client libraries
+AC_ARG_WITH(silc-libs, [  --with-silc-libs=DIR    Compile the SILC plugin against the SILC libs in DIR], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
+SILC_LIBS=""
+if test "$ac_silc_libs" != "no"; then
+	SILC_LIBS="-L$ac_silc_libs"
+fi
+SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread"
+AC_CHECK_LIB(silcclient, silc_client_init, ,
+	     [static_silc=no; dynamic_silc=no], $SILC_LIBS)
+AC_SUBST(SILC_LIBS)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
@@ -199,36 +223,8 @@ AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screen
 AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session management support],,enable_sm=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 AC_ARG_WITH(zephyr,    [  --with-zephyr=PREFIX    Compile Zephyr plugin against external libzephyr],zephyr="$withval",zephyr="no")
-AC_ARG_WITH(silc-libs, [  --with-silc-libs=DIR    Compile the SILC plugin against the SILC libs in DIR], [ac_silc_libs="$withval"])
-AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR
-                          Compile the SILC plugin against includes in DIR ],
-        [  ac_silc_includes="$withval" ])
 AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 
-#
-# SILC Toolkit check for SILC Protocol Plugin
-#
-SILC_INCLUDES=""
-SILC_LIBS=""
-ac_silc_includes=""
-ac_silc_libs=""
-
-if test "$ac_silc_includes" != "" ; then
-SILC_INCLUDES="-I$ac_silc_includes"
-else
-static_silc=no
-dynamic_silc=no
-fi
-
-if test "$ac_silc_libs" != "" ; then
-        SILC_LIBS="-L$ac_silc_libs"
-else
-static_silc=no
-dynamic_silc=no
-fi
-SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread"
-AC_SUBST(SILC_INCLUDES)
-AC_SUBST(SILC_LIBS)
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
@@ -1140,11 +1136,11 @@ AC_OUTPUT([Makefile
    		   src/protocols/novell/Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/rendezvous/Makefile
+		   src/protocols/silc/Makefile
 		   src/protocols/toc/Makefile
 		   src/protocols/trepia/Makefile
 		   src/protocols/yahoo/Makefile
 		   src/protocols/zephyr/Makefile
-		   src/protocols/silc/Makefile
 		   gaim.spec
 		  ])
 
