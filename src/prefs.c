@@ -147,6 +147,9 @@ void gaim_prefs_init() {
 	gaim_prefs_add_bool("/core/sound/use_sys_default", TRUE);
 	gaim_prefs_add_bool("/core/sound/use_esd", FALSE);
 	gaim_prefs_add_bool("/core/sound/use_arts", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_beep", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_custom", FALSE);
+	gaim_prefs_add_string("/core/sound/command", "");
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
 }
 

@@ -592,9 +592,13 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	switch (gaim_account_get_protocol(account)) {
 		case GAIM_PROTO_TOC:
 		case GAIM_PROTO_OSCAR:
-		case GAIM_PROTO_JABBER:
 			gaim_account_set_string(account, "server", p->value[0]);
 			gaim_account_set_int(account, "port", atoi(p->value[1]));
+			break;
+
+		case GAIM_PROTO_JABBER:
+			gaim_account_set_string(account, "connect_server", p->value[1]);
+			gaim_account_set_int(account, "port", atoi(p->value[0]));
 			break;
 
 		case GAIM_PROTO_MSN:
@@ -605,6 +609,7 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			break;
 
 		case GAIM_PROTO_IRC:
+			/* XXX: fix this */
 			gaim_account_set_string(account, "server", p->value[0]);
 			gaim_account_set_int(account, "port", atoi(p->value[1]));
 			gaim_account_set_string(account, "charset", p->value[2]);

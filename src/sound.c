@@ -79,8 +79,8 @@ static char *sound_cmd = NULL;
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "/gaim/gtk/sound/login", "arrive.wav"},
 	{N_("Buddy logs out"), "/gaim/gtk/sound/logout", "leave.wav"},
-	{N_("Message received"), "/gaim/gtk/sound/message_recv", "receive.wav"},
-	{N_("Message received begins conversation"), "/gaim/gtk/sound/first_message_recv", "receive.wav"},
+	{N_("Message received"), "/gaim/gtk/sound/im_recv", "receive.wav"},
+	{N_("Message received begins conversation"), "/gaim/gtk/sound/first_im_recv", "receive.wav"},
 	{N_("Message sent"), "/gaim/gtk/sound/send_im", "send.wav"},
 	{N_("Person enters chat"), "/gaim/gtk/sound/join_chat", "arrive.wav"},
 	{N_("Person leaves chat"), "/gaim/gtk/sound/left_chat", "leave.wav"},

@@ -1807,18 +1807,17 @@ event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	GtkTreeIter iter;
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	const char *pref;
-	gint soundnum;
 
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter,
-						0, &pref,
-						2, &soundnum,
+						2, &pref,
 						-1);
 
 	gaim_prefs_set_bool(pref, gtk_cell_renderer_toggle_get_active(cell));
 
 	gtk_list_store_set(GTK_LIST_STORE (model), &iter,
-					   0, !gtk_cell_renderer_toggle_get_active(cell));
+					   0, !gtk_cell_renderer_toggle_get_active(cell),
+					   -1);
 
 	gtk_tree_path_free(path);
 }
@@ -1929,7 +1928,7 @@ static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
-	gtk_tree_model_get_value (model, &iter, 2, &val);
+	gtk_tree_model_get_value (model, &iter, 3, &val);
 	sound_row_sel = g_value_get_uint(&val);
 	file = gaim_sound_get_event_file(sound_row_sel);
 	if (sound_entry)
@@ -1962,7 +1961,7 @@ GtkWidget *sound_events_page() {
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-	event_store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_UINT);
+	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
 
 	for (j=0; j < GAIM_NUM_SOUNDS; j++) {
 		const char *pref = gaim_sound_get_event_option(j);
@@ -1972,9 +1971,11 @@ GtkWidget *sound_events_page() {
 
 		gtk_list_store_append (event_store, &iter);
 		gtk_list_store_set(event_store, &iter,
-				   0, pref,
+				   0, gaim_prefs_get_bool(pref),
 				   1, _(gaim_sound_get_event_label(j)),
-				   2, j, -1);
+				   2, pref,
+				   3, j,
+				   -1);
 	}
 
 	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(event_store));
