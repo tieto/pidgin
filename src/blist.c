@@ -648,12 +648,12 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 			gaim_buddy_icon_unref(buddy->icon);
 
 		buddy->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
-
-		gaim_buddy_icon_cache(icon, buddy);
-
-		schedule_blist_save();
 	}
 
+	gaim_buddy_icon_cache(icon, buddy);
+
+	schedule_blist_save();
+	
 	gaim_blist_update_buddy_icon(buddy);
 }
 
