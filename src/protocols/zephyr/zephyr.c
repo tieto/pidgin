@@ -76,8 +76,33 @@ struct _zephyr_triple {
 					return;\
 				}
 
-static const char *local_zephyr_normalize(const char *);
+char *local_zephyr_normalize(const char *);
 static const char *zephyr_normalize(const GaimAccount *, const char *);
+static const char *gaim_zephyr_get_realm();
+
+char *zephyr_strip_foreign_realm(const char* user){
+/*
+	Takes in a username of the form username or username@realm 
+	and returns:
+	username, if there is no realm, or the realm is the local realm
+	or:
+	username@realm if there is a realm and it is foreign
+*/
+	char *tmp = g_strdup(user);
+	char *at = strchr(tmp,'@');
+	if (at && !g_ascii_strcasecmp(at+1,gaim_zephyr_get_realm())) {
+		/* We're passed in a username of the form user@users-realm */
+		char* tmp2;
+		*at = '\0';
+		tmp2 = g_strdup(tmp);
+		g_free(tmp);
+		return tmp2;
+	}
+	else {
+		/* We're passed in a username of the form user or user@foreign-realm */
+		return tmp;
+	}
+}
 
 /* this is so bad, and if Zephyr weren't so fucked up to begin with I
  * wouldn't do this. but it is so i will. */
@@ -88,21 +113,21 @@ static GList *pending_zloc_names = NULL;
 static GSList *subscrips = NULL;
 static int last_id = 0;
 
-/* just for debugging
+/* just for debugging */
 static void handle_unknown(ZNotice_t notice)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "z_packet: %s\n", notice.z_packet);
-	gaim_debug(GAIM_DEBUG_MISC, "z_version: %s\n", notice.z_version);
-	gaim_debug(GAIM_DEBUG_MISC, "z_kind: %d\n", notice.z_kind);
-	gaim_debug(GAIM_DEBUG_MISC, "z_class: %s\n", notice.z_class);
-	gaim_debug(GAIM_DEBUG_MISC, "z_class_inst: %s\n", notice.z_class_inst);
-	gaim_debug(GAIM_DEBUG_MISC, "z_opcode: %s\n", notice.z_opcode);
-	gaim_debug(GAIM_DEBUG_MISC, "z_sender: %s\n", notice.z_sender);
-	gaim_debug(GAIM_DEBUG_MISC, "z_recipient: %s\n", notice.z_recipient);
-	gaim_debug(GAIM_DEBUG_MISC, "z_message: %s\n", notice.z_message);
-	gaim_debug(GAIM_DEBUG_MISC, "z_message_len: %d\n", notice.z_message_len);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_packet: %s\n", notice.z_packet);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_version: %s\n", notice.z_version);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_kind: %d\n", (int)(notice.z_kind));
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_class: %s\n", notice.z_class);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_class_inst: %s\n", notice.z_class_inst);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_opcode: %s\n", notice.z_opcode);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_sender: %s\n", notice.z_sender);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_recipient: %s\n", notice.z_recipient);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_message: %s\n", notice.z_message);
+	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_message_len: %d\n", notice.z_message_len);
 }
-*/
+
 
 static zephyr_triple *new_triple(const char *c, const char *i, const char *r)
 {
@@ -141,17 +166,25 @@ static const char *gaim_zephyr_get_realm()
 	return ZGetRealm();
 }
 
-/* returns true if zt1 is a subset of zt2, i.e. zt2 has the same thing or
- * wildcards in each field of zt1. */
+/* returns true if zt1 is a subset of zt2.  This function is used to
+   determine whether a zephyr sent to zt1 should be placed in the chat
+   with triple zt2
+ 
+   zt1 is a subset of zt2 
+   iff. the classnames are identical ignoring case 
+   AND. the instance names are identical (ignoring case), or zt2->instance is *.
+   AND. the recipient names are identical
+*/
+
 static gboolean triple_subset(zephyr_triple * zt1, zephyr_triple * zt2)
 {
-	if (g_ascii_strcasecmp(zt2->class, zt1->class) && g_ascii_strcasecmp(zt2->class, "*")) {
+	if (g_ascii_strcasecmp(zt2->class, zt1->class)) {
 		return FALSE;
 	}
 	if (g_ascii_strcasecmp(zt2->instance, zt1->instance) && g_ascii_strcasecmp(zt2->instance, "*")) {
 		return FALSE;
 	}
-	if (g_ascii_strcasecmp(zt2->recipient, zt1->recipient) && g_ascii_strcasecmp(zt2->recipient, "*")) {
+	if (g_ascii_strcasecmp(zt2->recipient, zt1->recipient)) {
 		return FALSE;
 	}
 	return TRUE;
@@ -184,6 +217,10 @@ static zephyr_triple *find_sub_by_id(int id)
 	}
 	return NULL;
 }
+
+/* 
+   Convert incoming zephyr to utf-8 if necessary using user specified encoding
+*/
 
 static gchar *zephyr_recv_convert(char *string, int len)
 {
@@ -511,7 +548,8 @@ static gboolean pending_zloc(char *who)
 	GList *curr;
 
 	for (curr = pending_zloc_names; curr != NULL; curr = curr->next) {
-		if (!g_ascii_strcasecmp(local_zephyr_normalize(who), (char *)curr->data)) {
+		char* normalized_who = local_zephyr_normalize(who);
+		if (!g_ascii_strcasecmp(normalized_who, (char *)curr->data)) {
 			g_free((char *)curr->data);
 			pending_zloc_names = g_list_remove(pending_zloc_names, curr->data);
 			return TRUE;
@@ -520,10 +558,14 @@ static gboolean pending_zloc(char *who)
 	return FALSE;
 }
 
+/* Called when the server notifies us a message couldn't get sent */
+
 static void message_failed(ZNotice_t notice, struct sockaddr_in from)
 {
 	if (g_ascii_strcasecmp(notice.z_class, "message")) {
-		/* message to chat failed ignore for now */
+		gchar* chat_failed = g_strdup_printf(_("Unable send to chat %s,%s,%s"),notice.z_class,notice.z_class_inst,notice.z_recipient);
+		gaim_notify_error(zgc,"",chat_failed,NULL);
+		g_free(chat_failed);
 	} else {
 		gaim_notify_error(zgc, notice.z_recipient, _("User is offline"), NULL);
 	}
@@ -575,7 +617,6 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 	} else {
 		char *buf, *buf2, *buf3;
 		char *send_inst;
-		char *realmptr;
 		GaimConversation *gconv1;
 		GaimConvChat *gcc;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
@@ -596,10 +637,14 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 			g_free(buf);
 			g_free(tmpescape);
 
-			if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") && !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL")) {
+			if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") && !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL") 
+                            && !g_ascii_strcasecmp(notice.z_recipient,gaim_zephyr_get_sender())) {
+				gchar* stripped_sender;
 				if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
 					flags |= GAIM_CONV_IM_AUTO_RESP;
-				serv_got_im(zgc, notice.z_sender, buf3, flags, time(NULL));
+				stripped_sender = zephyr_strip_foreign_realm(notice.z_sender);
+				serv_got_im(zgc, stripped_sender, buf3, flags, time(NULL));
+				g_free(stripped_sender);
 			} else {
 				zephyr_triple *zt1, *zt2;
 
@@ -619,21 +664,11 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 						gaim_conv_chat_set_topic(gcc, sendertmp, notice.z_class_inst);
 
 					}
+					g_free(sendertmp); /* fix memory leak? */
 					/* If the person is in the default Realm, then strip the 
 					   Realm from the sender field */
-					sendertmp = g_strdup_printf("%s", notice.z_sender);
-					if ((realmptr = strchr(sendertmp, '@')) != NULL) {
-						realmptr++;
-						if (!g_ascii_strcasecmp(realmptr, gaim_zephyr_get_realm())) {
-							realmptr--;
-							sprintf(realmptr, "%c", '\0');
-							send_inst = g_strdup_printf("%s %s", sendertmp, notice.z_class_inst);
-						} else {
-							send_inst = g_strdup_printf("%s %s", notice.z_sender, notice.z_class_inst);
-						}
-					} else {
-						send_inst = g_strdup_printf("%s %s", sendertmp, notice.z_class_inst);
-					}
+					sendertmp = zephyr_strip_foreign_realm(notice.z_sender);
+					send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
 					serv_got_chat_in(zgc, zt2->id, send_inst, FALSE, buf3, time(NULL));
 
 					gconv1 = gaim_find_conversation_with_account(zt2->name, zgc->account);
@@ -646,9 +681,12 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					if (!found) {
 						/* force interpretation in network byte order */
 						unsigned char *addrs = (unsigned char *)&(notice.z_sender_addr.s_addr);
+						gchar* ipaddr = g_strdup_printf("%hhd.%hhd.%hhd.%hhd", (unsigned char)addrs[0], 
+										(unsigned char)addrs[1], (unsigned char)addrs[2], 
+										(unsigned char) addrs[3]);
 
-						gaim_conv_chat_add_user(gcc, sendertmp, g_strdup_printf("%hhd.%hhd.%hhd.%hhd", (unsigned char)addrs[0], (unsigned char)addrs[1], (unsigned char)addrs[2], (unsigned char)
-																				addrs[3]));
+						gaim_conv_chat_add_user(gcc, sendertmp, ipaddr);
+						g_free(ipaddr); /* fix memory leak? */
 
 					}
 					g_free(sendertmp);
@@ -680,9 +718,12 @@ static gint check_notify(gpointer data)
 				message_failed(notice, from);
 			}
 			break;
+		case CLIENTACK:
+			gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "Client ack received\n");
 		default:
 			/* we'll just ignore things for now */
-			gaim_debug(GAIM_DEBUG_WARNING, "zephyr", "Unhandled notice.\n");
+			handle_unknown(notice);
+			gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "Unhandled notice.\n");
 			break;
 		}
 
@@ -1038,18 +1079,12 @@ static int zephyr_chat_send(GaimConnection * gc, int id, const char *im)
 
 	gconv1 = gaim_find_conversation_with_account(zt->name, zgc->account);
 	gcc = gaim_conversation_get_chat_data(gconv1);
+	
+	/* Woops. Setting instance to "PERSONAL" which is the default
+	   sending instance if no instance is set */
 
-	/* This patently does not make sense ... if inst is not set by
-	 * gaim_conv_chat_get_topic, we set it to the uninitialized
-	 * value of notice.z_class_inst, only to set notice.z_class_inst
-	 * back to inst in a half a dozen lines.  I'm just going to let
-	 * it remain NULL instead.
-	 * 
 	if (!(inst = (char *)gaim_conv_chat_get_topic(gcc)))
-		inst = (char *)notice.z_class_inst;
-	 */
-	inst = (char *)gaim_conv_chat_get_topic(gcc);
-	/* There, now isn't that better? */
+		inst = "PERSONAL";
 
 	bzero((char *)&notice, sizeof(notice));
 	notice.z_kind = ACKED;
@@ -1101,7 +1136,7 @@ static int zephyr_send_im(GaimConnection * gc, const char *who, const char *im, 
 	notice.z_class = "MESSAGE";
 	notice.z_class_inst = "PERSONAL";
 	notice.z_sender = 0;
-	notice.z_recipient = who;
+	notice.z_recipient = local_zephyr_normalize(who);
 	notice.z_default_format = "Class $class, Instance $instance:\n" "To: @bold($recipient) at $time $date\n" "From: @bold($1) <$sender>\n\n$2";
 	notice.z_message_len = strlen(html_buf2) + strlen(sig) + 2;
 	notice.z_message = buf;
@@ -1115,6 +1150,7 @@ static int zephyr_send_im(GaimConnection * gc, const char *who, const char *im, 
 
 static const char *zephyr_normalize(const GaimAccount * account, const char *orig)
 {
+	/* returns the string you gave it. Maybe this function shouldn't be here */
 	static char buf[80];
 
 	if (!g_ascii_strcasecmp(orig, "")) {
@@ -1127,8 +1163,12 @@ static const char *zephyr_normalize(const GaimAccount * account, const char *ori
 }
 
 
-static const char *local_zephyr_normalize(const char *orig)
+char *local_zephyr_normalize(const char *orig)
 {
+	/* 
+	   Basically the inverse of zephyr_strip_foreign_realm 
+	   
+	 */	
 	static char buf[80];
 
 	if (!g_ascii_strcasecmp(orig, "")) {
@@ -1147,10 +1187,11 @@ static const char *local_zephyr_normalize(const char *orig)
 static void zephyr_zloc(GaimConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
+	gchar* normalized_who = local_zephyr_normalize(who);
 
-	if (ZRequestLocations(local_zephyr_normalize(who), &ald, UNACKED, ZAUTH) == ZERR_NONE) {
+	if (ZRequestLocations(normalized_who, &ald, UNACKED, ZAUTH) == ZERR_NONE) {
 		pending_zloc_names = g_list_append(pending_zloc_names,
-				g_strdup(local_zephyr_normalize(who)));
+				g_strdup(normalized_who));
 	}
 }
 
@@ -1214,14 +1255,19 @@ static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 	const char *classname;
 	const char *instname;
 	const char *recip;
+	GaimConversation *gconv;
+	GaimConvChat *gcc;
 
 	classname = g_hash_table_lookup(data, "class");
 	instname = g_hash_table_lookup(data, "instance");
 	recip = g_hash_table_lookup(data, "recipient");
 
-	if (!classname || !instname || !recip)
+	if (!classname)
 		return;
-
+	if (!instname || !strlen(instname))
+		instname = "*";
+	if (!recip || (*recip == '*'))
+		recip = "";
 	if (!g_ascii_strcasecmp(recip, "%me%"))
 		recip = gaim_zephyr_get_sender();
 
@@ -1229,8 +1275,15 @@ static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 	zt2 = find_sub_by_triple(zt1);
 	if (zt2) {
 		free_triple(zt1);
-		if (!zt2->open)
+		if (!zt2->open) {
 			serv_got_joined_chat(gc, zt2->id, zt2->name);
+			gconv = gaim_find_conversation_with_account(zt2->name, zgc->account);
+			gcc = gaim_conversation_get_chat_data(gconv);
+			if (!g_ascii_strcasecmp(instname,"*")) 
+				instname = "PERSONAL";
+			gaim_conv_chat_set_topic(gcc, gaim_zephyr_get_sender(), instname);
+			zt2->open = TRUE;
+		}	
 		return;
 	}
 
@@ -1246,6 +1299,11 @@ static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 	subscrips = g_slist_append(subscrips, zt1);
 	zt1->open = TRUE;
 	serv_got_joined_chat(gc, zt1->id, zt1->name);
+	gconv = gaim_find_conversation_with_account(zt1->name, zgc->account);
+	gcc = gaim_conversation_get_chat_data(gconv);
+	if (!g_ascii_strcasecmp(instname,"*")) 
+		instname = "PERSONAL";
+	gaim_conv_chat_set_topic(gcc, gaim_zephyr_get_sender(), instname);
 }
 
 static void zephyr_chat_leave(GaimConnection * gc, int id)

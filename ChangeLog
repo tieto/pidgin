@@ -43,6 +43,7 @@ version 0.79cvs:
 	* Protocol-specific settings for accounts were being removed whenever the
 	  account was modified. Now they're only removed when the protocol type
 	  changes, as it should be.
+	* Zepher bug fixes and memory leak plugs (Arun A Tharuvai)
 
 version 0.78 (05/30/2004):
 	New Features:
