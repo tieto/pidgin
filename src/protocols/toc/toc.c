@@ -744,14 +744,19 @@ static char *toc_name()
 static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int away)
 {
 	char buf[BUF_LEN * 2];
+	char *tmp = g_malloc(strlen(message) * 2);
 
-	escape_text(message);
-	if (strlen(message) + 52 > MSG_LEN)
+	strcpy(tmp, message);
+	escape_text(tmp);
+	if (strlen(tmp) + 52 > MSG_LEN) {
+		g_free(tmp);
 		return -E2BIG;
+	}
 	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
-		   message, ((away) ? " auto" : ""));
+		   tmp, ((away) ? " auto" : ""));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	
+	g_free(tmp);
 	return 0;
 }
 
