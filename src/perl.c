@@ -586,7 +586,7 @@ XS (XS_GAIM_serv_send_im)
 		XSRETURN(0);
 		return;
 	}
-	serv_send_im(connections->data, nick, what, isauto);
+	serv_send_im(gc, nick, what, isauto);
 	XSRETURN(0);
 }
 

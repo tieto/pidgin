@@ -678,14 +678,8 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
 	c = find_conversation(who);
 
-	if (a->gc) {
-		add_buddy(a->gc, grp, who, whoalias);
-		serv_add_buddy(a->gc, who);
-	} else if (connections) {
-		add_buddy(connections->data, grp, who, whoalias);
-		serv_add_buddy(connections->data, who);
-		a->gc = connections->data;
-	}
+	add_buddy(a->gc, grp, who, whoalias);
+	serv_add_buddy(a->gc, who);
 
 	if (c != NULL) {
 		update_buttons_by_protocol(c);
@@ -702,13 +696,10 @@ void do_add_group(GtkWidget *w, struct addbuddy *a)
 
 	grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
-	if (a->gc)
-		add_group(a->gc, grp);
-	else if (connections) {
-		add_group(connections->data, grp);
+	if (!a->gc)
 		a->gc = connections->data;
-	}
 
+	add_group(a->gc, grp);
 	do_export(a->gc);
 
 	destroy_dialog(NULL, a->window);
@@ -820,7 +811,7 @@ static void addbuddy_select_account(GtkObject *w, struct gaim_connection *gc)
 	b->gc = gc;
 
 	/* We also want to update our group list */	
-	gtk_combo_set_popdown_strings(GTK_COMBO(b->combo), groups_tree(gc ? gc : connections->data));
+	gtk_combo_set_popdown_strings(GTK_COMBO(b->combo), groups_tree(gc));
 }
 
 static void create_online_user_names(struct addbuddy *b)
@@ -880,7 +871,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	GtkWidget *label;
 
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
-	a->gc = gc;
+	a->gc = gc ? gc : connections->data;
 
 	a->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(a->window), "add_buddy", "Gaim");
@@ -929,7 +920,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
 
 	a->combo = gtk_combo_new();
-	gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(gc ? gc : connections->data));
+	gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(a->gc));
 	if (group != NULL)
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
 	gtk_table_attach_defaults(GTK_TABLE(table), a->combo, 1, 2, 2, 3);
@@ -1042,12 +1033,6 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 
 	menu = gtk_menu_new();
 
-	/* We should go ahead and set this in order to prevent problems */
-	if (u) {
-		a = (struct aim_user *)u->data;
-		b->user = a;
-	}
-
 	while (u) {
 		a = (struct aim_user *)u->data;
 		opt = gtk_menu_item_new_with_label(a->username);
@@ -1056,7 +1041,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 		gtk_menu_append(GTK_MENU(menu), opt);
 		gtk_widget_show(opt);
 
-		if (a->gc == gc) {
+		if (b->user == a) {
 			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
 			place = count;
 		}
@@ -1068,7 +1053,6 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), place);
-	b->user = ((struct gaim_connection *)connections->data)->user;
 
 	b->menu = optmenu;
 
@@ -1087,6 +1071,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away)
 	GtkWidget *optmenu;
 
 	struct addbp *b = g_new0(struct addbp, 1);
+	b->user = gc ? gc->user : aim_users->data;
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
@@ -1309,8 +1294,6 @@ void show_set_dir(struct gaim_connection *gc)
 	char buf[256];
 
 	struct set_dir_dlg *b = g_new0(struct set_dir_dlg, 1);
-	if (!g_slist_find(connections, gc))
-		gc = connections->data;
 	b->gc = gc;
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -1497,8 +1480,6 @@ void show_change_passwd(struct gaim_connection *gc)
 	char buf[256];
 
 	struct passwddlg *b = g_new0(struct passwddlg, 1);
-	if (!g_slist_find(connections, gc))
-		gc = connections->data;
 	b->gc = gc;
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -1597,8 +1578,6 @@ void show_set_info(struct gaim_connection *gc)
 	struct aim_user *tmp;
 
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
-	if (!g_slist_find(connections, gc))
-		gc = connections->data;
 	tmp = gc->user;
 	b->user = tmp;
 
@@ -1984,10 +1963,7 @@ void do_find_email(GtkWidget *w, struct findbyemail *b)
 
 	email = gtk_entry_get_text(GTK_ENTRY(b->emailentry));
 
-	if (b->gc)
-		serv_dir_search(b->gc, "", "", "", "", "", "", "", email);
-	else
-		serv_dir_search(connections->data, "", "", "", "", "", "", "", email);
+	serv_dir_search(b->gc, "", "", "", "", "", "", "", email);
 
 	destroy_dialog(NULL, b->window);
 }
@@ -2701,8 +2677,10 @@ static void do_import_dialog(GtkWidget *w, struct gaim_connection *gc)
 	if (file_is_dir(file, importdialog)) {
 		return;
 	}
-	do_import(importgc, file);
-	do_export(importgc);
+	if (g_slist_find(connections, importgc)) {
+		do_import(importgc, file);
+		do_export(importgc);
+	}
 	destroy_dialog(NULL, importdialog);
 }
 

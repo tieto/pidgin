@@ -2413,49 +2413,16 @@ void show_buddy_list()
 
 	gaim_separator(menu);
 
-#ifdef NO_MULTI
-	findmenu = gtk_menu_new();
-	gtk_widget_show(findmenu);
-	menuitem = gaim_new_item_with_pixmap(menu, _("Search for Buddy"), search_small_xpm,
-					     NULL, 0, 0, 0);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), findmenu);
-	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label(_("by Email"));
-	gtk_menu_append(GTK_MENU(findmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_find_email), NULL);
-	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label(_("by Dir Info"));
-	gtk_menu_append(GTK_MENU(findmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_find_info),
-			   connections->data);
-	gtk_widget_show(menuitem);
-
-	setmenu = gtk_menu_new();
-	gtk_widget_show(setmenu);
-	menuitem = gaim_new_item_with_pixmap(menu, _("Settings"), prefs_small_xpm, NULL, 0, 0, 0);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), setmenu);
-	menuitem = gtk_menu_item_new_with_label(_("User Info"));
-	gtk_menu_append(GTK_MENU(setmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_info), NULL);
-	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label(_("Directory Info"));
-	gtk_menu_append(GTK_MENU(setmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_dir), NULL);
-	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label(_("Change Password"));
-	gtk_menu_append(GTK_MENU(setmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_change_passwd), NULL);
-	gtk_widget_show(menuitem);
-#else
+#ifndef NO_MULTI
 	gaim_new_item_with_pixmap(menu, _("Accounts"), add_small_xpm,
 				  GTK_SIGNAL_FUNC(account_editor), 'a', GDK_CONTROL_MASK, "Ctl+A");
+#endif
 
 	protomenu = gtk_menu_new();
 	menuitem =
 	    gaim_new_item_with_pixmap(menu, _("Protocol Actions"), prefs_small_xpm, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), protomenu);
 	do_proto_menu();
-#endif
 
 	gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm,
 				  GTK_SIGNAL_FUNC(show_prefs), 'p', GDK_CONTROL_MASK, "Ctl+P");
