@@ -1870,8 +1870,9 @@ gaim_user_dir(void)
 		const gchar *hd = gaim_home_dir();
 
 		if (hd) {
-			strcpy((char*) &home_dir, hd);
-			strcat((char*) &home_dir, G_DIR_SEPARATOR_S ".gaim");
+			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
+			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".gaim",
+					sizeof(home_dir));
 		}
 	}
 
@@ -1881,7 +1882,8 @@ gaim_user_dir(void)
 void set_gaim_user_dir(const char *dir)
 {
 	if (dir != NULL && strlen(dir) > 0) {
-		strcpy((char*) &custom_home_dir, dir);
+		g_strlcpy((char*) &custom_home_dir, dir,
+				sizeof(custom_home_dir));
 	}
 }
 

@@ -395,13 +395,13 @@ char* wgaim_install_dir(void) {
 
 char* wgaim_lib_dir(void) {
 	strcpy(lib_dir, wgaim_install_dir());
-	strcat(lib_dir, G_DIR_SEPARATOR_S "plugins");
+	g_strlcat(lib_dir, G_DIR_SEPARATOR_S "plugins", sizeof(lib_dir));
 	return (char*)&lib_dir;
 }
 
 char* wgaim_locale_dir(void) {
 	strcpy(locale_dir, wgaim_install_dir());
-	strcat(locale_dir, G_DIR_SEPARATOR_S "locale");
+	g_strlcat(locale_dir, G_DIR_SEPARATOR_S "locale", sizeof(locale_dir));
 	return (char*)&locale_dir;
 }
 
@@ -594,7 +594,7 @@ void wgaim_init(HINSTANCE hint) {
                 move_settings_dir();
         }
         else {
-                strcpy(app_data_dir, newenv);
+                g_strlcpy(app_data_dir, newenv, sizeof(app_data_dir));
         }
         gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
 
