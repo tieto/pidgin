@@ -19,7 +19,6 @@
  *
  */
 
-#ifndef USE_APPLET
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
@@ -262,6 +261,7 @@ static void play(unsigned char *data, int size)
 }
 
 
+#ifndef USE_APPLET
 
 void play_sound(int sound)
 {
@@ -296,7 +296,6 @@ void play_sound(int sound)
 
 #else /* USE_APPLET */
 
-#include "gaim.h"
 #include <gnome.h>
 void play_sound(int sound)
 {
