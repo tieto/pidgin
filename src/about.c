@@ -82,6 +82,7 @@ void show_about(GtkWidget *w, void *null)
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *text;
+	GtkWidget *sw;
 
 	char abouttitle[45];
 
@@ -134,8 +135,15 @@ void show_about(GtkWidget *w, void *null)
 
 		gtk_text_insert (GTK_TEXT (text), NULL, NULL, NULL,
                    _("Active Developers\n====================\nRob Flynn (maintainer) [ rob@marko.net ]\nSean Egan (coder)      [ bj91704@binghamton.edu ]\n\nCrazy Patch Writers\n===================\nBenjamin Miller\nDecklin Foster\n\nRetired Developers\n===================\nJim Duchek\nEric Warmenhoven                   [ warmenhoven@yahoo.com ]\nMark Spencer (original author)   [ markster@marko.net ]"), 369);
+
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+		gtk_container_add(GTK_CONTAINER(sw), text);
+		gtk_widget_set_usize(GTK_WIDGET(sw), -1, 150);
+		gtk_widget_show(sw);
 		
-		gtk_box_pack_start(GTK_BOX(fbox), text, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
 		gtk_widget_show(text);
 
 		/* Close Button */
