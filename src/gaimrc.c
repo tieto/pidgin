@@ -827,7 +827,7 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tchat_options { %u }\n", chat_options);
 	fprintf(f, "\tfont_options { %u }\n", font_options);
 	fprintf(f, "\tsound_options { %u }\n", sound_options);
-	fprintf(f, "\taway_options { %u }\n", away_options);
+	fprintf(f, "\taway_options { %u } { %u }\n", away_options, away_resend);
 
 	fprintf(f, "\tfont_xfld { %s }\n", fontxfld);
 	fprintf(f, "\tfont_face { %s }\n", fontface);
