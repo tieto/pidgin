@@ -246,17 +246,26 @@ xmlnode_get_data(xmlnode *node)
 	return ret;
 }
 
-char *xmlnode_to_str(xmlnode *node, int *len)
+static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean pretty, int depth)
 {
 	char *ret;
 	GString *text = g_string_new("");
 	xmlnode *c;
-	char *node_name, *esc, *esc2;
-	gboolean need_end = FALSE;
+	char *node_name, *esc, *esc2, *tab = NULL;
+	gboolean need_end = FALSE, has_data = FALSE;
+#ifdef _WIN32
+	static const char *newline = "\r\n";
+#else
+	static const char *newline = "\n";
+#endif
+
+	if(pretty && depth) {
+		tab = g_strnfill(depth, '\t');
+		text = g_string_append(text, tab);
+	}
 
 	node_name = g_markup_escape_text(node->name, -1);
 	g_string_append_printf(text, "<%s", node_name);
-
 
 	for(c = node->child; c; c = c->next)
 	{
@@ -267,18 +276,20 @@ char *xmlnode_to_str(xmlnode *node, int *len)
 			g_free(esc);
 			g_free(esc2);
 		} else if(c->type == XMLNODE_TYPE_TAG || c->type == XMLNODE_TYPE_DATA) {
+			if(c->type == XMLNODE_TYPE_DATA)
+				has_data = TRUE;
 			need_end = TRUE;
 		}
 	}
 
 	if(need_end) {
-		text = g_string_append_c(text, '>');
+		g_string_append_printf(text, ">%s", (pretty && !has_data) ? newline : "");
 
 		for(c = node->child; c; c = c->next)
 		{
 			if(c->type == XMLNODE_TYPE_TAG) {
 				int esc_len;
-				esc = xmlnode_to_str(c, &esc_len);
+				esc = xmlnode_to_str_helper(c, &esc_len, (pretty && !has_data), depth+1);
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
 			} else if(c->type == XMLNODE_TYPE_DATA) {
@@ -288,18 +299,31 @@ char *xmlnode_to_str(xmlnode *node, int *len)
 			}
 		}
 
-		g_string_append_printf(text, "</%s>", node_name);
+		if(tab && pretty && !has_data)
+			text = g_string_append(text, tab);
+		g_string_append_printf(text, "</%s>%s", node_name, pretty ? newline : "");
 	} else {
-		g_string_append_printf(text, "/>");
+		g_string_append_printf(text, "/>%s", pretty ? newline : "");
 	}
 
 	g_free(node_name);
+
+	if(tab)
+		g_free(tab);
 
 	ret = text->str;
 	if(len)
 		*len = text->len;
 	g_string_free(text, FALSE);
 	return ret;
+}
+
+char *xmlnode_to_str(xmlnode *node, int *len) {
+	return xmlnode_to_str_helper(node, len, FALSE, 0);
+}
+
+char *xmlnode_to_formatted_str(xmlnode *node, int *len) {
+	return xmlnode_to_str_helper(node, len, TRUE, 0);
 }
 
 struct _xmlnode_parser_data {
