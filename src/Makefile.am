@@ -30,6 +30,7 @@ CORESOURCES = \
 	plugin.h \
 	pounce.c \
 	pounce.h \
+	privacy.h \
 	proxy.c \
 	proxy.h \
 	prefs.c \
@@ -99,7 +100,6 @@ gaim_SOURCES = \
 	main.c \
 	md5.c \
 	md5.h \
-	privacy.h \
 	session.c \
 	stock.c \
 	stock.h \
