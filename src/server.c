@@ -303,48 +303,6 @@ void serv_get_info(GaimConnection *g, const char *name)
 		prpl_info->get_info(g, name);
 }
 
-void serv_get_dir(GaimConnection *g, const char *name)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
-
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->get_dir)
-		prpl_info->get_dir(g, name);
-}
-
-void serv_set_dir(GaimConnection *g, const char *first,
-				  const char *middle, const char *last, const char *maiden,
-				  const char *city, const char *state, const char *country,
-				  int web)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
-
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_dir)
-		prpl_info->set_dir(g, first, middle, last, maiden, city, state,
-						 country, web);
-}
-
-void serv_dir_search(GaimConnection *g, const char *first,
-					 const char *middle, const char *last, const char *maiden,
-		     const char *city, const char *state, const char *country,
-			 const char *email)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
-
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->dir_search)
-		prpl_info->dir_search(g, first, middle, last, maiden, city, state,
-							country, email);
-}
-
-
 void serv_set_away(GaimConnection *gc, const char *state, const char *message)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;

@@ -4665,6 +4665,7 @@ static void oscar_get_info(GaimConnection *gc, const char *name) {
 		aim_locate_getinfoshort(od->sess, name, 0x00000003);
 }
 
+#if 0
 static void oscar_set_dir(GaimConnection *gc, const char *first, const char *middle, const char *last,
 			  const char *maiden, const char *city, const char *state, const char *country, int web) {
 	/* XXX - some of these things are wrong, but i'm lazy */
@@ -4672,6 +4673,7 @@ static void oscar_set_dir(GaimConnection *gc, const char *first, const char *mid
 	aim_locate_setdirinfo(od->sess, first, middle, last,
 				maiden, NULL, NULL, city, state, NULL, 0, web);
 }
+#endif
 
 static void oscar_set_idle(GaimConnection *gc, int time) {
 	OscarData *od = (OscarData *)gc->proto_data;
@@ -4870,13 +4872,6 @@ static void oscar_set_away(GaimConnection *gc, const char *state, const char *me
 static void oscar_warn(GaimConnection *gc, const char *name, int anon) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	aim_im_warn(od->sess, od->conn, name, anon ? AIM_WARN_ANON : 0);
-}
-
-static void oscar_dir_search(GaimConnection *gc, const char *first, const char *middle, const char *last,
-			     const char *maiden, const char *city, const char *state, const char *country, const char *email) {
-	OscarData *od = (OscarData *)gc->proto_data;
-	if (strlen(email))
-		aim_search_address(od->sess, od->conn, email);
 }
 
 static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) {
@@ -6687,7 +6682,9 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 
 static void search_by_email_cb(GaimConnection *gc, const char *email)
 {
-	serv_dir_search(gc, "", "", "", "", "", "", "", email);
+	OscarData *od = (OscarData *)gc->proto_data;
+
+	aim_search_address(od->sess, od->conn, email);
 }
 
 static void oscar_show_find_email(GaimConnection *gc)
@@ -6941,9 +6938,6 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_send_typing,
 	oscar_get_info,
 	oscar_set_away,
-	oscar_set_dir,
-	NULL,
-	oscar_dir_search,
 	oscar_set_idle,
 	oscar_change_passwd,
 	oscar_add_buddy,

@@ -244,14 +244,6 @@ struct _GaimPluginProtocolInfo
 	GList *(*chat_info)(GaimConnection *);
 
 	/* All the server-related functions */
-
-	/*
-	 * A lot of these (like get_dir) are protocol-dependent and should
-	 * be removed. ones like set_dir (which is also protocol-dependent)
-	 * can stay though because there's a dialog (i.e. the prpl says you
-	 * can set your dir info, the ui shows a dialog and needs to call
-	 * set_dir in order to set it)
-	 */
 	void (*login)(GaimAccount *);
 	void (*close)(GaimConnection *);
 	int  (*send_im)(GaimConnection *, const char *who,
@@ -261,16 +253,6 @@ struct _GaimPluginProtocolInfo
 	int  (*send_typing)(GaimConnection *, const char *name, int typing);
 	void (*get_info)(GaimConnection *, const char *who);
 	void (*set_away)(GaimConnection *, const char *state, const char *message);
-	void (*set_dir)(GaimConnection *, const char *first,
-					const char *middle, const char *last,
-					const char *maiden, const char *city,
-					const char *state, const char *country, int web);
-	void (*get_dir)(GaimConnection *, const char *who);
-	void (*dir_search)(GaimConnection *, const char *first,
-					   const char *middle, const char *last,
-					   const char *maiden, const char *city,
-					   const char *state, const char *country,
-					   const char *email);
 	void (*set_idle)(GaimConnection *, int idletime);
 	void (*change_passwd)(GaimConnection *, const char *old_pass,
 						  const char *new_pass);

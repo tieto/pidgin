@@ -1328,9 +1328,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	NULL,
-	NULL,
-	NULL,
-	NULL,
 	zephyr_join_chat,
 	NULL,						/* reject chat invite */
 	NULL,

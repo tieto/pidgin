@@ -3232,9 +3232,6 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_send_typing,
 	yahoo_get_info,
 	yahoo_set_away,
-	NULL, /* set_dir */
-	NULL, /* get_dir */
-	NULL, /* dir_search */
 	yahoo_set_idle,
 	NULL, /* change_passwd*/
 	yahoo_add_buddy,

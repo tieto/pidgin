@@ -1118,6 +1118,7 @@ static void toc_get_info(GaimConnection *gc, const char *name)
 	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
+/* Should be implemented as an Account Action? */
 static void toc_get_dir(GaimConnection *gc, const char *name)
 {
 	char buf[BUF_LEN * 2];
@@ -1125,6 +1126,8 @@ static void toc_get_dir(GaimConnection *gc, const char *name)
 	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
+#if 0
+/* Should be implemented as an Account Action */
 static void toc_set_dir(GaimConnection *g, const char *first, const char *middle, const char *last,
 			const char *maiden, const char *city, const char *state, const char *country, int web)
 {
@@ -1136,7 +1139,10 @@ static void toc_set_dir(GaimConnection *g, const char *first, const char *middle
 	g_free(buf3);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
+#endif
 
+#if 0
+/* Should be implemented as an Account Action */
 static void toc_dir_search(GaimConnection *g, const char *first, const char *middle, const char *last,
 			   const char *maiden, const char *city, const char *state, const char *country, const char *email)
 {
@@ -1149,6 +1155,7 @@ static void toc_dir_search(GaimConnection *g, const char *first, const char *mid
 		     city, state, country);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
+#endif
 
 static void toc_set_away(GaimConnection *g, const char *state, const char *message)
 {
@@ -2110,9 +2117,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	toc_get_info,
 	toc_set_away,
-	toc_set_dir,
-	toc_get_dir,
-	toc_dir_search,
 	toc_set_idle,
 	toc_change_passwd,
 	toc_add_buddy,

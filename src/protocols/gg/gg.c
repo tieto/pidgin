@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9665 2004-05-06 22:38:01Z thekingant $
+ * $Id: gg.c 9722 2004-05-16 07:19:56Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1304,6 +1304,7 @@ static void delete_buddies_server(GaimConnection *gc)
 }
 #endif
 
+#if 0
 static void agg_dir_search(GaimConnection *gc, const char *first, const char *middle,
 			   const char *last, const char *maiden, const char *city, const char *state,
 			   const char *country, const char *email)
@@ -1353,6 +1354,7 @@ static void agg_dir_search(GaimConnection *gc, const char *first, const char *mi
 		return;
 	}
 }
+#endif
 
 static void agg_change_passwd(GaimConnection *gc, const char *old, const char *new)
 {
@@ -1550,9 +1552,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	agg_get_info,
 	agg_set_away,
-	NULL,
-	NULL,
-	agg_dir_search,
 	NULL,
 	agg_change_passwd,
 	agg_add_buddy,

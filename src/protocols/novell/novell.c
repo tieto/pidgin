@@ -3308,9 +3308,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_send_typing,
 	novell_get_info,
 	novell_set_away,
-	NULL,						/* set_dir */
-	NULL,						/* get_dir */
-	NULL,						/* dir_search */
 	novell_set_idle,
 	NULL,						/* change pwd */
 	novell_add_buddy,
