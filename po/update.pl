@@ -44,7 +44,7 @@ if ($LANG=~/^-(.)*/){
     }
 
     elsif($LANG eq "--pot" || "$LANG" eq "-P"){
-                
+
         print "Building the $PACKAGE.pot ...";
 
         $b="xgettext --default-domain\=$PACKAGE --directory\=\.\."
@@ -52,7 +52,6 @@ if ($LANG=~/^-(.)*/){
           ." --files-from\=\.\/POTFILES\.in ";
         $b1="test \! -f $PACKAGE\.po \|\| \( rm -f \.\/$PACKAGE\.pot "
            ."&& mv $PACKAGE\.po \.\/$PACKAGE\.pot \)";
-        print $b . "\n"; 
 	if(($ret=system($b . " && " . $b1))==0) {
 	    print "...done\n";
 	}
@@ -62,7 +61,7 @@ if ($LANG=~/^-(.)*/){
 
         exit $ret;
     }
-        
+
     elsif ($LANG eq "--maintain" || "$LANG" eq "-M"){
 
         $a="find ../ -path ../intl -prune -o -print | egrep '.*\\.(c|y|cc|c++|h|gob)\$' ";
