@@ -294,10 +294,6 @@ msn_list_emblems(GaimBuddy *b, char **se, char **sw,
 		emblems[i++] = "away";
 
 	if (user == NULL) {
-		/* Shouldn't happen. */
-		gaim_debug_error("msn", "buddy %s does not have a MsnUser attached!\n",
-						 b->name);
-
 		emblems[0] = "offline";
 	}
 	else if (user->mobile)
@@ -322,7 +318,6 @@ static char *
 msn_tooltip_text(GaimBuddy *b)
 {
 	char *text = NULL;
-	/* MsnUser *user = b->proto_data; */
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
 		text = g_strdup_printf(_("<b>Status:</b> %s"),
