@@ -1797,26 +1797,31 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			debug_printf("Can't stat buddy icon file!\n");
 	}
 
-	/*
-	 * Quickly convert it to eight bit format, replacing 
-	 * non-ASCII UNICODE characters with their equivelent 
-	 * HTML entity.
-	 */
 	if (args->icbmflags & AIM_IMFLAGS_UNICODE) {
+		/* This message is marked as UNICODE, so we have to
+		 * convert it to utf-8 before handing it to the gaim core.
+		 * This conversion should *never* fail, if it does it
+		 * means that either the incoming ICBM is corrupted or
+		 * there is something we don't understand about it. */
+		/* For the record, AIM Unicode is big-endian UCS-2 */
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
 		if (err) {
 			debug_printf("Unicode IM conversion: %s\n", err->message);
 			tmp = strdup(_("(There was an error receiving this message)"));
 		}
-	} else if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1) {
+	} else {
+		/* This will get executed for both AIM_IMFLAGS_UNICODE and
+		 * unflagged messages, which are ASCII.  That's OK because
+		 * ASCII is a strict subset of ISO-8859-1; this should
+		 * help with compatibility with old, broken versions of
+		 * gaim (everything before 0.60) and other broken clients
+		 * that will happily send ISO-8859-1 without marking it as
+		 * such */
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
 		if (err) {
 			debug_printf("ISO-8859-1 IM conversion: %s\n", err->message);
 			tmp = strdup(_("(There was an error receiving this message)"));
 		}
-	} else {
-		/* ASCII is valid UTF-8 */
-		tmp = g_strdup(args->msg);
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
