@@ -528,6 +528,11 @@ static void gtk_blist_menu_im_cb(GtkWidget *w, GaimBuddy *b)
 	}
 }
 
+static void gtk_blist_menu_send_file_cb(GtkWidget *w, GaimBuddy *b)
+{
+	serv_send_file(b->account->gc, b->name, NULL);
+}
+
 static void gtk_blist_menu_autojoin_cb(GtkWidget *w, GaimChat *chat)
 {
 	gaim_blist_node_set_bool((GaimBlistNode*)chat, "gtk-autojoin",
@@ -1130,6 +1135,13 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 	}
 	gaim_new_item_from_stock(menu, _("I_M"), GAIM_STOCK_IM,
 			G_CALLBACK(gtk_blist_menu_im_cb), b, 0, 0, NULL);
+	if (prpl_info && prpl_info->send_file) {
+		if (!prpl_info->can_receive_file 
+				|| prpl_info->can_receive_file(b->account->gc, b->name)) {
+			gaim_new_item_from_stock(menu, _("_Send File"), GAIM_STOCK_FILE_TRANSFER,
+			G_CALLBACK(gtk_blist_menu_send_file_cb), b, 0, 0, NULL);
+		}
+	}
 	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
 			G_CALLBACK(gtk_blist_menu_bp_cb), b, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("View _Log"), NULL,

@@ -1588,3 +1588,14 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	g_free(buf);
 	g_free(buffy);
 }
+
+void serv_send_file(GaimConnection *gc, const char *who, const char *file)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && prpl_info->send_file)
+		prpl_info->send_file(gc, who, file);
+}

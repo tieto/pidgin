@@ -345,11 +345,11 @@ silcgaim_ftp_send_file_resolved(SilcClient client,
 		return;
 	}
 
-	silcgaim_ftp_send_file(client->application, (const char *)context);
+	silcgaim_ftp_send_file(client->application, (const char *)context, NULL);
 	silc_free(context);
 }
 
-void silcgaim_ftp_send_file(GaimConnection *gc, const char *name)
+void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *file)
 {
 	SilcGaim sg = gc->proto_data;
 	SilcClient client = sg->client;
@@ -400,7 +400,10 @@ void silcgaim_ftp_send_file(GaimConnection *gc, const char *name)
 	xfer->xfer->data = xfer;
 
 	/* Choose file to send */
-	gaim_xfer_request(xfer->xfer);
+	if (file)
+		gaim_xfer_request_accepted(xfer->xfer, file);
+	else
+		gaim_xfer_request(xfer->xfer);
 
 	silc_free(clients);
 	silc_free(nickname);

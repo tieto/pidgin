@@ -1436,7 +1436,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	silcgaim_roomlist_get_list,
 	silcgaim_roomlist_cancel,
-	NULL
+	NULL,
+	NULL,
+	silcgaim_ftp_send_file
 };
 
 static GaimPluginInfo info =

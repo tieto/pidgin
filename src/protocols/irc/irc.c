@@ -150,34 +150,15 @@ static GList *irc_actions(GaimPlugin *plugin, gpointer context)
 	return list;
 }
 
-
-static void irc_dccsend_send_ask_menu(GaimBlistNode *node, gpointer data)
-{
-	GaimBuddy *buddy;
-	GaimConnection *gc;
-
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (GaimBuddy *) node;
-	gc =gaim_account_get_connection(buddy->account);
-
-	irc_dccsend_send_ask(gc, buddy->name);
-}
-
-
+#if 0
 static GList *irc_blist_node_menu(GaimBlistNode *node)
 {
 	GList *m = NULL;
 	GaimBlistNodeAction *act;
 
-	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		act = gaim_blist_node_action_new(_("Send File"),
-				irc_dccsend_send_ask_menu, NULL);
-		m = g_list_append(m, act);
-	}
-	
 	return m;
 }
+#endif
 
 static GList *irc_chat_join_info(GaimConnection *gc)
 {
@@ -582,7 +563,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	irc_away_states,
-	irc_blist_node_menu,
+	NULL, /*irc_blist_node_menu, */
 	irc_chat_join_info,
 	irc_login,
 	irc_close,
@@ -626,7 +607,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	irc_roomlist_get_list,
 	irc_roomlist_cancel,
-	NULL
+	NULL,
+	NULL,
+	irc_dccsend_send_file
 };
 
 

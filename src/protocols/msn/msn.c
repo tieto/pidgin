@@ -354,30 +354,26 @@ t_msn_xfer_init(GaimXfer *xfer)
 }
 
 static void
-show_send_file_cb(GaimBlistNode *node, gpointer ignored)
+msn_send_file(GaimConnection *gc, const char *who, const char *file)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
 	MsnSession *session;
 	MsnSlpLink *slplink;
 	GaimXfer *xfer;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (GaimBuddy *) node;
-
-	gc = gaim_account_get_connection(buddy->account);
 	session = gc->proto_data;
 
-	xfer = gaim_xfer_new(buddy->account, GAIM_XFER_SEND, buddy->name);
+	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
 
-	slplink = msn_session_get_slplink(session, buddy->name);
+	slplink = msn_session_get_slplink(session, who);
 
 	xfer->data = slplink;
 
 	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
 
-	gaim_xfer_request(xfer);
+	if (file)
+		gaim_xfer_request_accepted(xfer, file);
+	else
+		gaim_xfer_request(xfer);
 }
 
 static void
@@ -539,11 +535,6 @@ msn_buddy_menu(GaimBuddy *buddy)
 	{
 		act = gaim_blist_node_action_new(_("Initiate Chat"),
 										 initiate_chat_cb, NULL);
-		m = g_list_append(m, act);
-
-		act = gaim_blist_node_action_new(_("Send File"),
-											show_send_file_cb, NULL);
-
 		m = g_list_append(m, act);
 
 		act = gaim_blist_node_action_new(_("Update Buddy Icon"),
@@ -1703,7 +1694,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	NULL,
+	msn_send_file
 };
 
 static GaimPluginInfo info =

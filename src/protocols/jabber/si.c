@@ -644,25 +644,19 @@ static void jabber_si_xfer_init(GaimXfer *xfer)
 	}
 }
 
-void jabber_si_xfer_ask_send(GaimBlistNode *node, gpointer data)
+void jabber_si_xfer_send(GaimConnection *gc, const char *who, const char *file)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
 	JabberStream *js;
 
 	GaimXfer *xfer;
 	JabberSIXfer *jsx;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
 	js = gc->proto_data;
 
-	if(!gaim_find_buddy(gc->account, buddy->name) || !jabber_buddy_find(js, buddy->name, FALSE))
+	if(!gaim_find_buddy(gc->account, who) || !jabber_buddy_find(js, who, FALSE))
 		return;
 
-	xfer = gaim_xfer_new(buddy->account, GAIM_XFER_SEND, buddy->name);
+	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
 
 	xfer->data = jsx = g_new0(JabberSIXfer, 1);
 	jsx->js = js;
@@ -673,7 +667,10 @@ void jabber_si_xfer_ask_send(GaimBlistNode *node, gpointer data)
 
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
-	gaim_xfer_request(xfer);
+	if (file)
+		gaim_xfer_request_accepted(xfer, file);
+	else
+		gaim_xfer_request(xfer);
 }
 
 void jabber_si_parse(JabberStream *js, xmlnode *packet)

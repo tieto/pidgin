@@ -1922,30 +1922,37 @@ static void oscar_xfer_ack_send(GaimXfer *xfer, const char *buffer, size_t size)
 	}
 }
 
-static void oscar_ask_sendfile(GaimBlistNode *node, gpointer data) {
+static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
+	gboolean can_receive = FALSE;
+	OscarData *od = gc->proto_data;
 
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	if (!od->icq) {
+		aim_userinfo_t *userinfo;
+		userinfo = aim_locate_finduserinfo(od->sess, who);
+		if (userinfo && userinfo->capabilities & AIM_CAPS_SENDFILE)
+			can_receive = TRUE;
+	}
+
+	return can_receive;
+}
+
+static void oscar_send_file(GaimConnection *gc, const char *who, const char *file) {
 
 	OscarData *od;
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	const char *ip;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
 	od = (OscarData *)gc->proto_data;
 
 	/* You want to send a file to someone else, you're so generous */
 
 	/* Build the file transfer handle */
-	xfer = gaim_xfer_new(buddy->account, GAIM_XFER_SEND, buddy->name);
+	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
 
 	/* Create the oscar-specific data */
 	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
-	oft_info = aim_oft_createinfo(od->sess, NULL, buddy->name, ip, 0, 0, 0, NULL);
+	oft_info = aim_oft_createinfo(od->sess, NULL, who, ip, 0, 0, 0, NULL);
 	xfer->data = oft_info;
 
 	 /* Setup our I/O op functions */
@@ -1959,7 +1966,10 @@ static void oscar_ask_sendfile(GaimBlistNode *node, gpointer data) {
 	od->file_transfers = g_slist_append(od->file_transfers, xfer);
 
 	/* Now perform the request */
-	gaim_xfer_request(xfer);
+	if (file)
+		gaim_xfer_request_accepted(xfer, file);
+	else
+		gaim_xfer_request(xfer);
 }
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -6770,13 +6780,12 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 						oscar_ask_direct_im, NULL);
 				m = g_list_append(m, act);
 			}
-
+#if 0
 			if (userinfo->capabilities & AIM_CAPS_SENDFILE) {
 				act = gaim_blist_node_action_new(_("Send File"),
 						oscar_ask_sendfile, NULL);
 				m = g_list_append(m, act);
 			}
-#if 0
 			if (userinfo->capabilities & AIM_CAPS_GETFILE) {
 				act = gaim_blist_node_action_new(_("Get File"),
 						oscar_ask_getfile, NULL);
@@ -7210,7 +7219,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	oscar_can_receive_file,
+	oscar_send_file
 };
 
 static GaimPluginInfo info =

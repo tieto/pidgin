@@ -32,7 +32,6 @@
 #include "jabber.h"
 #include "iq.h"
 #include "presence.h"
-#include "si.h"
 
 
 void jabber_buddy_free(JabberBuddy *jb)
@@ -925,10 +924,6 @@ GList *jabber_buddy_menu(GaimBuddy *buddy)
 
 	if(!jb)
 		return m;
-
-	act = gaim_blist_node_action_new(_("Send File"),
-			jabber_si_xfer_ask_send, NULL);
-	m = g_list_append(m, act);
 
 	/* XXX: fix the NOT ME below */
 

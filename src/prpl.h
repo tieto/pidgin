@@ -286,6 +286,10 @@ struct _GaimPluginProtocolInfo
 	struct _GaimRoomlist *(*roomlist_get_list)(GaimConnection *gc);
 	void (*roomlist_cancel)(struct _GaimRoomlist *list);
 	void (*roomlist_expand_category)(struct _GaimRoomlist *list, struct _GaimRoomlistRoom *category);
+
+	/* file transfer callbacks */
+	gboolean (*can_receive_file)(GaimConnection *, const char *who);
+	void (*send_file)(GaimConnection *, const char *who, const char *filename);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

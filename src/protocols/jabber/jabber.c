@@ -44,6 +44,7 @@
 #include "presence.h"
 #include "jabber.h"
 #include "roster.h"
+#include "si.h"
 #include "xdata.h"
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 8 : 5)
@@ -1515,7 +1516,9 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_find_blist_chat,
 	jabber_roomlist_get_list,
 	jabber_roomlist_cancel,
-	NULL
+	NULL,
+	NULL,
+	jabber_si_xfer_send
 };
 
 static GaimPluginInfo info =

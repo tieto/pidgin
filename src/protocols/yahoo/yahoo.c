@@ -2666,20 +2666,6 @@ static void yahoo_chat_goto_menu(GaimBlistNode *node, gpointer data)
 }
 
 
-static void yahoo_ask_send_file_menu(GaimBlistNode *node, gpointer data)
-{
-	GaimBuddy *buddy;
-	GaimConnection *gc;
-
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
-
-	yahoo_ask_send_file(gc, buddy->name);
-}
-
-
 static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 {
 	GList *m = NULL;
@@ -2711,11 +2697,6 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 
 	act = gaim_blist_node_action_new(_("Initiate Conference"),
 			yahoo_initiate_conference, NULL);
-	m = g_list_append(m, act);
-
-	/* FIXME: remove this when the ui does it for us. */
-	act = gaim_blist_node_action_new(_("Send File"),
-			yahoo_ask_send_file_menu, NULL);
 	m = g_list_append(m, act);
 
 	if (yahoo_friend_get_game(f)) {
@@ -3232,13 +3213,6 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
 	g_free(gpo);
 }
 
-#if 0
-static gboolean yahoo_has_send_file(GaimConnection *gc, const char *who)
-{
-	return TRUE;
-}
-#endif
-
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -3293,16 +3267,13 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_set_buddy_icon,
 	NULL, /* void (*remove_group)(GaimConnection *gc, const char *group);*/
 	NULL, /* char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who); */
-#if 0
-	yahoo_ask_send_file,
-	yahoo_send_file,
-	yahoo_has_send_file,
-#endif
 	NULL,
 	NULL,
 	yahoo_roomlist_get_list,
 	yahoo_roomlist_cancel,
-	yahoo_roomlist_expand_category
+	yahoo_roomlist_expand_category,
+	NULL,
+	yahoo_send_file
 };
 
 static GaimPluginInfo info =

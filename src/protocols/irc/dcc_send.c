@@ -299,12 +299,12 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
  * buddy menu
  * It sets up the GaimXfer struct and tells Gaim to go ahead
  */
-void irc_dccsend_send_ask(GaimConnection *gc, const char *dst) {
+void irc_dccsend_send_file(GaimConnection *gc, const char *who, const char *file) {
 	GaimXfer *xfer;
 	struct irc_xfer_send_data *xd;
 
 	/* Build the file transfer handle */
-	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, dst);
+	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, who);
 
 
 	xd = g_new0(struct irc_xfer_send_data, 1);
@@ -318,5 +318,8 @@ void irc_dccsend_send_ask(GaimConnection *gc, const char *dst) {
 	gaim_xfer_set_request_denied_fnc(xfer, irc_dccsend_send_destroy);
 	gaim_xfer_set_cancel_send_fnc(xfer, irc_dccsend_send_destroy);
 	/* Now perform the request */
-	gaim_xfer_request(xfer);
+	if (file)
+		gaim_xfer_request_accepted(xfer, file);
+	else
+		gaim_xfer_request(xfer);
 }

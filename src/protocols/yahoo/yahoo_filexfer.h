@@ -30,14 +30,6 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt);
  *
  * @param gc The GaimConnection handle.
  * @param who Who are we sending it to?
- * @param file What file?
+ * @param file What file? If NULL, user will choose after this call.
  */
 void yahoo_send_file(GaimConnection *gc, const char *who, const char *file);
-
-/**
- * Sends a file, that the user chooses after this call.
- *
- * @param gc The GaimConnection.
- * @param who Who are we going to send a file to?
- */
-void yahoo_ask_send_file(GaimConnection *gc, const char *who);

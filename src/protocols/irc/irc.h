@@ -155,6 +155,6 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 
-void irc_dccsend_send_ask(GaimConnection *gc, const char *dst);
+void irc_dccsend_send_file(GaimConnection *gc, const char *who, const char *file);
 void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg);
 #endif /* _GAIM_IRC_H */

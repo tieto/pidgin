@@ -1570,20 +1570,6 @@ silcgaim_buddy_kill(GaimBlistNode *node, gpointer data)
 				 b->name, "Killed by operator", NULL);
 }
 
-static void
-silcgaim_buddy_send_file(GaimBlistNode *node, gpointer data)
-{
-	GaimBuddy *b;
-	GaimConnection *gc;
-
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	b = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(b->account);
-
-	silcgaim_ftp_send_file(gc, b->name);
-}
-
 GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 {
 
@@ -1625,10 +1611,6 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 				silcgaim_buddy_getkey_menu, NULL);
 		m = g_list_append(m, act);
 	}
-
-	act = gaim_blist_node_action_new(_("Send File..."),
-			silcgaim_buddy_send_file, NULL);
-	m = g_list_append(m, act);
 
 	if (conn && conn->local_entry->mode & SILC_UMODE_ROUTER_OPERATOR) {
 		act = gaim_blist_node_action_new(_("Kill User"),
