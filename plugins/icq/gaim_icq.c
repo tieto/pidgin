@@ -66,7 +66,7 @@ static void gaim_icq_handler(gpointer data, gint source, GdkInputCondition cond)
 }
 
 static void icq_sock_notify(int socket, int type, int status) {
-	struct gaim_sock *gs;
+	struct gaim_sock *gs = NULL;
 	if (status) {
 		GdkInputCondition cond;
 		if (type == ICQ_SOCKET_READ)
@@ -121,12 +121,27 @@ static void icq_logged_off(icq_Link *link) {
 	id->cur_status = STATUS_ONLINE;
 }
 
+void strip_linefeed(gchar *text)
+{
+	int i, j;
+	gchar *text2 = g_malloc(strlen(text) + 1);
+
+	for (i = 0, j = 0; text[i]; i++)
+		if (text[i] != '\r')
+			text2[j++] = text[i];
+	text2[j] = '\0';
+
+	strcpy(text, text2);
+	g_free(text2);
+}
+
 static void icq_msg_incoming(icq_Link *link, unsigned long uin, unsigned char hour, unsigned char minute,
 			unsigned char day, unsigned char month, unsigned short year, const char *data) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char buf[256], *tmp = g_malloc(BUF_LONG);
 	g_snprintf(tmp, BUF_LONG, "%s", data);
 	g_snprintf(buf, sizeof buf, "%lu", uin);
+	strip_linefeed(tmp);
 	serv_got_im(gc, buf, tmp, 0, time((time_t)NULL));
 	g_free(tmp);
 }
