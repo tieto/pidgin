@@ -1,6 +1,11 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.9.18:
+	* Logging in works better for oscar
+	* Double error bug when sending message to an offline user is
+	  fixed.
+	* Pressing enter once again sends a message in buddy chatrooms (oops)
+	* More fixes for the change on the AOL sign-on process. 
 
 version 0.9.17 (05/31/2000):
 	* Automagic feature to check for new versions has been removed
