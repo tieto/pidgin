@@ -1140,9 +1140,8 @@ static struct away_message *save_away_message(struct create_away *ca)
 	g_snprintf(am->message, sizeof(am->message), "%s", away_message);
 	g_free(away_message);
 
-	if (!ca->mess) {
+	if (!ca->mess)
 		away_messages = g_slist_insert_sorted(away_messages, am, sort_awaymsg_list);
-	}
 
 	do_away_menu(NULL);
 	gaim_status_sync();

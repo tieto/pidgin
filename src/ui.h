@@ -51,6 +51,7 @@
 /* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
  * for the UI so that people can name their away messages when they save them. So these
  * are really a UI function and struct away_message should be removed from the core. */
+/* WTF?  How does having a title for something mean that it is part of the UI? */
 struct away_message {
 	char name[80];
 	char message[2048];

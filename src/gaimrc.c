@@ -1561,10 +1561,10 @@ void save_prefs()
 }
 
 
-/* This function is called by g_slist_insert_sorted to compare the item
+/*
+ * This function is called by g_slist_insert_sorted to compare the item
  * being compared to the rest of the items on the list.
  */
-
 gint sort_awaymsg_list(gconstpointer a, gconstpointer b)
 {
 	struct away_message *msg_a;
