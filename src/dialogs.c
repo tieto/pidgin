@@ -451,6 +451,7 @@ do_error_dialog(char *message, char *title)
 	aol_icon(d->window);
 
 	gtk_widget_show(d);
+	gtk_widget_grab_focus(close);
 	return d;
 }
 
