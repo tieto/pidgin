@@ -5275,10 +5275,10 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	{
 		GaimBuddyIcon *icon = gaim_im_get_icon(GAIM_IM(conv));
 
-		data = gaim_buddy_icon_get_data(icon, &len);
-
-		if (!data)
+		if (icon == NULL)
 			return;
+
+		data = gaim_buddy_icon_get_data(icon, &len);
 
 		/* this is such an evil hack, i don't know why i'm even considering it.
 		 * we'll do it differently when gdk-pixbuf-loader isn't leaky anymore. */
