@@ -1,7 +1,13 @@
-version 0.76  (04/01/2004):
+version 0.78
+
+version 0.77 (04/22/2004):
+
+version 0.76 (04/01/2004):
 	* Ability to open files directly from file transfer window.
 	* Installer translations for: Russian, Polish, Finnish, Japanese
 	  Hebrew and Norwegian.
+	* Updated GTK+ 2.2.4 build (rev c): glib updated to export needed
+	  symbol.
 
 version 0.75 (01/09/2004):
 	* TCL plugin loader now working. Thanks Daniel Atallah.
