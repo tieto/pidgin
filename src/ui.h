@@ -102,7 +102,7 @@ struct conversation {
 	char name[80];
 	GtkWidget *toolbar;
 	GtkWidget *text;
-//	GtkWidget *entry;
+/*	GtkWidget *entry; */
 	GtkWidget *italic;
 	GtkWidget *bold;
 	GtkWidget *underline;
