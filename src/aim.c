@@ -836,7 +836,7 @@ int main(int argc, char *argv[])
 
 	load_prefs();
 	core_main();
-#ifndef _WIN321
+#ifndef _WIN32
 	ui_main();
 #endif
 
