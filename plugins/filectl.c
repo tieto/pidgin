@@ -39,12 +39,12 @@ void run_commands() {
 		command = getarg(buffer, 0, 0);
 		if (!strncasecmp(command, "signon", 6)) {
 			struct aim_user *u = NULL;
-			GList *userlist = aim_users;
+			GSList *userlist = aim_users;
 			arg1 = getarg(buffer, 1, 1);
-			if(arg1) {
-				while(userlist) {
+			if (arg1) {
+				while (userlist) {
 					struct aim_user *current = userlist->data;
-					if(!strcmp(current->username, arg1)) {
+					if (!strcmp(current->username, arg1)) {
 						u = current;
 						break;
 					}
@@ -52,17 +52,25 @@ void run_commands() {
 				}
 				free(arg1);
 			}
-			if(u) /* username found */
+			if (u) /* username found */
 				serv_login(u);
 		} else if (!strncasecmp(command, "signoff", 7)) {
 			struct gaim_connection *gc = NULL;
+			GSList *c = connections;
 			arg1 = getarg(buffer, 1, 1);
-			if (arg1) {
-				gc = find_gaim_conn_by_name(arg1);
-				free(arg1);
+			while (c) {
+				gc = c->data;
+				if (!strcmp(gc->username, arg1)) {
+					break;
+				}
+				gc = NULL;
+				c = c->next;
 			}
-			if (gc) signoff(gc);
-			else signoff_all(NULL, NULL);
+			if (gc)
+				signoff(gc);
+			else if (!arg1)
+				signoff_all(NULL, NULL);
+			free(arg1);
 		} else if (!strncasecmp(command, "send", 4)) {
 			struct conversation *c;
 			arg1 = getarg(buffer, 1, 0);
