@@ -2223,7 +2223,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					data->gc = gc;
 					data->name = g_strdup(text[i*2+2]);
 					data->nick = g_strdup(text[i*2+1]);
-					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Deny"), gaim_free_name_data);
+					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data);
 					g_free(message);
 				}
 				g_strfreev(text);

@@ -91,8 +91,6 @@ static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *l
 /**
  * Locally add a new item to the given item list.
  *
- * XXX - This should copy data, not just use it.
- *
  * @param list A pointer to a pointer to the current list of items.
  * @param name A null terminated string of the name of the new item, or NULL if the 
  *        item should have no name.
@@ -431,6 +429,26 @@ faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, co
 }
 
 /**
+ * Locally find if you are waiting for authorization for a buddy.
+ *
+ * @param list A pointer to the current list of items.
+ * @return A pointer to a NULL terminated string that is the buddies 
+ *         alias, or NULL if the buddy has no alias.  You should free
+ *         this returned value!
+ */
+faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn)
+{
+	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
+	if (cur) {
+		aim_tlvlist_t *tlvlist = cur->data;
+		if (tlvlist)
+			if (aim_gettlv(tlvlist, 0x0066, 1))
+				return 1;
+	}
+	return 0;
+}
+
+/**
  * If there are changes, then create temporary items and 
  * call addmoddel.
  *
@@ -634,8 +652,11 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 
 	/* Check if there are empty groups */
 	for (cur=sess->ssi.local; cur; cur=cur->next)
-		if ((cur->type == AIM_SSI_TYPE_GROUP) && (!cur->data))
-			aim_ssi_itemlist_del(&sess->ssi.local, cur);
+		if (cur->type == AIM_SSI_TYPE_GROUP) {
+			aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00c8, 1);
+			if (!cur->data || !tlv || !tlv->length)
+				aim_ssi_itemlist_del(&sess->ssi.local, cur);
+		}
 
 	/* Check if the master group is empty */
 	if ((cur = aim_ssi_itemlist_find(sess->ssi.local, 0x0000, 0x0000)) && (!cur->data))
@@ -862,7 +883,7 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const cha
  */
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn, const char *sn)
 {
-	aim_ssi_addbuddy(sess, conn, sn, newgn, aim_ssi_getalias(sess->ssi.local, oldgn, sn), NULL, NULL, 0);
+	aim_ssi_addbuddy(sess, conn, sn, newgn, aim_ssi_getalias(sess->ssi.local, oldgn, sn), NULL, NULL, aim_ssi_waitingforauth(sess->ssi.local, oldgn, sn));
 	aim_ssi_delbuddy(sess, conn, sn, oldgn);
 	return 0;
 }
@@ -1022,7 +1043,7 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 
 /*
  * Subtype 0x0004 - Request SSI Data.
- * XXX - If you don't a timestamp and revision number?
+ * XXX - If you don't have a timestamp and revision number?
  *
  * Note that the client should never increment the revision, only the server.
  * 
