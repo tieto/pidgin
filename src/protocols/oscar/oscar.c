@@ -59,8 +59,8 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
-static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
+static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE;
+static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE;
 
 static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static fu8_t features_icq[] = {0x01, 0x06};
@@ -6347,6 +6347,7 @@ static void oscar_show_find_email(GaimConnection *gc)
 					   _("Cancel"), NULL, gc);
 }
 
+#if 0
 static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
@@ -6363,6 +6364,7 @@ static void oscar_show_setavailmsg(GaimConnection *gc)
 					   _("Cancel"), NULL,
 					   gc);
 }
+#endif
 
 static void oscar_show_set_info(GaimConnection *gc)
 {
@@ -6432,11 +6434,13 @@ static GList *oscar_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
+#if 0
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Set Available Message");
 	pam->callback = oscar_show_setavailmsg;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
+#endif
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");
