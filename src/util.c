@@ -1247,7 +1247,7 @@ char *
 gaim_markup_linkify(const char *text)
 {
 	const char *c, *t, *q = NULL;
-	char *tmp;
+	char *tmp, *tmpurlbuf;
 	char url_buf[BUF_LEN * 4];
 	gboolean inside_html = FALSE;
 	GString *ret = g_string_new("");
@@ -1291,8 +1291,10 @@ gaim_markup_linkify(const char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
+					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							url_buf, url_buf);
+							tmpurlbuf, url_buf);
+					g_free(tmpurlbuf);
 					c = t;
 					break;
 				}
@@ -1319,9 +1321,11 @@ gaim_markup_linkify(const char *text)
 							t--;
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
+						tmpurlbuf = gaim_unescape_html(url_buf);
 						g_string_append_printf(ret,
-								"<A HREF=\"http://%s\">%s</A>", url_buf,
+								"<A HREF=\"http://%s\">%s</A>", tmpurlbuf,
 								url_buf);
+						g_free(tmpurlbuf);
 						c = t;
 						break;
 					}
@@ -1338,8 +1342,10 @@ gaim_markup_linkify(const char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
+					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							url_buf, url_buf);
+							tmpurlbuf, url_buf);
+					g_free(tmpurlbuf);
 					c = t;
 					break;
 				}
@@ -1360,9 +1366,11 @@ gaim_markup_linkify(const char *text)
 							t--;
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
+						tmpurlbuf = gaim_unescape_html(url_buf);
 						g_string_append_printf(ret,
-								"<A HREF=\"ftp://%s\">%s</A>", url_buf,
+								"<A HREF=\"ftp://%s\">%s</A>", tmpurlbuf,
 								url_buf);
+						g_free(tmpurlbuf);
 						c = t;
 						break;
 					}
@@ -1379,8 +1387,10 @@ gaim_markup_linkify(const char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
+					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							  url_buf, url_buf);
+							  tmpurlbuf, url_buf);
+					g_free(tmpurlbuf);
 					c = t;
 					break;
 				}
@@ -1432,8 +1442,10 @@ gaim_markup_linkify(const char *text)
 					for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
 						*d = '\0';
 
+					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"mailto:%s\">%s</A>",
-							url_buf, url_buf);
+							tmpurlbuf, url_buf);
+					g_free(tmpurlbuf);
 					c = t;
 
 					break;
