@@ -219,7 +219,7 @@ gaimsmileypix_DATA = 	angel.png		\
 			yahoo_clown.gif		\
 			yahoo_coffee.gif	\
 			yahoo_cow.gif 		\
-			yahoo_cowboy.gif 	\ 
+			yahoo_cowboy.gif	\
 			yahoo_cry.gif		\
 			yahoo_dance.gif		\
 			yahoo_devil.gif		\
