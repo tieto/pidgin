@@ -344,6 +344,7 @@ void unload(GtkWidget *w, gpointer data) {
 
 	plugins = g_list_remove(plugins, p);
 	g_free(p);
+	gtk_widget_set_sensitive(config, 0);
 	update_show_plugins();
 }
 
