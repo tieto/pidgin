@@ -1237,8 +1237,10 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
 	
-	strncpy(c->current_fontface, fontface, sizeof(c->current_fontface));
-	strncpy(c->current_fontname, fontname, sizeof(c->current_fontname));
+	if (fontface)
+		strncpy(c->current_fontface, fontface, sizeof(c->current_fontface));
+	if (fontname)
+		strncpy(c->current_fontname, fontname, sizeof(c->current_fontname));
 	
 	set_font_face(NULL, c);
 	
