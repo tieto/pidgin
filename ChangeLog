@@ -2,6 +2,9 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.59
 	* Hungarian translation added (Thanks, Sutto Zoltan)
+	* Squashed a bug in buddy right-click menu handling
+	  that crashed Gaim.  In the process: found and
+	  eliminated some memory leaks.
 	
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
