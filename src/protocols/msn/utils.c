@@ -290,6 +290,11 @@ msn_import_html(const char *html, char **attributes, char **message)
 				msg[retcount++] = '>';
 				c += 4;
 			}
+			else if (!g_ascii_strncasecmp(c, "&nbsp;", 6))
+			{
+				msg[retcount++] = ' ';
+				c += 6;
+			}
 			else if (!g_ascii_strncasecmp(c, "&quot;", 6))
 			{
 				msg[retcount++] = '"';
@@ -300,6 +305,13 @@ msn_import_html(const char *html, char **attributes, char **message)
 				msg[retcount++] = '&';
 				c += 5;
 			}
+			else if (!g_ascii_strncasecmp(c, "&apos;", 6))
+			{
+				msg[retcount++] = '\'';
+				c += 6;
+			}
+			else
+				msg[retcount++] = *c++;
 		}
 		else
 			msg[retcount++] = *c++;
