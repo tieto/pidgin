@@ -128,6 +128,14 @@ void gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
 void gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
 
 /**
+ * Toggles the visibility of a widget.
+ *
+ * @param widget    @c NULL. Used for signal handlers.
+ * @param to_toggle The widget to toggle.
+ */
+void gaim_gtk_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
+
+/**
  * Adds a separator to a menu.
  *
  * @param menu The menu to add a separator to.

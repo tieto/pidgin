@@ -261,6 +261,18 @@ gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
 	}
 }
 
+void
+gaim_gtk_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle)
+{
+	if (to_toggle == NULL)
+		return;
+
+	if (GTK_WIDGET_VISIBLE(to_toggle))
+		gtk_widget_hide(to_toggle);
+	else
+		gtk_widget_show(to_toggle);
+}
+
 void gaim_separator(GtkWidget *menu)
 {
 	GtkWidget *menuitem;
