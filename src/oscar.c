@@ -373,6 +373,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	case 0xe: /* Chat */
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, ip);
+		static int id = 1;
 		char *roomname = va_arg(ap, char *);
 		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR) {
 			debug_print("unable to connect to chat server\n");
@@ -381,6 +382,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_chat_attachname(tstconn, roomname);
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 		aim_auth_sendcookie(sess, tstconn, cookie);
+		serv_got_joined_chat(id++, roomname);
 		}
 		break;
 	default: /* huh? */
@@ -553,30 +555,102 @@ int gaim_parse_motd(struct aim_session_t *sess,
 int gaim_chatnav_info(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	/* FIXME */
+	debug_print("inside chatnav_info\n");
 	return 1;
 }
 
 int gaim_chat_join(struct aim_session_t *sess,
 		   struct command_rx_struct *command, ...) {
-	/* FIXME */
+	va_list ap;
+	int count, i = 0;
+	struct aim_userinfo_s *info;
+
+	GList *bcs = buddy_chats;
+	struct buddy_chat *b = NULL;
+
+	va_start(ap, command);
+	count = va_arg(ap, int);
+	info  = va_arg(ap, struct aim_userinfo_s *);
+	va_end(ap);
+
+	while(bcs) {
+		b = (struct buddy_chat *)bcs->data;
+		if (!strcasecmp(b->name, (char *)command->conn->priv))
+			break;	
+		bcs = bcs->next;
+		b = NULL;
+	}
+	if (!b)
+		return 1;
+		
+	while (i < count)
+		add_chat_buddy(b, info[i++].sn);
+
 	return 1;
 }
 
 int gaim_chat_leave(struct aim_session_t *sess,
 		    struct command_rx_struct *command, ...) {
-	/* FIXME */
+	va_list ap;
+	int count, i = 0;
+	struct aim_userinfo_s *info;
+
+	GList *bcs = buddy_chats;
+	struct buddy_chat *b = NULL;
+
+	va_start(ap, command);
+	count = va_arg(ap, int);
+	info  = va_arg(ap, struct aim_userinfo_s *);
+	va_end(ap);
+
+	while(bcs) {
+		b = (struct buddy_chat *)bcs->data;
+		if (!strcasecmp(b->name, (char *)command->conn->priv))
+			break;	
+		bcs = bcs->next;
+		b = NULL;
+	}
+	if (!b)
+		return 1;
+		
+	while (i < count)
+		remove_chat_buddy(b, info[i++].sn);
+
 	return 1;
 }
 
 int gaim_chat_info_update(struct aim_session_t *sess,
 			  struct command_rx_struct *command, ...) {
 	/* FIXME */
+	debug_print("inside chat_info_update\n");
 	return 1;
 }
 
 int gaim_chat_incoming_msg(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
-	/* FIXME */
+	va_list ap;
+	struct aim_userinfo_s *info;
+	char *msg;
+
+	GList *bcs = buddy_chats;
+	struct buddy_chat *b = NULL;
+
+	va_start(ap, command);
+	info = va_arg(ap, struct aim_userinfo_s *);
+	msg  = va_arg(ap, char *);
+
+	while(bcs) {
+		b = (struct buddy_chat *)bcs->data;
+		if (!strcasecmp(b->name, (char *)command->conn->priv))
+			break;
+		bcs = bcs->next;
+		b = NULL;
+	}
+	if (!b)
+		return;
+
+	serv_got_chat_in(b->id, info->sn, 0, msg);
+
 	return 1;
 }
 

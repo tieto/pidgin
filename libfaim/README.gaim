@@ -4,8 +4,7 @@ affect the ten of you who actually read this.
 I'm going to start trying to get gaim to use Oscar through libfaim. As far as I
 can tell, the only thing it used to be able to do is sign on and receive IMs. I
 updated libfaim to what's currently in the libfaim CVS on sourceforge. As of
-right now, I haven't even gotten it to sign on, but theoretically it can receive
-IMs.
+right now, I've been able to implement most of the features libfaim offers.
 
 I'm going to try to make as few modifications as possible to the libfaim code.
 The only two modifications I'll probably ever make to it are 1) to make my life
@@ -27,17 +26,40 @@ Being idle
 Setting your info
 Getting other users' info
 Telling the server who's on your permit/deny lists (buggy)
+Chat:
+ - joining rooms
+ - leaving rooms
+ - talking
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
-Warning users (libfaim's problem)
-Chat (gaim's problem)
-Getting users' away messages (libfaim's problem? doesn't work with TOC either)
-Getting/setting dir info (libfaim's problem?)
-Changing your password (gaim's problem?)
-File transfer/IM images/voice chat/etc. (gaim's problem?)
+Warning users/getting warned
+Chat:
+ - whispering
+ - refreshing the chatlist in the preferences dialog
+ - invitations (both to and from you)
+Getting users' away messages
+Getting/setting dir info
+Changing your password
+File transfer/IM images/voice chat/etc.
 
-(If I assigned problems incorrectly, sorry.)
+KNOWN ISSUES
+============
+- libfaim apparently has a problem with receiving messages to fast (sort of). If
+someone sends you a message "too fast", the server says "slow down" basically,
+and lets you know that a message was dropped. The time interval between messages
+seems to be much longer with libfaim than with TOC (i.e. you can receive more
+messages in less time with TOC than with libfaim). The outgoing limit seems to
+be about the same. So if all your friends are slow typists, this shouldn't be a
+problem.
+
+- Signing on every once in a while acts really bizarrely for me. Maybe it's just
+me.
+
+- Adding or removing people to your permit/deny lists causes the server to tell
+you everyone on your buddy list signed off and then immediately signed in again.
+While you won't ever see that it happens (other than everyone will suddenly have
+the guy-in-the-door icon), you'll hear it. Be warned.
 
 HOW TO HELP
 ===========

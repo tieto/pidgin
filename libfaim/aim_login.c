@@ -322,7 +322,7 @@ unsigned long aim_sendauthresp(struct aim_session_t *sess,
   struct command_tx_struct *tx;
   struct aim_tlvlist_t *tlvlist = NULL;
 
-  if (!(tx = aim_tx_new(0x0001 /*right??*/, conn, 1152)))
+  if (!(tx = aim_tx_new(0x0004, conn, 1152)))
     return -1;
   
   tx->lock = 1;
@@ -370,16 +370,12 @@ int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn)
   struct command_tx_struct *tx;
   int i = 0;
 
-  if (!(tx = aim_tx_new(0x0002, conn, 10+0x20)))
+  if (!(tx = aim_tx_new(0x0002, conn, 10+0x22)))
     return -1;
 
   tx->lock = 1;
 
-  i += aimutil_put16(tx->data+i, 0x0001);
-  i += aimutil_put16(tx->data+i, 0x0003);
-  i += aimutil_put16(tx->data+i, 0x0000);
-  i += aimutil_put16(tx->data+i, 0x0000);
-  i += aimutil_put16(tx->data+i, 0x0000);
+  i += aim_putsnac(tx->data, 0x0001, 0x0003, 0x0000, sess->snac_nextid++);
   
   i += aimutil_put16(tx->data+i, 0x0001);  
   i += aimutil_put16(tx->data+i, 0x0002);
@@ -391,9 +387,11 @@ int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn)
   i += aimutil_put16(tx->data+i, 0x000a);
   i += aimutil_put16(tx->data+i, 0x000b);
   i += aimutil_put16(tx->data+i, 0x000c);
+  i += aimutil_put16(tx->data+i, 0x0013);
+  i += aimutil_put16(tx->data+i, 0x0015);
 
+  tx->commandlen = i;
   tx->lock = 0;
-
   return aim_tx_enqueue(sess, tx);
 }
 

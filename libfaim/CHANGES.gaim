@@ -1,4 +1,9 @@
 
+Sun May 21 11:42:22 UTC 2000 EWarmenhoven
+	- There were small changes to the libfaim code, which I updated
+	- Went ahead and implemented chat (since I said I wouldn't touch it
+	  until libfaim got updated again)
+
 Sat May 20 22:42:24 UTC 2000 EWarmenhoven
 	- Getting a user's info now displays the familiar dialog window
 	- You can now add people to your permit/deny list (I think - but I

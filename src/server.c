@@ -442,6 +442,8 @@ void serv_join_chat(int exchange, char *name)
 #ifndef USE_OSCAR
         g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
         sflap_send(buf, -1, TYPE_DATA);
+#else
+	aim_chat_join(gaim_sess, gaim_conn, 0x0004, name);
 #endif
 }
 
@@ -461,6 +463,22 @@ void serv_chat_leave(int id)
         g_snprintf(buf, 255, "toc_chat_leave %d",  id);
         sflap_send(buf, -1, TYPE_DATA);
         g_free(buf);
+#else
+	GList *bcs = buddy_chats;
+	struct buddy_chat *b = NULL;
+
+	while (bcs) {
+		b = (struct buddy_chat *)bcs->data;
+		if (id == b->id)
+			break;
+		bcs = bcs->next;
+		b = NULL;
+	}
+
+	if (!b)
+		return;
+
+	aim_chat_leaveroom(gaim_sess, b->name);
 #endif
 }
 
@@ -470,6 +488,9 @@ void serv_chat_whisper(int id, char *who, char *message)
 #ifndef USE_OSCAR
         g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
         sflap_send(buf2, -1, TYPE_DATA);
+#else
+	/* FIXME : libfaim doesn't whisper */
+	serv_chat_send(id, message);
 #endif
 }
 
@@ -479,6 +500,23 @@ void serv_chat_send(int id, char *message)
 #ifndef USE_OSCAR
         g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"",id, message);
         sflap_send(buf, -1, TYPE_DATA);
+#else
+	struct aim_conn_t *cn;
+	GList *bcs = buddy_chats;
+	struct buddy_chat *b = NULL;
+
+	while (bcs) {
+		b = (struct buddy_chat *)bcs->data;
+		if (id == b->id)
+			break;
+		bcs = bcs->next;
+		b = NULL;
+	}
+	if (!b)
+		return;
+
+	cn = aim_chat_getconn(gaim_sess, b->name);
+	aim_chat_send_im(gaim_sess, cn, message);
 #endif
 }
 
