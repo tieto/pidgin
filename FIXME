@@ -1,0 +1,5 @@
+Make sure the stupid smiley's dont run off the edge of the gtk_html widget (needs to wrap the image around).
+
+Sometimes the bottom of a face gets cut off.
+
+
