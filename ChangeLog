@@ -100,6 +100,7 @@ version 0.60:
 	* Allow only people in buddy list privacy option added for AIM
 	* Optional password on IRC accounts (Thanks, Christian Hammond)
 	* Better supression of auto-responses (Thanks Joshua Blanton)
+
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
 	* Swedish translation updated (Thanks, Christian Rose)
