@@ -690,7 +690,7 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 	if (ret == 0 && error == EINPROGRESS)
 		return; // we'll be called again later
 	if (ret < 0 || error != 0) {
-		if(ret==0) errno = error;
+		if(ret!=0) error = errno;
 		close(source);
 		gaim_input_remove(phb->inpa);
 
@@ -704,7 +704,7 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 		g_free(phb);
 
 		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
-			   "getsockopt SO_ERROR check: %s\n", strerror(errno));
+			   "getsockopt SO_ERROR check: %s\n", strerror(error));
 		return;
 	}
 
@@ -761,7 +761,7 @@ proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		}
 		else {
 			gaim_debug(GAIM_DEBUG_ERROR, "proxy",
-					   "Connect failed (errno %d)\n", errno);
+					   "Connect failed: %s\n", strerror(errno));
 			close(fd);
 			return -1;
 		}
