@@ -1,4 +1,10 @@
 version 0.60 alpha 4:
+	* Nativewin engine now properly working.
+	* Gaim systray icon permanantly parked in systray, with different
+	  icons for connected, disconnected and away.
+	* Right clickable menu for systray.
+	* Flashing conversation window on receiving an IM.
+	* Aspell installer allows user to set install path.
 
 version 0.60 alpha 3: (11/8/02)
 	* Improved UI
