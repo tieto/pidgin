@@ -8,6 +8,7 @@ EXTRA_DIST =	add.xpm				\
 		away_icon.xpm			\
 		big.xpm				\
 		bigsmile.xpm			\
+		block.xpm			\
 		bold.xpm			\
 		bsmile.xpm			\
 		buddyadd.xpm			\
@@ -50,6 +51,7 @@ EXTRA_DIST =	add.xpm				\
 		login_icon.xpm			\
 		logo.xpm			\
 		logout_icon.xpm			\
+		luke03.xpm			\
 		moneymouth.xpm			\
 		msg_pending.xpm			\
 		no_icon.xpm			\
@@ -85,8 +87,8 @@ EXTRA_DIST =	add.xpm				\
 		warn.xpm			\
 		wink.xpm			\
 		wood.xpm			\
-		yell.xpm			\
-		luke03.xpm
+		yell.xpm			
+
 
 pixmapdir = $(datadir)/pixmaps
 pixmap_DATA = gaim.xpm
