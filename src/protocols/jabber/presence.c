@@ -231,7 +231,25 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				/* this is where we'd normally get the "op" status of the
 				 * user, but since we don't have a good way to show that yet
 				 * we'll ignore it */
+				xmlnode *z;
+
 				muc = TRUE;
+				if((z = xmlnode_get_child(y, "status"))) {
+					const char *code = xmlnode_get_attrib(z, "code");
+					if(code && !strcmp(code, "201")) {
+						/* we created the room.  for now, we'll make it
+						 * an instant room.  XXX: allow fancy room creation */
+						JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_SET,
+								"http://jabber.org/protocol/muc#owner");
+						xmlnode *query = xmlnode_get_child(iq->node, "query");
+
+						xmlnode *x = xmlnode_new_child(query, "x");
+						xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
+						xmlnode_set_attrib(x, "type", "submit");
+
+						jabber_iq_send(iq);
+					}
+				}
 			}
 		}
 	}
