@@ -1135,7 +1135,7 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 			msn_kill_switch(ms);
 		debug_printf("\n");
-	} else {
+	} else if (strcmp(who, gc->username)) {
 		g_snprintf(buf, MSN_BUF_LEN, "XFR %d SB\n", ++md->trId);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, "Write error");
@@ -1149,7 +1149,8 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 		ms->txqueue = g_strdup(message);
 		ms->gc = gc;
 		ms->fd = -1;
-	}
+	} else
+		do_error_dialog("MSN: You can't send a message to yourself", "MSN Error");
 }
 
 static void msn_chat_send(struct gaim_connection *gc, int id, char *message)
