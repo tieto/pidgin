@@ -3298,6 +3298,7 @@ static GList *jabber_away_states(struct gaim_connection *gc) {
 	m = g_list_append(m, "Extended Away");
 	m = g_list_append(m, "Do Not Disturb");
 	m = g_list_append(m, "Invisible");
+	m = g_list_append(m, GAIM_AWAY_CUSTOM);
 
 	return m;
 }
