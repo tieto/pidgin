@@ -2048,13 +2048,20 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 
 
 			if (hb->text && hb->back != NULL && selected_state != GTK_STATE_SELECTED) {
-				int hwidth, hheight, hei;
+				int hwidth, hheight, hei, tmpcnt;
 				hei = get_line_height(html, hb);
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
 				gdk_gc_set_foreground(gc, hb->back);
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
 							hb->x, hb->y - html->yoffset - hei - 6,
 							hwidth - shift - hb->x + 1, hei + hei + 2);
+				for (tmpcnt = 1; tmpcnt < hb->newline; tmpcnt++) {
+					int eoff = hei + hei + 2;
+					eoff *= tmpcnt;
+					gdk_draw_rectangle(html->html_area, gc, TRUE,
+							1, hb->y - html->yoffset - hei - 6 + eoff,
+							hwidth, hei + hei + 2);
+				}
 			}
 
 			if (hb->fore != NULL)
@@ -2244,7 +2251,7 @@ static void undraw_cursor(GtkHtml * html)
 
 		clear_area(html, &area);
 
-		(html, html->cursor_hb, 1);
+		gtk_html_draw_bit(html, html->cursor_hb, 1);
 
 
 	}
