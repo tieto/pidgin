@@ -35,7 +35,7 @@ msgstr "Bitte geben Sie ein Passwort ein"
 
 #: src/aim.c:191 src/buddy.c:1723
 msgid "Signoff"
-msgstr ""
+msgstr "Abmelden"
 
 #: src/aim.c:301 src/aim.c:503 src/buddy.c:366 src/gnome_applet_mgr.c:348
 msgid "Signon"
@@ -111,13 +111,13 @@ msgstr ""
 #: src/conversation.c:1104 src/dialogs.c:744 src/dialogs.c:1465
 #: src/dialogs.c:1489 src/prefs.c:994
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
 #: src/buddy.c:271 src/buddy.c:276 src/buddy.c:279 src/buddy.c:284
 #: src/buddy.c:1883 src/buddy.c:1952 src/conversation.c:1101 src/dialogs.c:691
 #: src/prefs.c:995
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: src/buddy.c:272 src/buddy.c:280 src/buddy.c:1831
 msgid "Chat"
@@ -147,7 +147,7 @@ msgstr ""
 
 #: src/buddy.c:466
 msgid "Add Buddy Pounce"
-msgstr ""
+msgstr "Buddy-Alert hinzufügen"
 
 #: src/buddy.c:569 src/buddy.c:1017 src/buddy.c:1987 src/dialogs.c:1480
 msgid "Permit"
@@ -197,19 +197,19 @@ msgstr ""
 
 #: src/buddy.c:1713
 msgid "Add A Buddy"
-msgstr ""
+msgstr "Buddy Hinzufügen"
 
 #: src/buddy.c:1715
 msgid "Import Buddy List"
-msgstr ""
+msgstr "Buddy-Liste importieren"
 
 #: src/buddy.c:1716
 msgid "Export Buddy List"
-msgstr ""
+msgstr "Buddy-Liste exportieren"
 
 #: src/buddy.c:1726
 msgid "Quit"
-msgstr ""
+msgstr "Beenden"
 
 #: src/buddy.c:1733
 msgid "Tools"
@@ -218,7 +218,7 @@ msgstr ""
 #: src/buddy.c:1738 src/gnome_applet_mgr.c:175 src/gnome_applet_mgr.c:259
 #: src/prefs.c:596
 msgid "Away"
-msgstr ""
+msgstr "Abwesenheit"
 
 #: src/buddy.c:1743
 msgid "Buddy Pounce"
@@ -226,15 +226,15 @@ msgstr ""
 
 #: src/buddy.c:1751
 msgid "Search for Buddy"
-msgstr ""
+msgstr "Buddies suchen"
 
 #: src/buddy.c:1754
 msgid "by Email"
-msgstr ""
+msgstr "nach Email"
 
 #: src/buddy.c:1758
 msgid "by Dir Info"
-msgstr ""
+msgstr "nach Profil"
 
 #: src/buddy.c:1765
 msgid "Settings"
@@ -270,7 +270,7 @@ msgstr ""
 
 #: src/buddy.c:1867
 msgid "Send Instant Message"
-msgstr ""
+msgstr "Telegramm"
 
 #: src/buddy.c:1868
 msgid "Start/join a Buddy Chat"
@@ -479,7 +479,7 @@ msgstr ""
 
 #: src/conversation.c:1216 src/conversation.c:1217
 msgid "Logging"
-msgstr ""
+msgstr Mitschnitte an/aus""
 
 #: src/conversation.c:1216
 msgid "Enable logging"
