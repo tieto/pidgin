@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-12-19 07:21:45 -0500 (Tue, 19 Dec 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-12-19 23:03:47 -0500 (Tue, 19 Dec 2000) $ by $Author: robflynn $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -99,7 +99,7 @@ MSN
 ===
 
 MSN currently supports signing on/off, sending and receiving messages.  The
-buddylist is functional. It also supports permi/deny lists and going
+buddylist is functional. It also supports permit/deny lists and going
 away/idle.
 
 When sending the initial message (to start a conversation) there will be a small 
@@ -123,3 +123,12 @@ Jabber
 Um, Jabber can't do much yet. I don't even remember what it can do; I didn't
 write it, Adam of libfaim did. I just wanted to get it added; hopefully it'll
 be ready before 0.11.0 is finished.
+
+Napster
+=======
+
+Heh.  Ok, so I (Rob) am on crack!  Gaim can sign on/off of Napster, add/remove
+people to your hotlist (buddylist) as well as chat privately and in chat rooms.
+Hopefully I'll come up with a good way to do the file transfer stuff. 
+
+

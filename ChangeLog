@@ -6,6 +6,7 @@ version 0.11.0-pre4:
 	* Even More Protocol Plugins:
 		Jabber (plugins/jabber) [currently requires libxode and
 					 libjabber, which aren't provided]
+		Napster (plugins/napster.c)
 
 version 0.11.0-pre3 (12/15/2000):
 	* Away messages arranged alphabetically (Thanks Justin)
