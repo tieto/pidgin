@@ -777,32 +777,54 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		struct chat *chat = (struct chat *)node;
 		char *name = NULL;
+		struct proto_chat_entry *pce;
+		GList *parts, *tmp;
+		GString *parts_text = g_string_new("");
+
+		prpl = gaim_find_prpl(chat->account->protocol);
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+		parts = prpl_info->chat_info(chat->account->gc);
 
 		if(chat->alias) {
 			name = g_markup_escape_text(chat->alias, -1);
 		} else {
-			struct proto_chat_entry *pce;
-			GList *parts, *tmp;
-			prpl = gaim_find_prpl(chat->account->protocol);
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-
-			parts = prpl_info->chat_info(chat->account->gc);
 			pce = parts->data;
 			name = g_markup_escape_text(g_hash_table_lookup(chat->components,
 						pce->identifier), -1);
-			for(tmp = parts; tmp; tmp = tmp->next)
-				g_free(tmp->data);
-			g_list_free(parts);
 		}
+		if(g_slist_length(connections) > 1) {
+			char *account = g_markup_escape_text(chat->account->username, -1);
+			g_string_append_printf(parts_text, _("\n<b>Account:</b> %s"),
+					account);
+			g_free(account);
+		}
+		for(tmp = parts; tmp; tmp = tmp->next) {
+			char *label, *value;
+			pce = tmp->data;
 
-		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>",
-				name);
+			label = g_markup_escape_text(pce->label, -1);
+
+			value = g_markup_escape_text(g_hash_table_lookup(chat->components,
+						pce->identifier), -1);
+
+			g_string_append_printf(parts_text, "\n<b>%s</b> %s", label, value);
+			g_free(label);
+			g_free(value);
+			g_free(pce);
+		}
+		g_list_free(parts);
+
+		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>%s",
+				name, parts_text->str);
+		g_string_free(parts_text, TRUE);
 		g_free(name);
 	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		struct buddy *b = (struct buddy *)node;
 		char *statustext = NULL;
 		char *aliastext = NULL, *nicktext = NULL;
 		char *warning = NULL, *idletime = NULL;
+		char *accounttext = NULL;
 
 		prpl = gaim_find_prpl(b->account->protocol);
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
@@ -843,7 +865,11 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		if (b->evil > 0)
 			warning = g_strdup_printf(_("%d%%"), b->evil);
 
+		if(g_slist_length(connections) > 1)
+			accounttext = g_markup_escape_text(b->account->username, -1);
+
 		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
+				   "%s %s"     /* Account */
 			       "%s %s"  /* Alias */
 				   "%s %s"  /* Nickname */
 			       "%s %s"     /* Idle */
@@ -851,6 +877,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			       "%s%s"     /* Status */
 				   "%s",
 			       b->name,
+				   accounttext ? _("\n<b>Account:</b>") : "", accounttext ? accounttext : "",
 			       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
 			       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
 			       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
@@ -868,6 +895,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			g_free(nicktext);
 		if(aliastext)
 			g_free(aliastext);
+		if(accounttext)
+			g_free(accounttext);
 	}
 
 	return text;
