@@ -1940,15 +1940,18 @@ static void update_idle_time(struct buddy_show *bs) {
 void update_idle_times() {
 	GSList *grp = shows;
 	GSList *mem;
-	struct buddy_show *b;
-	struct group_show *g;
+	struct buddy_show *bs;
+	struct group_show *gs;
+	struct buddy *b;
 
 	while (grp) {
-		g = (struct group_show *)grp->data;
-		mem = g->members;
+		gs = (struct group_show *)grp->data;
+		mem = gs->members;
 		while (mem) {
-			b = (struct buddy_show *)mem->data;
-			update_idle_time(b);
+			bs = (struct buddy_show *)mem->data;
+			b = find_buddy(bs->connlist->data, bs->name);
+			if (b->idle)
+				update_idle_time(bs);
 			mem = mem->next;
 		}
 		grp = grp->next;

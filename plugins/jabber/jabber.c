@@ -329,8 +329,7 @@ static void gjab_recv(gjconn j)
 		debug_printf("input: %s\n", buf);
 		XML_Parse(j->parser, buf, len, 0);
 	} else if (len <= 0) {
-		STATE_EVT(JCONN_STATE_OFF);
-		gjab_stop(j);
+		STATE_EVT(JCONN_STATE_OFF)
 	}
 }
 
@@ -878,7 +877,8 @@ static void jabber_close(struct gaim_connection *gc)
 {
 	struct jabber_data *jd = gc->proto_data;
 	gdk_input_remove(gc->inpa);
-	gjab_stop(jd->jc);
+	gjab_delete(jd->jc);
+	jd->jc = NULL;
 	g_free(jd);
 	gc->proto_data = NULL;
 }
@@ -1207,7 +1207,6 @@ static void regpacket(jconn j, jpacket p)
 				if (here == 2) {
 					struct aim_user *u;
 					user = g_strdup(jid_full(j->user));
-					jab_stop(j);
 					regjconn = NULL;
 					gdk_input_remove(reginpa);
 					reginpa = 0;
@@ -1264,7 +1263,6 @@ static void regpacket(jconn j, jpacket p)
 				} else {
 					do_error_dialog("Registration failed", "Jabber Registration");
 				}
-				jab_stop(j);
 				regjconn = NULL;
 				gdk_input_remove(reginpa);
 				xmlnode_free(p->x);
