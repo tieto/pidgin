@@ -141,3 +141,19 @@ GAIM::add_timeout_handler(integer, function, args)
 	once, so if you want to keep calling function, keep readding the handler.
 	Args is a string that you'd like to have passed to your timeout handler; it's
 	optional.
+
+GAIM::play_sound(int sound)
+	Plays a sound using whatever method the user has selected. The argument is
+	one of the following numbers:
+
+	0	Buddy logs in
+	1	Buddy logs out
+	2	Message received
+	3	Message received begins conversation
+	4	Message sent
+	5	Person enters chat
+	6	Person leaves chat
+	7	You talk in chat
+	8	Others talk in chat
+	9	Default buddy pounce sound
+	10	Someone says your name in chat

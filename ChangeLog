@@ -22,7 +22,8 @@ version 0.59
 	  Priddy and Paul Miller)
 	* Zephyr fixes (thanks, Arun A. Tharuvai)
 	* Aliases in buddy ticker
-
+	* Perl scripts can play Gaim sounds (thanks Andrew Rodland)
+	
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
 	* Traditional Chinese  translation added (Thanks, Paladin Liu)

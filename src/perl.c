@@ -105,6 +105,9 @@ XS(XS_GAIM_serv_send_im); /* send message to someone (but do not display) */
 XS(XS_GAIM_add_event_handler); /* when servers talk */
 XS(XS_GAIM_add_timeout_handler); /* figure it out */
 
+/* play sound */
+XS(XS_GAIM_play_sound); /*play a sound*/
+
 void xs_init()
 {
 	char *file = __FILE__;
@@ -238,6 +241,8 @@ static void perl_init()
 
 	newXS ("GAIM::add_event_handler", XS_GAIM_add_event_handler, "GAIM");
 	newXS ("GAIM::add_timeout_handler", XS_GAIM_add_timeout_handler, "GAIM");
+
+	newXS ("GAIM::play_sound", XS_GAIM_play_sound, "GAIM");
 }
 
 void perl_end()
@@ -617,6 +622,8 @@ XS (XS_GAIM_print_to_conv)
 	XSRETURN(0);
 }
 
+
+	
 XS (XS_GAIM_print_to_chat)
 {
 	struct gaim_connection *gc;
@@ -830,6 +837,18 @@ XS (XS_GAIM_add_timeout_handler)
 	handler->handler_args = g_strdup(SvPV(ST(2), junk));
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 	handler->iotag = g_timeout_add(timeout, perl_timeout, handler);
+	XSRETURN_EMPTY;
+}
+
+XS (XS_GAIM_play_sound)
+{
+	int id;
+	dXSARGS;
+
+	id = SvIV(ST(0));
+
+	play_sound(id);
+
 	XSRETURN_EMPTY;
 }
 
