@@ -469,10 +469,10 @@ void serv_got_alias(GaimConnection *gc, char *who, char *alias) {
 	if (b->server_alias)
 		g_free(b->server_alias);
 
-	if(alias)
+	if (alias && g_utf8_validate(alias))
 		b->server_alias = g_strdup(alias);
 	else
-	       b->server_alias = NULL;
+		b->server_alias = NULL;
 
 	gaim_blist_update_buddy_status(b, b->uc);
 }

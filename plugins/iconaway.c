@@ -75,9 +75,9 @@ static GaimPluginInfo info =
 	N_("Iconify on Away"),                            /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Iconifies the away box and the buddy list when you go away."),
+	N_("Iconifies the buddy list and your conversations when you go away."),
 	                                                  /**  description    */
-	N_("Iconifies the away box and the buddy list when you go away."),
+	N_("Iconifies the buddy list and your conversations when you go away."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
 	WEBSITE,                                          /**< homepage       */
 

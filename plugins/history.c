@@ -24,7 +24,7 @@ void historize (char *name, void *data)
 	char *logfile = g_strdup_printf("%s.log", normalize(name));
 	char *path = g_build_filename(userdir, "logs", logfile, NULL);
 	char buf[HISTORY_SIZE+1];
-	char *tmp;
+	char *tmp, *tmp2;
 	int size;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 
@@ -50,10 +50,15 @@ void historize (char *name, void *data)
 	if(*tmp == '<')
 		options |= GTK_IMHTML_NO_NEWLINE;
 
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {		tmp2 = linkify_text(tmp);
+	else
+		tmp2 = g_strdup(tmp);
+
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp, strlen(tmp), options);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp2, strlen(tmp2), options);
 
+	g_free(tmp2);
 	g_free(userdir);
 	g_free(logfile);
 	g_free(path);
