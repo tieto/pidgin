@@ -35,7 +35,7 @@ version 0.76cvs:
 	  sometimes when trying to remove a group of users (Tim Ringenbach)
 	* Clearing an AIM buddy icon actually removes it from the server,
 	  icons changes in the account editor do not take effect if the
-	  canel button is used (Stu Tomlinson)
+	  cancel button is used (Stu Tomlinson)
 	* Improved chat parting logic (Tim Ringenbach)
 	* Yet Another IRC channel user duplication bugfix (Tim Ringenbach)
 	* TCL Plugin API changed
