@@ -1092,10 +1092,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	GSList *buddies;
 
 	account = gaim_connection_get_account(gc);
-	b = gaim_find_buddy(account, name);
-
-	if(!b) /* This shouldn't happen, but apparently does */
-		return;
 
 	c = gaim_find_conversation(b->name);
 
@@ -1117,6 +1113,8 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_debug(GAIM_DEBUG_ERROR, "server", "No such buddy: %s\n", name);
 		return;
 	}
+
+	b = gaim_find_buddy(account, name);
 
 	/* This code will 'align' the name from the TOC */
 	/* server with what's in our record.  We want to */
