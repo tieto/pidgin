@@ -44,13 +44,20 @@
  */
 char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	char *ret;
 	char *to_codeset;
+
+	if (yd->jp && utf8 && *utf8)
+		*utf8 = FALSE;
 
 	if (utf8 && *utf8) /* FIXME: maybe don't use utf8 if it'll fit in latin1 */
 		return g_strdup(str);
 
-	to_codeset = "ISO-8859-1";
+	if (yd->jp)
+		to_codeset = "SHIFT_JIS";
+	else
+		to_codeset = "ISO-8859-1";
 
 	ret = g_convert_with_fallback(str, strlen(str), to_codeset, "UTF-8", "?", NULL, NULL, NULL);
 	if (ret)
@@ -69,6 +76,7 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
  */
 char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	char *ret;
 	char *from_codeset;
 
@@ -77,7 +85,10 @@ char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
 			return g_strdup(str);
 	}
 
-	from_codeset = "ISO-8859-1";
+	if (yd->jp)
+		from_codeset = "SHIFT_JIS";
+	else
+		from_codeset = "ISO-8859-1";
 
 	ret = g_convert_with_fallback(str, strlen(str), "UTF-8", from_codeset, NULL, NULL, NULL, NULL);
 

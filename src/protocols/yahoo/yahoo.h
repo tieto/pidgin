@@ -34,6 +34,13 @@
 #define YAHOO_XFER_PORT 80
 #define YAHOO_ROOMLIST_URL "http://insider.msg.yahoo.com/ycontent/"
 
+/* really we should get the list of servers from
+ http://update.messenger.yahoo.co.jp/servers.html */
+#define YAHOOJP_PAGER_HOST "cs.yahoo.co.jp"
+#define YAHOOJP_XFER_HOST "filetransfer.msg.yahoo.co.jp"
+#define YAHOOJP_WEBCAM_HOST "wc.yahoo.co.jp"
+#define YAHOOJP_PROFILE_URL "profiles.yahoo.co.jp"
+
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
 enum yahoo_service { /* these are easier to see in hex */
@@ -136,6 +143,7 @@ struct yahoo_data {
 	char *cookie_y;
 	char *cookie_t;
 	int session_id;
+	gboolean jp;
 };
 
 struct yahoo_pair {

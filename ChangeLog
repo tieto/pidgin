@@ -4,6 +4,8 @@ version 0.79cvs:
 	New Features:
 	* Display name changes are now shown in the conversation windows.
 	  (Robert Mibus)
+	* Yahoo! Japan support. Click More Options and check Yahoo Japan
+	  in the account editor, to use your Yahoo! Japan account.
 
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze

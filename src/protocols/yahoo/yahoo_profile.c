@@ -900,6 +900,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 
 void yahoo_get_info(GaimConnection *gc, const char *name)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	YahooGetInfoData *data;
 	char *url;
 
@@ -907,7 +908,7 @@ void yahoo_get_info(GaimConnection *gc, const char *name)
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
-      if (strstr(gaim_account_get_string(gaim_connection_get_account(gc), "server", YAHOO_PAGER_HOST), "yahoo.co.jp")) {
+	if (yd->jp) {
 		url = g_strdup_printf("%s%s", "http://profiles.yahoo.co.jp/", name);
 	} else {
 		url = g_strdup_printf("%s%s", YAHOO_PROFILE_URL, name);

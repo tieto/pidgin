@@ -2256,15 +2256,27 @@ static void yahoo_login(GaimAccount *account) {
 
 	yahoo_server_check(account);
 
-	if (gaim_proxy_connect(account,
-	                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
-	                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
-	                       yahoo_got_connected, gc) != 0)
-	{
-		gaim_connection_error(gc, _("Connection problem"));
-		return;
+	if (gaim_account_get_bool(account, "yahoojp", FALSE)) {
+		yd->jp = TRUE;
+		if (gaim_proxy_connect(account,
+		                       gaim_account_get_string(account, "serverjp",  YAHOOJP_PAGER_HOST),
+		                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+		                       yahoo_got_connected, gc) != 0)
+		{
+			gaim_connection_error(gc, _("Connection problem"));
+			return;
+		}
+	} else {
+		yd->jp = FALSE;
+		if (gaim_proxy_connect(account,
+		                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
+		                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+		                       yahoo_got_connected, gc) != 0)
+		{
+			gaim_connection_error(gc, _("Connection problem"));
+			return;
+		}
 	}
-
 #else
 	gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
 	               yahoo_login_page_cb, gc);
@@ -3185,13 +3197,22 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
+	option = gaim_account_option_bool_new(_("Yahoo Japan"), "yahoojp", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 	option = gaim_account_option_string_new(_("Pager host"), "server", YAHOO_PAGER_HOST);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_string_new(_("Japan Pager host"), "serverjp", YAHOOJP_PAGER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("File transfer host"), "xfer_host", YAHOO_XFER_HOST);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_string_new(_("Japan File transfer host"), "xferjp_host", YAHOOJP_XFER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
