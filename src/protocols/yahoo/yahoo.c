@@ -1893,7 +1893,8 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 	decoded_group = yahoo_string_decode(gc, group, FALSE);
 	buf = g_strdup_printf(_("Could not add buddy %s to group %s to the server list on account %s."),
 				who, decoded_group, gaim_connection_get_display_name(gc));
-	gaim_notify_error(gc, NULL, _("Could not add buddy to server list"), buf);
+	if (!gaim_conv_present_error(who, gaim_connection_get_account(gc), buf))
+		gaim_notify_error(gc, NULL, _("Could not add buddy to server list"), buf);
 	g_free(buf);
 	g_free(decoded_group);
 }
