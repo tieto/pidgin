@@ -1356,12 +1356,21 @@ gaim_markup_linkify(const char *text)
 	const char *c, *t, *q = NULL;
 	char *tmp, *tmpurlbuf;
 	char url_buf[BUF_LEN * 4];
+	gunichar g;
 	gboolean inside_html = FALSE;
+	int inside_paren = 0;
 	GString *ret = g_string_new("");
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
 
 	c = text;
 	while (*c) {
+
+		if(*c == '(' && !inside_html) {
+			inside_paren++;
+			ret = g_string_append_c(ret, *c);
+			c++;
+		}
+
 		if(inside_html) {
 			if(*c == '>') {
 				inside_html = FALSE;
@@ -1398,6 +1407,9 @@ gaim_markup_linkify(const char *text)
 
 					if (*(t - 1) == '.')
 						t--;
+					if ((*(t - 1) == ')' && (inside_paren > 0))) {
+						t--;
+					}
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
 					tmpurlbuf = gaim_unescape_html(url_buf);
@@ -1428,6 +1440,9 @@ gaim_markup_linkify(const char *text)
 
 						if (*(t - 1) == '.')
 							t--;
+						if ((*(t - 1) == ')' && (inside_paren > 0))) {
+							t--;
+						}
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
 						tmpurlbuf = gaim_unescape_html(url_buf);
@@ -1449,6 +1464,9 @@ gaim_markup_linkify(const char *text)
 				if (badchar(*t)) {
 					if (*(t - 1) == '.')
 						t--;
+					if ((*(t - 1) == ')' && (inside_paren > 0))) {
+						t--;
+					}
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
 					tmpurlbuf = gaim_unescape_html(url_buf);
@@ -1473,6 +1491,9 @@ gaim_markup_linkify(const char *text)
 						}
 						if (*(t - 1) == '.')
 							t--;
+						if ((*(t - 1) == ')' && (inside_paren > 0))) {
+							t--;
+						}
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
 						tmpurlbuf = gaim_unescape_html(url_buf);
@@ -1509,9 +1530,8 @@ gaim_markup_linkify(const char *text)
 
 			}
 		} else if (c != text && (*c == '@')) {
-			char *tmp;
 			int flag;
-			int len = 0;
+			GString *gurl_buf;
 			const char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\r\n \0";
 			url_buf[0] = 0;
 
@@ -1521,20 +1541,19 @@ gaim_markup_linkify(const char *text)
 				flag = 1;
 
 			t = c;
+			gurl_buf = g_string_new("");
 			while (flag) {
-				if (badchar(*t)) {
-					ret = g_string_truncate(ret, ret->len - (len - 1));
+				/* iterate backwards grabbing the local part of an email address */
+				g = g_utf8_get_char(t);
+				if (badchar(*t) || (g >= 127) || (*t == '(') ||
+						((*t == ';') && (t > (text+2)) && !g_ascii_strncasecmp(t - 3, "&lt;", 4))) {
+					/* local part will already be part of ret, strip it out */
+					ret = g_string_truncate(ret, ret->len - (c - t));
+					ret = g_string_append_unichar(ret, g);
 					break;
 				} else {
-					len++;
-					tmp = g_malloc(len + 1);
-					tmp[len] = 0;
-					tmp[0] = *t;
-					strncpy(tmp + 1, url_buf, len - 1);
-					strcpy(url_buf, tmp);
-					url_buf[len] = 0;
-					g_free(tmp);
-					t--;
+					g_string_prepend_unichar(gurl_buf, g);
+					t = g_utf8_find_prev_char(text, t);
 					if (t < text) {
 						ret = g_string_assign(ret, "");
 						break;
@@ -1542,12 +1561,18 @@ gaim_markup_linkify(const char *text)
 				}
 			}
 
-			t = c + 1;
+			t = g_utf8_find_next_char(c, NULL);
 
 			while (flag) {
-				if (badchar(*t)) {
+				/* iterate forwards grabbing the domain part of an email address */
+				g = g_utf8_get_char(t);
+				if (badchar(*t) || (g >= 127) || (*t == ')') ||
+						((*t == '&') && !g_ascii_strncasecmp(t, "&gt;", 4))) {
 					char *d;
 
+					strcpy(url_buf, gurl_buf->str);
+
+					/* strip off trailing periods */
 					for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
 						*d = '\0';
 
@@ -1563,13 +1588,17 @@ gaim_markup_linkify(const char *text)
 
 					break;
 				} else {
-					strncat(url_buf, t, 1);
-					len++;
-					url_buf[len] = 0;
+					g_string_append_unichar(gurl_buf, g);
+					t = g_utf8_find_next_char(t, NULL);
 				}
-
-				t++;
 			}
+			g_string_free(gurl_buf, TRUE);
+		}
+
+		if(*c == ')' && !inside_html) {
+			inside_paren--;
+			ret = g_string_append_c(ret, *c);
+			c++;
 		}
 
 		if (*c == 0)
