@@ -768,8 +768,10 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "group")) {
 		blist_parser_current_tag = BLIST_TAG_GROUP;
 		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "name"))
+			if(!strcmp(attribute_names[i], "name")) {
+				g_free(blist_parser_group_name);
 				blist_parser_group_name = g_strdup(attribute_values[i]);
+			}
 		}
 		if(blist_parser_group_name) {
 			add_group(blist_parser_group_name);
@@ -777,16 +779,20 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "person")) {
 		blist_parser_current_tag = BLIST_TAG_PERSON;
 		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "name"))
+			if(!strcmp(attribute_names[i], "name")) {
+				g_free(blist_parser_person_name);
 				blist_parser_person_name = g_strdup(attribute_values[i]);
+			}
 		}
 	} else if(!strcmp(element_name, "buddy")) {
 		blist_parser_current_tag = BLIST_TAG_BUDDY;
 		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "account"))
+			if(!strcmp(attribute_names[i], "account")) {
+				g_free(blist_parser_account_name);
 				blist_parser_account_name = g_strdup(attribute_values[i]);
-			else if(!strcmp(attribute_names[i], "protocol"))
+			} else if(!strcmp(attribute_names[i], "protocol")) {
 				blist_parser_account_protocol = atoi(attribute_values[i]);
+			}
 		}
 	} else if(!strcmp(element_name, "name")) {
 		blist_parser_current_tag = BLIST_TAG_NAME;
@@ -795,8 +801,10 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "setting")) {
 		blist_parser_current_tag = BLIST_TAG_SETTING;
 		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "name"))
+			if(!strcmp(attribute_names[i], "name")) {
+				g_free(blist_parser_setting_name);
 				blist_parser_setting_name = g_strdup(attribute_values[i]);
+			}
 		}
 	} else if(!strcmp(element_name, "privacy")) {
 		blist_parser_current_tag = BLIST_TAG_PRIVACY;
@@ -807,8 +815,10 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 				blist_parser_account_protocol = atoi(attribute_values[i]);
 			else if(!strcmp(attribute_names[i], "mode"))
 				blist_parser_privacy_mode = atoi(attribute_values[i]);
-			else if(!strcmp(attribute_names[i], "name"))
+			else if(!strcmp(attribute_names[i], "name")) {
+				g_free(blist_parser_account_name);
 				blist_parser_account_name = g_strdup(attribute_values[i]);
+			}
 		}
 	} else if(!strcmp(element_name, "permit")) {
 		blist_parser_current_tag = BLIST_TAG_PERMIT;
@@ -882,16 +892,18 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		if(user) {
 			gaim_privacy_permit_add(user, blist_parser_buddy_name);
 		}
-		g_free(blist_parser_buddy_name);
 		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
+		g_free(blist_parser_buddy_name);
+		blist_parser_buddy_name = NULL;
 	} else if(!strcmp(element_name, "block")) {
 		struct aim_user *user = find_user(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(user) {
 			gaim_privacy_deny_add(user, blist_parser_buddy_name);
 		}
-		g_free(blist_parser_buddy_name);
 		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
+		g_free(blist_parser_buddy_name);
+		blist_parser_buddy_name = NULL;
 	} else if(!strcmp(element_name, "ignore")) {
 		/* we'll apparently do something with this later */
 		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
