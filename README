@@ -38,7 +38,7 @@ You should run 'make install' as root to make sure plugins and other files
 get installed into locations they want to be in. Once you've done that,
 you only need to run 'gaim'.
 
-Protocol plugins (prpls) are now automaticly loaded. Simply go to the
+Protocol plugins (prpls) are now automatically loaded. Simply go to the
 account editor, add a new account, and all supported protocols will be
 there. Be sure to use OSCAR (AIM/ICQ) and not the old TOC or ICQ plugins.
 
