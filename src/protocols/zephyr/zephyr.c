@@ -861,6 +861,8 @@ static void zephyr_login(GaimAccount * account)
 
 	zgc = gaim_account_get_connection(account);
 	zgc->flags |= GAIM_CONNECTION_HTML;
+	gaim_connection_update_progress(zgc, _("Connecting"), 0, 2);
+
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
 	z_call_s(ZOpenPort(NULL), "Couldn't open port");
 	z_call_s(ZSetLocation((char *)
