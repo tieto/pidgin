@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.52\n"
+"Project-Id-Version: gaim 0.55\n"
 "POT-Creation-Date: 2002-03-14 22:24-0800\n"
-"PO-Revision-Date: 2002-02-19 9:30+0200\n"
+"PO-Revision-Date: 2002-03-20 23:30+0200\n"
 "Last-Translator: Przemys³aw Su³ek <pbs@linux.net.pl>\n"
 "Language-Team: POLISH <pl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -268,9 +268,9 @@ msgid "Get Info"
 msgstr "Pobierz informacjê"
 
 #: src/protocols/irc/irc.c:429 src/protocols/irc/irc.c:1768
-#, fuzzy, c-format
+#, c-format
 msgid "DCC Chat with %s closed"
-msgstr "Zamkniêto bezpo¶redni IM z %s"
+msgstr "Zamkniêto CHAT DCC z %s"
 
 #: src/protocols/irc/irc.c:557 src/protocols/irc/irc.c:1129
 #, c-format
@@ -300,6 +300,7 @@ msgid ""
 "%s has requested a DCC chat.  Would you like to establish the direct "
 "connection?"
 msgstr ""
+"%s za¿±da³ chatu DCC. Czy chcesz ustanowiæ po³±czenie bezpo¶rednie?"
 
 #: src/protocols/irc/irc.c:986
 msgid "Unable to write"
@@ -333,9 +334,8 @@ msgid "Password:"
 msgstr "Has³o"
 
 #: src/protocols/irc/irc.c:1841
-#, fuzzy
 msgid "DCC Chat"
-msgstr "Chat"
+msgstr "Chat DCC"
 
 #: src/applet.c:293 src/buddy.c:487 src/buddy.c:2375 src/buddy.c:2511
 #: src/protocols/jabber/jabber.c:693
@@ -349,47 +349,41 @@ msgstr "Dostêpny"
 
 #: src/protocols/jabber/jabber.c:697
 msgid "Extended Away"
-msgstr ""
+msgstr "Rozszerzona zajêto¶æ"
 
 #: src/protocols/jabber/jabber.c:699
 msgid "Do Not Disturb"
-msgstr ""
+msgstr "Nie przeszkadzaæ"
 
 #: src/dialogs.c:844 src/protocols/jabber/jabber.c:1088
 msgid "Buddies"
 msgstr "Kolesie"
 
 #: src/protocols/jabber/jabber.c:1141
-#, fuzzy
 msgid "Authenticating"
-msgstr "Autoryzacja nie powiod³a siê"
+msgstr "Autentykowanie"
 
 #: src/protocols/jabber/jabber.c:1178
-#, fuzzy
 msgid "Unknown login error"
-msgstr "Nieznany Kod B³êdu."
+msgstr "Nieznany b³±d logowania."
 
 #: src/protocols/jabber/jabber.c:1408 src/protocols/jabber/jabber.c:1438
 #: src/protocols/jabber/jabber.c:2811 src/protocols/jabber/jabber.c:2855
-#, fuzzy
 msgid "Unable to connect"
 msgstr "Nie mo¿na siê po³±czyæ"
 
 #: src/protocols/jabber/jabber.c:1412
-#, fuzzy
 msgid "Connected"
-msgstr "Roz³±czony."
+msgstr "Po³±czony"
 
 #: src/protocols/jabber/jabber.c:1415
-#, fuzzy
 msgid "Requesting Authentication Method"
-msgstr "Autoryzacja nie powiod³a siê"
+msgstr "¯±danie metody autentykacji"
 
 #. we have no chats yet
 #: src/protocols/jabber/jabber.c:1433
-#, fuzzy
 msgid "Connecting"
-msgstr "Po³±czenie zamkniête"
+msgstr "£±czenie"
 
 #: src/protocols/jabber/jabber.c:1692
 msgid "Room:"
@@ -409,22 +403,18 @@ msgid "Get Away Msg"
 msgstr "Pobierz wiadomo¶æ Zajêty"
 
 #: src/protocols/jabber/jabber.c:2208
-#, fuzzy
 msgid "Full Name"
-msgstr "Imiê"
+msgstr "Pe³na nazwa"
 
 #: src/protocols/jabber/jabber.c:2209
-#, fuzzy
 msgid "Family Name"
-msgstr "Imiê"
+msgstr "Nazwisko"
 
 #: src/protocols/jabber/jabber.c:2210
-#, fuzzy
 msgid "Given Name"
 msgstr "Nazwisko panieñskie"
 
 #: src/protocols/jabber/jabber.c:2211
-#, fuzzy
 msgid "Nickname"
 msgstr "Pseudonim"
 
@@ -434,23 +424,23 @@ msgstr "URL"
 
 #: src/protocols/jabber/jabber.c:2213
 msgid "Street Address"
-msgstr ""
+msgstr "Adres ulica"
 
 #: src/protocols/jabber/jabber.c:2214
 msgid "Extended Address"
-msgstr ""
+msgstr "Rozszerzony adres"
 
 #: src/protocols/jabber/jabber.c:2215
 msgid "Locality"
-msgstr ""
+msgstr "Miejsce (lokalizacja)"
 
 #: src/protocols/jabber/jabber.c:2216
 msgid "Region"
-msgstr ""
+msgstr "Region"
 
 #: src/protocols/jabber/jabber.c:2217
 msgid "Postal Code"
-msgstr ""
+msgstr "Kod pocztowy"
 
 #. Line 7
 #: src/dialogs.c:1599 src/dialogs.c:2303 src/protocols/jabber/jabber.c:2218
@@ -458,9 +448,8 @@ msgid "Country"
 msgstr "Kraj"
 
 #: src/protocols/jabber/jabber.c:2219
-#, fuzzy
 msgid "Telephone"
-msgstr "Wybierz ¿aden"
+msgstr "Telefon"
 
 #: src/dialogs.c:2379 src/protocols/jabber/jabber.c:2220
 msgid "Email"
@@ -468,25 +457,23 @@ msgstr "Email"
 
 #: src/protocols/jabber/jabber.c:2221
 msgid "Organization Name"
-msgstr ""
+msgstr "Nazwa organizacji"
 
 #: src/protocols/jabber/jabber.c:2222
 msgid "Organization Unit"
-msgstr ""
+msgstr "Jednostka organizacyjna"
 
 #: src/prefs.c:1998 src/protocols/jabber/jabber.c:2223
 msgid "Title"
 msgstr "Tytu³"
 
 #: src/protocols/jabber/jabber.c:2224
-#, fuzzy
 msgid "Role"
-msgstr "Usuñ"
+msgstr "Rola"
 
 #: src/protocols/jabber/jabber.c:2225
-#, fuzzy
 msgid "Birthday"
-msgstr "Rok urodzenia"
+msgstr "Data urodzenia"
 
 #. Right side: frame with description and the filepath of plugin
 #: src/dialogs.c:2482 src/plugins.c:211 src/protocols/jabber/jabber.c:2226
@@ -498,27 +485,28 @@ msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
 msgstr ""
+"Wszystkie poni¿sze pola s± opcjonalne. Wprowad¼ jedynie te informacje, które "
+"uwa¿asz za stosowne"
 
 #: src/protocols/jabber/jabber.c:2252
 msgid "User Identity"
-msgstr ""
+msgstr "Identyfikacja u¿ytkownika"
 
 #: src/protocols/jabber/jabber.c:2668
 msgid "Gaim - Edit Jabber vCard"
-msgstr ""
+msgstr "Gaim - Edycja vCard Jabber"
 
 #: src/protocols/jabber/jabber.c:2742
 msgid "Server Registration successful!"
-msgstr ""
+msgstr "Poprawa rejestracja na serwerze!"
 
 #: src/protocols/jabber/jabber.c:2769
 msgid "Unknown registration error"
-msgstr ""
+msgstr "Nieznany b³±d rejestracji"
 
 #: src/protocols/jabber/jabber.c:2873 src/protocols/jabber/jabber.c:2888
-#, fuzzy
 msgid "Set User Info"
-msgstr "Pobierz informacje o u¿ytkowniku"
+msgstr "Ustaw informacje o u¿ytkowniku"
 
 #: src/protocols/msn/msn.c:717 src/protocols/msn/msn.c:2021
 #: src/protocols/msn/msn.c:2054
@@ -548,9 +536,9 @@ msgid "Direct IM with %s closed"
 msgstr "Zamkniêto bezpo¶redni IM z %s"
 
 #: src/protocols/oscar/oscar.c:324
-#, fuzzy, c-format
+#, c-format
 msgid "Direct IM with %s failed"
-msgstr "Zamkniêto bezpo¶redni IM z %s"
+msgstr "B³±d bezpo¶redniej IM z %s"
 
 #: src/protocols/oscar/oscar.c:362
 msgid "connection error (rend)\n"
@@ -1345,7 +1333,7 @@ msgstr "Usuñ wychwycenie kolesia"
 
 #: src/buddy.c:1639
 msgid "[Click to edit]"
-msgstr ""
+msgstr "[Kliknij by edytowaæ]"
 
 #: src/buddy.c:2058
 #, c-format
@@ -1599,9 +1587,8 @@ msgid "Gaim - Save Conversation"
 msgstr "Gaim - zapisz rozmowê"
 
 #: src/conversation.c:460
-#, fuzzy
 msgid "Gaim - Insert Image"
-msgstr "Gaim - u¿ytkownik IM"
+msgstr "Gaim - Wstaw obraz"
 
 #: src/conversation.c:1219
 msgid "Unable to send message: too large"
@@ -1718,14 +1705,12 @@ msgid "Smiley"
 msgstr "Usmiech"
 
 #: src/conversation.c:2106
-#, fuzzy
 msgid "Insert IM Image"
-msgstr "Obraz IM"
+msgstr "Wstaw obraz IM"
 
 #: src/conversation.c:2106
-#, fuzzy
 msgid "Image"
-msgstr "Obraz IM"
+msgstr "Obraz"
 
 #: src/conversation.c:2113
 msgid "Enable logging"
@@ -1913,9 +1898,8 @@ msgid "Pounce on return from idle"
 msgstr "Wywo³aj przy powrocie z bezczynno¶ci"
 
 #: src/dialogs.c:1308
-#, fuzzy
 msgid "Pounce when buddy is typing to you"
-msgstr "D¼wiêk gdy kole¶ siê loguje"
+msgstr "D¼wiêk gdy kole¶ napisze do Ciebie"
 
 #. </pounce type="when">
 #. <pounce type="action">
@@ -2222,7 +2206,7 @@ msgstr "Nowe powiadomienie o poczcie"
 
 #: src/multi.c:669
 msgid "Register with server"
-msgstr ""
+msgstr "Rejestracja na serwerze"
 
 #: src/multi.c:727
 msgid "Gaim - Modify Account"
@@ -2297,9 +2281,8 @@ msgstr "Gaim - wtyczki"
 
 #. Left side: frame with list of plugin file names
 #: src/plugins.c:192
-#, fuzzy
 msgid "Loaded Plugins"
-msgstr "Wtyczki"
+msgstr "Wczytane wtyczki"
 
 #: src/plugins.c:238
 msgid "Filepath:"
@@ -2370,7 +2353,7 @@ msgstr "Poka¿ okno odpluskwiania"
 #. Preferences should be positive
 #: src/prefs.c:233
 msgid "Notify buddies that you are typing to them"
-msgstr ""
+msgstr "Wychwyæ kolesi, do których piszesz"
 
 #: src/prefs.c:240
 msgid "Report Idle Times"
@@ -2509,7 +2492,6 @@ msgid "Buddy List Window"
 msgstr "Okno listy kolesi"
 
 #: src/prefs.c:568
-#, fuzzy
 msgid "Tab Placement:"
 msgstr "Ustawienie zak³adek"
 
@@ -2583,7 +2565,7 @@ msgstr "Opcje klawiatury"
 
 #: src/prefs.c:683
 msgid "Enter sends message"
-msgstr "Wprowad¼ wysy³ane wiadomo¶ci"
+msgstr "Enter wysy³a wiadomo¶æ"
 
 #: src/prefs.c:684
 msgid "Control-Enter sends message"
@@ -2738,9 +2720,8 @@ msgid "Hide Buddy Icons"
 msgstr "Ukryj ikony kolesia"
 
 #: src/prefs.c:1036
-#, fuzzy
 msgid "Disable Buddy Icon Animation"
-msgstr "Wy³±cz animacjê"
+msgstr "Wy³±cz animacjê ikon kolesi"
 
 #: src/prefs.c:1062
 msgid "Chat Options"
@@ -2799,9 +2780,8 @@ msgid "Gaim - Sound Configuration"
 msgstr "Gaim - konfiguracja d¼wiêku"
 
 #: src/prefs.c:1540
-#, fuzzy
 msgid "Test"
-msgstr "Tekst"
+msgstr "Test"
 
 #: src/prefs.c:1550
 msgid "Choose..."
@@ -2824,13 +2804,13 @@ msgid "Sound Player:"
 msgstr "Odtwarzacz d¼wiêku:"
 
 #: src/prefs.c:1729
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command to play sound files\n"
 "(%s for filename)"
 msgstr ""
 "Polecenie odegrania plików\n"
-"(%s dla nazwy pliku; wewnêtrzny gdy puste)"
+"(%s dla nazwy pliku)"
 
 #: src/prefs.c:1741
 msgid "Events"

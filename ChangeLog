@@ -12,6 +12,7 @@ version 0.55:
 	* Updated Dutch translation
 	* Shows "mobile" icon for Oscar buddies using mobile
 	  devices (Thanks Mark Doliner)
+	* Updated Polish Translation (Thanks Przemyslaw Sulek)
 
 version 0.54 (03/14/2002):
 	* Compiles without GdkPixbuf again
