@@ -3021,22 +3021,6 @@ plugin_changed_cb(GaimPlugin *p, gpointer *data)
 	gaim_gtk_blist_update_plugin_actions();
 }
 
-
-/* this is called on all sorts of signals, and we have no reason to pass
- * it anything, so it remains without arguments. If you need anything
- * more specific, do as below, and create another callback that calls
- * this */
-static void
-raise_on_events_cb()
-{
-	if(gtkblist && gtkblist->window &&
-			gaim_prefs_get_bool("/gaim/gtk/blist/raise_on_events")) {
-		gtk_widget_show(gtkblist->window);
-		gtk_window_deiconify(GTK_WINDOW(gtkblist->window));
-		gdk_window_raise(gtkblist->window->window);
-	}
-}
-
 /**********************************************************************************
  * Public API Functions                                                           *
  **********************************************************************************/
@@ -3047,12 +3031,6 @@ static void gaim_gtk_blist_new_list(GaimBuddyList *blist)
 
 	gtkblist = g_new0(GaimGtkBuddyList, 1);
 	blist->ui_data = gtkblist;
-
-	/* All of these signal handlers are for the "Raise on Events" option */
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on",
-			gtkblist, GAIM_CALLBACK(raise_on_events_cb), NULL);
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-off",
-			gtkblist, GAIM_CALLBACK(raise_on_events_cb), NULL);
 }
 
 static void gaim_gtk_blist_new_node(GaimBlistNode *node)
@@ -4541,7 +4519,6 @@ void gaim_gtk_blist_init(void)
 	/* Initialize prefs */
 	gaim_prefs_add_none("/gaim/gtk/blist");
 	gaim_prefs_add_bool("/gaim/gtk/blist/auto_expand_contacts", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);

@@ -906,10 +906,6 @@ GtkWidget *list_page() {
 
 	g_list_free(l);
 
-	vbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
-	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
-			"/gaim/gtk/blist/raise_on_events", vbox);
-
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Display"));
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/blist/show_buddy_icons", vbox);
@@ -2267,102 +2263,6 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 */
 }
 
-GtkWidget *away_message_page() {
-	GtkWidget *ret;
-	GtkWidget *hbox;
-	GtkWidget *button;
-	GtkWidget *sw;
-	GtkWidget *event_view;
-	GtkCellRenderer *rend;
-	GtkTreeViewColumn *col;
-	GtkTreeSelection *sel;
-/* XXX CORE/UI
-	GtkTreeIter iter;
-	GSList *awy = away_messages;
-	struct away_message *a;
-*/
-	GtkSizeGroup *sg;
-
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
-
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-
-	prefs_away_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
-/* XXX CORE/UI
-	while (awy) {
-		a = (struct away_message *)awy->data;
-		gtk_list_store_append (prefs_away_store, &iter);
-		gtk_list_store_set(prefs_away_store, &iter,
-				   0, a->name,
-				   1, a, -1);
-		awy = awy->next;
-	}
-*/
-	event_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(prefs_away_store));
-
-	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes ("NULL",
-							rend,
-							"text", 0,
-							NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
-	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW(event_view), FALSE);
-	gtk_widget_show(event_view);
-	gtk_container_add(GTK_CONTAINER(sw), event_view);
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-
-	away_text = gtk_imhtml_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(sw), away_text);
-
-	gaim_setup_imhtml(away_text);
-	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
-	g_signal_connect(G_OBJECT(sel), "changed",
-					 G_CALLBACK(away_message_sel_cb), NULL);
-	g_signal_connect(G_OBJECT(event_view), "button-press-event",
-					 G_CALLBACK(away_message_click_cb), NULL);
-	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(ret), hbox, FALSE, FALSE, 0);
-	button = gtk_button_new_from_stock (GTK_STOCK_ADD);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, button);
-
-/* XXX CORE/UI
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(create_away_mess), NULL);
-*/
-
-	button = gtk_button_new_from_stock (GTK_STOCK_REMOVE);
-	gtk_size_group_add_widget(sg, button);
-
-/* XXX CORE/UI
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(remove_away_message), event_view);
-*/
-
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	button = gaim_pixbuf_button_from_stock(_("_Edit"), GAIM_STOCK_EDIT,
-			GAIM_BUTTON_HORIZONTAL);
-	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(away_edit_sel), event_view);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
 GtkTreeIter *prefs_notebook_add_page(const char *text,
 				     GdkPixbuf *pixbuf,
 				     GtkWidget *page,
@@ -2403,7 +2303,6 @@ void prefs_notebook_init() {
 #endif
 	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
 
 	if (gaim_plugins_enabled()) {
 		prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
