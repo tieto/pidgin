@@ -882,6 +882,7 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	char *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);
+	fclose(file);
 	read[data->length] = '\0';
 	*flags = 0;
 	if(strstr(read, "<BR>"))
