@@ -397,7 +397,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 704 $"
+#define REVISION "gaim:$Revision: 706 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -494,6 +494,7 @@ extern int display_options;
 #define OPT_DISP_COOL_LOOK       0x00000400
 #define OPT_DISP_CHAT_LOGON      0x00000800
 #define OPT_DISP_IGN_WHITE       0x00001000
+#define OPT_DISP_NO_BUTTONS      0x00002000
  
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001
@@ -544,6 +545,7 @@ extern void add_chat_buddy(struct conversation *, char *);
 extern void remove_chat_buddy(struct conversation *, char *);
 extern void show_new_buddy_chat(struct conversation *);
 extern void setup_buddy_chats();
+extern void build_imchat_box(gboolean);
 extern void do_quit();
 
 

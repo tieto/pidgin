@@ -68,6 +68,7 @@
 static GtkTooltips *tips;
 static GtkWidget *editpane;
 static GtkWidget *buddypane;
+static GtkWidget *imchatbox;
 static GtkWidget *permitpane;
 static GtkWidget *edittree;
 static GtkWidget *imbutton, *infobutton, *chatbutton;
@@ -236,25 +237,31 @@ void update_button_pix()
 	        adjust_pic(addbutton, _("Add"), (gchar **)daemon_buddyadd_xpm);
 	        adjust_pic(groupbutton, _("Group"), NULL);
 		adjust_pic(rembutton, _("Remove"), (gchar **)daemon_buddydel_xpm);
-		adjust_pic(chatbutton, _("Chat"), (gchar **)daemon_buddychat_xpm);
-	        adjust_pic(imbutton, _("IM"), (gchar **)daemon_im_xpm);
-	        adjust_pic(infobutton, _("Info"), (gchar **)daemon_info_xpm);
+		if (!(display_options & OPT_DISP_NO_BUTTONS)) {
+			adjust_pic(chatbutton, _("Chat"), (gchar **)daemon_buddychat_xpm);
+		        adjust_pic(imbutton, _("IM"), (gchar **)daemon_im_xpm);
+		        adjust_pic(infobutton, _("Info"), (gchar **)daemon_info_xpm);
+		}
 /*	        adjust_pic(addpermbutton, _("Add"), (gchar **)daemon_permadd_xpm);
 	        adjust_pic(rempermbutton, _("Remove"), (gchar **)daemon_permdel_xpm);
 */	} else {
 	        adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
 	        adjust_pic(groupbutton, _("Group"), NULL);
 		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
-		adjust_pic(chatbutton, _("Chat"), (gchar **)buddychat_xpm);
-	        adjust_pic(imbutton, _("IM"), (gchar **)im_xpm);
-	        adjust_pic(infobutton, _("Info"), (gchar **)info_xpm);
+		if (!(display_options & OPT_DISP_NO_BUTTONS)) {
+			adjust_pic(chatbutton, _("Chat"), (gchar **)buddychat_xpm);
+		        adjust_pic(imbutton, _("IM"), (gchar **)im_xpm);
+		        adjust_pic(infobutton, _("Info"), (gchar **)info_xpm);
+		}
 /*	        adjust_pic(addpermbutton, _("Add"), (gchar **)permadd_xpm);
 	        adjust_pic(rempermbutton, _("Remove"), (gchar **)permdel_xpm);
 */	}
 	gtk_widget_hide(addbutton->parent);
 	gtk_widget_show(addbutton->parent);
-	gtk_widget_hide(chatbutton->parent);
-	gtk_widget_show(chatbutton->parent);
+	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
+		gtk_widget_hide(chatbutton->parent);
+		gtk_widget_show(chatbutton->parent);
+	}
 /*	gtk_widget_hide(addpermbutton->parent);
 	gtk_widget_show(addpermbutton->parent);
 */}
@@ -1690,6 +1697,52 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str, GtkSignalFunc sf)
 
 
 
+void build_imchat_box(gboolean on)
+{
+	if (on) {
+		if (imchatbox) return;
+
+		imbutton   = gtk_button_new_with_label(_("IM"));
+		infobutton = gtk_button_new_with_label(_("Info"));
+		chatbutton = gtk_button_new_with_label(_("Chat"));
+
+		imchatbox  = gtk_hbox_new(TRUE, 10);
+
+		if (display_options & OPT_DISP_COOL_LOOK)
+		{
+			gtk_button_set_relief(GTK_BUTTON(imbutton), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(infobutton), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(chatbutton), GTK_RELIEF_NONE);
+		}
+
+		/* Put the buttons in the hbox */
+		gtk_widget_show(imbutton);
+		gtk_widget_show(chatbutton);
+		gtk_widget_show(infobutton);
+
+		gtk_box_pack_start(GTK_BOX(imchatbox), imbutton, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(imchatbox), infobutton, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(imchatbox), chatbutton, TRUE, TRUE, 0);
+		gtk_container_border_width(GTK_CONTAINER(imchatbox), 10);
+
+		gtk_signal_connect(GTK_OBJECT(imbutton), "clicked", GTK_SIGNAL_FUNC(show_im_dialog), buddies);
+		gtk_signal_connect(GTK_OBJECT(infobutton), "clicked", GTK_SIGNAL_FUNC(info_callback), buddies);
+		gtk_signal_connect(GTK_OBJECT(chatbutton), "clicked", GTK_SIGNAL_FUNC(chat_callback), buddies);
+
+		gtk_tooltips_set_tip(tips,infobutton, _("Information on selected Buddy"), "Penguin");
+		gtk_tooltips_set_tip(tips,imbutton, _("Send Instant Message"), "Penguin");
+		gtk_tooltips_set_tip(tips,chatbutton, _("Start/join a Buddy Chat"), "Penguin");
+
+		gtk_box_pack_start(GTK_BOX(buddypane), imchatbox, FALSE, FALSE, 0);
+
+		gtk_widget_show(imchatbox);
+	} else {
+		if (imchatbox)
+			gtk_widget_destroy(imchatbox);
+		imchatbox = NULL;
+	}
+}
+
 
 
 void show_buddy_list()
@@ -1703,7 +1756,6 @@ void show_buddy_list()
 	GtkWidget *setmenu;
 	GtkWidget *menubar;
 	GtkWidget *vbox;
-	GtkWidget *hbox;
 	GtkWidget *menuitem;
         GtkWidget *notebook;
         GtkWidget *label;
@@ -1733,6 +1785,7 @@ void show_buddy_list()
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	gaim_new_item(menu, _("Add A Buddy"), GTK_SIGNAL_FUNC(add_buddy_callback));
+	gaim_new_item(menu, _("Join A Chat"), GTK_SIGNAL_FUNC(chat_callback));
         gaim_seperator(menu);
         gaim_new_item(menu, _("Import Buddy List"), GTK_SIGNAL_FUNC(import_callback));
         gaim_new_item(menu, _("Export Buddy List"), GTK_SIGNAL_FUNC(export_callback));
@@ -1829,26 +1882,11 @@ void show_buddy_list()
 
         buddypane = gtk_vbox_new(FALSE, 0);
         
-        imbutton   = gtk_button_new_with_label(_("IM"));
-	infobutton = gtk_button_new_with_label(_("Info"));
-	chatbutton = gtk_button_new_with_label(_("Chat"));
-
-	hbox       = gtk_hbox_new(TRUE, 10);
-
 	buddies    = gtk_tree_new();
 	sw         = gtk_scrolled_window_new(NULL, NULL);
 	
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
-		gtk_button_set_relief(GTK_BUTTON(imbutton), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(infobutton), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(chatbutton), GTK_RELIEF_NONE);
-	}
-        
 	tips = gtk_tooltips_new();
 	gtk_object_set_data(GTK_OBJECT(blist), _("Buddy List"), tips);
-	
- 
 	
 	/* Now the buddy list */
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw),buddies);
@@ -1858,27 +1896,11 @@ void show_buddy_list()
 	gtk_widget_show(buddies);
 	gtk_widget_show(sw);
 
-	/* Put the buttons in the hbox */
-	gtk_widget_show(imbutton);
-	gtk_widget_show(chatbutton);
-	gtk_widget_show(infobutton);
-
-	gtk_box_pack_start(GTK_BOX(hbox), imbutton, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), infobutton, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), chatbutton, TRUE, TRUE, 0);
-        gtk_container_border_width(GTK_CONTAINER(hbox), 10);
-
-
-	gtk_tooltips_set_tip(tips,infobutton, _("Information on selected Buddy"), "Penguin");
-	gtk_tooltips_set_tip(tips,imbutton, _("Send Instant Message"), "Penguin");
-	gtk_tooltips_set_tip(tips,chatbutton, _("Start/join a Buddy Chat"), "Penguin");
-
         gtk_box_pack_start(GTK_BOX(buddypane), sw, TRUE, TRUE, 0);
-        gtk_box_pack_start(GTK_BOX(buddypane), hbox, FALSE, FALSE, 0);
-
-        gtk_widget_show(hbox);
         gtk_widget_show(buddypane);
 
+	if (!(display_options & OPT_DISP_NO_BUTTONS))
+		build_imchat_box(TRUE);
 
 
         /* Swing the edit buddy */
@@ -1956,9 +1978,6 @@ void show_buddy_list()
 
         /* Enable buttons */
 	
-	gtk_signal_connect(GTK_OBJECT(imbutton), "clicked", GTK_SIGNAL_FUNC(show_im_dialog), buddies);
-	gtk_signal_connect(GTK_OBJECT(infobutton), "clicked", GTK_SIGNAL_FUNC(info_callback), buddies);
-	gtk_signal_connect(GTK_OBJECT(chatbutton), "clicked", GTK_SIGNAL_FUNC(chat_callback), buddies);
        	gtk_signal_connect(GTK_OBJECT(rembutton), "clicked", GTK_SIGNAL_FUNC(do_del_buddy), edittree);
        	gtk_signal_connect(GTK_OBJECT(addbutton), "clicked", GTK_SIGNAL_FUNC(add_buddy_callback), NULL);
        	gtk_signal_connect(GTK_OBJECT(groupbutton), "clicked", GTK_SIGNAL_FUNC(add_group_callback), NULL);

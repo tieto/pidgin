@@ -327,6 +327,7 @@ static void buddy_page()
 	gaim_button(_("Show numbers in groups"), &display_options, OPT_DISP_SHOW_GRPNUM, box);
 	gaim_button(_("Show idle times"), &display_options, OPT_DISP_SHOW_IDLETIME, box);
 	gaim_button(_("Show buddy type icons"), &display_options, OPT_DISP_SHOW_PIXMAPS, box);
+	gaim_button(_("Hide IM/Info/Chat buttons"), &display_options, OPT_DISP_NO_BUTTONS, box);
 	gaim_button(_("Show pictures on buttons"), &display_options, OPT_DISP_SHOW_BUTTON_XPM, box);
 	gaim_button(_("Use Daemon pictures"), &display_options, OPT_DISP_DEVIL_PIXMAPS, box);
 
@@ -1507,6 +1508,8 @@ void set_general_option(GtkWidget *w, int *option)
 void set_display_option(GtkWidget *w, int *option)
 {
         display_options = display_options ^ (int)option;
+
+	build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
 
 	if (blist) update_button_pix();
 
