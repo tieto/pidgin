@@ -315,6 +315,85 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	}
 	g_string_append(str, "<BR/>");
 
+	/* The following primarly intented for user/developer interaction and thus
+	   ought not be translated */
+	g_string_append(str, "<b>Gaim was compiled with the following:</b><br/>");
+#ifdef CONFIG_ARGS /* win32 build doesn't use configure */
+	g_string_append(str, "Arguments to <i>./configure</i>:  " CONFIG_ARGS "<br/>");
+#endif
+#ifdef DEBUG
+	g_string_append(str, "Print debugging messages:  Yes<br/>");
+#else
+	g_string_append(str, "Print debugging messages:  No<br/>");
+#endif /* DEBUG */
+#ifdef ENABLE_BINRELOC
+	g_string_append(str, "Binary relocation:  Enabled<br/>");
+#else
+	g_string_append(str, "Binary relocation:  Disabled<br/>");
+#endif /* ENABLE_BINRELOC */
+#ifdef GAIM_PLUGINS
+	g_string_append(str, "Plugins:  Enabled<br/>");
+#else
+	g_string_append(str, "Plugins:  Disabled<br/>");
+#endif /* GAIM_PLUGINS */
+#ifdef HAVE_SSL
+	g_string_append(str, "SSL:  Gaim was compiled with SSL support<br/>");
+#else
+	g_string_append(str, "SSL:  Gaim was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
+#endif
+#ifdef HAVE_GNUTLS
+	g_string_append(str, "GNUTLS:  Enabled<br/>");
+#else
+	g_string_append(str, "GNUTLS:  Disabled<br/>");
+#endif
+#ifdef HAVE_NSS
+	g_string_append(str, "NSS:  Enabled<br/>");
+#else
+	g_string_append(str, "NSS:  Disabled<br/>");
+#endif
+#ifdef HAVE_TK
+	g_string_append(str, "TK:  Yes<br/>");
+#else
+	g_string_append(str, "TK:  No<br/>");
+#endif
+#ifdef LIBZEPHYR_EXT
+	g_string_append(str, "External libzephyr:  Yes<br/>");
+#else
+	g_string_append(str, "External libzephyr:  No<br/>");
+#endif
+#ifdef ZEPHYR_USES_KERBEROS
+	g_string_append(str, "Zephyr uses Kerberos: Yes<br/>");
+#else
+	g_string_append(str, "Zephyr uses Kerberos: No<br/>");
+#endif
+#ifdef USE_AO
+	g_string_append(str, "AO:  Yes<br/>");
+#else
+	g_string_append(str, "AO:  No<br/>");
+#endif
+#ifdef USE_NAS_AUDIO
+	g_string_append(str, "NAS Audio:  Yes<br/>");
+#else
+	g_string_append(str, "NAS Audio:  No<br/>");
+#endif
+#ifdef USE_GTKSPELL
+	g_string_append(str, "GtkSpell:  Enabled<br/>");
+#else
+	g_string_append(str, "GtkSpell:  Disabled<br/>");
+#endif
+#ifdef USE_SCREENSAVER
+	g_string_append(str, "XScreenSaver support:  Yes<br/>");
+#else
+	g_string_append(str, "XScreenSaver support:  No<br/>");
+#endif
+#ifdef USE_SM
+	g_string_append(str, "X SM support:  Yes<br/>");
+#else
+	g_string_append(str, "X SM support:  No<br/>");
+#endif
+
+	/* End of not to be translated section */
+
 	gtk_imhtml_append_text(GTK_IMHTML(text), str->str, GTK_IMHTML_NO_SCROLL);
 	g_string_free(str, TRUE);
 
