@@ -126,6 +126,24 @@
 #include "win32dep.h"
 #endif
 
+/* ugly ugly ugly */
+/* This is a workaround for the fact that G_GINT64_MODIFIER and G_GSIZE_FORMAT
+ * are only defined in Glib >= 2.4 */
+#ifndef G_GINT64_MODIFIER
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_GINT64_MODIFIER "l"
+#	else
+#		define G_GINT64_MODIFIER "ll"
+#	endif
+#endif
+
+#ifndef G_GSIZE_FORMAT
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_GSIZE_FORMAT "lu"
+#	else
+#		define G_GSIZE_FORMAT "u"
+#	endif
+#endif
 
 #define GAIM_WEBSITE "http://gaim.sourceforge.net/"
 
