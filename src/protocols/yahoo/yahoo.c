@@ -1471,7 +1471,7 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* extract their Email address and put it in */
 	info_extract_field(stripped, url_text, "My Email", 5, "\n", 0,
-			_("Private"), _("Email"), 0, NULL);
+			"Private", _("Email"), 0, NULL);
 
 	/* extract the Nickname if it exists */
 	info_extract_field(stripped, url_text, "Nickname:", 1, "\n", '\n',
@@ -1491,11 +1491,11 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* extract their MaritalStatus and put it in */
 	info_extract_field(stripped, url_text, "MaritalStatus:", 3, "\n", '\n',
-			_("No Answer"), _("Marital Status"), 0, NULL);
+			"No Answer", _("Marital Status"), 0, NULL);
 
 	/* extract their Gender and put it in */
 	info_extract_field(stripped, url_text, "Gender:", 3, "\n", '\n',
-			_("No Answer"), _("Gender"), 0, NULL);
+			"No Answer", _("Gender"), 0, NULL);
 
 	/* extract their Occupation and put it in */
 	info_extract_field(stripped, url_text, "Occupation:", 2, "\n", '\n',

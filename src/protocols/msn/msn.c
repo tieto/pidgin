@@ -1211,27 +1211,27 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* extract their Name and put it in */
 	info_extract_field(stripped, url_text, "\tName", 0, "\t", '\n',
-			_("Undisclosed"), _("Name"), 0, NULL);
+			"Undisclosed", _("Name"), 0, NULL);
 
 	/* extract their Age and put it in */
 	info_extract_field(stripped, url_text, "\tAge", 0, "\t", '\n',
-			_("Undisclosed"), _("Age"), 0, NULL);
+			"Undisclosed", _("Age"), 0, NULL);
 
 	/* extract their Gender and put it in */
 	info_extract_field(stripped, url_text, "\tGender", 6, "\t", '\n',
-			_("Undisclosed"), _("Gender"), 0, NULL);
+			"Undisclosed", _("Gender"), 0, NULL);
 
 	/* extract their MaritalStatus and put it in */
 	info_extract_field(stripped, url_text, "\tMaritalStatus", 0, "\t", '\n',
-			_("Undisclosed"), _("Marital Status"), 0, NULL);
+			"Undisclosed", _("Marital Status"), 0, NULL);
 
 	/* extract their Location and put it in */
 	info_extract_field(stripped, url_text, "\tLocation", 0, "\t", '\n',
-			_("Undisclosed"), _("Location"), 0, NULL);
+			"Undisclosed", _("Location"), 0, NULL);
 
 	/* extract their Occupation and put it in */
 	info_extract_field(stripped, url_text, "\t Occupation", 6, "\t", '\n',
-			_("Undisclosed"), _("Occupation"), 0, NULL);
+			"Undisclosed", _("Occupation"), 0, NULL);
 
 	/* the fields, 'A Little About Me', 'Favorite Things', 'Hobbies and Interests',
 	 * 'Favorite Quote', and 'My Homepage' may or may not appear, in any combination.
