@@ -86,7 +86,7 @@ EXTRA_DIST =
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
-gaimbuttonpix_DATA = edit.png accounts.png signon.png preferences.png insert-image-small.png text_bigger.png text_smaller.png insert-link-small.png insert-smiley-small.png text_normal.png
+gaimbuttonpix_DATA = edit.png accounts.png change-bgcolor-small.png change-fgcolor-small.png signon.png preferences.png insert-image-small.png text_bigger.png text_smaller.png insert-link-small.png insert-smiley-small.png text_normal.png
 
 gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png gaim_cool.png
