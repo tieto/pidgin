@@ -1438,9 +1438,9 @@ faim_internal int aim_sizetlvchain(aim_tlvlist_t **list);
 faim_export int aimutil_putstr(char *, const char *, int);
 faim_export fu16_t aimutil_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_util_getlocalip(fu8_t *ip);
-faim_export int aimutil_tokslen(char *toSearch, int index, char dl);
+faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl);
 faim_export int aimutil_itemcnt(char *toSearch, char dl);
-faim_export char *aimutil_itemindex(char *toSearch, int index, char dl);
+faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl);
 
 faim_export int aim_snlen(const char *sn);
 faim_export int aim_sncmp(const char *sn1, const char *sn2);

@@ -40,7 +40,7 @@ faim_export int aimutil_putstr(char *dest, const char *src, int len)
  *   -- DMP.
  *
  */
-faim_export int aimutil_tokslen(char *toSearch, int index, char dl)
+faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl)
 {
 	int curCount = 1;
 	char *next;
@@ -50,13 +50,13 @@ faim_export int aimutil_tokslen(char *toSearch, int index, char dl)
 	last = toSearch;
 	next = strchr(toSearch, dl);
 
-	while(curCount < index && next != NULL) {
+	while(curCount < theindex && next != NULL) {
 		curCount++;
 		last = next + 1;
 		next = strchr(last, dl);
 	}
 
-	if ((curCount < index) || (next == NULL))
+	if ((curCount < theindex) || (next == NULL))
 		toReturn = strlen(toSearch) - (curCount - 1);
 	else
 		toReturn = next - toSearch - (curCount - 1);
@@ -81,7 +81,7 @@ faim_export int aimutil_itemcnt(char *toSearch, char dl)
 	return curCount;
 }
 
-faim_export char *aimutil_itemindex(char *toSearch, int index, char dl)
+faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl)
 {
 	int curCount;
 	char *next;
@@ -93,19 +93,19 @@ faim_export char *aimutil_itemindex(char *toSearch, int index, char dl)
 	last = toSearch;
 	next = strchr(toSearch, dl);
 
-	while (curCount < index && next != NULL) {
+	while (curCount < theindex && next != NULL) {
 		curCount++;
 		last = next + 1;
 		next = strchr(last, dl);
 	}
 
-	if (curCount < index) {
+	if (curCount < theindex) {
 		toReturn = malloc(sizeof(char));
 		*toReturn = '\0';
 	}
 	next = strchr(last, dl);
 
-	if (curCount < index) {
+	if (curCount < theindex) {
 		toReturn = malloc(sizeof(char));
 		*toReturn = '\0';
 	} else {
