@@ -38,6 +38,43 @@
 	0.74. Also, a lot of other bug fixes happened that escape my notice
 	right now.
 
+	Ethan: I just want to say that now logging really doesn't eat
+	memory 'till the cows come home.  We don't think.
+
+	I would like to thank each and every one of these people, and
+	I think you should, too:
+
+	Paul A, Daniel Atallah, Patrick Aussems, Brian Bernas,
+	Jonas Birmé, Ethan Blanton (hi Mom), Joshua Blanton, Herman
+	Bloggs, Jason Boerner, Graham Booker, Craig Boston, Chris
+	Boyle, Jeremy Brooks, Sean Burke, Cerulean Studios LLC,
+	Ka-Hing Cheung, Arturo Cisneros Jr., Vincas Ciziunas, Joe
+	Clarke, Todd Cohen, Felipe Contreras, Jeramey Crawford, Mark
+	Doliner, Nuno Donato, Jim Duchek, Tom Dyas, Andrew Echols,
+	Sean Egan, Brian Enigma, Stefan Esser, Larry Ewing, Jesse
+	Farmer, Gavan Fantom, Rob Flynn, Nathan Fredrickson, Free
+	Software Foundation, Decklin Foster, Adam Fritzler, Michael
+	Golden, Ryan C. Gordon, Christian Hammond, Andy Harrison, G.
+	Sumner Hayes, Mike Heffner, Iain Holmes, Karsten Huneycutt,
+	Akuke Kok, Tero Kuusela, Dennis Lambe Jr., Ho-seok Lee, Moses
+	Lei, Ambrose C. Li, Nicolas Lichtmaier, Artem Litvinovich, Syd
+	Logan, Matthew Luckie, Brian Macke, Paolo Maggi, Willian T.
+	Mahan, John Matthews, Ryan McCabe, Robert McQueen, Robert
+	Mibus, Benjamin Miller, Kevin Miller, Paul Miller, Arkadiusz
+	Miskiewicz, Andrew Molloy, Matt Pandina, Ricardo Fernandez
+	Pascual, Havoc Pennington, Ari Pollak, Robey Pointer, Nathan
+	Poznick, Brent Priddy, Federicco Mena Quintero, David Raeman,
+	Etan Reisner, Kristian Rietveld, Tim Ringenbach, Andrew
+	Rodland, Neil Sanchala, Carsten Schaar, Luke Schierer, Torrey
+	Searle, Jim Seymour, John Silvestri, David Smock, Mark
+	Spencer, Lex Spoon, Kevin Stange, David Stoddard, Stu
+	Tomlinson, Brian Tarricone, Peter Teichman, Arun A. Tharuvai,
+	Philip Tellis, Bill Tompkins, Tom Tromey, Junichi Uekawa,
+	Bjoern Voigt, Nathan Walp, Eric Warmenhoven, Jason Willis,
+	Matt Wilson, Ximian, Jaroen Zwartepoorte.
+
+	Thanks, all.
+
 0.74 (11/25/2003):
 	Sean: Christian and Nathan were wrong.
 
