@@ -438,8 +438,17 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 	gboolean in_tag = FALSE;
 	gboolean in_attr = FALSE;
 	const char *in_quotes = NULL;
-	size_t needlelen = strlen(needle);
+	size_t needlelen;
 
+	g_return_val_if_fail(    needle != NULL, FALSE);
+	g_return_val_if_fail(   *needle != '\0', FALSE);
+	g_return_val_if_fail(  haystack != NULL, FALSE);
+	g_return_val_if_fail( *haystack != '\0', FALSE);
+	g_return_val_if_fail(     start != NULL, FALSE);
+	g_return_val_if_fail(       end != NULL, FALSE);
+	g_return_val_if_fail(attributes != NULL, FALSE);
+
+	needlelen = strlen(needle);
 	g_datalist_init(&attribs);
 
 	while (*cur && !found) {
@@ -537,10 +546,14 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 				if (*cur == ' ' || *cur == '>') {
 					in_tag = TRUE;
 				} else {
-					while (*cur && *cur != '"' && *cur != '>') {
+					while (*cur && *cur != '"' && *cur != '\'' && *cur != '>') {
 						if (*cur == '"') {
 							cur++;
 							while (*cur && *cur != '"')
+								cur++;
+						} else if (*cur == '\'') {
+							cur++;
+							while (*cur && *cur != '\'')
 								cur++;
 						} else {
 							cur++;

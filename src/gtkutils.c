@@ -1043,6 +1043,9 @@ gaim_gtk_find_images(const char *message, GSList **list)
 	GData *attribs;
 	const char *tmp, *start, *end;
 
+	g_return_if_fail(message != NULL);
+	g_return_if_fail(   list != NULL);
+
 	tmp = message;
 	while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
 		GaimStoredImage *image = NULL;
