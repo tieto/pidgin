@@ -1587,6 +1587,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 	int place = 0;
 	char buf[2048];
 
+
 	optmenu = gtk_option_menu_new();
 
 	menu = gtk_menu_new();
@@ -1629,6 +1630,8 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	GtkWidget *frame;
 	GtkWidget *table;
 	GtkWidget *optmenu;
+	GtkWidget *sep;
+	GtkSizeGroup *sg;
 
 	struct addbp *b = g_new0(struct addbp, 1);
 	
@@ -1842,17 +1845,28 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_box_pack_start(GTK_BOX(vbox), b->save, FALSE, FALSE, 0);
 	gtk_widget_show(b->save);
 
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+	
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
 
-	button = picture_button(b->window, _("Cancel"), cancel_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	button = picture_button(b->window, _("OK"), ok_xpm);
+	button = gaim_pixbuf_button_from_stock(_("_Create"), "gtk-execute", GAIM_BUTTON_HORIZONTAL);
+	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_new_bp), b);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	button = gaim_pixbuf_button_from_stock(_("C_ancel"), "gtk-cancel", GAIM_BUTTON_HORIZONTAL);
+	gtk_size_group_add_widget(sg, button);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
 
 	gtk_widget_show(b->window);
 }
