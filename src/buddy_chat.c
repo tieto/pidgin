@@ -686,6 +686,18 @@ void show_new_buddy_chat(struct conversation *b)
 
 	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback),b);
 
+	b->font_dialog = NULL;
+	b->color_dialog = NULL;	
+	b->smiley_dialog = NULL;
+	b->link_dialog = NULL;
+	b->log_dialog = NULL;
+	sprintf(b->fontface, "%s", fontface);
+	b->hasfont = 0;
+	b->bgcol = bgcolor;
+	b->hasbg = 0;
+	b->fgcol = fgcolor;
+	b->hasfg = 0;
+	
 	gtk_widget_realize(win);
 	aol_icon(win->window);
 
