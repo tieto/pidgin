@@ -347,6 +347,8 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 		if(cnode->parent->child == cnode)
 			cnode->parent->child = cnode->next;
 
+		((struct group *)((GaimBlistNode *)chat)->parent)->online--;
+
 		ops->remove(gaimbuddylist, cnode);
 
 		save = TRUE;
@@ -370,6 +372,8 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 		if (chat->account->gc)
 			g->currentsize++;
 	}
+
+	((struct group *)((GaimBlistNode *)chat)->parent)->online++;
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)cnode);
