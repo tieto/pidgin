@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Error of Ruto
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -75,7 +75,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 	if (strlen(search_term) == 0) {/* reset the tree */
 		populate_log_tree(lv);
 		lv->search = NULL;
-		gtk_imhtml_search_clear(lv->imhtml);
+		gtk_imhtml_search_clear(GTK_IMHTML(lv->imhtml));
 		return;
 	}
 	
@@ -160,7 +160,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
 
 	if (viewer->search)
-		gtk_imhtml_search_find(viewer->imhtml, viewer->search);
+		gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
 	
 	g_free(read);
 	g_free(title);
