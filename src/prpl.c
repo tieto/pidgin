@@ -25,6 +25,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/tb_forward.xpm"
@@ -158,7 +162,7 @@ static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
 			break;
 		}
 	g_free(doask);
-	gtk_widget_destroy(d);
+	gtk_widget_destroy(GTK_WIDGET(d));
 }
 
 
