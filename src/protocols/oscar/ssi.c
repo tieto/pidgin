@@ -154,7 +154,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 			*list = new;
 		} else {
 			struct aim_ssi_item *prev;
-			for ((prev=*list, cur=(*list)->next); (cur && (new->gid > cur->gid || ((new->gid == cur->gid) && (new->bid > cur->bid)))); prev=cur, cur=cur->next);
+			for ((prev=*list, cur=(*list)->next); (cur && ((new->gid > cur->gid) || ((new->gid == cur->gid) && (new->bid > cur->bid)))); prev=cur, cur=cur->next);
 			new->next = prev->next;
 			prev->next = new;
 		}
@@ -180,7 +180,7 @@ static int aim_ssi_itemlist_del(struct aim_ssi_item **list, struct aim_ssi_item 
 
 	/* Remove the item from the list */
 	if (*list == del) {
-		*list = del->next;
+		*list = (*list)->next;
 	} else {
 		struct aim_ssi_item *cur;
 		for (cur=*list; (cur->next && (cur->next!=del)); cur=cur->next);

@@ -2242,7 +2242,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x0e: { /* Someone has emailed you at your_uin@pager.icq.com */
 			if (i >= 6) {
-				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\n1=%s\n2=%s\n3=%s\n4=%s\n5=%s\n6=%s\n"), msg2[0], msg2[1], msg2[2], msg2[3], msg2[4], msg2[5]);
+				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ email from %s [%s]\n\nMessage is:\n%s"), msg2[0], msg2[3], msg2[5]);
 				do_error_dialog("ICQ Email", dialog_msg, GAIM_INFO);
 				g_free(dialog_msg);
 			}

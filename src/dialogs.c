@@ -1394,7 +1394,7 @@ static void pref_deny_rem(GtkWidget *button, gboolean permit)
 
 		if (name) {
 			current_deny_gc->permit = g_slist_remove(current_deny_gc->permit, name);
-			serv_rem_deny(current_deny_gc, who);
+			serv_rem_permit(current_deny_gc, who);
 			build_allow_list();
 		}
 	} else {
