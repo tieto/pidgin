@@ -789,9 +789,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	} else if (!strcasecmp(c, "RVOUS_PROPOSE")) {
 		char *user, *uuid, *cookie;
 		int seq;
-		char *rip, *pip, *vip;
+		char *rip, *pip, *vip, *trillian;
 		int port;
-
+		
 		user = strtok(NULL, ":");
 		uuid = strtok(NULL, ":");
 		cookie = strtok(NULL, ":");
@@ -809,11 +809,16 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			struct ft_request *ft;
 
 			for (i = 0; i < 4; i++) {
-				sscanf(strtok(NULL, ":"), "%d", &unk[i]);
+				trillian = strtok(NULL, ":");
+				sscanf(trillian, "%d", &unk[i]);
 				if (unk[i] == 10001)
 					break;
-				frombase64(strtok(NULL, ":"), &messages[i], NULL);
+				/* Trillian likes to send an empty token as a message, rather than
+				   no message at all. */
+				if (*(trillian + strlen(trillian) +1) != ':')
+					frombase64(strtok(NULL, ":"), &messages[i], NULL);
 			}
+			   
 			frombase64(strtok(NULL, ":"), &tmp, NULL);
 
 			subtype = tmp[1];
@@ -866,7 +871,10 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				sscanf(strtok(NULL, ":"), "%d", unk + i);
 				if (unk[i] == 10001)
 					break;
-				frombase64(strtok(NULL, ":"), &messages[i], NULL);
+				/* Trillian likes to send an empty token as a message, rather than
+				   no message at all. */
+				if (*(trillian + strlen(trillian) +1) != ':')
+					frombase64(strtok(NULL, ":"), &messages[i], NULL);
 			}
 			frombase64(strtok(NULL, ":"), &tmp, NULL);
 
