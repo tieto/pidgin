@@ -66,7 +66,6 @@ static GtkTreeStore *prefstree;
 
 
 static GtkWidget *sounddialog = NULL;
-static GtkWidget *browser_entry = NULL;
 static GtkWidget *sound_entry = NULL;
 static GtkWidget *away_text = NULL;
 static GtkListStore *smiley_theme_store = NULL;
@@ -321,7 +320,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs = NULL;
 	tree_v = NULL;
 	sound_entry = NULL;
-	browser_entry = NULL;
 	debugbutton = NULL;
 	prefs_away_menu = NULL;
 	notebook_page = 0;
@@ -1268,6 +1266,7 @@ GtkWidget *browser_page() {
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
+	GtkWidget *entry;
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
 
@@ -1279,7 +1278,7 @@ GtkWidget *browser_page() {
 
 	browsers = get_available_browsers();
 	if (browsers != NULL) {
-		label = prefs_dropdown_from_list(vbox,_("_Browser"), GAIM_PREF_STRING,
+		label = prefs_dropdown_from_list(vbox,_("_Browser:"), GAIM_PREF_STRING,
 										 "/gaim/gtk/browsers/browser",
 										 browsers);
 
@@ -1294,19 +1293,19 @@ GtkWidget *browser_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	browser_entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), browser_entry);
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 
 	if (strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
 		gtk_widget_set_sensitive(hbox, FALSE);
 	browser_pref_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
 												  browser_changed_cb, hbox);
 
-	gtk_box_pack_start (GTK_BOX (hbox), browser_entry, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
 
-	gtk_entry_set_text(GTK_ENTRY(browser_entry),
+	gtk_entry_set_text(GTK_ENTRY(entry),
 					   gaim_prefs_get_string("/gaim/gtk/browsers/command"));
-	g_signal_connect(G_OBJECT(browser_entry), "focus-out-event",
+	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
 
 	if (browsers != NULL) {
@@ -1350,13 +1349,11 @@ GtkWidget *logging_page() {
 	return ret;
 }
 
-static GtkWidget *sndcmd = NULL;
-
 #ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
 	gaim_prefs_set_string("/gaim/gtk/sound/command",
-			gtk_entry_get_text(GTK_ENTRY(sndcmd)));
+			gtk_entry_get_text(GTK_ENTRY(entry)));
 	return TRUE;
 }
 
@@ -1379,6 +1376,7 @@ GtkWidget *sound_page() {
 	GtkWidget *dd;
 	GtkWidget *hbox;
 	GtkWidget *label;
+	GtkWidget *entry;
 	const char *cmd;
 #endif
 
@@ -1421,17 +1419,17 @@ GtkWidget *sound_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-	sndcmd = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), sndcmd);
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 
-	gtk_editable_set_editable(GTK_EDITABLE(sndcmd), TRUE);
+	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
 	cmd = gaim_prefs_get_string("/gaim/gtk/sound/command");
 	if(cmd)
-		gtk_entry_set_text(GTK_ENTRY(sndcmd), cmd);
-	gtk_widget_set_size_request(sndcmd, 75, -1);
+		gtk_entry_set_text(GTK_ENTRY(entry), cmd);
+	gtk_widget_set_size_request(entry, 75, -1);
 
-	gtk_box_pack_start(GTK_BOX(hbox), sndcmd, TRUE, TRUE, 5);
-	g_signal_connect(G_OBJECT(sndcmd), "changed",
+	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 5);
+	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(sound_cmd_yeah), NULL);
 
 	gtk_widget_set_sensitive(hbox,
