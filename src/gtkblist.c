@@ -574,6 +574,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 	GaimLogType type;
 	GaimAccount *account;
 	char *name = NULL;
+
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *b = (GaimBuddy*) node;
 		type = GAIM_LOG_IM;
@@ -588,6 +589,9 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 		if (prpl_info && prpl_info->get_chat_name) {
 			name = prpl_info->get_chat_name(c->components);
 		}
+	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		gaim_gtk_log_show_contact((GaimContact *)node);
+		return;
 	} else
 		return;
 
@@ -1156,11 +1160,18 @@ gaim_gtk_append_blist_node_extended_menu (GtkWidget *menu, GaimBlistNode *node)
 void
 gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	GaimPluginProtocolInfo *prpl_info;
+	GaimContact *contact;
+	gboolean contact_expanded = FALSE;
 
 	g_return_if_fail(menu);
 	g_return_if_fail(buddy);
 
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(buddy->account->gc->prpl);
+
+	contact = gaim_buddy_get_contact(buddy);
+	if (contact) {
+		contact_expanded = ((struct _gaim_gtk_blist_node *)(((GaimBlistNode*)contact)->ui_data))->contact_expanded;
+	}
 
 	if (prpl_info && prpl_info->get_info) {
 		gaim_new_item_from_stock(menu, _("Get _Info"), GAIM_STOCK_INFO,
@@ -1180,8 +1191,15 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) 
 	}
 	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("View _Log"), NULL,
-			G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
+
+	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
+		gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+				G_CALLBACK(gtk_blist_menu_showlog_cb),
+				contact, 0, 0, NULL);
+	} else if (!sub) {
+		gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
+	}
 
 	gaim_gtk_append_blist_node_proto_menu(menu, buddy->account->gc,
 										  (GaimBlistNode *)buddy);
@@ -1189,17 +1207,17 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) 
 
 	gaim_separator(menu);
 
-	if(((GaimBlistNode*)buddy)->parent->child->next && !sub) {
+	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
 		gaim_new_item_from_stock(menu, _("_Alias Buddy..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Remove Buddy"), GTK_STOCK_REMOVE,
 				G_CALLBACK(gaim_gtk_blist_remove_cb), buddy, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("Alias Contact..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb),
-				gaim_buddy_get_contact(buddy), 0, 0, NULL);
+				contact, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("Remove Contact"), GTK_STOCK_REMOVE,
 				G_CALLBACK(gaim_gtk_blist_remove_cb),
-				gaim_buddy_get_contact(buddy), 0, 0, NULL);
+				contact, 0, 0, NULL);
 	} else {
 		gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
@@ -1299,13 +1317,23 @@ create_contact_menu (GaimBlistNode *node)
 	GtkWidget *menu;
 
 	menu = gtk_menu_new();
+
+	gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+				 G_CALLBACK(gtk_blist_menu_showlog_cb),
+				 node, 0, 0, NULL);
+
+	gaim_separator(menu);
+
 	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
+				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
+
+	gaim_separator(menu);
+
 	gaim_new_item_from_stock(menu, _("_Collapse"), GTK_STOCK_ZOOM_OUT,
 				 G_CALLBACK(gaim_gtk_blist_collapse_contact_cb),
 				 node, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
-				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
 
 	gaim_gtk_append_blist_node_extended_menu(menu, node);
 

@@ -25,6 +25,8 @@ version 2.0.0
 	  (Richard Laager)
 	* Ability to set ICQ "require authorization" and "web aware"
 	  setting (Ettore Simone)
+	* Log viewer aggregates logs from the same "Person," (contact, meta-
+	  contact, whatever) (Richard Laager)
 
 	Bug fixes:
 	* People using input methods can now use Enter again.
