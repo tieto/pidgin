@@ -68,6 +68,8 @@ typedef struct _JabberStream
 	JabberID *user;
 	GaimConnection *gc;
 	GaimSslConnection *gsc;
+
+	gboolean registration;
 } JabberStream;
 
 typedef void (JabberCallback)(JabberStream *js, xmlnode *packet);

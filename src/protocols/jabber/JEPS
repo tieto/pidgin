@@ -20,7 +20,7 @@
 	XHTML-IM
 0073: NEED
 	Basic IM Protocol Suite
-0077: NEED 0.71
+0077: DONE
 	In-Band Registration
 0078: DONE
 	Non-SASL Authentication

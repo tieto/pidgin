@@ -227,6 +227,8 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		jabber_iq_handle_time(js, packet);
 	} else if(!strcmp(xmlns, "jabber:iq:version")) {
 		jabber_iq_handle_version(js, packet);
+	} else if(!strcmp(xmlns, "jabber:iq:register")) {
+		jabber_register_parse(js, packet);
 	} else {
 		gaim_debug(GAIM_DEBUG_WARNING, "jabber", "Unknown query: %s\n", xmlns);
 	}

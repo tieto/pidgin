@@ -37,7 +37,9 @@
 #include "html.h"
 #include "message.h"
 #include "multi.h"
+#include "notify.h"
 #include "prpl.h"
+#include "request.h"
 #include "server.h"
 
 #include "auth.h"
@@ -376,6 +378,270 @@ jabber_login(GaimAccount *account)
 	}
 }
 
+static gboolean
+conn_close_cb(gpointer data)
+{
+	JabberStream *js = data;
+	gaim_connection_destroy(js->gc);
+	return FALSE;
+}
+
+static void
+jabber_connection_schedule_close(JabberStream *js)
+{
+	g_timeout_add(0, conn_close_cb, js);
+}
+
+static void
+jabber_registration_result_cb(JabberStream *js, xmlnode *packet)
+{
+	const char *type = xmlnode_get_attrib(packet, "type");
+	char *buf;
+
+	if(!strcmp(type, "result")) {
+		buf = g_strdup_printf(_("Registration of %s@%s successful"),
+				js->user->node, js->user->domain);
+		gaim_notify_info(NULL, _("Registration Successful"),
+				_("Registration Successful"), buf);
+		g_free(buf);
+	} else {
+		char *error;
+		xmlnode *y;
+
+		if((y = xmlnode_get_child(packet, "error"))) {
+			error = xmlnode_get_data(y);
+		} else {
+			error = g_strdup(_("Unknown Error"));
+		}
+
+		buf = g_strdup_printf(_("Registration of %s@%s failed: %s"),
+				js->user->node, js->user->domain, error);
+		gaim_notify_error(NULL, _("Registration Failed"),
+				_("Registration Failed"), buf);
+		g_free(buf);
+		g_free(error);
+	}
+	jabber_connection_schedule_close(js);
+}
+
+static void
+jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
+{
+	GList *groups, *flds;
+	xmlnode *query, *y;
+	JabberIq *iq;
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
+	query = xmlnode_get_child(iq->node, "query");
+
+	for(groups = gaim_request_fields_get_groups(fields); groups;
+			groups = groups->next) {
+		for(flds = gaim_request_field_group_get_fields(groups->data);
+				flds; flds = flds->next) {
+			GaimRequestField *field = flds->data;
+			const char *id = gaim_request_field_get_id(field);
+			const char *value = gaim_request_field_string_get_value(field);
+
+			if(!strcmp(id, "username")) {
+				y = xmlnode_new_child(query, "username");
+			} else if(!strcmp(id, "password")) {
+				y = xmlnode_new_child(query, "password");
+			} else if(!strcmp(id, "name")) {
+				y = xmlnode_new_child(query, "name");
+			} else if(!strcmp(id, "email")) {
+				y = xmlnode_new_child(query, "email");
+			} else if(!strcmp(id, "nick")) {
+				y = xmlnode_new_child(query, "nick");
+			} else if(!strcmp(id, "first")) {
+				y = xmlnode_new_child(query, "first");
+			} else if(!strcmp(id, "last")) {
+				y = xmlnode_new_child(query, "last");
+			} else if(!strcmp(id, "address")) {
+				y = xmlnode_new_child(query, "address");
+			} else if(!strcmp(id, "city")) {
+				y = xmlnode_new_child(query, "city");
+			} else if(!strcmp(id, "state")) {
+				y = xmlnode_new_child(query, "state");
+			} else if(!strcmp(id, "zip")) {
+				y = xmlnode_new_child(query, "zip");
+			} else if(!strcmp(id, "phone")) {
+				y = xmlnode_new_child(query, "phone");
+			} else if(!strcmp(id, "url")) {
+				y = xmlnode_new_child(query, "url");
+			} else if(!strcmp(id, "date")) {
+				y = xmlnode_new_child(query, "date");
+			} else {
+				continue;
+			}
+			xmlnode_insert_data(y, value, -1);
+		}
+	}
+
+	jabber_iq_set_callback(iq, jabber_registration_result_cb);
+
+	jabber_iq_send(iq);
+
+}
+
+static void
+jabber_register_cancel_cb(JabberStream *js, GaimRequestFields *fields)
+{
+	jabber_connection_schedule_close(js);
+}
+
+void jabber_register_parse(JabberStream *js, xmlnode *packet)
+{
+	if(js->registration) {
+		GaimRequestFields *fields;
+		GaimRequestFieldGroup *group;
+		GaimRequestField *field;
+		xmlnode *query, *y;
+		char *instructions;
+
+		/* get rid of the login thingy */
+		gaim_connection_set_state(js->gc, GAIM_CONNECTED);
+
+		query = xmlnode_get_child(packet, "query");
+
+		if(xmlnode_get_child(query, "registered")) {
+			gaim_notify_error(NULL, _("Already Registered"),
+					_("Already Registered"), NULL);
+			jabber_connection_schedule_close(js);
+			return;
+		}
+
+		fields = gaim_request_fields_new();
+		group = gaim_request_field_group_new(NULL);
+		gaim_request_fields_add_group(fields, group);
+
+		field = gaim_request_field_string_new("username", _("Username"),
+				js->user->node, FALSE);
+		gaim_request_field_group_add_field(group, field);
+
+		field = gaim_request_field_string_new("password", _("Password"),
+				gaim_account_get_password(js->gc->account), FALSE);
+		gaim_request_field_string_set_masked(field, TRUE);
+		gaim_request_field_group_add_field(group, field);
+
+		if(xmlnode_get_child(query, "name")) {
+			field = gaim_request_field_string_new("name", _("Name"),
+					gaim_account_get_alias(js->gc->account), FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "email")) {
+			field = gaim_request_field_string_new("email", _("E-Mail"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "nick")) {
+			field = gaim_request_field_string_new("nick", _("Nickname"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "first")) {
+			field = gaim_request_field_string_new("first", _("First Name"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "last")) {
+			field = gaim_request_field_string_new("last", _("Last Name"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "address")) {
+			field = gaim_request_field_string_new("address", _("Address"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "city")) {
+			field = gaim_request_field_string_new("city", _("City"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "state")) {
+			field = gaim_request_field_string_new("state", _("State"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "zip")) {
+			field = gaim_request_field_string_new("zip", _("Postal Code"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "phone")) {
+			field = gaim_request_field_string_new("phone", _("Phone"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "url")) {
+			field = gaim_request_field_string_new("url", _("URL"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "date")) {
+			field = gaim_request_field_string_new("date", _("Date"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+
+		if((y = xmlnode_get_child(query, "instructions")))
+			instructions = xmlnode_get_data(y);
+		else
+			instructions = g_strdup(_("Please fill out the information below "
+						"to register your new account."));
+
+		gaim_request_fields(js->gc, _("Register New Jabber Account"),
+				_("Register New Jabber Account"), instructions, fields,
+				_("Register"), G_CALLBACK(jabber_register_cb),
+				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb), js);
+	}
+}
+
+static void jabber_register_start(JabberStream *js)
+{
+	JabberIq *iq;
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:register");
+	jabber_iq_send(iq);
+}
+
+static void jabber_register_account(GaimAccount *account)
+{
+	GaimConnection *gc = gaim_account_get_connection(account);
+	JabberStream *js;
+	const char *connect_server = gaim_account_get_string(account,
+			"connect_server", "");
+	const char *server;
+	int rc;
+
+	js = gc->proto_data = g_new0(JabberStream, 1);
+	js->gc = gc;
+	js->registration = TRUE;
+	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, NULL);
+	js->user = jabber_id_new(gaim_account_get_username(account));
+
+	server = connect_server[0] ? connect_server : js->user->domain;
+
+	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
+
+	if(gaim_account_get_bool(account, "old_ssl", FALSE)
+			&& gaim_ssl_is_supported()) {
+		js->gsc = gaim_ssl_connect(account, server,
+				gaim_account_get_int(account, "port", 5222),
+				jabber_login_callback_ssl, gc);
+	}
+
+	if(!js->gsc) {
+		rc = gaim_proxy_connect(account, server,
+				gaim_account_get_int(account, "port", 5222),
+				jabber_login_callback, gc);
+
+		if (rc != 0)
+			gaim_connection_error(gc, _("Unable to create socket"));
+	}
+}
+
 static void jabber_close(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
@@ -385,13 +651,19 @@ static void jabber_close(GaimConnection *gc)
 	if(js->gsc) {
 		gaim_ssl_close(js->gsc);
 	} else {
+		if(js->gc->inpa)
+			gaim_input_remove(js->gc->inpa);
 		close(js->fd);
 	}
 
 	g_markup_parse_context_free(js->context);
 
-	g_hash_table_destroy(js->callbacks);
-	g_hash_table_destroy(js->buddies);
+	if(js->callbacks)
+		g_hash_table_destroy(js->callbacks);
+	if(js->buddies)
+		g_hash_table_destroy(js->buddies);
+	if(js->chats)
+		g_hash_table_destroy(js->chats);
 	if(js->stream_id)
 		g_free(js->stream_id);
 	jabber_id_free(js->user);
@@ -417,7 +689,9 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_AUTHENTICATING:
 			gaim_connection_update_progress(js->gc, _("Authenticating"),
 					js->gsc ? 6 : 3, JABBER_CONNECT_STEPS);
-			if(js->protocol_version == JABBER_PROTO_0_9)
+			if(js->registration)
+				jabber_register_start(js);
+			else if(js->protocol_version == JABBER_PROTO_0_9)
 				jabber_auth_start_old(js);
 			break;
 		case JABBER_STREAM_REINITIALIZING:
@@ -627,7 +901,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_chat_whisper,
 	jabber_message_send_chat,
 	jabber_keepalive,
-	NULL, /* register_user */ /* XXX tell the user success/failure */
+	jabber_register_account,
 	jabber_buddy_get_info_chat,
 	NULL,
 	jabber_roster_alias_change,
@@ -670,6 +944,12 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
+
+	/* Ugly Hack for SSL */
+	GaimPlugin *ssl_plugin;
+	ssl_plugin = gaim_plugins_find_with_id("core-ssl");
+	if (ssl_plugin != NULL && !gaim_plugin_is_loaded(ssl_plugin))
+		gaim_plugin_load(ssl_plugin);
 
 	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);

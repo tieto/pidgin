@@ -80,9 +80,10 @@ jabber_parser_element_end(GMarkupParseContext *context,
 		if(!strcmp(js->current->name, element_name))
 			js->current = js->current->parent;
 	} else {
-		jabber_process_packet(js, js->current);
-		xmlnode_free(js->current);
+		xmlnode *packet = js->current;
 		js->current = NULL;
+		jabber_process_packet(js, packet);
+		xmlnode_free(packet);
 	}
 }
 

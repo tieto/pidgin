@@ -340,6 +340,7 @@ gaim_request_field_string_new(const char *id, const char *text,
 	field->u.string.editable  = TRUE;
 
 	gaim_request_field_string_set_default_value(field, default_value);
+	gaim_request_field_string_set_value(field, default_value);
 
 	return field;
 }
@@ -446,6 +447,7 @@ gaim_request_field_int_new(const char *id, const char *text,
 	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_INTEGER);
 
 	gaim_request_field_int_set_default_value(field, default_value);
+	gaim_request_field_int_set_value(field, default_value);
 
 	return field;
 }
@@ -499,6 +501,7 @@ gaim_request_field_bool_new(const char *id, const char *text,
 	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_BOOLEAN);
 
 	gaim_request_field_bool_set_default_value(field, default_value);
+	gaim_request_field_bool_set_value(field, default_value);
 
 	return field;
 }
@@ -552,6 +555,7 @@ gaim_request_field_choice_new(const char *id, const char *text,
 	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_CHOICE);
 
 	gaim_request_field_choice_set_default_value(field, default_value);
+	gaim_request_field_choice_set_value(field, default_value);
 
 	return field;
 }
