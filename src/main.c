@@ -887,6 +887,8 @@ int main(int argc, char *argv[])
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
 
+	gaim_gtk_conversation_init();
+
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
 	plugin_search_paths[2] = g_strdup_printf("%s/plugins", gaim_user_dir());

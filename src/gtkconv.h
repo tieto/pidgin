@@ -190,6 +190,13 @@ struct gaim_gtk_conversation
 /**************************************************************************
  * @name GTK+ Conversation API
  **************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the GTK+ conversation system.
+ */
+void gaim_gtk_conversation_init(void);
+
 /**
  * Returns the UI operations structure for GTK windows.
  *
@@ -218,11 +225,6 @@ void gaim_gtkconv_toggle_timestamps(void);
  * Toggles spell checking.
  */
 void gaim_gtkconv_toggle_spellchk(void);
-
-/**
- * Toggles the presence of close buttons on tabs
- */
-void gaim_gtkconv_toggle_close_buttons(void);
 
 /**
  * Updates the buddy icon on a conversation.
@@ -326,5 +328,7 @@ int gaim_gtkconv_get_tab_at_xy(struct gaim_window *win, int x, int y);
  * @return The index of the tab at the location.
  */
 int gaim_gtkconv_get_dest_tab_at_xy(struct gaim_window *win, int x, int y);
+
+/*@}*/
 
 #endif /* _GAIM_GTK_CONVERSATION_H_ */

@@ -4599,27 +4599,6 @@ gaim_gtkconv_toggle_spellchk(void)
 #endif
 }
 
-void
-gaim_gtkconv_toggle_close_buttons(void)
-{
-	GList *cl;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-	
-	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
-		conv = (struct gaim_conversation *)cl->data;
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		if (!gaim_prefs_get_bool("/gaim/gtk/conversations/close_on_tabs"))
-			gtk_widget_hide(gtkconv->close);
-		else
-			gtk_widget_show_all(gtkconv->close);
-	}
-}
-
 static void
 remove_icon(struct gaim_gtk_conversation *gtkconv)
 {
@@ -5349,5 +5328,93 @@ gaim_gtkconv_get_dest_tab_at_xy(struct gaim_window *win, int x, int y)
 		return -1;
 
 	return page_num;
+}
+
+static void
+close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
+					  gpointer data)
+{
+	GList *l;
+	struct gaim_conversation *conv;
+	struct gaim_gtk_conversation *gtkconv;
+
+	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
+		conv = (struct gaim_conversation *)l->data;
+
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv= GAIM_GTK_CONVERSATION(conv);
+
+		if (value)
+			gtk_widget_show(gtkconv->close);
+		else
+			gtk_widget_hide(gtkconv->close);
+	}
+}
+
+void
+gaim_gtk_conversation_init(void)
+{
+	/* Conversations */
+	gaim_prefs_add_none("/gaim/gtk/conversations");
+	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_enter_sends", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/enter_sends", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/escape_closes", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_w_closes", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/f2_toggles_timestamps", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/send_strikethrough", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_smileys", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_colors", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_fonts", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_font_sizes", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_bgcolor", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_fgcolor", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_font", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_size", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
+	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "#FFFFFF");
+	gaim_prefs_add_string("/gaim/gtk/conversations/fgcolor", "#000000");
+	gaim_prefs_add_string("/gaim/gtk/conversations/font_face", "");
+	gaim_prefs_add_int("/gaim/gtk/conversations/font_size", 3);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);
+	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
+	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "");
+
+	/* Conversations -> Chat */
+	gaim_prefs_add_none("/gaim/gtk/conversations/chat");
+	gaim_prefs_add_int("/gaim/gtk/conversations/chat/button_type",
+					   GAIM_BUTTON_TEXT_IMAGE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/color_nicks", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/old_tab_complete", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/raise_on_events", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/tab_completion", TRUE);
+	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_width", 410);
+	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_height", 160);
+	gaim_prefs_add_int("/gaim/gtk/conversations/chat/entry_height", 50);
+
+	/* Conversations -> IM */
+	gaim_prefs_add_none("/gaim/gtk/conversations/im");
+	gaim_prefs_add_int("/gaim/gtk/conversations/im/button_type",
+					   GAIM_BUTTON_TEXT_IMAGE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/im/animate_buddy_icons", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/im/hide_on_send", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/im/raise_on_events", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
+	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_width", 410);
+	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_height", 160);
+	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
+
+	/* Connect callbacks. */
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/close_on_tabs",
+								close_on_tabs_pref_cb, NULL);
 }
 
