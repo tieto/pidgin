@@ -281,7 +281,8 @@ change_password_cb(GaimAccount *account, GaimRequestFields *fields)
 		return;
 	}
 
-	if (*orig_pass == '\0' || *new_pass_1 == '\0' || *new_pass_2 == '\0')
+	if (orig_pass == NULL || new_pass_1 == NULL || new_pass_2 == NULL ||
+		*orig_pass == '\0' || *new_pass_1 == '\0' || *new_pass_2 == '\0')
 	{
 		gaim_notify_error(NULL, NULL,
 						  _("Fill out all fields completely."), NULL);
@@ -312,18 +313,21 @@ gaim_account_request_change_password(GaimAccount *account)
 	field = gaim_request_field_string_new("password", _("Original password"),
 										  NULL, FALSE);
 	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_string_new("new_password_1",
 										  _("New password"),
 										  NULL, FALSE);
 	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_string_new("new_password_2",
 										  _("New password (again)"),
 										  NULL, FALSE);
 	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
 
 	g_snprintf(primary, sizeof(primary), _("Change password for %s"),
