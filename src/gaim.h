@@ -414,7 +414,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 945 $"
+#define REVISION "gaim:$Revision: 950 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -458,8 +458,8 @@ extern GList *permit;  /* The list of people permitted */
 extern GList *deny;    /* The list of people denied */
 extern GList *log_conversations;
 extern GList *buddy_pounces;
-extern GList *away_messages;
-extern GList *groups;
+extern GSList *away_messages;
+extern GSList *groups;
 extern GList *buddy_chats;
 extern GList *conversations;
 extern GList *chat_rooms;

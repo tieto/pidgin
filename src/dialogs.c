@@ -927,7 +927,7 @@ static GList *groups_tree()
 	GList *tmp=NULL;
         char *tmp2;
 	struct group *g;
-        GList *grp = groups;
+        GSList *grp = groups;
         
 	if (!grp) {
                 tmp2 = g_strdup(_("Buddies"));
@@ -937,7 +937,7 @@ static GList *groups_tree()
 			g = (struct group *)grp->data;
                         tmp2 = g->name;
                         tmp=g_list_append(tmp, tmp2);
-			grp = grp->next;
+			grp = g_slist_next(grp);
 		}
 	}
 	return tmp;
@@ -3016,7 +3016,7 @@ void save_away_mess(GtkWidget *widget, struct create_away *ca)
 	g_free(away_message);
 
 	if (!ca->mess) {
-		away_messages = g_list_append(away_messages, am);
+		away_messages = g_slist_append(away_messages, am);
 		if (GTK_TOGGLE_BUTTON(ca->checkbx)->active)
 			do_away_message(NULL, am);
 	}
@@ -3024,7 +3024,7 @@ void save_away_mess(GtkWidget *widget, struct create_away *ca)
 	save_prefs();
 	do_away_menu();	
 	if (prefs_away_list != NULL)
-		gtk_list_select_item(GTK_LIST(prefs_away_list), g_list_index(away_messages, am));
+		gtk_list_select_item(GTK_LIST(prefs_away_list), g_slist_index(away_messages, am));
 	
 	destroy_dialog(NULL, ca->window);
 	

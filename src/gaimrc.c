@@ -207,14 +207,14 @@ static void gaimrc_read_away(FILE *f)
 			g_snprintf(a->name, sizeof(a->name),  "%s", p->value[0]);
 			g_snprintf(a->message, sizeof(a->message), "%s", p->value[1]);
 			filter_break(a->message);
-			away_messages = g_list_append(away_messages, a);
+			away_messages = g_slist_append(away_messages, a);
 		}
 	}
 }
 
 static void gaimrc_write_away(FILE *f)
 {
-	GList *awy = away_messages;
+	GSList *awy = away_messages;
 	struct away_message *a;
 
 	fprintf(f, "away {\n");
@@ -235,7 +235,7 @@ static void gaimrc_write_away(FILE *f)
 			free(str1);
 			free(str2);
 	
-			awy = awy->next;
+			awy = g_slist_next(awy);
 		}
 	}
 	else
@@ -670,7 +670,7 @@ void set_defaults(int saveinfo)
        	 	}
        	 	if (away_messages)
        	 	{
-       	 		g_list_free(away_messages);
+       	 		g_slist_free(away_messages);
         		away_messages = NULL;
         	}
 	}

@@ -1499,7 +1499,7 @@ static void away_page()
 	GtkWidget *label;
 	GtkWidget *list_item;
 	GtkWidget *sep;
-	GList *awy = away_messages;
+	GSList *awy = away_messages;
 	struct away_message *a;
 	char buffer[BUF_LONG];
 

@@ -186,7 +186,7 @@ void applet_do_signon(AppletWidget *widget, gpointer data) {
 }
 
 void insert_applet_away() {
-	GList *awy = away_messages;
+	GSList *awy = away_messages;
 	struct away_message *a;
 	char  *awayname;
 
@@ -212,13 +212,13 @@ void insert_applet_away() {
 			(AppletCallbackFunc)do_away_message,
 			a);
 
-		awy = awy->next;
+		awy = g_slist_next(awy);
 		free(awayname);
 	}
 }
 
 void remove_applet_away() {
-	GList *awy = away_messages;
+	GSList *awy = away_messages;
 	struct away_message *a;
 	char  *awayname;
 
@@ -233,7 +233,7 @@ void remove_applet_away() {
 		strcat(awayname, a->name);
 		applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
 
-		awy = awy->next;
+		awy = g_slist_next(awy);
 		free(awayname);
 	}
 	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away/");

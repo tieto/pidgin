@@ -66,8 +66,8 @@ GList *permit = NULL;
 GList *deny = NULL;
 GList *log_conversations = NULL;
 GList *buddy_pounces = NULL;
-GList *away_messages = NULL;
-GList *groups = NULL;
+GSList *away_messages = NULL;
+GSList *groups = NULL;
 GList *buddy_chats = NULL;
 GList *conversations = NULL;
 GList *chat_rooms = NULL;
@@ -131,12 +131,6 @@ void set_login_progress(int howfar, char *whattosay)
 
         while (gtk_events_pending())
                gtk_main_iteration();
-
-	/* Why do I need these? */
-	usleep(10);
-	while (gtk_events_pending())
-               gtk_main_iteration();
-	       
 }
 
 void hide_login_progress(char *why)
@@ -147,11 +141,6 @@ void hide_login_progress(char *why)
 	gtk_statusbar_push(GTK_STATUSBAR(notice), 1, why);	
 
         while (gtk_events_pending())
-               gtk_main_iteration();
-
-	/* Why do I need these? */
-	usleep(10);
-	while (gtk_events_pending())
                gtk_main_iteration();
 }
 

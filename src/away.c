@@ -176,7 +176,7 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 	strcat(awayname, a->name);
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
 #endif
-        away_messages = g_list_remove(away_messages, a);
+        away_messages = g_slist_remove(away_messages, a);
         g_free(a);
         do_away_menu();
         save_prefs();
@@ -192,7 +192,7 @@ void do_away_menu()
 	GtkWidget *sep;
 	GList *l;
 	GtkWidget *list_item;
-        GList *awy = away_messages;
+        GSList *awy = away_messages;
         struct away_message *a;
 
 #ifdef USE_APPLET
@@ -222,7 +222,7 @@ void do_away_menu()
 			gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
 			gtk_widget_show(list_item);
 
-			awy = awy->next;
+			awy = g_slist_next(awy);
 		}
 		if (away_messages != NULL)
                         gtk_list_select_item(GTK_LIST(prefs_away_list), 0);
@@ -238,14 +238,11 @@ void do_away_menu()
 
 
 	remmenu = gtk_menu_new();
-	
-	
 
 	menuitem = gtk_menu_item_new_with_label(_("New Away Message"));
 	gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 	gtk_widget_show(menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(create_away_mess), NULL);
-
 
 	awy = away_messages;
         while(awy) {
@@ -256,7 +253,7 @@ void do_away_menu()
 		gtk_widget_show(remitem);
 		gtk_signal_connect(GTK_OBJECT(remitem), "activate", GTK_SIGNAL_FUNC(rem_away_mess), a);
 
-		awy = awy->next;
+		awy = g_slist_next(awy);
 
 	}
 	
@@ -266,7 +263,6 @@ void do_away_menu()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), remmenu);
 	gtk_widget_show(remmenu);
 	
-
 	sep = gtk_hseparator_new();
 	menuitem = gtk_menu_item_new();
 	gtk_menu_append(GTK_MENU(awaymenu), menuitem);
@@ -285,7 +281,7 @@ void do_away_menu()
 		gtk_widget_show(menuitem);
 		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(do_away_message), a);
 
-		awy = awy->next;
+		awy = g_slist_next(awy);
 
 	}
 

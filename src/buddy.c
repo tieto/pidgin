@@ -117,7 +117,7 @@ void destroy_buddy()
 
 void update_num_groups()
 {
-	GList *grp = groups;
+	GSList *grp = groups;
 	GList *mem;
         struct buddy *b;
 	struct group *g;
@@ -155,7 +155,7 @@ void update_num_groups()
 		if (display_options & OPT_DISP_SHOW_GRPNUM)
 #endif
                 gtk_label_set(GTK_LABEL(g->label), buf);
-                grp = grp->next;
+                grp = g_slist_next(grp);
         }
 #ifdef USE_APPLET
 	g_snprintf(buf, sizeof(buf), _("%d/%d Buddies Online"), onl, all);
@@ -165,7 +165,7 @@ void update_num_groups()
 
 void update_show_idlepix()
 {
-	GList *grp = groups;
+	GSList *grp = groups;
 	GList *mem;
 	struct group *g;
         struct buddy *b;
@@ -188,13 +188,13 @@ void update_show_idlepix()
                                 gtk_widget_hide(b->pix);
                         mem = mem->next;
                 }
-                grp = grp->next;
+                grp = g_slist_next(grp);
         }
 }
 
 void update_all_buddies()
 {
-	GList *grp = groups;
+	GSList *grp = groups;
 	GList *mem;
         struct buddy *b;
 	struct group *g;
@@ -219,7 +219,7 @@ void update_all_buddies()
 			gtk_widget_hide(g->item);
 		else gtk_widget_show(g->item);
 
-                grp = grp->next;
+                grp = g_slist_next(grp);
         }
 
 
@@ -298,7 +298,7 @@ void signoff()
                         mem = g_list_remove(mem, mem->data);
 		}
 		g_free(groups->data);
-                groups = g_list_remove(groups, groups->data);
+                groups = g_slist_remove(groups, groups->data);
 	}
 
 	sprintf(debug_buff, "date: %s\n", full_date());
@@ -478,7 +478,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 
 void remove_buddy(struct group *rem_g, struct buddy *rem_b)
 {
-	GList *grp;
+	GSList *grp;
 	GList *mem;
 	struct buddy *b;
 	int count = 0;
@@ -486,7 +486,7 @@ void remove_buddy(struct group *rem_g, struct buddy *rem_b)
 	struct group *delg;
 	struct buddy *delb;
 
-	grp = g_list_find(groups, rem_g);
+	grp = g_slist_find(groups, rem_g);
         delg = (struct group *)grp->data;
         mem = delg->members;
 	
@@ -514,19 +514,17 @@ void remove_buddy(struct group *rem_g, struct buddy *rem_b)
 	do_export( (GtkWidget *) NULL, 0 );
         
 	update_num_groups();
-
-
 }
 
 void remove_group(struct group *rem_g)
 {
-	GList *grp;
+	GSList *grp;
 	GList *mem;
 	
 	struct group *delg;
 	struct buddy *delb;
 
-	grp = g_list_find(groups, rem_g);
+	grp = g_slist_find(groups, rem_g);
         delg = (struct group *)grp->data;
         mem = delg->members;
 
@@ -540,7 +538,7 @@ void remove_group(struct group *rem_g)
 
 
 	gtk_tree_remove_items(GTK_TREE(buddies), g_list_append(NULL, delg->item));
-	groups = g_list_remove(groups, delg);
+	groups = g_slist_remove(groups, delg);
 	g_free(delg);
 
         serv_save_config();
@@ -596,7 +594,8 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 
 	
 	if (!parent) {
-		GList *grps, *buds;
+		GSList *grps;
+		GList *buds;
 		struct group *g, *g2;
 		GList *tmp, *mem;
 		int pos, count;
@@ -626,7 +625,7 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 		gtk_tree_remove_items(GTK_TREE(buddies), tmp);
 		g_list_free(tmp);
 
-                groups = g_list_remove(groups, g);
+                groups = g_slist_remove(groups, g);
 
                 g->item = gtk_tree_item_new_with_label(g->name);
 		mem = g->members; count = 0;
@@ -639,17 +638,17 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 
 		if (sibling) {
 			g2 = find_group(target2);
-                        pos = g_list_index(groups, g2);
+                        pos = g_slist_index(groups, g2);
                         if (pos == 0) {
-				groups = g_list_prepend(groups, g);
+				groups = g_slist_prepend(groups, g);
 				gtk_tree_prepend(GTK_TREE(buddies), g->item);
 			} else {
-				groups = g_list_insert(groups, g, pos);
+				groups = g_slist_insert(groups, g, pos);
 				gtk_tree_insert(GTK_TREE(buddies), g->item, pos);
 			}
          
 		} else {
-			groups = g_list_append(groups, g);
+			groups = g_slist_append(groups, g);
 			gtk_tree_append(GTK_TREE(buddies), g->item);
 
 		}
@@ -665,7 +664,6 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 
                 update_num_groups();
 
-
 		buds = g->members;
 
 		while(buds) {
@@ -677,7 +675,7 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 		grps = groups;
 		while(grps) {
 			g = (struct group *)grps->data;
-			grps = grps->next;
+			grps = g_slist_next(grps);
 		}
 
         } else {
@@ -774,7 +772,7 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 void build_edit_tree()
 {
         GtkCTreeNode *p = NULL, *n;
-	GList *grp = groups;
+	GSList *grp = groups;
 	GList *mem;
 	struct group *g;
 	struct buddy *b;
@@ -810,7 +808,7 @@ void build_edit_tree()
 			mem = mem->next;
                         
  		}
-		grp = grp->next;
+		grp = g_slist_next(grp);
 	}
 
 	gtk_clist_thaw(GTK_CLIST(edittree));
@@ -897,7 +895,7 @@ struct group *add_group(char *group)
 		return NULL;
 
 	strncpy(g->name, group, sizeof(g->name));
-        groups = g_list_append(groups, g);
+        groups = g_slist_append(groups, g);
 
         if (blist == NULL)
                 return g;
@@ -1094,7 +1092,7 @@ void chat_callback(GtkWidget *widget, GtkTree *tree)
 struct group *find_group(char *group)
 {
 	struct group *g;
-        GList *grp = groups;
+        GSList *grp = groups;
 	char *grpname = g_malloc(strlen(group) + 1);
 
 	strcpy(grpname, normalize(group));
@@ -1104,7 +1102,7 @@ struct group *find_group(char *group)
 				g_free(grpname);
 				return g;
 		}
-		grp = grp->next;
+		grp = g_slist_next(grp);
 	}
 
 	g_free(grpname);
@@ -1117,7 +1115,7 @@ struct group *find_group_by_buddy(char *who)
 {
 	struct group *g;
 	struct buddy *b;
-	GList *grp = groups;
+	GSList *grp = groups;
 	GList *mem;
         char *whoname = g_malloc(strlen(who) + 1);
 
@@ -1135,7 +1133,7 @@ struct group *find_group_by_buddy(char *who)
 			}
 			mem = mem->next;
 		}
-		grp = grp->next;
+		grp = g_slist_next(grp);
 	}
 	g_free(whoname);
 	return NULL;
@@ -1146,7 +1144,7 @@ struct buddy *find_buddy(char *who)
 {
 	struct group *g;
 	struct buddy *b;
-	GList *grp = groups;
+	GSList *grp = groups;
 	GList *mem;
         char *whoname = g_malloc(strlen(who) + 1);
 
@@ -1164,7 +1162,7 @@ struct buddy *find_buddy(char *who)
 			}
 			mem = mem->next;
 		}
-		grp = grp->next;
+		grp = g_slist_next(grp);
 	}
 	g_free(whoname);
 	return NULL;

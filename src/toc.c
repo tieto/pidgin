@@ -822,7 +822,7 @@ char *toc_wait_config()
 
 void toc_build_config(char *s, int len, gboolean show)
 {
-	GList *grp = groups;
+	GSList *grp = groups;
 	GList *mem;
 	struct group *g;
 	struct buddy *b;
@@ -845,7 +845,7 @@ void toc_build_config(char *s, int len, gboolean show)
 					show ? ":" : "", show ? b->show : "");
 			mem = mem->next;
 		}
-		grp = grp ->next;
+		grp = g_slist_next(grp);
 	}
 
 	while(plist) {

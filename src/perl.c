@@ -330,7 +330,7 @@ XS (XS_AIM_buddy_list)
 {
 	struct buddy *buddy;
 	struct group *g;
-	GList *list = groups;
+	GSList *list = groups;
 	GList *mem;
 	int i = 0;
 	dXSARGS;
@@ -344,7 +344,7 @@ XS (XS_AIM_buddy_list)
 			XST_mPV(i++, buddy->name);
 			mem = mem->next;
 		}
-		list = list->next;
+		list = g_slist_next(list);
 	}
 	XSRETURN(i);
 }
@@ -353,7 +353,7 @@ XS (XS_AIM_online_list)
 {
 	struct buddy *b;
 	struct group *g;
-	GList *list = groups;
+	GSList *list = groups;
 	GList *mem;
 	int i = 0;
 	dXSARGS;
@@ -367,7 +367,7 @@ XS (XS_AIM_online_list)
 			if (b->present) XST_mPV(i++, b->name);
 			mem = mem->next;
 		}
-		list = list->next;
+		list = g_slist_next(list);
 	}
 	XSRETURN(i);
 }
