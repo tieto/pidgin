@@ -2755,7 +2755,5 @@ gaim_conversations_init(void)
 void
 gaim_conversations_uninit(void)
 {
-	/* close the conversations, which will also finalize the logs for us */
-	gaim_conversation_foreach(gaim_conversation_destroy);
 	gaim_signals_unregister_by_instance(gaim_conversations_get_handle());
 }
