@@ -196,11 +196,9 @@ void doenter(GtkWidget *widget, GtkWidget *w)
 	if (widget == name) {
 		gtk_entry_set_text(GTK_ENTRY(pass),"");
 		gtk_entry_select_region(GTK_ENTRY(GTK_COMBO(name)->entry), 0, 0);
-		gtk_window_set_focus(GTK_WINDOW(mainwindow), pass);
+		gtk_widget_grab_focus(pass);
 	} else if (widget == pass) {
-		gtk_window_set_focus(GTK_WINDOW(mainwindow), signon);
-	} else {
-		g_print("what did you press enter on?\n");
+		gtk_widget_grab_focus(signon);
 	}
 
 }
@@ -208,11 +206,10 @@ void doenter(GtkWidget *widget, GtkWidget *w)
 
 static void combo_changed(GtkWidget *w, GtkWidget *combo)
 {
-        char *txt = gtk_editable_get_chars(GTK_EDITABLE(GTK_COMBO(combo)->entry), 0, -1);
+        char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
         struct aim_user *u;
         
         if (!(general_options & OPT_GEN_REMEMBER_PASS)) {
-		g_free(txt);
                 return;
         }
 
@@ -224,7 +221,6 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
                 gtk_entry_set_text(GTK_ENTRY(pass), "");
         }
        
-	g_free(txt); 
         return;
 }
 
@@ -409,13 +405,15 @@ void show_login()
 		int length = g_list_length(all) - g_list_length(srch);
 		
 		gtk_combo_set_value_in_list(GTK_COMBO(name), length, 0);
-                if ((general_options & OPT_GEN_REMEMBER_PASS)) {
-                        combo_changed(NULL, name);
+		if ((general_options & OPT_GEN_REMEMBER_PASS)) {
+			combo_changed(NULL, name);
 			gtk_widget_grab_focus(signon);
-                } else
+		} else {
 			gtk_widget_grab_focus(pass);
-	} else
+		}
+	} else {
 		gtk_widget_grab_focus(name);
+	}
 
 
 	gtk_signal_connect(GTK_OBJECT(remember), "clicked", GTK_SIGNAL_FUNC(set_general_option), (int *)OPT_GEN_REMEMBER_PASS);

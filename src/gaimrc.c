@@ -378,8 +378,9 @@ static void gaimrc_read_users(FILE *f)
                 p = parse_line(buf);
 
                 if (!strcmp(p->option, "current_user")) {
-                        cur = 1;;
+                        cur = 1;
                 } else if (strcmp(p->option, "user")) {
+			cur = 0;
                         continue;
                 }
 
