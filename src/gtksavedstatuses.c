@@ -343,7 +343,7 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   STATUS_WINDOW_COLUMN_MESSAGE);
 #if GTK_CHECK_VERSION(2,6,0)
-	g_object_set(renderer, "ellipsize", PANGO_ELLIPSIZE_END);
+	g_object_set(renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
 
 	/* Enable CTRL+F searching */
