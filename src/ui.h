@@ -244,6 +244,7 @@ struct mod_user {
 	GtkWidget *rempass;
 	GtkWidget *user_frame;
 	GtkWidget *proto_frame;
+	GtkSizeGroup *sg;
 	GList *opt_entries;
 
 	/* stuff for icon selection */

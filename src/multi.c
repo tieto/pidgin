@@ -43,9 +43,25 @@ GSList *connections;
 int connecting_count = 0;
 
 static GtkWidget *acctedit = NULL;
-static GtkWidget *list = NULL;	/* the clist of names in the accteditor */
+static GtkWidget *treeview = NULL; /* the treeview of names in the accteditor */
+static GtkListStore *model = NULL;
 
 static GSList *mod_users = NULL;
+
+enum
+{
+	COLUMN_SCREENNAME,
+	COLUMN_ONLINE,
+	COLUMN_AUTOLOGIN,
+	COLUMN_PROTOCOL,
+	COLUMN_DATA,
+	NUM_COLUMNS
+};
+
+static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
+						gpointer d);
+static void acct_autologin(GtkCellRendererToggle *cell, gchar *path_str,
+						   gpointer d);
 
 static struct mod_user *find_mod_user(struct aim_user *a)
 {
@@ -138,7 +154,7 @@ static void delete_acctedit(GtkWidget *w, gpointer d)
 		gtk_widget_destroy(acctedit);
 	}
 	acctedit = NULL;
-	list = NULL;
+	treeview = NULL;
 	if (!d && !blist && !mainwindow && !connections)
 		gtk_main_quit();
 }
@@ -160,64 +176,130 @@ static char *proto_name(int proto)
 		return "Unknown";
 }
 
-
-static void reorder_list(GtkCList *cl, int from, int to, void *p)
-{
-	struct aim_user *au;
-	if (from == to)
-		return; /* This shouldn't happen, but just in case */
-	au = (struct aim_user*)g_slist_nth_data(aim_users, from);
-	aim_users = g_slist_remove (aim_users, au);
-	aim_users = g_slist_insert(aim_users, au, to);
-	save_prefs();
-}
-
 void regenerate_user_list()
 {
-	char *titles[4];
 	GSList *u = aim_users;
 	struct aim_user *a;
-	int i;
+	GtkTreeIter iter;
 
 	if (!acctedit)
 		return;
 
-	gtk_clist_clear(GTK_CLIST(list));
+	gtk_list_store_clear(model);
 
 	while (u) {
 		a = (struct aim_user *)u->data;
-		titles[0] = a->username;
-		titles[1] = a->gc ? "Yes" : "No";
-		titles[2] = (a->options & OPT_USR_AUTO) ? "True" : "False";
-		titles[3] = proto_name(a->protocol);
-		i = gtk_clist_append(GTK_CLIST(list), titles);
-		gtk_clist_set_row_data(GTK_CLIST(list), i, a);
+
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter,
+						   COLUMN_SCREENNAME, a->username,
+						   COLUMN_ONLINE, (a->gc ? TRUE : FALSE),
+						   COLUMN_AUTOLOGIN, (a->options & OPT_USR_AUTO),
+						   COLUMN_PROTOCOL, proto_name(a->protocol),
+						   COLUMN_DATA, a,
+						   -1);
 		u = u->next;
 	}
+}
+
+static gboolean get_iter_from_data(GtkTreeView *treeview,
+								   struct aim_user *a, GtkTreeIter *iter)
+{
+	return gtk_tree_model_iter_nth_child(gtk_tree_view_get_model(treeview),
+										 iter, NULL,
+										 g_slist_index(aim_users, a));
+#if 0
+	GtkListModel *model = gtk_tree_view_get_model(treeview);
+	struct aim_user *user;
+	int i;
+
+	rows = gtk_tree_model_iter_n_children(model, NULL);
+
+	for (i = 0; i < rows; i++)
+	{
+		gtk_tree_model_get(model, iter, COLUMN_DATA, &user, -1);
+
+		if (user == a)
+			return TRUE;
+	}
+
+	return FALSE;
+#endif
+}
+
+static void add_columns(GtkWidget *treeview)
+{
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	/* Screennames */
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+												-1, _("Screenname"),
+												renderer,
+												"text", COLUMN_SCREENNAME,
+												NULL);
+
+	/* Online? */
+	renderer = gtk_cell_renderer_toggle_new();
+	g_signal_connect(G_OBJECT(renderer), "toggled",
+					 G_CALLBACK(acct_signin), model);
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+												-1, _("Online"),
+												renderer,
+												"active", COLUMN_ONLINE,
+												NULL);
+
+	/* Auto-login? */
+	renderer = gtk_cell_renderer_toggle_new();
+	g_signal_connect(G_OBJECT(renderer), "toggled",
+					 G_CALLBACK(acct_autologin), model);
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+												-1, _("Auto-login"),
+												renderer,
+												"active", COLUMN_AUTOLOGIN,
+												NULL);
+
+	/* Protocol */
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+												-1, _("Protocol"),
+												renderer,
+												"text", COLUMN_PROTOCOL,
+												NULL);
+
+	/* Data */
+	column = gtk_tree_view_column_new();
+//	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+	gtk_tree_view_column_set_visible(column, FALSE);
 }
 
 static GtkWidget *generate_list()
 {
 	GtkWidget *win;
-	char *titles[4] = { "Screenname", "Currently Online", "Auto-login", "Protocol" };
 
 	win = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(win), GTK_POLICY_AUTOMATIC,
-				       GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(win),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_ALWAYS);
 
-	list = gtk_clist_new_with_titles(4, titles);
-	gtk_clist_set_column_width(GTK_CLIST(list), 0, 90);
-	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_EXTENDED);
-	gtk_clist_column_titles_passive(GTK_CLIST(list));
-	
-	gtk_container_add(GTK_CONTAINER(win), list);
-	gtk_widget_show(list);
+	/* Create the list model. */
+	model = gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN,
+							   G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+
+	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
+	gtk_tree_selection_set_mode(
+		gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
+		GTK_SELECTION_MULTIPLE);
+
+	add_columns(treeview);
+
+	gtk_container_add(GTK_CONTAINER(win), treeview);
+	gtk_widget_show(treeview);
 
 	regenerate_user_list();
-	gtk_clist_set_reorderable (GTK_CLIST(list), TRUE);
-	gtk_clist_set_use_drag_icons (GTK_CLIST(list), TRUE);
-	gtk_signal_connect(GTK_OBJECT(list), "row-move", GTK_SIGNAL_FUNC(reorder_list), NULL);
-		
+	gtk_tree_view_set_reorderable (GTK_TREE_VIEW(treeview), TRUE);
 	gtk_widget_show(win);
 	return win;
 }
@@ -257,9 +339,9 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 {
 	GList *tmp;
 	const char *txt;
-	int i;
 	struct aim_user *a;
 	struct prpl *p;
+	GtkTreeIter iter;
 
 	if (!u->user) {
 		txt = gtk_entry_get_text(GTK_ENTRY(u->name));
@@ -279,11 +361,21 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 	else
 		a->password[0] = '\0';
 
+	if (get_iter_from_data(GTK_TREE_VIEW(treeview), a, &iter)) {
+		gtk_list_store_set(model, &iter,
+						   COLUMN_SCREENNAME, a->username,
+						   COLUMN_AUTOLOGIN, (a->options & OPT_USR_AUTO),
+						   COLUMN_PROTOCOL, proto_name(a->protocol),
+						   -1);
+	}
+
+#if 0
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), a);
 	gtk_clist_set_text(GTK_CLIST(list), i, 0, a->username);
 	gtk_clist_set_text(GTK_CLIST(list), i, 2,
 			   (a->options & OPT_USR_AUTO) ? "True" : "False");
 	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(a->protocol));
+#endif
 
 	tmp = u->opt_entries;
 	while (tmp) {
@@ -491,6 +583,8 @@ static GtkWidget *build_icon_selection(struct mod_user *u, GtkWidget *box)
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new(_("Buddy Icon File:"));
+	gtk_size_group_add_widget(u->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -523,8 +617,7 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 
 	struct prpl *p;
 
-	frame = gtk_frame_new("Login Options");
-	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
+	frame = make_frame(box, _("Login Options"));
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -534,6 +627,8 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Screenname:"));
+	gtk_size_group_add_widget(u->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	u->name = gtk_entry_new();
@@ -543,6 +638,8 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	gtk_box_pack_start(GTK_BOX(vbox), u->pwdbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Password:"));
+	gtk_size_group_add_widget(u->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(u->pwdbox), label, FALSE, FALSE, 0);
 
 	u->pass = gtk_entry_new();
@@ -553,6 +650,8 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Alias:"));
+	gtk_size_group_add_widget(u->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	u->alias = gtk_entry_new();
@@ -563,6 +662,8 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new(_("Protocol:"));
+	gtk_size_group_add_widget(u->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	make_protocol_menu(hbox, u);
@@ -600,8 +701,7 @@ static void generate_user_options(struct mod_user *u, GtkWidget *box)
 
 	struct prpl *p = find_prpl(u->protocol);
 
-	u->user_frame = gtk_frame_new("User Options");
-	gtk_box_pack_start(GTK_BOX(box), u->user_frame, FALSE, FALSE, 0);
+	u->user_frame = make_frame(box, _("User Options"));
 	gtk_widget_show(u->user_frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -637,6 +737,7 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *entry;
+	GtkWidget *frame;
 
 	char buf[256];
 
@@ -661,13 +762,15 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 		return;
 
 	g_snprintf(buf, sizeof(buf), "%s Options", p->name);
-	u->proto_frame = gtk_frame_new(buf);
-	gtk_box_pack_start(GTK_BOX(box), u->proto_frame, FALSE, FALSE, 0);
-	gtk_widget_show(u->proto_frame);
+	frame = make_frame(box, buf);
+
+	/* BLEH */
+	u->proto_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_widget_show_all(u->proto_frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_container_add(GTK_CONTAINER(u->proto_frame), vbox);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
 	while (op) {
@@ -678,6 +781,8 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 		gtk_widget_show(hbox);
 
 		label = gtk_label_new(puo->label);
+		gtk_size_group_add_widget(u->sg, label);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
 
@@ -714,8 +819,11 @@ static void show_acct_mod(struct aim_user *a)
 	 * Protcol Options frame. This fucking removes the two fucking tabs, which were
 	 * quite fucking uneccessary. Fuck. */
 				/* -- SeanEgan */
-	GtkWidget *hbox;
+				/* YEAH!! -- ChipX86 */
+	GtkWidget *hbox, *vbox;
 	GtkWidget *button;
+	GtkWidget *sep;
+	GtkSizeGroup *button_sg;
 
 	struct mod_user *u = find_mod_user(a);
 
@@ -758,30 +866,40 @@ static void show_acct_mod(struct aim_user *a)
 	gtk_window_set_policy(GTK_WINDOW(u->mod), FALSE, TRUE, TRUE);	/* nothing odd here :) */
 	gtk_signal_connect(GTK_OBJECT(u->mod), "destroy", GTK_SIGNAL_FUNC(delmod), u);
 
-	u->main = gtk_vbox_new(FALSE, 5);
-	gtk_container_border_width(GTK_CONTAINER(u->main), 5);
-	gtk_container_add(GTK_CONTAINER(u->mod), u->main);
-	gtk_widget_show(u->main);
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_container_border_width(GTK_CONTAINER(vbox), 6);
+	gtk_container_add(GTK_CONTAINER(u->mod), vbox);
+
+	u->main = gtk_vbox_new(FALSE, 12);
+	gtk_container_border_width(GTK_CONTAINER(u->main), 6);
+	gtk_box_pack_start(GTK_BOX(vbox), u->main, FALSE, FALSE, 0);
+
+	u->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	generate_login_options(u, u->main);
 	generate_user_options(u, u->main);
 	generate_protocol_options(u, u->main);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(u->main), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
 
-	button = picture_button(u->mod, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_mod), u);
-	gtk_widget_show(button);
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
+	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	button = picture_button(u->mod, _("OK"), ok_xpm);
+	button_sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_OK);
+	gtk_size_group_add_widget(button_sg, button);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_mod), u);
-	gtk_widget_show(button);
 
-	gtk_widget_show(u->mod);
+	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	gtk_size_group_add_widget(button_sg, button);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_mod), u);
+
+	gtk_widget_show_all(u->mod);
 }
 
 static void add_acct(GtkWidget *w, gpointer d)
@@ -789,11 +907,28 @@ static void add_acct(GtkWidget *w, gpointer d)
 	show_acct_mod(NULL);
 }
 
+static void mod_acct_func(GtkTreeModel *model, GtkTreePath *path,
+						  GtkTreeIter *iter, gpointer data)
+{
+	struct aim_user *u;
+
+	gtk_tree_model_get(model, iter, COLUMN_DATA, &u, -1);
+
+	if (u != NULL)
+		show_acct_mod(u);
+}
+
 static void mod_acct(GtkWidget *w, gpointer d)
 {
-	GList *l = GTK_CLIST(list)->selection;
-	int row = -1;
-	struct aim_user *u;
+	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+
+	gtk_tree_selection_selected_foreach(selection, mod_acct_func, NULL);
+
+#if 0
 	while (l) {
 		row = (int)l->data;
 		if (row != -1) {
@@ -803,6 +938,7 @@ static void mod_acct(GtkWidget *w, gpointer d)
 		}
 		l = l->next;
 	}
+#endif
 }
 
 struct pass_prompt {
@@ -869,8 +1005,7 @@ static void do_pass_dlg(struct aim_user *u)
 	gtk_signal_connect(GTK_OBJECT(p->win), "destroy", GTK_SIGNAL_FUNC(pass_des), p);
 	gtk_widget_realize(p->win);
 
-	frame = gtk_frame_new(_("Enter Password"));
-	gtk_container_add(GTK_CONTAINER(p->win), frame);
+	frame = make_frame(p->win, _("Enter Password"));
 	gtk_widget_show(frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -908,74 +1043,112 @@ static void do_pass_dlg(struct aim_user *u)
 	gtk_widget_show(p->win);
 }
 
-static void acct_signin(GtkWidget *w, gpointer d)
+static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
+						gpointer d)
 {
-	GList *l = GTK_CLIST(list)->selection;
-	int row = -1;
+	GtkTreeModel *model = (GtkTreeModel *)d;
+	GtkTreeIter iter;
+	GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
+
 	struct aim_user *u = NULL;
 	struct prpl *p = NULL;
-	while (l) {
-		row = (int)l->data;
-		u = g_slist_nth_data(aim_users, row);
-		p = find_prpl(u->protocol);
-		if (!u->gc && p && p->login) {
-			struct prpl *p = find_prpl(u->protocol);
-			if (p && !(p->options & OPT_PROTO_NO_PASSWORD) && !u->password[0]) {
-				do_pass_dlg(u);
-			} else {
-				serv_login(u);
-				gtk_clist_set_text(GTK_CLIST(list), row, 1, "Attempting");
-			}
-		} else if (u->gc) {
-			u->gc->wants_to_die = TRUE;
-			signoff(u->gc);
+
+	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
+	gtk_tree_model_get(model, &iter, COLUMN_DATA, &u, -1);
+
+	p = find_prpl(u->protocol);
+	if (!u->gc && p && p->login) {
+		struct prpl *p = find_prpl(u->protocol);
+		if (p && !(p->options & OPT_PROTO_NO_PASSWORD) && !u->password[0]) {
+			do_pass_dlg(u);
 		} else {
-			if (u->protocol == PROTO_TOC)
-				do_error_dialog(_("TOC not found."), 
-						_("You have attempted to login an IM account using the "
-						 "TOC protocol.  Because this protocol is inferior to "
-						 "OSCAR, it is now compiled as a plugin by default.  "
-						 "To login, edit this account to use OSCAR or load the "
-						  "TOC plugin."), GAIM_ERROR);
-			else
-				do_error_dialog(_("Protocol not found."), 
-						_("You cannot log this account in; you do not have "
-						  "the protocol it uses loaded, or the protocol does "
-						  "not have a login function."), GAIM_ERROR);
+			serv_login(u);
 		}
-		l = l->next;
+	} else if (u->gc) {
+		u->gc->wants_to_die = TRUE;
+		signoff(u->gc);
+	} else {
+		if (u->protocol == PROTO_TOC)
+			do_error_dialog(_("TOC not found."), 
+					_("You have attempted to login an IM account using the "
+					 "TOC protocol.  Because this protocol is inferior to "
+					 "OSCAR, it is now compiled as a plugin by default.  "
+					 "To login, edit this account to use OSCAR or load the "
+					  "TOC plugin."), GAIM_ERROR);
+		else
+			do_error_dialog(_("Protocol not found."), 
+					_("You cannot log this account in; you do not have "
+					  "the protocol it uses loaded, or the protocol does "
+					  "not have a login function."), GAIM_ERROR);
 	}
 }
-	
-static void do_del_acct(gpointer w, struct aim_user *u)
+
+static void acct_autologin(GtkCellRendererToggle *cell, gchar *path_str,
+						   gpointer d)
 {
+ 	GtkTreeModel *model = (GtkTreeModel *)d;
+ 	GtkTreeIter iter;
+ 	GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
+
+	struct aim_user *u = NULL;
+	struct prpl *p = NULL;
+
+	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
+	gtk_tree_model_get(model, &iter, COLUMN_DATA, &u, -1);
+
+	u->options ^= OPT_USR_AUTO;
+
+	gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+					   COLUMN_AUTOLOGIN, (u->options & OPT_USR_AUTO), -1);
+
+	save_prefs();
+}
+
+static void do_del_acct(struct aim_user *u)
+{
+	GtkTreeIter iter;
+
 	if (u->gc) {
 		u->gc->wants_to_die = TRUE;
 		signoff(u->gc);
 	}
-	gtk_clist_remove(GTK_CLIST(list), g_slist_index(aim_users, u));
+
+	if (get_iter_from_data(GTK_TREE_VIEW(treeview), u, &iter)) {
+		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+	}
+
 	aim_users = g_slist_remove(aim_users, u);
 	save_prefs();
 }
 
-static void del_acct(GtkWidget *w, gpointer d)
+static void del_acct_func(GtkTreeModel *model, GtkTreePath *path,
+						  GtkTreeIter *iter, gpointer data)
 {
-	GList *l = GTK_CLIST(list)->selection;
-	char buf[8192];
-	int row = -1;
 	struct aim_user *u;
-	while (l) {
-		row = (int)l->data;
-		u = g_slist_nth_data(aim_users, row);
-		if (!u)
-			return;
 
-		g_snprintf(buf, sizeof(buf), _("Are you sure you want to delete %s?"), u->username);
+	gtk_tree_model_get(model, iter, COLUMN_DATA, &u, -1);
+
+	if (u != NULL) {
+		char buf[8192];
+
+		g_snprintf(buf, sizeof(buf),
+				   _("Are you sure you want to delete %s?"), u->username);
 		do_ask_dialog(buf, NULL, u, _("Delete"), do_del_acct, _("Cancel"), NULL);
-		l = l->next;
 	}
 }
 
+static void del_acct(GtkWidget *w, gpointer d)
+{
+	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+
+	gtk_tree_selection_selected_foreach(selection, del_acct_func, NULL);
+}
+
+#if 0
 static void sel_auto(gpointer w, gpointer d)
 {
 	GSList *l = aim_users;
@@ -991,6 +1164,7 @@ static void sel_auto(gpointer w, gpointer d)
 		i++;
 	}
 }
+#endif
 
 void account_editor(GtkWidget *w, GtkWidget *W)
 {
@@ -1000,6 +1174,8 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	GtkWidget *vbox2;
 	GtkWidget *sw;
 	GtkWidget *button;	/* used for many things */
+	GtkWidget *sep;
+	GtkSizeGroup *sg;
 
 	if (acctedit) {
 		gtk_window_present(GTK_WINDOW(acctedit));
@@ -1010,59 +1186,79 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_window_set_title(GTK_WINDOW(acctedit), _("Gaim - Account Editor"));
 	gtk_window_set_wmclass(GTK_WINDOW(acctedit), "accounteditor", "Gaim");
 	gtk_widget_realize(acctedit);
-	gtk_widget_set_usize(acctedit, -1, 200);
+	gtk_widget_set_usize(acctedit, -1, 250);
+	gtk_window_set_default_size(GTK_WINDOW(acctedit), 450, 250);
 	gtk_signal_connect(GTK_OBJECT(acctedit), "destroy", GTK_SIGNAL_FUNC(delete_acctedit), W);
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
 	gtk_container_add(GTK_CONTAINER(acctedit), vbox);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 	sw = generate_list();
 
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 6);
+
+	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 6);
+
+#if 0
 	vbox2 = gtk_vbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
 
-	button = picture_button2(acctedit, _("Select All"), tb_refresh_xpm, 2);
+	button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
+	gtk_button_set_use_stock(GTK_BUTTON(button), FALSE);
+	gtk_button_set_label(GTK_BUTTON(button), "Select All");
+//	button = picture_button2(acctedit, _("Select All"), tb_refresh_xpm, 2);
 	gtk_box_pack_start(GTK_BOX(vbox2), button, TRUE, TRUE, 0);
 	gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
 				  GTK_SIGNAL_FUNC(gtk_clist_select_all), GTK_OBJECT(list));
 
-	button = picture_button2(acctedit, _("Select Autos"), tb_redo_xpm, 2);
+	button = gtk_button_new_from_stock(GTK_STOCK_REDO);
+	gtk_button_set_use_stock(GTK_BUTTON(button), FALSE);
+//	gtk_button_set_label(button, "Select Autos");
+//	button = picture_button2(acctedit, _("Select Autos"), tb_redo_xpm, 2);
 	gtk_box_pack_start(GTK_BOX(vbox2), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(sel_auto), NULL);
 
-	button = picture_button2(acctedit, _("Select None"), tb_undo_xpm, 2);
+	button = gtk_button_new_from_stock(GTK_STOCK_UNDO);
+	gtk_button_set_use_stock(GTK_BUTTON(button), FALSE);
+	gtk_button_set_label(GTK_BUTTON(button), "Select None");
+//	button = picture_button2(acctedit, _("Select None"), tb_undo_xpm, 2);
 	gtk_box_pack_start(GTK_BOX(vbox2), button, TRUE, TRUE, 0);
 	gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
 				  GTK_SIGNAL_FUNC(gtk_clist_unselect_all), GTK_OBJECT(list));
 
-	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
+#endif
 
-	hbox = gtk_hbox_new(TRUE, 5);
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	button = picture_button(acctedit, _("Add"), gnome_add_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(add_acct), NULL);
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
-	button = picture_button(acctedit, _("Modify"), gnome_preferences_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_acct), NULL);
+	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_size_group_add_widget(sg, button);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), W);
 
-	button = picture_button(acctedit, _("Sign On/Off"), join_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acct_signin), NULL);
-
-	button = picture_button(acctedit, _("Delete"), gnome_remove_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
+	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	gtk_size_group_add_widget(sg, button);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(del_acct), NULL);
 
-	button = picture_button(acctedit, _("Close"), cancel_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), W);
+	button = gaim_pixbuf_button_from_stock("_Modify", GTK_STOCK_PREFERENCES,
+										   GAIM_BUTTON_HORIZONTAL);
+	gtk_size_group_add_widget(sg, button);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_acct), NULL);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_size_group_add_widget(sg, button);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(add_acct), NULL);
 
 	gtk_widget_show_all(acctedit);
 }
@@ -1117,6 +1313,7 @@ void account_online(struct gaim_connection *gc)
 {
 	int i;
 	struct signon_meter *meter = find_signon_meter(gc);
+	GtkTreeIter iter;
 
 	/* first we hide the login progress meter */
 	if (meter) {
@@ -1160,17 +1357,22 @@ void account_online(struct gaim_connection *gc)
 	/* everything for the account editor */
 	if (!acctedit)
 		return;
-	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
-	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
-	gtk_clist_set_text(GTK_CLIST(list), i, 3, gc->prpl->name);
+
+	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->user, &iter)) {
+		gtk_list_store_set(model, &iter,
+						   COLUMN_ONLINE, TRUE,
+						   COLUMN_PROTOCOL, gc->prpl->name,
+						   -1);
+	}
 
 	return;
 }
 
 void account_offline(struct gaim_connection *gc)
 {
-	int i;
 	struct signon_meter *meter = find_signon_meter(gc);
+	GtkTreeIter iter;
+
 	if (meter) {
 		kill_meter(meter);
 		meters = g_slist_remove(meters, meter);
@@ -1179,8 +1381,10 @@ void account_offline(struct gaim_connection *gc)
 	gc->user->gc = NULL;	/* wasn't that awkward? */
 	if (!acctedit)
 		return;
-	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
-	gtk_clist_set_text(GTK_CLIST(list), i, 1, "No");
+
+	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->user, &iter)) {
+		gtk_list_store_set(model, &iter, COLUMN_ONLINE, FALSE, -1);
+	}
 }
 
 void auto_login()
@@ -1462,9 +1666,6 @@ void signoff(struct gaim_connection *gc)
 
 struct aim_user *new_user(const char *name, int proto, int opts)
 {
-	char *titles[4];
-	int i;
-
 	struct aim_user *u = g_new0(struct aim_user, 1);
 	g_snprintf(u->username, sizeof(u->username), "%s", name);
 	g_snprintf(u->user_info, sizeof(u->user_info), "%s", DEFAULT_INFO);
@@ -1472,13 +1673,17 @@ struct aim_user *new_user(const char *name, int proto, int opts)
 	u->options = opts;
 	aim_users = g_slist_append(aim_users, u);
 
-	if (list) {
-		titles[0] = u->username;
-		titles[1] = u->gc ? "Yes" : "No";
-		titles[2] = (u->options & OPT_USR_AUTO) ? "True" : "False";
-		titles[3] = proto_name(u->protocol);
-		i = gtk_clist_append(GTK_CLIST(list), titles);
-		gtk_clist_set_row_data(GTK_CLIST(list), i, u);
+	if (treeview) {
+		GtkTreeIter iter;
+
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter,
+						   COLUMN_SCREENNAME, u->username,
+						   COLUMN_ONLINE, (u->gc ? TRUE : FALSE),
+						   COLUMN_AUTOLOGIN, (u->options & OPT_USR_AUTO),
+						   COLUMN_PROTOCOL, proto_name(u->protocol),
+						   COLUMN_DATA, u,
+						   -1);
 	}
 
 	return u;
