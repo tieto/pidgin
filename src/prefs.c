@@ -59,6 +59,7 @@ static gint handle_delete(GtkWidget *, GdkEvent *, void *);
 static void delete_prefs(GtkWidget *, void *);
 void set_default_away(GtkWidget *, gpointer);
 
+static GtkWidget *sounddialog = NULL;
 static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
 GtkWidget *prefs_away_list = NULL;
@@ -900,8 +901,71 @@ static void sound_page()
 
 static GtkWidget *sndent[NUM_SOUNDS];
 
+void close_sounddialog(GtkWidget *w, GtkWidget *w2) 
+{
+
+	GtkWidget *dest;
+	
+	if (!GTK_IS_WIDGET(w2))
+		dest = w;
+	else
+		dest = w2;
+
+	sounddialog = NULL;
+
+	gtk_widget_destroy(dest);
+}
+
+void do_select_sound(GtkWidget *w, int snd) {
+	
+	char *file;
+	
+	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
+
+	/* If they type in a directory, change there */
+	if (file_is_dir(file, sounddialog))
+		return;
+
+	/* Let's just be safe */
+	if (sound_file[snd])
+		free(sound_file[snd]);
+
+	/* Set it -- and forget it */
+	sound_file[snd] = g_strdup(file);
+
+	save_prefs();
+	
+	/* Close the window! It's getting cold in here! */
+	close_sounddialog(NULL, sounddialog);
+}
+
 static void sel_sound(GtkWidget *button, int snd) {
-	do_error_dialog("This isn't implemented yet! Ain't that a pisser? That's what you get for using CVS, I guess. So you have two options now: 1. Implement it yourself (this message should be pretty damn easy to find in the code), or 2. Hand-edit ~/.gaimrc. I suggest 2.", "Implement me!");
+	
+	char *buf = g_malloc(BUF_LEN);
+	
+	if (!sounddialog)
+	{
+		sounddialog = gtk_file_selection_new(_("Gaim - Sound Configuration"));
+
+		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
+
+		g_snprintf(buf, BUF_LEN -1, "%s/", getenv("HOME"));
+
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
+
+		gtk_signal_connect(GTK_OBJECT(sounddialog), "destroy", 
+				GTK_SIGNAL_FUNC(close_sounddialog), sounddialog);
+
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
+				"clicked", GTK_SIGNAL_FUNC(do_select_sound), (int *)snd);
+
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
+				"clicked", GTK_SIGNAL_FUNC(close_sounddialog), sounddialog);
+	}
+
+	g_free(buf);
+	gtk_widget_show(sounddialog);
+	gdk_window_raise(sounddialog->window);
 }
 
 static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
