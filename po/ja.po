@@ -1410,7 +1410,7 @@ msgid "There is no Buddy List stored on server. Sorry!"
 msgstr "サーバ上に格納された仲間リストはありません。残念です!"
 
 #: src/protocols/gg/gg.c:768
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "サーバから仲間リストを取得できませんでした"
 
 #: src/protocols/gg/gg.c:815
@@ -1427,7 +1427,7 @@ msgid "Couldn't transfer Buddy List to server"
 msgstr "仲間リストのサーバへの転送ができません"
 
 #: src/protocols/gg/gg.c:827
-msgid "Buddy List sucessfully deleted from server"
+msgid "Buddy List successfully deleted from server"
 msgstr "サーバから仲間リストを削除しました"
 
 #: src/protocols/gg/gg.c:833
@@ -1476,15 +1476,15 @@ msgid "Directory Search"
 msgstr "ディレクトリ検索"
 
 #: src/protocols/gg/gg.c:1162 src/protocols/gg/gg.c:1179
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "サーバから仲間リストのインポート"
 
 #: src/protocols/gg/gg.c:1164 src/protocols/gg/gg.c:1180
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "サーバへ仲間リストをエクスポート"
 
 #: src/protocols/gg/gg.c:1166 src/protocols/gg/gg.c:1181
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "サーバから仲間リストを削除"
 
 #: src/sound.c:63
@@ -2547,7 +2547,7 @@ msgstr "匿名の警告はそれほど荒くありません"
 
 #: src/dialogs.c:469
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "仲間リストから'%s'を削除\n"
 
 #: src/dialogs.c:494
@@ -2563,7 +2563,7 @@ msgstr "仲間を削除"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr "仲間リストから'%s'を削除することについて続けますか?"
 
 #: src/dialogs.c:687

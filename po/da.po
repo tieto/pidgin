@@ -281,7 +281,7 @@ msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "Der er ingen venne-liste gemt på serveren."
 
 #: src/protocols/gg/gg.c:767
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "Kunne ikke importere venne-liste fra server"
 
 #: src/protocols/gg/gg.c:814
@@ -296,7 +296,7 @@ msgstr "Kunne ikke overføre venne-liste til server"
 
 #: src/protocols/gg/gg.c:825
 #, fuzzy
-msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "Venne-liste på server slettet"
 
 #: src/protocols/gg/gg.c:830
@@ -354,7 +354,7 @@ msgstr "Kunne ikke oprette direkte forbindelse"
 #: src/protocols/gg/gg.c:1109
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please tryagain later."
+"the directory server.  Please try again later."
 msgstr ""
 
 #: src/protocols/gg/gg.c:1141
@@ -383,15 +383,15 @@ msgid "Change Password"
 msgstr "Skift adgangskode"
 
 #: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "Importér venne-liste fra server"
 
 #: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "Eksportér venne-liste til server"
 
 #: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "Slet venne-liste på server"
 
 #: src/protocols/gg/gg.c:1204
@@ -401,7 +401,7 @@ msgstr "Kunne ikke læse filen %s."
 
 #: src/protocols/gg/gg.c:1205
 msgid ""
-"Gaim was unable to access this users profile due to an error connecting to "
+"Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -498,7 +498,7 @@ msgstr "Kan ikke læse fra netværket"
 
 #: src/protocols/jabber/jabber.c:957
 msgid ""
-"The new password you entered is the same as your current passord.  Your "
+"The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
 
@@ -2386,7 +2386,7 @@ msgstr "Anonyme advarsler er mindre grove."
 
 #: src/dialogs.c:471
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "Sletter %s fra venne-liste.\n"
 
 #: src/dialogs.c:496
@@ -2402,7 +2402,7 @@ msgstr "Slet ven"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 "Du er ved at slette %s fra din\n"
 "venneliste. Vil du fortsætte?"

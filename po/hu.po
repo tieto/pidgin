@@ -276,7 +276,7 @@ msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "Nincs tárolva partner lista a kiszolgálón. Sajnálom!"
 
 #: src/protocols/gg/gg.c:767
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "Nem tudom a partner listát importálni a kiszolgálóról"
 
 #: src/protocols/gg/gg.c:814
@@ -291,7 +291,7 @@ msgstr "Nem sikerül a partner lista továbbítása a kiszolgálóra"
 
 #: src/protocols/gg/gg.c:825
 #, fuzzy
-msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "Partner lista sikeresen törölve a kiszolgálóról"
 
 #: src/protocols/gg/gg.c:830
@@ -313,7 +313,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:953
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating to "
+"Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 
@@ -349,7 +349,7 @@ msgstr "Nem sikerült megnyitni a közvetlen IM-et"
 #: src/protocols/gg/gg.c:1109
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please tryagain later."
+"the directory server.  Please try again later."
 msgstr ""
 
 #: src/protocols/gg/gg.c:1141
@@ -378,15 +378,15 @@ msgid "Change Password"
 msgstr "Jelszó megváltoztatása"
 
 #: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "Partner lista importálása a kiszolgálóról"
 
 #: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "Partner lista exportálása a kiszolgálóra"
 
 #: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "Partner lista törlése a kiszolgálóról"
 
 #: src/protocols/gg/gg.c:1204
@@ -396,7 +396,7 @@ msgstr "Nem sikerül olvasni a fájlt %s."
 
 #: src/protocols/gg/gg.c:1205
 msgid ""
-"Gaim was unable to access this users profile due to an error connecting to "
+"Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -494,7 +494,7 @@ msgstr "Foglalatot nem lehet olvasni"
 
 #: src/protocols/jabber/jabber.c:957
 msgid ""
-"The new password you entered is the same as your current passord.  Your "
+"The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
 
@@ -2385,7 +2385,7 @@ msgstr "A névtelen figyelmeztetések nem olyan kellemetlenek."
 
 #: src/dialogs.c:471
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "'%s' elvátolítása a listáról.\n"
 
 #: src/dialogs.c:496
@@ -2401,7 +2401,7 @@ msgstr "Partner törlése"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 "Elkívánod távolítani '%s'-t a partnereid közül.\n"
 "Folytatni akarod?"

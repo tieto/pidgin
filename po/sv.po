@@ -2,7 +2,7 @@
 # Copyright (C) 2001, 2002 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2001.
 #
-# $Id: sv.po 4263 2002-12-10 00:22:48Z lschiere $
+# $Id: sv.po 4269 2002-12-11 02:09:43Z lschiere $
 #
 msgid ""
 msgstr ""
@@ -275,7 +275,7 @@ msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "Det finns ingen kompislista lagrad på servern. Ledsen!"
 
 #: src/protocols/gg/gg.c:767
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "Kunde inte importera kompislista från servern"
 
 #: src/protocols/gg/gg.c:814
@@ -290,7 +290,7 @@ msgstr "Kunde inte överföra kompislista till servern"
 
 #: src/protocols/gg/gg.c:825
 #, fuzzy
-msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "Kompislistan togs utan problem bort från servern"
 
 #: src/protocols/gg/gg.c:830
@@ -312,7 +312,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:953
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating to "
+"Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 
@@ -348,7 +348,7 @@ msgstr "Kan inte öppna direktmeddelande"
 #: src/protocols/gg/gg.c:1109
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please tryagain later."
+"the directory server.  Please try again later."
 msgstr ""
 
 #: src/protocols/gg/gg.c:1141
@@ -377,15 +377,15 @@ msgid "Change Password"
 msgstr "Byt lösenord"
 
 #: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "Importera kompislista från servern"
 
 #: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "Exportera kompislista till servern"
 
 #: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "Ta bort kompislista från server"
 
 #: src/protocols/gg/gg.c:1204
@@ -395,7 +395,7 @@ msgstr "Kan inte läsa filen %s."
 
 #: src/protocols/gg/gg.c:1205
 msgid ""
-"Gaim was unable to access this users profile due to an error connecting to "
+"Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -492,7 +492,7 @@ msgstr "Kan inte läsa från uttag"
 
 #: src/protocols/jabber/jabber.c:957
 msgid ""
-"The new password you entered is the same as your current passord.  Your "
+"The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
 
@@ -2387,7 +2387,7 @@ msgstr "Anonyma varningar är mindre barska."
 
 #: src/dialogs.c:471
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "Ta bort \"%s\" från kompislistan.\n"
 
 #: src/dialogs.c:496
@@ -2403,7 +2403,7 @@ msgstr "Ta bort kompis"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 "Du håller på att ta bort \"%s\" från\n"
 "din kompislista. Vill du fortsätta?"

@@ -270,7 +270,7 @@ msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "Nu existã nici o listã de contacte pe serverul Gadu-Gadu."
 
 #: src/protocols/gg/gg.c:767
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "Nu am putut importa lista de contacte de pe server"
 
 #: src/protocols/gg/gg.c:814
@@ -282,7 +282,7 @@ msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
 msgstr "Nu am putut transfera lista de contacte pe serverul Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:825
-msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "Lista de contacte a fost ºtearsã de pe serverul Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:830
@@ -303,7 +303,7 @@ msgstr "Eroare în conexiunea la serverul Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:953
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating to "
+"Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 "Gaim nu a putut da curs cererii dumneavoastrã datoritã unei probleme în "
@@ -342,7 +342,7 @@ msgstr "Nu pot accesa directorul"
 #: src/protocols/gg/gg.c:1109
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please tryagain later."
+"the directory server.  Please try again later."
 msgstr ""
 "Gaim nu a putut cãuta în director deoarece nu s-a putut conecta la server. "
 "Vã rugãm încercaþi din nou mai târziu."
@@ -374,15 +374,15 @@ msgid "Change Password"
 msgstr "Schimbã parola"
 
 #: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "Importã lista de contacte de pe server"
 
 #: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "Exportã lista de contacte cãtre server"
 
 #: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "ªterge lista de contacte de pe server"
 
 #: src/protocols/gg/gg.c:1204
@@ -391,7 +391,7 @@ msgstr "Nu pot accesa profilul utilizatorului."
 
 #: src/protocols/gg/gg.c:1205
 msgid ""
-"Gaim was unable to access this users profile due to an error connecting to "
+"Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 "Gaim nu a putut accesa profilul acestui utilizatori datoritã unei erori la "
@@ -489,7 +489,7 @@ msgstr "Nu pot schimba parola"
 
 #: src/protocols/jabber/jabber.c:957
 msgid ""
-"The new password you entered is the same as your current passord.  Your "
+"The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
 "Parola nou introdusãeste identicã cu cea veche. Parola rãmâne neschimbatã."
@@ -2355,7 +2355,7 @@ msgstr "Avertizãrile anonime sunt mai puþin supãrãtoare."
 
 #: src/dialogs.c:465
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "Îl ºterg pe '%s' din lista de contacte.\n"
 
 #: src/dialogs.c:490
@@ -2371,7 +2371,7 @@ msgstr "ªtergere contact"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 "Sunteþi pe cale sã ºtergeþi pe '%s' din\n"
 "lista de contacte. Doriþi sã continuaþi?"

@@ -279,7 +279,7 @@ msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "Список пользователей на сервере не обнаружен."
 
 #: src/protocols/gg/gg.c:767
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "Невозможно получить список пользователей с сервера"
 
 #: src/protocols/gg/gg.c:814
@@ -294,7 +294,7 @@ msgstr "Невозможно передать список пользователей на сервер"
 
 #: src/protocols/gg/gg.c:825
 #, fuzzy
-msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "Список пользователей удален с сервера"
 
 #: src/protocols/gg/gg.c:830
@@ -317,7 +317,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:953
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating to "
+"Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 
@@ -353,7 +353,7 @@ msgstr "Немогу установить прямое соединение"
 #: src/protocols/gg/gg.c:1109
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please tryagain later."
+"the directory server.  Please try again later."
 msgstr ""
 
 #: src/protocols/gg/gg.c:1141
@@ -382,15 +382,15 @@ msgid "Change Password"
 msgstr "Сменить пароль"
 
 #: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "Импорт списка пользователей"
 
 #: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "Экспорт списка пользователей"
 
 #: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "Удалить список пользователей с сервера"
 
 #: src/protocols/gg/gg.c:1204
@@ -400,7 +400,7 @@ msgstr "Нет возможности прочитать файл %s"
 
 #: src/protocols/gg/gg.c:1205
 msgid ""
-"Gaim was unable to access this users profile due to an error connecting to "
+"Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -497,7 +497,7 @@ msgstr "Нет возможности прочитать сокет"
 
 #: src/protocols/jabber/jabber.c:957
 msgid ""
-"The new password you entered is the same as your current passord.  Your "
+"The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
 
@@ -2386,7 +2386,7 @@ msgstr "Анонимные предупреждения менее надоедливы."
 
 #: src/dialogs.c:471
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "Удаление '%s' из списка пользователей.\n"
 
 #: src/dialogs.c:496
@@ -2402,7 +2402,7 @@ msgstr "Переименовать пользователя"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 "Действительно удалить '%s' из\n"
 "списка пользователей ?"

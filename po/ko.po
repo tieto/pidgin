@@ -281,7 +281,7 @@ msgid "There is no Buddy List stored on server. Sorry!"
 msgstr "서버에 친구 목록이 저장되어 있지 않습니다."
 
 #: src/protocols/gg/gg.c:768
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "서버에서 친구 목록을 가져올 수 없습니다."
 
 #: src/protocols/gg/gg.c:815
@@ -298,7 +298,7 @@ msgid "Couldn't transfer Buddy List to server"
 msgstr "서버로 친구 목록을 전송할 수 없습니다."
 
 #: src/protocols/gg/gg.c:827
-msgid "Buddy List sucessfully deleted from server"
+msgid "Buddy List successfully deleted from server"
 msgstr "서버에서 친구 목록이 삭제되었습니다."
 
 #: src/protocols/gg/gg.c:833
@@ -356,15 +356,15 @@ msgid "Change Password"
 msgstr "비밀번호 변경"
 
 #: src/protocols/gg/gg.c:1162 src/protocols/gg/gg.c:1179
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "서버에서 친구 목록 가져오기"
 
 #: src/protocols/gg/gg.c:1164 src/protocols/gg/gg.c:1180
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "친구 목록을 서버로 보내기"
 
 #: src/protocols/gg/gg.c:1166 src/protocols/gg/gg.c:1181
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "서버에서 친구 목록 삭제"
 
 #: src/protocols/icq/gaim_icq.c:308
@@ -2247,7 +2247,7 @@ msgstr "익명의 경고는 문제를 덜 일으킬 수 있습니다."
 
 #: src/dialogs.c:469
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "'%s' 를 친구목록에서 삭제합니다.\n"
 
 #: src/dialogs.c:494
@@ -2263,7 +2263,7 @@ msgstr "친구 삭제"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 "정말 친구 목록에서 '%s'님을\n"
 "삭제할까요?"

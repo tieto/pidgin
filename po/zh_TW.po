@@ -275,7 +275,7 @@ msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "對不起，伺服器上並沒有儲存任何的好友名單！"
 
 #: src/protocols/gg/gg.c:767
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr "無法自伺服器上取得好友名單"
 
 #: src/protocols/gg/gg.c:814
@@ -290,7 +290,7 @@ msgstr "無法傳送好朋名單到伺服器上"
 
 #: src/protocols/gg/gg.c:825
 #, fuzzy
-msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "成功的將好友名單自伺服器上刪除"
 
 #: src/protocols/gg/gg.c:830
@@ -312,7 +312,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:953
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating to "
+"Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 
@@ -348,7 +348,7 @@ msgstr "無法開啟直接的即時訊息"
 #: src/protocols/gg/gg.c:1109
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please tryagain later."
+"the directory server.  Please try again later."
 msgstr ""
 
 #: src/protocols/gg/gg.c:1141
@@ -377,15 +377,15 @@ msgid "Change Password"
 msgstr "修改密碼"
 
 #: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "自伺服器上匯入好友名單"
 
 #: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "匯出好友名單到伺服器上"
 
 #: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr "將伺服器上的好友名單刪除"
 
 #: src/protocols/gg/gg.c:1204
@@ -395,7 +395,7 @@ msgstr "無法讀取檔案 %s。"
 
 #: src/protocols/gg/gg.c:1205
 msgid ""
-"Gaim was unable to access this users profile due to an error connecting to "
+"Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -492,7 +492,7 @@ msgstr "無法送出密碼"
 
 #: src/protocols/jabber/jabber.c:957
 msgid ""
-"The new password you entered is the same as your current passord.  Your "
+"The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
 
@@ -2319,7 +2319,7 @@ msgstr ""
 
 #: src/dialogs.c:471
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "由好友名單移除 '%s'。\n"
 
 #: src/dialogs.c:496
@@ -2335,7 +2335,7 @@ msgstr "移除好友"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 "您正試著將 '%s'  從您的好友清單\n"
 "中移除。您要繼續這個動作嗎？"

@@ -444,7 +444,7 @@ void do_remove_buddy(struct buddy *b)
 	if (!b)
 		return;
 
-	debug_printf(_("Removing '%s' from buddylist.\n"), b->name);
+	debug_printf(_("Removing '%s' from buddy list.\n"), b->name);
 	serv_remove_buddy(b->gc, b->name, g->name);
 	remove_buddy(gc, g, b);
 	do_export(gc);

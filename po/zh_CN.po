@@ -293,7 +293,7 @@ msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr ""
 
 #: src/protocols/gg/gg.c:767
-msgid "Couldn't Import Buddies List from Server"
+msgid "Couldn't Import Buddy List from Server"
 msgstr ""
 
 #: src/protocols/gg/gg.c:814
@@ -306,7 +306,7 @@ msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
 msgstr "导出朋友列表"
 
 #: src/protocols/gg/gg.c:825
-msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr ""
 
 #: src/protocols/gg/gg.c:830
@@ -329,7 +329,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:953
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating to "
+"Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 
@@ -365,7 +365,7 @@ msgstr "不能建立直接连接"
 #: src/protocols/gg/gg.c:1109
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please tryagain later."
+"the directory server.  Please try again later."
 msgstr ""
 
 #: src/protocols/gg/gg.c:1141
@@ -396,16 +396,16 @@ msgstr "更改密码"
 
 #: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
 #, fuzzy
-msgid "Import Buddies List from Server"
+msgid "Import Buddy List from Server"
 msgstr "导入朋友列表"
 
 #: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
 #, fuzzy
-msgid "Export Buddies List to Server"
+msgid "Export Buddy List to Server"
 msgstr "导出朋友列表"
 
 #: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
-msgid "Delete Buddies List from Server"
+msgid "Delete Buddy List from Server"
 msgstr ""
 
 #: src/protocols/gg/gg.c:1204
@@ -415,7 +415,7 @@ msgstr "不能读入文件 %s。"
 
 #: src/protocols/gg/gg.c:1205
 msgid ""
-"Gaim was unable to access this users profile due to an error connecting to "
+"Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -515,7 +515,7 @@ msgstr "不能读入文件 %s。"
 
 #: src/protocols/jabber/jabber.c:957
 msgid ""
-"The new password you entered is the same as your current passord.  Your "
+"The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
 
@@ -2420,7 +2420,7 @@ msgstr "匿名警告不那么严厉。"
 
 #: src/dialogs.c:471
 #, c-format
-msgid "Removing '%s' from buddylist.\n"
+msgid "Removing '%s' from buddy list.\n"
 msgstr "把 “%s”从朋友表上删去\n"
 
 #: src/dialogs.c:496
@@ -2437,7 +2437,7 @@ msgstr "重命名哥们儿"
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
+"your buddy list. Do you want to continue?"
 msgstr ""
 
 #: src/dialogs.c:531 src/prpl.c:166 src/prpl.c:240
