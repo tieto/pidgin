@@ -172,16 +172,21 @@ static void irc_send_im(struct gaim_connection *gc, char *who, char *message, in
 	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
 	/* Before we actually send this, we should check to see if they're trying
-	 * To issue a /me command and handle it properly. */
+	 * To issue a command and handle it properly. */
 
-	if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
-		/* We have /me!! We have /me!! :-) */
+	if (message[0] == '/')
+	{
+		/* I'll change the implementation of this a little later :-) */
+		if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
+			/* We have /me!! We have /me!! :-) */
 
-		gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-		strcpy(temp, message + 4);
-		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%cACTION %s%c\n", who, '\001', temp, '\001');
-		g_free(temp);
-	} else {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 4);
+			g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%cACTION %s%c\n", who, '\001', temp, '\001');
+			g_free(temp);
+		} 
+	}
+	else {
 		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%s\n", who, message);
 	}
 
