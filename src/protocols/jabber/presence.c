@@ -45,28 +45,25 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	jabber_send(chat->js, presence);
 }
 
-static int show_to_state(const char *show) {
-	if(!show)
-		return 0;
-	else if(!strcmp(show, "away") || !strcmp(show, _("Away")))
-		return JABBER_STATE_AWAY;
-	else if(!strcmp(show, "chat") || !strcmp(show, _("Chatty")))
-		return JABBER_STATE_CHAT;
-	else if(!strcmp(show, "xa") || !strcmp(show, _("Extended Away")))
-		return JABBER_STATE_XA;
-	else if(!strcmp(show, "dnd") || !strcmp(show, _("Do Not Disturb")))
-		return JABBER_STATE_DND;
-	return 0;
-}
-
-void jabber_presence_fake_to_self(JabberStream *js, const char *show, const char *status) {
+void jabber_presence_fake_to_self(JabberStream *js, const char *away_state, const char *msg) {
 	char *my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	if(gaim_find_buddy(js->gc->account, my_base_jid)) {
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr;
 		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
-			jabber_buddy_track_resource(jb, js->user->resource, 0,
-					show_to_state(show), (status && *status) ? status : NULL);
+			int state = 0;
+			if(away_state) {
+				if(!strcmp(away_state, _("Away")) ||
+						(msg && *msg && !strcmp(away_state, GAIM_AWAY_CUSTOM)))
+					state = JABBER_STATE_AWAY;
+				else if(!strcmp(away_state, _("Chatty")))
+					state = JABBER_STATE_CHAT;
+				else if(!strcmp(away_state, _("Extended Away")))
+					state = JABBER_STATE_XA;
+				else if(!strcmp(away_state, _("Do Not Disturb")))
+					state = JABBER_STATE_DND;
+			}
+			jabber_buddy_track_resource(jb, js->user->resource, 0, state, (msg && *msg) ? msg : NULL);
 			if((jbr = jabber_buddy_find_resource(jb, NULL)))
 				serv_got_update(js->gc, my_base_jid, 1, 0, 0, 0, jbr->state);
 		}
@@ -165,6 +162,20 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 
 	g_free(jap->who);
 	g_free(jap);
+}
+
+static int show_to_state(const char *show) {
+	if(!show)
+		return 0;
+	else if(!strcmp(show, "away"))
+		return JABBER_STATE_AWAY;
+	else if(!strcmp(show, "chat"))
+		return JABBER_STATE_CHAT;
+	else if(!strcmp(show, "xa"))
+		return JABBER_STATE_XA;
+	else if(!strcmp(show, "dnd"))
+		return JABBER_STATE_DND;
+	return 0;
 }
 
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)

@@ -877,7 +877,7 @@ static void jabber_list_emblems(GaimBuddy *b, char **se, char **sw,
 				*se = "extendedaway";
 				break;
 			case JABBER_STATE_DND:
-				*se = "extendedaway";
+				*se = "dnd";
 				break;
 			case JABBER_STATE_ERROR:
 				*se = "error";
