@@ -27,25 +27,25 @@ write_status(GaimConnection *gc, char *who, const char *message)
 static void
 buddy_away_cb(GaimConnection *gc, char *who, void *data)
 {
-	write_status(gc, who, _("has gone away."));
+	write_status(gc, who, "has gone away.");
 }
 
 static void
 buddy_unaway_cb(GaimConnection *gc, char *who, void *data)
 {
-	write_status(gc, who, _("is no longer away."));
+	write_status(gc, who, "is no longer away.");
 }
 
 static void
 buddy_idle_cb(GaimConnection *gc, char *who, void *data)
 {
-	write_status(gc, who, _("has become idle."));
+	write_status(gc, who, "has become idle.");
 }
 
 static void
 buddy_unidle_cb(GaimConnection *gc, char *who, void *data)
 {
-	write_status(gc, who, _("is no longer idle."));
+	write_status(gc, who, "is no longer idle.");
 }
 
 static gboolean
