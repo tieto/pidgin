@@ -269,7 +269,7 @@ gaim_status_type_set_primary_attr(GaimStatusType *status_type, const char *id)
 }
 
 void
-gaim_status_type_add_attr(GaimStatusType *status_type, const char *id,\
+gaim_status_type_add_attr(GaimStatusType *status_type, const char *id,
 		const char *name, GaimValue *value)
 {
 	GaimStatusAttr *attr;
@@ -515,7 +515,8 @@ gaim_status_new(GaimStatusType *status_type, GaimPresence *presence)
 		GaimValue *new_value = gaim_value_dup(value);
 
 		g_hash_table_insert(status->attr_values,
-		g_strdup(gaim_status_attr_get_id(attr)), new_value);
+							g_strdup(gaim_status_attr_get_id(attr)),
+							new_value);
 	}
 
 	return status;
@@ -693,7 +694,6 @@ gaim_status_set_attr_boolean(GaimStatus *status, const char *id,
 		gboolean value)
 {
 	GaimStatusType *status_type;
-	GaimStatusAttr *attr;
 	GaimValue *attr_value;
 
 	g_return_if_fail(status != NULL);
@@ -701,11 +701,9 @@ gaim_status_set_attr_boolean(GaimStatus *status, const char *id,
 
 	status_type = gaim_status_get_type(status);
 
-	/* Make sure this attribute exists. */
-	attr = gaim_status_type_get_attr(status_type, id);
-	g_return_if_fail(attr != NULL);
-
-	attr_value = gaim_status_attr_get_value_type(attr);
+	/* Make sure this attribute exists and is the correct type. */
+	attr_value = gaim_status_get_attr_value(status, id);
+	g_return_if_fail(attr_value != NULL);
 	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_BOOLEAN);
 
 	gaim_value_set_boolean(attr_value, value);
@@ -715,7 +713,6 @@ void
 gaim_status_set_attr_int(GaimStatus *status, const char *id, int value)
 {
 	GaimStatusType *status_type;
-	GaimStatusAttr *attr;
 	GaimValue *attr_value;
 
 	g_return_if_fail(status != NULL);
@@ -723,11 +720,9 @@ gaim_status_set_attr_int(GaimStatus *status, const char *id, int value)
 
 	status_type = gaim_status_get_type(status);
 
-	/* Make sure this attribute exists. */
-	attr = gaim_status_type_get_attr(status_type, id);
-	g_return_if_fail(attr != NULL);
-
-	attr_value = gaim_status_attr_get_value_type(attr);
+	/* Make sure this attribute exists and is the correct type. */
+	attr_value = gaim_status_get_attr_value(status, id);
+	g_return_if_fail(attr_value != NULL);
 	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_INT);
 
 	gaim_value_set_int(attr_value, value);
@@ -738,7 +733,6 @@ gaim_status_set_attr_string(GaimStatus *status, const char *id,
 		const char *value)
 {
 	GaimStatusType *status_type;
-	GaimStatusAttr *attr;
 	GaimValue *attr_value;
 
 	g_return_if_fail(status != NULL);
@@ -746,11 +740,9 @@ gaim_status_set_attr_string(GaimStatus *status, const char *id,
 
 	status_type = gaim_status_get_type(status);
 
-	/* Make sure this attribute exists. */
-	attr = gaim_status_type_get_attr(status_type, id);
-	g_return_if_fail(attr != NULL);
-
+	/* Make sure this attribute exists and is the correct type. */
 	attr_value = gaim_status_get_attr_value(status, id);
+	g_return_if_fail(attr_value != NULL);
 	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_STRING);
 
 	gaim_value_set_string(attr_value, value);
@@ -833,12 +825,6 @@ gaim_status_is_online(const GaimStatus *status)
 			primitive != GAIM_STATUS_OFFLINE);
 }
 
-/*
- * What's the difference between
- * gaim_status_get_attr_value(GaimStatus *status, const char *id)
- * gaim_status_attr_get_value_type(GaimStatusAttr *attr)
- * and I think there was another similar one...
- */
 GaimValue *
 gaim_status_get_attr_value(const GaimStatus *status, const char *id)
 {
@@ -868,7 +854,7 @@ gaim_status_get_attr_boolean(const GaimStatus *status, const char *id)
 	if ((value = gaim_status_get_attr_value(status, id)) == NULL)
 		return FALSE;
 
-	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_STRING, FALSE);
+	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_BOOLEAN, FALSE);
 
 	return gaim_value_get_boolean(value);
 }

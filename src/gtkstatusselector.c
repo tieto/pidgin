@@ -226,13 +226,9 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			/* TODO */
 		}
 	}
-	else if (!strcmp(status_type_id, "available"))
+	else
 	{
-		/* TODO */
-	}
-	else if (!strcmp(status_type_id, "away"))
-	{
-		const char *message = "";
+		const char *message = text;
 		GtkTextBuffer *buffer;
 		gboolean allow_message = FALSE;
 
@@ -256,7 +252,7 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			if (gaim_status_type_get_attr(status_type, "message") != NULL)
 			{
 				gaim_account_set_status(account,
-										"away", TRUE,
+										status_type_id, TRUE,
 										"message", message,
 										NULL);
 
@@ -265,7 +261,7 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			else
 			{
 				gaim_account_set_status(account,
-										"away", TRUE,
+										status_type_id, TRUE,
 										NULL);
 			}
 		}

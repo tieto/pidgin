@@ -5560,11 +5560,6 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 
 	gaim_debug_info("oscar", "Setting status to %s\n", status_id);
 
-	if (primitive == GAIM_STATUS_HIDDEN)
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
-	else
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
-
 	if (od->rights.maxawaymsglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
 							_("You have probably requested to set your "
@@ -5574,6 +5569,8 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 							  "fully connected."));
 
 	if (primitive == GAIM_STATUS_AVAILABLE) {
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 #if 0
 		/* Set an available message */
@@ -5581,6 +5578,8 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 #endif
 
 	} else if (primitive == GAIM_STATUS_AWAY) {
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+
 		text_html = gaim_status_get_attr_string(status, "message");
 
 		if (text_html == NULL) {
@@ -5615,6 +5614,9 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 			gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
 			g_free(errstr);
 		}
+
+	} else if (primitive == GAIM_STATUS_HIDDEN) {
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
 
 	} else {
 		gaim_debug_info("oscar", "Don't know what to do for this status\n");
