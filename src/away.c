@@ -57,6 +57,11 @@ static void dequeue_message(GtkTreeIter *iter)
 	gchar *name;
 	GSList *templist;
 	GaimConversation *cnv;
+	gboolean orig_while_away;
+
+	orig_while_away = gaim_prefs_get_bool("/core/sound/while_away");
+	if (orig_while_away)
+		gaim_prefs_set_bool("/core/sound/while_away", FALSE);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), iter, 0, &name, -1);
 
@@ -97,6 +102,9 @@ static void dequeue_message(GtkTreeIter *iter)
 	/* In GTK 2.2, _store_remove actually returns whether iter is valid or not
 	 * after the remove, but in GTK 2.0 it is a void function. */
 	gtk_list_store_remove(awayqueuestore, iter);
+
+	if (orig_while_away)
+		gaim_prefs_set_bool("/core/sound/while_away", orig_while_away);
 }
 
 void purge_away_queue(GSList **queue)
@@ -105,6 +113,11 @@ void purge_away_queue(GSList **queue)
 	struct queued_message *qm;
 	GaimConversation *cnv;
 	GaimAccount *account;
+	gboolean orig_while_away;
+
+	orig_while_away = gaim_prefs_get_bool("/core/sound/while_away");
+	if (orig_while_away)
+		gaim_prefs_set_bool("/core/sound/while_away", FALSE);
 
 	while (q) {
 		qm = q->data;
@@ -132,6 +145,9 @@ void purge_away_queue(GSList **queue)
 
 	g_slist_free(*queue);
 	*queue = NULL;
+
+	if (orig_while_away)
+		gaim_prefs_set_bool("/core/sound/while_away", orig_while_away);
 }
 
 gint dequeue_cb(GtkWidget *treeview, GdkEventButton *event, gpointer data) {
