@@ -32,8 +32,8 @@
  * to the settings of that state.
  */
 
-typedef struct _GaimStatusSaved     GaimStatusSaved;
-typedef struct _GaimStatusSavedSub  GaimStatusSavedSub;
+typedef struct _GaimSavedStatus     GaimSavedStatus;
+typedef struct _GaimSavedStatusSub  GaimSavedStatusSub;
 
 /**************************************************************************/
 /** @name Saved status subsystem                                          */
@@ -49,7 +49,8 @@ typedef struct _GaimStatusSavedSub  GaimStatusSavedSub;
  *
  * @return The newly created saved status.
  */
-GaimStatusSaved *gaim_savedstatuses_new(const char *title, GaimStatusPrimitive type);
+GaimSavedStatus *gaim_savedstatus_new(const char *title,
+									  GaimStatusPrimitive type);
 
 /**
  * Delete a saved status.  This removes the saved status from the list
@@ -61,7 +62,7 @@ GaimStatusSaved *gaim_savedstatuses_new(const char *title, GaimStatusPrimitive t
  *         status could not be deleted because no saved status exists
  *         with the given title.
  */
-gboolean gaim_savedstatuses_delete(const char *title);
+gboolean gaim_savedstatus_delete(const char *title);
 
 /**
  * Returns all saved statuses.
@@ -77,19 +78,7 @@ const GList *gaim_savedstatuses_get_all(void);
  *
  * @return The saved status if found, or NULL.
  */
-GaimStatusSaved *gaim_savedstatuses_find(const char *title);
-
-/**
- * Create a new saved status and add it to the list
- * of saved statuses.
- *
- * @param title The title for the new saved status.
- * @param type  The type of saved status.
- *
- * @return The newly created saved status.
- */
-GaimStatusSaved *gaim_savedstatuses_new(const char *title,
-									  GaimStatusPrimitive type);
+GaimSavedStatus *gaim_savedstatus_find(const char *title);
 
 /**
  * Return the name of a given saved status.
@@ -98,7 +87,7 @@ GaimStatusSaved *gaim_savedstatuses_new(const char *title,
  *
  * @return The title.
  */
-const char *gaim_savedstatuses_get_title(const GaimStatusSaved *saved_status);
+const char *gaim_savedstatus_get_title(const GaimSavedStatus *saved_status);
 
 /**
  * Return the name of a given saved status.
@@ -107,7 +96,7 @@ const char *gaim_savedstatuses_get_title(const GaimStatusSaved *saved_status);
  *
  * @return The name.
  */
-GaimStatusPrimitive gaim_savedstatuses_get_type(const GaimStatusSaved *saved_status);
+GaimStatusPrimitive gaim_savedstatus_get_type(const GaimSavedStatus *saved_status);
 
 /**
  * Return the name of a given saved status.
@@ -116,7 +105,7 @@ GaimStatusPrimitive gaim_savedstatuses_get_type(const GaimStatusSaved *saved_sta
  *
  * @return The name.
  */
-const char *gaim_savedstatuses_get_message(const GaimStatusSaved *saved_status);
+const char *gaim_savedstatus_get_message(const GaimSavedStatus *saved_status);
 
 /**
  * Get the handle for the status subsystem.

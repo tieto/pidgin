@@ -141,6 +141,72 @@ static GHashTable *buddy_presences = NULL;
 #define SCORE_IDLE_TIME 6
 
 /**************************************************************************
+ * GaimStatusPrimitive API
+ **************************************************************************/
+static struct GaimStatusPrimitiveMap
+{
+	GaimStatusPrimitive type;
+	const char *id;
+	const char *name;
+
+} const status_primitive_map[] =
+{
+	{ GAIM_STATUS_UNSET,           "unset",           N_("Unset")           },
+	{ GAIM_STATUS_OFFLINE,         "offline",         N_("Offline")         },
+	{ GAIM_STATUS_ONLINE,          "online",          N_("Online")          },
+	{ GAIM_STATUS_AVAILABLE,       "available",       N_("Available")       },
+	{ GAIM_STATUS_UNAVAILABLE,     "unavailable",     N_("Unavailable")     },
+	{ GAIM_STATUS_HIDDEN,          "hidden",          N_("Hidden")          },
+	{ GAIM_STATUS_AWAY,            "away",            N_("Away")            },
+	{ GAIM_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended Away")   }
+};
+
+const char *
+gaim_primitive_get_id_from_type(GaimStatusPrimitive type)
+{
+    int i;
+
+    for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+    {
+		if (type == status_primitive_map[i].type)
+			return status_primitive_map[i].id;
+    }
+
+    return status_primitive_map[0].id;
+}
+
+const char *
+gaim_primitive_get_name_from_type(GaimStatusPrimitive type)
+{
+    int i;
+
+    for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+    {
+		if (type == status_primitive_map[i].type)
+			return status_primitive_map[i].name;
+    }
+
+    return status_primitive_map[0].name;
+}
+
+GaimStatusPrimitive
+gaim_primitive_get_type_from_id(const char *id)
+{
+    int i;
+
+    g_return_val_if_fail(id != NULL, GAIM_STATUS_UNSET);
+
+    for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+    {
+        if (!strcmp(id, status_primitive_map[i].id))
+            return status_primitive_map[i].type;
+    }
+
+    return status_primitive_map[0].type;
+}
+
+
+/**************************************************************************
  * GaimStatusType API
  **************************************************************************/
 GaimStatusType *

@@ -42,22 +42,22 @@
  * are fully backward compatible.  The new status API just
  * adds the optional sub-statuses to the XML file.
  */
-struct _GaimStatusSaved
+struct _GaimSavedStatus
 {
 	char *title;
 	GaimStatusPrimitive type;
 	char *message;
 
-	GList *substatuses;      /**< A list of GaimStatusSavedSub's. */
+	GList *substatuses;      /**< A list of GaimSavedStatusSub's. */
 };
 
 /*
  * TODO: If an account is deleted, need to also delete any associated
- *       GaimStatusSavedSub's.
+ *       GaimSavedStatusSub's.
  * TODO: If a GaimStatusType is deleted, need to also delete any
- *       associated GaimStatusSavedSub's?
+ *       associated GaimSavedStatusSub's?
  */
-struct _GaimStatusSavedSub
+struct _GaimSavedStatusSub
 {
 	GaimAccount *account;
 	const GaimStatusType *type;
@@ -72,39 +72,8 @@ static guint statuses_save_timer = 0;
 * Helper functions
 **************************************************************************/
 
-/**
- * Elements of this array correspond to the GaimStatusPrimitive
- * enumeration.
- */
-static const char *primitive_names[] =
-{
-	"unset",
-	"offline",
-	"available",
-	"unavailable",
-	"hidden",
-	"away",
-	"extended_away"
-};
-
-static GaimStatusPrimitive
-gaim_primitive_get_type(const char *name)
-{
-	int i;
-
-	g_return_val_if_fail(name != NULL, GAIM_STATUS_UNSET);
-
-	for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
-	{
-		if (!strcmp(name, primitive_names[i]))
-			return i;
-	}
-
-	return GAIM_STATUS_UNSET;
-}
-
 static void
-free_statussavedsub(GaimStatusSavedSub *substatus)
+free_statussavedsub(GaimSavedStatusSub *substatus)
 {
 	g_return_if_fail(substatus != NULL);
 
@@ -113,7 +82,7 @@ free_statussavedsub(GaimStatusSavedSub *substatus)
 }
 
 static void
-free_statussaved(GaimStatusSaved *status)
+free_statussaved(GaimSavedStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
@@ -122,7 +91,7 @@ free_statussaved(GaimStatusSaved *status)
 
 	while (status->substatuses != NULL)
 	{
-		GaimStatusSavedSub *substatus = status->substatuses->data;
+		GaimSavedStatusSub *substatus = status->substatuses->data;
 		status->substatuses = g_list_remove(status->substatuses, substatus);
 		free_statussavedsub(substatus);
 	}
@@ -136,7 +105,7 @@ free_statussaved(GaimStatusSaved *status)
 **************************************************************************/
 
 static xmlnode *
-substatus_to_xmlnode(GaimStatusSavedSub *substatus)
+substatus_to_xmlnode(GaimSavedStatusSub *substatus)
 {
 	xmlnode *node, *child;
 
@@ -164,7 +133,7 @@ substatus_to_xmlnode(GaimStatusSavedSub *substatus)
 }
 
 static xmlnode *
-status_to_xmlnode(GaimStatusSaved *status)
+status_to_xmlnode(GaimSavedStatus *status)
 {
 	xmlnode *node, *child;
 	GList *cur;
@@ -173,7 +142,7 @@ status_to_xmlnode(GaimStatusSaved *status)
 	xmlnode_set_attrib(node, "name", status->title);
 
 	child = xmlnode_new("state");
-	xmlnode_insert_data(child, primitive_names[status->type], -1);
+	xmlnode_insert_data(child, strdup(gaim_primitive_get_id_from_type(status->type)), -1);
 	xmlnode_insert_child(node, child);
 
 	child = xmlnode_new("message");
@@ -246,14 +215,14 @@ schedule_save(void)
 /**************************************************************************
 * Saved status reading from disk
 **************************************************************************/
-static GaimStatusSavedSub *
+static GaimSavedStatusSub *
 parse_substatus(xmlnode *substatus)
 {
-	GaimStatusSavedSub *ret;
+	GaimSavedStatusSub *ret;
 	xmlnode *node;
 	char *data = NULL;
 
-	ret = g_new0(GaimStatusSavedSub, 1);
+	ret = g_new0(GaimSavedStatusSub, 1);
 
 	/* Read the account */
 	node = xmlnode_get_child(substatus, "account");
@@ -319,16 +288,16 @@ parse_substatus(xmlnode *substatus)
  *
  * I know.  Moving, huh?
  */
-static GaimStatusSaved *
+static GaimSavedStatus *
 parse_status(xmlnode *status)
 {
-	GaimStatusSaved *ret;
+	GaimSavedStatus *ret;
 	xmlnode *node;
 	const char *attrib;
 	char *data = NULL;
 	int i;
 
-	ret = g_new0(GaimStatusSaved, 1);
+	ret = g_new0(GaimSavedStatus, 1);
 
 	/* Read the title */
 	attrib = xmlnode_get_attrib(status, "name");
@@ -337,7 +306,7 @@ parse_status(xmlnode *status)
 	/* Ensure the title is unique */
 	ret->title = g_strdup(attrib);
 	i = 2;
-	while (gaim_savedstatuses_find(ret->title) != NULL)
+	while (gaim_savedstatus_find(ret->title) != NULL)
 	{
 		g_free(ret->title);
 		ret->title = g_strdup_printf("%s %d", attrib, i);
@@ -349,7 +318,7 @@ parse_status(xmlnode *status)
 	if (node != NULL)
 		data = xmlnode_get_data(node);
 	if (data != NULL) {
-		ret->type = gaim_primitive_get_type(data);
+		ret->type = gaim_primitive_get_type_from_id(data);
 		g_free(data);
 		data = NULL;
 	}
@@ -365,7 +334,7 @@ parse_status(xmlnode *status)
 	for (node = xmlnode_get_child(status, "status"); node != NULL;
 			node = xmlnode_get_next_twin(node))
 	{
-		GaimStatusSavedSub *new;
+		GaimSavedStatusSub *new;
 		new = parse_substatus(node);
 		if (new != NULL)
 			ret->substatuses = g_list_append(ret->substatuses, new);
@@ -426,7 +395,7 @@ read_statuses(const char *filename)
 	for (status = xmlnode_get_child(statuses, "status"); status != NULL;
 			status = xmlnode_get_next_twin(status))
 	{
-		GaimStatusSaved *new;
+		GaimSavedStatus *new;
 		new = parse_status(status);
 		saved_statuses = g_list_append(saved_statuses, new);
 	}
@@ -471,12 +440,12 @@ load_statuses(void)
 /**************************************************************************
 * Saved status API
 **************************************************************************/
-GaimStatusSaved *
-gaim_savedstatuses_new(const char *title, GaimStatusPrimitive type)
+GaimSavedStatus *
+gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 {
-	GaimStatusSaved *status;
+	GaimSavedStatus *status;
 
-	status = g_new0(GaimStatusSaved, 1);
+	status = g_new0(GaimSavedStatus, 1);
 	status->title = g_strdup(title);
 	status->type = type;
 
@@ -488,11 +457,11 @@ gaim_savedstatuses_new(const char *title, GaimStatusPrimitive type)
 }
 
 gboolean
-gaim_savedstatuses_delete(const char *title)
+gaim_savedstatus_delete(const char *title)
 {
-	GaimStatusSaved *status;
+	GaimSavedStatus *status;
 
-	status = gaim_savedstatuses_find(title);
+	status = gaim_savedstatus_find(title);
 
 	if (status == NULL)
 		return FALSE;
@@ -511,15 +480,15 @@ gaim_savedstatuses_get_all(void)
 	return saved_statuses;
 }
 
-GaimStatusSaved *
-gaim_savedstatuses_find(const char *title)
+GaimSavedStatus *
+gaim_savedstatus_find(const char *title)
 {
 	GList *l;
-	GaimStatusSaved *status;
+	GaimSavedStatus *status;
 
 	for (l = saved_statuses; l != NULL; l = g_list_next(l))
 	{
-		status = (GaimStatusSaved *)l->data;
+		status = (GaimSavedStatus *)l->data;
 		if (!strcmp(status->title, title))
 			return status;
 	}
@@ -528,19 +497,19 @@ gaim_savedstatuses_find(const char *title)
 }
 
 const char *
-gaim_savedstatuses_get_title(const GaimStatusSaved *saved_status)
+gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 {
 	return saved_status->title;
 }
 
 GaimStatusPrimitive
-gaim_savedstatuses_get_type(const GaimStatusSaved *saved_status)
+gaim_savedstatus_get_type(const GaimSavedStatus *saved_status)
 {
 	return saved_status->type;
 }
 
 const char *
-gaim_savedstatuses_get_message(const GaimStatusSaved *saved_status)
+gaim_savedstatus_get_message(const GaimSavedStatus *saved_status)
 {
 	return saved_status->message;
 }
@@ -562,7 +531,7 @@ gaim_savedstatuses_uninit(void)
 	}
 
 	while (saved_statuses != NULL) {
-		GaimStatusSaved *status = saved_statuses->data;
+		GaimSavedStatus *status = saved_statuses->data;
 		saved_statuses = g_list_remove(saved_statuses, status);
 		free_statussaved(status);
 	}

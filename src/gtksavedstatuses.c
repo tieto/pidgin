@@ -98,10 +98,10 @@ status_editor_save_cb(GtkButton *button, gpointer user_data)
 	/* TODO: Save the status */
 }
 
-/* TODO: Can this menu be created more automatically? */
 static GtkWidget *
-create_status_type_menu()
+create_status_type_menu(GaimStatusPrimitive type)
 {
+	int i;
 	GtkWidget *dropdown;
 	GtkWidget *menu;
 	GtkWidget *item;
@@ -109,31 +109,14 @@ create_status_type_menu()
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
 
-	/* GAIM_STATUS_AVAILABLE */
-	item = gtk_menu_item_new_with_label(_("Available"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
+	for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+	{
+		item = gtk_menu_item_new_with_label(gaim_primitive_get_name_from_type(i));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		gtk_widget_show(item);
+	}
 
-	/* GAIM_STATUS_UNAVAILABLE */
-	item = gtk_menu_item_new_with_label(_("Unavailable"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* GAIM_STATUS_HIDDEN */
-	item = gtk_menu_item_new_with_label(_("Hidden"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* GAIM_STATUS_AWAY */
-	item = gtk_menu_item_new_with_label(_("Away"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* GAIM_STATUS_EXTENDED_AWAY */
-	item = gtk_menu_item_new_with_label(_("Extended Away"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
+	gtk_menu_set_active(GTK_MENU(menu), type);
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
 	gtk_widget_show(menu);
 
@@ -234,7 +217,7 @@ status_editor_populate_list(StatusEditor *dialog)
 }
 
 void
-gaim_gtk_status_editor_show(void)
+gaim_gtk_status_editor_show(GaimSavedStatus *status)
 {
 	StatusEditor *dialog;
 	GtkSizeGroup *sg;
@@ -284,7 +267,10 @@ gaim_gtk_status_editor_show(void)
 	gtk_size_group_add_widget(sg, label);
 
 	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry), _("Out of the office"));
+	if (status != NULL)
+		gtk_entry_set_text(GTK_ENTRY(entry), gaim_savedstatus_get_title(status));
+	else
+		gtk_entry_set_text(GTK_ENTRY(entry), _("Out of the office"));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	gtk_widget_show(entry);
 
@@ -299,7 +285,10 @@ gaim_gtk_status_editor_show(void)
 	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
-	dropdown = create_status_type_menu();
+	if (status != NULL)
+		dropdown = create_status_type_menu(gaim_savedstatus_get_type(status));
+	else
+		dropdown = create_status_type_menu(GAIM_STATUS_AWAY);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, TRUE, TRUE, 0);
 	gtk_widget_show(dropdown);
 
@@ -317,6 +306,10 @@ gaim_gtk_status_editor_show(void)
 	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
+
+	if (status != NULL)
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+							   gaim_savedstatus_get_message(status), 0);
 
 	/* Custom status message disclosure */
 	disclosure = gaim_disclosure_new(_("Use a different status for some accounts"),
@@ -426,7 +419,7 @@ status_window_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 static void
 status_window_add_cb(GtkButton *button, gpointer user_data)
 {
-	gaim_gtk_status_editor_show();
+	gaim_gtk_status_editor_show(NULL);
 }
 
 static void
@@ -434,12 +427,12 @@ status_window_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
 	const char *title;
-	GaimStatusSaved *status;
+	GaimSavedStatus *status;
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
 
-	status = gaim_savedstatuses_find(title);
-	/* TODO: Need to show a status editor pre-populated with this status */
+	status = gaim_savedstatus_find(title);
+	gaim_gtk_status_editor_show(status);
 }
 
 static void
@@ -461,7 +454,7 @@ status_window_delete_confirm_cb(char *title)
 	if (status_window_find_savedstatus(&iter, title))
 		gtk_list_store_remove(status_window->model, &iter);
 
-	gaim_savedstatuses_delete(title);
+	gaim_savedstatus_delete(title);
 
 	g_free(title);
 }
@@ -520,7 +513,7 @@ populate_saved_status_list(StatusWindow *dialog)
 {
 	GtkTreeIter iter;
 	const GList *saved_statuses;
-	GaimStatusSaved *saved_status;
+	GaimSavedStatus *saved_status;
 	char *message;
 
 	gtk_list_store_clear(dialog->model);
@@ -528,14 +521,14 @@ populate_saved_status_list(StatusWindow *dialog)
 	for (saved_statuses = gaim_savedstatuses_get_all(); saved_statuses != NULL;
 			saved_statuses = g_list_next(saved_statuses))
 	{
-		saved_status = (GaimStatusSaved *)saved_statuses->data;
-		message = gaim_markup_strip_html(gaim_savedstatuses_get_message(saved_status));
+		saved_status = (GaimSavedStatus *)saved_statuses->data;
+		message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));
 		if (strlen(message) > 70)
 			strcpy(&message[68], "...");
 
 		gtk_list_store_append(dialog->model, &iter);
 		gtk_list_store_set(dialog->model, &iter,
-						   STATUS_WINDOW_COLUMN_TITLE, gaim_savedstatuses_get_title(saved_status),
+						   STATUS_WINDOW_COLUMN_TITLE, gaim_savedstatus_get_title(saved_status),
 						   STATUS_WINDOW_COLUMN_MESSAGE, message,
 						   -1);
 		free(message);

@@ -67,6 +67,44 @@ typedef enum
 #include "value.h"
 
 /**************************************************************************/
+/** @name GaimStatusPrimtive API                                          */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Lookup the id of a primitive status type based on the type.  This
+ * ID is a unique plain-text name of the status, without spaces.
+ *
+ * @param type A primitive status type.
+ *
+ * @return The unique ID for this type.
+ */
+const char *gaim_primitive_get_id_from_type(GaimStatusPrimitive type);
+
+/**
+ * Lookup the name of a primitive status type based on the type.  This
+ * name is the plain-English name of the status type.  It is usually one
+ * or two works.
+ *
+ * @param type A primitive status type.
+ *
+ * @return The name of this type, suitable for users to see.
+ */
+const char *gaim_primitive_get_name_from_type(GaimStatusPrimitive type);
+
+/**
+ * Lookup the value of a primitive status type based on the id.  The
+ * ID is a unique plain-text name of the status, without spaces.
+ *
+ * @param type The unique ID of a primitive status type.
+ *
+ * @return The GaimStatusPrimitive value.
+ */
+GaimStatusPrimitive gaim_primitive_get_type_from_id(const char *id);
+
+/*@}*/
+
+/**************************************************************************/
 /** @name GaimStatusType API                                              */
 /**************************************************************************/
 /*@{*/
