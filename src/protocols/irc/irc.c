@@ -1106,6 +1106,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	       if (!g_strcasecmp(pdibuf, "ME")) {
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :\001ACTION %s\001\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
+		return 1;
 	} else if (!g_strcasecmp(pdibuf, "TOPIC")) {
 		if (!*word_eol[2])
 			return -EINVAL;
