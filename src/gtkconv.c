@@ -1639,7 +1639,7 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	GaimGtkConversation *gtkconv = data;
 
-	if ((event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) ||
+	if ((event->state & GDK_CONTROL_MASK) ||
 		(event->keyval == GDK_Up) ||
 		(event->keyval == GDK_Down) ||
 		(event->keyval == GDK_Left) ||
