@@ -1153,19 +1153,13 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 void away_list_unclicked(GtkWidget *widget, struct away_message *a)
 {
 	if (prefs_away_list == NULL)
-	{
-		g_print("early return from away_list_unclicked\n");
 		return;
-	}
 
-	g_print("away_list_unclicked\n");
-	g_print("setting '%s' to '%s'\n", a->name, edited_message);
 	strcpy(a->message, edited_message);
 	save_prefs();
 	
 	/* point edited_message to the new text */
 /*	edited_message = gtk_editable_get_chars(GTK_EDITABLE(away_text), 0, -1);
-	g_print("edited_message now equals '%s'\n", edited_message);
 }
 */
 void save_away_message(GtkWidget *widget, void *dummy)
