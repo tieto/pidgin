@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -55,6 +55,13 @@ gboolean gaim_core_init(const char *ui);
  * application using the gaim core.
  */
 void gaim_core_quit(void);
+
+/**
+ * Returns the version of the core library.
+ *
+ * @return The version of the core library.
+ */
+const char *gaim_core_get_version(void);
 
 /**
  * Iterates once through the gaim mainloop.

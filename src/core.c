@@ -138,6 +138,12 @@ gaim_core_quit(void)
 	_core = NULL;
 }
 
+const char *
+gaim_core_get_version(void)
+{
+	return VERSION;
+}
+
 void
 gaim_core_mainloop_iteration(void)
 {
