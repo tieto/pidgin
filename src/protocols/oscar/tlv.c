@@ -43,6 +43,7 @@ static void freetlv(aim_tlv_t **oldtlv)
  * in libfaim.
  *
  * @param bs Input bstream
+ * @return Return the TLV chain read
  */
 faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs)
 {
@@ -127,6 +128,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs)
  *        There are a number of places where you want to read in a tlvchain, 
  *        but the chain is not at the end of the SNAC, and the chain is 
  *        preceded by the number of TLVs.  So you can limit that with this.
+ * @return Return the TLV chain read
  */
 faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, fu16_t num)
 {
@@ -195,6 +197,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, fu16_t num)
  *        There are a number of places where you want to read in a tlvchain, 
  *        but the chain is not at the end of the SNAC, and the chain is 
  *        preceded by the length of the TLVs.  So you can limit that with this.
+ * @return Return the TLV chain read
  */
 faim_internal aim_tlvlist_t *aim_tlvlist_readlen(aim_bstream_t *bs, fu16_t len)
 {
@@ -268,7 +271,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
  *
  * @param one One of the TLV chains to compare.
  * @param two The other TLV chain to compare.
- * @preturn Return 0 if the lists are the same, return 1 if they are different.
+ * @return Return 0 if the lists are the same, return 1 if they are different.
  */
 faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 {
@@ -297,12 +300,12 @@ faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 
 /**
  * Free a TLV chain structure
- * @list: Chain to be freed
  *
  * Walks the list of TLVs in the passed TLV chain and
  * frees each one. Note that any references to this data
  * should be removed before calling this.
  *
+ * @param list Chain to be freed
  */
 faim_internal void aim_tlvlist_free(aim_tlvlist_t **list)
 {
@@ -373,8 +376,8 @@ faim_internal int aim_tlvlist_size(aim_tlvlist_t **list)
  *
  * @param list Desination chain (%NULL pointer if empty).
  * @param type TLV type.
- * @length Length of string to add (not including %NULL).
- * @value String to add.
+ * @param length Length of string to add (not including %NULL).
+ * @param value String to add.
  * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t length, const fu8_t *value)
@@ -564,6 +567,11 @@ faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const fu16_t type)
  * 
  * This is so neat.
  *
+ * @param list Destination chain.
+ * @param type TLV type to add.
+ * @param t1 The TLV chain you want to write.
+ * @return The number of bytes that would be needed to
+ *         write the passed TLV chain to a data buffer.
  */
 faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl)
 {
@@ -710,9 +718,6 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const fu16_t type)
 
 /**
  * aim_tlvlist_write - Write a TLV chain into a data buffer.
- * @buf: Destination buffer
- * @buflen: Maximum number of bytes that will be written to buffer
- * @list: Source TLV chain
  *
  * Copies a TLV chain into a raw data buffer, writing only the number
  * of bytes specified. This operation does not free the chain; 
@@ -720,6 +725,10 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const fu16_t type)
  * by the chain structures.
  *
  * XXX clean this up, make better use of bstreams 
+ *
+ * @param bs Input bstream
+ * @param list Source TLV chain
+ * @return Return 0 if there is not enough buffer, otherwise return 1.
  */
 faim_internal int aim_tlvlist_write(aim_bstream_t *bs, aim_tlvlist_t **list)
 {
