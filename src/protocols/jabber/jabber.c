@@ -2373,6 +2373,27 @@ static void jabber_remove_buddy(struct gaim_connection *gc, char *name, char *gr
 	xmlnode_free(x);
 }
 
+/*
+ * Remove a buddy item from the roster entirely
+ */
+static void jabber_remove_buddy_roster_item(struct gaim_connection *gc, char *name)
+{
+	xmlnode x, y;
+	char *realwho;
+	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+
+	if(!name || (realwho = get_realwho(gjc, name, FALSE, NULL)) == NULL)
+		return;
+
+	x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
+	y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
+	xmlnode_put_attrib(y, "jid", realwho);
+	xmlnode_put_attrib(y, "subscription", "remove");
+	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
+	g_free(realwho);
+	xmlnode_free(x);
+}
+
 static char **jabber_list_icon(int uc)
 {
 	switch (uc) {
@@ -2839,6 +2860,22 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
 	}
+
+	return m;
+}
+
+/*
+ * Jabber protocol-specific "edit buddy menu" item(s)
+ */
+static GList *jabber_edit_buddy_menu(struct gaim_connection *gc, char *who) {
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Remove From Roster");
+	pbm->callback = jabber_remove_buddy_roster_item;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
 	return m;
 }
@@ -3732,6 +3769,7 @@ void jabber_init(struct prpl *ret)
 	ret->actions = jabber_actions;
 	ret->do_action = jabber_do_action;
 	ret->buddy_menu = jabber_buddy_menu;
+	ret->edit_buddy_menu = jabber_edit_buddy_menu;
 	ret->user_opts = jabber_user_opts;
 	ret->login = jabber_login;
 	ret->close = jabber_close;
