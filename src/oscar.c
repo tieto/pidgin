@@ -531,7 +531,7 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 	} else
 		time_idle = 0;
 
-	serv_got_update(info->sn, 1, info->warnlevel, info->onlinesince,
+	serv_got_update(info->sn, 1, info->warnlevel/10, info->onlinesince,
 			time_idle, type, info->capabilities);
 
 	return 1;
@@ -804,7 +804,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 				  "Idle Minutes : <B>%d</B>\n<BR><HR><BR>"
 				  "%s\n"),
 				  info->sn,
-				  info->warnlevel,
+				  info->warnlevel/10,
 				  asctime(localtime(&info->onlinesince)),
 				  info->idletime,
 				  infotype == AIM_GETINFO_GENERALINFO ? prof :
