@@ -331,8 +331,6 @@ void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 			 * other platforms, if need be */
 			if (!g_strcasecmp(tail, ".gz") || !g_strcasecmp(tail, ".tgz"))
 				grab_url(name, TRUE, theme_got_url, ".tgz");
-
-			g_free(tail);
 		}
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);
