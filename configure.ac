@@ -140,7 +140,7 @@ AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
-AC_ARG_WITH(dynamic_prpls,   [ --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
+AC_ARG_WITH(dynamic_prpls,   [  --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
 	DYNAMIC_PRPLS="gg irc jabber msn napster oscar toc yahoo zephyr"
 fi
@@ -551,7 +551,7 @@ if test "x$enable_nss" != "xno"; then
 		[with_nspr_includes="$withval"])
 
 	AC_ARG_WITH(nspr-libs,
-		[  --with-nspr-libs=PREFIX         Specify location of Mozilla nsp4 libs.],
+		[  --with-nspr-libs=PREFIX         Specify location of Mozilla nspr4 libs.],
 		[with_nspr_libs="$withval"])
 
 	AC_ARG_WITH(nss-includes,
