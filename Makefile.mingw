@@ -31,11 +31,11 @@ VERSION := $(shell cat ./VERSION)
 NEEDED_DLLS =		$(GTKSPELL_TOP)/libgtkspell.dll \
 			$(IDLETRACK_TOP)/idletrack.dll
 
-SOUNDS =		$(GAIM_SOUNDS)/leave.wav \
-			$(GAIM_SOUNDS)/redalert.wav \
+SOUNDS =	$(GAIM_SOUNDS)/alert.wav \
+			$(GAIM_SOUNDS)/login.wav \
+			$(GAIM_SOUNDS)/logout.wav \
 			$(GAIM_SOUNDS)/receive.wav \
-			$(GAIM_SOUNDS)/send.wav \
-			$(GAIM_SOUNDS)/arrive.wav
+			$(GAIM_SOUNDS)/send.wav
 
 
 ##
