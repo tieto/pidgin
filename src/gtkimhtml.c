@@ -24,6 +24,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "debug.h"
 #include "util.h"
 #include "gtkimhtml.h"
 #include "gtksourceiter.h"
@@ -211,8 +212,9 @@ static gint
 gtk_imhtml_tip (gpointer data)
 {
 	GtkIMHtml *imhtml = data;
-	PangoFontMetrics *font;
+	PangoFontMetrics *font_metrics;
 	PangoLayout *layout;
+	PangoFont *font;
 
 	gint gap, x, y, h, w, scr_w, baseline_skip;
 
@@ -238,19 +240,33 @@ gtk_imhtml_tip (gpointer data)
 
 	gtk_widget_ensure_style (imhtml->tip_window);
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
-	font = pango_font_get_metrics(pango_context_load_font(pango_layout_get_context(layout),
-							      imhtml->tip_window->style->font_desc),
-				      NULL);
+	font = pango_context_load_font(pango_layout_get_context(layout),
+			      imhtml->tip_window->style->font_desc);
+
+	if (font == NULL) {
+		char *tmp = pango_font_description_to_string(
+					imhtml->tip_window->style->font_desc);
+
+		gaim_debug(GAIM_DEBUG_ERROR, "gtk_imhtml_tip",
+			"pango_context_load_font() couldn't load font: '%s'\n",
+			tmp);
+		g_free(tmp);
+
+		return FALSE;
+		
+	}
+
+	font_metrics = pango_font_get_metrics(font, NULL);
 	
 
 	pango_layout_get_pixel_size(layout, &scr_w, NULL);
-	gap = PANGO_PIXELS((pango_font_metrics_get_ascent(font) +
-					   pango_font_metrics_get_descent(font))/ 4);
+	gap = PANGO_PIXELS((pango_font_metrics_get_ascent(font_metrics) +
+					   pango_font_metrics_get_descent(font_metrics))/ 4);
 
 	if (gap < 2)
 		gap = 2;
-	baseline_skip = PANGO_PIXELS(pango_font_metrics_get_ascent(font) +
-								pango_font_metrics_get_descent(font));
+	baseline_skip = PANGO_PIXELS(pango_font_metrics_get_ascent(font_metrics) +
+								pango_font_metrics_get_descent(font_metrics));
 	w = 8 + scr_w;
 	h = 8 + baseline_skip;
 
@@ -267,14 +283,14 @@ gtk_imhtml_tip (gpointer data)
 	else if (x < 0)
 		x = 0;
 
-	y = y + PANGO_PIXELS(pango_font_metrics_get_ascent(font) +
-						pango_font_metrics_get_descent(font));
+	y = y + PANGO_PIXELS(pango_font_metrics_get_ascent(font_metrics) +
+						pango_font_metrics_get_descent(font_metrics));
 
 	gtk_widget_set_size_request (imhtml->tip_window, w, h);
 	gtk_widget_show (imhtml->tip_window);
 	gtk_window_move (GTK_WINDOW(imhtml->tip_window), x, y);
 
-	pango_font_metrics_unref(font);
+	pango_font_metrics_unref(font_metrics);
 	g_object_unref(layout);
 
 	return FALSE;

@@ -73,6 +73,7 @@ version 0.76cvs:
 	* Assorted SSL crashfixes
 	* --enable-debug no longer breaks compilation when using gtk 2.4,
 	  which also broke garnome.
+	* Tooltips shouldn't crash now (Daniel Atallah)
 
 version 0.75 (01/09/2004):
 	* New Yahoo! auth method
