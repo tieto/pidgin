@@ -8,24 +8,32 @@ version 0.78cvs
 	  the autoreconnect plugin (Christopher (siege) O'Brien)
 	* Added support for dragging buddies from the buddy list into the
 	  Add Buddy Pounce dialog.
-	* Massive rewrite of MSN support, which should fix a number of issues
-	  and make errors easier to interpret. (Felipe Contreras)
-	* Option to hide the buttons at the bottom of conversation
-	  windows (Phil Snowberger)
 	* Pounce notification now includes time (Mike Lundy)
+	* The history plugin now shows history for chats in addition to IMs
 
 	Bug Fixes:
-	* Gadu-Gadu updates (Andrew Wellington)
 	* Compiles again with gcc 2.96 (Ignacio J. Elia)
+	* Gtk2.0 compatibility fixes (Tim Ringenbach)
+	* Massive rewrite of MSN support, which should fix a number of issues
+	  and make errors easier to interpret. (Felipe Contreras)
+	* Gadu-Gadu updates (Andrew Wellington)
 	* Dialogs opened from a conversation window are now closed when
 	  the conversation window is closed, preventing a crash (Kevin Stange)
-	* Gtk2.0 compatibility fixes (Tim Ringenbach)
 	* Updated and standardized blist signals (Gary Kramlich)
 	* More doxygen fixes (Jonathan Champ)
 	* Copy/paste encoding fixes (Joe Marcus Clarke)
 	* IRC disconnect crash fix (Luciano Miguel Ferreira Rocha)
 	* Novell prpl works on big endian machines (Novell)
 	* Zephyr works on 64 bit machines (Arun A Tharuvai)
+	* Print Gadu-Gadu messages to the debug window instead of the console
+
+	Preference Changes:
+	* Added a "none" smiley theme to replace the "Show graphical
+	  smileys" option
+	* Removed "Show logins in window," default to yes
+	* Removed "Send URLs as links," default to yes (in protocols that
+	  support HTML)
+	* Removed "Show URLs as links," default to yes
 
 version 0.77 (04/22/2004):
 	New Features:
