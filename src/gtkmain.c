@@ -100,27 +100,6 @@ static int ignore_sig_list[] = {
 };
 #endif
 
-static guint snd_tmout = 0;
-static gboolean sound_timeout(gpointer data)
-{
-	gaim_gtk_sound_set_login_mute(FALSE);
-	snd_tmout = 0;
-	return FALSE;
-}
-
-/* we need to do this for Oscar because serv_login only starts the login
- * process, it doesn't end there. gaim_setup will be called later from
- * oscar.c, after the buddy list is made and serv_finish_login is called */
-void gaim_setup(GaimConnection *gc)
-{
-	if (gaim_prefs_get_bool("/gaim/gtk/sound/enabled/login")) {
-		if (snd_tmout)
-			g_source_remove(snd_tmout);
-		gaim_gtk_sound_set_login_mute(TRUE);
-		snd_tmout = gaim_timeout_add(10000, sound_timeout, NULL);
-	}
-}
-
 static int dologin_named(char *name)
 {
 	GaimAccount *account;
@@ -335,49 +314,43 @@ gaim_gtk_core_get_ui_ops(void)
 }
 
 static void
-show_usage(int mode, const char *name)
+show_usage(const char *name, gboolean terse)
 {
-	char *text=NULL;
+	char *text;
+	char *text_conv;
+	GError *error = NULL;
 
-	switch (mode) {
-	case 0:		/* full help text */
-		text=g_strdup_printf(_("Gaim %s\n"
+	if (terse) {
+		text = g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+	} else {
+		text = g_strdup_printf(_("Gaim %s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -a, --acct          display account editor window\n"
-		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
-		       "                      name of away message to use)\n"
-		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-		       "                      account(s) to use, seperated by commas)\n"
-		       "  -n, --loginwin      don't automatically login; show login window\n"
-		       "  -u, --user=NAME     use account NAME\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -h, --help          display this help and exit\n"
+		       "  -n, --loginwin      don't automatically login; show login window\n"
+		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+		       "                      account(s) to use, seperated by commas)\n"
+		       "  -u, --user=NAME     use account NAME\n"
 		       "  -v, --version       display the current version and exit\n"
-		       "  -h, --help          display this help and exit\n"), VERSION, name);
-		break;
-	case 1:		/* short message */
-		text=g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
-		break;
+		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
+		       "                      name of away message to use)\n"), VERSION, name);
 	}
 
-	if(text) {
-		char *text_conv;
-		GError *error=NULL;
-
-		/* tries to convert 'text' to users locale */
-		text_conv=g_locale_from_utf8(text,-1,NULL,NULL,&error);
-		if(text_conv) {
-			puts(text_conv);
-			g_free(text_conv);
-		}
-		/* use 'text' as a fallback */
-		else {
-			g_warning("%s\n", error->message);
-			g_error_free(error);
-			puts(text);
-		}
-		g_free(text);
+	/* tries to convert 'text' to users locale */
+	text_conv = g_locale_from_utf8(text, -1, NULL, NULL, &error);
+	if (text_conv != NULL) {
+		puts(text_conv);
+		g_free(text_conv);
 	}
+	/* use 'text' as a fallback */
+	else {
+		g_warning("%s\n", error->message);
+		g_error_free(error);
+		puts(text);
+	}
+	g_free(text);
 }
 
 #ifdef HAVE_STARTUP_NOTIFICATION
@@ -630,8 +603,6 @@ int main(int argc, char *argv[])
 	   }
 	 */
 
-	gui_check = gtk_init_check(&argc, &argv);
-
 	/* scan command-line options */
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
@@ -642,10 +613,6 @@ int main(int argc, char *argv[])
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
-		case 'u':	/* set user */
-			opt_user = 1;
-			opt_user_arg = g_strdup(optarg);
-			break;
 		case 'a':	/* account editor */
 			opt_acct = 1;
 			break;
@@ -656,21 +623,25 @@ int main(int argc, char *argv[])
 			set_gaim_user_dir(optarg);
 			opt_config_dir_arg = g_strdup(optarg);
 			break;
-		case 's':	/* use existing session ID */
-			opt_session_arg = g_strdup(optarg);
-			break;
-		case 'v':	/* version */
-			opt_version = 1;
-			break;
 		case 'h':	/* help */
 			opt_help = 1;
 			break;
 		case 'n':       /* don't autologin */
 			opt_nologin = 1;
 			break;
+		case 's':	/* use existing session ID */
+			opt_session_arg = g_strdup(optarg);
+			break;
+		case 'u':	/* set user */
+			opt_user = 1;
+			opt_user_arg = g_strdup(optarg);
+			break;
+		case 'v':	/* version */
+			opt_version = 1;
+			break;
 		case '?':
 		default:
-			show_usage(1, argv[0]);
+			show_usage(argv[0], TRUE);
 			return 0;
 			break;
 		}
@@ -678,7 +649,7 @@ int main(int argc, char *argv[])
 
 	/* show help message */
 	if (opt_help) {
-		show_usage(0, argv[0]);
+		show_usage(argv[0], FALSE);
 		return 0;
 	}
 	/* show version message */
@@ -687,6 +658,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+	gui_check = gtk_init_check(&argc, &argv);
 	if (!gui_check) {
 		char *display = gdk_get_display();
 
@@ -758,7 +730,6 @@ int main(int argc, char *argv[])
 		g_free(opt_session_arg);
 		opt_session_arg = NULL;
 	}
-
 	if (opt_config_dir_arg != NULL) {
 		g_free(opt_config_dir_arg);
 		opt_config_dir_arg = NULL;
@@ -787,7 +758,7 @@ int main(int argc, char *argv[])
 		gaim_accounts_auto_login(GAIM_GTK_UI);
 
 	gaim_blist_show();
-	
+
 	if (opt_acct) {
 		gaim_gtk_accounts_window_show();
 	}
@@ -795,12 +766,13 @@ int main(int argc, char *argv[])
 #ifdef HAVE_STARTUP_NOTIFICATION
 	startup_notification_complete();
 #endif
+
 	gtk_main();
+
 	gaim_sound_shutdown();
 #ifdef _WIN32
 	wgaim_cleanup();
 #endif
-
 
 	return 0;
 

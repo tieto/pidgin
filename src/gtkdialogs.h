@@ -88,9 +88,6 @@ extern int docklet_count;
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
 
-/* Functions in gtkmain.c */
-extern void gaim_setup(GaimConnection *);
-
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *, gchar *);
 extern void session_end();

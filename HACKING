@@ -204,12 +204,9 @@ idle.c:
   reporting idle time (imagine that). It's a pretty straight-forward file.
   This also takes care of the auto-away stuff.
 
-main.c:
+gtkmain.c:
   This is where the main() function is. It takes care of a lot of the
-  initialization stuff, and showing the login window. It's pretty tiny
-  and there's not really much to edit in it. This has some of the most
-  pointless functions, like gaim_setup, which optionally turns off sounds
-  on signon. A lot of this file should actually be part of other files.
+  initialization stuff, and showing the buddy list or account editor.
 
 md5.c:
   Oscar, Yahoo, and MSN all require md5 hashing, so better to put it in

@@ -63,9 +63,6 @@
 #include "gtkutils.h"
 #include "gtkstock.h"
 
-/* XXX */
-#include "gaim.h"
-
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
 #define SEND_COLOR "#16569E"

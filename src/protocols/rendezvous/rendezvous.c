@@ -126,7 +126,7 @@ static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, con
 	gaim_prpl_got_user_status(account, b->name, "offline", NULL);
 	gaim_blist_remove_buddy(b);
 	/* XXX - This results in incorrect group counts--needs to be fixed in the core */
-	/* XXX - We also need to call remove_idle_buddy() in server.c for idle buddies */ 
+	/* XXX - We also need to call remove_idle_buddy() in server.c for idle buddies */
 
 	/*
 	 * XXX - Instead of removing immediately, wait 10 seconds and THEN remove

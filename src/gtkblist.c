@@ -4894,7 +4894,6 @@ plugin_act(GtkObject *obk, GaimPluginAction *pam)
 }
 
 
-
 static void
 build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
 {
@@ -5098,4 +5097,3 @@ gaim_gtk_blist_update_plugin_actions(void)
 		}
 	}
 }
-

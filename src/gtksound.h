@@ -44,13 +44,6 @@ void *gaim_gtk_sound_get_handle();
 GaimSoundUiOps *gaim_gtk_sound_get_ui_ops(void);
 
 /**
- * Mutes or un-mutes login sounds.
- *
- * @param mute The mute state.
- */
-void gaim_gtk_sound_set_login_mute(gboolean mute);
-
-/**
  * Get the prefs option for an event.
  *
  * @param event The event.

@@ -36,8 +36,6 @@
 #include "proxy.h"
 #include "util.h"
 
-#include "gaim.h"
-
 static GaimProxyInfo *global_proxy_info = NULL;
 
 struct PHB {

@@ -18,8 +18,6 @@
 #include "internal.h"
 #include "gtkgaim.h"
 
-#include "gaim.h"
-
 char username[] = "";
 char password[] = "";
 char mailhost[] = "";
@@ -101,7 +99,6 @@ void destroy_mail_list()
 	}
 }
 
-
 void setup_mail_list()
 {
 	GList *list;
@@ -131,16 +128,15 @@ void setup_mail_list()
 	gtk_tree_item_set_subtree(GTK_TREE_ITEM(item), tree);
 	gtk_tree_item_expand(GTK_TREE_ITEM(item));
 
-	buf = g_malloc(BUF_LONG);
-
-	g_snprintf(buf, BUF_LONG, _("%s (%d new/%d total)"), mailhost, lastnum - orig, lastnum);
+	/* XXX - This needs to use ngettext() */
+	buf = g_strdup_printf(_("%s (%d new/%d total)"), mailhost, lastnum - orig, lastnum);
 	item = gtk_tree_item_new_with_label(buf);
 	g_free(buf);
 
 	gtk_tree_append(GTK_TREE(tree), item);
 	gtk_widget_show(item);
 }
-	
+
 void gaim_plugin_init(void *h) {
 	handle = h;
 
@@ -149,7 +145,7 @@ void gaim_plugin_init(void *h) {
 
 	gaim_signal_connect(handle, event_blist_update, setup_mail_list, NULL);
 	setup_mail_list();
-	
+
 	mytimer = g_timeout_add(30000, check_mail, NULL);
 }
 
@@ -186,7 +182,6 @@ void update_mail () {
 	setup_mail_list();
 	state = 0;
 }
-
 
 void gaim_plugin_remove() {
 	g_source_remove(mytimer);

@@ -21,7 +21,6 @@
 #include "conversation.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "gaim.h"
 #include "internal.h"
 #include "util.h"
 #include "version.h"

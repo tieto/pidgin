@@ -58,6 +58,7 @@ struct gaim_sound_event {
 
 #define PLAY_SOUND_TIMEOUT 15000
 
+static guint mute_login_sounds_timeout = 0;
 static gboolean mute_login_sounds = FALSE;
 static gboolean sound_initialized = FALSE;
 
@@ -83,8 +84,36 @@ static int ao_driver = -1;
 static void _pref_sound_method_changed(const char *name, GaimPrefType type,
 		gpointer val, gpointer data);
 
+static gboolean
+mute_login_sounds_cb(gpointer data)
+{
+	mute_login_sounds = FALSE;
+	mute_login_sounds_timeout = 0;
+	return FALSE;
+}
+
+/*
+ * We mute sounds for the 10 seconds after you log in so that
+ * you don't get flooded with sounds when the blist shows all
+ * your buddies logging in.
+ */
+static void
+account_signon_cb(GaimConnection *gc, gpointer data)
+{
+	if (mute_login_sounds_timeout != 0)
+		g_source_remove(mute_login_sounds_timeout);
+	mute_login_sounds = TRUE;
+	mute_login_sounds_timeout = gaim_timeout_add(10000, mute_login_sounds_cb, NULL);
+}
+
 static void gaim_gtk_sound_init(void)
 {
+	void *gtk_sound_handle = gaim_gtk_sound_get_handle();
+
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						gtk_sound_handle, GAIM_CALLBACK(account_signon_cb),
+						NULL);
+
 	gaim_prefs_add_none("/gaim/gtk/sound");
 	gaim_prefs_add_none("/gaim/gtk/sound/enabled");
 	gaim_prefs_add_none("/gaim/gtk/sound/file");
@@ -387,11 +416,6 @@ static gboolean play_file_nas(const char *filename)
 }
 
 #endif /* USE_NAS_AUDIO */
-
-void gaim_gtk_sound_set_login_mute(gboolean mute)
-{
-	mute_login_sounds = mute;
-}
 
 const char *gaim_gtk_sound_get_event_option(GaimSoundEventID event)
 {

@@ -22,7 +22,7 @@
  */
 
 /* Somewhat inspired by XMMS*/
- 
+
 /* This provides code for connecting to a Gaim socket and communicating with
  * it.  It will eventually be made a library once the core and ui are split. */
 
@@ -30,7 +30,6 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include "gaim.h"
 #include "gaim-socket.h"
 
 void cui_send_packet (int fd, struct gaim_cui_packet *p) {

@@ -236,8 +236,6 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 {
 	struct login_meter *meter = find_login_meter(gc);
 
-	gaim_setup(gc);
-
 #if 0 /* XXX CORE/UI */
 	do_away_menu();
 #endif
