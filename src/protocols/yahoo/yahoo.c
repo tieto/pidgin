@@ -417,8 +417,14 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 		lines = g_strsplit(pair->value, "\n", -1);
 		for (tmp = lines; *tmp; tmp++) {
 			split = g_strsplit(*tmp, ":", 2);
+			if (!split)
+				continue;
+			if (!split[1]) {
+				g_strfreev(split);
+				continue;
+			}
 			buddies = g_strsplit(split[1], ",", -1);
-			for (bud = buddies; *bud; bud++)
+			for (bud = buddies; bud && *bud; bud++)
 				if (!find_buddy(gc, *bud)) {
 					add_buddy(gc, split[0], *bud, *bud);
 					export = TRUE;
