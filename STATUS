@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-02-26 15:38:27 -0500 (Mon, 26 Feb 2001) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-03-08 23:28:33 -0500 (Thu, 08 Mar 2001) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -88,7 +88,8 @@ so far though), checking other people's status (via right-clicking in the
 buddy list), and sending/receiving messages. You can also select your active ID,
 though currently you have to just remember what it is since there's nothing in
 the UI that'll let you know. Chat and file transfer are planned but not yet
-implemented.
+implemented. Adding and removing buddies currently doesn't work. Yahoo servers
+are flaky at best so if you're having problems it's probably not my fault.
 
 
 IRC (Rob)
