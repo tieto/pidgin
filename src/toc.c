@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1343 $"
+#define REVISION "gaim:$Revision: 1378 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -726,9 +726,10 @@ static void toc_set_away(struct gaim_connection *g, char *message)
 
 static void toc_set_info(struct gaim_connection *g, char *info)
 {
-	char buf[MSG_LEN];
-	escape_text(info);
-	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", info);
+	char buf[MSG_LEN], buf2[MSG_LEN];
+	g_snprintf(buf2, sizeof buf2, "%s", info);
+	escape_text(buf2);
+	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", buf2);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
