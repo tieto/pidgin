@@ -647,6 +647,19 @@ void irc_msg_notice(struct irc_conn *irc, const char *name, const char *from, ch
 	irc_msg_privmsg(irc, name, from, newargs);
 }
 
+void irc_msg_nochangenick(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	GaimConnection *gc = gaim_account_get_connection(irc->account);
+	char *msg;
+
+	if (!args || !args[1] || !args[2] || !gc)
+		return;
+
+	msg = g_strdup_printf(_("Could not change nick:"), args[1]);
+	gaim_notify_error(gc, _("Cannot change nick"), msg, args[2]);
+	g_free(msg);
+}
+
 void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);

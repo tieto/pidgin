@@ -73,6 +73,7 @@ static struct _irc_msg {
 	{ "421", "nv:", irc_msg_unknown },	/* Unknown command		*/
 	{ "422", "nv:", irc_msg_endmotd },	/* No MOTD available		*/
 	{ "433", "vn:", irc_msg_nickused },	/* Nickname already in use	*/
+	{ "438", "nn:", irc_msg_nochangenick },	/* Nick may not change		*/
 	{ "442", "nc:", irc_msg_notinchan },	/* Not in channel		*/
 	{ "473", "nc:", irc_msg_inviteonly },	/* Tried to join invite-only	*/
 	{ "474", "nc:", irc_msg_banned },	/* Banned from channel		*/
