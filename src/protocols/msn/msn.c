@@ -392,17 +392,19 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 				 const char **nw, const char **ne)
 {
 	MsnUser *user;
+	GaimPresence *presence;
 	const char *emblems[4] = { NULL, NULL, NULL, NULL };
-	int away_type = MSN_AWAY_TYPE(b->uc);
 	int i = 0;
 
 	user = b->proto_data;
+	presence = gaim_buddy_get_presence(b);
 
-	if (b->present == GAIM_BUDDY_OFFLINE)
+	if (!gaim_presence_is_online(presence))
 		emblems[i++] = "offline";
-	else if (away_type == MSN_BUSY || away_type == MSN_PHONE)
+	else if (gaim_presence_is_status_active(presence, "busy") ||
+			 gaim_presence_is_status_active(presence, "phone"))
 		emblems[i++] = "occupied";
-	else if (away_type != 0)
+	else if (gaim_presence_is_status_active(presence, "away"))
 		emblems[i++] = "away";
 
 	if (user == NULL)
@@ -449,37 +451,49 @@ msn_tooltip_text(GaimBuddy *buddy)
 static GList *
 msn_status_types(GaimAccount *account)
 {
-	GaimStatusType *offline;
-	GaimStatusType *online;
-	GaimStatusType *unavail;
+	GaimStatusType *status;
 	GList *types = NULL;
 
-	offline = gaim_status_type_new(GAIM_STATUS_OFFLINE,
+	status = gaim_status_type_new(GAIM_STATUS_OFFLINE,
 			"offline", _("Offline"), FALSE);
-	types = g_list_append(types, offline);
+	types = g_list_append(types, status);
 
-	online = gaim_status_type_new(GAIM_STATUS_ONLINE,
+	status = gaim_status_type_new(GAIM_STATUS_ONLINE,
 			"online", _("Online"), FALSE);
-	types = g_list_append(types, online);
+	types = g_list_append(types, status);
 
-	gaim_status_type_new(online, GAIM_STATUS_AVAILABLE, "available",
-			_("Available"), FALSE, FALSE, FALSE);
-	unavail = gaim_status_type_new(online, GAIM_STATUS_UNAVAILABLE,
+	status = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+			"available", _("Available"), FALSE, FALSE, FALSE);
+	types = g_list_append(types, status);
+
+	status = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
 			"unavailable", _("Unavailable"),
 			FALSE, FALSE, FALSE);
+	types = g_list_append(types, status);
 
-	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "away",
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away",
 			_("Away"), FALSE, TRUE, FALSE);
-	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "brb",
+	types = g_list_append(types, status);
+
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "brb",
 			_("Be Right Back"), FALSE, TRUE, FALSE);
-	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "busy",
+	types = g_list_append(types, status);
+
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "busy",
 			_("Busy"), FALSE, TRUE, FALSE);
-	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "phone",
+	types = g_list_append(types, status);
+
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "phone",
 			_("On The Phone"), FALSE, TRUE, FALSE);
-	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "lunch",
+	types = g_list_append(types, status);
+
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "lunch",
 			_("Out To Lunch"), FALSE, TRUE, FALSE);
-	gaim_status_type_new(unavail, GAIM_STATUS_HIDDEN, "hidden",
+	types = g_list_append(types, status);
+
+	status = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "hidden",
 			_("Hidden"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, status);
 
 	return types;
 }
@@ -740,53 +754,40 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 }
 
 static void
-msn_set_away(GaimConnection *gc, const char *state, const char *msg)
+msn_set_status(GaimAccount *account, GaimStatus *status)
 {
+	GaimConnection *gc;
 	MsnSession *session;
-	int status;
+	const char *state;
+	int msnstatus;
+
+	gc = gaim_account_get_connection(account);
+
+	if (gc == NULL)
+		return;
 
 	session = gc->proto_data;
 
-	if (gc->away != NULL)
-	{
-		g_free(gc->away);
-		gc->away = NULL;
-	}
+	state = gaim_status_get_id(status);
 
-	if (msg != NULL)
-	{
-		gc->away = g_strdup("");
-		status = MSN_AWAY;
-	}
-	else if (state)
-	{
-		gc->away = g_strdup("");
-
-		if (!strcmp(state, _("Away From Computer")))
-			status = MSN_AWAY;
-		else if (!strcmp(state, _("Be Right Back")))
-			status = MSN_BRB;
-		else if (!strcmp(state, _("Busy")))
-			status = MSN_BUSY;
-		else if (!strcmp(state, _("On The Phone")))
-			status = MSN_PHONE;
-		else if (!strcmp(state, _("Out To Lunch")))
-			status = MSN_LUNCH;
-		else if (!strcmp(state, _("Hidden")))
-			status = MSN_HIDDEN;
-		else
-		{
-			g_free(gc->away);
-			gc->away = NULL;
-			status = MSN_ONLINE;
-		}
-	}
-	else if (gc->is_idle)
-		status = MSN_IDLE;
+	if (!strcmp(state, "away"))
+		msnstatus = MSN_AWAY;
+	else if (!strcmp(state, "brb"))
+		msnstatus = MSN_BRB;
+	else if (!strcmp(state, "busy"))
+		msnstatus = MSN_BUSY;
+	else if (!strcmp(state, "phone"))
+		msnstatus = MSN_PHONE;
+	else if (!strcmp(state, "lunch"))
+		msnstatus = MSN_LUNCH;
+	else if (!strcmp(state, "hidden"))
+		msnstatus = MSN_HIDDEN;
+	else if (0) /* how do we detect idle with new status? */
+		msnstatus = MSN_IDLE;
 	else
-		status = MSN_ONLINE;
+		msnstatus = MSN_ONLINE;
 
-	msn_change_status(session, status);
+	msn_change_status(session, msnstatus);
 }
 
 static void
@@ -795,9 +796,6 @@ msn_set_idle(GaimConnection *gc, int idle)
 	MsnSession *session;
 
 	session = gc->proto_data;
-
-	if (gc->away != NULL)
-		return;
 
 	msn_change_status(session, (idle ? MSN_IDLE : MSN_ONLINE));
 }
@@ -1170,7 +1168,9 @@ msn_tooltip_info_text(MsnGetInfoData *info_data) {
 			info_data->name);
 
 	if (b) {
+		GaimPresence *presence;
 		char *statustext = msn_tooltip_text(b);
+		presence = gaim_buddy_get_presence(b);
 		if(b->alias && b->alias[0]) {
 			char *aliastext = g_markup_escape_text(b->alias, -1);
 			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
@@ -1183,8 +1183,9 @@ msn_tooltip_info_text(MsnGetInfoData *info_data) {
 					nicktext);
 			g_free(nicktext);
 		}
-		if (b->idle > 0) {
-			char *idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
+		if (gaim_presence_is_idle(presence)) {
+			char *idletime = gaim_str_seconds_to_string(time(NULL) -
+										gaim_presence_get_idle_time(presence));
 			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"),
 					idletime);
 			g_free(idletime);
@@ -1685,7 +1686,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* set_info */
 	msn_send_typing,		/* send_typing */
 	msn_get_info,			/* get_info */
-	msn_set_away,			/* set_away */
+	msn_set_status,			/* set_away */
 	msn_set_idle,			/* set_idle */
 	NULL,					/* change_passwd */
 	msn_add_buddy,			/* add_buddy */
