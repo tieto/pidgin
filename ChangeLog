@@ -28,6 +28,8 @@ version 0.76cvs:
 	  (Send Message, Get User Info, and Insert Link dialogs)
 	* Jabber file transfer
 	* IRC file transfer (Tim Ringenbach)
+	* Added a hidden preference for disabling buddy list tooltips or
+	  changing the pop-up delay in prefs.xml.
 	* Moved translation news to po/ChangeLog
 
 	Bug Fixes:
