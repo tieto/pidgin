@@ -352,6 +352,7 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	char *buf, *buf2;
 	GtkTextIter start_iter, end_iter;
 	int limit;
+	struct gaim_connection *gc = gaim_conversation_get_gc(conv);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -385,7 +386,7 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 
 	buf2 = g_malloc(limit);
 
-	if (gaim_conversation_get_gc(conv)->flags & OPT_CONN_HTML) {
+	if (gc && gc->flags & OPT_CONN_HTML) {
 		if (font_options & OPT_FONT_BOLD) {
 			g_snprintf(buf2, limit, "<B>%s</B>", buf);
 			strcpy(buf, buf2);
