@@ -353,7 +353,6 @@ extern void signoff(struct gaim_connection *);
 extern void do_pounce(struct gaim_connection *, char *, int);
 void create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
 					  GdkPixmap **pixmap, GdkBitmap **mask);
-void docklet_toggle();
 
 /* Functions in buddy_chat.c */
 extern void show_new_buddy_chat(struct conversation *);

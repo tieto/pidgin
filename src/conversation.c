@@ -2118,7 +2118,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	GtkWidget *win;
 	GtkWidget *entry;
 
-	toolbar = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+	toolbar = gtk_toolbar_new();
 	win = c->window;
 	entry = c->entry;
 

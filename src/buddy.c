@@ -1999,7 +1999,7 @@ void docklet_toggle() {
 	   buddy list/login window--depending on which is active */
 	if (connections) {
 		if (GTK_WIDGET_VISIBLE(blist)) {
-			if (DOCKLET_WINDOW_ICONIFIED(blist)) {
+			if (GAIM_WINDOW_ICONIFIED(blist)) {
 				unhide_buddy_list();
 			} else {
 				hide_buddy_list();
@@ -2009,7 +2009,7 @@ void docklet_toggle() {
 		}
 	} else {
 		if (GTK_WIDGET_VISIBLE(mainwindow)) {
-			if (DOCKLET_WINDOW_ICONIFIED(mainwindow)) {
+			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
 				gtk_window_present(GTK_WINDOW(mainwindow));
 			} else {
 				gtk_widget_hide(mainwindow);
@@ -2458,6 +2458,13 @@ static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void 
 	}
 }
 
+static void change_state_blist_window(GtkWidget *w, GdkEventWindowState *event, void *dummy) {
+       if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED &&
+           docklet_count) {
+               gtk_widget_hide(blist);
+       }
+}
+
 /*******************************************************************
  *
  * Helper funs for making the menu
@@ -2493,8 +2500,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
-	gtk_widget_lock_accelerators(menuitem);
-
+	
 	return menuitem;
 }
 
@@ -2544,7 +2550,6 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 	if (accel_key) {
 		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,
 					   accel_mods, GTK_ACCEL_LOCKED);
-		gtk_widget_lock_accelerators(menuitem);
 	}
 
 	return menuitem;
@@ -2656,7 +2661,7 @@ void show_buddy_list()
 	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
 
 	accel = gtk_accel_group_new();
-	gtk_accel_group_attach(accel, G_OBJECT(blist));
+	gtk_window_add_accel_group(G_OBJECT(blist), accel);
 
 	menubar = gtk_menu_bar_new();
 
@@ -2866,6 +2871,8 @@ void show_buddy_list()
 			   NULL);
 
 	gtk_signal_connect(GTK_OBJECT(blist), "configure_event", GTK_SIGNAL_FUNC(configure_blist_window),
+			   NULL);
+	gtk_signal_connect(GTK_OBJECT(blist), "window_state_event", GTK_SIGNAL_FUNC(change_state_blist_window),
 			   NULL);
 
 

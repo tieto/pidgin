@@ -26,13 +26,12 @@
     - handle and update tooltips to show your current accounts
     - dernyi's account status menu in the right click
     - store icons in gtk2 stock icon thing (needs doing for the whole prog)
-    - pop up notices when GNOME2's system-tray-applet supports it, with a
-       prefs dialog to choose what to alert for */
+    - optional pop up notices when GNOME2's system-tray-applet supports it
+    - support blinking the icon when messages are pending */
 
 /* includes */
 #define GAIM_PLUGINS
 #include <gtk/gtk.h>
-#include <fcntl.h>
 #include "gaim.h"
 #include "eggtrayicon.h"
 
@@ -48,34 +47,27 @@ enum docklet_status {
 
 /* functions */
 static void docklet_create();
+static void docklet_update_status();
 
 /* globals */
+static GtkWidget *configwin;
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *icon;
 static enum docklet_status status;
-static GtkWidget *configwin = NULL;
 
-static void docklet_embedded(GtkWidget *widget, void *data) {
-	debug_printf("Docklet: embedded\n");
-	docklet_add();
+static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
+	mute_sounds = GTK_CHECK_MENU_ITEM(toggle)->active;
 }
 
-static void docklet_destroyed(GtkWidget *widget, void *data) {
-	debug_printf("Docklet: destroyed\n");
-	docklet_remove();
-	docklet_create();
+static void docklet_toggle_queue(GtkWidget *widget, void *data) {
+	away_options ^= OPT_AWAY_QUEUE_UNREAD;
+	save_prefs();
 }
-
- 
-static void docklet_mute(GtkWidget *toggle, void *data) {
-       mute_sounds = GTK_CHECK_MENU_ITEM(toggle)->active;
-       if (mute_sounds) {
-	       debug_printf("Docklet: sounds muted\n");
-       } else {
-               debug_printf("Docklet: sounds unmuted\n");
-       }
+  
+static void docklet_flush_queue() {
+	purge_away_queue(unread_message_queue);
+	unread_message_queue = NULL;
 }
-
 
 static void docklet_menu(GdkEventButton *event) {
 	static GtkWidget *menu = NULL;
@@ -89,7 +81,7 @@ static void docklet_menu(GdkEventButton *event) {
 
 	if (status == offline) {
 		entry = gtk_menu_item_new_with_label(_("Auto-login"));
-		g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(auto_login), NULL);
+		g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(auto_login), NULL);
 		gtk_menu_append(GTK_MENU(menu), entry);
 	} else {
 		if (status == online) {
@@ -104,7 +96,7 @@ static void docklet_menu(GdkEventButton *event) {
 				a = (struct away_message *)awy->data;
 
 				entry = gtk_menu_item_new_with_label(a->name);
-				g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(do_away_message), a);
+				g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_away_message), a);
 				gtk_menu_append(GTK_MENU(docklet_awaymenu), entry);
 
 				awy = g_slist_next(awy);
@@ -114,7 +106,7 @@ static void docklet_menu(GdkEventButton *event) {
 			gtk_menu_append(GTK_MENU(docklet_awaymenu), entry);
 
 			entry = gtk_menu_item_new_with_label(_("New..."));
-			g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(create_away_mess), NULL);
+			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(create_away_mess), NULL);
 			gtk_menu_append(GTK_MENU(docklet_awaymenu), entry);
 
 			entry = gtk_menu_item_new_with_label(_("Away"));
@@ -122,12 +114,12 @@ static void docklet_menu(GdkEventButton *event) {
 			gtk_menu_append(GTK_MENU(menu), entry);
 		} else {
 			entry = gtk_menu_item_new_with_label(_("Back"));
-			g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(do_im_back), NULL);
+			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_im_back), NULL);
 			gtk_menu_append(GTK_MENU(menu), entry);
 		}
 
 		entry = gtk_menu_item_new_with_label(_("Signoff"));
-		g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(signoff_all), NULL);
+		g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(signoff_all), NULL);
 		gtk_menu_append(GTK_MENU(menu), entry);
 	}
 
@@ -136,26 +128,26 @@ static void docklet_menu(GdkEventButton *event) {
 
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), mute_sounds);
-	g_signal_connect(GTK_WIDGET(entry), "toggled", G_CALLBACK(docklet_mute), NULL);
+	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 
 	entry = gtk_menu_item_new_with_label(_("Accounts"));
-	g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(account_editor), NULL);
+	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(account_editor), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 
 	entry = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, NULL);
-	g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(show_prefs), NULL);
+	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(show_prefs), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 
 	entry = gtk_separator_menu_item_new();
 	gtk_menu_append(GTK_MENU(menu), entry);
 
 	entry = gtk_menu_item_new_with_label(_("About"));
-	g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(show_about), NULL);
+	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(show_about), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 
 	entry = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
-	g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(do_quit), NULL);
+	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_quit), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 
 	gtk_widget_show_all(menu);
@@ -166,12 +158,12 @@ static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data
 	switch (event->button) {
 		case 1:
 			if (unread_message_queue) {
- 				purge_away_queue(unread_message_queue);
-				unread_message_queue=NULL;
+ 				docklet_flush_queue();
 				docklet_update_status();
 			}
-			else
+			else {
 				docklet_toggle();
+			}
 			break;
 		case 2:
 			break;
@@ -238,6 +230,8 @@ static void docklet_update_status() {
 			} else {
 				status = away;
 			}
+		} else if (connecting_count) {
+			status = connecting;
 		} else {
 			status = online;
 		}
@@ -254,28 +248,47 @@ static void docklet_update_status() {
 	}
 }
 
+static void docklet_embedded(GtkWidget *widget, void *data) {
+       debug_printf("Docklet: embedded\n");
+       docklet_add();
+}
+
+static void docklet_destroyed(GtkWidget *widget, void *data) {
+       debug_printf("Docklet: destroyed\n");
+       docklet_flush_queue();
+       docklet_remove();
+       docklet_create();
+}
+
 static void docklet_create() {
 	GtkWidget *box;
 
-	/* is this necessary/wise? */
-	if (docklet) {
-		g_signal_handlers_disconnect_by_func(GTK_WIDGET(docklet), G_CALLBACK(docklet_destroyed), NULL);
-		gtk_widget_destroy(GTK_WIDGET(docklet));
-		debug_printf("Docklet: freed\n");
+       	if (docklet) {
+               /* if this is being called when a docklet exists, it's because that
+                  docklet is in the process of being destroyed. all we need to do
+                  is tell gobject we're not interested in it any more, and throw
+                  the pointer away. Alan Cox said so. */
+
+		/* Ooooh, look at me!  I'm Robot101! I know Alan Cox!  I talk to him
+		   all the time!  I'm sooooo special! --Sean Egan */
+               g_object_unref(G_OBJECT(docklet));
+               docklet = NULL;
 	}
 
 	docklet = egg_tray_icon_new("Gaim");
 	box = gtk_event_box_new();
 	icon = gtk_image_new();
 
-	g_signal_connect(GTK_WIDGET(docklet), "embedded", G_CALLBACK(docklet_embedded), NULL);
-	g_signal_connect(GTK_WIDGET(docklet), "destroy", G_CALLBACK(docklet_destroyed), NULL);
-	g_signal_connect(box, "button-press-event", G_CALLBACK(docklet_clicked), NULL);
+	g_signal_connect(G_OBJECT(docklet), "embedded", G_CALLBACK(docklet_embedded), NULL);
+	g_signal_connect(G_OBJECT(docklet), "destroy", G_CALLBACK(docklet_destroyed), NULL);
+	g_signal_connect(G_OBJECT(box), "button-press-event", G_CALLBACK(docklet_clicked), NULL);
 
 	gtk_container_add(GTK_CONTAINER(box), icon);
 	gtk_container_add(GTK_CONTAINER(docklet), box);
 	gtk_widget_show_all(GTK_WIDGET(docklet));
 
+	/* ref the docklet before we bandy it about the place */
+	g_object_ref(G_OBJECT(docklet));
 	docklet_update_status();
 	docklet_update_icon();
 
@@ -338,19 +351,34 @@ char *gaim_plugin_init(GModule *handle) {
 	return NULL;
 }
 
-static void toggle_queue (GtkWidget *w, void *null) {
-	away_options ^= OPT_AWAY_QUEUE_UNREAD;
-	save_prefs();
+void gaim_plugin_remove() {
+       if (GTK_WIDGET_VISIBLE(docklet)) {
+               docklet_remove();
+       }
+
+       docklet_flush_queue();
+
+       g_object_unref(G_OBJECT(docklet));
+       g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_destroyed), NULL);
+       gtk_widget_destroy(GTK_WIDGET(docklet));
+
+       debug_printf("Docklet: removed\n");
 }
-	
+
+static void config_close() {
+	configwin = NULL;
+}
+
 void gaim_plugin_config() {
 	/* This is the sorriest dialog ever written ever */
 	/* It's a good thing I plan on rewriting it later tonight */
 	GtkWidget *button;
 	GtkWidget *vbox;
 
-	if (configwin) return;
+	if (configwin) 
+		return;
 	GAIM_DIALOG(configwin);
+	g_signal_connect(G_OBJECT(configwin), "destroy", GTK_SIGNAL_FUNC(config_close), NULL);
 
 	vbox = gtk_vbox_new(0, 6);
 	gtk_container_add(GTK_CONTAINER(configwin), vbox);
@@ -358,22 +386,10 @@ void gaim_plugin_config() {
 	
 	button = gtk_check_button_new_with_mnemonic("_Hide new messages until docklet is clicked");
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), away_options & OPT_AWAY_QUEUE_UNREAD);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_queue), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(docklet_toggle_queue), NULL);
 	gtk_box_pack_end(GTK_BOX(vbox), button, 0, 0, 0);
 
 	gtk_widget_show_all(configwin);
-}
-
-
-void gaim_plugin_remove() {
-	if (GTK_WIDGET_VISIBLE(docklet)) {
-		docklet_remove();
-	}
-
-	g_signal_handlers_disconnect_by_func(GTK_WIDGET(docklet), G_CALLBACK(docklet_destroyed), NULL);
-	gtk_widget_destroy(GTK_WIDGET(docklet));
-
-	debug_printf("Docklet: removed\n");
 }
       
 struct gaim_plugin_description desc; 

@@ -3692,7 +3692,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 	/* pack buttons */
 	if (c->gc->prpl->smiley_list == NULL) {
-		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		smiley_box = gtk_toolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 		
 		toolbar_add_smiley(c, smiley_box, angel_xpm, win, "O:-)");
@@ -3700,7 +3700,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 		toolbar_add_smiley(c, smiley_box, burp_xpm, win, ":-!");
 		toolbar_add_smiley(c, smiley_box, crossedlips_xpm, win, ":-X");
 
-		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		smiley_box = gtk_toolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 
 		toolbar_add_smiley(c, smiley_box, cry_xpm, win, ":'(");
@@ -3708,7 +3708,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 		toolbar_add_smiley(c, smiley_box, kiss_xpm, win, ":-*");
 		toolbar_add_smiley(c, smiley_box, moneymouth_xpm, win, ":-$");
 
-		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		smiley_box = gtk_toolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 
 		toolbar_add_smiley(c, smiley_box, sad_xpm, win, ":-(");
@@ -3716,7 +3716,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 		toolbar_add_smiley(c, smiley_box, smile_xpm, win, ":-)");
 		toolbar_add_smiley(c, smiley_box, smile8_xpm, win, "8-)");
 
-		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		smiley_box = gtk_toolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 
 		toolbar_add_smiley(c, smiley_box, think_xpm, win, ":-/");
@@ -3740,7 +3740,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 		smilies = c->gc->prpl->smiley_list();
 
-		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+		smiley_box = gtk_toolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 
 		while (smilies) {
@@ -3750,7 +3750,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 			if (smile->show) {
 
 				if ((!(smiley_count % ((int)(sqrt(total_count))))) && (smiley_count > 0)) {
-					smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+					smiley_box = gtk_toolbar_new();
 					gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 				}
 			

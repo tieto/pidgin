@@ -31,12 +31,8 @@
 
 #define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
-#define GdkWindowPrivate GdkWindowObject
-#define gtk_toolbar_new(x,y) gtk_toolbar_new()
-#define gtk_accel_group_attach(x, y) _gtk_accel_group_attach(x, y)
-#define gtk_widget_lock_accelerators(x)
 
-#define DOCKLET_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
+#define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
 #define DEFAULT_FONT_FACE "Helvetica"
 

@@ -1112,7 +1112,7 @@ void kill_meter(struct signon_meter *meter) {
 		gtk_widget_destroy(meter_win->window);
 		g_free (meter_win);
 		meter_win = NULL;
-		}
+	}
 }
 
 void account_online(struct gaim_connection *gc)
@@ -1130,22 +1130,6 @@ void account_online(struct gaim_connection *gc)
 	/* then we do the buddy list stuff */
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
-
-/* fixme: docklet
-	if (blist_options & OPT_BLIST_APP_BUDDY_SHOW) {
-		show_buddy_list();
-		refresh_buddy_window();
-		createOnlinePopup();
-		applet_buddy_show = TRUE;
-	} else if (!blist) {
-		show_buddy_list();
-		build_edit_tree();
-		gtk_widget_hide(blist);
-		applet_buddy_show = FALSE;
-	} else {
-		build_edit_tree();
-	}
-	set_user_state(online); */
 
 	show_buddy_list();
 	refresh_buddy_window();

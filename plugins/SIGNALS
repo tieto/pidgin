@@ -346,14 +346,14 @@ event_del_conversation:
 
 	'c'	is he conversation being closed.
 	
-event_connecting
+event_connecting:
 	struct aim_user *u
 
 	This is called when Gaim attempts to bring a user on-line. The
-	boolean u->connecting is set to true, and a global counter
+	boolean u->connecting is set to true, and connecting_count
 	incremented. The attempt can end with event_signon or event_signoff
 	being called, depending upon whether the attempt was a sucess or
 	a failure. In both cases, u->connecting is set to false and the
 	counter decremented.
 	
-	'u'	is the account being connected
+	'u'	is the account being connected.

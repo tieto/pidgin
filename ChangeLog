@@ -71,8 +71,8 @@ version 0.60:
 	* i18n fixes (Thanks Matt Wilson)
 	* Removed Ctrl-C binding for color
 	* Docklet plugin--replaces the old GNOME applet.  You'll need the
-	  Panel Notification Area applet for GNOME 2, or the patch from
-	  RedHat for KDE 3. (Thanks Robert McQueen)
+	  Panel Notification Area applet for GNOME 2, or the kicker for
+	  KDE 3.1. (Thanks Robert McQueen, Ari Pollak, Patrick Aussems)
 	* Plugins dialog and perl script menu merged into preferences.
 
 version 0.59 (06/24/2002):
