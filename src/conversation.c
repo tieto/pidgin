@@ -256,20 +256,20 @@ struct log_conversation *find_log_info(char *name)
 	return NULL;
 }
 
-void delete_conversation(struct conversation *cnv)
+void delete_conversation(struct conversation *c)
 {
-        conversations = g_list_remove(conversations, cnv);
-	if (cnv->color_dialog)
-		gtk_widget_destroy(cnv->color_dialog);
-	if (cnv->font_dialog)
-		gtk_widget_destroy(cnv->font_dialog);
-	if (cnv->smiley_dialog)
-		gtk_widget_destroy(cnv->smiley_dialog);
-	if (cnv->link_dialog)
-		gtk_widget_destroy(cnv->link_dialog);
-	if (cnv->log_dialog)
-		gtk_widget_destroy(cnv->log_dialog);
-	g_free(cnv);
+        conversations = g_list_remove(conversations, c);
+	if (c->color_dialog)
+		gtk_widget_destroy(c->color_dialog);
+	if (c->font_dialog)
+		gtk_widget_destroy(c->font_dialog);
+	if (c->smiley_dialog)
+		gtk_widget_destroy(c->smiley_dialog);
+	if (c->link_dialog)
+		gtk_widget_destroy(c->link_dialog);
+	if (c->log_dialog)
+		gtk_widget_destroy(c->log_dialog);
+	g_free(c);
 }
 
 void update_log_convs()
@@ -378,6 +378,22 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	if (c->window)
 	        gtk_widget_destroy(c->window);
 	c->window = NULL;
+
+	if (c->color_dialog)
+		gtk_widget_destroy(c->color_dialog);
+	c->color_dialog = NULL;
+	if (c->font_dialog)
+		gtk_widget_destroy(c->font_dialog);
+	c->font_dialog = NULL;
+	if (c->smiley_dialog)
+		gtk_widget_destroy(c->smiley_dialog);
+	c->smiley_dialog = NULL;
+	if (c->link_dialog)
+		gtk_widget_destroy(c->link_dialog);
+	c->link_dialog = NULL;
+	if (c->log_dialog)
+		gtk_widget_destroy(c->log_dialog);
+	c->log_dialog = NULL;
 
 	if (c->is_chat) {
 		serv_chat_leave(c->id);
