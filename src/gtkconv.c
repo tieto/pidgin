@@ -3676,7 +3676,7 @@ build_conv_toolbar(GaimConversation *conv)
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	/* Bold */
@@ -3897,7 +3897,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_show(vpaned);
 
 	/* Setup the top part of the pane. */
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack1(GTK_PANED(vpaned), vbox, TRUE, FALSE);
 	gtk_widget_show(vbox);
 
@@ -3906,15 +3906,16 @@ setup_chat_pane(GaimConversation *conv)
 
 	if (prpl_info->options & OPT_PROTO_CHAT_TOPIC)
 	{
-		hbox = gtk_hbox_new(FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+		hbox = gtk_hbox_new(FALSE, 6);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		gtk_widget_show(hbox);
 
 		label = gtk_label_new(_("Topic:"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
 
 		gtkchat->topic_text = gtk_entry_new();
+
 		if(prpl_info->set_chat_topic == NULL) {
 			gtk_editable_set_editable(GTK_EDITABLE(gtkchat->topic_text), FALSE);
 		} else {
@@ -3922,13 +3923,13 @@ setup_chat_pane(GaimConversation *conv)
 					G_CALLBACK(topic_callback), conv);
 		}
 
-		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 5);
+		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 0);
 		gtk_widget_show(gtkchat->topic_text);
 	}
 
 	/* Setup the horizontal pane. */
 	hpaned = gtk_hpaned_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show(hpaned);
 
 	/* Setup the scrolled window to put gtkimhtml in. */
@@ -3964,7 +3965,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_show(gtkconv->imhtml);
 
 	/* Build the right pane. */
-	lbox = gtk_vbox_new(FALSE, 5);
+	lbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(hpaned), lbox, FALSE, TRUE);
 	gtk_widget_show(lbox);
 
@@ -4015,7 +4016,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_container_add(GTK_CONTAINER(sw), list);
 
 	/* Setup the user list toolbar. */
-	bbox = gtk_hbox_new(TRUE, 5);
+	bbox = gtk_hbox_new(TRUE, 6);
 	gtk_box_pack_start(GTK_BOX(lbox), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
 
@@ -4056,7 +4057,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtkconv->info = button;
 
 	/* Build the toolbar. */
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, FALSE);
 	gtk_widget_show(vbox);
 
@@ -4099,7 +4100,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_show(gtkconv->entry);
 
 	/* Setup the bottom button box. */
-	gtkconv->bbox = gtk_hbox_new(FALSE, 5);
+	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->bbox, FALSE, FALSE, 0);
 	gtk_widget_show(gtkconv->bbox);
 
@@ -4129,7 +4130,7 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(paned);
 
 	/* Setup the top part of the pane. */
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
@@ -4162,7 +4163,7 @@ setup_im_pane(GaimConversation *conv)
 	gaim_setup_imhtml(gtkconv->imhtml);
 	gtk_widget_show(gtkconv->imhtml);
 
-	vbox2 = gtk_vbox_new(FALSE, 5);
+	vbox2 = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
 	gtk_widget_show(vbox2);
 
@@ -4210,7 +4211,7 @@ setup_im_pane(GaimConversation *conv)
 	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
 
-	gtkconv->bbox = gtk_hbox_new(FALSE, 5);
+	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->bbox, FALSE, FALSE, 0);
 	gtk_widget_show(gtkconv->bbox);
 
@@ -4518,8 +4519,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 #endif
 
 		/* Setup the container for the tab. */
-		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(tab_cont), 5);
+		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 6);
+		gtk_container_set_border_width(GTK_CONTAINER(tab_cont), 6);
 		gtk_container_add(GTK_CONTAINER(tab_cont), pane);
 		gtk_widget_show(pane);
 
@@ -4535,8 +4536,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 					gtkconv->entry);
 	}
 
-	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 5);
-	gtkconv->menu_tabby = menu_tabby = gtk_hbox_new(FALSE, 5);
+	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 6);
+	gtkconv->menu_tabby = menu_tabby = gtk_hbox_new(FALSE, 6);
 
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
@@ -5555,7 +5556,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame),
 							  (bm ? GTK_SHADOW_NONE : GTK_SHADOW_IN));
-	gtk_box_pack_start(GTK_BOX(gtkconv->bbox), frame, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(gtkconv->bbox), frame, FALSE, FALSE, 0);
 	gtk_box_reorder_child(GTK_BOX(gtkconv->bbox), frame, 0);
 	gtk_widget_show(frame);
 
