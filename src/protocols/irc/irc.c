@@ -1135,6 +1135,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			return -EINVAL;
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
+		return 1;
 	} else if (!g_strcasecmp(pdibuf, "MSG")) {
 		if (!*word[2])
 			return -EINVAL;
@@ -1189,9 +1190,20 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		write_to_conv(c, "<B>Currently supported commands:<BR>"
 				 "JOIN PART TOPIC<BR>"
 				 "OP DEOP VOICE DEVOICE KICK<BR>"
-				 "NICK ME MSG QUOTE SAY</B><BR>",
+				 "NICK ME MSG QUOTE SAY</B>",
 				 WFLAG_SYSTEM, NULL, time(NULL));
+	} else {
+		struct conversation *c = NULL;
+		if (is_channel(gc, who)) {
+			c = irc_find_chat(gc, who);
+		} else {
+			c = find_conversation(who);
+		}
+		if (!c)
+			return -EINVAL;
+		write_to_conv(c, "<B>Unsupported command</B>", WFLAG_SYSTEM, NULL, time(NULL));
 	}
+
 	return 0;
 }
 

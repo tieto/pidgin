@@ -1123,6 +1123,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	time_t time_idle;
 	int type = 0;
 	struct gaim_connection *gc = sess->aux_data;
+	char *tmp;
 
 	va_list ap;
 	va_start(ap, fr);
@@ -1145,6 +1146,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		time_idle -= info->idletime*60;
 	} else
 		time_idle = 0;
+
+	tmp = g_strdup(normalize(gc->username));
+	if (!strcmp(tmp, normalize(info->sn)))
+		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", info->sn);
+	g_free(tmp);
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, info->onlinesince,
 			time_idle, type, info->capabilities);

@@ -444,7 +444,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		serv_got_im(gc, c, message, a, time((time_t)NULL));
 	} else if (!strcasecmp(c, "UPDATE_BUDDY")) {
-		char *l, *uc;
+		char *l, *uc, *tmp;
 		int logged, evil, idle, type = 0;
 		time_t signon, time_idle;
 
@@ -480,6 +480,11 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			time_idle -= idle * 60;
 		} else
 			time_idle = 0;
+
+		tmp = g_strdup(normalize(gc->username));
+		if (!strcmp(tmp, normalize(c)))
+			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", c);
+		g_free(tmp);
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type, 0);
 	} else if (!strcasecmp(c, "ERROR")) {
