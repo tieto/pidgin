@@ -305,7 +305,7 @@ void show_login()
 
 	gtk_window_set_role(GTK_WINDOW(mainwindow), "login");
 	gtk_window_set_resizable(GTK_WINDOW(mainwindow), FALSE);
-	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
+	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Login"));
 	gtk_widget_realize(mainwindow);
 	gdk_window_set_group(mainwindow->window, mainwindow->window);
 	gtk_container_set_border_width(GTK_CONTAINER(mainwindow), 5);
@@ -437,7 +437,7 @@ void sighandler(int sig)
 			"they can help you.\n");
 #else
 		fprintf(stderr, "Oh no!  Segmentation fault!\n");
-		g_on_error_query (g_get_prgname());
+		/*g_on_error_query (g_get_prgname());*/
 		exit(1);
 #endif
 		abort();

@@ -374,7 +374,7 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 	g_free(filename);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	w->window = gtk_dialog_new_with_buttons(_("Gaim - Warn User"), GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("_Warn"), GTK_RESPONSE_OK, NULL);
+	w->window = gtk_dialog_new_with_buttons(_("Warn User"), GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("_Warn"), GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(w->window), "response", G_CALLBACK(do_warn), w);
 
@@ -777,7 +777,7 @@ void show_info_dialog()
 	g_free(filename);
 	info->gc = connections->data;
 
-	window = gtk_dialog_new_with_buttons(_("Gaim - Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL, 
+	window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL, 
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
@@ -959,7 +959,7 @@ void show_add_group(struct gaim_connection *gc)
 	g_free(filename);
 	a->gc = gc;
 
-	a->window =  gtk_dialog_new_with_buttons(_("Gaim - Add Group"), GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, 
+	a->window =  gtk_dialog_new_with_buttons(_("Add Group"), GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, 
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(a->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(a->window), 6);
@@ -1073,7 +1073,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	g_free(filename);
 
 	GAIM_DIALOG(a->window);
-	a->window = gtk_dialog_new_with_buttons(_("Gaim - Add Buddy"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL,
+	a->window = gtk_dialog_new_with_buttons(_("Add Buddy"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
@@ -1473,7 +1473,7 @@ void show_privacy_options() {
 	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_resizable(GTK_WINDOW(pwin), FALSE);
 	gtk_window_set_role(GTK_WINDOW(pwin), "privacy");
-	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
+	gtk_window_set_title(GTK_WINDOW(pwin), _("Privacy"));
 	g_signal_connect(GTK_OBJECT(pwin), "destroy", G_CALLBACK(destroy_privacy), NULL);
 	gtk_widget_realize(pwin);
 
@@ -1675,7 +1675,7 @@ void show_set_dir(struct gaim_connection *gc)
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_window_set_role(GTK_WINDOW(b->window), "set_dir");
 	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Set Directory Info"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
 
@@ -1859,7 +1859,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	GAIM_DIALOG(b->window);
 	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "change_passwd");
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Password Change"));
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Change Password"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
@@ -1958,7 +1958,7 @@ void show_set_info(struct gaim_connection *gc)
 	GAIM_DIALOG(b->window);
 	gtk_window_set_role(GTK_WINDOW(b->window), "set_info");
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Set User Info"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
 
@@ -2199,9 +2199,9 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 	gtk_widget_show(bbox);
 	gtk_widget_show(vbox);
 	if (permit)
-		gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Permit"));
+		gtk_window_set_title(GTK_WINDOW(p->window), _("Add Permit"));
 	else
-		gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Deny"));
+		gtk_window_set_title(GTK_WINDOW(p->window), _("Add Deny"));
 	gtk_window_set_focus(GTK_WINDOW(p->window), p->entry);
 	gtk_container_add(GTK_CONTAINER(p->window), topbox);
 	gtk_widget_realize(p->window);
@@ -2269,7 +2269,7 @@ void show_log_dialog(struct gaim_conversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (!gtkconv->dialogs.log) {
-		gtkconv->dialogs.log = gtk_file_selection_new(_("Gaim - Log Conversation"));
+		gtkconv->dialogs.log = gtk_file_selection_new(_("Log Conversation"));
 
 		gtk_file_selection_hide_fileop_buttons(
 			GTK_FILE_SELECTION(gtkconv->dialogs.log));
@@ -2479,7 +2479,7 @@ void show_find_info(struct gaim_connection *gc)
 	gtk_widget_show(frame);
 	gtk_widget_show(fbox);
 
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Info"));
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Find Buddy By Info"));
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->firstentry);
 	gtk_container_add(GTK_CONTAINER(b->window), fbox);
 	gtk_container_set_border_width(GTK_CONTAINER(b->window), 5);
@@ -2506,7 +2506,7 @@ void show_find_email(struct gaim_connection *gc)
 	gtk_widget_realize(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Email"));
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Find Buddy By Email"));
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -2614,7 +2614,7 @@ void show_insert_link(GtkWidget *linky, struct gaim_conversation *c)
 		g_free(filename);
 
 		a->c = c;
-		a->window = gtk_dialog_new_with_buttons(_("Gaim - Insert Link"),
+		a->window = gtk_dialog_new_with_buttons(_("Insert Link"),
 				GTK_WINDOW(gtkwin->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL,
 				GTK_RESPONSE_CANCEL, _("Insert"), GTK_RESPONSE_OK, NULL);
 
@@ -3110,7 +3110,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_set_size_request(ca->window, -1, 250);
 	gtk_container_set_border_width(GTK_CONTAINER(ca->window), 5);
 	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
-	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
+	gtk_window_set_title(GTK_WINDOW(ca->window), _("New away message"));
 	g_signal_connect(GTK_OBJECT(ca->window), "delete_event",
 			   G_CALLBACK(destroy_dialog), ca->window);
 	gtk_widget_realize(ca->window);
@@ -3414,7 +3414,7 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_widget_show(topbox);
 	gtk_widget_show(bbox);
 	gtk_widget_show(vbox);
-	gtk_window_set_title(GTK_WINDOW(aliasdlg), _("Gaim - Alias Buddy"));
+	gtk_window_set_title(GTK_WINDOW(aliasdlg), _("Alias Buddy"));
 	gtk_window_set_focus(GTK_WINDOW(aliasdlg), aliasname);
 	gtk_container_add(GTK_CONTAINER(aliasdlg), vbox);
 	gtk_container_set_border_width(GTK_CONTAINER(aliasdlg), 5);
@@ -3483,7 +3483,7 @@ static void show_save_log(GtkWidget *w, gchar *name)
 	g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s%s", gaim_home_dir(),
 		   name ? normalize(name) : "system", name ? ".log" : "");
 
-	filesel = gtk_file_selection_new(_("Gaim - Save Log File"));
+	filesel = gtk_file_selection_new(_("Save Log File"));
 	g_signal_connect(GTK_OBJECT(filesel), "delete_event",
 			   G_CALLBACK(destroy_dialog), filesel);
 
@@ -3532,7 +3532,7 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 
 	GAIM_DIALOG(window);
 	gtk_window_set_role(GTK_WINDOW(window), "dialog");
-	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Clear Log"));
+	gtk_window_set_title(GTK_WINDOW(window), _("Clear Log"));
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 	g_signal_connect(GTK_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
@@ -3720,9 +3720,9 @@ void show_log(char *nm)
 	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_log_win), NULL);
 	gtk_window_set_role(GTK_WINDOW(window), "log");
 	if (name)
-		g_snprintf(buf, BUF_LONG, _("Gaim - Conversations with %s"), name);
+		g_snprintf(buf, BUF_LONG, _("Conversations with %s"), name);
 	else
-		g_snprintf(buf, BUF_LONG, _("Gaim - System Log"));
+		g_snprintf(buf, BUF_LONG, _("System Log"));
 	gtk_window_set_title(GTK_WINDOW(window), buf);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
@@ -4038,7 +4038,7 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 		GAIM_DIALOG(rename_bud_dialog);
 		gtk_window_set_role(GTK_WINDOW(rename_bud_dialog), "rename_bud_dialog");
 		gtk_window_set_resizable(GTK_WINDOW(rename_bud_dialog), TRUE);
-		gtk_window_set_title(GTK_WINDOW(rename_bud_dialog), _("Gaim - Rename Buddy"));
+		gtk_window_set_title(GTK_WINDOW(rename_bud_dialog), _("Rename Buddy"));
 		g_signal_connect(GTK_OBJECT(rename_bud_dialog), "destroy",
 				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
 		gtk_widget_realize(rename_bud_dialog);
@@ -4083,81 +4083,6 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 	gtk_widget_show_all(rename_bud_dialog);
 }
 
-#ifdef USE_PERL
-
-static GtkWidget *perl_config = NULL;
-static char *perl_last_dir = NULL;
-
-static void cfdes(GtkWidget *m, gpointer n)
-{
-	if (perl_config)
-		gtk_widget_destroy(perl_config);
-	perl_config = NULL;
-}
-
-static void do_load(GtkWidget *m, gpointer n)
-{
-	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(perl_config));
-	gchar *f = NULL;
-	if (!file || !strlen(file)) {
-		return;
-	}
-
-	if (file_is_dir(file, perl_config)) {
-		return;
-	}
-
-	if (perl_last_dir) {
-		g_free(perl_last_dir);
-	}
-	perl_last_dir = g_dirname(file);
-
-	debug_printf("Loading perl script: %s\n", file);
-
-	f = g_strdup(file);
-	perl_load_file(f);
-	g_free(f);
-	cfdes(perl_config, NULL);
-}
-
-void load_perl_script()
-{
-	char *buf, *temp;
-
-	if (perl_config) {
-		gtk_widget_show(perl_config);
-		gdk_window_raise(perl_config->window);
-		return;
-	}
-
-	/* Below is basically stolen from plugins.c */
-	perl_config = gtk_file_selection_new(_("Gaim - Select Perl Script"));
-
-	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(perl_config));
-
-	if (!perl_last_dir) {
-		temp = gaim_user_dir();
-		buf = g_strconcat(temp, G_DIR_SEPARATOR_S, NULL);
-	} else {
-		buf = g_strconcat(perl_last_dir, G_DIR_SEPARATOR_S, NULL);
-	}
-
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(perl_config), buf);
-	gtk_file_selection_complete(GTK_FILE_SELECTION(perl_config), "*.pl");
-	g_signal_connect(GTK_OBJECT(perl_config), "destroy", G_CALLBACK(cfdes), perl_config);
-
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->ok_button),
-			   "clicked", G_CALLBACK(do_load), NULL);
-
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->cancel_button),
-			   "clicked", G_CALLBACK(cfdes), NULL);
-
-	g_free(buf);
-	gtk_widget_show(perl_config);
-	gdk_window_raise(perl_config->window);
-}
-
-#endif /* USE_PERL */
 
 GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *icon)
 {

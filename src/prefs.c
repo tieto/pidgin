@@ -1413,7 +1413,7 @@ static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 	char *buf = g_malloc(BUF_LEN);
 
 	if (!sounddialog) {
-		sounddialog = gtk_file_selection_new(_("Gaim - Sound Configuration"));
+		sounddialog = gtk_file_selection_new(_("Sound Selection"));
 
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
 
@@ -1760,7 +1760,7 @@ void show_prefs()
 	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
 	gtk_widget_realize(prefs);
-	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
+	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
 	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
 	g_signal_connect(GTK_OBJECT(prefs), "destroy", G_CALLBACK(delete_prefs), NULL);
 
@@ -1878,7 +1878,7 @@ static void build_debug()
 	GAIM_DIALOG(dw->window);
 	gtk_window_set_default_size(GTK_WINDOW(dw->window), 500, 200);
 	gtk_window_set_role(GTK_WINDOW(dw->window), "debug");
-	gtk_window_set_title(GTK_WINDOW(dw->window), _("Gaim - Debug Window"));
+	gtk_window_set_title(GTK_WINDOW(dw->window), _("Debug Window"));
 	g_signal_connect(G_OBJECT(dw->window), "delete_event", G_CALLBACK(debug_delete), NULL);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);

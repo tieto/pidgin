@@ -587,7 +587,7 @@ static void sel_icon_dlg(GtkWidget *w, struct mod_account *ma)
 		return;
 	}
 
-	dlg = gtk_file_selection_new(_("Gaim - Load Buddy Icon"));
+	dlg = gtk_file_selection_new(_("Load Buddy Icon"));
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(dlg));
 	if (ma->iconfile) {
 		char *tmp = g_dirname(ma->iconfile);
@@ -1085,7 +1085,7 @@ static void show_acct_mod(struct gaim_account *a)
 	ma->mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(ma->mod), "account");
 	gtk_widget_realize(ma->mod);
-	gtk_window_set_title(GTK_WINDOW(ma->mod), _("Gaim - Modify Account"));
+	gtk_window_set_title(GTK_WINDOW(ma->mod), _("Modify Account"));
 	gtk_window_set_resizable(GTK_WINDOW(ma->mod), FALSE);	/* nothing odd here :) */
 	g_signal_connect(GTK_OBJECT(ma->mod), "destroy", G_CALLBACK(delmod), ma);
 
@@ -1392,7 +1392,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	}
 	
 	acctedit = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(acctedit), _("Gaim - Account Editor"));
+	gtk_window_set_title(GTK_WINDOW(acctedit), _("Account Editor"));
 	gtk_window_set_role(GTK_WINDOW(acctedit), "accounteditor");
 	gtk_widget_realize(acctedit);
 	gtk_widget_set_size_request(acctedit, -1, 250);
@@ -1759,7 +1759,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_window_set_resizable(GTK_WINDOW(meter_win->window), FALSE);
 		gtk_window_set_role(GTK_WINDOW(meter_win->window), "signon");
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
-		gtk_window_set_title (GTK_WINDOW (meter_win->window), _("Gaim Account Signon"));
+		gtk_window_set_title (GTK_WINDOW (meter_win->window), _("Signon"));
 		gtk_widget_realize(meter_win->window);
 
 		vbox = gtk_vbox_new (FALSE, 0);
