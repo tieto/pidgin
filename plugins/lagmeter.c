@@ -59,13 +59,16 @@ static void update_lag(int us) {
 
 static void check_lag(struct gaim_connection *gc, char **who, char **message, void *m) {
 	char *name;
+	gboolean good = FALSE;
 	if (gc != my_gc)
 		return;
 
 	name = g_strdup(normalize(*who));
-	if (!strcasecmp(normalize(gc->username), name) &&
-	    (*message != NULL) &&
-	    !strcmp(*message, MY_LAG_STRING)) {
+	if (!g_strcasecmp(normalize(gc->username), name))
+		good = TRUE;
+	if (!g_strcasecmp(normalize(gc->displayname), name))
+		good = TRUE;
+	if (good && (*message != NULL) && !strcmp(*message, MY_LAG_STRING)) {
 		struct timeval tv;
 		int ms;
 
@@ -96,7 +99,9 @@ static gint send_lag() {
 				g_free(buf);
 			} else
 				serv_send_im(my_gc, my_gc->username, m, 1);
-		} else
+		} else if (strcmp(my_gc->username, my_gc->displayname))
+			serv_send_im(my_gc, my_gc->displayname, m, 1);
+		else
 			serv_send_im(my_gc, my_gc->username, m, 1);
 		g_free(m);
 		return TRUE;
