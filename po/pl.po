@@ -4560,7 +4560,7 @@ msgstr "Zalogowany od"
 
 #: src/protocols/irc/msgs.c:212
 msgid "<br><b>Defining adjective:</b> Glorious<br>"
-msgstr "<br><b>Definiowanie przymiotnika:<\b> Chwalebny<br>"
+msgstr "<br><b>Definiowanie przymiotnika:</b> Chwalebny<br>"
 
 #: src/protocols/irc/msgs.c:219
 #, c-format
