@@ -1861,10 +1861,15 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		gtk_widget_show(gtkwin->menu.view_log);
 
-		if (gc && prpl_info->options & OPT_PROTO_IM_IMAGE)
+		if (gc && prpl_info->options & OPT_PROTO_IM_IMAGE) {
 			gtk_widget_show(gtkwin->menu.insert_image);
-		else
+			gtk_widget_set_sensitive(gtkconv->toolbar.image, TRUE);
+
+		}
+		else {
 			gtk_widget_hide(gtkwin->menu.insert_image);
+			gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
+		}
 
 		gtk_widget_show(gtkwin->menu.add_pounce);
 		gtk_widget_show(gtkwin->menu.get_info);
@@ -1887,7 +1892,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		gtk_widget_set_sensitive(gtkwin->menu.add,    TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
 
-
 		gtk_widget_hide(gtkwin->menu.invite);
 
 		if (gtkwin->menu.send_as != NULL)
@@ -1898,6 +1902,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 		gtk_widget_hide(gtkwin->menu.view_log);
 		gtk_widget_hide(gtkwin->menu.insert_image);
+		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
 
 		gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
 
