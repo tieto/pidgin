@@ -515,7 +515,7 @@ void set_defaults()
                 OPT_DISP_SHOW_PIXMAPS |
                 OPT_DISP_SHOW_BUTTON_XPM;
 	font_options = 0; 
-        sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND;
+        sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND | OPT_SOUND_SILENT_SIGNON;
         report_idle = IDLE_GAIM;
         web_browser = BROWSER_NETSCAPE;
         proxy_type = PROXY_NONE;

@@ -1,5 +1,5 @@
 
-EXTRA_DIST = gaim_applet.gnorba gaim_applet.desktop gaim_applet.soundlist \
+EXTRA_DIST = gaim.spec gaim_applet.gnorba gaim_applet.desktop gaim_applet.soundlist \
 	buddytrans
 
 if GNOMEAPPLET
