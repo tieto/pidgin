@@ -26,6 +26,8 @@
 #ifndef _GAIM_UTIL_H_
 #define _GAIM_UTIL_H_
 
+#include <stdio.h>
+
 #include "account.h"
 
 #ifdef __cplusplus
