@@ -148,7 +148,13 @@ void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt)
 		if (icon == 2)
 			yahoo_send_picture_request(gc, who);
 		else if ((icon == 0) || (icon == 1)) {
+			GaimBuddy *b = gaim_find_buddy(gc->account, who);
+			YahooFriend *f;
 			gaim_buddy_icons_set_for_user(gc->account, who, NULL, 0);
+			if (b)
+				gaim_blist_node_remove_setting((GaimBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+			if ((f = yahoo_friend_find(gc, who)))
+				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			gaim_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
 		}
 	}

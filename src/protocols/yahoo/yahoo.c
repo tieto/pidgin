@@ -443,14 +443,20 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (!name)
 				break;
 
+			b = gaim_find_buddy(gc->account, name);
+
 			if (!cksum || (cksum == -1)) {
+				if (f)
+					yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 				gaim_buddy_icons_set_for_user(gc->account, name, NULL, 0);
+				if (b)
+					gaim_blist_node_remove_setting((GaimBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
 				break;
 			}
 
 			if (!f)
 				break;
-			b = gaim_find_buddy(gc->account, name);
+
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
 			if (cksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
 				yahoo_send_picture_request(gc, name);
