@@ -31,6 +31,8 @@
 
 #include "account.h"
 
+#define GAIM_DEFAULT_ACTION_NONE	-1
+
 /**
  * Request types.
  */

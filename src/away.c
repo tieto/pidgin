@@ -362,7 +362,8 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 
 	text = g_strdup_printf(_("Are you sure you want to remove the away message \"%s\"?"), a->name);
 
-	gaim_request_action(NULL, NULL, _("Remove Away Message"), text, -1, g_strdup(a->name), 2,
+	gaim_request_action(NULL, NULL, _("Remove Away Message"), text, 
+						GAIM_DEFAULT_ACTION_NONE, g_strdup(a->name), 2,
 						_("Remove"), G_CALLBACK(do_rem_away_mess),
 						_("Cancel"), G_CALLBACK(g_free));
 

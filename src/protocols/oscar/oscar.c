@@ -3713,8 +3713,8 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				data->nick = NULL;
 
 				gaim_request_action(gc, NULL, _("Authorization Request"),
-									dialog_msg, 0, data, 2,
-									_("Authorize"),
+									dialog_msg, GAIM_DEFAULT_ACTION_NONE, data,
+									2, _("Authorize"),
 									G_CALLBACK(gaim_auth_grant),
 									_("Deny"),
 									G_CALLBACK(gaim_auth_dontgrant_msgprompt));

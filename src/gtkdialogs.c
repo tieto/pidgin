@@ -753,7 +753,8 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 		gchar *text = g_strdup_printf(_("You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"),
 			       buddy->name, contact->totalsize - 1);
 
-		gaim_request_action(NULL, NULL, _("Remove Contact"), text, -1, contact, 2,
+		gaim_request_action(NULL, NULL, _("Remove Contact"), text, 
+				GAIM_DEFAULT_ACTION_NONE, contact, 2,
 				_("Remove Contact"), G_CALLBACK(gaim_gtkdialogs_remove_contact_cb),
 				_("Cancel"), NULL);
 
@@ -855,7 +856,8 @@ gaim_gtkdialogs_remove_buddy(GaimBuddy *buddy)
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
 						   buddy->name);
 
-	gaim_request_action(NULL, NULL, _("Remove Buddy"), text, -1, buddy, 2,
+	gaim_request_action(NULL, NULL, _("Remove Buddy"), text, 
+						GAIM_DEFAULT_ACTION_NONE, buddy, 2,
 						_("Remove Buddy"), G_CALLBACK(gaim_gtkdialogs_remove_buddy_cb),
 						_("Cancel"), NULL);
 

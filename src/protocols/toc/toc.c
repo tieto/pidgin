@@ -2099,7 +2099,8 @@ static void accept_file_dialog(struct ft_request *ft) {
 		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"), ft->user);
 	}
 
-	gaim_request_accept_cancel(ft->gc, NULL, buf, NULL, 0, ft,
+	gaim_request_accept_cancel(ft->gc, NULL, buf, NULL, 
+								GAIM_DEFAULT_ACTION_NONE, ft,
 							   G_CALLBACK(toc_accept_ft),
 							   G_CALLBACK(toc_reject_ft));
 }
