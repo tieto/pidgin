@@ -646,7 +646,7 @@ static gboolean find_nick(struct gaim_connection *gc, char *message)
 	}
 	g_free(who);
 
-	if (g_strcasecmp(gc->username, gc->displayname)) {
+	if (!g_strcasecmp(gc->username, gc->displayname)) {
 		g_free(msg);
 		return FALSE;
 	}
