@@ -982,12 +982,14 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 	conversations = g_list_remove(conversations, conv);
 
 	if (conv->type == GAIM_CONV_IM) {
+		GSList *snode;
+
 		gaim_im_stop_typing_timeout(conv->u.im);
 		gaim_im_stop_type_again_timeout(conv->u.im);
 
-		for (node = conv->u.im->images; node != NULL; node = node->next) {
-			if (node->data != NULL)
-				g_free(node->data);
+		for (snode = conv->u.im->images; snode != NULL; snode = snode->next) {
+			if (snode->data != NULL)
+				g_free(snode->data);
 		}
 
 		g_slist_free(conv->u.im->images);
