@@ -9,6 +9,8 @@ version 0.71
 	  longer attempt to load the same, possibly incompatible plugins
 	  (Robert McQueen)
 	* Zepher formatting fixes (Arun A Tharuvai)
+	* Fix sort by idle to behave as it did pre-contact support (David
+	  Smock)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
 
 version 0.70 (09/28/2003):
