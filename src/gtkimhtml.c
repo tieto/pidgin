@@ -2835,7 +2835,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	gchar amp;
 
-	int smilelen;
+	gint smilelen;
 
 	GList *newbits = NULL;
 
@@ -3144,8 +3144,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			pos++;
 		} else if (gtk_imhtml_is_smiley (imhtml, c, &smilelen)) {
 			NEW_BIT (NEW_TEXT_BIT);
-			g_snprintf (ws, smilelen + 1, "%s", c);
-			wpos = smilelen + 1;
+			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
 			NEW_BIT (NEW_SMILEY_BIT);
 			c += smilelen;
 			pos += smilelen;
