@@ -1608,11 +1608,11 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #if 0   /* XXX Public key auth interface with explicit key pair is
 	   broken in SILC Toolkit */
-	g_snprintf(tmp, sizeof(tmp), "%s/public_key.pub", silcgaim_silcdir());
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
 	option = gaim_account_option_string_new(_("Public Key File"),
 						"public-key", tmp);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	g_snprintf(tmp, sizeof(tmp), "%s/private_key.prv", silcgaim_silcdir());
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
 	option = gaim_account_option_string_new(_("Private Key File"),
 						"public-key", tmp);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
@@ -1637,9 +1637,9 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_bool("/plugins/prpl/silc/verify_im", FALSE);
 	gaim_prefs_add_bool("/plugins/prpl/silc/sign_chat", FALSE);
 	gaim_prefs_add_bool("/plugins/prpl/silc/verify_chat", FALSE);
-	g_snprintf(tmp, sizeof(tmp), "%s/public_key.pub", silcgaim_silcdir());
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
 	gaim_prefs_add_string("/plugins/prpl/silc/pubkey", tmp);
-	g_snprintf(tmp, sizeof(tmp), "%s/private_key.prv", silcgaim_silcdir());
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
 	gaim_prefs_add_string("/plugins/prpl/silc/privkey", tmp);
 	gaim_prefs_add_string("/plugins/prpl/silc/vcard", "");
 
