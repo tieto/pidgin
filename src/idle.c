@@ -40,7 +40,7 @@
 #include "signals.h"
 
 /* XXX - Get this out of here! */
-#include "gtkdialogs.h"
+#include "away.h"
 
 /* XXX For the away stuff */
 #include "gaim.h"

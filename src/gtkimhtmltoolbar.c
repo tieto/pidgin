@@ -22,15 +22,15 @@
  */
 #include "gtkinternal.h"
 
-#include "gtkimhtmltoolbar.h"
-#include "gtkutils.h"
-
-#include "gtkdialogs.h"
 #include "imgstore.h"
 #include "notify.h"
 #include "request.h"
 #include "stock.h"
 #include "util.h"
+
+#include "gtkdialogs.h"
+#include "gtkimhtmltoolbar.h"
+#include "gtkutils.h"
 
 static GtkVBoxClass *parent_class = NULL;
 

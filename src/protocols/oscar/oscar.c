@@ -28,7 +28,6 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "away.h"
 #include "buddyicon.h"
 #include "conversation.h"
 #include "core.h"
@@ -5416,7 +5415,7 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *st
 		/* If this is our only online account then globally set Gaim not-away */
 		GList *gcs = gaim_connections_get_all();
 		if (gcs->next == NULL)
-			do_im_back(NULL, NULL);
+			; /* XXX do_im_back(NULL, NULL); */
 	}
 
 	aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);

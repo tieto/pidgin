@@ -25,12 +25,29 @@
 #ifndef _GAIM_AWAY_H_
 #define _GAIM_AWAY_H_
 
-#define GtkWidget int
+#include "gtkinternal.h"
 
-int this_file;
+/* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
+ * for the UI so that people can name their away messages when they save them. So these
+ * are really a UI function and struct away_message should be removed from the core. */
+/* WTF?  How does having a title for something mean that it is part of the UI? */
+struct away_message {
+	char name[80];
+	char message[2048];
+};
 
-#define A_BIG_HACK this_file;
+extern GSList *away_messages;
+extern struct away_message *awaymessage;
+extern GtkWidget *awaymenu;
+extern GtkWidget *awayqueue;
+extern GtkListStore *awayqueuestore;
 
+extern void rem_away_mess(GtkWidget *, struct away_message *);
+extern void do_away_message(GtkWidget *, struct away_message *);
+extern void do_away_menu();
+extern void toggle_away_queue();
+extern void purge_away_queue(GSList **);
 extern void do_im_back(GtkWidget *, GtkWidget *);
+void create_away_mess(GtkWidget *, void *);
 
 #endif /* _GAIM_AWAY_H_ */

@@ -36,6 +36,7 @@
 #include "stock.h"
 #include "util.h"
 
+#include "away.h"
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkconv.h"
@@ -533,11 +534,11 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, GaimChat *chat)
 static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 {
 	if(GAIM_BLIST_NODE_IS_BUDDY(node))
-		alias_dialog_bud((GaimBuddy*)node);
+		gaim_gtkdialogs_alias_buddy((GaimBuddy*)node);
 	else if(GAIM_BLIST_NODE_IS_CONTACT(node))
-		alias_dialog_contact((GaimContact*)node);
+		gaim_gtkdialogs_alias_contact((GaimContact*)node);
 	else if(GAIM_BLIST_NODE_IS_CHAT(node))
-		alias_dialog_blist_chat((GaimChat*)node);
+		gaim_gtkdialogs_alias_chat((GaimChat*)node);
 }
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, GaimBuddy *b)
@@ -986,13 +987,13 @@ static void
 gaim_gtk_blist_remove_cb (GtkWidget *w, GaimBlistNode *node)
 {
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		show_confirm_del((GaimBuddy*)node);
+		gaim_gtkdialogs_remove_buddy((GaimBuddy*)node);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
-		show_confirm_del_blist_chat((GaimChat*)node);
+		gaim_gtkdialogs_remove_chat((GaimChat*)node);
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		show_confirm_del_group((GaimGroup*)node);
+		gaim_gtkdialogs_remove_group((GaimGroup*)node);
 	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
-		show_confirm_del_contact((GaimContact*)node);
+		gaim_gtkdialogs_remove_contact((GaimContact*)node);
 	}
 }
 
@@ -3090,7 +3091,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
-	gtk_widget_set_size_request(gtkblist->treeview, -1, 200);
+	gtk_widget_set_size_request(gtkblist->treeview, -1, 100);
 	gtk_widget_set_name(gtkblist->treeview, "gaim_gtkblist_treeview");
 
 	/* Set up selection stuff */

@@ -34,8 +34,9 @@
 #include "util.h"
 
 /* XXX UI Stuff */
-#include "gaim.h"
+#include "away.h"
 #include "gtkdialogs.h"
+#include "gaim.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
 

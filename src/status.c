@@ -26,8 +26,8 @@
 #include "util.h"
 
 /* XXX CORE/UI */
+#include "away.h"
 #include "gtkinternal.h"
-#include "gtkdialogs.h"
 
 
 /* for people like myself who are too lazy to add an away msg :) */

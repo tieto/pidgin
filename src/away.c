@@ -21,9 +21,11 @@
  *
  */
 #include "internal.h"
+#include "gtkinternal.h"
 
 #include "conversation.h"
 #include "debug.h"
+#include "notify.h"
 #include "plugin.h"
 #include "prefs.h"
 #include "prpl.h"
@@ -32,11 +34,12 @@
 #include "request.h"
 
 /* XXX CORE/UI: Until we can get rid of the message queue stuff... */
+#include "away.h"
 #include "gaim.h"
-#include "gtkinternal.h"
 #include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
+#include "gtkimhtmltoolbar.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
 
@@ -667,4 +670,243 @@ void do_away_menu()
 		default_away_menu_init(GTK_WIDGET(prefs_away_menu));
 		gtk_widget_show(prefs_away_menu);
 	}
+}
+
+/*------------------------------------------------------------------------*/
+/*  The dialog for new away messages (from dialogs.c)                     */
+/*------------------------------------------------------------------------*/
+struct create_away {
+	GtkWidget *window;
+	GtkWidget *toolbar;
+	GtkWidget *entry;
+	GtkWidget *text;
+	struct away_message *mess;
+};
+
+static void
+away_mess_destroy(GtkWidget *widget, struct create_away *ca)
+{
+	gtk_widget_destroy(ca->window);
+	g_free(ca);
+}
+
+static void
+away_mess_destroy_ca(GtkWidget *widget, GdkEvent *event, struct create_away *ca)
+{
+	away_mess_destroy(NULL, ca);
+}
+
+static gint
+sort_awaymsg_list(gconstpointer a, gconstpointer b)
+{
+	struct away_message *msg_a;
+	struct away_message *msg_b;
+
+	msg_a = (struct away_message *)a;
+	msg_b = (struct away_message *)b;
+
+	return (strcmp(msg_a->name, msg_b->name));
+}
+
+static struct
+away_message *save_away_message(struct create_away *ca)
+{
+	struct away_message *am;
+	gchar *away_message;
+
+	if (!ca->mess)
+		am = g_new0(struct away_message, 1);
+	else {
+		am = ca->mess;
+	}
+
+	g_snprintf(am->name, sizeof(am->name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
+	away_message = gtk_imhtml_get_markup(GTK_IMHTML(ca->text));
+
+	g_snprintf(am->message, sizeof(am->message), "%s", away_message);
+	g_free(away_message);
+
+	if (!ca->mess)
+		away_messages = g_slist_insert_sorted(away_messages, am, sort_awaymsg_list);
+
+	do_away_menu(NULL);
+	gaim_status_sync();
+
+	return am;
+}
+
+int
+check_away_mess(struct create_away *ca, int type)
+{
+	gchar *msg;
+	if ((strlen(gtk_entry_get_text(GTK_ENTRY(ca->entry))) == 0) && (type == 1)) {
+		/* We shouldn't allow a blank title */
+		gaim_notify_error(NULL, NULL,
+						  _("You cannot save an away message with a "
+							"blank title"),
+						  _("Please give the message a title, or choose "
+							"\"Use\" to use without saving."));
+		return 0;
+	}
+
+	msg = gtk_imhtml_get_text(GTK_IMHTML(ca->text), NULL, NULL);
+
+	if ((type <= 1) && ((msg == NULL) || (*msg == '\0'))) {
+		/* We shouldn't allow a blank message */
+		gaim_notify_error(NULL, NULL,
+						  _("You cannot create an empty away message"), NULL);
+		return 0;
+	}
+
+	g_free(msg);
+
+	return 1;
+}
+
+void
+save_away_mess(GtkWidget *widget, struct create_away *ca)
+{
+	if (!check_away_mess(ca, 1))
+		return;
+
+	save_away_message(ca);
+
+	away_mess_destroy(NULL, ca);
+}
+
+void
+use_away_mess(GtkWidget *widget, struct create_away *ca)
+{
+	static struct away_message am;
+	gchar *away_message;
+
+	if (!check_away_mess(ca, 0))
+		return;
+
+	g_snprintf(am.name, sizeof(am.name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
+	away_message = gtk_imhtml_get_markup(GTK_IMHTML(ca->text));
+
+	g_snprintf(am.message, sizeof(am.message), "%s", away_message);
+	g_free(away_message);
+
+	do_away_message(NULL, &am);
+
+	away_mess_destroy(NULL, ca);
+}
+
+void
+su_away_mess(GtkWidget *widget, struct create_away *ca)
+{
+	if (!check_away_mess(ca, 1))
+		return;
+
+	do_away_message(NULL, save_away_message(ca));
+
+	away_mess_destroy(NULL, ca);
+}
+
+void
+create_away_mess(GtkWidget *widget, void *dummy)
+{
+	GtkWidget *vbox, *hbox;
+	GtkWidget *label;
+	GtkWidget *sw;
+	GtkWidget *button;
+	GList *focus_chain = NULL;
+	struct create_away *ca = g_new0(struct create_away, 1);
+
+	/* Set up window */
+	GAIM_DIALOG(ca->window);
+	gtk_widget_set_size_request(ca->window, -1, 250);
+	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
+	gtk_window_set_title(GTK_WINDOW(ca->window), _("New away message"));
+	g_signal_connect(G_OBJECT(ca->window), "delete_event",
+			   G_CALLBACK(away_mess_destroy_ca), ca);
+
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 12);
+	gtk_container_add(GTK_CONTAINER(ca->window), hbox);
+
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+
+	/* Away message title */
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Away title: "));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	ca->entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), ca->entry, TRUE, TRUE, 0);
+	gaim_set_accessible_label (ca->entry, label);
+	focus_chain = g_list_append(focus_chain, hbox);
+
+	/* Toolbar */
+	ca->toolbar = gtk_imhtmltoolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), ca->toolbar, FALSE, FALSE, 0);
+
+	/* Away message text */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+
+	ca->text = gtk_imhtml_new(NULL, NULL);
+	gtk_imhtml_set_editable(GTK_IMHTML(ca->text), TRUE);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(ca->text), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
+
+	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(ca->text),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
+	gtk_imhtml_html_shortcuts(GTK_IMHTML(ca->text),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(ca->text));
+	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(ca->toolbar), ca->text);
+	gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(ca->toolbar), "default");
+	gaim_setup_imhtml(ca->text);
+
+	gtk_container_add(GTK_CONTAINER(sw), ca->text);
+	focus_chain = g_list_append(focus_chain, sw);
+
+	if (dummy) {
+		struct away_message *amt;
+		GtkTreeIter iter;
+		GtkListStore *ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(dummy)));
+		GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(dummy));
+		GValue val = { 0, };
+
+		if (! gtk_tree_selection_get_selected (sel, (GtkTreeModel**)&ls, &iter))
+			return;
+		gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
+		amt = g_value_get_pointer (&val);
+		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(ca->text), amt->message, 0, NULL);
+		ca->mess = amt;
+	}
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	button = gaim_pixbuf_button_from_stock(_("_Save"), GTK_STOCK_SAVE, GAIM_BUTTON_HORIZONTAL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(save_away_mess), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+	button = gaim_pixbuf_button_from_stock(_("Sa_ve & Use"), GTK_STOCK_OK, GAIM_BUTTON_HORIZONTAL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(su_away_mess), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE, GAIM_BUTTON_HORIZONTAL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(use_away_mess), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+	button = gaim_pixbuf_button_from_stock(_("_Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(away_mess_destroy), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	focus_chain = g_list_prepend(focus_chain, hbox);
+
+	gtk_widget_show_all(ca->window);
+	gtk_container_set_focus_chain(GTK_CONTAINER(vbox), focus_chain);
 }

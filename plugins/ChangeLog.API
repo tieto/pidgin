@@ -9,6 +9,14 @@ version 0.82cvs:
 	* Renamed show_warn_dialog to gaim_gtkdialogs_warn
 	* Renamed show_im_dialog to gaim_gtkdialogs_im
 	* Renamed gaim_gtkdialogs_new_im to gaim_gtkdialogs_im_with_user
+	* Renamed destroy_all_dialogs to gaim_gtkdialogs_destroy_all
+	* Renamed alias_dialog_bud to gaim_gtkdialogs_alias_buddy
+	* Renamed alias_dialog_contact to gaim_gtkdialogs_alias_contact
+	* Renamed alias_dialog_blist_chat to gaim_gtkdialogs_alias_chat
+	* Renamed show_confirm_del to gaim_gtkdialogs_remove_buddy
+	* Renamed show_confirm_del_group to gaim_gtkdialogs_remove_group
+	* Renamed show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
+	* Renamed show_confirm_del_contact to gaim_gtkdialogs_remove_contact
 
 version 0.81 (08/05/2004):
 	Commands API:

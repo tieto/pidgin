@@ -525,7 +525,7 @@ add_remove_cb(GtkWidget *widget, GaimConversation *conv)
 
 		b = gaim_find_buddy(account, name);
 		if (b != NULL)
-			show_confirm_del(b);
+			gaim_gtkdialogs_remove_buddy(b);
 		else if (account != NULL && gaim_account_is_connected(account))
 			gaim_blist_request_add_buddy(account, (char *)name, NULL, NULL);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
@@ -533,7 +533,7 @@ add_remove_cb(GtkWidget *widget, GaimConversation *conv)
 
 		c = gaim_blist_find_chat(account, name);
 		if (c != NULL)
-			show_confirm_del_blist_chat(c);
+			gaim_gtkdialogs_remove_chat(c);
 		else if (account != NULL && gaim_account_is_connected(account))
 			gaim_blist_request_add_chat(account, NULL, NULL);
 	}
@@ -998,13 +998,13 @@ menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 
 		b = gaim_find_buddy(account, name);
 		if (b != NULL)
-			alias_dialog_bud(b);
+			gaim_gtkdialogs_alias_buddy(b);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		GaimChat *c;
 
 		c = gaim_blist_find_chat(account, name);
 		if (c != NULL)
-			alias_dialog_blist_chat(c);
+			gaim_gtkdialogs_alias_chat(c);
 	}
 }
 
@@ -1302,7 +1302,7 @@ menu_chat_add_remove_cb(GtkWidget *w, GaimConversation *conv)
 	b       = gaim_find_buddy(account, name);
 
 	if (b != NULL)
-		show_confirm_del(b);
+		gaim_gtkdialogs_remove_buddy(b);
 	else if (account != NULL && gaim_account_is_connected(account))
 		gaim_blist_request_add_buddy(account, name, NULL, NULL);
 

@@ -32,7 +32,6 @@
 #include "stock.h"
 #include "util.h"
 
-#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtknotify.h"
 #include "gtkutils.h"

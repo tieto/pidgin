@@ -38,6 +38,7 @@
 #include "signals.h"
 #include "sound.h"
 
+#include "away.h"
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkft.h"

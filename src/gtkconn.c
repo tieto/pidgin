@@ -23,13 +23,14 @@
 
 #include "account.h"
 #include "debug.h"
-#include "gtkdialogs.h"
 #include "notify.h"
 #include "prefs.h"
 #include "stock.h"
 #include "util.h"
 
+#include "away.h"
 #include "gtkblist.h"
+#include "gtkdialogs.h"
 #include "gtkutils.h"
 
 /*
@@ -77,7 +78,7 @@ static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
 		kill_meter(meter, _("Done."));
 
 		if (gaim_connections_get_all() == NULL) {
-			destroy_all_dialogs();
+			gaim_gtkdialogs_destroy_all();
 
 			gaim_blist_destroy();
 
@@ -261,7 +262,7 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 	if (gaim_connections_get_all() != NULL)
 		return;
 
-	destroy_all_dialogs();
+	gaim_gtkdialogs_destroy_all();
 
 	gaim_blist_destroy();
 

@@ -26,7 +26,6 @@
 
 #include "prefs.h"
 
-#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtkrequest.h"

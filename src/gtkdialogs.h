@@ -31,21 +31,20 @@
 #include "conversation.h"
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
+void gaim_gtkdialogs_destroy_all();
 void gaim_gtkdialogs_im();
+void gaim_gtkdialogs_im_with_user(GaimAccount *, const char *);
 void gaim_gtkdialogs_info();
 void gaim_gtkdialogs_log();
-void gaim_gtkdialogs_im_with_user(GaimAccount *, const char *);
 void gaim_gtkdialogs_warn(GaimConnection *, const char *);
+void gaim_gtkdialogs_alias_contact(GaimContact *);
+void gaim_gtkdialogs_alias_buddy(GaimBuddy *);
+void gaim_gtkdialogs_alias_chat(GaimChat *);
 
-void alias_dialog_bud(GaimBuddy *);
-void alias_dialog_contact(GaimContact *);
-void alias_dialog_blist_chat(GaimChat *);
-void create_away_mess(GtkWidget *, void *);
-void show_confirm_del(GaimBuddy *);
-void show_confirm_del_group(GaimGroup *);
-void show_confirm_del_blist_chat(GaimChat *);
-void show_confirm_del_contact(GaimContact *);
-void destroy_all_dialogs();
+void gaim_gtkdialogs_remove_buddy(GaimBuddy *);
+void gaim_gtkdialogs_remove_group(GaimGroup *);
+void gaim_gtkdialogs_remove_chat(GaimChat *);
+void gaim_gtkdialogs_remove_contact(GaimContact *);
 
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);
@@ -63,17 +62,6 @@ extern void show_about(GtkWidget *, void *);
 #define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
 #define DEFAULT_FONT_FACE "Helvetica"
-
-
-/* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
- * for the UI so that people can name their away messages when they save them. So these
- * are really a UI function and struct away_message should be removed from the core. */
-/* WTF?  How does having a title for something mean that it is part of the UI? */
-struct away_message {
-	char name[80];
-	char message[2048];
-};
-
 
 
 /* this is used for queuing messages received while away. This is really a UI function
@@ -102,13 +90,6 @@ struct smiley_theme {
 extern GtkWidget *mainwindow;
 extern int docklet_count;
 
-/* Globals in away.c */
-extern GSList *away_messages;
-extern struct away_message *awaymessage;
-extern GtkWidget *awaymenu;
-extern GtkWidget *awayqueue;
-extern GtkListStore *awayqueuestore;
-
 /* Globals in themes.c */
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
@@ -116,14 +97,6 @@ extern GSList *smiley_themes;
 /* Functions in main.c */
 extern void show_login();
 extern void gaim_setup(GaimConnection *);
-
-/* Functions in away.c */
-extern void rem_away_mess(GtkWidget *, struct away_message *);
-extern void do_away_message(GtkWidget *, struct away_message *);
-extern void do_away_menu();
-extern void toggle_away_queue();
-extern void purge_away_queue(GSList**);
-extern void do_im_back(GtkWidget *w, GtkWidget *x);
 
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *, gchar *);

@@ -35,6 +35,7 @@
 #include "util.h"
 #include "network.h"
 
+#include "away.h"
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"

@@ -38,8 +38,8 @@
 #include "notify.h"
 
 /* XXX */
+#include "away.h"
 #include "gtkconv.h"
-#include "gtkdialogs.h"
 #include "gtkplugin.h"
 #include "gaim.h"
 #include "prefs.h"
