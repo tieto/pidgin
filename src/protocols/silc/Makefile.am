@@ -10,7 +10,7 @@ libsilcgaim_la_LDFLAGS = -module -avoid-version
 
 if STATIC_SILC
 
-st = -DGAIM_STATIC_PRPL $(SILC_INCLUDES)
+st = -DGAIM_STATIC_PRPL $(SILC_CFLAGS)
 noinst_LIBRARIES = libsilcgaim.a
 pkg_LTLIBRARIES =
 
@@ -20,7 +20,7 @@ libsilcgaim_a_LIBADD  = $(SILC_LIBS)
 
 else
 
-st = $(SILC_INCLUDES)
+st = $(SILC_CFLAGS)
 pkg_LTLIBRARIES = libsilcgaim.la
 noinst_LIBRARIES =
 

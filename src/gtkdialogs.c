@@ -246,6 +246,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	g_string_append(str,
 					"  Daniel 'datallah' Atallah<BR>"
 					"  Ka-Hing 'javabsp' Cheung<BR>"
+					"  Felipe 'shx' Contreras<BR>"
 					"  Decklin Foster<BR>"
 					"  Gary 'grim' Kramlich<BR>"
 					"  Robert 'Robot101' McQueen<BR>"

@@ -45,19 +45,6 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h)
 
-dnl Check for SILC includes
-AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR
-                          Compile the SILC plugin against includes in DIR ], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
-SILC_INCLUDES=""
-if test "$ac_silc_includes" != "no"; then
-	SILC_INCLUDES="-I$ac_silc_includes"
-fi
-CPPFLAGS_save="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $SILC_INCLUDES"
-AC_CHECK_HEADER(silcincludes.h, [silcincludes=yes])
-CPPFLAGS="$CPPFLAGS_save"
-AC_SUBST(SILC_INCLUDES)
-
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_STRUCT_TM
@@ -109,15 +96,40 @@ AC_TRY_COMPILE([
 	])
 ])
 
-dnl check for SILC client libraries
+dnl Check for SILC client includes and libraries
+AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR
+                          Compile the SILC plugin against includes in DIR ], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
 AC_ARG_WITH(silc-libs, [  --with-silc-libs=DIR    Compile the SILC plugin against the SILC libs in DIR], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
+SILC_CFLAGS=""
 SILC_LIBS=""
-if test "$ac_silc_libs" != "no"; then
-	SILC_LIBS="-L$ac_silc_libs"
+if test -n "$with_silc_includes" || test -n "$with_silc_libs"; then
+	silc_manual_check="yes"
+else
+	silc_manual_check="no"
 fi
-SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread -ldl"
-AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
+if test "x$silc_manual_check" = "xno"; then
+	PKG_CHECK_MODULES(SILC, silc, [
+		have_silc="yes"
+		silcincludes="yes"
+		silcclient="yes"
+	], have_silc="no")
+else
+	if test "$ac_silc_includes" != "no"; then
+		SILC_CFLAGS="-I$ac_silc_includes"
+	fi
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
+	AC_CHECK_HEADER(silcincludes.h, [silcincludes=yes])
+	CPPFLAGS="$CPPFLAGS_save"
+
+	if test "$ac_silc_libs" != "no"; then
+		SILC_LIBS="-L$ac_silc_libs"
+	fi
+	SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread -ldl"
+	AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
+fi
 AC_SUBST(SILC_LIBS)
+AC_SUBST(SILC_CFLAGS)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
