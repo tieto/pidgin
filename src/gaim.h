@@ -155,6 +155,7 @@
 /*#define OPT_USR_KEEPALV	0x00000002 this shouldn't be optional */
 #define OPT_USR_REM_PASS	0x00000004
 #define OPT_USR_MAIL_CHECK      0x00000008
+/*do not use OPT_USR		0x00000010 */
 
 #define DEFAULT_INFO "Visit the Gaim website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
 
