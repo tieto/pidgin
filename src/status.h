@@ -481,6 +481,15 @@ gboolean gaim_status_is_available(const GaimStatus *status);
 gboolean gaim_status_is_active(const GaimStatus *status);
 
 /**
+ * Returns whether or not a status is considered 'online'
+ *
+ * @param status The status.
+ *
+ * @return TRUE if the status is considered online, FALSE otherwise
+ */
+gboolean gaim_status_is_online(const GaimStatus *status);
+
+/**
  * Returns the value of an attribute in a status with the specified ID.
  *
  * @param status The status.

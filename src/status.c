@@ -794,6 +794,19 @@ gaim_status_is_active(const GaimStatus *status)
 	return status->active;
 }
 
+gboolean
+gaim_status_is_online(const GaimStatus *status)
+{
+	GaimStatusPrimitive primitive;
+
+	g_return_val_if_fail( status != NULL, FALSE);
+
+	primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
+
+	return (primitive != GAIM_STATUS_UNSET &&
+			primitive != GAIM_STATUS_OFFLINE);
+}
+
 GaimValue *
 gaim_status_get_attr_value(const GaimStatus *status, const char *id)
 {
@@ -1345,17 +1358,13 @@ gboolean
 gaim_presence_is_online(const GaimPresence *presence)
 {
 	GaimStatus *status;
-	GaimStatusPrimitive primitive;
 
 	g_return_val_if_fail(presence != NULL, FALSE);
 
 	if ((status = gaim_presence_get_active_status(presence)) == NULL)
 		return FALSE;
 
-	primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
-
-	return (primitive != GAIM_STATUS_UNSET &&
-			primitive != GAIM_STATUS_OFFLINE);
+	return gaim_status_is_online(status);
 }
 
 gboolean
