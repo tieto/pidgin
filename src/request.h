@@ -104,6 +104,7 @@ typedef struct
 		struct
 		{
 			GList *items;
+			GHashTable *item_data;
 			GList *selected;
 
 			gboolean multiple_selection;
@@ -705,24 +706,12 @@ GList *gaim_request_field_choice_get_labels(const GaimRequestField *field);
 /**
  * Creates a multiple list item field.
  *
- * @param id    The field ID.
- * @param text  The optional label of the field.
- * @param items The list of items.
+ * @param id   The field ID.
+ * @param text The optional label of the field.
  *
  * @return The new field.
  */
-GaimRequestField *gaim_request_field_list_new(const char *id, const char *text,
-											  GList *items);
-
-/**
- * Sets the list of items in a list field.
- *
- * The items are not copied. The actual list passed is assigned to the field.
- *
- * @param field The list field.
- * @param items The items.
- */
-void gaim_request_field_list_set_items(GaimRequestField *field, GList *items);
+GaimRequestField *gaim_request_field_list_new(const char *id, const char *text);
 
 /**
  * Sets whether or not a list field allows multiple selection.
@@ -745,12 +734,25 @@ gboolean gaim_request_field_list_get_multi_select(
 	const GaimRequestField *field);
 
 /**
+ * Returns the data for a particular item.
+ *
+ * @param field The list field.
+ * @param item  The item text.
+ *
+ * @return The data associated with the item.
+ */
+void *gaim_request_field_list_get_data(const GaimRequestField *field,
+									   const char *text);
+
+/**
  * Adds an item to a list field.
  *
  * @param field The list field.
  * @param item  The list item.
+ * @param data  The associated data.
  */
-void gaim_request_field_list_add(GaimRequestField *field, const char *item);
+void gaim_request_field_list_add(GaimRequestField *field,
+								 const char *item, void *data);
 
 /**
  * Adds a selected item to the list field.

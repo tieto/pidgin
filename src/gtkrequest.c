@@ -621,7 +621,7 @@ select_field_list_item(GtkTreeModel *model, GtkTreePath *path,
 	GaimRequestField *field = (GaimRequestField *)data;
 	const char *text;
 
-	gtk_tree_model_get(model, iter, 0, &text, -1);
+	gtk_tree_model_get(model, iter, 1, &text, -1);
 
 	gaim_request_field_list_add_selected(field, text);
 }
@@ -643,6 +643,8 @@ create_list_field(GaimRequestField *field)
 	GtkCellRenderer *renderer;
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
+	GtkTreeIter iter;
+	const GList *l;
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -654,7 +656,7 @@ create_list_field(GaimRequestField *field)
 	gtk_widget_show(sw);
 
 	/* Create the list store */
-	store = gtk_list_store_new(1, G_TYPE_STRING);
+	store = gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING);
 
 	/* Create the tree view */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
@@ -674,7 +676,19 @@ create_list_field(GaimRequestField *field)
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(column, renderer, "text", 0);
+	gtk_tree_view_column_add_attribute(column, renderer, "text", 1);
+
+	for (l = gaim_request_field_list_get_items(field); l != NULL; l = l->next)
+	{
+		const char *text = (const char *)l->data;
+
+		gtk_list_store_append(store, &iter);
+
+		gtk_list_store_set(store, &iter,
+						   0, gaim_request_field_list_get_data(field, text),
+						   1, text,
+						   -1);
+	}
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);

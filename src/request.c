@@ -299,6 +299,8 @@ gaim_request_field_destroy(GaimRequestField *field)
 			g_list_foreach(field->u.list.selected, (GFunc)g_free, NULL);
 			g_list_free(field->u.list.selected);
 		}
+
+		g_hash_table_destroy(field->u.list.item_data);
 	}
 
 	g_free(field);
@@ -649,34 +651,19 @@ gaim_request_field_choice_get_labels(const GaimRequestField *field)
 }
 
 GaimRequestField *
-gaim_request_field_list_new(const char *id, const char *text, GList *items)
+gaim_request_field_list_new(const char *id, const char *text)
 {
 	GaimRequestField *field;
 
-	g_return_val_if_fail(id    != NULL, NULL);
-	g_return_val_if_fail(items != NULL, NULL);
+	g_return_val_if_fail(id   != NULL, NULL);
+	g_return_val_if_fail(text != NULL, NULL);
 
 	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_LIST);
 
-	gaim_request_field_list_set_items(field, items);
+	field->u.list.item_data = g_hash_table_new_full(g_str_hash, g_str_equal,
+													g_free, NULL);
 
 	return field;
-}
-
-void
-gaim_request_field_list_set_items(GaimRequestField *field, GList *items)
-{
-	g_return_if_fail(field != NULL);
-	g_return_if_fail(items != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
-
-	if (field->u.list.items != NULL)
-	{
-		g_list_foreach(field->u.list.items, (GFunc)g_free, NULL);
-		g_list_free(field->u.list.items);
-	}
-
-	field->u.list.items = items;
 }
 
 void
@@ -698,14 +685,29 @@ gaim_request_field_list_get_multi_select(const GaimRequestField *field)
 	return field->u.list.multiple_selection;
 }
 
+void *
+gaim_request_field_list_get_data(const GaimRequestField *field,
+								 const char *text)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(text  != NULL, NULL);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, NULL);
+
+	return g_hash_table_lookup(field->u.list.item_data, text);
+}
+
 void
-gaim_request_field_list_add(GaimRequestField *field, const char *item)
+gaim_request_field_list_add(GaimRequestField *field, const char *item,
+							void *data)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(item  != NULL);
+	g_return_if_fail(data  != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
 
 	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
+
+	g_hash_table_insert(field->u.list.item_data, g_strdup(item), data);
 }
 
 void
@@ -715,8 +717,8 @@ gaim_request_field_list_add_selected(GaimRequestField *field, const char *item)
 	g_return_if_fail(item  != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
 
-	field->u.list.selected =
-		g_list_append(field->u.list.selected, g_strdup(item));
+	field->u.list.selected = g_list_append(field->u.list.selected,
+										   g_strdup(item));
 }
 
 void
@@ -725,7 +727,17 @@ gaim_request_field_list_clear_selected(GaimRequestField *field)
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
 
-	gaim_request_field_list_set_selected(field, NULL);
+	if (field->u.list.items != NULL)
+	{
+		g_list_foreach(field->u.list.items, (GFunc)g_free, NULL);
+		g_list_free(field->u.list.items);
+		field->u.list.items = NULL;
+	}
+
+	g_hash_table_destroy(field->u.list.item_data);
+
+	field->u.list.item_data = g_hash_table_new_full(g_str_hash, g_str_equal,
+													g_free, NULL);
 }
 
 void
@@ -739,6 +751,7 @@ gaim_request_field_list_set_selected(GaimRequestField *field, GList *items)
 	{
 		g_list_foreach(field->u.list.selected, (GFunc)g_free, NULL);
 		g_list_free(field->u.list.selected);
+		field->u.list.selected = NULL;
 	}
 
 	field->u.list.selected = items;
