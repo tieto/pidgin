@@ -390,13 +390,13 @@ void sighandler(int sig)
 	gtkspell_stop();
 	switch (sig) {
 	case SIGSEGV:
-		g_print("Gaim has segfaulted and attempted to dump a core file.\n"
-			"Please notify the gaim maintainers by reporting a bug at\n"
-			"http://sourceforge.net/projects/gaim/\n\n"
-			"Please make sure to specify what you were doing at the time,\n"
-			"and post the backtrace from the core file (if you do not know\n"
-			"how to get the backtrace, please IM either EWarmenhoven or\n"
-			"RobFlynn and they can instruct you).\n");
+		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
+				"Please notify the gaim maintainers by reporting a bug at\n"
+				"http://sourceforge.net/projects/gaim/\n\n"
+				"Please make sure to specify what you were doing at the time,\n"
+				"and post the backtrace from the core file (if you do not know\n"
+				"how to get the backtrace, please IM either EWarmenhoven or\n"
+				"RobFlynn and they can instruct you).\n");
 		abort();
 		break;
 	default:
