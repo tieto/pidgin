@@ -75,9 +75,8 @@ msn_act_id(const char *entry, void *data)
 }
 
 static void
-msn_set_prp(gpointer data, const char *type, const char *entry)
+msn_set_prp(struct gaim_connection *gc, const char *type, const char *entry)
 {
-	struct gaim_connection *gc = data;
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
 
@@ -95,37 +94,37 @@ msn_set_prp(gpointer data, const char *type, const char *entry)
 }
 
 static void
-msn_set_home_phone_cb(gpointer data, char *entry)
+msn_set_home_phone_cb(const char *entry, struct gaim_connection *gc)
 {
-	msn_set_prp(data, "PHH", entry);
+	msn_set_prp(gc, "PHH", entry);
 }
 
 static void
-msn_set_work_phone_cb(gpointer data, char *entry)
+msn_set_work_phone_cb(const char *entry, struct gaim_connection *gc)
 {
-	msn_set_prp(data, "PHW", entry);
+	msn_set_prp(gc, "PHW", entry);
 }
 
 static void
-msn_set_mobile_phone_cb(gpointer data, char *entry)
+msn_set_mobile_phone_cb(const char *entry, struct gaim_connection *gc)
 {
-	msn_set_prp(data, "PHM", entry);
+	msn_set_prp(gc, "PHM", entry);
 }
 
 static void
-__enable_msn_pages_cb(struct gaim_connection *gc)
+__enable_msn_pages_cb(struct gaim_connection *gc, const char *entry)
 {
 	msn_set_prp(gc, "MOB", "Y");
 }
 
 static void
-__disable_msn_pages_cb(struct gaim_connection *gc)
+__disable_msn_pages_cb(struct gaim_connection *gc, const char *entry)
 {
 	msn_set_prp(gc, "MOB", "N");
 }
 
 static void
-__send_to_mobile_cb(MsnMobileData *data, const char *entry)
+__send_to_mobile_cb(const char *entry, MsnMobileData *data)
 {
 	MsnSession *session = data->gc->proto_data;
 	MsnServConn *servconn = session->notification_conn;
@@ -154,12 +153,20 @@ __send_to_mobile_cb(MsnMobileData *data, const char *entry)
 	g_free(page_str);
 }
 
+static void
+__close_mobile_page_cb(const char *entry, MsnMobileData *data)
+{
+	g_free(data);
+}
+
 /* -- */
 
 static void
 msn_show_set_friendly_name(struct gaim_connection *gc)
 {
-	gaim_request_input(gc, NULL, _("Set your friendly name."), NULL,
+	gaim_request_input(gc, NULL, _("Set your friendly name."),
+					   _("This is the name that other MSN buddies will "
+						 "see you as."),
 					   gc->displayname, FALSE,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL, gc);
@@ -170,9 +177,10 @@ msn_show_set_home_phone(struct gaim_connection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
-	do_prompt_dialog(_("Set Home Phone Number:"),
-					 msn_user_get_home_phone(session->user),
-					 gc, msn_set_home_phone_cb, NULL);
+	gaim_request_input(gc, NULL, _("Set your home phone number."), NULL,
+					   msn_user_get_home_phone(session->user), FALSE,
+					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
+					   _("Cancel"), NULL, gc);
 }
 
 static void
@@ -180,9 +188,10 @@ msn_show_set_work_phone(struct gaim_connection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
-	do_prompt_dialog(_("Set Work Phone Number:"),
-					 msn_user_get_work_phone(session->user),
-					 gc, msn_set_work_phone_cb, NULL);
+	gaim_request_input(gc, NULL, _("Set your work phone number."), NULL,
+					   msn_user_get_work_phone(session->user), FALSE,
+					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
+					   _("Cancel"), NULL, gc);
 }
 
 static void
@@ -190,9 +199,10 @@ msn_show_set_mobile_phone(struct gaim_connection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
-	do_prompt_dialog(_("Set Mobile Phone Number:"),
-					 msn_user_get_mobile_phone(session->user),
-					 gc, msn_set_mobile_phone_cb, NULL);
+	gaim_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
+					   msn_user_get_mobile_phone(session->user), FALSE,
+					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
+					   _("Cancel"), NULL, gc);
 }
 
 #if 0
@@ -238,8 +248,11 @@ __show_send_to_mobile_cb(struct gaim_connection *gc, const char *passport)
 	data->gc = gc;
 	data->passport = passport;
 
-	do_prompt_dialog(_("Send message:"), NULL,
-					 data, __send_to_mobile_cb, g_free);
+	gaim_request_input(gc, NULL, _("Send a mobile message."), NULL,
+					   NULL, TRUE,
+					   _("Page"), G_CALLBACK(__send_to_mobile_cb),
+					   _("Close"), G_CALLBACK(__close_mobile_page_cb),
+					   data);
 }
 
 
