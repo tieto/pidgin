@@ -212,18 +212,15 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		switch (sess->logininfo.errorcode) {
 		case 0x18:
 			/* connecting too frequently */
-			strtok("983:", ":");
-			show_error_dialog("983");
+			show_error_dialog("983\0\0");
 			break;
 		case 0x05:
 			/* Incorrect nick/password */
-			strtok("980:", ":");
-			show_error_dialog("980");
+			show_error_dialog("980\0\0");
 			break;
 		case 0x1c:
 			/* client too old */
-			strtok("981:", ":");
-			show_error_dialog("981");
+			show_error_dialog("981\0\0");
 			break;
 		}
 		sprintf(debug_buff, "Login Error Code 0x%04x\n",
@@ -597,26 +594,22 @@ int gaim_parse_misses(struct aim_session_t *sess,
 			/* sending messages too fast */
 			/* this also gets sent to us when our warning level
 			 * changes, don't ask me why or how to interpret it */
-			strtok("960:someone", ":");
-			show_error_dialog("960");
+			show_error_dialog("960\0someone");
 		}
 		break;
 	case 0x0002:
 		if (subtype == 0x0001) {
 			/* unknown SNAC error */
-			strtok("970:", ":");
-			show_error_dialog("970");
+			show_error_dialog("970\0\0");
 		}
 		break;
 	case 0x0004:
 		if (subtype == 0x0001) {
 			/* user is not logged in */
-			strtok("901:User", ":");
-			show_error_dialog("901");
+			show_error_dialog("901\0User");
 		} else if (subtype == 0x000a) {
 			/* message has been dropped */
-			strtok("903:", ":");
-			show_error_dialog("903");
+			show_error_dialog("903\0\0");
 		}
 		break;
 	}
@@ -641,8 +634,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 
 	if (prof == NULL || !strlen(prof)) {
 		/* no info/away message */
-		strtok("977:", ":");
-		show_error_dialog("977");
+		show_error_dialog("977\0\0");
 		return 1;
 	}
 

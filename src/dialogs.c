@@ -455,7 +455,11 @@ void show_error_dialog(char *d)
 {
 
 	int no = atoi(d);
+#ifndef USE_OSCAR
 	char *w = strtok(NULL, ":");
+#else
+	char *w = d + 4;
+#endif
 	char buf[256];
 	char buf2[32];
  	

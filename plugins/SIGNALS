@@ -161,6 +161,9 @@ event_chat_send:
 	'text' is what you're about to say, linkified/HTML-ized, but not
 	TOC-escaped.
 
+	Be aware that you receive messages you send (as noted above). This
+	event will be called before you actually send the message though.
+
 event_warned:
 	char *who, int level
 
