@@ -851,13 +851,13 @@ GtkWidget *hotkeys_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = gaim_gtk_make_frame(ret, _("Send Message"));
-	prefs_checkbox(_("_Enter sends message"),
+	prefs_checkbox(_("Enter _sends message"),
 				  "/gaim/gtk/conversations/enter_sends", vbox);
 	prefs_checkbox(_("C_ontrol-Enter sends message"),
 				  "/gaim/gtk/conversations/ctrl_enter_sends", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Window Closing"));
-	prefs_checkbox(_("E_scape closes window"),
+	prefs_checkbox(_("_Escape closes window"),
 				  "/gaim/gtk/conversations/escape_closes", vbox);
 	prefs_checkbox(_("Control-_W closes window"),
 				  "/gaim/gtk/conversations/ctrl_w_closes", vbox);
@@ -865,7 +865,7 @@ GtkWidget *hotkeys_page() {
 	vbox = gaim_gtk_make_frame(ret, _("Insertions"));
 	prefs_checkbox(_("Control-{B/I/U/S} inserts _HTML tags"),
 				  "/gaim/gtk/conversations/html_shortcuts", vbox);
-	prefs_checkbox(_("Control-(number) inserts _smileys"),
+	prefs_checkbox(_("Control-(number) _inserts smileys"),
 				  "/gaim/gtk/conversations/smiley_shortcuts", vbox);
 
 	gtk_widget_show_all(ret);
