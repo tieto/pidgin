@@ -452,6 +452,8 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	xmlnode y;
 	char *show;
 	int state;
+	GSList *resources;
+	char *res;
 
 	to = xmlnode_get_attrib(p->x, "to");
 	from = xmlnode_get_attrib(p->x, "from");
@@ -485,11 +487,26 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 		build_edit_tree();
 		do_export(NULL, NULL);
 	}
+	resources = b->proto_data;
+	res = who->resource;
+	while (resources) {
+		if (!strcmp(res, resources->data))
+			break;
+		resources = resources->next;
+	}
 
-	if (type && (strcasecmp(type, "unavailable") == 0))
-		serv_got_update(GJ_GC(j), buddy, 0, 0, 0, 0, 0, 0);
-	else
+	if (type && (strcasecmp(type, "unavailable") == 0)) {
+		g_free(resources->data);
+		b->proto_data = g_slist_remove(b->proto_data, resources->data);
+		if (!b->proto_data) {
+			serv_got_update(GJ_GC(j), buddy, 0, 0, 0, 0, 0, 0);
+		}
+	} else {
+		if (!resources) {
+			b->proto_data = g_slist_append(b->proto_data, g_strdup(res));
+		}
 		serv_got_update(GJ_GC(j), buddy, 1, 0, 0, 0, state, 0);
+	}
 
 	g_free(buddy);
 
@@ -825,6 +842,8 @@ void Jabber_init(struct prpl *ret)
 	ret->list_icon = jabber_list_icon;
 	ret->action_menu = NULL;
 	ret->user_opts = NULL;
+	ret->draw_new_user = NULL;
+	ret->do_new_user = NULL;
 	ret->login = jabber_login;
 	ret->close = jabber_close;
 	ret->send_im = jabber_send_im;
