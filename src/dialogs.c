@@ -3760,12 +3760,14 @@ static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 	char *new_name;
 	struct group *g;
 	struct group *orig;
+	struct gaim_connection *gc;
 
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	g = gtk_object_get_user_data(obj);
 
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
 		char *prevname;
+		gc = g->gc;
 		if ((orig = find_group(g->gc, new_name)) != NULL) {
 			orig->members = g_slist_concat(orig->members, g->members);
 			handle_group_rename(orig, g->name);
@@ -3778,7 +3780,7 @@ static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 			handle_group_rename(g, prevname);
 			g_free(prevname);
 		}
-		do_export(g->gc);
+		do_export(gc);
 	}
 
 	destroy_dialog(rename_dialog, rename_dialog);
