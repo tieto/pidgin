@@ -32,6 +32,7 @@
 #include "accountopt.h"
 #include "event.h"
 #include "prefs.h"
+#include "plugin.h"
 #include "stock.h"
 #include "gtkblist.h"
 #include "gaim-disclosure.h"
@@ -1065,14 +1066,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_accounts_add(dialog->account);
 	}
 
-	/* See if we want to register with a server now. */
-	if (dialog->prpl_info->register_user != NULL &&
-		gtk_toggle_button_get_active(
-				GTK_TOGGLE_BUTTON(dialog->register_check))) {
-
-		dialog->prpl_info->register_user(dialog->account);
-	}
-
 	gtk_widget_destroy(dialog->window);
 
 	account_win_destroy_cb(NULL, NULL, dialog);
@@ -1084,7 +1077,7 @@ static void
 register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
 	GaimAccount *account = dialog->account;
-	GaimProtocolPluginInfo *prpl_info = dialog->prpl_info;
+	GaimPluginProtocolInfo *prpl_info = dialog->prpl_info;
 
 	ok_account_prefs_cb(NULL, dialog);
 
