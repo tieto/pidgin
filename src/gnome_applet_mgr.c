@@ -41,9 +41,11 @@ enum gaim_user_states MRI_user_status;
 gboolean applet_buddy_show = FALSE;
 GtkWidget *applet_popup = NULL;
 
+/*
 gchar GAIM_GNOME_OFFLINE_ICON[255] = GAIM_GNOME_PENGUIN_OFFLINE;
 gchar GAIM_GNOME_CONNECT_ICON[255] = GAIM_GNOME_PENGUIN_CONNECT;
 gchar GAIM_GNOME_ONLINE_ICON[255] = GAIM_GNOME_PENGUIN_ONLINE;
+*/
 
 GtkWidget *applet;
 GtkWidget *appletframe;
@@ -146,6 +148,7 @@ static gboolean update_applet(gboolean force_update){
 }
 
 void update_pixmaps() {
+	/*
 	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
 		sprintf(GAIM_GNOME_OFFLINE_ICON, "%s",  GAIM_GNOME_DEVIL_OFFLINE);
 		sprintf(GAIM_GNOME_CONNECT_ICON, "%s",  GAIM_GNOME_DEVIL_CONNECT);
@@ -155,6 +158,7 @@ void update_pixmaps() {
 		sprintf(GAIM_GNOME_CONNECT_ICON, "%s",  GAIM_GNOME_PENGUIN_CONNECT);
 		sprintf(GAIM_GNOME_ONLINE_ICON, "%s",  GAIM_GNOME_PENGUIN_ONLINE);
 	}
+	*/
 	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, (sizehint-16), (sizehint-12),
 			&icon_offline_pm, &icon_offline_bm );
 	load_applet_icon( GAIM_GNOME_CONNECT_ICON, (sizehint-16), (sizehint-12),

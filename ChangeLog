@@ -24,6 +24,7 @@ version 0.10.0:
 	* Added the S html tag. 		
 	* Optionally Ignore TiK's Automated Messages
 	* Option to beep instead of play sound
+	* New icons for panel (depends on some GNOME pixmaps)
 
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features
