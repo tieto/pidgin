@@ -107,6 +107,7 @@ DLL_C_SRC =		about.c \
 			gtkprivacy.c \
 			gtkrequest.c \
 			gtksound.c \
+			gtksourceiter.c \
 			gtkutils.c \
 			idle.c \
 			imgstore.c \
