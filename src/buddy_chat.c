@@ -945,8 +945,8 @@ void add_chat_buddy(struct conversation *b, char *buddy, char *extra_msg)
 
 	add_chat_buddy_common(b, name, pos);
 
-	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room),
-		   g_list_length(b->in_room) == 1 ? "person" : "people");
+	g_snprintf(tmp, sizeof(tmp), ngettext("%d person in room", "%d people in room",
+		    g_list_length(b->in_room)),  g_list_length(b->in_room));
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
 	if (b->makesound)
@@ -1084,8 +1084,8 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 		return;
 
 	/* don't remove them from ignored in case they re-enter */
-	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room),
-		   g_list_length(b->in_room) == 1 ? "person" : "people");
+	g_snprintf(tmp, sizeof(tmp), ngettext("%d person in room", "%d people in room",
+		    g_list_length(b->in_room)),  g_list_length(b->in_room));
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
 	if (b->makesound)
@@ -1652,8 +1652,8 @@ void chat_tabize()
 			if (c->topic)
 				gtk_entry_set_text(GTK_ENTRY(c->topic_text), c->topic);
 
-			g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(c->in_room),
-				   g_list_length(c->in_room) == 1 ? "person" : "people");
+			g_snprintf(tmp, sizeof(tmp), ngettext("%d person in room", "%d people in room",
+				    g_list_length(c->in_room)),  g_list_length(c->in_room));
 			gtk_label_set_text(GTK_LABEL(c->count), tmp);
 
 			while (r) {
@@ -1685,8 +1685,8 @@ void chat_tabize()
 			if (c->topic)
 				gtk_entry_set_text(GTK_ENTRY(c->topic_text), c->topic);
 
-			g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(c->in_room),
-				   g_list_length(c->in_room) == 1 ? "person" : "people");
+			g_snprintf(tmp, sizeof(tmp), ngettext("%d person in room", "%d people in room",
+				    g_list_length(c->in_room)),  g_list_length(c->in_room));
 			gtk_label_set_text(GTK_LABEL(c->count), tmp);
 
 			while (r) {

@@ -1978,9 +1978,10 @@ static void accept_file_dialog(struct ft_request *ft) {
 			index++;
 		}
 	        g_snprintf(buf, sizeof(buf), 
-				ft->files == 1 ? 
-				_("%s requests %s to accept %d file: %s (%.2f %s)%s%s") :
-				_("%s requests %s to accept %d files: %s (%.2f %s)%s%s"),
+				ngettext(
+				"%s requests %s to accept %d file: %s (%.2f %s)%s%s",
+				"%s requests %s to accept %d files: %s (%.2f %s)%s%s",
+				ft->files),
 				ft->user, ft->gc->username, ft->files, 
 				ft->filename, size, sizes[index], (ft->message) ? "\n" : "",
 				(ft->message) ? ft->message : "");

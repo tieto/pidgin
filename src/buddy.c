@@ -1576,11 +1576,11 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				/* I know the line below is really ugly. I only did it this way
 				 * because I thought it'd be funny :-) */
 
-				g_snprintf(tmp, sizeof(tmp), "%s has %s", name, 
-					   (when & OPT_POUNCE_TYPING) ? "started typing to you" :
-					   (when & OPT_POUNCE_SIGNON) ? "signed on" : 
-					   (when & OPT_POUNCE_UNIDLE) ? "returned from being idle" : 
-					   "returned from being away");
+				g_snprintf(tmp, sizeof(tmp), 
+					   (when & OPT_POUNCE_TYPING) ? _("%s has started typing to you") :
+					   (when & OPT_POUNCE_SIGNON) ? _("%s has signed on") : 
+					   (when & OPT_POUNCE_UNIDLE) ? _("%s has returned from being idle") : 
+					   _("%s has returned from being away"), name);
 				
 				do_error_dialog(tmp, NULL, GAIM_INFO);
 			}

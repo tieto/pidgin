@@ -2346,60 +2346,66 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			/* Invalid (0) */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   nummissed == 1 ? 
-				   _("You missed %hu message from %s because it was invalid.") :
-				   _("You missed %hu messages from %s because they were invalid."),
-				   nummissed,
-				   userinfo->sn);
+				   ngettext( 
+				   "You missed %hu message from %s because it was invalid.",
+				   "You missed %hu messages from %s because they were invalid.",
+				   nummissed),
+				   userinfo->sn,
+				   nummissed);
 			break;
 		case 1:
 			/* Message too large */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   nummissed == 1 ?
-				   _("You missed %hu message from %s because it was too large.") :
-				   _("You missed %hu messages from %s because they were too large."),
-				   nummissed,
-				   userinfo->sn);
+				   ngettext( 
+				   "You missed %hu message from %s because it was too large.",
+				   "You missed %hu messages from %s because they were too large.",
+				   nummissed),
+				   userinfo->sn,
+				   nummissed);
 			break;
 		case 2:
 			/* Rate exceeded */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   nummissed == 1 ? 
-				   _("You missed %hu message from %s because the rate limit has been exceeded.") :
-				   _("You missed %hu messages from %s because the rate limit has been exceeded."),
-				   nummissed,
-				   userinfo->sn);
+				   ngettext( 
+				   "You missed %hu message from %s because the rate limit has been exceeded.",
+				   "You missed %hu messages from %s because the rate limit has been exceeded.",
+				   nummissed),
+				   userinfo->sn,
+				   nummissed);
 			break;
 		case 3:
 			/* Evil Sender */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   nummissed == 1 ?
-				   _("You missed %hu message from %s because he/she was too evil.") : 
-				   _("You missed %hu messages from %s because he/she was too evil."),
-				   nummissed,
-				   userinfo->sn);
+				   ngettext( 
+				   "You missed %hu message from %s because he/she was too evil.",
+				   "You missed %hu messages from %s because he/she was too evil.",
+				   nummissed),
+				   userinfo->sn,
+				   nummissed);
 			break;
 		case 4:
 			/* Evil Receiver */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   nummissed == 1 ? 
-				   _("You missed %hu message from %s because you are too evil.") :
-				   _("You missed %hu messages from %s because you are too evil."),
-				   nummissed,
-				   userinfo->sn);
+				   ngettext( 
+				   "You missed %hu message from %s because you are too evil.",
+				   "You missed %hu messages from %s because you are too evil.",
+				   nummissed),
+				   userinfo->sn,
+				   nummissed);
 			break;
 		default:
 			g_snprintf(buf,
 				   sizeof(buf),
-				   nummissed == 1 ? 
-				   _("You missed %hu message from %s for an unknown reason.") :
-				   _("You missed %hu messages from %s for an unknown reason."),
-				   nummissed,
-				   userinfo->sn);
+				   ngettext( 
+				   "You missed %hu message from %s for an unknown reason.",
+				   "You missed %hu messages from %s for an unknown reason.",
+				   nummissed),
+				   userinfo->sn,
+				   nummissed);
 			break;
 	}
 	do_error_dialog(buf, NULL, GAIM_ERROR);

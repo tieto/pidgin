@@ -482,12 +482,12 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 
 	if (count < 0) {
 		if (from && subject)
-			g_snprintf(buf, sizeof buf, "%s has mail from %s: %s", gc->username, from, *subject ? subject : _("No Subject"));
+			g_snprintf(buf, sizeof buf, _("%s has mail from %s: %s"), gc->username, from, *subject ? subject : _("No Subject"));
 		else
-			g_snprintf(buf, sizeof buf, "%s has new mail.", gc->username);
+			g_snprintf(buf, sizeof buf, _("%s has new mail."), gc->username);
 	} else if (count > 0) {
-		g_snprintf(buf, sizeof buf, "%s has %d new message%s.",
-			   gc->username, count, count == 1 ? "" : "s");
+		g_snprintf(buf, sizeof buf, 
+			   ngettext("%s has %d new message.","%s has %d new messages.",count), gc->username, count);
 	} else if (mn->email_win) {
 		gtk_widget_destroy(mn->email_win);
 		return;
