@@ -745,7 +745,7 @@ static void oscar_direct_im_disconnect(OscarData *od, struct oscar_direct_im *di
 	conv = gaim_find_conversation_with_account(dim->name, gaim_connection_get_account(dim->gc));
 	if (conv) {
 		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
-	gaim_conversation_update_progress(conv, 0);
+		gaim_conversation_update_progress(conv, 0);
 	} else {
 		gaim_notify_error(dim->gc, NULL, _("Direct Connect failed"), buf);
 	}
