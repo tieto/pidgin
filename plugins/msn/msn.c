@@ -75,11 +75,15 @@ struct msn_conn {
 	gchar *user;
 	int inpa;
 	int fd;
+	struct gaim_connection *gc;
+	char *secret;
+	char *session;
 };
 
 GSList *msn_connections = NULL;
 
 unsigned long long globalc = 0;
+static void msn_callback(gpointer data, gint source, GdkInputCondition condition);
 
 static char *msn_name()
 {
@@ -108,12 +112,30 @@ void msn_write(int fd, char *buf)
 	printf("MSN <== %s", buf);
 }
 
+static void msn_answer_callback(gpointer data, gint source, GdkInputCondition condition)
+{
+	struct msn_conn *mc = data;
+	char buf[MSN_BUF_LEN];
+
+	fcntl(source, F_SETFL, 0);
+
+	g_snprintf(buf, MSN_BUF_LEN, "ANS 1 %s %s %s\n", mc->gc->username, mc->secret, mc->session);
+	msn_write(mc->fd, buf);
+
+	gdk_input_remove(mc->inpa);
+	mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_READ, msn_callback, mc->gc);
+	
+	/* Append our connection */
+	msn_connections = g_slist_append(msn_connections, mc);
+}
+
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
 	char buf[MSN_BUF_LEN];
 	int i = 0;
+	int num;
 
 	bzero(buf, MSN_BUF_LEN);
 		
@@ -130,7 +152,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 	g_strchomp(buf);
 
-	printf("MSN ==> %s\n", buf);
+	printf("MSN(%d) ==> %s\n", source, buf);
 
 	if (!strncmp("NLN ", buf, 4) || !strncmp("ILN ", buf, 4))
 	{
@@ -168,6 +190,87 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		return;
 
+	}
+	else if (!strncmp("MSG ", buf, 4))
+	{
+		/* We are receiving an incoming message */
+		gchar **res;
+		gchar *user;
+		gchar *msgdata;
+		int size;
+		       
+		res = g_strsplit(buf, " ", 0);
+
+		user = g_strdup(res[1]);
+		size = atoi(res[3]);
+
+		/* Ok, we know who we're receiving a message from as well as
+		 * how big the message is */
+
+		msgdata = (gchar *)g_malloc(sizeof(gchar) *(size + 1));
+		num = recv(source, msgdata, size, 0);
+		msgdata[size] = 0;
+
+		if (num < size)
+			printf("MSN: Uhh .. we gots a problem!. Expected %d but got %d.\n", size, num);
+
+		/* We should ignore messages from the user Hotmail */
+		if (!strcasecmp("hotmail", res[1]))
+		{
+			g_strfreev(res);
+			g_free(msgdata);
+			return;
+		}
+
+		/* Check to see if any body is in the message */
+		if (!strcmp(strstr(msgdata, "\r\n\r\n") + 4, "\r\n"))
+		{
+			g_strfreev(res);
+			g_free(msgdata);
+			return;
+		}
+
+		/* Otherwise, everything is ok. Let's show the message. Skipping, 
+		 * of course, the header. */
+
+		serv_got_im(gc, res[1], strstr(msgdata, "\r\n\r\n") + 4, 0);
+
+		g_strfreev(res);
+		g_free(msgdata);
+
+		return;
+	}
+	else if (!strncmp("RNG ", buf, 4))
+	{
+		/* Ok, someone wants to talk to us. Ring ring?  Hi!!! */
+		gchar **address;
+		gchar **res;
+		struct msn_conn *mc = g_new0(struct msn_conn, 1);
+
+		res = g_strsplit(buf, " ", 0);
+		address = g_strsplit(res[2], ":", 0);
+
+		if (!(mc->fd = msn_connect(address[0], atoi(address[1]))))
+		{
+			/* Looks like we had an error connecting. */
+			g_strfreev(address);
+			g_strfreev(res);
+			g_free(mc);
+			return;
+		}
+
+		/* Set up our struct with user and input watcher */
+		mc->user = g_strdup(res[5]);
+		mc->secret = g_strdup(res[4]);
+		mc->session = g_strdup(res[1]);
+		mc->gc = gc;
+
+		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_WRITE, msn_answer_callback, mc);
+
+		g_strfreev(address);
+		g_strfreev(res);
+
+		return;
 	}
 	else if (!strncmp("LST ", buf, 4))
 	{
@@ -470,13 +573,23 @@ void msn_login(struct aim_user *user)
 	printf("Connected.\n");
 }
 
+static char **msn_list_icon(int uc)
+{
+	if (uc == UC_UNAVAILABLE)
+		return msn_away_xpm;
+	else if (uc == UC_NORMAL)
+		return msn_online_xpm;
+	
+	return msn_online_xpm;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_MSN;
 	ret->name = msn_name;
-	ret->list_icon = NULL;
+	ret->list_icon = msn_list_icon;
 	ret->buddy_menu = NULL;
 	ret->user_opts = NULL;
 	ret->login = msn_login;
