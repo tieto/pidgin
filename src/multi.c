@@ -1183,12 +1183,13 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	GtkWidget *button;	/* used for many things */
 	GtkWidget *sep;
 	GtkSizeGroup *sg;
+	GtkWidget *frame;
 
 	if (acctedit) {
 		gtk_window_present(GTK_WINDOW(acctedit));
 		return;
 	}
-
+	
 	acctedit = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(acctedit), _("Gaim - Account Editor"));
 	gtk_window_set_wmclass(GTK_WINDOW(acctedit), "accounteditor", "Gaim");
@@ -1202,11 +1203,15 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_container_add(GTK_CONTAINER(acctedit), vbox);
 
 	sw = generate_list();
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_container_add(GTK_CONTAINER(frame), sw);
+	gtk_widget_show(frame);
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 6);
 
-	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
 #if 0
 	vbox2 = gtk_vbox_new(TRUE, 5);
