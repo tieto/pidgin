@@ -202,10 +202,6 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	gboolean save = FALSE;
 
-	/* if we're moving to overtop of ourselves, do nothing */
-	if((GaimBlistNode*)buddy == node)
-		return;
-
 	if (!n) {
 		if (!g) {
 			g = gaim_group_new(_("Buddies"));
@@ -213,6 +209,10 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		}
 		n = gaim_blist_get_last_child((GaimBlistNode*)g);
 	}
+
+	/* if we're moving to overtop of ourselves, do nothing */
+	if((GaimBlistNode*)buddy == n)
+		return;
 
 	if (((GaimBlistNode*)buddy)->parent) {
 		/* This buddy was already in the list and is
@@ -284,12 +284,12 @@ void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 		return;
 	}
 
+	if (!node)
+		node = gaim_blist_get_last_sibling(gaimbuddylist->root);
+
 	/* if we're moving to overtop of ourselves, do nothing */
 	if((GaimBlistNode*)group == node)
 		return;
-
-	if (!node)
-		node = gaim_blist_get_last_sibling(gaimbuddylist->root);
 
 	if (gaim_find_group(group->name)) {
 		/* This is just being moved */
