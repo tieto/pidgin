@@ -13,6 +13,8 @@ plugins/gtik.c
 plugins/history.c
 plugins/iconaway.c
 plugins/idle.c
+plugins/ipc-test-client.c
+plugins/ipc-test-server.c
 plugins/mailchk.c
 plugins/notify.c
 plugins/perl/perl.c
@@ -22,7 +24,6 @@ plugins/simple.c
 plugins/spellchk.c
 plugins/statenotify.c
 plugins/tcl/tcl.c
-plugins/tcl/tcl_cmds.c
 plugins/ticker/gtkticker.c
 plugins/ticker/ticker.c
 plugins/timestamp.c
@@ -124,7 +125,6 @@ src/protocols/jabber/xmltok.c
 src/protocols/jabber/xmltok_impl.c
 src/protocols/jabber/xmltok_ns.c
 src/protocols/jabber/xstream.c
-src/protocols/msn/buddyicon.c
 src/protocols/msn/dispatch.c
 src/protocols/msn/error.c
 src/protocols/msn/ft.c

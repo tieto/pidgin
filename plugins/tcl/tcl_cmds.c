@@ -417,7 +417,7 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 	switch (cmd) {
 	case CMD_CONN_ACCOUNT:
 		if (objc != 3) {
-			Tcl_WrongNumArgs(interp, 2, objv, _("gc"));
+			Tcl_WrongNumArgs(interp, 2, objv, "gc");
 			return TCL_ERROR;
 		}
 		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&gc);
