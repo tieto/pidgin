@@ -1,5 +1,8 @@
-version 0.68:
-	* Installer translations for: Bulgarian
+version 0.68: (09/01/2003):
+	* Installer translations for: Bulgarian and Traditional Chinese.
+	* No Perl plugin support, due to the re-write. (It should be back in 
+	  the next release).
+	* Executable pounces now working (Thanks to Kevin Stange).
 
 version 0.67 (08/14/2003):
 	* Installer translations for: Dutch, French, German, Hungarian,
