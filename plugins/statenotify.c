@@ -66,13 +66,13 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 
 	frame = gaim_plugin_pref_frame_new();
 
-	ppref = gaim_plugin_pref_new_with_label("Notify When");
+	ppref = gaim_plugin_pref_new_with_label(_("Notify When"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_away", "Buddy Goes _Away");
+	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_away", _("Buddy Goes _Away"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 	
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_idle", "Buddy Goes _Idle");
+	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_idle", _("Buddy Goes _Idle"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 	
 	return frame;
