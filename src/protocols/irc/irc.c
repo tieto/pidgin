@@ -1134,6 +1134,13 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 			return;
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "MSG")) {
+		if (!*word[2])
+			return;
+		if (!*word_eol[3])
+			return;
+		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", word[2], word_eol[3]);
+		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "KICK")) {
 		if (!*word[2])
 			return;
@@ -1181,7 +1188,8 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 		write_to_conv(c, "<B>Currently supported commands:<BR>"
 				 "JOIN PART TOPIC<BR>"
 				 "OP DEOP VOICE DEVOICE KICK<BR>"
-				 "NICK ME QUOTE SAY</B><BR>", WFLAG_SYSTEM, NULL, time(NULL));
+				 "NICK ME MSG QUOTE SAY</B><BR>",
+				 WFLAG_SYSTEM, NULL, time(NULL));
 	}
 }
 
