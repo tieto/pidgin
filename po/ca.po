@@ -1,7 +1,7 @@
 # Gaim Catalan translation
 # Copyright (C) 2003, JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>
 # Copyright (C) unknown, Robert Millan <zeratul2@wanadoo.es>
-# Copyright (C) December 2003 (from 2003-12-12 until 2003-12-18), Xan <dxpublica@telefonica.net>
+# Copyright (C) December 2003 (from 2003-12-12 until 2003-12-18), January (2004-01-07), Xan <dxpublica@telefonica.net>
 #
 # This file is distributed under the same license as the Gaim package.
 #
@@ -39,7 +39,7 @@ msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-11-25 22:56-0500\n"
-"PO-Revision-Date: 2003-12-18 1:16+0100\n"
+"PO-Revision-Date: 2004-01-07 0:54+0100\n"
 "Last-Translator: Xan <dxpublica@telefonica.net>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -67,7 +67,7 @@ msgstr "Això us reconnecta quan estau desconnectats."
 
 #: plugins/chkmail.c:90 plugins/chkmail.c:113 plugins/chkmail.c:122
 msgid "Mail Server"
-msgstr "Servidor de correu:"
+msgstr "Servidor de correu"
 
 #: plugins/chkmail.c:132
 #, c-format
@@ -76,11 +76,11 @@ msgstr "%s (%d nous/%d total)"
 
 #: plugins/chkmail.c:195
 msgid "Check Mail"
-msgstr "Comprova el correu"
+msgstr "Comprova el correu electrònic"
 
 #: plugins/chkmail.c:199
 msgid "Check email every X seconds.\n"
-msgstr "Comprova el correu cada X segons.\n"
+msgstr "Comprova el correu electrònic cada X segons.\n"
 
 #: plugins/contact_priority.c:82
 #, fuzzy
@@ -1183,7 +1183,7 @@ msgstr "Català"
 
 #: src/about.c:165 src/about.c:197
 msgid "Czech"
-msgstr ""
+msgstr "Txec"
 
 #: src/about.c:166
 msgid "Danish"
@@ -1207,7 +1207,7 @@ msgstr "Francès"
 
 #: src/about.c:171
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: src/about.c:172
 msgid "Hungarian"
@@ -1222,8 +1222,9 @@ msgid "Korean"
 msgstr "Coreà"
 
 #: src/about.c:175
+#, fuzzy
 msgid "Dutch; Flemish"
-msgstr ""
+msgstr "Holandès; flemish"
 
 #: src/about.c:176
 msgid "Norwegian"
@@ -1231,7 +1232,7 @@ msgstr "Norueg"
 
 #: src/about.c:177 src/about.c:205
 msgid "Polish"
-msgstr ""
+msgstr "Polac"
 
 #: src/about.c:178
 msgid "Portuguese"
@@ -1255,7 +1256,7 @@ msgstr "Serbi"
 
 #: src/about.c:183 src/about.c:208
 msgid "Swedish"
-msgstr ""
+msgstr "Suec"
 
 #: src/about.c:184
 msgid "Vietnamese"
@@ -1308,11 +1309,11 @@ msgstr "Tancar"
 
 #: src/account.c:275 src/protocols/jabber/jabber.c:977
 msgid "New passwords do not match."
-msgstr "Les noves claus no coincideixen"
+msgstr "Les noves claus no coincideixen."
 
 #: src/account.c:283
 msgid "Fill out all fields completely."
-msgstr "Ompliu tots els camps per complet"
+msgstr "Ompliu tots els camps per complet."
 
 #: src/account.c:308
 msgid "Original password"
@@ -1329,7 +1330,7 @@ msgstr "Nova clau (un altre cop)"
 #: src/account.c:325
 #, c-format
 msgid "Change password for %s"
-msgstr "Canviant la clau de %s:"
+msgstr "Canviant la clau de %s"
 
 #: src/account.c:331
 msgid "Please enter your current password and your new password."
@@ -1932,7 +1933,9 @@ msgstr ""
 "Enviant un MI a un contacte:\n"
 "\tgaim-remote uri 'aim:goim?screenname=Pingüí&message=Hola+a+tot+el+món'\n"
 "En aquest cas, 'Pingüí' és el nom del contacte al que volem enviar el MI, i 'Hola a tot el món'\n"
+"és el missatge a enviar. S'ha d'utilitzar '+' envers d'espais.\n"
 "Si us plau, teniu en compte els símbols entre les cometes utilitzats a dalt. Si voleu executar"
+"això en una consola, el caràcter '&' ha d'anar precedit per la barra invertida o sinó l'ordre s'aturarà en aquest punt.\n"
 "Per altra banda, el següent obrirà només una conversa amb un contacte,\n"
 "sense cap missatge:\n"
 "\tgaim-remote uri aim:goim?screenname=Pingüí\n"
@@ -7832,7 +7835,7 @@ msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser<br>"
 msgstr ""
-"Si voleu veure aquest perfil, haureu de visitar aquest enllaç amb el vostre "
+"Si voleu veure aquest perfil, haureu de visitar aquest enllaç amb el vostre navegador<br>"
 
 #: src/protocols/yahoo/yahoo.c:2622
 #, fuzzy
