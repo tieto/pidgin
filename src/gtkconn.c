@@ -377,7 +377,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 	GtkTreeSelection *sel = NULL;
 	GtkTreeModel *model = NULL;
 	GaimAccount *account = NULL;
-	
+
 	switch (id) {
 	case GTK_RESPONSE_APPLY: /* Reconnect All */
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview));
@@ -572,6 +572,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 
 		gtk_container_set_border_width(GTK_CONTAINER(disconnect_window->window), 6);
 		gtk_window_set_resizable(GTK_WINDOW(disconnect_window->window), FALSE);
+		gtk_window_set_title(GTK_WINDOW(disconnect_window->window), _("Disconnected"));
 		gtk_dialog_set_has_separator(GTK_DIALOG(disconnect_window->window), FALSE);
 		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(disconnect_window->window)->vbox), 12);
 		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(disconnect_window->window)->vbox), 6);
@@ -631,7 +632,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		col = gtk_tree_view_column_new_with_attributes (_("Time"),
 								rend, "text", 2, NULL);
 		gtk_tree_view_append_column (GTK_TREE_VIEW(disconnect_window->treeview), col);
-		
+
 		g_object_unref(G_OBJECT(list_store));
 		gtk_container_add(GTK_CONTAINER(disconnect_window->sw), disconnect_window->treeview);
 
