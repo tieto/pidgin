@@ -471,95 +471,64 @@ GdkColor *get_color(int colorv, GdkColormap * map)
 }
 
 
-
-
-GdkFont *getfont(char * font, int bold, int italic, int fixed, int size)
+int load_font_with_cache(const char *name, const char *weight, char slant,
+	int size, GdkFont **font_return)
 {
-	gchar font_name[1024] = "-*-";
-	GdkFont * my_font;
-	if (size > MAX_SIZE)
-		size = MAX_SIZE;
-	if (size < 1)
-		size = 1;
-	size--;
+	gchar font_spec[1024];
 
-	if(strlen(font))
-	{
-		strcat( font_name, font );
-	}
-	else
-	{
-		if( fixed )
-		{
-			strcat( font_name, "courier" );
-		}
-		else
-		{
-			strcat( font_name, "helvetica" );
-		}
-	}
-	strcat( font_name, "-" );
+	g_snprintf(font_spec, sizeof font_spec,
+		"-*-%s-%s-%c-normal-*-*-%d-*-*-*-*-iso8859-1",
+		name, weight, slant, size);
 
-	if(bold)
-	{
-		strcat( font_name, "bold");
+	if((*font_return = g_datalist_id_get_data(&font_cache,
+				g_quark_from_string(font_spec)))) {
+		return TRUE;
+	} else if ((*font_return = gdk_font_load(font_spec))) {
+		g_datalist_id_set_data(&font_cache,
+			g_quark_from_string(font_spec), *font_return);
+		return TRUE;
+	} else {
+		return FALSE;
 	}
-	else
-	{
-		strcat( font_name, "medium");
-	}
-	strcat( font_name, "-" );
-	/*
-	 * here is the deal, some fonts have oblique but not italics
-	 * other fonts have italics but not oblique
-	 * so we are going to try both
-	 */
-	if( italic == 1 )
-	{
-		strcat( font_name, "i");
-	}
-	else if( italic == 2 )
-	{
-		strcat( font_name, "o" );
-	}
-	else
-	{
-		strcat( font_name, "r");
-	}
-	strcat( font_name, "-*-*-*-");
-	{
-		char buff[256];
-		sprintf(buff, "%d-*-*-*-*-*-*", font_sizes[size]);
-		strcat( font_name, buff );
-	}
-
-	g_strdown(font_name);
-		
-	if( (my_font = 
-	     g_datalist_id_get_data(&font_cache, 
-				    g_quark_from_string(font_name)) ) )	
-	{
-		return my_font;
-	}
-	my_font = gdk_font_load(font_name);
-	if( !my_font )
-	{
-		if( italic == 1 )
-		{
-			my_font = getfont(font, bold, 2, fixed, size+1 );
-		}
-		else
-		{
-			my_font = getfont("", bold, italic, fixed, size+1 );
-		}
-	}
-	g_datalist_id_set_data( &font_cache, 
-							g_quark_from_string(font_name),
-							my_font );
-	return my_font;
 }
 
 
+GdkFont *getfont(const char *font, int bold, int italic, int fixed, int size)
+{
+	GdkFont *my_font = NULL;
+	gchar *weight, slant;
+
+	if (!font || !strlen(font)) font = fixed ? "courier" : "helvetica";
+	weight = bold ? "bold" : "medium";
+	slant = italic ? 'i' : 'r';
+
+	if (size > MAX_SIZE) size = MAX_SIZE;
+	if (size < 1) size = 1;
+	size = font_sizes[size-1];
+	
+	/* try both 'i'talic and 'o'blique for italic fonts, and keep
+	 * increasing the size until we get one that works. */	
+
+	while (size < 720) {
+		if (load_font_with_cache(font, weight, slant, size, &my_font))
+			return my_font;
+		if (italic && load_font_with_cache(font, weight, 'o', size, &my_font))
+			return my_font;
+		size += 10;
+	}
+
+	/* since we couldn't get any size up to 72, fall back to the
+	 * default fonts. */
+
+	font = fixed ? "courier" : "helvetica";
+
+	if (load_font_with_cache(font, weight, slant, 120, &my_font))
+		return my_font;
+	else {
+		fprintf(stderr, "gaim: can't load default font\n");
+		exit(1);
+	}
+}
 
 
 /* 'Borrowed' from ETerm */
