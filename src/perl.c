@@ -335,6 +335,7 @@ XS (XS_AIM_print)
 
 XS (XS_AIM_buddy_list)
 {
+	/* FIXME
 	struct buddy *buddy;
 	struct group *g;
 	GSList *list = groups;
@@ -354,10 +355,12 @@ XS (XS_AIM_buddy_list)
 		list = g_slist_next(list);
 	}
 	XSRETURN(i);
+	*/
 }
 
 XS (XS_AIM_online_list)
 {
+	/* FIXME
 	struct buddy *b;
 	struct group *g;
 	GSList *list = groups;
@@ -377,10 +380,12 @@ XS (XS_AIM_online_list)
 		list = g_slist_next(list);
 	}
 	XSRETURN(i);
+	*/
 }
 
 XS (XS_AIM_deny_list)
 {
+	/* FIXME, yet again. perl is so fucked
 	char *name;
 	GList *list = deny;
 	int i = 0;
@@ -393,6 +398,7 @@ XS (XS_AIM_deny_list)
 		list = list->next;
 	}
 	XSRETURN(i);
+	*/
 }
 
 XS (XS_AIM_command)
@@ -437,6 +443,7 @@ XS (XS_AIM_command)
 
 XS (XS_AIM_user_info)
 {
+	/* FIXME
 	int junk;
 	struct buddy *buddy;
 	char *nick;
@@ -457,6 +464,7 @@ XS (XS_AIM_user_info)
 	XST_mIV(5, buddy->uc);
 	XST_mIV(6, buddy->caps);
 	XSRETURN(7);
+	*/
 }
 
 XS (XS_AIM_print_to_conv)

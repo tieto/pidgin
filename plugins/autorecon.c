@@ -18,7 +18,7 @@ char *description() {
 }
 
 void do_signon(char *name) {
-	struct aim_user *u = find_user(name);
+	struct aim_user *u = find_user(name, -1);
 	g_free(name);
 	serv_login(u);
 	gtk_timeout_remove(recon);

@@ -65,7 +65,7 @@ gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
 
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" $(DEBUG_CFLAGS)
-LDFLAGS += $(DEBUG_LDFLAGS)
+LIBS += $(DEBUG_LIBS)
 
 EXTRA_DIST =	convo.h \
 		gaim.h \

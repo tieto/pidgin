@@ -45,8 +45,11 @@
 #include "aim.h"
 #include "gnome_applet_mgr.h"
 
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/ok.xpm"
+#include "pixmaps/admin_icon.xpm"
+#include "pixmaps/aol_icon.xpm"
+#include "pixmaps/away_icon.xpm"
+#include "pixmaps/dt_icon.xpm"
+#include "pixmaps/free_icon.xpm"
 
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
@@ -258,6 +261,7 @@ void oscar_login(struct aim_user *user) {
 	char buf[256];
 	struct gaim_connection *gc = new_gaim_conn(PROTO_OSCAR, user->username, user->password);
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
+	gc->user = user;
 
 	sprintf(debug_buff, _("Logging in %s\n"), user->username);
 	debug_print(debug_buff);
@@ -579,6 +583,7 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 	struct aim_userinfo_s *info;
 	time_t time_idle;
 	int type = 0;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_list ap;
 	va_start(ap, command);
@@ -602,7 +607,7 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 	} else
 		time_idle = 0;
 
-	serv_got_update(info->sn, 1, info->warnlevel/10, info->onlinesince,
+	serv_got_update(gc, info->sn, 1, info->warnlevel/10, info->onlinesince,
 			time_idle, type, info->capabilities);
 
 	return 1;
@@ -612,12 +617,13 @@ int gaim_parse_offgoing(struct aim_session_t *sess,
 			struct command_rx_struct *command, ...) {
 	char *sn;
 	va_list ap;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
-	serv_got_update(sn, 0, 0, 0, 0, 0, 0);
+	serv_got_update(gc, sn, 0, 0, 0, 0, 0, 0);
 
 	return 1;
 }
@@ -1063,7 +1069,7 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		aim_bos_setprofile(sess, command->conn, gc->user_info, NULL, gaim_caps);
 		aim_bos_reqbuddyrights(sess, command->conn);
 
-		account_online(gc);
+		account_online(gc->user, gc); /* this is an awkward hack */
 		serv_finish_login(gc);
 
 		if (bud_list_cache_exists(gc))
@@ -1144,7 +1150,6 @@ static char *oscar_name() {
 
 static void oscar_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	struct conversation *cnv = find_conversation(name);
 	if (away)
 		aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
 	else
@@ -1326,9 +1331,24 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	aim_chat_send_im(odata->sess, cn, message);
 }
 
+static char **oscar_list_icon(int uc) {
+	if (uc & UC_UNAVAILABLE)
+		return (char **)away_icon_xpm;
+	if (uc & UC_AOL)
+		return (char **)aol_icon_xpm;
+	if (uc & UC_NORMAL)
+		return (char **)free_icon_xpm;
+	if (uc & UC_ADMIN)
+		return (char **)admin_icon_xpm;
+	if (uc & UC_UNCONFIRMED)
+		return (char **)dt_icon_xpm;
+	return NULL;
+}
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->name = oscar_name;
+	ret->list_icon = oscar_list_icon;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;

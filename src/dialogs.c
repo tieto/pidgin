@@ -777,34 +777,30 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 {
 	char *grp, *who;
         struct conversation *c;
+	GSList *n = connections;
+	struct gaim_connection *g;
         
 	who = gtk_entry_get_text(GTK_ENTRY(a->entry));
         grp = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry));
 
         c = find_conversation(who);
 
-        add_buddy(grp, who, NULL);
+	/* FIXME */
+        add_buddy(connections->data, grp, who, NULL);
 
         if (c != NULL) {
-		int dispstyle = set_dispstyle(0);
-		GtkWidget *parent = c->add->parent;
-		gtk_widget_destroy(c->add);
-		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
-		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-		gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
-		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
-		gtk_widget_show(c->add);
+		update_convo_add_button(c);
 	}
         
         build_edit_tree();
 
-        serv_save_config();
-
-        serv_add_buddy(who);
+	while (n) {
+		g = (struct gaim_connection *)n->data;
+		serv_add_buddy(g, who);
+		n = n->next;
+	}
 
 	do_export( (GtkWidget *) NULL, 0 );
-
-        update_num_groups();
 
         destroy_dialog(NULL, a->window);
 }
@@ -815,26 +811,23 @@ void do_add_group(GtkWidget *w, struct addbuddy *a)
 
 	grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
-	add_group(grp);
+	/* FIXME */
+	add_group(connections->data, grp);
 
 	build_edit_tree();
 
-	serv_save_config();
-
 	do_export( (GtkWidget *) NULL, 0 );
-
-	update_num_groups();
 
 	destroy_dialog(NULL, a->window);
 }
 
 
-static GList *groups_tree()
+static GList *groups_tree(struct gaim_connection *gc)
 {
 	GList *tmp=NULL;
         char *tmp2;
 	struct group *g;
-        GSList *grp = groups;
+        GSList *grp = gc->groups;
         
 	if (!grp) {
                 tmp2 = g_strdup(_("Buddies"));
@@ -930,7 +923,7 @@ void show_add_group()
 	gtk_widget_show(a->window);
 }
 
-void show_add_buddy(char *buddy, char *group)
+void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 {
 	GtkWidget *cancel;
 	GtkWidget *add;
@@ -956,7 +949,7 @@ void show_add_buddy(char *buddy, char *group)
         a->entry = gtk_entry_new();
         a->combo = gtk_combo_new();
         /* Fix the combo box */
-        gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree());
+        gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(gc ? gc : connections->data));
         /* Put the buttons in the box */
 
 	add = picture_button(a->window, _("Add"), add_xpm);
@@ -1457,7 +1450,11 @@ void show_change_passwd()
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
+#ifndef NO_MULTI
 	passwd_multi_menu(vbox, b);
+#else
+	b->gc = connections->data;
+#endif
 
 	/* First Line */
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -1733,38 +1730,13 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         }
 
         if (d) {
-		GList *d = deny;
-		char *n = g_strdup(normalize(name));
-		while (d) {
-			if (!strcmp(n, normalize(d->data)))
-				break;
-			d = d->next;
-		}
-		g_free(n);
-		if (!d) {
-	                deny = g_list_append(deny, name);
-        	        serv_add_deny(name);
-		}
+		/* FIXME */
+		serv_add_deny(connections->data, name);
         } else {
-		GList *d = permit;
-		char *n = g_strdup(normalize(name));
-		while (d) {
-			if (!strcmp(n, normalize(d->data)))
-				break;
-			d = d->next;
-		}
-		g_free(n);
-		if (!d) {
-			permit = g_list_append(permit, name);
-			serv_add_permit(name);
-		}
+		/* FIXME */
+		serv_add_permit(connections->data, name);
         }
 
-
-
-        build_permit_tree();
-
-        serv_save_config();
 	do_export(0, 0);
 
         destroy_dialog(NULL, p->window);
@@ -2697,7 +2669,7 @@ void do_export(GtkWidget *w, void *dummy)
 		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(exportdialog));
 		strncpy( path, file, PATHSIZE - 1 );
 		if ((f = fopen(path,"w"))) {
-			serv_build_config(buf, 8192 - 1, TRUE);
+			toc_build_config(connections->data, buf, 8192 - 1, TRUE);
 			fprintf(f, "%s\n", buf);
 			fclose(f);
 			chmod(buf, S_IRUSR | S_IWUSR);
@@ -2733,7 +2705,7 @@ void do_export(GtkWidget *w, void *dummy)
 				if ((f = fopen(path,"w"))) {
 					sprintf(debug_buff, "writing %s\n", path);
 					debug_print(debug_buff);
-					serv_build_config(buf, 8192 - 1, TRUE);
+					toc_build_config(g, buf, 8192 - 1, TRUE);
 					fprintf(f, "%s\n", buf);
 					fclose(f);
 					chmod(buf, S_IRUSR | S_IWUSR);
@@ -2871,10 +2843,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 
         parse_toc_buddy_list(gc, buf, 1);
 
-        serv_save_config();
-
         build_edit_tree();
-        build_permit_tree();
 
 	fclose( f );
 
@@ -3233,7 +3202,8 @@ static void do_alias(GtkWidget *w, gpointer n)
 	char *name, *who;
 	struct buddy *b;
 	name = g_strdup(gtk_entry_get_text(GTK_ENTRY(aliasentry)));
-	if ((b = find_buddy(name)) == NULL) {
+	/* FIXME */
+	if ((b = find_buddy(connections->data, name)) == NULL) {
 		g_free(name);
 		destroy_dialog(aliasdlg, aliasdlg);
 		return;
@@ -3242,9 +3212,10 @@ static void do_alias(GtkWidget *w, gpointer n)
 	do_export(0, 0);
 	who = g_malloc(sizeof(b->show) + 10);
 	strcpy(who, b->show);
-	gtk_label_set(GTK_LABEL(b->label), who);
+	/* FIXME */
+	/* gtk_label_set(GTK_LABEL(b->label), who); */
 	g_free(who);
-	set_buddy(b);
+	/* set_buddy(b); */
 	g_free(name);
 	destroy_dialog(aliasdlg, aliasdlg);
 }

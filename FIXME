@@ -1,19 +1,25 @@
 GAIM: Items to be fixed
 ------------------------
-Holy crap.
+This is just for the buddy list window now. Everything else is nearing completion.
 
-Take a deep breath.
+1. Enforce order. E.g. a buddy list looks like:
+	|-Buddies
+	|   |--EWarmenhoven
+	|   `--RobFlynn
+	`-Friends
+	    `--Zilding
 
-Holy Crap.
+   Need to enforce that Buddies comes before Friends, and EWarmenhoven comes before RobFlynn.
+   See appropriate FIXME comments in buddy.c.
 
-1. We need to modify the conversation window to state who you're sending messages as. The current way,
-   with the drop-down menu, is pretty crappy, though effective. (Perhaps just repositioning the menu?)
-2. We need to modify the buddy list to indicate which buddies belong to which connections. We also
-   need to modify the buddy list to vary the right-click menus on a per-conversation basis. (I.e. create
-   the menu based on which options the protocol supports.)
-3. We need to modify nearly every function in server.c to determine which connection to do things on.
-   The ones that still need to be modified have a FIXME comment in them.
-   3.1. We need to modify the UI to let the user indicate which account to do things on.
-4. We need to completely modify the plugin/perl system to account for multiple connections. SOMEWHAT DONE
+2. Need to make it so that when the buddy list is edited the main window properly reflects that.
 
-And that's just the large things. There are countless trivial issues that need to be addressed.
+3. Need to modify the right-click menu for buddies, to include status for the buddy from each
+   connection that has it registered, and also to get available actions from each connection
+   that has it registered.
+
+4. Need to get Aliases working again.
+
+5. Need to set number of buddies in group (as an option)
+
+6. Need to not hide empty groups (as an option)

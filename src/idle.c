@@ -47,7 +47,6 @@ gint check_idle(struct gaim_connection *gc)
 #endif
 
         /* Not idle, really...  :) */
-	update_all_buddies();
 
 	plugin_event(event_blist_update, 0, 0, 0, 0);
         

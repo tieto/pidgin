@@ -78,7 +78,6 @@ extern void remove_applet_away();
 
 extern void update_pixmaps();
 extern void applet_set_tooltips(char *);
-extern void dologin(GtkWidget *, GtkWidget *);
 
 extern gboolean applet_buddy_show;
 

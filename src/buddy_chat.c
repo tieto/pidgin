@@ -158,6 +158,7 @@ void join_chat()
 		gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
 		gtk_widget_show(entry);
 
+#ifndef NO_MULTI
 		hbox = gtk_hbox_new(TRUE, 10);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
 		gtk_widget_show(hbox);
@@ -167,6 +168,9 @@ void join_chat()
 		gtk_widget_show(label);
 
 		create_joinchat_menu(hbox);
+#else
+		joinchatgc = connections->data;
+#endif
 
 		hbox = gtk_hbox_new(TRUE, 10);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
@@ -843,7 +847,7 @@ void update_im_button_pix()
 		c->close = change_text(c->window, _("Close"), c->close, cancel_xpm, opt);
 		gtk_box_reorder_child(GTK_BOX(parent), c->close, 0);
 		gtk_box_set_child_packing(GTK_BOX(parent), c->sep1, dispstyle, dispstyle, 0, GTK_PACK_END);
-		if (find_buddy(c->name) == NULL)
+		if (find_buddy(c->gc, c->name) == NULL)
 			c->add = change_text(c->window, _("Add"), c->add, gnome_add_xpm, opt);
 		else
 			c->add = change_text(c->window, _("Remove"), c->add, gnome_remove_xpm, opt);

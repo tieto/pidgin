@@ -57,17 +57,16 @@ void serv_login(struct aim_user *user)
 
 void serv_close(struct gaim_connection *gc)
 {
+	if (gc->idle_timer > 0)
+		gtk_timeout_remove(gc->idle_timer);
+        gc->idle_timer = -1;
+
 	if (gc->prpl && gc->prpl->close)
 		(*gc->prpl->close)(gc);
 
 	account_offline(gc);
 	destroy_gaim_conn(gc);
-
-	if (connections) return;
-
-	if (gc->idle_timer > 0)
-		gtk_timeout_remove(gc->idle_timer);
-        gc->idle_timer = -1;
+	build_edit_tree();
 }
 
 void serv_touch_idle(struct gaim_connection *gc)
@@ -99,7 +98,7 @@ void serv_finish_login(struct gaim_connection *gc)
 
         time(&gc->login_time);
 
-        serv_add_buddy(gc->username);
+        serv_add_buddy(gc, gc->username);
 }
 
 
@@ -132,7 +131,7 @@ void serv_get_away_msg(char *name)
 	if (!connections) return;
 	g = connections->data;
 
-	if (g && g->prpl && g->prpl->get_info)
+	if (g && g->prpl && g->prpl->get_away_msg)
 		(*g->prpl->get_away_msg)(g, name);
 }
 
@@ -196,165 +195,51 @@ void serv_change_passwd(struct gaim_connection *g, char *orig, char *new) {
 		(*g->prpl->change_passwd)(g, orig, new);
 }
 
-void serv_add_buddy(char *name)
+void serv_add_buddy(struct gaim_connection *g, char *name)
 {
-	/* FIXME: this will need to be changed. for now all buddies will be added to
-	 * all connections :-P */
-	GSList *c = connections;
-	struct gaim_connection *g;
-
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		if (g->prpl && g->prpl->add_buddy)
-			(*g->prpl->add_buddy)(g, name);
-		c = c->next;
-	}
+	if (g->prpl && g->prpl->add_buddy)
+		(*g->prpl->add_buddy)(g, name);
 }
 
-void serv_add_buddies(GList *buddies)
+void serv_add_buddies(struct gaim_connection *g, GList *buddies)
 {
-	/* FIXME: see the comment above for adding one buddy :-P */
-	GSList *c = connections;
-	struct gaim_connection *g;
-
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		if (g->prpl && g->prpl->add_buddies)
-			(*g->prpl->add_buddies)(g, buddies);
-		c = c->next;
-	}
+	if (g->prpl && g->prpl->add_buddies)
+		(*g->prpl->add_buddies)(g, buddies);
 }
 
 
-void serv_remove_buddy(char *name)
+void serv_remove_buddy(struct gaim_connection *g, char *name)
 {
-	/* FIXME: since we added them to all conns, we need to remove them from all conns */
-	GSList *c = connections;
-	struct gaim_connection *g;
-
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		if (g->prpl && g->prpl->remove_buddy)
-			(*g->prpl->remove_buddy)(g, name);
-		c = c->next;
-	}
+	if (g->prpl && g->prpl->remove_buddy)
+		(*g->prpl->remove_buddy)(g, name);
 }
 
-void serv_add_permit(char *name)
-{
-	permdeny = 3;
-	build_permit_tree();
-	serv_set_permit_deny();
-}
-
-
-
-void serv_add_deny(char *name)
-{
-	permdeny = 4;
-	build_permit_tree();
-	serv_set_permit_deny();
-}
-
-
-
-void serv_set_permit_deny()
+void serv_add_permit(struct gaim_connection *gc, char *name)
 {
 	/* FIXME */
-	struct gaim_connection *g;
-	if (!connections) return;
-	g = connections->data;
-	if (g && g->protocol == PROTO_TOC) {
-		char buf[MSG_LEN];
-		int at;
-		GList *list;
+}
 
-		switch (permdeny) {
-		case PERMIT_ALL:
-			sprintf(buf, "toc_add_permit %s", g->username);
-			sflap_send(g, buf, -1, TYPE_DATA);
-			sprintf(buf, "toc_add_deny");
-			sflap_send(g, buf, -1, TYPE_DATA);
-			break;
-		case PERMIT_NONE:
-			sprintf(buf, "toc_add_deny %s", g->username);
-			sflap_send(g, buf, -1, TYPE_DATA);
-			sprintf(buf, "toc_add_permit");
-			sflap_send(g, buf, -1, TYPE_DATA);
-			break;
-		case PERMIT_SOME:
-			at = g_snprintf(buf, sizeof(buf), "toc_add_permit");
-			list = permit;
-			while (list) {
-				at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
-				list = list->next;
-			}
-			buf[at] = 0; /* is this necessary? */
-			sflap_send(g, buf, -1, TYPE_DATA);
-			break;
-		case DENY_SOME:
-			/* you'll still see people as being online, but they won't see you, and you
-			 * won't get updates for them. that's why i thought this was broken. */
-			at = g_snprintf(buf, sizeof(buf), "toc_add_deny");
-			list = deny;
-			while (list) {
-				at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
-				list = list->next;
-			}
-			buf[at] = 0; /* is this necessary? */
-			sflap_send(g, buf, -1, TYPE_DATA);
-			break;
-		}
-	} else if (g->protocol == PROTO_OSCAR) {
-/*
-		int at;
-		GList *list;
-		char buf[MSG_LEN];
+void serv_add_deny(struct gaim_connection *gc, char *name)
+{
+	/* FIXME */
+}
 
-		switch (permdeny) {
-		case PERMIT_ALL:
-			aim_bos_changevisibility(gaim_sess, gaim_conn,
-			   AIM_VISIBILITYCHANGE_DENYADD, current_user->username);
-			break;
-		case PERMIT_NONE:
-			aim_bos_changevisibility(gaim_sess, gaim_conn,
-			   AIM_VISIBILITYCHANGE_PERMITADD, current_user->username);
-			break;
-		case PERMIT_SOME:
-			at = g_snprintf(buf, sizeof(buf), "%s", current_user->username);
-			list = permit;
-			while (list) {
-				at += g_snprintf(&buf[at], sizeof(buf) - at, "&");
-				at += g_snprintf(&buf[at], sizeof(buf) - at, "%s", list->data);
-				list = list->next;
-			}
-			aim_bos_changevisibility(gaim_sess, gaim_conn,
-			   AIM_VISIBILITYCHANGE_PERMITADD, buf);
-			break;
-		case DENY_SOME:
-			if (deny) {
-				at = 0;
-				list = deny;
-				while (list) {
-					at += g_snprintf(&buf[at], sizeof(buf) - at, "%s", list->data);
-					list = list->next;
-					if (list)
-						at += g_snprintf(&buf[at], sizeof(buf) - at, "&");
-				}
-				sprintf(debug_buff, "denying %s\n", buf);
-				debug_print(debug_buff);
-				aim_bos_changevisibility(gaim_sess, gaim_conn,
-				   AIM_VISIBILITYCHANGE_DENYADD, buf);
-			} else {
-				aim_bos_changevisibility(gaim_sess, gaim_conn,
-				   AIM_VISIBILITYCHANGE_DENYADD, current_user->username);
-			}
-			break;
-		}
-*/
-	}
-	do_export(0, 0);
-	serv_save_config();
+void serv_rem_permit(struct gaim_connection *gc, char *name)
+{
+	/* FIXME */
+}
+
+void serv_rem_deny(struct gaim_connection *gc, char *name)
+{
+	/* FIXME */
+}
+
+void serv_set_permit_deny(struct gaim_connection *gc)
+{
+	/* FIXME */
+	/* this is called when some other function has modified the permit/deny list and
+	 * now wants to register that change with the server. if you're just adding/removing
+	 * one name, use the add/remove functions above */
 }
 
 
@@ -369,29 +254,6 @@ void serv_warn(struct gaim_connection *g, char *name, int anon)
 	if (g->prpl && g->prpl->warn)
 		(*g->prpl->warn)(g, name, anon);
 }
-
-void serv_build_config(char *buf, int len, gboolean show) {
-	toc_build_config(buf, len, show);
-}
-
-
-void serv_save_config()
-{
-	/* FIXME */
-	struct gaim_connection *g;
-	if (!connections) return;
-	g = connections->data;
-	if (g && g->protocol == PROTO_TOC) {
-		char *buf = g_malloc(BUF_LONG);
-		char *buf2 = g_malloc(MSG_LEN);
-		serv_build_config(buf, BUF_LONG / 2, FALSE);
-		g_snprintf(buf2, MSG_LEN, "toc_set_config {%s}", buf);
-	        sflap_send(g, buf2, -1, TYPE_DATA);
-		g_free(buf2);
-		g_free(buf);
-	}
-}
-
 
 void serv_accept_chat(struct gaim_connection *g, int i)
 {
@@ -505,7 +367,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	if (awaymessage != NULL) {
 		time_t t;
 		char *tmpmsg;
-		struct buddy *b = find_buddy(name);
+		struct buddy *b = find_buddy(gc, name);
 		char *alias = b ? b->show : name;
 
 		time(&t);
@@ -542,14 +404,13 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 
 
-void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t idle, int type, u_short caps)
+void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int evil, time_t signon, time_t idle, int type, u_short caps)
 {
-        struct buddy *b = find_buddy(name);
-	struct gaim_connection *gc = find_gaim_conn_by_name(name);
+        struct buddy *b = find_buddy(gc, name);
+	struct gaim_connection *g = find_gaim_conn_by_name(name);
                      
-        if (gc) {
-                correction_time = (int)(signon - gc->login_time);
-                update_all_buddies();
+        if (g) {
+                correction_time = (int)(signon - g->login_time);
                 if (!b) {
                         return;
 		}
@@ -560,6 +421,8 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
 				debug_print(debug_buff);
                 return;
         }
+
+	debug_printf("got update for %s\n", b->name);
 
         /* This code will 'align' the name from the TOC */
         /* server with what's in our record.  We want to */
@@ -616,11 +479,15 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
                 if (!b->present) {
                         b->present = 1;
                         do_pounce(b->name);
+			plugin_event(event_buddy_signon, b->name, 0, 0, 0);
                 }
-        } else
+        } else {
+		if (b->present)
+			plugin_event(event_buddy_signoff, b->name, 0, 0, 0);
                 b->present = 0;
+	}
 
-        set_buddy(b);
+        set_buddy(gc, b);
 }
 
 static

@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-10-16 16:14:18 -0400 (Mon, 16 Oct 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-10-27 03:53:32 -0400 (Fri, 27 Oct 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -34,13 +34,9 @@ BUDDY LIST
 ==========
 
 The buddy list is completely fucked up. It needs to be heavily modified to be
-able to support The Change. But logging in as only one user makes it work as
-it always did.
-
-This may be changed, but here's how the buddy list cache currently works. When
-you sign on it imports the list from the name you sign on as. When the list is
-saved, it is saved to all of the signed on users. This means that when you sign
-on two or more names at once their lists will be merged.
+able to support The Change. It is currently in the process of being changed,
+and so will probably act very bizarrely. It should still be mostly usable, but
+don't try to edit your buddy list.
 
 
 TOC

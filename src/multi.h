@@ -36,11 +36,20 @@ struct gaim_connection {
 	/* all connections need an input watcher */
 	int inpa;
 
+	/* buddy list stuff. there is still a global groups for the buddy list, but
+	 * we need to maintain our own set of buddies, and our own permit/deny lists */
+	GSList *groups;
+	GSList *permit;
+	GSList *deny;
+	int permdeny;
+
 	/* all connections need a list of chats, even if they don't have chat */
 	GSList *buddy_chats;
 
 	/* each connection then can have its own protocol-specific data */
 	void *proto_data;
+
+	struct aim_user *user;
 
 	char username[64];
 	char password[32];
@@ -70,7 +79,7 @@ struct gaim_connection *find_gaim_conn_by_name(char *);
 
 void account_editor(GtkWidget *, GtkWidget *);
 
-void account_online(struct gaim_connection *);
+void account_online(struct aim_user *, struct gaim_connection *);
 void account_offline(struct gaim_connection *);
 
 void auto_login();

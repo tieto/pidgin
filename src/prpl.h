@@ -39,6 +39,8 @@ struct prpl {
 	int protocol;
 	char *(* name)();
 
+	char **(* list_icon)(int);
+
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);
 	void (* send_im)	(struct gaim_connection *, char *who, char *message, int away);

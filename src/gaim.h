@@ -74,8 +74,7 @@
 
 #define IDLE_NONE        0
 #define IDLE_GAIM        1
-#define IDLE_SYSTEM      2
-#define IDLE_SCREENSAVER 3
+#define IDLE_SCREENSAVER 2
 
 #define WFLAG_SEND 1
 #define WFLAG_RECV 2
@@ -133,6 +132,8 @@ struct aim_user {
 	char user_info[2048];
 	int options;
 	int protocol;
+
+	struct gaim_connection *gc;
 
 	/* stuff for modify window */
 	GtkWidget *mod;
@@ -218,10 +219,6 @@ extern GList *callbacks;
 struct buddy {
 	char name[80];
 	char show[80];
-	GtkWidget *item;
-	GtkWidget *label;
-	GtkWidget *pix;
-        GtkWidget *idletime;
         int present;
         int log_timer;
 	int evil;
@@ -250,11 +247,8 @@ struct away_message {
 };
 
 struct group {
-	GtkWidget *item;
-        GtkWidget *label;
-        GtkWidget *tree;
 	char name[80];
-	GList *members;
+	GSList *members;
 };
 
 struct chat_room {
@@ -467,12 +461,9 @@ extern int smiley_array[FACE_TOTAL];
 /* Globals in toc.c */
 
 /* Globals in aim.c */
-extern GList *permit;  /* The list of people permitted */
-extern GList *deny;    /* The list of people denied */
 extern GList *log_conversations;
 extern GList *buddy_pounces;
 extern GSList *away_messages;
-extern GSList *groups;
 extern GList *conversations;
 extern GList *chat_rooms;
 extern GtkWidget *mainwindow;
@@ -484,7 +475,6 @@ extern struct away_message *awaymessage;
 extern GtkWidget *awaymenu;
 
 /* Globals in buddy.c */
-extern int permdeny;
 extern GtkWidget *buddies;
 extern GtkWidget *bpmenu;
 extern GtkWidget *blist;
@@ -616,7 +606,7 @@ extern gint linkify_text(char *);
 extern void aol_icon(GdkWindow *);
 extern FILE *open_log_file (char *);
 extern char *sec_to_text(int);
-extern struct aim_user *find_user(const char *);
+extern struct aim_user *find_user(const char *, int);
 extern char *full_date();
 extern void check_gaim_versions();
 extern void spell_checker(GtkWidget *);
@@ -645,14 +635,14 @@ extern void serv_set_idle(struct gaim_connection *, int);
 extern void serv_set_info(struct gaim_connection *, char *);
 extern void serv_set_away(char *);
 extern void serv_change_passwd(struct gaim_connection *, char *, char *);
-extern void serv_add_buddy(char *);
-extern void serv_add_buddies(GList *);
-extern void serv_remove_buddy(char *);
-extern void serv_add_permit(char *);
-extern void serv_add_deny(char *);
-extern void serv_set_permit_deny();
-extern void serv_build_config(char *, int, gboolean);
-extern void serv_save_config();
+extern void serv_add_buddy(struct gaim_connection *, char *);
+extern void serv_add_buddies(struct gaim_connection *, GList *);
+extern void serv_remove_buddy(struct gaim_connection *, char *);
+extern void serv_add_permit(struct gaim_connection *, char *);
+extern void serv_add_deny(struct gaim_connection *, char *);
+extern void serv_rem_permit(struct gaim_connection *, char *);
+extern void serv_rem_deny(struct gaim_connection *, char *);
+extern void serv_set_permit_deny(struct gaim_connection *);
 extern void serv_warn(struct gaim_connection *, char *, int);
 extern void serv_set_dir(char *, char *, char *, char *, char *, char *, char *, int);
 extern void serv_dir_search(char *, char *, char *, char *, char *, char *, char *, char *);
@@ -664,7 +654,7 @@ extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_send(struct gaim_connection *, int, char *);
 
 /* output from serv */
-extern void serv_got_update(char *, int, int, time_t, time_t, int, u_short);
+extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, u_short);
 extern void serv_got_im(struct gaim_connection *, char *, char *, int);
 extern void serv_got_eviled(char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, char *);
@@ -675,6 +665,7 @@ extern void serv_rvous_accept(struct gaim_connection *, char *, char *, char *);
 extern void serv_rvous_cancel(struct gaim_connection *, char *, char *, char *);
 
 /* Functions in conversation.c */
+extern void update_convo_add_button(struct conversation *);
 extern void write_html_with_smileys(GtkWidget *, GtkWidget *, char *);
 extern void write_to_conv(struct conversation *, char *, int, char *);
 extern void show_conv(struct conversation *);
@@ -722,32 +713,28 @@ extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
 
 /* Functions in buddy.c */
 extern void destroy_buddy();
-extern void update_num_groups();
-extern void update_show_idlepix();
 extern void update_button_pix();
 extern void update_all_buddies();
 extern void show_buddy_list();
 extern void refresh_buddy_window();
-extern void toc_build_config(char *, int len, gboolean);
+extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);
 extern void signoff(struct gaim_connection *);
 extern void signoff_all(GtkWidget *, gpointer);
 extern void do_im_back();
-extern void set_buddy(struct buddy *);
-extern struct person *add_person(char *, char *);
-extern struct group *add_group(char *);
+extern void set_buddy(struct gaim_connection *, struct buddy *);
+extern struct group *add_group(struct gaim_connection *, char *);
 extern void add_category(char *);
 extern void build_edit_tree();
 extern void remove_person(struct group *, struct buddy *);
 extern void remove_category(struct group *);
 extern void do_pounce(char *);
 extern void do_bp_menu();
-extern struct buddy *find_buddy(char *);
-extern struct group *find_group(char *);
-extern struct group *find_group_by_buddy(char *);
-extern void remove_buddy(struct group *, struct buddy *);
-extern struct buddy *add_buddy(char *, char *, char *);
-extern void remove_group(struct group *);
-extern void update_lagometer(int);
+extern struct buddy *find_buddy(struct gaim_connection *, char *);
+extern struct group *find_group(struct gaim_connection *, char *);
+extern struct group *find_group_by_buddy(struct gaim_connection *, char *);
+extern void remove_buddy(struct gaim_connection *, struct group *, struct buddy *);
+extern struct buddy *add_buddy(struct gaim_connection *, char *, char *, char *);
+extern void remove_group(struct gaim_connection *, struct group *);
 
 /* Functions in away.c */
 extern void rem_away_mess(GtkWidget *, struct away_message *);
@@ -799,7 +786,6 @@ extern void set_general_option(GtkWidget *, int *);
 extern void set_option(GtkWidget *, int *);
 extern void show_prefs();
 extern void show_debug(GtkObject *);
-extern void build_permit_tree();
 extern void update_color(GtkWidget *, GtkWidget *);
 extern GtkWidget *prefs_away_list;
 extern GtkWidget *pref_fg_picture;
@@ -820,7 +806,7 @@ extern void do_error_dialog(char *, char *);
 extern void show_error_dialog(char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
-extern void show_add_buddy(char *, char *);
+extern void show_add_buddy(struct gaim_connection *, char *, char *);
 extern void show_add_group();
 extern void show_add_perm();
 extern void destroy_all_dialogs();

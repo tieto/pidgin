@@ -135,9 +135,9 @@ struct conversation *new_conversation(char *name)
 		fclose(fd);
 	}
 
-        show_conv(c);
 	if (connections)
 		c->gc = (struct gaim_connection *)connections->data;
+        show_conv(c);
         conversations = g_list_append(conversations, c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
         return c;
@@ -406,26 +406,16 @@ static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation
 
 void add_callback(GtkWidget *widget, struct conversation *c)
 {
-	if (find_buddy(c->name) != NULL) {
-		int dispstyle;
-		GtkWidget *parent = c->add->parent;
-
-		dispstyle = set_dispstyle(0);
-
+	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
 		sprintf(debug_buff,_("Removing '%s' from buddylist.\n"), c->name);
 		debug_print(debug_buff);
-		remove_buddy(find_group_by_buddy(c->name), find_buddy(c->name));
+		remove_buddy(c->gc, find_group_by_buddy(c->gc, c->name), find_buddy(c->gc, c->name));
 		build_edit_tree();
-		gtk_widget_destroy(c->add);
-		c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
-		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-		gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
-		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
-		gtk_widget_show(c->add);
+		update_convo_add_button(c);
 	}
 	else
 	{
-        	show_add_buddy(c->name, NULL);
+        	show_add_buddy(c->gc, c->name, NULL);
 	}
 
 	gtk_widget_grab_focus(c->entry);
@@ -1181,20 +1171,20 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 	if (!who) {
 		if (flags & WFLAG_SEND) {
-			b = find_buddy(c->gc->username);
+			b = find_buddy(c->gc, c->gc->username);
 			if (b)
 				who = b->show;
 			else
 				who = c->gc->username;
 		} else {
-			b = find_buddy(c->name);
+			b = find_buddy(c->gc, c->name);
 			if (b)
 				who = b->show;
 			else
 				who = c->name;
 		}
 	} else {
-		b = find_buddy(who);
+		b = find_buddy(c->gc, who);
 		if (b)
 			who = b->show;
 	}
@@ -1598,6 +1588,24 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 	cnv->gc = c;
 }
 
+void update_convo_add_button(struct conversation *c)
+{
+	int dispstyle = set_dispstyle(0);
+	GtkWidget *parent = c->add->parent;
+	gtk_widget_destroy(c->add);
+	
+	if (c->gc && find_buddy(c->gc, c->name)) {
+		/* remove */
+		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
+	} else {
+		c->add = picture_button2(c->window, _("Add"), gnome_remove_xpm, dispstyle);
+	}
+	gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+	gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
+	gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
+	gtk_widget_show(c->add);
+}
+
 static void create_convo_menu(struct conversation *cnv)
 {
 	GtkWidget *menu, *opt;
@@ -1643,6 +1651,8 @@ void redo_convo_menus()
 		else
 			C->gc = NULL;
 
+		update_convo_add_button(C);
+
 		c = c->next;
 	}
 }
@@ -1684,7 +1694,7 @@ void show_conv(struct conversation *c)
 	info = picture_button2(win, _("Info"), tb_search_xpm, dispstyle);
 	warn = picture_button2(win, _("Warn"), warn_xpm, dispstyle);
 	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
-	if (find_buddy(c->name) != NULL)
+	if (c->gc && find_buddy(c->gc, c->name) != NULL)
 		add = picture_button2(win, _("Remove"), gnome_remove_xpm, dispstyle);
 	else
 		add = picture_button2(win, _("Add"), gnome_add_xpm, dispstyle);

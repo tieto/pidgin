@@ -40,7 +40,13 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 1030 $"
+#include "pixmaps/admin_icon.xpm"
+#include "pixmaps/aol_icon.xpm"
+#include "pixmaps/away_icon.xpm"
+#include "pixmaps/dt_icon.xpm"
+#include "pixmaps/free_icon.xpm"
+
+#define REVISION "gaim:$Revision: 1040 $"
 
 struct toc_data {
 	int toc_fd;
@@ -136,7 +142,7 @@ void toc_login(struct aim_user *user)
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-	account_online(gc);
+	account_online(user, gc);
 	serv_finish_login(gc);
 
 	config = toc_wait_config(gc);
@@ -414,7 +420,7 @@ void toc_callback( gpointer          data,
                 } else
                         time_idle = 0;
 		
-                serv_got_update(c, logged, evil, signon, time_idle, type, 0);
+                serv_got_update(gc, c, logged, evil, signon, time_idle, type, 0);
 
 	} else if (!strcasecmp(c, "CONFIG")) {
 		/* do we want to load the buddy list again here? */
@@ -804,21 +810,21 @@ char *toc_wait_config(struct gaim_connection *gc)
 		return NULL;
 }
 
-void toc_build_config(char *s, int len, gboolean show)
+void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean show)
 {
-	GSList *grp = groups;
-	GList *mem;
+	GSList *grp = gc->groups;
+	GSList *mem;
 	struct group *g;
 	struct buddy *b;
-	GList *plist = permit;
-	GList *dlist = deny;
+	GSList *plist = gc->permit;
+	GSList *dlist = gc->deny;
 
 	int pos=0;
 
-	if (!permdeny)
-		permdeny = 1;
+	if (!gc->permdeny)
+		gc->permdeny = 1;
 
-	pos += g_snprintf(&s[pos], len - pos, "m %d\n", permdeny);
+	pos += g_snprintf(&s[pos], len - pos, "m %d\n", gc->permdeny);
 	while(grp) {
 		g = (struct group *)grp->data;
 		pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
@@ -864,9 +870,9 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				break;
 			if (*c == 'g') {
 				strncpy(current,c+2, sizeof(current));
-				add_group(current);
+				add_group(gc, current);
 				how_many++;
-			} else if (*c == 'b' && !find_buddy(c+2)) {
+			} else if (*c == 'b' && !find_buddy(gc, c+2)) {
 				char nm[80], sw[80], *tmp = c+2;
 				int i = 0;
 				while (*tmp != ':' && *tmp)
@@ -876,13 +882,13 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				i = 0;
 				while (*tmp) sw[i++] = *tmp++;
 				sw[i] = '\0';
-				if (!find_buddy(nm))
-					add_buddy(current, nm, sw);
+				if (!find_buddy(gc, nm))
+					add_buddy(gc, current, nm, sw);
 				how_many++;
 				
 				bud = g_list_append(bud, c+2);
 			} else if (*c == 'p') {
-				GList *d = permit;
+				GSList *d = gc->permit;
 				char *n;
 				name = g_malloc(strlen(c+2) + 2);
 				g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
@@ -894,9 +900,9 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				}
 				g_free(n);
 				if (!d)
-					permit = g_list_append(permit, name);
+					gc->permit = g_slist_append(gc->permit, name);
 			} else if (*c == 'd') {
-				GList *d = deny;
+				GSList *d = gc->deny;
 				char *n;
 				name = g_malloc(strlen(c+2) + 2);
 				g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
@@ -908,30 +914,29 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				}
 				g_free(n);
 				if (!d)
-					deny = g_list_append(deny, name);
+					gc->deny = g_slist_append(gc->deny, name);
 			} else if (!strncmp("toc", c, 3)) {
-				sscanf(c + strlen(c) - 1, "%d", &permdeny);
-				sprintf(debug_buff, "permdeny: %d\n", permdeny);
+				sscanf(c + strlen(c) - 1, "%d", &gc->permdeny);
+				sprintf(debug_buff, "permdeny: %d\n", gc->permdeny);
 				debug_print(debug_buff);
-				if (permdeny == 0)
-					permdeny = 1;
+				if (gc->permdeny == 0)
+					gc->permdeny = 1;
 			} else if (*c == 'm') {
-				sscanf(c + 2, "%d", &permdeny);
-				sprintf(debug_buff, "permdeny: %d\n", permdeny);
+				sscanf(c + 2, "%d", &gc->permdeny);
+				sprintf(debug_buff, "permdeny: %d\n", gc->permdeny);
 				debug_print(debug_buff);
-				if (permdeny == 0)
-					permdeny = 1;
+				if (gc->permdeny == 0)
+					gc->permdeny = 1;
 			}
 		} while((c=strtok(NULL,"\n"))); 
 #if 0
 		fprintf(stdout, "Sending message '%s'\n",buf);
 #endif
 				      
-		if (bud != NULL) serv_add_buddies(bud);
-		serv_set_permit_deny();
+		if (bud != NULL) serv_add_buddies(gc, bud);
+		serv_set_permit_deny(gc);
 		if (blist) {
 			build_edit_tree();
-			build_permit_tree();
 		}
 	}
 
@@ -1096,9 +1101,24 @@ static void toc_keepalive(struct gaim_connection *gc) {
 	sflap_send(gc, "", 0, TYPE_KEEPALIVE);
 }
 
+static char **toc_list_icon(int uc) {
+	if (uc & UC_UNAVAILABLE)
+		return (char **)away_icon_xpm;
+	if (uc & UC_AOL)
+		return (char **)aol_icon_xpm;
+	if (uc & UC_NORMAL)
+		return (char **)free_icon_xpm;
+	if (uc & UC_ADMIN)
+		return (char **)admin_icon_xpm;
+	if (uc & UC_UNCONFIRMED)
+		return (char **)dt_icon_xpm;
+	return NULL;
+}
+
 void toc_init(struct prpl *ret) {
         ret->protocol = PROTO_TOC;
         ret->name = toc_name;
+	ret->list_icon = toc_list_icon;
         ret->login = toc_login;
         ret->close = toc_close;
         ret->send_im = toc_send_im;

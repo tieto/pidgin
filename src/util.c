@@ -704,7 +704,7 @@ void aol_icon(GdkWindow *w)
 #endif
 }
 
-struct aim_user *find_user(const char *name)
+struct aim_user *find_user(const char *name, int protocol)
 {
         char *who = g_strdup(normalize(name));
         GList *usr = aim_users;
@@ -713,8 +713,16 @@ struct aim_user *find_user(const char *name)
         while(usr) {
                 u = (struct aim_user *)usr->data;
                 if (!strcmp(normalize(u->username), who)) {
-                        g_free(who);
-                        return u;
+			if (protocol != -1) {
+				if (u->protocol == protocol) {
+					g_free(who);
+					return u;
+				}
+			} else {
+				g_free(who);
+				return u;
+			}
+				
                 }
                 usr = usr->next;
         }
@@ -1205,7 +1213,7 @@ void set_first_user (char *name)
 {
 	struct aim_user *u;
 
-	u = find_user (name);
+	u = find_user (name, -1);
 
 	if (!u) { /* new user */
 		u = g_new0(struct aim_user, 1);
@@ -1237,7 +1245,7 @@ int do_auto_login (char *name)
 		names = g_strsplit (name, ",", 32);
 		for (n = names; *n != NULL; n++) {
 			printf ("user %s...\n", *n);
-			u = find_user(*n);
+			u = find_user(*n, -1);
 			if (u) { /* found a user */
 				if (first == NULL)
 					first = g_strdup (*n);

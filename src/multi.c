@@ -56,6 +56,9 @@ struct gaim_connection *new_gaim_conn(int proto, char *username, char *password)
 	gc->keepalive = -1;
 	gc->inpa = -1;
 	gc->buddy_chats = NULL;
+	gc->groups = NULL;
+	gc->permit = NULL;
+	gc->deny = NULL;
 
 	connections = g_slist_append(connections, gc);
 
@@ -206,8 +209,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 	} else {
 		char *titles[4];
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
-		if (find_user(txt)) {
-			/* PRPL: also need to check protocol. remember TOC and Oscar are both AIM */
+		if (find_user(txt, tmpusr.protocol)) {
 			gtk_widget_destroy(newmod);
 			return;
 		}
@@ -406,13 +408,11 @@ static void add_acct(GtkWidget *w, gpointer d)
 static void mod_acct(GtkWidget *w, gpointer d)
 {
 	int row = -1;
-	char *name;
 	struct aim_user *u;
 	if (GTK_CLIST(list)->selection)
 		row = (int)GTK_CLIST(list)->selection->data;
 	if (row != -1) {
-		gtk_clist_get_text(GTK_CLIST(list), row, 0, &name);
-		u = find_user(name);
+		u = g_list_nth_data(aim_users, row);
 		if (u)
 			show_acct_mod(u);
 	}
@@ -502,16 +502,12 @@ static void do_pass_dlg(struct aim_user *u)
 static void acct_signin(GtkWidget *w, gpointer d)
 {
 	int row = -1;
-	char *name;
 	struct aim_user *u;
-	struct gaim_connection *gc;
 	if (GTK_CLIST(list)->selection)
 		row = (int)GTK_CLIST(list)->selection->data;
 	if (row != -1) {
-		gtk_clist_get_text(GTK_CLIST(list), row, 0, &name);
-		u = find_user(name);
-		gc = find_gaim_conn_by_name(name);
-		if (!gc) {
+		u = g_list_nth_data(aim_users, row);
+		if (!u->gc) {
 			if (!u->password[0]) {
 				do_pass_dlg(u);
 			} else {
@@ -521,7 +517,7 @@ static void acct_signin(GtkWidget *w, gpointer d)
 				serv_login(u);
 			}
 		} else {
-			signoff(gc);
+			signoff(u->gc);
 		}
 	}
 }
@@ -529,13 +525,11 @@ static void acct_signin(GtkWidget *w, gpointer d)
 static void del_acct(GtkWidget *w, gpointer d)
 {
 	int row = -1;
-	char *name;
 	struct aim_user *u;
 	if (GTK_CLIST(list)->selection)
 		row = (int)GTK_CLIST(list)->selection->data;
 	if (row != -1) {
-		gtk_clist_get_text(GTK_CLIST(list), row, 0, &name);
-		u = find_user(name);
+		u = g_list_nth_data(aim_users, row);
 		if (u) {
 			aim_users = g_list_remove(aim_users, u);
 			save_prefs();
@@ -603,10 +597,12 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_widget_show(acctedit);
 }
 
-void account_online(struct gaim_connection *gc)
+void account_online(struct aim_user *u, struct gaim_connection *gc)
 {
-	struct aim_user *u;
 	int i;
+
+	gc->user = u;
+	u->gc = gc;
 
 	/* first we hide the login progress meter */
 	if (gc->meter)
@@ -640,8 +636,7 @@ void account_online(struct gaim_connection *gc)
 
 	/* everything for the account editor */
 	if (!acctedit) return;
-	u = find_user(gc->username);
-	i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
+	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
 	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(gc->protocol));
 
@@ -650,11 +645,10 @@ void account_online(struct gaim_connection *gc)
 
 void account_offline(struct gaim_connection *gc)
 {
-	struct aim_user *u;
 	int i;
+	gc->user->gc = NULL; /* wasn't that awkward? */
 	if (!acctedit) return;
-	u = find_user(gc->username);
-	i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
+	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "No");
 	redo_convo_menus();
 }
