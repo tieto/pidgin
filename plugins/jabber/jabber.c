@@ -420,11 +420,16 @@ static void gjab_connected(gpointer data, gint source, GdkInputCondition cond)
 {
 	xmlnode x;
 	char *t, *t2;
-	gjconn j = data;
-	struct gaim_connection *gc;
+	struct gaim_connection *gc = data;;
+	gjconn j;
 
 	if (source == -1) {
 		STATE_EVT(JCONN_STATE_OFF)
+		return;
+	}
+
+	if (!g_slist_find(connections, gc)) {
+		close(source);
 		return;
 	}
 
@@ -467,7 +472,7 @@ static void gjab_start(gjconn j)
 	XML_SetElementHandler(j->parser, startElement, endElement);
 	XML_SetCharacterDataHandler(j->parser, charData);
 
-	j->fd = proxy_connect(j->user->server, 5222, gjab_connected, j);
+	j->fd = proxy_connect(j->user->server, 5222, gjab_connected, GJ_GC(j));
 	if (!user->gc || (j->fd < 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
