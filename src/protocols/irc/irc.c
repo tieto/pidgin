@@ -1125,29 +1125,23 @@ is_channel(struct gaim_connection *gc, char *name)
 }
 
 static void 
-irc_rem_chat_bud(struct gaim_connection *gc, char *nick, char *reason)
+irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct conversation *b, char *reason)
 {
-	GSList *bcs = gc->buddy_chats;
 
-	while (bcs) {
-		struct conversation *b = bcs->data;
-
-		GList *r = b->in_room;
-		while (r) {
-			char *who = r->data;
-			if (*who == '@')
-				who++;
-			if (*who == '+')
-				who++;
-			if (!g_strcasecmp(who, nick)) {
-				char *tmp = g_strdup(r->data);
-				remove_chat_buddy(b, tmp, reason);
-				g_free(tmp);
-				break;
-			}
-			r = r->next;
+	GList *r = b->in_room;
+	while (r) {
+		char *who = r->data;
+		if (*who == '@')
+			who++;
+		if (*who == '+')
+			who++;
+		if (!g_strcasecmp(who, nick)) {
+			char *tmp = g_strdup(r->data);
+			remove_chat_buddy(b, tmp, reason);
+			g_free(tmp);
+			break;
 		}
-		bcs = bcs->next;
+			r = r->next;
 	}
 }
 
@@ -1395,7 +1389,8 @@ irc_parse(struct gaim_connection *gc, char *buf)
 		} else {
 			char *reason = *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5];
 			char *msg = g_strdup_printf(_("Kicked by %s: %s"), nick, reason);
-			irc_rem_chat_bud(gc, word[4], msg);
+			struct conversation *c = irc_find_chat(gc, word[3]);
+			irc_rem_chat_bud(gc, word[4], c, msg);
 			g_free(msg);
 		}
 	} else if (!strcmp(cmd, "KILL")) { /* */
@@ -1426,7 +1421,7 @@ irc_parse(struct gaim_connection *gc, char *buf)
 		}
 	} else if (!strcmp(cmd, "PONG")) { /* */
 	} else if (!strcmp(cmd, "QUIT")) {
-		irc_rem_chat_bud(gc, nick, *word_eol[3] == ':' ? word_eol[3] + 1 : word_eol[3]);
+		irc_rem_chat_bud(gc, nick, irc_find_chat(gc, word[3]), *word_eol[3] == ':' ? word_eol[3] + 1 : word_eol[3]);
 	} else if (!strcmp(cmd, "TOPIC")) {
 		irc_parse_topic(gc, nick, word, word_eol);
 	} else if (!strcmp(cmd, "WALLOPS")) { /* Don't know if a dialog box is the right way? */
