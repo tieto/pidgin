@@ -294,7 +294,12 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition conditi
 
 static void yahoo_notify(struct yahoo_session *sess, int socket, int type, int cont) {
 	struct gaim_connection *gc = sess->user_data;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd;
+
+	if (!g_slist_find(connections, gc))
+		return;
+	
+	yd = gc->proto_data;
 
 	if (cont) {
 		struct conn *c = g_new0(struct conn, 1);
@@ -319,6 +324,13 @@ static void yahoo_notify(struct yahoo_session *sess, int socket, int type, int c
 
 static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition cond) {
 	struct connect *con = data;
+	struct gaim_connection *gc = con->sess->user_data;
+
+	if (!g_slist_find(connections, gc)) {
+		close(source);
+		g_free(con);
+		return;
+	}
 
 	debug_printf("got connected (possibly)\n");
 	yahoo_connected(con->sess, con->data, source);
