@@ -123,7 +123,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		text = g_strdup_printf("%s\n<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>", 
 				       status_box->title, status_box->error);
 	} else if (status_box->typing) {
-		text = 	text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
+		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
 					       status_box->title, 
 					       aa_color,
 					       _("Typing"));
