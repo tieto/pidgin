@@ -676,8 +676,9 @@ static void update_color(GtkWidget *w, GtkWidget *pic)
 {
 	GdkColor c;
 	GtkStyle *style;
-	c.pixel = 0;
 	GdkColor color;
+
+	c.pixel = 0;
 
 	if (pic == pref_fg_picture) {
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_fgcolor")) {
