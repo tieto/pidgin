@@ -2443,7 +2443,7 @@ void clicked_debug (GtkWidget *widg, gpointer pntr)
 	}
 }
 
-static void
+void
 show_xfer_dialog(GtkMenuItem *item, gpointer user_data)
 {
 	struct gaim_gtkxfer_dialog *dialog;

@@ -93,6 +93,19 @@ static void docklet_menu(GdkEventButton *event) {
 	switch (status) {
 		case offline:
 		case offline_connecting:
+			entry = gtk_menu_item_new_with_label(_("Auto-login"));
+			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(auto_login), NULL);
+			gtk_menu_append(GTK_MENU(menu), entry);
+			break;
+		default:
+			gaim_new_item_from_stock(menu, _("New Message.."), GTK_STOCK_CONVERT, G_CALLBACK(show_im_dialog), NULL, 0, 0, NULL);
+			gaim_new_item_from_stock(menu, _("Join A Chat..."), GTK_STOCK_JUMP_TO, G_CALLBACK(join_chat), NULL, 0, 0, NULL);
+			break;
+	}
+
+	switch (status) {
+		case offline:
+		case offline_connecting:
 			break;
 		case online:
 		case online_connecting:
@@ -133,12 +146,22 @@ static void docklet_menu(GdkEventButton *event) {
 			break;
 	}
 
+	gaim_separator(menu);
+
+	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_sound_get_mute());
+	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
+	gtk_menu_append(GTK_MENU(menu), entry);
+
+	gaim_new_item_from_stock(menu, _("File Transfers..."), GTK_STOCK_REVERT_TO_SAVED, G_CALLBACK(show_xfer_dialog), NULL, 0, 0, NULL);
+	gaim_new_item_from_pixbuf(menu, _("Accounts..."), "accounts-menu.png", G_CALLBACK(account_editor), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(show_prefs), NULL, 0, 0, NULL);
+
+	gaim_separator(menu);
+
 	switch (status) {
 		case offline:
 		case offline_connecting:
-			entry = gtk_menu_item_new_with_label(_("Auto-login"));
-			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(auto_login), NULL);
-			gtk_menu_append(GTK_MENU(menu), entry);
 			break;
 		default:
 			entry = gtk_menu_item_new_with_label(_("Signoff"));
@@ -147,19 +170,6 @@ static void docklet_menu(GdkEventButton *event) {
 			break;
 	}
 
-	gaim_separator(menu);
-
-	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_sound_get_mute());
-	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
-	gtk_menu_append(GTK_MENU(menu), entry);
-
-	gaim_new_item_from_pixbuf(menu, _("Accounts..."), "accounts-menu.png", G_CALLBACK(account_editor), NULL, 0, 0, 0);
-	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(show_prefs), NULL, 0, 0, 0);
-
-	gaim_separator(menu);
-
-	gaim_new_item_from_pixbuf(menu, _("About Gaim..."), "about_menu.png", G_CALLBACK(show_about), NULL, 0, 0, 0);
 	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(do_quit), NULL, 0, 0, 0);
 
 	gtk_widget_show_all(menu);
@@ -453,6 +463,9 @@ void gaim_plugin_remove() {
 	
 	docklet_unregister_icon_factory();
 
+	/* do this while gaim has no other way to toggle the global mute */
+	gaim_sound_set_mute(FALSE);
+
 	debug_printf("Tray Icon: removed\n");
 }
 
@@ -487,7 +500,7 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup(_("Tray Icon"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ (although the icon doesn't flash yet =)."));
+	desc.description = g_strdup(_("Interacts with a Notification Area applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ."));
 	desc.authors = g_strdup(_("Robert McQueen &lt;robot101@debian.org>"));
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
@@ -498,5 +511,5 @@ char *name() {
 }
 
 char *description() {
-	return _("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ (although the icon doesn't flash yet =).");
+	return _("Interacts with a Notification Area applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ.");
 }

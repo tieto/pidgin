@@ -362,6 +362,7 @@ extern void docklet_toggle();
 extern GtkWidget *gaim_new_item(GtkWidget *, const char *);
 extern void update_idle_times();
 extern void build_imchat_box(gboolean);
+extern void show_xfer_dialog();
 
 /* Functions in buddy_chat.c */
 #if 0
