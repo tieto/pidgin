@@ -253,15 +253,21 @@ gaim_xfer_ask_recv(GaimXfer *xfer)
 	/* If we have already accepted the request, ask the destination file
 	   name directly */
 	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_ACCEPTED) {
-		size = gaim_xfer_get_size(xfer);
-		size_buf = gaim_str_size_to_units(size);
-
-		escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
-		buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
-				      xfer->who, escaped,
-				      size_buf);
-		g_free(size_buf);
-		g_free(escaped);
+		if (gaim_xfer_get_filename(xfer) != NULL)
+		{
+			size = gaim_xfer_get_size(xfer);
+			size_buf = gaim_str_size_to_units(size);
+			escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
+			buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
+					      xfer->who, escaped,
+					      size_buf);
+			g_free(size_buf);
+			g_free(escaped);
+		}
+		else
+		{
+			buf = g_strdup_printf(_("%s wants to send you a file"), xfer->who);
+		}
 
 		if (xfer->message != NULL)
 			serv_got_im(gaim_account_get_connection(xfer->account),
@@ -867,8 +873,11 @@ gaim_xfer_end(GaimXfer *xfer)
 		return;
 	}
 
-	msg = g_strdup_printf(_("Transfer of %s complete"),
-						  gaim_xfer_get_filename(xfer));
+	if (gaim_xfer_get_filename(xfer) != NULL)
+		msg = g_strdup_printf(_("Transfer of file %s complete"),
+							  gaim_xfer_get_filename(xfer));
+	else
+		msg = g_strdup_printf(_("File transfer complete"));
 	gaim_xfer_conversation_write(xfer, msg, FALSE);
 	g_free(msg);
 
@@ -914,10 +923,17 @@ gaim_xfer_cancel_local(GaimXfer *xfer)
 
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_LOCAL);
 
-	escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
-	msg = g_strdup_printf(_("You canceled the transfer of %s"),
-						  escaped);
-	g_free(escaped);
+	if (gaim_xfer_get_filename(xfer) != NULL)
+	{
+		escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
+		msg = g_strdup_printf(_("You canceled the transfer of %s"),
+							  escaped);
+		g_free(escaped);
+	}
+	else
+	{
+		msg = g_strdup_printf(_("File transfer cancelled"));
+	}
 	gaim_xfer_conversation_write(xfer, msg, FALSE);
 	g_free(msg);
 
@@ -966,9 +982,16 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 	gaim_request_close_with_handle(xfer);
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_REMOTE);
 
-	escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
-	msg = g_strdup_printf(_("%s canceled the transfer of %s"),
-						  xfer->who, escaped);
+	if (gaim_xfer_get_filename(xfer) != NULL)
+	{
+		escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
+		msg = g_strdup_printf(_("%s canceled the transfer of %s"),
+							  xfer->who, escaped);
+	}
+	else
+	{
+		msg = g_strdup_printf(_("%s canceled the file transfer"), xfer->who);
+	}
 	g_free(escaped);
 	gaim_xfer_conversation_write(xfer, msg, TRUE);
 	gaim_xfer_error(gaim_xfer_get_type(xfer), xfer->who, msg);
