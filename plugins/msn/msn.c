@@ -462,8 +462,8 @@ static void msn_rng_connect(gpointer data, gint source, GdkInputCondition cond)
 
 	md = gc->proto_data;
 
-	if (md->fd != source)
-		md->fd = source;
+	if (ms->fd != source)
+		ms->fd = source;
 
 	g_snprintf(buf, sizeof(buf), "ANS %d %s %s %s\n", ++ms->trId, gc->username, ms->auth, ms->sessid);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
