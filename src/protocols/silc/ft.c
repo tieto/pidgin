@@ -99,7 +99,7 @@ silcgaim_ftp_monitor(SilcClient client,
 		} else if (error == SILC_CLIENT_FILE_UNKNOWN_SESSION) {
 			gaim_notify_error(gc, _("Secure File Transfer"),
 					  _("Error during file transfer"),
-					  _("File transfer sessions does not exist"));
+					  _("File transfer session does not exist"));
 		} else {
 			gaim_notify_error(gc, _("Secure File Transfer"),
 					  _("Error during file transfer"), NULL);
