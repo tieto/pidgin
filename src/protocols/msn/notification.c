@@ -342,7 +342,7 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	GaimAccount *account;
 	GaimConnection *gc;
 	const char *list, *passport;
-	char *reason;
+	char *reason = NULL;
 	char *msg = NULL;
 	char **params;
 
@@ -363,16 +363,35 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	if (!strcmp(list, "FL"))
 	{
-		reason = g_strdup_printf("%s is not a valid passport account.\n\n"
-								 "This user will be automatically removed "
-								 "from your %s account's buddy list, so this "
-								 "won't appear again.",
-								 passport, gaim_account_get_username(account));
+		if (error == 208)
+		{
+			reason = g_strdup_printf("%s is not a valid passport account.\n\n"
+									 "This user will be automatically removed "
+									 "from your %s account's buddy list, "
+									 "this won't appear again.",
+									 passport,
+									 gaim_account_get_username(account));
+		}
+		else if (error == 210)
+		{
+			reason = g_strdup_printf("%s's buddy list is full.\n\n"
+									 "%s could not be added.",
+									 gaim_account_get_username(account),
+									 passport);
+		}
 	}
-	else
+
+	if (reason == NULL)
 	{
-		reason = g_strdup_printf("%s is not a valid passport account.",
-								 passport);
+		if (error == 208)
+		{
+			reason = g_strdup_printf("%s is not a valid passport account.",
+									 passport);
+		}
+		else
+		{
+			reason = g_strdup_printf("Unknown error.");
+		}
 	}
 
 	if (msg != NULL)
