@@ -2017,7 +2017,7 @@ msgstr "Sluiten"
 #: src/protocols/msn/msn.c:324 src/protocols/yahoo/yahoo.c:1126
 #, c-format
 msgid "<b>Status:</b> %s"
-msgstr "<B>Status:</B> %s"
+msgstr "<b>Status:</b> %s"
 
 #: src/protocols/msn/msn.c:337 src/protocols/msn/msn.c:592
 #: src/protocols/msn/state.c:32
@@ -4989,7 +4989,9 @@ msgstr "/Hulp/_Info..."
 msgid ""
 "\n"
 "<b>Account:</b> %s"
-msgstr "<B>Status:</B> %s"
+msgstr ""
+"\n"
+"<b>Account:</b> %s"
 
 #: src/gtkblist.c:908
 #, c-format
@@ -5001,7 +5003,9 @@ msgstr "%d%%"
 msgid ""
 "\n"
 "<b>Account:</b>"
-msgstr "Account:"
+msgstr ""
+"\n"
+"<b>Account:</b>"
 
 #: src/gtkblist.c:923
 msgid ""
@@ -5048,14 +5052,18 @@ msgstr ""
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
-msgstr "<B>Status:</B> %s"
+msgstr ""
+"\n"
+"<b>Status:</b>: Awesome"
 
 #: src/gtkblist.c:930
 #, fuzzy
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
-msgstr "<b>Status:</b> "
+msgstr ""
+"\n"
+"<b>Status:</b>: Rockin'"
 
 #: src/gtkblist.c:1227
 #, c-format
