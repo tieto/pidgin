@@ -102,6 +102,9 @@ void set_option(GtkWidget *w, int *option)
 void set_display_option(GtkWidget *w, int *option)
 {
         display_options = display_options ^ (int)option;
+
+	update_button_pix();
+
 	save_prefs();
 }
 
