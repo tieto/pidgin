@@ -174,13 +174,92 @@ trepia_list_emblems(struct buddy *b, char **se, char **sw,
 static char *
 trepia_status_text(struct buddy *b)
 {
+	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
+
+	if (trepia_profile_get_profile(profile) != NULL)
+		return g_strdup(trepia_profile_get_profile(profile));
+
 	return NULL;
 }
 
 static char *
 trepia_tooltip_text(struct buddy *b)
 {
-	return NULL;
+	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
+	const char *value;
+	const char *first_name, *last_name;
+	int int_value;
+	char *text = NULL;
+	char *tmp, *tmp2;
+	char *c;
+
+	text = g_strdup("");
+
+	first_name = trepia_profile_get_first_name(profile);
+	last_name  = trepia_profile_get_last_name(profile);
+
+	if (first_name != NULL || last_name != NULL) {
+		tmp = g_strdup_printf("<b>Name:</b> %s%s%s\n",
+							  (first_name == NULL ? "" : first_name),
+							  (first_name == NULL ? "" : " "),
+							  (last_name == NULL ? "" : last_name));
+
+		tmp2 = g_strconcat(text, tmp, NULL);
+		g_free(tmp);
+		g_free(text);
+		text = tmp2;
+	}
+
+	if ((int_value = trepia_profile_get_age(profile)) != 0) {
+		tmp = g_strdup_printf("<b>Age:</b> %d\n", int_value);
+
+		tmp2 = g_strconcat(text, tmp, NULL);
+		g_free(tmp);
+		g_free(text);
+		text = tmp2;
+	}
+
+	tmp = g_strdup_printf("<b>Gender:</b> %s\n",
+			(trepia_profile_get_sex(profile) == 'F' ? "Female" : "Male"));
+
+	tmp2 = g_strconcat(text, tmp, NULL);
+	g_free(tmp);
+	g_free(text);
+	text = tmp2;
+
+	if ((value = trepia_profile_get_city(profile)) != NULL) {
+		tmp = g_strdup_printf("<b>City:</b> %s\n", value);
+
+		tmp2 = g_strconcat(text, tmp, NULL);
+		g_free(tmp);
+		g_free(text);
+		text = tmp2;
+	}
+
+	if ((value = trepia_profile_get_state(profile)) != NULL) {
+		tmp = g_strdup_printf("<b>State:</b> %s\n", value);
+
+		tmp2 = g_strconcat(text, tmp, NULL);
+		g_free(tmp);
+		g_free(text);
+		text = tmp2;
+	}
+
+	if ((value = trepia_profile_get_country(profile)) != NULL) {
+		tmp = g_strdup_printf("<b>Country:</b> %s\n", value);
+
+		tmp2 = g_strconcat(text, tmp, NULL);
+		g_free(tmp);
+		g_free(text);
+		text = tmp2;
+	}
+
+	c = text + strlen(text);
+
+	if (*c == '\n')
+		*c = '\0';
+
+	return text;
 }
 
 static GList *
@@ -784,7 +863,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	trepia_list_icon,
 	trepia_list_emblems,
-	NULL,
+	trepia_status_text,
 	trepia_tooltip_text,
 	NULL,
 	NULL,
