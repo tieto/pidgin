@@ -9,6 +9,8 @@ version 0.44:
 	* Temporarily removed Jabber user registration, which wasn't
 	  working anyway.
 	* Added a spiffy Help button
+	* Wrote a plugin for all those people who miss having the
+	  chat rooms in their buddy lists (chatlist.so)
 
 version 0.43 (09/06/2001):
 	* Updated German Translation (thanks Daniel Seifert)

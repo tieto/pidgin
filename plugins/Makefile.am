@@ -15,7 +15,7 @@ if PLUGINS
 
 plugindir = $(libdir)/gaim
 
-plugin_DATA = autorecon.so iconaway.so lagmeter.so notify.so spellchk.so
+plugin_DATA = autorecon.so chatlist.so iconaway.so lagmeter.so notify.so spellchk.so
 
 $(plugin_DATA): $(top_srcdir)/src/gaim.h
 
@@ -31,4 +31,4 @@ endif
 
 EXTRA_DIST = ChangeLog PERL-HOWTO CRAZY HOWTO SIGNALS autorecon.c error.c filectl.c \
 	gaiminc.c iconaway.c lagmeter.c notify.c simple.c spellchk.c \
-	toc_commands.c events.c gaim.pl mailchk.c
+	toc_commands.c events.c gaim.pl mailchk.c chatlist.c
