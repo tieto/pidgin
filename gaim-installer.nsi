@@ -428,22 +428,22 @@ SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
     done:
   SectionEnd
 
-;  Section $(GTK_WIMP_SECTION_TITLE) SecGtkWimp
-;    Call CanWeInstallATheme
-;    Pop $R1
-;    StrCmp $R1 "" done
-;
-;    SetOverwrite on
-;    Rename $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-;    SetOutPath $R1\${GTK_DEFAULT_THEME_ENGINE_DIR}
-;    File ${GTK_THEME_DIR}\engines\libwimp.dll
-;    SetOutPath $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}
-;    File ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
-;    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
-;    SetOverwrite off
-;    
-;    done:
-;  SectionEnd
+  Section $(GTK_WIMP_SECTION_TITLE) SecGtkWimp
+    Call CanWeInstallATheme
+    Pop $R1
+    StrCmp $R1 "" done
+
+    SetOverwrite on
+    Rename $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
+    SetOutPath $R1\${GTK_DEFAULT_THEME_ENGINE_DIR}
+    File ${GTK_THEME_DIR}\engines\libwimp.dll
+    SetOutPath $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}
+    File ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
+    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
+    SetOverwrite off
+    
+    done:
+  SectionEnd
 
   Section $(GTK_BLUECURVE_SECTION_TITLE) SecGtkBluecurve
     Call CanWeInstallATheme
@@ -519,11 +519,10 @@ Section Uninstall
     RMDir /r "$INSTDIR\pixmaps"
     RMDir /r "$INSTDIR\perlmod"
     Delete "$INSTDIR\plugins\autorecon.dll"
+    Delete "$INSTDIR\plugins\docklet.dll"
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
-    Delete "$INSTDIR\plugins\docklet.dll"
-    Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
@@ -531,7 +530,10 @@ Section Uninstall
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\spellchk.dll"
+    Delete "$INSTDIR\plugins\ssl-nss.dll"
+    Delete "$INSTDIR\plugins\ssl.dll"
     Delete "$INSTDIR\plugins\statenotify.dll"
     Delete "$INSTDIR\plugins\ticker.dll"
     Delete "$INSTDIR\plugins\timestamp.dll"
@@ -596,8 +598,8 @@ SectionEnd ; end of uninstall section
 	$(GTK_THEMES_SECTION_DESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkNone} \
         $(GTK_NO_THEME_DESC)
-;  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkWimp} \
-;	$(GTK_WIMP_THEME_DESC)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkWimp} \
+	$(GTK_WIMP_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkBluecurve} \
         $(GTK_BLUECURVE_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkLighthouseblue} \
@@ -979,7 +981,7 @@ Function .onInit
   ; Set up Theme sections..
   StrCpy $1 ${SecGtkNone} ; Sets global to remember which theme is set.
   !insertmacro SelectSection ${SecGtkNone}
-;  !insertmacro UnselectSection ${SecGtkWimp}
+  !insertmacro UnselectSection ${SecGtkWimp}
   !insertmacro UnselectSection ${SecGtkBluecurve}
   !insertmacro UnselectSection ${SecGtkLighthouseblue}
 
@@ -1002,15 +1004,15 @@ Function .onSelChange
   StrCpy $2 ${SF_SELECTED}
   SectionGetFlags ${SecGtkNone} $0
   IntOp $2 $2 & $0
-;  SectionGetFlags ${SecGtkWimp} $0
-;  IntOp $2 $2 & $0
+  SectionGetFlags ${SecGtkWimp} $0
+  IntOp $2 $2 & $0
   SectionGetFlags ${SecGtkBluecurve} $0
   IntOp $2 $2 & $0
   SectionGetFlags ${SecGtkLighthouseblue} $0
   IntOp $2 $2 & $0
   StrCmp $2 0 skip
     SectionSetFlags ${SecGtkNone} 0
-;    SectionSetFlags ${SecGtkWimp} 0
+    SectionSetFlags ${SecGtkWimp} 0
     SectionSetFlags ${SecGtkBluecurve} 0
     SectionSetFlags ${SecGtkLighthouseblue} 0
   skip:
@@ -1025,10 +1027,10 @@ Function .onSelChange
   IntOp $0 $0 & ${SF_SELECTED}
   IntCmp $0 ${SF_SELECTED} 0 +2 +2
     StrCpy $1 ${SecGtkNone}
-;  SectionGetFlags ${SecGtkWimp} $0
-;  IntOp $0 $0 & ${SF_SELECTED}
-;  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-;    StrCpy $1 ${SecGtkWimp}
+  SectionGetFlags ${SecGtkWimp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  IntCmp $0 ${SF_SELECTED} 0 +2 +2
+    StrCpy $1 ${SecGtkWimp}
   SectionGetFlags ${SecGtkBluecurve} $0
   IntOp $0 $0 & ${SF_SELECTED}
   IntCmp $0 ${SF_SELECTED} 0 +2 +2
