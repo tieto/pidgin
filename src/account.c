@@ -839,6 +839,10 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 		else {
 			data->account = gaim_account_new(buffer, data->protocol);
+
+			if (data->account->protocol_id != NULL)
+				g_free(data->account->protocol_id);
+
 			data->account->protocol_id = data->protocol_id;
 
 			gaim_accounts_add(data->account);
