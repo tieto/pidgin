@@ -38,7 +38,7 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup("Iconify on away");
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Iconifies the away box and thee buddy list when you go away.");
+	desc.description = g_strdup("Iconifies the away box and the buddy list when you go away.");
 	desc.authors = g_strdup("Eric Warmenhoven &lt;eric@warmenhoven.org>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
