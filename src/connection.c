@@ -118,12 +118,14 @@ gaim_connection_connect(GaimConnection *gc)
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL) &&
 		gaim_account_get_password(account) == NULL) {
 
+		gchar *primary;
 		gaim_debug(GAIM_DEBUG_INFO, "connection", "Requesting password\n");
-
-		gaim_request_input(gc, NULL, _("Please enter your password"), NULL, 
-						   NULL, FALSE, TRUE,
+		primary = g_strdup_printf(_("Enter password for %s"),
+								 gaim_account_get_username(account));
+		gaim_request_input(gc, NULL, primary, NULL, NULL, FALSE, TRUE,
 						   _("OK"), G_CALLBACK(request_pass_ok_cb),
 						   _("Cancel"), NULL, account);
+		g_free(primary);
 		gaim_connection_destroy(gc);
 
 		return;
