@@ -868,6 +868,8 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 	if (data == NULL)
 		return;
 
+	if (!data->in_list)
+		return;
 
 	if ((gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) && (dialog->auto_clear)) {
 		gaim_gtkxfer_dialog_remove_xfer(dialog, xfer);
@@ -1011,6 +1013,7 @@ do_overwrite_cb(GaimXfer *xfer)
 	g_free(data->name);
 	data->name = NULL;
 
+	gaim_xfer_unref(xfer);
 	return 0;
 }
 
@@ -1042,8 +1045,10 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->filesel));
 
-	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->filesel)))
+	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->filesel))) {
+		gaim_xfer_unref(xfer);
 		return;
+	}
 
 	if (stat(name, &st) != 0) {
 		/* File not found. */
@@ -1072,6 +1077,7 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 		}
 		else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 			data->name = g_strdup(name);
+			gaim_xfer_ref(xfer);
 
 			gaim_request_yes_no(NULL, NULL,
 								_("That file already exists."),
@@ -1087,6 +1093,7 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 
 	gtk_widget_destroy(data->filesel);
 	data->filesel = NULL;
+	gaim_xfer_unref(xfer);
 }
 
 static int
@@ -1134,6 +1141,7 @@ static int
 cancel_recv_cb(GaimXfer *xfer)
 {
 	gaim_xfer_request_denied(xfer);
+	gaim_xfer_unref(xfer);
 
 	return 0;
 }
@@ -1163,6 +1171,7 @@ gaim_gtkxfer_ask_recv(GaimXfer *xfer)
 static void
 gaim_gtkxfer_request_file(GaimXfer *xfer)
 {
+	gaim_xfer_ref(xfer);
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
 		gaim_gtkxfer_ask_recv(xfer);
 	else
