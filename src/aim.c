@@ -549,8 +549,10 @@ int main(int argc, char *argv[])
 			break;
 		case '?':
 		default:
+			/*
 			show_usage(1, argv[0]);
 			return 0;
+			*/
 			break;
 		}
 	}
