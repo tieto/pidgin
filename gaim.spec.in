@@ -97,6 +97,15 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/*/*/perllocal.pod
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
+
+%if %{!?_with_silc:1}%{?_with_silc:0}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
+%endif
+
+%if %{!?_with_tcl:1}%{?_with_tcl:0}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
+%endif
+
 find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
 	sed "s@^$RPM_BUILD_ROOT@@g" | \
 	grep -v libsilcgaim.so |
@@ -152,6 +161,10 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/gaim.pc
 
 %changelog
+* Sat Oct  2 2004 Stu Tomlinson <stu@nosnilmot.com>
+- If --with tcl or silc are not specified, make sure the plugins don't
+  exist to prevent RPM complaining about unpackaged files
+
 * Tue Jun 29 2004 Ethan Blanton <eblanton@cs.ohiou.edu>
 - Change Tcl to use --with tcl, the same as SILC, and build a gaim-tcl
   package if specified.
