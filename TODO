@@ -274,6 +274,7 @@ IRC:
 	display target of +b and +q
 
 Jabber:
+	Segfault on account creation, esp. on register new account
 	in 0.59.3, not replicated by me in cvs, timestamp
 		is having a font size tag set (value of 10, obviously a point
 		size), but the rest of the line isn't. 3 issues here:
