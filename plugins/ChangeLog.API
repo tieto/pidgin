@@ -22,6 +22,21 @@ version 2.0.0cvs:
 	           of GaimBlistNodeActions to be created as a submenu of the item.
 	* Removed: gaim_escape_html(const char *html) (use
 	           g_markup_escape_text(html, -1) instead)
+	* Removed: gaim_accounts_sync, account changes are now scheduled to be saved
+	           automatically
+	* Removed: gaim_connection_connect
+	* Removed: gaim_connection_disconnect
+	* Removed: gaim_connection_register
+	* Removed: gaim_accounts_auto_login
+	* Changed: gaim_connection_new, gaim_account_connect and gaim_account_register
+	           no longer return a GaimConnection
+	* Added:   a password field to GaimConnection, which only persists for the
+	           session (when "remember password" is false, account->password is NEVER set)
+			   Use gaim_connection_get_password(GaimConnection *gc)
+	* Removed: serv_login
+	* Removed: serv_close
+	* Removed: serv_finish_login
+	* Changed: keep_alive in GaimConnection is renamed to keepalive
 
 	Signals:
 	* Changed: "received-im-msg and "received-chat-msg" to match, both
