@@ -119,7 +119,7 @@ static void gtk_html_size_allocate(GtkWidget * widget,
 static void gtk_html_adjustment(GtkAdjustment * adjustment, GtkHtml * html);
 static void gtk_html_disconnect(GtkAdjustment * adjustment, GtkHtml * html);
 static void gtk_html_add_seperator(GtkHtml * html);
-static void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, gint fit);
+// static void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, gint fit);
 static void gtk_html_add_text(GtkHtml * html,
 							  GdkFont * font,
 							  GdkColor * fore,
@@ -2685,10 +2685,7 @@ static void gtk_html_unrealize(GtkWidget * widget)
 }
 
 
-
-
-
-static void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit)
+void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit)
 {
 	GtkHtmlBit *last_hb;
 	GtkHtmlBit *hb = g_new0(GtkHtmlBit, 1);

@@ -45,6 +45,10 @@
 #include "pixmaps/link.xpm"
 #include "pixmaps/strike.xpm"
 
+#include "pixmaps/smile_happy.xpm"
+#include "pixmaps/smile_sad.xpm"
+#include "pixmaps/smile_wink.xpm"
+
 int state_lock=0;
 
 GdkPixmap *dark_icon_pm = NULL;
@@ -837,17 +841,22 @@ void write_to_conv(struct conversation *c, char *what, int flags)
         char *who = NULL;
         FILE *fd;
         char colour[10];
-
+	GdkBitmap *mask;
+	GdkPixmap *face;
+	int state;
+	int y;
+	int i;
+	char *smiley = g_malloc(5);
+	
         if (flags & WFLAG_SYSTEM) {
 
                 gtk_html_freeze(GTK_HTML(c->text));
         
                 gtk_html_append_text(GTK_HTML(c->text), what, 0);
-
-                gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
+		
+		gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
 
                 gtk_html_thaw(GTK_HTML(c->text));
-
 
                 if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
                         char *t1;
@@ -887,8 +896,98 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 
                 gtk_html_freeze(GTK_HTML(c->text));
 
-                gtk_html_append_text(GTK_HTML(c->text), buf, 0);
-                gtk_html_append_text(GTK_HTML(c->text), what, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+		y = 0;
+		state = 0;
+		buf2[0] = 0;
+
+
+		gtk_html_append_text(GTK_HTML(c->text), buf, 0);
+	
+		if (display_options & OPT_DISP_SHOW_SMILEY)
+		{
+			for (i = 0; i < strlen(what); i++)
+        		{
+               			buf2[y] = what[i];
+               			y++;
+
+		                if ((what[i] == ':') || (what[i] == ';'))
+               			{
+                       			if (state == 0)
+                        	  	{
+                                		smiley[state] = what[i];
+                                		state = 1;
+                        		}
+                        		else
+                                		state = 0;
+                		}
+                		else if ((what[i] == '-'))
+                		{
+                        		if (state == 1)
+                        		{
+                                		smiley[state] = what[i];
+                                		state = 2;
+                        		}
+                        		else
+                                		state = 0;
+                		}
+                		else if ((what[i] == ')') || (what[i] == '*') || (what[i] == '(') ||
+                         		(what[i] == 'p') || (what[i] == 'P') || (what[i] == '$') ||
+                         		(what[i] == '!') || (what[i] == 'D') || (what[i] == 'X') )
+                		{
+                        		if ( (state == 1) && (what[i] == ')') )
+                        		{
+                                		smiley[state] = what[i];
+                                		smiley[state+1] = 0;
+                                		buf2[y - state - 1] = 0;
+                                		y = 0;
+						face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_happy_xpm);	
+						gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+						gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);			
+                                		state = 0;
+                        		}
+                        		else if (state == 2)
+                        		{
+                                		smiley[state] = what[i];
+                                		smiley[state+1] = 0;
+                                		buf2[y - state - 1] = 0;
+                                		y = 0;
+
+						if (!strcasecmp(smiley, ":-("))
+						{
+							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_sad_xpm);
+						}
+						else if (!strcasecmp(smiley, ";-)"))
+						{
+							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_wink_xpm);
+						}
+						else
+						{
+							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_happy_xpm);
+						}
+
+						gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+						gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);
+                                		state = 0;
+                        		}
+                        		else
+                                		state = 0;
+                		}
+               		 	else
+                		{
+                        		state = 0;
+                		}
+        		}
+
+			if (buf2)
+			{
+				buf2[y] = 0;
+				gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+			}				
+		}
+		else
+		{
+			gtk_html_append_text(GTK_HTML(c->text), what, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+		}
 
                 gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
 
@@ -927,7 +1026,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
         if (general_options & OPT_GEN_POPUP_WINDOWS)
                 gdk_window_show(c->window->window);
 
-        
+	g_free(smiley);        
 	g_free(buf);
         g_free(buf2);
 }

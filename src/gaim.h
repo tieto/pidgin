@@ -350,7 +350,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 323 $"
+#define REVISION "gaim:$Revision: 347 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -438,7 +438,8 @@ extern int display_options;
 #define OPT_DISP_IGNORE_COLOUR   0x00000020
 #define OPT_DISP_SHOW_LOGON      0x00000040
 #define OPT_DISP_DEVIL_PIXMAPS   0x00000080
-
+#define OPT_DISP_SHOW_SMILEY	 0x00000100
+ 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001
 #define OPT_SOUND_LOGOUT         0x00000002

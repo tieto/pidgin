@@ -789,7 +789,7 @@ void build_prefs()
 #endif
 	gaim_button("Show logon/logoffs in conversation windows", &display_options, OPT_DISP_SHOW_LOGON, appbox );
 	gaim_button("Use devil icons", &display_options, OPT_DISP_DEVIL_PIXMAPS, appbox );
-	
+	gaim_button("Show graphical smileys", &display_options, OPT_DISP_SHOW_SMILEY, appbox );
 	
 	
 	gaim_button("Bold Text", &font_options, OPT_FONT_BOLD, fontbox);

@@ -1345,6 +1345,9 @@ void g_show_info_text(char *info)
 	GtkWidget *text;
         GtkWidget *bbox;
         GtkWidget *sw;
+	GdkBitmap *mask;
+	GdkPixmap *face;
+	GtkWidget *face_p;
 
         struct info_dlg *b = g_new0(struct info_dlg, 1);
 
@@ -1383,6 +1386,7 @@ void g_show_info_text(char *info)
 	gtk_widget_show_all(b->window);
 
 	gtk_html_append_text(GTK_HTML(b->text), info, 0);
+
 }
 
 void g_show_info(char *url) {
