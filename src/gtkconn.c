@@ -52,10 +52,14 @@ struct meter_window *meter_win = NULL;
 
 static void kill_meter(struct signon_meter *meter, const char *text)
 {
+	if(!meter->progress)
+		return;
+
 	gtk_widget_set_sensitive(meter->button, FALSE);
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(meter->progress), 1);
 	gtk_label_set_text(GTK_LABEL(meter->status), text);
 	meter_win->active_count--;
+	meter->progress = NULL;
 
 	if (meter_win->active_count == 0) {
 		gtk_widget_destroy(meter_win->window);
