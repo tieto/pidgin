@@ -3478,13 +3478,16 @@ void show_log(char *name)
 	GtkWidget *clear_button;
 	GtkWidget *save_button;
 	GtkWidget *list = NULL;
-	GtkWidget *item;
+	GList *item_list = NULL;
+	GtkWidget *item = NULL;
+	GtkWidget *last = NULL;
 	GtkWidget *frame;
 
 	int options;
 	guint block;
 	char convo_start[32];
 	long offset = 0;
+	unsigned int i = 0;
 
 
 	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
@@ -3547,8 +3550,20 @@ void show_log(char *name)
 			if (strstr(buf, "---- New C")) {
 				int length;
 				char *temp = strchr(buf, '@');
+
 				if (temp == NULL || strlen(temp) < 2)
 					continue;
+
+				if (i == 1) {
+					if (item_list) {
+						item_list = g_list_remove(item_list, last);
+						last = NULL;
+					}
+				}
+					
+
+				i = 0;
+
 				temp++;
 				length = strcspn(temp, "-");
 				if (length > 31) length = 31;
@@ -3562,12 +3577,22 @@ void show_log(char *name)
 				gtk_object_set_data(GTK_OBJECT(item), "box", (gpointer)bbox);
 				gtk_object_set_data(GTK_OBJECT(item), "window", (gpointer)window);
 				gtk_signal_connect(GTK_OBJECT(item), "select", GTK_SIGNAL_FUNC(log_show_convo), layout);
-				gtk_container_add(GTK_CONTAINER(list), item);
+				last = item;
+				item_list = g_list_append(item_list, item);
+				
 				gtk_widget_show(item);
 			}
+			i++;
 		}
 		fclose(fp);
 	}
+
+	if (i == 1) {
+		if (item_list)
+			item_list = g_list_remove(item_list, item);
+	}
+	
+	gtk_list_insert_items(GTK_LIST(list), item_list, 0 );
 
 	gtk_signal_disconnect(GTK_OBJECT(window), block);
 	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
