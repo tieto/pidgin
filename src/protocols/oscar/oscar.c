@@ -3546,8 +3546,12 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Gender:</b> ", info->gender==1 ? "Female" : "Male", NULL);  g_free(tmp);
 	}
 	if (info->birthyear || info->birthmonth || info->birthday) {
-		char date[15];
-		snprintf(date, sizeof(date), "%hhd/%hhd/%hd", info->birthmonth, info->birthday, info->birthyear);
+		char date[30];
+		struct tm tm;
+		tm.tm_mday = (int)info->birthday;
+		tm.tm_mon = (int)info->birthmonth-1;
+		tm.tm_year = (int)info->birthyear-1900;
+		strftime(date, sizeof(date), "%e %B %Y", &tm);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Birthday:</b> ", date, NULL);  g_free(tmp);
 	}
 	if (info->age) {
