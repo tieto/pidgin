@@ -1003,8 +1003,8 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	int fd;
 
 	va_start(ap, fr);
-	offset = va_arg(ap, fu32_t);
-	len = va_arg(ap, fu32_t);
+       offset = (fu32_t)va_arg(ap, unsigned long);
+       len = (fu32_t)va_arg(ap, unsigned long);
 	modname = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2194,13 +2194,12 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 }
 
 static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
-	fu16_t channel;
-	int ret = 0;
+	int channel, ret = 0;
 	aim_userinfo_t *userinfo;
 	va_list ap;
 
 	va_start(ap, fr);
-	channel = va_arg(ap, fu16_t);
+	channel = va_arg(ap, int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 
 	switch (channel) {
@@ -2239,10 +2238,10 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buf[1024];
 
 	va_start(ap, fr);
-	chan = va_arg(ap, fu16_t);
-	userinfo = va_arg(ap, aim_userinfo_t *);
-	nummissed = va_arg(ap, fu16_t);
-	reason = va_arg(ap, fu16_t);
+       chan = (fu16_t)va_arg(ap, unsigned int);
+        userinfo = va_arg(ap, aim_userinfo_t *);
+       nummissed = (fu16_t)va_arg(ap, unsigned int);
+       reason = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	switch(reason) {
@@ -2408,18 +2407,18 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *who;
 
 	va_start(ap, fr);
-	chan = va_arg(ap, fu16_t);
+	chan = (fu16_t) va_arg(ap, unsigned int);
 	who = va_arg(ap, char *);
-	reason = va_arg(ap, fu16_t);
+	reason = (fu16_t) va_arg(ap, unsigned int);
 
 	if (chan == 0x0002) { /* File transfer declined */
 		char *cookie = va_arg(ap, char *);
 		return gaim_parse_clientauto_ch2(sess, who, reason, cookie);
 	} else if (chan == 0x0004) { /* ICQ message */
-		fu32_t state = 0;
+		int state = 0;
 		char *msg = NULL;
 		if (reason == 0x0003) {
-			state = va_arg(ap, fu32_t);
+			state = (int) va_arg(ap, fu32_t);
 			msg = va_arg(ap, char *);
 		}
 		return gaim_parse_clientauto_ch4(sess, who, reason, state, msg);
@@ -2436,7 +2435,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *m;
 
 	va_start(ap, fr);
-	reason = va_arg(ap, fu16_t);
+	reason = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
 	debug_printf("snac threw error (reason 0x%04hx: %s)\n", reason,
@@ -2459,7 +2458,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_file_transfer *oft;
 	
 	va_start(ap, fr);
-	reason = va_arg(ap, fu16_t);
+	reason = (fu16_t) va_arg(ap, unsigned int);
 	data = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2486,9 +2485,9 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn;
 
 	va_start(ap, fr);
-	type1 = va_arg(ap, fu16_t);
+	type1 = (fu16_t) va_arg(ap, unsigned int);
 	sn = va_arg(ap, char *);
-	type2 = va_arg(ap, fu16_t);
+	type2 = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
 	debug_printf("Received an mtn from %s.  Type1 is 0x%04hx and type2 is 0x%04hx.\n", sn, type1, type2);
@@ -2521,7 +2520,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buf[1024];
 
 	va_start(ap, fr);
-	reason = va_arg(ap, fu16_t);
+	reason = (fu16_t) va_arg(ap, unsigned int);
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2634,7 +2633,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
-	infotype = va_arg(ap, fu16_t);
+	infotype = (fu16_t) va_arg(ap, unsigned int);
 	text_enc = va_arg(ap, char *);
 	text = va_arg(ap, char *);
 	text_len = va_arg(ap, int);
@@ -2757,7 +2756,7 @@ static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buildbuf[150];
 
 	va_start(ap, fr);
-	id  = va_arg(ap, fu16_t);
+	id  = (fu16_t) va_arg(ap, unsigned int);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2777,7 +2776,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
-	type = va_arg(ap, fu16_t);
+	type = (fu16_t) va_arg(ap, unsigned int);
 
 	switch(type) {
 		case 0x0002: {
@@ -2785,7 +2784,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			struct aim_chat_exchangeinfo *exchanges;
 			int exchangecount, i;
 
-			maxrooms = va_arg(ap, fu8_t);
+			maxrooms = (fu8_t) va_arg(ap, unsigned int);
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 
@@ -2811,16 +2810,17 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			fu32_t createtime;
 
 			fqcn = va_arg(ap, char *);
-			instance = va_arg(ap, fu16_t);
-			exchange = va_arg(ap, fu16_t);
-			flags = va_arg(ap, fu16_t);
-			createtime = va_arg(ap, fu32_t);
-			maxmsglen = va_arg(ap, fu16_t);
-			maxoccupancy = va_arg(ap, fu16_t);
-			createperms = va_arg(ap, fu8_t);
-			unknown = va_arg(ap, fu16_t);
-			name = va_arg(ap, char *);
-			ck = va_arg(ap, char *);
+                       instance = (fu16_t)va_arg(ap, unsigned int);
+                       exchange = (fu16_t)va_arg(ap, unsigned int);
+                       flags = (fu16_t)va_arg(ap, unsigned int);
+                        createtime = va_arg(ap, fu32_t);
+                       maxmsglen = (fu16_t)va_arg(ap, unsigned int);
+                       maxoccupancy = (fu16_t)va_arg(ap, unsigned int);
+                       createperms = (fu8_t)va_arg(ap, int);
+                       unknown = (fu16_t)va_arg(ap, unsigned int);
+                       name = va_arg(ap, char *);
+                       ck = va_arg(ap, char *);
+/*                        va_end(ap); */
 
 			debug_printf("created room: %s %hu %hu %hu %lu %hu %hu %hhu %hu %s %s\n",
 					fqcn,
@@ -2905,12 +2905,12 @@ static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 	usercount= va_arg(ap, int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	roomdesc = va_arg(ap, char *);
-	unknown_c9 = va_arg(ap, fu16_t);
-	creationtime = va_arg(ap, fu32_t);
-	maxmsglen = va_arg(ap, fu16_t);
-	unknown_d2 = va_arg(ap, fu16_t);
-	unknown_d5 = va_arg(ap, fu16_t);
-	maxvisiblemsglen = va_arg(ap, fu16_t);
+       unknown_c9 = (fu16_t)va_arg(ap, int);
+       creationtime = (fu32_t)va_arg(ap, unsigned long);
+       maxmsglen = (fu16_t)va_arg(ap, int);
+       unknown_d2 = (fu16_t)va_arg(ap, int);
+       unknown_d5 = (fu16_t)va_arg(ap, int);
+       maxvisiblemsglen = (fu16_t)va_arg(ap, int);
 	va_end(ap);
 
 	debug_printf("inside chat_info_update (maxmsglen = %hu, maxvislen = %hu)\n",
@@ -2975,7 +2975,7 @@ static int gaim_parse_msgack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn;
 
 	va_start(ap, fr);
-	type = va_arg(ap, fu16_t);
+	type = (fu16_t) va_arg(ap, unsigned int);
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2997,15 +2997,15 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu32_t windowsize, clear, alert, limit, disconnect, currentavg, maxavg;
 
 	va_start(ap, fr); 
-	code = va_arg(ap, fu16_t);
-	rateclass= va_arg(ap, fu16_t);
-	windowsize = va_arg(ap, fu32_t);
-	clear = va_arg(ap, fu32_t);
-	alert = va_arg(ap, fu32_t);
-	limit = va_arg(ap, fu32_t);
-	disconnect = va_arg(ap, fu32_t);
-	currentavg = va_arg(ap, fu32_t);
-	maxavg = va_arg(ap, fu32_t);
+       code = (fu16_t)va_arg(ap, unsigned int);
+       rateclass= (fu16_t)va_arg(ap, unsigned int);
+       windowsize = (fu32_t)va_arg(ap, unsigned long);
+       clear = (fu32_t)va_arg(ap, unsigned long);
+       alert = (fu32_t)va_arg(ap, unsigned long);
+       limit = (fu32_t)va_arg(ap, unsigned long);
+       disconnect = (fu32_t)va_arg(ap, unsigned long);
+       currentavg = (fu32_t)va_arg(ap, unsigned long);
+       maxavg = (fu32_t)va_arg(ap, unsigned long);
 	va_end(ap);
 
 	debug_printf("rate %s (param ID 0x%04hx): curavg = %lu, maxavg = %lu, alert at %lu, "
@@ -3042,7 +3042,7 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
-	newevil = va_arg(ap, fu16_t);
+	newevil = (fu16_t) va_arg(ap, unsigned int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
@@ -3166,7 +3166,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	fu32_t flags;
 
 	va_start(ap, fr);
-	maxsiglen = va_arg(ap, fu16_t);
+	maxsiglen = (fu16_t) va_arg(ap, int);
 	va_end(ap);
 
 	debug_printf("locate rights: max sig len = %d\n", maxsiglen);
@@ -3200,8 +3200,8 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
-	maxbuddies = va_arg(ap, fu16_t);
-	maxwatchers = va_arg(ap, fu16_t);
+	maxbuddies = (fu16_t) va_arg(ap, unsigned int);
+	maxwatchers = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
 	debug_printf("buddy list rights: Max buddies = %hu / Max watchers = %hu\n", maxbuddies, maxwatchers);
@@ -3219,8 +3219,8 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
-	maxpermits = va_arg(ap, fu16_t);
-	maxdenies = va_arg(ap, fu16_t);
+	maxpermits = (fu16_t) va_arg(ap, unsigned int);
+	maxdenies = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
 	debug_printf("BOS rights: Max permit = %hu / Max deny = %hu\n", maxpermits, maxdenies);
@@ -3413,9 +3413,9 @@ static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_start(ap, fr);
 	msg = va_arg(ap, char *);
 	url = va_arg(ap, char *);
-	wid = va_arg(ap, fu16_t);
-	hei = va_arg(ap, fu16_t);
-	delay = va_arg(ap, fu16_t);
+	wid = (fu16_t) va_arg(ap, int);
+	hei = (fu16_t) va_arg(ap, int);
+	delay = (fu16_t) va_arg(ap, int);
 	va_end(ap);
 
 	serv_got_popup(msg, url, wid, hei);
@@ -3469,7 +3469,7 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
-	status = va_arg(ap, fu16_t); /* status code of confirmation request */
+	status = (fu16_t) va_arg(ap, unsigned int); /* status code of confirmation request */
 	va_end(ap);
 
 	debug_printf("account confirmation returned status 0x%04x (%s)\n", status,
@@ -3492,8 +3492,8 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	va_start(ap, fr);
 	change = va_arg(ap, int);
-	perms = va_arg(ap, fu16_t);
-	err = va_arg(ap, fu16_t);
+	perms = (fu16_t) va_arg(ap, unsigned int);
+	err = (fu16_t) va_arg(ap, unsigned int);
 	url = va_arg(ap, char *);
 	sn = va_arg(ap, char *);
 	email = va_arg(ap, char *);
