@@ -502,7 +502,7 @@ do_error_dialog(char *message, char *title)
 
 	d = gtk_dialog_new();
 	gtk_window_set_policy(GTK_WINDOW(d), FALSE, FALSE, TRUE);
-	gtk_widget_show(d);
+        gtk_widget_realize(d);
         label = gtk_label_new(message);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_widget_show(label);
@@ -538,7 +538,6 @@ do_error_dialog(char *message, char *title)
 	gtk_container_set_border_width(GTK_CONTAINER(d), 5);
 	gtk_window_set_title(GTK_WINDOW(d), title);
 	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), d);
-        gtk_widget_realize(d);
 	aol_icon(d->window);
 
 	gtk_widget_show(d);
