@@ -1457,64 +1457,6 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 	}
 }
 
-static void jabber_handleavatar(gjconn gjc, xmlnode querynode, char *from) {
-	char *buddy;
-	char *encoded;
-	char *icon;
-	int iconlen;
-	xmlnode data;
-
-	if((buddy = get_realwho(gjc, from, FALSE, NULL)) == NULL)
-		return;
-
-	if(!jabber_is_default_resource(GJ_GC(gjc), buddy)) {
-		g_free(buddy);
-		return;
-	}
-
-	data = xmlnode_get_tag(querynode, "data");
-
-	if(!data) {
-		g_free(buddy);
-		return;
-	}
-
-	encoded = xmlnode_get_data(data);
-
-	if(!encoded) {
-		g_free(buddy);
-		return;
-	}
-
-	frombase64(encoded, &icon, &iconlen);
-	set_icon_data(GJ_GC(gjc), buddy, icon, iconlen);
-	g_free(icon);
-	g_free(buddy);
-}
-
-static void jabber_request_buddy_avatar(struct gaim_connection *gc, char *who) {
-	xmlnode x;
-	char *id;
-	char *realwho;
-	struct jabber_data *jd = gc->proto_data;
-	gjconn gjc = jd->gjc;
-
-	if((realwho = get_realwho(gjc, who, TRUE, NULL)) == NULL)
-		return;
-
-	x = jutil_iqnew(JPACKET__GET, "jabber:iq:avatar");
-	xmlnode_put_attrib(x, "to", realwho);
-
-	g_free(realwho);
-
-	id = gjab_getid(gjc);
-	xmlnode_put_attrib(x, "id", id);
-
-	gjab_send(gjc, x);
-
-	xmlnode_free(x);
-}
-
 static void jabber_handlepresence(gjconn gjc, jpacket p)
 {
 	char *to, *from, *type;
@@ -1603,31 +1545,6 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 
 		/* keep track of away msg somewhat the same as the yahoo plugin */
 		jabber_track_away(gjc, p, type);
-	}
-
-	for(y = xmlnode_get_firstchild(p->x); y; y = xmlnode_get_nextsibling(y)) {
-		char *tagname = xmlnode_get_name(y);
-		if(!tagname) {
-			continue;
-		} else if(!strcmp(tagname, "x")) {
-			if(!strcmp(xmlnode_get_attrib(y, "xmlns"), "jabber:x:avatar")) {
-				xmlnode hash = xmlnode_get_tag(y, "hash");
-				if(!jabber_is_default_resource(GJ_GC(gjc), from))
-					continue;
-				if(hash) {
-					char *old_hash = gaim_buddy_get_setting(b, "icon_checksum");
-					char *new_hash = xmlnode_get_data(hash);
-					if(!old_hash || strcmp(old_hash, new_hash)) {
-						jabber_request_buddy_avatar(GJ_GC(gjc), from);
-						gaim_buddy_set_setting(b, "icon_checksum", new_hash);
-						gaim_blist_save();
-					}
-				} else {
-					gaim_buddy_set_setting(b, "icon_checksum", NULL);
-					gaim_blist_save();
-				}
-			}
-		}
 	}
 
 	if (!cnv) {
@@ -2314,8 +2231,6 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 			} else if (vcard) {
 				jabber_track_queries(gjc->queries, id, TRUE);	/* delete query track */
 				jabber_handlevcard(gjc, vcard, from);
-			} else if(NSCHECK(querynode, "jabber:iq:avatar")) {
-				jabber_handleavatar(gjc, querynode, from);
 			} else if((xmlns = xmlnode_get_attrib(querynode, "xmlns")) != NULL) {
 				gaim_debug(GAIM_DEBUG_MISC, "jabber",
 						   "jabber:iq:query: %s\n", xmlns);
