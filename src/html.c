@@ -344,6 +344,7 @@ struct gaim_parse_tag {
 							c = p + 1; \
 						} else { \
 							xhtml = g_string_append(xhtml, "&lt;"); \
+							plain = g_string_append_c(plain, '<'); \
 						} \
 						continue; \
 					} \
@@ -357,29 +358,36 @@ struct gaim_parse_tag {
 								pt->src_tag = x; \
 								pt->dest_tag = y; \
 								tags = g_list_prepend(tags, pt); \
+								xhtml = g_string_append_c(xhtml, '>'); \
+							} else { \
+								xhtml = g_string_append(xhtml, "/>");\
 							} \
+							c = strchr(c, '>') + 1; \
 							continue; \
 						}
 #define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
 
-char *html_to_xhtml(const char *html) {
+void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 	GString *xhtml = g_string_new("");
+	GString *plain = g_string_new("");
 	GList *tags = NULL, *tag;
 	const char *q = NULL, *c = html;
-	char *ret;
 	while(*c) {
 		if(!q && (*c == '\"' || *c == '\'')) {
 			q = c;
 			xhtml = g_string_append_c(xhtml, *c);
+			plain = g_string_append_c(plain, *c);
 			c++;
 		} else if(q) {
 			if(*c == *q) {
 				q = NULL;
 			} else if(*c == '\\') {
 				xhtml = g_string_append_c(xhtml, *c);
+				plain = g_string_append_c(plain, *c);
 				c++;
 			}
 			xhtml = g_string_append_c(xhtml, *c);
+			plain = g_string_append_c(plain, *c);
 			c++;
 		} else if(*c == '<') {
 			if(*(c+1) == '/') { /* closing tag */
@@ -407,6 +415,7 @@ char *html_to_xhtml(const char *html) {
 					/* we tried to close a tag we never opened! escape it
 					 * and move on */
 					xhtml = g_string_append(xhtml, "&lt;");
+					plain = g_string_append_c(plain, '<');
 					c++;
 				}
 			} else { /* opening tag */
@@ -572,10 +581,12 @@ char *html_to_xhtml(const char *html) {
 				}
 
 				xhtml = g_string_append(xhtml, "&lt;");
+				plain = g_string_append_c(plain, '<');
 				c++;
 			}
 		} else {
 			xhtml = g_string_append_c(xhtml, *c);
+			plain = g_string_append_c(plain, *c);
 			c++;
 		}
 	}
@@ -585,7 +596,10 @@ char *html_to_xhtml(const char *html) {
 		tag = tag->next;
 	}
 	g_list_free(tags);
-	ret = g_strdup(xhtml->str);
+	if(xhtml_out)
+		*xhtml_out = g_strdup(xhtml->str);
+	if(plain_out)
+		*plain_out = g_strdup(plain->str);
 	g_string_free(xhtml, TRUE);
-	return ret;
+	g_string_free(plain, TRUE);
 }

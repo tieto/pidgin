@@ -2424,26 +2424,27 @@ static int jabber_send_typing(struct gaim_connection *gc, char *who, int typing)
 
 static void insert_message(xmlnode x, const char *message, gboolean use_xhtml) {
 	xmlnode y;
-	char *buf = strip_html(message);
-	y = xmlnode_insert_tag(x, "body");
-	xmlnode_insert_cdata(y, buf, -1);
+	char *buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", message);
+	char *xhtml, *plain;
+
+	html_to_xhtml(buf, &xhtml, &plain);
 	g_free(buf);
 
-	if(use_xhtml) {
-		char *buf2 = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", message);
-		buf = html_to_xhtml(buf2);
-		g_free(buf2);
+	y = xmlnode_insert_tag(x, "body");
+	xmlnode_insert_cdata(y, plain, -1);
+	g_free(plain);
 
-		y = xmlnode_str(buf, strlen(buf));
+	if(use_xhtml) {
+		y = xmlnode_str(xhtml, strlen(xhtml));
 		if(y) {
 			xmlnode_insert_tag_node(x, y);
 			xmlnode_free(y);
 		} else {
 			debug_printf("holy cow, html_to_xhtml didn't work right!\n");
-			debug_printf("the invalid XML: %s\n", buf);
+			debug_printf("the invalid XML: %s\n", xhtml);
 		}
-		g_free(buf);
 	}
+	g_free(xhtml);
 }
 
 static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
