@@ -123,6 +123,17 @@ static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string)
 	g_string_append_printf(string, "%s ", name);
 }
 
+static void irc_ison_one(struct irc_conn *irc, struct irc_buddy *ib)
+{
+	char *buf;
+
+	ib->flag = FALSE;
+	buf = irc_format(irc, "vn", "ISON", ib->name);
+	irc_send(irc, buf);
+	g_free(buf);
+}
+
+
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "irc";
@@ -345,7 +356,11 @@ static void irc_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group
 	ib->name = g_strdup(buddy->name);
 	g_hash_table_insert(irc->buddies, ib->name, ib);
 
-	irc_blist_timeout(irc);
+	/* if the timer isn't set, this is during signon, so we don't want to flood
+	 * ourself off with ISON's, so we don't, but after that we want to know when
+	 * someone's online asap */
+	if (irc->timer)
+		irc_ison_one(irc, ib);
 }
 
 static void irc_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
