@@ -1,6 +1,8 @@
 
 EXTRA_DIST = gaim.spec gaim_applet.gnorba gaim_applet.desktop gaim_applet.soundlist \
-	buddytrans
+	buddytrans plugins/CRAZY plugins/HOWTO plugins/Makefile plugins/SIGNALS \
+	plugins/autorecon.c plugins/chkmail.c plugins/filectl.c plugins/gaiminc.c \
+	plugins/iconaway.c plugins/simple.c plugins/spellchk.c
 
 if GNOMEAPPLET
 
