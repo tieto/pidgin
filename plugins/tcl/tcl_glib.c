@@ -1,22 +1,47 @@
 /*
  * Tcl/Glib glue
  *
- * Copyright (C) 2003 Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ * Copyright (C) 2003, 2004 Ethan Blanton <eblanton@cs.purdue.edu>
+ *
+ * This file is dual-licensed under the two sets of terms below.  You may
+ * use, redistribute, or modify it pursuant to either the set of conditions
+ * under "TERMS 1" or "TERMS 2", at your discretion.  The DISCLAIMER
+ * applies to both sets of terms.
+ *
+ * TERMS 1
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * TERMS 2
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must contain the above copyright
+ *    notice and this comment block in their entirety.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice and the text of this comment block in their entirety in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * DISCLAIMER
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ */
+
+/*
  * NOTES
  * 
  * This file was developed for the Gaim project.  It inserts the Tcl
