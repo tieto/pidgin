@@ -343,26 +343,16 @@ void serv_remove_buddy(char *name)
 
 void serv_add_permit(char *name)
 {
-	if (!USE_OSCAR) {
-		char buf[1024];
-		g_snprintf(buf, sizeof(buf), "toc_add_permit %s", normalize(name));
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
-		serv_set_permit_deny();
-	}
+	permdeny = 3;
+	build_permit_tree();
 }
 
 
 
 void serv_add_deny(char *name)
 {
-	if (!USE_OSCAR) {
-		char buf[1024];
-		g_snprintf(buf, sizeof(buf), "toc_add_deny %s", normalize(name));
-		sflap_send(buf, -1, TYPE_DATA);
-	} else {
-		serv_set_permit_deny();
-	}
+	permdeny = 4;
+	build_permit_tree();
 }
 
 
@@ -376,11 +366,15 @@ void serv_set_permit_deny()
 
 		switch (permdeny) {
 		case PERMIT_ALL:
-			sprintf(buf, "toc_add_deny %s", current_user->username);
+			sprintf(buf, "toc_add_permit %s", current_user->username);
+			sflap_send(buf, -1, TYPE_DATA);
+			sprintf(buf, "toc_add_deny");
 			sflap_send(buf, -1, TYPE_DATA);
 			break;
 		case PERMIT_NONE:
-			sprintf(buf, "toc_add_permit %s", current_user->username);
+			sprintf(buf, "toc_add_deny %s", current_user->username);
+			sflap_send(buf, -1, TYPE_DATA);
+			sprintf(buf, "toc_add_permit");
 			sflap_send(buf, -1, TYPE_DATA);
 			break;
 		case PERMIT_SOME:
@@ -640,7 +634,6 @@ void serv_got_im(char *name, char *message, int away)
 	struct conversation *cnv;
         int is_idle = -1;
         int new_conv = 0;
-	char *nname;
 
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
