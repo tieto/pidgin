@@ -3184,13 +3184,13 @@ static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
 static gboolean
 _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
 {
+	gboolean result;
 	gchar *enteredstring;
 	const gchar *withmarkup;
 	gchar *nomarkup;
 	const gchar *normalized;
-	gboolean result;
 
-	gtk_tree_model_get(model, iter, NAME_COLUMN, &withmarkup, -1);
+	gtk_tree_model_get(model, iter, column, &withmarkup, -1);
 
 	enteredstring = g_strdup(gaim_normalize(NULL, key));
 	nomarkup = gaim_markup_strip_html(withmarkup);

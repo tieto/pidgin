@@ -167,11 +167,13 @@ status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
 	const char *title;
-	char *buf;
+	char *title_escaped, *buf;
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
 
-	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title);
+	title_escaped = gaim_escape_html(title);
+	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title_escaped);
+	free(title_escaped);
 	gaim_request_action(NULL, NULL, buf, NULL, 0, g_strdup(title), 2,
 						_("Delete"), status_window_delete_confirm_cb,
 						_("Cancel"), g_free);
@@ -222,8 +224,6 @@ add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_stat
 	title = gaim_savedstatus_get_title(saved_status);
 	type = gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status));
 	message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));
-	if (strlen(message) > 70)
-		strcpy(&message[68], "...");
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
@@ -246,6 +246,16 @@ populate_saved_status_list(StatusWindow *dialog)
 	{
 		add_status_to_saved_status_list(dialog->model, saved_statuses->data);
 	}
+}
+
+static gboolean
+search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
+{
+	const char *haystack;
+
+	gtk_tree_model_get(model, iter, column, &haystack, -1);
+
+	return (gaim_strcasestr(haystack, key) == NULL);
 }
 
 static GtkWidget *
@@ -318,6 +328,13 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   STATUS_WINDOW_COLUMN_MESSAGE);
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(renderer, "ellipsize", PANGO_ELLIPSIZE_END);
+#endif
+
+	/* Enable CTRL+F searching */
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW(treeview), STATUS_WINDOW_COLUMN_TITLE);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(treeview), search_func, NULL, NULL);
 
 	/* Sort the title column by default */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(dialog->model),
