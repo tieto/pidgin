@@ -5,17 +5,35 @@ SUFFIXES = .c .so
 
 if PLUGINS
 
+plugindir = $(libdir)/gaim
+
+if PRPLS
+
 SUBDIRS = yay icq msn jabber
 
 prpls = irc.so napster.so
+
+$(prpls): $(top_srcdir)/src/prpl.h
+
+else
+
+SUBDIRS =
+
+prpls = 
+
+endif 
+
 plugin_DATA = $(prpls) autorecon.so iconaway.so notify.so spellchk.so lagmeter.so
-plugindir = $(libdir)/gaim
 
 $(plugin_DATA): $(top_srcdir)/src/gaim.h
-$(prpls): $(top_srcdir)/src/prpl.h
 
 clean distclean:
 	$(RM) $(plugin_DATA)
+
+else
+
+plugin_DATA = 
+
 endif
 
 

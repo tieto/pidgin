@@ -41,6 +41,7 @@ CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I\$(top_srcdir)"
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(multi,   [  --disable-multi         disable multiple connections],,enable_multi=yes)
+AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build protocol plugins],,enable_prpls=yes)
 AC_ARG_ENABLE(gnome,   [  --disable-gnome         compile without Gnome bits],,enable_gnome=yes)
 AC_ARG_ENABLE(panel,   [  --enable-panel          compile as a GNOME applet],,enable_panel=$enable_distrib)
 AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
@@ -180,9 +181,18 @@ AC_SUBST(LIBS)
 
 if test "x$enable_multi" != "xyes" ; then
 	AC_DEFINE(NO_MULTI)
+	enable_multi=no
 fi
 
-if test "x$enable_plugins" = xyes ; then
+if test "x$enable_plugins" = "xyes" ; then
+	AC_DEFINE(GAIM_PLUGINS)
+	AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
+else
+	enable_plugins=no
+	enable_prpls=no
+fi
+
+if test "x$enable_prpls" = "xyes" ; then
 	dnl checks for icqlib
 	AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
 	AC_CHECK_FUNCS(bswap_32 bswap_16)
@@ -192,8 +202,9 @@ if test "x$enable_plugins" = xyes ; then
 	AC_CHECK_FUNCS(snprintf connect)
 	AC_CHECK_LIB(nsl, gethostent)
 
-	AC_DEFINE(GAIM_PLUGINS)
-	AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
+	AM_CONDITIONAL(PRPLS, test "x$enable_plugins" = "xyes")
+else
+	enable_prpls=no
 fi
 
 AC_OUTPUT([Makefile
@@ -216,6 +227,9 @@ AC_OUTPUT([Makefile
 echo
 echo $PACKAGE $VERSION
 
+echo
+echo Allow Multiple Connections. : $enable_multi
+echo Build Protocol Plugins..... : $enable_prpls
 echo
 echo Build with GNOME bits...... : $enable_gnome
 echo Build as GNOME applet...... : $enable_panel
