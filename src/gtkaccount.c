@@ -681,16 +681,6 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 		}
 	}
-
-	/* Register user */
-	if (dialog->prpl_info->register_user != NULL) {
-		dialog->register_check =
-			gtk_check_button_new_with_label(_("Register with your server"));
-
-		gtk_box_pack_start(GTK_BOX(vbox), dialog->register_check,
-						   FALSE, FALSE, 0);
-		gtk_widget_show(dialog->register_check);
-	}
 }
 
 static GtkWidget *
@@ -1179,6 +1169,17 @@ show_account_prefs(AccountPrefsDialogType type,
 	gtk_box_pack_end(GTK_BOX(main_vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
 
+	if (dialog->prpl_info->register_user != NULL) {
+		/* Register button */
+		button = gtk_button_new_with_label("Register");
+		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+		gtk_widget_show(button);
+
+		g_signal_connect_swapped(G_OBJECT(button), "clicked",
+								 G_CALLBACK(dialog->prpl_info->register_user),
+								 dialog->account);
+	}
+
 	/* Cancel button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
@@ -1187,8 +1188,8 @@ show_account_prefs(AccountPrefsDialogType type,
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(cancel_account_prefs_cb), dialog);
 
-	/* OK button */
-	button = gtk_button_new_from_stock(GTK_STOCK_OK);
+	/* Save button */
+	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	if (dialog->account == NULL)
