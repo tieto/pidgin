@@ -1891,7 +1891,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		gchar **xflds;
 
 		gchar **newvals;
-		gint i;
+		gint i, j;
 		gchar **names;
 		gchar fs[10];
 
@@ -1920,8 +1920,17 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 #define ENCDNG 14
 
 		for (i = 0; xflds [i]; i++);
-		newvals = g_memdup (xflds, (i + 1) * sizeof (xflds));
-		if (!xflds [ADSTYL][0])
+		g_print("%d\n", i);
+		if (i != 15) {
+			int tmp;
+			newvals = g_malloc0 (16 * sizeof (gchar *));
+			newvals [0] = "";
+			for (tmp = 1; tmp < 15; tmp++)
+				newvals [tmp] = "*";
+		} else
+			newvals = g_memdup (xflds, 16 * sizeof (xflds));
+
+		if ((i < ADSTYL) && !xflds [ADSTYL][0])
 			newvals [ADSTYL] = "*";
 
 		if (bold)
@@ -1936,38 +1945,52 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 
 		if (name)
 			names = g_strsplit (name, ",", -1);
-		else {
+		else if (i > FMLY) {
 			names = g_new0 (gchar *, 2);
 			names [0] = g_strdup (xflds [FMLY]);
+		} else {
+			names = g_new0 (gchar *, 2);
+			names [0] = g_strdup ("*");
 		}
 
-		for (i = 0; names [i]; i++) {
-			newvals [FMLY] = names [i];
+		for (j = 0; names [j]; j++) {
+			newvals [FMLY] = names [j];
 			TRY_FONT;
 		}
 
-		for (i = 0; italics && names [i]; i++) {
-			newvals [FMLY] = names [i];
+		for (j = 0; italics && names [j]; j++) {
+			newvals [FMLY] = names [j];
 
 			newvals [SLANT] = "o";
 			TRY_FONT;
 
-			newvals [SLANT] = xflds [SLANT];
+			if (i > SLANT)
+				newvals [SLANT] = xflds [SLANT];
+			else
+				newvals [SLANT] = "*";
 			TRY_FONT;
 		}
 
-		for (i = 0; fontsize && names [i]; i++) {
-			newvals [FMLY] = names [i];
+		for (j = 0; fontsize && names [j]; j++) {
+			newvals [FMLY] = names [j];
 
-			newvals [PXLSZ] = xflds [PXLSZ];
-			newvals [PTSZ] = xflds [PTSZ];
+			if (i > PTSZ) {
+				newvals [PXLSZ] = xflds [PXLSZ];
+				newvals [PTSZ] = xflds [PTSZ];
+			} else {
+				newvals [PXLSZ] = "*";
+				newvals [PTSZ] = "*";
+			}
 			TRY_FONT;
 		}
 
-		for (i = 0; bold && names [i]; i++) {
-			newvals [FMLY] = names [i];
+		for (j = 0; bold && names [j]; j++) {
+			newvals [FMLY] = names [j];
 
-			newvals [WGHT] = xflds [WGHT];
+			if (i > WGHT)
+				newvals [WGHT] = xflds [WGHT];
+			else
+				newvals [WGHT] = "*";
 			TRY_FONT;
 		}
 
