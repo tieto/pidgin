@@ -1603,6 +1603,17 @@ static void sound_page()
 	GtkWidget *menu;
 	GtkWidget *opt;
 	int i=1, driver=0, j;
+	/* order that sound options are presented in, SND_SEPARATOR for  *
+         * a seperator. better to do it this way than try and re-order   *
+         * the sound defines 'cause that would mux up the sound prefs in *
+         * gaimrc. this list is terminated with SND_END.       -Robot101 */
+	int sound_order[] = {
+		SND_BUDDY_ARRIVE, SND_BUDDY_LEAVE, SND_SEPARATOR,
+		SND_FIRST_RECEIVE, SND_RECEIVE, SND_SEND, SND_SEPARATOR,
+		SND_CHAT_JOIN, SND_CHAT_LEAVE,
+		SND_CHAT_YOU_SAY, SND_CHAT_SAY, SND_CHAT_NICK,
+		SND_END
+	};
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -1745,19 +1756,17 @@ static void sound_page()
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	for (j=0; j < NUM_SOUNDS; j++) {
-		/* no entry for sounds without an option */
-		if (sounds[j].opt == 0)
-			continue;
-
-		/* seperators before SND_RECEIVE and SND_CHAT_JOIN */
-		if ((j == SND_RECEIVE) || (j == SND_CHAT_JOIN)) {
+	for (j=0; sound_order[j] != SND_END; j++) {
+		if (sound_order[j] == SND_SEPARATOR) {
 			sep = gtk_hseparator_new();
 			gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 5);
 			gtk_widget_show(sep);
+		} else {
+			/* no entry for sounds without an option */
+			if (sounds[sound_order[j]].opt == 0)
+				continue;
+			sound_entry(vbox, sound_order[j]);
 		}
-
-		sound_entry(vbox, j);
 	}
 
 	gtk_widget_show(prefdialog);

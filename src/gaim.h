@@ -297,6 +297,9 @@ extern guint sound_options;
 #define SND_POUNCE_DEFAULT 9
 #define SND_CHAT_NICK 10
 #define NUM_SOUNDS 11
+/* these two for the sound_order list in prefs.c */
+#define SND_SEPARATOR -1
+#define SND_END -2
 extern char *sound_file[NUM_SOUNDS];
 
 /* global sound struct */

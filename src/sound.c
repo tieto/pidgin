@@ -52,12 +52,13 @@
 #include "sounds/Receive.h"
 #include "sounds/RedAlert.h"
 
-
 gboolean mute_sounds = 0;
 
-/* label and opt are null for the buddy pounce because it's configured *
- * per pounce. NULL option means it doesn't get displayed in the sound *
- * preferences box */
+/* description, option bit, default sound array, and it's size.   *
+ * if you want it to get displayed in the prefs dialog, it needs  *
+ * to be added to the sound_order array in prefs.c, if not, and   *
+ * it has no option bit, set it to 0. the order here has to match *
+ * the defines in gaim.h.                               -Robot101 */
 struct sound_struct sounds[NUM_SOUNDS] = {
 	{N_("Buddy logs in"), OPT_SOUND_LOGIN, BuddyArrive, sizeof(BuddyArrive)},
 	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, BuddyLeave, sizeof(BuddyLeave)},
@@ -68,6 +69,7 @@ struct sound_struct sounds[NUM_SOUNDS] = {
 	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave)},
 	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, Send, sizeof(Send)},
 	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, Receive, sizeof(Receive)},
+	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, 0, RedAlert, sizeof(RedAlert)},
 	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, Receive, sizeof(Receive)}
 };
