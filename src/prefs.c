@@ -423,7 +423,7 @@ GtkWidget *font_page() {
 	gaim_button(_("_Bold"), &font_options, OPT_FONT_BOLD, vbox);
 	gaim_button(_("_Italics"), &font_options, OPT_FONT_ITALIC, vbox);
 	gaim_button(_("_Underline"), &font_options, OPT_FONT_UNDERLINE, vbox);
-	gaim_button(_("_Strikethough"), &font_options, OPT_FONT_STRIKE, vbox);
+	gaim_button(_("_Strikethrough"), &font_options, OPT_FONT_STRIKE, vbox);
 
 	vbox = make_frame(ret, _("Face"));
 	hbox = gtk_hbox_new(FALSE, 6);

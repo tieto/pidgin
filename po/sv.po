@@ -2,7 +2,7 @@
 # Copyright (C) 2001, 2002 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2001.
 #
-# $Id: sv.po 4869 2003-02-17 15:22:21Z lschiere $
+# $Id: sv.po 4884 2003-02-22 01:08:51Z lschiere $
 #
 msgid ""
 msgstr ""
@@ -1274,7 +1274,7 @@ msgid "Got invalid XFR\n"
 msgstr ""
 
 #: src/protocols/msn/msn.c:1576
-msgid "Error transfering"
+msgid "Error transferring"
 msgstr ""
 
 #: src/protocols/msn/msn.c:1660 src/protocols/msn/msn.c:1899
@@ -2949,7 +2949,7 @@ msgstr "Gaim - Lägg till kompis"
 #: src/dialogs.c:1088
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
-"buddylist. You may optionally enter an alias, or nickname,  for the buddy. "
+"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
 "The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr ""
 
@@ -3552,7 +3552,7 @@ msgstr "Understrykning"
 
 #: src/prefs.c:204
 #, fuzzy
-msgid "_Strikethough"
+msgid "_Strikethrough"
 msgstr "Genomstryk text"
 
 #: src/prefs.c:206

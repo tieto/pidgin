@@ -1405,7 +1405,7 @@ msgid "Got invalid XFR\n"
 msgstr "Ongeldige XFR onvangen\n"
 
 #: src/protocols/msn/msn.c:788
-msgid "Error transfering"
+msgid "Error transferring"
 msgstr "Fout bij bestandsoverdracht"
 
 #: src/protocols/msn/msn.c:872
@@ -2999,7 +2999,7 @@ msgid "Gaim - Add Buddy"
 msgstr "Gaim - Contact toevoegen"
 
 #: src/dialogs.c:1094
-msgid "Please enter the screen name of the person you would like to add to your buddylist. You may optionally enter an alias, or nickname,  for the buddy. The alias will be displayed in place of the screen name whenever possible.\n"
+msgid "Please enter the screen name of the person you would like to add to your buddy list. You may optionally enter an alias, or nickname,  for the buddy. The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr "Geef hier de gebruikersnaam van de persoon die u aan uw contactenlijst zou willen toevoegen. U kunt ook een alias of bij bijnaam voor deze persoon opgeven. Deze alias wordt dan gebruikt in plaats van de echte naam (wanneer mogelijk).\n"
 
 #: src/dialogs.c:1113
@@ -4007,7 +4007,7 @@ msgid "_Underline"
 msgstr "_Onderstrepen"
 
 #: src/prefs.c:426
-msgid "_Strikethough"
+msgid "_Strikethrough"
 msgstr "_Doorgehaalde Tekst"
 
 #: src/prefs.c:428

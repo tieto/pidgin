@@ -1285,7 +1285,7 @@ msgid "Got invalid XFR\n"
 msgstr "不正な XFR\n"
 
 #: src/protocols/msn/msn.c:1569
-msgid "Error transfering"
+msgid "Error transferring"
 msgstr "転送エラー"
 
 #: src/protocols/msn/msn.c:1653 src/protocols/msn/msn.c:1892
@@ -2974,7 +2974,7 @@ msgstr "Gaim - 友達を追加"
 #: src/dialogs.c:1088
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
-"buddylist. You may optionally enter an alias, or nickname,  for the buddy. "
+"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
 "The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr "友達リストに加えたい人のスクリーン名を入力してください。任意で友達のエイリアスとニックネームを入力できます。エイリアスは、可能な場合に限りスクリーン名のかわりに表示されます。\n"
 
@@ -3563,7 +3563,7 @@ msgid "_Underline"
 msgstr "下線 (_U)"
 
 #: src/prefs.c:215
-msgid "_Strikethough"
+msgid "_Strikethrough"
 msgstr "打ち消し (_S)"
 
 #: src/prefs.c:217

@@ -1091,7 +1091,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
-	label = gtk_label_new(_("Please enter the screen name of the person you would like to add to your buddylist. You may optionally enter an alias, or nickname,  for the buddy. The alias will be displayed in place of the screen name whenever possible.\n"));
+	label = gtk_label_new(_("Please enter the screen name of the person you would like to add to your buddy list. You may optionally enter an alias, or nickname,  for the buddy. The alias will be displayed in place of the screen name whenever possible.\n"));
 	gtk_widget_set_size_request(GTK_WIDGET(label), 400, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);

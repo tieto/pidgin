@@ -785,7 +785,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
 			if (proxy_connect(host, port, msn_login_xfr_connect, gc) != 0) {
-				hide_login_progress(gc, _("Error transfering"));
+				hide_login_progress(gc, _("Error transferring"));
 				signoff(gc);
 				return 0;
 			}

@@ -1532,7 +1532,7 @@ msgid "Got invalid XFR\n"
 msgstr "Bekam falsches XFR\n"
 
 #: src/protocols/msn/msn.c:788
-msgid "Error transfering"
+msgid "Error transferring"
 msgstr "Fehler beim transferieren"
 
 #: src/protocols/msn/msn.c:872 src/protocols/msn/msn.c:1110
@@ -3373,7 +3373,7 @@ msgstr "Gaim - Buddy hinzufügen"
 #: src/dialogs.c:1094
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
-"buddylist. You may optionally enter an alias, or nickname,  for the buddy. "
+"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
 "The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr ""
 "Bitte geben Sie den Benutzernamen der Person ein, die Sie zur Buddy-Liste "
@@ -4612,7 +4612,7 @@ msgid "_Underline"
 msgstr "_Unterstrichen"
 
 #: src/prefs.c:426
-msgid "_Strikethough"
+msgid "_Strikethrough"
 msgstr "Durchge_strichen"
 
 #: src/prefs.c:428

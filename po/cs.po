@@ -1294,7 +1294,7 @@ msgid "Got invalid XFR\n"
 msgstr ""
 
 #: src/protocols/msn/msn.c:1576
-msgid "Error transfering"
+msgid "Error transferring"
 msgstr ""
 
 #: src/protocols/msn/msn.c:1660 src/protocols/msn/msn.c:1899
@@ -2973,7 +2973,7 @@ msgstr "Gaim - Pøidat kamaráda"
 #: src/dialogs.c:1088
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
-"buddylist. You may optionally enter an alias, or nickname,  for the buddy. "
+"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
 "The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr ""
 
@@ -3580,7 +3580,7 @@ msgstr "Podtr¾ený"
 
 #: src/prefs.c:204
 #, fuzzy
-msgid "_Strikethough"
+msgid "_Strikethrough"
 msgstr "Pøe¹krtnutý text"
 
 #: src/prefs.c:206
