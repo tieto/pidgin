@@ -166,6 +166,7 @@ void load_plugin(char *filename) {
 		g_snprintf(buf, BUF_LEN - 1, "%s/%s", getenv("HOME"), PLUGIN_DIR);
 		plug->filename = g_malloc(strlen(buf) + strlen(filename) + 1);
 		sprintf(plug->filename, "%s%s", buf, filename);
+		g_free(buf);
 	} else
 		plug->filename = g_strdup(filename);
 	sprintf(debug_buff, "Loading %s\n", filename);
@@ -177,6 +178,7 @@ void load_plugin(char *filename) {
 	if (!plug->handle) {
 		error = (char *)dlerror();
 		do_error_dialog(error, _("Plugin Error"));
+		g_free(plug->filename);
 		g_free(plug);
 		return;
 	}
@@ -185,6 +187,7 @@ void load_plugin(char *filename) {
 	if ((error = (char *)dlerror()) != NULL) {
 		do_error_dialog(error, _("Plugin Error"));
 		dlclose(plug->handle);
+		g_free(plug->filename);
 		g_free(plug);
 		return;
 	}
@@ -217,6 +220,7 @@ void load_plugin(char *filename) {
 				do_error_dialog(plugin_error, _("Plugin Error"));
 		}
 		dlclose(plug->handle);
+		g_free(plug->filename);
 		g_free(plug);
 		return;
 	}
