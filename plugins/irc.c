@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,13 +50,14 @@
 
 static int chat_id = 0;
 
-struct irc_channel { 
+struct irc_channel {
 	int id;
 	gchar *name;
 };
 
 struct irc_data {
 	int fd;
+	int inpa;		/* used for non-block logins */
 
 	int timer;
 
@@ -66,55 +68,61 @@ struct irc_data {
 	GList *channels;
 };
 
-static char *irc_name() {
+static char *irc_name()
+{
 	return "IRC";
 }
 
-char *name() {
+char *name()
+{
 	return "IRC";
 }
 
-char *description() {
+char *description()
+{
 	return "Allows gaim to use the IRC protocol";
 }
 
-void irc_join_chat( struct gaim_connection *gc, int id, char *name) {
+static void irc_join_chat(struct gaim_connection *gc, int id, char *name)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
-	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN+1);
+	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
 	g_snprintf(buf, IRC_BUF_LEN, "JOIN %s\n", name);
 	write(idata->fd, buf, strlen(buf));
-	
+
 	g_free(buf);
 }
 
-void irc_update_user (struct gaim_connection *gc, char *name, int status) {
+static void irc_update_user(struct gaim_connection *gc, char *name, int status)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	struct irc_channel *u;
 	GSList *temp = idata->templist;
 
 	/* Loop through our list */
-	
+
 	while (temp) {
 		u = (struct irc_channel *)temp->data;
 		if (g_strcasecmp(u->name, name) == 0) {
 			u->id = status;
 			return;
 		}
-		
+
 		temp = g_slist_next(temp);
 	}
 	return;
 }
 
-void irc_request_buddy_update ( struct gaim_connection *gc ) {
+static void irc_request_buddy_update(struct gaim_connection *gc)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GSList *grp = gc->groups;
 	GSList *person;
 	struct group *g;
 	struct buddy *b;
 	struct irc_channel *u;
-	gchar buf[IRC_BUF_LEN+1];
+	gchar buf[IRC_BUF_LEN + 1];
 
 	if (idata->templist != NULL)
 		return;
@@ -127,12 +135,12 @@ void irc_request_buddy_update ( struct gaim_connection *gc ) {
 		return;
 	}
 
-	/* Send the first part of our request */	
+	/* Send the first part of our request */
 	write(idata->fd, "ISON", 4);
 
 	/* Step through our list of groups */
 	while (grp) {
-		
+
 		g = (struct group *)grp->data;
 		person = g->members;
 
@@ -142,9 +150,9 @@ void irc_request_buddy_update ( struct gaim_connection *gc ) {
 			/* We will store our buddy info here.  I know, this is cheap
 			 * but hey, its the exact same data structure.  Why should we
 			 * bother with making another one */
-			
+
 			u = g_new0(struct irc_channel, 1);
-			u->id = 0; /* Assume by default that they're offline */
+			u->id = 0;	/* Assume by default that they're offline */
 			u->name = strdup(b->name);
 
 			write(idata->fd, " ", 1);
@@ -153,41 +161,41 @@ void irc_request_buddy_update ( struct gaim_connection *gc ) {
 
 			person = person->next;
 		}
-		
+
 		grp = g_slist_next(grp);
 	}
 	write(idata->fd, "\n", 1);
 }
 
 
-void irc_send_im( struct gaim_connection *gc, char *who, char *message, int away) {
+static void irc_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+{
 
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
-	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN + 1);
+	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
 	/* Before we actually send this, we should check to see if they're trying
 	 * To issue a /me command and handle it properly. */
 
-	if ( (g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message)>4)) {
+	if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
 		/* We have /me!! We have /me!! :-) */
 
-		gchar *temp = (gchar *)g_malloc(IRC_BUF_LEN+1);
-		strcpy(temp, message+4);
+		gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+		strcpy(temp, message + 4);
 		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%cACTION %s%c\n", who, '\001', temp, '\001');
 		g_free(temp);
-	}
-	else
-	{
+	} else {
 		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%s\n", who, message);
 	}
 
-	write(idata->fd, buf, strlen(buf)); 
+	write(idata->fd, buf, strlen(buf));
 
-	g_free(buf);	
+	g_free(buf);
 }
 
-int find_id_by_name(struct gaim_connection *gc, char *name) {
-	gchar *temp = (gchar *)g_malloc(IRC_BUF_LEN + 1);
+static int find_id_by_name(struct gaim_connection *gc, char *name)
+{
+	gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 	GList *templist;
 	struct irc_channel *channel;
 
@@ -203,7 +211,7 @@ int find_id_by_name(struct gaim_connection *gc, char *name) {
 			return channel->id;
 		}
 
-		templist = templist -> next;
+		templist = templist->next;
 	}
 
 	g_free(temp);
@@ -212,8 +220,9 @@ int find_id_by_name(struct gaim_connection *gc, char *name) {
 	return -1;
 }
 
-struct irc_channel * find_channel_by_name(struct gaim_connection *gc, char *name) {
-	gchar *temp = (gchar *)g_malloc(IRC_BUF_LEN + 1);
+static struct irc_channel *find_channel_by_name(struct gaim_connection *gc, char *name)
+{
+	gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 	GList *templist;
 	struct irc_channel *channel;
 
@@ -229,7 +238,7 @@ struct irc_channel * find_channel_by_name(struct gaim_connection *gc, char *name
 			return channel;
 		}
 
-		templist = templist -> next;
+		templist = templist->next;
 	}
 
 	g_free(temp);
@@ -238,10 +247,11 @@ struct irc_channel * find_channel_by_name(struct gaim_connection *gc, char *name
 	return NULL;
 }
 
-struct irc_channel * find_channel_by_id (struct gaim_connection *gc, int id) {
+static struct irc_channel *find_channel_by_id(struct gaim_connection *gc, int id)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	struct irc_channel *channel;
-	
+
 	GList *temp;
 
 	temp = idata->channels;
@@ -253,7 +263,7 @@ struct irc_channel * find_channel_by_id (struct gaim_connection *gc, int id) {
 			/* We've found our man */
 			return channel;
 		}
-		
+
 		temp = temp->next;
 	}
 
@@ -262,48 +272,49 @@ struct irc_channel * find_channel_by_id (struct gaim_connection *gc, int id) {
 	return NULL;
 }
 
-void irc_chat_send( struct gaim_connection *gc, int id, char *message) {
+static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
+{
 
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	struct irc_channel *channel = NULL;
-	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN + 1);
+	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
 	/* First lets get our current channel */
 	channel = find_channel_by_id(gc, id);
-	
+
 
 	if (!channel) {
 		/* If for some reason we've lost our channel, let's bolt */
 		g_free(buf);
 		return;
 	}
-	
-	
+
+
 	/* Before we actually send this, we should check to see if they're trying
 	 * To issue a /me command and handle it properly. */
 
-	if ( (g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message)>4)) {
+	if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
 		/* We have /me!! We have /me!! :-) */
 
-		gchar *temp = (gchar *)g_malloc(IRC_BUF_LEN+1);
-		strcpy(temp, message+4);
-		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name, '\001', temp, '\001');
+		gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+		strcpy(temp, message + 4);
+		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name, '\001', temp,
+			   '\001');
 		g_free(temp);
-	}
-	else
-	{
+	} else {
 		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%s\n", channel->name, message);
 	}
 
-	write(idata->fd, buf, strlen(buf)); 
+	write(idata->fd, buf, strlen(buf));
 
 	/* Since AIM expects us to receive the message we send, we gotta fake it */
 	serv_got_chat_in(gc, id, gc->username, 0, message);
 
-	g_free(buf);	
+	g_free(buf);
 }
 
-struct conversation * find_conversation_by_id( struct gaim_connection * gc, int id) {
+static struct conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GSList *bc = gc->buddy_chats;
 	struct conversation *b = NULL;
@@ -324,7 +335,8 @@ struct conversation * find_conversation_by_id( struct gaim_connection * gc, int 
 	return b;
 }
 
-struct conversation * find_conversation_by_name( struct gaim_connection * gc, char *name) {
+static struct conversation *find_conversation_by_name(struct gaim_connection *gc, char *name)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GSList *bc = gc->buddy_chats;
 	struct conversation *b = NULL;
@@ -348,43 +360,30 @@ struct conversation * find_conversation_by_name( struct gaim_connection * gc, ch
 
 
 
-void irc_callback ( struct gaim_connection * gc ) {
-
+static void irc_callback(gpointer data, gint source, GdkInputCondition condition)
+{
+	struct gaim_connection *gc = data;
 	int i = 0;
-	char c;
 	gchar buf[4096];
 	gchar **buf2;
-	int status;
 	struct irc_data *idata;
 
 	idata = (struct irc_data *)gc->proto_data;
-	
-	do {
-		status = recv(idata->fd, &c, 1, 0);
 
-		if (!status)
-		{
+	do {
+		if (read(idata->fd, buf + i, 1) < 0) {
+			hide_login_progress(gc, "Read error");
+			signoff(gc);
 			return;
 		}
-		buf[i] = c;
-		i++;
-	} while (c != '\n');
+	} while (buf[i++] != '\n');
 
-	buf[i] = '\0';
-
-	/* And remove that damned trailing \n */
-	g_strchomp(buf);
-
-	/* For now, lets display everything to the console too. Im such 
-	 * a bitch */
-	printf("IRC:'%'s\n", buf);
-
-
+	buf[--i] = '\0';
 
 	/* Check for errors */
 
 	if (((strstr(buf, "ERROR :") && (!strstr(buf, "PRIVMSG ")) &&
-		(!strstr(buf, "NOTICE ")) && (strlen(buf) > 7)))) {
+	      (!strstr(buf, "NOTICE ")) && (strlen(buf) > 7)))) {
 
 		gchar *u_errormsg;
 
@@ -399,12 +398,11 @@ void irc_callback ( struct gaim_connection * gc ) {
 		/* And our necessary garbage collection */
 		free(u_errormsg);
 	}
-	
+
 	/* Parse the list of names that we receive when we first sign on to
 	 * a channel */
 
-	if (((strstr(buf, " 353 ")) && (!strstr(buf, "PRIVMSG")) &&
-	     (!strstr(buf, "NOTICE")))) {
+	if (((strstr(buf, " 353 ")) && (!strstr(buf, "PRIVMSG")) && (!strstr(buf, "NOTICE")))) {
 		gchar u_host[255];
 		gchar u_command[32];
 		gchar u_channel[128];
@@ -416,39 +414,42 @@ void irc_callback ( struct gaim_connection * gc ) {
 			u_host[j] = buf[i];
 		}
 
-		u_host[j] = '\0'; i++;
+		u_host[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ' '; j++, i++) {
 			u_command[j] = buf[i];
 		}
 
-		u_command[j] = '\0'; i++;
+		u_command[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != '#'; j++, i++) {
 		}
 		i++;
-		
+
 		for (j = 0; buf[i] != ':'; j++, i++) {
 			u_channel[j] = buf[i];
 		}
 
-		u_channel[j-1] = '\0'; i++;
+		u_channel[j - 1] = '\0';
+		i++;
 
 		while ((buf[i] == ' ') || (buf[i] == ':')) {
 			i++;
 		}
 
 		strcpy(u_names, buf + i);
-	
+
 		buf2 = g_strsplit(u_names, " ", 0);
-		
+
 		/* Let's get our conversation window */
 		convo = find_conversation_by_name(gc, u_channel);
 
 		if (!convo) {
 			return;
 		}
-			
+
 		/* Now that we've parsed the hell out of this big
 		 * mess, let's try to split up the names properly */
 
@@ -464,16 +465,15 @@ void irc_callback ( struct gaim_connection * gc ) {
 		}
 
 		/* And free our pointers */
-		g_strfreev (buf2);
-	
+		g_strfreev(buf2);
+
 		return;
-		
+
 	}
 
 	/* Receive a list of users that are currently online */
-	
-	if (((strstr(buf, " 303 ")) && (!strstr(buf, "PRIVMSG")) &&
-	     (!strstr(buf, "NOTICE")))) {
+
+	if (((strstr(buf, " 303 ")) && (!strstr(buf, "PRIVMSG")) && (!strstr(buf, "NOTICE")))) {
 		gchar u_host[255];
 		gchar u_command[32];
 		gchar u_names[IRC_BUF_LEN + 1];
@@ -483,23 +483,25 @@ void irc_callback ( struct gaim_connection * gc ) {
 			u_host[j] = buf[i];
 		}
 
-		u_host[j] = '\0'; i++;
+		u_host[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ' '; j++, i++) {
 			u_command[j] = buf[i];
 		}
 
-		u_command[j] = '\0'; i++;
+		u_command[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ':'; j++, i++) {
 			/* My Nick */
 		}
 		i++;
-		
+
 		strcpy(u_names, buf + i);
-	
+
 		buf2 = g_strsplit(u_names, " ", 0);
-		
+
 		/* Now that we've parsed the hell out of this big
 		 * mess, let's try to split up the names properly */
 
@@ -510,7 +512,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 
 			irc_update_user(gc, buf2[i], 1);
 		}
-		
+
 		/* Increase our received blocks counter */
 		idata->recblocks++;
 
@@ -518,22 +520,22 @@ void irc_callback ( struct gaim_connection * gc ) {
 		if (idata->recblocks == idata->totalblocks) {
 			GSList *temp;
 			struct irc_channel *u;
-			
+
 			/* Let's grab our list of people and bring them all on or off line */
 			temp = idata->templist;
-			
+
 			/* Loop */
 			while (temp) {
-				
-				u = temp->data;		
-			
+
+				u = temp->data;
+
 				/* Tell Gaim to bring the person on or off line */
-				serv_got_update(gc, u->name, u->id, 0, 0, 0, 0, 0);	
-			
+				serv_got_update(gc, u->name, u->id, 0, 0, 0, 0, 0);
+
 				/* Grab the next entry */
 				temp = g_slist_next(temp);
 			}
-		
+
 			/* And now, let's delete all of our entries */
 			temp = idata->templist;
 			while (temp) {
@@ -541,29 +543,29 @@ void irc_callback ( struct gaim_connection * gc ) {
 				g_free(u->name);
 				temp = g_slist_remove(temp, u);
 			}
-			
+
 			/* Reset our list */
 			idata->totalblocks = 0;
 			idata->recblocks = 0;
-			
+
 			idata->templist = NULL;
-				
+
 			return;
 		}
 
 		/* And free our pointers */
-		g_strfreev (buf2);
-	
+		g_strfreev(buf2);
+
 		return;
-		
+
 	}
 
-	
-	if ( (strstr(buf, " JOIN ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+
+	if ((strstr(buf, " JOIN ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
 		gchar u_nick[128];
-		
+
 		struct irc_channel *channel;
 		int id;
 		int j;
@@ -572,14 +574,15 @@ void irc_callback ( struct gaim_connection * gc ) {
 			u_nick[j] = buf[i];
 		}
 
-		u_nick[j] = '\0'; i++;
+		u_nick[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != '#'; j++, i++) {
 		}
-		
+
 		i++;
-	
-		strcpy(u_channel, buf+i);
+
+		strcpy(u_channel, buf + i);
 
 		/* Looks like we're going to join the channel for real 
 		 * now.  Let's create a valid channel structure and add 
@@ -592,29 +595,29 @@ void irc_callback ( struct gaim_connection * gc ) {
 			chat_id++;
 
 			channel = g_new0(struct irc_channel, 1);
-			
+
 			channel->id = chat_id;
 			channel->name = strdup(u_channel);
-	
+
 			idata->channels = g_list_append(idata->channels, channel);
 
-			serv_got_joined_chat(gc, chat_id, u_channel);	
+			serv_got_joined_chat(gc, chat_id, u_channel);
 		} else {
 			struct conversation *convo = NULL;
-			
+
 			/* Someone else joined. Find their conversation
 			 * window */
 			convo = find_conversation_by_id(gc, channel->id);
 
 			/* And add their name to it */
 			add_chat_buddy(convo, u_nick);
-			
+
 		}
 
 		return;
 	}
-	
-	if ( (strstr(buf, " PART ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+
+	if ((strstr(buf, " PART ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
 		gchar u_nick[128];
@@ -630,13 +633,13 @@ void irc_callback ( struct gaim_connection * gc ) {
 		u_nick[j] = '\0';
 
 		i++;
-		
+
 		for (j = 0; buf[i] != '#'; j++, i++) {
 		}
-		
+
 		i++;
-		
-		strcpy(u_channel, buf+i);
+
+		strcpy(u_channel, buf + i);
 
 
 		/* Now, lets check to see if it was US that was leaving.  
@@ -651,7 +654,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 		}
 
 		if (g_strcasecmp(u_nick, gc->username) == 0) {
-	
+
 			/* Looks like we're going to leave the channel for 
 			 * real now.  Let's create a valid channel structure 
 			 * and add it to our list */
@@ -661,16 +664,16 @@ void irc_callback ( struct gaim_connection * gc ) {
 			idata->channels = g_list_remove(idata->channels, channel);
 		} else {
 			struct conversation *convo = NULL;
-			
+
 			/* Find their conversation window */
 			convo = find_conversation_by_id(gc, channel->id);
 
 			if (!convo) {
 				/* Some how the window doesn't exist. 
 				 * Let's get out of here */
-				return ;
+				return;
 			}
-		
+
 			/* And remove their name */
 			remove_chat_buddy(convo, u_nick);
 
@@ -679,8 +682,8 @@ void irc_callback ( struct gaim_connection * gc ) {
 		/* Go Home! */
 		return;
 	}
-	
-	if ( (strstr(buf, " NOTICE ")) && (buf[0] == ':')) {
+
+	if ((strstr(buf, " NOTICE ")) && (buf[0] == ':')) {
 		gchar u_nick[128];
 		gchar u_host[255];
 		gchar u_command[32];
@@ -693,25 +696,29 @@ void irc_callback ( struct gaim_connection * gc ) {
 			u_nick[j] = buf[i];
 		}
 
-		u_nick[j] = '\0'; i++;
+		u_nick[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ' '; j++, i++) {
 			u_host[j] = buf[i];
 		}
 
-		u_host[j] = '\0'; i++;
+		u_host[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ' '; j++, i++) {
 			u_command[j] = buf[i];
 		}
 
-		u_command[j] = '\0'; i++;
+		u_command[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ':'; j++, i++) {
 			u_channel[j] = buf[i];
 		}
 
-		u_channel[j-1] = '\0'; i++;
+		u_channel[j - 1] = '\0';
+		i++;
 
 
 		/* Now that everything is parsed, the rest of this baby must be our message */
@@ -725,24 +732,24 @@ void irc_callback ( struct gaim_connection * gc ) {
 				gchar u_buf[200];
 
 				strcpy(u_arg, u_message + 6);
-				u_arg[strlen(u_arg)-1] = '\0';
+				u_arg[strlen(u_arg) - 1] = '\0';
 
 				/* FIXME: We should keep track of pings we send.  We should store
 				 * the serial # and the time so that we can accurately report which
 				 * pings are turning, etc */
 
 				g_snprintf(u_buf, sizeof(u_buf), "Ping Reply From %s", u_nick);
-				
+
 				do_error_dialog(u_buf, "Gaim IRC - Ping Reply");
-			
+
 				return;
 			}
 		}
 
 	}
-	
-	
-	if ( (strstr(buf, " PRIVMSG ")) && (buf[0] == ':')) {
+
+
+	if ((strstr(buf, " PRIVMSG ")) && (buf[0] == ':')) {
 		gchar u_nick[128];
 		gchar u_host[255];
 		gchar u_command[32];
@@ -755,52 +762,59 @@ void irc_callback ( struct gaim_connection * gc ) {
 			u_nick[j] = buf[i];
 		}
 
-		u_nick[j] = '\0'; i++;
+		u_nick[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ' '; j++, i++) {
 			u_host[j] = buf[i];
 		}
 
-		u_host[j] = '\0'; i++;
+		u_host[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ' '; j++, i++) {
 			u_command[j] = buf[i];
 		}
 
-		u_command[j] = '\0'; i++;
+		u_command[j] = '\0';
+		i++;
 
 		for (j = 0; buf[i] != ':'; j++, i++) {
 			u_channel[j] = buf[i];
 		}
 
-		u_channel[j-1] = '\0'; i++;
+		u_channel[j - 1] = '\0';
+		i++;
 
 
 		/* Now that everything is parsed, the rest of this baby must be our message */
 		strncpy(u_message, buf + i, IRC_BUF_LEN);
-	
+
 		/* Now, lets check the message to see if there's anything special in it */
 		if (u_message[0] == '\001') {
 			if (g_strncasecmp(u_message, "\001VERSION", 8) == 0) {
 				/* Looks like we have a version request.  Let
 				 * us handle it thusly */
-				
-				g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cVERSION GAIM %s:The Pimpin Penguin AIM Clone:www.marko.net/gaim%c\n", u_nick, '\001', VERSION, '\001'); 
+
+				g_snprintf(buf, IRC_BUF_LEN,
+					   "NOTICE %s :%cVERSION GAIM %s:The Pimpin Penguin AIM Clone:www.marko.net/gaim%c\n",
+					   u_nick, '\001', VERSION, '\001');
 
 				write(idata->fd, buf, strlen(buf));
 
 				/* And get the heck out of dodge */
 				return;
 			}
-			
+
 			if ((g_strncasecmp(u_message, "\001PING ", 6) == 0) && (strlen(u_message) > 6)) {
 				/* Someone's triyng to ping us.  Let's respond */
 				gchar u_arg[24];
 
 				strcpy(u_arg, u_message + 6);
-				u_arg[strlen(u_arg)-1] = '\0';
+				u_arg[strlen(u_arg) - 1] = '\0';
 
-				g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cPING %s%c\n", u_nick, '\001', u_arg, '\001'); 
+				g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cPING %s%c\n", u_nick, '\001',
+					   u_arg, '\001');
 
 				write(idata->fd, buf, strlen(buf));
 
@@ -830,8 +844,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 			if (id != -1) {
 				serv_got_chat_in(gc, id, u_nick, 0, u_message);
 			}
-		}
-		else {
+		} else {
 			/* Nope. Let's treat it as a private message */
 			serv_got_im(gc, u_nick, u_message, 0);
 		}
@@ -843,7 +856,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 
 	if (strncmp(buf, "PING :", 6) == 0) {
 		buf2 = g_strsplit(buf, ":", 1);
-		
+
 		/* Let's build a new response */
 		g_snprintf(buf, IRC_BUF_LEN, "PONG :%s\n", buf2[1]);
 		write(idata->fd, buf, strlen(buf));
@@ -856,23 +869,21 @@ void irc_callback ( struct gaim_connection * gc ) {
 
 }
 
-void irc_handler(gpointer data, gint source, GdkInputCondition condition) {
-	irc_callback(data);
-}
-
-void irc_close(struct gaim_connection *gc) {
+static void irc_close(struct gaim_connection *gc)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GList *chats = idata->channels;
 	struct irc_channel *cc;
 
-	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN);
+	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN);
 
-	gtk_timeout_remove(idata->timer);
-	
 	g_snprintf(buf, IRC_BUF_LEN, "QUIT :Download GAIM [www.marko.net/gaim]\n");
 	write(idata->fd, buf, strlen(buf));
 
 	g_free(buf);
+
+	if (idata->timer)
+		gtk_timeout_remove(idata->timer);
 
 	while (chats) {
 		cc = (struct irc_channel *)chats->data;
@@ -880,21 +891,25 @@ void irc_close(struct gaim_connection *gc) {
 		chats = g_list_remove(chats, cc);
 		g_free(cc);
 	}
-	
+
 	if (gc->inpa)
 		gdk_input_remove(gc->inpa);
+
+	if (idata->inpa)
+		gdk_input_remove(idata->inpa);
 
 	close(idata->fd);
 	g_free(gc->proto_data);
 }
 
-void irc_chat_leave(struct gaim_connection *gc, int id) {
+static void irc_chat_leave(struct gaim_connection *gc, int id)
+{
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	struct irc_channel *channel;
-	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN+1);
-	
+	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+
 	channel = find_channel_by_id(gc, id);
-	
+
 	if (!channel) {
 		return;
 	}
@@ -905,24 +920,60 @@ void irc_chat_leave(struct gaim_connection *gc, int id) {
 	g_free(buf);
 }
 
-void irc_login(struct aim_user *user) {
+static void irc_login_callback(gpointer data, gint source, GdkInputCondition condition)
+{
+	struct gaim_connection *gc = data;
+	struct irc_data *idata = gc->proto_data;
+	char buf[4096];
+	int len, error = ETIMEDOUT;
+
+	len = sizeof(error);
+	if (getsockopt(idata->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+		error = errno;
+	if (error) {
+		hide_login_progress(gc, "Couldn't connect");
+		signoff(gc);
+		return;
+	}
+
+	fcntl(idata->fd, F_SETFL, 0);
+
+	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (www.marko.net/gaim)\n",
+		   gc->username, g_get_user_name(), gc->user->proto_opt[0]);
+
+	if (write(idata->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+
+	gdk_input_remove(idata->inpa);
+	idata->inpa = 0;
+
+	/* Now lets sign ourselves on */
+	account_online(gc);
+	serv_finish_login(gc);
+
+	if (bud_list_cache_exists(gc))
+		do_import(NULL, gc);
+
+	idata->timer = gtk_timeout_add(20000, (GtkFunction)irc_request_buddy_update, gc);
+
+	irc_request_buddy_update(gc);
+}
+
+static void irc_login(struct aim_user *user)
+{
 	int fd;
 	struct hostent *host;
 	struct sockaddr_in site;
 	char buf[4096];
-	
+
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
 	char c;
 	int i;
 	int status;
-
-	set_login_progress(gc, 1, buf);
-
-	while (gtk_events_pending())
-		gtk_main_iteration();
-	if (!g_slist_find(connections, gc))
-		return;
 
 	host = gethostbyname(user->proto_opt[0]);
 	if (!host) {
@@ -942,52 +993,43 @@ void irc_login(struct aim_user *user) {
 		return;
 	}
 
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
-		hide_login_progress(gc, "Unable to connect.");
-		signoff(gc);
-		return;
+		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+			idata->inpa = gdk_input_add(idata->fd, GDK_INPUT_WRITE, irc_login_callback, gc);
+		} else {
+			hide_login_progress(gc, "Unable to connect.");
+			signoff(gc);
+			return;
+		}
 	}
 
 	idata->fd = fd;
-	
+
 	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
 	set_login_progress(gc, 2, buf);
 
 	/* This is where we will attempt to sign on */
-	
-	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (www.marko.net/gaim)\n", gc->username, getenv("USER"), user->proto_opt[0]);
 
-	printf("Sending: %s\n", buf);
-	write(idata->fd, buf, strlen(buf));
+	if (!idata->inpa)
+		irc_login_callback(gc, idata->fd, GDK_INPUT_READ);
 
-	/* Now lets sign ourselves on */
-        account_online(gc);
-	serv_finish_login(gc);
-
-	if (bud_list_cache_exists(gc))
-		do_import(NULL, gc);
-	
-	
-	gc->inpa = gdk_input_add(idata->fd, GDK_INPUT_READ, irc_handler, gc);
-
-	/* We want to update our buddlist every 20 seconds */
-	idata->timer = gtk_timeout_add(20000, (GtkFunction)irc_request_buddy_update, gc);
-
-	/* But first, let's go ahead and check our list */
-	irc_request_buddy_update(gc);
+	gc->inpa = gdk_input_add(idata->fd, GDK_INPUT_READ, irc_callback, gc);
 }
 
-static void irc_print_option(GtkEntry *entry, struct aim_user *user) {
+static void irc_print_option(GtkEntry * entry, struct aim_user *user)
+{
 	if (gtk_object_get_user_data(GTK_OBJECT(entry))) {
 		g_snprintf(user->proto_opt[1], sizeof(user->proto_opt[1]), "%s",
-				gtk_entry_get_text(entry));
+			   gtk_entry_get_text(entry));
 	} else {
 		g_snprintf(user->proto_opt[0], sizeof(user->proto_opt[0]), "%s",
-				gtk_entry_get_text(entry));
+			   gtk_entry_get_text(entry));
 	}
 }
 
-static void irc_user_opts(GtkWidget *book, struct aim_user *user) {
+static void irc_user_opts(GtkWidget * book, struct aim_user *user)
+{
 	/* so here, we create the new notebook page */
 	GtkWidget *vbox;
 	GtkWidget *hbox;
@@ -995,8 +1037,7 @@ static void irc_user_opts(GtkWidget *book, struct aim_user *user) {
 	GtkWidget *entry;
 
 	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
-			gtk_label_new("IRC Options"));
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("IRC Options"));
 	gtk_widget_show(vbox);
 
 	hbox = gtk_hbox_new(FALSE, 0);
@@ -1009,8 +1050,7 @@ static void irc_user_opts(GtkWidget *book, struct aim_user *user) {
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(irc_print_option), user);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
 	if (user->proto_opt[0][0]) {
 		debug_printf("setting text %s\n", user->proto_opt[0]);
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[0]);
@@ -1032,17 +1072,18 @@ static void irc_user_opts(GtkWidget *book, struct aim_user *user) {
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[1]);
 	}
 	gtk_object_set_user_data(GTK_OBJECT(entry), user);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(irc_print_option), user);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
 	gtk_widget_show(entry);
 }
 
-static char **irc_list_icon(int uc) {
+static char **irc_list_icon(int uc)
+{
 	return free_icon_xpm;
 }
 
 /* Send out a ping request to the specified user */
-void irc_send_ping(GtkObject *w, char *who) {
+static void irc_send_ping(GtkObject * w, char *who)
+{
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	char buf[BUF_LEN];
@@ -1050,16 +1091,16 @@ void irc_send_ping(GtkObject *w, char *who) {
 
 	g_snprintf(buf, BUF_LEN, "PRIVMSG %s :%cPING %d%c\n", who, '\001', serial, '\001');
 
-	write(idata->fd, buf, strlen(buf));	
+	write(idata->fd, buf, strlen(buf));
 }
 
 
-static void irc_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+static void irc_action_menu(GtkWidget * menu, struct gaim_connection *gc, char *who)
+{
 	GtkWidget *button;
-	
+
 	button = gtk_menu_item_new_with_label("Ping");
-	gtk_signal_connect(GTK_OBJECT(button), "activate",
-			GTK_SIGNAL_FUNC(irc_send_ping), who);
+	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(irc_send_ping), who);
 	gtk_object_set_user_data(GTK_OBJECT(button), gc);
 	gtk_menu_append(GTK_MENU(menu), button);
 	gtk_widget_show(button);
@@ -1068,7 +1109,8 @@ static void irc_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *w
 
 static struct prpl *my_protocol = NULL;
 
-void irc_init(struct prpl *ret) {
+static void irc_init(struct prpl *ret)
+{
 	ret->protocol = PROTO_IRC;
 	ret->name = irc_name;
 	ret->list_icon = irc_list_icon;
@@ -1077,38 +1119,21 @@ void irc_init(struct prpl *ret) {
 	ret->login = irc_login;
 	ret->close = irc_close;
 	ret->send_im = irc_send_im;
-	ret->set_info = NULL;
-	ret->get_info = NULL;
-	ret->set_away = NULL;
-	ret->get_away_msg = NULL;
-	ret->set_dir = NULL;
-	ret->get_dir = NULL;
-	ret->dir_search = NULL;
-	ret->set_idle = NULL;
-	ret->change_passwd = NULL;
-	ret->add_buddy = NULL;
-	ret->add_buddies = NULL;
-	ret->remove_buddy = NULL;
-	ret->add_permit = NULL;
-	ret->add_deny = NULL;
-	ret->warn = NULL;
-	ret->accept_chat = NULL;
 	ret->join_chat = irc_join_chat;
-	ret->chat_invite = NULL;
 	ret->chat_leave = irc_chat_leave;
-	ret->chat_whisper = NULL;
 	ret->chat_send = irc_chat_send;
-	ret->keepalive = NULL;
 
 	my_protocol = ret;
 }
 
-char *gaim_plugin_init(GModule *handle) {
+char *gaim_plugin_init(GModule * handle)
+{
 	load_protocol(irc_init);
 	return NULL;
 }
 
-void gaim_plugin_remove() {
+void gaim_plugin_remove()
+{
 	struct prpl *p = find_prpl(PROTO_IRC);
 	if (p == my_protocol)
 		unload_protocol(p);
