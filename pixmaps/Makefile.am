@@ -18,6 +18,8 @@ if GNOMEAPPLET
 gaimpixmapdir = /usr/share/pixmaps/gaim
 gaimpixmap_DATA = aimicon.xpm
 gaimgnomedir = /usr/share/pixmaps/gaim/gnome
-gaimgnome_DATA = gnome/penguin-online.png gnome/penguin-offline.png \
-	gnome/penguin-online.png
+gaimgnome_DATA = 
+gaimgnomepixmapsdir = /usr/share/pixmaps/gaim
+gaimgnomepixmaps_DATA = gnome/penguin-online.png gnome/penguin-offline.png \
+	gnome/penguin-connect.png
 endif
