@@ -578,8 +578,7 @@ create_choice_field(GaimRequestField *field)
 		}
 
 		g_signal_connect(G_OBJECT(widget), "changed",
-						 G_CALLBACK(field_choice_menu_cb),
-						 field);
+						 G_CALLBACK(field_choice_menu_cb), field);
 	}
 	else
 	{
@@ -613,6 +612,74 @@ create_choice_field(GaimRequestField *field)
 	}
 
 	return widget;
+}
+
+static void
+select_field_list_item(GtkTreeModel *model, GtkTreePath *path,
+					   GtkTreeIter *iter, gpointer data)
+{
+	GaimRequestField *field = (GaimRequestField *)data;
+	const char *text;
+
+	gtk_tree_model_get(model, iter, 0, &text, -1);
+
+	gaim_request_field_list_add_selected(field, text);
+}
+
+static void
+list_field_select_changed_cb(GtkTreeSelection *sel, GaimRequestField *field)
+{
+	gaim_request_field_list_clear_selected(field);
+
+	gtk_tree_selection_selected_foreach(sel, select_field_list_item, field);
+}
+
+static GtkWidget *
+create_list_field(GaimRequestField *field)
+{
+	GtkWidget *sw;
+	GtkWidget *treeview;
+	GtkListStore *store;
+	GtkCellRenderer *renderer;
+	GtkTreeSelection *sel;
+	GtkTreeViewColumn *column;
+
+	/* Create the scrolled window */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+										GTK_SHADOW_IN);
+	gtk_widget_show(sw);
+
+	/* Create the list store */
+	store = gtk_list_store_new(1, G_TYPE_STRING);
+
+	/* Create the tree view */
+	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+
+	if (gaim_request_field_list_get_multi_select(field))
+		gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
+
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(list_field_select_changed_cb), field);
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer, "text", 0);
+
+	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	gtk_widget_show(treeview);
+
+	return sw;
 }
 
 static void *
@@ -811,6 +878,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 					widget = create_bool_field(field);
 				else if (type == GAIM_REQUEST_FIELD_CHOICE)
 					widget = create_choice_field(field);
+				else if (type == GAIM_REQUEST_FIELD_LIST)
+					widget = create_list_field(field);
 
 				if (type == GAIM_REQUEST_FIELD_STRING &&
 					gaim_request_field_string_is_multiline(field))
