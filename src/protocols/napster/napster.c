@@ -320,7 +320,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		g_free(buf);
 		return;
-		
+
 	}
 
 	if (command == 0xd1) {
@@ -328,15 +328,15 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		res = g_strsplit(buf, " ", 0);
 
-		serv_got_update(gc, res[0], 1, 0, 0, 0, 0, 0);
-		
+		serv_got_update(gc, res[0], 1, 0, 0, 0, 0);
+
 		g_strfreev(res);
 		g_free(buf);
 		return;
 	}
 
 	if (command == 0xd2) {
-		serv_got_update(gc, buf, 0, 0, 0, 0, 0, 0);
+		serv_got_update(gc, buf, 0, 0, 0, 0, 0);
 		g_free(buf);
 		return;
 	}

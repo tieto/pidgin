@@ -593,9 +593,9 @@ handle_list(struct gaim_connection *gc, char *list)
 				if (x && (*l != ' ' && *l != 0))
 					x = 0;
 				if (!b->present && x)
-					serv_got_update(gc, b->name, 1, 0, 0, 0, 0, 0);
+					serv_got_update(gc, b->name, 1, 0, 0, 0, 0);
 				else if (b->present && !x)
-					serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
+					serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
 				g_free(tmp);
 			}
 			m = m->next;
@@ -2760,12 +2760,6 @@ irc_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Info");
-	pbm->callback = irc_get_info;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("DCC Chat");

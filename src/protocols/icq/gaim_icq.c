@@ -118,13 +118,13 @@ static void icq_user_online(icq_Link *link, unsigned long uin, unsigned long st,
 
 	g_snprintf(buf, sizeof buf, "%lu", uin);
 	status = (st == STATUS_ONLINE) ? 0 : UC_UNAVAILABLE | (st << 1);
-	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
+	serv_got_update(gc, buf, 1, 0, 0, 0, status);
 }
 
 static void icq_user_offline(icq_Link *link, unsigned long uin) {
 	struct gaim_connection *gc = link->icq_UserData;
 	char buf[256]; g_snprintf(buf, sizeof buf, "%lu", uin);
-	serv_got_update(gc, buf, 0, 0, 0, 0, 0, 0);
+	serv_got_update(gc, buf, 0, 0, 0, 0, 0);
 }
 
 static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st) {
@@ -134,7 +134,7 @@ static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st)
 
 	g_snprintf(buf, sizeof buf, "%lu", uin);
 	status = (st == STATUS_ONLINE) ? 0 : UC_UNAVAILABLE | (st << 1);
-	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
+	serv_got_update(gc, buf, 1, 0, 0, 0, status);
 }
 
 static gboolean icq_set_timeout_cb(gpointer data) {
@@ -462,23 +462,6 @@ static void icq_get_info(struct gaim_connection *gc, char *who) {
 	icq_SendInfoReq(id->link, atol(who));
 }
 
-static void icq_info(struct gaim_connection *gc, char *who) {
-	serv_get_info(gc, who);
-}
-
-static GList *icq_buddy_menu(struct gaim_connection *gc, char *who) {
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Info");
-	pbm->callback = icq_info;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	return m;
-}
-
 static GList *icq_away_states(struct gaim_connection *gc) {
 	GList *m = NULL;
 
@@ -499,7 +482,7 @@ void icq_init(struct prpl *ret) {
 	ret->name = g_strdup("ICQ");
 	ret->list_icon = icq_list_icon;
 	ret->away_states = icq_away_states;
-	ret->buddy_menu = icq_buddy_menu;
+	ret->buddy_menu = NULL;
 	ret->login = icq_login;
 	ret->close = icq_close;
 	ret->send_im = icq_send_msg;

@@ -848,7 +848,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 
 
 void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
-					 int evil, time_t signon, time_t idle, int type, guint caps)
+					 int evil, time_t signon, time_t idle, int type)
 {
 	struct buddy *b = gaim_find_buddy(gc->account, name);
 

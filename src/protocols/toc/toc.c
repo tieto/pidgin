@@ -754,7 +754,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", c);
 		g_free(tmp);
 
-		serv_got_update(gc, c, logged, evil, signon, time_idle, type, 0);
+		serv_got_update(gc, c, logged, evil, signon, time_idle, type);
 	} else if (!strcasecmp(c, "ERROR")) {
 		do_error_dialog(show_error_message(), NULL, GAIM_ERROR);
 	} else if (!strcasecmp(c, "EVILED")) {
@@ -1303,12 +1303,6 @@ static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Info");
-	pbm->callback = toc_get_info;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Get Dir Info");

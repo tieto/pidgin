@@ -195,7 +195,7 @@ struct prpl
 	 * Gets a short string representing this buddy's status.  This will be shown
 	 * on the buddy list.
 	 */
-	const char *(* status_text)(struct buddy *buddy);
+	char *(* status_text)(struct buddy *buddy);
 	
 	/**
 	 * Gets a string to put in the buddy list tooltip.

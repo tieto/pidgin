@@ -408,15 +408,15 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 		case 13: /* in pager? */
 			if (pkt->service == YAHOO_SERVICE_LOGOFF ||
 			    strtol(pair->value, NULL, 10) == 0) {
-				serv_got_update(gc, name, 0, 0, 0, 0, 0, 0);
+				serv_got_update(gc, name, 0, 0, 0, 0, 0);
 				break;
 			}
 			if (g_hash_table_lookup(yd->games, name))
 				gamestate = YAHOO_STATUS_GAME;
 			if (state == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, name, 1, 0, 0, 0, gamestate, 0);
+				serv_got_update(gc, name, 1, 0, 0, 0, gamestate);
 			else 
-				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate, 0);
+				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate);
 			if (state == YAHOO_STATUS_CUSTOM) {
 				gpointer val = g_hash_table_lookup(yd->hash, name);
 				if (val) {
@@ -527,7 +527,7 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 			}
 			g_hash_table_insert (yd->games, g_strdup(from), g_strdup(game));
 			if (bud)
-				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc | YAHOO_STATUS_GAME, 0);
+				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc | YAHOO_STATUS_GAME);
 		} else {
 			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
 				g_free(free1);
@@ -535,7 +535,7 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 				g_hash_table_remove (yd->games, from);
 			}
 			if (bud)
-				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc & ~YAHOO_STATUS_GAME, 0);
+				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc & ~YAHOO_STATUS_GAME);
 		}
 	}
 }
@@ -614,11 +614,11 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 		show_got_added(gc, id, who, NULL, msg);
 	if (name) {
 		if (state == YAHOO_STATUS_AVAILABLE)
-			serv_got_update(gc, name, 1, 0, 0, 0, 0, 0);
+			serv_got_update(gc, name, 1, 0, 0, 0, 0);
 		else if (state == YAHOO_STATUS_IDLE)
-			serv_got_update(gc, name, 1, 0, 0, time(NULL) - 600, (state << 2), 0);
+			serv_got_update(gc, name, 1, 0, 0, time(NULL) - 600, (state << 2));
 		else
-			serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE, 0);
+			serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE);
 		if (state == YAHOO_STATUS_CUSTOM) {
 			gpointer val = g_hash_table_lookup(yd->hash, name);
 			if (val) {
@@ -1067,14 +1067,14 @@ static void yahoo_game(struct gaim_connection *gc, char *name) {
 	g_free(game);
 }
 
-static const char *yahoo_status_text(struct buddy *b)
+static char *yahoo_status_text(struct buddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	if (b->uc & UC_UNAVAILABLE) {
-	       	if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
-			return yahoo_get_status_string(b->uc >> 2);
+		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+			return g_strdup(yahoo_get_status_string(b->uc >> 2));
 		else
-			return g_hash_table_lookup(yd->hash, b->name);
+			return strip_html(g_hash_table_lookup(yd->hash, b->name));
 	}
 	return NULL;
 }
@@ -1086,7 +1086,7 @@ static char *yahoo_tooltip_text(struct buddy *b)
 		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
 			return g_strdup(yahoo_get_status_string(b->uc >> 2));
 		else
-			return g_strdup(g_hash_table_lookup(yd->hash, b->name));
+			return strip_html(g_hash_table_lookup(yd->hash, b->name));
 	}
 	return NULL;
 }

@@ -75,6 +75,11 @@ static void gaim_gtk_blist_destroy_cb()
 		do_quit();
 }
 
+static void gtk_blist_menu_info_cb(GtkWidget *w, struct buddy *b)
+{
+	serv_get_info(b->account->gc, b->name);
+}
+
 static void gtk_blist_menu_im_cb(GtkWidget *w, struct buddy *b)
 {
        gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
@@ -203,6 +208,31 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 
 	/* Protocol specific options */
 	prpl = find_prpl(((struct buddy*)node)->account->protocol);
+
+	if(prpl && prpl->get_info) {
+		menuitem = gtk_image_menu_item_new_with_mnemonic("_Get Info");
+		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_info_cb), node);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	}
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic("_IM");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_im_cb), node);
+	image = gtk_image_new_from_stock(GAIM_STOCK_IM, GTK_ICON_SIZE_MENU);
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic("_Alias");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_alias_cb), node);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic("Add Buddy _Pounce");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_bp_cb), node);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic("View _Log");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_showlog_cb), node);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
 	if (prpl) {
 		list = prpl->buddy_menu(((struct buddy*)node)->account->gc, ((struct buddy*)node)->name);
 		while (list) {
@@ -214,24 +244,6 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 			list = list->next;
 		}
 	}
-	
-	menuitem = gtk_image_menu_item_new_with_mnemonic("_IM");
-	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_im_cb), node);
-	image = gtk_image_new_from_stock(GAIM_STOCK_IM, GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);	
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	
-	menuitem = gtk_image_menu_item_new_with_mnemonic("_Alias");
-	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_alias_cb), node);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	
-	menuitem = gtk_image_menu_item_new_with_mnemonic("Add Buddy _Pounce");
-	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_bp_cb), node);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	
-	menuitem = gtk_image_menu_item_new_with_mnemonic("View _Log");
-	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_showlog_cb), node);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gtk_widget_show_all(menu);
 	
@@ -344,11 +356,13 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, s
 	GdkPixbuf *pixbuf = gaim_gtk_blist_get_status_icon(b, GAIM_STATUS_ICON_LARGE);
 	PangoLayout *layout;
 	char *tooltiptext = gaim_get_tooltip_text(b);
+	int width;
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
+	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
 	style = gtkblist->tipwindow->style;
-	
+
 	gtk_paint_flat_box (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 			    NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
 
@@ -439,7 +453,7 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 
 	if (gtkblist->timeout) {
 		if ((event->y > gtkblist->rect.y) && ((event->y - gtkblist->rect.height) < gtkblist->rect.y))
-			return;
+			return FALSE;
 		/* We've left the cell.  Remove the timeout and create a new one below */
 		if (gtkblist->tipwindow) {
 			gtk_widget_destroy(gtkblist->tipwindow);
@@ -526,13 +540,9 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 	char *warning = NULL, *idletime = NULL;
 
 	if (prpl->tooltip_text) {
-		char *tmp = prpl->tooltip_text(b);
-		if (tmp) {
-			statustext = g_markup_escape_text(tmp, strlen(tmp));
-			g_free(tmp);
-		}
+		statustext = prpl->tooltip_text(b);
 	}
-	
+
 	if (b->idle) {
 		int ihrs, imin;
 		time_t t;
@@ -540,14 +550,14 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 		ihrs = (t - b->idle) / 3600;
 		imin = ((t - b->idle) / 60) % 60;
 		if (ihrs)
-			idletime = g_strdup_printf(_("<b>Idle</b> %dh%02dm"), ihrs, imin);
+			idletime = g_strdup_printf(_("<b>Idle:</b> %dh%02dm"), ihrs, imin);
 		else
-			idletime = g_strdup_printf(_("<b>Idle</b> %dm"), imin);
+			idletime = g_strdup_printf(_("<b>Idle:</b> %dm"), imin);
 	}
-	
+
 	if (b->evil > 0)
-		warning = g_strdup_printf(_("<b>Warned</b> %d%%"), b->evil);
-	
+		warning = g_strdup_printf(_("<b>Warned:</b> %d%%"), b->evil);
+
 	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
 			       "%s %s %s"  /* Alias */
 			       "%s %s %s"  /* Nickname */
@@ -555,8 +565,8 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       "%s %s"     /* Warning */
 			       "%s %s",    /* Status */
 			       b->name,
-			       b->alias && b->alias[0] ? "\n" : "", b->alias && b->alias[0] ? _("<b>Alias</b> ") : "", b->alias ? b->alias : "", 
-			       b->server_alias ? "\n" : "", b->server_alias ? _("<b>Nickname</b> ") : "", b->server_alias ? b->server_alias : "", 
+			       b->alias && b->alias[0] ? "\n" : "", b->alias && b->alias[0] ? _("<b>Alias:</b> ") : "", b->alias ? b->alias : "", 
+			       b->server_alias ? "\n" : "", b->server_alias ? _("<b>Nickname:</b> ") : "", b->server_alias ? b->server_alias : "", 
 			       b->idle ? "\n" : "", b->idle ? idletime : "", 
 			       b->evil ? "\n" : "", b->evil ? warning : "",
 			       statustext ? "\n" : "", statustext ? statustext : "");
@@ -730,7 +740,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 
 	int ihrs, imin;
 	char *idletime = NULL, *warning = NULL, *statustext = NULL;
-       	time_t t;
+	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
 		if (b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS) {
@@ -748,11 +758,17 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	imin = ((t - b->idle) / 60) % 60;
 
 	if (prpl->status_text) {
-		const char *tmp = prpl->status_text(b);
-		if (tmp)
-			statustext = g_markup_escape_text(tmp, strlen(tmp));
+		char *tmp = prpl->status_text(b);
+
+		if(tmp) {
+			if(strlen(tmp) > 20)
+				statustext = g_strdup_printf("%.16s...", tmp);
+			else
+				statustext = g_strdup(tmp);
+			g_free(tmp);
+		}
 	}
-	
+
 	if (b->idle) {
 		if (ihrs)
 			idletime = g_strdup_printf(_("Idle (%dh%02dm)"), ihrs, imin);

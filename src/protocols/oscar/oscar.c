@@ -111,6 +111,7 @@ struct oscar_data {
 	GSList *file_transfers;
 	GSList *hasicons;
 	GHashTable *supports_tn;
+	GHashTable *buddy_caps;
 
 	gboolean killme;
 	gboolean icq;
@@ -549,6 +550,7 @@ static void oscar_login(struct gaim_account *account) {
 		gc->flags |= OPT_CONN_AUTO_RESP;
 	}
 	od->supports_tn = g_hash_table_new(g_str_hash, g_str_equal);
+	od->buddy_caps = g_hash_table_new(g_str_hash, g_str_equal);
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -623,6 +625,7 @@ static void oscar_close(struct gaim_connection *gc) {
 		g_free(n);
 	}
 	g_hash_table_destroy(od->supports_tn);
+	g_hash_table_destroy(od->buddy_caps);
 	while (od->evilhack) {
 		g_free(od->evilhack->data);
 		od->evilhack = g_slist_remove(od->evilhack, od->evilhack->data);
@@ -1629,8 +1632,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!aim_sncmp(gc->username, info->sn))
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", info->sn);
 
+	g_hash_table_replace(od->buddy_caps, normalize(info->sn),
+			GINT_TO_POINTER(caps));
+
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
-			time_idle, type, caps);
+			time_idle, type);
 
 	return 1;
 }
@@ -1644,7 +1650,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_update(gc, info->sn, 0, 0, 0, 0, 0, 0);
+	serv_got_update(gc, info->sn, 0, 0, 0, 0, 0);
 
 	return 1;
 }
@@ -2779,7 +2785,6 @@ static char *images(int flags) {
 }
 
 
-/* XXX This is horribly copied from ../../buddy.c. */
 static char *caps_string(guint caps)
 {
 	static char buf[512], *tmp;
@@ -2849,6 +2854,14 @@ static char *caps_string(guint caps)
 		bit <<= 1;
 	}
 	return buf;
+}
+
+static char *oscar_tooltip_text(struct buddy *b) {
+	struct oscar_data *od = b->account->gc->proto_data;
+	guint caps = GPOINTER_TO_INT(g_hash_table_lookup(od->buddy_caps,
+				normalize(b->name)));
+
+	return g_strdup_printf(_("<b>Capabilities:</b> %s"), caps_string(caps));
 }
 
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -5190,12 +5203,6 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Info");
-	pbm->callback = oscar_get_info;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
 	if (od->icq) {
 #if 0
 		pbm = g_new0(struct proto_buddy_menu, 1);
@@ -5607,6 +5614,7 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->chat_send = oscar_chat_send;
 	ret->keepalive = oscar_keepalive;
 	ret->convo_closed = oscar_convo_closed;
+	ret->tooltip_text = oscar_tooltip_text;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Auth Host:");

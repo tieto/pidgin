@@ -208,7 +208,7 @@ extern int plugin_event(enum gaim_event, ...);
 extern char *event_name(enum gaim_event);
 
 /* Functions in server.c */
-extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, guint);
+extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int);
 extern void serv_got_im(struct gaim_connection *, char *, char *, guint32, time_t, gint);
 extern void serv_got_typing(struct gaim_connection *, char *, int, int);
 extern void serv_got_typing_stopped(struct gaim_connection *, char *);

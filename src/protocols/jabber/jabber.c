@@ -1519,7 +1519,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		}
 	}
 
-	if (type && (strcasecmp(type, "unavailable") == 0))
+	if (state == UC_ERROR || (type && (strcasecmp(type, "unavailable") == 0)))
 		jabber_remove_resource(GJ_GC(gjc), buddy, gjid->resource);
 	else {
 		jabber_track_resource(GJ_GC(gjc), buddy, gjid->resource, priority, state);
@@ -1533,9 +1533,9 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		/* this is where we handle presence information for "regular" buddies */
 		jab_res_info jri = jabber_find_resource(GJ_GC(gjc), buddy);
 		if(jri) {
-			serv_got_update(GJ_GC(gjc), buddy, 1, 0, b->signon, b->idle, jri->state, 0);
+			serv_got_update(GJ_GC(gjc), buddy, 1, 0, b->signon, b->idle, jri->state);
 		} else
-			serv_got_update(GJ_GC(gjc), buddy, 0, 0, 0, 0, 0, 0);
+			serv_got_update(GJ_GC(gjc), buddy, 0, 0, 0, 0, 0);
 
 	} else {
 		if (gjid->resource) {
@@ -1797,7 +1797,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				gaim_blist_save();
 				if(present) {
 					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, signon, idle,
-							uc, 0);
+							uc);
 				}
 			} else if(name != NULL && strcmp(b->alias, name)) {
 				g_free(b->alias);
@@ -3202,6 +3202,15 @@ static void jabber_get_cb_away_msg(struct gaim_connection *gc, int cid, char *wh
 
 }
 
+static char *jabber_status_text(struct buddy *b)
+{
+	struct jabber_data *jd = b->account->gc->proto_data;
+	if (b->uc & UC_UNAVAILABLE) {
+			return strip_html(jabber_lookup_away(jd->gjc, b->name));
+	}
+	return NULL;
+}
+
 static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -3221,11 +3230,6 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 
 		g_free(realwho);
 
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Get Info");
-		pbm->callback = jabber_get_info;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Get Away Msg");
 		pbm->callback = jabber_get_away_msg;
@@ -4157,6 +4161,7 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->options = OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_CHAT_TOPIC;
 	ret->name = g_strdup("Jabber");
 	ret->list_icon = jabber_list_icon;
+	ret->status_text = jabber_status_text;
 	ret->away_states = jabber_away_states;
 	ret->actions = jabber_actions;
 	ret->buddy_menu = jabber_buddy_menu;

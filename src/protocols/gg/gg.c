@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5016 2003-03-11 18:15:36Z faceprint $
+ * $Id: gg.c 5047 2003-03-13 06:08:56Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -365,7 +365,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 
 				g_snprintf(user, sizeof(user), "%lu", n->uin);
 				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
-						status, 0);
+						status);
 				n++;
 			}
 		}
@@ -391,7 +391,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 
 			g_snprintf(user, sizeof(user), "%lu", e->event.status.uin);
 			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
-					status, 0);
+					status);
 		}
 		break;
 	case GG_EVENT_ACK:

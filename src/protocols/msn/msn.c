@@ -418,7 +418,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		char *usr = buf;
 
 		GET_NEXT(usr);
-		serv_got_update(gc, usr, 0, 0, 0, 0, 0, 0);
+		serv_got_update(gc, usr, 0, 0, 0, 0, 0);
 	} else if (!g_strncasecmp(buf, "GTC", 3)) {
 	} else if (!g_strncasecmp(buf, "INF", 3)) {
 	} else if (!g_strncasecmp(buf, "ILN", 3)) {
@@ -452,7 +452,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 		}
 
-		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
+		serv_got_update(gc, user, 1, 0, 0, 0, status);
 	} else if (!g_strncasecmp(buf, "LST", 3)) {
 		char *which, *who, *friend, *tmp = buf;
 		struct msn_add_permit *ap; /* for any as yet undealt with buddies who've added you to their buddy list when you were off-line.  How dare they! */
@@ -596,7 +596,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 		}
 
-		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
+		serv_got_update(gc, user, 1, 0, 0, 0, status);
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 		char *tmp = buf;
 
@@ -1637,14 +1637,14 @@ static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
 	mft->xfer = transfer_out_add(gc, mft->sn);
 }
 #endif
-static const char *msn_status_text(struct buddy *b) {
+static char *msn_status_text(struct buddy *b) {
 	if (b->uc & UC_UNAVAILABLE)
-		return msn_get_away_text(b->uc >> 1);
+		return strip_html(msn_get_away_text(b->uc >> 1));
 	return NULL;
 }
 
-static const char *msn_tooltip_text(struct buddy *b) {
-	return g_strdup(msn_get_away_text(b->uc >> 1));
+static char *msn_tooltip_text(struct buddy *b) {
+	return strip_html(msn_get_away_text(b->uc >> 1));
 }
 
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
