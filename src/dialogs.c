@@ -2763,6 +2763,9 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 		}
 		c->current_fontface[k] = '\0';
 
+		sprintf(debug_buff, "Setting font face %s\n", c->current_fontface);
+		debug_print(debug_buff);
+
 		set_font_face(NULL, c);
 	}
 	else

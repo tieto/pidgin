@@ -250,8 +250,8 @@ void update_font_buttons()
                 if (c->strike)
                         gtk_widget_set_sensitive(c->strike, ((font_options & OPT_FONT_STRIKE)) ? FALSE : TRUE);
 
-/*                if (c->font)
-                        gtk_widget_set_sensitive(c->font, ((font_options & OPT_FONT_FACE)) ? TRUE : FALSE);*/
+                if (c->font)
+                        gtk_widget_set_sensitive(c->font, ((font_options & OPT_FONT_FACE)) ? TRUE : FALSE);
 		
 		cnv = cnv->next;
 	}
@@ -311,9 +311,6 @@ void set_font_face(GtkWidget *widget, struct conversation *c)
 {
 	char *pre_fontface, *old_font_face;
 	int alloc = 0;
-
-	if (!(font_options & OPT_FONT_FACE))
-		return;
 
 	if (c->current_fontface[0] && strcmp(c->current_fontface, "(null)"))
 	{
@@ -484,6 +481,11 @@ void send_callback(GtkWidget *widget, struct conversation *c)
                 strcpy(buf, buf2);
         }
 
+        if (font_options & OPT_FONT_FACE) {
+                g_snprintf(buf2, BUF_LONG, "<FONT FACE=\"%s\">%s</FONT>", c->current_fontface, buf);
+                strcpy(buf, buf2);
+        }
+
 #ifdef GAIM_PLUGINS
 	{
 		GList *ca = callbacks;
@@ -542,11 +544,9 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		do_im_back();
 	}
 
-	set_font_face(NULL, c);
-	
 	gtk_widget_grab_focus(c->entry);
 
-        g_free(buf2);
+	g_free(buf2);
 	g_free(buf);
 }
 
@@ -1219,9 +1219,6 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 						NULL, _("Font"), _("Select Font"),
 						_("Font"), font_p, GTK_SIGNAL_FUNC(toggle_font), c);
 
-	if (!(font_options & OPT_FONT_FACE))
-		gtk_widget_set_sensitive(GTK_WIDGET(font), FALSE);
-	
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
                                             GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, _("Link"), _("Insert Link"),
@@ -1426,8 +1423,6 @@ void show_conv(struct conversation *c)
 		strncpy(c->current_fontface, fontface, sizeof(c->current_fontface));
 	if (fontname)
 		strncpy(c->current_fontname, fontname, sizeof(c->current_fontname));
-	
-	set_font_face(NULL, c);
 	
 	gtk_widget_show(win);
 }
