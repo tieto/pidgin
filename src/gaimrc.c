@@ -502,7 +502,9 @@ static void gaimrc_write_options(FILE *f)
         fprintf(f, "\tdisplay_options { %d }\n", display_options);
         fprintf(f, "\tsound_options { %d }\n", sound_options);
 		fprintf(f, "\tfont_options { %d }\n", font_options);
+	if (fontface)
 		fprintf(f, "\tfont_face { %s }\n", fontface);
+	if (fontname)
 		fprintf(f, "\tfont_name { %s }\n", fontname);
         fprintf(f, "\treport_idle { %d }\n", report_idle);
         fprintf(f, "\tweb_browser { %d }\n", web_browser);
