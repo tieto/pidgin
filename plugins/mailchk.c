@@ -9,6 +9,7 @@
 
 #include "gtkblist.h"
 #include "gtkplugin.h"
+#include "gtksound.h"
 
 #define MAILCHK_PLUGIN_ID "gtk-mailchk"
 
@@ -55,7 +56,7 @@ static void destroy_cb()
 static gboolean check_timeout(gpointer data)
 {
 	gint count = check_mail();
-	struct gaim_buddy_list *list = gaim_get_blist();
+	GaimBuddyList *list = gaim_get_blist();
 
 	if (count == -1)
 		return FALSE;
@@ -89,7 +90,7 @@ static gboolean check_timeout(gpointer data)
 
 static void signon_cb(GaimConnection *gc)
 {
-	struct gaim_buddy_list *list = gaim_get_blist();
+	GaimBuddyList *list = gaim_get_blist();
 	if (list && GAIM_IS_GTK_BLIST(list) && !timer) {
 		check_timeout(NULL); /* we want the box to be drawn immediately */
 		timer = g_timeout_add(2000, check_timeout, NULL);
@@ -98,7 +99,7 @@ static void signon_cb(GaimConnection *gc)
 
 static void signoff_cb(GaimConnection *gc)
 {
-	struct gaim_buddy_list *list = gaim_get_blist();
+	GaimBuddyList *list = gaim_get_blist();
 	if ((!list || !GAIM_IS_GTK_BLIST(list) || !GAIM_GTK_BLIST(list)->vbox) && timer) {
 		g_source_remove(timer);
 		timer = 0;
@@ -112,11 +113,11 @@ static void signoff_cb(GaimConnection *gc)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	struct gaim_buddy_list *list = gaim_get_blist();
+	GaimBuddyList *list = gaim_get_blist();
 	void *conn_handle = gaim_connections_get_handle();
 
 	if (!check_timeout(NULL)) {
-		gaim_debug(GAIM_DEBUG_WARNING, "mailchk", "Could not read $MAIL or /var/spool/mail/$USER");
+		gaim_debug_warning("mailchk", "Could not read $MAIL or /var/spool/mail/$USER");
 		return FALSE;
 	}
 
@@ -156,7 +157,8 @@ static GaimPluginInfo info =
 	N_("Mail Checker"),
 	VERSION,
 	N_("Checks for new local mail."),
-	N_("Checks for new local mail."),
+	N_("Adds a small box to the buddy list that"
+	   " shows if you have new mail."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
 	GAIM_WEBSITE,
 	plugin_load,
