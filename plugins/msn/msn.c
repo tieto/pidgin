@@ -100,28 +100,6 @@ static int msn_write(int fd, void *data, int len)
 	return write(fd, data, len);
 }
 
-static char *url_encode(const char *msg)
-{
-	static char buf[MSN_BUF_LEN];
-	int i, j = 0;
-
-	bzero(buf, sizeof(buf));
-	for (i = 0; i < strlen(msg); i++) {
-		if ((msg[i] < 33) || (msg[i] > 126)) {
-			char tmp[5];
-			int k;
-			buf[j++] = '%';
-			g_snprintf(tmp, sizeof(tmp), "%02x", msg[i]);
-			for (k = 0; tmp[k]; k++)
-				buf[j++] = tmp[k];
-		} else
-			buf[j++] = msg[i];
-	}
-	buf[j] = 0;
-
-	return buf;
-}
-
 static char *url_decode(const char *msg)
 {
 	static char buf[MSN_BUF_LEN];
@@ -368,8 +346,8 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	} else if (!g_strncasecmp(buf, "JOI", 3)) {
 		if (ms->txqueue) {
 			g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
-					strlen(MIME_HEADER) + strlen(url_encode(ms->txqueue)),
-					MIME_HEADER, url_encode(ms->txqueue));
+					strlen(MIME_HEADER) + strlen(ms->txqueue),
+					MIME_HEADER, ms->txqueue);
 			g_free(ms->txqueue);
 			ms->txqueue = NULL;
 			if (msn_write(ms->fd, buf, strlen(buf)) < 0)
@@ -1053,8 +1031,8 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 
 	if (ms) {
 		g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
-				strlen(MIME_HEADER) + strlen(url_encode(message)),
-				MIME_HEADER, url_encode(message));
+				strlen(MIME_HEADER) + strlen(message),
+				MIME_HEADER, message);
 		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 			msn_kill_switch(ms);
 	} else {
