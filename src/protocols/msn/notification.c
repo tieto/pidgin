@@ -425,12 +425,12 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 		if ((error = strstr(buffer, "WWW-Authenticate")) != NULL)
 		{
-			if ((error = strstr(buffer, "cbtxt=")) != NULL)
+			if ((error = strstr(error, "cbtxt=")) != NULL)
+			{
 				error += strlen("cbtxt=");
-
-			error = gaim_url_decode(error);
+				error = gaim_url_decode(error);
+			}
 		}
-
 
 		if (error == NULL)
 		{
@@ -1877,7 +1877,7 @@ xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (strcmp(params[1], "SB") && strcmp(params[1], "NS")) {
 		gaim_connection_error(gc, _("Got invalid XFR"));
-		
+
 		return FALSE;
 	}
 
