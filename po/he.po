@@ -1,4 +1,4 @@
-# Gaim Hewbrew translation
+# Gaim Hebrew translation
 # Copyright (C) 2003, Pavel Bibergal <cyberkm@barak-online.net>
 #
 # This file is distributed under the same license as the Gaim package.
