@@ -58,8 +58,8 @@
 struct sound_struct sounds[NUM_SOUNDS] = {
 	N_("Buddy logs in"), OPT_SOUND_LOGIN, BuddyArrive, sizeof(BuddyArrive),
 	N_("Buddy logs out"), OPT_SOUND_LOGOUT, BuddyLeave, sizeof(BuddyLeave),
-	N_("Message recieved"), OPT_SOUND_RECV, Receive, sizeof(Receive),
-	N_("Message recieved begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive),
+	N_("Message received"), OPT_SOUND_RECV, Receive, sizeof(Receive),
+	N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive),
 	N_("Message sent"), OPT_SOUND_SEND, Send, sizeof(Send),
 	N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, BuddyArrive, sizeof(BuddyArrive),
 	N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave),
