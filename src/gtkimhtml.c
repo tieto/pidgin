@@ -1853,6 +1853,8 @@ gtk_imhtml_get_font_name (GdkFont *font)
 				ret_font = gdk_fontset_load (tmp); \
 			g_free (tmp); \
 			if (ret_font) { \
+				g_free (newvals); \
+				g_strfreev (xnames); \
 				g_strfreev (xflds); \
 				g_strfreev (names); \
 				return ret_font; \
@@ -1868,94 +1870,110 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 {
 	GdkFont *default_font = imhtml->default_font;
 	gchar *default_name;
-	gchar **xflds;
-
-	gchar *newvals[16];
-	gint i;
-	gchar **names;
-	gchar fs[10];
-
-	gchar *tmp;
-	GdkFont *ret_font;
+	gchar **xnames;
+	gchar **pos;
 
 	if (!name && !bold && !italics && !fontsize)
 		return gdk_font_ref (default_font);
 
 	default_name = gtk_imhtml_get_font_name (default_font);
-	xflds = g_strsplit (default_name, "-", -1);
+	xnames = g_strsplit (default_name, ",", -1);
+
+	for (pos = xnames; pos && *pos; pos++) {
+		gchar *xname;
+		gchar **xflds;
+
+		gchar **newvals;
+		gint i;
+		gchar **names;
+		gchar fs[10];
+
+		gchar *tmp;
+		GdkFont *ret_font;
+
+		xname = *pos;
+		xname = g_strchomp (xname);
+		xname = g_strchug (xname);
+
+		xflds = g_strsplit (xname, "-", -1);
 
 #define NAME 2
 #define BOLD 3
 #define ITALICS 4
 #define SIZE 6
 #define PTSZ 7
-#define END 15
 
-	if (name)
-		names = g_strsplit (name, ",", -1);
-	else {
-		names = g_new0 (gchar *, 2);
-		names [0] = g_strdup (xflds [NAME]);
-	}
+		for (i = 0; xflds [i]; i++);
+		newvals = g_memdup (xflds, (i + 1) * sizeof (xflds));
 
-	for (i = 0; xflds [i]; i++)
-		newvals [i] = xflds [i];
+		if (bold)
+			newvals [BOLD] = "bold";
+		if (italics)
+			newvals [ITALICS] = "i";
+		if (fontsize) {
+			g_snprintf (fs, sizeof (fs), "%d", font_sizes [MIN (fontsize, MAX_SIZE) - 1]);
+			newvals [SIZE] = fs;
+			newvals [PTSZ] = "";
+		}
 
-	if (bold)
-		newvals [BOLD] = "bold";
-	if (italics)
-		newvals [ITALICS] = "i";
-	if (fontsize) {
-		g_snprintf (fs, sizeof (fs), "%d", font_sizes [MIN (fontsize, MAX_SIZE) - 1]);
-		newvals [SIZE] = fs;
-		newvals [PTSZ] = "";
-	}
-	newvals [END] = NULL;
+		if (name)
+			names = g_strsplit (name, ",", -1);
+		else {
+			names = g_new0 (gchar *, 2);
+			names [0] = g_strdup (xflds [NAME]);
+		}
 
-	TRY_FONT;
+		for (i = 0; names [i]; i++) {
+			newvals [NAME] = names [i];
+			TRY_FONT;
+		}
 
-	for (i = 0; italics && names [i]; i++) {
-		newvals [NAME] = names [i];
+		for (i = 0; italics && names [i]; i++) {
+			newvals [NAME] = names [i];
 
-		newvals [ITALICS] = "o";
-		TRY_FONT;
-
-		newvals [ITALICS] = xflds [ITALICS];
-		TRY_FONT;
-	}
-
-	for (i = 0; fontsize && names [i]; i++) {
-		newvals [NAME] = names [i];
-
-		if (xflds [PTSZ][0]) {
-			g_snprintf (fs, sizeof (fs), "%d",
-				    font_sizes [MIN (fontsize, MAX_SIZE) - 1] / 10);
-			newvals [PTSZ] = fs;
-			newvals [SIZE] = "";
+			newvals [ITALICS] = "o";
 			TRY_FONT;
 
-			newvals [PTSZ] = xflds [PTSZ];
-		} else
-			newvals [SIZE] = xflds [SIZE];
-		TRY_FONT;
-	}
+			newvals [ITALICS] = xflds [ITALICS];
+			TRY_FONT;
+		}
 
-	for (i = 0; bold && names [i]; i++) {
-		newvals [NAME] = names [i];
+		for (i = 0; fontsize && names [i]; i++) {
+			newvals [NAME] = names [i];
 
-		newvals [BOLD] = xflds [BOLD];
-		TRY_FONT;
-	}
+			if (xflds [PTSZ][0]) {
+				g_snprintf (fs, sizeof (fs), "%d",
+					    font_sizes [MIN (fontsize, MAX_SIZE) - 1] / 10);
+				newvals [PTSZ] = fs;
+				newvals [SIZE] = "";
+				TRY_FONT;
+
+				newvals [PTSZ] = xflds [PTSZ];
+			} else
+				newvals [SIZE] = xflds [SIZE];
+			TRY_FONT;
+		}
+
+		for (i = 0; bold && names [i]; i++) {
+			newvals [NAME] = names [i];
+
+			newvals [BOLD] = xflds [BOLD];
+			TRY_FONT;
+		}
 
 #undef NAME
 #undef BOLD
 #undef ITALICS
 #undef SIZE
 #undef PTSZ
-#undef END
 
-	g_strfreev (xflds);
-	g_strfreev (names);
+		g_free (newvals);
+		g_strfreev (xflds);
+		g_strfreev (names);
+
+	}
+
+	g_strfreev (xnames);
 
 	return gdk_font_ref (default_font);
 }
