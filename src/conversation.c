@@ -645,6 +645,7 @@ static void do_big(GtkWidget *big, GtkWidget *entry)
 void check_everything(GtkWidget *entry)
 {
 	struct conversation *c;
+
 	c = (struct conversation *)gtk_object_get_user_data(GTK_OBJECT(entry));
 	if (!c) return;
 	if (invert_tags(entry, "<B>", "</B>", 0))
@@ -799,6 +800,28 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 
 
 
+static void check_spelling( GtkEditable * editable, gchar * new_text,
+                                                          gint length, gint * position,
+                                                          gpointer data )
+{
+        gtk_signal_handler_block_by_func(GTK_OBJECT(editable),
+        GTK_SIGNAL_FUNC(check_spelling),
+		data);
+        //gtk_editable_insert_text( editable, new_text, length, position );
+        gtk_text_set_point(GTK_TEXT(editable), *position);
+        gtk_text_insert(GTK_TEXT(editable), NULL, &(GTK_WIDGET(editable)->style->fg[0]),
+                                        NULL, new_text, length );
+        if(isspace(new_text[0]))
+        {
+                gtk_text_freeze(GTK_TEXT(editable));
+                spell_check(GTK_WIDGET(editable));
+                gtk_text_thaw(GTK_TEXT(editable));
+        }
+        gtk_signal_handler_unblock_by_func(GTK_OBJECT(editable),
+                                                           GTK_SIGNAL_FUNC(check_spelling),
+                                                           data);
+        gtk_signal_emit_stop_by_name(GTK_OBJECT(editable), "insert-text");
+}
 
 
 void show_conv(struct conversation *c)
@@ -1067,6 +1090,7 @@ void show_conv(struct conversation *c)
 	gtk_window_set_focus(GTK_WINDOW(win),entry);
 
 	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
+	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
 
 	gtk_widget_show(win);

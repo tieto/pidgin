@@ -745,3 +745,79 @@ void check_gaim_versions()
 }
 
 
+/*  
+
+This function was taken from EveryBuddy and was written by
+Torrey Searle.  tsearle@valhalla.marko.net 
+
+http://www.everybuddy.com
+
+*/
+
+void spell_check(GtkWidget * text)
+{
+        int start = 0;
+        int end = 0;
+        int length = gtk_text_get_length(GTK_TEXT(text));
+        static GdkColor * color = NULL;
+        int ignore = 0;
+        int point = gtk_editable_get_position(GTK_EDITABLE(text));
+
+        GString * string;
+
+        if( color == NULL )
+        {
+                GdkColormap * gc = gtk_widget_get_colormap( text );
+                color = g_new0(GdkColor, 1);
+                color->red = 255 * 256;
+                gdk_colormap_alloc_color(gc, color, FALSE, TRUE);
+        }
+
+
+
+        end = point-1;
+        for( start = end-1; start >= 0; start-- )
+        {
+                if((isspace(GTK_TEXT_INDEX(GTK_TEXT(text), start)) || start == 0)
+                                && !ignore)
+                {
+                        char * word;
+                        FILE * file;
+                        char buff[1024];
+                        word = gtk_editable_get_chars( GTK_EDITABLE(text), start, end );
+                        g_snprintf(buff, 1024, "echo \"%s\" | ispell -l", word );
+                        file = popen(buff, "r");
+
+                        buff[0] = 0;
+                        fgets(buff, 255, file);
+
+                        if(strlen(buff) > 0 )
+                        {
+                                string = g_string_new(word);
+                                gtk_text_set_point(GTK_TEXT(text), end);
+                                gtk_text_backward_delete(GTK_TEXT(text), end-start);
+                                gtk_text_insert( GTK_TEXT(text), NULL, color, NULL,
+                                                                 string->str, string->len );
+                                g_string_free( string, TRUE );
+                        }
+                        else
+                        {
+                                string = g_string_new(word);
+                                gtk_text_set_point(GTK_TEXT(text), end);
+                                gtk_text_backward_delete(GTK_TEXT(text), end-start);
+                                gtk_text_insert( GTK_TEXT(text), NULL, &(text->style->fg[0]), NULL,
+                                                                 string->str, string->len );
+                                g_string_free( string, TRUE );
+                        }
+                        pclose( file);
+                        break;
+                }
+                else if(!isalpha(GTK_TEXT_INDEX(GTK_TEXT(text), start)))
+                {
+                        ignore = 1;
+                }
+        }
+        gtk_text_set_point(GTK_TEXT(text), point);
+
+}
+

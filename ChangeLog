@@ -5,6 +5,8 @@ version 0.9.15:
 	* Some plugins built/installed by default
 	* Option to automagically check for new releases
 	* Ability to receive files (one-way file transfer)
+	* In-line spell checker (thanks to Torrey Searle of the
+	  Everybuddy Devel team for this one)
 
 version 0.9.14:
 	* Numerous Fixes by G. Sumner Hayes (buffer over flow patches,
