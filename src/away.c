@@ -208,7 +208,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	GtkWidget *vbox;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
-	char *buf2;
 	char *buf;
 
 	if (!a)
@@ -301,10 +300,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	}
 
 	gtk_widget_show(imaway);
-	buf2 = g_malloc(strlen(awaymessage->message) * 4 + 1);
-	strncpy_withhtml(buf2, awaymessage->message, strlen(awaymessage->message) * 4 + 1);
-	serv_set_away_all(buf2);
-	g_free(buf2);
+	serv_set_away_all(awaymessage->message);
 }
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)

@@ -315,31 +315,19 @@ void serv_set_away(GaimConnection *gc, char *state, char *message)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && prpl_info->set_away) {
-		char *buf = NULL;
-
 		if (gc->away_state) {
 			g_free(gc->away_state);
 			gc->away_state = NULL;
 		}
 
-		if (message) {
-			buf = g_malloc(strlen(message) * 4 + 1);
-			if (gc->flags & OPT_CONN_HTML)
-				strncpy_withhtml(buf, message, strlen(message) * 4 + 1);
-			else
-				strncpy_nohtml(buf, message, strlen(message) + 1);
-		}
-
-		prpl_info->set_away(gc, state, buf);
+		prpl_info->set_away(gc, state, message);
 
 		if (gc->away && state) {
 			gc->away_state = g_strdup(state);
 		}
 
-		gaim_event_broadcast(event_away, gc, state, buf);
+		gaim_event_broadcast(event_away, gc, state, message);
 
-		if (buf)
-			g_free(buf);
 	}
 
 	system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON);

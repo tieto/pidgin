@@ -838,6 +838,8 @@ int main(int argc, char *argv[])
 
 	/* This has to be done before the debug stuff. */
 	gaim_gtk_stock_init();
+	
+	static_proto_init();
 
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
@@ -920,8 +922,6 @@ int main(int argc, char *argv[])
 
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled"))
 		gaim_gtk_debug_window_show();
-
-	static_proto_init();
 
 	/* deal with --login */
 	if (opt_login) {

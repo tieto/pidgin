@@ -4413,6 +4413,7 @@ static void oscar_set_idle(GaimConnection *gc, int time) {
 static void oscar_set_info(GaimConnection *gc, const char *text) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	fu32_t flags = 0;
+	char *text_html = NULL;
 	char *msg = NULL;
 	int msglen = 0;
 
@@ -4430,19 +4431,20 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 			aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, NULL, 0, caps_aim);
 			return;
 		}
-
-		flags = oscar_encoding_check(text);
+		
+		text_html = strdup_withhtml(text);
+		flags = oscar_encoding_check(text_html);
 		if (flags & AIM_IMFLAGS_UNICODE) {
-			msg = g_convert(text, strlen(text), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 			aim_bos_setprofile(od->sess, od->conn, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 			g_free(msg);
 		} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
-			msg = g_convert(text, strlen(text), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
+			msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 			aim_bos_setprofile(od->sess, od->conn, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 			g_free(msg);
 		} else {
-			msglen = strlen(text);
-			aim_bos_setprofile(od->sess, od->conn, "us-ascii", text, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
+			msglen = strlen(text_html);
+			aim_bos_setprofile(od->sess, od->conn, "us-ascii", text_html, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 		}
 
 		if (msglen > od->rights.maxsiglen) {
@@ -4453,6 +4455,8 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 			g_free(errstr);
 		}
 
+		g_free(text_html);
+
 	}
 
 	return;
@@ -4461,6 +4465,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const char *text)
 {
 	fu32_t flags = 0;
+	gchar *text_html = NULL;
 	char *msg = NULL;
 	int msglen = 0;
 
@@ -4482,24 +4487,24 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 		return;
 	}
 
-	flags = oscar_encoding_check(text);
+	flags = oscar_encoding_check(text_html);
 	if (flags & AIM_IMFLAGS_UNICODE) {
-		msg = g_convert(text, strlen(text), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "unicode-2-0", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
 		g_free(msg);
 		gc->away = g_strndup(text, od->rights.maxawaymsglen/2);
 	} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
-		msg = g_convert(text, strlen(text), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
+		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "iso-8859-1", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
 		g_free(msg);
-		gc->away = g_strndup(text, od->rights.maxawaymsglen);
+		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	} else {
-		msglen = strlen(text);
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "us-ascii", text, 
+		msglen = strlen(text_html);
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "us-ascii", text_html, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
-		gc->away = g_strndup(text, od->rights.maxawaymsglen);
+		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	}
 
 	if (msglen > od->rights.maxawaymsglen) {
@@ -4510,7 +4515,8 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 		gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
 		g_free(errstr);
 	}
-
+	
+	g_free(text_html);
 	return;
 }
 

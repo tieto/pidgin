@@ -1883,9 +1883,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 	junk = gtk_text_view_get_text(GTK_TEXT_VIEW(b->text), FALSE);
 
 	if (b->account) {
-		gchar *tmp = strdup_withhtml(junk);
-		gaim_account_set_user_info(b->account, tmp);
-		g_free(tmp);
+		gaim_account_set_user_info(b->account, junk);
 		gc = b->account->gc;
 
 		if (gc)
