@@ -1536,6 +1536,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	char *text = sd->data;
 	GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
+	gint i = 0;
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
 
@@ -1545,21 +1546,32 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			gaim_str_strip_cr(sd->data);
 
 			links = g_strsplit(sd->data, "\n", 0);
-			while((link = *links++) != NULL){
+			while((link = links[i]) != NULL){
 				if(gaim_str_has_prefix(link, "http://") ||
 				   gaim_str_has_prefix(link, "https://") ||
-				   gaim_str_has_prefix(link, "ftp://")){
-					gtk_imhtml_insert_link(imhtml, mark, link, link);
+                   gaim_str_has_prefix(link, "ftp://"))
+				{
+					gchar *label;
+
+					if(links[i + 1])
+						i++;
+
+					label = links[i];
+
+					gtk_imhtml_insert_link(imhtml, mark, link, label);
 				} else if (link=='\0') {
 					/* Ignore blank lines */
 				} else {
 					/* Special reasons, aka images being put in via other tag, etc. */
 					/* ... don't pretend we handled it if we didn't */
 					gtk_drag_finish(dc, FALSE, FALSE, t);
+					g_strfreev(links);
 					return;
 				}
+
+				i++;
 			}
-			g_strfreev(links);
+            g_strfreev(links);
 			break;
 		case GTK_IMHTML_DRAG_HTML:
 			{
