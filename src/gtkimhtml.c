@@ -2054,10 +2054,11 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 						if (font->sml)
 							g_free (font->sml);
-						g_free (font);
 
 						if ((font->size != 3) && (imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK)))
 							gtk_imhtml_font_set_size(imhtml, 3);
+
+						g_free(font);
 
 						fonts = fonts->next;
 						if (fonts) {
