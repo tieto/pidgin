@@ -11,7 +11,7 @@ version 0.77cvs
 	* WYSIWYG improvements (Tim Ringenbach)
 	* WYSIWYG editing for user info (Jon Oberheide)
 	* Rich-text copy and paste
-	
+
 	Bug Fixes:
 	* TOC has been removed from the default build list. I do not support
 	  it, as no one is making sure that the updated code to keep it
