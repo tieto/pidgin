@@ -162,6 +162,7 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 		(*gc->prpl->set_away)(gc, state, message);
 		plugin_event(event_away, gc, state, message, 0);
 	}
+	system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON);
 }
 
 void serv_set_away_all(char *message)
@@ -171,10 +172,7 @@ void serv_set_away_all(char *message)
 
 	while (c) {
 		g = (struct gaim_connection *)c->data;
-		if (g->prpl && g->prpl->set_away) {
-			(*g->prpl->set_away)(g, GAIM_AWAY_CUSTOM, message);
-			plugin_event(event_away, g, GAIM_AWAY_CUSTOM, message, 0);
-		}
+		serv_set_away(g, GAIM_AWAY_CUSTOM, message);
 		c = c->next;
 	}
 }
@@ -467,11 +465,14 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 
 	}
 
-	if (!b->idle && idle)
+	if (!b->idle && idle) {
 		plugin_event(event_buddy_idle, gc, b->name, 0, 0);
+		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
+	}
 	if (b->idle && !idle) {
 		do_pounce(b->name, OPT_POUNCE_UNIDLE);
 		plugin_event(event_buddy_unidle, gc, b->name, 0, 0);
+		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 
 	b->idle = idle;
@@ -480,8 +481,10 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
 		do_pounce(b->name, OPT_POUNCE_UNAWAY);
 		plugin_event(event_buddy_back, gc, b->name, 0, 0);
+		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
 		plugin_event(event_buddy_away, gc, b->name, 0, 0);
+		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
 	}
 
 	b->uc = type;
@@ -495,10 +498,13 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 			b->present = 1;
 			do_pounce(b->name, OPT_POUNCE_SIGNON);
 			plugin_event(event_buddy_signon, gc, b->name, 0, 0);
+			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	} else {
-		if (b->present)
+		if (b->present) {
 			plugin_event(event_buddy_signoff, gc, b->name, 0, 0);
+			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
+		}
 		b->present = 0;
 	}
 

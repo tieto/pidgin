@@ -110,9 +110,11 @@ gint check_idle(struct gaim_connection *gc)
 		debug_printf("setting %s idle %d seconds\n", gc->username, idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
+		system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	} else if (idle_time < 600 && gc->is_idle) {
 		debug_printf("setting %s unidle\n", gc->username);
 		serv_touch_idle(gc);
+		system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	}
 
 	return TRUE;

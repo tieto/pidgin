@@ -714,6 +714,7 @@ void account_online(struct gaim_connection *gc)
 	gaim_setup(gc);
 
 	plugin_event(event_signon, gc, 0, 0, 0);
+	system_log(log_signon, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 	/* away option given? */
 	if (opt_away) {

@@ -36,6 +36,7 @@
 #include <math.h>
 #include <pixmaps/aimicon.xpm>
 #include "gaim.h"
+#include "prpl.h"
 
 static GdkPixmap *icon_pm = NULL;
 static GdkBitmap *icon_bm = NULL;
@@ -335,37 +336,15 @@ gint linkify_text(char *text)
 }
 
 
-FILE *open_log_file(char *name)
+FILE *open_gaim_log_file(char *name, int *flag)
 {
 	char *buf;
 	char *buf2;
 	char log_all_file[256];
-	struct log_conversation *l;
 	struct stat st;
-	int flag = 0;
 	FILE *fd;
 	int res;
 	gchar *gaim_dir;
-
-	if (!(logging_options & OPT_LOG_ALL)) {
-
-		l = find_log_info(name);
-		if (!l)
-			return NULL;
-
-		if (stat(l->filename, &st) < 0)
-			flag = 1;
-
-		fd = fopen(l->filename, "a");
-
-		if (flag) {	/* is a new file */
-			fprintf(fd, "<HTML><HEAD><TITLE>");
-			fprintf(fd, "IM Sessions with %s", name);
-			fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
-		}
-
-		return fd;
-	}
 
 	buf = g_malloc(BUF_LONG);
 	buf2 = g_malloc(BUF_LONG);
@@ -388,6 +367,7 @@ FILE *open_log_file(char *name)
 			do_error_dialog(buf, "Error!");
 			g_free(buf);
 			g_free(buf2);
+			g_free(gaim_dir);
 			return NULL;
 		}
 	} else
@@ -396,7 +376,7 @@ FILE *open_log_file(char *name)
 	g_snprintf(log_all_file, 256, "%s/logs", gaim_dir);
 
 	if (stat(log_all_file, &st) < 0)
-		flag = 1;
+		*flag = 1;
 	if (!S_ISDIR(st.st_mode))
 		unlink(log_all_file);
 
@@ -409,6 +389,7 @@ FILE *open_log_file(char *name)
 			do_error_dialog(buf, "Error!");
 			g_free(buf);
 			g_free(buf2);
+			g_free(gaim_dir);
 			return NULL;
 		}
 	} else
@@ -416,19 +397,13 @@ FILE *open_log_file(char *name)
 
 
 
-	g_snprintf(log_all_file, 256, "%s/logs/%s.log", gaim_dir, normalize(name));
+	g_snprintf(log_all_file, 256, "%s/logs/%s", gaim_dir, name);
 	if (stat(log_all_file, &st) < 0)
-		flag = 1;
+		*flag = 1;
 
 	debug_printf("Logging to: \"%s\"\n", log_all_file);
 
 	fd = fopen(log_all_file, "a");
-
-	if (fd && flag) {	/* is a new file */
-		fprintf(fd, "<HTML><HEAD><TITLE>");
-		fprintf(fd, "IM Sessions with %s", name);
-		fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
-	}
 
 	g_free(buf);
 	g_free(buf2);
@@ -436,6 +411,55 @@ FILE *open_log_file(char *name)
 	return fd;
 }
 
+FILE *open_log_file(char *name)
+{
+	struct stat st;
+	char realname[256];
+	struct log_conversation *l;
+	FILE *fd;
+	int flag = 0;
+
+	if (!(logging_options & OPT_LOG_ALL)) {
+
+		l = find_log_info(name);
+		if (!l)
+			return NULL;
+
+		if (stat(l->filename, &st) < 0)
+			flag = 1;
+
+		fd = fopen(l->filename, "a");
+
+		if (flag) {	/* is a new file */
+			fprintf(fd, "<HTML><HEAD><TITLE>");
+			fprintf(fd, "IM Sessions with %s", name);
+			fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+		}
+
+		return fd;
+	}
+
+	g_snprintf(realname, sizeof(realname), "%s.log", normalize(name));
+	fd = open_gaim_log_file(realname, &flag);
+
+	if (fd && flag) {	/* is a new file */
+		fprintf(fd, "<HTML><HEAD><TITLE>");
+		fprintf(fd, "IM Sessions with %s", name);
+		fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+	}
+
+	return fd;
+}
+
+FILE *open_system_log_file(char *name)
+{
+	int x;
+
+	if (name)
+		return open_log_file(name);
+	else
+		return open_gaim_log_file("system", &x);
+}
 
 /* we only need this for TOC, because messages must be escaped */
 int escape_message(char *msg)
@@ -1325,4 +1349,145 @@ void away_on_login (char *mesg)
 		do_away_message((GtkWidget*)NULL, message);
 	}
 	return;
+}
+
+void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *who, int why)
+{
+	FILE *fd;
+	char text[256], html[256];
+
+	if ((logging_options & why) != why)
+		return;
+
+	if (logging_options & OPT_LOG_INDIVIDUAL)
+		fd = open_system_log_file(who->name);
+	else
+		fd = open_system_log_file(NULL);
+
+	if (!fd)
+		return;
+
+	if (why & OPT_LOG_MY_SIGNON) {
+		switch (what) {
+		case log_signon:
+			g_snprintf(text, sizeof(text), "+++ %s (%s) signed on @ %s",
+					gc->username, (*gc->prpl->name)(), full_date());
+			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
+			break;
+		case log_signoff:
+			g_snprintf(text, sizeof(text), "+++ %s (%s) signed off @ %s",
+					gc->username, (*gc->prpl->name)(), full_date());
+			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
+			break;
+		case log_away:
+			g_snprintf(text, sizeof(text), "+++ %s (%s) changed away state @ %s",
+					gc->username, (*gc->prpl->name)(), full_date());
+			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
+			break;
+		case log_back:
+			g_snprintf(text, sizeof(text), "+++ %s (%s) came back @ %s",
+					gc->username, (*gc->prpl->name)(), full_date());
+			g_snprintf(html, sizeof(html), "%s", text);
+			break;
+		case log_idle:
+			g_snprintf(text, sizeof(text), "+++ %s (%s) became idle @ %s",
+					gc->username, (*gc->prpl->name)(), full_date());
+			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
+			break;
+		case log_unidle:
+			g_snprintf(text, sizeof(text), "+++ %s (%s) returned from idle @ %s",
+					gc->username, (*gc->prpl->name)(), full_date());
+			g_snprintf(html, sizeof(html), "%s", text);
+			break;
+		case log_quit:
+			g_snprintf(text, sizeof(text), "+++ Program exit @ %s", full_date());
+			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
+			break;
+		}
+	} else if (strcmp(who->name, who->show)) {
+		switch (what) {
+		case log_signon:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) signed on @ %s",
+				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
+			break;
+		case log_signoff:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) signed off @ %s",
+				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
+			break;
+		case log_away:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) went away @ %s",
+				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
+			break;
+		case log_back:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) came back @ %s",
+				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+			g_snprintf(html, sizeof(html), "%s", text);
+			break;
+		case log_idle:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) became idle @ %s",
+				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
+			break;
+		case log_unidle:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) returned from idle @ %s",
+				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+			g_snprintf(html, sizeof(html), "%s", text);
+			break;
+		default:
+			fclose(fd);
+			return;
+			break;
+		}
+	} else {
+		switch (what) {
+		case log_signon:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s signed on @ %s",
+				gc->username, (*gc->prpl->name)(), who->name, full_date());
+			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
+			break;
+		case log_signoff:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s signed off @ %s",
+				gc->username, (*gc->prpl->name)(), who->name, full_date());
+			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
+			break;
+		case log_away:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s went away @ %s",
+				gc->username, (*gc->prpl->name)(), who->name, full_date());
+			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
+			break;
+		case log_back:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s came back @ %s",
+				gc->username, (*gc->prpl->name)(), who->name, full_date());
+			g_snprintf(html, sizeof(html), "%s", text);
+			break;
+		case log_idle:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s became idle @ %s",
+				gc->username, (*gc->prpl->name)(), who->name, full_date());
+			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
+			break;
+		case log_unidle:
+			g_snprintf(text, sizeof(text), "%s (%s) reported that %s returned from idle @ %s",
+				gc->username, (*gc->prpl->name)(), who->name, full_date());
+			g_snprintf(html, sizeof(html), "%s", text);
+			break;
+		default:
+			fclose(fd);
+			return;
+			break;
+		}
+	}
+
+	if (logging_options & OPT_LOG_STRIP_HTML) {
+		fprintf(fd, "---- %s ----\n", text);
+	} else {
+		if (logging_options & OPT_LOG_INDIVIDUAL)
+			fprintf(fd, "<HR>%s<BR><HR><BR>\n", html);
+		else
+			fprintf(fd, "%s<BR>\n", html);
+	}
+
+	fclose(fd);
 }

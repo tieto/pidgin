@@ -3,9 +3,11 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.11.0-pre7:
 	* Can build RPMs as non-root
 	* New yahoo library (can use HTTP proxy)
-	* Command-line arg to specify config file
+	* Command-line arg to specify config file (thanks Jason Boerner)
 	* Can view all conversations in one tabbed window
 	* Tooltips on links work again
+	* Can log system notices: signons/signoffs, awayness and idleness
+	  (thanks Andrew Echols)
 
 version 0.11.0-pre6 (03/06/2001):
 	* Fixed bug with NAS support

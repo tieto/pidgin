@@ -57,6 +57,7 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 		GtkWidget *tmp = imaway;
 		imaway = NULL;
 		gtk_widget_destroy(tmp);
+		return;
 	}
 
 	serv_set_away_all(NULL);

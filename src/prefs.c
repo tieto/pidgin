@@ -305,10 +305,6 @@ static void logging_page()
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-	label = gtk_label_new(_("Nothing below is implemented yet"));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
 	gaim_button(_("Log when buddies sign on/sign off"), &logging_options, OPT_LOG_BUDDY_SIGNON, box);
 	gaim_button(_("Log when buddies become idle/un-idle"), &logging_options, OPT_LOG_BUDDY_IDLE, box);
 	gaim_button(_("Log when buddies go away/come back"), &logging_options, OPT_LOG_BUDDY_AWAY, box);

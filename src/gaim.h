@@ -192,6 +192,16 @@ enum gaim_event {
 	/* any others? it's easy to add... */
 };
 
+enum log_event {
+	log_signon = 0,
+	log_signoff,
+	log_away,
+	log_back,
+	log_idle,
+	log_unidle,
+	log_quit
+};
+
 #ifdef GAIM_PLUGINS
 #include <gmodule.h>
 
@@ -580,6 +590,7 @@ extern char *gaim_user_dir();
 extern void strncpy_nohtml(gchar *, const gchar *, size_t);
 extern void strncpy_withhtml(gchar *, const gchar *, size_t);
 extern void away_on_login(char *);
+extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
 
 /* Functions in server.c */
 /* input to serv */

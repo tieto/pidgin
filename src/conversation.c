@@ -1815,9 +1815,6 @@ static void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, 
 	style = gtk_style_new();
 	gdk_font_unref(style->font);
 	style->font = label->style->font;
-	style->fg[0].red = 0x0000;
-	style->fg[0].green = 0x0000;
-	style->fg[0].blue = 0x0000;
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
 }

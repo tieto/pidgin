@@ -284,6 +284,7 @@ void signoff_all(GtkWidget *w, gpointer d)
 void signoff(struct gaim_connection *gc)
 {
 	plugin_event(event_signoff, gc, 0, 0, 0);
+	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 	update_keepalive(gc, FALSE);
 	serv_close(gc);
 	redo_buddy_list();
@@ -1135,6 +1136,7 @@ void do_quit()
 		c = c->next;
 	}
 #endif
+	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 #ifdef USE_PERL
 	perl_end();
 #endif
