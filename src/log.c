@@ -615,7 +615,7 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	GaimLog *log = NULL;
 	GList *list = NULL;
 
-	if (!(file = fopen(path, "r"))) {
+	if (!(file = fopen(path, "rb"))) {
 		g_free(path);
 		return NULL;
 	}
@@ -647,6 +647,9 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 					data->length -=
 						strlen("---- New Conversation @ ") + strlen("----");
 				}
+
+				if(strchr(buf, '\r'))
+					data->length--;
 
 				if (data->length != 0)
 					list = g_list_append(list, log);
@@ -682,7 +685,7 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 {
 	struct old_logger_data *data = log->logger_data;
-	FILE *file = fopen(data->path, "r");
+	FILE *file = fopen(data->path, "rb");
 	char *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);
@@ -690,6 +693,7 @@ char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	*flags = 0;
 	if(strstr(read, "<BR>"))
 		*flags |= GAIM_LOG_READ_NO_NEWLINE;
+	gaim_str_strip_linefeed(read);
 	return read;
 }
 
