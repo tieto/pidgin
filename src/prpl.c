@@ -66,118 +66,6 @@ gaim_find_prpl(GaimProtocol type)
 	return NULL;
 }
 
-static GSList *do_ask_dialogs = NULL;
-
-struct doaskstruct {
-	GtkWidget *dialog;
-	GModule *handle;
-	void (*yesfunc)(gpointer);
-	void (*nofunc)(gpointer);
-	gpointer data;
-};
-
-void do_ask_cancel_by_handle(void *handle)
-{
-	GSList *d = do_ask_dialogs;
-
-	gaim_debug(GAIM_DEBUG_MISC, "prpl",
-			   "%d dialogs to search\n", g_slist_length(d));
-
-	while (d) {
-		struct doaskstruct *doask = d->data;
-
-		d = d->next;
-
-		if (doask->handle == handle) {
-			gaim_debug(GAIM_DEBUG_MISC, "prpl",
-					   "Removing dialog, %d remain\n", g_slist_length(d));
-			gtk_dialog_response(GTK_DIALOG(doask->dialog), GTK_RESPONSE_NONE);
-		}
-	}
-}
-
-static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
-{
-	switch (resp) 
-		{
-		case GTK_RESPONSE_YES:
-			if (doask->yesfunc)
-				doask->yesfunc(doask->data);
-			break;
-		default:
-			if (doask->nofunc)
-				doask->nofunc(doask->data);
-			break;
-		}
-	do_ask_dialogs = g_slist_remove(do_ask_dialogs, doask);
-	g_free(doask);
-	gtk_widget_destroy(GTK_WIDGET(d));
-}
-
-#define STOCK_ITEMIZE(r, l)       if (!strcmp(r,yestext))  \
-                                           yestext = l;    \
-                                   if (!strcmp(r,notext))  \
-                                           notext = l;     
-
-void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext, void *doit, char *notext, void *dont, GModule *handle, gboolean modal)
-{
-	GtkWidget *window;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	char labeltext[1024 * 2];
-	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-	struct doaskstruct *doask = g_new0(struct doaskstruct, 1);
-
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-
-	/* This is ugly.  GTK Stock items will take a button with a label "gtk-cancel" and turn it into a 
-	 * Cancel button with a Cancel icon and whatnot.  We want to avoid using anything gtk in the prpls
-	 * so we replace "Cancel" with "gtk-cancel" right here. */
-	STOCK_ITEMIZE("Add", GTK_STOCK_ADD);
-	STOCK_ITEMIZE("Apply", GTK_STOCK_APPLY);
-	STOCK_ITEMIZE("Cancel", GTK_STOCK_CANCEL);
-	STOCK_ITEMIZE("Close", GTK_STOCK_CLOSE);
-	STOCK_ITEMIZE("Delete", GTK_STOCK_DELETE);
-	STOCK_ITEMIZE("Remove", GTK_STOCK_REMOVE);
-	STOCK_ITEMIZE("Yes", GTK_STOCK_YES);
-	STOCK_ITEMIZE("No", GTK_STOCK_NO);
-
-	window = gtk_dialog_new_with_buttons("", NULL, 0, notext, GTK_RESPONSE_NO, yestext, GTK_RESPONSE_YES, NULL);
-
-	if (modal) {
-		gtk_window_set_modal(GTK_WINDOW(window), TRUE);
-	}
-
-	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_YES);
-	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_ask_callback), doask);
-
-	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
-	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), 12);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), 6);
-
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	
-	g_snprintf(labeltext, sizeof(labeltext), "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s", prim, sec ? sec : "");
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), labeltext);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-	doask->dialog  = window;
-	doask->handle  = handle;
-	doask->yesfunc = doit;
-	doask->nofunc  = dont;
-	doask->data    = data;
-	do_ask_dialogs = g_slist_append(do_ask_dialogs, doask);
-
-	gtk_widget_show_all(window);
-}
-
 static void proto_act(GtkObject *obj, struct proto_actions_menu *pam)
 {
 	if (pam->callback && pam->gc)
@@ -628,8 +516,10 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		gaim_notify_info(NULL, NULL, _("Gaim - Information"), buf);
 	}
 	else
-		do_ask_dialog(_("Gaim - Confirm"), buf, ga,
-					  _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
+		gaim_request_action(NULL, NULL, _("Add buddy to your list?"), buf,
+							0, ga, 2,
+							_("Add"), G_CALLBACK(do_add),
+							_("Cancel"), G_CALLBACK(dont_add));
 }
 
 static GtkWidget *regdlg = NULL;

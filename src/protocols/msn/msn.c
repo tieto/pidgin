@@ -43,9 +43,8 @@ typedef struct
 } MsnMobileData;
 
 static void
-msn_act_id(const char *entry, void *data)
+msn_act_id(struct gaim_connection *gc, const char *entry)
 {
-	struct gaim_connection *gc = data;
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
 	char *alias;
@@ -94,37 +93,37 @@ msn_set_prp(struct gaim_connection *gc, const char *type, const char *entry)
 }
 
 static void
-msn_set_home_phone_cb(const char *entry, struct gaim_connection *gc)
+msn_set_home_phone_cb(struct gaim_connection *gc, const char *entry)
 {
 	msn_set_prp(gc, "PHH", entry);
 }
 
 static void
-msn_set_work_phone_cb(const char *entry, struct gaim_connection *gc)
+msn_set_work_phone_cb(struct gaim_connection *gc, const char *entry)
 {
 	msn_set_prp(gc, "PHW", entry);
 }
 
 static void
-msn_set_mobile_phone_cb(const char *entry, struct gaim_connection *gc)
+msn_set_mobile_phone_cb(struct gaim_connection *gc, const char *entry)
 {
 	msn_set_prp(gc, "PHM", entry);
 }
 
 static void
-__enable_msn_pages_cb(int id, struct gaim_connection *gc)
+__enable_msn_pages_cb(struct gaim_connection *gc)
 {
 	msn_set_prp(gc, "MOB", "Y");
 }
 
 static void
-__disable_msn_pages_cb(int id, struct gaim_connection *gc)
+__disable_msn_pages_cb(struct gaim_connection *gc)
 {
 	msn_set_prp(gc, "MOB", "N");
 }
 
 static void
-__send_to_mobile_cb(const char *entry, MsnMobileData *data)
+__send_to_mobile_cb(MsnMobileData *data, const char *entry)
 {
 	MsnSession *session = data->gc->proto_data;
 	MsnServConn *servconn = session->notification_conn;
@@ -154,7 +153,7 @@ __send_to_mobile_cb(const char *entry, MsnMobileData *data)
 }
 
 static void
-__close_mobile_page_cb(const char *entry, MsnMobileData *data)
+__close_mobile_page_cb(MsnMobileData *data, const char *entry)
 {
 	g_free(data);
 }
@@ -205,22 +204,6 @@ msn_show_set_mobile_phone(struct gaim_connection *gc)
 					   _("Cancel"), NULL, gc);
 }
 
-#if 0
-static void
-msn_show_set_mobile_support(struct gaim_connection *gc)
-{
-	MsnSession *session = gc->proto_data;
-
-	do_ask_dialog(_("MSN Mobile Support"),
-				  _("Do you want to enable or disable MSN Mobile "
-					"device support?"),
-				  gc,
-				  _("Enable"), __enable_msn_mobile_cb,
-				  _("Disable"), __disable_msn_mobile_cb,
-				  session->prpl->handle, FALSE);
-}
-#endif
-
 static void
 msn_show_set_mobile_pages(struct gaim_connection *gc)
 {
@@ -228,9 +211,10 @@ msn_show_set_mobile_pages(struct gaim_connection *gc)
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
-						-1, gc, 2,
+						-1, gc, 3,
 						_("Allow"), G_CALLBACK(__enable_msn_pages_cb),
-						_("Disallow"), G_CALLBACK(__disable_msn_pages_cb));
+						_("Disallow"), G_CALLBACK(__disable_msn_pages_cb),
+						_("Cancel"), NULL);
 }
 
 static void

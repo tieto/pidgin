@@ -1184,9 +1184,8 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, const char *who)
 	return m;
 }
 
-static void yahoo_act_id(const char *entry, gpointer data)
+static void yahoo_act_id(struct gaim_connection *gc, const char *entry)
 {
-	struct gaim_connection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, 0);

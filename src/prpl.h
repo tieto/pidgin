@@ -346,30 +346,6 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 					const char *who, const char *alias, const char *msg);
 
 /**
- * Closes do_ask_dialogs when the associated plugin is unloaded.
- *
- * @param handle The handle.
- */
-void do_ask_cancel_by_handle(void *handle);
-
-/**
- * Asks the user a question and acts on the response.
- *
- * @param prim    The primary question.
- * @param sec     The secondary question.
- * @param data    The data to be passed to a callback.
- * @param yestext The text for the Yes button.
- * @param doit    The callback function to call when the Yes button is clicked.
- * @param notext  The text for the No button.
- * @param dont    The callback function to call when the No button is clicked.
- * @param handle  The module handle to associate with this dialog, or @c NULL.
- * @param modal   @c TRUE if the dialog should be modal; @c FALSE otherwise.
- */
-void do_ask_dialog(const char *prim, const char *sec, void *data,
-				   char *yestext, void *doit, char *notext, void *dont,
-				   GModule *handle, gboolean modal);
-
-/**
  * Called to notify the user that the account has new mail.
  *
  * If @a count is less than 0, the dialog will display the the sender

@@ -1236,7 +1236,10 @@ void serv_got_chat_invite(struct gaim_connection *gc, char *name,
 	cid->gc = gc;
 	cid->components = data;
 
-	do_ask_dialog(_("Buddy Chat Invite"), buf2, cid, _("Accept"), chat_invite_accept, _("Cancel"), chat_invite_data_free, NULL, FALSE);
+	gaim_request_accept_cancel(gc, NULL, _("Accept chat invitation?"),
+							   buf2, 0, cid,
+							   G_CALLBACK(chat_invite_accept),
+							   G_CALLBACK(chat_invite_data_free));
 }
 
 struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,

@@ -440,10 +440,9 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 			   _("The user %s (%s) wants to add %s to his or her buddy list."),
 			   passport, friend, gc->username);
 
-	do_ask_dialog(msg, NULL, pa,
-				  _("Authorize"), msn_accept_add_cb,
-				  _("Deny"), msn_cancel_add_cb,
-				  session->prpl->handle, FALSE);
+	gaim_request_action(gc, NULL, msg, NULL, 0, pa, 2,
+						_("Authorize"), G_CALLBACK(msn_accept_add_cb),
+						_("Deny"), G_CALLBACK(msn_cancel_add_cb));
 
 	return TRUE;
 }
@@ -715,10 +714,11 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 						   msn_user_get_passport(pa->user),
 						   msn_user_get_name(pa->user));
 
-				do_ask_dialog(msg, NULL, pa,
-							  _("Authorize"), msn_accept_add_cb,
-							  _("Deny"), msn_cancel_add_cb,
-							  session->prpl->handle, FALSE);
+				gaim_request_action(gc, NULL, msg, NULL, 0, pa, 2,
+									_("Authorize"),
+									G_CALLBACK(msn_accept_add_cb),
+									_("Deny"),
+									G_CALLBACK(msn_cancel_add_cb));
 			}
 		}
 

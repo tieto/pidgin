@@ -247,7 +247,7 @@ join_chat()
 
 	if (gc == NULL) {
 		gaim_notify_error(NULL, NULL,
-						  _("You are not currently signed on wit any "
+						  _("You are not currently signed on with any "
 							"protocols that have the ability to chat."),
 						  NULL);
 

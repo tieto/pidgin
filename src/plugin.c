@@ -316,7 +316,8 @@ gaim_plugin_unload(GaimPlugin *plugin)
 			   plugin->info->name);
 
 	/* cancel any pending dialogs the plugin has */
-	do_ask_cancel_by_handle(plugin);
+	gaim_request_close_with_handle(plugin);
+	gaim_notify_close_with_handle(plugin);
 
 	plugin->loaded = FALSE;
 

@@ -465,22 +465,34 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 		return;
 
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"), name);
-	do_ask_dialog(_("Remove Buddy"), text, bd, _("Remove Buddy"), do_remove_buddy, _("Cancel"), NULL, NULL, FALSE);
+
+	gaim_request_action(NULL, NULL, _("Remove Buddy"), text, -1, bd, 2,
+						_("Remove Buddy"), G_CALLBACK(do_remove_buddy),
+						_("Cancel"), NULL);
+
 	g_free(text);
 }
 
 void show_confirm_del_chat(struct chat *chat)
 {
 	char *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), chat->alias);
-	do_ask_dialog(_("Remove Chat"), text, chat, _("Remove Chat"), do_remove_chat, _("Cancel"), NULL, NULL, FALSE);
+
+	gaim_request_action(NULL, NULL, _("Remove Chat"), text, -1, chat, 2,
+						_("Remove Chat"), G_CALLBACK(do_remove_chat),
+						_("Cancel"), NULL);
+
 	g_free(text);
 }
 
 void show_confirm_del_group(struct group *g)
 {
-     	char *text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"), 
+	char *text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"), 
 			       g->name);
-	do_ask_dialog(_("Remove Group"), text, g, _("Remove Group"), do_remove_group, _("Cancel"), NULL, NULL, FALSE);
+
+	gaim_request_action(NULL, NULL, _("Remove Group"), text, -1, g, 2,
+						_("Remove Group"), G_CALLBACK(do_remove_group),
+						_("Cancel"), NULL);
+
 	g_free(text);
 }
 

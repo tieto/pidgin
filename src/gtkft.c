@@ -29,6 +29,7 @@
 #include "gtkcellrendererprogress.h"
 #include "gaim-disclosure.h"
 #include "notify.h"
+#include "request.h"
 
 #define GAIM_GTKXFER(xfer) \
 	(struct gaim_gtkxfer_ui_data *)(xfer)->ui_data
@@ -1027,12 +1028,12 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 		else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 			data->name = g_strdup(name);
 
-			do_ask_dialog(_("That file already exists. "
-							"Would you like to overwrite it?"),
-						  NULL, xfer,
-						  _("Yes"), do_overwrite_cb,
-						  _("No"), dont_overwrite_cb,
-						  NULL, FALSE);
+			gaim_request_yes_no(NULL, NULL,
+								_("That file already exists."),
+								_("Would you like to overwrite it?"),
+								1, xfer,
+								G_CALLBACK(do_overwrite_cb),
+								G_CALLBACK(dont_overwrite_cb));
 		}
 		else {
 			gaim_xfer_request_accepted(xfer, g_strdup(name));
@@ -1107,10 +1108,9 @@ gaim_gtkxfer_ask_recv(struct gaim_xfer *xfer)
 
 	g_free(size_buf);
 
-	do_ask_dialog(buf, NULL, xfer,
-				  _("Accept"), choose_file,
-				  _("Cancel"), cancel_recv_cb,
-				  NULL, FALSE);
+	gaim_request_accept_cancel(NULL, NULL, buf, NULL, 0, xfer,
+							   G_CALLBACK(choose_file),
+							   G_CALLBACK(cancel_recv_cb));
 
 	g_free(buf);
 }

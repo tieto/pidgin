@@ -1544,7 +1544,10 @@ static void del_acct_func(GtkTreeModel *model, GtkTreePath *path,
 
 		g_snprintf(buf, sizeof(buf),
 				   _("Are you sure you want to delete %s?"), account->username);
-		do_ask_dialog(buf, NULL, account, _("Delete"), do_del_acct, _("Cancel"), NULL, NULL, FALSE);
+
+		gaim_request_action(NULL, NULL, buf, NULL, 1, account, 2,
+							_("Delete"), G_CALLBACK(do_del_acct),
+							_("Cancel"), NULL);
 	}
 }
 
@@ -2124,6 +2127,9 @@ void signoff(struct gaim_connection *gc)
 		gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
 								 GAIM_CONV_ACCOUNT_OFFLINE);
 	}
+
+	gaim_request_close_with_handle(gc);
+	gaim_notify_close_with_handle(gc);
 
 	update_privacy_connections();
 

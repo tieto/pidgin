@@ -72,7 +72,7 @@ __input_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
 		value = gtk_entry_get_text(GTK_ENTRY(data->u.input.entry));
 
 	if (id < data->cb_count && data->cbs[id] != NULL)
-		((GaimRequestInputCb)data->cbs[id])(value, data->user_data);
+		((GaimRequestInputCb)data->cbs[id])(data->user_data, value);
 
 	gaim_request_close(GAIM_REQUEST_INPUT, data);
 }
@@ -81,7 +81,7 @@ static void
 __action_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
 {
 	if (id < data->cb_count && data->cbs[id] != NULL)
-		((GaimRequestActionCb)data->cbs[id])(id, data->user_data);
+		((GaimRequestActionCb)data->cbs[id])(data->user_data, id);
 
 	gaim_request_close(GAIM_REQUEST_INPUT, data);
 }

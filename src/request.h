@@ -64,8 +64,8 @@ typedef struct
 
 } GaimRequestUiOps;
 
-typedef void (*GaimRequestInputCb)(const char *, void *);
-typedef void (*GaimRequestActionCb)(int, void *);
+typedef void (*GaimRequestInputCb)(void *, const char *);
+typedef void (*GaimRequestActionCb)(void *, int);
 
 /**************************************************************************/
 /** @name Request API                                                     */
@@ -213,18 +213,28 @@ void gaim_request_close_with_handle(void *handle);
  */
 #define gaim_request_yes_no(handle, title, primary, secondary, \
 							default_action, user_data, yes_cb, no_cb) \
-	gaim_request_action((handle), (title), (primary), (secondary) \
-						(default_action), (user_data), \
-						_("Yes"), (yes_cb), _("No"), (no_cb), NULL)
+	gaim_request_action((handle), (title), (primary), (secondary), \
+						(default_action), (user_data), 2, \
+						_("Yes"), (yes_cb), _("No"), (no_cb))
 
 /**
  * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
  */
 #define gaim_request_ok_cancel(handle, title, primary, secondary, \
 							default_action, user_data, ok_cb, cancel_cb) \
-	gaim_request_action((handle), (title), (primary), (secondary) \
-						(default_action), (user_data), \
-						_("OK"), (ok_cb), _("Cancel"), (cancel_cb), NULL)
+	gaim_request_action((handle), (title), (primary), (secondary), \
+						(default_action), (user_data), 2, \
+						_("OK"), (ok_cb), _("Cancel"), (cancel_cb))
+
+/**
+ * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
+ */
+#define gaim_request_accept_cancel(handle, title, primary, secondary, \
+								   default_action, user_data, accept_cb, \
+								   cancel_cb) \
+	gaim_request_action((handle), (title), (primary), (secondary), \
+						(default_action), (user_data), 2, \
+						_("Accept"), (accept_cb), _("Cancel"), (cancel_cb))
 
 /*@}*/
 

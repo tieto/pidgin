@@ -997,7 +997,7 @@ handle_roomlist(struct gaim_connection *gc, char *word[], char *word_eol[])
 }
 
 static void 
-irc_change_nick(const char *b, void *a) {
+irc_change_nick(void *a, const char *b) {
 	struct gaim_connection *gc = a;
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];	
@@ -1437,7 +1437,14 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		dccchat->port=atoi(chat_args[4]);		
 		g_snprintf(dccchat->nick, sizeof(dccchat->nick), nick);	
 		g_snprintf(ask, sizeof(ask), _("%s would like to establish a DCC chat"), nick);
-		do_ask_dialog(ask, _("This requires a direct connection to be established between the two computers.  Messages sent will not pass through the IRC server"), dccchat, _("Connect"), dcc_chat_init, _("Cancel"), dcc_chat_cancel, my_protocol->handle, FALSE);
+
+		gaim_request_action(gc, NULL, ask,
+							_("This requires a direct connection to be "
+							  "established between the two computers.  "
+							  "Messages sent will not pass through the "
+							  "IRC server"), 0, dccchat, 2,
+							_("Connect"), G_CALLBACK(dcc_chat_init),
+							_("Cancel"), G_CALLBACK(dcc_chat_cancel));
 	}
 	else if (!g_ascii_strncasecmp(msg, "DCC SEND", 8)) {
 		struct gaim_xfer *xfer;
