@@ -65,7 +65,6 @@ src/main.c
 src/plugin.c
 src/prefs.c
 src/protocols/gg/gg.c
-src/protocols/icq/gaim_icq.c
 src/protocols/irc/cmds.c
 src/protocols/irc/dcc_send.c
 src/protocols/irc/irc.c
