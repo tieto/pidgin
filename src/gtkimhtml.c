@@ -1562,6 +1562,23 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 		formats = formats->next;
 	}
 
+	g_slist_free(formats);
+#else
+	/* this is really ugly code, but I think it will work */
+	char *basename = g_path_get_basename(filename);
+	char *ext = strrchr(basename, '.');
+
+	if(ext) {
+		ext++;
+		if(!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
+			type = g_strdup("jpeg");
+		else if(!g_ascii_strcasecmp(ext, "png"))
+			type = g_strdup("png");
+	}
+
+	g_free(basename);
+#endif
+
 	/* If I can't find a valid type, I will just tell the user about it and then assume
 	   it's a png */
 	if(!type){
@@ -1569,10 +1586,6 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 						_("Gaim was unable to guess the image type base on the file extension supplied.  Defaulting to PNG."));
 		type = g_strdup("png");
 	}
-	g_slist_free(formats);
-#else
-	type = g_strdup("png");
-#endif
 
 	gdk_pixbuf_save(gtk_image_get_pixbuf(image->image), filename, type, &error, NULL);
 
