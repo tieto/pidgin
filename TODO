@@ -2,7 +2,16 @@
 	Ability to merge gaim, toc, aim2, aim4 buddylists
 	Third sound option for people without soundcards who still want
 		sound events.  Make a PC Speaker Beep (^G / Char 7)
-	Save Buddy Pounces (how did I forget this)
+	Save Buddy Pounces 
 	Save Buddy Chats
-	Default colors in prefs
+	Default colors (foreground and background) in prefs
 	Execute Command on Buddy Pounce
+	Possibly make it so that you can create 'aliases' for buddies
+		on your buddy list.  This won't be too hard it'll just
+		take a bit of work.  Maybe we'll save this one for the
+		release after our next release.
+	Possibly make the background font colour #FFFFFF represent "nothing".
+		Most windows clients send <BODY BGCOLOR="#FFFFFF"> and </BODY>
+		around the users text.  If you have a GTK theme this causes
+		a funky white background behind the text.  We can do this
+		by default or make it an option -- either way it'll be handy :)
