@@ -1,7 +1,9 @@
 /*
  * gaim-remote
  *
- * Copyright (C) 2002, Sean Egan <bj91704@binghamton.edu>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +21,7 @@
  *
  */
 
-/* Somewhat inspired by XMMS:
- *  Copyright (C) 1998-2002  Peter Alm, Mikael Alm, Olle Hallnas,
- *                           Thomas Nilsson and 4Front Technologies
- *  Copyright (C) 1999-2002  Haavard Kvaalen 
- */
+/* Somewhat inspired by XMMS*/
  
 /* This provides code for connecting to a Gaim socket and communicating with
  * it.  It will eventually be made a library once the core and ui are split. */

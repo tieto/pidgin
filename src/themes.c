@@ -1,7 +1,9 @@
 /*
  * Themes for Gaim
  *
- * Copyright (C) 2003, Sean Egan <bj91704@binghamton.edu>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,6 +1,10 @@
 /*
  * gaim
  *
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
  * Some code copyright 2003 Tim Ringenbach <omarvo@hotmail.com>
  * (marv on irc.freenode.net)
  * Some code borrowed from libyahoo2, copyright (C) 2002, Philip

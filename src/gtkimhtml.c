@@ -1,7 +1,9 @@
 /*
  * GtkIMHtml
  *
- * Copyright (C) 2000, Eric Warmenhoven <warmenhoven@yahoo.com>
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * under the terms of the GNU General Public License as published by

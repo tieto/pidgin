@@ -1,11 +1,9 @@
 /*
  * session management for Gaim
  *
- * Copyright (C) 2002, Robert McQueen <robot101@debian.org> but
- * much code shamelessly cribbed from GsmClient (C) 2001 Havoc
- * Pennington, which is in turn inspired by various other pieces
- * of code including GnomeClient (C) 1998 Carsten Schaar, Tom
- * Tromey, and twm session code (C) 1998 The Open Group.
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,5 +1,8 @@
 /* Declarations for getopt.
-   Copyright (C) 1989, 1990, 1991, 1992, 1993 Free Software Foundation, Inc.
+
+   Gaim is the legal property of its developers, whose names are too numerous
+   to list here.  Please refer to the COPYRIGHT file distributed with this
+   source distribution.
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
