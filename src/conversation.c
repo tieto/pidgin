@@ -483,7 +483,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 	if (event->keyval == GDK_Escape) {
 		if (general_options & OPT_GEN_ESC_CAN_CLOSE) {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			gtk_widget_destroy(c->window);
+			close_callback(c->window, c);
 		}
 	} else if (event->keyval == GDK_Return) {
 		if (!(event->state & GDK_SHIFT_MASK)
