@@ -5884,13 +5884,11 @@ static GList *oscar_actions(struct gaim_connection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
-	if ((od->sess->authinfo->regstatus == 0x0003) || (od->icq)) {
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Change Password");
-		pam->callback = show_change_passwd;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
-	}
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Change Password");
+	pam->callback = show_change_passwd;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
 
 	if (od->sess->authinfo->chpassurl) {
 		pam = g_new0(struct proto_actions_menu, 1);
@@ -5900,7 +5898,7 @@ static GList *oscar_actions(struct gaim_connection *gc)
 		m = g_list_append(m, pam);
 	}
 
-	if (od->sess->authinfo->regstatus == 0x0003) {
+	if (!od->icq) {
 		/* AIM actions */
 		m = g_list_append(m, NULL);
 
