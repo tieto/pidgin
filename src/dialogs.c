@@ -3605,11 +3605,7 @@ static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char **xp
 void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 {
 	GtkWidget *dialog;
-	GtkWidget *cancel_button, *cancel_label;
-	GtkWidget *vbox, *smiley_box_1, *smiley_box_2, *smiley_box_3, *smiley_box_4, *cancel_button_box;
-	GdkPixmap *cancel_i;
-	GtkWidget *cancel_p;
-	GdkBitmap *mask;
+	GtkWidget *vbox, *smiley_box_1, *smiley_box_2, *smiley_box_3, *smiley_box_4;
 	GtkWidget *win;
 	GtkWidget *bbox;
 
@@ -3663,13 +3659,10 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
 	/* show everything */
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(cancel_button), GTK_RELIEF_NONE);
-		
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
+	gtk_widget_show_all(dialog);
 
 	c->smiley_dialog = dialog;
-	gtk_widget_show_all(dialog);
-	
+		
 	return;
 }

@@ -35,6 +35,7 @@
 #include "gaim.h"
 #include "proxy.h"
 #include "gnome_applet_mgr.h"
+#include "pixmaps/close.xpm"
 
 struct prefs_data *pd = NULL;
 struct debug_window *dw = NULL;
@@ -343,6 +344,9 @@ void build_prefs()
 	GtkWidget *away_page;
 	GtkWidget *select_font;
 	GtkWidget *font_face_for_text;
+	GtkWidget *button_box, *icon_i, *close_label;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
 	
 	GtkWidget *list_item;
 
@@ -813,10 +817,34 @@ void build_prefs()
 	gtk_widget_show(chat_page);
 	
 	bbox = gtk_hbox_new(FALSE, 5);
-	close = gtk_button_new_with_label(_("Close"));
+
+	/* Build close button */
+
+	close = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( pd->window->window, &mask, NULL, close_xpm);
+
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	close_label = gtk_label_new(_("Close"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), close_label, FALSE, FALSE, 2);
+
+	gtk_widget_show(close_label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(close), button_box);
+	
+	/* End of close button */
+
+
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
-	
+			
 	/* Pack the button(s) in the button box */
 	gtk_box_pack_end(GTK_BOX(bbox), close, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox),bbox, FALSE, FALSE, 5);
