@@ -289,8 +289,8 @@ static void gtk_cell_renderer_progress_render (GtkCellRenderer *cell,
 		       window,
 		       state, GTK_SHADOW_OUT,
 		       NULL, widget, "bar",
-		       cell_area->x + x_offset + cell->xpad + 1,
-		       cell_area->y + y_offset + cell->ypad + 1,
+		       cell_area->x + x_offset + cell->xpad,
+		       cell_area->y + y_offset + cell->ypad,
 		       width * cellprogress->progress,
-		       height - 2);
+		       height - 1);
 }
