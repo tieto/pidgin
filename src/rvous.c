@@ -39,6 +39,22 @@
 static void do_send_file(GtkWidget *, struct file_transfer *);
 static void do_get_file (GtkWidget *, struct file_transfer *);
 
+static void toggle(GtkWidget *w, int *m)
+{
+	*m = !(*m);
+}
+
+static void free_ft(struct file_transfer *ft)
+{
+	if (ft->window) { gtk_widget_destroy(ft->window); ft->window = NULL; }
+	if (ft->filename) g_free(ft->filename);
+	if (ft->user) g_free(ft->user);
+	if (ft->message) g_free(ft->message);
+	if (ft->ip) g_free(ft->ip);
+	if (ft->cookie) g_free(ft->cookie);
+	g_free(ft);
+}
+
 static void warn_callback(GtkWidget *widget, struct file_transfer *ft)
 {
         show_warn_dialog(ft->user);
@@ -62,15 +78,7 @@ static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)
 			ft->cookie, ft->UID);
 	sflap_send(send, strlen(send), TYPE_DATA);
 	g_free(send);
-	gtk_widget_destroy(ft->window);
-	ft->window = NULL;
-	g_free(ft->user);
-	if (ft->message)
-		g_free(ft->message);
-	g_free(ft->filename);
-	if (ft->cookie) g_free(ft->cookie);
-	g_free(ft->ip);
-        g_free(ft);
+	free_ft(ft);
 }
 
 static void accept_callback(GtkWidget *widget, struct file_transfer *ft)
@@ -140,7 +148,8 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	struct sockaddr_in sin;
 	guint32 rcv;
         char *c;
-	GtkWidget *fw = NULL, *fbar = NULL, *label;
+	int cont = 1;
+	GtkWidget *fw = NULL, *fbar = NULL, *label = NULL, *button = NULL;
         
 	if (!(ft->f = fopen(file,"w"))) {
 		buf = g_malloc(BUF_LONG);
@@ -180,6 +189,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		if(read_rv < 0) {
 			close(ft->fd);
 			g_free(header);
+			free_ft(ft);
 			return;
 		}
 		rcv += read_rv;
@@ -208,6 +218,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		if(read_rv < 0) {
 			close(ft->fd);
 			g_free(header);
+			free_ft(ft);
 			return;
 		}
 		rcv += read_rv;
@@ -245,6 +256,10 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	fbar = gtk_progress_bar_new();
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), fbar, 0, 0, 5);
 	gtk_widget_show(fbar);
+	button = gtk_button_new_with_label("Cancel");
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), button, 0, 0, 5);
+	gtk_widget_show(button);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", (GtkSignalFunc)toggle, &cont);
 	gtk_window_set_title(GTK_WINDOW(fw), "File Transfer");
 	gtk_widget_realize(fw);
 	aol_icon(fw->window);
@@ -254,15 +269,16 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 			ft->user, ft->size);
 	debug_print(debug_buff);
 
-	while (rcv != ft->size) {
+	while (rcv != ft->size && cont) {
 		int i;
 		int remain = ft->size - rcv > 1024 ? 1024 : ft->size - rcv;
-		read_rv = read(ft->fd, buf, remain);
+		read_rv = recv(ft->fd, buf, remain, O_NONBLOCK);
 		if(read_rv < 0) {
 			fclose(ft->f);
 			close(ft->fd);
 			g_free(buf);
 			g_free(header);
+			free_ft(ft);
 			return;
 		}
 		rcv += read_rv;
@@ -276,8 +292,19 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		while(gtk_events_pending())
 			gtk_main_iteration();
 	}
-
 	fclose(ft->f);
+
+	if (!cont) {
+		char *tmp = frombase64(ft->cookie);
+		sprintf(buf, "toc_rvous_cancel %s %s %s", ft->user, tmp, ft->UID);
+		sflap_send(buf, strlen(buf), TYPE_DATA);
+		gtk_widget_destroy(fw);
+		fw = NULL;
+		close(ft->fd);
+		free_ft(ft);
+		return;
+	}
+
 	memset(header + 18, 0, 4);
 	header[94] = 0;
 	header[1] = 0x04;
@@ -289,14 +316,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 
 	g_free(buf);
 	g_free(header);
-	gtk_widget_destroy(fw);
-	g_free(ft->cookie);
-	g_free(ft->ip);
-	if (ft->message)
-		g_free(ft->message);
-	g_free(ft->filename);
-	g_free(ft->user);
-	g_free(ft);
+	free_ft(ft);
 }
 
 static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
@@ -356,39 +376,37 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 	/* 1. build/send header */
 	buf = frombase64(ft->cookie);
-	sprintf(debug_buff, "Building header to send %s\n", file);
+	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf);
 	debug_print(debug_buff);
-	fhdr->hdrtype = 0x101;
+	fhdr->hdrtype = 0x1108;
 	snprintf(fhdr->bcookie, 9, "%s", buf);
 	g_free(buf);
-	fhdr->encrypt = htons(0);
-	fhdr->compress = htons(0);
-	fhdr->totfiles = htons(1);
-	fhdr->filesleft = htons(1);
-	fhdr->totparts = htons(1);
-	fhdr->partsleft = htons(1);
-	fhdr->totsize = htonl((long)(st.st_size));
+	fhdr->encrypt = 0;
+	fhdr->compress = 0;
+	fhdr->totfiles = 1;
+	fhdr->filesleft = 1;
+	fhdr->totparts = 1;
+	fhdr->partsleft = 1;
+	fhdr->totsize = (long)st.st_size;
 	fhdr->size = htonl((long)(st.st_size));
 	fhdr->modtime = htonl(0);
 	fhdr->checksum = htonl(0); /* FIXME? */
-	fhdr->rfrcsum = htonl(0);
-	fhdr->rfsize = htonl(0);
-	fhdr->cretime = htonl(0);
-	fhdr->rfcsum = htonl(0);
-	fhdr->nrecvd = htonl(0);
-	fhdr->recvcsum = htonl(0);
+	fhdr->rfrcsum = 0;
+	fhdr->rfsize = 0;
+	fhdr->cretime = 0;
+	fhdr->rfcsum = 0;
+	fhdr->nrecvd = 0;
+	fhdr->recvcsum = 0;
 	snprintf(fhdr->idstring, 32, "Gaim");
 	fhdr->flags = 0x20; /* don't ask me why */
-	fhdr->lnameoffset = htonl(0);
-	fhdr->lsizeoffset = htonl(0);
-	snprintf(fhdr->dummy, 69, "");
-	snprintf(fhdr->macfileinfo, 16, "");
-	fhdr->nencode = htons(0);
-	fhdr->nlanguage = htons(0);
-	c = &file[strlen(file) - 1];
-	while (*(c - 1) != '/') c--;
-	snprintf(fhdr->name, 64, "%s", c);
-	snprintf(bmagic, 7, "GAIM\001\000");
+	fhdr->lnameoffset = 0x1A;
+	fhdr->lsizeoffset = 0x10;
+	fhdr->dummy[0] = 0;
+	fhdr->macfileinfo[0] = 0;
+	fhdr->nencode = 0;
+	fhdr->nlanguage = 0;
+	snprintf(fhdr->name, 64, "listing.txt");
+	snprintf(bmagic, 7, "OFT2\001\000");
 	read_rv = write(ft->fd, bmagic, 6);
 	if (read_rv <= -1) {
 		sprintf(debug_buff, "Couldn't write opening header \n");
@@ -448,7 +466,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	rcv = 0;
 	buf = g_malloc(2048);
 	fw = gtk_dialog_new();
-	snprintf(buf, 2048, "Sendin %s to %s (%d bytes)", fhdr->name,
+	snprintf(buf, 2048, "Sendin %s to %s (%ld bytes)", fhdr->name,
 			ft->user, fhdr->size);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
@@ -479,7 +497,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 			return;
 		}
 		rcv += read_rv;
-		snprintf(buf, 2048, "Sending %s to %s (%d / %d bytes)",
+		snprintf(buf, 2048, "Sending %s to %s (%d / %ld bytes)",
 				fhdr->name, ft->user, rcv, st.st_size);
 		gtk_label_set_text(GTK_LABEL(label), buf);
 		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar),
@@ -510,12 +528,6 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fclose(ft->f);
 	close(ft->fd);
 	g_free(fhdr);
-	g_free(ft->cookie);
-	g_free(ft->ip);
-	if (ft->message)
-		g_free(ft->message);
-	g_free(ft->user);
-	g_free(ft);
 }
 
 void accept_file_dialog(struct file_transfer *ft)

@@ -446,7 +446,7 @@ void show_login()
 	}
 }
 
-extern show_debug(GtkObject *);
+extern void show_debug(GtkObject *);
 
 int main(int argc, char *argv[])
 {

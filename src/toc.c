@@ -589,7 +589,6 @@ void toc_callback( gpointer          data,
                 int unk[4];
                 char *messages[4];
                 int subtype, files, totalsize;
-		int temp;
                 char *name;
                 char *tmp;
                 int i;

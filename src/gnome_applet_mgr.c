@@ -91,8 +91,6 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 	gboolean result = TRUE;
 	char *path;
 	GdkImlibImage *im;
-	GdkPixmap *temp_pm;
-        GdkPixmap *temp_bm;
 
 	path = gnome_pixmap_file(name);	
 
@@ -132,7 +130,6 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 ****************************************************************/ 
 
 gboolean update_applet( gpointer *ap ){
-     char temp_string[25];
      static enum gaim_user_states old_user_status = offline;
      
      if( MRI_user_status != old_user_status || ap){
@@ -366,7 +363,6 @@ void AppletCancelLogon(){
 **
 ****************************************************************/ 
 GtkAllocation get_applet_pos(){
-    GtkAllocation pos;
     gint x,y,pad;
     GtkRequisition buddy_req, applet_req;
     GtkAllocation result;

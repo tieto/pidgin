@@ -217,7 +217,7 @@ void serv_set_away(char *message)
         if (message)
                 g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
         else
-                g_snprintf(buf, MSG_LEN, "toc_set_away");
+                g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
 	sflap_send(buf, -1, TYPE_DATA);
 #endif
 }

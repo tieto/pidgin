@@ -3,6 +3,7 @@
 #include <error.h>
 #endif
 #include <fcntl.h>
+#include <unistd.h>
 
 #define BUF_SIZE 10
 
@@ -10,7 +11,6 @@ int main(int argc, char *argv[])
 {
 	int fd;
 	FILE *f;
-	int cnt;
 	int res,x;
 	char buf[BUF_SIZE];
 
