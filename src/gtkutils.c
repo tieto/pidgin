@@ -457,10 +457,10 @@ GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
 	if (menu)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), checked);
+
 	if (sf)
 		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
-
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), checked);
 
 	gtk_widget_show_all(menuitem);
 
