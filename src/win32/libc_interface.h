@@ -41,7 +41,7 @@ extern int wgaim_getsockopt(int socket, int level, int optname, void *optval, so
 #define getsockopt( args... ) \
 wgaim_getsockopt( args )
 
-extern int wgaim_setsockopt(int socket, int level, int optname, void *optval, socklen_t optlen);
+extern int wgaim_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen);
 #define setsockopt( args... ) \
 wgaim_setsockopt( args )
 

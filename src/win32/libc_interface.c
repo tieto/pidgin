@@ -100,7 +100,7 @@ int wgaim_getsockopt(int socket, int level, int optname, void *optval, socklen_t
 	return 0;
 }
 
-int wgaim_setsockopt(int socket, int level, int optname, void *optval, socklen_t optlen) {
+int wgaim_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen) {
 	if(setsockopt(socket, level, optname, optval, optlen) == SOCKET_ERROR ) {
 		errno = WSAGetLastError();
 		return -1;

@@ -175,6 +175,14 @@ void gaim_prefs_set_string(const char *name, const char *value);
 void gaim_prefs_set_string_list(const char *name, GList *value);
 
 /**
+ * Check if a pref exists
+ *
+ * @param name  The name of the pref
+ * @return Whether or not the pref exists
+ */
+gboolean gaim_prefs_exists(const char *name);
+
+/**
  * Get pref type
  *
  * @param name The name of the pref
