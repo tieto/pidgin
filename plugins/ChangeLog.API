@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 0.78cvs :
+version 0.78 (05/28/2004):
     * * Plugin plugin API:    4
     * Added: actions - for plugins to add to the new Plugin Actions menu
 
