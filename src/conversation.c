@@ -66,6 +66,7 @@
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
 #include "pixmaps/luke03.xpm"
+#include "pixmaps/oneeye.xpm"
 
 
 int state_lock=0;
@@ -999,6 +1000,8 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
 	*len = 3;
 	if (	   !strncmp(m, ":-)", 3)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, smile_xpm);
+	} else if (!strncmp(m, "O-)", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, oneeye_xpm);
 	} else if (!strncmp(m, "C:)", 3)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, luke03_xpm);
 	} else if (!strncmp(m, ":-(", 3)) {
