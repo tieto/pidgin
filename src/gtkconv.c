@@ -929,6 +929,29 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+menu_toolbar_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+
+	conv = gaim_conv_window_get_active_conversation(win);
+
+	if (conv == NULL)
+		return;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtkconv->show_formatting_toolbar =
+		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+
+	if (gtkconv->show_formatting_toolbar)
+		gtk_widget_show(gtkconv->toolbar.toolbar);
+	else
+		gtk_widget_hide(gtkconv->toolbar.toolbar);
+}
+
+static void
 menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
@@ -945,8 +968,6 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 	gtkconv->make_sound =
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
 }
-
-
 
 void
 im_cb(GtkWidget *widget, GaimConversation *conv)
@@ -2017,7 +2038,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	GaimGtkWindow *gtkwin;
 	GaimConnection *gc;
 	GdkPixbuf *window_icon = NULL;
-	
+
 	win = (GaimConvWindow *)user_data;
 
 	conv = gaim_conv_window_get_conversation_at(win, page_num);
@@ -2074,7 +2095,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
-		
+
 		if (gtkconv->u.im->anim) {
 			window_icon = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 			g_object_ref(window_icon);
@@ -2109,20 +2130,24 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 		gtk_widget_set_sensitive(gtkwin->menu.add,    FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, FALSE);
-		
+
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 		window_icon = get_tab_icon(conv);
 	}
-	
+
 	update_typing_icon(conv);
-	
+
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.logging),
 				       gaim_conversation_is_logging(conv));
-	
+
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.sounds),
 				       gtkconv->make_sound);
-	
+
+	gtk_check_menu_item_set_active(
+			GTK_CHECK_MENU_ITEM(gtkwin->menu.show_formatting_toolbar),
+			gtkconv->show_formatting_toolbar);
+
 	gtk_widget_grab_focus(gtkconv->entry);
 
 	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
@@ -2954,6 +2979,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/_Options"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
+	{ N_("/Options/Show Formatting _Toolbar"), NULL, menu_toolbar_cb, 0, "<CheckItem>" },
 };
 
 static const int menu_item_count =
@@ -3048,6 +3074,9 @@ setup_menubar(GaimConvWindow *win)
 	gtkwin->menu.sounds =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Options/Enable Sounds"));
+	gtkwin->menu.show_formatting_toolbar =
+		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
+									N_("/Options/Show Formatting Toolbar"));
 
 	generate_send_as_items(win, NULL);
 
@@ -3377,6 +3406,9 @@ build_conv_toolbar(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(vbox);
+
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"))
+		gtk_widget_hide(vbox);
 
 	return vbox;
 }
@@ -4058,6 +4090,9 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		gtkconv->make_sound = TRUE;
 
+		gtkconv->show_formatting_toolbar = gaim_prefs_get_bool(
+				"/gaim/gtk/conversations/show_formatting_toolbar");
+
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
 					 G_CALLBACK(gtk_widget_grab_focus),
 					 gtkconv->entry);
@@ -4116,7 +4151,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 		gaim_gtkconv_update_buddy_icon(conv);
-	
+
 	/* Add this pane to the conversations notebook. */
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby);
 	gtk_notebook_set_menu_label(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, menu_tabby);
@@ -5006,7 +5041,7 @@ gaim_gtkconv_set_title(GaimConversation *conv, const char *title)
 
 	gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
 	gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
-	
+
 	if(conv == gaim_conv_window_get_active_conversation(win))
 		gtk_window_set_title(GTK_WINDOW(gtkwin->window), title);
 }
@@ -5029,7 +5064,7 @@ update_tab_icon(GaimConversation *conv)
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
 
-	if (gaim_conv_window_get_active_conversation(win) == conv && gtkconv->u.im->anim == NULL) 
+	if (gaim_conv_window_get_active_conversation(win) == conv && gtkconv->u.im->anim == NULL)
 		gtk_window_set_icon(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window), status);
 
 	if(status)
@@ -5961,6 +5996,39 @@ tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
+show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
+								gpointer value, gpointer data)
+{
+	GList *l;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimConvWindow *win;
+	GaimGtkWindow *gtkwin;
+
+	for (l = gaim_get_conversations(); l != NULL; l = l->next)
+	{
+		conv = (GaimConversation *)l->data;
+
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		win     = gaim_conversation_get_window(conv);
+		gtkwin  = GAIM_GTK_WINDOW(win);
+
+		gtkconv->show_formatting_toolbar = (gboolean)value;
+		gtk_check_menu_item_set_active(
+				GTK_CHECK_MENU_ITEM(gtkwin->menu.show_formatting_toolbar),
+				gtkconv->show_formatting_toolbar);
+
+		if (gtkconv->show_formatting_toolbar)
+			gtk_widget_show(gtkconv->toolbar.toolbar);
+		else
+			gtk_widget_hide(gtkconv->toolbar.toolbar);
+	}
+}
+
+static void
 im_button_type_pref_cb(const char *name, GaimPrefType type,
 					   gpointer value, gpointer data)
 {
@@ -6097,6 +6165,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "#FFFFFF");
 	gaim_prefs_add_string("/gaim/gtk/conversations/fgcolor", "#000000");
 	gaim_prefs_add_string("/gaim/gtk/conversations/font_face", "");
@@ -6139,6 +6208,8 @@ gaim_gtk_conversations_init(void)
 								show_smileys_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_timestamps",
 								show_timestamps_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_formatting_toolbar",
+								show_formatting_toolbar_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/spellcheck",
 								spellcheck_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/tab_side",

@@ -891,6 +891,9 @@ GtkWidget *conv_page() {
 	prefs_checkbox(_("Send _URLs as Links"),
 				  "/core/conversations/send_urls_as_links", vbox);
 
+	prefs_checkbox(_("Show Formatting Toolbar"),
+				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
+
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
 
 	label = prefs_dropdown(vbox, _("_Tab Placement:"), GAIM_PREF_INT,
