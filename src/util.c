@@ -539,7 +539,7 @@ char *normalize(const char *s)
 	buf[i] = '\0';
 
 	tmp = g_utf8_strdown(buf, -1);
-	g_snprintf(buf, sizeof(buf), tmp);
+	g_snprintf(buf, sizeof(buf), "%s", tmp);
 	g_free(tmp);
 
 	return buf;
