@@ -1079,7 +1079,7 @@ void show_conv(struct conversation *c)
 	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Big", "Increase font size", "Big", big_p, GTK_SIGNAL_FUNC(do_big), entry);
 	font = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Font", "Select Font", "Font", font_p, GTK_SIGNAL_FUNC(toggle_font), entry);
 	gtk_object_set_user_data(GTK_OBJECT(font), c);
-	/* if (!(font_options & OPT_FONT_FACE)) */
+	if (!(font_options & OPT_FONT_FACE))
 		gtk_widget_set_sensitive(GTK_WIDGET(font), FALSE);
 	
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
