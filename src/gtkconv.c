@@ -3397,7 +3397,9 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		gtk_widget_show(pane);
 
 		new_ui = TRUE;
-
+		
+		gtk_widget_grab_focus(pane);
+		
 		gtkconv->make_sound = TRUE;
 	}
 
