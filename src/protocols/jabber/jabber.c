@@ -34,6 +34,7 @@
 #include "auth.h"
 #include "buddy.h"
 #include "chat.h"
+#include "disco.h"
 #include "iq.h"
 #include "jutil.h"
 #include "message.h"
@@ -386,7 +387,9 @@ jabber_login(GaimAccount *account)
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
-	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
+	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
+	js->disco_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
@@ -718,7 +721,9 @@ static void jabber_register_account(GaimAccount *account)
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->registration = TRUE;
-	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
+	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
+	js->disco_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
 	js->user = jabber_id_new(gaim_account_get_username(account));
 	js->next_id = g_random_int();
@@ -781,8 +786,10 @@ static void jabber_close(GaimConnection *gc)
 
 	if(js->context)
 		g_markup_parse_context_free(js->context);
-	if(js->callbacks)
-		g_hash_table_destroy(js->callbacks);
+	if(js->iq_callbacks)
+		g_hash_table_destroy(js->iq_callbacks);
+	if(js->disco_callbacks)
+		g_hash_table_destroy(js->disco_callbacks);
 	if(js->buddies)
 		g_hash_table_destroy(js->buddies);
 	if(js->chats)
@@ -832,7 +839,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_roster_request(js);
 			jabber_presence_send(js->gc, js->gc->away_state, js->gc->away);
-			jabber_iq_disco_server(js);
+			jabber_disco_items_server(js);
 			serv_finish_login(js->gc);
 			break;
 	}

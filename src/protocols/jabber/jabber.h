@@ -31,6 +31,17 @@
 #include "xmlnode.h"
 
 typedef enum {
+	JABBER_CAP_NONE           = 0,
+	JABBER_CAP_XHTML          = 1 << 0,
+	JABBER_CAP_COMPOSING      = 1 << 1,
+	JABBER_CAP_SI             = 1 << 2,
+	JABBER_CAP_SI_FILE_XFER   = 1 << 3,
+	JABBER_CAP_BYTESTREAMS    = 1 << 4,
+	JABBER_CAP_IBB            = 1 << 5,
+	JABBER_CAP_RETRIEVED      = 1 << 31
+} JabberCapabilities;
+
+typedef enum {
 	JABBER_STREAM_OFFLINE,
 	JABBER_STREAM_CONNECTING,
 	JABBER_STREAM_INITIALIZING,
@@ -69,8 +80,10 @@ typedef struct _JabberStream
 	GList *chat_servers;
 	GaimRoomlist *roomlist;
 
-	GHashTable *callbacks;
+	GHashTable *iq_callbacks;
+	GHashTable *disco_callbacks;
 	int next_id;
+
 
 	GList *oob_file_transfers;
 	GList *file_transfers;
@@ -94,7 +107,5 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet);
 void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
-
-void jabber_iq_disco_server(JabberStream *js);
 
 #endif /* _GAIM_JABBER_H_ */

@@ -815,31 +815,6 @@ void jabber_buddy_get_info_chat(GaimConnection *gc, int id,
 }
 
 
-#if 0
-static void jabber_buddy_ask_send_file(GaimConnection *gc, const char *name)
-{
-	JabberStream *js = gc->proto_data;
-	GaimXfer *xfer;
-	JabberSIXfer *jsx;
-
-	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, name);
-
-	xfer->data = jsx = g_new0(JabberSIXfer, 1);
-	jsx->js = js;
-
-	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
-	gaim_xfer_set_start_fnc(xfer, jabber_si_xfer_start);
-	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-	gaim_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
-	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
-	gaim_xfer_set_ack_fnc(xfer, jabber_si_xfer_ack);
-
-	js->file_transfers = g_list_append(js->file_transfers, xfer);
-
-	gaim_xfer_request(xfer);
-}
-#endif
-
 static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 		gboolean invisible)
 {
@@ -904,14 +879,11 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 	if(!jb)
 		return m;
 
-	/* XXX: should check capability once we know we want to send
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Send File");
-	pbm->callback = jabber_buddy_ask_send_file;
+	pbm->callback = jabber_si_xfer_ask_send;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-
-	*/
 
 	/* XXX: fix the NOT ME below */
 

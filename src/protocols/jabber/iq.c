@@ -23,6 +23,7 @@
 #include "prefs.h"
 
 #include "buddy.h"
+#include "disco.h"
 #include "iq.h"
 #include "oob.h"
 #include "roster.h"
@@ -118,7 +119,7 @@ void jabber_iq_send(JabberIq *iq)
 		jcd = g_new0(JabberCallbackData, 1);
 		jcd->callback = iq->callback;
 		jcd->data = iq->callback_data;
-		g_hash_table_insert(iq->js->callbacks, g_strdup(iq->id), jcd);
+		g_hash_table_insert(iq->js->iq_callbacks, g_strdup(iq->id), jcd);
 	}
 
 	jabber_iq_free(iq);
@@ -133,7 +134,7 @@ void jabber_iq_free(JabberIq *iq)
 	g_free(iq);
 }
 
-static void jabber_iq_handle_last(JabberStream *js, xmlnode *packet)
+static void jabber_iq_last_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *iq;
 	const char *type;
@@ -161,7 +162,7 @@ static void jabber_iq_handle_last(JabberStream *js, xmlnode *packet)
 	}
 }
 
-static void jabber_iq_handle_time(JabberStream *js, xmlnode *packet)
+static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *type, *from, *id;
 	JabberIq *iq;
@@ -195,7 +196,7 @@ static void jabber_iq_handle_time(JabberStream *js, xmlnode *packet)
 	}
 }
 
-static void jabber_iq_handle_version(JabberStream *js, xmlnode *packet)
+static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *iq;
 	const char *type, *from, *id;
@@ -234,162 +235,6 @@ static void jabber_iq_handle_version(JabberStream *js, xmlnode *packet)
 	}
 }
 
-#define SUPPORT_FEATURE(x) \
-	feature = xmlnode_new_child(query, "feature"); \
-	xmlnode_set_attrib(feature, "var", x);
-
-
-void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
-
-	if(!from || !type)
-		return;
-
-	if(!strcmp(type, "get")) {
-		xmlnode *query, *identity, *feature;
-		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
-				"http://jabber.org/protocol/disco#info");
-
-		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
-
-		xmlnode_set_attrib(iq->node, "to", from);
-		query = xmlnode_get_child(iq->node, "query");
-
-		identity = xmlnode_new_child(query, "identity");
-		xmlnode_set_attrib(identity, "category", "client");
-		xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
-													 * handheld, pc, phone,
-													 * web */
-
-		SUPPORT_FEATURE("jabber:iq:last")
-		SUPPORT_FEATURE("jabber:iq:oob")
-		SUPPORT_FEATURE("jabber:iq:time")
-		SUPPORT_FEATURE("jabber:iq:version")
-		SUPPORT_FEATURE("jabber:x:conference")
-		SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
-		SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
-		SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
-#if 0
-		SUPPORT_FEATURE("http://jabber.org/protocol/ibb")
-#endif
-		SUPPORT_FEATURE("http://jabber.org/protocol/muc")
-		SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
-		SUPPORT_FEATURE("http://jabber.org/protocol/si")
-		SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
-		SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
-
-		jabber_iq_send(iq);
-	} else if(!strcmp(type, "result")) {
-		xmlnode *query = xmlnode_get_child(packet, "query");
-		xmlnode *child;
-		JabberID *jid;
-		JabberBuddy *jb;
-		JabberBuddyResource *jbr = NULL;
-
-		if(!(jid = jabber_id_new(from)))
-			return;
-
-		if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
-			jbr = jabber_buddy_find_resource(jb, jid->resource);
-		jabber_id_free(jid);
-
-		for(child = query->child; child; child = child->next) {
-			if(child->type != XMLNODE_TYPE_TAG)
-				continue;
-
-			if(!strcmp(child->name, "identity")) {
-				const char *category = xmlnode_get_attrib(child, "category");
-				const char *type = xmlnode_get_attrib(child, "type");
-				if(!category || !type)
-					continue;
-
-				/* we found a groupchat or MUC server, add it to the list */
-				/* XXX: actually check for protocol/muc or gc-1.0 support */
-				if(!strcmp(category, "conference") && !strcmp(type, "text"))
-					js->chat_servers = g_list_append(js->chat_servers, g_strdup(from));
-
-			} else if(!strcmp(child->name, "feature")) {
-				const char *var = xmlnode_get_attrib(child, "var");
-				if(!var)
-					continue;
-
-				if(jbr && !strcmp(var, "http://jabber.org/protocol/si"))
-					jbr->capabilities |= JABBER_CAP_SI;
-				else if(jbr && !strcmp(var,
-							"http://jabber.org/protocol/si/profile/file-transfer"))
-					jbr->capabilities |= JABBER_CAP_SI_FILE_XFER;
-				else if(jbr && !strcmp(var, "http://jabber.org/protocol/bytestreams"))
-					jbr->capabilities |= JABBER_CAP_BYTESTREAMS;
-			}
-		}
-	}
-}
-
-void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
-
-	if(!strcmp(type, "get")) {
-		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
-				"http://jabber.org/protocol/disco#items");
-
-		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
-
-		xmlnode_set_attrib(iq->node, "to", from);
-		jabber_iq_send(iq);
-	}
-}
-
-static void
-jabber_iq_disco_server_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
-{
-	xmlnode *query, *child;
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
-
-	if(!from || !type)
-		return;
-
-	if(strcmp(from, js->user->domain))
-		return;
-
-	if(strcmp(type, "result"))
-		return;
-
-	while(js->chat_servers) {
-		g_free(js->chat_servers->data);
-		js->chat_servers = g_list_delete_link(js->chat_servers, js->chat_servers);
-	}
-
-	query = xmlnode_get_child(packet, "query");
-
-	for(child = xmlnode_get_child(query, "item"); child;
-			child = xmlnode_get_next_twin(child)) {
-		JabberIq *iq;
-		const char *jid;
-
-		if(!(jid = xmlnode_get_attrib(child, "jid")))
-			continue;
-
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
-		xmlnode_set_attrib(iq->node, "to", jid);
-		jabber_iq_send(iq);
-	}
-}
-
-void jabber_iq_disco_server(JabberStream *js)
-{
-	JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET,
-			"http://jabber.org/protocol/disco#items");
-
-	xmlnode_set_attrib(iq->node, "to", js->user->domain);
-
-	jabber_iq_set_callback(iq, jabber_iq_disco_server_result_cb, NULL);
-	jabber_iq_send(iq);
-}
-
-
 void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberCallbackData *jcd;
@@ -401,6 +246,19 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	query = xmlnode_get_child(packet, "query");
 	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
+	id = xmlnode_get_attrib(packet, "id");
+
+	/* First, lets see if a special callback got registered */
+
+	if(type && (!strcmp(type, "result") || !strcmp(type, "error"))) {
+		if(id && *id && (jcd = g_hash_table_lookup(js->iq_callbacks, id))) {
+			jcd->callback(js, packet, jcd->data);
+			g_hash_table_remove(js->iq_callbacks, id);
+		}
+		return;
+	}
+
+	/* Apparently not, so lets see if we have a pre-defined handler */
 
 	if(type && query && (xmlns = xmlnode_get_attrib(query, "xmlns"))) {
 		if(!strcmp(type, "set")) {
@@ -416,13 +274,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			}
 		} else if(!strcmp(type, "get")) {
 			if(!strcmp(xmlns, "jabber:iq:last")) {
-				jabber_iq_handle_last(js, packet);
+				jabber_iq_last_parse(js, packet);
 				return;
 			} else if(!strcmp(xmlns, "jabber:iq:time")) {
-				jabber_iq_handle_time(js, packet);
+				jabber_iq_time_parse(js, packet);
 				return;
 			} else if(!strcmp(xmlns, "jabber:iq:version")) {
-				jabber_iq_handle_version(js, packet);
+				jabber_iq_version_parse(js, packet);
 				return;
 			} else if(!strcmp(xmlns, "http://jabber.org/protocol/disco#info")) {
 				jabber_disco_info_parse(js, packet);
@@ -444,28 +302,14 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			}
 		}
 	} else {
-		xmlnode *si;
-		if((si = xmlnode_get_child(packet, "si")) && (xmlns = xmlnode_get_attrib(si, "xmlns")) &&
-				!strcmp(xmlns, "http://jabber.org/protocol/si")) {
+		if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
 			jabber_si_parse(js, packet);
 			return;
 		}
 	}
 
-	/* If we got here, no pre-defined handlers got it, lets see if a special
-	 * callback got registered */
 
-	id = xmlnode_get_attrib(packet, "id");
-
-	if(type && (!strcmp(type, "result") || !strcmp(type, "error"))) {
-		if(id && *id && (jcd = g_hash_table_lookup(js->callbacks, id))) {
-			jcd->callback(js, packet, jcd->data);
-			g_hash_table_remove(js->callbacks, id);
-		}
-		return;
-	}
-
-	/* Default error reply mandated by XMPP-CORE */
+	/* If we get here, send the default error reply mandated by XMPP-CORE */
 
 	iq = jabber_iq_new(js, JABBER_IQ_ERROR);
 

@@ -11,6 +11,8 @@ JABBERSOURCES = auth.c \
 			  buddy.h \
 			  chat.c \
 			  chat.h \
+			  disco.c \
+			  disco.h \
 			  iq.c \
 			  iq.h \
 			  jabber.c \
