@@ -123,6 +123,8 @@ char *gaim_plugin_init(GModule *h) {
 		gaim_signal_connect(handle, event_signon, avail_now, NULL);
 	else
 		avail_now(connections->data, NULL);
+
+	return NULL;
 }
 
 void adjust_timeout(GtkWidget *button, GtkWidget *spinner) {
