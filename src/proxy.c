@@ -1563,7 +1563,7 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 	if (gaim_proxy_info_get_type(phb->gpi) == GAIM_PROXY_USE_ENVVAR) {
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
-			(tmp= g_getenv("HTTPPROXY")) != NULL) {
+			(tmp = g_getenv("HTTPPROXY")) != NULL) {
 			char *proxyhost,*proxypath,*proxyuser,*proxypasswd;
 			int proxyport;
 
@@ -1592,6 +1592,10 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 
 				gaim_proxy_info_set_port(phb->gpi, proxyport);
 			}
+		} else {
+			/* no proxy environment variable found, don't use a proxy */
+			gaim_debug_info("proxy", "No environment settings found, not using a proxy\n");
+			gaim_proxy_info_set_type(phb->gpi, GAIM_PROXY_NONE);
 		}
 
 		/* XXX: Do we want to skip this step if user/password were part of url? */
