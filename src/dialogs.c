@@ -3473,17 +3473,30 @@ void close_smiley_dialog(GtkWidget *widget, struct gaim_conversation *c)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
 									FALSE);
 	}
-	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.smiley);
-	gtk_widget_destroy(gtkconv->dialogs.smiley);
-	gtkconv->dialogs.smiley = NULL;
+	if(gtkconv->dialogs.smiley) {
+		dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.smiley);
+		gtk_widget_destroy(gtkconv->dialogs.smiley);
+		gtkconv->dialogs.smiley = NULL;
+	}
 }
 
 void insert_smiley_text(GtkWidget *widget, struct gaim_conversation *c)
 {
 	struct gaim_gtk_conversation *gtkconv;
 	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
+	GtkTextMark *select_mark, *insert_mark;
+	GtkTextIter select_iter, insert_iter;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
+
+	select_mark = gtk_text_buffer_get_selection_bound(gtkconv->entry_buffer);
+	insert_mark = gtk_text_buffer_get_insert(gtkconv->entry_buffer);
+
+	if(insert_mark != select_mark) { /* there is text selected */
+		gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &select_iter, select_mark);
+		gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &insert_iter, insert_mark);
+		gtk_text_buffer_delete(gtkconv->entry_buffer, &select_iter, &insert_iter);
+	}
 
 	gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, smiley_text, -1);
 	close_smiley_dialog(NULL, c);
