@@ -2495,9 +2495,9 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 			}
 
 			if (evilhack)
-				dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR>%s<BR>"), who, status_msg, g_strjoinv("<BR>", splitmsg));
+				dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, status_msg, g_strjoinv("<BR>", splitmsg));
 			else
-				dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<BR><HR>%s<BR>"), status_msg, g_strjoinv("<BR>", splitmsg));
+				dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<HR>%s"), status_msg, g_strjoinv("<BR>", splitmsg));
 			g_show_info_text(gc, who, 2, dialog_msg, NULL);
 
 			g_free(status_msg);
@@ -2789,7 +2789,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"Warning Level : <B>%d %%</B><BR>\n"
 			"%s"
 			"%s"
-			"%s<BR>\n"
+			"%s\n"
 			"<HR>\n"),
 			info->sn, images(info->flags),
 			info->warnlevel/10,
@@ -2822,7 +2822,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
 					 (utf8 && *utf8) ? away_subs(utf8, gc->username) : NULL,
-					 (utf8 && *utf8) ? "<BR><HR>" : NULL,
+					 (utf8 && *utf8) ? "<HR>" : NULL,
 					 NULL);
 		}
 	} else if (infotype == AIM_GETINFO_CAPABILITIES) {
@@ -3416,7 +3416,7 @@ static int gaim_icqsimpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 				g_show_info_text(gc, who, 0, buf, NULL);
 			else {
 				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-				g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<BR>\n<HR><I>Remote client does not support sending status messages.</I><BR>\n", NULL);
+				g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<HR>\n<I>Remote client does not support sending status messages.</I><BR>\n", NULL);
 				free(state_msg);
 			}
 		} else {
@@ -3473,7 +3473,7 @@ static int gaim_icqallinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	}
 	if (info->info) {
 		tmp = buf;
-		buf = g_strconcat(tmp, "<br><b>Additional Information:</b><br>", info->info, "<br><hr>\n", NULL);
+		buf = g_strconcat(tmp, "<br><b>Additional Information:</b><br>", info->info, "<hr>\n", NULL);
 		g_free(tmp);
 	}
 	if (info->homecity && info->homestate && info->homeaddr && info->homezip) {
@@ -4903,14 +4903,14 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 					aim_send_im_ch2_geticqmessage(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
 				else {
 					char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
+					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
 					g_show_info_text(gc, who, 2, dialog_msg, NULL);
 					free(state_msg);
 					free(dialog_msg);
 				}
 			else {
 				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-				char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>User has no status message.</I><BR>"), who, state_msg);
+				char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR><I>User has no status message.</I><BR>"), who, state_msg);
 				g_show_info_text(gc, who, 2, dialog_msg, NULL);
 				free(state_msg);
 				free(dialog_msg);

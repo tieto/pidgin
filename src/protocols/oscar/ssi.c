@@ -643,6 +643,21 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 {
 	struct aim_ssi_item *cur, *next;
 
+	/* Delete any buddies, permits, or denies with empty names */
+	cur = sess->ssi.local;
+	while (cur) {
+		next = cur->next;
+		if (!cur->name) {
+			if (cur->type == AIM_SSI_TYPE_BUDDY)
+				aim_ssi_delbuddy(sess, conn, cur->name, NULL);
+			else if (cur->type == AIM_SSI_TYPE_PERMIT)
+				aim_ssi_delpermit(sess, conn, cur->name);
+			else if (cur->type == AIM_SSI_TYPE_DENY)
+				aim_ssi_deldeny(sess, conn, cur->name);
+		}
+		cur = next;
+	}
+
 	/* If there are any buddies directly in the master group, put them in a real group */
 	/* This will kind of mess up if you hit the item limit, but this function isn't too critical */
 	for (cur=sess->ssi.local; cur; cur=cur->next)
@@ -794,7 +809,7 @@ faim_export int aim_ssi_delbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
 {
 	struct aim_ssi_item *del;
 
-	if (!sess || !conn || !name || !group)
+	if (!sess || !conn || !name)
 		return -EINVAL;
 
 	/* Find the buddy */
@@ -838,7 +853,7 @@ faim_export int aim_ssi_delpermit(aim_session_t *sess, aim_conn_t *conn, const c
 {
 	struct aim_ssi_item *del;
 
-	if (!sess || !conn || !name)
+	if (!sess || !conn)
 		return -EINVAL;
 
 	/* Find the item */
@@ -866,7 +881,7 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const cha
 {
 	struct aim_ssi_item *del;
 
-	if (!sess || !conn || !name)
+	if (!sess || !conn)
 		return -EINVAL;
 
 	/* Find the item */
