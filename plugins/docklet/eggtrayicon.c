@@ -18,32 +18,57 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
 #include <string.h>
-#include <gdk/gdkx.h>
+
 #include "eggtrayicon.h"
+
+#include <gdk/gdkx.h>
+#include <X11/Xatom.h>
+
+#define _(x) x
+#define N_(x) x
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
 #define SYSTEM_TRAY_BEGIN_MESSAGE   1
 #define SYSTEM_TRAY_CANCEL_MESSAGE  2
+
+#define SYSTEM_TRAY_ORIENTATION_HORZ 0
+#define SYSTEM_TRAY_ORIENTATION_VERT 1
+
+enum {
+  PROP_0,
+  PROP_ORIENTATION
+};
          
 static GtkPlugClass *parent_class = NULL;
 
 static void egg_tray_icon_init (EggTrayIcon *icon);
 static void egg_tray_icon_class_init (EggTrayIconClass *klass);
 
+static void egg_tray_icon_get_property (GObject    *object,
+					guint       prop_id,
+					GValue     *value,
+					GParamSpec *pspec);
+
+static void egg_tray_icon_realize   (GtkWidget *widget);
 static void egg_tray_icon_unrealize (GtkWidget *widget);
 
-static void egg_tray_icon_update_manager_window (EggTrayIcon *icon);
+static void egg_tray_icon_update_manager_window    (EggTrayIcon *icon,
+						    gboolean     dock_if_realized);
+static void egg_tray_icon_manager_window_destroyed (EggTrayIcon *icon);
 
 GType
 egg_tray_icon_get_type (void)
 {
   static GType our_type = 0;
 
-  our_type = g_type_from_name("EggTrayIcon");
-
   if (our_type == 0)
     {
+      our_type = g_type_from_name("EggTrayIcon");
+
+      if (our_type == 0)
+        {
       static const GTypeInfo our_info =
       {
 	sizeof (EggTrayIconClass),
@@ -58,11 +83,13 @@ egg_tray_icon_get_type (void)
       };
 
       our_type = g_type_register_static (GTK_TYPE_PLUG, "EggTrayIcon", &our_info, 0);
+        }
+      else if (parent_class == NULL)
+        {
+          /* we're reheating the old class from a previous instance -  engage ugly hack =( */
+          egg_tray_icon_class_init((EggTrayIconClass *)g_type_class_peek(our_type));
+        }
     }
-  else if (parent_class == NULL) {
-    /* we're reheating the old class from a previous instance -  engage ugly hack =( */
-    egg_tray_icon_class_init((EggTrayIconClass *)g_type_class_peek(our_type));
-  }
 
   return our_type;
 }
@@ -71,6 +98,7 @@ static void
 egg_tray_icon_init (EggTrayIcon *icon)
 {
   icon->stamp = 1;
+  icon->orientation = GTK_ORIENTATION_HORIZONTAL;
   
   gtk_widget_add_events (GTK_WIDGET (icon), GDK_PROPERTY_CHANGE_MASK);
 }
@@ -78,11 +106,99 @@ egg_tray_icon_init (EggTrayIcon *icon)
 static void
 egg_tray_icon_class_init (EggTrayIconClass *klass)
 {
+  GObjectClass *gobject_class = (GObjectClass *)klass;
   GtkWidgetClass *widget_class = (GtkWidgetClass *)klass;
 
   parent_class = g_type_class_peek_parent (klass);
 
+  gobject_class->get_property = egg_tray_icon_get_property;
+
+  widget_class->realize   = egg_tray_icon_realize;
   widget_class->unrealize = egg_tray_icon_unrealize;
+
+  g_object_class_install_property (gobject_class,
+				   PROP_ORIENTATION,
+				   g_param_spec_enum ("orientation",
+						      _("Orientation"),
+						      _("The orientation of the tray."),
+						      GTK_TYPE_ORIENTATION,
+						      GTK_ORIENTATION_HORIZONTAL,
+						      G_PARAM_READABLE));
+}
+
+static void
+egg_tray_icon_get_property (GObject    *object,
+			    guint       prop_id,
+			    GValue     *value,
+			    GParamSpec *pspec)
+{
+  EggTrayIcon *icon = EGG_TRAY_ICON (object);
+
+  switch (prop_id)
+    {
+    case PROP_ORIENTATION:
+      g_value_set_enum (value, icon->orientation);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
+egg_tray_icon_get_orientation_property (EggTrayIcon *icon)
+{
+  Display *xdisplay;
+  Atom type;
+  int format;
+  union {
+	gulong *prop;
+	guchar *prop_ch;
+  } prop = { NULL };
+  gulong nitems;
+  gulong bytes_after;
+  int error, result;
+
+  g_assert (icon->manager_window != None);
+
+#if GTK_CHECK_VERSION(2,1,0)
+  xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));
+#else
+  xdisplay = gdk_display;
+#endif
+
+  gdk_error_trap_push ();
+  type = None;
+  result = XGetWindowProperty (xdisplay,
+			       icon->manager_window,
+			       icon->orientation_atom,
+			       0, G_MAXLONG, FALSE,
+			       XA_CARDINAL,
+			       &type, &format, &nitems,
+			       &bytes_after, &(prop.prop_ch));
+  error = gdk_error_trap_pop ();
+
+  if (error || result != Success)
+    return;
+
+  if (type == XA_CARDINAL)
+    {
+      GtkOrientation orientation;
+
+      orientation = (prop.prop [0] == SYSTEM_TRAY_ORIENTATION_HORZ) ?
+					GTK_ORIENTATION_HORIZONTAL :
+					GTK_ORIENTATION_VERTICAL;
+
+      if (icon->orientation != orientation)
+	{
+	  icon->orientation = orientation;
+
+	  g_object_notify (G_OBJECT (icon), "orientation");
+	}
+    }
+
+  if (prop.prop)
+    XFree (prop.prop);
 }
 
 static GdkFilterReturn
@@ -95,13 +211,18 @@ egg_tray_icon_manager_filter (GdkXEvent *xevent, GdkEvent *event, gpointer user_
       xev->xclient.message_type == icon->manager_atom &&
       xev->xclient.data.l[1] == icon->selection_atom)
     {
-      egg_tray_icon_update_manager_window (icon);
+      egg_tray_icon_update_manager_window (icon, TRUE);
     }
   else if (xev->xany.window == icon->manager_window)
     {
+      if (xev->xany.type == PropertyNotify &&
+	  xev->xproperty.atom == icon->orientation_atom)
+	{
+	  egg_tray_icon_get_orientation_property (icon);
+	}
       if (xev->xany.type == DestroyNotify)
 	{
-	  egg_tray_icon_update_manager_window (icon);
+	  egg_tray_icon_manager_window_destroyed (icon);
 	}
     }
   
@@ -118,7 +239,7 @@ egg_tray_icon_unrealize (GtkWidget *widget)
     {
       GdkWindow *gdkwin;
 
-#if HAVE_GTK_MULTIHEAD
+#if GTK_CHECK_VERSION(2,1,0)
       gdkwin = gdk_window_lookup_for_display (gtk_widget_get_display (widget),
                                               icon->manager_window);
 #else
@@ -128,7 +249,7 @@ egg_tray_icon_unrealize (GtkWidget *widget)
       gdk_window_remove_filter (gdkwin, egg_tray_icon_manager_filter, icon);
     }
 
-#if HAVE_GTK_MULTIHEAD
+#if GTK_CHECK_VERSION(2,1,0)
   root_window = gdk_screen_get_root_window (gtk_widget_get_screen (widget));
 #else
   root_window = gdk_window_lookup (gdk_x11_get_default_root_xwindow ());
@@ -161,12 +282,12 @@ egg_tray_icon_send_manager_message (EggTrayIcon *icon,
   ev.data.l[3] = data2;
   ev.data.l[4] = data3;
 
-#if HAVE_GTK_MULTIHEAD
+#if GTK_CHECK_VERSION(2,1,0)
   display = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));
 #else
   display = gdk_display;
 #endif
-  
+
   gdk_error_trap_push ();
   XSendEvent (display,
 	      icon->manager_window, False, NoEventMask, (XEvent *)&ev);
@@ -185,30 +306,20 @@ egg_tray_icon_send_dock_request (EggTrayIcon *icon)
 }
 
 static void
-egg_tray_icon_update_manager_window (EggTrayIcon *icon)
+egg_tray_icon_update_manager_window (EggTrayIcon *icon,
+				     gboolean     dock_if_realized)
 {
   Display *xdisplay;
   
-#if HAVE_GTK_MULTIHEAD
+  if (icon->manager_window != None)
+    return;
+
+#if GTK_CHECK_VERSION(2,1,0)
   xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));
 #else
   xdisplay = gdk_display;
 #endif
-  
-  if (icon->manager_window != None)
-    {
-      GdkWindow *gdkwin;
 
-#if HAVE_GTK_MULTIHEAD
-      gdkwin = gdk_window_lookup_for_display (gtk_widget_get_display (GTK_WIDGET (icon)),
-					      icon->manager_window);
-#else
-      gdkwin = gdk_window_lookup (icon->manager_window);
-#endif
-      
-      gdk_window_remove_filter (gdkwin, egg_tray_icon_manager_filter, icon);
-    }
-  
   XGrabServer (xdisplay);
   
   icon->manager_window = XGetSelectionOwner (xdisplay,
@@ -216,7 +327,7 @@ egg_tray_icon_update_manager_window (EggTrayIcon *icon)
 
   if (icon->manager_window != None)
     XSelectInput (xdisplay,
-		  icon->manager_window, StructureNotifyMask);
+		  icon->manager_window, StructureNotifyMask|PropertyChangeMask);
 
   XUngrabServer (xdisplay);
   XFlush (xdisplay);
@@ -225,91 +336,108 @@ egg_tray_icon_update_manager_window (EggTrayIcon *icon)
     {
       GdkWindow *gdkwin;
 
-#if HAVE_GTK_MULTIHEAD
+#if GTK_CHECK_VERSION(2,1,0)
       gdkwin = gdk_window_lookup_for_display (gtk_widget_get_display (GTK_WIDGET (icon)),
 					      icon->manager_window);
 #else
       gdkwin = gdk_window_lookup (icon->manager_window);
 #endif
-      
+
       gdk_window_add_filter (gdkwin, egg_tray_icon_manager_filter, icon);
 
-      /* Send a request that we'd like to dock */
-      egg_tray_icon_send_dock_request (icon);
+      if (dock_if_realized && GTK_WIDGET_REALIZED (icon))
+	egg_tray_icon_send_dock_request (icon);
+
+      egg_tray_icon_get_orientation_property (icon);
     }
 }
 
-EggTrayIcon *
-egg_tray_icon_new_for_xscreen (Screen *xscreen, const char *name)
+static void
+egg_tray_icon_manager_window_destroyed (EggTrayIcon *icon)
 {
-  EggTrayIcon *icon;
+  GdkWindow *gdkwin;
+  
+  g_return_if_fail (icon->manager_window != None);
+
+#if GTK_CHECK_VERSION(2,1,0)
+  gdkwin = gdk_window_lookup_for_display (gtk_widget_get_display (GTK_WIDGET (icon)),
+					  icon->manager_window);
+#else
+  gdkwin = gdk_window_lookup (icon->manager_window);
+#endif
+
+  gdk_window_remove_filter (gdkwin, egg_tray_icon_manager_filter, icon);
+
+  icon->manager_window = None;
+
+  egg_tray_icon_update_manager_window (icon, TRUE);
+}
+
+static void
+egg_tray_icon_realize (GtkWidget *widget)
+{
+  EggTrayIcon *icon = EGG_TRAY_ICON (widget);
+  gint screen;
+  Display *xdisplay;
   char buffer[256];
   GdkWindow *root_window;
 
-  g_return_val_if_fail (xscreen != NULL, NULL);
-  
-  icon = g_object_new (EGG_TYPE_TRAY_ICON, NULL);
-  gtk_window_set_title (GTK_WINDOW (icon), name);
+  if (GTK_WIDGET_CLASS (parent_class)->realize)
+    GTK_WIDGET_CLASS (parent_class)->realize (widget);
 
-#if HAVE_GTK_MULTIHEAD
-  /* FIXME: this code does not compile, screen is undefined. Now try
-   * getting the GdkScreen from xscreen (:. Dunno how to solve this
-   * (there is probably some easy way I cant think of right now)
-   */
-  gtk_plug_construct_for_display (GTK_PLUG (icon),
-				  gdk_screen_get_display (screen), 0);
+#if GTK_CHECK_VERSION(2,1,0)
+  screen = gdk_screen_get_number (gtk_widget_get_screen (widget));
+  xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (widget));
 #else
-  gtk_plug_construct (GTK_PLUG (icon), 0);
+  screen = XScreenNumberOfScreen (DefaultScreenOfDisplay (gdk_display));
+  xdisplay = gdk_display;
 #endif
-  
-  gtk_widget_realize (GTK_WIDGET (icon));
 
   /* Now see if there's a manager window around */
   g_snprintf (buffer, sizeof (buffer),
 	      "_NET_SYSTEM_TRAY_S%d",
-	      XScreenNumberOfScreen (xscreen));
-  
-  icon->selection_atom = XInternAtom (DisplayOfScreen (xscreen),
-				      buffer, False);
-  
-  icon->manager_atom = XInternAtom (DisplayOfScreen (xscreen),
-				    "MANAGER", False);
-  
-  icon->system_tray_opcode_atom = XInternAtom (DisplayOfScreen (xscreen),
-					       "_NET_SYSTEM_TRAY_OPCODE", False);
+	      screen);
 
-  egg_tray_icon_update_manager_window (icon);
+  icon->selection_atom = XInternAtom (xdisplay, buffer, False);
+  
+  icon->manager_atom = XInternAtom (xdisplay, "MANAGER", False);
+  
+  icon->system_tray_opcode_atom = XInternAtom (xdisplay,
+						   "_NET_SYSTEM_TRAY_OPCODE",
+						   False);
 
-#if HAVE_GTK_MULTIHEAD
-  root_window = gdk_screen_get_root_window (gtk_widget_get_screen (screen));
+  icon->orientation_atom = XInternAtom (xdisplay,
+					"_NET_SYSTEM_TRAY_ORIENTATION",
+					False);
+
+  egg_tray_icon_update_manager_window (icon, FALSE);
+  egg_tray_icon_send_dock_request (icon);
+
+#if GTK_CHECK_VERSION(2,1,0)
+  root_window = gdk_screen_get_root_window (gtk_widget_get_screen (widget));
 #else
   root_window = gdk_window_lookup (gdk_x11_get_default_root_xwindow ());
 #endif
-  
+
   /* Add a root window filter so that we get changes on MANAGER */
   gdk_window_add_filter (root_window,
 			 egg_tray_icon_manager_filter, icon);
-		      
-  return icon;
 }
 
-#if HAVE_GTK_MULTIHEAD
+#if GTK_CHECK_VERSION(2,1,0)
 EggTrayIcon *
 egg_tray_icon_new_for_screen (GdkScreen *screen, const char *name)
 {
-  EggTrayIcon *icon;
-  char buffer[256];
-
   g_return_val_if_fail (GDK_IS_SCREEN (screen), NULL);
 
-  return egg_tray_icon_new_for_xscreen (GDK_SCREEN_XSCREEN (screen), name);
+  return g_object_new (EGG_TYPE_TRAY_ICON, "screen", screen, "title", name, NULL);
 }
 #endif
 
 EggTrayIcon*
 egg_tray_icon_new (const gchar *name)
 {
-  return egg_tray_icon_new_for_xscreen (DefaultScreenOfDisplay (gdk_display), name);
+  return g_object_new (EGG_TYPE_TRAY_ICON, "title", name, NULL);
 }
 
 guint
@@ -344,12 +472,12 @@ egg_tray_icon_send_message (EggTrayIcon *icon,
       XClientMessageEvent ev;
       Display *xdisplay;
 
-#if HAVE_GTK_MULTIHEAD
+#if GTK_CHECK_VERSION(2,1,0)
       xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));
 #else
       xdisplay = gdk_display;
 #endif
-      
+
       ev.type = ClientMessage;
       ev.window = (Window)gtk_plug_get_id (GTK_PLUG (icon));
       ev.format = 8;
@@ -386,4 +514,12 @@ egg_tray_icon_cancel_message (EggTrayIcon *icon,
   egg_tray_icon_send_manager_message (icon, SYSTEM_TRAY_CANCEL_MESSAGE,
 				      (Window)gtk_plug_get_id (GTK_PLUG (icon)),
 				      id, 0, 0);
+}
+
+GtkOrientation
+egg_tray_icon_get_orientation (EggTrayIcon *icon)
+{
+  g_return_val_if_fail (EGG_IS_TRAY_ICON (icon), GTK_ORIENTATION_HORIZONTAL);
+
+  return icon->orientation;
 }
