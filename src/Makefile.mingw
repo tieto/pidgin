@@ -81,7 +81,6 @@ DLL_C_SRC =		about.c \
 			accountopt.c \
 			away.c \
 			blist.c \
-			buddy_chat.c \
 			buddyicon.c \
 			connection.c \
 			conversation.c \
