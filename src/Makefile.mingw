@@ -116,6 +116,7 @@ DLL_C_SRC =		about.c \
 			log.c \
 			main.c \
 			md5.c \
+			network.c \
 			notify.c \
 			plugin.c \
 			pounce.c \
