@@ -46,10 +46,14 @@
 #include "pixmaps/status-here.xpm"
 #include "pixmaps/status-idle.xpm"
 
+#include "pixmaps/cancel.xpm"
+
 struct yahoo_data {
 	struct yahoo_context *ctxt;
 	int current_status;
 	GHashTable *hash;
+	GtkWidget *email_win;
+	GtkWidget *email_label;
 };
 
 static char *yahoo_name() {
@@ -121,6 +125,13 @@ static void process_packet_message(struct gaim_connection *gc, struct yahoo_pack
 	}
 }
 
+static void des_win(GtkWidget *w, struct yahoo_data *yd) {
+	gtk_widget_destroy(yd->email_win);
+	if (yd->email_win == w)
+		yd->email_win = NULL;
+	yd->email_label = NULL;
+}
+
 static void process_packet_newmail(struct gaim_connection *gc, struct yahoo_packet *pkt) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	char buf[2048];
@@ -134,8 +145,33 @@ static void process_packet_newmail(struct gaim_connection *gc, struct yahoo_pack
 			g_snprintf(buf, sizeof buf, "%s has %d new personal message%s on Yahoo Mail.",
 					gc->username, pkt->mail_status,
 					pkt->mail_status == 1 ? "" : "s");
-		do_error_dialog(buf, "New Mail!");
-	}
+		if (!yd->email_win) {
+			GtkWidget *close;
+
+			yd->email_win = gtk_dialog_new();
+			gtk_window_set_policy(GTK_WINDOW(yd->email_win), 0, 0, 1);
+			gtk_container_set_border_width(GTK_CONTAINER(yd->email_win), 5);
+			gtk_window_set_title(GTK_WINDOW(yd->email_win), "New Mail");
+			gtk_signal_connect(GTK_OBJECT(yd->email_win), "destroy",
+					   GTK_SIGNAL_FUNC(des_win), yd);
+			gtk_widget_realize(yd->email_win);
+			aol_icon(yd->email_win->window);
+
+			yd->email_label = gtk_label_new(buf);
+			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(yd->email_win)->vbox),
+				yd->email_label, 0, 0, 5);
+			gtk_widget_show(yd->email_label);
+
+			close = picture_button(yd->email_win, _("Close"), cancel_xpm);
+			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(yd->email_win)->action_area),
+					close, 0, 0, 5);
+			gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(des_win), yd);
+
+			gtk_widget_show(yd->email_win);
+		}
+		gtk_label_set_text(GTK_LABEL(yd->email_label), buf);
+	} else if (yd->email_win)
+		gtk_widget_destroy(yd->email_win);
 }
 
 static void process_packet_conference(struct gaim_connection *gc, struct yahoo_packet *pkt) {
