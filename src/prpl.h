@@ -60,6 +60,7 @@ typedef enum
 	PROTO_TLEN,        /**< TLEN protocol             */
 	PROTO_RVP,         /**< RVP protocol              */
 	PROTO_BACKRUB,     /**< Instant Massager protocol */
+	PROTO_MOO,         /**< MOO protocol              */
 	PROTO_UNTAKEN      /**< Untaken protocol number   */
 
 } GaimProtocol;
