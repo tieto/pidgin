@@ -672,12 +672,19 @@ msn_add_buddy(GaimConnection *gc, const char *name)
 }
 
 static void
-msn_rem_buddy(GaimConnection *gc, const char *who, const char *group)
+msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
 {
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
+	MsnGroup *group;
 
-	g_snprintf(outparams, sizeof(outparams), "FL %s", who);
+	group = msn_groups_find_with_name(session->groups, group_name);
+
+	if (group == NULL)
+		g_snprintf(outparams, sizeof(outparams), "FL %s", who);
+	else
+		g_snprintf(outparams, sizeof(outparams), "FL %s %d", who,
+				   msn_group_get_id(group));
 
 	if (!msn_servconn_send_command(session->notification_conn,
 								   "REM", outparams)) {
