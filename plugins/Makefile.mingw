@@ -14,6 +14,7 @@ GTK_TOP :=		../../win32-dev/gtk_2_0
 OSCAR_ROOT :=		../src/protocols/oscar
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 TICKER :=		./ticker
+TRANSPARENCY :=		./win32/transparency
 
 ##
 ## VARIABLE DEFINITIONS
@@ -73,10 +74,12 @@ LIBS = -lgtk-win32-2.0 -lglib-2.0 -lgdk-win32-2.0 -lgobject-2.0 -lgmodule-2.0 -l
 
 all: plugins
 	$(MAKE) -C $(TICKER) -f Makefile.mingw
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
 
 install:
 	cp $(GAIM_PLUGINS)/*.dll $(GAIM_PLUGINS)/*.pl $(GAIM_INSTALL_DIR)/plugins
 	$(MAKE) -C $(TICKER) -f Makefile.mingw install
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
 
 #
 # BUILD Plugin
@@ -101,3 +104,4 @@ clean:
 	rm -rf *.o
 	rm -rf *.dll
 	$(MAKE) -C $(TICKER) -f Makefile.mingw clean
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw clean
