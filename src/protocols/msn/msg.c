@@ -200,7 +200,7 @@ msn_message_parse_payload(MsnMessage *msg, const char *payload,
 
 		tmp += 48;
 
-		body_len = payload_len - (tmp - tmp_base) - 5;
+		body_len = payload_len - (tmp - tmp_base) - 4;
 
 		if (body_len > 0)
 		{
