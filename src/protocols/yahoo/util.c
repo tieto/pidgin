@@ -136,6 +136,7 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "x2", "</I>");
 	g_hash_table_insert(ht,  "4",  "<U>");
 	g_hash_table_insert(ht, "x4", "</U>");
+	g_hash_table_insert(ht, "</font>", "</font>");
 
 	/* these just tell us the text they surround is supposed
 	 * to be a link. gaim figures that out on its own so we
