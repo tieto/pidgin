@@ -1,0 +1,9 @@
+Eric Warmenhoven <warmenhoven@yahoo.com>
+
+Most of this code is either based off of or taken from:
+libfaim by Adam Fritzler, et al., http://sourceforge.net/projects/libfaim/
+icqlib by Bill Soudan et al., http://sourceforge.net/projects/icqlib/
+libyahoo by Nathan Neulinger et al., http://sourceforge.net/projects/libyahoo/
+
+I did not reverse engineer the protocol at all. All of that work was done by
+everyone who has worked on libyahoo.
