@@ -574,7 +574,7 @@ if test "x$enable_nss" != "xno"; then
 					nsprlibs="-ldl $with_nspr_libs/libplc4.a $with_nspr_libs/libplds4.a $with_nspr_libs/libnspr4.a $PTHREAD_LIB"
 				fi
 			else
-				nsprlibs="-ldl -lplc4 -lplds4 -lpthread -lnspr4 $PTHREAD_LIB"
+				nsprlibs="-ldl -lplc4 -lplds4 -lnspr4 $PTHREAD_LIB"
 			fi
 
 			AC_CACHE_CHECK([for Mozilla nspr libraries], moz_nspr_libs,
