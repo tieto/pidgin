@@ -21,6 +21,8 @@ version 0.71
 	* Fix sort by idle to behave as it did pre-contact support (David
 	  Smock)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Implemented another new Yahoo! authentication method
+	* Window icons are now set as buddy icons or status icons
 
 version 0.70 (09/28/2003):
 	* Implemented Yahoo's new authentication method (Cerulean Studios)
