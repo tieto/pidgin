@@ -39,29 +39,6 @@
 #include "prpl.h"
 #include "proxy.h"
 
-/* temporary preferences */
-static guint misc_options_new;
-static guint logging_options_new;
-static guint blist_options_new;
-static guint convo_options_new;
-static guint im_options_new;
-static guint chat_options_new;
-static guint font_options_new;
-static guint sound_options_new;
-static char *sound_file_new[NUM_SOUNDS];
-static guint away_options_new;
-static guint away_resend_new;
-static int auto_away_new;
-static int report_idle_new;
-static int proxytype_new;
-static struct away_message* default_away_new;
-static int web_browser_new;
-static char sound_cmd_new[2048];
-static char web_command_new[2048];
-static int fontsize_new;
-GdkColor fgcolor_new, bgcolor_new;
-static struct window_size conv_size_new, buddy_chat_size_new;
-char fontface_new[128];
 char fontface[128];
 
 GtkWidget *tree_v = NULL;
@@ -88,7 +65,6 @@ static GtkWidget *gaim_dropdown(GtkWidget *, const gchar *, int *, int, ...);
 static GtkWidget *show_color_pref(GtkWidget *, gboolean);
 static void delete_prefs(GtkWidget *, void *);
 void set_default_away(GtkWidget *, gpointer);
-static void apply_prefs();
 
 struct debug_window *dw = NULL;
 GtkWidget *prefs = NULL;
@@ -102,15 +78,7 @@ static GtkTreeIter plugin_iter;
 GtkTreeIter *prefs_notebook_add_page(char*, GdkPixbuf*, GtkWidget*, GtkTreeIter*, GtkTreeIter*, int);
 
 void delete_prefs(GtkWidget *asdf, void *gdsa) {
-	int v;
-
 	prefs = NULL;
-	for (v = 0; v < NUM_SOUNDS; v++) {
-		if (sound_file_new[v]) {
-			g_free(sound_file_new[v]);
-		sound_file_new[v] = NULL;
-		}
-	}
 	tree_v = NULL;
 	sound_entry = NULL;
 	browser_entry = NULL;
@@ -126,15 +94,15 @@ GtkWidget *preflabel;
 GtkWidget *prefsnotebook;
 GtkTreeStore *prefstree;
 
-static void set_misc_options();
-static void set_logging_options();
-static void set_blist_options();
-static void set_convo_options();
-static void set_im_options();
-static void set_chat_options();
-static void set_font_options();
-static void set_sound_options();
-static void set_away_options();
+static void set_misc_option();
+static void set_logging_option();
+static void set_blist_option();
+static void set_convo_option();
+static void set_im_option();
+static void set_chat_option();
+static void set_font_option();
+static void set_sound_option();
+static void set_away_option();
 
 #define PROXYHOST 0
 #define PROXYPORT 1
@@ -151,7 +119,6 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 		g_snprintf(proxyuser, sizeof(proxyuser), "%s", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
 		g_snprintf(proxypass, sizeof(proxypass), "%s", gtk_entry_get_text(entry));
-	apply_prefs();
 }
 
 
@@ -177,67 +144,6 @@ GtkWidget *make_frame(GtkWidget *ret, char *text) {
 
 /* OK, Apply and Cancel */
 
-static void apply_cb(GtkWidget *button, void *data)
-{
-	apply_prefs();
-}
-
-static void apply_prefs()
-{
-	int r;
-	if (misc_options != misc_options_new)
-		set_misc_options();
-	if (logging_options != logging_options_new)
-		set_logging_options();
-	if (blist_options != blist_options_new)
-		set_blist_options();
-	if (convo_options != convo_options_new)
-		set_convo_options();
-	if (im_options != im_options_new)
-		set_im_options();
-	if (chat_options != chat_options_new)
-		set_chat_options();
-		chat_options = chat_options_new;
-	if (font_options != font_options_new)
-		set_font_options();
-	if (sound_options != sound_options_new)
-		set_sound_options();
-	for (r = 0; r < NUM_SOUNDS; r++) {
-		if (sound_file[r])
-			g_free(sound_file[r]);
-		sound_file[r] = g_strdup(sound_file_new[r]);
-	}
-	if (away_options != away_options_new)
-		set_away_options();
-	away_resend = away_resend_new;
-	auto_away = auto_away_new;
-	report_idle = report_idle_new;
-	web_browser = web_browser_new;
-	proxytype = proxytype_new;
-	default_away = default_away_new;
-	fontsize = fontsize_new;
-#ifndef _WIN32	
-	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", sound_cmd_new);
-#endif
-	g_snprintf(web_command, sizeof(web_command), "%s", web_command_new);
-	memcpy(&conv_size, &conv_size_new, sizeof(struct window_size));
-	memcpy(&conv_size, &conv_size_new, sizeof(struct window_size));
-	memcpy(&fgcolor, &fgcolor_new, sizeof(GdkColor));
-	memcpy(&bgcolor, &bgcolor_new, sizeof(GdkColor));
-
-
-	g_snprintf(fontface, sizeof(fontface), fontface_new);
-	update_convo_font();
-	update_convo_color();
-	save_prefs();
-}
-
-
-static void ok_cb(GtkWidget *button, void *data)
-{
-	apply_cb(button, data);
-	gtk_widget_destroy(prefs);
-}
 
 static void pref_nb_select(GtkTreeSelection *sel, GtkNotebook *nb) {
 	GtkTreeIter   iter;
@@ -267,10 +173,10 @@ GtkWidget *interface_page() {
 	vbox = make_frame(ret, _("Interface Options"));
 	/* This shouldn't have to wait for user to click OK or APPLY or whatnot */
 	/* This really shouldn't be in preferences at all */
-	debugbutton = gaim_button(_("Show _Debug Window"), &misc_options_new, OPT_MISC_DEBUG, vbox);
+	debugbutton = gaim_button(_("Show _Debug Window"), &misc_options, OPT_MISC_DEBUG, vbox);
 
 
-	gaim_button(_("Use _borderless buttons"), &misc_options_new, OPT_MISC_COOL_LOOK, vbox);
+	gaim_button(_("Use _borderless buttons"), &misc_options, OPT_MISC_COOL_LOOK, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -287,19 +193,19 @@ GtkWidget *font_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame(ret, _("Style"));
-	gaim_button(_("_Bold"), &font_options_new, OPT_FONT_BOLD, vbox);
-	gaim_button(_("_Italics"), &font_options_new, OPT_FONT_ITALIC, vbox);
-	gaim_button(_("_Underline"), &font_options_new, OPT_FONT_UNDERLINE, vbox);
-	gaim_button(_("_Strikethough"), &font_options_new, OPT_FONT_STRIKE, vbox);
+	gaim_button(_("_Bold"), &font_options, OPT_FONT_BOLD, vbox);
+	gaim_button(_("_Italics"), &font_options, OPT_FONT_ITALIC, vbox);
+	gaim_button(_("_Underline"), &font_options, OPT_FONT_UNDERLINE, vbox);
+	gaim_button(_("_Strikethough"), &font_options, OPT_FONT_STRIKE, vbox);
 
 	vbox = make_frame(ret, _("Face"));
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	button = gaim_button(_("Use custo_m face"), &font_options_new, OPT_FONT_FACE, hbox);
+	button = gaim_button(_("Use custo_m face"), &font_options, OPT_FONT_FACE, hbox);
 	gtk_size_group_add_widget(sg, button);
 	select = gtk_button_new_from_stock(GTK_STOCK_SELECT_FONT);
 
-	if (!(font_options_new & OPT_FONT_FACE))
+	if (!(font_options & OPT_FONT_FACE))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
 	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_font_dialog), NULL);
@@ -307,10 +213,10 @@ GtkWidget *font_page() {
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	button = gaim_button(_("Use custom si_ze"), &font_options_new, OPT_FONT_SIZE, hbox);
+	button = gaim_button(_("Use custom si_ze"), &font_options, OPT_FONT_SIZE, hbox);
 	gtk_size_group_add_widget(sg, button);
-	select = gaim_labeled_spin_button(hbox, NULL, &fontsize_new, 1, 7, NULL);
-	if (!(font_options_new & OPT_FONT_SIZE))
+	select = gaim_labeled_spin_button(hbox, NULL, &fontsize, 1, 7, NULL);
+	if (!(font_options & OPT_FONT_SIZE))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
 
@@ -319,7 +225,7 @@ GtkWidget *font_page() {
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 
-	button = gaim_button(_("_Text color"), &font_options_new, OPT_FONT_FGCOL, hbox);
+	button = gaim_button(_("_Text color"), &font_options, OPT_FONT_FGCOL, hbox);
 	gtk_size_group_add_widget(sg, button);
 
 	select = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
@@ -328,14 +234,14 @@ GtkWidget *font_page() {
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color),
 			   pref_fg_picture);
 
-	if (!(font_options_new & OPT_FONT_FGCOL))
+	if (!(font_options & OPT_FONT_FGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
 	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_fgcolor_dialog), NULL);
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-	button = gaim_button(_("Bac_kground color"), &font_options_new, OPT_FONT_BGCOL, hbox);
+	button = gaim_button(_("Bac_kground color"), &font_options, OPT_FONT_BGCOL, hbox);
 	gtk_size_group_add_widget(sg, button);
 	select = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 0);
@@ -343,7 +249,7 @@ GtkWidget *font_page() {
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color),
 			   pref_bg_picture);
 
-	if (!(font_options_new & OPT_FONT_BGCOL))
+	if (!(font_options & OPT_FONT_BGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_bgcolor_dialog), NULL);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
@@ -360,17 +266,17 @@ GtkWidget *messages_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Display"));
-	gaim_button(_("Show graphical _smileys"), &convo_options_new, OPT_CONVO_SHOW_SMILEY, vbox);
-	gaim_button(_("Show _timestamp on messages"), &convo_options_new, OPT_CONVO_SHOW_TIME, vbox);
-	gaim_button(_("Show _URLs as links"), &convo_options_new, OPT_CONVO_SEND_LINKS, vbox);
+	gaim_button(_("Show graphical _smileys"), &convo_options, OPT_CONVO_SHOW_SMILEY, vbox);
+	gaim_button(_("Show _timestamp on messages"), &convo_options, OPT_CONVO_SHOW_TIME, vbox);
+	gaim_button(_("Show _URLs as links"), &convo_options, OPT_CONVO_SEND_LINKS, vbox);
 #ifdef USE_GTKSPELL
-	gaim_button(_("_Highlight misspelled words"), &convo_options_new, OPT_CONVO_CHECK_SPELLING, vbox);
+	gaim_button(_("_Highlight misspelled words"), &convo_options, OPT_CONVO_CHECK_SPELLING, vbox);
 #endif
 	vbox = make_frame (ret, _("Ignore"));
-	gaim_button(_("Ignore c_olors"), &convo_options_new, OPT_CONVO_IGNORE_COLOUR, vbox);
-	gaim_button(_("Ignore font _faces"), &convo_options_new, OPT_CONVO_IGNORE_FONTS, vbox);
-	gaim_button(_("Ignore font si_zes"), &convo_options_new, OPT_CONVO_IGNORE_SIZES, vbox);
-/*	gaim_button(_("Ignore Ti_K Automated Messages"), &away_options_new, OPT_AWAY_TIK_HACK, vbox); */
+	gaim_button(_("Ignore c_olors"), &convo_options, OPT_CONVO_IGNORE_COLOUR, vbox);
+	gaim_button(_("Ignore font _faces"), &convo_options, OPT_CONVO_IGNORE_FONTS, vbox);
+	gaim_button(_("Ignore font si_zes"), &convo_options, OPT_CONVO_IGNORE_SIZES, vbox);
+/*	gaim_button(_("Ignore Ti_K Automated Messages"), &away_options, OPT_AWAY_TIK_HACK, vbox); */
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -383,16 +289,16 @@ GtkWidget *hotkeys_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame(ret, _("Send Message"));
-	gaim_button(_("_Enter sends message"), &convo_options_new, OPT_CONVO_ENTER_SENDS, vbox);
-	gaim_button(_("C_ontrol-Enter sends message"), &convo_options_new, OPT_CONVO_CTL_ENTER, vbox);
+	gaim_button(_("_Enter sends message"), &convo_options, OPT_CONVO_ENTER_SENDS, vbox);
+	gaim_button(_("C_ontrol-Enter sends message"), &convo_options, OPT_CONVO_CTL_ENTER, vbox);
 
 	vbox = make_frame (ret, _("Window Closing"));
-	gaim_button(_("E_scape closes window"), &convo_options_new, OPT_CONVO_ESC_CAN_CLOSE, vbox);
-	gaim_button(_("Control-_W closes window"), &convo_options_new, OPT_CONVO_CTL_W_CLOSES, vbox);
+	gaim_button(_("E_scape closes window"), &convo_options, OPT_CONVO_ESC_CAN_CLOSE, vbox);
+	gaim_button(_("Control-_W closes window"), &convo_options, OPT_CONVO_CTL_W_CLOSES, vbox);
 
 	vbox = make_frame(ret, "Insertions");
-	gaim_button(_("Control-{B/I/U/S} inserts _HTML tags"), &convo_options_new, OPT_CONVO_CTL_CHARS, vbox);
-	gaim_button(_("Control-(number) inserts _smileys"), &convo_options_new, OPT_CONVO_CTL_SMILEYS, vbox);
+	gaim_button(_("Control-{B/I/U/S} inserts _HTML tags"), &convo_options, OPT_CONVO_CTL_CHARS, vbox);
+	gaim_button(_("Control-(number) inserts _smileys"), &convo_options, OPT_CONVO_CTL_SMILEYS, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -405,22 +311,22 @@ GtkWidget *list_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Buttons"));
-	gaim_button(_("_Hide IM/Info/Chat buttons"), &blist_options_new, OPT_BLIST_NO_BUTTONS, vbox);
-	gaim_button(_("Show _pictures on buttons"), &blist_options_new, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
+	gaim_button(_("_Hide IM/Info/Chat buttons"), &blist_options, OPT_BLIST_NO_BUTTONS, vbox);
+	gaim_button(_("Show _pictures on buttons"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
 
 	vbox = make_frame (ret, _("Buddy List Window"));
-	gaim_button(_("_Save Window Size/Position"), &blist_options_new, OPT_BLIST_SAVED_WINDOWS, vbox);
-	gaim_button(_("_Raise Window on Events"), &blist_options_new, OPT_BLIST_POPUP, vbox);
+	gaim_button(_("_Save Window Size/Position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
+	gaim_button(_("_Raise Window on Events"), &blist_options, OPT_BLIST_POPUP, vbox);
 
 	vbox = make_frame (ret, _("Group Display"));
-	gaim_button(_("Hide _groups with no online buddies"), &blist_options_new, OPT_BLIST_NO_MT_GRP, vbox);
-	gaim_button(_("Show _numbers in groups"), &blist_options_new, OPT_BLIST_SHOW_GRPNUM, vbox);
+	gaim_button(_("Hide _groups with no online buddies"), &blist_options, OPT_BLIST_NO_MT_GRP, vbox);
+	gaim_button(_("Show _numbers in groups"), &blist_options, OPT_BLIST_SHOW_GRPNUM, vbox);
 
 	vbox = make_frame (ret, _("Buddy Display"));
-	gaim_button(_("Show buddy type _icons"), &blist_options_new, OPT_BLIST_SHOW_PIXMAPS, vbox);
-	gaim_button(_("Show _warning levels"), &blist_options_new, OPT_BLIST_SHOW_WARN, vbox);
-	gaim_button(_("Show idle _times"), &blist_options_new, OPT_BLIST_SHOW_IDLETIME, vbox);
-	gaim_button(_("Grey i_dle buddies"), &blist_options_new, OPT_BLIST_GREY_IDLERS, vbox);
+	gaim_button(_("Show buddy type _icons"), &blist_options, OPT_BLIST_SHOW_PIXMAPS, vbox);
+	gaim_button(_("Show _warning levels"), &blist_options, OPT_BLIST_SHOW_WARN, vbox);
+	gaim_button(_("Show idle _times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
+	gaim_button(_("Grey i_dle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -438,31 +344,31 @@ GtkWidget *im_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("Window"));
-	widge = gaim_dropdown(vbox, "Show _buttons as:", &im_options_new, OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM,
+	widge = gaim_dropdown(vbox, "Show _buttons as:", &im_options, OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM,
 		      "Pictures", OPT_IM_BUTTON_XPM,
 		      "Text", OPT_IM_BUTTON_TEXT,
 		      "Pictures and text", OPT_IM_BUTTON_XPM | OPT_IM_BUTTON_TEXT, NULL);
 	gtk_size_group_add_widget(sg, widge);
 	gtk_misc_set_alignment(GTK_MISC(widge), 0, 0);
-	gaim_labeled_spin_button(vbox, _("New window _width:"), &conv_size_new.width, 25, 9999, sg);
-	gaim_labeled_spin_button(vbox, _("New window _height:"), &conv_size_new.height, 25, 9999, sg);
-	gaim_labeled_spin_button(vbox, _("_Entry widget height:"), &conv_size_new.entry_height, 25, 9999, sg);
-	gaim_button(_("_Raise windows on events"), &im_options_new, OPT_IM_POPUP, vbox);
-	gaim_button(_("Hide window on _send"), &im_options_new, OPT_IM_POPDOWN, vbox);
+	gaim_labeled_spin_button(vbox, _("New window _width:"), &conv_size.width, 25, 9999, sg);
+	gaim_labeled_spin_button(vbox, _("New window _height:"), &conv_size.height, 25, 9999, sg);
+	gaim_labeled_spin_button(vbox, _("_Entry widget height:"), &conv_size.entry_height, 25, 9999, sg);
+	gaim_button(_("_Raise windows on events"), &im_options, OPT_IM_POPUP, vbox);
+	gaim_button(_("Hide window on _send"), &im_options, OPT_IM_POPDOWN, vbox);
 	gtk_widget_show (vbox);
 
 	vbox = make_frame (ret, _("Buddy Icons"));
-	gaim_button(_("Hide Buddy _Icons"), &im_options_new, OPT_IM_HIDE_ICONS, vbox);
-	gaim_button(_("Disable Buddy Icon A_nimation"), &im_options_new, OPT_IM_NO_ANIMATION, vbox);
+	gaim_button(_("Hide Buddy _Icons"), &im_options, OPT_IM_HIDE_ICONS, vbox);
+	gaim_button(_("Disable Buddy Icon A_nimation"), &im_options, OPT_IM_NO_ANIMATION, vbox);
 
 	vbox = make_frame (ret, _("Display"));
-	gaim_button(_("Show _logins in window"), &im_options_new, OPT_IM_LOGON, vbox);
+	gaim_button(_("Show _logins in window"), &im_options, OPT_IM_LOGON, vbox);
 
 	vbox = make_frame (ret, _("Typing Notification"));
-	typingbutton = gaim_button(_("Notify buddies that you are _typing to them"), &misc_options_new,
+	typingbutton = gaim_button(_("Notify buddies that you are _typing to them"), &misc_options,
 				   OPT_MISC_STEALTH_TYPING, vbox);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(typingbutton), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(typingbutton)));
-	misc_options_new ^= OPT_MISC_STEALTH_TYPING;
+	misc_options ^= OPT_MISC_STEALTH_TYPING;
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -480,24 +386,24 @@ GtkWidget *chat_page() {
 	sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("Window"));
-	dd = gaim_dropdown(vbox, "Show _buttons as:", &chat_options_new, OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM,
+	dd = gaim_dropdown(vbox, "Show _buttons as:", &chat_options, OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM,
 			   "Pictures", OPT_CHAT_BUTTON_XPM,
 			   "Text", OPT_CHAT_BUTTON_TEXT,
 			   "Pictures and Text", OPT_CHAT_BUTTON_XPM | OPT_CHAT_BUTTON_TEXT, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
-	gaim_labeled_spin_button(vbox, _("New window _width:"), &buddy_chat_size_new.width, 25, 9999, sg);
-	gaim_labeled_spin_button(vbox, _("New window _height:"), &buddy_chat_size_new.height, 25, 9999, sg);
-	gaim_labeled_spin_button(vbox, _("_Entry widget height:"), &buddy_chat_size_new.entry_height, 25, 9999, sg);
-	gaim_button(_("_Raise windows on events"), &chat_options_new, OPT_CHAT_POPUP, vbox);
+	gaim_labeled_spin_button(vbox, _("New window _width:"), &buddy_chat_size.width, 25, 9999, sg);
+	gaim_labeled_spin_button(vbox, _("New window _height:"), &buddy_chat_size.height, 25, 9999, sg);
+	gaim_labeled_spin_button(vbox, _("_Entry widget height:"), &buddy_chat_size.entry_height, 25, 9999, sg);
+	gaim_button(_("_Raise windows on events"), &chat_options, OPT_CHAT_POPUP, vbox);
 
 	vbox = make_frame (ret, _("Tab Completion"));
-	gaim_button(_("_Tab-Complete Nicks"), &chat_options_new, OPT_CHAT_TAB_COMPLETE, vbox);
-	gaim_button(_("_Old-Style Tab Completion"), &chat_options_new, OPT_CHAT_OLD_STYLE_TAB, vbox);
+	gaim_button(_("_Tab-Complete Nicks"), &chat_options, OPT_CHAT_TAB_COMPLETE, vbox);
+	gaim_button(_("_Old-Style Tab Completion"), &chat_options, OPT_CHAT_OLD_STYLE_TAB, vbox);
 
 	vbox = make_frame (ret, _("Display"));
-	gaim_button(_("_Show people joining/leaving in window"), &chat_options_new, OPT_CHAT_LOGON, vbox);
-	gaim_button(_("Co_lorize screennames"), &chat_options_new, OPT_CHAT_COLORIZE, vbox);
+	gaim_button(_("_Show people joining/leaving in window"), &chat_options, OPT_CHAT_LOGON, vbox);
+	gaim_button(_("Co_lorize screennames"), &chat_options, OPT_CHAT_COLORIZE, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -514,30 +420,30 @@ GtkWidget *tab_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("IM Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _Placement:", &im_options_new, OPT_IM_SIDE_TAB | OPT_IM_BR_TAB,
+	dd = gaim_dropdown(vbox, "Tab _Placement:", &im_options, OPT_IM_SIDE_TAB | OPT_IM_BR_TAB,
 		      "Top", 0,
 		      "Bottom", OPT_IM_BR_TAB,
 		      "Left", OPT_IM_SIDE_TAB,
 		      "Right", OPT_IM_BR_TAB | OPT_IM_SIDE_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
-	gaim_button(_("Show all _Instant Messages in one tabbed\nwindow"), &im_options_new, OPT_IM_ONE_WINDOW, vbox);
-	gaim_button(_("Show a_liases in tabs/titles"), &im_options_new, OPT_IM_ALIAS_TAB, vbox);
+	gaim_button(_("Show all _Instant Messages in one tabbed\nwindow"), &im_options, OPT_IM_ONE_WINDOW, vbox);
+	gaim_button(_("Show a_liases in tabs/titles"), &im_options, OPT_IM_ALIAS_TAB, vbox);
 
 	vbox = make_frame (ret, _("Chat Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _Placement:", &chat_options_new, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
+	dd = gaim_dropdown(vbox, "Tab _Placement:", &chat_options, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
 			   "Top", 0,
 			   "Bottom", OPT_CHAT_BR_TAB,
 			   "Left", OPT_CHAT_SIDE_TAB,
 			   "Right", OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
-	gaim_button(_("Show all c_hats in one tabbed window"), &chat_options_new, OPT_CHAT_ONE_WINDOW,
+	gaim_button(_("Show all c_hats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW,
 		    vbox);
 
 	vbox = make_frame (ret, _("Combined Tabs"));
-	gaim_button(_("Show IMs and chats in _same tabbed\nwindow."), &convo_options_new, OPT_CONVO_COMBINE, vbox);
+	gaim_button(_("Show IMs and chats in _same tabbed\nwindow."), &convo_options, OPT_CONVO_COMBINE, vbox);
 
 	vbox = make_frame (ret, _("Buddy List Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _Placement:", &blist_options_new, OPT_BLIST_BOTTOM_TAB,
+	dd = gaim_dropdown(vbox, "Tab _Placement:", &blist_options, OPT_BLIST_BOTTOM_TAB,
 		      "Top", 0,
 		      "Bottom", OPT_BLIST_BOTTOM_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
@@ -558,7 +464,7 @@ GtkWidget *proxy_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Proxy Type"));
-	gaim_dropdown(vbox, "Proxy _Type:", &proxytype_new, -1,
+	gaim_dropdown(vbox, "Proxy _Type:", &proxytype, -1,
 		      "No Proxy", PROXY_NONE,
 		      "SOCKS 4", PROXY_SOCKS4,
 		      "SOCKS 5", PROXY_SOCKS5,
@@ -643,7 +549,7 @@ GtkWidget *proxy_page() {
 }
 
 static void browser_print_option(GtkEntry *entry, void *nullish) {
-	g_snprintf(web_command_new, sizeof(web_command_new), "%s", gtk_entry_get_text(entry));
+	g_snprintf(web_command, sizeof(web_command), "%s", gtk_entry_get_text(entry));
 }
 
 GtkWidget *browser_page() {
@@ -659,7 +565,7 @@ GtkWidget *browser_page() {
 #ifndef _WIN32
 	/* Registered default browser is used by Windows */
 	vbox = make_frame (ret, _("Browser Selection"));
-	label = gaim_dropdown(vbox, "_Browser", &web_browser_new, -1,
+	label = gaim_dropdown(vbox, "_Browser", &web_browser, -1,
 			      "Netscape", BROWSER_NETSCAPE,
 			      "Konqueror", BROWSER_KONQ,
 			      "Mozilla", BROWSER_MOZILLA,
@@ -679,16 +585,16 @@ GtkWidget *browser_page() {
 	gtk_size_group_add_widget(sg, label);
 	browser_entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), browser_entry);
-	if (web_browser_new != BROWSER_MANUAL)
+	if (web_browser != BROWSER_MANUAL)
 		gtk_widget_set_sensitive(browser_entry, FALSE);
 	gtk_box_pack_start (GTK_BOX (hbox), browser_entry, FALSE, FALSE, 0);
 
-	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command_new);
+	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
 	gtk_signal_connect(GTK_OBJECT(browser_entry), "changed",
 			   GTK_SIGNAL_FUNC(browser_print_option), NULL);
 #endif /* end !_WIN32 */
 	vbox = make_frame (ret, _("Browser Options"));
-	label = gaim_button(_("Open new _window by default"), &misc_options_new, OPT_MISC_BROWSER_POPUP, vbox);
+	label = gaim_button(_("Open new _window by default"), &misc_options, OPT_MISC_BROWSER_POPUP, vbox);
 #ifdef _WIN32
 	/* Until I figure out how to implement this on windows */
 	gtk_widget_set_sensitive(label, FALSE);
@@ -704,19 +610,19 @@ GtkWidget *logging_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Message Logs"));
-	gaim_button(_("_Log all Instant Messages"), &logging_options_new, OPT_LOG_CONVOS, vbox);
-	gaim_button(_("Log all c_hats"), &logging_options_new, OPT_LOG_CHATS, vbox);
-	gaim_button(_("Strip _HTML from logs"), &logging_options_new, OPT_LOG_STRIP_HTML, vbox);
+	gaim_button(_("_Log all Instant Messages"), &logging_options, OPT_LOG_CONVOS, vbox);
+	gaim_button(_("Log all c_hats"), &logging_options, OPT_LOG_CHATS, vbox);
+	gaim_button(_("Strip _HTML from logs"), &logging_options, OPT_LOG_STRIP_HTML, vbox);
 
 	vbox = make_frame (ret, _("System Logs"));
-	gaim_button(_("Log when buddies _sign on/sign off"), &logging_options_new, OPT_LOG_BUDDY_SIGNON,
+	gaim_button(_("Log when buddies _sign on/sign off"), &logging_options, OPT_LOG_BUDDY_SIGNON,
 		    vbox);
-	gaim_button(_("Log when buddies become _idle/un-idle"), &logging_options_new, OPT_LOG_BUDDY_IDLE,
+	gaim_button(_("Log when buddies become _idle/un-idle"), &logging_options, OPT_LOG_BUDDY_IDLE,
 		    vbox);
-	gaim_button(_("Log when buddies go away/come _back"), &logging_options_new, OPT_LOG_BUDDY_AWAY, vbox);
-	gaim_button(_("Log your _own signons/idleness/awayness"), &logging_options_new, OPT_LOG_MY_SIGNON,
+	gaim_button(_("Log when buddies go away/come _back"), &logging_options, OPT_LOG_BUDDY_AWAY, vbox);
+	gaim_button(_("Log your _own signons/idleness/awayness"), &logging_options, OPT_LOG_MY_SIGNON,
 		    vbox);
-	gaim_button(_("I_ndividual log file for each buddy's signons"), &logging_options_new,
+	gaim_button(_("I_ndividual log file for each buddy's signons"), &logging_options,
 		    OPT_LOG_INDIVIDUAL, vbox);
 
 	gtk_widget_show_all(ret);
@@ -727,7 +633,7 @@ static GtkWidget *sndcmd = NULL;
 
 static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
 {
-	g_snprintf(sound_cmd_new, sizeof(sound_cmd_new), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
+	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	return TRUE;
 }
 
@@ -744,12 +650,12 @@ GtkWidget *sound_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("Sound Options"));
-	gaim_button(_("_No sounds when you log in"), &sound_options_new, OPT_SOUND_SILENT_SIGNON, vbox);
-	gaim_button(_("_Sounds while away"), &sound_options_new, OPT_SOUND_WHEN_AWAY, vbox);
+	gaim_button(_("_No sounds when you log in"), &sound_options, OPT_SOUND_SILENT_SIGNON, vbox);
+	gaim_button(_("_Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, vbox);
 
 #ifndef _WIN32
 	vbox = make_frame (ret, _("Sound Method"));
-	dd = gaim_dropdown(vbox, "_Method", &sound_options_new, OPT_SOUND_BEEP |
+	dd = gaim_dropdown(vbox, "_Method", &sound_options, OPT_SOUND_BEEP |
 		      OPT_SOUND_ESD | OPT_SOUND_ARTSC | OPT_SOUND_NAS | OPT_SOUND_NORMAL |
 		      OPT_SOUND_CMD,
 		      "Console Beep", OPT_SOUND_BEEP,
@@ -784,7 +690,7 @@ GtkWidget *sound_page() {
 	gtk_entry_set_text(GTK_ENTRY(sndcmd), sound_cmd);
 	gtk_widget_set_size_request(sndcmd, 75, -1);
 
-	gtk_widget_set_sensitive(sndcmd, (sound_options_new & OPT_SOUND_CMD));
+	gtk_widget_set_sensitive(sndcmd, (sound_options & OPT_SOUND_CMD));
 	gtk_box_pack_start(GTK_BOX(hbox), sndcmd, TRUE, TRUE, 5);
 	gtk_signal_connect(GTK_OBJECT(sndcmd), "focus_out_event", GTK_SIGNAL_FUNC(sound_cmd_yeah), NULL);
 #endif /* _WIN32 */
@@ -808,24 +714,24 @@ GtkWidget *away_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("Away"));
-	gaim_button(_("_Sending messages removes away status"), &away_options_new, OPT_AWAY_BACK_ON_IM, vbox);
-	gaim_button(_("_Queue new messages when away"), &away_options_new, OPT_AWAY_QUEUE, vbox);
-	gaim_button(_("_Ignore new conversations when away"), &away_options_new, OPT_AWAY_DISCARD, vbox);
+	gaim_button(_("_Sending messages removes away status"), &away_options, OPT_AWAY_BACK_ON_IM, vbox);
+	gaim_button(_("_Queue new messages when away"), &away_options, OPT_AWAY_QUEUE, vbox);
+	gaim_button(_("_Ignore new conversations when away"), &away_options, OPT_AWAY_DISCARD, vbox);
 
 	vbox = make_frame (ret, _("Auto-response"));
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	gaim_labeled_spin_button(hbox, _("Seconds before _resending:"),
-				 &away_resend_new, 1, 24 * 60 * 60, sg);
-	gaim_button(_("_Don't send auto-response"), &away_options_new, OPT_AWAY_NO_AUTO_RESP, vbox);
-	gaim_button(_("_Only send auto-response when idle"), &away_options_new, OPT_AWAY_IDLE_RESP, vbox);
-	gaim_button(_("Do_n't send auto-response in active conversations"), &away_options_new, OPT_AWAY_DELAY_IN_USE, vbox);
+				 &away_resend, 1, 24 * 60 * 60, sg);
+	gaim_button(_("_Don't send auto-response"), &away_options, OPT_AWAY_NO_AUTO_RESP, vbox);
+	gaim_button(_("_Only send auto-response when idle"), &away_options, OPT_AWAY_IDLE_RESP, vbox);
+	gaim_button(_("Do_n't send auto-response in active conversations"), &away_options, OPT_AWAY_DELAY_IN_USE, vbox);
 
-	if (away_options_new & OPT_AWAY_NO_AUTO_RESP)
+	if (away_options & OPT_AWAY_NO_AUTO_RESP)
 		gtk_widget_set_sensitive(hbox, FALSE);
 
 	vbox = make_frame (ret, _("Idle"));
-	dd = gaim_dropdown(vbox, "Idle _Time Reporting:", &report_idle_new, -1,
+	dd = gaim_dropdown(vbox, "Idle _Time Reporting:", &report_idle, -1,
 			   "None", IDLE_NONE,
 			   "Gaim Usage", IDLE_GAIM,
 #ifdef USE_SCREENSAVER
@@ -836,9 +742,9 @@ GtkWidget *away_page() {
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
 
 	vbox = make_frame (ret, _("Auto-away"));
-	button = gaim_button(_("Set away _when idle"), &away_options_new, OPT_AWAY_AUTO, vbox);
-	select = gaim_labeled_spin_button(vbox, "_Minutes before setting away:", &auto_away_new, 1, 24 * 60, sg);
-	if (!(away_options_new & OPT_AWAY_AUTO))
+	button = gaim_button(_("Set away _when idle"), &away_options, OPT_AWAY_AUTO, vbox);
+	select = gaim_labeled_spin_button(vbox, "_Minutes before setting away:", &auto_away, 1, 24 * 60, sg);
+	if (!(away_options & OPT_AWAY_AUTO))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
 
@@ -850,7 +756,7 @@ GtkWidget *away_page() {
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	prefs_away_menu = gtk_option_menu_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), prefs_away_menu);
-	if (!(away_options_new & OPT_AWAY_AUTO))
+	if (!(away_options & OPT_AWAY_AUTO))
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), prefs_away_menu);
 	default_away_menu_init(prefs_away_menu);
@@ -1103,8 +1009,8 @@ static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter, 2, &soundnum, -1);
 
-	sound_options_new ^= sounds[soundnum].opt;
-	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, sound_options_new & sounds[soundnum].opt, -1);
+	sound_options ^= sounds[soundnum].opt;
+	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, sound_options & sounds[soundnum].opt, -1);
 
 	gtk_tree_path_free(path);
 }
@@ -1112,25 +1018,21 @@ static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 static void test_sound(GtkWidget *button, gpointer i_am_NULL)
 {
 	guint32 tmp_sound = sound_options;
-	char *save_me=NULL;
 	if (!(sound_options & OPT_SOUND_WHEN_AWAY))
 		sound_options ^= OPT_SOUND_WHEN_AWAY;
 	if (!(sound_options & sounds[sound_row_sel].opt))
 		sound_options ^= sounds[sound_row_sel].opt;
-	save_me = sound_file[sound_row_sel];
-	sound_file[sound_row_sel] = sound_file_new[sound_row_sel];
 	play_sound(sound_row_sel);
 
-	sound_file[sound_row_sel] = save_me;
 	sound_options = tmp_sound;
 }
 
 static void reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 {
 	/* This just resets a sound file back to default */
-	if (sound_file_new[sound_row_sel]) {
-		g_free(sound_file_new[sound_row_sel]);
-		sound_file_new[sound_row_sel] = NULL;
+	if (sound_file[sound_row_sel]) {
+		g_free(sound_file[sound_row_sel]);
+		sound_file[sound_row_sel] = NULL;
 	}
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
@@ -1162,21 +1064,21 @@ void do_select_sound(GtkWidget *w, int snd)
 		return;
 
 	/* Let's just be safe */
-	if (sound_file_new[snd])
-		g_free(sound_file_new[snd]);
+	if (sound_file[snd])
+		g_free(sound_file[snd]);
 
 	/* Set it -- and forget it */
-	sound_file_new[snd] = g_strdup(file);
+	sound_file[snd] = g_strdup(file);
 
 	/* Set our text entry */
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file_new[snd]);
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file[snd]);
 
 	/* Close the window! It's getting cold in here! */
 	close_sounddialog(NULL, sounddialog);
 
 	if (last_sound_dir)
 		g_free(last_sound_dir);
-	last_sound_dir = g_dirname(sound_file_new[snd]);
+	last_sound_dir = g_dirname(sound_file[snd]);
 }
 
 static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
@@ -1217,7 +1119,7 @@ static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	sound_row_sel = g_value_get_uint(&val);
 	if (sound_entry)
-		gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file_new[sound_row_sel] ? sound_file_new[sound_row_sel] : "(default)");
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file[sound_row_sel] ? sound_file[sound_row_sel] : "(default)");
 	g_value_unset (&val);
 	if (sounddialog)
 		gtk_widget_destroy(sounddialog);
@@ -1289,7 +1191,7 @@ GtkWidget *sound_events_page() {
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(ret), hbox, FALSE, FALSE, 0);
 	sound_entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file_new[0] ? sound_file_new[0] : "(default)");
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file[0] ? sound_file[0] : "(default)");
 	gtk_entry_set_editable(GTK_ENTRY(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
 
@@ -1512,8 +1414,6 @@ void show_prefs()
 	GtkWidget *button;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
-	int r;
-
 	if (prefs) {
 		gtk_window_present(GTK_WINDOW(prefs));
 		return;
@@ -1521,34 +1421,8 @@ void show_prefs()
 
 	/* copy the preferences to tmp values...
 	 * I liked "take affect immediately" Oh well :-( */
-	misc_options_new = misc_options;
-	logging_options_new = logging_options;
-	blist_options_new = blist_options;
-	convo_options_new = convo_options;
-	im_options_new = im_options;
-	chat_options_new = chat_options;
-	font_options_new = font_options;
-	sound_options_new = sound_options;
-	for (r = 0; r < NUM_SOUNDS; r++)
-		sound_file_new[r] = g_strdup(sound_file[r]);
-	away_options_new = away_options;
-	away_resend_new = away_resend;
-	report_idle_new = report_idle;
-	auto_away_new = auto_away;
-	default_away_new = default_away;
-	fontsize_new = fontsize;
-	web_browser_new = web_browser;
-	proxytype_new = proxytype;
-#ifndef _WIN32
-	g_snprintf(sound_cmd_new, sizeof(sound_cmd_new), "%s", sound_cmd);
-#endif
-	g_snprintf(web_command_new, sizeof(web_command_new), "%s", 
-		   web_command ? web_command : "xterm -e lynx %%s");
-	g_snprintf(fontface_new, sizeof(fontface_new), fontface);
-	memcpy(&conv_size_new, &conv_size, sizeof(struct window_size));
-	memcpy(&buddy_chat_size_new, &buddy_chat_size, sizeof(struct window_size));
-	memcpy(&fgcolor_new, &fgcolor, sizeof(GdkColor));
-	memcpy(&bgcolor_new, &bgcolor, sizeof(GdkColor));
+	
+	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
 	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1629,30 +1503,17 @@ void show_prefs()
 	gtk_widget_show(sep);
 	gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
 
-	/* The buttons to press! */
+	/* The buttons^H to press! */
 	hbox = gtk_hbox_new (FALSE, 6);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 	gtk_container_add (GTK_CONTAINER(vbox), hbox);
 	gtk_widget_show (hbox);
 
-	button = gtk_button_new_from_stock (GTK_STOCK_OK);
-	gtk_size_group_add_widget(sg, button);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_cb), prefs);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
+	button = gtk_button_new_from_stock (GTK_STOCK_CLOSE);
 	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect_object(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), prefs);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
-
-	button = gtk_button_new_from_stock (GTK_STOCK_APPLY);
-	gtk_size_group_add_widget(sg, button);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(apply_cb), prefs);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
 
 	prefs_notebook_init();
 
@@ -1665,7 +1526,7 @@ static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 	if (debugbutton)
 		gtk_button_clicked(GTK_BUTTON(debugbutton));
 	if (misc_options & OPT_MISC_DEBUG) {
-		misc_options_new ^= OPT_MISC_DEBUG;
+		misc_options ^= OPT_MISC_DEBUG;
 		misc_options ^= OPT_MISC_DEBUG;
 		save_prefs();
 	}
@@ -1745,11 +1606,6 @@ void debug_printf(char *fmt, ...)
 	g_free(s);
 }
 
-
-
-
-
-
 void set_option(GtkWidget *w, int *option)
 {
 	*option = !(*option);
@@ -1757,155 +1613,123 @@ void set_option(GtkWidget *w, int *option)
 
 static void set_misc_option(GtkWidget *w, int option)
 {
-	misc_options_new ^= option;
+	misc_options ^= option;
 
-	/* gross hack because we don't want to save all prefs just because
-	 * we enabled the debug window.  then again, what about the debug
-	 * window _isn't_ an ugly hack? */
-
-	if (option == OPT_MISC_DEBUG) {
-		misc_options ^= option;
-		save_prefs();
+	if (option == OPT_MISC_DEBUG)
 		show_debug();
-	}
+
+	save_prefs();
 }
 
-
-/* Functions for each _options variable that sees what's changed, and makes
- * effective those changes that take place immediately (UI stuff) */
-static void set_misc_options()
+static void set_logging_option(GtkWidget *w, int option)
 {
+	logging_options ^= option;
 
-/*	int option = misc_options ^ misc_options_new; */
-	misc_options = misc_options_new;
-
-}
-
-static void set_logging_options()
-{
-	int option = logging_options ^ logging_options_new;
-	logging_options = logging_options_new;
-
-	if (option & OPT_LOG_CONVOS || option & OPT_LOG_CHATS)
+	if (option == OPT_LOG_CONVOS || option == OPT_LOG_CHATS)
 		update_log_convs();
 
+	save_prefs();
 }
 
-static void set_blist_options()
+static void set_blist_option(GtkWidget *w, int option)
 {
-	int option = blist_options ^ blist_options_new;
-	blist_options = blist_options_new;
+	blist_options ^= option;
+
+	save_prefs();
 
 	if (!blist)
 		return;
 
-	if (option & OPT_BLIST_BOTTOM_TAB)
-		set_blist_tab();
-
-	if (option & OPT_BLIST_NO_BUTTONS)
+	if (option == OPT_BLIST_NO_BUTTONS)
 		build_imchat_box(!(blist_options & OPT_BLIST_NO_BUTTONS));
 
-	if (option & OPT_BLIST_SHOW_GRPNUM)
+	if (option == OPT_BLIST_SHOW_GRPNUM)
 		update_num_groups();
 
-	if (option & OPT_BLIST_NO_MT_GRP)
+	if (option == OPT_BLIST_NO_MT_GRP)
 		toggle_show_empty_groups();
 
-	if ((option & OPT_BLIST_SHOW_BUTTON_XPM) || (option & OPT_BLIST_NO_BUTTONS))
+	if ((option == OPT_BLIST_SHOW_BUTTON_XPM) || (option == OPT_BLIST_NO_BUTTONS))
 		update_button_pix();
 
-	if (option & OPT_BLIST_SHOW_PIXMAPS)
+	if (option == OPT_BLIST_SHOW_PIXMAPS)
 		toggle_buddy_pixmaps();
 
-	if ((option & OPT_BLIST_GREY_IDLERS) || (option & OPT_BLIST_SHOW_IDLETIME))
+	if ((option == OPT_BLIST_GREY_IDLERS) || (option == OPT_BLIST_SHOW_IDLETIME))
 		update_idle_times();
 
 }
 
-static void set_convo_options()
+static void set_convo_option(GtkWidget *w, int option)
 {
-	int option = convo_options ^ convo_options_new;
-	convo_options = convo_options_new;
+	convo_options ^= option;
 
-	if (option & OPT_CONVO_SHOW_SMILEY)
+	if (option == OPT_CONVO_SHOW_SMILEY)
 		toggle_smileys();
 
-	if (option & OPT_CONVO_SHOW_TIME)
+	if (option == OPT_CONVO_SHOW_TIME)
 		toggle_timestamps();
 
-	if (option & OPT_CONVO_CHECK_SPELLING)
+	if (option == OPT_CONVO_CHECK_SPELLING)
 		toggle_spellchk();
 
-	if (option & OPT_CONVO_COMBINE) {
-		/* (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB) == (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB) */
-
-	}
-
+	save_prefs();
 }
 
-static void set_im_options()
+static void set_im_option(GtkWidget *w, int option)
 {
-	int option = im_options ^ im_options_new;
-	im_options = im_options_new;
+	im_options ^= option;
 
-	if (option & OPT_IM_ONE_WINDOW)
+	if (option == OPT_IM_ONE_WINDOW)
 		im_tabize();
 
-	if (option & OPT_IM_SIDE_TAB || option & OPT_IM_BR_TAB)
-		update_im_tabs();
-
-	if (option & OPT_IM_HIDE_ICONS)
+	if (option == OPT_IM_HIDE_ICONS)
 		set_hide_icons();
 
-	if (option & OPT_IM_ALIAS_TAB)
+	if (option == OPT_IM_ALIAS_TAB) {
 		set_convo_titles();
+	}
 
-	if (option & OPT_IM_NO_ANIMATION)
+	if (option == OPT_IM_NO_ANIMATION)
 		set_anim();
 
-	if (option & OPT_IM_BUTTON_TEXT || option & OPT_IM_BUTTON_XPM)
-		update_im_button_pix();
+	save_prefs();
 }
 
-static void set_chat_options()
+static void set_chat_option(GtkWidget *w, int option)
 {
-	int option = chat_options ^ chat_options_new;
-	chat_options = chat_options_new;
+	chat_options ^= option;
 
-	if (option & OPT_CHAT_ONE_WINDOW)
+	if (option == OPT_CHAT_ONE_WINDOW)
 		chat_tabize();
 
-	if (option & OPT_CHAT_BUTTON_TEXT || option & OPT_CHAT_BUTTON_XPM)
-		update_chat_button_pix();
+	save_prefs();
 }
 
-void set_sound_options()
+void set_sound_option(GtkWidget *w, int option)
 {
-	/* int option = sound_options ^ sound_options_new; */
-	sound_options = sound_options_new;
+	sound_options ^= option;
 
+	save_prefs();
 }
 
-static void set_font_options()
+static void set_font_option(GtkWidget *w, int option)
 {
-	/* int option = font_options ^ font_options_new; */
-	font_options = font_options_new;
+	font_options ^= option;
 
 	update_font_buttons();
+
+	save_prefs();
 }
 
-static void set_away_options()
+static void set_away_option(GtkWidget *w, int option)
 {
-	int option = away_options ^ away_options_new;
-	away_options = away_options_new;
+	away_options ^= option;
 
-	if (option & OPT_AWAY_QUEUE)
+	if (option == OPT_AWAY_QUEUE)
 		toggle_away_queue();
-}
 
-static void toggle_option(GtkWidget *w, int option) {
-	int *o = gtk_object_get_user_data(GTK_OBJECT(w));
-	*o ^= option;
+	save_prefs();
 }
 
 GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *page)
@@ -1916,13 +1740,32 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(button), options);
 
-	/* So that the debug window happens immediately
-	 * I don't think it should be "preferences," anyway. */
-	if (options == &misc_options_new && option == OPT_MISC_DEBUG)
+       if (options == &misc_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_misc_option),
 				   (int *)option);
-	else
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_option),
+	if (options == &logging_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_logging_option),
+				   (int *)option);
+	if (options == &blist_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_blist_option),
+				   (int *)option);
+	if (options == &convo_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_convo_option),
+				   (int *)option);
+	if (options == &im_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_im_option),
+				   (int *)option);
+	if (options == &chat_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_chat_option),
+				   (int *)option);
+	if (options == &font_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_font_option),
+				   (int *)option);
+	if (options == &sound_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_sound_option),
+				   (int *)option);
+	if (options == &away_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_away_option),
 				   (int *)option);
 
 	gtk_widget_show(button);
@@ -1977,13 +1820,13 @@ void apply_color_dlg(GtkWidget *w, gpointer d)
 	if ((int)d == 1) {
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION
 						      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel),
-						      &fgcolor_new);
+						      &fgcolor);
 		destroy_colorsel(NULL, (void *)1);
 		update_color(NULL, pref_fg_picture);
 	} else {
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION
 						      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel),
-						      &bgcolor_new);
+						      &bgcolor);
 		destroy_colorsel(NULL, (void *)0);
 		update_color(NULL, pref_bg_picture);
 	}
@@ -1996,20 +1839,20 @@ void update_color(GtkWidget *w, GtkWidget *pic)
 	c.pixel = 0;
 
 	if (pic == pref_fg_picture) {
-		if (font_options_new & OPT_FONT_FGCOL) {
-			c.red = fgcolor_new.red;
-			c.blue = fgcolor_new.blue;
-			c.green = fgcolor_new.green;
+		if (font_options & OPT_FONT_FGCOL) {
+			c.red = fgcolor.red;
+			c.blue = fgcolor.blue;
+			c.green = fgcolor.green;
 		} else {
 			c.red = 0;
 			c.blue = 0;
 			c.green = 0;
 		}
 	} else {
-		if (font_options_new & OPT_FONT_BGCOL) {
-			c.red = bgcolor_new.red;
-			c.blue = bgcolor_new.blue;
-			c.green = bgcolor_new.green;
+		if (font_options & OPT_FONT_BGCOL) {
+			c.red = bgcolor.red;
+			c.blue = bgcolor.blue;
+			c.green = bgcolor.green;
 		} else {
 			c.red = 0xffff;
 			c.blue = 0xffff;
@@ -2028,11 +1871,11 @@ void set_default_away(GtkWidget *w, gpointer i)
 	int length = g_slist_length(away_messages);
 
 	if (away_messages == NULL)
-		default_away_new = NULL;
+		default_away = NULL;
 	else if ((int)i >= length)
-		default_away_new = g_slist_nth_data(away_messages, length - 1);
+		default_away = g_slist_nth_data(away_messages, length - 1);
 	else
-		default_away_new = g_slist_nth_data(away_messages, (int)i);
+		default_away = g_slist_nth_data(away_messages, (int)i);
 }
 
 static void update_spin_value(GtkWidget *w, GtkWidget *spin)
@@ -2087,21 +1930,33 @@ void dropdown_set(GtkObject *w, int *option)
 		*option = opt;
 	}
 
-	if (option == &proxytype_new) {
+	if (option == &proxytype) {
 		if (opt == PROXY_NONE)
 			gtk_widget_set_sensitive(prefs_proxy_frame, FALSE);
 		else
 			gtk_widget_set_sensitive(prefs_proxy_frame, TRUE);
-	} else if (option == &web_browser_new) {
+	} else if (option == &web_browser) {
 		if (opt == BROWSER_MANUAL)
 			gtk_widget_set_sensitive(browser_entry, TRUE);
 		else
 			gtk_widget_set_sensitive(browser_entry, FALSE);
-	} else if (*option == sound_options_new) {
+	} else if (option == (int*)&sound_options) {
 		if (opt == OPT_SOUND_CMD)
 			gtk_widget_set_sensitive(sndcmd, TRUE);
 		else
 			gtk_widget_set_sensitive(sndcmd, FALSE);
+	} else if (option == (int*)&im_options) { 
+		if (clear == (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB))
+			update_im_tabs();
+		else if (clear == (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM))
+			update_im_button_pix();
+	} else if (option == (int*)&chat_options) {
+		if (clear == (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB))
+			update_im_tabs();
+		else if (clear == (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM))
+			update_im_button_pix();
+	} else if (option == (int*)&blist_options) {
+		set_blist_tab();
 	}
 
 }
@@ -2168,20 +2023,20 @@ static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 	GtkStyle *style;
 	c.pixel = 0;
 	if (fgc) {
-		if (font_options_new & OPT_FONT_FGCOL) {
-			c.red = fgcolor_new.red;
-			c.blue = fgcolor_new.blue;
-			c.green = fgcolor_new.green;
+		if (font_options & OPT_FONT_FGCOL) {
+			c.red = fgcolor.red;
+			c.blue = fgcolor.blue;
+			c.green = fgcolor.green;
 		} else {
 			c.red = 0;
 			c.blue = 0;
 			c.green = 0;
 		}
 	} else {
-		if (font_options_new & OPT_FONT_BGCOL) {
-			c.red = bgcolor_new.red;
-			c.blue = bgcolor_new.blue;
-			c.green = bgcolor_new.green;
+		if (font_options & OPT_FONT_BGCOL) {
+			c.red = bgcolor.red;
+			c.blue = bgcolor.blue;
+			c.green = bgcolor.green;
 		} else {
 			c.red = 0xffff;
 			c.blue = 0xffff;
@@ -2208,12 +2063,11 @@ void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 	fontname = g_strdup(gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(f)));
 	destroy_fontsel(0, 0);
 
-	while(fontname[i] && !isdigit(fontname[i]) && i < sizeof(fontface_new)) {
-		fontface_new[i] = fontname[i];
+	while(fontname[i] && !isdigit(fontname[i]) && i < sizeof(fontface)) {
+		fontface[i] = fontname[i];
 		i++;
 	}
-	fontface_new[i] = 0;
-	debug_printf("fontface_new: %s\n", fontface_new);
+	fontface[i] = 0;
 	g_free(fontname);
 }
 
