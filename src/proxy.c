@@ -35,7 +35,7 @@
 #include "proxy.h"
 
 
-static int proxy_inited=0;
+/* static int proxy_inited=0; */
 int proxy_type = 0;
 char proxy_host[256];
 int proxy_port = 3128;

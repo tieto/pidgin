@@ -29,6 +29,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <gtk/gtk.h>
+#include <ctype.h>
 #include <pixmaps/aimicon.xpm>
 #include "gaim.h"
 
@@ -758,7 +759,6 @@ void spell_checker(GtkWidget * text)
 {
         int start = 0;
         int end = 0;
-        int length = gtk_text_get_length(GTK_TEXT(text));
         static GdkColor * color = NULL;
         int ignore = 0;
         int point = gtk_editable_get_position(GTK_EDITABLE(text));

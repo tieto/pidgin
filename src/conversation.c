@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "gtkhtml.h"
@@ -37,7 +38,7 @@
 #include "pixmaps/normal.xpm"
 #include "pixmaps/big.xpm"
 #include "pixmaps/speaker.xpm"
-#include "pixmaps/aimicon2.xpm"
+/* #include "pixmaps/aimicon2.xpm" */
 #include "pixmaps/wood.xpm"
 #include "pixmaps/palette.xpm"
 #include "pixmaps/link.xpm"

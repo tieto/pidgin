@@ -235,34 +235,36 @@ struct conversation {
 };
 
 struct file_header {
-	short hdrtype;		/* 0 */
-	char  bcookie[8];	/* 2 */
-	short encrypt;		/* 10 */
-	short compress;		/* 12 */
-	short totfiles;		/* 14 */
-	short filesleft;	/* 16 */
-	short totparts;		/* 18 */
-	short partsleft;	/* 20 */
-	long  totsize;		/* 22 */
-	long  size;		/* 26 */
-	long  modtime;		/* 30 */
-	long  checksum;		/* 34 */
-	long  rfrcsum;		/* 38 */
-	long  rfsize;		/* 42 */
-	long  cretime;		/* 46 */
-	long  rfcsum;		/* 50 */
-	long  nrecvd;		/* 54 */
-	long  recvcsum;		/* 58 */
-	char  idstring[32];	/* 62 */
-	char  flags;		/* 94 */
-	char  lnameoffset;	/* 95 */
-	char  lsizeoffset;	/* 96 */
-	char  dummy[69];	/* 97 */
-	char  macfileinfo[16];	/* 166 */
-	short nencode;		/* 182 */
-	short nlanguage;	/* 184 */
-	char  name[64];		/* 186 */
-				/* 250 */
+	char  magic[4];		/* 0 */
+	short hdrlen;		/* 4 */
+	short hdrtype;		/* 6 */
+	char  bcookie[8];	/* 8 */
+	short encrypt;		/* 16 */
+	short compress;		/* 18 */
+	short totfiles;		/* 20 */
+	short filesleft;	/* 22 */
+	short totparts;		/* 24 */
+	short partsleft;	/* 26 */
+	long  totsize;		/* 28 */
+	long  size;		/* 32 */
+	long  modtime;		/* 36 */
+	long  checksum;		/* 40 */
+	long  rfrcsum;		/* 44 */
+	long  rfsize;		/* 48 */
+	long  cretime;		/* 52 */
+	long  rfcsum;		/* 56 */
+	long  nrecvd;		/* 60 */
+	long  recvcsum;		/* 64 */
+	char  idstring[32];	/* 68 */
+	char  flags;		/* 100 */
+	char  lnameoffset;	/* 101 */
+	char  lsizeoffset;	/* 102 */
+	char  dummy[69];	/* 103 */
+	char  macfileinfo[16];	/* 172 */
+	short nencode;		/* 188 */
+	short nlanguage;	/* 190 */
+	char  name[64];		/* 192 */
+				/* 256 */
 };
 
 struct file_transfer {
@@ -332,7 +334,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 219 $"
+#define REVISION "gaim:$Revision: 220 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

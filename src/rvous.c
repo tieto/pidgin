@@ -324,7 +324,6 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	char *file = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window)));
 	char *buf;
 	int read_rv;
-	char bmagic[7];
 	struct file_header *fhdr = g_new0(struct file_header, 1);
 	struct sockaddr_in sin;
 	guint32 rcv;
@@ -379,6 +378,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	buf = frombase64(ft->cookie);
 	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf);
 	debug_print(debug_buff);
+	fhdr->magic[0] = 'O'; fhdr->magic[1] = 'F'; fhdr->magic[2] = 'T'; fhdr->magic[3] = '2';
+	fhdr->hdrlen = 256;
 	fhdr->hdrtype = 0x1108;
 	snprintf(fhdr->bcookie, 8, "%s", buf);
 	g_free(buf);
@@ -408,17 +409,9 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->nencode = 0;
 	fhdr->nlanguage = 0;
 	snprintf(fhdr->name, 64, "listing.txt");
-	snprintf(bmagic, 6, "TFT1\001");
-	read_rv = write(ft->fd, bmagic, 6);
+	read_rv = write(ft->fd, fhdr, 256);
 	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't write opening header \n");
-		debug_print(debug_buff);
-		close(ft->fd);
-		return;
-	}
-	read_rv = write(ft->fd, fhdr, 250);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't write opening header 2\n");
+		sprintf(debug_buff, "Couldn't write opening header\n");
 		debug_print(debug_buff);
 		close(ft->fd);
 		return;
@@ -427,16 +420,9 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	/* 2. receive header */
 	sprintf(debug_buff, "Receiving header\n");
 	debug_print(debug_buff);
-	read_rv = read(ft->fd, bmagic, 6);
+	read_rv = read(ft->fd, fhdr, 256);
 	if (read_rv <= -1) {
 		sprintf(debug_buff, "Couldn't read header\n");
-		debug_print(debug_buff);
-		close(ft->fd);
-		return;
-	}
-	read_rv = read(ft->fd, fhdr, *(short *)&bmagic[4]);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't read header 2\n");
 		debug_print(debug_buff);
 		close(ft->fd);
 		return;
@@ -474,16 +460,9 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	/* 4. receive header */
 	sprintf(debug_buff, "Receiving closing header\n");
 	debug_print(debug_buff);
-	read_rv = read(ft->fd, bmagic, 6);
+	read_rv = read(ft->fd, fhdr, 256);
 	if (read_rv <= -1) {
 		sprintf(debug_buff, "Couldn't read closing header\n");
-		debug_print(debug_buff);
-		close(ft->fd);
-		return;
-	}
-	read_rv = read(ft->fd, fhdr, *(short *)&bmagic[4]);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't read closing header 2\n");
 		debug_print(debug_buff);
 		close(ft->fd);
 		return;
