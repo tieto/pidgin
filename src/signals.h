@@ -44,6 +44,13 @@ extern "C" {
 /*@{*/
 
 /**
+ * Signal Connect Priorities
+ */
+#define GAIM_SIGNAL_PRIORITY_DEFAULT     0
+#define GAIM_SIGNAL_PRIORITY_HIGHEST  9999
+#define GAIM_SIGNAL_PRIORITY_LOWEST  -9999
+
+/**
  * Registers a signal in an instance.
  *
  * @param instance   The instance to register the signal for.
@@ -101,6 +108,27 @@ void gaim_signal_get_values(void *instance, const char *signal,
  * @param handle   The handle of the receiver.
  * @param func     The callback function.
  * @param data     The data to pass to the callback function.
+ * @param priority The order in which the signal should be added to the list
+ *
+ * @return The signal handler ID.
+ *
+ * @see gaim_signal_disconnect()
+ */
+gulong gaim_signal_connect_priority(void *instance, const char *signal,
+				   void *handle, GaimCallback func, void *data, int priority);
+
+/**
+ * Connects a signal handler to a signal for a particular object.
+ * (priority defaults to 0)
+ * 
+ * Take care not to register a handler function twice. Gaim will
+ * not correct any mistakes for you in this area.
+ *
+ * @param instance The instance to connect to.
+ * @param signal   The name of the signal to connect.
+ * @param handle   The handle of the receiver.
+ * @param func     The callback function.
+ * @param data     The data to pass to the callback function.
  *
  * @return The signal handler ID.
  *
@@ -112,6 +140,29 @@ gulong gaim_signal_connect(void *instance, const char *signal,
 /**
  * Connects a signal handler to a signal for a particular object.
  *
+ * The signal handler will take a va_args of arguments, instead of
+ * individual arguments.
+ *
+ * Take care not to register a handler function twice. Gaim will
+ * not correct any mistakes for you in this area.
+ *
+ * @param instance The instance to connect to.
+ * @param signal   The name of the signal to connect.
+ * @param handle   The handle of the receiver.
+ * @param func     The callback function.
+ * @param data     The data to pass to the callback function.
+ * @param priority The order in which the signal should be added to the list
+ *
+ * @return The signal handler ID.
+ *
+ * @see gaim_signal_disconnect()
+ */
+gulong gaim_signal_connect_priority_vargs(void *instance, const char *signal,
+					void *handle, GaimCallback func, void *data, int priority);
+
+/**
+ * Connects a signal handler to a signal for a particular object.
+ * (priority defaults to 0)
  * The signal handler will take a va_args of arguments, instead of
  * individual arguments.
  *

@@ -66,6 +66,7 @@ typedef struct
 	void *handle;
 	void *data;
 	gboolean use_vargs;
+	int priority;
 
 } GaimSignalHandlerData;
 
@@ -241,9 +242,17 @@ gaim_signal_get_values(void *instance, const char *signal,
 		*ret_value = signal_data->ret_value;
 }
 
+static gint handler_priority(void * a, void * b) {
+	GaimSignalHandlerData *ah = (GaimSignalHandlerData*)a;
+	GaimSignalHandlerData *bh = (GaimSignalHandlerData*)b;
+	if (ah->priority > bh->priority) return 1;
+	if (ah->priority < bh->priority) return -1;
+	return 0;
+}
+
 static gulong
 signal_connect_common(void *instance, const char *signal, void *handle,
-					  GaimCallback func, void *data, gboolean use_vargs)
+					  GaimCallback func, void *data, int priority, gboolean use_vargs)
 {
 	GaimInstanceData *instance_data;
 	GaimSignalData *signal_data;
@@ -278,8 +287,9 @@ signal_connect_common(void *instance, const char *signal, void *handle,
 	handler_data->handle    = handle;
 	handler_data->data      = data;
 	handler_data->use_vargs = use_vargs;
-
-	signal_data->handlers = g_list_append(signal_data->handlers, handler_data);
+	handler_data->priority = priority;
+	
+	signal_data->handlers = g_list_insert_sorted(signal_data->handlers, handler_data, (GCompareFunc)handler_priority);
 	signal_data->handler_count++;
 	signal_data->next_handler_id++;
 
@@ -287,17 +297,31 @@ signal_connect_common(void *instance, const char *signal, void *handle,
 }
 
 gulong
+gaim_signal_connect_priority(void *instance, const char *signal, void *handle,
+					GaimCallback func, void *data, int priority)
+{
+	return signal_connect_common(instance, signal, handle, func, data, priority, FALSE);
+}
+
+gulong
 gaim_signal_connect(void *instance, const char *signal, void *handle,
 					GaimCallback func, void *data)
 {
-	return signal_connect_common(instance, signal, handle, func, data, FALSE);
+	return signal_connect_common(instance, signal, handle, func, data, GAIM_SIGNAL_PRIORITY_DEFAULT, FALSE);
+}
+
+gulong
+gaim_signal_connect_priority_vargs(void *instance, const char *signal, void *handle,
+						  GaimCallback func, void *data, int priority)
+{
+	return signal_connect_common(instance, signal, handle, func, data, priority, TRUE);
 }
 
 gulong
 gaim_signal_connect_vargs(void *instance, const char *signal, void *handle,
 						  GaimCallback func, void *data)
 {
-	return signal_connect_common(instance, signal, handle, func, data, TRUE);
+	return signal_connect_common(instance, signal, handle, func, data, GAIM_SIGNAL_PRIORITY_DEFAULT, TRUE);
 }
 
 void
