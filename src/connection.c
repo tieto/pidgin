@@ -329,10 +329,10 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 
 	ops = gaim_get_connection_ui_ops();
 
-	gaim_connection_disconnect(gc);
-
 	if (ops != NULL && ops->disconnected != NULL)
 		ops->disconnected(gc, text);
+
+	gaim_connection_disconnect(gc);
 }
 
 void
