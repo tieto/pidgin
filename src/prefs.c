@@ -1222,7 +1222,7 @@ static void away_page()
 	gtk_widget_show(bot);
 
 	button = picture_button(prefs, _("Add"), gnome_add_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), NULL);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), button);
 	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
 
 	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
