@@ -2,7 +2,7 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.9.16:
 	* Paned buddy chat window (Thanks Syd)
-	* Buddy lists (and changes) are cached to ~/.gaimbdcache_<sn>
+	* Buddy lists (and changes) are cached to ~/.gaim/<sn>.blist
 	  where <sn> is your screen name. If for some reason, you log
           into the AOL server and the buddy list comes back empty, we
 	  check for a cache file, and, if we find one, read it in. This

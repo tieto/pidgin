@@ -2057,14 +2057,14 @@ bud_list_cache_exists( void )
 
 	file = getenv( "HOME" );
 	if ( file != (char *) NULL ) {
-	       	sprintf( path, "%s/.gaimbdcache_%s", file, g_screenname );
+	       	sprintf( path, "%s/.gaim/%s.blist", file, g_screenname );
 		if ( !stat(path, &sbuf) ) 
 			ret = TRUE;
 	}
 	return ret;
 }
 
-/* if dummy is 0, save to ~/.gaimbdcache_screenname. Else, let user choose */
+/* if dummy is 0, save to ~/.gaim/screenname.blist. Else, let user choose */
 
 void do_export(GtkWidget *w, void *dummy)
 {
@@ -2081,9 +2081,16 @@ void do_export(GtkWidget *w, void *dummy)
 	}
 	else {
 		file = getenv( "HOME" );
-		if ( file != (char *) NULL )
-                        sprintf( path, "%s/.gaimbdcache_%s", file, g_screenname );
-		else
+		if ( file != (char *) NULL ) {
+			FILE *dir;
+			sprintf(buf, "%s/.gaim/");
+			dir = fopen(buf, "r");
+			if (!dir)
+				mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
+			else
+				fclose(dir);
+                        sprintf( path, "%s/.gaim/%s.blist", file, g_screenname );
+		} else
 			return;
 	}
         if ((f = fopen(path,"w"))) {
@@ -2134,7 +2141,7 @@ void show_export_dialog()
 
 }
 
-/* if dummy is 0, then import from ~/.gaimbdcache_screenname, else let user
+/* if dummy is 0, then import from ~/.gaim/screenname.blist, else let user
    choose */
 
 void do_import(GtkWidget *w, void *dummy)
@@ -2156,7 +2163,7 @@ void do_import(GtkWidget *w, void *dummy)
         else {
                 file = getenv( "HOME" );
                 if ( file != (char *) NULL )
-                        sprintf( path, "%s/.gaimbdcache_%s", file, g_screenname );
+                        sprintf( path, "%s/.gaim/%s.blist", file, g_screenname );
                 else
 			return;
         }
