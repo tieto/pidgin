@@ -1553,62 +1553,11 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 char *
 gaim_markup_strip_html(const char *str)
 {
-	int i, j, k;
-	gboolean visible = TRUE;
-	gchar *str2;
+	char *ret;
 
-	g_return_val_if_fail(str != NULL, NULL);
+	gaim_markup_html_to_xhtml(str, NULL, &ret);
 
-	str2 = g_strdup(str);
-
-	for (i = 0, j = 0; str2[i]; i++)
-	{
-		if (str2[i] == '<')
-		{
-			k = i + 1;
-
-			if(g_ascii_isspace(str2[k]))
-				visible = TRUE;
-			else
-			{
-				while (str2[k])
-				{
-					if (str2[k] == '<')
-					{
-						visible = TRUE;
-						break;
-					}
-
-					if (str2[k] == '>')
-					{
-						visible = FALSE;
-						break;
-					}
-
-					k++;
-				}
-			}
-		}
-		else if (str2[i] == '>' && !visible)
-		{
-			visible = TRUE;
-			continue;
-		}
-
-		if (str2[i] == '&' && strncasecmp(str2 + i, "&quot;", 6) == 0)
-		{
-		    str2[j++] = '\"';
-		    i = i + 5;
-		    continue;
-		}
-
-		if (visible)
-			str2[j++] = str2[i];
-	}
-
-	str2[j] = '\0';
-
-	return str2;
+	return ret;
 }
 
 gboolean
