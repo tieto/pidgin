@@ -29,33 +29,11 @@
 #include "network.h"
 #include "prpl.h"
 #include "sha.h"
-
-#include "mdns.h"
 #include "util.h"
 #include "version.h"
 
-#define RENDEZVOUS_CONNECT_STEPS 2
-
-typedef struct _RendezvousData {
-	int fd;
-	GHashTable *buddies;
-	GSList *mytxtdata;
-} RendezvousData;
-
-typedef struct _RendezvousBuddy {
-#if 0
-	guint ttltimer;
-#endif
-	gchar *firstandlast;
-	gchar *aim;
-	int ip[4];
-	int p2pjport;
-	int status;
-	int idle;
-	gchar *msg;
-} RendezvousBuddy;
-
-#define UC_IDLE 2
+#include "rendezvous.h"
+#include "mdns.h"
 
 /****************************/
 /* Utility Functions        */
@@ -115,7 +93,7 @@ static void rendezvous_addtolocal(GaimConnection *gc, const char *name, const ch
 	b = gaim_buddy_new(account, name, NULL);
 	/* gaim_blist_node_set_flag(b, GAIM_BLIST_NODE_FLAG_NO_SAVE); */
 	gaim_blist_add_buddy(b, NULL, g, NULL);
-	serv_got_update(gc, b->name, TRUE, 0, 0, 0, 0);
+	serv_got_update(gc, b->name, TRUE, 0);
 
 #if 0
 	RendezvousBuddy *rb;
@@ -145,7 +123,7 @@ static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, con
 	if (b == NULL)
 		return;
 
-	serv_got_update(gc, b->name, FALSE, 0, 0, 0, 0);
+	serv_got_update(gc, b->name, FALSE, 0);
 	gaim_blist_remove_buddy(b);
 	/* XXX - This results in incorrect group counts--needs to be fixed in the core */
 	/* XXX - We also need to call remove_idle_buddy() in server.c for idle buddies */ 
@@ -177,7 +155,7 @@ static void rendezvous_removeallfromlocal(GaimConnection *gc)
 					b = (GaimBuddy *)bnode;
 					if (b->account != account)
 						continue;
-					serv_got_update(gc, b->name, FALSE, 0, 0, 0, 0);
+					serv_got_update(gc, b->name, FALSE, 0);
 					gaim_blist_remove_buddy(b);
 				}
 			}
@@ -199,7 +177,9 @@ static void rendezvous_handle_rr_a(GaimConnection *gc, ResourceRecord *rr, const
 		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
 	}
 
+#if 0
 	memcpy(rb->ip, rdata, 4);
+#endif
 }
 
 static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
@@ -265,7 +245,8 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
 		}
-		serv_got_update(gc, name, TRUE, 0, 0, rb->idle, rb->status);
+		serv_got_update(gc, name, TRUE, 0);
+		/* XXX - Idle time is rb->idle and status is rb->status */
 	}
 
 	node1 = mdns_txt_find(rdata, "msg");
@@ -366,7 +347,7 @@ static const char* rendezvous_prpl_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "rendezvous";
 }
 
-static void rendezvous_prpl_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
+static void rendezvous_prpl_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
 		if (b->uc & UC_UNAVAILABLE)
@@ -631,11 +612,6 @@ static int rendezvous_prpl_send_im(GaimConnection *gc, const char *who, const ch
 	return 1;
 }
 
-static void rendezvous_prpl_set_away(GaimConnection *gc, const char *state, const char *text)
-{
-	gaim_debug_error("rendezvous", "Set away, state=%s,  text=%s\n", state, text);
-}
-
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info;
@@ -691,7 +667,6 @@ static void init_plugin(GaimPlugin *plugin)
 	prpl_info.login					= rendezvous_prpl_login;
 	prpl_info.close					= rendezvous_prpl_close;
 	prpl_info.send_im				= rendezvous_prpl_send_im;
-	prpl_info.set_away				= rendezvous_prpl_set_away;
 
 	if (gethostname(hostname, 255) != 0) {
 		gaim_debug_warning("rendezvous", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
