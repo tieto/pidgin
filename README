@@ -1,0 +1,38 @@
+gaim
+========================
+Rob Flynn <rob@linuxpimps.com> IM: RobFlynn (currnet maintainer)
+Jim Duchek <jimduchek@ou.edu> IM: Zilding (former maintainer)
+Mark Spencer <markster@marko.net>
+
+Build:
+
+./configure ; make 
+for the stock version.  ./configure --help to see what option you can get.
+
+You need GTK 1.2.3.  I don't wanna hear about it, if you can't get it to
+work under a lower version.
+
+Run:
+
+type "./gaim"
+
+If you built as a GNOME applet, su to root and run "make install". 
+Afterwards panel->add applet->Amusements->Gaim should be there.
+
+Notes:
+
+This should now compile under Solaris, Digital Unix, Irix, etc w/o a
+problem.
+This compiles without warnings on Linux-x86 2.2.10 glibc2.1, GTK 1.2.3 system.
+If you get warnings on something else, let me know and I'll check it out.
+If you get errors, upgrade to the latest GTK-1.2 before bothering me.
+
+The resulting executable is standalone, so you can put it in /usr/bin or
+whatever.
+
+Send me bug reports.  The web page is http://www.marko.net/gaim and the ftp
+site is ftp://ftp.marko.net/pub/gaim
+
+Keep your eyes out for updates, and I'll try to keep the program maintained.
+Other contributors and patches are welcomed.  Please read the FAQ first.
+

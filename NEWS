@@ -1,0 +1,97 @@
+-=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
+
+0.9.11:
+	Jeramey got a new Comfy Chair! Its very very comfy!  Whee!
+Jim also had a little hyper-drunken moment and started hacking away at
+a new configuration format for GAIM.  Looks like we're running .gaimrc
+version 1 now.  Gotta love it.  I got bored and hacked in a couple font
+properties that will, in time, contain more features.  That's about it
+for this version -- cept for that memory leak we fixed.  Shush! We're
+not plumbers! -- rob
+
+** Extra special update **
+
+Well guys, it looks like we all stopped working on gaim, moved to California,
+and took up a new job.  Don't worry though, those beach bums out here havent
+worn off on us yet.  I've decided to pick up the Gaim torch myself and continue
+development ont he prohect.  Hopefully we wont have any more five month braks in
+the project.  Sorry about that, guys :)
+
+0.9.10: 
+	Umm.  Dont ask.  Silly memory leak.  For those of you who
+wondered, you were losing about 256 bytes every 25 seconds for each
+person you have on your contact list.  Make fun of us.  Better yet ..
+Send us beer.  We'll do better :)
+
+0.9.9:
+	Welp, All of you boys and girls who run Mandrake and have some
+problems with GAIM working properly, please check out the FAQ file.  It 
+contains a nice fix submitted by one of our users.  I hope this works for
+you guys!
+	Jim appears to have intoxicated himself.  This is, as always, a
+Good Thing (tm).  His late-night adventure with the liquid-bread food group
+lead to the birth of a nice little feature called `The Lag-O-Meter'.  Dont
+ask, just try it out :).  It is pretty pointless if you have a super-fast
+connection but if you are a modem user, like many of us are, then try it out.
+	There's also some idle preferences and some other little random
+bug fixes.  Check'em out yo :)
+
+0.9.8:
+	Get Along Lil' Doggies.  Heh.  Looks like we have yet another new
+version of gaim for you guys to play with.  Be gentle now, it has a few
+new fetures.  The HTML widget is now more robust and we have *da da da* 
+HTTP proxy support.  
+	Oh By The Way, Do not pay too much attention to what we are doing
+with this release.  We are all a little bit happy tonight.  You must love
+life.  This is a special release of gaim.  We will be releasing some wonderful
+photographs soon .. or perhaps if we get the bloody webcam working then we
+will take a couple of quick snapshots.
+	Looks like the GAIM developers convention (cool name huh) that we
+had this weekend in Auburn, AL went wonderfully :).  yum yum yum. Hahahah. Oh
+by the way.  Beware of insecure rednecks in the deli.  Bad things.
+	In (non)related news, Jeramey could not successfully slaughter the
+one pound hamburger that he ordered.  (I think he could have done it but he
+wasn't feeling very well at the time).
+	Oh Yes, New Logo Too :) You likes? Thanks, Naru!
+	Just a little side-note: it looks like we didnt make the release that
+we had expected during the Gaim Convention.  Maybe we partied too much? I am
+not sure.  I remember watching the sun rise before I went to bed, though.
+Oh well.  Here's your release!  Enjoy!
+	By The Way, we have uploaded our party pictures to a website.
+http://www.dorky.net/gaim/party/  They are nothing spectacular but I hope you
+enjoy them! :).
+
+0.9.7:
+	Well, boys and girls, it's that time again!  Yup, time for the good
+release fairy to come bless us with her infinite wisdom and divine presence.
+Umm, yeah, something like that.  Anyways, this release has several little
+"bad" network fixes (as Jim likes to say) and a couple touch-ups to a few
+other features.  It also features preliminary oscar support.  Thanks to Jim
+and Adam ("the libfaim guy")  hehe :)  We have also corrected a problem with
+gaim not wainting to correctly save your password if you have an underscore
+in it.  Thanks to w1za7d for pointing out the underscore problem.  ' and \
+have also been fixed in passwords. :o) 
+
+0.9.6:
+	Sorry about the little segfaulting bugs in the past release.  Rob
+is stupid. :).  Anyways, they have been patched up and a couple new features
+have been added.  I hope you guys enjoy.
+
+0.9.5:
+	Well we added a myriad of new features to this release. (A lot of
+small buggie fixes too.)  If you need a detailed list just check out the
+ChangeLog.  We now have a new webpage design and have added a FAQ to the
+distribution.  Before coming to us with any problems please take a quick
+look through the FAQ to make sure we havent already covered your question.
+	Also, thanks to our beloved Web Monkey, FlynOrange, we have all
+learned the true power of foam weapons, slinkies, and whoopie cushions.  Hmm
+gotta love those pranks, eh?
+
+0.8.0:
+	Well, just starting the NEWS file.  I'll try to remember what's new
+from the last version.  Hmmm.  BIG code reorg.  Import/export, buddy pounce
+among the major new features.  Autoconf script too, which is a big win.
+Apologies to those who submitted patches which haven't made it in.. I
+promise, the next version!  This code reorg took up a lot of my time, and I
+want to get it out there.  
+

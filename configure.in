@@ -1,0 +1,102 @@
+dn3l Process this file with autoconf to produce a configure script.
+AC_INIT(src/aim.c)
+
+AM_INIT_AUTOMAKE([gaim], [0.9.11])
+
+dnl Checks for programs.
+AM_PROG_LIBTOOL
+AC_PROG_CC
+AC_PROG_INSTALL
+
+
+AC_CYGWIN
+
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_STRUCT_TM
+
+dnl Checks for library functions.
+AC_TYPE_SIGNAL
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS(socket strdup strstr atexit)
+
+dnl This is a bad, bad hack.  I am a bad, bad man.
+CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include"
+
+AC_ARG_ENABLE(debug, [  --enable-debug          compile with debugging support],enable_debug=yes,)
+AC_ARG_ENABLE(gnome, [  --enable-gnome          compile as a GNOME applet],enable_gnome=yes,)
+AC_ARG_ENABLE(esd,   [  --disable-esd           Turn off ESD (default=auto)],enable_esd=no,enable_esd=yes)
+AC_ARG_ENABLE(oscar, [  --enable-oscar          Enable Oscar support (experimental)],enable_oscar=yes,)
+AC_ARG_ENABLE(nas,   [  --enable-nas            Enable NAS (Network Audio System) support],enable_nas=yes,)
+dnl AC_ARG_ENABLE(plugins, [  --enable-plugins         compile with plugin support],enable_plugins=yes,)
+
+GAIM_CFLAGS="$CFLAGS -I../"
+GAIM_LIBS="$LIBS"
+GAIM_LDADD="$LDADD"
+LIBFAIM_DO=""
+
+if test "$enable_debug" = yes ; then
+	GAIM_CFLAGS="$GAIM_CFLAGS -Wall -d -g -DDEBUG"
+fi
+
+if test "$enable_oscar" = yes ; then
+	GAIM_CFLAGS="$GAIM_CFLAGS -DUSE_OSCAR -I../libfaim"
+        GAIM_LDADD="$GAIM_LDADD -L../libfaim -lfaim"
+        LIBFAIM_DO="libfaim.a"
+fi
+
+if test "$enable_gnome" = yes ; then
+	GNOME_INIT(applets)
+	GNOME_X_CHECKS
+        GAIM_CFLAGS="$GNOME_INCLUDEDIR $GAIM_CFLAGS -DUSE_APPLET"
+	GAIM_LIBS="$GAIM_LIBS $GNOME_LIBDIR $GTK_LIBS $GNOME_APPLETS_LIBS"
+else
+	AM_PATH_GLIB(1.2.0)
+	AM_PATH_GTK(1.2.0)
+	GAIM_LIBS="$GAIM_LIBS $GTK_LIBS"
+	
+fi
+
+GAIM_CFLAGS="$GAIM_CFLAGS $GTK_CFLAGS"
+
+if test "$enable_plugins" = yes ; then
+	GAIM_CFLAGS="$GAIM_CFLAGS -DGAIM_PLUGINS"
+fi
+
+if test "$enable_nas" = yes ; then
+	GAIM_CFLAGS="$GAIM_CFLAGS -DNAS_SOUND"
+        GAIM_LIBS="$GAIM_LIBS -laudio"
+fi
+
+if test "$enable_esd" = yes ; then
+	AM_PATH_GESD
+        if test "$no_esd" != yes ; then
+        	GAIM_CFLAGS="$GAIM_CFLAGS $ESD_CFLAGS -DESD_SOUND"
+                GAIM_LIBS="$GAIM_LIBS $ESD_LIBS"
+        fi
+fi
+
+if test "$ac_cv_cygwin" = yes ; then
+	GAIM_LDADD="$GAIM_LDADD -static"
+	GAIM_CFLAGS="$GAIM_CFLAGS -Wall -g -DDEBUG"
+fi                           
+
+AC_SUBST(GAIM_CFLAGS)
+AC_SUBST(GAIM_LIBS)
+AC_SUBST(GAIM_LDADD)
+AC_SUBST(LIBFAIM_DO)
+
+AC_OUTPUT([Makefile
+	   src/Makefile
+           sounds/Makefile
+           pixmaps/Makefile
+           libfaim/Makefile
+           doc/Makefile
+           m4/Makefile
+          ])

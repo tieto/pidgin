@@ -1,0 +1,118 @@
+GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
+
+version 0.9.11:
+	* <STRIKE>Strike Tag Support</STRIKE> :-)
+	* Another memory leak fix
+	* New .gaimrc format
+	* Better support for multiple screen names
+	* Font Properties
+	* Saving of buddylist window position 
+	* Fixed a problem with GAIM and Mozilla
+	* New Sound Properties
+	* More General Properties
+	* Bigger Text-Entry field (Thanks to CrazyDavy for this one)
+	* Various Random Bug fixes
+
+version 0.9.10 (11/03/1999):
+	* Fixed a nasty memory leak.  No more 40M GAIM processes. LOL
+	* IDLE Times are displayed in a neater fashion.
+ 
+version 0.9.9  (10/31/1999):
+	* A little selection bug has been squished
+	* Small memory leak fixed
+	* Small network fix (problem with HTTP Proxy fixed?)
+	* Proxy stuff should work now :)
+	* Widget table support, dir info looks nicer
+	* Info box looks nicer (thanks to Decklin Foster)
+	* Client now 'corrects' time values from the server for accurate
+          login times.
+	* Lag-O-Meter (ala Drunken Jim)
+	* IDLE Preferences
+
+version 0.9.8  (10/04/1999):
+	* HTTP Proxy Support (No SOCKS yet)
+	* HTML Widget more robust
+	* Graphical Debug Window
+	* Buddylist bug fixed
+	* Some logging fixes and improvements
+	* configurable host/port selection
+	* Clickable Links in buddy chat
+	* New GAIM Logo 
+	* Display Signon/Signoff messages in conversation windows 
+	* Option to strip HTML from logged messages
+	* GNOME cleanups (It might work now haha)
+	* When viewing user info, URLS are converted to clickable links
+	* Tooltips on URLS
+
+version 0.9.7  (08/08/1999):
+	* Preliminary Oscar Support
+        * Fixed bad network bug
+        * Fixed some bad text rendering bugs in the HTML widget
+        * log all conversation names are now normalized.
+        * Fixed another bad network bug :)
+        * Multiple browser support, some Netscape buggies fixed.
+	* Permit/Deny preferences moved to 'Permit' pane on buddylist.
+	* Fixed problem with _, ', and \ in passwords
+	  
+version 0.9.6  (08/01/1999):
+	* Fixed 'log all conversation' segfault
+	* Added NAS support
+	* Removed Xmu dependancies.
+	* Restructured network code
+	* ESD detection more robust.
+	* Sound fallbacks are MUCH more robust!
+
+version 0.9.5  (07/25/1999):
+	* Fixed About Box SegFault
+	* Autologin Works with Applet
+	* Option to Show Buddy List after Signon with Applet
+	* 2048 character messages
+	* Away-Detection (shows a different icon on the buddy list)
+	* Fixed Segfault with messages > allowed size
+	* Added option to log all conversations
+	* Changed g_new to g_new0
+	* Buddy List: Right Click Menus
+	* Find Buddy By Email
+	* Find Buddy By Info
+	* New HTML widget (Underline/Links/HRs)
+	* Updated Toolbar with 'Underline' Icon
+	* More Buddy Pounce Options
+	* Option to auto-change urls into clickable links (Under Prefs)
+	* Better Buddy Chat functionality
+	* Away Prefs
+	* Registration Information (Let Us Know Who You Are)
+	* Buddy Chat Prefs (Update Chatroom Lists)
+	* Set User Info
+	* FAQ added to the distribution
+	* Sound problem with some systems fixed
+	* Set Dir Info
+	* Autostart of Netscape on URL Click
+	* DnD Rearranging of Groups
+	* Better Netscape Functionality
+	* Right Click `URL' Menus
+	* DnD Rearranging of Buddies
+	* Script to convert win95 buddylist to gaim buddylist
+	* Added `Link/URL' button to conversation window
+	* ESD is now autodetected
+	* Not too important but we GNU-ified the source tree :)
+
+version 0.8.0  (04/31/1999):
+	* Code clean-up
+	* Updated Prefs
+	* Buddy Pouncing
+	* Pixmaps for buttons
+	* Buddylist import/export
+	* Autoconf/Automake
+	* Conversation Logging
+	* Coloured Text Selection
+	* Updated Preferences
+	* ESD Support
+	* Minor Bug Fixes
+	* `Warning' support
+	* `Blocking' on conversation window
+	* Add/Remove buddy from conversation window
+	* Scroll-Wheel Mice work in Conversation Window
+	* Fixed WindowMaker Appicon 
+	* Version Number in About Box
+	* GAIM Slogan in about box :)
+	* Created Changelog File :) 
