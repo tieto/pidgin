@@ -26,6 +26,7 @@ version 0.60:
 		- Preferences dialog
 		- Plugins dialog (Ari Pollak)
 		- GtkIMHtml, sorta (Ari Pollak, Christian Hammond)
+		- Buddy Icons
 	* Notify.c plugin rewritten; check its configure dialog (Thanks,
 	  Etan Reisner)
 

@@ -3351,9 +3351,10 @@ static gboolean redraw_icon(gpointer data)
 	gdk_pixbuf_unref(scale);
 	gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
 	gdk_pixmap_unref(pm);
+	gtk_widget_queue_draw(c->icon);
 	if (bm)
 		gdk_bitmap_unref(bm);
-	delay = MAX(gdk_pixbuf_animation_iter_get_delay_time(c->iter), 13);
+	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter) / 10;
 #else
 	frames = gdk_pixbuf_animation_get_frames(c->anim);
 	frame = g_list_nth_data(frames, c->frame);
@@ -3441,7 +3442,7 @@ static void start_anim(GtkObject *obj, struct conversation *c)
 	GdkPixbufFrame *frame;
 	int delay;
 #if GTK_CHECK_VERSION(1,3,0)
-	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter);
+	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter) / 10;
 #else
 	frames = gdk_pixbuf_animation_get_frames(c->anim);
 	frame = g_list_nth_data(frames, c->frame);
@@ -3616,7 +3617,7 @@ void update_icon(struct conversation *c)
 	char filename[256];
 	FILE *file;
 #if GTK_CHECK_VERSION(1,3,0)
-	GError *err;
+	GError *err = NULL;
 #endif
 	void *data;
 	int len, delay;
@@ -3657,6 +3658,10 @@ void update_icon(struct conversation *c)
 
 #if GTK_CHECK_VERSION(1,3,0)
 	c->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
+	if (err) {
+		debug_printf("Buddy icon error: %s\n", err->message);
+		g_error_free(err);
+	}
 #else
 	c->anim = gdk_pixbuf_animation_new_from_file(filename);
 #endif
@@ -3667,15 +3672,24 @@ void update_icon(struct conversation *c)
 		return;
 
 #if GTK_CHECK_VERSION(1,3,0)
+	if (gdk_pixbuf_animation_is_static_image(c->anim)) {
+		c->iter = NULL;
+		delay = 0;
+		buf = gdk_pixbuf_animation_get_static_image(c->anim);
+	} else {
 		c->iter = gdk_pixbuf_animation_get_iter(c->anim, NULL);
 		buf = gdk_pixbuf_animation_iter_get_pixbuf(c->iter);
+		delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter);
+		delay = delay / 10;
+	}
+		sf = SCALE(c->anim);
 		scale = gdk_pixbuf_scale_simple(buf,
 						MAX(gdk_pixbuf_get_width(buf) * sf /
 						    gdk_pixbuf_animation_get_width(c->anim), 1),
 						MAX(gdk_pixbuf_get_height(buf) * sf /
 						    gdk_pixbuf_animation_get_height(c->anim), 1),
 						GDK_INTERP_NEAREST);
-		delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter);
+	
 #else
 		c->frame = 1;
 		frames = gdk_pixbuf_animation_get_frames(c->anim);
@@ -3693,8 +3707,8 @@ void update_icon(struct conversation *c)
 			delay = 0;
 		}
 #endif
-		if (delay)
-			c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+	if (delay)
+		c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 	
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
