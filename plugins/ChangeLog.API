@@ -5,10 +5,13 @@ version 0.80cvs:
 	* Removed: PRPL numbers : gaim_account_set_protocol(),
 	  gaim_account_get_protocol(), gaim_accounts_find_with_prpl_num,
 	  gaim_prpl_num_to_id(), gaim_prpl_id_to_num(), GaimProtocol
-	* Changed: chat-invited signal changed. See make docs for details
 
 	Protocol Plugin API: v6
 	* Added: can_receive_file & send_file to the GaimPluginProtocolInfo struct
+
+	Signals:
+	* Changed "chat-invited" to also include the components hash table so 
+	  plugins can use serv_join_chat when the signal is emitted.
 
 version 0.79 (06/24/2004):
 	Gaim API:
