@@ -78,13 +78,13 @@ src/protocols/jabber/xmltok.c
 src/protocols/jabber/xmltok_impl.c
 src/protocols/jabber/xmltok_ns.c
 src/protocols/jabber/xstream.c
-src/protocols/msn/away.c
 src/protocols/msn/dispatch.c
 src/protocols/msn/error.c
 src/protocols/msn/ft.c
 src/protocols/msn/msg.c
 src/protocols/msn/msn.c
 src/protocols/msn/notification.c
+src/protocols/msn/state.c
 src/protocols/msn/switchboard.c
 src/protocols/napster/napster.c
 src/protocols/oscar/admin.c
