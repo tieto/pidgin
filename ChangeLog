@@ -8,6 +8,7 @@ version 2.0.0
 	* gaim-remote can send text (John B. Silvestri)
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 	* Screenname colors in chats now come from GNOME color palette
+	* Yahoo! has the following new "/" commands:  /join, /buzz
 
 	Preference changes:
 	* Removed keyboard shortcut preferences for ctrl-b/i/u and made sure they
