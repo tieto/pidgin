@@ -73,6 +73,11 @@ SetDateSave on
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
 
+#  ;Remember the installer language
+#  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+#  !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
+#  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+
 ;--------------------------------
 ;Pages
   
@@ -90,108 +95,9 @@ SetDateSave on
   !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
-;Language Strings
-!ifndef WITH_GTK
-  LangString GTK_INSTALLER_NEEDED		${LANG_ENGLISH} \
-		"The GTK+ runtime environment is either missing or needs to be upgraded.$\r \
-		Please install v${GTK_VERSION} or higher of the GTK+ runtime"
-!endif
-  ; Componants Page
-  LangString GAIM_SECTION_TITLE			${LANG_ENGLISH} \
-		"Gaim Instant Messenger (required)"
-  LangString GTK_SECTION_TITLE			${LANG_ENGLISH} \
-		"GTK+ Rutime Environment (required)"
-  LangString GTK_THEMES_SECTION_TITLE		${LANG_ENGLISH} \
-		"GTK+ Themes"
-  LangString GTK_NOTHEME_SECTION_TITLE		${LANG_ENGLISH} \
-		"No Theme"
-  LangString GTK_WIMP_SECTION_TITLE		${LANG_ENGLISH} \
-		"Wimp Theme"
-  LangString GTK_BLUECURVE_SECTION_TITLE	${LANG_ENGLISH} \
-		"Bluecurve Theme"
-  LangString GTK_LIGHTHOUSEBLUE_SECTION_TITLE	${LANG_ENGLISH} \
-		"Light House Blue  Theme"
-  LangString GAIM_SECTION_DESCRIPTION		${LANG_ENGLISH} \
-		"Core Gaim files and dlls"
-  LangString GTK_SECTION_DESCRIPTION		${LANG_ENGLISH} \
-		"A multi-platform GUI toolkit, used by Gaim"
-  LangString GTK_THEMES_SECTION_DESCRIPTION	${LANG_ENGLISH} \
-		"GTK+ Themes can change the look and feel of GTK+ applications."
-  LangString GTK_NO_THEME_DESC			${LANG_ENGLISH} \
-        	"Don't install a GTK+ theme"
-  LangString GTK_WIMP_THEME_DESC		${LANG_ENGLISH} \
-		"GTK-Wimp (Windows impersonator) is a GTK theme that blends well into the Windows desktop environment."
-  LangString GTK_BLUECURVE_THEME_DESC		${LANG_ENGLISH} \
-        	"The Bluecurve theme."
-  LangString GTK_LIGHTHOUSEBLUE_THEME_DESC	${LANG_ENGLISH} \
-        	"The Lighthouseblue theme."
+;Translations
 
-  ; Extra GTK+ Dir Selector Page
-  LangString GTK_PAGE_TITLE			${LANG_ENGLISH} \
-		"Choose Install Location"
-  LangString GTK_PAGE_SUBTITLE			${LANG_ENGLISH} \
-		"Choose the folder in which to install GTK+"
-  LangString GTK_PAGE_INSTALL_MSG1		${LANG_ENGLISH} \
-		"Setup will install GTK+ in the following folder"
-  LangString GTK_PAGE_INSTALL_MSG2		${LANG_ENGLISH} \
-		"To install in a different folder, click Browse and select \
-		another folder. Click Next to continue."
-  LangString GTK_PAGE_UPGRADE_MSG1		${LANG_ENGLISH} \
-		"Setup will upgrade GTK+ found in the following folder"
-  LangString GTK_UPGRADE_PROMPT			${LANG_ENGLISH} \
-		"An old version of the GTK+ runtime was found. Do you wish to upgrade? $\r \
-		Note: Gaim may not work unless you do."
-
-  ; Gaim Section Prompts and Texts
-  LangString GAIM_UNINSTALL_DESC		${LANG_ENGLISH} \
-		"Gaim (remove only)"
-  LangString GAIM_PROMPT_WIPEOUT		${LANG_ENGLISH} \
-		"You're old Gaim directory is about to be deleted. Would you like to continue?$\r$\r \
-		Note: Any non-standard plugins that you may have installed will be deleted. $\r \
-		Gaim user settings will not be affected."
-  LangString GAIM_PROMPT_DIR_EXISTS		${LANG_ENGLISH} \
-		"The installation directory you specified already exists. Any contents $\r \
-		it may have will be deleted. Would you like to continue?"
-
-  ; GTK+ Section Prompts
-  LangString GTK_INSTALL_ERROR			${LANG_ENGLISH} \
-		"Error installing GTK+ runtime."
-  LangString GTK_BAD_INSTALL_PATH		${LANG_ENGLISH} \
-		"The path you entered can not be accessed or created."
-  LangString GTK_DLL_CONFLICT_PROMPT		${LANG_ENGLISH} \
-		"Duplicate GTK+ dlls were found in your Windows dll search path and will$\r \
-		likely conflict with your GTK+ runtime installation. $\r$\r \
-		$\r \
-		Would you like to rename these dlls to avoid any possible conflicts?$\r \
-		(E.G. somedll.dll to somedll.dll.prob)$\r \
-		$\r \
-		Note: Any applications relying on these dlls will no longer function.$\r \
-		It is suggested that you contact the authors of these applications$\r \
-		to notify them of this conflict."
-  LangString GTK_INSTALL_TO_GAIM_DIR		${LANG_ENGLISH} \
-		"Installing GTK+ runtime package to your Gaim installation directory.$\r \
-		(This will prevent Gaim from using any of the duplicate dlls found in $\r \
-		in your Windows dll search path)."
-  LangString GTK_CAN_NOT_RENAME_CONFLICT_DLL	${LANG_ENGLISH} \
-		"A duplicate GTK+ dll was found in your Windows dll search path and will$\r \
-		likely conflict with your GTK+ runtime installation. $\r$\r \
-                You do not have permission to rename this file.  To avoid any possible dll$\r \
-                conflicts, you can install the GTK+ runtime files to the Gaim installation$\r \
-                directory.  Do you wish to do so?$\r$\r \
-                Note: You may also resolve these conflicts by logging on with an Admin account$\r \
-                and running the Gaim installer once more. This will enable the Gaim installer to$\r \
-                rename the conflict dlls."
-
-  ; GTK+ Themes section
-  LangString GTK_NO_THEME_INSTALL_RIGHTS	${LANG_ENGLISH} \
-		"You do not have permission to install a GTK+ theme."
-
-  ; Uninstall Section Prompts
-  LangString un.GAIM_UNINSTALL_ERROR_1         	${LANG_ENGLISH} \
-		"The uninstaller could not find registry entries for Gaim.$\r \
-		It is likely that another user installed this application."
-  LangString un.GAIM_UNINSTALL_ERROR_2         	${LANG_ENGLISH} \
-		"You do not have permission to uninstall this application."
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\english.nsh"
 
 
 ;--------------------------------
@@ -528,6 +434,8 @@ Section Uninstall
     ; The WinPrefs plugin may have left this behind..
     DeleteRegValue HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim"
     DeleteRegValue HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
+#    ; Remove Language prefrence info
+#    DeleteRegKey ${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_REGISTRY_KEY}
 
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
@@ -996,7 +904,17 @@ Function .onInit
   !insertmacro UnselectSection ${SecGtkBluecurve}
   !insertmacro UnselectSection ${SecGtkLighthouseblue}
 
+#  ; Display Language selection dialog
+#  !insertmacro MUI_LANGDLL_DISPLAY
+
 FunctionEnd
+
+#Function un.onInit
+#
+#  ; Get stored language prefrence
+#  !insertmacro MUI_UNGETLANGUAGE
+#  
+#FunctionEnd
 
 Function .onSelChange
   Push $0
