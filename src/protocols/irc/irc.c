@@ -544,6 +544,53 @@ static void handle_mode(struct gaim_connection *gc, char *word[], char *word_eol
 	}
 }
 
+/* Handle our whois stuff here.  You know what, I have a sore throat.  You know
+ * what I think about that? I'm not too pleased with it.  Perhaps I should take
+ * some medicine, or perhaps I should go to bed? Blah!! */
+
+static void handle_whois(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
+{
+	struct irc_data *id = gc->proto_data;
+	char tmp[1024];
+
+	if (!id->in_whois) {
+		id->in_whois = TRUE;
+		id->whois_str = g_string_new("");
+	} else {
+		/* I can't decide if we should have one break or two */
+		id->whois_str = g_string_append(id->whois_str, "<BR>");
+		id->in_whois = TRUE;
+	}
+
+	switch (num) {
+		case 311:
+			id->whois_str = g_string_append(id->whois_str, "<b>User: </b>");
+			break;
+		case 312:
+			id->whois_str = g_string_append(id->whois_str, "<b>Server: </b>");
+			break;
+		case 313:
+			g_snprintf(tmp, sizeof(tmp), "<b>IRC Operator:</b> %s ", word[4]);
+			id->whois_str = g_string_append(id->whois_str, tmp);
+			break;
+
+		case 317:
+			id->whois_str = g_string_append(id->whois_str, "<b>Idle Time: </b>");
+			break;
+		case 319:
+			id->whois_str = g_string_append(id->whois_str, "<b>Channels: </b>");
+			break;
+		default:
+			break;
+	}
+	
+	if (word_eol[5][0] == ':')
+		id->whois_str = g_string_append(id->whois_str, word_eol[5] + 1);
+	else
+		id->whois_str = g_string_append(id->whois_str, word_eol[5]);
+
+}
+
 static void process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 {
 	struct irc_data *id = gc->proto_data;
@@ -580,23 +627,20 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	case 313:
 	case 317:
 	case 319:
-		if (!id->in_whois) {
-			id->in_whois = TRUE;
-			id->whois_str = g_string_new("");
-		} else {
-			id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
-			id->in_whois = TRUE;
-		}
-		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
+		handle_whois(gc, word, word_eol, n);
 		break;
 	case 318:
+		/*
 		id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
 		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
+		*/
+
 		{
 			GString *str = decode_html(id->whois_str->str);
 			g_show_info_text(str->str, NULL);
 			g_string_free(str, TRUE);
 		}
+
 		g_string_free(id->whois_str, TRUE);
 		id->whois_str = NULL;
 		id->in_whois = FALSE;
