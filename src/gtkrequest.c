@@ -488,8 +488,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 	if (primary != NULL || secondary != NULL) {
 		label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
-									 "%s</span>\n\n%s",
+									 "%s</span>%s%s",
 									 (primary ? primary : ""),
+									 (secondary ? "\n\n" : ""),
 									 (secondary ? secondary : ""));
 
 		label = gtk_label_new(NULL);
@@ -627,7 +628,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 						if (value != NULL) {
 							GtkTextBuffer *buffer;
-							
+
 							buffer = gtk_text_view_get_buffer(
 								GTK_TEXT_VIEW(textview));
 
