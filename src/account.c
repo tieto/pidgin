@@ -537,9 +537,9 @@ load_accounts(void)
 	for (child = xmlnode_get_child(node, "account"); child != NULL;
 			child = xmlnode_get_next_twin(child))
 	{
-		GaimAccount *new;
-		new = parse_account(child);
-		gaim_accounts_add(new);
+		GaimAccount *new_acct;
+		new_acct = parse_account(child);
+		gaim_accounts_add(new_acct);
 	}
 }
 
@@ -1669,8 +1669,6 @@ gaim_accounts_init(void)
 {
 	void *handle = gaim_accounts_get_handle();
 
-	load_accounts();
-
 	gaim_signal_register(handle, "account-connecting",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
@@ -1709,6 +1707,9 @@ gaim_accounts_init(void)
 	gaim_signal_register(handle, "account-removed",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_ACCOUNT));
+
+	load_accounts();
+
 }
 
 void

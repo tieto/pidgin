@@ -593,6 +593,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	if(!from)
 		return;
 
+	/* XXX: handle the error case */
+
 	resource_name = jabber_get_resource(from);
 	bare_jid = jabber_get_bare_jid(from);
 

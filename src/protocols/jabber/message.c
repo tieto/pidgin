@@ -69,13 +69,16 @@ static void handle_chat(JabberMessage *jm)
 	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
-		GaimConversation *conv;
+		if(jid->resource) {
+			GaimConversation *conv;
 
-		from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-		conv = jabber_find_unnormalized_conv(from, jm->js->gc->account);
-		if(conv)
-			gaim_conversation_set_name(conv, jm->from);
-		g_free(from);
+			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
+			conv = jabber_find_unnormalized_conv(from, jm->js->gc->account);
+			if(conv) {
+				gaim_conversation_set_name(conv, jm->from);
+			}
+			g_free(from);
+		}
 		from = g_strdup(jm->from);
 	} else {
 		from = g_strdup(jid->domain);

@@ -71,7 +71,7 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 
 			gaim_status_to_jabber(gstatus, &state, &msg, &priority);
 
-			if (state == JABBER_BUDDY_STATE_UNAVAILABLE) {
+			if (state == JABBER_BUDDY_STATE_UNAVAILABLE || state == JABBER_BUDDY_STATE_UNKNOWN) {
 				jabber_buddy_remove_resource(jb, js->user->resource);
 			} else {
 				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
