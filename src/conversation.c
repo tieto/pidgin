@@ -1728,7 +1728,11 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
        
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
-	gtk_widget_set_usize(entry, 300, 25);
+
+	if (display_options & OPT_DISP_CONV_BIG_ENTRY)
+		gtk_widget_set_usize(entry, 300, 50);
+	else
+		gtk_widget_set_usize(entry, 300, 25);
 
 	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
 	sep = gtk_vseparator_new();

@@ -663,7 +663,11 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_widget_show( vpaned );
 	gtk_widget_show( hpaned );
 	gtk_widget_show(chatentry);
-       	gtk_widget_set_usize(chatentry, 320, 25);
+
+	if (display_options & OPT_DISP_CHAT_BIG_ENTRY)
+       		gtk_widget_set_usize(chatentry, 320, 50);
+	else
+       		gtk_widget_set_usize(chatentry, 320, 25);
 	
 	gtk_container_add(GTK_CONTAINER(win),vpaned);
 	gtk_container_border_width(GTK_CONTAINER(win), 10);

@@ -676,6 +676,7 @@ static void im_page()
 
 	gaim_button(_("Show logins in window"), &display_options, OPT_DISP_SHOW_LOGON, box);
 	gaim_button(_("Show buttons with text"), &display_options, OPT_DISP_CONV_SHOW_TEXT, box);
+	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CONV_BIG_ENTRY, box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_WINDOWS, box);
 	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, box);
 	gaim_button(_("Ignore TiK Automated Messages"), &general_options, OPT_GEN_TIK_HACK, box);
@@ -705,6 +706,7 @@ static void chat_page()
 
 	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON, box);
 	gaim_button(_("Show buttons with text"), &display_options, OPT_DISP_CHAT_SHOW_TEXT, box);
+	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CHAT_BIG_ENTRY, box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_CHAT, box);
 
 	gtk_widget_show(prefdialog);

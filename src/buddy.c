@@ -1827,9 +1827,10 @@ void show_buddy_list()
 
 	setmenu = gtk_menu_new();
 	gtk_widget_show(setmenu);
-	menuitem = gaim_new_item(menu, _("Settings"), NULL);
+	//menuitem = gaim_new_item(menu, _("Settings"), NULL);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Settings"), prefs_small_xpm, NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), setmenu);
-	gtk_widget_show(menuitem);
+	//gtk_widget_show(menuitem);
 	menuitem = gtk_menu_item_new_with_label(_("User Info"));
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_info), NULL);
@@ -1852,7 +1853,7 @@ void show_buddy_list()
 #ifdef USE_PERL
 	perlmenu = gtk_menu_new();
 	gtk_widget_show(perlmenu);
-	menuitem = gaim_new_item(menu, _("Perl"), NULL);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Perl"), plugins_small_xpm, NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), perlmenu);
 	gtk_widget_show(menuitem);
 	menuitem = gtk_menu_item_new_with_label(_("Load Script"));
@@ -1876,7 +1877,7 @@ void show_buddy_list()
 	gtk_menu_item_right_justify(GTK_MENU_ITEM(menuitem));
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 	
-	gaim_new_item(menu, _("About"), show_about);
+	gaim_new_item(menu, _("About Gaim"), show_about);
 
         gtk_widget_show(menubar);
 
