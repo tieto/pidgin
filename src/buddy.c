@@ -903,10 +903,10 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 			while(*c && vis < 20) {
 				if(*c == '&')
 					inside = TRUE;
+				else if(*c == ';')
+					inside = FALSE;
 				if(!inside)
 					vis++;
-				if(*c == ';')
-					inside = FALSE;
 				length++;
 				c++; /* this is fun */
 			}

@@ -864,7 +864,11 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 
 static void proxy_dropdown_set(GObject *w, struct mod_account *ma) {
 	int opt = GPOINTER_TO_INT(g_object_get_data(w, "proxytype"));
-	gtk_widget_set_sensitive(ma->proxy_host_box, (opt != PROXY_NONE && opt != PROXY_USE_GLOBAL));
+	if(opt == PROXY_NONE || opt == PROXY_USE_GLOBAL)
+		gtk_widget_hide_all(ma->proxy_host_box);
+	else {
+		gtk_widget_show_all(ma->proxy_host_box);
+	}
 }
 
 static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
@@ -1031,7 +1035,8 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 	gtk_widget_show(entry);
 	ma->proxypass_entry = entry;
 
-	gtk_widget_set_sensitive(vbox2, !(gpi == NULL || gpi->proxytype == PROXY_NONE));
+	if(gpi == NULL || gpi->proxytype == PROXY_NONE)
+		gtk_widget_hide_all(vbox2);
 }
 
 static void show_acct_mod(struct gaim_account *a)
