@@ -1,5 +1,5 @@
-CFLAGS += -I\$(top_srcdir)/src -I\$(top_srcdir)/plugins -DCONFDIR=\"$(confdir)\"
-LIBS += $(GTK_LIBS)
+CFLAGS += -I\$(top_srcdir)/src -I\$(top_srcdir)/plugins -DCONFDIR=\"$(confdir)\" $(KRB4_CFLAGS)
+LIBS += $(GTK_LIBS) $(KRB4_LDFLAGS) $(KRB4_LIBS)
 
 pkgdir = $(libdir)/gaim
 pkg_LTLIBRARIES = libzephyr.la
