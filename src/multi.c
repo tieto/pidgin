@@ -868,7 +868,7 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 	gc->meter = NULL;
 }
 
-struct aim_user *new_user(char *name, int proto, int opts)
+struct aim_user *new_user(const char *name, int proto, int opts)
 {
 	char *titles[4];
 	int i;

@@ -142,8 +142,8 @@ void gaim_setup(struct gaim_connection *gc)
 static void dologin(GtkWidget *widget, GtkWidget *w)
 {
 	struct aim_user *u;
-	char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
-	char *password = gtk_entry_get_text(GTK_ENTRY(pass));
+	const char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
+	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
 	if (!strlen(username)) {
 		do_error_dialog(_("Please enter your logon"), _("Signon Error"));
@@ -180,7 +180,7 @@ static void doenter(GtkWidget *widget, GtkWidget *w)
 
 static void combo_changed(GtkWidget *w, GtkWidget *combo)
 {
-	char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
+	const char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
 	struct aim_user *u;
 
 	u = find_user(txt, -1);
