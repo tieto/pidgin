@@ -1,4 +1,4 @@
-EXTRA_DIST = admin_icon.xpm aimicon.xpm \
+EXTRA_DIST = gaim.xpm admin_icon.xpm aimicon.xpm \
 	aimicon2.xpm aol_icon.xpm big.xpm \
 	bold.xpm dt_icon.xpm free_icon.xpm \
 	italic.xpm login_icon.xpm logo.xpm \
@@ -16,6 +16,9 @@ EXTRA_DIST = admin_icon.xpm aimicon.xpm \
 	daemon-buddyadd.xpm daemon-buddychat.xpm daemon-buddydel.xpm \
 	daemon-im.xpm daemon-info.xpm daemon-permadd.xpm \
 	daemon-permdel.xpm daemon.xpm fontface.xpm
+
+pixmapdir = $(datadir)/pixmaps
+pixmap_DATA = gaim.xpm
 	
 if GNOMEAPPLET
 gnomesysconf = `@GNOME_CONFIG@ --sysconfdir`

@@ -21,5 +21,8 @@ gaimsound_DATA = $(gaim_SOUND)
 
 endif
 
+pixmapdir = $(datadir)/gnome/apps/Internet
+pixmap_DATA = gaim.desktop
+
 SUBDIRS = m4 libfaim sounds plugins pixmaps doc src
 ACLOCAL_AMFLAGS = -I m4
