@@ -6063,10 +6063,11 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 		char *buf = g_malloc(st.st_size);
 		file = fopen(iconfile, "rb");
 		if (file) {
+			md5_state_t *state;
 			char md5[16];
 			int len = fread(buf, 1, st.st_size, file);
 			fclose(file);
-			md5_state_t *state = g_malloc(sizeof(md5_state_t));
+			state = g_malloc(sizeof(md5_state_t));
 			md5_init(state);
 			md5_append(state, buf, len);
 			md5_finish(state, md5);
