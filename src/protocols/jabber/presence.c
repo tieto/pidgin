@@ -300,11 +300,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					real_jid = xmlnode_get_attrib(z, "jid");
 					affiliation = xmlnode_get_attrib(z, "affiliation");
 					role = xmlnode_get_attrib(z, "role");
+					if(affiliation != NULL && !strcmp(affiliation, "owner"))
+						flags |= GAIM_CBFLAGS_FOUNDER;
 					if (role != NULL) {
 						if (!strcmp(role, "moderator"))
-							flags = GAIM_CBFLAGS_OP;
+							flags |= GAIM_CBFLAGS_OP;
 						else if (!strcmp(role, "participant"))
-							flags = GAIM_CBFLAGS_VOICE;
+							flags |= GAIM_CBFLAGS_VOICE;
 					}
 				}
 			}
