@@ -711,6 +711,28 @@ syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	int total_users;
 
 	session = cmdproc->session;
+
+	if (cmd->param_count == 2)
+	{
+		char *buf;
+		/*
+		 * This can happen if we sent a SYN with an up-to-date
+		 * buddy list revision, but we send 0 to get a full list.
+		 * So, error out.
+		 */
+		buf = g_strdup_printf(
+				_("Your MSN buddy list for %s is temporarily unavailable. "
+				  "Please wait and try again."),
+				gaim_account_get_username(session->account));
+
+		gaim_connection_error(gaim_account_get_connection(session->account),
+							  buf);
+
+		g_free(buf);
+
+		return;
+	}
+
 	total_users  = atoi(cmd->params[2]);
 
 	if (total_users == 0)
