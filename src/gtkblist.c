@@ -3722,10 +3722,6 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 	} else {
 		gaim_gtk_blist_new_node(node);
 		gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
-		/* If the node is a contact, and gtknode was NULL, it's because it was dragged.
-		 * It *must* have been expanded in order for it to be dragged. */
-		if(GAIM_BLIST_NODE_IS_CONTACT(node))
-			gtknode->contact_expanded = TRUE;
 	}
 
 	newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel),

@@ -1122,7 +1122,10 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							}
 							g_string_append_printf(xhtml, "<span style='background: %s;'>", color->str);
 							g_string_free(color, TRUE);
-							c = strchr(c, '>') + 1;
+							if ((c = strchr(c, '>')) != NULL)
+								c++;
+							else
+								c = p;
 							pt->src_tag = "body";
 							pt->dest_tag = "span";
 							tags = g_list_prepend(tags, pt);
@@ -2762,6 +2765,9 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		/* Just in case :) */
 		if (end == NULL)
 			end = strchr(s, '\n');
+
+		if (end == NULL)
+			return FALSE;
 
 		len = end - s;
 
