@@ -23,7 +23,7 @@
 #include "gtkgaim.h"
 #include "gtkutils.h"
 #include "gtkimhtml.h"
-#include "gaim-disclosure.h"
+#include "gtkgaim-disclosure.h"
 
 #include "debug.h"
 
