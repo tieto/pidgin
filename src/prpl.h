@@ -409,6 +409,16 @@ void gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
  */
 void gaim_prpl_set_account_status(GaimAccount *account, GaimStatus *status);
 
+/**
+ * Retrieves the list of stock status types from a prpl.
+ *
+ * @param account The account the user is on.
+ * @param presence The presence for which we're going to get statuses
+ *
+ * @return List of statuses
+ */
+GList *gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence);
+
 /*@}*/
 
 /**************************************************************************/

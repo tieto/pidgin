@@ -654,6 +654,14 @@ void gaim_presence_set_idle(GaimPresence *presence, gboolean idle,
 							time_t idle_time);
 
 /**
+ * Sets the login time on a presence.
+ *
+ * @param presence The presence.
+ * @param level    The login time.
+ */
+void gaim_presence_set_login_time(GaimPresence *presence, time_t login_time);
+
+/**
  * Sets the warning level on a presence.
  *
  * @param presence The presence.

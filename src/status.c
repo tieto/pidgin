@@ -67,6 +67,7 @@ struct _GaimPresence
 
 	gboolean idle;
 	time_t idle_time;
+ 	time_t login_time;
 
 	unsigned int warning_level;
 
@@ -117,6 +118,7 @@ typedef struct
 {
 	GaimAccount *account;
 	char *name;
+	guint id;
 
 } GaimStatusBuddyKey;
 
@@ -216,6 +218,7 @@ gaim_status_type_new_with_attrs(GaimStatusPrimitive primitive,
 	g_return_val_if_fail(primitive  != GAIM_STATUS_UNSET, NULL);
 	g_return_val_if_fail(id         != NULL,              NULL);
 	g_return_val_if_fail(name       != NULL,              NULL);
+ 	g_return_val_if_fail(attr_id    != NULL,              NULL);
 	g_return_val_if_fail(attr_name  != NULL,              NULL);
 	g_return_val_if_fail(attr_value != NULL,              NULL);
 
@@ -567,6 +570,8 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 {
 	GaimPresenceContext context = gaim_presence_get_context(presence);
 
+	gaim_debug_info("notify_status_update", "Context is %d\n", context);
+
 	if (context == GAIM_PRESENCE_CONTEXT_ACCOUNT)
 	{
 		GaimAccountUiOps *ops = gaim_accounts_get_ui_ops();
@@ -613,11 +618,11 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 
 	status_type = gaim_status_get_type(status);
 
-	if (!active && gaim_status_type_is_independent(status_type))
+	if (!active && !gaim_status_type_is_independent(status_type))
 	{
 		gaim_debug(GAIM_DEBUG_ERROR, "status",
-				"Cannot deactivate an exclusive status (%s).\n",
-				gaim_status_type_get_id(status_type));
+				   "Cannot deactivate an exclusive status (%s).\n",
+				   gaim_status_type_get_id(status_type));
 		return;
 	}
 
@@ -628,14 +633,12 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 	{
 		const GList *l;
 
-		for (l = gaim_presence_get_statuses(presence);
-				l != NULL;
-				l = l->next)
+		for (l = gaim_presence_get_statuses(presence); l != NULL; l = l->next)
 		{
 			GaimStatus *temp_status = (GaimStatus *)l->data;
 			GaimStatusType *temp_type;
 
-			if (temp_status == status)
+			if  (!gaim_status_compare(temp_status, status))
 				continue;
 
 			temp_type = gaim_status_get_type(temp_status);
@@ -912,12 +915,11 @@ GaimPresence *
 gaim_presence_new_for_account(GaimAccount *account)
 {
 	GaimPresence *presence;
-
 	g_return_val_if_fail(account != NULL, NULL);
 
 	presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_ACCOUNT);
-
 	presence->u.account = account;
+	presence->statuses = gaim_prpl_get_statuses(account, presence);
 
 	return presence;
 }
@@ -930,8 +932,8 @@ gaim_presence_new_for_conv(GaimConversation *conv)
 	g_return_val_if_fail(conv != NULL, NULL);
 
 	presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_CONV);
-
 	presence->u.chat.conv = conv;
+	/* presence->statuses = gaim_prpl_get_statuses(conv->account, presence); ? */
 
 	return presence;
 }
@@ -941,19 +943,31 @@ gaim_presence_new_for_buddy(GaimBuddy *buddy)
 {
 	GaimPresence *presence;
 	GaimStatusBuddyKey *key;
+	GaimAccount *account;
+	gchar *hash_seed;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
+
+	account = buddy->account;
+	hash_seed = g_strdup_printf("%s:%s:%s", buddy->name, account->username,
+								account->protocol_id);
 
 	key = g_new0(GaimStatusBuddyKey, 1);
 	key->account = buddy->account;
 	key->name    = g_strdup(buddy->name);
+	key->id		 = g_str_hash(hash_seed);
 
-	if ((presence = g_hash_table_lookup(buddy_presences, key)) == NULL)
+	g_free(hash_seed);
+	hash_seed = NULL;
+
+	presence = g_hash_table_lookup(buddy_presences, key);
+	if (presence == NULL)
 	{
 		presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_BUDDY);
 
 		presence->u.buddy.name    = g_strdup(buddy->name);
 		presence->u.buddy.account = buddy->account;
+		presence->statuses = gaim_prpl_get_statuses(buddy->account, presence);
 
 		g_hash_table_insert(buddy_presences, key, presence);
 	}
@@ -996,6 +1010,9 @@ gaim_presence_destroy(GaimPresence *presence)
 		if (presence->u.chat.user != NULL)
 			g_free(presence->u.chat.user);
 	}
+
+	if (buddy_presences != NULL)
+		g_hash_table_destroy(buddy_presences);
 
 	if (presence->statuses != NULL)
 		g_list_free(presence->statuses);
@@ -1174,6 +1191,17 @@ gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
 }
 
 void
+gaim_presence_set_login_time(GaimPresence *presence, time_t login_time)
+{
+	g_return_if_fail(presence != NULL);
+
+	if (presence->login_time == login_time)
+		return;
+
+	presence->login_time = login_time;
+}
+
+void
 gaim_presence_set_warning_level(GaimPresence *presence, unsigned int level)
 {
 	g_return_if_fail(presence != NULL);
@@ -1267,12 +1295,29 @@ GaimStatus *
 gaim_presence_get_status(const GaimPresence *presence, const char *status_id)
 {
 	GaimStatus *status;
+	const GList *l = NULL;
 
 	g_return_val_if_fail(presence  != NULL, NULL);
 	g_return_val_if_fail(status_id != NULL, NULL);
 
-	status = (GaimStatus *)g_hash_table_lookup(presence->status_table,
-			status_id);
+	/* What's the purpose of this hash table? */
+  	status = (GaimStatus *)g_hash_table_lookup(presence->status_table,
+						   status_id);
+  
+	if (status == NULL) {
+		for (l = gaim_presence_get_statuses(presence); 
+			 l != NULL && status == NULL; l = l->next)
+		{
+			GaimStatus *temp_status = l->data;
+ 
+			if (!strcmp(status_id, gaim_status_get_id(temp_status)))
+				status = temp_status;
+		}
+
+		if (status != NULL)
+			g_hash_table_insert(presence->status_table,
+								g_strdup(gaim_status_get_id(status)), status);
+  	}
 
 	return status;
 }
@@ -1446,6 +1491,24 @@ score_pref_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	primitive_scores[index] = GPOINTER_TO_INT(value);
 }
 
+guint 
+gaim_buddy_presences_hash(gconstpointer key)
+{
+	return ((GaimStatusBuddyKey *)key)->id;
+}
+
+gboolean 
+gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
+{
+	GaimStatusBuddyKey *key_a = (GaimStatusBuddyKey *)a;
+	GaimStatusBuddyKey *key_b = (GaimStatusBuddyKey *)b;
+
+	if (key_a->id == key_b->id)
+		return TRUE;
+	else
+		return FALSE;
+}
+
 void
 gaim_statuses_init(void)
 {
@@ -1483,6 +1546,10 @@ gaim_statuses_init(void)
 	gaim_prefs_connect_callback("/core/status/scores/idle",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
+
+	/* XXX - I don't think this is destroyed correctly.  --Mark */
+	buddy_presences = g_hash_table_new(gaim_buddy_presences_hash,
+									   gaim_buddy_presences_equal);
 }
 
 void

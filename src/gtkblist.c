@@ -3476,13 +3476,13 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 	/* XXX: why do we assume we have a buddy here? */
 	if (!gtknode) {
 #if 0
-		gaim_debug(GAIM_DEBUG_ERROR, "gtkblist", "buddy %s has no ui_data\n", ((GaimBuddy *)node)->name);
+		gaim_debug_error("gtkblist", "buddy %s has no ui_data\n", ((GaimBuddy *)node)->name);
 #endif
 		return FALSE;
 	}
 
 	if (!gtkblist) {
-		gaim_debug(GAIM_DEBUG_ERROR, "gtkblist", "get_iter_from_node was called, but we don't seem to have a blist\n");
+		gaim_debug_error("gtkblist", "get_iter_from_node was called, but we don't seem to have a blist\n");
 		return FALSE;
 	}
 
@@ -3766,10 +3766,11 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 	contact = (GaimContact*)node;
 	buddy = gaim_contact_get_priority_buddy(contact);
 
-	if(buddy && (buddy->present != GAIM_BUDDY_OFFLINE ||
-			(gaim_account_is_connected(buddy->account) &&
-			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
-			gaim_blist_node_get_bool(node, "show_offline"))) {
+	if (buddy && (gaim_presence_is_online(buddy->presence) ||
+		(gaim_account_is_connected(buddy->account) &&
+			gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
+			gaim_blist_node_get_bool(node, "show_offline")))
+	{
 		GtkTreeIter iter;
 
 		if(!insert_node(list, node, &iter))
@@ -3819,14 +3820,15 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 	/* First things first, update the contact */
 	gaim_gtk_blist_update_contact(list, node->parent);
 
-	if(gtkparentnode->contact_expanded &&
-			(buddy->present != GAIM_BUDDY_OFFLINE ||
+	if (gtkparentnode->contact_expanded &&
+		(gaim_presence_is_online(buddy->presence) ||
 			(gaim_account_is_connected(buddy->account) &&
-			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
-			gaim_blist_node_get_bool(node->parent, "show_offline"))) {
+				gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
+			gaim_blist_node_get_bool(node->parent, "show_offline")))
+	{
 		GtkTreeIter iter;
 
-		if(!insert_node(list, node, &iter))
+		if (!insert_node(list, node, &iter))
 			return;
 
 		buddy_node(buddy, &iter, node);
@@ -4556,7 +4558,7 @@ void gaim_gtk_blist_docklet_toggle() {
 		} else {
 			/* we're logging in or something... do nothing */
 			/* or should I make the blist? */
-			gaim_debug(GAIM_DEBUG_WARNING, "blist",
+			gaim_debug_warning("gtkblist",
 					   "docklet_toggle called with gaim_connections_get_all() "
 					   "but no blist!\n");
 		}
@@ -4599,6 +4601,19 @@ void gaim_gtk_blist_docklet_remove()
 	}
 }
 
+void gaim_gtk_blist_status_changed(GaimBuddy *buddy, GaimStatus *status)
+{
+	g_return_if_fail(buddy != NULL);
+
+	/*
+	 * What do we do with status here?
+	 * g_return_if_fail(status != NULL);
+	 */
+
+	gaim_debug_info("gtkblist", "Updating buddy list\n");
+	gaim_gtk_blist_update(gaim_get_blist(), (GaimBlistNode*)buddy);	
+}
+
 static GaimBlistUiOps blist_ui_ops =
 {
 	gaim_gtk_blist_new_list,
@@ -4610,7 +4625,8 @@ static GaimBlistUiOps blist_ui_ops =
 	gaim_gtk_blist_set_visible,
 	gaim_gtk_blist_request_add_buddy,
 	gaim_gtk_blist_request_add_chat,
-	gaim_gtk_blist_request_add_group
+	gaim_gtk_blist_request_add_group,
+	gaim_gtk_blist_status_changed
 };
 
 

@@ -256,12 +256,7 @@ gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
 
 	presence = gaim_buddy_get_presence(buddy);
 
-	/*
-	 * TODO: Set a presence's sign-on time. We don't support this yet.
-	 */
-	gaim_debug_warning("prpl",
-					   "Attempting to set a user's sign-on time, but we "
-					   "don't support this yet! FIX IT!\n");
+	gaim_presence_set_login_time(presence, login_time);
 }
 
 void
@@ -337,6 +332,36 @@ gaim_prpl_set_account_status(GaimAccount *account, GaimStatus *status)
 
 	if (prpl_info->set_status != NULL)
 		prpl_info->set_status(account, status);
+}
+
+GList *
+gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence)
+{
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info;
+	GList *statuses = NULL;
+	GList *l;
+	GaimStatus *status;
+
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(presence != NULL, NULL);
+
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	
+	if (prpl == NULL)
+		return NULL;
+	
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info == NULL || prpl_info->status_types == NULL)
+		return NULL;
+
+	for (l = prpl_info->status_types(account); l != NULL; l = l->next)
+	{
+		status = gaim_status_new((GaimStatusType *)l->data, presence);
+		statuses = g_list_append(statuses, status);
+	}
+
+	return statuses;
 }
 
 
