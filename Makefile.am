@@ -3,6 +3,7 @@ EXTRA_DIST = \
 		gaim.spec.in \
 		gaim.desktop \
 		gaim2blt.pl \
+		gaim-installer.nsi \
 		HACKING \
 		PROGRAMMING_NOTES \
 		licq2gaim.pl \
