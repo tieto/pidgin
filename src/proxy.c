@@ -265,14 +265,14 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		release_dns_child(req);	
 		return;
 	}
-	if(G_LIKELY(rc>0)) {
+	if(rc>0) {
 		rc=read(req->fd_out, &addrlen, sizeof(addrlen));
-		if(G_LIKELY(rc>0)) {
+		if(rc>0) {
 			addr=g_malloc(addrlen);
 			rc=read(req->fd_out, addr, addrlen);
 		}
 	}
-	if(G_UNLIKELY(rc==-1)) {
+	if(rc==-1) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "Error reading from DNS child: %s",strerror(errno));
 		debug_printf("%s\n",message);
@@ -283,7 +283,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		number_of_dns_children--;
 		return;
 	}
-	if(G_UNLIKELY(rc==0)) {
+	if(rc==0) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "EOF reading from DNS child");
 		close(req->fd_out);
