@@ -1382,6 +1382,8 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 	} else {
 		gdk_window_raise(c->window->window);
 	}
+
+	set_convo_gc(c, b->connlist->data);
 }
 
 
