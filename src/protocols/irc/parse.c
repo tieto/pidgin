@@ -104,34 +104,35 @@ static struct _irc_user_cmd {
 	char *name;
 	char *format;
 	IRCCmdCallback cb;
+	char *help;
 } _irc_cmds[] = {
-	{ "action", ":", irc_cmd_ctcp_action },
-	{ "away", ":", irc_cmd_away },
-	{ "deop", ":", irc_cmd_op },
-	{ "devoice", ":", irc_cmd_op },
-	{ "invite", ":", irc_cmd_invite },
-	{ "j", "cv", irc_cmd_join },
-	{ "join", "cv", irc_cmd_join },
-	{ "kick", "n:", irc_cmd_kick },
-	{ "list", ":", irc_cmd_list },
-	{ "me", ":", irc_cmd_ctcp_action },
-	{ "mode", ":", irc_cmd_mode },
-	{ "msg", "t:", irc_cmd_privmsg },
-	{ "names", "c", irc_cmd_names },
-	{ "nick", "n", irc_cmd_nick },
-	{ "op", ":", irc_cmd_op },
-	{ "operwall", ":", irc_cmd_wallops },
-	{ "part", "c:", irc_cmd_part },
-	{ "ping", "n", irc_cmd_ping },
-	{ "query", "n:", irc_cmd_query },
-	{ "quit", ":", irc_cmd_quit },
-	{ "quote", "*", irc_cmd_quote },
-	{ "remove", "n:", irc_cmd_remove },
-	{ "topic", ":", irc_cmd_topic },
-	{ "umode", ":", irc_cmd_mode },
-	{ "voice", ":", irc_cmd_op },
-	{ "wallops", ":", irc_cmd_wallops },
-	{ "whois", "n", irc_cmd_whois },
+	{ "action", ":", irc_cmd_ctcp_action, N_("action &lt;action to perform&gt;:  Perform an action.") },
+	{ "away", ":", irc_cmd_away, N_("away [message]:  Set an away message, or use no message to return from being away.") },
+	{ "deop", ":", irc_cmd_op, N_("deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from someone. You must have ops yourself to do this.") },
+	{ "devoice", ":", irc_cmd_op, N_("devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from someone, preventing them from speaking if the room is +m. You must have ops to do this.") },
+	{ "invite", ":", irc_cmd_invite, N_("invite &lt;nick&gt; [room]:  Invite someone to join you in the specified chat room, or the current room.") },
+	{ "j", "cv", irc_cmd_join, N_("j &lt;room1&gt[,room2][,...] [key1[,key2][,...]]:  Enter one or more chat rooms, optionally providing a channel key if needed.") },
+	{ "join", "cv", irc_cmd_join, N_("join &lt;room1&gt[,room2][,...] [key1[,key2][,...]]:  Enter one or more chat rooms, optionally providing a channel key if needed.") },
+	{ "kick", "n:", irc_cmd_kick, N_("kick &lt;nick&gt; [message]:  Remove someone from a room. You must be a channel operator to do this.") },
+	{ "list", ":", irc_cmd_list, N_("list:  Bring up the list of chat rooms. <i>Warning, some servers may disconnect you upon doing this.</i>") },
+	{ "me", ":", irc_cmd_ctcp_action, N_("me &lt;action to perform&gt;:  Perform an action.") },
+	{ "mode", ":", irc_cmd_mode, N_("mode &lt;nick|channel&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a channel or user mode.") },
+	{ "msg", "t:", irc_cmd_privmsg, N_("msg &lt;nick&gt; &lt;message&gt;:  Sent a message to a user (as opposed to a channel).") },
+	{ "names", "c", irc_cmd_names, N_("names [channel]:  See who is in a channel.") },
+	{ "nick", "n", irc_cmd_nick, N_("nick &lt;new nick name&gt;:  Change your nick name.") },
+	{ "op", ":", irc_cmd_op, N_("op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You must have ops yourself to do this.") },
+	{ "operwall", ":", irc_cmd_wallops, N_("operwall &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
+	{ "part", "c:", irc_cmd_part, N_("part [room] [message]:  Leave the current room, or a specified room, with an optional message.") },
+	{ "ping", "n", irc_cmd_ping, N_("ping [nick]:  Asks how much lag a user (or the server if no user specified) has.") },
+	{ "query", "n:", irc_cmd_query, N_("query &lt;nick&gt; &lt;message&gt;:  Sent a message to a user (as opposed to a channel).") },
+	{ "quit", ":", irc_cmd_quit, N_("quit [message]:  Disconnect from the server, with an optional message.") },
+	{ "quote", "*", irc_cmd_quote, N_("quote [...]:  Send a raw command to the server.") },
+	{ "remove", "n:", irc_cmd_remove, N_("remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a channel operator to do this.") },
+	{ "topic", ":", irc_cmd_topic, N_("topic [new topic]:  View or change the channel topic.") },
+	{ "umode", ":", irc_cmd_mode, N_("umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode.") },
+	{ "voice", ":", irc_cmd_op, N_("voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must have ops to do this.") },
+	{ "wallops", ":", irc_cmd_wallops, N_("wallops &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
+	{ "whois", "n", irc_cmd_whois, N_("whois &lt;nick&gt;:  Get information on a user.") },
 	{ NULL, NULL, NULL }
 };
 
@@ -185,7 +186,7 @@ static void irc_register_command(struct _irc_user_cmd *c)
 	args[i] = '\0';
 
 	gaim_cmd_register(c->name, args, GAIM_CMD_P_PRPL, f, "prpl-irc", irc_parse_gaim_cmd,
-	                  _("No help is available at this time for this command."));
+	                  _(c->help));
 }
 
 void irc_register_commands(void)
