@@ -109,6 +109,7 @@ struct conversation {
 	/* stuff used for both IM and chat */
 	GtkWidget *window;
 	char name[80];
+	GtkWidget *toolbar;
 	GtkWidget *text;
 	GtkWidget *entry;
 	GtkWidget *italic;

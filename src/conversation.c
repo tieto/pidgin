@@ -2273,6 +2273,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	gdk_pixmap_unref(speaker_i);
 	gdk_pixmap_unref(image_i);
 
+	c->toolbar = toolbar;
 	c->bold = bold;
 	c->strike = strike;
 	c->italic = italic;
