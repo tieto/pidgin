@@ -1016,12 +1016,13 @@ static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
 		switch (type) {
 		case 0x0000:
-		case 0x0001: { /* not sure what the difference between 1 and 0 is */
+		case 0x0001: { /* buddy icon checksum */
+			/* not sure what the difference between 1 and 0 is */
 			fu8_t *md5 = aimbs_getraw(bs, length);
 			ret = userfunc(sess, rx, type, flags, length, md5);
 			free(md5);
 			} break;
-		case 0x0002: {
+		case 0x0002: { /* available message */
 			/* there is a second length that is just for the message */
 			char *msg = aimbs_getstr(bs, aimbs_get16(bs));
 			ret = userfunc(sess, rx, msg);

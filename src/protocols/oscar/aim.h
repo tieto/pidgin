@@ -1349,6 +1349,7 @@ faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs);
 faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num);
 faim_internal aim_tlvlist_t *aim_readtlvchain_len(aim_bstream_t *bs, fu16_t len);
 faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig);
+faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two);
 faim_internal void aim_freetlvchain(aim_tlvlist_t **list);
 faim_internal aim_tlv_t *aim_gettlv(aim_tlvlist_t *, fu16_t t, const int n);
 faim_internal char *aim_gettlv_str(aim_tlvlist_t *, const fu16_t t, const int n);

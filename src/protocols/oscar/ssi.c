@@ -214,28 +214,8 @@ static int aim_ssi_itemlist_cmp(struct aim_ssi_item *cur1, struct aim_ssi_item *
 	if (!cur1->data && cur2->data)
 		return 3;
 
-	if (cur1->data && cur2->data) {
-		/* Write each TLV list to a bstream and then memcmp them */
-		aim_bstream_t bs1, bs2;
-
-		if (aim_sizetlvchain(&cur1->data) != aim_sizetlvchain(&cur2->data))
+	if ((cur1->data && cur2->data) && (aim_tlvlist_cmp(cur1->data, cur2->data)))
 			return 4;
-
-		aim_bstream_init(&bs1, ((fu8_t *)malloc(aim_sizetlvchain(&cur1->data)*sizeof(fu8_t))), aim_sizetlvchain(&cur1->data));
-		aim_bstream_init(&bs2, ((fu8_t *)malloc(aim_sizetlvchain(&cur2->data)*sizeof(fu8_t))), aim_sizetlvchain(&cur2->data));
-
-		aim_writetlvchain(&bs1, &cur1->data);
-		aim_writetlvchain(&bs2, &cur2->data);
-
-		if (memcmp(bs1.data, bs2.data, bs1.len)) {
-			free(bs1.data);
-			free(bs2.data);
-			return 4;
-		}
-
-		free(bs1.data);
-		free(bs2.data);
-	}
 
 	if (cur1->name && !cur2->name)
 		return 5;
@@ -1047,7 +1027,14 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t icon
 	/* This TLV is added to cache the icon. */
 	aim_addtlvtochain_noval(&data, 0x0131);
 
-	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "0", AIM_SSI_TYPE_ICONINFO))) {
+	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO))) {
+		/* If the new tlvchain and oldtlvchain are the same, then do nothing */
+		if (!aim_tlvlist_cmp(tmp->data, data)) {
+			/* The new tlvlist is the identical to the old one */
+			aim_freetlvchain(&data);
+			free(csumdata);
+			return 0;
+		}
 		aim_freetlvchain(&tmp->data);
 		tmp->data = data;
 	} else {

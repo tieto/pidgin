@@ -262,6 +262,39 @@ faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
 	return new;
 }
 
+/*
+ * Compare two TLV lists for equality.  This probably is not the most 
+ * efficient way to do this.
+ *
+ * @param one One of the TLV chains to compare.
+ * @param two The other TLV chain to compare.
+ * @preturn Retrun 0 if the lists are the same, return 1 if they are different.
+ */
+faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
+{
+	aim_bstream_t bs1, bs2;
+
+	if (aim_sizetlvchain(&one) != aim_sizetlvchain(&two))
+		return 1;
+
+	aim_bstream_init(&bs1, ((fu8_t *)malloc(aim_sizetlvchain(&one)*sizeof(fu8_t))), aim_sizetlvchain(&one));
+	aim_bstream_init(&bs2, ((fu8_t *)malloc(aim_sizetlvchain(&two)*sizeof(fu8_t))), aim_sizetlvchain(&two));
+
+	aim_writetlvchain(&bs1, &one);
+	aim_writetlvchain(&bs2, &two);
+
+	if (memcmp(bs1.data, bs2.data, bs1.len)) {
+		free(bs1.data);
+		free(bs2.data);
+		return 1;
+	}
+
+	free(bs1.data);
+	free(bs2.data);
+
+	return 0;
+}
+
 /**
  * aim_freetlvchain - Free a TLV chain structure
  * @list: Chain to be freed

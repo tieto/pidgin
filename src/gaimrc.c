@@ -29,6 +29,7 @@
 #include "proxy.h"
 #include "prpl.h"
 #include "sound.h"
+#include "status.h"
 #include "ui.h"
 #include "util.h"
 
