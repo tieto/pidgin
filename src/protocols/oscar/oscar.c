@@ -61,6 +61,9 @@
 
 #define OSCAR_CONNECT_STEPS 6
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
+#define OSCAR_DEFAULT_AUTHORIZATION TRUE
+#define OSCAR_DEFAULT_HIDE_IP TRUE
+#define OSCAR_DEFAULT_WEB_AWARE FALSE
 
 #define FAIM_DEBUG_LEVEL 0
 
@@ -5039,6 +5042,7 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	va_list ap;
 	fu16_t maxpermits, maxdenies;
 
@@ -5064,7 +5068,10 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(sess);
-		aim_icq_hideip(sess);
+		aim_icq_setsecurity(sess,
+			gaim_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION),
+			gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE),
+			gaim_account_get_bool(account, "hide_ip", OSCAR_DEFAULT_HIDE_IP));
 	}
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
@@ -7179,6 +7186,64 @@ static GList *oscar_blist_node_menu(GaimBlistNode *node) {
 	}
 }
 
+static void
+oscar_icq_privacy_opts(GaimConnection *gc, GaimRequestFields *fields)
+{
+	OscarData *od = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimRequestField *f;
+	gboolean auth, hide_ip, web_aware;
+
+	f = gaim_request_fields_get_field(fields, "authorization");
+	auth = gaim_request_field_bool_get_value(f);
+
+	f = gaim_request_fields_get_field(fields, "hide_ip");
+	hide_ip = gaim_request_field_bool_get_value(f);
+
+	f = gaim_request_fields_get_field(fields, "web_aware");
+	web_aware = gaim_request_field_bool_get_value(f);
+
+	gaim_account_set_bool(account, "authorization", auth);
+	gaim_account_set_bool(account, "hide_ip", hide_ip);
+	gaim_account_set_bool(account, "web_aware", web_aware);
+
+	aim_icq_setsecurity(od->sess, auth, web_aware, hide_ip);
+}
+
+static void
+oscar_show_icq_privacy_opts(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *g;
+	GaimRequestField *f;
+	gboolean auth, hide_ip, web_aware;
+
+	auth = gaim_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION);
+	hide_ip = gaim_account_get_bool(account, "hide_ip", OSCAR_DEFAULT_HIDE_IP);
+	web_aware = gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE);
+
+	fields = gaim_request_fields_new();
+
+	g = gaim_request_field_group_new(NULL);
+
+	f = gaim_request_field_bool_new("authorization", _("Require authorization"), auth);
+	gaim_request_field_group_add_field(g, f);
+
+	f = gaim_request_field_bool_new("hide_ip", _("Hide IP address"), hide_ip);
+	gaim_request_field_group_add_field(g, f);
+
+	f = gaim_request_field_bool_new("web_aware", _("Web aware"), web_aware);
+	gaim_request_field_group_add_field(g, f);
+
+	gaim_request_fields_add_group(fields, g);
+
+	gaim_request_fields(gc, _("ICQ Privacy Options"), _("ICQ Privacy Options"),
+						NULL, fields,
+						_("OK"), G_CALLBACK(oscar_icq_privacy_opts),
+						_("Cancel"), NULL, gc);
+}
 
 static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 	OscarData *od = gc->proto_data;
@@ -7404,7 +7469,8 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 			oscar_show_set_info);
 	m = g_list_append(m, act);
 
-	if (od->icq) {
+	if (od->icq)
+	{
 		act = gaim_plugin_action_new(_("Set User Info (URL)..."),
 				oscar_show_set_info_icqurl);
 		m = g_list_append(m, act);
@@ -7414,7 +7480,8 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 			oscar_change_pass);
 	m = g_list_append(m, act);
 
-	if (od->sess->authinfo->chpassurl) {
+	if (od->sess->authinfo->chpassurl != NULL)
+	{
 		act = gaim_plugin_action_new(_("Change Password (URL)"),
 				oscar_show_chpassurl);
 		m = g_list_append(m, act);
@@ -7424,10 +7491,18 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 		m = g_list_append(m, act);
 	}
 
-	if (!od->icq) {
-		/* AIM actions */
-		m = g_list_append(m, NULL);
+	m = g_list_append(m, NULL);
 
+	if (od->icq)
+	{
+		/* ICQ actions */
+		act = gaim_plugin_action_new(_("Show privacy options..."),
+				oscar_show_icq_privacy_opts);
+		m = g_list_append(m, act);
+	}
+	else
+	{
+		/* AIM actions */
 		act = gaim_plugin_action_new(_("Format Screen Name..."),
 				oscar_show_format_screenname);
 		m = g_list_append(m, act);
@@ -7652,6 +7727,11 @@ init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	/* We don't add these to protocol_options because they're ICQ specific */
+	option = gaim_account_option_bool_new(_("Authorization"), "authorization", OSCAR_DEFAULT_AUTHORIZATION);
+	option = gaim_account_option_bool_new(_("Hide IP"), "hide_ip", OSCAR_DEFAULT_HIDE_IP);
+	option = gaim_account_option_bool_new(_("Web presence"), "web_aware", OSCAR_DEFAULT_WEB_AWARE);
 
 	my_protocol = plugin;
 

@@ -70,7 +70,16 @@ faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess)
 	return 0;
 }
 
-faim_export int aim_icq_hideip(aim_session_t *sess)
+/**
+ * Set your ICQ security.
+ *
+ * @param sess The oscar session.
+ * @param auth Ask authorization when a buddy adds us?
+ * @param web  Show our presence on the ICQ web site.
+ * @param hide Hide our IP address.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_icq_setsecurity(aim_session_t *sess, const int auth, const int web, const int hide)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -97,14 +106,20 @@ faim_export int aim_icq_hideip(aim_session_t *sess)
 	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
 	aimbs_putle16(&fr->data, snacid); /* eh. */
 	aimbs_putle16(&fr->data, 0x0424); /* shrug. */
-	aimbs_putle16(&fr->data, 0x0001);
-	aimbs_putle16(&fr->data, 0x0001);
+	aimbs_putle8(&fr->data, (auth == TRUE) ? 0x00 : 0x01);
+	aimbs_putle8(&fr->data, (web  == TRUE) ? 0x00 : 0x01);
+	aimbs_putle8(&fr->data, (hide == TRUE) ? 0x00 : 0x01);
+	aimbs_putle8(&fr->data, 0x00);
 
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
 }
 
+/**
+ * I don't know why we have this function and the one above...
+ * Maybe one of them is wrong?  Maybe they both really DO exist?
+ */
 faim_export int aim_icq_setauthsetting(aim_session_t *sess, int auth_required)
 {
 	aim_conn_t *conn;

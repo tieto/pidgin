@@ -24,6 +24,8 @@ version 2.0.0
 	* Entries in the text replacement plugin are now sorted alphabetically
 	  (Richard Laager)
 	* CHAP authentication support for SOCKS5 proxies (Malcolm Smith)
+	* Ability to set ICQ "require authorization" and "web aware"
+	  setting (Ettore Simone)
 
 	Bug fixes:
 	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)
