@@ -389,27 +389,35 @@ buddy_icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), "");
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
 gboolean str_array_match(char **a, char **b)
 {
 	int i, j;
-	for (i = 0; a[i] != NULL; i++) 
-		for (j = 0; b[j] != NULL; j++) 
+	for (i = 0; a[i] != NULL; i++)
+		for (j = 0; b[j] != NULL; j++)
 			if (!g_ascii_strcasecmp(a[i], b[j]))
 				return TRUE;
 	return FALSE;
 }
+#endif
 
 static void
 convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 {
+#if GTK_CHECK_VERSION(2,4,0)
 	int width, height;
-	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(account->protocol_id));
 	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
-	GdkPixbufFormat *format = gdk_pixbuf_get_file_info (path, &width, &height);
-	char **pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
+	char **pixbuf_formats;
+	GdkPixbufFormat *format;
+	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(account->protocol_id));
+	
+	format = gdk_pixbuf_get_file_info (path, &width, &height);
+	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
 	if (str_array_match(pixbuf_formats, prpl_formats)) {
+#endif
 		gaim_account_set_buddy_icon(account, path);
+#if GTK_CHECK_VERSION(2,4,0)
 	} else {
 		int i;
 		GError *error = NULL;
@@ -443,6 +451,7 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 		g_free(random);
 		g_object_unref(pixbuf);
 	}
+#endif
 }
 
 static void
