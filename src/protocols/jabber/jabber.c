@@ -345,14 +345,6 @@ jabber_login_callback(gpointer data, gint source, GaimInputCondition cond)
 	gc->inpa = gaim_input_add(js->fd, GAIM_INPUT_READ, jabber_recv_cb, gc);
 }
 
-static void tls_init(JabberStream *js)
-{
-	gaim_input_remove(js->gc->inpa);
-	js->gc->inpa = 0;
-	js->gsc = gaim_ssl_connect_fd(js->gc->account, js->fd,
-			jabber_login_callback_ssl, NULL, js->gc);
-}
-
 static void
 jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 		gpointer data)
@@ -365,6 +357,15 @@ jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 			break;
 	}
 }
+
+static void tls_init(JabberStream *js)
+{
+	gaim_input_remove(js->gc->inpa);
+	js->gc->inpa = 0;
+	js->gsc = gaim_ssl_connect_fd(js->gc->account, js->fd,
+			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->gc);
+}
+
 
 static void
 jabber_login(GaimAccount *account)
