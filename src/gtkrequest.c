@@ -92,20 +92,24 @@ action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 	gaim_request_close(GAIM_REQUEST_INPUT, data);
 }
 
-static void
+static gboolean
 field_string_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
 {
 	const char *value = gtk_entry_get_text(entry);
 
 	gaim_request_field_string_set_value(field,
 			(*value == '\0' ? NULL : value));
+
+	return FALSE;
 }
 
-static void
+static gboolean
 field_int_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
 {
 	gaim_request_field_int_set_value(field,
 			atoi(gtk_entry_get_text(entry)));
+
+	return FALSE;
 }
 
 static void
@@ -615,7 +619,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 											   TRUE, TRUE, 0);
 							gtk_widget_show(radio);
 
-							g_signal_connect(G_OBJECT(widget), "toggled",
+							g_signal_connect(G_OBJECT(radio), "toggled",
 											 G_CALLBACK(field_choice_option_cb),
 											 field);
 						}
