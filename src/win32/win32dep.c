@@ -268,6 +268,7 @@ static void move_settings_dir() {
         char *old_home = g_strdup_printf("%s%s", g_get_home_dir() ? g_get_home_dir() : "C:", "\\.gaim");
         char *new_home = g_strdup_printf("%s%s", wgaim_data_dir(), "\\.gaim");
 
+        /* Do users really need to know their settings have moved?  Is that what MessageBox does? */
         if(folder_exists(old_home) && !folder_exists(new_home)) {
                 if(move_folder(old_home, wgaim_data_dir(), _("Moving Gaim Settings.."), FALSE)) {
                         char *locenc, *locenc1, *str;
