@@ -1,5 +1,31 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.0.1 (10/07/2004):
+	Congratulations to Tim & Kim on their wedding!
+
+	Sean: So, if you're playing along at home, you're aware that
+	incrementing the micro version number means that the API has
+	not changed at all.  Although that itself is insignificant to
+	most everyone but plugin developers, but users won't find too
+	many significant changes.  Consult ChangeLog.  We're currently
+	branched for some major changes, so expect a really great 2.0.0
+	sometime relatively soon.
+
+	Luke: Nothing much to see here, some bug fixes. Most of the work
+	is going towards the 2.0.0 release. We aren't quite sure when
+	that will be, and will keep the bug fix releases coming untill
+	all is ready.
+
+	Christian: I would call this a ground-breaking release, but it isn't.
+	It seems like a good one, though. I dunno. I've been too busy at VMware,
+	unfortunately, but have some work that's just waiting to be finished up
+	for Gaim. Gaim 2.0.0 is going to rock. Gaim 3.0.0 will rock more.
+	Do you see a pattern? Thanks go out to Henry Jen for fixing up parts of
+	the gevolution plugin to support multiple addressbooks, and to all our
+	moms, for believing in us. Or something.
+
+	Nathan: I got a new computer.  It's fast.  And has twice the bits!
+
 1.0.0 (09/17/2004):
 	Nathan: Hah!  Bet you weren't expecting this!  OK, if you were
 	paying any attention to the flame^H^H^H^H^Hthread on gaim-devel,

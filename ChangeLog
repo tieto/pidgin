@@ -8,6 +8,26 @@ version 2.0.0
 	* gaim-remote can send text (John B. Silvestri)
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 
+version 1.0.1 (10/07/2004):
+	New Features:
+	* Use the GNOME default browser when opening links if you're running GNOME
+	  (Alex Duggan)
+	* Added support for multiple addressbooks in the gevolution plugin
+	  (Henry Jen).
+
+	Bug Fixes:
+	* Send-As menu duplicates less work (Dave West)
+	* Can now see your own MSN buddy icon (Felipe Contreras)
+	* Jabber roomlist fetches work again
+	* Close buttons on tabs in existing conversations correctly reflect the
+	  "show close buttons on tabs" preference (Nathan Fredrickson)
+	* Fix to make the get_signon(buddy) perl plugin function work (Gregory C.
+	  Harfst)
+	* Fixed crashes when reloading the gevolution plugin (Henry Jen)
+	* Fixed some memory leaks in the gevolution plugin.
+	* Wrap at character boundaries if there is not enough space for a full word
+	* 64 bit compile warning fixes
+
 version 1.0.0 (09/17/2004):
 	New Features:
 	* Drag-and-drop buddy support for the Invite dialog (Stu Tomlinson)
