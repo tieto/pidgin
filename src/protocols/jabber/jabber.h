@@ -80,6 +80,8 @@ void jabber_send_raw(JabberStream *js, const char *data);
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state);
 
+void jabber_register_parse(JabberStream *js, xmlnode *packet);
+
 char *jabber_get_next_id(JabberStream *js);
 
 #endif /* _GAIM_JABBER_H_ */
