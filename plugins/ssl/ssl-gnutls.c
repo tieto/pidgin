@@ -104,8 +104,6 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 	while ((ret == GNUTLS_E_AGAIN) || (ret == GNUTLS_E_INTERRUPTED));
 
-	gaim_debug_info("gnutls", "Handshake complete\n");
-
 	if (ret < 0)
 	{
 		gaim_debug_error("gnutls", "Handshake failed. Error %d\n", ret);
@@ -118,6 +116,8 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 	else
 	{
+		gaim_debug_info("gnutls", "Handshake complete\n");
+
 		gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
 	}
 }
