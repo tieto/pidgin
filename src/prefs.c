@@ -1241,6 +1241,8 @@ GtkWidget *sound_events_page() {
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 	event_store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_UINT);
 
@@ -1375,8 +1377,8 @@ GtkWidget *away_message_page() {
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	away_text = gtk_imhtml_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-					GTK_SHADOW_IN);
+//	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+//					GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	prefs_away_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
