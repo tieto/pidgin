@@ -915,6 +915,8 @@ GdkPixmap *is_smiley(struct conversation *c, char *m, int *len) {
 	*len = 3;
 	if (	   !strncmp(m, ":-)", 3)) {
 		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_xpm);
+	} else if (!strncmp(m, "C:)", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, luke03_xpm);
 	} else if (!strncmp(m, ":-(", 3)) {
 		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, sad_xpm);
 	} else if (!strncmp(m, ";-)", 3)) {
@@ -951,6 +953,9 @@ GdkPixmap *is_smiley(struct conversation *c, char *m, int *len) {
 	*len = 4;
 	if (	   !strncmp(m, "O:-)", 4)) {
 		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, angel_xpm);
+	}
+	else if (!strncmp(m, "C:-)", 4)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, luke03_xpm);
 	}
 
 	if (face || strlen(m) < 6) return face;

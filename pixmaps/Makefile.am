@@ -76,7 +76,8 @@ EXTRA_DIST =	add.xpm				\
 		warn.xpm			\
 		wink.xpm			\
 		wood.xpm			\
-		yell.xpm
+		yell.xpm			\
+		luke03.xpm
 
 pixmapdir = $(datadir)/pixmaps
 pixmap_DATA = gaim.xpm

@@ -55,6 +55,7 @@
 #include "pixmaps/tongue.xpm"
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
+#include "pixmaps/luke03.xpm"
 
 #include "pixmaps/join.xpm"
 #include "pixmaps/cancel.xpm"
