@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1142 $"
+#define REVISION "gaim:$Revision: 1155 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -1105,6 +1105,93 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user) {
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 }
 
+static void toc_add_permit(struct gaim_connection *gc, char *who) {
+	char buf2[MSG_LEN];
+	if (gc->permdeny != 3) return;
+	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
+	sflap_send(gc, buf2, -1, TYPE_DATA);
+}
+
+static void toc_add_deny(struct gaim_connection *gc, char *who) {
+	char buf2[MSG_LEN];
+	if (gc->permdeny != 4) return;
+	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
+	sflap_send(gc, buf2, -1, TYPE_DATA);
+}
+
+static void toc_set_permit_deny(struct gaim_connection *gc) {
+	char buf2[MSG_LEN];
+	GSList *list;
+	int at;
+
+	switch (gc->permdeny) {
+	case 1:
+		/* permit all, deny none. to get here reliably we need to have been in permit
+		 * mode, and send an empty toc_add_deny message, which will switch us to deny none */
+		g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+		g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+		break;
+	case 2:
+		/* deny all, permit none. to get here reliably we need to have been in deny
+		 * mode, and send an empty toc_add_permit message, which will switch us to permit none */
+		g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+		g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+		break;
+	case 3:
+		/* permit some. we want to switch to deny mode first, then send the toc_add_permit
+		 * message, which will clear and set our permit list. toc sucks. */
+		g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+
+		at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
+		list = gc->permit;
+		while (list) {
+			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", normalize(list->data));
+			if (at > MSG_LEN + 32) /* from out my ass comes greatness */ {
+				sflap_send(gc, buf2, -1, TYPE_DATA);
+				at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
+			}
+			list = list->next;
+		}
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+		break;
+	case 4:
+		/* deny some. we want to switch to permit mode first, then send the toc_add_deny
+		 * message, which will clear and set our deny list. toc sucks. */
+		g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+
+		at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
+		list = gc->deny;
+		while (list) {
+			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", normalize(list->data));
+			if (at > MSG_LEN + 32) /* from out my ass comes greatness */ {
+				sflap_send(gc, buf2, -1, TYPE_DATA);
+				at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
+			}
+			list = list->next;
+		}
+		sflap_send(gc, buf2, -1, TYPE_DATA);
+		break;
+	default:
+		break;
+	}
+}
+
+static void toc_rem_permit(struct gaim_connection *gc, char *who) {
+	if (gc->permdeny != 3) return;
+	toc_set_permit_deny(gc);
+}
+
+static void toc_rem_deny(struct gaim_connection *gc, char *who) {
+	if (gc->permdeny != 4) return;
+	toc_set_permit_deny(gc);
+}
+
 void toc_init(struct prpl *ret) {
         ret->protocol = PROTO_TOC;
         ret->name = toc_name;
@@ -1126,11 +1213,11 @@ void toc_init(struct prpl *ret) {
         ret->add_buddy = toc_add_buddy;
         ret->add_buddies = toc_add_buddies;
         ret->remove_buddy = toc_remove_buddy;
-        ret->add_permit = NULL; /* FIXME */
-        ret->add_deny = NULL;
-	ret->rem_permit = NULL;
-	ret->rem_deny = NULL;
-	ret->set_permit_deny = NULL;
+        ret->add_permit = toc_add_permit;
+        ret->add_deny = toc_add_deny;
+	ret->rem_permit = toc_rem_permit;
+	ret->rem_deny = toc_add_deny;
+	ret->set_permit_deny = toc_set_permit_deny;
         ret->warn = toc_warn;
         ret->accept_chat = toc_accept_chat;
         ret->join_chat = toc_join_chat;

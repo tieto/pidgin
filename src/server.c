@@ -226,9 +226,9 @@ void serv_rem_deny(struct gaim_connection *g, char *name)
 
 void serv_set_permit_deny(struct gaim_connection *g)
 {
-	/* this is called when some other function has modified the permit/deny list and
-	 * now wants to register that change with the server. if you're just adding/removing
-	 * one name, use the add/remove functions above */
+	/* this is called when either you import a buddy list, and make lots of changes that way,
+	 * or when the user toggles the permit/deny mode in the prefs. In either case you should
+	 * probably be resetting and resending the permit/deny info when you get this. */
 	if (g->prpl && g->prpl->set_permit_deny)
 		(*g->prpl->set_permit_deny)(g);
 }
