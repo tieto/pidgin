@@ -156,7 +156,6 @@ common_send(GaimConversation *conv, const char *message)
 	char *displayed = NULL, *sent = NULL;
 	int plugin_return;
 	int err = 0;
-	GList *first;
 
 	if (strlen(message) == 0)
 		return;
@@ -167,15 +166,6 @@ common_send(GaimConversation *conv, const char *message)
 
 	type = gaim_conversation_get_type(conv);
 	ops  = gaim_conversation_get_ui_ops(conv);
-
-	first = g_list_first(conv->send_history);
-
-	if (first->data)
-		g_free(first->data);
-
-	first->data = g_strdup(message);
-
-	conv->send_history = g_list_prepend(first, NULL);
 
 	if (gc->flags & GAIM_CONNECTION_HTML)
 		displayed = gaim_markup_linkify(message);
