@@ -1,11 +1,11 @@
 #include "config.h"
-#include "sound.h"
 
 #ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
 #endif
 
 #include "gaim.h"
+#include "sound.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -75,7 +75,7 @@ static gboolean check_timeout(gpointer data)
 	}
 
 	if (count & NEW_MAIL)
-		gaim_sound_play(SND_POUNCE_DEFAULT);
+		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
 
 	if (count & UNREAD_MAIL)
 		gtk_label_set_text(GTK_LABEL(mail), "You have new mail!");
