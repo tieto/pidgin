@@ -2998,7 +2998,8 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	if (bi) {
 		gchar *yay;
 		char *caps = caps_string(bi->caps);
-		char *tstr = sec_to_text(time(NULL) - bi->signon + gc->login_time_official - gc->login_time);
+		char *tstr = sec_to_text(time(NULL) - bi->signon + 
+			(gc->login_time_official ? gc->login_time_official - gc->login_time : 0));
 		yay = g_strdup_printf(_("<b>Logged In:</b> %s%s%s"), tstr, 
 				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
 		free(tstr);
