@@ -470,6 +470,47 @@ static gboolean find_chat_buddy(struct conversation *b, char *name)
 	return FALSE;
 }
 
+static unsigned char *utf8_to_str(unsigned char *in)
+{
+	int n = 0,i = 0;
+	int inlen;
+	unsigned char *result;
+
+	if (!in)
+		return NULL;
+
+	inlen = strlen(in);
+
+	result = (unsigned char*)malloc(inlen+1);
+
+	while(n <= inlen-1) {
+		long c = (long)in[n];
+		if(c<0x80)
+			result[i++] = (char)c;
+		else {
+			if((c&0xC0) == 0xC0)
+				result[i++] = (char)(((c&0x03)<<6)|(((unsigned char)in[++n])&0x3F));
+			else if((c&0xE0) == 0xE0) {
+				if (n + 2 <= inlen) {
+					result[i] = (char)(((c&0xF)<<4)|(((unsigned char)in[++n])&0x3F));
+					result[i] = (char)(((unsigned char)result[i]) |(((unsigned char)in[++n])&0x3F));
+					i++;
+				} else n += 2;
+			}
+			else if((c&0xF0) == 0xF0)
+				n += 3;
+			else if((c&0xF8) == 0xF8)
+				n += 4;
+			else if((c&0xFC) == 0xFC)
+				n += 5;
+		}
+		n++;
+    }
+    result[i] = '\0';
+
+    return result;
+}
+
 static void jabber_handlemessage(gjconn j, jpacket p)
 {
 	xmlnode y, xmlns;
@@ -487,9 +528,13 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			type = xmlnode_get_attrib(xmlns, "xmlns");
 
 		from = jid_full(p->from);
-		if ((y = xmlnode_get_tag(p->x, "body"))) {
+		if ((y = xmlnode_get_tag(p->x, "html"))) {
+			msg = xmlnode_get_data(y);
+		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
 		}
+
+		msg = utf8_to_str(msg);
 
 		if (!from || !msg) {
 			return;
@@ -515,6 +560,8 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 				g_free(from);
 		}
 
+		free(msg);
+
 	} else if (!strcmp(type, "error")) {
 		if ((y = xmlnode_get_tag(p->x, "error"))) {
 			type = xmlnode_get_attrib(y, "code");
@@ -530,9 +577,15 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		struct conversation *b;
 		static int i = 0;
 		from = jid_full(p->from);
-		if ((y = xmlnode_get_tag(p->x, "body"))) {
+
+		if ((y = xmlnode_get_tag(p->x, "html"))) {
+			msg = xmlnode_get_data(y);
+		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
 		}
+
+		msg = utf8_to_str(msg);
+
 		b = find_chat(GJ_GC(j), p->from->user);
 		if (!b) {
 			jid chat = NULL;
@@ -569,11 +622,10 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 				g_snprintf(buf, sizeof(buf), "%s", msg);
 				serv_got_chat_in(GJ_GC(j), b->id, p->from->resource, 0, buf, time((time_t)NULL));
 			}
-		/*
-		} else if (msg) {
-			write_to_conv(b, msg, WFLAG_SYSTEM, NULL);
-		*/
 		}
+
+		free(msg);
+
 	} else {
 		debug_printf("unhandled message %s\n", type);
 	}

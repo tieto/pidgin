@@ -541,15 +541,20 @@ void close_warned(GtkWidget *w, GtkWidget *w2)
 
 void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 {
-	char *buf2 = g_malloc(1024);
+	char buf2[1024];
 	GtkWidget *d, *label, *close;
-
 
 	plugin_event(event_warned, gc, name, (void *)lev, 0);
 
-	g_snprintf(buf2, 1023, "%s has just been warned by %s.\nYour new warning level is %d%%",
-		   gc->username, ((name == NULL)? "an anonymous person" : name), lev);
+	if (gc->evil > lev) {
+		gc->evil = lev;
+		return;
+	}
 
+	gc->evil = lev;
+
+	g_snprintf(buf2, sizeof(buf2), "%s has just been warned by %s.\nYour new warning level is %d%%",
+		   gc->username, ((name == NULL)? "an anonymous person" : name), lev);
 
 	d = gtk_dialog_new();
 	gtk_widget_realize(d);

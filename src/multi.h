@@ -71,6 +71,8 @@ struct gaim_connection {
 
 	char *away;
 	int is_auto_away;
+
+	int evil;
 };
 
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
