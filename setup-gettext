@@ -61,7 +61,7 @@ AM_GNU_GETTEXT_VERSION(0.10.40)/' < .tmp-configure.ac > configure.ac
 
 	[ -f autogen.sh ] && {
 		cp autogen.sh .tmp-autogen.sh
-		sed -e 's/\(gettextize\|autopoint\) --version/.\/setup-gettext --gettext-tool/1' -f 's/^\(echo.*|[\t ]*\)\?\(gettextize\|autopoint\) -.*$/.\/setup-gettext/1' < .tmp-autogen.sh > autogen.sh
+		sed -e 's/\(gettextize\|autopoint\) --version/.\/setup-gettext --gettext-tool/1' -e 's/^\(echo.*|[\t ]*\)\?\(gettextize\|autopoint\) -.*$/.\/setup-gettext/1' < .tmp-autogen.sh > autogen.sh
 		rm .tmp-autogen.sh
 	}
 
