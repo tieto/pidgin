@@ -945,6 +945,11 @@ static void zephyr_chat_leave(struct gaim_connection *gc, int id)
 	}
 }
 
+static const char *zephyr_list_icon(struct gaim_account *a, struct buddy *b)
+{
+	return "zephyr";
+}
+
 static struct prpl *my_protocol = NULL;
 
 void zephyr_init(struct prpl *ret)
@@ -952,6 +957,7 @@ void zephyr_init(struct prpl *ret)
 	ret->protocol = PROTO_ZEPHYR;
 	ret->options = OPT_PROTO_NO_PASSWORD;
 	ret->name = g_strdup("Zephyr");
+	ret->list_icon = zephyr_list_icon;
 	ret->login = zephyr_login;
 	ret->close = zephyr_close;
 	ret->add_buddy = zephyr_add_buddy;
