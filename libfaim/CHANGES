@@ -1,6 +1,17 @@
 
 No release numbers
 ------------------
+ - Tue Dec 12 23:02:41 UTC 2000
+  - Got pissed off at sess->logininfo.  Got rid of it.
+    - Now pass all that stuff in as varargs, like it should be.
+    - *** Look at the changes to faimtest. You'll also need to
+          change anything in your code that references sess->logininfo
+          to reference sess->sn instead.  The rest of the other info
+          is now unavailable (it was before, too, it just didnt look like it).
+  - A few other minor cleanups.
+  - Added aim_gettlv8/16/32, aim_puttlv_8, and aim_addtlvtochain_noval.
+  - Added that short 0x004a TLV to the auth request, like WinAIM 4.3.
+
  - Mon Dec  4 23:46:35 UTC 2000
   - Add exchange to the create response callback (doh!)
 

@@ -26,7 +26,7 @@ faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_con
   int acceptfd = 0;
   rxcallback_t userfunc;
   struct sockaddr cliaddr;
-  unsigned int clilen = sizeof(cliaddr);
+  socklen_t clilen = sizeof(cliaddr);
   int ret = 0;
 
   /*
@@ -151,7 +151,7 @@ faim_export int aim_send_im_direct(struct aim_session_t *sess,
   i += aimutil_put16(newpacket2->hdr.oft.hdr2+i, 0x0000);
   i += aimutil_put16(newpacket2->hdr.oft.hdr2+i, 0x0000);
 
-  i += aimutil_putstr(newpacket2->hdr.oft.hdr2+i, sess->logininfo.screen_name, strlen(sess->logininfo.screen_name));
+  i += aimutil_putstr(newpacket2->hdr.oft.hdr2+i, sess->sn, strlen(sess->sn));
   
   i = 52; /* 0x34 */
   i += aimutil_put8(newpacket2->hdr.oft.hdr2+i, 0x00); /* 53 */
@@ -205,7 +205,7 @@ faim_export int aim_send_im_direct(struct aim_session_t *sess,
   i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0000);
   i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0000);
 
-  i += aimutil_putstr(newpacket->hdr.oft.hdr2+i, sess->logininfo.screen_name, strlen(sess->logininfo.screen_name));
+  i += aimutil_putstr(newpacket->hdr.oft.hdr2+i, sess->sn, strlen(sess->sn));
   
   i = 52; /* 0x34 */
   i += aimutil_put8(newpacket->hdr.oft.hdr2+i, 0x00); /* 53 */
@@ -1572,6 +1572,86 @@ faim_export int aim_getfile_send(struct aim_conn_t *conn, FILE *tosend, struct a
 }
 
 /*
+ * int aim_getfile_send_chunk(struct aim_conn_t *conn, FILE *tosend, struct aim_fileheader_t *fh, int pos, int bufsize)
+ * conn is the OFT connection to shove the data down,
+ * tosend is the FILE * for the file to send
+ * fh is the filled-in fh value
+ * pos is the position to start at (at beginning should be 0, after 5
+ *  bytes are sent should be 5); -1 for "don't seek"
+ * bufsize is the size of the chunk to send
+ *
+ * returns -1 on error, new pos on success.
+ *
+ * 
+ * Notes on usage: 
+ * You don't really have to keep track of pos if you don't want
+ *  to. just always call with -1 for pos, and it'll use the one
+ *  contained within the FILE *.
+ *
+ * if (pos + chunksize > fh->size), we only send as much data as we
+ *  can get (ie: up to fh->size.  
+ */
+
+faim_export int aim_getfile_send_chunk(struct aim_conn_t *conn, FILE *tosend, struct aim_fileheader_t *fh, int pos, int bufsize)
+{
+  int bufpos; 
+  char *buf;
+
+  /* sanity checks */
+  if(conn->type != AIM_CONN_TYPE_RENDEZVOUS || conn->type != AIM_CONN_SUBTYPE_OFT_GETFILE) {
+    faimdprintf(1, "faim: getfile_send_chunk: conn->type(0x%04x) != RENDEZVOUS or conn->subtype(0x%04x) != GETFILE\n", conn->type, conn->subtype);
+    return -1;
+  }
+  
+  if(!tosend) {
+    faimdprintf(1, "faim: getfile_send_chunk: file pointer isn't valid\n");
+    return -1;
+  }
+
+  if(!fh) {
+    faimdprintf(1, "faim: getfile_send_chunk: fh isn't valid\n");
+    return -1;
+  }
+
+  /* real code */
+
+  if(!(buf = (char *)calloc(1, bufsize))) {
+    perror("faim: getfile_send_chunk: calloc:");
+    faimdprintf(2, "faim: getfile_send_chunk calloc error\n");
+    return -1;
+  }
+  
+  if(pos != -1) {
+    if( fseek(tosend, pos, SEEK_SET) == -1) {
+      perror("faim: getfile_send_chunk:  fseek:");
+      faimdprintf(2, "faim: getfile_send_chunk fseek error\n");
+    }  
+  }
+
+  faimdprintf(2, "faim: getfile_send_chunk: using %i byte blocks\n", bufsize);
+
+  for(bufpos = 0; pos < fh->size; bufpos++, pos++) {
+    if( (buf[bufpos] = fgetc(tosend)) == EOF) {
+      if(pos != fh->size) {
+	faimdprintf(1, "faim: getfile_send_chunk: hrm... apparent early EOF at pos 0x%x of 0x%x\n", pos, fh->size);
+	free(buf);   
+	return -1;
+      }
+    }      
+  }
+
+  if( write(conn->fd, buf, bufpos+1) != (bufpos+1)) {
+    faimdprintf(1, "faim: getfile_send_chunk cleanup: whoopsy, didn't write it all...\n");
+    free(buf);   
+    return -1;
+  }
+
+  free(buf);   
+  
+  return (pos + bufpos);
+}
+
+/*
  * aim_tx_destroy:
  * free's tx_command_t's. if command is locked, doesn't free.
  * returns -1 on error (locked struct); 0 on success.
@@ -1802,92 +1882,3 @@ faim_export struct aim_conn_t *aim_getfile_initiate(struct aim_session_t *sess,
 }
 
 #endif
-
-/*
- * int aim_getfile_send_chunk(struct aim_conn_t *conn, FILE *tosend, struct aim_fileheader_t *fh, int pos, int bufsize)
- * conn is the OFT connection to shove the data down,
- * tosend is the FILE * for the file to send
- * fh is the filled-in fh value
- * pos is the position to start at (at beginning should be 0, after 5
- *  bytes are sent should be 5); -1 for "don't seek"
- * bufsize is the size of the chunk to send
- *
- * returns -1 on error, new pos on success. 0 on EOF
- *
- * 
- * Notes on usage: 
- * You don't really have to keep track of pos if you don't want
- *  to. just always call with -1 for pos, and it'll use the one
- *  contained within the FILE *.
- *
- * if (pos + chunksize > fh->size), we only send as much data as we
- *  can get (ie: up to fh->size.  
- */
-
-faim_export int aim_getfile_send_chunk(struct aim_conn_t *conn, FILE *tosend, struct aim_fileheader_t *fh, int pos, int bufsize)
-{
-  int bufpos; 
-  int curpos;
-  char *buf;
-
-  /* sanity checks */
-  if(conn->type != AIM_CONN_TYPE_RENDEZVOUS || conn->subtype != AIM_CONN_SUBTYPE_OFT_GETFILE) {
-    faimdprintf(1, "faim: getfile_send_chunk: conn->type(0x%04x) != RENDEZVOUS or conn->subtype(0x%04x) != GETFILE\n", conn->type, conn->subtype);
-    return -1;
-  }
-  
-  if(!tosend) {
-    faimdprintf(1, "faim: getfile_send_chunk: file pointer isn't valid\n");
-    return -1;
-  }
-
-  if(!fh) {
-    faimdprintf(1, "faim: getfile_send_chunk: fh isn't valid\n");
-    return -1;
-  }
-
-  /* real code */
-
-  if(!(buf = (char *)calloc(1, bufsize))) {
-    perror("faim: getfile_send_chunk: calloc:");
-    faimdprintf(2, "faim: getfile_send_chunk calloc error\n");
-    return -1;
-  }
-  
-  if(pos != -1) {
-    if( fseek(tosend, pos, SEEK_SET) == -1) {
-      perror("faim: getfile_send_chunk:  fseek:");
-      faimdprintf(2, "faim: getfile_send_chunk fseek error\n");
-    }  
-    curpos = pos;
-  } else 
-    pos = ftell(tosend);
-	
-
-  faimdprintf(2, "faim: getfile_send_chunk: using %i byte blocks\n", bufsize);
-
-  for(bufpos = 0; (bufpos < bufsize) && (pos < fh->size); bufpos++, pos++) {
-    if( (buf[bufpos] = fgetc(tosend)) == EOF) {
-#if 0 /* fuck checking */
-      if(pos != fh->size) {
-	fprintf(stderr, "faim: getfile_send_chunk: hrm... apparent early EOF at pos 0x%x of 0x%x\n", pos, fh->size);
-	perror("getfile_send_chunk: fgetc: ");
-	free(buf);   
-	return -1;
-      }
-#endif
-      return 0;
-    }      
-  }
-
-  if( write(conn->fd, buf, bufpos+1) != (bufpos+1)) {
-    faimdprintf(1, "faim: getfile_send_chunk cleanup: whoopsy, didn't write it all...\n");
-    perror("getfile_send_chunk: write: ");
-    free(buf);   
-    return -1;
-  }
-
-  free(buf);   
-  
-  return (pos+1);
-}

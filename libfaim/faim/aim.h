@@ -143,22 +143,6 @@
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
 /*
- * Login info.  Passes information from the Authorization
- * stage of login to the service (BOS, etc) connection
- * phase.
- *
- */
-struct aim_login_struct {
-  char screen_name[MAXSNLEN+1];
-  char *BOSIP;
-  unsigned char cookie[AIM_COOKIELEN];
-  char *email;
-  u_short regstatus;
-  char *errorurl;
-  u_short errorcode;
-};
-
-/*
  * Client info.  Filled in by the client and passed
  * in to aim_login().  The information ends up
  * getting passed to OSCAR through the initial
@@ -297,21 +281,24 @@ struct aim_session_t {
 
   /* ---- Client Accessible ------------------------ */
   /* 
-   * Login information.  See definition above.
+   * Our screen name.
    *
    */
-  struct aim_login_struct logininfo;
+  char sn[MAXSNLEN+1];
   
   /*
    * Pointer to anything the client wants to 
    * explicitly associate with this session.
+   *
+   * This is for use in the callbacks mainly. In any
+   * callback, you can access this with sess->aux_data.
+   *
    */
   void *aux_data;
 
   /* 
    * OFT Data 
    */
-
   struct aim_oft_session_t oft;
 
   /* ---- Internal Use Only ------------------------ */
@@ -419,9 +406,13 @@ faim_internal struct aim_tlv_t *aim_grabtlv(u_char *src);
 faim_internal struct aim_tlv_t *aim_grabtlvstr(u_char *src);
 faim_internal struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *, u_short, int);
 faim_internal char *aim_gettlv_str(struct aim_tlvlist_t *, u_short, int);
+faim_internal unsigned char aim_gettlv8(struct aim_tlvlist_t *list, unsigned short type, int num);
+faim_internal unsigned short aim_gettlv16(struct aim_tlvlist_t *list, unsigned short type, int num);
+faim_internal unsigned long aim_gettlv32(struct aim_tlvlist_t *list, unsigned short type, int num);
 faim_internal int aim_puttlv (u_char *dest, struct aim_tlv_t *newtlv);
 faim_internal struct aim_tlv_t *aim_createtlv(void);
 faim_internal int aim_freetlv(struct aim_tlv_t **oldtlv);
+faim_export int aim_puttlv_8(unsigned char *buf, unsigned short t, unsigned char  v);
 faim_internal int aim_puttlv_16(u_char *, u_short, u_short);
 faim_internal int aim_puttlv_32(u_char *, u_short, u_long);
 faim_internal int aim_puttlv_str(u_char *buf, u_short t, int l, char *v);
@@ -430,6 +421,7 @@ faim_internal int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned shor
 faim_internal int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val);
 faim_internal int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len);
 faim_internal int aim_addtlvtochain_caps(struct aim_tlvlist_t **list, unsigned short type, unsigned short caps);
+faim_internal int aim_addtlvtochain_noval(struct aim_tlvlist_t **list, unsigned short type);
 faim_internal int aim_counttlvchain(struct aim_tlvlist_t **list);
 
 /*
@@ -460,7 +452,7 @@ faim_export int aim_getfile_send(struct aim_conn_t *conn, FILE *tosend, struct a
 faim_export int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_export int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
 faim_export int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *, char *key);
-faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *bosip, char *cookie, char *email, int regstatus);
+faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, int errorcode, char *errorurl, char *bosip, char *cookie, char *email, int regstatus);
 faim_export int aim_gencookie(unsigned char *buf);
 faim_export int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_internal int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command);

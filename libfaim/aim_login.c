@@ -132,6 +132,17 @@ faim_export int aim_request_login(struct aim_session_t *sess,
  * encode_password().  See that function for their
  * stupid method of doing it.
  *
+ * Latest WinAIM:
+ *   clientstring = "AOL Instant Messenger (SM), version 4.3.2188/WIN32"
+ *   major2 = 0x0109
+ *   major = 0x0400
+ *   minor = 0x0003
+ *   minor2 = 0x0000
+ *   build = 0x088c
+ *   unknown = 0x00000086
+ *   lang = "en"
+ *   country = "us"
+ *   unknown4a = 0x01
  */
 faim_export int aim_send_login (struct aim_session_t *sess,
 				struct aim_conn_t *conn, 
@@ -188,7 +199,9 @@ faim_export int aim_send_login (struct aim_session_t *sess,
   
     curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
     curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
+    curbyte += aim_puttlv_8(newpacket->data+curbyte, 0x004a, 0x01);
   } else {
+    /* Use very specific version numbers, to further indicate the hack. */
     curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x010a);
     curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, 0x0004);
     curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, 0x003c);
@@ -272,7 +285,7 @@ static int aim_encode_password(const char *password, unsigned char *encoded)
  * It can be either an error or a success, depending on the
  * precense of certain TLVs.  
  *
- * The client should check the value of logininfo->errorcode. If
+ * The client should check the value passed as errorcode. If
  * its nonzero, there was an error.
  *
  */
@@ -281,10 +294,10 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
 {
   struct aim_tlvlist_t *tlvlist;
   int ret = 1;
-  char *sn;
   rxcallback_t userfunc = NULL;
-
-  memset(&sess->logininfo, 0x00, sizeof(sess->logininfo));
+  char *sn = NULL, *bosip = NULL, *errurl = NULL, *email = NULL;
+  unsigned char *cookie = NULL;
+  int errorcode = 0, regstatus = 0;
 
   /*
    * Read block of TLVs.  All further data is derived
@@ -301,74 +314,69 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
   /*
    * No matter what, we should have a screen name.
    */
-  sn = aim_gettlv_str(tlvlist, 0x0001, 1);
-  strncpy(sess->logininfo.screen_name, sn, strlen(sn));
-  free(sn);
+  memset(sess->sn, 0, sizeof(sess->sn));
+  if (aim_gettlv(tlvlist, 0x0001, 1)) {
+    sn = aim_gettlv_str(tlvlist, 0x0001, 1);
+    strncpy(sess->sn, sn, sizeof(sess->sn));
+  }
 
   /*
    * Check for an error code.  If so, we should also
    * have an error url.
    */
-  if (aim_gettlv(tlvlist, 0x0008, 1)) {
-    struct aim_tlv_t *errtlv;
-    errtlv = aim_gettlv(tlvlist, 0x0008, 1);
-    sess->logininfo.errorcode = aimutil_get16(errtlv->value);
-    sess->logininfo.errorurl = aim_gettlv_str(tlvlist, 0x0004, 1);
-  }
-  /* 
-   * If we have both an IP number (0x0005) and a cookie (0x0006),
-   * then the login was successful.
+  if (aim_gettlv(tlvlist, 0x0008, 1)) 
+    errorcode = aim_gettlv16(tlvlist, 0x0008, 1);
+  if (aim_gettlv(tlvlist, 0x0004, 1))
+    errurl = aim_gettlv_str(tlvlist, 0x0004, 1);
+
+  /*
+   * BOS server address.
    */
-  else if (aim_gettlv(tlvlist, 0x0005, 1) && aim_gettlv(tlvlist, 0x0006, 1) 
-	   /*aim_gettlv(tlvlist, 0x0006, 1)->length*/) {
+  if (aim_gettlv(tlvlist, 0x0005, 1))
+    bosip = aim_gettlv_str(tlvlist, 0x0005, 1);
+
+  /*
+   * Authorization cookie.
+   */
+  if (aim_gettlv(tlvlist, 0x0006, 1)) {
     struct aim_tlv_t *tmptlv;
 
-    /*
-     * IP address of BOS server.
-     */
-    sess->logininfo.BOSIP = aim_gettlv_str(tlvlist, 0x0005, 1);
-    
-    /*
-     * Authorization Cookie
-     */
     tmptlv = aim_gettlv(tlvlist, 0x0006, 1);
-    memcpy(sess->logininfo.cookie, tmptlv->value, AIM_COOKIELEN);
-    
-    /*
-     * The email address attached to this account
-     *   Not available for ICQ logins.
-     */
-    if (aim_gettlv(tlvlist, 0x0011, 1))
-      sess->logininfo.email = aim_gettlv_str(tlvlist, 0x0011, 1);
-    
-    /*
-     * The registration status.  (Not real sure what it means.)
-     *   Not available for ICQ logins.
-     */
-    if ((tmptlv = aim_gettlv(tlvlist, 0x0013, 1)))
-      sess->logininfo.regstatus = aimutil_get16(tmptlv->value);
-      
+
+    if ((cookie = malloc(tmptlv->length)))
+      memcpy(cookie, tmptlv->value, tmptlv->length);
   }
 
-  userfunc = aim_callhandler(command->conn, 0x0017, 0x0003);
+  /*
+   * The email address attached to this account
+   *   Not available for ICQ logins.
+   */
+  if (aim_gettlv(tlvlist, 0x0011, 1))
+    email = aim_gettlv_str(tlvlist, 0x0011, 1);
 
-  if (userfunc)
-    ret = userfunc(sess, command);
+  /*
+   * The registration status.  (Not real sure what it means.)
+   *   Not available for ICQ logins.
+   */
+  if (aim_gettlv(tlvlist, 0x0013, 1))
+    regstatus = aim_gettlv16(tlvlist, 0x0013, 1);
 
+
+  if ((userfunc = aim_callhandler(command->conn, 0x0017, 0x0003)))
+    ret = userfunc(sess, command, sn, errorcode, errurl, regstatus, email, bosip, cookie);
+
+
+  if (sn)
+    free(sn);
+  if (bosip)
+    free(bosip);
+  if (errurl)
+    free(errurl);
+  if (email)
+    free(email);
+  if (cookie)
+    free(cookie);
   aim_freetlvchain(&tlvlist);
-
-  if (sess->logininfo.BOSIP) {
-    free(sess->logininfo.BOSIP);
-    sess->logininfo.BOSIP = NULL;
-  }
-  if (sess->logininfo.email) {
-    free(sess->logininfo.email);
-    sess->logininfo.email = NULL;
-  }
-  if (sess->logininfo.errorurl) {
-    free(sess->logininfo.errorurl);
-    sess->logininfo.errorurl = NULL;
-  }
 
   return ret;
 }
@@ -409,7 +417,8 @@ faim_internal int aim_authkeyparse(struct aim_session_t *sess, struct command_rx
  */
 faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, 
 					   struct aim_conn_t *conn, 
-					   char *sn, char *bosip, 
+					   char *sn, int errorcode,
+					   char *errorurl, char *bosip, 
 					   char *cookie, char *email, 
 					   int regstatus)
 {	
@@ -424,11 +433,11 @@ faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess,
   if (sn)
     aim_addtlvtochain_str(&tlvlist, 0x0001, sn, strlen(sn));
   else
-    aim_addtlvtochain_str(&tlvlist, 0x0001, sess->logininfo.screen_name, strlen(sess->logininfo.screen_name));
+    aim_addtlvtochain_str(&tlvlist, 0x0001, sess->sn, strlen(sess->sn));
 
-  if (sess->logininfo.errorcode) {
-    aim_addtlvtochain16(&tlvlist, 0x0008, sess->logininfo.errorcode);
-    aim_addtlvtochain_str(&tlvlist, 0x0004, sess->logininfo.errorurl, strlen(sess->logininfo.errorurl));
+  if (errorcode) {
+    aim_addtlvtochain16(&tlvlist, 0x0008, errorcode);
+    aim_addtlvtochain_str(&tlvlist, 0x0004, errorurl, strlen(errorurl));
   } else {
     aim_addtlvtochain_str(&tlvlist, 0x0005, bosip, strlen(bosip));
     aim_addtlvtochain_str(&tlvlist, 0x0006, cookie, AIM_COOKIELEN);
@@ -438,6 +447,7 @@ faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess,
 
   tx->commandlen = aim_writetlvchain(tx->data, tx->commandlen, &tlvlist);
   tx->lock = 0;
+
   return aim_tx_enqueue(sess, tx);
 }
 

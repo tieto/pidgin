@@ -453,14 +453,29 @@ void oscar_close(struct gaim_connection *gc) {
 
 int gaim_parse_auth_resp(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
+	va_list ap;
 	struct aim_conn_t *bosconn = NULL;
+	char *sn = NULL, *bosip = NULL, *errurl = NULL, *email = NULL;
+	unsigned char *cookie = NULL;
+	int errorcode = 0, regstatus = 0;
+
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
-	sprintf(debug_buff, "inside auth_resp (Screen name: %s)\n",
-			sess->logininfo.screen_name);
+
+	va_start(ap, command);
+	sn = va_arg(ap, char *);
+	errorcode = va_arg(ap, int);
+	errurl = va_arg(ap, char *);
+	regstatus = va_arg(ap, int);
+	email = va_arg(ap, char *);
+	bosip = va_arg(ap, char *);
+	cookie = va_arg(ap, unsigned char *);
+	va_end(ap);
+
+	sprintf(debug_buff, "inside auth_resp (Screen name: %s)\n", sn);
 	debug_print(debug_buff);
 
-	if (sess->logininfo.errorcode) {
-		switch (sess->logininfo.errorcode) {
+	if (errorcode || !bosip || !cookie) {
+		switch (errorcode) {
 		case 0x18:
 			/* connecting too frequently */
 			hide_login_progress(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
@@ -480,12 +495,8 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 			hide_login_progress(gc, _("Authentication Failed"));
 			break;
 		}
-		sprintf(debug_buff, "Login Error Code 0x%04x\n",
-				sess->logininfo.errorcode);
-		debug_print(debug_buff);
-		sprintf(debug_buff, "Error URL: %s\n",
-				sess->logininfo.errorurl);
-		debug_print(debug_buff);
+		debug_printf("Login Error Code 0x%04x\n", errorcode);
+		debug_printf("Error URL: %s\n", errurl);
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
@@ -494,18 +505,17 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	}
 
 
-	if (sess->logininfo.email) {
-		sprintf(debug_buff, "Email: %s\n", sess->logininfo.email);
-		debug_print(debug_buff);
+	if (email) {
+		debug_printf("Email: %s\n", email);
 	} else {
-		debug_print("Email is NULL\n");
+		debug_printf("Email is NULL\n");
 	}
 	sprintf(debug_buff, "Closing auth connection...\n");
 	debug_print(debug_buff);
 	gdk_input_remove(gc->inpa);
 	aim_conn_kill(sess, &command->conn);
 
-	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, sess->logininfo.BOSIP);
+	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, bosip);
 	if (bosconn == NULL) {
 #ifdef USE_APPLET
 		set_user_state(offline);
@@ -544,7 +554,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEFAULT, aim_parse_unknown, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 
-	aim_auth_sendcookie(sess, bosconn, sess->logininfo.cookie);
+	aim_auth_sendcookie(sess, bosconn, cookie);
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
 	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, bosconn);

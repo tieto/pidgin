@@ -322,6 +322,41 @@ faim_export int aim_addtlvtochain_caps(struct aim_tlvlist_t **list, unsigned sho
 }
 
 /**
+ * aim_addtlvtochain_noval - Add a blank TLV to a TLV chain
+ * @list: Destination chain
+ * @type: TLV type to add
+ *
+ * Adds a TLV with a zero length to a TLV chain.
+ *
+ */
+faim_internal int aim_addtlvtochain_noval(struct aim_tlvlist_t **list, unsigned short type)
+{
+  struct aim_tlvlist_t *newtlv;
+  struct aim_tlvlist_t *cur;
+
+  newtlv = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
+  memset(newtlv, 0x00, sizeof(struct aim_tlvlist_t));
+
+  newtlv->tlv = aim_createtlv();	
+  newtlv->tlv->type = type;
+  newtlv->tlv->length = 0;
+  newtlv->tlv->value = NULL;
+
+  newtlv->next = NULL;
+
+  if (*list == NULL) {
+    *list = newtlv;
+  } else if ((*list)->next == NULL) {
+    (*list)->next = newtlv;
+  } else {
+    for(cur = *list; cur->next; cur = cur->next)
+      ;
+    cur->next = newtlv;
+  }
+  return newtlv->tlv->length;
+}
+
+/**
  * aim_writetlvchain - Write a TLV chain into a data buffer.
  * @buf: Destination buffer
  * @buflen: Maximum number of bytes that will be written to buffer
@@ -418,6 +453,63 @@ faim_export char *aim_gettlv_str(struct aim_tlvlist_t *list, u_short type, int n
   *(newstr + tlv->length) = '\0';
 
   return newstr;
+}
+
+/**
+ * aim_gettlv8 - Retrieve the Nth TLV in chain as a 8bit integer.
+ * @list: Source TLV chain
+ * @type: TLV type to search for
+ * @nth: Index of TLV to return
+ *
+ * Same as aim_gettlv(), except that the return value is a 
+ * 8bit integer instead of an aim_tlv_t. 
+ *
+ */
+faim_internal unsigned char aim_gettlv8(struct aim_tlvlist_t *list, unsigned short type, int num)
+{
+  struct aim_tlv_t *tlv;
+
+  if (!(tlv = aim_gettlv(list, type, num)) || !tlv->value)
+    return 0; /* erm */
+  return aimutil_get8(tlv->value);
+}
+
+/**
+ * aim_gettlv16 - Retrieve the Nth TLV in chain as a 16bit integer.
+ * @list: Source TLV chain
+ * @type: TLV type to search for
+ * @nth: Index of TLV to return
+ *
+ * Same as aim_gettlv(), except that the return value is a 
+ * 16bit integer instead of an aim_tlv_t. 
+ *
+ */
+faim_internal unsigned short aim_gettlv16(struct aim_tlvlist_t *list, unsigned short type, int num)
+{
+  struct aim_tlv_t *tlv;
+
+  if (!(tlv = aim_gettlv(list, type, num)) || !tlv->value)
+    return 0; /* erm */
+  return aimutil_get16(tlv->value);
+}
+
+/**
+ * aim_gettlv32 - Retrieve the Nth TLV in chain as a 32bit integer.
+ * @list: Source TLV chain
+ * @type: TLV type to search for
+ * @nth: Index of TLV to return
+ *
+ * Same as aim_gettlv(), except that the return value is a 
+ * 32bit integer instead of an aim_tlv_t. 
+ *
+ */
+faim_internal unsigned long aim_gettlv32(struct aim_tlvlist_t *list, unsigned short type, int num)
+{
+  struct aim_tlv_t *tlv;
+
+  if (!(tlv = aim_gettlv(list, type, num)) || !tlv->value)
+    return 0; /* erm */
+  return aimutil_get32(tlv->value);
 }
 
 /**
@@ -547,6 +639,26 @@ faim_export int aim_freetlv(struct aim_tlv_t **oldtlv)
   (*oldtlv) = NULL;
 
   return 0;
+}
+
+/**
+ * aim_puttlv_8 - Write a one-byte TLV.
+ * @buf: Destination buffer
+ * @t: TLV type
+ * @v: Value
+ *
+ * Writes a TLV with a one-byte integer value portion.
+ *
+ */
+faim_export int aim_puttlv_8(unsigned char *buf, unsigned short t, unsigned char  v)
+{
+  int curbyte=0;
+
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)(t&0xffff));
+  curbyte += aimutil_put16(buf+curbyte, (unsigned short)0x0001);
+  curbyte += aimutil_put8(buf+curbyte, (unsigned char)(v&0xff));
+
+  return curbyte;
 }
 
 /**
