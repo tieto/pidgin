@@ -1403,7 +1403,7 @@ static void jabber_register_commands(void)
 			jabber_cmd_chat_config, _("configure:  Configure a chat room."));
 	gaim_cmd_register("nick", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
-			jabber_cmd_chat_nick, _("nick &ltnew nickname&gt;:  Change your nickname."));
+			jabber_cmd_chat_nick, _("nick &l;tnew nickname&gt;:  Change your nickname."));
 	gaim_cmd_register("part", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
