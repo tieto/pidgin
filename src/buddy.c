@@ -185,6 +185,7 @@ void handle_group_rename(struct group *g, char* prevname) {
 		} else {
 			update_num_group(gs);
 		}
+		update_num_group(new_gs);
 	} else {
 		/* two possible actions: if gs contains things that are only from g,
 		 * just rename gs and fix the label. otherwise, move everything in g

@@ -3787,15 +3787,25 @@ static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 {
 	char *new_name;
 	struct group *g;
+	struct group *orig;
 
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	g = gtk_object_get_user_data(obj);
 
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
-		char *prevname = g_strdup(g->name);
-		g_snprintf(g->name, sizeof(g->name), "%s", new_name);
-		handle_group_rename(g, prevname);
-		g_free(prevname);
+		char *prevname;
+		if ((orig = find_group(g->gc, new_name)) != NULL) {
+			orig->members = g_slist_concat(orig->members, g->members);
+			handle_group_rename(orig, g->name);
+			g->gc->groups = g_slist_remove(g->gc->groups, g);
+			/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
+			g_free(g);
+		} else {
+			prevname = g_strdup(g->name);
+			g_snprintf(g->name, sizeof(g->name), "%s", new_name);
+			handle_group_rename(g, prevname);
+			g_free(prevname);
+		}
 		do_export(0, 0);
 	}
 
