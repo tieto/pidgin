@@ -244,7 +244,7 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 static void
 icon_filesel_choose_cb(GtkWidget *widget, gint response, AccountPrefsDialog *dialog)
 {
-	const char *filename;
+	char *filename;
 
 	if (response != GTK_RESPONSE_ACCEPT) {
 		if (response == GTK_RESPONSE_CANCEL)
@@ -258,15 +258,16 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, AccountPrefsDialog *dia
 static void
 icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	const char *filename;
+	char *filename;
 
-	filename = gtk_file_selection_get_filename(
-			GTK_FILE_SELECTION(dialog->icon_filesel));
+	filename = g_strdup(gtk_file_selection_get_filename(
+			GTK_FILE_SELECTION(dialog->icon_filesel)));
 
 	/* If they typed in a directory, change there */
 	if (gaim_gtk_check_if_dir(filename,
 			GTK_FILE_SELECTION(dialog->icon_filesel)))
 	{
+		g_free(filename);
 		return;
 	}
 #endif /* FILECHOOSER */
@@ -279,6 +280,7 @@ icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	gtk_widget_destroy(dialog->icon_filesel);
 	dialog->icon_filesel = NULL;
+	g_free(filename);
  }
 
 static void
@@ -292,18 +294,21 @@ icon_preview_change_cb(GtkTreeSelection *sel, AccountPrefsDialog *dialog)
 	int height, width;
 	char *basename, *markup, *size;
 	struct stat st;
-	const char *filename;
+	char *filename;
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	filename = gtk_file_chooser_get_preview_filename(
 					GTK_FILE_CHOOSER(dialog->icon_filesel));
 #else /* FILECHOOSER */
-	filename = gtk_file_selection_get_filename(
-		GTK_FILE_SELECTION(dialog->icon_filesel));
+	filename = g_strdup(gtk_file_selection_get_filename(
+		GTK_FILE_SELECTION(dialog->icon_filesel)));
 #endif /* FILECHOOSER */
 
 	if (!filename || stat(filename, &st))
+	{
+		g_free(filename);
 		return;
+	}
 
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	if (!pixbuf) {
@@ -313,6 +318,7 @@ icon_preview_change_cb(GtkTreeSelection *sel, AccountPrefsDialog *dialog)
 		gtk_file_chooser_set_preview_widget_active(
 					GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
 #endif /* FILECHOOSER */
+		g_free(filename);
 		return;
 	}
 
@@ -336,6 +342,7 @@ icon_preview_change_cb(GtkTreeSelection *sel, AccountPrefsDialog *dialog)
 
 	g_object_unref(G_OBJECT(pixbuf));
 	g_object_unref(G_OBJECT(scale));
+	g_free(filename);
 	g_free(basename);
 	g_free(size);
 	g_free(markup);
@@ -535,6 +542,8 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		   prpl_info->icon_spec.max_width >= width &&
 		   prpl_info->icon_spec.min_height <= height &&
 		   prpl_info->icon_spec.max_height >= height))) {                                  /* The icon is the correct size */
+		g_strfreev(prpl_formats);
+		g_strfreev(pixbuf_formats);
 #endif
 		return g_strdup(path);
 #if GTK_CHECK_VERSION(2,2,0)
@@ -546,6 +555,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		const char *dirname = gaim_buddy_icons_get_cache_dir();
 		char *filename = g_build_filename(dirname, random, NULL);
 		pixbuf = gdk_pixbuf_new_from_file(path, &error);
+		g_strfreev(pixbuf_formats);
 		if (!error && (prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) &&
 			(width < prpl_info->icon_spec.min_width ||
 			 width > prpl_info->icon_spec.max_width ||
@@ -574,6 +584,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			g_free(random);
 			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
 			g_error_free(error);
+			g_strfreev(prpl_formats);
 			return NULL;
 		}
 
@@ -584,6 +595,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 				gaim_debug_error("buddyicon",
 								 "Unable to create directory %s: %s\n",
 								 dirname, strerror(errno));
+				g_strfreev(prpl_formats);
 				return NULL;
 			}
 		}
@@ -595,6 +607,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			if (gdk_pixbuf_save (pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
 					break;
 		}
+		g_strfreev(prpl_formats);
 		if (!error) {
 			g_free(random);
 			g_object_unref(G_OBJECT(pixbuf));
@@ -1284,6 +1297,9 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	if (dialog->protocol_id != NULL)
 		g_free(dialog->protocol_id);
+
+	if (dialog->icon_path != NULL)
+		g_free(dialog->icon_path);
 
 	if (dialog->icon_filesel)
 		gtk_widget_destroy(dialog->icon_filesel);

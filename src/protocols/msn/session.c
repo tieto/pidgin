@@ -289,7 +289,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_SERVCONN:
 			msg = g_strdup(info);
 			break;
-		case MSN_ERROR_UNSUPORTED_PROTOCOL:
+		case MSN_ERROR_UNSUPPORTED_PROTOCOL:
 			msg = g_strdup(_("Our protocol is not supported by the "
 							 "server."));
 			break;
@@ -347,6 +347,17 @@ void
 msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 {
 	GaimConnection *gc;
+
+	/* Prevent the connection progress going backwards, eg. if we get
+	 * transferred several times during login */
+	if (session->login_step >= step)
+		return;
+
+	/* If we're already logged in, we're probably here because of a
+	 * mid-session XFR from the notification server, so we don't want to
+	 * popup the connection progress dialog */
+	if (session->logged_in)
+		return;
 
 	gc = session->account->gc;
 

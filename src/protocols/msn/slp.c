@@ -290,6 +290,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			g_return_if_reached();
 		}
 
+		msn_object_destroy(obj);
+
 		slpsession = msn_slplink_find_slp_session(slplink,
 												  slpcall->session_id);
 
@@ -645,6 +647,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body, gsize len)
 
 		got_invite(slpcall, branch, content_type, content);
 
+		g_free(branch);
 		g_free(content_type);
 		g_free(content);
 	}
@@ -1005,6 +1008,7 @@ msn_request_user_display(MsnUser *user)
 
 		/* TODO: I think we need better buddy icon core functions. */
 		gaim_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
+		g_free(data);
 
 		sl = gaim_find_buddies(account, user->passport);
 

@@ -111,13 +111,10 @@ connect_cb(MsnServConn *servconn)
 
 	vers = g_strjoinv(" ", a);
 
-	if (!session->logged_in)
-	{
-		if (session->login_step == MSN_LOGIN_STEP_START)
-			msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
-		else
-			msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE2);
-	}
+	if (session->login_step == MSN_LOGIN_STEP_START)
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
+	else
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE2);
 
 	msn_cmdproc_send(cmdproc, "VER", "%s", vers);
 
@@ -206,8 +203,7 @@ msn_got_login_params(MsnSession *session, const char *login_params)
 
 	cmdproc = session->notification->cmdproc;
 
-	if (!session->logged_in)
-		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
 	msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
 }
@@ -241,8 +237,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		gaim_connection_set_display_name(gc, friendly);
 
-		if (!session->logged_in)
-			msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
 
 		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
 	}
@@ -267,8 +262,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		g_strfreev(elems);
 
-		if (!session->logged_in)
-			msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
 
 		msn_nexus_connect(session->nexus);
 	}
@@ -299,7 +293,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!protocol_supported)
 	{
-		msn_session_set_error(session, MSN_ERROR_UNSUPORTED_PROTOCOL,
+		msn_session_set_error(session, MSN_ERROR_UNSUPPORTED_PROTOCOL,
 							  NULL);
 		return;
 	}
@@ -1012,8 +1006,7 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		session = cmdproc->session;
 
-		if (!session->logged_in)
-			msn_session_set_login_step(session, MSN_LOGIN_STEP_TRANSFER);
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_TRANSFER);
 
 		msn_notification_connect(session->notification, host, port);
 	}

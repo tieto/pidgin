@@ -1663,7 +1663,7 @@ score_pref_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	primitive_scores[index] = GPOINTER_TO_INT(value);
 }
 
-guint
+static guint
 gaim_buddy_presences_hash(gconstpointer key)
 {
 	const GaimStatusBuddyKey *me = key;
@@ -1677,7 +1677,7 @@ gaim_buddy_presences_hash(gconstpointer key)
 	return ret;
 }
 
-gboolean
+static gboolean
 gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
 {
 	GaimStatusBuddyKey *key_a = (GaimStatusBuddyKey *)a;
@@ -1688,6 +1688,14 @@ gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
 		return TRUE;
 	else
 		return FALSE;
+}
+
+static void
+gaim_buddy_presences_key_free(gpointer a)
+{
+	GaimStatusBuddyKey *key = (GaimStatusBuddyKey *)a;
+	g_free(key->name);
+	g_free(key);
 }
 
 void *
@@ -1737,8 +1745,9 @@ gaim_status_init(void)
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
 
-	buddy_presences = g_hash_table_new(gaim_buddy_presences_hash,
-									   gaim_buddy_presences_equal);
+	buddy_presences = g_hash_table_new_full(gaim_buddy_presences_hash,
+											gaim_buddy_presences_equal,
+											gaim_buddy_presences_key_free, NULL);
 }
 
 void

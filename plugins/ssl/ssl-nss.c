@@ -57,18 +57,18 @@ static PRDescIdentity _identity;
 static void
 ssl_nss_init_nss(void)
 {
+	char *lib;
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(NULL);
 
 	/* TODO: Fix this so autoconf does the work trying to find this lib. */
-	SECMOD_AddNewModule("Builtins",
 #ifndef _WIN32
-                            g_strdup(BR_LIBDIR("/libnssckbi.so")),
-			    /* this might leak, and looks wrong in general */
+	lib = g_strdup(BR_LIBDIR("/libnssckbi.so"));
 #else
-                            "nssckbi.dll",
+	lib = g_strdup("nssckbi.dll");
 #endif
-                            0, 0);
+	SECMOD_AddNewModule("Builtins", lib, 0, 0);
+	g_free(lib);
 	NSS_SetDomesticPolicy();
 
 	_identity = PR_GetUniqueIdentity("Gaim");

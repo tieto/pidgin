@@ -43,12 +43,17 @@ void tcl_signal_init()
 
 void tcl_signal_handler_free(struct tcl_signal_handler *handler)
 {
+	int i;
+
 	if (handler == NULL)
 		return;
 
 	g_free(handler->signal);
-        if (handler->argnames != NULL)
+    if (handler->argnames != NULL) {
+		for (i = 0; i < handler->nnames; i++)
+			g_free(handler->argnames[i]);
 		g_free(handler->argnames);
+	}
 	Tcl_DecrRefCount(handler->proc);
 	g_free(handler);
 }

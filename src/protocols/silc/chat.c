@@ -31,6 +31,7 @@ GList *silcgaim_chat_info(GaimConnection *gc)
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Channel:");
 	pce->identifier = "channel";
+	pce->required = TRUE;
 	ci = g_list_append(ci, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
