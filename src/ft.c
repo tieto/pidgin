@@ -208,7 +208,6 @@ static int
 ask_accept_ok(GaimXfer *xfer)
 {
 	gaim_xfer_request_accepted(xfer, NULL);
-	gaim_xfer_unref(xfer);
 
 	return 0;
 }
