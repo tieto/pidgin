@@ -1104,10 +1104,10 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                                  } \
                         } \
                         if (url) { \
-                                 g_signal_connect(G_OBJECT(texttag), "event", G_CALLBACK(tag_event), g_strdup(url)); \
                                  gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "LINK", &siter, &iter); \
-                                 texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, NULL); \
-                                 g_object_set_data(G_OBJECT(texttag), "link_url", g_strdup(url)); \
+                                 texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);									\
+                                 g_signal_connect(G_OBJECT(texttag), "event", G_CALLBACK(tag_event), g_strdup(url)); \
+                                 g_object_set_data(G_OBJECT(texttag), "link_url", g_strdup(url));	\
                                  gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
                         } \
                         wpos = 0; \
