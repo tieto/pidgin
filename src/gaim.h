@@ -27,7 +27,7 @@
 
 #include "connection.h"
 
-/* Globals in main.c */
+/* Globals in gtkmain.c */
 extern int opt_away;
 extern char *opt_away_arg;
 extern int opt_debug;

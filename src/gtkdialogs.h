@@ -81,15 +81,15 @@ struct smiley_theme {
 	struct smiley_list *list;
 };
 
-/* Globals in main.c */
+/* Globals in gtkmain.c */
 extern GtkWidget *mainwindow;
 extern int docklet_count;
 
-/* Globals in themes.c */
+/* Globals in gtkthemes.c */
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
 
-/* Functions in main.c */
+/* Functions in gtkmain.c */
 extern void show_login();
 extern void gaim_setup(GaimConnection *);
 
@@ -97,7 +97,7 @@ extern void gaim_setup(GaimConnection *);
 extern void session_init(gchar *, gchar *, gchar *);
 extern void session_end();
 
-/* Functions in themes.c */
+/* Functions in gtkthemes.c */
 extern void smiley_themeize(GtkWidget *);
 extern void smiley_theme_probe();
 extern void load_smiley_theme(const char *file, gboolean load);

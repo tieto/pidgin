@@ -55,6 +55,7 @@
 #include "gtkrequest.h"
 #include "gtkroomlist.h"
 #include "gtksound.h"
+#include "gtkstatus.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
 
@@ -313,6 +314,8 @@ void show_login()
 	/* And raise the curtain! */
 	gtk_widget_show_all(mainwindow);
 
+	/* XXX - TODO - STATUS - Remove this! */
+	gaim_gtk_status_window_show();
 }
 
 static void
@@ -464,6 +467,7 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_conversations_init();
 	gaim_gtk_pounces_init();
 	gaim_gtk_privacy_init();
+	gaim_gtk_status_init();
 	gaim_gtk_xfers_init();
 	gaim_gtk_roomlist_init();
 }

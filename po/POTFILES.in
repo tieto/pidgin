@@ -40,7 +40,6 @@ src/blist.c
 src/connection.c
 src/conversation.c
 src/ft.c
-src/gaim-disclosure.c
 src/gaim-remote.c
 src/gtkaccount.c
 src/gtkblist.c
@@ -49,9 +48,11 @@ src/gtkconv.c
 src/gtkdebug.c
 src/gtkdialogs.c
 src/gtkft.c
+src/gtkgaim-disclosure.c
 src/gtkimhtml.c
 src/gtkimhtmltoolbar.c
 src/gtklog.c
+src/gtkmain.c
 src/gtknotify.c
 src/gtkpounce.c
 src/gtkprefs.c
@@ -59,9 +60,9 @@ src/gtkprivacy.c
 src/gtkrequest.c
 src/gtkroomlist.c
 src/gtksound.c
+src/gtkstock.c
 src/gtkutils.c
 src/log.c
-src/main.c
 src/plugin.c
 src/prefs.c
 src/protocols/gg/gg.c
@@ -133,6 +134,5 @@ src/prpl.h
 src/request.h
 src/server.c
 src/status.c
-src/stock.c
 src/util.c
 src/win32/win32dep.c
