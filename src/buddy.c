@@ -2765,7 +2765,7 @@ void show_buddy_list()
 
 	gtk_tooltips_set_tip(tips, addbutton, _("Add a new Buddy"), "Penguin");
 	gtk_tooltips_set_tip(tips, groupbutton, _("Add a new Group"), "Penguin");
-	gtk_tooltips_set_tip(tips, rembutton, _("Remove selected Buddy"), "Penguin");
+	gtk_tooltips_set_tip(tips, rembutton, _("Remove selected Buddy/Group"), "Penguin");
 
        	/* And the boxes in the box */
        	gtk_box_pack_start(GTK_BOX(editpane), tbox, TRUE, TRUE, 0);
