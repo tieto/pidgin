@@ -77,7 +77,7 @@ struct gaim_gtk_buddy_list {
 	((list)->ui_ops == gaim_get_gtk_blist_ui_ops())
 
 /**************************************************************************
- * @name GTK+ Conversation API
+ * @name GTK+ Buddy List API
  **************************************************************************/
 /**
  * Returns the UI operations structure for the buddy list.
@@ -125,5 +125,48 @@ void gaim_gtk_blist_update_refresh_timeout();
  */
 GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node,
 		GaimStatusIconSize size);
+
+/**************************************************************************
+ * @name GTK+ Buddy List sorting functions
+ **************************************************************************/
+
+typedef GtkTreeIter (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, struct gaim_buddy_list *blist, GtkTreeIter group, GtkTreeIter *cur);
+
+extern GSList *gaim_gtk_blist_sort_methods;
+
+struct gaim_gtk_blist_sort_method {
+	char *name;
+	gaim_gtk_blist_sort_function func;
+};
+
+/**
+ * Registers a buddy list sorting method.
+ *
+ * @param name The method's name.
+ * @param func  A pointer to the function.
+ *
+ */
+void gaim_gtk_blist_sort_method_reg(const char *name, gaim_gtk_blist_sort_function func);
+
+/**
+ * Unregisters a buddy list sorting method.
+ *
+ * @param name The method's name
+ */
+void gaim_gtk_blist_sort_method_unreg(const char *name);
+
+/**
+ * Sets a buddy list sorting method.
+ *
+ * @param name The method's name.
+ */
+void gaim_gtk_blist_sort_method_set(const char *name);
+
+/**
+ * Sets up the programs default sort methods
+ */
+void gaim_gtk_blist_setup_sort_methods();
+
+
 
 #endif /* _GAIM_GTK_LIST_H_ */

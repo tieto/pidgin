@@ -326,6 +326,7 @@ extern GSList *message_queue;
 extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
 extern char web_command[2048];
+extern char sort_method[64];
 extern struct save_pos blist_pos;
 extern struct window_size conv_size, buddy_chat_size;
 

@@ -573,8 +573,27 @@ GtkWidget *list_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *button, *b2;
+	int r = 0;
+	gboolean fnd = FALSE;
+	GList *l= NULL;
+	GSList *sl = gaim_gtk_blist_sort_methods;
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	
+	
+	vbox = make_frame (ret, _("Buddy List Sorting"));
+	while (sl) {
+		l = g_list_append(l, ((struct gaim_gtk_blist_sort_method*)sl->data)->name);
+		l = g_list_append(l, ((struct gaim_gtk_blist_sort_method*)sl->data)->name);
+		if (!fnd && !gaim_utf8_strcasecmp(((struct gaim_gtk_blist_sort_method*)sl->data)->name, sort_method))
+			fnd = TRUE;
+			sl = sl->next;
+		if (!fnd) r++;
+	}
+	gaim_dropdown_from_list(vbox, _("Sorting:"),
+				(int*)&sort_method, r, l);
+	
+	g_list_free(l);
 
 	vbox = make_frame (ret, _("Buddy List Toolbar"));
 	gaim_dropdown(vbox, _("Show _buttons as:"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM | OPT_BLIST_NO_BUTTON_TEXT,
@@ -2300,6 +2319,12 @@ void dropdown_set(GObject *w, int *option)
 	int opt = GPOINTER_TO_INT(g_object_get_data(w, "value"));
 	int clear = GPOINTER_TO_INT(g_object_get_data(w, "clear"));
 
+	if (option == (int*)&sort_method) {
+		/* Hack city -- Population: Sean Egan */
+		char *name = (char*)opt;
+		 gaim_gtk_blist_sort_method_set(name);
+		 return;
+	}		
 	if (clear != -1) {
 		*option = *option & ~clear;
 		*option = *option | opt;
@@ -2340,7 +2365,7 @@ void dropdown_set(GObject *w, int *option)
 		//    set_blist_tab();
 	} else if (option == (int *)&conv_placement_option) {
 		gaim_conv_placement_set_active(conv_placement_option);
-	}
+	} 
 }
 
 static GtkWidget *gaim_dropdown(GtkWidget *box, const gchar *title, int *option, int clear, ...)
@@ -2409,7 +2434,10 @@ static GtkWidget *gaim_dropdown_from_list(GtkWidget *box, const gchar *title, in
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
-		if (((clear > -1) && ((*option & clear) == value)) || *option == value) {
+		if (option == (int*)sort_method) {
+			/* Now Entering Hacksville, Estd. May 17, 2003 */
+			gtk_menu_set_active(GTK_MENU(menu), clear);
+		} else if (((clear > -1) && ((*option & clear) == value)) || *option == value) {
 			gtk_menu_set_active(GTK_MENU(menu), o);
 		}
 		o++;

@@ -31,9 +31,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <math.h>
 #include <time.h>
-#include <ctype.h>
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
@@ -56,6 +58,12 @@
 #include "win32dep.h"
 #endif
 
+GSList *gaim_gtk_blist_sort_methods = NULL;
+static struct gaim_gtk_blist_sort_method *current_sort_method = NULL;
+static GtkTreeIter sort_method_none(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
+static GtkTreeIter sort_method_alphabetical(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
+static GtkTreeIter sort_method_status(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
+static GtkTreeIter sort_method_log(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
 static struct gaim_gtk_buddy_list *gtkblist = NULL;
 
 /* part of the best damn Docklet code this side of Tahiti */
@@ -66,6 +74,8 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 static char *gaim_get_tooltip_text(GaimBlistNode *node);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
+
+char sort_method[64];
 
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
@@ -1307,6 +1317,16 @@ item_factory_translate_func (const char *path, gpointer func_data)
 	return _(path);
 }
 
+void gaim_gtk_blist_setup_sort_methods()
+{
+	gaim_gtk_blist_sort_method_reg("None", sort_method_none);
+	gaim_gtk_blist_sort_method_reg("Alphabetical", sort_method_alphabetical);
+	gaim_gtk_blist_sort_method_reg("By status", sort_method_status);
+	gaim_gtk_blist_sort_method_reg("By log size", sort_method_log);
+	gaim_gtk_blist_sort_method_set(sort_method[0] ? sort_method : "None");
+}		
+
+
 static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 {
 	GtkItemFactory *ift;
@@ -1504,18 +1524,25 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 		gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
 }
 
-void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
+static void redo_buddy_list(struct gaim_buddy_list *list, gboolean remove)
 {
 	GaimBlistNode *group, *buddy;
-
+	
 	for(group = list->root; group; group = group->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(group))
 			continue;
 		gaim_gtk_blist_update(list, group);
 		for(buddy = group->child; buddy; buddy = buddy->next) {
+			if (remove)
+				gaim_gtk_blist_hide_node(list, buddy);
 			gaim_gtk_blist_update(list, buddy);
 		}
 	}
+}
+
+void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
+{
+	redo_buddy_list(list, FALSE);
 }
 
 void
@@ -1676,7 +1703,6 @@ static void make_a_group(GaimBlistNode *node, GtkTreeIter *iter) {
 	g_free(mark);
 }
 
-
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
 	GtkTreeIter iter;
@@ -1706,17 +1732,9 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 					expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter);
 				else
 					g_free(collapsed);
-
-				oldersibling = node->prev;
-				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter)) {
-					oldersibling = oldersibling->prev;
-				}
-
-				gtk_tree_store_insert_after(gtkblist->treemodel, &iter, &groupiter, oldersibling ? &oldersiblingiter : NULL);
-				newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
-				gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
-				gtk_tree_path_free(newpath);
-
+				
+				iter = current_sort_method->func(node, list, groupiter, NULL);
+			
 				if (blist_options & OPT_BLIST_POPUP) {
 					gtk_widget_show(gtkblist->window);
 					gtk_window_deiconify(GTK_WINDOW(gtkblist->window));
@@ -1816,6 +1834,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		gaim_gtk_blist_hide_node(list, node);
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present != GAIM_BUDDY_OFFLINE || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc))) {
 		GdkPixbuf *status, *avatar;
+		GtkTreeIter groupiter;
 		char *mark;
 		char *warning = NULL, *idle = NULL;
 
@@ -1857,6 +1876,10 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				g_free(idle);
 				idle = i2;
 			}
+		}
+		if (!selected) {
+			get_iter_from_node(node->parent, &groupiter);
+			iter = current_sort_method->func(node, list, groupiter, &iter);
 		}
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
@@ -2068,3 +2091,217 @@ create_prpl_icon(struct gaim_account *account)
 	return status;
 }
 
+
+/*********************************************************************
+ * Buddy List sorting functions                                          *
+ *********************************************************************/
+
+void gaim_gtk_blist_sort_method_reg(const char *name, gaim_gtk_blist_sort_function func)
+{
+	struct gaim_gtk_blist_sort_method *method = g_new0(struct gaim_gtk_blist_sort_method, 1);
+	method->name = g_strdup(name);
+	method->func = func;
+	gaim_gtk_blist_sort_methods = g_slist_append(gaim_gtk_blist_sort_methods, method);
+}
+
+void gaim_gtk_blist_sort_method_unreg(const char *name){
+
+}
+
+void gaim_gtk_blist_sort_method_set(const char *name){
+	GSList *l = gaim_gtk_blist_sort_methods;
+	while (l && gaim_utf8_strcasecmp(((struct gaim_gtk_blist_sort_method*)l->data)->name, name))
+		l = l->next;
+	
+	if (l) {
+		current_sort_method = l->data;
+		strcpy(sort_method, ((struct gaim_gtk_blist_sort_method*)l->data)->name);
+	} else if (!current_sort_method) {
+		gaim_gtk_blist_sort_method_set("None");
+		return;
+	}
+	save_prefs();
+	redo_buddy_list(gaim_get_blist(), TRUE);
+
+}
+
+/******************************************
+ ** Sort Methods
+ ******************************************/
+
+/* A sort method takes a core buddy list node, the buddy list it belongs in, the GtkTreeIter of its group and
+ * the nodes own iter if it has one.  It returns the iter the buddy list should use to represent this buddy, be
+ * it a new iter, or an existing one.  If it is a new iter, and cur is defined, the buddy list will probably want
+ * to remove cur from the buddy list. */
+static GtkTreeIter sort_method_none(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur)
+{
+	GtkTreePath *newpath;
+	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+	GaimBlistNode *oldersibling = node->prev;
+	GtkTreeIter iter, oldersiblingiter;
+	
+	if (cur)
+		return *cur;
+	
+	while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter)) {
+		oldersibling = oldersibling->prev;
+	}
+	
+	gtk_tree_store_insert_after(gtkblist->treemodel, &iter, &groupiter, oldersibling ? &oldersiblingiter : NULL);
+	newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+	gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+	gtk_tree_path_free(newpath);
+	return iter;
+}
+
+static GtkTreeIter sort_method_alphabetical(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur)
+{
+	GtkTreeIter more_z, iter;
+	GaimBlistNode *n;
+	GtkTreePath *newpath;
+	GValue val = {0,};
+	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+
+	if (cur) 
+		return *cur;
+	
+
+	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
+		gtk_tree_store_insert(gtkblist->treemodel, &iter, &groupiter, 0);
+		newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+		gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+		gtk_tree_path_free(newpath);
+		return iter;
+	}
+
+	do {
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
+		n = g_value_get_pointer(&val);
+		
+		if (GAIM_BLIST_NODE_IS_BUDDY(n) && gaim_utf8_strcasecmp(gaim_get_buddy_alias((struct buddy*)node), 
+									gaim_get_buddy_alias((struct buddy*)n)) < 0) {
+			gtk_tree_store_insert_before(gtkblist->treemodel, &iter, &groupiter, &more_z);
+			newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+			gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+			gtk_tree_path_free(newpath);
+			return iter;
+		}
+		g_value_unset(&val);
+	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
+													  
+	gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
+	newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+	gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+	gtk_tree_path_free(newpath);
+	return iter;
+}
+
+static GtkTreeIter sort_method_status(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur)
+{
+	GtkTreeIter more_z, iter;
+	GaimBlistNode *n;
+	GtkTreePath *newpath, *expand;
+	GValue val = {0,};
+	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+	char *collapsed = gaim_group_get_setting((struct group *)node->parent, "collapsed");
+	if(!collapsed)
+		expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter);
+	else
+		g_free(collapsed);
+	
+	
+	if (cur)
+		gaim_gtk_blist_hide_node(blist, node);
+	
+	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
+		gtk_tree_store_insert(gtkblist->treemodel, &iter, &groupiter, 0);
+		newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+		gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+		gtk_tree_path_free(newpath);
+		if(expand) {
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), expand, TRUE);
+			gtk_tree_path_free(expand);
+		}
+		return iter;
+	}
+
+	do {
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
+		n = g_value_get_pointer(&val);
+		
+		if (n && GAIM_BLIST_NODE_IS_BUDDY(n)) {
+			struct buddy *new = (struct buddy*)node, *it = (struct buddy*)n;
+			if (it->idle > new->idle)
+				{
+					printf("Inserting %s before %s\n", new->name, it->name);
+					gtk_tree_store_insert_before(gtkblist->treemodel, &iter, &groupiter, &more_z);
+						newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+						gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+						gtk_tree_path_free(newpath);
+						return iter;
+				}
+			g_value_unset(&val);
+		}
+	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
+
+	gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
+	newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+	gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+	gtk_tree_path_free(newpath);
+	return iter;
+}
+
+static GtkTreeIter sort_method_log(GaimBlistNode *node, struct gaim_buddy_list *blist, GtkTreeIter groupiter, GtkTreeIter *cur)
+{
+	GtkTreeIter more_z, iter;
+	GaimBlistNode *n;
+	GtkTreePath *newpath;
+	GValue val = {0,};
+	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+	char *logname = g_strdup_printf("%s.log", normalize(((struct buddy*)node)->name));
+	char *filename = g_build_filename(gaim_user_dir(), "logs", logname, NULL);
+	struct stat st, st2;
+	
+	if (cur)
+		return *cur;
+
+	if (stat(filename, &st))
+		st.st_size = 0;
+	g_free(filename);
+	g_free(logname);	
+
+	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
+		gtk_tree_store_insert(gtkblist->treemodel, &iter, &groupiter, 0);
+		newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+		gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+		gtk_tree_path_free(newpath);
+		return iter;
+	}
+
+	do {
+		
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
+		n = g_value_get_pointer(&val);
+		
+		logname = g_strdup_printf("%s.log", normalize(((struct buddy*)n)->name));
+		filename = g_build_filename(gaim_user_dir(), "logs", logname, NULL);
+		if (stat(filename, &st2))
+			st2.st_size = 0;
+		g_free(filename);
+		g_free(logname);
+		if (GAIM_BLIST_NODE_IS_BUDDY(n) && st.st_size > st2.st_size) {
+			gtk_tree_store_insert_before(gtkblist->treemodel, &iter, &groupiter, &more_z);
+			newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+			gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+			gtk_tree_path_free(newpath);
+			return iter;
+		}
+		g_value_unset(&val);
+	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
+													  
+	gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
+	newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+	gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
+	gtk_tree_path_free(newpath);
+	return iter;
+}

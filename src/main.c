@@ -541,6 +541,7 @@ static int ui_main()
 		}
 	}
 
+	gaim_gtk_blist_setup_sort_methods();
 	setup_stock();
 
 #ifndef _WIN32

@@ -966,6 +966,8 @@ static void gaimrc_read_options(FILE *f)
 			blist_pos.y = atoi(p->value[1]);
 			blist_pos.width = atoi(p->value[2]);
 			blist_pos.height = atoi(p->value[3]);
+		} else if (!strcmp(p->option, "sort_method")) {
+			strcpy(sort_method, p->value[0]);
 		}
 
 	}
@@ -1056,6 +1058,7 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\treport_idle { %d }\n", report_idle);
 	fprintf(f, "\tweb_browser { %d }\n", web_browser);
 	fprintf(f, "\tweb_command { %s }\n", web_command);
+	fprintf(f, "\tsort_method { %s }\n", sort_method);
 	if (current_smiley_theme) {
 #ifndef _WIN32
 		fprintf(f, "\tsmiley_theme { %s }\n", current_smiley_theme->path);
