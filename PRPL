@@ -25,8 +25,8 @@ file, and have it call
 
 	load_protocol(my_proto_init);
 
-and return a non-negative int. Then compile as a plugin, load the .so file, and you're set. If you're
-going to load it statically, extern the my_proto_init function, and in prpl.c, call load_protocol.
+and return NULL. Then compile as a plugin, load the .so file, and you're set. If you're going to
+load it statically, extern the my_proto_init function, and in prpl.c, call load_protocol.
 
 Your PRPL needs to have a login function, which ideally should set up a gdk_input watcher. When you
 want to indicate that the account is online, simply call account_online(struct gaim_connection *).

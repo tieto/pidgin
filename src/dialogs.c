@@ -3123,11 +3123,11 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_show(tbox);
 
 	frame = gtk_frame_new(_("New away message"));
-	gtk_container_set_border_width(GTK_CONTAINER(frame), 0);
 	gtk_box_pack_start(GTK_BOX(tbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
 	fbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 	gtk_container_add(GTK_CONTAINER(frame), fbox);
 	gtk_widget_show(fbox);
 
