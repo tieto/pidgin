@@ -215,7 +215,8 @@ void update_all_buddies()
                         mem = mem->next;
                 }
 		/* this is a fall-back in case we missed any */
-		if (!count) gtk_widget_hide(g->item);
+		if (!count && (display_options & OPT_DISP_NO_MT_GRP))
+			gtk_widget_hide(g->item);
 		else gtk_widget_show(g->item);
 
                 grp = grp->next;
@@ -502,7 +503,8 @@ void remove_buddy(struct group *rem_g, struct buddy *rem_b)
 		if (b->present) count++;
 		mem = mem->next;
 	}
-	if (!count) gtk_widget_hide(delg->item);
+	if (!count && (display_options & OPT_DISP_NO_MT_GRP))
+		gtk_widget_hide(delg->item);
 	
 
         serv_save_config();
@@ -748,7 +750,8 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 				if (bt->present) count++;
 				mem = mem->next;
 			}
-			if (!count) gtk_widget_hide(old_g->item);
+			if (!count && (display_options & OPT_DISP_NO_MT_GRP))
+				gtk_widget_hide(old_g->item);
 			gtk_widget_show(new_g->item);
 		}
                 set_buddy(b);
