@@ -19,6 +19,7 @@ version 0.55:
 	* Speling corections (Thanks Tero Kuusela)
 	* Oscar list icon fixes (Thanks Mark Doliner)
 	* Oscar idle times work again (Thanks Mark Doliner)
+	* Protocol icons on Edit Buddies tab (Thanks Christian Hammond)	
 
 version 0.54 (03/14/2002):
 	* Compiles without GdkPixbuf again
