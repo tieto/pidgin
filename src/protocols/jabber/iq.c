@@ -153,6 +153,8 @@ static void jabber_iq_handle_last(JabberStream *js, xmlnode *packet)
 	idle_time = g_strdup_printf("%ld", js->idle ? time(NULL) - js->idle : 0);
 	xmlnode_set_attrib(query, "seconds", idle_time);
 	g_free(idle_time);
+
+	jabber_iq_send(iq);
 }
 
 static void jabber_iq_handle_time(JabberStream *js, xmlnode *packet)
