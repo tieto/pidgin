@@ -34,6 +34,10 @@
 #include <mmsystem.h>
 #endif
 
+#ifdef HAVE_ENDIAN_H
+#include <endian.h>
+#endif
+
 #ifdef USE_AO
 #include <ao/ao.h>
 #include <audiofile.h>
@@ -229,10 +233,15 @@ void gaim_sound_play_file(char *filename)
 			afSetVirtualSampleFormat(file, AF_DEFAULT_TRACK,
 					AF_SAMPFMT_TWOSCOMP, format.bits);
 
-			if(afGetByteOrder(file, AF_DEFAULT_TRACK) == AF_BYTEORDER_BIGENDIAN)
-				format.byte_format = AO_FMT_BIG;
-			else
-				format.byte_format = AO_FMT_LITTLE;
+#if __BYTE_ORDER == __BIG_ENDIAN
+			format.byte_format = AO_FMT_BIG;
+			afSetVirtualByteOrder(file, AF_DEFAULT_TRACK,
+					AF_BYTEORDER_BIGENDIAN);
+#elif __BYTE_ORDER == __LITTLE_ENDIAN
+			format.byte_format = AO_FMT_LITTLE;
+			afSetVirtualByteOrder(file, AF_DEFAULT_TRACK,
+					AF_BYTEORDER_LITTLEENDIAN);
+#endif
 
 			bytes_per_frame = format.bits * format.channels / 8;
 

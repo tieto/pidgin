@@ -801,8 +801,10 @@ static void gaimrc_read_options(FILE *f)
 
 	/* this is where we do bugs and compatibility stuff */
 	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_NORMAL | OPT_SOUND_ESD
-					| OPT_SOUND_ARTS | OPT_SOUND_NAS | OPT_SOUND_CMD)))
+					| OPT_SOUND_ARTS | OPT_SOUND_NAS | OPT_SOUND_CMD))) {
 		sound_options |= OPT_SOUND_NORMAL;
+		gaim_sound_change_output_method();
+	}
 
 	if (conv_size.width == 0 &&
 	    conv_size.height == 0 &&
