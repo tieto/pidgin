@@ -482,7 +482,7 @@ void set_user_state(enum gaim_user_states state)
 {
 	if (state == signing_on)
 		connecting++;
-	else if ((state == away || state == online) && connecting > 0)
+	else if ((state == offline || state == away || state == online) && connecting > 0)
 		connecting--;
 	update_applet();
 }
