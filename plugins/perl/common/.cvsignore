@@ -1,6 +1,7 @@
 *.bs
 *.o
 Makefile.PL
+Makefile
 blib
 pm_to_blib
 *.c
