@@ -1976,6 +1976,8 @@ void show_conv(struct conversation *c)
 
 	entry = gtk_text_new(NULL, NULL);
 	c->entry = entry;
+	if (!(display_options & OPT_DISP_ONE_WINDOW))
+		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 
 	toolbar = build_conv_toolbar(c);
 	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 0);
