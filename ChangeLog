@@ -9,6 +9,7 @@ version 0.11.0-pre12:
 	* Auto-recon plugin got reworked
 	* Lots of clean-ups
 	* Some new pixmaps (Thanks, DennisR).
+	* Fixed a segfault in IRC (Thanks Sean Egan)
 
 version 0.11.0-pre11 (04/30/2001):
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
