@@ -2051,7 +2051,9 @@ void signoff(struct gaim_connection *gc)
 {
 	GList *wins;
 
-	gaim_blist_remove_account(gc->account);
+	/* we only remove the account if we ever added it */
+	if(!gc->account->connecting)
+		gaim_blist_remove_account(gc->account);
 
 	/* core stuff */
 	/* remove this here so plugins get a sensible count of connections */
