@@ -15,6 +15,7 @@ version 0.9.16: (05/24/2000)
 	* Better proxy support overall (you can get people's info now! :) )
 	* Two-way file transfer (you can get and send files, but you still
 	  can't initiate either)
+	* Fixed font problem with Misconfigured X-Servers.  Thanks Decklin!
 
 version 0.9.15: (05/06/2000)
 	* Plugin support enabled by default (oops)
