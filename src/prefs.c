@@ -954,7 +954,7 @@ void do_select_sound(GtkWidget *w, int snd) {
 static void reset_sound(GtkWidget *button, int snd) {
 
 	/* This just resets a sound file back to default */
-	g_free(sound_file[snd]);
+	sound_file[snd] = NULL;
 	
 	gtk_entry_set_text(GTK_ENTRY(sndent[snd]), "(default)");
 }
