@@ -317,6 +317,8 @@ add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (user == NULL)
 	{
+		gaim_debug_info("msn", "Creating new user. '%s' was not found.\n",
+						passport);
 		user = msn_user_new(session->userlist, passport, friendly);
 		msn_userlist_add_user(session->userlist, user);
 	}

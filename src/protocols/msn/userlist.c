@@ -246,6 +246,14 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 						"%s has added you to his or her contact list.\n",
 						passport);
 
+#if 0
+		gaim_debug_misc("msn", "User's list op = %d\n", user->list_op);
+		gaim_debug_misc("msn", "FL = %d\n", (user->list_op & MSN_LIST_FL_OP));
+		gaim_debug_misc("msn", "AL = %d\n", (user->list_op & MSN_LIST_AL_OP));
+		gaim_debug_misc("msn", "BL = %d\n", (user->list_op & MSN_LIST_BL_OP));
+		gaim_debug_misc("msn", "RL = %d\n", (user->list_op & MSN_LIST_RL_OP));
+#endif
+
 		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP |
 							   MSN_LIST_FL_OP)))
 		{
@@ -367,8 +375,11 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		/* These are users who have us on their contact list. */
 		/* TODO: what does store name is when this happens? */
 
-		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
+		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP |
+						 MSN_LIST_FL_OP)))
+		{
 			got_new_entry(gc, passport, store);
+		}
 	}
 
 	user->list_op = list_op;
@@ -413,6 +424,8 @@ msn_userlist_destroy(MsnUserList *userlist)
 void
 msn_userlist_add_user(MsnUserList *userlist, MsnUser *user)
 {
+	gaim_debug_misc("msn", "[%p] Adding %s (%p)\n",
+					userlist, user->passport, user);
 	userlist->users = g_list_append(userlist->users, user);
 }
 
@@ -434,6 +447,11 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 		MsnUser *user = (MsnUser *)l->data;
 
 		g_return_val_if_fail(user->passport != NULL, NULL);
+
+#if 0
+		gaim_debug_misc("msn", "[%p] Comparing '%s' and '%s' (%p)\n",
+						userlist, passport, user->passport, user);
+#endif
 
 		if (!strcmp(passport, user->passport))
 			return user;

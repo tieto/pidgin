@@ -121,6 +121,14 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	friend     = gaim_url_decode(cmd->params[1]);
 	list_op    = atoi(cmd->params[2]);
 
+#if 0
+	gaim_debug_misc("msn", "Got list op = %d\n", list_op);
+	gaim_debug_misc("msn", "FL = %d\n", (list_op & MSN_LIST_FL_OP));
+	gaim_debug_misc("msn", "AL = %d\n", (list_op & MSN_LIST_AL_OP));
+	gaim_debug_misc("msn", "BL = %d\n", (list_op & MSN_LIST_BL_OP));
+	gaim_debug_misc("msn", "RL = %d\n", (list_op & MSN_LIST_RL_OP));
+#endif
+
 	user = msn_user_new(session->userlist, passport, friend);
 
 	msn_userlist_add_user(session->userlist, user);
