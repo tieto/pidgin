@@ -1162,7 +1162,7 @@ static void jabber_draw_new_user(GtkWidget *box)
 	gtk_widget_show(label);
 
 	newserv = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(newserv), "4.41.58.92");
+	gtk_entry_set_text(GTK_ENTRY(newserv), "jabber.org");
 	gtk_box_pack_end(GTK_BOX(hbox), newserv, FALSE, FALSE, 5);
 	gtk_widget_show(newserv);
 }
