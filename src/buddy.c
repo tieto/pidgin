@@ -1971,7 +1971,6 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (b->present == 1) {
 			if (bs->sound != 2)
 				play_sound(BUDDY_ARRIVE);
-			bs->sound = 2;
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 							NULL, (char **)login_icon_xpm);
 			gtk_widget_hide(bs->pix);
@@ -1988,7 +1987,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				gtk_timeout_remove(bs->log_timer);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
 			update_num_group(gs);
-			if (display_options & OPT_DISP_SHOW_LOGON) {
+			if ((bs->sound != 2) && (display_options & OPT_DISP_SHOW_LOGON)) {
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
 					char tmp[1024];
@@ -1998,6 +1997,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 				}
 			}
+			bs->sound = 2;
 		} else if (bs->log_timer == 0) {
 			if (gc->prpl->list_icon)
 				xpm = (*gc->prpl->list_icon)(b->uc);
@@ -2023,7 +2023,6 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					      off */
 		if (bs->sound != 1)
 			play_sound(BUDDY_LEAVE);
-		bs->sound = 1;
 
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		if (bs->log_timer > 0)
@@ -2040,7 +2039,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		}
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
-		if (display_options & OPT_DISP_SHOW_LOGON) {
+		if ((bs->sound != 1) && (display_options & OPT_DISP_SHOW_LOGON)) {
 			struct conversation *c = find_conversation(b->name);
 			if (c) {
 				char tmp[1024];
@@ -2050,6 +2049,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 			}
 		}
+
+		bs->sound = 1;
 	}
 }
 
