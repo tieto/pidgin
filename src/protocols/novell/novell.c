@@ -1013,6 +1013,7 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 		}
 	}
 
+	/* XXX - Um, we're using "Title" as the title? */
 	gaim_notify_formatted(NULL, "Title", _("User Properties"),
 						  NULL, info_text->str, NULL, NULL);
 
