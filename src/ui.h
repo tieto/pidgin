@@ -220,6 +220,7 @@ struct mod_user {
 /* Globals in aim.c */
 extern GList *log_conversations; /* this should be moved to conversations.c */
 extern GSList *away_messages; /* this should be moved to away.c */
+extern GtkWidget *mainwindow;
 
 /* Globals in away.c */
 extern struct away_message *awaymessage;

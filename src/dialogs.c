@@ -86,7 +86,8 @@ GdkColor fgcolor;
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
 static GtkWidget *infodialog = NULL;
 static GList *dialogwindows = NULL;
-static GtkWidget *exportdialog, *importdialog;
+static GtkWidget *importdialog;
+static struct gaim_connection *importgc;
 static GtkWidget *icondlg;
 static GtkWidget *aliasdlg = NULL;
 static GtkWidget *aliasentry = NULL;
@@ -277,11 +278,10 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 	if (dest == infodialog)
 		infodialog = NULL;
 
-	if (dest == exportdialog)
-		exportdialog = NULL;
-
-	if (dest == importdialog)
+	if (dest == importdialog) {
 		importdialog = NULL;
+		importgc = NULL;
+	}
 
 	if (dest == icondlg)
 		icondlg = NULL;
@@ -327,11 +327,6 @@ void destroy_all_dialogs()
 	if (infodialog) {
 		destroy_dialog(NULL, infodialog);
 		infodialog = NULL;
-	}
-
-	if (exportdialog) {
-		destroy_dialog(NULL, exportdialog);
-		exportdialog = NULL;
 	}
 
 	if (importdialog) {
@@ -2616,11 +2611,59 @@ static void do_import_dialog(GtkWidget *w, struct gaim_connection *gc)
 	if (file_is_dir(file, importdialog)) {
 		return;
 	}
-	/* FIXME : import buddy list file. moderately important */
-	do_import(connections->data, file);
+	do_import(importgc, file);
+	do_export(importgc);
 	destroy_dialog(NULL, importdialog);
-	importdialog = NULL;
-	do_export(connections->data);
+}
+
+static void set_import_gc(gpointer data, struct gaim_connection *gc)
+{
+	importgc = gc;
+}
+
+static void create_import_dropdown(GtkFileSelection *fs)
+{
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GSList *g = connections;
+	struct gaim_connection *c;
+	GtkWidget *optmenu;
+	GtkWidget *menu;
+	char buf[256];
+	GtkWidget *opt;
+
+	if (!connections)
+		return;
+	importgc = connections->data;
+	if (!connections->next)
+		return;
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(fs->action_area), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	optmenu = gtk_option_menu_new();
+	gtk_box_pack_end(GTK_BOX(hbox), optmenu, FALSE, FALSE, 5);
+	gtk_widget_show(optmenu);
+
+	label = gtk_label_new(_("Import to:"));
+	gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	menu = gtk_menu_new();
+
+	while (g) {
+		c = (struct gaim_connection *)g->data;
+		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, (*c->prpl->name)());
+		opt = gtk_menu_item_new_with_label(buf);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_import_gc), c);
+		gtk_widget_show(opt);
+		gtk_menu_append(GTK_MENU(menu), opt);
+		g = g->next;
+	}
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
 }
 
 void show_import_dialog()
@@ -2642,44 +2685,13 @@ void show_import_dialog()
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
 				   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
 
-
+		create_import_dropdown(GTK_FILE_SELECTION(importdialog));
 	}
 
 	g_free(buf);
 	gtk_widget_show(importdialog);
 	gdk_window_raise(importdialog->window);
 }
-
-/*
-void show_export_dialog()
-{
-        char *buf = g_malloc(BUF_LEN);
-        if (!exportdialog) {
-                exportdialog = gtk_file_selection_new(_("Gaim - Export Buddy List"));
-
-                gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(exportdialog));
-
-                g_snprintf(buf, BUF_LEN - 1, "%s/gaim.buddy", getenv("HOME"));
-                
-                gtk_file_selection_set_filename(GTK_FILE_SELECTION(exportdialog), buf);
-                gtk_signal_connect(GTK_OBJECT(exportdialog), "destroy",
-                                   GTK_SIGNAL_FUNC(destroy_dialog), exportdialog);
-                
-                gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(exportdialog)->ok_button),
-                                   "clicked", GTK_SIGNAL_FUNC(do_export), (void*)1);
-                gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(exportdialog)->cancel_button),
-                                   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), exportdialog);
-                
-
-	}
-
-	g_free(buf);
-
-        gtk_widget_show(exportdialog);
-        gdk_window_raise(exportdialog->window);
-
-}
-*/
 
 /*------------------------------------------------------------------------*/
 /*  The dialog for new away messages                                      */

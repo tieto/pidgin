@@ -179,7 +179,6 @@ struct buddy_pounce {
 /* Globals in aim.c */
 extern GList *buddy_pounces;
 extern GList *conversations;
-extern GtkWidget *mainwindow;
 extern int opt_away;
 extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
