@@ -1248,7 +1248,7 @@ void show_new_buddy_chat(struct conversation *b)
 		cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(cont), 5);
 
-		tabby = gtk_hbox_new(FALSE, 0);
+		tabby = gtk_hbox_new(FALSE, 5);
 		b->close = gtk_button_new();
 		gtk_widget_set_size_request(GTK_WIDGET(b->close), 16, 16);
 		gtk_container_add(GTK_CONTAINER(b->close), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));

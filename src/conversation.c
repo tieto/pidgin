@@ -2798,7 +2798,7 @@ void show_conv(struct conversation *c)
 		gtk_container_set_border_width(GTK_CONTAINER(cont), 5);
 		/* this doesn't matter since we're resetting the name once we're out of the if */
 /*		gtk_notebook_insert_page(GTK_NOTEBOOK(convo_notebook), cont, gtk_label_new(c->name),*/
-		tabby = gtk_hbox_new(FALSE, 0);
+		tabby = gtk_hbox_new(FALSE, 5);
 		c->close = gtk_button_new();
 		gtk_widget_set_size_request(GTK_WIDGET(c->close), 16, 16);
 		gtk_container_add(GTK_CONTAINER(c->close), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
