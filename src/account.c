@@ -796,6 +796,8 @@ start_element_handler(GMarkupParseContext *context,
 				data->setting_type = GAIM_PREF_BOOLEAN;
 		}
 	}
+
+	g_hash_table_destroy(atts);
 }
 
 static void

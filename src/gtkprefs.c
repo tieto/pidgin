@@ -2030,8 +2030,10 @@ GtkWidget *sound_events_page() {
 				gaim_gtk_sound_get_event_option(j));
 		const char *label = gaim_gtk_sound_get_event_label(j);
 
-		if (label == NULL)
+		if (label == NULL) {
+			g_free(pref);
 			continue;
+		}
 
 		gtk_list_store_append (event_store, &iter);
 		gtk_list_store_set(event_store, &iter,

@@ -210,12 +210,15 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 	
 static void buddy_icon_filesel_delete_cb (GtkWidget *w, AccountPrefsDialog *dialog)
 {
+	if (dialog->buddy_icon_filesel != NULL)
+		gtk_widget_destroy(dialog->buddy_icon_filesel);
 	dialog->buddy_icon_filesel = NULL;
 }
 
 static void buddy_icon_filesel_choose (GtkWidget *w, AccountPrefsDialog *dialog)
 {
 	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(dialog->buddy_icon_filesel));
+
 	if (dialog->account)
 		gaim_account_set_buddy_icon(dialog->account, filename);
 	gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry), filename);
@@ -254,6 +257,7 @@ static void buddy_icon_preview_change_cb(GtkTreeSelection *sel, AccountPrefsDial
 	g_object_unref(G_OBJECT(scale));
 	g_free(basename);
 	g_free(size);
+	g_free(markup);
 }
 
 static void buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
@@ -263,10 +267,11 @@ static void buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	GtkTreeSelection *sel;
 
 	if (dialog->buddy_icon_filesel) {
-		gdk_window_show(GDK_WINDOW(dialog->buddy_icon_filesel));
+		gtk_widget_show(GTK_WIDGET(dialog->buddy_icon_filesel));
+		gdk_window_raise(GDK_WINDOW(dialog->buddy_icon_filesel->window));
 		return;
 	}
-	
+
 	dialog->buddy_icon_filesel = gtk_file_selection_new(_("Buddy Icon"));
 	dialog->buddy_icon_preview = gtk_image_new();
 	dialog->buddy_icon_text = gtk_label_new(NULL);
@@ -276,24 +281,24 @@ static void buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 			   FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox), dialog->buddy_icon_preview, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox), dialog->buddy_icon_text, FALSE, FALSE, 0);
-	
+
 	tv = GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->file_list;
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(buddy_icon_preview_change_cb), dialog);
 
-	g_signal_connect(G_OBJECT(dialog->buddy_icon_filesel), "delete_event", G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->cancel_button), "clicked",
-			 G_CALLBACK(gtk_widget_destroy), dialog->buddy_icon_filesel);
+	g_signal_connect(G_OBJECT(dialog->buddy_icon_filesel), "destroy", G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->cancel_button), "clicked",
+			 G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->ok_button), "clicked", G_CALLBACK(buddy_icon_filesel_choose),
 			 dialog);
 
-	gtk_widget_show_all(dialog->buddy_icon_filesel);
-	if (dialog->account) {
+	gtk_widget_show_all(GTK_WIDGET(dialog->buddy_icon_filesel));
+	if (dialog->account && (gaim_account_get_buddy_icon(dialog->account) != NULL)) {
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->buddy_icon_filesel), 
 						gaim_account_get_buddy_icon(dialog->account));
 		buddy_icon_preview_change_cb(NULL, dialog);
 	}
-	
+
 }
 
 static void buddy_icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
