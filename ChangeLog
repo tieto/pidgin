@@ -2,19 +2,18 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.9.20:
 	* More plugin events, more plugin features
-	* French translation added (fr)
-	* Spanish translation added (es)
-	* Simplified Chinese translation added (zh_CN)
-	* Korean translation added (kr)
+	* French (fr), Spanish (es), Simplified Chinese (zh_CN), Korean (kr)
+	  translations added 
 	* Run-time OSCAR support
 	* Added buddy list ticker (See prefs/Appearance). Clicking on a
 	  name will cause a new or previous IM window to display for 
 	  that screenname 
 	* "You are sending messages too quickly" error is now fixed
 	   when you have a large buddylist.
-	* Dialog windows are now prettier
 	* Fixed the LC_ALL compile problem on Solaris boxes 
 	* Fixed PPC and ARM compile problem with oscar.c
+	* Smileys work better, and don't cause font attributes to drop
+	* Dialog windows are now prettier
 	* /me in IM window; font/color dialogs and smileys in chat window
 
 version 0.9.19 (06/09/2000):
