@@ -1,11 +1,11 @@
 src/about.c
 src/aim.c
+src/applet.c
 src/away.c
 src/buddy.c
 src/buddy_chat.c
 src/conversation.c
 src/dialogs.c
-src/gnome_applet_mgr.c
 src/gtkhtml.c
 src/html.c
 src/multi.c

@@ -36,7 +36,6 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
-#include "gnome_applet_mgr.h"
 #include "md5.h"
 
 #define MSN_BUF_LEN 4096
