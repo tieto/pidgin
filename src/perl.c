@@ -78,24 +78,23 @@ static GList *perl_event_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
 
 /* dealing with gaim */
-XS(XS_AIM_register); /* set up hooks for script */
-XS(XS_AIM_get_info); /* version, last to attempt signon, protocol */
-XS(XS_AIM_print); /* lemme figure this one out... */
+XS(XS_GAIM_register); /* set up hooks for script */
+XS(XS_GAIM_get_info); /* version, last to attempt signon, protocol */
+XS(XS_GAIM_print); /* lemme figure this one out... */
 
 /* list stuff */
-XS(XS_AIM_buddy_list); /* all buddies */
-XS(XS_AIM_online_list); /* online buddies */
-XS(XS_AIM_deny_list); /* also returns permit list */
+XS(XS_GAIM_buddy_list); /* all buddies */
+XS(XS_GAIM_online_list); /* online buddies */
 
 /* server stuff */
-XS(XS_AIM_command); /* send command to server */
-XS(XS_AIM_user_info); /* given name, return struct buddy members */
-XS(XS_AIM_print_to_conv); /* send message to someone */
-XS(XS_AIM_print_to_chat); /* send message to chat room */
+XS(XS_GAIM_command); /* send command to server */
+XS(XS_GAIM_user_info); /* given name, return struct buddy members */
+XS(XS_GAIM_print_to_conv); /* send message to someone */
+XS(XS_GAIM_print_to_chat); /* send message to chat room */
 
 /* handler commands */
-XS(XS_AIM_add_event_handler); /* when servers talk */
-XS(XS_AIM_add_timeout_handler); /* figure it out */
+XS(XS_GAIM_add_event_handler); /* when servers talk */
+XS(XS_GAIM_add_timeout_handler); /* figure it out */
 
 void xs_init()
 {
@@ -207,21 +206,20 @@ void perl_init()
 	Perl_eval_pv(load_file, TRUE);
 #endif
 
-	newXS ("AIM::register", XS_AIM_register, "AIM");
-	newXS ("AIM::get_info", XS_AIM_get_info, "AIM");
-	newXS ("AIM::print", XS_AIM_print, "AIM");
+	newXS ("GAIM::register", XS_GAIM_register, "GAIM");
+	newXS ("GAIM::get_info", XS_GAIM_get_info, "GAIM");
+	newXS ("GAIM::print", XS_GAIM_print, "GAIM");
 
-	newXS ("AIM::buddy_list", XS_AIM_buddy_list, "AIM");
-	newXS ("AIM::online_list", XS_AIM_online_list, "AIM");
-	newXS ("AIM::deny_list", XS_AIM_deny_list, "AIM");
+	newXS ("GAIM::buddy_list", XS_GAIM_buddy_list, "GAIM");
+	newXS ("GAIM::online_list", XS_GAIM_online_list, "GAIM");
 
-	newXS ("AIM::command", XS_AIM_command, "AIM");
-	newXS ("AIM::user_info", XS_AIM_user_info, "AIM");
-	newXS ("AIM::print_to_conv", XS_AIM_print_to_conv, "AIM");
-	newXS ("AIM::print_to_chat", XS_AIM_print_to_chat, "AIM");
+	newXS ("GAIM::command", XS_GAIM_command, "GAIM");
+	newXS ("GAIM::user_info", XS_GAIM_user_info, "GAIM");
+	newXS ("GAIM::print_to_conv", XS_GAIM_print_to_conv, "GAIM");
+	newXS ("GAIM::print_to_chat", XS_GAIM_print_to_chat, "GAIM");
 
-	newXS ("AIM::add_event_handler", XS_AIM_add_event_handler, "AIM");
-	newXS ("AIM::add_timeout_handler", XS_AIM_add_timeout_handler, "AIM");
+	newXS ("GAIM::add_event_handler", XS_GAIM_add_event_handler, "GAIM");
+	newXS ("GAIM::add_timeout_handler", XS_GAIM_add_timeout_handler, "GAIM");
 }
 
 void perl_end()
@@ -264,7 +262,7 @@ void perl_end()
 	}
 }
 
-XS (XS_AIM_register)
+XS (XS_GAIM_register)
 {
 	char *name, *ver, *callback, *unused; /* exactly like X-Chat, eh? :) */
 	int junk;
@@ -287,8 +285,9 @@ XS (XS_AIM_register)
 	XSRETURN (1);
 }
 
-XS (XS_AIM_get_info)
+XS (XS_GAIM_get_info)
 {
+	int i = 0;
 	int junk;
 	dXSARGS;
 	items = 0;
@@ -296,30 +295,44 @@ XS (XS_AIM_get_info)
 	switch(atoi(SvPV(ST(0), junk))) {
 	case 0:
 		XST_mPV(0, VERSION);
+		i = 1;
 		break;
 	case 1:
-		/* FIXME: no more current_user
-		XST_mPV(0, current_user->username);
-		*/
+		{
+			GSList *c = connections;
+			struct gaim_connection *gc;
+
+			while (c) {
+				gc = (struct gaim_connection *)c->data;
+				XST_mPV(i++, gc->username);
+				c = c->next;
+			}
+		}
 		break;
 	case 2:
-		/* FIXME: more per-connection issues
-		if (!blist)
-			XST_mPV(0, "Offline");
-		else if (!USE_OSCAR)
-			XST_mPV(0, "TOC");
-		else
-			XST_mPV(0, "Oscar");
-		*/
+		{
+			GList *u = aim_users;
+			struct aim_user *a;
+			char *name = g_strdup(normalize(SvPV(ST(1), junk)));
+
+			while (u) {
+				a = (struct aim_user *)u->data;
+				if (!strcasecmp(normalize(a->username), name))
+					XST_mIV(i++, a->protocol);
+				u = u->next;
+			}
+			g_free(name);
+		}
 		break;
 	default:
 		XST_mPV(0, "Error2");
+		i = 1;
 	}
 
-	XSRETURN(1);
+	XSRETURN(i);
 }
 
-XS (XS_AIM_print)
+XS (XS_GAIM_print)
 {
 	char *title;
 	char *message;
@@ -333,16 +346,22 @@ XS (XS_AIM_print)
 	XSRETURN(0);
 }
 
-XS (XS_AIM_buddy_list)
+XS (XS_GAIM_buddy_list)
 {
-	/* FIXME
+	char *acct;
+	struct gaim_connection *gc;
 	struct buddy *buddy;
 	struct group *g;
-	GSList *list = groups;
-	GList *mem;
+	GSList *list = NULL;
+	GSList *mem;
 	int i = 0;
+	int junk;
 	dXSARGS;
 	items = 0;
+
+	acct = SvPV(ST(0), junk);
+	gc = find_gaim_conn_by_name(acct);
+	if (gc) list = gc->groups;
 
 	while (list) {
 		g = (struct group *)list->data;
@@ -355,19 +374,24 @@ XS (XS_AIM_buddy_list)
 		list = g_slist_next(list);
 	}
 	XSRETURN(i);
-	*/
 }
 
-XS (XS_AIM_online_list)
+XS (XS_GAIM_online_list)
 {
-	/* FIXME
+	char *acct;
+	struct gaim_connection *gc;
 	struct buddy *b;
 	struct group *g;
-	GSList *list = groups;
-	GList *mem;
+	GSList *list = NULL;
+	GSList *mem;
 	int i = 0;
+	int junk;
 	dXSARGS;
 	items = 0;
+
+	acct = SvPV(ST(0), junk);
+	gc = find_gaim_conn_by_name(acct);
+	if (gc) list = gc->groups;
 
 	while (list) {
 		g = (struct group *)list->data;
@@ -380,28 +404,9 @@ XS (XS_AIM_online_list)
 		list = g_slist_next(list);
 	}
 	XSRETURN(i);
-	*/
 }
 
-XS (XS_AIM_deny_list)
-{
-	/* FIXME, yet again. perl is so fucked
-	char *name;
-	GList *list = deny;
-	int i = 0;
-	dXSARGS;
-	items = 0;
-
-	while (list) {
-		name = (char *)list->data;
-		XST_mPV(i++, name);
-		list = list->next;
-	}
-	XSRETURN(i);
-	*/
-}
-
-XS (XS_AIM_command)
+XS (XS_GAIM_command)
 {
 	int junk;
 	char *command = NULL;
@@ -411,15 +416,14 @@ XS (XS_AIM_command)
 	command = SvPV(ST(0), junk);
 	if (!command) XSRETURN(0);
 	if        (!strncasecmp(command, "signon", 6)) {
-		/* FIXME
-		if (!blist) {
-			show_login();
-			dologin(0, 0);
-		}
-		*/
+		char *who = SvPV(ST(1), junk);
+		struct aim_user *u = find_user(who, -1);
+		if (u) serv_login(u);
 	} else if (!strncasecmp(command, "signoff", 7)) {
-		/* FIXME: we need to figure out how this works for multiple connections
-		 * signoff(); */
+		char *who = SvPV(ST(1), junk);
+		struct gaim_connection *gc = find_gaim_conn_by_name(who);
+		if (gc) signoff(gc);
+		else signoff_all(NULL, NULL);
 	} else if (!strncasecmp(command, "away", 4)) {
 		char *message = SvPV(ST(1), junk);
 		struct away_message a;
@@ -428,22 +432,33 @@ XS (XS_AIM_command)
 	} else if (!strncasecmp(command, "back", 4)) {
 		do_im_back();
 	} else if (!strncasecmp(command, "idle", 4)) {
-		/* FIXME
-		serv_set_idle(atoi(SvPV(ST(1), junk)));
-		*/
+		GSList *c = connections;
+		struct gaim_connection *gc;
+
+		while (c) {
+			gc = (struct gaim_connection *)c->data;
+			serv_set_idle(gc, atoi(SvPV(ST(1), junk)));
+			gc->is_idle = 1;
+			c = c->next;
+		}
 	} else if (!strncasecmp(command, "warn", 4)) {
-		/* yet another perl FIXME
-		char *name = SvPV(ST(1), junk);
-		serv_warn(name, 0);
-		*/
+		GSList *c = connections;
+		struct gaim_connection *gc;
+
+		while (c) {
+			gc = (struct gaim_connection *)c->data;
+			serv_warn(gc, SvPV(ST(1), junk), 0);
+			c = c->next;
+		}
 	}
 
 	XSRETURN(0);
 }
 
-XS (XS_AIM_user_info)
+XS (XS_GAIM_user_info)
 {
-	/* FIXME
+	GSList *c = connections;
+	struct gaim_connection *gc;
 	int junk;
 	struct buddy *buddy;
 	char *nick;
@@ -453,23 +468,27 @@ XS (XS_AIM_user_info)
 	nick = SvPV(ST(0), junk);
 	if (!nick[0])
 		XSRETURN(0);
-	buddy = find_buddy(nick);
+	while (c) {
+		gc = (struct gaim_connection *)c->data;
+		buddy = find_buddy(gc, nick);
+		if (buddy) c = NULL;
+		else c = c->next;
+	}
 	if (!buddy)
 		XSRETURN(0);
 	XST_mPV(0, buddy->name);
-	XST_mPV(1, buddy->present ? "Online" : "Offline");
-	XST_mIV(2, buddy->evil);
-	XST_mIV(3, buddy->signon);
-	XST_mIV(4, buddy->idle);
-	XST_mIV(5, buddy->uc);
-	XST_mIV(6, buddy->caps);
-	XSRETURN(7);
-	*/
+	XST_mPV(1, buddy->show);
+	XST_mPV(2, buddy->present ? "Online" : "Offline");
+	XST_mIV(3, buddy->evil);
+	XST_mIV(4, buddy->signon);
+	XST_mIV(5, buddy->idle);
+	XST_mIV(6, buddy->uc);
+	XST_mIV(7, buddy->caps);
+	XSRETURN(8);
 }
 
-XS (XS_AIM_print_to_conv)
+XS (XS_GAIM_print_to_conv)
 {
-	/* FIXME
 	char *nick, *what;
 	struct conversation *c;
 	int junk;
@@ -482,33 +501,37 @@ XS (XS_AIM_print_to_conv)
 	if (!c)
 		c = new_conversation(nick);
 	write_to_conv(c, what, WFLAG_SEND, NULL);
-	serv_send_im(nick, what, 0);
-	*/
+	serv_send_im(c->gc, nick, what, 0);
 }
 
-XS (XS_AIM_print_to_chat)
+XS (XS_GAIM_print_to_chat)
 {
-	/* FIXME: need to make this multi-connection based
-	char *nick, *what;
-	struct conversation *c = NULL;
-	GList *bcs = buddy_chats;
+	char *nick, *what, *tmp;
+	GSList *c = connections;
+	struct gaim_connection *gc;
+	struct conversation *b = NULL;
+	GSList *bcs;
 	int junk;
 	dXSARGS;
 	items = 0;
 
 	nick = SvPV(ST(0), junk);
 	what = SvPV(ST(1), junk);
-	while (bcs) {
-		c = (struct conversation *)bcs->data;
-		if (!strcmp(c->name, nick))
-			break;
-		bcs = bcs->next;
-		c = NULL;
+	tmp = g_strdup(normalize(nick));
+	while (c) {
+		gc = (struct gaim_connection *)c->data;
+		bcs = gc->buddy_chats;
+		while (bcs) {
+			b = (struct conversation *)bcs->data;
+			if (!strcmp(normalize(b->name), tmp))
+				break;
+			bcs = bcs->next;
+			b = NULL;
+		}
+		serv_chat_send(b->gc, b->id, what);
+		c = c->next;
 	}
-	if (!c)
-		XSRETURN(0);
-	serv_chat_send(c->id, what);
-	*/
+	XSRETURN(0);
 }
 
 int perl_event(char *event, char *args)
@@ -529,7 +552,7 @@ int perl_event(char *event, char *args)
 	return 0;
 }
 
-XS (XS_AIM_add_event_handler)
+XS (XS_GAIM_add_event_handler)
 {
 	int junk;
 	struct _perl_event_handlers *handler;
@@ -555,7 +578,7 @@ static int perl_timeout(struct _perl_timeout_handlers *handler)
 	return 0; /* returning zero removes the timeout handler */
 }
 
-XS (XS_AIM_add_timeout_handler)
+XS (XS_GAIM_add_timeout_handler)
 {
 	int junk;
 	long timeout;

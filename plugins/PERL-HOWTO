@@ -3,7 +3,7 @@ but there didn't seem to be a much better place.
 
 If you've ever written a perl script for X-Chat then you've basically written
 one for gaim as well. perl.c in gaim's source is basically an exact copy of
-X-Chat's perl.c file, with small modifications to suit AIM rather than IRC.
+X-Chat's perl.c file, with small modifications to suit GAIM rather than IRC.
 
 Basically the reason for including perl is based on the experience with the
 plugins. X-Chat's docs on Perl Scripting sums it up nicely:
@@ -21,51 +21,51 @@ should show most of the functions. Most things should be self-explanatory.
 
 Everything available in normal perl scripts should be available in gaim's
 perl interface, so I'm not going to bother describing that. The important
-things are the functions provided by gaim's internal AIM module, which is
+things are the functions provided by gaim's internal GAIM module, which is
 what most of this document is about. So, onto the functions.
 
-AIM::register(name, version, shutdownroutine, unused)
+GAIM::register(name, version, shutdownroutine, unused)
 	Just like X-Chat. This is the first function your script should call.
 	shutdownroutine is a function that will be called when the script
 	gets unloaded (like when gaim gets closed). This function returns
 	gaim's version number.
 
-AIM::get_info(integer)
+GAIM::get_info(integer, ...)
 	This function returns different information based on the integer passed
 	to it.
 	0 - the version of gaim you're running ("0.10.0" for example).
-	1 - the screenname to last attempt to sign on
-	2 - either "Offline", "TOC", or "Oscar"
+	1 - the list of currently online screennames
+	2 - given a screenname, the protocol(s) it(/they) use(s) (as ints)
 
-AIM::print(title, message)
+GAIM::print(title, message)
 	This displays a nice little dialog window.
 
 
-AIM::buddy_list()
+GAIM::buddy_list(name)
 	This returns the buddy list (no groups, just the names of the buddies)
+	for the specified account
 
-AIM::online_list()
-	This returns the list of online buddies.
-
-AIM::deny_list()
-	This returns the deny list. This is probably going to be modified before
-	0.10.0 is released to return either the deny or the permit list and the
-	current mode.
+GAIM::online_list(name)
+	This returns the list of online buddies for the specified account.
 
 
-AIM::command(command, ...)
+GAIM::command(command, ...)
 	This sends commands to the server, and each command takes various
 	arguments. The command should be self-explanatory:
-	"signon" - no args.
-	"signoff" - no args.
+	"signon" - the second arg is the screenname to sign on
+	"signoff" - the optional second arg is who to sign off. if no args are
+		    given, all names are signed off.
 	"away" - the second arg is the away message
 	"back" - no args.
 	"idle" - the second arg is how long (in seconds) to set the idle time
-	"warn" - the second arg is the name of the person to warn
+		 (this sets the idle time for all connections)
+	"warn" - the second arg is the name of the person to warn. this is
+		 especially evil since it warns the person from every connection.
 
-AIM::user_info(nick)
-	Returns 7 data items:
+GAIM::user_info(nick)
+	Returns 8 data items:
 		the screenname of the buddy
+		the alias of the buddy
 		"Online" or "Offline"
 		their warning level
 		signon time, in seconds since the epoch
@@ -83,19 +83,21 @@ AIM::user_info(nick)
 			CHAT		8
 			GETFILE		16
 			SENDFILE	32
+	Since buddy lists are per-connection this goes through the connections
+	until it finds a matching buddy name.
 
-		This is probably going to change before 0.10.0 is released to
-		also return the alias of the buddy.
+GAIM::print_to_conv(who, what)
+	The question is not what does this do, it's who does this do it as. The
+	answer is "whatever the default is". It uses whichever connection is
+	selected in the conversation window's menu. If the conversation window
+	didn't exist beforehand, then it's the default (first) connection.
 
-AIM::print_to_conv(who, what)
-	This should be obvious. If you can't figure this out on your own, you
-	shouldn't be using a computer.
-
-AIM::print_to_chat(room, what)
-	This should be just as obvious as the last command.
+GAIM::print_to_chat(room, what)
+	This goes through each connection. If it finds a room matching the name,
+	it'll print the message to that room.
 
 
-AIM::add_event_handler(event, function)
+GAIM::add_event_handler(event, function)
 	This is the most important of them all. This is basically exactly like
 	gaim_signal_connect for plugins. You pass which event you want to connect to
 	(a string with the same name as the events for plugins, see SIGNALS), and a
@@ -106,13 +108,18 @@ AIM::add_event_handler(event, function)
 	yourself with split. (Sounding exactly like X-Chat yet?) The arguments are
 	the exact same as those passed to the plugins, and are passed after the
 	plugins have had their way with them. Perl scripts cannot modify the values
-	so that gaim knows what the changes are. Unlike X-Chat, perl scripts cannot
-	short-circut gaim (that is, your script will be called in order it was added,
-	despite what other scripts do, and afterwards, execution will continue as
-	normal). Names of buddies and chat rooms will be in quotes, and all other
+	so that gaim knows what the changes are.
+
+	Perl scripts can short-circuit certain events (namely event_im_send,
+	event_im_recv, event_chat_send, and event_chat_recv). To short-circuit an
+	event simply return a non-0 value. This will cause all subsequent scripts
+	and the event itself to never happen (i.e. the user won't see it happen,
+	and _send events won't actually send).
+
+	Names of buddies and chat rooms will be in quotes, and all other
 	values (like text messages) will not be. (Watch the debug window to get a
 	better feel for this, or better yet, look at the bottom of plugins.c.)
 
-AIM::add_timeout_handler(integer, function)
+GAIM::add_timeout_handler(integer, function)
 	This calls function after integer number of seconds. It only calls function
 	once, so if you want to keep calling function, keep readding the handler.
