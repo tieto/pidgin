@@ -73,6 +73,17 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Wed Apr 23 2003 Rob Flynn <rob@marko.net> (0.62 release)
+- Keyboard shortcuts in the buddy list work again (Thanks Joe Clarke).
+- Support for Jabber XHTML messages
+- Updated a number of translations. Thanks to everyone who submitted a translation update.
+-Ability to re-request authorization from ICQ and Jabber users by right clicking on them in your buddy list.
+- Improved Zephyr internationalization.  
+- Bug causing 'Hide on Send' windows to be lost forever fixed.
+- Iconified windows are now raised properly.
+- Dates printed for old/offline messages.
+- Some assorted crash bugs fixed.
+												 
 * Mon Apr 07 2003 Rob Flynn <rob@marko.net> (0.61 release)
 - Split the buddy pounce core and UI, and rewrote the UI for it.
 - Removed folder icons and excess space from the buddy list (Thanks Dave Camp)
