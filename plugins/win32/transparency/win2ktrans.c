@@ -331,6 +331,10 @@ G_MODULE_EXPORT void gaim_plugin_remove() {
 		g_list_free(window_list);
 		window_list = NULL;
 	}
+	if(blist) {
+		SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		set_wintrans_off(blist);
+	}
 }
 
 struct gaim_plugin_description desc; 
