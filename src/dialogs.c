@@ -393,7 +393,7 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	w->window = gtk_dialog_new_with_buttons("", GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "_Warn", GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_CANCEL);
+	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(w->window), "response", G_CALLBACK(do_warn), w);
 
 	gtk_container_set_border_width (GTK_CONTAINER(w->window), 6);
