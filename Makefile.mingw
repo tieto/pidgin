@@ -65,7 +65,13 @@ PIXMAPS_DIALOGS =	$(GAIM_PIXMAPS)/gaim_error.png \
 PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
 			$(GAIM_PIXMAPS)/accounts.png \
 			$(GAIM_PIXMAPS)/preferences.png \
-			$(GAIM_PIXMAPS)/signon.png
+			$(GAIM_PIXMAPS)/signon.png \
+			$(GAIM_PIXMAPS)/insert-image-small.png \
+			$(GAIM_PIXMAPS)/insert-link-small.png \
+			$(GAIM_PIXMAPS)/insert-smiley-small.png \
+			$(GAIM_PIXMAPS)/text_bigger.png \
+			$(GAIM_PIXMAPS)/text_normal.png \
+			$(GAIM_PIXMAPS)/text_smaller.png \
 
 PIXMAPS =		$(GAIM_PIXMAPS)/away.png \
 			$(GAIM_PIXMAPS)/connect.png \
