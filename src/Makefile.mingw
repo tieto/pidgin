@@ -199,7 +199,6 @@ $(TARGET).exe: $(TARGET).lib $(EXE_OBJECTS)
 ##
 
 clean:
-	$(MAKE) -C $(GAIM_TOP)/sounds -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_SRC)/win32/IdleTracker -f Makefile.mingw clean
 	rm -rf *.o ./win32/*.o
 	rm -rf $(TARGET).dll
