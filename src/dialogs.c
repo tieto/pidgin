@@ -64,9 +64,7 @@ static GList *dialogwindows = NULL;
 static GtkWidget *importdialog;
 static struct gaim_connection *importgc;
 static GtkWidget *icondlg;
-static GtkWidget *aliasdlg = NULL;
-static GtkWidget *aliasentry = NULL;
-static GtkWidget *aliasname = NULL;
+static GtkWidget *alias_dialog = NULL;
 static GtkWidget *rename_dialog = NULL;
 static GtkWidget *rename_bud_dialog = NULL;
 
@@ -140,6 +138,14 @@ struct getuserinfo {
 	GtkWidget *entry;
 	GtkWidget *account;
 	struct gaim_connection *gc; 
+};
+
+struct alias_dialog_info
+{
+	GtkWidget *window;
+	GtkWidget *name_entry;
+	GtkWidget *alias_entry;
+	struct buddy *buddy;
 };
 
 static GSList *info_dlgs = NULL;
@@ -291,30 +297,19 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 
 	if (dest == imdialog)
 		imdialog = NULL;
-
-	if (dest == importdialog) {
+	else if (dest == importdialog) {
 		importdialog = NULL;
 		importgc = NULL;
 	}
-
-	if (dest == icondlg)
+	else if (dest == icondlg)
 		icondlg = NULL;
-
-	if (dest == aliasdlg) {
-		aliasdlg = NULL;
-		aliasentry = NULL;
-		aliasname = NULL;
-	}
-
-	if (dest == rename_dialog)
+	else if (dest == rename_dialog)
 		rename_dialog = NULL;
-
-	if (dest == rename_bud_dialog)
+	else if (dest == rename_bud_dialog)
 		rename_bud_dialog = NULL;
 
 	dialogwindows = g_list_remove(dialogwindows, dest);
 	gtk_widget_destroy(dest);
-
 }
 
 
@@ -3271,83 +3266,138 @@ void show_smiley_dialog(struct gaim_conversation *c, GtkWidget *widget)
 	return;
 }
 
-static void do_alias_bud(GtkWidget *w, struct buddy *b)
+static void
+do_alias_buddy(GtkWidget *w, int resp, struct alias_dialog_info *info)
 {
-	const char *al = gtk_entry_get_text(GTK_ENTRY(aliasname));
-	gaim_blist_alias_buddy (b, (al && strlen(al)) ? al : NULL);
-	serv_alias_buddy(b);
-	gaim_blist_save();
-	destroy_dialog(aliasdlg, aliasdlg);
+	if (resp == GTK_RESPONSE_OK) {
+		const char *alias;
+	
+		alias = gtk_entry_get_text(GTK_ENTRY(info->alias_entry));
+
+		gaim_blist_alias_buddy(info->buddy, (alias && *alias) ? alias : NULL);
+		serv_alias_buddy(info->buddy);
+		gaim_blist_save();
+	}
+
+	destroy_dialog(NULL, alias_dialog);
+	alias_dialog = NULL;
+
+	g_free(info);
 }
 
-void alias_dialog_bud(struct buddy *b)
+void
+alias_dialog_bud(struct buddy *b)
 {
+	struct alias_dialog_info *info = NULL;
+	struct gaim_gtk_buddy_list *gtkblist;
+	GtkWidget *hbox;
 	GtkWidget *vbox;
-	GtkWidget *bbox;
-	GtkWidget *cancel;
-	static GtkWidget *add = NULL;
 	GtkWidget *label;
-	GtkWidget *topbox;
+	GtkWidget *table;
+	GtkWidget *img;
 
-	if (aliasdlg)
-		gtk_widget_destroy(aliasdlg);
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
-	GAIM_DIALOG(aliasdlg);
-	gtk_window_set_resizable(GTK_WINDOW(aliasdlg), FALSE);
-	gtk_window_set_role(GTK_WINDOW(aliasdlg), "alias_dialog");
-	gtk_widget_realize(aliasdlg);
-	dialogwindows = g_list_prepend(dialogwindows, aliasdlg);
+	if (!alias_dialog) {
+		info = g_new0(struct alias_dialog_info, 1);
+		info->buddy = b;
 
-	topbox = gtk_vbox_new(FALSE, 5);
-	vbox = gtk_vbox_new(FALSE, 5);
+		alias_dialog = gtk_dialog_new_with_buttons(_("Alias Buddy"),
+			(gtkblist ? GTK_WINDOW(gtkblist->window) : NULL),
+			GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			NULL);
 
-	aliasentry = gtk_entry_new();
-	aliasname = gtk_entry_new();
+		gtk_dialog_set_default_response(GTK_DIALOG(alias_dialog),
+										GTK_RESPONSE_OK);
+		gtk_container_set_border_width(GTK_CONTAINER(alias_dialog), 6);
+		gtk_window_set_resizable(GTK_WINDOW(alias_dialog), FALSE);
+		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(alias_dialog)->vbox), 12);
+		gtk_container_set_border_width(
+				GTK_CONTAINER(GTK_DIALOG(alias_dialog)->vbox), 6);
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(alias_dialog),
+										  GTK_RESPONSE_OK, FALSE);
 
-	/* Make the buddy name box */
-	bbox = gtk_hbox_new(FALSE, 5);
-	label = gtk_label_new(_("Buddy"));
-	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), aliasentry, FALSE, FALSE, 5);
-	gtk_editable_set_editable(GTK_EDITABLE(aliasentry), FALSE);
-	gtk_box_pack_start(GTK_BOX(topbox), bbox, FALSE, FALSE, 0);
+		/* The main hbox container. */
+		hbox = gtk_hbox_new(FALSE, 12);
+		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(alias_dialog)->vbox), hbox);
 
-	/* And the buddy alias box */
-	bbox = gtk_hbox_new(FALSE, 5);
-	label = gtk_label_new(_("Alias"));
-	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), aliasname, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(topbox), bbox, FALSE, FALSE, 0);
+		/* The dialog image. */
+		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
+									   GTK_ICON_SIZE_DIALOG);
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	gtk_entry_set_text(GTK_ENTRY(aliasentry), b->name);
-	if(b->alias)
-		gtk_entry_set_text(GTK_ENTRY(aliasname), b->alias);
+		/* The main vbox container. */
+		vbox = gtk_vbox_new(FALSE, 0);
+		gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
-	/* Put the buttons in the box */
-	bbox = gtk_hbox_new(FALSE, 5);
+		/* Setup the label containing the description. */
+		label = gtk_label_new(_("Please enter an aliased name for the "
+								"person below, or rename this contact "
+								"in your buddy list.\n"));
+		gtk_widget_set_size_request(GTK_WIDGET(label), 350, -1);
 
-	add = gaim_pixbuf_button_from_stock(_("Alias"), GTK_STOCK_ADD, GAIM_BUTTON_HORIZONTAL);
-	cancel = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
-	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	/* And the boxes in the box */
-	gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
+		hbox = gtk_hbox_new(FALSE, 6);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-	/* Handle closes right */
-	g_signal_connect(GTK_OBJECT(aliasdlg), "destroy", G_CALLBACK(destroy_dialog), aliasdlg);
-	g_signal_connect(GTK_OBJECT(cancel), "clicked", G_CALLBACK(destroy_dialog), aliasdlg);
-	g_signal_connect(GTK_OBJECT(add), "clicked", G_CALLBACK(do_alias_bud), b);
-	g_signal_connect(GTK_OBJECT(aliasname), "activate", G_CALLBACK(do_alias_bud), b);
-	/* Finish up */
-	gtk_window_set_title(GTK_WINDOW(aliasdlg), _("Alias Buddy"));
-	gtk_window_set_focus(GTK_WINDOW(aliasdlg), aliasname);
-	gtk_container_add(GTK_CONTAINER(aliasdlg), vbox);
-	gtk_container_set_border_width(GTK_CONTAINER(aliasdlg), 5);
-	gtk_widget_realize(aliasdlg);
+		/* The table containing the entry widgets and labels. */
+		table = gtk_table_new(2, 2, FALSE);
+		gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+		gtk_table_set_col_spacings(GTK_TABLE(table), 6);
+		gtk_container_set_border_width(GTK_CONTAINER(table), 12);
+		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
-	gtk_widget_show_all(aliasdlg);
+		/* The "Screenname:" label. */
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+
+		/* The Screen name entry field. */
+		info->name_entry = gtk_entry_new();
+		gtk_table_attach_defaults(GTK_TABLE(table), info->name_entry,
+								  1, 2, 0, 1);
+		gtk_entry_set_activates_default(GTK_ENTRY(info->name_entry), TRUE);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->name_entry);
+		gtk_entry_set_text(GTK_ENTRY(info->name_entry), info->buddy->name);
+
+		g_signal_connect(G_OBJECT(info->name_entry), "changed",
+						 G_CALLBACK(dialog_set_ok_sensitive), alias_dialog);
+
+		/* The "Alias:" label. */
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Alias:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
+
+		/* The alias entry field. */
+		info->alias_entry = gtk_entry_new();
+		gtk_table_attach_defaults(GTK_TABLE(table), info->alias_entry,
+								  1, 2, 1, 2);
+		gtk_entry_set_activates_default(GTK_ENTRY(info->alias_entry), TRUE);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->alias_entry);
+
+		if (info->buddy->alias != NULL)
+			gtk_entry_set_text(GTK_ENTRY(info->alias_entry),
+							   info->buddy->alias);
+
+		g_signal_connect(G_OBJECT(info->alias_entry), "changed",
+						 G_CALLBACK(dialog_set_ok_sensitive), alias_dialog);
+
+		g_signal_connect(G_OBJECT(alias_dialog), "response",
+						 G_CALLBACK(do_alias_buddy), info);
+	}
+
+	gtk_widget_show_all(alias_dialog);
+
+	if (info)
+		gtk_widget_grab_focus(info->name_entry);
 }
 
 
