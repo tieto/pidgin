@@ -855,7 +855,7 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_
 	}
 
 	memcpy(fr->hdr.rend.magic, "OFT2", 4);
-	fr->hdr.rend.hdrlen = aim_bstream_curpos(&fr->data);
+	fr->hdr.rend.hdrlen = aim_bstream_curpos(&fr->data) + 8;
 
 	aim_tx_enqueue(sess, fr);
 
