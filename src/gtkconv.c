@@ -2017,6 +2017,7 @@ generate_send_as_items(struct gaim_window *win,
 	GSList *group = NULL;
 	gboolean first_offline = TRUE;
 	gboolean found_online = FALSE;
+	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
@@ -2065,18 +2066,54 @@ generate_send_as_items(struct gaim_window *win,
 	/* Fill it with entries. */
 	for (gcs = connections; gcs != NULL; gcs = gcs->next) {
 
-		char buf[256];
 		struct gaim_connection *gc;
+		GtkWidget *box;
+		GtkWidget *label;
+		GtkWidget *image;
+		GdkPixmap *pixmap = NULL;
+		GdkBitmap *mask   = NULL;
 
 		found_online = TRUE;
 
 		gc = (struct gaim_connection *)gcs->data;
 
-		g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name);
+		/* Create a pixmap for the protocol icon. */
+		create_prpl_icon(gtkwin->window, gc, &pixmap, &mask);
 
-		menuitem = gtk_radio_menu_item_new_with_label(group, buf);
+		/* Now convert it to GtkImage */
+		if (pixmap == NULL)
+			image = gtk_image_new();
+		else
+			image = gtk_image_new_from_pixmap(pixmap, mask);
+
+		gtk_size_group_add_widget(sg, image);
+
+		if (pixmap != NULL) g_object_unref(pixmap);
+		if (mask   != NULL) g_object_unref(mask);
+
+		/* Make our menu item */
+		menuitem = gtk_radio_menu_item_new_with_label(group, gc->username);
 		group = gtk_radio_menu_item_group(GTK_RADIO_MENU_ITEM(menuitem));
 
+		/* Do some evil, see some evil, speak some evil. */
+		box = gtk_hbox_new(FALSE, 0);
+
+		label = gtk_bin_get_child(GTK_BIN(menuitem));
+		g_object_ref(label);
+		gtk_container_remove(GTK_CONTAINER(menuitem), label);
+
+		gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+
+		g_object_unref(label);
+
+		gtk_container_add(GTK_CONTAINER(menuitem), box);
+
+		gtk_widget_show(label);
+		gtk_widget_show(image);
+		gtk_widget_show(box);
+
+		/* Set our data and callbacks. */
 		g_object_set_data(G_OBJECT(menuitem), "user_data", win);
 
 		g_signal_connect(G_OBJECT(menuitem), "activate",
@@ -2096,6 +2133,11 @@ generate_send_as_items(struct gaim_window *win,
 
 		struct gaim_conversation *conv;
 		struct gaim_account *account;
+		GtkWidget *box;
+		GtkWidget *label;
+		GtkWidget *image;
+		GdkPixmap *pixmap = NULL;
+		GdkBitmap *mask   = NULL;
 
 		conv = (struct gaim_conversation *)convs->data;
 
@@ -2113,9 +2155,42 @@ generate_send_as_items(struct gaim_window *win,
 				first_offline = FALSE;
 			}
 
+			/* Create a pixmap for the protocol icon. */
+			create_prpl_icon(gtkwin->window, account->gc, &pixmap, &mask);
+
+			/* Now convert it to GtkImage */
+			if (pixmap == NULL)
+				image = gtk_image_new();
+			else
+				image = gtk_image_new_from_pixmap(pixmap, mask);
+
+			gtk_size_group_add_widget(sg, image);
+
+			if (pixmap != NULL) g_object_unref(pixmap);
+			if (mask   != NULL) g_object_unref(mask);
+
+			/* Make our menu item */
 			menuitem = gtk_radio_menu_item_new_with_label(group,
 														  account->username);
 			group = gtk_radio_menu_item_group(GTK_RADIO_MENU_ITEM(menuitem));
+
+			/* Do some evil, see some evil, speak some evil. */
+			box = gtk_hbox_new(FALSE, 0);
+
+			label = gtk_bin_get_child(GTK_BIN(menuitem));
+			g_object_ref(label);
+			gtk_container_remove(GTK_CONTAINER(menuitem), label);
+
+			gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+
+			g_object_unref(label);
+
+			gtk_container_add(GTK_CONTAINER(menuitem), box);
+
+			gtk_widget_show(label);
+			gtk_widget_show(image);
+			gtk_widget_show(box);
 
 			gtk_widget_set_sensitive(menuitem, FALSE);
 
@@ -2123,6 +2198,8 @@ generate_send_as_items(struct gaim_window *win,
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 		}
 	}
+
+	g_object_unref(sg);
 
 	gtk_widget_show(gtkwin->menu.send_as);
 	update_send_as_selection(win);
