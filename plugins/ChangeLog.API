@@ -3,9 +3,9 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 0.82cvs:
 	Gaim API:
 	* Removed: gaim_gtk_get_dispstyle(), gaim_gtk_change_text()
-	* Added: gaim_gtkconv_button_new()
 	* Removed: multi.h
 	* Renamed: ui.h to gtkdialogs.h
+	* Renamed: gtkinternal.h to gtkgaim.h
 	* Renamed: show_info_dialog to gaim_gtkdialogs_info
 	* Renamed: show_log_dialog to gaim_gtkdialogs_log
 	* Renamed: show_warn_dialog to gaim_gtkdialogs_warn
@@ -20,7 +20,14 @@ version 0.82cvs:
 	* Renamed: show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
 	* Renamed: show_confirm_del_contact to gaim_gtkdialogs_remove_contact
 	* Renamed: show_about to gaim_gtkdialogs_about
+
+	Buddy List API:
 	* Changed: gaim_blist_request_add_chat(), added name parameter
+	* Added: gaim_contact_on_account()
+	* Added: flags parameter to the GaimBlistNode struct
+
+	Conversation API:
+	* Added: gaim_gtkconv_button_new()
 
 	Protocol Plugin API: v7
 	* Added: chat_info_defaults to the GaimPluginProtocolInfo struct
