@@ -2400,7 +2400,7 @@ static GaimPluginInfo info = {
 	GAIM_PRIORITY_DEFAULT,							  /**< priority       */
 
 	"prpl-novell",									  /**< id             */
-	"GroupWise Messenger",								 /**< name           */
+	"GroupWise",								 /**< name           */
 	VERSION,										  /**< version        */
 	/**  summary        */
 	N_("Novell GroupWise Messenger Protocol Plugin"),

@@ -7,6 +7,7 @@ version 0.77cvs
 	* Reorganized and cleaned up the MSN protocol plugin (Felipe Contreras)
 	* Added the -c option to specify location of the .gaim directory, removed
 	  the outdated -f option that no longer had any effect (Daniel Atallah)
+	* Novell GroupWise protocol support added (Novell)
 
 	Bug Fixes:
 	* TOC has been removed from the default build list. I do not support
