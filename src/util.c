@@ -1257,11 +1257,27 @@ gchar *gaim_user_dir()
 	return g_strjoin(G_DIR_SEPARATOR_S, g_get_home_dir(), ".gaim", NULL);
 }
 
+/*
+ * rcg10312000 This could be more robust, but it works for my current
+ *  goal: to remove those annoying <BR> tags.  :)
+ * dtf12162000 made the loop more readable. i am a neat freak. ;) */
+void strncpy_nohtml(gchar *dest, const gchar *src, size_t destsize)
+{
+	gchar *ptr;
+	g_snprintf(dest, destsize, "%s", src);
+
+	while (ptr = strstr(dest, "<BR>")) {
+		/* replace <BR> with a newline. */
+		*ptr = '\n';
+		memmove(ptr + 1, ptr + 4, strlen(ptr + 4) + 1);
+	}
+}
+
 void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 {
 	gchar *end = dest + destsize;
 
-	while (dest < end) {
+	while (*src && dest < end) {
 		if (*src == '\n' && dest < end - 4) {
 			strcpy(dest, "<BR>");
 			src++;
@@ -1269,6 +1285,7 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 		} else
 			*dest++ = *src++;
 	}
+	dest[destsize-1] = '\0';
 }
 
 

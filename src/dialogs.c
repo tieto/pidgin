@@ -995,7 +995,13 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 void do_new_bp(GtkWidget *w, struct addbp *b)
 {
         struct buddy_pounce *bp = g_new0(struct buddy_pounce, 1);
-	
+
+        if(strlen(gtk_entry_get_text(GTK_ENTRY(b->nameentry))) == 0) {
+          	do_error_dialog(_("Please enter a buddy to pounce."), _("Buddy Pounce Error"));
+	        g_free(bp);
+                return;
+	}
+        
 	g_snprintf(bp->name, 80, "%s", gtk_entry_get_text(GTK_ENTRY(b->nameentry)));
 	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
 	g_snprintf(bp->command, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->commentry)));
@@ -1243,22 +1249,13 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 	junk = gtk_editable_get_chars(GTK_EDITABLE(b->text), 0, -1);
 
 	if (b->user) {
-		g_snprintf(b->user->user_info, sizeof(b->user->user_info), "%s", junk);
+		strncpy_withhtml(b->user->user_info, junk, sizeof b->user->user_info);
 		gc = b->user->gc;
 			
 		save_prefs();
 
-		if (gc) {
-			buf = g_malloc(strlen(junk) * 4);
-			if (!buf) {
-				buf = g_malloc(1);
-				buf[0] = 0;
-			}
-			//g_snprintf(buf, MIN(strlen(junk) * 2, 4096), "%s", junk);
-                        strncpy_withhtml(buf, junk, MIN(strlen(junk) * 2, 4096));
-			serv_set_info(gc, buf);
-			g_free(buf);
-		}
+		if (gc)
+			serv_set_info(gc, b->user->user_info);
 	}
 	g_free(junk);
 	destroy_dialog(NULL, b->window);
@@ -1624,13 +1621,18 @@ void show_change_passwd()
 
 static void info_choose(GtkWidget *opt, struct set_info_dlg *b)
 {
-	int text_len;
+	int text_len = gtk_text_get_length(GTK_TEXT(b->text));
 	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
+	gchar *buf = g_malloc(strlen(u->user_info)+1);
 	b->user = u;
-	text_len = gtk_text_get_length(GTK_TEXT(b->text));
+
+	strncpy_nohtml(buf, u->user_info, strlen(u->user_info)+1);
+
 	gtk_text_set_point(GTK_TEXT(b->text), 0);
 	gtk_text_forward_delete(GTK_TEXT(b->text), text_len);
-	gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, u->user_info, -1);
+	gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, buf, -1);
+
+	g_free(buf);
 }
 
 static void info_user_menu(struct set_info_dlg *b, GtkWidget *box)
@@ -1678,7 +1680,9 @@ void show_set_info()
 {
 	GtkWidget *buttons;
 	GtkWidget *vbox;
-	
+	gchar *buf;
+	struct aim_user *tmp;
+
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -1714,9 +1718,12 @@ void show_set_info()
 	gtk_text_set_editable(GTK_TEXT(b->text), TRUE);
 	gtk_widget_set_usize(b->text, 300, 200);
 	if (aim_users) {
-		gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL,
-				((struct gaim_connection *)connections->data)->user->user_info, -1);
-		b->user = ((struct gaim_connection *)connections->data)->user;
+		tmp = ((struct gaim_connection *)connections->data)->user;
+		buf = g_malloc(strlen(tmp->user_info)+1);
+		strncpy_nohtml(buf, tmp->user_info, strlen(tmp->user_info)+1);
+		gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, buf, -1);
+		b->user = tmp;
+                g_free(buf);
 	}
 
 	gtk_widget_show(b->text);
@@ -1731,6 +1738,7 @@ void show_set_info()
 	aol_icon(b->window->window);
 	
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
+	gtk_window_set_focus(GTK_WINDOW(b->window), b->text);
 	gtk_widget_show(b->window);
 
 }

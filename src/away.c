@@ -69,26 +69,6 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 }
 
 
-/*
- * rcg10312000 This could be more robust, but it works for my current
- *  goal: to remove those annoying <BR> tags.  :)
- */
-static void strncpy_nohtml(gchar * dest, const gchar * src, size_t destsize)
-{
-	gchar *ptr;
-	g_snprintf(dest, destsize, "%s", src);
-
-	while (1) {
-		ptr = strstr(dest, "<BR>");
-		if (ptr == NULL)	/* done? */
-			return;
-
-		/* replace <BR> with a newline. */
-		*ptr = '\n';
-		memmove(ptr + 1, ptr + 4, strlen(ptr + 4) + 1);
-	}
-}
-
 void do_away_message(GtkWidget *w, struct away_message *a)
 {
 	GtkWidget *back;

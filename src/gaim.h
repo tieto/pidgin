@@ -565,6 +565,7 @@ extern void set_first_user (char *);
 extern int do_auto_login (char *);
 extern int file_is_dir (char *, GtkWidget *);
 extern char *gaim_user_dir();
+extern void strncpy_nohtml(gchar *, const gchar *, size_t);
 extern void strncpy_withhtml(gchar *, const gchar *, size_t);
 extern void away_on_login(char *);
 

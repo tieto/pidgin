@@ -97,10 +97,10 @@ void serv_finish_login(struct gaim_connection *gc)
 	char *buf;
 
 	if (strlen(gc->user->user_info)) {
-		buf = g_malloc(strlen(gc->user->user_info) * 4);
-		strncpy_withhtml(buf, gc->user->user_info, strlen(gc->user->user_info) * 4);
-		serv_set_info(gc, buf);
-		g_free(buf);
+		//g_malloc(strlen(gc->user->user_info) * 4);
+		//strncpy_withhtml(buf, gc->user->user_info, strlen(gc->user->user_info) * 4);
+		serv_set_info(gc, gc->user->user_info);
+		//g_free(buf);
 	}
 
 	if (gc->idle_timer > 0)
