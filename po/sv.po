@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-11-16 01:32-0500\n"
-"PO-Revision-Date: 2003-11-16 15:27+0100\n"
+"PO-Revision-Date: 2003-11-16 17:42+0100\n"
 "Last-Translator: Tore Lundqvist <tlt@mima.x.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,7 @@ msgstr "Kolla e-post var X sekund.\n"
 
 #: plugins/contact_priority.c:82
 msgid "Point values to use when..."
-msgstr "Punktvärden att använda när..."
+msgstr "Poängvärden att använda när..."
 
 #: plugins/contact_priority.c:91
 msgid "Buddy is offline:"
@@ -87,7 +87,7 @@ msgstr ""
 
 #: plugins/contact_priority.c:142
 msgid "Point values to use for Account..."
-msgstr "Punktvärden att använda för konto..."
+msgstr "Poängvärden att använda för konto..."
 
 #. *< api_version
 #. *< type
