@@ -1,3 +1,4 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*- */
 /*
    Yahoo Pager Client Library
 
@@ -3067,7 +3068,7 @@ int yahoo_parsepacket_status(struct yahoo_context *ctx,
 					{
 						delim[0] = 1;
 						delim[1] = ',';
-						delim[1] = 0;
+						delim[2] = 0;
 						tmp1 = strtok(NULL, delim);
 					}
 					else
