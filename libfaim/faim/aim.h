@@ -347,6 +347,9 @@ struct aim_userinfo_s {
   u_long onlinesince;
   u_long sessionlen;  
   u_short capabilities;
+  struct {
+    unsigned short status;
+  } icqinfo;
 };
 
 #define AIM_FLAG_UNCONFIRMED 	0x0001 /* "damned transients" */
@@ -522,6 +525,8 @@ faim_export unsigned long aim_bos_reqlocaterights(struct aim_session_t *, struct
 faim_export unsigned long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
 faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,struct aim_conn_t *conn);
 faim_export unsigned long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export unsigned long aim_setdirectoryinfo(struct aim_session_t *sess, struct aim_conn_t *conn, char *first, char *middle, char *last, char *maiden, char *nickname, char *street, char *city, char *state, char *zip, int country, unsigned short privacy);
+faim_export unsigned long aim_setuserinterests(struct aim_session_t *sess, struct aim_conn_t *conn, char *interest1, char *interest2, char *interest3, char *interest4, char *interest5, unsigned short privacy);
 
 faim_internal struct aim_fileheader_t *aim_getlisting(struct aim_session_t*);
 faim_internal int aim_listenestablish(u_short);

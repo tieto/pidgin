@@ -774,3 +774,118 @@ faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,
 
   return (sess->snac_nextid);
 }
+
+/* 
+ * Set directory profile data (not the same as aim_bos_setprofile!)
+ */
+faim_export unsigned long aim_setdirectoryinfo(struct aim_session_t *sess, struct aim_conn_t *conn, char *first, char *middle, char *last, char *maiden, char *nickname, char *street, char *city, char *state, char *zip, int country, unsigned short privacy) 
+{
+  struct command_tx_struct *newpacket;
+  int packlen = 0, i = 0;
+
+  packlen += 2+2+2;
+
+  if(first) /* TLV 0001 */
+    packlen += (strlen(first) + 4);
+  if(middle) 
+    packlen += (strlen(middle) + 4);
+  if(last)
+    packlen += (strlen(last) + 4);
+  if(maiden)
+    packlen += (strlen(maiden) + 4);
+  if(nickname)
+    packlen += (strlen(nickname) + 4);
+  if(street)
+    packlen += (strlen(street) + 4);
+  if(state)
+    packlen += (strlen(state) + 4);
+  if(city)
+    packlen += (strlen(city) + 4);
+  if(zip)
+    packlen += (strlen(zip) + 4);
+    
+  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen+10)))
+    return -1;
+
+  newpacket->lock = 1;
+
+  i = aim_putsnac(newpacket->data, 0x0002, 0x0009, 0x0000, 0);
+
+  /* 000a/0002: privacy: 1 to allow search/disp, 0 to disallow */
+  i += aim_puttlv_16(newpacket->data+i, 0x000a, privacy);
+
+
+  if (first)
+    i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen(first), first);
+  if (middle)
+    i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen(middle), middle);
+  if (last)
+    i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(last), last);
+  if (maiden)
+    i += aim_puttlv_str(newpacket->data+i, 0x0004, strlen(maiden), maiden);
+  if (nickname)
+    i += aim_puttlv_str(newpacket->data+i, 0x000c, strlen(nickname), nickname);
+  if (street)
+    i += aim_puttlv_str(newpacket->data+i, 0x0021, strlen(street), street);
+  if (city)
+    i += aim_puttlv_str(newpacket->data+i, 0x0008, strlen(city), city);
+  if (state)
+    i += aim_puttlv_str(newpacket->data+i, 0x0007, strlen(state), state);
+  if (zip)
+    i += aim_puttlv_str(newpacket->data+i, 0x000d, strlen(zip), zip);
+
+  newpacket->commandlen = i;
+  newpacket->lock = 0;
+
+  aim_tx_enqueue(sess, newpacket);
+   
+  return(sess->snac_nextid);
+}
+
+faim_export unsigned long aim_setuserinterests(struct aim_session_t *sess, struct aim_conn_t *conn, char *interest1, char *interest2, char *interest3, char *interest4, char *interest5, unsigned short privacy)
+{
+  struct command_tx_struct *newpacket;
+  int packlen = 0, i = 0;
+
+  packlen += 2+2+2;
+
+  if(interest1)
+    packlen += (strlen(interest1) + 4);
+  if(interest2)
+    packlen += (strlen(interest2) + 4);
+  if(interest3)
+    packlen += (strlen(interest3) + 4);
+  if(interest4)
+    packlen += (strlen(interest4) + 4);
+  if(interest5)
+    packlen += (strlen(interest5) + 4) ;
+
+    
+  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen+10)))
+    return -1;
+
+  newpacket->lock = 1;
+
+  i = aim_putsnac(newpacket->data, 0x0002, 0x000f, 0x0000, 0);
+
+  /* 000a/0002: 0000 ?? ?privacy? */
+  i += aim_puttlv_16(newpacket->data+i, 0x000a, privacy); 
+
+  if(interest1) 
+    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest1), interest1);
+  if(interest2) 
+    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest2), interest2);
+  if(interest3) 
+    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest3), interest3);
+  if(interest4) 
+    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest4), interest4);
+  if(interest5) 
+    i += aim_puttlv_str(newpacket->data+i, 0x000b, strlen(interest1), interest5);
+
+  newpacket->commandlen = i;
+  newpacket->lock = 0;
+    
+  aim_tx_enqueue(sess, newpacket);
+    
+  return(sess->snac_nextid);
+}

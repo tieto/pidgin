@@ -314,6 +314,18 @@ faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinf
       break;
       
       /*
+       * Type = 0x0006: ICQ Online Status
+       *
+       * ICQ's Away/DND/etc "enriched" status
+       * Some decoding of values done by Scott <darkagl@pcnet.com>
+       */
+    case 0x0006:
+      if (aimutil_get16(buf+i+2) != 0x04)
+	break;
+      outinfo->icqinfo.status = aimutil_get16(buf+i+2+2+2);
+      break;
+
+      /*
        * Type = 0x000d
        *
        * Capability information.  Not real sure of

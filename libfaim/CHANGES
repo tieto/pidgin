@@ -1,6 +1,10 @@
 
 No release numbers
 ------------------
+ - Tue Sep 19 03:10:07 UTC 2000
+   - Add aim_setuserinterests() and aim_setdirectoryinfo()
+   - Add ICQ away status
+
  - Thu Sep 14 00:54:48 UTC 2000
    - Added create room callback
 

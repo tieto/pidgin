@@ -197,13 +197,17 @@ void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
 	if (!USE_OSCAR) {
-	char buf2[BUF_LEN*4], buf[BUF_LEN];
-	g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
-		   middle, last, maiden, city, state, country,
-		   (web == 1) ? "Y" : "");
-	escape_text(buf2);
-	g_snprintf(buf, sizeof(buf), "toc_set_dir %s", buf2);
-	sflap_send(buf, -1, TYPE_DATA);
+		char buf2[BUF_LEN*4], buf[BUF_LEN];
+		g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
+			   middle, last, maiden, city, state, country,
+			   (web == 1) ? "Y" : "");
+		escape_text(buf2);
+		g_snprintf(buf, sizeof(buf), "toc_set_dir %s", buf2);
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		/* FIXME : some of these things are wrong, but i'm lazy */
+		aim_setdirectoryinfo(gaim_sess, gaim_conn, first, middle, last,
+				maiden, NULL, NULL, city, state, NULL, 0, web);
 	}
 }
 
