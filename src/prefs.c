@@ -858,6 +858,8 @@ static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 
 	sound_options_new ^= sounds[soundnum].opt;
 	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, sound_options_new & sounds[soundnum].opt, -1);
+
+	gtk_tree_path_free(path);
 }
 
 static void test_sound(GtkWidget *button, gpointer i_am_NULL)
@@ -1018,6 +1020,7 @@ GtkWidget *sound_events_page() {
 			  G_CALLBACK(event_toggled), event_store);
 	path = gtk_tree_path_new_first();
 	gtk_tree_selection_select_path(sel, path);
+	gtk_tree_path_free(path);
 
 	col = gtk_tree_view_column_new_with_attributes ("Play",
 							rend,
@@ -1100,6 +1103,7 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 	gtk_list_store_remove(GTK_LIST_STORE(ts), &iter);
 	path = gtk_tree_path_new_first();
 	gtk_tree_selection_select_path(sel, path);
+	gtk_tree_path_free(path);
 }
 
 GtkWidget *away_message_page() {
@@ -1112,7 +1116,6 @@ GtkWidget *away_message_page() {
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
-	GtkTreePath *path;
 	GSList *awy = away_messages;
 	struct away_message *a;
 	GtkWidget *sw2;
@@ -1163,7 +1166,6 @@ GtkWidget *away_message_page() {
 	gaim_setup_imhtml(away_text);
 	gtk_imhtml_set_defaults(GTK_IMHTML(away_text), NULL, NULL, NULL);
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
-	path = gtk_tree_path_new_first();
 	g_signal_connect (G_OBJECT (sel), "changed",
 			  G_CALLBACK (away_message_sel),
 			  NULL);
