@@ -1721,19 +1721,25 @@ static void oscar_file_transfer_cancel(struct gaim_connection *gc, struct file_t
 	g_free(oft);
 }
 
-static int accept_direct_im(struct ask_direct *d) {
+static void accept_direct_im(struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *od;
 	struct direct_im *dim;
 	char *host; int port = 4443;
 	int i;
 
+	if (!g_slist_find(connections, gc)) {
+		cancel_direct_im(d);
+		return;
+	}
+
+	od = (struct oscar_data *)gc->proto_data;
 	debug_printf("Accepted DirectIM.\n");
 
 	dim = find_direct_im(od, d->sn);
 	if (dim) {
 		cancel_direct_im(d); /* 40 */
-		return TRUE;
+		return;
 	}
 	dim = g_new0(struct direct_im, 1);
 	dim->gc = d->gc;
@@ -1743,7 +1749,7 @@ static int accept_direct_im(struct ask_direct *d) {
 	if (!dim->conn) {
 		g_free(dim);
 		cancel_direct_im(d);
-		return TRUE;
+		return;
 	}
 
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
@@ -1766,12 +1772,12 @@ static int accept_direct_im(struct ask_direct *d) {
 		aim_conn_kill(od->sess, &dim->conn);
 		g_free(dim);
 		cancel_direct_im(d);
-		return TRUE;
+		return;
 	}
 
 	cancel_direct_im(d);
 
-	return TRUE;
+	return;
 }
 
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
@@ -2058,60 +2064,80 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
  */
 static void gaim_auth_request(struct name_data *data) {
 	struct gaim_connection *gc = data->gc;
-	struct oscar_data *od = gc->proto_data;
-	struct buddy *buddy = find_buddy(gc, data->name);
-	struct group *group = find_group_by_buddy(gc, data->name);
-	if (buddy && group) {
-		debug_printf("ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-		aim_ssi_sendauthrequest(od->sess, od->conn, data->name, "Please authorize me so I can add you to my buddy list.");
-		aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 1);
+
+	if (g_slist_find(connections, gc)) {
+		struct oscar_data *od = gc->proto_data;
+		struct buddy *buddy = find_buddy(gc, data->name);
+		struct group *group = find_group_by_buddy(gc, data->name);
+		if (buddy && group) {
+			debug_printf("ssi: adding buddy %s to group %s\n", buddy->name, group->name);
+			aim_ssi_sendauthrequest(od->sess, od->conn, data->name, "Please authorize me so I can add you to my buddy list.");
+			aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 1);
+		}
 	}
+
 	gaim_free_name_data(data);
 }
 
 static void gaim_auth_dontrequest(struct name_data *data) {
-/*	struct gaim_connection *gc = data->gc; */
-/*	struct oscar_data *od = gc->proto_data; */
-	/* XXX - Take the buddy out of our buddy list */
+	struct gaim_connection *gc = data->gc;
+
+	if (g_slist_find(connections, gc)) {
+		/* struct oscar_data *od = gc->proto_data; */
+		/* XXX - Take the buddy out of our buddy list */
+	}
+
 	gaim_free_name_data(data);
 }
 
 /* When other people ask you for authorization */
 static void gaim_auth_grant(struct name_data *data) {
 	struct gaim_connection *gc = data->gc;
-	struct oscar_data *od = gc->proto_data;
+
+	if (g_slist_find(connections, gc)) {
+		struct oscar_data *od = gc->proto_data;
 #ifdef NOSSI
-	struct buddy *buddy;
-	gchar message;
-	message = 0;
-	buddy = find_buddy(gc, data->name);
-	aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
-	show_got_added(gc, NULL, data->name, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
+		struct buddy *buddy;
+		gchar message;
+		message = 0;
+		buddy = find_buddy(gc, data->name);
+		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
+		show_got_added(gc, NULL, data->name, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
 #else
-	aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x01, NULL);
+		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x01, NULL);
 #endif
+	}
+
 	gaim_free_name_data(data);
 }
 
 /* When other people ask you for authorization */
 static void gaim_auth_dontgrant(struct name_data *data) {
 	struct gaim_connection *gc = data->gc;
-	struct oscar_data *od = gc->proto_data;
-	gchar *message;
-	message = g_strdup_printf(_("No reason given."));
+
+	if (g_slist_find(connections, gc)) {
+		struct oscar_data *od = gc->proto_data;
+		gchar *message;
 #ifdef NOSSI
-	aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, message);
+		message = g_strdup_printf(_("No reason given."));
+		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, message);
 #else
-	aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x00, message);
+		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x00, message);
 #endif
-	g_free(message);
+		g_free(message);
+	}
+
 	gaim_free_name_data(data);
 }
 
 /* When someone sends you contacts  */
 static void gaim_icq_contactadd(struct name_data *data) {
 	struct gaim_connection *gc = data->gc;
-	show_add_buddy(gc, data->name, NULL, data->nick);
+
+	if (g_slist_find(connections, gc)) {
+		show_add_buddy(gc, data->name, NULL, data->nick);
+	}
+
 	gaim_free_name_data(data);
 }
 
@@ -4774,8 +4800,15 @@ static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
 
 static void oscar_direct_im(struct ask_do_dir_im *data) {
 	struct gaim_connection *gc = data->gc;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *od;
 	struct direct_im *dim;
+
+	if (!g_slist_find(connections, gc)) {
+		g_free(data);
+		return;
+	}
+
+	od = (struct oscar_data *)gc->proto_data;
 
 	dim = find_direct_im(od, data->who);
 	if (dim) {
@@ -4786,6 +4819,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 			debug_printf("Gave up on old direct IM, trying again\n");
 		} else {
 			do_error_dialog("DirectIM already open.", NULL, GAIM_ERROR);
+			g_free(data);
 			return;
 		}
 	}
@@ -4804,6 +4838,8 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 		do_error_dialog(_("Unable to open Direct IM"), NULL, GAIM_ERROR);
 		g_free(dim);
 	}
+
+	g_free(data);
 }
 
 static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
