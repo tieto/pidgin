@@ -2685,7 +2685,7 @@ gaim_conversations_init(void)
 						 gaim_value_new(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "received-chat-msg",
-						 gaim_marshal_BOOOEAN__POINTER_POINTER_POINTER_UINT,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT,
 						 gaim_value_new(GAIM_TYPE_BOOLEAN), 4,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
