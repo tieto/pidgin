@@ -899,11 +899,6 @@ GtkWidget *conv_page() {
 			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
 	gaim_gtk_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/core/conversations/im/send_typing", vbox);
-	gaim_gtk_prefs_checkbox(_("_Raise IM window on events"),
-			"/gaim/gtk/conversations/im/raise_on_events", vbox);
-
-	gaim_gtk_prefs_checkbox(_("Raise chat _window on events"),
-			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
 
 	/* All the tab options! */
 	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
@@ -2361,6 +2356,8 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/smiley_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
+	gaim_prefs_remove("/gaim/gtk/conversations/im/raise_on_events");
+	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");

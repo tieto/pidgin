@@ -4618,12 +4618,6 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 
 	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
 
-	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
-		gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events")) {
-
-		gaim_conv_window_raise(gaim_conversation_get_window(conv));
-	}
-
 	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
 		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
@@ -4683,14 +4677,6 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/chat/color_nicks"))
 		flags |= GAIM_MESSAGE_COLORIZE;
 
-	/* Raise the window, if specified in prefs. */
-	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
-	    /* we may want to change this */
-		gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) {
-
-		gaim_conv_window_raise(gaim_conversation_get_window(conv));
-	}
-
 	gaim_conversation_write(conv, who, message, flags, mtime);
 }
 
@@ -4716,14 +4702,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	gc = gaim_conversation_get_gc(conv);
 
 	win = gaim_conversation_get_window(conv);
-
-	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
-		((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-		 gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) ||
-		(gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
-		 gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events")))) {
-		gaim_conv_window_show(win);
-	}
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
@@ -5909,7 +5887,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_width", 410);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/entry_height", 50);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/raise_on_events", FALSE);
 
 	/* Conversations -> IM */
 	gaim_prefs_add_none("/gaim/gtk/conversations/im");
@@ -5919,7 +5896,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_width", 410);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/im/raise_on_events", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
 
 	/* Connect callbacks. */
