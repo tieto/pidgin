@@ -62,6 +62,8 @@
 #define OSCAR_CONNECT_STEPS 6
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
 
+#define FAIM_DEBUG_LEVEL 0
+
 static GaimPlugin *my_protocol = NULL;
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
@@ -1730,7 +1732,7 @@ static void oscar_login(GaimAccount *account) {
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
 
 	sess = g_new0(aim_session_t, 1);
-	aim_session_init(sess, TRUE, 0);
+	aim_session_init(sess, TRUE, FAIM_DEBUG_LEVEL);
 	aim_setdebuggingcb(sess, oscar_debug);
 	/*
 	 * We need an immediate queue because we don't use a while-loop 
