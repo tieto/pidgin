@@ -569,7 +569,7 @@ static void gjab_send(gjconn gjc, xmlnode x)
 #else
 			send(gjc->fd, buf, strlen(buf), 0);
 #endif
-		debug_printf("gjab_send: %s\n", buf);
+		gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send: %s\n", buf);
 	}
 }
 
@@ -589,7 +589,7 @@ static void gjab_send_raw(gjconn gjc, const char *str)
 		}
 		/* printing keepalives to the debug window is really annoying */
 		if(strcmp(str, JABBER_KEEPALIVE_STRING))
-			debug_printf("gjab_send_raw: %s\n", str);
+			gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send_raw: %s\n", str);
 	}
 }
 
@@ -650,7 +650,8 @@ static void gjab_auth(gjconn gjc)
 	xmlnode_insert_cdata(z, gjc->user->resource, -1);
 
 	if (gjc->sid) {
-		debug_printf("digest authentication (sid %s)\n", gjc->sid);
+		gaim_debug(GAIM_DEBUG_MISC, "jabber",
+				   "digest authentication (sid %s)\n", gjc->sid);
 		z = xmlnode_insert_tag(y, "digest");
 		hash = pmalloc(x->p, strlen(gjc->sid) + strlen(gjc->pass) + 1);
 		strcpy(hash, gjc->sid);
@@ -682,7 +683,8 @@ static void gjab_recv(gjconn gjc)
 #endif
 		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 		buf[len] = '\0';
-		debug_printf("input (len %d): %s\n", len, buf);
+		gaim_debug(GAIM_DEBUG_MISC, "jabber",
+				   "input (len %d): %s\n", len, buf);
 		XML_Parse(gjc->parser, buf, len, 0);
 		if (jd->die)
 			signoff(GJ_GC(gjc));
@@ -971,7 +973,8 @@ static void jabber_remove_gaim_buddy(struct gaim_connection *gc, const char *bud
 	struct buddy *b;
 
 	if ((b = gaim_find_buddy(gc->account, buddyname)) != NULL) {
-		debug_printf("removing buddy [1]: %s\n", buddyname);
+		gaim_debug(GAIM_DEBUG_INFO, "jabber",
+				   "removing buddy [1]: %s\n", buddyname);
 		gaim_blist_remove_buddy(b);
 		gaim_blist_save();
 	}
@@ -1421,7 +1424,8 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		}
 
 	} else {
-		debug_printf("unhandled message %s\n", type);
+		gaim_debug(GAIM_DEBUG_WARNING, "jabber",
+				   "unhandled message %s\n", type);
 	}
 }
 
@@ -1765,7 +1769,8 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				g = gaim_group_new(_("Buddies"));
 				gaim_blist_add_group(g, NULL);
 			}
-			debug_printf("adding buddy [4]: %s\n", buddyname);
+			gaim_debug(GAIM_DEBUG_INFO, "jabber",
+					   "adding buddy [4]: %s\n", buddyname);
 			gaim_blist_add_buddy(b, g, NULL);
 			gaim_blist_save();
 		} else {
@@ -1846,7 +1851,7 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 			}
 			gjab_auth(gjc);
 		} else {
-			debug_printf("auth success\n");
+			gaim_debug(GAIM_DEBUG_INFO, "jabber", "auth success\n");
 
 			account_online(GJ_GC(gjc));
 			serv_finish_login(GJ_GC(gjc));
@@ -1861,7 +1866,7 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 		int errcode = 0;
 		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 
-		debug_printf("auth failed\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "auth failed\n");
 		xerr = xmlnode_get_tag(p->x, "error");
 		if (xerr) {
 			char msg[BUF_LONG];
@@ -2156,7 +2161,8 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 		jabber_handlepresence(gjc, p);
 		break;
 	case JPACKET_IQ:
-		debug_printf("jpacket_subtype: %d\n", jpacket_subtype(p));
+		gaim_debug(GAIM_DEBUG_MISC, "jabber",
+				   "jpacket_subtype: %d\n", jpacket_subtype(p));
 
 		id = xmlnode_get_attrib(p->x, "id");
 		if (id != NULL && !strcmp(id, IQID_AUTH)) {
@@ -2204,11 +2210,13 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 				jabber_track_queries(gjc->queries, id, TRUE);	/* delete query track */
 				jabber_handlevcard(gjc, vcard, from);
 			} else if((xmlns = xmlnode_get_attrib(querynode, "xmlns")) != NULL) {
-				debug_printf("jabber:iq:query: %s\n", xmlns);
+				gaim_debug(GAIM_DEBUG_MISC, "jabber",
+						   "jabber:iq:query: %s\n", xmlns);
 			} else {
 				char *val;
 
-				debug_printf("jabber:iq: %s\n", xmlnode2str(p->x));
+				gaim_debug(GAIM_DEBUG_MISC, "jabber",
+						   "jabber:iq: %s\n", xmlnode2str(p->x));
 
 				/* handle "null" query results */
 				if((val = jabber_track_queries(gjc->queries, id, TRUE)) != NULL) {
@@ -2251,7 +2259,8 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 		jabber_handles10n(gjc, p);
 		break;
 	default:
-		debug_printf("jabber: packet type %d (%s)\n", p->type, xmlnode2str(p->x));
+		gaim_debug(GAIM_DEBUG_MISC, "jabber",
+				   "jabber: packet type %d (%s)\n", p->type, xmlnode2str(p->x));
 	}
 
 	xmlnode_free(p->x);
@@ -2279,7 +2288,7 @@ static void jabber_handlestate(gjconn gjc, int state)
 		gjab_reqauth(gjc);
 		break;
 	default:
-		debug_printf("state change: %d\n", state);
+		gaim_debug(GAIM_DEBUG_MISC, "jabber", "state change: %d\n", state);
 	}
 	return;
 }
@@ -2299,7 +2308,8 @@ static void jabber_login(struct gaim_account *account)
 
 	if (!(jd->gjc = gjab_new(loginname, account->password, gc))) {
 		g_free(loginname);
-		debug_printf("jabber: unable to connect (jab_new failed)\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "jabber",
+				   "unable to connect (jab_new failed)\n");
 		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 		return;
@@ -2438,8 +2448,10 @@ static void insert_message(xmlnode x, const char *message, gboolean use_xhtml) {
 			xmlnode_insert_tag_node(x, y);
 			xmlnode_free(y);
 		} else {
-			debug_printf("holy cow, html_to_xhtml didn't work right!\n");
-			debug_printf("the invalid XML: %s\n", xhtml);
+			gaim_debug(GAIM_DEBUG_ERROR, "jabber",
+					   "holy cow, html_to_xhtml didn't work right!\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "jabber",
+					   "the invalid XML: %s\n", xhtml);
 		}
 	}
 	g_free(xhtml);
@@ -2910,7 +2922,7 @@ static void jabber_join_chat(struct gaim_connection *gc, GList *data)
 		return;
 
 	realwho = create_valid_jid(data->data, data->next->data, data->next->next->data);
-	debug_printf("%s\n", realwho);
+	gaim_debug(GAIM_DEBUG_INFO, "%s\n", realwho);
 
 	if((gjid = gaim_jid_new(realwho)) == NULL) {
 		char *msg = g_strdup_printf("The Jabber I.D. %s is invalid.", realwho);
@@ -2923,26 +2935,31 @@ static void jabber_join_chat(struct gaim_connection *gc, GList *data)
 	if((jc = find_any_chat(gc, gjid)) != NULL) {
 		switch(jc->state) {
 			case JCS_PENDING:
-				debug_printf("attempt to re-join already pending Jabber chat! (ignoring)\n");
+				gaim_debug(GAIM_DEBUG_INFO, "jabber",
+						   "attempt to re-join already pending Jabber chat! (ignoring)\n");
 				g_free(realwho);	/* yuck! */
 				gaim_jid_free(gjid);
 				return;
 			case JCS_ACTIVE:
-				debug_printf("attempt to re-join already active Jabber chat! (ignoring)\n");
+				gaim_debug(GAIM_DEBUG_INFO, "jabber",
+						   "attempt to re-join already active Jabber chat! (ignoring)\n");
 				g_free(realwho);	/* yuck! */
 				gaim_jid_free(gjid);
 				return;
 			case JCS_CLOSED:
-				debug_printf("rejoining previously closed Jabber chat\n");
+				gaim_debug(GAIM_DEBUG_INFO, "jabber",
+						   "rejoining previously closed Jabber chat\n");
 				break;
 			default:
-				debug_printf("found Jabber chat in unknown state! (ignoring)\n");
+				gaim_debug(GAIM_DEBUG_INFO, "jabber",
+						   "found Jabber chat in unknown state! (ignoring)\n");
 				g_free(realwho);	/* yuck! */
 				gaim_jid_free(gjid);
 				return;
 		}
 	} else {
-		debug_printf("joining completely new Jabber chat\n");
+		gaim_debug(GAIM_DEBUG_INFO, "jabber",
+				   "joining completely new Jabber chat\n");
 		jc = g_new0(struct jabber_chat, 1);
 		jc->gjid = gjid;
 		jc->gc = gc;
@@ -3451,7 +3468,8 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 
 static void jabber_set_idle(struct gaim_connection *gc, int idle) {
 	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
-	debug_printf("jabber_set_idle: setting idle %i\n", idle);
+	gaim_debug(GAIM_DEBUG_INFO, "jabber",
+			   "jabber_set_idle: setting idle %i\n", idle);
 	jd->idle = idle ? time(NULL) - idle : idle;
 }
 
@@ -3854,7 +3872,8 @@ static void jabber_set_info(struct gaim_connection *gc, char *info)
 		if (xmlnode_get_name(vc_node) &&
 				!g_ascii_strncasecmp(xmlnode_get_name(vc_node), "vcard", 5)) {
 			xmlnode_insert_tag_node(x, vc_node);
-			debug_printf("jabber: vCard packet: %s\n", xmlnode2str(x));
+			gaim_debug(GAIM_DEBUG_MISC, "jabber",
+					   "jabber: vCard packet: %s\n", xmlnode2str(x));
 			gjab_send(gjc, x);
 		}
 		xmlnode_free(vc_node);
@@ -4061,7 +4080,8 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 				char *tag;
 				xmlnode child = xmlnode_get_firstchild(querynode);
 
-				debug_printf("got registration requirments response!\n");
+				gaim_debug(GAIM_DEBUG_INFO, "jabber",
+						   "got registration requirments response!\n");
 
 				while(child != NULL) {
 					if((tag = xmlnode_get_name(child)) != NULL) {
@@ -4079,7 +4099,8 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 				}
 			}
 		} else {
-			debug_printf("registration successful!\n");
+			gaim_debug(GAIM_DEBUG_INFO, "jabber",
+					   "registration successful!\n");
 
 			hide_login_progress_notice(GJ_GC(gjc), _("Server Registration successful!"));
 			/*
@@ -4096,7 +4117,7 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 		int errcode = 0;
 		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 
-		debug_printf("registration failed\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "registration failed\n");
 		xerr = xmlnode_get_tag(p->x, "error");
 		if (xerr) {
 			char msg[BUF_LONG];
@@ -4138,7 +4159,8 @@ static void gjab_reqreg(gjconn gjc)
 	z = xmlnode_insert_tag(y, "password");
 	xmlnode_insert_cdata(z, gjc->pass, -1);
 
-	debug_printf("jabber: registration packet: %s\n", xmlnode2str(x));
+	gaim_debug(GAIM_DEBUG_MISC, "jabber",
+			   "jabber: registration packet: %s\n", xmlnode2str(x));
 	gjab_send(gjc, x);
 	xmlnode_free(x);
 }
@@ -4176,7 +4198,7 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 		 */
 		break;
 	default:
-		debug_printf("state change: %d\n", state);
+		gaim_debug(GAIM_DEBUG_MISC, "jabber", "state change: %d\n", state);
 	}
 	return;
 }
@@ -4198,7 +4220,8 @@ void jabber_register_user(struct gaim_account *account)
 
 	if ((jd->gjc = gjab_new(loginname, account->password, gc)) == NULL) {
 		g_free(loginname);
-		debug_printf("jabber: unable to connect (jab_new failed)\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "jabber",
+				   "unable to connect (jab_new failed)\n");
 		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 	} else {
