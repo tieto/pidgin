@@ -4224,12 +4224,10 @@ static void oscar_get_away(struct gaim_connection *g, char *who) {
 		aim_getinfo(od->sess, od->conn, who, AIM_GETINFO_GENERALINFO);
 }
 
-#if 0
 static void oscar_get_caps(struct gaim_connection *g, char *name) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	aim_getinfo(od->sess, od->conn, name, AIM_GETINFO_CAPABILITIES);
 }
-#endif
 
 static void oscar_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last,
 			  const char *maiden, const char *city, const char *state, const char *country, int web) {
@@ -5515,13 +5513,11 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 		}
 	}
 
-#if 0
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Get Capabilities");
 	pbm->callback = oscar_get_caps;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-#endif
 
 	return m;
 }

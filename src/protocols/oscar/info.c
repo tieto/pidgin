@@ -635,13 +635,6 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 */
 			int type, subtype, len;
 			char *iconstr;
-/*
-int i;
-debug_printf("iconstr: 0x");
-for (i=0; i<length; i++)
-	debug_printf("%02hhx ", bs->data[bs->offset+i]);
-debug_printf("\n");
-*/
 			while (aim_bstream_curpos(bs) < endpos) {
 				type = aimbs_get16(bs);
 				subtype = aimbs_get8(bs);
