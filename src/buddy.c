@@ -153,7 +153,7 @@ void toggle_show_empty_groups() {
 			if (!g_slist_length(g->members)) {
 				shows = g_slist_remove(shows, g);
 				s = shows;
-				gtk_widget_destroy(g->item);
+				gtk_container_remove(GTK_CONTAINER(buddies), g->item);
 				g_free(g->name);
 				g_free(g);
 			} else
@@ -273,11 +273,11 @@ static void destroy_buddies(struct gaim_connection *gc) {
 				if (b->log_timer > 0)
 					gtk_timeout_remove(b->log_timer);
 				b->connlist = g_slist_remove(b->connlist, gc);
-				gtk_widget_destroy(b->item);
+				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
 				g->members = g_slist_remove(g->members, b);
 				if (g->members == NULL) {
 					shows = g_slist_remove(shows, g);
-					gtk_widget_destroy(g->item);
+					gtk_container_remove(GTK_CONTAINER(buddies), g->item);
 					g_free(g->name);
 					g_free(g);
 					m = NULL;
@@ -494,13 +494,13 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
 						gtk_timeout_remove(bs->log_timer);
-					gtk_widget_destroy(bs->item);
+					gtk_container_remove(GTK_CONTAINER(gs->tree), bs->item);
 					g_free(bs->show);
 					g_free(bs->name);
 					g_free(bs);
 					if (!g_slist_length(gs->members)) {
 						shows = g_slist_remove(shows, gs);
-						gtk_widget_destroy(gs->item);
+						gtk_container_remove(GTK_CONTAINER(buddies), gs->item);
 						g_free(gs->name);
 						g_free(gs);
 					}
@@ -537,8 +537,6 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 	
 	struct group *delg;
 	struct buddy *delb;
-
-	struct conversation *c;
 
 	/* we assume that the group actually does exist within the gc, and that the gc is not NULL.
 	 * the UI is responsible for this */
@@ -1528,10 +1526,10 @@ static int log_timeout(struct buddy_show *b) {
 	if (!b->connlist) {
 		struct group_show *g = find_gs_by_bs(b);
 		g->members = g_slist_remove(g->members, b);
-		gtk_widget_destroy(b->item);
+		gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
 		if (g->members == NULL && (display_options & OPT_DISP_NO_MT_GRP)) {
 			shows = g_slist_remove(shows, g);
-			gtk_widget_destroy(g->item);
+			gtk_container_remove(GTK_CONTAINER(buddies), g->item);
 			g_free(g->name);
 			g_free(g);
 		}
@@ -1606,7 +1604,6 @@ static void update_idle_time(struct buddy_show *bs) {
 	time_t t;
 	int ihrs, imin;
 	struct buddy *b;
-	GSList *c;
 
 	char infotip[256];
 	char warn[256];
@@ -1672,10 +1669,6 @@ void update_idle_times() {
 	GSList *mem;
 	struct buddy_show *b;
 	struct group_show *g;
-	struct buddy *bud;
-	time_t t;
-	char idlet[16];
-	int ihrs, imin;
 
 	while (grp) {
 		g = (struct group_show *)grp->data;
