@@ -120,6 +120,8 @@ struct addbp {
 	GtkWidget *p_unaway;
 	GtkWidget *p_unidle;
 	GtkWidget *menu;
+
+	struct aim_user *user;
 };
 
 struct findbyemail {
@@ -1034,6 +1036,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	
 	g_snprintf(bp->name, 80, "%s", gtk_entry_get_text(GTK_ENTRY(b->nameentry)));
 	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
+	g_snprintf(bp->pouncer, 80, "%s", b->user->username);
 
 	if (GTK_TOGGLE_BUTTON(b->openwindow)->active)
 		bp->popup = 1;
@@ -1070,6 +1073,12 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
         g_free(b);
 }
 
+static void pounce_choose(GtkWidget *opt, struct addbp *b)
+{
+	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
+	b->user = u;
+}
+
 static void pounce_user_menu(struct addbp *b, GtkWidget *box)
 {
 	GtkWidget *hbox;
@@ -1098,6 +1107,7 @@ static void pounce_user_menu(struct addbp *b, GtkWidget *box)
 		a = (struct aim_user *)u->data;
 		opt = gtk_menu_item_new_with_label(a->username);
 		gtk_object_set_user_data(GTK_OBJECT(opt), a);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(pounce_choose), b);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		gtk_widget_show(opt);
 		u = u->next;
