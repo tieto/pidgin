@@ -642,6 +642,7 @@ static void
 msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 {
 	MsnSession *session = gc->proto_data;
+	MsnGroup *msn_group = NULL;
 	char *who;
 	char outparams[MSN_BUF_LEN];
 	GSList *l;
@@ -663,11 +664,23 @@ msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 	if (l != NULL)
 		return;
 
-	g_snprintf(outparams, sizeof(outparams),
-			   "FL %s %s", who, who);
+	if (group != NULL)
+		msn_group = msn_groups_find_with_name(session->groups, group->name);
+
+	if (msn_group != NULL)
+	{
+		g_snprintf(outparams, sizeof(outparams),
+				   "FL %s %s %d", who, who, msn_group_get_id(msn_group));
+	}
+	else
+	{
+		g_snprintf(outparams, sizeof(outparams),
+				   "FL %s %s", who, who);
+	}
 
 	if (!msn_servconn_send_command(session->notification_conn,
-								   "ADD", outparams)) {
+								   "ADD", outparams))
+	{
 		gaim_connection_error(gc, _("Write error"));
 		return;
 	}

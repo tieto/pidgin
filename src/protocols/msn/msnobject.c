@@ -76,6 +76,29 @@ msn_object_new_from_string(const char *str)
 	return obj;
 }
 
+void
+msn_object_destroy(MsnObject *obj)
+{
+	g_return_if_fail(obj != NULL);
+
+	if (obj->creator != NULL)
+		g_free(obj->creator);
+
+	if (obj->location != NULL)
+		g_free(obj->location);
+
+	if (obj->friendly != NULL)
+		g_free(obj->friendly);
+
+	if (obj->sha1d != NULL)
+		g_free(obj->sha1d);
+
+	if (obj->sha1c != NULL)
+		g_free(obj->sha1c);
+
+	g_free(obj);
+}
+
 char *
 msn_object_to_string(const MsnObject *obj)
 {
