@@ -50,13 +50,13 @@ http_poll(gpointer data)
 {
 	MsnServConn *servconn = data;
 
-#if 0	
 	gaim_debug_info("msn", "Polling server %s.\n",
 					servconn->http_data->gateway_ip);
-#endif
 	msn_http_servconn_poll(servconn);
 
 	servconn->http_data->timer = 0;
+
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Returning from http_poll\n");
 
 	return FALSE;
 }
@@ -66,6 +66,7 @@ stop_timer(MsnServConn *servconn)
 {
 	if (servconn->http_data->timer)
 	{
+		gaim_debug(GAIM_DEBUG_INFO, "msn", "Stopping timer\n");
 		g_source_remove(servconn->http_data->timer);
 		servconn->http_data->timer = 0;
 	}
@@ -76,6 +77,7 @@ start_timer(MsnServConn *servconn)
 {
 	stop_timer(servconn);
 
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Starting timer\n");
 	servconn->http_data->timer = g_timeout_add(5000, http_poll, servconn);
 }
 
@@ -162,7 +164,7 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 
 	s = 0;
 	needed = strlen(temp);
-	
+
 	do {
 		res = write(servconn->fd, temp, needed);
 		if (res >= 0)
@@ -174,7 +176,7 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 			return -1;
 		}
 	} while (s < needed);
-		 
+
 	g_free(temp);
 
 	servconn->http_data->waiting_response = TRUE;
@@ -217,9 +219,7 @@ msn_http_servconn_poll(MsnServConn *servconn)
 		servconn->http_data->session_id,
 		servconn->http_data->gateway_ip);
 
-#if 0
 	gaim_debug_misc("msn", "Writing to HTTP: {%s}\n", temp);
-#endif
 
 	s = write(servconn->fd, temp, strlen(temp));
 
@@ -252,9 +252,7 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 	g_return_val_if_fail(ret_size != NULL, FALSE);
 	g_return_val_if_fail(error    != NULL, FALSE);
 
-#if 0	
 	gaim_debug_info("msn", "parsing data {%s} from fd %d\n", buf, servconn->fd);
-#endif	
 	servconn->http_data->waiting_response = FALSE;
 
 	gc = gaim_account_get_connection(servconn->session->account);
@@ -300,9 +298,7 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 	s += 4; /* Skip \r\n */
 	body = g_strndup(s, size - (s - buf));
 
-#if 0
 	gaim_debug_misc("msn", "Incoming HTTP buffer: {%s\r\n%s}", headers, body);
-#endif
 
 	if ((s = strstr(headers, "Content-Length: ")) != NULL)
 	{

@@ -1061,13 +1061,16 @@ msn_keepalive(GaimConnection *gc)
 	MsnSession *session = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "PNG\r\n");
+	if (!session->http_method)
+	{
+		g_snprintf(buf, sizeof(buf), "PNG\r\n");
 
-	if (msn_servconn_write(session->notification_conn,
-						   buf, strlen(buf)) < 0) {
+		if (msn_servconn_write(session->notification_conn,
+							   buf, strlen(buf)) < 0) {
 
-		gaim_connection_error(gc, _("Write error"));
-		return;
+			gaim_connection_error(gc, _("Write error"));
+			return;
+		}
 	}
 }
 
