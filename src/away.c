@@ -25,6 +25,7 @@
 #include "plugin.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "status.h"
 #include "util.h"
 
 /* XXX CORE/UI: Until we can get rid of the message queue stuff... */
@@ -298,6 +299,7 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 	away_messages = g_slist_remove(away_messages, a);
 	g_free(a);
 	do_away_menu();
+	gaim_status_sync();
 }
 
 static void set_gc_away(GObject *obj, GaimConnection *gc)
