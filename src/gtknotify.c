@@ -419,7 +419,7 @@ uri_command(const char *command, gboolean sync)
 		gchar *tmp;
 
 		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
-							  command);
+							  command ? command : "(none)");
 
 		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 
