@@ -147,73 +147,67 @@ void
 gaim_connection_destroy(GaimConnection *gc)
 {
 	GaimAccount *account;
+	GList *wins;
+	GaimPresence *presence = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(gc != NULL);
 
 	account = gaim_connection_get_account(gc);
 
-	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED)
+	gaim_debug_info("connection", "Disconnecting connection %p\n", gc);
+
+	if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
+		gaim_blist_remove_account(account);
+
+	gaim_signal_emit(gaim_connections_get_handle(), "signing-off", gc);
+
+	while (gc->buddy_chats)
 	{
-		GList *wins;
-		GaimPresence *presence = NULL;
-		GaimPluginProtocolInfo *prpl_info = NULL;
+		GaimConversation *b = gc->buddy_chats->data;
 
-		gaim_debug_info("connection", "Disconnecting connection %p\n", gc);
-
-		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
-			gaim_blist_remove_account(account);
-
-		gaim_signal_emit(gaim_connections_get_handle(), "signing-off", gc);
-
-		while (gc->buddy_chats)
-		{
-			GaimConversation *b = gc->buddy_chats->data;
-
-			gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
-			gaim_conv_chat_left(GAIM_CONV_CHAT(b));
-		}
-
-		if (gc->idle_timer > 0)
-			gaim_timeout_remove(gc->idle_timer);
-		gc->idle_timer = 0;
-
-		update_keepalive(gc, FALSE);
-
-		if (gc->prpl != NULL)
-		{
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-			if (prpl_info->close)
-				(prpl_info->close)(gc);
-		}
-
-		connections = g_list_remove(connections, gc);
-
-		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
-
-		/* LOG	system_log(log_signoff, gc, NULL,
-		   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
-		gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
-
-		presence = gaim_account_get_presence(account);
-		if (gaim_presence_is_online(presence) == TRUE)
-			gaim_presence_set_status_active(presence, "offline", TRUE);
-
-		/*
-		 * XXX This is a hack! Remove this and replace it with a better event
-		 *     notification system.
-		 */
-		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			GaimConvWindow *win = (GaimConvWindow *)wins->data;
-			gaim_conversation_update(gaim_conv_window_get_conversation_at(win, 0),
-									 GAIM_CONV_ACCOUNT_OFFLINE);
-		}
-
-		gaim_request_close_with_handle(gc);
-		gaim_notify_close_with_handle(gc);
-
-		return;
+		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
+		gaim_conv_chat_left(GAIM_CONV_CHAT(b));
 	}
+
+	if (gc->idle_timer > 0)
+		gaim_timeout_remove(gc->idle_timer);
+	gc->idle_timer = 0;
+
+	update_keepalive(gc, FALSE);
+
+	if (gc->prpl != NULL)
+	{
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+		if (prpl_info->close)
+			(prpl_info->close)(gc);
+	}
+
+	connections = g_list_remove(connections, gc);
+
+	gaim_connection_set_state(gc, GAIM_DISCONNECTED);
+
+	/* LOG	system_log(log_signoff, gc, NULL,
+	   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
+	gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
+
+	presence = gaim_account_get_presence(account);
+	if (gaim_presence_is_online(presence) == TRUE)
+		gaim_presence_set_status_active(presence, "offline", TRUE);
+
+	/*
+	 * XXX This is a hack! Remove this and replace it with a better event
+	 *     notification system.
+	 */
+	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+		GaimConvWindow *win = (GaimConvWindow *)wins->data;
+		gaim_conversation_update(gaim_conv_window_get_conversation_at(win, 0),
+								 GAIM_CONV_ACCOUNT_OFFLINE);
+	}
+
+	gaim_request_close_with_handle(gc);
+	gaim_notify_close_with_handle(gc);
 
 	gaim_debug_info("connection", "Destroying connection %p\n", gc);
 

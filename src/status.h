@@ -35,7 +35,7 @@
  * available statuses of the protocol.  AIM, for example, supports
  * and available state with an optional available message, an away
  * state with a mandatory message, and an invisible state (which is
- * technically "independant" of the other two, but we'll get into
+ * technically "independent" of the other two, but we'll get into
  * that later).  GaimStatusTypes are very permanent.  They are
  * hardcoded in each PRPL and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
@@ -55,6 +55,14 @@
  * is also a list of saved statuses that are written to the
  * status.xml file.  Also, each GaimStatus has a "savable" boolean.
  * If "savable" is set to FALSE then the status is NEVER saved.
+ * All GaimStatuses should be inside a GaimPresence.
+ *
+ *
+ * A GaimStatus is either "indepedent" or "exclusive."
+ * Independent statuses can be active or inactive and it doesn't
+ * affect anything else.  However, you can only have one exclusive
+ * status per GaimPresence.  If you active one exlusive status,
+ * then the previous exclusive status is automatically deactivated.
  *
  * A GaimPresence is like a collection of GaimStatuses (plus some
  * other random info).  For any buddy, or for any one of your accounts,
@@ -65,8 +73,6 @@
  * and it contains their current idle time.  GaimPresences are
  * never saved to disk.  The information they contain is only relevent
  * for the current GaimSession.
- *
- * TODO: Talk about independant statuses.
  */
 
 typedef struct _GaimStatusType      GaimStatusType;

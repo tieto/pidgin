@@ -583,11 +583,16 @@ gaim_status_new(GaimStatusType *status_type, GaimPresence *presence)
 	return status;
 }
 
+/*
+ * TODO: If the GaimStatus is in a GaimPresence, then
+ *       remove it from the GaimPresence?
+ */
 void
 gaim_status_destroy(GaimStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
+	/* TODO: Don't do this is if the status is exclusive */
 	gaim_status_set_active(status, FALSE);
 
 	g_hash_table_destroy(status->attr_values);
@@ -708,7 +713,6 @@ status_has_changed(GaimStatus *status)
 	GaimStatus *old_status;
 
 	presence   = gaim_status_get_presence(status);
-	old_status = gaim_presence_get_active_status(presence);
 
 	/*
 	 * If this status is exclusive, then we must be setting it to "active."
@@ -717,33 +721,13 @@ status_has_changed(GaimStatus *status)
 	 */
 	if (gaim_status_is_exclusive(status))
 	{
-		const GList *l;
-
-		for (l = gaim_presence_get_statuses(presence); l != NULL; l = l->next)
-		{
-			GaimStatus *temp_status = l->data;
-
-			if (temp_status == status)
-				continue;
-
-			if (gaim_status_is_independent(temp_status))
-				continue;
-
-			if (gaim_status_is_active(temp_status))
-			{
-				/*
-				 * Since we don't want infinite recursion, we have to set
-				 * the active variable ourself instead of calling
-				 * gaim_status_set_active().
-				 */
-				temp_status->active = FALSE;
-
-				notify_status_update(presence, old_status, temp_status);
-
-				break;
-			}
-		}
+		old_status = gaim_presence_get_active_status(presence);
+		if (old_status != NULL)
+			old_status->active = FALSE;
+		presence->active_status = status;
 	}
+	else
+		old_status = NULL;
 
 	notify_status_update(presence, old_status, status);
 }
@@ -751,22 +735,7 @@ status_has_changed(GaimStatus *status)
 void
 gaim_status_set_active(GaimStatus *status, gboolean active)
 {
-	if (!active && gaim_status_is_exclusive(status))
-	{
-		gaim_debug_error("status",
-				   "Cannot deactivate an exclusive status (%s).\n",
-				   gaim_status_get_id(status));
-		return;
-	}
-
-	g_return_if_fail(status != NULL);
-
-	if (status->active == active)
-		return;
-
-	status->active = active;
-
-	status_has_changed(status);
+	gaim_status_set_active_with_attrs(status, active, NULL);
 }
 
 void
@@ -793,6 +762,7 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 	status->active = active;
 
 	/* Set any attributes */
+	if (args != NULL)
 	while ((id = va_arg(args, const char *)) != NULL)
 	{
 		GaimValue *value;
@@ -1276,10 +1246,6 @@ gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 					status_id);
 			return;
 		}
-
-		if (presence->active_status != NULL)
-			gaim_status_set_active(presence->active_status, FALSE);
-		presence->active_status = status;
 	}
 
 	gaim_status_set_active(status, active);
@@ -1288,22 +1254,7 @@ gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 void
 gaim_presence_switch_status(GaimPresence *presence, const char *status_id)
 {
-	GaimStatus *status;
-
-	g_return_if_fail(presence  != NULL);
-	g_return_if_fail(status_id != NULL);
-
-	status = gaim_presence_get_status(presence, status_id);
-
-	g_return_if_fail(status != NULL);
-
-	if (gaim_status_is_independent(status))
-		return;
-
-	if (presence->active_status != NULL)
-		gaim_status_set_active(presence->active_status, FALSE);
-
-	gaim_status_set_active(status, TRUE);
+	gaim_presence_set_status_active(presence, status_id, TRUE);
 }
 
 static void

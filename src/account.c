@@ -1163,10 +1163,11 @@ gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
 		return;
 	}
 
-	/* TODO: Record the status in accounts.xml? */
+	/* Our current statuses are saved to accounts.xml */
+	schedule_accounts_save();
 
-	gaim_status_set_active_with_attrs(status, active, args);
-	gaim_presence_set_status_active(gaim_account_get_presence(account), status_id, active);
+	if (active || gaim_status_is_independent(status))
+		gaim_status_set_active_with_attrs(status, active, args);
 
 	/*
 	 * If this account should be connected, but is not, then connect.
