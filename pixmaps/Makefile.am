@@ -14,7 +14,6 @@ EXTRA_DIST =	about_menu.png \
 		change-fgcolor-small.png \
 		close.xpm			\
 		connect.png			\
-		download.png			\
 		edit.png			\
 		fontface2.xpm			\
 		gaim.png			\
