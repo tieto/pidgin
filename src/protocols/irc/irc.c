@@ -1350,7 +1350,6 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			c->gc = NULL;
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
 			do_error_dialog(buf, _("IRC Part"));
-			return -1;
 		}
 	} else if (!g_strcasecmp(pdibuf, "WHOIS")) {
 		g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", word_eol[2]);

@@ -925,7 +925,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 			do_error_dialog(_("Unable to send message: too large"), _("Message Error"));
 		else
 			do_error_dialog(_("Unable to send message: Unknown reason"), _("Message Error"));
-	} else {
+	} else if (err > 0) {
 		gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
 
 		if (away_options & OPT_AWAY_BACK_ON_IM) {
