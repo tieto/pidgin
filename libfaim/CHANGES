@@ -1,6 +1,10 @@
 
 No release numbers
 ------------------
+ - Wed Dec 13 00:38:56 UTC 2000
+  - Added the client update/version info to the authresp callback
+  - Added the prototype for aim_getfile_send_chunk to aim.h
+
  - Tue Dec 12 23:02:41 UTC 2000
   - Got pissed off at sess->logininfo.  Got rid of it.
     - Now pass all that stuff in as varargs, like it should be.

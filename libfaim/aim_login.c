@@ -298,6 +298,10 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
   char *sn = NULL, *bosip = NULL, *errurl = NULL, *email = NULL;
   unsigned char *cookie = NULL;
   int errorcode = 0, regstatus = 0;
+  int latestbuild = 0, latestbetabuild = 0;
+  char *latestrelease = NULL, *latestbeta = NULL;
+  char *latestreleaseurl = NULL, *latestbetaurl = NULL;
+  char *latestreleaseinfo = NULL, *latestbetainfo = NULL;
 
   /*
    * Read block of TLVs.  All further data is derived
@@ -361,9 +365,31 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
   if (aim_gettlv(tlvlist, 0x0013, 1))
     regstatus = aim_gettlv16(tlvlist, 0x0013, 1);
 
+  if (aim_gettlv(tlvlist, 0x0040, 1))
+    latestbetabuild = aim_gettlv32(tlvlist, 0x0040, 1);
+  if (aim_gettlv(tlvlist, 0x0041, 1))
+    latestbetaurl = aim_gettlv_str(tlvlist, 0x0041, 1);
+  if (aim_gettlv(tlvlist, 0x0042, 1))
+    latestbetainfo = aim_gettlv_str(tlvlist, 0x0042, 1);
+  if (aim_gettlv(tlvlist, 0x0043, 1))
+    latestbeta = aim_gettlv_str(tlvlist, 0x0043, 1);
+  if (aim_gettlv(tlvlist, 0x0048, 1))
+    ; /* no idea what this is */
+
+  if (aim_gettlv(tlvlist, 0x0044, 1))
+    latestbuild = aim_gettlv32(tlvlist, 0x0044, 1);
+  if (aim_gettlv(tlvlist, 0x0045, 1))
+    latestreleaseurl = aim_gettlv_str(tlvlist, 0x0045, 1);
+  if (aim_gettlv(tlvlist, 0x0046, 1))
+    latestreleaseinfo = aim_gettlv_str(tlvlist, 0x0046, 1);
+  if (aim_gettlv(tlvlist, 0x0047, 1))
+    latestrelease = aim_gettlv_str(tlvlist, 0x0047, 1);
+  if (aim_gettlv(tlvlist, 0x0049, 1))
+    ; /* no idea what this is */
+
 
   if ((userfunc = aim_callhandler(command->conn, 0x0017, 0x0003)))
-    ret = userfunc(sess, command, sn, errorcode, errurl, regstatus, email, bosip, cookie);
+    ret = userfunc(sess, command, sn, errorcode, errurl, regstatus, email, bosip, cookie, latestrelease, latestbuild, latestreleaseurl, latestreleaseinfo, latestbeta, latestbetabuild, latestbetaurl, latestbetainfo);
 
 
   if (sn)
@@ -376,6 +402,19 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
     free(email);
   if (cookie)
     free(cookie);
+  if (latestrelease)
+    free(latestrelease);
+  if (latestreleaseurl)
+    free(latestreleaseurl);
+  if (latestbeta)
+    free(latestbeta);
+  if (latestbetaurl)
+    free(latestbetaurl);
+  if (latestreleaseinfo)
+    free(latestreleaseinfo);
+  if (latestbetainfo)
+    free(latestbetainfo);
+
   aim_freetlvchain(&tlvlist);
 
   return ret;

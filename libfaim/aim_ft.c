@@ -1591,7 +1591,6 @@ faim_export int aim_getfile_send(struct aim_conn_t *conn, FILE *tosend, struct a
  * if (pos + chunksize > fh->size), we only send as much data as we
  *  can get (ie: up to fh->size.  
  */
-
 faim_export int aim_getfile_send_chunk(struct aim_conn_t *conn, FILE *tosend, struct aim_fileheader_t *fh, int pos, int bufsize)
 {
   int bufpos; 

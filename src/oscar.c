@@ -458,6 +458,10 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	char *sn = NULL, *bosip = NULL, *errurl = NULL, *email = NULL;
 	unsigned char *cookie = NULL;
 	int errorcode = 0, regstatus = 0;
+	int latestbuild = 0, latestbetabuild = 0;
+	char *latestrelease = NULL, *latestbeta = NULL;
+	char *latestreleaseurl = NULL, *latestbetaurl = NULL;
+	char *latestreleaseinfo = NULL, *latestbetainfo = NULL;
 
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
@@ -469,6 +473,17 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	email = va_arg(ap, char *);
 	bosip = va_arg(ap, char *);
 	cookie = va_arg(ap, unsigned char *);
+
+	latestrelease = va_arg(ap, char *);
+	latestbuild = va_arg(ap, int);
+	latestreleaseurl = va_arg(ap, char *);
+	latestreleaseinfo = va_arg(ap, char *);
+
+	latestbeta = va_arg(ap, char *);
+	latestbetabuild = va_arg(ap, int);
+	latestbetaurl = va_arg(ap, char *);
+	latestbetainfo = va_arg(ap, char *);
+
 	va_end(ap);
 
 	sprintf(debug_buff, "inside auth_resp (Screen name: %s)\n", sn);
@@ -505,13 +520,20 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	}
 
 
+	debug_printf("Reg status: %2d\n", regstatus);
 	if (email) {
 		debug_printf("Email: %s\n", email);
 	} else {
 		debug_printf("Email is NULL\n");
 	}
-	sprintf(debug_buff, "Closing auth connection...\n");
-	debug_print(debug_buff);
+	debug_printf("BOSIP: %s\n", bosip);
+	if (latestbeta)
+		debug_printf("Latest WinAIM beta version %s, build %d, at %s (%s)\n",
+				latestbeta, latestbetabuild, latestbetaurl, latestbetainfo);
+	if (latestrelease)
+		debug_printf("Latest WinAIM released version %s, build %d, at %s (%s)\n",
+				latestrelease, latestbuild, latestreleaseurl, latestreleaseinfo);
+	debug_printf("Closing auth connection...\n");
 	gdk_input_remove(gc->inpa);
 	aim_conn_kill(sess, &command->conn);
 
