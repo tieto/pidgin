@@ -37,7 +37,6 @@ extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
 
 /* Functions in dialogs.c */
-extern void show_change_passwd(GaimConnection *);
 extern void show_set_dir(GaimConnection *);
 extern void show_find_email(GaimConnection *);
 extern void show_find_info(GaimConnection *);
