@@ -641,7 +641,6 @@ static void oscar_login(struct aim_user *user) {
 
 	if (isdigit(*user->username)) {
 		odata->icq = TRUE;
-		/* this is odd but it's necessary for a proper do_import and do_export */
 		gc->password[8] = 0;
 	} else {
 		gc->flags |= OPT_CONN_HTML;
