@@ -344,6 +344,104 @@ static char *event_name(enum gaim_event event)
 	return buf;
 }
 
+static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
+{
+#ifndef DEBUG
+	if (!(misc_options & OPT_MISC_DEBUG))
+		return;
+#endif
+	switch (event) {
+		case event_quit:
+			debug_printf("%s\n", event_name(event));
+			break;
+		case event_signon:
+		case event_signoff:
+			debug_printf("%s: %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username);
+			break;
+		case event_new_conversation:
+			debug_printf("event_new_conversation: %s\n", (char *)arg1);
+			break;
+		case event_error:
+			debug_printf("event_error: %d\n", (int)arg1);
+			break;
+		case event_buddy_signon:
+		case event_buddy_signoff:
+		case event_buddy_away:
+		case event_buddy_back:
+		case event_buddy_idle:
+		case event_buddy_unidle:
+		case event_set_info:
+			debug_printf("%s: %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username, (char *)arg2);
+			break;
+		case event_chat_leave:
+			debug_printf("event_chat_leave: %s %d\n",
+					((struct gaim_connection *)arg1)->username, (int)arg2);
+			break;
+		case event_im_send:
+		case event_im_displayed_sent:
+			debug_printf("%s: %s %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(char *)arg2, *(char **)arg3 ? *(char **)arg3 : "");
+			break;
+		case event_chat_join:
+		case event_chat_buddy_join:
+		case event_chat_buddy_leave:
+			debug_printf("%s: %s %d %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(int)arg2, (char *)arg3);
+			break;
+		case event_chat_send:
+			debug_printf("%s: %s %d %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(int)arg2, *(char **)arg3 ? *(char **)arg3 : "");
+			break;
+		case event_away:
+			debug_printf("%s: %s %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(char *)arg2, (char *)arg3 ? (char *)arg3 : "");
+			break;
+		case event_warned:
+			debug_printf("%s: %s %s %d\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(char *)arg2 ? (char *)arg2 : "", (int)arg3);
+			break;
+		case event_im_recv:
+			debug_printf("%s: %s %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					*(char **)arg2 ? *(char **)arg2 : "",
+					*(char **)arg3 ? *(char **)arg3 : "");
+			break;
+		case event_im_displayed_rcvd:
+			debug_printf("%s: %s %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					*(char **)arg2 ? *(char **)arg2 : "",
+					*(char **)arg3 ? *(char **)arg3 : "");
+			break;
+		case event_chat_recv:
+			debug_printf("%s: %s %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(char *)arg2 ? (char *)arg2 : "",
+					(char *)arg3 ? (char *)arg3 : "");
+			break;
+		case event_chat_send_invite:
+			debug_printf("%s: %s %d %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(int)arg2, (char *)arg3,
+					*(char **)arg4 ? *(char **)arg4 : "");
+			break;
+		case event_chat_invited:
+			debug_printf("%s: %s %s %s %s\n", event_name(event),
+					((struct gaim_connection *)arg1)->username,
+					(char *)arg2, (char *)arg3,
+					(char *)arg4 ? (char *)arg4 : "");
+			break;
+		default:
+			break;
+	}
+}
+
 int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
 {
 #ifdef USE_PERL
@@ -352,7 +450,11 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
 	struct gaim_callback *g;
+#endif
 
+	debug_event(event, arg1, arg2, arg3, arg4);
+
+#ifdef GAIM_PLUGINS
 	while (c) {
 		void (*zero)(void *);
 		void (*one)(void *, void *);
