@@ -109,74 +109,124 @@ static void yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn 
 
 static void yahoo_parse_status(struct yahoo_session *sess, struct yahoo_packet *pkt)
 {
+	/* OK, I'm going to comment it this time. We either get:
+	 * gtkobject(99,(test)\001,6634CD3,0,1,0,0)
+	 * or
+	 * 2,gtkobject(0,6634CD3,0,1,0,0),warmenhoven(0,6C8C0C48,0,1,0,0)
+	 *
+	 * in the first case, we only get one person, and we get a bunch of fields.
+	 * in the second case, the number is how many people we got, and then the
+	 * names followed by a bunch of fields, separated by commas.
+	 *
+	 * the fields are: (status, [optional: custom message \001,] session id, ?, pager, chat, game)
+	 *
+	 * the custom message may contain any characters (none are escaped) so we can't split on
+	 * anything in particular. this is what we fucked up with the first time
+	 */
 	char *tmp = pkt->content;
 	int count = 0;
-	char **strs;
 	int i;
 
 	if (strstr(pkt->content, "was not AWAY"))
 		return;
 
+	/* count is the first number, if we got it. */
 	while (*tmp && isdigit((int)*tmp))
 		count = count * 10 + *tmp++ - '0';
-	if (*tmp == ',')
-		tmp++;
 	count = count ? count : 1;
 
-	if (count > 1)
-		strs = g_strsplit(tmp, "),", count);
-	else
-		strs = g_strsplit(tmp, ")", count);
+	for (i = 0; i < count && *tmp; i++) {
+		int status, in_pager, in_chat, in_game;
+		char *p, *who, *msg = NULL;
 
-	for (i = 0; i < count && strs[i]; i++) {
-		char **vals;
-		char *end, *who;
-		char **it;
-		int c, j;
+		if (*tmp == ',')
+			tmp++;
 
-		who = strs[i];
-		end = strchr(who, '(');
-		*end++ = '\0';
+		/* who is the person we're getting an update for. there will always be a paren
+		 * after this so we should be OK. if we don't get a paren, we'll just break. */
+		who = tmp;
+		if ((tmp = strchr(who, '(')) == NULL)
+			break;
+		*tmp++ = '\0';
 
-		vals = g_strsplit(end, ",", 1024);
+		/* tmp now points to the start of the fields. we'll get the status first. it
+		 * should always be followed by a comma, and if it isn't, we'll just break. */
+		if ((p = strchr(tmp, ',')) == NULL)
+			break;
+		*p++ = '\0';
+		status = atoi(tmp);
+		tmp = p;
 
-		for (it = vals, c = 0; *it; it++, c++);
-		if (c > 6)
-			end = g_strdup(vals[1]);
-		for (j = 2; j < c - 5; j++) {
-			char *x = end;
-			end = g_strconcat(end, ",", vals[j], NULL);
-			g_free(x);
+		if (status == YAHOO_STATUS_CUSTOM) {
+			/* tmp now points to the away message. it should end with "\001,". */
+			msg = tmp;
+			if ((tmp = strstr(msg, "\001,")) == NULL)
+				break;
+			*tmp = '\0';
+			tmp += 2;
 		}
 
+		/* tmp now points to the session id. we don't need it. */
+		if ((tmp = strchr(tmp, ',')) == NULL)
+			break;
+		tmp++;
+
+		/* tmp is at the unknown value. we don't need it. */
+		if ((tmp = strchr(tmp, ',')) == NULL)
+			break;
+		tmp++;
+
+		/* tmp is at the in_pager value */
+		if ((p = strchr(tmp, ',')) == NULL)
+			break;
+		*p++ = '\0';
+		in_pager = atoi(tmp);
+		tmp = p;
+
+		/* tmp is at the in_chat value */
+		if ((p = strchr(tmp, ',')) == NULL)
+			break;
+		*p++ = '\0';
+		in_chat = atoi(tmp);
+		tmp = p;
+
+		/* tmp is at the in_game value. this is the last value, so it should end with
+		 * a parenthesis. */
+		if ((p = strchr(tmp, ')')) == NULL)
+			break;
+		*p++ = '\0';
+		in_game = atoi(tmp);
+		tmp = p;
+
 		if (sess->callbacks[YAHOO_HANDLE_STATUS].function)
-			(*sess->callbacks[YAHOO_HANDLE_STATUS].function)(sess, who, atoi(vals[0]),
-									 end, atoi(vals[c - 3]),
-									 atoi(vals[c - 2]),
-									 atoi(vals[c - 1]));
-
-		if (c > 6)
-			g_free(end);
-		g_strfreev(vals);
+			(*sess->callbacks[YAHOO_HANDLE_STATUS].function)(sess, who, status, msg,
+									 in_pager, in_chat, in_game);
 	}
-
-	g_strfreev(strs);
 }
 
 static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet *pkt)
 {
 	char buf[256];
 	int type = yahoo_makeint(pkt->msgtype);
-	char **str_array;
+	char *str_array[3];
+	char *tmp;
+
 	switch(type) {
 	case YAHOO_MESSAGE_NORMAL:
-		str_array = g_strsplit(pkt->content, ",", 3);
+		str_array[0] = pkt->content;
+		if ((tmp = strchr(str_array[0], ',')) == NULL)
+			break;
+		*tmp++ = '\0';
+		str_array[1] = tmp;
+		if ((tmp = strchr(str_array[1], ',')) == NULL)
+			break;
+		*tmp++ = '\0';
+		str_array[2] = tmp;
 		if (sess->callbacks[YAHOO_HANDLE_MESSAGE].function)
 			(*sess->callbacks[YAHOO_HANDLE_MESSAGE].function)(sess, pkt->nick2,
 									  str_array[0],
 									  atol(str_array[1]),
 									  str_array[2]);
-		g_strfreev(str_array);
 		break;
 	case YAHOO_MESSAGE_BOUNCE:
 		if (sess->callbacks[YAHOO_HANDLE_BOUNCE].function)
