@@ -5927,7 +5927,7 @@ __init_plugin(GaimPlugin *plugin)
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Auth Port:");
 	puo->def   = g_strdup("5190");
-	puo->pos   = USEROPT_AUTH;
+	puo->pos   = USEROPT_AUTHPORT;
 	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	my_protocol = plugin;
