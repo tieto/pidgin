@@ -93,6 +93,42 @@ action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 }
 
 static void
+field_string_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
+{
+	gaim_request_field_string_set_value(field,
+			gtk_entry_get_text(entry));
+}
+
+static void
+field_int_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
+{
+	gaim_request_field_int_set_value(field,
+			atoi(gtk_entry_get_text(entry)));
+}
+
+static void
+field_bool_cb(GtkToggleButton *button, GaimRequestField *field)
+{
+	gaim_request_field_bool_set_value(field,
+			gtk_toggle_button_get_active(button));
+}
+
+static void
+field_choice_menu_cb(GtkOptionMenu *menu, GaimRequestField *field)
+{
+	gaim_request_field_choice_set_value(field,
+			gtk_option_menu_get_history(menu));
+}
+
+static void
+field_choice_option_cb(GtkRadioButton *button, GaimRequestField *field)
+{
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+		gaim_request_field_choice_set_value(field,
+				g_slist_index(gtk_radio_button_get_group(button), button));
+}
+
+static void
 multifield_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
 {
 	if (data->cbs[0] != NULL)
@@ -489,6 +525,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 					if (value != NULL)
 						gtk_entry_set_text(GTK_ENTRY(widget), value);
+
+					g_signal_connect(G_OBJECT(widget), "focus-out-event",
+									 G_CALLBACK(field_string_focus_out_cb),
+									 field);
 				}
 				else if (type == GAIM_REQUEST_FIELD_INTEGER) {
 					int value;
@@ -504,6 +544,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 						gtk_entry_set_text(GTK_ENTRY(widget), buf);
 					}
+
+					g_signal_connect(G_OBJECT(widget), "focus-out-event",
+									 G_CALLBACK(field_int_focus_out_cb),
+									 field);
 				}
 				else if (type == GAIM_REQUEST_FIELD_BOOLEAN) {
 					widget = gtk_check_button_new_with_label(
@@ -511,6 +555,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
 						gaim_request_field_bool_get_default_value(field));
+
+					g_signal_connect(G_OBJECT(widget), "toggled",
+									 G_CALLBACK(field_bool_cb), field);
 				}
 				else if (type == GAIM_REQUEST_FIELD_CHOICE) {
 					GList *labels;
@@ -535,6 +582,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 							gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 						}
+
+						g_signal_connect(G_OBJECT(widget), "changed",
+										 G_CALLBACK(field_choice_menu_cb),
+										 field);
 					}
 					else {
 						GtkWidget *box;
@@ -561,6 +612,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 							gtk_box_pack_start(GTK_BOX(box), radio,
 											   TRUE, TRUE, 0);
 							gtk_widget_show(radio);
+
+							g_signal_connect(G_OBJECT(widget), "toggled",
+											 G_CALLBACK(field_choice_option_cb),
+											 field);
 						}
 					}
 				}
