@@ -2228,7 +2228,15 @@ char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
 				}
 			 
 			}
-			
+	
+			if (c == '<')
+				str = g_string_append(str, "&lt;");
+			else if (c == '>')
+				str = g_string_append(str, "&gt;");
+			else if (c == '&')
+				str = g_string_append(str, "&amp;");
+			else if (c == '"')
+				str = g_string_append(str, "&quot;");
 			str = g_string_append_unichar(str, c);
 		}
 		gtk_text_iter_forward_char(&iter);
