@@ -103,8 +103,8 @@ After you're signed in, Gaim draws the buddy list by calling
 show_buddy_list. Assuming the user has a buddy list (all buddy list
 functions are controlled by list.c; when you sign on do_import is called
 and that loads the locally saved list), the protocol calls
-serv_got_update, which sets the information in the appropriate struct
-buddy and then passes it off to set_buddy.
+gaim_prpl_got functions, which set the information in the appropriate 
+struct buddy and then passes it off to set_buddy.
 
 set_buddy is responsible for a lot of stuff, but most of it is done
 implicitly. It's responsible for the sounds (which is just a call to
@@ -242,8 +242,8 @@ prpl.c:
 server.c:
   This is where all of the differentiation between the different protocols
   is done.  Nearly everything that's network related goes through here
-  at one point or another. This has good things like serv_send_im and
-  serv_got_update. Most of it should be pretty self-explanatory.
+  at one point or another. This has good things like serv_send_im. Most of 
+  it should be pretty self-explanatory.
 
 sound.c:
   The main function in this file is play_sound, which plays one of 8
@@ -339,9 +339,8 @@ in a prpl struct and kept track of in the protocols GSList. The way the
 management of the protocols is, there will only ever be one prpl per
 numeric protocol. Each prpl defines a basic set of functions: login,
 logout, send_im, etc. The prpl is responsible not only for handling
-these functions, but also for calling the appropriate serv_got functions
-(e.g. serv_got_update when a buddy comes online/goes offline/goes
-idle/etc). It handles each of these on a per-connection basis.
+these functions, but also for calling the appropriate prpl_got functions
+It handles each of these on a per-account basis.
 
 So why's it called a PRPL? It stands for PRotocol PLugin. That means
 that it's possible to dynamically add new protocols to gaim. However,

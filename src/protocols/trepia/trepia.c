@@ -842,9 +842,9 @@ _parse_data(TrepiaSession *session, char *buf)
 				*int_p = id;
 				g_hash_table_insert(session->user_profiles, int_p, profile);
 
-				serv_got_update(session->gc,
-								username, TRUE, 0,
-								trepia_profile_get_login_time(profile), 0, 0);
+				gaim_prpl_got_user_status(account, username, "online", NULL);
+				gaim_prpl_got_user_login_time(account, username,
+											  trepia_profile_get_login_time(profile));
 
 				/* Buddy Icon */
 				if ((value = g_hash_table_lookup(info, "q")) != NULL) {
@@ -853,12 +853,12 @@ _parse_data(TrepiaSession *session, char *buf)
 
 					gaim_base64_decode(value, &icon, &icon_len);
 
-					gaim_buddy_icons_set_for_user(session->gc->account,
+					gaim_buddy_icons_set_for_user(account,
 							username, icon, icon_len);
 
 					g_free(icon);
 
-					serv_got_update(session->gc, username, TRUE, 0, 0, 0, 0);
+					gaim_prpl_got_user_status(account, username, "online", NULL);
 				}
 
 				/*
@@ -890,10 +890,12 @@ _parse_data(TrepiaSession *session, char *buf)
 
 				b = profile->buddy;
 
-				if (b != NULL)
-					serv_got_update(session->gc,
-									trepia_profile_get_login(profile),
-									FALSE, 0, 0, 0, 0);
+				if (b != NULL) {
+					gaim_prpl_got_user_status(account, trepia_profile_get_login(profile),
+											  "offline", NULL);
+					gaim_prpl_got_user_login_time(account, trepia_profile_get_login(profile),
+												  trepia_profile_get_login_time(profile));
+				}
 
 				gaim_blist_remove_buddy(b);
 
@@ -906,8 +908,8 @@ _parse_data(TrepiaSession *session, char *buf)
 		g_hash_table_destroy(info);
 	}
 	else {
-		gaim_debug(GAIM_DEBUG_WARNING, "trepia",
-				   "Unknown data received. Possibly an image?\n");
+		gaim_debug_warning("trepia",
+						   "Unknown data received. Possibly an image?\n");
 	}
 
 	return TRUE;

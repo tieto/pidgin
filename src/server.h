@@ -76,8 +76,6 @@ void serv_set_buddyicon(GaimConnection *gc, const char *filename);
 void serv_got_typing_stopped(GaimConnection *gc, const char *name);
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				 GaimConvImFlags imflags, time_t mtime);
-void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
-					 time_t signon);
 void serv_finish_login(GaimConnection *gc);
 void serv_got_chat_invite(GaimConnection *gc, const char *name,
 						  const char *who, const char *message,

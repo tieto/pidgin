@@ -1175,7 +1175,12 @@ _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 			break;
 	}
 
-	serv_got_update(gc, buddy->name, loggedin, 0, 0, idle, gstatus);
+	gaim_prpl_user_status(account, buddy->name,
+						  (loggedin ? "online" : "offline"), NULL);
+	if (time_idle > 0)
+		gaim_prpl_got_user_idle(account, buddy->name, TRUE, idle);
+	else
+		gaim_prpl_got_user_idle(account, buddy->name, FALSE, 0);
 #endif
 }
 

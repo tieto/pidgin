@@ -64,6 +64,7 @@ static GaimPlugin *my_protocol = NULL;
 #define FILE_GET_UID  "09461348-4C7F-11D1-8222-444553540000"
 #define GAMES_UID     "0946134a-4C7F-11D1-8222-444553540000"
 
+#define UC_UNAVAILABLE	0x01
 #define UC_AOL			0x02
 #define UC_ADMIN		0x04
 #define UC_UNCONFIRMED	0x08
@@ -601,11 +602,11 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				   "Client sends TOC \"toc_signon\" message\n");
 		/* i hate icq. */
 		if (username[0] >= '0' && username[0] <= '9')
-			password = g_strndup(gaim_account_get_password(gc->account), 8);
+			password = g_strndup(gaim_account_get_password(account), 8);
 		else
-			password = g_strdup(gaim_account_get_password(gc->account));
+			password = g_strdup(gaim_account_get_password(account));
 		g_snprintf(snd, sizeof snd, "toc_signon %s %d  %s %s %s \"%s\"",
-			   AUTH_HOST, AUTH_PORT, gaim_normalize(gc->account, username),
+			   AUTH_HOST, AUTH_PORT, gaim_normalize(account, username),
 			   roast_password(password), LANGUAGE, REVISION);
 		g_free(password);
 		if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
@@ -682,8 +683,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			tdt->state = STATE_ONLINE;
 			g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
 				   AUTH_HOST, AUTH_PORT,
-				   gaim_normalize(gc->account, gaim_account_get_username(gc->account)),
-				   roast_password(gaim_account_get_password(gc->account)),
+				   gaim_normalize(account, gaim_account_get_username(account)),
+				   roast_password(gaim_account_get_password(account)),
 				   LANGUAGE, REVISION);
 			if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
 				gaim_connection_error(gc, _("Disconnected."));
@@ -697,7 +698,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		}
 	} else if (!g_ascii_strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
-		gaim_blist_parse_toc_buddy_list(gc->account, c);
+		gaim_blist_parse_toc_buddy_list(account, c);
 	} else if (!g_ascii_strcasecmp(c, "NICK")) {
 		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
@@ -764,14 +765,21 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		 * If we have info for ourselves then set our display name, warning
 		 * level and official time of login.
 		 */
-		tmp = g_strdup(gaim_normalize(gc->account, gaim_account_get_username(gc->account)));
-		if (!strcmp(tmp, gaim_normalize(gc->account, c))) {
+		tmp = g_strdup(gaim_normalize(account, gaim_account_get_username(gc->account)));
+		if (!strcmp(tmp, gaim_normalize(account, c))) {
 			gaim_connection_set_display_name(gc, c);
-			gc->evil = evil;
+			/* XXX - What should the second parameter be here? */
+			gaim_prpl_got_account_warning_level(account, NULL, evil);
+			gaim_prpl_got_account_login_time(account, NULL, signon);
 		}
 		g_free(tmp);
 
-		serv_got_update(gc, c, logged_in, evil, signon, time_idle, type);
+		gaim_prpl_got_user_status(account, c, (logged_in ? "online" : "offline"), NULL);
+		gaim_prpl_got_user_login_time(account, c, signon);
+		if (time_idle > 0)
+			gaim_prpl_got_user_idle(account, c, TRUE, time_idle);
+		else
+			gaim_prpl_got_user_idle(account, c, FALSE, 0);
 	} else if (!g_ascii_strcasecmp(c, "ERROR")) {
 		gaim_notify_error(gc, NULL, show_error_message(), NULL);
 	} else if (!g_ascii_strcasecmp(c, "EVILED")) {
@@ -781,7 +789,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		sscanf(strtok(NULL, ":"), "%d", &lev);
 		name = strtok(NULL, ":");
 
-		serv_got_eviled(gc, name, lev);
+		gaim_prpl_got_account_warning_level(account, name, lev);
 	} else if (!g_ascii_strcasecmp(c, "CHAT_JOIN")) {
 		char *name;
 		int id;
@@ -1154,16 +1162,16 @@ static void toc_dir_search(GaimConnection *g, const char *first, const char *mid
 }
 #endif
 
-static void toc_set_away(GaimConnection *g, const char *state, const char *message)
+static void toc_set_away(GaimConnection *gc, const char *state, const char *message)
 {
 	char buf[BUF_LEN * 2];
-	if (g->away) {
-		g_free (g->away);
-		g->away = NULL;
+	if (gc->away) {
+		g_free(gc->away);
+		gc->away = NULL;
 	}
 	if (message) {
 		char *tmp;
-		g->away = g_strdup(message);
+		gc->away = g_strdup(message);
 		tmp = escape_text(message);
 		g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", tmp);
 		g_free(tmp);

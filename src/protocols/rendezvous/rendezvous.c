@@ -185,6 +185,7 @@ static void rendezvous_handle_rr_a(GaimConnection *gc, ResourceRecord *rr, const
 static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
 {
 	RendezvousData *rd = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	RendezvousBuddy *rb;
 	GSList *rdata;
 	ResourceRecordRDataTXTNode *node1, *node2;
@@ -241,12 +242,12 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 				rb->idle += 978307200; /* convert to seconds-since-epoch */
 			}
 			rb->status = UC_IDLE;
-			gaim_prpl_got_user_idle(account, b->name, TRUE, rb->idle);
+			gaim_prpl_got_user_idle(account, name, TRUE, rb->idle);
 		} else if (!strcmp(node1->value, "dnd")) {
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
 		}
-		gaim_prpl_got_user_status(account, b->name, "online", NULL);
+		gaim_prpl_got_user_status(account, name, "online", NULL);
 		/* XXX - Idle time is rb->idle and status is rb->status */
 	}
 
