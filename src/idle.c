@@ -41,17 +41,82 @@
 
 #define IDLEMARK 600   	/* 10 minutes! */
 
-gint check_idle(gpointer data)
+typedef enum
 {
-	const char *report_idle;
-	GaimConnection *gc = data;
-	GaimAccount *account;
-	time_t t;
+	GAIM_IDLE_NOT_AWAY = 0,
+	GAIM_IDLE_AUTO_AWAY,
+	GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY
+
+} GaimAutoAwayState;
+
 #ifdef USE_SCREENSAVER
+/**
+ * Get the number of seconds the user has been idle.  In Unix-world
+ * this is based on the X Windows usage.  In MS Windows this is based
+ * on keyboard/mouse usage.
+ *
+ * In Debian bug #271639, jwz says:
+ *
+ * Gaim should simply ask xscreensaver how long the user has been idle:
+ *   % xscreensaver-command -time
+ *   XScreenSaver 4.18: screen blanked since Tue Sep 14 14:10:45 2004
+ *
+ * Or you can monitor the _SCREENSAVER_STATUS property on root window #0.
+ * Element 0 is the status (0, BLANK, LOCK), element 1 is the time_t since
+ * the last state change, and subsequent elements are which hack is running
+ * on the various screens:
+ *   % xprop -f _SCREENSAVER_STATUS 32ac -root _SCREENSAVER_STATUS
+ *   _SCREENSAVER_STATUS(INTEGER) = BLANK, 1095196626, 10, 237
+ *
+ * See watch() in xscreensaver/driver/xscreensaver-command.c.
+ *
+ * @return The number of seconds the user has been idle.
+ */
+static int
+get_idle_time_from_system()
+{
 #ifndef _WIN32
 	static XScreenSaverInfo *mit_info = NULL;
+	int event_base, error_base;
+	if (XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base)) {
+		if (mit_info == NULL) {
+			mit_info = XScreenSaverAllocInfo();
+		}
+		XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
+		return (mit_info->idle) / 1000;
+	} else
+		return 0;
+#else
+	return (GetTickCount() - wgaim_get_lastactive()) / 1000;
 #endif
-#endif
+}
+#endif /* USE_SCREENSAVER */
+
+/*
+ * This function should be called when you think your idle state
+ * may have changed.  Maybe you're over the 10-minute mark and
+ * Gaim should start reporting idle time to the server.  Maybe
+ * you've returned from being idle.  Maybe your auto-away message
+ * should be set.
+ *
+ * There is no harm to calling this many many times, other than
+ * it will be kinda slow.  This is called every 20 seconds by a
+ * timer set when an account logs in.  It is also called when
+ * you send an IM, a chat, etc.
+ *
+ * This function has 3 sections.
+ * 1. Get your idle time.  It will query XScreenSaver or Windows
+ *    or get the Gaim idle time.  Whatever.
+ * 2. Set or unset your auto-away message.
+ * 3. Report your current idle time to the IM server.
+ */
+gint
+check_idle(gpointer data)
+{
+	GaimConnection *gc = data;
+	const char *report_idle;
+	GaimAccount *account;
+	time_t t;
 	int idle_time;
 
 	account = gaim_connection_get_account(gc);
@@ -63,24 +128,13 @@ gint check_idle(gpointer data)
 	report_idle = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
 
 #ifdef USE_SCREENSAVER
-	if (report_idle != NULL && !strcmp(report_idle, "system")) {
-#ifndef _WIN32
-		int event_base, error_base;
-		if (XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base)) {
-			if (mit_info == NULL) {
-				mit_info = XScreenSaverAllocInfo();
-			}
-			XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
-			idle_time = (mit_info->idle) / 1000;
-		} else
-			idle_time = 0;
-#else
-		idle_time = (GetTickCount() - wgaim_get_lastactive()) / 1000;
-#endif
-	} else
+	if (report_idle != NULL && !strcmp(report_idle, "system"))
+		idle_time = get_idle_time_from_system();
+	else
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->last_sent_time;
 
+	/* Should be become auto-away? */
 	if (gaim_prefs_get_bool("/core/away/away_when_idle") &&
 		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
 		&& (!gc->is_auto_away))
@@ -91,81 +145,53 @@ gint check_idle(gpointer data)
 
 		if (gaim_presence_is_available(presence))
 		{
-/* XXX CORE/UI
-			struct away_message *default_away = NULL;
-			GSList *l;
-*/
 			const char *default_name;
 
+			gaim_debug_info("idle", "Making %s auto-away\n",
+							gaim_account_get_username(account));
+
 			default_name = gaim_prefs_get_string("/core/away/default_message");
-/* XXX CORE/UI
-			for(l = away_messages; l; l = l->next) {
-				if(!strcmp(default_name, ((struct away_message *)l->data)->name)) {
-					default_away = l->data;
-					break;
-				}
-			}
 
-			if(!default_away && away_messages)
-				default_away = away_messages->data;
-*/
+			/* XXX STATUS AWAY CORE/UI */
+			/* Need to set the default_name away message for this connection here */
 
-			gaim_debug(GAIM_DEBUG_INFO, "idle",
-					   "Making %s away automatically\n",
-					   gaim_account_get_username(account));
+			gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
+		} else {
+			gc->is_auto_away = GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY;
+		}
 
-/* XXX CORE/UI
-			if (g_list_length(gaim_connections_get_all()) == 1)
-				do_away_message(NULL, default_away);
-			else if (default_away)
-				serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
-*/
-
-			gc->is_auto_away = 1;
-		} else
-			gc->is_auto_away = 2;
+	/* Should we return from being auto-away? */
 	} else if (gc->is_auto_away &&
 			idle_time < 60 * gaim_prefs_get_int("/core/away/mins_before_away")) {
-		if (gc->is_auto_away == 2) {
-			gc->is_auto_away = 0;
+		if (gc->is_auto_away == GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY) {
+			gc->is_auto_away = GAIM_IDLE_NOT_AWAY;
 			return TRUE;
 		}
-		gc->is_auto_away = 0;
+		gc->is_auto_away = GAIM_IDLE_NOT_AWAY;
 
-/* XXX CORE/UI
-		if (awaymessage == NULL) {
-			gaim_debug(GAIM_DEBUG_INFO, "idle",
-					   "Removing auto-away message for %s\n", gaim_account_get_username(account));
-			serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
-		} else {
-			if (g_list_length(gaim_connections_get_all()) == 1)
-				do_im_back(0, 0);
-			else {
-				gaim_debug(GAIM_DEBUG_INFO, "idle",
-						   "Replacing auto-away with global for %s\n",
-						   gaim_account_get_username(account));
-				serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
-			}
-		}
-*/
+		/* XXX STATUS AWAY CORE/UI */
+		/* Need to set this connection to available here */
 	}
 
-
-	/* If we're not reporting idle times to the server, still use Gaim
-	   usage for auto-away, but quit here so we don't report to the 
-	   server */
-
+	/*
+	 * If we're not reporting idle times to the server, still use Gaim
+	 * usage for auto-away, but quit here so we don't report to the 
+	 * server.
+	 *
+	 * Hmm.  What if _while_ we're idle we toggle the pref for reporting
+	 * idle time to the server?  We would never become unidle...
+	 */
 	if (report_idle != NULL && !strcmp(report_idle, "none"))
 		return TRUE;
 
 	if (idle_time >= IDLEMARK && !gc->is_idle) {
-		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s idle %d seconds\n",
+		gaim_debug_info("idle", "Setting %s idle %d seconds\n",
 				   gaim_account_get_username(account), idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
 		/* LOG	system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
 	} else if (idle_time < IDLEMARK && gc->is_idle) {
-		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s unidle\n",
+		gaim_debug_info("idle", "Setting %s unidle\n",
 				   gaim_account_get_username(account));
 		serv_touch_idle(gc);
 		/* LOG	system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
