@@ -498,7 +498,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 		strcpy(buffy, message);
 		angel = g_strdup(name);
-		plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, (void *)flags);
+		plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, (void *)&flags);
 
 		if (!buffy || !angel || plugin_return) {
 			if (buffy)
@@ -971,6 +971,8 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
 	char *buf;
+	char *buffy, *angel;
+	int plugin_return;
 
 	while (bcs) {
 		b = (struct conversation *)bcs->data;
@@ -983,8 +985,26 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	if (!b)
 		return;
 
-	if (plugin_event(event_chat_recv, g, (void *)b->id, who, message))
+	
+	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
+	 * by the prpls. so we create temp holders and pass those instead. it's basically
+	 * just to avoid segfaults. of course, if the data is binary, plugins don't see it.
+	 * bitch all you want; i really don't want you to be dealing with it. */
+	
+	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
+	strcpy(buffy, message);
+	angel = g_strdup(who);
+	plugin_return = plugin_event(event_chat_recv, g, (void *)b->id, &angel, &buffy);
+
+	if (!buffy || !angel || plugin_return) {
+		if (buffy)
+			g_free(buffy);
+		if (angel)
+			g_free(angel);
 		return;
+	}
+	who = angel;
+	message = buffy;
 
 	buf = g_malloc(MAX(strlen(message) * 2, 8192));
 	strcpy(buf, message);
@@ -998,6 +1018,8 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 		w = 0;
 
 	chat_write(b, who, w, buf, mtime);
+	g_free(who);
+	g_free(message);
 	g_free(buf);
 }
 

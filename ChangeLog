@@ -9,6 +9,8 @@ version 0.57
 	* Finnish translation update (Thanks, Tero Kuusela)
 	* Jabber improvements (Thanks, Nathan Walp)
 	* More keyboard shortcuts
+	* event_chat_recv takes char**'s, and event_im_recv takes
+	  a *guint32 for flags
 
 version 0.56 (04/11/2002):
 	* German translation update (Thanks Karsten Weiss)

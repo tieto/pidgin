@@ -93,7 +93,7 @@ event_back:
 	removed eventually.
 
 event_im_recv:
-	struct gaim_connection *gc, char **who, char **text, guint32 flags
+	struct gaim_connection *gc, char **who, char **text, guint32 *flags
 
 	'gc' is the connection that received the message.
 	'who' is the username of the person who sent the message.
@@ -211,13 +211,16 @@ event_chat_buddy_leave:
 	'who' is the screenname of the person who left.
 
 event_chat_recv:
-	struct gaim_connection *gc, int id, char *who, char *text
+	struct gaim_connection *gc, int id, char **who, char **text
 
 	'gc' is the connection that received the message.
 	'who' should be too.
 	'text' is the message that got sent.
 	'id' is the id of the room that received the message (see
 	event_chat_join)
+
+	Like event_im_recv, you are allowed and encouraged to change
+	these values	
 
 	Note that because of the bizarre way chat works, you also receive
 	messages that you send. I didn't design it, AOL did.
