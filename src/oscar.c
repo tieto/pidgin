@@ -430,10 +430,11 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 		debug_print("buddy list loaded\n");
 
+		setup_buddy_chats();
+
 		aim_bos_clientready(sess, command->conn);
 		debug_print("Roger that, all systems go\n");
 
-		setup_buddy_chats();
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 
 		break;
