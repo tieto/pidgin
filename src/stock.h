@@ -45,6 +45,8 @@
 #define GAIM_STOCK_TEXT_SMALLER   "gaim-text-smaller"
 #define GAIM_STOCK_UPLOAD         "gaim-upload"
 #define GAIM_STOCK_WARN           "gaim-warn"
+#define GAIM_STOCK_TYPING         "gaim-typing"
+#define GAIM_STOCK_TYPED          "gaim-typed"
 #define GAIM_STOCK_IM             "gaim-im"
 #define GAIM_STOCK_CHAT           "gaim-chat"
 #define GAIM_STOCK_AWAY           "gaim-away"

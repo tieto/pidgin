@@ -52,6 +52,7 @@ struct gaim_gtk_window
 		GtkWidget *logging;
 		GtkWidget *sounds;
 		GtkWidget *send_as;
+		GtkWidget *typing_icon;
 
 		GtkItemFactory *item_factory;
 

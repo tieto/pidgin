@@ -53,6 +53,8 @@ static struct StockIcon
 	{ GAIM_STOCK_TEXT_BIGGER,   "buttons", "text_bigger.png"          },
 	{ GAIM_STOCK_TEXT_NORMAL,   "buttons", "text_normal.png"          },
 	{ GAIM_STOCK_TEXT_SMALLER,  "buttons", "text_smaller.png"         },
+	{ GAIM_STOCK_TYPED,         NULL,      GTK_STOCK_JUSTIFY_FILL     },
+	{ GAIM_STOCK_TYPING,        NULL,      GTK_STOCK_EXECUTE          },
 	{ GAIM_STOCK_UPLOAD,        NULL,      GTK_STOCK_GO_UP            },
 	{ GAIM_STOCK_WARN,          NULL,      GTK_STOCK_DIALOG_WARNING   },
 	{ GAIM_STOCK_IM,            NULL,      GTK_STOCK_CONVERT          },

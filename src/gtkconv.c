@@ -122,6 +122,7 @@ static GList *generate_invite_user_names(struct gaim_connection *gc);
 static void add_chat_buddy_common(struct gaim_conversation *conv,
 								  const char *name, int pos);
 static void tab_complete(struct gaim_conversation *conv);
+static void update_typing_icon(struct gaim_conversation *conv);
 static gboolean update_send_as_selection(struct gaim_window *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
@@ -1723,6 +1724,8 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 			gtk_widget_hide(gtkwin->menu.send_as);
 	}
 
+	update_typing_icon(conv);
+
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.logging),
 								   gaim_conversation_is_logging(conv));
 
@@ -1891,6 +1894,48 @@ got_typing_keypress(struct gaim_conversation *conv, gboolean first)
 			gaim_im_set_type_again(im, time(NULL) + timeout);
 		else
 			gaim_im_set_type_again(im, 0);
+	}
+}
+
+static void
+update_typing_icon(struct gaim_conversation *conv)
+{
+	struct gaim_gtk_window *gtkwin;
+	struct gaim_im *im = NULL;
+
+	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
+
+	if(gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		im = GAIM_IM(conv);
+
+	if(gtkwin->menu.typing_icon) {
+		gtk_widget_destroy(gtkwin->menu.typing_icon);
+		gtkwin->menu.typing_icon = NULL;
+	}
+	if(im && gaim_im_get_typing_state(im) == TYPING) {
+		gtkwin->menu.typing_icon = gtk_image_menu_item_new();
+		gtk_image_menu_item_set_image(
+				GTK_IMAGE_MENU_ITEM(gtkwin->menu.typing_icon),
+				gtk_image_new_from_stock(GAIM_STOCK_TYPING,
+					GTK_ICON_SIZE_MENU));
+		gtk_tooltips_set_tip(gtk_tooltips_new(), gtkwin->menu.typing_icon,
+				_("User is typing..."), NULL);
+	} else if(im && gaim_im_get_typing_state(im) == TYPED) {
+		gtkwin->menu.typing_icon = gtk_image_menu_item_new();
+		gtk_image_menu_item_set_image(
+				GTK_IMAGE_MENU_ITEM(gtkwin->menu.typing_icon),
+				gtk_image_new_from_stock(GAIM_STOCK_TYPED,
+					GTK_ICON_SIZE_MENU));
+		gtk_tooltips_set_tip(gtk_tooltips_new(), gtkwin->menu.typing_icon,
+				_("User has typed something and paused"), NULL);
+	}
+
+	if(gtkwin->menu.typing_icon) {
+		gtk_menu_item_set_right_justified(
+				GTK_MENU_ITEM(gtkwin->menu.typing_icon), TRUE);
+		gtk_widget_show_all(gtkwin->menu.typing_icon);
+		gtk_menu_shell_append(GTK_MENU_SHELL(gtkwin->menu.menubar),
+				gtkwin->menu.typing_icon);
 	}
 }
 
@@ -4185,11 +4230,13 @@ static void
 gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 {
 	struct gaim_window *win;
+	struct gaim_gtk_window *gtkwin;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
 	struct gaim_chat *chat;
 
 	win     = gaim_conversation_get_window(conv);
+	gtkwin = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (type == GAIM_CONV_UPDATE_ACCOUNT) {
@@ -4203,9 +4250,9 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 	}
 	else if (type == GAIM_CONV_UPDATE_TYPING ||
 			 type == GAIM_CONV_UPDATE_UNSEEN) {
-
 		GtkStyle *style;
 		struct gaim_im *im = NULL;
+
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 			im = GAIM_IM(conv);
@@ -4245,6 +4292,12 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 
 		gtk_widget_set_style(gtkconv->tab_label, style);
 		g_object_unref(G_OBJECT(style));
+
+		if(type == GAIM_CONV_UPDATE_TYPING &&
+				conv == gaim_window_get_active_conversation(win)) {
+			update_typing_icon(conv);
+		}
+
 	}
 	else if (type == GAIM_CONV_UPDATE_TOPIC) {
 		chat = GAIM_CHAT(conv);
@@ -4260,7 +4313,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 	}
 	else if(type == GAIM_CONV_UPDATE_ADD ||
 			type == GAIM_CONV_UPDATE_REMOVE) {
-		
+
 		update_convo_add_button(conv);
 	}
 }
