@@ -870,8 +870,9 @@ savelog_checkfile_cb(GtkWidget *widget, GaimConversation *conv)
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-savelog_destroy_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
+savelog_destroy_cb(GtkWidget *widget, GaimConversation *conv)
 {
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 	if (gtkconv->dialogs.savelog != NULL) {
 		gaim_notify_close_with_handle(gtkconv->dialogs.savelog);
 		gaim_request_close_with_handle(gtkconv->dialogs.savelog);
@@ -888,6 +889,11 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 	GaimConversation *conv = gaim_conv_window_get_active_conversation(win);
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gchar *buf;
+
+	if (gtkconv->dialogs.savelog != NULL) {
+		gtk_window_present(GTK_WINDOW(gtkconv->dialogs.savelog));
+		return;
+	}
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	buf = g_strdup_printf("%s.html", gaim_normalize(conv->account, conv->name));
@@ -913,7 +919,7 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->dialogs.savelog)->cancel_button),
 					 "clicked", G_CALLBACK(savelog_destroy_cb), conv);
 	g_signal_connect(G_OBJECT(gtkconv->dialogs.savelog),
-					 "clicked", G_CALLBACK(savelog_destroy_cb), conv);
+					 "destroy", G_CALLBACK(savelog_destroy_cb), conv);
 #endif /* FILECHOOSER */
 
 	g_free(buf);
