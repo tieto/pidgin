@@ -1236,9 +1236,52 @@ __modify_account_cb(GtkWidget *w, AccountsDialog *dialog)
 }
 
 static void
-__delete_account_cb(GtkWidget *w, AccountsDialog *dialog)
+__delete_account_cb(GaimAccount *account)
 {
+	size_t index;
+	GtkTreeIter iter;
 
+	index = g_list_index(gaim_accounts_get_all(), account);
+
+	if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(accounts_dialog->model),
+									  &iter, NULL, index)) {
+
+		gtk_list_store_remove(accounts_dialog->model, &iter);
+	}
+
+	gaim_account_destroy(account);
+}
+
+static void
+__ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
+						 GtkTreeIter *iter, gpointer data)
+{
+	GaimAccount *account;
+
+	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
+
+	if (account != NULL) {
+		char buf[8192];
+
+		g_snprintf(buf, sizeof(buf),
+				   _("Are you sure you want to delete %s?"),
+				   gaim_account_get_username(account));
+
+		gaim_request_action(NULL, NULL, buf, NULL, 1, account, 2,
+							_("Delete"), __delete_account_cb,
+							_("Cancel"), NULL);
+	}
+}
+
+static void
+__ask_delete_account_cb(GtkWidget *w, AccountsDialog *dialog)
+{
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+
+	gtk_tree_selection_selected_foreach(selection, __ask_delete_account_sel,
+										dialog);
 }
 
 static void
@@ -1513,7 +1556,7 @@ gaim_gtk_account_dialog_show(void)
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(__delete_account_cb), dialog);
+					 G_CALLBACK(__ask_delete_account_cb), dialog);
 
 	/* Close button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
