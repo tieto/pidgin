@@ -538,10 +538,18 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_friendly_name(user, friendly);
 
-	if (session->protocol_ver >= 9 && cmd->param_count == 5)
+	if (session->protocol_ver >= 9)
 	{
-		msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[4]));
-		msn_user_set_object(user, msnobj);
+		if (cmd->param_count == 5)
+		{
+			msnobj =
+				msn_object_new_from_string(gaim_url_decode(cmd->params[4]));
+			msn_user_set_object(user, msnobj);
+		}
+		else
+		{
+			msn_user_set_object(user, NULL);
+		}
 	}
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
