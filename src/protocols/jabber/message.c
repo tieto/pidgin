@@ -228,13 +228,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "body")) {
 			if(!jm->body)
 				jm->body = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "html") && child->child) {
-			/* check to see if the <html> actually contains anything,
-			 * otherwise we'll ignore it */
-			char *txt = xmlnode_get_data(child);
-			if(!jm->xhtml && txt)
+		} else if(!strcmp(child->name, "html")) {
+			if(!jm->xhtml)
 				jm->xhtml = xmlnode_to_str(child);
-			g_free(txt);
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
