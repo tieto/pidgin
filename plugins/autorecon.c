@@ -1,28 +1,13 @@
-/* TODO: save state
- * I'm not at my computer right now, so I'm not going to bother
- * writing it, but if someone wants to before I get back (hint,
- * hint), go for it. Here's how to do it.
- *
- * First, add a global "state", which is either 'away' or not.
- *
- * In gaim_plugin_init, set state, and add two more signal
- * handlers: event_away and event_back, and if you can't figure
- * out what you're supposed to do for them, you shouldn't be
- * editing this plugin.
- *
- * In the reconnect function, if "state" was away, then reset
- * the away message. You may have to remember the away message
- * on your own; I haven't checked yet to see if there's a global
- * that remembers it that isn't erased on signoff/signon.
- *
- * Anyway, that should be it.
- */
-
 #define GAIM_PLUGINS
 #include "gaim.h"
 #include <gtk/gtk.h>
 
+extern GtkWidget *imaway;
+
 static int recon;
+static int away_state;
+static int forced_off = 0;
+static struct away_message *last_away;
 
 char *name() {
 	return "Auto Reconnect";
@@ -36,16 +21,36 @@ extern void dologin(GtkWidget *, GtkWidget *);
 
 void do_signon() {
 	dologin(NULL, NULL);
-	if (query_state() != STATE_OFFLINE) {
+	if (blist) {
 		gtk_timeout_remove(recon);
+		forced_off = 0;
+		if (away_state)
+			do_away_message(NULL, last_away);
 		return;
 	}
 }
 
 void reconnect(void *m) {
 	recon = gtk_timeout_add(2000, (GtkFunction)do_signon, NULL);
+	forced_off = 1;
+}
+
+void away_toggle(void *m) {
+	if ((int)m == 1) {
+		last_away = awaymessage;
+		away_state = 1;
+	} else if (!forced_off)
+		away_state = 0;
 }
 
 void gaim_plugin_init(void *handle) {
+	if (imaway) {
+		away_state = 1;
+		last_away = awaymessage;
+	} else
+		away_state = 0;
+
+	gaim_signal_connect(handle, event_away, away_toggle, (void *)1);
+	gaim_signal_connect(handle, event_back, away_toggle, (void *)0);
 	gaim_signal_connect(handle, event_signoff, reconnect, NULL);
 }
