@@ -3319,12 +3319,12 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 static GList *jabber_away_states(struct gaim_connection *gc) {
 	GList *m = NULL;
 
-	m = g_list_append(m, "Online");
-	m = g_list_append(m, "Chatty");
-	m = g_list_append(m, "Away");
-	m = g_list_append(m, "Extended Away");
-	m = g_list_append(m, "Do Not Disturb");
-	m = g_list_append(m, "Invisible");
+	m = g_list_append(m, _("Online"));
+	m = g_list_append(m, _("Chatty"));
+	m = g_list_append(m, _("Away"));
+	m = g_list_append(m, _("Extended Away"));
+	m = g_list_append(m, _("Do Not Disturb"));
+	m = g_list_append(m, _("Invisible"));
 	m = g_list_append(m, GAIM_AWAY_CUSTOM);
 
 	return m;
@@ -3362,25 +3362,25 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 		}
 	} else {
 		/* state is one of our own strings. it won't be NULL. */
-		if (!strcmp(state, "Online")) {
+		if (!strcmp(state, _("Online"))) {
 			/* once again, we don't have to put anything here */
-		} else if (!strcmp(state, "Chatty")) {
+		} else if (!strcmp(state, _("Chatty"))) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "chat", -1);
 			gc->away = g_strdup("");
-		} else if (!strcmp(state, "Away")) {
+		} else if (!strcmp(state, _("Away"))) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "away", -1);
 			gc->away = g_strdup("");
-		} else if (!strcmp(state, "Extended Away")) {
+		} else if (!strcmp(state, _("Extended Away"))) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "xa", -1);
 			gc->away = g_strdup("");
-		} else if (!strcmp(state, "Do Not Disturb")) {
+		} else if (!strcmp(state, _("Do Not Disturb"))) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "dnd", -1);
 			gc->away = g_strdup("");
-		} else if (!strcmp(state, "Invisible")) {
+		} else if (!strcmp(state, _("Invisible"))) {
 			xmlnode_put_attrib(x, "type", "invisible");
 			gc->away = g_strdup("");
 			invisible = TRUE;
