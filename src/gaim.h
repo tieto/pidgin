@@ -139,6 +139,7 @@ struct aim_user {
 
 	/* stuff for modify window */
 	GtkWidget *mod;
+	GtkWidget *main;
 	GtkWidget *name;
 	GtkWidget *pass;
 	int tmp_options;

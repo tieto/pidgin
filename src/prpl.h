@@ -43,6 +43,8 @@ struct prpl {
 	char **(* list_icon)(int);
 	/* returns a GtkMenu * for use in the buddy list */
 	void (* action_menu)(GtkWidget *, struct gaim_connection *, char *);
+	/* fuck UI plugins */
+	void (* user_opts)(GtkWidget *, struct aim_user *);
 
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);

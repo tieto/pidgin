@@ -43,10 +43,6 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
 
-/* FIXME: We shouldn't have hard coded servers and ports :-) */
-#define IRC_SERVER "irc.mozilla.org"
-#define IRC_PORT 6667
-
 #define IRC_BUF_LEN 4096
 
 
@@ -835,7 +831,7 @@ void irc_login(struct aim_user *user) {
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-	host = gethostbyname(IRC_SERVER);
+	host = gethostbyname(user->proto_opt[0]);
 	if (!host) {
 		hide_login_progress(gc, "Unable to resolve hostname");
 		destroy_gaim_conn(gc);
@@ -844,7 +840,7 @@ void irc_login(struct aim_user *user) {
 
 	site.sin_family = AF_INET;
 	site.sin_addr.s_addr = *(long *)(host->h_addr);
-	site.sin_port = htons(IRC_PORT);
+	site.sin_port = htons(atoi(user->proto_opt[1]));
 
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd < 0) {
@@ -889,11 +885,72 @@ void irc_login(struct aim_user *user) {
 	irc_request_buddy_update(gc);
 }
 
+static void irc_print_option(GtkEntry *entry, struct aim_user *user) {
+	if (gtk_object_get_user_data(GTK_OBJECT(entry))) {
+		g_snprintf(user->proto_opt[1], sizeof(user->proto_opt[1]), "%s",
+				gtk_entry_get_text(entry));
+	} else {
+		g_snprintf(user->proto_opt[0], sizeof(user->proto_opt[0]), "%s",
+				gtk_entry_get_text(entry));
+	}
+}
+
+static void irc_user_opts(GtkWidget *book, struct aim_user *user) {
+	/* so here, we create the new notebook page */
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+			gtk_label_new("IRC Options"));
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Server:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(irc_print_option), user);
+	if (user->proto_opt[0][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[0]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[0]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	if (user->proto_opt[1][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[1]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[1]);
+	}
+	gtk_object_set_user_data(GTK_OBJECT(entry), user);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(irc_print_option), user);
+	gtk_widget_show(entry);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void irc_init(struct prpl *ret) {
 	ret->protocol = PROTO_IRC;
 	ret->name = irc_name;
+	ret->user_opts = irc_user_opts;
 	ret->login = irc_login;
 	ret->close = irc_close;
 	ret->send_im = irc_send_im;

@@ -38,6 +38,7 @@ GSList *connections;
 static GtkWidget *acctedit = NULL;
 static GtkWidget *list = NULL; /* the clist of names in the accteditor */
 static GtkWidget *newmod = NULL; /* the dialog for creating a new account */
+static GtkWidget *newmain = NULL; /* the frame that holds the possible notebook for options */
 static struct aim_user tmpusr;
 
 struct mod_usr_opt {
@@ -227,11 +228,8 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(u->protocol));
 	} else {
 		char *titles[4];
+		int i;
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
-		if (find_user(txt, tmpusr.protocol)) {
-			gtk_widget_destroy(newmod);
-			return;
-		}
 		u = g_new0(struct aim_user, 1);
 		g_snprintf(u->username, sizeof(u->username), "%s", txt);
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.pass));
@@ -246,6 +244,8 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		i = gtk_clist_append(GTK_CLIST(list), titles);
 		gtk_clist_set_row_data(GTK_CLIST(list), i, u);
 		aim_users = g_list_append(aim_users, u);
+		for (i = 0; i < 6; i++)
+			g_snprintf(u->proto_opt[i], sizeof(u->proto_opt[i]), "%s", tmpusr.proto_opt[i]);
 	}
 	save_prefs();
 }
@@ -259,25 +259,30 @@ static void cancel_mod(GtkWidget *w, struct aim_user *u)
 	}
 }
 
+static void generate_options(struct aim_user *, GtkWidget *);
+
 static void set_prot(GtkWidget *opt, int proto)
 {
 	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
 	if (u) {
 		u->tmp_protocol = proto;
+		generate_options(u, u->main);
 	} else {
-		tmpusr.protocol = proto;
+		tmpusr.tmp_protocol = tmpusr.protocol = proto;
+		generate_options(NULL, newmain);
 	}
 }
 
-static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
+static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u, GtkWidget *frame)
 {
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
 	GSList *p = protocols;
 	struct prpl *e;
+	int count = 0;
+	gboolean found = FALSE;
 
-	/* PRPL: should we set some way to update these when new protocols get added? */
 	optmenu = gtk_option_menu_new();
 	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 5);
 	gtk_widget_show(optmenu);
@@ -286,6 +291,17 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
 
 	while (p) {
 		e = (struct prpl *)p->data;
+		if (u) {
+			if (e->protocol == u->tmp_protocol)
+				found = TRUE;
+			if (!found)
+				count++;
+		} else {
+			if (e->protocol == tmpusr.tmp_protocol)
+				found = TRUE;
+			if (!found)
+				count++;
+		}
 		if (e->name)
 			opt = gtk_menu_item_new_with_label((*e->name)());
 		else
@@ -299,59 +315,71 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	if (u) {
-		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), u->protocol);
-		u->tmp_protocol = u->protocol;
-	} else {
-		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
-				((struct prpl *)protocols->data)->protocol);
-	}
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), count);
 
 	return optmenu;
 }
 
-static void show_acct_mod(struct aim_user *u)
-{
-	/* here we can have all the aim_user options, including ones not shown in the main acctedit
-	 * window. this can keep the size of the acctedit window small and readable, and make this
-	 * one the powerful editor. this is where things like name/password are edited, but can
-	 * also have toggles (and even more complex options) like whether to autologin or whether
-	 * to send keepalives or whatever. this would be the perfect place to specify which protocol
-	 * to use. make sure to account for the possibility of protocol plugins. */
-	GtkWidget *mod;
-	GtkWidget *frame;
+static void generate_options(struct aim_user *u, GtkWidget *frame) {
+	GList *tmp;
+	GtkWidget *book;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *name;
 	GtkWidget *pass;
-	GtkWidget *button;
+	struct prpl *p;
 
-	if (!u && newmod) {
-		gtk_widget_show(newmod);
-		return;
+	tmp = gtk_container_children(GTK_CONTAINER(frame));
+
+	if (u)
+		p = find_prpl(u->tmp_protocol);
+	else
+		p = find_prpl(tmpusr.protocol);
+
+	if (p && p->user_opts) {
+		if (tmp && !GTK_IS_NOTEBOOK(tmp->data)) {
+			gtk_widget_destroy(tmp->data);
+			tmp = NULL;
+		}
+		
+		if (!tmp) {
+			book = gtk_notebook_new();
+			gtk_container_add(GTK_CONTAINER(frame), book);
+			gtk_widget_show(book);
+
+			vbox = gtk_vbox_new(FALSE, 0);
+			gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+					gtk_label_new(_("General Options")));
+			gtk_widget_show(vbox);
+
+			if (u)
+				(*p->user_opts)(book, u);
+			else
+				(*p->user_opts)(book, &tmpusr);
+		} else {
+			book = (GtkWidget *)tmp->data;
+			gtk_notebook_remove_page(GTK_NOTEBOOK(book), 1);
+			if (u)
+				(*p->user_opts)(book, u);
+			else
+				(*p->user_opts)(book, &tmpusr);
+			return;
+		}
+	} else {
+		if (tmp && GTK_IS_NOTEBOOK(tmp->data)) {
+			gtk_widget_destroy(tmp->data);
+			tmp = NULL;
+		}
+
+		if (!tmp) {
+			vbox = gtk_vbox_new(FALSE, 0);
+			gtk_container_add(GTK_CONTAINER(frame), vbox);
+			gtk_widget_show(vbox);
+		} else {
+			return;
+		}
 	}
-	if (u && u->mod) {
-		gtk_widget_show(u->mod);
-		return;
-	}
-
-	mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_wmclass(GTK_WINDOW(mod), "account", "Gaim");
-	gtk_widget_realize(mod);
-	aol_icon(mod->window);
-	gtk_container_border_width(GTK_CONTAINER(mod), 10);
-	gtk_window_set_title(GTK_WINDOW(mod), _("Gaim - Modify Account"));
-	gtk_signal_connect(GTK_OBJECT(mod), "destroy",
-			   GTK_SIGNAL_FUNC(delmod), u);
-
-	frame = gtk_frame_new(_("Modify Account"));
-	gtk_container_add(GTK_CONTAINER(mod), frame);
-	gtk_widget_show(frame);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_widget_show(vbox);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
@@ -382,14 +410,71 @@ static void show_acct_mod(struct aim_user *u)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	make_protocol_menu(hbox, u);
+	make_protocol_menu(hbox, u, frame);
 
 	acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
 	acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox);
 
+	if (u) {
+		u->name = name;
+		u->pass = pass;
+		gtk_entry_set_text(GTK_ENTRY(name), u->username);
+		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
+		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
+	} else {
+		tmpusr.name = name;
+		tmpusr.pass = pass;
+	}
+}
+
+static void show_acct_mod(struct aim_user *u)
+{
+	/* here we can have all the aim_user options, including ones not shown in the main acctedit
+	 * window. this can keep the size of the acctedit window small and readable, and make this
+	 * one the powerful editor. this is where things like name/password are edited, but can
+	 * also have toggles (and even more complex options) like whether to autologin or whether
+	 * to send keepalives or whatever. this would be the perfect place to specify which protocol
+	 * to use. make sure to account for the possibility of protocol plugins. */
+	GtkWidget *mod;
+	GtkWidget *box;
+	GtkWidget *frame;
+	GtkWidget *hbox;
+	GtkWidget *button;
+
+	if (!u && newmod) {
+		gtk_widget_show(newmod);
+		return;
+	}
+	if (u && u->mod) {
+		gtk_widget_show(u->mod);
+		return;
+	}
+
+	mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_wmclass(GTK_WINDOW(mod), "account", "Gaim");
+	gtk_widget_realize(mod);
+	aol_icon(mod->window);
+	gtk_container_border_width(GTK_CONTAINER(mod), 10);
+	gtk_window_set_title(GTK_WINDOW(mod), _("Gaim - Modify Account"));
+	gtk_window_set_policy(GTK_WINDOW(mod), 0, 1, 1); /* i know, i'm odd */
+	gtk_signal_connect(GTK_OBJECT(mod), "destroy",
+			   GTK_SIGNAL_FUNC(delmod), u);
+
+	box = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(mod), box);
+	gtk_widget_show(box);
+
+	frame = gtk_frame_new(_("Modify Account"));
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
+	gtk_widget_show(frame);
+
+	if (u) u->tmp_protocol = u->protocol;
+	else tmpusr.tmp_protocol = tmpusr.protocol;
+	generate_options(u, frame);
+
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
 	button = picture_button(mod, _("Cancel"), cancel_xpm);
@@ -404,16 +489,11 @@ static void show_acct_mod(struct aim_user *u)
 
 	if (u) {
 		u->mod = mod;
-		u->name = name;
-		u->pass = pass;
+		u->main = frame; /* ha, get it? :) */
 		u->tmp_options = u->options;
-		gtk_entry_set_text(GTK_ENTRY(name), u->username);
-		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
-		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
 	} else {
 		newmod = mod;
-		tmpusr.name = name;
-		tmpusr.pass = pass;
+		newmain = frame;
 	}
 
 	gtk_widget_show(mod);

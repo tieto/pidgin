@@ -1601,6 +1601,7 @@ static char *caps_string(gushort caps)
 }
 
 static void update_idle_time(struct buddy_show *bs) {
+	/* this also updates the tooltip since that has idle time in it */
 	char idlet[16];
 	time_t t;
 	int ihrs, imin;
