@@ -35,6 +35,8 @@
 #include "gaim.h"
 #include "proxy.h"
 #include "gnome_applet_mgr.h"
+#include "pixmaps/save.xpm"
+#include "pixmaps/cancel.xpm"
 
 struct prefs_data *pd = NULL;
 struct debug_window *dw = NULL;
@@ -95,7 +97,6 @@ void away_list_unclicked( GtkWidget *widget, struct away_message *a)
         if (pd == NULL)
                 return;
 	strcpy(a->message, pd->edited_message);
-	save_prefs();
 }
 
 void set_option(GtkWidget *w, int *option)
@@ -112,14 +113,11 @@ void set_display_option(GtkWidget *w, int *option)
 #ifdef USE_APPLET
 	update_pixmaps();
 #endif
-
-	save_prefs();
 }
 
 void set_sound_option(GtkWidget *w, int *option)
 {
 	sound_options = sound_options ^ (int)option;
-	save_prefs();
 }
 
 void set_font_option(GtkWidget *w, int *option)
@@ -127,8 +125,6 @@ void set_font_option(GtkWidget *w, int *option)
 	font_options = font_options ^ (int)option;
 
 	update_font_buttons();	
-
-	save_prefs();
 }
 
 void set_general_option(GtkWidget *w, int *option)
@@ -139,7 +135,6 @@ void set_general_option(GtkWidget *w, int *option)
        		update_lagometer(-1);
        	if ((int)option == OPT_GEN_LOG_ALL)
        		update_log_convs();
-	save_prefs();
 
 	/*
         if (data == &show_grp_nums)
@@ -162,7 +157,6 @@ static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 	if (general_options & OPT_GEN_DEBUG)
 	{
 		general_options = general_options ^ (int)OPT_GEN_DEBUG;
-		save_prefs();
 	}
 	g_free(dw);
 	dw=NULL;
@@ -190,7 +184,6 @@ static gint handle_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 
 	}
 	
-	save_prefs();
 
 	if (event == NULL)
 	{
@@ -207,8 +200,8 @@ static gint handle_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 static int
 manualentry_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 {
-        g_snprintf(web_command, sizeof(web_command), "%s", gtk_entry_get_text(GTK_ENTRY(pd->browser_entry)));
-        save_prefs();
+    g_snprintf(web_command, sizeof(web_command), "%s", gtk_entry_get_text(GTK_ENTRY(pd->browser_entry)));
+
 	return TRUE;
 }
 
@@ -224,7 +217,6 @@ connection_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 
 	g_snprintf(login_host, sizeof(login_host), "%s", gtk_entry_get_text(GTK_ENTRY(pd->login_host_entry)));
 	sscanf(gtk_entry_get_text(GTK_ENTRY(pd->login_port_entry)), "%d", &login_port);	
-	save_prefs();
 	return TRUE;
 }
 
@@ -249,9 +241,6 @@ static void set_browser(GtkWidget *w, int *data)
                 if (pd->nwbutton)
                         gtk_widget_set_sensitive(pd->nwbutton, TRUE);
         }
-        
-
-        save_prefs();
 }
 
 static void set_connect(GtkWidget *w, int *data)
@@ -269,13 +258,11 @@ static void set_connect(GtkWidget *w, int *data)
 			gtk_widget_set_sensitive(pd->proxy_port_entry, FALSE);
 	}
         
-        save_prefs();
 }
 
 static void set_idle(GtkWidget *w, int *data)
 {
 	report_idle = (int)data;
-        save_prefs();
 }
 
 
@@ -301,7 +288,6 @@ GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *pa
 	return button;
 }
 
-
 void build_prefs()
 {
 	GtkWidget *bbox;
@@ -316,7 +302,6 @@ void build_prefs()
 	GtkWidget *away_botbox;
 	GtkWidget *add_away;
 	GtkWidget *remove_away;
-	GtkWidget *close;
 	GtkWidget *notebook;
 	GtkWidget *sound_page;
 	/* GtkWidget *debug_page; */
@@ -335,7 +320,7 @@ void build_prefs()
         GtkWidget *label;
         GtkWidget *browseropt;
         GtkWidget *idleopt;
-	        
+	    
         GList *awy = away_messages;
         struct away_message *a;
         GtkWidget *sw;
@@ -343,8 +328,10 @@ void build_prefs()
 	GtkWidget *away_page;
 	GtkWidget *select_font;
 	GtkWidget *font_face_for_text;
-	
 	GtkWidget *list_item;
+	GtkWidget *button_box, *save, *cancel, *icon_i, *button_label;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
 
 	gchar buffer[64];
 
@@ -812,22 +799,82 @@ void build_prefs()
 	gtk_widget_show(chat_page);
 	
 	bbox = gtk_hbox_new(FALSE, 5);
-	close = gtk_button_new_with_label(_("Close"));
+
+	/* Build Save Button */
+
+	save = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( pd->window->window, &mask, NULL, save_xpm);
+
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	button_label = gtk_label_new(_("Save"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), button_label, FALSE, FALSE, 2);
+
+	gtk_widget_show(button_label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(save), button_box);
+	
+	/* End of Save Button */
+		
+	/* Build Cancel Button */
+
+	cancel = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( pd->window->window, &mask, NULL, cancel_xpm);
+
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	button_label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), button_label, FALSE, FALSE, 2);
+
+	gtk_widget_show(button_label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	
+	/* End of Cancel Button */
+
+
 	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
+	{
+		gtk_button_set_relief(GTK_BUTTON(save), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+	}
+	
+/*	close = gtk_button_new_with_label(_("Close"));
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);*/
 	
 	/* Pack the button(s) in the button box */
-	gtk_box_pack_end(GTK_BOX(bbox), close, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), save, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox),bbox, FALSE, FALSE, 5);
 
 	gtk_widget_show(notebook);
-        gtk_widget_show(close);
-
+ 	gtk_widget_show(save);
+ 	gtk_widget_show(cancel);
+ 
 	gtk_widget_show(bbox);
 	gtk_widget_show(vbox);
 
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(handle_delete), NULL);
-        gtk_signal_connect(GTK_OBJECT(pd->window),"delete_event", GTK_SIGNAL_FUNC(handle_delete), NULL);
+	gtk_signal_connect(GTK_OBJECT(save), "clicked", GTK_SIGNAL_FUNC(save_prefs), NULL);
+	gtk_signal_connect(GTK_OBJECT(save), "clicked", GTK_SIGNAL_FUNC(handle_delete), NULL);
+	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(set_defaults), NULL);
+	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(load_prefs), NULL);
+	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(handle_delete), NULL);
+	gtk_signal_connect(GTK_OBJECT(pd->window),"delete_event", GTK_SIGNAL_FUNC(handle_delete), NULL);
 
 }
 
@@ -866,9 +913,6 @@ void add_chat(GtkWidget *w, struct chat_page *cp)
 	chat_rooms = g_list_append(chat_rooms, cr2);
 
 	setup_buddy_chats();
-	save_prefs();
-	
-
 }
 
 void remove_chat(GtkWidget *w, struct chat_page *cp)
@@ -906,7 +950,6 @@ void remove_chat(GtkWidget *w, struct chat_page *cp)
 	}
 
 	setup_buddy_chats();
-        save_prefs();
 }
 
 void refresh_list(GtkWidget *w, struct chat_page *cp)

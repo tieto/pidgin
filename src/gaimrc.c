@@ -527,6 +527,16 @@ static void gaimrc_write_options(FILE *f)
 
 void set_defaults()
 {
+        if (aim_users)
+        {
+        	g_list_free(aim_users);
+        	aim_users = NULL;
+        }
+        if (away_messages)
+        {
+        	g_list_free(away_messages);
+        	away_messages = NULL;
+        }
         general_options =
                 OPT_GEN_SEND_LINKS |
                 OPT_GEN_ENTER_SENDS |
@@ -568,7 +578,7 @@ void load_prefs()
 	FILE *f;
 	char buf[1024];
 	int ver = 0;
-	
+
         if (getenv("HOME")) {
                 g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
 		if ((f = fopen(buf,"r"))) {

@@ -2889,8 +2889,6 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 				fontface[k++] = fontname[i];
 		}
 		fontface[k] = '\0';
-	
-		save_prefs();
 	}
 	
 	cancel_font(NULL, c);
@@ -2918,7 +2916,6 @@ void apply_font_dlg(GtkWidget *w, GtkWidget *f) {
 			fontface[k++] = fontname[i];
 	}
 	fontface[k] = '\0';
-	save_prefs();
 }
 
 void show_font_dialog(struct conversation *c, GtkWidget *font)
@@ -3383,6 +3380,12 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 void close_smiley_dialog(GtkWidget *widget, struct conversation *c)
 {	
+	if (c->smiley)
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->smiley), FALSE);
+		set_state_lock(0);
+	}
 	dialogwindows = g_list_remove(dialogwindows, c->smiley_dialog);
 	gtk_widget_destroy(c->smiley_dialog);
 	c->smiley_dialog = NULL;	

@@ -316,16 +316,15 @@ void toggle_loggle(GtkWidget *w, struct conversation *p)
 		show_log_dialog(p->name);
 }
 
-void insert_smiley(GtkWidget *widget, struct conversation *c)
+void insert_smiley(GtkWidget *smiley, struct conversation *c)
 {
 	if (state_lock)
 		return;
-		
-	if (c->smiley_dialog)
-		close_smiley_dialog(widget, c);
-	else
-		show_smiley_dialog(c, NULL);
-		
+	if (GTK_TOGGLE_BUTTON(smiley)->active)
+		show_smiley_dialog(c, smiley);
+	else if (c->smiley_dialog)
+		close_smiley_dialog(smiley, c);
+	
 	return;
 }
 
@@ -1297,9 +1296,9 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 					    NULL, _("Logging"), _("Enable logging"),
                                           _("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
 	smiley = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-						GTK_TOOLBAR_CHILD_BUTTON,
-						NULL, _("Smiley"), _("Insert smiley face"),
-						_("Smiley"), smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
+						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+						NULL, _("Smiley"), _("Insert smiley face"), _("Smiley"),
+						 smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
         speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Sound"), _("Enable sounds"),
@@ -1342,6 +1341,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	c->palette = palette;
 	c->link = link;  
 	c->font = font;
+	c->smiley = smiley;
 
         gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
         
@@ -1501,6 +1501,7 @@ void show_conv(struct conversation *c)
 
 	c->font_dialog = NULL;
 	c->color_dialog = NULL;	
+	c->smiley_dialog = NULL;
 	
 	gtk_container_add(GTK_CONTAINER(win), paned);
         gtk_container_border_width(GTK_CONTAINER(win), 10);
