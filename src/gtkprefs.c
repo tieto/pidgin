@@ -1918,7 +1918,7 @@ void do_select_sound(GtkWidget *w, int snd)
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
 
 	/* If they type in a directory, change there */
-	if (file_is_dir(file, sounddialog))
+	if (file_is_dir(file, GTK_FILE_SELECTION(sounddialog)))
 		return;
 
 	/* Set it -- and forget it */

@@ -265,7 +265,7 @@ do_save_icon(GtkObject *obj, GaimConversation *c)
 	f = gtk_file_selection_get_filename(
 		GTK_FILE_SELECTION(gtkconv->u.im->save_icon));
 
-	if (file_is_dir(f, gtkconv->u.im->save_icon))
+	if (file_is_dir(f, GTK_FILE_SELECTION(gtkconv->u.im->save_icon)))
 		return;
 
 	if ((file = fopen(f, "w")) != NULL) {

@@ -996,6 +996,9 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->filesel));
 
+	if (file_is_dir(name, GTK_FILE_SELECTION(data->filesel)))
+		return;
+
 	if (stat(name, &st) != 0) {
 		/* File not found. */
 		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {

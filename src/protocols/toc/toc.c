@@ -1646,7 +1646,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	GaimAccount *account;
 	char buf[BUF_LEN * 2];
 
-	if (file_is_dir(dirname, old_ft->window))
+	if (file_is_dir(dirname, GTK_FILE_SELECTION(old_ft->window)))
 		return;
 	ft = g_new0(struct file_transfer, 1);
 	if (old_ft->files == 1)
@@ -1845,7 +1845,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	GaimAccount *account;
 	char *buf, buf2[BUF_LEN * 2];
 
-	if (file_is_dir(dirname, old_ft->window))
+	if (file_is_dir(dirname, GTK_FILE_SELECTION(old_ft->window)))
 		return;
 	ft = g_new0(struct file_transfer, 1);
 	ft->filename = g_strdup(dirname);

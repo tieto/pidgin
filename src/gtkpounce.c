@@ -110,17 +110,22 @@ pounce_update_entryfields(GtkWidget *w, gpointer data)
 {
 	const char *filename;
 	GHashTable *args;
+	GtkFileSelection *filesel;
 
 	args = (GHashTable *)data;
+	filesel = GTK_FILE_SELECTION(g_hash_table_lookup(args, "filesel"));
 
-	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(
-				g_hash_table_lookup(args, "filesel")));
+	filename = gtk_file_selection_get_filename(filesel);
+
+	if (file_is_dir(filename, filesel))
+		return;
 
 	if (filename != NULL)
 		gtk_entry_set_text(GTK_ENTRY(g_hash_table_lookup(args, "entry")),
 						   filename);
 
-	g_free(args);
+	gtk_widget_destroy(GTK_WIDGET(filesel));
+	g_hash_table_destroy(args);
 }
 
 static void
@@ -138,18 +143,16 @@ filesel(GtkWidget *w, gpointer data)
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(filesel));
 	gtk_file_selection_set_select_multiple(GTK_FILE_SELECTION(filesel), FALSE);
 
-	args = g_hash_table_new(g_str_hash,g_str_equal);
+	args = g_hash_table_new(g_str_hash, g_str_equal);
 	g_hash_table_insert(args, "filesel", filesel);
 	g_hash_table_insert(args, "entry",   entry);
 
 	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
 					 "clicked",
 					 G_CALLBACK(pounce_update_entryfields), args);
-
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
 							 "clicked",
-							 G_CALLBACK(gtk_widget_destroy), filesel);
-
+							 G_CALLBACK(g_hash_table_destroy), args);
 	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
 							 "clicked",
 							 G_CALLBACK(gtk_widget_destroy), filesel);

@@ -1618,7 +1618,12 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 	GError *error = NULL;
 #if GTK_CHECK_VERSION(2,2,0)
 	GSList *formats = gdk_pixbuf_get_formats();
+#endif
 
+	if (file_is_dir(filename, GTK_FILE_SELECTION(sel)))
+		return;
+
+#if GTK_CHECK_VERSION(2,2,0)
 	while(formats){
 		GdkPixbufFormat *format = formats->data;
 		gchar **extensions = gdk_pixbuf_format_get_extensions(format);
