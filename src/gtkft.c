@@ -499,7 +499,7 @@ setup_tree(GaimGtkXferDialog *dialog)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
 
 	/* Progress bar column */
-	renderer = gtk_cell_renderer_progress_new();
+	renderer = gaim_gtk_cell_renderer_progress_new();
 	column = gtk_tree_view_column_new_with_attributes(_("Progress"), renderer,
 				"percentage", COLUMN_PROGRESS, NULL);
 	gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);

@@ -1,4 +1,4 @@
-/* gtkcellrendererprogress.h
+/* gtkxcellrendererprogress.h
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -28,30 +28,30 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-#define GTK_TYPE_CELL_RENDERER_PROGRESS         (gtk_cell_renderer_progress_get_type())
-#define GTK_CELL_RENDERER_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_CELL_RENDERER_PROGRESS, GtkCellRendererProgress))
-#define GTK_CELL_RENDERER_PROGRESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_CELL_RENDERER_PROGRESS, GtkCellRendererProgressClass))
-#define GTK_IS_CELL_PROGRESS_PROGRESS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CELL_RENDERER_PROGRESS))
-#define GTK_IS_CELL_PROGRESS_PROGRESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_CELL_RENDERER_PROGRESS))
-#define GTK_CELL_RENDERER_PROGRESS_GET_CLASS(obj)         (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CELL_RENDERER_PROGRESS, GtkCellRendererProgressClass))
+#define GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS         (gaim_gtk_cell_renderer_progress_get_type())
+#define GAIM_GTK_CELL_RENDERER_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_CAST((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, GaimGtkCellRendererProgress))
+#define GAIM_GTK_CELL_RENDERER_PROGRESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, GaimGtkCellRendererProgressClass))
+#define GAIM_IS_GTK_CELL_PROGRESS_PROGRESS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS))
+#define GAIM_IS_GTK_CELL_PROGRESS_PROGRESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS))
+#define GAIM_GTK_CELL_RENDERER_PROGRESS_GET_CLASS(obj)         (G_TYPE_INSTANCE_GET_CLASS ((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, GaimGtkCellRendererProgressClass))
 
-typedef struct _GtkCellRendererProgress GtkCellRendererProgress;
-typedef struct _GtkCellRendererProgressClass GtkCellRendererProgressClass;
+typedef struct _GaimGtkCellRendererProgress GaimGtkCellRendererProgress;
+typedef struct _GaimGtkCellRendererProgressClass GaimGtkCellRendererProgressClass;
 
-	struct _GtkCellRendererProgress {
-		GtkCellRenderer parent;
+struct _GaimGtkCellRendererProgress {
+	GtkCellRenderer parent;
 
-		gdouble progress;
-		gchar *text;
-		gboolean text_set;
-	};
+	gdouble progress;
+	gchar *text;
+	gboolean text_set;
+};
 
-	struct _GtkCellRendererProgressClass {
-		GtkCellRendererClass parent_class;
-	};
+struct _GaimGtkCellRendererProgressClass {
+	GtkCellRendererClass parent_class;
+};
 
-	GType            gtk_cell_renderer_progress_get_type     (void);
-	GtkCellRenderer  *gtk_cell_renderer_progress_new          (void);
+GType            gaim_gtk_cell_renderer_progress_get_type     (void);
+GtkCellRenderer  *gaim_gtk_cell_renderer_progress_new          (void);
 
 
 #ifdef __cplusplus

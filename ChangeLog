@@ -1,4 +1,7 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
+version 0.83 (08/26/2004):
+	Bug Fixes:
+	* Compile with gtk 2.5.x (Gary Kramlich)
 
 version 0.82 (08/26/2004):
 	New Features:
