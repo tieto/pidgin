@@ -30,6 +30,7 @@ enum gaim_event {
 	event_got_typing,
 	event_del_conversation,
 	event_connecting,
+	event_switch_conversation,
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -357,3 +358,14 @@ event_connecting:
 	counter decremented.
 
 	'u'	is the account being connected.
+
+event_conversation_switch:
+	GaimConversation *c
+
+	This is called when a new conversation has become the active conversation
+	in its GaimWindow.
+
+	Using this in conjuction with GTK's focus-in-event will allow you to trigger
+	callbacks anytime a conversation receives focus.
+
+	'c' 	is the conversation that has just received focus.

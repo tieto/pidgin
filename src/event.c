@@ -200,6 +200,7 @@ gaim_event_broadcast(GaimEvent event, ...)
 				case event_signoff:
 				case event_new_conversation:
 				case event_del_conversation:
+			        case event_conversation_switch:
 				case event_error:
 				case event_connecting:
 					arg1 = va_arg(arrg, void *);

@@ -62,6 +62,7 @@ typedef enum gaim_event
 	event_got_typing,
 	event_del_conversation,
 	event_connecting,
+	event_conversation_switch,
 	/* any others? it's easy to add... */
 
 } GaimEvent;

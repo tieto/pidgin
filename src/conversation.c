@@ -744,6 +744,7 @@ void
 gaim_window_switch_conversation(GaimWindow *win, unsigned int index)
 {
 	GaimWindowUiOps *ops;
+	GaimConversation *conv;
 
 	g_return_if_fail(win != NULL);
 	g_return_if_fail(index >= 0 &&
@@ -754,8 +755,10 @@ gaim_window_switch_conversation(GaimWindow *win, unsigned int index)
 	if (ops != NULL && ops->switch_conversation != NULL)
 		ops->switch_conversation(win, index);
 
-	gaim_conversation_set_unseen(
-		gaim_window_get_conversation_at(win, index), 0);
+	conv = gaim_window_get_conversation_at(win, index);
+	gaim_conversation_set_unseen(conv, 0);
+	gaim_event_broadcast(event_conversation_switch, conv);
+
 }
 
 GaimConversation *
