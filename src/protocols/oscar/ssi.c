@@ -418,7 +418,7 @@ faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, co
 		if (tlvlist) {
 			aim_tlv_t *tlv = aim_gettlv(tlvlist, 0x0131, 1);
 			if (tlv && tlv->length) {
-				char *alias = (char *)(char *)malloc((tlv->length+1)*sizeof(char));
+				char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
 				strncpy(alias, tlv->value, tlv->length);
 				alias[tlv->length] = 0;
 				return alias;
@@ -1097,7 +1097,7 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
  * Note that the client should never increment the revision, only the server.
  * 
  */
-faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t localstamp, fu16_t localrev)
+faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t timestamp, fu16_t numitems)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -1111,8 +1111,8 @@ faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t lo
 	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, AIM_CB_SSI_REQLIST, 0x0000, NULL, 0);
 
 	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, AIM_CB_SSI_REQLIST, 0x0000, snacid);
-	aimbs_put32(&fr->data, localstamp);
-	aimbs_put16(&fr->data, localrev);
+	aimbs_put32(&fr->data, timestamp);
+	aimbs_put16(&fr->data, numitems);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -1130,8 +1130,7 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu8_t fmtver; /* guess */
-	fu16_t numitems, namelen, gid, bid, type;
-	fu32_t timestamp;
+	fu16_t namelen, gid, bid, type;
 	char *name;
 	aim_tlvlist_t *data;
 
@@ -1140,8 +1139,7 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	}
 
 	fmtver = aimbs_get8(bs); /* Version of ssi data.  Should be 0x00 */
-	numitems = aimbs_get16(bs); /* # of items in this SSI SNAC */
-	sess->ssi.numitems += numitems;
+	sess->ssi.numitems += aimbs_get16(bs); /* # of items in this SSI SNAC */
 
 	/* Read in the list */
 	while (aim_bstream_empty(bs) > 4) { /* last four bytes are timestamp */
@@ -1159,8 +1157,7 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	}
 
 	/* Read in the timestamp */
-	timestamp = aimbs_get32(bs);
-	sess->ssi.timestamp = timestamp;
+	sess->ssi.timestamp = aimbs_get32(bs);
 
 	if (!(snac->flags & 0x0001)) {
 		/* Make a copy of the list */

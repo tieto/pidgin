@@ -2350,8 +2350,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   "You missed %hu message from %s because it was invalid.",
 				   "You missed %hu messages from %s because they were invalid.",
 				   nummissed),
-				   userinfo->sn,
-				   nummissed);
+				   nummissed,
+				   userinfo->sn);
 			break;
 		case 1:
 			/* Message too large */
@@ -2361,8 +2361,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   "You missed %hu message from %s because it was too large.",
 				   "You missed %hu messages from %s because they were too large.",
 				   nummissed),
-				   userinfo->sn,
-				   nummissed);
+				   nummissed,
+				   userinfo->sn);
 			break;
 		case 2:
 			/* Rate exceeded */
@@ -2372,8 +2372,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   "You missed %hu message from %s because the rate limit has been exceeded.",
 				   "You missed %hu messages from %s because the rate limit has been exceeded.",
 				   nummissed),
-				   userinfo->sn,
-				   nummissed);
+				   nummissed,
+				   userinfo->sn);
 			break;
 		case 3:
 			/* Evil Sender */
@@ -2383,8 +2383,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   "You missed %hu message from %s because he/she was too evil.",
 				   "You missed %hu messages from %s because he/she was too evil.",
 				   nummissed),
-				   userinfo->sn,
-				   nummissed);
+				   nummissed,
+				   userinfo->sn);
 			break;
 		case 4:
 			/* Evil Receiver */
@@ -2394,8 +2394,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   "You missed %hu message from %s because you are too evil.",
 				   "You missed %hu messages from %s because you are too evil.",
 				   nummissed),
-				   userinfo->sn,
-				   nummissed);
+				   nummissed,
+				   userinfo->sn);
 			break;
 		default:
 			g_snprintf(buf,
@@ -2404,8 +2404,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   "You missed %hu message from %s for an unknown reason.",
 				   "You missed %hu messages from %s for an unknown reason.",
 				   nummissed),
-				   userinfo->sn,
-				   nummissed);
+				   nummissed,
+				   userinfo->sn);
 			break;
 	}
 	do_error_dialog(buf, NULL, GAIM_ERROR);
@@ -4125,22 +4125,24 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
 					char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, curitem->name);
-					if (!find_buddy(gc, curitem->name)) {
-						char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
+					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
+					struct buddy *buddy = find_buddy(gc, curitem->name);
+					if (buddy) {
+						if (alias)
+							strcpy(buddy->alias, alias);
+					} else {
 						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
 						add_buddy(gc, (gname ? gname : "orphans"), curitem->name, alias);
-						free(alias);
 						tmp++;
 					}
 					if (curitem->name && gname && aim_ssi_waitingforauth(sess->ssi.local, gname, curitem->name))
 						gaim_auth_sendrequest(gc, curitem->name);
-
+					free(alias);
 				}
 			} break;
 
 			case 0x0001: { /* Group */
-				if (curitem->name && !find_group(gc, curitem->name))
-					add_group(gc, curitem->name);
+				/* Shouldn't add empty groups */
 			} break;
 
 			case 0x0002: { /* Permit buddy */

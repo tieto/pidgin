@@ -466,25 +466,19 @@ void frombase64(const char *text, char **data, int *size)
 char *normalize(const char *s)
 {
 	static char buf[BUF_LEN];
-	char *t, *u;
-	int x = 0;
+	int i, j;
 
 	g_return_val_if_fail((s != NULL), NULL);
 
-	u = t = g_strdup(s);
-
-	strcpy(t, s);
-	g_strdown(t);
-
-	while (*t && (x < BUF_LEN - 1)) {
-		if (*t != ' ') {
-			buf[x] = *t;
-			x++;
-		}
-		t++;
+	strncpy(buf, s, BUF_LEN);
+	for (i=0, j=0; buf[j]; i++, j++) {
+		while (buf[j] == ' ')
+			j++;
+		buf[i] = buf[j];
 	}
-	buf[x] = '\0';
-	g_free(u);
+	buf[i] = '\0';
+	g_strdown(buf);
+
 	return buf;
 }
 
