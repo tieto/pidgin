@@ -293,11 +293,21 @@ static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
 faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn) {
 	struct userinfo_node *cur;
 
+	/* Make sure we aren't already requesting info for this buddy */
+	cur = sess->locate.request_queue;
+	while (cur != NULL) {
+		if (aim_sncmp(sn, cur->sn) == 0)
+			return;
+		cur = cur->next;
+	}
+
+	/* Add a new node to our request queue */
 	cur = (struct userinfo_node *)malloc(sizeof(struct userinfo_node));
 	cur->sn = strdup(sn);
 	cur->next = sess->locate.request_queue;
 	sess->locate.request_queue = cur;
 
+	/* Actually request some info up in this piece */
 	aim_locate_dorequest(sess);
 }
 
