@@ -39,6 +39,8 @@
 #if USE_PIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
+#else
+#include "pixmaps/broken.xpm"
 #endif
 
 #if GTK_CHECK_VERSION(1,3,0)
@@ -64,7 +66,6 @@
 #include "pixmaps/tongue.xpm"
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
-#include "pixmaps/broken.xpm"
 
 #define MAX_FONT_SIZE 7
 
@@ -511,8 +512,7 @@ draw_text (GtkIMHtml        *imhtml,
 
 	if (line->selected) {
 		gint width, x;
-		GdkColor col;
-
+		
 		if ((line->sel_start > line->sel_end) && (line->sel_end != NULL)) {
 			start = line->sel_end;
 			end = line->sel_start;
@@ -637,8 +637,11 @@ draw_img (GtkIMHtml        *imhtml,
 	yoff = GTK_LAYOUT (imhtml)->vadjustment->value;
 	gc = gdk_gc_new (window);
 	cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
-
-	if (bit->bg != NULL) {
+	
+	if (line->selected) {
+		gdk_color_alloc (cmap, imhtml->default_hl_color);
+		gdk_gc_set_foreground(gc, imhtml->default_hl_color);
+	} else if (bit->bg != NULL) {
 		gdk_color_alloc (cmap, bit->bg);
 		gdk_gc_set_foreground (gc, bit->bg);
 	} else {
@@ -685,16 +688,28 @@ draw_line (GtkIMHtml        *imhtml,
 	cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
 	gc = gdk_gc_new (drawable);
 
-	if (bit->bg != NULL) {
+	if (line->selected) {
+		gdk_color_alloc (cmap, imhtml->default_hl_color);
+		gdk_gc_set_foreground (gc, imhtml->default_hl_color);
+	} else if (bit->bg != NULL) {
 		gdk_color_alloc (cmap, bit->bg);
 		gdk_gc_set_foreground (gc, bit->bg);
-
-		gdk_draw_rectangle (drawable, gc, TRUE, line->x - xoff, line->y - yoff,
-				    line->width, line->height);
+	} else {
+		gdk_color_alloc (cmap, imhtml->default_bg_color);
+		gdk_gc_set_foreground (gc, imhtml->default_bg_color);
 	}
 
-	gdk_color_alloc (cmap, imhtml->default_fg_color);
-	gdk_gc_set_foreground (gc, imhtml->default_fg_color);
+	gdk_draw_rectangle (drawable, gc, TRUE, line->x - xoff, line->y - yoff,
+			    line->width, line->height);
+	
+	
+	if (line->selected) {
+		gdk_color_alloc (cmap, imhtml->default_hlfg_color);
+		gdk_gc_set_foreground (gc, imhtml->default_hlfg_color);
+	} else {
+		gdk_color_alloc (cmap, imhtml->default_fg_color);
+		gdk_gc_set_foreground (gc, imhtml->default_fg_color);
+	}
 
 	line_height = line->height / 2;
 

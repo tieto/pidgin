@@ -2416,7 +2416,7 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
 	if (!dim)
-		return;
+		return 0;
 	aim_send_typing(odata->sess, dim->conn, TRUE);
 	return 0;
 }
@@ -2606,7 +2606,7 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_INVISIBLE);
 		gc->away = "";
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
-		if (message) {
+	 	if (message) {
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT);
 			gc->away = "";
 		} else {
@@ -2759,7 +2759,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct aim_ssi_item *curitem;
-	struct group *g;
 	GSList *mem;
 	int tmp;
 	char **sns;

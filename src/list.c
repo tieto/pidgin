@@ -349,13 +349,13 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 	int how_many = 0;
 
 	bud = NULL;
-
+    
 	if (config != NULL) {
-
+    
 		/* skip "CONFIG:" (if it exists) */
 		c = strncmp(config + 6 /* sizeof(struct sflap_hdr) */ , "CONFIG:", strlen("CONFIG:")) ?
-		    strtok(config, "\n") :
-		    strtok(config + 6 /* sizeof(struct sflap_hdr) */  + strlen("CONFIG:"), "\n");
+			strtok(config, "\n") :
+			strtok(config + 6 /* sizeof(struct sflap_hdr) */  + strlen("CONFIG:"), "\n");
 		do {
 			if (c == NULL)
 				break;
@@ -368,13 +368,18 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 			} else if (*c == 'b' && !find_buddy(gc, c + 2)) {
 				char nm[80], sw[388], *tmp = c + 2;
 				int i = 0;
-				while (*tmp != ':' && *tmp)
+				while (*tmp != ':' && *tmp && i < sizeof(nm) - 1)
 					nm[i++] = *tmp++;
+				
+				while (*tmp != ':' && *tmp)
+					*tmp++;
+				
 				if (*tmp == ':')
 					*tmp++ = '\0';
+				
 				nm[i] = '\0';
 				i = 0;
-				while (*tmp)
+				while (*tmp && i < sizeof(sw) - 1)
 					sw[i++] = *tmp++;
 				sw[i] = '\0';
 				if (!find_buddy(gc, nm)) {
@@ -390,7 +395,7 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 				n = g_strdup(normalize (name));
 				while (d) {
 					if (!g_strcasecmp(n, normalize (d->data)))
-						 break;
+						break;
 					d = d->next;
 				}
 				g_free(n);
@@ -407,15 +412,15 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 				n = g_strdup(normalize (name));
 				while (d) {
 					if (!g_strcasecmp(n, normalize (d->data)))
-						 break;
-					d = d->next;
-				}
-				g_free(n);
-				if (!d) {
-					gc->deny = g_slist_append(gc->deny, name);
-					how_many++;
-				} else
-					g_free(name);
+					break;
+				d = d->next;
+			}
+			g_free(n);
+			if (!d) {
+				gc->deny = g_slist_append(gc->deny, name);
+				how_many++;
+			} else
+				g_free(name);
 			} else if (!strncmp("toc", c, 3)) {
 				sscanf(c + strlen(c) - 1, "%d", &gc->permdeny);
 				debug_printf("permdeny: %d\n", gc->permdeny);
@@ -428,16 +433,17 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 					gc->permdeny = 1;
 			}
 		} while ((c = strtok(NULL, "\n")));
-
+		
 		if (bud != NULL) {
 			serv_add_buddies(gc, bud);
 			g_list_free(bud);
 		}
 		serv_set_permit_deny(gc);
 	}
-
+	
 	if (how_many != 0)
 		do_export(gc);
+	
 }
 
 void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean show)

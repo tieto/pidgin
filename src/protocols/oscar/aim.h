@@ -1035,6 +1035,7 @@ faim_export int aim_ssi_addpermits(aim_session_t *sess, aim_conn_t *conn, char *
 faim_export int aim_ssi_adddenies(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
 faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
 faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
+faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_delpermits(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
 faim_export int aim_ssi_deldenies(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
 faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int permdeny);
