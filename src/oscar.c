@@ -40,7 +40,7 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
-#include "aim.h"
+#include "faim/aim.h"
 
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/admin_icon.xpm"

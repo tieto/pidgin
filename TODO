@@ -1,4 +1,14 @@
---- STUFF FOR 0.11.1 RELEASE ---
+--- STUFF FOR 0.11.0 RELEASE ---
+
+	Make Yahoo plugin let you have two identities in the same connection
+		(different from multiple connections)
+	Figure out some way of not displaying a million new mail messages
+	Allow messages through server for ICQ
+	Chat for Yahoo/ICQ
+	File transfer for Yahoo/ICQ/Oscar
+	Working file transfer for TOC
+	Other RVOUS actions for TOC/Oscar
+	Get Jabber working
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies

@@ -91,7 +91,7 @@ static gjconn gjab_new(char *user, char *pass, void *priv);
 static void gjab_delete(gjconn j);
 static void gjab_state_handler(gjconn j, gjconn_state_h h);
 static void gjab_packet_handler(gjconn j, gjconn_packet_h h);
-static void gjab_start(gjconn j);
+static void gjab_start(gjconn j, int port);
 static void gjab_stop(gjconn j);
 static int gjab_getfd(gjconn j);
 static jid gjab_getjid(gjconn j);
@@ -364,7 +364,7 @@ static void charData(void *userdata, const char *s, int slen)
         xmlnode_insert_cdata(j->current, s, slen);
 }
 
-static void gjab_start(gjconn j)
+static void gjab_start(gjconn j, int port)
 {
     xmlnode x;
     char *t,*t2;
@@ -377,7 +377,7 @@ static void gjab_start(gjconn j)
     XML_SetElementHandler(j->parser, startElement, endElement);
     XML_SetCharacterDataHandler(j->parser, charData);
 
-    j->fd = make_netsocket(5222, j->user->server, NETSOCKET_CLIENT);
+    j->fd = make_netsocket(port, j->user->server, NETSOCKET_CLIENT);
     if(j->fd < 0) {
         STATE_EVT(JCONN_STATE_OFF)
         return;
@@ -597,6 +597,7 @@ static void jabber_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *tmp;
+	int port;
 
 	set_login_progress(gc, 1, "Connecting");
 	while (gtk_events_pending())
@@ -620,7 +621,8 @@ static void jabber_login(struct aim_user *user) {
 
         gjab_state_handler(jd->jc, jabber_handlestate);
         gjab_packet_handler(jd->jc, jabber_handlepacket);
-        gjab_start(jd->jc);
+	port = user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : 5222;
+        gjab_start(jd->jc, port);
 
 
 	gc->inpa = gdk_input_add(jd->jc->fd, 
