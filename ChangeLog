@@ -1,5 +1,8 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
+version 0.72
+	* Swedish translation updated (Tore Lundqvist (luntor))
+
 version 0.71 (10/09/2003):
 	* The right-click menu for e-mail links now presents a "Copy E-Mail
 	  Address" item
