@@ -72,9 +72,10 @@
 #define UC_NORMAL	8
 #define UC_UNAVAILABLE  16
 
-#define IDLE_NONE       0
-#define IDLE_GAIM       1
-#define IDLE_SYSTEM     2
+#define IDLE_NONE        0
+#define IDLE_GAIM        1
+#define IDLE_SYSTEM      2
+#define IDLE_SCREENSAVER 3
 
 #define WFLAG_SEND 1
 #define WFLAG_RECV 2
@@ -594,13 +595,14 @@ extern void do_quit();
 extern void update_chat_button_pix();
 extern void update_im_button_pix();
 
-
-
 /* Functions in html.c */
 extern char *fix_url(char *);
 extern struct g_url parse_url(char *);
 extern char *grab_url(char *);
 extern gchar *strip_html(gchar *);
+
+/* Functions in idle.c */
+extern gint check_idle(struct gaim_connection *);
 
 /* Functions in util.c */
 extern char *normalize(const char *);

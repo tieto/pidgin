@@ -6,6 +6,7 @@
 #undef HAVE_LIBSM
 #undef USE_APPLET
 #undef USE_GNOME
+#undef USE_SCREENSAVER
 #undef NO_MULTI
 #undef DEBUG
 #undef GAIM_PLUGINS

@@ -763,7 +763,7 @@ void set_defaults(int saveinfo)
 			sound_file[i] = NULL;
 		font_options = 0; 
         	sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND | OPT_SOUND_SILENT_SIGNON;
-        	report_idle = IDLE_GAIM;
+        	report_idle = IDLE_SCREENSAVER;
         	web_browser = BROWSER_NETSCAPE;
         	proxy_type = PROXY_NONE;
         

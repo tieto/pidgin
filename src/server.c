@@ -31,6 +31,11 @@
 #include <unistd.h>
 #include <gtk/gtk.h>
 #include <aim.h>
+#ifdef USE_SCREENSAVER
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/scrnsaver.h>
+#endif /* USE_SCREENSAVER */
 extern int gaim_caps;
 #include "prpl.h"
 #include "multi.h"
@@ -65,7 +70,6 @@ void serv_close(struct gaim_connection *gc)
         gc->idle_timer = -1;
 }
 
-
 void serv_touch_idle(struct gaim_connection *gc)
 {
 	/* Are we idle?  If so, not anymore */
@@ -75,35 +79,6 @@ void serv_touch_idle(struct gaim_connection *gc)
         }
         time(&gc->lastsent);
 }
-
-
-static gint check_idle(struct gaim_connection *gc)
-{
-	time_t t;
-
-        /* Not idle, really...  :) */
-        update_all_buddies();
-
-	plugin_event(event_blist_update, 0, 0, 0, 0);
-        
-	time(&t);
-
-	if (report_idle != IDLE_GAIM)
-                return TRUE;
-
-	
-	if (gc->is_idle)
-		return TRUE;
-
-	if ((t - gc->lastsent) > 600) { /* 15 minutes! */
-		serv_set_idle(gc, (int)t - gc->lastsent);
-		gc->is_idle = 1;
-        }
-
-	return TRUE;
-
-}
-
 
 void serv_finish_login(struct gaim_connection *gc)
 {
@@ -382,12 +357,12 @@ void serv_set_permit_deny()
 	serv_save_config();
 }
 
+
 void serv_set_idle(struct gaim_connection *g, int time)
 {
 	if (g->prpl && g->prpl->set_idle)
 		(*g->prpl->set_idle)(g, time);
 }
-
 
 void serv_warn(struct gaim_connection *g, char *name, int anon)
 {

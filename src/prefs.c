@@ -73,10 +73,33 @@ static void destdeb(GtkWidget *m, gpointer n)
 	debugbutton = NULL;
 }
 
+static void set_idle(GtkWidget *w, int *data)
+{
+        report_idle = (int)data;
+	save_prefs();
+}
+
+static GtkWidget *idle_radio(char *label, int which, GtkWidget *box, GtkWidget *set)
+{
+	GtkWidget *opt;
+
+	if (!set)
+		opt = gtk_radio_button_new_with_label(NULL, label);
+	else
+		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label);
+	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_idle), (void *)which);
+	gtk_widget_show(opt);
+	if (report_idle == which)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	return opt;
+}
+
 static void general_page()
 {
 	GtkWidget *parent;
-	GtkWidget *box;
+	GtkWidget *box, *box2;
 	GtkWidget *label;
 	GtkWidget *sep;
 	GtkWidget *idle;
@@ -117,8 +140,18 @@ static void general_page()
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-	idle = gaim_button(_("Report Idle Times"), &report_idle, 1, box);
-	gtk_signal_connect(GTK_OBJECT(idle), "clicked", set_option, &report_idle);
+	box2 = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), box2, FALSE, FALSE, 5);
+	gtk_widget_show(box2);
+
+	label = gtk_label_new(_("Report Idle Times:"));
+	gtk_box_pack_start(GTK_BOX(box2), label, FALSE, FALSE, 5);
+	gtk_widget_show (label);
+	idle = idle_radio(_("None"), IDLE_NONE, box2, NULL);
+	idle = idle_radio(_("GAIM Use"), IDLE_GAIM, box2, idle);
+#ifdef USE_SCREENSAVER
+	idle = idle_radio(_("X Use"), IDLE_SCREENSAVER, box2, idle);
+#endif
 
 	gtk_widget_show(prefdialog);
 }
