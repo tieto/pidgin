@@ -926,6 +926,7 @@ int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_struct 
 	struct aim_directim_priv *priv;
 	struct aim_conn_t *newconn;
 	struct conversation *cnv;
+	int watcher;
 
 	va_start(ap, command);
 	newconn = va_arg(ap, struct aim_conn_t *);
@@ -937,10 +938,10 @@ int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_struct 
 	debug_print(debug_buff);
 
 	cnv = find_conversation(priv->sn);
-	cnv->conn = newconn;
 	gdk_input_remove(cnv->watcher);
-	cnv->watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, newconn);
+	make_direct(cnv, TRUE, newconn, watcher);
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
@@ -966,7 +967,7 @@ int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *c
 void oscar_do_directim(char *name) {
 	struct aim_conn_t *newconn = aim_directim_initiate(gaim_sess, gaim_conn, NULL, name);
 	struct conversation *cnv = find_conversation(name); /* this will never be null because it just got set up */
-	int watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
-	make_direct(cnv, TRUE, newconn, watcher);
+	cnv->conn = newconn;
+	cnv->watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
 	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE, gaim_directim_initiate, 0);
 }
