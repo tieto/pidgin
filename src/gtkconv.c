@@ -1638,11 +1638,23 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 		if (gaim_window_get_conversation_count(win) > 1) {
 			/* Make a new window to stick this to. */
 			struct gaim_window *new_win;
+			struct gaim_gtk_window *new_gtkwin;
+			gint win_width, win_height;
 
 			new_win = gaim_window_new();
 			gaim_window_remove_conversation(win,
 											gaim_conversation_get_index(conv));
 			gaim_window_add_conversation(new_win, conv);
+
+			new_gtkwin = GAIM_GTK_WINDOW(new_win);
+
+			gtk_window_get_size(GTK_WINDOW(new_gtkwin->window),
+								&win_width, &win_height);
+
+			gtk_window_move(GTK_WINDOW(new_gtkwin->window),
+							e->x_root - (win_width  / 2),
+							e->y_root - (win_height / 2));
+
 			gaim_window_show(new_win);
 		}
 
