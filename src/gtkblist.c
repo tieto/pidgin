@@ -418,6 +418,7 @@ map_shadow_windows (gpointer data)
 
 /**************** END WEIRD DROP SHADOW STUFF ***********************************/
 #endif
+
 static GSList *blist_prefs_callbacks = NULL;
 
 /***************************************************
@@ -1703,6 +1704,24 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	return;
 }
 
+static void gaim_gtk_blist_tooltip_destroy()
+{
+	if (gtkblist->tipwindow == NULL)
+		return;
+
+	gtk_widget_destroy(gtkblist->tipwindow);
+	gtkblist->tipwindow = NULL;
+#ifdef WANT_DROP_SHADOW
+	gdk_window_set_user_data (gtkblist->east_shadow, NULL);
+	gdk_window_destroy (gtkblist->east_shadow);
+	gtkblist->east_shadow = NULL;
+
+	gdk_window_set_user_data (gtkblist->south_shadow, NULL);
+	gdk_window_destroy (gtkblist->south_shadow);
+	gtkblist->south_shadow = NULL;
+#endif
+}
+
 static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 {
 	GtkTreePath *path;
@@ -1873,20 +1892,7 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 		if ((event->y > gtkblist->tip_rect.y) && ((event->y - gtkblist->tip_rect.height) < gtkblist->tip_rect.y))
 			return FALSE;
 		/* We've left the cell.  Remove the timeout and create a new one below */
-		if (gtkblist->tipwindow) {
-			gtk_widget_destroy(gtkblist->tipwindow);
-#ifdef WANT_DROP_SHADOW
-			  gdk_window_set_user_data (gtkblist->east_shadow, NULL);
-			  gdk_window_destroy (gtkblist->east_shadow);
-			  gtkblist->east_shadow = NULL;
-
-			  gdk_window_set_user_data (gtkblist->south_shadow, NULL);
-			  gdk_window_destroy (gtkblist->south_shadow);
-			  gtkblist->south_shadow = NULL;
-#endif
-			gtkblist->tipwindow = NULL;
-		}
-
+		gaim_gtk_blist_tooltip_destroy();
 		g_source_remove(gtkblist->timeout);
 	}
 	
@@ -1913,19 +1919,7 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 		g_source_remove(gtkblist->timeout);
 		gtkblist->timeout = 0;
 	}
-	if (gtkblist->tipwindow) {
-		gtk_widget_destroy(gtkblist->tipwindow);
-#ifdef WANT_DROP_SHADOW
-		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
-		gdk_window_destroy (gtkblist->east_shadow);
-		gtkblist->east_shadow = NULL;
-
-		gdk_window_set_user_data (gtkblist->south_shadow, NULL);
-		gdk_window_destroy (gtkblist->south_shadow);
-		gtkblist->south_shadow = NULL;
-#endif
-		gtkblist->tipwindow = NULL;
-	}
+	gaim_gtk_blist_tooltip_destroy();
 
 	if (gtkblist->mouseover_contact && 
 	    !((e->x > gtkblist->contact_rect.x) && (e->x < (gtkblist->contact_rect.x + gtkblist->contact_rect.width)) &&
@@ -3384,8 +3378,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 
 	gtk_widget_destroy(gtkblist->window);
 
-	if (gtkblist->tipwindow)
-		gtk_widget_destroy(gtkblist->tipwindow);
+	gaim_gtk_blist_tooltip_destroy();
 
 	gtk_object_sink(GTK_OBJECT(gtkblist->tooltips));
 
@@ -3400,7 +3393,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	gtkblist->treemodel = NULL;
 	gtkblist->idle_column = NULL;
 	gtkblist->warning_column = gtkblist->buddy_icon_column = NULL;
-	gtkblist->bbox = gtkblist->tipwindow = NULL;
+	gtkblist->bbox = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
 	protomenu = NULL;
 	awaymenu = NULL;
