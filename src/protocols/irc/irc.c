@@ -1319,9 +1319,14 @@ static void irc_set_away(struct gaim_connection *gc, char *state, char *msg)
 	struct irc_data *idata = gc->proto_data;
 	char buf[IRC_BUF_LEN];
 
-	if (msg)
+	if (gc->away)
+		g_free(gc->away);
+	gc->away = NULL;
+
+	if (msg) {
 		g_snprintf(buf, sizeof(buf), "AWAY :%s\r\n", msg);
-	else
+		gc->away = g_strdup(msg);
+	} else
 		g_snprintf(buf, sizeof(buf), "AWAY\r\n");
 	irc_write(idata->fd, buf, strlen(buf));
 }

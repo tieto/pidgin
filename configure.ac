@@ -32,8 +32,6 @@ dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(socket strdup strstr atexit getaddrinfo)
-AC_TRY_COMPILE([#include <sys/types.h>
-#include <sys/socket.h>], [socklen_t slen;],,[AC_DEFINE(NEED_SOCKLEN_T)])
 
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] ) 
@@ -48,7 +46,7 @@ AC_ARG_ENABLE(multi,   [  --disable-multi         disable multiple connections],
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
 AC_ARG_WITH(static-prpls,    [  --with-static-prpls     link in certain protocols statically],[STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],STATIC_PRPLS="oscar toc")
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="icq irc jabber msn napster oscar toc yahoo zephyr"
+	STATIC_PRPLS="gg icq irc jabber msn napster oscar toc yahoo zephyr"
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -59,6 +57,7 @@ for i in $STATIC_PRPLS ; do
 	extern_init="$extern_init extern void ${i}_init(struct prpl *);"
 	load_proto="$load_proto load_protocol(${i}_init, sizeof(struct prpl));"
 	case $i in
+		gg) static_gg=yes ;;
 		icq) static_icq=yes ;;
 		irc) static_irc=yes ;;
 		jabber) static_jabber=yes ;;
@@ -71,6 +70,7 @@ for i in $STATIC_PRPLS ; do
 		*) echo "Invalid static protocol $i!!" ; exit ;;
 	esac
 done
+AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_ICQ, test "x$static_icq" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
@@ -358,6 +358,7 @@ AC_OUTPUT([Makefile
            sounds/Makefile
 	   src/Makefile
 	   src/protocols/Makefile
+	   src/protocols/gg/Makefile
 	   src/protocols/icq/Makefile
 	   src/protocols/irc/Makefile
 	   src/protocols/jabber/Makefile

@@ -2389,7 +2389,8 @@ void show_buddy_list()
 	gtk_widget_show(menuitem);
 	menuitem = gtk_menu_item_new_with_label(_("by Dir Info"));
 	gtk_menu_append(GTK_MENU(findmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_find_info), NULL);
+	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_find_info),
+			   connections->data);
 	gtk_widget_show(menuitem);
 
 	setmenu = gtk_menu_new();

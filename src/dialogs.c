@@ -150,6 +150,7 @@ struct findbyemail {
 };
 
 struct findbyinfo {
+	struct gaim_connection *gc;
 	GtkWidget *window;
 	GtkWidget *firstentry;
 	GtkWidget *middleentry;
@@ -2058,10 +2059,7 @@ void do_find_info(GtkWidget *w, struct findbyinfo *b)
 	state = gtk_entry_get_text(GTK_ENTRY(b->stateentry));
 	country = gtk_entry_get_text(GTK_ENTRY(b->countryentry));
 
-	/* FIXME : dir search. not sure if even works; not important */
-	if (connections)
-		serv_dir_search(connections->data, first, middle, last, maiden, city, state, country,
-				"");
+	serv_dir_search(b->gc, first, middle, last, maiden, city, state, country, "");
 	destroy_dialog(NULL, b->window);
 }
 
@@ -2079,7 +2077,7 @@ void do_find_email(GtkWidget *w, struct findbyemail *b)
 	destroy_dialog(NULL, b->window);
 }
 
-void show_find_info()
+void show_find_info(struct gaim_connection *gc)
 {
 	GtkWidget *cancel;
 	GtkWidget *ok;
@@ -2091,6 +2089,7 @@ void show_find_info()
 	GtkWidget *frame;
 
 	struct findbyinfo *b = g_new0(struct findbyinfo, 1);
+	b->gc = gc;
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "find_info", "Gaim");

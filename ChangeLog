@@ -11,6 +11,7 @@ version 0.45:
 	* Nick Highlighting in chat
 	* Tab-completion for nicks in chat (thanks to Sean Egan)
 	* Large internal reworkings
+	* New Protocol: Gadu-Gadu, written by Arkadiusz Miskiewicz
 
 version 0.44 (09/20/2001):
 	* More sane scaling of buddy icons (intelligently scale to

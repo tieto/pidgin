@@ -34,6 +34,10 @@ EXTRA_DIST =	ab.xpm				\
 		fontface2.xpm			\
 		free_icon.xpm			\
 		gaim.xpm			\
+		gg_suncloud.xpm			\
+		gg_sunred.xpm			\
+		gg_sunwhitered.xpm		\
+		gg_sunyellow.xpm		\
 		gnome_add.xpm			\
 		gnome_preferences.xpm		\
 		gnome_remove.xpm 		\

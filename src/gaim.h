@@ -807,7 +807,9 @@ extern void list_perl_scripts();
 /* Functions in plugins.c */
 #ifdef GAIM_PLUGINS
 extern void show_plugins(GtkWidget *, gpointer);
-extern void load_plugin (char *);
+extern struct gaim_plugin *load_plugin(char *);
+extern void unload_plugin(struct gaim_plugin *);
+extern struct gaim_plugin *reload_plugin(struct gaim_plugin *);
 extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
 extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
 extern void gaim_plugin_unload(GModule *);
@@ -857,8 +859,8 @@ extern void show_export_dialog();
 extern void show_new_bp();
 extern void show_log(char *);
 extern void show_log_dialog(struct conversation *);
-extern void show_find_email(struct gaim_connection *gc);
-extern void show_find_info();
+extern void show_find_email(struct gaim_connection *);
+extern void show_find_info(struct gaim_connection *);
 extern void g_show_info_text(char *, ...);
 extern void show_set_info(struct gaim_connection *);
 extern void show_set_dir();

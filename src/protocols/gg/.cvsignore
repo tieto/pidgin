@@ -1,0 +1,7 @@
+.deps
+.libs
+Makefile
+Makefile.in
+gg.lo
+libgg.la
+libgg.lo

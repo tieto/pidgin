@@ -18,6 +18,7 @@ gaim_applet_SOURCES =	about.c \
 			html.c \
 			idle.c \
 			list.c \
+			module.c \
 			multi.c \
 			perl.c \
 			plugins.c \
@@ -49,6 +50,7 @@ gaim_SOURCES =	about.c \
 		html.c \
 		idle.c \
 		list.c \
+		module.c \
 		multi.c \
 		perl.c \
 		plugins.c \
