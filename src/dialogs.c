@@ -3025,22 +3025,21 @@ void cancel_bgcolor(GtkWidget *widget, struct conversation *c)
 
 void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 {
-	gdouble color[3];
 	GdkColor text_color;
 	struct conversation *c;
 	char *open_tag;
 
 	open_tag = g_malloc(30);
 
-	gtk_color_selection_get_color(colorsel, color);
+	gtk_color_selection_get_current_color(colorsel, &text_color);
 
 	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
-	text_color.red = ((guint16)(color[0] * 65535)) >> 8;
-	text_color.green = ((guint16)(color[1] * 65535)) >> 8;
-	text_color.blue = ((guint16)(color[2] * 65535)) >> 8;
-
+	text_color.red = text_color.red * 256 / 65535;
+	text_color.green = text_color.green * 256 /65535;
+	text_color.blue = text_color.blue * 256 / 65535;
+	
 	c->fgcol = text_color;
 	c->hasfg = 1;
 	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green,
@@ -3053,21 +3052,20 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 
 void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 {
-	gdouble color[3];
 	GdkColor text_color;
 	struct conversation *c;
 	char *open_tag;
 
 	open_tag = g_malloc(30);
 
-	gtk_color_selection_get_color(colorsel, color);
+	gtk_color_selection_get_current_color(colorsel, &text_color);
 
 	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
-	text_color.red = ((guint16)(color[0] * 65535)) >> 8;
-	text_color.green = ((guint16)(color[1] * 65535)) >> 8;
-	text_color.blue = ((guint16)(color[2] * 65535)) >> 8;
+	text_color.red = text_color.red * 256 / 65535;
+	text_color.green = text_color.green * 256 /65535;
+	text_color.blue = text_color.blue * 256 / 65535;
 
 	c->bgcol = text_color;
 	c->hasbg = 1;
