@@ -126,6 +126,8 @@ typedef struct NMField_t
 #define	NM_FIELD_TRUE					"1"
 #define	NM_FIELD_FALSE					"0"
 
+#define NMFIELD_MAX_STR_LENGTH			32768
+
 /**
  * Count the number of fields
  *

@@ -486,7 +486,7 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 		return NMERR_BAD_PARM;
 
 	do {
-		if (count !=  -1) {
+		if (count > 0) {
 			count--;
 		}
 
@@ -537,17 +537,23 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 			if (rc != NM_OK)
 				break;
 
+			if (val >= NMFIELD_MAX_STR_LENGTH) {
+				rc = NMERR_PROTOCOL;
+				break;
+			}
+
 			if (val > 0) {
 				str = g_new0(char, val + 1);
 
 				rc = nm_read_all(conn, str, val);
 				if (rc != NM_OK)
 					break;
+
+				*fields = nm_add_field(*fields, tag, 0, method, 0,
+									   (guint32) str, type);
+				str = NULL;
 			}
 
-			*fields = nm_add_field(*fields, tag, 0, method, 0,
-								   (guint32) str, type);
-			str = NULL;
 		} else {
 
 			/* Read the numerical value */
