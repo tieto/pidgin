@@ -53,3 +53,4 @@ src/prpl.h
 src/gaim-disclosure.c
 src/win32/systray.c
 src/pounce.c
+src/win_gaim.c
