@@ -545,7 +545,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 				else if ((y = xmlnode_get_tag(p->x, "status"))) {
 					char buf[8192];
 					msg = xmlnode_get_data(y);
-					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
+					g_snprintf(buf, sizeof(buf), "<B>%s now has status: %s</B>",
 							p->from->resource, msg);
 					write_to_conv(b, buf, WFLAG_SYSTEM, NULL);
 				}
@@ -684,7 +684,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				else if ((y = xmlnode_get_tag(p->x, "status"))) {
 					char buf[8192];
 					char *msg = xmlnode_get_data(y);
-					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
+					g_snprintf(buf, sizeof(buf), "<B>%s now has status: %s</B>",
 							p->from->resource, msg);
 					write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL);
 				}
@@ -1211,6 +1211,9 @@ static void regstate(jconn j, int state)
 	static int catch = 0;
 	switch (state) {
 		case JCONN_STATE_OFF:
+			gdk_input_remove(reginpa);
+			reginpa = 0;
+			jab_delete(j);
 			break;
 		case JCONN_STATE_CONNECTED:
 			break;
@@ -1231,6 +1234,7 @@ static void regstate(jconn j, int state)
 static void regpacket(jconn j, jpacket p)
 {
 	static int here = 0;
+	g_print("here\n");
 	switch (p->type) {
 		case JPACKET_MESSAGE:
 			break;
@@ -1245,21 +1249,19 @@ static void regpacket(jconn j, jpacket p)
 					struct aim_user *u;
 					user = g_strdup(jid_full(j->user));
 					regjconn = NULL;
-					gdk_input_remove(reginpa);
-					reginpa = 0;
 					here = 0;
 					u = new_user(user, PROTO_JABBER, OPT_USR_REM_PASS);
 					g_free(user);
 					g_snprintf(u->password, sizeof(u->password), "%s", j->pass);
 					save_prefs();
 					xmlnode_free(p->x);
-					jab_delete(j);
 					do_error_dialog("Registration successful! Your account has been"
 							" added to the Account Editor.", "Jabber "
 							"Registration");
 					gtk_entry_set_text(GTK_ENTRY(newname), "");
 					gtk_entry_set_text(GTK_ENTRY(newpass1), "");
 					gtk_entry_set_text(GTK_ENTRY(newpass2), "");
+					g_print("reg\n");
 					return;
 				} else if (here == 1) {
 					x = jutil_iqnew(JPACKET__SET, NS_AUTH);
@@ -1301,10 +1303,7 @@ static void regpacket(jconn j, jpacket p)
 					do_error_dialog("Registration failed", "Jabber Registration");
 				}
 				regjconn = NULL;
-				gdk_input_remove(reginpa);
 				xmlnode_free(p->x);
-				jab_delete(j);
-				reginpa = 0;
 				here = 0;
 				return;
 			}
@@ -1320,7 +1319,7 @@ static void regpacket(jconn j, jpacket p)
 
 static void regjcall(gpointer data, gint source, GdkInputCondition cond)
 {
-	jab_recv(regjconn);
+	gjab_recv((gjconn)regjconn);
 }
 
 static void jabber_do_new_user()
