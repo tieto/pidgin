@@ -98,6 +98,7 @@ EXTRA_DIST =	about_small.xpm			\
 		register.xpm			\
 		sad.xpm				\
 		save.xpm			\
+		save_small.xpm			\
 		scream.xpm			\
 		search_small.xpm		\
 		send_small.xpm			\

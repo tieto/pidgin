@@ -328,6 +328,8 @@ struct conversation {
 	GdkColor fgcol;
 	int hasfg;
 
+	GString *history;
+
 	GtkWidget *send;
 
 	/* stuff used just for IM */

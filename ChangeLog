@@ -15,6 +15,7 @@ version 0.11.0:
 	* Rewritten file transfer for TOC
 	* Jabber got chat
 	* Log Viewer (courtesy BMiller)
+	* Can save conversation history
 
 version 0.11.0-pre4:
 	* ICQ upgraded to use icqlib 1.1.0

@@ -634,6 +634,7 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 	b->in_room = NULL;
 	b->id = id;
 	b->gc = gc;
+	b->history = g_string_new("");
 	g_snprintf(b->name, 80, "%s", name);
 
 	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(b->name)) {
@@ -693,6 +694,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 		b->ignored = g_list_remove(b->ignored, b->ignored->data);
 	}
 
+	g_string_free(b->history, TRUE);
 	g_free(b);
 }
 
