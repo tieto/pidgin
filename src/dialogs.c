@@ -181,6 +181,7 @@ struct view_log {
 	GtkWidget *bbox;
 	GtkWidget *window;
 	GtkWidget *layout;
+	void *clear_handle;
 };
 
 /* Wrapper to get all the text from a GtkTextView */
@@ -1951,69 +1952,41 @@ static void show_save_log(GtkWidget *w, gchar *name)
 	return;
 }
 
-static void do_clear_log_file(GtkWidget *w, gchar *name)
+static void do_clear_log_file(struct view_log *view)
 {
-	gchar buf[256];
-	gchar filename[256];
-	GtkWidget *window;
+	gchar *filename, *buf;
 	char *tmp;
 
 	tmp = gaim_user_dir();
-	g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
-		   name ? gaim_normalize(NULL, name) : "system", name ? ".log" : "");
+	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
+		   view ? gaim_normalize(NULL, view->name) : "system", view ? ".log" : "");
 
 	if ((remove(filename)) == -1) {
-		g_snprintf(buf, 256, _("Couldn't remove file %s." ), filename);
+		buf = g_strdup_printf(_("Couldn't remove file %s." ), filename);
 		gaim_notify_error(NULL, NULL, buf, strerror(errno));
+		g_free(buf);
 	}
 
-	window = g_object_get_data(G_OBJECT(w), "log_window");
-	destroy_dialog(NULL, window);
+	g_free(filename);
+
+	gtk_widget_destroy(view->window);
 }
 
-static void show_clear_log(GtkWidget *w, gchar *name)
+static void show_clear_log(GtkWidget *w, struct view_log *view)
 {
-	GtkWidget *window;
-	GtkWidget *box;
-	GtkWidget *hbox;
-	GtkWidget *button;
-	GtkWidget *label;
-	GtkWidget *hsep;
+	char *text;
 
-	GAIM_DIALOG(window);
-	gtk_window_set_role(GTK_WINDOW(window), "dialog");
-	gtk_window_set_title(GTK_WINDOW(window), _("Clear Log"));
-	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
-	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
-	gtk_widget_realize(window);
+	if (view->clear_handle != NULL)
+		return;
 
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(window), box);
-
-	label = gtk_label_new(_("Really clear log?"));
-	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 15);
-
-	hsep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), hsep, FALSE, FALSE, 0);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-
-	button = gaim_pixbuf_button_from_stock(_("OK"), GTK_STOCK_OK, GAIM_BUTTON_HORIZONTAL);
-	g_object_set_data(G_OBJECT(button), "log_window", g_object_get_data(G_OBJECT(w),
-				"log_window"));
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(do_clear_log_file), name);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), window);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-
-	button = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), window);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-
-	gtk_widget_show_all(window);
-
-	return;
+	text = g_strdup_printf(_("You are about to remove the log file for %s.  Do you want to continue?"),
+						   view->name);
+	view->clear_handle = gaim_request_action(NULL, NULL, _("Remove Log"),
+											 text, -1, view, 2,
+											 _("Remove Log"),
+											 G_CALLBACK(do_clear_log_file),
+											 _("Cancel"), NULL);
+	g_free(text);
 }
 
 static void log_show_convo(struct view_log *view)
@@ -2106,6 +2079,8 @@ static void des_view_item(GtkObject *obj, struct view_log *view)
 {
 	if (view->name)
 		g_free(view->name);
+	if (view->clear_handle)
+		gaim_request_close(GAIM_REQUEST_ACTION, view->clear_handle);
 	g_free(view);
 }
 
@@ -2160,7 +2135,7 @@ void show_log(char *nm)
 	GtkWidget *item = NULL;
 	GtkWidget *last = NULL;
 	GtkWidget *frame;
-	struct view_log *view;
+	struct view_log *view = NULL;
 	char *name = nm ? g_strdup(nm) : NULL;
 
 	int options;
@@ -2311,7 +2286,7 @@ void show_log(char *nm)
 	clear_button = gaim_pixbuf_button_from_stock(_("Clear"), GTK_STOCK_CLEAR, GAIM_BUTTON_HORIZONTAL);
 	g_object_set_data(G_OBJECT(clear_button), "log_window", window);
 	gtk_box_pack_end(GTK_BOX(bbox), clear_button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(clear_button), "clicked", G_CALLBACK(show_clear_log), name);
+	g_signal_connect(G_OBJECT(clear_button), "clicked", G_CALLBACK(show_clear_log), view);
 
 	save_button = gaim_pixbuf_button_from_stock(_("Save"), GTK_STOCK_SAVE, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(bbox), save_button, FALSE, FALSE, 5);
