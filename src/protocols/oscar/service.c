@@ -737,12 +737,16 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
  * These are the same TLVs seen in user info.  You can 
  * also set 0x0008 and 0x000c.
  */
-faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t status)
+faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 	fu32_t data;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
 
 	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_WEBAWARE | status; /* yay for error checking ;^) */
 

@@ -4389,31 +4389,31 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 	}
 
 	if (!strcmp(state, _("Online")))
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 	else if (!strcmp(state, _("Away"))) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
 		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Do Not Disturb"))) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
 		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Not Available"))) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Occupied"))) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
 		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Free For Chat"))) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_CHAT);
 		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Invisible"))) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_INVISIBLE);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
 		gc->away = g_strdup("");
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 	 	if (message) {
-			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
+			aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 			gc->away = g_strdup("");
 		} else {
-			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
+			aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 		}
 	}
 
@@ -4799,6 +4799,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			do_error_dialog(_("Maximum buddy list length exceeded."), dialog_msg, GAIM_WARNING);
 			g_free(dialog_msg);
 		}
+	}
+
+	/* Set our ICQ status */
+	if  (od->icq && !gc->away) {
+		aim_setextstatus(sess, AIM_ICQ_STATE_NORMAL);
 	}
 
 	/* Activate SSI */

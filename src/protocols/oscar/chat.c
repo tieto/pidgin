@@ -204,12 +204,11 @@ faim_export int aim_chat_invite(aim_session_t *sess, aim_conn_t *conn, const cha
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, sn, strlen(sn)+1);
 	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
-
 	/*
 	 * Cookie
 	 */
-	for (i = 0; i < sizeof(ckstr); i++)
-		aimutil_put8(ckstr, (fu8_t) rand());
+	for (i = 0; i < 8; i++)
+		ckstr[i] = (fu8_t)rand();
 
 	/* XXX should be uncached by an unwritten 'invite accept' handler */
 	if ((priv = malloc(sizeof(struct aim_invite_priv)))) {
@@ -224,20 +223,11 @@ faim_export int aim_chat_invite(aim_session_t *sess, aim_conn_t *conn, const cha
 	else
 		free(priv);
 
-	for (i = 0; i < sizeof(ckstr); i++)
-		aimbs_put8(&fr->data, ckstr[i]);
-
-
-	/*
-	 * Channel (2)
-	 */
-	aimbs_put16(&fr->data, 0x0002);
-
-	/*
-	 * Dest sn
-	 */
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	/* ICBM Header */
+	aimbs_putraw(&fr->data, ckstr, 8); /* Cookie */
+	aimbs_put16(&fr->data, 0x0002); /* Channel */
+	aimbs_put8(&fr->data, strlen(sn)); /* Screename length */
+	aimbs_putraw(&fr->data, sn, strlen(sn)); /* Screenname */
 
 	/*
 	 * TLV t(0005)
@@ -497,31 +487,23 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 	snacid = aim_cachesnac(sess, 0x000e, 0x0005, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x000e, 0x0005, 0x0000, snacid);
 
-
-	/* 
-	 * Generate a random message cookie.
+	/*
+	 * Cookie
 	 *
 	 * XXX mkcookie should generate the cookie and cache it in one
 	 * operation to preserve uniqueness.
-	 *
 	 */
-	for (i = 0; i < sizeof(ckstr); i++)
-		aimutil_put8(ckstr+i, (fu8_t) rand());
+	for (i = 0; i < 8; i++)
+		ckstr[i] = (fu8_t)rand();
 
 	cookie = aim_mkcookie(ckstr, AIM_COOKIETYPE_CHAT, NULL);
 	cookie->data = NULL; /* XXX store something useful here */
 
 	aim_cachecookie(sess, cookie);
 
-	for (i = 0; i < sizeof(ckstr); i++)
-		aimbs_put8(&fr->data, ckstr[i]);
-
-
-	/*
-	 * Channel ID. 
-	 */
-	aimbs_put16(&fr->data, 0x0003);
-
+	/* ICBM Header */
+	aimbs_putraw(&fr->data, ckstr, 8); /* Cookie */
+	aimbs_put16(&fr->data, 0x0003); /* Channel */
 
 	/*
 	 * Type 1: Flag meaning this message is destined to the room.
