@@ -874,7 +874,7 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 	conv->title        = g_strdup(name);
 	conv->send_history = g_list_append(NULL, NULL);
 	conv->history      = g_string_new("");
-	conv->plugin_data  = g_hash_table_new_full(g_str_hash, g_str_equal,
+	conv->data  = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
 
 	if (type == GAIM_CONV_IM)
@@ -1041,7 +1041,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		chats = g_list_remove(chats, conv);
 	}
 
-	g_hash_table_destroy(conv->plugin_data);
+	g_hash_table_destroy(conv->data);
 
 	if (win != NULL) {
 		gaim_window_remove_conversation(win,
@@ -1313,23 +1313,22 @@ gaim_conversation_get_chat_data(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_plugin_data(struct gaim_conversation *conv,
-								  const char *key, gpointer data)
+gaim_conversation_set_data(struct gaim_conversation *conv, const char *key,
+						   gpointer data)
 {
 	if (conv == NULL || key == NULL)
 		return;
 
-	g_hash_table_replace(conv->plugin_data, g_strdup(key), data);
+	g_hash_table_replace(conv->data, g_strdup(key), data);
 }
 
 gpointer
-gaim_conversation_get_plugin_data(struct gaim_conversation *conv,
-								  const char *key)
+gaim_conversation_get_data(struct gaim_conversation *conv, const char *key)
 {
 	if (conv == NULL || key == NULL)
 		return NULL;
 
-	return g_hash_table_lookup(conv->plugin_data, key);
+	return g_hash_table_lookup(conv->data, key);
 }
 
 GList *
