@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "proxy.h"
 
-#include "pixmaps/irc_icon.xpm"
+#include "pixmaps/protocols/irc/irc_icon.xpm"
 
 #define IRC_BUF_LEN 4096
 #define PDIWORDS 32
