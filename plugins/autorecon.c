@@ -9,42 +9,70 @@
 #define INITIAL 8000
 #define MAXTIME 2048000
 
-static GHashTable *hash = NULL;
+typedef struct {
+	int delay;
+	guint timeout;
+} GaimAutoRecon;
 
-static guint tim = 0;
+static GHashTable *hash = NULL;
 
 static gboolean do_signon(gpointer data) {
 	GaimAccount *account = data;
+	GaimAutoRecon *info;
+
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "do_signon called\n");
+	g_return_val_if_fail(account != NULL, FALSE);
+	info = g_hash_table_lookup(hash, account);
 
 	if (g_list_index(gaim_accounts_get_all(), account) < 0)
 		return FALSE;
+
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling gaim_account_connect\n");
 	gaim_account_connect(account);
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling gaim_account_connect\n");
-	tim = 0;
+
+	info->timeout = 0;
+
 	return FALSE;
 }
 
 static void reconnect(GaimConnection *gc, void *m) {
+	GaimAccount *account;
+	GaimAutoRecon *info;
+
+	g_return_if_fail(gc != NULL);
+	account = gaim_connection_get_account(gc);
+	info = g_hash_table_lookup(hash, account);
+
 	if (!gc->wants_to_die) {
-		int del;
-		del = (int)g_hash_table_lookup(hash, gc->account);
-		if (!del)
-			del = INITIAL;
-		else
-			del = MIN(2 * del, MAXTIME);
-		tim = g_timeout_add(del, do_signon, gc->account);
-		g_hash_table_insert(hash, gc->account, (gpointer)del);
-	} else {
-		g_hash_table_remove(hash, gc->account);
+		if (info == NULL) {
+			info = g_new0(GaimAutoRecon, 1);
+			g_hash_table_insert(hash, account, info);
+			info->delay = INITIAL;
+		} else
+			info->delay = MIN(2 * info->delay, MAXTIME);
+		info->timeout = g_timeout_add(info->delay, do_signon, account);
+	} else if (info != NULL) {
+		g_hash_table_remove(hash, account);
+		g_free(info);
 	}
+}
+
+static void
+free_auto_recon(gpointer data)
+{
+	GaimAutoRecon *info = data;
+
+	if (info->timeout != 0)
+		g_source_remove(info->timeout);
+
+	g_free(info);
 }
 
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	hash = g_hash_table_new(g_int_hash, g_int_equal);
+	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL, free_auto_recon);
 
 	gaim_signal_connect(plugin, event_signoff, reconnect, NULL);
 
@@ -54,15 +82,10 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	if (tim)
-		g_source_remove(tim);
-
 	gaim_signal_disconnect(plugin, event_signoff, reconnect);
 
 	g_hash_table_destroy(hash);
-
 	hash = NULL;
-	tim = 0;
 
 	return TRUE;
 }

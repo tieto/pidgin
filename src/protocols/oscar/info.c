@@ -643,7 +643,10 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
 		} else if (type == 0x0019) {
-			faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV type 0x0019: from %s\n", outinfo->sn);
+/*			faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV type 0x0019: from %s\n", outinfo->sn); */
+
+		} else if (type == 0x001b) {
+/*			faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV type 0x001b: from %s\n", outinfo->sn); */
 
 		} else if (type == 0x001d) {
 			/*

@@ -407,9 +407,13 @@ void
 gaim_connections_disconnect_all(void)
 {
 	GList *l;
+	GaimConnection *gc;
 
-	while ((l = gaim_connections_get_all()) != NULL)
-		gaim_connection_destroy(l->data);
+	while ((l = gaim_connections_get_all()) != NULL) {
+		gc = l->data;
+		gc->wants_to_die = TRUE;
+		gaim_connection_destroy(gc);
+	}
 }
 
 GList *

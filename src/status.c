@@ -136,6 +136,8 @@ start_element_handler(GMarkupParseContext *context,
 		data->tag = TAG_MESSAGE;
 		
 	}
+
+	g_hash_table_destroy(atts);
 }
 
 static void
