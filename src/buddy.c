@@ -292,8 +292,10 @@ static void destroy_buddies(struct gaim_connection *gc) {
 				g_free(b->show);
 				g_free(b);
 			} else if (g_slist_find(b->connlist, gc)) {
-				if (g_slist_find(b->connlist, gc))
+				if (g_slist_find(b->connlist, gc)) {
 					b->connlist = g_slist_remove(b->connlist, gc);
+					update_num_group(g);
+				}
 				m = g_slist_next(m);
 			} else
 				m = g_slist_next(m);

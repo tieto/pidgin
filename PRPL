@@ -5,7 +5,7 @@ This identifier can be found in prpl.h. They are pre-assigned. PROTO_TOC is stil
 is still 1. The protocol_init function is expected to set the struct's protocol member to the
 appropriate value. If you want to write a new PRPL for gaim, please email one of the maintainers
 with the name of the protocol. We'll then reserve a number for it. Please do not use a number
-that has not been assigned to your protocol, not even for testing purposes.
+that has not been assigned to your protocol.
 
 The addition of PRPL to gaim means that gaim now supports multiple connections and multiple (and
 dynamically loadable) protocols.

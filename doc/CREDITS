@@ -13,8 +13,8 @@ Mark Spencer      <IM: markster97>		markster@marko.net
 Other Contributors:
 
 Adam Fritzler (mid)
-	Wrote libfaim, and added stuff to oscar.c to let people use
-	a proxy with libfaim.
+	Wrote libfaim, fixed the proxy code, and added the stuff to let
+	Oscar go through a proxy.
 
 Thanks to Torrey Searle for the spell checking code that
 accompanies the gtk_text box :)
@@ -44,6 +44,8 @@ S D Erle
 BMiller
 	A good collection of stuff. %n for away messages, import winaim
 	lists, pic/text/pic+text for buttons, among others
+Lance Rocker
+	Improved HTML formatting in logs, plus lots of debugging on *BSD.
 
 ergofobe:
 	GNOME Url handler patch

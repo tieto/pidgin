@@ -802,6 +802,42 @@ void remove_tags(GtkWidget *entry, char *tag)
 	g_free(s);
 }
 
+static char* add_br(char* p) {
+
+    char* temp_p = p;
+    char* buffer_p;
+    char* buffer_start;
+    int   num_cr = 0;
+    int   char_len = 0;
+
+    while( *temp_p != '\0' ) {
+	char_len++;
+	if( *temp_p == '\n' )
+	    num_cr++;
+	++temp_p;
+    }
+
+    temp_p = p;
+    buffer_p = g_malloc(char_len + ( 4 * num_cr ) + 1);
+    buffer_start = buffer_p;
+
+    while( *temp_p != '\0' ) {
+	*buffer_p = *temp_p;
+	if( *temp_p == '\n' ) {
+	    *buffer_p++ = '<';
+	    *buffer_p++ = 'B';
+	    *buffer_p++ = 'R';
+	    *buffer_p++ = '>';
+	    *buffer_p = '\n';
+	}
+	++buffer_p;
+	++temp_p;
+    }
+    *buffer_p = '\0';
+
+    return buffer_start;
+}
+
 void surround(GtkWidget *entry, char *pre, char *post)
 {
 	int temp, pos = GTK_EDITABLE(entry)->current_pos;
@@ -1314,8 +1350,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
                                 t1 = strip_html(buf);
                                 t2 = strip_html(what);
                         } else {
-                                t1 = buf;
-                                t2 = what;
+                                t1 = add_br(buf);
+                                t2 = add_br(what);
                         }
                         fd = open_log_file(nm);
 			if (fd > 0) {
@@ -1326,10 +1362,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 				}
 				fclose(fd);
 			}
-                        if (general_options & OPT_GEN_STRIP_HTML) {
-                                g_free(t1);
-                                g_free(t2);
-                        }
+                        g_free(t1);
+                        g_free(t2);
 			g_free(nm);
                 }
         }
