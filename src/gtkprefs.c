@@ -1028,14 +1028,14 @@ GtkWidget *conv_page() {
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(same_checkbox), FALSE);
 	}
+
+	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
+			 G_CALLBACK(gaim_gtk_toggle_sensitive), same_checkbox);
 #endif
 
 	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
 	                                                conversation_placement_cb,
 	                                                tabs_checkbox);
-
-	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
-			 G_CALLBACK(gaim_gtk_toggle_sensitive), same_checkbox);
 
 	close_checkbox = gaim_gtk_prefs_checkbox(_("Show _close button on tabs"),
 									"/gaim/gtk/conversations/close_on_tabs",
@@ -1896,6 +1896,7 @@ GtkWidget *away_page() {
 	return ret;
 }
 
+#if 0
 static GtkWidget *
 protocol_page() {
 	GtkWidget *ret;
@@ -1905,6 +1906,7 @@ protocol_page() {
 
 	return ret;
 }
+#endif
 
 static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
 

@@ -5704,6 +5704,8 @@ button_type_pref_cb(const char *name, GaimPrefType type,
 		case GAIM_CONV_CHAT:
 			setup_chat_buttons(conv, gtk_widget_get_parent(gtkconv->send));
 			break;
+		default:
+			break;
 		}
 	}
 }
