@@ -1284,7 +1284,7 @@ GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name)
 	if (!gaimbuddylist)
 		return NULL;
 
-	if (!name)
+	if ((name == NULL) || (*name == '\0'))
 		return NULL;
 
 	hb.account = account;
