@@ -1128,20 +1128,29 @@ static void
 irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct conversation *b, char *reason)
 {
 
-	GList *r = b->in_room;
-	while (r) {
-		char *who = r->data;
-		if (*who == '@')
-			who++;
-		if (*who == '+')
-			who++;
-		if (!g_strcasecmp(who, nick)) {
-			char *tmp = g_strdup(r->data);
-			remove_chat_buddy(b, tmp, reason);
-			g_free(tmp);
-			break;
-		}
+	if (b) {
+		GList *r = b->in_room;
+		while (r) {
+			char *who = r->data;
+			if (*who == '@')
+				who++;
+			if (*who == '+')
+				who++;
+			if (!g_strcasecmp(who, nick)) {
+				char *tmp = g_strdup(r->data);
+				remove_chat_buddy(b, tmp, reason);
+				g_free(tmp);
+				break;
+			}
 			r = r->next;
+		}
+	} else {
+		GSList *bcs = gc->buddy_chats;
+		while (bcs) {
+			struct conversation *bc = bcs->data;
+			irc_rem_chat_bud(gc, nick, bc, reason);
+			bcs = bcs->next;
+		}
 	}
 }
 
