@@ -1002,17 +1002,17 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	for(bnode = node->child; bnode; bnode = bnode->next) {
 		gaim_gtk_blist_update(NULL, bnode);
 	}
-	
+
 	/* This ensures that the bottom buddy is visible, i.e. not scrolled off the alignment */
 	get_iter_from_node(node, &parent);
-	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent, 
+	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent,
 			  gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &parent) -1);
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 	/* Let the treeview draw so it knows where to scroll */
 	while (gtk_events_pending())
 		gtk_main_iteration();
-	gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW(gtkblist->treeview), path, NULL, FALSE, 0, 0); 
-	
+	gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW(gtkblist->treeview), path, NULL, FALSE, 0, 0);
+
 
 	gaim_gtk_blist_update(NULL, node);
 	gtk_tree_path_free(path);
@@ -3021,6 +3021,8 @@ update_menu_bar(GaimGtkBuddyList *gtkblist)
 
 	sensitive = (gaim_connections_get_all() != NULL);
 
+	gtk_widget_set_sensitive(gtkblist->treeview, sensitive);
+
 	for (i = 0; i < SIZEOF_REQUIRE_CONNECTION; i++)
 	{
 		widget = gtk_item_factory_get_widget(gtkblist->ift, require_connection[i]);
@@ -3173,9 +3175,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Account Actions"));
 	pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Plugin Actions"));
 
-	update_menu_bar(gtkblist);
-	gaim_gtk_blist_update_plugin_actions();
-
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_widget_show(sw);
@@ -3280,6 +3279,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	if(!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
 		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE); 
 
+	/* Update some dynamic things */
+	update_menu_bar(gtkblist);
+	gaim_gtk_blist_update_plugin_actions();
+
 	/* OK... let's show this bad boy. */
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible") || docklet_count == 0) {
 		gaim_gtk_blist_refresh(list);
@@ -3289,7 +3292,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* start the refresh timer */
 	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
-	
+
 	handle = gaim_gtk_blist_get_handle();
 
 	/* things that affect how buddies are displayed */
