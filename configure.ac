@@ -234,26 +234,6 @@ PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
 AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
 AC_SUBST(STARTUP_NOTIFICATION_LIBS)
 
-
-dnl Check for stuff needed by the evolution integration plugin.
-PKG_CHECK_MODULES(LIBXML, libxml-2.0, have_libxml=yes, have_libxml=no)
-
-AC_SUBST(LIBXML_CFLAGS)
-AC_SUBST(LIBXML_LIBS)
-
-PKG_CHECK_MODULES(LIBEBOOK, libebook-1.0,
-[
-	have_libebook=yes
-],
-[
-	have_libebook=no
-])
-
-AC_SUBST(LIBEBOOK_CFLAGS)
-AC_SUBST(LIBEBOOK_LIBS)
-
-AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$have_libxml" = "xyes" -a test "x$have_libebook" = "xyes")
-
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
 	old_LIBS="$LIBS"
