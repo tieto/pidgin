@@ -153,7 +153,9 @@ static struct parse *parse_line(char *line, struct parse *p)
 				p->value[curval][vallen] = *c;
 
 				vallen++;
-				if (! isspace(*c))
+				if (isspace(*c))
+					last_non_space = vallen - 1;
+				else
 					last_non_space = vallen;
 				c++;
 				continue;
@@ -241,7 +243,6 @@ static char *escape_text2(const char *msg)
 		case '}':
 		case '\\':
 		case '"':
-		case ' ':
 			woo[cnt++] = '\\';
 			/* Fall through */
 		default:
