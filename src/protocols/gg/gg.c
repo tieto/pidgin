@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5001 2003-03-10 06:22:44Z faceprint $
+ * $Id: gg.c 5016 2003-03-11 18:15:36Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1028,7 +1028,7 @@ static void export_buddies_server(struct gaim_connection *gc)
 				/* GG Number */
 				gchar *name = gg_urlencode(b->name);
 				/* GG Pseudo */
-				gchar *show = gg_urlencode(b->alias[0] ? b->alias : b->name);
+				gchar *show = gg_urlencode(b->alias ? b->alias : b->name);
 				/* Group Name */
 				gchar *gname = gg_urlencode(g->name);
 

@@ -289,8 +289,8 @@ static void toc_build_config(struct gaim_account *account, char *s, int len, gbo
 				b = (struct buddy *)mem->data;
 				if(b->account == account) {
 					pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
-							(show && b->alias[0]) ? ":" : "",
-							(show && b->alias[0]) ? b->alias : "");
+							(show && b->alias) ? ":" : "",
+							(show && b->alias) ? b->alias : "");
 				}
 				mem = mem->next;
 			}

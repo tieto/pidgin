@@ -1743,6 +1743,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	if((buddyname = get_realwho(gjc, who, FALSE, &gjid)) == NULL)
 		return;
 
+
 	/* JFIXME: jabber_handleroster() had a "FIXME: transport" at this
 	 * equivilent point.  So...
 	 *
@@ -1765,7 +1766,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
 		if ((b = gaim_find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
-			struct buddy *b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name ? name : NULL);
+			struct buddy *b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 			struct group *g;
 			if (groupname) {
 				if (!(g = gaim_find_group(groupname)))
@@ -1791,7 +1792,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				 * seems rude, but it seems to be the only way...
 				 */
 				gaim_blist_remove_buddy(b);
-				b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name ? name : NULL);
+				b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 				gaim_blist_add_buddy(b, gaim_find_group(groupname), NULL);
 				gaim_blist_save();
 				if(present) {
@@ -1799,7 +1800,8 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 							uc, 0);
 				}
 			} else if(name != NULL && strcmp(b->alias, name)) {
-				g_snprintf(b->alias, sizeof(b->alias), "%s", name);
+				g_free(b->alias);
+				b->alias = g_strdup(name);
 				gaim_blist_rename_buddy(b, buddyname);
 				gaim_blist_save();
 			}
@@ -2500,7 +2502,7 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
 		 */
 		if(alias && alias[0] != '\0') {
 			my_alias = alias;
-		} else if(buddy && buddy->alias[0]) {
+		} else if(buddy && buddy->alias) {
 			my_alias = buddy->alias;
 		}
 

@@ -4328,8 +4328,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					free(alias);
 					if (buddy) {
 						/* Get server stored alias */
-						if (alias_utf8)
-							strcpy(buddy->alias, alias_utf8);
+						if (alias_utf8) {
+							g_free(buddy->alias);
+							buddy->alias = g_strdup(alias_utf8);
+						}
 					} else {
 						struct group *g;
 						buddy = gaim_buddy_new(gc->account, curitem->name, alias_utf8);
