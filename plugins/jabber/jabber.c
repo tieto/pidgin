@@ -529,9 +529,12 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			type = xmlnode_get_attrib(xmlns, "xmlns");
 
 		from = jid_full(p->from);
+		/*
 		if ((y = xmlnode_get_tag(p->x, "html"))) {
 			msg = xmlnode_get_data(y);
-		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
+		} else
+		*/
+		if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
 		}
 
@@ -579,9 +582,12 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		static int i = 0;
 		from = jid_full(p->from);
 
+		/*
 		if ((y = xmlnode_get_tag(p->x, "html"))) {
 			msg = xmlnode_get_data(y);
-		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
+		} else
+		*/
+		if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
 		}
 
