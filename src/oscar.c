@@ -169,9 +169,9 @@ static char *extract_name(char *name) {
 	char *tmp;
 	int i, j;
 	char *x = strchr(name, '-');
-	if (!x) return;
+	if (!x) return NULL;
 	x = strchr(++x, '-');
-	if (!x) return;
+	if (!x) return NULL;
 	tmp = g_strdup(++x);
 
 	for (i = 0, j = 0; x[i]; i++) {
@@ -182,7 +182,7 @@ static char *extract_name(char *name) {
 			hex[0] = x[++i];
 			hex[1] = x[++i];
 			hex[2] = 0;
-			sscanf(hex, "%x", &tmp[j++]);
+			sscanf(hex, "%x", (int *)&tmp[j++]);
 		}
 	}
 
@@ -2297,7 +2297,6 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 
 static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	struct aim_conn_t *cn; 
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
 	struct chat_connection *c = NULL;
