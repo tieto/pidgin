@@ -132,7 +132,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		(char *)g_hash_table_lookup(nexus->challenge_data, "tpf"),
 		nexus->login_host);
 
-	gaim_debug(GAIM_DEBUG_MISC, "msn", "Sending: {%s}\n", request_str);
+	gaim_debug_misc("msn", "Sending: {%s}\n", request_str);
 
 	g_free(username);
 	g_free(password);
@@ -151,7 +151,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 	gaim_ssl_close(gsc);
 
-	gaim_debug(GAIM_DEBUG_MISC, "msn", "ssl buffer: {%s}", buffer);
+	gaim_debug_misc("msn", "ssl buffer: {%s}", buffer);
 
 	if (strstr(buffer, "HTTP/1.1 302") != NULL)
 	{

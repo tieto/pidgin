@@ -33,7 +33,12 @@ MsnSlpMessage *
 msn_slpmsg_new(MsnSlpLink *slplink)
 {
 	MsnSlpMessage *slpmsg;
+
 	slpmsg = g_new0(MsnSlpMessage, 1);
+
+#ifdef MSN_DEBUG_SLPMSG
+	gaim_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
+#endif
 
 	slpmsg->slplink = slplink;
 
@@ -47,6 +52,13 @@ void
 msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 {
 	MsnSlpLink *slplink;
+	GList *cur;
+
+	g_return_if_fail(slpmsg != NULL);
+
+#ifdef MSN_DEBUG_SLPMSG
+	gaim_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
+#endif
 
 	slplink = slpmsg->slplink;
 
@@ -56,42 +68,31 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->buffer != NULL)
 		g_free(slpmsg->buffer);
 
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 	/*
 	if (slpmsg->info != NULL)
 		g_free(slpmsg->info);
 	*/
 #endif
 
-	if (slpmsg->msg != NULL)
+	for (cur = slpmsg->msgs; cur != NULL; cur = cur->next)
 	{
 		/* Something is pointing to this slpmsg, so we should remove that
 		 * pointer to prevent a crash. */
 		/* Ex: a user goes offline and after that we receive an ACK */
 
+		MsnMessage *msg = cur->data;
+
+#ifdef MSN_DEBUG_SLPMSG
 		gaim_debug_info("msn", "Unlink slpmsg callbacks.\n");
-
-		slpmsg->msg->ack_cb = NULL;
-		slpmsg->msg->ack_data = NULL;
-
-#if 0
-		MsnTransaction *trans;
-
-		trans = slpmsg->msg->trans;
-
-		if (trans != NULL)
-		{
-			if (trans->callbacks != NULL && trans->has_custom_callbacks)
-				g_hash_table_destroy(trans->callbacks);
-			
-			trans->callbacks = NULL;
-			trans->data = NULL;
-		}
 #endif
+
+		msg->ack_cb = NULL;
+		msg->nak_cb = NULL;
+		msg->ack_data = NULL;
 	}
 
-	slplink->slp_msgs =
-		g_list_remove(slplink->slp_msgs, slpmsg);
+	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
 
 	g_free(slpmsg);
 }
@@ -119,7 +120,7 @@ msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
 		slpmsg->size = st.st_size;
 }
 
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 const void
 msn_slpmsg_show(MsnMessage *msg)
 {
@@ -203,6 +204,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	msn_slpmsg_set_body(slpmsg, body, body_len);
 
 	slpmsg->sip = TRUE;
+	slpmsg->slpcall = slpcall;
 
 	g_free(body);
 

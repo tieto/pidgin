@@ -31,7 +31,144 @@
 
 static MsnTable *cbs_table;
 
-static void cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error);
+static void msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg,
+							 MsnMsgErrorType error);
+
+/**************************************************************************
+ * Main stuff
+ **************************************************************************/
+MsnSwitchBoard *
+msn_switchboard_new(MsnSession *session)
+{
+	MsnSwitchBoard *swboard;
+	MsnServConn *servconn;
+	MsnCmdProc *cmdproc;
+
+	g_return_val_if_fail(session != NULL, NULL);
+
+	swboard = g_new0(MsnSwitchBoard, 1);
+
+	swboard->session = session;
+	swboard->servconn = servconn = msn_servconn_new(session, MSN_SERVER_SB);
+	cmdproc = servconn->cmdproc;
+
+	swboard->im_queue = g_queue_new();
+	swboard->empty = TRUE;
+
+	servconn->data = swboard;
+
+	session->switches = g_list_append(session->switches, swboard);
+
+	cmdproc->cbs_table = cbs_table;
+
+	return swboard;
+}
+
+void
+msn_switchboard_destroy(MsnSwitchBoard *swboard)
+{
+	MsnSession *session;
+	MsnMessage *msg;
+	GList *l;
+
+	g_return_if_fail(swboard != NULL);
+
+	if (swboard->destroying)
+		return;
+
+	swboard->destroying = TRUE;
+
+	/* If it linked us is because its looking for trouble */
+	if (swboard->slplink != NULL)
+		msn_slplink_destroy(swboard->slplink);
+
+	/* Destroy the message queue */
+	while ((msg = g_queue_pop_head(swboard->im_queue)) != NULL)
+	{
+		if (swboard->error != MSN_SB_ERROR_NONE)
+		{
+			/* The messages could not be sent due to a switchboard error */
+			msg_error_helper(swboard->servconn->cmdproc, msg,
+							 MSN_MSG_ERROR_SB);
+		}
+		msn_message_destroy(msg);
+	}
+
+	g_queue_free(swboard->im_queue);
+
+	if (swboard->im_user != NULL)
+		g_free(swboard->im_user);
+
+	if (swboard->auth_key != NULL)
+		g_free(swboard->auth_key);
+
+	if (swboard->session_id != NULL)
+		g_free(swboard->session_id);
+
+	for (l = swboard->users; l != NULL; l = l->next)
+		g_free(l->data);
+
+	session = swboard->session;
+	session->switches = g_list_remove(session->switches, swboard);
+
+	if (swboard->servconn != NULL)
+		msn_servconn_destroy(swboard->servconn);
+
+	g_free(swboard);
+}
+
+void
+msn_switchboard_set_auth_key(MsnSwitchBoard *swboard, const char *key)
+{
+	g_return_if_fail(swboard != NULL);
+	g_return_if_fail(key != NULL);
+
+	swboard->auth_key = g_strdup(key);
+}
+
+const char *
+msn_switchboard_get_auth_key(MsnSwitchBoard *swboard)
+{
+	g_return_val_if_fail(swboard != NULL, NULL);
+
+	return swboard->auth_key;
+}
+
+void
+msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id)
+{
+	g_return_if_fail(swboard != NULL);
+	g_return_if_fail(id != NULL);
+
+	if (swboard->session_id != NULL)
+		g_free(swboard->session_id);
+
+	swboard->session_id = g_strdup(id);
+}
+
+const char *
+msn_switchboard_get_session_id(MsnSwitchBoard *swboard)
+{
+	g_return_val_if_fail(swboard != NULL, NULL);
+
+	return swboard->session_id;
+}
+
+void
+msn_switchboard_set_invited(MsnSwitchBoard *swboard, gboolean invited)
+{
+	g_return_if_fail(swboard != NULL);
+
+	swboard->invited = invited;
+}
+
+gboolean
+msn_switchboard_is_invited(MsnSwitchBoard *swboard)
+{
+	g_return_val_if_fail(swboard != NULL, FALSE);
+
+	return swboard->invited;
+}
 
 /**************************************************************************
  * Utility functions
@@ -68,9 +205,11 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	/* gaim_debug_info("msn", "user=[%s], total=%d\n", user,
 	 * swboard->current_users); */
 
-	if ((swboard->conv != NULL) && (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
+	if ((swboard->conv != NULL) &&
+		(gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
 	{
-		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL, GAIM_CBFLAGS_NONE, TRUE);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL,
+								GAIM_CBFLAGS_NONE, TRUE);
 	}
 	else if (swboard->current_users > 1 || swboard->total_users > 1)
 	{
@@ -127,18 +266,6 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 }
 
-/**************************************************************************
- * Switchboard Commands
- **************************************************************************/
-static void
-ans_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSwitchBoard *swboard;
-
-	swboard = cmdproc->servconn->data;
-	swboard->ready = TRUE;
-}
-
 GaimConversation *
 msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 {
@@ -148,6 +275,8 @@ msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 
 	if (swboard->conv != NULL)
 		return swboard->conv;
+
+	gaim_debug_error("msn", "Switchboard with unnasigned conversation\n");
 
 	account = swboard->session->account;
 
@@ -171,6 +300,126 @@ msn_switchboard_report_user(MsnSwitchBoard *swboard, GaimMessageFlags flags, con
 }
 
 static void
+swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
+{
+	gaim_debug_info("msg", "Error: Unable to call the user %s\n", passport);
+
+	if (swboard->total_users == 0)
+	{
+		swboard->error = reason;
+		msn_switchboard_destroy(swboard);
+	}
+}
+
+static void
+cal_error_helper(MsnTransaction *trans, int reason)
+{
+	MsnSwitchBoard *swboard;
+	const char *passport;
+	char **params;
+
+	params = g_strsplit(trans->params, " ", 0);
+
+	passport = params[0];
+
+	swboard = trans->data;
+
+	swboard_error_helper(swboard, reason, passport);
+
+	g_strfreev(params);
+}
+
+static void
+msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
+{
+	g_return_if_fail(cmdproc != NULL);
+	g_return_if_fail(msg     != NULL);
+
+	if (msg->nak_cb != NULL)
+		msg->nak_cb(msg, msg->ack_data);
+
+	if (msg->type == MSN_MSG_TEXT)
+	{
+		MsnSwitchBoard *swboard;
+		char *body;
+		char *report;
+		char *str_reason;
+
+		swboard = cmdproc->servconn->data;
+
+#if 0
+		if (swboard->conv == NULL)
+		{
+			msn_message_unref(msg);
+			return;
+		}
+#endif
+
+		if (msg->error == MSN_MSG_ERROR_TIMEOUT)
+		{
+			str_reason = _("Message may have not been sent "
+						   "because a time out occured.");
+		}
+		else if (msg->error == MSN_MSG_ERROR_SB)
+		{
+			switch (swboard->error)
+			{
+				case MSN_SB_ERROR_OFFLINE:
+					str_reason = _("Message could not be sent, "
+								   "not allowed while invisible");
+					break;
+				case MSN_SB_ERROR_USER_OFFLINE:
+					str_reason = _("Message could not be sent "
+								   "because the user is offline");
+					break;
+				case MSN_SB_ERROR_CONNECTION:
+					str_reason = _("Message could not be sent "
+								   "because a connection error occured");
+					break;
+				default:
+					str_reason = _("Message could not be sent "
+								   "because an error with "
+								   "the switchboard occured");
+					break;
+			}
+		}
+		else
+		{
+			str_reason = _("Message may have not been sent "
+						   "because an unkwown error occured");
+		}
+
+		body = msn_message_to_string(msg);
+		report = g_strdup_printf(_("%s:\n%s"), str_reason, body);
+
+		msn_switchboard_report_user(cmdproc->servconn->data,
+									GAIM_MESSAGE_ERROR, report);
+
+		g_free(report);
+		g_free(body);
+
+		msn_message_unref(msg);
+	}
+	else if (msg->type == MSN_MSG_SLP)
+	{
+		msn_message_unref(msg);
+	}
+
+}
+
+/**************************************************************************
+ * Switchboard Commands
+ **************************************************************************/
+static void
+ans_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	MsnSwitchBoard *swboard;
+
+	swboard = cmdproc->servconn->data;
+	swboard->ready = TRUE;
+}
+
+static void
 bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSwitchBoard *swboard;
@@ -179,15 +428,20 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = cmdproc->servconn->data;
 	user = cmd->params[0];
 
-	if (swboard->hidden)
-		return;
-
-	if (swboard->current_users > 1)
+	if (swboard->conv == NULL)
 	{
+		/* This is a helper switchboard */
+		msn_switchboard_disconnect(swboard);
+	}
+	else if (swboard->current_users > 1)
+	{
+		/* This is a switchboard used for a chat */
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(swboard->conv), user, NULL);
 	}
 	else
 	{
+		/* This is a switchboard used for a im session */
+
 		char *str = NULL;
 
 		if (cmd->param_count == 2 && atoi(cmd->params[1]) == 1)
@@ -261,9 +515,7 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_switchboard_add_user(swboard, passport);
 
-	swboard->user_joined = TRUE;
-
-	/* msn_cmdproc_process_queue(cmdproc); */
+	swboard->empty = FALSE;
 
 	msn_switchboard_process_queue(swboard);
 
@@ -299,28 +551,25 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 nak_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	/*
-	gaim_notify_error(cmdproc->session->account->gc, NULL,
-					  _("A MSN message may not have been received."), NULL);
-	 */
+	MsnMessage *msg;
+
+	msg = cmd->trans->data;
+	g_return_if_fail(msg != NULL);
+
+	msg_error_helper(cmdproc, msg, MSN_MSG_ERROR_NAK);
 }
 
 static void
 ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-#if 0
 	MsnMessage *msg;
-	const char *body;
 
-	msg = msn_message_new();
-	msn_message_parse_payload(msg, cmd->trans->payload, cmd->trans->payload_len);
+	msg = cmd->trans->data;
 
-	body = msn_message_get_body(msg);
+	if (msg->ack_cb != NULL)
+		msg->ack_cb(msg, msg->ack_data);
 
-	gaim_debug_info("msn", "ACK: {%s}\n", body);
-
-	msn_message_destroy(msg);
-#endif
+	msn_message_unref(msg);
 }
 
 static void
@@ -362,7 +611,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 /**************************************************************************
- * Message Types
+ * Message Handlers
  **************************************************************************/
 static void
 plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
@@ -467,63 +716,31 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 #endif
 }
 
-static void
-msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg)
-{
-	if (msg->type == MSN_MSG_TEXT)
-	{
-		MsnSwitchBoard *swboard;
-		char *body;
-		char *report;
-		char *str_reason;
-
-		swboard = cmdproc->servconn->data;
-
-		switch (swboard->error)
-		{
-			case MSN_SB_ERROR_OFFLINE:
-				str_reason = _("Message could not be sent, not allowed while invisible");
-				break;
-			case MSN_SB_ERROR_USER_OFFLINE:
-				str_reason = _("Message could not be sent because the user is offline");
-				break;
-			case MSN_SB_ERROR_CONNECTION:
-				str_reason = _("Message could not be sent because a connection error occured");
-				break;
-			default:
-				str_reason = _("Message could not be sent for an unknown reason");
-				break;
-		}
-
-		body = msn_message_to_string(msg);
-		report = g_strdup_printf(_("%s:\n%s"), str_reason, body);
-		gaim_debug_info("msn", "%s\n", report);
-		msn_switchboard_report_user(cmdproc->servconn->data, GAIM_MESSAGE_ERROR, report);
-		g_free(report);
-		g_free(body);
-	}
-}
-
+/**************************************************************************
+ * Message stuff
+ **************************************************************************/
+/** Called when a message times out. */
 static void
 msg_timeout(MsnCmdProc *cmdproc, MsnTransaction *trans)
 {
 	MsnMessage *msg;
 
 	msg = trans->data;
-	g_return_if_fail(msg != NULL);
 
-	gaim_debug_info("msn", "msg_timeout\n");
-	msg_error_helper(cmdproc, msg);
+	msg_error_helper(cmdproc, msg, MSN_MSG_ERROR_TIMEOUT);
 }
 
+/** Called when we receive an error of a message. */
 static void
 msg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
-	msg_error_helper(cmdproc, trans->data);
+	msg_error_helper(cmdproc, trans->data, MSN_MSG_ERROR_UNKNOWN);
 }
 
+#if 0
+/** Called when we receive an ack of a special message. */
 static void
-msg_ack (MsnCmdProc *cmdproc, MsnCommand *cmd)
+msg_ack(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnMessage *msg;
 
@@ -534,6 +751,18 @@ msg_ack (MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_message_unref(msg);
 }
+
+/** Called when we receive a nak of a special message. */
+static void
+msg_nak(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	MsnMessage *msg;
+
+	msg = cmd->trans->data;
+
+	msn_message_unref(msg);
+}
+#endif
 
 void
 msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
@@ -557,15 +786,24 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 
 	/* Data for callbacks */
 	msn_transaction_set_data(trans, msg);
-	msn_message_ref(msg);
 
-	if (msg->ack_cb != NULL)
+	if (msg->type == MSN_MSG_TEXT)
 	{
-		msn_transaction_add_cb(trans, "ACK", msg_ack);
+		msn_message_ref(msg);
 		msn_transaction_set_timeout_cb(trans, msg_timeout);
 	}
-	else if (msg->type == MSN_MSG_TEXT)
+	else if (msg->type == MSN_MSG_SLP)
+	{
+		msn_message_ref(msg);
 		msn_transaction_set_timeout_cb(trans, msg_timeout);
+#if 0
+		if (msg->ack_cb != NULL)
+		{
+			msn_transaction_add_cb(trans, "ACK", msg_ack);
+			msn_transaction_add_cb(trans, "NAK", msg_nak);
+		}
+#endif
+	}
 
 	trans->payload = payload;
 	trans->payload_len = payload_len;
@@ -624,7 +862,7 @@ connect_cb(MsnServConn *servconn)
 	swboard = servconn->data;
 	g_return_if_fail(swboard != NULL);
 
-	swboard->user_joined = TRUE;
+	swboard->empty = FALSE;
 
 	if (msn_switchboard_is_invited(swboard))
 	{
@@ -651,138 +889,29 @@ disconnect_cb(MsnServConn *servconn)
 	msn_switchboard_destroy(swboard);
 }
 
-void
-msn_switchboard_init(void)
+gboolean
+msn_switchboard_connect(MsnSwitchBoard *swboard, const char *host, int port)
 {
-	cbs_table = msn_table_new();
+	g_return_val_if_fail(swboard != NULL, FALSE);
 
-	msn_table_add_cmd(cbs_table, "ANS", "ANS", ans_cmd);
-	msn_table_add_cmd(cbs_table, "ANS", "IRO", iro_cmd);
+	msn_servconn_set_connect_cb(swboard->servconn, connect_cb);
 
-	msn_table_add_cmd(cbs_table, "MSG", "ACK", ack_cmd);
-	msn_table_add_cmd(cbs_table, "MSG", "NAK", nak_cmd);
-
-	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
-
-	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
-	msn_table_add_cmd(cbs_table, NULL, "JOI", joi_cmd);
-	msn_table_add_cmd(cbs_table, NULL, "BYE", bye_cmd);
-	msn_table_add_cmd(cbs_table, NULL, "OUT", out_cmd);
-
-#if 0
-	/* They might skip the history */
-	msn_table_add_cmd(cbs_table, NULL, "ACK", NULL);
-#endif
-
-	msn_table_add_error(cbs_table, "MSG", msg_error);
-	msn_table_add_error(cbs_table, "CAL", cal_error);
-
-	/* Register the message type callbacks. */
-	msn_table_add_msg_type(cbs_table, "text/plain",
-						   plain_msg);
-	msn_table_add_msg_type(cbs_table, "text/x-msmsgscontrol",
-						   control_msg);
-	msn_table_add_msg_type(cbs_table, "text/x-clientcaps",
-						   clientcaps_msg);
-	msn_table_add_msg_type(cbs_table, "text/x-clientinfo",
-						   clientcaps_msg);
-	msn_table_add_msg_type(cbs_table, "application/x-msnmsgrp2p",
-						   msn_p2p_msg);
-	msn_table_add_msg_type(cbs_table, "text/x-mms-emoticon",
-						   msn_emoticon_msg);
-#if 0
-	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
-						   msn_invite_msg);
-#endif
+	return msn_servconn_connect(swboard->servconn, host, port);
 }
 
 void
-msn_switchboard_end(void)
+msn_switchboard_disconnect(MsnSwitchBoard *swboard)
 {
-	msn_table_destroy(cbs_table);
-}
-
-MsnSwitchBoard *
-msn_switchboard_new(MsnSession *session)
-{
-	MsnSwitchBoard *swboard;
-	MsnServConn *servconn;
-	MsnCmdProc *cmdproc;
-
-	g_return_val_if_fail(session != NULL, NULL);
-
-	swboard = g_new0(MsnSwitchBoard, 1);
-
-	swboard->session = session;
-	swboard->servconn = servconn = msn_servconn_new(session, MSN_SERVER_SB);
-	cmdproc = servconn->cmdproc;
-
-	swboard->im_queue = g_queue_new();
-
-	if (session->http_method)
-		servconn->http_data->server_type = "SB";
-	else
-		msn_servconn_set_connect_cb(servconn, connect_cb);
-
-	msn_servconn_set_disconnect_cb(servconn, disconnect_cb);
-
-	servconn->data = swboard;
-
-	session->switches = g_list_append(session->switches, swboard);
-
-	cmdproc->cbs_table = cbs_table;
-
-	return swboard;
-}
-
-void
-msn_switchboard_destroy(MsnSwitchBoard *swboard)
-{
-	MsnSession *session;
-	MsnMessage *msg;
-	GList *l;
-
 	g_return_if_fail(swboard != NULL);
 
-	if (swboard->destroying)
-		return;
+	msn_servconn_set_disconnect_cb(swboard->servconn, disconnect_cb);
 
-	swboard->destroying = TRUE;
-
-	/* Destroy the message queue */
-	while ((msg = g_queue_pop_head(swboard->im_queue)) != NULL)
-	{
-		if (swboard->error > 0)
-		{
-			/* The messages could not be sent due to an error */
-			msg_error_helper(swboard->servconn->cmdproc, msg);
-		}
-		msn_message_destroy(msg);
-	}
-
-	g_queue_free(swboard->im_queue);
-
-	if (swboard->im_user != NULL)
-		g_free(swboard->im_user);
-
-	if (swboard->auth_key != NULL)
-		g_free(swboard->auth_key);
-
-	if (swboard->session_id != NULL)
-		g_free(swboard->session_id);
-
-	for (l = swboard->users; l != NULL; l = l->next)
-		g_free(l->data);
-
-	session = swboard->session;
-	session->switches = g_list_remove(session->switches, swboard);
-
-	if (swboard->servconn != NULL)
-		msn_servconn_destroy(swboard->servconn);
-
-	g_free(swboard);
+	msn_servconn_disconnect(swboard->servconn);
 }
 
+/**************************************************************************
+ * Call stuff
+ **************************************************************************/
 #if 0
 static void
 got_cal(MsnCmdProc *cmdproc, MsnCommand *cmd)
@@ -797,36 +926,6 @@ got_cal(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_switchboard_add_user(swboard, user);
 }
 #endif
-
-static void
-swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
-{
-	gaim_debug_info("msg", "Error: Unable to call the user %s\n", passport);
-
-	if (swboard->total_users == 0)
-	{
-		swboard->error = reason;
-		msn_switchboard_destroy(swboard);
-	}
-}
-
-static void
-cal_error_helper(MsnTransaction *trans, int reason)
-{
-	MsnSwitchBoard *swboard;
-	const char *passport;
-	char **params;
-
-	params = g_strsplit(trans->params, " ", 0);
-
-	passport = params[0];
-
-	swboard = trans->data;
-
-	swboard_error_helper(swboard, reason, passport);
-
-	g_strfreev(params);
-}
 
 static void
 cal_timeout(MsnCmdProc *cmdproc, MsnTransaction *trans)
@@ -867,75 +966,9 @@ msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user)
 		msn_cmdproc_queue_trans(cmdproc, trans);
 }
 
-void
-msn_switchboard_set_auth_key(MsnSwitchBoard *swboard, const char *key)
-{
-	g_return_if_fail(swboard != NULL);
-	g_return_if_fail(key != NULL);
-
-	swboard->auth_key = g_strdup(key);
-}
-
-const char *
-msn_switchboard_get_auth_key(MsnSwitchBoard *swboard)
-{
-	g_return_val_if_fail(swboard != NULL, NULL);
-
-	return swboard->auth_key;
-}
-
-void
-msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id)
-{
-	g_return_if_fail(swboard != NULL);
-	g_return_if_fail(id != NULL);
-
-	if (swboard->session_id != NULL)
-		g_free(swboard->session_id);
-
-	swboard->session_id = g_strdup(id);
-}
-
-const char *
-msn_switchboard_get_session_id(MsnSwitchBoard *swboard)
-{
-	g_return_val_if_fail(swboard != NULL, NULL);
-
-	return swboard->session_id;
-}
-
-void
-msn_switchboard_set_invited(MsnSwitchBoard *swboard, gboolean invited)
-{
-	g_return_if_fail(swboard != NULL);
-
-	swboard->invited = invited;
-}
-
-gboolean
-msn_switchboard_is_invited(MsnSwitchBoard *swboard)
-{
-	g_return_val_if_fail(swboard != NULL, FALSE);
-
-	return swboard->invited;
-}
-
-gboolean
-msn_switchboard_connect(MsnSwitchBoard *swboard, const char *host, int port)
-{
-	g_return_val_if_fail(swboard != NULL, FALSE);
-
-	return msn_servconn_connect(swboard->servconn, host, port);
-}
-
-void
-msn_switchboard_disconnect(MsnSwitchBoard *swboard)
-{
-	g_return_if_fail(swboard != NULL);
-
-	msn_servconn_disconnect(swboard->servconn);
-}
-
+/**************************************************************************
+ * Create & Transfer stuff
+ **************************************************************************/
 static void
 got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -960,7 +993,7 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		servconn = swboard->servconn;
 		account = session->account;
 
-		swboard->user_joined = TRUE;
+		swboard->empty = FALSE;
 
 		servconn->http_data->gateway_host = g_strdup(host);
 
@@ -1018,4 +1051,58 @@ msn_switchboard_request(MsnSwitchBoard *swboard)
 	msn_transaction_set_error_cb(trans, xfr_error);
 
 	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+/**************************************************************************
+ * Init stuff
+ **************************************************************************/
+void
+msn_switchboard_init(void)
+{
+	cbs_table = msn_table_new();
+
+	msn_table_add_cmd(cbs_table, "ANS", "ANS", ans_cmd);
+	msn_table_add_cmd(cbs_table, "ANS", "IRO", iro_cmd);
+
+	msn_table_add_cmd(cbs_table, "MSG", "ACK", ack_cmd);
+	msn_table_add_cmd(cbs_table, "MSG", "NAK", nak_cmd);
+
+	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
+
+	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "JOI", joi_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "BYE", bye_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "OUT", out_cmd);
+
+#if 0
+	/* They might skip the history */
+	msn_table_add_cmd(cbs_table, NULL, "ACK", NULL);
+#endif
+
+	msn_table_add_error(cbs_table, "MSG", msg_error);
+	msn_table_add_error(cbs_table, "CAL", cal_error);
+
+	/* Register the message type callbacks. */
+	msn_table_add_msg_type(cbs_table, "text/plain",
+						   plain_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-msmsgscontrol",
+						   control_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-clientcaps",
+						   clientcaps_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-clientinfo",
+						   clientcaps_msg);
+	msn_table_add_msg_type(cbs_table, "application/x-msnmsgrp2p",
+						   msn_p2p_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-mms-emoticon",
+						   msn_emoticon_msg);
+#if 0
+	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
+						   msn_invite_msg);
+#endif
+}
+
+void
+msn_switchboard_end(void)
+{
+	msn_table_destroy(cbs_table);
 }

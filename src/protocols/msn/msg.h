@@ -32,7 +32,7 @@ typedef struct _MsnMessage MsnMessage;
 #include "command.h"
 #include "transaction.h"
 
-typedef void (*MsnCb)(void *data);
+typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
 /*
 typedef enum
@@ -53,6 +53,16 @@ typedef enum
 	MSN_MSG_SLP
 
 } MsnMsgType;
+
+typedef enum
+{
+	MSN_MSG_ERROR_NONE, /**< No error. */
+	MSN_MSG_ERROR_TIMEOUT, /**< The message timedout. */
+	MSN_MSG_ERROR_NAK, /**< The message could not be sent. */
+	MSN_MSG_ERROR_SB, /**< The error comes from the switchboard. */
+	MSN_MSG_ERROR_UNKNOWN /**< An unknown error occured. */
+
+} MsnMsgErrorType;
 
 typedef struct
 {
@@ -102,8 +112,13 @@ struct _MsnMessage
 	MsnCommand *cmd;
 	MsnTransaction *trans;
 
-	MsnCb ack_cb;
-	void *ack_data;
+	MsnMsgCb ack_cb; /**< The callback to call when we receive an ACK of this
+					message. */
+	MsnMsgCb nak_cb; /**< The callback to call when we receive a NAK of this
+					message. */
+	void *ack_data; /**< The data used by callbacks. */
+
+	MsnMsgErrorType error; /**< The error of the message. */
 };
 
 /**

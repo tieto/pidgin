@@ -30,7 +30,7 @@ typedef struct _MsnTable MsnTable;
 #include "transaction.h"
 #include "msg.h"
 
-typedef void (*MsnMsgCb)(MsnCmdProc *cmdproc, MsnMessage *msg);
+typedef void (*MsnMsgTypeCb)(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 struct _MsnTable
 {
@@ -48,6 +48,6 @@ void msn_table_destroy(MsnTable *table);
 void msn_table_add_cmd(MsnTable *table, char *command, char *answer,
 					   MsnTransCb cb);
 void msn_table_add_error(MsnTable *table, char *answer, MsnErrorCb cb);
-void msn_table_add_msg_type(MsnTable *table, char *type, MsnMsgCb cb);
+void msn_table_add_msg_type(MsnTable *table, char *type, MsnMsgTypeCb cb);
 
 #endif /* _MSN_TABLE_H_ */

@@ -222,7 +222,7 @@ msn_cmdproc_process_payload(MsnCmdProc *cmdproc, char *payload,
 void
 msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	MsnMsgCb cb;
+	MsnMsgTypeCb cb;
 
 	if (msn_message_get_content_type(msg) == NULL)
 	{

@@ -1350,6 +1350,9 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 					/* Ignore blank lines */
 				} else {
 					/* Special reasons, aka images being put in via other tag, etc. */
+					/* ... don't pretend we handled it if we didn't */
+					gtk_drag_finish(dc, FALSE, FALSE, t);
+					return;
 				}
 			}
 			break;

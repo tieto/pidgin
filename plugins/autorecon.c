@@ -108,14 +108,14 @@ static void report_disconnect(GaimConnection *gc, const char *text) {
 			&& gaim_prefs_get_bool(OPT_HIDE_CONNECTED)) {
 		/* this is a connected error, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
-				"hid disconnect error message\n");
+				"hid disconnect error message (%s)\n", text);
 		return;
 
 	} else if(gc->state == GAIM_CONNECTING
 			&& gaim_prefs_get_bool(OPT_HIDE_CONNECTING)) {
 		/* this is a connecting error, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
-			"hid error message while connecting\n");
+			"hid error message while connecting (%s)\n", text);
 		return;
 	}
 

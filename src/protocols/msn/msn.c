@@ -757,9 +757,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		session = gc->proto_data;
 		swboard = msn_session_get_swboard(session, who);
 
-
-		if (!g_queue_is_empty(swboard->im_queue) ||
-			!swboard->user_joined)
+		if (!g_queue_is_empty(swboard->im_queue) || swboard->empty)
 		{
 			msn_switchboard_queue_msg(swboard, msg);
 		}
@@ -767,7 +765,6 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		{
 			msn_switchboard_send_msg(swboard, msg);
 		}
-
 	}
 	else
 	{
@@ -824,7 +821,7 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 	if (swboard == NULL)
 		return 0;
 
-	if (!swboard->user_joined)
+	if (swboard->empty)
 		return 0;
 
 	msg = msn_message_new(MSN_MSG_TYPING);
@@ -834,7 +831,16 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 						 gaim_account_get_username(account));
 	msn_message_set_bin_data(msg, "\r\n", 2);
 
-	msn_switchboard_send_msg(swboard, msg);
+	swboard = msn_session_get_swboard(session, who);
+
+	if (!g_queue_is_empty(swboard->im_queue) || swboard->empty)
+	{
+		msn_switchboard_queue_msg(swboard, msg);
+	}
+	else
+	{
+		msn_switchboard_send_msg(swboard, msg);
+	}
 
 	msn_message_destroy(msg);
 
@@ -1155,29 +1161,29 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 	if (swboard == NULL)
 		return -EINVAL;
 
-	if (swboard->ready)
+	if (!swboard->ready)
+		return 0;
+
+	msn_import_html(message, &msgformat, &msgtext);
+
+	if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
 	{
-		msn_import_html(message, &msgformat, &msgtext);
-
-		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
-		{
-			g_free(msgformat);
-			g_free(msgtext);
-
-			return -E2BIG;
-		}
-
-		msg = msn_message_new_plain(msgtext);
-		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
-		msn_switchboard_send_msg(swboard, msg);
-		msn_message_destroy(msg);
-
 		g_free(msgformat);
 		g_free(msgtext);
 
-		serv_got_chat_in(gc, id, gaim_account_get_username(account), 0,
-						 message, time(NULL));
+		return -E2BIG;
 	}
+
+	msg = msn_message_new_plain(msgtext);
+	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+	msn_switchboard_send_msg(swboard, msg);
+	msn_message_destroy(msg);
+
+	g_free(msgformat);
+	g_free(msgtext);
+
+	serv_got_chat_in(gc, id, gaim_account_get_username(account), 0,
+					 message, time(NULL));
 
 	return 0;
 }

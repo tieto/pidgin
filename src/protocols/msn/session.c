@@ -25,8 +25,6 @@
 #include "session.h"
 #include "notification.h"
 
-#include "slplink.h"
-
 #include "dialog.h"
 
 MsnSession *

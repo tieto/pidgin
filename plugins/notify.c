@@ -224,6 +224,9 @@ static gboolean
 chat_recv_im(GaimAccount *account, char *sender, char *message,
              GaimConversation *conv, int *flags)
 {
+	if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), sender))
+			return FALSE;
+
 	notify(conv, TRUE);
 
 	return FALSE;

@@ -117,7 +117,7 @@ msn_table_add_error(MsnTable *table,
 
 void
 msn_table_add_msg_type(MsnTable *table,
-					   char *type, MsnMsgCb cb)
+					   char *type, MsnMsgTypeCb cb)
 {
 	g_return_if_fail(table != NULL);
 	g_return_if_fail(type  != NULL);

@@ -32,10 +32,86 @@ msn_message_new(MsnMsgType type)
 	msg = g_new0(MsnMessage, 1);
 	msg->type = type;
 
+#ifdef MSN_DEBUG_MSG
+	gaim_debug_info("msn", "message new (%p)(%d)\n", msg, type);
+#endif
+
 	msg->attr_table = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, g_free);
 
 	msn_message_ref(msg);
+
+	return msg;
+}
+
+void
+msn_message_destroy(MsnMessage *msg)
+{
+	g_return_if_fail(msg != NULL);
+
+	if (msg->ref_count > 0)
+	{
+		msn_message_unref(msg);
+
+		return;
+	}
+
+#ifdef MSN_DEBUG_MSG
+	gaim_debug_info("msn", "message destroy (%p)\n", msg);
+#endif
+
+	if (msg->remote_user != NULL)
+		g_free(msg->remote_user);
+
+	if (msg->body != NULL)
+		g_free(msg->body);
+
+	if (msg->content_type != NULL)
+		g_free(msg->content_type);
+
+	if (msg->charset != NULL)
+		g_free(msg->charset);
+
+	g_hash_table_destroy(msg->attr_table);
+	g_list_free(msg->attr_list);
+
+	g_free(msg);
+}
+
+MsnMessage *
+msn_message_ref(MsnMessage *msg)
+{
+	g_return_val_if_fail(msg != NULL, NULL);
+
+	msg->ref_count++;
+
+#ifdef MSN_DEBUG_MSG
+	gaim_debug_info("msn", "message ref (%p)[%d]\n", msg, msg->ref_count);
+#endif
+
+	return msg;
+}
+
+MsnMessage *
+msn_message_unref(MsnMessage *msg)
+{
+	g_return_val_if_fail(msg != NULL, NULL);
+
+	if (msg->ref_count <= 0)
+		return NULL;
+
+	msg->ref_count--;
+
+#ifdef MSN_DEBUG_MSG
+	gaim_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
+#endif
+
+	if (msg->ref_count == 0)
+	{
+		msn_message_destroy(msg);
+
+		return NULL;
+	}
 
 	return msg;
 }
@@ -237,66 +313,6 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 	msg->remote_user = g_strdup(cmd->params[0]);
 	/* msg->size = atoi(cmd->params[2]); */
 	msg->cmd = cmd;
-
-	return msg;
-}
-
-void
-msn_message_destroy(MsnMessage *msg)
-{
-	g_return_if_fail(msg != NULL);
-
-	if (msg->ref_count > 0)
-	{
-		msn_message_unref(msg);
-
-		return;
-	}
-
-	if (msg->remote_user != NULL)
-		g_free(msg->remote_user);
-
-	if (msg->body != NULL)
-		g_free(msg->body);
-
-	if (msg->content_type != NULL)
-		g_free(msg->content_type);
-
-	if (msg->charset != NULL)
-		g_free(msg->charset);
-
-	g_hash_table_destroy(msg->attr_table);
-	g_list_free(msg->attr_list);
-
-	g_free(msg);
-}
-
-MsnMessage *
-msn_message_ref(MsnMessage *msg)
-{
-	g_return_val_if_fail(msg != NULL, NULL);
-
-	msg->ref_count++;
-
-	return msg;
-}
-
-MsnMessage *
-msn_message_unref(MsnMessage *msg)
-{
-	g_return_val_if_fail(msg != NULL, NULL);
-
-	if (msg->ref_count <= 0)
-		return NULL;
-
-	msg->ref_count--;
-
-	if (msg->ref_count == 0)
-	{
-		msn_message_destroy(msg);
-
-		return NULL;
-	}
 
 	return msg;
 }
@@ -691,7 +707,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->msnslp_header.ack_sub_id);
 		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->msnslp_header.ack_size);
 
-#ifdef DEBUG_SLP_VERBOSE
+#ifdef MSN_DEBUG_SLP_VERBOSE
 		if (body != NULL)
 		{
 			if (text_body)

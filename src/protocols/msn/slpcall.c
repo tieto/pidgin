@@ -68,27 +68,6 @@ msn_slp_call_new(MsnSlpLink *slplink)
 }
 
 void
-msn_slp_call_init(MsnSlpCall *slpcall, MsnSlpCallType type)
-{
-	slpcall->session_id = rand() % 0xFFFFFF00 + 4;
-	slpcall->id = rand_guid();
-	slpcall->type = type;
-}
-
-void
-msn_slp_call_session_init(MsnSlpCall *slpcall)
-{
-	MsnSlpSession *slpsession;
-
-	slpsession = msn_slp_session_new(slpcall);
-
-	if (slpcall->session_init_cb)
-		slpcall->session_init_cb(slpsession);
-
-	slpcall->started = TRUE;
-}
-
-void
 msn_slp_call_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
@@ -117,20 +96,38 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 
 		g_return_if_fail(slpmsg != NULL);
 
+		gaim_debug_info("msn", "slpcall destroy: tryping slp_msg (%p)\n",
+						slpmsg);
+
 		if (slpmsg->slpcall == slpcall)
-		{
-#if 1
 			msn_slpmsg_destroy(slpmsg);
-#else
-			slpmsg->wasted = TRUE;
-#endif
-		}
 	}
 
 	if (slpcall->end_cb != NULL)
 		slpcall->end_cb(slpcall);
 
 	g_free(slpcall);
+}
+
+void
+msn_slp_call_init(MsnSlpCall *slpcall, MsnSlpCallType type)
+{
+	slpcall->session_id = rand() % 0xFFFFFF00 + 4;
+	slpcall->id = rand_guid();
+	slpcall->type = type;
+}
+
+void
+msn_slp_call_session_init(MsnSlpCall *slpcall)
+{
+	MsnSlpSession *slpsession;
+
+	slpsession = msn_slp_session_new(slpcall);
+
+	if (slpcall->session_init_cb)
+		slpcall->session_init_cb(slpsession);
+
+	slpcall->started = TRUE;
 }
 
 void
@@ -164,7 +161,7 @@ msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 
 	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header, slpcall->branch,
 								"application/x-msnmsgr-sessionreqbody", content);
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP INVITE";
 	slpmsg->text_body = TRUE;
 #endif

@@ -205,7 +205,7 @@ send_ok(MsnSlpCall *slpcall, const char *branch,
 								"MSNSLP/1.0 200 OK",
 								branch, type, content);
 
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP 200 OK";
 	slpmsg->text_body = TRUE;
 #endif
@@ -229,7 +229,7 @@ send_decline(MsnSlpCall *slpcall, const char *branch,
 								"MSNSLP/1.0 603 Decline",
 								branch, type, content);
 
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP 603 Decline";
 	slpmsg->text_body = TRUE;
 #endif
@@ -295,19 +295,21 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		/* DATA PREP */
 		slpmsg = msn_slpmsg_new(slplink);
+		slpmsg->slpcall = slpcall;
 		slpmsg->slpsession = slpsession;
 		slpmsg->session_id = slpsession->id;
 		msn_slpmsg_set_body(slpmsg, NULL, 4);
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA PREP";
 #endif
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
 
 		/* DATA */
 		slpmsg = msn_slpmsg_new(slplink);
+		slpmsg->slpcall = slpcall;
 		slpmsg->slpsession = slpsession;
 		slpmsg->flags = 0x20;
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA";
 #endif
 		msn_slpmsg_open_file(slpmsg, file_name);
@@ -383,7 +385,7 @@ send_bye(MsnSlpCall *slpcall, const char *type)
 								"\r\n");
 	g_free(header);
 
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP BYE";
 	slpmsg->text_body = TRUE;
 #endif
@@ -553,7 +555,7 @@ got_ok(MsnSlpCall *slpcall,
 										"application/x-msnmsgr-transreqbody",
 										content);
 
-#ifdef DEBUG_SLP
+#ifdef MSN_DEBUG_SLP
 			slpmsg->info = "SLP INVITE";
 			slpmsg->text_body = TRUE;
 #endif
