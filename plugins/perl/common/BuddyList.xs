@@ -80,7 +80,7 @@ void
 groups()
 PREINIT:
 	GaimBlistNode *node;
-CODE:
+PPCODE:
 	if (gaim_get_blist() != NULL)
 	{
 		for (node = gaim_get_blist()->root; node != NULL; node = node->next)
