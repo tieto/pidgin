@@ -44,6 +44,7 @@ what shared memory is for.
 
 When your plugin gets unloaded, gaim will try to call gaim_plugin_remove(). It
 doesn't have to be there, but it's nice if, say, you create a window, and when
-the plugin gets unloaded, it removes the window.
+the plugin gets unloaded, it removes the window. Also, all the callbacks you
+have attached to gaim signals will be removed.
 
 There are a few examples in this directory. Enjoy.
