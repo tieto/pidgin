@@ -246,8 +246,21 @@ gaim_plugin_probe(const char *filename)
 			plugin->info->major_version != GAIM_MAJOR_VERSION ||
 			plugin->info->minor_version > GAIM_MINOR_VERSION)
 	{
-		gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d.%d.x (need %d.%d.x)\n",
-				   plugin->path, plugin->info->major_version, plugin->info->minor_version, GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION);
+		gaim_debug_error("plugins", "%s is unloadable: API version mismatch %d.%d.x (need %d.%d.x)\n",
+						 plugin->path, plugin->info->major_version, plugin->info->minor_version,
+						 GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION);
+		gaim_plugin_destroy(plugin);
+		return NULL;
+	}
+
+	/* If plugin is a PRPL, make sure it implements the required functions */
+	if ((plugin->info->type == GAIM_PLUGIN_PROTOCOL) && (
+		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon == NULL) ||
+		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->login == NULL) ||
+		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->close == NULL)))
+	{
+		gaim_debug_error("plugins", "%s is unloadable: Does not implement all required functions\n",
+						 plugin->path);
 		gaim_plugin_destroy(plugin);
 		return NULL;
 	}
