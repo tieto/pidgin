@@ -10,6 +10,7 @@ Build:
 
 ./configure ; make 
 for the stock version.  ./configure --help to see what option you can get.
+You need to use gmake, BSD make will not work.
 
 You need GTK 1.2.3.  I don't wanna hear about it, if you can't get it to
 work under a lower version.
