@@ -43,8 +43,16 @@ fi
 echo "Generating configuration files for Gaim, please wait...."
 echo;
 
+# Backup the po/ChangeLog. This should prevent the annoying
+# gettext ChangeLog modifications.
+
+cp -p po/ChangeLog po/ChangeLog.save
+
 echo "Running gettextize, please ignore non-fatal messages...."
 $SETUP_GETTEXT
+
+# Restore the po/ChangeLog file.
+mv po/ChangeLog.save po/ChangeLog
 
 echo "Running libtoolize, please ignore non-fatal messages...."
 echo n | libtoolize --copy --force || exit;
