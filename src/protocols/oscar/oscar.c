@@ -2866,6 +2866,7 @@ static char *oscar_tooltip_text(struct buddy *b) {
 		char *caps = caps_string(bi->caps);
 		char *time = asctime(localtime(&bi->signon));
 		*(strchr(time, '\n')) = '\0';
+debug_printf("caps_string of %d is %s\n", bi->caps, caps);
 		return g_strdup_printf(_("<b>Online Since:</b> %s%s%s"), 
 				       time, 
 				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
