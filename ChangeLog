@@ -1,5 +1,12 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
+version 0.73cvs:
+	* New Logging format and code:
+		* fixes i18n issues with logs
+		* compatable with old logs
+		* hopefully fixes segfault in viewing logs
+	* German translation updated (Bjoern Voigt)
+
 version 0.72 (10/31/2003):
 	* Added a search feature to conversations.
 	* Added an option to remove the formatting toolbar, both globally and
@@ -13,7 +20,7 @@ version 0.72 (10/31/2003):
 	  connect.
 	* Fixed a crash when deleting an account that has IMs or chats open.
 	  Closes bug #821630.
-	* Smileys have background colors  
+	* Smileys have background colors
 	* If SSL is not enabled, MSN will load, but error on connect.
 	* Disable Jabber SASL auth until the standard stabilizes
 	* Chinese (Simplified) translation updated (Funda Wang)
