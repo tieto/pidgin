@@ -1064,6 +1064,8 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_blist_save();
 	}
 
+	gaim_blist_update_buddy_idle(b, idle);
+
 	if (!b->idle && idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE);
 		gaim_event_broadcast(event_buddy_idle, gc, b->name);
@@ -1075,7 +1077,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 
-	gaim_blist_update_buddy_idle(b, idle);
 	gaim_blist_update_buddy_evil(b, evil);
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
