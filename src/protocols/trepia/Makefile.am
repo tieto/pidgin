@@ -1,7 +1,6 @@
 pkgdir = $(libdir)/gaim
 
 TREPIASOURCES = \
-	md5.h \
 	profile.c \
 	profile.h \
 	trepia.c

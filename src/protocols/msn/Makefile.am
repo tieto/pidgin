@@ -1,6 +1,5 @@
 EXTRA_DIST = \
 		PROTOCOL \
-		md5.h \
 		Makefile.mingw
 
 pkgdir = $(libdir)/gaim
@@ -12,7 +11,6 @@ MSNSOURCES = \
 	error.h \
 	group.c \
 	group.h \
-	md5.h \
 	msg.c \
 	msg.h \
 	msn.c \

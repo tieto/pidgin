@@ -5,7 +5,6 @@ pkgdir = $(libdir)/gaim
 
 YAHOOSOURCES = \
 	crypt.c \
-	md5.h \
 	yahoo.h \
 	yahoochat.h \
 	yahoo.c \
