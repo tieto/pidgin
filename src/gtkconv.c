@@ -124,6 +124,7 @@ static void add_chat_buddy_common(struct gaim_conversation *conv,
 								  const char *name, int pos);
 static void tab_complete(struct gaim_conversation *conv);
 static void update_send_as_selection(struct gaim_window *win);
+static char *item_factory_translate_func (const char *path, gpointer func_data);
 
 /**************************************************************************
  * Callbacks
@@ -2423,8 +2424,14 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
 };
 
-static const int menu_item_count =
+static const int menu_item_count = 
 	sizeof(menu_items) / sizeof(*menu_items);
+
+static char *
+item_factory_translate_func (const char *path, gpointer func_data)
+{
+	return _(path);
+}
 
 static GtkWidget *
 setup_menubar(struct gaim_window *win)
@@ -2440,6 +2447,10 @@ setup_menubar(struct gaim_window *win)
 
 	item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", NULL);
 
+	gtk_item_factory_set_translate_func (item_factory,
+					     item_factory_translate_func,
+					     NULL, NULL);
+	
 	gtk_item_factory_create_items(item_factory, menu_item_count,
 								  menu_items, win);
 
