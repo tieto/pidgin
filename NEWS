@@ -16,6 +16,14 @@
 	Gaim in ways nothing like you. You'll find that the answer will
 	usually be that the preference isn't all that important.
 
+	Tim: I continued with the other crazy patch writers in fixing those
+	WYSIWYG bugs. Then they went and made me a developer. Which is cool.
+	They told me I could commit WYSIWYG and Yahoo! changes. So I went
+	and fixed IM Image and Direct Connect in AIM for some reason. I also
+	added some new Yahoo! smileys at least. I might work on some of
+	those new Yahoo! features for next release, like buddy icons. But
+	don't count on it.
+
 0.77 (04/22/2004):
 	Sean: We're back to a somewhat regular release cycle now.  Hooray!
 	WYSIWYG is much improved in this release, and you can now copy and paste
