@@ -49,6 +49,7 @@
 
 #include "gaim.h"
 #include "sound.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -181,7 +182,7 @@ void gaim_sound_play_file(char *filename)
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
 		char *tmp = g_strdup_printf(_("Unable to play sound because the chosen file (%s) does not exist."), filename);
-		do_error_dialog(tmp, NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL, tmp, NULL);
 		g_free(tmp);
 		return;
 	}
@@ -192,7 +193,10 @@ void gaim_sound_play_file(char *filename)
 		GError *error = NULL;
 
 		if(!sound_cmd) {
-			do_error_dialog(_("Unable to play sound because the 'Command' sound method has been chosen, but no command has been set."), NULL, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL,
+							  _("Unable to play sound because the "
+								"'Command' sound method has been chosen, "
+								"but no command has been set."), NULL);
 			return;
 		}
 
@@ -200,7 +204,7 @@ void gaim_sound_play_file(char *filename)
 
 		if(!g_spawn_command_line_async(command, &error)) {
 			char *tmp = g_strdup_printf(_("Unable to play sound because the configured sound command could not be launched: %s"), error->message);
-			do_error_dialog(tmp, NULL, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL, tmp, NULL);
 			g_free(tmp);
 			g_error_free(error);
 		}

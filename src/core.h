@@ -56,6 +56,7 @@ struct buddy;
 #include "privacy.h"
 #include "plugin.h"
 #include "event.h"
+#include "notify.h"
 
 /* Really user states are controlled by the PRPLs now. We just use this for event_away */
 #define UC_UNAVAILABLE  1

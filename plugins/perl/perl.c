@@ -107,6 +107,7 @@ struct _perl_timeout_handlers {
 	GaimPlugin *plug;
 };
 
+static GaimPlugin *my_plugin = NULL;
 static GList *perl_list = NULL;
 static GList *perl_timeout_handlers = NULL;
 static GList *perl_event_handlers = NULL;
@@ -658,7 +659,7 @@ XS (XS_GAIM_print)
 
 	title = SvPV(ST(0), junk);
 	message = SvPV(ST(1), junk);
-	do_error_dialog(title, message, GAIM_INFO);
+	gaim_dialog_info(my_plugin, NULL, title, message);
 	XSRETURN(0);
 }
 
@@ -1392,6 +1393,8 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
+	my_plugin = plugin;
+
 	loader_info.exts = g_list_append(loader_info.exts, "pl");
 }
 

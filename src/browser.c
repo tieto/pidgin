@@ -49,6 +49,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
 #include "gaim.h"
+#include "notify.h"
 
 #ifndef _WIN32
 
@@ -424,8 +425,9 @@ static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated,
 	unsigned char *data = 0;
 
 	if (window == NULL || GDK_WINDOW_OBJECT(window)->destroyed) {
-		do_error_dialog(_("Communication with the browser failed.  Please close all "
-					      "windows and try again."), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("Communication with the browser failed. "
+							"Please close all windows and try again."), NULL);
 		gaim_debug(GAIM_DEBUG_WARNING, "browser",
 				   "netscape_response_cb called with NULL window.\n");
 		return GDK_FILTER_CONTINUE;
@@ -451,8 +453,9 @@ static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated,
 							 &data) != Success 
 		|| data == NULL || (data[0] != '1' && data[0] != '2')) {
 
-		do_error_dialog(_("Communication with the browser failed.  Please close all "
-					      "windows and try again."), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("Communication with the browser failed. "
+							"Please close all windows and try again."), NULL);
 	} 
 
     if (data[0] == '1') {
@@ -584,7 +587,11 @@ void open_url(GtkWidget *w, char *url)
 			char *space_free_url = NULL;
 
 			if (!web_command[0]) {
-				do_error_dialog(_("Unable to launch your browser because the 'Manual' browser command has been chosen, but no command has been set."), NULL, GAIM_ERROR);
+				gaim_notify_error(NULL, NULL,
+								  _("Unable to launch your browser because "
+									"the 'Manual' browser command has been "
+									"chosen, but no command has been set."),
+								  NULL);
 				return;
 			}
 
@@ -600,7 +607,7 @@ void open_url(GtkWidget *w, char *url)
 
 	if (g_spawn_command_line_async(command, &error) == FALSE) {
 		char *tmp = g_strdup_printf(_("There was an error launching your chosen browser: %s"), error->message);
-		do_error_dialog(tmp, NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL, tmp, NULL);
 		g_free(tmp);
 		g_error_free(error);
  	}

@@ -27,6 +27,7 @@
 #include "multi.h"
 #include "gaim.h"
 #include "conversation.h"
+#include "notify.h"
 #include "gtkblist.h"
 #include "gaim-disclosure.h"
 
@@ -302,6 +303,38 @@ static void add_columns(GtkWidget *treeview)
 	*/
 }
 
+static void
+__rows_reordered_cb(GtkTreeModel *model, GtkTreePath *arg1,
+					GtkTreeIter *arg2, int *new_order, gpointer user_data)
+{
+	GSList *accounts = gaim_accounts;
+	GSList *new_accounts = NULL;
+	struct gaim_account **account_array;
+	int count, i;
+
+	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Reordering accounts\n");
+
+	count = g_slist_length(accounts);
+
+	/* Grr. */
+	account_array = g_new(struct gaim_account *, count);
+
+	/* I hate this. */
+	for (i = 0; i < count; i++, accounts = accounts->next)
+		account_array[new_order[i]] = accounts->data;
+
+	/* I hate this too. */
+	for (i = 0; i < count; i++)
+		new_accounts = g_slist_append(new_accounts, account_array[i]);
+
+	gaim_accounts = new_accounts;
+
+	g_slist_free(accounts);
+	g_free(account_array);
+
+	save_prefs();
+}
+
 static GtkWidget *generate_list()
 {
 	GtkWidget *win;
@@ -330,6 +363,9 @@ static GtkWidget *generate_list()
 
 	regenerate_user_list();
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW(treeview), TRUE);
+	g_signal_connect(G_OBJECT(model), "rows-reordered",
+					 G_CALLBACK(__rows_reordered_cb), NULL);
+
 	gtk_widget_show(win);
 	return win;
 }
@@ -1416,17 +1452,21 @@ static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
 		signoff(account->gc);
 	} else {
 		if (account->protocol == GAIM_PROTO_TOC)
-			do_error_dialog(_("TOC not found."), 
-					_("You have attempted to login an IM account using the "
-					 "TOC protocol.  Because this protocol is inferior to "
-					 "OSCAR, it is now compiled as a plugin by default.  "
-					 "To login, edit this account to use OSCAR or load the "
-					  "TOC plugin."), GAIM_ERROR);
+			gaim_notify_error(NULL, NULL,
+							  _("TOC not found."),
+							  _("You have attempted to login an IM account "
+								"using the TOC protocol.  Because this "
+								"protocol is inferior to OSCAR, it is now "
+								"compiled as a plugin by default. To login, "
+								"edit this account to use OSCAR or load the "
+								"TOC plugin."));
 		else
-			do_error_dialog(_("Protocol not found."), 
-					_("You cannot log this account in; you do not have "
-					  "the protocol it uses loaded, or the protocol does "
-					  "not have a login function."), GAIM_ERROR);
+			gaim_notify_error(NULL, NULL,
+							  _("Protocol not found."),
+							  _("You cannot log this account in; you do "
+								"not have the protocol it uses loaded, or "
+								"the protocol does not have a login "
+								"function."));
 	}
 }
 
@@ -1967,7 +2007,7 @@ static struct kick_dlg *find_kick_dlg(struct gaim_account *account)
 	return NULL;
 }
 
-static void set_kick_null(GtkObject *obj, struct kick_dlg *k)
+static void set_kick_null(struct kick_dlg *k)
 {
 	kicks = g_slist_remove(kicks, k);
 	g_free(k);
@@ -1989,10 +2029,9 @@ static void hide_login_progress_common(struct gaim_connection *gc,
 		gtk_widget_destroy(k->dlg);
 	k = g_new0(struct kick_dlg, 1);
 	k->account = gc->account;
-	k->dlg = do_error_dialog(title, buf, GAIM_ERROR);
+	k->dlg = gaim_notify_message(NULL, GAIM_NOTIFY_MSG_ERROR, NULL,
+								 title, buf, G_CALLBACK(set_kick_null), k);
 	kicks = g_slist_append(kicks, k);
-	g_signal_connect(G_OBJECT(k->dlg), "destroy",
-					 G_CALLBACK(set_kick_null), k);
 	if (meter) {
 		kill_meter(meter);
 		meters = g_slist_remove(meters, meter);

@@ -221,8 +221,8 @@ __nak_cmd(MsnServConn *servconn, const char *command, const char **params,
 	 * TODO: Investigate this, as it seems to occur frequently with
 	 *       the old prpl.
 	 */
-	do_error_dialog(_("An MSN message may not have been received."),
-					NULL, GAIM_ERROR);
+	gaim_notify_error(servconn->session->account->gc, NULL,
+					  _("An MSN message may not have been received."), NULL);
 
 	return TRUE;
 }

@@ -49,6 +49,7 @@
 #include "gtkimhtml.h"
 #include "prpl.h"
 #include "gtkblist.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -486,66 +487,6 @@ void show_confirm_del_group(struct group *g)
 /*------------------------------------------------------------------------*/
 /*  The dialog for getting an error                                       */
 /*------------------------------------------------------------------------*/
-
-GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
-{
-	GtkWidget *d;
-	GtkWidget *label;
-	GtkWidget *img = NULL;
-	GtkWidget *hbox;
-	char labeltext[1024 * 2];
-	const char *name = NULL;
-
-	/* These are the GTK stock dialog icons with our little Gaim logo on top.
-	 * Inspired by the GIMP. */
-	switch (type){
-	case GAIM_LOGO:
-		name = GAIM_STOCK_ICON_ONLINE;
-		break;
-	case GAIM_INFO:
-		name = GAIM_STOCK_DIALOG_INFO;
-		break; 
-	case GAIM_WARNING:
-		name = GAIM_STOCK_DIALOG_WARNING;
-		break;
-	case GAIM_ERROR:
-		name = GAIM_STOCK_DIALOG_ERROR;
-		break;
-	}
-
-	if (name) {
-		img = gtk_image_new_from_stock(name, GTK_ICON_SIZE_DIALOG);
-		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	}
-
-	d = gtk_dialog_new_with_buttons("", NULL, 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
-	g_signal_connect(d, "response", G_CALLBACK(gtk_widget_destroy), NULL);
-
-	gtk_container_set_border_width (GTK_CONTAINER(d), 6);
-	gtk_window_set_resizable(GTK_WINDOW(d), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(d), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(d)->vbox), 12);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(d)->vbox), 6);
-
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(d)->vbox), hbox);
-	if (img) {
-		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	}
-
-	g_snprintf(labeltext, sizeof(labeltext), "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s", primary, secondary ? secondary : "");
-	
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), labeltext);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(d);
-
-	return d;
-}
-
 static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 {
 	const char *who;
@@ -1401,10 +1342,10 @@ void show_add_chat(struct gaim_account *account, struct group *group) {
     }
 
     if (!ac->account) {
-	do_error_dialog(
-		_("You are not currently signed on with any protocols "
-		"that have the ability to chat."), NULL, GAIM_ERROR); 
-	return;
+		gaim_notify_error(NULL, NULL,
+						  _("You are not currently signed on with any "
+							"protocols that have the ability to chat."), NULL);
+		return;
     }
 
 	ac->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -2159,12 +2100,14 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	new2 = gtk_entry_get_text(GTK_ENTRY(b->new2));
 
 	if (g_utf8_collate(new1, new2)) {
-		do_error_dialog(_("New Passwords Do Not Match"), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("New passwords do not match."), NULL);
 		return;
 	}
 
 	if ((strlen(orig) < 1) || (strlen(new1) < 1) || (strlen(new2) < 1)) {
-		do_error_dialog(_("Fill out all fields completely"), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("Fill out all fields completely."), NULL);
 		return;
 	}
 
@@ -3311,9 +3254,11 @@ int check_away_mess(struct create_away *ca, int type)
 	char *msg;
 	if ((strlen(gtk_entry_get_text(GTK_ENTRY(ca->entry))) == 0) && (type == 1)) {
 		/* We shouldn't allow a blank title */
-		do_error_dialog(_("You cannot save an away message with a blank title"), 
-				_("Please give the message a title, or choose \"Use\" to use "
-				  "without saving."), GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("You cannot save an away message with a "
+							"blank title"),
+						  _("Please give the message a title, or choose "
+							"\"Use\" to use without saving."));
 		return 0;
 	}
 
@@ -3321,7 +3266,8 @@ int check_away_mess(struct create_away *ca, int type)
 
 	if (!msg && (type <= 1)) {
 		/* We shouldn't allow a blank message */
-		do_error_dialog(_("You cannot create an empty away message"), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("You cannot create an empty away message"), NULL);
 		return 0;
 	}
 
@@ -3845,14 +3791,14 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 	if ((fp_new = fopen(path, "w")) == NULL) {
 		g_snprintf(error, BUF_LONG,
 			   _("Couldn't write to %s."), path);
-		do_error_dialog(error, strerror(errno), GAIM_ERROR);
+		gaim_notify_error(NULL, NULL, error, strerror(errno));
 		return;
 	}
 
 	if ((fp_old = fopen(filename, "r")) == NULL) {
 		g_snprintf(error, BUF_LONG,
 			   _("Couldn't write to %s."), filename);
-		do_error_dialog(error, strerror(errno), GAIM_ERROR);
+		gaim_notify_error(NULL, NULL, error, strerror(errno));
 		fclose(fp_new);
 		return;
 	}
@@ -3906,7 +3852,7 @@ static void do_clear_log_file(GtkWidget *w, gchar *name)
 
 	if ((remove(filename)) == -1) {
 		g_snprintf(buf, 256, _("Couldn't remove file %s." ), filename);
-		do_error_dialog(buf, strerror(errno), GAIM_ERROR);
+		gaim_notify_error(NULL, NULL, buf, strerror(errno));
 	}
 
 	window = g_object_get_data(G_OBJECT(w), "log_window");
@@ -3979,7 +3925,7 @@ static void log_show_convo(struct view_log *view)
 	if ((fp = fopen(filename, "r")) == NULL) {
 		if (view->name) {
 			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
-			do_error_dialog(buf, strerror(errno), GAIM_ERROR);
+			gaim_notify_error(NULL, NULL, buf, strerror(errno));
 		}
 		/* If the system log doesn't exist.. no message just show empty system log window.
 		   That way user knows that the log is empty :)
@@ -4141,7 +4087,7 @@ void show_log(char *nm)
 		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, normalize(name));
 		if ((fp = fopen(filename, "r")) == NULL) {
 			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s"), filename);
-			do_error_dialog(buf, strerror(errno), GAIM_ERROR);
+			gaim_notify_error(NULL, NULL, buf, strerror(errno));
 			return;
 		}
 

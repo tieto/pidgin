@@ -46,6 +46,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "prpl.h"
 #include "ui.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "wspell.h"
@@ -279,8 +280,8 @@ do_save_icon(GtkObject *obj, struct gaim_conversation *c)
 
 		fclose(file);
 	} else {
-		do_error_dialog("Can't save icon file to disk",
-						strerror(errno), GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("Can't save icon file to disk."), NULL);
 	}
 
 	gtk_widget_destroy(gtkconv->u.im->save_icon);

@@ -131,7 +131,7 @@ __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 		g_snprintf(buf, sizeof(buf), "MSN Error: Unable to parse message\n");
 	}
 
-	do_error_dialog(buf, NULL, GAIM_ERROR);
+	gaim_notify_error(servconn->session->account->gc, NULL, buf, NULL);
 
 	return TRUE;
 }
@@ -1218,9 +1218,8 @@ __system_msg(MsnServConn *servconn, const MsnMessage *msg)
 				break;
 		}
 
-		if (*buf != '\0') {
-			do_error_dialog(buf, NULL, GAIM_INFO);
-		}
+		if (*buf != '\0')
+			gaim_notify_info(servconn->session->account->gc, NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);

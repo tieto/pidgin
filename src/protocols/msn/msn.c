@@ -56,8 +56,8 @@ msn_act_id(gpointer data, char *entry)
 		alias = g_strdup(entry);
 
 	if (strlen(alias) >= BUDDY_ALIAS_MAXLEN) {
-		do_error_dialog(_("Your new MSN friendly name is too long."),
-						NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Your new MSN friendly name is too long."), NULL);
 		return;
 	}
 
@@ -663,7 +663,7 @@ msn_add_permit(struct gaim_connection *gc, const char *who)
 			     "Perhaps you meant %s@hotmail.com. No changes were made "
 				 "to your allow list."), who);
 
-		do_error_dialog(_("Invalid MSN screenname"), buf, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Invalid MSN screenname"), buf);
 		gaim_privacy_permit_remove(gc->account, who);
 
 		return;
@@ -704,7 +704,7 @@ msn_add_deny(struct gaim_connection *gc, const char *who)
 			     "Perhaps you meant %s@hotmail.com. No changes were made "
 				 "to your block list."), who);
 
-		do_error_dialog(_("Invalid MSN screenname"), buf, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Invalid MSN screenname"), buf);
 
 		gaim_privacy_deny_remove(gc->account, who);
 

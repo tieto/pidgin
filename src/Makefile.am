@@ -18,6 +18,8 @@ CORESOURCES = \
 	event.h \
 	ft.c \
 	ft.h \
+	notify.c \
+	notify.h \
 	plugin.c \
 	plugin.h \
 	pounce.c \
@@ -59,6 +61,8 @@ gaim_SOURCES = \
 	gtkft.h \
 	gtkimhtml.c \
 	gtkimhtml.h \
+	gtknotify.c \
+	gtknotify.h \
 	gtkplugin.c \
 	gtkplugin.h \
 	gtkpounce.c \

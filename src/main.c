@@ -50,8 +50,10 @@
 #include "sound.h"
 #include "gaim.h"
 #include "gaim-socket.h"
+#include "notify.h"
 #include "gtkblist.h"
 #include "gtkdebug.h"
+#include "gtknotify.h"
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -178,7 +180,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
 	if (!strlen(username)) {
-		do_error_dialog(_("Please enter your login."), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL, _("Please enter your login."), NULL);
 		return;
 	}
 
@@ -874,6 +876,7 @@ int main(int argc, char *argv[])
 	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
 	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
 	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
+	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
 
 
 	plugin_search_paths[0] = LIBDIR;

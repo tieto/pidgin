@@ -681,8 +681,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			}
 			g_snprintf(snd, sizeof snd, "toc_init_done");
 			sflap_send(gc, snd, -1, TYPE_DATA);
-			do_error_dialog(_("TOC has come back from its pause. You may now send"
-					  " messages again."), NULL, GAIM_INFO);
+			gaim_notify_info(gc, NULL,
+							 _("TOC has come back from its pause. You may "
+							   "now send messages again."), NULL);
 		}
 	} else if (!g_ascii_strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
@@ -755,7 +756,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type);
 	} else if (!g_ascii_strcasecmp(c, "ERROR")) {
-		do_error_dialog(show_error_message(), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, show_error_message(), NULL);
 	} else if (!g_ascii_strcasecmp(c, "EVILED")) {
 		int lev;
 		char *name;
@@ -853,7 +854,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			gaim_conversation_set_account(b, NULL);
 			g_snprintf(error_buf, sizeof error_buf, _("You have been disconnected"
 								  " from chat room %s."), b->name);
-			do_error_dialog(error_buf, NULL, GAIM_ERROR);
+			gaim_notify_error(gc, NULL, error_buf, NULL);
 		} else
 			serv_got_chat_left(gc, id);
 	} else if (!g_ascii_strcasecmp(c, "GOTO_URL")) {
@@ -870,13 +871,16 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	} else if (!g_ascii_strcasecmp(c, "DIR_STATUS")) {
 	} else if (!g_ascii_strcasecmp(c, "ADMIN_NICK_STATUS")) {
 	} else if (!g_ascii_strcasecmp(c, "ADMIN_PASSWD_STATUS")) {
-		do_error_dialog(_("Password Change Successful"), NULL, GAIM_INFO);
+		gaim_notify_info(gc, NULL, _("Password Change Successful"), NULL);
 	} else if (!g_ascii_strcasecmp(c, "PAUSE")) {
 		tdt->state = STATE_PAUSE;
-		do_error_dialog(_("TOC has sent a PAUSE command."), _("When this happens, TOC ignores"
-				  " any messages sent to it, and may kick you off if you send a"
-				  " message. Gaim will prevent anything from going through. This"
-				  " is only temporary, please be patient."), GAIM_WARNING);
+		gaim_notify_warning(gc, NULL,
+							_("TOC has sent a PAUSE command."),
+							_("When this happens, TOC ignores any messages "
+							  "sent to it, and may kick you off if you send a"
+							  " message. Gaim will prevent anything from "
+							  "going through. This is only temporary, please "
+							  "be patient."));
 	} else if (!g_ascii_strcasecmp(c, "RVOUS_PROPOSE")) {
 		char *user, *uuid, *cookie;
 		int seq;
@@ -1564,7 +1568,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 			ft->file = fopen(ft->filename, "w");
 			if (!ft->file) {
 				buf = g_strdup_printf(_("Could not open %s for writing!"), ft->filename);
-				do_error_dialog(buf, strerror(errno), GAIM_ERROR);
+				gaim_notify_error(ft->gc, NULL, buf, strerror(errno));
 				g_free(buf);
 				gaim_input_remove(ft->inpa);
 				toc_soc_close(source);
@@ -1581,7 +1585,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 			if (!ft->file) {
 				buf = g_strdup_printf("Could not open %s/%s for writing!", ft->filename,
 						ft->hdr.name);
-				do_error_dialog(buf, strerror(errno), GAIM_ERROR);
+				gaim_notify_error(ft->gc, NULL, buf, strerror(errno));
 				g_free(buf);
 				gaim_input_remove(ft->inpa);
 				toc_soc_close(source);
@@ -1598,7 +1602,9 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 
 	rt = toc_read(source, buf, MIN(ntohl(ft->hdr.size) - ft->recvsize, 1024));
 	if (rt < 0) {
-		do_error_dialog("File transfer failed; other side probably canceled.", NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL,
+						  _("File transfer failed; other side probably "
+							"canceled."), NULL);
 		gaim_input_remove(ft->inpa);
 		toc_soc_close(source);
 		g_free(ft->user);
@@ -1641,7 +1647,8 @@ static void toc_send_file_connect(gpointer data, gint src, GaimInputCondition co
 	struct file_transfer *ft = data;
 
 	if (src == -1) {
-		do_error_dialog(_("Could not connect for transfer."), NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL,
+						  _("Could not connect for transfer."), NULL);
 		g_free(ft->filename);
 		g_free(ft->cookie);
 		g_free(ft->user);
@@ -1680,7 +1687,8 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	sflap_send(ft->gc, buf, -1, TYPE_DATA);
 
 	if (proxy_connect(account, ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
-		do_error_dialog(_("Could not connect for transfer."), NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL,
+						  _("Could not connect for transfer."), NULL);
 		g_free(ft->filename);
 		g_free(ft->cookie);
 		g_free(ft->user);
@@ -1746,7 +1754,7 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 
 		if (ft->hdr.hdrtype != htons(0x120c)) {
 			g_snprintf(buf, sizeof(buf), "%s decided to cancel the transfer", ft->user);
-			do_error_dialog(buf, NULL, GAIM_ERROR);
+			gaim_notify_error(ft->gc, NULL, buf, NULL);
 			gaim_input_remove(ft->inpa);
 			toc_soc_close(source);
 			g_free(ft->filename);
@@ -1803,7 +1811,8 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 	char *basename;
 
 	if (src == -1) {
-		do_error_dialog(_("Could not connect for transfer!"), NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL,
+						  _("Could not connect for transfer!"), NULL);
 		fclose(ft->file);
 		g_free(ft->filename);
 		g_free(ft->cookie);
@@ -1835,7 +1844,9 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 	hdr->lsizeoffset = 0x10;
 	g_snprintf(hdr->name, 64, "listing.txt");
 	if (toc_write(src, hdr, 256) < 0) {
-		do_error_dialog(_("Could not write file header.  The file will not be transferred."), NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL,
+						  _("Could not write file header.  The file will "
+							"not be transferred."), NULL);
 		fclose(ft->file);
 		g_free(ft->filename);
 		g_free(ft->cookie);
@@ -1862,7 +1873,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	ft->file = fopen(ft->filename, "r");
 	if (!ft->file) {
 		buf = g_strdup_printf("Unable to open %s for transfer.", ft->filename);
-		do_error_dialog(buf, NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL, buf, NULL);
 		g_free(buf);
 		g_free(ft->filename);
 		g_free(ft);
@@ -1870,7 +1881,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	}
 	if (stat(dirname, &ft->st)) {
 		buf = g_strdup_printf("Unable to examine %s.", dirname);
-		do_error_dialog(buf, NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL, buf, NULL);
 		g_free(buf);
 		g_free(ft->filename);
 		g_free(ft);
@@ -1888,7 +1899,8 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	sflap_send(ft->gc, buf2, -1, TYPE_DATA);
 
 	if (proxy_connect(account, ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
-		do_error_dialog(_("Could not connect for transfer."), NULL, GAIM_ERROR);
+		gaim_notify_error(ft->gc, NULL,
+						  _("Could not connect for transfer."), NULL);
 		fclose(ft->file);
 		g_free(ft->filename);
 		g_free(ft->cookie);

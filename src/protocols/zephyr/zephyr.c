@@ -594,8 +594,11 @@ static void zephyr_login(struct gaim_account *account)
 	ZSubscription_t sub;
 
 	if (zgc) {
-		do_error_dialog(_("Already logged in with Zephyr"), _("Because Zephyr uses your system username, you are unable to "
-				"have multiple accounts on it when logged in as the same user."), GAIM_ERROR);
+		gaim_notify_error(account->gc, NULL,
+						  _("Already logged in with Zephyr"),
+						  _("Because Zephyr uses your system username, you "
+							"are unable to have multiple accounts on it "
+							"when logged in as the same user."));
 		return;
 	}
 

@@ -37,6 +37,7 @@
 #include "gaim.h"
 #include "sound.h"
 #include "pounce.h"
+#include "notify.h"
 
 void serv_login(struct gaim_account *account)
 {
@@ -51,7 +52,8 @@ void serv_login(struct gaim_account *account)
 	if (prpl_info->login) {
 		if (!strlen(account->password) && !(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL)) {
-			do_error_dialog(_("Please enter your password"), NULL, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL,
+							  _("Please enter your password"), NULL);
 			return;
 		}
 
@@ -1138,7 +1140,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 			   gc->username,
 			   ((name == NULL)? _("an anonymous person") : name), lev);
 
-	do_error_dialog(buf2, NULL, GAIM_INFO);
+	gaim_notify_info(NULL, NULL, buf2, NULL);
 }
 
 void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,

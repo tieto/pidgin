@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
+#include "error.h"
 
 const char *
 msn_error_get_text(unsigned int type)
@@ -170,11 +171,11 @@ msn_error_get_text(unsigned int type)
 }
 
 void
-msn_error_handle(unsigned int type)
+msn_error_handle(MsnSession *session, unsigned int type)
 {
 	const char *text;
 
 	text = msn_error_get_text(type);
 
-	do_error_dialog(text, NULL, GAIM_ERROR);
+	gaim_notify_error(session->account->gc, NULL, text, NULL);
 }

@@ -99,6 +99,9 @@ __process_multi_line(MsnServConn *servconn, char *buffer)
 		return FALSE;
 	}
 
+	gaim_debug(GAIM_DEBUG_MISC, "msn",
+			   "Message: {%s}\n", msn_message_get_body(msg));
+
 	cb(servconn, msg);
 
 	msn_message_destroy(msg);

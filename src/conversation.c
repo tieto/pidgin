@@ -31,6 +31,7 @@
 #include "conversation.h"
 #include "gaim.h"
 #include "prpl.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -399,16 +400,16 @@ common_send(struct gaim_conversation *conv, const char *message)
 
 	if (err < 0) {
 		if (err == -E2BIG) {
-			do_error_dialog(_("Unable to send message. "
-							  "The message is too large."), NULL,
-							GAIM_ERROR);
+			gaim_notify_error(NULL, NULL,
+							  _("Unable to send message. The message is "
+								"too large."), NULL);
 		}
 		else if (err == -ENOTCONN) {
 			gaim_debug(GAIM_DEBUG_ERROR, "conversation",
 					   "Not yet connected.\n");
 		}
 		else {
-			do_error_dialog(_("Unable to send message."), NULL, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL, _("Unable to send message."), NULL);
 		}
 	}
 	else {

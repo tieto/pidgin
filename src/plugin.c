@@ -42,6 +42,7 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "event.h"
+#include "notify.h"
 
 #include <string.h>
 
@@ -228,8 +229,8 @@ gaim_plugin_probe(const char *filename)
 					 "information"),
 				   plugin->path);
 
-		do_error_dialog(_("Gaim was unable to load your plugin."), buf,
-						GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("Gaim was unable to load your plugin."), buf);
 
 		gaim_plugin_destroy(plugin);
 

@@ -274,7 +274,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	switch (command) {
 	case 000: /* MSG_SERVER_ERROR */
-		do_error_dialog(buf, NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, buf, NULL);
 		gaim_input_remove(gc->inpa);
 		gc->inpa = 0;
 		close(source);
@@ -335,13 +335,14 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 302: /* MSG_SERVER_HOTLIST_ERROR */
 		buf2 = g_strdup_printf(_("Unable to add \"%s\" to your Napster hotlist"), buf);
-		do_error_dialog(buf2, NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, buf2, NULL);
 		g_free(buf2);
 		break;
 
 	case 316: /* MSG_SERVER_DISCONNECTING */
 		/* we have been kicked off =^( */
-		do_error_dialog(_("You were disconnected from the server."), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("You were disconnected from the server."), NULL);
                 signoff(gc);
 		break;
 
@@ -426,7 +427,9 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 748: /* MSG_SERVER_GHOST */
 		/* Looks like someone logged in as us! =-O */
-		do_error_dialog(_("You were disconnected from the server, because you logged on from a different location"), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("You were disconnected from the server, because "
+							"you logged on from a different location"), NULL);
 		signoff(gc);
 		break;
 
@@ -441,7 +444,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 752: /* MSG_CLIENT_PONG */
 		buf2 = g_strdup_printf("Received pong from %s", buf);
-		do_error_dialog(buf2, NULL, GAIM_INFO);
+		gaim_notify_info(gc, NULL, buf2, NULL);
 		g_free(buf2);
 		break;
 

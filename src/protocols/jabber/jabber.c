@@ -986,15 +986,18 @@ static void jabber_change_passwd(struct gaim_connection *gc, const char *old, co
 
 	if(strcmp(old, gjc->pass))
 	{
-		do_error_dialog(_("Unable to change password."),
-			_("The current password you entered is incorrect.  Your password has "
-			  "not been changed."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Unable to change password."),
+						  _("The current password you entered is incorrect.  "
+							"Your password has not been changed."));
 	}
 	else if(!strcmp(old, new))
 	{
-		do_error_dialog(_("Unable to change password"),
-			_("The new password you entered is the same as your current password.  "
-			  "Your password remains the same."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Unable to change password"),
+						  _("The new password you entered is the same as "
+							"your current password.  "
+							"Your password remains the same."));
 	}
 	else
 	{
@@ -1422,7 +1425,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 
 		if (msg) {
 			from = g_strdup_printf(_("Jabber Error %s"), type ? type : "");
-			do_error_dialog(from, msg, GAIM_ERROR);
+			gaim_notify_error(GJ_GC(gjc), NULL, from, msg);
 			g_free(from);
 		}
 	} else if (!strcasecmp(type, "groupchat")) {
@@ -1735,7 +1738,7 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
 				char *msg = g_strdup_printf(_("The Jabber user %s does not exist and was therefore "
 							      "not added to your roster."), 
 							    xmlnode_get_attrib(p->x, "from"));
-				do_error_dialog(_("No such user."), msg, GAIM_ERROR );
+				gaim_notify_error(GJ_GC(gjc), NULL, _("No such user."), msg);
 				g_free(msg);
 			}
 		}
@@ -2285,7 +2288,7 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 					   char buf[BUF_LONG];
 					   sprintf(buf, _("Password successfully changed."));
 
-					   do_error_dialog(buf, NULL, GAIM_INFO);
+					   gaim_notify_info(GJ_GC(gjc), NULL, buf, NULL);
 					}
 				}
 			}
@@ -2304,7 +2307,7 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 			}
 
 			from = g_strdup_printf("Jabber Error %d (%s)", errcode, from);
-			do_error_dialog(from, errmsg, GAIM_ERROR);
+			gaim_notify_error(GJ_GC(gjc), NULL, from, errmsg);
 			g_free(from);
 
 		}
@@ -2687,7 +2690,8 @@ static void jabber_add_buddy(struct gaim_connection *gc, const char *name)
 	if((realwho = get_realwho(gjc, name, FALSE, &gjid)) == NULL) {
 		char *msg = g_strdup_printf(_("The user %s is an invalid Jabber I.D. and was "
 					      "therefore not added."),  name);
-		do_error_dialog("Unable to add buddy.", _("Jabber Error"), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Unable to add buddy."),
+						  _("Jabber Error"));
 		g_free(msg);
 		jabber_remove_gaim_buddy(gc, name);
 		return;
@@ -2987,7 +2991,7 @@ static void jabber_join_chat(struct gaim_connection *gc, GHashTable *data)
 
 	if((gjid = gaim_jid_new(realwho)) == NULL) {
 		char *msg = g_strdup_printf("The Jabber I.D. %s is invalid.", realwho);
-		do_error_dialog(_("Unable to join chat"), msg, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Unable to join chat"), msg);
 		g_free(msg);
 		g_free(realwho);
 		return;

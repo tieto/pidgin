@@ -32,6 +32,7 @@
 #include "gtkimhtml.h"
 
 #include "prpl.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "wspell.h"
@@ -245,9 +246,10 @@ join_chat()
 	}
 
 	if (gc == NULL) {
-		do_error_dialog(
-			_("You are not currently signed on with any protocols that have "
-			  "the ability to chat."), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("You are not currently signed on wit any "
+							"protocols that have the ability to chat."),
+						  NULL);
 
 		return;
 	}

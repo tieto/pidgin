@@ -44,6 +44,7 @@
 #include "dnd-hints.h"
 #include "sound.h"
 #include "gtkblist.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -235,7 +236,7 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 	}
 }
 
-	static void
+static void
 insert_link_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
@@ -3333,9 +3334,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 		gaim_window_add_conversation(win, c);
 	}
-
-	/* do_error_dialog("MWAHAHAHA! I AM A TROLL! I AM GOING TO EAT YOU!",
-	   NULL, GAIM_WARNING); */
 }
 
 /**************************************************************************

@@ -27,6 +27,7 @@
 #include "gtkblist.h"
 #include "prpl.h"
 #include "sound.h"
+#include "notify.h"
 
 struct gaim_gtkpounce_dialog
 {
@@ -167,7 +168,8 @@ save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 	name = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry));
 
 	if (*name == '\0') {
-		do_error_dialog(_("Please enter a buddy to pounce."), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("Please enter a buddy to pounce."), NULL);
 		return;
 	}
 
@@ -350,7 +352,7 @@ pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
 				   _("Unknown pounce event. Please report this!"),
 				   pouncee);
 
-		do_error_dialog(tmp, NULL, GAIM_INFO);
+		gaim_notify_info(NULL, NULL, tmp, NULL);
 	}
 
 	if (pounce_data->actions & GAIM_GTKPOUNCE_SEND_MSG &&

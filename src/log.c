@@ -15,6 +15,7 @@
 #include "core.h"
 #include "multi.h"
 #include "prpl.h"
+#include "notify.h"
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -158,7 +159,7 @@ static FILE *open_gaim_log_file(const char *name, int *flag)
 		if (res < 0) {
 			g_snprintf(buf, BUF_LONG, _("Unable to make directory %s for logging"),
 				   log_all_file);
-			do_error_dialog(buf, NULL, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL, buf, NULL);
 			g_free(buf);
 			g_free(buf2);
 			return NULL;
@@ -179,7 +180,7 @@ static FILE *open_gaim_log_file(const char *name, int *flag)
 		if (res < 0) {
 			g_snprintf(buf, BUF_LONG, _("Unable to make directory %s for logging"),
 				   log_all_file);
-			do_error_dialog(buf, NULL, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL, buf, NULL);
 			g_free(buf);
 			g_free(buf2);
 			return NULL;
@@ -191,7 +192,7 @@ static FILE *open_gaim_log_file(const char *name, int *flag)
 
 	if( _mkdir(log_all_file) < 0 && errno != EEXIST ) {
 	  g_snprintf(buf, BUF_LONG, _("Unable to make directory %s for logging"), log_all_file);
-	  do_error_dialog(buf, NULL, GAIM_ERROR);
+	  gaim_notify_error(NULL, NULL, buf, NULL);
 	  g_free(buf);
 	  g_free(buf2);
 	  return NULL;

@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "proxy.h"
+#include "notify.h"
 
 static struct gaim_xfer_ui_ops *xfer_ui_ops = NULL;
 
@@ -739,7 +740,7 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 	else
 		title = g_strdup_printf(_("File transfer from %s aborted.\n"), who);
 
-	do_error_dialog(title, msg, GAIM_ERROR);
+	gaim_notify_error(NULL, NULL, title, msg);
 
 	g_free(title);
 }

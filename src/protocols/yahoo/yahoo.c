@@ -446,7 +446,7 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 		case 60: /* no clue */
 			 break;
 		case 16: /* Custom error message */
-			do_error_dialog(pair->value, NULL, GAIM_ERROR);
+			gaim_notify_error(gc, NULL, pair->value, NULL);
 			break;
 		default:
 			gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
@@ -601,7 +601,8 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 		msg[j] = 0;
 		serv_got_im(gc, from, g_strdup(msg), 0, tm, -1);
 	} else if (pkt->status == 2) {
-		do_error_dialog(_("Your Yahoo! message did not get sent."), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Your Yahoo! message did not get sent."), NULL);
 	}
 }
 

@@ -28,6 +28,7 @@
 #include <string.h>
 #include "gtkcellrendererprogress.h"
 #include "gaim-disclosure.h"
+#include "notify.h"
 
 #define GAIM_GTKXFER(xfer) \
 	(struct gaim_gtkxfer_ui_data *)(xfer)->ui_data
@@ -1006,14 +1007,15 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 			gaim_xfer_request_accepted(xfer, g_strdup(name));
 		}
 		else {
-			do_error_dialog(_("That file does not exist."),
-							NULL, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL,
+							  _("That file does not exist."), NULL);
 
 			gaim_xfer_request_denied(xfer);
 		}
 	}
 	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) && (st.st_size == 0)) {
-		do_error_dialog(_("Can not send a file of 0 bytes."), NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL,
+						  _("Cannot send a file of 0 bytes."), NULL);
 
 		gaim_xfer_request_denied(xfer);
 	}

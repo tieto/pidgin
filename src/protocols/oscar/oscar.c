@@ -554,7 +554,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					c->fd = -1;
 					aim_conn_kill(od->sess, &conn);
 					buf = g_strdup_printf(_("You have been disconnected from chat room %s."), c->name);
-					do_error_dialog(buf, NULL, GAIM_ERROR);
+					gaim_notify_error(gc, NULL, buf, NULL);
 					g_free(buf);
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (od->cnpa > 0)
@@ -568,7 +568,9 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 						od->create_rooms =
 							g_slist_remove(od->create_rooms, cr);
 						g_free(cr);
-						do_error_dialog(_("Chat is currently unavailable"), NULL, GAIM_ERROR);
+						gaim_notify_error(gc, NULL,
+										  _("Chat is currently unavailable"),
+										  NULL);
 					}
 					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_AUTH) {
@@ -870,7 +872,8 @@ static void oscar_xfer_init(struct gaim_xfer *xfer)
 			aim_im_sendch2_sendfile_ask(od->sess, oft_info);
 			aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_estblsh, 0);
 		} else {
-			do_error_dialog(_("File Transfer Aborted"), _("Unable to establish listener socket."), GAIM_ERROR);
+			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+							  _("Unable to establish listener socket."));
 			/* XXX - The below line causes a crash because the transfer is canceled before the "Ok" callback on the file selection thing exists, I think */
 			/* gaim_xfer_cancel_remote(xfer); */
 		}
@@ -881,11 +884,13 @@ static void oscar_xfer_init(struct gaim_xfer *xfer)
 			aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
 			oft_info->conn->fd = xfer->fd = proxy_connect(gc->account, xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
 			if (xfer->fd == -1) {
-				do_error_dialog(_("File Transfer Aborted"), _("Unable to establish file descriptor."), GAIM_ERROR);
+				gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+								  _("Unable to establish file descriptor."));
 				/* gaim_xfer_cancel_remote(xfer); */
 			}
 		} else {
-			do_error_dialog(_("File Transfer Aborted"), _("Unable to create new connection."), GAIM_ERROR);
+			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+							  _("Unable to create new connection."));
 			/* gaim_xfer_cancel_remote(xfer); */
 			/* Try a different port? Ask them to connect to us? */
 		}
@@ -1220,8 +1225,9 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 		char buf[256];
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), WEBSITE);
-		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."),
-				buf, GAIM_WARNING);
+		gaim_notify_warning(pos->gc, NULL,
+							_("Gaim was Unable to get a valid AIM login hash."),
+							buf);
 		gaim_input_remove(pos->inpa);
 		close(pos->fd);
 		g_free(pos);
@@ -1249,7 +1255,9 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 	if (source < 0) {
 		buf = g_strdup_printf(_("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), WEBSITE);
-		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."), buf, GAIM_WARNING);
+		gaim_notify_warning(pos->gc, NULL,
+							_("Gaim was Unable to get a valid AIM login hash."),
+							buf);
 		g_free(buf);
 		if (pos->modname)
 			g_free(pos->modname);
@@ -1335,8 +1343,9 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_free(pos);
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), WEBSITE);
-		do_error_dialog(_("Gaim was Unable to get a valid login hash."),
-				 buf, GAIM_WARNING);
+		gaim_notify_warning(pos->gc, NULL,
+							_("Gaim was Unable to get a valid login hash."),
+							buf);
 	}
 
 	return 1;
@@ -2572,21 +2581,23 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x07: { /* Someone has denied you authorization */
 			if (i >= 1) {
 				gchar *dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
-				do_error_dialog(_("ICQ authorization denied."), dialog_msg, GAIM_INFO);
+				gaim_notify_info(gc, NULL, _("ICQ authorization denied."),
+								 dialog_msg);
 				g_free(dialog_msg);
 			}
 		} break;
 
 		case 0x08: { /* Someone has granted you authorization */
 			gchar *dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
-			do_error_dialog("ICQ authorization accepted.", dialog_msg, GAIM_INFO);
+			gaim_notify_info(gc, NULL, "ICQ authorization accepted.",
+							 dialog_msg);
 			g_free(dialog_msg);
 		} break;
 
 		case 0x09: { /* Message from the Godly ICQ server itself, I think */
 			if (i >= 5) {
 				gchar *dialog_msg = g_strdup_printf(_("You have received a special message\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
-				do_error_dialog("ICQ Server Message", dialog_msg, GAIM_INFO);
+				gaim_notify_info(gc, NULL, "ICQ Server Message", dialog_msg);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -2594,7 +2605,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x0d: { /* Someone has sent you a pager message from http://www.icq.com/your_uin */
 			if (i >= 6) {
 				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
-				do_error_dialog("ICQ Page", dialog_msg, GAIM_INFO);
+				gaim_notify_info(gc, NULL, "ICQ Page", dialog_msg);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -2602,7 +2613,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x0e: { /* Someone has emailed you at your_uin@pager.icq.com */
 			if (i >= 6) {
 				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ email from %s [%s]\n\nMessage is:\n%s"), msg2[0], msg2[3], msg2[5]);
-				do_error_dialog("ICQ Email", dialog_msg, GAIM_INFO);
+				gaim_notify_info(gc, NULL, "ICQ Email", dialog_msg);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -2760,7 +2771,7 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   userinfo->sn);
 			break;
 	}
-	do_error_dialog(buf, NULL, GAIM_ERROR);
+	gaim_notify_error(sess->aux_data, NULL, buf, NULL);
 	g_free(buf);
 
 	return 1;
@@ -2902,7 +2913,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	m = g_strdup_printf(_("SNAC threw error: %s\n"),
 			reason < msgerrreasonlen ? _(msgerrreason[reason]) : _("Unknown error"));
-	do_error_dialog(m, NULL, GAIM_ERROR);
+	gaim_notify_error(sess->aux_data, NULL, m, NULL);
 	g_free(m);
 
 	return 1;
@@ -2937,7 +2948,8 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* Data is assumed to be the destination sn */
 	buf = g_strdup_printf(_("Your message to %s did not get sent:"), data);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
+	gaim_notify_error(sess->aux_data, NULL, buf,
+					  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
 	g_free(buf);
 
 	return 1;
@@ -2988,7 +3000,8 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
+	gaim_notify_error(sess->aux_data, NULL, buf,
+					  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
 	g_free(buf);
 
 	return 1;
@@ -3203,7 +3216,8 @@ static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_debug(GAIM_DEBUG_MISC, "oscar",
 			   "MOTD: %s (%hu)\n", msg ? msg : "Unknown", id);
 	if (id < 4)
-		do_error_dialog(_("Your AIM connection may be lost."), NULL, GAIM_WARNING);
+		gaim_notify_warning(sess->aux_data, NULL,
+							_("Your AIM connection may be lost."), NULL);
 
 	return 1;
 }
@@ -3564,9 +3578,10 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} else if (code == AIM_RATE_CODE_WARNING) {
 		aim_conn_setlatency(fr->conn, windowsize/4);
 	} else if (code == AIM_RATE_CODE_LIMIT) {
-		do_error_dialog(_("Rate limiting error."),
-				_("The last message was not sent because you are over the rate limit.  "
-				  "Please wait 10 seconds and try again."), GAIM_ERROR);
+		gaim_notify_error(sess->aux_data, NULL, _("Rate limiting error."),
+						  _("The last message was not sent because you "
+							"are over the rate limit.  Please wait 10 "
+							"seconds and try again."));
 		aim_conn_setlatency(fr->conn, windowsize/2);
 	} else if (code == AIM_RATE_CODE_CLEARLIMIT) {
 		aim_conn_setlatency(fr->conn, 0);
@@ -4032,7 +4047,7 @@ static int gaim_parse_searcherror(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	buf = g_strdup_printf(_("No results found for email address %s"), address);
-	do_error_dialog(buf, NULL, GAIM_ERROR);
+	gaim_notify_error(sess->aux_data, NULL, buf, NULL);
 	g_free(buf);
 
 	return 1;
@@ -4054,7 +4069,7 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!status) {
 		g_snprintf(msg, sizeof(msg), _("You should receive an email asking to confirm %s."),
 				gc->username);
-		do_error_dialog(_("Account Confirmation Requested"), msg, GAIM_INFO);
+		gaim_notify_info(gc, NULL, _("Account Confirmation Requested"), msg);
 	}
 
 	return 1;
@@ -4106,7 +4121,7 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
 			} break;
 		}
-		do_error_dialog(dialog_top, dialog_msg, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, dialog_top, dialog_msg);
 		g_free(dialog_top);
 		g_free(dialog_msg);
 		return 1;
@@ -4114,13 +4129,13 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (sn) {
 		char *dialog_msg = g_strdup_printf(_("Your screen name is currently formatted as follows:\n%s"), sn);
-		do_error_dialog(_("Account Info"), dialog_msg, GAIM_INFO);
+		gaim_notify_info(gc, NULL, _("Account Info"), dialog_msg);
 		g_free(dialog_msg);
 	}
 
 	if (email) {
 		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"), gc->username, email);
-		do_error_dialog(_("Account Info"), dialog_msg, GAIM_INFO);
+		gaim_notify_info(gc, NULL, _("Account Info"), dialog_msg);
 		g_free(dialog_msg);
 	}
 
@@ -4341,9 +4356,11 @@ static void oscar_set_info(struct gaim_connection *gc, char *text) {
 	int msglen = 0;
 
 	if (od->rights.maxsiglen == 0)
-		do_error_dialog(_("Unable to set AIM profile."), 
-				_("You have probably requested to set your profile before the login procedure completed.  "
-				  "Your profile remains unset; try setting it again when you are fully connected."), GAIM_WARNING);
+		gaim_notify_warning(gc, NULL, _("Unable to set AIM profile."),
+							_("You have probably requested to set your "
+							  "profile before the login procedure completed.  "
+							  "Your profile remains unset; try setting it "
+							  "again when you are fully connected."));
 
 	if (od->icq)
 		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
@@ -4371,7 +4388,7 @@ static void oscar_set_info(struct gaim_connection *gc, char *text) {
 			gchar *errstr;
 			errstr = g_strdup_printf(_("The maximum profile length of %d bytes has been exceeded.  "
 						   "Gaim has truncated it for you."), od->rights.maxsiglen);
-			do_error_dialog(_("Profile too long."), errstr, GAIM_WARNING);
+			gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
 			g_free(errstr);
 		}
 
@@ -4387,9 +4404,12 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 	int msglen = 0;
 
 	if (od->rights.maxawaymsglen == 0)
-		do_error_dialog(_("Unable to set AIM away message."), 
-				_("You have probably requested to set your away message before the login procedure completed.  "
-				  "You remain in a \"present\" state; try setting it again when you are fully connected."), GAIM_WARNING);
+		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
+							_("You have probably requested to set your "
+							  "away message before the login procedure "
+							  "completed.  You remain in a \"present\" "
+							  "state; try setting it again when you are "
+							  "fully connected."));
 
 	if (gc->away) {
 		g_free(gc->away);
@@ -4426,7 +4446,7 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 
 		errstr = g_strdup_printf(_("The maximum away message length of %d bytes has been exceeded.  "
 					   "Gaim has truncated it and set you away."), od->rights.maxawaymsglen);
-		do_error_dialog(_("Away message too long."), errstr, GAIM_WARNING);
+		gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
 		g_free(errstr);
 	}
 
@@ -4639,7 +4659,8 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_debug(GAIM_DEBUG_ERROR, "oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
-		do_error_dialog(_("Unable To Retrive Buddy List"), _("Gaim was temporarily unable to retrive your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Unable To Retrive Buddy List"),
+						  _("Gaim was temporarily unable to retrive your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
 	}
 
 	/* Activate SSI */
@@ -4900,7 +4921,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
 				gchar *buf;
 				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
-				do_error_dialog(_("Unable To Add"), buf, GAIM_ERROR);
+				gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
 			}
 
@@ -4913,7 +4934,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 				gchar *buf;
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
-				do_error_dialog(_("Unable To Add"), buf, GAIM_ERROR);
+				gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
 				/* XXX - Should remove buddy from local list */
 			} break;
@@ -5021,11 +5042,11 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (reply) {
 		/* Granted */
 		dialog_msg = g_strdup_printf(_("The user %s has granted your request to add them to your contact list."), nombre);
-		do_error_dialog(_("Authorization Granted"), dialog_msg, GAIM_INFO);
+		gaim_notify_info(gc, NULL, _("Authorization Granted"), dialog_msg);
 	} else {
 		/* Denied */
 		dialog_msg = g_strdup_printf(_("The user %s has denied your request to add them to your contact list for the following reason:\n%s"), nombre, msg ? msg : _("No reason given."));
-		do_error_dialog(_("Authorization Denied"), dialog_msg, GAIM_INFO);
+		gaim_notify_info(gc, NULL, _("Authorization Denied"), dialog_msg);
 	}
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -5499,7 +5520,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "Gave up on old direct IM, trying again\n");
 		} else {
-			do_error_dialog("DirectIM already open.", NULL, GAIM_ERROR);
+			gaim_notify_error(gc, NULL, "DirectIM already open.", NULL);
 			g_free(data->who);
 			g_free(data);
 			return;
@@ -5517,7 +5538,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED,
 					gaim_odc_initiate, 0);
 	} else {
-		do_error_dialog(_("Unable to open Direct IM"), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Unable to open Direct IM"), NULL);
 		g_free(dim);
 	}
 
@@ -5725,8 +5746,8 @@ static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
 			aim_admin_setnick(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH), nick);
 		}
 	} else {
-		do_error_dialog(_("The new formatting is invalid."),
-				_("Screenname formatting can change only capitalization and whitespace."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("The new formatting is invalid."),
+						  _("Screenname formatting can change only capitalization and whitespace."));
 	}
 }
 

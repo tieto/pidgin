@@ -36,6 +36,7 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "blist.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -678,7 +679,8 @@ void  gaim_blist_remove_group (struct group *group)
 					"removed because their accounts were not logged in.  These "
 					"buddies, and the group were not removed.\n"),
 				count, group->name);
-		do_error_dialog(_("Group Not Removed"), buf, GAIM_ERROR);
+
+		gaim_notify_error(NULL, NULL, _("Group not removed"), NULL);
 		g_free(buf);
 		return;
 	}
@@ -1569,7 +1571,7 @@ void gaim_blist_load() {
 		if(!gaim_blist_read(filename)) {
 			msg = g_strdup_printf(_("An error was encountered parsing your "
 						"buddy list.  It has not been loaded."));
-			do_error_dialog(_("Buddy List Error"), msg, GAIM_ERROR);
+			gaim_notify_error(NULL, NULL, _("Buddy List Error"), msg);
 			g_free(msg);
 		}
 	} else if(g_slist_length(gaim_accounts)) {
@@ -1578,7 +1580,7 @@ void gaim_blist_load() {
 		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
 					"to a new format, which will now be located at %s"),
 				filename);
-		do_error_dialog(_("Converting Buddy List"), msg, GAIM_INFO);
+		gaim_notify_info(NULL, NULL, _("Converting Buddy List"), msg);
 		g_free(msg);
 
 		/* now, let gtk actually display the dialog before we start anything */

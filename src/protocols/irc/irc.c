@@ -1093,21 +1093,22 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 		irc_request_buddy_update(gc);
 		break;
 	case 382: /* RPL_REHASHING */
-		do_error_dialog(_("Rehashing server"), _("IRC Operator"), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Rehashing server"), _("IRC Operator"));
 		break;
 	case 401: /* ERR_NOSUCHNICK */
-		do_error_dialog(_("No such nick/channel"), _("IRC Error"), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("No such nick/channel"), _("IRC Error"));
 		break;
 	case 402: /* ERR_NOSUCHSERVER */
-		do_error_dialog(_("No such server"), _("IRC Error"), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("No such server"), _("IRC Error"));
 		break;
 	case 422: /* ERR_NOMOTD */
 		break;  /* drop it - bringing up dialog for NOMOTD is annoying */
 	case 431: /* ERR_NONICKNAMEGIVEN */
-		do_error_dialog(_("No nickname given"), _("IRC Error"), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("No nickname given"), _("IRC Error"));
 		break;
 	case 481: /* ERR_NOPRIVILEGES */
-		do_error_dialog(_("You're not an IRC operator!"), _("IRC Error"), GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("You're not an IRC operator!"),
+						  _("IRC Error"));
 		break;		
 	case 433:
 		do_prompt_dialog(_("That nick is already in use.  Please enter a new nick"), gc->displayname, gc, irc_change_nick, NULL);
@@ -1117,10 +1118,15 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 		if (n > 400 && n < 502) {
 			char errmsg[IRC_BUF_LEN];
 			char *errmsg1 = strrchr(text, ':');
+
 			g_snprintf(errmsg, sizeof(errmsg), "IRC Error %d", n);
-			if (errmsg)
-				do_error_dialog(errmsg, errmsg1 ? errmsg1+1 : NULL, GAIM_ERROR);
+
+			if (errmsg) {
+				gaim_notify_error(gc, NULL, errmsg,
+								  (errmsg1 ? errmsg1 + 1 : NULL));
+			}
 		}
+
 		break;
 	}
 }
@@ -1390,19 +1396,19 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 			   "Multi-protocol Messaging Client: " WEBSITE "\001");
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP VERSION requested from %s", nick);
-		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
+		gaim_notify_info(gc, NULL, out, _("IRC CTCP info"));
 	}
 	else if (!g_ascii_strncasecmp(msg, "CLIENTINFO", 10)) {
 		g_snprintf(buf, sizeof(buf), "\001CLIENTINFO USERINFO CLIENTINFO VERSION\001");
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP CLIENTINFO requested from %s", nick);
-		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
+		gaim_notify_info(gc, NULL, out, _("IRC CTCP info"));
 	}
 	else if (!g_ascii_strncasecmp(msg, "USERINFO", 8)) {
 		g_snprintf(buf, sizeof(buf), "\001USERINFO Alias: %s\001", gc->account->alias);
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP USERINFO requested from %s", nick);
-		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
+		gaim_notify_info(gc, NULL, out, _("IRC CTCP info"));
 	}
 	else if (!g_ascii_strncasecmp(msg, "ACTION", 6)) {
 		char *po = strchr(msg + 6, 1);
@@ -1416,7 +1422,7 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		g_snprintf(buf, sizeof(buf), "\001%s\001", msg);
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP PING requested from %s", nick);
-		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
+		gaim_notify_info(gc, NULL, out, _("IRC CTCP info"));
 	}
 	else if (!g_ascii_strncasecmp(msg, "DCC CHAT", 8)) {
 		char **chat_args = g_strsplit(msg, " ", 5);
@@ -1456,7 +1462,7 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 					   _("Received an invalid file send request from %s."),
 					   nick);
 
-			do_error_dialog(buf, _("IRC Error"), GAIM_ERROR);
+			gaim_notify_error(gc, NULL, buf, _("IRC Error"));
 
 			return;
 		}
@@ -1599,7 +1605,7 @@ irc_parse(struct gaim_connection *gc, char *buf)
 			gaim_conversation_set_account(c, NULL);
 			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
 				   word[3], *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5]);
-			do_error_dialog(outbuf, _("IRC Error"), GAIM_ERROR);
+			gaim_notify_error(gc, NULL, outbuf, _("IRC Error"));
 		} else {
 			char *reason = *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5];
 			char *msg = g_strdup_printf(_("Kicked by %s: %s"), nick, reason);
@@ -1641,7 +1647,7 @@ irc_parse(struct gaim_connection *gc, char *buf)
 	} else if (!strcmp(cmd, "WALLOPS")) { /* Don't know if a dialog box is the right way? */
 		char *msg = strrchr(word_eol[0], ':');
 		if (msg)
-			do_error_dialog(msg+1, _("IRC Operator"), GAIM_ERROR);
+			gaim_notify_error(gc, NULL, msg+1, _("IRC Operator"));
 	}
 
 	return FALSE;
@@ -1658,19 +1664,19 @@ irc_parse_notice(struct gaim_connection *gc, char *nick, char *ex,
 		char *p = g_strrstr(word_eol[5], "\001");
 		*p = 0;
 		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
-		do_error_dialog(buf, _("CTCP ClientInfo"), GAIM_INFO);
+		gaim_notify_info(gc, NULL, buf, _("CTCP ClientInfo"));
 
 	} else if (!g_ascii_strcasecmp(word[4], ":\001USERINFO")) {
 		char *p = g_strrstr(word_eol[5], "\001");
 		*p = 0;
 		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
-		do_error_dialog(buf, _("CTCP UserInfo"), GAIM_INFO);
+		gaim_notify_info(gc, NULL, buf, _("CTCP UserInfo"));
 
 	} else if (!g_ascii_strcasecmp(word[4], ":\001VERSION")) {
 		char *p = g_strrstr(word_eol[5], "\001");
 		*p = 0;
 		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
-		do_error_dialog(buf, _("CTCP Version"), GAIM_INFO);
+		gaim_notify_info(gc, NULL, buf, _("CTCP Version"));
 
 	} else if (!g_ascii_strcasecmp(word[4], ":\001PING")) {
 		char *p = g_strrstr(word_eol[5], "\001");
@@ -1698,7 +1704,7 @@ irc_parse_notice(struct gaim_connection *gc, char *nick, char *ex,
 					   "CTCP Ping reply from %s: %lu.%.03lu seconds",
 					   nick, ping_time.tv_sec, (ping_time.tv_usec/1000));
 
-			do_error_dialog(buf, _("CTCP Ping"), GAIM_INFO);
+			gaim_notify_info(gc, NULL, buf, _("CTCP Ping"));
 			g_strfreev(vector);
 		}
 	} else {
@@ -2304,7 +2310,7 @@ handle_command(struct gaim_connection *gc, const char *who, const char *in_what)
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			gaim_conversation_set_account(c, NULL);
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
-			do_error_dialog(buf, _("IRC Part"), GAIM_INFO);
+			gaim_notify_info(gc, NULL, buf, _("IRC Part"));
 		}
 	} else if (!g_ascii_strcasecmp(pdibuf, "WHOIS")) {
 		g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", word_eol[2]);

@@ -49,6 +49,8 @@ guint method = 1;
 #define METHOD_URGENT		0x00000004
 #define METHOD_COUNT		0x00000008
 
+static GaimPlugin *my_plugin = NULL;
+
 void *handle;
 GtkWidget *Entry;
 gchar *title_string;
@@ -436,7 +438,9 @@ void save_notify_prefs() {
 
 	snprintf(buf, 1000, "%s/.gaim/.notify", getenv("HOME"));
 	if (!(fp = fopen(buf, "w"))) {
-		do_error_dialog(_("Unable to write to config file"), _("Notify plugin"), GAIM_ERROR);
+		gaim_notify_error(my_plugin, NULL,
+						  _("Unable to write to config file"),
+						  _("Notify plugin"));
 		return;
 	}
 
@@ -712,6 +716,7 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
+	my_plugin = plugin;
 }
 
 GAIM_INIT_PLUGIN(notify, __init_plugin, info);

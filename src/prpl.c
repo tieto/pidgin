@@ -23,6 +23,7 @@
 #include "gtkutils.h"
 #include "gtkblist.h"
 #include "prpl.h"
+#include "notify.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -700,10 +701,13 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		   msg ? ": " : ".",
 		   msg ? msg : "",
 		   b ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));
-	if (b)
-		do_error_dialog(_("Gaim - Information"), buf, GAIM_INFO);
+
+	if (b) {
+		gaim_notify_info(NULL, NULL, _("Gaim - Information"), buf);
+	}
 	else
-		do_ask_dialog(_("Gaim - Confirm"), buf, ga, _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
+		do_ask_dialog(_("Gaim - Confirm"), buf, ga,
+					  _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
 }
 
 static GtkWidget *regdlg = NULL;

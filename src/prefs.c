@@ -42,6 +42,7 @@
 #include "prpl.h"
 #include "proxy.h"
 #include "sound.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -881,7 +882,7 @@ static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpoin
 		char *error = g_strdup_printf(_("The entered manual browser "
 						"'%s' is not valid. Hyperlinks will "
 						"not work."), program); 
-		do_error_dialog(error, NULL, GAIM_WARNING);
+		gaim_notify_warning(NULL, NULL, error, NULL);
 	}
 
 	g_strlcpy(web_command, program, sizeof(web_command));

@@ -22,6 +22,8 @@
 #ifndef _MSN_ERROR_H_
 #define _MSN_ERROR_H_
 
+#include "session.h"
+
 /**
  * Returns the string representation of an error type.
  *
@@ -34,8 +36,9 @@ const char *msn_error_get_text(unsigned int type);
 /**
  * Handles an error.
  *
- * @param type The error type.
+ * @param session The current session.
+ * @param type    The error type.
  */
-void msn_error_handle(unsigned int type);
+void msn_error_handle(MsnSession *session, unsigned int type);
 
 #endif /* _MSN_ERROR_H_ */

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5573 2003-04-25 06:47:33Z chipx86 $
+ * $Id: gg.c 5818 2003-05-18 19:59:02Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -588,8 +588,9 @@ static int agg_send_im(struct gaim_connection *gc, const char *who, const char *
 	gchar *imsg;
 
 	if (invalid_uin(who)) {
-		do_error_dialog(_("You are trying to send a message to an invalid Gadu-Gadu UIN."), NULL,
-				GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("You are trying to send a message to an "
+							"invalid Gadu-Gadu UIN."), NULL);
 		return -1;
 	}
 
@@ -651,7 +652,7 @@ static void search_results(struct gaim_connection *gc, gchar *webdata)
 
 	if ((ptr = strstr(webdata, "query_results:")) == NULL || (ptr = strchr(ptr, '\n')) == NULL) {
 		debug_printf("search_callback: pubdir result [%s]\n", webdata);
-		do_error_dialog(_("Couldn't get search results"), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL, _("Couldn't get search results"), NULL);
 		return;
 	}
 	ptr++;
@@ -755,13 +756,16 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 	gchar **users_tbl;
 	int i;
 	if (strstr(webdata, "no_data:")) {
-		do_error_dialog(_("There is no Buddy List stored on the Gadu-Gadu server."), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("There is no Buddy List stored on the "
+							"Gadu-Gadu server."), NULL);
 		return;
 	}
 
 	if ((ptr = strstr(webdata, "get_results:")) == NULL || (ptr = strchr(ptr, ':')) == NULL) {
 		debug_printf("import_buddies_server_results: import buddies result [%s]\n", webdata);
-		do_error_dialog(_("Couldn't Import Buddy List from Server"), NULL, GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Couldn't Import Buddy List from Server"), NULL);
 		return;
 	}
 	ptr++;
@@ -821,34 +825,44 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 static void export_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "put_success:")) {
-		do_error_dialog(_("Buddy List successfully transferred to Gadu-Gadu server"), NULL, GAIM_INFO);
+		gaim_notify_info(gc, NULL,
+						 _("Buddy List successfully transferred to "
+						   "Gadu-Gadu server"), NULL);
 		return;
 	}
 
 	debug_printf("export_buddies_server_results: webdata [%s]\n", webdata);
-	do_error_dialog(_("Couldn't transfer Buddy List to Gadu-Gadu server"), NULL, GAIM_ERROR);
+	gaim_notify_error(gc, NULL,
+					  _("Couldn't transfer Buddy List to Gadu-Gadu server"),
+					  NULL);
 }
 
 static void delete_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "put_success:")) {
-		do_error_dialog(_("Buddy List successfully deleted from Gadu-Gadu server"), NULL, GAIM_INFO);
+		gaim_notify_info(gc, NULL,
+						 _("Buddy List successfully deleted from "
+						   "Gadu-Gadu server"), NULL);
 		return;
 	}
 
 	debug_printf("delete_buddies_server_results: webdata [%s]\n", webdata);
-	do_error_dialog(_("Couldn't delete Buddy List from Gadu-Gadu server"), NULL, GAIM_ERROR);
+	gaim_notify_error(gc, NULL,
+					  _("Couldn't delete Buddy List from Gadu-Gadu server"),
+					  NULL);
 }
 
 static void password_change_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "reg_success:")) {
-		do_error_dialog(_("Password changed successfully"), NULL, GAIM_INFO);
+		gaim_notify_info(gc, NULL,
+						 _("Password changed successfully"), NULL);
 		return;
 	}
 
 	debug_printf("password_change_server_results: webdata [%s]\n", webdata);
-	do_error_dialog(_("Password couldn't be changed"), NULL, GAIM_ERROR);
+	gaim_notify_error(gc, NULL,
+					  _("Password couldn't be changed"), NULL);
 }
 
 static void http_results(gpointer data, gint source, GaimInputCondition cond)
@@ -959,10 +973,11 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 		g_free(buf);
 		g_free(hdata);
 		close(source);
-		do_error_dialog(_("Error communicating with Gadu-Gadu server"),
-				_("Gaim was unable to complete your request due to a problem "
-				  "communicating with the Gadu-Gadu HTTP server.  Please try again "
-				  "later."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Error communicating with Gadu-Gadu server"),
+						  _("Gaim was unable to complete your request due "
+							"to a problem communicating with the Gadu-Gadu "
+							"HTTP server.  Please try again later."));
 		return;
 	}
 
@@ -987,9 +1002,10 @@ static void import_buddies_server(struct gaim_connection *gc)
 	g_free(p);
 
 	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
-		do_error_dialog(_("Unable to import Gadu-Gadu buddy list"), 
-				_("Gaim was unable to connect to the Gadu-Gadu buddy list "
-				  "server.  Please try again later."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Unable to import Gadu-Gadu buddy list"),
+						  _("Gaim was unable to connect to the Gadu-Gadu "
+							"buddy list server.  Please try again later."));
 		g_free(hi->request);
 		g_free(hi);
 		return;
@@ -1056,9 +1072,10 @@ static void export_buddies_server(struct gaim_connection *gc)
 	}
 
 	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
-		do_error_dialog(_("Couldn't export buddy list"), 
-				_("Gaim was unable to connect to the buddy list server.  "
-				  "Please try again later."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Couldn't export buddy list"),
+						  _("Gaim was unable to connect to the buddy "
+							"list server.  Please try again later."));
 		g_free(he->request);
 		g_free(he);
 		return;
@@ -1078,9 +1095,10 @@ static void delete_buddies_server(struct gaim_connection *gc)
 	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Delete=1", u, p);
 
 	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
-		do_error_dialog(_("Unable to delete Gadu-Gadu buddy list"), 
-				_("Gaim was unable to connect to the buddy list server.  "
-				  "Please try again later."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Unable to delete Gadu-Gadu buddy list"),
+						  _("Gaim was unable to connect to the buddy "
+							"list server.  Please try again later."));
 		g_free(he->request);
 		g_free(he);
 		return;
@@ -1126,10 +1144,11 @@ static void agg_dir_search(struct gaim_connection *gc, const char *first, const 
 	}
 
 	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
-		do_error_dialog(_("Unable to access directory"), 
-				_("Gaim was unable to search the Directory because it "
-				  "was unable to connect to the directory server.  Please try "
-				  "again later."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Unable to access directory"),
+						  _("Gaim was unable to search the Directory "
+							"because it was unable to connect to the "
+							"directory server.  Please try again later."));
 		g_free(srch->request);
 		g_free(srch);
 		return;
@@ -1159,9 +1178,12 @@ static void agg_change_passwd(struct gaim_connection *gc, const char *old, const
 	g_free(eold);
 
 	if (proxy_connect(gc->account, GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
-	       	do_error_dialog(_("Unable to change Gadu-Gadu password"), 
-				_("Gaim was unable to change your password due to an error connecting "
-				  "to the Gadu-Gadu server.  Please try again later."), GAIM_ERROR);
+	       	gaim_notify_error(gc, NULL,
+							  _("Unable to change Gadu-Gadu password"),
+							  _("Gaim was unable to change your password "
+								"due to an error connecting to the "
+								"Gadu-Gadu server.  Please try again "
+								"later."));
 		g_free(hpass->request);
 		g_free(hpass);
 		return;
@@ -1234,9 +1256,11 @@ static void agg_get_info(struct gaim_connection *gc, const char *who)
 		srch->request = g_strdup_printf("Mode=3&UserId=%s", who);
 
 	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
-		do_error_dialog(_("Unable to access user profile."), 
-				_("Gaim was unable to access this user's profile due to an error "
-				  "connecting to the directory server.  Please try again later."), GAIM_ERROR);
+		gaim_notify_error(gc, NULL,
+						  _("Unable to access user profile."),
+						  _("Gaim was unable to access this user's "
+							"profile due to an error connecting to the "
+							"directory server.  Please try again later."));
 		g_free(srch->request);
 		g_free(srch);
 		return;

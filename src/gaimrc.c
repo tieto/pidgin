@@ -41,6 +41,7 @@
 #include "sound.h"
 #include "pounce.h"
 #include "gtkpounce.h"
+#include "notify.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -1547,7 +1548,7 @@ void load_prefs()
 		}
 	} else if (opt_rcfile_arg) {
 		g_snprintf(buf, sizeof(buf), _("Could not open config file %s."), opt_rcfile_arg);
-		do_error_dialog(buf, NULL, GAIM_ERROR);
+		gaim_notify_error(NULL, NULL, buf, NULL);
 		set_defaults();
 	} else {
 		set_defaults();
@@ -1603,7 +1604,11 @@ void save_prefs()
 					   "Error renaming %s to %s\n", filename_temp, filename);
 		} else {
 			fclose(f);
-			do_error_dialog(_("Unable to Save Preferences"), _("Gaim was unable to save your preferences.  Please verify that you have enough free space."), GAIM_ERROR);
+			gaim_notify_error(NULL, NULL,
+							  _("Unable to Save Preferences"),
+							  _("Gaim was unable to save your preferences. "
+								"Please verify that you have enough "
+								"free space."));
 		}
 		is_saving_prefs = 0;
 	} else
