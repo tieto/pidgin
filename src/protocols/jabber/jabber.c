@@ -573,10 +573,17 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 
 		if (type && !strcasecmp(type, "jabber:x:conference")) {
 			char *room;
+			GList *m = NULL;
+			char **data;
 
 			room = xmlnode_get_attrib(xmlns, "jid");
+			data = g_strsplit(room, "@", 2);
+			m = g_list_append(m, g_strdup(data[0]));
+			m = g_list_append(m, g_strdup(data[1]));
+			m = g_list_append(m, g_strdup(j->user->user));
+			g_strfreev(data);
 
-			serv_got_chat_invite(GJ_GC(j), room, 0, from, msg);
+			serv_got_chat_invite(GJ_GC(j), room, from, msg, m);
 		} else if (msg) { /* whisper */
 			struct jabber_chat *jc;
 			g_snprintf(m, sizeof(m), "%s", msg);
@@ -1326,7 +1333,31 @@ static char **jabber_list_icon(int uc)
 	}
 }
 
-static void jabber_join_chat(struct gaim_connection *gc, int exch, char *name)
+static GList *jabber_chat_info(struct gaim_connection *gc)
+{
+	gjconn j = ((struct jabber_data *)gc->proto_data)->jc;
+
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Room:");
+	m = g_list_append(m, pce);
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Server:");
+	pce->def = DEFAULT_GROUPCHAT;
+	m = g_list_append(m, pce);
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Handle:");
+	pce->def = j->user->user;
+	m = g_list_append(m, pce);
+
+	return m;
+}
+
+static void jabber_join_chat(struct gaim_connection *gc, GList *data)
 {
 	xmlnode x;
 	char *realwho;
@@ -1334,11 +1365,12 @@ static void jabber_join_chat(struct gaim_connection *gc, int exch, char *name)
 	GSList *pc = ((struct jabber_data *)gc->proto_data)->pending_chats;
 	struct jabber_chat *jc;
 
-	if (!name)
+	if (!data || !data->next || !data->next->next)
 		return;
 
 	jc = g_new0(struct jabber_chat, 1);
-	realwho = create_valid_jid(name, DEFAULT_GROUPCHAT, j->user->user);
+	realwho = create_valid_jid(data->data, data->next->data,
+			data->next->next->data);
 	jc->Jid = jid_new(j->p, realwho);
 	jc->gc = gc;
 	debug_printf("%s\n", realwho);
@@ -1355,10 +1387,10 @@ static void jabber_chat_invite(struct gaim_connection *gc, int id, char *message
 {
 	xmlnode x, y;
 	GSList *bcs = gc->buddy_chats;
-	struct conversation *b;
+	struct conversation *b = NULL;
 	struct jabber_data *jd = gc->proto_data;
 	gjconn j = jd->jc;
-	struct jabber_chat *jc;
+	struct jabber_chat *jc = NULL;
 	char *realwho, *subject;
 
 	if (!name)
@@ -1412,10 +1444,10 @@ static void jabber_chat_invite(struct gaim_connection *gc, int id, char *message
 static void jabber_chat_leave(struct gaim_connection *gc, int id)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct conversation *b;
+	struct conversation *b = NULL;
 	struct jabber_data *jd = gc->proto_data;
 	gjconn j = jd->jc;
-	struct jabber_chat *jc;
+	struct jabber_chat *jc = NULL;
 	char *realwho;
 	xmlnode x;
 
@@ -1450,10 +1482,10 @@ static void jabber_chat_leave(struct gaim_connection *gc, int id)
 static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct conversation *b;
+	struct conversation *b = NULL;
 	struct jabber_data *jd = gc->proto_data;
 	xmlnode x, y;
-	struct jabber_chat *jc;
+	struct jabber_chat *jc = NULL;
 	char *chatname;
 
 	while (bcs) {
@@ -1497,10 +1529,10 @@ static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 static void jabber_chat_set_topic(struct gaim_connection *gc, int id, char *topic)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct conversation *b;
+	struct conversation *b = NULL;
 	struct jabber_data *jd = gc->proto_data;
 	xmlnode x, y;
-	struct jabber_chat *jc;
+	struct jabber_chat *jc = NULL;
 	char *chatname;
 	char buf[8192];
 
@@ -1547,10 +1579,10 @@ static void jabber_chat_set_topic(struct gaim_connection *gc, int id, char *topi
 static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, char *message)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct conversation *b;
+	struct conversation *b = NULL;
 	struct jabber_data *jd = gc->proto_data;
 	xmlnode x, y;
-	struct jabber_chat *jc;
+	struct jabber_chat *jc = NULL;
 	char *chatname;
 
 	while (bcs) {
@@ -2005,7 +2037,7 @@ void jabber_init(struct prpl *ret)
 	ret->rem_deny = NULL;
 	ret->set_permit_deny = NULL;
 	ret->warn = NULL;
-	ret->accept_chat = NULL;
+	ret->chat_info = jabber_chat_info;
 	ret->join_chat = jabber_join_chat;
 	ret->chat_invite = jabber_chat_invite;
 	ret->chat_leave = jabber_chat_leave;

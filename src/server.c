@@ -286,16 +286,10 @@ void serv_warn(struct gaim_connection *g, char *name, int anon)
 		(*g->prpl->warn)(g, name, anon);
 }
 
-void serv_accept_chat(struct gaim_connection *g, int i)
-{
-	if (g->prpl && g->prpl->accept_chat)
-		(*g->prpl->accept_chat)(g, i);
-}
-
-void serv_join_chat(struct gaim_connection *g, int exchange, char *name)
+void serv_join_chat(struct gaim_connection *g, GList *data)
 {
 	if (g->prpl && g->prpl->join_chat)
-		(*g->prpl->join_chat)(g, exchange, name);
+		(*g->prpl->join_chat)(g, data);
 }
 
 void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *name)
@@ -741,10 +735,15 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 
 static void close_invite(GtkWidget *w, GtkWidget *w2)
 {
-	char *str = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
+	GList *str = gtk_object_get_user_data(GTK_OBJECT(w2));
+	GList *tmp = str;
 
+	while (tmp) {
+		g_free(tmp->data);
+		tmp = tmp->next;
+	}
 	if (str)
-		g_free(str);
+		g_list_free(str);
 
 	gtk_widget_destroy(w2);
 }
@@ -753,26 +752,28 @@ static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 {
 	struct gaim_connection *g = (struct gaim_connection *)
 					gtk_object_get_user_data(GTK_OBJECT(GTK_DIALOG(w2)->vbox));
-	int id;
-	char *str;
+	GList *str, *tmp;
 
-	id = (int)gtk_object_get_user_data(GTK_OBJECT(w));
-	str = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
+	str = gtk_object_get_user_data(GTK_OBJECT(w2));
 
-	if (g->prpl && g->prpl->accept_chat)
-		serv_accept_chat(g, id);
-	else
-		serv_join_chat(g, id, str);
+	serv_join_chat(g, str);
 
+	tmp = str;
+
+	while (tmp) {
+		/* this is either a g_malloc'd char* or g_malloc'd int* */
+		g_free(tmp->data);
+		tmp = tmp->next;
+	}
 	if (str)
-		g_free(str);
+		g_list_free(str);
 
 	gtk_widget_destroy(w2);
 }
 
 
 
-void serv_got_chat_invite(struct gaim_connection *g, char *name, int id, char *who, char *message)
+void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char *message, GList *data)
 {
 	GtkWidget *d;
 	GtkWidget *label;
@@ -806,9 +807,7 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, int id, char *w
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), nobtn, FALSE, FALSE, 5);
 
 	gtk_object_set_user_data(GTK_OBJECT(GTK_DIALOG(d)->vbox), g);
-	if (name)
-		gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
-	gtk_object_set_user_data(GTK_OBJECT(yesbtn), (void *)id);
+	gtk_object_set_user_data(GTK_OBJECT(d), data);
 
 
 	gtk_window_set_title(GTK_WINDOW(d), "Buddy chat invite");

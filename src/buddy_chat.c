@@ -41,27 +41,17 @@
 
 GtkWidget *joinchat;
 static struct gaim_connection *joinchatgc;
-static GtkWidget *entry;
 static GtkWidget *invite;
 static GtkWidget *inviteentry;
 static GtkWidget *invitemess;
 static GtkWidget *jc_vbox = NULL;
+static GList *chatentries = NULL;
 extern int state_lock;
 
 GList *chats = NULL;
 GtkWidget *all_chats = NULL;
 GtkWidget *chat_notebook = NULL;
 
-
-static void destroy_prev_jc()
-{
-	if (!jc_vbox)
-		return;
-
-	while (GTK_BOX(jc_vbox)->children)
-		gtk_container_remove(GTK_CONTAINER(jc_vbox),
-				     ((GtkBoxChild *)GTK_BOX(jc_vbox)->children->data)->widget);
-}
 
 static void destroy_join_chat()
 {
@@ -81,47 +71,94 @@ static void destroy_invite()
 void do_join_chat()
 {
 	if (joinchat) {
-		if (joinchatgc->prpl->draw_join_chat)
-			serv_join_chat(joinchatgc, 0, NULL);
-		else
-			serv_join_chat(joinchatgc, 0, gtk_entry_get_text(GTK_ENTRY(entry)));
+		GList *data = NULL;
+		GList *tmp = chatentries;
+		int *ival;
+		char *sval;
+		while (tmp) {
+			if (gtk_object_get_user_data(tmp->data)) {
+				ival = g_new0(int, 1);
+				*ival = gtk_spin_button_get_value_as_int(tmp->data);
+				data = g_list_append(data, ival);
+			} else {
+				sval = g_strdup(gtk_entry_get_text(tmp->data));
+				data = g_list_append(data, sval);
+			}
+			tmp = tmp->next;
+		}
+		serv_join_chat(joinchatgc, data);
+
+		tmp = data;
+		while (tmp) {
+			g_free(tmp->data);
+			tmp = tmp->next;
+		}
+		g_list_free(data);
+
 		gtk_widget_destroy(joinchat);
+		if (chatentries)
+			g_list_free(chatentries);
+		chatentries = NULL;
 	}
 	joinchat = NULL;
 }
 
-static void default_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
-	GtkWidget *label;
-	GtkWidget *rowbox;
-
-	if (!joinchat || !fbox)
-		return;
-	
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
-	gtk_widget_show(rowbox);
-
-	label = gtk_label_new(_("Join what group:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
-	gtk_widget_grab_focus(entry);
-	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(do_join_chat), NULL);
-	gtk_widget_show(entry);
-}
-
 static void rebuild_jc()
 {
+	GList *list, *tmp;
+	struct proto_chat_entry *pce;
+
 	if (!joinchatgc)
 		return;
 
-	destroy_prev_jc();
-	if (joinchatgc->prpl->draw_join_chat)
-		(*joinchatgc->prpl->draw_join_chat)(joinchatgc, jc_vbox);
-	else
-		default_draw_join_chat(joinchatgc, jc_vbox);
+	while (GTK_BOX(jc_vbox)->children)
+		gtk_container_remove(GTK_CONTAINER(jc_vbox),
+				     ((GtkBoxChild *)GTK_BOX(jc_vbox)->children->data)->widget);
+	if (chatentries)
+		g_list_free(chatentries);
+	chatentries = NULL;
+
+	tmp = list = (*joinchatgc->prpl->chat_info)(joinchatgc);
+	while (list) {
+		GtkWidget *label;
+		GtkWidget *rowbox;
+		pce = list->data;
+
+		rowbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(jc_vbox), rowbox, TRUE, TRUE, 0);
+		gtk_widget_show(rowbox);
+
+		label = gtk_label_new(pce->label);
+		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+		gtk_widget_show(label);
+
+		if (pce->is_int) {
+			GtkObject *adjust;
+			GtkWidget *spin;
+			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max, 1, 10, 10);
+			spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+			gtk_object_set_user_data(GTK_OBJECT(spin), (void *)1);
+			chatentries = g_list_append(chatentries, spin);
+			gtk_widget_set_usize(spin, 50, -1);
+			gtk_box_pack_start(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
+			gtk_widget_show(spin);
+		} else {
+			GtkWidget *entry;
+			entry = gtk_entry_new();
+			chatentries = g_list_append(chatentries, entry);
+			gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
+			if (pce->def)
+				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
+			gtk_widget_grab_focus(entry);
+			gtk_signal_connect(GTK_OBJECT(entry), "activate",
+					   GTK_SIGNAL_FUNC(do_join_chat), NULL);
+			gtk_widget_show(entry);
+		}
+
+		g_free(pce);
+		list = list->next;
+	}
+	g_list_free(tmp);
 }
 
 static void joinchat_choose(GtkWidget *w, struct gaim_connection *g)

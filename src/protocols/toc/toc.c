@@ -123,9 +123,6 @@ struct signon {
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
 
-static GtkWidget *join_chat_spin = NULL;
-static GtkWidget *join_chat_entry = NULL;
-
 static void toc_login_callback(gpointer, gint, GaimInputCondition);
 static void toc_callback(gpointer, gint, GaimInputCondition);
 static unsigned char *roast_password(char *);
@@ -546,14 +543,14 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				remove_chat_buddy(b, buddy);
 	} else if (!strcasecmp(c, "CHAT_INVITE")) {
 		char *name, *who, *message;
-		int id;
+		int *id = g_new0(int, 1);
 
 		name = strtok(NULL, ":");
-		sscanf(strtok(NULL, ":"), "%d", &id);
+		sscanf(strtok(NULL, ":"), "%d", id);
 		who = strtok(NULL, ":");
 		message = strtok(NULL, ":");
 
-		serv_got_chat_invite(gc, name, id, who, message);
+		serv_got_chat_invite(gc, name, who, message, g_list_append(NULL, id));
 	} else if (!strcasecmp(c, "CHAT_LEFT")) {
 		GSList *bcs = gc->buddy_chats;
 		struct conversation *b = NULL;
@@ -882,27 +879,44 @@ static void toc_warn(struct gaim_connection *g, char *name, int anon)
 	sflap_send(g, send, -1, TYPE_DATA);
 }
 
-static void toc_accept_chat(struct gaim_connection *g, int i)
+static GList *toc_chat_info(struct gaim_connection *gc)
 {
-	char buf[BUF_LEN * 2];
-	g_snprintf(buf, 255, "toc_chat_accept %d", i);
-	sflap_send(g, buf, -1, TYPE_DATA);
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Join what group:");
+	m = g_list_append(m, pce);
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Exchange:");
+	pce->is_int = TRUE;
+	pce->min = 4;
+	pce->max = 20;
+	m = g_list_append(m, pce);
+
+	return m;
 }
 
-static void toc_join_chat(struct gaim_connection *g, int exchange, char *name)
+static void toc_join_chat(struct gaim_connection *g, GList *data)
 {
 	char buf[BUF_LONG];
-	if (!name) {
-		const char *nm;
-		if (!join_chat_entry || !join_chat_spin)
-			return;
-		nm = gtk_entry_get_text(GTK_ENTRY(join_chat_entry));
-		exchange = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(join_chat_spin));
-		if (!nm || !strlen(nm))
-			return;
-		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", exchange, nm);
-	} else
-		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", exchange, name);
+	int *exchange;
+	char *name;
+	int *i;
+
+	if (!data)
+		return;
+
+	if (!data->next) {
+		i = data->data;
+		g_snprintf(buf, 255, "toc_chat_accept %d", *i);
+	} else {
+		name = data->data;
+		exchange = data->next->data;
+		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", *exchange, name);
+	}
+
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
@@ -974,47 +988,6 @@ static char **toc_list_icon(int uc)
 	if (uc & UC_UNCONFIRMED)
 		return (char **)dt_icon_xpm;
 	return NULL;
-}
-
-static void des_jc()
-{
-	join_chat_entry = NULL;
-	join_chat_spin = NULL;
-}
-
-static void toc_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
-	GtkWidget *label;
-	GtkWidget *rowbox;
-	GtkObject *adjust;
-
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
-	gtk_widget_show(rowbox);
-
-	label = gtk_label_new(_("Join what group:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(label), "destroy", GTK_SIGNAL_FUNC(des_jc), NULL);
-	gtk_widget_show(label);
-
-	join_chat_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(rowbox), join_chat_entry, TRUE, TRUE, 0);
-	gtk_widget_grab_focus(join_chat_entry);
-	gtk_signal_connect(GTK_OBJECT(join_chat_entry), "activate", GTK_SIGNAL_FUNC(do_join_chat), NULL);
-	gtk_widget_show(join_chat_entry);
-
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
-	gtk_widget_show(rowbox);
-
-	label = gtk_label_new(_("Community:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-	
-	adjust = gtk_adjustment_new(4, 4, 20, 1, 10, 10);
-	join_chat_spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
-	gtk_widget_set_usize(join_chat_spin, 50, -1);
-	gtk_box_pack_start(GTK_BOX(rowbox), join_chat_spin, FALSE, FALSE, 0);
-	gtk_widget_show(join_chat_spin);
 }
 
 static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
@@ -1236,8 +1209,7 @@ void toc_init(struct prpl *ret)
 	ret->rem_deny = toc_rem_deny;
 	ret->set_permit_deny = toc_set_permit_deny;
 	ret->warn = toc_warn;
-	ret->draw_join_chat = toc_draw_join_chat;
-	ret->accept_chat = toc_accept_chat;
+	ret->chat_info = toc_chat_info;
 	ret->join_chat = toc_join_chat;
 	ret->chat_invite = toc_chat_invite;
 	ret->chat_leave = toc_chat_leave;

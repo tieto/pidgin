@@ -774,12 +774,6 @@ void yahoo_init(struct prpl *ret) {
 	ret->rem_deny = NULL;
 	ret->set_permit_deny = NULL;
 	ret->warn = NULL;
-	ret->accept_chat = NULL;
-	ret->join_chat = NULL;
-	ret->chat_invite = NULL;
-	ret->chat_leave = NULL;
-	ret->chat_whisper = NULL;
-	ret->chat_send = NULL;
 	ret->keepalive = yahoo_keepalive;
 
 	my_protocol = ret;

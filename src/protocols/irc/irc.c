@@ -76,10 +76,28 @@ static char *irc_name()
 
 static void irc_get_info(struct gaim_connection *gc, char *who);
 
-static void irc_join_chat(struct gaim_connection *gc, int id, char *name)
+static GList *irc_chat_info(struct gaim_connection *gc)
+{
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Room:");
+	m = g_list_append(m, pce);
+
+	return m;
+}
+
+static void irc_join_chat(struct gaim_connection *gc, GList *data)
 {
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
-	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	gchar *buf, *name;
+
+	if (!data)
+		return;
+	name = data->data;
+	
+	buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
 	g_snprintf(buf, IRC_BUF_LEN, "JOIN %s\n", name);
 	write(idata->fd, buf, strlen(buf));
@@ -423,12 +441,14 @@ static int irc_chat_send(struct gaim_connection *gc, int id, char *message)
 		else if (!g_strncasecmp(message, "/join ", 6) && (strlen(message) > 6)) {
 
 			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			GList *m = g_list_append(NULL, temp);
 
 			strcpy(temp, message + 6);
 
 
-			irc_join_chat(gc, 0, temp);
+			irc_join_chat(gc, m);
 			g_free(temp);
+			g_list_free(m);
 			is_command = TRUE;
 			return 0;
 		}
@@ -2074,6 +2094,7 @@ void irc_init(struct prpl *ret)
 	ret->login = irc_login;
 	ret->close = irc_close;
 	ret->send_im = irc_send_im;
+	ret->chat_info = irc_chat_info;
 	ret->join_chat = irc_join_chat;
 	ret->chat_leave = irc_chat_leave;
 	ret->chat_send = irc_chat_send;

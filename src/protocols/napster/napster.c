@@ -921,9 +921,27 @@ static void nap_login(struct aim_user *user)
 	}
 }
 
-static void nap_join_chat(struct gaim_connection *gc, int id, char *name)
+static GList *nap_chat_info(struct gaim_connection *gc)
+{
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Join what group:");
+	m = g_list_append(m, pce);
+
+	return m;
+}
+
+static void nap_join_chat(struct gaim_connection *gc, GList *data)
 {
 	gchar buf[NAP_BUF_LEN];
+	char *name;
+
+	if (!data)
+		return;
+
+	name = data->data;
 
 	/* Make sure the name has a # preceeding it */
 	if (name[0] != '#') 
@@ -1200,7 +1218,7 @@ void napster_init(struct prpl *ret)
 	ret->add_deny = NULL;
 	ret->rem_deny = NULL;
 	ret->warn = NULL;
-	ret->accept_chat = NULL;
+	ret->chat_info = nap_chat_info;
 	ret->join_chat = nap_join_chat;
 	ret->chat_invite = NULL;
 	ret->chat_leave = nap_chat_leave;

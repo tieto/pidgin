@@ -59,9 +59,6 @@ static int gaim_caps = AIM_CAPS_CHAT |
 		       AIM_CAPS_BUDDYICON |
 		       AIM_CAPS_IMIMAGE;
 
-static GtkWidget *join_chat_spin = NULL;
-static GtkWidget *join_chat_entry = NULL;
-
 struct oscar_data {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
@@ -1331,11 +1328,16 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		va_end(ap);
 		if (args->reqclass & AIM_CAPS_CHAT) {
 			char *name = extract_name(args->info.chat.roominfo.name);
+			int *exch = g_new0(int, 1);
+			GList *m = NULL;
+			m = g_list_append(m, g_strdup(name ? name : args->info.chat.roominfo.name));
+			*exch = args->info.chat.roominfo.exchange;
+			m = g_list_append(m, exch);
 			serv_got_chat_invite(gc,
 					     name ? name : args->info.chat.roominfo.name,
-					     args->info.chat.roominfo.exchange,
 					     userinfo->sn,
-					     args->info.chat.msg);
+					     args->info.chat.msg,
+					     m);
 			if (name)
 				g_free(name);
 		} else if (args->reqclass & AIM_CAPS_SENDFILE) {
@@ -2195,69 +2197,47 @@ static void oscar_remove_buddy(struct gaim_connection *g, char *name) {
 	aim_remove_buddy(odata->sess, odata->conn, name);
 }
 
-static void oscar_join_chat(struct gaim_connection *g, int exchange, char *name) {
+static GList *oscar_chat_info(struct gaim_connection *gc) {
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Join what group:");
+	m = g_list_append(m, pce);
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Exchange:");
+	pce->is_int = TRUE;
+	pce->min = 4;
+	pce->max = 20;
+	m = g_list_append(m, pce);
+
+	return m;
+}
+
+static void oscar_join_chat(struct gaim_connection *g, GList *data) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	struct aim_conn_t *cur = NULL;
-	if (!name) {
-		if (!join_chat_entry || !join_chat_spin)
-			return;
-		name = gtk_entry_get_text(GTK_ENTRY(join_chat_entry));
-		exchange = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(join_chat_spin));
-		if (!name || !strlen(name))
-			return;
-	}
+	char *name;
+	int *exchange;
+
+	if (!data || !data->next)
+		return;
+
+	name = data->data;
+	exchange = data->next->data;
+
 	debug_printf("Attempting to join chat room %s.\n", name);
 	if ((cur = aim_getconn_type(odata->sess, AIM_CONN_TYPE_CHATNAV))) {
 		debug_printf("chatnav exists, creating room\n");
-		aim_chatnav_createroom(odata->sess, cur, name, exchange);
+		aim_chatnav_createroom(odata->sess, cur, name, *exchange);
 	} else {
 		/* this gets tricky */
 		debug_printf("chatnav does not exist, opening chatnav\n");
-		odata->create_exchange = exchange;
+		odata->create_exchange = *exchange;
 		odata->create_name = g_strdup(name);
 		aim_bos_reqservice(odata->sess, odata->conn, AIM_CONN_TYPE_CHATNAV);
 	}
-}
-
-static void des_jc()
-{
-	join_chat_entry = NULL;
-	join_chat_spin = NULL;
-}
-
-static void oscar_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
-	GtkWidget *label;
-	GtkWidget *rowbox;
-	GtkObject *adjust;
-
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
-	gtk_widget_show(rowbox);
-
-	label = gtk_label_new(_("Join what group:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(label), "destroy", GTK_SIGNAL_FUNC(des_jc), NULL);
-	gtk_widget_show(label);
-
-	join_chat_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(rowbox), join_chat_entry, TRUE, TRUE, 0);
-	gtk_widget_grab_focus(join_chat_entry);
-	gtk_signal_connect(GTK_OBJECT(join_chat_entry), "activate", GTK_SIGNAL_FUNC(do_join_chat), NULL);
-	gtk_widget_show(join_chat_entry);
-
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
-	gtk_widget_show(rowbox);
-
-	label = gtk_label_new(_("Exchange:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-	
-	adjust = gtk_adjustment_new(4, 4, 20, 1, 10, 10);
-	join_chat_spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
-	gtk_widget_set_usize(join_chat_spin, 50, -1);
-	gtk_box_pack_start(GTK_BOX(rowbox), join_chat_spin, FALSE, FALSE, 0);
-	gtk_widget_show(join_chat_spin);
 }
 
 static void oscar_chat_invite(struct gaim_connection *g, int id, char *message, char *name) {
@@ -2758,9 +2738,8 @@ void oscar_init(struct prpl *ret) {
 	ret->rem_deny = oscar_rem_deny;
 	ret->set_permit_deny = oscar_set_permit_deny;
 	ret->warn = oscar_warn;
-	ret->accept_chat = NULL; /* oscar doesn't have accept, it just joins */
+	ret->chat_info = oscar_chat_info;
 	ret->join_chat = oscar_join_chat;
-	ret->draw_join_chat = oscar_draw_join_chat;
 	ret->chat_invite = oscar_chat_invite;
 	ret->chat_leave = oscar_chat_leave;
 	ret->chat_whisper = NULL;

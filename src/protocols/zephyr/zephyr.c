@@ -27,7 +27,6 @@
 #include "config.h"
 #endif
 
-#include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -88,9 +87,6 @@ struct gaim_connection *zgc = NULL;
 static GList *pending_zloc_names = NULL;
 static GSList *subscrips = NULL;
 static int last_id = 0;
-static GtkWidget *class_entry;
-static GtkWidget *inst_entry;
-static GtkWidget *recip_entry;
 
 /* just for debugging
 static void handle_unknown(ZNotice_t notice)
@@ -819,80 +815,43 @@ static GList *zephyr_away_states()
 	return m;
 }
 
-static void zephyr_draw_jc(struct gaim_connection *gc, GtkWidget *vbox) {
-	GtkWidget *label;
-	GtkWidget *rowbox;
-	
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+static GList *zephyr_chat_info(struct gaim_connection *gc) {
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
 
-	label = gtk_label_new(_("Class:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-	
-	class_entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(rowbox), class_entry, FALSE, FALSE, 5);
-	gtk_widget_show(class_entry);
-	
-	gtk_widget_show(rowbox);
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Class:");
+	m = g_list_append(m, NULL);
 
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Instance:");
+	m = g_list_append(m, NULL);
 
-	label = gtk_label_new(_("Instance:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-	
-	inst_entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(rowbox), inst_entry, FALSE, FALSE, 5);
-	gtk_widget_show(inst_entry);
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Recipient:");
+	m = g_list_append(m, NULL);
 
-	gtk_widget_show(rowbox);
-
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new(_("Recipient:"));
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-	
-	recip_entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(rowbox), recip_entry, FALSE, FALSE, 5);
-	gtk_widget_show(recip_entry);
-	
-	gtk_widget_show(rowbox);
+	return m;
 }
 
-static void zephyr_join_chat(struct gaim_connection *gc, int id, char *nm)
+static void zephyr_join_chat(struct gaim_connection *gc, GList *data)
 {
 	ZSubscription_t sub;
 	zephyr_triple *zt1, *zt2;
 	const char *classname;
 	const char *instname;
 	const char *recip;
-	char **splitted;
 
-	if (!nm) {
-		splitted = NULL;
-		classname = gtk_entry_get_text(GTK_ENTRY(class_entry));
-		instname = gtk_entry_get_text(GTK_ENTRY(inst_entry));
-		recip = gtk_entry_get_text(GTK_ENTRY(recip_entry));
-		if (!g_strcasecmp(recip, "%me%"))
-			recip = g_getenv("USER");
-	} else {
-		splitted = g_strsplit(nm, ",", 3);
-		if (!splitted[0] || !splitted[1] || !splitted[2]) {
-			g_strfreev(splitted);
-			return;
-		}
-		classname = g_strstrip(splitted[0]);
-		instname = g_strstrip(splitted[1]);
-		recip = g_strstrip(splitted[2]);
-	}
+	if (!data || !data->next || !data->next->next)
+		return;
+
+	classname = data->data;
+	instname = data->next->data;
+	recip = data->next->next->data;
+	if (!g_strcasecmp(recip, "%me%"))
+		recip = g_getenv("USER");
 
 	zt1 = new_triple(classname, instname, recip);
-	if (splitted)
-		g_strfreev(splitted);
 	zt2 = find_sub_by_triple(zt1);
 	if (zt2) {
 		free_triple(zt1);
@@ -942,7 +901,7 @@ void zephyr_init(struct prpl *ret)
 	ret->buddy_menu = zephyr_buddy_menu;
 	ret->away_states = zephyr_away_states;
 	ret->set_away = zephyr_set_away;
-	ret->draw_join_chat = zephyr_draw_jc;
+	ret->chat_info = zephyr_chat_info;
 	ret->join_chat = zephyr_join_chat;
 	ret->chat_send = zephyr_chat_send;
 	ret->chat_leave = zephyr_chat_leave;

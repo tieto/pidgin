@@ -81,6 +81,7 @@ struct prpl {
 	/* user_opts returns a GList* of g_malloc'd struct proto_user_opts */
 	GList *(* user_opts)();
 	GList *(* buddy_menu)(struct gaim_connection *, char *);
+	GList *(* chat_info)(struct gaim_connection *);
 
 	/* when UI plugins come, these will have to be reconciled by returning
 	 * structs indicating what kinds of information they want displayed. */
@@ -90,7 +91,6 @@ struct prpl {
 	 * their UIs all that often anyway. */
 	void (* draw_new_user)(GtkWidget *);
 	void (* do_new_user)();
-	void (* draw_join_chat)(struct gaim_connection *, GtkWidget *);
 	void (* insert_convo)(struct gaim_connection *, struct conversation *);
 	void (* remove_convo)(struct gaim_connection *, struct conversation *);
 
@@ -130,8 +130,7 @@ struct prpl {
 	void (* rem_deny)	(struct gaim_connection *, char *name);
 	void (* set_permit_deny)(struct gaim_connection *);
 	void (* warn)		(struct gaim_connection *, char *who, int anonymous);
-	void (* accept_chat)	(struct gaim_connection *, int id);
-	void (* join_chat)	(struct gaim_connection *, int id, char *name);
+	void (* join_chat)	(struct gaim_connection *, GList *data);
 	void (* chat_invite)	(struct gaim_connection *, int id, char *who, char *message);
 	void (* chat_leave)	(struct gaim_connection *, int id);
 	void (* chat_whisper)	(struct gaim_connection *, int id, char *who, char *message);
