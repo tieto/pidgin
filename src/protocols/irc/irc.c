@@ -1908,13 +1908,14 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	if (!*hostname)
 		g_snprintf(hostname, sizeof(hostname), "localhost");
 
-	if (*gc->account->password) {
+	if (gc->account->password != NULL) {
 		g_snprintf(buf, sizeof(buf), "PASS %s\r\n", gaim_account_get_password(account));
 
 		if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 			gaim_connection_error(gc, "Write error");
 			return;
 		}
+	}
 
 	g_snprintf(buf, sizeof(buf), "USER %s %s %s :%s\r\n",
 		   g_get_user_name(), hostname,
@@ -1976,7 +1977,7 @@ irc_login(GaimAccount *account)
 			   irc_login_callback, gc);
 	
 	if (!account->gc || (rc != 0)) {
-		gaim_connection_error(gc, "Unable to create socket");
+		gaim_connection_error(gc, _("Unable to create socket"));
 		return;
 	}
 }
