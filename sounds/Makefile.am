@@ -9,17 +9,7 @@ all: BuddyArrive.h BuddyLeave.h Send.h Receive.h RedAlert.h
 clean distclean:
 	rm -f BuddyArrive.h BuddyLeave.h Send.h Receive.h RedAlert.h
 
-BuddyArrive.h: BuddyArrive.au au2h
-	./au2h $< $@
+SUFFIXES = .au .h
 
-BuddyLeave.h: BuddyLeave.au au2h
-	./au2h $< $@
-
-Send.h: Send.au au2h
-	./au2h $< $@
-
-Receive.h: Receive.au au2h
-	./au2h $< $@
-
-RedAlert.h: RedAlert.au au2h
+.au.h: au2h
 	./au2h $< $@
