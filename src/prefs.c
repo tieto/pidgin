@@ -639,7 +639,7 @@ static void room_page()
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
 
-	prefdialog = gtk_frame_new(_("Chat Options"));
+	prefdialog = gtk_frame_new(_("Chat Rooms"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
