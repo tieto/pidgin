@@ -167,6 +167,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			jb->subscription = JABBER_SUB_FROM;
 		else if(!strcmp(subscription, "both"))
 			jb->subscription = JABBER_SUB_BOTH;
+		else if(!strcmp(subscription, "remove"))
+			jb->subscription = JABBER_SUB_REMOVE;
 		else
 			jb->subscription = JABBER_SUB_NONE;
 
@@ -175,11 +177,10 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 		else
 			jb->subscription &= ~JABBER_SUB_PENDING;
 
-		if(jb->subscription == JABBER_SUB_NONE) {
+		if(jb->subscription == JABBER_SUB_REMOVE) {
 			remove_gaim_buddies(js, jid);
 		} else {
 			GSList *groups = NULL;
-
 			for(group = xmlnode_get_child(item, "group"); group; group = xmlnode_get_next_twin(group)) {
 				char *group_name;
 
@@ -188,14 +189,6 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 				groups = g_slist_append(groups, group_name);
 			}
 			add_gaim_buddies_in_groups(js, jid, name, groups);
-
-			if(jb->subscription == JABBER_SUB_BOTH) {
-				char *my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-				if(!strcmp(jid, my_bare_jid)) {
-					jabber_presence_fake_to_self(js, js->gc->away_state, js->gc->away);
-				}
-				g_free(my_bare_jid);
-			}
 		}
 	}
 
@@ -257,6 +250,7 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 	GSList *groups = NULL;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
+	char *my_bare_jid;
 
 	if(!js->roster_parsed)
 		return;
@@ -272,11 +266,15 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 
 	jabber_roster_update(js, who, groups);
 
-	if(!jb || !(jb->subscription & JABBER_SUB_TO))
+	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+	if(!strcmp(who, my_bare_jid))
+		jabber_presence_fake_to_self(js, js->gc->away_state, js->gc->away);
+	else if(!jb || !(jb->subscription & JABBER_SUB_TO))
 		jabber_presence_subscription_set(js, who, "subscribe");
 	else if((jbr =jabber_buddy_find_resource(jb, NULL)))
 		serv_got_update(gc, who, 1, 0, 0, 0, jbr->state);
 
+	g_free(my_bare_jid);
 	g_free(who);
 }
 

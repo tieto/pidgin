@@ -37,7 +37,8 @@ typedef struct _JabberBuddy {
 		JABBER_SUB_PENDING = 1 << 1,
 		JABBER_SUB_TO      = 1 << 2,
 		JABBER_SUB_FROM    = 1 << 3,
-		JABBER_SUB_BOTH    = (JABBER_SUB_TO | JABBER_SUB_FROM)
+		JABBER_SUB_BOTH    = (JABBER_SUB_TO | JABBER_SUB_FROM),
+		JABBER_SUB_REMOVE  = 1 << 4
 	} subscription;
 } JabberBuddy;
 

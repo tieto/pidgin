@@ -1090,6 +1090,10 @@ void gaim_blist_remove_buddy (GaimBuddy *buddy)
 		cnode->child = node->next;
 	}
 
+	if(((GaimContact*)cnode)->priority == buddy) {
+		gaim_contact_compute_priority_buddy((GaimContact*)cnode);
+		ops->update(gaimbuddylist, cnode);
+	}
 
 	hb.name = g_strdup(gaim_normalize(buddy->account, buddy->name));
 	hb.account = buddy->account;
