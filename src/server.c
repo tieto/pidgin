@@ -1087,6 +1087,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	GaimConversation *c;
 	GaimBuddy *b;
 	GSList *buddies;
+	int old_idle;
 
 	account = gaim_connection_get_account(gc);
 	b = gaim_find_buddy(account, name);
@@ -1120,11 +1121,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_blist_save();
 	}
 
-	if (!b->idle && idle) {
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
-	} else if (b->idle && !idle) {
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
-	}
+	old_idle = b->idle;
 
 	if (gc->login_time_official && gc->login_time)
 		signon += gc->login_time_official - gc->login_time;
@@ -1138,6 +1135,12 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
 */
 	gaim_blist_update_buddy_status(b, type);
+
+	if (!old_idle && idle) {
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
+	} else if (old_idle && !idle) {
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
+	}
 
 	if (loggedin) {
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
