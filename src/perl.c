@@ -82,6 +82,7 @@ static GList *perl_timeout_handlers = NULL;
 static GList *perl_event_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
 static char* last_dir = NULL;
+static void perl_init();
 
 /* dealing with gaim */
 XS(XS_GAIM_register); /* set up hooks for script */
@@ -146,6 +147,8 @@ static SV *execute_perl(char *function, char *args)
 int perl_load_file(char *script_name)
 {
 	SV *return_val;
+	if (my_perl == NULL)
+		perl_init();
 	return_val = execute_perl("load_file", script_name);
 	return SvNV (return_val);
 }
@@ -186,7 +189,7 @@ void perl_autoload()
 	g_free(path);
 }
 
-void perl_init()
+static void perl_init()
 {
 	char *perl_args[] = {"", "-e", "0", "-w"};
 	char load_file[] =

@@ -617,7 +617,6 @@ int main(int argc, char *argv[])
 
 	gtkspell_start(NULL, ispell_cmd);
 #ifdef USE_PERL
-	perl_init();
 	perl_autoload();
 #endif
 	static_proto_init();

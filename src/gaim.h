@@ -792,7 +792,6 @@ extern void play_file(char *);
 
 /* Functions in perl.c */
 #ifdef USE_PERL
-extern void perl_init();
 extern void perl_autoload();
 extern int perl_load_file(char *);
 extern void perl_end();
