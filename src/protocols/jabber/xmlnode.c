@@ -365,7 +365,8 @@ xmlnode *xmlnode_from_str(const char *str, size_t size)
 	if(!g_markup_parse_context_parse(context, str, real_size, NULL)) {
 		while(xpd->current && xpd->current->parent)
 			xpd->current = xpd->current->parent;
-		xmlnode_free(xpd->current);
+		if(xpd->current)
+			xmlnode_free(xpd->current);
 		xpd->current = NULL;
 	}
 	g_markup_parse_context_free(context);
