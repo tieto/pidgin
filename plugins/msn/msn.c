@@ -345,7 +345,6 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	if (!g_strncasecmp(buf, "ACK", 3)) {
 	} else if (!g_strncasecmp(buf, "ANS", 3)) {
 	} else if (!g_strncasecmp(buf, "BYE", 3)) {
-		msn_kill_switch(ms);
 	} else if (!g_strncasecmp(buf, "CAL", 3)) {
 	} else if (!g_strncasecmp(buf, "IRO", 3)) {
 	} else if (!g_strncasecmp(buf, "JOI", 3)) {
