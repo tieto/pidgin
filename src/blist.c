@@ -72,8 +72,21 @@ static guint _gaim_blist_hbuddy_equal (struct _gaim_hbuddy *hb1, struct _gaim_hb
 
 static void blist_pref_cb(const char *name, GaimPrefType typ, gpointer value, gpointer data)
 {
-	/* XXX - We shouldn't call gtk functions directly */
-	/* gaim_gtk_blist_refresh(gaimbuddylist); */
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistNode *group, *buddy;
+
+	if (!ops)
+		return;
+
+	for(group = gaimbuddylist->root; group; group = group->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(group))
+			continue;
+		for(buddy = group->child; buddy; buddy = buddy->next) {
+			if(!GAIM_BLIST_NODE_IS_BUDDY(buddy))
+				continue;
+			ops->update(gaimbuddylist, buddy);
+		}
+	}
 }
 
 /*****************************************************************************
