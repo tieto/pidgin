@@ -2699,6 +2699,15 @@ const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key)
 
 /* XXX: end compat crap */
 
+
+GList *gaim_buddy_get_extended_menu(GaimBuddy *b) {
+	GList *menu = NULL;
+	gaim_signal_emit(gaim_blist_get_handle(), "buddy-extended-menu",
+		b, &menu);
+	return menu;
+}
+
+
 int gaim_blist_get_group_size(GaimGroup *group, gboolean offline) {
 	if(!group)
 		return 0;
@@ -2769,6 +2778,11 @@ gaim_blist_init(void)
 										GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(handle, "update-idle", gaim_marshal_VOID, NULL, 0);
+	gaim_signal_register(handle, "buddy-extended-menu",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE,
+					    GAIM_SUBTYPE_BLIST_BUDDY),
+			     gaim_value_new(GAIM_TYPE_BOXED, "GList **"));
 }
 
 void

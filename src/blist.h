@@ -854,6 +854,14 @@ const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
 
 /*@}*/
 
+
+/**
+ * Retrieves the extended menu items for a buddy.
+ * @param b      The buddy to obtain the extended menu items for
+*/
+GList *gaim_buddy_get_extended_menu(GaimBuddy *b);
+
+
 /**************************************************************************/
 /** @name UI Registration Functions                                       */
 /**************************************************************************/

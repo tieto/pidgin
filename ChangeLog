@@ -11,6 +11,8 @@ version 0.77cvs
 	* WYSIWYG improvements (Tim Ringenbach)
 	* WYSIWYG editing for user info (Jon Oberheide)
 	* Rich-text copy and paste
+	* Plugins can now add menu items to the buddy context menu
+	  (Christopher O'Brien)
 
 	Bug Fixes:
 	* TOC has been removed from the default build list. I do not support

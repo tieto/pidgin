@@ -1079,7 +1079,8 @@ static void gaim_proto_menu_cb(GtkMenuItem *item, GaimBuddy *b)
 
 static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, GaimBuddy *b)
 {
-	GList *list;
+	GList *list = NULL, *l = NULL;
+	gboolean dup_separator = FALSE;
 	GtkWidget *menuitem;
 
 	if (prpl_info && prpl_info->get_info) {
@@ -1095,17 +1096,62 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 
 	if (prpl_info && prpl_info->buddy_menu) {
 		list = prpl_info->buddy_menu(b->account->gc, b->name);
-		while (list) {
-			struct proto_buddy_menu *pbm = list->data;
+
+		for(l = list; l; l = l->next) {
+			struct proto_buddy_menu *pbm = l->data;
+
+			/* draw "-" titled menu items as a separator. Since the
+			   pbm is not being used in a callback, it needs to be
+			   freed. Also, do some simple checking to prevent
+			   doubled-up separators */
+			if('-' == *pbm->label) {
+				if(! dup_separator) {
+					gaim_separator(menu);
+					dup_separator = TRUE;
+				}
+				g_free(pbm);
+				continue;
+			} else {
+				dup_separator = FALSE;
+			}
+
 			menuitem = gtk_menu_item_new_with_mnemonic(pbm->label);
 			g_object_set_data(G_OBJECT(menuitem), "gaimcallback", pbm);
 			g_signal_connect(G_OBJECT(menuitem), "activate",
-					G_CALLBACK(gaim_proto_menu_cb), b);
+				G_CALLBACK(gaim_proto_menu_cb), b);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-			list = list->next;
 		}
+		g_list_free(list);
 	}
 
+	/* check for additional menu items which may be added by other
+	   plugins. */
+	list = gaim_buddy_get_extended_menu(b);
+	for(l = list; l; l = l->next) {
+		struct proto_buddy_menu *pbm = l->data;
+
+		/* draw "-" titled menu items as a separator.  see previous,
+		   identical-looking code. */
+		if('-' == *pbm->label) {
+			if(! dup_separator) {
+				gaim_separator(menu);
+				dup_separator = TRUE;
+			}
+			g_free(pbm);
+			continue;
+		} else {
+			dup_separator = FALSE;
+		}
+
+		menuitem = gtk_menu_item_new_with_mnemonic(pbm->label);
+		g_object_set_data(G_OBJECT(menuitem), "gaimcallback", pbm);
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+			G_CALLBACK(gaim_proto_menu_cb), b);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	}
+	g_list_free(list);
+
+	/* moving on to the old ui-specific plugin menus */
 	gaim_signal_emit(GAIM_GTK_BLIST(gaim_get_blist()),
 			"drawing-menu", menu, b);
 
