@@ -1533,9 +1533,9 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 	const gchar *filename = gtk_file_selection_get_filename(sel);
 	gaim_im_image *image = g_object_get_data(G_OBJECT(sel), "gaim_im_image");
 	gchar *type = NULL;
+	GError *error = NULL;
 #if GTK_CHECK_VERSION(2,2,0)
 	GSList *formats = gdk_pixbuf_get_formats();
-	GError *error = NULL;
 
 	while(formats){
 		GdkPixbufFormat *format = formats->data;
@@ -1569,6 +1569,7 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 						_("Gaim was unable to guess the image type base on the file extension supplied.  Defaulting to PNG."));
 		type = g_strdup("png");
 	}
+	g_slist_free(formats);
 #else
 	type = g_strdup("png");
 #endif
@@ -1581,7 +1582,6 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 		g_error_free(error);
 	}
 
-	g_slist_free(formats);
 	g_free(type);
 }
 
