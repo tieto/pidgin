@@ -1287,11 +1287,11 @@ const char *handle_uri(char *uri) {
 	if (gc == NULL)
 		return "Not connected to AIM";
 
- 	/* aim://goim?screenname=screenname&message=message */
-	if (!g_strncasecmp(uri, "aim://goim?", strlen("aim://goim?"))) {
+ 	/* aim:goim?screenname=screenname&message=message */
+	if (!g_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
 		char *who, *what;
 		struct conversation *c;
-		uri = uri + strlen("aim://goim?");
+		uri = uri + strlen("aim:goim?");
 		
 		if (!(who = strstr(uri, "screenname="))) {
 			return "No screenname given.";
@@ -1326,9 +1326,9 @@ const char *handle_uri(char *uri) {
 					 what, strlen(what), &finish);
 			g_free(what);
 		}
-	} else if (!g_strncasecmp(uri, "aim://addbuddy?", strlen("aim://addbuddy?"))) {
+	} else if (!g_strncasecmp(uri, "aim:addbuddy?", strlen("aim:addbuddy?"))) {
 		char *who, *group;
-		uri = uri + strlen("aim://addbuddy?");
+		uri = uri + strlen("aim:addbuddy?");
 		/* spaces are encoded as +'s */
 		
 		if (!(who = strstr(uri, "screenname="))) {
@@ -1359,12 +1359,12 @@ const char *handle_uri(char *uri) {
 		g_free(who);
 		if (group)
 			g_free(group);
-	} else if (!g_strncasecmp(uri, "aim://gochat?", strlen("aim://gochat?"))) {
+	} else if (!g_strncasecmp(uri, "aim:gochat?", strlen("aim:gochat?"))) {
 		char *room;
 		GList *chat=NULL;
 		int exch = 5;
 		
-		uri = uri + strlen("aim://gochat?");
+		uri = uri + strlen("aim:gochat?");
 		/* spaces are encoded as +'s */
 		
 		if (!(room = strstr(uri, "roomname="))) {
