@@ -156,7 +156,7 @@ CFLAGS="$CFLAGS $GTK_CFLAGS"
 if test "x$enable_panel" = "xyes" ; then
 	dnl Things moved with the new versoin of Orbit. Thanks for
 	dnl telling me, Dan.  This should fix them.
-	CFLAGS="$CFLAGS ORBIT_CFLAGS"
+	CFLAGS="$CFLAGS $ORBIT_CFLAGS"
 fi
 
 use_pixbuf=no
