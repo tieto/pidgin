@@ -802,9 +802,8 @@ if test "$enable_tcl" = yes; then
 	else
 		. $TCLCONFIG
 		AC_MSG_CHECKING([Tcl version compatability])
-		dnl It seems only 8.3 fits our bill for now...
-		if test "$TCL_MAJOR_VERSION" -ne 8 -o "$TCL_MINOR_VERSION" -ne 3; then
-			AC_MSG_RESULT([bad, $TCL_VERSION found but 8.3 required])
+		if test "$TCL_MAJOR_VERSION" -ne 8 -o "$TCL_MINOR_VERSION" -lt 3; then
+			AC_MSG_RESULT([bad, $TCL_VERSION found but 8.3 or later required])
 			enable_tcl=no
 		else
 			AC_MSG_RESULT([ok, $TCL_VERSION])

@@ -79,6 +79,8 @@ void tcl_glib_init ()
 {
 	Tcl_NotifierProcs notifier;
 
+	memset(&notifier, 0, sizeof(notifier));
+
 	notifier.createFileHandlerProc = tcl_create_file_handler;
 	notifier.deleteFileHandlerProc = tcl_delete_file_handler;
 	notifier.setTimerProc = tcl_set_timer;
