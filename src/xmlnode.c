@@ -186,7 +186,13 @@ xmlnode_free(xmlnode *node)
 }
 
 xmlnode*
-xmlnode_get_child_with_namespace(xmlnode *parent, const char *name, const char *ns)
+xmlnode_get_child(const xmlnode *parent, const char *name)
+{
+	return xmlnode_get_child_with_namespace(parent, name, NULL);
+}
+
+xmlnode *
+xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const char *ns)
 {
 	xmlnode *x, *ret = NULL;
 	char **names;
@@ -215,12 +221,6 @@ xmlnode_get_child_with_namespace(xmlnode *parent, const char *name, const char *
 
 	g_strfreev(names);
 	return ret;
-}
-
-xmlnode*
-xmlnode_get_child(xmlnode *parent, const char *name)
-{
-	return xmlnode_get_child_with_namespace(parent, name, NULL);
 }
 
 char *

@@ -84,7 +84,7 @@ void xmlnode_insert_child(xmlnode *parent, xmlnode *child);
  *
  * @return The child or NULL.
  */
-xmlnode *xmlnode_get_child(xmlnode *parent, const char *name);
+xmlnode *xmlnode_get_child(const xmlnode *parent, const char *name);
 
 /**
  * Gets a child node named name in a namespace.
@@ -95,7 +95,7 @@ xmlnode *xmlnode_get_child(xmlnode *parent, const char *name);
  *
  * @return The child or NULL.
  */
-xmlnode *xmlnode_get_child_with_namespace(xmlnode *parent, const char *name, const char *xmlns);
+xmlnode *xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const char *xmlns);
 
 /**
  * Gets the next node with the same name as node.
