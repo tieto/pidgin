@@ -90,7 +90,7 @@ Run Gaim
   NSIS from http://www.nullsoft.com/free/nsis/ making sure to place its
   binary dir in your PATH. Then...
 
-  $ cd ~/gaim/win32-install-dir
+  $ cd ~/gaim
   $ make -f Makefile.mingw installer
 
 Debugging
