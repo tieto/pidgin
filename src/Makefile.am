@@ -85,4 +85,5 @@ EXTRA_DIST =	applet.h \
 		gtkticker.h \
 		multi.h \
 		prpl.h \
-		proxy.h
+		proxy.h \
+		ui.h
