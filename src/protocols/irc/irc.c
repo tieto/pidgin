@@ -274,7 +274,7 @@ static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond)
 	struct irc_conn *irc = gc->proto_data;
 	char hostname[256];
 	char *buf;
-	const char *username;
+	const char *username, *realname;
 	GList *connections = gaim_connections_get_all();
 
 	if (source < 0) {
@@ -301,8 +301,9 @@ static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond)
 	gethostname(hostname, sizeof(hostname));
 	hostname[sizeof(hostname) - 1] = '\0';
 	username = gaim_account_get_string(irc->account, "username", "");
+	realname = gaim_account_get_string(irc->account, "realname", "");
 	buf = irc_format(irc, "vvvv:", "USER", strlen(username) ? username : g_get_user_name(), hostname, irc->server,
-			      gc->account->alias && *gc->account->alias ? gc->account->alias : IRC_DEFAULT_ALIAS);
+			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	if (irc_send(irc, buf) < 0) {
 		gaim_connection_error(gc, "Error registering with server");
 		return;
@@ -708,6 +709,9 @@ static void _init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Username"), "username", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_string_new(_("Real name"), "realname", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	_irc_plugin = plugin;
