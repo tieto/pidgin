@@ -1253,6 +1253,7 @@ static void do_import(GaimAccount *account, const char *filename)
 
 		protocol = prpl_num;
 
+		/* TODO Somehow move this checking into prpls */
 		if (prpl_num == GAIM_PROTO_OSCAR) {
 			if ((username = gaim_account_get_username(account)) != NULL) {
 				protocol = (isalpha(*username)
