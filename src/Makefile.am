@@ -16,6 +16,7 @@ gaim_SOURCES =	about.c \
 		html.c \
 		idle.c \
 		list.c \
+		log.c \
 		md5.c \
 		module.c \
 		multi.c \

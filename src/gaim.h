@@ -454,7 +454,6 @@ extern void frombase64(const char *, char **, int *);
 extern void clean_pid();
 extern char *date();
 extern gint linkify_text(char *);
-extern FILE *open_log_file (const char *, int);
 extern char *sec_to_text(guint);
 extern struct aim_user *find_user(const char *, int) G_GNUC_PURE;
 extern char *full_date() G_GNUC_PURE;
@@ -468,13 +467,21 @@ extern void strncpy_nohtml(gchar *, const gchar *, size_t);
 extern void strncpy_withhtml(gchar *, const gchar *, size_t);
 extern gchar *strdup_withhtml(const gchar *);
 extern void away_on_login(char *);
-extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
 extern char *add_cr(char *);
 extern void strip_linefeed(char *);
 extern time_t get_time(int, int, int, int, int, int) G_GNUC_CONST;
 extern FILE *gaim_mkstemp(gchar **);
 extern char *convert_string(char *, const char *, const char *);
 extern const char *handle_uri(char *);
+
+/* Functions in log.h */
+extern FILE *open_log_file (const char *, int);
+extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
+extern void rm_log(struct log_conversation *);
+extern struct log_conversation *find_log_info(const char *);
+extern void update_log_convs();
+extern void save_convo(GtkWidget *save, struct conversation *c);
+extern char *html_logize(char *p);
 
 /*------------------------------------------------------------------------*/
 /*  Multi-Entry dialog and vCard dialog support                           */
