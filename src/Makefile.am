@@ -75,6 +75,7 @@ LIBS = @LIBS@ $(UI_LIBS) $(SOUND_LIBS) $(STATIC_LINK_LIBS) $(PERL_LIBS) $(XSS_LI
 
 EXTRA_DIST =	applet.h \
 		convo.h \
+		core.h \
 		gaim.h \
 		getopt.c \
 		getopt.h \
