@@ -209,6 +209,7 @@ static void free_pref_value(struct gaim_pref *pref) {
 	switch(pref->type) {
 		case GAIM_PREF_BOOLEAN:
 			pref->value.boolean = FALSE;
+			break;
 		case GAIM_PREF_INT:
 			pref->value.integer = 0;
 			break;
