@@ -227,6 +227,7 @@ extern guint convo_options;
 #define OPT_CONVO_IGNORE_FONTS		0x00000800
 #define OPT_CONVO_IGNORE_SIZES		0x00001000
 #define OPT_CONVO_COMBINE		0x00002000
+#define OPT_CONVO_CTL_W_CLOSES          0x00004000
 
 extern guint im_options;
 #define OPT_IM_POPUP			0x00000001
