@@ -24,6 +24,7 @@
 #include "notify.h"
 
 #include "chat.h"
+#include "iq.h"
 #include "message.h"
 #include "presence.h"
 
@@ -263,4 +264,37 @@ char *jabber_chat_buddy_real_name(GaimConnection *gc, int id, const char *who)
 		return NULL;
 
 	return g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
+}
+
+void jabber_chat_start_room_configure(JabberChat *chat) {
+	if(!chat)
+		return;
+
+	/* XXX: implement me! */
+
+	/* XXX: for now... */
+	jabber_chat_create_instant_room(chat);
+}
+
+void jabber_chat_create_instant_room(JabberChat *chat) {
+	JabberIq *iq;
+	xmlnode *query, *x;
+	char *room_jid;
+
+	if(!chat)
+		return;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
+			"http://jabber.org/protocol/muc#owner");
+	query = xmlnode_get_child(iq->node, "query");
+	x = xmlnode_new_child(query, "x");
+	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
+
+	xmlnode_set_attrib(iq->node, "to", room_jid);
+	xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
+	xmlnode_set_attrib(x, "type", "submit");
+
+	jabber_iq_send(iq);
+
+	g_free(room_jid);
 }

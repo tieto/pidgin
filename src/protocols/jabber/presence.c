@@ -239,22 +239,18 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				if((z = xmlnode_get_child(y, "status"))) {
 					const char *code = xmlnode_get_attrib(z, "code");
 					if(code && !strcmp(code, "201")) {
-						/* we created the room.  for now, we'll make it
-						 * an instant room.  XXX: allow fancy room creation */
-						JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_SET,
-								"http://jabber.org/protocol/muc#owner");
-						xmlnode *query = xmlnode_get_child(iq->node, "query");
-						xmlnode *x = xmlnode_new_child(query, "x");
-						char *room_jid = g_strdup_printf("%s@%s", jid->node,
-										jid->domain);
-
-						xmlnode_set_attrib(iq->node, "to", room_jid);
-						xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
-						xmlnode_set_attrib(x, "type", "submit");
-
-						jabber_iq_send(iq);
-
-						g_free(room_jid);
+						chat = jabber_chat_find(js, jid->node, jid->domain);
+						/* XXX: finish this
+						gaim_request_action(js->gc, _("Create New Room"),
+								_("Create New Room"),
+								_("You are creating a new room.  Would you like to "
+									"configure it, or accept the default settings?"),
+								1, chat, 2, _("Configure Room"),
+								G_CALLBACK(jabber_chat_start_room_configure),
+								_("Accept Defaults"),
+								G_CALLBACK(jabber_chat_create_instant_room));
+								*/
+						jabber_chat_create_instant_room(chat);
 					}
 				}
 			}
