@@ -1265,6 +1265,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_PASSWORD_OPTIONAL,
 	NULL,
 	NULL,
+	NO_BUDDY_ICONS,
 	silcgaim_list_icon,
 	silcgaim_list_emblems,
 	silcgaim_status_text,

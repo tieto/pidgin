@@ -2098,6 +2098,7 @@ static GaimPluginProtocolInfo prpl_info =
 	0,
 	NULL,
 	NULL,
+	NO_BUDDY_ICONS,
 	toc_list_icon,
 	toc_list_emblems,
 	NULL,

@@ -574,6 +574,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
 	NULL,
 	NULL,
+	NO_BUDDY_ICONS,
 	irc_blist_icon,
 	irc_blist_emblems,
 	NULL,

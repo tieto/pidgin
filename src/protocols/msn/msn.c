@@ -1631,9 +1631,10 @@ static GaimPluginUiInfo prefs_info = {
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON,
+	OPT_PROTO_MAIL_CHECK,
 	NULL,
 	NULL,
+	{"png", 96, 96},
 	msn_list_icon,
 	msn_list_emblems,
 	msn_status_text,

@@ -22,6 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 #include "gtkinternal.h"
 
 #include "account.h"
@@ -31,6 +32,7 @@
 #include "notify.h"
 #include "plugin.h"
 #include "prefs.h"
+#include "prpl.h"
 #include "request.h"
 #include "signals.h"
 #include "util.h"
@@ -117,6 +119,7 @@ typedef struct
 	GtkWidget *new_mail_check;
 	GtkWidget *buddy_icon_hbox;
 	GtkWidget *buddy_icon_entry;
+	char *buddy_icon_path;
 	GtkWidget *buddy_icon_filesel;
 	GtkWidget *buddy_icon_preview;
 	GtkWidget *buddy_icon_text;
@@ -269,7 +272,10 @@ buddy_icon_filesel_choose(GtkWidget *w, AccountPrefsDialog *dialog)
 		return;
 	}
 
-	gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry), filename);
+	if (dialog->buddy_icon_path)
+		g_free(dialog->buddy_icon_path);
+	dialog->buddy_icon_path = g_strdup(filename);
+	gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), filename);
 	gtk_widget_destroy(dialog->buddy_icon_filesel);
 }
 
@@ -377,7 +383,66 @@ buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 static void
 buddy_icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
-	gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry), "");
+	if (dialog->buddy_icon_path)
+		g_free(dialog->buddy_icon_path);
+	dialog->buddy_icon_path = NULL;
+	gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), "");
+}
+
+gboolean str_array_match(char **a, char **b)
+{
+	int i, j;
+	for (i = 0; a[i] != NULL; i++) 
+		for (j = 0; b[j] != NULL; j++) 
+			if (!g_ascii_strcasecmp(a[i], b[j]))
+				return TRUE;
+	return FALSE;
+}
+
+static void
+convert_and_set_buddy_icon(GaimAccount *account, const char *path)
+{
+	int width, height;
+	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(account->protocol_id));
+	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
+	GdkPixbufFormat *format = gdk_pixbuf_get_file_info (path, &width, &height);
+	char **pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
+
+	if (str_array_match(pixbuf_formats, prpl_formats)) {
+		gaim_account_set_buddy_icon(account, path);
+	} else {
+		int i;
+		GError *error = NULL;
+		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, &error);
+		GdkPixbuf *scale;
+		char *random   = g_strdup_printf("%x", g_random_int());
+		const char *dirname = gaim_buddy_icons_get_cache_dir();
+		char *filename = g_build_filename(dirname, random, NULL);
+		if (prpl_info->icon_spec.width > 0 && prpl_info->icon_spec.height > 0) {
+			scale = gdk_pixbuf_scale_simple (pixbuf, prpl_info->icon_spec.width, prpl_info->icon_spec.height, GDK_INTERP_HYPER);
+			gdk_pixbuf_unref(pixbuf);
+			pixbuf = scale;
+		}
+		if (error) {
+			g_free(filename);
+			g_free(random);
+			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
+			return;
+		}
+		for (i = 0; prpl_formats[i]; i++) {
+			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
+			if (gdk_pixbuf_save (pixbuf, filename, prpl_formats[i], &error, NULL) == FALSE)
+				break;
+		}
+		if (!error) {
+			gaim_account_set_buddy_icon(account, filename);
+		} else {
+			gaim_debug_error("buddyicon", "Could not convert icon to usable format: %s\n", error->message);
+		}
+		g_free(filename);
+		g_free(random);
+		g_object_unref(pixbuf);
+	}
 }
 
 static void
@@ -578,8 +643,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	dialog->buddy_icon_entry = gtk_entry_new();
-	gtk_editable_set_editable(GTK_EDITABLE(dialog->buddy_icon_entry), FALSE);
+	dialog->buddy_icon_entry = gtk_image_new();
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_icon_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_icon_entry);
 	gaim_set_accessible_label (dialog->buddy_icon_entry, label);
@@ -600,7 +664,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		if (!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK))
 			gtk_widget_hide(dialog->new_mail_check);
 
-		if (!(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON))
+		if (!(dialog->prpl_info->icon_spec.format != NULL))
 			gtk_widget_hide(dialog->buddy_icon_hbox);
 	}
 
@@ -608,14 +672,15 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
 				gaim_account_get_check_mail(dialog->account));
 
-		if (gaim_account_get_buddy_icon(dialog->account) != NULL)
-			gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry),
-					gaim_account_get_buddy_icon(dialog->account));
+		if (gaim_account_get_buddy_icon(dialog->account) != NULL) {
+			dialog->buddy_icon_path = g_strdup(gaim_account_get_buddy_icon(dialog->account));
+			gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry),dialog->buddy_icon_path);
+		}
 	}
 
 	if (!dialog->prpl_info ||
 			(!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK) &&
-		!(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON))) {
+			 (dialog->prpl_info->icon_spec.format ==  NULL))) {
 
 		/* Nothing to see :( aww. */
 		gtk_widget_hide(dialog->user_frame);
@@ -1099,15 +1164,15 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_alias(dialog->account, NULL);
 
 	/* Buddy Icon */
-	value = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_icon_entry));
-
+	value = dialog->buddy_icon_path;
+	
 	if (dialog->prpl_info &&
-			(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON) &&
-			*value != '\0')
-		gaim_account_set_buddy_icon(dialog->account, value);
-	else
+	    (dialog->prpl_info->icon_spec.format) &&
+	    *value != '\0') {
+		convert_and_set_buddy_icon(dialog->account, value);
+	} else {
 		gaim_account_set_buddy_icon(dialog->account, NULL);
-
+	}
 	/* Remember Password */
 	gaim_account_set_remember_password(dialog->account,
 			gtk_toggle_button_get_active(

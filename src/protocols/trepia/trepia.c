@@ -1197,9 +1197,10 @@ trepia_register_user(GaimAccount *account)
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
-	OPT_PROTO_BUDDY_ICON,
+	0,
 	NULL,	/* user_splits */
 	NULL,	/* protocol_options */
+	{"Christian, fix me!", 0, 0},
 	trepia_list_icon,
 	trepia_list_emblems,
 	trepia_status_text,

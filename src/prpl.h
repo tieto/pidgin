@@ -100,6 +100,21 @@ typedef enum
 
 } GaimConvImFlags;
 
+/**
+ * A description of a Buddy Icon specification.  This tells Gaim what kind of image file
+ * it should give this prpl, and what kind of image file it should expect back.
+ */
+typedef struct {
+	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported. 
+					     * The core nor the prpl will actually check to see if the data it's given matches this, it's entirely
+					     * up to the UI to do what it wants */
+	int width;                          /**< The width of this icon */
+	int height;                         /**< The height of this icon */
+} GaimBuddyIconSpec;
+
+/* This #define exists just to make it easier to fill out the buddy icon field in he prpl info struct for protocols that couldn't care less. */
+#define NO_BUDDY_ICONS {NULL, 0, 0}
+
 #include "blist.h"
 #include "proxy.h"
 #include "plugin.h"
@@ -146,8 +161,11 @@ typedef enum
 	 * Buddy icon support.
 	 *
 	 * Oscar and Jabber have buddy icons.
+	 *
+	 * *We'll do this a bit more sophisticated like, now.
+	 *
+	 * OPT_PROTO_BUDDY_ICON = 0x00000040,
 	 */
-	OPT_PROTO_BUDDY_ICON = 0x00000040,
 
 	/**
 	 * Images in IMs.
@@ -194,7 +212,9 @@ struct _GaimPluginProtocolInfo
 
 	GList *user_splits;      /* A GList of GaimAccountUserSplit */
 	GList *protocol_options; /* A GList of GaimAccountOption    */
-
+	
+	GaimBuddyIconSpec icon_spec; /* The icon spec. */
+	
 	/**
 	 * Returns the base icon name for the given buddy and account.
 	 * If buddy is NULL, it will return the name to use for the account's icon

@@ -639,7 +639,8 @@ static void init_plugin(GaimPlugin *plugin)
 	char hostname[255];
 
 	prpl_info.api_version	= GAIM_PRPL_API_VERSION;
-	prpl_info.options		= OPT_PROTO_NO_PASSWORD | OPT_PROTO_BUDDY_ICON;
+	prpl_info.options		= OPT_PROTO_NO_PASSWORD;
+	prpl_info.icon_spec     = {"FIXME, Mark!", 0,0};
 	prpl_info.list_icon		= rendezvous_prpl_list_icon;
 	prpl_info.list_emblems	= rendezvous_prpl_list_emblems;
 	prpl_info.status_text	= rendezvous_prpl_status_text;

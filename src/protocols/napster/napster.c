@@ -553,6 +553,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC,
 	NULL,
 	NULL,
+	NO_BUDDY_ICONS,
 	nap_list_icon,
 	nap_list_emblems,
 	NULL,

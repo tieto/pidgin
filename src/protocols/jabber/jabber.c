@@ -1465,6 +1465,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
 	NULL,
 	NULL,
+	NO_BUDDY_ICONS,
 	jabber_list_icon,
 	jabber_list_emblems,
 	jabber_status_text,

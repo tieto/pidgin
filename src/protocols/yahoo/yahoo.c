@@ -3187,9 +3187,10 @@ static GaimPlugin *my_protocol = NULL;
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC | OPT_PROTO_BUDDY_ICON,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
+	{"png", 96, 96},
 	yahoo_list_icon,
 	yahoo_list_emblems,
 	yahoo_status_text,
