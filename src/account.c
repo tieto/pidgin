@@ -708,6 +708,7 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 {
 	GaimPlugin *plugin;
 	const char *password, *alias, *user_info, *buddy_icon;
+	char *esc;
 
 	plugin = gaim_find_prpl(gaim_account_get_protocol(account));
 
@@ -715,22 +716,34 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 	fprintf(fp, "  <protocol>%s</protocol>\n",
 			(plugin != NULL && plugin->info != NULL && plugin->info->id != NULL
 			 ? plugin->info->id : "unknown"));
-	fprintf(fp, "  <name>%s</name>\n", gaim_account_get_username(account));
+	esc = g_markup_escape_text(gaim_account_get_username(account), -1);
+	fprintf(fp, "  <name>%s</name>\n", esc);
+	g_free(esc);
 
 	if (gaim_account_get_remember_password(account) &&
 		(password = gaim_account_get_password(account)) != NULL) {
-
-		fprintf(fp, "  <password>%s</password>\n", password);
+		esc = g_markup_escape_text(password, -1);
+		fprintf(fp, "  <password>%s</password>\n", esc);
+		g_free(esc);
 	}
 
-	if ((alias = gaim_account_get_alias(account)) != NULL)
-		fprintf(fp, "  <alias>%s</alias>\n", alias);
+	if ((alias = gaim_account_get_alias(account)) != NULL) {
+		esc = g_markup_escape_text(alias, -1);
+		fprintf(fp, "  <alias>%s</alias>\n", esc);
+		g_free(esc);
+	}
 
-	if ((user_info = gaim_account_get_user_info(account)) != NULL)
-		fprintf(fp, "  <userinfo>%s</userinfo>\n", user_info);
+	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
+		esc = g_markup_escape_text(user_info, -1);
+		fprintf(fp, "  <userinfo>%s</userinfo>\n", esc);
+		g_free(esc);
+	}
 
-	if ((buddy_icon = gaim_account_get_buddy_icon(account)) != NULL)
-		fprintf(fp, "  <buddyicon>%s</buddyicon>\n", buddy_icon);
+	if ((buddy_icon = gaim_account_get_buddy_icon(account)) != NULL) {
+		esc = g_markup_escape_text(buddy_icon, -1);
+		fprintf(fp, "  <buddyicon>%s</buddyicon>\n", esc);
+		g_free(esc);
+	}
 
 	fprintf(fp, "  <settings>\n");
 	g_hash_table_foreach(account->settings, __write_setting, fp);
