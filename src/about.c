@@ -105,7 +105,7 @@ void show_about(GtkWidget *w, void *data)
 			"  Rob Flynn (", _("maintainer"), ") "
 			"&lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>"
 			"  Sean Egan (", _("lead developer"), ") "
-			"&lt;<A HREF=\"mailto:bj91704@binghamton.edu\">"
+			"&lt;<A HREF=\"mailto:sean.egan@binghamton.edu\">"
 			"bj91704@binghamton.edu</A>&gt;<BR>"
 			"  Christian 'ChipX86' Hammond (", _("developer & webmaster"), ")<BR>"
 			"  Herman Bloggs (", _("win32 port"), ") "
