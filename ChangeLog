@@ -16,6 +16,8 @@ version 0.82:
 	  (Felipe Contreras)
 	* The chat invite button has a correct label (Stu Tomlinson)
 	* The system log should leak fewer file descriptors now (Ka-Hing Cheung)
+	* File transfers appear in the file transfer window when they
+	  are initiated rather than when they begin transferring (Dave West)
 	* Better file transfer cancel messages for AIM (Dave West)
 
 version 0.81 (08/05/2004):

@@ -320,8 +320,8 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		gaim_xfer_set_local_filename(xfer, filename);
 	}
 
-
 	xfer->ops.init(xfer);
+	gaim_xfer_add(xfer);
 }
 
 void
@@ -713,10 +713,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 static void
 begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 {
-	GaimXferUiOps *ui_ops;
 	GaimXferType type = gaim_xfer_get_type(xfer);
-
-	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
 	/*
 	 * We'll have already tried to open this earlier to make sure we can
@@ -732,9 +729,6 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 	}
 
 	xfer->watcher = gaim_input_add(xfer->fd, cond, transfer_cb, xfer);
-
-	if (ui_ops != NULL && ui_ops->add_xfer != NULL)
-		ui_ops->add_xfer(xfer);
 
 	if (xfer->ops.start != NULL)
 		xfer->ops.start(xfer);
