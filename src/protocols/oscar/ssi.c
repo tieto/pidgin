@@ -820,7 +820,7 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int p
 				free(tlv->value);
 				tlv->value = (fu8_t *)malloc(sizeof(fu8_t));
 			}
-			memcpy(tlv->value, &permdeny, 1);
+			tlv->value[0] = permdeny;
 		} else {
 			/* Need to add the x00ca TLV to the TLV chain */
 			aim_addtlvtochain8((aim_tlvlist_t**)&cur->data, 0x00ca, permdeny);
