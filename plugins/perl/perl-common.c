@@ -1,4 +1,5 @@
 #include "debug.h"
+#include "value.h"
 
 #include "perl-common.h"
 
@@ -35,6 +36,20 @@ create_sv_ptr(void *object)
 }
 
 SV *
+newSVGChar(const char *str)
+{
+	SV *sv;
+
+	if (str == NULL)
+		return &PL_sv_undef;
+
+	sv = newSVpv(str, 0);
+	SvUTF8_on(sv);
+
+	return sv;
+}
+
+SV *
 gaim_perl_bless_object(void *object, const char *stash_name)
 {
 	HV *stash;
@@ -51,13 +66,6 @@ gaim_perl_bless_object(void *object, const char *stash_name)
 	hv_store(hv, "_gaim", 5, create_sv_ptr(object), 0);
 
 	return sv_bless(newRV_noinc((SV *)hv), stash);
-
-//	return sv_bless(create_sv_ptr(object), gv_stashpv(stash, 1));
-//	return create_sv_ptr(object);
-
-//	dXSARGS;
-
-//	return sv_setref_pv(ST(0), "Gaim::Account", create_sv_ptr(object));
 }
 
 gboolean
@@ -216,4 +224,199 @@ execute_perl(const char *function, int argc, char **args)
 	return ret_value;
 }
 
+#if 0
+gboolean
+gaim_perl_value_from_sv(GaimValue *value, SV *sv)
+{
+	switch (gaim_value_get_type(value))
+	{
+		case GAIM_TYPE_CHAR:
+			if ((tmp = SvGChar(sv)) != NULL)
+				gaim_value_set_char(value, tmp[0]);
+			else
+				return FALSE;
+			break;
 
+		case GAIM_TYPE_UCHAR:
+			if ((tmp = SvPV_nolen(sv)) != NULL)
+				gaim_value_set_uchar(value, tmp[0]);
+			else
+				return FALSE;
+			break;
+
+		case GAIM_TYPE_BOOLEAN:
+			gaim_value_set_boolean(value, SvTRUE(sv));
+			break;
+
+		case GAIM_TYPE_INT:
+			gaim_value_set_int(value, SvIV(sv));
+			break;
+
+		case GAIM_TYPE_UINT:
+			gaim_value_set_uint(value, SvIV(sv));
+			break;
+
+		case GAIM_TYPE_LONG:
+			gaim_value_set_long(value, SvIV(sv));
+			break;
+
+		case GAIM_TYPE_ULONG:
+			gaim_value_set_ulong(value, SvIV(sv));
+			break;
+
+		case GAIM_TYPE_INT64:
+			gaim_value_set_int64(value, SvIV(sv));
+			break;
+
+		case GAIM_TYPE_UINT64:
+			gaim_value_set_uint64(value, SvIV(sv));
+			break;
+
+		case GAIM_TYPE_STRING:
+			gaim_value_set_string(value, SvGChar(sv));
+			break;
+
+		case GAIM_TYPE_POINTER:
+			gaim_value_set_pointer(value, (void *)SvIV(sv));
+			break;
+
+		case GAIM_TYPE_BOXED:
+			if (!strcmp(gaim_value_get_specific_type(value), "SV"))
+				gaim_value_set_boxed(value, (sv == &PL_sv_undef ? NULL : sv));
+			else
+				gaim_value_set_boxed(value, sv);
+			break;
+
+		default:
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+SV *
+gaim_perl_sv_from_value(const GaimValue *value, va_list list)
+{
+	switch (gaim_value_get_type(value))
+	{
+		case GAIM_TYPE_BOOLEAN:
+			return newSViv(gaim_value_get_boolean(value));
+			break;
+
+		case GAIM_TYPE_INT:
+			return newSViv(gaim_value_get_int(value));
+			break;
+
+		case GAIM_TYPE_UINT:
+			return newSVuv(gaim_value_get_uint(value));
+			break;
+
+		case GAIM_TYPE_LONG:
+			return newSViv(gaim_value_get_long(value));
+			break;
+
+		case GAIM_TYPE_ULONG:
+			return newSVuv(gaim_value_get_ulong(value));
+			break;
+
+		case GAIM_TYPE_INT64:
+			return newSViv(gaim_value_get_int64(value));
+			break;
+
+		case GAIM_TYPE_UINT64:
+			return newSVuv(gaim_value_get_int64(value));
+			break;
+
+		case GAIM_TYPE_STRING:
+			return newSVGChar(gaim_value_get_string(value));
+			break;
+
+		case GAIM_TYPE_POINTER:
+			return newSViv((IV)gaim_value_get_pointer(value));
+			break;
+
+		case GAIM_TYPE_BOXED:
+			if (!strcmp(gaim_value_get_specific_type(value), "SV"))
+			{
+				SV *sv = (SV *)gaim_perl_get_boxed(value);
+
+				return (sv == NULL ? &PL_sv_undef : sv);
+			}
+
+			/* Uh.. I dunno. Try this? */
+			return sv_2mortal(gaim_perl_bless_object(
+					gaim_perl_get_boxed(value),
+					gaim_value_get_specific_type(value)));
+
+		default:
+			return FALSE;
+	}
+
+	return TRUE;
+}
+#endif
+
+static SV *
+gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
+{
+	const char *stash = NULL;
+
+	switch (gaim_value_get_subtype(value))
+	{
+		case GAIM_SUBTYPE_ACCOUNT:
+			stash = "Gaim::Account";
+			break;
+
+		default:
+			stash = "Gaim"; /* ? */
+	}
+
+	return sv_2mortal(gaim_perl_bless_object(arg, stash));
+}
+
+SV *
+gaim_perl_sv_from_vargs(const GaimValue *value, va_list args)
+{
+	switch (gaim_value_get_type(value))
+	{
+		case GAIM_TYPE_SUBTYPE:
+			return gaim_perl_sv_from_subtype(value, va_arg(args, void *));
+
+		case GAIM_TYPE_BOOLEAN:
+			return newSViv(va_arg(args, gboolean));
+
+		case GAIM_TYPE_INT:
+			return newSViv(va_arg(args, int));
+
+		case GAIM_TYPE_UINT:
+			return newSVuv(va_arg(args, unsigned int));
+
+		case GAIM_TYPE_LONG:
+			return newSViv(va_arg(args, long));
+
+		case GAIM_TYPE_ULONG:
+			return newSVuv(va_arg(args, unsigned long));
+
+		case GAIM_TYPE_INT64:
+			return newSViv(va_arg(args, gint64));
+
+		case GAIM_TYPE_UINT64:
+			return newSVuv(va_arg(args, guint64));
+
+		case GAIM_TYPE_STRING:
+			return newSVGChar(va_arg(args, char *));
+
+		case GAIM_TYPE_POINTER:
+			return newSViv((IV)va_arg(args, void *));
+
+		case GAIM_TYPE_BOXED:
+			/* Uh.. I dunno. Try this? */
+			return sv_2mortal(gaim_perl_bless_object(
+					va_arg(args, void *),
+					gaim_value_get_specific_type(value)));
+
+		default:
+			/* If this happens, things are going to get screwed up... */
+			return NULL;
+	}
+}

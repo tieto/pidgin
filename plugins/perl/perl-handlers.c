@@ -55,21 +55,35 @@ static void *
 perl_signal_cb(va_list args, void *data)
 {
 	GaimPerlSignalHandler *handler = (GaimPerlSignalHandler *)data;
-	void *arg;
 	void *ret_val = NULL;
+	int i;
 	int count;
+	int value_count;
+	GaimValue *ret_value, **values;
 
 	dSP;
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(sp);
 
-	while ((arg = va_arg(args, void *)) != NULL)
-		XPUSHs((SV *)arg);
+	gaim_signal_get_values(handler->instance, handler->signal,
+						   &ret_value, &value_count, &values);
 
+	for (i = 0; i < value_count; i++)
+	{
+		SV *sv = gaim_perl_sv_from_vargs(values[i], args);
+
+		gaim_debug(GAIM_DEBUG_INFO, "perl", "Pushing arg %p\n", sv);
+
+		XPUSHs(sv);
+	}
+
+	gaim_debug(GAIM_DEBUG_INFO, "perl", "Pushing data %p\n", handler->data);
 	XPUSHs((SV *)handler->data);
 
 	PUTBACK;
+	gaim_debug(GAIM_DEBUG_INFO, "perl", "Calling handler %s\n",
+			   handler->func);
 	count = call_pv(handler->func, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
