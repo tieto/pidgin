@@ -35,7 +35,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include "gaim.h"
-#include <aim.h>
+#include <faim/aim.h>
 #include "gnome_applet_mgr.h"
 
 static int inpa = -1;

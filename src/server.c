@@ -28,7 +28,7 @@
 #include <unistd.h>
 #include <gtk/gtk.h>
 #ifdef USE_OSCAR
-#include <aim.h>
+#include <faim/aim.h>
 extern int gaim_caps;
 #endif
 #include "gaim.h"
