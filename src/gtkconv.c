@@ -1143,13 +1143,7 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	win     = gaim_conversation_get_window(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 
-	if (event->keyval == GDK_Escape) {
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/escape_closes")) {
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-			gaim_conversation_destroy(conv);
-		}
-	}
-	else if (event->keyval == GDK_Page_Up) {
+	if (event->keyval == GDK_Page_Up) {
 		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
 
 		if (!(event->state & GDK_CONTROL_MASK))
@@ -1345,13 +1339,6 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
 			g_string_free(conv->history, TRUE);
 			conv->history = g_string_new("");
-		}
-		else if (event->keyval == 'w') {
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-
-			gaim_conversation_destroy(conv);
-
-			return TRUE;
 		}
 		else if (event->keyval == 'n') {
 			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
@@ -2844,9 +2831,9 @@ setup_menubar(GaimWindow *win)
 	GtkAccelGroup *accel_group;
 	gtkwin = GAIM_GTK_WINDOW(win);
 
-        accel_group = gtk_accel_group_new ();
-        gtk_window_add_accel_group (GTK_WINDOW (gtkwin->window), accel_group);
-        g_object_unref (accel_group);
+	accel_group = gtk_accel_group_new ();
+	gtk_window_add_accel_group (GTK_WINDOW (gtkwin->window), accel_group);
+	g_object_unref (accel_group);
 
 	gtkwin->menu.item_factory =
 		gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
@@ -2922,6 +2909,9 @@ setup_menubar(GaimWindow *win)
 									N_("/Options/Enable Sounds"));
 
 	generate_send_as_items(win, NULL);
+
+//	if (gaim_prefs_get_bool("/gaim/gtk/conversations/escape_closes"))
+//		/
 
 	gtk_widget_show(gtkwin->menu.menubar);
 
@@ -5535,8 +5525,20 @@ gaim_gtkconv_get_dest_tab_at_xy(GaimWindow *win, int x, int y)
 }
 
 static void
+escape_closes_pref_cb(const char *name, GaimPrefType type, gpointer value,
+					  gpointer data)
+{
+	if (value)
+		gtk_accel_map_change_entry(N_("<main>/Conversation/Close"),
+								   GDK_Escape, 0, TRUE);
+	else
+		gtk_accel_map_change_entry(N_("<main>/Conversation/Close"),
+								   GDK_W, GDK_CONTROL_MASK, TRUE);
+}
+
+static void
 icons_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
-						gpointer data)
+					  gpointer data)
 {
 	GList *l;
 	GaimConversation *conv;
@@ -5841,6 +5843,8 @@ gaim_gtk_conversation_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
 
 	/* Connect callbacks. */
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/escape_closes",
+								escape_closes_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/icons_on_tabs",
 								icons_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/close_on_tabs",
