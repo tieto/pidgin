@@ -4636,6 +4636,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		if (gtkconv->show_formatting_toolbar)
 			gtk_widget_show(gtkconv->toolbar);
+		else
+			gtk_widget_hide(gtkconv->toolbar);
 
 		gtkconv->show_timestamps = gaim_prefs_get_bool(
 				"/gaim/gtk/conversations/show_timestamps");
