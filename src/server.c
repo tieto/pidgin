@@ -104,6 +104,7 @@ void serv_close(GaimConnection *gc)
 		GaimConversation *b = gc->buddy_chats->data;
 
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
+		gaim_conv_chat_left(GAIM_CONV_CHAT(b));
 	}
 
 	if (gc->idle_timer > 0)
