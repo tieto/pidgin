@@ -641,3 +641,140 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 
 	return optmenu;
 }
+
+static void
+account_menu_cb(GtkWidget *optmenu, GCallback cb)
+{
+	GtkWidget *menu;
+	GtkWidget *item;
+	GaimAccount *account;
+	gpointer user_data;
+
+	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
+	item = gtk_menu_get_active(GTK_MENU(menu));
+
+	account   = g_object_get_data(G_OBJECT(item),    "account");
+	user_data = g_object_get_data(G_OBJECT(optmenu), "user_data");
+
+	if (cb != NULL)
+		((void (*)(GtkWidget *, GaimAccount *, gpointer))cb)(item, account,
+															 user_data);
+}
+
+GtkWidget *
+gaim_gtk_account_option_menu_new(GaimAccount *default_account,
+								 gboolean show_all, GCallback cb,
+								 gpointer user_data)
+{
+	GaimAccount *account;
+	GList *list;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *optmenu;
+	GtkWidget *menu;
+	GtkWidget *item;
+	GtkWidget *image;
+	GdkPixbuf *pixbuf;
+	GdkPixbuf *scale;
+	GList *p;
+	GtkSizeGroup *sg;
+	char *filename;
+	const char *proto_name;
+	char buf[256];
+	int i, selected_index = -1;
+
+	optmenu = gtk_option_menu_new();
+	gtk_widget_show(optmenu);
+
+	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
+
+	menu = gtk_menu_new();
+	gtk_widget_show(menu);
+
+	sg  = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	if (show_all)
+		list = gaim_accounts_get_all();
+	else
+		list = gaim_accounts_get_active();
+
+	for (p = list, i = 0; p != NULL; p = p->next, i++) {
+		GaimPluginProtocolInfo *prpl_info = NULL;
+		GaimPlugin *plugin;
+
+		account = (GaimAccount *)p->data;
+
+		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
+
+		if (plugin != NULL)
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+
+		/* Create the item. */
+		item = gtk_menu_item_new();
+
+		/* Create the hbox. */
+		hbox = gtk_hbox_new(FALSE, 4);
+		gtk_container_add(GTK_CONTAINER(item), hbox);
+		gtk_widget_show(hbox);
+
+		/* Load the image. */
+		if (prpl_info != NULL) {
+			proto_name = prpl_info->list_icon(NULL, NULL);
+			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+										"default", buf, NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+			if (pixbuf != NULL) {
+				/* Scale and insert the image */
+				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+												GDK_INTERP_BILINEAR);
+				image = gtk_image_new_from_pixbuf(scale);
+
+				g_object_unref(G_OBJECT(pixbuf));
+				g_object_unref(G_OBJECT(scale));
+			}
+			else
+				image = gtk_image_new();
+		}
+		else
+			image = gtk_image_new();
+
+		gtk_size_group_add_widget(sg, image);
+
+		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+		gtk_widget_show(image);
+
+		g_snprintf(buf, sizeof(buf), "%s (%s)",
+				   gaim_account_get_username(account), plugin->info->name);
+
+		/* Create the label. */
+		label = gtk_label_new(buf);
+		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
+
+		g_object_set_data(G_OBJECT(item), "account", account);
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		gtk_widget_show(item);
+
+		if (account == default_account)
+			selected_index = i;
+	}
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
+
+	if (selected_index != -1)
+		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
+
+	g_signal_connect(G_OBJECT(optmenu), "changed",
+					 G_CALLBACK(account_menu_cb), cb);
+
+	g_object_unref(sg);
+
+	return optmenu;
+}

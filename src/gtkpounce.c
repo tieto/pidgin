@@ -269,11 +269,13 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 }
 
 static void
-pounce_choose_cb(GtkWidget *item, GaimGtkPounceDialog *dialog)
+pounce_choose_cb(GtkWidget *item, GaimAccount *account,
+				 GaimGtkPounceDialog *dialog)
 {
-	dialog->account = g_object_get_data(G_OBJECT(item), "user_data");
+	dialog->account = account;
 }
 
+#if 0
 static GtkWidget *
 pounce_user_menu(GaimGtkPounceDialog *dialog)
 {
@@ -321,6 +323,7 @@ pounce_user_menu(GaimGtkPounceDialog *dialog)
 
 	return opt_menu;
 }
+#endif
 
 static void
 buddy_changed_cb(GtkEntry *entry, GaimGtkPounceDialog *dialog)
@@ -405,7 +408,10 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
-	dialog->account_menu = pounce_user_menu(dialog);
+	dialog->account_menu =
+		gaim_gtk_account_option_menu_new(dialog->account, TRUE,
+										 G_CALLBACK(pounce_choose_cb), dialog);
+
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->account_menu, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->account_menu);
 

@@ -176,4 +176,19 @@ GtkWidget *gaim_gtk_protocol_option_menu_new(GaimProtocol protocol,
 											 GCallback cb,
 											 gpointer user_data);
 
+/**
+ * Creates a drop-down option menu filled with accounts.
+ *
+ * @param default_account The account to select by default.
+ * @param show_all        Whether or not to show all accounts, or just active
+ *                        accounts.
+ * @param cb              The callback to call when an account is selected.
+ * @param user_data       Data to pass to the callback function.
+ *
+ * @return The drop-down option menu.
+ */
+GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
+											gboolean show_all, GCallback cb,
+											gpointer user_data);
+
 #endif /* _GAIM_GTK_UTILS_H_ */
