@@ -31,7 +31,7 @@
  * The structure is opaque, as nobody should be touching anything inside of
  * it.
  */
-struct gaim_gtkxfer_dialog;
+typedef struct _GaimGtkXferDialog GaimGtkXferDialog;
 
 /**************************************************************************/
 /** @name GTK+ File Transfer Dialog API                                   */
@@ -43,28 +43,28 @@ struct gaim_gtkxfer_dialog;
  *
  * @return The new dialog.
  */
-struct gaim_gtkxfer_dialog *gaim_gtkxfer_dialog_new(void);
+GaimGtkXferDialog *gaim_gtkxfer_dialog_new(void);
 
 /**
  * Destroys a file transfer dialog.
  *
  * @param dialog The file transfer dialog.
  */
-void gaim_gtkxfer_dialog_destroy(struct gaim_gtkxfer_dialog *dialog);
+void gaim_gtkxfer_dialog_destroy(GaimGtkXferDialog *dialog);
 
 /**
  * Displays the file transfer dialog.
  *
  * @param dialog The file transfer dialog to show.
  */
-void gaim_gtkxfer_dialog_show(struct gaim_gtkxfer_dialog *dialog);
+void gaim_gtkxfer_dialog_show(GaimGtkXferDialog *dialog);
 
 /**
  * Hides the file transfer dialog.
  *
  * @param dialog The file transfer dialog to hide.
  */
-void gaim_gtkxfer_dialog_hide(struct gaim_gtkxfer_dialog *dialog);
+void gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog);
 
 /**
  * Shows the file transfer dialog, creating a new one if necessary
@@ -77,8 +77,7 @@ void gaim_show_xfer_dialog();
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void gaim_gtkxfer_dialog_add_xfer(struct gaim_gtkxfer_dialog *dialog,
-								  struct gaim_xfer *xfer);
+void gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer);
 
 /**
  * Removes a file transfer from the dialog.
@@ -86,8 +85,8 @@ void gaim_gtkxfer_dialog_add_xfer(struct gaim_gtkxfer_dialog *dialog,
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void gaim_gtkxfer_dialog_remove_xfer(struct gaim_gtkxfer_dialog *dialog,
-									 struct gaim_xfer *xfer);
+void gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
+									 GaimXfer *xfer);
 
 /**
  * Indicate in a file transfer dialog that a transfer was canceled.
@@ -95,8 +94,8 @@ void gaim_gtkxfer_dialog_remove_xfer(struct gaim_gtkxfer_dialog *dialog,
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer that was canceled.
  */
-void gaim_gtkxfer_dialog_cancel_xfer(struct gaim_gtkxfer_dialog *dialog,
-									 struct gaim_xfer *xfer);
+void gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
+									 GaimXfer *xfer);
 
 /**
  * Updates the information for a transfer in the dialog.
@@ -104,8 +103,8 @@ void gaim_gtkxfer_dialog_cancel_xfer(struct gaim_gtkxfer_dialog *dialog,
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
-									 struct gaim_xfer *xfer);
+void gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
+									 GaimXfer *xfer);
 
 /*@}*/
 
@@ -124,21 +123,21 @@ void gaim_gtk_xfer_init(void);
  *
  * @param dialog The main dialog.
  */
-void gaim_set_gtkxfer_dialog(struct gaim_gtkxfer_dialog *dialog);
+void gaim_set_gtkxfer_dialog(GaimGtkXferDialog *dialog);
 
 /**
  * Returns gaim's main file transfer dialog.
  *
  * @return The main dialog.
  */
-struct gaim_gtkxfer_dialog *gaim_get_gtkxfer_dialog(void);
+GaimGtkXferDialog *gaim_get_gtkxfer_dialog(void);
 
 /**
  * Returns the UI operations structure for the GTK+ file transfer UI.
  *
  * @return The GTK+ file transfer UI operations structure.
  */
-struct gaim_xfer_ui_ops *gaim_get_gtk_xfer_ui_ops(void);
+GaimXferUiOps *gaim_get_gtk_xfer_ui_ops(void);
 
 /*@}*/
 

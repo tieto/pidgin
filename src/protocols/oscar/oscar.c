@@ -713,8 +713,8 @@ static void oscar_close(GaimConnection *gc) {
 	}
 /* BBB */
 	while (od->file_transfers) {
-		struct gaim_xfer *xfer;
-		xfer = (struct gaim_xfer *)od->file_transfers->data;
+		GaimXfer *xfer;
+		xfer = (GaimXfer *)od->file_transfers->data;
 		gaim_xfer_destroy(xfer);
 	}
 	while (od->requesticon) {
@@ -822,7 +822,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition);
 
 /* XXX - This function is pretty ugly */
-static void oscar_xfer_init(struct gaim_xfer *xfer)
+static void oscar_xfer_init(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
@@ -881,14 +881,14 @@ static void oscar_xfer_init(struct gaim_xfer *xfer)
 	}
 }
 
-static void oscar_xfer_start(struct gaim_xfer *xfer)
+static void oscar_xfer_start(GaimXfer *xfer)
 {
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_start\n");
 	/* I'm pretty sure we don't need to do jack here.  Nor Jill. */
 }
 
-static void oscar_xfer_end(struct gaim_xfer *xfer)
+static void oscar_xfer_end(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
@@ -907,7 +907,7 @@ static void oscar_xfer_end(struct gaim_xfer *xfer)
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
 
-static void oscar_xfer_cancel_send(struct gaim_xfer *xfer)
+static void oscar_xfer_cancel_send(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
@@ -924,7 +924,7 @@ static void oscar_xfer_cancel_send(struct gaim_xfer *xfer)
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
 
-static void oscar_xfer_cancel_recv(struct gaim_xfer *xfer)
+static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
@@ -941,7 +941,7 @@ static void oscar_xfer_cancel_recv(struct gaim_xfer *xfer)
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
 
-static void oscar_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
+static void oscar_xfer_ack(GaimXfer *xfer, const char *buffer, size_t size)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 
@@ -962,9 +962,9 @@ static void oscar_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t si
 	}
 }
 
-static struct gaim_xfer *oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
+static GaimXfer *oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
 {
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 
 	while (fts) {
@@ -980,9 +980,9 @@ static struct gaim_xfer *oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
 	return NULL;
 }
 
-static struct gaim_xfer *oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
+static GaimXfer *oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
 {
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 
 	while (fts) {
@@ -1000,7 +1000,7 @@ static struct gaim_xfer *oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
 
 static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	aim_conn_t *conn;
 
@@ -1913,7 +1913,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	va_list ap;
 	aim_conn_t *conn, *listenerconn;
@@ -1953,7 +1953,7 @@ static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
  * user in order to transfer a file.
  */
 static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition) {
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
@@ -1986,7 +1986,7 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	va_list ap;
 	aim_conn_t *conn;
@@ -2031,7 +2031,7 @@ static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	va_list ap;
 	aim_conn_t *conn;
 	fu8_t *cookie;
@@ -2063,7 +2063,7 @@ static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	va_list ap;
 	aim_conn_t *conn;
 	fu8_t *cookie;
@@ -2292,7 +2292,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 /* BBB */
 		if (args->status == AIM_RENDEZVOUS_PROPOSE) {
 			/* Someone wants to send a file (or files) to us */
-			struct gaim_xfer *xfer;
+			GaimXfer *xfer;
 			struct aim_oft_info *oft_info;
 
 			if (!args->cookie || !args->port || !args->verifiedip || 
@@ -2353,7 +2353,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			gaim_xfer_request(xfer);
 		} else if (args->status == AIM_RENDEZVOUS_CANCEL) {
 			/* The other user wants to cancel a file transfer */
-			struct gaim_xfer *xfer;
+			GaimXfer *xfer;
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "AAA - File transfer canceled by remote user\n");
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie)))
@@ -2838,7 +2838,7 @@ static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_
 /* BBB */
 	switch (reason) {
 		case 3: { /* Decline sendfile. */
-			struct gaim_xfer *xfer;
+			GaimXfer *xfer;
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "AAA - Other user declined file transfer\n");
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, cookie)))
@@ -2957,7 +2957,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 #if 0
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 #endif
 	va_list ap;
 	fu16_t reason;

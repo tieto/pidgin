@@ -26,7 +26,7 @@
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
-struct gaim_xfer;
+typedef struct _GaimXfer GaimXfer;
 
 #include "account.h"
 
@@ -45,28 +45,29 @@ typedef enum
  * File transfer UI operations.
  *
  * Any UI representing a file transfer must assign a filled-out
- * gaim_xfer_ui_ops structure to the gaim_xfer.
+ * GaimXferUiOps structure to the gaim_xfer.
  */
-struct gaim_xfer_ui_ops
+typedef struct
 {
-	void (*new)(struct gaim_xfer *xfer);
-	void (*destroy)(struct gaim_xfer *xfer);
-	void (*request_file)(struct gaim_xfer *xfer);
-	void (*ask_cancel)(struct gaim_xfer *xfer);
-	void (*add_xfer)(struct gaim_xfer *xfer);
-	void (*update_progress)(struct gaim_xfer *xfer, double percent);
-	void (*cancel_local)(struct gaim_xfer *xfer);
-	void (*cancel_remote)(struct gaim_xfer *xfer);
-};
+	void (*new_xfer)(GaimXfer *xfer);
+	void (*destroy)(GaimXfer *xfer);
+	void (*request_file)(GaimXfer *xfer);
+	void (*ask_cancel)(GaimXfer *xfer);
+	void (*add_xfer)(GaimXfer *xfer);
+	void (*update_progress)(GaimXfer *xfer, double percent);
+	void (*cancel_local)(GaimXfer *xfer);
+	void (*cancel_remote)(GaimXfer *xfer);
+
+} GaimXferUiOps;
 
 /**
  * A core representation of a file transfer.
  */
-struct gaim_xfer
+struct _GaimXfer
 {
 	GaimXferType type;            /**< The type of transfer.               */
 
-	GaimAccount *account; /**< The account.                        */
+	GaimAccount *account;         /**< The account.                        */
 
 	char *who;                    /**< The person on the other end of the
 	                                   transfer.                           */
@@ -93,20 +94,18 @@ struct gaim_xfer
 	/* I/O operations. */
 	struct
 	{
-		void (*init)(struct gaim_xfer *xfer);
-		void (*start)(struct gaim_xfer *xfer);
-		void (*end)(struct gaim_xfer *xfer);
-		void (*cancel_send)(struct gaim_xfer *xfer);
-		void (*cancel_recv)(struct gaim_xfer *xfer);
-		size_t (*read)(char **buffer, struct gaim_xfer *xfer);
-		size_t (*write)(const char *buffer, size_t size,
-						struct gaim_xfer *xfer);
-		void (*ack)(struct gaim_xfer *xfer, const char *buffer, 
-						size_t size);
+		void (*init)(GaimXfer *xfer);
+		void (*start)(GaimXfer *xfer);
+		void (*end)(GaimXfer *xfer);
+		void (*cancel_send)(GaimXfer *xfer);
+		void (*cancel_recv)(GaimXfer *xfer);
+		size_t (*read)(char **buffer, GaimXfer *xfer);
+		size_t (*write)(const char *buffer, size_t size, GaimXfer *xfer);
+		void (*ack)(GaimXfer *xfer, const char *buffer, size_t size);
 
 	} ops;
 
-	struct gaim_xfer_ui_ops *ui_ops;  /**< UI-specific operations. */
+	GaimXferUiOps *ui_ops;            /**< UI-specific operations. */
 	void *ui_data;                    /**< UI-specific data.       */
 
 	void *data;                       /**< prpl-specific data.     */
@@ -130,7 +129,7 @@ extern "C" {
  *
  * @return A file transfer handle.
  */
-struct gaim_xfer *gaim_xfer_new(GaimAccount *account,
+GaimXfer *gaim_xfer_new(GaimAccount *account,
 								GaimXferType type, const char *who);
 
 /**
@@ -138,14 +137,14 @@ struct gaim_xfer *gaim_xfer_new(GaimAccount *account,
  *
  * @param xfer The file transfer to destroy.
  */
-void gaim_xfer_destroy(struct gaim_xfer *xfer);
+void gaim_xfer_destroy(GaimXfer *xfer);
 
 /**
  * Requests confirmation for a file transfer from the user.
  *
  * @param xfer The file transfer to request confirmation on.
  */
-void gaim_xfer_request(struct gaim_xfer *xfer);
+void gaim_xfer_request(GaimXfer *xfer);
 
 /**
  * Called if the user accepts the file transfer request.
@@ -153,14 +152,14 @@ void gaim_xfer_request(struct gaim_xfer *xfer);
  * @param xfer     The file transfer.
  * @param filename The filename.
  */
-void gaim_xfer_request_accepted(struct gaim_xfer *xfer, char *filename);
+void gaim_xfer_request_accepted(GaimXfer *xfer, char *filename);
 
 /**
  * Called if the user rejects the file transfer request.
  *
  * @param xfer The file transfer.
  */
-void gaim_xfer_request_denied(struct gaim_xfer *xfer);
+void gaim_xfer_request_denied(GaimXfer *xfer);
 
 /**
  * Returns the type of file transfer.
@@ -169,7 +168,7 @@ void gaim_xfer_request_denied(struct gaim_xfer *xfer);
  *
  * @return The type of the file transfer.
  */
-GaimXferType gaim_xfer_get_type(const struct gaim_xfer *xfer);
+GaimXferType gaim_xfer_get_type(const GaimXfer *xfer);
 
 /**
  * Returns the account the file transfer is using.
@@ -178,7 +177,7 @@ GaimXferType gaim_xfer_get_type(const struct gaim_xfer *xfer);
  *
  * @return The account.
  */
-GaimAccount *gaim_xfer_get_account(const struct gaim_xfer *xfer);
+GaimAccount *gaim_xfer_get_account(const GaimXfer *xfer);
 
 /**
  * Returns the completed state for a file transfer.
@@ -187,7 +186,7 @@ GaimAccount *gaim_xfer_get_account(const struct gaim_xfer *xfer);
  *
  * @return The completed state.
  */
-gboolean gaim_xfer_is_completed(const struct gaim_xfer *xfer);
+gboolean gaim_xfer_is_completed(const GaimXfer *xfer);
 
 /**
  * Returns the name of the file being sent or received.
@@ -196,7 +195,7 @@ gboolean gaim_xfer_is_completed(const struct gaim_xfer *xfer);
  *
  * @return The filename.
  */
-const char *gaim_xfer_get_filename(const struct gaim_xfer *xfer);
+const char *gaim_xfer_get_filename(const GaimXfer *xfer);
 
 /**
  * Returns the file's destination filename,
@@ -205,7 +204,7 @@ const char *gaim_xfer_get_filename(const struct gaim_xfer *xfer);
  *
  * @return The destination filename.
  */
-const char *gaim_xfer_get_local_filename(const struct gaim_xfer *xfer);
+const char *gaim_xfer_get_local_filename(const GaimXfer *xfer);
 
 /**
  * Returns the number of bytes sent so far.
@@ -214,7 +213,7 @@ const char *gaim_xfer_get_local_filename(const struct gaim_xfer *xfer);
  *
  * @return The number of bytes sent.
  */
-size_t gaim_xfer_get_bytes_sent(const struct gaim_xfer *xfer);
+size_t gaim_xfer_get_bytes_sent(const GaimXfer *xfer);
 
 /**
  * Returns the number of bytes received so far.
@@ -223,7 +222,7 @@ size_t gaim_xfer_get_bytes_sent(const struct gaim_xfer *xfer);
  *
  * @return The number of bytes received.
  */
-size_t gaim_xfer_get_bytes_remaining(const struct gaim_xfer *xfer);
+size_t gaim_xfer_get_bytes_remaining(const GaimXfer *xfer);
 
 /**
  * Returns the size of the file being sent or received.
@@ -232,7 +231,7 @@ size_t gaim_xfer_get_bytes_remaining(const struct gaim_xfer *xfer);
  * 
  * @return The total size of the file.
  */
-size_t gaim_xfer_get_size(const struct gaim_xfer *xfer);
+size_t gaim_xfer_get_size(const GaimXfer *xfer);
 
 /**
  * Returns the current percentage of progress of the transfer.
@@ -243,7 +242,7 @@ size_t gaim_xfer_get_size(const struct gaim_xfer *xfer);
  *
  * @return The percentage complete.
  */
-double gaim_xfer_get_progress(const struct gaim_xfer *xfer);
+double gaim_xfer_get_progress(const GaimXfer *xfer);
 
 /**
  * Returns the local IP address in the file transfer.
@@ -252,7 +251,7 @@ double gaim_xfer_get_progress(const struct gaim_xfer *xfer);
  *
  * @return The IP address on this end.
  */
-const char *gaim_xfer_get_local_ip(const struct gaim_xfer *xfer);
+const char *gaim_xfer_get_local_ip(const GaimXfer *xfer);
 
 /**
  * Returns the local port number in the file transfer.
@@ -261,7 +260,7 @@ const char *gaim_xfer_get_local_ip(const struct gaim_xfer *xfer);
  *
  * @return The port number on this end.
  */
-unsigned int gaim_xfer_get_local_port(const struct gaim_xfer *xfer);
+unsigned int gaim_xfer_get_local_port(const GaimXfer *xfer);
 
 /**
  * Returns the remote IP address in the file transfer.
@@ -270,7 +269,7 @@ unsigned int gaim_xfer_get_local_port(const struct gaim_xfer *xfer);
  *
  * @return The IP address on the other end.
  */
-const char *gaim_xfer_get_remote_ip(const struct gaim_xfer *xfer);
+const char *gaim_xfer_get_remote_ip(const GaimXfer *xfer);
 
 /**
  * Returns the remote port number in the file transfer.
@@ -279,7 +278,7 @@ const char *gaim_xfer_get_remote_ip(const struct gaim_xfer *xfer);
  *
  * @return The port number on the other end.
  */
-unsigned int gaim_xfer_get_remote_port(const struct gaim_xfer *xfer);
+unsigned int gaim_xfer_get_remote_port(const GaimXfer *xfer);
 
 /**
  * Sets the completed state for the file transfer.
@@ -287,7 +286,7 @@ unsigned int gaim_xfer_get_remote_port(const struct gaim_xfer *xfer);
  * @param xfer      The file transfer.
  * @param completed The completed state.
  */
-void gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed);
+void gaim_xfer_set_completed(GaimXfer *xfer, gboolean completed);
 
 /**
  * Sets the filename for the file transfer.
@@ -295,7 +294,7 @@ void gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed);
  * @param xfer     The file transfer.
  * @param filename The filename.
  */
-void gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename);
+void gaim_xfer_set_filename(GaimXfer *xfer, const char *filename);
 
 /**
  * Sets the local filename for the file transfer.
@@ -303,7 +302,7 @@ void gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename);
  * @param xfer     The file transfer.
  * @param filename The filename
  */
-void gaim_xfer_set_local_filename(struct gaim_xfer *xfer, const char *filename);
+void gaim_xfer_set_local_filename(GaimXfer *xfer, const char *filename);
 
 /**
  * Sets the size of the file in a file transfer.
@@ -311,7 +310,7 @@ void gaim_xfer_set_local_filename(struct gaim_xfer *xfer, const char *filename);
  * @param xfer The file transfer.
  * @param size The size of the file.
  */
-void gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size);
+void gaim_xfer_set_size(GaimXfer *xfer, size_t size);
 
 /**
  * Returns the UI operations structure for a file transfer.
@@ -320,7 +319,7 @@ void gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size);
  *
  * @return The UI operations structure.
  */
-struct gaim_xfer_ui_ops *gaim_xfer_get_ui_ops(const struct gaim_xfer *xfer);
+GaimXferUiOps *gaim_xfer_get_ui_ops(const GaimXfer *xfer);
 
 /**
  * Sets the read function for the file transfer.
@@ -328,8 +327,8 @@ struct gaim_xfer_ui_ops *gaim_xfer_get_ui_ops(const struct gaim_xfer *xfer);
  * @param xfer The file transfer.
  * @param fnc  The read function.
  */
-void gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
-	size_t (*fnc)(char **, struct gaim_xfer *));
+void gaim_xfer_set_read_fnc(GaimXfer *xfer,
+		size_t (*fnc)(char **, GaimXfer *));
 
 /**
  * Sets the write function for the file transfer.
@@ -337,8 +336,8 @@ void gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
  * @param xfer The file transfer.
  * @param fnc  The write function.
  */
-void gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
-		size_t (*fnc)(const char *, size_t, struct gaim_xfer *));
+void gaim_xfer_set_write_fnc(GaimXfer *xfer,
+		size_t (*fnc)(const char *, size_t, GaimXfer *));
 
 /**
  * Sets the acknowledge function for the file transfer.
@@ -346,8 +345,8 @@ void gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
  * @param xfer The file transfer.
  * @param fnc  The acknowledge function.
  */
-void gaim_xfer_set_ack_fnc(struct gaim_xfer *xfer,
-		void (*fnc)(struct gaim_xfer *, const char *, size_t));
+void gaim_xfer_set_ack_fnc(GaimXfer *xfer,
+		void (*fnc)(GaimXfer *, const char *, size_t));
 
 /**
  * Sets the transfer initialization function for the file transfer.
@@ -359,8 +358,7 @@ void gaim_xfer_set_ack_fnc(struct gaim_xfer *xfer,
  * @param xfer The file transfer.
  * @param fnc  The transfer initialization function.
  */
-void gaim_xfer_set_init_fnc(struct gaim_xfer *xfer,
-							void (*fnc)(struct gaim_xfer *));
+void gaim_xfer_set_init_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *));
 
 /**
  * Sets the start transfer function for the file transfer.
@@ -368,8 +366,7 @@ void gaim_xfer_set_init_fnc(struct gaim_xfer *xfer,
  * @param xfer The file transfer.
  * @param fnc  The start transfer function.
  */
-void gaim_xfer_set_start_fnc(struct gaim_xfer *xfer,
-							 void (*fnc)(struct gaim_xfer *));
+void gaim_xfer_set_start_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *));
 
 /**
  * Sets the end transfer function for the file transfer.
@@ -377,8 +374,7 @@ void gaim_xfer_set_start_fnc(struct gaim_xfer *xfer,
  * @param xfer The file transfer.
  * @param fnc  The end transfer function.
  */
-void gaim_xfer_set_end_fnc(struct gaim_xfer *xfer,
-						   void (*fnc)(struct gaim_xfer *));
+void gaim_xfer_set_end_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *));
 
 /**
  * Sets the cancel send function for the file transfer.
@@ -386,8 +382,7 @@ void gaim_xfer_set_end_fnc(struct gaim_xfer *xfer,
  * @param xfer The file transfer.
  * @param fnc  The cancel send function.
  */
-void gaim_xfer_set_cancel_send_fnc(struct gaim_xfer *xfer,
-								   void (*fnc)(struct gaim_xfer *));
+void gaim_xfer_set_cancel_send_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *));
 
 /**
  * Sets the cancel receive function for the file transfer.
@@ -395,8 +390,7 @@ void gaim_xfer_set_cancel_send_fnc(struct gaim_xfer *xfer,
  * @param xfer The file transfer.
  * @param fnc  The cancel receive function.
  */
-void gaim_xfer_set_cancel_recv_fnc(struct gaim_xfer *xfer,
-								   void (*fnc)(struct gaim_xfer *));
+void gaim_xfer_set_cancel_recv_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *));
 
 /**
  * Reads in data from a file transfer stream.
@@ -406,7 +400,7 @@ void gaim_xfer_set_cancel_recv_fnc(struct gaim_xfer *xfer,
  *
  * @return The number of bytes read.
  */
-size_t gaim_xfer_read(struct gaim_xfer *xfer, char **buffer);
+size_t gaim_xfer_read(GaimXfer *xfer, char **buffer);
 
 /**
  * Writes data to a file transfer stream.
@@ -417,8 +411,7 @@ size_t gaim_xfer_read(struct gaim_xfer *xfer, char **buffer);
  *
  * @return The number of bytes written.
  */
-size_t gaim_xfer_write(struct gaim_xfer *xfer, const char *buffer,
-					   size_t size);
+size_t gaim_xfer_write(GaimXfer *xfer, const char *buffer, size_t size);
 
 /**
  * Starts a file transfer.
@@ -432,7 +425,7 @@ size_t gaim_xfer_write(struct gaim_xfer *xfer, const char *buffer,
  * @param ip   The IP address to connect to.
  * @param port The port to connect to.
  */
-void gaim_xfer_start(struct gaim_xfer *xfer, int fd, const char *ip,
+void gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 					 unsigned int port);
 
 /**
@@ -440,21 +433,21 @@ void gaim_xfer_start(struct gaim_xfer *xfer, int fd, const char *ip,
  *
  * @param xfer The file transfer.
  */
-void gaim_xfer_end(struct gaim_xfer *xfer);
+void gaim_xfer_end(GaimXfer *xfer);
 
 /**
  * Cancels a file transfer on the local end.
  *
  * @param xfer The file transfer.
  */
-void gaim_xfer_cancel_local(struct gaim_xfer *xfer);
+void gaim_xfer_cancel_local(GaimXfer *xfer);
 
 /**
  * Cancels a file transfer from the remote end.
  *
  * @param xfer The file transfer.
  */
-void gaim_xfer_cancel_remote(struct gaim_xfer *xfer);
+void gaim_xfer_cancel_remote(GaimXfer *xfer);
 
 /**
  * Displays a file transfer-related error message.
@@ -481,14 +474,14 @@ void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
  *
  * @param fnc The function.
  */
-void gaim_set_xfer_ui_ops(struct gaim_xfer_ui_ops *ops);
+void gaim_set_xfer_ui_ops(GaimXferUiOps *ops);
 
 /**
  * Returns the UI operations structure to be used in all gaim file transfers.
  *
  * @return The UI operations structure.
  */
-struct gaim_xfer_ui_ops *gaim_get_xfer_ui_ops(void);
+GaimXferUiOps *gaim_get_xfer_ui_ops(void);
 
 /*@}*/
 

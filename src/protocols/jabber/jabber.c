@@ -2007,13 +2007,13 @@ struct jabber_xfer_data {
 	struct jabber_data *jd;
 };
 
-static void jabber_xfer_init(struct gaim_xfer *xfer)
+static void jabber_xfer_init(GaimXfer *xfer)
 {
 	struct jabber_xfer_data *data = xfer->data;
 	gaim_xfer_start(xfer, -1, data->url->address, data->url->port);
 }
 
-static void jabber_xfer_free(struct gaim_xfer *xfer)
+static void jabber_xfer_free(GaimXfer *xfer)
 {
 	struct jabber_xfer_data *data = xfer->data;
 	data->jd->file_transfers = g_slist_remove(data->jd->file_transfers, xfer);
@@ -2026,7 +2026,7 @@ static void jabber_xfer_free(struct gaim_xfer *xfer)
 	xfer->data = NULL;
 }
 
-static void jabber_xfer_end(struct gaim_xfer *xfer)
+static void jabber_xfer_end(GaimXfer *xfer)
 {
 	struct jabber_xfer_data *data = xfer->data;
 	xmlnode x;
@@ -2043,7 +2043,7 @@ static void jabber_xfer_end(struct gaim_xfer *xfer)
 	jabber_xfer_free(xfer);
 }
 
-static void jabber_xfer_start(struct gaim_xfer *xfer)
+static void jabber_xfer_start(GaimXfer *xfer)
 {
 	struct jabber_xfer_data *data = xfer->data;
 	char *buf = g_strdup_printf("GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n",
@@ -2052,7 +2052,7 @@ static void jabber_xfer_start(struct gaim_xfer *xfer)
 	g_free(buf);
 }
 
-static size_t jabber_xfer_read(char **buffer, struct gaim_xfer *xfer) {
+static size_t jabber_xfer_read(char **buffer, GaimXfer *xfer) {
 	struct jabber_xfer_data *data = xfer->data;
 	char test;
 	int size;
@@ -2080,10 +2080,10 @@ static size_t jabber_xfer_read(char **buffer, struct gaim_xfer *xfer) {
 	return 0;
 }
 
-static void jabber_xfer_cancel_send(struct gaim_xfer *xfer) {
+static void jabber_xfer_cancel_send(GaimXfer *xfer) {
 }
 
-static void jabber_xfer_cancel_recv(struct gaim_xfer *xfer) {
+static void jabber_xfer_cancel_recv(GaimXfer *xfer) {
 	struct jabber_xfer_data *data = xfer->data;
 	xmlnode x,y;
 
@@ -2106,7 +2106,7 @@ static void jabber_xfer_cancel_recv(struct gaim_xfer *xfer) {
 static void jabber_handleoob(gjconn gjc, xmlnode iqnode) {
 	struct jabber_xfer_data *xfer_data;
 	struct jabber_data *jd = GJ_GC(gjc)->proto_data;
-	struct gaim_xfer *xfer;
+	GaimXfer *xfer;
 	char *msg = NULL;
 	char *filename;
 	xmlnode querynode = xmlnode_get_tag(iqnode, "query");

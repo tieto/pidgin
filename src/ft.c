@@ -25,19 +25,19 @@
 #include "notify.h"
 #include "proxy.h"
 
-static struct gaim_xfer_ui_ops *xfer_ui_ops = NULL;
+static GaimXferUiOps *xfer_ui_ops = NULL;
 
-struct gaim_xfer *
-gaim_xfer_new(GaimAccount *account, GaimXferType type,
-			  const char *who)
+GaimXfer *
+gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 {
-	struct gaim_xfer *xfer;
-	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXfer *xfer;
+	GaimXferUiOps *ui_ops;
 
-	if (account == NULL || type == GAIM_XFER_UNKNOWN || who == NULL)
-		return NULL;
+	g_return_val_if_fail(type    != GAIM_XFER_UNKNOWN, NULL);
+	g_return_val_if_fail(account != NULL,              NULL);
+	g_return_val_if_fail(who     != NULL,              NULL);
 
-	xfer = g_malloc0(sizeof(struct gaim_xfer));
+	xfer = g_new0(GaimXfer, 1);
 
 	xfer->type    = type;
 	xfer->account = account;
@@ -46,19 +46,18 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type,
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
-	if (ui_ops != NULL && ui_ops->new != NULL)
-		ui_ops->new(xfer);
+	if (ui_ops != NULL && ui_ops->new_xfer != NULL)
+		ui_ops->new_xfer(xfer);
 
 	return xfer;
 }
 
 void
-gaim_xfer_destroy(struct gaim_xfer *xfer)
+gaim_xfer_destroy(GaimXfer *xfer)
 {
-	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXferUiOps *ui_ops;
 
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	if (!xfer->completed)
 		gaim_xfer_cancel_local(xfer);
@@ -81,12 +80,12 @@ gaim_xfer_destroy(struct gaim_xfer *xfer)
 }
 
 void
-gaim_xfer_request(struct gaim_xfer *xfer)
+gaim_xfer_request(GaimXfer *xfer)
 {
-	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXferUiOps *ui_ops;
 
-	if (xfer == NULL || xfer->ops.init == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(xfer->ops.init != NULL);
 
 	ui_ops = gaim_get_xfer_ui_ops();
 
@@ -97,7 +96,7 @@ gaim_xfer_request(struct gaim_xfer *xfer)
 }
 
 void
-gaim_xfer_request_accepted(struct gaim_xfer *xfer, char *filename)
+gaim_xfer_request_accepted(GaimXfer *xfer, char *filename)
 {
 	GaimXferType type;
 
@@ -157,10 +156,9 @@ gaim_xfer_request_accepted(struct gaim_xfer *xfer, char *filename)
 }
 
 void
-gaim_xfer_request_denied(struct gaim_xfer *xfer)
+gaim_xfer_request_denied(GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	gaim_xfer_destroy(xfer);
 
@@ -168,82 +166,73 @@ gaim_xfer_request_denied(struct gaim_xfer *xfer)
 }
 
 GaimXferType
-gaim_xfer_get_type(const struct gaim_xfer *xfer)
+gaim_xfer_get_type(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return GAIM_XFER_UNKNOWN;
+	g_return_val_if_fail(xfer != NULL, GAIM_XFER_UNKNOWN);
 
 	return xfer->type;
 }
 
 GaimAccount *
-gaim_xfer_get_account(const struct gaim_xfer *xfer)
+gaim_xfer_get_account(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return NULL;
+	g_return_val_if_fail(xfer != NULL, NULL);
 
 	return xfer->account;
 }
 
 gboolean
-gaim_xfer_is_completed(const struct gaim_xfer *xfer)
+gaim_xfer_is_completed(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return TRUE;
+	g_return_val_if_fail(xfer != NULL, TRUE);
 
 	return xfer->completed;
 }
 
 const char *
-gaim_xfer_get_filename(const struct gaim_xfer *xfer)
+gaim_xfer_get_filename(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return NULL;
+	g_return_val_if_fail(xfer != NULL, NULL);
 
 	return xfer->filename;
 }
 
 const char *
-gaim_xfer_get_local_filename(const struct gaim_xfer *xfer)
+gaim_xfer_get_local_filename(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return NULL;
+	g_return_val_if_fail(xfer != NULL, NULL);
 
 	return xfer->local_filename;
 }
 
 size_t
-gaim_xfer_get_bytes_sent(const struct gaim_xfer *xfer)
+gaim_xfer_get_bytes_sent(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return 0;
+	g_return_val_if_fail(xfer != NULL, 0);
 
 	return xfer->bytes_sent;
 }
 
 size_t
-gaim_xfer_get_bytes_remaining(const struct gaim_xfer *xfer)
+gaim_xfer_get_bytes_remaining(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return 0;
+	g_return_val_if_fail(xfer != NULL, 0);
 
 	return xfer->bytes_remaining;
 }
 
 size_t
-gaim_xfer_get_size(const struct gaim_xfer *xfer)
+gaim_xfer_get_size(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return 0;
+	g_return_val_if_fail(xfer != NULL, 0);
 
 	return xfer->size;
 }
 
 double
-gaim_xfer_get_progress(const struct gaim_xfer *xfer)
+gaim_xfer_get_progress(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return 0.0;
+	g_return_val_if_fail(xfer != NULL, 0.0);
 
 	if (gaim_xfer_get_size(xfer) == 0)
 		return 0.0;
@@ -253,48 +242,43 @@ gaim_xfer_get_progress(const struct gaim_xfer *xfer)
 }
 
 const char *
-gaim_xfer_get_local_ip(const struct gaim_xfer *xfer)
+gaim_xfer_get_local_ip(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return NULL;
+	g_return_val_if_fail(xfer != NULL, NULL);
 
 	return xfer->local_ip;
 }
 
 unsigned int
-gaim_xfer_get_local_port(const struct gaim_xfer *xfer)
+gaim_xfer_get_local_port(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return -1;
+	g_return_val_if_fail(xfer != NULL, -1);
 
 	return xfer->local_port;
 }
 
 const char *
-gaim_xfer_get_remote_ip(const struct gaim_xfer *xfer)
+gaim_xfer_get_remote_ip(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return NULL;
+	g_return_val_if_fail(xfer != NULL, NULL);
 
 	return xfer->remote_ip;
 }
 
 unsigned int
-gaim_xfer_get_remote_port(const struct gaim_xfer *xfer)
+gaim_xfer_get_remote_port(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return -1;
+	g_return_val_if_fail(xfer != NULL, -1);
 
 	return xfer->remote_port;
 }
 
 void
-gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed)
+gaim_xfer_set_completed(GaimXfer *xfer, gboolean completed)
 {
-	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXferUiOps *ui_ops;
 
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->completed = completed;
 
@@ -306,10 +290,9 @@ gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed)
 }
 
 void
-gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename)
+gaim_xfer_set_filename(GaimXfer *xfer, const char *filename)
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	if (xfer->filename != NULL)
 		g_free(xfer->filename);
@@ -318,10 +301,9 @@ gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename)
 }
 
 void
-gaim_xfer_set_local_filename(struct gaim_xfer *xfer, const char *filename)
+gaim_xfer_set_local_filename(GaimXfer *xfer, const char *filename)
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	if (xfer->local_filename != NULL)
 		g_free(xfer->local_filename);
@@ -330,10 +312,9 @@ gaim_xfer_set_local_filename(struct gaim_xfer *xfer, const char *filename)
 }
 
 void
-gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size)
+gaim_xfer_set_size(GaimXfer *xfer, size_t size)
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	if (xfer->size == 0)
 		xfer->bytes_remaining = size - xfer->bytes_sent;
@@ -341,104 +322,88 @@ gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size)
 	xfer->size = size;
 }
 
-struct gaim_xfer_ui_ops *
-gaim_xfer_get_ui_ops(const struct gaim_xfer *xfer)
+GaimXferUiOps *
+gaim_xfer_get_ui_ops(const GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return NULL;
+	g_return_val_if_fail(xfer != NULL, NULL);
 
 	return xfer->ui_ops;
 }
 
 void
-gaim_xfer_set_init_fnc(struct gaim_xfer *xfer,
-					   void (*fnc)(struct gaim_xfer *))
+gaim_xfer_set_init_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.init = fnc;
 }
 
 
 void
-gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
-					   size_t (*fnc)(char **, struct gaim_xfer *))
+gaim_xfer_set_read_fnc(GaimXfer *xfer, size_t (*fnc)(char **, GaimXfer *))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.read = fnc;
 }
 
 void
-gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
-						size_t (*fnc)(const char *, size_t,
-									  struct gaim_xfer *))
+gaim_xfer_set_write_fnc(GaimXfer *xfer,
+						size_t (*fnc)(const char *, size_t, GaimXfer *))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.write = fnc;
 }
 
 void
-gaim_xfer_set_ack_fnc(struct gaim_xfer *xfer,
-			  void (*fnc)(struct gaim_xfer *, const char *, size_t))
+gaim_xfer_set_ack_fnc(GaimXfer *xfer,
+			  void (*fnc)(GaimXfer *, const char *, size_t))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.ack = fnc;
 }
 
 void
-gaim_xfer_set_start_fnc(struct gaim_xfer *xfer,
-						void (*fnc)(struct gaim_xfer *))
+gaim_xfer_set_start_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.start = fnc;
 }
 
 void
-gaim_xfer_set_end_fnc(struct gaim_xfer *xfer,
-					  void (*fnc)(struct gaim_xfer *))
+gaim_xfer_set_end_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.end = fnc;
 }
 
 void
-gaim_xfer_set_cancel_send_fnc(struct gaim_xfer *xfer,
-							  void (*fnc)(struct gaim_xfer *))
+gaim_xfer_set_cancel_send_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.cancel_send = fnc;
 }
 
 void
-gaim_xfer_set_cancel_recv_fnc(struct gaim_xfer *xfer,
-							  void (*fnc)(struct gaim_xfer *))
+gaim_xfer_set_cancel_recv_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	xfer->ops.cancel_recv = fnc;
 }
 
 size_t
-gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
+gaim_xfer_read(GaimXfer *xfer, char **buffer)
 {
 	size_t s, r;
 
-	if (xfer == NULL || buffer == NULL)
-		return 0;
+	g_return_val_if_fail(xfer   != NULL, 0);
+	g_return_val_if_fail(buffer != NULL, 0);
 
 	if (gaim_xfer_get_size(xfer) == 0)
 		s = 4096;
@@ -460,12 +425,13 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 }
 
 size_t
-gaim_xfer_write(struct gaim_xfer *xfer, const char *buffer, size_t size)
+gaim_xfer_write(GaimXfer *xfer, const char *buffer, size_t size)
 {
 	size_t r, s;
 
-	if (xfer == NULL || buffer == NULL || size == 0)
-		return 0;
+	g_return_val_if_fail(xfer   != NULL, 0);
+	g_return_val_if_fail(buffer != NULL, 0);
+	g_return_val_if_fail(size   != 0,    0);
 
 	s = MIN(gaim_xfer_get_bytes_remaining(xfer), size);
 
@@ -480,8 +446,8 @@ gaim_xfer_write(struct gaim_xfer *xfer, const char *buffer, size_t size)
 static void
 transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 {
-	struct gaim_xfer_ui_ops *ui_ops;
-	struct gaim_xfer *xfer = (struct gaim_xfer *)data;
+	GaimXferUiOps *ui_ops;
+	GaimXfer *xfer = (GaimXfer *)data;
 	char *buffer = NULL;
 	size_t r;
 
@@ -526,9 +492,9 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 }
 
 static void
-begin_transfer(struct gaim_xfer *xfer, GaimInputCondition cond)
+begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 {
-	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXferUiOps *ui_ops;
 	GaimXferType type = gaim_xfer_get_type(xfer);
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
@@ -558,7 +524,7 @@ begin_transfer(struct gaim_xfer *xfer, GaimInputCondition cond)
 static void
 connect_cb(gpointer data, gint source, GaimInputCondition condition)
 {
-	struct gaim_xfer *xfer = (struct gaim_xfer *)data;
+	GaimXfer *xfer = (GaimXfer *)data;
 
 	xfer->fd = source;
 
@@ -566,14 +532,14 @@ connect_cb(gpointer data, gint source, GaimInputCondition condition)
 }
 
 void
-gaim_xfer_start(struct gaim_xfer *xfer, int fd, const char *ip,
+gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 				unsigned int port)
 {
 	GaimInputCondition cond;
 	GaimXferType type;
 
-	if (xfer == NULL || gaim_xfer_get_type(xfer) == GAIM_XFER_UNKNOWN)
-		return;
+	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(gaim_xfer_get_type(xfer) != GAIM_XFER_UNKNOWN);
 
 	type = gaim_xfer_get_type(xfer);
 
@@ -607,10 +573,9 @@ gaim_xfer_start(struct gaim_xfer *xfer, int fd, const char *ip,
 }
 
 void
-gaim_xfer_end(struct gaim_xfer *xfer)
+gaim_xfer_end(GaimXfer *xfer)
 {
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	/* See if we are actually trying to cancel this. */
 	if (!xfer->completed) {
@@ -636,12 +601,11 @@ gaim_xfer_end(struct gaim_xfer *xfer)
 }
 
 void
-gaim_xfer_cancel_local(struct gaim_xfer *xfer)
+gaim_xfer_cancel_local(GaimXfer *xfer)
 {
-	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXferUiOps *ui_ops;
 
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{
@@ -676,12 +640,11 @@ gaim_xfer_cancel_local(struct gaim_xfer *xfer)
 }
 
 void
-gaim_xfer_cancel_remote(struct gaim_xfer *xfer)
+gaim_xfer_cancel_remote(GaimXfer *xfer)
 {
-	struct gaim_xfer_ui_ops *ui_ops;
+	GaimXferUiOps *ui_ops;
 
-	if (xfer == NULL)
-		return;
+	g_return_if_fail(xfer != NULL);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{
@@ -720,8 +683,8 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 {
 	char *title;
 
-	if (msg == NULL || type == GAIM_XFER_UNKNOWN)
-		return;
+	g_return_if_fail(msg  != NULL);
+	g_return_if_fail(type != GAIM_XFER_UNKNOWN);
 
 	if (type == GAIM_XFER_SEND)
 		title = g_strdup_printf(_("File transfer to %s aborted.\n"), who);
@@ -734,15 +697,14 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 }
 
 void
-gaim_set_xfer_ui_ops(struct gaim_xfer_ui_ops *ops)
+gaim_set_xfer_ui_ops(GaimXferUiOps *ops)
 {
-	if (ops == NULL)
-		return;
+	g_return_if_fail(ops != NULL);
 
 	xfer_ui_ops = ops;
 }
 
-struct gaim_xfer_ui_ops *
+GaimXferUiOps *
 gaim_get_xfer_ui_ops(void)
 {
 	return xfer_ui_ops;

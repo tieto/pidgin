@@ -37,16 +37,16 @@
 #include "stock.h"
 
 #define GAIM_GTKXFER(xfer) \
-	(struct gaim_gtkxfer_ui_data *)(xfer)->ui_data
+	(GaimGtkXferUiData *)(xfer)->ui_data
 
-struct gaim_gtkxfer_dialog
+struct _GaimGtkXferDialog
 {
 	gboolean keep_open;
 	gboolean auto_clear;
 
 	gint num_transfers;
 
-	struct gaim_xfer *selected_xfer;
+	GaimXfer *selected_xfer;
 
 	GtkWidget *window;
 	GtkWidget *tree;
@@ -75,16 +75,17 @@ struct gaim_gtkxfer_dialog
 	GtkWidget *close_button;
 };
 
-struct gaim_gtkxfer_ui_data
+typedef struct
 {
 	GtkWidget *filesel;
 	GtkTreeIter iter;
 	time_t start_time;
 
 	char *name;
-};
 
-static struct gaim_gtkxfer_dialog *xfer_dialog = NULL;
+} GaimGtkXferUiData;
+
+static GaimGtkXferDialog *xfer_dialog = NULL;
 
 enum
 {
@@ -101,11 +102,10 @@ enum
  * Utility Functions
  **************************************************************************/
 static void
-get_xfer_info_strings(struct gaim_xfer *xfer,
-					  char **kbsec, char **time_elapsed,
+get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 					  char **time_remaining)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 	double kb_sent, kb_rem;
 	double kbps = 0.0;
 	time_t elapsed, now;
@@ -162,10 +162,9 @@ get_xfer_info_strings(struct gaim_xfer *xfer,
 }
 
 static void
-update_detailed_info(struct gaim_gtkxfer_dialog *dialog,
-					 struct gaim_xfer *xfer)
+update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 	char *kbsec, *time_elapsed, *time_remaining;
 	char *status;
 
@@ -225,7 +224,7 @@ update_detailed_info(struct gaim_gtkxfer_dialog *dialog,
 }
 
 static void
-update_buttons(struct gaim_gtkxfer_dialog *dialog, struct gaim_xfer *xfer)
+update_buttons(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 {
 	if (dialog->selected_xfer == NULL) {
 		gtk_widget_set_sensitive(dialog->disclosure, FALSE);
@@ -267,7 +266,7 @@ update_buttons(struct gaim_gtkxfer_dialog *dialog, struct gaim_xfer *xfer)
 }
 
 static void
-ensure_row_selected(struct gaim_gtkxfer_dialog *dialog)
+ensure_row_selected(GaimGtkXferDialog *dialog)
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
@@ -287,9 +286,9 @@ ensure_row_selected(struct gaim_gtkxfer_dialog *dialog)
 static gint
 delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
-	struct gaim_gtkxfer_dialog *dialog;
+	GaimGtkXferDialog *dialog;
 
-	dialog = (struct gaim_gtkxfer_dialog *)d;
+	dialog = (GaimGtkXferDialog *)d;
 
 	gaim_gtkxfer_dialog_hide(dialog);
 
@@ -297,25 +296,26 @@ delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 }
 
 static void
-toggle_keep_open_cb(GtkWidget *w, struct gaim_gtkxfer_dialog *dialog)
+toggle_keep_open_cb(GtkWidget *w, GaimGtkXferDialog *dialog)
 {
 	dialog->keep_open = !dialog->keep_open;
-	gaim_prefs_set_bool("/gaim/gtk/filetransfer/keep_open", dialog->keep_open);
+	gaim_prefs_set_bool("/gaim/gtk/filetransfer/keep_open",
+						dialog->keep_open);
 }
 
 static void
-toggle_clear_finished_cb(GtkWidget *w, struct gaim_gtkxfer_dialog *dialog)
+toggle_clear_finished_cb(GtkWidget *w, GaimGtkXferDialog *dialog)
 {
 	dialog->auto_clear = !dialog->auto_clear;
-	gaim_prefs_set_bool("/gaim/gtk/filetransfer/clear_finished", dialog->auto_clear);
+	gaim_prefs_set_bool("/gaim/gtk/filetransfer/clear_finished",
+						dialog->auto_clear);
 }
 
 static void
-selection_changed_cb(GtkTreeSelection *selection,
-					 struct gaim_gtkxfer_dialog *dialog)
+selection_changed_cb(GtkTreeSelection *selection, GaimGtkXferDialog *dialog)
 {
 	GtkTreeIter iter;
-	struct gaim_xfer *xfer = NULL;
+	GaimXfer *xfer = NULL;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		GValue val = {0, };
@@ -344,34 +344,34 @@ selection_changed_cb(GtkTreeSelection *selection,
 }
 
 static void
-open_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
+open_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 }
 
 static void
-pause_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
+pause_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 }
 
 static void
-resume_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
+resume_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 }
 
 static void
-remove_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
+remove_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 	gaim_gtkxfer_dialog_remove_xfer(dialog, dialog->selected_xfer);
 }
 
 static void
-stop_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
+stop_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 	gaim_xfer_cancel_local(dialog->selected_xfer);
 }
 
 static void
-close_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
+close_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 	gaim_gtkxfer_dialog_hide(dialog);
 }
@@ -380,7 +380,7 @@ close_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
  * Dialog Building Functions
  **************************************************************************/
 static GtkWidget *
-setup_tree(struct gaim_gtkxfer_dialog *dialog)
+setup_tree(GaimGtkXferDialog *dialog)
 {
 	GtkWidget *sw;
 	GtkWidget *tree;
@@ -468,7 +468,7 @@ setup_tree(struct gaim_gtkxfer_dialog *dialog)
 }
 
 static GtkWidget *
-make_info_table(struct gaim_gtkxfer_dialog *dialog)
+make_info_table(GaimGtkXferDialog *dialog)
 {
 	GtkWidget *table;
 	GtkWidget *label;
@@ -533,10 +533,10 @@ make_info_table(struct gaim_gtkxfer_dialog *dialog)
 	return table;
 }
 
-struct gaim_gtkxfer_dialog *
+GaimGtkXferDialog *
 gaim_gtkxfer_dialog_new(void)
 {
-	struct gaim_gtkxfer_dialog *dialog;
+	GaimGtkXferDialog *dialog;
 	GtkWidget *window;
 	GtkWidget *vbox1, *vbox2;
 	GtkWidget *bbox;
@@ -547,9 +547,11 @@ gaim_gtkxfer_dialog_new(void)
 	GtkWidget *table;
 	GtkWidget *checkbox;
 
-	dialog = g_new0(struct gaim_gtkxfer_dialog, 1);
-	dialog->keep_open  = gaim_prefs_get_bool("/gaim/gtk/filetransfer/keep_open");
-	dialog->auto_clear = gaim_prefs_get_bool("/gaim/gtk/filetransfer/clear_finished");
+	dialog = g_new0(GaimGtkXferDialog, 1);
+	dialog->keep_open =
+		gaim_prefs_get_bool("/gaim/gtk/filetransfer/keep_open");
+	dialog->auto_clear =
+		gaim_prefs_get_bool("/gaim/gtk/filetransfer/clear_finished");
 
 	/* Create the window. */
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -696,10 +698,9 @@ gaim_gtkxfer_dialog_new(void)
 }
 
 void
-gaim_gtkxfer_dialog_destroy(struct gaim_gtkxfer_dialog *dialog)
+gaim_gtkxfer_dialog_destroy(GaimGtkXferDialog *dialog)
 {
-	if (dialog == NULL)
-		return;
+	g_return_if_fail(dialog != NULL);
 
 	gtk_widget_destroy(dialog->window);
 
@@ -707,19 +708,17 @@ gaim_gtkxfer_dialog_destroy(struct gaim_gtkxfer_dialog *dialog)
 }
 
 void
-gaim_gtkxfer_dialog_show(struct gaim_gtkxfer_dialog *dialog)
+gaim_gtkxfer_dialog_show(GaimGtkXferDialog *dialog)
 {
-	if (dialog == NULL)
-		return;
+	g_return_if_fail(dialog != NULL);
 
 	gtk_widget_show(dialog->window);
 }
 
 void
-gaim_gtkxfer_dialog_hide(struct gaim_gtkxfer_dialog *dialog)
+gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog)
 {
-	if (dialog == NULL)
-		return;
+	g_return_if_fail(dialog != NULL);
 
 	gtk_widget_hide(dialog->window);
 }
@@ -727,30 +726,29 @@ gaim_gtkxfer_dialog_hide(struct gaim_gtkxfer_dialog *dialog)
 void
 gaim_show_xfer_dialog()
 {
-       struct gaim_gtkxfer_dialog *dialog;
-       
-       dialog = gaim_get_gtkxfer_dialog();
-       
-       if (dialog == NULL) {
-	       dialog = gaim_gtkxfer_dialog_new();
+	GaimGtkXferDialog *dialog;
 
-	       gaim_set_gtkxfer_dialog(dialog);
-       }
+	dialog = gaim_get_gtkxfer_dialog();
 
-       gaim_gtkxfer_dialog_show(dialog);
+	if (dialog == NULL) {
+		dialog = gaim_gtkxfer_dialog_new();
+
+		gaim_set_gtkxfer_dialog(dialog);
+	}
+
+	gaim_gtkxfer_dialog_show(dialog);
 }
 
 void
-gaim_gtkxfer_dialog_add_xfer(struct gaim_gtkxfer_dialog *dialog,
-							 struct gaim_xfer *xfer)
+gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 	GaimXferType type;
 	GdkPixbuf *pixbuf;
 	char *size_str, *remaining_str;
 
-	if (dialog == NULL || xfer == NULL)
-		return;
+	g_return_if_fail(dialog != NULL);
+	g_return_if_fail(xfer != NULL);
 
 	data = GAIM_GTKXFER(xfer);
 
@@ -792,13 +790,13 @@ gaim_gtkxfer_dialog_add_xfer(struct gaim_gtkxfer_dialog *dialog,
 }
 
 void
-gaim_gtkxfer_dialog_remove_xfer(struct gaim_gtkxfer_dialog *dialog,
-								struct gaim_xfer *xfer)
+gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
+								GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 
-	if (dialog == NULL || xfer == NULL)
-		return;
+	g_return_if_fail(dialog != NULL);
+	g_return_if_fail(xfer != NULL);
 
 	data = GAIM_GTKXFER(xfer);
 
@@ -821,16 +819,16 @@ gaim_gtkxfer_dialog_remove_xfer(struct gaim_gtkxfer_dialog *dialog,
 }
 
 void
-gaim_gtkxfer_dialog_cancel_xfer(struct gaim_gtkxfer_dialog *dialog,
-								struct gaim_xfer *xfer)
+gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
+								GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 #if 0
 	GdkPixbuf *pixbuf;
 #endif
 
-	if (dialog == NULL || xfer == NULL)
-		return;
+	g_return_if_fail(dialog != NULL);
+	g_return_if_fail(xfer != NULL);
 
 	data = GAIM_GTKXFER(xfer);
 
@@ -865,17 +863,17 @@ gaim_gtkxfer_dialog_cancel_xfer(struct gaim_gtkxfer_dialog *dialog,
 }
 
 void
-gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
-								struct gaim_xfer *xfer)
+gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
+								GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 	char *size_str, *remaining_str;
 	GtkTreeSelection *selection;
 
-	if (dialog == NULL || xfer == NULL)
-		return;
+	g_return_if_fail(dialog != NULL);
+	g_return_if_fail(xfer != NULL);
 
-	if (!(data = GAIM_GTKXFER(xfer)))
+	if ((data = GAIM_GTKXFER(xfer)) == NULL)
 		return;
 
 	size_str      = gaim_get_size_string(gaim_xfer_get_size(xfer));
@@ -917,17 +915,17 @@ gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
  * File Transfer UI Ops
  **************************************************************************/
 static void
-gaim_gtkxfer_new(struct gaim_xfer *xfer)
+gaim_gtkxfer_new_xfer(GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 
 	/* This is where we're setting xfer->ui_data for the first time. */
-	data = g_malloc0(sizeof(struct gaim_gtkxfer_ui_data));
+	data = g_new0(GaimGtkXferUiData, 1);
 	xfer->ui_data = data;
 }
 
 static void
-gaim_gtkxfer_destroy(struct gaim_xfer *xfer)
+gaim_gtkxfer_destroy(GaimXfer *xfer)
 {
 	gaim_gtkxfer_dialog_remove_xfer(xfer_dialog, xfer);
 }
@@ -935,7 +933,7 @@ gaim_gtkxfer_destroy(struct gaim_xfer *xfer)
 static gboolean
 choose_file_close_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-	gaim_xfer_request_denied((struct gaim_xfer *)user_data);
+	gaim_xfer_request_denied((GaimXfer *)user_data);
 
 	return FALSE;
 }
@@ -943,8 +941,8 @@ choose_file_close_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 static void
 choose_file_cancel_cb(GtkButton *button, gpointer user_data)
 {
-	struct gaim_xfer *xfer = (struct gaim_xfer *)user_data;
-	struct gaim_gtkxfer_ui_data *data;
+	GaimXfer *xfer = (GaimXfer *)user_data;
+	GaimGtkXferUiData *data;
 
 	data = GAIM_GTKXFER(xfer);
 
@@ -955,9 +953,9 @@ choose_file_cancel_cb(GtkButton *button, gpointer user_data)
 }
 
 static int
-do_overwrite_cb(struct gaim_xfer *xfer)
+do_overwrite_cb(GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 	
 	data = GAIM_GTKXFER(xfer);
 
@@ -973,9 +971,9 @@ do_overwrite_cb(struct gaim_xfer *xfer)
 }
 
 static int
-dont_overwrite_cb(struct gaim_xfer *xfer)
+dont_overwrite_cb(GaimXfer *xfer)
 {
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 	
 	data = GAIM_GTKXFER(xfer);
 
@@ -990,12 +988,12 @@ dont_overwrite_cb(struct gaim_xfer *xfer)
 static void
 choose_file_ok_cb(GtkButton *button, gpointer user_data)
 {
-	struct gaim_xfer *xfer;
-	struct gaim_gtkxfer_ui_data *data;
+	GaimXfer *xfer;
+	GaimGtkXferUiData *data;
 	struct stat st;
 	const char *name;
 
-	xfer = (struct gaim_xfer *)user_data;
+	xfer = (GaimXfer *)user_data;
 	data = GAIM_GTKXFER(xfer);
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->filesel));
@@ -1015,7 +1013,9 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 			gaim_xfer_request_denied(xfer);
 		}
 	}
-	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) && (st.st_size == 0)) {
+	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) &&
+			 (st.st_size == 0)) {
+
 		gaim_notify_error(NULL, NULL,
 						  _("Cannot send a file of 0 bytes."), NULL);
 
@@ -1046,10 +1046,10 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 }
 
 static int
-choose_file(struct gaim_xfer *xfer)
+choose_file(GaimXfer *xfer)
 {
 	char *cur_dir, *init_str;
-	struct gaim_gtkxfer_ui_data *data;
+	GaimGtkXferUiData *data;
 
 	data = GAIM_GTKXFER(xfer);
 	cur_dir = g_get_current_dir();
@@ -1087,7 +1087,7 @@ choose_file(struct gaim_xfer *xfer)
 }
 
 static int
-cancel_recv_cb(struct gaim_xfer *xfer)
+cancel_recv_cb(GaimXfer *xfer)
 {
 	gaim_xfer_request_denied(xfer);
 
@@ -1095,7 +1095,7 @@ cancel_recv_cb(struct gaim_xfer *xfer)
 }
 
 static void
-gaim_gtkxfer_ask_recv(struct gaim_xfer *xfer)
+gaim_gtkxfer_ask_recv(GaimXfer *xfer)
 {
 	char *buf, *size_buf;
 	size_t size;
@@ -1117,25 +1117,21 @@ gaim_gtkxfer_ask_recv(struct gaim_xfer *xfer)
 }
 
 static void
-gaim_gtkxfer_request_file(struct gaim_xfer *xfer)
+gaim_gtkxfer_request_file(GaimXfer *xfer)
 {
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
-	{
 		gaim_gtkxfer_ask_recv(xfer);
-	}
 	else
-	{
 		choose_file(xfer);
-	}
 }
 
 static void
-gaim_gtkxfer_ask_cancel(struct gaim_xfer *xfer)
+gaim_gtkxfer_ask_cancel(GaimXfer *xfer)
 {
 }
 
 static void
-gaim_gtkxfer_add_xfer(struct gaim_xfer *xfer)
+gaim_gtkxfer_add_xfer(GaimXfer *xfer)
 {
 	if (xfer_dialog == NULL)
 		xfer_dialog = gaim_gtkxfer_dialog_new();
@@ -1144,31 +1140,33 @@ gaim_gtkxfer_add_xfer(struct gaim_xfer *xfer)
 }
 
 static void
-gaim_gtkxfer_update_progress(struct gaim_xfer *xfer, double percent)
+gaim_gtkxfer_update_progress(GaimXfer *xfer, double percent)
 {
 	gaim_gtkxfer_dialog_update_xfer(xfer_dialog, xfer);
 
 	/* See if it's removed. */
 	/* XXX - This caused some bad stuff, and I don't see a point to it */
-/*	if (xfer->ui_data == NULL)
-		gaim_xfer_destroy(xfer); */
+#if 0
+	if (xfer->ui_data == NULL)
+		gaim_xfer_destroy(xfer);
+#endif
 }
 
 static void
-gaim_gtkxfer_cancel_local(struct gaim_xfer *xfer)
+gaim_gtkxfer_cancel_local(GaimXfer *xfer)
 {
 	gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
 static void
-gaim_gtkxfer_cancel_remote(struct gaim_xfer *xfer)
+gaim_gtkxfer_cancel_remote(GaimXfer *xfer)
 {
 	gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
-struct gaim_xfer_ui_ops ops =
+static GaimXferUiOps ops =
 {
-	gaim_gtkxfer_new,
+	gaim_gtkxfer_new_xfer,
 	gaim_gtkxfer_destroy,
 	gaim_gtkxfer_request_file,
 	gaim_gtkxfer_ask_cancel,
@@ -1190,18 +1188,18 @@ gaim_gtk_xfer_init(void)
 }
 
 void
-gaim_set_gtkxfer_dialog(struct gaim_gtkxfer_dialog *dialog)
+gaim_set_gtkxfer_dialog(GaimGtkXferDialog *dialog)
 {
 	xfer_dialog = dialog;
 }
 
-struct gaim_gtkxfer_dialog *
+GaimGtkXferDialog *
 gaim_get_gtkxfer_dialog(void)
 {
 	return xfer_dialog;
 }
 
-struct gaim_xfer_ui_ops *
+GaimXferUiOps *
 gaim_get_gtk_xfer_ui_ops(void)
 {
 	return &ops;

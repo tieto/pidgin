@@ -1261,7 +1261,7 @@ irc_convo_closed(GaimConnection *gc, const char *who)
 }
 
 static void
-irc_xfer_init(struct gaim_xfer *xfer)
+irc_xfer_init(GaimXfer *xfer)
 {
 	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
 
@@ -1269,7 +1269,7 @@ irc_xfer_init(struct gaim_xfer *xfer)
 }
 
 static void
-irc_xfer_end(struct gaim_xfer *xfer)
+irc_xfer_end(GaimXfer *xfer)
 {
 	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
 
@@ -1281,7 +1281,7 @@ irc_xfer_end(struct gaim_xfer *xfer)
 }
 
 static void
-irc_xfer_cancel_send(struct gaim_xfer *xfer)
+irc_xfer_cancel_send(GaimXfer *xfer)
 {
 	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
 
@@ -1293,7 +1293,7 @@ irc_xfer_cancel_send(struct gaim_xfer *xfer)
 }
 
 static void
-irc_xfer_cancel_recv(struct gaim_xfer *xfer)
+irc_xfer_cancel_recv(GaimXfer *xfer)
 {
 	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
 
@@ -1305,7 +1305,7 @@ irc_xfer_cancel_recv(struct gaim_xfer *xfer)
 }
 
 static void
-irc_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
+irc_xfer_ack(GaimXfer *xfer, const char *buffer, size_t size)
 {
 	guint32 pos;
 
@@ -1434,7 +1434,7 @@ handle_ctcp(GaimConnection *gc, char *to, char *nick,
 							_("Cancel"), G_CALLBACK(dcc_chat_cancel));
 	}
 	else if (!g_ascii_strncasecmp(msg, "DCC SEND", 8)) {
-		struct gaim_xfer *xfer;
+		GaimXfer *xfer;
 		char **send_args;
 		char *ip, *filename;
 		struct irc_xfer_data *xfer_data;
@@ -1988,9 +1988,9 @@ irc_close(GaimConnection *gc)
 
 	/* Kill any existing transfers */
 	while (idata->file_transfers) {
-		struct gaim_xfer *xfer;
+		GaimXfer *xfer;
 
-		xfer = (struct gaim_xfer *)idata->file_transfers->data;
+		xfer = (GaimXfer *)idata->file_transfers->data;
 
 		gaim_xfer_end(xfer);
 		gaim_xfer_destroy(xfer);
