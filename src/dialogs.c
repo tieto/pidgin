@@ -2394,6 +2394,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	/* Set up window */
 	ca->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_container_border_width(GTK_CONTAINER(ca->window), 10);
+	gtk_window_set_policy(GTK_WINDOW(ca->window), FALSE, FALSE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
 	gtk_signal_connect(GTK_OBJECT(ca->window),"delete_event",
 		           GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
@@ -2403,19 +2404,19 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	frame = gtk_frame_new(_("New away message"));
 
 	/* set up container boxes */
-	bbox = gtk_vbox_new(FALSE, 0);
+	bbox = gtk_hbox_new(FALSE, 0);
 	fbox = gtk_vbox_new(FALSE, 0);
-	hbox = gtk_hbox_new(TRUE, 0);
+	hbox = gtk_hbox_new(FALSE, 0);
 	titlebox = gtk_hbox_new(FALSE, 0);
 	tbox = gtk_vbox_new(FALSE, 0);
 
 	/* Make a label for away entry */
 	label = gtk_label_new(_("Away title: "));
-	gtk_box_pack_start(GTK_BOX(titlebox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(titlebox), label, TRUE, TRUE, 5);
 
 	/* make away title entry */
 	ca->entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(titlebox), ca->entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(titlebox), ca->entry, TRUE, TRUE, 5);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
@@ -2429,7 +2430,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_text_set_editable(GTK_TEXT(ca->text), TRUE );
 	gtk_container_add(GTK_CONTAINER(sw), ca->text);
 	gtk_widget_show(ca->text);
-	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 10);   
+	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 5);   
 
 	/* make create button */
 	create = gtk_button_new_with_label (_("Create new message"));
@@ -2445,9 +2446,9 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	ca->checkbx = gtk_check_button_new_with_label(_("Make away now"));
 
 	/* pack boxes where they belong */
-	gtk_box_pack_start(GTK_BOX(fbox), titlebox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(fbox), bbox, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(fbox), ca->checkbx, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(fbox), titlebox, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), bbox, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), ca->checkbx, TRUE, TRUE, 5);
 
 	gtk_container_add(GTK_CONTAINER(frame), fbox);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
