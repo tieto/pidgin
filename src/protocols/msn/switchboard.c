@@ -361,7 +361,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		if (error == MSN_MSG_ERROR_TIMEOUT)
 		{
 			str_reason = _("Message may have not been sent "
-						   "because a time out occured:");
+						   "because a time out occurred:");
 		}
 		else if (error == MSN_MSG_ERROR_SB)
 		{
@@ -377,19 +377,19 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 					break;
 				case MSN_SB_ERROR_CONNECTION:
 					str_reason = _("Message could not be sent "
-								   "because a connection error occured:");
+								   "because a connection error occurred:");
 					break;
 				default:
 					str_reason = _("Message could not be sent "
 								   "because an error with "
-								   "the switchboard occured:");
+								   "the switchboard occurred:");
 					break;
 			}
 		}
 		else
 		{
 			str_reason = _("Message may have not been sent "
-						   "because an unkwown error occured:");
+						   "because an unknown error occurred:");
 		}
 
 		body_str = msn_message_to_string(msg);
