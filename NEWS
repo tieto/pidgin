@@ -29,6 +29,14 @@
 	in helping to handle triage. This is mostly a bug fix release,
 	so PLEASE upgrade to it before submitting new bugs.
 
+	Kevin: Herman's been away, so Daniel Atallah and myself were given
+	the task of preparing 0.82's Windows packages. After some feverish
+	plotting, we decided to update GTK and Daniel prepped an update to
+	libpng to address recent security advisories. Besides plotting and
+	a little bit of testing, this NEWS is all I really did. Oh, I also
+	rerefixed the transparency plugin... again! Our beloved Hermanator
+	should be back next time around, for 0.83.
+
 0.81 (08/05/2004):
 	Sean: Three weeks again!  Sticking to schedules is awesome!  Just
 	like Gaim v0.81.  This is what we in the industry call a "bugfix
