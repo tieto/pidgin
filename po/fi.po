@@ -30,12 +30,10 @@ msgid "Error while reading from socket."
 msgstr "Virhe luettaessa socketista."
 
 #: src/protocols/gg/gg.c:194
-#, fuzzy
 msgid "Error while writing to socket."
 msgstr "Virhe kirjoitettaessa socketiin."
 
 #: src/protocols/gg/gg.c:197
-#, fuzzy
 msgid "Authentication failed."
 msgstr "Todennus ep‰onnistui."
 
@@ -110,7 +108,6 @@ msgid "Connect to %s failed"
 msgstr "%s: yhteyden muodostaminen ep‰onnistui"
 
 #: src/protocols/gg/gg.c:594
-#, fuzzy
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
 msgstr "Yrit‰t l‰hett‰‰ viesti‰ ep‰kelvolle Gadu-Gadu-UIN:lle!"
 
@@ -184,7 +181,6 @@ msgid "Couldn't Import Buddies List from Server"
 msgstr "Ei voitu tuoda tuttavalistaa palvelimelta"
 
 #: src/protocols/gg/gg.c:815
-#, fuzzy
 msgid "Buddy List successfully transferred to server"
 msgstr "Tuttavalista siirretty onnistuneesti palvelimelle"
 
@@ -194,22 +190,18 @@ msgid "Gadu-Gadu Information"
 msgstr "Gadu-Gadu-tietoja"
 
 #: src/protocols/gg/gg.c:821
-#, fuzzy
 msgid "Couldn't transfer Buddy List to server"
 msgstr "Ei voitu siirt‰‰ tuttavalistaa palvelimelle"
 
 #: src/protocols/gg/gg.c:827
-#, fuzzy
 msgid "Buddy List sucessfully deleted from server"
 msgstr "Tuttavalista onnistuneesti poistettu palvelimelta"
 
 #: src/protocols/gg/gg.c:833
-#, fuzzy
 msgid "Couldn't delete Buddy List from server"
 msgstr "Ei voitu poistaa tuttavalistaa palvelimelta"
 
 #: src/protocols/gg/gg.c:839
-#, fuzzy
 msgid "Password changed successfully"
 msgstr "Salasanan vaihto onnistui"
 
@@ -308,7 +300,8 @@ msgstr "Kutsumanime‰ ei annettu"
 msgid ""
 "%s has requested a DCC chat.  Would you like to establish the direct "
 "connection?"
-msgstr "%s on pyyt‰nyt DCC-keskustelua. Haluatko muodostaa suoran yhteyden?"
+msgstr ""
+"%s on pyyt‰nyt DCC-keskustelua. Haluatko muodostaa suoran yhteyden?"
 
 #: src/protocols/irc/irc.c:1001
 msgid "Unable to write"
@@ -347,7 +340,7 @@ msgstr "DCC-keskustelu"
 
 #: src/protocols/jabber/jabber.c:699
 msgid "Unavailable"
-msgstr ""
+msgstr "Tavoittamattomissa"
 
 #: src/applet.c:293 src/buddy.c:493 src/buddy.c:2508 src/buddy.c:2644
 #: src/protocols/jabber/jabber.c:703
@@ -368,14 +361,12 @@ msgid "Do Not Disturb"
 msgstr "‰l‰ h‰iritse"
 
 #: src/protocols/jabber/jabber.c:1042
-#, fuzzy
 msgid "No such user"
 msgstr "Palvelinta ei ole olemassa"
 
 #: src/protocols/jabber/jabber.c:1044
-#, fuzzy
 msgid "Jabber Error"
-msgstr "Viestivirhe"
+msgstr "Jabber-virhe"
 
 #: src/dialogs.c:845 src/protocols/jabber/jabber.c:1124
 msgid "Buddies"
@@ -390,9 +381,8 @@ msgid "Unknown login error"
 msgstr "Tuntematon sis‰‰nkirjautumisvirhe"
 
 #: src/protocols/jabber/jabber.c:1455 src/protocols/jabber/jabber.c:2903
-#, fuzzy
 msgid "Connection lost"
-msgstr "Yhteys suljettu"
+msgstr "Yhteys kadotettu"
 
 #: src/protocols/jabber/jabber.c:1457 src/protocols/jabber/jabber.c:1489
 #: src/protocols/jabber/jabber.c:2905 src/protocols/jabber/jabber.c:2951
@@ -425,9 +415,8 @@ msgid "Handle:"
 msgstr "K‰densija:"
 
 #: src/protocols/jabber/jabber.c:2062 src/protocols/jabber/jabber.c:2401
-#, fuzzy
 msgid "Unknown"
-msgstr "ICQ tuntematon"
+msgstr "Tuntematon"
 
 #: src/buddy_chat.c:875 src/protocols/jabber/jabber.c:2117
 #: src/protocols/oscar/oscar.c:3443
@@ -680,24 +669,26 @@ msgid ""
 "following reason:\n"
 "\n"
 msgstr ""
+"K‰ytt‰j‰ %d on ev‰nnyt pyyntˆsi lis‰t‰ h‰net tuttavalistallesi seuraavasta "
+"syyst‰:\n"
+"\n"
 
 #: src/protocols/oscar/oscar.c:1496 src/protocols/oscar/oscar.c:2371
-#, fuzzy
 msgid "No reason given."
-msgstr "Kutsumanime‰ ei annettu"
+msgstr "Syyt‰ ei annettu"
 
 #: src/protocols/oscar/oscar.c:1497 src/protocols/oscar/oscar.c:2372
 msgid "Gaim - ICQ Authorization Denied"
-msgstr ""
+msgstr "Gaim - ICQ valtuutus ev‰tty"
 
 #: src/protocols/oscar/oscar.c:1503 src/protocols/oscar/oscar.c:2378
 #, c-format
 msgid "The user %d has granted your request to add them to your contact list."
-msgstr ""
+msgstr "K‰ytt‰j‰ %d on hyv‰ksynyt pyyntˆsi lis‰t‰ h‰net tuttavalistallesi."
 
 #: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2379
 msgid "Gaim - ICQ Authorization Granted"
-msgstr ""
+msgstr "Gaim - ICQ valtuutus hyv‰ksytty"
 
 #: src/protocols/oscar/oscar.c:1577
 #, c-format
@@ -855,7 +846,6 @@ msgid "Trillian Encryption"
 msgstr "Trillian-salaus"
 
 #: src/protocols/oscar/oscar.c:1801
-#, fuzzy
 msgid ""
 "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG "
 "SRC=\"free_icon.gif\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL "
@@ -868,7 +858,8 @@ msgstr ""
 "SRC=\"free_icon.gif\"> : Tavallinen AIM-k‰ytt‰j‰<br><IMG "
 "SRC=\"aol_icon.gif\"> : AOL-k‰ytt‰j‰ <br><IMG SRC=\"dt_icon.gif\"> : "
 "AIM-koek‰ytt‰j‰ <br><IMG SRC=\"admin_icon.gif\"> : P‰‰k‰ytt‰j‰ <br><IMG "
-"SRC=\"ab_icon.gif\"> : ActiveBuddy vuorovaikutteinen agentti<br>"
+"SRC=\"ab_icon.gif\"> : ActiveBuddy vuorovaikutteinen agentti<br><IMG "
+"SRC=\"wireless_icon.gif\"> : Langattoman laitteen k‰ytt‰j‰<br>"
 
 #: src/protocols/oscar/oscar.c:1829
 msgid ""
@@ -1058,7 +1049,7 @@ msgid "An unknown signon error has occurred: %s."
 msgstr "Tuntematon sis‰‰nkirjautumisvirhe esiintyi: %s."
 
 #: src/protocols/toc/toc.c:474
-#, fuzzy, c-format
+#, c-format
 msgid "An unknown error, %d, has occurred.  Info: %s"
 msgstr "Tuntematon virhe, %d, esiintyi. Tiedot: %s"
 
@@ -1083,7 +1074,6 @@ msgid "Chat Error"
 msgstr "Ryhm‰keskusteluvirhe"
 
 #: src/protocols/toc/toc.c:782
-#, fuzzy
 msgid "Password Change Successful"
 msgstr "Salasanan vaihto onnistui"
 
@@ -2224,7 +2214,7 @@ msgid "Preferences Error"
 msgstr "Asetusvirhe"
 
 #: src/html.c:183
-#, fuzzy, c-format
+#, c-format
 msgid "Received: '%s'\n"
 msgstr "Vastaanotettu: \"%s\"\n"
 
@@ -2344,14 +2334,13 @@ msgid "Notice"
 msgstr "Ilmoitus"
 
 #: src/multi.c:1408
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been signed off"
-msgstr "%s ei kyennyt kirjautumaan sis‰‰n"
+msgstr "%s on kirjautunut ulos"
 
 #: src/multi.c:1409
-#, fuzzy
 msgid "Connection Error"
-msgstr "Yhteys suljettu"
+msgstr "Yhteysvirhe"
 
 #: src/perl.c:856
 msgid "Perl Scripts"
@@ -2887,23 +2876,21 @@ msgid "Sounds while away"
 msgstr "‰‰net poissaollessasi"
 
 #: src/prefs.c:1651
-#, fuzzy
 msgid "Sound method"
-msgstr "‰‰nivalinnat"
+msgstr "ƒ‰nimenetelm‰"
 
 #: src/prefs.c:1725
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Sound command\n"
 "(%s for filename)"
 msgstr ""
-"Komento ‰‰nitiedostojen soittamiseen\n"
+"ƒ‰nikomento\n"
 "(%s tiedostonimeksi)"
 
 #: src/prefs.c:1737
-#, fuzzy
 msgid "Sound played when:"
-msgstr "‰‰nisoitin:"
+msgstr "ƒ‰ni soitetaan kun:"
 
 #: src/prefs.c:1881 src/prefs.c:2939
 msgid "Away Messages"
@@ -3106,32 +3093,3 @@ msgstr "Ei"
 msgid "More Info"
 msgstr "Lis‰‰ tietoja"
 
-#~ msgid "Events"
-#~ msgstr "Tapahtumat"
-
-#~ msgid "Sound when buddy logs in"
-#~ msgstr "‰‰ni kun tuttava kirjautuu sis‰‰n"
-
-#~ msgid "Sound when buddy logs out"
-#~ msgstr "‰‰ni kun tuttava kirjautuu ulos"
-
-#~ msgid "Sound when received message begins conversation"
-#~ msgstr "‰‰ni kun vastaanotettu viesti aloittaa keskustelun"
-
-#~ msgid "Sound when message is received"
-#~ msgstr "‰‰ni kun viesti vastaanotetaan"
-
-#~ msgid "Sound when message is sent"
-#~ msgstr "‰‰ni kun viesti l‰hetet‰‰n"
-
-#~ msgid "Sound in chat rooms when people enter"
-#~ msgstr "‰‰ni keskusteluhuoneissa ihmisten saapuessa"
-
-#~ msgid "Sound in chat rooms when people leave"
-#~ msgstr "‰‰ni keskusteluhuoneissa ihmisten poistuessa"
-
-#~ msgid "Sound in chat rooms when you talk"
-#~ msgstr "‰‰ni keskusteluhuoneissa viestitt‰ess‰si"
-
-#~ msgid "Sound in chat rooms when others talk"
-#~ msgstr "‰‰ni keskusteluhuoneissa muiden viestitt‰ess‰"
