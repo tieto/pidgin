@@ -20,7 +20,7 @@
 
 use Locale::Language;
 
-$lang{pt_BR} = "Portuguese (Brizillian)";
+$lang{pt_BR} = "Portuguese (Brazillian)";
 $lang{'sr@Latn'} = "Serbian (Latin)";
 $lang{zh_CN} = "Chinese (Simplified)";
 $lang{zh_TW} = "Chinese (Traditional)";
