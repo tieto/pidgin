@@ -1001,7 +1001,7 @@ static void do_pass_dlg(struct aim_user *u)
 
 	vbox = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
-	frame = make_frame(p->win, _("Enter Password"));
+	frame = make_frame(vbox, _("Enter Password"));
 	gtk_widget_show(frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
