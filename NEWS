@@ -7,6 +7,15 @@
 	OpenOffice).  Also, Novell has released their first release of their
 	GroupWise plugin, included in this release.  Good stuff all around.
 
+	Luke: Only a week "late" this time around, much nicer than the delay
+	before the last release.  Anyway, this release sees a HUGE number of
+	improvements to the WYSIWYG support, much thanks to all involved. If
+	you weren't impressed before, you should be now!  This release also
+	sees the end of our TOC support, no one has been working on this in
+	some time and its causing problems. DON'T USE IT!.  Also plugin
+	authors will want to take note of the fact that the plugin api version
+	changed. A nice solid release for you all :-)
+
 0.76 (04/01/2004):
 	Sean: Yeah, it's been a long time since the last release, and despite
 	what others may tell you, we were just really lazy.  This is pretty
