@@ -3090,34 +3090,6 @@ static char *caps_string(guint caps)
 	return buf; 
 }
 
-static char *oscar_tooltip_text(struct buddy *b) {
-	struct gaim_connection *gc = b->account->gc;
-	struct oscar_data *od = gc->proto_data;
-	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
-       
-	if (bi) {
-		gchar *yay;
-		char *caps = caps_string(bi->caps);
-		char *tstr = sec_to_text(time(NULL) - bi->signon + 
-			(gc->login_time_official ? gc->login_time_official - gc->login_time : 0));
-		yay = g_strdup_printf(_("<b>Logged In:</b> %s%s%s"), tstr, 
-				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
-		free(tstr);
-
-		if (isdigit(b->name[0])) {
-			char *tmp, *status = gaim_icq_status((b->uc & 0xffff0000) >> 16);
-			tmp = yay;
-			yay = g_strconcat(tmp, _("\n<b>Status:</b> "), status, NULL);
-			g_free(tmp);
-			g_free(status);
-		}
-
-		return yay;
-	} else {
-		return NULL;
-	}
-}
-
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
@@ -4740,7 +4712,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							gaim_blist_add_group(g, NULL);
 						}
 						
-						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
+						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
 						gaim_blist_add_buddy(buddy, g, NULL);
 						export = TRUE;
 					}
@@ -5229,8 +5201,20 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
 
-	if (b->present == GAIM_BUDDY_OFFLINE)
-		emblems[i++] = "offline";
+	if (!GAIM_BUDDY_IS_ONLINE(b)) {
+		struct gaim_account *account;
+		struct gaim_connection *gc;
+		struct oscar_data *od;
+		char *gname;
+		if ((b->name) && (account = b->account) && (gc = account->gc) && 
+			(od = gc->proto_data) && (od->sess->ssi.received_data) && 
+			(gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name)) && 
+			(aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))) {
+			emblems[i++] = "notauthorized";
+		} else {
+			emblems[i++] = "offline";
+		}
+	}
 
 	if (b->name && (b->uc & 0xffff0000) && isdigit(b->name[0])) {
 		int uc = b->uc >> 16;
@@ -5264,6 +5248,56 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 	*sw = emblems[1];
 	*nw = emblems[2];
 	*ne = emblems[3];
+}
+
+static char *oscar_tooltip_text(struct buddy *b) {
+	struct gaim_connection *gc = b->account->gc;
+	struct oscar_data *od = gc->proto_data;
+	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
+	gchar *tmp, *yay = g_strdup("");
+
+	if (GAIM_BUDDY_IS_ONLINE(b)) {
+		if (isdigit(b->name[0])) {
+			char *tmp, *status;
+			status = gaim_icq_status((b->uc & 0xffff0000) >> 16);
+			tmp = yay;
+			yay = g_strconcat(tmp, _("<b>Status:</b> "), status, "\n", NULL);
+			g_free(tmp);
+			g_free(status);
+		}
+
+		if (bi) {
+			char *tstr = sec_to_text(time(NULL) - bi->signon + 
+				(gc->login_time_official ? gc->login_time_official - gc->login_time : 0));
+			tmp = yay;
+			yay = g_strconcat(tmp, _("<b>Logged In:</b> "), tstr, "\n", NULL);
+			free(tmp);
+			free(tstr);
+
+			if (bi->caps) {
+				char *caps = caps_string(bi->caps);
+				tmp = yay;
+				yay = g_strconcat(tmp, _("<b>Capabilities:</b> "), caps, "\n", NULL);
+				free(tmp);
+			}
+		}
+	} else {
+		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
+		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name)) {
+			tmp = yay;
+			yay = g_strconcat(tmp, _("<b>Status:</b> Not Authorized"), "\n", NULL);
+			g_free(tmp);
+		} else {
+			tmp = yay;
+			yay = g_strconcat(tmp, _("<b>Status:</b> Offline"), "\n", NULL);
+			g_free(tmp);
+		}
+	}
+
+	/* remove the trailing newline character */
+	if (yay)
+		yay[strlen(yay)-1] = '\0';
+	return yay;
 }
 
 /*
@@ -5613,18 +5647,17 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			m = g_list_append(m, pbm);
 #endif
 		}
+	}
 		
-		if (od->sess->ssi.received_data) {
-			char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
-			if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
-				pbm = g_new0(struct proto_buddy_menu, 1);
-				pbm->label = _("Re-request Authorization");
-				pbm->callback = gaim_auth_sendrequest;
-				pbm->gc = gc;
-				m = g_list_append(m, pbm);
-			}
+	if (od->sess->ssi.received_data) {
+		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
+		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Re-request Authorization");
+			pbm->callback = gaim_auth_sendrequest;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
 		}
-		
 	}
 	
 	return m;
@@ -5868,6 +5901,7 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->name = g_strdup("AIM/ICQ");
 	ret->list_icon = oscar_list_icon;
 	ret->list_emblems = oscar_list_emblems;
+	ret->tooltip_text = oscar_tooltip_text;
 	ret->away_states = oscar_away_states;
 	ret->actions = oscar_actions;
 	ret->buddy_menu = oscar_buddy_menu;
@@ -5908,7 +5942,6 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->chat_send = oscar_chat_send;
 	ret->keepalive = oscar_keepalive;
 	ret->convo_closed = oscar_convo_closed;
-	ret->tooltip_text = oscar_tooltip_text;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Auth Host:");

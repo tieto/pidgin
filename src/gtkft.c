@@ -990,7 +990,24 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->filesel));
 
-	if (stat(name, &st) == 0) {
+	if (stat(name, &st) != 0) {
+		/* File not found. */
+		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+			gaim_xfer_request_accepted(xfer, g_strdup(name));
+		}
+		else {
+			do_error_dialog(_("That file does not exist."),
+							NULL, GAIM_ERROR);
+
+			gaim_xfer_request_denied(xfer);
+		}
+	}
+	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) && (st.st_size == 0)) {
+		do_error_dialog(_("Can not send a file of 0 bytes."), NULL, GAIM_ERROR);
+
+		gaim_xfer_request_denied(xfer);
+	}
+	else {
 		if (S_ISDIR(st.st_mode)) {
 			/* XXX */
 			gaim_xfer_request_denied(xfer);
@@ -1007,18 +1024,6 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 		}
 		else {
 			gaim_xfer_request_accepted(xfer, g_strdup(name));
-		}
-	}
-	else {
-		/* File not found. */
-		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-			gaim_xfer_request_accepted(xfer, g_strdup(name));
-		}
-		else {
-			do_error_dialog(_("That file does not exist."),
-							NULL, GAIM_ERROR);
-
-			gaim_xfer_request_denied(xfer);
 		}
 	}
 

@@ -695,6 +695,9 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 		}
 	}
 
+	if (!statustext && !GAIM_BUDDY_IS_ONLINE(b))
+		statustext = g_strdup(_("<b>Status:</b> Offline"));
+
 	if (b->idle > 0) {
 		int ihrs, imin;
 		time_t t;
@@ -721,7 +724,6 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       "%s %s"  /* Nickname */
 			       "%s %s"     /* Idle */
 			       "%s %s"     /* Warning */
-			       "%s"        /* Offline */
 			       "%s%s"     /* Status */
 				   "%s",
 			       b->name,
@@ -729,7 +731,6 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
 			       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
 			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
-			       !GAIM_BUDDY_IS_ONLINE(b) ? _("\n<b>Status:</b> Offline") : "",
 			       statustext ? "\n" : "", statustext ? statustext : "",
 				   !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") : "");
 	
