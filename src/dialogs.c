@@ -3026,16 +3026,12 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
-	text_color.red = text_color.red / 256;
-	text_color.green = text_color.green / 256;
-	text_color.blue = text_color.blue / 256;
-	
 	c->fgcol = text_color;
 	c->hasfg = 1;
-	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green,
-		   text_color.blue);
+	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red/256, 
+		   text_color.green/256, text_color.blue/256);
 	surround(c, open_tag, "</FONT>");
-	debug_printf("#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
+	debug_printf("#%02X%02X%02X\n", text_color.red/256, text_color.green/256, text_color.blue/256);
 	g_free(open_tag);
 	cancel_fgcolor(NULL, c);
 }
@@ -3053,16 +3049,12 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
-	text_color.red = text_color.red / 256;
-	text_color.green = text_color.green / 256;
-	text_color.blue = text_color.blue / 256;
-
 	c->bgcol = text_color;
 	c->hasbg = 1;
-	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green,
-		   text_color.blue);
+	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">", text_color.red/256, 
+		   text_color.green/256, text_color.blue/256);
 	surround(c, open_tag, "</BODY>");
-	debug_printf("#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
+	debug_printf("#%02X%02X%02X\n", text_color.red/256, text_color.green/256, text_color.blue/256);
 	g_free(open_tag);
 	cancel_bgcolor(NULL, c);
 }
@@ -3075,9 +3067,9 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 	if (color == NULL) {	/* we came from the prefs */
 		if (fgcseld)
 			return;
-		fgclr[0] = (gdouble)(fgcolor.red) / 255;
-		fgclr[1] = (gdouble)(fgcolor.green) / 255;
-		fgclr[2] = (gdouble)(fgcolor.blue) / 255;
+		fgclr[0] = (gdouble)(fgcolor.red) ;
+		fgclr[1] = (gdouble)(fgcolor.green);
+		fgclr[2] = (gdouble)(fgcolor.blue);
 
 		fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
 		gtk_color_selection_set_color(GTK_COLOR_SELECTION
@@ -3095,9 +3087,9 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 	}
 
 	if (!c->fg_color_dialog) {
-		fgclr[0] = (gdouble)(c->fgcol.red) / 255;
-		fgclr[1] = (gdouble)(c->fgcol.green) / 255;
-		fgclr[2] = (gdouble)(c->fgcol.blue) / 255;
+		fgclr[0] = (gdouble)(c->fgcol.red);
+		fgclr[1] = (gdouble)(c->fgcol.green);
+		fgclr[2] = (gdouble)(c->fgcol.blue);
 
 		c->fg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 		colorsel = GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->colorsel;
@@ -3127,9 +3119,9 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 	if (color == NULL) {	/* we came from the prefs */
 		if (bgcseld)
 			return;
-		bgclr[0] = (gdouble)(bgcolor.red) / 255;
-		bgclr[1] = (gdouble)(bgcolor.green) / 255;
-		bgclr[2] = (gdouble)(bgcolor.blue) / 255;
+		bgclr[0] = (gdouble)(bgcolor.red);
+		bgclr[1] = (gdouble)(bgcolor.green);
+		bgclr[2] = (gdouble)(bgcolor.blue);
 
 		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
 		gtk_color_selection_set_color(GTK_COLOR_SELECTION
@@ -3147,9 +3139,9 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 	}
 
 	if (!c->bg_color_dialog) {
-		bgclr[0] = (gdouble)(c->bgcol.red) / 255;
-		bgclr[1] = (gdouble)(c->bgcol.green) / 255;
-		bgclr[2] = (gdouble)(c->bgcol.blue) / 255;
+		bgclr[0] = (gdouble)(c->bgcol.red);
+		bgclr[1] = (gdouble)(c->bgcol.green);
+		bgclr[2] = (gdouble)(c->bgcol.blue);
 
 		c->bg_color_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
 		colorsel = GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->colorsel;

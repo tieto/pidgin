@@ -1252,14 +1252,14 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		}
 
 		if ((font_options & OPT_FONT_FGCOL) || c->hasfg) {
-			g_snprintf(buf2, limit, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", c->fgcol.red,
-				   c->fgcol.green, c->fgcol.blue, buf);
+			g_snprintf(buf2, limit, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", 
+				   c->fgcol.red/256, c->fgcol.green/256, c->fgcol.blue/256, buf);
 			strcpy(buf, buf2);
 		}
 
 		if ((font_options & OPT_FONT_BGCOL) || c->hasbg) {
 			g_snprintf(buf2, limit, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
-				   c->bgcol.red, c->bgcol.green, c->bgcol.blue, buf);
+				   c->bgcol.red/256, c->bgcol.green/256, c->bgcol.blue/256, buf);
 			strcpy(buf, buf2);
 		}
 	}

@@ -776,14 +776,14 @@ char *stylize(gchar *text, int length)
 	}
 
 	if (font_options & OPT_FONT_FGCOL) {
-		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red,
-			   fgcolor.green, fgcolor.blue, buf);
+		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red/256,
+			   fgcolor.green/256, fgcolor.blue/256, buf);
 		strcpy(buf, tmp);
 	}
 
 	if (font_options & OPT_FONT_BGCOL) {
-		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", bgcolor.red,
-			   bgcolor.green, bgcolor.blue, buf);
+		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", bgcolor.red/256,
+			   bgcolor.green/256, bgcolor.blue/256, buf);
 		strcpy(buf, tmp);
 	}
 
