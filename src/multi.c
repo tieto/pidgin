@@ -1187,7 +1187,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_window_set_wmclass(GTK_WINDOW(acctedit), "accounteditor", "Gaim");
 	gtk_widget_realize(acctedit);
 	gtk_widget_set_usize(acctedit, -1, 250);
-	gtk_window_set_default_size(GTK_WINDOW(acctedit), 450, 250);
+	gtk_window_set_default_size(GTK_WINDOW(acctedit), 550, 250);
 	gtk_signal_connect(GTK_OBJECT(acctedit), "destroy", GTK_SIGNAL_FUNC(delete_acctedit), W);
 
 	vbox = gtk_vbox_new(FALSE, 6);
@@ -1239,7 +1239,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), W);
