@@ -900,7 +900,7 @@ faim_export void aim_session_init(aim_session_t *sess, bool nonblocking, int deb
 	 * Register all the modules for this session...
 	 */
 	aim__registermodule(sess, misc_modfirst); /* load the catch-all first */
-	aim__registermodule(sess, general_modfirst);
+	aim__registermodule(sess, service_modfirst);
 	aim__registermodule(sess, locate_modfirst);
 	aim__registermodule(sess, buddylist_modfirst);
 	aim__registermodule(sess, msg_modfirst);

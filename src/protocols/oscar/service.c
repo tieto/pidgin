@@ -543,8 +543,13 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  * call it again with zero when you're back.
  *
  */
-faim_export int aim_bos_setidle(aim_session_t *sess, aim_conn_t *conn, fu32_t idletime)
+faim_export int aim_srv_setidle(aim_session_t *sess, fu32_t idletime)
 {
+	aim_conn_t *conn;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_GEN)))
+		return -EINVAL;
+
 	return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
 }
 
@@ -1069,7 +1074,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int general_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int service_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0001;
@@ -1077,7 +1082,7 @@ faim_internal int general_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;
 	mod->flags = 0;
-	strncpy(mod->name, "general", sizeof(mod->name));
+	strncpy(mod->name, "service", sizeof(mod->name));
 	mod->snachandler = snachandler;
 
 	return 0;

@@ -46,7 +46,7 @@ faim_internal int misc_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int chatnav_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int chat_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int locate_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int general_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int service_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int invite_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int translate_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int popups_modfirst(aim_session_t *sess, aim_module_t *mod);

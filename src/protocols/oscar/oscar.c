@@ -3848,7 +3848,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_clientready(sess, fr->conn);
 	aim_srv_setavailmsg(sess, NULL);
-	aim_bos_setidle(sess, fr->conn, 0);
+	aim_srv_setidle(sess, 0);
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(sess);
@@ -4448,7 +4448,7 @@ static void oscar_set_dir(GaimConnection *gc, const char *first, const char *mid
 
 static void oscar_set_idle(GaimConnection *gc, int time) {
 	OscarData *od = (OscarData *)gc->proto_data;
-	aim_bos_setidle(od->sess, od->conn, time);
+	aim_srv_setidle(od->sess, time);
 }
 
 static void oscar_set_info(GaimConnection *gc, const char *text) {

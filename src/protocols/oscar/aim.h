@@ -595,6 +595,7 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
 
 /* 0x0001 - service.c */
 faim_export int aim_srv_setavailmsg(aim_session_t *sess, char *msg);
+faim_export int aim_srv_setidle(aim_session_t *sess, fu32_t idletime);
 
 
 
@@ -613,7 +614,6 @@ faim_export int aim_srv_setavailmsg(aim_session_t *sess, char *msg);
 faim_export int aim_sendpauseack(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_nop(aim_session_t *, aim_conn_t *);
 faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_bos_setidle(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_bos_changevisibility(aim_session_t *, aim_conn_t *, int, const char *);
 faim_export int aim_bos_setgroupperm(aim_session_t *, aim_conn_t *, fu32_t mask);
 faim_export int aim_bos_setprivacyflags(aim_session_t *, aim_conn_t *, fu32_t);
