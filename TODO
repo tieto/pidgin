@@ -1,5 +1,4 @@
 WINGAIM:
-	compiling plugins for win32 not possible (makefile is currently for .so)
 	font issues?
 	resizing windows does not work correctly [what's the problem here?]
 		resizing blist only updates window when you let go of mouse,
