@@ -56,30 +56,15 @@ extern "C" {
 #endif /* __GNUC__ */
 
 
+static br_locate_fallback_func fallback_func = NULL;
+static void *fallback_data = NULL;
+
+
 #ifdef ENABLE_BINRELOC
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <unistd.h>
-
-
-static br_locate_fallback_func fallback_func = NULL;
-static void *fallback_data = NULL;
-/**
- * br_set_fallback_function:
- * func: A function to call to find the binary.
- * data: User data to pass to func.
- *
- * Sets a function to call to find the path to the binary, in
- * case "/proc/self/maps" can't be opened. The function set should
- * return a string that is safe to free with free().
- */
-void
-br_set_locate_fallback_func (br_locate_fallback_func func, void *data)
-{
-	fallback_func = func;
-	fallback_data = data;
-}
 
 
 /**
@@ -462,6 +447,23 @@ br_extract_prefix (const char *path)
 	}
 
 	return result;
+}
+
+
+/**
+ * br_set_fallback_function:
+ * func: A function to call to find the binary.
+ * data: User data to pass to func.
+ *
+ * Sets a function to call to find the path to the binary, in
+ * case "/proc/self/maps" can't be opened. The function set should
+ * return a string that is safe to free with free().
+ */
+void
+br_set_locate_fallback_func (br_locate_fallback_func func, void *data)
+{
+	fallback_func = func;
+	fallback_data = data;
 }
 
 
