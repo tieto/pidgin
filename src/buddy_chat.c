@@ -934,11 +934,16 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 
 		g_snprintf(tmp, sizeof(tmp), "X %s", name);
 		list_item = gtk_list_item_new_with_label(tmp);
-	} else if (ignored(b, new)) {
-		g_snprintf(tmp, sizeof(tmp), "X %s", name);
-		list_item = gtk_list_item_new_with_label(tmp);
-	} else
+	} else {
+		if ((ign = ignored(b, new)) != NULL) {
+			/* if they weren't ignored and change to someone who is ignored,
+			 * assume it's someone else. that may seem a little backwards but
+			 * it's better when it *is* actually someone else. Sorry Sean. */
+			g_free(ign);
+			b->ignored = g_list_remove(b->ignored, ign);
+		}
 		list_item = gtk_list_item_new_with_label(name);
+	}
 
 	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
 	gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
