@@ -54,7 +54,6 @@
 GaimPlugin *handle = NULL;
 static struct docklet_ui_ops *ui_ops = NULL;
 static enum docklet_status status = offline;
-static guint blinktimer = 0;
 #ifdef _WIN32
 __declspec(dllimport) GSList *unread_message_queue;
 __declspec(dllimport) GSList *away_messages;
@@ -264,7 +263,7 @@ docklet_update_status()
 
 		/* and schedule the blinker function if messages are pending */
 		if (status == online_pending || status == away_pending) {
-			blinktimer = g_timeout_add(500, docklet_blink_icon, NULL);
+			g_timeout_add(500, docklet_blink_icon, &handle);
 		}
 	}
 
@@ -440,9 +439,6 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	if (blinktimer != 0)
-		g_source_remove(blinktimer);
-
 	if (ui_ops->destroy)
 		ui_ops->destroy();
 

@@ -4255,6 +4255,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	int ret = 0;
 	GError *err = NULL;
 	const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+	char *tmpmsg;
 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
@@ -4329,13 +4330,19 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		args.destsn = name;
 
-		len = strlen(message);
-		args.flags |= oscar_encoding_check(message);
+		/* For ICQ send newlines as CR/LF, for AIM send newlines as <BR> */
+		if (isdigit(name[0]))
+			tmpmsg = add_cr(message);
+		else
+			tmpmsg = strdup_withhtml(message);
+		len = strlen(tmpmsg);
+
+		args.flags |= oscar_encoding_check(tmpmsg);
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
 			gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending Unicode IM\n");
 			args.charset = 0x0002;
 			args.charsubset = 0x0000;
-			args.msg = g_convert(message, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
+			args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 						   "Error converting a unicode message: %s\n", err->message);
@@ -4350,16 +4357,16 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 					   "Sending ISO-8859-1 IM\n");
 			args.charset = 0x0003;
 			args.charsubset = 0x0000;
-			args.msg = g_convert(message, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
+			args.msg = g_convert(tmpmsg, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 			if (err) {
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 						   "conversion error: %s\n", err->message);
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 						   "Someone tell Ethan his 8859-1 detection is wrong\n");
 				args.flags ^= AIM_IMFLAGS_ISO_8859_1 | AIM_IMFLAGS_UNICODE;
-				len = strlen(message);
+				len = strlen(tmpmsg);
 				g_error_free(err);
-				args.msg = g_convert(message, len, "UCS-2BE", "UTF8", NULL, &len, &err);
+				args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF8", NULL, &len, &err);
 				if (err) {
 					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 							   "Error in unicode fallback: %s\n", err->message);
@@ -4369,15 +4376,18 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		} else {
 			args.charset = 0x0000;
 			args.charsubset = 0x0000;
-			args.msg = message;
+			args.msg = tmpmsg;
 		}
 		args.msglen = len;
 
 		ret = aim_im_sendch1_ext(od->sess, &args);
 	}
 
+	g_free(tmpmsg);
+
 	if (ret >= 0)
 		return 1;
+
 	return ret;
 }
 
