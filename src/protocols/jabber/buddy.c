@@ -854,6 +854,13 @@ static void jabber_buddy_rerequest_auth(GaimConnection *gc, const char *name)
 	jabber_presence_subscription_set(js, name, "subscribe");
 }
 
+static void jabber_buddy_unsubscribe(GaimConnection *gc, const char *name)
+{
+	JabberStream *js = gc->proto_data;
+
+	jabber_presence_subscription_set(js, name, "unsubscribe");
+}
+
 GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 {
 	GList *m = NULL;
@@ -882,8 +889,14 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 
 	if(!(jb->subscription & JABBER_SUB_TO)) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Re-request authorization");
+		pbm->label = _("(Re-)Request authorization");
 		pbm->callback = jabber_buddy_rerequest_auth;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	} else {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Unsubscribe");
+		pbm->callback = jabber_buddy_unsubscribe;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
 	}
