@@ -812,10 +812,10 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		GaimConvWindow *win;
 
 		win = gaim_conv_window_new();
-		
+
 		/* Ensure the window is visible. */
 		gaim_conv_window_show(win);
-		
+
 		gaim_conv_window_add_conversation(win, conv);
 	}
 	else
