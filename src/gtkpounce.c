@@ -831,7 +831,7 @@ fill_menu(GtkWidget *menu, GCallback cb)
 	const char *buddy;
 	GList *bp;
 
-	for (bp = gaim_get_pounces(); bp != NULL; bp = bp->next) {
+	for (bp = gaim_pounces_get_all(); bp != NULL; bp = bp->next) {
 		pounce = (GaimPounce *)bp->data;
 		buddy = gaim_pounce_get_pouncee(pounce);
 

@@ -25,6 +25,9 @@
 
 typedef struct _GaimPounce GaimPounce;
 
+#include <glib.h>
+#include "account.h"
+
 /**
  * Events that trigger buddy pounces.
  */
@@ -261,10 +264,20 @@ GaimPounce *gaim_find_pounce(const GaimAccount *pouncer,
 							 const char *pouncee, GaimPounceEvent events);
 
 /**
+ * Loads the pounces.
+ */
+gboolean gaim_pounces_load(void);
+
+/**
+ * Force an immediate write of pounces.
+ */
+void gaim_pounces_sync(void);
+
+/**
  * Returns a list of all registered buddy pounces.
  *
  * @return The list of buddy pounces.
  */
-GList *gaim_get_pounces(void);
+GList *gaim_pounces_get_all(void);
 
 #endif /* _GAIM_POUNCE_H_ */
