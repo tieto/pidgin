@@ -236,6 +236,9 @@ static int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 		len = MSG_LEN;
 	}
 
+	if (olen < 0)
+		debug_printf("TOC C: %s\n", buf);
+
 	hdr.ast = '*';
 	hdr.type = type;
 	hdr.seqno = htons(tdt->seqno++ & 0xffff);
@@ -308,6 +311,98 @@ static void toc_got_info(gpointer data, char *url_text)
 	g_show_info_text(url_text, NULL);
 }
 
+static char *show_error_message(char *d)
+{
+	int no = atoi(strtok(NULL, ":"));
+	char *w = strtok(NULL, ":");
+	static char buf[256];
+
+	plugin_event(event_error, (void *)no, 0, 0, 0);
+
+        switch(no) {
+        case 69:
+                g_snprintf(buf, sizeof(buf), _("Unable to write file %s."), w);
+                break;
+        case 169:
+                g_snprintf(buf, sizeof(buf), _("Unable to read file %s."), w);
+                break;
+        case 269:
+                g_snprintf(buf, sizeof(buf), _("Message too long, last %s bytes truncated."), w);
+                break;
+        case 901:
+                g_snprintf(buf, sizeof(buf), _("%s not currently logged in."), w);
+                break;
+        case 902:
+                g_snprintf(buf, sizeof(buf), _("Warning of %s not allowed."), w);
+                break;
+        case 903:
+                g_snprintf(buf, sizeof(buf), _("A message has been dropped, you are exceeding the server speed limit."));
+                break;
+        case 950:
+                g_snprintf(buf, sizeof(buf), _("Chat in %s is not available."), w);
+                break;
+        case 960:
+                g_snprintf(buf, sizeof(buf), _("You are sending messages too fast to %s."), w);
+                break;
+        case 961:
+                g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was too big."), w);
+                break;
+        case 962:
+                g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was sent too fast."), w);
+                break;
+        case 970:
+                g_snprintf(buf, sizeof(buf), _("Failure."));
+                break;
+        case 971:
+                g_snprintf(buf, sizeof(buf), _("Too many matches."));
+                break;
+        case 972:
+                g_snprintf(buf, sizeof(buf), _("Need more qualifiers."));
+                break;
+        case 973:
+                g_snprintf(buf, sizeof(buf), _("Dir service temporarily unavailable."));
+                break;
+        case 974:
+                g_snprintf(buf, sizeof(buf), _("Email lookup restricted."));
+                break;
+        case 975:
+                g_snprintf(buf, sizeof(buf), _("Keyword ignored."));
+                break;
+        case 976:
+                g_snprintf(buf, sizeof(buf), _("No keywords."));
+                break;
+        case 977:
+                g_snprintf(buf, sizeof(buf), _("User has no directory information."));
+                /* g_snprintf(buf, sizeof(buf), "Language not supported."); */
+                break;
+        case 978:
+                g_snprintf(buf, sizeof(buf), _("Country not supported."));
+                break;
+        case 979:
+                g_snprintf(buf, sizeof(buf), _("Failure unknown: %s."), w);
+                break;
+        case 980:
+                g_snprintf(buf, sizeof(buf), _("Incorrect nickname or password."));
+                break;
+        case 981:
+                g_snprintf(buf, sizeof(buf), _("The service is temporarily unavailable."));
+                break;
+        case 982:
+                g_snprintf(buf, sizeof(buf), _("Your warning level is currently too high to log in."));
+                break;
+        case 983:
+                g_snprintf(buf, sizeof(buf), _("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."));
+                break;
+        case 989:
+                g_snprintf(buf, sizeof(buf), _("An unknown signon error has occurred: %s."), w);
+                break;
+        default:
+                g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occured.  Info: %s"), no, w);
+	}
+
+        return buf;
+}
+
 static void toc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)data;
@@ -363,7 +458,12 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (g_strncasecmp(buf + sizeof(struct sflap_hdr), "SIGN_ON", strlen("SIGN_ON"))) {
 			debug_printf("Didn't get SIGN_ON! buf was: %s\n",
 				     buf + sizeof(struct sflap_hdr));
-			hide_login_progress(gc, _("Authentication Failed"));
+			if (!g_strncasecmp(buf + sizeof(struct sflap_hdr), "ERROR", 5)) {
+				strtok(buf + sizeof(struct sflap_hdr), ":");
+				hide_login_progress(gc, show_error_message(buf +
+							sizeof(struct sflap_hdr)));
+			} else
+				hide_login_progress(gc, _("Authentication Failed"));
 			signoff(gc);
 			return;
 		}
@@ -396,7 +496,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		return;
 	}
 
-	debug_printf("From TOC server: %s\n", buf + sizeof(struct sflap_hdr));
+	debug_printf("TOC S: %s\n", buf + sizeof(struct sflap_hdr));
 
 	c = strtok(buf + sizeof(struct sflap_hdr), ":");	/* Ditch the first part */
 
@@ -489,7 +589,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type, 0);
 	} else if (!strcasecmp(c, "ERROR")) {
 		c = strtok(NULL, ":");
-		show_error_dialog(c);
+		show_error_message(c);
 	} else if (!strcasecmp(c, "EVILED")) {
 		int lev;
 		char *name;
@@ -847,7 +947,7 @@ static void toc_add_buddy(struct gaim_connection *g, char *name)
 	toc_set_config(g);
 }
 
-static void toc_add_buddies(struct gaim_connection *g, GList * buddies)
+static void toc_add_buddies(struct gaim_connection *g, GList *buddies)
 {
 	char buf[BUF_LEN * 2];
 	int n;
@@ -868,6 +968,24 @@ static void toc_remove_buddy(struct gaim_connection *g, char *name)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
+	sflap_send(g, buf, -1, TYPE_DATA);
+	toc_set_config(g);
+}
+
+static void toc_remove_buddies(struct gaim_connection *g, GList *buddies)
+{
+	char buf[BUF_LEN * 2];
+	int n;
+
+	n = g_snprintf(buf, sizeof(buf), "toc_remove_buddy");
+	while (buddies) {
+		if (strlen(normalize(buddies->data)) + n + 32 > MSG_LEN) {
+			sflap_send(g, buf, -1, TYPE_DATA);
+			n = g_snprintf(buf, sizeof(buf), "toc_remove_buddy");
+		}
+		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", normalize(buddies->data));
+		buddies = buddies->next;
+	}
 	sflap_send(g, buf, -1, TYPE_DATA);
 	toc_set_config(g);
 }
@@ -1190,6 +1308,7 @@ void toc_init(struct prpl *ret)
 	ret->add_buddy = toc_add_buddy;
 	ret->add_buddies = toc_add_buddies;
 	ret->remove_buddy = toc_remove_buddy;
+	ret->remove_buddies = toc_remove_buddies;
 	ret->add_permit = toc_add_permit;
 	ret->add_deny = toc_add_deny;
 	ret->rem_permit = toc_rem_permit;

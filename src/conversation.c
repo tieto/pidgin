@@ -532,7 +532,9 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
 		debug_printf(_("Removing '%s' from buddylist.\n"), c->name);
+		serv_remove_buddy(c->gc, c->name);
 		remove_buddy(c->gc, find_group_by_buddy(c->gc, c->name), find_buddy(c->gc, c->name));
+		do_export(c->gc);
 		build_edit_tree();
 		update_convo_add_button(c);
 	} else {

@@ -234,6 +234,20 @@ void serv_remove_buddy(struct gaim_connection *g, char *name)
 		(*g->prpl->remove_buddy)(g, name);
 }
 
+void serv_remove_buddies(struct gaim_connection *gc, GList *g)
+{
+	if (!gc->prpl)
+		return; /* how the hell did that happen? */
+	if (gc->prpl->remove_buddies)
+		(*gc->prpl->remove_buddies)(gc, g);
+	else {
+		while (g) {
+			serv_remove_buddy(gc, g->data);
+			g = g->next;
+		}
+	}
+}
+
 void serv_add_permit(struct gaim_connection *g, char *name)
 {
 	if (g->prpl && g->prpl->add_permit)

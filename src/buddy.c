@@ -869,7 +869,6 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
         delb = (struct buddy *)mem->data;
 	
         delg->members = g_slist_remove(delg->members, delb);
-        serv_remove_buddy(gc, delb->name);
 
 	gs = find_group_show(rem_g->name);
 	if (gs) {
@@ -907,9 +906,8 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 		update_buttons_by_protocol(c);
         g_free(delb);
 
-	/* flush buddy list to cache */
-
-	do_export(gc);
+	/* we don't flush buddy list to cache because in the case of remove_group that would
+	 * mean writing to the buddy list file once for each buddy, plus one more time */
 }
 
 void remove_group(struct gaim_connection *gc, struct group *rem_g)
@@ -917,6 +915,7 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 	GSList *grp;
 	GSList *mem;
 	struct group_show *gs;
+	GList *tmp = NULL;
 	
 	struct group *delg;
 	struct buddy *delb;
@@ -930,6 +929,7 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 
 	while(delg->members) {
 		delb = (struct buddy *)delg->members->data;
+		tmp = g_list_append(tmp, g_strdup(delb->name));
 		remove_buddy(gc, delg, delb); /* this should take care of removing
 						 the group_show if necessary */
 	}
@@ -944,9 +944,14 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 	}
 	g_free(delg);
 
-        /* flush buddy list to cache */
+	serv_remove_buddies(gc, tmp);
+	while (tmp) {
+		g_free(tmp->data);
+		tmp = g_list_remove(tmp, tmp->data);
+	}
 
-        do_export(gc);
+        /* don't flush buddy list to cache in order to be consistent with remove_buddy,
+	 * mostly. remove_group is only called from one place, so we'll let it handle it. */
 }
 
 
@@ -1386,6 +1391,7 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 			b = (struct buddy *)type;
 			g = find_group_by_buddy(b->gc, b->name);
 			gct = b->gc;
+			serv_remove_buddy(b->gc, b->name);
 			remove_buddy(b->gc, g, b);
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
 			do_export(gct);

@@ -116,6 +116,7 @@ struct prpl {
 	void (* add_buddy)	(struct gaim_connection *, char *name);
 	void (* add_buddies)	(struct gaim_connection *, GList *buddies);
 	void (* remove_buddy)	(struct gaim_connection *, char *name);
+	void (* remove_buddies)	(struct gaim_connection *, GList *buddies);
 	void (* add_permit)	(struct gaim_connection *, char *name);
 	void (* add_deny)	(struct gaim_connection *, char *name);
 	void (* rem_permit)	(struct gaim_connection *, char *name);
