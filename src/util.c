@@ -573,6 +573,10 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 	return retval;
 }
 
+size_t gaim_strftime(char *s, size_t max, const char *format, const struct tm *tm)
+{
+	return strftime(s, max, format, tm);
+}
 
 /**************************************************************************
  * Markup Functions

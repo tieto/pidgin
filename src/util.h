@@ -194,6 +194,14 @@ time_t gaim_time_build(int year, int month, int day, int hour,
  */
 time_t gaim_str_to_time(const char *timestamp, gboolean utc);
 
+/**
+ * Creates a string according to a time and format string
+ *
+ * This function just calls strftime. The only advantage to using it
+ * is that gcc won't give a warning if you use %c
+ */
+size_t gaim_strftime(char *s, size_t max, const char *format, const struct tm *tm);
+
 /*@}*/
 
 

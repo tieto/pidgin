@@ -5157,6 +5157,13 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 {
 	return strftime(s, max, fmt, tm);
 }
+
+/*
+ * Before even realizing this was here, I went and did the same thing in util.c.
+ *
+ * Use gaim_strftime()
+ */
+
 #endif
 
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
@@ -5220,7 +5227,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tm.tm_mday = (int)info->birthday;
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
-		strftime(date, sizeof(date), "%x", &tm);
+		gaim_strftime(date, sizeof(date), "%x", &tm);
 		oscar_string_append(str, "\n<br>", _("Birthday"), date);
 	}
 	if (info->age) {

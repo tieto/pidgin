@@ -32,6 +32,7 @@
 #include "gtklog.h"
 #include "gtkutils.h"
 #include "log.h"
+#include "util.h"
 
 static GHashTable *log_viewers = NULL;
 static void populate_log_tree(GaimGtkLogViewer *lv);
@@ -96,7 +97,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 			GaimLog *log = logs->data;
 			char title[64];
 			char *title_utf8; /* temporary variable for utf8 conversion */
-			strftime(title, sizeof(title), "%c", localtime(&log->time));
+			gaim_strftime(title, sizeof(title), "%c", localtime(&log->time));
 			title_utf8 = gaim_utf8_try_convert(title);
 			strncpy(title, title_utf8, sizeof(title));
 			g_free(title_utf8);
@@ -183,7 +184,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 
 	read = gaim_log_read(log, &flags);
 	viewer->flags = flags;
-	strftime(time, sizeof(time), "%c", localtime(&log->time));
+	gaim_strftime(time, sizeof(time), "%c", localtime(&log->time));
 	title = g_strdup_printf("%s - %s", log->name, time);
 	title_utf8 = gaim_utf8_try_convert(title);
 	g_free(title);
@@ -223,8 +224,8 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 	while (logs) {
 		GaimLog *log = logs->data;
 
-		strftime(month, sizeof(month), "%B %Y", localtime(&log->time));
-		strftime(title, sizeof(title), "%c", localtime(&log->time));
+		gaim_strftime(month, sizeof(month), "%B %Y", localtime(&log->time));
+		gaim_strftime(title, sizeof(title), "%c", localtime(&log->time));
 
 		/* do utf8 conversions */
 		utf8_tmp = gaim_utf8_try_convert(month);
