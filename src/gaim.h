@@ -77,6 +77,24 @@
 #define REG_SRVR "blueridge.net"
 #define REG_PORT 25
 
+#define FACE_ANGEL 0
+#define FACE_BIGSMILE 1
+#define FACE_BURP 2
+#define FACE_CROSSEDLIPS 3
+#define FACE_CRY 4
+#define FACE_EMBARRASSED 5
+#define FACE_KISS 6
+#define FACE_MONEYMOUTH 7
+#define FACE_SAD 8
+#define FACE_SCREAM 9
+#define FACE_SMILE 10
+#define FACE_SMILE8 11
+#define FACE_THINK 12
+#define FACE_TONGUE 13
+#define FACE_WINK 14
+#define FACE_YELL 15
+#define FACE_TOTAL 16
+
 #ifndef USE_APPLET
 #ifdef ENABLE_NLS
 #  include <libintl.h>
@@ -257,8 +275,10 @@ struct conversation {
 	GtkWidget *log_button;
 	GtkWidget *strike;
 	GtkWidget *font;
+	GtkWidget *smiley;
 	GtkWidget *color_dialog;
 	GtkWidget *font_dialog;
+	GtkWidget *smiley_dialog;
 	int makesound;
 	char current_fontface[64];
 	char current_fontname[64];
@@ -382,7 +402,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 545 $"
+#define REVISION "gaim:$Revision: 565 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -412,6 +432,7 @@ extern int correction_time;
 /* Globals in dialog.c */
 extern char *fontface;
 extern char *fontname;
+extern int smiley_array[FACE_TOTAL];
 
 /* Globals in network.c */
 
@@ -747,6 +768,7 @@ extern void show_add_link(GtkWidget *, GtkWidget *);
 extern void show_change_passwd();
 extern void do_import(GtkWidget *, void *);
 extern int bud_list_cache_exists();
+extern void show_smiley_dialog(struct conversation *, GtkWidget *);
 
 extern void show_font_dialog(struct conversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);

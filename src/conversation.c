@@ -314,6 +314,16 @@ void toggle_loggle(GtkWidget *w, struct conversation *p)
 		show_log_dialog(p->name);
 }
 
+void insert_smiley(GtkWidget *widget, struct conversation *c)
+{
+	if (state_lock)
+		return;
+		
+	show_smiley_dialog(c, NULL);
+		
+	return;
+}
+
 int close_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (c->window)
@@ -1173,9 +1183,9 @@ static void check_spelling( GtkEditable * editable, gchar * new_text,
 
 
 GtkWidget *build_conv_toolbar(struct conversation *c) {
-        GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *palette_i, *link_i, *font_i;
-        GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *palette_p, *link_p, *font_p;
-        GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *palette, *link, *font;
+        GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *palette_i, *link_i, *font_i, *smiley_i;
+        GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *palette_p, *link_p, *font_p, *smiley_p;
+        GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *palette, *link, *font, *smiley;
         GdkBitmap *mask;
 	GtkWidget *toolbar;
 	GtkWidget *win;
@@ -1236,6 +1246,11 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 			&win->style->white, fontface_xpm );
 	font_p = gtk_pixmap_new(font_i, mask);
 	gtk_widget_show(font_p);
+	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, smile_xpm);
+	/*gdk_pixmap_create_from_xpm_d(win->window, &mask
+			&win->style->white, smile_xpm);*/
+	smiley_p = gtk_pixmap_new(smiley_i, mask);
+	gtk_widget_show(smiley_p);
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 	                                  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
@@ -1274,6 +1289,10 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Logging"), _("Enable logging"),
                                           _("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
+	smiley = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+						GTK_TOOLBAR_CHILD_BUTTON,
+						NULL, _("Smiley"), _("Insert smiley face"),
+						_("Smiley"), smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
         speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Sound"), _("Enable sounds"),
@@ -1303,6 +1322,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 		gtk_button_set_relief(GTK_BUTTON(link), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(font), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(small), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(smiley), GTK_RELIEF_NONE);
 	}
 	
 	gtk_widget_show(toolbar);

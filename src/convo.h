@@ -88,6 +88,7 @@ extern void toggle_font(GtkWidget *, struct conversation *);
 extern void do_link(GtkWidget *, GtkWidget *);
 extern void toggle_color(GtkWidget *, struct conversation *);
 extern void toggle_loggle(GtkWidget *, struct conversation *);
+extern void insert_smiley(GtkWidget *, struct conversation *);
 /* sound is handled by set_option */
 extern gboolean keypress_callback(GtkWidget *, GdkEventKey *, struct conversation *);
 

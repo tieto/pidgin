@@ -46,10 +46,28 @@
 #include "pixmaps/add.xpm"
 #include "pixmaps/warn.xpm"
 
+#include "pixmaps/angel.xpm"
+#include "pixmaps/bigsmile.xpm"
+#include "pixmaps/burp.xpm"
+#include "pixmaps/crossedlips.xpm"
+#include "pixmaps/cry.xpm"
+#include "pixmaps/embarrassed.xpm"
+#include "pixmaps/kiss.xpm"
+#include "pixmaps/moneymouth.xpm"
+#include "pixmaps/sad.xpm"
+#include "pixmaps/scream.xpm"
+#include "pixmaps/smile.xpm"
+#include "pixmaps/smile8.xpm"
+#include "pixmaps/think.xpm"
+#include "pixmaps/tongue.xpm"
+#include "pixmaps/wink.xpm"
+#include "pixmaps/yell.xpm"
+
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
 char *fontface;
 char *fontname;
+int smiley_array[FACE_TOTAL];
 
 static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
@@ -3359,4 +3377,247 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
         gtk_widget_realize(ca->window);
         aol_icon(ca->window->window);
+}
+
+/* smiley dialog */
+
+void close_smiley_dialog(GtkWidget *widget, struct conversation *c)
+{	
+	dialogwindows = g_list_remove(dialogwindows, c->smiley_dialog);
+	gtk_widget_destroy(c->smiley_dialog);
+	c->smiley_dialog = NULL;	
+}
+
+void set_smiley_array(GtkWidget *widget, int smiley_type)
+{
+	int i;
+
+	for (i = 0; i < FACE_TOTAL; i++)
+		smiley_array[i] = 0;
+		
+	smiley_array[smiley_type] = 1;
+	
+	return;
+}
+
+void insert_smiley_text(GtkWidget *widget, struct conversation *c)
+{
+	char *smiley_text;
+	int i;
+	
+	for (i = 0; i < FACE_TOTAL; i++)
+		if (smiley_array[i] == 1)
+			break;
+
+	switch (i)
+	{
+		case (FACE_ANGEL): smiley_text = g_strndup("O:-)", strlen("O:-)")); break;
+		case (FACE_BIGSMILE): smiley_text = g_strndup(":-D", strlen(":-D")); break;
+		case (FACE_BURP): smiley_text = g_strndup(":-!", strlen(":-!")); break;
+		case (FACE_CROSSEDLIPS): smiley_text = g_strndup(":-X", strlen(":-X")); break;
+		case (FACE_CRY): smiley_text = g_strndup(":'(", strlen(":'(")); break;
+		case (FACE_EMBARRASSED): smiley_text = g_strndup(":-[", strlen(":-[")); break;
+		case (FACE_KISS): smiley_text = g_strndup(":-*", strlen(":-*")); break;
+		case (FACE_MONEYMOUTH): smiley_text = g_strndup(":-$", strlen(":-$")); break;
+		case (FACE_SAD): smiley_text = g_strndup(":-(", strlen(":-(")); break;
+		case (FACE_SCREAM): smiley_text = g_strndup("=-O", strlen("=-O")); break;
+		case (FACE_SMILE): smiley_text = g_strndup(":-)", strlen(":-)")); break;
+		case (FACE_SMILE8): smiley_text = g_strndup("8-)", strlen("8-)")); break;
+		case (FACE_THINK): smiley_text = g_strndup(":-/", strlen(":-/")); break;
+		case (FACE_TONGUE): smiley_text = g_strndup(":-p", strlen(":-p")); break;
+		case (FACE_WINK): smiley_text = g_strndup(";-)", strlen(";-)")); break;
+		case (FACE_YELL): smiley_text = g_strndup(">:o", strlen(">:o")); break;
+		default: smiley_text = g_strndup(":-)", strlen(":-)")); break;
+	}
+	
+	surround(c->entry, smiley_text, "");
+
+	g_free(smiley_text);
+	
+	close_smiley_dialog(NULL, c);
+		
+	return;
+}
+	
+void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
+{
+	GtkWidget *dialog;
+	GtkWidget *cancel_button, *cancel_label;
+	GtkWidget *vbox, *smiley_box_1, *smiley_box_2, *cancel_button_box;
+	GdkPixmap *angel_i, *bigsmile_i, *burp_i, *crossedlips_i, *cry_i, *embarrassed_i, *kiss_i, *moneymouth_i, *sad_i, *scream_i, *smile_i, *smile8_i, *think_i, *tongue_i, *wink_i, *yell_i, *cancel_i;
+	GtkWidget *angel_p, *bigsmile_p, *burp_p, *crossedlips_p, *cry_p, *embarrassed_p, *kiss_p, *moneymouth_p, *sad_p, *scream_p, *smile_p, *smile8_p, *think_p, *tongue_p, *wink_p, *yell_p, *cancel_p;
+	GtkWidget *angel, *bigsmile, *burp, *crossedlips, *cry, *embarrassed, *kiss, *moneymouth, *sad, *scream, *smile, *smile8, *think, *tongue, *wink, *yell;
+	GdkBitmap *mask;
+	GtkWidget *win;
+
+	if (c->smiley_dialog)
+		return NULL;
+		
+	dialog = gtk_dialog_new();
+	win = c->window;
+	
+	/* setup boxes */
+	vbox = gtk_vbox_new(TRUE, 0);
+	smiley_box_1 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+	smiley_box_2 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+
+	/* setup buttons */
+
+	/* Build Cancel Button */
+
+	cancel_button = gtk_button_new();
+
+	cancel_button_box = gtk_hbox_new(FALSE, 5);
+	cancel_i = gdk_pixmap_create_from_xpm_d (win->window, &mask, NULL, cancel_xpm);
+
+	cancel_p = gtk_pixmap_new(cancel_i, mask);
+	
+	cancel_label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(cancel_button_box), cancel_p, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(cancel_button_box), cancel_label, FALSE, FALSE, 2);
+
+	gtk_widget_show(cancel_label);
+	gtk_widget_show(cancel_p);
+
+	gtk_widget_show(cancel_button_box);
+
+	gtk_container_add(GTK_CONTAINER(cancel_button), cancel_button_box);
+	
+	/* End of Cancel Button */
+	
+	angel_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, angel_xpm );
+	angel_p = gtk_pixmap_new(angel_i, mask);
+	gtk_widget_show(angel_p);
+	bigsmile_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, bigsmile_xpm );
+	bigsmile_p = gtk_pixmap_new(bigsmile_i, mask);
+	gtk_widget_show(bigsmile_p);
+	burp_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, burp_xpm );
+	burp_p = gtk_pixmap_new(burp_i, mask);
+	gtk_widget_show(burp_p);
+	crossedlips_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, crossedlips_xpm );
+	crossedlips_p = gtk_pixmap_new(crossedlips_i, mask);
+	gtk_widget_show(crossedlips_p);
+	cry_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, cry_xpm );
+	cry_p = gtk_pixmap_new(cry_i, mask);
+	gtk_widget_show(cry_p);
+	embarrassed_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, embarrassed_xpm );
+	embarrassed_p = gtk_pixmap_new(embarrassed_i, mask);
+	gtk_widget_show(embarrassed_p);
+	kiss_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, kiss_xpm );
+	kiss_p = gtk_pixmap_new(kiss_i, mask);
+	gtk_widget_show(kiss_p);
+	moneymouth_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, moneymouth_xpm );
+	moneymouth_p = gtk_pixmap_new(moneymouth_i, mask);
+	gtk_widget_show(moneymouth_p);
+	sad_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, sad_xpm );
+	sad_p = gtk_pixmap_new(sad_i, mask);
+	gtk_widget_show(sad_p);
+	scream_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, scream_xpm );
+	scream_p = gtk_pixmap_new(scream_i, mask);
+	gtk_widget_show(scream_p);
+	smile_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, smile_xpm );
+	smile_p = gtk_pixmap_new(smile_i, mask);
+	gtk_widget_show(smile_p);
+	smile8_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, smile8_xpm );
+	smile8_p = gtk_pixmap_new(smile8_i, mask);
+	gtk_widget_show(smile8_p);
+	think_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, think_xpm );
+	think_p = gtk_pixmap_new(think_i, mask);
+	gtk_widget_show(think_p);
+	tongue_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, tongue_xpm );
+	tongue_p = gtk_pixmap_new(tongue_i, mask);
+	gtk_widget_show(tongue_p);
+	wink_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, wink_xpm );
+	wink_p = gtk_pixmap_new(wink_i, mask);
+	gtk_widget_show(wink_p);
+	yell_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+	     &win->style->white, yell_xpm );
+	yell_p = gtk_pixmap_new(yell_i, mask);
+	gtk_widget_show(yell_p);
+
+	/* pack buttons */
+	angel = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert angel face"), _("Angel"), angel_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_ANGEL);
+	bigsmile = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert big smiley face"), _("Big smile"), bigsmile_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_BIGSMILE);
+	burp = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert burping face"), _("Burp"), burp_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_BURP);
+	crossedlips = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert crossed lips face"), _("Crossed lips"), crossedlips_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_CROSSEDLIPS);
+	cry = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert crying face"), _("Cry"), cry_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_CRY);
+	embarrassed = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert embarrassedl face"), _("Embarrassed"), embarrassed_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_EMBARRASSED);
+	kiss = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert kissing face"), _("Kiss"), kiss_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_KISS);
+	moneymouth = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_1), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert money mouth face"), _("Money mouth"), moneymouth_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_MONEYMOUTH);
+	sad = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert sad face"), _("Sad"), sad_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_SAD);
+	scream = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert screaming face"), _("Scream"), scream_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_SCREAM);
+	smile = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert smiley face"), _("Smile"), smile_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_SMILE);
+	smile8 = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert big-eyed smiley face"), _("Smile8"), smile8_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_SMILE8);
+	think = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert thinking face"), _("Think"), think_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_THINK);
+	tongue = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert tongue face"), _("Tongue"), tongue_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_TONGUE);
+	wink = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert winking face"), _("Wink"), wink_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_WINK);
+	yell = gtk_toolbar_append_element(GTK_TOOLBAR(smiley_box_2), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, _("Insert yelling face"), _("Yell"), yell_p, GTK_SIGNAL_FUNC(set_smiley_array), (int *)FACE_YELL);
+
+	/* pack containers */
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area), cancel_button, FALSE, FALSE, 10);
+	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_1, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_2, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), vbox);
+
+	/* connect signals */
+	gtk_signal_connect(GTK_OBJECT(cancel_button), "clicked", GTK_SIGNAL_FUNC(close_smiley_dialog), c);
+	gtk_signal_connect(GTK_OBJECT(angel), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(bigsmile), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(burp), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(crossedlips), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(cry), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(embarrassed), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(kiss), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(moneymouth), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(sad), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(scream), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(smile), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(smile8), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(think), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(tongue), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(wink), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	gtk_signal_connect(GTK_OBJECT(yell), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
+	
+	/* show everything */
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(cancel_button), GTK_RELIEF_NONE);
+		
+	gtk_button_set_relief(GTK_BUTTON(angel), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(bigsmile), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(burp), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(crossedlips), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(cry), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(embarrassed), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(kiss), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(moneymouth), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(sad), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(scream), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(smile), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(smile8), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(think), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(tongue), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(wink), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(yell), GTK_RELIEF_NONE);
+
+	gtk_widget_show_all(dialog);
+
+	c->smiley_dialog = dialog;
+	
+	return;
 }
