@@ -1,6 +1,6 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
-0.28 (09/06/2001):
+0.43 (09/06/2001):
 
 	Rob: Well, I knew that the day would eventually come. I just didn't
 	expect it to be so soon. ;-).  Yes, that's right, Eric and I finally
@@ -8,9 +8,16 @@
 	release an official 0.11.0. We thought that it would cause a lot
 	of confusion. We didn't want to continue our trend of prereleases
 	either. So, since gaim was first released officially, there
-	have been 27 release.  This is number 28, hence the 0.28 version
+	have been 42 releases.  This is number 43, hence the 0.43 version
 	number.  We're going to stick with this trend from now on. :-).
 
+	Eric: We're also going to be starting a release early, release
+	often trend, that hopefully we'll stick to this time. Hopefully
+	we'll be putting out a new release every two weeks or so. You
+	should all be using CVS anyway :) And as always, don't forget to
+	report bugs! Anyway, since there's only been 9 days since the
+	last release not much has changed. A bug-fix release and a version
+	change mostly :)
 
 0.11.0-pre15 (08/28/2001):
 	Eric: This isn't a real release. Really. It's just a quick thing
