@@ -705,7 +705,7 @@ GtkWidget *font_page() {
 									   "/gaim/gtk/conversations/font_size",
 									   1, 7, NULL);
 
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font"))
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size"))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
