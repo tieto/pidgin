@@ -5,6 +5,7 @@ version 0.81cvs:
 	* The autorecon plugin will somewhat remember state information(Yosef
 	  Radchenko)
 	* Visual display of ops/voice/halfops/so on in Chats (Stu Tomlinson)
+	* Tab completion of slash commands in Chats (Stu Tomlinson)
 	* The text messages of Yahoo Audibles are now displayed, although
 	  the audio and graphics are not.
 

@@ -127,7 +127,7 @@ static void got_typing_keypress(GaimConversation *conv, gboolean first);
 static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(GaimConversation *conv,
 								  const char *name);
-static void tab_complete(GaimConversation *conv);
+static gboolean tab_complete(GaimConversation *conv);
 static void update_typing_icon(GaimConversation *conv);
 static gboolean update_send_as_selection(GaimConvWindow *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
@@ -1688,11 +1688,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				break;
 
 			case GDK_Tab:
-				if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
-				{
-					tab_complete(conv);
-					return TRUE;
-				}
+				return tab_complete(conv);
 				break;
 
 			case GDK_Page_Up:
@@ -3309,7 +3305,7 @@ add_chat_buddy_common(GaimConversation *conv, const char *name)
 		g_object_unref(pixbuf);
 }
 
-static void
+static gboolean
 tab_complete(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
@@ -3320,11 +3316,13 @@ tab_complete(GaimConversation *conv)
 	char *entered, *partial = NULL;
 	char *text;
 	char *nick_partial;
+	const char *prefix;
 	GList *matches = NULL;
-	GList *nicks = NULL;
+	GList *list = NULL;
+	GList *l = NULL;
+	gboolean command = FALSE;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	chat    = GAIM_CONV_CHAT(conv);
 
 	gtk_text_buffer_get_start_iter(gtkconv->entry_buffer, &start_buffer);
 	gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &cursor,
@@ -3334,7 +3332,7 @@ tab_complete(GaimConversation *conv)
 
 	/* if there's nothing there just return */
 	if (!gtk_text_iter_compare(&cursor, &start_buffer))
-		return;
+		return (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) ? TRUE : FALSE;
 
 	text = gtk_text_buffer_get_text(gtkconv->entry_buffer, &start_buffer,
 									&cursor, FALSE);
@@ -3353,6 +3351,12 @@ tab_complete(GaimConversation *conv)
 		start--;
 	}
 
+	prefix = gaim_gtk_get_cmd_prefix();
+	if (start == -1 && (strlen(text) >= strlen(prefix)) && !strncmp(text, prefix, strlen(prefix))) {
+		command = TRUE;
+		gtk_text_iter_forward_chars(&word_start, strlen(prefix));
+	}
+
 	g_free(text);
 
 	entered = gtk_text_buffer_get_text(gtkconv->entry_buffer, &word_start,
@@ -3360,18 +3364,33 @@ tab_complete(GaimConversation *conv)
 
 	if (!g_utf8_strlen(entered, -1)) {
 		g_free(entered);
-		return;
+		return (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) ? TRUE : FALSE;
 	}
 
 	nick_partial = g_malloc(strlen(entered)+1);
 
-	for (nicks = gaim_conv_chat_get_users(chat);
-		 nicks != NULL;
-		 nicks = nicks->next) {
+	if (command) {
+		list = gaim_cmd_list(conv);
+	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		chat = GAIM_CONV_CHAT(conv);
+		list = gaim_conv_chat_get_users(chat);
+	} else {
+		g_free(nick_partial);
+		g_free(entered);
+		return FALSE;
+	}
 
-		GaimConvChatBuddy *cb = nicks->data;
+	for (l = list; l; l = l->next) {
+		char *name;
 
-		strncpy(nick_partial, cb->name, strlen(entered));
+		if (command)
+			name = l->data;
+		else {
+			GaimConvChatBuddy *cb = l->data;
+			name = cb->name;
+		}
+
+		strncpy(nick_partial, name, strlen(entered));
 		nick_partial[strlen(entered)] = '\0';
 		if(gaim_utf8_strcasecmp(nick_partial, entered))
 			continue;
@@ -3383,11 +3402,11 @@ tab_complete(GaimConversation *conv)
 			 * this will only get called once, since from now
 			 * on most_matched is >= 0
 			 */
-			most_matched = strlen(cb->name);
-			partial = g_strdup(cb->name);
+			most_matched = strlen(name);
+			partial = g_strdup(name);
 		}
 		else if (most_matched) {
-			char *tmp = g_strdup(cb->name);
+			char *tmp = g_strdup(name);
 
 			while (gaim_utf8_strcasecmp(tmp, partial)) {
 				partial[most_matched] = '\0';
@@ -3400,7 +3419,7 @@ tab_complete(GaimConversation *conv)
 			g_free(tmp);
 		}
 
-		matches = g_list_append(matches, cb->name);
+		matches = g_list_append(matches, name);
 	}
 
 	g_free(nick_partial);
@@ -3411,7 +3430,9 @@ tab_complete(GaimConversation *conv)
 	if (!matches) {
 		/* if matches isn't set partials won't be either */
 		g_free(entered);
-		return;
+		if (command)
+			g_list_free(list);
+		return (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) ? TRUE : FALSE;
 	}
 
 	gtk_text_buffer_delete(gtkconv->entry_buffer, &word_start, &cursor);
@@ -3453,8 +3474,12 @@ tab_complete(GaimConversation *conv)
 		g_free(addthis);
 	}
 
+	if (command)
+		g_list_free(list);
 	g_free(entered);
 	g_free(partial);
+
+	return TRUE;
 }
 
 static GtkItemFactoryEntry menu_items[] =
