@@ -11,6 +11,8 @@ version 0.79cvs:
 	* Non-looping animated icons no longer cause Gaim to freeze
 	* Fixed a crash in SILC that sometimes happened when resolving
 	  the buddy list (Pekka Riikonen)
+	* Parallel compiles of the perl plugin should work better
+	  (Stu Tomlinson)
 
 version 0.78 (05/30/2004):
 	New Features:

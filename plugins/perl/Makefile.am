@@ -18,7 +18,7 @@ perl_la_DEPENDENCIES = \
 	.libs/DynaLoader.a
 
 .libs/libperl_orig.a:
-	@if [ ! -d .libs ]; then mkdir .libs; fi
+	@mkdir -p .libs
 	@rm -f .libs/libperl_orig.a
 	@if [ x$(LIBPERL_A) = x ]; then \
 		touch .libs/libperl_orig.a; \
@@ -27,7 +27,7 @@ perl_la_DEPENDENCIES = \
 	fi
 
 .libs/DynaLoader.a:
-	@if [ ! -d .libs ]; then mkdir .libs; fi
+	@mkdir -p .libs
 	@rm -f .libs/DynaLoader.a
 	@if [ x$(DYNALOADER_A) = x ]; then \
 		touch .libs/DynaLoader.a; \
