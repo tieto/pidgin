@@ -551,11 +551,6 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBuddy *b)
 	gaim_gtk_log_show(b->name, b->account);
 }
 
-static void gtk_blist_menu_send_file_cb(GtkWidget *w, GaimBuddy *b)
-{
-        gaim_prpl_ask_send_file (b->account->gc, b->name);
-}
-
 static void gtk_blist_show_systemlog_cb()
 {
 	/* LOG show_log(NULL); */
@@ -836,11 +831,6 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 		}
 	}
 
-	if (gaim_prpl_has_send_file (b->account->gc, b->name))
-	    gaim_new_item_from_stock(menu, _("Send _File"), NULL,
-				     G_CALLBACK(gtk_blist_menu_send_file_cb), b, 0, 0, NULL);
-
-
 	gaim_signal_emit(GAIM_GTK_BLIST(gaim_get_blist()),
 			"drawing-menu", menu, b);
 
@@ -1113,128 +1103,17 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 
 }
 
-enum {DRAG_BUDDY, DRAG_ROW, DRAG_URI_LIST};
-
-struct send_file_data 
-{
-        GaimBuddy *buddy;
-	
-        char **uris;
-};
-
-
-
-static void send_file_accept (struct send_file_data *data)
-{
-	GaimBuddy *buddy = data->buddy;
-	char **s, **uris = data->uris;
-
-	s = uris;
-
-	do {
-		if (gaim_str_has_prefix(*s, "file://")) {
-			char *file = g_strstrip(*s + strlen ("file://"));
-
-			serv_send_file(buddy->account->gc, buddy->name, file); 
-		}
-		
-	} while (*(++s));
-
-	g_free(data);
-	g_strfreev(uris);
-}
-
-
 static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			  GtkSelectionData *sd, guint info, guint t)
 {
-	if (info == DRAG_URI_LIST && sd->data) {
-		GaimBuddy *buddy;
-		GaimBlistNode *node;
-		GValue val = {0};
-		GtkTreeIter iter;
-		GtkTreePath *path = NULL;
-		GtkTreeViewDropPosition position;
-
-		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
-			char **uris;
-			char **s;
-			int n = 0;
-			struct send_file_data *data;
-			
-			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
-						&iter, path);
-			
-			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-						  &iter, NODE_COLUMN, &val);
-
-			node = g_value_get_pointer(&val);
-			
-			/* Get the buddy to who we are sending */
-			if (GAIM_BLIST_NODE_IS_BUDDY(node))
-				buddy = (GaimBuddy*) node;	
-			else if (GAIM_BLIST_NODE_IS_CONTACT(node))
-				buddy = gaim_contact_get_priority_buddy ((GaimContact *) node);
-			else {
-				gtk_tree_path_free(path);
-				gtk_drag_finish(dc, TRUE, FALSE, t);
-				return;
-			}
-			
-			/* Check is the user can accept sends */
-			if (!gaim_prpl_has_send_file (buddy->account->gc, buddy->name)) {
-				gaim_request_action(buddy->account->gc, _("Error"),
-							  _("Error"), _("This user can't accept files"),
-							  0, NULL, 1, _("OK"), NULL);				
-				return;
-			}
-			
-			uris = s = g_strsplit (sd->data, "\n", 0);
-
-			/* Count how many files the user is trying to send */
-			do {
-				if (gaim_str_has_prefix (*s, "file://"))
-					n++;
-			} while (*(++s));
-			
-			/* Some one is trying to drop something != file:/// */
-			if (n == 0 && *uris != NULL) {
-				gaim_request_action(buddy->account->gc, _("Error"),
-							  _("Error"), _("Gaim just support file:// URIS currently"),
-							  0, NULL, 1, _("OK"), NULL);
-				return;
-			}
-
-			data = g_new (struct send_file_data, 1);
-
-			/* Prepare our data array */
-			data->buddy = buddy;
-			data->uris = uris;
-			
-			/* Some one wants to drop lots of files */
-			if (n > 2) {
-				gaim_request_accept_cancel(buddy->account->gc, "?", _("You are trying to send a lot of files"), _("Do you really want to send them ?"),
-							   0, data, send_file_accept, NULL);
-				return;
-			}
-
-			/* If there's nothing unusual just send the file[s] */
-			send_file_accept (data);
-		}
-
-		gtk_tree_path_free(path);
-		gtk_drag_finish(dc, TRUE, FALSE, t);
-		return;
-	}
-	
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE) && sd->data) {
 		GaimBlistNode *n = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 		memcpy(&n, sd->data, sizeof(n));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
-			/* if we're here, I think it means the drop is ok */
-			GtkTreeIter iter;
+			/* if we're here, I think it means the drop is ok */	
+		GtkTreeIter iter;
 			GaimBlistNode *node;
 			GValue val = {0};
 			struct _gaim_gtk_blist_node *gtknode;
@@ -1428,21 +1307,52 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	GValue val = {0};
 	int scr_w,scr_h, w, h, x, y;
 	PangoLayout *layout;
+	gboolean tooltip_top = FALSE;
 	char *tooltiptext = NULL;
+	struct _gaim_gtk_blist_node *gtknode;
 #if GTK_CHECK_VERSION(2,2,0)
 	GdkWindowAttr attr;
 #endif
 
-	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->rect.x, gtkblist->rect.y, &path, NULL, NULL, NULL))
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
-	gtk_tree_path_free(path);
 
 	if(!GAIM_BLIST_NODE_IS_CONTACT(node) && !GAIM_BLIST_NODE_IS_BUDDY(node)
 			&& !GAIM_BLIST_NODE_IS_CHAT(node))
 		return FALSE;
+
+	gtknode = node->ui_data;
+
+	if (node->child && node->child->next && GAIM_BLIST_NODE_IS_CONTACT(node) && !gtknode->contact_expanded) {
+		gaim_gtk_blist_expand_contact_cb(NULL, node);
+		tooltip_top = TRUE; /* When the person expands, the new screennames will be below.  We'll draw the tip above
+				       the cursor so that the user can see the included buddies */
+		
+		while (gtk_events_pending())
+			gtk_main_iteration();
+
+		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
+		gtkblist->mouseover_contact = node;
+		gtk_tree_path_down (path);
+		while (1) {
+			GtkTreePath *path2;
+			GdkRectangle rect;
+			gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
+			gtkblist->contact_rect.height += rect.height;
+			path2 = path;
+			gtk_tree_path_next(path); 
+			if (path2 == path) {
+				gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path2, NULL, &rect);
+				gtkblist->contact_rect.height += rect.height;
+				break;
+			}
+		}
+	}
+
+	gtk_tree_path_free(path);
 
 	tooltiptext = gaim_get_tooltip_text(node);
 
@@ -1509,7 +1419,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	else if (x < 0)
 		x = 0;
 
-	if ((y + h + 4) > scr_h)
+	if ((y + h + 4) > scr_h || tooltip_top)
 		y = y - h - 5;
 	else
 		y = y + 6;
@@ -1531,7 +1441,7 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 {
 	GtkTreePath *path;
 	if (gtkblist->timeout) {
-		if ((event->y > gtkblist->rect.y) && ((event->y - gtkblist->rect.height) < gtkblist->rect.y))
+		if ((event->y > gtkblist->tip_rect.y) && ((event->y - gtkblist->tip_rect.height) < gtkblist->tip_rect.y))
 			return FALSE;
 		/* We've left the cell.  Remove the timeout and create a new one below */
 		if (gtkblist->tipwindow) {
@@ -1552,10 +1462,18 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 	}
 	
 	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL);
-	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->rect);
+	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->tip_rect);
 	if (path)
 		gtk_tree_path_free(path);
 	gtkblist->timeout = g_timeout_add(500, (GSourceFunc)gaim_gtk_blist_tooltip_timeout, tv);
+
+	if (gtkblist->mouseover_contact) {
+		if ((event->y < gtkblist->contact_rect.y) || ((event->y - gtkblist->contact_rect.height) > gtkblist->contact_rect.y)) {
+			gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
+			gtkblist->mouseover_contact = NULL;
+		}
+	}
+	
 	return FALSE;
 }
 
@@ -1577,6 +1495,11 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 			  gtkblist->south_shadow = NULL;
 #endif
 		gtkblist->tipwindow = NULL;
+	}
+	
+	if (gtkblist->mouseover_contact) {
+		gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
+		gtkblist->mouseover_contact = NULL;
 	}
 }
 
@@ -1653,8 +1576,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	char *text = NULL;
-	struct _gaim_gtk_blist_node *gtknode = node->ui_data;
-
+	
 	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		GaimChat *chat = (GaimChat *)node;
 		char *name = NULL;
@@ -1709,8 +1631,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 
 		if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 			GaimContact *contact = (GaimContact*)node;
-			if(gtknode->contact_expanded)
-				return NULL;
 			b = gaim_contact_get_priority_buddy(contact);
 			if(contact->alias)
 				contactaliastext = g_markup_escape_text(contact->alias, -1);
@@ -2231,6 +2151,7 @@ void gaim_gtk_blist_update_columns()
 	}
 }
 
+enum {DRAG_BUDDY, DRAG_ROW};
 
 static char *
 item_factory_translate_func (const char *path, gpointer func_data)
@@ -2269,8 +2190,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
-				{"application/x-im-contact", 0, DRAG_BUDDY},
-				{"text/uri-list", 0, DRAG_URI_LIST}};
+				{"application/x-im-contact", 0, DRAG_BUDDY}};
 
 	if (gtkblist && gtkblist->window) {
 		gtk_widget_show(gtkblist->window);
@@ -2338,14 +2258,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview), GDK_BUTTON1_MASK, gte,
 					       2, GDK_ACTION_COPY);
 
-        /* This doesn't pass the info parameter for some reason, maybe a GTK+ bug
-	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview), gte_drop, 3,
-					     GDK_ACTION_COPY | GDK_ACTION_MOVE);*/
+        gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview), gte, 2,
+					     GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
-        gtk_drag_dest_set(GTK_WIDGET (gtkblist->treeview), 0, gte,
-			   3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
-
-	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
+  	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
 
 	/* Tooltips */

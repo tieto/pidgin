@@ -69,9 +69,14 @@ typedef struct {
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
 	guint      timeout;              /**< The timeout for the tooltip. */
-	GdkRectangle rect;               /**< This is the bounding rectangle of the
-					       cell we're currently hovering over.  This is
-					       used for tooltips. */
+	GdkRectangle tip_rect;           /**< This is the bounding rectangle of the
+					      cell we're currently hovering over.  This is
+					      used for tooltips. */
+	GdkRectangle contact_rect;       /**< This is the bounding rectangle of the contact node
+					      and its children.  This is used for auto-expand on
+					      mouseover. */
+	GaimBlistNode *mouseover_contact; /**< This is the contact currently mouse-over expanded */
+
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 
 	GaimBlistNode *selected_node;   /**< The currently selected node */
