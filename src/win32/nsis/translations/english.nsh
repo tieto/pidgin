@@ -5,7 +5,8 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Version 2
-;;
+;;  Note: If translating this file, replace "!insertmacro GAIM_MACRO_DEFAULT_STRING"
+;;  with "!define".
 
 ; Make sure to update the GAIM_MACRO_LANGUAGEFILE_END macro in
 ; langmacros.nsh when updating this file
@@ -52,5 +53,5 @@
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_NO_THEME_INSTALL_RIGHTS	"You do not have permission to install a GTK+ theme."
 
 ; Uninstall Section Prompts
-!insertmacro GAIM_MACRO_DEFAULT_STRING un.GAIM_UNINSTALL_ERROR_1         "The uninstaller could not find registry entries for Gaim.$\rIt is likely that another user installed this application."
-!insertmacro GAIM_MACRO_DEFAULT_STRING un.GAIM_UNINSTALL_ERROR_2         "You do not have permission to uninstall this application."
+!insertmacro GAIM_MACRO_DEFAULT_STRING un.GAIM_UNINSTALL_ERROR_1		"The uninstaller could not find registry entries for Gaim.$\rIt is likely that another user installed this application."
+!insertmacro GAIM_MACRO_DEFAULT_STRING un.GAIM_UNINSTALL_ERROR_2		"You do not have permission to uninstall this application."
