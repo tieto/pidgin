@@ -15,13 +15,14 @@
 #define GAIM_PLUGINS
 #include "gaim.h"
 
-#include <gtk/gtk.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <gtk/gtk.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
-#include <errno.h>
 
 guint choice = 1;
 #define NOTIFY_FOCUS		0x00000001
@@ -53,6 +54,7 @@ void string_remove(GtkWidget *widget);
 void count_remove(GtkWidget *widget);
 void quote_remove(GtkWidget *widget);
 void urgent_remove(struct conversation *c);
+int counter (char *buf, int *length);
 
 int received_im(struct gaim_connection *gc, char **who, char **what, void *m) {
 	char buf[256];
@@ -122,7 +124,7 @@ int received_im(struct gaim_connection *gc, char **who, char **what, void *m) {
 }
 
 int sent_im(struct gaim_connection *gc, char *who, char **what, void *m) {
-	char buf[256];
+	/* char buf[256]; */
 	struct conversation *c = find_conversation(who);
 
 	if (method & METHOD_QUOTE)
@@ -158,6 +160,7 @@ int new_conv(char *who) {
 		gtk_signal_connect_while_alive(GTK_OBJECT(c->entry), "key-press-event", GTK_SIGNAL_FUNC(un_star_window), NULL, GTK_OBJECT(really_evil_hack));
 		gtk_object_set_user_data(GTK_OBJECT(c->entry), (gpointer) c);
 	}
+	return 0;
 }
 
 void un_star(GtkWidget *widget, gpointer data) {
@@ -243,12 +246,11 @@ void quote_remove(GtkWidget *widget) {
 }
 
 void urgent_remove(struct conversation *c) {
-	char buf[256];
 	GdkWindow *win = c->window->window;
 
-	XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window));
+	XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
 	hints->flags &= ~XUrgencyHint;
-	XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+	XSetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win), hints);
 	return;
 }
 
@@ -258,7 +260,7 @@ void save_notify_prefs() {
 
 	snprintf(buf, 1000, "%s/.gaim/.notify", getenv("HOME"));
 	if (!(fp = fopen(buf, "w"))) {
-		do_error_dialog(_("Unable to write notify plugin config file"), strerror(errno), GAIM_ERROR);
+		do_error_dialog(_("Unable to write to config file"), _("Notify plugin"), GAIM_ERROR);
 		return;
 	}
 
@@ -380,7 +382,7 @@ char *gaim_plugin_init(GModule *hndl) {
 
 void gaim_plugin_remove() {
 	GList *c = conversations;
-	guint options;
+	/* guint options; */
 
 	gtk_widget_destroy(really_evil_hack);
 
