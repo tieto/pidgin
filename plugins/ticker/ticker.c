@@ -254,7 +254,8 @@ plugin_unload(GaimPlugin *plugin)
 		tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
 	}
 
-	gtk_widget_destroy(tickerwindow);
+	if (tickerwindow != NULL)
+		gtk_widget_destroy(tickerwindow);
 
 	return TRUE;
 }
