@@ -623,7 +623,15 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 	char m[17];
 	if (c == GDK_INPUT_WRITE) {
 		char buf[BUF_LONG];
-		aim_conn_completeconnect(od->sess, pos->conn);
+		if (aim_conn_completeconnect(od->sess, pos->conn) < 0) {
+			do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
+					" You may be disconnected shortly.", "Login Error");
+			gdk_input_remove(pos->inpa);
+			close(pos->conn->fd);
+			aim_conn_kill(od->sess, &pos->conn);
+			g_free(pos);
+			return;
+		}
 		g_snprintf(buf, sizeof(buf), "GET http://gaim.sourceforge.net/aim_data.php3?"
 				"offset=%d&len=%d&modname=%s HTTP/1.0\n\n",
 				pos->offset, pos->len, pos->modname ? pos->modname : "");
