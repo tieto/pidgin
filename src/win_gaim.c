@@ -23,6 +23,7 @@
  *
  */
 #include <windows.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -217,8 +218,8 @@ WinMain (struct HINSTANCE__ *hInstance,
 	 char               *lpszCmdLine,
 	 int                 nCmdShow)
 {
+        char errbuf[512];
         char gaimdir[MAX_PATH];
-        char *point;
         HMODULE hmod;
 
         /* If GAIM_NO_DLL_CHECK is set, don't run the dll check */
@@ -226,15 +227,30 @@ WinMain (struct HINSTANCE__ *hInstance,
                 run_dll_prep();
 
         /* Load exception handler if we have it */
-        GetModuleFileName(NULL, gaimdir, MAX_PATH);
-        if((point=strstr(gaimdir, "gaim.exe"))) {
-                point[0] = '\0';
-                strcat(gaimdir, "exchndl.dll");
-                LoadLibrary(gaimdir);
+        if(GetModuleFileName(NULL, gaimdir, MAX_PATH) != 0) {
+                char *tmp = gaimdir;
+                char *prev = NULL;
+
+                while((tmp=strchr(tmp, '\\'))) {
+                        prev = tmp;
+                        tmp+=1;
+                }
+                if(prev) {
+                        prev[0] = '\0';
+                        strcat(gaimdir, "\\exchndl.dll");
+                        LoadLibrary(gaimdir);
+                }
         }
-        
+        else {
+                snprintf(errbuf, 512, "Error getting module filename. Error: %u", (UINT)GetLastError());
+                MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
+        }
+
         /* Set Gaim locale */
         wgaim_set_locale();
+
+        /* Set global file mode to binary so that we don't do any dos file translations */
+        _fmode = _O_BINARY;
 
         /* Now we are ready for Gaim .. */
         if((hmod=LoadLibrary("gaim.dll"))) {
@@ -242,8 +258,7 @@ WinMain (struct HINSTANCE__ *hInstance,
         }
 
         if(!gaim_main) {
-                char errbuf[256];
-                sprintf(errbuf, "Error loading gaim.dll entry point. Error: %d", GetLastError());
+                snprintf(errbuf, 512, "Error loading gaim.dll. Error: %u", (UINT)GetLastError());
                 MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
                 return 0;
         }
