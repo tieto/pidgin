@@ -32,7 +32,7 @@ CFLAGS =
 
 DEFINES =
 
-LDFLAGS = -mwindows
+LDFLAGS = -mconsole -mwindows
 
 #-mconsole
 #-mwindows
@@ -75,7 +75,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-DLL_C_SRC =		about.c \
+DLL_C_SRC =	about.c \
 			away.c \
 			browser.c \
 			buddy.c \
@@ -139,7 +139,7 @@ DLL_LIBS =		-lgtkspell \
 			-lwinmm \
 			-lperl56 \
 			-laspell-15 \
-			-lidletracker
+			-lIdleTrac
 			
 
 
@@ -168,8 +168,8 @@ all: $(TARGET).exe $(TARGET).dll
 install:
 	cp $(GAIM_SRC)/gaim.exe $(GAIM_SRC)/gaim.dll $(GAIM_INSTALL_DIR)
 
-$(IDLETRACKER_TOP)/idletracker.dll:
-	$(MAKE) -C $(IDLETRACKER_TOP) -f Makefile.mingw
+$(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll:
+	$(MAKE) -C $(GAIM_SRC)/win32/IdleTracker -f Makefile.mingw
 
 #
 # BUILD DLL
@@ -187,7 +187,7 @@ $(TARGET).exp: $(TARGET).base $(TARGET).def
 	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
 		--output-exp $(TARGET).exp --def $(TARGET).def
 
-$(TARGET).dll: $(DLL_OBJECTS) $(IDLETRACKER_TOP)/idletracker.dll $(TARGET).exp
+$(TARGET).dll: $(DLL_OBJECTS) $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll $(TARGET).exp
 	$(CC) -mdll $(LDFLAGS) -o $(TARGET).dll $(DLL_OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf $(TARGET).exp $(TARGET).def $(TARGET).base
 
@@ -206,7 +206,7 @@ $(TARGET).exe: $(TARGET).lib $(EXE_OBJECTS)
 ##
 
 clean:
-	$(MAKE) -C $(IDLETRACKER_TOP) -f Makefile.mingw clean
+	$(MAKE) -C $(GAIM_SRC)/win32/IdleTracker -f Makefile.mingw clean
 	rm -rf *.o ./win32/*.o
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).lib
