@@ -5,6 +5,27 @@ tutorial on how gaim works. I'll quickly describe the logical flow of
 things, then what you'll find in each of the source files. Hopefully
 that's enough to get most of you going.
 
+If you're going to hack gaim, PLEASE, PLEASE PLEASE PLEASE send patches
+against the absolute latest CVS. I get really annoyed when I get patches
+against the last released version, especially since I don't usually have
+a copy of it on my computer, and gaim tends to change a lot between
+versions. (I sometimes get annoyed when they're against CVS from 3 days
+ago, but can't complain because it's usually my fault that I haven't
+looked at the patch yet.) To get gaim from CVS (if you haven't already),
+run the following commands:
+
+$ export CVSROOT=anonymous@cvs.gaim.sourceforge.net:/cvsroot/gaim
+$ cvs login
+(hit enter as the password)
+$ cvs co gaim
+(you'll see it getting all of the files)
+$ cd gaim
+$ ./gen
+
+You'll now have your normal gaim tree with ./configure and all. (If you
+want to make your life really simple, learn how CVS works. CVS is your
+friend.)
+
 There's one little thing that's just a pet peeve, and it's really stupid.
 In ./configure there's an --enable-debug option. This does two things:
 compiles with -Wall, and prints debugging information to stdout. The
