@@ -65,6 +65,7 @@ static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpoint
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(GaimBlistNode *node);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
+static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
 
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
@@ -480,6 +481,8 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 		GtkTreeIter iter;
 		GaimBlistNode *node = NULL;
 		GValue val = {0};
+		if(!sourcerow)
+			return;
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, sourcerow);
 		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 		node = g_value_get_pointer(&val);
@@ -488,10 +491,10 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 					8, /* bits */
 					(void*)&node,
 					sizeof (node));
-		
+
 		gtk_tree_path_free(sourcerow);
 	}
-	
+
 }
 
 static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
