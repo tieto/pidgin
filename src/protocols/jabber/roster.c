@@ -264,7 +264,7 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 		groups = g_slist_append(groups, grp->name);
 	}
 
-	jabber_roster_update(js, who, NULL);
+	jabber_roster_update(js, who, groups);
 
 	if(!jb || !(jb->subscription & JABBER_SUB_TO))
 		jabber_presence_subscription_set(js, who, "subscribe");
@@ -274,6 +274,10 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 
 void jabber_roster_alias_change(GaimConnection *gc, const char *name, const char *alias)
 {
+	GaimBuddy *b = gaim_find_buddy(gc->account, name);
+
+	gaim_blist_alias_buddy(b, alias);
+
 	jabber_roster_update(gc->proto_data, name, NULL);
 }
 
