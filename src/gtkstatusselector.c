@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "gtkgaim.h"
 #include "gtkimhtml.h"
+#include "gtksavedstatuses.h"
 #include "gtkstatusselector.h"
 #include "gtkutils.h"
 
@@ -262,6 +263,10 @@ get_selected_data(GaimGtkStatusSelector *selector, const char **text, const char
 	return FALSE;
 }
 
+/*
+ * TODO: Get rid of the duplication in this function and
+ * insert_text_timeout_cb()
+ */
 static void
 status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 {
@@ -275,7 +280,7 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 	{
 		if (!strcmp(text, _("New Status")))
 		{
-			/* TODO */
+			gaim_gtk_status_editor_show(NULL);
 		}
 	}
 	else
@@ -344,7 +349,7 @@ insert_text_timeout_cb(gpointer data)
 	{
 		if (!strcmp(text, _("New Status")))
 		{
-			/* TODO */
+			gaim_gtk_status_editor_show(NULL);
 		}
 	}
 	else
@@ -518,14 +523,17 @@ rebuild_list(GaimGtkStatusSelector *selector)
 	 * If no accounts are enabled then gray ourself out and get
 	 * outta hee.
 	 */
-	for(accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
+	for (accounts = gaim_accounts_get_all(); accounts != NULL;
+		 accounts = accounts->next)
+	{
 		GaimAccount *a = accounts->data;
-		if (gaim_account_get_enabled(a, GAIM_GTK_UI)) {
+		if (gaim_account_get_enabled(a, GAIM_GTK_UI))
+		{
 			enabled = TRUE;
 			break;
 		}
 	}
-			
+
 	if (enabled == FALSE)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(selector), FALSE);
@@ -580,7 +588,7 @@ rebuild_list(GaimGtkStatusSelector *selector)
 				continue;
 
 			/*
-			 * TODO Find a way to fallback to the GaimStatusPrimitive
+			 * TODO: Find a way to fallback to the GaimStatusPrimitive
 			 * if an icon for this id does not exist.
 			 */
 			g_snprintf(filename, sizeof(filename), "%s.png",
@@ -594,6 +602,7 @@ rebuild_list(GaimGtkStatusSelector *selector)
 	}
 	else
 	{
+		/* TODO: Add "online" and "offline" here? */
 		add_item(selector, "available", _("Available"),
 				 load_icon("online.png"));
 		add_item(selector, "away", _("Away"), load_icon("away.png"));

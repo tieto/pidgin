@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
 	int dologin_ret = -1;
-	char *plugin_search_paths[3];
+	char *search_path;
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -594,6 +594,13 @@ int main(int argc, char *argv[])
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gaim_gtk_eventloop_get_ui_ops());
 
+	/* Set plugin search directories */
+	gaim_plugins_add_search_path(LIBDIR);
+	gaim_plugins_add_search_path(gaim_user_dir());
+	search_path = g_build_filename(gaim_user_dir(), "plugins", NULL);
+	gaim_plugins_add_search_path(search_path);
+	g_free(search_path);
+
 	if (!gaim_core_init(GAIM_GTK_UI)) {
 		fprintf(stderr,
 				"Initialization of the Gaim core failed. Dumping core.\n"
@@ -603,18 +610,7 @@ int main(int argc, char *argv[])
 
 	gaim_debug_set_enabled(debug_enabled);
 
-	plugin_search_paths[0] = g_strdup(LIBDIR);
-	plugin_search_paths[1] = g_strdup(gaim_user_dir());
-	plugin_search_paths[2] = g_build_filename(gaim_user_dir(), "plugins", NULL);
-
-	gaim_plugins_set_search_paths(sizeof(plugin_search_paths) /
-								  sizeof(*plugin_search_paths),
-								  plugin_search_paths);
-
-	g_free(plugin_search_paths[0]);
-	g_free(plugin_search_paths[1]);
-	g_free(plugin_search_paths[2]);
-
+	/* TODO: Do this in gaim_core_init() instead of here */
 	gaim_plugins_probe(NULL);
 
 	/* TODO: Remove this check.  Maybe in 2005.  --KingAnt, 25 Jul 2004 */

@@ -39,7 +39,11 @@ void gaim_gtk_status_window_show(void);
 void gaim_gtk_status_window_hide(void);
 
 /**
- * Shows a status editor (used for editing a single saved status).
+ * Shows a status editor (used for adding a new saved status or
+ * editing an already existing saved status).
+ *
+ * @param status The saved status to edit, or @c NULL if you
+ *               want to add a new saved status.
  */
 void gaim_gtk_status_editor_show(GaimSavedStatus *status);
 

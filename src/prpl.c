@@ -326,13 +326,15 @@ gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
 }
 
 void
-gaim_prpl_set_account_status(GaimAccount *account, GaimStatus *status)
+gaim_prpl_change_account_status(GaimAccount *account,
+								GaimStatus *old_status, GaimStatus *new_status)
 {
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info;
 
-	g_return_if_fail(account != NULL);
-	g_return_if_fail(status  != NULL);
+	g_return_if_fail(account    != NULL);
+	g_return_if_fail(old_status != NULL);
+	g_return_if_fail(new_status != NULL);
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
@@ -342,7 +344,7 @@ gaim_prpl_set_account_status(GaimAccount *account, GaimStatus *status)
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info->set_status != NULL)
-		prpl_info->set_status(account, status);
+		prpl_info->set_status(account, new_status);
 }
 
 GList *
@@ -354,7 +356,7 @@ gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence)
 	GList *l;
 	GaimStatus *status;
 
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(account  != NULL, NULL);
 	g_return_val_if_fail(presence != NULL, NULL);
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));

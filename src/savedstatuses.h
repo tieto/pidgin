@@ -35,6 +35,8 @@
 typedef struct _GaimSavedStatus     GaimSavedStatus;
 typedef struct _GaimSavedStatusSub  GaimSavedStatusSub;
 
+#include "status.h"
+
 /**************************************************************************/
 /** @name Saved status subsystem                                          */
 /**************************************************************************/

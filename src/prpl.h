@@ -414,11 +414,14 @@ void gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
 /**
  * Informs the server that an account's status changed.
  *
- * @param account The account the user is on.
- * @param status  The status that was activated, or deactivated
- *                (in the case of independent statuses).
+ * @param account    The account the user is on.
+ * @param old_status The previous status.
+ * @param new_status The status that was activated, or deactivated
+ *                   (in the case of independent statuses).
  */
-void gaim_prpl_set_account_status(GaimAccount *account, GaimStatus *status);
+void gaim_prpl_change_account_status(GaimAccount *account,
+									 GaimStatus *old_status,
+									 GaimStatus *new_status);
 
 /**
  * Retrieves the list of stock status types from a prpl.

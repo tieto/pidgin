@@ -224,8 +224,14 @@ GaimPlugin *gaim_plugin_probe(const char *filename);
  * Registers a plugin and prepares it for loading.
  *
  * This shouldn't be called by anything but the internal module code.
+ * Plugins should use the GAIM_INIT_PLUGIN() macro to register themselves
+ * with the core.
  *
  * @param plugin The plugin to register.
+ *
+ * @return @c TRUE if the plugin was registered successfully.  Otherwise
+ *         @c FALSE is returned (this happens if the plugin does not contain
+ *         the necessary information).
  */
 gboolean gaim_plugin_register(GaimPlugin *plugin);
 
@@ -359,12 +365,11 @@ void *gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
 /*@{*/
 
 /**
- * Sets the search paths for plugins.
+ * Add a new directory to search for plugins
  *
- * @param count The number of search paths.
- * @param paths The search paths.
+ * @param paths The new search path.
  */
-void gaim_plugins_set_search_paths(size_t count, char **paths);
+void gaim_plugins_add_search_path(const char *path);
 
 /**
  * Unloads all loaded plugins.

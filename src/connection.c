@@ -147,14 +147,11 @@ void
 gaim_connection_connect(GaimConnection *gc, GaimStatus *status)
 {
 	GaimAccount *account;
-	GaimConnectionUiOps *ops;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(gc != NULL);
 
 	gaim_debug_info("connection", "Connecting. gc = %p\n", gc);
-
-	ops = gaim_connections_get_ui_ops();
 
 	if (gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);

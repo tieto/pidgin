@@ -58,14 +58,12 @@ typedef struct
 
 } GaimPluginIpcCommand;
 
-static GList *loaded_plugins   = NULL;
+static GList *search_paths     = NULL;
 static GList *plugins          = NULL;
+static GList *load_queue       = NULL;
+static GList *loaded_plugins   = NULL;
 static GList *plugin_loaders   = NULL;
 static GList *protocol_plugins = NULL;
-static GList *load_queue       = NULL;
-
-static size_t search_path_count = 0;
-static char **search_paths = NULL;
 
 static void (*probe_cb)(void *) = NULL;
 static void *probe_cb_data = NULL;
@@ -79,13 +77,14 @@ void *
 gaim_plugins_get_handle(void)
 {
 	static int handle;
+
 	return &handle;
 }
 
 
 #ifdef GAIM_PLUGINS
-static int
-is_so_file(const char *filename, const char *ext)
+static gboolean
+has_file_extension(const char *filename, const char *ext)
 {
 	int len, extlen;
 
@@ -98,7 +97,7 @@ is_so_file(const char *filename, const char *ext)
 	if (len < 0)
 		return 0;
 
-	return (!strncmp(filename + len, ext, extlen));
+	return (strncmp(filename + len, ext, extlen) == 0);
 }
 
 static gboolean
@@ -107,7 +106,7 @@ loader_supports_file(GaimPlugin *loader, const char *filename)
 	GList *exts;
 
 	for (exts = GAIM_PLUGIN_LOADER_INFO(loader)->exts; exts != NULL; exts = exts->next) {
-		if (is_so_file(filename, (char *)exts->data)) {
+		if (has_file_extension(filename, (char *)exts->data)) {
 			return TRUE;
 		}
 	}
@@ -141,10 +140,12 @@ find_loader_for_plugin(const GaimPlugin *plugin)
 
 #endif /* GAIM_PLUGINS */
 
+/**
+ * Negative if a before b, 0 if equal, positive if a after b.
+ */
 static gint
 compare_prpl(GaimPlugin *a, GaimPlugin *b)
 {
-	/* neg if a before b, 0 if equal, pos if a after b */
 	if(GAIM_IS_PROTOCOL_PLUGIN(a)) {
 		if(GAIM_IS_PROTOCOL_PLUGIN(b))
 			return strcmp(a->info->name, b->info->name);
@@ -186,21 +187,22 @@ gaim_plugin_probe(const char *filename)
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
 		return NULL;
 
+	/* If this plugin has already been probed then exit */
 	plugin = gaim_plugins_find_with_filename(filename);
-
 	if (plugin != NULL)
 		return plugin;
 
-	plugin = gaim_plugin_new(is_so_file(filename, PLUGIN_EXT), filename);
+	plugin = gaim_plugin_new(has_file_extension(filename, PLUGIN_EXT), filename);
 
 	if (plugin->native_plugin) {
 		const char *error;
 		plugin->handle = g_module_open(filename, 0);
 
-		if (plugin->handle == NULL) {
+		if (plugin->handle == NULL)
+		{
 			error = g_module_error();
-			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: %s\n",
-					   plugin->path, error ? error : "Unknown error.");
+			gaim_debug_error("plugins", "%s is unloadable: %s\n",
+							 plugin->path, error ? error : "Unknown error.");
 
 			gaim_plugin_destroy(plugin);
 
@@ -208,13 +210,14 @@ gaim_plugin_probe(const char *filename)
 		}
 
 		if (!g_module_symbol(plugin->handle, "gaim_init_plugin",
-							 &unpunned)) {
+							 &unpunned))
+		{
 			g_module_close(plugin->handle);
 			plugin->handle = NULL;
 
 			error = g_module_error();
-			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: %s\n",
-					   plugin->path, error ? error : "Unknown error.");
+			gaim_debug_error("plugins", "%s is unloadable: %s\n",
+							 plugin->path, error ? error : "Unknown error.");
 
 			gaim_plugin_destroy(plugin);
 
@@ -401,8 +404,7 @@ gaim_plugin_unload(GaimPlugin *plugin)
 
 	g_return_val_if_fail(gaim_plugin_is_loaded(plugin), FALSE);
 
-	gaim_debug(GAIM_DEBUG_INFO, "plugins", "Unloading plugin %s\n",
-			   plugin->info->name);
+	gaim_debug_info("plugins", "Unloading plugin %s\n", plugin->info->name);
 
 	/* cancel any pending dialogs the plugin has */
 	gaim_request_close_with_handle(plugin);
@@ -455,7 +457,6 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	if (unload_cb != NULL)
 		unload_cb(plugin, unload_cb_data);
 
-	/* I suppose this is the right place to call this... */
 	gaim_signal_emit(gaim_plugins_get_handle(), "plugin-unload", plugin);
 
 	gaim_prefs_disconnect_by_handle(plugin);
@@ -536,7 +537,7 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 						p2 = l->data;
 
 						if (p2->path != NULL &&
-							is_so_file(p2->path, exts->data))
+							has_file_extension(p2->path, exts->data))
 						{
 							gaim_plugin_destroy(p2);
 						}
@@ -787,30 +788,14 @@ gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
  * Plugins subsystem
  **************************************************************************/
 void
-gaim_plugins_set_search_paths(size_t count, char **paths)
+gaim_plugins_add_search_path(const char *path)
 {
-	size_t s;
+	g_return_if_fail(path != NULL);
 
-	g_return_if_fail(count > 0);
-	g_return_if_fail(paths != NULL);
+	if (g_list_find_custom(search_paths, path, (GCompareFunc)strcmp))
+		return;
 
-	if (search_paths != NULL) {
-		for (s = 0; s < search_path_count; s++)
-			g_free(search_paths[s]);
-
-		g_free(search_paths);
-	}
-
-	search_paths = g_new0(char *, count);
-
-	for (s = 0; s < count; s++) {
-		if (paths[s] == NULL)
-			search_paths[s] = NULL;
-		else
-			search_paths[s] = g_strdup(paths[s]);
-	}
-
-	search_path_count = count;
+	search_paths = g_list_append(search_paths, strdup(path));
 }
 
 void
@@ -835,6 +820,7 @@ gaim_plugins_destroy_all(void)
 #endif /* GAIM_PLUGINS */
 }
 
+/* TODO: Change this to accept a GList* */
 void
 gaim_plugins_load_saved(const char *key)
 {
@@ -883,7 +869,8 @@ gaim_plugins_probe(const char *ext)
 	const gchar *file;
 	gchar *path;
 	GaimPlugin *plugin;
-	size_t i;
+	GList *cur;
+	const char *search_path;
 
 	void *handle;
 
@@ -892,6 +879,7 @@ gaim_plugins_probe(const char *ext)
 
 	handle = gaim_plugins_get_handle();
 
+	/* TODO: These signals need to be registered in an init function */
 	gaim_debug_info("plugins", "registering plugin-load signal\n");
 	gaim_signal_register(handle, "plugin-load", gaim_marshal_VOID__POINTER, NULL,
 			1, gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_PLUGIN));
@@ -901,17 +889,20 @@ gaim_plugins_probe(const char *ext)
 			1, gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_PLUGIN));
 
 
-	for (i = 0; i < search_path_count; i++) {
-		if (search_paths[i] == NULL)
-			continue;
+	/* Probe plugins */
+	for (cur = search_paths; cur != NULL; cur = cur->next)
+	{
+		search_path = cur->data;
 
-		dir = g_dir_open(search_paths[i], 0, NULL);
+		dir = g_dir_open(search_path, 0, NULL);
 
-		if (dir != NULL) {
-			while ((file = g_dir_read_name(dir)) != NULL) {
-				path = g_build_filename(search_paths[i], file, NULL);
+		if (dir != NULL)
+		{
+			while ((file = g_dir_read_name(dir)) != NULL)
+			{
+				path = g_build_filename(search_path, file, NULL);
 
-				if (ext == NULL || is_so_file(file, ext))
+				if (ext == NULL || has_file_extension(file, ext))
 					plugin = gaim_plugin_probe(path);
 
 				g_free(path);
@@ -921,7 +912,7 @@ gaim_plugins_probe(const char *ext)
 		}
 	}
 
-	/* See if we have any plugins waiting to load. */
+	/* See if we have any plugins waiting to load */
 	while (load_queue != NULL)
 	{
 		plugin = (GaimPlugin *)load_queue->data;
@@ -933,8 +924,6 @@ gaim_plugins_probe(const char *ext)
 
 		if (plugin->info->type == GAIM_PLUGIN_LOADER)
 		{
-			GList *exts;
-
 			/* We'll just load this right now. */
 			if (!gaim_plugin_load(plugin))
 			{
@@ -945,11 +934,11 @@ gaim_plugins_probe(const char *ext)
 
 			plugin_loaders = g_list_append(plugin_loaders, plugin);
 
-			for (exts = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
-				 exts != NULL;
-				 exts = exts->next)
+			for (cur = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
+				 cur != NULL;
+				 cur = cur->next)
 			{
-				gaim_plugins_probe(exts->data);
+				gaim_plugins_probe(cur->data);
 			}
 		}
 		else if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
@@ -975,12 +964,6 @@ gaim_plugins_probe(const char *ext)
 		}
 	}
 
-	if (load_queue != NULL)
-	{
-		g_list_free(load_queue);
-		load_queue = NULL;
-	}
-
 	if (probe_cb != NULL)
 		probe_cb(probe_cb_data);
 
@@ -992,9 +975,11 @@ gaim_plugin_register(GaimPlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
+	/* If this plugin has been registered already then exit */
 	if (g_list_find(plugins, plugin))
 		return TRUE;
 
+	/* Ensure the plugin has the requisite information */
 	if (plugin->info->type == GAIM_PLUGIN_LOADER)
 	{
 		GaimPluginLoaderInfo *loader_info;
@@ -1003,12 +988,10 @@ gaim_plugin_register(GaimPlugin *plugin)
 
 		if (loader_info == NULL)
 		{
-			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable\n",
+			gaim_debug_error("plugins", "%s is unloadable\n",
 							   plugin->path);
 			return FALSE;
 		}
-
-		load_queue = g_list_append(load_queue, plugin);
 	}
 	else if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
 	{
@@ -1018,13 +1001,14 @@ gaim_plugin_register(GaimPlugin *plugin)
 
 		if (prpl_info == NULL)
 		{
-			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable\n",
+			gaim_debug_error("plugins", "%s is unloadable\n",
 							   plugin->path);
 			return FALSE;
 		}
-
-		load_queue = g_list_append(load_queue, plugin);
 	}
+
+	/* This plugin should be probed and maybe loaded--add it to the queue */
+	load_queue = g_list_append(load_queue, plugin);
 
 	plugins = g_list_append(plugins, plugin);
 
@@ -1198,4 +1182,3 @@ gaim_plugin_action_new(char* label, void (*callback)(GaimPluginAction *))
 
 	return act;
 }
-

@@ -628,8 +628,6 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 		}
 	}
 
-
-
 	if (ops != NULL && ops->update != NULL)
 		ops->update(gaim_get_blist(), (GaimBlistNode*)buddy);
 }
@@ -646,20 +644,7 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 		GaimAccountUiOps *ops = gaim_accounts_get_ui_ops();
 
 		if (gaim_account_get_enabled(account, gaim_core_get_ui()))
-		{
-			GaimPluginProtocolInfo *prpl_info = NULL;
-			GaimPlugin *prpl;
-
-			prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-
-			if (prpl != NULL)
-			{
-				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-
-				if (prpl_info != NULL && prpl_info->set_status != NULL)
-					prpl_info->set_status(account, new_status);
-			}
-		}
+			gaim_prpl_change_account_status(account, old_status, new_status);
 
 		if (ops != NULL && ops->status_changed != NULL)
 		{
