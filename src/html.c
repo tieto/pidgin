@@ -135,7 +135,7 @@ char *grab_url(char *url)
         webdata = NULL;
         len = 0;
 	
-	while ((data = fgetc(sockfile)) != -1) {
+	while ((data = fgetc(sockfile)) != EOF) {
 		if (!data)
 			continue;
 		
