@@ -419,14 +419,15 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 
 void do_remove_buddy(struct buddy *b)
 {
-	struct group *g = gaim_find_buddys_group(b);
+	struct group *g;
 	struct gaim_conversation *c;
-	gchar *name = g_strdup(b->name); /* b->name is null after remove_buddy */
+	gchar *name;
 
 	if (!b)
 		return;
 
 	g = gaim_find_buddys_group(b);
+	name = g_strdup(b->name); /* b->name is null after remove_buddy */
 
 	debug_printf(_("Removing '%s' from buddy list.\n"), b->name);
 	serv_remove_buddy(b->account->gc, name, g->name);
