@@ -1093,6 +1093,10 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	account = gaim_connection_get_account(gc);
 	b = gaim_find_buddy(account, name);
+
+	if(!b) /* This shouldn't happen, but apparently does */
+		return;
+
 	c = gaim_find_conversation(b->name);
 
 	if (signon && (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->options &
