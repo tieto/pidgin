@@ -4380,16 +4380,17 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 		bbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 
-		button = picture_button(rename_dialog, _("Cancel"), cancel_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				   G_CALLBACK(destroy_dialog), rename_dialog);
-
 		button = picture_button(rename_dialog, _("OK"), ok_xpm);
 		gtk_object_set_user_data(GTK_OBJECT(button), g);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		g_signal_connect(GTK_OBJECT(button), "clicked",
 				   G_CALLBACK(do_rename_group), name_entry);
+
+		button = picture_button(rename_dialog, _("Cancel"), cancel_xpm);
+		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+		g_signal_connect(GTK_OBJECT(button), "clicked",
+				   G_CALLBACK(destroy_dialog), rename_dialog);
+
 	}
 
 	gtk_widget_show_all(rename_dialog);
