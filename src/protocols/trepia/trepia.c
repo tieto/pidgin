@@ -1030,7 +1030,7 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 		"<b1></b1>\n"
 		"<c>%s</c>\n"
 		"<d>%s</d>\n"
-		"<e>%d</e>\n"
+		"<e>%s</e>\n"
 		"</C>",
 		mac, gaim_account_get_username(account),
 		md5_password, TREPIA_VERSION);
