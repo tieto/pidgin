@@ -204,11 +204,26 @@ if test "$enable_perl" = yes ; then
 		fi
 		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lc //'`
 		AC_MSG_RESULT(ok)
-		AC_SUBST(PERL_CFLAGS)
-		AC_SUBST(PERL_LIBS)
-		AC_DEFINE(USE_PERL, 1, [Define if Perl is enabled.])
-		AC_CHECK_FUNCS(Perl_eval_pv)
+
+		oldLIBS=$LIBS
+		LIBS="$LIBS $PERL_LIBS"
+		AC_MSG_CHECKING(for libperl)
+		AC_CHECK_FUNCS(perl_run, [], enable_perl=no)
+		LIBS=$oldLIBS
 	fi
+fi
+
+if test "$enable_perl" = yes ; then
+	AC_SUBST(PERL_CFLAGS)
+	AC_SUBST(PERL_LIBS)
+	AC_DEFINE(USE_PERL, 1, [Define if Perl is enabled.])
+
+	dnl This is almost definitely wrong, but in case there's
+	dnl something I'm missing, I'll leave it in.
+	AC_CHECK_FUNCS(Perl_eval_pv)
+else
+	PERL_CFLAGS=
+	PERL_LIBS=
 fi
 
 dnl Thanks, Evan.
