@@ -34,6 +34,19 @@
 #include <locale.h>
 #endif
 
+#ifdef ENABLE_NLS
+#  include <libintl.h>
+#  define _(x) gettext(x)
+#  ifdef gettext_noop
+#    define N_(String) gettext_noop (String)
+#  else
+#    define N_(String) (String)
+#  endif
+#else
+#  define N_(String) (String)
+#  define _(x) (x)
+#endif
+
 
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
@@ -155,13 +168,15 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *class)
 	object_class = (GtkObjectClass*) class;
 	gobject_class = (GObjectClass*) class;
 	parent_class = gtk_type_class(GTK_TYPE_TEXT_VIEW);
-	signals[URL_CLICKED] = gtk_signal_new("url_clicked",
-					      GTK_RUN_FIRST,
-					      GTK_CLASS_TYPE(object_class),
-					      GTK_SIGNAL_OFFSET(GtkIMHtmlClass, url_clicked),
-					      gtk_marshal_NONE__POINTER,
-					      GTK_TYPE_NONE, 1,
-					      GTK_TYPE_POINTER);
+	signals[URL_CLICKED] = g_signal_new("url_clicked",
+						G_TYPE_FROM_CLASS(gobject_class),
+						G_SIGNAL_RUN_FIRST,
+						G_STRUCT_OFFSET(GtkIMHtmlClass, url_clicked),
+						NULL,
+						0,
+						g_cclosure_marshal_VOID__POINTER,
+						G_TYPE_NONE, 1,
+						G_TYPE_POINTER);
 	gobject_class->finalize = gtk_imhtml_finalize;
 }
 
@@ -225,17 +240,97 @@ GtkType gtk_imhtml_get_type()
 	return imhtml_type;
 }
 
-/* The call back for an event on a link tag. */
-void tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter *arg2, char *url) {
+struct url_data {
+	GObject *object;
+	gchar *url;
+};
+
+static void url_open(GtkWidget *w, struct url_data *data) {
+	if(!data) return;
+
+	g_signal_emit(data->object, signals[URL_CLICKED], 0, data->url);
+	
+	g_object_unref(data->object);
+	g_free(data->url);
+	g_free(data);
+}
+static void url_copy(GtkWidget *w, gchar *url) {
+	GtkClipboard *clipboard;
+
+	clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(),
+					GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text(clipboard, url, -1);
+}
+
+/* The callback for an event on a link tag. */
+gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter *arg2, char *url) {
+	GdkEventButton *event_button = (GdkEventButton *) event;
+
 	if (event->type == GDK_BUTTON_RELEASE) {
-		/* A link was clicked--we emit the "url_clicked" signal with the URL as the argument */
-		//	if ((GdkEventButton)(event)->button == 1) 
-			gtk_signal_emit (GTK_OBJECT(arg1), signals[URL_CLICKED], url);
+		if (event_button->button == 1) { 
+			GtkTextIter start, end;
+			/* we shouldn't open a URL if the user has selected something: */
+			gtk_text_buffer_get_selection_bounds(
+						gtk_text_iter_get_buffer(arg2),	&start, &end);
+			if(gtk_text_iter_get_offset(&start) !=
+					gtk_text_iter_get_offset(&end))
+				return FALSE;
+
+			/* A link was clicked--we emit the "url_clicked" signal
+			 * with the URL as the argument */
+			g_signal_emit(arg1, signals[URL_CLICKED], 0, url);
+			return FALSE;
+		} else if(event_button->button == 3) {
+			GtkWidget *img, *item, *label, *menu;
+			struct url_data *tempdata = g_new(struct url_data, 1);
+			tempdata->object = g_object_ref(arg1);
+			tempdata->url = g_strdup(url);
+		
+			menu = gtk_menu_new();
+			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 
+							event_button->button, event_button->time);
+			
+			/* URL of link, desensitized */
+			item = gtk_menu_item_new();
+			label = gtk_label_new(url);
+			gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+			gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+			gtk_container_add(GTK_CONTAINER(item), label);
+			gtk_widget_set_sensitive(item, FALSE);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+			/* seperator */
+			item = gtk_menu_item_new();
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+						
+			/* buttons and such */
+			img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+			item = gtk_image_menu_item_new_with_label(_("Copy Link Location"));
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy),
+					url);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+			img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
+			item = gtk_image_menu_item_new_with_label(_("Open Link in Browser"));
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_open),
+					tempdata);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			gtk_widget_show_all(menu);
+			
+			return TRUE;
+		}
 	} else if (event->type == GDK_ENTER_NOTIFY) {
 		/* make a hand cursor and a tooltip timeout -- if GTK worked as it should */
 	} else if (event->type == GDK_LEAVE_NOTIFY) {
 		/* clear timeout and make an arrow cursor again --if GTK worked as it should */
 	}
+	if(event->type == GDK_BUTTON_PRESS && event_button->button == 3)
+		return TRUE; /* Clicking the right mouse button on a link shouldn't
+						be caught by the regular GtkTextView menu */
+	else
+		return FALSE; /* Let clicks go through if we didn't catch anything */
 }
 
 /* this isn't used yet

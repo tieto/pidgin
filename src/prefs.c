@@ -144,6 +144,7 @@ GtkWidget *make_frame(GtkWidget *ret, char *text) {
 	GtkWidget *vbox, *label, *hbox;
 	char labeltext[256];
 
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(ret), vbox, FALSE, FALSE, 0);
 	label = gtk_label_new(NULL);
