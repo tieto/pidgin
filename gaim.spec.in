@@ -99,7 +99,7 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
-* Thu Jan 10 (01/10/2002):
+* Thu Jan 10 2002 Rob Flynn <rob@marko.net> (0.51 release)
 - Arrow buttons in log viewer and some other dialogs work (thanks Ben Miller)
 - Option to only send auto-response while idle (thanks Sean Egan)
 - Control time between sending auto-responses (thanks Mark Doliner)
