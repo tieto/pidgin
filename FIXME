@@ -1,8 +1,7 @@
 GAIM: Items to be fixed
 ------------------------
-Need to make it so that when the buddy list is edited the main window properly reflects that.
-Need to set number of buddies in group (as an option)
-Need to not hide empty groups (as an option)
-Need to do Buddy Pounces on a per-connection basis
-Need to get the permit/deny stuff put back
-Need to have per-connection protocol options (e.g. which server to connect to for IRC)
+make moving buddy list work again (adding/removing works)
+not hide empty groups (as an option)
+do Buddy Pounces on a per-connection basis
+get the permit/deny stuff put back
+have per-connection protocol options (e.g. which server to connect to for IRC)

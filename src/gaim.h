@@ -726,6 +726,7 @@ extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
 extern void destroy_buddy();
 extern void update_button_pix();
 extern void update_all_buddies();
+extern void update_num_groups();
 extern void show_buddy_list();
 extern void refresh_buddy_window();
 extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);

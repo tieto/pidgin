@@ -1683,23 +1683,6 @@ void set_general_option(GtkWidget *w, int *option)
        	if ((int)option == OPT_GEN_LOG_ALL)
        		update_log_convs();
 
-	/*
-	if (prefrem)
-		gtk_signal_handler_block_by_data(GTK_OBJECT(prefrem), (int *)OPT_GEN_REMEMBER_PASS);
-	if (remember)
-		gtk_signal_handler_block_by_data(GTK_OBJECT(remember), (int *)OPT_GEN_REMEMBER_PASS);
-	if (prefrem)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(prefrem),
-			(general_options & OPT_GEN_REMEMBER_PASS));
-	if (remember)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(remember),
-			(general_options & OPT_GEN_REMEMBER_PASS));
-	if (prefrem)
-		gtk_signal_handler_unblock_by_data(GTK_OBJECT(prefrem), (int *)OPT_GEN_REMEMBER_PASS);
-	if (remember)
-		gtk_signal_handler_unblock_by_data(GTK_OBJECT(remember), (int *)OPT_GEN_REMEMBER_PASS);
-	*/
-
 	save_prefs();
 }
 
@@ -1707,9 +1690,11 @@ void set_display_option(GtkWidget *w, int *option)
 {
         display_options = display_options ^ (int)option;
 
-	if (blist) build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
+	if (blist && ((int)option == OPT_DISP_NO_BUTTONS))
+		build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
 
-	if (blist) update_button_pix();
+	if (blist && ((int)option == OPT_DISP_SHOW_GRPNUM))
+		update_num_groups();
 
 #ifdef USE_APPLET
 	update_pixmaps();

@@ -92,7 +92,6 @@ static void new_bp_callback(GtkWidget *w, char *name);
 struct group_show {
 	GtkWidget *item;
 	GtkWidget *label;
-	GtkWidget *count;
 	GtkWidget *tree;
 	GSList *members;
 	char *name;
@@ -142,6 +141,49 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 
 }
 
+
+static void update_num_group(struct group_show *gs) {
+	GSList *c = connections;
+	struct gaim_connection *gc;
+	struct group *g;
+	struct buddy_show *b;
+	int total = 0, on = 0;
+	char buf[256];
+
+	while (c) {
+		gc = (struct gaim_connection *)c->data;
+		g = find_group(gc, gs->name);
+		if (g) {
+			total += g_slist_length(g->members);
+		}
+		c = g_slist_next(c);
+	}
+
+	c = gs->members;
+	while (c) {
+		b = (struct buddy_show *)c->data;
+		on += g_slist_length(b->connlist);
+		c = g_slist_next(c);
+	}
+
+	if (display_options & OPT_DISP_SHOW_GRPNUM)
+		g_snprintf(buf, sizeof buf, "%s (%d/%d)", gs->name, on, total);
+	else
+		g_snprintf(buf, sizeof buf, "%s", gs->name);
+
+	gtk_label_set_text(GTK_LABEL(gs->label), buf);
+}
+
+void update_num_groups() {
+	GSList *s = shows;
+	struct group_show *g;
+
+	while (s) {
+		g = (struct group_show *)s->data;
+		update_num_group(g);
+		s = g_slist_next(s);
+	}
+}
 
 void update_button_pix()
 {
@@ -407,6 +449,7 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 		if (bs) {
 			if (g_slist_find(bs->connlist, gc)) {
 				bs->connlist = g_slist_remove(bs->connlist, gc);
+				update_num_group(gs);
 				if (!g_slist_length(bs->connlist)) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
@@ -677,6 +720,7 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 	do_export( (GtkWidget *) NULL, 0 );
 
 	redo_buddy_list();
+	update_num_groups();
 }
 
 
@@ -1401,6 +1445,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	gtk_widget_show(b->idle);
 
 	gs->members = g_slist_insert(gs->members, b, pos);
+	update_num_group(gs);
 	return b;
 }
 
@@ -1624,6 +1669,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				gtk_timeout_remove(bs->log_timer);
 			if (!g_slist_find(bs->connlist, gc))
 				bs->connlist = g_slist_append(bs->connlist, gc);
+			update_num_group(gs);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
 			if (display_options & OPT_DISP_SHOW_LOGON) {
 				struct conversation *c = find_conversation(b->name);
@@ -1657,6 +1703,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (!bs) return;
 		play_sound(BUDDY_LEAVE);
 		bs->connlist = g_slist_remove(bs->connlist, gc);
+		update_num_group(gs);
 		if (bs->log_timer > 0)
 			gtk_timeout_remove(bs->log_timer);
 		bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
