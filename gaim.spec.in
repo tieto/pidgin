@@ -13,7 +13,7 @@ Serial:		%{serial}
 Copyright:	GPL
 Group:		Applications/Internet
 Vendor:		Pimpin' Penguins
-Url:		http://www.marko.net/gaim/
+Url:		http://gaim.sf.net/
 Source:		%{name}-%{version}.tar.gz
 Packager:	Rob Flynn <rob@marko.net>
 BuildRoot:	/var/tmp/%{name}-%{version}-root
