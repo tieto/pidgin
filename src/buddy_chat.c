@@ -474,9 +474,7 @@ static void chat_press_im(GtkObject *obj, struct conversation *b)
 		gdk_window_show(c->window->window);
 	else {
 		c = new_conversation(gtk_object_get_user_data(obj));
-		c->gc = b->gc;
-		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu), g_slist_index(connections, b->gc));
-		update_buttons_by_protocol(c);
+		set_convo_gc(c, b->gc);
 	}
 }
 

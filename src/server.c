@@ -405,11 +405,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 	/* we should update the conversation window buttons and menu, if it exists. */
 	cnv = find_conversation(name);
-	if (cnv) {
-		cnv->gc = gc;
-		gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu), g_slist_index(connections, gc));
-		update_buttons_by_protocol(cnv);
-	}
+	if (cnv)
+		set_convo_gc(cnv, gc);
 
 	/* if you can't figure this out, stop reading right now.
 	 * "we're not worthy! we're not worthy!" */
@@ -484,10 +481,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			if (cnv == NULL) {
 				new_conv = 1;
 				cnv = new_conversation(name);
-				cnv->gc = gc;
-				gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
-							    g_slist_index(connections, gc));
-				update_buttons_by_protocol(cnv);
+				set_convo_gc(cnv, gc);
 			}
 			if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
 				play_sound(FIRST_RECEIVE);
@@ -540,10 +534,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		if (cnv == NULL) {
 			new_conv = 1;
 			cnv = new_conversation(name);
-			cnv->gc = gc;
-			gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
-						    g_slist_index(connections, gc));
-			update_buttons_by_protocol(cnv);
+			set_convo_gc(cnv, gc);
 		}
 		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
 			play_sound(FIRST_RECEIVE);

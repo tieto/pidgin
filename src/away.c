@@ -71,12 +71,8 @@ void purge_away_queue()
 		cnv = find_conversation(qm->name);
 		if (!cnv)
 			cnv = new_conversation(qm->name);
-		if (g_slist_index(connections, qm->gc) >= 0) {
-			cnv->gc = qm->gc;
-			gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
-					g_slist_index(connections, qm->gc)); 
-			update_buttons_by_protocol(cnv);
-		}
+		if (g_slist_index(connections, qm->gc) >= 0)
+			set_convo_gc(cnv, qm->gc);
 
 		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm);
 

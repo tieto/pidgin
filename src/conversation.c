@@ -150,6 +150,8 @@ struct conversation *new_conversation(char *name)
 	c->history = g_string_new("");
 	conversations = g_list_append(conversations, c);
 	show_conv(c);
+	if (c->gc && c->gc->prpl && c->gc->prpl->insert_convo)
+		(*c->gc->prpl->insert_convo)(c->gc, c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
 	return c;
 }
@@ -420,6 +422,8 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 			c->window = NULL;
 		}
 	} else {
+		if (c->gc && c->gc->prpl && c->gc->prpl->remove_convo)
+			(*c->gc->prpl->remove_convo)(c->gc, c);
 		if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
 			if (g_list_length(chats) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
@@ -1755,12 +1759,22 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	return toolbar;
 }
 
-static void convo_sel_send(GtkObject * m, struct gaim_connection *c)
+static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 {
 	struct conversation *cnv = gtk_object_get_user_data(m);
+
+	if (cnv->gc == c)
+		return;
+
+	if (cnv->gc && cnv->gc->prpl && cnv->gc->prpl->remove_convo)
+		(*cnv->gc->prpl->remove_convo)(cnv->gc, cnv);
+
 	cnv->gc = c;
 
 	update_buttons_by_protocol(cnv);
+
+	if (cnv->gc && cnv->gc->prpl && cnv->gc->prpl->insert_convo)
+		(*cnv->gc->prpl->insert_convo)(cnv->gc, cnv);
 }
 
 void update_convo_add_button(struct conversation *c)
@@ -1846,17 +1860,34 @@ void redo_convo_menus()
 
 	while (c) {
 		C = (struct conversation *)c->data;
+		c = c->next;
+
 		create_convo_menu(C);
 
-		if (connections)
-			C->gc = (struct gaim_connection *)connections->data;
-		else
-			C->gc = NULL;
+		if (g_slist_index(connections, C->gc) < 0)
+			continue;
 
-		update_buttons_by_protocol(C);
-
-		c = c->next;
+		set_convo_gc(C, connections ? connections->data : NULL);
 	}
+}
+
+void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
+{
+	if (c->gc == gc)
+		return;
+
+	if (c->gc && c->gc->prpl && c->gc->prpl->remove_convo)
+		(*c->gc->prpl->remove_convo)(c->gc, c);
+
+	c->gc = gc;
+
+	if (gc)
+		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu), g_slist_index(connections, gc));
+
+	update_buttons_by_protocol(c);
+
+	if (c->gc && c->gc->prpl && c->gc->prpl->insert_convo)
+		(*c->gc->prpl->insert_convo)(c->gc, c);
 }
 
 void update_buttons_by_protocol(struct conversation *c)
@@ -2075,6 +2106,10 @@ void show_conv(struct conversation *c)
 
 	create_convo_menu(c);
 
+	c->lbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), c->lbox, FALSE, FALSE, 0);
+	gtk_widget_show(c->lbox);
+
 	entry = gtk_text_new(NULL, NULL);
 	c->entry = entry;
 	if (!(display_options & OPT_DISP_ONE_WINDOW))
@@ -2097,7 +2132,7 @@ void show_conv(struct conversation *c)
 	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 0);
 	gtk_widget_show(entry);
 
-	bbox = gtk_hbox_new(FALSE, 5);
+	c->bbox = bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
 

@@ -561,11 +561,7 @@ void pressed_im_bud(GtkWidget *widget, struct buddy *b)
 	} else {
 		c = new_conversation(b->name);
 
-		c->gc = b->gc;
-		
-		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu), g_slist_index(connections, b->gc));
-
-		update_buttons_by_protocol(c);
+		set_convo_gc(c, b->gc);
 	}
 }
 
@@ -580,12 +576,7 @@ void pressed_im(GtkWidget *widget, struct buddy_show *b)
 	} else {
 		c = new_conversation(b->name);
 
-		c->gc = b->connlist->data;
-		
-		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
-				g_slist_index(connections, b->connlist->data));
-
-		update_buttons_by_protocol(c);
+		set_convo_gc(c, b->connlist->data);
 	}
 }
 
@@ -635,11 +626,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
                 } else {
                         c = new_conversation(b->name);
 
-			c->gc = b->connlist->data;
-			gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
-					g_slist_index(connections, b->connlist->data));
-		
-			update_buttons_by_protocol(c);
+			set_convo_gc(c, b->connlist->data);
                 }
 		if (display_options & OPT_DISP_ONE_WINDOW)
 			raise_convo_tab(c);
@@ -1722,20 +1709,14 @@ void do_pounce(char *name, int when)
 				if (c == NULL)
                                 	c = new_conversation(name);
 
-				c->gc = u->gc;
-				gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
-						g_slist_index(connections, u->gc));
-				update_buttons_by_protocol(c);
+				set_convo_gc(c, u->gc);
 			}
 			if (b->options & OPT_POUNCE_SEND_IM) {
                         	c = find_conversation(name);
                         	if (c == NULL)
                                 	c = new_conversation(name);
 
-				c->gc = u->gc;
-				gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
-						g_slist_index(connections, u->gc));
-				update_buttons_by_protocol(c);
+				set_convo_gc(c, u->gc);
 
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL, time((time_t)NULL));
                                 serv_send_im(u->gc, name, b->message, 0);

@@ -355,6 +355,8 @@ struct conversation {
 	GtkWidget *send;
 
 	/* stuff used just for IM */
+	GtkWidget *lbox;
+	GtkWidget *bbox;
 	GtkWidget *sw;
 	GtkWidget *info;
 	GtkWidget *warn;
@@ -704,6 +706,7 @@ extern void do_big(GtkWidget *, GtkWidget *);
 extern void set_font_face(char *, struct conversation *);
 extern void redo_convo_menus();
 extern void toggle_spellchk();
+extern void set_convo_gc(struct conversation *, struct gaim_connection *);
 extern void update_buttons_by_protocol(struct conversation *);
 extern void toggle_smileys();
 extern void toggle_timestamps();
