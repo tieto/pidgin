@@ -72,6 +72,7 @@ struct _zephyr_triple {
 					return;\
 				}
 
+static const char *local_zephyr_normalize(const char *);
 static const char *zephyr_normalize(const GaimAccount *, const char *);
 
 /* this is so bad, and if Zephyr weren't so fucked up to begin with I
@@ -119,6 +120,18 @@ static void free_triple(zephyr_triple *zt)
 	g_free(zt->recipient);
 	g_free(zt->name);
 	g_free(zt);
+}
+
+static const char* gaim_zephyr_get_sender() {
+        /* will be useful once this plugin can use a backend other
+           than libzephyr */
+        return ZGetSender();
+}
+
+static const char* gaim_zephyr_get_realm() {
+        /* will be useful once this plugin can use a backend other
+           than libzephyr */
+        return ZGetRealm();
 }
 
 /* returns true if zt1 is a subset of zt2, i.e. zt2 has the same thing or
@@ -329,7 +342,7 @@ static gboolean pending_zloc(char *who)
 {
 	GList *curr;
 	for (curr = pending_zloc_names; curr != NULL; curr = curr->next) {
-		if (!g_ascii_strcasecmp(zephyr_normalize(NULL, who), (char*)curr->data)) {
+		if (!g_ascii_strcasecmp(local_zephyr_normalize(who), (char*)curr->data)) {
 			g_free((char*)curr->data);
 			pending_zloc_names = g_list_remove(pending_zloc_names, curr->data);
 			return TRUE;
@@ -386,11 +399,11 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		char *buf, *buf2;
 		char *send_inst;
 		char *realmptr;
-		char *sendertmp;
                 GaimConversation *gconv1;
                 GaimConvChat *gcc;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
 		int len = notice.z_message_len - ((int)ptr - (int)notice.z_message);
+		char *sendertmp = g_strdup_printf("%s",gaim_zephyr_get_sender());
 		GaimConvImFlags flags = 0;
 		if (len > 0) {
 			buf = g_malloc(len + 1);
@@ -426,7 +439,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					sendertmp = g_strdup_printf("%s",notice.z_sender);
 					if ((realmptr = strchr(sendertmp,'@')) != NULL) {
 						realmptr++;
-						if (!g_ascii_strcasecmp(realmptr,ZGetRealm())) {
+						if (!g_ascii_strcasecmp(realmptr,gaim_zephyr_get_realm())) {
 							realmptr--;
 							sprintf(realmptr,"%c",'\0');
 							send_inst = g_strdup_printf("%s %s",sendertmp,
@@ -443,7 +456,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 
                                         gconv1 = gaim_find_conversation_with_account(zt2->name,zgc->account);
                                         gcc = gaim_conversation_get_chat_data(gconv1);
-                                        gaim_conv_chat_set_topic(gcc,sendertmp,notice.z_class_inst); 
+                                        /*                                        gaim_conv_chat_set_topic(gcc,sendertmp,notice.z_class_inst);  */
                                         for(gltmp = gaim_conv_chat_get_users(gcc);gltmp;gltmp=gltmp->next) {
                                                 if (!g_ascii_strcasecmp(gltmp->data,sendertmp) )
                                                     found = 1;
@@ -514,7 +527,7 @@ static gint check_loc(gpointer data)
 					continue;
 				if(b->account->gc == zgc) {
 					const char *chk;
-					chk = zephyr_normalize(b->account, b->name);
+					chk = local_zephyr_normalize(b->name);
 					/* doesn't matter if this fails or not; we'll just move on to the next one */
 					ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
 					free(ald.user);
@@ -572,15 +585,14 @@ static void process_zsubs()
 			if (buff[0]) {
 				triple = g_strsplit(buff, ",", 3);
 				if (triple[0] && triple[1] ) {
-					/* char *tmp = g_strdup_printf("%s@%s", g_getenv("USER"), ZGetRealm()); */
-					char *tmp = g_strdup_printf("%s",ZGetSender());
+					char *tmp = g_strdup_printf("%s",gaim_zephyr_get_sender());
 					char *atptr;
 					sub.zsub_class = triple[0];
 					sub.zsub_classinst = triple[1];
 					if(triple[2] == NULL) {
 						recip = g_malloc0(1);
 					} else if (!g_ascii_strcasecmp(triple[2], "%me%")) {
-						recip = g_strdup_printf("%s",ZGetSender());
+						recip = g_strdup_printf("%s",gaim_zephyr_get_sender());
 					} else if (!g_ascii_strcasecmp(triple[2], "*")) {
 						/* wildcard
 						 * form of class,instance,* */
@@ -594,7 +606,7 @@ static void process_zsubs()
 						 * If realm is local realm, blank recipient, else
 						 * @REALM-NAME
 						 */
-						char *realmat = g_strdup_printf("@%s", ZGetRealm());
+						char *realmat = g_strdup_printf("@%s", gaim_zephyr_get_realm());
 						if (!g_ascii_strcasecmp(atptr, realmat))
 							recip = g_malloc0(1);
 						else
@@ -667,11 +679,11 @@ static void zephyr_login(GaimAccount *account)
 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
 	z_call_s(ZOpenPort(NULL), "Couldn't open port");
-	z_call_s(ZSetLocation(gaim_account_get_string(zgc->account,"exposure_level",EXPOSE_REALMVIS)), "Couldn't set location");
+	z_call_s(ZSetLocation((char *)gaim_account_get_string(zgc->account,"exposure_level",EXPOSE_REALMVIS)), "Couldn't set location");
 
 	sub.zsub_class = "MESSAGE";
 	sub.zsub_classinst = "PERSONAL";
-	sub.zsub_recipient = ZGetSender();
+	sub.zsub_recipient = (char *)gaim_zephyr_get_sender();
 
 	/* we don't care if this fails. i'm lying right now. */
 	if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
@@ -711,7 +723,7 @@ static void write_zsubs()
 		if (triple[2] != NULL) {
 			if (!g_ascii_strcasecmp(triple[2], "")) {
 				fprintf(fd, "%s,%s,*\n", triple[0], triple[1]);
-			} else if (!g_ascii_strcasecmp(triple[2], ZGetSender())) {
+			} else if (!g_ascii_strcasecmp(triple[2], gaim_zephyr_get_sender())) {
 				fprintf(fd, "%s,%s,%%me%%\n",triple[0],triple[1]);
 			} else {
 				fprintf(fd, "%s\n", zt->name);
@@ -756,7 +768,7 @@ static void write_anyone()
 						/* We should only strip the realm name if the principal
 						   is in the user's realm
 						   */
-						if (!g_ascii_strcasecmp(ptr2,ZGetRealm())) {
+						if (!g_ascii_strcasecmp(ptr2,gaim_zephyr_get_realm())) {
 							*ptr = '\0';
 						}
 					}
@@ -814,7 +826,18 @@ static void zephyr_add_buddy(GaimConnection *gc, const char *buddy, GaimGroup *g
                 b = gaim_buddy_new(zgc->account, buddy, NULL);
                 gaim_blist_add_buddy(b, NULL, group, NULL);
         }
-        
+}
+
+static void zephyr_add_buddies(GaimConnection *gc, GList* buddies) {
+        GaimGroup *group;
+	if (!(group = gaim_find_group(_("Anyone")))) {
+		group = gaim_group_new(_("Anyone"));
+		gaim_blist_add_group(group, NULL);
+	}
+        while (buddies) {
+                zephyr_add_buddy(gc, buddies->data, group);
+                buddies = buddies->next;
+        }
 }
 
 static void zephyr_remove_buddy(GaimConnection *gc, const char *buddy, const char *group) { 
@@ -824,6 +847,17 @@ static void zephyr_remove_buddy(GaimConnection *gc, const char *buddy, const cha
                 gaim_blist_remove_buddy(b);
         else 
                 fprintf(stderr,"attempt to remove non-existent buddy %s\n",buddy);
+}
+
+static void zephyr_remove_buddies(GaimConnection *gc, GList *buddies, const char *group) {
+        GaimBuddy *b;
+        while(buddies) {
+                if ((b=gaim_find_buddy(zgc->account,buddies->data))) {
+                        gaim_blist_remove_buddy(b);
+                }  else {
+                        fprintf(stderr,"attempt to remove non-existent buddy %s\n",(char *)buddies->data);
+                }
+        }      
 }
 
 static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
@@ -850,8 +884,8 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
         gconv1 = gaim_find_conversation_with_account(zt->name,zgc->account);
         gcc = gaim_conversation_get_chat_data(gconv1);
 
-        if(!(inst = gaim_conv_chat_get_topic(gcc)))
-                inst = notice.z_class_inst;
+        if(!(inst = (char *)gaim_conv_chat_get_topic(gcc)))
+                inst = (char *)notice.z_class_inst;
                 
 	bzero((char *)&notice, sizeof(notice));
 	notice.z_kind = ACKED;
@@ -860,9 +894,9 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 	notice.z_class = zt->class;
 	notice.z_class_inst = inst;
 	if (!g_ascii_strcasecmp(zt->recipient, "*"))
-		notice.z_recipient = zephyr_normalize(gc->account, "");
+		notice.z_recipient = local_zephyr_normalize("");
 	else
-		notice.z_recipient = zephyr_normalize(gc->account, zt->recipient);
+		notice.z_recipient = local_zephyr_normalize(zt->recipient);
 	notice.z_sender = 0;
 	notice.z_default_format =
 		"Class $class, Instance $instance:\n"
@@ -915,11 +949,25 @@ static const char *zephyr_normalize(const GaimAccount *account,const char *orig)
 	if (!g_ascii_strcasecmp(orig, "")) {
 		buf[0] = '\0';
 		return buf;
+	} else {
+                g_snprintf(buf,80,"%s",orig);
+        }
+        return buf;
+}
+
+
+static const char *local_zephyr_normalize(const char *orig)
+{
+	static  char buf[80];
+	if (!g_ascii_strcasecmp(orig, "")) {
+		buf[0] = '\0';
+		return buf;
 	}
+        
 	if (strchr(orig, '@')) {
 		g_snprintf(buf, 80, "%s", orig);
 	} else {
-		g_snprintf(buf, 80, "%s@%s", orig, ZGetRealm());
+                g_snprintf(buf,80,"%s@%s",orig,gaim_zephyr_get_realm());
 	}
 	return buf;
 }
@@ -928,12 +976,12 @@ static void zephyr_zloc(GaimConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
 
-	if (ZRequestLocations(zephyr_normalize(gc->account, who), &ald, UNACKED, ZAUTH)
+	if (ZRequestLocations(local_zephyr_normalize(who), &ald, UNACKED, ZAUTH)
 					!= ZERR_NONE) {
 		return;
 	}
 	pending_zloc_names = g_list_append(pending_zloc_names,
-					g_strdup(zephyr_normalize(gc->account, who)));
+					g_strdup(local_zephyr_normalize(who)));
 }
 
 static GList *zephyr_buddy_menu(GaimConnection *gc, const char *who)
@@ -1015,7 +1063,7 @@ static void zephyr_join_chat(GaimConnection *gc, GHashTable *data)
 		return;
 
 	if (!g_ascii_strcasecmp(recip, "%me%"))
-		recip = ZGetSender();
+		recip = gaim_zephyr_get_sender();
 
 	zt1 = new_triple(classname, instname, recip);
 	zt2 = find_sub_by_triple(zt1);
@@ -1060,7 +1108,7 @@ static void zephyr_chat_set_topic(GaimConnection *gc, int id, const char *topic)
         zephyr_triple *zt;
         GaimConversation *gconv;
         GaimConvChat* gcc;
-        char* sender = ZGetSender();
+        char* sender = (char *)gaim_zephyr_get_sender();
 
         zt = find_sub_by_id(id);
         gconv = gaim_find_conversation_with_account(zt->name,zgc->account);
@@ -1099,9 +1147,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	zephyr_add_buddy,
-	NULL,
+	zephyr_add_buddies,
 	zephyr_remove_buddy,
-	NULL,
+	zephyr_remove_buddies,
 	NULL,
 	NULL,
 	NULL,

@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: lschiere $
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -53,7 +53,7 @@ Code_t ZCheckAuthentication(notice, from)
     our_checksum = des_quad_cksum(notice->z_packet, NULL, 
 				  notice->z_default_format+
 				  strlen(notice->z_default_format)+1-
-				  notice->z_packet, 0, cred.session);
+				  notice->z_packet, 0, (C_Block *)cred.session);
 #endif
     /* if mismatched checksum, then the packet was corrupted */
     return ((our_checksum == notice->z_checksum) ? ZAUTH_YES : ZAUTH_FAILED);

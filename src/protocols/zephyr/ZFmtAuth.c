@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: lschiere $
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -43,7 +43,7 @@ Code_t ZFormatAuthenticNotice(notice, buffer, buffer_len, len, session)
     newnotice.z_checksum = 0;
 #else
     newnotice.z_checksum =
-	(ZChecksum_t)des_quad_cksum(buffer, NULL, ptr - buffer, 0, session);
+	(ZChecksum_t)des_quad_cksum(buffer, NULL, ptr - buffer, 0, (C_Block*)session);
 #endif
     if ((retval = Z_FormatRawHeader(&newnotice, buffer, buffer_len,
 				    &hdrlen, NULL, NULL)) != ZERR_NONE)

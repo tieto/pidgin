@@ -10,12 +10,12 @@
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Id: ZMkAuth.c 8940 2004-02-07 17:40:57Z lschiere $ */
+/* $Id: ZMkAuth.c 9078 2004-02-27 19:25:27Z lschiere $ */
 
 #include <internal.h>
 
 #ifndef lint
-static const char rcsid_ZMakeAuthentication_c[] = "$Id: ZMkAuth.c 8940 2004-02-07 17:40:57Z lschiere $";
+static const char rcsid_ZMakeAuthentication_c[] = "$Id: ZMkAuth.c 9078 2004-02-27 19:25:27Z lschiere $";
 #endif
 
 #ifdef ZEPHYR_USES_KERBEROS
@@ -84,11 +84,11 @@ Code_t ZMakeAuthentication(notice, buffer, buffer_len, len)
     if ((result = krb_get_cred(SERVER_SERVICE, SERVER_INSTANCE, 
 			      __Zephyr_realm, &cred)) != 0)
 	return result;
-    checksum = des_quad_cksum(buffer, NULL, cstart - buffer, 0, cred.session);
+    checksum = des_quad_cksum(buffer, NULL, cstart - buffer, 0, (C_Block *)cred.session);
     checksum ^= des_quad_cksum(cend, NULL, buffer + *len - cend, 0,
-			       cred.session);
+			       (C_Block *)cred.session);
     checksum ^= des_quad_cksum(notice->z_message, NULL, notice->z_message_len,
-			       0, cred.session);
+			       0, (C_Block *)cred.session);
     notice->z_checksum = checksum;
     ZMakeAscii32(cstart, buffer + buffer_len - cstart, checksum);
 
