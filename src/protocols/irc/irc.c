@@ -1299,7 +1299,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		else
 			g_snprintf(buf, sizeof(buf), "KICK %s %s\r\n", who, word[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "JOIN")) {
+	} else if (!g_strcasecmp(pdibuf, "JOIN") || !g_strcasecmp(pdibuf, "J")) {
 		if (!*word[2])
 			return -EINVAL;
 		if (*word[3])
