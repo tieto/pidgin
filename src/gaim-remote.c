@@ -251,9 +251,19 @@ void show_longhelp( char *name, char *command)
 		       "	gaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 			  "...prompts you to add 'Penguin' to your buddy list.\n"), 1);
 	}
-	else if(!strcmp(command, "quit")) {
+
+	else if (!strcmp(command, "quit")) {
 		message(_("\nClose running copy of Gaim\n"), 1);
 	}
+
+	else if (!strcmp(command, "away")) {
+		message(_("\nMark all accounts as \"away\" with the default message.\n"), 1);
+	}
+
+	else if (!strcmp(command, "back")) {
+		message(_("\nSet all accounts as not away.\n"), 1);
+	}
+
 	else {
 		show_remote_usage(name);
 	}
