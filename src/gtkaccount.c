@@ -100,7 +100,7 @@ proto_name(int proto)
 static GtkWidget *
 __make_protocol_menu(AccountPrefsDialog *dialog)
 {
-	return NULL;
+	return gtk_button_new();
 }
 
 static GtkWidget *
@@ -118,6 +118,7 @@ __add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_size_group_add_widget(dialog->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
 
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_widget_show(widget);
@@ -140,9 +141,11 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->login_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
 	gtk_box_reorder_child(GTK_BOX(parent), dialog->login_frame, 0);
+	gtk_widget_show(dialog->login_frame);
 
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
 
 	/* Protocol */
 	dialog->protocol_menu = __make_protocol_menu(dialog);
@@ -166,6 +169,7 @@ __show_account_prefs(AccountPrefsDialogType type)
 	dialog = g_new0(AccountPrefsDialog, 1);
 
 	dialog->type = type;
+	dialog->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	GAIM_DIALOG(win);
 	dialog->window = win;
@@ -194,6 +198,8 @@ __show_account_prefs(AccountPrefsDialogType type)
 #if 0
 	__add_user_options(dialog, vbox);
 #endif
+
+	gtk_widget_show(win);
 }
 
 /**************************************************************************
