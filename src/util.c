@@ -356,81 +356,94 @@ gaim_mime_decode_field(const char *str)
 	return tmp;
 
 #if 0
-	/* This is revo/shx's version, and it caused coredumps for me */
-	char *cur, *mark;
-	char *unencoded_start, *unencoded_end;
-	char *charset, *encoding, *word, *decoded;
+	/* The shx version! */
+	const char *cur, *mark;
+	const char *unencoded, *encoded;
 	char *n, *new;
 
 	n = new = g_malloc(strlen(str));
-	charset = word = NULL;
 
 gaim_debug(GAIM_DEBUG_ERROR, "XXX", "new is %d\n", new);
-	/* Here we will be looking for encoded words and if they seem to be
-	 * valid then decode them */
 
-	for (unencoded_start = cur = str;
-		 (unencoded_end = cur = strstr(cur, "=?"));
-		 unencoded_start = cur)	{
+	/*
+	 * Here we will be looking for encoded words and if they seem to be
+	 * valid then decode them.
+	 * They are of this form: =?charset?encoding?text?=
+	 */
+	for (	unencoded = cur = str;
+			(encoded = cur = strstr(cur, "=?"));
+			unencoded = cur) {
 
-		int len;
-		char *token;
-		GQueue *tokens = g_queue_new();
-		
-		for (cur += 2, mark = cur; *cur; cur++) {
+		gboolean found_word = FALSE;
+		int i, num, len, dec_len;
+		char *decoded, *converted;
+		char *tokens[3];
+
+		/* Let's look for tokens, they are between ?'s */
+		for (cur += 2, mark = cur, num = 0; *cur; cur++) {
 			if (*cur == '?') {
-				token = g_strndup(mark, cur - mark);
-				g_queue_push_head(tokens, token);
+				if (num > 2)
+					/* No more than 3 tokens. */
+					break;
+
+				tokens[num++] = g_strndup(mark, cur - mark);
 
 				mark = (cur + 1);
-				
-				if (mark[0] == '=' && mark[1] == '\0')
+
+				if (mark[0] == '=' && mark[1] == '\0') {
+					found_word = TRUE;
 					break;
-			} else {
-				if ((tokens->length == 2) && (*cur == ' '))
-					break;
-				else if ((tokens->length < 2) && (strchr("()<>@,;:/[]", *cur)))
-					break;
-				else if (tokens->length > 2)
-					break;
+				}
 			}
+#if 0
+			/* I think this is rarely going to happen, if at all */
+			else if ((num < 2) && (strchr("()<>@,;:/[]", *cur)))
+				/* There can't be these characters in the first two tokens. */
+				break;
+			else if ((num == 2) && (*cur == ' '))
+				/* There can't be spaces in the third token. */
+				break;
+#endif
 		}
 
 		cur += 2;
 gaim_debug(GAIM_DEBUG_ERROR, "XXX", "new is %d, this is probably different than above, that's bad\n", new);
+		if (found_word) {
+			/* We found an encoded word. */
+	 		/* =?charset?encoding?text?= */
+			len = encoded - unencoded;
+			n = strncpy(n, unencoded, len) + len;
 
-		if ((tokens->length == 3) && (*mark == '=')) {
-			len = unencoded_end - unencoded_start;
-			n = strncpy(n, unencoded_start, len) + len;
+			if (g_ascii_strcasecmp(tokens[1], "Q") == 0)
+				gaim_quotedp_decode(tokens[2], &decoded, &dec_len);
+			else if (g_ascii_strcasecmp(tokens[1], "B") == 0)
+				gaim_base64_decode(tokens[2], &decoded, &dec_len);
+			else
+				decoded = NULL;
 
-			charset = g_queue_pop_tail(tokens);
-			encoding = g_queue_pop_tail(tokens);
-			word = g_queue_pop_tail(tokens);
-			
-			if ((decoded = gaim_mime_decode_word(charset, encoding, word))) {
-				len = strlen(decoded);
-				n = strncpy(n, decoded, len) + len;
+			if (decoded) {
+				converted = g_convert(decoded, dec_len, OUT_CHARSET, tokens[0],
+						NULL, &len, NULL);
 				g_free(decoded);
+
+				n = strncpy(n, converted, len) + len;
+				g_free(converted);
 			}
-			
-			g_free(charset);
-			g_free(encoding);
-			g_free(word);
 		} else {
-			len = cur - unencoded_start;
-			n = strncpy(n, unencoded_start, len) + len;
-			
-			while ((token = g_queue_pop_tail(tokens)))
-				g_free(token);
+			/* Some unencoded text. */
+			len = cur - unencoded;
+			n = strncpy(n, unencoded, len) + len;
 		}
-		
-		g_queue_free(tokens);
+
+		for (i = 0; i < num; i++)
+			g_free(tokens[i]);
 	}
 
 	*n = '\0';
 
-	if (*unencoded_start)
-		n = strcpy(n, unencoded_start);
+	/* There is unencoded text at the end. */
+	if (*unencoded)
+		n = strcpy(n, unencoded);
 
 	return new;
 #endif
