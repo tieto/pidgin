@@ -36,6 +36,7 @@
 #include "util.h"
 #include "xmlnode.h"
 
+/* TODO: Should use GaimValue instead of this?  What about "ui"? */
 typedef struct
 {
 	GaimPrefType type;
@@ -61,7 +62,7 @@ static gboolean accounts_loaded = FALSE;
 
 
 /*********************************************************************
- * Writting to disk                                                  *
+ * Writing to disk                                                   *
  *********************************************************************/
 
 static void

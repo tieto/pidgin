@@ -101,7 +101,7 @@ free_statussaved(GaimSavedStatus *status)
 }
 
 /*********************************************************************
- * Writting to disk                                                  *
+ * Writing to disk                                                   *
  *********************************************************************/
 
 static xmlnode *
