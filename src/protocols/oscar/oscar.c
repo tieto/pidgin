@@ -220,14 +220,14 @@ static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) 
 }
 
 static char *extract_name(const char *name) {
-	char *tmp;
+	char *tmp, *x;
 	int i, j;
-	char *x;
 
 	if (!name)
-			return NULL;
-
+		return NULL;
+	
 	x = strchr(name, '-');
+
 	if (!x) return NULL;
 	x = strchr(++x, '-');
 	if (!x) return NULL;
@@ -1764,6 +1764,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		struct icon_req *ir = NULL;
 		GSList *h = od->hasicons;
 		char *who = normalize(userinfo->sn);
+
+		if (!args->iconlen || !args->iconsum || !args->iconstamp)
+		    return 1;
+		    
 		debug_printf("%s has an icon\n", userinfo->sn);
 		while (h) {
 			ir = h->data;
@@ -1813,6 +1817,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		 * means that either the incoming ICBM is corrupted or
 		 * there is something we don't understand about it. */
 		/* For the record, AIM Unicode is big-endian UCS-2 */
+
+		if (!args->msg || !args->msglen)
+			return 1;
+		
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
 		if (err) {
 			debug_printf("Unicode IM conversion: %s\n", err->message);
@@ -1829,6 +1837,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1) {
 			debug_printf ("Received ISO-8859-1 IM\n");
 		}
+
+		if (!args->msg || !args->msglen)
+			return 1;
+
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
 		if (err) {
 			debug_printf("ISO-8859-1 IM conversion: %s\n", err->message);
@@ -1856,11 +1868,16 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
 
+	if (!args)
+		return 0;
+	
 	debug_printf("rendezvous status %d (%s)\n", args->status, userinfo->sn);
 
 	
 	if (args->status == AIM_RENDEZVOUS_CANCEL) {
 		struct oscar_file_transfer *oft;
+		if (!args->cookie)
+			return 1;
 		oft = find_oft_by_cookie(gc, args->cookie);
 		if (oft) {
 			transfer_abort(oft->xfer, _("Buddy canceled transfer"));
@@ -1881,17 +1898,14 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
-		char *name = extract_name(args->info.chat.roominfo.name);
+		char *name;
 		int *exch;
-
-		if (!name) {
-				/* Well, something weird must've happened here, let's run to church */
-				debug_printf("somebody tried to kick you in the balls.\n");
-				return 0;
-		}
-		
-		exch = g_new0(int, 1);
 		GList *m = NULL;
+		
+		if (!args->info.chat.roominfo.name || !args->info.chat.roominfo.exchange || !args->msg)
+			return 1;
+		name = extract_name(args->info.chat.roominfo.name);
+		exch = g_new0(int, 1);
 		m = g_list_append(m, g_strdup(name ? name : args->info.chat.roominfo.name));
 		*exch = args->info.chat.roominfo.exchange;
 		m = g_list_append(m, exch);
@@ -1906,6 +1920,10 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		struct oscar_file_transfer *oft;
 		struct oscar_data *od = gc->proto_data;
 
+		if (!args->cookie || !args->verifiedip || !args->port ||
+		    !args->info.sendfile.filename || !args->info.sendfile.totsize ||
+		    !args->info.sendfile.totfiles || !args->msg || !args->reqclass)
+			return 1;
 		if ((oft = find_oft_by_cookie(sess->aux_data, args->cookie)))
 		{
 			/* This is a request for a reverse connection,
@@ -2049,6 +2067,9 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	GError *err = NULL;
 	int i;
 
+	if (!args->type || !args->msg || !args->uin)
+		return 1;
+	
 	debug_printf("Received a channel 4 message of type %d.\n", args->type);
 
 	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
