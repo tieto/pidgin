@@ -862,7 +862,7 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
-	char *nick, *msg;
+	char *nick, *msg, *wallop;
 
 	if (!args || !args[0] || !gc)
 		return;
@@ -870,8 +870,10 @@ void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, c
 	nick = irc_mask_nick(from);
 	msg = g_strdup_printf (_("Wallops from %s"), nick);
 	g_free(nick);
-	gaim_notify_info(gc, NULL, msg, args[0]);
+	wallop = g_markup_escape_text(args[0], strlen(args[0]));
+	gaim_notify_info(gc, NULL, msg, wallop);
 	g_free(msg);
+	g_free(wallop);
 }
 
 void irc_msg_ignore(struct irc_conn *irc, const char *name, const char *from, char **args)
