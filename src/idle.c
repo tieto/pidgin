@@ -68,10 +68,15 @@ gint check_idle(struct gaim_connection *gc)
 		idle_time = t - gc->lastsent;
 
 	if ((general_options & OPT_GEN_AUTO_AWAY) && (idle_time > (60 * auto_away)) &&
-			(!gc->away) && (!gc->is_auto_away)) {
+			(!gc->is_auto_away)) {
 		debug_printf("making %s away automatically\n", gc->username);
 		set_default_away((GtkWidget*)NULL, (gpointer)g_slist_index(away_messages, default_away));
-		serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
+		if (!gc->away) {
+			if (g_slist_length(connections) == 1)
+				do_away_message(NULL, default_away);
+			else
+				serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
+		}
 		gc->is_auto_away = TRUE;
 	} else if (gc->is_auto_away && idle_time < 60 * auto_away) {
 		gc->is_auto_away = FALSE;
