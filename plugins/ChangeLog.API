@@ -12,6 +12,7 @@ version 0.80cvs:
 	Signals:
 	* Changed "chat-invited" to also include the components hash table so 
 	  plugins can use serv_join_chat when the signal is emitted.
+	* Added "chat-topic-changed" signal plugins know when a topic is changed.
 
 version 0.79 (06/24/2004):
 	Gaim API:

@@ -32,6 +32,7 @@
   @signal chat-invited
   @signal chat-joined
   @signal chat-left
+  @signal chat-topic-changed
  @endsignals
 
  @signaldef writing-im-msg
@@ -435,6 +436,17 @@ void (*chat_left)(GaimConversation *conv);
   @signaldesc
    Emitted when an account leaves a chat room.
   @param conv The conversation that left the chat room.
+ @endsignaldef
+
+ @signaldef chat-topic-changed
+  @signalproto
+void (*chat_topic_changed)(GaimConversation *conv, const char *who, const char *topic);
+  @endsignalproto
+  @signaldesc
+   Emitted when the topic is changed in a chat.
+  @param conv  The conversation whose topic changed.
+  @param who   The name of the person that changed the topic.
+  @param topic The new topic.
  @endsignaldef
 
 */

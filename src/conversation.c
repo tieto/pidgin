@@ -1842,6 +1842,9 @@ gaim_conv_chat_set_topic(GaimConvChat *chat, const char *who, const char *topic)
 
 	gaim_conversation_update(gaim_conv_chat_get_conversation(chat),
 							 GAIM_CONV_UPDATE_TOPIC);
+
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-topic-changed",
+					 chat->conv, chat->who, chat->topic);
 }
 
 const char *
@@ -2853,6 +2856,13 @@ gaim_conversations_init(void)
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION));
+
+	gaim_signal_register(handle, "chat-topic-changed",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING));
 }
 
 void

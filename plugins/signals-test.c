@@ -414,6 +414,15 @@ chat_left_cb(GaimConversation *conv, void *data)
 					gaim_conversation_get_name(conv));
 }
 
+static void
+chat_topic_changed_cb(GaimConversation *conv, const char *who,
+					  const char *topic, void *data)
+{
+	gaim_debug_misc("signals test",
+					"chat-topic-changed (%s topic changed to: \"%s\" by %s)\n",
+					gaim_conversation_get_name(conv), topic,
+					(who) ? who : "unknown");
+}
 /**************************************************************************
  * Core signal callbacks
  **************************************************************************/
@@ -534,6 +543,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(chat_joined_cb), NULL);
 	gaim_signal_connect(conv_handle, "chat-left",
 						plugin, GAIM_CALLBACK(chat_left_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-topic-changed",
+						plugin, GAIM_CALLBACK(chat_topic_changed_cb), NULL);
 
 	/* Core signals */
 	gaim_signal_connect(core_handle, "quitting",
