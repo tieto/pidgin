@@ -115,12 +115,12 @@ gaim_connection_disconnect(GaimConnection *gc)
 	if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
 		gaim_blist_remove_account(gaim_connection_get_account(gc));
 
-	gaim_event_broadcast(event_signoff, gc);
-	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
-
 	serv_close(gc);
 
 	gaim_connection_set_state(gc, GAIM_DISCONNECTED);
+
+	gaim_event_broadcast(event_signoff, gc);
+	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 	/* XXX Evil UI stuff!! */
 	do_away_menu();

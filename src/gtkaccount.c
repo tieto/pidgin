@@ -22,6 +22,7 @@
  */
 #include "gtkaccount.h"
 #include "account.h"
+#include "event.h"
 #include "prefs.h"
 #include "stock.h"
 #include "gtkblist.h"
@@ -56,6 +57,27 @@ proto_name(int proto)
 	GaimPlugin *p = gaim_find_prpl(proto);
 
 	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
+}
+
+static void
+__account_signed_on_cb(GaimConnection *gc, AccountsDialog *dialog)
+{
+	
+}
+
+static void
+__signed_on_off_cb(GaimConnection *gc, AccountsDialog *dialog)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
+	GtkTreeIter iter;
+	size_t index = g_list_index(gaim_accounts_get_all(), account);
+
+	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index)) {
+		gtk_list_store_set(dialog->model, &iter,
+						   COLUMN_ONLINE, gaim_account_is_connected(account),
+						   -1);
+	}
 }
 
 static gint
@@ -374,6 +396,10 @@ gaim_gtk_account_dialog_show(void)
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(__close_accounts_cb), dialog);
+
+	/* Setup some gaim signal handlers. */
+	gaim_signal_connect(dialog, event_signon,  __signed_on_off_cb, dialog);
+	gaim_signal_connect(dialog, event_signoff, __signed_on_off_cb, dialog);
 
 	gtk_widget_show(win);
 }

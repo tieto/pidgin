@@ -39,6 +39,7 @@
 #endif /* USE_SCREENSAVER */
 
 #include "gaim.h"
+#include "connection.h"
 #include "multi.h"
 #include "prpl.h"
 #include "prefs.h"
