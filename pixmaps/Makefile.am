@@ -28,6 +28,7 @@ EXTRA_DIST =	about_small.xpm			\
 		farted.xpm			\
 		fontface2.xpm			\
 		gaim.png			\
+		gaim_cool.png			\
 		gaim_error.png			\
 		gaim_info.png			\
 		gaim_question.png		\
@@ -96,7 +97,7 @@ gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
 gaimbuttonpix_DATA = edit.png accounts.png signon.png preferences.png insert-image-small.png text_bigger.png text_smaller.png insert-link-small.png insert-smiley-small.png text_normal.png
 
 gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
-gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png 
+gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png gaim_cool.png
 
 gaimmenupixdir = $(datadir)/pixmaps/gaim/menus
 gaimmenupix_DATA = insert-image-small.png
