@@ -520,12 +520,16 @@ close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
 static void
 insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
-	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
+	char *smiley_text, *escaped_smiley;
+
+	smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
+	escaped_smiley = gaim_escape_html(smiley_text);
 
 	gtk_imhtml_insert_smiley(GTK_IMHTML(toolbar->imhtml),
 							 GTK_IMHTML(toolbar->imhtml)->protocol_name,
-							 smiley_text);
+							 escaped_smiley);
 
+	g_free(escaped_smiley);
 	close_smiley_dialog(NULL, NULL, toolbar);
 }
 
