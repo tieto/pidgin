@@ -19,5 +19,5 @@ gaimpixmapdir = /usr/share/pixmaps/gaim
 gaimpixmap_DATA = aimicon.xpm
 gaimgnomedir = /usr/share/pixmaps/gaim/gnome
 gaimgnome_DATA = gnome/penguin-online.png gnome/penguin-offline.png \
-	penguin-online.png
+	gnome/penguin-online.png
 endif
