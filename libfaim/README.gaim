@@ -38,6 +38,7 @@ Chat:
  - leaving rooms
  - getting invited
  - talking
+Telling the server who's on your permit/deny lists
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
@@ -49,7 +50,6 @@ Chat:
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.
-Telling the server who's on your permit/deny lists (buggy)
 
 KNOWN ISSUES
 ============
@@ -62,14 +62,6 @@ look like you're trying to sign in twice (and in fact you will be). It doesn't
 seem to negatively affect anything, but it will when people start using it. (I
 think this may actually be related to the auto_recon plugin.) (FIXME for this is
 marked in aim.c)
-
-- Adding or removing people to your permit/deny lists causes the server to tell
-you everyone on your buddy list signed off and then immediately signed in again.
-While you won't ever see that it happens (other than everyone will suddenly have
-the guy-in-the-door icon), you'll hear it. Be warned. (This also happens at
-sign-on, because the list gets built, even if you don't have a list.) I've
-commented it out because it was causing too many problems. (FIXME for this is
-marked in server.c)
 
 - There are a lot of problems with panel support (funny that I'm supporting the
 panel code, and the oscar code I wrote doesn't work well with it).

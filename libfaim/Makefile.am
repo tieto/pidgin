@@ -2,7 +2,8 @@ noinst_LIBRARIES = $(LIBFAIM_DO)
 
 EXTRA_LIBRARIES = libfaim.a
 
-EXTRA_DIST = aim.h aim_cbtypes.h faimconfig.h
+EXTRA_DIST = aim.h aim_cbtypes.h faimconfig.h README README.gaim CHANGES \
+		CHANGES.gaim COPYING BUGS
 
 #libfaim_a_SOURCES = aim_chatnav.c aim_info.c aim_rxhandlers.c \
 #                    aim_tlv.c aim_auth.c aim_conn.c aim_login.c \

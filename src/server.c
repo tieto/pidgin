@@ -379,7 +379,8 @@ void serv_set_permit_deny()
 	/* oscar requires us to do everyone at once (?) */
 /* FIXME : there's something wrong with this code, it causes the entire buddy
  * list to update, and can cause other people's buddy lists to improperly update
-	if (!(permdeny == 1 || permdeny == 3)) {
+ */
+	if (!(permdeny == 1 || permdeny == 4)) {
 		list = permit; at = 0;
 		while (list) {
 			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
@@ -397,7 +398,6 @@ void serv_set_permit_deny()
 		aim_bos_changevisibility(gaim_sess, gaim_conn,
 				AIM_VISIBILITYCHANGE_DENYADD, buf);
 	}
- */
 #endif
 }
 

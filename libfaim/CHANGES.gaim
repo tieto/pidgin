@@ -1,4 +1,8 @@
 
+Tue May 23 18:07:00 UTC 2000 EWarmenhoven
+	- I fixed the code to tell the server who's on your permit/deny list.
+	  I still don't think it works right in all cases, but it does in most.
+
 Tue May 23 03:32:26 UTC 2000 EWarmenhoven
 	- I commented out the code to tell the server who's on your permit or
 	  deny lists. I coded that part seriously wrong.
