@@ -5775,7 +5775,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	{ /* If not in server list then prune from local list */
 		GaimBlistNode *gnode, *cnode, *bnode;
 		GaimBuddyList *blist;
-		GSList *cur;
+		GSList *cur, *next;
 
 		/* Buddies */
 		cur = NULL;
@@ -5824,24 +5824,30 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		/* Permit list */
 		if (gc->account->permit) {
-			for (cur=gc->account->permit; cur; cur=cur->next)
+			next = gc->account->permit;
+			while (next != NULL) {
+				cur = next;
+				next = next->next;
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 					gaim_debug_info("oscar",
 							"ssi: removing permit %s from local list\n", (const char *)cur->data);
 					gaim_privacy_permit_remove(account, cur->data, TRUE);
-					cur = gc->account->permit;
 				}
+			}
 		}
 
 		/* Deny list */
 		if (gc->account->deny) {
-			for (cur=gc->account->deny; cur; cur=cur->next)
+			next = gc->account->deny;
+			while (next != NULL) {
+				cur = next;
+				next = next->next;
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
 					gaim_debug_info("oscar",
 							"ssi: removing deny %s from local list\n", (const char *)cur->data);
 					gaim_privacy_deny_remove(account, cur->data, TRUE);
-					cur = gc->account->deny;
 				}
+			}
 		}
 		/* Presence settings (idle time visibility) */
 		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
