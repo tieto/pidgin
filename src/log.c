@@ -290,8 +290,14 @@ void system_log(enum log_event what, GaimConnection *gc,
 
 	account = gaim_connection_get_account(gc);
 
-	if (((why & OPT_LOG_MY_SIGNON) &&
-		 !gaim_prefs_get_bool("/gaim/gtk/logging/log_own_states"))) {
+	if ((why & OPT_LOG_MY_SIGNON &&
+		 !gaim_prefs_get_bool("/gaim/gtk/logging/log_own_states")) ||
+			(why & OPT_LOG_BUDDY_SIGNON &&
+			 !gaim_prefs_get_bool("/gaim/gtk/logging/log_signon_signoff")) ||
+			(why & OPT_LOG_BUDDY_IDLE &&
+			 !gaim_prefs_get_bool("/gaim/gtk/logging/log_idle_state")) ||
+			(why & OPT_LOG_BUDDY_AWAY &&
+			 !gaim_prefs_get_bool("/gaim/gtk/logging/log_away_state"))) {
 
 		return;
 	}
