@@ -856,7 +856,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 					struct buddy *b = NULL;
 					char *groupname, *buddyname;
 
-					if (who->user == NULL) {
+					if (!who || !who->user) {
 						/* FIXME: transport */
 						g = xmlnode_get_nextsibling(g);
 						continue;
@@ -887,7 +887,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 			struct buddy *b;
 			char *buddyname;
 
-			if (who->user == NULL) {
+			if (!who || !who->user) {
 				/* FIXME: transport */
 				x = xmlnode_get_nextsibling(x);
 				continue;

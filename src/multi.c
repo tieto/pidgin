@@ -813,7 +813,7 @@ void account_online(struct gaim_connection *gc)
 	update_connection_dependent_prefs();
 	do_away_menu();
 	do_proto_menu();
-	redo_convo_menus(NULL);
+	redo_convo_menus();
 	gaim_setup(gc);
 
 	plugin_event(event_signon, gc, 0, 0, 0);
