@@ -576,6 +576,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 		return;
 
 	b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
+	pos = g_list_index(b->in_room, name);
 
 	while (ignored) {
 		if (!strcasecmp(old, ignored->data))
