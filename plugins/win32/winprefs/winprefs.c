@@ -59,7 +59,7 @@ static GtkWidget *blist = NULL;
 /*
  *  PROTOS
  */
-static void blist_create_cb();
+static void blist_create_cb(GaimBuddyList *blist, void *data);
 
 /*
  *  CODE
@@ -138,24 +138,10 @@ static void gaim_quit_cb() {
         blist_set_dockable(FALSE);
 }
 
-/* Needed when the last account is signed off.. and we get the login window */
-static void blist_destroy_cb() {
-        gaim_debug_info(WINPREFS_PLUGIN_ID, "blist_destroy_cb\n");
-        blist_save_state();
-        blist_set_dockable(FALSE);
-        gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb), NULL);
-}
+static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
+	gaim_debug_info(WINPREFS_PLUGIN_ID, "buddy list created\n");
 
-static gboolean blist_create_cb_remove(gpointer data) {
-        gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb));
-        return FALSE;
-}
-
-static void blist_create_cb() {
-        gaim_debug_info(WINPREFS_PLUGIN_ID, "event_signon\n");
-
-        blist = GAIM_GTK_BLIST(gaim_get_blist())->window;
-        g_signal_connect(blist, "destroy", blist_destroy_cb, NULL);
+	blist = GAIM_GTK_BLIST(gaim_blist)->window;
 
         if(gaim_prefs_get_bool(OPT_WINPREFS_DBLIST_DOCKABLE)) {
                 blist_set_dockable(TRUE);
@@ -170,9 +156,6 @@ static void blist_create_cb() {
         if(gaim_prefs_get_bool(OPT_WINPREFS_BLIST_ON_TOP)) {
                 blist_set_ontop(TRUE);
         }
-        /* removing here will cause a crash when going to next cb
-           in the gaim signal cb loop.. so process delayed. */
-        g_idle_add(blist_create_cb_remove, NULL);
 }
 
 /* AUTOSTART */
@@ -277,18 +260,11 @@ gboolean plugin_load(GaimPlugin *plugin) {
         plugin_id = plugin;
 
         /* blist docking init */
-        if(gaim_get_blist() && GAIM_GTK_BLIST(gaim_get_blist()) && GAIM_GTK_BLIST(gaim_get_blist())->window) {
-                blist = GAIM_GTK_BLIST(gaim_get_blist())->window;
-                /* Set Dockable */
-                if(gaim_prefs_get_bool(OPT_WINPREFS_DBLIST_DOCKABLE))
-                        blist_set_dockable(TRUE);
-                /* Set On top */
-                if(gaim_prefs_get_bool(OPT_WINPREFS_BLIST_ON_TOP))
-                        blist_set_ontop(TRUE);
-                g_signal_connect(blist, "destroy", blist_destroy_cb, NULL);
-        }
-        else
-                gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb), NULL);
+	if (gaim_get_blist() && GAIM_GTK_BLIST(gaim_get_blist()) && GAIM_GTK_BLIST(gaim_get_blist())->window) {
+		blist_create_cb(gaim_get_blist(), NULL);
+	} else {
+		gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-created", plugin_id, GAIM_CALLBACK(blist_create_cb), NULL);
+	}
 
         wgaim_conv_im_blink_state(gaim_prefs_get_bool(OPT_WINPREFS_IM_BLINK));
 
