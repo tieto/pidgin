@@ -1306,6 +1306,7 @@ void do_bp_menu()
 gint log_timeout(char *name)
 {
 	struct buddy *b;
+	struct group *g;
 	
 	b = find_buddy(name);
 
@@ -1314,9 +1315,12 @@ gint log_timeout(char *name)
 
         b->log_timer = 0;
 			
-	if (!b->present)
+	if (!b->present) {
 		gtk_widget_hide(b->item);
-	else
+		g = find_group_by_buddy(name);
+		gtk_tree_item_collapse(GTK_TREE_ITEM(g->item));
+		gtk_tree_item_expand(GTK_TREE_ITEM(g->item));
+	} else
 		set_buddy(b);
 	
 	return FALSE;
