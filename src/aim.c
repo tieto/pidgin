@@ -594,7 +594,6 @@ int main(int argc, char *argv[])
         
 
         show_login();
-	new_conversation("poot");
         gtk_main();
         
 #endif /* USE_APPLET */
