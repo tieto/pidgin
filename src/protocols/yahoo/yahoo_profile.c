@@ -1214,7 +1214,7 @@ void yahoo_get_info(GaimConnection *gc, const char *name)
 	url = g_strdup_printf("%s%s",
 			(yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL), name);
 
-	gaim_url_fetch(url, FALSE, NULL, FALSE, yahoo_got_info, data);
+	gaim_url_fetch(url, TRUE, NULL, FALSE, yahoo_got_info, data);
 
 	g_free(url);
 }
