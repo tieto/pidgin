@@ -977,7 +977,7 @@ static void yahoo_login(struct aim_user *user) {
 				user->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
 			   user->proto_opt[USEROPT_PAGERPORT][0] ?
 				atoi(user->proto_opt[USEROPT_PAGERPORT]) : YAHOO_PAGER_PORT,
-			   yahoo_got_connected, gc) < 0) {
+			   yahoo_got_connected, gc) != 0) {
 		hide_login_progress(gc, "Connection problem");
 		signoff(gc);
 		return;

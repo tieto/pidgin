@@ -1664,12 +1664,12 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 
 	idata = gc->proto_data;
 
-	if (source == -1) {
+	if (source != 1) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
 		return;
 	}
-
+	idata->fd = source;
 	
 	/* Try a quick conversion to see if the specified encoding is OK */
 	test = g_convert("test", strlen("test"), gc->user->proto_opt[USEROPT_CHARSET],
@@ -1682,8 +1682,6 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	
 	g_free(test);
 	
-	idata->fd = source;
-
 	gethostname(hostname, sizeof(hostname) - 1);
 	hostname[sizeof(hostname) - 1] = 0;
 	if (!*hostname)
@@ -1740,10 +1738,9 @@ irc_login(struct aim_user *user)
 	idata->fd = -1;
 
 	rc = proxy_connect(user->proto_opt[USEROPT_SERV],
-				  user->proto_opt[USEROPT_PORT][0] ? atoi(user->
-									  proto_opt[USEROPT_PORT]) :
-				  6667, irc_login_callback, gc);
-	if (!user->gc || (rc < 0)) {
+				  user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) :
+								     6667, irc_login_callback, gc);
+	if (!user->gc || (rc != 0)) {
 		hide_login_progress(gc, "Unable to create socket");
 		signoff(gc);
 		return;

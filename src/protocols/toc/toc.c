@@ -198,13 +198,10 @@ static void toc_login(struct aim_user *user)
 	set_login_progress(gc, 1, buf);
 
 	debug_printf("* Client connects to TOC\n");
-	tdt->toc_fd =
-	    proxy_connect(user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST,
+ 	if (proxy_connect(user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST,
 			  user->proto_opt[USEROPT_AUTHPORT][0] ?
 				  atoi(user->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
-			  toc_login_callback, gc);
-
-	if (!user->gc || (tdt->toc_fd < 0)) {
+			  toc_login_callback, gc) != 0 || !user->gc) {
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed", user->proto_opt[USEROPT_AUTH]);
 		hide_login_progress(gc, buf);
 		signoff(gc);
@@ -231,9 +228,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 		signoff(gc);
 		return;
 	}
-
-	if (tdt->toc_fd == 0)
-		tdt->toc_fd = source;
+	tdt->toc_fd = source;
 
 	debug_printf("* Client sends \"FLAPON\\r\\n\\r\\n\"\n");
 	if (toc_write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
@@ -1694,9 +1689,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	g_snprintf(buf, sizeof(buf), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
 	sflap_send(ft->gc, buf, -1, TYPE_DATA);
 
-	fd =
-	    proxy_connect(ft->ip, ft->port, toc_send_file_connect, ft);
-	if (fd < 0) {
+	if (proxy_connect(ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
 		do_error_dialog(_("Could not connect for transfer."), NULL, GAIM_ERROR);
 		g_free(ft->filename);
 		g_free(ft->cookie);
@@ -1863,7 +1856,6 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
 	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
-	int fd;
 	struct aim_user *user;
 	char *buf, buf2[BUF_LEN * 2];
 
@@ -1899,9 +1891,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	g_snprintf(buf2, sizeof(buf2), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
 	sflap_send(ft->gc, buf2, -1, TYPE_DATA);
 
-	fd =
-	    proxy_connect(ft->ip, ft->port, toc_get_file_connect, ft);
-	if (fd < 0) {
+	if (proxy_connect(ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
 		do_error_dialog(_("Could not connect for transfer."), NULL, GAIM_ERROR);
 		fclose(ft->file);
 		g_free(ft->filename);

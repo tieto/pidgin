@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4712 2003-01-27 22:27:02Z lschiere $
+ * $Id: gg.c 4727 2003-01-28 21:42:44Z seanegan $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -306,7 +306,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	if (gd->sess->fd != source)
 		gd->sess->fd = source;
 
-	if (source == -1) {
+	if (source != 0) {
 		hide_login_progress(gc, _("Could not connect"));
 		signoff(gc);
 		return;
@@ -422,15 +422,15 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 	debug_printf("Found GG connection\n");
-	if (gd->sess->fd != source) {
-		gd->sess->fd = source;
-		debug_printf("Setting sess->fd to source\n");
-	}
-	if (source == -1) {
+	
+	if (source != 0) {
 		hide_login_progress(gc, _("Unable to connect."));
 		signoff(gc);
 		return;
 	}
+
+	gd->sess->fd = source;
+
 	debug_printf("Source is valid.\n");
 	if (gc->inpa == 0) {
 		debug_printf("login_callback.. checking gc->inpa .. is 0.. setting fd watch\n");
@@ -475,9 +475,8 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 			gaim_input_remove(gc->inpa);
 
 			ip.s_addr = gd->sess->server_ip;
-			gd->sess->fd = proxy_connect(inet_ntoa(ip), gd->sess->port, login_callback, gc);
 			
-			if (gd->sess->fd < 0) {
+			if (proxy_connect(inet_ntoa(ip), gd->sess->port, login_callback, gc) < 0) {
 				g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), inet_ntoa(ip));
 				hide_login_progress(gc, buf);
 				signoff(gc);
@@ -573,9 +572,7 @@ static void agg_login(struct aim_user *user)
 	gd->sess->state = GG_STATE_CONNECTING;
 	gd->sess->check = GG_CHECK_WRITE;
 	gd->sess->async = 1;
-	gd->sess->fd = proxy_connect(GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc);
-
-	if (gd->sess->fd < 0) {
+	if (proxy_connect(GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc) < 0) {
 		g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), GG_APPMSG_HOST);
 		hide_login_progress(gc, buf);
 		signoff(gc);
@@ -937,7 +934,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	if (source == -1) {
+	if (source != 0) {
 		g_free(request);
 		g_free(hdata);
 		return;

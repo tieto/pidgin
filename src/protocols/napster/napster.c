@@ -426,8 +426,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	}
 
 	ndata = gc->proto_data;
-	if (ndata->fd != source)
-		ndata->fd = source;
+	ndata->fd = source;
 
 	/* And write our signon data */
 	g_snprintf(buf, NAP_BUF_LEN, "%s %s 0 \"gaimster\" 0", gc->username, gc->password);
@@ -443,10 +442,9 @@ static void nap_login(struct aim_user *user)
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct nap_data *ndata = gc->proto_data = g_new0(struct nap_data, 1);
 
-	ndata->fd = proxy_connect(user->proto_opt[USEROPT_NAPSERVER][0] ? user->proto_opt[USEROPT_NAPSERVER] : NAP_SERVER, 
+	if (proxy_connect(user->proto_opt[USEROPT_NAPSERVER][0] ? user->proto_opt[USEROPT_NAPSERVER] : NAP_SERVER, 
 			       user->proto_opt[USEROPT_NAPPORT][0] ? atoi(user->proto_opt[USEROPT_NAPPORT]) : NAP_PORT,
-			       nap_login_connect, gc);
-	if (ndata->fd < 0) {
+			       nap_login_connect, gc) != 0) {
 		hide_login_progress(gc, "Unable to connect");
 		signoff(gc);
 	}

@@ -1156,7 +1156,8 @@ static void connection_host_resolved(struct sockaddr *addr, size_t addrlen, gpoi
 	}
 }
 
-int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
+int
+proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
 {
 	char *connecthost = host;
 	int connectport = port;
@@ -1194,5 +1195,5 @@ int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
 	}
 	
 	gaim_gethostbyname_async(connecthost, connectport, connection_host_resolved, phb);
-	return 1;
+	return 0;
 }

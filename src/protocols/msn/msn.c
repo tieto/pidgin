@@ -688,8 +688,7 @@ static void msn_msnftp_callback(gpointer data, gint source,
 	int cont = 1;
 	int len;
 
-	if (mft->fd != source)
-		mft->fd = source;
+	mft->fd = source;
 
 	len = read(mft->fd, buf, sizeof(buf));
 
@@ -838,9 +837,7 @@ static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 			mft->port = atoi(port_s);
 			mft->authcookie = atol(authcookie_s);
 
-			mft->fd = proxy_connect(mft->ip, mft->port, msn_msnftp_connect, mft);
-
-			if (ms->fd < 0) {
+			if (proxy_connect(mft->ip, mft->port, msn_msnftp_connect, mft) != 0) {
 				md->file_transfers = g_slist_remove(md->file_transfers, mft);
 				return;
 			}
@@ -933,9 +930,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 	int cont = 1;
 	int len;
 	
-	/* This is really stupid and I hate to put this here. */
-	if (ms->fd != source)
-		ms->fd = source;
+	ms->fd = source;
 	len = read(ms->fd, buf, sizeof(buf));
 	if (len <= 0) {
 		msn_kill_switch(ms);
@@ -1437,8 +1432,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			port = 1863;
 
 		ms = g_new0(struct msn_switchboard, 1);
-		ms->fd = proxy_connect(ssaddr, port, msn_rng_connect, ms);
-		if (ms->fd < 0) {
+		if (proxy_connect(ssaddr, port, msn_rng_connect, ms) != 0) {
 			g_free(ms);
 			return 1;
 		}
@@ -1548,26 +1542,22 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		}
 
 		if (switchboard) {
-			int rc;
 			struct msn_switchboard *ms = msn_find_writable_switch(gc);
 			if (!ms)
 				return 1;
 
 			GET_NEXT(tmp);
 
-			rc = proxy_connect(host, port, msn_ss_xfr_connect, ms);
-			if (rc < 0) {
+			if (proxy_connect(host, port, msn_ss_xfr_connect, ms) != 0) {
 				msn_kill_switch(ms);
 				return 1;
 			}
 			ms->auth = g_strdup(tmp);
 		} else {
-			int rc;
 			close(md->fd);
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
-			rc = proxy_connect(host, port, msn_login_xfr_connect, gc);
-			if (rc < 0) {
+			if (proxy_connect(host, port, msn_login_xfr_connect, gc) != 0) {
 				hide_login_progress(gc, _("Error transfering"));
 				signoff(gc);
 				return 0;
@@ -1862,9 +1852,8 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		gaim_input_remove(md->inpa);
 		md->inpa = 0;
 		md->fd = 0;
-		md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
 		md->sl = time(NULL);
-		if (md->fd < 0) {
+		if (proxy_connect(host, port, msn_login_xfr_connect, gc) != 0) {
 			hide_login_progress(gc, _("Unable to transfer"));
 			signoff(gc);
 		}
@@ -1978,10 +1967,9 @@ static void msn_login(struct aim_user *user)
 
 	g_snprintf(gc->username, sizeof(gc->username), "%s", msn_normalize(gc->username));
 	
-	md->fd = proxy_connect(user->proto_opt[USEROPT_MSNSERVER][0] ? user->proto_opt[USEROPT_MSNSERVER] : MSN_SERVER, 
+	if (proxy_connect(user->proto_opt[USEROPT_MSNSERVER][0] ? user->proto_opt[USEROPT_MSNSERVER] : MSN_SERVER, 
 			       user->proto_opt[USEROPT_MSNPORT][0] ? atoi(user->proto_opt[USEROPT_MSNPORT]) : MSN_PORT,
-			       msn_login_connect, gc);
-	if (md->fd < 0) {
+			       msn_login_connect, gc) != 0) {
 		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 	}
