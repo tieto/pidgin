@@ -641,8 +641,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	if ((s = strstr(buf, "\r\n\r\n")) == NULL)
 		return FALSE;
 
-	header = g_strndup(buf, s - buf);
 	s += 4; /* Skip \r\n */
+	header = g_strndup(buf, s - buf);
 	body_start = s;
 	body_len = size - (body_start - buf);
 
