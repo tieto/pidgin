@@ -639,6 +639,7 @@ void serv_got_im(char *name, char *message, int away)
 
         if (awaymessage != NULL) {
                 time_t t;
+		char tmpmsg[BUF_LEN];
 
                 time(&t);
 
@@ -651,7 +652,10 @@ void serv_got_im(char *name, char *message, int away)
                 if (is_idle)
                         is_idle = -1;
 
-                serv_send_im(name, awaymessage->message, 1);
+		strcpy(tmpmsg, awaymessage->message);
+		escape_text(tmpmsg);
+		escape_message(tmpmsg);
+                serv_send_im(name, tmpmsg, 1);
 
                 if (is_idle == -1)
 			is_idle = 1;
