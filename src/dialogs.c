@@ -2547,7 +2547,7 @@ void show_find_info()
 
 	gtk_widget_set_usize(ok, 75, 30);
 	gtk_widget_set_usize(cancel, 75, 30);
-        gtk_box_pack_end(GTK_BOX(bbox), ok, FALSE, FALSE, 10);
+        gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 10);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 10);
 
 	/* Line 1 */
