@@ -193,5 +193,6 @@ void gaim_set_notify_ui_ops(GaimNotifyUiOps *ops);
  * @param ops The UI operations structure.
  */
 GaimNotifyUiOps *gaim_get_notify_ui_ops(void);
+/*@}*/
 
 #endif /* _GAIM_NOTIFY_H_ */

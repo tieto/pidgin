@@ -85,7 +85,7 @@ unsigned char *tobase16(const unsigned char *str, int len);
  *
  * @see tobase16()
  */
-int frombase16(const char *str, char **ret_str);
+int frombase16(const char *str, unsigned char **ret_str);
 
 /**
  * Waits for all child processes to terminate.

@@ -3717,6 +3717,7 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gaim_debug(GAIM_DEBUG_INFO, "oscar", "setting email\n");
 		aim_admin_setemail(sess, fr->conn, od->email);
 		g_free(od->email);
+		od->email = NULL;
 		od->setemail = FALSE;
 	}
 

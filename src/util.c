@@ -486,15 +486,15 @@ unsigned char *tobase16(const unsigned char *data, int length)
 /*
  * Converts a null-terminated string of hexidecimal to raw data.
  */
-int frombase16(const char *ascii, char **raw)
+int frombase16(const char *ascii, unsigned char **raw)
 {
 	int len, i, accumulator=0;
-	char *data;
+	unsigned char *data;
 
 	if (!ascii || !(len = strlen(ascii)) || (len % 2))
 		return 0;
 
-	data = (char *)malloc((len/2)*sizeof(char));
+	data = malloc(len/2);
 	for (i=0; i<len; i++) {
 		if (!(i % 2))
 			accumulator = 0;

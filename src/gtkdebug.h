@@ -1,5 +1,5 @@
 /**
- * @file gtkdebug.c GTK+ Debug API
+ * @file gtkdebug.h GTK+ Debug API
  * @ingroup gtkui
  *
  * gaim
