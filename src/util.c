@@ -817,7 +817,8 @@ gaim_markup_strip_html(const char *str)
 	gboolean visible = TRUE;
 	gchar *str2;
 
-	g_return_val_if_fail(str != NULL, NULL);
+	if(!str)
+		return NULL;
 
 	str2 = g_strdup(str);
 
