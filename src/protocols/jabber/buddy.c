@@ -422,7 +422,7 @@ jabber_format_info(GaimConnection *gc, GaimRequestFields *fields)
 		}
 	}
 
-	p = xmlnode_to_str(vc_node);
+	p = xmlnode_to_str(vc_node, NULL);
 	xmlnode_free(vc_node);
 
 	account = gaim_connection_get_account(gc);

@@ -82,7 +82,7 @@ typedef struct _JabberStream
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet);
 void jabber_send(JabberStream *js, xmlnode *data);
-void jabber_send_raw(JabberStream *js, const char *data);
+void jabber_send_raw(JabberStream *js, const char *data, int len);
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state);
 

@@ -56,7 +56,7 @@ static void jabber_stream_init(JabberStream *js)
 						  "version='1.0'>",
 						  js->user->domain);
 
-	jabber_send_raw(js, open_stream);
+	jabber_send_raw(js, open_stream, -1);
 
 	g_free(open_stream);
 }
@@ -215,7 +215,7 @@ void jabber_process_packet(JabberStream *js, xmlnode *packet)
 	}
 }
 
-void jabber_send_raw(JabberStream *js, const char *data)
+void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
 	int ret;
 
@@ -225,9 +225,9 @@ void jabber_send_raw(JabberStream *js, const char *data)
 				js->gsc ? " (ssl)" : "", data);
 
 	if(js->gsc) {
-		ret = gaim_ssl_write(js->gsc, data, strlen(data));
+		ret = gaim_ssl_write(js->gsc, data, len == -1 ? strlen(data) : len);
 	} else {
-		ret = write(js->fd, data, strlen(data));
+		ret = write(js->fd, data, len == -1 ? strlen(data) : len);
 	}
 
 	if(ret < 0)
@@ -238,15 +238,16 @@ void jabber_send_raw(JabberStream *js, const char *data)
 void jabber_send(JabberStream *js, xmlnode *packet)
 {
 	char *txt;
+	int len;
 
-	txt = xmlnode_to_str(packet);
-	jabber_send_raw(js, txt);
+	txt = xmlnode_to_str(packet, &len);
+	jabber_send_raw(js, txt, len);
 	g_free(txt);
 }
 
 static void jabber_keepalive(GaimConnection *gc)
 {
-	jabber_send_raw(gc->proto_data, "\t");
+	jabber_send_raw(gc->proto_data, "\t", -1);
 }
 
 static void
@@ -307,7 +308,7 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 	js->gsc = gsc;
 
 	if(js->state == JABBER_STREAM_CONNECTING)
-		jabber_send_raw(js, "<?xml version='1.0' ?>");
+		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
 	gaim_ssl_input_add(gsc, jabber_recv_cb_ssl, gc);
@@ -328,7 +329,7 @@ jabber_login_callback(gpointer data, gint source, GaimInputCondition cond)
 	js->fd = source;
 
 	if(js->state == JABBER_STREAM_CONNECTING)
-		jabber_send_raw(js, "<?xml version='1.0' ?>");
+		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
 	gc->inpa = gaim_input_add(js->fd, GAIM_INPUT_READ, jabber_recv_cb, gc);
@@ -722,7 +723,7 @@ static void jabber_close(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-	jabber_send_raw(js, "</stream:stream>");
+	jabber_send_raw(js, "</stream:stream>", -1);
 
 	if(js->gsc) {
 		gaim_ssl_close(js->gsc);

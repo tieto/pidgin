@@ -233,7 +233,7 @@ xmlnode_get_data(xmlnode *node)
 	return ret;
 }
 
-char *xmlnode_to_str(xmlnode *node)
+char *xmlnode_to_str(xmlnode *node, int *len)
 {
 	char *ret;
 	GString *text = g_string_new("");
@@ -264,12 +264,13 @@ char *xmlnode_to_str(xmlnode *node)
 		for(c = node->child; c; c = c->next)
 		{
 			if(c->type == NODE_TYPE_TAG) {
-				esc = xmlnode_to_str(c);
-				g_string_append_printf(text, "%s", esc);
+				int esc_len;
+				esc = xmlnode_to_str(c, &esc_len);
+				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
 			} else if(c->type == NODE_TYPE_DATA) {
 				esc = g_markup_escape_text(c->data, c->data_sz);
-				g_string_append_printf(text, "%s", esc);
+				text = g_string_append(text, esc);
 				g_free(esc);
 			}
 		}
@@ -282,6 +283,8 @@ char *xmlnode_to_str(xmlnode *node)
 	g_free(node_name);
 
 	ret = text->str;
+	if(len)
+		*len = text->len;
 	g_string_free(text, FALSE);
 	return ret;
 }

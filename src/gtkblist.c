@@ -1113,7 +1113,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		memcpy(&n, sd->data, sizeof(n));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
 			/* if we're here, I think it means the drop is ok */	
-		GtkTreeIter iter;
+			GtkTreeIter iter;
 			GaimBlistNode *node;
 			GValue val = {0};
 			struct _gaim_gtk_blist_node *gtknode;

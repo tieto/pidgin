@@ -46,7 +46,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		if(gaim_account_get_bool(js->gc->account, "use_tls", TRUE) &&
 						gaim_ssl_is_supported()) {
 			jabber_send_raw(js,
-					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>");
+					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 			return;
 		} else if(xmlnode_get_child(starttls, "required")) {
 			gaim_connection_error(js->gc, _("Server requires SSL for login"));
@@ -78,8 +78,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	if(digest_md5) {
 		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
-	/*
+		/*
 	} else if(plain) {
+		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
 		js->auth_type = JABBER_AUTH_PLAIN;
 		*/
 	} else {
@@ -297,7 +298,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			if(rspauth && js->expected_rspauth &&
 					!strcmp(rspauth, js->expected_rspauth)) {
 				jabber_send_raw(js,
-						"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />");
+						"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />",
+						-1);
 			} else {
 				gaim_connection_error(js->gc, _("Invalid challenge from server"));
 			}
@@ -358,7 +360,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 			buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
 
-			jabber_send_raw(js, buf);
+			jabber_send_raw(js, buf, -1);
 
 			g_free(buf);
 
