@@ -56,11 +56,15 @@ static char *irc_mask_userhost(const char *mask)
 
 static void irc_chat_remove_buddy(GaimConversation *convo, char *data[2])
 {
-	char *message = g_strdup_printf("quit: %s", data[1]);
+	char *escaped, *message;
+
+	escaped = g_markup_escape_text(data[1], -1);
+	message = g_strdup_printf("quit: %s", escaped);
 
 	if (gaim_conv_chat_find_user(GAIM_CONV_CHAT(convo), data[0]))
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), data[0], message);
 
+	g_free(escaped);
 	g_free(message);
 }
 
@@ -818,7 +822,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	GaimConversation *convo;
-	char *nick, *msg;
+	char *nick, *msg, *escaped;
 
 	if (!args || !args[0] || !gc)
 		return;
@@ -829,17 +833,19 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 	}
 
+	escaped = (args[1] && *args[1]) ? g_markup_escape_text(args[1], -1) : NULL;
 	nick = irc_mask_nick(from);
 	if (!gaim_utf8_strcasecmp(nick, gaim_connection_get_display_name(gc))) {
 		msg = g_strdup_printf(_("You have parted the channel%s%s"),
                                       (args[1] && *args[1]) ? ": " : "",
-				      (args[1] && *args[1]) ? args[1] : "");
+									  (escaped && *escaped) ? escaped : "");
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
 	} else {
-		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), nick, args[1]);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), nick, escaped);
 	}
+	g_free(escaped);
 	g_free(nick);
 }
 
