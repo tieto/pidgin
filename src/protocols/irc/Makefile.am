@@ -1,4 +1,4 @@
-EXTRA_DIST = rfc1459.txt
+EXTRA_DIST = PROTOCOL
 
 pkgdir = $(libdir)/gaim
 
