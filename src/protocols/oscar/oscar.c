@@ -28,6 +28,7 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "away.h"
 #include "buddyicon.h"
 #include "conversation.h"
 #include "core.h"
@@ -4670,6 +4671,13 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *st
 		return;
 	} /* else... */
 
+	if (!strcmp(state, _("Back"))) {
+		/* If this is our only online account then globally set Gaim not-away */
+		GList *gcs = gaim_connections_get_all();
+		if (gcs->next == NULL)
+			do_im_back(NULL, NULL);
+	}
+
 	aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 	if (od->rights.maxawaymsglen == 0)
@@ -6417,6 +6425,7 @@ static GList *oscar_away_states(GaimConnection *gc)
 		m = g_list_append(m, _("Invisible"));
 	} else {
 		m = g_list_append(m, GAIM_AWAY_CUSTOM);
+		m = g_list_append(m, _("Back"));
 		m = g_list_append(m, _("Visible"));
 		m = g_list_append(m, _("Invisible"));
 	}
