@@ -1085,12 +1085,12 @@ msgstr "%d개의 %s님이 보낸 메시지가 유효하지 않아 보여줄 수 없습니다."
 #: src/protocols/oscar/oscar.c:1595
 #, c-format
 msgid "You missed %d message from %s because it was too large."
-msgstr "%s개의 %s님이 보낸 메시지가 너무 커서 보여줄 수 없습니다."
+msgstr "%d개의 %s님이 보낸 메시지가 너무 커서 보여줄 수 없습니다."
 
 #: src/protocols/oscar/oscar.c:1596
 #, c-format
 msgid "You missed %d messages from %s because they were too large."
-msgstr "%s개의 %s님이 보낸 메시지가 너무 커서 보여줄 수 없습니다."
+msgstr "%d개의 %s님이 보낸 메시지가 너무 커서 보여줄 수 없습니다."
 
 #: src/protocols/oscar/oscar.c:1605
 #, c-format
