@@ -89,8 +89,10 @@ const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
 
 /**
  * Attempts to open a listening port ONLY on the specified port number.  
- * Can be used if MUST be listening on a certain port.  You probably 
- * want to use gaim_network_listen_range() instead of this.
+ * You probably want to use gaim_network_listen_range() instead of this.  
+ * This function is useful, for example, if you wanted to write a telnet 
+ * server as a Gaim plugin, and you had to listen on port 23.  Why anyone 
+ * would want to do that is beyond me.
  *
  * This opens a listening port. The caller will want to set up a watcher
  * of type GAIM_INPUT_READ on the returned fd. It will probably call
@@ -106,7 +108,12 @@ const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
 int gaim_network_listen(short port);
 
 /**
- * Opens a listening port selected from a range of ports.
+ * Opens a listening port selected from a range of ports.  The range of 
+ * ports used is chosen in the following manner:
+ * If a range is specified in preferences, these values are used.
+ * If a non-0 values are passed to the function as parameters, these 
+ * values are used.
+ * Otherwise a port is chosen at random by the kernel.
  *
  * This opens a listening port. The caller will want to set up a watcher
  * of type GAIM_INPUT_READ on the returned fd. It will probably call
@@ -114,14 +121,10 @@ int gaim_network_listen(short port);
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
- * @note This function always lets the core override its args with the
- *       value of the user preferences.
- *
- * @param start The port number to bind to, or 0 to let the core decide.
- *              By default, the core will let the kernel pick one at random.
+ * @param start The port number to bind to, or 0 to pick a random port.
  *              Users are allowed to override this arg in prefs.
  * @param end The highest possible port in the range of ports to listen on,
- *            or 0 to let the core decide Users are allowed to override this
+ *            or 0 to pick a random port.  Users are allowed to override this
  *            arg in prefs.
  * @return The file descriptor of the listening socket, or -1 if
  *         no socket could be established.
