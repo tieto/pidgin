@@ -167,7 +167,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	GaimConnection *gc;
 	GString *info;
 	char buffer[256];
-	char *str;
+	char *str, *tmp;
 
 	if (!irc->whois.nick) {
 		gaim_debug(GAIM_DEBUG_WARNING, "irc", "Unexpected End of WHOIS for %s\n", args[1]);
@@ -179,18 +179,20 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	}
 
 	info = g_string_new("");
-	g_string_append_printf(info, _("<b>%s:</b> %s"), _("Nick"), args[1]);
+	tmp = g_markup_escape_text(args[1], -1);
+	g_string_append_printf(info, _("<b>%s:</b> %s"), _("Nick"), tmp);
+	g_free(tmp);
 	g_string_append_printf(info, "%s%s<br>",
 			       irc->whois.ircop ? _(" <i>(ircop)</i>") : "",
 			       irc->whois.identified ? _(" <i>(identified)</i>") : "");
 	if (irc->whois.away) {
-		char *tmp = g_markup_escape_text(irc->whois.away, strlen(irc->whois.away));
+		tmp = g_markup_escape_text(irc->whois.away, strlen(irc->whois.away));
 		g_free(irc->whois.away);
 		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Away"), tmp);
 		g_free(tmp);
 	}
 	if (irc->whois.userhost) {
-		char *tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
+		tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
 		g_free(irc->whois.name);
 		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Username"), irc->whois.userhost);
 		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Realname"), tmp);
@@ -444,6 +446,7 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 {
 	GaimConnection *gc;
 	GaimConversation *convo;
+	char *nick;
 
 	convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, args[1], irc->account);
 	if (convo) {
@@ -456,7 +459,9 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
 			return;
-		gaim_notify_error(gc, NULL, _("No such nick or channel"), args[1]);
+		nick = gaim_markup_escape_text(args[1], -1);
+		gaim_notify_error(gc, NULL, _("No such nick or channel"), nick);
+		g_free(nick);
 	}
 
 	if (irc->whois.nick && !gaim_utf8_strcasecmp(irc->whois.nick, args[1])) {
