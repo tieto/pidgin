@@ -22,6 +22,7 @@ version 0.78cvs
 	* Gtk2.0 compatibility fixes (Tim Ringenbach)
 	* Updated and standardized blist signals (Gary Kramlich)
 	* More doxygen fixes (Jonathan Champ)
+	* Copy/paste encoding fixes (Joe Marcus Clarke)
 
 version 0.77 (04/22/2004):
 	New Features:

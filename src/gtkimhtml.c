@@ -689,7 +689,6 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data)
 {
 	char *text;
-	guint16 c;
 	GtkIMHtml *imhtml = data;
 	GtkTextIter iter;
 	GtkIMHtmlOptions flags = GTK_IMHTML_NO_NEWLINE;
@@ -761,14 +760,14 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		memcpy(text, selection_data->data, selection_data->length);
 	}
 
-	memcpy (&c, text, 2);
-	if (c == 0xfeff) {
-		/* This is UCS2 */
-		char *utf8 = g_convert(text+2, selection_data->length - 2, "UTF-8", "UCS-2", NULL, NULL, NULL);
+	if (selection_data->length >= 2 &&
+		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
+		/* This is UCS-2 */
+		char *utf8 = g_convert(text, selection_data->length, "UTF-8", "UCS-2", NULL, NULL, NULL);
 		g_free(text);
 		text = utf8;
 		if (!text) {
-			gaim_debug_warning("gtkimhtml", "g_convert failed in paste_received_cb\n");
+			gaim_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in paste_received_cb\n");
 			return;
 		}
 	}
