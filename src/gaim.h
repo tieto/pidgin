@@ -233,8 +233,8 @@ struct conversation {
 	GtkWidget *strike;
 	GtkWidget *font;
 
-	char *current_fontface;
-	char *current_fontname;
+	char current_fontface[64];
+	char current_fontname[64];
 	int makesound;
  	time_t sent_away;
 };
@@ -339,7 +339,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 306 $"
+#define REVISION "gaim:$Revision: 318 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

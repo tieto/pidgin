@@ -1963,10 +1963,8 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 	
 	if (c)
 	{
-		g_free(c->current_fontname);
-		g_free(c->current_fontface);
-		c->current_fontface = g_malloc(64);
-		c->current_fontname = gtk_font_selection_get_font_name(fontsel);
+		char *tmp = gtk_font_selection_get_font_name(fontsel);
+		strncpy(c->current_fontname, tmp, sizeof(c->current_fontname));
 
 		for (i = 0; i < strlen(c->current_fontname); i++)
 		{

@@ -304,7 +304,7 @@ void set_font_face(GtkWidget *widget, struct conversation *c)
 	if (!(font_options & OPT_FONT_FACE))
 		return;
 
-	if (c->current_fontface && strcmp(c->current_fontface, "(null)"))
+	if (c->current_fontface[0] && strcmp(c->current_fontface, "(null)"))
 	{
 		pre_fontface = g_strconcat("<FONT FACE=\"", c->current_fontface, "\">", '\0');
 		alloc++;
@@ -951,7 +951,7 @@ void show_conv(struct conversation *c)
 	GtkWidget *info;
         GtkWidget *warn;
         GtkWidget *block;
-	GtkWidget *color;
+	/* GtkWidget *color; */
 	GtkWidget *close;
 	GtkWidget *entry;
 	GtkWidget *toolbar;
@@ -977,7 +977,7 @@ void show_conv(struct conversation *c)
 	send = gtk_button_new_with_label("Send");
 	info = gtk_button_new_with_label("Info");
 	warn = gtk_button_new_with_label("Warn");
-	color = gtk_button_new_with_label("Color");
+	/* color = gtk_button_new_with_label("Color"); */
 	close = gtk_button_new_with_label("Close");
 	if (find_buddy(c->name) != NULL) {
        		add = gtk_button_new_with_label("Remove");
@@ -1079,7 +1079,7 @@ void show_conv(struct conversation *c)
 	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Big", "Increase font size", "Big", big_p, GTK_SIGNAL_FUNC(do_big), entry);
 	font = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Font", "Select Font", "Font", font_p, GTK_SIGNAL_FUNC(toggle_font), entry);
 	gtk_object_set_user_data(GTK_OBJECT(font), c);
-	if (!(font_options & OPT_FONT_FACE))
+	/* if (!(font_options & OPT_FONT_FACE)) */
 		gtk_widget_set_sensitive(GTK_WIDGET(font), FALSE);
 	
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
@@ -1119,7 +1119,7 @@ void show_conv(struct conversation *c)
 	c->palette = palette;
 	c->link = link;  
         c->add_button = add;
-    c->font = font;
+	c->font = font;
 
         gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
         
@@ -1169,7 +1169,7 @@ void show_conv(struct conversation *c)
         gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
         gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
         gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
-	gtk_signal_connect(GTK_OBJECT(color), "clicked", GTK_SIGNAL_FUNC(color_callback), c);
+	/* gtk_signal_connect(GTK_OBJECT(color), "clicked", GTK_SIGNAL_FUNC(color_callback), c); */
        
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(user_keypress_callback), c);
 	gtk_widget_set_usize(entry, 300, 25);
@@ -1178,7 +1178,7 @@ void show_conv(struct conversation *c)
 	gtk_box_pack_start(GTK_BOX(bbox), info, TRUE, TRUE, 5);
         gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 5);
         gtk_box_pack_start(GTK_BOX(bbox), block, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), color, TRUE, TRUE, 5);
+	/* gtk_box_pack_start(GTK_BOX(bbox), color, TRUE, TRUE, 5); */
 	gtk_box_pack_start(GTK_BOX(bbox), add, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(bbox), close, TRUE, TRUE, 5);
 	
@@ -1219,8 +1219,8 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
 	
-	c->current_fontface = g_strdup(fontface);
-	c->current_fontname = g_strdup(fontname);
+	strncpy(c->current_fontface, fontface, sizeof(c->current_fontface));
+	strncpy(c->current_fontname, fontname, sizeof(c->current_fontname));
 	
 	set_font_face(NULL, c);
 	
