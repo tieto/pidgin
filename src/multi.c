@@ -1446,6 +1446,10 @@ void account_offline(struct gaim_connection *gc)
 	debug_printf("Disconnecting. user = %p, gc = %p (%p)\n",
 				 gc->user, gc->user->gc, gc);
 	gc->user->gc = NULL;	/* wasn't that awkward? */
+
+	/* take these buddies out of the edit tree */
+	build_edit_tree();
+
 	if (!acctedit)
 		return;
 
