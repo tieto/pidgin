@@ -56,6 +56,7 @@ static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
+G_MODULE_IMPORT GSList *groups;
 
 #define REVISION "penguin"
 
