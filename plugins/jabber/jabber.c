@@ -413,6 +413,7 @@ static void jabber_callback(gpointer data, gint source, GdkInputCondition condit
 static void jabber_handlemessage(gjconn j, jpacket p)
 {
   xmlnode y;
+  char *x, *m;
 
   char *from = NULL, *msg = NULL;
 
@@ -425,6 +426,17 @@ static void jabber_handlemessage(gjconn j, jpacket p)
     return;
   }
 
+  x = strchr(from, '@');
+  if (x) {
+	  *x++ = '\0';
+	  m = strchr(x, '/');
+	  *m = '\0';
+	  if (strcmp(j->user->server, x)) {
+		  x--;
+		  *x = '@';
+		  *m = '/';
+	  }
+  }
   debug_printf("jabber: msg from %s: %s\n", from, msg);
 
   serv_got_im(GJ_GC(j), from, msg, 0);
@@ -641,12 +653,19 @@ static void jabber_close(struct gaim_connection *gc) {
 
 static void jabber_send_im(struct gaim_connection *gc, char *who, char *message, int away) {
         xmlnode x, y;
+	char *realwho;
+	gjconn j = ((struct jabber_data *)gc->proto_data)->jc;
 
         if (!who || !message)
                 return;
 
         x = xmlnode_new_tag("message");
-        xmlnode_put_attrib(x, "to", who);
+	if (!strchr(who, '@'))
+		realwho = g_strdup_printf("%s@%s", who, j->user->server);
+	else
+		realwho = g_strdup(who);
+        xmlnode_put_attrib(x, "to", realwho);
+	g_free(realwho);
 
         xmlnode_put_attrib(x, "type", "chat");
 
