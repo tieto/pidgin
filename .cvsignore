@@ -1,0 +1,17 @@
+confdefs.h
+gaim
+au2h
+configure
+Makefile
+Makefile.in
+config.status
+config.cache
+config.log
+.deps
+BuddyArrive.h
+BuddyLeave.h
+Send.h
+Recieve.h
+Receive.h
+aclocal.m4
+libtool
