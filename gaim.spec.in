@@ -61,6 +61,8 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      sysconfdir=%{buildroot}%{_sysconfdir} \
      install
 
+rm -f $RPM_BUILD_ROOT/%{_libdir}/perl5/*/*/perllocal.pod
+
 %clean
 rm -rf %{buildroot}
 
@@ -74,6 +76,8 @@ rm -rf %{buildroot}
 %dir %{_libdir}/gaim
 %attr(755, root, root) %{_libdir}/gaim/*
 %attr(755, root, root) %{_libdir}/libgaim-remote.so.*
+%attr(755, root, root) %{_libdir}/perl5
+
 %{_bindir}/*
 %{_datadir}/locale/*/*/*
 %{_datadir}/pixmaps/*
