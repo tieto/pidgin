@@ -94,4 +94,5 @@ sub description {
 }
 
 # output the first message and start the timers...
-update_away();
+# This is done as a timeout to prevent attempts to set the profile before logging in.
+GAIM::add_timeout_handler($handle, $seconds, "update_away");
