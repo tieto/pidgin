@@ -915,7 +915,7 @@ static char *yahoo_decode(const char *text)
 				p += 1;
 				for (i = 0, k = 0; k < 3; k += 1) {
 					char c = p[k];
-				if (c < '0' || c > '7') break;
+					if (c < '0' || c > '7') break;
 					i *= 8;
 					i += c - '0';
 				}
