@@ -139,8 +139,14 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		res = g_strsplit(buf, " ", 0);
 
-		/* First, let's check the list type */
+		/* If we have zero buddies, abort */
+		if (atoi(res[5]) == 0)
+		{
+			g_strfreev(res);
+			return;
+		}
 
+		/* First, let's check the list type */
 		if (!strcmp("FL", res[2]))
 		{
 			/* We're dealing with a forward list.  Add them
