@@ -24,9 +24,10 @@
 #include "accountopt.h"
 #include "conversation.h"
 #include "debug.h"
-#include "prpl.h"
+#include "multi.h"
 #include "notify.h"
 #include "proxy.h"
+#include "prpl.h"
 #include "request.h"
 #include "util.h"
 
@@ -590,13 +591,14 @@ static char *show_error_message()
 static void toc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	GaimConnection *gc = (GaimConnection *)data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 	struct sflap_hdr *hdr;
 	struct signon so;
 	char buf[8 * 1024], *c;
 	char snd[BUF_LEN * 2];
 
-	const char *username = gaim_account_get_username(gc->account);
+	const char *username = gaim_account_get_username(account);
 	char *password;
 
 	/* there's data waiting to be read, so read it. */
@@ -670,6 +672,12 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
 		serv_finish_login(gc);
+
+		/*
+		 * Add me to my buddy list so that we know the time when
+		 * the server thinks I signed on.
+		 */
+		serv_add_buddy(gc, username, NULL);
 
 		/* Client sends TOC toc_init_done message */
 		gaim_debug(GAIM_DEBUG_INFO, "toc",
@@ -778,9 +786,16 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		} else
 			time_idle = 0;
 
+		/*
+		 * If we have info for ourselves then set our display name, warning
+		 * level and official time of login.
+		 */
 		tmp = g_strdup(gaim_normalize(gc->account, gaim_account_get_username(gc->account)));
-		if (!strcmp(tmp, gaim_normalize(gc->account, c)))
+		if (!strcmp(tmp, gaim_normalize(gc->account, c))) {
 			gaim_connection_set_display_name(gc, c);
+			gc->evil = evil;
+			gc->login_time_official = signon;
+		}
 		g_free(tmp);
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type);
@@ -1127,7 +1142,7 @@ static void toc_get_dir(GaimBlistNode *node, gpointer data)
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (GaimBuddy *) node;
-	gc = gaim_acount_get_connection(buddy->account);
+	gc = gaim_account_get_connection(buddy->account);
 
 	g_snprintf(buf, MSG_LEN, "toc_get_dir %s",
 			gaim_normalize(buddy->account, buddy->name));
@@ -2103,7 +2118,7 @@ static void accept_file_dialog(struct ft_request *ft) {
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
-	OPT_PROTO_CORRECT_TIME,
+	0,
 	NULL,
 	NULL,
 	toc_list_icon,

@@ -112,24 +112,6 @@ typedef enum
 typedef enum
 {
 	/**
-	 * TOC and Oscar send HTML-encoded messages;
-	 * most other protocols don't.
-	 */
-#if 0
-	#define OPT_PROTO_HTML            0x00000001 this should be per-connection */
-#endif
-
-	/**
-	 * Synchronize the time between the local computer and the server.
-	 *
-	 * TOC and Oscar have signon time, and the server's time needs
-	 * to be adjusted to match your computer's time.
-	 *
-	 * We wouldn't need this if everyone used NTP.
-	 */
-	OPT_PROTO_CORRECT_TIME = 0x00000002,
-
-	/**
 	 * Use a unique name, not an alias, for chat rooms.
 	 *
 	 * Jabber lets you choose what name you want for chat.

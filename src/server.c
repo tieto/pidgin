@@ -147,23 +147,14 @@ void serv_finish_login(GaimConnection *gc)
 
 	account = gaim_connection_get_account(gc);
 
-	if (gaim_account_get_user_info(account) != NULL) {
-		/* buf = gaim_strdup_withhtml(gc->user->user_info); */
+	if (gaim_account_get_user_info(account) != NULL)
 		serv_set_info(gc, gaim_account_get_user_info(account));
-		/* g_free(buf); */
-	}
 
 	if (gc->idle_timer > 0)
 		gaim_timeout_remove(gc->idle_timer);
 
 	gc->idle_timer = gaim_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);
-
-	/* Move this hack into toc.c */
-	if (prpl_info->options & OPT_PROTO_CORRECT_TIME)
-		serv_add_buddy(gc,
-				gaim_account_get_username(gaim_connection_get_account(gc)),
-				NULL);
 
 	update_keepalive(gc, TRUE);
 }
@@ -1065,20 +1056,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	account = gaim_connection_get_account(gc);
 	b = gaim_find_buddy(account, name);
-
-	if (signon && (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->options &
-				   OPT_PROTO_CORRECT_TIME)) {
-
-		char *tmp = g_strdup(gaim_normalize(account, name));
-		if (!gaim_utf8_strcasecmp(tmp,
-				gaim_normalize(account, gaim_account_get_username(account)))) {
-
-			gc->evil = evil;
-			gc->login_time_official = signon;
-			/*update_idle_times();*/
-		}
-		g_free(tmp);
-	}
 
 	if (!b) {
 		gaim_debug(GAIM_DEBUG_ERROR, "server", "No such buddy: %s\n", name);

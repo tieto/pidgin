@@ -2680,6 +2680,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = gc->proto_data;
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
@@ -2783,6 +2784,17 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			}
 		}
 		g_free(b16);
+	}
+
+	/*
+	 * If we have info for ourselves, then update our local warning
+	 * level and set our official time of login.  Is this necessary?
+	 * XXX - This needs to be changed some how.  evil should not be
+	 * handled by the core at all?
+	 */
+	if (!aim_sncmp(info->sn, gaim_account_get_username(account))) {
+		gc->evil = (info->warnlevel/10.0);
+		gc->login_time_official = signon;
 	}
 
 	serv_got_update(gc, info->sn, 1, (info->warnlevel/10.0) + 0.5, signon, time_idle, type);
