@@ -456,7 +456,7 @@ XS (XS_GAIM_command)
 
 		while (c) {
 			gc = (struct gaim_connection *)c->data;
-			serv_warn(gc, SvPV(ST(1), junk), 0);
+			serv_warn(gc, SvPV(ST(1), junk), atoi(SvPV(ST(2), junk)));
 			c = c->next;
 		}
 	}

@@ -60,7 +60,10 @@ GAIM::command(command, ...)
 	"idle" - the second arg is how long (in seconds) to set the idle time
 		 (this sets the idle time for all connections)
 	"warn" - the second arg is the name of the person to warn. this is
-		 especially evil since it warns the person from every connection.
+		 especially evil since it warns the person from every 
+		 connection.  The third argument is 1 if you want to warn
+		 anonymously.  If 0 or ommitted, it will warn normally.
+	"setinfo" - the second arg is what you want to set your profile to.
 
 GAIM::user_info(nick)
 	Returns 8 data items:
@@ -86,11 +89,13 @@ GAIM::user_info(nick)
 	Since buddy lists are per-connection this goes through the connections
 	until it finds a matching buddy name.
 
-GAIM::print_to_conv(who, what)
+GAIM::print_to_conv(who, what, auto)
 	The question is not what does this do, it's who does this do it as. The
 	answer is "whatever the default is". It uses whichever connection is
 	selected in the conversation window's menu. If the conversation window
-	didn't exist beforehand, then it's the default (first) connection.
+	didn't exist beforehand, then it's the default (first) connection.  If
+	auto is one, it will send as an auto (read: away) message.  If 0 or
+	ommitted, it will send normally.
 
 GAIM::print_to_chat(room, what)
 	This goes through each connection. If it finds a room matching the name,
