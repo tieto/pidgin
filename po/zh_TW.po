@@ -8986,7 +8986,7 @@ msgstr "頻道名稱：%s\n"
 #: src/protocols/silc/chat.c:106
 #, c-format
 msgid "User Count:\t\t%d\n"
-msgstr "使用者數：%s\n"
+msgstr "使用者數：%d\n"
 
 #: src/protocols/silc/chat.c:112
 #, c-format
@@ -9041,7 +9041,6 @@ msgid ""
 "Founder Key Babbleprint:\n"
 "%s"
 msgstr ""
-""
 "創立者之公鑰指紋可讀版本 (Babbleprint)：\n"
 "%s"
 
