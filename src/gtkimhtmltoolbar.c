@@ -336,7 +336,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
 					    toolbar);
- 	} else {
+	} else {
 		close_link_dialog(toolbar);
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
@@ -354,8 +354,6 @@ do_insert_image_cb(GtkWidget *widget, int resp, GtkIMHtmlToolbar *toolbar)
 
 	if (resp != GTK_RESPONSE_OK) {
 		//set_toggle(toolbar->image, FALSE);
-		gtk_widget_destroy(widget);
-		toolbar->image_dialog = NULL;
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
