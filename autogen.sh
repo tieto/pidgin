@@ -45,7 +45,7 @@ echo n | libtoolize --copy --force || exit;
 
 aclocal -I m4 $ACLOCAL_FLAGS || exit;
 autoheader || exit;
-automake --add-missing --copy || exit;
+automake --add-missing --copy;
 autoconf || exit;
 automake || exit;
 ./configure $@
