@@ -205,13 +205,6 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-ssl_nss_recv_cb(gpointer data, gint source, GaimInputCondition cond)
-{
-	GaimSslConnection *gsc = data;
-	gsc->recv_cb(gsc->recv_cb_data, gsc, cond);
-}
-
-static void
 ssl_nss_close(GaimSslConnection *gsc)
 {
 	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
@@ -243,7 +236,6 @@ static GaimSslOps ssl_ops =
 	ssl_nss_init,
 	ssl_nss_uninit,
 	ssl_nss_connect_cb,
-	ssl_nss_recv_cb,
 	ssl_nss_close,
 	ssl_nss_read,
 	ssl_nss_write
