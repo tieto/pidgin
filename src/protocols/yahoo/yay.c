@@ -158,6 +158,7 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 
 	g_free(tmp);
 
+	strip_linefeed(buf);
 	serv_got_im(gc, nick, buf, 0, tm ? tm : time((time_t)NULL));
 
 	return 1;
@@ -276,6 +277,8 @@ static int yahoo_online(struct yahoo_session *sess, ...) {
 
 	account_online(gc);
 	serv_finish_login(gc);
+	if (yd->active_id)
+		g_free(yd->active_id);
 	yd->active_id = g_strdup(gc->username);
 	yd->logged_in = TRUE;
 
@@ -397,6 +400,7 @@ static void yahoo_close(struct gaim_connection *gc) {
 	g_hash_table_destroy(yd->hash);
 	yahoo_disconnect(yd->sess);
 	yahoo_delete(yd->sess);
+	g_free(yd->active_id);
 	g_free(yd);
 }
 

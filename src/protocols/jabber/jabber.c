@@ -359,6 +359,7 @@ static void startElement(void *userdata, const char *name, const char **attribs)
 			/* id attrib of stream is stored for digest auth */
 			j->sid = xmlnode_get_attrib(x, "id");
 			/* STATE_EVT(JCONN_STATE_AUTH) */
+			xmlnode_free(x);
 		} else {
 			j->current = x;
 		}
@@ -1222,6 +1223,7 @@ static void jabber_close(struct gaim_connection *gc)
 		gaim_input_remove(gc->inpa);
 	close(jd->jc->fd);
 	g_timeout_add(50, jabber_free, jd->jc);
+	xmlnode_free(jd->jc->current);
 	jd->jc = NULL;
 	g_free(jd);
 	gc->proto_data = NULL;

@@ -884,6 +884,7 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
  */
 faim_export void aim_session_kill(aim_session_t *sess)
 {
+	aim_cleansnacs(sess, -1);
 
 	aim_logoff(sess);
 

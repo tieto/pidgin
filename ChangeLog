@@ -25,6 +25,7 @@ version 0.47:
 	* In MSN you can set a person's alias to their "friendly name" by
 	  right-click on their name while they're online.
 	* IRC can do /WHOIS
+	* The usual bug fixes and memory leak plugs
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)
