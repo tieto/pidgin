@@ -1424,6 +1424,7 @@ static void irc_login(struct aim_user *user)
 static void irc_close(struct gaim_connection *gc)
 {
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+
 	gchar buf[IRC_BUF_LEN];
 
 	if (idata->str->len > 0) {
@@ -1436,6 +1437,20 @@ static void irc_close(struct gaim_connection *gc)
 
 	if (idata->rxqueue)
 		g_free(idata->rxqueue);
+
+	/* Kill any existing transfers */
+	while (idata->file_transfers) {
+			struct irc_file_transfer *ift = (struct irc_file_transfer *)idata->file_transfers->data;
+
+			g_free(ift->sn);
+			g_free(ift->name);
+			gaim_input_remove(ift->watcher);
+
+			close(ift->fd);
+
+			idata->file_transfers = idata->file_transfers->next;
+	}
+
 	idata->rxqueue = NULL;
 	idata->rxlen = 0;
 
