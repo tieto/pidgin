@@ -1461,7 +1461,7 @@ static char* normalize_zephyr_exposure(const char* exposure) {
 	return EXPOSE_REALMVIS;
 }
 
-static void zephyr_login(GaimAccount * account)
+static void zephyr_login(GaimAccount * account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	zephyr_account *zephyr;

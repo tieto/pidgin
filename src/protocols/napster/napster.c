@@ -503,7 +503,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	gc->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_callback, gc);
 }
 
-static void nap_login(GaimAccount *account)
+static void nap_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 

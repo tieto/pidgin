@@ -140,7 +140,8 @@ static gboolean do_signon(gpointer data) {
 		info->timeout = 0;
 
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling gaim_account_connect\n");
-	gaim_account_connect(account);
+	/* XXX: make this remember the status from disconnect */
+	gaim_account_connect(account, gaim_account_get_status(account, "online"));
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling gaim_account_connect\n");
 
 	return FALSE;

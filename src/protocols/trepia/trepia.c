@@ -1042,7 +1042,7 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-trepia_login(GaimAccount *account)
+trepia_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	TrepiaSession *session;

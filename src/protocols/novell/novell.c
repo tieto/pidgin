@@ -2122,7 +2122,7 @@ _event_callback(NMUser * user, NMEvent * event)
  ******************************************************************************/
 
 static void
-novell_login(GaimAccount * account)
+novell_login(GaimAccount * account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	NMUser *user = NULL;

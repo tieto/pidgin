@@ -5583,14 +5583,16 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 
 	if (gc)
 		od = (OscarData *)gc->proto_data;
-	
-	if (od && od->rights.maxawaymsglen == 0)
+
+	if ((od == NULL) || (od->rights.maxawaymsglen == 0)) {
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
 				    _("You have probably requested to set your "
 				      "away message before the login procedure "
 				      "completed.  You remain in a \"present\" "
 				      "state; try setting it again when you are "
 				      "fully connected."));
+		return;
+	}
 
 	if (primitive == GAIM_STATUS_AVAILABLE) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);

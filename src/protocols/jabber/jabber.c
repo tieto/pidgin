@@ -345,7 +345,7 @@ static void tls_init(JabberStream *js)
 
 
 static void
-jabber_login(GaimAccount *account)
+jabber_login(GaimAccount *account, GaimStatus *status)
 {
 	int rc;
 	GaimConnection *gc = gaim_account_get_connection(account);

@@ -121,7 +121,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		if (gaim_account_is_connected(account))
 			Tcl_SetIntObj(result, (int)gaim_account_get_connection(account));
 		else
-			Tcl_SetIntObj(result, (int)gaim_account_connect(account));
+#warning Someone who knows TCL (Ethan!) fix this so TCL plugins can specify the status
+			Tcl_SetIntObj(result, (int)gaim_account_connect(account,
+					gaim_account_get_status(account, "online")));
 		break;
 	case CMD_ACCOUNT_CONNECTION:
 		if (objc != 3) {

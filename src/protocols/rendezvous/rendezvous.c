@@ -605,7 +605,7 @@ rendezvous_send_online(GaimConnection *gc)
 }
 
 static void
-rendezvous_prpl_login(GaimAccount *account)
+rendezvous_prpl_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	RendezvousData *rd;

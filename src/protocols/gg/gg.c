@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 11624 2004-12-17 23:30:38Z thekingant $
+ * $Id: gg.c 11638 2004-12-21 01:48:30Z nosnilmot $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -841,7 +841,7 @@ static void agg_keepalive(GaimConnection *gc)
 	}
 }
 
-static void agg_login(GaimAccount *account)
+static void agg_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct agg_data *gd = gc->proto_data = g_new0(struct agg_data, 1);

@@ -124,7 +124,7 @@ static void toc_callback(gpointer, gint, GaimInputCondition);
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
  * on success. */
-static void toc_login(GaimAccount *account)
+static void toc_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	struct toc_data *tdt;
@@ -1162,8 +1162,9 @@ static void toc_dir_search(GaimConnection *g, const char *first, const char *mid
 }
 #endif
 
-static void toc_set_away(GaimConnection *gc, const char *state, const char *message)
+static void toc_set_status(GaimAccount *account, GaimStatus *status)
 {
+#if 0 /* do we care about TOC any more? */
 	char buf[BUF_LEN * 2];
 	if (gc->away) {
 		g_free(gc->away);
@@ -1178,6 +1179,7 @@ static void toc_set_away(GaimConnection *gc, const char *state, const char *mess
 	} else
 		g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
 	sflap_send(g, buf, -1, TYPE_DATA);
+#endif
 }
 
 static void toc_set_info(GaimConnection *g, const char *info)
@@ -1534,9 +1536,13 @@ static void toc_rem_deny(GaimConnection *gc, const char *who)
 	toc_set_permit_deny(gc);
 }
 
-static GList *toc_away_states(GaimConnection *gc)
+static GList *toc_away_states(GaimAccount *account)
 {
+#if 0 /* do we care about TOC any more? */
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
+#else
+	return NULL;
+#endif
 }
 
 static void
@@ -2134,7 +2140,7 @@ static GaimPluginProtocolInfo prpl_info =
 	toc_set_info,			/* set_info */
 	NULL,					/* send_typing */
 	toc_get_info,			/* get_info */
-	toc_set_away,			/* set_away */
+	toc_set_status,			/* set_away */
 	toc_set_idle,			/* set_idle */
 	toc_change_passwd,		/* change_passwd */
 	toc_add_buddy,			/* add_buddy */

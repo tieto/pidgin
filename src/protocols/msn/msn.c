@@ -650,7 +650,7 @@ msn_blist_node_menu(GaimBlistNode *node)
 }
 
 static void
-msn_login(GaimAccount *account)
+msn_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	MsnSession *session;
