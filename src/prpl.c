@@ -444,7 +444,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 		mn->url = g_strdup(url);
 		urlbut = picture_button(mn->email_win, _("Open Mail"), tb_forward_xpm);
 		gtk_box_pack_end(GTK_BOX(hbox), urlbut, 0, 0, 5);
-		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(open_url_nw), mn->url);
+		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(open_url), mn->url);
 		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(des_email_win), mn);
 	}
 
@@ -574,4 +574,107 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		do_error_dialog(buf, "Added to List");
 	else
 		do_ask_dialog(buf, ga, do_add, dont_add);
+}
+
+static GtkWidget *regdlg = NULL;
+static GtkWidget *reg_list = NULL;
+static GtkWidget *reg_area = NULL;
+static GtkWidget *reg_reg = NULL;
+
+static void delete_regdlg()
+{
+	GtkWidget *tmp = regdlg;
+	regdlg = NULL;
+	if (tmp)
+		gtk_widget_destroy(tmp);
+}
+
+static void reset_reg_dlg()
+{
+	GSList *P = protocols;
+
+	if (!regdlg)
+		return;
+
+	while (GTK_BOX(reg_list)->children)
+		gtk_container_remove(GTK_CONTAINER(reg_list),
+				     ((GtkBoxChild *)GTK_BOX(reg_list)->children->data)->widget);
+
+	while (GTK_BOX(reg_area)->children)
+		gtk_container_remove(GTK_CONTAINER(reg_area),
+				     ((GtkBoxChild *)GTK_BOX(reg_area)->children->data)->widget);
+
+	while (P) {
+		struct prpl *p = P->data;
+		if (p->register_user)
+			break;
+		P = P->next;
+	}
+
+	if (!P) {
+		GtkWidget *no = gtk_label_new(_("You do not currently have any plugins loaded"
+						" that are able to register new accounts."));
+		gtk_box_pack_start(GTK_BOX(reg_area), no, FALSE, FALSE, 5);
+		gtk_widget_show(no);
+
+		gtk_widget_set_sensitive(reg_reg, FALSE);
+
+		return;
+	}
+}
+
+void register_dialog()
+{
+	/* this is just one big hack */
+	GtkWidget *vbox;
+	GtkWidget *frame;
+	GtkWidget *hbox;
+	GtkWidget *close;
+
+	if (regdlg) {
+		gdk_window_raise(regdlg->window);
+		return;
+	}
+
+	regdlg = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(regdlg), _("Gaim - Registration"));
+	gtk_window_set_wmclass(GTK_WINDOW(regdlg), "register", "Gaim");
+	gtk_widget_realize(regdlg);
+	aol_icon(regdlg->window);
+	gtk_signal_connect(GTK_OBJECT(regdlg), "destroy", GTK_SIGNAL_FUNC(delete_regdlg), NULL);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(regdlg), vbox);
+	gtk_widget_show(vbox);
+
+	reg_list = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), reg_list, FALSE, FALSE, 5);
+	gtk_widget_show(reg_list);
+
+	frame = gtk_frame_new(_("Registration Information"));
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 5);
+	gtk_widget_show(frame);
+
+	reg_area = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), reg_area);
+	gtk_widget_show(reg_area);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	close = picture_button(regdlg, _("Close"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(delete_regdlg), NULL);
+	gtk_widget_show(close);
+
+	reg_reg = picture_button(regdlg, _("Register"), ok_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), reg_reg, FALSE, FALSE, 5);
+	gtk_widget_show(reg_reg);
+
+	/* fuck me */
+	reset_reg_dlg();
+
+	gtk_widget_show(regdlg);
 }

@@ -143,6 +143,9 @@ struct prpl {
 	int  (* chat_send)	(struct gaim_connection *, int id, char *message);
 	void (* keepalive)	(struct gaim_connection *);
 
+	/* new user registration */
+	void (* register_user)	(struct gaim_connection *);
+
 	void (* buddy_free)	(struct buddy *);
 
 	/* this is really bad. */

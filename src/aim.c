@@ -212,7 +212,7 @@ void show_login()
 #endif
 	GtkWidget *signon;
 	GtkWidget *cancel;
-	GtkWidget *help;
+	GtkWidget *reg;
 	GtkWidget *bbox;
 	GtkWidget *hbox;
 	GtkWidget *sbox;
@@ -330,32 +330,32 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
 	gtk_widget_show(hbox);
 
-	help = gtk_button_new_with_label(_("Help!"));
+	reg = gtk_button_new_with_label(_("Help"));
 	options = gtk_button_new_with_label(_("Options"));
 #ifdef GAIM_PLUGINS
 	plugs = gtk_button_new_with_label(_("Plugins"));
 #endif
 	if (misc_options & OPT_MISC_COOL_LOOK) {
-		gtk_button_set_relief(GTK_BUTTON(help), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
 #ifdef GAIM_PLUGINS
 		gtk_button_set_relief(GTK_BUTTON(plugs), GTK_RELIEF_NONE);
 #endif
 	}
 
-	gtk_signal_connect(GTK_OBJECT(help), "clicked", GTK_SIGNAL_FUNC(gaim_help), NULL);
+	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(gaim_help), NULL);
 	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
 #ifdef GAIM_PLUGINS
 	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
 #endif
 
-	gtk_box_pack_start(GTK_BOX(hbox), help, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
 #ifdef GAIM_PLUGINS
 	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
 #endif
 
-	gtk_widget_show(help);
+	gtk_widget_show(reg);
 	gtk_widget_show(options);
 #ifdef GAIM_PLUGINS
 	gtk_widget_show(plugs);

@@ -60,6 +60,7 @@
 /*#define BROWSER_INTERNAL              3*/
 #define BROWSER_GNOME                 4
 #define BROWSER_OPERA                 5	
+#define BROWSER_GALEON                6
 
 #define FACE_ANGEL 0
 #define FACE_BIGSMILE 1
@@ -296,7 +297,6 @@ extern void purge_away_queue();
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);
-extern void open_url_nw(GtkWidget *, char *);
 extern void add_bookmark(GtkWidget *, char *);
 
 /* Functions in buddy.c */
@@ -439,6 +439,9 @@ extern GtkWidget *prefs_away_list;
 extern GtkWidget *prefs_away_menu;
 extern GtkWidget *pref_fg_picture;
 extern GtkWidget *pref_bg_picture;
+
+/* Functions in prpl.c */
+extern void register_dialog();
 
 /* Functions in sound.c */
 extern void play_sound(int);

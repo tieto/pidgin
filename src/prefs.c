@@ -292,6 +292,7 @@ static void general_page()
 #ifdef USE_GNOME
 	opt = browser_radio(_("GNOME URL Handler"), BROWSER_GNOME, vbox, opt);
 #endif /* USE_GNOME */
+	opt = browser_radio(_("Galeon"), BROWSER_GALEON, vbox, opt);
 	opt = browser_radio(_("Manual"), BROWSER_MANUAL, vbox, opt);
 
 	browser_entry = gtk_entry_new();

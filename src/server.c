@@ -982,7 +982,7 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	button = picture_button(window, _("More Info"), tb_search_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(open_url_nw), url);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(open_url), url);
 
 	gtk_widget_show_all(window);
 

@@ -567,68 +567,50 @@ void open_url(GtkWidget *w, char *url)
 	if (web_browser == BROWSER_NETSCAPE) {
 		char *command = g_malloc(1024);
 
-		g_snprintf(command, 1024, "OpenURL(%s)", url);
+		if (misc_options & OPT_MISC_BROWSER_POPUP)
+			g_snprintf(command, 1024, "OpenURL(%s, new-window)", url);
+		else
+			g_snprintf(command, 1024, "OpenURL(%s)", url);
 
 		netscape_command(command);
 		g_free(command);
-	} else if (web_browser == BROWSER_KFM) {
-		pid_t pid;
-
-		pid = fork();
-
-		if (pid == 0) {
-			char *args[4];
-
-			args[0] = g_strdup("kfmclient");
-			args[1] = g_strdup("openURL");
-			args[2] = url;
-			args[3] = NULL;
-
-			execvp(args[0], args);
-			_exit(0);
-		} else {
-			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
-		}
-	} else if (web_browser == BROWSER_OPERA) {
-		pid_t pid;
-
-		pid = fork();
-
-		if (pid == 0) {
-			char *args[4];
-			args[0] = g_strdup("opera");
-			args[1] = g_strdup("-newwindow");
-			args[2] = url;
-			args[3] = NULL;
-
-			execvp(args[0], args);
-			_exit(0);
-		} else {
-			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
-		}
 #ifdef USE_GNOME
 	} else if (web_browser == BROWSER_GNOME) {
 		gnome_url_show(url);
 #endif /* USE_GNOME */
-	} else if (web_browser == BROWSER_MANUAL) {
+	} else {
 		pid_t pid;
 
 		pid = fork();
 
 		if (pid == 0) {
 			char *args[4];
-
 			char command[1024];
 
-			g_snprintf(command, sizeof(command), web_command, url);
+			if (web_browser == BROWSER_OPERA) {
+				args[0] = g_strdup("opera");
+				args[1] = g_strdup("-newwindow");
+				args[2] = url;
+				args[3] = NULL;
+			} else if (web_browser == BROWSER_KFM) {
+				args[0] = g_strdup("kfmclient");
+				args[1] = g_strdup("openURL");
+				args[2] = url;
+				args[3] = NULL;
+			} else if (web_browser == BROWSER_GALEON) {
+				args[0] = g_strdup("galeon");
+				args[1] = url;
+				args[2] = NULL;
+			} else if (web_browser == BROWSER_MANUAL) {
+				g_snprintf(command, sizeof(command), web_command, url);
 
-			args[0] = "sh";
-			args[1] = "-c";
-			args[2] = command;
-			args[3] = NULL;
+				args[0] = "sh";
+				args[1] = "-c";
+				args[2] = command;
+				args[3] = NULL;
+			}
 
 			execvp(args[0], args);
-
 			_exit(0);
 		} else {
 			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
@@ -648,20 +630,6 @@ void add_bookmark(GtkWidget *w, char *url)
 	}
 }
 
-void open_url_nw(GtkWidget *w, char *url)
-{
-	if (web_browser == BROWSER_NETSCAPE) {
-		char *command = g_malloc(1024);
-
-		g_snprintf(command, 1024, "OpenURL(%s, new-window)", url);
-
-		netscape_command(command);
-		g_free(command);
-	} else {
-		open_url(w, url);
-	}
-}
-
 #else
 
 /* Sooner or later, I shall support Windows clicking! */
@@ -670,9 +638,6 @@ void add_bookmark(GtkWidget *w, char *url)
 {
 }
 void open_url_nw(GtkWidget *w, char *url)
-{
-}
-void open_url(GtkWidget *w, char *url)
 {
 }
 

@@ -53,7 +53,7 @@ static void version_exit()
 
 static void about_click(GtkWidget *w, gpointer m)
 {
-	open_url_nw(NULL, WEBSITE);
+	open_url(NULL, WEBSITE);
 }
 
 char *name()

@@ -96,7 +96,7 @@ void gaim_setup_imhtml(GtkWidget *imhtml)
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 	if (!(convo_options & OPT_CONVO_SHOW_SMILEY))
 		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
-	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
+	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url), NULL);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O-)", oneeye_xpm);
