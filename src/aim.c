@@ -502,11 +502,13 @@ static int ui_main()
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
 #endif
-
-
-	smiley_theme_probe();
-	if (current_smiley_theme == NULL && smiley_themes)
-		load_smiley_theme(smiley_themes->data, TRUE);
+	if (current_smiley_theme == NULL) {
+		smiley_theme_probe();
+		if (smiley_themes) {
+			struct smiley_theme *smile = smiley_themes->data;
+			load_smiley_theme(smile->path, TRUE);
+		}
+	}
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	icon_path = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);

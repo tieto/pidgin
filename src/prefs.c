@@ -215,7 +215,7 @@ static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 GtkWidget *theme_page() {
 	GtkWidget *ret;
 	GtkWidget *sw;
-	GSList *themes = smiley_themes;
+	GSList *themes;
 	GtkTreeIter iter;
 	GtkWidget *view;
 	GtkCellRenderer *rend;
@@ -226,6 +226,11 @@ GtkWidget *theme_page() {
 	GdkPixbuf *pixbuf;
 	int ind =0;
 
+	smiley_theme_probe();
+	if (!smiley_themes)
+		return;
+	themes = smiley_themes;
+	
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 

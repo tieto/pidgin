@@ -68,11 +68,13 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	struct smiley_list *list = NULL;
 	GSList *lst = smiley_themes;
 	char *dirname;
+	gboolean old=FALSE;
 	
 	while (lst) {
 		struct smiley_theme *thm = lst->data;
 		if (!strcmp(thm->path, file)) {
 			theme = thm;
+			old = TRUE;
 			break;
 		}
 		lst = lst->next;
@@ -185,7 +187,7 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	}
 
 	g_free(dirname);
-	return theme;
+	return old ? NULL : theme;
 }
 
 void smiley_theme_probe()
