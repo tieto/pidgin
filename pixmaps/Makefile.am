@@ -1,6 +1,5 @@
 SUBDIRS = protocols
-EXTRA_DIST = 
-		about_menu.png \
+EXTRA_DIST =	about_menu.png \
 		accounts.png \
 		accounts-menu.png \
 		add.xpm				\
