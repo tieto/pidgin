@@ -33,6 +33,8 @@ version 0.79cvs:
 	  (Stu Tomlinson)
 	* The disconnected UI op was called twice on connection errors. Now
 	  it is only called once. (Evan Schoenberg).
+	* Flashing windows should work again for unix in window managers that
+	  support the URGENT hint (Etan Reisner)
 
 version 0.78 (05/30/2004):
 	New Features:
