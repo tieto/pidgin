@@ -13,6 +13,16 @@
 	stored on the server was null.  Oops! We won't let it happen again,
 	we promise.
 
+	Eric: Lots of good changes in this one, including locale support. Chat
+	had a lot of things done to it, but it's still not finished. The UI
+	didn't get the overhaul we were planning, but we wanted to get a few
+	bugfixes out.
+
+	Lemme say something about reporting bugs. Please do. Please try to give
+	as much information as you can. But regardless of how much information
+	you give, please be POLITE. If you tell us our software is crap then
+	we're probably not going to respond well.
+
 0.9.18 (06/02/2000):
 	Rob: Talk about release early, release often - sheesh!  We're going
 	insane.  Ya know, I'm not too happy with the GAIM UI.  I dont know
