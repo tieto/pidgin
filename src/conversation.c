@@ -294,9 +294,6 @@ void update_font_buttons()
                 if (c->strike)
                         gtk_widget_set_sensitive(c->strike, ((font_options & OPT_FONT_STRIKE)) ? FALSE : TRUE);
 
-                if (c->font)
-                        gtk_widget_set_sensitive(c->font, ((font_options & OPT_FONT_FACE)) ? TRUE : FALSE);
-		
 		cnv = cnv->next;
 	}
 }
