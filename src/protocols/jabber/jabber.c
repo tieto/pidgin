@@ -669,7 +669,6 @@ static void gjab_recv(gjconn gjc)
 #else
 	if ((len = recv(gjc->fd, buf, sizeof(buf) - 1, 0)) > 0) {
 #endif
-		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_MISC, "jabber",
 				   "input (len %d): %s\n", len, buf);
@@ -1919,7 +1918,6 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 		xmlnode xerr;
 		char *errmsg = NULL;
 		int errcode = 0;
-		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 
 		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "auth failed\n");
 		xerr = xmlnode_get_tag(p->x, "error");
@@ -2228,7 +2226,7 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 			querynode = xmlnode_get_tag(p->x, "query");
 			from = xmlnode_get_attrib(p->x, "from");
 			to = xmlnode_get_attrib(p->x, "to");
-			if (NSCHECK(querynode, "jabber:iq:roster") && !strcmp(from, to)) {
+			if (NSCHECK(querynode, "jabber:iq:roster") && (!from || !strcmp(from, to))) {
 				jabber_handlebuddy(gjc, xmlnode_get_firstchild(querynode));
 			} else if(NSCHECK(querynode, "jabber:iq:oob")) {
 				jabber_handleoob(gjc, p->x);
@@ -4176,7 +4174,6 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 		xmlnode xerr;
 		char *errmsg = NULL;
 		int errcode = 0;
-		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 
 		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "registration failed\n");
 		xerr = xmlnode_get_tag(p->x, "error");
