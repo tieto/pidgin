@@ -226,7 +226,7 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 	aimbs_putraw(&fr->data, args->destsn, strlen(args->destsn));
 
 	/*
-	 * metaTLV start.
+	 * Message TLV (type 2).
 	 */
 	aimbs_put16(&fr->data, 0x0002);
 	aimbs_put16(&fr->data, msgtlvlen);
@@ -334,9 +334,8 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 
 	aim_tx_enqueue(sess, fr);
 
-#if 1 /* XXX do this with autoconf or something... */
-	aim_cleansnacs(sess, 60); /* clean out all SNACs over 60sec old */
-#endif
+	if (!(sess->flags & AIM_SESS_FLAGS_DONTTIMEOUTONICBM))
+		aim_cleansnacs(sess, 60); /* clean out SNACs over 60sec old */
 
 	return 0;
 }

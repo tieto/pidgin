@@ -368,9 +368,10 @@ typedef struct aim_session_s {
 } aim_session_t;
 
 /* Values for sess->flags */
-#define AIM_SESS_FLAGS_SNACLOGIN       0x00000001
-#define AIM_SESS_FLAGS_XORLOGIN        0x00000002
-#define AIM_SESS_FLAGS_NONBLOCKCONNECT 0x00000004
+#define AIM_SESS_FLAGS_SNACLOGIN         0x00000001
+#define AIM_SESS_FLAGS_XORLOGIN          0x00000002
+#define AIM_SESS_FLAGS_NONBLOCKCONNECT   0x00000004
+#define AIM_SESS_FLAGS_DONTTIMEOUTONICBM 0x00000008
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
 #define AIM_ICQ_STATE_ONLINE    0x0000
