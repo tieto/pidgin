@@ -683,7 +683,9 @@ gaim_account_is_connected(const GaimAccount *account)
 
 	gc = gaim_account_get_connection(account);
 
-	return ((gc != NULL) && GAIM_CONNECTION_IS_CONNECTED(gc));
+	/* XXX - The first way is better... but it doesn't work quite right yet */
+	/* return ((gc != NULL) && GAIM_CONNECTION_IS_CONNECTED(gc)); */
+	return ((gc != NULL) && gaim_connection_get_state(gc) != GAIM_DISCONNECTED);
 }
 
 const char *
