@@ -30,6 +30,8 @@
 #include "debug.h"
 #include "stringref.h"
 
+#define REFCOUNT(x) ((x) & 0x7fffffff)
+
 static GList *gclist = NULL;
 
 static void stringref_free(GaimStringref *stringref);
@@ -96,7 +98,7 @@ void gaim_stringref_unref(GaimStringref *stringref)
 {
 	if (stringref == NULL)
 		return;
-	if ((--(stringref->ref) & 0x7fffffff) == 0) {
+	if (REFCOUNT(--(stringref->ref)) == 0) {
 		if (stringref->ref & 0x80000000)
 			gclist = g_list_remove(gclist, stringref);
 		stringref_free(stringref);
@@ -121,7 +123,7 @@ size_t gaim_stringref_len(const GaimStringref *stringref)
 static void stringref_free(GaimStringref *stringref)
 {
 #ifdef DEBUG
-	if (stringref->ref != 0) {
+	if (REFCOUNT(stringref->ref) != 0) {
 		gaim_debug(GAIM_DEBUG_ERROR, "stringref", "Free of nonzero (%d) ref stringref!\n", stringref->ref);
 		return;
 	}
@@ -136,8 +138,7 @@ static gboolean gs_idle_cb(gpointer data)
 
 	while (gclist != NULL) {
 		ref = gclist->data;
-		ref->ref &= 0x7fffffff;
-		if (ref->ref == 0) {
+		if (REFCOUNT(ref->ref) == 0) {
 			stringref_free(ref);
 		}
 		del = gclist;
