@@ -37,6 +37,8 @@
 
 #include "gaim.h"
 
+#if DEVEL
+
 static gint UI_fd = -1;
 struct UI {
 	GIOChannel *channel;
@@ -170,6 +172,8 @@ static gint open_socket()
 		g_log(NULL, G_LOG_LEVEL_CRITICAL, "Unable to open socket: %s", strerror(errno));
 	return fd;
 }
+
+#endif /* DEVEL */
 
 int core_main()
 {
