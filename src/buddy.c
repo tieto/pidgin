@@ -104,6 +104,7 @@ static int group_number(char *group);
 static int buddy_number(char *group, char *buddy);
 static struct group_show *new_group_show(char *group);
 static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy, char **xpm);
+static void remove_buddy_show(struct group_show *gs, struct buddy_show *bs);
 static struct group_show *find_gs_by_bs(struct buddy_show *b);
 static void redo_buddy_list();
 
@@ -154,7 +155,7 @@ void toggle_show_empty_groups() {
 			if (!g_slist_length(g->members)) {
 				shows = g_slist_remove(shows, g);
 				s = shows;
-				gtk_container_remove(GTK_CONTAINER(buddies), g->item);
+				gtk_tree_remove_item(GTK_TREE(buddies), g->item);
 				g_free(g->name);
 				g_free(g);
 			} else
@@ -300,12 +301,12 @@ void signoff(struct gaim_connection *gc)
 				if (b->log_timer > 0)
 					gtk_timeout_remove(b->log_timer);
 				b->log_timer = 0;
-				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
+				gtk_tree_remove_item(GTK_TREE(g->tree), b->item);
 				g_free(b->show);
 				g_free(b->name);
 				g_free(b);
 			}
-			gtk_container_remove(GTK_CONTAINER(buddies), g->item);
+			gtk_tree_remove_item(GTK_TREE(buddies), g->item);
 			s = g_slist_remove(s, g);
 			g_free(g->name);
 			g_free(g);
@@ -487,14 +488,14 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 					if (bs->log_timer > 0)
 						gtk_timeout_remove(bs->log_timer);
 					bs->log_timer = 0;
-					gtk_container_remove(GTK_CONTAINER(gs->tree), bs->item);
+					remove_buddy_show(gs, bs);
 					g_free(bs->show);
 					g_free(bs->name);
 					g_free(bs);
 					if (!g_slist_length(gs->members) &&
 							(display_options & OPT_DISP_NO_MT_GRP)) {
 						shows = g_slist_remove(shows, gs);
-						gtk_container_remove(GTK_CONTAINER(buddies), gs->item);
+						gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 						g_free(gs->name);
 						g_free(gs);
 					} else
@@ -627,7 +628,7 @@ static void redo_buddy_list() {
 		gs = (struct group_show *)s->data;
 		s = g_slist_remove(s, gs);
 		m = gs->members;
-		gtk_container_remove(GTK_CONTAINER(buddies), gs->item);
+		gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 		while (m) {
 			bs = (struct buddy_show *)m->data;
 			m = g_slist_remove(m, bs);
@@ -1568,6 +1569,20 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	return b;
 }
 
+static void remove_buddy_show(struct group_show *gs, struct buddy_show *bs) {
+	/* the name of this function may be misleading, but don't let it fool you. the point
+	 * of this is to remove bs->item from gs->tree, and make sure gs->tree still exists
+	 * and is a valid tree afterwards. Otherwise, Bad Things will happen. */
+	gtk_tree_remove_item(GTK_TREE(gs->tree), bs->item);
+	bs->item = NULL;
+	if (gs->members == NULL) {
+		gs->tree = gtk_tree_new();
+		gtk_tree_item_set_subtree(GTK_TREE_ITEM(gs->item), gs->tree);
+		gtk_tree_item_expand(GTK_TREE_ITEM(gs->item));
+		gtk_widget_show(gs->tree);
+	}
+}
+
 static struct group_show *find_gs_by_bs(struct buddy_show *b) {
 	GSList *m, *n;
 	struct group_show *g = NULL;
@@ -1595,13 +1610,13 @@ static gint log_timeout(struct buddy_show *b) {
 		struct group_show *g = find_gs_by_bs(b);
 		g->members = g_slist_remove(g->members, b);
 		if (blist)
-			gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
+			remove_buddy_show(g, b);
 		else
 			debug_printf("log_timeout but buddy list not available\n");
 		if ((g->members == NULL) && (display_options & OPT_DISP_NO_MT_GRP)) {
 			shows = g_slist_remove(shows, g);
 			if (blist)
-				gtk_container_remove(GTK_CONTAINER(buddies), g->item);
+				gtk_tree_remove_item(GTK_TREE(buddies), g->item);
 			g_free(g->name);
 			g_free(g);
 		}
