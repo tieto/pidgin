@@ -40,10 +40,12 @@
 #include <errno.h>
 #include <ctype.h>
 #include <gtk/gtk.h>
+#ifdef USE_GTKSPELL
+#include <gtkspell/gtkspell.h>
+#endif
 #include "gtkimhtml.h"
 #include <gdk/gdkkeysyms.h>
 #include "convo.h"
-#include "gtkspell.h"
 #include "prpl.h"
 
 #ifdef _WIN32
@@ -511,9 +513,6 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	}
 
 	debug_printf("conversation close callback\n");
-
-/*	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_detach(GTK_TEXT(c->entry));*/
 
 	if (!c->is_chat) {
 		GSList *cn = connections;
@@ -1511,10 +1510,6 @@ void surround(struct conversation *c, char *pre, char *post)
 	GtkTextIter start, end;
 	GtkTextMark *mark_start, *mark_end;
 
-/*	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
-		gtkspell_detach(GTK_TEXT(entry));
-	}*/
-
 	if (gtk_text_buffer_get_selection_bounds(c->entry_buffer, &start, &end)) {
 		remove_tags(c, pre);
 		remove_tags(c, post);
@@ -1534,10 +1529,6 @@ void surround(struct conversation *c, char *pre, char *post)
 		gtk_text_iter_backward_chars(&start, strlen(post));
 		gtk_text_buffer_place_cursor(c->entry_buffer, &start);
 	}
-
-/*	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
-		gtkspell_attach(GTK_TEXT(entry));
-	}*/
 
 	gtk_widget_grab_focus(c->entry);
 }
@@ -2902,8 +2893,11 @@ void show_conv(struct conversation *c)
 	g_signal_connect(G_OBJECT(c->entry_buffer), "delete_range",
 			   G_CALLBACK(delete_text_callback), c);
 
-/*	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_attach(GTK_TEXT(c->entry));*/
+#ifdef USE_GTKSPELL
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_new_attach(GTK_TEXT_VIEW(c->entry), NULL, NULL);
+#endif
+
 	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(entry));
 	gtk_widget_show(entry);
 
@@ -3001,32 +2995,22 @@ void show_conv(struct conversation *c)
 
 void toggle_spellchk()
 {
+#ifdef USE_GTKSPELL
 	GList *cnv = conversations;
 	GSList *cht;
 	struct conversation *c;
 	GSList *con = connections;
 	struct gaim_connection *gc;
-
-	if (convo_options & OPT_CONVO_CHECK_SPELLING){
-		/*If ispell fails to start, start aspell. This is the way that
-		  Gabber does it. -- lorien420@myrealbox.com */
-		if (gtkspell_start(NULL, ispell_cmd)<0){
-			debug_printf("gtkspell failed to start when using ispell\n");
-			if (gtkspell_start(NULL, aspell_cmd)<0){
-				debug_printf("gtkspell failed to start when using aspell\n");
-			} else
-				debug_printf("gtkspell started with aspell\n");
-		} else {
-			debug_printf("gtkspell started with ispell\n");
-		}
-	}
-
+	GtkSpell *spell;
+	
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
-/*		if (convo_options & OPT_CONVO_CHECK_SPELLING)
-			gtkspell_attach(GTK_TEXT(c->entry));
-		else
-			gtkspell_detach(GTK_TEXT(c->entry));*/
+		if (convo_options & OPT_CONVO_CHECK_SPELLING) {
+			gtkspell_new_attach(GTK_TEXT_VIEW(c->entry), NULL, NULL);
+		} else {
+			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(c->entry));
+			gtkspell_detach(spell);
+		}
 		cnv = cnv->next;
 	}
 
@@ -3035,17 +3019,17 @@ void toggle_spellchk()
 		cht = gc->buddy_chats;
 		while (cht) {
 			c = (struct conversation *)cht->data;
-/*			if (convo_options & OPT_CONVO_CHECK_SPELLING)
-				gtkspell_attach(GTK_TEXT(c->entry));
-			else
-				gtkspell_detach(GTK_TEXT(c->entry));*/
+			if (convo_options & OPT_CONVO_CHECK_SPELLING) {
+				gtkspell_new_attach(GTK_TEXT_VIEW(c->entry), NULL, NULL);
+			} else {
+				spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(c->entry));
+				gtkspell_detach(spell);
+			}
 			cht = cht->next;
 		}
 		con = con->next;
 	}
-
-	if (!(convo_options & OPT_CONVO_CHECK_SPELLING))
-		gtkspell_stop();
+#endif
 }
 
 void toggle_timestamps()

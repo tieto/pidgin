@@ -119,7 +119,7 @@ AC_ARG_ENABLE(artsc,   [  --disable-artsc         Turn off ArtsC (default=auto)]
 
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
-
+AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
@@ -208,6 +208,16 @@ if test "$enable_perl" = yes ; then
 		AC_SUBST(PERL_LIBS)
 		AC_DEFINE(USE_PERL, 1, [Define if Perl is enabled.])
 		AC_CHECK_FUNCS(Perl_eval_pv)
+	fi
+fi
+
+dnl Thanks, Evan.
+if test "$enable_gtkspell" = yes ; then
+	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , enable_gtkspell=no)
+	if test "$enable_gtkspell" = "yes" ; then
+		AC_SUBST(GTKSPELL_CFLAGS)
+		AC_SUBST(GTKSPELL_LIBS)
+        	AC_DEFINE(USE_GTKSPELL,,[do we have gtkspell?])
 	fi
 fi
 
@@ -381,6 +391,8 @@ echo UI Library.................... : GTK 2.0
 echo
 echo Build with Plugin support..... : $enable_plugins
 echo Build with Perl support....... : $enable_perl
+echo
+echo Build with GtkSpell............: $enable_gtkspell
 echo
 echo Use XScreenSaver Extension.... : $enable_xss
 echo

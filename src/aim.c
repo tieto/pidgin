@@ -52,7 +52,6 @@
 #include <signal.h>
 #endif
 #include "locale.h"
-#include "gtkspell.h"
 #include <getopt.h>
 
 #ifdef _WIN32
@@ -396,15 +395,8 @@ void sighandler(int sig)
 #endif
 		abort();
 		break;
-	case SIGCHLD:
-		clean_pid();
-#if HAVE_SIGNAL_H
-		signal(SIGCHLD, sighandler);	/* restore signal catching on this one! */
-#endif
-		break;
 	default:
 		debug_printf("caught signal %d\n", sig);
-		gtkspell_stop();
 		signoff_all(NULL, NULL);
 #ifdef GAIM_PLUGINS
 		remove_all_plugins();
@@ -799,21 +791,7 @@ int main(int argc, char *argv[])
 
 	if (misc_options & OPT_MISC_DEBUG)
 		show_debug();
-#ifndef _WIN32
-	/*If ispell fails to start, try using aspell in ispell compatibitity mode.
-	  Gabber does this the same way -- lorien420@myrealbox.com*/
-	if (convo_options & OPT_CONVO_CHECK_SPELLING){
-		if (gtkspell_start(NULL, ispell_cmd)<0){
-			debug_printf("gtkspell failed to start when using ispell\n");
-			if (gtkspell_start(NULL, aspell_cmd)<0){
-				debug_printf("gtkspell failed to start when using aspell\n");
-			} else
-				debug_printf("gtkspell started with aspell\n");
-		} else {
-			debug_printf("gtkspell started with ispell\n");
-		}
-	}
-#endif
+
 	static_proto_init();
 
 	/* deal with --login */
@@ -838,10 +816,6 @@ int main(int argc, char *argv[])
 #endif
 
 	gtk_main();
-#ifndef _WIN32
-	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_stop();
-#endif
 	core_quit();
 	/* don't need ui_quit here because ui doesn't create anything */
 

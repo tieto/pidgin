@@ -30,7 +30,9 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
-#include "gtkspell.h"
+#ifdef USE_GTKSPELL
+#include <gtkspell/gtkspell.h>
+#endif
 #include <gdk/gdkkeysyms.h>
 
 #include "convo.h"
@@ -1410,9 +1412,10 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_widget_set_usize(chatentry, buddy_chat_size.width, MAX(buddy_chat_size.entry_height, 25));
 	gtk_window_set_focus(GTK_WINDOW(win), chatentry);
 	gtk_widget_show(chatentry);
-	/*if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_attach(GTK_TEXT(chatentry));*/
-
+#ifdef USE_GTKSPELL
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_attach(GTK_TEXT(chatentry));
+#endif
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);

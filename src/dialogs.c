@@ -559,47 +559,52 @@ GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
 
 
 
-static void do_im(GtkWidget *widget, GtkWidget *imentry)
+static void do_im(GtkWidget *widget, int resp, GtkWidget *imentry)
 {
 	char *who;
 	struct conversation *c;
 
-	who = g_strdup(gtk_entry_get_text(GTK_ENTRY(imentry)));
-	destroy_dialog(NULL, imdialog);
-	imdialog = NULL;
-
-	if (!g_strcasecmp(who, "")) {
+	if (resp == GTK_RESPONSE_OK) {
+		who = g_strdup(gtk_entry_get_text(GTK_ENTRY(imentry)));
+		destroy_dialog(NULL, imdialog);
+		imdialog = NULL;
+		
+		if (!g_strcasecmp(who, "")) {
+			g_free(who);
+			return;
+		}
+		
+		c = find_conversation(who);
+		
+		if (c == NULL) {
+			c = new_conversation(who);
+		} else {
+			gdk_window_raise(c->window->window);
+			}
 		g_free(who);
-		return;
 	}
-
-	c = find_conversation(who);
-
-	if (c == NULL) {
-		c = new_conversation(who);
-	} else {
-		gdk_window_raise(c->window->window);
-	}
-	g_free(who);
+	
+	destroy_dialog(NULL, widget);
 }
 
-static void do_info(GtkWidget *widget, struct getuserinfo *info)
+static void do_info(GtkWidget *widget, int resp, struct getuserinfo *info)
 {
 	char *who;
 
-	who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(info->entry))));
-	destroy_dialog(NULL, info->window);
+	if (resp == GTK_RESPONSE_OK) {
+		who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(info->entry))));
 
-	if (!g_strcasecmp(who, "")) {
+		if (!g_strcasecmp(who, "")) {
+			g_free(who);
+			return;
+		}
+	
+		/* what do we want to do about this case? */
+		if (info->gc)
+			serv_get_info(info->gc, who);
 		g_free(who);
-		return;
 	}
-
-	/* what do we want to do about this case? */
-	if (info->gc)
-		serv_get_info(info->gc, who);
-
-	g_free(who);
+	gtk_widget_destroy(GTK_WIDGET(widget));
 }
 
 void show_ee_dialog(int ee)
@@ -663,56 +668,55 @@ void show_ee_dialog(int ee)
 
 void show_im_dialog()
 {
-	GtkWidget *mainbox;
-	GtkWidget *frame;
-	GtkWidget *fbox;
-	GtkWidget *bbox;
-	GtkWidget *button;
-	GtkWidget *imentry;
+	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
+	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+	GtkWidget *img = gtk_image_new_from_file(filename);
+	GtkWidget *entry;
 
 	if (!imdialog) {
-		GAIM_DIALOG(imdialog);
-		gtk_window_set_wmclass(GTK_WINDOW(imdialog), "imdialog", "Gaim");
-		gtk_window_set_policy(GTK_WINDOW(imdialog), FALSE, TRUE, TRUE);
-		gtk_window_set_title(GTK_WINDOW(imdialog), _("Gaim - IM user"));
-		gtk_signal_connect(GTK_OBJECT(imdialog), "destroy",
-				   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
-		gtk_widget_realize(imdialog);
+		imdialog = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, 
+						       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+		gtk_dialog_set_default_response (GTK_DIALOG(imdialog), GTK_RESPONSE_OK);
+		gtk_container_set_border_width (GTK_CONTAINER(imdialog), 6);
+		gtk_window_set_resizable(GTK_WINDOW(imdialog), FALSE);
+		gtk_dialog_set_has_separator(GTK_DIALOG(imdialog), FALSE);
+		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(imdialog)->vbox), 12);
+		gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(imdialog)->vbox), 6);
+		
+		hbox = gtk_hbox_new(FALSE, 12);
+		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(imdialog)->vbox), hbox);
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-		mainbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
-		gtk_container_add(GTK_CONTAINER(imdialog), mainbox);
+		vbox = gtk_vbox_new(FALSE, 0);
+		gtk_container_add(GTK_CONTAINER(hbox), vbox);
+		
+		label = gtk_label_new(_("Please enter the screenname of the person you would like to IM.\n"));
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+		
+		hbox = gtk_hbox_new(FALSE, 6);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		
+		entry = gtk_entry_new();
+		gtk_entry_set_activates_default (GTK_ENTRY(entry), TRUE);
+		gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(entry));
 
-		frame = gtk_frame_new(_("Send Instant Message"));
-		gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
+		g_signal_connect(G_OBJECT(imdialog), "response", G_CALLBACK(do_info), entry);
 
-		fbox = gtk_hbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-		gtk_container_add(GTK_CONTAINER(frame), fbox);
-
-		label = gtk_label_new(_("IM who:"));
-		gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
-
-		imentry = gtk_entry_new();
-		gtk_box_pack_start(GTK_BOX(fbox), imentry, TRUE, TRUE, 0);
-		gtk_signal_connect(GTK_OBJECT(imentry), "activate", GTK_SIGNAL_FUNC(do_im), imentry);
-		gtk_widget_grab_focus(imentry);
-
-		bbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
-
-		button = picture_button(imdialog, _("Cancel"), cancel_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
-
-		button = picture_button(imdialog, _("OK"), ok_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_im), imentry);
+		dialogwindows = g_list_prepend(dialogwindows, imdialog->window);
 	}
 
 	gtk_widget_show_all(imdialog);
+	if (entry)
+		gtk_widget_grab_focus(GTK_WIDGET(entry));
 }
 
 void show_info_select_account(GtkObject *w, struct gaim_connection *gc)
@@ -723,58 +727,75 @@ void show_info_select_account(GtkObject *w, struct gaim_connection *gc)
 
 void show_info_dialog()
 {
-	GtkWidget *mainbox;
-	GtkWidget *frame;
-	GtkWidget *table;
-	GtkWidget *bbox;
-	GtkWidget *button;
+	GtkWidget *window, *hbox, *vbox;
 	GtkWidget *label;
-	GtkWidget *menu, *opt;
-	char buf[2048];
+	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+	GtkWidget *img = gtk_image_new_from_file(filename);
+	GtkWidget *table, *menu, *opt;
 	GSList *g = connections;
 	struct gaim_connection *c;
-
 	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
+	char buf[256];
+
 	info->gc = connections->data;
 
-	GAIM_DIALOG(info->window);
-	gtk_window_set_wmclass(GTK_WINDOW(info->window), "infodialog", "Gaim");
-	gtk_window_set_policy(GTK_WINDOW(info->window), FALSE, TRUE, TRUE);
-	gtk_widget_realize(info->window);
-
-	mainbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
-	gtk_container_add(GTK_CONTAINER(info->window), mainbox);
-
-	frame = gtk_frame_new(_("Get User Info"));
-	gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
-
+	window = gtk_dialog_new_with_buttons("", blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
+					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
+	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), 6);
+		
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+		
+	label = gtk_label_new(_("Please enter the screenname of the person whose info you would like to view.\n"));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	
 	table = gtk_table_new(2, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-	gtk_container_add(GTK_CONTAINER(frame), table);
-
-	label = gtk_label_new(_("User:"));
+	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 12);
+	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+	
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname:"));
+	gtk_misc_set_alignment(GTK_LABEL(img), 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
-	gtk_widget_show(label);
 
 	info->entry = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
-
+	gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
+	
 	if (connections->next) {
 
-		label = gtk_label_new(_("Account:"));
+		label = gtk_label_new(NULL);
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-		gtk_widget_show(label);
+		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 		info->account = gtk_option_menu_new();
 		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
-
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
+		
 		menu = gtk_menu_new();
 
 		while (g) {
 			c = (struct gaim_connection *)g->data;
+			if (!c->prpl->get_info) {
+				g = g->next;
+				continue;
+			}
 			g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name);
 			opt = gtk_menu_item_new_with_label(buf);
 			gtk_object_set_user_data(GTK_OBJECT(opt), info);
@@ -783,40 +804,18 @@ void show_info_dialog()
 					   GTK_SIGNAL_FUNC(show_info_select_account), c);
 
 			gtk_menu_append(GTK_MENU(menu), opt);
-			gtk_widget_show(opt);
-
 			g = g->next;
 		}
-
-		gtk_widget_show(menu);
+		
 		gtk_option_menu_set_menu(GTK_OPTION_MENU(info->account), menu);
-		gtk_widget_show(info->account);
 	}
 
-	/* Handle closes right */
-	gtk_signal_connect(GTK_OBJECT(info->entry), "activate",
-			   GTK_SIGNAL_FUNC(do_info), info);
-	gtk_signal_connect(GTK_OBJECT(info->window), "destroy",
-			   GTK_SIGNAL_FUNC(destroy_dialog), info->window);
-
-	/* Buttons */
-	bbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
-
-	button = picture_button(info->window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(destroy_dialog), info->window);
-
-	button = picture_button(info->window, _("OK"), ok_xpm);
-	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_info), info);
-
-	/* Finish up */
-	gtk_window_set_title(GTK_WINDOW(info->window), _("Gaim - Get User Info"));
-	gtk_widget_grab_focus(info->entry);
-
-	gtk_widget_show_all(info->window);
+	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_info), info);
+	
+	
+	gtk_widget_show_all(window);
+	if (info->entry)
+		gtk_widget_grab_focus(GTK_WIDGET(info->entry));
 }
 
 
