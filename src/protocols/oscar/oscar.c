@@ -2503,19 +2503,22 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	 * parse-icq-status-message function knows if it is putting it's message in 
 	 * an info window because the name will _not_ be in od->evilhack.  For getting 
 	 * only the away message the contact's UIN is put in od->evilhack. */
-	if ((budlight = find_buddy(gc, who)) && ((budlight->uc >> 7) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))) {
-		if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-			g_show_info_text(gc, who, 0, buf, NULL);
-		else {
+	if (budlight = find_buddy(gc, who)) {
+		if ((budlight->uc >> 7) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
+			if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
+				g_show_info_text(gc, who, 0, buf, NULL);
+			else {
+				char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+				g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<BR>\n<HR><BR><I>Remote client does not support sending status messages.</I><BR>\n", NULL);
+				free(state_msg);
+			}
+		} else {
 			char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
-			g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<BR>\n<HR><BR><I>Remote client does not support sending status messages.</I><BR>\n", NULL);
+			g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, NULL);
 			free(state_msg);
 		}
-	} else {
-		char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
-		g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, NULL);
-		free(state_msg);
-	}
+	} else
+		g_show_info_text(gc, who, 2, buf, NULL);
 
 	return 1;
 }
