@@ -1156,6 +1156,7 @@ gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
 		(gaim_status_type_get_primitive(status_type) == GAIM_STATUS_OFFLINE) &&
 		gaim_account_is_connected(account))
 	{
+		account->gc->wants_to_die = TRUE;
 		gaim_account_disconnect(account);
 
 		/* No need to actually set the status, so we just exit */

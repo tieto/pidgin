@@ -419,6 +419,10 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 	gtk_gaim_status_box_refresh(box);
 }
 
+/*
+ * TODO: This callback is triggered immediately, without the user actually
+ *       changing anything.  That's bad.
+ */
 static void gtk_gaim_status_box_changed(GtkComboBox *box)
 {
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(box);
