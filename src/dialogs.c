@@ -2778,10 +2778,10 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 			gtk_object_set_user_data(GTK_OBJECT(c->font_dialog), NULL);
 
 		if (c->fontxfld[0]) {
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
+			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(c->font_dialog),
 								c->fontxfld);
 		} else {
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
+			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(c->font_dialog),
 								DEFAULT_FONT_XFLD);
 		}
 
