@@ -8,7 +8,7 @@ version 0.11.0-pre12:
 	* Zephyr can do Subscriptions now (thanks to nsanch)
 	* Auto-recon plugin got reworked
 	* Lots of clean-ups
-	* Some new pixmaps.
+	* Some new pixmaps (Thanks, DennisR).
 
 version 0.11.0-pre11 (04/30/2001):
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
