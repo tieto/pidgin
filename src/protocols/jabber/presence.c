@@ -55,7 +55,8 @@ void jabber_presence_send(GaimConnection *gc, const char *state,
 
 	if(msg) {
 		gaim_markup_html_to_xhtml(msg, NULL, &stripped);
-	} else {
+	} else if(strcmp(state, GAIM_AWAY_CUSTOM)) {
+		/* i can't wait until someone re-writes the status/away stuff */
 		stripped = g_strdup("");
 	}
 
