@@ -1,4 +1,4 @@
-grincludedir = $(includedir)/gaim-remote
+grincludedir = $(includedir)/gaim
 
 plugindir = $(libdir)/gaim
 
