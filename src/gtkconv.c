@@ -1710,12 +1710,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				return TRUE;
 				break;
 
-			case 'z':
-				gtk_window_iconify(GTK_WINDOW(gtkwin->window));
-
-				return TRUE;
-				break;
-
 		} /* End of switch */
 	}
 
@@ -1737,7 +1731,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	{
 		switch (event->keyval)
 		{
-		        case GDK_Tab:
+			case GDK_Tab:
 				return tab_complete(conv);
 				break;
 
