@@ -5,26 +5,31 @@
 ;;  Windows Code page:950 
 ;;
 ;;  Author: Paladin R. Liu <paladin@ms1.hinet.net>
+;;  Minor updates: Ambrose C. Li <acli@ada.dhs.org>
 ;;
 
 ; Startup GTK+ check
 !define GTK_INSTALLER_NEEDED			"找不到符合的 GTK+ 執行環境。$\r請安裝 v${GTK_VERSION} 以上版本的 GTK+ 執行環境。"
+
+; License Page
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BUTTON			"下一步 >"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) 係以 GPL 方式授權發佈，在此列出授權書，純綷係作為參考之用。$_CLICK"
 
 ; Components Page
 !define GAIM_SECTION_TITLE			"Gaim 主程式 (必需)"
 !define GTK_SECTION_TITLE			"GTK+ 執行環境 (必需)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ 佈景主題"
 !define GTK_NOTHEME_SECTION_TITLE		"不安裝"
-!define GTK_WIMP_SECTION_TITLE		"Wimp Theme"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Theme"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Theme"
+!define GTK_WIMP_SECTION_TITLE		"Wimp 主題"
+!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve 主題"
+!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue 主題"
 !define GAIM_SECTION_DESCRIPTION		"Gaim 核心檔案及動態函式庫"
 !define GTK_SECTION_DESCRIPTION		"Gaim 所使用的跨平台圖形介面函式庫"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ 佈景主題可以用來改變 GTK+ 應用程式的外觀。"
 !define GTK_NO_THEME_DESC			"不安裝 GTK+ 佈景主題"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is a GTK theme that blends well into the Windows desktop environment."
-!define GTK_BLUECURVE_THEME_DESC		"The Bluecurve theme."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue theme."
+!define GTK_WIMP_THEME_DESC			"「GTK-Wimp」(Windows impersonator) 主題可讓 GTK 融入 Windows 卓面環環之中。"
+!define GTK_BLUECURVE_THEME_DESC		"「Bluecurve」主題"
+!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"「Lighthouseblue」主題。"
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"發現一個舊版的 GTK+ 執行環境。您要將它升級嗎？$\r請注意：如果您不升級，Gaim 可能無法正確的被執行。"
