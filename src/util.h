@@ -223,7 +223,7 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  * Extracts a field of data from HTML.
  *
  * This is a scary function. See protocols/msn/msn.c and
- * protocols/yahoo/yahoo.c for example usage.
+ * protocols/yahoo/yahoo_profile.c for example usage.
  *
  * @param str            The string to parse.
  * @param len            The size of str.
@@ -297,6 +297,40 @@ char *gaim_escape_html(const char *html);
  * @return the text with HTML entities literalized
  */
 char *gaim_unescape_html(const char *html);
+
+/**
+ * Returns a newly allocated substring of the HTML UTF-8 string "str".
+ * The markup is preserved such that the substring will have the same
+ * formatting as original string, even though some tags may have been
+ * opened before "x", or may close after "y". All open tags are closed
+ * at the end of the returned string, in the proper order.
+ *
+ * Note that x and y are in character offsets, not byte offsets, and
+ * are offsets into an unformatted version of str. Because of this,
+ * this function may be sensitive to changes in GtkIMHtml and may break
+ * when used with other UI's. libgaim users are encouraged to report and
+ * work out any problems encountered.
+ *
+ * @param str The input NUL terminated, HTML, UTF-8 (or ASCII) string.
+ * @param x The character offset into an unformatted version of str to
+ *          begin at.
+ * @param y The character offset (into an unformatted vesion of str) of
+ *          one past the last character to include in the slice.
+ *
+ * @return The HTML slice of string, with all formatting retained.
+ */
+char *gaim_markup_slice(const char *str, guint x, guint y);
+
+/**
+ * Returns a newly allocated string containing the name of the tag
+ * located at "tag". Tag is expected to point to a '<', and contain
+ * a '>' sometime after that. If there is no '>' and the string is
+ * not NUL terminated, this function can be expected to segfault.
+ *
+ * @param tag The string starting a HTML tag.
+ * @return A string containing the name of the tag.
+ */
+char *gaim_markup_get_tag_name(const char *tag);
 
 /*@}*/
 

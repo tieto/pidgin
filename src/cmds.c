@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "account.h"
+#include "util.h"
 #include "cmds.h"
 
 static GList *cmds = NULL;
@@ -106,7 +107,7 @@ void gaim_cmd_unregister(GaimCmdId *id)
 	}
 }
 
-static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, gchar ***args)
+static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, const gchar *m, gchar ***args)
 {
 	int i;
 	const char *end, *cur;
@@ -127,7 +128,7 @@ static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, gchar ***args)
 			break;
 		case 'W':
 			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			(*args)[i] = g_strndup(cur, end - cur); /* XXX apply default formatting here */
+			(*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
 			cur += end - cur;
 			break;
 		case 's':
@@ -135,7 +136,7 @@ static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, gchar ***args)
 			cur = cur + strlen(cur);
 			break;
 		case 'S':
-			(*args)[i] = g_strdup(cur); /* XXX apply default formatting here */
+			(*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_strlen(cur, -1) + 1);
 			cur = cur + strlen(cur);
 			break;
 		}
@@ -156,7 +157,38 @@ static void gaim_cmd_free_args(gchar **args)
 	g_free(args);
 }
 
-GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline, gchar **error)
+static void gaim_cmd_strip_current_char(gunichar c, char *s, guint len)
+{
+	int bytes;
+
+	bytes = g_unichar_to_utf8(c, NULL);
+	memmove(s, s + bytes, len + 1 - bytes);
+}
+
+static void gaim_cmd_strip_cmd_from_markup(char *markup)
+{
+	guint len = strlen(markup);
+	char *s = markup;
+
+	while (*s) {
+		gunichar c = g_utf8_get_char(s);
+
+		if (c == '<') {
+			s = strchr(s, '>');
+			if (!s)
+				return;
+		} else if (g_unichar_isspace(c)) {
+			gaim_cmd_strip_current_char(c, s, len - (s - markup));
+			return;
+		} else {
+			gaim_cmd_strip_current_char(c, s, len - (s - markup));
+			continue;
+		}
+		s = g_utf8_next_char(s);
+	}
+}
+GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
+                                  const gchar *markup, gchar **error)
 {
 	GaimCmd *c;
 	GList *l;
@@ -165,7 +197,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline, 
 	gboolean found = FALSE, tried_cmd = FALSE, right_type = FALSE, right_prpl = FALSE;
 	const gchar *prpl_id;
 	gchar **args = NULL;
-	gchar *cmd, *rest;
+	gchar *cmd, *rest, *mrest;
 	GaimCmdRet ret = GAIM_CMD_RET_CONTINUE;
 
 	*error = NULL;
@@ -186,6 +218,9 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline, 
 		cmd = g_strdup(cmdline);
 		rest = "";
 	}
+
+	mrest = g_strdup(markup);
+	gaim_cmd_strip_cmd_from_markup(mrest);
 
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
@@ -211,7 +246,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline, 
 		right_prpl = TRUE;
 
 		/* this checks the allow bad args flag for us */
-		if (!gaim_cmd_parse_args(c, rest, &args)) {
+		if (!gaim_cmd_parse_args(c, rest, mrest, &args)) {
 			gaim_cmd_free_args(args);
 			args = NULL;
 			continue;
@@ -235,6 +270,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline, 
 	if (args)
 		gaim_cmd_free_args(args);
 	g_free(cmd);
+	g_free(mrest);
 
 	if (!found)
 		return GAIM_CMD_STATUS_NOT_FOUND;

@@ -1659,6 +1659,127 @@ gaim_unescape_html(const char *html) {
 
 }
 
+char *
+gaim_markup_slice(const char *str, guint x, guint y)
+{
+	GString *ret;
+	GQueue *q;
+	guint z = 0;
+	gboolean appended = FALSE;
+	gunichar c;
+	char *tag;
+
+	g_return_val_if_fail(x <= y, NULL);
+
+	if (x == y)
+		return g_strdup("");
+
+	ret = g_string_new("");
+	q = g_queue_new();
+
+	while (*str && (z < y)) {
+		c = g_utf8_get_char(str);
+
+		if (c == '<') {
+			char *end = strchr(str, '>');
+
+			if (!end) {
+				g_string_free(ret, TRUE);
+				while ((tag = g_queue_pop_head(q)))
+					g_free(tag);
+				g_queue_free(q);
+				return NULL;
+			}
+
+			if (!g_ascii_strncasecmp(str, "<img ", 5)) {
+				z += strlen("[Image]");
+			} else if (!g_ascii_strncasecmp(str, "<br", 3)) {
+				z += 1;
+			} else if (!g_ascii_strncasecmp(str, "<hr>", 4)) {
+				z += strlen("\n---\n");
+			} else if (!g_ascii_strncasecmp(str, "</", 2)) {
+				/* pop stack */
+				char *tmp;
+
+				tmp = g_queue_pop_head(q);
+				if (tmp)
+					g_free(tmp);
+				/* z += 0; */
+			} else {
+				/* push it unto the stack */
+				char *tmp;
+
+				tmp = g_strndup(str, end - str + 1);
+				g_queue_push_head(q, tmp);
+				/* z += 0; */
+			}
+
+			if (z == x && !appended) {
+				GList *l = q->tail;
+
+				while (l) {
+					tag = l->data;
+					g_string_append(ret, tag);
+					l = l->prev;
+				}
+				appended = TRUE;
+			} else if (z >= x) {
+				g_string_append_len(ret, str, end - str + 1);
+			}
+
+			str = end;
+		} else if (c == '&') {
+			char *end = strchr(str, ';');
+			if (!end) {
+				g_string_free(ret, TRUE);
+				while ((tag = g_queue_pop_head(q)))
+					g_free(tag);
+				g_queue_free(q);
+
+				return NULL;
+			}
+
+			if (z >= x)
+				g_string_append_len(ret, str, end - str + 1);
+
+			z++;
+			str = end;
+		} else {
+			if (z >= x)
+				g_string_append_unichar(ret, c);
+			z++;
+		}
+
+		str = g_utf8_next_char(str);
+	}
+
+	while ((tag = g_queue_pop_head(q))) {
+		char *name;
+
+		name = gaim_markup_get_tag_name(tag);
+		g_string_append_printf(ret, "</%s>", name);
+		g_free(name);
+		g_free(tag);
+	}
+
+	g_queue_free(q);
+	return g_string_free(ret, FALSE);
+}
+
+char *
+gaim_markup_get_tag_name(const char *tag)
+{
+	int i;
+	g_return_val_if_fail(tag != NULL, NULL);
+	g_return_val_if_fail(*tag == '<', NULL);
+
+	for (i = 1; tag[i]; i++)
+		if (tag[i] == '>' || tag[i] == ' ' || tag[i] == '/')
+			break;
+
+	return g_strndup(tag, i);
+}
+
 /**************************************************************************
  * Path/Filename Functions
  **************************************************************************/

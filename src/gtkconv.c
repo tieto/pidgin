@@ -349,7 +349,7 @@ me_command_cb(GaimConversation *conv,
 	char *tmp;
 
 	tmp = g_strdup_printf("/me %s", args[0]);
-	
+
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 		gaim_conv_im_send(GAIM_CONV_IM(conv), tmp);
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
@@ -377,11 +377,17 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
 		if(cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)) {
 			GaimCmdStatus status;
-			char *error, *cmdline;
+			char *error, *cmdline, *markup;
+			GtkTextIter start, end;
 
 			cmdline = cmd + strlen(prefix);
-			status = gaim_cmd_do_command(conv, cmdline, &error);
+			gtk_text_buffer_get_start_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &start);
+			gtk_text_iter_forward_chars(&start, g_utf8_strlen(prefix, -1));
+			gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &end);
+			markup = gtk_imhtml_get_markup_range(GTK_IMHTML(gtkconv->entry), &start, &end);
+			status = gaim_cmd_do_command(conv, cmdline, markup, &error);
 			g_free(cmd);
+			g_free(markup);
 
 			gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 			default_formatize(conv);

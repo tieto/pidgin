@@ -97,9 +97,9 @@ extern "C" {
  *             This string contains no whitespace, and uses a single character for each argument.
  *             The recognized characters are:
  *               'w' Matches a single word.
- *               'W' Matches a single word, and applies the default formatting to it.
+ *               'W' Matches a single word, with formatting.
  *               's' Matches the rest of the arguments after this point, as a single string.
- *               'S' Same as 's' but applies the default formatting to the matched string.
+ *               'S' Same as 's' but with formatting.
  *             If args is the empty string, then the command accepts no arguments.
  *             The args passed to callback func will be a @c NULL terminated array of null
  *             terminated strings, and will always match the number of arguments asked for,
@@ -136,16 +136,20 @@ void gaim_cmd_unregister(GaimCmdId *id);
  * if aliases are ever implemented.
  *
  * @param conv The conversation the command was typed in.
- * @param cmd The command the user typed (including all arguments) as a single string.
+ * @param cmdline The command the user typed (including all arguments) as a single string.
  *            The caller doesn't have to do any parsing, except removing the command
  *            prefix, which the core has no knowledge of. cmd should not contain the
- *            default formatting, but should contain any user supplied formatting.
+ *            any formatting, and should be in plain text (no html entities).
+ * @param markup This is the same as cmd, but is the formatted version. It should be in
+ *               HTML, with < > and &, at least, escaped to html entities, and should
+ *               include both the default formatting and any extra manual formatting.
  * @param errormsg If the command failed and errormsg is not NULL, it is filled in with
  *                 the appropriate error message. It should be freed by the caller with
  *                 g_free().
  * @return A GaimCmdStatus indicated if the command succeeded or failed.
  */
-GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmd, gchar **errormsg);
+GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
+                                  const gchar *markup, gchar **errormsg);
 
 /**
  * List registered commands.
