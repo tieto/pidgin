@@ -58,6 +58,7 @@ static GtkWidget *sounddialog = NULL;
 static GtkWidget *browser_entry = NULL;
 static GtkWidget *sound_entry = NULL;
 static GtkWidget *away_text = NULL;
+static GtkListStore *smiley_theme_store = NULL;
 GtkCTreeNode *general_node = NULL;
 GtkCTreeNode *deny_node = NULL;
 GtkWidget *prefs_proxy_frame = NULL;
@@ -91,6 +92,7 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	debugbutton = NULL;
 	prefs_away_menu = NULL;
 	notebook_page = 0;
+	smiley_theme_store = NULL;
 	if(sounddialog)
 		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
@@ -212,43 +214,27 @@ static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	save_prefs();
 }
 
-GtkWidget *theme_page() {
-	GtkWidget *ret;
-	GtkWidget *sw;
+GtkTreePath *theme_refresh_theme_list()
+{
+	GdkPixbuf *pixbuf;
 	GSList *themes;
 	GtkTreeIter iter;
-	GtkWidget *view;
-	GtkCellRenderer *rend;
-	GtkTreeViewColumn *col;
-	GtkTreeSelection *sel;
-	GtkTreePath *path = NULL;
-	GtkListStore *store;
-	GdkPixbuf *pixbuf;
-	int ind =0;
+	GtkTreePath *path;
+	int ind;
 
 	smiley_theme_probe();
 	if (!smiley_themes)
 		return;
 	themes = smiley_themes;
-	
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-
-	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-	store = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 	while (themes) {
 		struct smiley_theme *theme = themes->data;
 		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 						    "<span size='smaller' foreground='gray'>%s</span>",
 						    theme->name, theme->author, theme->desc);; 
-		gtk_list_store_append (store, &iter);
+		gtk_list_store_append (smiley_theme_store, &iter);
 		pixbuf = gdk_pixbuf_new_from_file(theme->icon, NULL);
 		
-		gtk_list_store_set(store, &iter,
+		gtk_list_store_set(smiley_theme_store, &iter,
 				   0, pixbuf,
 				   1, description,
 				   2, theme->path,
@@ -263,8 +249,34 @@ GtkWidget *theme_page() {
 		}
 		ind++;
 	}
+	return path;
+}
+GtkWidget *theme_page() {
+	GtkWidget *ret;
+	GtkWidget *sw;
+	GSList *themes;
+	GtkTreeIter iter;
+	GtkWidget *view;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkTreePath *path = NULL;
+	GdkPixbuf *pixbuf;
+	int ind =0;
+
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+
+	sw = gtk_scrolled_window_new(NULL,NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+
+	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
+	smiley_theme_store = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+
+	path = theme_refresh_theme_list();
 	
-	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(store));
+	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
 	
 	rend = gtk_cell_renderer_pixbuf_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
@@ -284,7 +296,7 @@ GtkWidget *theme_page() {
 							"markup", 1,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(view), col);
-	g_object_unref(G_OBJECT(store));
+	g_object_unref(G_OBJECT(smiley_theme_store));
 	gtk_container_add(GTK_CONTAINER(sw), view);
 
 	g_signal_connect (G_OBJECT (sel), "changed",
