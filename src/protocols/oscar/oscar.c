@@ -2685,10 +2685,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				gchar *tmp;
 
 				/* If the message came from an ICQ user then escape any HTML */
-				if (isdigit(userinfo->sn[0]))
-					tmp = gaim_escape_html(msg2[0]);
-				else
-					tmp = g_strdup(msg2[0]);
+				tmp = gaim_escape_html(msg2[0]);
 
 				if (t) { /* This is an offline message */
 					/* I think this timestamp is in UTC, or something */
