@@ -611,27 +611,11 @@ enum {
 static void
 gtk_imhtmltoolbar_finalize (GObject *object)
 {
-	/*GtkIMHtml *imhtml = GTK_IMHTML(object);
-	GList *scalables;
+	GtkIMHtmlToolbar *toolbar = GTK_IMHTMLTOOLBAR(object);
 
-	g_hash_table_destroy(imhtml->smiley_data);
-	gtk_smiley_tree_destroy(imhtml->default_smilies);
-	gdk_cursor_unref(imhtml->hand_cursor);
-	gdk_cursor_unref(imhtml->arrow_cursor);
-	gdk_cursor_unref(imhtml->text_cursor);
-	if(imhtml->tip_window){
-		gtk_widget_destroy(imhtml->tip_window);
-	}
-	if(imhtml->tip_timer)
-		gtk_timeout_remove(imhtml->tip_timer);
+	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
 
-	for(scalables = imhtml->scalables; scalables; scalables = scalables->next) {
-		GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(scalables->data);
-		scale->free(scale);
-	}
-
-	g_list_free(imhtml->scalables);
-	G_OBJECT_CLASS(parent_class)->finalize (object);*/
+	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
 /* Boring GTK stuff */
