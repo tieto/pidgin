@@ -27,7 +27,7 @@ AC_STRUCT_TM
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS(socket strdup strstr atexit)
+AC_CHECK_FUNCS(socket strdup strstr atexit getaddrinfo)
 
 dnl This is a bad, bad hack.  I am a bad, bad man.
 CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I../"

@@ -3,6 +3,8 @@
 #include <sys/utsname.h> /* for aim_directim_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
 
+#include "config.h"
+
 /* aim_msgcookies.c is mostly new. just look at the diff and replace yours, easiest. */
 
 /* 
@@ -641,6 +643,7 @@ struct aim_fileheader_t *aim_getlisting(struct aim_session_t *sess)
 
 int aim_listenestablish(u_short portnum)
 {
+#if HAVE_GETADDRINFO
   int listenfd;
   const int on = 1;
   struct addrinfo hints, *res, *ressave;
@@ -672,6 +675,10 @@ int aim_listenestablish(u_short portnum)
   }
   freeaddrinfo(ressave);
   return listenfd;
+#else
+#warn You do not have getaddrinfo(); You cannot request DirectIM
+  return -1;
+#endif
 }
 
 int aim_get_command_rendezvous(struct aim_session_t *sess, struct aim_conn_t *conn)
