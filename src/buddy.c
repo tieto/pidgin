@@ -442,7 +442,7 @@ void update_button_pix()
 	adjust_pic(rembutton, _("Remove"), (gchar **)gnome_remove_xpm);
 
 	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
-		adjust_pic(awaybutton, _("Chat"), (gchar **)away_big_xpm);
+		adjust_pic(awaybutton, _("Away"), (gchar **)away_big_xpm);
 		adjust_pic(chatbutton, _("Chat"), (gchar **)join_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
 	        adjust_pic(infobutton, _("Info"), (gchar **)tb_search_xpm);
