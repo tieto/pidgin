@@ -412,7 +412,7 @@ faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list)
  *         alias, or NULL if the buddy has no alias.  You should free
  *         this returned value!
  */
-faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, char *gn, char *sn)
+faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn)
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
@@ -459,12 +459,12 @@ static int aim_ssi_sync(aim_session_t *sess, aim_conn_t *conn)
 	 * buddy ID#s, which makes things more efficient.  I think.
 	 */
 
-	/* Deletions */
+	/* Additions */
 	if (!sess->ssi.pending) {
-		for (cur1=sess->ssi.official; cur1; cur1=cur1->next) {
-			if (!aim_ssi_itemlist_find(sess->ssi.local, cur1->gid, cur1->bid)) {
+		for (cur1=sess->ssi.local; cur1; cur1=cur1->next) {
+			if (!aim_ssi_itemlist_find(sess->ssi.official, cur1->gid, cur1->bid)) {
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
-				new->action = AIM_CB_SSI_DEL;
+				new->action = AIM_CB_SSI_ADD;
 				new->ack = 0xffff;
 				new->name = NULL;
 				new->item = cur1;
@@ -478,12 +478,12 @@ static int aim_ssi_sync(aim_session_t *sess, aim_conn_t *conn)
 		}
 	}
 
-	/* Additions */
+	/* Deletions */
 	if (!sess->ssi.pending) {
-		for (cur1=sess->ssi.local; cur1; cur1=cur1->next) {
-			if (!aim_ssi_itemlist_find(sess->ssi.official, cur1->gid, cur1->bid)) {
+		for (cur1=sess->ssi.official; cur1; cur1=cur1->next) {
+			if (!aim_ssi_itemlist_find(sess->ssi.local, cur1->gid, cur1->bid)) {
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
-				new->action = AIM_CB_SSI_ADD;
+				new->action = AIM_CB_SSI_DEL;
 				new->ack = 0xffff;
 				new->name = NULL;
 				new->item = cur1;
@@ -862,8 +862,8 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const cha
  */
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn, const char *sn)
 {
+	aim_ssi_addbuddy(sess, conn, sn, newgn, aim_ssi_getalias(sess->ssi.local, oldgn, sn), NULL, NULL, 0);
 	aim_ssi_delbuddy(sess, conn, sn, oldgn);
-	aim_ssi_addbuddy(sess, conn, sn, newgn, NULL, NULL, NULL, 0);
 	return 0;
 }
 

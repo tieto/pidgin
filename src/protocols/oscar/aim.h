@@ -1176,7 +1176,7 @@ faim_export struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *li
 faim_export char *aim_ssi_itemlist_findparentname(struct aim_ssi_item *list, const char *sn);
 faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list);
 faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list);
-faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, char *gn, char *sn);
+faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn);
 
 /* Client functions for changing SSI data */
 faim_export int aim_ssi_addbuddy(aim_session_t *sess, aim_conn_t *conn, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
