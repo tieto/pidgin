@@ -18,6 +18,7 @@ EXTRA_DIST =	add.xpm				\
 		buddydel.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
+		close.xpm			\
 		close_small.xpm			\
 		crossedlips.xpm			\
 		cry.xpm				\
