@@ -686,7 +686,7 @@ static GList *yahoo_user_opts()
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = "Pager Port:";
 	puo->def = "5050";
-	puo->pos = USEROPT_PAGERHOST;
+	puo->pos = USEROPT_PAGERPORT;
 	m = g_list_append(m, puo);
 
 	return m;
