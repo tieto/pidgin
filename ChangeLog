@@ -35,6 +35,7 @@ version 0.60:
 	* Added support for gettext 0.11.x.
 	* Added support for automake 1.6.
 	* Buddy Ticker made a plugin.
+	* Read proxy environment variables.  (Thanks, Christian Hammond)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
