@@ -87,15 +87,8 @@ static void oscar_callback(gpointer data, gint source,
 			aim_logoff(sess);
 			gdk_input_remove(inpa);
 		} else {
-			aim_rxdispatch(sess);
-			/* the rest of this is a bad hack to try and get it to
-			 * update the display at least occasionally */
-			gdk_input_remove(inpa);
-			while (gtk_events_pending())
-				gtk_main_iteration();
-			inpa = gdk_input_add(gaim_conn->fd,
-			GDK_INPUT_READ | GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
-			oscar_callback, sess);
+			if (aim_rxdispatch(sess))
+				debug_print("I hate GDK!\n");
 		}
 	}
 }
@@ -348,6 +341,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		refresh_buddy_window();
 #endif
 		serv_finish_login();
+		gaim_setup();
 		if (bud_list_cache_exists())
 			do_import(NULL, 0);
 

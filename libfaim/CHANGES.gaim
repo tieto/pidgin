@@ -1,4 +1,10 @@
 
+Thu May 25 07:10:34 UTC 2000 EWarmenhoven
+	- Changed around aim.c a bit so that the registering of sounds and
+	  plugins and such gets taken care of after we actually finish signing
+	  on. this should fix a lot of things, but still not the 100% bug (as I
+	  call it now).
+
 Wed May 24 19:10:19 UTC 2000 EWarmenhoven
 	- Got rid of aim_select. Good. But it still uses 100% of the CPU. Bad.
 	  The reason is because oscar_callback gets called whenever there's

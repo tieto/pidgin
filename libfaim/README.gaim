@@ -57,14 +57,9 @@ KNOWN ISSUES
 You can receive more messages in less time with TOC than with libfaim. It's not
 completely libfaim's fault though.
 
-- It's possible that if the server negotiations don't happen fast enough, it'll
-look like you're trying to sign in twice (and in fact you will be). It doesn't
-seem to negatively affect anything, but it will when people start using it. (I
-think this may actually be related to the auto_recon plugin.) (FIXME for this is
-marked in aim.c)
-
 - There are a lot of problems with panel support (funny that I'm supporting the
-panel code, and the oscar code I wrote doesn't work well with it).
+panel code, and the oscar code I wrote doesn't work well with it). I think this
+is related to oscar_callback being funny.
 
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.

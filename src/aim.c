@@ -119,10 +119,10 @@ static void sound_timeout() {
 }
 
 char g_screenname[ 64 ];	/* gotta be enough */
+gboolean running = FALSE;
 
 void dologin(GtkWidget *widget, GtkWidget *w)
 {
-	static gboolean running = FALSE;
 	char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
         char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 	int i;
@@ -157,13 +157,18 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 	if (running) return;
 	running = TRUE;
 
-	/* libfaim FIXME : serv_login only starts the process. it's not over
-	 * after serv_login gets called */
         if (serv_login(username, password) < 0) {
 		running = FALSE;
                 return;
 	}
+#ifdef USE_OSCAR
+}
 
+/* we need to do this for Oscar because serv_login only starts the login
+ * process, it doesn't end there. gaim_setup will be called later from
+ * oscar.c, after the buddy list is made and serv_finish_login is called */
+void gaim_setup() {
+#endif /* USE_OSCAR */
 	if (sound_options & OPT_SOUND_LOGIN &&
 		sound_options & OPT_SOUND_SILENT_SIGNON) {
 		logins_not_muted = 0;
@@ -183,7 +188,7 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 			 _("Signoff"),
 			 signoff,
 			 NULL);
-#endif
+#endif /* USE_APPLET */
 
 #ifdef GAIM_PLUGINS
 	 {
@@ -199,7 +204,7 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 			 c = c->next;
 		 }
 	 }
-#endif
+#endif /* GAIM_PLUGINS */
 
 	 running = FALSE;
 	 return;
