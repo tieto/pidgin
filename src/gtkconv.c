@@ -313,6 +313,83 @@ insert_image_cb(GtkWidget *save, GaimConversation *conv)
 }
 
 static void
+do_insert_link_cb(GaimConversation *conv, GaimRequestFields *fields)
+{
+	GaimGtkConversation *gtkconv;
+	const char *url, *description;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	url         = gaim_request_fields_get_string(fields, "url");
+	description = gaim_request_fields_get_string(fields, "description");
+
+	if (description == NULL)
+		description = url;
+
+	gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry), url, description);
+	gaim_gtk_advance_past(gtkconv, "<A HREF>", "</A>");
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
+								 FALSE);
+
+	gtkconv->dialogs.link = NULL;
+}
+
+static void
+cancel_link_cb(GaimConversation *conv, GaimRequestFields *fields)
+{
+	GAIM_GTK_CONVERSATION(conv)->dialogs.link = NULL;
+}
+
+static void
+show_link_dialog(GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	fields = gaim_request_fields_new();
+
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("url", _("_URL"), NULL, FALSE);
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("description", _("_Description"),
+										  NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	gtkconv->dialogs.link =
+		gaim_request_fields(conv, _("Insert Link"),
+							NULL,
+							_("Please enter the URL and description of the "
+							  "link that you want to insert. The description "
+							  "is optional."),
+							fields,
+							_("_Insert"), G_CALLBACK(do_insert_link_cb),
+							_("Cancel"), G_CALLBACK(cancel_link_cb),
+							conv);
+}
+
+static void
+close_link_dialog(GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if (gtkconv->dialogs.link != NULL)
+	{
+		gaim_request_close(GAIM_REQUEST_FIELDS, gtkconv->dialogs.link);
+
+		gtkconv->dialogs.link = NULL;
+	}
+}
+
+static void
 insert_link_cb(GtkWidget *w, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
@@ -320,9 +397,9 @@ insert_link_cb(GtkWidget *w, GaimConversation *conv)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link)))
-		dialog_link_show(conv);
+		show_link_dialog(conv);
 	else
-		dialog_link_destroy(conv);
+		close_link_dialog(conv);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 }
@@ -4742,7 +4819,7 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 		gtk_widget_destroy(gtkconv->dialogs.smiley);
 
 	if (gtkconv->dialogs.link != NULL)
-		gtk_widget_destroy(gtkconv->dialogs.link);
+		close_link_dialog(conv);
 
 	if (gtkconv->dialogs.log != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.log);

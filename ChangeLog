@@ -19,6 +19,8 @@ version 0.76cvs:
 	* Core/UI split event loop code. (Scott Lamb)
 	* Added improvements to the multi-field request code, including
 	  required fields and account fields.
+	* Moved more dialogs to the request API for interface consistency
+	  (Send Message, Get User Info, and Insert Link dialogs)
 
 	Bug Fixes:
 	* Various buffer overflow fixes (Stefan Esser)

@@ -76,16 +76,6 @@ struct getuserinfo {
 	GaimConnection *gc;
 };
 
-struct linkdlg {
-	GtkWidget *ok;
-	GtkWidget *cancel;
-	GtkWidget *window;
-	GtkWidget *url;
-	GtkWidget *text;
-	GtkWidget *entry;
-	GaimConversation *c;
-};
-
 struct view_log {
 	long offset;
 	int options;
@@ -468,37 +458,6 @@ static gboolean show_ee_dialog(const char *ee)
 	return TRUE;
 }
 
-static void do_info(GtkWidget *dialog, int id, struct getuserinfo *info)
-{
-	char *who;
-	gboolean found = FALSE;
-
-	switch(id) {
-	case GTK_RESPONSE_OK:
-		who = g_strdup(gaim_normalize(info->gc->account, gtk_entry_get_text(GTK_ENTRY(info->entry))));
-
-		if (who && gaim_str_has_suffix(who, "rocksmyworld")) {
-			found = show_ee_dialog(who);
-		}
-
-		if (!found && who && *who && info->gc)
-			serv_get_info(info->gc, who);
-
-		g_free(who);
-		break;
-	}
-
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-	g_free(info);
-}
-
-static void
-show_info_select_account(GObject *w, GaimAccount *account,
-						 struct getuserinfo *info)
-{
-	info->gc = gaim_account_get_connection(account);
-}
-
 static void
 new_im_cb(gpointer data, GaimRequestFields *fields)
 {
@@ -551,211 +510,59 @@ show_im_dialog(void)
 						NULL);
 }
 
-void show_info_dialog()
+static void
+get_info_cb(gpointer data, GaimRequestFields *fields)
 {
-	GtkWidget *window, *hbox, *vbox;
-	GtkWidget *label;
-	GtkWidget *table;
-	GaimGtkBuddyList *gtkblist;
-	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
+	char *username;
+	gboolean found = FALSE;
+	GaimAccount *account;
 
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+	account  = gaim_request_fields_get_account(fields, "account");
 
-	info->gc = gaim_connections_get_all()->data;
+	username = g_strdup(gaim_normalize(account,
+		gaim_request_fields_get_string(fields,  "screenname")));
 
-	window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
-					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
-	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), 12);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), 6);
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(window), GTK_RESPONSE_OK, FALSE);
+	if (username != NULL && gaim_str_has_suffix(username, "rocksmyworld"))
+		found = show_ee_dialog(username);
 
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	if (!found && username != NULL && *username != '\0' && account != NULL)
+		serv_get_info(gaim_account_get_connection(account), username);
 
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(hbox), vbox);
-
-	label = gtk_label_new(_("Please enter the screen name of the person whose info you would like to view.\n"));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 12);
-	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screen Name:"));
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
-
-	info->entry = gtk_entry_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
-	gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
-	gaim_set_accessible_label (info->entry, label);
-
-	g_signal_connect(G_OBJECT(info->entry), "changed",
-			G_CALLBACK(gaim_gtk_set_sensitive_if_input), window);
-
-	if (gaim_connections_get_all()->next) {
-
-		label = gtk_label_new(NULL);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
-		info->account = gaim_gtk_account_option_menu_new(NULL, FALSE,
-				G_CALLBACK(show_info_select_account), NULL, info);
-
-		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
-		gaim_set_accessible_label (info->account, label);
-	}
-
-	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_info), info);
-
-	gtk_widget_show_all(window);
-	gtk_widget_grab_focus(GTK_WIDGET(info->entry));
+	g_free(username);
 }
 
-
-/*------------------------------------------------------*/
-/* Link Dialog                                          */
-/*------------------------------------------------------*/
-
-void dialog_link_destroy(GaimConversation *c)
+void
+show_info_dialog(void)
 {
-	GaimGtkConversation *gtkconv;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
 
-	gtkconv = GAIM_GTK_CONVERSATION(c);
+	fields = gaim_request_fields_new();
 
-	gtk_widget_destroy(gtkconv->dialogs.link);
-	gtkconv->dialogs.link = NULL;
-}
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
 
-static void do_insert_link(GtkWidget *w, int resp, struct linkdlg *a)
-{
-	GaimGtkConversation *gtkconv;
-	const char *urltext, *showtext;
+	field = gaim_request_field_string_new("screenname", _("_Screen name"),
+										  NULL, FALSE);
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
 
-	gtkconv = GAIM_GTK_CONVERSATION(a->c);
+	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	gaim_request_field_set_visible(field,
+		(gaim_connections_get_all() != NULL &&
+		 gaim_connections_get_all()->next != NULL));
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
 
-	if (resp == GTK_RESPONSE_OK) {
-		urltext = gtk_entry_get_text(GTK_ENTRY(a->url));
-		showtext = gtk_entry_get_text(GTK_ENTRY(a->text));
-
-		if (!strlen(showtext))
-			showtext = urltext;
-
-		gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry), urltext, showtext);
-		gaim_gtk_advance_past(gtkconv, "<A HREF>", "</A>");
-	}
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link), FALSE);
-}
-
-static void dialog_link_freedata(GtkWidget *w, gpointer user_data)
-{
-	struct linkdlg *a = user_data;
-
-	g_free(a);
-}
-
-void dialog_link_show(GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-	GaimGtkWindow *gtkwin;
-	GtkWidget *table;
-	GtkWidget *label;
-	GtkWidget *hbox;
-	GtkWidget *vbox;
-	struct linkdlg *a;
-	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
-
-	a = g_new0(struct linkdlg, 1);
-
-	a->c = c;
-	a->window = gtk_dialog_new_with_buttons(_("Insert Link"),
-			GTK_WINDOW(gtkwin->window), 0, GTK_STOCK_CANCEL,
-			GTK_RESPONSE_CANCEL, _("_Insert"), GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
-	g_signal_connect(G_OBJECT(a->window), "response",
-					 G_CALLBACK(do_insert_link), a);
-	g_signal_connect(G_OBJECT(a->window), "destroy",
-					 G_CALLBACK(dialog_link_freedata), a);
-
-	gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width(GTK_CONTAINER(a->window), 6);
-	gtk_window_set_resizable(GTK_WINDOW(a->window), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(a->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(a->window)->vbox), 12);
-	gtk_container_set_border_width(
-		GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), 6);
-	gtk_window_set_role(GTK_WINDOW(a->window), "insert_link");
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(a->window), GTK_RESPONSE_OK, FALSE);
-
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), hbox);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(hbox), vbox);
-
-	label = gtk_label_new(_("Please enter the URL and description of "
-							"the link that you want to insert.  The "
-							"description is optional.\n"));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
-	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("_URL:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
-
-	a->url = gtk_entry_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), a->url, 1, 2, 0, 1);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->url));
-	gaim_set_accessible_label (a->url, label);
-	gtk_widget_grab_focus(a->url);
-
-	gtk_entry_set_activates_default (GTK_ENTRY(a->url), TRUE);
-	g_signal_connect(G_OBJECT(a->url), "changed",
-			G_CALLBACK(gaim_gtk_set_sensitive_if_input), a->window);
-
-	label = gtk_label_new_with_mnemonic(_("_Description:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-
-	a->text = gtk_entry_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), a->text, 1, 2, 1, 2);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->text));
-	gaim_set_accessible_label (a->text, label);
-	gtk_entry_set_activates_default (GTK_ENTRY(a->text), TRUE);
-
-	gtkconv->dialogs.link = a->window;
-
-	gtk_widget_show_all(gtkconv->dialogs.link);
-	gdk_window_raise(gtkconv->dialogs.link->window);
+	gaim_request_fields(gaim_get_blist(), _("Get User Info"),
+						NULL,
+						_("Please enter the screen name of the person whose "
+						  "info you would like to view."),
+						fields,
+						_("OK"), G_CALLBACK(get_info_cb),
+						_("Cancel"), NULL,
+						NULL);
 }
 
 /*------------------------------------------------------*/

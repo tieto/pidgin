@@ -188,7 +188,7 @@ struct _GaimGtkConversation
 		GtkWidget *bg_color;
 		GtkWidget *font;
 		GtkWidget *smiley;
-		GtkWidget *link;
+		void *link;
 		GtkWidget *image;
 		GtkWidget *log;
 		GtkWidget *search;
