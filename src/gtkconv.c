@@ -1940,7 +1940,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
 	GaimConnection *gc;
-	GdkPixbuf *window_icon;
+	GdkPixbuf *window_icon = NULL;
 	
 	win = (GaimConvWindow *)user_data;
 
