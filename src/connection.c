@@ -179,8 +179,12 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 	ops = gaim_get_connection_ui_ops();
 
-	if (gc->state != GAIM_CONNECTED)
+	if (gc->state == GAIM_CONNECTING) {
+		connections_connecting = g_list_append(connections_connecting, gc);
+	}
+	else {
 		connections_connecting = g_list_remove(connections_connecting, gc);
+	}
 
 	if (gc->state == GAIM_CONNECTED) {
 		GaimBlistNode *gnode,*bnode;
@@ -189,8 +193,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		/* Set the time the account came online */
 		time(&gc->login_time);
-
-		connections_connecting = g_list_append(connections_connecting, gc);
 
 		if (ops != NULL && ops->connected != NULL)
 			ops->connected(gc);

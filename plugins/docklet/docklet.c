@@ -79,6 +79,10 @@ static void docklet_set_bool(GtkWidget *widget, const char *key) {
 	gaim_prefs_set_bool(key, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
 
+static void docklet_auto_login() {
+	gaim_accounts_auto_login(GAIM_GTK_UI);
+}
+
 static void docklet_flush_queue() {
 	if (unread_message_queue) {
 		purge_away_queue(&unread_message_queue);
@@ -98,10 +102,7 @@ static void docklet_menu(GdkEventButton *event) {
 	switch (status) {
 		case offline:
 		case offline_connecting:
-/* XXX CHIP KILLED AUTO CONNECTING */
-#if 0
-			gaim_new_item_from_stock(menu, _("Auto-login"), GAIM_STOCK_SIGN_ON, G_CALLBACK(auto_login), NULL, 0, 0, NULL);
-#endif
+			gaim_new_item_from_stock(menu, _("Auto-login"), GAIM_STOCK_SIGN_ON, G_CALLBACK(docklet_auto_login), NULL, 0, 0, NULL);
 			break;
 		default:
 			gaim_new_item_from_stock(menu, _("New Message.."), GAIM_STOCK_IM, G_CALLBACK(show_im_dialog), NULL, 0, 0, NULL);
@@ -194,6 +195,14 @@ static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data
 			}
 			break;
 		case 2:
+			switch (status) {
+				case offline:
+				case offline_connecting:
+					docklet_auto_login();
+					break;
+				default:
+					break;
+			}
 			break;
 		case 3:
 			docklet_menu(event);
@@ -270,26 +279,17 @@ static gboolean docklet_update_status() {
 			} else {
 				status = away;
 			}
-/* XXX Chip killed my dog... */
-#if 0
-		} else if (connecting_count) {
+		} else if (gaim_connections_get_connecting()) {
 			status = online_connecting;
-#endif
 		} else {
 			status = online;
 		}
 	} else {
-/* XXX ... and my pet goldfish ... */
-#if 0
-		if (connecting_count) {
+		if (gaim_connections_get_connecting()) {
 			status = offline_connecting;
 		} else {
-#endif
 			status = offline;
-/* XXX ... both of them. */
-#if 0
 		}
-#endif
 	}
 
 	/* update the icon if we changed status */
@@ -378,7 +378,10 @@ static void gaim_signoff(GaimConnection *gc, void *data) {
 	/* do this when idle so that if the prpl was connecting
 	   and was cancelled, we register that connecting_count
 	   has returned to 0 */
-	g_idle_add(docklet_update_status, &docklet);
+	/* no longer necessary because Chip decided that us plugins
+	 * didn't need to know if an account was connecting or not
+	 * g_idle_add(docklet_update_status, &docklet); */
+	docklet_update_status();
 }
 
 static void gaim_connecting(GaimAccount *account, void *data) {
@@ -452,7 +455,7 @@ plugin_unload(GaimPlugin *plugin)
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
 
-	/* do this while gaim has no other way to toggle the global mute */
+	/* XXX: do this while gaim has no other way to toggle the global mute */
 	gaim_gtk_sound_set_mute(FALSE);
 
 	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: removed\n");
