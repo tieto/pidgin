@@ -153,8 +153,8 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	account = gaim_accounts_find(username, -1);
 	if (!account) {
 		account = gaim_account_new(username, "prpl-oscar");
-
 		gaim_account_set_remember_password(account, TRUE);
+		gaim_accounts_add(account);
 	}
 
 	gaim_account_set_password(account, (*password != '\0') ? password : NULL);
@@ -180,20 +180,15 @@ static int dologin_named(char *name)
 		for (n = names; *n != NULL; n++) {
 			account = gaim_accounts_find(*n, -1);
 			if (account) {	/* found a user */
-				if (gaim_account_get_remember_password(account)) {
-					retval = 0;
-					gaim_account_connect(account);
-				}
+				retval = 0;
+				gaim_account_connect(account);
 			}
 		}
 		g_strfreev(names);
 	} else {		/* no name given, use default */
 		account = (GaimAccount *)gaim_accounts_get_all()->data;
-
-		if (gaim_account_get_remember_password(account)) {
-			retval = 0;
-			gaim_account_connect(account);
-		}
+		retval = 0;
+		gaim_account_connect(account);
 	}
 
 	return retval;
@@ -457,8 +452,10 @@ static void set_first_user(char *name)
 
 	account = gaim_accounts_find(name, -1);
 
-	if (account == NULL)   /* new user */
+	if (account == NULL) { /* new user */
 		account = gaim_account_new(name, "prpl-oscar");
+		gaim_accounts_add(account);
+	}
 
 	/* Place it as the first user. */
 	gaim_accounts_reorder(account, 0);
