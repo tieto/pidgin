@@ -298,20 +298,30 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 {
 	md5_state_t ctx;
 	md5_byte_t result[16];
+	size_t a1len;
 
-	char *x, *y, *a1, *ha1, *ha2, *kd, *z;
+	char *x, *a1, *ha1, *ha2, *kd, *z, *convnode, *convpasswd;
 
-	x = g_strdup_printf("%s:%s:%s", jid->node, realm, passwd);
+	if((convnode = g_convert(jid->node, strlen(jid->node), "iso-8859-1", "utf-8",
+					NULL, NULL, NULL)) == NULL) {
+		convnode = g_strdup(jid->node);
+	}
+	if((convpasswd = g_convert(passwd, strlen(passwd), "iso-8859-1", "utf-8",
+					NULL, NULL, NULL)) == NULL) {
+		convpasswd = g_strdup(passwd);
+	}
+
+	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd);
 	md5_init(&ctx);
 	md5_append(&ctx, x, strlen(x));
 	md5_finish(&ctx, result);
 
-	y = g_strndup(result, 16);
-
-	a1 = g_strdup_printf("%s:%s:%s", y, nonce, cnonce);
+	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
+	a1len = strlen(a1);
+	g_memmove(a1, result, 16);
 
 	md5_init(&ctx);
-	md5_append(&ctx, a1, strlen(a1));
+	md5_append(&ctx, a1, a1len);
 	md5_finish(&ctx, result);
 
 	ha1 = gaim_base16_encode(result, 16);
@@ -330,8 +340,9 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 	z = gaim_base16_encode(result, 16);
 
+	g_free(convnode);
+	g_free(convpasswd);
 	g_free(x);
-	g_free(y);
 	g_free(a1);
 	g_free(ha1);
 	g_free(ha2);
