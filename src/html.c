@@ -180,7 +180,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 		gunk->webdata = g_realloc(gunk->webdata, gunk->len + 1);
 		gunk->webdata[gunk->len] = 0;
 
-		debug_printf(_("Receieved: '%s'\n"), gunk->webdata);
+		debug_printf(_("Received: '%s'\n"), gunk->webdata);
 
 		gaim_input_remove(gunk->inpa);
 		close(sock);

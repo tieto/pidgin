@@ -471,7 +471,7 @@ static char *show_error_message()
                 g_snprintf(buf, sizeof(buf), _("An unknown signon error has occurred: %s."), w);
                 break;
         default:
-                g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occured.  Info: %s"), no, w);
+                g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occurred.  Info: %s"), no, w);
 	}
 
         return buf;
@@ -779,7 +779,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	} else if (!strcasecmp(c, "DIR_STATUS")) {
 	} else if (!strcasecmp(c, "ADMIN_NICK_STATUS")) {
 	} else if (!strcasecmp(c, "ADMIN_PASSWD_STATUS")) {
-		do_error_dialog(_("Password Change Successeful"), _("Gaim - Password Change"));
+		do_error_dialog(_("Password Change Successful"), _("Gaim - Password Change"));
 	} else if (!strcasecmp(c, "PAUSE")) {
 		tdt->state = STATE_PAUSE;
 		do_error_dialog(_("TOC has sent a PAUSE command. When this happens, TOC ignores"

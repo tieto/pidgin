@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3046 2002-03-12 17:21:46Z seanegan $
+ * $Id: gg.c 3114 2002-03-28 18:22:49Z seanegan $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -191,10 +191,10 @@ static char *handle_errcode(struct gaim_connection *gc, int errcode)
 		g_snprintf(msg, sizeof(msg), _("Error while reading from socket."));
 		break;
 	case GG_FAILURE_WRITING:
-		g_snprintf(msg, sizeof(msg), _("Error while writting to socket."));
+		g_snprintf(msg, sizeof(msg), _("Error while writing to socket."));
 		break;
 	case GG_FAILURE_PASSWORD:
-		g_snprintf(msg, sizeof(msg), _("Authentification failed."));
+		g_snprintf(msg, sizeof(msg), _("Authentication failed."));
 		break;
 	default:
 		g_snprintf(msg, sizeof(msg), _("Unknown Error Code."));
@@ -591,7 +591,7 @@ static int agg_send_im(struct gaim_connection *gc, char *who, char *msg, int len
 	gchar *imsg;
 
 	if (invalid_uin(who)) {
-		do_error_dialog(_("You are trying to send message to invalid Gadu-Gadu UIN!"),
+		do_error_dialog(_("You are trying to send a message to an invalid Gadu-Gadu UIN."),
 				_("Gadu-Gadu Error"));
 		return -1;
 	}
@@ -812,31 +812,31 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 static void export_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "put_success:")) {
-		do_error_dialog(_("Buddies List sucessfully transfered into Server"),
+		do_error_dialog(_("Buddy List successfully transferred to server"),
 				_("Gadu-Gadu Information"));
 		return;
 	}
 
 	debug_printf("export_buddies_server_results: webdata [%s]\n", webdata);
-	do_error_dialog(_("Couldn't transfer Buddies List into Server"), _("Gadu-Gadu Error"));
+	do_error_dialog(_("Couldn't transfer Buddy List to server"), _("Gadu-Gadu Error"));
 }
 
 static void delete_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "put_success:")) {
-		do_error_dialog(_("Buddies List sucessfully deleted from Server"),
+		do_error_dialog(_("Buddy List sucessfully deleted from server"),
 				_("Gadu-Gadu Information"));
 		return;
 	}
 
 	debug_printf("delete_buddies_server_results: webdata [%s]\n", webdata);
-	do_error_dialog(_("Couldn't delete Buddies List from Server"), _("Gadu-Gadu Error"));
+	do_error_dialog(_("Couldn't delete Buddy List from server"), _("Gadu-Gadu Error"));
 }
 
 static void password_change_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "reg_success:")) {
-		do_error_dialog(_("Password changed sucessfully"),
+		do_error_dialog(_("Password changed successfully"),
 				_("Gadu-Gadu Information"));
 		return;
 	}
