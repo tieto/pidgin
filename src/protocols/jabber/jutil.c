@@ -288,6 +288,8 @@ const char *jabber_normalize(const GaimAccount *account, const char *in)
 		g_snprintf(buf, sizeof(buf), "%s%s%s", jid->node ? jid->node : "",
 				jid->node ? "@" : "", jid->domain);
 
+	jabber_id_free(jid);
+
 	return buf;
 }
 

@@ -1228,8 +1228,11 @@ GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name)
 	if (!name)
 		return NULL;
 
-	hb.name = g_strdup(gaim_normalize(account, name));
 	hb.account = account;
+	hb.name = g_strdup(gaim_normalize(account, name));
+
+	if(!hb.name)
+		return NULL;
 
 	for(group = gaimbuddylist->root; group; group = group->next) {
 		hb.group = group;
