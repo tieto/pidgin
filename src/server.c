@@ -978,6 +978,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		/* XXX UGLY HACK OF THE YEAR
 		 * Robot101 will fix this after his exams. honest.
+		 * I guess he didn't specify WHICH exams, exactly...
 		 */
 		if (docklet_count &&
 		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
@@ -1037,8 +1038,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	}
 
 	if (!b) {
-		gaim_debug(GAIM_DEBUG_ERROR, "server",
-				   "No such buddy: %s\n", name);
+		gaim_debug(GAIM_DEBUG_ERROR, "server", "No such buddy: %s\n", name);
 		return;
 	}
 
@@ -1054,8 +1054,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE);
 		gaim_event_broadcast(event_buddy_idle, gc, b->name);
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
-	}
-	if (b->idle && !idle) {
+	} else if (b->idle && !idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE_RETURN);
 		gaim_event_broadcast(event_buddy_unidle, gc, b->name);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
@@ -1134,7 +1133,16 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	
 	gaim_blist_update_buddy_presence(b, loggedin);
 
-	/* Now, update the rest of the buddies in the list */
+	/*
+	 * Now, update the rest of the buddies in the list.  This is weird, by 
+	 * the way.  Basically we call gaim_find_buddy() until it returns null.  
+	 * Calling gaim_find_buddy() with a name sets a static variable.  Then 
+	 * calling it without a name uses that static reference to return other 
+	 * stuff.  We can't be sure that the above code didn't call 
+	 * gaim_find_buddy() again with another buddy name, so we "reseed" the 
+	 * function here.
+	 */
+	b = gaim_find_buddy(account, name);
 	while ((b = gaim_find_buddy(gc->account, NULL)) != NULL) {
 		gaim_blist_update_buddy_presence(b, loggedin);
 		gaim_blist_update_buddy_idle(b, idle);
