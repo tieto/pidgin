@@ -1266,8 +1266,12 @@ void signoff(struct gaim_connection *gc)
 #ifdef USE_APPLET
 	set_user_state(offline);
 	applet_buddy_show = FALSE;
-	applet_widget_unregister_callback(APPLET_WIDGET(applet), "signoff");
-	remove_applet_away();
+
+	if (applet) {
+		/* These don't have any purpose if the applet is gone :-P */
+		applet_widget_unregister_callback(APPLET_WIDGET(applet), "signoff");
+		remove_applet_away();
+	}
 #else
 	show_login();
 #endif /* USE_APPLET */
