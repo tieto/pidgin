@@ -67,45 +67,12 @@ struct warning {
 	GaimConnection *gc;
 };
 
-struct findbyemail {
-	GtkWidget *window;
-	GtkWidget *emailentry;
-	GaimConnection *gc;
-};
-
-struct findbyinfo {
-	GaimConnection *gc;
-	GtkWidget *window;
-	GtkWidget *firstentry;
-	GtkWidget *middleentry;
-	GtkWidget *lastentry;
-	GtkWidget *maidenentry;
-	GtkWidget *cityentry;
-	GtkWidget *stateentry;
-	GtkWidget *countryentry;
-};
-
-struct info_dlg {
-	GaimConnection *gc;
-	char *who;
-	GtkWidget *window;
-	GtkWidget *text;
-};
-
 struct getuserinfo {
 	GtkWidget *window;
 	GtkWidget *entry;
 	GtkWidget *account;
 	GaimConnection *gc;
 };
-
-typedef struct
-{
-	char *username;
-	gboolean block;
-	GaimConnection *gc;
-
-} GaimGtkBlockData;
 
 struct set_info_dlg {
 	GtkWidget *window;
@@ -114,29 +81,6 @@ struct set_info_dlg {
 	GtkWidget *text;
 	GtkWidget *save;
 	GtkWidget *cancel;
-};
-
-struct set_icon_dlg {
-	GtkWidget *window;
-	GaimAccount *account;
-	GtkWidget *ok;
-	GtkWidget *cancel;
-	GtkWidget *entry;
-};
-
-struct set_dir_dlg {
-	GaimConnection *gc;
-	GtkWidget *window;
-	GtkWidget *first;
-	GtkWidget *middle;
-	GtkWidget *last;
-	GtkWidget *maiden;
-	GtkWidget *city;
-	GtkWidget *state;
-	GtkWidget *country;
-	GtkWidget *web;
-	GtkWidget *cancel;
-	GtkWidget *save;
 };
 
 struct linkdlg {
@@ -148,16 +92,6 @@ struct linkdlg {
 	GtkWidget *toggle;
 	GtkWidget *entry;
 	GaimConversation *c;
-};
-
-struct passwddlg {
-	GtkWidget *window;
-	GtkWidget *ok;
-	GtkWidget *cancel;
-	GtkWidget *original;
-	GtkWidget *new1;
-	GtkWidget *new2;
-	GaimConnection *gc;
 };
 
 struct view_log {
