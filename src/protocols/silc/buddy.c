@@ -311,7 +311,7 @@ void silcgaim_buddy_keyagr_request(SilcClient client,
 static void
 silcgaim_buddy_keyagr(GaimBlistNode *node, gpointer data)
 {
-	GaimBuddy *buddy; 
+	GaimBuddy *buddy;
 
 	buddy = (GaimBuddy *)node;
 	silcgaim_buddy_keyagr_do(buddy->account->gc, buddy->name, FALSE);
@@ -797,56 +797,58 @@ silcgaim_add_buddy_save(bool success, void *context)
 	/* Now that we have the public key and we trust it now we
 	   save the attributes of the buddy and update its status. */
 
-	silc_dlist_start(client_entry->attrs);
-	while ((attr = silc_dlist_get(client_entry->attrs)) != SILC_LIST_END) {
-		attribute = silc_attribute_get_attribute(attr);
+	if (client_entry->attrs) {
+		silc_dlist_start(client_entry->attrs);
+		while ((attr = silc_dlist_get(client_entry->attrs))
+		       != SILC_LIST_END) {
+			attribute = silc_attribute_get_attribute(attr);
 
-		switch (attribute) {
+			switch (attribute) {
+			case SILC_ATTRIBUTE_USER_INFO:
+				if (!silc_attribute_get_object(attr, (void *)&vcard,
+							       sizeof(vcard)))
+					continue;
+				break;
 
-		case SILC_ATTRIBUTE_USER_INFO:
-			if (!silc_attribute_get_object(attr, (void *)&vcard,
-						       sizeof(vcard)))
-				continue;
-			break;
+			case SILC_ATTRIBUTE_STATUS_MESSAGE:
+				if (!silc_attribute_get_object(attr, (void *)&message,
+							       sizeof(message)))
+					continue;
+				break;
 
-		case SILC_ATTRIBUTE_STATUS_MESSAGE:
-			if (!silc_attribute_get_object(attr, (void *)&message,
-						       sizeof(message)))
-				continue;
-			break;
+			case SILC_ATTRIBUTE_EXTENSION:
+				if (!silc_attribute_get_object(attr, (void *)&extension,
+							       sizeof(extension)))
+					continue;
+				break;
 
-		case SILC_ATTRIBUTE_EXTENSION:
-			if (!silc_attribute_get_object(attr, (void *)&extension,
-						       sizeof(extension)))
-				continue;
-			break;
+			case SILC_ATTRIBUTE_SERVER_PUBLIC_KEY:
+				if (serverpk.type)
+					continue;
+				if (!silc_attribute_get_object(attr, (void *)&serverpk,
+							       sizeof(serverpk)))
+					continue;
+				break;
 
-		case SILC_ATTRIBUTE_SERVER_PUBLIC_KEY:
-			if (serverpk.type)
-				continue;
-			if (!silc_attribute_get_object(attr, (void *)&serverpk,
-						       sizeof(serverpk)))
-				continue;
-			break;
+			case SILC_ATTRIBUTE_USER_DIGITAL_SIGNATURE:
+				if (usersign.data)
+					continue;
+				if (!silc_attribute_get_object(attr, (void *)&usersign,
+							       sizeof(usersign)))
+					continue;
+				break;
 
-		case SILC_ATTRIBUTE_USER_DIGITAL_SIGNATURE:
-			if (usersign.data)
-				continue;
-			if (!silc_attribute_get_object(attr, (void *)&usersign,
-						       sizeof(usersign)))
-				continue;
-			break;
+			case SILC_ATTRIBUTE_SERVER_DIGITAL_SIGNATURE:
+				if (serversign.data)
+					continue;
+				if (!silc_attribute_get_object(attr, (void *)&serversign,
+							       sizeof(serversign)))
+					continue;
+				break;
 
-		case SILC_ATTRIBUTE_SERVER_DIGITAL_SIGNATURE:
-			if (serversign.data)
-				continue;
-			if (!silc_attribute_get_object(attr, (void *)&serversign,
-						       sizeof(serversign)))
-				continue;
-			break;
-
-		default:
-			break;
+			default:
+				break;
+			}
 		}
 	}
 
