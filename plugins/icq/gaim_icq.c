@@ -121,7 +121,8 @@ static void icq_logged_off(ICQLINK *link) {
 static void icq_msg_incoming(ICQLINK *link, unsigned long uin, unsigned char hour, unsigned char minute,
 			unsigned char day, unsigned char month, unsigned short year, const char *data) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
-	char buf[256], *tmp = g_strdup(data);
+	char buf[256], *tmp = g_malloc(BUF_LONG);
+	g_snprintf(tmp, BUF_LONG, "%s", data);
 	g_snprintf(buf, sizeof buf, "%lu", uin);
 	serv_got_im(gc, buf, tmp, 0);
 	g_free(tmp);
@@ -180,9 +181,8 @@ static void icq_url_incoming(struct icq_link *link, unsigned long uin, unsigned 
 				unsigned char minute, unsigned char day, unsigned char month,
 				unsigned short year, const char *url, const char *descr) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
-	int len = strlen(url) + strlen(descr) + 25; /* 25 is straight out of my ass */
-	char *msg = g_malloc(len), buf[256];
-	g_snprintf(msg, len, "<A HREF=\"%s\">%s</A>", url, descr);
+	char *msg = g_malloc(BUF_LONG), buf[256];
+	g_snprintf(msg, BUF_LONG, "<A HREF=\"%s\">%s</A>", url, descr);
 	g_snprintf(buf, 256, "%lu", uin);
 	serv_got_im(gc, buf, msg, 0);
 	g_free(msg);
@@ -221,7 +221,8 @@ static void icq_web_pager(struct icq_link *link, unsigned char hour, unsigned ch
 		const char *email, const char *msg) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char *who = g_strdup_printf("ICQ Web Pager: %s (%s)", nick, email);
-	char *what = g_strdup(msg);
+	char *what = g_malloc(BUF_LONG);
+	g_snprintf(what, BUF_LONG, "%s", msg);
 	serv_got_im(gc, who, what, 0);
 	g_free(who);
 	g_free(what);
@@ -232,7 +233,8 @@ static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned
 		const char *email, const char *msg) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char *who = g_strdup_printf("ICQ Mail Express: %s (%s)", nick, email);
-	char *what = g_strdup(msg);
+	char *what = g_malloc(BUF_LONG);
+	g_snprintf(what, BUF_LONG, "%s", msg);
 	serv_got_im(gc, who, what, 0);
 	g_free(who);
 	g_free(what);
