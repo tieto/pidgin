@@ -3702,7 +3702,8 @@ show_log (char *name)
 	layout = gtk_imhtml_new(NULL, NULL);
 	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", open_url_nw, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
-	gtk_imhtml_show_comments(GTK_IMHTML(layout), TRUE);
+	if (!(display_options & OPT_DISP_SHOW_SMILEY))
+		gtk_imhtml_show_smileys(GTK_IMHTML(layout), FALSE);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "O-)", oneeye_xpm);
