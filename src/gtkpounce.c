@@ -767,10 +767,16 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 {
 	GaimConversation *conv;
 	GaimAccount *account;
+	GaimBuddy *buddy;
 	const char *pouncee;
+	const char *alias;
 
 	pouncee = gaim_pounce_get_pouncee(pounce);
 	account = gaim_pounce_get_pouncer(pounce);
+
+	buddy = gaim_find_buddy(account, pouncee);
+
+	alias = gaim_get_buddy_alias(buddy);
 
 	if (gaim_pounce_action_is_enabled(pounce, "open-window")) {
 		conv = gaim_find_conversation_with_account(pouncee, account);
@@ -792,7 +798,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 				   (events & GAIM_POUNCE_IDLE) ? _("%s has become idle") :
 				   (events & GAIM_POUNCE_AWAY) ? _("%s has gone away.") :
 				   _("Unknown pounce event. Please report this!"),
-				   pouncee);
+				   alias);
 
 		gaim_notify_info(NULL, NULL, tmp, NULL);
 	}
