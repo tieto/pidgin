@@ -2490,7 +2490,7 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 		g_snprintf(away, sizeof(away), "%s", g->away);
 	if (strlen(info) > 1024)
 		do_error_dialog("Maximum info length (1024) exceeded, truncating", "Info Too Long");
-	aim_bos_setprofile(odata->sess, odata->conn, inforeal, g->away ? away : NULL, gaim_caps);
+	aim_bos_setprofile(odata->sess, odata->conn, inforeal, g->away ? NULL : "", gaim_caps);
 }
 
 static void oscar_set_away(struct gaim_connection *g, char *state, char *message) {
@@ -2499,7 +2499,7 @@ static void oscar_set_away(struct gaim_connection *g, char *state, char *message
 	g_snprintf(info, sizeof(info), "%s", g->user->user_info);
 	if (message)
 		g_snprintf(away, sizeof(away), "%s", message);
-	aim_bos_setprofile(odata->sess, odata->conn, info, message ? away : NULL, gaim_caps);
+	aim_bos_setprofile(odata->sess, odata->conn, NULL, message ? away : "", gaim_caps);
 	if (g->away)
 		g_free (g->away);
 	g->away = NULL;
