@@ -1552,11 +1552,10 @@ static void away_callback(GtkWidget *widget, GtkTree *tree)
 		gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
 				   GTK_SIGNAL_FUNC(do_away_message), a);
 		gtk_widget_show(menuitem);
-
 		awy = awy->next;
 	}
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 1, time(NULL));
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME );
 }
 
 void rem_bp(GtkWidget *w, struct buddy_pounce *b)
