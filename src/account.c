@@ -1583,15 +1583,23 @@ gaim_accounts_delete(GaimAccount *account)
 	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next) {
 		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+
+		cnode = gnode->child;
+		while (cnode) {
+			GaimBlistNode *cnode_next = cnode->next;
+
 			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
-				for (bnode = cnode->child; bnode; bnode = bnode->next) {
+				bnode = cnode->child;
+				while (bnode) {
+					GaimBlistNode *bnode_next = bnode->next;
+
 					if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
 						GaimBuddy *b = (GaimBuddy *)bnode;
 
 						if (b->account == account)
 							gaim_blist_remove_buddy(b);
 					}
+					bnode = bnode_next;
 				}
 			} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
 				GaimChat *c = (GaimChat *)cnode;
@@ -1599,6 +1607,7 @@ gaim_accounts_delete(GaimAccount *account)
 				if (c->account == account)
 					gaim_blist_remove_chat(c);
 			}
+			cnode = cnode_next;
 		}
 	}
 
