@@ -633,13 +633,18 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 				do_import(NULL, gc);
 			md->imported = TRUE;
 			while (md->fl) {
-				struct msn_buddy *b = md->fl->data;
-				md->fl = g_slist_remove(md->fl, b);
-				if (!find_buddy(gc, b->user))
-					add_buddy(gc, "Buddies", b->user, b->friend);
-				g_free(b->user);
-				g_free(b->friend);
-				g_free(b);
+				struct msn_buddy *mb = md->fl->data;
+				struct buddy *b;
+				md->fl = g_slist_remove(md->fl, mb);
+				if (!(b = find_buddy(gc, mb->user)))
+					add_buddy(gc, "Buddies", mb->user, mb->friend);
+				else if (!g_strcasecmp(b->name, b->show)) {
+					g_snprintf(b->show, sizeof(b->show), "%s", mb->friend);
+					handle_buddy_rename(b, b->name);
+				}
+				g_free(mb->user);
+				g_free(mb->friend);
+				g_free(mb);
 			}
 		}
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
