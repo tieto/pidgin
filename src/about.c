@@ -82,6 +82,7 @@ void show_about(GtkWidget *w, void *null)
 "It is developed by:\n"
 "Rob Flynn <rflynn@blueridge.net> <IM: RobFlynn> (Maintainer)\n"
 "Eric Warmenhoven <warmenhoven@yahoo.com> <IM: EWarmenhoven> (GNOME Applet)\n"
+"Syd Logan (Designated Driver and Super Hacker *OoOoO*)\n"
 "Jim Duchek <jimduchek@ou.edu> <IM:Zilding> (Former Maintainer)\n" 
 "Mark Spencer <markster@marko.net> <IM: Markster97> (Original Author)\n" 
 "\n"
