@@ -585,6 +585,7 @@ void open_url(GtkWidget *w, char *url)
 
 		case BROWSER_MANUAL: {
 			char *space_free_url = NULL;
+			char *web_tmp = NULL;
 
 			if (!web_command[0]) {
 				gaim_notify_error(NULL, NULL,
@@ -597,11 +598,26 @@ void open_url(GtkWidget *w, char *url)
 
 			space_free_url = g_strdup(url);
 			g_strdelimit(space_free_url, " ", '+');
-			if(strstr(web_command, "%s"))
+			/*
+			if (strstr(web_command, "%s"))
 				command = g_strdup_printf(web_command, space_free_url);
+
+			Replaced the above with the following to avoid users
+			from entering more than one %s as part of the browser
+			command.
+			*/
+			web_tmp = strstr(web_command, "%s");
+			if(web_tmp)
+			{
+				if (strstr((web_tmp + 1), "%s"))
+					command = g_strdup_printf(web_command, space_free_url);
+				else
+					gaim_notify_error(NULL, NULL, _("Unable to launch your browser because the 'Manual' browser command has too many '%s'."), NULL);
+			}
 			else
 				command = g_strdup_printf("%s %s", web_command, space_free_url);
 			g_free(space_free_url);
+			g_free(web_tmp);
 		} break;
 	}
 
