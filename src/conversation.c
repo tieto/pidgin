@@ -53,6 +53,7 @@ GdkBitmap *dark_icon_bm = NULL;
 char *fontface;
 
 void check_everything(GtkWidget *entry);
+char *get_tag_by_prefix(GtkWidget *entry, const char *prefix);
 gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);
 
 /*------------------------------------------------------------------------*/
@@ -135,6 +136,31 @@ struct conversation *find_conversation(char *name)
         return NULL;
 }
 
+/* given the first part of a tag, returns the length up to the final '>';
+   useful for 'remove_tags' calls on variable data, such as <font face>
+   tags */
+char *get_tag_by_prefix(GtkWidget *entry, const char *prefix)
+{
+	char *s, *t;
+	int i = 0;
+	
+	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+	t = s;
+		
+	if (t = strstr(s, prefix))
+	{
+		for (i = 1; t[i] != '\0'; i++)
+		{
+	
+			if (t[i] == '>')
+				break;
+		}
+		
+		t = gtk_editable_get_chars(GTK_EDITABLE(entry), (t-s), (t-s) + i + 1);		
+	}
+	return t;
+}
+	
 /* ---------------------------------------------------
  * Function to remove a log file entry
  * ---------------------------------------------------
@@ -272,8 +298,8 @@ static int close_callback(GtkWidget *widget, struct conversation *c)
 
 void set_font_face(GtkWidget *widget, struct conversation *c)
 {
-	char *pre_fontface;
-	int alloc = 0;
+	char *pre_fontface, *old_font_face;
+	int alloc = 0, length;
 
 	if (!(font_options & OPT_FONT_FACE))
 		return;
@@ -292,12 +318,20 @@ void set_font_face(GtkWidget *widget, struct conversation *c)
 		alloc--;
 		pre_fontface = "<FONT FACE=\"Helvetica\">";
 	}
-		
+
+	if (old_font_face = get_tag_by_prefix(c->entry, "<FONT FACE"))
+	{	
+		remove_tags(c->entry, old_font_face);
+		remove_tags(c->entry, "</FONT>");
+	}
+
 	surround(c->entry, pre_fontface, "</FONT>");
 	gtk_widget_grab_focus(c->entry);
 	
 	if (alloc)
 		g_free(pre_fontface);
+		
+	g_free(old_font_face); /* mem allocated in get_tag_by_prefix() */
 	return;
 }
 
@@ -543,12 +577,20 @@ int invert_tags(GtkWidget *entry, char *s1, char *s2, int really)
 
 void remove_tags(GtkWidget *entry, char *tag)
 {
-	char *s;
-	char *t;
+	char *s, *t;
 	int start = GTK_EDITABLE(entry)->selection_start_pos;
 	int finish = GTK_EDITABLE(entry)->selection_end_pos;
-	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1); 
+	int temp;
+	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 	t = s;
+	
+	if (start > finish)
+	{
+		temp = start;
+		start = finish;
+		finish = temp;
+	}
+	
 	if (strstr(tag, "<FONT SIZE="))
 	{
 		while((t = strstr(t, "<FONT SIZE="))) {
