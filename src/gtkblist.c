@@ -655,6 +655,35 @@ do_joinchat(GtkWidget *dialog, int id, GaimGtkJoinChatData *info)
 	g_free(info);
 }
 
+/*
+ * Check the values of all the text entry boxes.  If any required input
+ * strings are empty then don't allow the user to click on "OK."
+ */
+static void
+joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
+{
+	GaimGtkJoinChatData *data;
+	GList *tmp;
+	const char *text;
+	gboolean required;
+	gboolean sensitive = TRUE;
+
+	data = user_data;
+
+	for (tmp = data->entries; tmp != NULL; tmp = tmp->next)
+	{
+		if (!g_object_get_data(tmp->data, "is_spin"))
+		{
+			required = GPOINTER_TO_INT(g_object_get_data(tmp->data, "required"));
+			text = gtk_entry_get_text(tmp->data);
+			if (required && (*text == '\0'))
+				sensitive = FALSE;
+		}
+	}
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+}
+
 static void
 rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 {
@@ -689,6 +718,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 	{
 		GtkWidget *label;
 		GtkWidget *rowbox;
+		GtkWidget *input;
 
 		pce = tmp->data;
 
@@ -703,60 +733,58 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 		if (pce->is_int)
 		{
 			GtkObject *adjust;
-			GtkWidget *spin;
 			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max,
 										1, 10, 10);
-			spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
-			g_object_set_data(G_OBJECT(spin), "is_spin",
-							  GINT_TO_POINTER(TRUE));
-			g_object_set_data(G_OBJECT(spin), "identifier", pce->identifier);
-			data->entries = g_list_append(data->entries, spin);
-			gtk_widget_set_size_request(spin, 50, -1);
-			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
-			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(spin));
-			gaim_set_accessible_label (spin, label);
+			input = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+			gtk_widget_set_size_request(input, 50, -1);
+			gtk_box_pack_end(GTK_BOX(rowbox), input, FALSE, FALSE, 0);
 		}
 		else
 		{
-			GtkWidget *entry = gtk_entry_new();
 			char *value;
-
-			gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
-			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
-			data->entries = g_list_append(data->entries, entry);
-
+			input = gtk_entry_new();
+			gtk_entry_set_activates_default(GTK_ENTRY(input), TRUE);
 			value = g_hash_table_lookup(defaults, pce->identifier);
 			if (value != NULL)
-				gtk_entry_set_text(GTK_ENTRY(entry), value);
-
-			if (focus)
-			{
-				gtk_widget_grab_focus(entry);
-				focus = FALSE;
-			}
-
+				gtk_entry_set_text(GTK_ENTRY(input), value);
 			if (pce->secret)
-				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-
-			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
-			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(entry));
-			gaim_set_accessible_label (entry, label);
+				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
+			g_signal_connect(G_OBJECT(input), "changed",
+							 G_CALLBACK(joinchat_set_sensitive_if_input_cb), data);
 		}
+
+		/* Do the following for any type of input widget */
+		if (focus)
+		{
+			gtk_widget_grab_focus(input);
+			focus = FALSE;
+		}
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
+		gaim_set_accessible_label(input, label);
+		g_object_set_data(G_OBJECT(input), "identifier", pce->identifier);
+		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
+		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
+		data->entries = g_list_append(data->entries, input);
 
 		g_free(pce);
 	}
 
 	g_list_free(list);
+	g_hash_table_destroy(defaults);
+
+	/* Set whether the "OK" button should be clickable initially */
+	joinchat_set_sensitive_if_input_cb(NULL, data);
 
 	gtk_widget_show_all(data->entries_box);
 }
 
 static void
 joinchat_select_account_cb(GObject *w, GaimAccount *account,
-							GaimGtkJoinChatData *data)
+						   GaimGtkJoinChatData *data)
 {
 	if (strcmp(gaim_account_get_protocol_id(data->account),
-				gaim_account_get_protocol_id(account)) == 0)
+		gaim_account_get_protocol_id(account)) == 0)
 	{
 		data->account = account;
 	}
@@ -2465,163 +2493,203 @@ show_rename_group(GtkWidget *unused, GaimGroup *g)
 
 static char *gaim_get_tooltip_text(GaimBlistNode *node)
 {
+	GString *str = g_string_new("");
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	char *text = NULL;
+	char *tmp;
 
-	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
-		GaimChat *chat = (GaimChat *)node;
-		char *name = NULL;
+	if (GAIM_BLIST_NODE_IS_CHAT(node))
+	{
+		GaimChat *chat;
+		GList *cur;
 		struct proto_chat_entry *pce;
-		GList *parts = NULL, *tmp = NULL;
-		GString *parts_text = g_string_new("");
+		char *name, *value;
 
+		chat = (GaimChat *)node;
 		prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (prpl_info->chat_info != NULL)
-			parts = prpl_info->chat_info(chat->account->gc);
+		tmp = g_markup_escape_text(gaim_chat_get_name(chat), -1);
+		g_string_append_printf(str, "<span size='larger' weight='bold'>%s</span>", tmp);
+		g_free(tmp);
 
-		name = g_markup_escape_text(gaim_chat_get_name(chat), -1);
-
-		if(g_list_length(gaim_connections_get_all()) > 1) {
-			char *account = g_markup_escape_text(chat->account->username, -1);
-			g_string_append_printf(parts_text, _("\n<b>Account:</b> %s"),
-					account);
-			g_free(account);
+		if (g_list_length(gaim_connections_get_all()) > 1)
+		{
+			tmp = g_markup_escape_text(chat->account->username, -1);
+			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
+			g_free(tmp);
 		}
-		for(tmp = parts; tmp; tmp = tmp->next) {
-			char *label, *tmp2, *value;
-			pce = tmp->data;
 
-			if(!pce->secret) {
+		if (prpl_info->chat_info != NULL)
+			cur = prpl_info->chat_info(chat->account->gc);
+		else
+			cur = NULL;
 
-				tmp2 = g_markup_escape_text(pce->label, -1);
-				label = gaim_text_strip_mnemonic(tmp2);
-				g_free(tmp2);
+		while (cur != NULL)
+		{
+			pce = cur->data;
 
-				value = g_markup_escape_text(g_hash_table_lookup(chat->components,
-							pce->identifier), -1);
-
-				g_string_append_printf(parts_text, "\n<b>%s</b> %s", label, value);
-				g_free(label);
+			if (!pce->secret && (!pce->required &&
+				g_hash_table_lookup(chat->components, pce->identifier) == NULL))
+			{
+				tmp = gaim_text_strip_mnemonic(pce->label);
+				name = g_markup_escape_text(tmp, -1);
+				g_free(tmp);
+				value = g_markup_escape_text(g_hash_table_lookup(
+										chat->components, pce->identifier), -1);
+				g_string_append_printf(str, "\n<b>%s</b> %s", name, value);
+				g_free(name);
 				g_free(value);
 			}
-			g_free(pce);
-		}
-		g_list_free(parts);
 
-		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>%s",
-				name, parts_text->str);
-		g_string_free(parts_text, TRUE);
-		g_free(name);
-	} else if(GAIM_BLIST_NODE_IS_CONTACT(node) ||
-			GAIM_BLIST_NODE_IS_BUDDY(node)) {
+			g_free(pce);
+			cur = g_list_remove(cur, pce);
+		}
+	}
+	else if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_BUDDY(node))
+	{
+		GaimContact *c;
 		GaimBuddy *b;
 		GaimPresence *presence;
+		char *tmp;
 		gboolean idle;
 		time_t idle_secs;
+		int lastseen;
 		unsigned int warning_level;
-		char *statustext = NULL;
-		char *contactaliastext = NULL;
-		char *aliastext = NULL, *nicktext = NULL;
-		char *loggedin = NULL, *idletime = NULL;
-		char *warning = NULL;
-		char *accounttext = NULL;
 
-		if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
-			GaimContact *contact = (GaimContact*)node;
-			b = gaim_contact_get_priority_buddy(contact);
-			if(contact->alias)
-				contactaliastext = g_markup_escape_text(contact->alias, -1);
-		} else {
+		if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		{
+			c = (GaimContact *)node;
+			b = gaim_contact_get_priority_buddy(c);
+		}
+		else
+		{
 			b = (GaimBuddy *)node;
+			c = gaim_buddy_get_contact(b);
 		}
 
 		prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (prpl_info && prpl_info->tooltip_text) {
-			const char *end;
-			statustext = prpl_info->tooltip_text(b);
+		presence = gaim_buddy_get_presence(b);
 
-			if(statustext && !g_utf8_validate(statustext, -1, &end)) {
-				char *new = g_strndup(statustext,
-						g_utf8_pointer_to_offset(statustext, end));
-				g_free(statustext);
-				statustext = new;
+		/* Buddy Name */
+		tmp = g_markup_escape_text(gaim_buddy_get_name(b), -1);
+		g_string_append_printf(str, "<span size='larger' weight='bold'>%s</span>", tmp);
+		g_free(tmp);
+
+		/* Account */
+		if (g_list_length(gaim_connections_get_all()) > 1)
+		{
+			tmp = g_markup_escape_text(gaim_account_get_username(
+									   gaim_buddy_get_account(b)), -1);
+			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
+			g_free(tmp);
+		}
+
+		/* Contact Alias */
+		if (GAIM_BLIST_NODE_IS_CONTACT(node) &&
+			(gaim_contact_get_alias(c) != NULL))
+		{
+			tmp = g_markup_escape_text(gaim_contact_get_alias(c), -1);
+			g_string_append_printf(str, _("\n<b>Contact Alias:</b> %s"), tmp);
+			g_free(tmp);
+		}
+
+		/* Alias */
+		if ((b->alias != NULL) && (b->alias[0] != '\0'))
+		{
+			tmp = g_markup_escape_text(b->alias, -1);
+			g_string_append_printf(str, _("\n<b>Alias:</b> %s"), tmp);
+			g_free(tmp);
+		}
+
+		/* Nickname/Server Alias */
+		if (b->server_alias != NULL)
+		{
+			tmp = g_markup_escape_text(b->server_alias, -1);
+			g_string_append_printf(str, _("\n<b>Nickname:</b> %s"), tmp);
+			g_free(tmp);
+		}
+
+		/* Logged In */
+		if (b->signon > 0)
+		{
+			tmp = gaim_str_seconds_to_string(time(NULL) - b->signon);
+			g_string_append_printf(str, _("\n<b>Logged In:</b> %s"), tmp);
+			g_free(tmp);
+		}
+
+		/* Idle */
+		idle = gaim_presence_is_idle(presence);
+		if (idle)
+		{
+			idle_secs = gaim_presence_get_idle_time(presence);
+			if (idle_secs > 0)
+			{
+				tmp = gaim_str_seconds_to_string(time(NULL) - idle_secs);
+				g_string_append_printf(str, _("\n<b>Idle:</b> %s"), tmp);
+				g_free(tmp);
+			}
+			else
+				g_string_append_printf(str, _("\n<b>Idle</b>"));
+		}
+
+		/* Last Seen */
+		if ((b->present == GAIM_BUDDY_SIGNING_ON) ||
+			(b->present == GAIM_BUDDY_OFFLINE))
+		{
+			lastseen = gaim_blist_node_get_int(&b->node, "last_seen");
+			if (lastseen > 0)
+			{
+				tmp = gaim_str_seconds_to_string(time(NULL) - lastseen);
+				g_string_append_printf(str, _("\n<b>Last Seen:</b> %s ago"), tmp);
+				g_free(tmp);
 			}
 		}
 
-		presence = gaim_buddy_get_presence(b);
-
-		idle = gaim_presence_is_idle(presence);
-		idle_secs = gaim_presence_get_idle_time(presence);
+		/* Warning */
 		warning_level = gaim_presence_get_warning_level(presence);
-
-		if (!statustext && !GAIM_BUDDY_IS_ONLINE(b))
-			statustext = g_strdup(_("\n<b>Status:</b> Offline"));
-
-		if (b->signon > 0)
-			loggedin = gaim_str_seconds_to_string(time(NULL) - b->signon);
-
- 		if (idle && idle_secs > 0)
- 			idletime = gaim_str_seconds_to_string(time(NULL) - idle_secs);
-
-		if(b->alias && b->alias[0])
-			aliastext = g_markup_escape_text(b->alias, -1);
-
-		if(b->server_alias)
-			nicktext = g_markup_escape_text(b->server_alias, -1);
-
 		if (warning_level > 0)
-			warning = g_strdup_printf(_("%d%%"), warning_level);
+		{
+			tmp = g_strdup_printf(_("%d%%"), warning_level);
+			g_string_append_printf(str, _("\n<b>Warned:</b> %s"), tmp);
+			g_free(tmp);
+		}
 
-		if(g_list_length(gaim_connections_get_all()) > 1)
-			accounttext = g_markup_escape_text(b->account->username, -1);
+		/* Offline? */
+		if (!GAIM_BUDDY_IS_ONLINE(b)) {
+			g_string_append_printf(str, _("\n<b>Status:</b> Offline"));
+		}
+		else if (prpl_info && prpl_info->tooltip_text)
+		{
+			/* Additional text from the PRPL */
+			const char *end;
+			tmp = prpl_info->tooltip_text(b);
 
-		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
-					"%s %s"  /* Account */
-					"%s %s"  /* Contact Alias */
-					"%s %s"  /* Alias */
-					"%s %s"  /* Nickname */
-					"%s %s"  /* Logged In */
-					"%s %s"  /* Idle */
-					"%s %s"  /* Warning */
-					"%s"     /* Status */
-					"%s",
-					b->name,
-					accounttext ? _("\n<b>Account:</b>") : "", accounttext ? accounttext : "",
-					contactaliastext ? _("\n<b>Contact Alias:</b>") : "", contactaliastext ? contactaliastext : "",
-					aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
-					nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
-					loggedin ? _("\n<b>Logged In:</b>") : "", loggedin ? loggedin : "",
-					idle ? (idle_secs > 0 ? _("\n<b>Idle:</b>") : _("\n<b>Idle</b>")) : "",
-					idletime ? idletime : "",
-					warning_level ? _("\n<b>Warned:</b>") : "", warning_level ? warning : "",
-					statustext ? statustext : "",
-					!g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") :
-					!g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") :
-					!g_ascii_strcasecmp(b->name, "chipx86") ? _("\n<b>Status</b>: Rockin'") : "");
+			if (tmp && !g_utf8_validate(tmp, -1, &end))
+			{
+				char *new = g_strndup(tmp, g_utf8_pointer_to_offset(tmp, end));
+				g_free(tmp);
+				tmp = new;
+			}
 
-		if(warning)
-			g_free(warning);
-		if(loggedin)
-			g_free(loggedin);
-		if(idletime)
-			g_free(idletime);
-		if(statustext)
-			g_free(statustext);
-		if(nicktext)
-			g_free(nicktext);
-		if(aliastext)
-			g_free(aliastext);
-		if(accounttext)
-			g_free(accounttext);
+			g_string_append(str, tmp);
+		}
+
+		/* These are Easter Eggs.  Patches to remove them will be rejected. */
+		if (!g_ascii_strcasecmp(b->name, "robflynn"))
+			g_string_append(str, _("\n<b>Description:</b> Spooky"));
+		if (!g_ascii_strcasecmp(b->name, "seanegn"))
+			g_string_append(str, _("\n<b>Status:</b> Awesome"));
+		if (!g_ascii_strcasecmp(b->name, "chipx86"))
+			g_string_append(str, _("\n<b>Status:</b> Rockin'"));
 	}
+
 	gaim_signal_emit(gaim_gtk_blist_get_handle(),
-			 "drawing-tooltip", node, &text);
-	return text;
+			 "drawing-tooltip", node, &str->str);
+
+	return g_string_free(str, FALSE);
 }
 
 struct _emblem_data {
@@ -4160,6 +4228,7 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 	const char *group_name;
 	char *chat_name = NULL;
 	GaimConversation *conv = NULL;
+	const char *value;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal,
 									   g_free, g_free);
@@ -4175,9 +4244,11 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 		}
 		else
 		{
-			g_hash_table_replace(components,
-					g_strdup(g_object_get_data(tmp->data, "identifier")),
-					g_strdup(gtk_entry_get_text(tmp->data)));
+			value = gtk_entry_get_text(tmp->data);
+			if (*value != '\0')
+				g_hash_table_replace(components,
+						g_strdup(g_object_get_data(tmp->data, "identifier")),
+						g_strdup(value));
 		}
 	}
 
@@ -4234,6 +4305,35 @@ add_chat_resp_cb(GtkWidget *w, int resp, GaimGtkAddChatData *data)
 	}
 }
 
+/*
+ * Check the values of all the text entry boxes.  If any required input
+ * strings are empty then don't allow the user to click on "OK."
+ */
+static void
+addchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
+{
+	GaimGtkAddChatData *data;
+	GList *tmp;
+	const char *text;
+	gboolean required;
+	gboolean sensitive = TRUE;
+
+	data = user_data;
+
+	for (tmp = data->entries; tmp != NULL; tmp = tmp->next)
+	{
+		if (!g_object_get_data(tmp->data, "is_spin"))
+		{
+			required = GPOINTER_TO_INT(g_object_get_data(tmp->data, "required"));
+			text = gtk_entry_get_text(tmp->data);
+			if (required && (*text == '\0'))
+				sensitive = FALSE;
+		}
+	}
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+}
+
 static void
 rebuild_addchat_entries(GaimGtkAddChatData *data)
 {
@@ -4250,7 +4350,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 	while (GTK_BOX(data->entries_box)->children)
 	{
 		gtk_container_remove(GTK_CONTAINER(data->entries_box),
-				((GtkBoxChild *)GTK_BOX(data->entries_box)->children->data)->widget);
+			((GtkBoxChild *)GTK_BOX(data->entries_box)->children->data)->widget);
 	}
 
 	if (data->entries != NULL)
@@ -4262,13 +4362,13 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 		list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
 
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
-		defaults = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc,
-					data->default_chat_name);
+		defaults = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, data->default_chat_name);
 
 	for (tmp = list; tmp; tmp = tmp->next)
 	{
 		GtkWidget *label;
 		GtkWidget *rowbox;
+		GtkWidget *input;
 
 		pce = tmp->data;
 
@@ -4283,46 +4383,39 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 		if (pce->is_int)
 		{
 			GtkObject *adjust;
-			GtkWidget *spin;
 			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max,
 										1, 10, 10);
-			spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
-			g_object_set_data(G_OBJECT(spin), "is_spin", GINT_TO_POINTER(TRUE));
-			g_object_set_data(G_OBJECT(spin), "identifier", pce->identifier);
-			data->entries = g_list_append(data->entries, spin);
-			gtk_widget_set_size_request(spin, 50, -1);
-			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
-			gtk_label_set_mnemonic_widget(GTK_LABEL(label), spin);
-			gaim_set_accessible_label (spin, label);
+			input = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+			gtk_widget_set_size_request(input, 50, -1);
+			gtk_box_pack_end(GTK_BOX(rowbox), input, FALSE, FALSE, 0);
 		}
 		else
 		{
-			GtkWidget *entry = gtk_entry_new();
 			char *value;
-
-			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
-			data->entries = g_list_append(data->entries, entry);
-
+			input = gtk_entry_new();
+			gtk_entry_set_activates_default(GTK_ENTRY(input), TRUE);
 			value = g_hash_table_lookup(defaults, pce->identifier);
 			if (value != NULL)
-				gtk_entry_set_text(GTK_ENTRY(entry), value);
-
-			if (focus)
-			{
-				gtk_widget_grab_focus(entry);
-				focus = FALSE;
-			}
-
+				gtk_entry_set_text(GTK_ENTRY(input), value);
 			if (pce->secret)
-				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-
-			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
-
-			g_signal_connect(G_OBJECT(entry), "activate",
-							 G_CALLBACK(add_chat_cb), data);
-			gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-			gaim_set_accessible_label (entry, label);
+				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
+			g_signal_connect(G_OBJECT(input), "changed",
+							 G_CALLBACK(addchat_set_sensitive_if_input_cb), data);
 		}
+
+		/* Do the following for any type of input widget */
+		if (focus)
+		{
+			gtk_widget_grab_focus(input);
+			focus = FALSE;
+		}
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
+		gaim_set_accessible_label(input, label);
+		g_object_set_data(G_OBJECT(input), "identifier", pce->identifier);
+		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
+		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
+		data->entries = g_list_append(data->entries, input);
 
 		g_free(pce);
 	}
@@ -4330,11 +4423,14 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 	g_list_free(list);
 	g_hash_table_destroy(defaults);
 
+	/* Set whether the "OK" button should be clickable initially */
+	addchat_set_sensitive_if_input_cb(NULL, data);
+
 	gtk_widget_show_all(data->entries_box);
 }
 
 static void
-add_chat_select_account_cb(GObject *w, GaimAccount *account,
+addchat_select_account_cb(GObject *w, GaimAccount *account,
 						   GaimGtkAddChatData *data)
 {
 	if (strcmp(gaim_account_get_protocol_id(data->account),
@@ -4440,7 +4536,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 
 	data->account_menu = gaim_gtk_account_option_menu_new(account, FALSE,
-			G_CALLBACK(add_chat_select_account_cb),
+			G_CALLBACK(addchat_select_account_cb),
 			chat_account_filter_func, data);
 	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
 	gaim_set_accessible_label (data->account_menu, label);

@@ -88,6 +88,7 @@ typedef struct {
 struct proto_chat_entry {
 	char *label;
 	char *identifier;
+	gboolean required;
 	gboolean is_int;
 	int min;
 	int max;

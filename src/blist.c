@@ -103,6 +103,8 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	value   = (GaimValue *)hvalue;
 	node    = (xmlnode *)user_data;
 
+	g_return_if_fail(value != NULL);
+
 	child = xmlnode_new_child(node, "setting");
 	xmlnode_set_attrib(child, "name", name);
 
@@ -768,6 +770,7 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 	} else if (!gaim_status_is_online(status) &&
 				gaim_status_is_online(old_status)) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
+		gaim_blist_node_set_int(&buddy->node, "last_seen", time(NULL));
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
 		if (buddy->timer > 0)
 			gaim_timeout_remove(buddy->timer);
@@ -2226,6 +2229,8 @@ void gaim_blist_remove_account(GaimAccount *account)
 							((GaimContact*)cnode)->online--;
 							if (((GaimContact*)cnode)->online == 0)
 								((GaimGroup*)gnode)->online--;
+							gaim_blist_node_set_int(&((GaimBuddy *)bnode)->node,
+													"last_seen", time(NULL));
 						}
 						((GaimContact*)cnode)->currentsize--;
 						if (((GaimContact*)cnode)->currentsize == 0)

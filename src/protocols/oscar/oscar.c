@@ -6495,11 +6495,13 @@ static GList *oscar_chat_info(GaimConnection *gc) {
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Room:");
 	pce->identifier = "room";
+	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Exchange:");
 	pce->identifier = "exchange";
+	pce->required = TRUE;
 	pce->is_int = TRUE;
 	pce->min = 4;
 	pce->max = 20;
