@@ -13,7 +13,7 @@ GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
 SILC_ROOT :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-SILC_TOP :=		../../../../win32-dev/silc-toolkit
+SILC_TOP :=		../../../../win32-dev/silc-toolkit-0.9.12
 
 ##
 ## VARIABLE DEFINITIONS
@@ -21,8 +21,8 @@ SILC_TOP :=		../../../../win32-dev/silc-toolkit
 
 TARGET = libsilcgaim
 
-NEEDED_DLLS =	$(SILC_TOP)/lib/silc.dll \
-				$(SILC_TOP)/lib/silcclient.dll
+NEEDED_DLLS =		$(SILC_TOP)/win32/libsilc/Release/libsilc.dll \
+			$(SILC_TOP)/win32/libsilcclient/Release/libsilcclient.dll
 
 # Compiler Options
 
@@ -62,19 +62,21 @@ INCLUDE_PATHS +=	-I$(SILC_ROOT) \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
 			-I$(GAIM_TOP) \
-			-I$(SILC_TOP)/include
+			-I$(SILC_TOP)/win32 \
+			-I$(SILC_TOP)/win32/include
 
 
-LIB_PATHS =	-L$(GTK_TOP)/lib \
+LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_TOP)/src \
-			-L$(SILC_TOP)/lib
+			-L$(SILC_TOP)/win32/libsilc/Release \
+			-L$(SILC_TOP)/win32/libsilcclient/Release \
 
 
 ##
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =		silc.c \
+C_SRC =			silc.c \
 			buddy.c \
 			chat.c \
 			ft.c \
@@ -90,7 +92,7 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =		-lgtk-win32-2.0 \
+LIBS =			-lgtk-win32-2.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \
 			-lgmodule-2.0 \
@@ -98,8 +100,8 @@ LIBS =		-lgtk-win32-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim \
-			-lsilc \
-			-lsilcclient \
+			-llibsilc \
+			-llibsilcclient \
 			-lwsock32
 
 
@@ -137,7 +139,7 @@ $(GAIM_TOP)/src/gaim.lib:
 ##
 
 $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--image-base,0x64000000 -o $(TARGET).dll
 
 ##
 ## CLEAN RULES

@@ -109,7 +109,9 @@ extern int wgaim_close(int fd);
 #define close( fd ) \
 wgaim_close( fd )
 
+#ifndef sleep
 #define sleep(x) Sleep((x)*1000)
+#endif
 
 extern int wgaim_gethostname(char *name, size_t size);
 #define gethostname( name, size ) \

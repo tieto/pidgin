@@ -1,3 +1,6 @@
+version 0.81cvs:
+	* Napster joins binary release (Thanks Kevin)
+
 version 0.80 (07/15/2004):
 	* idletrack.dll now unloads properly when you quit Gaim in Windows
 	  2000 or later, so the installer will no longer report an error
