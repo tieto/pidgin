@@ -1,6 +1,11 @@
 
 No release numbers
 ------------------
+ - Fri Jun  2 15:57:27 UTC 2000
+   - Add creation time, maxmsglen, and various unknowns to chat info
+     update callback.
+   - Remove 'nothing works yet' comment from top of aim_chat.c (it works!)
+
  - Wed May 31 01:17:24 UTC 2000
    - Added constants for message sizes (MAXMSGLEN, MAXCHATMSGLEN)
      - Note that the new max message size is defined as 7988bytes,

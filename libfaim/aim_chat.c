@@ -1,7 +1,7 @@
 /*
  * aim_chat.c
  *
- * Routines for the Chat service.  Nothing works (yet).
+ * Routines for the Chat service.
  *
  */
 
@@ -221,6 +221,7 @@ int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo)
  * them to any of the 'Unknown's:
  *	- Language (English)
  *
+ * SNAC 000e/0002
  */
 int aim_chat_parse_infoupdate(struct aim_session_t *sess,
 			      struct command_rx_struct *command)
@@ -235,12 +236,25 @@ int aim_chat_parse_infoupdate(struct aim_session_t *sess,
   u_short tlvcount = 0;
   struct aim_tlvlist_t *tlvlist;
   char *roomdesc = NULL;
+  struct aim_tlv_t *tmptlv;
+  unsigned short unknown_c9 = 0;
+  unsigned long creationtime = 0;
+  unsigned short maxmsglen = 0;
+  unsigned short unknown_d2 = 0, unknown_d5 = 0;
 
   i = 10;
   i += aim_chat_readroominfo(command->data+i, &roominfo);
   
   detaillevel = aimutil_get8(command->data+i);
   i++;
+
+  if (detaillevel != 0x02) {
+    if (detaillevel == 0x01)
+      printf("faim: chat_roomupdateinfo: detail level 2 not supported\n");
+    else
+      printf("faim: chat_roomupdateinfo: unknown detail level %d\n", detaillevel);
+    return 1;
+  }
   
   tlvcount = aimutil_get16(command->data+i);
   i += 2;
@@ -259,55 +273,53 @@ int aim_chat_parse_infoupdate(struct aim_session_t *sess,
   /*
    * Type 0x006f: Number of occupants.
    */
-  if (aim_gettlv(tlvlist, 0x006f, 1))
-    {
-      struct aim_tlv_t *tmptlv;
-      tmptlv = aim_gettlv(tlvlist, 0x006f, 1);
-
-      usercount = aimutil_get16(tmptlv->value);
-    }
+  if (aim_gettlv(tlvlist, 0x006f, 1)) {
+    struct aim_tlv_t *tmptlv;
+    tmptlv = aim_gettlv(tlvlist, 0x006f, 1);
+    
+    usercount = aimutil_get16(tmptlv->value);
+  }
 
   /*
    * Type 0x0073:  Occupant list.
    */
-  if (aim_gettlv(tlvlist, 0x0073, 1))
-    {	
-      int curoccupant = 0;
-      struct aim_tlv_t *tmptlv;
+  if (aim_gettlv(tlvlist, 0x0073, 1)) {	
+    int curoccupant = 0;
+    struct aim_tlv_t *tmptlv;
+    
+    tmptlv = aim_gettlv(tlvlist, 0x0073, 1);
 
-      tmptlv = aim_gettlv(tlvlist, 0x0073, 1);
-
-      /* Allocate enough userinfo structs for all occupants */
-      userinfo = calloc(usercount, sizeof(struct aim_userinfo_s));
-
-      i = 0;
-      while (curoccupant < usercount)
-	i += aim_extractuserinfo(tmptlv->value+i, &userinfo[curoccupant++]);
-    }
+    /* Allocate enough userinfo structs for all occupants */
+    userinfo = calloc(usercount, sizeof(struct aim_userinfo_s));
+    
+    i = 0;
+    while (curoccupant < usercount)
+      i += aim_extractuserinfo(tmptlv->value+i, &userinfo[curoccupant++]);
+  }
   
   /* 
-   * Type 0x00c9: Unknown.
+   * Type 0x00c9: Unknown. (2 bytes)
    */
-  if (aim_gettlv(tlvlist, 0x00c9, 1))
-    ;
+  if ((tmptlv = aim_gettlv(tlvlist, 0x00c9, 1)))
+    unknown_c9 = aimutil_get16(tmptlv->value);
   
   /* 
-   * Type 0x00ca: Creation date
+   * Type 0x00ca: Creation time (4 bytes)
    */
-  if (aim_gettlv(tlvlist, 0x00ca, 1))
-    ;
+  if ((tmptlv = aim_gettlv(tlvlist, 0x00ca, 1)))
+    creationtime = aimutil_get32(tmptlv->value);
 
   /* 
    * Type 0x00d1: Maximum Message Length
    */
-  if (aim_gettlv(tlvlist, 0x00d1, 1))
-    ;
+  if ((tmptlv = aim_gettlv(tlvlist, 0x00d1, 1)))
+    maxmsglen = aimutil_get16(tmptlv->value);
 
   /* 
-   * Type 0x00d2: Unknown.
+   * Type 0x00d2: Unknown. (2 bytes)
    */
-  if (aim_gettlv(tlvlist, 0x00d2, 1))
-    ;
+  if ((tmptlv = aim_gettlv(tlvlist, 0x00d2, 1)))
+    unknown_d2 = aimutil_get16(tmptlv->value);;
 
   /* 
    * Type 0x00d3: Room Description
@@ -316,23 +328,27 @@ int aim_chat_parse_infoupdate(struct aim_session_t *sess,
     roomdesc = aim_gettlv_str(tlvlist, 0x00d3, 1);
 
   /* 
-   * Type 0x00d5: Unknown.
+   * Type 0x00d5: Unknown. (1 byte)
    */
-  if (aim_gettlv(tlvlist, 0x00d5, 1))
-    ;
+  if ((tmptlv = aim_gettlv(tlvlist, 0x00d5, 1)))
+    unknown_d5 = aimutil_get8(tmptlv->value);;
 
 
   userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE);
-  if (userfunc)
-    {
-      ret = userfunc(sess,
-		     command, 
-		     &roominfo,
-		     roomname,
-		     usercount,
-		     userinfo,	
-		     roomdesc);
-    }
+  if (userfunc) {
+    ret = userfunc(sess,
+		   command, 
+		   &roominfo,
+		   roomname,
+		   usercount,
+		   userinfo,	
+		   roomdesc,
+		   unknown_c9,
+		   creationtime,
+		   maxmsglen,
+		   unknown_d2,
+		   unknown_d5);
+  }	
   free(roominfo.name);
   free(userinfo);
   free(roomname);
@@ -349,21 +365,19 @@ int aim_chat_parse_joined(struct aim_session_t *sess,
   rxcallback_t userfunc=NULL;	
   int i = 10, curcount = 0, ret = 1;
 
-  while (i < command->commandlen)
-    {
-      curcount++;
-      userinfo = realloc(userinfo, curcount * sizeof(struct aim_userinfo_s));
-      i += aim_extractuserinfo(command->data+i, &userinfo[curcount-1]);
-    }
+  while (i < command->commandlen) {
+    curcount++;
+    userinfo = realloc(userinfo, curcount * sizeof(struct aim_userinfo_s));
+    i += aim_extractuserinfo(command->data+i, &userinfo[curcount-1]);
+  }
 
   userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN);
-  if (userfunc)
-    {
-      ret = userfunc(sess,
-		     command, 
-		     curcount,
-		     userinfo);
-    }
+  if (userfunc) {	
+    ret = userfunc(sess,
+		   command, 
+		   curcount,
+		   userinfo);
+  }
 
   free(userinfo);
 
@@ -378,21 +392,19 @@ int aim_chat_parse_leave(struct aim_session_t *sess,
   rxcallback_t userfunc=NULL;	
   int i = 10, curcount = 0, ret = 1;
 
-  while (i < command->commandlen)
-    {
-      curcount++;
-      userinfo = realloc(userinfo, curcount * sizeof(struct aim_userinfo_s));
-      i += aim_extractuserinfo(command->data+i, &userinfo[curcount-1]);
-    }
+  while (i < command->commandlen) {
+    curcount++;
+    userinfo = realloc(userinfo, curcount * sizeof(struct aim_userinfo_s));
+    i += aim_extractuserinfo(command->data+i, &userinfo[curcount-1]);
+  }
 
   userfunc = aim_callhandler(command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE);
-  if (userfunc)
-    {
-      ret = userfunc(sess,
-		     command, 
-		     curcount,
-		     userinfo);
-    }
+  if (userfunc) {
+    ret = userfunc(sess,
+		   command, 
+		   curcount,
+		   userinfo);
+  }
 
   free(userinfo);
 
@@ -437,11 +449,10 @@ int aim_chat_parse_incoming(struct aim_session_t *sess,
   channel = aimutil_get16(command->data+i);
   i += 2;
 
-  if (channel != 0x0003)
-    {
-      printf("faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
-      return 1;
-    }
+  if (channel != 0x0003) {
+    printf("faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
+    return 1;
+  }
 
   /*
    * Start parsing TLVs right away. 
@@ -451,13 +462,12 @@ int aim_chat_parse_incoming(struct aim_session_t *sess,
   /*
    * Type 0x0003: Source User Information
    */
-  if (aim_gettlv(outerlist, 0x0003, 1))
-    {
-      struct aim_tlv_t *userinfotlv;
-      
-      userinfotlv = aim_gettlv(outerlist, 0x0003, 1);
-      aim_extractuserinfo(userinfotlv->value, &userinfo);
-    }
+  if (aim_gettlv(outerlist, 0x0003, 1)) {
+    struct aim_tlv_t *userinfotlv;
+    
+    userinfotlv = aim_gettlv(outerlist, 0x0003, 1);
+    aim_extractuserinfo(userinfotlv->value, &userinfo);
+  }
 
   /*
    * Type 0x0001: Unknown.
