@@ -2836,6 +2836,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	char *msg = yahoo_html_to_codes(what);
 	char *msg2;
 	gboolean utf8 = TRUE;
+	int ret = 1;
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
@@ -2853,14 +2854,18 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	else
 		yahoo_packet_hash(pkt, 206, "2");
 
-	yahoo_send_packet(yd, pkt);
+	/* We may need to not send any packets over 2000 bytes, but I'm not sure yet. */
+	if ((YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt)) <= 2000)
+		yahoo_send_packet(yd, pkt);
+	else
+		ret = -E2BIG;
 
 	yahoo_packet_free(pkt);
 
 	g_free(msg);
 	g_free(msg2);
 
-	return 1;
+	return ret;
 }
 
 int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
