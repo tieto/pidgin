@@ -23,6 +23,7 @@ CORESOURCES = \
 	event.h \
 	ft.c \
 	ft.h \
+	multi.h \
 	notify.c \
 	notify.h \
 	plugin.c \
