@@ -119,7 +119,7 @@ gaim_network_get_ip_for_account(const GaimAccount *account, int fd)
 		return gaim_network_get_local_system_ip(fd);
 }
 
-static int gaim_network_do_listen(short portnum)
+static int gaim_network_do_listen(unsigned short port)
 {
 #if HAVE_GETADDRINFO
 	int listenfd;
@@ -127,7 +127,7 @@ static int gaim_network_do_listen(short portnum)
 	struct addrinfo hints, *res, *ressave;
 	char serv[5];
 
-	snprintf(serv, sizeof(serv), "%d", portnum);
+	snprintf(serv, sizeof(serv), "%d", port);
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;
@@ -169,7 +169,7 @@ static int gaim_network_do_listen(short portnum)
 
 	memset(&sockin, 0, sizeof(struct sockaddr_in));
 	sockin.sin_family = AF_INET;
-	sockin.sin_port = htons(portnum);
+	sockin.sin_port = htons(port);
 
 	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
 		gaim_debug_warning("network", "bind: %s\n", strerror(errno));
