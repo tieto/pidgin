@@ -4,8 +4,9 @@ version 0.9.19:
 	* Graphical Smiley Faces
 	* Applet got a bit of a makeover (inside & out)
 	* Compile-time options affect Preferences dialog
-	* Whispering works (does anyone even use this?)
+	* Whispering in chat works (does anyone even use this?)
 	* HTML-tag buttons in chat
+	* Chat got all kinds of new features (like IRC-sytle /me)
 	* Locale support
 	* Many many bugfixes
 

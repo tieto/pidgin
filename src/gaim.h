@@ -224,6 +224,7 @@ struct buddy_chat {
 	GtkWidget *link;
 	GtkWidget *strike;
 	GtkWidget *font;
+	GtkWidget *wood;
 	GtkWidget *color_dialog;
 	GtkWidget *font_dialog;
         GList *in_room;
@@ -375,7 +376,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 359 $"
+#define REVISION "gaim:$Revision: 381 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -474,6 +475,8 @@ extern int sound_options;
 #define OPT_SOUND_WHEN_AWAY      0x00000020
 #define OPT_SOUND_SILENT_SIGNON  0x00000040
 #define OPT_SOUND_THROUGH_GNOME  0x00000080
+#define OPT_SOUND_CHAT_JOIN	 0x00000100
+#define OPT_SOUND_CHAT_SAY	 0x00000200
 
 
 extern int font_options;
