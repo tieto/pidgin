@@ -426,7 +426,7 @@ gaim_plugin_unload(GaimPlugin *plugin)
 
 		loader_info = GAIM_PLUGIN_LOADER_INFO(loader);
 
-		if (loader_info->load != NULL)
+		if (loader_info->unload != NULL)
 			loader_info->unload(plugin);
 	}
 
