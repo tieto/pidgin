@@ -747,7 +747,7 @@ XS (XS_GAIM_command)
 		g_snprintf(a.message, sizeof(a.message), "%s", message);
 		do_away_message(NULL, &a);
 	} else if (!strncasecmp(command, "back", 4)) {
-		do_im_back();
+		do_im_back(NULL, NULL);
 	} else if (!strncasecmp(command, "idle", 4)) {
 		GList *c = gaim_connections_get_all();
 		GaimConnection *gc;
