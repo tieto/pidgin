@@ -1502,8 +1502,11 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 				gtk_tree_store_insert_after(gtkblist->treemodel, &iter, &groupiter, oldersibling ? &oldersiblingiter : NULL);
 
-				if (blist_options & OPT_BLIST_POPUP)
-					gtk_window_present(GTK_WINDOW(gtkblist->window));
+				if (blist_options & OPT_BLIST_POPUP) {
+					gtk_widget_show(gtkblist->window);
+					gtk_window_deiconify(GTK_WINDOW(gtkblist->window));
+					gdk_window_raise(gtkblist->window->window);
+				}
 
 			}
 		}
@@ -1590,8 +1593,11 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				   -1);
 
 		if (blist_options & OPT_BLIST_POPUP &&
-				((struct buddy *)node)->present == GAIM_BUDDY_SIGNING_OFF)
-			gtk_window_present(GTK_WINDOW(gtkblist->window));
+				((struct buddy *)node)->present == GAIM_BUDDY_SIGNING_OFF) {
+			gtk_widget_show(gtkblist->window);
+			gtk_window_deiconify(GTK_WINDOW(gtkblist->window));
+			gdk_window_raise(gtkblist->window->window);
+		}
 
 		g_free(mark);
 		if (idle)
