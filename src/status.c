@@ -795,6 +795,15 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 	{
 		GaimValue *value;
 		value = gaim_status_get_attr_value(status, id);
+		if (value == NULL)
+		{
+			gaim_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
+							   "not supported.\n", id, status->title);
+			/* Skip over the data and move on to the next attribute */
+			va_arg(args, void *);
+			continue;
+		}
+
 		if (value->type == GAIM_TYPE_STRING)
 		{
 			const gchar *string_data = va_arg(args, const char *);
