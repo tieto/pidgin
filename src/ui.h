@@ -520,6 +520,9 @@ extern void session_end();
 extern void play_sound(int);
 extern void play_file(char *);
 
+/* Functions in themes.c */
+extern void smiley_themeize(GtkWidget *);
+
 /* Fucnctions in util.c */
 extern GtkWidget *gaim_pixmap(char *, char *);
 extern GdkPixbuf *gaim_pixbuf(char *, char *);

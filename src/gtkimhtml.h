@@ -38,6 +38,7 @@ extern "C" {
 typedef gchar** (*GtkIMHtmlImage) (gchar *url);
 
 typedef struct _GtkSmileyTree  GtkSmileyTree;
+typedef struct _GtkIMHtmlSmiley GtkIMHtmlSmiley;
 
 typedef struct _GtkIMHtml      GtkIMHtml;
 typedef struct _GtkIMHtmlClass GtkIMHtmlClass;
@@ -60,6 +61,13 @@ struct _GtkIMHtmlClass {
 	GtkTextViewClass parent_class;
 
 	void (*url_clicked) (GtkIMHtml *, const gchar *);
+};
+
+struct _GtkIMHtmlSmiley {
+	gchar *smile;
+	gchar *file;
+	GdkPixbuf *icon;
+	gboolean hidden;
 };
 
 typedef enum
@@ -86,8 +94,7 @@ void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 
 void       gtk_imhtml_associate_smiley (GtkIMHtml        *imhtml,
 					gchar            *sml,
-					gchar            *text,
-					gchar            *path);
+					GtkIMHtmlSmiley  *smiley);
 
 void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml);
 

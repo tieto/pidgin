@@ -54,7 +54,7 @@ struct _FontDetail {
 struct _GtkSmileyTree {
 	GString *values;
 	GtkSmileyTree **children;
-	gchar *image;
+	GtkIMHtmlSmiley *image;
 };
 
 static GtkSmileyTree*
@@ -65,11 +65,10 @@ gtk_smiley_tree_new ()
 
 static void
 gtk_smiley_tree_insert (GtkSmileyTree *tree,
-			const gchar   *text,
-			const gchar   *path)
+			GtkIMHtmlSmiley *smiley)
 {
 	GtkSmileyTree *t = tree;
-	const gchar *x = text;
+	const gchar *x = smiley->smile;
 
 	if (!strlen (x))
 		return;
@@ -95,11 +94,13 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 		x++;
 	}
 	
-	t->image = g_strdup(path);
+	t->image = smiley;
 }
+
 
 gboolean gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 {
+	/*
 	GSList *list = g_slist_append (NULL, tree);
 
 	while (list) {
@@ -112,11 +113,12 @@ gboolean gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
-		g_free (t->image);
 		g_free (t);
 	}
 	return TRUE;
+	*/
 }
+
 
 static GtkTextViewClass *parent_class = NULL;
 
@@ -233,11 +235,11 @@ void tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter *arg
 }
 
 static void
-gtk_smiley_tree_remove (GtkSmileyTree *tree,
-			const gchar   *text)
+gtk_smiley_tree_remove (GtkSmileyTree     *tree,
+			GtkIMHtmlSmiley   *smiley)
 {
 	GtkSmileyTree *t = tree;
-	const gchar *x = text;
+	const gchar *x = smiley->smile;
 	gint len = 0;
 
 	while (*x) {
@@ -256,7 +258,6 @@ gtk_smiley_tree_remove (GtkSmileyTree *tree,
 	}
 
 	if (t->image) {
-		g_free(t->image);
 		t->image = NULL;
 	}
 }
@@ -291,16 +292,14 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 }
 
 void
-gtk_imhtml_associate_smiley (GtkIMHtml  *imhtml,
-			     gchar      *text,
-			     gchar      *sml,
-			     gchar      *path)
+gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
+			     gchar           *sml,
+			     GtkIMHtmlSmiley *smiley)
 {
 	GtkSmileyTree *tree;
 	g_return_if_fail (imhtml != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
-	g_return_if_fail (text != NULL);
-
+	
 	if (sml == NULL)
 		tree = imhtml->default_smilies;
 	else if ((tree = g_hash_table_lookup(imhtml->smiley_data, sml))) {
@@ -309,10 +308,7 @@ gtk_imhtml_associate_smiley (GtkIMHtml  *imhtml,
 		g_hash_table_insert(imhtml->smiley_data, sml, tree);
 	}
 
-	if (path == NULL)
-		gtk_smiley_tree_remove (tree, text);
-	else
-		gtk_smiley_tree_insert (tree, text, path);
+	gtk_smiley_tree_insert (tree, smiley);
 }
 
 static gboolean
@@ -342,14 +338,13 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	return (*len > 0);
 }
 
-static gchar*
+GdkPixbuf*
 gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		       const gchar   *sml,
 		       const gchar   *text)
 {
 	GtkSmileyTree *t;
 	const gchar *x = text;
-
 	if (sml == NULL)
 		t = imhtml->default_smilies;
 	else 
@@ -375,7 +370,10 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		x++;
 	}
 
-	return t->image;
+	if (!t->image->icon)
+		t->image->icon = gdk_pixbuf_new_from_file(t->image->file, NULL);
+
+	return t->image->icon;
 }
 #define VALID_TAG(x)	if (!g_strncasecmp (string, x ">", strlen (x ">"))) {	\
 				*tag = g_strndup (string, strlen (x));		\
@@ -932,7 +930,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			}
 			NEW_BIT (NEW_TEXT_BIT);
 			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
-			gtk_text_buffer_insert_pixbuf(imhtml->text_buffer, &iter, gdk_pixbuf_new_from_file(gtk_smiley_tree_image (imhtml, sml, ws), NULL));
+			gtk_text_buffer_insert_pixbuf(imhtml->text_buffer, &iter, gtk_smiley_tree_image (imhtml, sml, ws));
 			c += smilelen;
 			pos += smilelen;
 			wpos = 0;

@@ -490,6 +490,8 @@ static int ui_main()
 	GList *icons = NULL;
 	GdkPixbuf *icon = NULL;
 
+	smiley_theme_probe();
+
 	/* use the nice PNG icon for all the windows */
 	icon = gdk_pixbuf_new_from_file(DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "gaim.png",NULL);
 	if (icon) {
@@ -809,7 +811,7 @@ int main(int argc, char *argv[])
 #if GAIM_PLUGINS || USE_PERL
 	gaim_probe_plugins();
 #endif
-
+		
 #ifdef _WIN32
 	/* Various win32 initializations */
 	wgaim_init();

@@ -86,113 +86,6 @@ static void remove_checkbox(struct conversation *);
 /*------------------------------------------------------------------------*/
 
 
-void gaim_setup_imhtml_smileys(GtkWidget *imhtml)
-{
-	/* This is ugly right now--it will get better when the themable smileys come */
-	
-
-	char *filename;
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "smile.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":)", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-)", NULL, filename);	
-	g_free(filename);
-
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "sad.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":(", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-(", NULL, filename);	
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "wink.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ";)", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ";-)", NULL, filename);	
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "tongue.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-p", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-P", NULL, filename);	
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "scream.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "=-O", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "=-o", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "kiss.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-*", NULL, filename);
-	g_free(filename);
-
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "yell.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:o", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:O", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "cool.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "8-)", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "moneymouth.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-$", NULL, filename);	
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "burp.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-!", NULL, filename);		
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "embarrassed.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-[", NULL, filename);		
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "cry.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":'(", NULL, filename);	
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "think.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-/", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-\\", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "crossedlips.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-x", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-X", NULL, filename); 
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "bigsmile.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-d", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-D", NULL, filename); 	
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "angel.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O:-)", NULL, filename);	
-	g_free(filename);
-
-	/* "Secret" smileys */
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "luke.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:)", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:-)", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "oneeye.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O-)", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "crazy.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:)", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:-)", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "mrt.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-o)))", NULL, filename);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-O)))", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "download.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "8-|)", NULL, filename);
-	g_free(filename);
-	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "farted.png", NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-]", NULL, filename);
-	g_free(filename);
-}
 
 void gaim_setup_imhtml(GtkWidget *imhtml)
 {
@@ -202,7 +95,7 @@ void gaim_setup_imhtml(GtkWidget *imhtml)
 		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
 
 	g_signal_connect(GTK_OBJECT(imhtml), "url_clicked", G_CALLBACK(open_url), NULL);
-	gaim_setup_imhtml_smileys(imhtml);	
+	smiley_themeize(imhtml);	
 }
 
 void quiet_set(GtkWidget *tb, int state)
@@ -2246,7 +2139,6 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 
 	update_icon(cnv);
 	update_checkbox(cnv);
-	gaim_setup_imhtml_smileys(cnv->text);
 }
 
 int set_dispstyle(int chat)
@@ -2410,7 +2302,6 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 
 	update_icon(c);
 	update_checkbox(c);
-	gaim_setup_imhtml_smileys(c->text);
 }
 
 void update_buttons_by_protocol(struct conversation *c)

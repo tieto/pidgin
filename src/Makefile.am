@@ -42,6 +42,7 @@ gaim_SOURCES =	about.c \
 		session.c \
 		socket.c \
 		sound.c \
+		themes.c \
 		util.c \
 		ui.h
 
