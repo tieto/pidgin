@@ -12,7 +12,10 @@ EXTRA_DIST = admin_icon.xpm aimicon.xpm \
         peng_smile.xpm peng_frown.xpm peng_wink.xpm \
 	strike.xpm gnome/devil-connect.png gnome/devil-offline.png \
 	gnome/devil-online.png gnome/penguin-connect.png \
-	gnome/penguin-offline.png gnome/penguin-online.png
+	gnome/penguin-offline.png gnome/penguin-online.png \
+	daemon-buddyadd.xpm daemon-buddychat.xpm daemon-buddydel.xpm \
+	daemon-im.xpm daemon-info.xpm daemon-permadd.xpm \
+	daemon-permdel.xpm daemon.xpm
 	
 if GNOMEAPPLET
 gnomesysconf = `@GNOME_CONFIG@ --sysconfdir`
