@@ -181,7 +181,7 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
 
 static GList *combo_user_names()
 {
-	GList *usr = aim_users;
+	GSList *usr = aim_users;
 	GList *tmp = NULL;
 	struct aim_user *u;
 
@@ -423,10 +423,10 @@ static void set_first_user(char *name)
 		u = g_new0(struct aim_user, 1);
 		g_snprintf(u->username, sizeof(u->username), "%s", name);
 		u->protocol = DEFAULT_PROTO;
-		aim_users = g_list_prepend(aim_users, u);
+		aim_users = g_slist_prepend(aim_users, u);
 	} else {		/* user already exists */
-		aim_users = g_list_remove(aim_users, u);
-		aim_users = g_list_prepend(aim_users, u);
+		aim_users = g_slist_remove(aim_users, u);
+		aim_users = g_slist_prepend(aim_users, u);
 	}
 	save_prefs();
 }

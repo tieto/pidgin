@@ -346,14 +346,14 @@ XS (XS_GAIM_get_info)
 			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
 			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
-				XST_mIV(i++, g_list_index(aim_users, gc->user));
+				XST_mIV(i++, g_slist_index(aim_users, gc->user));
 			else
 				XST_mIV(i++, -1);
 		}
 		break;
 	case 5:
 		{
-			GList *a = aim_users;
+			GSList *a = aim_users;
 			while (a) {
 				struct aim_user *u = a->data;
 				XST_mPV(i++, u->username);
@@ -363,7 +363,7 @@ XS (XS_GAIM_get_info)
 		break;
 	case 6:
 		{
-			GList *a = aim_users;
+			GSList *a = aim_users;
 			while (a) {
 				struct aim_user *u = a->data;
 				XST_mIV(i++, u->protocol);
@@ -470,8 +470,8 @@ XS (XS_GAIM_command)
 	if (!command) XSRETURN(0);
 	if        (!strncasecmp(command, "signon", 6)) {
 		int index = SvIV(ST(1));
-		if (g_list_nth_data(aim_users, index))
-		serv_login(g_list_nth_data(aim_users, index));
+		if (g_slist_nth_data(aim_users, index))
+		serv_login(g_slist_nth_data(aim_users, index));
 	} else if (!strncasecmp(command, "signoff", 7)) {
 		struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
 		if (g_slist_find(connections, gc)) signoff(gc);

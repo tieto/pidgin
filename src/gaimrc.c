@@ -39,7 +39,7 @@
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
 #define MAX_VALUES 10
 
-GList *aim_users = NULL;
+GSList *aim_users = NULL;
 guint misc_options;
 guint logging_options;
 guint blist_options;
@@ -599,13 +599,13 @@ static void gaimrc_read_users(FILE *f)
 
 		u = gaimrc_read_user(f);
 
-		aim_users = g_list_append(aim_users, u);
+		aim_users = g_slist_append(aim_users, u);
 	}
 }
 
 static void gaimrc_write_users(FILE *f)
 {
-	GList *usr = aim_users;
+	GSList *usr = aim_users;
 	struct aim_user *u;
 
 	fprintf(f, "users {\n");

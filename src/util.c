@@ -640,7 +640,7 @@ gboolean clean_pid(gpointer dummy)
 struct aim_user *find_user(const char *name, int protocol)
 {
 	char *who = g_strdup(normalize(name));
-	GList *usr = aim_users;
+	GSList *usr = aim_users;
 	struct aim_user *u;
 
 	while (usr) {

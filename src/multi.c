@@ -139,7 +139,7 @@ static char *proto_name(int proto)
 void regenerate_user_list()
 {
 	char *titles[4];
-	GList *u = aim_users;
+	GSList *u = aim_users;
 	struct aim_user *a;
 	int i;
 
@@ -645,7 +645,7 @@ static void mod_acct(GtkWidget *w, gpointer d)
 	while (l) {
 		row = (int)l->data;
 		if (row != -1) {
-			u = g_list_nth_data(aim_users, row);
+			u = g_slist_nth_data(aim_users, row);
 			if (u)
 				show_acct_mod(u);
 		}
@@ -744,7 +744,7 @@ static void acct_signin(GtkWidget *w, gpointer d)
 	struct aim_user *u;
 	while (l) {
 		row = (int)l->data;
-		u = g_list_nth_data(aim_users, row);
+		u = g_slist_nth_data(aim_users, row);
 		if (!u->gc) {
 			struct prpl *p = find_prpl(u->protocol);
 			if (p && !(p->options & OPT_PROTO_NO_PASSWORD) && !u->password[0]) {
@@ -770,8 +770,8 @@ static void do_del_acct(gpointer w, struct aim_user *u)
 		u->gc->wants_to_die = TRUE;
 		signoff(u->gc);
 	}
-	gtk_clist_remove(GTK_CLIST(list), g_list_index(aim_users, u));
-	aim_users = g_list_remove(aim_users, u);
+	gtk_clist_remove(GTK_CLIST(list), g_slist_index(aim_users, u));
+	aim_users = g_slist_remove(aim_users, u);
 	save_prefs();
 }
 
@@ -783,7 +783,7 @@ static void del_acct(GtkWidget *w, gpointer d)
 	struct aim_user *u;
 	while (l) {
 		row = (int)l->data;
-		u = g_list_nth_data(aim_users, row);
+		u = g_slist_nth_data(aim_users, row);
 		if (!u)
 			return;
 
@@ -795,7 +795,7 @@ static void del_acct(GtkWidget *w, gpointer d)
 
 static void sel_auto(gpointer w, gpointer d)
 {
-	GList *l = aim_users;
+	GSList *l = aim_users;
 	struct aim_user *u;
 	int i = 0;		/* faster than doing g_list_index each time */
 	while (l) {
@@ -965,7 +965,7 @@ void account_offline(struct gaim_connection *gc)
 
 void auto_login()
 {
-	GList *u = aim_users;
+	GSList *u = aim_users;
 	struct aim_user *a = NULL;
 
 	while (u) {
@@ -1123,7 +1123,7 @@ struct aim_user *new_user(const char *name, int proto, int opts)
 	g_snprintf(u->user_info, sizeof(u->user_info), "%s", DEFAULT_INFO);
 	u->protocol = proto;
 	u->options = opts;
-	aim_users = g_list_append(aim_users, u);
+	aim_users = g_slist_append(aim_users, u);
 
 	if (list) {
 		titles[0] = u->username;

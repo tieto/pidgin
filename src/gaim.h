@@ -580,7 +580,7 @@ extern guint away_options;
 
 extern int report_idle;
 extern int web_browser;
-extern GList *aim_users;
+extern GSList *aim_users;
 extern GSList *message_queue;
 extern GSList *away_time_queue;
 extern char sound_cmd[2048];

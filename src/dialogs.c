@@ -963,7 +963,7 @@ static void pounce_user_menu(struct addbp *b, GtkWidget *box)
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
-	GList *u = aim_users;
+	GSList *u = aim_users;
 	struct aim_user *a;
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -998,7 +998,7 @@ static void pounce_user_menu(struct addbp *b, GtkWidget *box)
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
-				    g_list_index(aim_users,
+				    g_slist_index(aim_users,
 						 ((struct gaim_connection *)connections->data)->user));
 	b->user = ((struct gaim_connection *)connections->data)->user;
 
