@@ -197,16 +197,14 @@ faim_export int aim_snlen(const char *sn)
 faim_export int aim_sncmp(const char *sn1, const char *sn2)
 {
 
-	while (toupper(*sn1) == toupper(*sn2)) {
-		if (*sn1 == '\0')
-			return 0;
-		sn1++;
-		sn2++;
+	do {
 		while (*sn2 == ' ')
 			sn2++;
 		while (*sn1 == ' ')
 			sn1++;
-	}
+		if (toupper(*sn1) != toupper(*sn2))
+			return 1;
+	} while ((*sn1 != '\0') && sn1++ && sn2++);
 
-	return 1;
+	return 0;
 }
