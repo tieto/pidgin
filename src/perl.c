@@ -937,16 +937,18 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 				((struct gaim_connection *)arg1)->away : tmpbuf2;
 		break;
 	case event_im_recv:
+		if (!*(char**)arg2 || !*(char**)arg3) return 1;
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
 		buf[0] = tmpbuf1;
-		buf[1] = *(char **)arg2 ? *(char **)arg2 : tmpbuf3;
-		buf[2] = *(char **)arg3 ? *(char **)arg3 : tmpbuf3;
+		buf[1] = *(char **)arg2;
+		buf[2] = *(char **)arg3;
 		break;
 	case event_im_send:
+		if (!*(char**)arg3) return 1;
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
 		buf[0] = tmpbuf1;
 		buf[1] = arg2 ? arg2 : tmpbuf3;
-		buf[2] = *(char **)arg3 ? *(char **)arg3 : tmpbuf3;
+		buf[2] = *(char **)arg3;
 		break;
 	case event_buddy_signon:
 	case event_buddy_signoff:
@@ -983,27 +985,30 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		buf[1] = tmpbuf2;
 		break;
 	case event_chat_recv:
+		if (!*(char**)arg3 || !*(char**)arg4) return 1;
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
 		buf[0] = tmpbuf1;
 		g_snprintf(tmpbuf2, 16, "%d", (int)arg2);
 		buf[1] = tmpbuf2;
 		buf[2] = *(char **)arg3;
-		buf[3] = *(char **)arg4 ? *(char **)arg4 : tmpbuf3;
+		buf[3] = *(char **)arg4;
 		break;
 	case event_chat_send_invite:
+		if (!*(char**)arg4) return 1;
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
 		buf[0] = tmpbuf1;
 		g_snprintf(tmpbuf2, 16, "%d", (int)arg2);
 		buf[1] = tmpbuf2;
 		buf[2] = arg3;
-		buf[3] = *(char **)arg4 ? *(char **)arg4 : tmpbuf3;
+		buf[3] = *(char **)arg4;
 		break;
 	case event_chat_send:
+		if (!*(char**)arg3) return 1;
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
 		buf[0] = tmpbuf1;
 		g_snprintf(tmpbuf2, 16, "%d", (int)arg2);
 		buf[1] = tmpbuf2;
-		buf[2] = *(char **)arg3 ? *(char **)arg3 : tmpbuf3;
+		buf[2] = *(char **)arg3;
 		break;
 	case event_warned:
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
@@ -1021,10 +1026,11 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		buf[0] = arg1;
 		break;
 	case event_im_displayed_sent:
+		if (!*(char**)arg3) return 1;
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
 		buf[0] = tmpbuf1;
 		buf[1] = arg2;
-		buf[2] = *(char **)arg3 ? *(char **)arg3 : tmpbuf3;
+		buf[2] = *(char **)arg3;
 		break;
 	case event_im_displayed_rcvd:
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
