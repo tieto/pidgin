@@ -650,8 +650,10 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (g_ascii_strcasecmp(type, "RL") && user_num == 0 && num_users == 0)
 		return TRUE; /* There are no users on this list. */
 
-	passport  = params[5];
-	friend    = msn_url_decode(params[6]);
+	if (num_users > 0) {
+		passport  = params[5];
+		friend    = msn_url_decode(params[6]);
+	}
 
 	if (session->syncing_lists && session->lists_synced)
 		return TRUE;
