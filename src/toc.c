@@ -940,7 +940,7 @@ static void toc_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
 
 	label = gtk_label_new(_("Join what group:"));
 	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(label), "destroy", GTK_SIGNAL_CONNECT(des_jc), NULL);
+	gtk_signal_connect(GTK_OBJECT(label), "destroy", GTK_SIGNAL_FUNC(des_jc), NULL);
 	gtk_widget_show(label);
 
 	join_chat_entry = gtk_entry_new();
