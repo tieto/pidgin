@@ -2296,14 +2296,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					continue;
 				}
 
-				if (!(font->size || font->face || font->fore || font->back)) {
-					g_free (font);
-					intag = FALSE;
-					tpos = 0;
-					continue;
-				}
-
-				NEW_BIT (NEW_TEXT_BIT);
+				if (font->size || font->face || font->fore || font->back)
+					NEW_BIT (NEW_TEXT_BIT);
 
 				if (fonts) {
 					FontDetail *oldfont = fonts->data;
