@@ -1332,6 +1332,9 @@ gaim_markup_strip_html(const char *str)
 			visible = TRUE;
 		}
 
+		/* XXX: This sucks.  We need to be un-escaping all entities, which
+		 * includes these, as well as the &#num; ones */
+
 		if (str2[i] == '&' && strncasecmp(str2 + i, "&quot;", 6) == 0)
 		{
 		    str2[j++] = '\"';
@@ -1357,6 +1360,13 @@ gaim_markup_strip_html(const char *str)
 		{
 			str2[j++] = '>';
 			i = i + 3;
+			continue;
+		}
+
+		if (str2[i] == '&' && strncasecmp(str2 + i, "&apos;", 6) == 0)
+		{
+			str2[j++] = '\'';
+			i = i + 5;
 			continue;
 		}
 
