@@ -4020,17 +4020,17 @@ static void jabber_setup_set_info(GaimConnection *gc)
 	MultiEntryDlg *b = multi_entry_dialog_new();
 	char *cdata;
 	xmlnode x_vc_data = NULL;
-	GaimAccount *tmp = gc->account;
-	b->account = tmp;
+
+	b->account = gc->account;
 
 
 	/*
 	 * Get existing, XML-formatted, user info
 	 */
-	if((user_info = g_malloc(strlen(tmp->user_info) + 1)) != NULL) {
-		strcpy(user_info, tmp->user_info);
+	if((user_info = g_strdup(gaim_account_get_user_info(gc->account))) != NULL)
 		x_vc_data = xmlstr2xmlnode(user_info);
-	}
+	else
+		user_info = g_strdup("");
 
 	/*
 	 * Set up GSLists for edit with labels from "template," data from user info
@@ -4091,9 +4091,7 @@ static void jabber_setup_set_info(GaimConnection *gc)
 		}
 	}
 
-	if(user_info != NULL) {
-		g_free(user_info);
-	}
+    g_free(user_info);
 
 	b->title = _("Gaim - Edit Jabber vCard");
 	b->role = "set_info";
