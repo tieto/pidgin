@@ -66,8 +66,8 @@ struct _zephyr_account {
         GSList *subscrips;
         int last_id;
         unsigned short port;
-        char ourhost[MAXHOSTNAMELEN];
-        char ourhostcanon[MAXHOSTNAMELEN];
+        char ourhost[HOST_NAME_MAX + 1];
+        char ourhostcanon[HOST_NAME_MAX + 1];
 };
 
 /* struct I need for zephyr_to_html */
@@ -860,29 +860,31 @@ static void zephyr_inithosts(zephyr_account* zephyr)
 	/* XXX This code may not be Win32 clean */
 	struct hostent *hent;
 	
-	if (gethostname(zephyr->ourhost, sizeof(zephyr->ourhost)-1) == -1) {
+	if (gethostname(zephyr->ourhost, sizeof(zephyr->ourhost)) == -1) {
 		gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "unable to retrieve hostname, %%host%% and %%canon%% will be wrong in subscriptions and have been set to unknown\n");
-		g_stpcpy(zephyr->ourhost,"unknown");
-		g_stpcpy(zephyr->ourhostcanon,"unknown");
+		g_strlcpy(zephyr->ourhost, "unknown", sizeof(zephyr->ourhost));
+		g_strlcpy(zephyr->ourhostcanon, "unknown", sizeof(zephyr->ourhost));
 		return;
 	}
 	
 	if (!(hent = gethostbyname(zephyr->ourhost))) {
 		gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "unable to resolve hostname, %%canon%% will be wrong in subscriptions.and has been set to the value of %%host%%, %s\n",zephyr->ourhost);
-		g_stpcpy(zephyr->ourhostcanon,zephyr->ourhost);
+		g_strlcpy(zephyr->ourhostcanon, zephyr->ourhost, sizeof(zephyr->ourhost));
 		return;
 	}
-	g_stpcpy(zephyr->ourhostcanon,hent->h_name);
+
+	g_strlcpy(zephyr->ourhostcanon, hent->h_name, sizeof(zephyr->ourhostcanon));
+
 	return;
 }
 
 static void process_zsubs(zephyr_account *zephyr)
 {
-        /* Loads zephyr chats "(subscriptions) from ~/.zephyr.subs, and 
-           registers (subscribes to) them on the server */
+	/* Loads zephyr chats "(subscriptions) from ~/.zephyr.subs, and 
+	   registers (subscribes to) them on the server */
 
-        /* XXX deal with unsubscriptions */
-        /* XXX deal with punts */
+	/* XXX deal with unsubscriptions */
+	/* XXX deal with punts */
 
 	FILE *f;
 	gchar *fname;
