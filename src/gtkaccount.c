@@ -2004,7 +2004,8 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 		buf = g_strdup_printf(_("Are you sure you want to delete %s?"),
 							  gaim_account_get_username(account));
 
-		gaim_request_action(NULL, NULL, buf, NULL, 1, account, 2,
+		gaim_request_close_with_handle(account);
+		gaim_request_action(account, NULL, buf, NULL, 1, account, 2,
 							_("Delete"), delete_account_cb,
 							_("Cancel"), NULL);
 		g_free(buf);
