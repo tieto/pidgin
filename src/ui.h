@@ -36,8 +36,7 @@
 #define gtk_accel_group_attach(x, y) _gtk_accel_group_attach(x, y)
 #define gtk_widget_lock_accelerators(x)
 
-#define DEFAULT_FONT_XFLD "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
-#define DEFAULT_FONT_FACE "helvetica"
+#define DEFAULT_FONT_FACE "Helvetica"
 
 #define BROWSER_NETSCAPE              0
 #define BROWSER_KONQ                  1
@@ -125,7 +124,6 @@ struct conversation {
 	GtkWidget *log_dialog;
 	int makesound;
 	char fontface[128];
-	char fontxfld[256];
 	int hasfont;
 	GdkColor bgcol;
 	int hasbg;
@@ -296,6 +294,7 @@ extern GtkWidget *bgcseld;
 
 /* Globals in prefs.c */
 extern struct debug_window *dw;
+extern GtkWidget *fontseld;
 
 /* Globals in prpl.c */
 extern GtkWidget *protomenu;

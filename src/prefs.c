@@ -1919,13 +1919,14 @@ void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 	int i = 0;
 	char *fontname;
 
-	fontname = g_strdup(gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontseld)));
+	fontname = g_strdup(gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(f)));
 	destroy_fontsel(0, 0);
 
 	while(fontname[i] && !isdigit(fontname[i]) && i < sizeof(fontface_new)) { 
 		fontface_new[i] = fontname[i];
 		i++;
 	}
-	
+	fontface_new[i] = 0;
+	debug_printf("fontface_new: %s\n", fontface_new);
 	g_free(fontname);
 }

@@ -77,7 +77,7 @@ GtkWidget *all_convos = NULL;
 GtkWidget *convo_notebook = NULL;
 
 char fontface[128] = { 0 };
-char fontxfld[256] = { 0 };
+
 int fontsize = 3;
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
@@ -627,18 +627,8 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 void set_font_face(char *newfont, struct conversation *c)
 {
 	char *pre_fontface;
-	int i, j = 0, k = 0;
-
-
-	sprintf(c->fontxfld, "%s", newfont && *newfont ? newfont : DEFAULT_FONT_XFLD);
-	for (i = 0; i < strlen(c->fontxfld); i++) {
-		if (c->fontxfld[i] == '-') {
-			if (++j > 2)
-				break;
-		} else if (j == 2)
-			c->fontface[k++] = c->fontxfld[i];
-	}
-	c->fontface[k] = '\0';
+	
+	sprintf(c->fontface, "%s", newfont && *newfont ? newfont : DEFAULT_FONT_FACE);
 	c->hasfont = 1;
 
 	pre_fontface = g_strconcat("<FONT FACE=\"", c->fontface, "\">", NULL);
@@ -2761,7 +2751,6 @@ void show_conv(struct conversation *c)
 	c->smiley_dialog = NULL;
 	c->link_dialog = NULL;
 	c->log_dialog = NULL;
-	sprintf(c->fontxfld, "%s", fontxfld);
 	sprintf(c->fontface, "%s", fontface);
 	c->hasfont = 0;
 	c->bgcol = bgcolor;
@@ -3333,7 +3322,6 @@ void update_convo_font()
 		if (b->hasfont)
 			continue;
 		sprintf(b->fontface, "%s", fontface);
-		sprintf(b->fontxfld, "%s", fontxfld);
 	}
 }
 

@@ -581,7 +581,7 @@ GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
 		img = gtk_image_new_from_file(filename);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	}
-	d = gtk_dialog_new_with_buttons(NULL, NULL, GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT);
+	d = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT);
 	g_signal_connect(d, "response", G_CALLBACK(gtk_widget_destroy), NULL);
 	
 	gtk_container_set_border_width (GTK_CONTAINER(d), 6);
@@ -3206,33 +3206,28 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 {
 	/* this could be expanded to include font size, weight, etc.
 	   but for now only works with font face */
-	int i, j = 0, k = 0;
+	int i = 0;
 	char *fontname;
 	struct conversation *c = gtk_object_get_user_data(GTK_OBJECT(fontsel));
 
 	if (c) {
 		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
-
+		while(fontname[i] && !isdigit(fontname[i])) { 
+			i++;
+		}
+		fontname[i] = 0;
 		set_font_face(fontname, c);
 	} else {
 		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
-
-		for (i = 0; i < strlen(fontname); i++) {
-			if (fontname[i] == '-') {
-				if (++j > 2)
-					break;
-			} else if (j == 2)
-				fontface[k++] = fontname[i];
+		while(fontface[i] && !isdigit(fontname[i]) && i < sizeof(fontface)) { 
+			fontface[i] = fontname[i];
+			i++;
 		}
-		fontface[k] = '\0';
-
-		g_snprintf(fontxfld, sizeof(fontxfld), "%s", fontname);
+		fontface[i] = 0;
 	}
 
 	cancel_font(NULL, c);
 }
-
-static GtkWidget *fontseld;
 
 void destroy_fontsel(GtkWidget *w, gpointer d)
 {
@@ -3242,17 +3237,18 @@ void destroy_fontsel(GtkWidget *w, gpointer d)
 
 void show_font_dialog(struct conversation *c, GtkWidget *font)
 {
-
+	char fonttif[128];
 	if (!font) {		/* we came from the prefs dialog */
 		if (fontseld)
 			return;
 		fontseld = gtk_font_selection_dialog_new(_("Select Font"));
-		if (fontxfld[0]) {
+		if (fontface[0]) {
+			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontface);
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
-								fontxfld);
+								fonttif);
 		} else {
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
-								DEFAULT_FONT_XFLD);
+								DEFAULT_FONT_FACE " 12");
 		}
 
 		gtk_object_set_user_data(GTK_OBJECT(fontseld), NULL);
@@ -3261,7 +3257,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->cancel_button),
 				   "clicked", GTK_SIGNAL_FUNC(destroy_fontsel), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->ok_button), "clicked",
-				   GTK_SIGNAL_FUNC(apply_font_dlg), NULL);
+				   GTK_SIGNAL_FUNC(apply_font_dlg), fontseld);
 		gtk_widget_realize(fontseld);
 		aol_icon(fontseld->window);
 		gtk_widget_show(fontseld);
@@ -3277,12 +3273,13 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 		else
 			gtk_object_set_user_data(GTK_OBJECT(c->font_dialog), NULL);
 
-		if (c->fontxfld[0]) {
+		if (c->fontface[0]) {
+			g_snprintf(fonttif, sizeof(fonttif), "%s 12", c->fontface);
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(c->font_dialog),
-								c->fontxfld);
+							       fonttif);
 		} else {
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(c->font_dialog),
-								DEFAULT_FONT_XFLD);
+								DEFAULT_FONT_FACE);
 		}
 
 		gtk_signal_connect(GTK_OBJECT(c->font_dialog), "delete_event",
