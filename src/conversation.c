@@ -95,13 +95,8 @@ static void update_smilies(struct conversation *c);
 /*------------------------------------------------------------------------*/
 
 
-void gaim_setup_imhtml(GtkWidget *imhtml)
+void gaim_setup_imhtml_smileys(GtkWidget *imhtml)
 {
-	g_return_if_fail(imhtml != NULL);
-	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (!(convo_options & OPT_CONVO_SHOW_SMILEY))
-		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
-	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url), NULL);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O-)", oneeye_xpm);
@@ -111,6 +106,17 @@ void gaim_setup_imhtml(GtkWidget *imhtml)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-O)))", mrt_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "8-|)", download_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-]", farted_xpm);
+}
+
+void gaim_setup_imhtml(GtkWidget *imhtml)
+{
+	g_return_if_fail(imhtml != NULL);
+	g_return_if_fail(GTK_IS_IMHTML(imhtml));
+	if (!(convo_options & OPT_CONVO_SHOW_SMILEY))
+		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
+
+	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url), NULL);
+	gaim_setup_imhtml_smileys(imhtml);	
 }
 
 void quiet_set(GtkWidget *tb, int state)
@@ -2208,6 +2214,7 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 	update_icon(cnv);
 	update_checkbox(cnv);
 	update_smilies(cnv);
+	gaim_setup_imhtml_smileys(cnv->text);
 }
 
 int set_dispstyle(int chat)
@@ -2366,6 +2373,7 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 	update_icon(c);
 	update_checkbox(c);
 	update_smilies(c);
+	gaim_setup_imhtml_smileys(c->text);
 }
 
 void update_buttons_by_protocol(struct conversation *c)
