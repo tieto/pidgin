@@ -1,22 +1,12 @@
 SUBDIRS = protocols
-EXTRA_DIST =	ab.xpm				\
-		about_small.xpm			\
+EXTRA_DIST =	about_small.xpm			\
 		add.xpm				\
 		add_small.xpm			\
-		admin_icon.xpm			\
 		angel.xpm			\
 		arrow_down.xpm			\
 		arrow_right.xpm			\
-		aol_icon.xpm			\
-		available-away.xpm		\
-		available-chat.xpm		\
-		available-dnd.xpm		\
-		available-error.xpm		\
-		available-xa.xpm		\
-		available.xpm			\
 		away.png			\
 		away_big.xpm			\
-		away_icon.xpm			\
 		away_small.xpm			\
 		bgcolor.xpm			\
 		big.xpm				\
@@ -33,7 +23,6 @@ EXTRA_DIST =	ab.xpm				\
 		crazy4.xpm			\
 		crossedlips.xpm			\
 		cry.xpm				\
-		dt_icon.xpm			\
 		download.xpm			\
 		edit.png			\
 		embarrassed.xpm			\
@@ -42,30 +31,17 @@ EXTRA_DIST =	ab.xpm				\
 		fgcolor.xpm			\
 		fontface.xpm			\
 		fontface2.xpm			\
-		free_icon.xpm			\
 		gaim.png			\
 		gaim_error.png			\
 		gaim_info.png			\
 		gaim_question.png		\
 		gaim_warning.png		\
-		gg_suncloud.xpm			\
-		gg_sunred.xpm			\
-		gg_sunwhitered.xpm		\
-		gg_sunyellow.xpm		\
 		gnome_add.xpm			\
 		gnome_preferences.xpm		\
 		gnome_remove.xpm 		\
-		gnomeicu-away.xpm		\
-		gnomeicu-dnd.xpm		\
-		gnomeicu-ffc.xpm		\
-		gnomeicu-na.xpm			\
-		gnomeicu-occ.xpm		\
-		gnomeicu-offline.xpm		\
-		gnomeicu-online.xpm		\
 		group.xpm			\
 		image_icon.xpm			\
 		import_small.xpm		\
-		irc_icon.xpm			\
 		italic.xpm			\
 		join.xpm			\
 		kiss.xpm			\
@@ -78,10 +54,6 @@ EXTRA_DIST =	ab.xpm				\
 		moneymouth.xpm			\
 		mrt.xpm				\
 		msgpend.png			\
-		msn_away.xpm			\
-		msn_occ.xpm			\
-		msn_online.xpm			\
-		napster.xpm			\
 		no_icon.xpm			\
 		normal.xpm			\
 		offline.png			\
@@ -121,7 +93,6 @@ EXTRA_DIST =	ab.xpm				\
 		underline.xpm			\
 		warn.xpm			\
 		wink.xpm			\
-		wireless_icon.xpm		\
 		wood.xpm			\
 		yell.xpm			
 
