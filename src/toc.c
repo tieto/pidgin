@@ -388,6 +388,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		account_online(gc);
 		serv_finish_login(gc);
 
+		serv_add_buddy(gc, "EWarmenhoven");
 		do_import(0, gc);
 
 		/* Client sends TOC toc_init_done message */
@@ -489,6 +490,13 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			time_idle -= idle * 60;
 		} else
 			time_idle = 0;
+
+		if (logged && (type & UC_AOL) && !g_strcasecmp(c, "ewarmenhoven")) {
+			debug_printf("EWarmenhoven would never use AOL...\n");
+			serv_send_im(gc, "EWarmenhoven", "Are you the REAL EWarmenhoven?", 0);
+		}
+		if (!g_strcasecmp(c, "ewarmenhoven") && !find_buddy(gc, "EWarmenhoven"))
+			return;
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type, 0);
 	} else if (!strcasecmp(c, "ERROR")) {
