@@ -4,7 +4,8 @@
 RootName: @gaim.sourceforge.net/gaim:$SOFTWAREVERSION
 DisplayName: Gaim Internet Messenger
 ShortName: gaim
-Maintainer: The Gaim Developers - http://gaim.sourceforge.net/
+Maintainer: The Gaim Developers
+URL: http://gaim.sourceforge.net/
 Packager: Tim Ringenbach <marv_sf@users.sourceforge.net>
 Summary: Gaim allows you to talk to friends on a variety of chat network, such as AIM, ICQ, Yahoo!, MSN, and IRC.
 SoftwareVersion: @VERSION@
@@ -55,7 +56,7 @@ installLib ./lib/libgaim-remote.so.0.0.0
 # do the plugins
 copyFiles ./lib/gaim "$PREFIX/lib"
 installMan 1 ./man/man1/gaim.1
-installDesktop "Networking/Instant messaging" ./share/applications/gaim.desktop
+installDesktop "Networking/Instant Messaging" ./share/applications/gaim.desktop
 copyFiles ./share/locale "$PREFIX/share"
 copyFiles ./share/pixmaps "$PREFIX/share"
 copyFiles ./share/sounds "$PREFIX/share"
