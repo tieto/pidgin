@@ -1005,6 +1005,18 @@ GList *yahoo_c_info(GaimConnection *gc)
 	return m;
 }
 
+GHashTable *yahoo_c_info_defaults(GaimConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL)
+		g_hash_table_insert(defaults, "room", g_strdup(chat_name));
+
+	return defaults;
+}
+
 void yahoo_c_join(GaimConnection *gc, GHashTable *data)
 {
 	struct yahoo_data *yd;

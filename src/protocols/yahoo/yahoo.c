@@ -3272,7 +3272,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_away_states,
 	yahoo_blist_node_menu,
 	yahoo_c_info,
-	NULL,
+	yahoo_c_info_defaults,
 	yahoo_login,
 	yahoo_close,
 	yahoo_send_im,
