@@ -37,6 +37,7 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <errno.h>
+#include "proxy.h"
 
 gchar * strip_html(gchar * text)
 {
@@ -108,7 +109,6 @@ char *grab_url(struct aim_user *user, char *url)
         int len;
 	int read_rv;
 	int datalen = 0;
-	struct in_addr *host;
 	char buf[256];
 	char data;
         int startsaving = 0;
@@ -118,10 +118,10 @@ char *grab_url(struct aim_user *user, char *url)
 
 	if (user) {
 		if ((sock = proxy_connect(website.address, website.port, user->proto_opt[2],
-					user->proto_opt[3], atoi(user->proto_opt[4]))) < 0)
+					atoi(user->proto_opt[3]), atoi(user->proto_opt[4]))) < 0)
 			return g_strdup(_("g003: Error opening connection.\n"));
 	} else {
-		if ((sock = proxy_connect(website.address, website.port, NULL, NULL, -1)) < 0)
+		if ((sock = proxy_connect(website.address, website.port, NULL, 0, -1)) < 0)
 			return g_strdup(_("g003: Error opening connection.\n"));
 	}
 

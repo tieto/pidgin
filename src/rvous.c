@@ -37,6 +37,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <gtk/gtk.h>
+#include "proxy.h"
 #include "gaim.h"
 
 static void do_send_file(GtkWidget *, struct file_transfer *);
@@ -236,7 +237,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 
 
 	/* XXX is ft->port in host order or network order? */
-	ft->fd = proxy_connect(ft->ip, ft->port, NULL, NULL, -1);
+	ft->fd = proxy_connect(ft->ip, ft->port, NULL, 0, -1);
 
 	if (ft->fd <= -1) {
 		fclose(ft->f);
@@ -515,7 +516,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 
 	/* XXX is ft->port in host order or network order? */
-	ft->fd = proxy_connect(ft->ip, ft->port, NULL, NULL, -1);
+	ft->fd = proxy_connect(ft->ip, ft->port, NULL, 0, -1);
 
 	if (ft->fd <= -1) {
 		free_ft(ft);

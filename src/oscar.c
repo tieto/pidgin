@@ -722,7 +722,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	dim = find_direct_im(od, d->sn);
 	if (dim) {
 		cancel_direct_im(w, d); /* 40 */
-		return;
+		return TRUE;
 	}
 	dim = g_new0(struct direct_im, 1);
 	dim->gc = d->gc;
@@ -731,7 +731,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	if ((dim->conn = aim_directim_connect(od->sess, od->conn, d->priv)) == NULL) {
 		g_free(dim);
 		cancel_direct_im(w, d);
-		return;
+		return TRUE;
 	}
 
 	if (!(dim->cnv = find_conversation(d->sn))) dim->cnv = new_conversation(d->sn);
@@ -765,8 +765,6 @@ static void cancel_getfile(gpointer w, struct ask_getfile *g) {
 
 static int accept_getfile(gpointer w, struct ask_getfile *g) {
 	struct gaim_connection *gc = g->gc;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct aim_conn_t *newconn;
 
 	/*
 	if ((newconn = aim_accepttransfer(od->sess, od->conn, g->sn, g->cookie, g->ip, od->sess->oft.listing, AIM_CAPS_GETFILE)) == NULL) {
@@ -831,7 +829,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		} else if (rendtype & AIM_CAPS_SENDFILE) {
 		} else if (rendtype & AIM_CAPS_GETFILE) {
 			char *ip, *cookie;
-			struct aim_conn_t *newconn;
 			struct ask_getfile *g = g_new0(struct ask_getfile, 1);
 			char buf[256];
 

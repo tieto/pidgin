@@ -923,7 +923,7 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 
 	g->members = NULL;
 	
-	if (!blist) return;
+	if (!blist) return g;
 
 	build_edit_tree();
 	
