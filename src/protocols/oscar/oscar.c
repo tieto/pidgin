@@ -2430,7 +2430,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	int ret = 0;
 	if (dim) {
 		if (dim->connected) {  /* If we're not connected yet, send through server */
-			ret =  aim_send_im_direct(odata->sess, dim->conn, message, len == -1 ? strlen(len) : len);
+			ret =  aim_send_im_direct(odata->sess, dim->conn, message, len == -1 ? strlen(message) : len);
 			if (ret == 0)
 				return 1;
 			else return ret;
