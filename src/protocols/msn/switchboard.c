@@ -509,7 +509,7 @@ msn_switchboard_new(MsnSession *session)
 		msn_servconn_register_command(servconn, "NLN",      blank_cmd);
 		msn_servconn_register_command(servconn, "OUT",      out_cmd);
 		msn_servconn_register_command(servconn, "USR",      usr_cmd);
-		msn_servconn_register_command(servconn, "_unknown_",unknown_cmd);
+		msn_servconn_register_command(servconn, "_UNKNOWN_",unknown_cmd);
 
 		/* Register the message type callbacks. */
 		msn_servconn_register_msg_type(servconn, "text/plain",plain_msg);

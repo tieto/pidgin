@@ -268,7 +268,7 @@ msn_dispatch_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(dispatch, "INF",       inf_cmd);
 		msn_servconn_register_command(dispatch, "VER",       ver_cmd);
 		msn_servconn_register_command(dispatch, "XFR",       xfr_cmd);
-		msn_servconn_register_command(dispatch, "_unknown_", unknown_cmd);
+		msn_servconn_register_command(dispatch, "_UNKNOWN_", unknown_cmd);
 
 		/* Save this for future use. */
 		dispatch_commands = dispatch->commands;

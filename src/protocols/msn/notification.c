@@ -1880,7 +1880,7 @@ msn_notification_new(MsnSession *session)
 		msn_servconn_register_command(notification, "USR",       usr_cmd);
 		msn_servconn_register_command(notification, "VER",       ver_cmd);
 		msn_servconn_register_command(notification, "XFR",       xfr_cmd);
-		msn_servconn_register_command(notification, "_unknown_", unknown_cmd);
+		msn_servconn_register_command(notification, "_UNKNOWN_", unknown_cmd);
 
 		/* Register the message type callbacks. */
 		msn_servconn_register_msg_type(notification, "text/x-msmsgsprofile",
