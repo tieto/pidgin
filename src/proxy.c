@@ -189,7 +189,7 @@ gaim_global_proxy_get_info(void)
 typedef void (*dns_callback_t)(GSList *hosts, gpointer data,
 		const char *error_message);
 
-#ifdef __unix__
+#if 0
 
 /*  This structure represents both a pending DNS request and
  *  a free child process.
@@ -634,11 +634,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 	return 0;
 }
 
-#elif defined _WIN32 /* end __unix__ */
-
-/* Note: The below win32 implementation is actually platform independent.
-   Perhaps this can be used in place of the above platform dependent code.
-*/
+#elif defined G_THREADS_ENABLED
 
 typedef struct _dns_tdata {
 	char *hostname;
@@ -662,10 +658,42 @@ static gboolean dns_main_thread_cb(gpointer data) {
 }
 
 static gpointer dns_thread(gpointer data) {
-	struct sockaddr_in sin;
-	dns_tdata *td = (dns_tdata*)data;
-	struct hostent *hp;
 
+#if HAVE_GETADDRINFO
+	int rc;
+	struct addrinfo hints, *res, *tmp;
+	char servname[20];
+#else
+	struct sockaddr_in sin;
+	struct hostent *hp;
+#endif
+	dns_tdata *td = (dns_tdata*)data;
+
+#if HAVE_GETADDRINFO
+	g_snprintf(servname, sizeof(servname), "%d", td->port);
+	memset(&hints,0,sizeof(hints));
+
+	/* This is only used to convert a service
+	 * name to a port number. As we know we are
+	 * passing a number already, we know this
+	 * value will not be really used by the C
+	 * library.
+	 */
+	hints.ai_socktype = SOCK_STREAM;
+	if ((rc = getaddrinfo(td->hostname, servname, &hints, &res)) == 0) {
+		tmp = res;
+		while(res) {
+			td->hosts = g_slist_append(td->hosts,
+				GSIZE_TO_POINTER(res->ai_addrlen));
+			td->hosts = g_slist_append(td->hosts,
+				g_memdup(res->ai_addr, res->ai_addrlen));
+			res = res->ai_next;
+		}
+		freeaddrinfo(tmp);
+	} else {
+		td->errmsg = g_strdup_printf("DNS getaddrinfo(\"%s\", \"%s\") error: %d", td->hostname, servname, rc);
+	}
+#else
 	if ((hp = gethostbyname(td->hostname))) {
 		memset(&sin, 0, sizeof(struct sockaddr_in));
 		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
@@ -673,12 +701,13 @@ static gpointer dns_thread(gpointer data) {
 		sin.sin_port = htons(td->port);
 
 		td->hosts = g_slist_append(td->hosts,
-				GINT_TO_POINTER(sizeof(sin)));
+				GSIZE_TO_POINTER(sizeof(sin)));
 		td->hosts = g_slist_append(td->hosts,
 				g_memdup(&sin, sizeof(sin)));
 	} else {
-		td->errmsg = g_strdup_printf("DNS error: %d", errno);
+		td->errmsg = g_strdup_printf("DNS gethostbyname(\"%s\") error: %d", td->hostname, h_errno);
 	}
+#endif
 	/* back to main thread */
 	g_idle_add(dns_main_thread_cb, td);
 	return 0;
@@ -717,7 +746,7 @@ int gaim_gethostbyname_async(const char *hostname, int port,
 	return 0;
 }
 
-#else /* not __unix__ or _WIN32 */
+#else /* not G_THREADS_ENABLED */
 
 typedef struct {
 	gpointer data;
@@ -1891,10 +1920,8 @@ gaim_proxy_init(void)
 								proxy_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/core/proxy/password",
 								proxy_pref_cb, NULL);
-#ifdef _WIN32
 	if(!g_thread_supported())
 		g_thread_init(NULL);
-#endif
 }
 
 void *
