@@ -335,6 +335,7 @@ msn_cmdproc_show_error(MsnCmdProc *cmdproc, int error)
 		case MSN_ERROR_MISC:
 			tmp = _("Miscellaneous error"); break;
 		case MSN_ERROR_SIGNOTHER:
+			gc->wants_to_die = TRUE;
 			tmp = _("You have signed on from another location."); break;
 		case MSN_ERROR_SERVDOWN:
 			tmp = _("The MSN servers are going down temporarily."); break;

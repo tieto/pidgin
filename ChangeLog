@@ -36,6 +36,9 @@ version 0.81cvs:
 	* Prevent (null) or an empty string from being logged as the sender's
 	  name if the sender no longer has an alias because the account is
 	  signed off (Kevin Stange)
+	* The auto-reconnect plugin will no longer attempt to reconnect an
+	  MSN account if you were disconnected because you signed on from
+	  another location (Stu Tomlinson)
 
 version 0.80 (07/15/2004):
 	New Features:
