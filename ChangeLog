@@ -151,7 +151,7 @@ version 0.81 (08/05/2004):
 		* Fixed duplicate root folder bug
 		* Fixed bug with folder ordering (on a first time login
 		  folders were being added in reverse order).
-	* Use ISO date format for the system log (Eduardo P鲥z)
+	* Use ISO date format for the system log (Eduardo Pérez)
 	* Long buddy lists with irc should cause flooding disconnects less
 	  (Stu Tomlinson)
 	* Better smiley substitution
@@ -195,7 +195,7 @@ version 0.80 (07/15/2004):
 	* Parentheses are now displayed around the title and tabs of
 	  conversations from offline accounts or parted chats.
 	* Zephyr typing notification (Arun A Tharuvai)
-	* Account dialog's columns are resizable (Eduardo P鲥z)
+	* Account dialog's columns are resizable (Eduardo Pérez)
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9
