@@ -34,7 +34,7 @@
 void gaim_gtkdialogs_im();
 void gaim_gtkdialogs_info();
 void gaim_gtkdialogs_log();
-void gaim_gtkdialogs_new_im(GaimAccount *, const char *);
+void gaim_gtkdialogs_im_with_user(GaimAccount *, const char *);
 void gaim_gtkdialogs_warn(GaimConnection *, const char *);
 
 void alias_dialog_bud(GaimBuddy *);

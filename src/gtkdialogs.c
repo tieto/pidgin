@@ -411,10 +411,11 @@ static gboolean show_ee_dialog(const char *ee)
 }
 
 void
-gaim_gtkdialogs_new_im(GaimAccount *account, const char *username)
+gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
 {
 	GaimConversation *conv;
 	GaimConvWindow *win;
+	GaimGtkWindow *gtkwin;
 
 	conv = gaim_find_conversation_with_account(username, account);
 
@@ -422,8 +423,9 @@ gaim_gtkdialogs_new_im(GaimAccount *account, const char *username)
 		conv = gaim_conversation_new(GAIM_CONV_IM, account, username);
 
 	win = gaim_conversation_get_window(conv);
+	gtkwin = GAIM_GTK_WINDOW(win);
 
-	gaim_conv_window_raise(win);
+	gtk_window_present(GTK_WINDOW(gtkwin->window));
 	gaim_conv_window_switch_conversation(win, gaim_conversation_get_index(conv));
 }
 
@@ -436,7 +438,7 @@ new_im_cb(gpointer data, GaimRequestFields *fields)
 	account  = gaim_request_fields_get_account(fields, "account");
 	username = gaim_request_fields_get_string(fields,  "screenname");
 
-	gaim_gtkdialogs_new_im(account, username);
+	gaim_gtkdialogs_im_with_user(account, username);
 }
 
 void

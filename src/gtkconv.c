@@ -4540,7 +4540,9 @@ gaim_gtk_raise(GaimConvWindow *win)
 {
 	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 
-	gtk_window_present(GTK_WINDOW(gtkwin->window));
+	gtk_widget_show(gtkwin->window);
+	gtk_window_deiconify(GTK_WINDOW(gtkwin->window));
+	gdk_window_raise(gtkwin->window->window);
 }
 
 static void

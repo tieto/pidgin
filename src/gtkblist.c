@@ -511,7 +511,7 @@ static void gtk_blist_menu_info_cb(GtkWidget *w, GaimBuddy *b)
 
 static void gtk_blist_menu_im_cb(GtkWidget *w, GaimBuddy *b)
 {
-	gaim_gtkdialogs_new_im(b->account, b->name);
+	gaim_gtkdialogs_im_with_user(b->account, b->name);
 }
 
 static void gtk_blist_menu_send_file_cb(GtkWidget *w, GaimBuddy *b)
@@ -571,12 +571,12 @@ static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			gaim_gtkdialogs_new_im(((GaimBuddy*)node)->account, ((GaimBuddy*)node)->name);
+			gaim_gtkdialogs_im_with_user(((GaimBuddy*)node)->account, ((GaimBuddy*)node)->name);
 			return;
 		} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 			GaimBuddy *buddy =
 				gaim_contact_get_priority_buddy((GaimContact*)node);
-			gaim_gtkdialogs_new_im(buddy->account, buddy->name);
+			gaim_gtkdialogs_im_with_user(buddy->account, buddy->name);
 			return;
 		}
 	}
@@ -928,7 +928,7 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 		else
 			buddy = (GaimBuddy*)node;
 
-		gaim_gtkdialogs_new_im(buddy->account, buddy->name);
+		gaim_gtkdialogs_im_with_user(buddy->account, buddy->name);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		serv_join_chat(((GaimChat *)node)->account->gc, ((GaimChat *)node)->components);
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {

@@ -4,10 +4,11 @@ version 0.82cvs:
 	Gaim API:
 	* Removed multi.h
 	* Renamed ui.h to gtkdialogs.h
-	* Renamed show_warn_dialog to gaim_gtkdialogs_warn
-	* Renamed show_im_dialog to gaim_gtkdialogs_im
 	* Renamed show_info_dialog to gaim_gtkdialogs_info
 	* Renamed show_log_dialog to gaim_gtkdialogs_log
+	* Renamed show_warn_dialog to gaim_gtkdialogs_warn
+	* Renamed show_im_dialog to gaim_gtkdialogs_im
+	* Renamed gaim_gtkdialogs_new_im to gaim_gtkdialogs_im_with_user
 
 version 0.81 (08/05/2004):
 	Commands API:
