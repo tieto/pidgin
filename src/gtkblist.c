@@ -76,7 +76,7 @@ typedef struct
 typedef struct
 {
 	GaimAccount *account;
-	const char *default_chat_name;
+	gchar *default_chat_name;
 
 	GtkWidget *window;
 	GtkWidget *account_menu;
@@ -4106,8 +4106,8 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 	}
 
 	gtk_widget_destroy(data->window);
+	g_free(data->default_chat_name);
 	g_list_free(data->entries);
-
 	g_free(data);
 }
 
@@ -4121,6 +4121,7 @@ add_chat_resp_cb(GtkWidget *w, int resp, GaimGtkAddChatData *data)
 	else
 	{
 		gtk_widget_destroy(data->window);
+		g_free(data->default_chat_name);
 		g_list_free(data->entries);
 		g_free(data);
 	}
@@ -4260,41 +4261,40 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	GtkWidget *vbox;
 	GtkWidget *img;
 
+	if (account != NULL) {
+		gc = gaim_account_get_connection(account);
+
+		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat == NULL) {
+			gaim_notify_error(gc, NULL, _("This protocol does not support chat rooms."), NULL);
+			return;
+		}
+	} else {
+		/* Find an account with chat capabilities */
+		for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
+			gc = (GaimConnection *)l->data;
+
+			if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat != NULL) {
+				account = gaim_connection_get_account(gc);
+				break;
+			}
+		}
+
+		if (account == NULL) {
+			gaim_notify_error(NULL, NULL,
+							  _("You are not currently signed on with any "
+								"protocols that have the ability to chat."), NULL);
+			return;
+		}
+	}
+
 	data = g_new0(GaimGtkAddChatData, 1);
+	data->account = account;
+	data->default_chat_name = g_strdup(name);
 
 	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
 								   GTK_ICON_SIZE_DIALOG);
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-
-	data->default_chat_name = name;
-
-	if (account != NULL)
-	{
-		data->account = account;
-	}
-	else
-	{
-		/* Select an account with chat capabilities */
-		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
-		{
-			gc = (GaimConnection *)l->data;
-
-			if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat != NULL)
-			{
-				data->account = gaim_connection_get_account(gc);
-				break;
-			}
-		}
-	}
-
-	if (data->account == NULL)
-	{
-		gaim_notify_error(NULL, NULL,
-						  _("You are not currently signed on with any "
-							"protocols that have the ability to chat."), NULL);
-		return;
-	}
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 

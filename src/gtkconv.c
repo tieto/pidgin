@@ -2570,11 +2570,13 @@ gray_stuff_out(GaimConversation *conv)
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GdkPixbuf *window_icon = NULL;
 	GtkIMHtmlButtons buttons;
+	GaimAccount *account;
 
 	win     = gaim_conversation_get_window(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gc      = gaim_conversation_get_gc(conv);
+	account = gaim_connection_get_account(gc);
 
 	if (gc != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -2610,8 +2612,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkwin->menu.alias);
 		gtk_widget_show(gtkwin->menu.block);
 
-		if (gaim_find_buddy(gaim_conversation_get_account(conv),
-				    gaim_conversation_get_name(conv)) == NULL) {
+		if (gaim_find_buddy(account, gaim_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
 			gtk_widget_show(gtkconv->add);
@@ -2643,17 +2644,16 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkwin->menu.alias);
 		gtk_widget_hide(gtkwin->menu.block);
 
-		if (gaim_blist_find_chat(gaim_conversation_get_account(conv),
-								 gaim_conversation_get_name(conv)) == NULL) {
-		/* If the chat is NOT in the buddy list */
+		if (gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) == NULL) {
+			/* If the chat is NOT in the buddy list */
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
 			gtk_widget_show(gtkconv->add);
 			gtk_widget_hide(gtkconv->remove);
 		} else {
-		/* If the chat IS in the buddy list */
-			gtk_widget_show(gtkwin->menu.remove);
+			/* If the chat IS in the buddy list */
 			gtk_widget_hide(gtkwin->menu.add);
+			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkconv->add);
 			gtk_widget_show(gtkconv->remove);
 		}
@@ -2672,33 +2672,29 @@ gray_stuff_out(GaimConversation *conv)
 		/* Account is online */
 
 		/* Deal with buttons */
-		gtk_widget_set_sensitive(gtkconv->add, TRUE);
-		gtk_widget_set_sensitive(gtkconv->remove, TRUE);
 		gtk_widget_set_sensitive(gtkconv->info, (prpl_info->get_info != NULL));
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 		{
-			gtk_widget_set_sensitive(gtkconv->send,
-									 (prpl_info->send_im != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.im->warn,
-									 (prpl_info->warn != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.im->block,
-									 (prpl_info->add_deny != NULL));
+			gtk_widget_set_sensitive(gtkconv->add, (prpl_info->add_buddy != NULL));
+			gtk_widget_set_sensitive(gtkconv->remove, (prpl_info->remove_buddy != NULL));
+			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->send_im != NULL));
+			gtk_widget_set_sensitive(gtkconv->u.im->warn, (prpl_info->warn != NULL));
+			gtk_widget_set_sensitive(gtkconv->u.im->block, (prpl_info->add_deny != NULL));
 			gtk_widget_set_sensitive(gtkconv->u.im->send_file,
-					(prpl_info->send_file
-					 && (!prpl_info->can_receive_file
-						 || prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
+				(prpl_info->send_file && (!prpl_info->can_receive_file ||
+				 prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
 		}
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
 		{
-			gtk_widget_set_sensitive(gtkconv->send,
-									 (prpl_info->chat_send != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.chat->invite,
-									 (prpl_info->chat_invite != NULL));
+			/* Only allow adding/removing if this is a chat and not a conference */
+			gtk_widget_set_sensitive(gtkconv->add, (prpl_info->join_chat != NULL));
+			gtk_widget_set_sensitive(gtkconv->remove, (prpl_info->join_chat != NULL));
+			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->chat_send != NULL));
+			gtk_widget_set_sensitive(gtkconv->u.chat->invite, (prpl_info->chat_invite != NULL));
 		}
 
 		/* Deal with the toolbar */
-
 		if (gc->flags & GAIM_CONNECTION_HTML) {
 			buttons = GTK_IMHTML_ALL;    /* Everything on */
 			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
@@ -2715,45 +2711,35 @@ gray_stuff_out(GaimConversation *conv)
 			buttons = GTK_IMHTML_SMILEY;
 		}
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
-		gtk_imhtmltoolbar_associate_smileys (GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gaim_account_get_protocol_id(gaim_conversation_get_account(conv)));
+		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gaim_account_get_protocol_id(account));
 
 		/* Deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.warn, (prpl_info->warn != NULL));
-		gtk_widget_set_sensitive(gtkwin->menu.invite,
-								 (prpl_info->chat_invite != NULL));
+		gtk_widget_set_sensitive(gtkwin->menu.invite, (prpl_info->chat_invite != NULL));
+		gtk_widget_set_sensitive(gtkwin->menu.block, (prpl_info->add_deny != NULL));
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link, (gc->flags & GAIM_CONNECTION_HTML));
+		gtk_widget_set_sensitive(gtkwin->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE));
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+			gtk_widget_set_sensitive(gtkwin->menu.add, (prpl_info->add_buddy != NULL));
+			gtk_widget_set_sensitive(gtkwin->menu.remove, (prpl_info->remove_buddy != NULL));
 			gtk_widget_set_sensitive(gtkwin->menu.send_file,
-					(gc && prpl_info->send_file != NULL
-					 && (!prpl_info->can_receive_file 
-						 || prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
-			if (gaim_find_buddy(gaim_conversation_get_account(conv),
-					    gaim_conversation_get_name(conv)) == NULL)
-				gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
-			else
-				gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
+					(prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||
+					 prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
+			gtk_widget_set_sensitive(gtkwin->menu.alias,
+					(gaim_find_buddy(account, gaim_conversation_get_name(conv)) != NULL));
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-			if (gaim_blist_find_chat(gaim_conversation_get_account(conv),
-									 gaim_conversation_get_name(conv)) == NULL)
-				gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
-			else
-				gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
+			gtk_widget_set_sensitive(gtkwin->menu.add, (prpl_info->join_chat != NULL));
+			gtk_widget_set_sensitive(gtkwin->menu.remove, (prpl_info->join_chat != NULL));
+			gtk_widget_set_sensitive(gtkwin->menu.alias, 
+					(gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) != NULL));
 		}
-
-		gtk_widget_set_sensitive(gtkwin->menu.block,
-								 (prpl_info->add_deny != NULL));
-		gtk_widget_set_sensitive(gtkwin->menu.add, TRUE);
-		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
-		gtk_widget_set_sensitive(gtkwin->menu.insert_link,
-								 gc->flags & GAIM_CONNECTION_HTML);
-		gtk_widget_set_sensitive(gtkwin->menu.insert_image,
-								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 	} else {
 		/* Account is offline */
-		/* Or it's a chat where we left. */
+		/* Or it's a chat that we've left. */
 
 		/* Deal with buttons */
 		gtk_widget_set_sensitive(gtkconv->add, FALSE);
