@@ -1503,6 +1503,9 @@ gaim_conversation_update(GaimConversation *conv, GaimConvUpdateType type)
 
 	if (ops != NULL && ops->updated != NULL)
 		ops->updated(conv, type);
+
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "conversation-updated", conv, type);
 }
 
 /**************************************************************************
@@ -2895,6 +2898,12 @@ gaim_conversations_init(void)
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION));
+
+	gaim_signal_register(handle, "conversation-updated",
+						 gaim_marshal_VOID__POINTER_UINT, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "deleting-conversation",
 						 gaim_marshal_VOID__POINTER, NULL, 1,

@@ -18,6 +18,10 @@ version 0.82cvs:
 	* Renamed show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
 	* Renamed show_confirm_del_contact to gaim_gtkdialogs_remove_contact
 
+	Signals:
+	* Added: conversation-updated for any update to the data associated
+	  with the conversation (topic, icon, adding to buddy list, etc.)
+
 version 0.81 (08/05/2004):
 	Commands API:
 	* Most functions now have a void *data argument.
@@ -28,17 +32,19 @@ version 0.81 (08/05/2004):
 	* Renamed gaim_get_buddy_alias_only to gaim_buddy_get_alias_only
 
 	Conversation API:
-	* Changed: gaim_conv_chat_add_user() (added flags parameter)
-	gaim_conv_chat_add_users() now (added GList of flags parameter)
-	gaim_conv_chat_get_users() now returns a GList of GaimChatBuddy's
-	gaim_conv_chat_set_users() now expects a GList of GaimChatBuddy's
+	* Changed gaim_conv_chat_add_user(), added flags parameter
+	* Changed gaim_conv_chat_add_users(), added GList of flags parameter
+	* Changed gaim_conv_chat_get_users(), now returns a GList of
+	  GaimChatBuddy's
+	* Changed gaim_conv_chat_set_users() now expects a GList of
+	  GaimChatBuddy's
 	* Added: gaim_conv_chat_set_user_flags()
-	gaim_conv_chat_get_user_flags()
-	gaim_conv_chat_find_user()
-	gaim_conv_chat_cb_new()
-	gaim_conv_chat_cb_find()
-	gaim_conv_chat_cb_destroy()
-	gaim_conv_chat_cb_get_name()
+	* Added: gaim_conv_chat_get_user_flags()
+	* Added: gaim_conv_chat_find_user()
+	* Added: gaim_conv_chat_cb_new()
+	* Added: gaim_conv_chat_cb_find()
+	* Added: gaim_conv_chat_cb_destroy()
+	* Added: gaim_conv_chat_cb_get_name()
 
 	Conversation UI ops:
 	* Added: chat_update_user()
@@ -46,10 +52,10 @@ version 0.81 (08/05/2004):
 	Signals:
 	* Changed: chat-buddy-joining & chat-buddy-joined now include the user's flags
 	* Changed: chat-buddy-joining & chat-buddy-leaving are now booleans, return
-	TRUE if you don't want the join/leave to be displayed in the UI.
+	  TRUE if you don't want the join/leave to be displayed in the UI.
 	* Added: chat-buddy-flags for when user's flags change
-	gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT (required for the new
-	chat-buddy-flags signal)
+	  gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT (required for the new
+	  chat-buddy-flags signal)
 	* Added: account-modified for when account settings have been changed.
 
 version 0.80 (07/15/2004):
