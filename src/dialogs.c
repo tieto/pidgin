@@ -45,6 +45,7 @@
 #include "pixmaps/ok.xpm"
 #include "pixmaps/add.xpm"
 #include "pixmaps/warn.xpm"
+#include "pixmaps/gnome_remove.xpm"
 
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
@@ -755,6 +756,8 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 /*  The dialog for adding buddies                                         */
 /*------------------------------------------------------------------------*/
 
+extern void add_callback(GtkWidget *, struct conversation *);
+
 void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 {
 	char *grp, *who;
@@ -767,10 +770,15 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
         add_buddy(grp, who);
 
-/* FIXME ! pixmaps now
-        if (c != NULL)
-		gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), _("Remove"));
-*/
+        if (c != NULL) {
+		GtkWidget *parent = c->add_button->parent;
+		gtk_widget_destroy(c->add_button);
+		c->add_button = picture_button2(c->window, NULL, gnome_remove_xpm);
+		gtk_signal_connect(GTK_OBJECT(c->add_button), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+		gtk_box_pack_end(GTK_BOX(parent), c->add_button, FALSE, FALSE, 0);
+		gtk_box_reorder_child(GTK_BOX(parent), c->add_button, 1);
+		gtk_widget_show(c->add_button);
+	}
         
         build_edit_tree();
 
