@@ -589,6 +589,23 @@ void open_url(GtkWidget *w, char *url)
 		} else {
 			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
 		}
+	} else if (web_browser == BROWSER_OPERA) {
+		pid_t pid;
+
+		pid = fork();
+
+		if (pid == 0) {
+			char *args[4];
+			args[0] = g_strdup("opera");
+			args[1] = g_strdup("-newwindow");
+			args[2] = url;
+			args[3] = NULL;
+
+			execvp(args[0], args);
+			_exit(0);
+		} else {
+			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
+		}
 #ifdef USE_GNOME
 	} else if (web_browser == BROWSER_GNOME) {
 		gnome_url_show(url);

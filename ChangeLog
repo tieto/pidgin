@@ -11,6 +11,7 @@ version 0.47:
 	* When creating a new buddy pounce, gaim now automagically
 	  selects "on away" or "on idle", if the user is away
 	  or idle.
+	* Add Opera to the available browsers (thanks Brian Enigma)
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)

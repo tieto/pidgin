@@ -279,6 +279,7 @@ static void general_page()
 	gtk_widget_show(vbox);
 
 	opt = browser_radio(_("KFM"), BROWSER_KFM, vbox, NULL);
+	opt = browser_radio(_("Opera"), BROWSER_OPERA, vbox, opt);
 	opt = browser_radio(_("Netscape"), BROWSER_NETSCAPE, vbox, opt);
 
 	new_window =

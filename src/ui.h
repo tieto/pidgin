@@ -42,6 +42,7 @@
 #define BROWSER_MANUAL                2
 /*#define BROWSER_INTERNAL              3*/
 #define BROWSER_GNOME                 4
+#define BROWSER_OPERA                 5	
 
 #define FACE_ANGEL 0
 #define FACE_BIGSMILE 1
