@@ -8,7 +8,7 @@ version 0.9.18:
 	* More fixes for the change on the AOL sign-on process. 
 	* Fixed bug where GAIM sometimes doesn't find a font to use.
 	* Per-conversation font and color dialogs (thanks fflewddur)
-	* Chat in oscar works
+	* Chat in oscar works (somewhat)
 	* Even more fixes for the sign-on process, and now you don't flash when
 	  setting permit/deny lists.
 

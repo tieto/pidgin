@@ -347,8 +347,10 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	switch(serviceid) {
 	case 0x0005: /* Ads */
 		debug_print("Received Ads, finishing login\n");
+		/* we'll take care of this in the parse_toc_buddy_config() below
 		sprintf(buddies, "%s&", current_user->username);
 		aim_bos_setbuddylist(sess, command->conn, buddies);
+		*/
 		aim_bos_setprofile(sess, command->conn, current_user->user_info,
 					NULL, gaim_caps);
 		aim_seticbmparam(sess, command->conn);

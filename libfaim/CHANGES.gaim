@@ -1,4 +1,11 @@
 
+Fri Jun  2 19:39:13 UTC 2000 EWarmenhoven
+	- Buddy lists no longer get sent individually, but all together (as
+	  many as fit in the buffer at one time). This should reduce a lot
+	  of the "You're sending messages too fast" errors at signon.
+	- Chat is improved a bit, mostly because I think I'm starting to get
+	  some clue as to what's going on.
+
 Fri Jun  2 08:53:53 UTC 2000 EWarmenhoven
 	- Well, I got chat working again.
 	- Added struct chat_connection to keep track of file descriptors and

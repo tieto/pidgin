@@ -299,11 +299,17 @@ void serv_add_buddies(GList *buddies)
         }
 	sflap_send(buf, -1, TYPE_DATA);
 #else
-	/* oscar you have to add them one name at a time, except at login */
+	char buf[MSG_LEN];
+	int n = 0;
 	while(buddies) {
-		serv_add_buddy((char *)buddies->data);
+		if (n > MSG_LEN - 18) {
+			aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
+			n = 0;
+		}
+		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", buddies->data);
 		buddies = buddies->next;
 	}
+	aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
 #endif
 }
 
