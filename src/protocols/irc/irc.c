@@ -361,6 +361,8 @@ static void irc_add_buddy(GaimConnection *gc, const char *who, GaimGroup *group)
 	struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
 	ib->name = g_strdup(who);
 	g_hash_table_insert(irc->buddies, ib->name, ib);
+
+	irc_blist_timeout(irc);
 }
 
 static void irc_remove_buddy(GaimConnection *gc, const char *who, const char *group)

@@ -549,6 +549,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	GaimConversation *convo;
 	char *nick = irc_mask_nick(from), *userhost;
+	struct irc_buddy *ib;
 	static int id = 1;
 
 	if (!gc) {
@@ -572,6 +573,12 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 
 	userhost = irc_mask_userhost(from);
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo), nick, userhost);
+
+	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
+		ib->flag = TRUE;
+		irc_buddy_status(nick, ib, irc);
+	}
+
 	g_free(userhost);
 	g_free(nick);
 }
@@ -846,6 +853,7 @@ void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, c
 void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
+	struct irc_buddy *ib;
 	char *data[2];
 
 	if (!args || !args[0] || !gc)
@@ -855,6 +863,11 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	data[1] = args[0];
 	/* XXX this should have an API, I shouldn't grab this directly */
 	g_slist_foreach(gc->buddy_chats, (GFunc)irc_chat_remove_buddy, data);
+
+	if ((ib = g_hash_table_lookup(irc->buddies, data[0])) != NULL) {
+		ib->flag = FALSE;
+		irc_buddy_status(data[0], ib, irc);
+	}
 	g_free(data[0]);
 
 	return;
