@@ -367,27 +367,19 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			return;
 		}
 		if (cnv != NULL) {
-
+			struct queued_message *qm;
 			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
+			/*
+			qm = (struct queued_message *)g_new0(struct queued_message, 1);
+			snprintf(qm->name, sizeof(qm->name), "%s", name);
+			qm->message = strdup(message);
+			qm->gc = gc;
+			qm->tm = mtime;
 
-			if (gc->away)
-			{
-				struct queued_message *qm;
-
-				qm = (struct queued_message *)g_new0(struct queued_message, 1);
-				snprintf(qm->name, sizeof(qm->name), "%s", name);
-				qm->message = strdup(message);
-				qm->gc = gc;
-				qm->tm = mtime;
-
-				message_queue = g_slist_append(message_queue, qm);
-
-				printf("A message has been queued.\n");
-			}
-
+			message_queue = g_slist_append(message_queue, qm);
+			*/
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
-			
 		}
 
 	} else {
@@ -405,22 +397,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
 		}
-		
-		if (gc->away)
-		{
-			struct queued_message *qm;
-
-			qm = (struct queued_message *)g_new0(struct queued_message, 1);
-			snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = strdup(message);
-			qm->gc = gc;
-			qm->tm = mtime;
-
-			message_queue = g_slist_append(message_queue, qm);
-
-			printf("A message has been queued.\n");
-		}
-
 		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 	}
 

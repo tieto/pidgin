@@ -59,6 +59,10 @@ struct prpl {
 
 	/* when UI plugins come, these will have to be reconciled by returning
 	 * structs indicating what kinds of information they want displayed. */
+	/* new thought though. instead of UI plugins, just do like X-Chat does;
+	 * have different src- dirs in src: src-common, src-gtk, src-cli, etc.
+	 * then have a prpl-base and prpl-UI stuff. people don't need to change
+	 * their UIs all that often anyway. */
 	void (* buddy_menu)(GtkWidget *, struct gaim_connection *, char *);
 	void (* user_opts)(GtkWidget *, struct aim_user *);
 	void (* draw_new_user)(GtkWidget *);
