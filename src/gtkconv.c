@@ -272,7 +272,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	GaimConnection *gc = gaim_conversation_get_gc(conv);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	
+
 	if (gc && gc->flags & GAIM_CONNECTION_HTML)
 		buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 	else
@@ -4064,6 +4064,9 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		gtkconv->show_formatting_toolbar = gaim_prefs_get_bool(
 				"/gaim/gtk/conversations/show_formatting_toolbar");
+
+		if (gtkconv->show_formatting_toolbar)
+			gtk_widget_show(gtkconv->toolbar);
 
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
 					G_CALLBACK(gtk_widget_grab_focus),
