@@ -1,21 +1,25 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
+0.11.0pre2 (12/04/2000):
+	Rob: I messed up.  Oh well, it's fixed.
+
 0.11.0pre1 (12/03/2000):
-	Rob: Hey guys!  Guess what!?  Yup, you're correct!  It's the pre1 release 
-	of 0.11.0. We have all sorts of goodies in this release!  Check out the 
-	ChangeLog file.  As always if you find any bugs, please report them on 
-	www.sourceforge.net/projects/gaim/
+	Rob: Hey guys!  Guess what!?  Yup, you're correct!  It's the pre1 
+	release  of 0.11.0. We have all sorts of goodies in this release!  
+	Check out the  ChangeLog file.  As always if you find any bugs, 
+	please report them on www.sourceforge.net/projects/gaim/
 	
 	You may find several small bugs as this is still a prerelease.  
 
-	You may want to note that my IRC plugin does not have full functionality 
-	as of yet.  All of the important / commands will be added before the final 
-	release. Also, if someone could send me some good buddylist pixmaps for 
-	the irc plugin then I'd much appreciate it.  Thanks to everyone who made 
-	this new release possible!
+	You may want to note that my IRC plugin does not have full 
+	functionality as of yet.  All of the important / commands will be 
+	added before the final release. Also, if someone could send me 
+	some good buddylist pixmaps for the irc plugin then I'd much 
+	appreciate it.  Thanks to everyone who made this new release possible!
 
 	If you have any ideas, comments, or suggestions, please let us know 
-	either by e-mail or via the source forge message board at the URL above. :)
+	either by e-mail or via the source forge message board at the URL 
+	above. :)
 
 
 	Eric: So what was Yay! For Gaim!? Yay was the codename for the 
@@ -28,9 +32,9 @@
 	uses that protocol, and you're set! Yay! (Oscar and TOC are both still 
 	static. Gaim is, after all, primarily an AIM client.)
 
-	Lots of people have been very generous and contributed a lot of time and 
-	effort to writing some really nice patches for gaim since the last 
-	release. To all of you, a big thanks.
+	Lots of people have been very generous and contributed a lot of 
+	time and  effort to writing some really nice patches for gaim since 
+	the last release. To all of you, a big thanks.
 
 0.10.3 (10/09/2000):
 	Rob: I am dumb.
