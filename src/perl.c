@@ -417,8 +417,7 @@ static void perl_init()
 		  "eval $strin;"
 		  "if($@){"
 		    /*"  #something went wrong\n"*/
-		    "GAIM::print\"Errors loading file $f_name:\\n\";"
-		    "GAIM::print\"$@\\n\";"
+		    "GAIM::print(\"Errors loading file $f_name:\\n\",\"$@\");"
 		    "return 1;"
 		  "}"
 		  "return 0;"
@@ -432,7 +431,7 @@ static void perl_init()
 #else
 	perl_parse(my_perl, xs_init, 3, perl_args, NULL);
 #endif
-#ifndef HAVE_PERL_EVAL_PV
+ #ifdef HAVE_PERL_EVAL_PV
 	eval_pv(perl_definitions, TRUE);
 #else
 	perl_eval_pv(perl_definitions, TRUE); /* deprecated */
