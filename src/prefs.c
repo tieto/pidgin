@@ -221,7 +221,7 @@ GtkWidget *theme_page() {
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
-	GtkTreePath *path;
+	GtkTreePath *path = NULL;
 	GtkListStore *store;
 	GdkPixbuf *pixbuf;
 	int ind =0;
