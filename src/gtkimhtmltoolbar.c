@@ -77,16 +77,23 @@ do_big(GtkWidget *large, GtkIMHtmlToolbar *toolbar)
 
 
 
-static void toolbar_cancel_font(GtkWidget *widget, GdkEvent *event,
-								GtkIMHtmlToolbar *toolbar)
+static void
+destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
+					 GtkIMHtmlToolbar *toolbar)
 {
-
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->font), FALSE);
 
-	if (toolbar->font_dialog) {
+	if (toolbar->font_dialog != NULL)
+	{
 		gtk_widget_destroy(toolbar->font_dialog);
 		toolbar->font_dialog = NULL;
 	}
+}
+
+static void
+cancel_toolbar_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+{
+	destroy_toolbar_font(widget, NULL, toolbar);
 }
 
 static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
@@ -107,7 +114,7 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 
 	g_free(fontname);
 
-	toolbar_cancel_font(NULL, NULL, toolbar);
+	cancel_toolbar_font(NULL, toolbar);
 }
 
 static void
@@ -136,26 +143,36 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 		*/
 
 		g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
-				 G_CALLBACK(toolbar_cancel_font), toolbar);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->ok_button),
-				 "clicked", G_CALLBACK(apply_font), toolbar->font_dialog);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button),
-				 "clicked", G_CALLBACK(toolbar_cancel_font), toolbar);
-
+						 G_CALLBACK(destroy_toolbar_font), toolbar);
+		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->ok_button), "clicked",
+						 G_CALLBACK(apply_font), toolbar->font_dialog);
+		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button), "clicked",
+						 G_CALLBACK(cancel_toolbar_font), toolbar);
 
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
-		toolbar_cancel_font(NULL, NULL, toolbar);
+		cancel_toolbar_font(NULL, toolbar);
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void cancel_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
-								   GtkIMHtmlToolbar *toolbar)
+static void
+destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
+						GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->fgcolor), FALSE);
-	gtk_widget_destroy(toolbar->fgcolor_dialog);
-	toolbar->fgcolor_dialog = NULL;
+
+	if (toolbar->fgcolor_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->fgcolor_dialog);
+		toolbar->fgcolor_dialog = NULL;
+	}
+}
+
+static void cancel_toolbar_fgcolor(GtkWidget *widget,
+								   GtkIMHtmlToolbar *toolbar)
+{
+	destroy_toolbar_fgcolor(widget, NULL, toolbar);
 }
 
 static void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
@@ -173,7 +190,7 @@ static void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtk_imhtml_toggle_forecolor(GTK_IMHTML(toolbar->imhtml), open_tag);
 
 	g_free(open_tag);
-	cancel_toolbar_fgcolor(NULL, NULL, toolbar);
+	cancel_toolbar_fgcolor(NULL, toolbar);
 }
 
 static void
@@ -193,29 +210,39 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
 
 			g_signal_connect(G_OBJECT(toolbar->fgcolor_dialog), "delete_event",
-					 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->ok_button),
-					 "clicked", G_CALLBACK(do_fgcolor), colorsel);
-			g_signal_connect(G_OBJECT
-					 (GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->cancel_button),
-					 "clicked", G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
+							 G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->ok_button), "clicked",
+							 G_CALLBACK(do_fgcolor), colorsel);
+			g_signal_connect(G_OBJECT (GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->cancel_button), "clicked",
+							 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
 
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->fgcolor_dialog));
 	} else if (toolbar->fgcolor_dialog != NULL) {
-		cancel_toolbar_fgcolor(color, NULL, toolbar);
+		cancel_toolbar_fgcolor(color, toolbar);
 	} else {
 		//gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>");
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void cancel_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
-								   GtkIMHtmlToolbar *toolbar)
+static void
+destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
+						GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->bgcolor), FALSE);
-	gtk_widget_destroy(toolbar->bgcolor_dialog);
-	toolbar->bgcolor_dialog = NULL;
+
+	if (toolbar->bgcolor_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->bgcolor_dialog);
+		toolbar->bgcolor_dialog = NULL;
+	}
+}
+
+static void
+cancel_toolbar_bgcolor(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+{
+	destroy_toolbar_bgcolor(widget, NULL, toolbar);
 }
 
 static void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
@@ -233,7 +260,7 @@ static void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtk_imhtml_toggle_backcolor(GTK_IMHTML(toolbar->imhtml), open_tag);
 
 	g_free(open_tag);
-	cancel_toolbar_bgcolor(NULL, NULL, toolbar);
+	cancel_toolbar_bgcolor(NULL, toolbar);
 }
 
 static void
@@ -253,17 +280,16 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
 
 			g_signal_connect(G_OBJECT(toolbar->bgcolor_dialog), "delete_event",
-					 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
-			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->ok_button),
-					 "clicked", G_CALLBACK(do_bgcolor), colorsel);
-			g_signal_connect(G_OBJECT
-					 (GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->cancel_button),
-					 "clicked", G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
+							 G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->ok_button), "clicked",
+							 G_CALLBACK(do_bgcolor), colorsel);
+			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->cancel_button), "clicked",
+							 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
 
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->bgcolor_dialog));
 	} else if (toolbar->bgcolor_dialog != NULL) {
-		cancel_toolbar_bgcolor(color, NULL, toolbar);
+		cancel_toolbar_bgcolor(color, toolbar);
 	} else {
 		//gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>");
 	}
@@ -274,6 +300,7 @@ static void
 cancel_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
+
 	toolbar->link_dialog = NULL;
 }
 
@@ -434,19 +461,22 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 }
 
 
-void close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
-						 GtkIMHtmlToolbar *toolbar)
+static void
+close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
+					GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
 
-	if (toolbar->smiley_dialog) {
+	if (toolbar->smiley_dialog != NULL)
+	{
 		gtk_widget_destroy(toolbar->smiley_dialog);
 		toolbar->smiley_dialog = NULL;
 	}
 }
 
 
-void insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+static void
+insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
 	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
 	//GaimPlugin *proto = gaim_find_prpl(gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
@@ -557,7 +587,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		/* connect signals */
 		g_object_set_data(G_OBJECT(dialog), "dialog_type", "smiley dialog");
 		g_signal_connect(G_OBJECT(dialog), "delete_event",
-				 G_CALLBACK(close_smiley_dialog), toolbar);
+						 G_CALLBACK(close_smiley_dialog), toolbar);
 
 		/* show everything */
 		gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
@@ -828,7 +858,7 @@ GType gtk_imhtmltoolbar_get_type()
 }
 
 
-void gtk_imhtmltoolbar_attach    (GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
+void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 {
 	toolbar->imhtml = imhtml;
 }
