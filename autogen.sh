@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 (gettextize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
