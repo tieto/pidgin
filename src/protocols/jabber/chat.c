@@ -24,6 +24,7 @@
 
 #include "chat.h"
 #include "message.h"
+#include "presence.h"
 
 GList *jabber_chat_info(GaimConnection *gc)
 {
@@ -91,6 +92,7 @@ JabberChat *jabber_chat_find_by_id(JabberStream *js, int id)
 {
 	JabberChat *chat;
 	struct _find_by_id_data *fbid = g_new0(struct _find_by_id_data, 1);
+	fbid->id = id;
 	g_hash_table_foreach(js->chats, find_by_id_foreach_cb, fbid);
 	chat = fbid->chat;
 	g_free(fbid);
@@ -183,7 +185,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 
 	g_hash_table_insert(js->chats, room_jid, chat);
 
-	presence = xmlnode_new("presence");
+	presence = jabber_presence_create(gc->away_state, gc->away);
 	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
