@@ -13,6 +13,7 @@ version 0.10.0:
 	* Redesigned preferences dialog
 	* Redesigned conversation dialog
 	* Removed the Lag-O-Meter
+	* Socks 4/5 Proxy works
 	
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features

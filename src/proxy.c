@@ -219,7 +219,51 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
 	}
 		break;
 	case PROXY_SOCKS5:
-		return -1;
+	{
+		struct sockaddr_in sin;
+		struct hostent *hostinfo;
+		char buff[11];
+
+		sethostent(0);
+		hostinfo = gethostbyname(proxy_host);
+		if (!hostinfo) return -1;
+
+		sin.sin_addr.s_addr = atol(hostinfo->h_addr);
+		sin.sin_family = AF_INET;
+		sin.sin_port = htons(proxy_port);
+
+		if (connect(sockfd, (struct sockaddr *)&sin, sizeof(sin)) < 0)
+			return -1;
+
+		buff[0] = 5;
+		buff[1] = 1;
+		buff[2] = 0;
+
+		write(sockfd, buff, 3);
+		read(sockfd, buff, 2);
+
+		if (buff[1]) return -1;
+
+		hostinfo = gethostbyname(proxy_realhost);
+		if (!hostinfo) return -1;
+
+		buff[0] = 5;
+		buff[1] = 1;
+		buff[2] = 0;
+		buff[3] = 1;
+		buff[4] = (unsigned char) (hostinfo->h_addr_list[0])[0];
+		buff[5] = (unsigned char) (hostinfo->h_addr_list[0])[1];
+		buff[6] = (unsigned char) (hostinfo->h_addr_list[0])[2];
+		buff[7] = (unsigned char) (hostinfo->h_addr_list[0])[3];
+		memcpy(buff+8, &((struct sockaddr_in *)serv_addr)->sin_port, 2);
+
+		write(sockfd, buff, 10);
+		read(sockfd, buff, 10);
+
+		if (buff[1]) return -1;
+
+		return 0;
+	}
 		break;
         default:
                 fprintf(stderr,"Unknown proxy type : %d.\n",proxy_type);
