@@ -112,7 +112,8 @@ static void silcgaim_verify_ask(const char *entity,
 		   _("Fingerprint and babbleprint for the %s key are:\n\n"
 		     "%s\n%s\n"), entity, fingerprint, babbleprint);
 
-	gaim_request_action(NULL, _("Verify Public Key"), tmp, tmp2, 2, verify, 3,
+	gaim_request_action(NULL, _("Verify Public Key"), tmp, tmp2, 
+						GAIM_DEFAULT_ACTION_NONE, verify, 3,
 			    _("Yes"), G_CALLBACK(silcgaim_verify_cb),
 			    _("No"), G_CALLBACK(silcgaim_verify_cb),
 			    _("View..."), G_CALLBACK(silcgaim_verify_details));

@@ -274,6 +274,9 @@ faim_export int aim_snlen(const char *sn)
 faim_export int aim_sncmp(const char *sn1, const char *sn2)
 {
 
+	if ((sn1 == NULL) || (sn2 == NULL))
+		return -1;
+
 	do {
 		while (*sn2 == ' ')
 			sn2++;

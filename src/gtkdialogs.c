@@ -69,6 +69,7 @@ static struct developer developers[] = {
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), NULL},
+	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -230,7 +231,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 						   _("Active Developers"));
 	for (i = 0; developers[i].name != NULL; i++) {
 		if (developers[i].email != NULL) {
-			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto: %s\">%s</a>&gt;<br/>",
+			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
 					developers[i].name, _(developers[i].role),
 					developers[i].email, developers[i].email);
 		} else {
@@ -253,7 +254,6 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 					"  Benjamin Miller<BR>"
 					"  Etan 'deryni' Reisner<BR>"
 					"  Kevin 'SimGuy' Stange<BR>"
-					"  Stu 'nosnilmot' Tomlinson<BR>"
 					"<BR>");
 
 	/* Retired Developers */
@@ -261,7 +261,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 						   _("Retired Developers"));
 	for (i = 0; retired_developers[i].name != NULL; i++) {
 		if (retired_developers[i].email != NULL) {
-			g_string_append_printf(str, "  %s (%s) &lt;<A HREF=\"mailto: %s\">%s</a>&gt;<br/>",
+			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
 					retired_developers[i].name, _(retired_developers[i].role),
 					retired_developers[i].email, retired_developers[i].email);
 		} else {
@@ -276,7 +276,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 						   _("Current Translators"));
 	for (i = 0; current_translators[i].language != NULL; i++) {
 		if (current_translators[i].email != NULL) {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto: %s\">%s</a>&gt;<br/>",
+			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
 							_(current_translators[i].language),
 							current_translators[i].abbr,
 							_(current_translators[i].name),
@@ -296,7 +296,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 						   _("Past Translators"));
 	for (i = 0; past_translators[i].language != NULL; i++) {
 		if (past_translators[i].email != NULL) {
-			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto: %s\">%s</a>&gt;<br/>",
+			g_string_append_printf(str, "  <b>%s (%s)</b> - %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
 							_(past_translators[i].language),
 							past_translators[i].abbr,
 							_(past_translators[i].name),

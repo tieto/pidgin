@@ -2009,7 +2009,7 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 							  gaim_account_get_username(account));
 
 		gaim_request_close_with_handle(account);
-		gaim_request_action(account, NULL, buf, NULL, 1, account, 2,
+		gaim_request_action(account, NULL, buf, NULL, 0, account, 2,
 							_("Delete"), delete_account_cb,
 							_("Cancel"), NULL);
 		g_free(buf);
@@ -2505,7 +2505,7 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 	else
 	{
 		gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
-							buffer, 0, data, 2,
+							buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
 							_("Add"),    G_CALLBACK(add_user_cb),
 							_("Cancel"), G_CALLBACK(free_add_user_data));
 	}

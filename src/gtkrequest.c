@@ -1396,7 +1396,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 	if ((data->u.file.savedialog == TRUE) &&
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
 		gaim_request_yes_no(data, NULL, _("That file already exists"),
-							_("Would you like to overwrite it?"), 1, data,
+							_("Would you like to overwrite it?"), 0, data,
 							G_CALLBACK(file_yes_no_cb),
 							G_CALLBACK(file_yes_no_cb));
 	} else

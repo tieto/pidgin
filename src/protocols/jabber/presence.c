@@ -209,7 +209,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
 
-		gaim_request_action(js->gc, NULL, msg, NULL, 0, jap, 2,
+		gaim_request_action(js->gc, NULL, msg, NULL, GAIM_DEFAULT_ACTION_NONE, 
+				jap, 2,
 				_("Authorize"), G_CALLBACK(authorize_add_cb),
 				_("Deny"), G_CALLBACK(deny_add_cb));
 		g_free(msg);

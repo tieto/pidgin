@@ -351,7 +351,12 @@ faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *s
 }
 
 faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const char *sn) {
-	aim_userinfo_t *cur = sess->locate.userinfo;
+	aim_userinfo_t *cur = NULL;
+
+	if (sn == NULL)
+		return NULL;
+
+	cur = sess->locate.userinfo;
 
 	while (cur != NULL) {
 		if (aim_sncmp(cur->sn, sn) == 0)

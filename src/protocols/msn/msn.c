@@ -405,6 +405,24 @@ msn_send_file(GaimConnection *gc, const char *who, const char *file)
 		gaim_xfer_request(xfer);
 }
 
+static gboolean
+msn_can_receive_file(GaimConnection *gc, const char *who)
+{
+	GaimAccount *account;
+	char *normal;
+	gboolean ret;
+
+	account = gaim_connection_get_account(gc);
+
+	normal = g_strdup(msn_normalize(account, gaim_account_get_username(account)));
+
+	ret = strcmp(normal, msn_normalize(account, who));
+
+	g_free(normal);
+
+	return ret;
+}
+
 /**************************************************************************
  * Protocol Plugin ops
  **************************************************************************/
@@ -1860,7 +1878,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* roomlist_get_list */
 	NULL,					/* roomlist_cancel */
 	NULL,					/* roomlist_expand_category */
-	NULL,					/* can_receive_file */
+	msn_can_receive_file,	/* can_receive_file */
 	msn_send_file			/* send_file */
 };
 

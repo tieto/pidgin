@@ -1894,7 +1894,8 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	parms = g_slist_append(parms, nm_event_get_conference(event));
 
 	/* Prompt the user */
-	gaim_request_action(NULL, title, primary, secondary, -1, parms, 2,
+	gaim_request_action(NULL, title, primary, secondary, 
+						GAIM_DEFAULT_ACTION_NONE, parms, 2,
 						_("Yes"), G_CALLBACK(_join_conference_cb),
 						_("No"), G_CALLBACK(_reject_conference_cb));
 

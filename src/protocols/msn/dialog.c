@@ -108,7 +108,8 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 								 passport);
 	}
 
-	gaim_request_action(gc, NULL, msg, reason, 0, data, 2,
+	gaim_request_action(gc, NULL, msg, reason, GAIM_DEFAULT_ACTION_NONE, 
+						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),
 						_("No"), G_CALLBACK(msn_rem_cb));
 

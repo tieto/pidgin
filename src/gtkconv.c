@@ -2311,9 +2311,17 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 static GdkPixbuf *
 get_tab_icon(GaimConversation *conv, gboolean small_icon)
 {
-	GaimAccount *account = gaim_conversation_get_account(conv);
-	const char *name = gaim_conversation_get_name(conv);
+	GaimAccount *account = NULL;
+	const char *name = NULL;
 	GdkPixbuf *status = NULL;
+
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	account = gaim_conversation_get_account(conv);
+	name = gaim_conversation_get_name(conv);
+
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		GaimBuddy *b = gaim_find_buddy(account, name);
@@ -2348,11 +2356,15 @@ update_tab_icon(GaimConversation *conv)
 	const char *name;
 	GdkPixbuf *status = NULL;
 
+	g_return_if_fail(conv != NULL);
+
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);
 
 	status = get_tab_icon(conv, TRUE);
+
+	g_return_if_fail(status != NULL);
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
@@ -5531,6 +5543,8 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	GaimGtkChatPane *gtkchat;
 	GaimConvChat *chat;
 
+	g_return_if_fail(conv != NULL);
+
 	win     = gaim_conversation_get_window(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -5743,6 +5757,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (gtkconv->u.im->iter != NULL)
 		g_object_unref(G_OBJECT(gtkconv->u.im->iter));
+
+	gtkconv->u.im->iter = NULL;
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
 		return;

@@ -4173,13 +4173,15 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	g_string_append_printf(str, "<b>%s:</b> %s", _("Screen Name"), userinfo->sn);
 	g_string_append_printf(str, "\n<br><b>%s</b>: %d%%", _("Warning Level"), (int)((userinfo->warnlevel/10.0) + 0.5));
 
-	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		oscar_string_append(str, "\n<br>", _("Online Since"),
-							asctime(localtime((time_t *)&userinfo->onlinesince)));
+	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
+		time_t t = userinfo->onlinesince;
+		oscar_string_append(str, "\n<br>", _("Online Since"), ctime(&t));
+	}
 
-	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
-		oscar_string_append(str, "\n<br>", _("Member Since"),
-							asctime(localtime((time_t *)&userinfo->membersince)));
+	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
+		time_t t = userinfo->membersince;
+		oscar_string_append(str, "\n<br>", _("Member Since"), ctime(&t));
+	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
 		tmp = gaim_str_seconds_to_string(userinfo->idletime*60);
@@ -6252,7 +6254,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->nick = NULL;
 
 	gaim_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
-						0, data,
+						GAIM_DEFAULT_ACTION_NONE, data,
 						G_CALLBACK(gaim_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
 
@@ -6657,7 +6659,7 @@ static char *oscar_status_text(GaimBuddy *b)
 			ret = g_strdup(_("Away"));
 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
 		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
-		if (bi->availmsg)
+		if ((bi != NULL) && (bi->availmsg != NULL))
 			ret = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
 	} else {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);

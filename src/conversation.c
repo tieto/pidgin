@@ -922,18 +922,23 @@ gaim_conversation_destroy(GaimConversation *conv)
 	if (conv->name  != NULL) g_free(conv->name);
 	if (conv->title != NULL) g_free(conv->title);
 
+	conv->name = NULL;
+	conv->title = NULL;
+
 	for (node = g_list_first(conv->send_history);
 		 node != NULL;
 		 node = g_list_next(node)) {
 
 		if (node->data != NULL)
 			g_free(node->data);
+		node->data = NULL;
 	}
 
 	g_list_free(g_list_first(conv->send_history));
 
 	if (conv->history != NULL)
 		g_string_free(conv->history, TRUE);
+	conv->history = NULL;
 
 	conversations = g_list_remove(conversations, conv);
 
@@ -943,8 +948,10 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 		if (conv->u.im->icon != NULL)
 			gaim_buddy_icon_unref(conv->u.im->icon);
+		conv->u.im->icon = NULL;
 
 		g_free(conv->u.im);
+		conv->u.im = NULL;
 
 		ims = g_list_remove(ims, conv);
 	}
@@ -953,28 +960,37 @@ gaim_conversation_destroy(GaimConversation *conv)
 		for (node = conv->u.chat->in_room; node != NULL; node = node->next) {
 			if (node->data != NULL)
 				g_free(node->data);
+			node->data = NULL;
 		}
 
 		for (node = conv->u.chat->ignored; node != NULL; node = node->next) {
 			if (node->data != NULL)
 				g_free(node->data);
+			node->data = NULL;
 		}
 
 		g_list_free(conv->u.chat->in_room);
 		g_list_free(conv->u.chat->ignored);
 
+		conv->u.chat->in_room = NULL;
+		conv->u.chat->ignored = NULL;
+
 		if (conv->u.chat->who != NULL)
 			g_free(conv->u.chat->who);
+		conv->u.chat->who = NULL;
 
 		if (conv->u.chat->topic != NULL)
 			g_free(conv->u.chat->topic);
+		conv->u.chat->topic = NULL;
 
 		g_free(conv->u.chat);
+		conv->u.chat = NULL;
 
 		chats = g_list_remove(chats, conv);
 	}
 
 	g_hash_table_destroy(conv->data);
+	conv->data = NULL;
 
 	if (win != NULL) {
 		gaim_conv_window_remove_conversation(win,
@@ -986,6 +1002,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 	gaim_log_free(conv->log);
 	g_free(conv);
+	conv = NULL;
 }
 
 GaimConversationType
@@ -1107,7 +1124,7 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 		}
 	}
 
-	if(!text)
+	if(text == NULL)
 		text = name;
 
 	gaim_conversation_set_title(conv, text);
