@@ -3139,6 +3139,12 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 	static struct font_state def_state = { 3, 0, 0, "", NULL, NULL, NULL };
 
 	if (text == NULL) {
+		bold = 0;
+		italic = 0;
+		fixed = 0;
+		uline = 0;
+		strike = 0;
+		title = 0;
 		while (current->next)
 		{
 			if (current->ownbg)
