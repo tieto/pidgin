@@ -64,7 +64,7 @@
 
 #define AUTO_RESPONSE "<AUTO-REPLY> : "
 
-#define PLUGIN_DIR "$HOME/.gaim/plugins/"
+#define PLUGIN_DIR ".gaim/plugins/"
 
 #define REG_EMAIL_ADDR "gaiminfo@blueridge.net"
 #define REG_SRVR "blueridge.net"
@@ -117,15 +117,14 @@ struct g_url {
         char page[255];
 };
 
+#ifdef GAIM_PLUGINS
 struct gaim_plugin {
-        char name[64];
-        char filename[512];
-/*        char description[256];
-        int major_version;
-        int minor_version; */
-        char *(*init_gaim_plugin)();
-        void (*toc_receive)(char *);
+	char  *name;
+	char  *filename;
+	char  *description;
+	void  *handle;
 };
+#endif
 
 struct buddy {
 	char name[80];
@@ -269,7 +268,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 92 $"
+#define REVISION "gaim:$Revision: 100 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -541,7 +540,9 @@ extern void play_sound(int);
 
 #ifdef GAIM_PLUGINS
 /* Functions in plugins.c */
-extern void load_plugins();
+extern void load_plugin  (GtkWidget *, gpointer);
+extern void unload_plugin(GtkWidget *, gpointer);
+extern void show_plugins (GtkWidget *, gpointer);
 #endif
 
 /* Functions in prefs.c */
@@ -555,9 +556,6 @@ extern void set_defaults();
 extern void load_prefs();
 extern void save_prefs();
 
-
-/*Functions in plugins.c */
-extern void show_plugins();
 
 /* Functions in dialogs.c */
 extern void show_warn_dialog(char *);

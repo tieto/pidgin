@@ -1632,7 +1632,6 @@ void show_buddy_list()
 	gtk_menu_append(GTK_MENU(findmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_find_info), NULL);
  	gtk_widget_show(menuitem);
-	
 
 	setmenu = gtk_menu_new();
 	gtk_widget_show(setmenu);
@@ -1648,18 +1647,22 @@ void show_buddy_list()
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_dir), NULL);	
 	gtk_widget_show(menuitem);
 
-	/* Ok, this is the menu hookup for the plugin stuff */
-#ifdef GAIM_PLUGINS
-	gaim_seperator(menu);
-	
-	gaim_new_item(menu, "Plugins", GTK_SIGNAL_FUNC(show_plugins));
-#endif
-
-        /*---------------*/
-
 	gaim_seperator(menu);
 
         gaim_new_item(menu, "Preferences", GTK_SIGNAL_FUNC(show_prefs));
+
+#ifdef GAIM_PLUGINS
+	menu = gtk_menu_new();
+
+	menuitem = gaim_new_item(NULL, "Plugins", NULL);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
+	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
+
+	gaim_new_item(menu, "Load Plugin", GTK_SIGNAL_FUNC(load_plugin));
+	/* FIXME */
+	gaim_new_item(menu, "Remove Plugin", GTK_SIGNAL_FUNC(show_plugins));
+	gaim_new_item(menu, "Show Plugins", GTK_SIGNAL_FUNC(show_plugins));
+#endif
 	
 	menu = gtk_menu_new();
 
