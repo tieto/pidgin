@@ -1,4 +1,5 @@
-EXTRA_DIST =	gnomeicu-online.xpm		\
+EXTRA_DIST =	gnomeicu-offline.xpm		\
+		gnomeicu-online.xpm		\
 		gnomeicu-away.xpm		\
 		gnomeicu-dnd.xpm		\
 		gnomeicu-na.xpm			\
