@@ -100,9 +100,10 @@ void yahoo_add_handler(struct yahoo_session *session, int type, yahoo_callback f
 #define YAHOO_HANDLE_ONLINE       5
 #define YAHOO_HANDLE_NEWMAIL      6
 #define YAHOO_HANDLE_MESSAGE      7
-#define YAHOO_HANDLE_STATUS       8
-#define YAHOO_HANDLE_ACTIVATE     9
-#define YAHOO_HANDLE_MAX         10
+#define YAHOO_HANDLE_BOUNCE       8
+#define YAHOO_HANDLE_STATUS       9
+#define YAHOO_HANDLE_ACTIVATE    10
+#define YAHOO_HANDLE_MAX         11
 
 struct callback {
 	yahoo_callback function;

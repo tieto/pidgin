@@ -147,6 +147,12 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 	return 1;
 }
 
+static int yahoo_bounce(struct yahoo_session *sess, ...) {
+	do_error_dialog(_("Your message did not get sent."), _("Gaim - Error"));
+	
+	return 1;
+}
+
 static void des_win(GtkWidget *w, struct yahoo_data *yd) {
 	gtk_widget_destroy(yd->email_win);
 	if (yd->email_win == w)
@@ -336,6 +342,7 @@ static void yahoo_login(struct aim_user *user) {
 	yahoo_add_handler(yd->sess, YAHOO_HANDLE_ONLINE, yahoo_online);
 	yahoo_add_handler(yd->sess, YAHOO_HANDLE_NEWMAIL, yahoo_newmail);
 	yahoo_add_handler(yd->sess, YAHOO_HANDLE_MESSAGE, yahoo_message);
+	yahoo_add_handler(yd->sess, YAHOO_HANDLE_BOUNCE, yahoo_bounce);
 	yahoo_add_handler(yd->sess, YAHOO_HANDLE_STATUS, yahoo_status);
 }
 

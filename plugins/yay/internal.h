@@ -65,6 +65,7 @@ void yahoo_close(struct yahoo_session *, struct yahoo_conn *);
 #define YAHOO_SERVICE_PING            18
 
 #define YAHOO_MESSAGE_NORMAL  1
+#define YAHOO_MESSAGE_BOUNCE  2
 
 void yahoo_storeint(guchar *, guint);
 int yahoo_makeint(guchar *);

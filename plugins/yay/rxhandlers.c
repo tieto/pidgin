@@ -168,6 +168,9 @@ static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet 
 		CALLBACK(sess, YAHOO_HANDLE_MESSAGE, pkt->nick2, str_array[0], str_array[1]);
 		g_strfreev(str_array);
 		break;
+	case YAHOO_MESSAGE_BOUNCE:
+		CALLBACK(sess, YAHOO_HANDLE_BOUNCE);
+		break;
 	default:
 		g_snprintf(buf, sizeof(buf), "unhandled message type %d: %s", type, pkt->content);
 		YAHOO_PRINT(sess, YAHOO_LOG_WARNING, buf);
