@@ -8,6 +8,8 @@
 
 extern int alpha;
 
+BOOL WINAPI SetLayeredWindowAttributes(HWND,COLORREF,BYTE,DWORD);
+
 /* These defines aren't found in the current version of mingw */
 #ifndef LWA_ALPHA
 #define LWA_ALPHA               0x00000002
