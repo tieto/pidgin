@@ -799,6 +799,9 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 	g_return_if_fail(contact != NULL);
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CONTACT((GaimBlistNode*)contact));
 
+	if((GaimBlistNode*)contact == node)
+		return;
+
 	if(node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
 				GAIM_BLIST_NODE_IS_CHAT(node)))
 		g = (GaimGroup*)node->parent;
