@@ -137,16 +137,6 @@ struct conversation {
 	GtkWidget *check;
 	gboolean unseen;
 
-#if USE_PIXBUF
-	/* buddy icon stuff. sigh. */
-	GtkWidget *icon;
-	GdkPixbuf *unanim;
-	GdkPixbufAnimation *anim;
-	guint32 icon_timer;
-	int frame;
-	GtkWidget *save_icon;
-#endif
-
 	/* stuff used just for chat */
         GList *in_room;
         GList *ignored;
@@ -161,6 +151,16 @@ struct conversation {
 
 	/* something to distinguish */
 	gboolean is_chat;
+
+#if USE_PIXBUF
+	/* buddy icon stuff. sigh. */
+	GtkWidget *icon;
+	GdkPixbuf *unanim;
+	GdkPixbufAnimation *anim;
+	guint32 icon_timer;
+	int frame;
+	GtkWidget *save_icon;
+#endif
 };
 
 struct log_conversation {
