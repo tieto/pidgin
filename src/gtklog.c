@@ -258,7 +258,7 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	GtkTreeSelection *sel;
 	GtkWidget *icon, *label, *pane, *sw, *button;
 	GList *logs;
-	char *text;
+	char *text ,*ttext;
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
 
 	ht->screenname = g_strdup(screenname);
@@ -298,8 +298,11 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 
 	/* Label ************/
 	label = gtk_label_new(NULL);
-	text = g_strdup_printf("<span size='larger' weight='bold'>%s %s</span>",
-			       _("Conversations with"), screenname);
+
+	ttext = g_strdup_printf(_("Conversations with %s"), screenname);
+	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>",ttext);
+	g_free(ttext);
+
 	gtk_label_set_markup(GTK_LABEL(label), text);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	g_free(text);
