@@ -84,6 +84,8 @@ void show_about(GtkWidget *w, void *null)
 "Jim Duchek <jimduchek@ou.edu> <IM:Zilding> (Former Maintainer)\n" 
 "Mark Spencer <markster@marko.net> <IM: Markster97> (Original Author)\n" 
 "\n"
+"A special thanks to Eric Warmenhoven for his gnome applet-goodness.\n"
+"\n"
 "Gaim is brought to you by a team of penguin pimps, the letter G, and beer.\n");
 
 		gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
