@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6047 2003-06-01 17:40:20Z chipx86 $
+ * $Id: gg.c 6059 2003-06-01 23:31:46Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1377,7 +1377,7 @@ __init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Nick:"), "nick",
+	option = gaim_account_option_string_new(_("Nick"), "nick",
 											"Gadu-Gadu User");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
