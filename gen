@@ -1,2 +1,2 @@
 #!/bin/bash
-aclocal -I m4 ; autoconf ; automake
+aclocal -I m4 ; autoheader ; autoconf ; automake
