@@ -1,6 +1,10 @@
 -=[ Gaim ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
 0.57 (04/25/2002):
+	Sean: Nothing too special here, but a critical Yahoo fix that
+	ensures Yahoo! will work when they discontinue the old protocol
+	all the other 3rd party clients are using.  Next release will be
+	cooler, I promise.
 
 0.56 (04/11/2002):
 	Rob: Well, what do you know. I have another headache. I always have
