@@ -443,9 +443,10 @@ void do_remove_group(GaimGroup *g)
 			while(bnode) {
 				GaimBuddy *b;
 				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-					b = (GaimBuddy*)bnode;
+					GaimConversation *c;
+                                        b = (GaimBuddy*)bnode;
 					bnode = bnode->next;
-					GaimConversation *c = gaim_find_conversation_with_account(b->name, b->account);
+					c = gaim_find_conversation_with_account(b->name, b->account);
 					if(gaim_account_is_connected(b->account)) {
 						serv_remove_buddy(b->account->gc, b->name, g->name);
 						gaim_blist_remove_buddy(b);

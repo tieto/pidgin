@@ -118,6 +118,7 @@ DLL_C_SRC =		about.c \
 			server.c \
 			signals.c \
 			sound.c \
+			sslconn.c \
 			status.c \
 			stock.c \
 			themes.c \

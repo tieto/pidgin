@@ -122,7 +122,7 @@ gaim_ssl_close(GaimSslConnection *gsc)
 		gaim_input_remove(gsc->inpa);
 
 	if (ops != NULL && ops->close != NULL)
-		ops->close(gsc);
+		(ops->close)(gsc);
 
 	if (gsc->fd)
 		close(gsc->fd);
@@ -144,8 +144,8 @@ gaim_ssl_read(GaimSslConnection *gsc, void *data, size_t len)
 
 	ops = gaim_ssl_get_ops();
 
-	if (ops != NULL && ops->read != NULL)
-		return ops->read(gsc, data, len);
+	if (ops != NULL && (ops->read) != NULL)
+		return (ops->read)(gsc, data, len);
 
 	return 0;
 }
@@ -161,8 +161,8 @@ gaim_ssl_write(GaimSslConnection *gsc, const void *data, size_t len)
 
 	ops = gaim_ssl_get_ops();
 
-	if (ops != NULL && ops->write != NULL)
-		return ops->write(gsc, data, len);
+	if (ops != NULL && (ops->write) != NULL)
+		return (ops->write)(gsc, data, len);
 
 	return 0;
 }
