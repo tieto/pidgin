@@ -1,145 +1,36 @@
-#include "config.h"
-
-#ifndef _WIN32
-#include <unistd.h>
-#else
-#include <winsock.h>
-#include <io.h>
-#endif
-
-
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
-#ifndef _WIN32
-#include <netdb.h>
-#endif
-#include "gaim.h"
-#include "prpl.h"
-#include "proxy.h"
-#include "md5.h"
-
-#ifdef _WIN32
-#include "win32dep.h"
-#include "stdint.h"
-#endif
+/**
+ * @file msn.c The MSN protocol plugin
+ *
+ * gaim
+ *
+ * Parts Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+#include "msn.h"
 
 #include "pixmaps/protocols/msn/msn_online.xpm"
 #include "pixmaps/protocols/msn/msn_away.xpm"
 #include "pixmaps/protocols/msn/msn_occ.xpm"
 
+
 static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
-
-#define MSN_BUF_LEN 8192
-#define MIME_HEADER	"MIME-Version: 1.0\r\n" \
-			"Content-Type: text/plain; charset=UTF-8\r\n" \
-			"User-Agent: Gaim/" VERSION "\r\n" \
-			"X-MMS-IM-Format: FN=Arial; EF=; CO=0; PF=0\r\n\r\n"
-
-#define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"
-#define PASSPORT_URL "http://lc1.law13.hotmail.passport.com/cgi-bin/dologin?login="
-
-#define MSN_ONLINE  1
-#define MSN_BUSY    2
-#define MSN_IDLE    3
-#define MSN_BRB     4
-#define MSN_AWAY    5
-#define MSN_PHONE   6
-#define MSN_LUNCH   7
-#define MSN_OFFLINE 8
-#define MSN_HIDDEN  9
-
-#define USEROPT_HOTMAIL 0
-
-#define USEROPT_MSNSERVER 3
-#define MSN_SERVER "messenger.hotmail.com"
-#define USEROPT_MSNPORT 4
-#define MSN_PORT 1863
-
-#define MSN_TYPING_RECV_TIMEOUT 6
-#define MSN_TYPING_SEND_TIMEOUT	4
-
-struct msn_file_transfer {
-	enum { MFT_SENDFILE_IN, MFT_SENDFILE_OUT } type;
-	struct file_transfer *xfer;
-	struct gaim_connection *gc;
-
-	int fd;
-	int inpa;
-
-	char *filename;
-
-	char *sn;
-	char ip[16];
-	int port;
-
-	uint32_t cookie;
-	uint32_t authcookie;
-
-	int len;
-
-	char *rxqueue;
-	int rxlen;
-	gboolean msg;
-	char *msguser;
-	int msglen;
-};
-
-struct msn_data {
-	int fd;
-	uint32_t trId;
-	int inpa;
-
-	char *rxqueue;
-	int rxlen;
-	gboolean msg;
-	char *msguser;
-	int msglen;
-
-	GSList *switches;
-	GSList *fl;
-	GSList *permit;
-	GSList *deny;
-	GSList *file_transfers;
-
-	char *kv;
-	char *sid;
-	char *mspauth;
-	unsigned long sl;
-	char *passport;
-
-};
-
-struct msn_switchboard {
-	struct gaim_connection *gc;
-	struct gaim_conversation *chat;
-	int fd;
-	int inpa;
-
-	char *rxqueue;
-	int rxlen;
-	gboolean msg;
-	char *msguser;
-	int msglen;
-
-	char *sessid;
-	char *auth;
-	uint32_t trId;
-	int total;
-	char *user;
-	GSList *txqueue;
-};
-
-struct msn_buddy {
-	char *user;
-	char *friend;
-};
 
 static void msn_login_callback(gpointer, gint, GaimInputCondition);
 static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
@@ -150,13 +41,6 @@ static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,
 static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
 												  struct file_transfer *xfer);
 #endif
-
-#define GET_NEXT(tmp)	while (*(tmp) && *(tmp) != ' ') \
-				(tmp)++; \
-			*(tmp)++ = 0; \
-			while (*(tmp) && *(tmp) == ' ') \
-				(tmp)++;
-
 
 static char *msn_normalize(const char *s)
 {
@@ -169,55 +53,8 @@ static char *msn_normalize(const char *s)
 	return buf;
 }
 
-static int msn_write(int fd, void *data, int len)
-{
-	debug_printf("MSN C: %s", (char *)data);
-	return write(fd, data, len);
-}
-
-static char *url_decode(const char *msg)
-{
-	static char buf[MSN_BUF_LEN];
-	int i, j = 0;
-
-	bzero(buf, sizeof(buf));
-	for (i = 0; i < strlen(msg); i++) {
-		char hex[3];
-		if (msg[i] != '%') {
-			buf[j++] = msg[i];
-			continue;
-		}
-		strncpy(hex, msg + ++i, 2); hex[2] = 0;
-		/* i is pointing to the start of the number */
-		i++; /* now it's at the end and at the start of the for loop
-			will be at the next character */
-		buf[j++] = strtol(hex, NULL, 16);
-	}
-	buf[j] = 0;
-
-	return buf;
-}
-
-static char *url_encode(const char *msg)
-{
-	static char buf[MSN_BUF_LEN];
-	int i, j = 0;
-
-	bzero(buf, sizeof(buf));
-	for (i = 0; i < strlen(msg); i++) {
-		if (isalnum(msg[i]))
-			buf[j++] = msg[i];
-		else {
-			sprintf(buf + j, "%%%02x", (unsigned char)msg[i]);
-			j += 3;
-		}
-	}
-	buf[j] = 0;
-
-	return buf;
-}
-
-static char *handle_errcode(char *buf, gboolean show)
+char *
+handle_errcode(char *buf, gboolean show)
 {
 	int errcode;
 	static char msg[MSN_BUF_LEN];
@@ -353,6 +190,49 @@ static char *handle_errcode(char *buf, gboolean show)
 	return msg;
 }
 
+
+char *url_decode(const char *msg)
+{
+	static char buf[MSN_BUF_LEN];
+	int i, j = 0;
+
+	bzero(buf, sizeof(buf));
+	for (i = 0; i < strlen(msg); i++) {
+		char hex[3];
+		if (msg[i] != '%') {
+			buf[j++] = msg[i];
+			continue;
+		}
+		strncpy(hex, msg + ++i, 2); hex[2] = 0;
+		/* i is pointing to the start of the number */
+		i++; /* now it's at the end and at the start of the for loop
+			will be at the next character */
+		buf[j++] = strtol(hex, NULL, 16);
+	}
+	buf[j] = 0;
+
+	return buf;
+}
+
+static char *url_encode(const char *msg)
+{
+	static char buf[MSN_BUF_LEN];
+	int i, j = 0;
+
+	bzero(buf, sizeof(buf));
+	for (i = 0; i < strlen(msg); i++) {
+		if (isalnum(msg[i]))
+			buf[j++] = msg[i];
+		else {
+			sprintf(buf + j, "%%%02x", (unsigned char)msg[i]);
+			j += 3;
+		}
+	}
+	buf[j] = 0;
+
+	return buf;
+}
+
 static void handle_hotmail(struct gaim_connection *gc, char *data)
 {
 	char login_url[2048];
@@ -392,702 +272,6 @@ static void handle_hotmail(struct gaim_connection *gc, char *data)
 			connection_has_mail(gc, -1, from, subject, login_url);
 		}
 	}
-}
-
-static struct msn_switchboard *msn_find_switch(struct gaim_connection *gc, char *id)
-{
-	struct msn_data *md = gc->proto_data;
-	GSList *m = md->switches;
-
-	while (m) {
-		struct msn_switchboard *ms = m->data;
-		m = m->next;
-		if ((ms->total <= 1) && !g_strcasecmp(ms->user, id))
-			return ms;
-	}
-
-	return NULL;
-}
-
-static struct msn_switchboard *msn_find_switch_by_id(struct gaim_connection *gc, int id)
-{
-	struct msn_data *md = gc->proto_data;
-	GSList *m = md->switches;
-
-	while (m) {
-		struct msn_switchboard *ms = m->data;
-		m = m->next;
-		if (ms->chat && gaim_chat_get_id(GAIM_CHAT(ms->chat)) == id)
-			return ms;
-	}
-
-	return NULL;
-}
-
-static struct msn_switchboard *msn_find_writable_switch(struct gaim_connection *gc)
-{
-	struct msn_data *md = gc->proto_data;
-	GSList *m = md->switches;
-
-	while (m) {
-		struct msn_switchboard *ms = m->data;
-		m = m->next;
-		if (ms->txqueue)
-			return ms;
-	}
-
-	return NULL;
-}
-
-static void msn_kill_switch(struct msn_switchboard *ms)
-{
-	struct gaim_connection *gc = ms->gc;
-	struct msn_data *md = gc->proto_data;
-
-	if (ms->inpa)
-		gaim_input_remove(ms->inpa);
-	close(ms->fd);
-	g_free(ms->rxqueue);
-	if (ms->msg)
-		g_free(ms->msguser);
-	if (ms->sessid)
-		g_free(ms->sessid);
-	g_free(ms->auth);
-	if (ms->user)
-		g_free(ms->user);
-	while (ms->txqueue) {
-		g_free(ms->txqueue->data);
-		ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
-	}
-	if (ms->chat)
-		serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)));
-
-	md->switches = g_slist_remove(md->switches, ms);
-
-	g_free(ms);
-}
-
-static int msn_process_switch(struct msn_switchboard *ms, char *buf)
-{
-	struct gaim_connection *gc = ms->gc;
-	char sendbuf[MSN_BUF_LEN];
-	static int id = 0;
-
-	if (!g_strncasecmp(buf, "ACK", 3)) {
-	} else if (!g_strncasecmp(buf, "ANS", 3)) {
-		if (ms->chat)
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), gc->username, NULL);
-	} else if (!g_strncasecmp(buf, "BYE", 3)) {
-		char *user, *tmp = buf;
-		GET_NEXT(tmp);
-		user = tmp;
-
-		if (ms->chat) {
-			gaim_chat_remove_user(GAIM_CHAT(ms->chat), user, NULL);
-		} else {
-			char msgbuf[256];
-			const char *username;
-			struct gaim_conversation *cnv;
-			struct buddy *b;
-
-			if ((b = find_buddy(gc->account, user)) != NULL)
-				username = get_buddy_alias(b);
-			else
-				username = user;
-
-			g_snprintf(msgbuf, sizeof(msgbuf),
-					   _("%s has closed the conversation window"), username);
-
-			if ((cnv = gaim_find_conversation(user)))
-				gaim_conversation_write(cnv, NULL, msgbuf, -1,
-										WFLAG_SYSTEM, time(NULL));
-
-			msn_kill_switch(ms);
-			return 0;
-		}
-	} else if (!g_strncasecmp(buf, "CAL", 3)) {
-	} else if (!g_strncasecmp(buf, "IRO", 3)) {
-		char *tot, *user, *tmp = buf;
-
-		GET_NEXT(tmp);
-		GET_NEXT(tmp);
-		GET_NEXT(tmp);
-		tot = tmp;
-		GET_NEXT(tmp);
-		ms->total = atoi(tot);
-		user = tmp;
-		GET_NEXT(tmp);
-
-		if (ms->total > 1) {
-			if (!ms->chat)
-				ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), user, NULL);
-		} 
-	} else if (!g_strncasecmp(buf, "JOI", 3)) {
-		char *user, *tmp = buf;
-		GET_NEXT(tmp);
-		user = tmp;
-		GET_NEXT(tmp);
-
-		if (ms->total == 1) {
-			ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), ms->user, NULL);
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), gc->username, NULL);
-			g_free(ms->user);
-			ms->user = NULL;
-		}
-		if (ms->chat)
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), user, NULL);
-		ms->total++;
-		while (ms->txqueue) {
-			char *send = add_cr(ms->txqueue->data);
-			g_snprintf(sendbuf, sizeof(sendbuf), "MSG %u N %d\r\n%s%s", ++ms->trId,
-					strlen(MIME_HEADER) + strlen(send),
-					MIME_HEADER, send);
-			g_free(ms->txqueue->data);
-			ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
-			if (msn_write(ms->fd, sendbuf, strlen(sendbuf)) < 0) {
-				msn_kill_switch(ms);
-				return 0;
-			}
-			debug_printf("\n");
-		}
-	} else if (!g_strncasecmp(buf, "MSG", 3)) {
-		char *user, *tmp = buf;
-		int length;
-
-		GET_NEXT(tmp);
-		user = tmp;
-
-		GET_NEXT(tmp);
-
-		GET_NEXT(tmp);
-		length = atoi(tmp);
-
-		ms->msg = TRUE;
-		ms->msguser = g_strdup(user);
-		ms->msglen = length;
-	} else if (!g_strncasecmp(buf, "NAK", 3)) {
-		do_error_dialog(_("An MSN message may not have been received."), NULL, GAIM_ERROR);
-	} else if (!g_strncasecmp(buf, "NLN", 3)) {
-	} else if (!g_strncasecmp(buf, "OUT", 3)) {
-		if (ms->chat)
-			serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)));
-		msn_kill_switch(ms);
-		return 0;
-	} else if (!g_strncasecmp(buf, "USR", 3)) {
-		/* good, we got USR, now we need to find out who we want to talk to */
-		struct msn_switchboard *ms = msn_find_writable_switch(gc);
-
-		if (!ms)
-			return 0;
-
-		g_snprintf(sendbuf, sizeof(sendbuf), "CAL %u %s\r\n", ++ms->trId, ms->user);
-		if (msn_write(ms->fd, sendbuf, strlen(sendbuf)) < 0) {
-			msn_kill_switch(ms);
-			return 0;
-		}
-	} else if (isdigit(*buf)) {
-		handle_errcode(buf, TRUE);
-
-		if (atoi(buf) == 217)
-			msn_kill_switch(ms);
-
-	} else {
-		debug_printf("Unhandled message!\n");
-	}
-
-	return 1;
-}
-
-static char *msn_parse_format(char *mime)
-{
-	char *cur;
-	GString *ret = g_string_new(NULL);
-	guint colorbuf;
-	char *colors = (char *)(&colorbuf);
-	
-
-	cur = strstr(mime, "FN=");
-	if (cur && (*(cur = cur + 3) != ';')) {
-		ret = g_string_append(ret, "<FONT FACE=\"");
-		while (*cur && *cur != ';') {
-			ret = g_string_append_c(ret, *cur);
-			cur++;
-		}
-		ret = g_string_append(ret, "\">");
-	}
-	
-	cur = strstr(mime, "EF=");
-	if (cur && (*(cur = cur + 3) != ';')) {
-		while (*cur && *cur != ';') {
-			ret = g_string_append_c(ret, '<');
-			ret = g_string_append_c(ret, *cur);
-			ret = g_string_append_c(ret, '>');
-			cur++;
-		}
-	}
-	
-	cur = strstr(mime, "CO=");
-	if (cur && (*(cur = cur + 3) != ';')) {
-		if (sscanf (cur, "%x;", &colorbuf) == 1) {
-			char tag[64];
-			g_snprintf(tag, sizeof(tag), "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">", colors[0], colors[1], colors[2]);
-			ret = g_string_append(ret, tag);
-		}
-	}
-	
-	cur = url_decode(ret->str);
-	g_string_free(ret, TRUE);
-	return cur;
-}
-
-#if 0
-static int msn_process_msnftp(struct msn_file_transfer *mft, char *buf)
-{
-	struct gaim_connection *gc = mft->gc;
-	char sendbuf[MSN_BUF_LEN];
-
-	if (!g_strncasecmp(buf, "VER MSNFTP", 10)) {
-
-		/* Send the USR string. */
-		g_snprintf(sendbuf, sizeof(sendbuf), "USR %s %lu\r\n",
-				   gc->username, (unsigned long)mft->authcookie);
-
-		if (msn_write(mft->fd, sendbuf, strlen(sendbuf)) < 0) {
-			/* TODO: Clean up */
-			return 0;
-		}
-	}
-	else if (!g_strncasecmp(buf, "FIL", 3)) {
-		
-		char *tmp = buf;
-
-		GET_NEXT(tmp);
-
-		mft->len = atoi(tmp);
-
-		/* Send the TFR string, to request a start of transfer. */
-		g_snprintf(sendbuf, sizeof(sendbuf), "TFR\r\n");
-
-		gaim_input_remove(mft->inpa);
-		mft->inpa = 0;
-
-		if (msn_write(mft->fd, sendbuf, strlen(sendbuf)) < 0) {
-			/* TODO: Clean up */
-			return 0;
-		}
-
-		if (transfer_in_do(mft->xfer, mft->fd, mft->filename, mft->len)) {
-			debug_printf("MSN: transfer_in_do failed\n");
-		}
-	}
-
-	return 1;
-}
-
-static void msn_msnftp_callback(gpointer data, gint source,
-								GaimInputCondition cond)
-{
-	struct msn_file_transfer *mft = (struct msn_file_transfer *)data;
-	char buf[MSN_BUF_LEN];
-	int cont = 1;
-	int len;
-
-	mft->fd = source;
-
-	len = read(mft->fd, buf, sizeof(buf));
-
-	if (len <= 0) {
-		/* TODO: Kill mft. */
-		return;
-	}
-
-	mft->rxqueue = g_realloc(mft->rxqueue, len + mft->rxlen);
-	memcpy(mft->rxqueue + mft->rxlen, buf, len);
-	mft->rxlen += len;
-
-	while (cont) {
-		char *end = mft->rxqueue;
-		int cmdlen;
-		char *cmd;
-		int i = 0;
-
-		if (!mft->rxlen)
-			return;
-
-		while (i + 1 < mft->rxlen) {
-			if (*end == '\r' && end[1] == '\n')
-				break;
-			end++; i++;
-		}
-		if (i + 1 == mft->rxlen)
-			return;
-
-		cmdlen = end - mft->rxqueue + 2;
-		cmd = mft->rxqueue;
-		mft->rxlen -= cmdlen;
-		if (mft->rxlen) {
-			mft->rxqueue = g_memdup(cmd + cmdlen, mft->rxlen);
-		} else {
-			mft->rxqueue = NULL;
-			cmd = g_realloc(cmd, cmdlen + 1);
-		}
-		cmd[cmdlen] = 0;
-
-		g_strchomp(cmd);
-		cont = msn_process_msnftp(mft, cmd);
-
-		g_free(cmd);
-	}
-}
-
-static void msn_msnftp_connect(gpointer data, gint source,
-							   GaimInputCondition cond)
-{
-	struct msn_file_transfer *mft = (struct msn_file_transfer *)data;
-	struct gaim_connection *gc = mft->gc;
-	char buf[MSN_BUF_LEN];
-
-	if (source == -1 || !g_slist_find(connections, gc)) {
-		debug_printf("Error establishing MSNFTP connection\n");
-		close(source);
-		/* TODO: Clean up */
-		return;
-	}
-
-	if (mft->fd != source)
-		mft->fd = source;
-
-	g_snprintf(buf, sizeof(buf), "VER MSNFTP\r\n");
-
-	if (msn_write(mft->fd, buf, strlen(buf)) < 0) {
-		/* TODO: Clean up */
-		return;
-	}
-
-	mft->inpa = gaim_input_add(mft->fd, GAIM_INPUT_READ,
-							   msn_msnftp_callback, mft);
-}
-
-static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
-{
-	struct msn_file_transfer *mft;
-	struct msn_data *md = ms->gc->proto_data;
-	char *tmp = msg;
-
-	if (strstr(msg, "Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}") &&
-		strstr(msg, "Invitation-Command: INVITE")) {
-
-		/*
-		 * First invitation message, requesting an ACCEPT or CANCEL from
-		 * the recipient. Used in incoming file transfers.
-		 */
-
-		char *filename;
-		char *cookie_s, *filesize_s;
-		size_t filesize;
-
-		tmp = strstr(msg, "Invitation-Cookie");
-		GET_NEXT(tmp);
-		cookie_s = tmp;
-		GET_NEXT(tmp);
-		GET_NEXT(tmp);
-		filename = tmp;
-
-		/* Needed for filenames with spaces */
-		tmp = strchr(tmp, '\r');
-		*tmp = '\0';
-		tmp += 2;
-
-		GET_NEXT(tmp);
-		filesize_s = tmp;
-		GET_NEXT(tmp);
-
-		mft = g_new0(struct msn_file_transfer, 1);
-		mft->gc = ms->gc;
-		mft->type = MFT_SENDFILE_IN;
-		mft->sn = g_strdup(ms->msguser);
-		mft->cookie = atoi(cookie_s);
-		mft->filename = g_strdup(filename);
-
-		filesize = atoi(filesize_s);
-
-		md->file_transfers = g_slist_append(md->file_transfers, mft);
-
-		mft->xfer = transfer_in_add(ms->gc, ms->msguser,
-									mft->filename, filesize, 1, NULL);
-	}
-	else if (strstr(msg, "Invitation-Command: ACCEPT")) {
-
-		/*
-		 * XXX I hope these checks don't return false positives, but they
-		 *     seem like they should work. The only issue is alternative
-		 *     protocols, *maybe*.
-		 */
-
-		if (strstr(msg, "AuthCookie:")) {
-
-			/*
-			 * Second invitation request, sent after the recipient accepts
-			 * the request. Used in incoming file transfers.
-			 */
-
-			char *cookie_s, *ip, *port_s, *authcookie_s;
-
-			tmp = strstr(msg, "Invitation-Cookie");
-			GET_NEXT(tmp);
-			cookie_s = tmp;
-			GET_NEXT(tmp);
-			GET_NEXT(tmp);
-			ip = tmp;
-			GET_NEXT(tmp);
-			GET_NEXT(tmp);
-			port_s = tmp;
-			GET_NEXT(tmp);
-			GET_NEXT(tmp);
-			authcookie_s = tmp;
-			GET_NEXT(tmp);
-
-			mft = find_mft_by_cookie(ms->gc, atoi(cookie_s));
-
-			if (!mft)
-			{
-				debug_printf("MSN: Cookie not found. File transfer aborted.\n");
-				return;
-			}
-
-			strncpy(mft->ip, ip, 16);
-			mft->port = atoi(port_s);
-			mft->authcookie = atol(authcookie_s);
-
-			if (proxy_connect(mft->ip, mft->port, msn_msnftp_connect, mft) != 0) {
-				md->file_transfers = g_slist_remove(md->file_transfers, mft);
-				return;
-			}
-		}
-		else
-		{
-			/*
-			 * An accept message from the recipient. Used in outgoing
-			 * file transfers.
-			 */
-		}
-	}
-}
-#endif
-
-static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
-{
-	char *content, *agent, *format;
-	char *message = NULL;
-	int flags = 0;
-
-	agent = strstr(msg, "User-Agent: ");
-	if (agent) {
-		if (!g_strncasecmp(agent, "User-Agent: Gaim", strlen("User-Agent: Gaim")))
-			flags |= IM_FLAG_GAIMUSER;
-	}
-
-	format = strstr(msg, "X-MMS-IM-Format: ");
-	if (format) {
-		format = msn_parse_format(format);
-	} else {
-		format = NULL;
-	}
-
-	content = strstr(msg, "Content-Type: ");
-	if (!content)
-		return;
-	if (!g_strncasecmp(content, "Content-Type: text/x-msmsgscontrol\r\n",
-			   strlen(  "Content-Type: text/x-msmsgscontrol\r\n"))) {
-		if (strstr(content,"TypingUser: ") && !ms->chat) {
-			serv_got_typing(ms->gc, ms->msguser, MSN_TYPING_RECV_TIMEOUT, TYPING);
-			return;
-		} 
-
-	} else if (!g_strncasecmp(content, "Content-Type: text/x-msmsgsinvite;",
-							  strlen("Content-Type: text/x-msmsgsinvite;"))) {
-
-#if 0
-		/*
-		 * NOTE: Other things, such as voice communication, would go in
-		 *       here too (since they send the same Content-Type). However,
-		 *       this is the best check for file transfer messages, so I'm
-		 *       calling msn_process_ft_invite_msg(). If anybody adds support
-		 *       for anything else that sends a text/x-msmsgsinvite, perhaps
-		 *       this should be changed. For now, it stays.
-		 */
-		msn_process_ft_msg(ms, content);
-#endif
-
-	} else if (!g_strncasecmp(content, "Content-Type: text/plain",
-				  strlen("Content-Type: text/plain"))) {
-		
-	
-		
-		char *skiphead;
-		skiphead = strstr(msg, "\r\n\r\n");
-		if (!skiphead || !skiphead[4]) {
-			return;
-		}
-		skiphead += 4;
-		strip_linefeed(skiphead);
-		
-		if (format) { 
-			message = g_strdup_printf("%s%s", format, skiphead);
-		} else {
-			message = g_strdup(skiphead);
-		}
-		
-		if (ms->chat)
-			serv_got_chat_in(ms->gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)),
-							 ms->msguser, flags, message, time(NULL));
-		else
-			serv_got_im(ms->gc, ms->msguser, message, flags, time(NULL), -1);
-
-		g_free(message);
-	}
-}
-
-static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondition cond)
-{
-	struct msn_switchboard *ms = data;
-	char buf[MSN_BUF_LEN];
-	int cont = 1;
-	int len;
-	
-	ms->fd = source;
-	len = read(ms->fd, buf, sizeof(buf));
-	if (len <= 0) {
-		msn_kill_switch(ms);
-		return;
-	}
-
-	ms->rxqueue = g_realloc(ms->rxqueue, len + ms->rxlen);
-	memcpy(ms->rxqueue + ms->rxlen, buf, len);
-	ms->rxlen += len;
-
-	while (cont) {
-		if (!ms->rxlen)
-			return;
-
-		if (ms->msg) {
-			char *msg;
-			if (ms->msglen > ms->rxlen)
-				return;
-			msg = ms->rxqueue;
-			ms->rxlen -= ms->msglen;
-			if (ms->rxlen) {
-				ms->rxqueue = g_memdup(msg + ms->msglen, ms->rxlen);
-			} else {
-				ms->rxqueue = NULL;
-				msg = g_realloc(msg, ms->msglen + 1);
-			}
-			msg[ms->msglen] = 0;
-			ms->msglen = 0;
-			ms->msg = FALSE;
-
-			msn_process_switch_msg(ms, msg);
-
-			g_free(ms->msguser);
-			g_free(msg);
-		} else {
-			char *end = ms->rxqueue;
-			int cmdlen;
-			char *cmd;
-			int i = 0;
-
-			while (i + 1 < ms->rxlen) {
-				if (*end == '\r' && end[1] == '\n')
-					break;
-				end++; i++;
-			}
-			if (i + 1 == ms->rxlen)
-				return;
-
-			cmdlen = end - ms->rxqueue + 2;
-			cmd = ms->rxqueue;
-			ms->rxlen -= cmdlen;
-			if (ms->rxlen) {
-				ms->rxqueue = g_memdup(cmd + cmdlen, ms->rxlen);
-			} else {
-				ms->rxqueue = NULL;
-				cmd = g_realloc(cmd, cmdlen + 1);
-			}
-			cmd[cmdlen] = 0;
-
-			debug_printf("MSN S: %s", cmd);
-			g_strchomp(cmd);
-			cont = msn_process_switch(ms, cmd);
-
-			g_free(cmd);
-		}
-	}
-}
-
-static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
-{
-	struct msn_switchboard *ms = data;
-	struct gaim_connection *gc = ms->gc;
-	struct msn_data *md;
-	char buf[MSN_BUF_LEN];
-
-	if (source == -1 || !g_slist_find(connections, gc)) {
-		close(source);
-		g_free(ms->sessid);
-		g_free(ms->auth);
-		g_free(ms);
-		return;
-	}
-
-	md = gc->proto_data;
-
-	if (ms->fd != source)
-		ms->fd = source;
-
-	g_snprintf(buf, sizeof(buf), "ANS %u %s %s %s\r\n", ++ms->trId, gc->username, ms->auth, ms->sessid);
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
-		close(ms->fd);
-		g_free(ms->sessid);
-		g_free(ms->auth);
-		g_free(ms);
-		return;
-	}
-
-	md->switches = g_slist_append(md->switches, ms);
-	ms->inpa = gaim_input_add(ms->fd, GAIM_INPUT_READ, msn_switchboard_callback, ms);
-}
-
-static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition cond)
-{
-	struct msn_switchboard *ms = data;
-	struct gaim_connection *gc = ms->gc;
-	char buf[MSN_BUF_LEN];
-
-	if (source == -1 || !g_slist_find(connections, gc)) {
-		close(source);
-		if (g_slist_find(connections, gc)) {
-			msn_kill_switch(ms);
-			do_error_dialog(_("Gaim was unable to send an MSN message"),
-					_("Gaim encountered an error communicating with the "
-					  "MSN switchboard server.  Please try again later."), GAIM_ERROR);
-		}
-		return;
-	}
-
-	if (ms->fd != source)
-		ms->fd = source;
-
-	g_snprintf(buf, sizeof(buf), "USR %u %s %s\r\n", ++ms->trId, gc->username, ms->auth);
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
-		g_free(ms->auth);
-		g_free(ms);
-		return;
-	}
-
-	ms->inpa = gaim_input_add(ms->fd, GAIM_INPUT_READ, msn_switchboard_callback, ms);
 }
 
 struct msn_add_permit {
@@ -1584,16 +768,15 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		}
 
 		if (switchboard) {
-			struct msn_switchboard *ms = msn_find_writable_switch(gc);
-			if (!ms)
-				return 1;
+			struct msn_switchboard *ms;
 
 			GET_NEXT(tmp);
 
-			if (proxy_connect(host, port, msn_ss_xfr_connect, ms) != 0) {
-				msn_kill_switch(ms);
+			ms = msn_switchboard_connect(gc, host, port);
+
+			if (ms == NULL)
 				return 1;
-			}
+
 			ms->auth = g_strdup(tmp);
 		} else {
 			close(md->fd);
@@ -2064,44 +1247,6 @@ static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 }
 
 #if 0
-/* XXX Don't blame me. I stole this from the oscar module! */
-static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
-												  struct file_transfer *xfer)
-{
-	GSList *g = ((struct msn_data *)gc->proto_data)->file_transfers;
-	struct msn_file_transfer *f = NULL;
-
-	while (g) {
-		f = (struct msn_file_transfer *)g->data;
-		if (f->xfer == xfer)
-			break;
-
-		g = g->next;
-		f = NULL;
-	}
-
-	return f;
-}
-
-/* XXX Don't blame me. I stole this from the oscar module! */
-static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,
-													unsigned long cookie)
-{
-	GSList *g = ((struct msn_data *)gc->proto_data)->file_transfers;
-	struct msn_file_transfer *f = NULL;
-
-	while (g) {
-		f = (struct msn_file_transfer *)g->data;
-		if (f->cookie == cookie)
-			break;
-
-		g = g->next;
-		f = NULL;
-	}
-
-	return f;
-}
-
 static void msn_file_transfer_cancel(struct gaim_connection *gc,
 									 struct file_transfer *xfer)
 {

@@ -2,7 +2,14 @@ EXTRA_DIST = PROTOCOL md5.h
 
 pkgdir = $(libdir)/gaim
 
-MSNSOURCES = msn.c
+MSNSOURCES = \
+	ft.c \
+	msg.c \
+	msg.h \
+	msn.c \
+	msn.h \
+	switchboard.c \
+	switchboard.h
 
 AM_CFLAGS = $(st)
 
