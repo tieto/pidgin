@@ -40,7 +40,6 @@ struct ConvPlacementData
 {
 	char *name;
 	gaim_conv_placement_fnc fnc;
-
 };
 
 #define SEND_TYPED_TIMEOUT 5000
@@ -464,28 +463,40 @@ gaim_window_destroy(struct gaim_window *win)
 
 	ops = gaim_window_get_ui_ops(win);
 
-	for (node = g_list_first(gaim_window_get_conversations(win));
-		 node != NULL;
-		 node = g_list_next(node))
-	{
-		struct gaim_conversation *conv;
-		
-		conv = (struct gaim_conversation *)node->data;
+	/*
+	 * If there are any conversations in this, destroy them all. The last
+	 * conversation will call gaim_window_destroy(), but this time, this
+	 * check will fail and the window will actually be destroyed.
+	 *
+	 * This is needed because chats may not close right away. They may
+	 * wait for notification first. When they get that, the window is
+	 * already destroyed, and gaim either crashes or spits out gtk warnings.
+	 * The problem is fixed with this check.
+	 */
+	if (gaim_window_get_conversation_count(win) > 0) {
 
-		conv->window = NULL;
-		gaim_conversation_destroy(conv);
+		for (node = g_list_first(gaim_window_get_conversations(win));
+			 node != NULL;
+			 node = g_list_next(node))
+		{
+			struct gaim_conversation *conv;
 
-		node->data = NULL;
+			conv = (struct gaim_conversation *)node->data;
+
+			gaim_conversation_destroy(conv);
+		}
 	}
+	else
+	{
+		if (ops != NULL && ops->destroy_window != NULL)
+			ops->destroy_window(win);
 
-	if (ops != NULL && ops->destroy_window != NULL)
-		ops->destroy_window(win);
+		g_list_free(gaim_window_get_conversations(win));
 
-	g_list_free(gaim_window_get_conversations(win));
+		windows = g_list_remove(windows, win);
 
-	windows = g_list_remove(windows, win);
-
-	g_free(win);
+		g_free(win);
+	}
 }
 
 void
@@ -959,6 +970,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		 *
 		 *   -- ChipX86
 		 */
+
 		if (gc && g_slist_find(gc->buddy_chats, conv) != NULL) {
 			serv_chat_leave(gc, gaim_chat_get_id(GAIM_CHAT(conv)));
 
