@@ -20,6 +20,8 @@ version 0.77 (04/22/2004):
 	  for loader plugins and protocol plugins. Authors will want to
 	  update their plugins, and possibly use GAIM_PLUGIN_API_VERSION,
 	  GAIM_PRPL_API_VERSION, and GAIM_LOADER_API_VERSION constants.
+	* Zephyr error reporting works (Arun A. Tharuvai)
+	* Zephyr deals with non-utf8 characters (Arun A. Tharuvai)
 
 	Bug Fixes:
 	* Formatting in the Log viewer is fixed (Kevin Stange)
