@@ -125,6 +125,11 @@ void do_quit()
 	perl_end();
 #endif
 
+#ifdef USE_SM
+	/* unplug */
+	session_end();
+#endif
+
 	/* and end it all... */
 	gtk_main_quit();
 }
@@ -552,6 +557,7 @@ int main(int argc, char *argv[])
 {
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, dologin_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
+	char *opt_session_arg = NULL;
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -570,6 +576,7 @@ int main(int argc, char *argv[])
 		{"file", required_argument, NULL, 'f'},
 		{"debug", no_argument, NULL, 'd'},
 		{"version", no_argument, NULL, 'v'},
+		{"session", required_argument, NULL, 's'},
 		{0, 0, 0, 0}
 	};
 
@@ -703,7 +710,7 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "adhu:f:vn", 
+				  "adhu:f:vns:", 
 #else
 				  "adghu:f:vn", 
 #endif
@@ -721,6 +728,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'f':
 			opt_rcfile_arg = g_strdup(optarg);
+			break;
+		case 's':	/* use existing session ID */
+			opt_session_arg = g_strdup(optarg);
 			break;
 		case 'v':	/* version */
 			opt_version = 1;
@@ -805,6 +815,14 @@ int main(int argc, char *argv[])
 #ifndef _WIN32
 	ui_main();
 #endif
+
+#ifdef USE_SM
+	session_init(argv[0], opt_session_arg);
+#endif
+	if (opt_session_arg != NULL) {
+		g_free(opt_session_arg);
+		opt_session_arg = NULL;
+	};
 
 	/* set the default username */
 	if (opt_user_arg != NULL) {

@@ -122,6 +122,7 @@ AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting
 AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
+AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session management support],,enable_sm=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 
 if test "$enable_debug" = yes ; then
@@ -141,9 +142,10 @@ AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 AC_PATH_PROG(gaimpath, gaim)
 CFLAGS="$CFLAGS $GTK_CFLAGS -DGTK_ENABLE_BROKEN"
 
+AC_PATH_X
+
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
-	AC_PATH_X
 	old_LIBS="$LIBS"
 	LIBS="$LIBS $GTK_LIBS -L$x_libraries"
 	XSS_LIBS="no"
@@ -166,6 +168,23 @@ else
 	enable_xss=no
 fi
 AC_SUBST(XSS_LIBS)
+
+
+dnl Check for X session management libs
+if test "x$enable_sm" = "xyes"; then
+	enable_sm=no
+	AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [-L$x_libraries -lICE])
+	if test "$found_sm_lib" = "true"; then
+		AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="-L$x_libraries -lSM -lICE" enable_sm=yes)
+	fi
+else
+	SM_LIBS=""
+	enable_sm=no
+fi
+AC_SUBST(SM_LIBS)
+if test "$enable_sm" = "yes"; then
+	AC_DEFINE(USE_SM, 1, [Define if we're using X Session Management.])
+fi
 
 
 AC_DEFUN(GC_TM_GMTOFF,
@@ -410,6 +429,7 @@ echo
 echo Build with GtkSpell............: $enable_gtkspell
 echo
 echo Use XScreenSaver Extension.... : $enable_xss
+echo Use X Session Management...... : $enable_sm
 echo
 echo Build with ESD................ : $enable_esd
 echo Build with NAS................ : $enable_nas

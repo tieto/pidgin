@@ -39,17 +39,18 @@
 
 /* types */
 enum docklet_status {
+	offline,
+	offline_connecting,
 	online,
+	online_connecting,
+	online_pending,
 	away,
-	away_pending,
-	unread_pending,
-	connecting,
-	offline
+	away_pending
 };
 
 /* functions */
 static gboolean docklet_create();
-static void docklet_update_status();
+static gboolean docklet_update_status();
 void gaim_plugin_remove();
 
 /* globals */
@@ -88,12 +89,13 @@ static void docklet_menu(GdkEventButton *event) {
 
 	menu = gtk_menu_new();
 
-	if (status == offline) {
-		entry = gtk_menu_item_new_with_label(_("Auto-login"));
-		g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(auto_login), NULL);
-		gtk_menu_append(GTK_MENU(menu), entry);
-	} else {
-		if (status == online) {
+	switch (status) {
+		case offline:
+		case offline_connecting:
+			break;
+		case online:
+		case online_connecting:
+		case online_pending: {
 			GtkWidget *docklet_awaymenu;
 			GSList *awy = NULL;
 			struct away_message *a = NULL;
@@ -111,8 +113,8 @@ static void docklet_menu(GdkEventButton *event) {
 				awy = g_slist_next(awy);
 			}
 
-			entry = gtk_separator_menu_item_new();
-			gtk_menu_append(GTK_MENU(docklet_awaymenu), entry);
+			if (away_messages)
+				gaim_separator(docklet_awaymenu);
 
 			entry = gtk_menu_item_new_with_label(_("New..."));
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(create_away_mess), NULL);
@@ -121,43 +123,43 @@ static void docklet_menu(GdkEventButton *event) {
 			entry = gtk_menu_item_new_with_label(_("Away"));
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(entry), docklet_awaymenu);
 			gtk_menu_append(GTK_MENU(menu), entry);
-		} else {
+			} break;
+		case away:
+		case away_pending:
 			entry = gtk_menu_item_new_with_label(_("Back"));
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_im_back), NULL);
 			gtk_menu_append(GTK_MENU(menu), entry);
-		}
-
-		entry = gtk_menu_item_new_with_label(_("Signoff"));
-		g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(signoff_all), NULL);
-		gtk_menu_append(GTK_MENU(menu), entry);
+			break;
 	}
 
-	entry = gtk_separator_menu_item_new();
-	gtk_menu_append(GTK_MENU(menu), entry);
+	switch (status) {
+		case offline:
+		case offline_connecting:
+			entry = gtk_menu_item_new_with_label(_("Auto-login"));
+			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(auto_login), NULL);
+			gtk_menu_append(GTK_MENU(menu), entry);
+			break;
+		default:
+			entry = gtk_menu_item_new_with_label(_("Signoff"));
+			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(signoff_all), NULL);
+			gtk_menu_append(GTK_MENU(menu), entry);
+			break;
+	}
+
+	gaim_separator(menu);
 
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), mute_sounds);
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 
-	entry = gtk_menu_item_new_with_label(_("Accounts"));
-	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(account_editor), NULL);
-	gtk_menu_append(GTK_MENU(menu), entry);
+	gaim_new_item_from_pixbuf(menu, _("Accounts..."), "accounts-menu.png", G_CALLBACK(account_editor), NULL, 0, 0, 0);
+	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(show_prefs), NULL, 0, 0, 0);
 
-	entry = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, NULL);
-	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(show_prefs), NULL);
-	gtk_menu_append(GTK_MENU(menu), entry);
+	gaim_separator(menu);
 
-	entry = gtk_separator_menu_item_new();
-	gtk_menu_append(GTK_MENU(menu), entry);
-
-	entry = gtk_menu_item_new_with_label(_("About"));
-	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(show_about), NULL);
-	gtk_menu_append(GTK_MENU(menu), entry);
-
-	entry = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
-	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_quit), NULL);
-	gtk_menu_append(GTK_MENU(menu), entry);
+	gaim_new_item_from_pixbuf(menu, _("About Gaim..."), "about_menu.png", G_CALLBACK(show_about), NULL, 0, 0, 0);
+	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(do_quit), NULL, 0, 0, 0);
 
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
@@ -189,8 +191,18 @@ static void docklet_update_icon() {
 	GdkPixbuf *unscaled;
 
 	switch (status) {
+		case offline:
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "offline.png", NULL);
+			break;
+		case offline_connecting:
+		case online_connecting:
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "connect.png", NULL);
+			break;
 		case online:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "online.png", NULL);
+			break;
+		case online_pending:
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgunread.png", NULL);
 			break;
 		case away:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "away.png", NULL);
@@ -198,14 +210,6 @@ static void docklet_update_icon() {
 		case away_pending:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgpend.png", NULL);
 			break;
-		case unread_pending:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgunread.png", NULL);
-			break;
-		case connecting:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "connect.png", NULL);
-			break;
-		case offline:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "offline.png", NULL);
 	}
 
 	unscaled = gdk_pixbuf_new_from_file(filename, NULL);
@@ -226,14 +230,14 @@ static void docklet_update_icon() {
 	g_free(filename);
 }
 
-static void docklet_update_status() {
+static gboolean docklet_update_status() {
 	enum docklet_status oldstatus;
 
 	oldstatus = status;
 
 	if (connections) {
 		if (unread_message_queue) {
-			status = unread_pending;
+			status = online_pending;
 		} else if (awaymessage) {
 			if (message_queue) {
 				status = away_pending;
@@ -241,13 +245,13 @@ static void docklet_update_status() {
 				status = away;
 			}
 		} else if (connecting_count) {
-			status = connecting;
+			status = online_connecting;
 		} else {
 			status = online;
 		}
 	} else {
 		if (connecting_count) {
-			status = connecting;
+			status = offline_connecting;
 		} else {
 			status = offline;
 		}
@@ -256,6 +260,8 @@ static void docklet_update_status() {
 	if (status != oldstatus) {
 		docklet_update_icon();
 	}
+
+	return FALSE; /* for when we're called by the glib idle handler */
 }
 
 static void docklet_embedded(GtkWidget *widget, void *data) {
@@ -314,7 +320,10 @@ static void gaim_signon(struct gaim_connection *gc, void *data) {
 }
 
 static void gaim_signoff(struct gaim_connection *gc, void *data) {
-	docklet_update_status();
+	/* do this when idle so that if the prpl was connecting
+	   and was cancelled, we register that connecting_count
+	   has returned to 0 */
+	g_idle_add(docklet_update_status, NULL);
 }
 
 static void gaim_connecting(struct aim_user *user, void *data) {

@@ -2487,8 +2487,8 @@ static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void 
 	    y != blist_pos.y ||
 	    event->width != blist_pos.width ||
 	    event->height != blist_pos.height) {
-		blist_pos.x = x > 0 ? x : 0;
-		blist_pos.y = y > 0 ? y : 0;
+		blist_pos.x = x;
+		blist_pos.y = y;
 		blist_pos.width = event->width;
 		blist_pos.height = event->height;
 		save_prefs();

@@ -188,5 +188,5 @@ void show_about(GtkWidget *w, void *data)
 
 	/* Let's give'em something to talk about -- woah woah woah */
 	gtk_widget_show(about);
-	gtk_window_present(about);
+	gtk_window_present(GTK_WINDOW(about));
 }

@@ -315,6 +315,9 @@ extern GtkWidget *fontseld;
 /* Globals in prpl.c */
 extern GtkWidget *protomenu;
 
+/* Globals in session.c */
+extern gboolean session_managed;
+
 /* Globals in sound.c */
 extern gboolean mute_sounds;
 
@@ -506,13 +509,16 @@ extern void apply_font_dlg(GtkWidget *, GtkWidget *);
 extern void apply_color_dlg(GtkWidget *, gpointer);
 extern void destroy_colorsel(GtkWidget *, gpointer);
 
-
 /* Functions in prpl.c */
 extern void register_dialog();
 
 /* Functions in server.c */
 /* server.c is in desperate need need of a split */
 extern int find_queue_total_by_name(char *);
+
+/* Functions in session.c */
+extern void session_init(gchar *, gchar *);
+extern void session_end();
 
 /* Functions in sound.c */
 extern void play_sound(int);

@@ -24,6 +24,7 @@ gaim_SOURCES =	about.c \
 		proxy.c \
 		prpl.c \
 		server.c \
+		session.c \
 		socket.c \
 		sound.c \
 		util.c
@@ -37,7 +38,7 @@ gaim_remote_SOURCES = gaim-remote.c socket.c
 CFLAGS += $(PERL_CFLAGS) $(GTKSPELL_CFLAGS)
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" -DLIBDIR=\"$(libdir)/gaim/\" $(DEBUG_CFLAGS) -DDATADIR=\"$(datadir)\"
 
-LIBS = @LIBS@ $(GTK_LIBS) $(SOUND_LIBS) $(STATIC_LINK_LIBS) $(PERL_LIBS) $(XSS_LIBS) $(INTLLIBS) $(DEBUG_LIBS) $(GTKSPELL_LIBS)
+LIBS = @LIBS@ $(GTK_LIBS) $(SOUND_LIBS) $(STATIC_LINK_LIBS) $(PERL_LIBS) $(XSS_LIBS) $(SM_LIBS) $(INTLLIBS) $(DEBUG_LIBS) $(GTKSPELL_LIBS)
 
 EXTRA_DIST =	convo.h \
 		core.h \
