@@ -1017,7 +1017,16 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		/* keep track of away msg same as yahoo plugin */
 		jabber_track_away(gjc, p, normalize(b->name), type);
 
-		if (type && (strcasecmp(type, "unavailable") == 0)) {
+		/*
+		 * JFIXME: The check for "error" is a temporary fix.  We don't want to show the
+		 * buddy on-line in this case.  Ultimately what we'll want to do is process
+		 * "error" the same way as "away" type status and probably have the GUI show,
+		 * say, a broken lightbulb?
+		 *
+		 * Note that there's another check just like this one, below.
+		 */
+		if (type && ((strcasecmp(type, "unavailable") == 0) ||
+				     (strcasecmp(type, "error") == 0))) {
 			if (resources) {
 				g_free(resources->data);
 				b->proto_data = g_slist_remove(b->proto_data, resources->data);
@@ -1041,7 +1050,11 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 			jabber_track_away(gjc, p, buf, type);
 			g_free(buf);
 
-			if (type && !strcasecmp(type, "unavailable")) {
+			/*
+			 * JFIXME: Here's the other place we have temporary handling of a
+			 * presence "error."
+			 */
+			if (type && (!strcasecmp(type, "unavailable") || !strcasecmp(type, "error"))) {
 				struct jabber_data *jd;
 				if (!jc && !(jc = find_existing_chat(GJ_GC(gjc), who))) {
 					g_free(buddy);
