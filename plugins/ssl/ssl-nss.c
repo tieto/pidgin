@@ -63,7 +63,8 @@ ssl_nss_init_nss(void)
 	/* TODO: Fix this so autoconf does the work trying to find this lib. */
 	SECMOD_AddNewModule("Builtins",
 #ifndef _WIN32
-                            BR_LIBDIR("/libnssckbi.so"),
+                            g_strdup(BR_LIBDIR("/libnssckbi.so")),
+			    /* this might leak, and looks wrong in general */
 #else
                             "nssckbi.dll",
 #endif

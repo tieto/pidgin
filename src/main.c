@@ -585,6 +585,7 @@ startup_notification_complete(void)
 }
 #endif /* HAVE_STARTUP_NOTIFICATION */
 
+#ifndef _WIN32
 static char *gaim_find_binary_location(void *symbol, void *data)
 {
 	static char *fullname = NULL;
@@ -632,7 +633,7 @@ static char *gaim_find_binary_location(void *symbol, void *data)
 	fullname = basebuf;
 	return strdup(fullname);
 }
-
+#endif /* #ifndef _WIN32 */
 
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
@@ -672,7 +673,9 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
 	opt_debug = 1;
 #endif
+#ifndef _WIN32
 	br_set_locate_fallback_func(gaim_find_binary_location, argv[0]);
+#endif
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
