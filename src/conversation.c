@@ -1091,12 +1091,22 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	int colorv = -1;
 	char *clr;
 	char *smiley = g_malloc(7);
+	struct buddy *b;
 
 	if (!who) {
 		if (flags & WFLAG_SEND)
 			who = current_user->username;
-		else
-			who = c->name;
+		else {
+			b = find_buddy(c->name);
+			if (b)
+				who = b->show;
+			else
+				who = c->name;
+		}
+	} else {
+		b = find_buddy(who);
+		if (b)
+			who = b->show;
 	}
 	
         if (flags & WFLAG_SYSTEM) {

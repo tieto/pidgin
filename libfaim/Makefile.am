@@ -1,6 +1,6 @@
 noinst_LIBRARIES = libfaim.a
 
-EXTRA_DIST = faim/aim.h faim/aim_cbtypes.h faim/faimconfig.h README \
+EXTRA_DIST = faim/aim.h faim/aim_cbtypes.h faim/faimconfig.h md5.h README \
 		README.gaim CHANGES CHANGES.gaim COPYING BUGS AUTHORS
 
 libfaim_a_SOURCES = 	aim_ads.c		\
@@ -23,7 +23,8 @@ libfaim_a_SOURCES = 	aim_ads.c		\
 			aim_snac.c		\
 			aim_tlv.c		\
 			aim_txqueue.c		\
-			aim_util.c
+			aim_util.c		\
+			md5.c
 
 CFLAGS += -DAIM_BUILDDATE=\"`date +%Y%m%d`\" -DAIM_BUILDTIME=\"`date +%H%M%S`\"
 

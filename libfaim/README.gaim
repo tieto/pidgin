@@ -48,7 +48,6 @@ Chat:
  - inviting someone
  - getting invited
  - refreshing the chatlist in the preferences dialog
-ICQ!!! (Use your UIN instead of your SN to sign on)
 Direct IM (aka IM Image, for sounds and pictures)
 
 CURRENTLY UNSUPPORTED FEATURES
@@ -70,14 +69,6 @@ while, evidently). So if you want to "whisper" to someone, just IM them.
 
 - The permit/deny list stuff is really warped. I've commented it out; the code
 in libfaim is untested and it's causing way too many problems.
-
-- "Allow anyone" and "Deny some" serve the same function. That's not a bug. But
-"Allow anyone" works all the time (?) and "Deny some" doesn't work some of the
-time. That's a bug.
-
-- If you receive a message that's too large, gaim segfaults. I haven't watched
-this in gdb or gotten a backtrace on it, so I'm not exactly sure what the
-problem is. I think this actually happens on the TOC side of things too.
 
 - Gaim/TOC can do some RVOUS actions, and Gaim/Faim can do others. This is not
 because there is any difference in the protocols as far as the actual transfer

@@ -54,20 +54,6 @@
 #define USE_SNAC_FOR_IMS
 
 /*
- * As of AIM 3.5 or so, AOL as added a better way of
- * logging in.  Define this to use it instead of the 
- * old Version 1.0 way.  
- *
- * The largest caveat here is that I have no idea
- * how to encode passwords using the new 3.5 way.
- * Until someone figures that out the...
- *
- * Default: Undefined.
- *
- */
-#undef SNACLOGIN
-
-/*
  * Default Authorizer server name and TCP port for the OSCAR farm.  
  *
  * You shouldn't need to change this unless you're writing
@@ -83,15 +69,6 @@
  */
 #define FAIM_LOGIN_SERVER "login.oscar.aol.com"
 #define FAIM_LOGIN_PORT 5190
-
-/*
- * MAX_READ_ERROR can be decreased if you find dead connections
- * lingering around, and not getting detected, for too long.
- *
- * Default: 100
- *
- */
-#define MAX_READ_ERROR 100
 
 /*
  * The integer extraction/copying functions in aim_util.c have

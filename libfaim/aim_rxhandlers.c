@@ -352,35 +352,31 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	  
 	  switch (family) {
 	    /* New login protocol */
-#ifdef SNACLOGIN
 	  case 0x0017:
 	    if (subtype == 0x0001)
 	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0x0001, workingPtr);
 	    else if (subtype == 0x0003)
 	      workingPtr->handled = aim_authparse(sess, workingPtr);
 	    else if (subtype == 0x0007)
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0x0007, workingPtr);
+	      workingPtr->handled = aim_authkeyparse(sess, workingPtr);
 	    else
 	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
 	    break;
-#else	
-	    /* XXX: this isnt foolproof */
-	  case 0x0001:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, workingPtr);
+         case 0x0007:
+           if (subtype == 0x0005)
+             workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_ADM, AIM_CB_ADM_INFOCHANGE_REPLY, workingPtr);
+           break;
+         case AIM_CB_FAM_SPECIAL:
+           if (subtype == AIM_CB_SPECIAL_DEBUGCONN_CONNECT) {
+             workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+             break;
+           } /* others fall through */
+         default:
+#if 0
+           /* Old login protocol */
+           /* any user callbacks will be called from here */
+           workingPtr->handled = aim_authparse(sess, workingPtr);
 	    break;
-	  case 0x0007:
-	    if (subtype == 0x0005)
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_ADM, AIM_CB_ADM_INFOCHANGE_REPLY, workingPtr);
-	    break;
-	  case AIM_CB_FAM_SPECIAL:
-	    if (subtype == AIM_CB_SPECIAL_DEBUGCONN_CONNECT) {
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-	      break;
-	    } /* others fall through */
-	  default:
-	    /* Old login protocol */
-	    /* any user callbacks will be called from here */
-	    workingPtr->handled = aim_authparse(sess, workingPtr);
 #endif
 	  }
 	}

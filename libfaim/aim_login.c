@@ -7,6 +7,9 @@
 
 #include <faim/aim.h>
 
+#include "md5.h"
+
+static int aim_encode_password_md5(const char *password, const char *key, md5_byte_t *digest);
 
 /*
  * FIXME: Reimplement the TIS stuff.
@@ -34,7 +37,6 @@ int aim_sendconnack(struct aim_session_t *sess,
   return aim_tx_enqueue(sess, newpacket);
 }
 
-#ifdef SNACLOGIN
 /*
  * In AIM 3.5 protocol, the first stage of login is to request
  * login from the Authorizer, passing it the screen name
@@ -62,7 +64,6 @@ int aim_request_login(struct aim_session_t *sess,
   newpacket->lock = 0;
   return aim_tx_enqueue(sess, newpacket);
 }
-#endif /* SNACLOGIN */
 
 /*
  * send_login(int socket, char *sn, char *password)
@@ -76,11 +77,11 @@ int aim_request_login(struct aim_session_t *sess,
  */
 int aim_send_login (struct aim_session_t *sess,
 		    struct aim_conn_t *conn, 
-		    char *sn, char *password, struct client_info_s *clientinfo)
+		    char *sn, char *password, struct client_info_s *clientinfo,
+		    char *key)
 {
-  u_char *password_encoded = NULL;  /* to store encoded password */
   int curbyte=0;
-  int icqmode = 0;
+  md5_byte_t digest[16];
   
   struct command_tx_struct *newpacket;
 
@@ -90,67 +91,16 @@ int aim_send_login (struct aim_session_t *sess,
   if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152)))
     return -1;
 
-  /*
-   * For ICQ logins, the client version must be at
-   * least as high as ICQ2000a.
-   */
-  if ((sn[0] >= '0') && (sn[0] <= '9')) {
-    icqmode = 1; /* needs a different password encoding */
-    if (clientinfo && (clientinfo->major < 4)) {
-      printf("faim: icq: version must be at least 4.30.3141 for ICQ OSCAR login\n");
-    }
-    if (strlen(password) > 8) {
-      printf("faim: icq: password too long (8 char max)\n");
-    }
-  }
-
-#ifdef SNACLOGIN 
-  newpacket->commandlen = 10;
-  newpacket->commandlen += 2 + 2 + strlen(sn);
-  newpacket->commandlen += 2 + 2 + strlen(password);
-  newpacket->commandlen += 2 + 2 + strlen(clientinfo->clientstring);
-  newpacket->commandlen += 56;
-  
   newpacket->lock = 1;
 
+  newpacket->hdr.oscar.type = 0x02;
+  
   curbyte = aim_putsnac(newpacket->data+curbyte, 0x0017, 0x0002, 0x0000, 0x00010000);
+
   curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
-  password_encoded = (u_char *) malloc(strlen(password));
-  aim_encode_password(password, password_encoded);
-  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0002, strlen(password), password_encoded);
-  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0003, 
-			   strlen(clientinfo->clientstring), 
-			   clientinfo->clientstring);
-  /* XXX: should use clientinfo provided version info */
-  curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x0004);
-  curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x0017, 0x0003);
-  curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x0018, 0x0005);
-  curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x0019, 0x0000);
-  curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x001a, 0x0686);
-  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0001, 0x0002, clientinfo->country);
-  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0001, 0x0002, clientinfo->lang);
-  curbyte+= aim_puttlv_32(newpacket->data+curbyte, 0x0014, 0x0000002a);
-  curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
-#else
   
-  newpacket->lock = 1;
-  newpacket->hdr.oscar.type = 0x01;
-
-  /*
-   * These four bytes are actually the FLAP version information.
-   * They're sent here for convenience.  I suppose they could
-   * be seperated out into a seperate FLAP, but this is where
-   * everyone else sends them.
-   */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
-
-  curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
-
-  password_encoded = (char *) malloc(strlen(password));
-  aim_encode_password(password, password_encoded);
-  curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0002, strlen(password), password_encoded);
-  free(password_encoded);
+  aim_encode_password_md5(password, key, digest);
+  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0025, 16, digest);
   
   /* XXX is clientstring required by oscar? */
   if (strlen(clientinfo->clientstring))
@@ -161,8 +111,9 @@ int aim_send_login (struct aim_session_t *sess,
   curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, clientinfo->minor);
   curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, clientinfo->minor2);
   curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, clientinfo->build);
-
+  
   curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
 
   if (strlen(clientinfo->country))
     curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000e, strlen(clientinfo->country), clientinfo->country);
@@ -175,10 +126,22 @@ int aim_send_login (struct aim_session_t *sess,
     curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000f, 2, "en");
   
   newpacket->commandlen = curbyte;
-#endif
 
   newpacket->lock = 0;
   return aim_tx_enqueue(sess, newpacket);
+}
+
+static int aim_encode_password_md5(const char *password, const char *key, md5_byte_t *digest)
+{
+  md5_state_t state;
+
+  md5_init(&state);	
+  md5_append(&state, (const md5_byte_t *)key, strlen(key));
+  md5_append(&state, (const md5_byte_t *)password, strlen(password));
+  md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+  md5_finish(&state, (md5_byte_t *)digest);
+
+  return 0;
 }
 
 /*
@@ -196,8 +159,11 @@ int aim_send_login (struct aim_session_t *sess,
  * The encoding_table seems to be a fixed set of values.  We'll
  * hope it doesn't change over time!  
  *
+ * NOTE: This is no longer used. Its here for historical reference.
+ *
  */
-int aim_encode_password(const char *password, u_char *encoded)
+#if 0
+static int aim_encode_password(const char *password, unsigned char *encoded)
 {
   u_char encoding_table[] = {
 #if 0 /* old v1 table */
@@ -220,6 +186,7 @@ int aim_encode_password(const char *password, u_char *encoded)
 
   return 0;
 }
+#endif
 
 /*
  * This is sent back as a general response to the login command.
@@ -243,12 +210,12 @@ int aim_authparse(struct aim_session_t *sess,
   /*
    * Read block of TLVs.  All further data is derived
    * from what is parsed here.
+   *
+   * For SNAC login, there's a 17/3 SNAC header in front.
+   *
    */
-#ifdef SNACLOGIN
   tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10);
-#else
-  tlvlist = aim_readtlvchain(command->data, command->commandlen);
-#endif
+
   /*
    * No matter what, we should have a screen name.
    */
@@ -301,11 +268,8 @@ int aim_authparse(struct aim_session_t *sess,
       
   }
 
-#ifdef SNACLOGIN
   userfunc = aim_callhandler(command->conn, 0x0017, 0x0003);
-#else
-  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_AUTHSUCCESS);
-#endif
+
   if (userfunc)
     ret = userfunc(sess, command);
 
@@ -323,6 +287,33 @@ int aim_authparse(struct aim_session_t *sess,
     free(sess->logininfo.errorurl);
     sess->logininfo.errorurl = NULL;
   }
+
+  return ret;
+}
+
+/*
+ * Middle handler for 0017/0007 SNACs.  Contains the auth key prefixed
+ * by only its length in a two byte word.
+ *
+ * Calls the client, which should then use the value to call aim_send_login.
+ *
+ */
+int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command)
+{
+  unsigned char *key;
+  int keylen;
+  int ret = 1;
+  rxcallback_t userfunc;
+
+  keylen = aimutil_get16(command->data+10);
+  key = malloc(keylen+1);
+  memcpy(key, command->data+12, keylen);
+  key[keylen] = '\0';
+  
+  if ((userfunc = aim_callhandler(command->conn, 0x0017, 0x0007)))
+    ret = userfunc(sess, command, key);
+
+  free(key);  
 
   return ret;
 }

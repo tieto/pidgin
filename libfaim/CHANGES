@@ -1,6 +1,11 @@
 
 No release numbers
 ------------------
+ - Mon Aug 21 22:00:18 UTC 2000
+   - Implement SNAC login MD5 (thanks to Sonuvbob for that one)
+   - Clear out all that old login cruft. Much cleaner now.
+   - REQUIRES CLIENT CHANGES (see faimtest)
+
  - Fri Aug 18 19:52:54 UTC 2000
    - Fix the non-pthread bug
 

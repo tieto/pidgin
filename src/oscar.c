@@ -72,6 +72,7 @@ struct chat_connection *find_oscar_chat(char *name) {
 
 static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_auth_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_login      (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_server_ready     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_handle_redirect  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_oncoming   (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -148,7 +149,7 @@ static void oscar_callback(gpointer data, gint source,
 int oscar_login(char *username, char *password) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
-	struct client_info_s info = {"AOL Instant Messenger (TM), version 2.1.1187/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055};
+/*	struct client_info_s info = {"AOL Instant Messenger (TM), version 2.1.1187/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055}; */
 	struct aim_user *u;
 	char buf[256];
 
@@ -193,6 +194,11 @@ int oscar_login(char *username, char *password) {
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), username);
 	set_login_progress(2, buf);
 
+	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
+	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
+	aim_sendconnack(sess, conn);
+	aim_request_login(sess, conn, username);
+/*
 	aim_conn_addhandler(sess, conn, AIM_CB_FAM_SPECIAL,
 				AIM_CB_SPECIAL_AUTHSUCCESS,
 				gaim_parse_auth_resp, 0);
@@ -200,6 +206,7 @@ int oscar_login(char *username, char *password) {
 				AIM_CB_GEN_SERVERREADY,
 				gaim_auth_server_ready, 0);
 	aim_send_login(sess, conn, username, password, &info);
+*/
 
 	inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, conn);
@@ -345,6 +352,20 @@ int gaim_auth_server_ready(struct aim_session_t *sess,
 		change_password = FALSE;
 	}
 	return 1;
+}
+
+int gaim_parse_login(struct aim_session_t *sess,
+		     struct command_rx_struct *command, ...) {
+	struct client_info_s info = {"AOL Instant Messenger (TM), version 2.1.1187/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055};
+	unsigned char *key;
+	va_list ap;
+
+	va_start(ap, command);
+	key = va_arg(ap, char *);
+	va_end(ap);
+
+	aim_send_login(sess, command->conn,
+			current_user->username, current_user->password, &info, key);
 }
 
 int gaim_server_ready(struct aim_session_t *sess,

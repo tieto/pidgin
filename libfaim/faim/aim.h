@@ -113,6 +113,8 @@
  */
 #define AIM_COOKIELEN            0x100
 
+#define AIM_MD5_STRING "AOL Instant Messenger (SM)"
+
 #if debug > 0
 #define faimdprintf(l, x...) {if (l >= debug) printf(x); }
 #else
@@ -399,9 +401,7 @@ struct aim_fileheader_t *aim_oft_getfh(char *hdr);
 /* aim_login.c */
 int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
 int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
-int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *);
-int aim_encode_password(const char *, u_char *);
-int aimicq_encode_password(const char *password, u_char *encoded);
+int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *, char *key);
 unsigned long aim_sendauthresp(struct aim_session_t *sess, 
 			       struct aim_conn_t *conn, 
 			       char *sn, char *bosip, 
@@ -409,6 +409,7 @@ unsigned long aim_sendauthresp(struct aim_session_t *sess,
 			       int regstatus);
 int aim_gencookie(unsigned char *buf);
 int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn);
+int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command);
 unsigned long aim_sendredirect(struct aim_session_t *sess, 
 			       struct aim_conn_t *conn, 
 			       unsigned short servid, 
