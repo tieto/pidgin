@@ -691,6 +691,21 @@ __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
+__close_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
+{
+	gtk_widget_destroy(dialog->window);
+
+	g_free(dialog);
+}
+
+static void
+__account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
+						 AccountPrefsDialog *dialog)
+{
+	__close_account_prefs_cb(NULL, dialog);
+}
+
+static void
 __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
@@ -730,10 +745,8 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 
-#if 0
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(__account_win_destroy_cb), dialog);
-#endif
 
 	/* Setup the vbox */
 	main_vbox = gtk_vbox_new(FALSE, 12);
@@ -781,6 +794,9 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(__close_account_prefs_cb), dialog);
 
 	/* OK button */
 	button = gtk_button_new_from_stock(GTK_STOCK_OK);
