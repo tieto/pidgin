@@ -18,38 +18,41 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
-autorecon_la_LDFLAGS   = -module -avoid-version
-history_la_LDFLAGS     = -module -avoid-version
-iconaway_la_LDFLAGS    = -module -avoid-version
-idle_la_LDFLAGS        = -module -avoid-version
-notify_la_LDFLAGS      = -module -avoid-version
-relnot_la_LDFLAGS      = -module -avoid-version
-spellchk_la_LDFLAGS    = -module -avoid-version
-statenotify_la_LDFLAGS = -module -avoid-version
-timestamp_la_LDFLAGS   = -module -avoid-version
+autorecon_la_LDFLAGS    = -module -avoid-version
+extplacement_la_LDFLAGS = -module -avoid-version
+history_la_LDFLAGS      = -module -avoid-version
+iconaway_la_LDFLAGS     = -module -avoid-version
+idle_la_LDFLAGS         = -module -avoid-version
+notify_la_LDFLAGS       = -module -avoid-version
+relnot_la_LDFLAGS       = -module -avoid-version
+spellchk_la_LDFLAGS     = -module -avoid-version
+statenotify_la_LDFLAGS  = -module -avoid-version
+timestamp_la_LDFLAGS    = -module -avoid-version
 
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	autorecon.la   \
-	history.la     \
-	iconaway.la    \
-	idle.la        \
-	notify.la      \
-	relnot.la      \
-	spellchk.la    \
-	statenotify.la \
+	autorecon.la     \
+	extplacement.la  \
+	history.la       \
+	iconaway.la      \
+	idle.la          \
+	notify.la        \
+	relnot.la        \
+	spellchk.la      \
+	statenotify.la   \
 	timestamp.la
 
-autorecon_la_SOURCES   = autorecon.c
-history_la_SOURCES     = history.c
-iconaway_la_SOURCES    = iconaway.c
-idle_la_SOURCES        = idle.c
-notify_la_SOURCES      = notify.c
-relnot_la_SOURCES      = relnot.c
-spellchk_la_SOURCES    = spellchk.c
-statenotify_la_SOURCES = statenotify.c
-timestamp_la_SOURCES   = timestamp.c
+autorecon_la_SOURCES    = autorecon.c
+extplacement_la_SOURCES = extplacement.c
+history_la_SOURCES      = history.c
+iconaway_la_SOURCES     = iconaway.c
+idle_la_SOURCES         = idle.c
+notify_la_SOURCES       = notify.c
+relnot_la_SOURCES       = relnot.c
+spellchk_la_SOURCES     = spellchk.c
+statenotify_la_SOURCES  = statenotify.c
+timestamp_la_SOURCES    = timestamp.c
 
 endif # PLUGINS
 

@@ -22,6 +22,7 @@
 
 #include "internal.h"
 #include "conversation.h"
+#include "gtkplugin.h"
 
 static void
 conv_placement_last_created_win_split(GaimConversation *conv)
