@@ -2490,14 +2490,11 @@ static void change_state_blist_window(GtkWidget *w, GdkEventWindowState *event, 
 
 void gaim_separator(GtkWidget *menu)
 {
-	GtkWidget *sep, *menuitem;
-	sep = gtk_hseparator_new();
-	menuitem = gtk_menu_item_new();
-	gtk_menu_append(GTK_MENU(menu), menuitem);
-	gtk_container_add(GTK_CONTAINER(menuitem), sep);
-	gtk_widget_set_sensitive(menuitem, FALSE);
+	GtkWidget *menuitem;
+
+	menuitem = gtk_separator_menu_item_new();
 	gtk_widget_show(menuitem);
-	gtk_widget_show(sep);
+	gtk_menu_append(GTK_MENU(menu), menuitem);
 }
 
 
