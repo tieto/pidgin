@@ -70,7 +70,8 @@ GdkBitmap *dark_icon_bm = NULL;
 GtkWidget *all_convos = NULL;
 static GtkWidget *convo_notebook = NULL;
 
-char fontface[64];
+char fontface[128] = { 0 };
+char fontxfld[256] = { 0 };
 int fontsize = 3;
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
@@ -502,24 +503,24 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 void set_font_face(char *newfont, struct conversation *c)
 {
 	char *pre_fontface;
-	int alloc = 1;
+	int i, j = 0, k = 0;
 
-	pre_fontface = g_strconcat("<FONT FACE=\"", newfont, "\">", '\0');
 
-	if (!strcmp(pre_fontface, "<FONT FACE=\"\">")) {
-		g_free(pre_fontface);
-		alloc--;
-		pre_fontface = "<FONT FACE=\"" DEFAULT_FONT_FACE "\">";
+	sprintf(c->fontxfld, "%s", newfont && *newfont ? newfont : DEFAULT_FONT_XFLD);
+	for (i = 0; i < strlen(c->fontxfld); i++) {
+		if (c->fontxfld[i] == '-') {
+			if (++j > 2)
+				break;
+		} else if (j == 2)
+			c->fontface[k++] = c->fontxfld[i];
 	}
-
-	sprintf(c->fontface, "%s", newfont ?
-		(newfont[0] ? newfont : DEFAULT_FONT_FACE) : DEFAULT_FONT_FACE);
+	c->fontface[k] = '\0';
 	c->hasfont = 1;
+
+	pre_fontface = g_strconcat("<FONT FACE=\"", c->fontface, "\">", NULL);
 	surround(c->entry, pre_fontface, "</FONT>");
 	gtk_widget_grab_focus(c->entry);
-
-	if (alloc)
-		g_free(pre_fontface);
+	g_free(pre_fontface);
 }
 
 static gint delete_all_convo(GtkWidget *w, GdkEventAny *e, gpointer d)
@@ -2150,6 +2151,7 @@ void show_conv(struct conversation *c)
 	c->smiley_dialog = NULL;
 	c->link_dialog = NULL;
 	c->log_dialog = NULL;
+	sprintf(c->fontxfld, "%s", fontxfld);
 	sprintf(c->fontface, "%s", fontface);
 	c->hasfont = 0;
 	c->bgcol = bgcolor;
@@ -2586,6 +2588,7 @@ void update_convo_font()
 		if (b->hasfont)
 			continue;
 		sprintf(b->fontface, "%s", fontface);
+		sprintf(b->fontxfld, "%s", fontxfld);
 	}
 }
 

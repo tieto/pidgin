@@ -127,6 +127,7 @@ struct conversation {
 	GtkWidget *log_dialog;
 	int makesound;
 	char fontface[128];
+	char fontxfld[256];
 	int hasfont;
 	GdkColor bgcol;
 	int hasbg;
@@ -261,7 +262,8 @@ extern GtkWidget *chat_notebook;
 extern GtkWidget *joinchat;
 
 /* Globals in dialog.c */
-extern char fontface[64];
+extern char fontface[128];
+extern char fontxfld[256];
 extern int fontsize;
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;

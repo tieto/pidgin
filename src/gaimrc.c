@@ -731,9 +731,10 @@ static void gaimrc_read_options(FILE *f)
 			sound_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "away_options")) {
 			away_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "font_xfld")) {
+			g_snprintf(fontxfld, sizeof(fontxfld), "%s", p->value[0]);
 		} else if (!strcmp(p->option, "font_face")) {
-			if (p->value[0] != NULL)
-				g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
+			g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
 		} else if (!strcmp(p->option, "font_size")) {
 			fontsize = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "foreground")) {
@@ -823,8 +824,8 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tsound_options { %u }\n", sound_options);
 	fprintf(f, "\taway_options { %u }\n", away_options);
 
-	if (fontface)
-		fprintf(f, "\tfont_face { %s }\n", fontface);
+	fprintf(f, "\tfont_xfld { %s }\n", fontxfld);
+	fprintf(f, "\tfont_face { %s }\n", fontface);
 	fprintf(f, "\tfont_size { %d }\n", fontsize);
 	fprintf(f, "\tforeground { %d } { %d } { %d }\n", fgcolor.red, fgcolor.green, fgcolor.blue);
 	fprintf(f, "\tbackground { %d } { %d } { %d }\n", bgcolor.red, bgcolor.green, bgcolor.blue);
