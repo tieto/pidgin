@@ -50,7 +50,10 @@ enum _GaimCmdRet {
 	GAIM_CMD_RET_CONTINUE, /**< Continue, looking for other commands with the same name to call. */
 };
 
-typedef GaimCmdRet (*GaimCmdFunc)(GaimConversation *, const gchar *cmd, gchar **args, gchar **error);
+#define GAIM_CMD_FUNC(func) ((GaimCmdFunc)func)
+
+typedef GaimCmdRet (*GaimCmdFunc)(GaimConversation *, const gchar *cmd,
+                                  gchar **args, gchar **error, void *data);
 typedef guint GaimCmdId;
 
 enum _GaimCmdPriority {
@@ -120,7 +123,7 @@ extern "C" {
  *         Returns @c NULL on failure.
  */
 GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority p, GaimCmdFlag f,
-                             const gchar *prpl_id, GaimCmdFunc func, const gchar *helpstr);
+                             const gchar *prpl_id, GaimCmdFunc func, const gchar *helpstr, void *data);
 
 /**
  * Unregister a command with the core.
@@ -142,8 +145,8 @@ void gaim_cmd_unregister(GaimCmdId id);
  * @param conv The conversation the command was typed in.
  * @param cmdline The command the user typed (including all arguments) as a single string.
  *            The caller doesn't have to do any parsing, except removing the command
- *            prefix, which the core has no knowledge of. cmd should not contain the
- *            any formatting, and should be in plain text (no html entities).
+ *            prefix, which the core has no knowledge of. cmd should not contain any
+ *            formatting, and should be in plain text (no html entities).
  * @param markup This is the same as cmd, but is the formatted version. It should be in
  *               HTML, with < > and &, at least, escaped to html entities, and should
  *               include both the default formatting and any extra manual formatting.

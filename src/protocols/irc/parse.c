@@ -137,7 +137,7 @@ static struct _irc_user_cmd {
 };
 
 static GaimCmdRet irc_parse_gaim_cmd(GaimConversation *conv, const gchar *cmd,
-                                        gchar **args, gchar **error)
+                                        gchar **args, gchar **error, void *data)
 {
 	GaimConnection *gc;
 	struct irc_conn *irc;
@@ -185,8 +185,8 @@ static void irc_register_command(struct _irc_user_cmd *c)
 
 	args[i] = '\0';
 
-	gaim_cmd_register(c->name, args, GAIM_CMD_P_PRPL, f, "prpl-irc", irc_parse_gaim_cmd,
-	                  _(c->help));
+	gaim_cmd_register(c->name, args, GAIM_CMD_P_PRPL, f, "prpl-irc",
+	                  irc_parse_gaim_cmd, _(c->help), NULL);
 }
 
 void irc_register_commands(void)

@@ -1557,7 +1557,7 @@ static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic
 /*  commands */
 
 static GaimCmdRet zephyr_gaim_cmd_msg(GaimConversation *conv,
-                                      const char *cmd, char **args, char **error)
+                                      const char *cmd, char **args, char **error, void *data)
 {
         char *recipient;
         
@@ -1576,14 +1576,14 @@ static GaimCmdRet zephyr_gaim_cmd_msg(GaimConversation *conv,
 }
 
 static GaimCmdRet zephyr_gaim_cmd_zlocate(GaimConversation *conv,
-                                          const char *cmd, char **args, char **error)
+                                          const char *cmd, char **args, char **error, void *data)
 {
         zephyr_zloc(zgc,args[0]);
         return GAIM_CMD_RET_OK;
 }
 
 static GaimCmdRet zephyr_gaim_cmd_instance(GaimConversation *conv,
-                                          const char *cmd, char **args, char **error)
+                                          const char *cmd, char **args, char **error, void *data)
 {
         /* Currently it sets the instance with leading spaces and
          * all. This might not be the best thing to do, though having
@@ -1597,7 +1597,7 @@ static GaimCmdRet zephyr_gaim_cmd_instance(GaimConversation *conv,
 }
 
 static GaimCmdRet zephyr_gaim_cmd_joinchat_cir(GaimConversation *conv,
-                                              const char *cmd, char **args, char **error)
+                                              const char *cmd, char **args, char **error, void *data)
 {
         /* Join a new zephyr chat */
         GHashTable *triple = g_hash_table_new(NULL,NULL);
@@ -1609,7 +1609,7 @@ static GaimCmdRet zephyr_gaim_cmd_joinchat_cir(GaimConversation *conv,
 }
 
 static GaimCmdRet zephyr_gaim_cmd_zi(GaimConversation *conv,
-                                              const char *cmd, char **args, char **error)
+                                              const char *cmd, char **args, char **error, void *data)
 {
         /* args = instance, message */
 	if ( zephyr_send_message("message",args[0],"",args[1],zephyr_get_signature(),""))
@@ -1619,7 +1619,7 @@ static GaimCmdRet zephyr_gaim_cmd_zi(GaimConversation *conv,
 }
 
 static GaimCmdRet zephyr_gaim_cmd_zci(GaimConversation *conv,
-                                              const char *cmd, char **args, char **error)
+                                              const char *cmd, char **args, char **error, void *data)
 {
         /* args = class, instance, message */
 	if ( zephyr_send_message(args[0],args[1],"",args[2],zephyr_get_signature(),""))
@@ -1629,7 +1629,7 @@ static GaimCmdRet zephyr_gaim_cmd_zci(GaimConversation *conv,
 }
 
 static GaimCmdRet zephyr_gaim_cmd_zcir(GaimConversation *conv,
-                                              const char *cmd, char **args, char **error)
+                                              const char *cmd, char **args, char **error, void *data)
 {
         /* args = class, instance, recipient, message */
 	if ( zephyr_send_message(args[0],args[1],args[2],args[3],zephyr_get_signature(),"")) 
@@ -1639,7 +1639,7 @@ static GaimCmdRet zephyr_gaim_cmd_zcir(GaimConversation *conv,
 }
 
 static GaimCmdRet zephyr_gaim_cmd_zir(GaimConversation *conv,
-                                              const char *cmd, char **args, char **error)
+                                              const char *cmd, char **args, char **error, void *data)
 {
         /* args = instance, recipient, message */
 	if ( zephyr_send_message("message",args[0],args[1],args[2],zephyr_get_signature(),"")) 
@@ -1649,77 +1649,77 @@ static GaimCmdRet zephyr_gaim_cmd_zir(GaimConversation *conv,
 }
 
 static GaimCmdRet zephyr_gaim_cmd_zc(GaimConversation *conv,
-                                              const char *cmd, char **args, char **error)
+                                              const char *cmd, char **args, char **error, void *data)
 {
         /* args = class, message */
 	if ( zephyr_send_message(args[0],"PERSONAL","",args[1],zephyr_get_signature(),"")) 
                 return GAIM_CMD_RET_OK;
-        else 
+        else
                 return GAIM_CMD_RET_FAILED;
 }
 
-static void zephyr_register_slash_commands() 
+static void zephyr_register_slash_commands()
 {
 
         gaim_cmd_register("msg","ws", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_msg, _("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"));
+                          zephyr_gaim_cmd_msg, _("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"), NULL);
 
         gaim_cmd_register("zlocate","w", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_zlocate, _("zlocate &lt;nick&gt;: Locate user"));
+                          zephyr_gaim_cmd_zlocate, _("zlocate &lt;nick&gt;: Locate user"), NULL);
 
         gaim_cmd_register("zl","w", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_zlocate, _("zl &lt;nick&gt;: Locate user"));
+                          zephyr_gaim_cmd_zlocate, _("zl &lt;nick&gt;: Locate user"), NULL);
 
         gaim_cmd_register("instance","s", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_instance, _("instance &lt;instance&gt;: Set the instance to be used on this class"));
+                          zephyr_gaim_cmd_instance, _("instance &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
         gaim_cmd_register("inst","s", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"));
+                          zephyr_gaim_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
         gaim_cmd_register("sub", "www", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_joinchat_cir, 
-                          _("sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"));
+                          zephyr_gaim_cmd_joinchat_cir,
+                          _("sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"), NULL);
 
         gaim_cmd_register("zi","ws", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_zi, _("zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"));
+                          zephyr_gaim_cmd_zi, _("zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"), NULL);
 
         gaim_cmd_register("zci","wws",GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_zci, 
-                          _("zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,*&gt;"));
+                          zephyr_gaim_cmd_zci,
+                          _("zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,*&gt;"), NULL);
 
         gaim_cmd_register("zcir","wwws",GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_zcir, 
-                          _("zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"));
+                          zephyr_gaim_cmd_zcir,
+                          _("zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"), NULL);
 
         gaim_cmd_register("zir","wws",GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_zir, 
-                          _("zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,<i>instance</i>,<i>recipient</i>&gt;"));
+                          zephyr_gaim_cmd_zir,
+                          _("zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,<i>instance</i>,<i>recipient</i>&gt;"), NULL);
 
         gaim_cmd_register("zc","ws", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_zc, _("zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"));
-        
+                          zephyr_gaim_cmd_zc, _("zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"), NULL);
+
 }
 
 

@@ -1,6 +1,9 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.81cvs
+	Commands API:
+	* Most functions now have a void *data argument.
+	
 	Conversation API:
 	* Changed: gaim_conv_chat_add_user() (added flags parameter)
 	gaim_conv_chat_add_users() now (added GList of flags parameter)

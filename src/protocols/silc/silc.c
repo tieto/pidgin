@@ -942,7 +942,7 @@ GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
 /********************************* Commands **********************************/
 
 static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	GaimConversation *convo;
@@ -975,7 +975,7 @@ static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_chat_topic(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	int id = 0;
@@ -1013,7 +1013,7 @@ static GaimCmdRet silcgaim_cmd_chat_topic(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_chat_join(GaimConversation *conv,
-        const char *cmd, char **args, char **error)
+        const char *cmd, char **args, char **error, void *data)
 {
 	GHashTable *comp;
 
@@ -1033,7 +1033,7 @@ static GaimCmdRet silcgaim_cmd_chat_join(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_chat_list(GaimConversation *conv,
-        const char *cmd, char **args, char **error)
+        const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	gc = gaim_conversation_get_gc(conv);
@@ -1042,7 +1042,7 @@ static GaimCmdRet silcgaim_cmd_chat_list(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_whois(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 
@@ -1057,7 +1057,7 @@ static GaimCmdRet silcgaim_cmd_whois(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_msg(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	int ret;
 	GaimConnection *gc;
@@ -1076,7 +1076,7 @@ static GaimCmdRet silcgaim_cmd_msg(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_query(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	int ret = 1;
 	GaimConversation *convo;
@@ -1110,7 +1110,7 @@ static GaimCmdRet silcgaim_cmd_query(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_motd(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	SilcGaim sg;
@@ -1140,7 +1140,7 @@ static GaimCmdRet silcgaim_cmd_motd(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_detach(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	SilcGaim sg;
@@ -1162,7 +1162,7 @@ static GaimCmdRet silcgaim_cmd_detach(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_cmode(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	SilcGaim sg;
@@ -1215,7 +1215,7 @@ static GaimCmdRet silcgaim_cmd_cmode(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	SilcGaim sg;
@@ -1245,7 +1245,7 @@ static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_quit(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	SilcGaim sg;
@@ -1267,7 +1267,7 @@ static GaimCmdRet silcgaim_cmd_quit(GaimConversation *conv,
 }
 
 static GaimCmdRet silcgaim_cmd_call(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
+		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
 	SilcGaim sg;
@@ -1299,109 +1299,110 @@ silcgaim_register_commands(void)
 	gaim_cmd_register("part", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
 			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
-			"prpl-silc", silcgaim_cmd_chat_part, _("part [channel]:  Leave the chat"));
+			"prpl-silc", silcgaim_cmd_chat_part, _("part [channel]:  Leave the chat"), NULL);
 	gaim_cmd_register("leave", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
 			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
-			"prpl-silc", silcgaim_cmd_chat_part, _("leave [channel]:  Leave the chat"));
+			"prpl-silc", silcgaim_cmd_chat_part, _("leave [channel]:  Leave the chat"), NULL);
 	gaim_cmd_register("topic", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
-			silcgaim_cmd_chat_topic, _("topic [&lt;new topic&gt;]:  View or change the topic"));
+			silcgaim_cmd_chat_topic, _("topic [&lt;new topic&gt;]:  View or change the topic"), NULL);
 	gaim_cmd_register("join", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
 			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
 			"prpl-silc", silcgaim_cmd_chat_join,
-			_("join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"));
+			_("join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"), NULL);
 	gaim_cmd_register("list", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
-			silcgaim_cmd_chat_list, _("list:  List channels on this network"));
+			silcgaim_cmd_chat_list, _("list:  List channels on this network"), NULL);
 	gaim_cmd_register("whois", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc",
-			silcgaim_cmd_whois, _("whois &lt;nick&gt;:  View nick's information"));
+			silcgaim_cmd_whois, _("whois &lt;nick&gt;:  View nick's information"), NULL);
 	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_msg,
-			_("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"));
+			_("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"), NULL);
 	gaim_cmd_register("query", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_query,
-			_("query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"));
+			_("query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"), NULL);
 	gaim_cmd_register("motd", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_motd,
-			_("motd:  View the server's Message Of The Day"));
+			_("motd:  View the server's Message Of The Day"), NULL);
 	gaim_cmd_register("detach", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_detach,
-			_("detach:  Detach this session"));
+			_("detach:  Detach this session"), NULL);
 	gaim_cmd_register("quit", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_quit,
-			_("quit [message]:  Disconnect from the server, with an optional message"));
+			_("quit [message]:  Disconnect from the server, with an optional message"), NULL);
 	gaim_cmd_register("call", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_call,
-			_("call &lt;command&gt;:  Call any silc client command"));
-	/* These below just get passed through for the silc client library to deal with */
+			_("call &lt;command&gt;:  Call any silc client command"), NULL);
+	/* These below just get passed through for the silc client library to deal
+	 * with */
 	gaim_cmd_register("kill", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
-			_("kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"));
+			_("kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"), NULL);
 	gaim_cmd_register("nick", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_generic,
-			_("nick &lt;newnick&gt;:  Change your nickname"));
+			_("nick &lt;newnick&gt;:  Change your nickname"), NULL);
 	gaim_cmd_register("whowas", "ww", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
-			_("whowas &lt;nick&gt;:  View nick's information"));
+			_("whowas &lt;nick&gt;:  View nick's information"), NULL);
 	gaim_cmd_register("cmode", "wws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_cmode,
-			_("cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display channel modes"));
+			_("cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display channel modes"), NULL);
 	gaim_cmd_register("cumode", "wws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
-			_("cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes on channel"));
+			_("cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes on channel"), NULL);
 	gaim_cmd_register("umode", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_generic,
-			_("umode &lt;usermodes&gt;:  Set your modes in the network"));
+			_("umode &lt;usermodes&gt;:  Set your modes in the network"), NULL);
 	gaim_cmd_register("oper", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_generic,
-			_("oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"));
+			_("oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"), NULL);
 	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
-			_("invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from channel invite list"));
+			_("invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from channel invite list"), NULL);
 	gaim_cmd_register("kick", "wws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
-			_("kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"));
+			_("kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"), NULL);
 	gaim_cmd_register("info", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
-			_("info [server]:  View server administrative details"));
+			_("info [server]:  View server administrative details"), NULL);
 	gaim_cmd_register("ban", "ww", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
-			_("ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"));
+			_("ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"), NULL);
 	gaim_cmd_register("getkey", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_generic,
-			_("getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"));
+			_("getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"), NULL);
 	gaim_cmd_register("stats", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_generic,
-			_("stats:  View server and network statistics"));
+			_("stats:  View server and network statistics"), NULL);
 	gaim_cmd_register("ping", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_generic,
-			_("ping:  Send PING to the connected server"));
+			_("ping:  Send PING to the connected server"), NULL);
 #if 0 /* Gaim doesn't handle these yet */
 	gaim_cmd_register("users", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,

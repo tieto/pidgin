@@ -38,6 +38,7 @@ typedef struct _GaimCmd {
 	gchar *prpl_id;
 	GaimCmdFunc func;
 	gchar *help;
+	void *data;
 } GaimCmd;
 
 
@@ -50,8 +51,10 @@ static gint cmds_compare_func(const GaimCmd *a, const GaimCmd *b)
 	else return 0;
 }
 
-GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority p, GaimCmdFlag f,
-                             const gchar *prpl_id, GaimCmdFunc func, const gchar *helpstr)
+GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args,
+                            GaimCmdPriority p, GaimCmdFlag f,
+                            const gchar *prpl_id, GaimCmdFunc func,
+                            const gchar *helpstr, void *data)
 {
 	GaimCmdId id;
 	GaimCmd *c;
@@ -71,6 +74,7 @@ GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority
 	c->prpl_id = prpl_id ? g_strdup(prpl_id) : NULL;
 	c->func = func;
 	c->help = helpstr ? g_strdup(helpstr) : NULL;
+	c->data = data;
 
 	cmds = g_list_insert_sorted(cmds, c, (GCompareFunc)cmds_compare_func);
 
@@ -195,6 +199,7 @@ static void gaim_cmd_strip_cmd_from_markup(char *markup)
 		s = g_utf8_next_char(s);
 	}
 }
+
 GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
                                   const gchar *markup, gchar **error)
 {
@@ -261,7 +266,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
 		}
 
 		tried_cmd = TRUE;
-		ret = c->func(conv, cmd, args, &err);
+		ret = c->func(conv, cmd, args, &err, c->data);
 		if (ret == GAIM_CMD_RET_CONTINUE) {
 			if (err)
 				g_free(err);
