@@ -8,6 +8,8 @@ version 0.9.12:
 	  (thanks to Eric Warmenhoven for the patch)
 	* Support for displaying true type fonts
 	* Fixed the Lag-Meter Option
+	* Fixed problem with saving away messages which contain spaces
+	  and numbers.
 	
 version 0.9.11:
 	* <STRIKE>Strike Tag Support</STRIKE> :-)

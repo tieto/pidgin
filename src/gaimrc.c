@@ -183,12 +183,15 @@ static void gaimrc_read_away(FILE *f)
 			return;
 
 		p = parse_line(buf);
-		a = g_new0(struct away_message, 1);
+		if (!strcmp(p->option, "message"))
+		{
+			a = g_new0(struct away_message, 1);
 
-		g_snprintf(a->name, sizeof(a->name),  "%s", p->option);
-		g_snprintf(a->message, sizeof(a->message), "%s", p->value[0]);
-		filter_break(a->message);
-		away_messages = g_list_append(away_messages, a);
+			g_snprintf(a->name, sizeof(a->name),  "%s", p->value[0]);
+			g_snprintf(a->message, sizeof(a->message), "%s", p->value[1]);
+			filter_break(a->message);
+			away_messages = g_list_append(away_messages, a);
+		}
 	}
 }
 
@@ -201,9 +204,7 @@ static void gaimrc_write_away(FILE *f)
 
 	while (awy) {
 		a = (struct away_message *)awy->data;
-	//	escape_text(a->name);
-	//	escape_text(a->message);
-		fprintf(f, "\t%s { %s }\n", escape_text2(a->name), escape_text2(a->message));
+		fprintf(f, "\tmessage { %s } { %s }\n", escape_text2(a->name), escape_text2(a->message));
 		awy = awy->next;
 	}
 
@@ -474,7 +475,7 @@ void load_prefs()
 		if ((f = fopen(buf,"r"))) {
 			fgets(buf, sizeof(buf), f);
 			sscanf(buf, "# .gaimrc v%d", &ver);
-			if ( (ver <= 0) || (buf[0] != '#')) {
+			if ( (ver <= 1) || (buf[0] != '#')) {
                                 fclose(f);
 				set_defaults();
 				save_prefs();
@@ -514,7 +515,7 @@ void save_prefs()
 	if (getenv("HOME")) {
 		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
 		if ((f = fopen(buf,"w"))) {
-			fprintf(f, "# .gaimrc v%d\n", 1);
+			fprintf(f, "# .gaimrc v%d\n", 2);
 			gaimrc_write_users(f);
                         gaimrc_write_options(f);
                         gaimrc_write_away(f);
