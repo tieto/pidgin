@@ -1340,26 +1340,28 @@ static void create_online_account_menu_for_add_chat(struct addchat *ac)
 
 	while (g) {
 		c = (struct gaim_connection *)g->data;
-		g_snprintf(buf, sizeof(buf), "%s (%s)", 
-				c->username, c->prpl->info->name);
-		opt = gtk_menu_item_new_with_label(buf);
-		g_object_set_data(G_OBJECT(opt), "addchat", ac);
-		g_signal_connect(GTK_OBJECT(opt), "activate",
-				G_CALLBACK(addchat_select_account),
-				c);
-		gtk_widget_show(opt);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+		if (GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->join_chat) {
+			g_snprintf(buf, sizeof(buf), "%s (%s)", 
+					c->username, c->prpl->info->name);
+			opt = gtk_menu_item_new_with_label(buf);
+			g_object_set_data(G_OBJECT(opt), "addchat", ac);
+			g_signal_connect(GTK_OBJECT(opt), "activate",
+					G_CALLBACK(addchat_select_account),
+					c);
+			gtk_widget_show(opt);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
-		/* Now check to see if it's our current menu */
-		if (c->account == ac->account) {
-			place = count;
-			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
-			gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu), count);
+			/* Now check to see if it's our current menu */
+			if (c->account == ac->account) {
+				place = count;
+				gtk_menu_item_activate(GTK_MENU_ITEM(opt));
+				gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu), count);
 
-			/* Do the cha cha cha */
+				/* Do the cha cha cha */
+			}
+
+			count++;
 		}
-
-		count++;
 
 		g = g->next;
 	}
@@ -1372,6 +1374,8 @@ static void create_online_account_menu_for_add_chat(struct addchat *ac)
 void show_add_chat(struct gaim_account *account, struct group *group) {
     struct addchat *ac = g_new0(struct addchat, 1);
     struct gaim_gtk_buddy_list *gtkblist;
+    GSList *c;
+    struct gaim_connection *gc;
 
 	GtkWidget *label;
 	GtkWidget *rowbox;
@@ -1382,8 +1386,26 @@ void show_add_chat(struct gaim_account *account, struct group *group) {
 
     gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
-    ac->account = account ? account :
-		((struct gaim_connection *)connections->data)->account;
+    if (account) {
+	ac->account = account;
+    } else {
+	/* Select an account with chat capabilities */
+	for (c = connections; c != NULL; c = c->next) {
+	    gc = c->data;
+
+	    if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
+		ac->account = gc->account;
+		break;
+	    }
+	}
+    }
+
+    if (!ac->account) {
+	do_error_dialog(
+		_("You are not currently signed on with any protocols "
+		"that have the ability to chat."), NULL, GAIM_ERROR); 
+	return;
+    }
 
 	ac->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
