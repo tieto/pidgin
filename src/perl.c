@@ -617,18 +617,22 @@ static void cfdes(GtkWidget *m, gpointer n) {
 }
 
 static void do_load(GtkWidget *m, gpointer n) {
-	gchar* file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(config));
-	if (!file || !strlen(file)) {
+	const char *f = gtk_file_selection_get_filename(GTK_FILE_SELECTION(config));
+	gchar* file;
+	if (!f || !strlen(f)) {
 		perl_end();
 		perl_init();
 		return;
 	}
+	file = g_strdup(f);
 	
 	if (file_is_dir(file, config)) {
+		g_free(file);
 		return;
 	}
 	
 	if (last_dir) {
+		g_free(file);
 		g_free(last_dir);
 	}
 	last_dir = g_dirname(file);
@@ -637,6 +641,7 @@ static void do_load(GtkWidget *m, gpointer n) {
 	
 	perl_load_file(file);
 	cfdes(config, NULL);
+	g_free(file);
 }
 
 void load_perl_script(GtkWidget *w, gpointer d)
