@@ -1397,7 +1397,12 @@ void build_allow_list()
 {
 	GtkWidget *label;
 	GtkWidget *list_item;
-	GSList *p = current_deny_gc->permit;
+	GSList *p;
+
+	if (current_is_deny)
+		return;
+
+	p = current_deny_gc->permit;
 
 	gtk_list_remove_items(GTK_LIST(allow_list), GTK_LIST(allow_list)->children);
 
@@ -1417,9 +1422,12 @@ void build_block_list()
 {
 	GtkWidget *label;
 	GtkWidget *list_item;
-	GSList *d = current_deny_gc->deny;
+	GSList *d;
 
-	if (!prefs) return;
+	if (!current_is_deny)
+		return;
+
+	d = current_deny_gc->deny;
 
 	gtk_list_remove_items(GTK_LIST(block_list), GTK_LIST(block_list)->children);
 
