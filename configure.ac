@@ -285,6 +285,10 @@ if test "$enable_perl" = yes ; then
 		else
 			PERL_MM_PARAMS="INSTALLDIRS=perl LIB=$withval"
 		fi
+	],
+	[
+		prefix=`eval echo $prefix`
+		PERL_MM_PARAMS="INSTALLDIRS=perl PREFIX=$prefix"
 	])
 
 	AC_MSG_CHECKING(for DynaLoader.a)
