@@ -47,10 +47,10 @@
 #include "prpl.h"
 #include "gtklist.h"
 
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
-#ifdef _WIN32
+#else
 #include "win32dep.h"
 #endif
 

@@ -51,7 +51,7 @@ static void load_gtkspell() {
 
 void wgaim_gtkspell_init() {
 	    HKEY hKey;
-	    const char buffer[1024] = "";
+	    char buffer[1024] = "";
 	    DWORD size = sizeof(buffer);
 	    DWORD type;
 

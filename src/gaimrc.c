@@ -1114,7 +1114,9 @@ static void gaimrc_read_sounds(FILE *f)
 static void gaimrc_write_sounds(FILE *f)
 {
 	int i;
+#ifndef _WIN32
 	char *cmd;
+#endif
 	fprintf(f, "sound_files {\n");
 	for (i = 0; i < GAIM_NUM_SOUNDS; i++) {
 		char *file = gaim_sound_get_event_file(i);

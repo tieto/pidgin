@@ -326,7 +326,7 @@ int wgaim_rename (const char *oldname, const char *newname) {
 				/* newname is not a dir */
 				else {
 					remove(newname);
-					rename(oldname, newname);
+					return rename(oldname, newname);
 				}
 			}
 		}

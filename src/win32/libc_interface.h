@@ -44,6 +44,10 @@ extern struct hostent* wgaim_gethostbyname(const char *name);
 #define gethostbyname( name ) \
 wgaim_gethostbyname( ## name ## )
 
+/* netinet/in.h */
+#define ntohl( netlong ) \
+(unsigned int)ntohl( ## netlong ## )
+
 /* string.h */
 extern char* wgaim_strerror( int errornum );
 #define hstrerror( herror ) \

@@ -67,7 +67,9 @@ static GtkWidget *gaim_dropdown_from_list(GtkWidget *, const gchar *, int *, int
 static GtkWidget *show_color_pref(GtkWidget *, gboolean);
 static void delete_prefs(GtkWidget *, void *);
 void set_default_away(GtkWidget *, gpointer);
+#ifndef _WIN32
 static gboolean program_is_valid(const char *);
+#endif
 
 struct debug_window *dw = NULL;
 GtkWidget *prefs = NULL;
@@ -258,7 +260,9 @@ GtkTreePath *theme_refresh_theme_list()
 }
 
 void theme_install_theme(char *path, char *extn) {
+#ifndef _WIN32
 	gchar *command;
+#endif
 	gchar *destdir;
 	gchar *tail;
 
@@ -2211,6 +2215,7 @@ void set_default_away(GtkWidget *w, gpointer i)
 		default_away = g_slist_nth_data(away_messages, (int)i);
 }
 
+#ifndef _WIN32
 static gboolean program_is_valid(const char *program) 
 {
 	GError *error = NULL;
@@ -2240,6 +2245,7 @@ static gboolean program_is_valid(const char *program)
 	
 	return is_valid;
 }
+#endif
 
 static void update_spin_value(GtkWidget *w, GtkWidget *spin)
 {

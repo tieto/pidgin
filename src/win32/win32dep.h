@@ -5,6 +5,7 @@
 #ifndef _WIN32DEP_H_
 #define _WIN32DEP_H_
 #include <winsock.h>
+#include <process.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkevents.h>
 #include "wgaimerror.h"
@@ -18,19 +19,20 @@
 /**
  ** win32dep.c
  **/
-/* Misc */
-FARPROC wgaim_find_and_loadproc(char*, char*);
+/* Windows helper functions */
 HINSTANCE wgaim_hinstance(void);
-extern void wgaim_im_blink(GtkWidget*);
-extern char* wgaim_escape_dirsep(char*);
-extern int wgaim_gz_decompress(const char* in, const char* out);
-extern int wgaim_gz_untar(const char* filename, const char* destdir);
-
+FARPROC wgaim_find_and_loadproc(char*, char*);
 /* Determine Gaim paths */
 extern char* wgaim_install_dir(void);
 extern char* wgaim_lib_dir(void);
 extern char* wgaim_locale_dir(void);
-
+extern char* wgaim_escape_dirsep(char*);
+/* UI related */
+extern void wgaim_im_blink(GtkWidget*);
+extern void wgaim_gtk_window_move(GtkWindow *window, gint x, gint y);
+/* Utility */
+extern int wgaim_gz_decompress(const char* in, const char* out);
+extern int wgaim_gz_untar(const char* filename, const char* destdir);
 /* init / cleanup */
 extern void wgaim_init(void);
 extern void wgaim_cleanup(void);

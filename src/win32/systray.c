@@ -12,6 +12,7 @@
 #include "win32dep.h"
 #include "MinimizeToTray.h"
 #include "ui.h"
+#include "gtklist.h"
 
 /*
  *  DEFINES, MACROS & DATA TYPES
@@ -291,15 +292,15 @@ static void systray_create_menu(void) {
 	/* create popup menu */
 	if((systray_menu = CreatePopupMenu())) {
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_PREFS, _("Preferences")))
-			debug_printf("AppendMenu error: %d\n", GetLastError());
+			debug_printf("AppendMenu error: %ld\n", GetLastError());
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_AUTOLOGIN, _("Auto-login")))
-			debug_printf("AppendMenu error: %d\n", GetLastError());
+			debug_printf("AppendMenu error: %ld\n", GetLastError());
 		if(!AppendMenu(systray_menu, MF_SEPARATOR, 0, 0))
-			debug_printf("AppendMenu error: %d\n", GetLastError());
+			debug_printf("AppendMenu error: %ld\n", GetLastError());
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_MENU_EXIT, _("Exit")))
-			debug_printf("AppendMenu error: %d\n", GetLastError());
+			debug_printf("AppendMenu error: %ld\n", GetLastError());
 	} else
-		debug_printf("CreatePopupMenu error: %d\n", GetLastError());
+		debug_printf("CreatePopupMenu error: %ld\n", GetLastError());
 }
 
 static void systray_init_icon(HWND hWnd, HICON icon) {
@@ -339,6 +340,8 @@ static void systray_update_icon() {
 	case SYSTRAY_STATE_AWAY:
 		systray_change_icon(sysicon_away, GAIM_SYSTRAY_AWAY_HINT);
 		break;
+	case SYSTRAY_STATE_COUNT: /* not a state, here to avoid warning */
+	default:
 	}
 }
 
@@ -387,10 +390,6 @@ static void st_away(struct gaim_connection *gc, void *data) {
 
 static void st_back(struct gaim_connection *gc, void *data) {
 	systray_update_status();
-}
-
-static void st_im_recieve(struct gaim_connection *gc, void *data) {
-	
 }
 
 /*
