@@ -4155,10 +4155,10 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		} else {
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);
-		}
 
-		if (imflags & IM_FLAG_AWAY)
-			args.flags |= AIM_IMFLAGS_AWAY;
+			if (imflags & IM_FLAG_AWAY)
+				args.flags |= AIM_IMFLAGS_AWAY;
+		}
 
 		if (bi->ico_need) {
 			debug_printf("Sending buddy icon request with message\n");
