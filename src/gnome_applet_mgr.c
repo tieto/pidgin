@@ -263,7 +263,7 @@ void insert_applet_away() {
 	char  *awayname;
 
 	applet_widget_register_callback_dir(APPLET_WIDGET(applet),
-		"away",
+		"away/",
 		_("Away"));
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 		"away/new",
@@ -308,7 +308,7 @@ void remove_applet_away() {
 		awy = awy->next;
 		free(awayname);
 	}
-	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away");
+	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away/");
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
 }
 
