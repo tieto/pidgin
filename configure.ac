@@ -619,6 +619,9 @@ if test "$enable_tcl" = yes; then
 	TCL_LIBS=$TCL_LIB_SPEC
 	AC_SUBST(TCL_LIBS)
 	TCL_CFLAGS=$TCL_INCLUDE_SPEC
+	if test "x$GCC" = "xyes"; then
+		TCL_CFLAGS="$TCL_CFLAGS -fno-strict-aliasing"
+	fi
 	AC_SUBST(TCL_CFLAGS)
 else
 	AM_CONDITIONAL(USE_TCL, false)
