@@ -494,7 +494,6 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 	OscarData *od;
 
 	if (!gc) {
-		/* gc is null. we return, else we seg SIGSEG on next line. */
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
 				   "oscar callback for closed connection (1).\n");
 		return;
@@ -601,17 +600,15 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 }
 
 static void oscar_debug(aim_session_t *sess, int level, const char *format, va_list va) {
-	char *s = g_strdup_vprintf(format, va);
-	char buf[256];
-	char *t;
 	GaimConnection *gc = sess->aux_data;
+	gchar *s = g_strdup_vprintf(format, va);
+	gchar *buf;
 
-	g_snprintf(buf, sizeof(buf), "%s %d: ", gaim_account_get_username(gaim_connection_get_account(gc)), level);
-	t = g_strconcat(buf, s, NULL);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", t);
-	if (t[strlen(t)-1] != '\n')
+	buf = g_strdup_printf("%s %d: %s", gaim_account_get_username(gaim_connection_get_account(gc)), level, s);
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", buf);
+	if (buf[strlen(buf)-1] != '\n')
 		gaim_debug(GAIM_DEBUG_INFO, NULL, "\n");
-	g_free(t);
+	g_free(buf);
 	g_free(s);
 }
 
@@ -663,7 +660,7 @@ static void oscar_login(GaimAccount *account) {
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
 
 	sess = g_new0(aim_session_t, 1);
-	aim_session_init(sess, AIM_SESS_FLAGS_NONBLOCKCONNECT, 0);
+	aim_session_init(sess, TRUE, 0);
 	aim_setdebuggingcb(sess, oscar_debug);
 	/*
 	 * We need an immediate queue because we don't use a while-loop 
@@ -1178,6 +1175,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+/* XXX - Should use gaim_url_fetch for the below stuff */
 struct pieceofcrap {
 	GaimConnection *gc;
 	unsigned long offset;
@@ -3680,7 +3678,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 #endif
 
 	aim_locate_reqrights(sess);
-	aim_bos_reqbuddyrights(sess, fr->conn);
+	aim_buddylist_reqrights(sess, fr->conn);
 	aim_im_reqparams(sess);
 	aim_bos_reqrights(sess, fr->conn); /* XXX - Don't call this with ssi? */
 
@@ -4614,13 +4612,13 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 	int n=0;
 	while (buddies) {
 		if (n > MSG_LEN - 18) {
-			aim_bos_setbuddylist(od->sess, od->conn, buf);
+			aim_buddylist_set(od->sess, od->conn, buf);
 			n = 0;
 		}
 		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", (char *)buddies->data);
 		buddies = buddies->next;
 	}
-	aim_bos_setbuddylist(od->sess, od->conn, buf);
+	aim_buddylist_set(od->sess, od->conn, buf);
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {

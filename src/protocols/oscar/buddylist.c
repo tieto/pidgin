@@ -14,7 +14,7 @@
  * Request Buddy List rights.
  *
  */
-faim_export int aim_bos_reqbuddyrights(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_buddylist_reqrights(aim_session_t *sess, aim_conn_t *conn)
 {
 	return aim_genericreq_n_snacid(sess, conn, 0x0003, 0x0002);
 }
@@ -73,7 +73,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * XXX This should just be an extension of setbuddylist()
  *
  */
-faim_export int aim_add_buddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_buddylist_addbuddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -105,7 +105,7 @@ faim_export int aim_add_buddy(aim_session_t *sess, aim_conn_t *conn, const char 
  * XXX Clean this up.  
  *
  */
-faim_export int aim_bos_setbuddylist(aim_session_t *sess, aim_conn_t *conn, const char *buddy_list)
+faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const char *buddy_list)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -153,7 +153,7 @@ faim_export int aim_bos_setbuddylist(aim_session_t *sess, aim_conn_t *conn, cons
  * the same as setbuddylist() but with a different snac subtype).
  *
  */
-faim_export int aim_remove_buddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_buddylist_removebuddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -181,7 +181,7 @@ faim_export int aim_remove_buddy(aim_session_t *sess, aim_conn_t *conn, const ch
  * XXX Why would we send this?
  *
  */
-faim_export int aim_sendbuddyoncoming(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *info)
+faim_export int aim_buddylist_oncoming(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *info)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -208,7 +208,7 @@ faim_export int aim_sendbuddyoncoming(aim_session_t *sess, aim_conn_t *conn, aim
  * XXX Why would we send this?
  *
  */
-faim_export int aim_sendbuddyoffgoing(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_buddylist_offgoing(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;

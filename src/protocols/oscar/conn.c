@@ -532,11 +532,11 @@ static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, 
 
 		fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
 
-		if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT)
+		if (sess->nonblocking)
 			fcntl(fd, F_SETFL, O_NONBLOCK); /* XXX save flags */
 
 		if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
-			if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT) {
+			if (sess->nonblocking) {
 				if ((errno == EINPROGRESS) || (errno == EINTR)) {
 					if (statusret)
 						*statusret |= AIM_CONN_STATUS_INPROGRESS;
@@ -856,10 +856,10 @@ static void defaultdebugcb(aim_session_t *sess, int level, const char *format, v
  * stuff in the aim_session_t struct.
  *
  * @param sess Session to initialize.
- * @param flags Flags to use. nAny of %AIM_SESS_FLAGS %OR'd together.
+ * @param nonblocking Set to true if you want connections to be non-blocking.
  * @param debuglevel Level of debugging output (zero is least).
  */
-faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debuglevel)
+faim_export void aim_session_init(aim_session_t *sess, bool nonblocking, int debuglevel)
 {
 
 	if (!sess)
@@ -879,7 +879,7 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	sess->locate.waiting_for_response = FALSE;
 	sess->snacid_next = 0x00000001;
 
-	sess->flags = 0;
+	sess->nonblocking = nonblocking;
 	sess->debug = debuglevel;
 	sess->debugcb = defaultdebugcb;
 
@@ -894,8 +894,6 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	sess->ssi.waiting_for_ack = 0;
 
 	sess->authinfo = NULL;
-
-	sess->flags |= flags;
 
 	/*
 	 * This must always be set.  Default to the queue-based
