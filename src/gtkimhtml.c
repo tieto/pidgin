@@ -28,6 +28,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #ifdef HAVE_LANGINFO_CODESET
 #include <langinfo.h>
@@ -963,6 +964,10 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 							font->face = face;
 						else if (oldfont && oldfont->face)
 							font->face = g_strdup(oldfont->face);
+						if (font->face && (atoi(font->face) > 100)) {
+							g_free(font->face);
+							font->face = g_strdup("100");
+						}
 
 						if (sml)
 							font->sml = sml;
