@@ -267,6 +267,7 @@ static int yahoo_authconnect(struct yahoo_session *sess, ...) {
 	if (yahoo_send_login(sess, gc->username, gc->password) < 1) {
 		hide_login_progress(gc, "Authorizer error");
 		signoff(gc);
+		return 0;
 	}
 
 	return 1;
@@ -301,6 +302,7 @@ static int yahoo_mainconnect(struct yahoo_session *sess, ...) {
 	if (yahoo_finish_logon(sess, YAHOO_STATUS_AVAILABLE) < 1) {
 		hide_login_progress(gc, "Login error");
 		signoff(gc);
+		return 0;
 	}
 
 	if (bud_list_cache_exists(gc))

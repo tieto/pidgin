@@ -19,6 +19,7 @@
  *
  */
 
+#include <string.h>
 #include "internal.h"
 
 void (*yahoo_socket_notify)(struct yahoo_session *, int, int, gboolean) = NULL;
@@ -97,10 +98,12 @@ int yahoo_connected(struct yahoo_session *session, gpointer data, int fd)
 	conn->connected = TRUE;
 	if (conn->type == YAHOO_CONN_TYPE_AUTH) {
 		if (session->callbacks[YAHOO_HANDLE_AUTHCONNECT].function)
-			(*session->callbacks[YAHOO_HANDLE_AUTHCONNECT].function)(session);
+			if (!(*session->callbacks[YAHOO_HANDLE_AUTHCONNECT].function)(session))
+				return 0;
 	} else if (conn->type == YAHOO_CONN_TYPE_MAIN) {
 		if (session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)
-			(*session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)(session);
+			if (!(*session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)(session))
+				return 0;
 	} else if (conn->type == YAHOO_CONN_TYPE_DUMB) {
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "sending to buddy list host");
 		yahoo_write(session, conn, conn->txqueue, strlen(conn->txqueue));
