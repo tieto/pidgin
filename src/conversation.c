@@ -282,7 +282,7 @@ struct conversation *new_conversation(char *name)
 
 struct conversation *find_conversation(const char *name)
 {
-	char *cuser = g_malloc(1024);
+	char *cuser = g_malloc(BUF_LEN);
 	struct conversation *c;
 	GList *cnv = conversations;
 
@@ -319,7 +319,7 @@ void rm_log(struct log_conversation *a)
 
 struct log_conversation *find_log_info(const char *name)
 {
-	char *pname = g_malloc(1024);
+	char *pname = g_malloc(BUF_LEN);
 	GList *lc = log_conversations;
 	struct log_conversation *l;
 
