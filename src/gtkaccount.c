@@ -45,7 +45,6 @@ enum
 	COLUMN_SCREENNAME,
 	COLUMN_ONLINE,
 	COLUMN_AUTOLOGIN,
-	COLUMN_FILLER,
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
@@ -1457,7 +1456,6 @@ __set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 			COLUMN_AUTOLOGIN, FALSE,
 			COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol(account)),
 			COLUMN_DATA, account,
-			COLUMN_FILLER, FALSE,
 			-1);
 
 	if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
