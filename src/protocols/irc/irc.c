@@ -1151,8 +1151,8 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 				return FALSE;
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
-			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s:"),
-				   word[3]);
+			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s by %s:"),
+				   word[3], nick);
 			do_error_dialog(outbuf, *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5], GAIM_INFO);
 		} else {
 			char *reason = *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5];
