@@ -435,7 +435,7 @@ process_cmd_text(MsnServConn *servconn, const char *command)
 	cb = g_hash_table_lookup(servconn->commands, command);
 
 	if (cb == NULL) {
-		cb = g_hash_table_lookup(servconn->commands, "_unknown_");
+		cb = g_hash_table_lookup(servconn->commands, "_UNKNOWN_");
 
 		if (cb == NULL) {
 			gaim_debug(GAIM_DEBUG_WARNING, "msn",

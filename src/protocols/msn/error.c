@@ -232,7 +232,7 @@ msn_error_handle(MsnSession *session, unsigned int type)
 	char buf[MSN_BUF_LEN];
 
 	g_snprintf(buf, sizeof(buf), _("MSN Error: %s\n"),
-					msn_error_get_text(type));
+			   msn_error_get_text(type));
 
 	gaim_notify_error(session->account->gc, NULL, buf, NULL);
 }
