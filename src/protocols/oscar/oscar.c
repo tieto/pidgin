@@ -5411,9 +5411,11 @@ static char *oscar_tooltip_text(struct buddy *b) {
 			}
 
 			if (bi->availablemsg && !(b->uc & UC_UNAVAILABLE)) {
+				gchar *escaped = g_markup_escape_text(bi->availablemsg, strlen(bi->availablemsg));
 				tmp = yay;
-				yay = g_strconcat(tmp, _("<b>Available:</b> "), bi->availablemsg, "\n", NULL);
+				yay = g_strconcat(tmp, _("<b>Available:</b> "), escaped, "\n", NULL);
 				free(tmp);
+				g_free(escaped);
 			}
 		}
 	} else {
@@ -5448,7 +5450,7 @@ static char *oscar_status_text(struct buddy *b) {
 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
 		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 		if (bi->availablemsg)
-			ret = g_strdup(bi->availablemsg);
+			ret = g_markup_escape_text(bi->availablemsg, strlen(bi->availablemsg));
 	} else {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
 		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))
