@@ -1141,7 +1141,7 @@ GtkWidget *proxy_page() {
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	label = gtk_label_new_with_mnemonic(_("Port:"));
+	label = gtk_label_new_with_mnemonic(_("_Port:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 
