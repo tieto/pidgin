@@ -594,7 +594,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			xmlnode *child2;
 			char *text;
 
-			if(child->type != NODE_TYPE_TAG)
+			if(child->type != XMLNODE_TYPE_TAG)
 				continue;
 
 			text = xmlnode_get_data(child);
@@ -606,7 +606,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				{
 					char *text2;
 
-					if(child2->type != NODE_TYPE_TAG)
+					if(child2->type != XMLNODE_TYPE_TAG)
 						continue;
 
 					text2 = xmlnode_get_data(child2);
@@ -645,7 +645,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				{
 					char *text2;
 
-					if(child2->type != NODE_TYPE_TAG)
+					if(child2->type != XMLNODE_TYPE_TAG)
 						continue;
 
 					text2 = xmlnode_get_data(child2);
@@ -722,7 +722,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				{
 					char *text2;
 
-					if(child2->type != NODE_TYPE_TAG)
+					if(child2->type != XMLNODE_TYPE_TAG)
 						continue;
 
 					text2 = xmlnode_get_data(child2);

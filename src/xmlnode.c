@@ -35,7 +35,7 @@
 #include "xmlnode.h"
 
 static xmlnode*
-new_node(const char *name, NodeType type)
+new_node(const char *name, XMLNodeType type)
 {
 	xmlnode *node = g_new0(xmlnode, 1);
 	if(name)
@@ -50,7 +50,7 @@ xmlnode_new(const char *name)
 {
 	g_return_val_if_fail(name != NULL, NULL);
 
-	return new_node(name, NODE_TYPE_TAG);
+	return new_node(name, XMLNODE_TYPE_TAG);
 }
 
 xmlnode *xmlnode_new_child(xmlnode *parent, const char *name)
@@ -60,7 +60,7 @@ xmlnode *xmlnode_new_child(xmlnode *parent, const char *name)
 	g_return_val_if_fail(parent != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	node = new_node(name, NODE_TYPE_TAG);
+	node = new_node(name, XMLNODE_TYPE_TAG);
 
 	xmlnode_insert_child(parent, node);
 
@@ -96,7 +96,7 @@ xmlnode_insert_data(xmlnode *parent, const char *data, size_t size)
 
 	real_size = size == -1 ? strlen(data) : size;
 
-	node = new_node(NULL, NODE_TYPE_DATA);
+	node = new_node(NULL, XMLNODE_TYPE_DATA);
 
 	node->data = g_memdup(data, real_size);
 	node->data_sz = real_size;
@@ -114,7 +114,7 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 
 	for(attr_node = node->child; attr_node; attr_node = attr_node->next)
 	{
-		if(attr_node->type == NODE_TYPE_ATTRIB &&
+		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
 				!strcmp(attr_node->name, attr)) {
 			if(node->child == attr_node) {
 				node->child = attr_node->next;
@@ -139,7 +139,7 @@ xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 
 	xmlnode_remove_attrib(node, attr);
 
-	attrib_node = new_node(attr, NODE_TYPE_ATTRIB);
+	attrib_node = new_node(attr, XMLNODE_TYPE_ATTRIB);
 
 	attrib_node->data = g_strdup(value);
 
@@ -154,7 +154,7 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 	g_return_val_if_fail(node != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
-		if(x->type == NODE_TYPE_ATTRIB && !strcmp(attr, x->name)) {
+		if(x->type == XMLNODE_TYPE_ATTRIB && !strcmp(attr, x->name)) {
 			return x->data;
 		}
 	}
@@ -196,7 +196,7 @@ xmlnode_get_child(xmlnode *parent, const char *name)
 	child_name = names[1];
 
 	for(x = parent->child; x; x = x->next) {
-		if(x->type == NODE_TYPE_TAG && name && !strcmp(parent_name, x->name)) {
+		if(x->type == XMLNODE_TYPE_TAG && name && !strcmp(parent_name, x->name)) {
 			ret = x;
 			break;
 		}
@@ -220,7 +220,7 @@ xmlnode_get_data(xmlnode *node)
 
 
 	for(c = node->child; c; c = c->next) {
-		if(c->type == NODE_TYPE_DATA) {
+		if(c->type == XMLNODE_TYPE_DATA) {
 			if(!str)
 				str = g_string_new("");
 			str = g_string_append_len(str, c->data, c->data_sz);
@@ -249,13 +249,13 @@ char *xmlnode_to_str(xmlnode *node, int *len)
 
 	for(c = node->child; c; c = c->next)
 	{
-		if(c->type == NODE_TYPE_ATTRIB) {
+		if(c->type == XMLNODE_TYPE_ATTRIB) {
 			esc = g_markup_escape_text(c->name, -1);
 			esc2 = g_markup_escape_text(c->data, -1);
 			g_string_append_printf(text, " %s='%s'", esc, esc2);
 			g_free(esc);
 			g_free(esc2);
-		} else if(c->type == NODE_TYPE_TAG || c->type == NODE_TYPE_DATA) {
+		} else if(c->type == XMLNODE_TYPE_TAG || c->type == XMLNODE_TYPE_DATA) {
 			need_end = TRUE;
 		}
 	}
@@ -265,12 +265,12 @@ char *xmlnode_to_str(xmlnode *node, int *len)
 
 		for(c = node->child; c; c = c->next)
 		{
-			if(c->type == NODE_TYPE_TAG) {
+			if(c->type == XMLNODE_TYPE_TAG) {
 				int esc_len;
 				esc = xmlnode_to_str(c, &esc_len);
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
-			} else if(c->type == NODE_TYPE_DATA) {
+			} else if(c->type == XMLNODE_TYPE_DATA) {
 				esc = g_markup_escape_text(c->data, c->data_sz);
 				text = g_string_append(text, esc);
 				g_free(esc);
@@ -380,3 +380,47 @@ xmlnode *xmlnode_from_str(const char *str, size_t size)
 	g_free(xpd);
 	return ret;
 }
+
+xmlnode *xmlnode_copy(xmlnode *src)
+{
+	xmlnode *ret;
+	xmlnode *child;
+	xmlnode *sibling = NULL;
+
+	if(!src)
+		return NULL;
+
+	ret = new_node(src->name, src->type);
+	if(src->data) {
+		ret->data = g_memdup(src->data, src->data_sz);
+		ret->data_sz = src->data_sz;
+	}
+
+	for(child = src->child; child; child = child->next) {
+		if(sibling) {
+			sibling->next = xmlnode_copy(child);
+			sibling = sibling->next;
+		} else {
+			ret->child = xmlnode_copy(child);
+			sibling = ret->child;
+		}
+		sibling->parent = ret;
+	}
+
+	return ret;
+}
+
+xmlnode *xmlnode_get_next_twin(xmlnode *node) {
+	xmlnode *sibling;
+
+	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(node->type == XMLNODE_TYPE_TAG, NULL);
+
+	for(sibling = node->next; sibling; sibling = sibling->next) {
+		if(sibling->type == XMLNODE_TYPE_TAG && !strcmp(node->name, sibling->name))
+			return sibling;
+	}
+
+	return NULL;
+}
+

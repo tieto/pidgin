@@ -584,11 +584,8 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 
-		for(x = packet->child; x; x = x->next) {
+		for(x = xmlnode_get_child(packet, "x"); x; x = xmlnode_get_next_twin(x)) {
 			const char *xmlns;
-			if(x->type != NODE_TYPE_TAG || strcmp(x->name, "x"))
-				continue;
-
 			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
 				continue;
 

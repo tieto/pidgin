@@ -147,13 +147,10 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 
 	js->roster_parsed = TRUE;
 
-	for(item = query->child; item; item = item->next)
+	for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item))
 	{
 		const char *jid, *name, *subscription, *ask;
 		JabberBuddy *jb;
-
-		if(item->type != NODE_TYPE_TAG || strcmp(item->name, "item"))
-			continue;
 
 		subscription = xmlnode_get_attrib(item, "subscription");
 		jid = xmlnode_get_attrib(item, "jid");
@@ -186,10 +183,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 		} else {
 			GSList *groups = NULL;
 
-			for(group = item->child; group; group = group->next) {
+			for(group = xmlnode_get_child(item, "group"); group; group = xmlnode_get_next_twin(group)) {
 				char *group_name;
-				if(group->type != NODE_TYPE_TAG || strcmp(group->name, "group"))
-					continue;
 
 				if(!(group_name = xmlnode_get_data(group)))
 					group_name = g_strdup("");

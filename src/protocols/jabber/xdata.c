@@ -165,163 +165,157 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 	group = gaim_request_field_group_new(NULL);
 	gaim_request_fields_add_group(fields, group);
 
-	for(fn = packet->child; fn; fn = fn->next) {
-		if(fn->type == NODE_TYPE_TAG && !strcmp(fn->name, "field")) {
-			xmlnode *valuenode;
-			const char *type = xmlnode_get_attrib(fn, "type");
-			const char *label = xmlnode_get_attrib(fn, "label");
-			const char *var = xmlnode_get_attrib(fn, "var");
-			char *value = NULL;
+	for(fn = xmlnode_get_child(packet, "field"); fn; fn = xmlnode_get_next_twin(fn)) {
+		xmlnode *valuenode;
+		const char *type = xmlnode_get_attrib(fn, "type");
+		const char *label = xmlnode_get_attrib(fn, "label");
+		const char *var = xmlnode_get_attrib(fn, "var");
+		char *value = NULL;
 
-			if(!type)
-				continue;
+		if(!type)
+			continue;
 
-			if(!var && strcmp(type, "fixed"))
-				continue;
-			if(!label)
-				label = var;
+		if(!var && strcmp(type, "fixed"))
+			continue;
+		if(!label)
+			label = var;
+
+		if((valuenode = xmlnode_get_child(fn, "value")))
+			value = xmlnode_get_data(valuenode);
+
+
+		/* XXX: handle <required/> */
+
+		if(!strcmp(type, "text-private")) {
+			if((valuenode = xmlnode_get_child(fn, "value")))
+				value = xmlnode_get_data(valuenode);
+
+			field = gaim_request_field_string_new(var, label,
+					value ? value : "", FALSE);
+			gaim_request_field_string_set_masked(field, TRUE);
+			gaim_request_field_group_add_field(group, field);
+
+			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
+
+			if(value)
+				g_free(value);
+		} else if(!strcmp(type, "text-multi") || !strcmp(type, "jid-multi")) {
+			GString *str = g_string_new("");
+
+			for(valuenode = xmlnode_get_child(fn, "value"); valuenode;
+					valuenode = xmlnode_get_next_twin(valuenode)) {
+
+				if(!(value = xmlnode_get_data(valuenode)))
+					continue;
+
+				g_string_append_printf(str, "%s\n", value);
+				g_free(value);
+			}
+
+			field = gaim_request_field_string_new(var, label,
+					str->str, TRUE);
+			gaim_request_field_group_add_field(group, field);
+
+			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_MULTI));
+
+			g_string_free(str, TRUE);
+		} else if(!strcmp(type, "list-single") || !strcmp(type, "list-multi")) {
+			xmlnode *optnode;
+			GList *selected = NULL;
+
+			field = gaim_request_field_list_new(var, label);
+
+			if(!strcmp(type, "list-multi")) {
+				gaim_request_field_list_set_multi_select(field, TRUE);
+				g_hash_table_replace(data->fields, g_strdup(var),
+						GINT_TO_POINTER(JABBER_X_DATA_LIST_MULTI));
+			} else {
+				g_hash_table_replace(data->fields, g_strdup(var),
+						GINT_TO_POINTER(JABBER_X_DATA_LIST_SINGLE));
+			}
+
+			for(valuenode = xmlnode_get_child(fn, "value"); valuenode;
+					valuenode = xmlnode_get_next_twin(valuenode)) {
+				selected = g_list_prepend(selected, xmlnode_get_data(valuenode));
+			}
+
+			for(optnode = xmlnode_get_child(fn, "option"); optnode;
+					optnode = xmlnode_get_next_twin(optnode)) {
+				const char *lbl;
+
+				if(!(valuenode = xmlnode_get_child(optnode, "value")))
+					continue;
+
+				if(!(value = xmlnode_get_data(valuenode)))
+					continue;
+
+				if(!(lbl = xmlnode_get_attrib(optnode, "label")))
+					label = value;
+
+				data->values = g_slist_prepend(data->values, value);
+
+				gaim_request_field_list_add(field, lbl, value);
+				if(g_list_find_custom(selected, value, (GCompareFunc)strcmp))
+					gaim_request_field_list_add_selected(field, lbl);
+			}
+			gaim_request_field_group_add_field(group, field);
+
+			while(selected) {
+				g_free(selected->data);
+				selected = g_list_delete_link(selected, selected);
+			}
+
+		} else if(!strcmp(type, "boolean")) {
+			gboolean def = FALSE;
 
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
 
+			if(value && (!strcasecmp(value, "yes") ||
+						!strcasecmp(value, "true") || !strcasecmp(value, "1")))
+				def = TRUE;
 
-			/* XXX: handle <required/> */
+			field = gaim_request_field_bool_new(var, label, def);
+			gaim_request_field_group_add_field(group, field);
 
-			if(!strcmp(type, "text-private")) {
-				if((valuenode = xmlnode_get_child(fn, "value")))
-					value = xmlnode_get_data(valuenode);
+			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_BOOLEAN));
 
-				field = gaim_request_field_string_new(var, label,
-						value ? value : "", FALSE);
-				gaim_request_field_string_set_masked(field, TRUE);
-				gaim_request_field_group_add_field(group, field);
+			if(value)
+				g_free(value);
+		} else if(!strcmp(type, "fixed") && value) {
+			if((valuenode = xmlnode_get_child(fn, "value")))
+				value = xmlnode_get_data(valuenode);
 
-				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
+			field = gaim_request_field_label_new("", value);
+			gaim_request_field_group_add_field(group, field);
 
-				if(value)
-					g_free(value);
-			} else if(!strcmp(type, "text-multi") || !strcmp(type, "jid-multi")) {
-				GString *str = g_string_new("");
+			if(value)
+				g_free(value);
+		} else if(!strcmp(type, "hidden")) {
+			if((valuenode = xmlnode_get_child(fn, "value")))
+				value = xmlnode_get_data(valuenode);
 
-				for(valuenode = fn->child; valuenode; valuenode = valuenode->next) {
-					if(valuenode->type != NODE_TYPE_TAG || strcmp(valuenode->name, "value"))
-						continue;
+			field = gaim_request_field_string_new(var, "", value ? value : "",
+					FALSE);
+			gaim_request_field_set_visible(field, FALSE);
+			gaim_request_field_group_add_field(group, field);
 
-					if(!(value = xmlnode_get_data(valuenode)))
-						continue;
+			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 
-					g_string_append_printf(str, "%s\n", value);
-					g_free(value);
-				}
+			if(value)
+				g_free(value);
+		} else { /* text-single, jid-single, and the default */
+			if((valuenode = xmlnode_get_child(fn, "value")))
+				value = xmlnode_get_data(valuenode);
 
-				field = gaim_request_field_string_new(var, label,
-						str->str, TRUE);
-				gaim_request_field_group_add_field(group, field);
+			field = gaim_request_field_string_new(var, label,
+					value ? value : "", FALSE);
+			gaim_request_field_group_add_field(group, field);
 
-				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_MULTI));
+			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 
-				g_string_free(str, TRUE);
-			} else if(!strcmp(type, "list-single") || !strcmp(type, "list-multi")) {
-				xmlnode *optnode;
-				GList *selected = NULL;
-
-				field = gaim_request_field_list_new(var, label);
-
-				if(!strcmp(type, "list-multi")) {
-					gaim_request_field_list_set_multi_select(field, TRUE);
-					g_hash_table_replace(data->fields, g_strdup(var),
-							GINT_TO_POINTER(JABBER_X_DATA_LIST_MULTI));
-				} else {
-					g_hash_table_replace(data->fields, g_strdup(var),
-							GINT_TO_POINTER(JABBER_X_DATA_LIST_SINGLE));
-				}
-
-				for(valuenode = fn->child; valuenode; valuenode = valuenode->next) {
-					if(valuenode->type != NODE_TYPE_TAG || strcmp(valuenode->name, "value"))
-						continue;
-					selected = g_list_prepend(selected, xmlnode_get_data(valuenode));
-				}
-
-				for(optnode = fn->child; optnode; optnode = optnode->next) {
-					const char *lbl;
-
-					if(optnode->type != NODE_TYPE_TAG || strcmp(optnode->name, "option"))
-						continue;
-
-					if(!(valuenode = xmlnode_get_child(optnode, "value")))
-						continue;
-
-					if(!(value = xmlnode_get_data(valuenode)))
-						continue;
-
-					if(!(lbl = xmlnode_get_attrib(optnode, "label")))
-						label = value;
-
-					data->values = g_slist_prepend(data->values, value);
-
-					gaim_request_field_list_add(field, lbl, value);
-					if(g_list_find_custom(selected, value, (GCompareFunc)strcmp))
-						gaim_request_field_list_add_selected(field, lbl);
-				}
-				gaim_request_field_group_add_field(group, field);
-
-				while(selected) {
-					g_free(selected->data);
-					selected = g_list_delete_link(selected, selected);
-				}
-
-			} else if(!strcmp(type, "boolean")) {
-				gboolean def = FALSE;
-
-				if((valuenode = xmlnode_get_child(fn, "value")))
-					value = xmlnode_get_data(valuenode);
-
-				if(value && (!strcasecmp(value, "yes") ||
-							!strcasecmp(value, "true") || !strcasecmp(value, "1")))
-					def = TRUE;
-
-				field = gaim_request_field_bool_new(var, label, def);
-				gaim_request_field_group_add_field(group, field);
-
-				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_BOOLEAN));
-
-				if(value)
-					g_free(value);
-			} else if(!strcmp(type, "fixed") && value) {
-				if((valuenode = xmlnode_get_child(fn, "value")))
-					value = xmlnode_get_data(valuenode);
-
-				field = gaim_request_field_label_new("", value);
-				gaim_request_field_group_add_field(group, field);
-
-				if(value)
-					g_free(value);
-			} else if(!strcmp(type, "hidden")) {
-				if((valuenode = xmlnode_get_child(fn, "value")))
-					value = xmlnode_get_data(valuenode);
-
-				field = gaim_request_field_string_new(var, "", value ? value : "",
-						FALSE);
-				gaim_request_field_set_visible(field, FALSE);
-				gaim_request_field_group_add_field(group, field);
-
-				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
-
-				if(value)
-					g_free(value);
-			} else { /* text-single, jid-single, and the default */
-				if((valuenode = xmlnode_get_child(fn, "value")))
-					value = xmlnode_get_data(valuenode);
-
-				field = gaim_request_field_string_new(var, label,
-						value ? value : "", FALSE);
-				gaim_request_field_group_add_field(group, field);
-
-				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
-
-				if(value)
-					g_free(value);
-			}
+			if(value)
+				g_free(value);
 		}
 	}
 

@@ -259,7 +259,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jm->to = g_strdup(xmlnode_get_attrib(packet, "to"));
 
 	for(child = packet->child; child; child = child->next) {
-		if(child->type != NODE_TYPE_TAG)
+		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
 		if(!strcmp(child->name, "subject")) {

@@ -218,7 +218,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 
 	for(y = packet->child; y; y = y->next) {
-		if(y->type != NODE_TYPE_TAG)
+		if(y->type != XMLNODE_TYPE_TAG)
 			continue;
 
 		if(!strcmp(y->name, "status")) {
@@ -315,11 +315,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_buddy_remove_resource(jb, jid->resource);
 			if(chat->muc) {
 				xmlnode *x;
-				for(x = packet->child; x; x = x->next) {
+				for(x = xmlnode_get_child(packet, "x"); x; x = xmlnode_get_next_twin(x)) {
 					const char *xmlns, *nick, *code;
 					xmlnode *stat, *item;
-					if(x->type != NODE_TYPE_TAG || strcmp(x->name, "x"))
-						continue;
 					if(!(xmlns = xmlnode_get_attrib(x, "xmlns")) ||
 							strcmp(xmlns, "http://jabber.org/protocol/muc#user"))
 						continue;

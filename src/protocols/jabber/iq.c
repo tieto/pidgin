@@ -296,7 +296,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		jabber_id_free(jid);
 
 		for(child = query->child; child; child = child->next) {
-			if(child->type != NODE_TYPE_TAG)
+			if(child->type != XMLNODE_TYPE_TAG)
 				continue;
 
 			if(!strcmp(child->name, "identity")) {
@@ -365,14 +365,11 @@ jabber_iq_disco_server_result_cb(JabberStream *js, xmlnode *packet, gpointer dat
 
 	query = xmlnode_get_child(packet, "query");
 
-	for(child = query->child; child; child = child->next) {
+	for(child = xmlnode_get_child(query, "item"); child;
+			child = xmlnode_get_next_twin(child)) {
 		JabberIq *iq;
 		const char *jid;
 
-		if(child->type != NODE_TYPE_TAG)
-			continue;
-		if(strcmp(child->name, "item"))
-			continue;
 		if(!(jid = xmlnode_get_attrib(child, "jid")))
 			continue;
 
@@ -399,10 +396,12 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	JabberCallbackData *jcd;
 	xmlnode *query;
 	const char *xmlns;
-	const char *type, *id;
+	const char *type, *id, *from;
+	JabberIq *iq;
 
 	query = xmlnode_get_child(packet, "query");
 	type = xmlnode_get_attrib(packet, "type");
+	from = xmlnode_get_attrib(packet, "from");
 
 	if(type && query && (xmlns = xmlnode_get_attrib(query, "xmlns"))) {
 		if(!strcmp(type, "set")) {
@@ -453,6 +452,24 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			&& *id && (jcd = g_hash_table_lookup(js->callbacks, id))) {
 		jcd->callback(js, packet, jcd->data);
 		g_hash_table_remove(js->callbacks, id);
+		return;
+	}
+
+	/* Default error reply mandated by XMPP-CORE */
+
+	iq = jabber_iq_new(js, JABBER_IQ_ERROR);
+	xmlnode_set_attrib(iq->node, "id", id);
+	xmlnode_set_attrib(iq->node, "to", from);
+
+	for(query = packet->child; query; query = query->next) {
+		switch(query->type) {
+			case XMLNODE_TYPE_TAG:
+				break;
+			case XMLNODE_TYPE_ATTRIB:
+				break;
+			case XMLNODE_TYPE_DATA:
+				break;
+		}
 	}
 }
 

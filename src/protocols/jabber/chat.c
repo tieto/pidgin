@@ -310,11 +310,8 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 		if(!(query = xmlnode_get_child(packet, "query")))
 			return;
 
-		for(x = query->child; x; x = x->next) {
+		for(x = xmlnode_get_child(query, "x"); x; x = xmlnode_get_next_twin(x)) {
 			const char *xmlns;
-			if(x->type != NODE_TYPE_TAG || strcmp(x->name, "x"))
-				continue;
-
 			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
 				continue;
 
@@ -462,10 +459,8 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 		if(!(query = xmlnode_get_child(packet, "query")))
 			return;
 
-		for(x = query->child; x; x = x->next) {
+		for(x = xmlnode_get_child(query, "x"); x; x = xmlnode_get_next_twin(x)) {
 			const char *xmlns;
-			if(x->type != NODE_TYPE_TAG || strcmp(x->name, "x"))
-				continue;
 
 			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
 				continue;
@@ -632,15 +627,11 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 		return;
 	}
 
-	for(item = query->child; item; item = item->next) {
+	for(item = xmlnode_get_child(query, "item"); item;
+			item = xmlnode_get_next_twin(item)) {
 		const char *name;
 		GaimRoomlistRoom *room;
 		JabberID *jid;
-
-		if(item->type != NODE_TYPE_TAG)
-			continue;
-		if(strcmp(item->name, "item"))
-			continue;
 
 		if(!(jid = jabber_id_new(xmlnode_get_attrib(item, "jid"))))
 			continue;

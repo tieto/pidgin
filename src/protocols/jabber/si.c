@@ -82,18 +82,15 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	if(!(feature = xmlnode_get_child(si, "feature")))
 		return;
 
-	for(x = feature->child; x; x = x->next) {
+	for(x = xmlnode_get_child(feature, "x"); x; x = xmlnode_get_next_twin(x)) {
 		const char *xmlns;
-		if(x->type != NODE_TYPE_TAG)
-			continue;
 		if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
 			continue;
 		if(strcmp(xmlns, "jabber:x:data"))
 			continue;
-		for(field = x->child; field; field = field->next) {
+		for(field = xmlnode_get_child(x, "field"); field;
+				field = xmlnode_get_next_twin(field)) {
 			const char *var;
-			if(field->type != NODE_TYPE_TAG)
-				continue;
 			if(!(var = xmlnode_get_attrib(field, "var")))
 				continue;
 			if(!strcmp(var, "stream-method")) {

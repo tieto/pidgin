@@ -1979,9 +1979,7 @@ static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 	gaim_blist_add_buddy(buddy, contact, group,
 			gaim_blist_get_last_child((GaimBlistNode*)contact));
 
-	for(x = bnode->child; x; x = x->next) {
-		if(x->type != NODE_TYPE_TAG || strcmp(x->name, "setting"))
-			continue;
+	for(x = xmlnode_get_child(bnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
 		parse_setting((GaimBlistNode*)buddy, x);
 	}
 
@@ -2004,7 +2002,7 @@ static void parse_contact(GaimGroup *group, xmlnode *cnode)
 	}
 
 	for(x = cnode->child; x; x = x->next) {
-		if(x->type != NODE_TYPE_TAG)
+		if(x->type != XMLNODE_TYPE_TAG)
 			continue;
 		if(!strcmp(x->name, "buddy"))
 			parse_buddy(group, contact, x);
@@ -2043,11 +2041,9 @@ static void parse_chat(GaimGroup *group, xmlnode *cnode)
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
-	for(x = cnode->child; x; x = x->next) {
+	for(x = xmlnode_get_child(cnode, "component"); x; x = xmlnode_get_next_twin(x)) {
 		const char *name;
 		char *value;
-		if(x->type != NODE_TYPE_TAG || strcmp(x->name, "component"))
-			continue;
 
 		name = xmlnode_get_attrib(x, "name");
 		value = xmlnode_get_data(x);
@@ -2058,9 +2054,7 @@ static void parse_chat(GaimGroup *group, xmlnode *cnode)
 	gaim_blist_add_chat(chat, group,
 			gaim_blist_get_last_child((GaimBlistNode*)group));
 
-	for(x = cnode->child; x; x = x->next) {
-		if(x->type != NODE_TYPE_TAG || strcmp(x->name, "setting"))
-			continue;
+	for(x = xmlnode_get_child(cnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
 		parse_setting((GaimBlistNode*)chat, x);
 	}
 
@@ -2083,7 +2077,7 @@ static void parse_group(xmlnode *groupnode)
 			gaim_blist_get_last_sibling(gaimbuddylist->root));
 
 	for(cnode = groupnode->child; cnode; cnode = cnode->next) {
-		if(cnode->type != NODE_TYPE_TAG)
+		if(cnode->type != XMLNODE_TYPE_TAG)
 			continue;
 		if(!strcmp(cnode->name, "setting"))
 			parse_setting((GaimBlistNode*)group, cnode);
@@ -2122,11 +2116,8 @@ static gboolean gaim_blist_read(const char *filename) {
 	blist = xmlnode_get_child(gaim, "blist");
 	if(blist) {
 		xmlnode *groupnode;
-		for(groupnode = blist->child;  groupnode; groupnode = groupnode->next) {
-			if(groupnode->type != NODE_TYPE_TAG ||
-					strcmp(groupnode->name, "group"))
-				continue;
-
+		for(groupnode = xmlnode_get_child(blist, "group"); groupnode;
+				groupnode = xmlnode_get_next_twin(groupnode)) {
 			parse_group(groupnode);
 		}
 	}
@@ -2156,7 +2147,7 @@ static gboolean gaim_blist_read(const char *filename) {
 
 			for(x = anode->child; x; x = x->next) {
 				char *name;
-				if(x->type != NODE_TYPE_TAG)
+				if(x->type != XMLNODE_TYPE_TAG)
 					continue;
 
 				if(!strcmp(x->name, "permit")) {

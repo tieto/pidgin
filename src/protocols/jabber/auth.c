@@ -66,16 +66,15 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
-	for(mechnode = mechs->child; mechnode; mechnode = mechnode->next)
+	for(mechnode = xmlnode_get_child(mechs, "mechanism"); mechnode;
+			mechnode = xmlnode_get_next_twin(mechnode))
 	{
-		if(mechnode->type == NODE_TYPE_TAG) {
-			char *mech_name = xmlnode_get_data(mechnode);
-			if(mech_name && !strcmp(mech_name, "DIGEST-MD5"))
-				digest_md5 = TRUE;
-			else if(mech_name && !strcmp(mech_name, "PLAIN"))
-				plain = TRUE;
-			g_free(mech_name);
-		}
+		char *mech_name = xmlnode_get_data(mechnode);
+		if(mech_name && !strcmp(mech_name, "DIGEST-MD5"))
+			digest_md5 = TRUE;
+		else if(mech_name && !strcmp(mech_name, "PLAIN"))
+			plain = TRUE;
+		g_free(mech_name);
 	}
 
 	auth = xmlnode_new("auth");
