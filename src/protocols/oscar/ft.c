@@ -1174,7 +1174,7 @@ static int handlehdr_directim(aim_session_t *sess, aim_conn_t *conn, aim_bstream
 	if (flags & 0x0002) {
 		int ret = 0;
 
-		if (flags == 0x000c) {
+		if (flags & 0x000c) {
 			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
 				ret = userfunc(sess, &fr, snptr, 1);
 			return ret;
