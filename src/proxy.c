@@ -477,13 +477,13 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 					continue;
 				}
 				write(child_out[1], &zero, sizeof(zero));
+				tmp = res;
 				while(res) {
 					write(child_out[1], &(res->ai_addrlen), sizeof(res->ai_addrlen));
 					write(child_out[1], res->ai_addr, res->ai_addrlen);
-					tmp = res;
 					res = res->ai_next;
-					freeaddrinfo(tmp);
 				}
+				freeaddrinfo(tmp);
 				write(child_out[1], &zero, sizeof(zero));
 #else
 				if (!inet_aton(hostname, &sin.sin_addr)) {
