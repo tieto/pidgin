@@ -448,12 +448,13 @@ void do_remove_group(struct group *g)
 	while (b) {
 		struct buddy *bd = (struct buddy *)b;
 		struct gaim_conversation *c = gaim_find_conversation(bd->name);
-		serv_remove_buddy(bd->account->gc, bd->name, g->name);
-		gaim_blist_remove_buddy(bd);
+		if(bd->account->gc) {
+			serv_remove_buddy(bd->account->gc, bd->name, g->name);
+			gaim_blist_remove_buddy(bd);
 
-		if (c != NULL)
-			gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
-
+			if (c != NULL)
+				gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+		}
 		b = b->next;
 	}
 	gaim_blist_remove_group(g);

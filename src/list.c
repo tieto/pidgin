@@ -342,14 +342,27 @@ void  gaim_blist_remove_group (struct group *group)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *node = (GaimBlistNode*)group;
-	GaimBlistNode *child = node->child;
-	while (child) {
-		GaimBlistNode *n = child;
-		child = child->next;
-		gaim_blist_remove_buddy((struct buddy*)n);
+
+	if(node->child) {
+		char *buf;
+		int count = 0;
+		GaimBlistNode *child = node->child;
+
+		while(child) {
+			count++;
+			child = child->next;
+		}
+
+		buf = g_strdup_printf(_("%d buddies from group %s were not "
+					"removed because their accounts were not logged in.  These "
+					"buddies, and the group were not removed.\n"),
+				count, group->name);
+		do_error_dialog(_("Group Not Removed"), buf, GAIM_ERROR);
+		g_free(buf);
+		return;
 	}
 
-	if(node->parent->child == node)
+	if(node->parent && node->parent->child == node)
 		node->parent->child = node->next;
 	if (node->prev)
 		node->prev->next = node->next;
