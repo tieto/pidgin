@@ -735,7 +735,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                 if (flags & WFLAG_RECV) {
                         strcpy(colour, "#ff0000");
 			b = find_buddy(c->name);
-                        if (b->uc & UC_UNAVAILABLE) {
+                        if (b && (b->uc & UC_UNAVAILABLE)) {
 				who = malloc(strlen(c->name) + 24);
 				sprintf(who, "Auto-response from %s", c->name);
 			} else
