@@ -1503,6 +1503,7 @@ void show_conv(struct conversation *c)
 	GtkWidget *paned;
 	GtkWidget *add;
 	GtkWidget *toolbar;
+	GtkWidget *sep;
 	int dispstyle;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1599,10 +1600,16 @@ void show_conv(struct conversation *c)
 	gtk_widget_set_usize(entry, 300, 25);
 
 	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
+	sep = gtk_vseparator_new();
+	gtk_widget_show(sep);
+	gtk_box_pack_end(GTK_BOX(bbox), sep, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), add, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), block, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), warn, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), info, dispstyle, dispstyle, 0);
+	sep = gtk_vseparator_new();
+	gtk_widget_show(sep);
+	gtk_box_pack_end(GTK_BOX(bbox), sep, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 0);
 	
 	/* pack and fill the rest */

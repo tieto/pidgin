@@ -74,6 +74,9 @@
 #endif
 #include "pixmaps/exit_small.xpm"
 
+#include "pixmaps/tmp_send.xpm"
+#include "pixmaps/tb_search.xpm"
+
 static GtkTooltips *tips;
 static GtkWidget *editpane;
 static GtkWidget *buddypane;
@@ -215,8 +218,7 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 
 		/*if the user had opted to put pictures on the buttons*/
         if (display_options & OPT_DISP_SHOW_BUTTON_XPM && xpm) {
-		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
-						  NULL, xpm);
+		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
 		pic = gtk_pixmap_new(pm, bm);
 		gtk_widget_show(pic);
 		gdk_pixmap_unref(pm);
@@ -238,38 +240,21 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 void update_button_pix()
 {
 
-	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
-	        adjust_pic(addbutton, _("Add"), (gchar **)daemon_buddyadd_xpm);
-	        adjust_pic(groupbutton, _("Group"), NULL);
-		adjust_pic(rembutton, _("Remove"), (gchar **)daemon_buddydel_xpm);
-		if (!(display_options & OPT_DISP_NO_BUTTONS)) {
-			adjust_pic(chatbutton, _("Chat"), (gchar **)daemon_buddychat_xpm);
-		        adjust_pic(imbutton, _("IM"), (gchar **)daemon_im_xpm);
-		        adjust_pic(infobutton, _("Info"), (gchar **)daemon_info_xpm);
-		}
-/*	        adjust_pic(addpermbutton, _("Add"), (gchar **)daemon_permadd_xpm);
-	        adjust_pic(rempermbutton, _("Remove"), (gchar **)daemon_permdel_xpm);
-*/	} else {
-	        adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
-	        adjust_pic(groupbutton, _("Group"), NULL);
-		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
-		if (!(display_options & OPT_DISP_NO_BUTTONS)) {
-			adjust_pic(chatbutton, _("Chat"), (gchar **)buddychat_xpm);
-		        adjust_pic(imbutton, _("IM"), (gchar **)im_xpm);
-		        adjust_pic(infobutton, _("Info"), (gchar **)info_xpm);
-		}
-/*	        adjust_pic(addpermbutton, _("Add"), (gchar **)permadd_xpm);
-	        adjust_pic(rempermbutton, _("Remove"), (gchar **)permdel_xpm);
-*/	}
+	adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
+	adjust_pic(groupbutton, _("Group"), NULL);
+	adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
+	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
+		adjust_pic(chatbutton, _("Chat"), (gchar **)tb_search_xpm);
+	        adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
+	        adjust_pic(infobutton, _("Info"), (gchar **)tb_search_xpm);
+	}
 	gtk_widget_hide(addbutton->parent);
 	gtk_widget_show(addbutton->parent);
 	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
 		gtk_widget_hide(chatbutton->parent);
 		gtk_widget_show(chatbutton->parent);
 	}
-/*	gtk_widget_hide(addpermbutton->parent);
-	gtk_widget_show(addpermbutton->parent);
-*/}
+}
 
 
 
