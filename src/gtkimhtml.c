@@ -841,9 +841,10 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
 
-	if (GTK_LAYOUT (imhtml)->yoffset < TOP_BORDER)
+	if (GTK_LAYOUT (imhtml)->vadjustment->value < TOP_BORDER)
 		gdk_window_clear_area (GTK_LAYOUT (imhtml)->bin_window, 0, 0,
-				       imhtml->xsize, TOP_BORDER - GTK_LAYOUT (imhtml)->yoffset);
+				       imhtml->xsize,
+				       TOP_BORDER - GTK_LAYOUT (imhtml)->vadjustment->value);
 
 	b = imhtml->bits;
 	while (b) {
@@ -1721,18 +1722,15 @@ gtk_imhtml_adjustment_changed (GtkAdjustment *adjustment,
 {
 	GtkLayout *layout = GTK_LAYOUT (imhtml);
 
-	layout->xoffset = (gint) layout->hadjustment->value;
-	layout->yoffset = (gint) layout->vadjustment->value;
-
 	if (!GTK_WIDGET_MAPPED (imhtml) || !GTK_WIDGET_REALIZED (imhtml))
 		return;
 
 	if (layout->freeze_count)
 		return;
 
-	if (layout->yoffset < TOP_BORDER)
+	if (layout->vadjustment->value < TOP_BORDER)
 		gdk_window_clear_area (layout->bin_window, 0, 0,
-				       imhtml->xsize, TOP_BORDER - layout->yoffset);
+				       imhtml->xsize, TOP_BORDER - layout->vadjustment->value);
 
 	gtk_imhtml_draw_exposed (imhtml);
 }
