@@ -110,8 +110,8 @@ static char nick_colors[][8] = {
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
 
 #define SCALE(x) \
-	((gdk_pixbuf_animation_get_width(x) <= 48 && \
-	  gdk_pixbuf_animation_get_height(x) <= 48) ? 48 : 50)
+	((gdk_pixbuf_animation_get_width(x) <= 48 &&  gdk_pixbuf_animation_get_height(x) <= 48) ? 48 : \
+	 (gdk_pixbuf_animation_get_width(x) > 75 && gdk_pixbuf_animation_get_height(x) > 75) ? 96 : 50)
 
 typedef struct
 {
