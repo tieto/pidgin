@@ -1819,7 +1819,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		if (!stat(gc->user->iconfile, &st)) {
 			char *buf = g_malloc(st.st_size);
-			file = fopen(gc->user->iconfile, "r");
+			file = fopen(gc->user->iconfile, "rb");
 			if (file) {
 				int len = fread(buf, 1, st.st_size, file);
 				debug_printf("Sending buddy icon to %s (%d bytes, %lu reported)\n",
