@@ -61,7 +61,6 @@ gaim_core_init(const char *ui)
 	/* Initialize all static protocols. */
 	static_proto_init();
 
-	printf("gaim_prefs_init\n");
 	gaim_prefs_init();
 
 	if (ops != NULL) {
@@ -72,7 +71,6 @@ gaim_core_init(const char *ui)
 			ops->debug_ui_init();
 	}
 
-	printf("conversation_init\n");
 	gaim_conversation_init();
 	gaim_proxy_init();
 	gaim_sound_init();
