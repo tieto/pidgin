@@ -78,18 +78,6 @@ debug_window_new(void)
 								   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
 	win->entry = gtk_imhtml_new(NULL, NULL);
-	gaim_setup_imhtml(win->entry);
-
-#if 0
-	win->entry = gtk_text_view_new();
-	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(win->entry), FALSE);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(win->entry), FALSE);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(win->entry), GTK_WRAP_WORD_CHAR);
-
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(win->entry));
-	gtk_text_buffer_get_end_iter(buffer, &end);
-	gtk_text_buffer_create_mark(buffer, "end", &end, FALSE);
-#endif
 
 	gtk_container_add(GTK_CONTAINER(sw), win->entry);
 	gtk_container_add(GTK_CONTAINER(win->window), sw);

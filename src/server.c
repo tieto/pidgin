@@ -756,7 +756,7 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 	 */
 
 	if (flags & IM_FLAG_GAIMUSER)
-		gaim_debug(GAIM_DEBUG_MISC, "%s is a gaim user.\n", who);
+		gaim_debug(GAIM_DEBUG_MISC, "server", "%s is a gaim user.\n", who);
 
 	/*
 	 * We should update the conversation window buttons and menu,
