@@ -378,7 +378,6 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 {
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
-	struct yahoo_packet *newpkt;
 	char *name = NULL;
 	int state = 0;
 	int gamestate = 0;
@@ -745,45 +744,15 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		char *hash_string_p = g_malloc(50 + strlen(sn));
 		char *hash_string_c = g_malloc(50 + strlen(sn));
 		
-		int ordering;
 		char checksum;
 		
-		char sv;
+		int sv;
 		
 		char *result6 = g_malloc(25);
 		char *result96 = g_malloc(25);
 
 		sv = seed[15];
-		checksum = sv % 16;
-
-		/* I bet there's some really cool mathematical pattern here if I looked hard enough.
-		 * But, this works. */
-		switch (checksum) {
-		case 1:
-		case 6:
-		case 9:
-		case 14:
-			
-			checksum = seed[9];
-			break;
-		case 3:
-		case 11:
-			checksum = seed[1];
-			break;
-		case 4:
-		case 12:
-			checksum = seed[3];
-			break;
-		case 5:
-		case 8:
-		case 13:
-		case 0:
-			checksum = seed[7];
-			break;
-		}
-		checksum = seed[checksum % 16];
-		
-		ordering = sv % 8;
+		sv = sv % 8;
 
 		md5_init(&ctx);
 		md5_append(&ctx, gc->password, strlen(gc->password));
@@ -795,49 +764,50 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		md5_append(&ctx, crypt_result, strlen(crypt_result));
 		md5_finish(&ctx, result);
 		to_y64(crypt_hash, result, 16);
-		
-		/* I bet there's a nice pattern here, too. */
-		switch (ordering) {
+
+		switch (sv) {
 		case 1:
 		case 6:
+			checksum = seed[seed[9] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, gc->username, seed, password_hash);
-			g_snprintf(hash_string_c, strlen(sn) + 50,
+                                   "%c%s%s%s", checksum, gc->username, seed, password_hash);
+                        g_snprintf(hash_string_c, strlen(sn) + 50,
 				   "%c%s%s%s", checksum, gc->username, seed, crypt_hash);
 			break;
 		case 2:
 		case 7:
+			checksum = seed[seed[15] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, seed, password_hash, gc->username);
-			g_snprintf(hash_string_c, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, seed, crypt_hash, gc->username);
-			break;			
+                                   "%c%s%s%s", checksum, seed, password_hash, gc->username);
+                        g_snprintf(hash_string_c, strlen(sn) + 50,
+                                   "%c%s%s%s", checksum, seed, crypt_hash, gc->username);
+			break;
 		case 3:
+			checksum = seed[seed[1] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, gc->username, password_hash, seed);
-			g_snprintf(hash_string_c, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, gc->username, crypt_hash, seed);
-			break;			
+                                   "%c%s%s%s", checksum, gc->username, password_hash, seed);
+                        g_snprintf(hash_string_c, strlen(sn) + 50,
+                                   "%c%s%s%s", checksum, gc->username, crypt_hash, seed);
+			break;
 		case 4:
+			checksum = seed[seed[3] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, gc->username, password_hash, seed);
+				   "%c%s%s%s", checksum, password_hash, seed, gc->username);
 			g_snprintf(hash_string_c, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, gc->username, crypt_hash, seed);
-			break;	
+				   "%c%s%s%s", checksum, crypt_hash, seed, gc->username);
+			break;
 		case 0:
 		case 5:
+			checksum = seed[seed[7] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, password_hash, gc->username, seed);
-			g_snprintf(hash_string_c, strlen(sn) + 50,
+                                   "%c%s%s%s", checksum, password_hash, gc->username, seed);
+                        g_snprintf(hash_string_c, strlen(sn) + 50,
 				   "%c%s%s%s", checksum, crypt_hash, gc->username, seed);
-			break;		
+			break;
 		}
-
-		debug_printf("\nPassword: %s\n", hash_string_p);
-		debug_printf("Crypt:    %s\n\n", hash_string_c);
-
+		
 		md5_init(&ctx);  
-		md5_append(&ctx, hash_string_p, strlen(hash_string_c));
+		md5_append(&ctx, hash_string_p, strlen(hash_string_p));
 		md5_finish(&ctx, result);
 		to_y64(result6, result, 16);
 
@@ -845,11 +815,6 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		md5_append(&ctx, hash_string_c, strlen(hash_string_c));
 		md5_finish(&ctx, result);
 		to_y64(result96, result, 16);
-
-		md5_init(&ctx);
-		md5_append(&ctx, gc->password, strlen(gc->password));
-		md5_finish(&ctx, result);
-		to_y64(password_hash, result, 16);
 
 		pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, YAHOO_STATUS_AVAILABLE, 0);
 		yahoo_packet_hash(pack, 0, gc->username);
