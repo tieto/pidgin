@@ -1432,6 +1432,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	struct dcc_chat *dccchat = find_dcc_chat(gc, who);
 	struct irc_data *id = gc->proto_data;
 	g_free(tmp);
+	what = str->str;
 	if (*what != '/') {
 		unsigned int max = 440 - strlen(who);
 		char t;
@@ -1439,30 +1440,30 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			t = what[max];
 			what[max] = 0;
 			if (dccchat) {
-				g_snprintf(buf, sizeof(buf), "%s\r\n", str->str);
+				g_snprintf(buf, sizeof(buf), "%s\r\n", what);
 				irc_write(dccchat->fd, buf, strlen(buf));
 				g_string_free(str, TRUE);
 				return 1;
 			}
-			g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, str->str);
+			g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
 			irc_write(id->fd, buf, strlen(buf));
 			what[max] = t;
 			what = what + max;
 		}
 		if (dccchat) {
-			g_snprintf(buf, sizeof(buf), "%s\r\n", str->str);
+			g_snprintf(buf, sizeof(buf), "%s\r\n", what);
 			irc_write(dccchat->fd, buf, strlen(buf));
 			g_string_free(str, TRUE);
 			return 1;
 		}
-		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, str->str);
+		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
 		irc_write(id->fd, buf, strlen(buf));
 		g_string_free(str, TRUE);
 		return 1;
 	}
 	
 	what++;
-	process_data_init(pdibuf, str->str, word, word_eol, TRUE);
+	process_data_init(pdibuf, what, word, word_eol, TRUE);
 	g_string_free(str, TRUE);
 	if (!g_strcasecmp(pdibuf, "ME")) {
 		if (dccchat) {
