@@ -6,6 +6,7 @@ version 0.52:
 	* Fixed a little bug with connecting via proxy (thanks
 	  for reminding me of this, Manish Singh)
 	* Updated Simplified Chinese Translation (Thanks Rocky S. Lee)
+	* Updated German Translation (Thanks Karsten Weiss)
 
 version 0.51 (01/24/2002):
 	* Arrow buttons in log viewer and some other dialogs

@@ -1451,11 +1451,10 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ? 
-				   _("You missed %d message from %s because %s invalid.") :
-				   _("You missed %d messages from %s because %s invalid."),
+				   _("You missed %d message from %s because it was invalid.") :
+				   _("You missed %d messages from %s because they were invalid."),
 				   nummissed,
-				   userinfo->sn,
-				   nummissed == 1 ? "it was" : "they were");
+				   userinfo->sn);
 			break;
 		case 1:
 			/* Message too large */
@@ -1482,7 +1481,7 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ?
-				   _("You missed %d message from %s because they are too evil.") : 
+				   _("You missed %d message from %s because it was too evil.") : 
 				   _("You missed %d messages from %s because they are too evil."),
 				   nummissed,
 				   userinfo->sn);
