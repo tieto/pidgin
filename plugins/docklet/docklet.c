@@ -220,7 +220,6 @@ static void docklet_menu() {
 			break;
 	}
 
-	gaim_new_item_from_stock(menu, _("About"), GAIM_STOCK_ABOUT, G_CALLBACK(gaim_gtkdialogs_about), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, NULL);
 
 #ifdef _WIN32
