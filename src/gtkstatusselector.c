@@ -41,6 +41,8 @@ struct _GaimGtkStatusSelectorPrivate
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkListStore *model;
 #endif
+
+	guint entry_timer;
 };
 
 #if GTK_CHECK_VERSION(2,4,0)
@@ -58,6 +60,7 @@ static void gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector);
 static void gaim_gtk_status_selector_finalize(GObject *obj);
 static void gaim_gtk_status_selector_destroy(GtkObject *obj);
 static void status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector);
+static gboolean key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer user_data);
 static void signed_on_off_cb(GaimConnection *gc, GaimGtkStatusSelector *selector);
 static void rebuild_list(GaimGtkStatusSelector *selector);
 
@@ -158,6 +161,9 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 	gtk_box_pack_start(GTK_BOX(selector), frame, TRUE, TRUE, 0);
 	gtk_widget_hide(toolbar);
 
+	g_signal_connect(G_OBJECT(entry), "key_press_event",
+					 G_CALLBACK(key_press_cb), selector);
+
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						selector, GAIM_CALLBACK(signed_on_off_cb),
 						selector);
@@ -206,7 +212,6 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 	GtkTreeIter iter;
 	const char *status_type_id;
 	const char *text;
-	GList *l;
 
 	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
 									  &iter))
@@ -228,14 +233,86 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 	}
 	else
 	{
-		const char *message = text;
+		/*
+		 * If the chosen status does not require a message, then set the
+		 * status immediately.  Otherwise just register a timeout and the
+		 * status will be set whenever the user stops typing the message.
+		 */
+		GList *l;
 		GtkTextBuffer *buffer;
 		gboolean allow_message = FALSE;
 
 		buffer =
 			gtk_text_view_get_buffer(GTK_TEXT_VIEW(selector->priv->entry));
 
-		gtk_text_buffer_set_text(buffer, message, -1);
+		gtk_text_buffer_set_text(buffer, text, -1);
+
+		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+		{
+			GaimConnection *gc = (GaimConnection *)l->data;
+			GaimAccount *account = gaim_connection_get_account(gc);
+			GaimStatusType *status_type;
+
+			status_type = gaim_account_get_status_type(account,
+													   status_type_id);
+
+			if (status_type == NULL)
+				continue;
+
+			if (gaim_status_type_get_attr(status_type, "message") != NULL)
+			{
+				allow_message = TRUE;
+			}
+			else
+			{
+				gaim_account_set_status(account,
+										status_type_id, TRUE,
+										NULL);
+			}
+		}
+
+		if (allow_message)
+		{
+			gtk_widget_show(selector->priv->frame);
+			key_press_cb(NULL, NULL, selector);
+		}
+		else
+			gtk_widget_hide(selector->priv->frame);
+	}
+}
+
+static gboolean
+insert_text_timeout_cb(gpointer data)
+{
+	GaimGtkStatusSelector *selector = (GaimGtkStatusSelector *)data;
+	GtkTreeIter iter;
+	const char *status_type_id;
+	const char *text;
+
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
+									  &iter))
+	{
+		return FALSE;
+	}
+
+	gtk_tree_model_get(GTK_TREE_MODEL(selector->priv->model), &iter,
+					   COLUMN_NAME, &text,
+					   COLUMN_STATUS_TYPE_ID, &status_type_id,
+					   -1);
+
+	if (status_type_id == NULL)
+	{
+		if (!strcmp(text, _("New Status")))
+		{
+			/* TODO */
+		}
+	}
+	else
+	{
+		gchar *message;
+		GList *l;
+
+		message = gtk_imhtml_get_markup(GTK_IMHTML(selector->priv->entry));
 
 		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
 		{
@@ -255,22 +332,32 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 										status_type_id, TRUE,
 										"message", message,
 										NULL);
-
-				allow_message = TRUE;
-			}
-			else
-			{
-				gaim_account_set_status(account,
-										status_type_id, TRUE,
-										NULL);
 			}
 		}
-
-		if (allow_message)
-			gtk_widget_show(selector->priv->frame);
-		else
-			gtk_widget_hide(selector->priv->frame);
 	}
+
+	return FALSE;
+}
+
+/**
+ * The user typed in the IMHTML entry widget.  If the user is finished
+ * typing then we want to set the appropriate status message.  So let's
+ * wait 3 seconds, and if they haven't typed anything else then set the
+ * status message.
+ */
+static gboolean
+key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer user_data)
+{
+	GaimGtkStatusSelector *selector = (GaimGtkStatusSelector *)user_data;
+
+	if (selector->priv->entry_timer != 0) {
+		gaim_timeout_remove(selector->priv->entry_timer);
+	}
+
+	selector->priv->entry_timer = gaim_timeout_add(3000, insert_text_timeout_cb,
+											 selector);
+
+	return FALSE;
 }
 
 static void

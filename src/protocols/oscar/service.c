@@ -826,7 +826,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
  * These are the same TLVs seen in user info.  You can 
  * also set 0x0008 and 0x000c.
  */
-faim_export int aim_srv_setavailmsg(aim_session_t *sess, char *msg)
+faim_export int aim_srv_setavailmsg(aim_session_t *sess, const char *msg)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;

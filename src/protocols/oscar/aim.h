@@ -588,7 +588,7 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
 
 
 /* 0x0001 - service.c */
-faim_export int aim_srv_setavailmsg(aim_session_t *sess, char *msg);
+faim_export int aim_srv_setavailmsg(aim_session_t *sess, const char *msg);
 faim_export int aim_srv_setidle(aim_session_t *sess, fu32_t idletime);
 
 
