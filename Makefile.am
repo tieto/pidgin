@@ -29,5 +29,5 @@ apps_DATA = gaim.desktop
 
 SUBDIRS = sounds plugins pixmaps doc po intl src
 
-docs: Doxyfile.in
+docs: Doxyfile
 	@doxygen
