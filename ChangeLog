@@ -5,6 +5,13 @@ version 0.60:
 	* Polish translation updated (Thanks, Przemyslaw Sulek)
 	* Finnish translation updated (Thanks, Tero Kuusela)
 	* Spanish translation updated (Thanks, Lars Goldschlager) 
+	* Jabber invisibility and permanently cancel sending on-
+	  line status to Jabber buddies.
+	* Support for synchronizing group renames on server.  Group
+	  rename server synchronization for AIM.  Server-side
+	  synchronization for moving individual AIM buddy to new
+	  group improved.  (Thanks, Mark Doliner)
+	* Jabber roster updated on group renames.
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
