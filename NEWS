@@ -7,7 +7,7 @@
 	to a quick fix sent in by Cerulean Studios this morning. Reports say
 	they'll continue to try to break us, though, so don't be surprised
 	if your Yahoo cuts out again.
-
+	
 	Luke: I was really distracted this cycle, I want to thank my co-
 	developers and our crazy patch writters for keeping things going.
 	We have a fairly long changelog for you this release, including some
@@ -18,7 +18,15 @@
 	of applause to Felipe! To bad about the Yahoo thing, but.. eep! I have
 	to go! Movie with the girls and Farmer's Market.
 
->>>>>>> 1.255
+	Tim: This release brings us /commands in the core, which hopefully
+	works better, and Yahoo! buddy icons. Thanks to all the people I
+	bugged for packet captures, like Simguy, Bleeter, and odl. Yahoo!
+	broke again, so I did a little last minute work on the web
+	messenger stuff, but then Cerulean Studios was cool and fixed the
+	problem already, so all that code's disabled. I also finally added
+	the Yahoo! Japan support, for those of you with Yahoo! Japan
+	accounts.
+	
 0.78 (05/30/2004):
 	Luke: A very long time, once again, since the last release. I think
 	its mostly worth it. A few of you will still have trouble with msn
