@@ -491,6 +491,7 @@ show_im_dialog(void)
 	field = gaim_request_field_string_new("screenname", _("_Screen name"),
 										  NULL, FALSE);
 	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_set_type_hint(field, "screenname");
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_account_new("account", _("_Account"), NULL);
@@ -545,6 +546,7 @@ show_info_dialog(void)
 
 	field = gaim_request_field_string_new("screenname", _("_Screen name"),
 										  NULL, FALSE);
+	gaim_request_field_set_type_hint(field, "screenname");
 	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
 
