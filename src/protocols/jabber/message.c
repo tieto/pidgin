@@ -144,10 +144,12 @@ static void handle_groupchat(JabberMessage *jm)
 		return;
 
 	if(jm->subject)
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(chat->conv), jid->resource, jm->subject);
+		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(chat->conv), jid->resource,
+				jm->subject);
 
-	serv_got_chat_in(jm->js->gc, chat->id, jabber_get_resource(jm->from),
-			0, jm->xhtml ? jm->xhtml : jm->body, jm->sent);
+	if(jm->xhtml || jm->body)
+		serv_got_chat_in(jm->js->gc, chat->id, jabber_get_resource(jm->from),
+				0, jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 	jabber_id_free(jid);
 }
 
