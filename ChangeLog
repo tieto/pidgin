@@ -24,8 +24,8 @@ version 0.78cvs
 	Bug Fixes:
 	* Compiles again with gcc 2.96 (Ignacio J. Elia)
 	* Gtk2.0 compatibility fixes (Tim Ringenbach)
-	* Many documentation updates (Jonathan Champ, Gary Kramlich and
-	  Stu Tomlinson)
+	* Many documentation updates (Jonathan Champ, Gary Kramlich,
+	  Stu Tomlinson, and Kevin Stange)
 	* Yahoo works on 64 bit machines (Gary Kramlich)
 	* Zephyr works on 64 bit machines (Arun A Tharuvai)
 	* Novell 64bit fixes, better error messages, and buddy list sync fixes
