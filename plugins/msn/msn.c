@@ -109,17 +109,17 @@ struct msn_conn {
 	char *txqueue;
 };
 
-GSList *msn_connections = NULL;
+static GSList *msn_connections = NULL;
 
-unsigned long long globalc = 0;
+static unsigned long long globalc = 0;
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition);
 static void msn_add_permit(struct gaim_connection *gc, char *who);
 static void process_hotmail_msg(struct gaim_connection *gc, gchar *msgdata);
-void msn_des_win(GtkWidget *a, GtkWidget *b);
-void msn_newmail_dialog(const char *text);
+static void msn_des_win(GtkWidget *a, GtkWidget *b);
+static void msn_newmail_dialog(const char *text);
 static char *msn_normalize(const char *s);
 
-char tochar(char *h)
+static char tochar(char *h)
 {
 	char tmp;
 	char b = 0;
@@ -143,7 +143,7 @@ char tochar(char *h)
 	return v;
 }
 
-char *url_decode(char *text)
+static char *url_decode(char *text)
 {
 	static char newtext[MSN_BUF_LEN];
 	char *buf;
@@ -181,7 +181,7 @@ char *url_decode(char *text)
 	return newtext;
 }
 
-void msn_accept_add_permit(gpointer w, struct msn_ask_add_permit *ap)
+static void msn_accept_add_permit(gpointer w, struct msn_ask_add_permit *ap)
 {
 	msn_add_permit(ap->gc, ap->user);
 	/* leak if we don't free these? */
@@ -190,14 +190,14 @@ void msn_accept_add_permit(gpointer w, struct msn_ask_add_permit *ap)
 	g_free(ap);
 }
 
-void msn_cancel_add_permit(gpointer w, struct msn_ask_add_permit *ap)
+static void msn_cancel_add_permit(gpointer w, struct msn_ask_add_permit *ap)
 {
 	g_free(ap->user);
 	g_free(ap->friendly);
 	g_free(ap);
 }
 
-void free_msn_conn(struct msn_conn *mc)
+static void free_msn_conn(struct msn_conn *mc)
 {
 	if (mc->user)
 		free(mc->user);
@@ -220,7 +220,7 @@ void free_msn_conn(struct msn_conn *mc)
 }
 
 
-struct msn_conn *find_msn_conn_by_user(gchar * user)
+static struct msn_conn *find_msn_conn_by_user(gchar * user)
 {
 	struct msn_conn *mc;
 	GSList *conns = msn_connections;
@@ -240,7 +240,7 @@ struct msn_conn *find_msn_conn_by_user(gchar * user)
 	return NULL;
 }
 
-struct msn_conn *find_msn_conn_by_trid(time_t trid)
+static struct msn_conn *find_msn_conn_by_trid(time_t trid)
 {
 	struct msn_conn *mc;
 	GSList *conns = msn_connections;
@@ -277,19 +277,19 @@ char *description()
 	return "Allows gaim to use the MSN protocol.  For some reason, this frightens me.";
 }
 
-time_t trId(struct msn_data *md)
+static time_t trId(struct msn_data *md)
 {
 	md->last_trid = time((time_t *)NULL) + globalc++;
 	return md->last_trid;
 }
 
-void msn_write(int fd, char *buf)
+static void msn_write(int fd, char *buf)
 {
 	write(fd, buf, strlen(buf));
 	debug_printf("MSN(%d) <== %s", fd, buf);
 }
 
-void msn_add_request(struct gaim_connection *gc, char *buf)
+static void msn_add_request(struct gaim_connection *gc, char *buf)
 {
 	char **res;
 
@@ -875,7 +875,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 	}
 }
 
-void msn_login(struct aim_user *user)
+static void msn_login(struct aim_user *user)
 {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct msn_data *md = gc->proto_data = g_new0(struct msn_data, 1);
@@ -901,7 +901,7 @@ void msn_login(struct aim_user *user)
 	}
 }
 
-void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+static void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 {
 	struct msn_conn *mc;
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
@@ -1125,7 +1125,7 @@ static void msn_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *wh
 	gtk_widget_show(button);	
 }
 
-void msn_newmail_dialog(const char *text)
+static void msn_newmail_dialog(const char *text)
 {
 	GtkWidget *window;
 	GtkWidget *vbox;
@@ -1157,7 +1157,7 @@ void msn_newmail_dialog(const char *text)
 	gtk_widget_show_all(window);
 }
 
-void msn_des_win(GtkWidget *a, GtkWidget *b)
+static void msn_des_win(GtkWidget *a, GtkWidget *b)
 {
 	gtk_widget_destroy(b);
 }
@@ -1274,7 +1274,7 @@ static char *msn_normalize(const char *s)
 	return buf;
 }
 
-void do_change_name(GtkWidget *w, struct msn_name_dlg *b)
+static void do_change_name(GtkWidget *w, struct msn_name_dlg *b)
 {
 	struct gaim_connection *gc = b->user->gc;
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
@@ -1292,7 +1292,7 @@ void do_change_name(GtkWidget *w, struct msn_name_dlg *b)
 	return;
 }
 
-void show_change_name(struct gaim_connection *gc)
+static void show_change_name(struct gaim_connection *gc)
 {
 	GtkWidget *label;
 	GtkWidget *vbox;
@@ -1385,7 +1385,7 @@ static char **msn_list_icon(int uc)
 
 static struct prpl *my_protocol = NULL;
 
-void msn_init(struct prpl *ret)
+static void msn_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_MSN;
 	ret->name = msn_name;

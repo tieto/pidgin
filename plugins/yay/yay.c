@@ -49,6 +49,8 @@
 
 #include "pixmaps/cancel.xpm"
 
+#define USEROPT_MAIL 0
+
 struct conn {
 	int socket;
 	int type;
@@ -215,6 +217,9 @@ static int yahoo_newmail(struct yahoo_session *sess, ...) {
 	va_start(ap, sess);
 	count = va_arg(ap, int);
 	va_end(ap);
+
+	if (gc->user->proto_opt[USEROPT_MAIL][0] != '1')
+		return 1;
 
 	if (count) {
 		g_snprintf(buf, sizeof buf, "%s has %d new message%s on Yahoo Mail.",
@@ -676,6 +681,51 @@ static GList *yahoo_actions() {
 	return m;
 }
 
+struct mod_usr_opt {
+	struct aim_user *user;
+	int opt;
+};
+
+static void mod_opt(GtkWidget *b, struct mod_usr_opt *m)
+{
+	if (m->user->proto_opt[m->opt][0] == '1')
+		m->user->proto_opt[m->opt][0] = '\0';
+	else
+		strcpy(m->user->proto_opt[m->opt],"1");
+}
+
+static void free_muo(GtkWidget *b, struct mod_usr_opt *m)
+{
+	g_free(m);
+}
+
+static GtkWidget *yahoo_protoopt_button(const char *text, struct aim_user *u, int option, GtkWidget *box)
+{
+	GtkWidget *button;
+	struct mod_usr_opt *muo = g_new0(struct mod_usr_opt, 1);
+	button = gtk_check_button_new_with_label(text);
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (u->proto_opt[option][0] == '1'));
+	gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
+	muo->user = u;
+	muo->opt = option;
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_opt), muo);
+	gtk_signal_connect(GTK_OBJECT(button), "destroy", GTK_SIGNAL_FUNC(free_muo), muo);
+	gtk_widget_show(button);
+	return button;
+}
+
+static void yahoo_user_opts(GtkWidget *book, struct aim_user *user)
+{
+	GtkWidget *vbox;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Yahoo Options"));
+	gtk_widget_show(vbox);
+
+	yahoo_protoopt_button("Notify me of new Yahoo! Mail", user, USEROPT_MAIL, vbox);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Yahoo_init(struct prpl *ret) {
@@ -687,7 +737,7 @@ void Yahoo_init(struct prpl *ret) {
 	ret->actions = yahoo_actions;
 	ret->do_action = yahoo_do_action;
 	ret->buddy_menu = yahoo_buddy_menu;
-	ret->user_opts = NULL;
+	ret->user_opts = yahoo_user_opts;
 	ret->login = yahoo_login;
 	ret->close = yahoo_close;
 	ret->send_im = yahoo_send_im;
