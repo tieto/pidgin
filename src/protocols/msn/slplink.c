@@ -293,11 +293,14 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msn_slplink_send_msg(slplink, msg);
 
-	if ((slpmsg->slpcall != NULL) &&
-		(slpmsg->slpcall->progress_cb != NULL))
+	if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
-		slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size, len,
-									 slpmsg->offset);
+		if ((slpmsg->slpcall != NULL) &&
+			(slpmsg->slpcall->progress_cb != NULL))
+		{
+			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size, len,
+										slpmsg->offset);
+		}
 	}
 
 	slpmsg->offset += len;
@@ -467,14 +470,18 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 			if (slpmsg->slpcall != NULL)
 			{
-				GaimXfer *xfer;
-
-				xfer = slpmsg->slpcall->xfer;
-
-				if (xfer != NULL)
+				if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 				{
-					slpmsg->fp =
-						fopen(gaim_xfer_get_local_filename(slpmsg->slpcall->xfer), "wb");
+					GaimXfer *xfer;
+
+					xfer = slpmsg->slpcall->xfer;
+
+					if (xfer != NULL)
+					{
+						slpmsg->fp =
+							fopen(gaim_xfer_get_local_filename(slpmsg->slpcall->xfer),
+								  "wb");
+					}
 				}
 			}
 		}

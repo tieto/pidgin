@@ -131,8 +131,8 @@ msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize o
 
 	xfer = slpcall->xfer;
 
-	xfer->bytes_sent = offset;
-	xfer->bytes_remaining = total_length - offset;
+	xfer->bytes_sent = (offset + len);
+	xfer->bytes_remaining = total_length - (offset + len);
 
 	gaim_xfer_update_progress(xfer);
 }
@@ -141,10 +141,13 @@ void
 msn_xfer_finish_cb(MsnSlpCall *slpcall,
 				   const char *body, long long size)
 {
-	if (size < 0)
-		gaim_xfer_cancel_remote(slpcall->xfer);
-	else
-		gaim_xfer_set_completed(slpcall->xfer, TRUE);
+	if (gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_DONE)
+	{
+		if (size < 0)
+			gaim_xfer_cancel_remote(slpcall->xfer);
+		else
+			gaim_xfer_set_completed(slpcall->xfer, TRUE);
+	}
 }
 
 /**************************************************************************
