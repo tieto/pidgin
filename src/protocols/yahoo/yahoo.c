@@ -881,7 +881,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 	} else if (pkt->status == 2) {
 		gaim_notify_error(gc, NULL,
-						  _("Your Yahoo! message did not get sent."), NULL);
+		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
 
 	for (l = list; l; l = l->next) {

@@ -1797,13 +1797,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 				"<span size=\"larger\">%s %s</span>\n\n"
 				"<span weight=\"bold\" color=\"red\">%s</span>\n\n"
 				"%s",
-				pname, plug->info->version, perr, pdesc);
+				pname, plug->info->version, perr, pdesc ? pdesc : "");
 		g_free(perr);
 	}
 	else {
 		buf = g_strdup_printf(
 				"<span size=\"larger\">%s %s</span>\n\n%s",
-				pname, plug->info->version, pdesc);
+				pname, plug->info->version, pdesc ? pdesc : "");
 	}
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	g_free(buf);
@@ -1820,7 +1820,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		     "<span weight=\"bold\">URL:</span>  %s\n"
 		     "<span weight=\"bold\">File name:</span>  %s"),
 #endif
-		   pname, plug->info->version, pauth, pweb, plug->path);
+		   pname, plug->info->version, pauth ? pauth : "", pweb ? pweb : "", plug->path);
 
 	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
 	g_value_unset(&val);
