@@ -43,7 +43,7 @@ GList *silcgaim_chat_info(GaimConnection *gc)
 }
 
 static void
-silcgaim_chat_getinfo(GaimBlistNode *node, gpointer data);
+silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components);
 
 static void
 silcgaim_chat_getinfo_res(SilcClient client,
@@ -72,13 +72,11 @@ silcgaim_chat_getinfo_res(SilcClient client,
 	silcgaim_chat_getinfo(gc, components);
 }
 
-static void
-silcgaim_chat_getinfo(GaimBlistNode *node, gpointer data)
-{
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
 
+static void
+silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
 	const char *chname;
 	char *buf, tmp[256];
 	GString *s;
@@ -86,13 +84,10 @@ silcgaim_chat_getinfo(GaimBlistNode *node, gpointer data)
 	SilcHashTableList htl;
 	SilcChannelUser chu;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	if (!components)
+		return;
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
-	sg = gc->proto_data;
-
-	chname = g_hash_table_lookup(chat->components, "channel");
+	chname = g_hash_table_lookup(components, "channel");
 	if (!chname)
 		return;
 	channel = silc_client_get_channel(sg->client, sg->conn,
@@ -101,7 +96,7 @@ silcgaim_chat_getinfo(GaimBlistNode *node, gpointer data)
 		silc_client_get_channel_resolve(sg->client, sg->conn,
 						(char *)chname,
 						silcgaim_chat_getinfo_res,
-						chat->components);
+						components);
 		return;
 	}
 
@@ -160,6 +155,13 @@ silcgaim_chat_getinfo(GaimBlistNode *node, gpointer data)
 			    _("Channel Information"),
 			    buf, NULL, NULL);
 	g_free(buf);
+}
+
+
+static void
+silcgaim_chat_getinfo_menu(GaimBlistNode *node, gpointer data)
+{
+
 }
 
 
@@ -818,7 +820,7 @@ silcgaim_chat_setsecret(GaimBlistNode *node, gpointer data)
 
 GList *silcgaim_chat_menu(GaimChat *chat)
 {
-	GHashTable components = chat->components;
+	GHashTable *components = chat->components;
 	GaimConnection *gc = gaim_account_get_connection(chat->account);
 	SilcGaim sg = gc->proto_data;
 	SilcClientConnection conn = sg->conn;
@@ -827,7 +829,7 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 	SilcChannelUser chu = NULL;
 	SilcUInt32 mode = 0;
 
-	GList *m;
+	GList *m = NULL;
 	GaimBlistNodeAction *act;
 
 	if (components)
@@ -845,7 +847,7 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 		return NULL;
 
 	act = gaim_blist_node_action_new(_("Get Info"),
-			silcgaim_chat_getinfo, NULL);
+			silcgaim_chat_getinfo_menu, NULL);
 	m = g_list_append(m, act);
 
 #if 0   /* XXX For now these are not implemented.  We need better

@@ -417,33 +417,27 @@ silcgaim_buddy_privkey_resolved(SilcClient client,
 }
 
 static void
-silcgaim_buddy_privkey(GaimBlistNode *node, gpointer data)
+silcgaim_buddy_privkey(GaimConnection *gc, const char *name)
 {
-	GaimBuddy *b;
-	GaimConnection *gc;
-        SilcGaim sg;
+        SilcGaim sg = gc->proto_data;
 	char *nickname;
 	SilcGaimPrivkey p;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	b = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(b->account);
-	sg = gc->proto_data;
-
-	if (!silc_parse_userfqdn(b->name, &nickname, NULL))
+	if (!name)
+		return;
+	if (!silc_parse_userfqdn(name, &nickname, NULL))
 		return;
 
 	/* Find client entry */
 	clients = silc_client_get_clients_local(sg->client, sg->conn,
-						nickname, b->name,
+						nickname, name,
 						&clients_count);
 	if (!clients) {
 		silc_client_get_clients(sg->client, sg->conn, nickname, NULL,
 					silcgaim_buddy_privkey_resolved,
-					g_strdup(b->name));
+					g_strdup(name));
 		silc_free(nickname);
 		return;
 	}
@@ -462,6 +456,20 @@ silcgaim_buddy_privkey(GaimBlistNode *node, gpointer data)
 
 	silc_free(clients);
 	silc_free(nickname);
+}
+
+static void
+silcgaim_buddy_privkey_menu(GaimBlistNode *node, gpointer data)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	silcgaim_buddy_privkey(gc, buddy->name);
 }
 
 
@@ -534,36 +542,29 @@ silcgaim_buddy_getkey_resolved(SilcClient client,
 }
 
 static void
-silcgaim_buddy_getkey(GaimBlistNode *node, gpointer data)
+silcgaim_buddy_getkey(GaimConnection *gc, const char *name)
 {
-	GaimBuddy *b;
-	GaimConnection *gc;
-	SilcGaim sg;
-	SilcClient client;
-	SilcClientConnection;
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count;
 	SilcGaimBuddyGetkey g;
 	char *nickname;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	if (!name)
+		return;
 
-	b = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(b->account);
-	sg = gc->proto_data;
-	client = sg->client;
-	conn = sg->conn;
-
-	if (!silc_parse_userfqdn(b->name, &nickname, NULL))
+	if (!silc_parse_userfqdn(name, &nickname, NULL))
 		return;
 
 	/* Find client entry */
-	clients = silc_client_get_clients_local(client, conn, nickname,
-			b->name, &clients_count);
+	clients = silc_client_get_clients_local(client, conn, nickname, name,
+						&clients_count);
 	if (!clients) {
 		silc_client_get_clients(client, conn, nickname, NULL,
 					silcgaim_buddy_getkey_resolved,
-					g_strdup(b->name));
+					g_strdup(name));
 		silc_free(nickname);
 		return;
 	}
@@ -585,6 +586,21 @@ silcgaim_buddy_getkey(GaimBlistNode *node, gpointer data)
 }
 
 static void
+silcgaim_buddy_getkey_menu(GaimBlistNode *node, gpointer data)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	silcgaim_buddy_privkey(gc, buddy->name);
+
+}
+
+static void
 silcgaim_buddy_showkey(GaimBlistNode *node, gpointer data)
 {
 	GaimBuddy *b;
@@ -599,7 +615,7 @@ silcgaim_buddy_showkey(GaimBlistNode *node, gpointer data)
 	gc = gaim_account_get_connection(b->account);
 	sg = gc->proto_data;
 
-	pkfile = gaim_blist_node_get_string(buddy, "public-key");
+	pkfile = gaim_blist_node_get_string(node, "public-key");
 	if (!silc_pkcs_load_public_key(pkfile, &public_key, SILC_PKCS_FILE_PEM) &&
 	    !silc_pkcs_load_public_key(pkfile, &public_key, SILC_PKCS_FILE_BIN)) {
 		gaim_notify_error(gc,
@@ -1558,7 +1574,7 @@ char *silcgaim_tooltip_text(GaimBuddy *b)
 }
 
 static void
-silcgaim_buddy_kill(GaimBlistNode *buddy, gpointer data)
+silcgaim_buddy_kill(GaimBlistNode *node, gpointer data)
 {
 	GaimBuddy *b;
 	GaimConnection *gc;
@@ -1576,7 +1592,7 @@ silcgaim_buddy_kill(GaimBlistNode *buddy, gpointer data)
 }
 
 static void
-silcgaim_buddy_send_file(GaimBlistNode *buddy, gpointer data)
+silcgaim_buddy_send_file(GaimBlistNode *node, gpointer data)
 {
 	GaimBuddy *b;
 	GaimConnection *gc;
@@ -1600,44 +1616,44 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 	GaimBlistNodeAction *act;
 	GList *m = NULL;
 
-	pkfile = gaim_blist_node_get_string(node, "public-key");
+	pkfile = gaim_blist_node_get_string((GaimBlistNode *) buddy, "public-key");
 	client_entry = silc_client_get_client_by_id(sg->client,
 						    sg->conn,
-						    b->proto_data);
+						    buddy->proto_data);
 
 	if (client_entry && client_entry->send_key) {
 		act = gaim_blist_node_action_new(_("Reset IM Key"),
-				silcgaim_buddy_resetkey);
+				silcgaim_buddy_resetkey, NULL);
 		m = g_list_append(m, act);
 
 	} else {
 		act = gaim_blist_node_action_new(_("IM with Key Exchange"),
-				silcgaim_buddy_keyagr);
+				silcgaim_buddy_keyagr, NULL);
 		m = g_list_append(m, act);
 
 		act = gaim_blist_node_action_new(_("IM with Password"),
-				silcgaim_buddy_privkey);
+				silcgaim_buddy_privkey_menu, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (pkfile) {
 		act = gaim_blist_node_action_new(_("Show Public Key"),
-				silcgaim_buddy_showkey);
+				silcgaim_buddy_showkey, NULL);
 		m = g_list_append(m, act);
 
 	} else {
 		act = gaim_blist_node_action_new(_("Get Public Key..."),
-				silcgaim_buddy_getkey);
+				silcgaim_buddy_getkey_menu, NULL);
 		m = g_list_append(m, act);
 	}
 
 	act = gaim_blist_node_action_new(_("Send File..."),
-			silcgaim_buddy_send_file);
+			silcgaim_buddy_send_file, NULL);
 	m = g_list_append(m, act);
 
 	if (conn && conn->local_entry->mode & SILC_UMODE_ROUTER_OPERATOR) {
 		act = gaim_blist_node_action_new(_("Kill User"),
-				silcgaim_buddy_kill);
+				silcgaim_buddy_kill, NULL);
 		m = g_list_append(m, act);
 	}
 

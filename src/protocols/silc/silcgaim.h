@@ -86,7 +86,7 @@ void silcgaim_verify_public_key(SilcClient client, SilcClientConnection conn,
 				unsigned char *pk, SilcUInt32 pk_len,
 				SilcSKEPKType pk_type,
 				SilcVerifyPublicKey completion, void *context);
-GList *silcgaim_buddy_menu(GaimConnection *gc, const char *name);
+GList *silcgaim_buddy_menu(GaimBuddy *buddy);
 void silcgaim_add_buddy(GaimConnection *gc, const char *name, GaimGroup *grp);
 void silcgaim_add_buddies(GaimConnection *gc, GList *buddies);
 void silcgaim_remove_buddy(GaimConnection *gc, const char *name,
@@ -116,7 +116,7 @@ void silcgaim_get_chmode_string(SilcUInt32 mode, char *buf,
 void silcgaim_get_chumode_string(SilcUInt32 mode, char *buf,
 				 SilcUInt32 buf_size);
 GList *silcgaim_chat_info(GaimConnection *gc);
-GList *silcgaim_chat_menu(GaimConnection *gc, GHashTable *components);
+GList *silcgaim_chat_menu(GaimChat *);
 void silcgaim_chat_join(GaimConnection *gc, GHashTable *data);
 void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
 			  const char *name);

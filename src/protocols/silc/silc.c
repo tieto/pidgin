@@ -885,11 +885,11 @@ GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
 	   original: one for buddies and one for chats */
 
 	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
-		return silcgaim_chat_menu((GaimChar *) node);
+		return silcgaim_chat_menu((GaimChat *) node);
 	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		return silcgaim_buddy_menu((GaimBuddy *) node);
 	} else {
-		return_val_if_reached(NULL);
+		g_return_val_if_reached(NULL);
 	}	
 }
 
