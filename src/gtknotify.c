@@ -481,37 +481,19 @@ gaim_gtk_notify_uri(const char *uri)
 	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
 	place = gaim_prefs_get_int("/gaim/gtk/browsers/place");
 
-	if (!strcmp(web_browser, "netscape"))
-	{
-		command = g_strdup_printf("netscape \"%s\"", uri);
-
-		if (place == GAIM_BROWSER_NEW_WINDOW)
-		{
-			remote_command = g_strdup_printf("netscape -remote "
-											 "\"openURL(\"%s\",new-window)\"",
-											 uri);
-		}
-		else if (place == GAIM_BROWSER_CURRENT)
-		{
-			remote_command = g_strdup_printf("netscape -remote "
-											 "\"openURL(\"%s\")\"", uri);
-		}
-	}
-	else if (!strcmp(web_browser, "opera"))
+	if (!strcmp(web_browser, "epiphany") ||
+		!strcmp(web_browser, "galeon"))
 	{
 		if (place == GAIM_BROWSER_NEW_WINDOW)
-			command = g_strdup_printf("opera -newwindow \"%s\"", uri);
+			command = g_strdup_printf("%s -w \"%s\"", web_browser, uri);
 		else if (place == GAIM_BROWSER_NEW_TAB)
-			command = g_strdup_printf("opera -newpage \"%s\"", uri);
-		else if (place == GAIM_BROWSER_CURRENT)
-		{
-			remote_command = g_strdup_printf("opera -remote "
-											 "\"openURL(\"%s\")\"", uri);
-			command = g_strdup_printf("opera \"%s\"", uri);
-		}
+			command = g_strdup_printf("%s -n \"%s\"", web_browser, uri);
 		else
-			command = g_strdup_printf("opera \"%s\"", uri);
-
+			command = g_strdup_printf("%s \"%s\"", web_browser, uri);
+	}
+	else if (!strcmp(web_browser, "gnome-open"))
+	{
+		command = g_strdup_printf("gnome-open \"%s\"", uri);
 	}
 	else if (!strcmp(web_browser, "kfmclient"))
 	{
@@ -520,19 +502,6 @@ gaim_gtk_notify_uri(const char *uri)
 		 * Does Konqueror have options to open in new tab
 		 * and/or current window?
 		 */
-	}
-	else if (!strcmp(web_browser, "gnome-open"))
-	{
-		command = g_strdup_printf("gnome-open \"%s\"", uri);
-	}
-	else if (!strcmp(web_browser, "galeon"))
-	{
-		if (place == GAIM_BROWSER_NEW_WINDOW)
-			command = g_strdup_printf("galeon -w \"%s\"", uri);
-		else if (place == GAIM_BROWSER_NEW_TAB)
-			command = g_strdup_printf("galeon -n \"%s\"", uri);
-		else
-			command = g_strdup_printf("galeon \"%s\"", uri);
 	}
 	else if (!strcmp(web_browser, "mozilla") ||
 			 !strcmp(web_browser, "mozilla-firebird") ||
@@ -566,6 +535,38 @@ gaim_gtk_notify_uri(const char *uri)
 			remote_command = g_strdup_printf("%s %s -remote "
 											 "\"openURL(\"%s\")\"",
 											 web_browser, args, uri);
+	}
+	else if (!strcmp(web_browser, "netscape"))
+	{
+		command = g_strdup_printf("netscape \"%s\"", uri);
+
+		if (place == GAIM_BROWSER_NEW_WINDOW)
+		{
+			remote_command = g_strdup_printf("netscape -remote "
+											 "\"openURL(\"%s\",new-window)\"",
+											 uri);
+		}
+		else if (place == GAIM_BROWSER_CURRENT)
+		{
+			remote_command = g_strdup_printf("netscape -remote "
+											 "\"openURL(\"%s\")\"", uri);
+		}
+	}
+	else if (!strcmp(web_browser, "opera"))
+	{
+		if (place == GAIM_BROWSER_NEW_WINDOW)
+			command = g_strdup_printf("opera -newwindow \"%s\"", uri);
+		else if (place == GAIM_BROWSER_NEW_TAB)
+			command = g_strdup_printf("opera -newpage \"%s\"", uri);
+		else if (place == GAIM_BROWSER_CURRENT)
+		{
+			remote_command = g_strdup_printf("opera -remote "
+											 "\"openURL(\"%s\")\"", uri);
+			command = g_strdup_printf("opera \"%s\"", uri);
+		}
+		else
+			command = g_strdup_printf("opera \"%s\"", uri);
+
 	}
 	else if (!strcmp(web_browser, "custom"))
 	{
