@@ -238,7 +238,7 @@ parse_substatus(xmlnode *substatus)
 
 	/* Read the state */
 	node = xmlnode_get_child(substatus, "state");
-	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
 		ret->type = gaim_status_type_find_with_id(
 							ret->account->status_types, data);
@@ -247,7 +247,7 @@ parse_substatus(xmlnode *substatus)
 
 	/* Read the message */
 	node = xmlnode_get_child(substatus, "message");
-	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
 		ret->message = data;
 	}
@@ -306,7 +306,7 @@ parse_status(xmlnode *status)
 
 	/* Read the primitive status type */
 	node = xmlnode_get_child(status, "state");
-	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
 		ret->type = gaim_primitive_get_type_from_id(data);
 		g_free(data);
@@ -314,7 +314,7 @@ parse_status(xmlnode *status)
 
 	/* Read the message */
 	node = xmlnode_get_child(status, "message");
-	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
 		ret->message = data;
 	}
@@ -342,6 +342,8 @@ static void
 load_statuses(void)
 {
 	xmlnode *statuses, *status;
+
+	statuses_loaded = TRUE;
 
 	statuses = gaim_util_read_xml_from_file("status.xml", _("saved statuses"));
 

@@ -1252,6 +1252,8 @@ load_accounts(void)
 {
 	xmlnode *node, *child;
 
+	accounts_loaded = TRUE;
+
 	node = gaim_util_read_xml_from_file("accounts.xml", _("accounts"));
 
 	if (node == NULL)

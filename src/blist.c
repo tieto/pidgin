@@ -35,10 +35,6 @@
 
 #define PATHSIZE 1024
 
-GaimBuddyList *gaimbuddylist = NULL;
-static GaimBlistUiOps *blist_ui_ops = NULL;
-static guint blist_save_timer = 0;
-
 struct gaim_blist_node_setting {
 	enum {
 		GAIM_BLIST_NODE_SETTING_BOOL,
@@ -52,6 +48,11 @@ struct gaim_blist_node_setting {
 	} value;
 };
 
+static GaimBlistUiOps *blist_ui_ops = NULL;
+
+static GaimBuddyList *gaimbuddylist = NULL;
+static guint          blist_save_timer = 0;
+static gboolean       blist_loaded = FALSE;
 
 
 /*****************************************************************************
@@ -1781,8 +1782,6 @@ gboolean gaim_group_on_account(GaimGroup *g, GaimAccount *account)
 	return FALSE;
 }
 
-static gboolean blist_safe_to_write = FALSE;
-
 static void parse_setting(GaimBlistNode *node, xmlnode *setting)
 {
 	const char *name = xmlnode_get_attrib(setting, "name");
@@ -1918,7 +1917,6 @@ static void parse_chat(GaimGroup *group, xmlnode *cnode)
 		g_free(alias);
 }
 
-
 static void parse_group(xmlnode *groupnode)
 {
 	const char *name = xmlnode_get_attrib(groupnode, "name");
@@ -1945,42 +1943,16 @@ static void parse_group(xmlnode *groupnode)
 	}
 }
 
-static gboolean gaim_blist_read(const char *filename)
+void gaim_blist_load()
 {
-	GError *error;
-	gchar *contents = NULL;
-	gsize length;
 	xmlnode *gaim, *blist, *privacy;
 
-	gaim_debug_info("blist", "Reading %s\n", filename);
+	blist_loaded = TRUE;
 
-	if (!g_file_get_contents(filename, &contents, &length, &error)) {
-		gaim_debug_error("blist", "Error reading buddy list: %s\n",
-						 error->message);
-		g_error_free(error);
-		return FALSE;
-	}
+	gaim = gaim_util_read_xml_from_file("blist.xml", _("buddy list"));
 
-	gaim = xmlnode_from_str(contents, length);
-
-	if (gaim == NULL) {
-		FILE *backup;
-		char *name;
-		gaim_debug_error("blist", "Error parsing buddy list\n");
-		name = g_strdup_printf("%s~", filename);
-		if ((backup = fopen(name, "w"))) {
-			fwrite(contents, length, 1, backup);
-			fclose(backup);
-			chmod(name, S_IRUSR | S_IWUSR);
-		} else {
-			gaim_debug_error("blist", "Unable to write backup %s\n", name);
-		}
-		g_free(name);
-		g_free(contents);
-		return FALSE;
-	}
-
-	g_free(contents);
+	if (gaim == NULL)
+		return;
 
 	blist = xmlnode_get_child(gaim, "blist");
 	if (blist) {
@@ -2032,38 +2004,7 @@ static gboolean gaim_blist_read(const char *filename)
 		}
 	}
 
-	gaim_debug_info("blist", "Finished reading buddy list\n");
-
 	xmlnode_free(gaim);
-
-	return TRUE;
-}
-
-void gaim_blist_load()
-{
-	const char *user_dir = gaim_user_dir();
-	gchar *filename;
-	gchar *msg;
-
-	blist_safe_to_write = TRUE;
-
-	if (user_dir == NULL)
-		return;
-
-	filename = g_build_filename(user_dir, "blist.xml", NULL);
-
-	if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		if (!gaim_blist_read(filename)) {
-			msg = g_strdup_printf(_("An error was encountered parsing the "
-						"file containing your buddy list (%s).  It has not "
-						"been loaded, and the old file has been renamed "
-						"to blist.xml~."), filename);
-			gaim_notify_error(NULL, NULL, _("Buddy List Error"), msg);
-			g_free(msg);
-		}
-	}
-
-	g_free(filename);
 }
 
 void
@@ -2391,7 +2332,7 @@ void gaim_blist_sync()
 
 	g_return_if_fail(user_dir != NULL);
 
-	if (!blist_safe_to_write) {
+	if (!blist_loaded) {
 		gaim_debug_warning("blist save",
 				   "AHH!! Tried to write the blist before we read it!\n");
 		return;
