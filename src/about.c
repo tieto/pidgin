@@ -113,6 +113,7 @@ void show_about(GtkWidget *w, void *data)
 			"hermanator12002@yahoo.com</A>&gt;<BR>"
 			"  Nathan 'faceprint' Walp (", _("developer"), ")<BR>"
 			"  Mark 'KingAnt' Doliner (", _("developer"), ")<BR>"
+			"  Ethan 'Paco-Paco' Blanton<br>"
 			"  Luke 'LSchiere' Schierer (", _("support"), ")<BR>"
 			"<BR>", NULL);
 		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
@@ -124,7 +125,6 @@ void show_about(GtkWidget *w, void *data)
 			"  Benjamin Miller<BR>"
 			"  Decklin Foster<BR>"
 			"  Etan 'deryni' Reisner<BR>"
-			"  Ethan 'Paco-Paco' Blanton<br>"
 			"  Robert 'Robot101' McQueen<BR>"
 			"  Tim 'marv' Ringenbach<br>"
 			"<BR>", NULL);
@@ -166,6 +166,7 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>", _("Portuguese-Brazil"), " (pt_BR)</b> - Maurício de Lemos Rodrigues Collares Neto &lt;<a href=\"mailto: mauricioc@myrealbox.com\">mauricioc@myrealbox.com</a>&gt;<br>"
 				"  <b>", _("Portuguese-Portugal"), " (pt_PT)</b> - Duarte Henriques &lt;<a href=\"mailto:duarte_henriques@myrealbox.com\">duarte_henriques@myrealbox.com</a>&gt;<br>"
 				"  <b>", _("Romanian"), " (ro)</b> - Mişu Moldovan &lt;<a href=\"mailto: dumol@go.ro\">dumol@go.ro</a>&gt;<br>"
+				"  <b>", _("Russian"), "(ru)</b> = Alexandre Prokoudine &lt;<a href=\"mailto: avp@altlinux.ru\">avp@altlinux.ru</a>&gt;<br>"
 				"  <b>", _("Serbian"), " (sr)</b> - Danilo Šegan &lt;<a href=\"mailto: dsegan@gmx.net\">dsegan@gmx.net</a>&gt;, Aleksandar Urosevic &lt;<a href=\"mailto: urke@users.sourceforge.net\">urke@users.sourceforge.net</a>&gt;<br>"
 				"  <b>", _("Swedish"), " (sv)</b> - Tore Lundqvist &lt;<a href=\"mailto: tlt@mima.x.se\">tlt@mima.x.se</a>&gt;<br>"
 				"  <b>", _("Simplified Chinese"), " (zh_CN)</b> - Funda Wang &lt;<a href=\"mailto: fundawang@linux.net.cn\">fundawang@linux.net.cn</a>&gt;<br>"
