@@ -782,9 +782,16 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 }
 
 /* 
- * Subtype 0x001e - Extended Status
+ * Subtype 0x001e - Set various account settings (mostly ICQ related).
  *
- * Sets your ICQ status (available, away, do not disturb, etc.)
+ * These settings are transient, not server-stored (i.e. they only
+ * apply to this session, and must be re-set the next time you sign
+ * on).
+ *
+ * You can set your ICQ status (available, away, do not disturb,
+ * etc.), or whether your IP address should be hidden or not, or
+ * if your status is visible on ICQ web sites, and you can set
+ * your IP address info and what not.
  *
  * These are the same TLVs seen in user info.  You can 
  * also set 0x0008 and 0x000c.
@@ -800,7 +807,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_MSG)))
 		return -EINVAL;
 
-	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_WEBAWARE | status; /* yay for error checking ;^) */
+	data = AIM_ICQ_STATE_DIRECTREQUIREAUTH | AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_WEBAWARE | status;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
 		return -ENOMEM;
@@ -809,6 +816,11 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 	aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
 
 	aim_tlvlist_add_32(&tl, 0x0006, data);
+#if 0
+	aim_tlvlist_add_raw(&tl, 0x000c, 0x0025, chunk_of_x25_bytes_with_ip_address_etc);
+	aim_tlvlist_add_raw(&tl, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
+	aim_tlvlist_add_16(&tl, 0x0012, unknown 0x00 00);
+#endif
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);
 

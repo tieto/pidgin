@@ -4246,7 +4246,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (destn == NULL)
 		return 1;
-	
+
 	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
 	if (!gaim_conv_present_error(destn, gaim_connection_get_account((GaimConnection*)sess->aux_data), buf)) {
 		g_free(buf);
@@ -5814,6 +5814,7 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 		if (aim_sn_is_icq(gaim_account_get_username(account)))
 			oscar_set_status_icq(account, status);
 		else
+			/* QQQ - Should probably also set this for ICQ */
 			oscar_set_status_aim(account, status);
 	}
 	return;

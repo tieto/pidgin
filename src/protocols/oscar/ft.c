@@ -384,7 +384,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 
 	/* end of hdr2 */
 
-#if 0 /* XXX - this is how you send buddy icon info... */	
+#if 0 /* XXX - this is how you send buddy icon info... */
 	aimbs_put16(hdrbs, 0x0008);
 	aimbs_put16(hdrbs, 0x000c);
 	aimbs_put16(hdrbs, 0x0000);

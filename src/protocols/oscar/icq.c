@@ -105,6 +105,45 @@ faim_export int aim_icq_hideip(aim_session_t *sess)
 	return 0;
 }
 
+faim_export int aim_icq_setauthsetting(aim_session_t *sess, int auth_required)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int bslen;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+		return -EINVAL;
+
+	bslen = 2+4+2+2+2+4;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+
+	/* For simplicity, don't bother using a tlvlist */
+	aimbs_put16(&fr->data, 0x0001);
+	aimbs_put16(&fr->data, bslen);
+
+	aimbs_putle16(&fr->data, bslen - 2);
+	aimbs_putle32(&fr->data, atoi(sess->sn));
+	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
+	aimbs_putle16(&fr->data, snacid); /* eh. */
+	aimbs_putle16(&fr->data, 0x0c3a); /* shrug. */
+	aimbs_putle16(&fr->data, 0x02f8);
+	aimbs_putle16(&fr->data, 0x0001);
+	aimbs_putle8(&fr->data, auth_required);
+	aimbs_putle8(&fr->data, 0x0c);
+	aimbs_putle16(&fr->data, 0x0103);
+	aimbs_putle16(&fr->data, 0x0000);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
 /**
  * Change your ICQ password.
  *
