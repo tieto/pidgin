@@ -1710,7 +1710,7 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
 	meter->status = gtk_statusbar_new();
-	gtk_widget_set_size_request(meter->status, 250, 0);
+	gtk_widget_set_size_request(meter->status, 250, -1);
 
 	meter->progress = gtk_progress_bar_new ();
 
