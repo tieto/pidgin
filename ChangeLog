@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.60: 
+version 0.60 (04/04/2003): 
 	Core:
 	* Auto-loading protocol plugins.
 	* Plugins dialog and perl script menu merged into preferences.
