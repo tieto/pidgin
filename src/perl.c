@@ -28,7 +28,8 @@
 #endif
 #undef PACKAGE
 
-#if 0 /* #ifdef USE_PERL */
+/*#ifdef USE_PERL /**/
+#if 0 /**/
 
 #include <EXTERN.h>
 #ifndef _SEM_SEMUN_UNDEFINED

@@ -404,7 +404,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 585 $"
+#define REVISION "gaim:$Revision: 587 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -751,6 +751,7 @@ extern void do_error_dialog(char *, char *);
 extern void show_error_dialog(char *);
 extern void show_im_dialog(GtkWidget *, GtkWidget *);
 extern void show_add_buddy(char *, char *);
+extern void show_add_group();
 extern void show_add_perm();
 extern void destroy_all_dialogs();
 extern void show_export_dialog();

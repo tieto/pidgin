@@ -928,6 +928,25 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
         destroy_dialog(NULL, a->window);
 }
 
+void do_add_group(GtkWidget *w, struct addbuddy *a)
+{
+	char *grp;
+
+	grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
+
+	add_group(grp);
+
+	build_edit_tree();
+
+	serv_save_config();
+
+	do_export( (GtkWidget *) NULL, 0 );
+
+	update_num_groups();
+
+	destroy_dialog(NULL, a->window);
+}
+
 
 static GList *groups_tree()
 {
@@ -950,6 +969,130 @@ static GList *groups_tree()
 	return tmp;
 }
 
+
+void show_add_group()
+{
+	GtkWidget *cancel;
+	GtkWidget *add;
+	GtkWidget *label;
+	GtkWidget *bbox;
+	GtkWidget *vbox;
+        GtkWidget *topbox;
+	GtkWidget *frame;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *button_box;
+
+        struct addbuddy *a = g_new0(struct addbuddy, 1);
+        
+        a->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
+	gtk_widget_show(a->window);
+	dialogwindows = g_list_prepend(dialogwindows, a->window);
+
+	bbox = gtk_hbox_new(TRUE, 10);
+        topbox = gtk_hbox_new(FALSE, 5);
+        vbox = gtk_vbox_new(FALSE, 5);
+
+        a->entry = gtk_entry_new();
+        /* Put the buttons in the box */
+
+	/* Build Add Button */
+
+	add = gtk_button_new();
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
+		
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, add_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Add"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(add), button_box);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	cancel = gtk_button_new();
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	
+	/* End of Cancel Button */
+
+	gtk_widget_set_usize(add, 75, 30);
+	gtk_widget_set_usize(cancel, 75, 30);
+	
+        gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_label(GTK_FRAME(frame), _("Add Group"));
+
+        label = gtk_label_new(_("Group"));
+        gtk_widget_show(label);
+        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(topbox), a->entry, FALSE, FALSE, 5);
+
+        /* And the boxes in the box */
+        gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
+
+        /* Handle closes right */
+        gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
+                           GTK_SIGNAL_FUNC(destroy_dialog), a->window);
+        gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
+                           GTK_SIGNAL_FUNC(destroy_dialog), a->window);
+        gtk_signal_connect(GTK_OBJECT(add), "clicked",
+                           GTK_SIGNAL_FUNC(do_add_group), a);
+        gtk_signal_connect(GTK_OBJECT(a->entry), "activate",
+                           GTK_SIGNAL_FUNC(do_add_group), a);
+        /* Finish up */
+        gtk_widget_show(add);
+        gtk_widget_show(cancel);
+        gtk_widget_show(a->entry);
+        gtk_widget_show(topbox);
+        gtk_widget_show(bbox);
+        gtk_widget_show(vbox);
+	gtk_widget_show(frame);
+        gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
+        gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+        gtk_container_add(GTK_CONTAINER(a->window), frame);
+	gtk_container_set_border_width(GTK_CONTAINER(a->window), 5);
+        gtk_widget_realize(a->window);
+        aol_icon(a->window->window);
+
+	gtk_widget_show(a->window);
+}
 
 void show_add_buddy(char *buddy, char *group)
 {

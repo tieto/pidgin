@@ -72,7 +72,7 @@ static GtkWidget *permitpane;
 static GtkWidget *edittree;
 static GtkWidget *permtree;
 static GtkWidget *imbutton, *infobutton, *chatbutton;
-static GtkWidget *addbutton, *rembutton;
+static GtkWidget *addbutton, *groupbutton, *rembutton;
 static GtkWidget *addpermbutton, *rempermbutton;
 static GtkWidget *lagometer = NULL;
 static GtkWidget *lagometer_box = NULL;
@@ -251,7 +251,7 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
         GtkWidget *label;
 
 		/*if the user had opted to put pictures on the buttons*/
-        if (display_options & OPT_DISP_SHOW_BUTTON_XPM) {
+        if (display_options & OPT_DISP_SHOW_BUTTON_XPM && xpm) {
 		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 						  NULL, xpm);
 		pic = gtk_pixmap_new(pm, bm);
@@ -275,6 +275,7 @@ void update_button_pix()
 
 	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
 	        adjust_pic(addbutton, _("Add"), (gchar **)daemon_buddyadd_xpm);
+	        adjust_pic(groupbutton, _("Group"), NULL);
 		adjust_pic(rembutton, _("Remove"), (gchar **)daemon_buddydel_xpm);
 		adjust_pic(chatbutton, _("Chat"), (gchar **)daemon_buddychat_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)daemon_im_xpm);
@@ -283,6 +284,7 @@ void update_button_pix()
 	        adjust_pic(rempermbutton, _("Remove"), (gchar **)daemon_permdel_xpm);
 	} else {
 	        adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
+	        adjust_pic(groupbutton, _("Group"), NULL);
 		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
 		adjust_pic(chatbutton, _("Chat"), (gchar **)buddychat_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)im_xpm);
@@ -1161,6 +1163,11 @@ void add_buddy_callback(GtkWidget *widget, void *dummy)
 	}
 	show_add_buddy(NULL, grp);
 
+}
+
+void add_group_callback(GtkWidget *widget, void *dummy)
+{
+	show_add_group();
 }
 
 void add_perm_callback(GtkWidget *widget, void *dummy)
@@ -2042,11 +2049,13 @@ void show_buddy_list()
 
         
        	addbutton = gtk_button_new_with_label(_("Add"));
+       	groupbutton = gtk_button_new_with_label(_("Group"));
        	rembutton = gtk_button_new_with_label(_("Remove"));
 	
 	if (display_options & OPT_DISP_COOL_LOOK)
 	{
 		gtk_button_set_relief(GTK_BUTTON(addbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(groupbutton), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(rembutton), GTK_RELIEF_NONE);
 	}
 	
@@ -2066,10 +2075,12 @@ void show_buddy_list()
 	bbox = gtk_hbox_new(TRUE, 10);
        	tbox = gtk_scrolled_window_new(NULL, NULL);
        	/* Put the buttons in the box */
-       	gtk_box_pack_start(GTK_BOX(bbox), addbutton, TRUE, TRUE, 10);
-       	gtk_box_pack_start(GTK_BOX(bbox), rembutton, TRUE, TRUE, 10);
+       	gtk_box_pack_start(GTK_BOX(bbox), addbutton, TRUE, TRUE, 0);
+       	gtk_box_pack_start(GTK_BOX(bbox), groupbutton, TRUE, TRUE, 0);
+       	gtk_box_pack_start(GTK_BOX(bbox), rembutton, TRUE, TRUE, 0);
 
 	gtk_tooltips_set_tip(tips, addbutton, _("Add a new Buddy"), "Penguin");
+	gtk_tooltips_set_tip(tips, groupbutton, _("Add a new Group"), "Penguin");
 	gtk_tooltips_set_tip(tips, rembutton, _("Remove selected Buddy"), "Penguin");
 
        	/* And the boxes in the box */
@@ -2082,6 +2093,7 @@ void show_buddy_list()
 
        	/* Finish up */
        	gtk_widget_show(addbutton);
+       	gtk_widget_show(groupbutton);
        	gtk_widget_show(rembutton);
        	gtk_widget_show(edittree);
        	gtk_widget_show(tbox);
@@ -2177,6 +2189,7 @@ void show_buddy_list()
 	gtk_signal_connect(GTK_OBJECT(chatbutton), "clicked", GTK_SIGNAL_FUNC(chat_callback), buddies);
        	gtk_signal_connect(GTK_OBJECT(rembutton), "clicked", GTK_SIGNAL_FUNC(do_del_buddy), edittree);
        	gtk_signal_connect(GTK_OBJECT(addbutton), "clicked", GTK_SIGNAL_FUNC(add_buddy_callback), NULL);
+       	gtk_signal_connect(GTK_OBJECT(groupbutton), "clicked", GTK_SIGNAL_FUNC(add_group_callback), NULL);
         gtk_signal_connect(GTK_OBJECT(addpermbutton), "clicked", GTK_SIGNAL_FUNC(add_perm_callback), NULL);
         gtk_signal_connect(GTK_OBJECT(rempermbutton), "clicked", GTK_SIGNAL_FUNC(do_del_perm), permtree);
         gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, TRUE, 0);
