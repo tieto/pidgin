@@ -2099,7 +2099,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	{
 		area.x = hb->x - html->xoffset;
 		area.y = hb->y - hb->height + 5 - html->yoffset;
-		area.width = hb->width + 2;
+		area.width = hb->width;
 		area.height = hb->height;
 		clear_area(html, &area);
 		gdk_gc_set_background(gc, &widget->style->base[GTK_STATE_NORMAL]);
