@@ -123,7 +123,7 @@ faim_export int aim_purgecookies(struct aim_session_t *sess, int maxage)
     if (cur->addtime > (time(NULL) - maxage)) {
       struct aim_msgcookie_t *remed = NULL;
 
-#if DEBUG > 1
+#if 1
       printf("aimmsgcookie: WARNING purged obsolete message cookie %x%x%x%x %x%x%x%x\n",
 	     cur->cookie[0], cur->cookie[1], cur->cookie[2], cur->cookie[3],
 	     cur->cookie[4], cur->cookie[5], cur->cookie[6], cur->cookie[7]);

@@ -2934,6 +2934,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 	char g_screenname[64];
 	int i;
         FILE *f;
+	gboolean from_dialog = FALSE;
 
         if ( !gc ) {
         	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
@@ -2945,6 +2946,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 		}
 		/* FIXME : import buddy list file. moderately important */
 		gc = connections->data;
+		from_dialog = TRUE;
         }
         else {
 		for (i = 0; i < strlen(gc->username); i++)
@@ -3022,7 +3024,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 
 	fclose( f );
 
-	if ( !gc ) {
+	if ( from_dialog ) {
 		/* save what we just did to cache */
 
 		do_export( (GtkWidget *) NULL, 0 );

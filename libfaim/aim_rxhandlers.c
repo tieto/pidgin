@@ -228,14 +228,14 @@ faim_export int aim_clearhandlers(struct aim_conn_t *conn)
  if (!conn)
    return -1;
 
- cur = conn->handlerlist;
- while(cur) {
+ for (cur = conn->handlerlist; cur; ) {
    struct aim_rxcblist_t *tmp;
 
    tmp = cur->next;
    free(cur);
    cur = tmp;
  }
+ conn->handlerlist = NULL;
 
  return 0;
 }
@@ -781,9 +781,10 @@ faim_internal int aim_handleredirect_middle(struct aim_session_t *sess,
        */
       userfunc = aim_callhandler(command->conn, 0x0001, 0x0005);
       if (userfunc)
-	ret =  userfunc(sess, command, serviceid, ip, cookie, sess->pendingjoin);
+	ret =  userfunc(sess, command, serviceid, ip, cookie, sess->pendingjoin, (int)sess->pendingjoinexchange);
       free(sess->pendingjoin);
       sess->pendingjoin = NULL;
+      sess->pendingjoinexchange = 0;
     }
   else
     {

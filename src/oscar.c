@@ -76,9 +76,11 @@ struct oscar_data {
 
 struct chat_connection {
 	char *name;
+	int exchange;
 	int fd; /* this is redundant since we have the conn below */
 	struct aim_conn_t *conn;
 	int inpa;
+	int id;
 };
 
 struct direct_im {
@@ -151,14 +153,14 @@ static struct getfile_transfer *find_getfile_transfer(struct oscar_data *od, str
 	return n;
 }
 
-struct chat_connection *find_oscar_chat(struct gaim_connection *gc, char *name) {
+struct chat_connection *find_oscar_chat(struct gaim_connection *gc, int id) {
 	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
 	struct chat_connection *c = NULL;
 	if (gc->protocol != PROTO_OSCAR) return NULL;
 
 	while (g) {
 		c = (struct chat_connection *)g->data;
-		if (!strcmp(name, c->name))
+		if (c->id == id)
 			break;
 		g = g->next;
 		c = NULL;
@@ -569,6 +571,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	static int id = 1;
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
+	struct chat_connection *chatcon;
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
 		aim_setversions(sess, command->conn);
@@ -592,6 +595,8 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_bos_reqrate(sess, command->conn);
 		aim_bos_ackrateresp(sess, command->conn);
 		aim_chat_clientready(sess, command->conn);
+		chatcon = find_oscar_chat_by_conn(gc, command->conn);
+		chatcon->id = id;
 		serv_got_joined_chat(gc, id++, aim_chat_getname(command->conn));
 		break;
 	case AIM_CONN_TYPE_RENDEZVOUS:
@@ -651,18 +656,20 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, ip);
 		char *roomname = va_arg(ap, char *);
+		int exchange = va_arg(ap, int);
 		struct chat_connection *ccon;
 		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR) {
 			debug_print("unable to connect to chat server\n");
 			return 1;
 		}
-		sprintf(debug_buff, "Connected to chat room %s\n", roomname);
+		sprintf(debug_buff, "Connected to chat room %s exchange %d\n", roomname, exchange);
 		debug_print(debug_buff);
 
 		ccon = g_new0(struct chat_connection, 1);
 		ccon->conn = tstconn;
 		ccon->fd = tstconn->fd;
 		ccon->name = g_strdup(roomname);
+		ccon->exchange = exchange;
 		
 		ccon->inpa = gdk_input_add(tstconn->fd,
 				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
@@ -1755,7 +1762,7 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 				b->name, count);
 	debug_print(debug_buff);
 	
-	c = find_oscar_chat(g, b->name);
+	c = find_oscar_chat(g, b->id);
 	if (c != NULL) {
 		if (odata)
 			odata->oscar_chats = g_slist_remove(odata->oscar_chats, c);

@@ -155,10 +155,8 @@ faim_export unsigned long aim_chat_join(struct aim_session_t *sess,
   i+= aimutil_put16(newpacket->data+i, 2+1+strlen(roomname)+2);
   i+= aimutil_put16(newpacket->data+i, exchange);
   i+= aimutil_put8(newpacket->data+i, strlen(roomname));
-  memcpy(newpacket->data+i, roomname, strlen(roomname));
-  i+= strlen(roomname);
-  //i+= aimutil_putstr(newpacket->data+i, roomname, strlen(roomname));
-  i+= aimutil_put16(newpacket->data+i, 0x0000);
+  i+= aimutil_putstr(newpacket->data+i, roomname, strlen(roomname));
+  i+= aimutil_put16(newpacket->data+i, 0x0000); /* instance? */
 
   /*
    * Chat hack.
@@ -169,8 +167,8 @@ faim_export unsigned long aim_chat_join(struct aim_session_t *sess,
    *      redirect!
    *
    */
-  sess->pendingjoin = (char *)malloc(strlen(roomname)+1);
-  strcpy(sess->pendingjoin, roomname);
+  sess->pendingjoin = strdup(roomname);
+  sess->pendingjoinexchange = exchange;
 
   newpacket->lock = 0;
   aim_tx_enqueue(sess, newpacket);

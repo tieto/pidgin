@@ -1,6 +1,12 @@
 
 No release numbers
 ------------------
+ - Sat Dec  2 02:14:45 UTC 2000
+  - Dumb bug in aim_clearhandlers()
+
+ - Fri Dec  1 23:48:38 UTC 2000
+  - Store exchange along with room name in the great chat hack
+
  - Fri Dec  1 22:25:56 UTC 2000
   - Fix numerous tiny (but sometimes catastrophic) bugs dealing
       with connection death (particularly with chat connections)

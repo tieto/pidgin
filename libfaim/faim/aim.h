@@ -338,6 +338,7 @@ struct aim_session_t {
    * request and the resulting redirect.)
    */ 
   char *pendingjoin;
+  unsigned short pendingjoinexchange;
 
   /*
    * Outstanding snac handling 

@@ -13,6 +13,7 @@ version 0.11.0:
 	* small change in the way away messages are displayed
 	  (Thanks Ryan C. Gordon)
 	* Plugin system uses GModule now (improves portability, adds features)
+	  (Requires recompile and probably modifications of most plugins)
 	* Perl got updates (reread plugins/PERL-HOWTO)
 	* Spell checker now uses gtkspell
 	* Auto-Away (thanks, yet again, to bmiller ;)

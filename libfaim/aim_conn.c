@@ -709,7 +709,9 @@ faim_export void aim_session_init(struct aim_session_t *sess, unsigned long flag
   sess->queue_outgoing = NULL;
   sess->queue_incoming = NULL;
   sess->pendingjoin = NULL;
+  sess->pendingjoinexchange = 0;
   aim_initsnachash(sess);
+  sess->msgcookies = NULL;
   sess->snac_nextid = 0x00000001;
 
   sess->flags = 0;
