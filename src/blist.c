@@ -31,6 +31,7 @@
 #include "server.h"
 #include "signals.h"
 #include "util.h"
+#include "value.h"
 #include "xmlnode.h"
 
 #define PATHSIZE 1024
@@ -131,6 +132,8 @@ chat_component_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	name = (const char *)key;
 	data = (const char *)value;
 	node = (xmlnode *)user_data;
+
+	g_return_if_fail(data != NULL);
 
 	child = xmlnode_new_child(node, "component");
 	xmlnode_set_attrib(child, "name", name);

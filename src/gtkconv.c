@@ -1239,18 +1239,21 @@ menu_timestamps_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 chat_do_im(GaimConversation *conv, const char *who)
 {
+	GaimAccount *account;
+	GaimConnection *gc;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	char *real_who;
-	GaimConversation *conv2;
-	GaimAccount *account;
 
 	account = gaim_conversation_get_account(conv);
+	g_return_if_fail(account != NULL);
 
-	if(account && account->gc)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	gc = gaim_account_get_connection(account);
+	g_return_if_fail(gc != NULL);
 
-	if(prpl_info && prpl_info->get_cb_real_name)
-		real_who = prpl_info->get_cb_real_name(account->gc,
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && prpl_info->get_cb_real_name)
+		real_who = prpl_info->get_cb_real_name(gc,
 				gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), who);
 	else
 		real_who = g_strdup(who);
@@ -1258,16 +1261,10 @@ chat_do_im(GaimConversation *conv, const char *who)
 	if(!real_who)
 		return;
 
-	conv2 = gaim_find_conversation_with_account(GAIM_CONV_IM, real_who, account);
-
-	if (conv2 != NULL)
-		gaim_conv_window_show(gaim_conversation_get_window(conv2));
-	else
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, real_who);
+	gaim_gtkdialogs_im_with_user(account, real_who);
 
 	g_free(real_who);
 }
-
 
 static void
 chat_im_button_cb(GtkWidget *widget, GaimConversation *conv)
