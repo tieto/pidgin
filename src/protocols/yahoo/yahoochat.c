@@ -1391,7 +1391,7 @@ void yahoo_roomlist_cancel(GaimRoomlist *list)
 
 	for (; l; l = l->next) {
 		yahoo_roomlist_destroy(l->data);
-		gaim_roomlist_unref(l->data);
+		gaim_roomlist_unref(list);
 	}
 	g_list_free(k);
 }
@@ -1431,6 +1431,7 @@ void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *catego
 	{
 		gaim_notify_error(gaim_account_get_connection(list->account),
 		                  NULL, _("Connection problem"), _("Unable to fetch room list."));
+		gaim_roomlist_ref(list);
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
 	}

@@ -972,9 +972,10 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			g_free(session->passport_info.file);
 			session->passport_info.file = NULL;
 		}
+#ifdef _WIN32
 		else
 		{
-			/* 
+			/*
 			 * Renaming file with .html extension, so that the
 			 * win32 open_url will work.
 			 */
@@ -989,11 +990,12 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 				{
 					g_free(session->passport_info.file);
 					session->passport_info.file = tmp;
-				} 
+				}
 				else
 					g_free(tmp);
 			}
 		}
+#endif
 	}
 }
 /**************************************************************************
