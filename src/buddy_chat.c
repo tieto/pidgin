@@ -722,7 +722,7 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 	}
 
 	if (flag & WFLAG_RECV && b->makesound) {
-		if (flags & WFLAG_NICK && (sound_options & OPT_SOUND_CHAT_NICK)) {
+		if (flag & WFLAG_NICK && (sound_options & OPT_SOUND_CHAT_NICK)) {
 			play_sound(SND_CHAT_NICK);
 		} else {
 			play_sound(SND_CHAT_SAY);
