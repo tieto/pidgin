@@ -193,6 +193,7 @@ static gboolean xcomposite_is_present()
 		/* I don't actually care about versions/etc. */
 		if (XQueryExtension(GDK_DISPLAY(), "Composite", &i, &j, &k) == True)
 			result = TRUE;
+		known = TRUE;
 	}
 
 	return result;
