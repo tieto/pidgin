@@ -55,20 +55,13 @@
 
 #define USEROPT_SERV      0
 #define USEROPT_PORT      1
+#define USEROPT_CHARSET   2
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
 
-static void irc_start_chat(struct gaim_connection *gc, char *who);
-static void irc_ctcp_clientinfo(struct gaim_connection *gc, char *who);
-static void irc_ctcp_userinfo(struct gaim_connection *gc, char *who);
-static void irc_ctcp_version(struct gaim_connection *gc, char *who);
-static void irc_ctcp_ping(struct gaim_connection *gc, char *who);
-
-static void irc_send_privmsg(struct gaim_connection *gc, char *who, char *what);
-static void irc_send_notice(struct gaim_connection *gc, char *who, char *what);
-
+/* Datastructs */
 struct dcc_chat
 {
 	struct gaim_connection *gc;	
@@ -94,8 +87,6 @@ struct irc_file_transfer {
 	struct gaim_connection *gc;
 };
 
-GSList *dcc_chat_list = NULL;
-
 struct irc_data {
 	int fd;
 	gboolean online;
@@ -118,6 +109,32 @@ struct irc_data {
 	GSList *file_transfers;
 };
 
+/* Prototypes */
+static void irc_start_chat(struct gaim_connection *gc, char *who);
+static void irc_ctcp_clientinfo(struct gaim_connection *gc, char *who);
+static void irc_ctcp_userinfo(struct gaim_connection *gc, char *who);
+static void irc_ctcp_version(struct gaim_connection *gc, char *who);
+static void irc_ctcp_ping(struct gaim_connection *gc, char *who);
+
+static void irc_send_privmsg(struct gaim_connection *gc, char *who, char *what, gboolean fragment);
+static void irc_send_notice(struct gaim_connection *gc, char *who, char *what);
+
+static char *irc_send_convert(struct gaim_connection *gc, char *string, int maxlen, int *done);
+static char *irc_recv_convert(struct gaim_connection *gc, char *string);
+static void irc_parse_notice(struct gaim_connection *gc, char *nick, char *ex,
+                            char *word[], char *word_eol[]);
+static void irc_parse_join(struct gaim_connection *gc, char *nick,
+                          char *word[], char *word_eol[]);
+static gboolean irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
+                          char *word[], char *word_eol[]);
+static void irc_parse_topic(struct gaim_connection *gc, char *nick,
+                           char *word[], char *word_eol[]);
+
+static void dcc_chat_cancel(struct dcc_chat *);
+
+/* Global variables */
+GSList *dcc_chat_list = NULL;
+
 struct dcc_chat *
 find_dcc_chat (struct gaim_connection *gc, char *nick)
 {
@@ -139,13 +156,53 @@ find_dcc_chat (struct gaim_connection *gc, char *nick)
 	return NULL;
 }
 
-static int irc_write(int fd, char *data, int len)
+static int 
+irc_write(int fd, char *data, int len)
 {
 	debug_printf("IRC C: %s", data);
 	return write(fd, data, len);
 }
 
-static struct conversation *irc_find_chat(struct gaim_connection *gc, char *name)
+static char *
+irc_send_convert(struct gaim_connection *gc, char *string, int maxlen, int *done)
+{
+	char *converted = g_malloc(maxlen + 1);
+	gchar *inptr = string, *outptr = converted;
+	int inleft = strlen(string), outleft = maxlen;
+	GIConv conv;
+	
+	conv = g_iconv_open(gc->user->proto_opt[USEROPT_CHARSET], "UTF-8");
+	if (g_iconv(conv, &inptr, &inleft, &outptr, &outleft) == -1) {
+		debug_printf("IRC charset conversion error\n");
+		debug_printf("Sending as UTF-8 (this is a hack!)\n");
+		g_free(converted);
+		*done = maxlen;
+		return(g_strndup(string, maxlen));
+	}
+	
+	*done = strlen(string) - inleft;
+	*outptr = '\0';
+	return(converted);
+}
+
+static char *
+irc_recv_convert(struct gaim_connection *gc, char *string)
+{
+	char *utf8;
+	GError *err = NULL;
+	
+	utf8 = g_convert(string, strlen(string), "UTF-8",
+			 gc->user->proto_opt[USEROPT_CHARSET], NULL, NULL, &err);
+	if (err) {
+		debug_printf("IRC recv conversion error: %s\n", err->message);
+		utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
+	}
+	
+	return (utf8);
+}
+
+static struct conversation *
+irc_find_chat(struct gaim_connection *gc, char *name)
 {
 	GSList *bcs = gc->buddy_chats;
 
@@ -158,7 +215,8 @@ static struct conversation *irc_find_chat(struct gaim_connection *gc, char *name
 	return NULL;
 }
 
-static struct conversation *irc_find_chat_by_id(struct gaim_connection *gc, int id)
+static struct conversation *
+irc_find_chat_by_id(struct gaim_connection *gc, int id)
 {
 	GSList *bcs = gc->buddy_chats;
 
@@ -171,7 +229,8 @@ static struct conversation *irc_find_chat_by_id(struct gaim_connection *gc, int 
 	return NULL;
 }
 
-static void process_data_init(char *buf, char *cmd, char *word[], char *eol[], gboolean quotes)
+static void 
+process_data_init(char *buf, char *cmd, char *word[], char *eol[], gboolean quotes)
 {
 	int wordcount = 2;
 	gboolean space = FALSE;
@@ -223,7 +282,8 @@ static void process_data_init(char *buf, char *cmd, char *word[], char *eol[], g
 	}
 }
 
-static void handle_005(struct gaim_connection *gc, char *word[], char *word_eol[])
+static void 
+handle_005(struct gaim_connection *gc, char *word[], char *word_eol[])
 {
 	int w = 4;
 	struct irc_data *id = gc->proto_data;
@@ -250,7 +310,8 @@ static void handle_005(struct gaim_connection *gc, char *word[], char *word_eol[
 	}
 }
 
-static char *int_to_col(int c)
+static char *
+int_to_col(int c)
 {
 	switch(c) {
 	case 1:
@@ -288,7 +349,8 @@ static char *int_to_col(int c)
 	}
 }
 
-static GString *encode_html(char *msg)
+static GString *
+encode_html(char *msg)
 {
 	GString *str = g_string_new("");
 	char *cur = msg, *end = msg;
@@ -343,7 +405,8 @@ static GString *encode_html(char *msg)
 	return str;
 }
 
-static GString *decode_html(char *msg)
+static GString *
+decode_html(char *msg)
 {
 	GString /* oo la la */ *str = g_string_new("");
 	char *cur = msg, *end = msg;
@@ -440,14 +503,18 @@ static GString *decode_html(char *msg)
 	return str;
 }
 
-static void irc_got_im(struct gaim_connection *gc, char *who, char *what, int flags, time_t t)
+static void 
+irc_got_im(struct gaim_connection *gc, char *who, char *what, int flags, time_t t)
 {
-	GString *str = decode_html(what);
+	char *utf8 = irc_recv_convert(gc, what);
+	GString *str = decode_html(utf8);
 	serv_got_im(gc, who, str->str, flags, t, -1);
 	g_string_free(str, TRUE);
+	g_free(utf8);
 }
 
-static void dcc_chat_cancel(struct dcc_chat *);
+static void 
+dcc_chat_cancel(struct dcc_chat *);
 
 void
 dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
@@ -481,7 +548,8 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	}
 }
 
-static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_transfer *ift) {
+static void 
+irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_transfer *ift) {
 	/* Ok, we better be receiving some crap here boyeee */
 	if (transfer_in_do(ift->xfer, ift->fd, ift->name, ift->len)) {
 		gaim_input_remove(ift->watcher);
@@ -490,12 +558,14 @@ static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_tra
 }
 
 
-void irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition) {
+void 
+irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition) {
 	/* Read ACK Here */
 
 }
 
-void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
+void 
+dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
 	struct irc_file_transfer *ift = data;
 	struct sockaddr_in addr;
 	int len = sizeof(addr);
@@ -519,14 +589,16 @@ void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition
 	}
 }
 
-void dcc_recv_callback (gpointer data, gint source, GaimInputCondition condition) {
+void 
+dcc_recv_callback (gpointer data, gint source, GaimInputCondition condition) {
 	struct irc_file_transfer *ift = data;
 	
 	ift->fd = source;
 	irc_file_transfer_do(ift->gc, ift);
 }
 
-void dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
+void 
+dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
 	struct dcc_chat *chat = data;
 	struct conversation *convo = new_conversation (chat->nick);
 	char buf[IRC_BUF_LEN];
@@ -542,14 +614,18 @@ void dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition
 	chat->inpa = gaim_input_add(source, GAIM_INPUT_READ, dcc_chat_in, chat);
 }
 
-static void irc_got_chat_in(struct gaim_connection *gc, int id, char *who, int whisper, char *msg, time_t t)
+static void 
+irc_got_chat_in(struct gaim_connection *gc, int id, char *who, int whisper, char *msg, time_t t)
 {
-	GString *str = decode_html(msg);
+	char *utf8 = irc_recv_convert(gc, msg);
+	GString *str = decode_html(utf8);
 	serv_got_chat_in(gc, id, who, whisper, str->str, t);
 	g_string_free(str, TRUE);
+	g_free(utf8);
 }
 
-static void handle_list(struct gaim_connection *gc, char *list)
+static void 
+handle_list(struct gaim_connection *gc, char *list)
 {
 	struct irc_data *id = gc->proto_data;
 	GSList *gr;
@@ -586,7 +662,8 @@ static void handle_list(struct gaim_connection *gc, char *list)
 	id->str = g_string_new("");
 }
 
-static gboolean irc_request_buddy_update(gpointer data)
+static gboolean 
+irc_request_buddy_update(gpointer data)
 {
 	struct gaim_connection *gc = data;
 	struct irc_data *id = gc->proto_data;
@@ -619,7 +696,8 @@ static gboolean irc_request_buddy_update(gpointer data)
 	return TRUE;
 }
 
-static void handle_names(struct gaim_connection *gc, char *chan, char *names)
+static void 
+handle_names(struct gaim_connection *gc, char *chan, char *names)
 {
 	struct conversation *c = irc_find_chat(gc, chan);
 	char **buf, **tmp;
@@ -631,7 +709,8 @@ static void handle_names(struct gaim_connection *gc, char *chan, char *names)
 	g_strfreev(buf);
 }
 
-static void handle_notopic(struct gaim_connection *gc, char *text)
+static void 
+handle_notopic(struct gaim_connection *gc, char *text)
 {
 	struct conversation *c;
 	if ((c = irc_find_chat(gc, text))) {
@@ -641,7 +720,8 @@ static void handle_notopic(struct gaim_connection *gc, char *text)
 	}
 }
 
-static void handle_topic(struct gaim_connection *gc, char *text)
+static void 
+handle_topic(struct gaim_connection *gc, char *text)
 {
 	struct conversation *c;
 	char *po = strchr(text, ' ');
@@ -661,7 +741,8 @@ static void handle_topic(struct gaim_connection *gc, char *text)
 	}
 }
 
-static gboolean mode_has_arg(struct gaim_connection *gc, char sign, char mode)
+static gboolean 
+mode_has_arg(struct gaim_connection *gc, char sign, char mode)
 {
 	struct irc_data *id = gc->proto_data;
 	char *cm = id->chanmodes;
@@ -691,7 +772,8 @@ static gboolean mode_has_arg(struct gaim_connection *gc, char sign, char mode)
 	return FALSE;
 }
 
-static void irc_chan_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *argstr, char *who)
+static void 
+irc_chan_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *argstr, char *who)
 {
 	struct conversation *c = irc_find_chat(gc, room);
 	char buf[IRC_BUF_LEN];
@@ -704,7 +786,8 @@ static void irc_chan_mode(struct gaim_connection *gc, char *room, char sign, cha
 	write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL), -1);
 }
 
-static void irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *nick)
+static void 
+irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *nick)
 {
 	struct conversation *c = irc_find_chat(gc, room);
 	GList *r;
@@ -752,7 +835,8 @@ static void irc_user_mode(struct gaim_connection *gc, char *room, char sign, cha
 	}
 }
 
-static void handle_mode(struct gaim_connection *gc, char *word[], char *word_eol[], gboolean n324)
+static void 
+handle_mode(struct gaim_connection *gc, char *word[], char *word_eol[], gboolean n324)
 {
 	struct irc_data *id = gc->proto_data;
 	int offset = n324 ? 4 : 3;
@@ -793,7 +877,8 @@ static void handle_mode(struct gaim_connection *gc, char *word[], char *word_eol
 	}
 }
 
-static void handle_version(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
+static void
+handle_version(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
 {
 	struct irc_data *id = gc->proto_data;
 	GString *str;
@@ -810,7 +895,8 @@ static void handle_version(struct gaim_connection *gc, char *word[], char *word_
 	id->liststr = NULL;
 }
 
-static void handle_who(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
+static void 
+handle_who(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
 {
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -833,7 +919,8 @@ static void handle_who(struct gaim_connection *gc, char *word[], char *word_eol[
  * what I think about that? I'm not too pleased with it.  Perhaps I should take
  * some medicine, or perhaps I should go to bed? Blah!! */
 
-static void handle_whois(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
+static void 
+handle_whois(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
 {
 	struct irc_data *id = gc->proto_data;
 	char tmp[1024];
@@ -889,7 +976,8 @@ static void handle_whois(struct gaim_connection *gc, char *word[], char *word_eo
 		id->liststr = g_string_append(id->liststr, word_eol[5]);
 }
 
-static void handle_roomlist(struct gaim_connection *gc, char *word[], char *word_eol[])
+static void 
+handle_roomlist(struct gaim_connection *gc, char *word[], char *word_eol[])
 {
 	struct irc_data *id = gc->proto_data;
 
@@ -904,7 +992,8 @@ static void handle_roomlist(struct gaim_connection *gc, char *word[], char *word
 	id->liststr = g_string_append(id->liststr, word_eol[4]);
 }
 
-static void irc_change_nick(void *a, char *b) {
+static void 
+irc_change_nick(void *a, char *b) {
 	struct gaim_connection *gc = a;
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];	
@@ -912,7 +1001,8 @@ static void irc_change_nick(void *a, char *b) {
 	irc_write(id->fd, buf, strlen(buf));
 }
 
-static void process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
+static void 
+process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 {
 	struct irc_data *id = gc->proto_data;
 	char *text = word_eol[3];
@@ -1024,7 +1114,8 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	}
 }
 
-static gboolean is_channel(struct gaim_connection *gc, char *name)
+static gboolean 
+is_channel(struct gaim_connection *gc, char *name)
 {
 	struct irc_data *id = gc->proto_data;
 	if (strchr(id->chantypes, *name))
@@ -1032,7 +1123,8 @@ static gboolean is_channel(struct gaim_connection *gc, char *name)
 	return FALSE;
 }
 
-static void irc_rem_chat_bud(struct gaim_connection *gc, char *nick, char *reason)
+static void 
+irc_rem_chat_bud(struct gaim_connection *gc, char *nick, char *reason)
 {
 	GSList *bcs = gc->buddy_chats;
 
@@ -1058,7 +1150,8 @@ static void irc_rem_chat_bud(struct gaim_connection *gc, char *nick, char *reaso
 	}
 }
 
-static void irc_change_name(struct gaim_connection *gc, char *old, char *new)
+static void 
+irc_change_name(struct gaim_connection *gc, char *old, char *new)
 {
 	GSList *bcs = gc->buddy_chats;
 	char buf[IRC_BUF_LEN];
@@ -1088,7 +1181,8 @@ static void irc_change_name(struct gaim_connection *gc, char *old, char *new)
 	}
 }
 
-static void handle_privmsg(struct gaim_connection *gc, char *to, char *nick, char *msg)
+static void 
+handle_privmsg(struct gaim_connection *gc, char *to, char *nick, char *msg)
 {
 	if (is_channel(gc, to)) {
 		struct conversation *c = irc_find_chat(gc, to);
@@ -1111,11 +1205,13 @@ static void handle_privmsg(struct gaim_connection *gc, char *to, char *nick, cha
 	}
 }
 
-static void dcc_chat_init(struct dcc_chat *data) {
+static void 
+dcc_chat_init(struct dcc_chat *data) {
 	proxy_connect(data->ip_address, data->port, dcc_chat_callback, data);
 }
 
-static void dcc_chat_cancel(struct dcc_chat *data){
+static void 
+dcc_chat_cancel(struct dcc_chat *data){
 	if (find_dcc_chat(data->gc, data->nick)) {
 		dcc_chat_list = g_slist_remove(dcc_chat_list, data); 
 		gaim_input_remove (data->inpa);
@@ -1124,7 +1220,8 @@ static void dcc_chat_cancel(struct dcc_chat *data){
 	g_free(data);
 }
 
-static void irc_convo_closed(struct gaim_connection *gc, char *who)
+static void 
+irc_convo_closed(struct gaim_connection *gc, char *who)
 {
 	struct dcc_chat *dchat = find_dcc_chat(gc, who);
 	if (!dchat)
@@ -1133,7 +1230,8 @@ static void irc_convo_closed(struct gaim_connection *gc, char *who)
 	dcc_chat_cancel(dchat);
 }
 
-static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
+static void 
+handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 			char *msg, char *word[], char *word_eol[])
 {
 	struct irc_data *id = gc->proto_data;
@@ -1209,7 +1307,8 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 	/*write_to_conv(c, out, WFLAG_SYSTEM, NULL, time(NULL), -1);*/
 }
 
-static gboolean irc_parse(struct gaim_connection *gc, char *buf)
+static gboolean 
+irc_parse(struct gaim_connection *gc, char *buf)
 {
 	struct irc_data *idata = gc->proto_data;
 	gchar outbuf[IRC_BUF_LEN];
@@ -1281,26 +1380,7 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 		char *chan = g_strdup(word[4]);
 		serv_got_chat_invite(gc, chan + 1, nick, NULL, g_list_append(NULL, chan));
 	} else if (!strcmp(cmd, "JOIN")) {
-		char *chan = *word[3] == ':' ? word[3] + 1 : word[3];
-		if (!g_strcasecmp(gc->displayname, nick)) {
-			static int id = 1;
-			serv_got_joined_chat(gc, id++, chan);
-		} else {
-			struct conversation *c = irc_find_chat(gc, chan);
-			if (c) {
-				char *hostmask = g_strdup(word[1]);
-				char *p = strchr(hostmask, '!');
-				if (p) {
-					char *pend = strchr(p, ' ');
-					if (pend) {
-						*pend = 0;
-					}
-					add_chat_buddy(c, nick, p+1);
-					g_free(hostmask);
-				}
-			}
-		}
-
+		irc_parse_join(gc, nick, word, word_eol);
 	} else if (!strcmp(cmd, "KICK")) {
 		if (!strcmp(gc->displayname, word[4])) {
 			struct conversation *c = irc_find_chat(gc, word[3]);
@@ -1326,70 +1406,10 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", new);
 		irc_change_name(gc, nick, new);
 	} else if (!strcmp(cmd, "NOTICE")) {
-		char buf[IRC_BUF_LEN];
-		if (!g_strcasecmp(word[4], ":\001CLIENTINFO")) {
-			char *p = strrchr(word_eol[5], '\001');
-			*p = 0;
-			g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
-				   word_eol[5]);
-			do_error_dialog(buf, _("CTCP ClientInfo"), GAIM_INFO);
-		} else if (!g_strcasecmp(word[4], ":\001USERINFO")) {
-			char *p = strrchr(word_eol[5], '\001');
-			*p = 0;
-			g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", 
-				   word_eol[5]);
-			do_error_dialog(buf, _("CTCP UserInfo"), GAIM_INFO);
-		} else if (!g_strcasecmp(word[4], ":\001VERSION")) {
-			char *p = strrchr(word_eol[5], '\001');
-			*p = 0;
-			g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", 
-				   word_eol[5]);
-			do_error_dialog(buf, _("CTCP Version"), GAIM_INFO);
-		} else if (!g_strcasecmp(word[4], ":\001PING")) {
-			char *p = strrchr(word_eol[5], '\001');
-			time_t ping_time;
-			if (p) 
-				*p = 0;
-			ping_time = time(NULL) - atol(word_eol[5]);
-			g_snprintf(buf, sizeof(buf), "CTCP Ping reply from %s; %d seconds", 
-				   word[3], ping_time);
-			do_error_dialog(buf, _("CTCP Ping"), GAIM_INFO);
-		} else {
-			if (*word_eol[4] == ':') word_eol[4]++;
-			if (ex)
-				irc_got_im(gc, nick, word_eol[4], 0, 
-					   time(NULL));		
-		}
+		irc_parse_notice(gc, nick, ex, word, word_eol);
 	} else if (!strcmp(cmd, "PART")) {
-		char *chan = cmd + 5;
-		struct conversation *c;
-		char *reason = word_eol[4];
-		GList *r;
-		if (*chan == ':')
-			chan++;
-		if (*reason == ':')
-			reason++;
-		if (!(c = irc_find_chat(gc, chan)))
+		if (!irc_parse_part(gc, nick, cmd, word, word_eol))
 			return FALSE;
-		if (!strcmp(nick, gc->displayname)) {
-			serv_got_chat_left(gc, c->id);
-			return FALSE;
-		}
-		r = c->in_room;
-		while (r) {
-			char *who = r->data;
-			if (*who == '@')
-				who++;
-			if (*who == '+')
-				who++;
-			if (!g_strcasecmp(who, nick)) {
-				char *tmp = g_strdup(r->data);
-				remove_chat_buddy(c, tmp, reason);
-				g_free(tmp);
-				break;
-			}
-			r = r->next;
-		}
 	} else if (!strcmp(cmd, "PRIVMSG")) {
 		char *to, *msg;
 		if (!*word[3])
@@ -1407,15 +1427,7 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 	} else if (!strcmp(cmd, "QUIT")) {
 		irc_rem_chat_bud(gc, nick, *word_eol[3] == ':' ? word_eol[3] + 1 : word_eol[3]);
 	} else if (!strcmp(cmd, "TOPIC")) {
-		struct conversation *c = irc_find_chat(gc, word[3]);
-		char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
-		if (c) {
-			char buf[IRC_BUF_LEN];
-			chat_set_topic(c, nick, topic);
-			g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
-				   nick, topic);
-			write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
-		}
+		irc_parse_topic(gc, nick, word, word_eol);
 	} else if (!strcmp(cmd, "WALLOPS")) { /* Don't know if a dialog box is the right way? */
 		char *msg = strrchr(word_eol[0], ':');
 		if (msg)
@@ -1425,7 +1437,145 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 	return FALSE;
 }
 
-static void irc_callback(gpointer data, gint source, GaimInputCondition condition)
+/* CTCP by jonas@birme.se */
+static void
+irc_parse_notice(struct gaim_connection *gc, char *nick, char *ex,
+                            char *word[], char *word_eol[])
+{
+       char buf[IRC_BUF_LEN];
+
+       if (!g_strcasecmp(word[4], ":\001CLIENTINFO")) {
+               char *p = g_strrstr(word_eol[5], "\001");
+               *p = 0;
+               g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
+                          word_eol[5]);
+               do_error_dialog(buf, _("CTCP ClientInfo"), GAIM_INFO);
+       } else if (!g_strcasecmp(word[4], ":\001USERINFO")) {
+               char *p = g_strrstr(word_eol[5], "\001");
+               *p = 0;
+               g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
+                          word_eol[5]);
+               do_error_dialog(buf, _("CTCP UserInfo"), GAIM_INFO);
+       } else if (!g_strcasecmp(word[4], ":\001VERSION")) {
+               char *p = g_strrstr(word_eol[5], "\001");
+               *p = 0;
+               g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
+                          word_eol[5]);
+               do_error_dialog(buf, _("CTCP Version"), GAIM_INFO);
+       } else if (!g_strcasecmp(word[4], ":\001PING")) {
+               char *p = g_strrstr(word_eol[5], "\001");
+               struct timeval ping_time;
+               struct timeval now;
+               gchar **vector;
+               if (p)
+                       *p = 0;
+               vector = g_strsplit(word_eol[5], " ", 2);
+               if (gettimeofday(&now, NULL) == 0 && vector != NULL) {
+                       if (now.tv_usec - atol(vector[1]) < 0) {
+                               ping_time.tv_sec = now.tv_sec - atol(vector[0]) - 1;
+                               ping_time.tv_usec = now.tv_usec - atol(vector[1]) + 1000000;
+                       } else {
+                               ping_time.tv_sec = now.tv_sec - atol(vector[0]);
+                               ping_time.tv_usec = now.tv_usec - atol(vector[1]);
+                       }
+                       g_snprintf(buf, sizeof(buf),
+                                  "CTCP Ping reply from %s: %lu.%.03lu seconds",
+                                  nick, ping_time.tv_sec, (ping_time.tv_usec/1000));
+                       do_error_dialog(buf, _("CTCP Ping"), GAIM_INFO);
+                       g_strfreev(vector);
+               }
+       } else {
+               if (*word_eol[4] == ':') word_eol[4]++;
+               if (ex)
+                       irc_got_im(gc, nick, word_eol[4], 0,
+                                  time(NULL));
+       }
+
+}
+
+static void
+irc_parse_join(struct gaim_connection *gc, char *nick,  
+              char *word[], char *word_eol[])
+{
+       char *chan = *word[3] == ':' ? word[3] + 1 : word[3];
+       static int id = 1;
+       struct conversation *c;
+       char *hostmask, *p;
+               
+       if (!g_strcasecmp(gc->displayname, nick)) {
+               serv_got_joined_chat(gc, id++, chan);
+       } else {
+               c = irc_find_chat(gc, chan);
+               if (c) {
+                       hostmask = g_strdup(word[1]);
+                       p = strchr(hostmask, '!');
+                       if (p) {
+                               char *pend = strchr(p, ' ');
+                               if (pend) {
+                                       *pend = 0;
+                               }
+                               add_chat_buddy(c, nick, p+1);
+                               g_free(hostmask);
+                       }
+               }
+       }
+}
+       
+static void
+irc_parse_topic(struct gaim_connection *gc, char *nick,
+               char *word[], char *word_eol[])
+{
+       struct conversation *c = irc_find_chat(gc, word[3]);
+       char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
+       char buf[IRC_BUF_LEN];
+
+       if (c) {
+               chat_set_topic(c, nick, topic);
+               g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
+                          nick, topic);
+               write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+       }
+}
+
+static gboolean
+irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
+              char *word[], char *word_eol[])
+{
+       char *chan = cmd + 5;
+       struct conversation *c;
+       char *reason = word_eol[4];
+       GList *r;
+
+       if (*chan == ':')
+               chan++;
+       if (*reason == ':')
+               reason++;
+       if (!(c = irc_find_chat(gc, chan)))
+               return FALSE;
+       if (!strcmp(nick, gc->displayname)) {
+               serv_got_chat_left(gc, c->id);
+               return FALSE;
+       }
+       r = c->in_room;
+       while (r) {
+               char *who = r->data;
+               if (*who == '@')
+                       who++;
+               if (*who == '+')
+                       who++;
+               if (!g_strcasecmp(who, nick)) {
+                       char *tmp = g_strdup(r->data);
+                       remove_chat_buddy(c, tmp, reason);
+                       g_free(tmp);
+                       break;
+               }
+               r = r->next;
+       }
+}
+
+static void 
+irc_callback(gpointer data, gint source, 
+GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct irc_data *idata = gc->proto_data;
@@ -1458,7 +1608,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		debug_printf("IRC S: %s\n", d);
 
 		/* REMOVE ME BEFORE SUBMIT! */
-		/* fprintf(stderr, "IRC S: %s\n", d); */
+		/*fprintf(stderr, "IRC S: %s\n", d);*/
 
 		idata->rxlen -= len;
 		if (idata->rxlen) {
@@ -1479,13 +1629,16 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static void irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
+static void 
+irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct irc_data *idata;
 	char hostname[256];
 	char buf[IRC_BUF_LEN];
-
+	char *test;
+	GError *err = NULL;
+	
 	if (!g_slist_find(connections, gc)) {
 		close(source);
 		return;
@@ -1499,6 +1652,16 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 		return;
 	}
 
+	
+	/* Try a quick conversion to see if the specified encoding is OK */
+	test = g_convert("test", strlen("test"), gc->user->proto_opt[USEROPT_CHARSET],
+			 "UTF-8", NULL, NULL, &err);
+	if (err) {
+		debug_printf("Couldn't initialize %s for IRC charset conversion, using ISO-8859-1\n",
+			     gc->user->proto_opt[USEROPT_CHARSET]);
+		strcpy(gc->user->proto_opt[USEROPT_CHARSET], "ISO-8859-1");
+	}
+	
 	if (idata->fd != source)
 		idata->fd = source;
 
@@ -1526,7 +1689,8 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	gc->inpa = gaim_input_add(idata->fd, GAIM_INPUT_READ, irc_callback, gc);
 }
 
-static void irc_login(struct aim_user *user)
+static void 
+irc_login(struct aim_user *user)
 {
 	char buf[IRC_BUF_LEN];
 
@@ -1554,7 +1718,8 @@ static void irc_login(struct aim_user *user)
 	}
 }
 
-static void irc_close(struct gaim_connection *gc)
+static void 
+irc_close(struct gaim_connection *gc)
 {
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 
@@ -1607,7 +1772,8 @@ static void irc_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
-static void set_mode_3(struct gaim_connection *gc, char *who, int sign, int mode,
+static void 
+set_mode_3(struct gaim_connection *gc, char *who, int sign, int mode,
 		       int start, int end, char *word[])
 {
 	struct irc_data *id = gc->proto_data;
@@ -1643,7 +1809,8 @@ static void set_mode_3(struct gaim_connection *gc, char *who, int sign, int mode
 	}
 }
 
-static void set_mode_6(struct gaim_connection *gc, char *who, int sign, int mode,
+static void 
+set_mode_6(struct gaim_connection *gc, char *who, int sign, int mode,
 		       int start, int end, char *word[])
 {
 	struct irc_data *id = gc->proto_data;
@@ -1699,7 +1866,8 @@ static void set_mode_6(struct gaim_connection *gc, char *who, int sign, int mode
 	}
 }
 
-static void set_mode(struct gaim_connection *gc, char *who, int sign, int mode, char *word[])
+static void 
+set_mode(struct gaim_connection *gc, char *who, int sign, int mode, char *word[])
 {
 	struct irc_data *id = gc->proto_data;
 	int i = 2;
@@ -1718,7 +1886,8 @@ static void set_mode(struct gaim_connection *gc, char *who, int sign, int mode, 
 	}
 }
 
-static void set_chan_mode(struct gaim_connection *gc, char *chan, char *mode_str)
+static void 
+set_chan_mode(struct gaim_connection *gc, char *chan, char *mode_str)
 {
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -1729,45 +1898,30 @@ static void set_chan_mode(struct gaim_connection *gc, char *chan, char *mode_str
 	}
 }
 
-static int handle_command(struct gaim_connection *gc, char *who, char *what)
+static int 
+handle_command(struct gaim_connection *gc, char *who, char *what)
 {
 	char buf[IRC_BUF_LEN];
 	char pdibuf[IRC_BUF_LEN];
 	char *word[PDIWORDS], *word_eol[PDIWORDS];
 	char *tmp = g_strdup(what);
 	GString *str = encode_html(tmp);
+	char *intl;
+	int len;
 	struct dcc_chat *dccchat = find_dcc_chat(gc, who);
 	struct irc_data *id = gc->proto_data;
 	g_free(tmp);
 	what = str->str;
 	if (*what != '/') {
-		unsigned int max = 440 - strlen(who);
-		char t;
-		while (strlen(what) > max) {
-			t = what[max];
-			what[max] = 0;
-			if (dccchat) {
-				g_snprintf(buf, sizeof(buf), "%s\r\n", what);
-				irc_write(dccchat->fd, buf, strlen(buf));
-				g_string_free(str, TRUE);
-				return 1;
-			}
-			/*g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
-			  irc_write(id->fd, buf, strlen(buf));*/
-			irc_send_privmsg (gc, who, what);
-			what[max] = t;
-			what = what + max;
-		}
 		if (dccchat) {
-			g_snprintf(buf, sizeof(buf), "%s\r\n", what);
+			intl = irc_send_convert(gc, what, sizeof(buf), &len);
+			g_snprintf(buf, sizeof(buf), "%s\r\n", intl);
+			g_free(intl);
 			irc_write(dccchat->fd, buf, strlen(buf));
 			g_string_free(str, TRUE);
 			return 1;
 		}
-		/*
-		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
-		irc_write(id->fd, buf, strlen(buf));*/
-		irc_send_privmsg (gc, who, what);
+		irc_send_privmsg (gc, who, what, TRUE);
 		g_string_free(str, TRUE);
 		return 1;
 	}
@@ -1776,16 +1930,15 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	g_string_free(str, FALSE);
 	if (!g_strcasecmp(pdibuf, "ME")) {
 		if (dccchat) {
-			g_snprintf(buf, sizeof(buf), "\001ACTION %s\001\r\n", word_eol[2]);
+			intl = irc_send_convert(gc, word_eol[2], sizeof(buf), &len);
+			g_snprintf(buf, sizeof(buf), "\001ACTION %s\001\r\n", intl);
+			g_free(intl);
 			irc_write(dccchat->fd, buf, strlen(buf));
 			g_free(what);
 			return 1;
 		}
-		/*
-		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :\001ACTION %s\001\r\n", who, word_eol[2]);
-		irc_write(id->fd, buf, strlen(buf));*/
 		g_snprintf(buf, sizeof(buf), "\001ACTION %s\001", word_eol[2]);
-		irc_send_privmsg (gc, who, buf);
+		irc_send_privmsg (gc, who, buf, FALSE);
 		g_free(what);
 		return 1;
 	} else if (!g_strcasecmp(pdibuf, "INVITE")) {
@@ -1799,7 +1952,10 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_snprintf(buf, sizeof(buf), _("Topic for %s is %s"), who, c->topic ? c->topic : "(no topic set)");
 			write_to_conv(c, buf, WFLAG_SYSTEM | WFLAG_NOLOG, NULL, time(NULL), -1);
 		} else {
-			g_snprintf(buf, sizeof(buf), "TOPIC %s :%s\r\n", who, word_eol[2]);
+			/* This could be too long */
+			intl = irc_send_convert(gc, word_eol[2], sizeof(buf), &len);
+			g_snprintf(buf, sizeof(buf), "TOPIC %s :%s\r\n", who, intl);
+			g_free(intl);
 			irc_write(id->fd, buf, strlen(buf));
 		}
 	} else if (!g_strcasecmp(pdibuf, "NICK")) {
@@ -1832,9 +1988,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_free(what);
 			return -EINVAL;
 		}
-		/*g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, word_eol[2]);
-		  irc_write(id->fd, buf, strlen(buf));*/
-		irc_send_privmsg (gc, who, word_eol[2]);
+		irc_send_privmsg (gc, who, word_eol[2], TRUE);
 		return 1;
 	} else if (!g_strcasecmp(pdibuf, "MSG")) {
 		if (!*word[2]) {
@@ -1845,18 +1999,17 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_free(what);
 			return -EINVAL;
 		}
-		/*
-		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", word[2], word_eol[3]);
-		irc_write(id->fd, buf, strlen(buf));*/
-		irc_send_privmsg (gc, word[2], word_eol[3]);
+		irc_send_privmsg (gc, word[2], word_eol[3], TRUE);
 	} else if (!g_strcasecmp(pdibuf, "KICK")) {
 		if (!*word[2]) {
 			g_free(what);
 			return -EINVAL;
 		}
-		if (*word_eol[3])
-			g_snprintf(buf, sizeof(buf), "KICK %s %s :%s\r\n", who, word[2], word_eol[3]);
-		else
+		if (*word_eol[3]) {
+			intl = irc_send_convert(gc, word_eol[3], sizeof(buf), &len);
+			g_snprintf(buf, sizeof(buf), "KICK %s %s :%s\r\n", who, word[2], intl);
+			g_free(intl);
+		} else
 			g_snprintf(buf, sizeof(buf), "KICK %s %s\r\n", who, word[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "JOIN") || !g_strcasecmp(pdibuf, "J")) {
@@ -1878,9 +2031,12 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			return -EINVAL;
 		}
 		c = irc_find_chat(gc, chan);
-		g_snprintf(buf, sizeof(buf), "PART %s%s%s\r\n", chan,
-			   *reason ? " :" : "",
-			   *reason ? reason : "");
+		if (*reason) {
+			intl = irc_send_convert(gc, reason, sizeof(buf), &len);
+			g_snprintf(buf, sizeof(buf), "PART %s :%s\r\n", chan, intl);
+			g_free(intl);
+		} else
+			g_snprintf(buf, sizeof(buf), "PART %s\r\n", chan);
 		irc_write(id->fd, buf, strlen(buf));
 		if (c) {
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
@@ -2000,7 +2156,8 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	return 0;
 }
 
-static int send_msg(struct gaim_connection *gc, char *who, char *what)
+static int 
+send_msg(struct gaim_connection *gc, char *who, char *what)
 {
 	char *cr = strchr(what, '\n');
 	if (cr) {
@@ -2022,7 +2179,8 @@ static int send_msg(struct gaim_connection *gc, char *who, char *what)
 		return handle_command(gc, who, what);
 }
 
-static void irc_chat_invite(struct gaim_connection *gc, int idn, const char *message, const char *name) {
+static void 
+irc_chat_invite(struct gaim_connection *gc, int idn, const char *message, const char *name) {
 	char buf[IRC_BUF_LEN]; 
 	struct irc_data *id = gc->proto_data;
 	struct conversation *c = irc_find_chat_by_id(gc, idn);
@@ -2030,7 +2188,8 @@ static void irc_chat_invite(struct gaim_connection *gc, int idn, const char *mes
 	irc_write(id->fd, buf, strlen(buf));
 }
 
-static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int len, int flags)
+static int 
+irc_send_im(struct gaim_connection *gc, char *who, char *what, int len, int flags)
 {
 	if (*who == '@' || *who == '+')
 		return send_msg(gc, who + 1, what);
@@ -2038,10 +2197,13 @@ static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int le
 }
 
 /* IRC doesn't have a buddy list, but we can still figure out who's online with ISON */
-static void irc_add_buddy(struct gaim_connection *gc, const char *who) {}
-static void irc_remove_buddy(struct gaim_connection *gc, char *who, char *group) {}
+static void 
+irc_add_buddy(struct gaim_connection *gc, const char *who) {}
+static void 
+irc_remove_buddy(struct gaim_connection *gc, char *who, char *group) {}
 
-static GList *irc_chat_info(struct gaim_connection *gc)
+static GList *
+irc_chat_info(struct gaim_connection *gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
@@ -2057,7 +2219,8 @@ static GList *irc_chat_info(struct gaim_connection *gc)
 	return m;
 }
 
-static void irc_join_chat(struct gaim_connection *gc, GList *data)
+static void 
+irc_join_chat(struct gaim_connection *gc, GList *data)
 {
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -2074,7 +2237,8 @@ static void irc_join_chat(struct gaim_connection *gc, GList *data)
 	irc_write(id->fd, buf, strlen(buf));
 }
 
-static void irc_chat_leave(struct gaim_connection *gc, int id)
+static void 
+irc_chat_leave(struct gaim_connection *gc, int id)
 {
 	struct irc_data *idata = gc->proto_data;
 	struct conversation *c = irc_find_chat_by_id(gc, id);
@@ -2086,7 +2250,8 @@ static void irc_chat_leave(struct gaim_connection *gc, int id)
 	irc_write(idata->fd, buf, strlen(buf));
 }
 
-static int irc_chat_send(struct gaim_connection *gc, int id, char *what)
+static int 
+irc_chat_send(struct gaim_connection *gc, int id, char *what)
 {
 	struct conversation *c = irc_find_chat_by_id(gc, id);
 	if (!c)
@@ -2096,12 +2261,14 @@ static int irc_chat_send(struct gaim_connection *gc, int id, char *what)
 	return 0;
 }
 
-static GList *irc_away_states(struct gaim_connection *gc)
+static GList *
+irc_away_states(struct gaim_connection *gc)
 {
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }
 
-static void irc_set_away(struct gaim_connection *gc, char *state, char *msg)
+static void 
+irc_set_away(struct gaim_connection *gc, char *state, char *msg)
 {
 	struct irc_data *idata = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -2117,12 +2284,14 @@ static void irc_set_away(struct gaim_connection *gc, char *state, char *msg)
 	irc_write(idata->fd, buf, strlen(buf));
 }
 
-static char **irc_list_icon(int uc)
+static char **
+irc_list_icon(int uc)
 {
 	return irc_icon_xpm;
 }
 
-static int getlocalip(char *ip) /* Thanks, libfaim */
+static int 
+getlocalip(char *ip) /* Thanks, libfaim */
 {
 	struct hostent *hptr;
 	char localhost[129];
@@ -2144,7 +2313,8 @@ static int getlocalip(char *ip) /* Thanks, libfaim */
 	return 0;
 }
 
-static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
+static void 
+dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 {
 	struct dcc_chat *chat = data;
 	struct conversation *convo;
@@ -2174,7 +2344,8 @@ static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition con
 	dcc_chat_list = g_slist_append (dcc_chat_list, chat);
 }
 #if 0
-static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
+static void 
+irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
 	struct irc_data *id = (struct irc_data *)gc->proto_data;
 	struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
 	char *localip = (char *)malloc(12);
@@ -2193,7 +2364,8 @@ static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
 	ift->xfer = transfer_out_add(gc, ift->sn);
 }
 #endif
-static struct irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc, 
+static struct 
+irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc, 
 						  struct file_transfer *xfer) {
 		
 	GSList *g = ((struct irc_data *)gc->proto_data)->file_transfers;
@@ -2210,7 +2382,8 @@ static struct irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc,
 	return f;
 }
 
-static void irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file_transfer *xfer, const char *data, int len) {
+static void 
+irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file_transfer *xfer, const char *data, int len) {
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 	guint32 pos;
 	
@@ -2222,7 +2395,8 @@ static void irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file
 	// you are sending a file ...
 }
 
-static void irc_file_transfer_cancel (struct gaim_connection *gc, struct file_transfer *xfer) {
+static void 
+irc_file_transfer_cancel (struct gaim_connection *gc, struct file_transfer *xfer) {
 	struct irc_data *id = (struct irc_data *)gc->proto_data;
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 
@@ -2242,7 +2416,8 @@ static void irc_file_transfer_cancel (struct gaim_connection *gc, struct file_tr
 	g_free(ift);
 }
 
-static void irc_file_transfer_done(struct gaim_connection *gc, struct file_transfer *xfer) {
+static void 
+irc_file_transfer_done(struct gaim_connection *gc, struct file_transfer *xfer) {
 	struct irc_data *id = (struct irc_data *)gc->proto_data;
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 
@@ -2263,7 +2438,8 @@ static void irc_file_transfer_done(struct gaim_connection *gc, struct file_trans
 	g_free(ift);
 }
 
-static void irc_file_transfer_out (struct gaim_connection *gc, struct file_transfer *xfer, const char *name, int totfiles, int totsize) {
+static void 
+irc_file_transfer_out (struct gaim_connection *gc, struct file_transfer *xfer, const char *name, int totfiles, int totsize) {
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 	struct sockaddr_in addr;
 	char buf[IRC_BUF_LEN];
@@ -2290,7 +2466,8 @@ static void irc_file_transfer_out (struct gaim_connection *gc, struct file_trans
 	irc_send_im (gc, ift->sn, buf, -1, 0);
 }
 
-static void irc_file_transfer_in(struct gaim_connection *gc,
+static void 
+irc_file_transfer_in(struct gaim_connection *gc,
 				 struct file_transfer *xfer, int offset) {
 
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
@@ -2299,57 +2476,95 @@ static void irc_file_transfer_in(struct gaim_connection *gc,
 	proxy_connect(ift->ip, ift->port, dcc_recv_callback, ift);
 }
 
-static void irc_ctcp_clientinfo(struct gaim_connection *gc, char *who)
+static void 
+irc_ctcp_clientinfo(struct gaim_connection *gc, char *who)
 {
 	char buf[IRC_BUF_LEN];
 
-	snprintf (buf, sizeof buf, "\001CLIENTINFO\001\n");
-	irc_send_privmsg(gc, who, buf);
+	snprintf (buf, sizeof buf, "\001CLIENTINFO\001");
+	irc_send_privmsg(gc, who, buf, FALSE);
 }
 
-static void irc_ctcp_userinfo(struct gaim_connection *gc, char *who)
+static void 
+irc_ctcp_userinfo(struct gaim_connection *gc, char *who)
 {
 	char buf[IRC_BUF_LEN];
 
-	snprintf (buf, sizeof buf, "\001USERINFO\001\n");
-	irc_send_privmsg(gc, who, buf);
+	snprintf (buf, sizeof buf, "\001USERINFO\001");
+	irc_send_privmsg(gc, who, buf, FALSE);
 }
 
-static void irc_ctcp_version(struct gaim_connection *gc, char *who)
+static void 
+irc_ctcp_version(struct gaim_connection *gc, char *who)
 {
 	char buf[IRC_BUF_LEN];
 
-	snprintf (buf, sizeof buf, "\001VERSION\001\n");
-	irc_send_privmsg(gc, who, buf);
+	snprintf (buf, sizeof buf, "\001VERSION\001");
+	irc_send_privmsg(gc, who, buf, FALSE);
 }
 
-static void irc_ctcp_ping(struct gaim_connection *gc, char *who)
+static void 
+irc_ctcp_ping(struct gaim_connection *gc, char *who)
 {
 	char buf[IRC_BUF_LEN];
 
-	g_snprintf (buf, sizeof(buf), "\001PING %ul\001\n", time(NULL));
-	irc_send_privmsg(gc, who, buf);
+	g_snprintf (buf, sizeof(buf), "\001PING %ul\001", time(NULL));
+	irc_send_privmsg(gc, who, buf, FALSE);
 }
 
-static void irc_send_notice(struct gaim_connection *gc, char *who, char *what)
+static void 
+irc_send_notice(struct gaim_connection *gc, char *who, char *what)
 {
-	char buf[IRC_BUF_LEN];
+	char buf[IRC_BUF_LEN], *intl;
 	struct irc_data *id = gc->proto_data;
-
-	g_snprintf(buf, sizeof(buf), "NOTICE %s :%s\r\n", who, what);
+	int len;
+	
+	intl = irc_send_convert(gc, what, 501, &len);
+	g_snprintf(buf, sizeof(buf), "NOTICE %s :%s\r\n", who, intl);
+	g_free(intl);
 	irc_write(id->fd, buf, strlen(buf));
 }
 
-static void irc_send_privmsg(struct gaim_connection *gc, char *who, char *what)
+/* Don't call this guy with fragment = 1 for anything but straight
+ * up privmsgs.  (no CTCP/whatever)  It's still dangerous for CTCPs
+ * (it might not include the trailing \001), but I think this behavior
+ * is generally better than not fragmenting at all on lots of our
+ * packets. */
+/* From RFC2812:
+ * IRC messages are always lines of characters terminated with a CR-LF
+ * (Carriage Return - Line Feed) pair, and these messages SHALL NOT
+ * exceed 512 characters in length, counting all characters including
+ * the trailing CR-LF. Thus, there are 510 characters maximum allowed
+ * for the command and its parameters. */
+/* So apparently that includes all the inter-server crap, which is up
+ * to NINETY-THREE chars on dancer, which seems to be a pretty liberal
+ * ircd.  My rough calculation for now is ":<nick>!~<user>@<host> ",
+ * where <host> is a max of an (uncalculated) 63 chars.  Thanks to
+ * trelane and #freenode for giving a hand here. */
+static void 
+irc_send_privmsg(struct gaim_connection *gc, char *who, char *what, gboolean fragment)
 {
-	char buf[IRC_BUF_LEN];
+	char buf[IRC_BUF_LEN], *intl;
 	struct irc_data *id = gc->proto_data;
-
-	g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
-	irc_write(id->fd, buf, strlen(buf));
+	/* 512 - 12 (for PRIVMSG" "" :""\r\n") - namelen - nicklen - 68 */
+	int nicklen = (gc->user->alias && strlen(gc->user->alias)) ? strlen(gc->user->alias) : 4;
+	int max = 444 - strlen(who) - strlen(g_get_user_name()) - nicklen;
+	
+	int len;
+	
+	do {
+		/* the \001 on CTCPs may cause a problem here for some 
+		 * charsets, but probably not ones people use for IRC. */
+		intl = irc_send_convert(gc, what, max, &len);
+		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, intl);
+		g_free(intl);
+		irc_write(id->fd, buf, strlen(buf));
+		what += len;
+	} while (fragment && strlen(what));
 }
 
-static void irc_start_chat(struct gaim_connection *gc, char *who) {
+static void 
+irc_start_chat(struct gaim_connection *gc, char *who) {
 	struct dcc_chat *chat;
 	int len;
 	struct sockaddr_in addr;
@@ -2381,7 +2596,8 @@ static void irc_start_chat(struct gaim_connection *gc, char *who) {
 	irc_send_im (gc, who, buf, -1, 0);
 }
 
-static void irc_get_info(struct gaim_connection *gc, char *who)
+static void 
+irc_get_info(struct gaim_connection *gc, char *who)
 {
 	struct irc_data *idata = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -2395,7 +2611,8 @@ static void irc_get_info(struct gaim_connection *gc, char *who)
 	irc_write(idata->fd, buf, strlen(buf));
 }
 
-static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
+static GList *
+irc_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -2448,7 +2665,8 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 
 static struct prpl *my_protocol = NULL;
 
-G_MODULE_EXPORT void irc_init(struct prpl *ret)
+G_MODULE_EXPORT void 
+irc_init(struct prpl *ret)
 {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_IRC;
@@ -2488,11 +2706,18 @@ G_MODULE_EXPORT void irc_init(struct prpl *ret)
 	puo->pos = USEROPT_PORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Encoding:");
+	puo->def = g_strdup("ISO-8859-1");
+	puo->pos = USEROPT_CHARSET;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+	
 	my_protocol = ret;
 }
 
 #ifndef STATIC
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl* prpl)
+G_MODULE_EXPORT void 
+gaim_prpl_init(struct prpl* prpl)
 {
 	irc_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
