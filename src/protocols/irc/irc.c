@@ -50,6 +50,14 @@ static int irc_chat_send(GaimConnection *gc, int id, const char *what);
 static void irc_chat_join (GaimConnection *gc, GHashTable *data);
 static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond);
 
+static guint irc_nick_hash(const char *nick);
+static gboolean irc_nick_equal(const char *nick1, const char *nick2);
+static void irc_buddy_free(struct irc_buddy *ib);
+
+static GaimPlugin *_irc_plugin = NULL;
+
+static const char *status_chars = "@+%&";
+
 static void irc_view_motd(GaimConnection *gc)
 {
 	struct irc_conn *irc;
@@ -68,12 +76,6 @@ static void irc_view_motd(GaimConnection *gc)
 	title = g_strdup_printf(_("MOTD for %s"), irc->server);
 	gaim_notify_formatted(gc, title, title, NULL, irc->motd->str, NULL, NULL);
 }
-
-static guint irc_nick_hash(const char *nick);
-static gboolean irc_nick_equal(const char *nick1, const char *nick2);
-static void irc_buddy_free(struct irc_buddy *ib);
-
-static GaimPlugin *_irc_plugin = NULL;
 
 int irc_send(struct irc_conn *irc, const char *buf)
 {
@@ -287,7 +289,7 @@ static int irc_im_send(GaimConnection *gc, const char *who, const char *what, Ga
 	struct irc_conn *irc = gc->proto_data;
 	const char *args[2];
 
-	if (*who == '@' || *who == '%' || *who == '+')
+	if (strchr(status_chars, *who) != NULL)
 		args[0] = who + 1;
 	else
 		args[0] = who;
