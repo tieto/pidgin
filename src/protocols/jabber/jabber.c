@@ -738,7 +738,7 @@ static time_t iso8601_to_time(char *timestamp)
    {
       t.tm_year -= 1900;
       t.tm_mon -= 1;
-      return mktime(&t) - timezone;
+      return mktime(&t) - t.tm_gmtoff;
    }
    return 0;
 }
