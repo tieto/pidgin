@@ -82,6 +82,7 @@ version 0.60:
 	  (Thanks Mark Doliner)
 	* Improved typing notification support for Jabber and 
 	  Yahoo! (Thanks Nathan Walp)
+	* Generic File Transfer PRPL interface (Thanks William T. Mahan)
 	* DCC File Send / Receive support for IRC
 
 version 0.59 (06/24/2002):
