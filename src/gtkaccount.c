@@ -929,6 +929,8 @@ static void
 account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 						 AccountPrefsDialog *dialog)
 {
+	gtk_widget_destroy(dialog->window);
+
 	if (dialog->user_split_entries != NULL)
 		g_list_free(dialog->user_split_entries);
 
@@ -947,8 +949,6 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 static void
 cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	gtk_widget_destroy(dialog->window);
-
 	account_win_destroy_cb(NULL, NULL, dialog);
 }
 
@@ -1159,8 +1159,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			gaim_accounts_add(dialog->account);
 		}
 	}
-
-	gtk_widget_destroy(dialog->window);
 
 	ret = dialog->account;
 
