@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/aim.c)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([gaim], [0.46])
+AM_INIT_AUTOMAKE([gaim], [0.47])
 
 AC_PATH_PROG(sedpath, sed)
 
