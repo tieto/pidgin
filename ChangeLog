@@ -4,6 +4,8 @@ version 0.10.2:
 	* A few fixes to the URL parser.
 	* Better placement of smiley dialog
 	* Improved log file readibility
+	* Code cleanups (thanks kylev)
+	* Fixed problem when closing away message box (thanks bmiller)
 
 version 0.10.1 (09/15/2000):
 	* Better chatroom logging
