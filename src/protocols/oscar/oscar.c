@@ -4394,7 +4394,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("ssi: syncing local list and server list\n");
 
 	/* Clean the buddy list */
-	/* aim_ssi_cleanlist(sess, fr->conn); */
+	aim_ssi_cleanlist(sess, fr->conn);
 
 	/* Add from server list to local list */
 	for (curitem=sess->ssi.local; curitem; curitem=curitem->next) {
@@ -4520,7 +4520,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					}
 				}
 			}
-
+#if 0
 		/* Permit list */
 		if (gc->account->permit) {
 			for (cur=gc->account->permit; cur; cur=cur->next)
@@ -4538,7 +4538,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					aim_ssi_adddeny(sess, od->conn, cur->data);
 				}
 		}
-
+#endif
 		/* Presence settings (idle time visibility) */
 		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
 			if (report_idle && !(tmp & 0x400))
