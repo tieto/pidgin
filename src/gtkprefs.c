@@ -1258,6 +1258,7 @@ GtkWidget *browser_page() {
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
+	GtkWidget *checkbox;
 	GtkWidget *entry;
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
@@ -1299,13 +1300,14 @@ GtkWidget *browser_page() {
 					   gaim_prefs_get_string("/gaim/gtk/browsers/command"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
+	gaim_set_accessible_label (entry, label);
 
 	if (browsers != NULL) {
 		vbox = gaim_gtk_make_frame (ret, _("Browser Options"));
-		label = gaim_gtk_prefs_checkbox(_("Open new _window by default"),
-							  "/gaim/gtk/browsers/new_window", vbox);
+		checkbox = gaim_gtk_prefs_checkbox(_("Open new _window by default"),
+										   "/gaim/gtk/browsers/new_window",
+										   vbox);
 	}
-	gaim_set_accessible_label (entry, label);
 
 	gtk_widget_show_all(ret);
 	return ret;
