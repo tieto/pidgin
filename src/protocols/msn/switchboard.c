@@ -42,7 +42,6 @@ msn_switchboard_new(MsnSession *session)
 {
 	MsnSwitchBoard *swboard;
 	MsnServConn *servconn;
-	MsnCmdProc *cmdproc;
 
 	g_return_val_if_fail(session != NULL, NULL);
 
@@ -50,16 +49,15 @@ msn_switchboard_new(MsnSession *session)
 
 	swboard->session = session;
 	swboard->servconn = servconn = msn_servconn_new(session, MSN_SERVER_SB);
-	cmdproc = servconn->cmdproc;
+	swboard->cmdproc = servconn->cmdproc;
 
 	swboard->im_queue = g_queue_new();
 	swboard->empty = TRUE;
 
-	servconn->data = swboard;
+	swboard->cmdproc->data = swboard;
+	swboard->cmdproc->cbs_table = cbs_table;
 
 	session->switches = g_list_append(session->switches, swboard);
-
-	cmdproc->cbs_table = cbs_table;
 
 	return swboard;
 }
@@ -88,7 +86,7 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 		if (swboard->error != MSN_SB_ERROR_NONE)
 		{
 			/* The messages could not be sent due to a switchboard error */
-			msg_error_helper(swboard->servconn->cmdproc, msg,
+			msg_error_helper(swboard->cmdproc, msg,
 							 MSN_MSG_ERROR_SB);
 		}
 		msn_message_unref(msg);
@@ -199,8 +197,8 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 	g_return_if_fail(swboard != NULL);
 
-	cmdproc = swboard->servconn->cmdproc;
-	account = swboard->servconn->session->account;
+	cmdproc = swboard->cmdproc;
+	account = cmdproc->session->account;
 
 	swboard->users = g_list_prepend(swboard->users, g_strdup(user));
 	swboard->current_users++;
@@ -313,7 +311,7 @@ swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
 	if (swboard->total_users == 0)
 	{
 		swboard->error = reason;
-		msn_switchboard_destroy(swboard);
+		msn_switchboard_close(swboard);
 	}
 }
 
@@ -346,7 +344,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 	if ((error != MSN_MSG_ERROR_SB) && (msg->nak_cb != NULL))
 		msg->nak_cb(msg, msg->ack_data);
 
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 
 	if (msg->type == MSN_MSG_TEXT)
 	{
@@ -434,7 +432,7 @@ ans_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSwitchBoard *swboard;
 
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 	swboard->ready = TRUE;
 }
 
@@ -444,7 +442,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSwitchBoard *swboard;
 	const char *user;
 
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 	user = cmd->params[0];
 
 	if (swboard->conv == NULL)
@@ -509,7 +507,7 @@ iro_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	account = cmdproc->session->account;
 	gc = account->gc;
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 
 	swboard->total_users = atoi(cmd->params[2]);
 
@@ -530,13 +528,14 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	session = cmdproc->session;
 	account = session->account;
 	gc = account->gc;
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 
 	msn_switchboard_add_user(swboard, passport);
 
 	msn_switchboard_process_queue(swboard);
 
-	send_clientcaps(swboard);
+	if (!session->http_method)
+		send_clientcaps(swboard);
 
 	if (swboard->closed)
 		msn_switchboard_close(swboard);
@@ -590,7 +589,7 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (msg->ack_cb != NULL)
 		msg->ack_cb(msg, msg->ack_data);
 
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 	swboard->ack_list = g_list_remove(swboard->ack_list, msg);
 	msn_message_unref(msg);
 }
@@ -602,7 +601,7 @@ out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSwitchBoard *swboard;
 
 	gc = cmdproc->session->account->gc;
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 
 	if (swboard->current_users > 1)
 		serv_got_chat_left(gc, swboard->chat_id);
@@ -615,7 +614,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSwitchBoard *swboard;
 
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 
 #if 0
 	GList *l;
@@ -650,7 +649,7 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *value;
 
 	gc = cmdproc->session->account->gc;
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
@@ -709,7 +708,7 @@ control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *passport;
 
 	gc = cmdproc->session->account->gc;
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 	passport = msg->remote_user;
 
 	if (swboard->current_users == 1 &&
@@ -798,7 +797,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
 
-	cmdproc = swboard->servconn->cmdproc;
+	cmdproc = swboard->cmdproc;
 
 	payload = msn_message_gen_payload(msg, &payload_len);
 
@@ -885,8 +884,8 @@ connect_cb(MsnServConn *servconn)
 
 	cmdproc->ready = TRUE;
 
-	account = servconn->session->account;
-	swboard = servconn->data;
+	account = cmdproc->session->account;
+	swboard = cmdproc->data;
 	g_return_if_fail(swboard != NULL);
 
 	if (msn_switchboard_is_invited(swboard))
@@ -910,7 +909,7 @@ disconnect_cb(MsnServConn *servconn)
 {
 	MsnSwitchBoard *swboard;
 
-	swboard = servconn->data;
+	swboard = servconn->cmdproc->data;
 	g_return_if_fail(swboard != NULL);
 
 	msn_switchboard_destroy(swboard);
@@ -945,7 +944,7 @@ got_cal(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSwitchBoard *swboard;
 	const char *user;
 
-	swboard = cmdproc->servconn->data;
+	swboard = cmdproc->data;
 
 	user = cmd->params[0];
 
@@ -985,7 +984,7 @@ msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user)
 
 	g_return_if_fail(swboard != NULL);
 
-	cmdproc = swboard->servconn->cmdproc;
+	cmdproc = swboard->cmdproc;
 
 	trans = msn_transaction_new(cmdproc, "CAL", "%s", user);
 	/* this doesn't do anything, but users seem to think that
@@ -1019,41 +1018,6 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 
 	msn_parse_socket(cmd->params[2], &host, &port);
-
-	if (swboard->session->http_method)
-	{
-		GaimAccount *account;
-		MsnSession *session;
-		MsnServConn *servconn;
-
-		port = 80;
-
-		session = swboard->session;
-		servconn = swboard->servconn;
-		account = session->account;
-
-		swboard->empty = FALSE;
-
-		servconn->http_data->gateway_host = g_strdup(host);
-
-#if 0
-		servconn->connected = TRUE;
-		servconn->cmdproc->ready = TRUE;
-#endif
-
-		if (msn_switchboard_is_invited(swboard))
-		{
-			msn_cmdproc_send(servconn->cmdproc, "ANS", "%s %s %s",
-							 gaim_account_get_username(account),
-							 swboard->auth_key, swboard->session_id);
-		}
-		else
-		{
-			msn_cmdproc_send(servconn->cmdproc, "USR", "%s %s",
-							 gaim_account_get_username(account),
-							 swboard->auth_key);
-		}
-	}
 
 	msn_switchboard_connect(swboard, host, port);
 
@@ -1102,7 +1066,7 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 	{
 		MsnCmdProc *cmdproc;
 
-		cmdproc = swboard->servconn->cmdproc;
+		cmdproc = swboard->cmdproc;
 
 		msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
 

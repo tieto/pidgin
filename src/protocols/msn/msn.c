@@ -621,13 +621,12 @@ msn_buddy_menu(GaimBuddy *buddy)
 											 show_send_to_mobile_cb, NULL);
 			m = g_list_append(m, act);
 		}
-
 	}
 
 	if (g_ascii_strcasecmp(buddy->name,
 						   gaim_account_get_username(buddy->account)))
 	{
-		act = gaim_blist_node_action_new(_("Initiate Chat"),
+		act = gaim_blist_node_action_new(_("Initiate _Chat"),
 										 initiate_chat_cb, NULL);
 		m = g_list_append(m, act);
 	}
@@ -671,24 +670,12 @@ msn_login(GaimAccount *account, GaimStatus *status)
 	}
 
 	if (gaim_account_get_bool(account, "http_method", FALSE))
-	{
 		http_method = TRUE;
 
-		gaim_debug_info("msn", "using http method\n");
-
-		host = "gateway.messenger.hotmail.com";
-		port = 80;
-	}
-	else
-	{
-		host = gaim_account_get_string(account, "server", MSN_SERVER);
-		port = gaim_account_get_int(account,    "port",   MSN_PORT);
-	}
+	host = gaim_account_get_string(account, "server", MSN_SERVER);
+	port = gaim_account_get_int(account,    "port",   MSN_PORT);
 
 	session = msn_session_new(account, host, port, http_method);
-
-	if (session->http_method)
-		msn_http_session_init(session);
 
 	gc->proto_data = session;
 	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_FORMATTING_WBFO | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_FONTSIZE | GAIM_CONNECTION_NO_URLDESC;
@@ -712,9 +699,6 @@ msn_close(GaimConnection *gc)
 	session = gc->proto_data;
 
 	g_return_if_fail(session != NULL);
-
-	if (session->http_method)
-		msn_http_session_uninit(session);
 
 	msn_session_destroy(session);
 
@@ -1865,7 +1849,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* warn */
 	NULL,					/* join_chat */
 	NULL,					/* reject chat invite */
-	NULL,				/* get_chat_name */
+	NULL,					/* get_chat_name */
 	msn_chat_invite,		/* chat_invite */
 	msn_chat_leave,			/* chat_leave */
 	NULL,					/* chat_whisper */

@@ -55,6 +55,8 @@ struct _MsnCmdProc
 	/* MsnPayloadCb payload_cb; */
 
 	MsnHistory *history;
+
+	void *data; /**< Extra data, like the switchboard. */
 };
 
 MsnCmdProc *msn_cmdproc_new(MsnSession *session);

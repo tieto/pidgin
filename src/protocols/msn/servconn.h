@@ -30,13 +30,11 @@ typedef struct _MsnServConn MsnServConn;
 #include "cmdproc.h"
 
 #include "proxy.h"
-#include "httpmethod.h"
+#include "httpconn.h"
 
 /*
-#include "msg.h"
-#include "history.h"
-*/
-
+ * Connection types
+ */
 typedef enum
 {
 	MSN_SERVER_NS,
@@ -47,44 +45,107 @@ typedef enum
 
 } MsnServConnType;
 
+/*
+ * A Connection
+ */
 struct _MsnServConn
 {
-	MsnServConnType type;
-	MsnSession *session;
-	MsnCmdProc *cmdproc;
+	MsnServConnType type; /**< The type of this connection. */
+	MsnSession *session;  /**< The MSN session of this connection. */
+	MsnCmdProc *cmdproc;  /**< The command processor of this connection. */
 
-	gboolean connected;
-	gboolean processing;
-	gboolean wasted;
+	gboolean connected;   /**< A flag that states if it's connected. */
+	gboolean processing;  /**< A flag that states if something is working
+							with this connection. */
+	gboolean wasted;      /**< A flag that states if it should be destroyed. */
+	gboolean destroying;  /**< A flag that states if the connection is on
+							the process of being destroyed. */
 
-	int num;
+	char *host; /**< The host this connection is connected or should be
+				  connected to. */
+	int num; /**< A number id of this connection. */
 
-	MsnHttpMethodData *http_data;
+	MsnHttpConn *httpconn; /**< The HTTP connection this connection should use. */
 
-	int fd;
-	int inpa;
+	int fd; /**< The connection's file descriptor. */
+	int inpa; /**< The connection's input handler. */
 
-	char *rx_buf;
-	int rx_len;
+	char *rx_buf; /**< The receive buffer. */
+	int rx_len; /**< The receive buffer lenght. */
 
-	size_t payload_len;
+	size_t payload_len; /**< The length of the payload.
+						  It's only set when we've received a command that
+						  has a payload. */
 
-	void (*connect_cb)(MsnServConn *);
-	void (*disconnect_cb)(MsnServConn *);
-	void (*data_free_cb)(void *data);
-	void *data;
+	void (*connect_cb)(MsnServConn *); /**< The callback to call when connecting. */
+	void (*disconnect_cb)(MsnServConn *); /**< The callback to call when disconnecting. */
+	void (*destroy_cb)(MsnServConn *); /**< The callback to call when destroying. */
 };
 
+/**
+ * Creates a new connection object.
+ *
+ * @param session The session.
+ * @param type The type of the connection.
+ */
 MsnServConn *msn_servconn_new(MsnSession *session, MsnServConnType type);
+
+/**
+ * Destroys a connection object.
+ *
+ * @param servconn The connection.
+ */
 void msn_servconn_destroy(MsnServConn *servconn);
 
+/**
+ * Connects to a host.
+ *
+ * @param servconn The connection.
+ * @param host The host.
+ * @param port The port.
+ */
 gboolean msn_servconn_connect(MsnServConn *servconn, const char *host, int port);
+
+/**
+ * Disconnects.
+ *
+ * @param servconn The connection.
+ */
 void msn_servconn_disconnect(MsnServConn *servconn);
 
+/**
+ * Sets the connect callback.
+ *
+ * @param servconn The servconn.
+ * @param connect_cb The connect callback.
+ */
 void msn_servconn_set_connect_cb(MsnServConn *servconn,
 								 void (*connect_cb)(MsnServConn *));
+/**
+ * Sets the disconnect callback.
+ *
+ * @param servconn The servconn.
+ * @param disconnect_cb The disconnect callback.
+ */
 void msn_servconn_set_disconnect_cb(MsnServConn *servconn,
 									void (*disconnect_cb)(MsnServConn *));
-size_t msn_servconn_write(MsnServConn *servconn, const char *buf, size_t size);
+/**
+ * Sets the destroy callback.
+ *
+ * @param servconn The servconn that's being destroyed.
+ * @param destroy_cb The destroy callback.
+ */
+void msn_servconn_set_destroy_cb(MsnServConn *servconn,
+								 void (*destroy_cb)(MsnServConn *));
+
+/**
+ * Writes a chunck of data to the servconn.
+ *
+ * @param servconn The servconn.
+ * @param buf The data to write.
+ * @param size The size of the data.
+ */
+size_t msn_servconn_write(MsnServConn *servconn, const char *buf,
+						  size_t size);
 
 #endif /* _MSN_SERVCONN_H_ */

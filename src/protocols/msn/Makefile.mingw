@@ -75,7 +75,7 @@ C_SRC =			cmdproc.c \
 			error.c \
 			group.c \
 			history.c \
-			httpmethod.c \
+			httpconn.c \
 			msg.c \
 			msn.c \
 			nexus.c \

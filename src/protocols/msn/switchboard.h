@@ -57,6 +57,7 @@ struct _MsnSwitchBoard
 {
 	MsnSession *session;
 	MsnServConn *servconn;
+	MsnCmdProc *cmdproc;
 	char *im_user;
 
 	char *auth_key;

@@ -1,5 +1,5 @@
 /**
- * @file httpmethod.h HTTP connection method
+ * @file httpconn.h HTTP connection
  *
  * gaim
  *
@@ -21,29 +21,56 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _MSN_HTTP_METHOD_H_
-#define _MSN_HTTP_METHOD_H_
+#ifndef _MSN_HTTPCONN_H_
+#define _MSN_HTTPCONN_H_
 
-typedef struct _MsnHttpMethodData MsnHttpMethodData;
+typedef struct _MsnHttpConn MsnHttpConn;
 
 #include "servconn.h"
 
-struct _MsnHttpMethodData
+struct _MsnHttpConn
 {
+	MsnSession *session;
+	MsnServConn *servconn;
+
+	char *full_session_id;
 	char *session_id;
-	char *old_gateway_host;
-	char *gateway_host;
-	const char *server_type;
 
 	int timer;
 
-	gboolean virgin;
 	gboolean waiting_response;
-	gboolean dirty;
+	gboolean dirty; /**< The flag that states if we should poll. */
+	gboolean connected;
 
+	char *host;
 	GList *queue;
+
+	int fd;
+	int inpa;
+
+	char *rx_buf;
+	int rx_len;
+
+#if 0
+	GQueue *servconn_queue;
+#endif
+
+	gboolean virgin;
 };
 
+MsnHttpConn *msn_httpconn_new(MsnServConn *servconn);
+void msn_httpconn_destroy(MsnHttpConn *httpconn);
+size_t msn_httpconn_write(MsnHttpConn *httpconn, const char *buf, size_t size);
+
+gboolean msn_httpconn_connect(MsnHttpConn *httpconn,
+							  const char *host, int port);
+void msn_httpconn_disconnect(MsnHttpConn *httpconn);
+
+#if 0
+void msn_httpconn_queue_servconn(MsnHttpConn *httpconn, MsnServConn *servconn);
+#endif
+
+#if 0
 /**
  * Initializes the HTTP data for a session.
  *
@@ -96,5 +123,6 @@ gboolean msn_http_servconn_parse_data(MsnServConn *servconn,
 									  const char *buf, size_t size,
 									  char **ret_buf, size_t *ret_size,
 									  gboolean *error);
+#endif
 
-#endif /* _MSN_HTTP_METHOD_H_ */
+#endif /* _MSN_HTTPCONN_H_ */

@@ -18,8 +18,8 @@ MSNSOURCES = \
 	group.h \
 	history.c \
 	history.h \
-	httpmethod.c \
-	httpmethod.h \
+	httpconn.c \
+	httpconn.h \
 	msg.c \
 	msg.h \
 	msn.c \

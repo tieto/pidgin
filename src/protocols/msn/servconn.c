@@ -43,10 +43,7 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 	servconn->cmdproc->servconn = servconn;
 
 	if (session->http_method)
-	{
-		servconn->http_data = g_new0(MsnHttpMethodData, 1);
-		servconn->http_data->virgin = TRUE;
-	}
+		servconn->httpconn = msn_httpconn_new(servconn);
 
 	servconn->num = session->servconns_count++;
 
@@ -64,11 +61,22 @@ msn_servconn_destroy(MsnServConn *servconn)
 		return;
 	}
 
+	if (servconn->destroying)
+		return;
+
+	servconn->destroying = TRUE;
+
 	if (servconn->connected)
 		msn_servconn_disconnect(servconn);
 
-	if (servconn->http_data != NULL)
-		g_free(servconn->http_data);
+	if (servconn->destroy_cb)
+		servconn->destroy_cb(servconn);
+
+	if (servconn->httpconn != NULL)
+		msn_httpconn_destroy(servconn->httpconn);
+
+	if (servconn->host != NULL)
+		g_free(servconn->host);
 
 	msn_cmdproc_destroy(servconn->cmdproc);
 	g_free(servconn);
@@ -113,7 +121,7 @@ show_error(MsnServConn *servconn)
 	else
 	{
 		MsnSwitchBoard *swboard;
-		swboard = servconn->data;
+		swboard = servconn->cmdproc->data;
 		swboard->error = MSN_SB_ERROR_CONNECTION;
 	}
 
@@ -167,12 +175,26 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	if (servconn->connected)
 		msn_servconn_disconnect(servconn);
 
+	if (servconn->host != NULL)
+		g_free(servconn->host);
+
+	servconn->host = g_strdup(host);
+
 	if (session->http_method)
 	{
-		if (servconn->http_data->gateway_host != NULL)
-			g_free(servconn->http_data->gateway_host);
+		/* HTTP Connection. */
 
-		servconn->http_data->gateway_host = g_strdup(host);
+		if (!servconn->httpconn->connected)
+			msn_httpconn_connect(servconn->httpconn, host, port);
+
+		servconn->connected = TRUE;
+		servconn->cmdproc->ready = TRUE;
+		servconn->httpconn->virgin = TRUE;
+
+		/* Someone wants to know we connected. */
+		servconn->connect_cb(servconn);
+
+		return TRUE;
 	}
 
 	r = gaim_proxy_connect(session->account, host, port, connect_cb,
@@ -200,6 +222,15 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		return;
 	}
 
+	if (servconn->session->http_method)
+	{
+		/* Fake disconnection */
+		if (servconn->disconnect_cb != NULL)
+			servconn->disconnect_cb(servconn);
+
+		return;
+	}
+
 	if (servconn->inpa > 0)
 	{
 		gaim_input_remove(servconn->inpa);
@@ -207,21 +238,6 @@ msn_servconn_disconnect(MsnServConn *servconn)
 	}
 
 	close(servconn->fd);
-
-	if (servconn->http_data != NULL)
-	{
-		if (servconn->http_data->session_id != NULL)
-			g_free(servconn->http_data->session_id);
-
-		if (servconn->http_data->old_gateway_host != NULL)
-			g_free(servconn->http_data->old_gateway_host);
-
-		if (servconn->http_data->gateway_host != NULL)
-			g_free(servconn->http_data->gateway_host);
-
-		if (servconn->http_data->timer)
-			gaim_timeout_remove(servconn->http_data->timer);
-	}
 
 	servconn->rx_buf = NULL;
 	servconn->rx_len = 0;
@@ -235,18 +251,29 @@ msn_servconn_disconnect(MsnServConn *servconn)
 }
 
 void
-msn_servconn_set_connect_cb(MsnServConn *servconn, void (*connect_cb)(MsnServConn *))
+msn_servconn_set_connect_cb(MsnServConn *servconn,
+							void (*connect_cb)(MsnServConn *))
 {
 	g_return_if_fail(servconn != NULL);
 	servconn->connect_cb = connect_cb;
 }
 
 void
-msn_servconn_set_disconnect_cb(MsnServConn *servconn, void (*disconnect_cb)(MsnServConn *))
+msn_servconn_set_disconnect_cb(MsnServConn *servconn,
+							   void (*disconnect_cb)(MsnServConn *))
 {
 	g_return_if_fail(servconn != NULL);
 
 	servconn->disconnect_cb = disconnect_cb;
+}
+
+void
+msn_servconn_set_destroy_cb(MsnServConn *servconn,
+							   void (*destroy_cb)(MsnServConn *))
+{
+	g_return_if_fail(servconn != NULL);
+
+	servconn->destroy_cb = destroy_cb;
 }
 
 static void
@@ -266,7 +293,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 	g_return_val_if_fail(servconn != NULL, 0);
 
-	if (servconn->http_data == NULL)
+	if (!servconn->session->http_method)
 	{
 		switch (servconn->type)
 		{
@@ -285,8 +312,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 	}
 	else
 	{
-		ret = msn_http_servconn_write(servconn, buf, len,
-									  servconn->http_data->server_type);
+		ret = msn_httpconn_write(servconn->httpconn, buf, len);
 	}
 
 	if (ret == -1)
@@ -326,69 +352,6 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	servconn->rx_buf = g_realloc(servconn->rx_buf, len + servconn->rx_len + 1);
 	memcpy(servconn->rx_buf + servconn->rx_len, buf, len + 1);
 	servconn->rx_len += len;
-
-	if (session->http_method)
-	{
-		char *result_msg = NULL;
-		size_t result_len = 0;
-		gboolean error;
-		char *tmp;
-
-		tmp = g_strndup(servconn->rx_buf, servconn->rx_len);
-
-		if (!msn_http_servconn_parse_data(servconn, tmp, servconn->rx_len,
-										  &result_msg, &result_len,
-										  &error))
-		{
-			g_free(tmp);
-			return;
-		}
-
-		g_free(tmp);
-
-		if (error)
-		{
-			gaim_connection_error(gaim_account_get_connection(session->account),
-								  _("Received HTTP error. Please report this."));
-
-			return;
-		}
-
-		if (servconn->http_data->session_id != NULL &&
-			!strcmp(servconn->http_data->session_id, "close"))
-		{
-			msn_servconn_destroy(servconn);
-
-			return;
-		}
-
-#if 0
-		if (strcmp(servconn->http_data->gateway_ip,
-				   msn_servconn_get_server(servconn)) != 0)
-		{
-			int i;
-
-			/* Evil hackery. I promise to remove it, even though I can't. */
-
-			servconn->connected = FALSE;
-
-			if (servconn->inpa)
-				gaim_input_remove(servconn->inpa);
-
-			close(servconn->fd);
-
-			i = gaim_proxy_connect(session->account, servconn->host,
-								   servconn->port, read_cb, servconn);
-
-			if (i == 0)
-				servconn->connected = TRUE;
-		}
-#endif
-
-		g_free(servconn->rx_buf);
-		servconn->rx_buf = result_msg;
-		servconn->rx_len = result_len;
-	}
 
 	end = old_rx_buf = servconn->rx_buf;
 

@@ -113,6 +113,12 @@ msn_session_connect(MsnSession *session)
 
 	session->connected = TRUE;
 
+	if (session->notification == NULL)
+	{
+		gaim_debug_error("msn", "This shouldn't happen\n");
+		g_return_val_if_reached(FALSE);
+	}
+
 	if (msn_notification_connect(session->notification,
 								 session->dispatch_host,
 								 session->dispatch_port))
@@ -130,10 +136,12 @@ msn_session_disconnect(MsnSession *session)
 	g_return_if_fail(session->connected);
 
 	while (session->switches != NULL)
-		msn_switchboard_destroy(session->switches->data);
+		msn_switchboard_close(session->switches->data);
 
 	if (session->notification != NULL)
-		msn_notification_disconnect(session->notification);
+		msn_notification_close(session->notification);
+
+	session->connected = FALSE;
 }
 
 /* TODO: This must go away when conversation is redesigned */

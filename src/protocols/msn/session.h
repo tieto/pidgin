@@ -35,6 +35,7 @@ typedef struct _MsnSession MsnSession;
 
 #include "cmdproc.h"
 #include "nexus.h"
+#include "httpconn.h"
 
 #include "userlist.h"
 #include "sync.h"

@@ -37,9 +37,124 @@
 static MsnTable *cbs_table;
 
 /**************************************************************************
+ * Main
+ **************************************************************************/
+static void
+destroy_cb(MsnServConn *servconn)
+{
+	MsnNotification *notification;
+
+	notification = servconn->cmdproc->data;
+	g_return_if_fail(notification != NULL);
+
+	msn_notification_destroy(notification);
+}
+
+MsnNotification *
+msn_notification_new(MsnSession *session)
+{
+	MsnNotification *notification;
+	MsnServConn *servconn;
+
+	g_return_val_if_fail(session != NULL, NULL);
+
+	notification = g_new0(MsnNotification, 1);
+
+	notification->session = session;
+	notification->servconn = servconn = msn_servconn_new(session, MSN_SERVER_NS);
+	msn_servconn_set_destroy_cb(servconn, destroy_cb);
+
+	notification->cmdproc = servconn->cmdproc;
+	notification->cmdproc->data = notification;
+	notification->cmdproc->cbs_table = cbs_table;
+
+	return notification;
+}
+
+void
+msn_notification_destroy(MsnNotification *notification)
+{
+	if (notification->destroying)
+		return;
+
+	notification->destroying = TRUE;
+
+	msn_servconn_destroy(notification->servconn);
+
+	notification->session->notification = NULL;
+	g_free(notification);
+}
+
+/**************************************************************************
+ * Connect
+ **************************************************************************/
+static void
+connect_cb(MsnServConn *servconn)
+{
+	MsnCmdProc *cmdproc;
+	MsnSession *session;
+	GaimAccount *account;
+	char **a, **c, *vers;
+	int i;
+
+	g_return_if_fail(servconn != NULL);
+
+	cmdproc = servconn->cmdproc;
+	session = servconn->session;
+	account = session->account;
+
+	/* Allocate an array for CVR0, NULL, and all the versions */
+	a = c = g_new0(char *, session->protocol_ver - 8 + 3);
+
+	for (i = session->protocol_ver; i >= 8; i--)
+		*c++ = g_strdup_printf("MSNP%d", i);
+
+	*c++ = g_strdup("CVR0");
+
+	vers = g_strjoinv(" ", a);
+
+	msn_cmdproc_send(cmdproc, "VER", "%s", vers);
+
+	g_strfreev(a);
+	g_free(vers);
+
+	if (cmdproc->error)
+		return;
+
+	if (session->user == NULL)
+		session->user = msn_user_new(session->userlist,
+									 gaim_account_get_username(account), NULL);
+}
+
+gboolean
+msn_notification_connect(MsnNotification *notification, const char *host, int port)
+{
+	MsnServConn *servconn;
+
+	g_return_val_if_fail(notification != NULL, FALSE);
+
+	servconn = notification->servconn;
+
+	msn_servconn_set_connect_cb(servconn, connect_cb);
+	notification->in_use = msn_servconn_connect(servconn, host, port);
+
+	return notification->in_use;
+}
+
+void
+msn_notification_disconnect(MsnNotification *notification)
+{
+	g_return_if_fail(notification != NULL);
+	g_return_if_fail(notification->in_use);
+
+	msn_servconn_disconnect(notification->servconn);
+
+	notification->in_use = FALSE;
+}
+
+/**************************************************************************
  * Util
  **************************************************************************/
-
 static void
 group_error_helper(MsnSession *session, const char *msg, int group_id, int error)
 {
@@ -83,7 +198,6 @@ group_error_helper(MsnSession *session, const char *msg, int group_id, int error
 /**************************************************************************
  * Login
  **************************************************************************/
-
 void
 msn_got_login_params(MsnSession *session, const char *login_params)
 {
@@ -264,6 +378,16 @@ out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_cmdproc_show_error(cmdproc, MSN_ERROR_SIGNOTHER);
 	else if (!g_ascii_strcasecmp(cmd->params[0], "SSD"))
 		msn_cmdproc_show_error(cmdproc, MSN_ERROR_SERVDOWN);
+}
+
+void
+msn_notification_close(MsnNotification *notification)
+{
+	g_return_if_fail(notification != NULL);
+
+	msn_cmdproc_send_quick(notification->cmdproc, "OUT", NULL, NULL);
+
+	msn_notification_disconnect(notification);
 }
 
 /**************************************************************************
@@ -1177,44 +1301,6 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_hash_table_destroy(table);
 }
 
-static void
-connect_cb(MsnServConn *servconn)
-{
-	MsnCmdProc *cmdproc;
-	MsnSession *session;
-	GaimAccount *account;
-	char **a, **c, *vers;
-	int i;
-
-	g_return_if_fail(servconn != NULL);
-
-	cmdproc = servconn->cmdproc;
-	session = servconn->session;
-	account = session->account;
-
-	/* Allocate an array for CVR0, NULL, and all the versions */
-	a = c = g_new0(char *, session->protocol_ver - 8 + 3);
-
-	for (i = session->protocol_ver; i >= 8; i--)
-		*c++ = g_strdup_printf("MSNP%d", i);
-
-	*c++ = g_strdup("CVR0");
-
-	vers = g_strjoinv(" ", a);
-
-	msn_cmdproc_send(cmdproc, "VER", "%s", vers);
-
-	g_strfreev(a);
-	g_free(vers);
-
-	if (cmdproc->error)
-		return;
-
-	if (session->user == NULL)
-		session->user = msn_user_new(session->userlist,
-									 gaim_account_get_username(account), NULL);
-}
-
 void
 msn_notification_add_buddy(MsnNotification *notification, const char *list,
 						   const char *who, const char *store_name,
@@ -1254,6 +1340,9 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 	}
 }
 
+/**************************************************************************
+ * Init
+ **************************************************************************/
 void
 msn_notification_init(void)
 {
@@ -1335,58 +1424,4 @@ void
 msn_notification_end(void)
 {
 	msn_table_destroy(cbs_table);
-}
-
-MsnNotification *
-msn_notification_new(MsnSession *session)
-{
-	MsnNotification *notification;
-	MsnServConn *servconn;
-
-	g_return_val_if_fail(session != NULL, NULL);
-
-	notification = g_new0(MsnNotification, 1);
-
-	notification->session = session;
-	notification->servconn = servconn = msn_servconn_new(session, MSN_SERVER_NS);
-	notification->cmdproc = servconn->cmdproc;
-	msn_servconn_set_connect_cb(servconn, connect_cb);
-
-	if (session->http_method)
-		servconn->http_data->server_type = "NS";
-
-	servconn->cmdproc->cbs_table = cbs_table;
-
-	return notification;
-}
-
-void
-msn_notification_destroy(MsnNotification *notification)
-{
-	msn_servconn_destroy(notification->servconn);
-
-	g_free(notification);
-}
-
-gboolean
-msn_notification_connect(MsnNotification *notification, const char *host, int port)
-{
-	MsnServConn *servconn;
-
-	g_return_val_if_fail(notification != NULL, FALSE);
-
-	servconn = notification->servconn;
-
-	return (notification->in_use = msn_servconn_connect(servconn, host, port));
-}
-
-void
-msn_notification_disconnect(MsnNotification *notification)
-{
-	g_return_if_fail(notification != NULL);
-
-	notification->in_use = FALSE;
-
-	if (notification->servconn->connected)
-		msn_servconn_disconnect(notification->servconn);
 }

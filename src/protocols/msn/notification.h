@@ -36,6 +36,9 @@ struct _MsnNotification
 	MsnCmdProc *cmdproc;
 	MsnServConn *servconn;
 
+	gboolean destroying;	/**< A flag that states if the notification is on
+							  the process of being destroyed. */
+
 	gboolean in_use;
 };
 
@@ -55,6 +58,15 @@ void msn_notification_destroy(MsnNotification *notification);
 gboolean msn_notification_connect(MsnNotification *notification,
 							  const char *host, int port);
 void msn_notification_disconnect(MsnNotification *notification);
+
+/**
+ * Closes a notification.
+ *
+ * It's first closed, and then disconnected.
+ * 
+ * @param notification The notification object to close.
+ */
+void msn_notification_close(MsnNotification *notification);
 
 void msn_got_login_params(MsnSession *session, const char *login_params);
 
