@@ -4519,7 +4519,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	int ret = 0;
 	GError *err = NULL;
 	const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
-	char *tmpmsg = NULL;
+	char *tmpmsg = NULL, *tmpmsg2 = NULL;
 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
@@ -4593,9 +4593,12 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		args.destsn = name;
 
 		/* For ICQ send newlines as CR/LF, for AIM send newlines as <BR> */
-		if (isdigit(name[0]))
-			tmpmsg = gaim_str_add_cr(message);
-		else
+		/* Also strip HTML for ICQ */
+		if (isdigit(name[0])) {
+			tmpmsg2 = gaim_markup_strip_html(message);
+			tmpmsg = gaim_str_add_cr(tmpmsg2);
+			g_free(tmpmsg2);
+		} else
 			tmpmsg = gaim_strdup_withhtml(message);
 		len = strlen(tmpmsg);
 
