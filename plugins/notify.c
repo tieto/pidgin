@@ -562,7 +562,7 @@ char *gaim_plugin_init(GModule *hndl) {
 }
 
 void gaim_plugin_remove() {
-	GList *c = gaim_get_ims();
+	GList *c = gaim_get_conversations();
 
 	while (c) {
 		struct gaim_conversation *cnv = (struct gaim_conversation *)c->data;

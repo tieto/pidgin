@@ -733,10 +733,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			 * the receive sound (sound.c will take care of not playing
 			 * while away), and then write it to the convo window.
 			 */
-			if (cnv == NULL) {
-				cnv = gaim_conversation_new(GAIM_CONV_IM, name);
-				gaim_conversation_set_user(cnv, gc->user);
-			}
+			if (cnv == NULL)
+				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->user, name);
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
 						  away | WFLAG_RECV, mtime);
@@ -827,10 +825,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			qm->len = len;
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		} else {
-			if (cnv == NULL) {
-				cnv = gaim_conversation_new(GAIM_CONV_IM, name);
-				gaim_conversation_set_user(cnv, gc->user);
-			}
+			if (cnv == NULL)
+				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->user, name);
 
 			/* CONV XXX gaim_conversation_set_name(cnv, name); */
 
@@ -1078,14 +1074,13 @@ struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
 	struct gaim_conversation *b;
 	struct gaim_chat *chat;
 
-	b = gaim_conversation_new(GAIM_CONV_CHAT, name);
+	b = gaim_conversation_new(GAIM_CONV_CHAT, gc->user, name);
 	chat = GAIM_CHAT(b);
 
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
 
 	gaim_chat_set_id(chat, id);
-	gaim_conversation_set_user(b, gc->user);
-	
+
 	if ((logging_options & OPT_LOG_CHATS) ||
 		find_log_info(gaim_conversation_get_name(b))) {
 

@@ -1510,7 +1510,7 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 	dim->conn->fd = source;
 	aim_conn_completeconnect(od->sess, dim->conn);
 	if (!(cnv = gaim_find_conversation(dim->name))) 
-		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->name);
+		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->user, dim->name);
 
 	/* This is the best way to see if we're connected or not */
 	if (getpeername(source, &name, &name_len) == 0) {
@@ -4758,7 +4758,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	dim = find_direct_im(od, sn);
 
 	if (!(cnv = gaim_find_conversation(sn)))
-		cnv = gaim_conversation_new(GAIM_CONV_IM, sn);
+		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->user, sn);
 	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,

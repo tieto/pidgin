@@ -440,13 +440,10 @@ void pressed_im_bud(GtkWidget *widget, struct buddy *b)
 
 	c = gaim_find_conversation(b->name);
 
-	if (c != NULL) {
+	if (c != NULL)
 		gaim_window_show(gaim_conversation_get_window(c));
-	} else {
-		c = gaim_conversation_new(GAIM_CONV_IM, b->name);
-
-		gaim_conversation_set_user(c, b->user);
-	}
+	else
+		c = gaim_conversation_new(GAIM_CONV_IM, b->user, b->name);
 }
 
 void pressed_im(GtkWidget *widget, struct buddy_show *b)
@@ -458,12 +455,10 @@ void pressed_im(GtkWidget *widget, struct buddy_show *b)
 	if (c != NULL) {
 		gaim_window_show(gaim_conversation_get_window(c));
 	} else {
-		struct gaim_connection *gc;
+		struct aim_user *user;
 
-		gc = (struct gaim_connection *)b->connlist->data;
-		c  = gaim_conversation_new(GAIM_CONV_IM, b->name);
-
-		gaim_conversation_set_user(c, gc->user);
+		user = ((struct gaim_connection *)b->connlist->data)->user;
+		c    = gaim_conversation_new(GAIM_CONV_IM, user, b->name);
 	}
 }
 
@@ -500,9 +495,12 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 {
 	if (!b->connlist)
 		return FALSE;
+
 	if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
 		struct gaim_conversation *c;
-		struct gaim_connection *gc;
+		struct aim_user *user;
+
+		user = ((struct gaim_connection *)b->connlist->data)->user;
 
 		c = gaim_find_conversation(b->name);
 
@@ -512,15 +510,16 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 
 			gaim_window_switch_conversation(win, index);
 			gaim_window_show(win);
+
+			gaim_conversation_set_user(c, user);
 		}
 		else
-			c = gaim_conversation_new(GAIM_CONV_IM, b->name);
-
-		gc = (struct gaim_connection *)b->connlist->data;
-		gaim_conversation_set_user(c, gc->user);
+			c = gaim_conversation_new(GAIM_CONV_IM, user, b->name);
 
 		gaim_window_switch_conversation(gaim_conversation_get_window(c),
 										gaim_conversation_get_index(c));
+
+		gaim_window_raise(gaim_conversation_get_window(c));
 
 		/* XXX-GTK gtk_widget_grab_focus(c->entry); */
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
@@ -1292,15 +1291,16 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 	if (!b->name)
 		return;
 
+	user = ((struct gaim_connection *)b->connlist->data)->user;
+
 	c = gaim_find_conversation(b->name);
 
 	if (c == NULL)
-		c = gaim_conversation_new(GAIM_CONV_IM, b->name);
-	else
+		c = gaim_conversation_new(GAIM_CONV_IM, user, b->name);
+	else {
+		gaim_conversation_set_user(c, user);
 		gaim_window_raise(gaim_conversation_get_window(c));
-
-	user = ((struct gaim_connection *)b->connlist->data)->user;
-	gaim_conversation_set_user(c, user);
+	}
 }
 
 static void info_callback(GtkWidget *widget, GtkTree *tree)
@@ -1398,9 +1398,9 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				c = gaim_find_conversation(name);
 
 				if (c == NULL)
-					c = gaim_conversation_new(GAIM_CONV_IM, name);
-
-				gaim_conversation_set_user(c, u);
+					c = gaim_conversation_new(GAIM_CONV_IM, u, name);
+				else
+					gaim_conversation_set_user(c, u);
 			}
 			if (b->options & OPT_POUNCE_NOTIFY) {
 				char tmp[1024];
@@ -1421,9 +1421,9 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 					c = gaim_find_conversation(name);
 
 					if (c == NULL)
-						c = gaim_conversation_new(GAIM_CONV_IM, name);
-
-					gaim_conversation_set_user(c, u);
+						c = gaim_conversation_new(GAIM_CONV_IM, u, name);
+					else
+						gaim_conversation_set_user(c, u);
 
 					gaim_conversation_write(c, NULL, b->message, -1,
 											WFLAG_SEND, time(NULL));

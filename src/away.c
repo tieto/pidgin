@@ -72,13 +72,17 @@ static void dequeue_message(GtkTreeIter *iter)
 		struct queued_message *qm = templist->data;
 		if (templist->data) {
 			if (!g_strcasecmp(qm->name, name)) {
+				struct aim_user *user = NULL;
+
+				if (g_slist_index(connections, qm->gc) >= 0)
+					user = qm->gc->user;
+
 				cnv = gaim_find_conversation(name);
 
 				if (!cnv)
-					cnv = gaim_conversation_new(GAIM_CONV_IM, qm->name);
-
-				if (g_slist_index(connections, qm->gc) >= 0)
-					gaim_conversation_set_user(cnv, qm->gc->user);
+					cnv = gaim_conversation_new(GAIM_CONV_IM, user, qm->name);
+				else
+					gaim_conversation_set_user(cnv, user);
 
 				gaim_im_write(GAIM_IM(cnv), NULL, qm->message, qm->len,
 						qm->flags, qm->tm);
@@ -103,17 +107,22 @@ void purge_away_queue(GSList **queue)
 	GSList *q = *queue;
 	struct queued_message *qm;
 	struct gaim_conversation *cnv;
+	struct aim_user *user;
 
 	while (q) {
 		qm = q->data;
 
+		user = NULL;
+
+		if (g_slist_index(connections, qm->gc) >= 0)
+			user = qm->gc->user;
+
 		cnv = gaim_find_conversation(qm->name);
 
 		if (!cnv)
-			cnv = gaim_conversation_new(GAIM_CONV_IM, qm->name);
-
-		if (g_slist_index(connections, qm->gc) >= 0)
-			gaim_conversation_set_user(cnv, qm->gc->user);
+			cnv = gaim_conversation_new(GAIM_CONV_IM, user, qm->name);
+		else
+			gaim_conversation_set_user(cnv, user);
 
 		gaim_im_write(GAIM_IM(cnv), NULL, qm->message, -1, qm->flags, qm->tm);
 

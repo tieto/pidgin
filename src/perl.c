@@ -781,12 +781,12 @@ XS (XS_GAIM_write_to_conv)
 		case 2: wflags=WFLAG_SYSTEM; break;
 		default: wflags=WFLAG_RECV;
 	}	
-		
+
 	c = gaim_find_conversation(nick);
 
 	if (!c)
-		c = gaim_conversation_new(GAIM_CONV_IM, nick);
-		
+		c = gaim_conversation_new(GAIM_CONV_IM, NULL, nick);
+
 	gaim_conversation_write(c, who, what, -1, wflags, time(NULL));
 	XSRETURN(0);
 }
@@ -831,10 +831,14 @@ XS (XS_GAIM_print_to_conv)
 		XSRETURN(0);
 		return;
 	}
+
 	c = gaim_find_conversation(nick);
+
 	if (!c)
-		c = gaim_conversation_new(GAIM_CONV_IM, nick);
-	gaim_conversation_set_user(c, gc->user);
+		c = gaim_conversation_new(GAIM_CONV_IM, gc->user, nick);
+	else
+		gaim_conversation_set_user(c, gc->user);
+
 	gaim_conversation_write(c, NULL, what, -1,
 							(WFLAG_SEND | (isauto ? WFLAG_AUTO : 0)),
 							time(NULL));

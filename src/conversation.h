@@ -419,11 +419,14 @@ struct gaim_window *gaim_get_last_window_with_type(GaimConversationType type);
  * Creates a new conversation of the specified type.
  *
  * @param type The type of conversation.
+ * @param user The account opening the conversation window on the gaim
+ *             user's end.
  * @param name The name of the conversation.
  *
  * @return The new conversation.
  */
 struct gaim_conversation *gaim_conversation_new(GaimConversationType type,
+												struct aim_user *user,
 												const char *name);
 
 /**

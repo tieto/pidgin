@@ -841,7 +841,8 @@ gaim_get_last_window_with_type(GaimConversationType type)
  * Conversation API
  **************************************************************************/
 struct gaim_conversation *
-gaim_conversation_new(GaimConversationType type, const char *name)
+gaim_conversation_new(GaimConversationType type, struct aim_user *user,
+					  const char *name)
 {
 	struct gaim_conversation *conv;
 
@@ -849,12 +850,13 @@ gaim_conversation_new(GaimConversationType type, const char *name)
 		return NULL;
 
 	/* Check if this conversation already exists. */
-	if ((conv = gaim_find_conversation(name)) != NULL)
+	if ((conv = gaim_find_conversation_with_user(name, user)) != NULL)
 		return conv;
 
 	conv = g_malloc0(sizeof(struct gaim_conversation));
 
 	conv->type         = type;
+	conv->user         = user;
 	conv->name         = g_strdup(name);
 	conv->title        = g_strdup(name);
 	conv->send_history = g_list_append(NULL, NULL);
@@ -881,12 +883,6 @@ gaim_conversation_new(GaimConversationType type, const char *name)
 	}
 
 	conversations = g_list_append(conversations, conv);
-
-	/* Set the gc */
-	if (connections != NULL) {
-		gaim_conversation_set_user(conv,
-			((struct gaim_connection *)connections->data)->user);
-	}
 
 	/* Auto-set the title. */
 	gaim_conversation_autoset_title(conv);
@@ -1329,7 +1325,7 @@ gaim_find_conversation_with_user(const char *name, const struct aim_user *user)
 	char *cuser;
 	GList *cnv;
 
-	if (name == NULL || user == NULL)
+	if (name == NULL)
 		return NULL;
 
 	cuser = g_strdup(normalize(name));

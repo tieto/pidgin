@@ -505,7 +505,8 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	else	{
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
-		convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
+		convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user,
+									  chat->nick);
 		gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM,
 								time(NULL));
 		dcc_chat_cancel (chat);
@@ -567,7 +568,7 @@ dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
 	struct gaim_conversation *convo;
 	char buf[IRC_BUF_LEN];
 
-	convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
+	convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user, chat->nick);
 
 	chat->fd = source;
 	g_snprintf (buf, sizeof buf,
@@ -2377,7 +2378,8 @@ dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 	chat->fd = accept (chat->fd, (struct sockaddr *) (&addr), &addrlen);
 	if (!chat->fd) {
 		dcc_chat_cancel (chat);
-		convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
+		convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user,
+									  chat->nick);
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
 		gaim_conversation_write(convo, NULL, buf, -1,
@@ -2386,7 +2388,7 @@ dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 	}
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_in, chat);
-	convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
+	convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user, chat->nick);
 	g_snprintf (buf, sizeof buf, _("DCC Chat with %s established"),
 				chat->nick);
 	gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));

@@ -530,6 +530,7 @@ im_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	struct gaim_conversation *conv2;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
+	struct aim_user *user;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
@@ -549,14 +550,16 @@ im_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	if (*name == '@') name++;
 	if (*name == '+') name++;
 
+	user = gaim_conversation_get_user(conv);
+
 	conv2 = gaim_find_conversation(name);
 
-	if (conv2 != NULL)
+	if (conv2 != NULL) {
 		gaim_window_raise(gaim_conversation_get_window(conv2));
+		gaim_conversation_set_user(conv2, user);
+	}
 	else
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, name);
-
-	gaim_conversation_set_user(conv2, gaim_conversation_get_user(conv));
+		conv2 = gaim_conversation_new(GAIM_CONV_IM, user, name);
 }
 
 static void
@@ -600,17 +603,18 @@ menu_im_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	const char *who;
 	struct gaim_conversation *conv2;
+	struct aim_user *user;
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
+
+	user = gaim_conversation_get_user(conv);
 
 	conv2 = gaim_find_conversation(who);
 
 	if (conv2 != NULL)
 		gaim_window_show(gaim_conversation_get_window(conv2));
-	else {
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, who);
-		gaim_conversation_set_user(conv2, gaim_conversation_get_user(conv));
-	}
+	else
+		conv2 = gaim_conversation_new(GAIM_CONV_IM, user, who);
 }
 
 static void
@@ -710,9 +714,9 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		struct gaim_conversation *c;
 
 		if ((c = gaim_find_conversation(who)) == NULL)
-			c = gaim_conversation_new(GAIM_CONV_IM, who);
-
-		gaim_conversation_set_user(c, user);
+			c = gaim_conversation_new(GAIM_CONV_IM, user, who);
+		else
+			gaim_conversation_set_user(c, user);
 	}
 	else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		static GtkWidget *menu = NULL;

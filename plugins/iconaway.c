@@ -40,7 +40,7 @@ void iconify_windows(struct gaim_connection *gc, char *state,
 
 		win = (struct gaim_window *)windows->data;
 
-		if (gaim_window_get_ui_ops(win) == gaim_get_gtk_window_ui_ops()) {
+		if (GAIM_IS_GTK_WINDOW(win)) {
 			struct gaim_gtk_window *gtkwin;
 
 			gtkwin = GAIM_GTK_WINDOW(win);

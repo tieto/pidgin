@@ -1000,8 +1000,7 @@ const char *handle_uri(char *uri) {
 			g_string_free(str, TRUE);
 		}
 		
-		c = gaim_conversation_new(GAIM_CONV_IM, who);
-		gaim_conversation_set_user(c, gc->user);
+		c = gaim_conversation_new(GAIM_CONV_IM, gc->user, who);
 		g_free(who);
 
 		if (what) {

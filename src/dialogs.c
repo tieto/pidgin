@@ -561,24 +561,28 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 {
 	const char *who;
 	struct gaim_conversation *conv;
+	struct aim_user *user;
 
 	if (resp == GTK_RESPONSE_OK) {
 		who = gtk_entry_get_text(GTK_ENTRY(info->entry));
-	
+
 		if (!g_strcasecmp(who, "")) {
 			g_free(info);
 			return;
 		}
 
+		user = (info->gc ? info->gc->user : NULL);
+
 		conv = gaim_find_conversation(who);
 
 		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_IM, who);
-		else
+			conv = gaim_conversation_new(GAIM_CONV_IM, user, who);
+		else {
 			gaim_window_raise(gaim_conversation_get_window(conv));
 
-		if (info->gc)
-			gaim_conversation_set_user(conv, info->gc->user);
+			if (user)
+				gaim_conversation_set_user(conv, info->gc->user);
+		}
 	}
 
 	destroy_dialog(NULL, imdialog);
