@@ -23,6 +23,10 @@
  *
  */
 
+/*
+ * TODO: Need to document a lot of these.
+ */
+
 #ifndef _MDNS_H_
 #define _MDNS_H_
 
@@ -131,7 +135,6 @@ typedef struct _DNSPacket {
  */
 int mdns_socket_establish();
 
-
 /**
  * Close a multicast socket.  This also clears the MDNS
  * cache.
@@ -139,7 +142,6 @@ int mdns_socket_establish();
  * @param The file descriptor of the multicast socket.
  */
 void mdns_socket_close(int fd);
-
 
 /**
  * Sends a multicast DNS datagram.  Generally this is called
@@ -169,6 +171,7 @@ int mdns_send_rr(int fd, ResourceRecord *rr);
 int mdns_advertise_a(int fd, const char *name, const unsigned char *ip);
 int mdns_advertise_null(int fd, const char *name, const char *data, unsigned short rdlength);
 int mdns_advertise_ptr(int fd, const char *name, const char *domain);
+int mdns_advertise_ptr_with_ttl(int fd, const char *name, const char *domain, int ttl);
 int mdns_advertise_txt(int fd, const char *name, const GSList *txt);
 int mdns_advertise_aaaa(int fd, const char *name, const unsigned char *ip);
 int mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *target);
@@ -195,6 +198,7 @@ void mdns_free_rrs(GSList *rrs);
 ResourceRecord *mdns_copy_rr(const ResourceRecord *rr);
 
 ResourceRecordRDataTXTNode *mdns_txt_find(const GSList *ret, const char *name);
+
 GSList *mdns_txt_add(GSList *ret, const char *name, const char *value, gboolean replace);
 
 

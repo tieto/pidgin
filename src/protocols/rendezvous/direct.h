@@ -29,6 +29,10 @@
 
 #include "eventloop.h"
 
+#include "rendezvous.h"
+
 void rendezvous_direct_acceptconnection(gpointer data, gint source, GaimInputCondition condition);
+
+void rendezvous_direct_send_message(GaimConnection *gc, const char *who, const char *message);
 
 #endif /* _DIRECT_H_ */

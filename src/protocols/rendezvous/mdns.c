@@ -847,6 +847,12 @@ mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short 
 int
 mdns_advertise_ptr(int fd, const char *name, const char *domain)
 {
+	return mdns_advertise_ptr_with_ttl(fd, name, domain, 0x00001c20);
+}
+
+int
+mdns_advertise_ptr_with_ttl(int fd, const char *name, const char *domain, int ttl)
+{
 	int ret;
 	ResourceRecord *rr;
 
@@ -859,7 +865,7 @@ mdns_advertise_ptr(int fd, const char *name, const char *domain)
 	rr->name = g_strdup(name);
 	rr->type = RENDEZVOUS_RRTYPE_PTR;
 	rr->class = 0x8001;
-	rr->ttl = 0x00001c20;
+	rr->ttl = ttl;
 	rr->rdata = (void *)g_strdup(domain);
 	rr->rdlength = mdns_getlength_rr_rdata(rr->type, rr->rdata);
 
