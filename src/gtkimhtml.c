@@ -1357,11 +1357,15 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		x++;
 	}
 
+	if (!t->image->file)
+		return NULL;
+
 	if (!t->image->icon)
 		t->image->icon = gdk_pixbuf_animation_new_from_file(t->image->file, NULL);
 
 	return t->image->icon;
 }
+
 #define VALID_TAG(x)	if (!g_ascii_strncasecmp (string, x ">", strlen (x ">"))) {	\
 				*tag = g_strndup (string, strlen (x));		\
 				*len = strlen (x) + 1;				\
@@ -3469,10 +3473,6 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GtkTextChildAnchor *anchor;
 	char *unescaped = gaim_unescape_html(smiley);
 
-	anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
-	g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", unescaped, g_free);
-	g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
-
 	annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
 	if(annipixbuf) {
 		if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
@@ -3485,9 +3485,17 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	}
 
 	if (icon) {
+		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
+		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
+		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
+
 		gtk_widget_show(icon);
 		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
+	} else {
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
 	}
+
+	g_free(unescaped);
 }
 
 static const gchar *tag_to_html_start(GtkTextTag *tag)
