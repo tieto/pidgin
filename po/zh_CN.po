@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
-"POT-Creation-Date: 2003-08-12 15:50-0700\n"
+"POT-Creation-Date: 2003-08-13 17:21-0700\n"
 "PO-Revision-Date: 2003-08-13 06:51+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
@@ -1082,7 +1082,7 @@ msgid "Gaim encountered an error communicating with the ICQ server."
 msgstr "Gaim 与 ICQ 服务器通讯错误。"
 
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2685
-#: src/dialogs.c:866 src/gtkconv.c:1116 src/gtkconv.c:2954 src/gtkconv.c:4125
+#: src/dialogs.c:866 src/gtkconv.c:1116 src/gtkconv.c:2954 src/gtkconv.c:4123
 #: src/gtkrequest.c:193 src/prpl.c:313
 msgid "Add"
 msgstr "添加"
@@ -1223,9 +1223,12 @@ msgstr "错误更少的 IRC 协议插件"
 msgid "Server"
 msgstr "服务器"
 
-#: src/protocols/irc/irc.c:507
-msgid "Port:"
-msgstr "端口："
+#. Account Options
+#: src/protocols/irc/irc.c:507 src/protocols/jabber/jabber.c:4427
+#: src/protocols/msn/msn.c:1251 src/protocols/napster/napster.c:644
+#: src/protocols/trepia/trepia.c:1377 src/gtkprefs.c:1146
+msgid "Port"
+msgstr "端口"
 
 #: src/protocols/irc/irc.c:510
 msgid "Encoding"
@@ -1729,13 +1732,6 @@ msgstr "Jabber 协议插件"
 msgid "Resource"
 msgstr "资源"
 
-#. Account Options
-#: src/protocols/jabber/jabber.c:4427 src/protocols/msn/msn.c:1251
-#: src/protocols/napster/napster.c:644 src/protocols/trepia/trepia.c:1377
-#: src/gtkprefs.c:1146
-msgid "Port"
-msgstr "端口"
-
 #: src/protocols/jabber/jabber.c:4431
 msgid "Connect server"
 msgstr "连接服务器"
@@ -2017,7 +2013,7 @@ msgid "Page"
 msgstr "寻呼"
 
 #: src/protocols/msn/msn.c:237 src/about.c:151 src/dialogs.c:3450
-#: src/gtkrequest.c:191 src/server.c:1465
+#: src/gtkrequest.c:191 src/server.c:1469
 msgid "Close"
 msgstr "关闭"
 
@@ -3937,29 +3933,29 @@ msgstr[0] ""
 msgid "Group not removed"
 msgstr "组未删除"
 
-#: src/blist.c:981
+#: src/blist.c:1032
 msgid "Invalid Groupname"
 msgstr "组名无效"
 
-#: src/blist.c:1737
+#: src/blist.c:1789
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr "处理您的好友列表时出错。好友列表未装入。"
 
-#: src/blist.c:1739
+#: src/blist.c:1791
 msgid "Buddy List Error"
 msgstr "好友列表出错"
 
 #. rob wants to inform the user that their buddy lists are
 #. * being converted
-#: src/blist.c:1747
+#: src/blist.c:1799
 #, c-format
 msgid ""
 "Gaim is converting your old buddy lists to a new format, which will now be "
 "located at %s"
 msgstr "Gaim 正在将您旧的好友列表转换为新格式，并存放在 %s"
 
-#: src/blist.c:1750
+#: src/blist.c:1802
 msgid "Converting Buddy List"
 msgstr "正在转换好友列表"
 
@@ -4008,7 +4004,7 @@ msgstr "加入"
 msgid "Missing protocol plugin for %s"
 msgstr "缺少 %s 的协议插件"
 
-#: src/connection.c:121 src/connection.c:415
+#: src/connection.c:121 src/gtkconn.c:278
 msgid "Connection Error"
 msgstr "连接错误"
 
@@ -4016,15 +4012,6 @@ msgstr "连接错误"
 #, c-format
 msgid "Enter password for %s"
 msgstr "输入 %s 的密码"
-
-#: src/connection.c:411
-#, c-format
-msgid "%s has been disconnected"
-msgstr "%s 已经断开连接"
-
-#: src/connection.c:414
-msgid "Reason Unknown."
-msgstr "原因未知。"
 
 #: src/conversation.c:403
 msgid "Unable to send message. The message is too large."
@@ -4069,19 +4056,19 @@ msgstr "(还有 %d 人)"
 msgid " left the room (%s)."
 msgstr "离开了聊天室(%s)。"
 
-#: src/conversation.c:2351
+#: src/conversation.c:2395
 msgid "Last created window"
 msgstr "上次创建的窗口"
 
-#: src/conversation.c:2353
+#: src/conversation.c:2397
 msgid "New window"
 msgstr "新建窗口"
 
-#: src/conversation.c:2355
+#: src/conversation.c:2399
 msgid "By group"
 msgstr "按组"
 
-#: src/conversation.c:2357
+#: src/conversation.c:2401
 msgid "By account"
 msgstr "按账户"
 
@@ -5040,7 +5027,7 @@ msgstr "设置离开消息"
 msgid "No actions available"
 msgstr "没有可用的操作"
 
-#: src/gtkconn.c:57 src/gtkconn.c:241 src/gtkconn.c:253
+#: src/gtkconn.c:57 src/gtkconn.c:241 src/gtkconn.c:252
 msgid "Done."
 msgstr "完成。"
 
@@ -5055,6 +5042,15 @@ msgstr "登入"
 #: src/gtkconn.c:207
 msgid "Cancel All"
 msgstr "全部取消"
+
+#: src/gtkconn.c:274
+#, c-format
+msgid "%s has been disconnected"
+msgstr "%s 已经断开连接"
+
+#: src/gtkconn.c:277
+msgid "Reason Unknown."
+msgstr "原因未知。"
 
 #: src/gtkconv.c:184
 msgid "That file already exists"
@@ -5100,7 +5096,7 @@ msgstr "忽略"
 msgid "Info"
 msgstr "信息"
 
-#: src/gtkconv.c:1114 src/gtkconv.c:2960 src/gtkconv.c:4110
+#: src/gtkconv.c:1114 src/gtkconv.c:2960 src/gtkconv.c:4108
 #: src/gtkrequest.c:194
 msgid "Remove"
 msgstr "删除"
@@ -5247,15 +5243,15 @@ msgstr "/选项(O)/允许声音(S)"
 #. From right to left...
 #. Send button
 #: src/gtkconv.c:2934 src/gtkconv.c:2936 src/gtkconv.c:3034 src/gtkconv.c:3036
-#: src/gtkconv.c:5884
+#: src/gtkconv.c:5882
 msgid "Send"
 msgstr "发送"
 
-#: src/gtkconv.c:2957 src/gtkconv.c:4128
+#: src/gtkconv.c:2957 src/gtkconv.c:4126
 msgid "Add the user to your buddy list"
 msgstr "将用户加为好友"
 
-#: src/gtkconv.c:2963 src/gtkconv.c:4113
+#: src/gtkconv.c:2963 src/gtkconv.c:4111
 msgid "Remove the user from your buddy list"
 msgstr "从您的好友列表中删除该用户"
 
@@ -5282,7 +5278,7 @@ msgid "Block the user"
 msgstr "屏蔽用户"
 
 #. Invite
-#: src/gtkconv.c:3046 src/gtkconv.c:5887
+#: src/gtkconv.c:3046 src/gtkconv.c:5885
 msgid "Invite"
 msgstr "邀请"
 
@@ -5355,43 +5351,43 @@ msgstr "给用户发送即时消息"
 msgid "Ignore the user"
 msgstr "忽略用户"
 
-#: src/gtkconv.c:3904 src/server.c:1304
+#: src/gtkconv.c:3902 src/server.c:1308
 #, c-format
 msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
 msgstr "<HR><BR><H3 Align=Center> ---- 新对话 @ %s ----</H3><BR>\n"
 
-#: src/gtkconv.c:3908 src/server.c:1307
+#: src/gtkconv.c:3906 src/server.c:1311
 #, c-format
 msgid "---- New Conversation @ %s ----\n"
 msgstr "---- 新对话 @ %s ----\n"
 
-#: src/gtkconv.c:3940
+#: src/gtkconv.c:3938
 msgid "Close conversation"
 msgstr "关闭对话"
 
-#: src/gtkconv.c:4606 src/gtkconv.c:4638 src/gtkconv.c:4759 src/gtkconv.c:4826
+#: src/gtkconv.c:4604 src/gtkconv.c:4636 src/gtkconv.c:4757 src/gtkconv.c:4824
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "聊天室里有 %d 个人"
 
-#: src/gtkconv.c:5163
+#: src/gtkconv.c:5161
 msgid "Disable Animation"
 msgstr "禁用动画"
 
-#: src/gtkconv.c:5172
+#: src/gtkconv.c:5170
 msgid "Enable Animation"
 msgstr "启用动画"
 
-#: src/gtkconv.c:5179
+#: src/gtkconv.c:5177
 msgid "Hide Icon"
 msgstr "隐藏图标"
 
-#: src/gtkconv.c:5185
+#: src/gtkconv.c:5183
 msgid "Save Icon As..."
 msgstr "图标另存为..."
 
-#: src/gtkconv.c:5657 src/gtkconv.c:5660
+#: src/gtkconv.c:5655 src/gtkconv.c:5658
 msgid "<main>/Conversation/Close"
 msgstr "<main>/对话(C)/关闭(C)"
 
@@ -5923,11 +5919,11 @@ msgstr "在同一标签窗口内显示即时消息和聊天(_T)"
 
 #: src/gtkprefs.c:929
 msgid "Show _close button on tabs"
-msgstr "在标签上显示关闭按钮(_C)。"
+msgstr "在标签上显示关闭按钮(_C)"
 
 #: src/gtkprefs.c:940
 msgid "Show status _icons on tabs"
-msgstr "在标签上显示状态图标(_I)。"
+msgstr "在标签上显示状态图标(_I)"
 
 #: src/gtkprefs.c:967 src/gtkprefs.c:1023
 msgid "Window"
@@ -6741,7 +6737,7 @@ msgstr ""
 msgid "an anonymous person"
 msgstr "无名氏"
 
-#: src/server.c:1260
+#: src/server.c:1264
 #, c-format
 msgid ""
 "User '%s' invites %s to buddy chat room: '%s'\n"
@@ -6750,20 +6746,20 @@ msgstr ""
 "用户“%s”邀请 %s 加入好友聊天室：“%s”\n"
 "%s"
 
-#: src/server.c:1264
+#: src/server.c:1268
 #, c-format
 msgid "User '%s' invites %s to buddy chat room: '%s'\n"
 msgstr "用户“%s”邀请 %s 加入好友聊天室：“%s”\n"
 
-#: src/server.c:1270
+#: src/server.c:1274
 msgid "Accept chat invitation?"
 msgstr "接受聊天邀请吗？"
 
-#: src/server.c:1443
+#: src/server.c:1447
 msgid "Gaim - Popup"
 msgstr "Gaim - 弹出窗口"
 
-#: src/server.c:1470
+#: src/server.c:1474
 msgid "More Info"
 msgstr "更多信息"
 
@@ -6830,3 +6826,6 @@ msgstr "暂停"
 #: src/gtkdebug.c:179
 msgid "Timestamps"
 msgstr "时间戳"
+
+#~ msgid "Port:"
+#~ msgstr "端口："
