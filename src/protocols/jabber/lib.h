@@ -2,6 +2,9 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <sys/types.h>
+/*this must happen before sys/socket.h or freebsd won't compile*/
+
 #ifndef _WIN32
 #include <syslog.h>
 #include <strings.h>
@@ -19,7 +22,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <stdio.h>
 #include <setjmp.h>
 #include <sys/stat.h>

@@ -25,6 +25,9 @@
 #include <config.h>
 #endif
 
+#include <sys/types.h>
+/*this must happen before sys/socket.h or freebsd won't compile*/
+
 #ifndef _WIN32
 #include <netdb.h>
 #include <netinet/in.h>

@@ -26,6 +26,9 @@
 #ifndef _PROXY_H_
 #define _PROXY_H_
 
+#include <sys/types.h>
+/*this must happen before sys/socket.h or freebsd won't compile*/
+
 #ifndef _WIN32
 #include <sys/socket.h>
 #include <netdb.h>
@@ -34,7 +37,6 @@
 #include <winsock.h>
 #endif
 
-#include <sys/types.h>
 #include <glib.h>
 
 #define PROXY_NONE 0

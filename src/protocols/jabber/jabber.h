@@ -16,6 +16,10 @@
  *  Jabber
  *  Copyright (C) 1998-1999 The Jabber Team http://jabber.org/
  */
+
+#include <sys/types.h>
+/*this must happen before sys/socket.h or freebsd won't compile*/
+
 #ifndef _WIN32
 #include <syslog.h>
 #include <sys/socket.h>
@@ -31,7 +35,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <stdio.h>
 #include <setjmp.h>
 #include <sys/stat.h>
