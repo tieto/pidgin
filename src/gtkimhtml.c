@@ -2052,7 +2052,7 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 		imhtml->edit.underline = span;
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
-		span = imhtml->edit.italic;
+		span = imhtml->edit.underline;
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		imhtml->edit.underline = NULL;
 	}
