@@ -30,6 +30,7 @@
 #include "accountopt.h"
 #include "buddyicon.h"
 #include "conversation.h"
+#include "core.h"
 #include "debug.h"
 #include "ft.h"
 #include "imgstore.h"
@@ -44,11 +45,6 @@
 
 #include "aim.h"
 #include "md5.h"
-
-/* XXX CORE/UI */
-#include "gtkinternal.h"
-#include "gaim.h"
-
 
 #define UC_AOL		0x02
 #define UC_ADMIN	0x04
