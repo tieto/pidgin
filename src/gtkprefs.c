@@ -798,16 +798,8 @@ GtkWidget *messages_page() {
 	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
 			"/gaim/gtk/conversations/spellcheck", vbox);
 #endif
-#if 0 /* PREFSLASH04 */
-	vbox = gaim_gtk_make_frame (ret, _("Ignore"));
-	gaim_gtk_prefs_checkbox(_("Ignore c_olors"),
-			"/gaim/gtk/conversations/ignore_colors", vbox);
-	gaim_gtk_prefs_checkbox(_("Ignore font _faces"),
-			"/gaim/gtk/conversations/ignore_fonts", vbox);
-	gaim_gtk_prefs_checkbox(_("Ignore font si_zes"),
-			"/gaim/gtk/conversations/ignore_font_sizes", vbox);
-#endif /* PREFSLASH04 */
-	gaim_gtk_prefs_checkbox(_("Ignore formatting on incoming messages"), NULL, vbox);
+	gaim_gtk_prefs_checkbox(_("Ignore formatting on incoming messages"),
+			"/gaim/gtk/conversations/ignore_formatting", vbox);
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -2949,6 +2941,9 @@ void gaim_gtk_prefs_update_old() {
 									 "/gaim/gtk/sound/signon");
 
 	/* Remove some no-longer-used prefs */
+	gaim_prefs_remove("/gaim/gtk/conversations/ignore_colors");
+	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
+	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");

@@ -917,8 +917,6 @@ static void gaimrc_read_options(FILE *f)
 						 ? GAIM_BUTTON_IMAGE : GAIM_BUTTON_TEXT_IMAGE)
 					 : ((display_options & OPT_DISP_NO_BUTTONS)
 						 ? GAIM_BUTTON_NONE : GAIM_BUTTON_TEXT)));
-			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
-					display_options & OPT_DISP_IGNORE_COLOUR);
 			gaim_prefs_set_bool("/core/conversations/chat/show_join",
 					display_options & OPT_DISP_CHAT_LOGON);
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/button_type",
@@ -935,10 +933,6 @@ static void gaimrc_read_options(FILE *f)
 						 ? GAIM_BUTTON_TEXT : GAIM_BUTTON_NONE)));
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_warning_level",
 					display_options & OPT_DISP_SHOW_WARN);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_fonts",
-					display_options & OPT_DISP_IGNORE_FONTS);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_font_sizes",
-					display_options & OPT_DISP_IGNORE_SIZES);
 			gaim_prefs_set_int("/gaim/gtk/conversations/tab_side",
 					((display_options & OPT_DISP_CONV_SIDE_TAB)
 					 ? ((display_options & OPT_DISP_CONV_BR_TAB)
@@ -1000,12 +994,6 @@ static void gaimrc_read_options(FILE *f)
 					convo_options & OPT_CONVO_CTL_ENTER);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
 					convo_options & OPT_CONVO_SHOW_TIME);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
-					convo_options & OPT_CONVO_IGNORE_COLOUR);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_fonts",
-					convo_options & OPT_CONVO_IGNORE_FONTS);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_font_sizes",
-					convo_options & OPT_CONVO_IGNORE_SIZES);
 			gaim_prefs_set_bool("/core/conversations/combine_chat_im",
 					convo_options & OPT_CONVO_COMBINE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/close_on_tabs",
