@@ -11,7 +11,7 @@ else
 SUBDIRS = yay icq msn
 endif
 
-plugin_DATA = autorecon.so iconaway.so irc.so notify.so spellchk.so lagmeter.so
+plugin_DATA = autorecon.so iconaway.so irc.so notify.so spellchk.so lagmeter.so napster.so
 plugindir = $(libdir)/gaim
 
 clean distclean:
