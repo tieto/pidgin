@@ -885,15 +885,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 	message = buffy;
 
-	/*
-	 * If you can't figure this out, stop reading right now.
-	 * "We're not worthy! We're not worthy!"
-	 */
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
-		buffy = gaim_markup_linkify(message);
-		g_free(message);
-		message = buffy;
-	}
+	/* Make sure URLs are clickable */
+	buffy = gaim_markup_linkify(message);
+	g_free(message);
+	message = buffy;
 
 	/*
 	 * Um. When we call gaim_conversation_write with the message we received,
@@ -1555,12 +1550,8 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	who = angel;
 	message = buffy;
 
-
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
-		buf = gaim_markup_linkify(message);
-	else
-		buf = g_strdup(message);
+	/* Make sure URLs are clickable */
+	buf = gaim_markup_linkify(message);
 
 	if (whisper)
 		w = GAIM_MESSAGE_WHISPER;

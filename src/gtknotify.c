@@ -375,18 +375,11 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 	gaim_gtk_find_images(text, &images);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
-	{
-		linked_text = gaim_markup_linkify(text);
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
-										   options, images);
-		g_free(linked_text);
-	}
-	else
-	{
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text,
-										   options, images);
-	}
+	/* Make sure URLs are clickable */
+	linked_text = gaim_markup_linkify(text);
+	gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
+									   options, images);
+	g_free(linked_text);
 
 	if (images)
 	{

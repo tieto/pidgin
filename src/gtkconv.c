@@ -5849,7 +5849,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_colors", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_fonts", FALSE);

@@ -759,10 +759,6 @@ GtkWidget *messages_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
 	gaim_gtk_prefs_checkbox(_("Show _timestamp on messages"),
 			"/gaim/gtk/conversations/show_timestamps", vbox);
-#if 0 /* PREFSLASH04 */
-	  gaim_gtk_prefs_checkbox(_("Show _URLs as links"),
-			"/gaim/gtk/conversations/show_urls_as_links", vbox);
-#endif /* PREFSLASH04 */
 #ifdef USE_GTKSPELL
 	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
 			"/gaim/gtk/conversations/spellcheck", vbox);
