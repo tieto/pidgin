@@ -40,8 +40,6 @@ gaim_connection_new(GaimAccount *account)
 	gaim_connection_set_account(gc, account);
 	gaim_account_set_connection(account, gc);
 
-	connections = g_list_append(connections, gc);
-
 	return gc;
 }
 
@@ -98,6 +96,8 @@ gaim_connection_connect(GaimConnection *gc)
 	gaim_connection_set_state(gc, GAIM_CONNECTING);
 
 	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling serv_login\n");
+
+	connections = g_list_append(connections, gc);
 
 	serv_login(account);
 }
