@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-04-21 08:24:45 -0400 (Sat, 21 Apr 2001) $ by
+STATUS of GAIM CVS tree. Last modified $Date: 2001-05-23 07:39:05 -0400 (Wed, 23 May 2001) $ by
 $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
@@ -27,7 +27,9 @@ use the CVS version or stick with a stable release. Use the CVS version. If
 you need a version that you know is reliable, then keep your favorite one in
 case of an emergency. But for the most part, gaim is not mission-critical
 software, and if you can help us find a few bugs before we release, all the
-better.
+better. (Also, CVS tends to be more stable than releases, since we get 10 or
+12 bug reports right after we make a release, and all those bugs are fixed
+within a day or two usually.)
 
 
 Buddy List
@@ -65,15 +67,10 @@ going on.
 TOC (Rob)
 ===
 
-TOC is working reasonably well. The options to use a proxy got moved to the
-account editor, and are set up on a per-account basis, in case you were
-wondering. TOC can be used to sign into ICQ; though you should use the ICQ
-plugin as it offers more functionality.
-
-TOC cannot get people's away messages; TOC also cannot make requests to send
-files. It is possible, however, to have an AIM user request to get a file from
-or send a file to you. Support for Direct IM, Buddy Icons, and Voice Chat is
-being worked on.
+TOC is working reasonably well. TOC cannot get people's away messages; TOC also
+cannot make requests to send files. It is possible, however, to have an AIM user
+request to get a file from or send a file to you. Support for Direct IM, Buddy
+Icons, and Voice Chat is being worked on.
 
 
 Oscar (Eric)
@@ -83,6 +80,15 @@ Oscar can get people's away messages, so you should use it if that's what's
 important to you. Oscar also supports requesting and accepting Direct IM
 connections, but doesn't yet let you send/receive files through this or through
 the Get File/Send File method. Permit/Deny lists should work properly now.
+
+Oscar is the "default" protocol now, because it supports every feature that TOC
+supports and more (except file transfer, but TOC doesn't do file transfer very
+well), and is in general more reliable than TOC. When you add new accounts it
+defaults to using Oscar (you can specify TOC or any other protocol); when gaim
+can't figure out which protocol you wanted to use (e.g. when you type in a
+screenname into the Login window for an account gaim doesn't know about), it
+will sign it on using Oscar. It is also recommended that you use Oscar instead
+of TOC.
 
 
 Yahoo (Eric)
