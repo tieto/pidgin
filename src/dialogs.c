@@ -1301,6 +1301,9 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_widget_show(b->p_unidle);
 	
 	b->p_typing = gtk_check_button_new_with_label(_("Pounce when buddy is typing to you"));
+	if (edit_bp)		
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_typing),
+					   (edit_bp->options & OPT_POUNCE_TYPING) ? TRUE : FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->p_typing,1,2,1,2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_widget_show(b->p_typing);
 
