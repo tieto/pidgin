@@ -1919,16 +1919,15 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	 * with the TLVs read below, they are two different pieces.  The
 	 * userinfo block contains the number of TLVs that contain user
 	 * information, the rest are not even though there is no seperation.
-	 * aim_extractuserinfo() returns the number of bytes used by the
-	 * userinfo tlvs, so you can start reading the rest of them right
-	 * afterward.  
+	 * You can start reading the message TLVs after aim_info_extract() 
+	 * parses out the standard userinfo block.
 	 *
 	 * That also means that TLV types can be duplicated between the
 	 * userinfo block and the rest of the message, however there should
 	 * never be two TLVs of the same type in one block.
 	 * 
 	 */
-	aim_extractuserinfo(sess, bs, &userinfo);
+	aim_info_extract(sess, bs, &userinfo);
 
 	/*
 	 * From here on, its depends on what channel we're on.
@@ -1962,11 +1961,10 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		aim_freetlvchain(&tlvlist);
 
 	} else {
-
-		faimdprintf(sess, 0, "icbm: ICBM received on an unsupported channel.  Ignoring.\n (chan = %04x)", channel);
-
-		return 0;
+		faimdprintf(sess, 0, "icbm: ICBM received on an unsupported channel.  Ignoring.  (chan = %04x)\n", channel);
 	}
+
+	aim_info_free(&userinfo);
 
 	return ret;
 }
@@ -2014,12 +2012,14 @@ static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	while (aim_bstream_empty(bs)) {	
 
 		channel = aimbs_get16(bs);
-		aim_extractuserinfo(sess, bs, &userinfo);
+		aim_info_extract(sess, bs, &userinfo);
 		nummissed = aimbs_get16(bs);
 		reason = aimbs_get16(bs);
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			 ret = userfunc(sess, rx, channel, &userinfo, nummissed, reason);
+
+		aim_info_free(&userinfo);
 	}
 
 	return ret;

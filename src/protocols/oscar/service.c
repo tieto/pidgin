@@ -501,10 +501,12 @@ static int selfinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	aim_rxcallback_t userfunc;
 	aim_userinfo_t userinfo;
 
-	aim_extractuserinfo(sess, bs, &userinfo);
+	aim_info_extract(sess, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, &userinfo);
+
+	aim_info_free(&userinfo);
 
 	return ret;
 }
@@ -522,10 +524,12 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	newevil = aimbs_get16(bs);
 
 	if (aim_bstream_empty(bs))
-		aim_extractuserinfo(sess, bs, &userinfo);
+		aim_info_extract(sess, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, newevil, &userinfo);
+
+	aim_info_free(&userinfo);
 
 	return ret;
 }
@@ -938,6 +942,30 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t o
 	return 0;
 }
 
+/*
+ * Subtype 0x0021 - Receive our extended status
+ *
+ * This is used for MAC non-away "away" messages, and maybe ICQ extended status messages?
+ */
+static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+{
+	int ret = 0;
+	aim_rxcallback_t userfunc;
+	char *msg = NULL;
+	fu16_t id;
+
+	aimbs_get16(bs); /* 0x0002 */
+	aimbs_get16(bs); /* 0x0404 or 0x0407?  Maybe 0x04 and then a length? */
+	msg = aimbs_getstr(bs, aimbs_get16(bs));
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, msg);
+
+	free(msg);
+
+	return ret;
+}
+
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
@@ -965,6 +993,8 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		return hostversions(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x001f)
 		return memrequest(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x0021)
+		return aim_parse_extstatus(sess, mod, rx, snac, bs);
 
 	return 0;
 }

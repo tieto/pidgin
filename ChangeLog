@@ -16,6 +16,7 @@ version 0.65:
 	* Added Trepia support.
 	* New Send IM buddy icon merged from Ximian Desktop 2
 	* Fixed "Sort by Status" crash
+	* Ability to view iChat "Available" messages
 
 version 0.64 (05/29/2003):
 	* Buddy list sorting in buddy list preferences.

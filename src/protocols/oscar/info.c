@@ -443,11 +443,17 @@ static void dumptlv(aim_session_t *sess, fu16_t type, aim_bstream_t *bs, fu8_t l
 	return;
 }
 
+faim_internal void aim_info_free(aim_userinfo_t *info)
+{
+	free(info->iconcsum);
+	free(info->availablemsg);
+}
+
 /*
  * AIM is fairly regular about providing user info.  This is a generic 
  * routine to extract it in its standard form.
  */
-faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *outinfo)
+faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *outinfo)
 {
 	int curtlv, tlvcnt;
 	fu8_t snlen;
@@ -636,24 +642,54 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			/*
 			 * Type = 0x001d
 			 *
-			 * Buddy icon information.  This contains the info 
-			 * about the buddy icon that the user has stored on 
-			 * the server.
+			 * Buddy icon information and available messages.
+			 *
+			 * This almost seems like the AIM protocol guys gave 
+			 * the iChat guys a Type, and the iChat guys tried to 
+			 * cram as much cool shit into it as possible.  Then 
+			 * the Windows AIM guys were like, "hey, that's 
+			 * pretty neat, let's copy those prawns."
+			 *
+			 * In that spirit, this can contain a custom message, 
+			 * kind of like an away message, but you're not away 
+			 * (it's called an "available" message).  Or it can 
+			 * contain information about the buddy icon the user 
+			 * has stored on the server.
 			 */
-			int flags, number, len;
-			fu8_t *csum;
+			int type2, number, length2;
 
 			while (aim_bstream_curpos(bs) < endpos) {
-				flags = aimbs_get16(bs);
+				type2 = aimbs_get16(bs);
 				number = aimbs_get8(bs);
-				len = aimbs_get8(bs);
-				if ((flags & 0x0001) && (number == 0x01) && (len < 30)) {
-					csum = aimbs_getraw(bs, len);
-					memcpy(outinfo->iconcsum, csum, len);
-					outinfo->iconcsumlen = len;
-					free(csum);
-				} else
-					aim_bstream_advance(bs, len);
+				length2 = aimbs_get8(bs);
+
+				switch (type2) {
+					case 0x0000: { /* This is an official buddy icon? */
+						/* This is always 5 bytes? */
+						aim_bstream_advance(bs, length2);
+					} break;
+
+					case 0x0001: { /* A buddy icon checksum */
+						if ((length2 > 0) && (number == 0x01)) {
+							free(outinfo->iconcsum);
+							outinfo->iconcsum = aimbs_getraw(bs, length2);
+							outinfo->iconcsumlen = length2;
+						} else
+							aim_bstream_advance(bs, length2);
+					} break;
+
+					case 0x0002: { /* An available message */
+						if (length2 > 4) {
+							free(outinfo->availablemsg);
+							outinfo->availablemsg = aimbs_getstr(bs, aimbs_get16(bs));
+						} else
+							aim_bstream_advance(bs, length2);
+					} break;
+
+					default: {
+						aim_bstream_advance(bs, length2);
+					} break;
+				}
 			}
 
 		} else if (type == 0x001e) {
@@ -686,7 +722,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 }
 
 /*
- * Inverse of aim_extractuserinfo()
+ * Inverse of aim_info_extract()
  */
 faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 {
@@ -816,7 +852,7 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		return 0;
 	}
 
-	aim_extractuserinfo(sess, bs, &userinfo);
+	aim_info_extract(sess, bs, &userinfo);
 
 	tlvlist = aim_readtlvchain(bs);
 
@@ -854,10 +890,9 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, &userinfo, inforeq->infotype, text_encoding, text, textlen);
 
+	aim_info_free(&userinfo);
 	free(text_encoding);
-
 	aim_freetlvchain(&tlvlist);
-
 	if (origsnac)
 		free(origsnac->data);
 	free(origsnac);

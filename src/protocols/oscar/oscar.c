@@ -159,19 +159,20 @@ struct buddyinfo {
 	time_t signon;
 	int caps;
 	gboolean typingnot;
-
-	unsigned long ico_len;
-	unsigned long ico_csum;
-	time_t ico_time;
-	gboolean ico_need;
+	gchar *availablemsg;
 
 	unsigned long ico_me_len;
 	unsigned long ico_me_csum;
 	time_t ico_me_time;
 	gboolean ico_informed;
 
+	unsigned long ico_len;
+	unsigned long ico_csum;
+	time_t ico_time;
+	gboolean ico_need;
+
 	fu16_t iconcsumlen;
-	fu8_t iconcsum[30];
+	fu8_t *iconcsum;
 };
 
 struct name_data {
@@ -286,10 +287,17 @@ static gboolean gaim_icon_timerfunc(gpointer data);
 /* prpl actions - remove this at some point */
 static void oscar_set_info(GaimConnection *gc, char *text);
 
-static void gaim_free_name_data(struct name_data *data) {
+static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->name);
 	g_free(data->nick);
 	g_free(data);
+}
+
+static void oscar_free_buddyinfo(void *data) {
+	struct buddyinfo *bi = data;
+	g_free(bi->availablemsg);
+	g_free(bi->iconcsum);
+	g_free(bi);
 }
 
 static fu32_t oscar_encoding_check(const char *utf8)
@@ -654,7 +662,7 @@ static void oscar_login(GaimAccount *account) {
 		gc->flags |= OPT_CONN_HTML;
 		gc->flags |= OPT_CONN_AUTO_RESP;
 	}
-	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -1787,7 +1795,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		time_idle -= info->idletime*60;
 	}
 
-	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
+	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
+		signon = info->onlinesince;
+	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		signon = time(NULL) - info->sessionlen;
 
 	if (!aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), info->sn))
@@ -1803,12 +1813,18 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		bi->caps = caps;
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
+	if (info->availablemsg) {
+		free(bi->availablemsg);
+		bi->availablemsg = g_strdup(info->availablemsg);
+	}
 
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
 		char *b16, *saved_b16;
 		struct buddy *b;
 
+		free(bi->iconcsum);
+		bi->iconcsum = malloc(info->iconcsumlen);
 		memcpy(bi->iconcsum, info->iconcsum, info->iconcsumlen);
 		bi->iconcsumlen = info->iconcsumlen;
 		b16 = tobase16(bi->iconcsum, bi->iconcsumlen);
@@ -2424,7 +2440,7 @@ static void gaim_auth_request_msgprompt(struct name_data *data) {
 	gaim_request_input(data->gc, NULL, _("Authorization Request Message:"),
 					   NULL, _("Please authorize me!"), TRUE,
 					   _("OK"), G_CALLBACK(gaim_auth_request),
-					   _("Cancel"), G_CALLBACK(gaim_free_name_data),
+					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
 }
 
@@ -2436,7 +2452,7 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 		/* XXX - Take the buddy out of our buddy list */
 	}
 
-	gaim_free_name_data(data);
+	oscar_free_name_data(data);
 }
 
 static void gaim_auth_sendrequest(GaimConnection *gc, const char *name) {
@@ -2483,7 +2499,7 @@ static void gaim_auth_grant(struct name_data *data) {
 #endif
 	}
 
-	gaim_free_name_data(data);
+	oscar_free_name_data(data);
 }
 
 /* When other people ask you for authorization */
@@ -2504,7 +2520,7 @@ static void gaim_auth_dontgrant_msgprompt(struct name_data *data) {
 	gaim_request_input(data->gc, NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE,
 					   _("OK"), G_CALLBACK(gaim_auth_dontgrant),
-					   _("Cancel"), G_CALLBACK(gaim_free_name_data),
+					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
 }
 
@@ -2516,7 +2532,7 @@ static void gaim_icq_contactadd(struct name_data *data) {
 		show_add_buddy(gc, data->name, NULL, data->nick);
 	}
 
-	gaim_free_name_data(data);
+	oscar_free_name_data(data);
 }
 
 static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args, time_t t) {
@@ -2656,7 +2672,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 										  "to your Buddy List?"),
 										0, data, 2,
 										_("Add"), G_CALLBACK(gaim_icq_contactadd),
-										_("Decline"), G_CALLBACK(gaim_free_name_data));
+										_("Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
 				}
 				g_strfreev(text);
@@ -5000,7 +5016,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						0, data,
 						G_CALLBACK(gaim_icq_contactadd),
-						G_CALLBACK(gaim_free_name_data));
+						G_CALLBACK(oscar_free_name_data));
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -5353,6 +5369,12 @@ static char *oscar_tooltip_text(struct buddy *b) {
 				yay = g_strconcat(tmp, _("<b>Capabilities:</b> "), caps, "\n", NULL);
 				free(tmp);
 			}
+
+			if (bi->availablemsg) {
+				tmp = yay;
+				yay = g_strconcat(tmp, _("<b>Available:</b> "), bi->availablemsg, "\n", NULL);
+				free(tmp);
+			}
 		}
 	} else {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
@@ -5383,7 +5405,11 @@ static char *oscar_status_text(struct buddy *b) {
 			ret = gaim_icq_status((b->uc & 0xffff0000) >> 16);
 		else
 			ret = g_strdup(_("Away"));
-	} else if (!GAIM_BUDDY_IS_ONLINE(b)) {
+	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
+		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
+		if (bi->availablemsg)
+			ret = g_strdup(bi->availablemsg);
+	} else {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
 		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))
 			ret = g_strdup(_("Not Authorized"));

@@ -335,7 +335,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		aim_bstream_init(&occbs, tmptlv->value, tmptlv->length);
 
 		while (curoccupant < usercount)
-			aim_extractuserinfo(sess, &occbs, &userinfo[curoccupant++]);
+			aim_info_extract(sess, &occbs, &userinfo[curoccupant++]);
 	}
 
 	/* 
@@ -413,11 +413,11 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
 		ret = userfunc(sess,
-				rx, 
+				rx,
 				&roominfo,
 				roomname,
 				usercount,
-				userinfo,	
+				userinfo,
 				roomdesc,
 				flags,
 				creationtime,
@@ -428,6 +428,10 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	}
 
 	free(roominfo.name);
+
+	while (usercount > 0)
+		aim_info_free(&userinfo[--usercount]);
+
 	free(userinfo);
 	free(roomname);
 	free(roomdesc);
@@ -446,12 +450,13 @@ static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	while (aim_bstream_empty(bs)) {
 		curcount++;
 		userinfo = realloc(userinfo, curcount * sizeof(aim_userinfo_t));
-		aim_extractuserinfo(sess, bs, &userinfo[curcount-1]);
+		aim_info_extract(sess, bs, &userinfo[curcount-1]);
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, curcount, userinfo);
 
+	aim_info_free(userinfo);
 	free(userinfo);
 
 	return ret;
@@ -625,7 +630,7 @@ static int incomingmsg(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		userinfotlv = aim_gettlv(otl, 0x0003, 1);
 
 		aim_bstream_init(&tbs, userinfotlv->value, userinfotlv->length);
-		aim_extractuserinfo(sess, &tbs, &userinfo);
+		aim_info_extract(sess, &tbs, &userinfo);
 	}
 
 	/*
@@ -659,6 +664,7 @@ static int incomingmsg(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, &userinfo, msg);
 
+	aim_info_free(&userinfo);
 	free(cookie);
 	free(msg);
 	aim_freetlvchain(&otl);
