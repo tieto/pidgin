@@ -483,6 +483,9 @@ int main(int argc, char *argv[])
         gtk_init(&argc, &argv);
 #endif /* USE_THEMES */
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
         set_defaults();
         load_prefs();
