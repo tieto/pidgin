@@ -58,47 +58,45 @@ static int gaim_chat_leave       (struct aim_session_t *, struct command_rx_stru
 static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
 
-/* FIXME ! This uses 100% of the CPU, guaranteed. We shouldn't be using
- * aim_select at all. we should be using the gtk/gdk watcher functions */
+/* FIXME ! This uses 100% of the CPU, guaranteed. It's not using aim_select
+ * anymore, which is a good thing, but gdk still thinks there's always data
+ * to be read, even though aim_get_command and aim_rxdispatch have already
+ * taken care of the data that there was. So, it constantly calls this, and
+ * it acts basically like an infinite loop that actually does some work, and
+ * eats all of your CPU.
+ */
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
 	struct aim_session_t *sess = (struct aim_session_t *)data;
-	struct aim_conn_t *conn = NULL;
-	struct timeval tv;
-	int selstat;
 
-	tv.tv_sec = 0; tv.tv_usec = 0;
-	conn = aim_select(sess, &tv, &selstat);
-
-	switch(selstat) {
-		case -1: /* error */
+	if (condition & GDK_INPUT_EXCEPTION) {
+		signoff();
+		hide_login_progress("Disconnected.");
+		aim_logoff(sess);
+		gdk_input_remove(inpa);
+		return;
+	}
+	if (condition & GDK_INPUT_WRITE) {
+		aim_tx_flushqueue(sess);
+	}
+	if (condition & GDK_INPUT_READ) {
+		if (aim_get_command(sess, gaim_conn) < 0) {
+			debug_print("connection error!\n");
 			signoff();
 			hide_login_progress("Disconnected.");
 			aim_logoff(sess);
 			gdk_input_remove(inpa);
-			break;
-		case 0:
+		} else {
+			aim_rxdispatch(sess);
+			/* the rest of this is a bad hack to try and get it to
+			 * update the display at least occasionally */
 			gdk_input_remove(inpa);
 			while (gtk_events_pending())
 				gtk_main_iteration();
 			inpa = gdk_input_add(gaim_conn->fd,
-					GDK_INPUT_READ | GDK_INPUT_WRITE |
-					GDK_INPUT_EXCEPTION,
-					oscar_callback, sess);
-			break;
-		case 1: /* outgoing data pending */
-			aim_tx_flushqueue(sess);
-			break;
-		case 2: /* incoming data pending */
-			if (aim_get_command(sess, conn) < 0) {
-				debug_print("connection error!\n");
-				signoff();
-				hide_login_progress("Disconnected.");
-				aim_logoff(sess);
-				gdk_input_remove(inpa);
-			} else
-				aim_rxdispatch(sess);
-			break;
+			GDK_INPUT_READ | GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
+			oscar_callback, sess);
+		}
 	}
 }
 
@@ -153,8 +151,8 @@ int oscar_login(char *username, char *password) {
 
 	gaim_conn = conn;
 	inpa = gdk_input_add(conn->fd,
-				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-				oscar_callback, sess);
+			GDK_INPUT_READ | GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
+			oscar_callback, sess);
 
 	u = find_user(username);
 

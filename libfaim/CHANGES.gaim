@@ -1,4 +1,10 @@
 
+Wed May 24 19:10:19 UTC 2000 EWarmenhoven
+	- Got rid of aim_select. Good. But it still uses 100% of the CPU. Bad.
+	  The reason is because oscar_callback gets called whenever there's
+	  data waiting on the file descriptor, and it always thinks there's
+	  data waiting, even when we've already dealt with the data.
+
 Wed May 24 05:20:31 UTC 2000 EWarmenhoven
 	- Inviting someone is possible now (I hope - I haven't been able to get
 	  into a chat room using libfaim (any client) for a couple days now).
