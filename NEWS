@@ -19,6 +19,18 @@
 	actually a lot going on in this release, despite 2 releases 2 days ago.
 	Don't ask me how; I think the elves had something to do with it.
 
+	Oscar support is almost to the point where I'm considering removing
+	the 'experimental' label from configure. For those of you brave enough
+	to try it, I'd like feedback. (And if you happen to write a patch to
+	fix some of the stuff that would be really cool too.) Hopefully for the
+	next release, in addition to the cool new UI, Gaim/Faim will be able to
+	do nearly everything Gaim/TOC can do. (Big things coming in 0.9.19, I
+	can feel it....)
+
+	And just remember, you *can* have too many gummi candies. Especially if
+	you eat nearly a whole kilo of them. Believe me. I know. But the gummi
+	cherries are damn good.
+
 0.9.17 (05/31/2000):
 	Rob: I am an e-mail fiend!
 	(after receiving 60 emails within a 5 minute period about a problem
