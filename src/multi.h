@@ -22,11 +22,13 @@
 #ifndef _MULTI_H_
 #define _MULTI_H_
 
+#include "account.h"
 #include "core.h"
 #include "plugin.h"
 
+#if 0
 /* ok. now the fun begins. first we create a connection structure */
-struct gaim_connection {
+GaimConnection {
 	int edittype; /* XXX CUI: this is ui-specific and should be removed */
 
 	/* we need to do either oscar or TOC */
@@ -47,7 +49,7 @@ struct gaim_connection {
 	/* each connection then can have its own protocol-specific data */
 	void *proto_data;
 
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	char username[64];
 	char displayname[128];
@@ -70,6 +72,7 @@ struct gaim_connection {
 	int evil;		/* warning level for AIM (why is this here?) */
 	gboolean wants_to_die;	/* defaults to FALSE */
 };
+#endif
 
 #define OPT_CONN_HTML		0x00000001
 /* set this flag on a gc if you want serv_got_im to autoreply when away */
@@ -89,14 +92,14 @@ struct proto_user_opt {
 
 struct proto_actions_menu {
 	char *label;
-	void (*callback)(struct gaim_connection *);
-	struct gaim_connection *gc;
+	void (*callback)(GaimConnection *);
+	GaimConnection *gc;
 };
 
 struct proto_buddy_menu {
 	char *label;
-	void (*callback)(struct gaim_connection *, const char *);
-	struct gaim_connection *gc;
+	void (*callback)(GaimConnection *, const char *);
+	GaimConnection *gc;
 };
 
 struct proto_chat_entry {
@@ -108,27 +111,9 @@ struct proto_chat_entry {
 	int max;
 };
 
-/* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
-extern GSList *connections;
-
-/* number of accounts that are currently in the process of connecting */
-extern int connecting_count;
-
-struct gaim_account *gaim_account_new(const char *, int, int);
-struct gaim_connection *new_gaim_conn(struct gaim_account *);
-void destroy_gaim_conn(struct gaim_connection *);
-
-void regenerate_user_list();
-
-void account_online(struct gaim_connection *);
-void account_offline(struct gaim_connection *);
-
-void auto_login();
-
-void set_login_progress(struct gaim_connection *, float, char *);
-void hide_login_progress(struct gaim_connection *, char *);
-void hide_login_progress_notice(struct gaim_connection *, char *);
-void hide_login_progress_error(struct gaim_connection *, char *);
-GSList *gaim_get_connections();
+void set_login_progress(GaimConnection *, float, char *);
+void hide_login_progress(GaimConnection *, char *);
+void hide_login_progress_notice(GaimConnection *, char *);
+void hide_login_progress_error(GaimConnection *, char *);
 
 #endif /* _MULTI_H_ */

@@ -568,14 +568,14 @@ void clean_pid(void)
 #endif
 }
 
-struct gaim_account *gaim_account_find(const char *name, int protocol)
+GaimAccount *gaim_account_find(const char *name, int protocol)
 {
 	char *who = g_strdup(normalize(name));
 	GSList *accts = gaim_accounts;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	while (accts) {
-		account = (struct gaim_account *)accts->data;
+		account = (GaimAccount *)accts->data;
 		if (!strcmp(normalize(account->username), who)) {
 			if (protocol != -1) {
 				if (account->protocol == protocol) {
@@ -1008,21 +1008,29 @@ FILE *gaim_mkstemp(gchar **fpath)
 }
 
 /* AIM URI's ARE FUN :-D */
-const char *handle_uri(char *uri) {
+const char *
+handle_uri(char *uri)
+{
+	const char *username;
 	GString *str;
-	GSList *conn = connections;
-	struct gaim_connection *gc = NULL;
+	GList *conn;
+	GaimConnection *gc = NULL;
+	GaimAccount *account;
 
 	gaim_debug(GAIM_DEBUG_INFO, "handle_uri", "Handling URI: %s\n", uri);
 
 	/* Well, we'd better check to make sure we have at least one
 	   AIM account connected. */
-	while (conn) {
+	for (conn = gaim_connections_get_all(); conn != NULL; conn = conn->next) {
 		gc = conn->data;
-		if (gc->protocol == GAIM_PROTO_OSCAR && isalpha(gc->username[0])) {
+		account = gaim_connection_get_account(gc);
+		username = gaim_account_get_username(account);
+
+		if (gaim_account_get_protocol(account) == GAIM_PROTO_OSCAR &&
+			username != NULL && isalpha(*username)) {
+
 			break;
 		}
-		conn = conn->next;
 	}
 
 	if (gc == NULL)

@@ -41,7 +41,7 @@
 static GList *chatentries = NULL;
 static GtkWidget *joinchat = NULL;
 static GtkWidget *jc_vbox = NULL;
-static struct gaim_connection *joinchatgc;
+static GaimConnection *joinchatgc;
 
 static void
 do_join_chat()
@@ -157,7 +157,7 @@ rebuild_jc()
 }
 
 static void
-joinchat_choose(GtkWidget *w, struct gaim_connection *g)
+joinchat_choose(GtkWidget *w, GaimConnection *g)
 {
 	if (joinchatgc == g)
 		return;
@@ -173,11 +173,12 @@ joinchat_choose(GtkWidget *w, struct gaim_connection *g)
 static void
 create_joinchat_menu(GtkWidget *box)
 {
+	GaimAccount *account;
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
-	GSList *c;
-	struct gaim_connection *g;
+	GList *c;
+	GaimConnection *g;
 	char buf[2048];
 
 	optmenu = gtk_option_menu_new();
@@ -186,8 +187,8 @@ create_joinchat_menu(GtkWidget *box)
 	menu = gtk_menu_new();
 	joinchatgc = NULL;
 
-	for (c = connections; c != NULL; c = c->next) {
-		g = (struct gaim_connection *)c->data;
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+		g = (GaimConnection *)c->data;
 
 		if (!GAIM_PLUGIN_PROTOCOL_INFO(g->prpl)->join_chat)
 			continue;
@@ -195,8 +196,10 @@ create_joinchat_menu(GtkWidget *box)
 		if (!joinchatgc)
 			joinchatgc = g;
 
+		account = gaim_connection_get_account(g);
+
 		g_snprintf(buf, sizeof(buf), "%s (%s)",
-				   g->username, g->prpl->info->name);
+				   gaim_account_get_username(account), g->prpl->info->name);
 		opt = gtk_menu_item_new_with_label(buf);
 
 		g_object_set_data(G_OBJECT(opt), "gaim_connection", g);
@@ -233,10 +236,10 @@ join_chat()
 	GtkWidget *cancel;
 	GtkWidget *label;
 	GtkWidget *sep;
-	GSList *c;
-	struct gaim_connection *gc = NULL;
+	GList *c;
+	GaimConnection *gc = NULL;
 
-	for (c = connections; c != NULL; c = c->next) {
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
 		gc = c->data;
 
 		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat)

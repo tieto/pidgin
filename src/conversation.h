@@ -197,7 +197,7 @@ struct gaim_conversation
 {
 	GaimConversationType type;  /**< The type of conversation.          */
 
-	struct gaim_account *account;  /**< The user using this conversation.  */
+	GaimAccount *account;  /**< The user using this conversation.  */
 	struct gaim_window *window; /**< The parent window.                 */
 
 	int conversation_pos;       /**< The position in the window's list. */
@@ -428,7 +428,7 @@ struct gaim_window *gaim_get_last_window_with_type(GaimConversationType type);
  * @return The new conversation.
  */
 struct gaim_conversation *gaim_conversation_new(GaimConversationType type,
-												struct gaim_account *account,
+												GaimAccount *account,
 												const char *name);
 
 /**
@@ -481,7 +481,7 @@ struct gaim_conversation_ui_ops *gaim_conversation_get_ui_ops(
  * @param account The gaim_account.
  */
 void gaim_conversation_set_account(struct gaim_conversation *conv,
-								struct gaim_account *account);
+								GaimAccount *account);
 
 /**
  * Returns the specified conversation's gaim_account.
@@ -493,7 +493,7 @@ void gaim_conversation_set_account(struct gaim_conversation *conv,
  *
  * @return The conversation's gaim_account.
  */
-struct gaim_account *gaim_conversation_get_account(
+GaimAccount *gaim_conversation_get_account(
 		const struct gaim_conversation *conv);
 
 /**
@@ -505,7 +505,7 @@ struct gaim_account *gaim_conversation_get_account(
  *
  * @return The conversation's gaim_connection.
  */
-struct gaim_connection *gaim_conversation_get_gc(
+GaimConnection *gaim_conversation_get_gc(
 		const struct gaim_conversation *conv);
 
 /**
@@ -716,7 +716,7 @@ struct gaim_conversation *gaim_find_conversation(const char *name);
  * @return The conversation if found, or @c NULL otherwise.
  */
 struct gaim_conversation *gaim_find_conversation_with_account(
-		const char *name, const struct gaim_account *account);
+		const char *name, const GaimAccount *account);
 
 /**
  * Writes to a conversation window.
@@ -1094,7 +1094,7 @@ void gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
  *
  * @return The chat conversation.
  */
-struct gaim_conversation *gaim_find_chat(struct gaim_connection *gc, int id);
+struct gaim_conversation *gaim_find_chat(GaimConnection *gc, int id);
 
 /*@}*/
 

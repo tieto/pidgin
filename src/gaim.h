@@ -153,11 +153,6 @@
 #  define _(x) (x)
 #endif
 
-#define OPT_ACCT_AUTO		0x00000001
-/*#define OPT_ACCT_KEEPALV	0x00000002 this shouldn't be optional */
-#define OPT_ACCT_REM_PASS	0x00000004
-#define OPT_ACCT_MAIL_CHECK      0x00000008
-
 #define DEFAULT_INFO "Visit the Gaim website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
 
 enum log_event {
@@ -207,7 +202,7 @@ extern GSList *away_time_queue;
 extern void do_quit();
 
 /* Functions in gtkblist.c */
-extern void signoff(struct gaim_connection *);
+extern void signoff(GaimConnection *);
 
 /* Functions in buddy_chat.c */
 #if 0
@@ -220,13 +215,13 @@ extern void remove_chat_buddy(struct gaim_conversation *, char *, char *);
 #endif
 
 /* Functions in dialogs.c */
-extern void g_show_info_text(struct gaim_connection *, const char *, int, const char *, ...);
-extern void show_change_passwd(struct gaim_connection *);
-extern void show_set_dir(struct gaim_connection *);
-extern void show_find_email(struct gaim_connection *);
-extern void show_find_info(struct gaim_connection *);
-extern void show_set_info(struct gaim_connection *);
-extern void show_confirm_del(struct gaim_connection *, gchar *);
+extern void g_show_info_text(GaimConnection *, const char *, int, const char *, ...);
+extern void show_change_passwd(GaimConnection *);
+extern void show_set_dir(GaimConnection *);
+extern void show_find_email(GaimConnection *);
+extern void show_find_info(GaimConnection *);
+extern void show_set_info(GaimConnection *);
+extern void show_confirm_del(GaimConnection *, gchar *);
 extern void show_confirm_del_group(struct group *);
 extern void show_confirm_del_chat(struct chat *);
 
@@ -250,44 +245,44 @@ extern gint check_idle(gpointer);
 
 /* Functions in server.c */
 /* input to serv */
-extern void serv_login(struct gaim_account *);
-extern void serv_close(struct gaim_connection *);
-extern void serv_touch_idle(struct gaim_connection *);
-extern int  serv_send_im(struct gaim_connection *, char *, char *, int, int);
-extern void serv_get_info(struct gaim_connection *, char *);
-extern void serv_get_dir(struct gaim_connection *, char *);
-extern void serv_set_idle(struct gaim_connection *, int);
-extern void serv_set_info(struct gaim_connection *, char *);
-extern void serv_set_away(struct gaim_connection *, char *, char *);
+extern void serv_login(GaimAccount *);
+extern void serv_close(GaimConnection *);
+extern void serv_touch_idle(GaimConnection *);
+extern int  serv_send_im(GaimConnection *, char *, char *, int, int);
+extern void serv_get_info(GaimConnection *, char *);
+extern void serv_get_dir(GaimConnection *, char *);
+extern void serv_set_idle(GaimConnection *, int);
+extern void serv_set_info(GaimConnection *, char *);
+extern void serv_set_away(GaimConnection *, char *, char *);
 extern void serv_set_away_all(char *);
-extern int  serv_send_typing(struct gaim_connection *, char *, int);
-extern void serv_change_passwd(struct gaim_connection *, const char *, const char *);
-extern void serv_add_buddy(struct gaim_connection *, const char *);
-extern void serv_add_buddies(struct gaim_connection *, GList *);
-extern void serv_remove_buddy(struct gaim_connection *, char *, char *);
-extern void serv_remove_buddies(struct gaim_connection *, GList *, char *);
-extern void serv_add_permit(struct gaim_connection *, const char *);
-extern void serv_add_deny(struct gaim_connection *, const char *);
-extern void serv_rem_permit(struct gaim_connection *, const char *);
-extern void serv_rem_deny(struct gaim_connection *, const char *);
-extern void serv_set_permit_deny(struct gaim_connection *);
-extern void serv_warn(struct gaim_connection *, char *, int);
-extern void serv_set_dir(struct gaim_connection *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, int);
-extern void serv_dir_search(struct gaim_connection *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
-extern void serv_join_chat(struct gaim_connection *, GHashTable *);
-extern void serv_chat_invite(struct gaim_connection *, int, const char *, const char *);
-extern void serv_chat_leave(struct gaim_connection *, int);
-extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
-extern int  serv_chat_send(struct gaim_connection *, int, char *);
+extern int  serv_send_typing(GaimConnection *, char *, int);
+extern void serv_change_passwd(GaimConnection *, const char *, const char *);
+extern void serv_add_buddy(GaimConnection *, const char *);
+extern void serv_add_buddies(GaimConnection *, GList *);
+extern void serv_remove_buddy(GaimConnection *, char *, char *);
+extern void serv_remove_buddies(GaimConnection *, GList *, char *);
+extern void serv_add_permit(GaimConnection *, const char *);
+extern void serv_add_deny(GaimConnection *, const char *);
+extern void serv_rem_permit(GaimConnection *, const char *);
+extern void serv_rem_deny(GaimConnection *, const char *);
+extern void serv_set_permit_deny(GaimConnection *);
+extern void serv_warn(GaimConnection *, char *, int);
+extern void serv_set_dir(GaimConnection *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, int);
+extern void serv_dir_search(GaimConnection *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
+extern void serv_join_chat(GaimConnection *, GHashTable *);
+extern void serv_chat_invite(GaimConnection *, int, const char *, const char *);
+extern void serv_chat_leave(GaimConnection *, int);
+extern void serv_chat_whisper(GaimConnection *, int, char *, char *);
+extern int  serv_chat_send(GaimConnection *, int, char *);
 extern void serv_got_popup(char *, char *, int, int);
-extern void serv_get_away(struct gaim_connection *, const char *);
+extern void serv_get_away(GaimConnection *, const char *);
 extern void serv_alias_buddy(struct buddy *);
 extern void serv_move_buddy(struct buddy *, struct group *, struct group *);
-extern void serv_rename_group(struct gaim_connection *, struct group *, const char *);
+extern void serv_rename_group(GaimConnection *, struct group *, const char *);
 
 /* Functions in log.h */
 extern FILE *open_log_file (const char *, int);
-extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
+extern void system_log(enum log_event, GaimConnection *, struct buddy *, int);
 extern void rm_log(struct log_conversation *);
 extern struct log_conversation *find_log_info(const char *);
 extern void update_log_convs();
@@ -334,7 +329,7 @@ typedef struct multi_entry_dlg {
 	gchar *role;				/* window role */
 	char *title;				/* window title */
 
-	struct gaim_account *account;			/* user info - needed for most everything */
+	GaimAccount *account;			/* user info - needed for most everything */
 
 	MultiInstrData *instructions;		/* instructions (what else?) */
 

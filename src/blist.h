@@ -85,7 +85,7 @@ struct buddy {
 	int idle;                               /**< The time the buddy has been idle in minutes. */
 	int uc;                                 /**< This is a cryptic bitmask that makes sense only to the prpl.  This will get changed */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
-	struct gaim_account *account;           /**< the account this buddy belongs to */ 
+	GaimAccount *account;           /**< the account this buddy belongs to */ 
 	GHashTable *settings;                   /**< per-buddy settings from the XML buddy list, set by plugins and the likes. */
 	guint timer;							/**< The timer handle. */
 };
@@ -110,7 +110,7 @@ struct chat {
 	GaimBlistNode node;      /**< The node that this chat inherits from */
 	char *alias;             /**< The display name of this chat. */
 	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
-	struct gaim_account *account; /**< The account this chat is attached to */
+	GaimAccount *account; /**< The account this chat is attached to */
 };
 
 
@@ -276,7 +276,7 @@ void gaim_blist_rename_group(struct group *group, const char *name);
  * @param components The info the prpl needs to join the chat
  * @return           A newly allocated chat
  */
-struct chat *gaim_chat_new(struct gaim_account *account, const char *alias, GHashTable *components);
+struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components);
 
 /**
  * Adds a new chat to the buddy list.
@@ -299,7 +299,7 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
  * @param alias      The alias of the new buddy (or NULL if unaliased)
  * @return           A newly allocated buddy
  */
-struct buddy *gaim_buddy_new(struct gaim_account *account, const char *screenname, const char *alias);
+struct buddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias);
 
 /**
  * Adds a new buddy to the buddy list.
@@ -382,7 +382,7 @@ char *gaim_get_buddy_alias(struct buddy *buddy);
  * @param account The account this buddy belongs to
  * @return        The buddy or NULL if the buddy does not exist
  */
-struct buddy *gaim_find_buddy(struct gaim_account *account, const char *name);   
+struct buddy *gaim_find_buddy(GaimAccount *account, const char *name);   
 
 /**
  * Finds a group by name
@@ -415,7 +415,7 @@ GSList *gaim_group_get_accounts(struct group *g);
  * @param g       The group to search through.
  * @param account The account.
  */
-gboolean gaim_group_on_account(struct group *g, struct gaim_account *account);
+gboolean gaim_group_on_account(struct group *g, GaimAccount *account);
 
 /**
  * Called when an account gets signed on.  Tells the UI to update all the
@@ -423,7 +423,7 @@ gboolean gaim_group_on_account(struct group *g, struct gaim_account *account);
  *
  * @param account   The account
  */
-void gaim_blist_add_account(struct gaim_account *account);
+void gaim_blist_add_account(GaimAccount *account);
 
 
 /**
@@ -432,7 +432,7 @@ void gaim_blist_add_account(struct gaim_account *account);
  *
  * @param account   The account 
  */
-void gaim_blist_remove_account(struct gaim_account *account);
+void gaim_blist_remove_account(GaimAccount *account);
 
 
 /**
@@ -470,7 +470,7 @@ void gaim_blist_save();
  * @param account  This is the account that the buddies and groups from config will get added to
  * @param config   This is the toc-style buddy list data
  */
-void parse_toc_buddy_list(struct gaim_account *account, char *config);
+void parse_toc_buddy_list(GaimAccount *account, char *config);
 
 
 /**

@@ -26,7 +26,7 @@
 static GList *pounces = NULL;
 
 struct gaim_pounce *
-gaim_pounce_new(struct gaim_account *pouncer, const char *pouncee,
+gaim_pounce_new(GaimAccount *pouncer, const char *pouncee,
 				GaimPounceEvent event, gaim_pounce_cb cb,
 				void *data, void (*free)(void *))
 {
@@ -77,7 +77,7 @@ gaim_pounce_set_events(struct gaim_pounce *pounce, GaimPounceEvent events)
 
 void
 gaim_pounce_set_pouncer(struct gaim_pounce *pounce,
-						struct gaim_account *pouncer)
+						GaimAccount *pouncer)
 {
 	if (pounce == NULL || pouncer == NULL)
 		return;
@@ -115,7 +115,7 @@ gaim_pounce_get_events(const struct gaim_pounce *pounce)
 	return pounce->events;
 }
 
-struct gaim_account *
+GaimAccount *
 gaim_pounce_get_pouncer(const struct gaim_pounce *pounce)
 {
 	if (pounce == NULL)
@@ -143,7 +143,7 @@ gaim_pounce_get_data(const struct gaim_pounce *pounce)
 }
 
 void
-gaim_pounce_execute(const struct gaim_account *pouncer,
+gaim_pounce_execute(const GaimAccount *pouncer,
 					const char *pouncee, GaimPounceEvent events)
 {
 	struct gaim_pounce *pounce;
@@ -166,7 +166,7 @@ gaim_pounce_execute(const struct gaim_account *pouncer,
 }
 
 struct gaim_pounce *
-gaim_find_pounce(const struct gaim_account *pouncer,
+gaim_find_pounce(const GaimAccount *pouncer,
 				 const char *pouncee, GaimPounceEvent events)
 {
 	struct gaim_pounce *pounce;

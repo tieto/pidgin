@@ -42,7 +42,6 @@
 #include <glib.h>
 #include <gmodule.h>
 
-struct gaim_account;
 struct group;
 struct buddy;
 
@@ -69,7 +68,8 @@ struct buddy;
 /* This is far too long to be practical, but MSN users are probably used to long aliases */
 #define SELF_ALIAS_LEN 400
 
-struct gaim_account {
+#if 0
+GaimAccount {
 	char username[64];
 	char alias[SELF_ALIAS_LEN]; 
 	char password[32];
@@ -83,15 +83,15 @@ struct gaim_account {
 	/* buddy icon file */
 	char iconfile[256];
 
-	struct gaim_proxy_info *gpi;
 
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	gboolean connecting;
 
 	GSList *permit;
 	GSList *deny;
 	int permdeny;
 };
+#endif
 
 /* XXX Temporary, until we have better account-specific prefs. */
 #define GAIM_ACCOUNT_CHECK_MAIL(account) \
@@ -122,16 +122,16 @@ extern void load_pounces();
 extern void save_prefs();
 
 /* Functions in server.c */
-extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int);
-extern void serv_got_im(struct gaim_connection *, const char *, const char *, guint32, time_t, gint);
-extern void serv_got_typing(struct gaim_connection *, char *, int, int);
-extern void serv_got_typing_stopped(struct gaim_connection *, char *);
-extern void serv_got_eviled(struct gaim_connection *, char *, int);
-extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char *, GHashTable *);
-extern struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
-extern void serv_got_chat_left(struct gaim_connection *, int);
-extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *, time_t);
-extern void serv_got_alias(struct gaim_connection *, char *, char *);
+extern void serv_got_update(GaimConnection *, char *, int, int, time_t, time_t, int);
+extern void serv_got_im(GaimConnection *, const char *, const char *, guint32, time_t, gint);
+extern void serv_got_typing(GaimConnection *, char *, int, int);
+extern void serv_got_typing_stopped(GaimConnection *, char *);
+extern void serv_got_eviled(GaimConnection *, char *, int);
+extern void serv_got_chat_invite(GaimConnection *, char *, char *, char *, GHashTable *);
+extern struct gaim_conversation *serv_got_joined_chat(GaimConnection *, int, char *);
+extern void serv_got_chat_left(GaimConnection *, int);
+extern void serv_got_chat_in(GaimConnection *, int, char *, int, char *, time_t);
+extern void serv_got_alias(GaimConnection *, char *, char *);
 extern void serv_finish_login();
 
 #endif /* _CORE_H_ */

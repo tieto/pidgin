@@ -120,7 +120,7 @@ static void toggle_font(GtkWidget *font, struct gaim_conversation *conv);
 static void toggle_fg_color(GtkWidget *color, struct gaim_conversation *conv);
 static void toggle_bg_color(GtkWidget *color, struct gaim_conversation *conv);
 static void got_typing_keypress(struct gaim_conversation *conv, gboolean first);
-static GList *generate_invite_user_names(struct gaim_connection *gc);
+static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(struct gaim_conversation *conv,
 								  const char *name, int pos);
 static void tab_complete(struct gaim_conversation *conv);
@@ -365,7 +365,7 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	char *buf, *buf2;
 	GtkTextIter start_iter, end_iter;
 	int limit;
-	struct gaim_connection *gc = gaim_conversation_get_gc(conv);
+	GaimConnection *gc = gaim_conversation_get_gc(conv);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -474,7 +474,7 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 static void
 add_cb(GtkWidget *widget, struct gaim_conversation *conv)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct buddy *b;
 	const char *name;
 
@@ -536,7 +536,7 @@ warn_cb(GtkWidget *widget, struct gaim_conversation *conv)
 static void
 block_cb(GtkWidget *widget, struct gaim_conversation *conv)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	gc = gaim_conversation_get_gc(conv);
 
@@ -552,7 +552,7 @@ im_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	struct gaim_conversation *conv2;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
-	struct gaim_account *account;
+	GaimAccount *account;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
@@ -626,7 +626,7 @@ menu_im_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	const char *who;
 	struct gaim_conversation *conv2;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
 
@@ -644,7 +644,7 @@ static void
 menu_info_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *who;
 
 	gc = gaim_conversation_get_gc(conv);
@@ -668,7 +668,7 @@ static void
 menu_away_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *who;
 
 	gc  = gaim_conversation_get_gc(conv);
@@ -689,7 +689,7 @@ menu_away_cb(GtkWidget *w, struct gaim_conversation *conv)
 static void
 menu_add_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct buddy *b;
 	char *name;
 
@@ -712,8 +712,8 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
-	struct gaim_connection *gc;
-	struct gaim_account *account;
+	GaimConnection *gc;
+	GaimAccount *account;
 	GtkTreePath *path;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -863,7 +863,7 @@ invite_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	struct InviteBuddyInfo *info = NULL;
 
 	if (invite_dialog == NULL) {
-		struct gaim_connection *gc;
+		GaimConnection *gc;
 		struct gaim_window *win;
 		struct gaim_gtk_window *gtkwin;
 		GtkWidget *label;
@@ -1268,7 +1268,7 @@ static void
 menu_conv_sel_send_cb(GObject *m, gpointer data)
 {
 	struct gaim_window *win = g_object_get_data(m, "user_data");
-	struct gaim_account *account = g_object_get_data(m, "gaim_account");
+	GaimAccount *account = g_object_get_data(m, "gaim_account");
 	struct gaim_conversation *conv;
 
 	conv = gaim_window_get_active_conversation(win);
@@ -1738,7 +1738,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	struct gaim_conversation *conv;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_window *gtkwin;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	win = (struct gaim_window *)user_data;
 
@@ -2003,7 +2003,7 @@ update_typing_icon(struct gaim_conversation *conv)
 static gboolean
 update_send_as_selection(struct gaim_window *win)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct gaim_conversation *conv;
 	struct gaim_gtk_window *gtkwin;
 	GtkWidget *menu;
@@ -2037,7 +2037,7 @@ update_send_as_selection(struct gaim_window *win)
 		 child = child->next) {
 
 		GtkWidget *item = child->data;
-		struct gaim_account *item_account = g_object_get_data(G_OBJECT(item),
+		GaimAccount *item_account = g_object_get_data(G_OBJECT(item),
 				"gaim_account");
 
 		if (account == item_account) {
@@ -2055,7 +2055,7 @@ generate_send_as_items(struct gaim_window *win,
 	struct gaim_gtk_window *gtkwin;
 	GtkWidget *menu;
 	GtkWidget *menuitem;
-	GSList *gcs;
+	GList *gcs;
 	GList *convs;
 	GSList *group = NULL;
 	gboolean first_offline = TRUE;
@@ -2068,7 +2068,7 @@ generate_send_as_items(struct gaim_window *win,
 		gtk_widget_destroy(gtkwin->menu.send_as);
 
 	/* See if we have > 1 connection active. */
-	if (g_slist_length(connections) < 2) {
+	if (g_list_length(gaim_connections_get_all()) < 2) {
 		/* Now make sure we don't have any Offline entries. */
 		gboolean found_offline = FALSE;
 
@@ -2077,7 +2077,7 @@ generate_send_as_items(struct gaim_window *win,
 			 convs = convs->next) {
 
 			struct gaim_conversation *conv;
-			struct gaim_account *account;
+			GaimAccount *account;
 
 			conv = (struct gaim_conversation *)convs->data;
 			account = gaim_conversation_get_account(conv);
@@ -2107,9 +2107,10 @@ generate_send_as_items(struct gaim_window *win,
 	gtk_widget_show(menu);
 
 	/* Fill it with entries. */
-	for (gcs = connections; gcs != NULL; gcs = gcs->next) {
+	for (gcs = gaim_connections_get_all(); gcs != NULL; gcs = gcs->next) {
 
-		struct gaim_connection *gc;
+		GaimConnection *gc;
+		GaimAccount *account;
 		GtkWidget *box;
 		GtkWidget *label;
 		GtkWidget *image;
@@ -2117,7 +2118,7 @@ generate_send_as_items(struct gaim_window *win,
 
 		found_online = TRUE;
 
-		gc = (struct gaim_connection *)gcs->data;
+		gc = (GaimConnection *)gcs->data;
 
 		/* Create a pixmap for the protocol icon. */
 		pixbuf = create_prpl_icon(gc->account);
@@ -2134,8 +2135,11 @@ generate_send_as_items(struct gaim_window *win,
 		g_object_unref(G_OBJECT(scale));
 		g_object_unref(G_OBJECT(pixbuf));
 
+		account = gaim_connection_get_account(gc);
+
 		/* Make our menu item */
-		menuitem = gtk_radio_menu_item_new_with_label(group, gc->username);
+		menuitem = gtk_radio_menu_item_new_with_label(group,
+				gaim_account_get_username(account));
 		group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 
 		/* Do some evil, see some evil, speak some evil. */
@@ -2176,7 +2180,7 @@ generate_send_as_items(struct gaim_window *win,
 		 convs = convs->next) {
 
 		struct gaim_conversation *conv;
-		struct gaim_account *account;
+		GaimAccount *account;
 		GtkWidget *box;
 		GtkWidget *label;
 		GtkWidget *image;
@@ -2257,7 +2261,7 @@ generate_send_as_items(struct gaim_window *win,
 }
 
 static GList *
-generate_invite_user_names(struct gaim_connection *gc)
+generate_invite_user_names(GaimConnection *gc)
 {
 	GaimBlistNode *gnode,*bnode;
 	struct group *g;
@@ -2617,7 +2621,7 @@ setup_menubar(struct gaim_window *win)
 static void
 setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_im_pane *gtkim;
 	GaimConversationType type = GAIM_CONV_IM;
@@ -2717,7 +2721,7 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 static void
 setup_chat_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
 	struct gaim_gtk_window *gtkwin;
@@ -2945,7 +2949,7 @@ setup_chat_pane(struct gaim_conversation *conv)
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	GtkWidget *vpaned, *hpaned;
 	GtkWidget *vbox, *hbox;
 	GtkWidget *lbox, *bbox;
@@ -3769,7 +3773,7 @@ update_convo_add_button(struct gaim_conversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	GaimConversationType type;
 	GtkWidget *parent;
 
@@ -3944,7 +3948,7 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 {
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_window *win;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	int gtk_font_options = 0;
 	GString *log_str;
 	FILE *fd;
@@ -5031,18 +5035,18 @@ gaim_gtkconv_update_tabs(void)
 void
 gaim_gtkconv_update_chat_button_style()
 {
-	GSList *l;
-	struct gaim_connection *g;
+	GList *l;
+	GaimConnection *g;
 	GtkWidget *parent;
 	GaimConversationType type = GAIM_CONV_CHAT;
 
-	for (l = connections; l != NULL; l = l->next) {
+	for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
 		GSList *bcs;
 		struct gaim_conversation *conv;
 		struct gaim_gtk_conversation *gtkconv;
 		struct gaim_gtk_window *gtkwin;
 
-		g = (struct gaim_connection *)l->data;
+		g = (GaimConnection *)l->data;
 
 		for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 			conv = (struct gaim_conversation *)bcs->data;
@@ -5107,7 +5111,7 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 	struct gaim_window *win;
 	struct gaim_gtk_window *gtkwin = NULL;
 	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;

@@ -58,6 +58,7 @@
 #define GAIM_STOCK_INVITE          "gaim-invite"
 #define GAIM_STOCK_LINK            "gaim-link"
 #define GAIM_STOCK_LOGO            "gaim-logo"
+#define GAIM_STOCK_MODIFY          "gaim-modify"
 #define GAIM_STOCK_PRIVACY         "gaim-privacy"
 #define GAIM_STOCK_SEND            "gaim-send"
 #define GAIM_STOCK_SIGN_OFF        "gaim-sign-off"

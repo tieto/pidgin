@@ -61,7 +61,7 @@
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
 static GtkWidget *importdialog;
-static struct gaim_connection *importgc;
+static GaimConnection *importgc;
 static GtkWidget *icondlg;
 static GtkWidget *alias_dialog = NULL;
 static GtkWidget *rename_dialog = NULL;
@@ -75,7 +75,7 @@ struct confirm_del {
 	GtkWidget *ok;
 	GtkWidget *cancel;
 	char name[1024];
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 };
 
 struct create_away {
@@ -89,7 +89,7 @@ struct warning {
 	GtkWidget *window;
 	GtkWidget *anon;
 	char *who;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 };
 
 struct addbuddy {
@@ -98,24 +98,24 @@ struct addbuddy {
 	GtkWidget *entry;
 	GtkWidget *entry_for_alias;
 	GtkWidget *account;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 };
 
 struct addperm {
 	GtkWidget *window;
 	GtkWidget *entry;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	gboolean permit;
 };
 
 struct findbyemail {
 	GtkWidget *window;
 	GtkWidget *emailentry;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 };
 
 struct findbyinfo {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	GtkWidget *window;
 	GtkWidget *firstentry;
 	GtkWidget *middleentry;
@@ -127,7 +127,7 @@ struct findbyinfo {
 };
 
 struct info_dlg {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *who;
 	GtkWidget *window;
 	GtkWidget *text;
@@ -137,7 +137,7 @@ struct getuserinfo {
 	GtkWidget *window;
 	GtkWidget *entry;
 	GtkWidget *account;
-	struct gaim_connection *gc; 
+	GaimConnection *gc; 
 };
 
 struct alias_dialog_info
@@ -150,7 +150,7 @@ struct alias_dialog_info
 
 static GSList *info_dlgs = NULL;
 
-static struct info_dlg *find_info_dlg(struct gaim_connection *gc, const char *who)
+static struct info_dlg *find_info_dlg(GaimConnection *gc, const char *who)
 {
 	GSList *i = info_dlgs;
 	while (i) {
@@ -171,7 +171,7 @@ static struct info_dlg *find_info_dlg(struct gaim_connection *gc, const char *wh
 struct set_info_dlg {
 	GtkWidget *window;
 	GtkWidget *menu;
-	struct gaim_account *account;
+	GaimAccount *account;
 	GtkWidget *text;
 	GtkWidget *save;
 	GtkWidget *cancel;
@@ -179,14 +179,14 @@ struct set_info_dlg {
 
 struct set_icon_dlg {
 	GtkWidget *window;
-	struct gaim_account *account;
+	GaimAccount *account;
 	GtkWidget *ok;
 	GtkWidget *cancel;
 	GtkWidget *entry;
 };
 
 struct set_dir_dlg {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	GtkWidget *window;
 	GtkWidget *first;
 	GtkWidget *middle;
@@ -218,7 +218,7 @@ struct passwddlg {
 	GtkWidget *original;
 	GtkWidget *new1;
 	GtkWidget *new2;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 };
 
 struct view_log {
@@ -346,7 +346,7 @@ static void do_warn(GtkWidget *widget, gint resp, struct warning *w)
 	g_free(w);
 }
 
-void show_warn_dialog(struct gaim_connection *gc, char *who)
+void show_warn_dialog(GaimConnection *gc, char *who)
 {
 	char *labeltext;
 	GtkWidget *hbox, *vbox;
@@ -456,7 +456,7 @@ void do_remove_group(struct group *g)
 	gaim_blist_save();
 }
 
-void show_confirm_del(struct gaim_connection *gc, gchar *name)
+void show_confirm_del(GaimConnection *gc, gchar *name)
 {
 	struct buddy *bd = gaim_find_buddy(gc->account, name);
 	char *text;
@@ -502,7 +502,7 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 {
 	const char *who;
 	struct gaim_conversation *conv;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	if (resp == GTK_RESPONSE_OK) {
 		who = gtk_entry_get_text(GTK_ENTRY(info->entry));
@@ -612,7 +612,7 @@ void show_ee_dialog(int ee)
 	gtk_widget_show_all(window);
 }
 
-void show_info_select_account(GObject *w, struct gaim_connection *gc)
+void show_info_select_account(GObject *w, GaimConnection *gc)
 {
 	struct getuserinfo *info = g_object_get_data(w, "getuserinfo");
 	info->gc = gc;
@@ -629,8 +629,9 @@ void show_im_dialog()
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
 	GtkWidget *table, *menu, *opt;
-	GSList *g = connections;
-	struct gaim_connection *c;
+	GList *g = gaim_connections_get_all();
+	GaimConnection *c;
+	GaimAccount *account;
 	struct gaim_gtk_buddy_list *gtkblist;
 	char buf[256];
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
@@ -640,7 +641,7 @@ void show_im_dialog()
 
 	if (!imdialog) {
 		info = g_new0(struct getuserinfo, 1);
-		info->gc = connections->data;
+		info->gc = gaim_connections_get_all()->data;
 		imdialog = gtk_dialog_new_with_buttons(_("New Message"), gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 						       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(imdialog), GTK_RESPONSE_OK);
@@ -686,7 +687,7 @@ void show_im_dialog()
 		g_signal_connect(G_OBJECT(info->entry), "changed",
 				G_CALLBACK(dialog_set_ok_sensitive), imdialog);
 
-		if (connections->next) {
+		if (gaim_connections_get_all()->next) {
 
 			label = gtk_label_new(NULL);
 			gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
@@ -700,14 +701,18 @@ void show_im_dialog()
 			menu = gtk_menu_new();
 
 			while (g) {
-				c = (struct gaim_connection *)g->data;
+				c = (GaimConnection *)g->data;
 
 				if (!GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->send_im) {
 					g = g->next;
 					continue;
 				}
+
+				account = gaim_connection_get_account(c);
+
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
-						   c->username, c->prpl->info->name);
+						   gaim_account_get_username(account),
+						   c->prpl->info->name);
 				opt = gtk_menu_item_new_with_label(buf);
 				g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
 
@@ -735,15 +740,16 @@ void show_info_dialog()
 	GtkWidget *label;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	GtkWidget *table, *menu, *opt;
-	GSList *g = connections;
-	struct gaim_connection *c;
+	GList *g = gaim_connections_get_all();
+	GaimConnection *c;
+	GaimAccount *account;
 	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
 	struct gaim_gtk_buddy_list *gtkblist;
 	char buf[256];
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
-	info->gc = connections->data;
+	info->gc = gaim_connections_get_all()->data;
 
 	window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0, 
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
@@ -788,7 +794,7 @@ void show_info_dialog()
 	g_signal_connect(G_OBJECT(info->entry), "changed",
 			G_CALLBACK(dialog_set_ok_sensitive), window);
 	
-	if (connections->next) {
+	if (gaim_connections_get_all()->next) {
 
 		label = gtk_label_new(NULL);
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
@@ -802,14 +808,18 @@ void show_info_dialog()
 		menu = gtk_menu_new();
 
 		while (g) {
-			c = (struct gaim_connection *)g->data;
+			c = (GaimConnection *)g->data;
 
 			if (!GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->get_info) {
 				g = g->next;
 				continue;
 			}
+
+			account = gaim_connection_get_account(c);
+
 			g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   c->username, c->prpl->info->name);
+					   gaim_account_get_username(account),
+					   c->prpl->info->name);
 			opt = gtk_menu_item_new_with_label(buf);
 			g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
 
@@ -889,7 +899,7 @@ void do_add_group(GtkWidget *w, int resp, struct addbuddy *a)
 		grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
 		if (!a->gc)
-			a->gc = connections->data;
+			a->gc = gaim_connections_get_all()->data;
 
 		g = gaim_group_new(grp);
 		gaim_blist_add_group (g, NULL);
@@ -930,7 +940,7 @@ static void free_dialog(GtkWidget *w, struct addbuddy *a)
 }
 
 
-void show_add_group(struct gaim_connection *gc)
+void show_add_group(GaimConnection *gc)
 {
 
 	GtkWidget *hbox, *vbox;
@@ -983,7 +993,7 @@ void show_add_group(struct gaim_connection *gc)
 	gtk_widget_grab_focus(GTK_WIDGET(a->entry));
 }
 
-static void addbuddy_select_account(GObject *w, struct gaim_connection *gc)
+static void addbuddy_select_account(GObject *w, GaimConnection *gc)
 {
 	struct addbuddy *b = g_object_get_data(w, "addbuddy");
 
@@ -994,8 +1004,9 @@ static void addbuddy_select_account(GObject *w, struct gaim_connection *gc)
 static void create_online_user_names(struct addbuddy *b)
 {
 	char buf[2048]; /* Never hurts to be safe ;-) */
-	GSList *g = connections;
-	struct gaim_connection *c;
+	GList *g = gaim_connections_get_all();
+	GaimConnection *c;
+	GaimAccount *account;
 	GtkWidget *menu, *opt;
 	int count = 0;
 	int place = 0;
@@ -1003,9 +1014,13 @@ static void create_online_user_names(struct addbuddy *b)
 	menu = gtk_menu_new();
 
 	while (g) {
-		c = (struct gaim_connection *)g->data;
+		c = (GaimConnection *)g->data;
+
+		account = gaim_connection_get_account(c);
+
 		g_snprintf(buf, sizeof(buf), "%s (%s)", 
-				c->username, c->prpl->info->name);
+				   gaim_account_get_username(account),
+				   c->prpl->info->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		g_object_set_data(G_OBJECT(opt), "addbuddy", b);
 		g_signal_connect(G_OBJECT(opt), "activate",
@@ -1037,7 +1052,7 @@ static void create_online_user_names(struct addbuddy *b)
 
 }
 
-void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *alias)
+void show_add_buddy(GaimConnection *gc, char *buddy, char *group, char *alias)
 {
 	GtkWidget *table;
 	GtkWidget *label;
@@ -1046,7 +1061,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	struct gaim_gtk_buddy_list *gtkblist;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
-	a->gc = gc ? gc : connections->data;
+	a->gc = gc ? gc : gaim_connections_get_all()->data;
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
@@ -1141,7 +1156,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 }
 
 struct addchat {
-    struct gaim_account *account;
+    GaimAccount *account;
     GtkWidget *window;
 	GtkWidget *account_menu;
 	GtkWidget *alias_entry;
@@ -1267,7 +1282,7 @@ static void rebuild_addchat_entries(struct addchat *ac) {
 	gtk_widget_show_all(ac->entries_box);
 }
 
-static void addchat_select_account(GObject *w, struct gaim_connection *gc)
+static void addchat_select_account(GObject *w, GaimConnection *gc)
 {
 	struct addchat *ac = g_object_get_data(w, "addchat");
 
@@ -1282,8 +1297,9 @@ static void addchat_select_account(GObject *w, struct gaim_connection *gc)
 static void create_online_account_menu_for_add_chat(struct addchat *ac)
 {
 	char buf[2048]; /* Never hurts to be safe ;-) */
-	GSList *g = connections;
-	struct gaim_connection *c;
+	GList *g = gaim_connections_get_all();
+	GaimConnection *c;
+	GaimAccount *account;
 	GtkWidget *menu, *opt;
 	int count = 0;
 	int place = 0;
@@ -1291,10 +1307,13 @@ static void create_online_account_menu_for_add_chat(struct addchat *ac)
 	menu = gtk_menu_new();
 
 	while (g) {
-		c = (struct gaim_connection *)g->data;
+		c = (GaimConnection *)g->data;
+		account = gaim_connection_get_account(c);
+
 		if (GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->join_chat) {
-			g_snprintf(buf, sizeof(buf), "%s (%s)", 
-					c->username, c->prpl->info->name);
+			g_snprintf(buf, sizeof(buf), "%s (%s)",
+					   gaim_account_get_username(account),
+					   c->prpl->info->name);
 			opt = gtk_menu_item_new_with_label(buf);
 			g_object_set_data(G_OBJECT(opt), "addchat", ac);
 			g_signal_connect(G_OBJECT(opt), "activate",
@@ -1323,11 +1342,11 @@ static void create_online_account_menu_for_add_chat(struct addchat *ac)
 	gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu), place);
 }
 
-void show_add_chat(struct gaim_account *account, struct group *group) {
+void show_add_chat(GaimAccount *account, struct group *group) {
     struct addchat *ac = g_new0(struct addchat, 1);
     struct gaim_gtk_buddy_list *gtkblist;
-    GSList *c;
-    struct gaim_connection *gc;
+    GList *c;
+    GaimConnection *gc;
 
 	GtkWidget *label;
 	GtkWidget *rowbox;
@@ -1342,7 +1361,7 @@ void show_add_chat(struct gaim_account *account, struct group *group) {
 	ac->account = account;
     } else {
 	/* Select an account with chat capabilities */
-	for (c = connections; c != NULL; c = c->next) {
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
 	    gc = c->data;
 
 	    if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
@@ -1448,7 +1467,7 @@ void show_add_chat(struct gaim_account *account, struct group *group) {
 static GtkWidget *deny_type = NULL;
 static GtkWidget *deny_conn_hbox = NULL;
 static GtkWidget *deny_opt_menu = NULL;
-static struct gaim_connection *current_deny_gc = NULL;
+static GaimConnection *current_deny_gc = NULL;
 static gboolean current_is_deny = FALSE;
 static GtkWidget *allow_list = NULL;
 static GtkWidget *block_list = NULL;
@@ -1462,7 +1481,7 @@ static void set_deny_mode(GtkWidget *w, int data)
 		return;
 
 	gaim_debug(GAIM_DEBUG_INFO, "privacy", "Setting deny mode %d\n", data);
-	current_deny_gc->account->permdeny = data;
+	current_deny_gc->account->perm_deny = data;
 	serv_set_permit_deny(current_deny_gc);
 	gaim_blist_save();
 }
@@ -1481,7 +1500,7 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *set)
 
 	g_signal_connect(G_OBJECT(opt), "toggled", G_CALLBACK(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
-	if (current_deny_gc->account->permdeny == which)
+	if (current_deny_gc->account->perm_deny == which)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 	return opt;
@@ -1506,7 +1525,7 @@ static void set_deny_type()
 {
 	GSList *bg = gtk_radio_button_get_group(GTK_RADIO_BUTTON(deny_type));
 
-	switch (current_deny_gc->account->permdeny) {
+	switch (current_deny_gc->account->perm_deny) {
 	case 5:
 		bg = bg->next->next;
 		break;
@@ -1573,7 +1592,7 @@ void build_block_list()
 	}
 }
 
-static void deny_gc_opt(GtkWidget *opt, struct gaim_connection *gc)
+static void deny_gc_opt(GtkWidget *opt, GaimConnection *gc)
 {
 	current_deny_gc = gc;
 	set_deny_type();
@@ -1585,13 +1604,14 @@ static void build_deny_menu()
 {
 	GtkWidget *menu;
 	GtkWidget *opt;
-	GSList *c = connections;
-	struct gaim_connection *gc;
+	GList *c = gaim_connections_get_all();
+	GaimConnection *gc;
+	GaimAccount *account;
 	int count = 0;
 	gboolean found = FALSE;
 	char buf[2048];
 
-	if (g_slist_length(connections) == 1) {
+	if (g_list_length(gaim_connections_get_all()) == 1) {
 		gtk_widget_hide(deny_conn_hbox);
 		return;
 	} else
@@ -1600,14 +1620,16 @@ static void build_deny_menu()
 	menu = gtk_menu_new();
 
 	while (c) {
-		gc = (struct gaim_connection *)c->data;
+		gc = (GaimConnection *)c->data;
 		c = c->next;
 
 		if (!GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny)
 			continue;
 
+		account = gaim_connection_get_account(gc);
+
 		g_snprintf(buf, sizeof buf, "%s (%s)",
-				   gc->username, gc->prpl->info->name);
+				   gaim_account_get_username(account), gc->prpl->info->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		g_signal_connect(G_OBJECT(opt), "activate", G_CALLBACK(deny_gc_opt), gc);
 		gtk_widget_show(opt);
@@ -1619,7 +1641,7 @@ static void build_deny_menu()
 	}
 
 	if (!found) {
-		current_deny_gc = connections->data;
+		current_deny_gc = gaim_connections_get_all()->data;
 		count = 0;
 	}
 
@@ -1700,11 +1722,12 @@ static void pref_deny_rem(GtkWidget *button, gboolean permit)
 	gaim_blist_save();
 }
 
-GtkWidget *privacy_win;
+static GtkWidget *privacy_win;
+
 void update_privacy_connections() { /* This is a slightly better name */
 	gboolean needdeny = FALSE;
-	GSList *c = connections;
-	struct gaim_connection *gc = NULL;
+	GList *c = gaim_connections_get_all();
+	GaimConnection *gc = NULL;
 
 	if (!privacy_win)
 		return;
@@ -1749,8 +1772,8 @@ void show_privacy_options() {
 	GtkTreeViewColumn *col;
 	GtkWidget *table;
 
-	current_deny_gc = connections->data;	/* this is safe because this screen will only be
-						   available when there are connections */
+	current_deny_gc = gaim_connections_get_all()->data;	/* this is safe because this screen will only be
+						   available when there are gaim_connections_get_all() */
 	current_is_deny = TRUE;
 
 	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1906,7 +1929,7 @@ void show_privacy_options() {
 void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 {
 	gchar *junk;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	junk = gtk_text_view_get_text(GTK_TEXT_VIEW(b->text), FALSE);
 
@@ -1941,8 +1964,9 @@ void do_set_dir(GtkWidget *widget, struct set_dir_dlg *b)
 	g_free(b);
 }
 
-void show_set_dir(struct gaim_connection *gc)
+void show_set_dir(GaimConnection *gc)
 {
+	GaimAccount *account;
 	GtkWidget *label;
 	GtkWidget *bot;
 	GtkWidget *vbox;
@@ -1952,7 +1976,10 @@ void show_set_dir(struct gaim_connection *gc)
 	char buf[256];
 
 	struct set_dir_dlg *b = g_new0(struct set_dir_dlg, 1);
+
 	b->gc = gc;
+
+	account = gaim_connection_get_account(gc);
 
 	GAIM_DIALOG(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
@@ -1976,7 +2003,8 @@ void show_set_dir(struct gaim_connection *gc)
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	g_snprintf(buf, sizeof(buf), _("Setting Dir Info for %s:"), gc->username);
+	g_snprintf(buf, sizeof(buf), _("Setting Dir Info for %s:"),
+			   gaim_account_get_username(account));
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
@@ -2130,8 +2158,9 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	g_free(b);
 }
 
-void show_change_passwd(struct gaim_connection *gc)
+void show_change_passwd(GaimConnection *gc)
 {
+	GaimAccount *account;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *vbox;
@@ -2141,6 +2170,8 @@ void show_change_passwd(struct gaim_connection *gc)
 
 	struct passwddlg *b = g_new0(struct passwddlg, 1);
 	b->gc = gc;
+
+	account = gaim_connection_get_account(gc);
 
 	GAIM_DIALOG(b->window);
 	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
@@ -2161,7 +2192,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
-	g_snprintf(buf, sizeof(buf), _("Changing password for %s:"), gc->username);
+	g_snprintf(buf, sizeof(buf), _("Changing password for %s:"), gaim_account_get_username(account));
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 
@@ -2213,7 +2244,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	gtk_widget_show_all(b->window);
 }
 
-void show_set_info(struct gaim_connection *gc)
+void show_set_info(GaimConnection *gc)
 {
 	GtkWidget *buttons;
 	GtkWidget *label;
@@ -2221,7 +2252,7 @@ void show_set_info(struct gaim_connection *gc)
 	GtkTextBuffer *buffer;
 	GtkWidget *frame;
 	gchar *buf;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
 	account = gc->account;
@@ -2239,7 +2270,8 @@ void show_set_info(struct gaim_connection *gc)
 	gtk_container_add(GTK_CONTAINER(b->window), vbox);
 
 	buf = g_malloc(256);
-	g_snprintf(buf, 256, _("Changing info for %s:"), account->username);
+	g_snprintf(buf, 256, _("Changing info for %s:"),
+			   gaim_account_get_username(account));
 	label = gtk_label_new(buf);
 	g_free(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
@@ -2291,7 +2323,7 @@ static void info_dlg_free(GtkWidget *b, struct info_dlg *d)
  *
  * i wish this were my client. if i were i wouldn't have to deal with this shit.
  */
-void g_show_info_text(struct gaim_connection *gc, const char *who, int away, const char *info, ...)
+void g_show_info_text(GaimConnection *gc, const char *who, int away, const char *info, ...)
 {
 	GtkWidget *ok;
 	GtkWidget *label;
@@ -2403,7 +2435,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 
 
 
-void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
+void show_add_perm(GaimConnection *gc, char *who, gboolean permit)
 {
 	GtkWidget *cancel;
 	GtkWidget *add;
@@ -2595,7 +2627,7 @@ void do_find_email(GtkWidget *w, struct findbyemail *b)
 	destroy_dialog(NULL, b->window);
 }
 
-void show_find_info(struct gaim_connection *gc)
+void show_find_info(GaimConnection *gc)
 {
 	GtkWidget *cancel;
 	GtkWidget *ok;
@@ -2723,7 +2755,7 @@ void show_find_info(struct gaim_connection *gc)
 	gtk_widget_show_all(b->window);
 }
 
-void show_find_email(struct gaim_connection *gc)
+void show_find_email(GaimConnection *gc)
 {
 	GtkWidget *label;
 	GtkWidget *bbox;
@@ -2733,7 +2765,7 @@ void show_find_email(struct gaim_connection *gc)
 	GtkWidget *button;
 
 	struct findbyemail *b = g_new0(struct findbyemail, 1);
-	if (g_slist_find(connections, gc))
+	if (g_list_find(gaim_connections_get_all(), gc))
 		b->gc = gc;
 	GAIM_DIALOG(b->window);
 	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
@@ -4342,7 +4374,7 @@ static void do_rename_buddy(GObject *obj, GtkWidget *entry)
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	b = g_object_get_data(obj, "buddy");
 
-	if (!g_slist_find(connections, b->account->gc)) {
+	if (!g_list_find(gaim_connections_get_all(), b->account->gc)) {
 		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
 		return;
 	}
@@ -5009,7 +5041,7 @@ void show_multi_entry_dialog(gpointer data)
 void set_vcard_dialog_ok_clicked(GtkWidget *widget, gpointer  data)
 {
 	MultiEntryDlg *b = (MultiEntryDlg *) data;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	gchar *tmp;
 	GSList *list;
 

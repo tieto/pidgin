@@ -75,7 +75,7 @@ static void dequeue_message(GtkTreeIter *iter)
 		struct queued_message *qm = templist->data;
 		if (templist->data) {
 			if (!gaim_utf8_strcasecmp(qm->name, name)) {
-				struct gaim_account *account = NULL;
+				GaimAccount *account = NULL;
 
 				if (g_slist_index(gaim_accounts, qm->account) >= 0)
 					account = qm->account;
@@ -110,7 +110,7 @@ void purge_away_queue(GSList **queue)
 	GSList *q = *queue;
 	struct queued_message *qm;
 	struct gaim_conversation *cnv;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	while (q) {
 		qm = q->data;
@@ -322,7 +322,7 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 	save_prefs();
 }
 
-static void set_gc_away(GObject *obj, struct gaim_connection *gc)
+static void set_gc_away(GObject *obj, GaimConnection *gc)
 {
 	struct away_message *awy = g_object_get_data(obj, "away_message");
 
@@ -332,7 +332,7 @@ static void set_gc_away(GObject *obj, struct gaim_connection *gc)
 		serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
 }
 
-static void set_gc_state(GObject *obj, struct gaim_connection *gc)
+static void set_gc_state(GObject *obj, GaimConnection *gc)
 {
 	char *awy = g_object_get_data(obj, "away_state");
 
@@ -354,8 +354,8 @@ void do_away_menu()
 	GList *l;
 	GSList *awy = away_messages;
 	struct away_message *a;
-	GSList *con = connections;
-	struct gaim_connection *gc = NULL;
+	GList *con;
+	GaimConnection *gc = NULL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	int count = 0;
@@ -413,28 +413,26 @@ void do_away_menu()
 
 		gaim_separator(awaymenu);
 
-		while (con) {
+		for (con = gaim_connections_get_all(); con != NULL; con = con->next) {
 			gc = con->data;
 
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 			if (prpl_info->away_states != NULL && prpl_info->set_away != NULL)
 				count++;
-			con = g_slist_next(con);
 		}
-		con = connections;
 
 		if (count == 0) {
 		} else if (count == 1) {
 			GList *msgs, *tmp;
-			while (con) {
+
+			for (con = gaim_connections_get_all(); con != NULL; con = con->next) {
 				gc = con->data;
 
 				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 				if (prpl_info->away_states && prpl_info->set_away)
 					break;
-				con = g_slist_next(con);
 			}
 
 			tmp = msgs = prpl_info->away_states(gc);
@@ -493,21 +491,23 @@ void do_away_menu()
 				}
 
 			g_list_free(tmp);
-		} else {
-			while (con) {
+		}
+		else {
+			for (con = gaim_connections_get_all(); con != NULL; con = con->next) {
+				GaimAccount *account;
 				char buf[256];
 				GList *msgs, *tmp;
 				gc = con->data;
 
 				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-				if (!prpl_info->away_states || !prpl_info->set_away) {
-					con = con->next;
+				if (!prpl_info->away_states || !prpl_info->set_away)
 					continue;
-				}
+
+				account = gaim_connection_get_account(gc);
 
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gc->username, gc->prpl->info->name);
+					   gaim_account_get_username(account), gc->prpl->info->name);
 				menuitem = gtk_image_menu_item_new_with_label(buf);
 
 				pixbuf = create_prpl_icon(gc->account);
@@ -598,8 +598,6 @@ void do_away_menu()
 					}
 
 				g_list_free(tmp);
-
-				con = g_slist_next(con);
 			}
 
 			menuitem = gtk_menu_item_new_with_label(_("Set All Away"));

@@ -94,7 +94,7 @@ struct gaim_blist_ui_ops *gaim_get_gtk_blist_ui_ops(void);
  * 
  * @return         The icon
  */
-GdkPixbuf *create_prpl_icon(struct gaim_account *account);
+GdkPixbuf *create_prpl_icon(GaimAccount *account);
 
 /**
  * Refreshes all the nodes of the buddy list.

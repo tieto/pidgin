@@ -85,14 +85,17 @@ insertname_compare(gconstpointer one, gconstpointer two)
 }
 
 static gboolean
-find_nick(struct gaim_connection *gc, const char *message)
+find_nick(GaimConnection *gc, const char *message)
 {
+	GaimAccount *account;
 	char *msg, *who, *p;
 	int n;
 
+	account = gaim_connection_get_account(gc);
+
 	msg = g_utf8_strdown(message, -1);
 
-	who = g_utf8_strdown(gc->username, -1);
+	who = g_utf8_strdown(gaim_account_get_username(account), -1);
 	n = strlen(who);
 
 	if ((p = strstr(msg, who)) != NULL) {
@@ -106,13 +109,14 @@ find_nick(struct gaim_connection *gc, const char *message)
 
 	g_free(who);
 
-	if (!gaim_utf8_strcasecmp(gc->username, gc->displayname)) {
+	if (!gaim_utf8_strcasecmp(gaim_account_get_username(account),
+							  gaim_connection_get_display_name(gc))) {
 		g_free(msg);
 
 		return FALSE;
 	}
 
-	who = g_utf8_strdown(gc->displayname, -1);
+	who = g_utf8_strdown(gaim_connection_get_display_name(gc), -1);
 	n = strlen(who);
 
 	if (n > 0 && (p = strstr(msg, who)) != NULL) {
@@ -153,7 +157,7 @@ static gboolean
 send_typed(gpointer data)
 {
 	struct gaim_conversation *conv = (struct gaim_conversation *)data;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	const char *name;
 
 	gc   = gaim_conversation_get_gc(conv);
@@ -175,7 +179,7 @@ static void
 common_send(struct gaim_conversation *conv, const char *message)
 {
 	GaimConversationType type;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct gaim_conversation_ui_ops *ops;
 	char *buf, *buf2, *buffy = NULL;
 	gulong length = 0;
@@ -857,7 +861,7 @@ gaim_get_last_window_with_type(GaimConversationType type)
  * Conversation API
  **************************************************************************/
 struct gaim_conversation *
-gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
+gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 					  const char *name)
 {
 	struct gaim_conversation *conv;
@@ -939,7 +943,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_window *win;
 	struct gaim_conversation_ui_ops *ops;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	const char *name;
 	GList *node;
 
@@ -1099,7 +1103,7 @@ gaim_conversation_get_ui_ops(struct gaim_conversation *conv)
 
 void
 gaim_conversation_set_account(struct gaim_conversation *conv,
-						   struct gaim_account *account)
+						   GaimAccount *account)
 {
 	if (conv == NULL || account == gaim_conversation_get_account(conv))
 		return;
@@ -1109,7 +1113,7 @@ gaim_conversation_set_account(struct gaim_conversation *conv,
 	gaim_conversation_update(conv, GAIM_CONV_UPDATE_ACCOUNT);
 }
 
-struct gaim_account *
+GaimAccount *
 gaim_conversation_get_account(const struct gaim_conversation *conv)
 {
 	if (conv == NULL)
@@ -1118,10 +1122,10 @@ gaim_conversation_get_account(const struct gaim_conversation *conv)
 	return conv->account;
 }
 
-struct gaim_connection *
+GaimConnection *
 gaim_conversation_get_gc(const struct gaim_conversation *conv)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	if (conv == NULL)
 		return NULL;
@@ -1165,7 +1169,7 @@ gaim_conversation_get_title(const struct gaim_conversation *conv)
 void
 gaim_conversation_autoset_title(struct gaim_conversation *conv)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct buddy *b;
 	const char *text, *name;
 
@@ -1386,7 +1390,7 @@ gaim_find_conversation(const char *name)
 }
 
 struct gaim_conversation *
-gaim_find_conversation_with_account(const char *name, const struct gaim_account *account)
+gaim_find_conversation_with_account(const char *name, const GaimAccount *account)
 {
 	struct gaim_conversation *c = NULL;
 	char *cuser;
@@ -1420,7 +1424,8 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 						time_t mtime)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_account *account;
+	GaimConnection *gc;
+	GaimAccount *account;
 	struct gaim_conversation_ui_ops *ops;
 	struct gaim_window *win;
 	struct buddy *b;
@@ -1436,6 +1441,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 		return;
 
 	account = gaim_conversation_get_account(conv);
+	gc      = gaim_account_get_connection(account);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
 		(account->gc == NULL || !g_slist_find(account->gc->buddy_chats, conv)))
@@ -1453,15 +1459,17 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 
 			if (who == NULL) {
 				if (flags & WFLAG_SEND) {
-					b = gaim_find_buddy(account, account->gc->username);
+					b = gaim_find_buddy(account,
+										gaim_account_get_username(account));
+
 					if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
 						who = gaim_get_buddy_alias(b);
-					else if (*account->alias)
+					else if (gaim_account_get_alias(account) != NULL)
 						who = account->alias;
-					else if (*account->gc->displayname)
-						who = account->gc->displayname;
+					else if (gaim_connection_get_display_name(gc) != NULL)
+						who = gaim_connection_get_display_name(gc);
 					else
-						who = account->gc->username;
+						who = gaim_account_get_username(account);
 				}
 				else {
 					b = gaim_find_buddy(account,
@@ -1878,14 +1886,16 @@ void
 gaim_chat_write(struct gaim_chat *chat, const char *who,
 				const char *message, int flags, time_t mtime)
 {
+	GaimAccount *account;
 	struct gaim_conversation *conv;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	if (chat == NULL || who == NULL || message == NULL)
 		return;
 
-	conv = gaim_chat_get_conversation(chat);
-	gc   = gaim_conversation_get_gc(conv);
+	conv    = gaim_chat_get_conversation(chat);
+	gc      = gaim_conversation_get_gc(conv);
+	account = gaim_connection_get_account(gc);
 
 	/* Don't display this if the person who wrote it is ignored. */
 	if (gaim_chat_is_user_ignored(chat, who))
@@ -1896,8 +1906,8 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 
 		str = g_strdup(normalize(who));
 
-		if (!gaim_utf8_strcasecmp(str, normalize(gc->username)) ||
-			!gaim_utf8_strcasecmp(str, normalize(gc->displayname))) {
+		if (!gaim_utf8_strcasecmp(str, normalize(gaim_account_get_username(account))) ||
+			!gaim_utf8_strcasecmp(str, normalize(gaim_connection_get_display_name(gc)))) {
 
 			flags |= WFLAG_SEND;
 		}
@@ -2058,7 +2068,7 @@ gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 }
 
 struct gaim_conversation *
-gaim_find_chat(struct gaim_connection *gc, int id)
+gaim_find_chat(GaimConnection *gc, int id)
 {
 	GList *l;
 	struct gaim_conversation *conv;
@@ -2183,7 +2193,7 @@ conv_placement_by_account(struct gaim_conversation *conv)
 {
 	GaimConversationType type;
 	GList *wins, *convs;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 
 	account = gaim_conversation_get_account(conv);

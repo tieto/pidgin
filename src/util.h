@@ -26,6 +26,8 @@
 #ifndef _GAIM_UTIL_H_
 #define _GAIM_UTIL_H_
 
+#include "account.h"
+
 /**
  * Normalizes a string, so that it is suitable for comparison.
  *
@@ -131,8 +133,7 @@ char *sec_to_text(guint sec);
  *
  * @return The gaim_account, if found, or @c NULL otherwise.
  */
-struct gaim_account *gaim_account_find(const char *name,
-									   int protocol) G_GNUC_PURE;
+GaimAccount *gaim_account_find(const char *name, int protocol);
 
 /**
  * Returns the date and time in human-readable form.
@@ -144,7 +145,7 @@ struct gaim_account *gaim_account_find(const char *name,
  *
  * @see date()
  */
-char *full_date(void) G_GNUC_PURE;
+char *full_date(void);
 
 /**
  * Looks for %n, %d, or %t in a string, and replaces them with the
@@ -268,7 +269,7 @@ void strip_linefeed(char *str);
  * @return A time_t.
  */
 time_t get_time(int year, int month, int day,
-				int hour, int min, int sec) G_GNUC_CONST;
+				int hour, int min, int sec);
 
 /**
  * Creates a temporary file and returns a file pointer to it.

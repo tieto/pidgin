@@ -6,8 +6,12 @@ EXTRA_DIST = \
 SUBDIRS = protocols
 
 CORESOURCES = \
+	account.c \
+	account.h \
 	blist.c \
 	blist.h \
+	connection.c \
+	connection.h \
 	conversation.c \
 	conversation.h \
 	core.c \
@@ -53,6 +57,8 @@ gaim_SOURCES = \
 	gaim-disclosure.c \
 	gaim-disclosure.h \
 	gaimrc.c \
+	gtkaccount.c \
+	gtkaccount.h \
 	gtkcellrendererprogress.c \
 	gtkcellrendererprogress.h \
 	gtkblist.c \

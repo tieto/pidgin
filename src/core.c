@@ -219,7 +219,7 @@ static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 static void user_handler(struct UI *ui, guchar subtype, guchar *data)
 {
 	guint id;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	switch (subtype) {
 		/*
@@ -258,7 +258,7 @@ static void message_handler(struct UI *ui, guchar subtype, guchar *data)
 			return;
 		{
 			guint id;
-			struct gaim_connection *gc;
+			GaimConnection *gc;
 			guint len;
 			char *who, *msg;
 			gint flags;
@@ -266,7 +266,7 @@ static void message_handler(struct UI *ui, guchar subtype, guchar *data)
 
 			memcpy(&id, data + pos, sizeof(id));
 			pos += sizeof(id);
-			gc = g_slist_nth_data(connections, id);
+			gc = g_list_nth_data(gaim_connections_get_all(), id);
 			if (!gc)
 				return;
 

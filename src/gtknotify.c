@@ -29,7 +29,7 @@
 
 typedef struct
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *url;
 	GtkWidget *dialog;
 	GtkWidget *label;

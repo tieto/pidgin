@@ -283,11 +283,14 @@ FILE *open_log_file(const char *name, int is_chat)
 	return fd;
 }
 
-void system_log(enum log_event what, struct gaim_connection *gc,
+void system_log(enum log_event what, GaimConnection *gc,
 				struct buddy *who, int why)
 {
+	GaimAccount *account;
 	FILE *fd;
 	char text[256], html[256];
+
+	account = gaim_connection_get_account(gc);
 
 	if (((why & OPT_LOG_MY_SIGNON) &&
 		 !gaim_prefs_get_bool("/gaim/gtk/logging/log_own_states"))) {
@@ -297,7 +300,7 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 
 	if (gaim_prefs_get_bool("/gaim/gtk/logging/individual_logs")) {
 		if (why & OPT_LOG_MY_SIGNON)
-			fd = open_system_log_file(gc ? gc->username : NULL);
+			fd = open_system_log_file(gc ? (char *)gaim_account_get_username(account) : NULL);
 		else
 			fd = open_system_log_file(who->name);
 	} else
@@ -310,32 +313,32 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 		switch (what) {
 		case log_signon:
 			g_snprintf(text, sizeof(text), _("+++ %s (%s) signed on @ %s"),
-				   gc->username, gc->prpl->info->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
 			g_snprintf(text, sizeof(text), _("+++ %s (%s) signed off @ %s"),
-				   gc->username, gc->prpl->info->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
 			g_snprintf(text, sizeof(text), _("+++ %s (%s) changed away state @ %s"),
-				   gc->username, gc->prpl->info->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
 			g_snprintf(text, sizeof(text), _("+++ %s (%s) came back @ %s"),
-				   gc->username, gc->prpl->info->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
 			g_snprintf(text, sizeof(text), _("+++ %s (%s) became idle @ %s"),
-				   gc->username, gc->prpl->info->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
 			g_snprintf(text, sizeof(text), _("+++ %s (%s) returned from idle @ %s"),
-				   gc->username, gc->prpl->info->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_quit:
@@ -347,32 +350,32 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 		switch (what) {
 		case log_signon:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) signed on @ %s"),
-				   gc->username, gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) signed off @ %s"),
-				   gc->username, gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) went away @ %s"),
-				   gc->username, gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) came back @ %s"),
-				   gc->username, gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) became idle @ %s"),
-				   gc->username, gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
 			g_snprintf(text, sizeof(text),
-				   _("%s (%s) reported that %s (%s) returned from idle @ %s"), gc->username,
+				   _("%s (%s) reported that %s (%s) returned from idle @ %s"), gaim_account_get_username(account),
 				   gc->prpl->info->name, gaim_get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
@@ -385,32 +388,32 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 		switch (what) {
 		case log_signon:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s signed on @ %s"),
-				   gc->username, gc->prpl->info->name, who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s signed off @ %s"),
-				   gc->username, gc->prpl->info->name, who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s went away @ %s"),
-				   gc->username, gc->prpl->info->name, who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s came back @ %s"),
-				   gc->username, gc->prpl->info->name, who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s became idle @ %s"),
-				   gc->username, gc->prpl->info->name, who->name, full_date());
+				   gaim_account_get_username(account), gc->prpl->info->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
 			g_snprintf(text, sizeof(text),
-				   _("%s (%s) reported that %s returned from idle @ %s"), gc->username,
+				   _("%s (%s) reported that %s returned from idle @ %s"), gaim_account_get_username(account),
 				   gc->prpl->info->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;

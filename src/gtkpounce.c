@@ -33,7 +33,7 @@ struct gaim_gtkpounce_dialog
 {
 	/* Pounce data */
 	struct gaim_pounce  *pounce;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	/* The window */
 	GtkWidget *window;
@@ -276,7 +276,7 @@ pounce_choose_cb(GtkWidget *item, struct gaim_gtkpounce_dialog *dialog)
 static GtkWidget *
 pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	GaimPlugin *prpl;
 	GtkWidget *opt_menu;
 	GtkWidget *menu;
@@ -289,7 +289,7 @@ pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 	menu = gtk_menu_new();
 
 	for (l = gaim_accounts, count = 0; l != NULL; l = l->next, count++) {
-		account = (struct gaim_account *)l->data;
+		account = (GaimAccount *)l->data;
 
 		prpl = gaim_find_prpl(account->protocol);
 
@@ -322,7 +322,7 @@ static void
 pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
 {
 	struct gaim_conversation *conv;
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct gaim_gtkpounce_data *pounce_data;
 	const char *pouncee;
 
@@ -429,7 +429,7 @@ free_pounce(void *data)
 }
 
 struct gaim_pounce *
-gaim_gtkpounce_new(struct gaim_account *pouncer, const char *pouncee,
+gaim_gtkpounce_new(GaimAccount *pouncer, const char *pouncee,
 				   GaimPounceEvent events, GaimGtkPounceAction actions,
 				   const char *message, const char *command,
 				   const char *sound, gboolean save)

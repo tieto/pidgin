@@ -50,8 +50,10 @@
 #include "sound.h"
 #include "gaim.h"
 #include "gaim-socket.h"
+#include "account.h"
 #include "prefs.h"
 #include "notify.h"
+#include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkdebug.h"
 #include "gtknotify.h"
@@ -119,7 +121,7 @@ void do_quit()
 	gaim_event_broadcast(event_quit);
 
 	/* transmission ends */
-	signoff_all();
+	gaim_connections_disconnect_all();
 
 	/* record what we have before we blow it away... */
 	save_prefs();
@@ -156,7 +158,7 @@ static gboolean sound_timeout(gpointer data)
 /* we need to do this for Oscar because serv_login only starts the login
  * process, it doesn't end there. gaim_setup will be called later from
  * oscar.c, after the buddy list is made and serv_finish_login is called */
-void gaim_setup(struct gaim_connection *gc)
+void gaim_setup(GaimConnection *gc)
 {
 	if (gaim_prefs_get_bool("/core/sound/login") && gaim_prefs_get_bool("/core/sound/silent_signon")) {
 		if(snd_tmout) {
@@ -172,13 +174,14 @@ static gboolean domiddleclick(GtkWidget *w, GdkEventButton *event, gpointer null
 	if (event->button != 2)
 		return FALSE;
 
-	auto_login();
+	/* TODO auto_login(); */
+
 	return TRUE;
 }
 
 static void dologin(GtkWidget *widget, GtkWidget *w)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	const char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
 	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
@@ -192,13 +195,15 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	 * the second one */
 
 	account = gaim_account_find(username, -1);
-	if (!account)
-		account = gaim_account_new(username, GAIM_PROTO_DEFAULT,
-								   OPT_ACCT_REM_PASS);
+	if (!account) {
+		account = gaim_account_new(username, GAIM_PROTO_DEFAULT);
 
-	g_snprintf(account->password, sizeof account->password, "%s", password);
-	save_prefs();
-	serv_login(account);
+		gaim_account_set_remember_password(account, TRUE);
+	}
+
+	gaim_account_set_password(account, password);
+
+	gaim_account_connect(account);
 }
 
 /* <name> is a comma-separated list of names, or NULL
@@ -210,7 +215,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 */
 static int dologin_named(char *name)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	char **names, **n;
 	int retval = -1;
 
@@ -219,7 +224,7 @@ static int dologin_named(char *name)
 		for (n = names; *n != NULL; n++) {
 			account = gaim_account_find(*n, -1);
 			if (account) {	/* found a user */
-				if (account->options & OPT_ACCT_REM_PASS) {
+				if (gaim_account_get_remember_password(account)) {
 					retval = 0;
 					serv_login(account);
 				}
@@ -227,8 +232,9 @@ static int dologin_named(char *name)
 		}
 		g_strfreev(names);
 	} else {		/* no name given, use default */
-		account = (struct gaim_account *)gaim_accounts->data;
-		if (account->options & OPT_ACCT_REM_PASS) {
+		account = (GaimAccount *)gaim_accounts->data;
+
+		if (gaim_account_get_remember_password(account)) {
 			retval = 0;
 			serv_login(account);
 		}
@@ -253,11 +259,11 @@ static void doenter(GtkWidget *widget, GtkWidget *w)
 static void combo_changed(GtkWidget *w, GtkWidget *combo)
 {
 	const char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	account = gaim_account_find(txt, -1);
 
-	if (account && account->options & OPT_ACCT_REM_PASS) {
+	if (account && gaim_account_get_remember_password(account)) {
 		gtk_entry_set_text(GTK_ENTRY(pass), account->password);
 	} else {
 		gtk_entry_set_text(GTK_ENTRY(pass), "");
@@ -269,13 +275,13 @@ static GList *combo_user_names()
 {
 	GSList *accts = gaim_accounts;
 	GList *tmp = NULL;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	if (!accts)
 		return g_list_append(NULL, _("<New User>"));
 
 	while (accts) {
-		account = (struct gaim_account *)accts->data;
+		account = (GaimAccount *)accts->data;
 		tmp = g_list_append(tmp, account->username);
 		accts = accts->next;
 	}
@@ -367,7 +373,7 @@ void show_login()
 	button = gaim_pixbuf_button_from_stock(_("Accounts"), GAIM_STOCK_ACCOUNTS, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(account_editor), mainwindow);
+					 G_CALLBACK(gaim_gtk_account_dialog_show), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 #ifdef NO_MULTI
@@ -389,8 +395,9 @@ void show_login()
 
 	/* Now grab the focus that we need */
 	if (gaim_accounts) {
-		struct gaim_account *account = gaim_accounts->data;
-		if (account->options & OPT_ACCT_REM_PASS) {
+		GaimAccount *account = gaim_accounts->data;
+
+		if (gaim_account_get_remember_password(account)) {
 			combo_changed(NULL, name);
 			gtk_widget_grab_focus(button);
 		} else {
@@ -412,7 +419,7 @@ void sighandler(int sig)
 	case SIGHUP:
 		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
 				   "Caught signal %d\n", sig);
-		signoff_all(NULL, NULL);
+		gaim_connections_disconnect_all();
 		break;
 	case SIGSEGV:
 		core_quit();
@@ -449,7 +456,7 @@ void sighandler(int sig)
 	default:
 		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
 				   "Caught signal %d\n", sig);
-		signoff_all(NULL, NULL);
+		gaim_connections_disconnect_all();
 
 		gaim_plugins_unload_all();
 
@@ -578,12 +585,12 @@ static int ui_main()
 
 static void set_first_user(char *name)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	account = gaim_account_find(name, -1);
 
 	if (!account) {		/* new user */
-		account = g_new0(struct gaim_account, 1);
+		account = g_new0(GaimAccount, 1);
 		g_snprintf(account->username, sizeof(account->username), "%s", name);
 		account->protocol = GAIM_PROTO_DEFAULT;
 		gaim_accounts = g_slist_prepend(gaim_accounts, account);
@@ -939,11 +946,11 @@ int main(int argc, char *argv[])
 	}
 
 	if (!opt_acct && !opt_nologin && gaim_session == 0)
-		auto_login();
+		; /* TODO auto_login(); */
 
 	if (opt_acct) {
-		account_editor(NULL, NULL);
-	} else if ((dologin_ret == -1) && !connections)
+		gaim_gtk_account_dialog_show();
+	} else if ((dologin_ret == -1) && !gaim_connections_get_all())
 		show_login();
 
 	gtk_main();

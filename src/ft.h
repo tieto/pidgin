@@ -64,7 +64,7 @@ struct gaim_xfer
 {
 	GaimXferType type;            /**< The type of transfer.               */
 
-	struct gaim_account *account; /**< The account.                        */
+	GaimAccount *account; /**< The account.                        */
 
 	char *who;                    /**< The person on the other end of the
 	                                   transfer.                           */
@@ -124,7 +124,7 @@ struct gaim_xfer
  *
  * @return A file transfer handle.
  */
-struct gaim_xfer *gaim_xfer_new(struct gaim_account *account,
+struct gaim_xfer *gaim_xfer_new(GaimAccount *account,
 								GaimXferType type, const char *who);
 
 /**
@@ -172,7 +172,7 @@ GaimXferType gaim_xfer_get_type(const struct gaim_xfer *xfer);
  *
  * @return The account.
  */
-struct gaim_account *gaim_xfer_get_account(const struct gaim_xfer *xfer);
+GaimAccount *gaim_xfer_get_account(const struct gaim_xfer *xfer);
 
 /**
  * Returns the completed state for a file transfer.

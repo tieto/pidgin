@@ -40,7 +40,7 @@
 #include "notify.h"
 #include "prefs.h"
 
-void serv_login(struct gaim_account *account)
+void serv_login(GaimAccount *account)
 {
 	GaimPlugin *p = gaim_find_prpl(account->protocol);
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -61,10 +61,7 @@ void serv_login(struct gaim_account *account)
 		gaim_debug(GAIM_DEBUG_INFO, "server",
 				   PACKAGE " " VERSION " logging in %s using %s\n",
 				   account->username, p->info->name);
-		account->connecting = TRUE;
-		connecting_count++;
-		gaim_debug(GAIM_DEBUG_MISC, "server",
-				   "connection count: %d\n", connecting_count);
+
 		gaim_event_broadcast(event_connecting, account);
 		prpl_info->login(account);
 	}
@@ -72,7 +69,7 @@ void serv_login(struct gaim_account *account)
 
 static gboolean send_keepalive(gpointer d)
 {
-	struct gaim_connection *gc = d;
+	GaimConnection *gc = d;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (gc != NULL && gc->prpl != NULL)
@@ -84,19 +81,19 @@ static gboolean send_keepalive(gpointer d)
 	return TRUE;
 }
 
-static void update_keepalive(struct gaim_connection *gc, gboolean on)
+static void update_keepalive(GaimConnection *gc, gboolean on)
 {
-	if (on && !gc->keepalive) {
+	if (on && !gc->keep_alive) {
 		gaim_debug(GAIM_DEBUG_INFO, "server", "allowing NOP\n");
-		gc->keepalive = g_timeout_add(60000, send_keepalive, gc);
-	} else if (!on && gc->keepalive > 0) {
+		gc->keep_alive = g_timeout_add(60000, send_keepalive, gc);
+	} else if (!on && gc->keep_alive > 0) {
 		gaim_debug(GAIM_DEBUG_INFO, "server", "removing NOP\n");
-		g_source_remove(gc->keepalive);
-		gc->keepalive = 0;
+		g_source_remove(gc->keep_alive);
+		gc->keep_alive = 0;
 	}
 }
 
-void serv_close(struct gaim_connection *gc)
+void serv_close(GaimConnection *gc)
 {
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -125,23 +122,23 @@ void serv_close(struct gaim_connection *gc)
 	}
 
 	prpl = gc->prpl;
-	account_offline(gc);
-	destroy_gaim_conn(gc);
+
+	gaim_account_disconnect(gaim_connection_get_account(gc));
 }
 
-void serv_touch_idle(struct gaim_connection *gc)
+void serv_touch_idle(GaimConnection *gc)
 {
 	/* Are we idle?  If so, not anymore */
 	if (gc->is_idle > 0) {
 		gc->is_idle = 0;
 		serv_set_idle(gc, 0);
 	}
-	time(&gc->lastsent);
+	time(&gc->last_sent_time);
 	if (gc->is_auto_away)
 		check_idle(gc);
 }
 
-void serv_finish_login(struct gaim_connection *gc)
+void serv_finish_login(GaimConnection *gc)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -162,7 +159,8 @@ void serv_finish_login(struct gaim_connection *gc)
 	serv_touch_idle(gc);
 
 	if (prpl_info->options & OPT_PROTO_CORRECT_TIME)
-		serv_add_buddy(gc, gc->username);
+		serv_add_buddy(gc,
+				gaim_account_get_username(gaim_connection_get_account(gc)));
 
 	update_keepalive(gc, TRUE);
 }
@@ -171,7 +169,7 @@ void serv_finish_login(struct gaim_connection *gc)
  * typing notifications.
  * if it returns zero, it will not send any more typing notifications 
  * typing is a flag - TRUE for typing, FALSE for stopped typing */
-int serv_send_typing(struct gaim_connection *g, char *name, int typing) {
+int serv_send_typing(GaimConnection *g, char *name, int typing) {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
@@ -190,7 +188,7 @@ struct queued_away_response {
 
 struct queued_away_response *find_queued_away_response_by_name(char *name);
 
-int serv_send_im(struct gaim_connection *gc, char *name, char *message,
+int serv_send_im(GaimConnection *gc, char *name, char *message,
 				 int len, int flags)
 {
 	struct gaim_conversation *c;
@@ -231,7 +229,7 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message,
 	return val;
 }
 
-void serv_get_info(struct gaim_connection *g, char *name)
+void serv_get_info(GaimConnection *g, char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -242,7 +240,7 @@ void serv_get_info(struct gaim_connection *g, char *name)
 		prpl_info->get_info(g, name);
 }
 
-void serv_get_away(struct gaim_connection *g, const char *name)
+void serv_get_away(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -253,18 +251,18 @@ void serv_get_away(struct gaim_connection *g, const char *name)
 		prpl_info->get_away(g, name);
 }
 
-void serv_get_dir(struct gaim_connection *g, char *name)
+void serv_get_dir(GaimConnection *g, char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->get_dir)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->get_dir)
 		prpl_info->get_dir(g, name);
 }
 
-void serv_set_dir(struct gaim_connection *g, const char *first,
+void serv_set_dir(GaimConnection *g, const char *first,
 				  const char *middle, const char *last, const char *maiden,
 				  const char *city, const char *state, const char *country,
 				  int web)
@@ -274,12 +272,12 @@ void serv_set_dir(struct gaim_connection *g, const char *first,
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_dir)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_dir)
 		prpl_info->set_dir(g, first, middle, last, maiden, city, state,
 						 country, web);
 }
 
-void serv_dir_search(struct gaim_connection *g, const char *first,
+void serv_dir_search(GaimConnection *g, const char *first,
 					 const char *middle, const char *last, const char *maiden,
 		     const char *city, const char *state, const char *country,
 			 const char *email)
@@ -289,13 +287,13 @@ void serv_dir_search(struct gaim_connection *g, const char *first,
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->dir_search)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->dir_search)
 		prpl_info->dir_search(g, first, middle, last, maiden, city, state,
 							country, email);
 }
 
 
-void serv_set_away(struct gaim_connection *gc, char *state, char *message)
+void serv_set_away(GaimConnection *gc, char *state, char *message)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -349,24 +347,24 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 
 void serv_set_away_all(char *message)
 {
-	GSList *c;
-	struct gaim_connection *g;
+	GList *c;
+	GaimConnection *g;
 
-	for (c = connections; c != NULL; c = c->next) {
-		g = (struct gaim_connection *)c->data;
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+		g = (GaimConnection *)c->data;
 
 		serv_set_away(g, GAIM_AWAY_CUSTOM, message);
 	}
 }
 
-void serv_set_info(struct gaim_connection *g, char *info)
+void serv_set_info(GaimConnection *g, char *info)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_info) {
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_info) {
 		if (gaim_event_broadcast(event_set_info, g, info))
 			return;
 
@@ -374,36 +372,36 @@ void serv_set_info(struct gaim_connection *g, char *info)
 	}
 }
 
-void serv_change_passwd(struct gaim_connection *g, const char *orig, const char *new)
+void serv_change_passwd(GaimConnection *g, const char *orig, const char *new)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->change_passwd)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->change_passwd)
 		prpl_info->change_passwd(g, orig, new);
 }
 
-void serv_add_buddy(struct gaim_connection *g, const char *name)
+void serv_add_buddy(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->add_buddy)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->add_buddy)
 		prpl_info->add_buddy(g, name);
 }
 
-void serv_add_buddies(struct gaim_connection *g, GList *buddies)
+void serv_add_buddies(GaimConnection *g, GList *buddies)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g)) {
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g)) {
 		if (prpl_info->add_buddies)
 			prpl_info->add_buddies(g, buddies);
 		else if (prpl_info->add_buddy) {
@@ -416,22 +414,22 @@ void serv_add_buddies(struct gaim_connection *g, GList *buddies)
 }
 
 
-void serv_remove_buddy(struct gaim_connection *g, char *name, char *group)
+void serv_remove_buddy(GaimConnection *g, char *name, char *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->remove_buddy)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->remove_buddy)
 		prpl_info->remove_buddy(g, name, group);
 }
 
-void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
+void serv_remove_buddies(GaimConnection *gc, GList *g, char *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (!g_slist_find(connections, gc))
+	if (!g_list_find(gaim_connections_get_all(), gc))
 		return;
 
 	if (!gc->prpl)
@@ -465,7 +463,7 @@ void serv_alias_buddy(struct buddy *b)
 	}
 }
 
-void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
+void serv_got_alias(GaimConnection *gc, char *who, char *alias) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 	if(!b)
 		return;
@@ -504,7 +502,7 @@ void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 /*
  * Rename a group on server roster/list.
  */
-void serv_rename_group(struct gaim_connection *g, struct group *old_group,
+void serv_rename_group(GaimConnection *g, struct group *old_group,
 					   const char *new_name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -538,51 +536,51 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group,
 	}
 }
 
-void serv_add_permit(struct gaim_connection *g, const char *name)
+void serv_add_permit(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->add_permit)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->add_permit)
 		prpl_info->add_permit(g, name);
 }
 
-void serv_add_deny(struct gaim_connection *g, const char *name)
+void serv_add_deny(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->add_deny)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->add_deny)
 		prpl_info->add_deny(g, name);
 }
 
-void serv_rem_permit(struct gaim_connection *g, const char *name)
+void serv_rem_permit(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->rem_permit)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->rem_permit)
 		prpl_info->rem_permit(g, name);
 }
 
-void serv_rem_deny(struct gaim_connection *g, const char *name)
+void serv_rem_deny(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->rem_deny)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->rem_deny)
 		prpl_info->rem_deny(g, name);
 }
 
-void serv_set_permit_deny(struct gaim_connection *g)
+void serv_set_permit_deny(GaimConnection *g)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -595,45 +593,45 @@ void serv_set_permit_deny(struct gaim_connection *g)
 	 * in the prefs. In either case you should probably be resetting and
 	 * resending the permit/deny info when you get this.
 	 */
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_permit_deny)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_permit_deny)
 		prpl_info->set_permit_deny(g);
 }
 
 
-void serv_set_idle(struct gaim_connection *g, int time)
+void serv_set_idle(GaimConnection *g, int time)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_idle)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_idle)
 		prpl_info->set_idle(g, time);
 }
 
-void serv_warn(struct gaim_connection *g, char *name, int anon)
+void serv_warn(GaimConnection *g, char *name, int anon)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->warn)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->warn)
 		prpl_info->warn(g, name, anon);
 }
 
-void serv_join_chat(struct gaim_connection *g, GHashTable *data)
+void serv_join_chat(GaimConnection *g, GHashTable *data)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->join_chat)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->join_chat)
 		prpl_info->join_chat(g, data);
 }
 
-void serv_chat_invite(struct gaim_connection *g, int id, const char *message, const char *name)
+void serv_chat_invite(GaimConnection *g, int id, const char *message, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	char *buffy = message && *message ? g_strdup(message) : NULL;
@@ -643,18 +641,18 @@ void serv_chat_invite(struct gaim_connection *g, int id, const char *message, co
 
 	gaim_event_broadcast(event_chat_send_invite, g, (void *)id, name, &buffy);
 
-	if (prpl_info && g_slist_find(connections, g) && prpl_info->chat_invite)
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->chat_invite)
 		prpl_info->chat_invite(g, id, buffy, name);
 
 	if (buffy)
 		g_free(buffy);
 }
 
-void serv_chat_leave(struct gaim_connection *g, int id)
+void serv_chat_leave(GaimConnection *g, int id)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (!g_slist_find(connections, g))
+	if (!g_list_find(gaim_connections_get_all(), g))
 		return;
 
 	if (g->prpl != NULL)
@@ -664,7 +662,7 @@ void serv_chat_leave(struct gaim_connection *g, int id)
 		prpl_info->chat_leave(g, id);
 }
 
-void serv_chat_whisper(struct gaim_connection *g, int id, char *who, char *message)
+void serv_chat_whisper(GaimConnection *g, int id, char *who, char *message)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -675,7 +673,7 @@ void serv_chat_whisper(struct gaim_connection *g, int id, char *who, char *messa
 		prpl_info->chat_whisper(g, id, who, message);
 }
 
-int serv_chat_send(struct gaim_connection *g, int id, char *message)
+int serv_chat_send(GaimConnection *g, int id, char *message)
 {
 	int val = -EINVAL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -753,7 +751,7 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
  * woo. i'm actually going to comment this function. isn't that fun. make
  * sure to follow along, kids
  */
-void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
+void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				 guint32 flags, time_t mtime, gint len)
 {
 	char *buffy;
@@ -1027,16 +1025,22 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 
 
 
-void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
+void serv_got_update(GaimConnection *gc, char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type)
 {
-	struct buddy *b = gaim_find_buddy(gc->account, name);
+	GaimAccount *account;
+	struct buddy *b;
+
+	account = gaim_connection_get_account(gc);
+	b = gaim_find_buddy(account, name);
 
 	if (signon && (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->options &
 				   OPT_PROTO_CORRECT_TIME)) {
 
 		char *tmp = g_strdup(normalize(name));
-		if (!gaim_utf8_strcasecmp(tmp, normalize(gc->username))) {
+		if (!gaim_utf8_strcasecmp(tmp,
+				normalize(gaim_account_get_username(account)))) {
+
 			gc->evil = evil;
 			gc->login_time_official = signon;
 			/*update_idle_times();*/
@@ -1145,7 +1149,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 }
 
 
-void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
+void serv_got_eviled(GaimConnection *gc, char *name, int lev)
 {
 	char buf2[1024];
 
@@ -1161,13 +1165,13 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 	g_snprintf(buf2, sizeof(buf2),
 			   _("%s has just been warned by %s.\n"
 				 "Your new warning level is %d%%"),
-			   gc->username,
-			   ((name == NULL)? _("an anonymous person") : name), lev);
+			   gaim_account_get_username(gaim_connection_get_account(gc)),
+			   ((name == NULL) ? _("an anonymous person") : name), lev);
 
 	gaim_notify_info(NULL, NULL, buf2, NULL);
 }
 
-void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,
+void serv_got_typing(GaimConnection *gc, char *name, int timeout,
 					 int state) {
 
 	struct buddy *b;
@@ -1194,7 +1198,7 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,
 		gaim_im_start_typing_timeout(im, timeout);
 }
 
-void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
+void serv_got_typing_stopped(GaimConnection *gc, char *name) {
 
 	struct gaim_conversation *c = gaim_find_conversation(name);
 	struct gaim_im *im;
@@ -1219,7 +1223,7 @@ void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 }
 
 struct chat_invite_data {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	GHashTable *components;
 };
 
@@ -1239,23 +1243,25 @@ static void chat_invite_accept(struct chat_invite_data *cid)
 
 
 
-void serv_got_chat_invite(struct gaim_connection *gc, char *name,
+void serv_got_chat_invite(GaimConnection *gc, char *name,
 						  char *who, char *message, GHashTable *data)
 {
+	GaimAccount *account;
 	char buf2[BUF_LONG];
 	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
 
+	account = gaim_connection_get_account(gc);
 
 	gaim_event_broadcast(event_chat_invited, gc, who, name, message);
 
 	if (message)
 		g_snprintf(buf2, sizeof(buf2),
 				   _("User '%s' invites %s to buddy chat room: '%s'\n%s"),
-				   who, gc->username, name, message);
+				   who, gaim_account_get_username(account), name, message);
 	else
 		g_snprintf(buf2, sizeof(buf2),
 				   _("User '%s' invites %s to buddy chat room: '%s'\n"),
-				   who, gc->username, name);
+				   who, gaim_account_get_username(account), name);
 
 	cid->gc = gc;
 	cid->components = data;
@@ -1266,7 +1272,7 @@ void serv_got_chat_invite(struct gaim_connection *gc, char *name,
 							   G_CALLBACK(chat_invite_data_free));
 }
 
-struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
+struct gaim_conversation *serv_got_joined_chat(GaimConnection *gc,
 											   int id, char *name)
 {
 	struct gaim_conversation *b;
@@ -1313,7 +1319,7 @@ struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
 	return b;
 }
 
-void serv_got_chat_left(struct gaim_connection *g, int id)
+void serv_got_chat_left(GaimConnection *g, int id)
 {
 	GSList *bcs;
 	struct gaim_conversation *conv = NULL;
@@ -1343,7 +1349,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 	gaim_conversation_destroy(conv);
 }
 
-void serv_got_chat_in(struct gaim_connection *g, int id, char *who,
+void serv_got_chat_in(GaimConnection *g, int id, char *who,
 					  int whisper, char *message, time_t mtime)
 {
 	int w;

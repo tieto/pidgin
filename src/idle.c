@@ -48,7 +48,8 @@
 gint check_idle(gpointer data)
 {
 	const char *report_idle;
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
+	GaimAccount *account;
 	time_t t;
 #ifdef USE_SCREENSAVER
 #ifndef _WIN32
@@ -56,6 +57,8 @@ gint check_idle(gpointer data)
 #endif
 #endif
 	int idle_time;
+
+	account = gaim_connection_get_account(gc);
 
 	gaim_event_broadcast(event_blist_update);
 
@@ -80,15 +83,16 @@ gint check_idle(gpointer data)
 #endif
 	} else
 #endif /* USE_SCREENSAVER */
-		idle_time = t - gc->lastsent;
+		idle_time = t - gc->last_sent_time;
 
 	if (gaim_prefs_get_bool("/core/away/away_when_idle") &&
 		(idle_time > (60 * auto_away)) && (!gc->is_auto_away)) {
 
 		if (!gc->away) {
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
-					   "Making %s away automatically\n", gc->username);
-			if (g_slist_length(connections) == 1)
+					   "Making %s away automatically\n",
+					   gaim_account_get_username(account));
+			if (g_list_length(gaim_connections_get_all()) == 1)
 				do_away_message(NULL, default_away);
 			else if (default_away)
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
@@ -104,15 +108,15 @@ gint check_idle(gpointer data)
 		gc->is_auto_away = 0;
 		if (awaymessage == NULL) {
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
-					   "Removing auto-away message for %s\n", gc->username);
+					   "Removing auto-away message for %s\n", gaim_account_get_username(account));
 			serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
 		} else {
-			if (g_slist_length(connections) == 1)
+			if (g_list_length(gaim_connections_get_all()) == 1)
 				do_im_back(0, 0);
 			else {
 				gaim_debug(GAIM_DEBUG_INFO, "idle",
 						   "Replacing auto-away with global for %s\n",
-						   gc->username);
+						   gaim_account_get_username(account));
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
 			}
 		}
@@ -128,13 +132,13 @@ gint check_idle(gpointer data)
 
 	if (idle_time >= IDLEMARK && !gc->is_idle) {
 		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s idle %d seconds\n",
-				   gc->username, idle_time);
+				   gaim_account_get_username(account), idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
 		system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	} else if (idle_time < IDLEMARK && gc->is_idle) {
 		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s unidle\n",
-				   gc->username);
+				   gaim_account_get_username(account));
 		serv_touch_idle(gc);
 		system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	}

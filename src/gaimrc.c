@@ -152,6 +152,10 @@
 #define OPT_AWAY_QUEUE_UNREAD		0x00000080
 #define OPT_AWAY_DELAY_IN_USE		0x00000100
 
+#define OPT_ACCT_AUTO		0x00000001
+/*#define OPT_ACCT_KEEPALV	0x00000002 this shouldn't be optional */
+#define OPT_ACCT_REM_PASS	0x00000004
+#define OPT_ACCT_MAIL_CHECK      0x00000008
 
 GSList *gaim_accounts = NULL;
 static guint misc_options;
@@ -491,13 +495,15 @@ static void gaimrc_read_plugins(FILE *f)
 	}
 }
 
-static struct gaim_account *gaimrc_read_user(FILE *f)
+static GaimAccount *gaimrc_read_user(FILE *f)
 {
 	struct parse parse_buffer;
 	struct parse *p;
-	struct gaim_account *account;
+	GaimAccount *account;
 	int i;
 	char buf[4096];
+	char user_info[2048];
+	int flags;
 
 	if (!fgets(buf, sizeof(buf), f))
 		return NULL;
@@ -507,15 +513,10 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "ident"))
 		return NULL;
 
-	account = g_new0(struct gaim_account, 1);
+	account = gaim_account_new(p->value[0], GAIM_PROTO_DEFAULT);
 
-	strcpy(account->username, p->value[0]);
-	strcpy(account->password, p->value[1]);
-
-	account->user_info[0] = 0;
-	account->options = OPT_ACCT_REM_PASS;
-	account->protocol = GAIM_PROTO_DEFAULT;
-	account->permit = account->deny = NULL;
+	gaim_account_set_password(account, p->value[1]);
+	gaim_account_set_remember_password(account, TRUE);
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
@@ -527,18 +528,23 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
 
+	*user_info = '\0';
+
 	while (strncmp(buf, "\t\t}", 3)) {
 		if (strlen(buf) > 3)
-			strcat(account->user_info, buf + 3);
+			strcat(user_info, buf + 3);
 
 		if (!fgets(buf, sizeof(buf), f)) {
+			gaim_account_set_user_info(account, user_info);
+
 			return account;
 		}
 	}
 
-	if ((i = strlen(account->user_info))) {
-		account->user_info[i - 1] = '\0';
-	}
+	if ((i = strlen(account->user_info)))
+		user_info[i - 1] = '\0';
+
+	gaim_account_set_user_info(account, user_info);
 
 	if (!fgets(buf, sizeof(buf), f)) {
 		return account;
@@ -553,8 +559,14 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "user_opts"))
 		return account;
 
-	account->options = atoi(p->value[0]);
-	account->protocol = atoi(p->value[1]);
+	/* TODO: Handle OPT_ACCT_AUTO and OPT_ACCT_MAIL_CHECK */
+
+	flags = atoi(p->value[0]);
+
+	if (!(flags & OPT_ACCT_REM_PASS))
+		gaim_account_set_remember_password(account, FALSE);
+
+	gaim_account_set_protocol(account, atoi(p->value[1]));
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
@@ -567,8 +579,14 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "proto_opts"))
 		return account;
 
-	for (i = 0; i < 7; i++)
+	/* TODO: Server and port should be preserved! :/ */
+#if 0
+	for (i = 0; i < 7; i++) {
+		char buf[256];
+
 		g_snprintf(account->proto_opt[i], sizeof account->proto_opt[i], "%s", p->value[i]);
+	}
+#endif
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
@@ -581,7 +599,7 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "iconfile"))
 		return account;
 
-	g_snprintf(account->iconfile, sizeof(account->iconfile), "%s", p->value[0]);
+	gaim_account_set_buddy_icon(account, p->value[0]);
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
@@ -594,7 +612,7 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "alias"))
 		return account;
 
-	g_snprintf(account->alias, sizeof(account->alias), "%s", p->value[0]);
+	gaim_account_set_alias(account, p->value[0]);
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
@@ -626,7 +644,7 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 static void gaimrc_read_users(FILE *f)
 {
 	char buf[2048];
-	struct gaim_account *account = NULL;
+	GaimAccount *account = NULL;
 	struct parse parse_buffer;
 	struct parse *p=NULL;
 
@@ -1344,7 +1362,7 @@ load_pounces()
 	GList *l;
 	struct pounce_placeholder *ph;
 	struct gaim_pounce *pounce;
-	struct gaim_account *account;
+	GaimAccount *account;
 
 	for (l = buddy_pounces; l != NULL; l = l->next) {
 		GaimPounceEvent events = GAIM_POUNCE_NONE;

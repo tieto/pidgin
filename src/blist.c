@@ -69,7 +69,7 @@ static GaimBlistNode *gaim_blist_get_last_child(GaimBlistNode *node)
 
 struct _gaim_hbuddy {
 	char *name;
-	struct gaim_account *account;
+	GaimAccount *account;
 };
 
 static guint _gaim_blist_hbuddy_hash (struct _gaim_hbuddy *hb)
@@ -295,14 +295,14 @@ void gaim_blist_rename_group(struct group *group, const char *name)
 			child = next;
 		}
 		for (accts = gaim_group_get_accounts(group); accts; accts = g_slist_remove(accts, accts->data)) {
-			struct gaim_account *account = accts->data;
+			GaimAccount *account = accts->data;
 			serv_rename_group(account->gc, group, name);
 		}
 		gaim_blist_remove_group(group);
 	} else {
 		/* a simple rename */
 		for (accts = gaim_group_get_accounts(group); accts; accts = g_slist_remove(accts, accts->data)) {
-			struct gaim_account *account = accts->data;
+			GaimAccount *account = accts->data;
 			serv_rename_group(account->gc, group, name);
 		}
 		g_free(group->name);
@@ -312,7 +312,7 @@ void gaim_blist_rename_group(struct group *group, const char *name)
 	}
 }
 
-struct chat *gaim_chat_new(struct gaim_account *account, const char *alias, GHashTable *components)
+struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components)
 {
 	struct chat *chat;
 	struct gaim_blist_ui_ops *ops;
@@ -336,7 +336,7 @@ struct chat *gaim_chat_new(struct gaim_account *account, const char *alias, GHas
 	return chat;
 }
 
-struct buddy *gaim_buddy_new(struct gaim_account *account, const char *screenname, const char *alias)
+struct buddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias)
 {
 	struct buddy *b;
 	struct gaim_blist_ui_ops *ops;
@@ -723,7 +723,7 @@ char *  gaim_get_buddy_alias (struct buddy *buddy)
 
 }
 
-struct buddy *gaim_find_buddy(struct gaim_account *account, const char *name)
+struct buddy *gaim_find_buddy(GaimAccount *account, const char *name)
 {
 	struct buddy *buddy;
 	struct _gaim_hbuddy hb;
@@ -771,7 +771,7 @@ GSList *gaim_group_get_accounts(struct group *g)
 	return l;
 }
 
-void gaim_blist_add_account(struct gaim_account *account)
+void gaim_blist_add_account(GaimAccount *account)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *group, *buddy;
@@ -801,7 +801,7 @@ void gaim_blist_add_account(struct gaim_account *account)
 	}
 }
 
-void gaim_blist_remove_account(struct gaim_account *account)
+void gaim_blist_remove_account(GaimAccount *account)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *group, *buddy;
@@ -834,7 +834,7 @@ void gaim_blist_remove_account(struct gaim_account *account)
 	}
 }
 
-void parse_toc_buddy_list(struct gaim_account *account, char *config)
+void parse_toc_buddy_list(GaimAccount *account, char *config)
 {
 	char *c;
 	char current[256];
@@ -899,17 +899,17 @@ void parse_toc_buddy_list(struct gaim_account *account, char *config)
 			} else if (*c == 'd') {
 				gaim_privacy_deny_add(account, c + 2);
 			} else if (!strncmp("toc", c, 3)) {
-				sscanf(c + strlen(c) - 1, "%d", &account->permdeny);
+				sscanf(c + strlen(c) - 1, "%d", &account->perm_deny);
 				gaim_debug(GAIM_DEBUG_MISC, "toc blist",
-						   "permdeny: %d\n", account->permdeny);
-				if (account->permdeny == 0)
-					account->permdeny = 1;
+						   "permdeny: %d\n", account->perm_deny);
+				if (account->perm_deny == 0)
+					account->perm_deny = 1;
 			} else if (*c == 'm') {
-				sscanf(c + 2, "%d", &account->permdeny);
+				sscanf(c + 2, "%d", &account->perm_deny);
 				gaim_debug(GAIM_DEBUG_MISC, "toc blist",
-						   "permdeny: %d\n", account->permdeny);
-				if (account->permdeny == 0)
-					account->permdeny = 1;
+						   "permdeny: %d\n", account->perm_deny);
+				if (account->perm_deny == 0)
+					account->perm_deny = 1;
 			}
 		} while ((c = strtok(NULL, "\n")));
 
@@ -1105,7 +1105,7 @@ static gchar *get_screenname_filename(const char *name)
 static gboolean gaim_blist_read(const char *filename);
 
 
-static void do_import(struct gaim_account *account, const char *filename)
+static void do_import(GaimAccount *account, const char *filename)
 {
 	GString *buf = NULL;
 	char first[64];
@@ -1198,7 +1198,7 @@ static void do_import(struct gaim_account *account, const char *filename)
 	}
 }
 
-gboolean gaim_group_on_account(struct group *g, struct gaim_account *account) {
+gboolean gaim_group_on_account(struct group *g, GaimAccount *account) {
 	GaimBlistNode *bnode;
 	for(bnode = g->node.child; bnode; bnode = bnode->next) {
 		struct buddy *b = (struct buddy *)bnode;
@@ -1358,7 +1358,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 		blist_parser_group_settings = NULL;
 	} else if(!strcmp(element_name, "chat")) {
-		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			struct chat *chat = gaim_chat_new(account, blist_parser_chat_alias, blist_parser_chat_components);
@@ -1376,7 +1376,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		blist_parser_person_name = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "buddy")) {
-		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			struct buddy *b = gaim_buddy_new(account, blist_parser_buddy_name, blist_parser_buddy_alias);
@@ -1441,16 +1441,16 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "privacy")) {
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "account")) {
-		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
-			account->permdeny = blist_parser_privacy_mode;
+			account->perm_deny = blist_parser_privacy_mode;
 		}
 		g_free(blist_parser_account_name);
 		blist_parser_account_name = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "permit")) {
-		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			gaim_privacy_permit_add(account, blist_parser_buddy_name);
@@ -1459,7 +1459,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		blist_parser_buddy_name = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "block")) {
-		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			gaim_privacy_deny_add(account, blist_parser_buddy_name);
@@ -1658,7 +1658,7 @@ static void blist_print_chat_components(gpointer key, gpointer data,
 	g_free(data_val);
 }
 
-static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
+static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 	GSList *accounts, *buds;
 	GaimBlistNode *gnode,*bnode;
 	struct group *group;
@@ -1728,11 +1728,11 @@ static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 	fprintf(file, "\t<privacy>\n");
 
 	for(accounts = gaim_accounts; accounts; accounts = accounts->next) {
-		struct gaim_account *account = accounts->data;
+		GaimAccount *account = accounts->data;
 		char *acct_name = g_markup_escape_text(account->username, -1);
 		if(!exp_acct || account == exp_acct) {
 			fprintf(file, "\t\t<account protocol=\"%d\" name=\"%s\" "
-					"mode=\"%d\">\n", account->protocol, acct_name, account->permdeny);
+					"mode=\"%d\">\n", account->protocol, acct_name, account->perm_deny);
 			for(buds = account->permit; buds; buds = buds->next) {
 				char *bud_name = g_markup_escape_text(buds->data, -1);
 				fprintf(file, "\t\t\t<permit>%s</permit>\n", bud_name);
@@ -1794,7 +1794,7 @@ void gaim_blist_save() {
 	g_free(filename_real);
 }
 
-gboolean gaim_privacy_permit_add(struct gaim_account *account, const char *who) {
+gboolean gaim_privacy_permit_add(GaimAccount *account, const char *who) {
 	GSList *d = account->permit;
 	char *n = g_strdup(normalize(who));
 	while(d) {
@@ -1811,7 +1811,7 @@ gboolean gaim_privacy_permit_add(struct gaim_account *account, const char *who) 
 	return FALSE;
 }
 
-gboolean gaim_privacy_permit_remove(struct gaim_account *account, const char *who) {
+gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *who) {
 	GSList *d = account->permit;
 	char *n = g_strdup(normalize(who));
 	while(d) {
@@ -1828,7 +1828,7 @@ gboolean gaim_privacy_permit_remove(struct gaim_account *account, const char *wh
 	return FALSE;
 }
 
-gboolean gaim_privacy_deny_add(struct gaim_account *account, const char *who) {
+gboolean gaim_privacy_deny_add(GaimAccount *account, const char *who) {
 	GSList *d = account->deny;
 	char *n = g_strdup(normalize(who));
 	while(d) {
@@ -1845,7 +1845,7 @@ gboolean gaim_privacy_deny_add(struct gaim_account *account, const char *who) {
 	return FALSE;
 }
 
-gboolean gaim_privacy_deny_remove(struct gaim_account *account, const char *who) {
+gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *who) {
 	GSList *d = account->deny;
 	char *n = g_strdup(normalize(who));
 	while(d) {

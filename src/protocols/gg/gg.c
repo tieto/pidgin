@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5818 2003-05-18 19:59:02Z chipx86 $
+ * $Id: gg.c 5965 2003-05-30 09:38:29Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -92,7 +92,7 @@ struct agg_data {
 };
 
 struct agg_http {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	gchar *request;
 	gchar *form;
 	gchar *host;
@@ -119,9 +119,11 @@ static gint args_compare(gconstpointer a, gconstpointer b)
 	return g_ascii_strcasecmp((const gchar *)a,(const gchar *)b);
 }
 
-static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
+static gboolean allowed_uin(GaimConnection *gc, char *uin)
 {
-	switch (gc->account->permdeny) {
+	GaimAccount *account = gaim_connection_get_account(gc);
+
+	switch (account->perm_deny) {
 	case 1:
 		/* permit all, deny none */
 		return TRUE;
@@ -148,7 +150,7 @@ static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
 	}
 }
 
-static char *handle_errcode(struct gaim_connection *gc, int errcode)
+static char *handle_errcode(GaimConnection *gc, int errcode)
 {
 	static char msg[AGG_BUF_LEN];
 
@@ -181,7 +183,7 @@ static char *handle_errcode(struct gaim_connection *gc, int errcode)
 	return msg;
 }
 
-static void agg_set_away(struct gaim_connection *gc, char *state, char *msg)
+static void agg_set_away(GaimConnection *gc, char *state, char *msg)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	int status = gd->own_status;
@@ -250,7 +252,7 @@ static gchar *get_away_text(int uc)
 	}
 }
 
-static GList *agg_away_states(struct gaim_connection *gc)
+static GList *agg_away_states(GaimConnection *gc)
 {
 	GList *m = NULL;
 
@@ -265,7 +267,7 @@ static GList *agg_away_states(struct gaim_connection *gc)
 }
 
 /* Enhance these functions, more options and such stuff */
-static GList *agg_buddy_menu(struct gaim_connection *gc, const char *who)
+static GList *agg_buddy_menu(GaimConnection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -288,7 +290,7 @@ static GList *agg_buddy_menu(struct gaim_connection *gc, const char *who)
 
 static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct agg_data *gd = gc->proto_data;
 	struct gg_event *e;
 
@@ -403,7 +405,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 
 void login_callback(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct agg_data *gd = gc->proto_data;
 	struct gg_event *e;
 
@@ -495,7 +497,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		gc->inpa = gaim_input_add(gd->sess->fd, GAIM_INPUT_READ, main_callback, gc);
 
 		/* Our signon is complete */
-		account_online(gc);
+		gaim_connection_set_state(gc, GAIM_CONNECTED);
 		serv_finish_login(gc);
 
 		break;
@@ -513,7 +515,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	gg_free_event(e);
 }
 
-static void agg_keepalive(struct gaim_connection *gc)
+static void agg_keepalive(GaimConnection *gc)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (gg_ping(gd->sess) < 0) {
@@ -523,19 +525,19 @@ static void agg_keepalive(struct gaim_connection *gc)
 	}
 }
 
-static void agg_login(struct gaim_account *account)
+static void agg_login(GaimAccount *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(account);
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct agg_data *gd = gc->proto_data = g_new0(struct agg_data, 1);
 	char buf[80];
 
+#if 0
 	gc->checkbox = _("Send as message");
+#endif
 
 	gd->sess = g_new0(struct gg_session, 1);
 
-	if (account->proto_opt[USEROPT_NICK][0])
-		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s",
-			   account->proto_opt[USEROPT_NICK]);
+	gaim_connection_set_display_name(account, gaim_account_get_string("nick"));
 
 	set_login_progress(gc, 1, _("Looking up GG server"));
 
@@ -571,7 +573,7 @@ static void agg_login(struct gaim_account *account)
 	}
 }
 
-static void agg_close(struct gaim_connection *gc)
+static void agg_close(GaimConnection *gc)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (gc->inpa)
@@ -582,7 +584,7 @@ static void agg_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
-static int agg_send_im(struct gaim_connection *gc, const char *who, const char *msg, int len, int flags)
+static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, int len, int flags)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	gchar *imsg;
@@ -605,7 +607,7 @@ static int agg_send_im(struct gaim_connection *gc, const char *who, const char *
 	return 1;
 }
 
-static void agg_add_buddy(struct gaim_connection *gc, const char *who)
+static void agg_add_buddy(GaimConnection *gc, const char *who)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (invalid_uin(who))
@@ -613,7 +615,7 @@ static void agg_add_buddy(struct gaim_connection *gc, const char *who)
 	gg_add_notify(gd->sess, strtol(who, (char **)NULL, 10));
 }
 
-static void agg_rem_buddy(struct gaim_connection *gc, char *who, char *group)
+static void agg_rem_buddy(GaimConnection *gc, char *who, char *group)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (invalid_uin(who))
@@ -621,7 +623,7 @@ static void agg_rem_buddy(struct gaim_connection *gc, char *who, char *group)
 	gg_remove_notify(gd->sess, strtol(who, (char **)NULL, 10));
 }
 
-static void agg_add_buddies(struct gaim_connection *gc, GList *whos)
+static void agg_add_buddies(GaimConnection *gc, GList *whos)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	uin_t *userlist = NULL;
@@ -643,7 +645,7 @@ static void agg_add_buddies(struct gaim_connection *gc, GList *whos)
 	}
 }
 
-static void search_results(struct gaim_connection *gc, gchar *webdata)
+static void search_results(GaimConnection *gc, gchar *webdata)
 {
 	gchar **webdata_tbl;
 	gchar *buf;
@@ -750,7 +752,7 @@ static void search_results(struct gaim_connection *gc, gchar *webdata)
 	g_free(buf);
 }
 
-static void import_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
+static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 {
 	gchar *ptr;
 	gchar **users_tbl;
@@ -822,7 +824,7 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 	g_strfreev(users_tbl);
 }
 
-static void export_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
+static void export_buddies_server_results(GaimConnection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "put_success:")) {
 		gaim_notify_info(gc, NULL,
@@ -837,7 +839,7 @@ static void export_buddies_server_results(struct gaim_connection *gc, gchar *web
 					  NULL);
 }
 
-static void delete_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
+static void delete_buddies_server_results(GaimConnection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "put_success:")) {
 		gaim_notify_info(gc, NULL,
@@ -852,7 +854,7 @@ static void delete_buddies_server_results(struct gaim_connection *gc, gchar *web
 					  NULL);
 }
 
-static void password_change_server_results(struct gaim_connection *gc, gchar *webdata)
+static void password_change_server_results(GaimConnection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "reg_success:")) {
 		gaim_notify_info(gc, NULL,
@@ -868,7 +870,7 @@ static void password_change_server_results(struct gaim_connection *gc, gchar *we
 static void http_results(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct agg_http *hdata = data;
-	struct gaim_connection *gc = hdata->gc;
+	GaimConnection *gc = hdata->gc;
 	char *webdata;
 	int len;
 	char read_data;
@@ -937,7 +939,7 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 static void http_req_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct agg_http *hdata = data;
-	struct gaim_connection *gc = hdata->gc;
+	GaimConnection *gc = hdata->gc;
 	gchar *request = hdata->request;
 	gchar *buf;
 
@@ -986,7 +988,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 	hdata->inpa = gaim_input_add(source, GAIM_INPUT_READ, http_results, hdata);
 }
 
-static void import_buddies_server(struct gaim_connection *gc)
+static void import_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *hi = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gc->username);
@@ -1012,7 +1014,7 @@ static void import_buddies_server(struct gaim_connection *gc)
 	}
 }
 
-static void export_buddies_server(struct gaim_connection *gc)
+static void export_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	gchar *ptr;
@@ -1082,7 +1084,7 @@ static void export_buddies_server(struct gaim_connection *gc)
 	}
 }
 
-static void delete_buddies_server(struct gaim_connection *gc)
+static void delete_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gc->username);
@@ -1105,7 +1107,7 @@ static void delete_buddies_server(struct gaim_connection *gc)
 	}
 }
 
-static void agg_dir_search(struct gaim_connection *gc, const char *first, const char *middle,
+static void agg_dir_search(GaimConnection *gc, const char *first, const char *middle,
 			   const char *last, const char *maiden, const char *city, const char *state,
 			   const char *country, const char *email)
 {
@@ -1155,7 +1157,7 @@ static void agg_dir_search(struct gaim_connection *gc, const char *first, const 
 	}
 }
 
-static void agg_change_passwd(struct gaim_connection *gc, const char *old, const char *new)
+static void agg_change_passwd(GaimConnection *gc, const char *old, const char *new)
 {
 	struct agg_http *hpass = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gc->username);
@@ -1190,7 +1192,7 @@ static void agg_change_passwd(struct gaim_connection *gc, const char *old, const
 	}                                        
 }
 
-static GList *agg_actions(struct gaim_connection *gc)
+static GList *agg_actions(GaimConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
@@ -1232,7 +1234,7 @@ static GList *agg_actions(struct gaim_connection *gc)
 	return m;
 }
 
-static void agg_get_info(struct gaim_connection *gc, const char *who)
+static void agg_get_info(GaimConnection *gc, const char *who)
 {
 	struct agg_http *srch = g_new0(struct agg_http, 1);
 	srch->gc = gc;
@@ -1267,7 +1269,7 @@ static void agg_get_info(struct gaim_connection *gc, const char *who)
 	}
 }
 
-static const char *agg_list_icon(struct gaim_account *a, struct buddy *b)
+static const char *agg_list_icon(GaimAccount *a, struct buddy *b)
 {
 	return "gadu-gadu";
 }
@@ -1291,12 +1293,12 @@ static void agg_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 }
 
 
-static void agg_set_permit_deny_dummy(struct gaim_connection *gc)
+static void agg_set_permit_deny_dummy(GaimConnection *gc)
 {
 	/* It's implemented on client side because GG server doesn't support this */
 }
 
-static void agg_permit_deny_dummy(struct gaim_connection *gc, const char *who)
+static void agg_permit_deny_dummy(GaimConnection *gc, const char *who)
 {
 	/* It's implemented on client side because GG server doesn't support this */
 }

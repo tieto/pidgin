@@ -67,6 +67,7 @@ static struct StockIcon
 	{ GAIM_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_LINK,            "buttons", "insert-link-small.png"    },
 	{ GAIM_STOCK_LOGO,            "gaim",    "logo.png"                 },
+	{ GAIM_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 	{ GAIM_STOCK_PRIVACY,         NULL,      GTK_STOCK_PROPERTIES       },
 	{ GAIM_STOCK_SEND,            NULL,      GTK_STOCK_CONVERT          },
 	{ GAIM_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
@@ -84,6 +85,7 @@ static struct StockIcon
 
 const GtkStockItem stock_items[] =
 {
+	{ GAIM_STOCK_MODIFY,    N_("_Modify"),    0, 0, NULL },
 	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL }
 };
 

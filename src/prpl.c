@@ -78,9 +78,9 @@ void do_proto_menu()
 	GtkWidget *submenu;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GList *l;
-	GSList *c = connections;
+	GList *c;
 	struct proto_actions_menu *pam;
-	struct gaim_connection *gc = NULL;
+	GaimConnection *gc = NULL;
 	int count = 0;
 	char buf[256];
 
@@ -97,17 +97,14 @@ void do_proto_menu()
 		l = l->next;
 	}
 
-	while (c) {
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
 		gc = c->data;
 
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 		if (prpl_info->actions && gc->login_time)
 			count++;
-
-		c = g_slist_next(c);
 	}
-	c = connections;
 
 	if (!count) {
 		g_snprintf(buf, sizeof(buf), _("No actions available"));
@@ -119,15 +116,14 @@ void do_proto_menu()
 
 	if (count == 1) {
 		GList *act;
-		while (c) {
+
+		for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
 			gc = c->data;
 
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 			if (prpl_info->actions && gc->login_time)
 				break;
-
-			c = g_slist_next(c);
 		}
 
 		act = prpl_info->actions(gc);
@@ -147,7 +143,8 @@ void do_proto_menu()
 			act = g_list_next(act);
 		}
 	} else {
-		while (c) {
+		for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+			GaimAccount *account;
 			GList *act;
 			GdkPixbuf *pixbuf, *scale;
 			GtkWidget *image;
@@ -156,13 +153,15 @@ void do_proto_menu()
 
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-			if (!prpl_info->actions || !gc->login_time) {
-				c = g_slist_next(c);
+			if (!prpl_info->actions || !gc->login_time)
 				continue;
-			}
+
+			account = gaim_connection_get_account(gc);
 
 			g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gc->username, gc->prpl->info->name);
+					   gaim_account_get_username(account),
+					   gc->prpl->info->name);
+
 			menuitem = gtk_image_menu_item_new_with_label(buf);
 
 			pixbuf = create_prpl_icon(gc->account);
@@ -200,13 +199,12 @@ void do_proto_menu()
 				}
 				act = g_list_next(act);
 			}
-			c = g_slist_next(c);
 		}
 	}
 }
 
 struct icon_data {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *who;
 	void *data;
 	int len;
@@ -222,7 +220,7 @@ static gint find_icon_data(gconstpointer a, gconstpointer b)
 	return ((x->gc != y->gc) || gaim_utf8_strcasecmp(x->who, y->who));
 }
 
-void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int len)
+void set_icon_data(GaimConnection *gc, const char *who, void *data, int len)
 {
 	struct gaim_conversation *conv;
 	struct icon_data tmp;
@@ -325,7 +323,7 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
 	g_free(realwho);
 }
 
-void remove_icon_data(struct gaim_connection *gc)
+void remove_icon_data(GaimConnection *gc)
 {
 	GList *list = icons;
 	struct icon_data *id;
@@ -342,7 +340,7 @@ void remove_icon_data(struct gaim_connection *gc)
 	}
 }
 
-void *get_icon_data(struct gaim_connection *gc, const char *who, int *len)
+void *get_icon_data(GaimConnection *gc, const char *who, int *len)
 {
 	struct icon_data tmp = { gc, normalize(who), NULL, 0 };
 	GList *l = g_list_find_custom(icons, &tmp, find_icon_data);
@@ -358,7 +356,7 @@ void *get_icon_data(struct gaim_connection *gc, const char *who, int *len)
 }
 
 struct got_add {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	char *who;
 	char *alias;
 };
@@ -373,21 +371,26 @@ static void dont_add(struct got_add *ga)
 
 static void do_add(struct got_add *ga)
 {
-	if (g_slist_find(connections, ga->gc))
+	if (g_list_find(gaim_connections_get_all(), ga->gc))
 		show_add_buddy(ga->gc, ga->who, NULL, ga->alias);
 	dont_add(ga);
 }
 
-void show_got_added(struct gaim_connection *gc, const char *id,
+void show_got_added(GaimConnection *gc, const char *id,
 		    const char *who, const char *alias, const char *msg)
 {
+	GaimAccount *account;
 	char buf[BUF_LONG];
-	struct got_add *ga = g_new0(struct got_add, 1);
-	struct buddy *b = gaim_find_buddy(gc->account, who);
+	struct got_add *ga;
+	struct buddy *b;
 
-	ga->gc = gc;
-	ga->who = g_strdup(who);
-	ga->alias = alias ? g_strdup(alias) : NULL;
+	account = gaim_connection_get_account(gc);
+	b = gaim_find_buddy(gc->account, who);
+
+	ga = g_new0(struct got_add, 1);
+	ga->gc    = gc;
+	ga->who   = g_strdup(who);
+	ga->alias = (alias ? g_strdup(alias) : NULL);
 
 
 	g_snprintf(buf, sizeof(buf), _("%s%s%s%s has made %s his or her buddy%s%s%s"),
@@ -395,7 +398,11 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		   alias ? " (" : "",
 		   alias ? alias : "",
 		   alias ? ")" : "",
-		   id ? id : gc->displayname[0] ? gc->displayname : gc->username,
+		   (id
+			? id
+			: (gaim_connection_get_display_name(gc)
+			   ? gaim_connection_get_display_name(gc)
+			   : gaim_account_get_username(account))),
 		   msg ? ": " : ".",
 		   msg ? msg : "",
 		   b ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));

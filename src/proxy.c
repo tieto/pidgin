@@ -64,7 +64,7 @@ struct PHB {
 	int port;
 	gint inpa;
 	struct gaim_proxy_info *gpi;
-	struct gaim_account *account;
+	GaimAccount *account;
 };
 
 typedef struct _GaimIOClosure {
@@ -1241,7 +1241,7 @@ static void connection_host_resolved(GSList *hosts, gpointer data, const char *e
 }
 
 int
-proxy_connect(struct gaim_account *account, char *host, int port, GaimInputFunction func, gpointer data)
+proxy_connect(GaimAccount *account, char *host, int port, GaimInputFunction func, gpointer data)
 {
 	char *connecthost = host;
 	int connectport = port;

@@ -56,7 +56,7 @@ typedef void (*gaim_pounce_cb)(struct gaim_pounce *, GaimPounceEvent, void *);
 struct gaim_pounce
 {
 	GaimPounceEvent events;       /**< The event(s) to pounce on. */
-	struct gaim_account *pouncer; /**< The user who is pouncing.  */
+	GaimAccount *pouncer; /**< The user who is pouncing.  */
 
 	char *pouncee;                /**< The buddy to pounce on.    */
 
@@ -78,7 +78,7 @@ struct gaim_pounce
  *
  * @return The new buddy pounce structure.
  */
-struct gaim_pounce *gaim_pounce_new(struct gaim_account *pouncer,
+struct gaim_pounce *gaim_pounce_new(GaimAccount *pouncer,
 									const char *pouncee,
 									GaimPounceEvent event,
 									gaim_pounce_cb cb, void *data,
@@ -107,7 +107,7 @@ void gaim_pounce_set_events(struct gaim_pounce *pounce,
  * @param pouncer The account that will pounce.
  */
 void gaim_pounce_set_pouncer(struct gaim_pounce *pounce,
-							 struct gaim_account *pouncer);
+							 GaimAccount *pouncer);
 
 /**
  * Sets the buddy a pounce should pounce on.
@@ -149,7 +149,7 @@ GaimPounceEvent gaim_pounce_get_events(const struct gaim_pounce *pounce);
  *
  * @return The account that will pounce.
  */
-struct gaim_account *gaim_pounce_get_pouncer(const struct gaim_pounce *pounce);
+GaimAccount *gaim_pounce_get_pouncer(const struct gaim_pounce *pounce);
 
 /**
  * Returns the buddy a pounce should pounce on.
@@ -176,7 +176,7 @@ void *gaim_pounce_get_data(const struct gaim_pounce *pounce);
  * @param pouncee The buddy that is being pounced.
  * @param events  The events that triggered the pounce.
  */
-void gaim_pounce_execute(const struct gaim_account *pouncer,
+void gaim_pounce_execute(const GaimAccount *pouncer,
 						 const char *pouncee,
 						 GaimPounceEvent events);
 
@@ -189,7 +189,7 @@ void gaim_pounce_execute(const struct gaim_account *pouncer,
  *
  * @return The pounce if found, or @c NULL otherwise.
  */
-struct gaim_pounce *gaim_find_pounce(const struct gaim_account *pouncer,
+struct gaim_pounce *gaim_find_pounce(const GaimAccount *pouncer,
 									 const char *pouncee,
 									 GaimPounceEvent events);
 

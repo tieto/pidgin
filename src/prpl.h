@@ -29,10 +29,6 @@
 
 typedef struct _GaimPluginProtocolInfo GaimPluginProtocolInfo;
 
-#include "core.h"
-#include "proxy.h"
-#include "multi.h"
-
 /**************************************************************************/
 /** @name Basic Protocol Information                                      */
 /**************************************************************************/
@@ -66,6 +62,10 @@ typedef enum
 	GAIM_PROTO_UNTAKEN      /**< Untaken protocol number   */
 
 } GaimProtocol;
+
+#include "core.h"
+#include "proxy.h"
+#include "multi.h"
 
 /** Default protocol plugin description */
 #define GAIM_PRPL_DESC(x) \
@@ -191,7 +191,7 @@ struct _GaimPluginProtocolInfo
 	 * Returns the base icon name for the given buddy and account.  
 	 * If buddy is NULL, it will return the name to use for the account's icon
 	 */
-	const char *(*list_icon)(struct gaim_account *account, struct buddy *buddy);
+	const char *(*list_icon)(GaimAccount *account, struct buddy *buddy);
 
 	/**
 	 * Fills the four char**'s with string identifiers for "emblems"
@@ -211,11 +211,11 @@ struct _GaimPluginProtocolInfo
 	 */
 	char *(*tooltip_text)(struct buddy *buddy);
 	
-	GList *(*away_states)(struct gaim_connection *gc);
-	GList *(*actions)(struct gaim_connection *gc);
+	GList *(*away_states)(GaimConnection *gc);
+	GList *(*actions)(GaimConnection *gc);
 
-	GList *(*buddy_menu)(struct gaim_connection *, const char *);
-	GList *(*chat_info)(struct gaim_connection *);
+	GList *(*buddy_menu)(GaimConnection *, const char *);
+	GList *(*chat_info)(GaimConnection *);
 
 	/* All the server-related functions */
 
@@ -226,71 +226,71 @@ struct _GaimPluginProtocolInfo
 	 * can set your dir info, the ui shows a dialog and needs to call
 	 * set_dir in order to set it)
 	 */
-	void (*login)(struct gaim_account *);
-	void (*close)(struct gaim_connection *);
-	int  (*send_im)(struct gaim_connection *, const char *who,
+	void (*login)(GaimAccount *);
+	void (*close)(GaimConnection *);
+	int  (*send_im)(GaimConnection *, const char *who,
 					const char *message, int len, int away);
-	void (*set_info)(struct gaim_connection *, char *info);
-	int  (*send_typing)(struct gaim_connection *, char *name, int typing);
-	void (*get_info)(struct gaim_connection *, const char *who);
-	void (*set_away)(struct gaim_connection *, char *state, char *message);
-	void (*get_away)(struct gaim_connection *, const char *who);
-	void (*set_dir)(struct gaim_connection *, const char *first,
+	void (*set_info)(GaimConnection *, char *info);
+	int  (*send_typing)(GaimConnection *, char *name, int typing);
+	void (*get_info)(GaimConnection *, const char *who);
+	void (*set_away)(GaimConnection *, char *state, char *message);
+	void (*get_away)(GaimConnection *, const char *who);
+	void (*set_dir)(GaimConnection *, const char *first,
 					const char *middle, const char *last,
 					const char *maiden, const char *city,
 					const char *state, const char *country, int web);
-	void (*get_dir)(struct gaim_connection *, const char *who);
-	void (*dir_search)(struct gaim_connection *, const char *first,
+	void (*get_dir)(GaimConnection *, const char *who);
+	void (*dir_search)(GaimConnection *, const char *first,
 					   const char *middle, const char *last,
 					   const char *maiden, const char *city,
 					   const char *state, const char *country,
 					   const char *email);
-	void (*set_idle)(struct gaim_connection *, int idletime);
-	void (*change_passwd)(struct gaim_connection *, const char *old,
+	void (*set_idle)(GaimConnection *, int idletime);
+	void (*change_passwd)(GaimConnection *, const char *old,
 						  const char *new);
-	void (*add_buddy)(struct gaim_connection *, const char *name);
-	void (*add_buddies)(struct gaim_connection *, GList *buddies);
-	void (*remove_buddy)(struct gaim_connection *, char *name, char *group);
-	void (*remove_buddies)(struct gaim_connection *, GList *buddies,
+	void (*add_buddy)(GaimConnection *, const char *name);
+	void (*add_buddies)(GaimConnection *, GList *buddies);
+	void (*remove_buddy)(GaimConnection *, char *name, char *group);
+	void (*remove_buddies)(GaimConnection *, GList *buddies,
 						   const char *group);
-	void (*add_permit)(struct gaim_connection *, const char *name);
-	void (*add_deny)(struct gaim_connection *, const char *name);
-	void (*rem_permit)(struct gaim_connection *, const char *name);
-	void (*rem_deny)(struct gaim_connection *, const char *name);
-	void (*set_permit_deny)(struct gaim_connection *);
-	void (*warn)(struct gaim_connection *, char *who, int anonymous);
-	void (*join_chat)(struct gaim_connection *, GHashTable *components);
-	void (*chat_invite)(struct gaim_connection *, int id,
+	void (*add_permit)(GaimConnection *, const char *name);
+	void (*add_deny)(GaimConnection *, const char *name);
+	void (*rem_permit)(GaimConnection *, const char *name);
+	void (*rem_deny)(GaimConnection *, const char *name);
+	void (*set_permit_deny)(GaimConnection *);
+	void (*warn)(GaimConnection *, char *who, int anonymous);
+	void (*join_chat)(GaimConnection *, GHashTable *components);
+	void (*chat_invite)(GaimConnection *, int id,
 						const char *who, const char *message);
-	void (*chat_leave)(struct gaim_connection *, int id);
-	void (*chat_whisper)(struct gaim_connection *, int id,
+	void (*chat_leave)(GaimConnection *, int id);
+	void (*chat_whisper)(GaimConnection *, int id,
 						 char *who, char *message);
-	int  (*chat_send)(struct gaim_connection *, int id, char *message);
-	void (*keepalive)(struct gaim_connection *);
+	int  (*chat_send)(GaimConnection *, int id, char *message);
+	void (*keepalive)(GaimConnection *);
 
 	/* new user registration */
-	void (*register_user)(struct gaim_account *);
+	void (*register_user)(GaimAccount *);
 
 	/* get "chat buddy" info and away message */
-	void (*get_cb_info)(struct gaim_connection *, int, char *who);
-	void (*get_cb_away)(struct gaim_connection *, int, char *who);
+	void (*get_cb_info)(GaimConnection *, int, char *who);
+	void (*get_cb_away)(GaimConnection *, int, char *who);
 
 	/* save/store buddy's alias on server list/roster */
-	void (*alias_buddy)(struct gaim_connection *, const char *who,
+	void (*alias_buddy)(GaimConnection *, const char *who,
 						const char *alias);
 
 	/* change a buddy's group on a server list/roster */
-	void (*group_buddy)(struct gaim_connection *, const char *who,
+	void (*group_buddy)(GaimConnection *, const char *who,
 						const char *old_group, const char *new_group);
 
 	/* rename a group on a server list/roster */
-	void (*rename_group)(struct gaim_connection *, const char *old_group,
+	void (*rename_group)(GaimConnection *, const char *old_group,
 						 const char *new_group, GList *members);
 
 	void (*buddy_free)(struct buddy *);
 
 	/* this is really bad. */
-	void (*convo_closed)(struct gaim_connection *, char *who);
+	void (*convo_closed)(GaimConnection *, char *who);
 
 	char *(*normalize)(const char *);
 };
@@ -342,7 +342,7 @@ void do_proto_menu(void);
  * @param alias The user's alias.
  * @param msg   The message to go along with the request.
  */
-void show_got_added(struct gaim_connection *gc, const char *id,
+void show_got_added(GaimConnection *gc, const char *id,
 					const char *who, const char *alias, const char *msg);
 
 /**
@@ -353,7 +353,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
  * @param data The icon data.
  * @param len  The length of @a data.
  */
-void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int len);
+void set_icon_data(GaimConnection *gc, const char *who, void *data, int len);
 
 /**
  * Retrieves the buddy icon data for a user.
@@ -364,6 +364,6 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
  *
  * @return The buddy icon data.
  */
-void *get_icon_data(struct gaim_connection *gc, const char *who, int *len);
+void *get_icon_data(GaimConnection *gc, const char *who, int *len);
 
 #endif /* _PRPL_H_ */

@@ -140,7 +140,7 @@ struct queued_message {
 	char name[80];
 	char *message;
 	time_t tm;
-	struct gaim_account *account;
+	GaimAccount *account;
 	int flags;
 	int len;
 };
@@ -205,7 +205,7 @@ extern void gaim_help(GtkWidget *, void *);
 
 /* Functions in aim.c */
 extern void show_login();
-extern void gaim_setup(struct gaim_connection *gc);
+extern void gaim_setup(GaimConnection *gc);
 
 /* Functions in away.c */
 extern void rem_away_mess(GtkWidget *, struct away_message *);
@@ -231,10 +231,10 @@ extern void update_num_groups(void);
 extern void show_buddy_list();
 extern void signoff_all();
 extern void do_im_back();
-extern void set_buddy(struct gaim_connection *, struct buddy *);
+extern void set_buddy(GaimConnection *, struct buddy *);
 extern void build_edit_tree();
 extern void do_bp_menu();
-extern void ui_add_buddy(struct gaim_connection *, struct group *, struct buddy *);
+extern void ui_add_buddy(GaimConnection *, struct group *, struct buddy *);
 extern void ui_remove_buddy(struct buddy *);
 extern void ui_add_group(struct group *);
 extern void ui_remove_group(struct group *);
@@ -253,13 +253,13 @@ extern void show_xfer_dialog();
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);
 extern void alias_dialog_chat(struct chat *);
-extern void show_warn_dialog(struct gaim_connection *, char *);
+extern void show_warn_dialog(GaimConnection *, char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
-extern void show_add_buddy(struct gaim_connection *, char *, char *, char *);
-extern void show_add_chat(struct gaim_account *, struct group *);
-extern void show_add_group(struct gaim_connection *);
-extern void show_add_perm(struct gaim_connection *, char *, gboolean);
+extern void show_add_buddy(GaimConnection *, char *, char *, char *);
+extern void show_add_chat(GaimAccount *, struct group *);
+extern void show_add_group(GaimConnection *);
+extern void show_add_perm(GaimConnection *, char *, gboolean);
 extern void destroy_all_dialogs();
 extern void show_import_dialog();
 extern void show_export_dialog();

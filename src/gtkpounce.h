@@ -82,7 +82,7 @@ struct gaim_gtkpounce_dialog;
  *
  * @return The new buddy pounce.
  */
-struct gaim_pounce *gaim_gtkpounce_new(struct gaim_account *pouncer,
+struct gaim_pounce *gaim_gtkpounce_new(GaimAccount *pouncer,
 									   const char *pouncee,
 									   GaimPounceEvent events,
 									   GaimGtkPounceAction actions,

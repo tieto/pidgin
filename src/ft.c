@@ -42,7 +42,7 @@
 static struct gaim_xfer_ui_ops *xfer_ui_ops = NULL;
 
 struct gaim_xfer *
-gaim_xfer_new(struct gaim_account *account, GaimXferType type,
+gaim_xfer_new(GaimAccount *account, GaimXferType type,
 			  const char *who)
 {
 	struct gaim_xfer *xfer;
@@ -190,7 +190,7 @@ gaim_xfer_get_type(const struct gaim_xfer *xfer)
 	return xfer->type;
 }
 
-struct gaim_account *
+GaimAccount *
 gaim_xfer_get_account(const struct gaim_xfer *xfer)
 {
 	if (xfer == NULL)
