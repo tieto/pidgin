@@ -13,6 +13,8 @@ version 0.9.16:
 	* Small changes to the Oscar/libfaim stuff (see libfaim/README.gaim)
 	* SOCKS v4 Proxy support
 	* Better proxy support overall (you can get people's info now! :) )
+	* Two-way file transfer (you can get and send files, but you still
+	  can't initiate either)
 
 version 0.9.15: (05/06/2000)
 	* Plugin support enabled by default (oops)

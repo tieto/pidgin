@@ -39,6 +39,8 @@
 static void do_send_file(GtkWidget *, struct file_transfer *);
 static void do_get_file (GtkWidget *, struct file_transfer *);
 
+static int snpa = -1;
+
 static void toggle(GtkWidget *w, int *m)
 {
 	*m = !(*m);
@@ -78,8 +80,8 @@ static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)
 
 static void accept_callback(GtkWidget *widget, struct file_transfer *ft)
 {
-	char *buf = g_malloc(BUF_LEN);
-	char *fname = g_malloc(BUF_LEN);
+	char buf[BUF_LEN];
+	char fname[BUF_LEN];
 	char *c;
 
 	if (!strcmp(ft->UID, FILE_SEND_UID)) {
@@ -126,14 +128,13 @@ static void accept_callback(GtkWidget *widget, struct file_transfer *ft)
 			   "clicked", GTK_SIGNAL_FUNC(cancel_callback), ft);
 
 	gtk_widget_show(ft->window);
-	
-	g_free(buf);
-	g_free(fname);
 }
 
 static int read_file_header(int fd, struct file_header *header) {
 	char buf[257];
 	int read_rv = read(fd, buf, 256);
+	if (read_rv < 0)
+		return read_rv;
 	memcpy(&header->magic,		buf +   0,  4);
 	memcpy(&header->hdrlen,		buf +   4,  2);
 	memcpy(&header->hdrtype,	buf +   6,  2);
@@ -202,10 +203,10 @@ static int write_file_header(int fd, struct file_header *header) {
 
 static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 {
-	char *send = g_malloc(256);
 	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window));
-	char *buf;
-	struct file_header *header = g_new0(struct file_header, 1);
+	char buf[BUF_LONG];
+	char *buf2;
+	struct file_header header;
 	int read_rv;
 	guint32 rcv;
         char *c;
@@ -214,11 +215,8 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	GtkWidget *button = NULL, *pct = NULL;
 
 	if (!(ft->f = fopen(file,"w"))) {
-		buf = g_malloc(BUF_LONG);
                 g_snprintf(buf, BUF_LONG / 2, "Error writing file %s", file);
 		do_error_dialog(buf, "Error");
-		g_free(buf);
-		g_free(header);
 		ft->accepted = 0;
 		accept_callback(NULL, ft);
 		return;
@@ -229,48 +227,43 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
 	serv_rvous_accept(ft->user, ft->cookie, ft->UID);
-	g_free(send);
 
 	
 	ft->fd = connect_address(inet_addr(ft->ip), ft->port);
 
 	if (ft->fd <= -1) {
-		g_free(header);
 		fclose(ft->f);
 		free_ft(ft);
 		return;
 	}
 
-	read_rv = read_file_header(ft->fd, header);
+	read_rv = read_file_header(ft->fd, &header);
 	if(read_rv < 0) {
 		close(ft->fd);
 		fclose(ft->f);
-		g_free(header);
 		free_ft(ft);
 		return;
 	}
 
-	sprintf(debug_buff, "header length %d\n", header->hdrlen);
+	sprintf(debug_buff, "header length %d\n", header.hdrlen);
 	debug_print(debug_buff);
 
-	header->hdrtype = 0x202;
+	header.hdrtype = 0x202;
 	
-	buf = frombase64(ft->cookie);
-	memcpy(header->bcookie, buf, 8);
-	g_free(buf);
-	snprintf(header->idstring, 32, "Gaim");
-	header->encrypt = 0; header->compress = 0;
-	header->totparts = 1; header->partsleft = 1;
+	buf2 = frombase64(ft->cookie);
+	memcpy(header.bcookie, buf2, 8);
+	snprintf(header.idstring, 32, "Gaim");
+	g_free(buf2);
+	header.encrypt = 0; header.compress = 0;
+	header.totparts = 1; header.partsleft = 1;
 
 	sprintf(debug_buff, "sending confirmation\n");
 	debug_print(debug_buff);
-	write_file_header(ft->fd, header);
+	write_file_header(ft->fd, &header);
 
-	buf = g_malloc(2048);
 	rcv = 0;
 
 	fw = gtk_dialog_new();
-	buf = g_malloc(2048);
 	snprintf(buf, 2048, "Receiving %s from %s", ft->filename, ft->user);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
@@ -311,8 +304,6 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 			fw = NULL;
 			fclose(ft->f);
 			close(ft->fd);
-			g_free(buf);
-			g_free(header);
 			free_ft(ft);
 			return;
 		}
@@ -334,209 +325,80 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		serv_rvous_cancel(ft->user, tmp, ft->UID);
 		close(ft->fd);
 		free_ft(ft);
-		g_free(header);
 		return;
 	}
 
 	sprintf(debug_buff, "Download complete.\n");
 	debug_print(debug_buff);
 
-	header->hdrtype = 0x402;
-	header->totparts = 0; header->partsleft = 0;
-	header->flags = 0;
-	header->recvcsum = header->checksum;
-	header->nrecvd = header->totsize;
-	write_file_header(ft->fd, header);
+	header.hdrtype = 0x402;
+	header.totparts = 0; header.partsleft = 0;
+	header.flags = 0;
+	header.recvcsum = header.checksum;
+	header.nrecvd = header.totsize;
+	write_file_header(ft->fd, &header);
 	close(ft->fd);
 
-	g_free(buf);
-	g_free(header);
 	free_ft(ft);
 }
 
-static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
-	char *send = g_malloc(256);
-	char *file = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window)));
-	char *buf;
+static void send_file_callback(gpointer data, gint source,
+		GdkInputCondition condition) {
+	struct file_transfer *ft = (struct file_transfer *)data;
+	struct file_header fhdr;
 	int read_rv;
-	struct file_header *fhdr = g_new0(struct file_header, 1);
-	struct sockaddr_in sin;
-	guint32 rcv;
-	int cont;
-	char *c;
-	struct stat st;
-	struct tm *fortime;
+	char buf[2048];
 	GtkWidget *fw = NULL, *fbar = NULL, *label = NULL;
 	GtkWidget *button = NULL, *pct = NULL;
+	int rcv, cont;
 
-	stat(file, &st);
-	if (!(ft->f = fopen(file, "r"))) {
-		buf = g_malloc(BUF_LONG);
-		g_snprintf(buf, BUF_LONG / 2, "Error reading file %s", file);
-		do_error_dialog(buf, "Error");
-		g_free(buf);
-		ft->accepted = 0;
-		accept_callback(NULL, ft);
-		free_ft(ft);
-		return;
-	}
+	gdk_input_remove(snpa);
+	snpa = -1;
 
-	ft->accepted = 1;
-
-	gtk_widget_destroy(ft->window);
-	ft->window = NULL;
-	serv_rvous_accept(ft->user, ft->cookie, ft->UID);
-	g_free(send);
-
-
-
-	ft->fd = connect_address(inet_addr(ft->ip), ft->port);
-
-	if (ft->fd <= -1) {
-		g_free(fhdr);
-		free_ft(ft);
-		return;
-	}
-
-	/* here's where we differ from do_get_file */
-	/* 1. build/send header
-	 * 2. receive header
-	 * 3. send listing file
-	 * 4. receive header
-	 *
-	 * then we need to wait to actually send the file.
-	 *
-	 * 5. either (receive header) or (remote host cancels)
-	 * 6. if received header, send file
-	 * 7. ? haven't gotten this far yet
-	 */
-
-	/* 1. build/send header */
-	c = file + strlen(file);
-	while (*(c - 1) != '/') c--;
-	buf = frombase64(ft->cookie);
-	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf);
-	debug_print(debug_buff);
-	fhdr->magic[0] = 'O'; fhdr->magic[1] = 'F';
-	fhdr->magic[2] = 'T'; fhdr->magic[3] = '2';
-	fhdr->hdrlen = htons(256);
-	fhdr->hdrtype = htons(0x1108);
-	snprintf(fhdr->bcookie, 8, "%s", buf);
-	g_free(buf);
-	fhdr->encrypt = 0;
-	fhdr->compress = 0;
-	fhdr->totfiles = htons(1);
-	fhdr->filesleft = htons(1);
-	fhdr->totparts = htons(1);
-	fhdr->partsleft = htons(1);
-	fhdr->totsize = htonl((long)st.st_size); /* combined size of all files */
-	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
-	fhdr->size = htonl(28 + strlen(c)); /* size of listing.txt */
-	fhdr->modtime = htonl(time(NULL)); /* time since UNIX epoch */
-	fhdr->checksum = htonl(0x89f70000); /* ? i don't think this matters */
-	fhdr->rfrcsum = 0;
-	fhdr->rfsize = 0;
-	fhdr->cretime = 0;
-	fhdr->rfcsum = 0;
-	fhdr->nrecvd = 0;
-	fhdr->recvcsum = 0;
-	snprintf(fhdr->idstring, 32, "OFT_Windows ICBMFT V1.1 32");
-	fhdr->flags = 0x02;		/* don't ask me why */
-	fhdr->lnameoffset = 0x1A;	/* ? still no clue */
-	fhdr->lsizeoffset = 0x10;	/* whatever */
-	memset(fhdr->dummy, 0, 69);
-	memset(fhdr->macfileinfo, 0, 16);
-	fhdr->nencode = 0;
-	fhdr->nlanguage = 0;
-	snprintf(fhdr->name, 64, "listing.txt");
-	read_rv = write_file_header(ft->fd, fhdr);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't write opening header\n");
-		debug_print(debug_buff);
-		g_free(fhdr);
+	if (condition & GDK_INPUT_EXCEPTION) {
+		fclose(ft->f);
 		close(ft->fd);
 		free_ft(ft);
 		return;
 	}
 
-	/* 2. receive header */
-	sprintf(debug_buff, "Receiving header\n");
-	debug_print(debug_buff);
-	read_rv = read_file_header(ft->fd, fhdr);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't read header\n");
-		debug_print(debug_buff);
-		g_free(fhdr);
+	/* OK, so here's what's going on: we need to send a file. The person
+	 * sends us a file_header, then we send a file_header, then they send
+	 * us a file header, then we send the file, then they send a header,
+	 * and we're done. */
+
+	/* we can do some neat tricks because the other person sends us back
+	 * all the information we need in the file_header */
+
+	read_rv = read_file_header(ft->fd, &fhdr);
+	if (read_rv < 0) {
+		fclose(ft->f);
 		close(ft->fd);
 		free_ft(ft);
 		return;
 	}
 
-	/* 3. qend listing file */
-	/* mm/dd/yyyy hh:mm sizesize name.ext\r\n */
-	/* creation date ^ */
-	sprintf(debug_buff, "Sending file\n");
-	debug_print(debug_buff);
-	buf = g_malloc(ft->size + 1);
-	fortime = localtime(&st.st_ctime);
-	snprintf(buf, ntohl(fhdr->size) + 1, "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
-			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
-			fortime->tm_hour + 1, fortime->tm_min + 1,
-			st.st_size, c);
-	sprintf(debug_buff, "Sending listing.txt (%ld bytes) to %s\n",
-			ntohl(fhdr->size) + 1, ft->user);
-	debug_print(debug_buff);
-
-	read_rv = write(ft->fd, buf, ntohl(fhdr->size));
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Could not send file, wrote %d\n", rcv);
+	if (ntohs(fhdr.hdrtype) != 0xc12) {
+		sprintf(debug_buff, "%s decided to cancel.\n", ft->user);
 		debug_print(debug_buff);
-		g_free(buf);
-		g_free(fhdr);
-		close(ft->fd);
-		free_ft(ft);
-		return;
-	}
-	g_free(buf);
-
-	/* 4. receive header */
-	sprintf(debug_buff, "Receiving closing header\n");
-	debug_print(debug_buff);
-	read_rv = read_file_header(ft->fd, fhdr);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't read closing header\n");
-		debug_print(debug_buff);
-		g_free(fhdr);
+		fclose(ft->f);
 		close(ft->fd);
 		free_ft(ft);
 		return;
 	}
 
-	/* 5. wait to see if we're sending it */
-	fcntl(ft->fd, F_SETFL, O_NONBLOCK);
-	rcv = 0;
-	while (rcv != 256) {
-		int i;
-		read_rv = read_file_header(ft->fd, fhdr);
-		if(read_rv < 0) {
-			if (errno == EWOULDBLOCK) {
-				while(gtk_events_pending())
-					gtk_main_iteration();
-				continue;
-			}
-			fclose(ft->f);
-			close(ft->fd);
-			g_free(fhdr);
-			free_ft(ft);
-			return;
-		}
-		rcv += read_rv;
-	}
+	/* now we need to set the hdrtype to a certain value, but I don't know
+	 * what that value is, and I don't happen to have a win computer to do
+	 * my sniffing from :-P */
+	fhdr.hdrtype = ntohs(0x101);
+	fhdr.totfiles = 1;
+	fhdr.filesleft = 1;
+	fhdr.flags = 0x20;
+	write_file_header(ft->fd, &fhdr);
+	read_file_header(ft->fd, &fhdr);
 
-	/* 6. send the file */
 	fw = gtk_dialog_new();
-	buf = g_malloc(2048);
-	snprintf(buf, 2048, "Sending %s to %s", fhdr->name, ft->user);
+	snprintf(buf, 2048, "Sending %s to %s", fhdr.name, ft->user);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
 	gtk_widget_show(label);
@@ -544,7 +406,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), fbar, 0, 0, 5);
 	gtk_widget_show(fbar);
 	pct = gtk_label_new("0 %");
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), pct, 0, 0, 5);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), pct, 0, 0, 5); 
 	gtk_widget_show(pct);
 	button = gtk_button_new_with_label("Cancel");
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), button, 0, 0, 5);
@@ -555,37 +417,32 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	aol_icon(fw->window);
 	gtk_widget_show(fw);
 
-	sprintf(debug_buff, "Sending %s to %s (%d bytes)\n", fhdr->name,
-			ft->user, fhdr->totsize);
+	sprintf(debug_buff, "Sending %s to %s (%d bytes)\n", fhdr.name,
+			ft->user, fhdr.totsize);
 	debug_print(debug_buff);
 
 	rcv = 0; cont = 1;
-	while (rcv != fhdr->totsize && cont) {
+	while (rcv != ntohl(fhdr.totsize) && cont) {
 		int i;
-		float pcnt = ((float)rcv)/((float)fhdr->totsize);
-		int remain = fhdr->totsize - rcv > 1024 ? 1024 : fhdr->totsize - rcv;
-		for (i = 0; i < 1024; i++)
+		float pcnt = ((float)rcv)/((float)ntohl(fhdr.totsize));
+		int remain = ntohl(fhdr.totsize) - rcv > 1024 ? 1024 :
+			ntohl(fhdr.totsize) - rcv;
+		for (i = 0; i < remain; i++)
 			fscanf(ft->f, "%c", &buf[i]);
 		read_rv = write(ft->fd, buf, remain);
 		if (read_rv < 0) {
-			if (errno == EWOULDBLOCK) {
-				while (gtk_events_pending())
-					gtk_main_iteration();
-				continue;
-			}
 			fclose(ft->f);
 			gtk_widget_destroy(fw);
 			fw = NULL;
 			fclose(ft->f);
 			close(ft->fd);
-			g_free(buf);
-			g_free(fhdr);
 			free_ft(ft);
 			return;
 		}
 		rcv += read_rv;
 		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar), pcnt);
-		sprintf(buf, "%d / %d K (%2.0f %%)", rcv/1024, ft->size/1024, 100*pcnt);
+		sprintf(buf, "%d / %d K (%2.0f %%)", rcv/1024,
+				ntohl(fhdr.totsize)/1024, 100*pcnt);
 		gtk_label_set_text(GTK_LABEL(pct), buf);
 		while(gtk_events_pending())
 			gtk_main_iteration();
@@ -597,23 +454,166 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
 		serv_rvous_cancel(ft->user, tmp, ft->UID);
-		g_free(buf);
 		close(ft->fd);
 		free_ft(ft);
-		g_free(fhdr);
 		return;
 	}
 
 	sprintf(debug_buff, "Upload complete.\n");
 	debug_print(debug_buff);
 
-	/* 7. receive closing header */
+	read_file_header(ft->fd, &fhdr);
 
-	/* done */
 	close(ft->fd);
-	g_free(buf);
-	g_free(fhdr);
 	free_ft(ft);
+}
+
+static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
+	char *file = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window)));
+	char buf[BUF_LONG];
+	char *buf2;
+	int read_rv;
+	struct file_header fhdr;
+	struct sockaddr_in sin;
+	guint32 rcv;
+	int cont;
+	char *c;
+	struct stat st;
+	struct tm *fortime;
+
+	stat(file, &st);
+	if (!(ft->f = fopen(file, "r"))) {
+		g_snprintf(buf, BUF_LONG / 2, "Error reading file %s", file);
+		do_error_dialog(buf, "Error");
+		ft->accepted = 0;
+		accept_callback(NULL, ft);
+		free_ft(ft);
+		return;
+	}
+
+	ft->accepted = 1;
+	ft->filename = file;
+
+	gtk_widget_destroy(ft->window);
+	ft->window = NULL;
+	serv_rvous_accept(ft->user, ft->cookie, ft->UID);
+
+
+
+	ft->fd = connect_address(inet_addr(ft->ip), ft->port);
+
+	if (ft->fd <= -1) {
+		free_ft(ft);
+		return;
+	}
+
+	/* here's where we differ from do_get_file */
+	/* 1. build/send header
+	 * 2. receive header
+	 * 3. send listing file
+	 * 4. receive header
+	 *
+	 * then we need to wait to actually send the file, if they want.
+	 *
+	 */
+
+	/* 1. build/send header */
+	c = file + strlen(file);
+	while (*(c - 1) != '/') c--;
+	buf2 = frombase64(ft->cookie);
+	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf2);
+	debug_print(debug_buff);
+	fhdr.magic[0] = 'O'; fhdr.magic[1] = 'F';
+	fhdr.magic[2] = 'T'; fhdr.magic[3] = '2';
+	fhdr.hdrlen = htons(256);
+	fhdr.hdrtype = htons(0x1108);
+	snprintf(fhdr.bcookie, 8, "%s", buf2);
+	g_free(buf2);
+	fhdr.encrypt = 0;
+	fhdr.compress = 0;
+	fhdr.totfiles = htons(1);
+	fhdr.filesleft = htons(1);
+	fhdr.totparts = htons(1);
+	fhdr.partsleft = htons(1);
+	fhdr.totsize = htonl((long)st.st_size); /* combined size of all files */
+	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
+	fhdr.size = htonl(28 + strlen(c)); /* size of listing.txt */
+	fhdr.modtime = htonl(time(NULL)); /* time since UNIX epoch */
+	fhdr.checksum = htonl(0x89f70000); /* ? i don't think this matters */
+	fhdr.rfrcsum = 0;
+	fhdr.rfsize = 0;
+	fhdr.cretime = 0;
+	fhdr.rfcsum = 0;
+	fhdr.nrecvd = 0;
+	fhdr.recvcsum = 0;
+	snprintf(fhdr.idstring, 32, "OFT_Windows ICBMFT V1.1 32");
+	fhdr.flags = 0x02;		/* don't ask me why */
+	fhdr.lnameoffset = 0x1A;	/* ? still no clue */
+	fhdr.lsizeoffset = 0x10;	/* whatever */
+	memset(fhdr.dummy, 0, 69);
+	memset(fhdr.macfileinfo, 0, 16);
+	fhdr.nencode = 0;
+	fhdr.nlanguage = 0;
+	snprintf(fhdr.name, 64, "listing.txt");
+	read_rv = write_file_header(ft->fd, &fhdr);
+	if (read_rv <= -1) {
+		sprintf(debug_buff, "Couldn't write opening header\n");
+		debug_print(debug_buff);
+		close(ft->fd);
+		free_ft(ft);
+		return;
+	}
+
+	/* 2. receive header */
+	sprintf(debug_buff, "Receiving header\n");
+	debug_print(debug_buff);
+	read_rv = read_file_header(ft->fd, &fhdr);
+	if (read_rv <= -1) {
+		sprintf(debug_buff, "Couldn't read header\n");
+		debug_print(debug_buff);
+		close(ft->fd);
+		free_ft(ft);
+		return;
+	}
+
+	/* 3. send listing file */
+	/* mm/dd/yyyy hh:mm sizesize name.ext\r\n */
+	/* creation date ^ */
+	sprintf(debug_buff, "Sending file\n");
+	debug_print(debug_buff);
+	fortime = localtime(&st.st_ctime);
+	snprintf(buf, ntohl(fhdr.size) + 1, "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
+			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
+			fortime->tm_hour + 1, fortime->tm_min + 1,
+			st.st_size, c);
+	sprintf(debug_buff, "Sending listing.txt (%ld bytes) to %s\n",
+			ntohl(fhdr.size) + 1, ft->user);
+	debug_print(debug_buff);
+
+	read_rv = write(ft->fd, buf, ntohl(fhdr.size));
+	if (read_rv <= -1) {
+		sprintf(debug_buff, "Could not send file, wrote %d\n", rcv);
+		debug_print(debug_buff);
+		close(ft->fd);
+		free_ft(ft);
+		return;
+	}
+
+	/* 4. receive header */
+	sprintf(debug_buff, "Receiving closing header\n");
+	debug_print(debug_buff);
+	read_rv = read_file_header(ft->fd, &fhdr);
+	if (read_rv <= -1) {
+		sprintf(debug_buff, "Couldn't read closing header\n");
+		debug_print(debug_buff);
+		close(ft->fd);
+		free_ft(ft);
+		return;
+	}
+
+	snpa = gdk_input_add(ft->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+				send_file_callback, ft);
+
 }
 
 void accept_file_dialog(struct file_transfer *ft)
