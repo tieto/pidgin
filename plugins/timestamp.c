@@ -46,14 +46,34 @@ static gboolean do_timestamp (gpointer data)
 	char *buf;
 	char mdate[6];
 	time_t tim = time(NULL);
+        gsize len = 0;
 
 	if (!g_list_find(gaim_get_conversations(), c))
 		return FALSE;
 
-	strftime(mdate, sizeof(mdate), "%H:%M", localtime(&tim));
-	buf = g_strdup_printf("            %s", mdate);
-	gaim_conversation_write(c, NULL, buf, GAIM_MESSAGE_NO_LOG, tim);
-	g_free(buf);
+        len = GPOINTER_TO_INT(
+            gaim_conversation_get_data(c, "timestamp-last-size"));
+        if((NULL != c->history) && (len != c->history->len)) {
+
+            strftime(mdate, sizeof(mdate), "%02H:%02M", localtime(&tim));
+            buf = g_strdup_printf("%s", mdate);
+        }
+#ifndef DEBUG_TIMESTAMP
+        else {
+            return TRUE;
+        }
+#else
+        else {
+            buf = g_strdup_printf("NC");
+        }
+#endif
+
+        gaim_conversation_write(c, NULL, buf, GAIM_MESSAGE_NO_LOG, tim);
+        g_free(buf);
+
+        gaim_conversation_set_data(c, "timestamp-last-size",
+                                   GINT_TO_POINTER(c->history->len));
+
 	return TRUE;
 }
 

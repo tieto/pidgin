@@ -21,6 +21,7 @@ version 0.78cvs
 	  the conversation window is closed, preventing a crash (Kevin Stange)
 	* Gtk2.0 compatibility fixes (Tim Ringenbach)
 	* Updated and standardized blist signals (Gary Kramlich)
+	* The timestamp plugin won't spam the conversation now (Robert Story)
 
 version 0.77 (04/22/2004):
 	New Features:
