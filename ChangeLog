@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.66 (07/17/2003):
+version 0.66 (07/18/2003):
 	* Freebsd compile fix (Matthew Luckie)
 	* .spec file improvements (Ethan Blanton)
 	* Added a gaim-remote man page (Robert McQueen)
