@@ -954,11 +954,15 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 			port = 1863;
 
 		ms = g_new0(struct msn_switchboard, 1);
+		ms->fd = proxy_connect(ssaddr, port, msn_rng_connect, ms);
+		if (ms->fd < 0) {
+			g_free(ms);
+			return;
+		}
 		ms->user = g_strdup(user);
 		ms->sessid = g_strdup(sessid);
 		ms->auth = g_strdup(auth);
 		ms->gc = gc;
-		ms->fd = proxy_connect(ssaddr, port, msn_rng_connect, ms);
 	} else if (!g_strncasecmp(buf, "SYN", 3)) {
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
 	} else if (!g_strncasecmp(buf, "XFR", 3)) {
@@ -999,13 +1003,21 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 
 			GET_NEXT(tmp);
 
-			ms->auth = g_strdup(tmp);
 			ms->fd = proxy_connect(host, port, msn_ss_xfr_connect, ms);
+			if (ms->fd < 0) {
+				msn_kill_switch(ms);
+				return;
+			}
+			ms->auth = g_strdup(tmp);
 		} else {
 			close(md->fd);
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
 			md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
+			if (md->fd < 0) {
+				hide_login_progress(gc, "Error transfering");
+				signoff(gc);
+			}
 		}
 	} else if (isdigit(*buf)) {
 		handle_errcode(buf, TRUE);
@@ -1173,6 +1185,10 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 		md->inpa = 0;
 		md->fd = 0;
 		md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
+		if (md->fd < 0) {
+			hide_login_progress(gc, "Unable to transfer");
+			signoff(gc);
+		}
 	} else {
 		if (isdigit(*buf))
 			hide_login_progress(gc, handle_errcode(buf, FALSE));
@@ -1226,6 +1242,10 @@ static void msn_login(struct aim_user *user)
 	g_snprintf(gc->username, sizeof(gc->username), "%s", msn_normalize(gc->username));
 
 	md->fd = proxy_connect("messenger.hotmail.com", 1863, msn_login_connect, gc);
+	if (md->fd < 0) {
+		hide_login_progress(gc, "Unable to connect");
+		signoff(gc);
+	}
 }
 
 static void msn_close(struct gaim_connection *gc)
