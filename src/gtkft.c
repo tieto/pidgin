@@ -262,7 +262,13 @@ update_buttons(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 		gtk_widget_hide(dialog->stop_button);
 		gtk_widget_show(dialog->remove_button);
 
-		/* TODO: gtk_widget_set_sensitive(dialog->open_button, TRUE); */
+#ifdef _WIN32 /* Only supported in Win32 right now */
+        if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+            gtk_widget_set_sensitive(dialog->open_button, TRUE);
+        } else {
+            gtk_widget_set_sensitive(dialog->open_button, FALSE);
+        }
+#endif
 		gtk_widget_set_sensitive(dialog->pause_button,  FALSE);
 		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
 
@@ -370,6 +376,22 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkXferDialog *dialog)
 static void
 open_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
+#ifdef _WIN32 /* Only supported in Win32 right now */
+    int code = (int)ShellExecute(NULL, NULL,
+                                 gaim_xfer_get_local_filename(dialog->selected_xfer),
+                                 NULL, NULL, SW_SHOW);
+    if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
+    {
+        gaim_notify_error(NULL, NULL,
+                          _("There is no application configured to open this type of file."), NULL);
+    }
+    else if (code < 32)
+    {
+        gaim_notify_error(NULL, NULL,
+                          _("An error occurred while opening the file."), NULL);
+        gaim_debug_warning("ft", "filename: %s; code: %d\n", gaim_xfer_get_local_filename(dialog->selected_xfer), code);
+    }
+#endif
 }
 
 static void

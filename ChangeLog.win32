@@ -1,4 +1,5 @@
 version 0.76:
+	* Ability to open files directly from file transfer window.
 	* Installer translations for: Russian, Polish, Finnish, Japanese.
 
 version 0.75 (01/09/2004):
