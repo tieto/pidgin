@@ -1081,6 +1081,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 				char *tmp = g_strdup_printf(_("%s logged out."), gaim_get_buddy_alias(b));
 				gaim_conversation_write(c, NULL, tmp, -1,
 							WFLAG_SYSTEM, time(NULL));
+				serv_got_typing_stopped(gc, name); /* obviously not typing */
 				g_free(tmp);
 			} else if (awayqueue && find_queue_total_by_name(b->name)) {
 				struct queued_message *qm = g_new0(struct queued_message, 1);

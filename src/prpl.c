@@ -85,7 +85,7 @@ void do_ask_cancel_by_handle(void *handle)
 	GSList *d = do_ask_dialogs;
 
 	gaim_debug(GAIM_DEBUG_MISC, "prpl",
-			   "%d dialogs to search", g_slist_length(d));
+			   "%d dialogs to search\n", g_slist_length(d));
 
 	while (d) {
 		struct doaskstruct *doask = d->data;
