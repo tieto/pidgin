@@ -113,7 +113,7 @@ void show_about(GtkWidget *w, void *data)
 			"hermanator12002@yahoo.com</A>&gt;<BR>"
 			"  Nathan 'faceprint' Walp (", _("developer"), ")<BR>"
 			"  Mark 'KingAnt' Doliner (", _("developer"), ")<BR>"
-			"  Ethan 'Paco-Paco' Blanton<br>"
+			"  Ethan 'Paco-Paco' Blanton (", _("developer"), ")<br>"
 			"  Luke 'LSchiere' Schierer (", _("support"), ")<BR>"
 			"<BR>", NULL);
 		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
