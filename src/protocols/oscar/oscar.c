@@ -385,7 +385,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 
 	} else if (strcmp(encoding, "us-ascii") && strcmp(encoding, "utf-8")) {
 		gaim_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
-						   "attempting to convert to UTF-8 anyway\n");
+						   "attempting to convert to UTF-8 anyway\n", encoding);
 		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
 	}
 
