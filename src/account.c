@@ -789,17 +789,7 @@ gaim_account_get_protocol_name(const GaimAccount *account)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	p = gaim_find_prpl(account->protocol_id);
-
-	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
-}
-
-const char *
-gaim_account_get_protocol_name(const GaimAccount *account)
-{
-	g_return_val_if_fail(account != NULL, NULL);
-
-	GaimPlugin *p = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	p = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
 	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
 }
