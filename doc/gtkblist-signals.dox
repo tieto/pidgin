@@ -10,7 +10,7 @@
 
  @signaldef gtkblist-created
   @signalproto
-(*gtkblist-created)(GaimBuddyList *blist);
+void (*gtkblist-created)(GaimBuddyList *blist);
   @endsignalproto
   @signaldesc
    Emitted when the buddy list is created.
