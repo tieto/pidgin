@@ -366,9 +366,13 @@ static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
 
-	for (cur = irc->inbuf; cur < irc->inbuf + irc->inbufused && (end = strstr(cur, "\r\n")); cur = end + 2) {
+	cur = irc->inbuf;
+	while (cur < irc->inbuf + irc->inbufused &&
+	       ((end = strstr(cur, "\r\n")) || (end = strstr(cur, "\n")))) {
+		int step = (*end == '\r' ? 2 : 1);
 		*end = '\0';
 		irc_parse_msg(irc, cur);
+		cur = end + step;
 	}
 	if (cur != irc->inbuf + irc->inbufused) { /* leftover */
 		irc->inbufused -= (cur - irc->inbuf);
