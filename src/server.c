@@ -36,7 +36,6 @@
 #include "multi.h"
 #include "gaim.h"
 
-#include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/tb_search.xpm"
 
@@ -980,92 +979,55 @@ void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 	gaim_im_update_typing(im);
 }
 
-static void close_invite(GtkWidget *w, GtkWidget *w2)
+struct chat_invite_data {
+	struct gaim_connection *gc;
+	GList *str;
+};
+
+static void chat_invite_data_free(struct chat_invite_data *cid)
 {
-	GList *str = gtk_object_get_user_data(GTK_OBJECT(w2));
-	GList *tmp = str;
-
-	while (tmp) {
-		g_free(tmp->data);
-		tmp = tmp->next;
-	}
-	if (str)
-		g_list_free(str);
-
-	gtk_widget_destroy(w2);
-}
-
-static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
-{
-	struct gaim_connection *g = (struct gaim_connection *)
-	    gtk_object_get_user_data(GTK_OBJECT(GTK_DIALOG(w2)->vbox));
-	GList *str, *tmp;
-
-	str = gtk_object_get_user_data(GTK_OBJECT(w2));
-
-	serv_join_chat(g, str);
-
-	tmp = str;
-
+	GList *tmp = cid->str;
 	while (tmp) {
 		/* this is either a g_malloc'd char* or g_malloc'd int* */
 		g_free(tmp->data);
 		tmp = tmp->next;
 	}
-	if (str)
-		g_list_free(str);
+	if (cid->str)
+		g_list_free(cid->str);
+	g_free(cid);
+}
 
-	gtk_widget_destroy(w2);
+static void chat_invite_accept(struct chat_invite_data *cid)
+{
+	serv_join_chat(cid->gc, cid->str);
+
+	chat_invite_data_free(cid);
 }
 
 
 
-void serv_got_chat_invite(struct gaim_connection *g, char *name,
+void serv_got_chat_invite(struct gaim_connection *gc, char *name,
 						  char *who, char *message, GList *data)
 {
-	GtkWidget *d;
-	GtkWidget *label;
-	GtkWidget *yesbtn;
-	GtkWidget *nobtn;
-
 	char buf2[BUF_LONG];
+	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
 
 
-	plugin_event(event_chat_invited, g, who, name, message);
+	plugin_event(event_chat_invited, gc, who, name, message);
 
 	if (message)
 		g_snprintf(buf2, sizeof(buf2),
 				   _("User '%s' invites %s to buddy chat room: '%s'\n%s"),
-				   who, g->username, name, message);
+				   who, gc->username, name, message);
 	else
 		g_snprintf(buf2, sizeof(buf2),
 				   _("User '%s' invites %s to buddy chat room: '%s'\n"),
-				   who, g->username, name);
+				   who, gc->username, name);
 
-	d = gtk_dialog_new();
-	gtk_widget_realize(d);
+	cid->gc = gc;
+	cid->str = data;
 
-
-	label = gtk_label_new(buf2);
-	gtk_widget_show(label);
-	yesbtn = picture_button(d, _("Yes"), ok_xpm);
-	nobtn = picture_button(d, _("No"), cancel_xpm);
-	gtk_widget_show(nobtn);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), yesbtn, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), nobtn, FALSE, FALSE, 5);
-
-	gtk_object_set_user_data(GTK_OBJECT(GTK_DIALOG(d)->vbox), g);
-	gtk_object_set_user_data(GTK_OBJECT(d), data);
-
-
-	gtk_window_set_title(GTK_WINDOW(d), _("Buddy chat invite"));
-	g_signal_connect(G_OBJECT(nobtn), "clicked",
-					 G_CALLBACK(close_invite), d);
-	g_signal_connect(G_OBJECT(yesbtn), "clicked",
-					 G_CALLBACK(chat_invite_callback), d);
-
-	gtk_widget_show(d);
+	do_ask_dialog(_("Buddy Chat Invite"), buf2, cid, _("Accept"), chat_invite_accept, _("Cancel"), chat_invite_data_free, NULL, FALSE);
 }
 
 struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
