@@ -397,10 +397,11 @@ int gaim_gethostbyname_async(const char *hostname, int port, int socktype, dns_c
 		req->dns_pid=fork();
 		if(req->dns_pid==0) {
 			const int zero = 0;
+			int rc;
+
 #ifdef HAVE_GETADDRINFO
 			struct addrinfo hints, *res;
 			char servname[20];
-			int rc;
 #else
 			struct sockaddr_in sin;
 			const socklen_t addrlen = sizeof(sin);
