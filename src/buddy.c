@@ -898,7 +898,9 @@ struct buddy *add_buddy(char *group, char *buddy)
 
 struct group *add_group(char *group)
 {
-	struct group *g;
+	struct group *g = find_group(group);
+	if (g)
+		return g;
 	g = (struct group *)g_new0(struct group, 1);
 	if (!g)
 		return NULL;

@@ -9,6 +9,8 @@ version 0.9.18:
 	* Fixed bug where GAIM sometimes doesn't find a font to use.
 	* Per-conversation font and color dialogs (thanks fflewddur)
 	* Chat in oscar works
+	* Even more fixes for the sign-on process, and now you don't flash when
+	  setting permit/deny lists.
 
 version 0.9.17 (05/31/2000):
 	* Automagic feature to check for new versions has been removed

@@ -444,6 +444,8 @@ void toc_callback( gpointer          data,
 
 	} else if (!strcasecmp(c, "CONFIG")) {
 		/* do we want to load the buddy list again here? */
+		c = strtok(NULL,":");
+		parse_toc_buddy_list(c, 0);
 	} else if (!strcasecmp(c, "ERROR")) {
 		/* This should be handled by wait_reply
 		c = strtok(NULL,":");

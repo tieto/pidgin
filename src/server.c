@@ -352,33 +352,36 @@ void serv_set_permit_deny()
 	int at;
 	GList *list;
 
-        /* FIXME!  We flash here. */
-        if (permdeny == 1 || permdeny == 3) {
-        	g_snprintf(buf, sizeof(buf), "toc_add_permit");
+        if (permdeny == 1 || permdeny == 4) {
+        	g_snprintf(buf, sizeof(buf), "toc_add_deny");
                 sflap_send(buf, -1, TYPE_DATA);
         } else {
-                g_snprintf(buf, sizeof(buf), "toc_add_deny");
+                g_snprintf(buf, sizeof(buf), "toc_add_permit");
                 sflap_send(buf, -1, TYPE_DATA);
         }
 
 
-	at = g_snprintf(buf, sizeof(buf), "toc_add_permit");
-	list = permit;
-	while(list) {
-                at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
-                list = list->next;
+	if (permit) {
+		at = g_snprintf(buf, sizeof(buf), "toc_add_permit");
+		list = permit;
+		while(list) {
+	                at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
+	                list = list->next;
+		}
+		buf[at] = 0;
+		sflap_send(buf, -1, TYPE_DATA);
 	}
-	buf[at] = 0;
-	sflap_send(buf, -1, TYPE_DATA);
 
-	at = g_snprintf(buf, sizeof(buf), "toc_add_deny");
-	list = deny;
-	while(list) {
-                at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
-		list = list->next;
+	if (deny) {
+		at = g_snprintf(buf, sizeof(buf), "toc_add_deny");
+		list = deny;
+		while(list) {
+	                at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
+			list = list->next;
+		}
+		buf[at] = 0;
+		sflap_send(buf, -1, TYPE_DATA);
 	}
-	buf[at] = 0;
-	sflap_send(buf, -1, TYPE_DATA);
 #else
 	/* oscar requires us to do everyone at once (?) */
 	/* I think this code is OK now. */
