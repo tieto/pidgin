@@ -800,6 +800,11 @@ static void imhtml_realized_remove_primary(GtkIMHtml *imhtml, gpointer unused)
 
 }
 
+static void imhtml_destroy_add_primary(GtkIMHtml *imhtml, gpointer unused)
+{
+	gtk_text_buffer_add_selection_clipboard(GTK_IMHTML(imhtml)->text_buffer,
+	                                        gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY));
+}
 #endif
 
 static void mark_set_so_update_selection_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *mark, GtkIMHtml *imhtml)
@@ -871,7 +876,6 @@ gtk_imhtml_finalize (GObject *object)
 		g_free(imhtml->clipboard_text_string);
 		g_free(imhtml->clipboard_html_string);
 	}
-  
 
 	g_list_free(imhtml->scalables);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
@@ -964,6 +968,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->show_smileys = TRUE;
 	imhtml->show_comments = TRUE;
 
+	imhtml->zoom = 1.0;
+	imhtml->original_fsize = 0;
+
 	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
@@ -987,7 +994,8 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	//g_signal_connect_after(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml), "realize", G_CALLBACK(imhtml_realized_remove_primary), NULL);
-#endif
+	g_signal_connect(G_OBJECT(imhtml), "unrealize", G_CALLBACK(imhtml_destroy_add_primary), NULL);
+#endif                                                                             
 
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 		               G_CALLBACK(mark_set_so_update_selection_cb), imhtml);
@@ -2857,10 +2865,55 @@ static GtkTextTag *find_font_face_tag(GtkIMHtml *imhtml, gchar *face)
 	return tag;
 }
 
+static void _init_original_fsize(GtkIMHtml *imhtml)
+{
+	GtkTextAttributes *attr;
+	attr = gtk_text_view_get_default_attributes(GTK_TEXT_VIEW(imhtml));
+	imhtml->original_fsize = pango_font_description_get_size(attr->font);
+	gtk_text_attributes_unref(attr);
+}
+
+static void _recalculate_font_sizes(GtkTextTag *tag, gpointer imhtml)
+{
+	if (strncmp(tag->name, "FONT SIZE ", 10) == 0) {
+		int size;
+
+		size = strtol(tag->name + 10, NULL, 10);
+		g_object_set(G_OBJECT(tag), "size",
+		             (gint) (GTK_IMHTML(imhtml)->original_fsize *
+		             ((double) _point_sizes[size-1] * GTK_IMHTML(imhtml)->zoom)), NULL);
+	}
+
+
+}
+
+void gtk_imhtml_font_zoom(GtkIMHtml *imhtml, double zoom)
+{
+	GtkRcStyle *s;
+	PangoFontDescription *font_desc = pango_font_description_new();
+
+	imhtml->zoom = zoom;
+
+	if (!imhtml->original_fsize)
+		_init_original_fsize(imhtml);
+
+	gtk_text_tag_table_foreach(gtk_text_buffer_get_tag_table(imhtml->text_buffer),
+	                           _recalculate_font_sizes, imhtml);
+
+	pango_font_description_set_size(font_desc, (gint)((double) imhtml->original_fsize * zoom));
+
+	s = gtk_widget_get_modifier_style(GTK_WIDGET(imhtml));
+	s->font_desc = font_desc;
+	gtk_widget_modify_style(GTK_WIDGET(imhtml), s);
+}
+
 static GtkTextTag *find_font_size_tag(GtkIMHtml *imhtml, int size)
 {
 	gchar str[24];
 	GtkTextTag *tag;
+
+	if (!imhtml->original_fsize)
+		_init_original_fsize(imhtml);
 
 	g_snprintf(str, sizeof(str), "FONT SIZE %d", size);
 	str[23] = '\0';
@@ -2871,11 +2924,9 @@ static GtkTextTag *find_font_size_tag(GtkIMHtml *imhtml, int size)
 		 * size other than my theme's default size. Our size 4 was actually smaller than
 		 * our size 3 for me. So this works around that oddity.
 		 */
-		GtkTextAttributes *attr = gtk_text_view_get_default_attributes(GTK_TEXT_VIEW(imhtml));
 		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "size",
-		                                 (gint) (pango_font_description_get_size(attr->font) *
-		                                 (double) _point_sizes[size-1]), NULL);
-		gtk_text_attributes_unref(attr);
+		                                 (gint) (imhtml->original_fsize *
+		                                 ((double) _point_sizes[size-1] * imhtml->zoom)), NULL);
 	}
 
 	return tag;

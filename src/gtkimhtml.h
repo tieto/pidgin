@@ -106,7 +106,10 @@ struct _GtkIMHtml {
 		int fontsize;
 		GtkTextTag *link;
 	} edit;
-	
+
+	double zoom;
+	int original_fsize;
+
 	char *clipboard_text_string;
 	char *clipboard_html_string;
 };
@@ -213,6 +216,8 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml);
 void       gtk_imhtml_clear            (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_up          (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_down        (GtkIMHtml *imhtml);
+
+void gtk_imhtml_font_zoom(GtkIMHtml *imhtml, double zoom);
 
 GtkIMHtmlScalable *gtk_imhtml_scalable_new();
 GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename);
