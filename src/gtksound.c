@@ -59,18 +59,18 @@ static gboolean mute_login_sounds = FALSE;
 static gboolean sound_initialized = FALSE;
 
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
-	{N_("Buddy logs in"), "login", "arrive.wav"},
-	{N_("Buddy logs out"), "logout", "leave.wav"},
+	{N_("Buddy logs in"), "login", "login.wav"},
+	{N_("Buddy logs out"), "logout", "logout.wav"},
 	{N_("Message received"), "im_recv", "receive.wav"},
 	{N_("Message received begins conversation"), "first_im_recv", "receive.wav"},
 	{N_("Message sent"), "send_im", "send.wav"},
-	{N_("Person enters chat"), "join_chat", "arrive.wav"},
-	{N_("Person leaves chat"), "left_chat", "leave.wav"},
+	{N_("Person enters chat"), "join_chat", "login.wav"},
+	{N_("Person leaves chat"), "left_chat", "logout.wav"},
 	{N_("You talk in chat"), "send_chat_msg", "send.wav"},
 	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
-	{NULL, "pounce_default", "redalert.wav"},
-	{N_("Someone says your name in chat"), "nick_said", "redalert.wav"}
+	{NULL, "pounce_default", "alert.wav"},
+	{N_("Someone says your name in chat"), "nick_said", "alert.wav"}
 };
 
 #ifdef USE_AO

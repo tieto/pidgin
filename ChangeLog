@@ -5,9 +5,11 @@ version 2.0.0
 	* Insane rewrite of all code dealing with buddy and account status, away
 	  messages, away states, online/offline, etc.  Huge thanks to Christian,
 	  Dave West, and Daniel Atallah
+	* Beautiful new default sounds (Brad Turcotte)
 	* gaim-remote can send text (John B. Silvestri)
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
-	* Screenname colors in chats now come from GNOME color palette
+	* Screenname colors in chats now chosen intelligently from GNOME color
+	  palette
 	* Yahoo! has the following new "/" commands:  /join, /buzz
 	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
 

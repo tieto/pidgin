@@ -1,7 +1,8 @@
-EXTRA_DIST =	arrive.wav \
-		leave.wav \
+EXTRA_DIST = \
+		alert.wav \
+		login.wav \
+		logout.wav \
 		receive.wav \
-		redalert.wav \
 		send.wav
 
 soundsdir =	$(datadir)/sounds/gaim
