@@ -89,8 +89,25 @@ static void gaim_blist_print()
 struct gaim_buddy_list *gaim_blist_new()
 {
 	struct gaim_buddy_list *gbl = g_new0(struct gaim_buddy_list, 1);
-	gbl->ui_ops = blist_ui_ops;
+
+	gbl->ui_ops = gaim_get_blist_ui_ops();
+
+	if (gbl->ui_ops != NULL && gbl->ui_ops->new_list != NULL)
+		gbl->ui_ops->new_list(gbl);
+
 	return gbl;
+}
+
+void
+gaim_set_blist(struct gaim_buddy_list *list)
+{
+	gaimbuddylist = list;
+}
+
+struct gaim_buddy_list *
+gaim_get_blist(void)
+{
+	return gaimbuddylist;
 }
 
 void  gaim_blist_show () 
@@ -173,12 +190,20 @@ void gaim_blist_rename_group(struct group *group, const char *name)
 }
 struct buddy *gaim_buddy_new(struct gaim_account *account, const char *screenname, const char *alias)
 {
-	struct buddy *b = g_new0(struct buddy, 1);
+	struct buddy *b;
+	struct gaim_blist_ui_ops *ops;
+
+	b = g_new0(struct buddy, 1);
 	b->account = account;
 	b->name  = g_strdup(screenname);
 	b->alias = g_strdup(alias);
 	b->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	((GaimBlistNode*)b)->type = GAIM_BLIST_BUDDY_NODE;
+
+	ops = gaim_get_blist_ui_ops();
+
+	if (ops != NULL && ops->new_node != NULL)
+		ops->new_node((GaimBlistNode *)b);
 
 	return b;
 }
@@ -224,10 +249,17 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 struct group *gaim_group_new(const char *name)
 {
 	struct group *g = gaim_find_group(name);
+
 	if (!g) {
+		struct gaim_blist_ui_ops *ops;
 		g= g_new0(struct group, 1);
 		g->name = g_strdup(name);
 		((GaimBlistNode*)g)->type = GAIM_BLIST_GROUP_NODE;
+
+		ops = gaim_get_blist_ui_ops();
+
+		if (ops != NULL && ops->new_node != NULL)
+			ops->new_node((GaimBlistNode *)g);
 
 	}
 	return g;
@@ -1243,5 +1275,11 @@ char *gaim_buddy_get_setting(struct buddy *b, const char *key) {
 
 void gaim_set_blist_ui_ops(struct gaim_blist_ui_ops *ops)
 {
-	gaimbuddylist->ui_ops = blist_ui_ops = ops;
+	blist_ui_ops = ops;
+}
+
+struct gaim_blist_ui_ops *
+gaim_get_blist_ui_ops(void)
+{
+	return blist_ui_ops;
 }

@@ -185,9 +185,14 @@ static void quit_acctedit(gpointer d)
 		gtk_widget_destroy(acctedit);
 		acctedit = NULL;
 	}
+
 	treeview = NULL;
-	if (!d && !gtkblist->window && !mainwindow && !connections)
+
+	if (!d && !GAIM_GTK_BLIST(gaim_get_blist())->window &&
+		!mainwindow && !connections) {
+
 		do_quit();
+	}
 }
 
 static void on_delete_acctedit(GtkWidget *w, GdkEvent *ev, gpointer d)

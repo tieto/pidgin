@@ -585,10 +585,12 @@ void show_ee_dialog(int ee)
 	GtkWidget *window;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	
+	struct gaim_gtk_buddy_list *gtkblist;
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_cool.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
-	
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+
 	label = gtk_label_new(NULL);
 	if (ee == 0)
 		gtk_label_set_markup(GTK_LABEL(label), 
@@ -658,10 +660,13 @@ void show_im_dialog()
 	GtkWidget *table, *menu, *opt;
 	GSList *g = connections;
 	struct gaim_connection *c;
+	struct gaim_gtk_buddy_list *gtkblist;
 	char buf[256];
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
 	struct getuserinfo *info = NULL;
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	g_free(filename);
 
@@ -764,7 +769,10 @@ void show_info_dialog()
 	GSList *g = connections;
 	struct gaim_connection *c;
 	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
+	struct gaim_gtk_buddy_list *gtkblist;
 	char buf[256];
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	g_free(filename);
 	info->gc = connections->data;
@@ -941,9 +949,12 @@ void show_add_group(struct gaim_connection *gc)
 
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
+	struct gaim_gtk_buddy_list *gtkblist;
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	g_free(filename);
 	a->gc = gc;
@@ -1051,12 +1062,13 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	GtkWidget *label;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
-
+	struct gaim_gtk_buddy_list *gtkblist;
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
-
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
 	a->gc = gc ? gc : connections->data;
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	g_free(filename);
 
@@ -3911,11 +3923,14 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
+	struct gaim_gtk_buddy_list *gtkblist;
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
 	GtkWidget *name_entry = NULL;
 
 	g_free(filename);
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	if (!rename_dialog) {
 		rename_dialog =  gtk_dialog_new_with_buttons(_("Rename Group"), GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, 

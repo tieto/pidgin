@@ -815,6 +815,9 @@ void away_on_login(char *mesg)
 {
 	GSList *awy = away_messages;
 	struct away_message *a, *message = NULL;
+	struct gaim_gtk_buddy_list *gtkblist;
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	if (!gtkblist->window) {
 		return;

@@ -37,8 +37,8 @@ enum gaim_blist_node_type {
 	GAIM_BLIST_OTHER_NODE,
 };
 
-#define GAIM_BLIST_NODE_IS_BUDDY(n) (n->type == GAIM_BLIST_BUDDY_NODE)
-#define GAIM_BLIST_NODE_IS_GROUP(n) (n->type == GAIM_BLIST_GROUP_NODE)
+#define GAIM_BLIST_NODE_IS_BUDDY(n) ((n)->type == GAIM_BLIST_BUDDY_NODE)
+#define GAIM_BLIST_NODE_IS_GROUP(n) ((n)->type == GAIM_BLIST_GROUP_NODE)
 
 /**************************************************************************/
 /* Data Structures                                                        */
@@ -93,6 +93,8 @@ struct group {
 struct gaim_buddy_list {
 	GaimBlistNode *root;                    /**< The first node in the buddy list */
 	struct gaim_blist_ui_ops *ui_ops;       /**< The UI operations for the buddy list */
+
+	void *ui_data;                          /**< UI-specific data. */
 };
 
 /**
@@ -103,6 +105,8 @@ struct gaim_buddy_list {
  */
 struct gaim_blist_ui_ops
 {
+	void (*new_list)(struct gaim_buddy_list *list); /**< Sets UI-specific data on a buddy list. */
+	void (*new_node)(GaimBlistNode *node);      /**< Sets UI-specific data on a node. */
 	void (*show)(struct gaim_buddy_list *list);     /**< The core will call this when its finished doing it's core stuff */
 	void (*update)(struct gaim_buddy_list *list, 
 		       GaimBlistNode *node);            /**< This will update a node in the buddy list. */
@@ -115,12 +119,6 @@ struct gaim_blist_ui_ops
 }; 
 
 /**************************************************************************/
-/* Globals                                                                */
-/**************************************************************************/
-extern struct gaim_buddy_list *gaimbuddylist;      /**< A global for the core buddy list. */
-
-
-/**************************************************************************/
 /** @name Buddy List API                                                  */
 /**************************************************************************/
 /*@{*/
@@ -130,6 +128,19 @@ extern struct gaim_buddy_list *gaimbuddylist;      /**< A global for the core bu
  */
 struct gaim_buddy_list *gaim_blist_new();
 
+/**
+ * Sets the main buddy list.
+ *
+ * @return The main buddy list.
+ */
+void gaim_set_blist(struct gaim_buddy_list *blist);
+
+/**
+ * Returns the main buddy list.
+ *
+ * @return The main buddy list.
+ */
+struct gaim_buddy_list *gaim_get_blist(void);
 
 /**
  * Shows the buddy list, creating a new one if necessary.
@@ -401,6 +412,13 @@ char *gaim_buddy_get_setting(struct buddy *b, const char *key);
  * @param ops The ops struct.
  */
 void gaim_set_blist_ui_ops(struct gaim_blist_ui_ops *ops);
+
+/**
+ * Returns the UI operations structure to be used for the buddy list.
+ *
+ * @return The UI operations structure.
+ */
+struct gaim_blist_ui_ops *gaim_get_blist_ui_ops(void);
 
 /*@}*/
 

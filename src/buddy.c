@@ -54,6 +54,8 @@
 #include "win32dep.h"
 #endif
 
+static struct gaim_gtk_buddy_list *gtkblist = NULL;
+
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
 
 /***************************************************
@@ -482,6 +484,16 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 /**********************************************************************************
  * Public API Functions                                                           *
  **********************************************************************************/
+static void gaim_gtk_blist_new_list(struct gaim_buddy_list *blist)
+{
+	blist->ui_data = g_new0(struct gaim_gtk_buddy_list, 1);
+}
+
+static void gaim_gtk_blist_new_node(GaimBlistNode *node)
+{
+	node->ui_data = g_new0(struct gaim_gtk_blist_node, 1);
+}
+
 static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 {
 	GtkItemFactory *ift;
@@ -496,7 +508,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 		return;
 	}
 
-	gtkblist = g_new0(struct gaim_gtk_buddy_list , 1);
+	gtkblist = GAIM_GTK_BLIST(list);
+
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
 
@@ -608,17 +621,23 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
 
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
-	GtkTreeIter *iter = node->ui_data;
+	struct gaim_gtk_blist_node *gtknode;
+	GtkTreeIter *iter;
 	gboolean expand = FALSE;
 
 	if (!gtkblist)
 		return;
+	
+	gtknode = GAIM_GTK_BLIST_NODE(node);
+	iter = gtknode->iter;
+
 
 	if (!iter) { /* This is a newly added node */
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 			if (((struct buddy*)node)->present) {
-				if(node->parent && node->parent && !node->parent->ui_data) {
-
+				if(node->parent && node->parent &&
+				   !GAIM_GTK_BLIST_NODE(node->parent)->iter) {
+					
 					/* This buddy's group has not yet been added.  We do that here */
 
 					char *mark = g_strdup_printf("<span weight='bold'>%s</span>",  ((struct group*)node->parent)->name);
@@ -627,36 +646,41 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 					GtkTreeIter *insertatiter = NULL;
 
 					/* We traverse backwards through the buddy list to find the node in the tree to insert it after */
-					while (insertat && !insertat->ui_data)
+					while (insertat && !GAIM_GTK_BLIST_NODE(insertat)->iter)
 						insertat = insertat->prev;
+
 					if (insertat)
-						insertatiter = insertat->ui_data;
+						insertatiter = GAIM_GTK_BLIST_NODE(insertat)->iter;
 
 					/* This is where we create the node and add it. */
 					gtk_tree_store_insert_after(gtkblist->treemodel, iter2, 
-								    node->parent->parent ? node->parent->parent->ui_data : NULL, insertatiter);
+								    node->parent->parent ?
+									GAIM_GTK_BLIST_NODE(node->parent->parent)->iter : NULL, insertatiter);
 					gtk_tree_store_set(gtkblist->treemodel, iter2, 
 							   STATUS_ICON_COLUMN, gtk_widget_render_icon
 							   (gtkblist->treeview,GTK_STOCK_OPEN,GTK_ICON_SIZE_SMALL_TOOLBAR,NULL),
 							   NAME_COLUMN, mark,
 							   NODE_COLUMN, node->parent,
 							   -1);
-					node->parent->ui_data = iter2;
+
+					GAIM_GTK_BLIST_NODE(node->parent)->iter = iter2;
 					expand = TRUE;
 				}
 				iter = g_new0(GtkTreeIter, 1);
-				node->ui_data = iter;
-				
-				gtk_tree_store_insert_after (gtkblist->treemodel, iter, node->parent  ? node->parent->ui_data : NULL,
-							     node->prev ? node->prev->ui_data : NULL);
+
+				GAIM_GTK_BLIST_NODE(node)->iter = iter;
+
+				gtk_tree_store_insert_after (gtkblist->treemodel, iter, node->parent  ? GAIM_GTK_BLIST_NODE(node->parent)->iter : NULL,
+							     node->prev ? GAIM_GTK_BLIST_NODE(node->prev)->iter : NULL);
 			
 							   
 				if (expand) {       /* expand was set to true if this is the first element added to a group.  In such case
 						     * we expand the group node */
-					GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), node->parent->ui_data);
+					GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), GAIM_GTK_BLIST_NODE(node->parent)->iter);
 					gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), path, TRUE);	
 				}
-				node->ui_data = iter;
+
+				GAIM_GTK_BLIST_NODE(node)->iter = iter;
 			}
 		} 
 	}
@@ -679,23 +703,36 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				   -1);
 			
 		g_free(mark);
-		g_object_unref(status);
-		if (avatar) {
-				g_object_unref(avatar);
-		}
-	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && node->ui_data){
-		gtk_tree_store_remove(GTK_TREE_STORE(gtkblist->treemodel), (GtkTreeIter*)(node->ui_data));
-		g_free(node->ui_data);
-		node->ui_data = NULL;
+
+		if (status != NULL)
+			g_object_unref(status);
+
+		if (avatar != NULL)
+			g_object_unref(avatar);
+
+	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && GAIM_GTK_BLIST_NODE(node)->iter){
+		gtk_tree_store_remove(GTK_TREE_STORE(gtkblist->treemodel), GAIM_GTK_BLIST_NODE(node)->iter);
+
+		g_free(GAIM_GTK_BLIST_NODE(node)->iter);
+		GAIM_GTK_BLIST_NODE(node)->iter = NULL;
 	}
 	
 }
 
 static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
+	struct gaim_gtk_blist_node *gtknode;
+
 	if (!node->ui_data)
 		return;
-	gtk_tree_store_remove(gtkblist->treemodel, (GtkTreeIter*)(node->ui_data));
+
+	gtknode = (struct gaim_gtk_blist_node *)node->ui_data;
+
+	if (gtknode->timer > 0)
+		g_source_remove(gtknode->timer);
+
+	if (gtknode->iter != NULL)
+		gtk_tree_store_remove(gtkblist->treemodel, gtknode->iter);
 }
 
 static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
@@ -713,6 +750,8 @@ static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean sh
 
 static struct gaim_blist_ui_ops blist_ui_ops =
 {
+	gaim_gtk_blist_new_list,
+	gaim_gtk_blist_new_node,
 	gaim_gtk_blist_show,
 	gaim_gtk_blist_update,
 	gaim_gtk_blist_remove,

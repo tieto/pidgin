@@ -1966,12 +1966,16 @@ static void set_logging_option(GtkWidget *w, int option)
 
 static void set_blist_option(GtkWidget *w, int option)
 {
+	struct gaim_gtk_buddy_list *gtkblist;
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+
 	blist_options ^= option;
 	
 	if (!gtkblist)
 		return;
 	
-	gaim_gtk_blist_refresh(gaimbuddylist);
+	gaim_gtk_blist_refresh(gaim_get_blist());
 
 }
 

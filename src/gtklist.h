@@ -23,7 +23,6 @@
 
 #ifndef _GAIM_GTK_LIST_H_
 #define _GAIM_GTK_LIST_H_
-extern GtkWidget *blist;
 
 enum {
 	STATUS_ICON_COLUMN,
@@ -51,8 +50,18 @@ struct gaim_gtk_buddy_list {
 			
 	GtkWidget *bbox;                /**< A Button Box. */
 };
-struct gaim_gtk_buddy_list *gtkblist;
 
+/**
+ * A GTK+ buddy list node.
+ */
+struct gaim_gtk_blist_node
+{
+	GtkTreeIter *iter;               /**< The tree iterator. */
+	uint timer;                      /**< The timer handle.  */
+};
+
+#define GAIM_GTK_BLIST_NODE(node) ((struct gaim_gtk_blist_node *)(node)->ui_data)
+#define GAIM_GTK_BLIST(list) ((struct gaim_gtk_buddy_list *)(list)->ui_data)
 
 /**************************************************************************
  * @name GTK+ Conversation API
