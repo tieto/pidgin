@@ -1087,11 +1087,14 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 	char *tmp;
+	int caps;
 
 	va_list ap;
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
+
+	caps = info->capabilities;
 
 	if (!od->icq) {
 		if (info->flags & AIM_FLAG_ACTIVEBUDDY)
@@ -1112,6 +1115,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT))
 				type |= UC_UNAVAILABLE;
 		}
+		if (caps & AIM_CAPS_EVERYBUDDY)
+			caps ^= AIM_CAPS_EVERYBUDDY;
 		debug_printf("icq status: %d\n", info->icqinfo.status);
 	}
 
@@ -1127,7 +1132,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	g_free(tmp);
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, time(NULL) - info->sessionlen,
-			time_idle, type, info->capabilities);
+			time_idle, type, caps);
 
 	return 1;
 }
