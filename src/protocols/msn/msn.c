@@ -2180,8 +2180,9 @@ GSList *msn_smiley_list()
 	smilies = add_smiley(smilies, ";-)", msn_wink, 1);
 	smilies = add_smiley(smilies, ";)", msn_wink, 0);
 	smilies = add_smiley(smilies, ":S-", msn_wink, 0);
+	smilies = add_smiley(smilies, ":-$", msn_embarrassed, 1);
+	smilies = add_smiley(smilies, ":$", msn_embarrassed, 0);
 	
-
 	return smilies;
 }
 
