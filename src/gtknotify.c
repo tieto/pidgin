@@ -46,6 +46,12 @@ static void *gaim_gtk_notify_emails(size_t count, gboolean detailed,
 									void *user_data);
 
 static void
+message_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
+{
+	gaim_notify_close(GAIM_NOTIFY_MESSAGE, data);
+}
+
+static void
 email_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
 {
 	if (id == 0)
@@ -93,7 +99,7 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 										 GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
 										 NULL);
 	g_signal_connect(G_OBJECT(dialog), "response",
-					 G_CALLBACK(gtk_widget_destroy), NULL);
+					 G_CALLBACK(message_response_cb), dialog);
 
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);

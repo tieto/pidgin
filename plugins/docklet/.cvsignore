@@ -2,7 +2,6 @@
 .libs
 Makefile
 Makefile.in
-docklet.la
-docklet.lo
-eggtrayicon.lo
-docklet.dll
+*.dll
+*.la
+*.lo
