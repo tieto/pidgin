@@ -1,9 +1,12 @@
 src/protocols/icq/gaim_icq.c
+src/protocols/irc/irc.c
+src/protocols/jabber/jabber.c
 src/protocols/msn/msn.c
 src/protocols/napster/napster.c
 src/protocols/oscar/oscar.c
 src/protocols/toc/toc.c
 src/protocols/yahoo/yay.c
+src/protocols/zephyr/zephyr.c
 src/about.c
 src/aim.c
 src/applet.c
