@@ -39,14 +39,16 @@
 
 #include <glib.h>
 
-#define PROXY_NONE 0
-#define PROXY_HTTP 1
-#define PROXY_SOCKS4 2
-#define PROXY_SOCKS5 3
+typedef enum {
+	PROXY_NONE = 0,
+	PROXY_HTTP,
+	PROXY_SOCKS4,
+	PROXY_SOCKS5,
+} proxytype_t;
 
 extern char proxyhost[128];
 extern int  proxyport;
-extern int  proxytype;
+extern proxytype_t  proxytype;
 extern char proxyuser[128];
 extern char proxypass[128];
 extern guint proxy_info_is_from_gaimrc;

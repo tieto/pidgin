@@ -16,7 +16,9 @@ version 0.60:
 	  Robert McQueen)
 	* Conversation backend and UI are now separated. (Thanks,
 	  Christian Hammond)
-
+	* Asynchronous, non-blocking, DNS function (Thanks, Nicolas
+	  Lichtmaier)
+	
 	Plugins:
 	* Tray icon plugin--replaces the old GNOME applet. You'll need 
 	  the panel Notification Area applet (aka system-tray-applet) 

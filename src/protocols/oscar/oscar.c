@@ -620,6 +620,8 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	odata = gc->proto_data;
 	sess = odata->sess;
 	conn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
+	
+	conn->fd = source;
 
 	if (source < 0) {
 		hide_login_progress(gc, _("Couldn't connect to host"));
@@ -639,6 +641,7 @@ static void oscar_login(struct aim_user *user) {
 	char buf[256];
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
+	int rc;
 
 	if (isdigit(*user->username)) {
 		odata->icq = TRUE;
@@ -675,12 +678,12 @@ static void oscar_login(struct aim_user *user) {
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
 
 	conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	conn->fd = proxy_connect(user->proto_opt[USEROPT_AUTH][0] ?
+	rc = proxy_connect(user->proto_opt[USEROPT_AUTH][0] ?
 					user->proto_opt[USEROPT_AUTH] : FAIM_LOGIN_SERVER,
 				 user->proto_opt[USEROPT_AUTHPORT][0] ?
 					atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
 				 oscar_login_connect, gc);
-	if (conn->fd < 0) {
+	if (rc < 0) {
 		hide_login_progress(gc, _("Couldn't connect to host"));
 		signoff(gc);
 		return;
@@ -766,7 +769,8 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 
 	odata = gc->proto_data;
 	sess = odata->sess;
-	bosconn = odata->conn;
+	bosconn = odata->conn;	
+	bosconn->fd = source;
 
 	if (source < 0) {
 		hide_login_progress(gc, _("Could Not Connect"));
@@ -797,7 +801,7 @@ static void oscar_ask_send_file(struct gaim_connection *gc, char *destsn) {
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	struct aim_authresp_info *info;
-	int i; char *host; int port;
+	int i, rc; char *host; int port;
 	struct aim_user *user;
 	aim_conn_t *bosconn;
 
@@ -921,9 +925,9 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 	host = g_strndup(info->bosip, i);
 	bosconn->status |= AIM_CONN_STATUS_INPROGRESS;
-	bosconn->fd = proxy_connect(host, port, oscar_bos_connect, gc);
+	rc = proxy_connect(host, port, oscar_bos_connect, gc);
 	g_free(host);
-	if (bosconn->fd < 0) {
+	if (rc < 0) {
 		hide_login_progress(gc, _("Could Not Connect"));
 		od->killme = TRUE;
 		return 0;
@@ -987,6 +991,8 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond) {
 	struct pieceofcrap *pos = data;
 	char buf[BUF_LONG];
+
+	pos->fd = source;
 
 	if (source < 0) {
 		char buf[256];
@@ -1079,7 +1085,6 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 		do_error_dialog(_("Gaim was Unable to get valid login hash."),
 				 buf, GAIM_WARNING);
 	}
-	pos->fd = fd;
 
 	return 1;
 }
@@ -1166,6 +1171,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 	odata = gc->proto_data;
 	sess = odata->sess;
 	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_CHATNAV);
+	tstconn->fd = source;
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
@@ -1194,6 +1200,7 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 	odata = gc->proto_data;
 	sess = odata->sess;
 	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
+	tstconn->fd = source;
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
@@ -1226,6 +1233,7 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 	odata = gc->proto_data;
 	sess = odata->sess;
 	tstconn = ccon->conn;
+	tstconn->fd = source;
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
@@ -1256,6 +1264,7 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 	odata = gc->proto_data;
 	sess = odata->sess;
 	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_EMAIL);
+	tstconn->fd = source;
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
@@ -1275,7 +1284,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct aim_user *user = gc->user;
 	aim_conn_t *tstconn;
-	int i;
+	int i, rc;
 	char *host;
 	int port;
 
@@ -1309,8 +1318,8 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		tstconn->fd = proxy_connect(host, port, oscar_auth_connect, gc);
-		if (tstconn->fd < 0) {
+		rc = proxy_connect(host, port, oscar_auth_connect, gc);
+		if (rc < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to reconnect with authorizer\n");
 			g_free(host);
@@ -1329,8 +1338,8 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_chatnav, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		tstconn->fd = proxy_connect(host, port, oscar_chatnav_connect, gc);
-		if (tstconn->fd < 0) {
+		rc = proxy_connect(host, port, oscar_chatnav_connect, gc);
+		if (rc < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chatnav server\n");
 			g_free(host);
@@ -1361,8 +1370,8 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		ccon->show = extract_name(redir->chat.room);
 		
 		ccon->conn->status |= AIM_CONN_STATUS_INPROGRESS;
-		ccon->conn->fd = proxy_connect(host, port, oscar_chat_connect, ccon);
-		if (ccon->conn->fd < 0) {
+		rc = proxy_connect(host, port, oscar_chat_connect, ccon);
+		if (rc < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chat server\n");
 			g_free(host);
@@ -1384,8 +1393,8 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_email, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		tstconn->fd = proxy_connect(host, port, oscar_email_connect, gc);
-		if (tstconn->fd < 0) {
+		rc = proxy_connect(host, port, oscar_email_connect, gc);
+		if (rc < 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to email server\n");
 			g_free(host);
@@ -1503,8 +1512,7 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 		return;
 	}
 
-	if (dim->conn->fd != source)
-		dim->conn->fd = source;
+	dim->conn->fd = source;
 	aim_conn_completeconnect(od->sess, dim->conn);
 	if (!(cnv = gaim_find_conversation(dim->name))) 
 		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->name);
@@ -1720,7 +1728,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	struct oscar_data *od;
 	struct direct_im *dim;
 	char *host; int port = 4443;
-	int i;
+	int i, rc;
 
 	if (!g_slist_find(connections, gc)) {
 		cancel_direct_im(d);
@@ -1760,9 +1768,9 @@ static void accept_direct_im(struct ask_direct *d) {
 	}
 	host = g_strndup(d->ip, i);
 	dim->conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	dim->conn->fd = proxy_connect(host, port, oscar_directim_callback, dim);
+	rc = proxy_connect(host, port, oscar_directim_callback, dim);
 	g_free(host);
-	if (dim->conn->fd < 0) {
+	if (rc < 0) {
 		aim_conn_kill(od->sess, &dim->conn);
 		g_free(dim);
 		cancel_direct_im(d);

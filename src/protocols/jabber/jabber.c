@@ -765,8 +765,7 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 	jd = gc->proto_data;
 	gjc = jd->gjc;
 
-	if (gjc->fd != source)
-		gjc->fd = source;
+	gjc->fd = source;
 
 	if (source == -1) {
 		STATE_EVT(JCONN_STATE_OFF)
@@ -798,7 +797,7 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 static void gjab_start(gjconn gjc)
 {
 	struct aim_user *user;
-	int port;
+	int port, rc;
 
 	if (!gjc || gjc->state != JCONN_STATE_OFF)
 		return;
@@ -811,8 +810,8 @@ static void gjab_start(gjconn gjc)
 	XML_SetElementHandler(gjc->parser, startElement, endElement);
 	XML_SetCharacterDataHandler(gjc->parser, charData);
 
-	gjc->fd = proxy_connect(gjc->user->server, port, gjab_connected, GJ_GC(gjc));
-	if (!user->gc || (gjc->fd < 0)) {
+	rc = proxy_connect(gjc->user->server, port, gjab_connected, GJ_GC(gjc));
+	if (!user->gc || (rc < 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
 	}
