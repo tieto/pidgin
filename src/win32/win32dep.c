@@ -507,6 +507,24 @@ void wgaim_systray_maximize( GtkWidget *window ) {
 	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
 }
 
+void wgaim_notify_uri(const char *uri) {
+	SHELLEXECUTEINFO sinfo;
+
+	memset(&sinfo, 0, sizeof(sinfo));
+    sinfo.cbSize = sizeof(sinfo);
+    sinfo.fMask = SEE_MASK_CLASSNAME;
+    sinfo.lpVerb = "open";
+    sinfo.lpFile = uri; 
+    sinfo.nShow = SW_SHOWNORMAL; 
+    sinfo.lpClass = "http";
+
+	/* We'll allow whatever URI schemes are supported by the
+	   default http browser.
+	*/
+	if(!ShellExecuteEx(&sinfo))
+		gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n", uri, (int)sinfo.hInstApp);
+}
+
 void wgaim_init(HINSTANCE hint) {
 	WORD wVersionRequested;
 	WSADATA wsaData;

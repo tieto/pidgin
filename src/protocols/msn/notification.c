@@ -829,27 +829,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 			unlink(session->passport_info.file);
 			g_free(session->passport_info.file);
-		}
-		else
-		{
-			/*
-			 * Renaming file with .html extension, so that the
-			 * win32 open_url will work.
-			 */
-			char *tmp;
-
-			if ((tmp =
-				 g_strdup_printf("%s.html", session->passport_info.file))
-				!= NULL)
-			{
-				if (rename(session->passport_info.file, tmp) == 0)
-				{
-					g_free(session->passport_info.file);
-					session->passport_info.file = tmp;
-				}
-				else
-					g_free(tmp);
-			}
+			session->passport_info.file = NULL;
 		}
 	}
 }

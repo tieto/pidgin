@@ -601,7 +601,7 @@ static void gtk_blist_show_systemlog_cb()
 
 static void gtk_blist_show_onlinehelp_cb()
 {
-	gaim_notify_uri(NULL, GAIM_WEBSITE "documentation.php", TRUE);
+	gaim_notify_uri(NULL, GAIM_WEBSITE "documentation.php");
 }
 
 static void

@@ -459,7 +459,7 @@ trepia_visit_homepage(GaimBlistNode *node, gpointer data)
 	value = trepia_profile_get_homepage(profile);
 
 	if (value != NULL)
-		gaim_notify_uri(gc, value, FALSE);
+		gaim_notify_uri(gc, value);
 }
 
 static GList *

@@ -56,6 +56,8 @@ extern int       wgaim_gz_untar(const char* filename, const char* destdir);
 /* Docklet */
 extern void      wgaim_systray_minimize( GtkWidget* );
 extern void      wgaim_systray_maximize( GtkWidget* );
+/* Misc */
+extern void      wgaim_notify_uri(const char *uri);
 /* init / cleanup */
 extern void      wgaim_init(HINSTANCE);
 extern void      wgaim_cleanup(void);

@@ -2713,7 +2713,7 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 		t++;
 	*t = 0;
 	g_snprintf(url, sizeof url, "http://games.yahoo.com/games/%s", game2);
-	gaim_notify_uri(gc, url, TRUE);
+	gaim_notify_uri(gc, url);
 	g_free(game2);
 }
 

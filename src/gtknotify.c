@@ -62,7 +62,7 @@ static void
 email_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
 {
 	if (id == 0)
-		gaim_notify_uri(NULL, data->url, TRUE);
+		gaim_notify_uri(NULL, data->url);
 
 	gaim_notify_close(GAIM_NOTIFY_EMAILS, data);
 }
@@ -454,7 +454,7 @@ uri_command(const char *command, gboolean sync)
 #endif /* _WIN32 */
 
 static void *
-gaim_gtk_notify_uri(const char *uri, gboolean trusted)
+gaim_gtk_notify_uri(const char *uri)
 {
 #ifndef _WIN32
 	char *command = NULL;
@@ -598,27 +598,7 @@ gaim_gtk_notify_uri(const char *uri, gboolean trusted)
 	g_free(command);
 
 #else /* !_WIN32 */
-	/**
-	 * If the URI is not trusted we limit ourselves to the following URI
-	 * types (Execution of an untrusted local file URI could potentially
-	 * be a security risk):
-	 * http, https, ftp, mailto
-	 */
-	if(!trusted &&
-	   !(g_ascii_strncasecmp(uri, "http://", 7) == 0 ||
-		 g_ascii_strncasecmp(uri, "mailto:", 7) == 0 ||
-		 g_ascii_strncasecmp(uri, "https://", 8) == 0 ||
-		 g_ascii_strncasecmp(uri, "ftp://", 6) == 0)) {
-		gaim_debug_misc("gtknotify",
-						"Ignoring untrusted '%s' URI as it is not recognized as a secure URI.\n",
-						uri);
-	}
-	else {
-		int ret;
-		/* The URI is trusted */
-		if((ret = ShellExecute(NULL, "open", uri, NULL, NULL, SW_SHOWNORMAL)) <= 32)
-			gaim_debug_error("gtknotify", "Opening URI: '%s' ShellExecute failure: %d\n", uri, ret);
-	}
+	wgaim_notify_uri(uri);
 #endif /* !_WIN32 */
 
 	return NULL;
