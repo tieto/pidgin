@@ -102,7 +102,7 @@ static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame
 	 */
 	aim_bstream_init(&hdr, hdr_raw, sizeof(hdr_raw));
 	if (aim_bstream_recv(&hdr, conn->fd, 6) < 6) {
-		aim_conn_close(sess, conn);
+		aim_conn_close(conn);
 		return -1;
 	}
 
@@ -114,7 +114,7 @@ static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame
 	 */
 	if (aimbs_get8(&hdr) != 0x2a) {
 		faimdprintf(sess, 0, "Invalid FLAP frame received on FLAP connection!");
-		aim_conn_close(sess, conn);
+		aim_conn_close(conn);
 		return -1;
 	}
 
@@ -142,7 +142,7 @@ static int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *conn, aim
 	 */
 	aim_bstream_init(&hdr, hdr_raw, sizeof(hdr_raw));
 	if (aim_bstream_recv(&hdr, conn->fd, 8) < 8) {
-		aim_conn_close(sess, conn);
+		aim_conn_close(conn);
 		return -1;
 	}
 
@@ -212,7 +212,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 		/* read the payload */
 		if (aim_bstream_recv(&fr->data, conn->fd, payloadlen) < payloadlen) {
 			aim_frame_destroy(fr); /* free's payload */
-			aim_conn_close(sess, conn);
+			aim_conn_close(conn);
 			return -1;
 		}
 	} else

@@ -159,7 +159,7 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 	aim_tx_cleanqueue(sess, *deadconn);
 
 	if ((*deadconn)->fd != -1)
-		aim_conn_close(sess, *deadconn);
+		aim_conn_close(*deadconn);
 
 	/*
 	 * XXX ->priv should never be touched by the library. I know
@@ -191,6 +191,28 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 }
 
 /**
+ * This sends an empty channel 4 SNAC.  This is sent to signify
+ * that we're logging off.  This shouldn't really be necessary--
+ * usually the AIM server will detect that the TCP connection has
+ * been destroyed.
+ */
+static int
+aim_flap_close(aim_session_t *sess, aim_conn_t *conn)
+{
+	aim_frame_t *fr;
+
+	if (!sess || !conn)
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x04, 0)))
+		return -ENOMEM;
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/**
  * Clears out the connection list, killing remaining connections.
  *
  * @param sess Session to be cleared.
@@ -201,9 +223,13 @@ static void aim_connrst(aim_session_t *sess)
 	if (sess->connlist) {
 		aim_conn_t *cur = sess->connlist, *tmp;
 
+		/* Attempt to send the log-off packet */
+		if (cur->type == AIM_CONN_TYPE_BOS)
+			aim_flap_close(sess, cur);
+
 		while (cur) {
 			tmp = cur->next;
-			aim_conn_close(sess, cur);
+			aim_conn_close(cur);
 			connkill_real(sess, &cur);
 			cur = tmp;
 		}
@@ -297,28 +323,6 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
 }
 
 /**
- * This sends an empty channel 4 SNAC.  This is sent to signify
- * that we're logging off.  This shouldn't really be necessary--
- * usually the AIM server will detect that the TCP connection has
- * been destroyed.
- */
-static int
-aim_flap_close(aim_session_t *sess, aim_conn_t *conn)
-{
-	aim_frame_t *fr;
-
-	if (!sess || !conn)
-		return -EINVAL;
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x04, 0)))
-		return -ENOMEM;
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/**
  * Close (but not free) a connection.
  *
  * This leaves everything untouched except for clearing the 
@@ -330,11 +334,9 @@ aim_flap_close(aim_session_t *sess, aim_conn_t *conn)
  *
  * @param deadconn The connection to close.
  */
-faim_export void aim_conn_close(aim_session_t *sess, aim_conn_t *deadconn)
+faim_export void aim_conn_close(aim_conn_t *deadconn)
 {
 	aim_rxcallback_t userfunc;
-
-	aim_flap_close(sess, deadconn);
 
 	if (deadconn->fd >= 0)
 		close(deadconn->fd);
