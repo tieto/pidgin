@@ -52,10 +52,9 @@
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
 #include "gtksound.h"
+#include "gtkstatus.h"
 #include "gtkstatusselector.h"
 #include "gtkutils.h"
-
-#include "gaim.h"
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -107,7 +106,6 @@ typedef struct
 
 
 static GtkWidget *protomenu = NULL;
-static GtkWidget *awaymenu = NULL;
 static GtkWidget *pluginmenu = NULL;
 
 GSList *gaim_gtk_blist_sort_methods = NULL;
@@ -992,7 +990,7 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	struct _gaim_gtk_blist_node *gtknode;
 	GtkTreeIter iter, parent;
 	GaimBlistNode *bnode;
-	GtkTreePath *path;		
+	GtkTreePath *path;
 
 	if(!GAIM_BLIST_NODE_IS_CONTACT(node))
 		return;
@@ -2378,18 +2376,18 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/_Away"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Account Ac_tions"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Pl_ugin Actions"), NULL, NULL, 0, "<Branch>" },
 	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Tools/_Statuses"), NULL, gaim_gtk_status_window_show, 0, "<StockItem>", GAIM_STOCK_ICON_AWAY },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
-	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
-	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, NULL },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, NULL },
-	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
+	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
+	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
 
 	/* Help */
@@ -3143,13 +3141,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_widget_show(menu);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
 
-	awaymenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Away"));
-
-	/* FIXME: Status */
-#if 0
-	do_away_menu();
-#endif
-
 	gtkblist->bpmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounce"));
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 
@@ -3158,6 +3149,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Plugin Actions"));
 	gaim_gtk_blist_update_plugin_actions();
+
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_widget_show(sw);
@@ -3808,7 +3800,6 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	g_object_unref(G_OBJECT(gtkblist->ift));
 	protomenu = NULL;
 	pluginmenu = NULL;
-	awaymenu = NULL;
 	gtkblist = NULL;
 
 	gaim_prefs_disconnect_by_handle(gaim_gtk_blist_get_handle());
@@ -3818,9 +3809,9 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 {
 	if (!(gtkblist && gtkblist->window))
 		return;
-	
+
 	gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", show);
-	
+
 	if (show) {
 		gaim_gtk_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
