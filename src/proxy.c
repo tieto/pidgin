@@ -737,15 +737,15 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 	struct PHB *phb = data;
 	unsigned int len;
 	int error=0;
-	int ret=0;
 
 	gaim_debug(GAIM_DEBUG_INFO, "proxy", "Connected.\n");
 
 	len = sizeof(error);
 
-	ret = getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len);
-	if (ret < 0 || error != 0) {
-		if(ret==0) errno = error;
+	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+/*	if (ret < 0 || error != 0) { */
+		/* The fourth parameter above isn't really "error", is it? */
+		/* if(ret==0) errno = error; */
 		close(source);
 		gaim_input_remove(phb->inpa);
 

@@ -3124,9 +3124,11 @@ void cancel_font(GtkWidget *widget, GaimConversation *c)
 			GTK_TOGGLE_BUTTON(gtkconv->toolbar.font), FALSE);
 	}
 
-	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.font);
-	gtk_widget_destroy(gtkconv->dialogs.font);
-	gtkconv->dialogs.font = NULL;
+	if (gtkconv->dialogs.font) {
+		dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.font);
+		gtk_widget_destroy(gtkconv->dialogs.font);
+		gtkconv->dialogs.font = NULL;
+	}
 }
 
 void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
