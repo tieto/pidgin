@@ -148,7 +148,7 @@ void gaim_account_set_user_info(GaimAccount *account, const char *user_info);
 
 /**
  * Sets the account's buddy icon.
- * 
+ *
  * @param account The account.
  * @param icon    The buddy icon file.
  */
@@ -217,7 +217,7 @@ void gaim_account_set_public_ip(GaimAccount *account, const char *ip);
 
 /**
  * Sets the account's proxy information.
- * 
+ *
  * @param account The account.
  * @param info    The proxy information.
  */

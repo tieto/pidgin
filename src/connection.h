@@ -135,7 +135,7 @@ void gaim_connection_register(GaimConnection *gc);
 
 /**
  * Signs a connection off.
- 
+ *
  * @param gc The connection to sign off.
  *
  * @see gaim_connection_connect()
