@@ -67,6 +67,8 @@ typedef struct
 		struct
 		{
 			gboolean multiline;
+			gboolean masked;
+			gboolean editable;
 			char *default_value;
 			char *value;
 
@@ -410,6 +412,25 @@ void gaim_request_field_string_set_value(GaimRequestField *field,
 										 const char *value);
 
 /**
+ * Sets whether or not a string field is masked
+ * (commonly used for password fields).
+ *
+ * @param field  The field.
+ * @param masked The masked value.
+ */
+void gaim_request_field_string_set_masked(GaimRequestField *field,
+										  gboolean masked);
+
+/**
+ * Sets whether or not a string field is editable.
+ *
+ * @param field    The field.
+ * @param editable The editable value.
+ */
+void gaim_request_field_string_set_editable(GaimRequestField *field,
+											gboolean editable);
+
+/**
  * Returns the default value in a string field.
  *
  * @param field The field.
@@ -436,6 +457,24 @@ const char *gaim_request_field_string_get_value(const GaimRequestField *field);
  * @return @c TRUE if the field is mulit-line, or @c FALSE otherwise.
  */
 gboolean gaim_request_field_string_is_multiline(const GaimRequestField *field);
+
+/**
+ * Returns whether or not a string field is masked.
+ *
+ * @param field The field.
+ *
+ * @return @c TRUE if the field is masked, or @c FALSE otherwise.
+ */
+gboolean gaim_request_field_string_is_masked(const GaimRequestField *field);
+
+/**
+ * Returns whether or not a string field is editable.
+ *
+ * @param field The field.
+ *
+ * @return @c TRUE if the field is editable, or @c FALSE otherwise.
+ */
+gboolean gaim_request_field_string_is_editable(const GaimRequestField *field);
 
 /*@}*/
 

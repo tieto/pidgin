@@ -369,6 +369,25 @@ gaim_request_field_string_set_value(GaimRequestField *field, const char *value)
 	field->u.string.value = (value == NULL ? NULL : g_strdup(value));
 }
 
+void
+gaim_request_field_string_set_masked(GaimRequestField *field, gboolean masked)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
+
+	field->u.string.masked = masked;
+}
+
+void
+gaim_request_field_string_set_editable(GaimRequestField *field,
+									   gboolean editable)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
+
+	field->u.string.editable = editable;
+}
+
 const char *
 gaim_request_field_string_get_default_value(const GaimRequestField *field)
 {
@@ -385,7 +404,7 @@ gaim_request_field_string_get_value(const GaimRequestField *field)
 	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, NULL);
 
 	return field->u.string.value;
-}   
+}
 
 gboolean
 gaim_request_field_string_is_multiline(const GaimRequestField *field)
@@ -394,6 +413,24 @@ gaim_request_field_string_is_multiline(const GaimRequestField *field)
 	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, FALSE);
 
 	return field->u.string.multiline;
+}
+
+gboolean
+gaim_request_field_string_is_masked(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, FALSE);
+
+	return field->u.string.masked;
+}
+
+gboolean
+gaim_request_field_string_is_editable(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, FALSE);
+
+	return field->u.string.editable;
 }
 
 GaimRequestField *
