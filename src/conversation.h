@@ -118,7 +118,8 @@ typedef enum
 	GAIM_MESSAGE_NO_LOG    = 0x0040, /**< Do not log.              */
 	GAIM_MESSAGE_WHISPER   = 0x0080, /**< Whispered message.       */
 	GAIM_MESSAGE_ERROR     = 0x0200, /**< Error message.           */
-	GAIM_MESSAGE_DELAYED   = 0x0400  /**< Delayed message.         */
+	GAIM_MESSAGE_DELAYED   = 0x0400, /**< Delayed message.         */
+	GAIM_MESSAGE_RAW       = 0x0800  /**< "Raw" message - don't apply formatting */
 
 } GaimMessageFlags;
 

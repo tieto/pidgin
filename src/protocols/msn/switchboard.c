@@ -201,6 +201,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 	swboard->users = g_list_prepend(swboard->users, g_strdup(user));
 	swboard->current_users++;
+	swboard->empty = FALSE;
 
 	/* gaim_debug_info("msn", "user=[%s], total=%d\n", user,
 	 * swboard->current_users); */
@@ -276,7 +277,7 @@ msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 	if (swboard->conv != NULL)
 		return swboard->conv;
 
-	gaim_debug_error("msn", "Switchboard with unnasigned conversation\n");
+	gaim_debug_error("msn", "Switchboard with unassigned conversation\n");
 
 	account = swboard->session->account;
 
@@ -341,8 +342,8 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 	if (msg->type == MSN_MSG_TEXT)
 	{
 		MsnSwitchBoard *swboard;
-		char *body;
-		char *report;
+		const char *format;
+		char *body_str, *body_enc, *pre, *post;
 		char *str_reason;
 
 		swboard = cmdproc->servconn->data;
@@ -350,61 +351,68 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 #if 0
 		if (swboard->conv == NULL)
 		{
-			msn_message_unref(msg);
+			if (msg->ack_ref)
+				 msn_message_unref(msg);
+
 			return;
 		}
 #endif
 
-		if (msg->error == MSN_MSG_ERROR_TIMEOUT)
+		if (error == MSN_MSG_ERROR_TIMEOUT)
 		{
 			str_reason = _("Message may have not been sent "
-						   "because a time out occured.");
+						   "because a time out occured:");
 		}
-		else if (msg->error == MSN_MSG_ERROR_SB)
+		else if (error == MSN_MSG_ERROR_SB)
 		{
 			switch (swboard->error)
 			{
 				case MSN_SB_ERROR_OFFLINE:
 					str_reason = _("Message could not be sent, "
-								   "not allowed while invisible");
+								   "not allowed while invisible:");
 					break;
 				case MSN_SB_ERROR_USER_OFFLINE:
 					str_reason = _("Message could not be sent "
-								   "because the user is offline");
+								   "because the user is offline:");
 					break;
 				case MSN_SB_ERROR_CONNECTION:
 					str_reason = _("Message could not be sent "
-								   "because a connection error occured");
+								   "because a connection error occured:");
 					break;
 				default:
 					str_reason = _("Message could not be sent "
 								   "because an error with "
-								   "the switchboard occured");
+								   "the switchboard occured:");
 					break;
 			}
 		}
 		else
 		{
 			str_reason = _("Message may have not been sent "
-						   "because an unkwown error occured");
+						   "because an unkwown error occured:");
 		}
 
-		body = msn_message_to_string(msg);
-		report = g_strdup_printf(_("%s:\n%s"), str_reason, body);
+		body_str = msn_message_to_string(msg);
+		body_enc = gaim_escape_html(body_str);
+		g_free(body_str);
+
+		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
+		msn_parse_format(format, &pre, &post);
+		body_str = g_strdup_printf("%s%s%s", pre, body_enc, post);
+		g_free(body_enc);
+		g_free(pre);
+		g_free(post);
 
 		msn_switchboard_report_user(cmdproc->servconn->data,
-									GAIM_MESSAGE_ERROR, report);
+									GAIM_MESSAGE_ERROR, str_reason);
+		msn_switchboard_report_user(cmdproc->servconn->data,
+									GAIM_MESSAGE_RAW, body_str);
 
-		g_free(report);
-		g_free(body);
-
-		msn_message_unref(msg);
-	}
-	else if (msg->type == MSN_MSG_SLP)
-	{
-		msn_message_unref(msg);
+		g_free(body_str);
 	}
 
+	if (msg->ack_ref)
+		msn_message_unref(msg);
 }
 
 /**************************************************************************
@@ -514,8 +522,6 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = cmdproc->servconn->data;
 
 	msn_switchboard_add_user(swboard, passport);
-
-	swboard->empty = FALSE;
 
 	msn_switchboard_process_queue(swboard);
 
@@ -789,11 +795,13 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 
 	if (msg->type == MSN_MSG_TEXT)
 	{
+		msg->ack_ref = TRUE;
 		msn_message_ref(msg);
 		msn_transaction_set_timeout_cb(trans, msg_timeout);
 	}
 	else if (msg->type == MSN_MSG_SLP)
 	{
+		msg->ack_ref = TRUE;
 		msn_message_ref(msg);
 		msn_transaction_set_timeout_cb(trans, msg_timeout);
 #if 0
@@ -862,10 +870,10 @@ connect_cb(MsnServConn *servconn)
 	swboard = servconn->data;
 	g_return_if_fail(swboard != NULL);
 
-	swboard->empty = FALSE;
-
 	if (msn_switchboard_is_invited(swboard))
 	{
+		swboard->empty = FALSE;
+
 		msn_cmdproc_send(cmdproc, "ANS", "%s %s %s",
 						 gaim_account_get_username(account),
 						 swboard->auth_key, swboard->session_id);

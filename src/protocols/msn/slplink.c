@@ -209,7 +209,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			if (slplink->swboard == NULL)
 				return;
 
-			/* If swboard is destroyed we will too */
+			/* If swboard is destroyed we will be too */
 			slplink->swboard->slplink = slplink;
 		}
 

@@ -5028,8 +5028,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			   sml_attrib, message);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, 0);
-	}
-	else {
+	} else if (flags & GAIM_MESSAGE_RAW) {
+		g_snprintf(buf, BUF_LONG, "%s", message);
+
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, 0);
+	} else {
 		char *new_message = g_memdup(message, length);
 		char *who_escaped = (who ? g_markup_escape_text(who, strlen(who)) : g_strdup(""));
 
@@ -5079,7 +5082,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 							col.green = col.green * scale;
 							col.blue = col.blue * scale;
 						}
-						
+
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							   col.red >> 8, col.green >> 8, col.blue >> 8);
 					} else

@@ -109,13 +109,16 @@ struct _MsnMessage
 	GHashTable *attr_table;
 	GList *attr_list;
 
+	gboolean ack_ref;           /**< A flag that states if this message has
+								  been ref'ed for using it in a callback. */
+
 	MsnCommand *cmd;
 	MsnTransaction *trans;
 
 	MsnMsgCb ack_cb; /**< The callback to call when we receive an ACK of this
-					message. */
+					   message. */
 	MsnMsgCb nak_cb; /**< The callback to call when we receive a NAK of this
-					message. */
+					   message. */
 	void *ack_data; /**< The data used by callbacks. */
 
 	MsnMsgErrorType error; /**< The error of the message. */

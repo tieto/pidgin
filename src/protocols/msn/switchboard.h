@@ -40,12 +40,12 @@ typedef struct _MsnSwitchBoard MsnSwitchBoard;
  */
 typedef enum
 {
-	MSN_SB_ERROR_NONE, /**< No error */
-	MSN_SB_ERROR_CAL, /**< The user could not join (answer the call) */
-	MSN_SB_ERROR_OFFLINE, /**< The account is offline */
-	MSN_SB_ERROR_USER_OFFLINE, /**< The user to call is offline */
-	MSN_SB_ERROR_CONNECTION, /**< There was a connection error */
-	MSN_SB_ERROR_UNKNOWN /**< An unknown error occured */
+	MSN_SB_ERROR_NONE, /**< No error. */
+	MSN_SB_ERROR_CAL, /**< The user could not join (answer the call). */
+	MSN_SB_ERROR_OFFLINE, /**< The account is offline. */
+	MSN_SB_ERROR_USER_OFFLINE, /**< The user to call is offline. */
+	MSN_SB_ERROR_CONNECTION, /**< There was a connection error. */
+	MSN_SB_ERROR_UNKNOWN /**< An unknown error occured. */
 
 } MsnSBErrorType;
 

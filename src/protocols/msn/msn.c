@@ -781,6 +781,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
 		msn_parse_format(format, &pre, &post);
 		body_str = g_strdup_printf("%s%s%s", pre, body_enc, post);
+		g_free(body_enc);
 		g_free(pre);
 		g_free(post);
 
@@ -824,6 +825,9 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 	if (swboard->empty)
 		return 0;
 
+	if (!g_queue_is_empty(swboard->im_queue))
+		return 0;
+
 	msg = msn_message_new(MSN_MSG_TYPING);
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
 	msn_message_set_flag(msg, 'U');
@@ -831,16 +835,7 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 						 gaim_account_get_username(account));
 	msn_message_set_bin_data(msg, "\r\n", 2);
 
-	swboard = msn_session_get_swboard(session, who);
-
-	if (!g_queue_is_empty(swboard->im_queue) || swboard->empty)
-	{
-		msn_switchboard_queue_msg(swboard, msg);
-	}
-	else
-	{
-		msn_switchboard_send_msg(swboard, msg);
-	}
+	msn_switchboard_send_msg(swboard, msg);
 
 	msn_message_destroy(msg);
 
