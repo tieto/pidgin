@@ -1344,56 +1344,49 @@ faim_export int aim_email_activate(aim_session_t *sess, aim_conn_t *conn);
 
 
 
-/* tlv.c - TLV handling */
 #if defined(FAIM_INTERNAL) || defined(FAIM_NEED_TLV)
-/* Generic TLV structure. */
+/* tlv.c - TLV handling */
+
+/* TLV structure */
 typedef struct aim_tlv_s {
 	fu16_t type;
 	fu16_t length;
 	fu8_t *value;
 } aim_tlv_t;
 
-/* List of above. */
+/* TLV List structure */
 typedef struct aim_tlvlist_s {
 	aim_tlv_t *tlv;
 	struct aim_tlvlist_s *next;
 } aim_tlvlist_t;
 
-/* TLV-handling functions */
+/* TLV handling functions */
+faim_internal aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, fu16_t type, const int nth);
+faim_internal char *aim_tlv_getstr(aim_tlvlist_t *list, const fu16_t type, const int nth);
+faim_internal fu8_t aim_tlv_get8(aim_tlvlist_t *list, const fu16_t type, const int nth);
+faim_internal fu16_t aim_tlv_get16(aim_tlvlist_t *list, const fu16_t type, const int nth);
+faim_internal fu32_t aim_tlv_get32(aim_tlvlist_t *list, const fu16_t type, const int nth);
 
-#if 0
-/* Very, very raw TLV handling. */
-faim_internal int aim_puttlv_8(fu8_t *buf, const fu16_t t, const fu8_t v);
-faim_internal int aim_puttlv_16(fu8_t *buf, const fu16_t t, const fu16_t v);
-faim_internal int aim_puttlv_32(fu8_t *buf, const fu16_t t, const fu32_t v);
-faim_internal int aim_puttlv_raw(fu8_t *buf, const fu16_t t, const fu16_t l, const fu8_t *v);
-#endif
-
-/* TLV list handling. */
-faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs);
-faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num);
-faim_internal aim_tlvlist_t *aim_readtlvchain_len(aim_bstream_t *bs, fu16_t len);
+/* TLV list handling functions */
+faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs);
+faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, fu16_t num);
+faim_internal aim_tlvlist_t *aim_tlvlist_readlen(aim_bstream_t *bs, fu16_t len);
 faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig);
-faim_internal int aim_counttlvchain(aim_tlvlist_t **list);
-faim_internal int aim_sizetlvchain(aim_tlvlist_t **list);
+
+faim_internal int aim_tlvlist_count(aim_tlvlist_t **list);
+faim_internal int aim_tlvlist_size(aim_tlvlist_t **list);
 faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two);
-faim_internal int aim_writetlvchain(aim_bstream_t *bs, aim_tlvlist_t **list);
-faim_internal void aim_freetlvchain(aim_tlvlist_t **list);
+faim_internal int aim_tlvlist_write(aim_bstream_t *bs, aim_tlvlist_t **list);
+faim_internal void aim_tlvlist_free(aim_tlvlist_t **list);
 
-faim_internal aim_tlv_t *aim_gettlv(aim_tlvlist_t *list, fu16_t type, const int nth);
-faim_internal char *aim_gettlv_str(aim_tlvlist_t *list, const fu16_t type, const int nth);
-faim_internal fu8_t aim_gettlv8(aim_tlvlist_t *list, const fu16_t type, const int nth);
-faim_internal fu16_t aim_gettlv16(aim_tlvlist_t *list, const fu16_t type, const int nth);
-faim_internal fu32_t aim_gettlv32(aim_tlvlist_t *list, const fu16_t type, const int nth);
-
-faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t length, const fu8_t *value);
-faim_internal int aim_addtlvtochain_noval(aim_tlvlist_t **list, const fu16_t type);
-faim_internal int aim_addtlvtochain8(aim_tlvlist_t **list, const fu16_t type, const fu8_t value);
-faim_internal int aim_addtlvtochain16(aim_tlvlist_t **list, const fu16_t type, const fu16_t value);
-faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t type, const fu32_t value);
-faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t type, const fu32_t caps);
-faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *ui);
-faim_internal int aim_addtlvtochain_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl);
+faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t length, const fu8_t *value);
+faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const fu16_t type);
+faim_internal int aim_tlvlist_add_8(aim_tlvlist_t **list, const fu16_t type, const fu8_t value);
+faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const fu16_t type, const fu16_t value);
+faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, const fu32_t value);
+faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const fu16_t type, const fu32_t caps);
+faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *userinfo);
+faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl);
 
 faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t lenth, const fu8_t *value);
 faim_internal int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const fu16_t type);

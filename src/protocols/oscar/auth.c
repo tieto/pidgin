@@ -30,9 +30,9 @@ faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu16
 		return -ENOMEM;
 
 	aimbs_put32(&fr->data, 0x00000001);
-	aim_addtlvtochain_raw(&tl, 0x0006, length, chipsahoy);
-	aim_writetlvchain(&fr->data, &tl);
-	aim_freetlvchain(&tl);
+	aim_tlvlist_add_raw(&tl, 0x0006, length, chipsahoy);
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -140,9 +140,9 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0017, 0x0006, 0x0000, snacid);
 
-	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
-	aim_writetlvchain(&fr->data, &tl);
-	aim_freetlvchain(&tl);
+	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -173,24 +173,24 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 	aim_encode_password(password, password_encoded);
 
 	aimbs_put32(&fr->data, 0x00000001); /* FLAP Version */
-	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
-	aim_addtlvtochain_raw(&tl, 0x0002, passwdlen, password_encoded);
+	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
+	aim_tlvlist_add_raw(&tl, 0x0002, passwdlen, password_encoded);
 
 	if (ci->clientstring)
-		aim_addtlvtochain_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
-	aim_addtlvtochain16(&tl, 0x0016, (fu16_t)ci->clientid);
-	aim_addtlvtochain16(&tl, 0x0017, (fu16_t)ci->major);
-	aim_addtlvtochain16(&tl, 0x0018, (fu16_t)ci->minor);
-	aim_addtlvtochain16(&tl, 0x0019, (fu16_t)ci->point);
-	aim_addtlvtochain16(&tl, 0x001a, (fu16_t)ci->build);
-	aim_addtlvtochain32(&tl, 0x0014, (fu32_t)ci->distrib); /* distribution chan */
-	aim_addtlvtochain_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
-	aim_addtlvtochain_raw(&tl, 0x000e, strlen(ci->country), ci->country);
+		aim_tlvlist_add_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
+	aim_tlvlist_add_16(&tl, 0x0016, (fu16_t)ci->clientid);
+	aim_tlvlist_add_16(&tl, 0x0017, (fu16_t)ci->major);
+	aim_tlvlist_add_16(&tl, 0x0018, (fu16_t)ci->minor);
+	aim_tlvlist_add_16(&tl, 0x0019, (fu16_t)ci->point);
+	aim_tlvlist_add_16(&tl, 0x001a, (fu16_t)ci->build);
+	aim_tlvlist_add_32(&tl, 0x0014, (fu32_t)ci->distrib); /* distribution chan */
+	aim_tlvlist_add_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
+	aim_tlvlist_add_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 
-	aim_writetlvchain(&fr->data, &tl);
+	aim_tlvlist_write(&fr->data, &tl);
 
 	free(password_encoded);
-	aim_freetlvchain(&tl);
+	aim_tlvlist_free(&tl);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -251,37 +251,37 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	snacid = aim_cachesnac(sess, 0x0017, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0017, 0x0002, 0x0000, snacid);
 
-	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
+	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
 
 	aim_encode_password_md5(password, key, digest);
-	aim_addtlvtochain_raw(&tl, 0x0025, 16, digest);
+	aim_tlvlist_add_raw(&tl, 0x0025, 16, digest);
 
 	/*
 	 * Newer versions of winaim have an empty type x004c TLV here.
 	 */
 
 	if (ci->clientstring)
-		aim_addtlvtochain_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
-	aim_addtlvtochain16(&tl, 0x0016, (fu16_t)ci->clientid);
-	aim_addtlvtochain16(&tl, 0x0017, (fu16_t)ci->major);
-	aim_addtlvtochain16(&tl, 0x0018, (fu16_t)ci->minor);
-	aim_addtlvtochain16(&tl, 0x0019, (fu16_t)ci->point);
-	aim_addtlvtochain16(&tl, 0x001a, (fu16_t)ci->build);
-	aim_addtlvtochain32(&tl, 0x0014, (fu32_t)ci->distrib);
-	aim_addtlvtochain_raw(&tl, 0x000e, strlen(ci->country), ci->country);
-	aim_addtlvtochain_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
+		aim_tlvlist_add_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
+	aim_tlvlist_add_16(&tl, 0x0016, (fu16_t)ci->clientid);
+	aim_tlvlist_add_16(&tl, 0x0017, (fu16_t)ci->major);
+	aim_tlvlist_add_16(&tl, 0x0018, (fu16_t)ci->minor);
+	aim_tlvlist_add_16(&tl, 0x0019, (fu16_t)ci->point);
+	aim_tlvlist_add_16(&tl, 0x001a, (fu16_t)ci->build);
+	aim_tlvlist_add_32(&tl, 0x0014, (fu32_t)ci->distrib);
+	aim_tlvlist_add_raw(&tl, 0x000e, strlen(ci->country), ci->country);
+	aim_tlvlist_add_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
 
 #ifndef NOSSI
 	/*
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	aim_addtlvtochain8(&tl, 0x004a, 0x01);
+	aim_tlvlist_add_8(&tl, 0x004a, 0x01);
 #endif
 
-	aim_writetlvchain(&fr->data, &tl);
+	aim_tlvlist_write(&fr->data, &tl);
 
-	aim_freetlvchain(&tl);
+	aim_tlvlist_free(&tl);
 	
 	aim_tx_enqueue(sess, fr);
 
@@ -364,14 +364,14 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * Read block of TLVs.  All further data is derived
 	 * from what is parsed here.
 	 */
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
 	/*
 	 * No matter what, we should have a screen name.
 	 */
 	memset(sess->sn, 0, sizeof(sess->sn));
-	if (aim_gettlv(tlvlist, 0x0001, 1)) {
-		info->sn = aim_gettlv_str(tlvlist, 0x0001, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
+		info->sn = aim_tlv_getstr(tlvlist, 0x0001, 1);
 		strncpy(sess->sn, info->sn, sizeof(sess->sn));
 	}
 
@@ -379,24 +379,24 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * Check for an error code.  If so, we should also
 	 * have an error url.
 	 */
-	if (aim_gettlv(tlvlist, 0x0008, 1)) 
-		info->errorcode = aim_gettlv16(tlvlist, 0x0008, 1);
-	if (aim_gettlv(tlvlist, 0x0004, 1))
-		info->errorurl = aim_gettlv_str(tlvlist, 0x0004, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0008, 1)) 
+		info->errorcode = aim_tlv_get16(tlvlist, 0x0008, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0004, 1))
+		info->errorurl = aim_tlv_getstr(tlvlist, 0x0004, 1);
 
 	/*
 	 * BOS server address.
 	 */
-	if (aim_gettlv(tlvlist, 0x0005, 1))
-		info->bosip = aim_gettlv_str(tlvlist, 0x0005, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0005, 1))
+		info->bosip = aim_tlv_getstr(tlvlist, 0x0005, 1);
 
 	/*
 	 * Authorization cookie.
 	 */
-	if (aim_gettlv(tlvlist, 0x0006, 1)) {
+	if (aim_tlv_gettlv(tlvlist, 0x0006, 1)) {
 		aim_tlv_t *tmptlv;
 
-		tmptlv = aim_gettlv(tlvlist, 0x0006, 1);
+		tmptlv = aim_tlv_gettlv(tlvlist, 0x0006, 1);
 
 		info->cookielen = tmptlv->length;
 		info->cookie = tmptlv->value;
@@ -409,8 +409,8 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 *   family 0x0018 to check the status of your email.
 	 * XXX - Not really true!
 	 */
-	if (aim_gettlv(tlvlist, 0x0011, 1))
-		info->email = aim_gettlv_str(tlvlist, 0x0011, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0011, 1))
+		info->email = aim_tlv_getstr(tlvlist, 0x0011, 1);
 
 	/*
 	 * The registration status.  (Not real sure what it means.)
@@ -426,41 +426,41 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * Means you can use the admin family? (0x0007)
 	 *
 	 */
-	if (aim_gettlv(tlvlist, 0x0013, 1))
-		info->regstatus = aim_gettlv16(tlvlist, 0x0013, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0013, 1))
+		info->regstatus = aim_tlv_get16(tlvlist, 0x0013, 1);
 
-	if (aim_gettlv(tlvlist, 0x0040, 1))
-		info->latestbeta.build = aim_gettlv32(tlvlist, 0x0040, 1);
-	if (aim_gettlv(tlvlist, 0x0041, 1))
-		info->latestbeta.url = aim_gettlv_str(tlvlist, 0x0041, 1);
-	if (aim_gettlv(tlvlist, 0x0042, 1))
-		info->latestbeta.info = aim_gettlv_str(tlvlist, 0x0042, 1);
-	if (aim_gettlv(tlvlist, 0x0043, 1))
-		info->latestbeta.name = aim_gettlv_str(tlvlist, 0x0043, 1);
-	if (aim_gettlv(tlvlist, 0x0048, 1))
+	if (aim_tlv_gettlv(tlvlist, 0x0040, 1))
+		info->latestbeta.build = aim_tlv_get32(tlvlist, 0x0040, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0041, 1))
+		info->latestbeta.url = aim_tlv_getstr(tlvlist, 0x0041, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0042, 1))
+		info->latestbeta.info = aim_tlv_getstr(tlvlist, 0x0042, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0043, 1))
+		info->latestbeta.name = aim_tlv_getstr(tlvlist, 0x0043, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0048, 1))
 		; /* no idea what this is */
 
-	if (aim_gettlv(tlvlist, 0x0044, 1))
-		info->latestrelease.build = aim_gettlv32(tlvlist, 0x0044, 1);
-	if (aim_gettlv(tlvlist, 0x0045, 1))
-		info->latestrelease.url = aim_gettlv_str(tlvlist, 0x0045, 1);
-	if (aim_gettlv(tlvlist, 0x0046, 1))
-		info->latestrelease.info = aim_gettlv_str(tlvlist, 0x0046, 1);
-	if (aim_gettlv(tlvlist, 0x0047, 1))
-		info->latestrelease.name = aim_gettlv_str(tlvlist, 0x0047, 1);
-	if (aim_gettlv(tlvlist, 0x0049, 1))
+	if (aim_tlv_gettlv(tlvlist, 0x0044, 1))
+		info->latestrelease.build = aim_tlv_get32(tlvlist, 0x0044, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0045, 1))
+		info->latestrelease.url = aim_tlv_getstr(tlvlist, 0x0045, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0046, 1))
+		info->latestrelease.info = aim_tlv_getstr(tlvlist, 0x0046, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0047, 1))
+		info->latestrelease.name = aim_tlv_getstr(tlvlist, 0x0047, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0049, 1))
 		; /* no idea what this is */
 
 	/*
 	 * URL to change password.
 	 */
-	if (aim_gettlv(tlvlist, 0x0054, 1))
-		info->chpassurl = aim_gettlv_str(tlvlist, 0x0054, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0054, 1))
+		info->chpassurl = aim_tlv_getstr(tlvlist, 0x0054, 1);
 
 	/*
 	 * Unknown.  Seen on an @mac.com screen name with value of 0x003f
 	 */
-	if (aim_gettlv(tlvlist, 0x0055, 1))
+	if (aim_tlv_gettlv(tlvlist, 0x0055, 1))
 		;
 
 	sess->authinfo = info;
@@ -468,7 +468,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
 		ret = userfunc(sess, rx, info);
 
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;
 }

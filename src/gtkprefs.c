@@ -847,7 +847,6 @@ GtkWidget *list_page() {
 				  "/gaim/gtk/blist/raise_on_events", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Group Display"));
-	/* prefs_checkbox(_("Show _groups with no online buddies"), "/gaim/gtk/blist/show_empty_groups", vbox); */
 	prefs_checkbox(_("Show _numbers in groups"),
 				  "/gaim/gtk/blist/show_group_count", vbox);
 

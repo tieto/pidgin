@@ -184,7 +184,7 @@ static int aim_ssi_itemlist_del(struct aim_ssi_item **list, struct aim_ssi_item 
 
 	/* Free the removed item */
 	free(del->name);
-	aim_freetlvchain(&del->data);
+	aim_tlvlist_free(&del->data);
 	free(del);
 
 	return 0;
@@ -353,7 +353,7 @@ faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list)
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, NULL, NULL, AIM_SSI_TYPE_PDINFO);
 	if (cur) {
-		aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00ca, 1);
+		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x00ca, 1);
 		if (tlv && tlv->value)
 			return aimutil_get8(tlv->value);
 	}
@@ -372,7 +372,7 @@ faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list)
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
 	if (cur) {
-		aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00c9, 1);
+		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x00c9, 1);
 		if (tlv && tlv->length)
 			return aimutil_get32(tlv->value);
 	}
@@ -393,7 +393,7 @@ faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, co
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
-		aim_tlv_t *tlv = aim_gettlv(cur->data, 0x0131, 1);
+		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x0131, 1);
 		if (tlv && tlv->length) {
 			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
 			strncpy(alias, tlv->value, tlv->length);
@@ -418,7 +418,7 @@ faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
-		if (aim_gettlv(cur->data, 0x0066, 1))
+		if (aim_tlv_gettlv(cur->data, 0x0066, 1))
 			return 1;
 	}
 	return 0;
@@ -544,7 +544,7 @@ static int aim_ssi_freelist(aim_session_t *sess)
 		del = cur;
 		cur = cur->next;
 		free(del->name);
-		aim_freetlvchain(&del->data);
+		aim_tlvlist_free(&del->data);
 		free(del);
 	}
 
@@ -553,7 +553,7 @@ static int aim_ssi_freelist(aim_session_t *sess)
 		del = cur;
 		cur = cur->next;
 		free(del->name);
-		aim_freetlvchain(&del->data);
+		aim_tlvlist_free(&del->data);
 		free(del);
 	}
 
@@ -592,7 +592,7 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess)
 		del = cur;
 		cur = cur->next;
 		free(del->name);
-		aim_freetlvchain(&del->data);
+		aim_tlvlist_free(&del->data);
 		free(del);
 	}
 	sess->ssi.local = NULL;
@@ -646,7 +646,7 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 	while (cur) {
 		next = cur->next;
 		if (cur->type == AIM_SSI_TYPE_GROUP) {
-			aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00c8, 1);
+			aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x00c8, 1);
 			if (!tlv || !tlv->length)
 				aim_ssi_itemlist_del(&sess->ssi.local, cur);
 		}
@@ -695,17 +695,17 @@ faim_export int aim_ssi_addbuddy(aim_session_t *sess, const char *name, const ch
 
 	/* Create a TLV list for the new buddy */
 	if (needauth)
-		aim_addtlvtochain_noval(&data, 0x0066);
+		aim_tlvlist_add_noval(&data, 0x0066);
 	if (alias)
-		aim_addtlvtochain_raw(&data, 0x0131, strlen(alias), alias);
+		aim_tlvlist_add_raw(&data, 0x0131, strlen(alias), alias);
 	if (smsnum)
-		aim_addtlvtochain_raw(&data, 0x013a, strlen(smsnum), smsnum);
+		aim_tlvlist_add_raw(&data, 0x013a, strlen(smsnum), smsnum);
 	if (comment)
-		aim_addtlvtochain_raw(&data, 0x013c, strlen(comment), comment);
+		aim_tlvlist_add_raw(&data, 0x013c, strlen(comment), comment);
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&sess->ssi.local, name, parent->gid, 0xFFFF, AIM_SSI_TYPE_BUDDY, data);
-	aim_freetlvchain(&data);
+	aim_tlvlist_free(&data);
 
 	/* Modify the parent group */
 	aim_ssi_itemlist_rebuildgroup(sess->ssi.local, group);
@@ -1063,18 +1063,18 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	fu16_t *maxitems;
 
 	/* This SNAC is made up of a bunch of TLVs */
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
 	/* TLV 0x0004 contains the maximum number of each item */
-	if (!(tlv = aim_gettlv(tlvlist, 0x0004, 1))) {
-		aim_freetlvchain(&tlvlist);
+	if (!(tlv = aim_tlv_gettlv(tlvlist, 0x0004, 1))) {
+		aim_tlvlist_free(&tlvlist);
 		return 0;
 	}
 
 	aim_bstream_init(&bstream, tlv->value, tlv->length);
 
 	if (!(maxitems = (fu16_t *)malloc((tlv->length/2)*sizeof(fu16_t)))) {
-		aim_freetlvchain(&tlvlist);
+		aim_tlvlist_free(&tlvlist);
 		return 0;
 	}
 
@@ -1084,7 +1084,7 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, tlv->length/2, maxitems);
 
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 	free(maxitems);
 
 	return ret;
@@ -1168,10 +1168,10 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 		gid = aimbs_get16(bs);
 		bid = aimbs_get16(bs);
 		type = aimbs_get16(bs);
-		data = aim_readtlvchain_len(bs, aimbs_get16(bs));
+		data = aim_tlvlist_readlen(bs, aimbs_get16(bs));
 		aim_ssi_itemlist_add(&sess->ssi.official, name, gid, bid, type, data);
 		free(name);
-		aim_freetlvchain(&data);
+		aim_tlvlist_free(&data);
 	}
 
 	/* Read in the timestamp */
@@ -1237,7 +1237,7 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess)
 		if (cur->item->name)
 			snaclen += strlen(cur->item->name);
 		if (cur->item->data)
-			snaclen += aim_sizetlvchain(&cur->item->data);
+			snaclen += aim_tlvlist_size(&cur->item->data);
 	}
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, snaclen)))
@@ -1253,9 +1253,9 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess)
 		aimbs_put16(&fr->data, cur->item->gid);
 		aimbs_put16(&fr->data, cur->item->bid);
 		aimbs_put16(&fr->data, cur->item->type);
-		aimbs_put16(&fr->data, cur->item->data ? aim_sizetlvchain(&cur->item->data) : 0);
+		aimbs_put16(&fr->data, cur->item->data ? aim_tlvlist_size(&cur->item->data) : 0);
 		if (cur->item->data)
-			aim_writetlvchain(&fr->data, &cur->item->data);
+			aim_tlvlist_write(&fr->data, &cur->item->data);
 	}
 
 	aim_tx_enqueue(sess, fr);
@@ -1285,14 +1285,14 @@ static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		bid = aimbs_get16(bs);
 		type = aimbs_get16(bs);
 		if ((len = aimbs_get16(bs)))
-			data = aim_readtlvchain_len(bs, len);
+			data = aim_tlvlist_readlen(bs, len);
 		else
 			data = NULL;
 
 		aim_ssi_itemlist_add(&sess->ssi.local, name, gid, bid, type, data);
 		aim_ssi_itemlist_add(&sess->ssi.official, name, gid, bid, type, data);
 		free(name);
-		aim_freetlvchain(&data);
+		aim_tlvlist_free(&data);
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx);
@@ -1326,7 +1326,7 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		bid = aimbs_get16(bs);
 		type = aimbs_get16(bs);
 		if ((len = aimbs_get16(bs)))
-			data = aim_readtlvchain_len(bs, len);
+			data = aim_tlvlist_readlen(bs, len);
 		else
 			data = NULL;
 
@@ -1339,7 +1339,7 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				strcpy(item->name, name);
 			} else
 				item->name = NULL;
-			aim_freetlvchain(&item->data);
+			aim_tlvlist_free(&item->data);
 			item->data = aim_tlvlist_copy(data);
 		}
 
@@ -1351,7 +1351,7 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				strcpy(item->name, name);
 			} else
 				item->name = NULL;
-			aim_freetlvchain(&item->data);
+			aim_tlvlist_free(&item->data);
 			item->data = aim_tlvlist_copy(data);
 		}
 
@@ -1359,7 +1359,7 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 			ret = userfunc(sess, rx);
 
 		free(name);
-		aim_freetlvchain(&data);
+		aim_tlvlist_free(&data);
 	}
 
 	return ret;
@@ -1447,7 +1447,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 							strcpy(cur->item->name, cur1->name);
 						} else
 							cur->item->name = NULL;
-						aim_freetlvchain(&cur->item->data);
+						aim_tlvlist_free(&cur->item->data);
 						cur->item->data = aim_tlvlist_copy(cur1->data);
 					}
 				} else
@@ -1481,7 +1481,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 							strcpy(cur1->name, cur->item->name);
 						} else
 							cur1->name = NULL;
-						aim_freetlvchain(&cur1->data);
+						aim_tlvlist_free(&cur1->data);
 						cur1->data = aim_tlvlist_copy(cur->item->data);
 					}
 				} else

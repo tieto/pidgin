@@ -104,9 +104,9 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	new->cookie8 = cookie8;
 	new->cookie16 = cookie16;
 
-	tlvlist = aim_readtlvchain_num(bs, aimbs_get16(bs));
+	tlvlist = aim_tlvlist_readnum(bs, aimbs_get16(bs));
 
-	tmp = aim_gettlv16(tlvlist, 0x0080, 1);
+	tmp = aim_tlv_get16(tlvlist, 0x0080, 1);
 	if (tmp) {
 		if (new->nummsgs < tmp)
 			havenewmail = 1;
@@ -117,18 +117,18 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 		havenewmail = 1;
 		new->nummsgs++; /* We know we have at least 1 new email */
 	}
-	new->url = aim_gettlv_str(tlvlist, 0x0007, 1);
-	if (!(new->unread = aim_gettlv8(tlvlist, 0x0081, 1))) {
+	new->url = aim_tlv_getstr(tlvlist, 0x0007, 1);
+	if (!(new->unread = aim_tlv_get8(tlvlist, 0x0081, 1))) {
 		havenewmail = 0;
 		new->nummsgs = 0;
 	}
-	new->domain = aim_gettlv_str(tlvlist, 0x0082, 1);
-	new->flag = aim_gettlv16(tlvlist, 0x0084, 1);
+	new->domain = aim_tlv_getstr(tlvlist, 0x0082, 1);
+	new->flag = aim_tlv_get16(tlvlist, 0x0084, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, new, havenewmail);
 
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;
 }

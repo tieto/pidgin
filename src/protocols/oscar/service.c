@@ -108,19 +108,19 @@ static int redirect(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 
 	memset(&redir, 0, sizeof(redir));
 
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
-	if (!aim_gettlv(tlvlist, 0x000d, 1) ||
-			!aim_gettlv(tlvlist, 0x0005, 1) ||
-			!aim_gettlv(tlvlist, 0x0006, 1)) {
-		aim_freetlvchain(&tlvlist);
+	if (!aim_tlv_gettlv(tlvlist, 0x000d, 1) ||
+			!aim_tlv_gettlv(tlvlist, 0x0005, 1) ||
+			!aim_tlv_gettlv(tlvlist, 0x0006, 1)) {
+		aim_tlvlist_free(&tlvlist);
 		return 0;
 	}
 
-	redir.group = aim_gettlv16(tlvlist, 0x000d, 1);
-	redir.ip = aim_gettlv_str(tlvlist, 0x0005, 1);
-	redir.cookielen = aim_gettlv(tlvlist, 0x0006, 1)->length;
-	redir.cookie = aim_gettlv_str(tlvlist, 0x0006, 1);
+	redir.group = aim_tlv_get16(tlvlist, 0x000d, 1);
+	redir.ip = aim_tlv_getstr(tlvlist, 0x0005, 1);
+	redir.cookielen = aim_tlv_gettlv(tlvlist, 0x0006, 1)->length;
+	redir.cookie = aim_tlv_getstr(tlvlist, 0x0006, 1);
 
 	/* Fetch original SNAC so we can get csi if needed */
 	origsnac = aim_remsnac(sess, snac->id);
@@ -143,7 +143,7 @@ static int redirect(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		free(origsnac->data);
 	free(origsnac);
 
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;
 }
@@ -585,17 +585,17 @@ static int migrate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_
 		faimdprintf(sess, 0, "bifurcated migration unsupported -- group 0x%04x\n", group);
 	}
 
-	tl = aim_readtlvchain(bs);
+	tl = aim_tlvlist_read(bs);
 
-	if (aim_gettlv(tl, 0x0005, 1))
-		ip = aim_gettlv_str(tl, 0x0005, 1);
+	if (aim_tlv_gettlv(tl, 0x0005, 1))
+		ip = aim_tlv_getstr(tl, 0x0005, 1);
 
-	cktlv = aim_gettlv(tl, 0x0006, 1);
+	cktlv = aim_tlv_gettlv(tl, 0x0006, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, ip, cktlv ? cktlv->value : NULL);
 
-	aim_freetlvchain(&tl);
+	aim_tlvlist_free(&tl);
 	free(ip);
 
 	return ret;
@@ -626,16 +626,16 @@ static int motd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mod
 	/* 
 	 * TLVs follow 
 	 */
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
-	msg = aim_gettlv_str(tlvlist, 0x000b, 1);
+	msg = aim_tlv_getstr(tlvlist, 0x000b, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, id, msg);
 
 	free(msg);
 
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;
 }
@@ -760,9 +760,9 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 	snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
 	
-	aim_addtlvtochain32(&tl, 0x0006, data);
-	aim_writetlvchain(&fr->data, &tl);
-	aim_freetlvchain(&tl);
+	aim_tlvlist_add_32(&tl, 0x0006, data);
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
 	
 	aim_tx_enqueue(sess, fr);
 
@@ -870,9 +870,9 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 	offset = aimbs_get32(bs);
 	len = aimbs_get32(bs);
-	list = aim_readtlvchain(bs);
+	list = aim_tlvlist_read(bs);
 
-	modname = aim_gettlv_str(list, 0x0001, 1);
+	modname = aim_tlv_getstr(list, 0x0001, 1);
 
 	faimdprintf(sess, 1, "data at 0x%08lx (%d bytes) of requested\n", offset, len, modname ? modname : "aim.exe");
 
@@ -880,7 +880,7 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		ret = userfunc(sess, rx, offset, len, modname);
 
 	free(modname);
-	aim_freetlvchain(&list);
+	aim_tlvlist_free(&list);
 
 	return ret;
 }

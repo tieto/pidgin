@@ -697,33 +697,33 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 	aimbs_put16(bs, info->warnlevel);
 
 	if (info->present & AIM_USERINFO_PRESENT_FLAGS)
-		aim_addtlvtochain16(&tlvlist, 0x0001, info->flags);
+		aim_tlvlist_add_16(&tlvlist, 0x0001, info->flags);
 	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
-		aim_addtlvtochain32(&tlvlist, 0x0002, info->membersince);
+		aim_tlvlist_add_32(&tlvlist, 0x0002, info->membersince);
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		aim_addtlvtochain32(&tlvlist, 0x0003, info->onlinesince);
+		aim_tlvlist_add_32(&tlvlist, 0x0003, info->onlinesince);
 	if (info->present & AIM_USERINFO_PRESENT_IDLE)
-		aim_addtlvtochain16(&tlvlist, 0x0004, info->idletime);
+		aim_tlvlist_add_16(&tlvlist, 0x0004, info->idletime);
 
 /* XXX - So, ICQ_OSCAR_SUPPORT is never defined anywhere... */
 #if ICQ_OSCAR_SUPPORT
 	if (atoi(info->sn) != 0) {
 		if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS)
-			aim_addtlvtochain16(&tlvlist, 0x0006, info->icqinfo.status);
+			aim_tlvlist_add_16(&tlvlist, 0x0006, info->icqinfo.status);
 		if (info->present & AIM_USERINFO_PRESENT_ICQIPADDR)
-			aim_addtlvtochain32(&tlvlist, 0x000a, info->icqinfo.ipaddr);
+			aim_tlvlist_add_32(&tlvlist, 0x000a, info->icqinfo.ipaddr);
 	}
 #endif
 
 	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
-		aim_addtlvtochain_caps(&tlvlist, 0x000d, info->capabilities);
+		aim_tlvlist_add_caps(&tlvlist, 0x000d, info->capabilities);
  
 	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
-		aim_addtlvtochain32(&tlvlist, (fu16_t)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
+		aim_tlvlist_add_32(&tlvlist, (fu16_t)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
 
-	aimbs_put16(bs, aim_counttlvchain(&tlvlist));
-	aim_writetlvchain(bs, &tlvlist);
-	aim_freetlvchain(&tlvlist);
+	aimbs_put16(bs, aim_tlvlist_count(&tlvlist));
+	aim_tlvlist_write(bs, &tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	return 0;
 }
@@ -760,15 +760,15 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	int ret = 0;
 	fu16_t maxsiglen = 0;
 
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
-	if (aim_gettlv(tlvlist, 0x0001, 1))
-		maxsiglen = aim_gettlv16(tlvlist, 0x0001, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0001, 1))
+		maxsiglen = aim_tlv_get16(tlvlist, 0x0001, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, maxsiglen);
 
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;
 }
@@ -820,8 +820,8 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 			return -ENOMEM;
 		}
 		snprintf(encoding, strlen(defencoding) + strlen(profile_encoding), defencoding, profile_encoding);
-		aim_addtlvtochain_raw(&tl, 0x0001, strlen(encoding), encoding);
-		aim_addtlvtochain_raw(&tl, 0x0002, profile_len, profile);
+		aim_tlvlist_add_raw(&tl, 0x0001, strlen(encoding), encoding);
+		aim_tlvlist_add_raw(&tl, 0x0002, profile_len, profile);
 		free(encoding);
 	}
 
@@ -840,23 +840,23 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 				return -ENOMEM;
 			}
 			snprintf(encoding, strlen(defencoding) + strlen(awaymsg_encoding), defencoding, awaymsg_encoding);
-			aim_addtlvtochain_raw(&tl, 0x0003, strlen(encoding), encoding);
-			aim_addtlvtochain_raw(&tl, 0x0004, awaymsg_len, awaymsg);
+			aim_tlvlist_add_raw(&tl, 0x0003, strlen(encoding), encoding);
+			aim_tlvlist_add_raw(&tl, 0x0004, awaymsg_len, awaymsg);
 			free(encoding);
 		} else
-			aim_addtlvtochain_noval(&tl, 0x0004);
+			aim_tlvlist_add_noval(&tl, 0x0004);
 	}
 
-	aim_addtlvtochain_caps(&tl, 0x0005, caps);
+	aim_tlvlist_add_caps(&tl, 0x0005, caps);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_sizetlvchain(&tl))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0002, 0x004, 0x0000, snacid);
 
-	aim_writetlvchain(&fr->data, &tl);
-	aim_freetlvchain(&tl);
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -909,32 +909,32 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 
 	userinfo = (aim_userinfo_t *)malloc(sizeof(aim_userinfo_t));
 	aim_info_extract(sess, bs, userinfo);
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
 	/* Profile will be 1 and 2 */
-	userinfo->info_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
-	if ((tlv = aim_gettlv(tlvlist, 0x0002, 1))) {
+	userinfo->info_encoding = aim_tlv_getstr(tlvlist, 0x0001, 1);
+	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0002, 1))) {
 		userinfo->info = (char *)malloc(tlv->length);
 		memcpy(userinfo->info, tlv->value, tlv->length);
 		userinfo->info_len = tlv->length;
 	}
 
 	/* Away message will be 3 and 4 */
-	userinfo->away_encoding = aim_gettlv_str(tlvlist, 0x0003, 1);
-	if ((tlv = aim_gettlv(tlvlist, 0x0004, 1))) {
+	userinfo->away_encoding = aim_tlv_getstr(tlvlist, 0x0003, 1);
+	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0004, 1))) {
 		userinfo->away = (char *)malloc(tlv->length);
 		memcpy(userinfo->away, tlv->value, tlv->length);
 		userinfo->away_len = tlv->length;
 	}
 
 	/* Caps will be 5 */
-	if ((tlv = aim_gettlv(tlvlist, 0x0005, 1))) {
+	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1))) {
 		aim_bstream_t cbs;
 		aim_bstream_init(&cbs, tlv->value, tlv->length);
 		userinfo->capabilities = aim_getcap(sess, &cbs, tlv->length);
 		userinfo->present = AIM_USERINFO_PRESENT_CAPABILITIES;
 	}
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	aim_locate_adduserinfo(sess, userinfo);
 	userinfo2 = aim_locate_finduserinfo(sess, userinfo->sn);
@@ -994,38 +994,38 @@ faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, co
 	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
 		return -EINVAL;
 
-	aim_addtlvtochain16(&tl, 0x000a, privacy);
+	aim_tlvlist_add_16(&tl, 0x000a, privacy);
 
 	if (first)
-		aim_addtlvtochain_raw(&tl, 0x0001, strlen(first), first);
+		aim_tlvlist_add_raw(&tl, 0x0001, strlen(first), first);
 	if (last)
-		aim_addtlvtochain_raw(&tl, 0x0002, strlen(last), last);
+		aim_tlvlist_add_raw(&tl, 0x0002, strlen(last), last);
 	if (middle)
-		aim_addtlvtochain_raw(&tl, 0x0003, strlen(middle), middle);
+		aim_tlvlist_add_raw(&tl, 0x0003, strlen(middle), middle);
 	if (maiden)
-		aim_addtlvtochain_raw(&tl, 0x0004, strlen(maiden), maiden);
+		aim_tlvlist_add_raw(&tl, 0x0004, strlen(maiden), maiden);
 
 	if (state)
-		aim_addtlvtochain_raw(&tl, 0x0007, strlen(state), state);
+		aim_tlvlist_add_raw(&tl, 0x0007, strlen(state), state);
 	if (city)
-		aim_addtlvtochain_raw(&tl, 0x0008, strlen(city), city);
+		aim_tlvlist_add_raw(&tl, 0x0008, strlen(city), city);
 
 	if (nickname)
-		aim_addtlvtochain_raw(&tl, 0x000c, strlen(nickname), nickname);
+		aim_tlvlist_add_raw(&tl, 0x000c, strlen(nickname), nickname);
 	if (zip)
-		aim_addtlvtochain_raw(&tl, 0x000d, strlen(zip), zip);
+		aim_tlvlist_add_raw(&tl, 0x000d, strlen(zip), zip);
 
 	if (street)
-		aim_addtlvtochain_raw(&tl, 0x0021, strlen(street), street);
+		aim_tlvlist_add_raw(&tl, 0x0021, strlen(street), street);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_sizetlvchain(&tl))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x0009, 0x0000, NULL, 0);
 
 	aim_putsnac(&fr->data, 0x0002, 0x0009, 0x0000, snacid);
-	aim_writetlvchain(&fr->data, &tl);
-	aim_freetlvchain(&tl);
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -1077,27 +1077,27 @@ faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interes
 		return -EINVAL;
 
 	/* ?? privacy ?? */
-	aim_addtlvtochain16(&tl, 0x000a, privacy);
+	aim_tlvlist_add_16(&tl, 0x000a, privacy);
 
 	if (interest1)
-		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest1), interest1);
+		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest1), interest1);
 	if (interest2)
-		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest2), interest2);
+		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest2), interest2);
 	if (interest3)
-		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest3), interest3);
+		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest3), interest3);
 	if (interest4)
-		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest4), interest4);
+		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest4), interest4);
 	if (interest5)
-		aim_addtlvtochain_raw(&tl, 0x0000b, strlen(interest5), interest5);
+		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest5), interest5);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_sizetlvchain(&tl))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x000f, 0x0000, NULL, 0);
 
 	aim_putsnac(&fr->data, 0x0002, 0x000f, 0x0000, 0);
-	aim_writetlvchain(&fr->data, &tl);
-	aim_freetlvchain(&tl);
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
 
 	aim_tx_enqueue(sess, fr);
 

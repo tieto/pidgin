@@ -33,13 +33,13 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	/* 
 	 * TLVs follow 
 	 */
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
 	/*
 	 * TLV type 0x0001: Maximum number of buddies.
 	 */
-	if (aim_gettlv(tlvlist, 0x0001, 1))
-		maxbuddies = aim_gettlv16(tlvlist, 0x0001, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0001, 1))
+		maxbuddies = aim_tlv_get16(tlvlist, 0x0001, 1);
 
 	/*
 	 * TLV type 0x0002: Maximum number of watchers.
@@ -49,8 +49,8 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	 * other IM protocol.)
 	 * 
 	 */
-	if (aim_gettlv(tlvlist, 0x0002, 1))
-		maxwatchers = aim_gettlv16(tlvlist, 0x0002, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0002, 1))
+		maxwatchers = aim_tlv_get16(tlvlist, 0x0002, 1);
 
 	/*
 	 * TLV type 0x0003: Unknown.
@@ -61,7 +61,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, maxbuddies, maxwatchers);
 
-	aim_freetlvchain(&tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;  
 }
