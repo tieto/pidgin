@@ -282,6 +282,7 @@ static void icq_login(struct aim_user *user) {
 	link = id->link = icq_ICQLINKNew(atol(user->username), ps,
 			  user->proto_opt[USEROPT_NICK][0] ? user->proto_opt[USEROPT_NICK] : "gaim user",
 			  TRUE);
+	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", user->proto_opt[USEROPT_NICK]);
 
 	link->icq_Logged = icq_online;
 	link->icq_Disconnected = icq_logged_off;

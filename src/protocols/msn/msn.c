@@ -497,6 +497,7 @@ static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
 	char buf[MSN_BUF_LEN];
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
+		close(source);
 		g_free(ms->sessid);
 		g_free(ms->auth);
 		g_free(ms);
@@ -528,6 +529,7 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition co
 	char buf[MSN_BUF_LEN];
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
+		close(source);
 		g_free(ms->auth);
 		g_free(ms);
 		return;
@@ -900,8 +902,10 @@ static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition
 	struct msn_data *md;
 	char buf[MSN_BUF_LEN];
 
-	if (!g_slist_find(connections, gc))
+	if (!g_slist_find(connections, gc)) {
+		close(source);
 		return;
+	}
 
 	md = gc->proto_data;
 
@@ -975,8 +979,21 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 
 		set_login_progress(gc, 3, "Requesting to send password");
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
+		char *resp, *friend, *tmp = buf;
+
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		resp = tmp;
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		friend = tmp;
+
+		debug_printf("resp: %s; friend: %s\n", resp, friend);
+
 		/* so here, we're either getting the challenge or the OK */
 		if (strstr(buf, "OK")) {
+			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
+
 			g_snprintf(buf, sizeof(buf), "SYN %d 0\n", ++md->trId);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 				hide_login_progress(gc, "Unable to write");
@@ -1082,8 +1099,10 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 	struct msn_data *md;
 	char buf[1024];
 
-	if (!g_slist_find(connections, gc))
+	if (!g_slist_find(connections, gc)) {
+		close(source);
 		return;
+	}
 
 	md = gc->proto_data;
 

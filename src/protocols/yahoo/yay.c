@@ -644,6 +644,7 @@ static void yahoo_act_id(gpointer data, char *entry) {
 	if (yd->active_id)
 		g_free(yd->active_id);
 	yd->active_id = g_strdup(entry);
+	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", yd->active_id);
 }
 
 static void yahoo_do_action(struct gaim_connection *gc, char *act) {
