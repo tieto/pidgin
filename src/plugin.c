@@ -547,7 +547,7 @@ gaim_plugins_destroy_all(void)
 }
 
 void
-gaim_plugins_load_all(void)
+gaim_plugins_load_saved(void)
 {
 #ifdef GAIM_PLUGINS
 	GList *f, *files = gaim_prefs_get_string_list("/plugins/loaded");

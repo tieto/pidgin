@@ -503,7 +503,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(label);
 
 	dialog->buddy_icon_entry = gtk_entry_new();
-	gtk_entry_set_editable(GTK_ENTRY(dialog->buddy_icon_entry), FALSE);
+	gtk_editable_set_editable(GTK_EDITABLE(dialog->buddy_icon_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_icon_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_icon_entry);
 

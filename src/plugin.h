@@ -252,7 +252,7 @@ void gaim_plugins_destroy_all(void);
 /**
  * Attempts to load all the plugins that were loaded when gaim last quit
  */
-void gaim_plugins_load_all(void);
+void gaim_plugins_load_saved(void);
 
 /**
  * Probes for plugins in the registered module paths.
