@@ -32,7 +32,6 @@
 typedef struct
 {
 	gnutls_session session;
-	gnutls_certificate_client_credentials xcred;
 
 } GaimSslGnutlsData;
 
@@ -46,7 +45,8 @@ ssl_gnutls_init(void)
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
-	gnutls_certificate_set_x509_trust_file(xcred, "ca.pem", GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_trust_file(xcred, "ca.pem",
+										   GNUTLS_X509_FMT_PEM);
 
 	return TRUE;
 }
@@ -60,12 +60,25 @@ ssl_gnutls_uninit(void)
 }
 
 static void
+input_func(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimSslConnection *gsc = (GaimSslConnection *)data;
+
+	gaim_debug_misc("gnutls", "In input_func\n");
+
+	gsc->input_func(gsc->user_data, gsc, cond);
+}
+
+static void
 ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimSslConnection *gsc = (GaimSslConnection *)data;
 	GaimSslGnutlsData *gnutls_data;
+	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
 	int ret;
-	const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
+
+	if (source < 0)
+		return;
 
 	gsc->fd = source;
 
@@ -88,11 +101,16 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (ret < 0)
 	{
+		gaim_debug_error("gnutls", "Handshake failed\n");
+
+		gaim_ssl_close(gsc);
 	}
 	else
 	{
-	gaim_debug_info("gnutls", "Calling input function\n");
-	gsc->input_func(gsc->user_data, (GaimSslConnection *)gsc, cond);
+		gaim_debug_info("gnutls", "Adding input handler.\n");
+		gsc->inpa = gaim_input_add(gsc->fd,
+								   GAIM_INPUT_READ | GAIM_INPUT_WRITE,
+								   input_func, gsc);
 	}
 }
 
@@ -104,7 +122,6 @@ ssl_gnutls_close(GaimSslConnection *gsc)
 	gnutls_bye(gnutls_data->session, GNUTLS_SHUT_RDWR);
 
 	gnutls_deinit(gnutls_data->session);
-//	gnutls_certificate_free_credentials(gnutls_data->xcred);
 
 	g_free(gnutls_data);
 }
@@ -120,8 +137,6 @@ ssl_gnutls_read(GaimSslConnection *gsc, void *data, size_t len)
 	if (s < 0)
 		s = 0;
 
-	gaim_debug_misc("gnutls", "s = %d\n", s);
-
 	return s;
 }
 
@@ -131,9 +146,12 @@ ssl_gnutls_write(GaimSslConnection *gsc, const void *data, size_t len)
 	GaimSslGnutlsData *gnutls_data = GAIM_SSL_GNUTLS_DATA(gsc);
 	size_t s;
 
-	gaim_debug_misc("gnutls", "Writing: {%s}\n", data);
-
 	s = gnutls_record_send(gnutls_data->session, data, len);
+
+	if (s < 0)
+		s = 0;
+
+	return s;
 }
 
 static GaimSslOps ssl_ops =
