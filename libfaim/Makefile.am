@@ -3,7 +3,8 @@ noinst_LIBRARIES = libfaim.a
 EXTRA_DIST = faim/aim.h faim/aim_cbtypes.h faim/faimconfig.h README \
 		README.gaim CHANGES CHANGES.gaim COPYING BUGS
 
-libfaim_a_SOURCES = 	aim_auth.c 		\
+libfaim_a_SOURCES = 	aim_ads.c		\
+			aim_auth.c 		\
 			aim_buddylist.c		\
 			aim_chat.c		\
 			aim_chatnav.c		\

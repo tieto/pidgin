@@ -17,7 +17,7 @@ u_long aim_usersearch_address(struct aim_session_t *sess,
   if (!address)
     return -1;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10+strlen(address))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+strlen(address))))
     return -1;
 
   newpacket->lock = 1;

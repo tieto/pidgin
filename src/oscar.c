@@ -542,10 +542,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 	} else if (channel == 2) {
 		struct aim_userinfo_s *userinfo;
 		int rendtype = va_arg(ap, int);
-		if (rendtype == 0 ||
-		    rendtype == AIM_RENDEZVOUS_CHAT_EX3 ||
-		    rendtype == AIM_RENDEZVOUS_CHAT_EX4 ||
-		    rendtype == AIM_RENDEZVOUS_CHAT_EX5) {
+		if (rendtype & AIM_CAPS_CHAT) {
 			char *msg, *encoding, *lang;
 			struct aim_chat_roominfo *roominfo;
 
@@ -560,12 +557,15 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					     roominfo->instance,
 					     userinfo->sn,
 					     msg);
-		} else if (rendtype == AIM_RENDEZVOUS_FILETRANSFER) {
+		} else if (rendtype & AIM_CAPS_SENDFILE) {
 			/* libfaim won't tell us that we got this just yet */
-		} else if (rendtype == AIM_RENDEZVOUS_FILETRANSFER_GET) {
+		} else if (rendtype & AIM_CAPS_GETFILE) {
 			/* nor will it tell us this. but it's still there */
-		} else if (rendtype == AIM_RENDEZVOUS_VOICE) {
+		} else if (rendtype & AIM_CAPS_VOICE) {
 			/* this one libfaim tells us unuseful info about  */
+		} else if (rendtype & AIM_CAPS_BUDDYICON) {
+			/* bah */
+		} else if (rendtype & AIM_CAPS_IMIMAGE) {
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -670,8 +670,11 @@ int gaim_parse_motd(struct aim_session_t *sess,
 
 int gaim_chatnav_info(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
-	va_list ap = va_start(ap, command);
-	u_short type = va_arg(ap, u_short);
+	va_list ap;
+	u_short type;
+
+	va_start(ap, command);
+	type = va_arg(ap, u_short);
 
 	switch(type) {
 		case 0x0002: {

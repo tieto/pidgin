@@ -106,14 +106,17 @@
 /*
  * Select whether or not to use POSIX thread functionality.
  * 
- * Default: defined on Linux, otherwise undefined
+ * We don't actually use threads, but we do use the POSIX mutex
+ * in order to maintain thread safety.  You can use the fake locking
+ * if you really don't like pthreads or you don't have it.
+ *
+ * Default: defined on Linux, otherwise use fake locks.
  */
-/*
 #ifdef __linux__
 #define FAIM_USEPTHREADS
+#else
+#define FAIM_USEFAKELOCKS
 #endif
-*/
-#define FAIM_USEPTHREADS
 
 #endif /* __FAIMCONFIG_H__ */
 

@@ -14,8 +14,12 @@
  *
  * Right now, that is.  If/when we implement a pool of transmit
  * frames, this will become the request-an-unused-frame part.
+ *
+ * framing = AIM_FRAMETYPE_OFT/OSCAR
+ * chan = channel for OSCAR, hdrtype for OFT
+ *
  */
-struct command_tx_struct *aim_tx_new(int chan, struct aim_conn_t *conn, int datalen)
+struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen)
 {
   struct command_tx_struct *new;
 
@@ -30,11 +34,21 @@ struct command_tx_struct *aim_tx_new(int chan, struct aim_conn_t *conn, int data
   memset(new, 0, sizeof(struct command_tx_struct));
 
   new->conn = conn; 
-  new->type = chan;
 
   if(datalen) {
     new->data = (u_char *)malloc(datalen);
     new->commandlen = datalen;
+  } else
+    new->data = NULL;
+
+  new->hdrtype = framing;
+  if (new->hdrtype == AIM_FRAMETYPE_OSCAR) {
+    new->hdr.oscar.type = chan;
+  } else if (new->hdrtype == AIM_FRAMETYPE_OFT) {
+    new->hdr.oft.type = chan;
+    new->hdr.oft.hdr2len = 0; /* this will get setup by caller */
+  } else { 
+    printf("tx_new: unknown framing\n");
   }
 
   return new;
@@ -66,8 +80,10 @@ int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
       newpacket->conn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
   }
  
-  /* assign seqnum */
-  newpacket->seqnum = aim_get_next_txseqnum(newpacket->conn);
+  if (newpacket->hdrtype == AIM_FRAMETYPE_OSCAR) {
+    /* assign seqnum */
+    newpacket->hdr.oscar.seqnum = aim_get_next_txseqnum(newpacket->conn);
+  }
   /* set some more fields */
   newpacket->lock = 1; /* lock */
   newpacket->sent = 0; /* not sent yet */
@@ -116,12 +132,13 @@ int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_stru
     return -1;
   }
 
-  newpacket->seqnum = aim_get_next_txseqnum(newpacket->conn);
+  if (newpacket->hdrtype == AIM_FRAMETYPE_OSCAR)
+    newpacket->hdr.oscar.seqnum = aim_get_next_txseqnum(newpacket->conn);
 
   newpacket->lock = 1; /* lock */
   newpacket->sent = 0; /* not sent yet */
 
-  aim_tx_sendframe(newpacket);
+  aim_tx_sendframe(sess, newpacket);
 
   if (newpacket->data)
     free(newpacket->data);
@@ -169,8 +186,10 @@ int aim_tx_printqueue(struct aim_session_t *sess)
     faimdprintf(2, "aim_tx_flushqueue(): queue empty");
   else {
       for (cur = sess->queue_outgoing; cur; cur = cur->next) {
-	  faimdprintf(2, "\t  %2x   %4x %4x   %1d    %1d\n", 
-		      cur->type, cur->seqnum, 
+	  faimdprintf(2, "\t  %2x  %2x   %4x %4x   %1d    %1d\n", 
+		      cur->hdrtype,
+		      (cur->hdrtype==AIM_FRAMETYPE_OFT)?cur->hdr.oft.type:cur->hdr.oscar.type, 
+		      (cur->hdrtype==AIM_FRAMETYPE_OSCAR)?cur->seqnum:0, 
 		      cur->commandlen, cur->lock, 
 		      cur->sent);
       }
@@ -206,46 +225,86 @@ int aim_tx_printqueue(struct aim_session_t *sess)
  *    9) Step to next struct in list and go back to 1.
  *
  */
-int aim_tx_sendframe(struct command_tx_struct *cur)
+int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur)
 {
-  u_char *curPacket;
+  int buflen = 0;
+  unsigned char *curPacket;
 
   if (!cur)
     return -1; /* fatal */
 
   cur->lock = 1; /* lock the struct */
 
-  /* allocate full-packet buffer */
-  curPacket = (char *) malloc(cur->commandlen + 6);
-      
-  /* command byte */
-  curPacket[0] = 0x2a;
-      
-  /* type/family byte */
-  curPacket[1] = cur->type;
-      
-  /* bytes 3+4: word: FLAP sequence number */
-  aimutil_put16(curPacket+2, cur->seqnum);
-
-  /* bytes 5+6: word: SNAC len */
-  aimutil_put16(curPacket+4, cur->commandlen);
-      
-  /* bytes 7 and on: raw: SNAC data */  /* XXX: ye gods! get rid of this! */
-  memcpy(&(curPacket[6]), cur->data, cur->commandlen);
-      
-  /* full image of raw packet data now in curPacket */
-  faim_mutex_lock(&cur->conn->active);
-  if ( (u_int)write(cur->conn->fd, curPacket, (cur->commandlen + 6)) != (cur->commandlen + 6)) {
-    faim_mutex_unlock(&cur->conn->active);
-    printf("\nWARNING: Error in sending packet 0x%4x -- will try again next time\n\n", cur->seqnum);
-    cur->sent = 0; /* mark it unsent */
-    return 0; /* bail out -- continuable error */
-  } else {
-    faimdprintf(2, "\nSENT 0x%4x\n\n", cur->seqnum);
-    
-    cur->sent = 1; /* mark the struct as sent */
-    cur->conn->lastactivity = time(NULL);
+  if (cur->hdrtype == AIM_FRAMETYPE_OSCAR)
+    buflen = cur->commandlen + 6;
+  else if (cur->hdrtype == AIM_FRAMETYPE_OFT)
+    buflen = cur->hdr.oft.hdr2len + 8;
+  else {
+    cur->lock = 0;
+    return -1;
   }
+
+  /* allocate full-packet buffer */
+  if (!(curPacket = (unsigned char *) malloc(buflen))) {
+    cur->lock = 0;
+    return -1;
+  }
+      
+  if (cur->hdrtype == AIM_FRAMETYPE_OSCAR) {
+    /* command byte */
+    curPacket[0] = 0x2a;
+      
+    /* type/family byte */
+    curPacket[1] = cur->hdr.oscar.type;
+      
+    /* bytes 3+4: word: FLAP sequence number */
+    aimutil_put16(curPacket+2, cur->hdr.oscar.seqnum);
+
+    /* bytes 5+6: word: SNAC len */
+    aimutil_put16(curPacket+4, cur->commandlen);
+      
+    /* bytes 7 and on: raw: SNAC data */  /* XXX: ye gods! get rid of this! */
+    memcpy(&(curPacket[6]), cur->data, cur->commandlen);
+
+  } else if (cur->hdrtype == AIM_FRAMETYPE_OFT) {
+    int z = 0;
+
+    z += aimutil_put8(curPacket+z, 0x4f);
+    z += aimutil_put8(curPacket+z, 0x44);
+    z += aimutil_put8(curPacket+z, 0x43);
+    z += aimutil_put8(curPacket+z, 0x32);
+
+    z += aimutil_put16(curPacket+z, cur->hdr.oft.hdr2len + 8);
+    z += aimutil_put16(curPacket+z, cur->hdr.oft.type);
+
+    memcpy(curPacket+z, cur->hdr.oft.hdr2, cur->hdr.oft.hdr2len);
+  }
+
+  /* 
+   * For OSCAR, a full image of the raw packet data now in curPacket.
+   * For OFT, an image of just the bloated header is in curPacket, 
+   * since OFT allows us to do the data in a different write (yay!).
+   */
+  faim_mutex_lock(&cur->conn->active);
+  if ( (u_int)write(cur->conn->fd, curPacket, buflen) != buflen) {
+    faim_mutex_unlock(&cur->conn->active);
+    cur->sent = 1;
+    aim_conn_kill(sess, &cur->conn);
+    return 0; /* bail out */
+  }
+
+  if ((cur->hdrtype == AIM_FRAMETYPE_OFT) && cur->commandlen) {
+    if (write(cur->conn->fd, cur->data, cur->commandlen) != cur->commandlen) {
+      /* 
+       * Theres nothing we can do about this since we've already sent the 
+       * header!  The connection is unstable.
+       */
+    }
+  }
+
+  cur->sent = 1; /* mark the struct as sent */
+  cur->conn->lastactivity = time(NULL);
+
   faim_mutex_unlock(&cur->conn->active);
 
 #if debug > 2
@@ -293,7 +352,7 @@ int aim_tx_flushqueue(struct aim_session_t *sess)
 	sleep((cur->conn->lastactivity + cur->conn->forcedlatency) - time(NULL));
       }
 
-      if (aim_tx_sendframe(cur) == -1)
+      if (aim_tx_sendframe(sess, cur) == -1)
 	break;
     }
   }
@@ -324,6 +383,8 @@ void aim_tx_purgequeue(struct aim_session_t *sess)
     if (!sess->queue_outgoing->lock && sess->queue_outgoing->sent) {
       tmp = sess->queue_outgoing;
       sess->queue_outgoing = NULL;
+      if (tmp->hdrtype == AIM_FRAMETYPE_OFT)
+	free(tmp->hdr.oft.hdr2);
       free(tmp->data);
       free(tmp);
     }
@@ -334,6 +395,8 @@ void aim_tx_purgequeue(struct aim_session_t *sess)
     if (!cur->next->lock && cur->next->sent) {
       tmp = cur->next;
       cur->next = tmp->next;
+      if (tmp->hdrtype == AIM_FRAMETYPE_OFT)
+	free(tmp->hdr.oft.hdr2);
       free(tmp->data);
       free(tmp);
     }	

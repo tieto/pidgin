@@ -79,7 +79,7 @@ u_long aim_bos_changevisibility(struct aim_session_t *sess,
   listcount = aimutil_itemcnt(localcpy, '&');
   packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, packlen)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)))
     return -1;
 
   newpacket->lock = 1;
@@ -173,7 +173,7 @@ u_long aim_bos_setbuddylist(struct aim_session_t *sess,
 #endif
   free(localcpy);
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, packet_login_phase3c_hi_b_len - 6)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packet_login_phase3c_hi_b_len - 6)))
     return -1;
 
   newpacket->lock = 1;
@@ -209,20 +209,6 @@ u_long aim_bos_setbuddylist(struct aim_session_t *sess,
  * Gives BOS your profile.
  *
  * 
- * The large data chunk given here is of unknown decoding.
- * What I do know is that each 0x20 byte repetition 
- * represents a capability.  People with only the 
- * first two reptitions can support normal messaging
- * and chat (client version 2.0 or 3.0).  People with 
- * the third as well can also support voice chat (client
- * version 3.5 or higher).  IOW, if we don't send this,
- * we won't get chat invitations (get "software doesn't
- * support chat" error).
- *
- * This data is broadcast along with your oncoming
- * buddy command to everyone who has you on their
- * buddy list, as a type 0x0002 TLV.
- * 
  */
 u_long aim_bos_setprofile(struct aim_session_t *sess,
 			  struct aim_conn_t *conn, 
@@ -231,9 +217,9 @@ u_long aim_bos_setprofile(struct aim_session_t *sess,
 			  unsigned int caps)
 {
   struct command_tx_struct *newpacket;
-  int i = 0;
+  int i = 0, tmp, caplen;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 1152+strlen(profile)+1+(awaymsg?strlen(awaymsg):0))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152+strlen(profile)+1+(awaymsg?strlen(awaymsg):0))))
     return -1;
 
   i += aim_putsnac(newpacket->data, 0x0002, 0x004, 0x0000, sess->snac_nextid);
@@ -249,25 +235,12 @@ u_long aim_bos_setprofile(struct aim_session_t *sess,
     i += aim_puttlv_str(newpacket->data+i, 0x0004, 0x0000, NULL);
 
   /* Capability information. */
-  {
-    int isave;
-    i += aimutil_put16(newpacket->data+i, 0x0005);
-    isave = i;
-    i += aimutil_put16(newpacket->data+i, 0);
-    if (caps & AIM_CAPS_BUDDYICON)
-      i += aimutil_putstr(newpacket->data+i, aim_caps[0], 0x10);
-    if (caps & AIM_CAPS_VOICE)
-      i += aimutil_putstr(newpacket->data+i, aim_caps[1], 0x10);
-    if (caps & AIM_CAPS_IMIMAGE)
-      i += aimutil_putstr(newpacket->data+i, aim_caps[2], 0x10);
-    if (caps & AIM_CAPS_CHAT)
-      i += aimutil_putstr(newpacket->data+i, aim_caps[3], 0x10);
-    if (caps & AIM_CAPS_GETFILE)
-      i += aimutil_putstr(newpacket->data+i, aim_caps[4], 0x10);
-    if (caps & AIM_CAPS_SENDFILE)
-      i += aimutil_putstr(newpacket->data+i, aim_caps[5], 0x10);
-    aimutil_put16(newpacket->data+isave, i-isave-2);
-  }
+ 
+  tmp = (i += aimutil_put16(newpacket->data+i, 0x0005));
+  i += aimutil_put16(newpacket->data+i, 0x0000); /* rewritten later */
+  i += (caplen = aim_putcap(newpacket->data+i, 512, caps));
+  aimutil_put16(newpacket->data+tmp, caplen); /* rewrite TLV size */
+
   newpacket->commandlen = i;
   aim_tx_enqueue(sess, newpacket);
   
@@ -347,7 +320,7 @@ u_long aim_bos_clientready(struct aim_session_t *sess,
   int command_2_len = 0x52;
   struct command_tx_struct *newpacket;
   
-  if (!(newpacket = aim_tx_new(0x0002, conn, command_2_len)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, command_2_len)))
     return -1;
 
   newpacket->lock = 1;
@@ -391,7 +364,7 @@ u_long aim_bos_ackrateresp(struct aim_session_t *sess,
   if (conn->type != AIM_CONN_TYPE_BOS)
     packlen += 2;
 
-  if(!(newpacket = aim_tx_new(0x0002, conn, packlen)));
+  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)));
   
   newpacket->lock = 1;
 
@@ -438,7 +411,7 @@ u_long aim_bos_reqpersonalinfo(struct aim_session_t *sess,
 {
   struct command_tx_struct *newpacket;
   
-  if (!(newpacket = aim_tx_new(0x0002, conn, 12)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 12)))
     return -1;
 
   newpacket->lock = 1;
@@ -460,7 +433,7 @@ u_long aim_setversions(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10 + (4*11))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10 + (4*11))))
     return -1;
 
   newpacket->lock = 1;
@@ -527,6 +500,22 @@ u_long aim_bos_reqservice(struct aim_session_t *sess,
 }
 
 /*
+ * aim_bos_nop()
+ *
+ * No-op.  WinAIM sends these every 4min or so to keep
+ * the connection alive.  With the recent changes
+ * in the OSCAR servers, it looks like we must do the
+ * same or be disconnected with a mysterious 'you logged
+ * on from another client' message.
+ *
+ */
+u_long aim_bos_nop(struct aim_session_t *sess,
+		   struct aim_conn_t *conn)
+{
+  return aim_genericreq_n(sess, conn, 0x0001, 0x0016);
+}
+
+/*
  * aim_bos_reqrights()
  *
  * Request BOS rights.
@@ -551,6 +540,17 @@ u_long aim_bos_reqbuddyrights(struct aim_session_t *sess,
 }
 
 /*
+ * aim_debugconn_sendconnect()
+ *
+ * For aimdebugd.  If you don't know what it is, you don't want to.
+ */
+u_long aim_debugconn_sendconnect(struct aim_session_t *sess,
+				 struct aim_conn_t *conn)
+{
+  return aim_genericreq_n(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEBUGCONN_CONNECT);
+}
+
+/*
  * Generic routine for sending commands.
  *
  *
@@ -568,7 +568,7 @@ u_long aim_genericreq_n(struct aim_session_t *sess,
 {
   struct command_tx_struct *newpacket;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10)))
     return 0;
 
   newpacket->lock = 1;
@@ -594,7 +594,7 @@ u_long aim_genericreq_l(struct aim_session_t *sess,
   if (!longdata)
     return aim_genericreq_n(sess, conn, family, subtype);
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10+sizeof(u_long))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+sizeof(u_long))))
     return -1;
 
   newpacket->lock = 1;
@@ -620,7 +620,7 @@ u_long aim_genericreq_s(struct aim_session_t *sess,
   if (!shortdata)
     return aim_genericreq_n(sess, conn, family, subtype);
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10+sizeof(u_short))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+sizeof(u_short))))
     return -1;
 
   newpacket->lock = 1;

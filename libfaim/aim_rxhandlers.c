@@ -177,9 +177,9 @@ int bleck(struct aim_session_t *sess,struct command_rx_struct *workingPtr, ...)
   subtype= aimutil_get16(workingPtr->data+2);
 
   if((family < maxf) && (subtype+1 < maxs) && (literals[family][subtype] != NULL))
-    faimdprintf(1, "bleck: null handler for %04x/%04x (%s)\n", family, subtype, literals[family][subtype+1]);
+    faimdprintf("bleck: null handler for %04x/%04x (%s)\n", family, subtype, literals[family][subtype+1]);
   else
-    faimdprintf(1, "bleck: null handler for %04x/%04x (no literal)\n",family,subtype);
+    faimdprintf("bleck: null handler for %04x/%04x (no literal)\n",family,subtype);
 
   return 1;
 }
@@ -314,6 +314,19 @@ int aim_rxdispatch(struct aim_session_t *sess)
       if (workingPtr->handled)
 	continue;
 
+      /*
+       * This is a debugging/sanity check only and probably could/should be removed
+       * for stable code.
+       */
+      if (((workingPtr->hdrtype == AIM_FRAMETYPE_OFT) && 
+	   (workingPtr->conn->type != AIM_CONN_TYPE_RENDEZVOUS)) || 
+	  ((workingPtr->hdrtype == AIM_FRAMETYPE_OSCAR) && 
+	   (workingPtr->conn->type == AIM_CONN_TYPE_RENDEZVOUS))) {
+	printf("faim: rxhandlers: incompatible frame type %d on connection type 0x%04x\n", workingPtr->hdrtype, workingPtr->conn->type);
+	workingPtr->handled = 1;
+	continue;
+      }
+
       switch(workingPtr->conn->type) {
       case -1:
 	/*
@@ -332,7 +345,9 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	if (head == 0x00000001) {
 	  faimdprintf(1, "got connection ack on auth line\n");
 	  workingPtr->handled = 1;
-	} else {
+	} else if (workingPtr->hdr.oscar.type == 0x0004) {
+	  workingPtr->handled = aim_authparse(sess, workingPtr);
+        } else {
 	  u_short family,subtype;
 	  
 	  family = aimutil_get16(workingPtr->data);
@@ -354,15 +369,17 @@ int aim_rxdispatch(struct aim_session_t *sess)
 #else	
 	    /* XXX: this isnt foolproof */
 	  case 0x0001:
-	    if (subtype == 0x0003)
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, workingPtr);
-	    else
-	      workingPtr->handled = aim_authparse(sess, workingPtr);
+	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, workingPtr);
 	    break;
 	  case 0x0007:
 	    if (subtype == 0x0005)
 	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_ADM, AIM_CB_ADM_INFOCHANGE_REPLY, workingPtr);
 	    break;
+	  case AIM_CB_FAM_SPECIAL:
+	    if (subtype == AIM_CB_SPECIAL_DEBUGCONN_CONNECT) {
+	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+	      break;
+	    } /* others fall through */
 	  default:
 	    /* Old login protocol */
 	    /* any user callbacks will be called from here */
@@ -376,7 +393,7 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	u_short family;
 	u_short subtype;
 
-	if (workingPtr->type == 0x04) {
+	if (workingPtr->hdr.oscar.type == 0x04) {
 	  workingPtr->handled = aim_negchan_middle(sess, workingPtr);
 	  break;
 	}
@@ -459,6 +476,9 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	  case 0x0005:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0004, 0x0005, workingPtr);
 	    break;
+	  case 0x0006:
+	    workingPtr->handled = aim_parse_outgoing_im_middle(sess, workingPtr);
+	    break;
 	  case 0x0007:
 	    workingPtr->handled = aim_parse_incoming_im_middle(sess, workingPtr);
 	    break;
@@ -497,6 +517,9 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	  else
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_STS, AIM_CB_STS_DEFAULT, workingPtr);
 	  break;
+      case AIM_CB_FAM_SPECIAL: 
+	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+	break;
 	default:
 	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
 	  break;
@@ -553,8 +576,21 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	}
 	break;
       }
+      case AIM_CONN_TYPE_RENDEZVOUS: {
+	/* make sure that we only get OFT frames on these connections */
+	if (workingPtr->hdrtype != AIM_FRAMETYPE_OFT) {
+	  printf("faim: internal error: non-OFT frames on OFT connection\n");
+	  workingPtr->handled = 1; /* get rid of it */
+	  break;
+	}
+	
+	/* XXX: implement this */
+	printf("faim: OFT frame!\n");
+	
+	break;
+      }
       default:
-	printf("\ninternal error: unknown connection type (very bad.) (type = %d, fd = %d, channel = %02x, commandlen = %02x)\n\n", workingPtr->conn->type, workingPtr->conn->fd, workingPtr->type, workingPtr->commandlen);
+	printf("\ninternal error: unknown connection type (very bad.) (type = %d, fd = %d, commandlen = %02x)\n\n", workingPtr->conn->type, workingPtr->conn->fd, workingPtr->commandlen);
 	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
 	break;
       }	
@@ -680,12 +716,12 @@ int aim_parse_unknown(struct aim_session_t *sess,
   for (i = 0; i < command->commandlen; i++)
     {
       if ((i % 8) == 0)
-	printf("\n\t");
+	faimdprintf(1, "\n\t");
 
-      printf("0x%2x ", command->data[i]);
+      faimdprintf(1, "0x%2x ", command->data[i]);
     }
   
-  printf("\n\n");
+  faimdprintf(1, "\n\n");
 
   return 1;
 }

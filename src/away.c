@@ -153,7 +153,10 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_container_add(GTK_CONTAINER(imaway), vbox);
 		awaymessage = a;
 
-        }
+        } else {
+		destroy_im_away();
+		do_away_message(w, a);
+	}
 
         /* New away message... Clear out the old sent_aways */
         while(cnv) {

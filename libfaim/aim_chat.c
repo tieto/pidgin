@@ -55,7 +55,7 @@ u_long aim_chat_send_im(struct aim_session_t *sess,
   if (!sess || !conn || !msg)
     return 0;
   
-  if (!(newpacket = aim_tx_new(0x0002, conn, 1152)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152)))
     return -1;
 
   newpacket->lock = 1; /* lock struct */
@@ -130,7 +130,7 @@ u_long aim_chat_join(struct aim_session_t *sess,
   if (!sess || !conn || !roomname)
     return 0;
   
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10+9+strlen(roomname)+2)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+9+strlen(roomname)+2)))
     return -1;
 
   newpacket->lock = 1;
@@ -513,7 +513,7 @@ u_long aim_chat_clientready(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 0x20)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 0x20)))
     return -1;
 
   newpacket->lock = 1;
@@ -567,7 +567,7 @@ u_long aim_chat_invite(struct aim_session_t *sess,
   if (!sess || !conn || !sn || !msg || !roomname)
     return 0;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 1152+strlen(sn)+strlen(roomname)+strlen(msg))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152+strlen(sn)+strlen(roomname)+strlen(msg))))
     return -1;
 
   newpacket->lock = 1;

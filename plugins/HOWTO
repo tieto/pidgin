@@ -57,10 +57,18 @@ doesn't have to be there, but it's nice if, say, you create a window, and when
 the plugin gets unloaded, it removes the window. Also, all the callbacks you
 have attached to gaim signals will be removed.
 
+Plugins can also unload themselves. To do this, call gaim_plugin_unload(void *)
+(the void* is the handle passed to gaim_plugin_init). When your plugin gets
+unloaded, gaim will remove all of your callbacks. It will not call your
+gaim_plugin_remove function, however, since it will assume you have already
+done the necessary cleanup.
+
 Compilation of the plugins is fairly straight-forward; there is a Makefile in
 this directory that has a rule for making the .so file from a .c file. No
 modification of the Makefile should be necessary, unless if you simply want
 to type 'make' to have it made; otherwise, 'make filename.so' will take
-filename.c and make the .so plugin from it.
+filename.c and make the .so plugin from it. If you need to link in with extra
+libraries, you can set the environment variable PLUGIN_LIBS to be the libraries
+you want to link with.
 
 There are a few examples in this directory. Enjoy.

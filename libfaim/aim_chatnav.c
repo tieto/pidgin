@@ -34,7 +34,7 @@ u_long aim_chatnav_clientready(struct aim_session_t *sess,
   struct command_tx_struct *newpacket; 
   int i;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 0x20)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 0x20)))
     return -1;
 
   newpacket->lock = 1;
@@ -283,7 +283,7 @@ u_long aim_chatnav_createroom(struct aim_session_t *sess,
   int i;
   struct aim_snac_t snac;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10+12+strlen("invite")+strlen(name))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+12+strlen("invite")+strlen(name))))
     return -1;
 
   newpacket->lock = 1;

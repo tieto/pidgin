@@ -15,7 +15,7 @@ int aim_auth_sendcookie(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int curbyte=0;
   
-  if (!(newpacket = aim_tx_new(0x0001, conn, 4+2+2+AIM_COOKIELEN)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0001, conn, 4+2+2+AIM_COOKIELEN)))
     return -1;
 
   newpacket->lock = 1;
@@ -35,7 +35,7 @@ u_long aim_auth_clientready(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int curbyte = 0;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 26)))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 26)))
     return -1;
 
   newpacket->lock = 1;
@@ -75,7 +75,7 @@ u_long aim_auth_changepasswd(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i;
 
-  if (!(newpacket = aim_tx_new(0x0002, conn, 10+4+strlen(current)+4+strlen(new))))
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+4+strlen(current)+4+strlen(new))))
     return -1;
 
   newpacket->lock = 1;

@@ -80,6 +80,9 @@ void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
   }
   faim_mutex_unlock(&sess->connlistlock);
 
+  /* XXX: do we need this for txqueue too? */
+  aim_rxqueue_cleanbyconn(sess, *deadconn);
+
   aim_conn_close(*deadconn);
   free(*deadconn);
   deadconn = NULL;
@@ -255,7 +258,8 @@ struct aim_conn_t *aim_select(struct aim_session_t *sess,
   faim_mutex_lock(&sess->connlistlock);
   if (sess->connlist == NULL) {
     faim_mutex_unlock(&sess->connlistlock);
-    return 0;
+    *status = -1;
+    return NULL;
   }
   faim_mutex_unlock(&sess->connlistlock);
 

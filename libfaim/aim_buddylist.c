@@ -17,7 +17,7 @@ u_long aim_add_buddy(struct aim_session_t *sess,
    if(!sn)
      return -1;
 
-   if (!(newpacket = aim_tx_new(0x0002, conn, 10+1+strlen(sn))))
+   if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+1+strlen(sn))))
      return -1;
 
    newpacket->lock = 1;
@@ -55,7 +55,7 @@ u_long aim_remove_buddy(struct aim_session_t *sess,
    if(!sn)
      return -1;
 
-   if (!(newpacket = aim_tx_new(0x0002, conn, 10+1+strlen(sn))))
+   if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+1+strlen(sn))))
      return -1;
 
    newpacket->lock = 1;

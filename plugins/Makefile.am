@@ -9,7 +9,7 @@ endif
 LDFLAGS += -ggdb $(GTK_LIBS) -shared
 SUFFIXES = .c .so
 .c.so:
-	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -fPIC -DPIC -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -fPIC -DPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
 
 
 
