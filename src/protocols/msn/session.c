@@ -331,7 +331,8 @@ get_login_step_text(MsnSession *session)
 	const char *steps_text[] = {
 		_("Connecting"),
 		_("Handshaking"),
-		_("Transfering"),
+		_("Transferring"),
+		_("Handshaking"),
 		_("Starting authentication"),
 		_("Getting cookie"),
 		_("Authenticating"),

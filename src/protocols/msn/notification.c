@@ -112,7 +112,13 @@ connect_cb(MsnServConn *servconn)
 	vers = g_strjoinv(" ", a);
 
 	if (!session->logged_in)
-		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
+	{
+		if (session->login_step == MSN_LOGIN_STEP_START)
+			msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
+		else
+			msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE2);
+	}
+
 	msn_cmdproc_send(cmdproc, "VER", "%s", vers);
 
 	g_strfreev(a);
