@@ -410,7 +410,16 @@ SectionEnd ; end of default Gaim section
 
 SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
   Section $(GTK_NOTHEME_SECTION_TITLE) SecGtkNone
-    ; Do nothing..
+    Call CanWeInstallATheme
+    Pop $R1
+    StrCmp $R1 "" done
+
+    SetOverwrite on
+    Rename $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
+    CopyFiles $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.plain $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc
+    SetOverwrite off
+
+    done:
   SectionEnd
 
   Section $(GTK_WIMP_SECTION_TITLE) SecGtkWimp
