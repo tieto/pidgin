@@ -476,7 +476,7 @@ static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
  *
  * XXX convert this to use tlvchains 
  */
-faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const char *msg, int msglen)
+faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const char *msg, int msglen, char *charset)
 {   
 	int i;
 	aim_frame_t *fr;
@@ -534,6 +534,11 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 	 */
 	aim_tlvlist_add_raw(&itl, 0x0001, msglen, msg);
 
+        /*
+         * SubTLV: Type 2: Encoding
+         */
+        aim_tlvlist_add_raw(&itl, 0x0002, strlen(charset), charset);
+
 	/*
 	 * Type 5: Message block.  Contains more TLVs.
 	 *
@@ -587,6 +592,8 @@ static int incomingmsg(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	fu16_t channel;
 	aim_tlvlist_t *otl;
 	char *msg = NULL;
+	int len;
+	char *charset = NULL;
 	aim_msgcookie_t *ck;
 
 	memset(&userinfo, 0, sizeof(aim_userinfo_t));
@@ -657,14 +664,22 @@ static int incomingmsg(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		/* 
 		 * Type 0x0001: Message.
 		 */	
-		if (aim_tlv_gettlv(itl, 0x0001, 1))
+		if (aim_tlv_gettlv(itl, 0x0001, 1)) {
 			msg = aim_tlv_getstr(itl, 0x0001, 1);
+			len = aim_tlv_gettlv(itl, 0x0001, 1)->length;
+		}
+
+		/* 
+		 * Type 0x0002: Charset.
+		 */	
+		if (aim_tlv_gettlv(itl, 0x0002, 1))
+			charset = aim_tlv_getstr(itl, 0x0002, 1);
 
 		aim_tlvlist_free(&itl); 
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo, msg);
+		ret = userfunc(sess, rx, &userinfo, len, msg, charset);
 
 	aim_info_free(&userinfo);
 	free(cookie);

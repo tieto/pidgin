@@ -454,6 +454,22 @@ static struct chat_connection *find_oscar_chat_by_conn(GaimConnection *gc,
 	return c;
 }
 
+static struct chat_connection *find_oscar_chat_by_conv(GaimConnection *gc,
+							GaimConversation *conv) {
+	GSList *g = ((OscarData *)gc->proto_data)->oscar_chats;
+	struct chat_connection *c = NULL;
+
+	while (g) {
+		c = (struct chat_connection *)g->data;
+		if (c->cnv == conv)
+			break;
+		g = g->next;
+		c = NULL;
+	}
+
+	return c;
+}
+
 static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
@@ -3398,15 +3414,39 @@ static int gaim_conv_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...
 	GaimConnection *gc = sess->aux_data;
 	va_list ap;
 	aim_userinfo_t *info;
+	GError *err = NULL;
 	char *msg;
+	char *tmp;
+	int len;
+	char *charset;
+	int convlen;
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, fr->conn);
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
+	len = va_arg(ap, int);
 	msg = va_arg(ap, char *);
+	charset = va_arg(ap, char *);
 	va_end(ap);
 
-	serv_got_chat_in(gc, ccon->id, info->sn, 0, msg, time((time_t)NULL));
+	if (charset) {
+	  if (strcmp(charset, "unicode-2-0") == 0)
+	    charset = "UCS-2BE";
+	} else {
+	  charset = "iso-8859-1";
+	}
+
+	tmp = g_convert(msg, len, "UTF-8", charset, NULL, &convlen, &err);
+	
+	if (err) {
+	  gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		     "Unicode Chat conversion: %s\n", err->message);
+	  tmp = g_strdup(_("(There was an error receiving this message)"));
+	  g_error_free(err);
+	}
+
+	serv_got_chat_in(gc, ccon->id, info->sn, 0, tmp, time((time_t)NULL));
+	g_free(tmp);
 
 	return 1;
 }
@@ -4860,18 +4900,25 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimBuddy *b;
 	struct aim_ssi_item *curitem;
 	int tmp;
-	/* XXX - use these?
 	va_list ap;
+	fu16_t fmtver, numitems;
+	struct aim_ssi_item *items;
+	fu32_t timestamp;
 
 	va_start(ap, fr);
 	fmtver = (fu16_t)va_arg(ap, int);
 	numitems = (fu16_t)va_arg(ap, int);
-	items = va_arg(ap, struct aim_ssi_item);
+	items = va_arg(ap, struct aim_ssi_item *);
 	timestamp = va_arg(ap, fu32_t);
-	va_end(ap); */
+	va_end(ap);
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "ssi: syncing local list and server list\n");
+
+	if ((timestamp == 0) || (numitems == 0)) {
+		gaim_notify_error(gc, NULL, "Got AIM SSI with a 0 timestamp or 0 numitems, not syncing, tell KingAnt!  And tell him if your buddy list actually works or not.  Thanks!  Oh, IM him at markdoliner on AIM/ICQ.", NULL);
+		return 1;
+	}
 
 	/* Clean the buddy list */
 	aim_ssi_cleanlist(sess);
@@ -5329,59 +5376,76 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 	serv_got_chat_left(g, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
 }
 
-static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
-	OscarData *od = (OscarData *)g->proto_data;
-	GSList *bcs = g->buddy_chats;
-	GaimConversation *b = NULL;
+static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
+	OscarData *od = (OscarData *)gc->proto_data;
+	GError *err = NULL;
+	GaimConversation *conv = NULL;
 	struct chat_connection *c = NULL;
 	char *buf, *buf2;
-	guint i, j;
+	char *charset = NULL;
+	int encoding;
+	int len;
 
-	while (bcs) {
-		b = (GaimConversation *)bcs->data;
-		if (id == gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)))
-			break;
-		bcs = bcs->next;
-		b = NULL;
-	}
-	if (!b)
+	if (!(conv = gaim_find_chat(gc, id)))
 		return -EINVAL;
 
-	bcs = od->oscar_chats;
-	while (bcs) {
-		c = (struct chat_connection *)bcs->data;
-		if (b == c->cnv)
-			break;
-		bcs = bcs->next;
-		c = NULL;
-	}
-	if (!c)
+	if (!(c = find_oscar_chat_by_conv(gc, conv)))
 		return -EINVAL;
 
-	buf = g_malloc(strlen(message) * 4 + 1);
-	for (i = 0, j = 0; i < strlen(message); i++) {
-		if (message[i] == '\n') {
-			buf[j++] = '<';
-			buf[j++] = 'B';
-			buf[j++] = 'R';
-			buf[j++] = '>';
-		} else {
-			buf[j++] = message[i];
+	buf = gaim_strdup_withhtml(message);
+	len = strlen(buf);
+
+	encoding = oscar_encoding_check(buf);
+	if (encoding == AIM_IMFLAGS_UNICODE) {
+		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending Unicode Chat\n");
+		charset = "unicode-2-0";
+		buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
+		if (err) {
+			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					   "Error converting a unicode message: %s\n",
+					   err->message);
+			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					   "This really shouldn't happen!\n");
+			/* We really shouldn't try to send the
+			* IM now, but I'm not sure what to do */
+	    g_error_free(err);
+	  }
+	} else if (encoding & AIM_IMFLAGS_ISO_8859_1) {
+		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+				   "Sending ISO-8859-1 Chat\n");
+		charset = "iso-8859-1";
+		buf2 = g_convert(buf, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
+		if (err) {
+			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					   "conversion error: %s\n", err->message);
+			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					   "Someone tell Ethan his 8859-1 detection is wrong\n");
+			g_error_free(err);
+			encoding = AIM_IMFLAGS_UNICODE;
+			buf2 = g_convert(buf, len, "UCS-2BE", "UTF8", NULL, &len, &err);
+			if (err) {
+				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+						   "Error in unicode fallback: %s\n", err->message);
+				g_error_free(err);
+			}
 		}
+	} else {
+	  charset = "us-ascii";
+	  buf2 = g_strdup(buf);
 	}
-	buf[j] = '\0';
 
-	if (strlen(buf) > c->maxlen)
+	if (len > c->maxlen)
 		return -E2BIG;
 
-	buf2 = gaim_markup_strip_html(buf);
-	if (strlen(buf2) > c->maxvis) {
-		g_free(buf2);
-		return -E2BIG;
-	}
+	g_free(buf);
+	buf = gaim_markup_strip_html(buf2);
 	g_free(buf2);
+	if (strlen(buf) > c->maxvis) {
+		g_free(buf);
+		return -E2BIG;
+	}
 
-	aim_chat_send_im(od->sess, c->conn, 0, buf, strlen(buf));
+	aim_chat_send_im(od->sess, c->conn, 0, buf, len, charset);
 	g_free(buf);
 	return 0;
 }
@@ -6682,7 +6746,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_chat_invite,
 	oscar_chat_leave,
 	NULL,
-	oscar_chat_send,
+	oscar_send_chat,
 	oscar_keepalive,
 	NULL,
 	NULL,
