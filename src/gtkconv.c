@@ -3965,13 +3965,13 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 
 	if (flags & WFLAG_SYSTEM) {
 		if (convo_options & OPT_CONVO_SHOW_TIME)
-			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>",
+			g_snprintf(buf, BUF_LONG, "(%s) <B>%s</B>",
 					   mdate, message);
 		else
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", message);
 
 		g_snprintf(buf2, sizeof(buf2),
-				   "<FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B><BR>",
+				   "<!--(%s) --><B>%s</B><BR>",
 				   mdate, message);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, -1, 0);
@@ -4090,7 +4090,7 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 
 		if (convo_options & OPT_CONVO_SHOW_TIME)
 			g_snprintf(buf, BUF_LONG,
-					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\">(%s) </FONT>"
+					   "<FONT COLOR=\"%s\" %s>(%s) "
 					   "<B>%s</B></FONT> ", color,
 					   sml_attrib ? sml_attrib : "", mdate, str);
 		else
@@ -4099,7 +4099,7 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 					   sml_attrib ? sml_attrib : "", str);
 
 		g_snprintf(buf2, BUF_LONG,
-				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+				   "<FONT COLOR=\"%s\" %s><!--(%s) -->"
 				   "<B>%s</B></FONT> ",
 				   color, sml_attrib ? sml_attrib : "", mdate, str);
 
