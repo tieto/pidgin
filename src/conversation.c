@@ -1440,8 +1440,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	    (!c->is_chat && (general_options & OPT_GEN_POPUP_WINDOWS)))
 		    gdk_window_show(c->window->window);
 
-	if ((flags & WFLAG_RECV) && !c->is_chat && (display_options & OPT_DISP_ONE_WINDOW) &&
-			(gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook))
+	if (((flags & WFLAG_RECV) || (flags & WFLAG_SYSTEM)) && !c->is_chat &&
+	    (display_options & OPT_DISP_ONE_WINDOW) &&
+	    (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook))
 			 != g_list_index(conversations, c))) {
 		GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
 				gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
@@ -1921,6 +1922,7 @@ void show_conv(struct conversation *c)
 
 			convo_notebook = gtk_notebook_new();
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(convo_notebook), TRUE);
+			gtk_notebook_popup_enable(GTK_NOTEBOOK(convo_notebook));
 			gtk_container_add(GTK_CONTAINER(win), convo_notebook);
 			gtk_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
 					   GTK_SIGNAL_FUNC(convo_switch), NULL);
