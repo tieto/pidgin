@@ -722,7 +722,7 @@ status_has_changed(GaimStatus *status)
 	if (gaim_status_is_exclusive(status))
 	{
 		old_status = gaim_presence_get_active_status(presence);
-		if (old_status != NULL)
+		if (old_status != NULL && (old_status != status))
 			old_status->active = FALSE;
 		presence->active_status = status;
 	}

@@ -278,7 +278,7 @@ accounts_to_xmlnode(void)
 	xmlnode *node, *child;
 	GList *cur;
 
-	node = xmlnode_new("accounts");
+	node = xmlnode_new("account");
 	xmlnode_set_attrib(node, "version", "1.0");
 
 	for (cur = gaim_accounts_get_all(); cur != NULL; cur = cur->next)
@@ -298,7 +298,7 @@ sync_accounts(void)
 
 	if (!accounts_loaded)
 	{
-		gaim_debug_error("accounts", "Attempted to save accounts before "
+		gaim_debug_error("account", "Attempted to save accounts before "
 						 "they were read!\n");
 		return;
 	}
@@ -1140,33 +1140,20 @@ gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
 							  gboolean active, va_list args)
 {
 	GaimStatus *status;
-	GaimStatusType *status_type;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(status_id != NULL);
 
+	gaim_debug_info("account", "Changing status for %s, setting %s to %d\n",
+					gaim_account_get_username(account), status_id, active);
+
 	status = gaim_account_get_status(account, status_id);
 	if (status == NULL)
 	{
-		gaim_debug_error("accounts",
+		gaim_debug_error("account",
 				   "Invalid status ID %s for account %s (%s)\n",
 				   status_id, gaim_account_get_username(account),
 				   gaim_account_get_protocol_id(account));
-		return;
-	}
-	status_type = gaim_status_get_type(status);
-
-	/*
-	 * If this account should be disconnected, but is online, then disconnect.
-	 */
-	if (active &&
-		(gaim_status_type_get_primitive(status_type) == GAIM_STATUS_OFFLINE) &&
-		gaim_account_is_connected(account))
-	{
-		account->gc->wants_to_die = TRUE;
-		gaim_account_disconnect(account);
-
-		/* No need to actually set the status, so we just exit */
 		return;
 	}
 
@@ -1175,16 +1162,6 @@ gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
 
 	if (active || gaim_status_is_independent(status))
 		gaim_status_set_active_with_attrs(status, active, args);
-
-	/*
-	 * If this account should be connected, but is not, then connect.
-	 */
-	if (active &&
-		(gaim_status_type_get_primitive(status_type) != GAIM_STATUS_OFFLINE) &&
-		!gaim_account_is_connected(account))
-	{
-		gaim_account_connect(account);
-	}
 }
 
 void
@@ -1759,7 +1736,7 @@ gaim_accounts_reorder(GaimAccount *account, size_t new_index)
 	index = g_list_index(accounts, account);
 
 	if (index == -1) {
-		gaim_debug_error("accounts",
+		gaim_debug_error("account",
 				   "Unregistered account (%s) discovered during reorder!\n",
 				   gaim_account_get_username(account));
 		return;
