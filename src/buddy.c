@@ -433,7 +433,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	return FALSE;
 }
 
-static void gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gpointer null)
+static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gpointer null)
 {
 	GtkTreePath *path;
 
@@ -454,6 +454,7 @@ static void gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gpoi
 	if (path)
 		gtk_tree_path_free(path);
 	gtkblist->timeout = g_timeout_add(500, (GSourceFunc)gaim_gtk_blist_tooltip_timeout, tv);
+	return FALSE;
 }
 
 static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n)
