@@ -1,11 +1,22 @@
 -=[ Gaim ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
 0.52 (02/17/2002):
-	Rob: Well, after a long delay we're finally ready for another release. I
-	finally got settled into my new apartment, the new job is going well, and
-	I finally have internet connectivity again. You can expect us to be back on
-	our usually bi-monthly schedule.  Enjoy these fixen, as they resolve a few
-	connectivity issues. :-)
+	Rob: Well, after a long delay we're finally ready for another release. 
+	I finally got settled into my new apartment, the new job is going 
+	well, and I finally have internet connectivity again. You can expect 
+	us to be back on our usually bi-monthly schedule.  Enjoy these fixen, 
+	as they resolve a few connectivity issues. :-)
+
+	Sean: It looks like things are back on track now.  Eric left which is 
+	sad.  He's done so much for Gaim, and I know we're all thankful.  
+	Thanks Eric!  I'll be stepping in and do more development, but I can 
+	never replace Eric.  This release fixes a long-standing problem in 
+	MSN.  If you've gotten errors when trying to connect to MSN, you want 
+	this release.  If you've suddenly found yourself unable to connect to 
+	Yahoo!, you want this release too.  The "neat goodies" will be in the 
+	next release ;)
+
+	Rob: Project Evil does not exist! ;-)
 
 
 0.51 (01/24/2002):
