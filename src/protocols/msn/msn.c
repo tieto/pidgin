@@ -272,7 +272,7 @@ msn_list_emblems(struct buddy *b, char **se, char **sw,
 	if (user == NULL) {
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
 				   "buddy %s does not have a MsnUser attached!\n",
-				   buddy->name);
+				   b->name);
 	}
 	else if (user->mobile)
 		emblems[i++] = "wireless";
