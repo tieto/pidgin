@@ -2803,6 +2803,10 @@ gaim_blist_init(void)
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_BLIST_BUDDY));
+	gaim_signal_register(handle, "buddy-idle-updated",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(handle, "buddy-signed-on",
 						 gaim_marshal_VOID__POINTER, NULL, 1,

@@ -1209,6 +1209,10 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	{
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
 	}
+	else if (old_idle != idle)
+	{
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated", b);
+	}
 
 	if (c != NULL)
 		gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);

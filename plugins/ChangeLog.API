@@ -21,6 +21,7 @@ version 0.78 (05/28/2004):
     * Added: "gtkblist-created"
     * Added: "receiving-im-msg" and "receiving-chat-msg" (these behave
               exactly like received-*-msg used to)
+    * Added: "buddy-idle-updated" signal, for when the idle time changes.
     * Changed: "received-im-msg" and "received-chat-msg" no longer pass
                pointers to who, message and flags, and are now void.
     * Removed: "drawing-menu" - it was UI sepecific and
