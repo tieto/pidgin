@@ -847,6 +847,7 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 {
 	struct buddy *b;
 	struct group *g;
+	struct group_show *gs = find_group_show(group);
 
 	if ((b = find_buddy(gc, buddy)) != NULL)
                 return b;
@@ -870,6 +871,8 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 
         b->idle = 0;
 	b->caps = 0;
+
+	if (gs) update_num_group(gs);
 			
 	return b;
 }
@@ -889,6 +892,8 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 
 	g->members = NULL;
 	
+	if (!blist) return;
+
 	build_edit_tree();
 	
 	if (!(display_options & OPT_DISP_NO_MT_GRP) && !find_group_show(group))
@@ -1725,6 +1730,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				gtk_timeout_remove(bs->log_timer);
 			if (!g_slist_find(bs->connlist, gc))
 				bs->connlist = g_slist_append(bs->connlist, gc);
+			else
+				debug_printf("already got signon for %s from %s\n", b->name, gc->username);
 			update_num_group(gs);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
 			if (display_options & OPT_DISP_SHOW_LOGON) {

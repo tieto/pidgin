@@ -477,8 +477,6 @@ extern GSList *away_messages;
 extern GList *conversations;
 extern GList *chat_rooms;
 extern GtkWidget *mainwindow;
-extern char *quad_addr;
-extern char toc_addy[16];
 
 /* Globals in away.c */
 extern struct away_message *awaymessage;
@@ -572,8 +570,6 @@ extern int web_browser;
 extern GList *aim_users;
 extern char web_command[2048];
 extern char debug_buff[BUF_LONG];
-extern char aim_host[512];
-extern int aim_port;
 extern struct save_pos blist_pos;
 extern char latest_ver[25];
 
@@ -595,7 +591,6 @@ extern void update_im_button_pix();
 extern void update_idle_times();
 
 /* Functions in html.c */
-extern char *fix_url(char *);
 extern struct g_url parse_url(char *);
 extern char *grab_url(struct aim_user *, char *);
 extern gchar *strip_html(gchar *);

@@ -70,10 +70,6 @@ GtkWidget *mainwindow = NULL;
 
 void BuddyTickerCreateWindow( void );
 
-char toc_addy[16];
-char *quad_addr = NULL;
-
-
 void cancel_logon(void)
 {
 #ifdef USE_APPLET

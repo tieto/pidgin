@@ -210,21 +210,3 @@ char *grab_url(struct aim_user *user, char *url)
 	close(sock);
 	return webdata;
 }
-
-char *fix_url(gchar *buf)
-{
-	char *new,*tmp;
-	int size;
-
-	size=8;
-	size+=strlen(quad_addr);
-	tmp=strchr(strchr(buf,':')+1,':');
-	size+=strlen(tmp);
-	new=g_malloc(size);
-	strcpy(new,"http://");
-	strcat(new,quad_addr);
-	strcat(new,tmp);
-	return(new);
-}
-
-

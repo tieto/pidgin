@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1097 $"
+#define REVISION "gaim:$Revision: 1098 $"
 
 struct toc_data {
 	int toc_fd;
@@ -84,7 +84,8 @@ void toc_login(struct aim_user *user)
 	gc = new_gaim_conn(PROTO_TOC, user->username, user->password);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
 	
-	g_snprintf(buf, sizeof(buf), "Looking up %s", aim_host);	
+	g_snprintf(buf, sizeof(buf), "Looking up %s", 
+		user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST);
 	set_login_progress(gc, 1, buf);
 	while (gtk_events_pending())
 		gtk_main_iteration();
@@ -452,7 +453,7 @@ void toc_callback( gpointer          data,
 		url = strtok(NULL, ":");
 
 
-		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", toc_addy, aim_port, url);
+		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", TOC_HOST, TOC_PORT, url);
 		g_show_info(gc->user, tmp);
         } else if (!strcasecmp(c, "EVILED")) {
                 int lev;

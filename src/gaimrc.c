@@ -46,8 +46,6 @@ int font_options;
 int report_idle, web_browser;
 struct save_pos blist_pos;
 char web_command[2048];
-char aim_host[512];
-int aim_port;
 char latest_ver[25];
 char *sound_file[NUM_SOUNDS];
 
