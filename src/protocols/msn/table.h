@@ -41,6 +41,7 @@ struct _MsnTable
 	GHashTable *errors;
 
 	GHashTable *async;
+	GHashTable *fallback;
 };
 
 MsnTable *msn_table_new();

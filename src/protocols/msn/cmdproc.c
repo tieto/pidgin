@@ -288,6 +288,9 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			cb = g_hash_table_lookup(trans->callbacks, cmd->command);
 	}
 
+	if (cb == NULL && cmdproc->cbs_table->fallback != NULL)
+		cb = g_hash_table_lookup(cmdproc->cbs_table->fallback, cmd->command);
+
 	if (cb != NULL)
 	{
 		cb(cmdproc, cmd);
