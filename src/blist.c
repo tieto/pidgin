@@ -170,7 +170,6 @@ static gboolean presence_update_timeout_cb(struct buddy *buddy) {
 
 	if(buddy->present == GAIM_BUDDY_SIGNING_ON) {
 		buddy->present = GAIM_BUDDY_ONLINE;
-		gaim_event_broadcast(event_buddy_signon, buddy->account->gc, buddy->name);
 	} else if(buddy->present == GAIM_BUDDY_SIGNING_OFF) {
 		buddy->present = GAIM_BUDDY_OFFLINE;
 	}

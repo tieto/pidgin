@@ -1,12 +1,6 @@
 /*
  * A lot of this code (especially the config code) was taken directly
  * or nearly directly from xchat, version 1.4.2 by Peter Zelezny and others.
- *
- * TODO:
- *	? I think i did everything i want to with it.
- *
- * BUGS:
- *	? I think i fixed them all.
  */
 #include "internal.h"
 
@@ -225,9 +219,7 @@ static GtkWidget *good_entry;
 static void save_list();
 
 static void on_edited(GtkCellRendererText *cellrenderertext,
-	gchar *path,
-	gchar *arg2,
-	gpointer data)
+					  gchar *path, gchar *arg2, gpointer data)
 {
 	GtkTreeIter iter;
 	GValue val;
@@ -241,7 +233,6 @@ static void on_edited(GtkCellRendererText *cellrenderertext,
 	if(strcmp(arg2, g_value_get_string(&val))) {
 		gtk_list_store_set(model, &iter, GPOINTER_TO_INT(data), arg2, -1);
 		save_list();
-		printf("Editado! %s, %s\n", path, arg2);
 	}
 	g_value_unset(&val);
 }
