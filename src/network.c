@@ -149,7 +149,7 @@ gaim_network_get_my_ip(int fd)
 static int
 gaim_network_do_listen(unsigned short port)
 {
-	int listenfd;
+	int listenfd = -1;
 	const int on = 1;
 #if HAVE_GETADDRINFO
 	int errnum;
