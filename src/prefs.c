@@ -1101,6 +1101,11 @@ static void event_page()
 
 	gaim_button(_("Sound when buddy logs in"), &sound_options, OPT_SOUND_LOGIN, box);
 	gaim_button(_("Sound when buddy logs out"), &sound_options, OPT_SOUND_LOGOUT, box);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
 	gaim_button(_("Sound when message is received"), &sound_options, OPT_SOUND_RECV, box);
 	gaim_button(_("Sound when message is first received"), &sound_options, OPT_SOUND_FIRST_RCV, box);
 	gaim_button(_("Sound when message is sent"), &sound_options, OPT_SOUND_SEND, box);
