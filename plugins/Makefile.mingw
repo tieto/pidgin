@@ -18,6 +18,7 @@ TRANSPARENCY :=		./win32/transparency
 WINPREFS :=		./win32/winprefs
 PERL_PLUGIN_LOADER :=	./perl
 DOCKLET :=		./docklet
+SSL :=			./ssl
 
 ##
 ## VARIABLE DEFINITIONS
@@ -90,6 +91,7 @@ all: plugins
 	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
 	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw
 	$(MAKE) -C $(DOCKLET) -f Makefile.mingw
+	$(MAKE) -C $(SSL) -f Makefile.mingw
 
 install:
 	cp $(GAIM_PLUGINS)/*.dll $(GAIM_INSTALL_DIR)/plugins
@@ -98,6 +100,7 @@ install:
 	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
 	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw install
 	$(MAKE) -C $(DOCKLET) -f Makefile.mingw install
+	$(MAKE) -C $(SSL) -f Makefile.mingw install
 
 #
 # BUILD Plugin
@@ -129,3 +132,4 @@ clean:
 	$(MAKE) -C $(WINPREFS) -f Makefile.mingw clean
 	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw clean
 	$(MAKE) -C $(DOCKLET) -f Makefile.mingw clean
+	$(MAKE) -C $(SSL) -f Makefile.mingw clean

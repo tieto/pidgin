@@ -22,6 +22,14 @@ NSPR_DIR :=             ../../../win32-dev/nspr-4.3
 TARGET = ssl
 TARGET_NSS = ssl-nss
 
+NEEDED_DLLS =		$(NSS_DIR)/lib/nss3.dll \
+			$(NSS_DIR)/lib/nssckbi.dll \
+			$(NSS_DIR)/lib/softokn3.dll \
+			$(NSS_DIR)/lib/ssl3.dll \
+			$(NSPR_DIR)/lib/nspr4.dll \
+			$(NSPR_DIR)/lib/plc4.dll \
+			$(NSPR_DIR)/lib/plds4.dll
+
 # Compiler Options
 
 CFLAGS =
@@ -108,7 +116,7 @@ all: $(TARGET).dll $(TARGET_NSS).dll
 install:
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 	cp $(TARGET_NSS).dll $(DLL_INSTALL_DIR)
-
+	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
 ##
 ## BUILD Dependencies
@@ -123,6 +131,7 @@ $(GAIM_TOP)/src/gaim.lib:
 
 $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
+
 $(TARGET_NSS).dll: $(OBJECTS_NSS) $(GAIM_TOP)/src/gaim.lib
 	$(CC) -shared $(OBJECTS_NSS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET_NSS).dll
 
