@@ -777,8 +777,8 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 		return "Stepped Out";
 	case YAHOO_STATUS_INVISIBLE:
 		return "Invisible";
-    default:
-        return "Online";
+	default:
+		return "Online";
 	}
 }
 
