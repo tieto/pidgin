@@ -82,6 +82,8 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 
 static void preinsert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
+static void insert_ca_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextChildAnchor *arg2, gpointer user_data);
+static void gtk_imhtml_apply_tags_on_insert(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
 static gboolean gtk_imhtml_is_amp_escape (const gchar *string, gchar **replace, gint *length);
 void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter);
 static void gtk_imhtml_link_drop_cb(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, gpointer user_data);
@@ -1075,6 +1077,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "button_press_event", G_CALLBACK(gtk_imhtml_button_press_event), NULL);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(preinsert_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(insert_cb), imhtml);
+	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-child-anchor", G_CALLBACK(insert_ca_cb), imhtml);
 	gtk_drag_dest_set(GTK_WIDGET(imhtml), 0,
 			  link_drag_drop_targets, sizeof(link_drag_drop_targets) / sizeof(GtkTargetEntry),
 			  GDK_ACTION_COPY);
@@ -3249,6 +3252,16 @@ static void preinsert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, 
 	imhtml->insert_offset = gtk_text_iter_get_offset(iter);
 }
 
+static void insert_ca_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextChildAnchor *arg2, gpointer user_data)
+{
+	GtkTextIter start;
+
+	start = *arg1;
+	gtk_text_iter_backward_char(&start);
+
+	gtk_imhtml_apply_tags_on_insert(user_data, &start, arg1);
+}
+
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *end, gchar *text, gint len, GtkIMHtml *imhtml)
 {
 	GtkTextIter start;
@@ -3259,61 +3272,65 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *end, gchar *text, gint
 	start = *end;
 	gtk_text_iter_set_offset(&start, imhtml->insert_offset);
 
+	gtk_imhtml_apply_tags_on_insert(imhtml, &start, end);
+}
+
+static void gtk_imhtml_apply_tags_on_insert(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end)
+{
 	if (imhtml->edit.bold)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, end);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", start, end);
 	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, end);
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", start, end);
 
 	if (imhtml->edit.italic)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, end);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", start, end);
 	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, end);
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", start, end);
 
 	if (imhtml->edit.underline)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, end);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", start, end);
 	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, end);
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", start, end);
 
 	if (imhtml->edit.strike)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, end);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", start, end);
 	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, end);
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", start, end);
 
 	if (imhtml->edit.forecolor) {
-		remove_font_forecolor(imhtml, &start, end, TRUE);
+		remove_font_forecolor(imhtml, start, end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                          find_font_forecolor_tag(imhtml, imhtml->edit.forecolor),
-		                          &start, end);
+		                          start, end);
 	}
 
 	if (imhtml->edit.backcolor) {
-		remove_font_backcolor(imhtml, &start, end, TRUE);
+		remove_font_backcolor(imhtml, start, end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                          find_font_backcolor_tag(imhtml, imhtml->edit.backcolor),
-		                          &start, end);
+		                          start, end);
 	}
 
 	if (imhtml->edit.fontface) {
-		remove_font_face(imhtml, &start, end, TRUE);
+		remove_font_face(imhtml, start, end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                          find_font_face_tag(imhtml, imhtml->edit.fontface),
-		                          &start, end);
+		                          start, end);
 	}
 
 	if (imhtml->edit.fontsize) {
-		remove_font_size(imhtml, &start, end, TRUE);
+		remove_font_size(imhtml, start, end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                          find_font_size_tag(imhtml, imhtml->edit.fontsize),
-		                          &start, end);
+		                          start, end);
 	}
 
 	if (imhtml->edit.link) {
-		remove_font_link(imhtml, &start, end, TRUE);
+		remove_font_link(imhtml, start, end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                          imhtml->edit.link,
-		                          &start, end);
+		                          start, end);
 	}
-
 }
 
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable)
