@@ -3,28 +3,19 @@ EXTRA_DIST =	about_menu.png \
 		accounts.png \
 		accounts-menu.png \
 		add.xpm				\
-		angel.png			\
 		arrow_down.xpm			\
 		arrow_right.xpm			\
 		away.png			\
 		away_big.xpm			\
-		bigsmile.png			\
 		block.xpm			\
 		broken.xpm			\
-		burp.png			\
 		cancel.xpm			\
 		change-bgcolor-small.png \
 		change-fgcolor-small.png \
 		close.xpm			\
-		cool.png			\
 		connect.png			\
-		crazy.png			\
-		crossedlips.png 		\
-		cry.png				\
 		download.png			\
 		edit.png			\
-		embarrassed.png			\
-		farted.png			\
 		fontface2.xpm			\
 		gaim.png			\
 		gaim_cool.png			\
@@ -41,29 +32,21 @@ EXTRA_DIST =	about_menu.png \
 		insert-link-small.png \
 		insert-smiley-small.png \
 		join.xpm			\
-		kiss.png			\
 		login_icon.xpm			\
 		logo.png		\
 		logo.xpm			\
 		logout_icon.xpm			\
-		luke.png			\
-		moneymouth.png			\
-		mrt.png				\
 		msgpend.png			\
 		msgunread.png			\
 		no_icon.xpm			\
 		offline.png			\
 		ok.xpm				\
-		oneeye.png			\
 		online.png			\
 		panic.xpm			\
 		preferences.png	\
 		refresh.xpm			\
-		sad.png				\
 		save.xpm			\
-		scream.png			\
 		signon.png \
-		smile.png			\
 		status-away.xpm			\
 		status-game.xpm			\
 		status-here.xpm			\
@@ -76,12 +59,8 @@ EXTRA_DIST =	about_menu.png \
 		text_bigger.png			\
 		text_normal.png	\
 		text_smaller.png		\
-		think.png			\
 		tmp_send.xpm			\
-		tongue.png			\
-		warn.xpm			\
-		wink.png			\
-		yell.png			
+		warn.xpm			
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
