@@ -790,7 +790,6 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	ca->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), ca->entry, TRUE, TRUE, 0);
 	gaim_set_accessible_label (ca->entry, label);
-	gtk_widget_grab_focus(ca->entry);
 
 	/* Toolbar */
 	ca->toolbar = gtk_imhtmltoolbar_new();
@@ -856,6 +855,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ca->window);
+	gtk_widget_grab_focus(ca->text);
 }
 
 static void
