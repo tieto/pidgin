@@ -189,7 +189,7 @@ gaim_global_proxy_get_info(void)
 typedef void (*dns_callback_t)(GSList *hosts, gpointer data,
 		const char *error_message);
 
-#if 0
+#ifdef __unix__ 
 
 /*  This structure represents both a pending DNS request and
  *  a free child process.
@@ -634,7 +634,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 	return 0;
 }
 
-#elif defined G_THREADS_ENABLED
+#elif defined _WIN32 /* end __unix__ */
 
 typedef struct _dns_tdata {
 	char *hostname;
@@ -746,7 +746,7 @@ int gaim_gethostbyname_async(const char *hostname, int port,
 	return 0;
 }
 
-#else /* not G_THREADS_ENABLED */
+#else /* not __unix__ or _WIN32 */
 
 typedef struct {
 	gpointer data;
@@ -1920,8 +1920,10 @@ gaim_proxy_init(void)
 								proxy_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/core/proxy/password",
 								proxy_pref_cb, NULL);
+#ifdef _WIN32
 	if(!g_thread_supported())
 		g_thread_init(NULL);
+#endif
 }
 
 void *

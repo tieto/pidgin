@@ -272,7 +272,7 @@ AM_PATH_GLIB_2_0(2.0.0,,AC_MSG_ERROR([
 AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 *** GTK+ 2.0 is required to build Gaim; please make sure you have the GTK+
 *** development headers installed. The latest version of GTK+ is
-*** always available at http://www.gtk.org/.]), gthread)
+*** always available at http://www.gtk.org/.]))
 
 AC_PATH_PROG(gaimpath, gaim)
 AC_SUBST(GTK_CFLAGS)
