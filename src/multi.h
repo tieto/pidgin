@@ -26,7 +26,7 @@
 
 /* ok. now the fun begins. first we create a connection structure */
 struct gaim_connection {
-	int edittype; /* CUI: this is ui-specific and should be removed */
+	int edittype; /* XXX CUI: this is ui-specific and should be removed */
 
 	/* we need to do either oscar or TOC */
 	/* we make this as an int in case if we want to add more protocols later */
@@ -54,10 +54,9 @@ struct gaim_connection {
 	char username[64];
 	char displayname[128];
 	char password[32];
-	int options; /* same as aim_user options */
 	guint keepalive;
 	/* stuff needed for per-connection idle times */
-	guint idle_timer; /* CUI: we need to figure out what to do about idle reporting */
+	guint idle_timer;
 	time_t login_time;
 	time_t lastsent;
 	int is_idle;

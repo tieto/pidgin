@@ -66,7 +66,7 @@ struct debug_window {
 	GtkWidget *entry;
 };
 
-/* CUI: save_pos and window_size are used by gaimrc.c which is core.
+/* XXX CUI: save_pos and window_size are used by gaimrc.c which is core.
  * Need to figure out options saving. Same goes for several global variables as well. */
 struct save_pos {
         int x;
@@ -89,7 +89,7 @@ struct log_conversation {
         struct log_conversation *next;
 };
 
-/* CUI: away messages aren't really anything more than char* but we need two char*'s
+/* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
  * for the UI so that people can name their away messages when they save them. So these
  * are really a UI function and struct away_message should be removed from the core. */
 struct away_message {

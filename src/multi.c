@@ -66,7 +66,6 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 	gc->prpl = find_prpl(user->protocol);
 	g_snprintf(gc->username, sizeof(gc->username), "%s", user->username);
 	g_snprintf(gc->password, sizeof(gc->password), "%s", user->password);
-	gc->options = user->options;
 	gc->keepalive = 0;
 	gc->inpa = 0;
 	gc->buddy_chats = NULL;

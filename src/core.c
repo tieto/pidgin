@@ -67,7 +67,7 @@ void UI_broadcast(guchar *data, gint len)
 	}
 }
 
-static gint gaim_recv(GIOChannel *source, guchar *buf, gint len)
+static gint gaim_recv(GIOChannel *source, void *buf, gint len)
 {
 	gint total = 0;
 	gint cur;
@@ -87,25 +87,14 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 {
 	struct UI *ui = data;
 
-	guchar buf[2] = {0, 0};
+	guchar type;
+	guchar subtype;
 	guint32 len;
 
 	guchar *in;
 
-	gushort type;
-
-	/* buf[0] is to specify gaim, buf[1] is for protocol version */
-	if ((gaim_recv(source, buf, 2) != 2) || (buf[0] != 102) || (buf[1] != 1)) { 
-		debug_printf("UI has abandoned us! (%d %d)\n", buf[0], buf[1]);
-		uis = g_slist_remove(uis, ui);
-		g_io_channel_close(ui->channel);
-		g_source_remove(ui->inpa);
-		g_free(ui);
-		return FALSE;
-	}
-
 	/* no byte order worries! this'll change if we go to TCP */
-	if (gaim_recv(source, (guchar *)&len, sizeof(len)) != sizeof(len)) {
+	if (gaim_recv(source, &type, sizeof(type)) != sizeof(type)) {
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_close(ui->channel);
@@ -114,10 +103,34 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		return FALSE;
 	}
 
-	in = g_new0(guchar, len + 1);
-	gaim_recv(source, in, len);
+	if (gaim_recv(source, &subtype, sizeof(subtype)) != sizeof(subtype)) {
+		debug_printf("UI has abandoned us!\n");
+		uis = g_slist_remove(uis, ui);
+		g_io_channel_close(ui->channel);
+		g_source_remove(ui->inpa);
+		g_free(ui);
+		return FALSE;
+	}
 
-	memcpy(&type, in, sizeof(type));
+	if (gaim_recv(source, &len, sizeof(len)) != sizeof(len)) {
+		debug_printf("UI has abandoned us!\n");
+		uis = g_slist_remove(uis, ui);
+		g_io_channel_close(ui->channel);
+		g_source_remove(ui->inpa);
+		g_free(ui);
+		return FALSE;
+	}
+
+	in = g_new0(guchar, len);
+	if (gaim_recv(source, in, len) != len) {
+		debug_printf("UI has abandoned us!\n");
+		uis = g_slist_remove(uis, ui);
+		g_io_channel_close(ui->channel);
+		g_source_remove(ui->inpa);
+		g_free(ui);
+		return FALSE;
+	}
+
 	switch (type) {
 			/*
 		case CUI_TYPE_META:

@@ -94,7 +94,7 @@ extern GList *callbacks;
 #endif
 
 struct buddy {
-	int edittype; /* CUI: this is really a GUI function and we need to put this in ui.h */
+	int edittype; /* XXX CUI: this is really a GUI function and we need to put this in ui.h */
 	char name[80];
 	char show[80];
         int present;
@@ -108,7 +108,7 @@ struct buddy {
 };
 
 struct group {
-	int edittype; /* CUI: this is really a GUI function and we need to put this in ui.h */
+	int edittype; /* XXX CUI: this is really a GUI function and we need to put this in ui.h */
 	char name[80];
 	GSList *members;
 	struct gaim_connection *gc; /* the connection it belongs to */

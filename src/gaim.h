@@ -28,9 +28,58 @@
 
 #include "core.h"
 #include "ui.h"
-/* CUI: when this is done being split, the only things below should be things
+/* XXX CUI: when this is done being split, the only things below should be things
  * both the core and the uis depend on e.g. the protocol definitions, etc, and
  * it won't include core.h or ui.h (i.e. it'll mostly be #define's) */
+
+/* this is the basis of the CUI protocol. */
+#define CUI_TYPE_META		1
+#define CUI_TYPE_PLUGIN		2
+#define CUI_TYPE_USER		3
+#define CUI_TYPE_CONN		4
+#define CUI_TYPE_BUDDY		5	/* BUDDY_LIST, i.e., both groups and buddies */
+#define CUI_TYPE_MESSAGE	6
+#define CUI_TYPE_CHAT		7
+
+#define CUI_META_LIST		1	/* 1 is always list; this is ignored by the core.
+					   If we move to TCP this can be a keepalive */
+#define CUI_META_QUIT		2
+#define CUI_META_DETACH		3	/* you don't need to send this, you can just close
+					   the socket. the core will understand. */
+
+#define CUI_PLUGIN_LIST		1
+#define CUI_PLUGIN_LOAD		2
+#define CUI_PLUGIN_UNLOAD	3
+#define CUI_PLUGIN_RELOAD	4	/* this is redundant and may be removed */
+
+#define CUI_USER_LIST		1
+#define CUI_USER_ADD		2
+#define CUI_USER_REMOVE		3
+#define CUI_USER_MODIFY		4	/* this handles moving them in the list too */
+
+#define CUI_CONN_LIST		1
+#define CUI_CONN_PROGRESS	2
+#define CUI_CONN_ONLINE		3
+#define CUI_CONN_OFFLINE	4	/* this may send a "reason" for why it was killed */
+
+#define CUI_BUDDY_LIST		1
+#define CUI_BUDDY_STATE		2	/* notifies the UI of state changes; UI can use it to
+					   request the current status from the core */
+#define CUI_BUDDY_ADD		3
+#define CUI_BUDDY_REMOVE	4
+#define CUI_BUDDY_MODIFY	5
+
+#define CUI_MESSAGE_LIST	1	/* no idea */
+#define CUI_MESSAGE_SEND	2
+#define CUI_MESSAGE_RECV	3
+
+#define CUI_CHAT_LIST		1
+#define CUI_CHAT_HISTORY	2	/* is this necessary? should we have one for IMs? */
+#define CUI_CHAT_JOIN		3	/* handles other people joining/parting too */
+#define CUI_CHAT_PART		4
+#define CUI_CHAT_SEND		5
+#define CUI_CHAT_RECV		6
+
 
 
 #define IM_FLAG_AWAY     0x01
