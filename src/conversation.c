@@ -2232,14 +2232,15 @@ ensure_default_funcs(void)
 	}
 }
 
-GList *gaim_conv_placement_get_options(void)
+GList *
+gaim_conv_placement_get_options(void)
 {
 	GList *n, *list = NULL;
 	ConvPlacementData *data;
 
 	ensure_default_funcs();
 
-	for(n = conv_placement_fncs; n; n = n->next) {
+	for (n = conv_placement_fncs; n; n = n->next) {
 		data = n->data;
 		list = g_list_append(list, data->name);
 		list = g_list_append(list, data->id);
@@ -2250,9 +2251,10 @@ GList *gaim_conv_placement_get_options(void)
 
 
 void
-gaim_conv_placement_add_fnc(const char *id, const char *name, GaimConvPlacementFunc fnc)
+gaim_conv_placement_add_fnc(const char *id, const char *name,
+							GaimConvPlacementFunc fnc)
 {
-	g_return_if_fail(id != NULL);
+	g_return_if_fail(id   != NULL);
 	g_return_if_fail(name != NULL);
 	g_return_if_fail(fnc  != NULL);
 
@@ -2266,7 +2268,7 @@ gaim_conv_placement_remove_fnc(const char *id)
 {
 	ConvPlacementData *data = get_conv_placement_data(id);
 
-	if(!data)
+	if (data == NULL)
 		return;
 
 	conv_placement_fncs = g_list_remove(conv_placement_fncs, data);
@@ -2285,7 +2287,7 @@ gaim_conv_placement_get_name(const char *id)
 
 	data = get_conv_placement_data(id);
 
-	if (!data)
+	if (data == NULL)
 		return NULL;
 
 	return data->name;
@@ -2307,12 +2309,12 @@ gaim_conv_placement_get_fnc(const char *id)
 }
 
 static void
-conv_placement_pref_cb(const char *name, GaimPrefType type, gpointer value,
-		gpointer data)
+conv_placement_pref_cb(const char *name, GaimPrefType type,
+					   gpointer value, gpointer data)
 {
 	GaimConvPlacementFunc fnc;
 
-	if(strcmp(name, "/core/conversations/placement"))
+	if (strcmp(name, "/core/conversations/placement"))
 		return;
 
 	ensure_default_funcs();
@@ -2326,8 +2328,8 @@ conv_placement_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-update_titles_pref_cb(const char *name, GaimPrefType type, gpointer value,
-		gpointer data)
+update_titles_pref_cb(const char *name, GaimPrefType type,
+					  gpointer value, gpointer data)
 {
 	/*
 	 * If the use_server_alias option was changed, and use_alias_for_title 
