@@ -832,17 +832,7 @@ void toggle_font(GtkWidget *font, struct conversation *c)
 	else
 		advance_past(c->entry, "<FONT FACE>", "</FONT>");
 }
-/*
-void do_link(GtkWidget *linky, GtkWidget *entry)
-{
-	if (state_lock)
-		return;
-	if (GTK_TOGGLE_BUTTON(linky)->active)
-		show_add_link(entry, linky);
-	else
-		advance_past(entry, "<A HREF>", "</A>"	);
-}
-*/
+
 void toggle_link(GtkWidget *linky, struct conversation *c)
 {
 	if (state_lock)
@@ -1349,7 +1339,8 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, _("Link"), _("Insert Link"),
+                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, _("Link"), _("Insert Link"),
                                             _("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);                 
 	palette = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,

@@ -2254,7 +2254,7 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 		gtk_window_set_focus(GTK_WINDOW(c->link_dialog  ), b->url);
 		b->window = c->link_dialog;
 		b->toggle = linky;
-        b->entry = c->entry;
+		b->entry = c->entry;
                 gtk_widget_realize(c->link_dialog);
 		aol_icon(c->link_dialog->window);
 
