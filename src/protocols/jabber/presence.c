@@ -55,7 +55,12 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 }
 
 void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
-	char *my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+	char *my_base_jid;
+
+	if(!js->user)
+		return;
+
+	my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	if(gaim_find_buddy(js->gc->account, my_base_jid)) {
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr;
