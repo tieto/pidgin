@@ -28,7 +28,7 @@ Gaim v@VERSION@ \- Instant Messaging client
 
 .SH DESCRIPTION
 .PP
-\fBgaim\fR is a GTK2-based Instant Messaging (IM) client designed primarily for use with AOL Instant Messenger (AIM).  However, it supports most other popular IM protocols including Gadu-Gadu, ICQ, IRC, Jabber, MSN Messenger, Napster, Yahoo!, and Zephyr.
+\fBgaim\fR is a GTK2-based Instant Messaging (IM) application.  It supports multiple protocols via modules, including AIM, ICQ, Yahoo!, MSN, Jabber, IRC, Napster, Gadu-Gadu and Zephyr.  It has many common features found in other clients, as well as many unique features.  Gaim is not endorsed by or affiliated with AOL TimeWarner, Microsoft, or Yahoo.
 
 .SH OPTIONS
 The following options are provided by \fBgaim\fR using the standard GNU command line syntax:
@@ -61,26 +61,23 @@ Display the version information window.
 Automatically go away on signon.  You may optionally use the \fIMESG\fR parameter to set the away message.
 
 .SH BUDDY LIST
-The \fBBuddy List\fR window is \fBgaim\fR's main interface window.  The focus of this window is the \fBBuddy List\fR itself, shown in the \fBOnline\fR pane.  Buddy list organization and editing is handled in the \fBEdit Buddies\fR pane.
+The \fBBuddy List\fR window is \fBgaim\fR's main interface window.  Using this window you can see which of your buddies is online, away, idle, etc.  You can also add and remove buddies from your buddy list.
 
-Buddy Lists can be imported by using the \fIImport Buddy List\fR command in the \fIFile\fR menu.
-
-.SH Online Pane
-The \fBOnline\fR pane contains a list of your buddies who are online and have allowed you to be notified of their presence.  The icon to the left of each buddy (if enabled in \fBgaim\fR's \fBPreferences\fR) indicates the buddy's current state.  Double clicking a buddy will open a new \fBConversation\fR window.  Right clicking will pop up a menu:
+The \fBBuddy List\fR window contains a list of your buddies who are online and have allowed you to be notified of their presence.  The icon to the left of each buddy indicates the buddy's current state and the protocol they are using.  Double clicking a buddy will open a new \fBConversation\fR window.  Right clicking will pop up a menu:
 .TP
 .B IM
 Opens a new \fBConversation\fR window to the selected buddy.
-.TP
-.B Alias
-Create an alias for this buddy.  This will open up a new dialog in which one can give this buddy an alternate name to appear on the buddy list and in conversataions.
-
-For example, if a buddy's name screen name was jsmith1281xx and his real name was 'John Q. Smith,' one could create an alias as to identify the buddy by his common name. 
 .TP
 .B Add Buddy Pounce
 A Buddy Pounce is a configurable automated action to be performed when the buddy's state changes.  This will open the \fBBuddy Pounce\fR dialog to be discussed later.
 .TP 
 .B View Log
 \fBgaim\fR is capable of automatically log its activities.  These logs are html files (with a .log extenstion) located in the \fI~/.gaim/logs\fR directory.  This menu command will attempt to view this file with \fBgaim\fR's internal log viewer.
+.TP
+.B Alias
+Create an alias for this buddy.  This will open up a new dialog in which one can give this buddy an alternate name to appear on the buddy list and in conversataions.
+
+For example, if a buddy's name screen name was jsmith1281xx and his real name was 'John Q. Smith,' one could create an alias as to identify the buddy by his common name. 
 .LP
 The remainder of the menu will consist of protocol specific commands.  These commands vary depending on the protocol; below are the commands available when using OSCAR, the more popular and developer-recommended AIM protocol:
 .TP
@@ -89,11 +86,8 @@ Retrieves and displays information about the buddy.  This information is also kn
 .TP
 .B Get Away Msg
 If this buddy is in an Away state, this will retrieve and display the buddy's \fBAway Message\fR.
-.TP
-.B Get Capabilities
-Retrieves and displays the client capabilities of your buddy.
 .LP
-At the bottom of the pane are several buttons (if enabled in \fBPreferences\fR):
+At the bottom of the \fBBuddy List\fR are several buttons (if enabled in \fBPreferences\fR):
 .TP
 .B IM
 Opens a new \fBConversation\fR window to to the selected buddy, or brings up the \fBNew Message\fR dialog box if no buddy is selected.
@@ -107,22 +101,8 @@ Brings up the \fBJoin Chat\fR dialog box, prompting the user to select which use
 .B Away
 Brings up a menu of all available \fBAway Messages\fR.  If an item is selected, all online accounts will use this item as their away message.
 
-.SH Edit Buddies Pane
-Clicking the \fBEdit Buddies\fR tab on the \fBBuddy List Window\fR will invoke the main interface to edit and organize buddy lists.  Buddies already in your buddy list can be moved to different groups or reordered in the same group by clicking and dragging with the mouse.  One can also add, rename, alias, or delete buddies here, as well as access some of the functions available in the \fBBuddy List Dialog\fR.  
-
-At the bottom of the pane are several buttons:
-.TP
-.B Add
-This brings up the \fBAdd Buddy Dialog\fR, where you can add a buddy to your buddy list.
-.TP
-.B Group
-This brings up the \fBAdd Group Dialog\fR, where you can add a group to the current connection (the connection with an item selected, otherwise the top-most connection).
-.TP
-.B Remove
-This removes the currently selected buddy or group.  If no buddy or group is selected, no action is taken.
-
 .SH ACCOUNT EDITOR
-The account editor consists of a list of accounts and information about them.  Clicking \fIDelete\fR will delete the currently selected account.  Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR window.  Here, you can add or alter account information.  When creating a new account, you will submit your screen name and password.  You will also choose your protocol. The AIM protocol, OSCAR, is always loaded, but other protocols can be dynamically loaded and unloaded using \fBProtocols Plugins\fR (PRPLS).
+The account editor consists of a list of accounts and information about them.  Clicking \fIDelete\fR will delete the currently selected account.  Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR window.  Here, you can add or alter account information.  When creating a new account, you will submit your screen name and password.  You will also choose your protocol.
 
 If \fIRemember Password\fR is chosen, the password will be saved in \fBgaim\fR's configuration file.
 
@@ -135,8 +115,6 @@ Each protocol has it's own specific options that can be found in the protocol-sp
 All options take effect immediately.
 
 .SH Interface
-
-\fIShow debug window\fR: Makes visable \fBgaim\fR's debugging window, which displays more verbose operating information.  A must for bug-tracking.
 
 \fIDisplay remote nicknames if no alias is set\fR: Toggles whether server nickname data should be used if no local alias exists.
 
@@ -421,4 +399,3 @@ The retired developers of \fBgaim\fR are:
 
 
 This manpage was originally written by Dennis Ristuccia <\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by Sean Egan <\fIbj91704@binghamton.edu\fR> and Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>.
-
