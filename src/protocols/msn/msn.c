@@ -1079,7 +1079,8 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   who, friendly, msn_group_get_id(new_group));
+				   who, msn_url_encode(friendly),
+				   msn_group_get_id(new_group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {
