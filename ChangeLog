@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 0.79cvs:
+	Bug Fixes:
+	* Non-looping animated icons no longer cause Gaim to freeze
+
 version 0.78 (05/30/2004):
 	New Features:
 	* Support for the SILC protocol (http://www.silcnet.org/)

@@ -2199,9 +2199,11 @@ redraw_icon(gpointer data)
 	if (bm)
 		g_object_unref(G_OBJECT(bm));
 
-	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
+	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter);
+	if (delay <= 0)
+		delay = 100;
 
-	gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon, conv);
+	gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, conv);
 
 	return FALSE;
 }
