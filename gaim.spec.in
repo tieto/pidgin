@@ -96,7 +96,7 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
-* Thu Sep 06 2001 Rob Flynn <rob@marko.net> (0.28 release)
+* Thu Sep 06 2001 Rob Flynn <rob@marko.net> (0.43 release)
 - Updated German Translation (thanks Daniel Seifert)
 - Can change friendly name in MSN again
 - Bug fixes
