@@ -2,11 +2,12 @@
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#: src/gnome_applet_mgr.c:352
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.19\n"
-"POT-Creation-Date: 2000-06-07 17:19-0700\n"
+"POT-Creation-Date: 2000-06-10 00:43-0700\n"
 "PO-Revision-Date: 2000-06-07 22:42+0000\n"
 "Last-Translator: Rob Flynn <rob@linuxpimps.org>\n"
 "Language-Team: German <de@li.org>\n"
@@ -20,8 +21,8 @@ msgid "About GAIM v%s"
 msgstr "Über GAIM v%s"
 
 #. color = gtk_button_new_with_label("Color");
-#: src/about.c:93 src/buddy.c:1728 src/buddy_chat.c:556
-#: src/conversation.c:1099 src/dialogs.c:435 src/plugins.c:259 src/prefs.c:804
+#: src/about.c:93 src/buddy.c:1728 src/buddy_chat.c:642
+#: src/conversation.c:1100 src/dialogs.c:435 src/plugins.c:259 src/prefs.c:808
 msgid "Close"
 msgstr "Schließen"
 
@@ -37,7 +38,7 @@ msgstr "Bitte geben Sie ein Passwort ein"
 msgid "Signoff"
 msgstr "Abmelden"
 
-#: src/aim.c:301 src/aim.c:503 src/buddy.c:366 src/gnome_applet_mgr.c:348
+#: src/aim.c:301 src/aim.c:508 src/buddy.c:366 src/gnome_applet_mgr.c:372
 msgid "Signon"
 msgstr "Los"
 
@@ -57,7 +58,7 @@ msgstr "Neu"
 msgid "Options"
 msgstr "Einstellungen"
 
-#: src/aim.c:306 src/aim.c:509 src/buddy.c:1785
+#: src/aim.c:306 src/aim.c:514 src/buddy.c:1785
 msgid "Plugins"
 msgstr ""
 
@@ -77,7 +78,7 @@ msgstr "Passwort Speichern"
 msgid "Gaim - Login"
 msgstr "Gaim - Anmeldung"
 
-#: src/aim.c:498 src/buddy.c:1782
+#: src/aim.c:503 src/buddy.c:1782
 msgid "Preferences"
 msgstr "Einstellungen"
 
@@ -93,7 +94,7 @@ msgstr "Ich bin zurück"
 msgid "Gaim - Away!"
 msgstr "Gaim - Abwesenheit!"
 
-#: src/away.c:264 src/gnome_applet_mgr.c:262
+#: src/away.c:264 src/gnome_applet_mgr.c:286
 msgid "New Away Message"
 msgstr "Neue Abwesenheits-Mitteilung"
 
@@ -108,14 +109,14 @@ msgstr ""
 
 #: src/buddy.c:270 src/buddy.c:275 src/buddy.c:278 src/buddy.c:283
 #: src/buddy.c:1882 src/buddy.c:1951 src/conversation.c:368
-#: src/conversation.c:1104 src/dialogs.c:744 src/dialogs.c:1465
-#: src/dialogs.c:1489 src/prefs.c:994
+#: src/conversation.c:1105 src/dialogs.c:744 src/dialogs.c:1465
+#: src/dialogs.c:1489 src/prefs.c:998
 msgid "Add"
 msgstr "Hinzufügen"
 
 #: src/buddy.c:271 src/buddy.c:276 src/buddy.c:279 src/buddy.c:284
-#: src/buddy.c:1883 src/buddy.c:1952 src/conversation.c:1101 src/dialogs.c:691
-#: src/prefs.c:995
+#: src/buddy.c:1883 src/buddy.c:1952 src/conversation.c:1102 src/dialogs.c:691
+#: src/prefs.c:999
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -124,12 +125,12 @@ msgid "Chat"
 msgstr ""
 
 #: src/buddy.c:273 src/buddy.c:281 src/buddy.c:434 src/buddy.c:1829
-#: src/buddy_chat.c:561
+#: src/buddy_chat.c:647
 msgid "IM"
 msgstr "Telegramm"
 
 #: src/buddy.c:274 src/buddy.c:282 src/buddy.c:440 src/buddy.c:1830
-#: src/buddy_chat.c:563 src/conversation.c:1096 src/rvous.c:634
+#: src/buddy_chat.c:649 src/conversation.c:1097 src/rvous.c:634
 msgid "Info"
 msgstr ""
 
@@ -215,8 +216,8 @@ msgstr "Beenden"
 msgid "Tools"
 msgstr ""
 
-#: src/buddy.c:1738 src/gnome_applet_mgr.c:175 src/gnome_applet_mgr.c:259
-#: src/prefs.c:596
+#: src/buddy.c:1738 src/gnome_applet_mgr.c:198 src/gnome_applet_mgr.c:283
+#: src/prefs.c:598
 msgid "Away"
 msgstr "Abwesenheit"
 
@@ -328,7 +329,7 @@ msgstr "An wlecher Gruppe teinlnehmen:"
 msgid "Join Chat"
 msgstr ""
 
-#: src/buddy_chat.c:177 src/buddy_chat.c:557
+#: src/buddy_chat.c:177 src/buddy_chat.c:643
 msgid "Invite"
 msgstr "Einladen"
 
@@ -344,87 +345,124 @@ msgstr "Mit Nachricht:"
 msgid "Invite to Buddy Chat"
 msgstr ""
 
-#: src/buddy_chat.c:558
+#: src/buddy_chat.c:644
 msgid "Whisper"
 msgstr "Flüstern"
 
-#: src/buddy_chat.c:559 src/conversation.c:1095 src/dialogs.c:1273
+#: src/buddy_chat.c:645 src/conversation.c:1096 src/dialogs.c:1273
 msgid "Send"
 msgstr "Abschicken"
 
-#: src/buddy_chat.c:562
+#: src/buddy_chat.c:648
 msgid "Ignore"
 msgstr "Ignorieren"
 
-#: src/buddy_chat.c:627 src/conversation.c:1180
+#: src/buddy_chat.c:734 src/conversation.c:1181
 msgid "Bold"
 msgstr "Fetter"
 
-#: src/buddy_chat.c:627 src/conversation.c:1180 src/prefs.c:773
+#: src/buddy_chat.c:734 src/conversation.c:1181 src/prefs.c:777
 msgid "Bold Text"
 msgstr "Fetter Text"
 
-#: src/buddy_chat.c:631 src/buddy_chat.c:632 src/conversation.c:1184
-#: src/conversation.c:1185
+#: src/buddy_chat.c:738 src/buddy_chat.c:739 src/conversation.c:1185
+#: src/conversation.c:1186
 msgid "Italics"
 msgstr "Kursiver"
 
-#: src/buddy_chat.c:631 src/conversation.c:1184 src/prefs.c:774
+#: src/buddy_chat.c:738 src/conversation.c:1185 src/prefs.c:778
 msgid "Italics Text"
 msgstr "Kursiver Text"
 
-#: src/buddy_chat.c:635 src/buddy_chat.c:636 src/conversation.c:1188
-#: src/conversation.c:1189
+#: src/buddy_chat.c:742 src/buddy_chat.c:743 src/conversation.c:1189
+#: src/conversation.c:1190
 msgid "Underline"
 msgstr "Unterstrichener"
 
-#: src/buddy_chat.c:635 src/conversation.c:1188
+#: src/buddy_chat.c:742 src/conversation.c:1189
 msgid "Underline Text"
 msgstr "Unterstrichener Text"
 
-#: src/buddy_chat.c:639 src/buddy_chat.c:640 src/conversation.c:1192
-#: src/conversation.c:1193
+#: src/buddy_chat.c:746 src/buddy_chat.c:747 src/conversation.c:1193
+#: src/conversation.c:1194
 msgid "Strike"
 msgstr "Durchgestrichener through"
 
-#: src/buddy_chat.c:639 src/conversation.c:1192
+#: src/buddy_chat.c:746 src/conversation.c:1193
 msgid "Strike through Text"
 msgstr "Durchgestrichener through Text"
 
-#: src/buddy_chat.c:642 src/conversation.c:1195
+#: src/buddy_chat.c:749 src/conversation.c:1196
 msgid "Small"
 msgstr ""
 
-#: src/buddy_chat.c:642 src/conversation.c:1195
+#: src/buddy_chat.c:749 src/conversation.c:1196
 msgid "Decrease font size"
 msgstr "Schrift kleiner"
 
-#: src/buddy_chat.c:643 src/conversation.c:1196
+#: src/buddy_chat.c:750 src/conversation.c:1197
 msgid "Normal"
 msgstr ""
 
-#: src/buddy_chat.c:643 src/conversation.c:1196
+#: src/buddy_chat.c:750 src/conversation.c:1197
 msgid "Normal font size"
 msgstr "Schrift normal"
 
-#: src/buddy_chat.c:644 src/conversation.c:1197
+#: src/buddy_chat.c:751 src/conversation.c:1198
 msgid "Big"
 msgstr ""
 
-#: src/buddy_chat.c:644 src/conversation.c:1197
+#: src/buddy_chat.c:751 src/conversation.c:1198
 msgid "Increase font size"
 msgstr "Schrift größer"
 
-#: src/buddy_chat.c:648 src/buddy_chat.c:649 src/conversation.c:1208
-#: src/conversation.c:1209
+#: src/buddy_chat.c:754 src/buddy_chat.c:755 src/conversation.c:1201
+#: src/conversation.c:1202
+msgid "Font"
+msgstr ""
+
+#: src/buddy_chat.c:754 src/conversation.c:1201 src/dialogs.c:2061
+#: src/dialogs.c:2080 src/prefs.c:783
+msgid "Select Font"
+msgstr ""
+
+#: src/buddy_chat.c:760 src/buddy_chat.c:761 src/conversation.c:1209
+#: src/conversation.c:1210
 msgid "Link"
 msgstr ""
 
-#: src/buddy_chat.c:648 src/conversation.c:1208
+#: src/buddy_chat.c:760 src/conversation.c:1209
 msgid "Insert Link"
 msgstr "Link einfügen"
 
-#: src/buddy_chat.c:792 src/buddy_chat.c:804
+#: src/buddy_chat.c:764 src/buddy_chat.c:765 src/conversation.c:1213
+#: src/conversation.c:1214
+msgid "Color"
+msgstr "Farbe"
+
+#: src/buddy_chat.c:764 src/conversation.c:1213
+msgid "Text Color"
+msgstr "Text-Farbe"
+
+#: src/buddy_chat.c:769 src/buddy_chat.c:770 src/conversation.c:1217
+#: src/conversation.c:1218
+msgid "Logging"
+msgstr ""
+
+#: src/buddy_chat.c:769 src/conversation.c:1217
+msgid "Enable logging"
+msgstr ""
+
+#: src/buddy_chat.c:775 src/buddy_chat.c:776 src/conversation.c:1221
+#: src/conversation.c:1222
+msgid "Sound"
+msgstr ""
+
+#: src/buddy_chat.c:775 src/conversation.c:1221
+msgid "Enable sounds"
+msgstr ""
+
+#: src/buddy_chat.c:927 src/buddy_chat.c:939
 msgid "Buddy Chat"
 msgstr ""
 
@@ -433,65 +471,32 @@ msgstr ""
 msgid "Removing '%s' from buddylist.\n"
 msgstr ""
 
-#: src/conversation.c:496
+#: src/conversation.c:497
 msgid "Message too long, some data truncated."
 msgstr ""
 
-#: src/conversation.c:496 src/dialogs.c:2168 src/dialogs.c:2239
+#: src/conversation.c:497 src/dialogs.c:2168 src/dialogs.c:2239
 #: src/rvous.c:222 src/rvous.c:491
 msgid "Error"
 msgstr "Fehler"
 
-#: src/conversation.c:670
+#: src/conversation.c:671
 #, c-format
 msgid "Currently at %d\n"
 msgstr ""
 
-#: src/conversation.c:677
+#: src/conversation.c:678
 #, c-format
 msgid "Setting position to %d\n"
 msgstr ""
 
-#: src/conversation.c:1097 src/dialogs.c:372 src/rvous.c:635
+#: src/conversation.c:1098 src/dialogs.c:372 src/rvous.c:635
 msgid "Warn"
 msgstr "Warnen"
 
-#: src/conversation.c:1106
+#: src/conversation.c:1107
 msgid "Block"
 msgstr "Sperren"
-
-#: src/conversation.c:1200 src/conversation.c:1201
-msgid "Font"
-msgstr ""
-
-#: src/conversation.c:1200 src/dialogs.c:2061 src/dialogs.c:2080
-#: src/prefs.c:779
-msgid "Select Font"
-msgstr ""
-
-#: src/conversation.c:1212 src/conversation.c:1213
-msgid "Color"
-msgstr "Farbe"
-
-#: src/conversation.c:1212
-msgid "Text Color"
-msgstr "Text-Farbe"
-
-#: src/conversation.c:1216 src/conversation.c:1217
-msgid "Logging"
-msgstr ""
-
-#: src/conversation.c:1216
-msgid "Enable logging"
-msgstr ""
-
-#: src/conversation.c:1220 src/conversation.c:1221
-msgid "Sound"
-msgstr ""
-
-#: src/conversation.c:1220
-msgid "Enable sounds"
-msgstr ""
 
 #: src/dialogs.c:197
 msgid "Error Resolving Mail Server.\n"
@@ -608,7 +613,7 @@ msgstr ""
 msgid "Failure unknown: %s."
 msgstr ""
 
-#: src/dialogs.c:525 src/oscar.c:216
+#: src/dialogs.c:525 src/oscar.c:217
 msgid "Incorrect nickname or password."
 msgstr ""
 
@@ -620,7 +625,7 @@ msgstr ""
 msgid "Your warning level is currently too high to log in."
 msgstr ""
 
-#: src/dialogs.c:534 src/oscar.c:213
+#: src/dialogs.c:534 src/oscar.c:214
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
@@ -847,36 +852,36 @@ msgstr ""
 msgid "Make away now"
 msgstr ""
 
-#: src/gnome_applet_mgr.c:115
+#: src/gnome_applet_mgr.c:117
 #, c-format
 msgid "file not found: %s\n"
 msgstr ""
 
-#: src/gnome_applet_mgr.c:148
+#: src/gnome_applet_mgr.c:171
 msgid "Offilne. Click to bring up login box."
 msgstr ""
 
-#: src/gnome_applet_mgr.c:155
+#: src/gnome_applet_mgr.c:178
 msgid "Attempting to sign on...."
 msgstr ""
 
-#: src/gnome_applet_mgr.c:326
+#: src/gnome_applet_mgr.c:350
 msgid "GAIM"
 msgstr ""
 
-#: src/gnome_applet_mgr.c:528
+#: src/gnome_applet_mgr.c:552
 msgid "Can't create GAIM applet!"
 msgstr ""
 
-#: src/gnome_applet_mgr.c:560
+#: src/gnome_applet_mgr.c:586
 msgid "Offline"
 msgstr ""
 
-#: src/gnome_applet_mgr.c:571
+#: src/gnome_applet_mgr.c:597
 msgid "Font does not exist"
 msgstr ""
 
-#: src/gnome_applet_mgr.c:587
+#: src/gnome_applet_mgr.c:613
 msgid "About..."
 msgstr ""
 
@@ -918,104 +923,104 @@ msgstr ""
 msgid "Receieved: '%s'\n"
 msgstr ""
 
-#: src/oscar.c:93 src/oscar.c:103
+#: src/oscar.c:94 src/oscar.c:104
 msgid "Disconnected."
 msgstr ""
 
-#: src/oscar.c:101
+#: src/oscar.c:102
 msgid "connection error!\n"
 msgstr ""
 
-#: src/oscar.c:120
+#: src/oscar.c:121
 #, c-format
 msgid "Logging in %s\n"
 msgstr ""
 
-#: src/oscar.c:130
+#: src/oscar.c:131
 #, c-format
 msgid "Looking up %s"
 msgstr ""
 
-#: src/oscar.c:135
+#: src/oscar.c:136
 msgid "internal connection error\n"
 msgstr ""
 
-#: src/oscar.c:140
+#: src/oscar.c:141
 msgid "Unable to login to AIM"
 msgstr ""
 
-#: src/oscar.c:148
+#: src/oscar.c:149
 msgid "couldn't resolve host\n"
 msgstr ""
 
-#: src/oscar.c:152
+#: src/oscar.c:153
 msgid "couldn't connect to host\n"
 msgstr ""
 
-#: src/oscar.c:158
+#: src/oscar.c:159
 #, c-format
 msgid "Signon: %s"
 msgstr ""
 
-#: src/oscar.c:186
+#: src/oscar.c:187
 msgid "Password sent, waiting for response\n"
 msgstr ""
 
-#: src/oscar.c:200
+#: src/oscar.c:201
 msgid "Signed off.\n"
 msgstr ""
 
-#: src/oscar.c:213 src/oscar.c:216 src/oscar.c:219 src/oscar.c:580
+#: src/oscar.c:214 src/oscar.c:217 src/oscar.c:220 src/oscar.c:583
 msgid "Gaim - Error"
 msgstr ""
 
-#: src/oscar.c:219
+#: src/oscar.c:220
 msgid ""
 "AOL has decided your client is too old. Please download a newer version from "
 "http://www.marko.net/gaim/"
 msgstr ""
 
-#: src/oscar.c:232
+#: src/oscar.c:233
 msgid "Authentication Failed"
 msgstr ""
 
-#: src/oscar.c:253
+#: src/oscar.c:254
 msgid "Internal Error"
 msgstr ""
 
-#: src/oscar.c:261
+#: src/oscar.c:262
 msgid "Could Not Connect"
 msgstr ""
 
-#: src/oscar.c:287
+#: src/oscar.c:288
 msgid "Connection established, cookie sent"
 msgstr ""
 
-#: src/oscar.c:589
+#: src/oscar.c:592
 msgid "You are sending messages too fast."
 msgstr ""
 
-#: src/oscar.c:593
+#: src/oscar.c:596
 msgid "Unknown SNAC error (I'm hungry)"
 msgstr ""
 
-#: src/oscar.c:597
+#: src/oscar.c:600
 msgid "User is not online."
 msgstr ""
 
-#: src/oscar.c:599
+#: src/oscar.c:602
 msgid "A message has been dropped."
 msgstr ""
 
-#: src/oscar.c:625
+#: src/oscar.c:628
 msgid "User has no info/away message."
 msgstr ""
 
-#: src/oscar.c:626
+#: src/oscar.c:629
 msgid "Gaim - User Info"
 msgstr ""
 
-#: src/oscar.c:630
+#: src/oscar.c:633
 msgid ""
 "Username : <B>%s</B>\n"
 "<BR>Warning Level : <B>%d %%</B>\n"
@@ -1080,230 +1085,247 @@ msgid "Raise windows when message recieved"
 msgstr "Fenster nach Oben, bei neuer Nachricht"
 
 #: src/prefs.c:390
+#, fuzzy
+msgid "Raise chat windows when people speak"
+msgstr "Fenster nach Oben, bei neuer Nachricht"
+
+#: src/prefs.c:391
 msgid "Send URLs as links"
 msgstr "URLs als Link verschicken"
 
-#: src/prefs.c:391
+#: src/prefs.c:392
 msgid "Show Lag-O-Meter"
 msgstr "Warnlevel zeigen"
 
-#: src/prefs.c:392
+#: src/prefs.c:393
 msgid "Save some window size/positions"
 msgstr "Fensterposition und -größe speichern"
 
-#: src/prefs.c:393
+#: src/prefs.c:394
 msgid "Ignore new conversations when away"
 msgstr "Neue Telegramme bei Abwesenheit ignorieren"
 
-#: src/prefs.c:394
+#: src/prefs.c:395
 msgid "Automagically highlight misspelled words"
 msgstr ""
 
-#: src/prefs.c:397
+#: src/prefs.c:396
+msgid "Sending messages removes away status"
+msgstr ""
+
+#: src/prefs.c:399
 msgid "Enable debug mode"
 msgstr "Debugmodus aktivieren"
 
-#: src/prefs.c:400
+#: src/prefs.c:402
 msgid "No Idle"
 msgstr ""
 
-#: src/prefs.c:407
+#: src/prefs.c:409
 msgid "GAIM Use"
 msgstr ""
 
-#: src/prefs.c:435
+#: src/prefs.c:437
 msgid "Applet"
 msgstr ""
 
-#: src/prefs.c:442
+#: src/prefs.c:444
 msgid "Automatically Show Buddy List"
 msgstr ""
 
-#: src/prefs.c:443
+#: src/prefs.c:445
 msgid "Sounds go through GNOME"
 msgstr ""
 
-#: src/prefs.c:444
+#: src/prefs.c:446
 msgid "Buddy list displays near the applet"
 msgstr ""
 
-#: src/prefs.c:456
+#: src/prefs.c:458
 msgid "Connection"
 msgstr ""
 
-#: src/prefs.c:461
+#: src/prefs.c:463
 msgid "TOC Host:"
 msgstr ""
 
-#: src/prefs.c:468 src/prefs.c:490 src/prefs.c:543
+#: src/prefs.c:470 src/prefs.c:492 src/prefs.c:545
 msgid "Port:"
 msgstr ""
 
-#: src/prefs.c:483
+#: src/prefs.c:485
 msgid "Login Host:"
 msgstr ""
 
-#: src/prefs.c:504
+#: src/prefs.c:506
 msgid "No Proxy"
 msgstr ""
 
-#: src/prefs.c:511
+#: src/prefs.c:513
 msgid "HTTP Proxy"
 msgstr ""
 
-#: src/prefs.c:519
+#: src/prefs.c:521
 msgid "SOCKS v4 Proxy"
 msgstr ""
 
-#: src/prefs.c:527
+#: src/prefs.c:529
 msgid "SOCKS v5 Proxy (DOES NOT WORK!)"
 msgstr ""
 
-#: src/prefs.c:536
+#: src/prefs.c:538
 msgid "Proxy Host:"
 msgstr ""
 
-#: src/prefs.c:623
+#: src/prefs.c:625
 msgid "Create Message"
 msgstr ""
 
-#: src/prefs.c:627
+#: src/prefs.c:629
 msgid "Remove Message"
 msgstr ""
 
-#: src/prefs.c:666
+#: src/prefs.c:668
 msgid "Sounds"
 msgstr ""
 
-#: src/prefs.c:669
+#: src/prefs.c:671
 msgid "Sound when buddy logs in"
 msgstr ""
 
-#: src/prefs.c:670
+#: src/prefs.c:672
 msgid "Sound when buddy logs out"
 msgstr ""
 
-#: src/prefs.c:671
+#: src/prefs.c:673
 msgid "Sound when message is received"
 msgstr ""
 
-#: src/prefs.c:672
+#: src/prefs.c:674
 msgid "Sound when message is sent"
 msgstr ""
 
-#: src/prefs.c:673
+#: src/prefs.c:675
 msgid "Sound when first message is received"
 msgstr ""
 
-#: src/prefs.c:674
+#: src/prefs.c:676
 msgid "Sound when message is received if away"
 msgstr ""
 
-#: src/prefs.c:675
+#: src/prefs.c:677
 msgid "No sound for buddies signed on when you log in"
 msgstr ""
 
-#: src/prefs.c:682
+#: src/prefs.c:678
+msgid "Sounds in chat rooms when people enter/leave"
+msgstr ""
+
+#: src/prefs.c:679
+msgid "Sounds in chat rooms when people talk"
+msgstr ""
+
+#: src/prefs.c:686
 msgid "Browser"
 msgstr ""
 
-#: src/prefs.c:687
+#: src/prefs.c:691
 msgid "Netscape"
 msgstr ""
 
-#: src/prefs.c:694
+#: src/prefs.c:698
 msgid "KFM (The KDE browser)"
 msgstr ""
 
-#: src/prefs.c:702
+#: src/prefs.c:706
 msgid "Internal HTML widget (Quite likely a bad idea!)"
 msgstr ""
 
-#: src/prefs.c:710
+#: src/prefs.c:714
 msgid "Manual"
 msgstr ""
 
-#: src/prefs.c:724
+#: src/prefs.c:728
 msgid "Pop up new window by default"
 msgstr ""
 
-#: src/prefs.c:748
+#: src/prefs.c:752
 msgid "Appearance"
 msgstr ""
 
-#: src/prefs.c:752
+#: src/prefs.c:756
 msgid "Font Properties"
 msgstr ""
 
-#: src/prefs.c:759
+#: src/prefs.c:763
 msgid "Show time on messages"
 msgstr ""
 
-#: src/prefs.c:760
+#: src/prefs.c:764
 msgid "Show numbers in groups"
 msgstr ""
 
-#: src/prefs.c:761
+#: src/prefs.c:765
 msgid "Show buddy-type pixmaps"
 msgstr ""
 
-#: src/prefs.c:762
+#: src/prefs.c:766
 msgid "Show idle times"
 msgstr ""
 
-#: src/prefs.c:763
+#: src/prefs.c:767
 msgid "Show button pixmaps"
 msgstr ""
 
-#: src/prefs.c:764
+#: src/prefs.c:768
 msgid "Ignore incoming colours"
 msgstr ""
 
-#: src/prefs.c:768
+#: src/prefs.c:772
 msgid "Show logon/logoffs in conversation windows"
 msgstr ""
 
-#: src/prefs.c:769
+#: src/prefs.c:773
 msgid "Use devil icons"
 msgstr ""
 
-#: src/prefs.c:770
-msgid "Show graphical smileys"
+#: src/prefs.c:774
+msgid "Show graphical smileys (experimental)"
 msgstr ""
 
-#: src/prefs.c:775
+#: src/prefs.c:779
 msgid "Underlined Text"
 msgstr ""
 
-#: src/prefs.c:776
+#: src/prefs.c:780
 msgid "Strike Text"
 msgstr ""
 
-#: src/prefs.c:777
+#: src/prefs.c:781
 msgid "Font Face for Text"
 msgstr ""
 
-#: src/prefs.c:795
+#: src/prefs.c:799
 msgid "Buddy Chats"
 msgstr ""
 
-#: src/prefs.c:918 src/prefs.c:920 src/prefs.c:1050 src/prefs.c:1052
+#: src/prefs.c:922 src/prefs.c:924 src/prefs.c:1054 src/prefs.c:1056
 msgid "Gaim Chat"
 msgstr ""
 
-#: src/prefs.c:993
+#: src/prefs.c:997
 msgid "Refresh"
 msgstr ""
 
-#: src/prefs.c:1024
+#: src/prefs.c:1028
 msgid "List of available chats"
 msgstr ""
 
-#: src/prefs.c:1038
+#: src/prefs.c:1042
 msgid "List of subscribed chats"
 msgstr ""
 
-#: src/prefs.c:1095
+#: src/prefs.c:1099
 msgid "GAIM debug output window"
 msgstr ""
 
