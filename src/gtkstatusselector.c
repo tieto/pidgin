@@ -510,6 +510,17 @@ rebuild_list(GaimGtkStatusSelector *selector)
 #endif
 
 	/*
+	 * If no accounts are connected then gray ourself out and get
+	 * outta hee.
+	 */
+	if (gaim_connections_get_all() == NULL)
+	{
+		gtk_widget_set_sensitive(GTK_WIDGET(selector), FALSE);
+		return;
+	}
+	gtk_widget_set_sensitive(GTK_WIDGET(selector), TRUE);
+
+	/*
 	 * If the user only has one IM account or one type of IM account
 	 * connected, they'll see all their statuses. This is ideal for those
 	 * who use only one account, or one single protocol. Everyone else

@@ -2989,16 +2989,44 @@ static void gaim_gtk_blist_hide_node(GaimBuddyList *list, GaimBlistNode *node)
 	gtknode->row = NULL;
 }
 
-static void
-sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
+static const char *require_connection[] =
 {
-	GaimGtkBuddyList *gtkblist = GAIM_GTK_BLIST(blist);
+	N_("/Buddies/New Instant Message..."),
+	N_("/Buddies/Join a Chat..."),
+	N_("/Buddies/Get User Info..."),
+	N_("/Buddies/Add Buddy..."),
+	N_("/Buddies/Add Chat..."),
+	N_("/Buddies/Add Group..."),
+	N_("/Buddies/Log Out")
+};
+
+/* There's got to be a cleaner way to do this...? */
+#define SIZEOF_REQUIRE_CONNECTION 7
+
+/**
+ * Rebuild dynamic menus and make menu items sensitive/insensitive
+ * where appropriate.
+ */
+static void
+update_menu_bar(GaimGtkBuddyList *gtkblist)
+{
 	GtkWidget *widget;
+	gboolean sensitive;
+	int i;
+
+	g_return_if_fail(gtkblist != NULL);
 
 	gaim_gtk_blist_update_protocol_actions();
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 
-	/* Make menu items sensitive/insensitive where appropriate */
+	sensitive = (gaim_connections_get_all() != NULL);
+
+	for (i = 0; i < SIZEOF_REQUIRE_CONNECTION; i++)
+	{
+		widget = gtk_item_factory_get_widget(gtkblist->ift, require_connection[i]);
+		gtk_widget_set_sensitive(widget, sensitive);
+	}
+
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Join a Chat..."));
 	gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
 
@@ -3009,6 +3037,13 @@ sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 	gtk_widget_set_sensitive(widget, gaim_gtk_privacy_is_showable());
 }
 
+static void
+sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
+{
+	GaimGtkBuddyList *gtkblist = GAIM_GTK_BLIST(blist);
+
+	update_menu_bar(gtkblist);
+}
 
 static void
 plugin_changed_cb(GaimPlugin *p, gpointer *data)
@@ -3135,12 +3170,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
 
 	gtkblist->bpmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounce"));
-	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
-
 	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Account Actions"));
-	gaim_gtk_blist_update_protocol_actions();
-
 	pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Plugin Actions"));
+
+	update_menu_bar(gtkblist);
 	gaim_gtk_blist_update_plugin_actions();
 
 	/****************************** GtkTreeView **********************************/
@@ -4847,13 +4880,12 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 
 #endif
 
-
 static void
 plugin_act(GtkObject *obk, GaimPluginAction *pam)
 {
-	if (pam->callback) pam->callback(pam);
+	if (pam->callback)
+		pam->callback(pam);
 }
-
 
 static void
 build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
@@ -4981,7 +5013,6 @@ gaim_gtk_blist_update_protocol_actions(void)
 		}
 	}
 }
-
 
 void
 gaim_gtk_blist_update_plugin_actions(void)

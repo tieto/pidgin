@@ -250,7 +250,8 @@ void gaim_connection_error(GaimConnection *gc, const char *reason);
 void gaim_connections_disconnect_all(void);
 
 /**
- * Returns a list of all active connections.
+ * Returns a list of all active connections.  This does not
+ * include connections that are in the process of connecting.
  *
  * @return A list of all active connections.
  */

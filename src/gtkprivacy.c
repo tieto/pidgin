@@ -521,6 +521,8 @@ privacy_dialog_new(void)
 void
 gaim_gtk_privacy_dialog_show(void)
 {
+	g_return_if_fail(gaim_connections_get_all() != NULL);
+
 	if (privacy_dialog == NULL)
 		privacy_dialog = privacy_dialog_new();
 

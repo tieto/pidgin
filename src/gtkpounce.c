@@ -357,6 +357,9 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	GPtrArray *sound_widgets;
 	GPtrArray *exec_widgets;
 
+	g_return_if_fail((cur_pounce != NULL) || (account != NULL) ||
+					 (gaim_connections_get_all() != NULL));
+
 	dialog = g_new0(GaimGtkPounceDialog, 1);
 
 	if (cur_pounce != NULL)
@@ -900,6 +903,7 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 	/* "New Buddy Pounce" */
 	item = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_set_sensitive(item, (gaim_connections_get_all() != NULL));
 	gtk_widget_show(item);
 	g_signal_connect(G_OBJECT(item), "activate",
 					 G_CALLBACK(new_pounce_cb), NULL);
