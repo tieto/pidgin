@@ -1131,11 +1131,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (info->flags & AIM_FLAG_UNCONFIRMED)
 		type |= UC_UNCONFIRMED;
-	else if (info->flags & AIM_FLAG_ADMINISTRATOR)
+	if (info->flags & AIM_FLAG_ADMINISTRATOR)
 		type |= UC_ADMIN;
-	else if (info->flags & AIM_FLAG_AOL)
+	if (info->flags & AIM_FLAG_AOL)
 		type |= UC_AOL;
-	else if (info->flags & AIM_FLAG_FREE)
+	if (info->flags & AIM_FLAG_FREE)
 		type |= UC_NORMAL;
 	if (info->flags & AIM_FLAG_AWAY)
 		type |= UC_UNAVAILABLE;
