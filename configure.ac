@@ -320,6 +320,9 @@ AC_CHECK_LIB(nsl, gethostent)
 
 dnl checks for yahoo
 AC_CHECK_HEADERS(crypt.h)
+CRYPT_LIBS=
+AC_CHECK_FUNC(crypt, , CRYPT_LIBS=-lcrypt)
+AC_SUBST(CRYPT_LIBS)
 
 dnl checks for zephyr
 AC_DEFINE(ZEPHYR_INT32, long)

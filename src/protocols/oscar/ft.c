@@ -4,6 +4,9 @@
  */
 
 #define FAIM_INTERNAL
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <aim.h>
 
 
@@ -776,8 +779,7 @@ faim_export struct aim_fileheader_t *aim_getlisting(aim_session_t *sess, FILE *f
  */
 static int listenestablish(fu16_t portnum)
 {
-#if defined(__linux__)
-	/* XXX what other OS's support getaddrinfo? */
+#if HAVE_GETADDRINFO
 	int listenfd;
 	const int on = 1;
 	struct addrinfo hints, *res, *ressave;
