@@ -1822,12 +1822,12 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 				gaim_input_remove(gc->inpa);
 			gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
 			               yahoo_login_page_cb, gc);
-			gaim_notify_warning(gc, NULL, _("Normal authencation failed!"),
-			                    _("The normal authencation method has failed. "
+			gaim_notify_warning(gc, NULL, _("Normal authentication failed!"),
+			                    _("The normal authentication method has failed. "
 			                      "This means either your password is incorrect, "
-			                      "or Yahoo!'s authencation scheme has changed. "
+			                      "or Yahoo!'s authentication scheme has changed. "
 			                      "Gaim will now attempt to log in using Web "
-			                      "Messenger authencation, which will result "
+			                      "Messenger authentication, which will result "
 			                      "in reduced functionality and features."));
 			return;
 		}
