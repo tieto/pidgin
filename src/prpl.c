@@ -646,10 +646,12 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 {
 	char buf[BUF_LONG];
 	struct got_add *ga = g_new0(struct got_add, 1);
+	struct buddy *b = find_buddy(gc->user, who);
 
 	ga->gc = gc;
 	ga->who = g_strdup(who);
 	ga->alias = alias ? g_strdup(alias) : NULL;
+
 
 	g_snprintf(buf, sizeof(buf), _("%s%s%s%s has made %s his or her buddy%s%s%s"),
 		   who,
@@ -659,8 +661,8 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		   id ? id : gc->displayname[0] ? gc->displayname : gc->username,
 		   msg ? ": " : ".",
 		   msg ? msg : "",
-		   find_buddy(gc, ga->who) ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));
-	if (find_buddy(gc, ga->who))
+		   b ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));
+	if (b)
 		do_error_dialog(_("Gaim - Information"), buf, GAIM_INFO);
 	else
 		do_ask_dialog(_("Gaim - Confirm"), buf, ga, _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);

@@ -642,10 +642,8 @@ static void oscar_login(struct aim_user *user) {
 	if (isdigit(*user->username)) {
 		odata->icq = TRUE;
 		/* this is odd but it's necessary for a proper do_import and do_export */
-		gc->protocol = PROTO_ICQ;
 		gc->password[8] = 0;
 	} else {
-		gc->protocol = PROTO_TOC;
 		gc->flags |= OPT_CONN_HTML;
 		gc->flags |= OPT_CONN_AUTO_RESP;
 	}
@@ -2063,8 +2061,8 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 
 	if (g_slist_find(connections, gc)) {
 		struct oscar_data *od = gc->proto_data;
-		struct buddy *buddy = find_buddy(gc, data->name);
-		struct group *group = find_group_by_buddy(gc, data->name);
+		struct buddy *buddy = find_buddy(gc->user, data->name);
+		struct group *group = find_group_by_buddy(buddy);
 		if (buddy && group) {
 			debug_printf("ssi: adding buddy %s to group %s\n", buddy->name, group->name);
 			aim_ssi_sendauthrequest(od->sess, od->conn, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
@@ -2094,7 +2092,7 @@ static void gaim_auth_sendrequest(struct gaim_connection *gc, char *name) {
 	struct buddy *buddy;
 	gchar *dialog_msg, *nombre;
 
-	buddy = find_buddy(gc, name);
+	buddy = find_buddy(gc->user, name);
 	if (buddy && (get_buddy_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", name, get_buddy_alias_only(buddy));
 	else
@@ -2120,7 +2118,7 @@ static void gaim_auth_grant(struct name_data *data) {
 		struct buddy *buddy;
 		gchar message;
 		message = 0;
-		buddy = find_buddy(gc, data->name);
+		buddy = find_buddy(gc->user, data->name);
 		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
 		show_got_added(gc, NULL, data->name, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
 #else
@@ -3321,9 +3319,6 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	account_online(gc);
 	serv_finish_login(gc);
 
-	if (bud_list_cache_exists(gc))
-		do_import(gc, NULL);
-
 	debug_printf("buddy list loaded\n");
 
 	aim_clientready(sess, fr->conn);
@@ -3410,7 +3405,7 @@ static int gaim_icqsimpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	 * parse-icq-status-message function knows if it is putting it's message in 
 	 * an info window because the name will _not_ be in od->evilhack.  For getting 
 	 * only the away message the contact's UIN is put in od->evilhack. */
-	if ((budlight = find_buddy(gc, who))) {
+	if ((budlight = find_buddy(gc->user, who))) {
 		if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
 			if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
 				g_show_info_text(gc, who, 0, buf, NULL);
@@ -3776,7 +3771,7 @@ static void oscar_get_info(struct gaim_connection *g, char *name) {
 static void oscar_get_away(struct gaim_connection *g, char *who) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (odata->icq) {
-		struct buddy *budlight = find_buddy(g, who);
+		struct buddy *budlight = find_buddy(g->user, who);
 		if (budlight)
 			if ((budlight->uc & 0xffff0000) >> 16)
 				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
@@ -3909,13 +3904,14 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 	}
 
 	if (strcmp(state, _("Invisible"))) {
-		if (aim_ssi_getpermdeny(od->sess->ssi.local) != gc->permdeny)
-			aim_ssi_setpermdeny(od->sess, od->conn, gc->permdeny, 0xffffffff);
-		gc->permdeny = 4;
+		if (aim_ssi_getpermdeny(od->sess->ssi.local) != gc->user->permdeny)
+			aim_ssi_setpermdeny(od->sess, od->conn, gc->user->permdeny,
+					0xffffffff);
+		gc->user->permdeny = 4;
 	} else {
 		if (aim_ssi_getpermdeny(od->sess->ssi.local) != 0x03)
 			aim_ssi_setpermdeny(od->sess, od->conn, 0x03, 0xffffffff);
-		gc->permdeny = 3;
+		gc->user->permdeny = 3;
 	}
 
 	if (!strcmp(state, _("Online")))
@@ -3980,8 +3976,8 @@ static void oscar_add_buddy(struct gaim_connection *gc, const char *name) {
 	aim_add_buddy(od->sess, od->conn, name);
 #else
 	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_exists(od->sess->ssi.local, name))) {
-		struct buddy *buddy = find_buddy(gc, name);
-		struct group *group = find_group_by_buddy(gc, name);
+		struct buddy *buddy = find_buddy(gc->user, name);
+		struct group *group = find_group_by_buddy(buddy);
 		if (buddy && group) {
 			debug_printf("ssi: adding buddy %s to group %s\n", name, group->name);
 			aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
@@ -4007,8 +4003,8 @@ static void oscar_add_buddies(struct gaim_connection *gc, GList *buddies) {
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
-			struct buddy *buddy = find_buddy(gc, (const char *)buddies->data);
-			struct group *group = find_group_by_buddy(gc, (const char *)buddies->data);
+			struct buddy *buddy = find_buddy(gc->user, (const char *)buddies->data);
+			struct group *group = find_group_by_buddy(buddy);
 			if (buddy && group) {
 				debug_printf("ssi: adding buddy %s to group %s\n", (const char *)buddies->data, group->name);
 				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
@@ -4140,14 +4136,14 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				if (curitem->name) {
 					char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, curitem->name);
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
-					struct buddy *buddy = find_buddy(gc, curitem->name);
+					struct buddy *buddy = find_buddy(gc->user, curitem->name);
 					if (buddy) {
 						/* Get server stored alias */
 						if (alias)
 							strcpy(buddy->alias, alias);
 					} else {
 						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
-						add_buddy(gc, (gname ? gname : "orphans"), curitem->name, alias);
+						add_buddy(gc->user, (gname ? gname : "orphans"), curitem->name, alias);
 						tmp++;
 					}
 					free(alias);
@@ -4162,12 +4158,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				if (curitem->name) {
 					/* if (!find_permdeny_by_name(gc->permit, curitem->name)) { AAA */
 					GSList *list;
-					for (list=gc->permit; (list && aim_sncmp(curitem->name, list->data)); list=list->next);
+					for (list=gc->user->permit; (list && aim_sncmp(curitem->name, list->data)); list=list->next);
 					if (!list) {
-						char *name;
 						debug_printf("ssi: adding permit buddy %s to local list\n", curitem->name);
-						name = g_strdup(normalize(curitem->name));
-						gc->permit = g_slist_append(gc->permit, name);
+						gaim_privacy_permit_add(gc->user, curitem->name);
 						build_allow_list();
 						tmp++;
 					}
@@ -4177,12 +4171,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0003: { /* Deny buddy */
 				if (curitem->name) {
 					GSList *list;
-					for (list=gc->deny; (list && aim_sncmp(curitem->name, list->data)); list=list->next);
+					for (list=gc->user->deny; (list && aim_sncmp(curitem->name, list->data)); list=list->next);
 					if (!list) {
-						char *name;
 						debug_printf("ssi: adding deny buddy %s to local list\n", curitem->name);
-						name = g_strdup(normalize(curitem->name));
-						gc->deny = g_slist_append(gc->deny, name);
+						gaim_privacy_deny_add(gc->user, curitem->name);
 						build_block_list();
 						tmp++;
 					}
@@ -4192,10 +4184,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0004: { /* Permit/deny setting */
 				if (curitem->data) {
 					fu8_t permdeny;
-					if ((permdeny = aim_ssi_getpermdeny(sess->ssi.local)) && (permdeny != gc->permdeny)) {
-						debug_printf("ssi: changing permdeny from %d to %hhu\n", gc->permdeny, permdeny);
-						gc->permdeny = permdeny;
-						if (od->icq && gc->permdeny == 0x03) {
+					if ((permdeny = aim_ssi_getpermdeny(sess->ssi.local)) && (permdeny != gc->user->permdeny)) {
+						debug_printf("ssi: changing permdeny from %d to %hhu\n", gc->user->permdeny, permdeny);
+						gc->user->permdeny = permdeny;
+						if (od->icq && gc->user->permdeny == 0x03) {
 							serv_set_away(gc, "Invisible", "");
 						}
 						tmp++;
@@ -4211,34 +4203,36 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* If changes were made, then flush buddy list to file */
 	if (tmp)
-		do_export(gc);
+		gaim_blist_save();
 
 	/* Add from local list to server list */
 	if (gc) {
 		GSList *cur;
 
 		/* Buddies */
-		for (cur=gc->groups; cur; cur=g_slist_next(cur)) {
+		for (cur=groups; cur; cur=g_slist_next(cur)) {
 			GSList *curb;
 			struct group *group = cur->data;
 			for (curb=group->members; curb; curb=curb->next) {
 				struct buddy *buddy = curb->data;
-				if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
-					/* Store local alias on server */
-					char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
-					if (!alias && buddy->alias[0])
-						aim_ssi_aliasbuddy(sess, od->conn, group->name, buddy->name, buddy->alias);
-					free(alias);
-				} else {
-					debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
-					aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
+				if(buddy->user == gc->user) {
+					if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
+						/* Store local alias on server */
+						char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
+						if (!alias && buddy->alias[0])
+							aim_ssi_aliasbuddy(sess, od->conn, group->name, buddy->name, buddy->alias);
+						free(alias);
+					} else {
+						debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
+						aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
+					}
 				}
 			}
 		}
 
 		/* Permit list */
-		if (gc->permit) {
-			for (cur=gc->permit; cur; cur=cur->next)
+		if (gc->user->permit) {
+			for (cur=gc->user->permit; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 					debug_printf("ssi: adding permit %s from local list to server list\n", (char *)cur->data);
 					aim_ssi_addpermit(sess, od->conn, cur->data);
@@ -4246,8 +4240,8 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 
 		/* Deny list */
-		if (gc->deny) {
-			for (cur=gc->deny; cur; cur=cur->next)
+		if (gc->user->deny) {
+			for (cur=gc->user->deny; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
 					debug_printf("ssi: adding deny %s from local list to server list\n", (char *)cur->data);
 					aim_ssi_adddeny(sess, od->conn, cur->data);
@@ -4260,9 +4254,15 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				aim_ssi_setpresence(sess, fr->conn, tmp | 0x400);
 
 		/* Check for maximum number of buddies */
-		for (cur=gc->groups, tmp=0; cur; cur=g_slist_next(cur)) {
+		for (cur=groups, tmp=0; cur; cur=g_slist_next(cur)) {
 			struct group* gr = (struct group*)cur->data;
-			tmp = tmp + g_slist_length(gr->members);
+			GSList *buds = gr->members;
+			while(buds) {
+				struct buddy *b = buds->data;
+				if(b->user == gc->user)
+					tmp++;
+				buds = buds->next;
+			}
 		}
 		if (tmp > od->rights.maxbuddies) {
 			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
@@ -4332,7 +4332,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: %s has given you permission to add him to your buddy list\n", sn);
 
-	buddy = find_buddy(gc, sn);
+	buddy = find_buddy(gc->user, sn);
 	if (buddy && (get_buddy_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
 	else
@@ -4366,7 +4366,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: received authorization request from %s\n", sn);
 
-	buddy = find_buddy(gc, sn);
+	buddy = find_buddy(gc->user, sn);
 	if (buddy && (get_buddy_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
 	else
@@ -4401,7 +4401,7 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", sn, reply);
 
-	buddy = find_buddy(gc, sn);
+	buddy = find_buddy(gc->user, sn);
 	if (buddy && (get_buddy_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
 	else
@@ -4432,7 +4432,7 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
-	buddy = find_buddy(gc, sn);
+	buddy = find_buddy(gc->user, sn);
 	debug_printf("ssi: %s added you to their buddy list\n", sn);
 	show_got_added(gc, NULL, sn, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
 
@@ -4898,7 +4898,7 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 	struct oscar_data *od = gc->proto_data;
 	od->evilhack = g_slist_append(od->evilhack, g_strdup(normalize(who)));
 	if (od->icq) {
-		struct buddy *budlight = find_buddy(gc, who);
+		struct buddy *budlight = find_buddy(gc->user, who);
 		if (budlight)
 			if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))
 				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
@@ -4930,7 +4930,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	char buf[MAXMSGLEN];
 	int at;
 
-	switch(gc->permdeny) {
+	switch(gc->user->permdeny) {
 	case 1:
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, gc->username);
 		break;
@@ -4956,16 +4956,18 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
 		break;
 	case 5:
-		g = gc->groups;
+		g = groups;
 		at = 0;
 		while (g) {
-		        list = ((struct group *)g->data)->members;
+			list = ((struct group *)g->data)->members;
 			while (list) {
-				at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", ((struct buddy *)list->data)->name);
+				struct buddy *b = list->data;
+				if(b->user == gc->user)
+					at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", b->name);
 				list = list->next;
 			}
 			g = g->next;
-		}			
+		}
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
 		break;
 	default:
@@ -4974,13 +4976,13 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	signoff_blocked(gc);
 #else
 	if (od->sess->ssi.received_data)
-		aim_ssi_setpermdeny(od->sess, od->conn, gc->permdeny, 0xffffffff);
+		aim_ssi_setpermdeny(od->sess, od->conn, gc->user->permdeny, 0xffffffff);
 #endif
 }
 
-static void oscar_add_permit(struct gaim_connection *gc, char *who) {
+static void oscar_add_permit(struct gaim_connection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->permdeny == 3)
+	if (gc->user->permdeny == 3)
 		oscar_set_permit_deny(gc);
 #else
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -4990,9 +4992,9 @@ static void oscar_add_permit(struct gaim_connection *gc, char *who) {
 #endif
 }
 
-static void oscar_add_deny(struct gaim_connection *gc, char *who) {
+static void oscar_add_deny(struct gaim_connection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->permdeny == 4)
+	if (gc->user->permdeny == 4)
 		oscar_set_permit_deny(gc);
 #else
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -5002,9 +5004,9 @@ static void oscar_add_deny(struct gaim_connection *gc, char *who) {
 #endif
 }
 
-static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
+static void oscar_rem_permit(struct gaim_connection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->permdeny == 3)
+	if (gc->user->permdeny == 3)
 		oscar_set_permit_deny(gc);
 #else
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -5014,9 +5016,9 @@ static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
 #endif
 }
 
-static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
+static void oscar_rem_deny(struct gaim_connection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->permdeny == 4)
+	if (gc->user->permdeny == 4)
 		oscar_set_permit_deny(gc);
 #else
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -5196,11 +5198,11 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 
 	text = g_strdup(_("You are awaiting authorization from the following buddies:<BR>"));
 
-	for (curg=gc->groups; curg; curg=g_slist_next(curg)) {
+	for (curg=groups; curg; curg=g_slist_next(curg)) {
 		struct group *group = curg->data;
 		for (curb=group->members; curb; curb=g_slist_next(curb)) {
 			struct buddy *buddy = curb->data;
-			if (aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
+			if (buddy->user == gc->user && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
 				if (get_buddy_alias_only(buddy))
 					nombre = g_strdup_printf(" %s (%s)", buddy->name, get_buddy_alias_only(buddy));
 				else

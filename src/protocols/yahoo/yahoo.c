@@ -464,7 +464,6 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 		if (pair->key != 87)
 			continue;
 
-		do_import(gc, NULL);
 		lines = g_strsplit(pair->value, "\n", -1);
 		for (tmp = lines; *tmp; tmp++) {
 			split = g_strsplit(*tmp, ":", 2);
@@ -476,8 +475,8 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 			}
 			buddies = g_strsplit(split[1], ",", -1);
 			for (bud = buddies; bud && *bud; bud++)
-				if (!find_buddy(gc, *bud)) {
-					add_buddy(gc, split[0], *bud, *bud);
+				if (!find_buddy(gc->user, *bud)) {
+					add_buddy(gc->user, split[0], *bud, *bud);
 					export = TRUE;
 				}
 			g_strfreev(buddies);
@@ -487,7 +486,7 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 	}
 
 	if (export)
-		do_export(gc);
+		gaim_blist_save();
 }
 
 static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet *pkt)
@@ -520,7 +519,7 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 		else
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_strncasecmp(msg, "GAME", strlen("GAME"))) {
-		struct buddy *bud = find_buddy(gc, from);
+		struct buddy *bud = find_buddy(gc->user, from);
 		void *free1=NULL, *free2=NULL;
 		if (!bud)
 			debug_printf("%s is playing a game, and doesn't want you to know.\n", from);
@@ -1070,7 +1069,7 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	struct buddy *b = find_buddy(gc, who); /* this should never be null. if it is,
+	struct buddy *b = find_buddy(gc->user, who); /* this should never be null. if it is,
 						  segfault and get the bug report. */
 	static char buf[1024];
 	static char buf2[1024];
@@ -1312,7 +1311,7 @@ static void yahoo_add_buddy(struct gaim_connection *gc, const char *who)
 	if (!yd->logged_in)
 		return;
 
-	g = find_group_by_buddy(gc, who);
+	g = find_group_by_buddy(find_buddy(gc->user, who));
 	if (g)
 		group = g->name;
 	else

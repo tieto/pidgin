@@ -635,22 +635,21 @@ XS (XS_GAIM_buddy_list)
 	struct gaim_connection *gc;
 	struct buddy *buddy;
 	struct group *g;
-	GSList *list = NULL;
+	GSList *list = groups;
 	GSList *mem;
 	int i = 0;
 	dXSARGS;
 	items = 0;
 
 	gc = (struct gaim_connection *)SvIV(ST(0));
-	if (g_slist_find(connections, gc))
-		list = gc->groups;
 
 	while (list) {
 		g = (struct group *)list->data;
 		mem = g->members;
 		while (mem) {
 			buddy = (struct buddy *)mem->data;
-			XST_mPV(i++, buddy->name);
+			if(buddy->user->gc == gc)
+				XST_mPV(i++, buddy->name);
 			mem = mem->next;
 		}
 		list = g_slist_next(list);
@@ -663,22 +662,20 @@ XS (XS_GAIM_online_list)
 	struct gaim_connection *gc;
 	struct buddy *b;
 	struct group *g;
-	GSList *list = NULL;
+	GSList *list = groups;
 	GSList *mem;
 	int i = 0;
 	dXSARGS;
 	items = 0;
 
 	gc = (struct gaim_connection *)SvIV(ST(0));
-	if (g_slist_find(connections, gc))
-		list = gc->groups;
 
 	while (list) {
 		g = (struct group *)list->data;
 		mem = g->members;
 		while (mem) {
 			b = (struct buddy *)mem->data;
-			if (b->present) XST_mPV(i++, b->name);
+			if (b->user->gc == gc && b->present) XST_mPV(i++, b->name);
 			mem = mem->next;
 		}
 		list = g_slist_next(list);
@@ -747,7 +744,7 @@ XS (XS_GAIM_user_info)
 
 	gc = (struct gaim_connection *)SvIV(ST(0));
 	if (g_slist_find(connections, gc))
-		buddy = find_buddy(gc, SvPV(ST(1), junk));
+		buddy = find_buddy(gc->user, SvPV(ST(1), junk));
 
 	if (!buddy)
 		XSRETURN(0);

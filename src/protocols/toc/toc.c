@@ -513,7 +513,6 @@ static char *show_error_message()
         case 983:
                 g_snprintf(buf, sizeof(buf), _("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."));
                 break;
-        case 989:
                 g_snprintf(buf, sizeof(buf), _("An unknown signon error has occurred: %s."), w);
                 break;
         default:
@@ -601,9 +600,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		account_online(gc);
 		serv_finish_login(gc);
 
-		if (bud_list_cache_exists(gc))
-			do_import(gc, NULL);
-
 		/* Client sends TOC toc_init_done message */
 		debug_printf("* Client sends TOC toc_init_done message\n");
 		g_snprintf(snd, sizeof snd, "toc_init_done");
@@ -637,8 +633,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				signoff(gc);
 				return;
 			}
-			if (bud_list_cache_exists(gc))
-				do_import(gc, NULL);
 			g_snprintf(snd, sizeof snd, "toc_init_done");
 			sflap_send(gc, snd, -1, TYPE_DATA);
 			do_error_dialog(_("TOC has come back from its pause. You may now send"
@@ -646,7 +640,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		}
 	} else if (!strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
-		parse_toc_buddy_list(gc, c);
+		parse_toc_buddy_list(gc->user, c);
 	} else if (!strcasecmp(c, "NICK")) {
 		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
@@ -995,7 +989,7 @@ static int toc_send_im(struct gaim_connection *gc, char *name, char *message, in
 static void toc_set_config(struct gaim_connection *gc)
 {
 	char *buf = g_malloc(MSG_LEN), snd[BUF_LEN * 2];
-	toc_build_config(gc, buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
+	toc_build_config(gc->user, buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
 	g_snprintf(snd, MSG_LEN, "toc_set_config {%s}", buf);
 	sflap_send(gc, snd, -1, TYPE_DATA);
 	g_free(buf);
@@ -1272,10 +1266,10 @@ static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
 	return m;
 }
 
-static void toc_add_permit(struct gaim_connection *gc, char *who)
+static void toc_add_permit(struct gaim_connection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->permdeny != 3)
+	if (gc->user->permdeny != 3)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
@@ -1283,10 +1277,10 @@ static void toc_add_permit(struct gaim_connection *gc, char *who)
 	signoff_blocked(gc);
 }
 
-static void toc_add_deny(struct gaim_connection *gc, char *who)
+static void toc_add_deny(struct gaim_connection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->permdeny != 4)
+	if (gc->user->permdeny != 4)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
@@ -1300,7 +1294,7 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 	GSList *list;
 	int at;
 
-	switch (gc->permdeny) {
+	switch (gc->user->permdeny) {
 	case 1:
 		/* permit all, deny none. to get here reliably we need to have been in permit
 		 * mode, and send an empty toc_add_deny message, which will switch us to deny none */
@@ -1324,7 +1318,7 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 		sflap_send(gc, buf2, -1, TYPE_DATA);
 
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
-		list = gc->permit;
+		list = gc->user->permit;
 		while (list) {
 			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", normalize(list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
@@ -1342,7 +1336,7 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 		sflap_send(gc, buf2, -1, TYPE_DATA);
 
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
-		list = gc->deny;
+		list = gc->user->deny;
 		while (list) {
 			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", normalize(list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
@@ -1360,16 +1354,16 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 	signoff_blocked(gc);
 }
 
-static void toc_rem_permit(struct gaim_connection *gc, char *who)
+static void toc_rem_permit(struct gaim_connection *gc, const char *who)
 {
-	if (gc->permdeny != 3)
+	if (gc->user->permdeny != 3)
 		return;
 	toc_set_permit_deny(gc);
 }
 
-static void toc_rem_deny(struct gaim_connection *gc, char *who)
+static void toc_rem_deny(struct gaim_connection *gc, const char *who)
 {
-	if (gc->permdeny != 4)
+	if (gc->user->permdeny != 4)
 		return;
 	toc_set_permit_deny(gc);
 }

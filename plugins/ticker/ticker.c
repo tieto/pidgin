@@ -332,37 +332,33 @@ void BuddyTickerShow()
 {
 	GdkPixmap *pm;
 	GdkBitmap *bm;
-	struct gaim_connection *gc;
 	struct group *g;
 	struct buddy *b;
-	GSList *gcons, *grps, *buds;
+	GSList *grps, *buds;
 	char **xpm;
-	
-	for( gcons = connections; gcons; gcons = gcons->next ) {
-		gc = (struct gaim_connection *)gcons->data;
-		for( grps = gc->groups; grps; grps = grps->next ) {
-			g = (struct group *)grps->data;
-			for( buds = g->members; buds; buds = buds->next ) {
-				b = (struct buddy *)buds->data;
-				if( b->present ) {
-					xpm = NULL;
-					if (gc->prpl->list_icon)
-						xpm = gc->prpl->list_icon(b->uc);
-					if (xpm == NULL)
-						xpm = (char **)no_icon_xpm;
-					pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
-					BuddyTickerAddUser( b->name, get_buddy_alias(b), pm, bm );
-					gdk_pixmap_unref(pm);
-					if (bm)
-						gdk_bitmap_unref(bm);
-				}
+
+	for( grps = groups; grps; grps = grps->next ) {
+		g = (struct group *)grps->data;
+		for( buds = g->members; buds; buds = buds->next ) {
+			b = (struct buddy *)buds->data;
+			if( b->present ) {
+				xpm = NULL;
+				if (b->user->gc->prpl->list_icon)
+					xpm = b->user->gc->prpl->list_icon(b->uc);
+				if (xpm == NULL)
+					xpm = (char **)no_icon_xpm;
+				pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
+				BuddyTickerAddUser( b->name, get_buddy_alias(b), pm, bm );
+				gdk_pixmap_unref(pm);
+				if (bm)
+					gdk_bitmap_unref(bm);
 			}
 		}
 	}
 }
 
 void signon_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = find_buddy(gc, who);
+	struct buddy *b  = find_buddy(gc->user, who);
 	char **xpm = NULL;
 	
 	GdkPixmap *pm;
@@ -393,7 +389,7 @@ void buddy_signoff_cb(struct gaim_connection *gc, char *who) {
 }
 
 void away_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = find_buddy(gc, who);
+	struct buddy *b  = find_buddy(gc->user, who);
 	char **xpm = NULL;
 	
 	GdkPixmap *pm;

@@ -610,23 +610,25 @@ handle_list(struct gaim_connection *gc, char *list)
 		return;
 
 	g_strdown(id->str->str);
-	gr = gc->groups;
+	gr = groups;
 	while (gr) {
 		GSList *m = ((struct group *)gr->data)->members;
 		while (m) {
 			struct buddy *b = m->data;
-			char *tmp = g_strdup(b->name);
-			char *x, *l;
-			g_strdown(tmp);
-			x = strstr(id->str->str, tmp);
-			l = x + strlen(b->name);
-			if (x && (*l != ' ' && *l != 0))
-				x = 0;
-			if (!b->present && x)
-				serv_got_update(gc, b->name, 1, 0, 0, 0, 0, 0);
-			else if (b->present && !x)
-				serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
-			g_free(tmp);
+			if(b->user->gc == gc) {
+				char *tmp = g_strdup(b->name);
+				char *x, *l;
+				g_strdown(tmp);
+				x = strstr(id->str->str, tmp);
+				l = x + strlen(b->name);
+				if (x && (*l != ' ' && *l != 0))
+					x = 0;
+				if (!b->present && x)
+					serv_got_update(gc, b->name, 1, 0, 0, 0, 0, 0);
+				else if (b->present && !x)
+					serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
+				g_free(tmp);
+			}
 			m = m->next;
 		}
 		gr = gr->next;
@@ -643,7 +645,7 @@ irc_request_buddy_update(gpointer data)
 	char buf[500];
 	int n = g_snprintf(buf, sizeof(buf), "ISON");
 
-	GSList *gr = gc->groups;
+	GSList *gr = groups;
 	if (!gr || id->bc)
 		return TRUE;
 
@@ -652,13 +654,15 @@ irc_request_buddy_update(gpointer data)
 		GSList *m = g->members;
 		while (m) {
 			struct buddy *b = m->data;
-			if (n + strlen(b->name) + 2 > sizeof(buf)) {
-				g_snprintf(buf + n, sizeof(buf) - n, "\r\n");
-				irc_write(id->fd, buf, n);
-				id->bc++;
-				n = g_snprintf(buf, sizeof(buf), "ISON");
+			if(b->user->gc == gc) {
+				if (n + strlen(b->name) + 2 > sizeof(buf)) {
+					g_snprintf(buf + n, sizeof(buf) - n, "\r\n");
+					irc_write(id->fd, buf, n);
+					id->bc++;
+					n = g_snprintf(buf, sizeof(buf), "ISON");
+				}
+				n += g_snprintf(buf + n, sizeof(buf) - n, " %s", b->name);
 			}
-			n += g_snprintf(buf + n, sizeof(buf) - n, " %s", b->name);
 			m = m->next;
 		}
 		gr = gr->next;
@@ -1320,9 +1324,6 @@ irc_parse(struct gaim_connection *gc, char *buf)
 		/* Now lets sign ourselves on */
 		account_online(gc);
 		serv_finish_login(gc);
-
-		if (bud_list_cache_exists(gc))
-			do_import(gc, NULL);
 
 		/* we don't call this now because otherwise some IRC servers might not like us */
 		idata->timer = g_timeout_add(20000, irc_request_buddy_update, gc);

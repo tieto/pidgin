@@ -504,7 +504,7 @@ static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation
 
 void add_callback(GtkWidget *widget, struct conversation *c)
 {
-	struct buddy *b = find_buddy(c->gc, c->name);
+	struct buddy *b = find_buddy(c->gc->user, c->name);
 	if (b) {
 		show_confirm_del(c->gc, c->name);
 	} else if (c->gc)
@@ -1632,7 +1632,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	if (!c->is_chat || !(c->gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if (!who) {
 			if (flags & WFLAG_SEND) {
-				b = find_buddy(c->gc, c->gc->username);
+				b = find_buddy(c->gc->user, c->gc->username);
 				if (get_buddy_alias_only(b))
 					 who = get_buddy_alias(b);
 				else if (c->gc->user->alias[0])
@@ -1642,14 +1642,14 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				else
 					who = c->gc->username;
 			} else {
-				b = find_buddy(c->gc, c->name);
+				b = find_buddy(c->gc->user, c->name);
 				if (b)
 					who = get_buddy_alias(b);
 				else
 					who = c->name;
 			}
 		} else {
-			b = find_buddy(c->gc, who);
+			b = find_buddy(c->gc->user, who);
 			if (b)
 				who = get_buddy_alias(b);
 		}
@@ -2179,7 +2179,7 @@ void update_convo_add_button(struct conversation *c)
 	GtkWidget *parent = c->add->parent;
 	gboolean rebuild = FALSE;
 
-	if (find_buddy(c->gc, c->name)) {
+	if (find_buddy(c->gc->user, c->name)) {
 		if (!gtk_object_get_user_data(GTK_OBJECT(c->add))) {
 			gtk_widget_destroy(c->add);
 			c->add = gaim_pixbuf_button_from_stock(dispstyle == 0 ? NULL : _("Remove"),
@@ -2780,7 +2780,7 @@ void show_conv(struct conversation *c)
 	
 	/* And put the other buttons on the left */
 
-	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
+	if (c->gc && find_buddy(c->gc->user, c->name) != NULL) {
 		add = gaim_pixbuf_button_from_stock(
 				(dispstyle == 0 ? NULL : _("Remove")),
 				(dispstyle == 1 ? NULL : "gtk-remove"),
@@ -3110,7 +3110,7 @@ void set_convo_title(struct conversation *c)
 	int index;
 	GtkNotebook *nb;
 
-	if ((im_options & OPT_IM_ALIAS_TAB) && c->gc && ((b = find_buddy(c->gc, c->name)) != NULL))
+	if ((im_options & OPT_IM_ALIAS_TAB) && c->gc && ((b = find_buddy(c->gc->user, c->name)) != NULL))
 		text = get_buddy_alias(b);
 	else
 		text = c->name;

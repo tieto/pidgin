@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4597 2003-01-18 01:58:00Z thekingant $
+ * $Id: gg.c 4614 2003-01-19 22:16:52Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -129,7 +129,7 @@ static gint args_compare(gconstpointer a, gconstpointer b)
 
 static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
 {
-	switch (gc->permdeny) {
+	switch (gc->user->permdeny) {
 	case 1:
 		/* permit all, deny none */
 		return TRUE;
@@ -140,13 +140,13 @@ static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
 		break;
 	case 3:
 		/* permit some. */
-		if (g_slist_find_custom(gc->permit, uin, args_compare))
+		if (g_slist_find_custom(gc->user->permit, uin, args_compare))
 			return TRUE;
 		return FALSE;
 		break;
 	case 4:
 		/* deny some. */
-		if (g_slist_find_custom(gc->deny, uin, args_compare))
+		if (g_slist_find_custom(gc->user->deny, uin, args_compare))
 			return FALSE;
 		return TRUE;
 		break;
@@ -277,7 +277,7 @@ static GList *agg_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = find_buddy(gc, who);
+	struct buddy *b = find_buddy(gc->user, who);
 	static char buf[AGG_BUF_LEN];
 
 	if (!b) {
@@ -507,8 +507,6 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		account_online(gc);
 		serv_finish_login(gc);
 
-		if (bud_list_cache_exists(gc))
-			do_import(gc, NULL);
 		break;
 	case GG_EVENT_CONN_FAILED:
 		gaim_input_remove(gc->inpa);
@@ -797,7 +795,7 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 		}
 
 		debug_printf("import_buddies_server_results: uin: %s\n", name);
-		if (!find_buddy(gc, name)) {
+		if (!find_buddy(gc->user, name)) {
 			/* Default group if none specified on server */
 			gchar *group = g_strdup("Gadu-Gadu");
 			if (strlen(data_tbl[5])) {
@@ -809,8 +807,8 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 				g_strfreev(group_tbl);
 			}
 			/* Add Buddy to our userlist */
-			add_buddy(gc, group, name, strlen(show) ? show : name);
-			do_export(gc);
+			add_buddy(gc->user, group, name, strlen(show) ? show : name);
+			gaim_blist_save();
 			g_free(group);
 		}
 		g_strfreev(data_tbl);
@@ -1003,7 +1001,7 @@ static void export_buddies_server(struct gaim_connection *gc)
 	gchar *u = gg_urlencode(gc->username);
 	gchar *p = gg_urlencode(gc->password);
 
-	GSList *gr = gc->groups;
+	GSList *gr = groups;
 
 	he->gc = gc;
 	he->type = AGG_HTTP_USERLIST_EXPORT;
@@ -1019,26 +1017,28 @@ static void export_buddies_server(struct gaim_connection *gc)
 		GSList *m = g->members;
 		while (m) {
 			struct buddy *b = m->data;
-			gchar *newdata;
-			/* GG Number */
-			gchar *name = gg_urlencode(b->name);
-			/* GG Pseudo */
-			gchar *show = gg_urlencode(b->alias[0] ? b->alias : b->name);
-			/* Group Name */
-			gchar *gname = gg_urlencode(g->name);
 
-			ptr = he->request;
-			newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s\r\n",
-						  show, show, show, show, "", gname, name);
-			he->request = g_strconcat(ptr, newdata, NULL);
+			if(b->user->gc == gc) {
+				gchar *newdata;
+				/* GG Number */
+				gchar *name = gg_urlencode(b->name);
+				/* GG Pseudo */
+				gchar *show = gg_urlencode(b->alias[0] ? b->alias : b->name);
+				/* Group Name */
+				gchar *gname = gg_urlencode(g->name);
 
-			g_free(newdata);
-			g_free(ptr);
+				ptr = he->request;
+				newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s\r\n",
+						show, show, show, show, "", gname, name);
+				he->request = g_strconcat(ptr, newdata, NULL);
 
-			g_free(gname);
-			g_free(show);
-			g_free(name);
+				g_free(newdata);
+				g_free(ptr);
 
+				g_free(gname);
+				g_free(show);
+				g_free(name);
+			}
 			m = g_slist_next(m);
 		}
 		gr = g_slist_next(gr);
@@ -1254,7 +1254,7 @@ static void agg_set_permit_deny_dummy(struct gaim_connection *gc)
 	/* It's implemented on client side because GG server doesn't support this */
 }
 
-static void agg_permit_deny_dummy(struct gaim_connection *gc, char *who)
+static void agg_permit_deny_dummy(struct gaim_connection *gc, const char *who)
 {
 	/* It's implemented on client side because GG server doesn't support this */
 }

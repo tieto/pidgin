@@ -320,10 +320,10 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
-			if ((b = find_buddy(zgc, user)) == NULL) {
+			if ((b = find_buddy(zgc->user, user)) == NULL) {
 				char *e = strchr(user, '@');
 				if (e) *e = '\0';
-				b = find_buddy(zgc, user);
+				b = find_buddy(zgc->user, user);
 			}
 			if (!b) {
 				free(user);
@@ -445,18 +445,20 @@ static gint check_loc(gpointer data)
 	memset(&(ald.uid), 0, sizeof(ZUnique_Id_t));
 	ald.version = NULL;
 
-	gr = zgc->groups;
+	gr = groups;
 	while (gr) {
 		struct group *g = gr->data;
 		m = g->members;
 		while (m) {
 			struct buddy *b = m->data;
-			char *chk;
-			chk = zephyr_normalize(b->name);
-			/* doesn't matter if this fails or not; we'll just move on to the next one */
-			ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
-			free(ald.user);
-			free(ald.version);
+			if(b->user->gc == zgc) {
+				char *chk;
+				chk = zephyr_normalize(b->name);
+				/* doesn't matter if this fails or not; we'll just move on to the next one */
+				ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
+				free(ald.user);
+				free(ald.version);
+			}
 			m = m->next;
 		}
 		gr = gr->next;
@@ -571,7 +573,7 @@ static void process_anyone()
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0])
-				add_buddy(zgc, "Anyone", buff, buff);
+				add_buddy(zgc->user, "Anyone", buff, buff);
 		}
 		fclose(fd);
 	}
@@ -606,8 +608,6 @@ static void zephyr_login(struct aim_user *user)
 	account_online(zgc);
 	serv_finish_login(zgc);
 
-	if (bud_list_cache_exists(zgc))
-		do_import(zgc, NULL);
 	process_anyone();
 	process_zsubs();
 
@@ -667,24 +667,26 @@ static void write_anyone()
 		return;
 	}
 
-	gr = zgc->groups;
+	gr = groups;
 	while (gr) {
 		g = gr->data;
 		m = g->members;
 		while (m) {
 			b = m->data;
-			if ((ptr = strchr(b->name, '@')) != NULL) {
-				ptr2 = ptr + 1;
-				/* We should only strip the realm name if the principal
-				   is in the user's realm
-				*/
-				if (!g_strcasecmp(ptr2,ZGetRealm())) {
-					*ptr = '\0';
+			if(b->user->gc == zgc) {
+				if ((ptr = strchr(b->name, '@')) != NULL) {
+					ptr2 = ptr + 1;
+					/* We should only strip the realm name if the principal
+					   is in the user's realm
+					   */
+					if (!g_strcasecmp(ptr2,ZGetRealm())) {
+						*ptr = '\0';
+					}
 				}
+				fprintf(fd, "%s\n", b->name);
+				if (ptr)
+					*ptr = '@';
 			}
-			fprintf(fd, "%s\n", b->name);
-			if (ptr)
-				*ptr = '@';
 			m = m->next;
 		}
 		gr = gr->next;

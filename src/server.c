@@ -333,13 +333,13 @@ void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
  */
 void serv_alias_buddy(struct buddy *b)
 {
-	if(b && b->gc && b->gc->prpl && b->gc->prpl->alias_buddy) {
-		b->gc->prpl->alias_buddy(b->gc, b->name, b->alias);
+	if(b && b->user->gc && b->user->gc->prpl && b->user->gc->prpl->alias_buddy) {
+		b->user->gc->prpl->alias_buddy(b->user->gc, b->name, b->alias);
 	}
 }
 
 void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
-	struct buddy *b = find_buddy(gc, who);
+	struct buddy *b = find_buddy(gc->user, who);
 	if(!b)
 		return;
 
@@ -359,14 +359,9 @@ void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
  */
 void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 {
-	if(b && b->gc && og && og->gc && ng && ng->gc) {
-		/*
-		 * If there are no connection changes...
-		 */
-		if(b->gc == og->gc && b->gc == ng->gc && ng->gc == og->gc) {
-			if(b->gc->prpl && b->gc->prpl->group_buddy) {
-				b->gc->prpl->group_buddy(b->gc, b->name, og->name, ng->name);
-			}
+	if(b && b->user->gc && og && ng) {
+		if(b->user->gc->prpl && b->user->gc->prpl->group_buddy) {
+			b->user->gc->prpl->group_buddy(b->user->gc, b->name, og->name, ng->name);
 		}
 	}
 }
@@ -396,25 +391,25 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group, const
 	}
 }
 
-void serv_add_permit(struct gaim_connection *g, char *name)
+void serv_add_permit(struct gaim_connection *g, const char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_permit)
 		g->prpl->add_permit(g, name);
 }
 
-void serv_add_deny(struct gaim_connection *g, char *name)
+void serv_add_deny(struct gaim_connection *g, const char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_deny)
 		g->prpl->add_deny(g, name);
 }
 
-void serv_rem_permit(struct gaim_connection *g, char *name)
+void serv_rem_permit(struct gaim_connection *g, const char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->rem_permit)
 		g->prpl->rem_permit(g, name);
 }
 
-void serv_rem_deny(struct gaim_connection *g, char *name)
+void serv_rem_deny(struct gaim_connection *g, const char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->rem_deny)
 		g->prpl->rem_deny(g, name);
@@ -622,7 +617,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 	if (gc->away) {
 		time_t t;
 		char *tmpmsg;
-		struct buddy *b = find_buddy(gc, name);
+		struct buddy *b = find_buddy(gc->user, name);
 		char *alias = b ? get_buddy_alias(b) : name;
 		int row;
 		struct queued_away_response *qar;
@@ -787,7 +782,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int evil, time_t signon,
 		     time_t idle, int type, guint caps)
 {
-	struct buddy *b = find_buddy(gc, name);
+	struct buddy *b = find_buddy(gc->user, name);
 
 	if (signon && (gc->prpl->options & OPT_PROTO_CORRECT_TIME)) {
 		char *tmp = g_strdup(normalize(name));
@@ -811,7 +806,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		char *who = g_strdup(b->name);
 		g_snprintf(b->name, sizeof(b->name), "%s", name);
 		handle_buddy_rename(b, who);
-		do_export(b->gc);
+		gaim_blist_save();
 		g_free(who);
 	}
 

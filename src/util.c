@@ -960,7 +960,7 @@ const char *handle_uri(char *uri) {
 	   AIM account connected. */
 	while (conn) {
 		gc = conn->data;
-		if (gc->protocol == PROTO_TOC) {
+		if (gc->protocol == PROTO_OSCAR && isalpha(gc->username[0])) {
 			break;
 		}
 		conn = conn->next;

@@ -504,6 +504,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	u->user_info[0] = 0;
 	u->options = OPT_USR_REM_PASS;
 	u->protocol = DEFAULT_PROTO;
+	u->permit = u->deny = NULL;
 
 	if (!fgets(buf, sizeof(buf), f))
 		return u;

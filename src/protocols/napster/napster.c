@@ -403,9 +403,6 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 		account_online(gc);
 		serv_finish_login(gc);
 
-		if (bud_list_cache_exists(gc))
-			do_import(gc, NULL);
-
 		return;
 	}
 }

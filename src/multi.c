@@ -86,9 +86,6 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 	gc->keepalive = 0;
 	gc->inpa = 0;
 	gc->buddy_chats = NULL;
-	gc->groups = NULL;
-	gc->permit = NULL;
-	gc->deny = NULL;
 	gc->away = NULL;
 	gc->away_state = NULL;
 
@@ -109,32 +106,21 @@ struct meter_window {
 
 void destroy_gaim_conn(struct gaim_connection *gc)
 {
-	GSList *g = gc->groups;
+	GSList *g = groups;
 	GSList *h;
 	struct group *m;
 	struct buddy *n;
 	while (g) {
 		m = (struct group *)g->data;
-		g = g_slist_remove(g, m);
+		g = g_slist_next(g);
 		h = m->members;
 		while (h) {
 			n = (struct buddy *)h->data;
-			if (gc->prpl->buddy_free)
-				gc->prpl->buddy_free(n);
-			h = g_slist_remove(h, n);
-			g_free(n);
+			h = g_slist_next(h);
+			if(n->user == gc->user) {
+				n->present = 0;
+			}
 		}
-		g_free(m);
-	}
-	g = gc->permit;
-	while (g) {
-		g_free(g->data);
-		g = g_slist_remove(g, g->data);
-	}
-	g = gc->deny;
-	while (g) {
-		g_free(g->data);
-		g = g_slist_remove(g, g->data);
 	}
 	g_free(gc->away);
 	g_free(gc->away_state);
@@ -1112,6 +1098,7 @@ static void acct_autologin(GtkCellRendererToggle *cell, gchar *path_str,
 static void do_del_acct(struct aim_user *u)
 {
 	GtkTreeIter iter;
+	GSList *grps = groups, *buds;
 
 	if (u->gc) {
 		u->gc->wants_to_die = TRUE;
@@ -1122,7 +1109,33 @@ static void do_del_acct(struct aim_user *u)
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 	}
 
+
+	/* remove the buddies for the account we just destroyed */
+	while(grps) {
+		struct group *g = grps->data;
+		grps = grps->next;
+		buds = g->members;
+		while(buds) {
+			struct buddy *b = buds->data;
+			buds = buds->next;
+			if(b->user == u) {
+				/* sigh, someday we'll get a central gaim_buddy_free() */
+				g->members = g_slist_remove(g->members, b);
+				g_hash_table_destroy(b->settings);
+				g_free(b);
+			}
+		}
+		if(!g->members) {
+			ui_remove_group(g);
+			groups = g_slist_remove(groups, g);
+			g_free(g);
+		}
+	}
+
 	aim_users = g_slist_remove(aim_users, u);
+
+	gaim_blist_save();
+
 	save_prefs();
 }
 
@@ -1320,6 +1333,8 @@ void account_online(struct gaim_connection *gc)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
 	GtkTreeIter iter;
+	GSList *grps, *buds;
+	GList *add_buds=NULL;
 
 	/* Set the time the account came online */
 	time(&gc->login_time);
@@ -1341,6 +1356,7 @@ void account_online(struct gaim_connection *gc)
 	do_away_menu();
 	do_proto_menu();
 	redo_convo_menus();
+	redo_buddy_list();
 	gaim_setup(gc);
 
 	gc->user->connecting = FALSE;
@@ -1362,6 +1378,25 @@ void account_online(struct gaim_connection *gc)
 		g_free(opt_away_arg);
 		opt_away_arg = NULL;
 	}
+
+	/* let the prpl know what buddies we pulled out of the local list */
+
+	for(grps = groups; grps; grps = grps->next) {
+		struct group *g = grps->data;
+		for(buds = g->members; buds; buds = buds->next) {
+			struct buddy *b = buds->data;
+			if(b->user->gc == gc) {
+				add_buds = g_list_append(add_buds, b->name);
+			}
+		}
+	}
+
+	if(add_buds) {
+		serv_add_buddies(gc, add_buds);
+		g_list_free(add_buds);
+	}
+
+	serv_set_permit_deny(gc);
 
 	/* everything for the account editor */
 	if (!acctedit)
@@ -1658,7 +1693,6 @@ void signoff(struct gaim_connection *gc)
 
 	/* more UI stuff */
 	redo_buddy_list();
-	build_edit_tree();
 	do_away_menu();
 	do_proto_menu();
 	redo_convo_menus();
@@ -1681,6 +1715,8 @@ struct aim_user *new_user(const char *name, int proto, int opts)
 	g_snprintf(u->user_info, sizeof(u->user_info), "%s", DEFAULT_INFO);
 	u->protocol = proto;
 	u->options = opts;
+	u->permit = NULL;
+	u->deny = NULL;
 	aim_users = g_slist_append(aim_users, u);
 
 	if (treeview) {

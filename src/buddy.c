@@ -118,9 +118,6 @@ static void update_idle_time(struct buddy_show *bs);
 void handle_group_rename(struct group *g, char *prevname)
 {
 	struct group_show *gs, *new_gs;
-	struct buddy_show *bs;
-	struct buddy *b;
-	GSList *m;
 	GtkCTreeNode *c;
 
 	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, g);
@@ -134,93 +131,20 @@ void handle_group_rename(struct group *g, char *prevname)
 	if (new_gs) {
 		/* transfer everything that was in gs and is in the same gaim_conn as g
 		 * over to new_gs. */
-		m = gs->members;
-		while (m) {
-			bs = (struct buddy_show *)m->data;
-			if (g_slist_index(bs->connlist, g->gc) >= 0) {
-				b = find_buddy(g->gc, bs->name);
-				m = g_slist_next(m);
-				bs->connlist = g_slist_remove(bs->connlist, g->gc);
-				if (!bs->connlist) {
-					gs->members = g_slist_remove(gs->members, bs);
-					if (bs->log_timer > 0)
-						g_source_remove(bs->log_timer);
-					bs->log_timer = 0;
-					remove_buddy_show(gs, bs);
-					g_free(bs->name);
-					g_free(bs);
-				}
-				if ((bs = find_buddy_show(new_gs, b->name)) == NULL) {
-					if (g->gc->prpl->list_icon) {
-						bs = new_buddy_show(new_gs, b,
-								    g->gc->prpl->list_icon(b->uc));
-					} else {
-						bs = new_buddy_show(new_gs, b, (char **)no_icon_xpm);
-					}
-				}
-				bs->connlist = g_slist_append(bs->connlist, g->gc);
-			} else {
-				m = g_slist_next(m);
-			}
+		while (gs->members) {
+			new_gs->members = g_slist_append(new_gs->members, gs->members->data);
+			gs->members = g_slist_remove(gs->members, gs->members->data);
+
 		}
-		if (!gs->members) {
-			/* we just transferred all of the members out of this group_show,
-			 * so this group_show serves no purpose now. */
-			shows = g_slist_remove(shows, gs);
-			gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
-			g_free(gs->name);
-			g_free(gs);
-		} else {
-			update_num_group(gs);
-		}
+		shows = g_slist_remove(shows, gs);
+		gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
+		g_free(gs->name);
+		g_free(gs);
 		update_num_group(new_gs);
 	} else {
-		/* two possible actions: if gs contains things that are only from g,
-		 * just rename gs and fix the label. otherwise, move everything in g
-		 * over to another group_show */
-		for (m = gs->members; m != NULL; m = g_slist_next(m)) {
-			bs = (struct buddy_show *)m->data;
-			if (g_slist_index(bs->connlist, g->gc) < 0 || g_slist_length(bs->connlist) > 1) {
-				break;
-			}
-		}
-		if (m) {
-			/* there's something from a different gaim_connection. */
-			new_gs = new_group_show(g->name);
-			m = gs->members;
-			while (m) {
-				bs = (struct buddy_show *)m->data;
-				if (g_slist_index(bs->connlist, g->gc) >= 0) {
-					b = find_buddy(g->gc, bs->name);
-					m = g_slist_next(m);
-					bs->connlist = g_slist_remove(bs->connlist, g->gc);
-					if (!bs->connlist) {
-						gs->members = g_slist_remove(gs->members, bs);
-						if (bs->log_timer > 0)
-							g_source_remove(bs->log_timer);
-						bs->log_timer = 0;
-						remove_buddy_show(gs, bs);
-						g_free(bs->name);
-						g_free(bs);
-					}
-					if (g->gc->prpl->list_icon) {
-						bs = new_buddy_show(new_gs, b,
-								    g->gc->prpl->list_icon(b->uc));
-					} else {
-						bs = new_buddy_show(new_gs, b, (char **)no_icon_xpm);
-					}
-					bs->connlist = g_slist_append(NULL, g->gc);
-				} else {
-					m = g_slist_next(m);
-				}
-			}
-			update_num_group(gs);
-			update_num_group(new_gs);
-		} else {
-			g_free(gs->name);
-			gs->name = g_strdup(g->name);
-			update_num_group(gs);
-		}
+		g_free(gs->name);
+		gs->name = g_strdup(g->name);
+		update_num_group(gs);
 	}
 }
 
@@ -243,7 +167,7 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	if ((cnv = find_conversation(b->name)) != NULL)
 		set_convo_title(cnv);
 
-	g = find_group_by_buddy(b->gc, b->name);
+	g = find_group_by_buddy(b);
 	if (!g) {
 		/* shouldn't happen */
 		return;
@@ -259,7 +183,7 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	}
 
 	if (g_strcasecmp(b->name, prevname)) {
-		bs->connlist = g_slist_remove(bs->connlist, b->gc);
+		bs->connlist = g_slist_remove(bs->connlist, b->user->gc);
 		if (!bs->connlist) {
 			gs->members = g_slist_remove(gs->members, bs);
 			if (bs->log_timer > 0)
@@ -383,23 +307,14 @@ void toggle_show_empty_groups()
 
 	} else {
 		/* put back all groups */
-		GSList *c = connections;
-		struct gaim_connection *gc;
-		GSList *m;
-		struct group *g;
+		GSList *m = groups;
 
-		while (c) {
-			gc = (struct gaim_connection *)c->data;
-			m = gc->groups;
-			while (m) {
-				g = (struct group *)m->data;
-				m = g_slist_next(m);
-				if (!find_group_show(g->name))
-					new_group_show(g->name);
-			}
-			c = g_slist_next(c);
+		while (m) {
+			struct group *g = (struct group *)m->data;
+			if (!find_group_show(g->name) && gaim_group_on_account(g, NULL))
+				new_group_show(g->name);
+			m = g_slist_next(m);
 		}
-
 	}
 }
 
@@ -428,9 +343,8 @@ void toggle_buddy_pixmaps()
 static void update_num_group(struct group_show *gs)
 {
 	GSList *c = connections;
-	struct gaim_connection *gc;
-	struct group *g;
-	struct buddy_show *b;
+	struct group *g = find_group(gs->name);
+	struct buddy *b;
 	int total = 0, on = 0;
 	char buf[256];
 
@@ -438,21 +352,15 @@ static void update_num_group(struct group_show *gs)
 		debug_printf("update_num_group called for unfound group_show %s\n", gs->name);
 		return;
 	}
-
-	while (c) {
-		gc = (struct gaim_connection *)c->data;
-		g = find_group(gc, gs->name);
-		if (g) {
-			total += g_slist_length(g->members);
+	if (g) {
+		for (c = g->members; c; c = c->next) {
+			b = c->data;
+			if(b->user->gc) {
+				if(b->present)
+					on++;
+				total++;
+			}
 		}
-		c = g_slist_next(c);
-	}
-
-	c = gs->members;
-	while (c) {
-		b = (struct buddy_show *)c->data;
-		on += g_slist_length(b->connlist);
-		c = g_slist_next(c);
 	}
 
 	if (blist_options & OPT_BLIST_SHOW_GRPNUM)
@@ -537,7 +445,7 @@ void pressed_im_bud(GtkWidget *widget, struct buddy *b)
 	} else {
 		c = new_conversation(b->name);
 
-		set_convo_gc(c, b->gc);
+		set_convo_gc(c, b->user->gc);
 	}
 }
 
@@ -568,7 +476,8 @@ void show_syslog()
 
 void pressed_alias_bs(GtkWidget *widget, struct buddy_show *bs)
 {
-	alias_dialog_bud(find_buddy(bs->connlist->data, bs->name));
+	struct gaim_connection *gc = bs->connlist->data;
+	alias_dialog_bud(find_buddy(gc->user, bs->name));
 }
 
 void pressed_alias_bud(GtkWidget *widget, struct buddy *b)
@@ -740,7 +649,7 @@ static void un_alias(GtkWidget *a, struct buddy *b)
 	b->alias[0] = '\0';
 	handle_buddy_rename(b, b->name); /* make me a sammich! */
 	serv_alias_buddy(b);
-	do_export(b->gc);
+	gaim_blist_save();
 }
 
 static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpointer data)
@@ -831,8 +740,8 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		/*
 		 * Add protocol-specific edit buddy menu items if they exist
 		 */
-		if (b->gc->prpl->edit_buddy_menu) {
-			GList *mo = mo_top = b->gc->prpl->edit_buddy_menu(b->gc, b->name);
+		if (b->user->gc && b->user->gc->prpl->edit_buddy_menu) {
+			GList *mo = mo_top = b->user->gc->prpl->edit_buddy_menu(b->user->gc, b->name);
 
 			while (mo) {
 				struct proto_buddy_menu *pbm = mo->data;
@@ -872,9 +781,10 @@ static void ui_remove_buddy_node(struct group *rem_g, struct buddy *rem_b)
 	}
 }
 
-void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy *rem_b)
+void ui_remove_buddy(struct buddy *rem_b)
 {
 	struct conversation *c;
+	struct group *rem_g = find_group_by_buddy(rem_b);
 	struct group_show *gs;
 	struct buddy_show *bs;
 
@@ -882,8 +792,8 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 	if (gs) {
 		bs = find_buddy_show(gs, rem_b->name);
 		if (bs) {
-			if (g_slist_find(bs->connlist, gc)) {
-				bs->connlist = g_slist_remove(bs->connlist, gc);
+			if (g_slist_find(bs->connlist, rem_b->user->gc)) {
+				bs->connlist = g_slist_remove(bs->connlist, rem_b->user->gc);
 				if (!g_slist_length(bs->connlist)) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
@@ -892,8 +802,9 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 					remove_buddy_show(gs, bs);
 					g_free(bs->name);
 					g_free(bs);
-					if (!g_slist_length(gs->members) &&
-					    (blist_options & OPT_BLIST_NO_MT_GRP)) {
+					if ((!g_slist_length(gs->members) &&
+					    (blist_options & OPT_BLIST_NO_MT_GRP)) ||
+							gaim_group_on_account(rem_g, NULL)) {
 						shows = g_slist_remove(shows, gs);
 						gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 						g_free(gs->name);
@@ -916,9 +827,12 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 
 }
 
-void ui_remove_group(struct gaim_connection *gc, struct group *rem_g)
+void ui_remove_group(struct group *rem_g)
 {
 	struct group_show *gs;
+	GtkCTreeNode *gnode = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, rem_g);
+	gtk_ctree_remove_node(GTK_CTREE(edittree), gnode);
+
 
 	if ((gs = find_group_show(rem_g->name)) != NULL) {
 		shows = g_slist_remove(shows, gs);
@@ -935,7 +849,7 @@ gboolean edit_drag_compare_func(GtkCTree *ctree, GtkCTreeNode *source_node,
 
 	type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), source_node);
 
-	if (*type == EDIT_GC) {
+	if (*type == EDIT_GROUP) {
 		if (!new_parent)
 			return TRUE;
 	} else if (*type == EDIT_BUDDY) {
@@ -944,14 +858,6 @@ gboolean edit_drag_compare_func(GtkCTree *ctree, GtkCTreeNode *source_node,
 			if (*type == EDIT_GROUP)
 				return TRUE;
 		}
-	} else {		/* group */
-
-		if (g_slist_length(connections) > 1 && new_parent) {
-			type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), new_parent);
-			if (*type == EDIT_GC)
-				return TRUE;
-		} else if (g_slist_length(connections) == 1 && !new_parent)
-			return TRUE;
 	}
 
 	return FALSE;
@@ -976,8 +882,6 @@ void redo_buddy_list()
 	struct group_show *gs;
 	GSList *m;
 	struct buddy_show *bs;
-	GSList *c = connections;
-	struct gaim_connection *gc;
 	GSList *gr;
 	struct group *g;
 	struct buddy *b;
@@ -1002,35 +906,32 @@ void redo_buddy_list()
 		g_free(gs);
 	}
 	shows = NULL;
-	while (c) {
-		gc = (struct gaim_connection *)c->data;
-		c = c->next;
-		gr = gc->groups;
-		while (gr) {
-			g = (struct group *)gr->data;
-			gr = gr->next;
-			gs = find_group_show(g->name);
-			if (!gs && !(blist_options & OPT_BLIST_NO_MT_GRP))
-				gs = new_group_show(g->name);
-			m = g->members;
-			while (m) {
-				b = (struct buddy *)m->data;
-				m = m->next;
-				if (b->present) {
-					if (!gs)
-						gs = new_group_show(g->name);
-					bs = find_buddy_show(gs, b->name);
-					if (!bs) {
-						if (gc->prpl->list_icon)
-							bs = new_buddy_show(gs, b,
-									    gc->prpl->list_icon(b->
-												   uc));
-						else
-							bs = new_buddy_show(gs, b, (char **)no_icon_xpm);
-					}
-					bs->connlist = g_slist_append(bs->connlist, gc);
-					update_num_group(gs);
+	gr = groups;
+	while (gr) {
+		g = (struct group *)gr->data;
+		gr = gr->next;
+		gs = find_group_show(g->name);
+		if (!gs && !(blist_options & OPT_BLIST_NO_MT_GRP)
+				&& gaim_group_on_account(g, NULL))
+			gs = new_group_show(g->name);
+		m = g->members;
+		while (m) {
+			b = (struct buddy *)m->data;
+			m = m->next;
+			if (b->present) {
+				if (!gs)
+					gs = new_group_show(g->name);
+				bs = find_buddy_show(gs, b->name);
+				if (!bs) {
+					if (b->user->gc->prpl->list_icon)
+						bs = new_buddy_show(gs, b,
+								b->user->gc->prpl->list_icon(b->
+									uc));
+					else
+						bs = new_buddy_show(gs, b, (char **)no_icon_xpm);
 				}
+				bs->connlist = g_slist_append(bs->connlist, b->user->gc);
+				update_num_group(gs);
 			}
 		}
 	}
@@ -1040,7 +941,6 @@ void redo_buddy_list()
 static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *parent,
 			   GtkCTreeNode *sibling, gpointer data)
 {
-	struct gaim_connection *gc, *pc = NULL, *sc = NULL;
 	int *ctype, *ptype = NULL, *stype = NULL;
 
 	ctype = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), child);
@@ -1051,55 +951,18 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 	if (sibling)
 		stype = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), sibling);
 
-	if (*ctype == EDIT_GC) {
-		/* not that it particularly matters which order the connections
-		 * are in, but just for debugging sake, i guess.... */
-		gc = (struct gaim_connection *)ctype;
-		connections = g_slist_remove(connections, gc);
-		if (sibling) {
-			int pos;
-			sc = (struct gaim_connection *)stype;
-			pos = g_slist_index(connections, sc);
-			if (pos)
-				connections = g_slist_insert(connections, gc, pos);
-			else
-				connections = g_slist_prepend(connections, gc);
-		} else
-			connections = g_slist_append(connections, gc);
-		redo_convo_menus(); /* this is evil */
-	} else if (*ctype == EDIT_BUDDY) {
+	if (*ctype == EDIT_BUDDY) {
 		/* we moved a buddy. hopefully we just changed groups or positions or something.
 		 * if we changed connections, we copy the buddy to the new connection. if the new
 		 * connection already had the buddy in its buddy list but in a different group,
 		 * we change the group that the buddy is in */
 		struct group *old_g, *new_g = (struct group *)ptype;
 		struct buddy *s = NULL, *buddy = (struct buddy *)ctype;
-		gboolean add = FALSE;
 		int pos;
 
-		if (buddy->gc != new_g->gc) {
-			/* we changed connections */
-			struct buddy *a;
+		old_g = find_group_by_buddy(buddy);
 
-			a = find_buddy(new_g->gc, buddy->name);
-
-			if (a) {
-				/* the buddy is in the new connection, so we'll remove it from
-				 * its current group and add it to the proper group below */
-				struct group *og;
-				og = find_group_by_buddy(new_g->gc, buddy->name);
-				og->members = g_slist_remove(og->members, a);
-			} else {
-				/* we don't have this buddy yet; let's add him */
-				add = TRUE;
-			}
-		}
-
-		old_g = find_group_by_buddy(buddy->gc, buddy->name);
-
-		if (buddy->gc == new_g->gc)
-			/* this is the same connection, so we'll remove it from its old group */
-			old_g->members = g_slist_remove(old_g->members, buddy);
+		old_g->members = g_slist_remove(old_g->members, buddy);
 
 		if (sibling) {
 			s = (struct buddy *)stype;
@@ -1111,21 +974,9 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 		} else
 			new_g->members = g_slist_append(new_g->members, buddy);
 
-		/*
-		 * we do the add after it's added locally so that prpls can find it if necessary
-		 * JFIXME: Er, shouldn't the buddy be removed from the old server, as well?
-		 */
-		if (add) {
-			serv_add_buddy(new_g->gc, buddy->name);
-		} else {
-			serv_move_buddy(buddy, old_g, new_g);
-		}
+		serv_move_buddy(buddy, old_g, new_g);
 
-		do_export(buddy->gc);
-		if (buddy->gc != new_g->gc) {
-			do_export(new_g->gc);
-			build_edit_tree();
-		}
+		gaim_blist_save();
 	} else {		/* group */
 
 		/* move the group. if moving connections, copy the group, and each buddy in the
@@ -1134,57 +985,23 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 		struct group *g, *g2, *group;
 		int pos;
 
-		pc = (struct gaim_connection *)ptype;
 		group = (struct group *)ctype;
 
-		if (g_slist_length(connections) > 1) {
-			g = find_group(pc, group->name);
-			if (!g)
-				g = add_group(pc, group->name);
+		g = group;
 
-			pc->groups = g_slist_remove(pc->groups, g);
+		groups = g_slist_remove(groups, g);
 
-			if (sibling) {
-				g2 = (struct group *)stype;
-				pos = g_slist_index(pc->groups, g2);
-				if (pos)
-					pc->groups = g_slist_insert(pc->groups, g, pos);
-				else
-					pc->groups = g_slist_prepend(pc->groups, g);
-			} else
-				pc->groups = g_slist_append(pc->groups, g);
+		if (sibling) {
+			g2 = (struct group *)stype;
+			pos = g_slist_index(groups, g2);
+			if (pos)
+				groups = g_slist_insert(groups, g, pos);
+			else
+				groups = g_slist_prepend(groups, g);
+		} else
+			groups = g_slist_append(groups, g);
 
-			if (pc != group->gc) {
-				GSList *mem;
-				struct buddy *b;
-				g2 = group;
-
-				mem = g2->members;
-				while (mem) {
-					b = (struct buddy *)mem->data;
-					if (!find_buddy(pc, b->name))
-						add_buddy(pc, g->name, b->name, b->alias);
-					mem = mem->next;
-				}
-			}
-			do_export(pc);
-		} else {
-			g = group;
-			gc = g->gc;
-
-			gc->groups = g_slist_remove(gc->groups, g);
-
-			if (sibling) {
-				g2 = (struct group *)stype;
-				pos = g_slist_index(gc->groups, g2);
-				if (pos)
-					gc->groups = g_slist_insert(gc->groups, g, pos);
-				else
-					gc->groups = g_slist_prepend(gc->groups, g);
-			} else
-				gc->groups = g_slist_append(gc->groups, g);
-			do_export(gc);
-		}
+		gaim_blist_save();
 	}
 
 	redo_buddy_list();
@@ -1225,11 +1042,9 @@ create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
 
 void build_edit_tree()
 {
-	GtkCTreeNode *c = NULL, *p = NULL, *n;
-	GSList *con = connections;
+	GtkCTreeNode *p = NULL, *n;
 	GSList *grp;
 	GSList *mem;
-	struct gaim_connection *z;
 	struct group *g;
 	struct buddy *b;
 	char *text[1];
@@ -1241,47 +1056,27 @@ void build_edit_tree()
 	gtk_clist_clear(GTK_CLIST(edittree));
 
 
-	while (con) {
-		z = (struct gaim_connection *)con->data;
+	grp = groups;
 
-		if (g_slist_length(connections) > 1) {
-			GdkPixmap *pixmap;
-			GdkBitmap *mask;
+	while (grp) {
 
-			text[0] = z->username;
+		g = (struct group *)grp->data;
 
-			create_prpl_icon(blist, z, &pixmap, &mask);
+		text[0] = g->name;
 
-			c = gtk_ctree_insert_node(GTK_CTREE(edittree), NULL,
-						  NULL, text, 3, pixmap, mask, pixmap, mask, 0, 1);
+		p = gtk_ctree_insert_node(GTK_CTREE(edittree), NULL,
+				NULL, text, 5, NULL, NULL, NULL, NULL, 0, 1);
 
-			gdk_pixmap_unref (pixmap);
-			gdk_bitmap_unref (mask);
+		gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, g);
 
-			gtk_ctree_node_set_row_data(GTK_CTREE(edittree), c, z);
-		} else
-			c = NULL;
+		n = NULL;
 
-		grp = z->groups;
+		mem = g->members;
 
-		while (grp) {
-			
-			g = (struct group *)grp->data;
-
-			text[0] = g->name;
-
-			p = gtk_ctree_insert_node(GTK_CTREE(edittree), c,
-						  NULL, text, 5, NULL, NULL, NULL, NULL, 0, 1);
-
-			gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, g);
-
-			n = NULL;
-
-			mem = g->members;
-
-			while (mem) {
-				char buf[256];
-				b = (struct buddy *)mem->data;
+		while (mem) {
+			char buf[256];
+			b = (struct buddy *)mem->data;
+			if(b->user->gc) {
 				if (get_buddy_alias_only(b)) {
 					g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, get_buddy_alias(b));
 					text[0] = buf;
@@ -1289,17 +1084,15 @@ void build_edit_tree()
 					text[0] = b->name;
 
 				n = gtk_ctree_insert_node(GTK_CTREE(edittree),
-							  p, NULL, text, 5,
-							  NULL, NULL, NULL, NULL, 1, 1);
+						p, NULL, text, 5,
+						NULL, NULL, NULL, NULL, 1, 1);
 
 				gtk_ctree_node_set_row_data(GTK_CTREE(edittree), n, b);
-
-				mem = mem->next;
-
 			}
-			grp = g_slist_next(grp);
+
+			mem = mem->next;
 		}
-		con = g_slist_next(con);
+		grp = g_slist_next(grp);
 	}
 
 	gtk_clist_thaw(GTK_CLIST(edittree));
@@ -1321,6 +1114,9 @@ void ui_add_buddy(struct gaim_connection *gc, struct group *g, struct buddy *b)
 	if (!blist)
 		return;
 
+	if(!b->user->gc)
+		return;
+
 	p = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, g);
 	if (get_buddy_alias_only(b)) {
 		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, get_buddy_alias(b));
@@ -1332,9 +1128,9 @@ void ui_add_buddy(struct gaim_connection *gc, struct group *g, struct buddy *b)
 	gtk_ctree_node_set_row_data(GTK_CTREE(edittree), n, b);
 }
 
-void ui_add_group(struct gaim_connection *gc, struct group *g)
+void ui_add_group(struct group *g)
 {
-	GtkCTreeNode *c = NULL, *p;
+	GtkCTreeNode *p;
 	char *text[1];
 
 	g->edittype = EDIT_GROUP;
@@ -1342,12 +1138,12 @@ void ui_add_group(struct gaim_connection *gc, struct group *g)
 	if (!blist)
 		return;
 
-	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, gc);
 	text[0] = g->name;
-	p = gtk_ctree_insert_node(GTK_CTREE(edittree), c, NULL, text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	p = gtk_ctree_insert_node(GTK_CTREE(edittree), NULL, NULL, text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, g);
 
-	if (!(blist_options & OPT_BLIST_NO_MT_GRP) && !find_group_show(g->name))
+	if (!(blist_options & OPT_BLIST_NO_MT_GRP) && !find_group_show(g->name)
+			&& gaim_group_on_account(g, NULL))
 		new_group_show(g->name);
 }
 
@@ -1366,18 +1162,14 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 		type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 
 		if (*type == EDIT_BUDDY) {
-			struct gaim_connection *gct;
 			b = (struct buddy *)type;
-			g = find_group_by_buddy(b->gc, b->name);
-			gct = b->gc;
-			serv_remove_buddy(b->gc, b->name, g->name);
-			remove_buddy(b->gc, g, b);
-			do_export(gct);
+			g = find_group_by_buddy(b);
+			serv_remove_buddy(b->user->gc, b->name, g->name);
+			remove_buddy(b);
+			gaim_blist_save();
 		} else if (*type == EDIT_GROUP) {
-			struct gaim_connection *gc = ((struct group *)type)->gc;
-			remove_group(gc, (struct group *)type);
-			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
-			do_export(gc);
+			remove_group((struct group *)type);
+			gaim_blist_save();
 		}
 
 	} else {
@@ -1406,13 +1198,16 @@ void add_buddy_callback(GtkWidget *widget, void *dummy)
 
 		if (*type == EDIT_BUDDY) {
 			struct buddy *b = (struct buddy *)type;
-			struct group *g = find_group_by_buddy(b->gc, b->name);
+			struct group *g = find_group_by_buddy(b);
 			grp = g->name;
-			gc = b->gc;
+			gc = b->user->gc;
 		} else if (*type == EDIT_GROUP) {
 			struct group *g = (struct group *)type;
 			grp = g->name;
-			gc = g->gc;
+			if(g->members)
+				gc = ((struct buddy *)g->members->data)->user->gc;
+			else
+				gc = connections->data;
 		} else {
 			gc = (struct gaim_connection *)type;
 		}
@@ -1433,9 +1228,9 @@ void add_group_callback(GtkWidget *widget, void *dummy)
 		node = i->data;
 		type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 		if (*type == EDIT_BUDDY)
-			gc = ((struct buddy *)type)->gc;
+			gc = ((struct buddy *)type)->user->gc;
 		else if (*type == EDIT_GROUP)
-			gc = ((struct group *)type)->gc;
+			gc = connections->data;
 		else
 			gc = (struct gaim_connection *)type;
 	}
@@ -1627,7 +1422,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 static void new_bp_callback(GtkWidget *w, struct buddy *b)
 {
 	if (b)
-		show_new_bp(b->name, b->gc, b->idle, b->uc & UC_UNAVAILABLE, NULL);
+		show_new_bp(b->name, b->user->gc, b->idle, b->uc & UC_UNAVAILABLE, NULL);
 	else
 		show_new_bp(NULL, NULL, 0, 0, NULL);
 }
@@ -1758,24 +1553,18 @@ static struct buddy_show *find_buddy_show(struct group_show *gs, char *name)
 
 static int group_number(char *group)
 {
-	GSList *c = connections;
-	struct gaim_connection *g;
 	GSList *m;
 	struct group *p;
 	int pos = 0;
 
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		m = g->groups;
-		while (m) {
-			p = (struct group *)m->data;
-			if (!strcmp(p->name, group))
-				return pos;
-			if (find_group_show(p->name))
-				pos++;
-			m = m->next;
-		}
-		c = c->next;
+	m = groups;
+	while (m) {
+		p = (struct group *)m->data;
+		if (!strcmp(p->name, group))
+			return pos;
+		if (find_group_show(p->name))
+			pos++;
+		m = m->next;
 	}
 	/* um..... we'll never get here */
 	return -1;
@@ -1783,38 +1572,38 @@ static int group_number(char *group)
 
 static int buddy_number(char *group, char *buddy)
 {
-	GSList *c = connections;
-	struct gaim_connection *g;
 	struct group *p;
 	GSList *z;
 	struct buddy *b;
 	int pos = 0;
 	char *tmp1 = g_strdup(normalize (buddy));
 	struct group_show *gs = find_group_show(group);
+	struct buddy_show *bs;
+	GSList *seen = NULL;
 
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		p = find_group(g, group);
-		if (!p) {
-			c = c->next;
-			continue;
-		}
+	p = find_group(group);
+	if(p) {
 		z = p->members;
 		while (z) {
 			b = (struct buddy *)z->data;
 			if (!strcmp(tmp1, normalize (b->name))) {
 				g_free(tmp1);
+				g_slist_free(seen);
 				return pos;
 			}
-			if (find_buddy_show(gs, b->name))
-				pos++;
+			if ((bs = find_buddy_show(gs, b->name))) {
+				if(!g_slist_find(seen, bs)) {
+					seen = g_slist_append(seen, bs);
+					pos++;
+				}
+			}
 			z = z->next;
 		}
-		c = c->next;
 	}
 	/* we shouldn't ever get here */
 	debug_printf("got to bad place in buddy_number\n");
 	g_free(tmp1);
+	g_slist_free(seen);
 	return -1;
 }
 
@@ -2123,10 +1912,10 @@ static gboolean log_timeout(gpointer data)
 		GdkPixmap *pm;
 		GdkBitmap *bm;
 		gchar **xpm = NULL;
-		struct buddy *light = find_buddy(b->connlist->data, b->name);
-		if (((struct gaim_connection *)b->connlist->data)->prpl->list_icon)
-			xpm =
-			    (*((struct gaim_connection *)b->connlist->data)->prpl->list_icon)(light->uc);
+		struct gaim_connection *gc = b->connlist->data;
+		struct buddy *light = find_buddy(gc->user, b->name);
+		if (gc->prpl->list_icon)
+			xpm = gc->prpl->list_icon(light->uc);
 		if (xpm == NULL)
 			xpm = (char **)no_icon_xpm;
 		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
@@ -2233,12 +2022,15 @@ static void update_idle_time(struct buddy_show *bs)
 	char serv_alias[512];
 	char *sotime = NULL, *itime;
 
+	struct gaim_connection *gc;
+
 	int i;
 
 	time(&t);
 	if (!bs->connlist)
 		return;
-	b = find_buddy(bs->connlist->data, bs->name);
+	gc = bs->connlist->data;
+	b = find_buddy(gc->user, bs->name);
 	if (!b)
 		return;
 	ihrs = (t - b->idle) / 3600;
@@ -2348,7 +2140,7 @@ void update_idle_times()
 
 void set_buddy(struct gaim_connection *gc, struct buddy *b)
 {
-	struct group *g = find_group_by_buddy(gc, b->name);
+	struct group *g = find_group_by_buddy(b);
 	struct group_show *gs;
 	struct buddy_show *bs;
 	GdkPixmap *pm;

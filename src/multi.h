@@ -40,13 +40,6 @@ struct gaim_connection {
 	/* all connections need an input watcher */
 	int inpa;
 
-	/* buddy list stuff. there is still a global groups for the buddy list, but
-	 * we need to maintain our own set of buddies, and our own permit/deny lists */
-	GSList *groups;
-	GSList *permit;
-	GSList *deny;
-	int permdeny;
-
 	/* all connections need a list of chats, even if they don't have chat */
 	GSList *buddy_chats;
 

@@ -274,7 +274,7 @@ static void icq_acc_auth(struct icq_auth *iq)
 		icq_SendAuthMsg(iq->link, iq->uin);
 
 		g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
-		if (find_buddy(iq->gc, uin))
+		if (find_buddy(iq->gc->user, uin))
 			return;
 
 		iqnew = g_memdup(iq, sizeof(struct icq_auth));
@@ -342,8 +342,6 @@ static void icq_login(struct aim_user *user) {
 		icq_SetProxy(link, proxyhost, proxyport, proxyuser[0], proxyuser, proxypass);
 
 	icq_ContactClear(id->link);
-	if (bud_list_cache_exists(gc))
-		do_import(gc, NULL);
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
 		hide_login_progress(gc, "Unable to connect");

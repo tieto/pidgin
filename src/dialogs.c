@@ -449,17 +449,16 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 
 void do_remove_buddy(struct buddy *b)
 {
-	struct group *g = find_group_by_buddy(b->gc, b->name);
-	struct gaim_connection *gc = b->gc;
+	struct group *g = find_group_by_buddy(b);
 	struct conversation *cv;
 
 	if (!b)
 		return;
 
 	debug_printf(_("Removing '%s' from buddy list.\n"), b->name);
-	serv_remove_buddy(b->gc, b->name, g->name);
-	remove_buddy(gc, g, b);
-	do_export(gc);
+	serv_remove_buddy(b->user->gc, b->name, g->name);
+	remove_buddy(b);
+	gaim_blist_save();
 
 	cv = find_conversation(b->name);
 
@@ -470,7 +469,7 @@ void do_remove_buddy(struct buddy *b)
 
 void show_confirm_del(struct gaim_connection *gc, gchar *name)
 {
-	struct buddy *bd = find_buddy(gc, name);
+	struct buddy *bd = find_buddy(gc->user, name);
 	char *text;
 	if (!bd)
 		return;
@@ -884,14 +883,14 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 
 		c = find_conversation(who);
 
-		add_buddy(a->gc, grp, who, whoalias);
+		add_buddy(a->gc->user, grp, who, whoalias);
 		serv_add_buddy(a->gc, who);
 
 		if (c != NULL) {
 			update_buttons_by_protocol(c);
 		}
 
-		do_export(a->gc);
+		gaim_blist_save();
 	}
 
 	destroy_dialog(NULL, a->window);
@@ -900,15 +899,15 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 void do_add_group(GtkWidget *w, int resp, struct addbuddy *a)
 {
 	const char *grp;
-	
+
 	if (resp == GTK_RESPONSE_OK) {
 		grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
 		if (!a->gc)
 			a->gc = connections->data;
 
-		add_group(a->gc, grp);
-		do_export(a->gc);
+		add_group(grp);
+		gaim_blist_save();
 	}
 
 	destroy_dialog(NULL, a->window);
@@ -920,7 +919,7 @@ static GList *groups_tree(struct gaim_connection *gc)
 	GList *tmp = NULL;
 	char *tmp2;
 	struct group *g;
-	GSList *grp = gc->groups;
+	GSList *grp = groups;
 
 	if (!grp) {
 		tmp2 = g_strdup(_("Buddies"));
@@ -1176,9 +1175,9 @@ static void set_deny_mode(GtkWidget *w, int data)
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	debug_printf("setting deny mode %d\n", data);
-	current_deny_gc->permdeny = data;
+	current_deny_gc->user->permdeny = data;
 	serv_set_permit_deny(current_deny_gc);
-	do_export(current_deny_gc);
+	gaim_blist_save();
 }
 
 static GtkWidget *deny_opt(char *label, int which, GtkWidget *set)
@@ -1194,7 +1193,7 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *set)
 
 	g_signal_connect(GTK_OBJECT(opt), "toggled", G_CALLBACK(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
-	if (current_deny_gc->permdeny == which)
+	if (current_deny_gc->user->permdeny == which)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 	return opt;
@@ -1219,7 +1218,7 @@ static void set_deny_type()
 {
 	GSList *bg = gtk_radio_button_group(GTK_RADIO_BUTTON(deny_type));
 
-	switch (current_deny_gc->permdeny) {
+	switch (current_deny_gc->user->permdeny) {
 	case 5:
 		bg = bg->next->next;
 		break;
@@ -1248,7 +1247,7 @@ void build_allow_list()
 	if (!current_is_deny)
 		return;
 
-	p = current_deny_gc->permit;
+	p = current_deny_gc->user->permit;
 
 	gtk_list_store_clear(GTK_LIST_STORE(allow_store));
 
@@ -1272,7 +1271,7 @@ void build_block_list()
 	if (!current_is_deny)
 		return;
 
-	d = current_deny_gc->deny;
+	d = current_deny_gc->user->deny;
 
 	gtk_list_store_clear(GTK_LIST_STORE(block_store));
 
@@ -1390,24 +1389,24 @@ static void pref_deny_rem(GtkWidget *button, gboolean permit)
 		return;
 
 	if (permit) {
-		char *name = find_permdeny_by_name(current_deny_gc->permit, who);
+		char *name = find_permdeny_by_name(current_deny_gc->user->permit, who);
 
 		if (name) {
-			current_deny_gc->permit = g_slist_remove(current_deny_gc->permit, name);
+			gaim_privacy_permit_remove(current_deny_gc->user, name);
 			serv_rem_permit(current_deny_gc, who);
 			build_allow_list();
 		}
 	} else {
-		char *name = find_permdeny_by_name(current_deny_gc->deny, who);
+		char *name = find_permdeny_by_name(current_deny_gc->user->deny, who);
 
 		if (name) {
-			current_deny_gc->deny = g_slist_remove(current_deny_gc->deny, name);
+			gaim_privacy_deny_remove(current_deny_gc->user, name);
 			serv_rem_deny(current_deny_gc, who);
 			build_block_list();
 		}
 	}
 
-	do_export(current_deny_gc);
+	gaim_blist_save();
 }
 
 GtkWidget *privacy_win;
@@ -2496,47 +2495,21 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 {
 
 	const char *who;
-	char *name;
 
 	who = gtk_entry_get_text(GTK_ENTRY(p->entry));
 
-	name = g_malloc(strlen(who) + 2);
-	g_snprintf(name, strlen(who) + 2, "%s", who);
-
 	if (!p->permit) {
-		GSList *d = p->gc->deny;
-		char *n;
-		n = g_strdup(normalize(name));
-		while (d) {
-			if (!g_strcasecmp(n, normalize(d->data)))
-				break;
-			d = d->next;
-		}
-		g_free(n);
-		if (!d) {
-			p->gc->deny = g_slist_append(p->gc->deny, name);
-			serv_add_deny(p->gc, name);
+		if (gaim_privacy_deny_add(p->gc->user, who)) {
+			serv_add_deny(p->gc, who);
 			build_block_list();
-			do_export(p->gc);
-		} else
-			g_free(name);
-	} else {
-		GSList *d = p->gc->permit;
-		char *n;
-		n = g_strdup(normalize(name));
-		while (d) {
-			if (!g_strcasecmp(n, normalize(d->data)))
-				break;
-			d = d->next;
+			gaim_blist_save();
 		}
-		g_free(n);
-		if (!d) {
-			p->gc->permit = g_slist_append(p->gc->permit, name);
-			serv_add_permit(p->gc, name);
+	} else {
+		if (gaim_privacy_permit_add(p->gc->user, who)) {
+			serv_add_permit(p->gc, who);
 			build_allow_list();
-			do_export(p->gc);
-		} else
-			g_free(name);
+			gaim_blist_save();
+		}
 	}
 
 	destroy_dialog(NULL, p->window);
@@ -3357,8 +3330,8 @@ static void do_import_dialog(GtkWidget *w, struct gaim_connection *gc)
 		return;
 	}
 	if (g_slist_find(connections, importgc)) {
-		do_import(importgc, file);
-		do_export(importgc);
+		do_import(gc->user, file);
+		gaim_blist_save();
 	}
 	destroy_dialog(NULL, importdialog);
 }
@@ -3777,7 +3750,7 @@ static void do_alias_bud(GtkWidget *w, struct buddy *b)
 		b->alias[0] = '\0';
 	handle_buddy_rename(b, b->name);
 	serv_alias_buddy(b);
-	do_export(b->gc);
+	gaim_blist_save();
 	destroy_dialog(aliasdlg, aliasdlg);
 }
 
@@ -4298,7 +4271,7 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 	const char *new_name;
 	struct group *g;
 	struct group *orig;
-	struct gaim_connection *gc;
+	GSList *accts;
 
 	if (resp == GTK_RESPONSE_OK) {
 
@@ -4307,27 +4280,35 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 
 		if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
 			char *prevname;
-			gc = g->gc;
 	
-			if ((orig = find_group(g->gc, new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
+			if ((orig = find_group(new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
 				orig->members = g_slist_concat(orig->members, g->members);
 				handle_group_rename(orig, g->name);
-				g->gc->groups = g_slist_remove(g->gc->groups, g);
+				groups = g_slist_remove(groups, g);
 				/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
-				serv_rename_group(gc, g, new_name);
+				accts = gaim_group_get_accounts(g);
+				while(accts) {
+					struct aim_user *au = accts->data;
+					serv_rename_group(au->gc, g, new_name);
+					accts = g_slist_remove(accts, accts->data);
+				}
 				g_free(g);
 			} else {
 				prevname = g_strdup(g->name);
-				serv_rename_group(gc, g, new_name);
+				accts = gaim_group_get_accounts(g);
+				while(accts) {
+					struct aim_user *au = accts->data;
+					serv_rename_group(au->gc, g, new_name);
+					accts = g_slist_remove(accts, accts->data);
+				}
 				g_snprintf(g->name, sizeof(g->name), "%s", new_name);
 				handle_group_rename(g, prevname);
 				/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
 				g_free(prevname);
 			}
-			do_export(gc);
+			gaim_blist_save();
 		}
 	}
-
 	destroy_dialog(rename_dialog, rename_dialog);
 }
 
@@ -4403,12 +4384,12 @@ static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	b = gtk_object_get_user_data(obj);
 
-	if (!g_slist_find(connections, b->gc)) {
+	if (!g_slist_find(connections, b->user->gc)) {
 		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
 		return;
 	}
 
-	gr = b->gc->groups;
+	gr = groups;
 	while (gr) {
 		if (g_slist_find(((struct group *)gr->data)->members, b))
 			break;
@@ -4420,14 +4401,14 @@ static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 	}
 
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, b->name)) {
-		struct group *g = find_group_by_buddy(b->gc, b->name);
+		struct group *g = find_group_by_buddy(b);
 		char *prevname = g_strdup(b->name);
 		if (g)
-			serv_remove_buddy(b->gc, b->name, g->name);
+			serv_remove_buddy(b->user->gc, b->name, g->name);
 		g_snprintf(b->name, sizeof(b->name), "%s", new_name);
-		serv_add_buddy(b->gc, b->name);
+		serv_add_buddy(b->user->gc, b->name);
 		handle_buddy_rename(b, prevname);
-		do_export(b->gc);
+		gaim_blist_save();
 		g_free(prevname);
 	}
 

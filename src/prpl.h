@@ -144,10 +144,10 @@ struct prpl {
 	void (* add_buddies)	(struct gaim_connection *, GList *buddies);
 	void (* remove_buddy)	(struct gaim_connection *, char *name, char *group);
 	void (* remove_buddies)	(struct gaim_connection *, GList *buddies, const char *group);
-	void (* add_permit)	(struct gaim_connection *, char *name);
-	void (* add_deny)	(struct gaim_connection *, char *name);
-	void (* rem_permit)	(struct gaim_connection *, char *name);
-	void (* rem_deny)	(struct gaim_connection *, char *name);
+	void (* add_permit)	(struct gaim_connection *, const char *name);
+	void (* add_deny)	(struct gaim_connection *, const char *name);
+	void (* rem_permit)	(struct gaim_connection *, const char *name);
+	void (* rem_deny)	(struct gaim_connection *, const char *name);
 	void (* set_permit_deny)(struct gaim_connection *);
 	void (* warn)		(struct gaim_connection *, char *who, int anonymous);
 	void (* join_chat)	(struct gaim_connection *, GList *data);

@@ -354,7 +354,7 @@ GList *generate_invite_user_names(struct gaim_connection *gc)
 	tmp = g_list_append(tmp, "");
 
 	if (gc) {
-		grp = gc->groups;
+		grp = groups;
 
 		while (grp) {
 			g = (struct group *)grp->data;
@@ -364,7 +364,7 @@ GList *generate_invite_user_names(struct gaim_connection *gc)
 			while (bl) {
 				buddy = (struct buddy *)bl->data;
 
-				if (buddy->present)
+				if (buddy->user->gc == gc && buddy->present)
 					tmp = g_list_append(tmp, buddy->name);
 
 				bl = g_slist_next(bl);
@@ -806,7 +806,7 @@ static void chat_press_away(GtkObject *obj, struct conversation *b)
 static void chat_press_add(GtkObject *obj, struct conversation *c)
 {
 	char *name = gtk_object_get_user_data(obj);
-	struct buddy *b = find_buddy(c->gc, name);
+	struct buddy *b = find_buddy(c->gc->user, name);
 
 	if (b) {
 		show_confirm_del(c->gc, name);
@@ -896,7 +896,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 
 		/* Added by Jonas <jonas@birme.se> */
 		if (b->gc) {
-			if (find_buddy(b->gc, who))
+			if (find_buddy(b->gc->user, who))
 				button = gtk_menu_item_new_with_label(_("Remove"));
 			else
 				button = gtk_menu_item_new_with_label(_("Add"));
@@ -1582,7 +1582,7 @@ void update_im_button_pix()
 		gtk_box_pack_end(GTK_BOX(parent), c->sep2, FALSE, TRUE, 0);
 		gtk_widget_show(c->sep2);
 
-		if (find_buddy(c->gc, c->name) == NULL)
+		if (find_buddy(c->gc->user, c->name) == NULL)
 			c->add = change_text(c->window, _("Add"), c->add, "gtk-add", opt);
 		else
 			c->add = change_text(c->window, _("Remove"), c->add, "gtk-remove", opt);
