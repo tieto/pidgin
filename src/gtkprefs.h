@@ -80,10 +80,10 @@ GtkWidget *prefs_labeled_spin_button(GtkWidget *page,
 /**
  * Add a new dropdown representing a preference of the specified type
  *
- * @param page  The page to which the spin button will be added
- * @param title The text to be displayed as the spin button label
+ * @param page  The page to which the dropdown will be added
+ * @param title The text to be displayed as the dropdown label
  * @param type  The type of preference to be stored in the generated dropdown
- * @param key   The key of the gaim int pref that will be represented by the spin button
+ * @param key   The key of the gaim int pref that will be represented by the dropdown
  * @param ...   The choices to be added to the dropdown
  */
 GtkWidget *prefs_dropdown(GtkWidget *page, const gchar *title,
@@ -93,10 +93,10 @@ GtkWidget *prefs_dropdown(GtkWidget *page, const gchar *title,
 /**
  * Add a new dropdown representing a preference of the specified type
  *
- * @param page      The page to which the spin button will be added
- * @param title     The text to be displayed as the spin button label
+ * @param page      The page to which the dropdown will be added
+ * @param title     The text to be displayed as the dropdown label
  * @param type      The type of preference to be stored in the generated dropdown
- * @param key       The key of the gaim int pref that will be represented by the spin button
+ * @param key       The key of the gaim int pref that will be represented by the dropdown
  * @param menuitems The choices to be added to the dropdown
  */
 GtkWidget *prefs_dropdown_from_list(GtkWidget *page,
