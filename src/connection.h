@@ -87,7 +87,6 @@ struct _GaimConnection
 
 	guint idle_timer;            /**< The idle timer.                    */
 	time_t login_time;           /**< Time of login.                     */
-	time_t login_time_official;  /**< Official time of login.            */
 	time_t last_sent_time;       /**< The time something was last sent.  */
 	int is_idle;                 /**< Idle state of the connection.      */
 
