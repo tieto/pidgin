@@ -6,17 +6,14 @@ Take a deep breath.
 
 Holy Crap.
 
-1. We need to modify the login window to allow for multiple connections. (Account Editor needs to be
-   a button at the very least.) MOSTLY DONE
-2. We need to modify the conversation window to state who you're sending messages as. The current way,
+1. We need to modify the conversation window to state who you're sending messages as. The current way,
    with the drop-down menu, is pretty crappy, though effective. (Perhaps just repositioning the menu?)
-3. We need to modify the buddy list to indicate which buddies belong to which connections. We also
+2. We need to modify the buddy list to indicate which buddies belong to which connections. We also
    need to modify the buddy list to vary the right-click menus on a per-conversation basis. (I.e. create
    the menu based on which options the protocol supports.)
-4. We need to modify nearly every function in server.c to determine which connection to do things on.
+3. We need to modify nearly every function in server.c to determine which connection to do things on.
    The ones that still need to be modified have a FIXME comment in them.
-   4.1. We need to modify the UI to let the user indicate which account to do things on.
-5. We need to completely modify the plugin/perl system to account for multiple connections.
-6. We need to modify functions to account for the possibility of protocol plugins.
+   3.1. We need to modify the UI to let the user indicate which account to do things on.
+4. We need to completely modify the plugin/perl system to account for multiple connections.
 
 And that's just the large things. There are countless trivial issues that need to be addressed.

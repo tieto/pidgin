@@ -1,7 +1,7 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-10-10 06:35:05 -0400 (Tue, 10 Oct 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-10-14 17:24:53 -0400 (Sat, 14 Oct 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
-the actually want to compile what they just checked out. Gaim CVS is usually
+they actually want to compile what they just checked out. Gaim CVS is usually
 relatively stable (we use it all the time), but has tendencies to be quirky at
 times.
 
