@@ -2840,6 +2840,8 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 		linkdialog = gtk_window_new(GTK_WINDOW_DIALOG);
 		dialogwindows = g_list_prepend(dialogwindows, linkdialog);
 
+		gtk_widget_set_usize(linkdialog, 270, 165);
+		gtk_window_set_policy(GTK_WINDOW(linkdialog), FALSE, FALSE, TRUE);
 		gtk_widget_show(linkdialog);
 
 		vbox = gtk_vbox_new(FALSE, 10);
