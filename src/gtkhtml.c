@@ -488,13 +488,10 @@ int load_font_with_cache(const char *name, const char *weight, char slant,
 		g_snprintf(font_spec, sizeof font_spec,
 			"-*-%s-%s-%c-*-*-*-%d-*-*-*-*-*-*",
 			name, weight, slant, size);
-	else if (size == 0)
+	else
 		g_snprintf(font_spec, sizeof font_spec,
 			"-*-%s-%s-%c-*-*-*-*-*-*-*-*-*-*",
 			name, weight, slant);
-	else
-		g_snprintf(font_spec, sizeof font_spec,
-			"-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
 
 	if((*font_return = g_datalist_id_get_data(&font_cache,
 				g_quark_from_string(font_spec)))) {
@@ -522,10 +519,13 @@ GdkFont *getfont(const char *font, int bold, int italic, int fixed, int size)
 	if (size < 1) size = 1;
 	size = font_sizes[size-1];
 	
-	/* try both 'i'talic and 'o'blique for italic fonts, and keep
-	 * increasing the size until we get one that works. */	
+	/* try both 'i'talic and 'o'blique for italic fonts */
 
 	if (load_font_with_cache(font, weight, slant, size, &my_font))
+		return my_font;
+	if (load_font_with_cache(font, weight, 'o', size, &my_font))
+		return my_font;
+	if (italic && load_font_with_cache(font, weight, slant, 0, &my_font))
 		return my_font;
 	if (italic && load_font_with_cache(font, weight, 'o', 0, &my_font))
 		return my_font;
@@ -577,7 +577,7 @@ GdkFont *getfont(const char *font, int bold, int italic, int fixed, int size)
 	
 	/* well, if they can't do any of the fonts above, they'll take whatever
 	 * they can get, and be happy about it, damn it. :) */
-	load_font_with_cache("*", "*", '*', -1, &my_font);
+	load_font_with_cache("*", "*", '*', 0, &my_font);
 	return my_font;
 }
 
