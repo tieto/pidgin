@@ -36,36 +36,18 @@ static void set_idle(GtkWidget *button, GtkWidget *spinner) {
 	gc->is_idle = 0;
 }
 
-static void sel_gc(GtkWidget *opt, GaimConnection *g) {
-	gc = g;
+static void select_account_cb(GtkWidget *opt, GaimAccount *account)
+{
+	gc = gaim_account_get_connection(account);
 }
 
 static void make_connect_menu(GtkWidget *box) {
-	GtkWidget *optmenu, *menu, *opt;
-	GaimAccount *account;
-	GList *c = gaim_connections_get_all();
-	GaimConnection *g;
+	GtkWidget *optmenu;
 
-	optmenu = gtk_option_menu_new();
+	optmenu = gaim_gtk_account_option_menu_new(NULL, FALSE,
+			G_CALLBACK(select_account_cb), NULL);
+
 	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 5);
-
-	menu = gtk_menu_new();
-
-	while (c) {
-		g = (GaimConnection *)c->data;
-		account = gaim_connection_get_account(g);
-
-		opt = gtk_menu_item_new_with_label(gaim_account_get_username(account));
-		g_signal_connect(G_OBJECT(opt), "activate",
-				   G_CALLBACK(sel_gc), g);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-		gtk_widget_show(opt);
-		c = g_list_next(c);
-	}
-
-	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
 
 	if (gaim_connections_get_all())
 		gc = gaim_connections_get_all()->data;
