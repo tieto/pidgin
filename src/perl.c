@@ -425,6 +425,14 @@ XS (XS_GAIM_command)
 		struct gaim_connection *gc = find_gaim_conn_by_name(who);
 		if (gc) signoff(gc);
 		else signoff_all(NULL, NULL);
+	} else if (!strncasecmp(command, "info", 4)) {
+	        GSList *c = connections;
+		struct gaim_connection *gc;
+		while (c) {
+		        gc = (struct gaim_connection *)c->data;
+			serv_set_info(gc, SvPV(ST(1), junk));
+			c = c->next;
+		}
 	} else if (!strncasecmp(command, "away", 4)) {
 		char *message = SvPV(ST(1), junk);
 		static struct away_message a;
@@ -490,7 +498,7 @@ XS (XS_GAIM_user_info)
 
 XS (XS_GAIM_print_to_conv)
 {
-	char *nick, *what;
+	char *nick, *what, *isauto;
 	struct conversation *c;
 	int junk;
 	dXSARGS;
@@ -498,11 +506,12 @@ XS (XS_GAIM_print_to_conv)
 
 	nick = SvPV(ST(0), junk);
 	what = SvPV(ST(1), junk);
+	isauto = SvPV(ST(2), junk);
 	c = find_conversation(nick);
 	if (!c)
 		c = new_conversation(nick);
 	write_to_conv(c, what, WFLAG_SEND, NULL);
-	serv_send_im(c->gc, nick, what, 0);
+	serv_send_im(c->gc, nick, what, atoi(isauto));
 }
 
 XS (XS_GAIM_print_to_chat)
