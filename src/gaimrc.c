@@ -1177,9 +1177,7 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 
 	len = c - proxy;
 
-	if (!strncmp(proxy, "http://", len + 3))
-		global_proxy_info.proxytype = PROXY_HTTP;
-	else
+	if (strncmp(proxy, "http://", len + 3))
 		return FALSE;
 
 	gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "Found HTTP proxy.\n");
@@ -1348,9 +1346,6 @@ static void gaimrc_read_proxy(FILE *f)
 				g_snprintf(global_proxy_info.proxypass,
 						sizeof(global_proxy_info.proxypass), "%s",
 						g_getenv("HTTPPROXYPASS"));
-
-			if (global_proxy_info.proxyhost[0])
-				global_proxy_info.proxytype = PROXY_HTTP;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * @file gtkimhtml.h Gaim IM rendering component
+ * @file gtkimhtml.h GTK+ Gaim IM rendering component
  * @ingroup gtkui
  *
  * Copyright (C) 2000, Eric Warmenhoven <warmenhoven@yahoo.com>

@@ -195,12 +195,12 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 
 		if (froms != NULL) {
 			from_text = g_strdup_printf(
-				"<span weight=\"bold\">From:</span> %s", *froms);
+				"<span weight=\"bold\">From:</span> %s\n", *froms);
 		}
 
 		if (subjects != NULL) {
 			subject_text = g_strdup_printf(
-				"<span weight=\"bold\">Subject:</span> %s", *subjects);
+				"<span weight=\"bold\">Subject:</span> %s\n", *subjects);
 		}
 
 		label_text = g_strdup_printf(

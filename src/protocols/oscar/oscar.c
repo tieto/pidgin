@@ -3445,11 +3445,13 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	if (emailinfo) {
+		gchar *to = g_strdup_printf("%s@%s", gc->username, emailinfo->domain);
 		if (emailinfo->unread) {
 			if (havenewmail)
-				connection_has_mail(gc, emailinfo->nummsgs ? emailinfo->nummsgs : -1, NULL, NULL, emailinfo->url);
+				gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, &to, &emailinfo->url, NULL, NULL);
 		} else
-			connection_has_mail(gc, 0, NULL, NULL, emailinfo->url);
+			gaim_notify_emails(gc, 0, FALSE, NULL, NULL, &to, &emailinfo->url, NULL, NULL);
+		g_free(to);
 	}
 
 	return 1;

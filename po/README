@@ -12,7 +12,7 @@ from the gaim/po/ directory.
 
 To update an exsting translation, type:
 
-./update.pl LANG.po
+./update.pl LANG
 
 where LANG is the language code to update, such as fr or ja. This will build
 a new gaim.pot and update the translation with the changes. You may then
