@@ -33,7 +33,7 @@ when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
 and send it off.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-08-15 14:09:48 -0400 (Wed, 15 Aug 2001) $.
+$Date: 2001-08-20 16:39:29 -0400 (Mon, 20 Aug 2001) $.
 
 
 CODING STYLE
@@ -227,12 +227,6 @@ multi.c:
   now...). account_editor is really the only function that the UI needs
   to be concerned with.
 
-oscar.c:
-  One big hack of copied code. This is supposed to be the libfaim tie-in
-  in gaim. Most of it is just copied straight from faimtest, the small
-  program that comes with libfaim. I'm not even sure how half of it works,
-  if that makes you feel any better.
-
 perl.c:
   This was basically copied straight from X-Chat through the power of
   the GPL.  Perl is the biggest, most confusing piece of C code I've ever
@@ -299,15 +293,6 @@ ticker.c:
   functions that you'd want right up at the top. Someday I want to be
   as cool as Syd.
 
-toc.c:
-  This handles everything TOC-related, including parsing gaim's buddy
-  list.  Most of this file is toc_callback, which parses the incoming
-  information from the server. I really don't like TOC though. (I've spent
-  waaayyyy too much time with TOC. I rewrote the signon process for this
-  file at one point, so that read was only called when data was pending.
-  Since then the TOC server has been blocking my IP (probably my own
-  stupid fault, sending bad strings or some such).)
-
 util.c:
   There's not really a lot of cohesion to this file; it's just a lot of
   stuff that happened to be thrown into it for no apparent reason. None
@@ -317,12 +302,7 @@ util.c:
 PRPL sources:
 -------------
 
-plugins/yay: Yahoo
-  All of the files in here were written by Eric. All of the .c and .h
-  files except yay.c are part of a library that Eric wrote, libyay.
-  yay.c is what interacts with gaim.
-
-plugins/icq: ICQ (UDP v5)
+ICQ (UDP v5)
   All of the .c and .h files in here, with the exception of gaim_icq.c,
   are part of ICQLib, by Bill Soudan and others. gaim_icq.c is what
   interacts with gaim, and Eric wrote it. ICQLib is a fairly complete
@@ -330,25 +310,48 @@ plugins/icq: ICQ (UDP v5)
   feature you're probably going to be adding it to gaim_icq.c and not
   to ICQLib.
 
-plugins/msn: MSN
-  Rob wrote msn.c, and md5.c is a standard file. MSN doesn't use its
-  own library; all of the networking code is included inside of msn.c.
+ICQ (2000)
+  This protocol doesn't exist yet. If you get really bored one day,
+  you can write it. It shouldn't be that hard since ICQ2000 uses Oscar,
+  so it should just be copying everything from oscar/ to here, and then
+  making small modifications to deal with various things. Have fun.
 
-plugins/irc.c: IRC
+IRC
   Rob wrote irc.c, and since it is only one file it stands by itself.
   All of the networking code is contained inside this file, as well as
   the parts that interact with gaim.
 
-plugins/jabber: Jabber
+Jabber
   jabber.c was written by Adam Fritzler (the guy that wrote libfaim),
   and is maintained by Eric. The other .c and .h files belong to
   libxode and libjabber, which were written by the Jabber developers.
 
-plugins/napster.c: Napster
+MSN
+  Rob wrote msn.c, and md5.c is a standard file. MSN doesn't use its
+  own library; all of the networking code is included inside of msn.c.
+
+Napster
   Rob wrote napster.c, and since it is only one file it stands by
   itself.
 
-plugins/zephyr: Zephyr
+Oscar
+  Most of these files are libfaim; the only one that's written by a Gaim
+  developer is oscar.c, and even that's questionable. oscar.c is mostly
+  copied straight from faimtest, the small program that comes with
+  libfaim.
+
+TOC
+  Everything TOC-related, more or less. All of it is in one big file, so
+  depending on your style that either makes things a lot easier or a lot
+  harder. Have fun with it. This protocol seems to break more easily
+  than any of the others, which seems odd to me. But oh well.
+
+Yahoo
+  All of the files in here were written by Eric. All of the .c and .h
+  files except yay.c are part of a library that Eric wrote, libyay.
+  yay.c is what interacts with gaim.
+
+Zephyr
   zephyr.c is the only file in this directory by Eric; all the other
   files are part of the Zephyr library from MIT.
 

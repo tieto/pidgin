@@ -468,7 +468,7 @@ static void unload_immediate(GModule *handle)
 	g_module_close(handle);
 }
 
-static gint unload_timeout(GModule *handle)
+static gboolean unload_timeout(gpointer handle)
 {
 	g_module_close(handle);
 	return FALSE;
