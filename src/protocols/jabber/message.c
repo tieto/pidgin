@@ -53,7 +53,7 @@ void jabber_message_free(JabberMessage *jm)
 }
 
 static GaimConversation *
-find_unnormalized_conv(const char *name, GaimAccount *account)
+find_unnormalized_im(const char *name, GaimAccount *account)
 {
 	GaimConversation *c = NULL;
 	GList *cnv;
@@ -62,7 +62,8 @@ find_unnormalized_conv(const char *name, GaimAccount *account)
 
 	for(cnv = gaim_get_conversations(); cnv; cnv = cnv->next) {
 		c = (GaimConversation*)cnv->data;
-		if(!gaim_utf8_strcasecmp(name, gaim_conversation_get_name(c)) &&
+		if(gaim_conversation_get_type(c) == GAIM_CONV_IM &&
+				!gaim_utf8_strcasecmp(name, gaim_conversation_get_name(c)) &&
 				account == gaim_conversation_get_account(c))
 			return c;
 	}
@@ -84,13 +85,13 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(find_unnormalized_conv(jm->from, jm->js->gc->account)) {
+	if(find_unnormalized_im(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
 		GaimConversation *conv;
 
 		from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-		conv = find_unnormalized_conv(from, jm->js->gc->account);
+		conv = find_unnormalized_im(from, jm->js->gc->account);
 		if(conv)
 			gaim_conversation_set_name(conv, jm->from);
 		g_free(from);
