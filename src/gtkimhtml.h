@@ -24,6 +24,7 @@
 
 #include <gdk/gdk.h>
 #include <gtk/gtktextview.h>
+#include <gtk/gtktooltips.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,6 +56,10 @@ struct _GtkIMHtml {
 
 	gboolean show_smileys;
 	gboolean show_comments;
+
+	GtkWidget *tip_window;
+	char *tip;
+	guint tip_timer;
 };
 
 struct _GtkIMHtmlClass {
@@ -113,6 +118,7 @@ void       gtk_imhtml_page_up          (GtkIMHtml        *imhtml);
 void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml);
 void       gtk_imhtml_to_bottom        (GtkIMHtml        *imhtml);
 
+gboolean       gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer user_data);
 #ifdef __cplusplus
 }
 #endif

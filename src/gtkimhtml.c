@@ -48,6 +48,12 @@
 #  define _(x) (x)
 #endif
 
+#include <pango/pango-font.h>
+
+#define TOOLTIP_TIMEOUT 500
+
+static gint gtk_imhtml_tip (gpointer data);
+
 
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
@@ -158,6 +164,12 @@ gtk_imhtml_finalize (GObject *object)
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
 	gdk_cursor_unref(imhtml->hand_cursor);
 	gdk_cursor_unref(imhtml->arrow_cursor);
+	if(imhtml->tip_window){
+		gtk_widget_destroy(imhtml->tip_window);
+	}
+	if(imhtml->tip_timer)
+		gtk_timeout_remove(imhtml->tip_timer);
+
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -213,6 +225,12 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 	imhtml->smiley_data = g_hash_table_new (g_str_hash, g_str_equal);
 	imhtml->default_smilies = gtk_smiley_tree_new();
+
+	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
+
+	imhtml->tip = NULL;
+	imhtml->tip_timer = 0;
+	imhtml->tip_window = NULL;
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -293,19 +311,6 @@ gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter 
 			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 
 							event_button->button, event_button->time);
 			
-			/* URL of link, desensitized */
-			item = gtk_menu_item_new();
-			label = gtk_label_new(url);
-			gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-			gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-			gtk_container_add(GTK_CONTAINER(item), label);
-			gtk_widget_set_sensitive(item, FALSE);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-
-			/* seperator */
-			item = gtk_menu_item_new();
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-						
 			/* buttons and such */
 			img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
 			item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Link Location"));
@@ -324,16 +329,56 @@ gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter 
 			
 			return TRUE;
 		}
-	} else if (event->type == GDK_ENTER_NOTIFY) {
-		/* make a hand cursor and a tooltip timeout -- if GTK worked as it should */
-	} else if (event->type == GDK_LEAVE_NOTIFY) {
-		/* clear timeout and make an arrow cursor again --if GTK worked as it should */
 	}
 	if(event->type == GDK_BUTTON_PRESS && event_button->button == 3)
 		return TRUE; /* Clicking the right mouse button on a link shouldn't
 						be caught by the regular GtkTextView menu */
 	else
 		return FALSE; /* Let clicks go through if we didn't catch anything */
+}
+
+gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
+{	
+	GtkTextIter iter;
+	GdkWindow *win = event->window;
+	int x, y;
+	GSList *tags = NULL, *templist = NULL;
+
+	gdk_window_get_pointer(GTK_WIDGET(imhtml)->window, NULL, NULL, NULL);
+
+	gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(imhtml), GTK_TEXT_WINDOW_WIDGET,
+										  event->x, event->y, &x, &y);
+	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(imhtml), &iter, x, y);
+
+	if (GTK_IMHTML(imhtml)->tip_window) {
+		gtk_widget_destroy (GTK_IMHTML(imhtml)->tip_window);
+		GTK_IMHTML(imhtml)->tip_window = NULL;
+	}
+	if (GTK_IMHTML(imhtml)->tip_timer) {
+		gtk_timeout_remove (GTK_IMHTML(imhtml)->tip_timer);
+		GTK_IMHTML(imhtml)->tip_timer = 0;
+	}
+
+	GTK_IMHTML(imhtml)->tip = NULL;
+
+	tags = gtk_text_iter_get_tags(&iter);
+
+	for(templist = tags; !GTK_IMHTML(imhtml)->tip && templist; templist = templist->next){
+		GtkTextTag *tag = templist->data;
+		GTK_IMHTML(imhtml)->tip = g_object_get_data(G_OBJECT(tag), "link_url");
+	}
+
+	if(GTK_IMHTML(imhtml)->tip){
+		gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
+		GTK_IMHTML(imhtml)->tip_timer = gtk_timeout_add (TOOLTIP_TIMEOUT, 
+														 gtk_imhtml_tip, imhtml);
+	}
+	else{
+		gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->arrow_cursor);
+	}
+
+	g_slist_free(tags);
+	return FALSE;
 }
 
 /* this isn't used yet
@@ -723,6 +768,9 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                         if (url) { \
                                  texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL); \
                                  g_signal_connect(G_OBJECT(texttag), "event", G_CALLBACK(tag_event), strdup(url)); \
+                                 gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
+                                 texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, NULL); \
+                                 g_object_set_data(G_OBJECT(texttag), "link_url", g_strdup(url)); \
                                  gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
                         } \
                         wpos = 0; \
@@ -1166,3 +1214,96 @@ void gtk_imhtml_page_up (GtkIMHtml *imhtml)
 
 }
 void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml){}
+
+static gint
+gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
+{
+	PangoLayout *layout;
+
+	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
+
+	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
+
+	gtk_paint_flat_box (imhtml->tip_window->style, imhtml->tip_window->window, 
+						GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, imhtml->tip_window,
+						"tooltip", 0, 0, -1, -1);
+
+	gtk_paint_layout (imhtml->tip_window->style, imhtml->tip_window->window, GTK_STATE_NORMAL,
+					  FALSE, NULL, imhtml->tip_window, NULL, 4, 4, layout);
+
+	g_free(layout);
+	return FALSE;
+}
+
+static gint
+gtk_imhtml_tip (gpointer data)
+{
+	GtkIMHtml *imhtml = data;
+	PangoFontMetrics *font;
+	PangoLayout *layout;
+
+	gint gap, x, y, h, w, scr_w, baseline_skip;
+
+	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
+
+	if (!imhtml->tip || !GTK_WIDGET_DRAWABLE (GTK_WIDGET(imhtml))) {
+		imhtml->tip_timer = 0;
+		return FALSE;
+	}
+	
+	if (imhtml->tip_window){
+		gtk_widget_destroy (imhtml->tip_window);
+		imhtml->tip_window = NULL;
+	}
+
+	imhtml->tip_timer = 0;
+	imhtml->tip_window = gtk_window_new (GTK_WINDOW_POPUP);
+	gtk_widget_set_app_paintable (imhtml->tip_window, TRUE);
+	gtk_window_set_resizable (GTK_WINDOW (imhtml->tip_window), FALSE);
+	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
+	g_signal_connect_swapped (G_OBJECT (imhtml->tip_window), "expose_event",
+							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
+
+	gtk_widget_ensure_style (imhtml->tip_window);
+	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
+	font = pango_font_get_metrics(pango_context_load_font(pango_layout_get_context(layout),
+														  imhtml->tip_window->style->font_desc),
+														  NULL);
+
+
+	pango_layout_get_pixel_size(layout, &scr_w, NULL);
+	gap = PANGO_PIXELS((pango_font_metrics_get_ascent(font) + 
+					   pango_font_metrics_get_descent(font))/ 4);
+
+	if (gap < 2)
+		gap = 2;
+	baseline_skip = PANGO_PIXELS(pango_font_metrics_get_ascent(font) + 
+								pango_font_metrics_get_descent(font));
+	w = 8 + scr_w;
+	h = 8 + baseline_skip;
+
+	gdk_window_get_pointer (NULL, &x, &y, NULL);
+	if (GTK_WIDGET_NO_WINDOW (GTK_WIDGET(imhtml)))
+		y += GTK_WIDGET(imhtml)->allocation.y;
+
+	scr_w = gdk_screen_width();
+
+	x -= ((w >> 1) + 4);
+
+	if ((x + w) > scr_w)
+		x -= (x + w) - scr_w;
+	else if (x < 0)
+		x = 0;
+
+	y = y + PANGO_PIXELS(pango_font_metrics_get_ascent(font) + 
+						pango_font_metrics_get_descent(font));
+
+	gtk_widget_set_size_request (imhtml->tip_window, w, h);
+	gtk_widget_show (imhtml->tip_window);
+	gtk_window_move (GTK_WINDOW(imhtml->tip_window), x, y);
+
+	pango_font_metrics_unref(font);
+	g_free(layout);
+
+	return FALSE;
+}
