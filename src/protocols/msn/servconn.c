@@ -34,7 +34,7 @@ show_error(MsnServConn *servconn)
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
-	
+
 	gc = gaim_account_get_connection(servconn->session->account);
 	name = names[servconn->type];
 
@@ -49,7 +49,8 @@ show_error(MsnServConn *servconn)
 			break;
 		case MSN_ERROR_READ:
 			cmd = servconn->cmdproc->last_trans;
-			tmp = g_strdup_printf(_("Error reading from %s server"), name);
+			tmp = g_strdup_printf(_("Error reading from %s server. Last"
+									"command was:\n %s"), name, cmd);
 			gaim_debug_info("msn", "Last command was: %s\n", cmd);
 			break;
 		default:
@@ -58,7 +59,7 @@ show_error(MsnServConn *servconn)
 	}
 
 	gaim_connection_error(gc, tmp);
-	
+
 	g_free(tmp);
 }
 
