@@ -29,6 +29,7 @@ MSN_SMILEYS = \
 	msn_away.png		\
 	msn_bat.png			\
 	msn_beer.png		\
+	msn_bowl.png		\
 	msn_boy.png			\
 	msn_brheart.png		\
 	msn_cake.png		\
@@ -60,6 +61,7 @@ MSN_SMILEYS = \
 	msn_island.png		\
 	msn_kiss.png		\
 	msn_laugh.png		\
+	msn_lightning.png	\
 	msn_nerd.png		\
 	msn_neutral.png		\
 	msn_note.png		\
@@ -71,6 +73,7 @@ MSN_SMILEYS = \
 	msn_photo.png		\
 	msn_pizza.png		\
 	msn_plane.png		\
+	msn_plate.png		\
 	msn_question.png	\
 	msn_rainbow.png		\
 	msn_run.png			\
@@ -86,6 +89,7 @@ MSN_SMILEYS = \
 	msn_snail.png		\
 	msn_soccer.png		\
 	msn_star.png		\
+	msn_stormy.png		\
 	msn_sun.png			\
 	msn_sunglasses.png	\
 	msn_teeth.png		\
