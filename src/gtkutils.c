@@ -343,21 +343,24 @@ int
 gaim_gtk_get_dispstyle(GaimConversationType type)
 {
 	int dispstyle = 2;
+	int value;
 
 	if (type == GAIM_CONV_CHAT) {
-		switch (chat_options & (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM)) {
+		value = gaim_prefs_get_int("/gaim/gtk/conversations/chat/button_type");
 
-			case OPT_CHAT_BUTTON_TEXT: dispstyle = 1; break;
-			case OPT_CHAT_BUTTON_XPM:  dispstyle = 0; break;
-			default:                   dispstyle = 2; break; /* both/neither */
+		switch (value) {
+			case GAIM_BUTTON_TEXT:  dispstyle = 1; break;
+			case GAIM_BUTTON_IMAGE: dispstyle = 0; break;
+			default:                dispstyle = 2; break; /* both/neither */
 		}
 	}
 	else if (type == GAIM_CONV_IM) {
-		switch (im_options & (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM)) {
+		value = gaim_prefs_get_int("/gaim/gtk/conversations/im/button_type");
 
-			case OPT_IM_BUTTON_TEXT: dispstyle = 1; break;
-			case OPT_IM_BUTTON_XPM:  dispstyle = 0; break;
-			default:                 dispstyle = 2; break; /* both/neither */
+		switch (value) {
+			case GAIM_BUTTON_TEXT:  dispstyle = 1; break;
+			case GAIM_BUTTON_IMAGE: dispstyle = 0; break;
+			default:                dispstyle = 2; break; /* both/neither */
 		}
 	}
 

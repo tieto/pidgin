@@ -31,8 +31,9 @@
 #include "gtkplugin.h"
 #include "gaim.h"
 #include "sound.h"
-#include "eggtrayicon.h"
+#include "prefs.h"
 #include "gtkblist.h"
+#include "eggtrayicon.h"
 
 #define DOCKLET_PLUGIN_ID "gtk-docklet"
 
@@ -62,15 +63,9 @@ static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
 	gaim_sound_set_mute(GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
-static void docklet_toggle_queue(GtkWidget *widget, void *data) {
-	away_options ^= OPT_AWAY_QUEUE_UNREAD;
-	save_prefs();
+static void docklet_set_bool(GtkWidget *widget, const char *key) {
+	gaim_prefs_set_bool(key, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
-
-/* static void docklet_toggle_blist_show(GtkWidget *widget, void *data) {
-	blist_options ^= OPT_BLIST_APP_BUDDY_SHOW;
-	save_prefs();
-} */
 
 static void docklet_flush_queue() {
 	if (unread_message_queue) {
@@ -397,6 +392,9 @@ static void gaim_new_conversation(char *who, void *data) {
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
+	gaim_prefs_add_none("/plugins/gtk/docklet");
+	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
+
 	docklet_create(NULL);
 
 	gaim_signal_connect(plugin, event_signon, gaim_signon, NULL);
@@ -444,6 +442,7 @@ get_config_frame(GaimPlugin *plugin)
 	GtkWidget *frame;
 	GtkWidget *vbox, *hbox;
 	GtkWidget *toggle;
+	static const char *qmpref = "/plugins/gtk/docklet/queue_messages";
 
 	frame = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
@@ -452,14 +451,9 @@ get_config_frame(GaimPlugin *plugin)
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-/*	toggle = gtk_check_button_new_with_mnemonic(_("_Automatically show buddy list on sign on"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), blist_options & OPT_BLIST_APP_BUDDY_SHOW);
-	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_blist_show), NULL);
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0); */
-
 	toggle = gtk_check_button_new_with_mnemonic(_("_Hide new messages until tray icon is clicked"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), away_options & OPT_AWAY_QUEUE_UNREAD);
-	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_queue), NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), gaim_prefs_get_bool(qmpref));
+	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_set_bool), (void *)qmpref);
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(frame);

@@ -2666,7 +2666,7 @@ gaim_gtk_prefs_init(void)
 
 	/* XXX Move this! HACK! :( Aww... */
 	gaim_prefs_add_none("/plugins/gtk/docklet");
-	gaim_prefs_add_bool("/plugins/gtk/docklet/queue-messages", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
 
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");

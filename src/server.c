@@ -987,11 +987,13 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		 * earlier), then play a sound indicating we've received it and
 		 * then display it. Easy.
 		 */
-#if 0
-		/* XXX This is never TRUE, since nothing sets OPT_AWAY_QUEUE_UNREAD */
-		if (away_options & OPT_AWAY_QUEUE_UNREAD &&
-			!gaim_find_conversation(name) && docklet_count) {
 
+		/* XXX UGLY HACK OF THE YEAR
+		 * Robot101 will fix this after his exams. honest.
+		 */
+		if (docklet_count &&
+		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_unread") &&
+		    !gaim_find_conversation(name)) {
 			/*
 			 * We're gonna queue it up and wait for the user to ask for
 			 * it... probably by clicking the docklet or windows tray icon.
@@ -1007,16 +1009,13 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		}
 		else {
-#endif
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
 						  away | WFLAG_RECV, mtime);
 			gaim_window_flash(gaim_conversation_get_window(cnv));
-#if 0
 		}
-#endif
 	}
 
 	gaim_event_broadcast(event_im_displayed_rcvd, gc, name, message, flags, mtime);

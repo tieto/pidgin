@@ -241,7 +241,7 @@ FILE *open_log_file(const char *name, int is_chat)
 	FILE *fd;
 	int flag = 0;
 
-	if (((is_chat == 2) && !(logging_options & OPT_LOG_INDIVIDUAL))
+	if (((is_chat == 2) && !gaim_prefs_get_bool("/gaim/gtk/logging/individual_logs"))
 		|| ((is_chat == 1) && !gaim_prefs_get_bool("/gaim/gtk/logging/log_chats"))
 		|| ((is_chat == 0) && !gaim_prefs_get_bool("/gaim/gtk/logging/log_ims"))) {
 
@@ -255,7 +255,7 @@ FILE *open_log_file(const char *name, int is_chat)
 		fd = fopen(l->filename, "a");
 
 		if (flag) {	/* is a new file */
-			if (logging_options & OPT_LOG_STRIP_HTML) {
+			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 				fprintf(fd, _("IM Sessions with %s\n"), name);
 			} else {
 				fprintf(fd, "<HTML><HEAD><TITLE>");
@@ -271,7 +271,7 @@ FILE *open_log_file(const char *name, int is_chat)
 	fd = open_gaim_log_file(realname, &flag);
 
 	if (fd && flag) {	/* is a new file */
-		if (logging_options & OPT_LOG_STRIP_HTML) {
+		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 			fprintf(fd, _("IM Sessions with %s\n"), name);
 		} else {
 			fprintf(fd, "<HTML><HEAD><TITLE>");
