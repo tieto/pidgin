@@ -334,7 +334,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 220 $"
+#define REVISION "gaim:$Revision: 240 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -358,6 +358,14 @@ extern struct aim_conn_t *gaim_conn;
 
 /* Globals in server.c */
 extern int correction_time;
+
+/* Globals in dialog.c */
+extern char *fontface;
+extern char *fontname;
+
+/* Globals in dialog.c */
+extern char *fontface;
+extern char *fontname;
 
 /* Globals in network.c */
 
@@ -430,6 +438,7 @@ extern int font_options;
 #define OPT_FONT_ITALIC          0x00000002
 #define OPT_FONT_UNDERLINE       0x00000008
 #define OPT_FONT_STRIKE          0x00000010
+#define OPT_FONT_FACE            0x00000020
 
 #define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://www.marko.net/gaim\">http://www.marko.net/gaim</A>."
 
@@ -631,6 +640,7 @@ extern void save_prefs();
 
 
 /* Functions in dialogs.c */
+extern void do_export(GtkWidget *, void *);
 extern void show_warn_dialog(char *);
 extern void do_error_dialog(char *, char *);
 extern void show_error_dialog(char *);
@@ -648,11 +658,15 @@ extern void g_show_info (char *);
 extern void show_register_dialog();
 extern void show_set_info();
 extern void show_set_dir();
-extern void show_color_dialog(GtkWidget *entrye, GtkWidget *color);
+extern void show_color_dialog(GtkWidget *entry, GtkWidget *color);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *, GtkWidget *);
 extern void show_change_passwd();
+
+extern void show_font_dialog(GtkWidget *widget, GtkWidget *font);
+extern void cancel_font(GtkWidget *widget, GtkWidget *font);
+extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 
 /* Functions in rvous.c */
 extern void accept_file_dialog(struct file_transfer *);

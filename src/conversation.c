@@ -37,6 +37,7 @@
 #include "pixmaps/small.xpm"
 #include "pixmaps/normal.xpm"
 #include "pixmaps/big.xpm"
+/* #include "pixmaps/fontface.xpm" */
 #include "pixmaps/speaker.xpm"
 /* #include "pixmaps/aimicon2.xpm" */
 #include "pixmaps/wood.xpm"
@@ -49,10 +50,11 @@ int state_lock=0;
 GdkPixmap *dark_icon_pm = NULL;
 GdkBitmap *dark_icon_bm = NULL;
 
+char *fontface;
 
 void check_everything(GtkWidget *entry);
 gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);
-
+void set_font_face(GtkWidget *widget, struct conversation *c);
 
 /*------------------------------------------------------------------------*/
 /*  Helpers                                                               */
@@ -247,12 +249,35 @@ void toggle_loggle(GtkWidget *w, struct conversation *p)
 		show_log_dialog(p->name);
 }
 
-
 static int close_callback(GtkWidget *widget, struct conversation *c)
 {
         gtk_widget_destroy(c->window);
         delete_conversation(c);
         return TRUE;
+}
+
+void set_font_face(GtkWidget *widget, struct conversation *c)
+{
+	char *pre_fontface;
+	int alloc = 0;
+
+	if (!(font_options & OPT_FONT_FACE))
+		return;
+
+	if (fontface)
+	{
+		pre_fontface = g_strconcat("<FONT FACE=\"", fontface, "\">", '\0');
+		alloc++;
+	}
+	else
+		pre_fontface = "<FONT FACE=\"Helvetica\">";
+		
+	surround(c->entry, pre_fontface, "</FONT>");
+	gtk_widget_grab_focus(c->entry);
+	
+	if (alloc)
+		g_free(pre_fontface);
+	return;
 }
 
 static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation *c)
@@ -419,7 +444,8 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 		do_im_back();
 	}
 
-
+    set_font_face(NULL, c);
+	
 	gtk_widget_grab_focus(c->entry);
 
         g_free(buf2);
@@ -502,12 +528,27 @@ void remove_tags(GtkWidget *entry, char *tag)
 	int finish = GTK_EDITABLE(entry)->selection_end_pos;
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1); 
 	t = s;
-	while((t = strstr(t, tag))) {
-		if (((t-s) < finish) && ((t-s) >= start)) { 
-			gtk_editable_delete_text(GTK_EDITABLE(entry), (t-s), (t-s) + strlen(tag));
-			t = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+	if (strstr(tag, "<FONT SIZE="))
+	{
+		while((t = strstr(t, "<FONT SIZE="))) {
+			if (((t-s) < finish) && ((t-s) >= start)) {
+				gtk_editable_delete_text(GTK_EDITABLE(entry), (t-s), (t-s) + strlen(tag));
+				s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+				t = s;
+			}
+			else t++;
 		}
-		else t++;
+	}
+	else
+	{
+		while((t = strstr(t, tag))) {
+			if (((t-s) < finish) && ((t-s) >= start)) {
+				gtk_editable_delete_text(GTK_EDITABLE(entry), (t-s), (t-s) + strlen(tag));
+				s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+				t = s;
+			}
+			else t++;
+		}
 	}
 	g_free(s);
 }
@@ -622,11 +663,14 @@ static void do_italic(GtkWidget *italic, GtkWidget *entry)
 		advance_past(entry, "<I>", "</I>");
 }
 
+/* html code to modify font sizes must all be the same length, */
+/* currently set to 15 chars */
+
 static void do_small(GtkWidget *small, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
-	surround(entry, "<FONT SIZE=\"-2\">","</FONT>");
+	surround(entry, "<FONT SIZE=\"1\">","</FONT>");
 }
 
 static void do_normal(GtkWidget *normal, GtkWidget *entry)
@@ -640,7 +684,7 @@ static void do_big(GtkWidget *big, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
-	surround(entry, "<FONT SIZE=\"+5\">","</FONT>");
+	surround(entry, "<FONT SIZE=\"5\">","</FONT>");
 }
 
 void check_everything(GtkWidget *entry)
@@ -884,7 +928,7 @@ void show_conv(struct conversation *c)
 	entry = gtk_text_new(NULL, NULL);
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
 	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
-        
+
 	/* Toolbar */
 	toolbar = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
 
@@ -1093,8 +1137,9 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
 
-	gtk_widget_show(win);
+	set_font_face(NULL, c);
 	
+	gtk_widget_show(win);
 }
 
 

@@ -36,6 +36,8 @@
 #include "gnome_applet_mgr.h"
 #endif
 
+/* for people like myself, who are too lazy to add an away msg :) */
+#define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
 
 struct aim_user *current_user = NULL;
 GList *aim_users = NULL;
@@ -43,6 +45,8 @@ int general_options;
 int display_options;
 int sound_options;
 int font_options;
+char *fontface;
+char *fontname;
 
 int report_idle, web_browser;
 struct save_pos blist_pos;
@@ -214,22 +218,27 @@ static void gaimrc_write_away(FILE *f)
 
 	fprintf(f, "away {\n");
 
-	while (awy) {
-		char *str1, *str2;
+	if (awy)
+	{
+		while (awy) {
+			char *str1, *str2;
 
-		a = (struct away_message *)awy->data;
+			a = (struct away_message *)awy->data;
 
-		str1 = escape_text2(a->name);
-		str2 = escape_text2(a->message);
+			str1 = escape_text2(a->name);
+			str2 = escape_text2(a->message);
+	
+			fprintf(f, "\tmessage { %s } { %s }\n", str1, str2);
 
-		fprintf(f, "\tmessage { %s } { %s }\n", str1, str2);
-
-		/* escape_text2 uses malloc(), so we don't want to g_free these */
-		free(str1);
-		free(str2);
-
-		awy = awy->next;
+			/* escape_text2 uses malloc(), so we don't want to g_free these */
+			free(str1);
+			free(str2);
+	
+			awy = awy->next;
+		}
 	}
+	else
+		fprintf(f, "\tmessage { boring default } { %s }\n", BORING_DEFAULT_AWAY_MSG);
 
 	fprintf(f, "}\n");
 }
@@ -444,10 +453,14 @@ static void gaimrc_read_options(FILE *f)
                         display_options = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "sound_options")) {
                         sound_options = atoi(p->value[0]);
-		} else if (!strcmp(p->option, "font_options")) {
-			font_options = atoi(p->value[0]);
-		} else if (!strcmp(p->option, "latest_ver")) {
-			g_snprintf(latest_ver, BUF_LONG, "%s", p->value[0]);
+				} else if (!strcmp(p->option, "font_options")) {
+						font_options = atoi(p->value[0]);
+				} else if (!strcmp(p->option, "font_face")) {
+						fontface = g_strconcat(p->value[0], '\0');
+				} else if (!strcmp(p->option, "font_name")) {
+						fontname = g_strconcat(p->value[0], '\0');
+				} else if (!strcmp(p->option, "latest_ver")) {
+						g_snprintf(latest_ver, BUF_LONG, "%s", p->value[0]);
                 } else if (!strcmp(p->option, "report_idle")) {
                         report_idle = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "web_browser")) {
@@ -488,7 +501,9 @@ static void gaimrc_write_options(FILE *f)
         fprintf(f, "\tgeneral_options { %d }\n", general_options);
         fprintf(f, "\tdisplay_options { %d }\n", display_options);
         fprintf(f, "\tsound_options { %d }\n", sound_options);
-	fprintf(f, "\tfont_options { %d }\n", font_options);
+		fprintf(f, "\tfont_options { %d }\n", font_options);
+		fprintf(f, "\tfont_face { %s }\n", fontface);
+		fprintf(f, "\tfont_name { %s }\n", fontname);
         fprintf(f, "\treport_idle { %d }\n", report_idle);
         fprintf(f, "\tweb_browser { %d }\n", web_browser);
         fprintf(f, "\tweb_command { %s }\n", web_command);

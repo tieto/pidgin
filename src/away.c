@@ -210,6 +210,7 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
         away_messages = g_list_remove(away_messages, a);
         g_free(a);
         do_away_menu();
+        save_prefs();
 }
 
 

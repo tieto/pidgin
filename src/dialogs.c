@@ -37,9 +37,16 @@
 #include "gaim.h"
 #include "gtkhtml.h"
 
+#define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
+
+char *fontface;
+char *fontname;
+
 static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
-static GtkWidget *linkdialog, *colordialog, *exportdialog, *importdialog, *logdialog;
+static GtkWidget *linkdialog, *colordialog, *exportdialog, *importdialog, *logdialog, *fontdialog;
+
+static void accept_callback(GtkWidget *widget, struct file_transfer *t);
 
 struct create_away {
         GtkWidget *window;
@@ -1933,6 +1940,74 @@ void show_color_dialog(GtkWidget *entry, GtkWidget *color)
 }
 
 /*------------------------------------------------------------------------*/
+/*  Font Selection Dialog                                                 */
+/*------------------------------------------------------------------------*/
+
+void cancel_font(GtkWidget *widget, GtkWidget *font)
+{
+	if (font)
+    {
+		set_state_lock(1);
+        gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(font), FALSE);
+        set_state_lock(0);
+	}
+	
+	destroy_dialog(NULL, fontdialog);
+}
+
+void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
+{
+	/* this could be expanded to include font size, weight, etc.
+	   but for now only works with font face */
+	int i, j = 0, k = 0;
+
+	fontface = g_malloc(64);
+	fontname = gtk_font_selection_get_font_name(fontsel);
+	
+	for (i = 0; i < strlen(fontname); i++)
+	{
+		if (fontname[i] == '-')
+		{
+			if (++j > 2)
+				break;	
+		}		
+		else if (j == 2)
+			fontface[k++] = fontname[i];
+	}
+	fontface[k] = '\0';
+	
+	save_prefs();
+	
+	cancel_font(widget, NULL);	
+}
+
+void show_font_dialog(GtkWidget *widget, GtkWidget *font)
+{
+	GtkWidget *fontsel;
+
+	fontdialog = gtk_font_selection_dialog_new("Select Font");
+	fontsel = GTK_FONT_SELECTION_DIALOG(fontdialog)->fontsel;
+	
+	gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)fontdialog, DEFAULT_FONT_NAME);	
+	gtk_window_set_modal(GTK_WINDOW(fontdialog), TRUE);
+	gtk_signal_connect(GTK_OBJECT(fontdialog), "delete_event", GTK_SIGNAL_FUNC(cancel_font), font);
+	gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontdialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_font), fontsel);
+	gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontdialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_font), font);
+	
+	if (fontname)
+		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)fontdialog, fontname);
+	else
+		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)fontdialog, DEFAULT_FONT_NAME);		
+		
+	gtk_widget_realize(fontdialog);
+	
+	aol_icon(fontdialog->window);
+		
+	gtk_widget_show(fontdialog);
+	gdk_window_raise(fontdialog->window);
+}
+
+/*------------------------------------------------------------------------*/
 /*  The dialog for import/export                                          */
 /*------------------------------------------------------------------------*/
 
@@ -2014,7 +2089,7 @@ void show_export_dialog()
                                    GTK_SIGNAL_FUNC(destroy_dialog), exportdialog);
                 
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(exportdialog)->ok_button),
-                                   "clicked", GTK_SIGNAL_FUNC(do_export), 1);
+                                   "clicked", GTK_SIGNAL_FUNC(do_export), (void*)1);
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(exportdialog)->cancel_button),
                                    "clicked", GTK_SIGNAL_FUNC(destroy_dialog), exportdialog);
                 
@@ -2134,7 +2209,7 @@ void show_import_dialog()
                                    GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
                 
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
-                                   "clicked", GTK_SIGNAL_FUNC(do_import), 1);
+                                   "clicked", GTK_SIGNAL_FUNC(do_import), (void*)1);
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
                                    "clicked", GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
                 

@@ -94,7 +94,6 @@ void away_list_unclicked( GtkWidget *widget, struct away_message *a)
 	save_prefs();
 }
 
-
 void set_option(GtkWidget *w, int *option)
 {
 	*option = !(*option);
@@ -334,11 +333,11 @@ void build_prefs()
         GtkWidget *sw;
 	GtkWidget *sw2;
 	GtkWidget *away_page;
-
+	GtkWidget *select_font;
+	
 	GtkWidget *list_item;
 
 	gchar buffer[64];
-
 
 	if (!pd)
                 pd = g_new0(struct prefs_data, 1);
@@ -729,6 +728,12 @@ void build_prefs()
 	gaim_button("Italics Text", &font_options, OPT_FONT_ITALIC, fontbox);
 	gaim_button("Underlined Text", &font_options, OPT_FONT_UNDERLINE, fontbox);
 	gaim_button("Strike Text", &font_options, OPT_FONT_STRIKE, fontbox);
+	gaim_button("Font Face for Text", &font_options, OPT_FONT_FACE, fontbox);
+	
+	select_font = gtk_button_new_with_label("Select Font");
+	gtk_box_pack_start(GTK_BOX(fontbox), select_font, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(select_font), "clicked", GTK_SIGNAL_FUNC(show_font_dialog), NULL);
+	gtk_widget_show(select_font);
 
 	gtk_widget_show(appearance_page);
 	gtk_widget_show(fontbox);
