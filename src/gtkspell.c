@@ -85,7 +85,7 @@ static char *readline() {
 	while (!buf || (end = strchr(buf, '\n')) == NULL) {
 		char space[1024];
 		int ret = read(fd_read[0], space, 1023);
-		if (ret < 0) {
+		if (ret <= 0) {
 			error_print("read: %s\n", strerror(errno));
 			return NULL;
 		}
