@@ -6,6 +6,7 @@ version 0.11.0-pre15:
 	* Redid the about box again.
 	* Fixed a nice little bug with the manual browser command
 	* Oscar Unicode fix (Thanks John Matthews)
+	* Added Russian Translation
 
 version 0.11.0-pre14 (06/17/2001):
 	* Fixed a segfault with Oscar's account confirmation
