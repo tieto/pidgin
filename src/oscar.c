@@ -825,11 +825,11 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
   */
 int gaim_parse_msgack(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
-	unsigned short type;
+	u_short type;
 	char *sn = NULL;
 
-	ap = va_start(ap, command);
-	type = va_arg(ap, unsigned short);
+	va_start(ap, command);
+	type = (u_short)va_arg(ap, u_int);
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
