@@ -1281,20 +1281,11 @@ static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
 
 FILE *gaim_mkstemp(gchar **fpath)
 {
-	static char *tmpdir = NULL;
+	gchar *tmpdir;
 	int fd;
 	FILE *fp = NULL;
 
-	if(!tmpdir) {
-		if((tmpdir = tempnam(NULL, NULL)) == NULL) {
-			debug_printf("Error: tempnam() failed, error: %d\n", errno);
-		} else {
-			char *t = strrchr(tmpdir, '/');
-			*t = '\0';
-		}
-	}
-
-	if(tmpdir) {
+	if((tmpdir = g_get_tmp_dir()) != NULL) {
 		if((*fpath = g_strdup_printf("%s/%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
 			if((fd = mkstemp(*fpath)) == -1) {
 				debug_printf("Error: Couldn't make \"%s\", error: %d\n", *fpath, errno);
@@ -1309,6 +1300,8 @@ FILE *gaim_mkstemp(gchar **fpath)
 				*fpath = NULL;
 			}
 		}
+	} else {
+		debug_printf("Error: g_get_tmp_dir() failed in gaim_mkstemp()!\n");
 	}
 
 	return fp;
