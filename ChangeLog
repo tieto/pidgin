@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
+version 0.67
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Various bug fixes (larne from irc)
+
 version 0.66 (07/18/2003):
 	* Freebsd compile fix (Matthew Luckie)
 	* .spec file improvements (Ethan Blanton)

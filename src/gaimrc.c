@@ -358,8 +358,9 @@ static void gaimrc_read_away(FILE *f)
 			gaim_prefs_set_int("/core/away/mins_before_away",
 					atoi(p->value[0]));
 			default_away = g_slist_nth_data(away_messages, atoi(p->value[1]));
-			gaim_prefs_set_string("/core/away/default_message",
-					default_away->name);
+			if (default_away)
+				gaim_prefs_set_string("/core/away/default_message",
+						default_away->name);
 		}
 	}
 	if (!away_messages) {
