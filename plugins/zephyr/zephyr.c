@@ -33,6 +33,20 @@
 #include "prpl.h"
 #include "zephyr/zephyr.h"
 
+typedef struct _zframe zframe;
+
+/* struct I need for zephyr_to_html */
+struct _zframe {
+	/* true for everything but @color, since inside the parens of that one is
+	* the color. */
+	gboolean has_closer;
+	/* </i>, </font>, </b>, etc. */
+	char *closing;
+	/* text including the opening html thingie. */
+	GString *text;
+	struct _zframe *enclosing;
+};
+
 char *name()
 {
 	return "Zephyr";
@@ -58,6 +72,8 @@ static char *zephyr_name()
 					return;\
 				}
 
+static char *zephyr_normalize(const char *);
+
 /* this is so bad, and if Zephyr weren't so fucked up to begin with I
  * wouldn't do this. but it is so i will. */
 static guint32 nottimer = 0;
@@ -82,15 +98,132 @@ static void handle_unknown(ZNotice_t notice)
 }
 */
 
-static char *zephyr_normalize(const char *orig)
+/* utility macros that are useful for zephyr_to_html */
+
+#define IS_OPENER(c) ((c == '{') || (c == '[') || (c == '(') || (c == '<'))
+#define IS_CLOSER(c) ((c == '}') || (c == ']') || (c == ')') || (c == '>'))
+
+/* this parses zephyr formatting and converts it to html. For example, if
+ * you pass in "@{@color(blue)@i(hello)}" you should get out
+ * "<font color=blue><i>hello</i></font>". */
+static char *zephyr_to_html(char *message)
 {
-	static char buf[80];
-	if (strchr(orig, '@')) {
-		g_snprintf(buf, 80, "%s", orig);
-	} else {
-		g_snprintf(buf, 80, "%s@%s", orig, ZGetRealm());
+	int len, cnt;
+	zframe *frames, *curr;
+	char *ret;
+
+	frames = g_new(zframe, 1);
+	frames->text = g_string_new("");
+	frames->enclosing = NULL;
+	frames->closing = "";
+	frames->has_closer = FALSE;
+
+	len = strlen(message);
+	cnt = 0;
+	while (cnt <= len) {
+		if (message[cnt] == '@') {
+			zframe *new_f;
+			char *buf;
+			int end;
+			for (end=1; (cnt+end) <= len &&
+					!IS_OPENER(message[cnt+end]); end++);
+			buf = g_new0(char, end);
+			if (end) {
+				g_snprintf(buf, end, "%s", message+cnt+1);
+			}
+			if (!g_strcasecmp(buf, "italic") ||
+					!g_strcasecmp(buf, "i")) {
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("<i>");
+				new_f->closing = "</i>";
+				new_f->has_closer = TRUE;
+				frames = new_f;
+				cnt += end+1; /* cnt points to char after opener */
+			} else if (!g_strcasecmp(buf, "bold")
+					|| !g_strcasecmp(buf, "b")) {
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("<b>");
+				new_f->closing = "</b>";
+				new_f->has_closer = TRUE;
+				frames = new_f;
+				cnt += end+1;
+			} else if (!g_strcasecmp(buf, "color")) {
+				cnt += end+1;
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("<font color=");
+				for (; (cnt <= len) && !IS_CLOSER(message[cnt]); cnt++) {
+					g_string_append_c(new_f->text, message[cnt]);
+				}
+				cnt++; /* point to char after closer */
+				g_string_append_c(new_f->text, '>');
+				new_f->closing = "</font>";
+				new_f->has_closer = FALSE;
+				frames = new_f;
+			} else if (!g_strcasecmp(buf, "")) {
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("");
+				new_f->closing = "";
+				new_f->has_closer = TRUE;
+				frames = new_f;
+				cnt += end+1; /* cnt points to char after opener */
+			} else {
+				if ((cnt+end) > len) {
+					g_string_append_c(frames->text, '@');
+					cnt++;
+				} else {
+					/* unrecognized thingie. act like it's not there, but we
+					 * still need to take care of the corresponding closer,
+					 * make a frame that does nothing. */
+					new_f = g_new(zframe, 1);
+					new_f->enclosing = frames;
+					new_f->text = g_string_new("");
+					new_f->closing = "";
+					new_f->has_closer = TRUE;
+					frames = new_f;
+					cnt += end+1; /* cnt points to char after opener */
+				}
+			}
+		} else if (IS_CLOSER(message[cnt])) {
+			zframe *popped;
+			gboolean last_had_closer;
+			if (frames->enclosing) {
+				do {
+					popped = frames;
+					frames = frames->enclosing;
+					g_string_append(frames->text, popped->text->str);
+					g_string_append(frames->text, popped->closing);
+					g_string_free(popped->text, TRUE);
+					last_had_closer = popped->has_closer;
+					g_free(popped);
+				} while (frames && frames->enclosing && !last_had_closer);
+			} else {
+				g_string_append_c(frames->text, message[cnt]);
+			}
+			cnt++;
+		} else if (message[cnt] == '\n') {
+			g_string_append(frames->text, "<br>");
+			cnt++;
+		} else {
+			g_string_append_c(frames->text, message[cnt++]);
+		}
 	}
-	return buf;
+	/* go through all the stuff that they didn't close */
+	while (frames->enclosing) {
+		curr = frames;
+		g_string_append(frames->enclosing->text, frames->text->str);
+		g_string_append(frames->enclosing->text, frames->closing);
+		g_string_free(frames->text, TRUE);
+		frames = frames->enclosing;
+		g_free(curr);
+	}
+	ret = frames->text->str;
+	g_string_free(frames->text, FALSE);
+	g_free(frames);
+	return ret;
 }
 
 static gboolean pending_zloc(char *who)
@@ -104,35 +237,6 @@ static gboolean pending_zloc(char *who)
 		}
 	}
 	return FALSE;
-}
-
-static void zephyr_zloc(struct gaim_connection *gc, char *who)
-{
-	ZAsyncLocateData_t ald;
-	
-	if (ZRequestLocations(zephyr_normalize(who), &ald, UNACKED, ZAUTH)
-					!= ZERR_NONE) {
-		return;
-	}
-	pending_zloc_names = g_list_append(pending_zloc_names,
-					g_strdup(zephyr_normalize(who)));
-}
-
-static void info_callback(GtkObject *obj, char *who)
-{
-	zephyr_zloc(gtk_object_get_user_data(obj), who);
-}
-
-static void zephyr_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
-{
-	GtkWidget *button;
-
-	button = gtk_menu_item_new_with_label(_("ZLocate"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate",
-			   GTK_SIGNAL_FUNC(info_callback), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
 }
 
 static void handle_message(ZNotice_t notice, struct sockaddr_in from)
@@ -173,22 +277,36 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				}
 				g_show_info_text(str->str);
 				g_string_free(str, TRUE);
-			}
-			serv_got_update(zgc, b->name, nlocs, 0, 0, 0, 0, 0);
+			} else
+				serv_got_update(zgc, b->name, nlocs, 0, 0, 0, 0, 0);
 
 			free(user);
 		}
-	} else if (!g_strcasecmp(notice.z_class, "MESSAGE")) {
-		char buf[BUF_LONG];
+	} else {
+		char *buf, *buf2;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
 		int len = notice.z_message_len - (ptr - notice.z_message);
+		int away;
 		if (len > 0) {
+			buf = g_malloc(len + 1);
 			g_snprintf(buf, len + 1, "%s", ptr);
 			g_strchomp(buf);
-			serv_got_im(zgc, notice.z_sender, buf, 0);
+			buf2 = zephyr_to_html(buf);
+			g_free(buf);
+			if (!g_strcasecmp(notice.z_class, "MESSAGE") &&
+					!g_strcasecmp(notice.z_class_inst, "PERSONAL")) {
+				if (!g_strcasecmp(notice.z_message, "Automated reply:"))
+					away = TRUE;
+				else
+					away = FALSE;
+				len = MAX(BUF_LONG, strlen(buf2));
+				buf = g_malloc(len + 1);
+				g_snprintf(buf, len + 1, "%s", buf2);
+				serv_got_im(zgc, notice.z_sender, buf, 0);
+				g_free(buf);
+			}
+			g_free(buf2);
 		}
-	} else {
-		/* yes. */
 	}
 }
 
@@ -233,10 +351,9 @@ static gint check_loc(gpointer data)
 		while (m) {
 			struct buddy *b = m->data;
 			char *chk;
-			chk = g_strdup(zephyr_normalize(b->name));
+			chk = zephyr_normalize(b->name);
 			/* doesn't matter if this fails or not; we'll just move on to the next one */
 			ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
-			g_free(chk);
 			m = m->next;
 		}
 		gr = gr->next;
@@ -372,11 +489,46 @@ static void zephyr_login(struct aim_user *user)
 	loctimer = gtk_timeout_add(2000, check_loc, NULL);
 }
 
+static void write_anyone()
+{
+	GSList *gr, *m;
+	struct group *g;
+	struct buddy *b;
+	char *ptr, *fname;
+	FILE *fd;
+
+	fname = g_strdup_printf("%s/.anyone", g_get_home_dir());
+	fd = fopen(fname, "w");
+	if (!fd) {
+		g_free(fname);
+		return;
+	}
+
+	gr = zgc->groups;
+	while (gr) {
+		g = gr->data;
+		m = g->members;
+		while (m) {
+			b = m->data;
+			if ((ptr = strchr(b->name, '@')) != NULL)
+				*ptr = '\0';
+			fprintf(fd, "%s\n", b->name);
+			if (ptr)
+				*ptr = '@';
+			m = m->next;
+		}
+		gr = gr->next;
+	}
+
+	fclose(fd);
+	g_free(fname);
+}
+
 static void zephyr_close(struct gaim_connection *gc)
 {
 	g_list_foreach(pending_zloc_names, (GFunc)g_free, NULL);
 	g_list_free(pending_zloc_names);
-	/* should probably write .anyone, but eh. we all use gaim exclusively, right? :-P */
+	write_anyone();
 	if (nottimer)
 		gtk_timeout_remove(nottimer);
 	nottimer = 0;
@@ -397,9 +549,13 @@ static void zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int 
 	char *buf;
 	char *sig;
 
-	sig = ZGetVariable("zwrite-signature");
-	if (!sig) {
-		sig = g_get_real_name();
+	if (away)
+		sig = "Automated reply:";
+	else {
+		sig = ZGetVariable("zwrite-signature");
+		if (!sig) {
+			sig = g_get_real_name();
+		}
 	}
 	buf = g_strdup_printf("%s%c%s", sig, '\0', im);
 
@@ -421,6 +577,70 @@ static void zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int 
 	g_free(buf);
 }
 
+static char *zephyr_normalize(const char *orig)
+{
+	static char buf[80];
+	if (strchr(orig, '@')) {
+		g_snprintf(buf, 80, "%s", orig);
+	} else {
+		g_snprintf(buf, 80, "%s@%s", orig, ZGetRealm());
+	}
+	return buf;
+}
+
+static void zephyr_zloc(struct gaim_connection *gc, char *who)
+{
+	ZAsyncLocateData_t ald;
+	
+	if (ZRequestLocations(zephyr_normalize(who), &ald, UNACKED, ZAUTH)
+					!= ZERR_NONE) {
+		return;
+	}
+	pending_zloc_names = g_list_append(pending_zloc_names,
+					g_strdup(zephyr_normalize(who)));
+}
+
+static void info_callback(GtkObject *obj, char *who)
+{
+	zephyr_zloc(gtk_object_get_user_data(obj), who);
+}
+
+static void zephyr_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+{
+	GtkWidget *button;
+
+	button = gtk_menu_item_new_with_label(_("ZLocate"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(info_callback), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+}
+
+static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)
+{
+	if (gc->away)
+		g_free(gc->away);
+	gc->away = NULL;
+	if (!g_strcasecmp(state, "Hidden"))
+		ZSetLocation(EXPOSE_OPSTAFF);
+	else if (!g_strcasecmp(state, "Online"))
+		ZSetLocation(get_exposure_level());
+	else /* state is GAIM_AWAY_CUSTOM */ if (msg)
+		gc->away = g_strdup(msg);
+}
+
+static GList *zephyr_away_states()
+{
+	GList *m = NULL;
+
+	m = g_list_append(m, "Online");
+	m = g_list_append(m, GAIM_AWAY_CUSTOM);
+	m = g_list_append(m, "Hidden");
+
+	return m;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void zephyr_init(struct prpl *ret)
@@ -435,6 +655,8 @@ void zephyr_init(struct prpl *ret)
 	ret->get_info = zephyr_zloc;
 	ret->normalize = zephyr_normalize;
 	ret->buddy_menu = zephyr_buddy_menu;
+	ret->away_states = zephyr_away_states;
+	ret->set_away = zephyr_set_away;
 
 	my_protocol = ret;
 }

@@ -356,7 +356,7 @@ void do_away_menu()
 						gtk_menu_append(GTK_MENU(submenu), menuitem);
 						gtk_widget_show(menuitem);
 						gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-								   GTK_SIGNAL_FUNC(set_gc_away), gc);
+								   GTK_SIGNAL_FUNC(do_away_message), a);
 
 						awy = g_slist_next(awy);
 					}
