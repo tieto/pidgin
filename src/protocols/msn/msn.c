@@ -730,7 +730,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		char *user, *tmp = buf;
 		int length;
 		char *msg, *skiphead, *utf, *final;
-		int len;
+		int len, r;
 
 		GET_NEXT(tmp);
 		user = tmp;
@@ -742,11 +742,13 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 
 		msg = g_new0(char, MAX(length + 1, MSN_BUF_LEN));
 
-		if (read(md->fd, msg, length) != length) {
-			g_free(msg);
-			hide_login_progress(gc, "Unable to read message");
-			signoff(gc);
-			return;
+		for (len = 0; len < length; len += r) {
+			if ((r = read(md->fd, msg+len, length-len)) <= 0) {
+				g_free(msg);
+				hide_login_progress(gc, "Unable to read message");
+				signoff(gc);
+				return;
+			}
 		}
 
 		if (!g_strcasecmp(user, "hotmail")) {
