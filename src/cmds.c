@@ -168,7 +168,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline, 
 	gchar *cmd, *rest;
 	GaimCmdRet ret = GAIM_CMD_RET_CONTINUE;
 
-	error = NULL;
+	*error = NULL;
 	prpl_id = gaim_account_get_protocol_id(gaim_conversation_get_account(conv));
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
@@ -222,6 +222,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline, 
 		if (ret == GAIM_CMD_RET_CONTINUE) {
 			if (err)
 				g_free(err);
+			err = NULL;
 			gaim_cmd_free_args(args);
 			args = NULL;
 			continue;
