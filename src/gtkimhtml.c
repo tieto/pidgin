@@ -2527,7 +2527,6 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		}
 		gtk_text_iter_forward_char(&iter);
 	}
-	closers = g_list_reverse(closers);
 	while (closers) {
 		GtkIMHtmlFormatSpan *span = (GtkIMHtmlFormatSpan*)closers->data;
 		str = g_string_append(str, span->end_tag);

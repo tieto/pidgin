@@ -970,13 +970,44 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
 }
 
-void
-im_cb(GtkWidget *widget, GaimConversation *conv)
+static void
+chat_do_im(GaimConversation *conv, const char *who)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	char *real_who;
 	GaimConversation *conv2;
+	GaimAccount *account;
+
+	account = gaim_conversation_get_account(conv);
+
+	if(account && account->gc)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+
+	if(prpl_info && prpl_info->get_cb_real_name)
+		real_who = prpl_info->get_cb_real_name(account->gc,
+				gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), who);
+	else
+		real_who = g_strdup(who);
+
+	if(!real_who)
+		return;
+
+	conv2 = gaim_find_conversation_with_account(real_who, account);
+
+	if (conv2 != NULL)
+		gaim_conv_window_show(gaim_conversation_get_window(conv2));
+	else
+		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, real_who);
+
+	g_free(real_who);
+}
+
+
+static void
+chat_im_button_cb(GtkWidget *widget, GaimConversation *conv)
+{
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
-	GaimAccount *account;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
@@ -993,14 +1024,7 @@ im_cb(GtkWidget *widget, GaimConversation *conv)
 	else
 		return;
 
-	account = gaim_conversation_get_account(conv);
-
-	conv2 = gaim_find_conversation_with_account(name, account);
-
-	if (conv2 != NULL)
-		gaim_conv_window_raise(gaim_conversation_get_window(conv2));
-	else
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, name);
+	chat_do_im(conv, name);
 }
 
 static void
@@ -1037,38 +1061,6 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 		gaim_conv_chat_ignore(chat, name);
 
 	add_chat_buddy_common(conv, name, pos);
-}
-
-static void
-chat_do_im(GaimConversation *conv, const char *who)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	char *real_who;
-	GaimConversation *conv2;
-	GaimAccount *account;
-
-	account = gaim_conversation_get_account(conv);
-
-	if(account && account->gc)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
-
-	if(prpl_info && prpl_info->get_cb_real_name)
-		real_who = prpl_info->get_cb_real_name(account->gc,
-				gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), who);
-	else
-		real_who = g_strdup(who);
-
-	if(!real_who)
-		return;
-
-	conv2 = gaim_find_conversation_with_account(real_who, account);
-
-	if (conv2 != NULL)
-		gaim_conv_window_show(gaim_conversation_get_window(conv2));
-	else
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, real_who);
-
-	g_free(real_who);
 }
 
 static void
@@ -3631,7 +3623,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("IM the user"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(im_cb), conv);
+					 G_CALLBACK(chat_im_button_cb), conv);
 
 	gtk_widget_show(button);
 
