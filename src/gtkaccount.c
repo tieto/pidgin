@@ -158,6 +158,8 @@ static AccountsWindow *accounts_window = NULL;
 static void add_account(AccountsWindow *dialog, GaimAccount *account);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  GaimAccount *account);
+static char*
+convert_buddy_icon(GaimAccount *account, const char *path);
 
 static char *
 proto_name(const char *id)
@@ -281,13 +283,13 @@ icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	if (dialog->icon_path)
 		g_free(dialog->icon_path);
-	dialog->icon_path = g_strdup(filename);
-	gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), filename);
+	dialog->icon_path = convert_buddy_icon(dialog->account, filename);
+	gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), dialog->icon_path);
 	gtk_widget_show(dialog->icon_entry);
 
 	gtk_widget_destroy(dialog->icon_filesel);
 	dialog->icon_filesel = NULL;
-}
+ }
 
 static void
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
@@ -473,8 +475,8 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 				*rtmp = '\0';
 			if (dialog->icon_path)
 				g_free(dialog->icon_path);
-			dialog->icon_path = g_strdup(tmp);
-			gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), tmp);
+			dialog->icon_path = convert_buddy_icon(dialog->account, tmp);
+			gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), dialog->icon_path);
 			gtk_widget_show(dialog->icon_entry);
 			g_free(tmp);
 		} 
@@ -500,8 +502,8 @@ str_array_match(char **a, char **b)
 }
 #endif
 
-static void
-convert_and_set_buddy_icon(GaimAccount *account, const char *path)
+static char*
+convert_buddy_icon(GaimAccount *account, const char *path)
 {
 #if GTK_CHECK_VERSION(2,2,0)
 	int width, height;
@@ -544,7 +546,7 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 		   prpl_info->icon_spec.min_height <= height &&
 		   prpl_info->icon_spec.max_height >= height))) {                                  /* The icon is the correct size */
 #endif
-		gaim_account_set_buddy_icon(account, path);
+		return g_strdup(path);
 #if GTK_CHECK_VERSION(2,2,0)
 	} else {
 		int i;
@@ -577,7 +579,7 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 			g_free(random);
 			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
 			g_error_free(error);
-			return;
+			return NULL;
 		}
 		for (i = 0; prpl_formats[i]; i++) {
 			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
@@ -585,7 +587,9 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 				break;
 		}
 		if (!error) {
-			gaim_account_set_buddy_icon(account, filename);
+			g_free(random);
+			g_object_unref(G_OBJECT(pixbuf));
+			return filename;
 		} else {
 			gaim_debug_error("buddyicon", "Could not convert icon to usable format: %s\n", error->message);
 			g_error_free(error);
@@ -594,6 +598,7 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 		g_free(random);
 		g_object_unref(G_OBJECT(pixbuf));
 	}
+	return NULL;
 #endif
 }
 
@@ -1330,14 +1335,8 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* Buddy Icon */
 	value = dialog->icon_path;
+	gaim_account_set_buddy_icon(dialog->account, value);
 	
-	if (dialog->prpl_info &&
-	    (dialog->prpl_info->icon_spec.format) &&
-	    value != NULL) {
-		convert_and_set_buddy_icon(dialog->account, value);
-	} else {
-		gaim_account_set_buddy_icon(dialog->account, NULL);
-	}
 	/* Remember Password */
 	gaim_account_set_remember_password(dialog->account,
 			gtk_toggle_button_get_active(
