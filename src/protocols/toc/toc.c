@@ -164,6 +164,8 @@ static void toc_login(GaimAccount *account)
 	gc->flags |= GAIM_CONNECTION_HTML;
 	gc->flags |= GAIM_CONNECTION_AUTO_RESP;
 
+	gaim_notify_warning(gc, NULL, _("You are using TOC."), _("You are using the TOC protocol to connect to the AOL Instant Messaging service.  It is <b>highly</b> recommend that you use the \"AIM/ICQ\" (oscar) protocol, instead.  You can change this by editing your AIM or ICQ account using the account editor."));
+
 	g_snprintf(buf, sizeof buf, _("Looking up %s"),
 			gaim_account_get_string(account, "server", TOC_HOST));
 	gaim_connection_update_progress(gc, buf, 1, TOC_CONNECT_STEPS);
