@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 #include <gtk/gtk.h>
 #include "gaim.h"
@@ -48,6 +49,7 @@
 #include "pixmaps/ok.xpm"
 #include "pixmaps/add.xpm"
 #include "pixmaps/warn.xpm"
+#include "pixmaps/close.xpm"
 
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
@@ -3642,8 +3644,161 @@ void alias_dialog_bud(struct buddy *b)
 }
 
 
-static gboolean dont_destroy(gpointer a, gpointer b, gpointer c) {
+static gboolean dont_destroy(gpointer a, gpointer b, gpointer c) 
+{
 	return TRUE;
+}
+
+static void do_save_log(GtkWidget *w, GtkWidget *filesel)
+{
+	char *file;
+	char path[PATHSIZE];
+	char buf[BUF_LONG];
+	char error[BUF_LEN];
+	FILE *fp_old, *fp_new;
+	char filename[PATHSIZE];
+	char *name;
+
+	name = gtk_object_get_user_data(GTK_OBJECT(filesel));
+	g_snprintf(filename, PATHSIZE, "%s/logs/%s.log", 
+		   gaim_user_dir(), normalize(name));
+
+	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
+	strncpy(path, file, PATHSIZE-1);
+	if (file_is_dir(path, filesel))
+		return;
+
+	if ((fp_new = fopen(path, "w")) == NULL) {
+		g_snprintf(error, BUF_LONG, 
+			   "Can't open file %s for writing - %s",
+			   path, strerror(errno));
+		do_error_dialog(error, "Error");
+		return;
+	}
+
+	if ((fp_old = fopen(filename, "r")) == NULL) {
+		g_snprintf(error, BUF_LONG, 
+			   "Can't open file %s for reading - %s",
+			   filename, strerror(errno));
+		do_error_dialog(error, "Error");
+		fclose(fp_new);
+		return;
+	}
+
+	while (fgets(buf, BUF_LONG, fp_old))
+		fputs(buf, fp_new);
+	fclose(fp_old);
+	fclose(fp_new);
+
+	dialogwindows = g_list_remove(dialogwindows, filesel);
+	gtk_widget_destroy(filesel);
+
+	return;
+}
+
+static void show_save_log(GtkWidget *w, gchar *name) 
+{
+	GtkWidget *filesel;
+	gchar buf[BUF_LEN];
+
+	g_snprintf(buf, BUF_LEN - 1, "%s/%s.log", 
+		   getenv("HOME"), normalize(name));
+
+	filesel = gtk_file_selection_new(_("Gaim - Save Log File"));
+	dialogwindows = g_list_prepend(dialogwindows, filesel);
+	gtk_signal_connect(GTK_OBJECT(filesel), "delete_event",
+			   GTK_SIGNAL_FUNC(destroy_dialog), filesel);
+
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(filesel));
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), buf);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
+			   "clicked", GTK_SIGNAL_FUNC(do_save_log), filesel);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button), 
+			   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), 
+			   filesel);
+	gtk_object_set_user_data(GTK_OBJECT(filesel), name);
+
+	gtk_widget_realize(filesel);
+	aol_icon(filesel->window);
+	gtk_widget_show(filesel);
+
+	return;
+}
+
+static void do_clear_log_file(GtkWidget *w, gchar *name) 
+{
+	gchar buf[256];
+	gchar filename[256];
+	GtkWidget *window;
+
+	g_snprintf(filename, 256, "%s/logs/%s.log", 
+		   gaim_user_dir(), normalize(name));
+
+	if ((remove(filename)) == -1) {
+		g_snprintf(buf, 256, _("Unable to remove file %s - %s"),
+			   filename, strerror(errno));
+		do_error_dialog(buf, _("Error"));
+	}
+
+	window = gtk_object_get_user_data(GTK_OBJECT(w));
+	destroy_dialog(NULL, window);
+}
+
+static void show_clear_log(GtkWidget *w, gchar *name) 
+{
+	GtkWidget *window;
+	GtkWidget *box;
+	GtkWidget *hbox;
+	GtkWidget *button;
+	GtkWidget *label;
+	GtkWidget *hsep;
+
+	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	dialogwindows = g_list_prepend(dialogwindows, window);
+	gtk_window_set_wmclass(GTK_WINDOW(window), "dialog", "Gaim");
+	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
+	gtk_signal_connect(GTK_OBJECT(window), "delete_event",
+			   GTK_SIGNAL_FUNC(destroy_dialog), window);
+	gtk_widget_realize(window);
+	aol_icon(window->window);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(window), box);
+
+	label = gtk_label_new(_("Really clear log?"));
+	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 15);
+
+	hsep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), hsep, FALSE, FALSE, 0);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	button = picture_button(window, _("Cancel"), cancel_xpm);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", 
+			   GTK_SIGNAL_FUNC(destroy_dialog), window);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_widget_show(button);
+
+	button = picture_button(window, _("Okay"), ok_xpm);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_object_set_user_data(GTK_OBJECT(button), 
+				 gtk_object_get_user_data(GTK_OBJECT(w)));
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", 
+			   GTK_SIGNAL_FUNC(do_clear_log_file), name);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			   GTK_SIGNAL_FUNC(destroy_dialog), window);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_widget_show(button);
+
+	gtk_widget_show_all(window);
+
+	return;
 }
 
 void
@@ -3655,18 +3810,21 @@ show_log (char *name)
 	FILE *fp;
 	GtkWidget *window;
 	GtkWidget *box;
+	GtkWidget *hbox;
 	GtkWidget *sw;
 	GtkWidget *layout;
+	GtkWidget *close_button;
+	GtkWidget *clear_button;
+	GtkWidget *save_button;
 	int options;
 	guint block;
 
 	string = g_string_new("");
 
 	g_snprintf(filename, 256, "%s/logs/%s.log", 
-		   gaim_user_dir(), normalize(name));
+	gaim_user_dir(), normalize(name));
 	if ((fp = fopen(filename, "r")) == NULL) {
-		g_snprintf(buf, BUF_LONG, "Unable to open log file %s",
-			   filename);
+		g_snprintf(buf, BUF_LONG, "Unable to open log file %s", filename);
 		do_error_dialog(buf, "Error!");
 		return;
 	}
@@ -3684,14 +3842,14 @@ show_log (char *name)
 	gtk_window_set_wmclass(GTK_WINDOW(window), "log", "Gaim");
 	g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
 	gtk_window_set_title(GTK_WINDOW(window), buf);
-	gtk_container_set_border_width(GTK_CONTAINER(window), 15);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
 	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event",
 				   GTK_SIGNAL_FUNC(dont_destroy), window);
 	gtk_widget_realize(window);
 	aol_icon(window->window);
 
-	box = gtk_vbox_new(FALSE, 0);
+	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(window), box);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -3708,15 +3866,30 @@ show_log (char *name)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "O-)", oneeye_xpm);
 
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	close_button = picture_button(window, _("Close"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 5);
+	gtk_widget_set_sensitive(close_button, FALSE);
+
+	clear_button = picture_button(window, _("Clear"), close_xpm);
+	gtk_object_set_user_data(GTK_OBJECT(clear_button), window);
+	gtk_box_pack_end(GTK_BOX(hbox), clear_button, FALSE, FALSE, 5);
+	gtk_widget_set_sensitive(clear_button, FALSE);
+
+	save_button = picture_button(window, _("Save"), save_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), save_button, FALSE, FALSE, 5);
+	gtk_widget_set_sensitive(save_button, FALSE);
+
 	gtk_widget_show_all(window);
 
 	while (fgets (buf, BUF_LONG, fp)) {
-		if (strlen (buf) >= 5 && 
-		    (!strncmp (buf+strlen(buf)-5, "<BR>\n", 5)))
+		if (strlen (buf) >= 5 && (!strncmp (buf+strlen(buf)-5, "<BR>\n", 5)))
 			/* take off the \n */
 			buf[strlen(buf)-1] = '\0';
-		if (strlen (buf) >= 21 &&
-		    strstr (buf, "---- New C")) {
+		if (strlen (buf) >= 21 && strstr (buf, "---- New C")) {
 			gtk_imhtml_append_text (GTK_IMHTML(layout), string->str, options);
 			g_string_free (string, TRUE);
 			string = g_string_new (buf);
@@ -3731,6 +3904,15 @@ show_log (char *name)
 	gtk_signal_disconnect(GTK_OBJECT(window), block);
 	gtk_signal_connect(GTK_OBJECT(window), "delete_event",
 			   GTK_SIGNAL_FUNC(destroy_dialog), window);
+	gtk_signal_connect(GTK_OBJECT(close_button), "clicked", 
+			   GTK_SIGNAL_FUNC(destroy_dialog), window);
+	gtk_signal_connect(GTK_OBJECT(clear_button), "clicked", 
+			   GTK_SIGNAL_FUNC(show_clear_log), name);
+	gtk_signal_connect(GTK_OBJECT(save_button), "clicked", 
+			   GTK_SIGNAL_FUNC(show_save_log), name);
+	gtk_widget_set_sensitive(close_button, TRUE);
+	gtk_widget_set_sensitive(clear_button, TRUE);
+	gtk_widget_set_sensitive(save_button, TRUE);
 
 	fclose(fp);
 	g_string_free (string, TRUE);
