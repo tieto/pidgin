@@ -698,6 +698,15 @@ static void oscar_login(GaimAccount *account) {
 
 	gaim_debug(GAIM_DEBUG_MISC, "oscar", "oscar_login: gc = %p\n", gc);
 
+#if 0
+	if (!aim_snvalid(gaim_account_get_username(account))) {
+		gchar *buf;
+		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), name);
+		gaim_connection_error(gc, buf);
+		g_free(buf);
+	}
+#endif
+
 	if (isdigit(*(gaim_account_get_username(account)))) {
 		od->icq = TRUE;
 	} else {

@@ -179,7 +179,7 @@ faim_export int aim_snvalid(const char *sn)
 			if (!isdigit(sn[i]))
 				return 0;
 		} else {
-			if (!isalnum(sn[i]) && (sn[i] != ' '))
+			if (!isalnum(sn[i]) && (sn[i] != ' ') && (sn[i] != '@') && (sn[i] != '.'))
 				return 0;
 		}
 		i++;
