@@ -1359,9 +1359,12 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 	if ((logging_options & why) != why)
 		return;
 
-	if (logging_options & OPT_LOG_INDIVIDUAL)
-		fd = open_system_log_file(who->name);
-	else
+	if (logging_options & OPT_LOG_INDIVIDUAL) {
+		if (why & OPT_LOG_MY_SIGNON)
+			fd = open_system_log_file(gc ? gc->username : NULL);
+		else
+			fd = open_system_log_file(who->name);
+	} else
 		fd = open_system_log_file(NULL);
 
 	if (!fd)
