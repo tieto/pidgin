@@ -565,12 +565,13 @@ static void txt_logger_write(GaimLog *log,
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	stripped = gaim_markup_strip_html(message);
 	if (type & GAIM_MESSAGE_SEND ||
-	    type & GAIM_MESSAGE_RECV)
-		fprintf(log->logger_data, "(%s) %s: %s\n", date, from, stripped);	
-	else if (type & GAIM_MESSAGE_SYSTEM)
+	    type & GAIM_MESSAGE_RECV) {
+		if (type & GAIM_MESSAGE_AUTO_RESP)
+			fprintf(log->logger_data, _("(%s) %s <AUTO-REPLY>: %s\n"), date, from, stripped);
+		else
+			fprintf(log->logger_data, "(%s) %s: %s\n", date, from, stripped);	
+  	} else if (type & GAIM_MESSAGE_SYSTEM)
 		fprintf(log->logger_data, "(%s) %s\n", date, stripped);
-	else if (type & GAIM_MESSAGE_AUTO_RESP)
-		fprintf(log->logger_data, _("(%s) %s <AUTO-REPLY>: %s\n"), date, from, stripped);
 	else if (type & GAIM_MESSAGE_NO_LOG) {
 		/* This shouldn't happen */
 		g_free(stripped);
