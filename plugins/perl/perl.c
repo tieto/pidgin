@@ -312,27 +312,29 @@ load_perl_plugin(GaimPlugin *plugin)
 
 	execute_perl("load_n_eval", 1, atmp);
 
-	dSP;
-	ENTER;
-	SAVETMPS;
-	PUSHMARK(sp);
-	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
-	PUTBACK;
+	{
+		dSP;
+		ENTER;
+		SAVETMPS;
+		PUSHMARK(sp);
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
+		PUTBACK;
 
-	perl_call_pv(gps->load_sub, G_EVAL | G_SCALAR);
-	SPAGAIN;
+		perl_call_pv(gps->load_sub, G_EVAL | G_SCALAR);
+		SPAGAIN;
 
-	if (SvTRUE(ERRSV)) {
-		int len;
+		if (SvTRUE(ERRSV)) {
+			int len;
 
-		gaim_debug(GAIM_DEBUG_ERROR, "perl",
-				   "Perl function %s exited abnormally: %s\n",
-				   gps->load_sub, SvPV(ERRSV, len));
+			gaim_debug(GAIM_DEBUG_ERROR, "perl",
+					   "Perl function %s exited abnormally: %s\n",
+					   gps->load_sub, SvPV(ERRSV, len));
+		}
+
+		PUTBACK;
+		FREETMPS;
+		LEAVE;
 	}
-
-	PUTBACK;
-	FREETMPS;
-	LEAVE;
 
 	return TRUE;
 }
@@ -347,28 +349,30 @@ unload_perl_plugin(GaimPlugin *plugin)
 
 	gaim_debug(GAIM_DEBUG_INFO, "perl", "Unloading perl script\n");
 
-	dSP;
-	ENTER;
-	SAVETMPS;
-	PUSHMARK(sp);
-	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
-	PUTBACK;
+	{
+		dSP;
+		ENTER;
+		SAVETMPS;
+		PUSHMARK(sp);
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
+		PUTBACK;
 
-	perl_call_pv(gps->unload_sub, G_EVAL | G_SCALAR);
-	SPAGAIN;
+		perl_call_pv(gps->unload_sub, G_EVAL | G_SCALAR);
+		SPAGAIN;
 
-	if (SvTRUE(ERRSV)) {
-		int len;
+		if (SvTRUE(ERRSV)) {
+			int len;
 
-		gaim_debug(GAIM_DEBUG_ERROR, "perl",
-				   "Perl function %s exited abnormally: %s\n",
-				   gps->load_sub, SvPV(ERRSV, len));
+			gaim_debug(GAIM_DEBUG_ERROR, "perl",
+					   "Perl function %s exited abnormally: %s\n",
+					   gps->load_sub, SvPV(ERRSV, len));
+		}
+
+
+		PUTBACK;
+		FREETMPS;
+		LEAVE;
 	}
-
-
-	PUTBACK;
-	FREETMPS;
-	LEAVE;
 
 	gaim_signals_disconnect_by_handle(plugin);
 	gaim_perl_timeout_clear_for_plugin(plugin);
