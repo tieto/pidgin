@@ -8,6 +8,7 @@ WINGAIM:
 	sounds while away?	
 
 gtk2/new prefs
+	sound player preference not being saved
 	resize blist doesn't work on some systems.
 	most toolbar buttons stay depressed after being clicked once, only raise when clicked a second time.
 		smiles and links do not.
