@@ -481,13 +481,17 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *fbox;
-	GtkWidget *frame;
+	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gchar tmp[2048];
+	char labeltext[1024 * 2];
+	char *filename;
+	GtkWidget *image;
 
 	GAIM_DIALOG(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 
 	g_snprintf(tmp, sizeof(tmp), _("Gaim - Remove %s?"), name);
+	gtk_container_set_border_width(GTK_CONTAINER(b->window), 6);
 	gtk_window_set_title(GTK_WINDOW(b->window), tmp);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "confirm_del", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
@@ -497,33 +501,44 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 	gtk_widget_realize(b->window);
 
 	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_set_spacing(GTK_BOX(vbox), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
 	gtk_container_add(GTK_CONTAINER(b->window), vbox);
 	gtk_widget_show(vbox);
 
-	frame = gtk_frame_new(_("Remove Buddy"));
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
-	gtk_widget_show(frame);	
-
-	fbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), fbox);
+	fbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_set_spacing(GTK_BOX(fbox), 6);
 	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 	gtk_widget_show(fbox);
 
-	g_snprintf(tmp, sizeof(tmp), _("You are about to remove '%s' from\nyour buddylist. Do you want to continue?"), name);
-	b->label = gtk_label_new(tmp);
-	gtk_misc_set_alignment(GTK_MISC(b->label), 0, 0.5);
+	filename = g_build_filename (DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+	debug_printf("Loading: %s\n", filename);
+	image = gtk_image_new_from_file(filename);
+	gtk_misc_set_alignment(GTK_MISC(image), 0, 0);
+	gtk_box_pack_start(GTK_BOX(fbox), image, FALSE, FALSE, 0);
+	gtk_widget_show(image);
+	g_free(filename);
+
+	g_snprintf(labeltext, sizeof(labeltext), "<span weight=\"bold\" size=\"larger\">Remove Buddy</span>\n\nYou are about to remove '%s' from\nyour buddylist.  Do you want to continue?", name);
+	b->label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(b->label), labeltext);
+	gtk_label_set_line_wrap(GTK_LABEL(b->label), TRUE);
 	gtk_label_set_justify(GTK_LABEL(b->label), GTK_JUSTIFY_LEFT);
+	gtk_misc_set_alignment(GTK_MISC(b->label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(fbox), b->label, FALSE, FALSE, 0);
 	gtk_widget_show(b->label);
+	gtk_box_pack_start(GTK_BOX(vbox), fbox, TRUE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_set_spacing(GTK_BOX(hbox), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	b->ok = picture_button(b->window, _("Accept"), ok_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), b->ok, FALSE, FALSE, 5);
+	b->ok = gtk_button_new_with_label("Remove Buddy");
+	gtk_widget_show(b->ok);
+	gtk_size_group_add_widget(sg, b->ok);
+	gtk_box_pack_end(GTK_BOX(hbox), b->ok, FALSE, FALSE, 5);
 
 	bd = find_buddy(gc, name);
 
@@ -532,8 +547,10 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 	
 	gtk_signal_connect(GTK_OBJECT(b->ok), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 
-	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), b->cancel, FALSE, FALSE, 5);
+	b->cancel = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
+	gtk_widget_show(b->cancel);
+	gtk_size_group_add_widget(sg, b->cancel);
+	gtk_box_pack_end(GTK_BOX(hbox), b->cancel, FALSE, FALSE, 5);
 	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	
 	gtk_widget_show(b->window);	
@@ -563,10 +580,10 @@ GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
  	case GAIM_INFO:
 	 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_info.png", NULL);
 		break; 
-	 case GAIM_WARNING:
+	case GAIM_WARNING:
 	 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_warning.png", NULL);
 	  	break;
-	 case GAIM_ERROR:
+	case GAIM_ERROR:
 	 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_error.png", NULL);
 	 	break;
 		/*	 case GAIM_QUESTION:
