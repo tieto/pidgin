@@ -4,10 +4,10 @@
  * Some code copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
  * Some code copyright (C) 1999-2001, Eric Warmenhoven
  * Some code copyright (C) 2001-2003, Sean Egan
- * Some code copyright (C) 2001-2003, Mark Doliner <thekingant@users.sourceforge.net>
+ * Some code copyright (C) 2001-2004, Mark Doliner <thekingant@users.sourceforge.net>
  *
  * Most libfaim code copyright (C) 1998-2001 Adam Fritzler <afritz@auk.cx>
- * Some libfaim code copyright (C) 2001-2003 Mark Doliner <thekingant@users.sourceforge.net>
+ * Some libfaim code copyright (C) 2001-2004 Mark Doliner <thekingant@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2460,8 +2460,9 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
-		/* OscarData *od = gc->proto_data; */
-		/* XXX - Take the buddy out of our buddy list */
+		/* Remove from local list */
+		GaimBuddy *b = gaim_find_buddy(gaim_connection_get_account(gc), data->name);
+		gaim_blist_remove_buddy(b);
 	}
 
 	oscar_free_name_data(data);
@@ -5087,7 +5088,6 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
 				gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
-				/* XXX - Should remove buddy from local list */
 			} break;
 		}
 
