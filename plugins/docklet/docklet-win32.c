@@ -1,7 +1,7 @@
 /*
  * System tray icon (aka docklet) plugin for Gaim
  *
- * Copyright (C) 2002 Robert McQueen <robot101@debian.org>
+ * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
  * Inspired by a similar plugin by:
  *  John (J5) Palmieri <johnp@martianrock.com>
@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
+
 #include <windows.h>
 #include <gdk/gdkwin32.h>
 #include <gdk/gdk.h>
@@ -196,15 +197,16 @@ static void wgaim_tray_create() {
 
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd, sysicon_disconn);
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: created\n");
+	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "created\n");
 }
 
 static void wgaim_tray_destroy() {
 	systray_remove_nid();
 	DestroyWindow(systray_hwnd);
+	docklet_remove(TRUE);
 }
 
-static struct gaim_tray_ops wgaim_tray_ops =
+static struct docklet_ui_ops wgaim_tray_ops =
 {
 	wgaim_tray_create,
 	wgaim_tray_destroy,
@@ -212,6 +214,6 @@ static struct gaim_tray_ops wgaim_tray_ops =
 };
 
 /* Used by docklet's plugin load func */
-void trayicon_init() {
-	docklet_set_tray_ops(&wgaim_tray_ops);
+void docklet_ui_init() {
+	docklet_set_ui_ops(&wgaim_tray_ops);
 }
