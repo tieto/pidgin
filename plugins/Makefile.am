@@ -1,4 +1,4 @@
-DIST_SUBDIRS = docklet gaim-remote gestures perl tcl ticker
+DIST_SUBDIRS = docklet gaim-remote gestures perl ssl tcl ticker
 
 if USE_PERL
 PERL_DIR = perl

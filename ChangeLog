@@ -4,6 +4,7 @@ version 0.71
 	* Display AIM away messages in the tooltip for buddies when 
 	  they are away.
 	* Re-write of Jabber protocol plugin
+	* SSL support can now be provided by third party plugins.
 
 version 0.70 (09/28/2003):
 	* Implemented Yahoo's new authentication method (Cerulean Studios)

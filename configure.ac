@@ -926,6 +926,7 @@ AC_OUTPUT([Makefile
 		   plugins/gestures/Makefile
 		   plugins/perl/Makefile
 		   plugins/perl/common/Makefile.PL
+		   plugins/ssl/Makefile
 		   plugins/tcl/Makefile
 		   plugins/ticker/Makefile
 		   po/Makefile.in

@@ -25,16 +25,6 @@
 #include "debug.h"
 #include "sslconn.h"
 
-/* Pre-installed SSL op functions. */
-#ifdef HAVE_NSS
-GaimSslOps *gaim_ssl_nss_get_ops();
-#endif
-
-#ifdef HAVE_GNUTLS
-GaimSslOps *gaim_ssl_gnutls_get_ops();
-#endif
-
-
 static gboolean _ssl_initialized = FALSE;
 static GaimSslOps *_ssl_ops = NULL;
 
@@ -237,11 +227,6 @@ gaim_ssl_get_ops(void)
 void
 gaim_ssl_init(void)
 {
-#if defined(HAVE_NSS)
-	gaim_ssl_set_ops(gaim_ssl_nss_get_ops());
-#elif defined(HAVE_GNUTLS)
-	gaim_ssl_set_ops(gaim_ssl_gnutls_get_ops());
-#endif
 }
 
 void
