@@ -127,37 +127,42 @@ void show_about(GtkWidget *w, void *data)
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 			_("  Rob Flynn (maintainer) "
 			"&lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>"
-			"  Sean Egan (coder) "
+			"  Sean Egan (lead developer) "
 			"&lt;<A HREF=\"mailto:bj91704@binghamton.edu\">"
 			"bj91704@binghamton.edu</A>&gt;"
-			"<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
+			"  Christian 'ChipX86' Hammond (developer & webmaster)<BR>"
+			"  Herman Bloggs (win32 port) "
+			"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">"
+			"hermanator12002@yahoo.com</A>&gt;<BR>"
+			"  Nathan 'faceprint' Walp (developer)<BR>"
+			"  Mark 'KingAnt' Doliner (developer)<BR>"
+			"  Luke 'LSchiere' Schierer (support)<BR>"
+			"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 			_("<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 			"  Benjamin Miller<BR>"
 			"  Decklin Foster<BR>"
-			"  Nathan Walp<BR>"
-			"  Mark Doliner<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
-
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("<FONT SIZE=\"3\">Win32 Port:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				"  Herman Bloggs "
-				"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">"
-				"hermanator12002@yahoo.com</A>&gt;<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
+			"  Etan 'deryni' Reisner<BR>"
+			"  Ethan 'Paco-Paco' Blanton<br>"
+			"  Robert 'Robot101' McQueen<BR>"
+			"<BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_("<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("  Jim Duchek<BR>"
-				"  Eric Warmenhoven "
+				_("  Adam Fritzler (former libfaim maintainer)<BR>"
+				"  Eric Warmenhoven (former lead developer)"
 				"&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">"
 				"warmenhoven@yahoo.com</A>&gt;<BR>"
+				"  Jim Duchek (former maintainer)<BR>"
+				"  Jim Seymour (former Jabber developer)<BR>"
 				"  Mark Spencer (original author) "
 				"&lt;<A HREF=\"mailto:markster@marko.net\">"
 				"markster@marko.net</A>&gt;"
-				"<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
+				"  Syd Logan (hacker and designated driver [lazy bum])<BR>"
+				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 

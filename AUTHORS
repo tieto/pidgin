@@ -1,34 +1,45 @@
 gaim - the Pimpin' Penguin IM Clone that's Good for the Soul
 ============================================================
 
-Developers:
-----------
-Rob Flynn <rob@marko.net> - Main developer (send patches here)
+We've got an IRC room now too, #gaim on irc.freenode.net. Come check us out.
+
+Active Developers:
+------------------
+
+Rob Flynn <rob@marko.net> - Maintainer
 	AIM: RobFlynn
 	ICQ: 1358450
 	MSN: rmf410@hotmail.com
 	Yahoo: IBRRob
 	Jabber: robflynn@jabber.org
 
-Sean Egan <bj91704@binghamton.edu> - Developer
+Sean Egan <bj91704@binghamton.edu> - Lead Developer
 	AIM: SeanEgn
 	ICQ: 96642211
 	MSN: SeanEgn@hotmail.com
 	Yahoo:	SeanEgn
 	Jabber: SeanEgn@jabber.org
 
-Syd Logan - Hacker and Designated Driver (lazy bum)
+Christian 'ChipX86' Hammond - Developer & Webmaster
+Herman 'Hermanator' Bloggs - Win32 Port
+Nathan 'faceprint' Walp - Developer
+Mark 'KingAnt' Doliner - Developer
+Luke 'LSchiere' Schierer - Support
 
-Decklin Foster
+Crazy Patch Writers:
+--------------------
+
 Ben Miller
-Nathan Walp
-Mark Doliner
-
-We've got an IRC room now too, #gaim on irc.freenode.net. Come check us out.
+Decklin Foster
+Etan 'deryni' Reisner
+Ethan 'Paco-Paco' Blanton
+Robert 'Robot101' McQueen
 
 Retired:
 --------
+Adam Fritzler - Former libfaim Maintainer
+Eric Warmenhoven <eric@warmenhoven.org> - Former Lead Developer
 Jim Duchek <jimduchek@ou.edu> - Former Maintainer 
+Jim Seymour - Former Jabber Developer
 Mark Spencer <markster@marko.net> - Original Author
-Eric Warmenhoven <eric@warmenhoven.org>
-Adam Fritzler
+Syd Logan - Hacker and Designated Driver (lazy bum)
