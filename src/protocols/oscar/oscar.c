@@ -4432,7 +4432,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		}
 
 		if (iconfile && !stat(iconfile, &st)) {
-			FILE *file = fopen(iconfile, "r");
+			FILE *file = fopen(iconfile, "rb");
 			if (file) {
 				char *buf = g_malloc(st.st_size);
 				fread(buf, 1, st.st_size, file);
