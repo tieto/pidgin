@@ -288,6 +288,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	GSList *images = NULL;
 	int options = 0;
 	char label_text[2048];
+    char *linked_text;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -360,6 +361,12 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	options ^= GTK_IMHTML_NO_SCROLL;
 
 	gaim_gtk_find_images(text, &images);
+    if(gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")){
+        linked_text = gaim_markup_linkify(text);
+        gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
+                                           options, images);
+        g_free(linked_text);
+    } 
 	gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text, options, images);
 
 	if (images) {
