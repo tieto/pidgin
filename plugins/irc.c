@@ -122,7 +122,6 @@ static void irc_request_buddy_update(struct gaim_connection *gc)
 	struct group *g;
 	struct buddy *b;
 	struct irc_channel *u;
-	gchar buf[IRC_BUF_LEN + 1];
 
 	if (idata->templist != NULL)
 		return;
@@ -469,7 +468,6 @@ I THOUGHT THIS WOULD WORK, BUT I WAS WRONG.  WOULD SOMEONE KINDLY FIX IT?
 }
 static struct conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
 {
-	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GSList *bc = gc->buddy_chats;
 	struct conversation *b = NULL;
 
@@ -491,12 +489,10 @@ static struct conversation *find_conversation_by_id(struct gaim_connection *gc, 
 
 static struct conversation *find_conversation_by_name(struct gaim_connection *gc, char *name)
 {
-	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GSList *bc = gc->buddy_chats;
 	struct conversation *b = NULL;
 
 	while (bc) {
-		int x;
 		b = (struct conversation *)bc->data;
 
 		if (g_strcasecmp(name, b->name) == 0) {
@@ -745,13 +741,12 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	}
 
 
-	if ((strstr(buf, " JOIN ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+	if ((strstr(buf, " JOIN ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
 		gchar u_nick[128];
 
 		struct irc_channel *channel;
-		int id;
 		int j;
 
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
@@ -804,7 +799,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 	}
 
-	if ((strstr(buf, " NICK ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+	if ((strstr(buf, " NICK ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar old[128];
 		gchar new[128];
@@ -812,7 +807,6 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		GList *templist;
 
 		struct irc_channel *channel;
-		int id;
 		int j;
 
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
@@ -844,7 +838,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		}
 	}
 
-	if ((strstr(buf, "QUIT ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+	if ((strstr(buf, "QUIT ")) && (buf[0] == ':') && (strstr(buf, "!")) && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_nick[128];
 
@@ -873,15 +867,13 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		}
 	}
 
-	if ((strstr(buf, " PART ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+	if ((strstr(buf, " PART ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
 		gchar u_nick[128];
 
 		struct irc_channel *channel;
-		int id;
 		int j;
-		GList *test = NULL;
 
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
 			u_nick[j] = buf[i];
@@ -946,7 +938,6 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		gchar u_channel[128];
 		gchar u_message[IRC_BUF_LEN];
 		int j;
-		int msgcode = 0;
 
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
 			u_nick[j] = buf[i];
@@ -1014,7 +1005,6 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		gchar u_channel[128];
 		gchar u_message[IRC_BUF_LEN];
 		int j;
-		int msgcode = 0;
 
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
 			u_nick[j] = buf[i];
@@ -1228,9 +1218,6 @@ static void irc_login(struct aim_user *user)
 
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
-	char c;
-	int i;
-	int status;
 
 	host = gethostbyname(user->proto_opt[0]);
 	if (!host) {
@@ -1364,7 +1351,7 @@ static void irc_get_info(struct gaim_connection *gc, char *who)
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	char buf[BUF_LEN];
 
-	if ((who[0] == '@') || (who[0] == '+') && (strlen(who)>1))
+	if (((who[0] == '@') || (who[0] == '+')) && (strlen(who)>1))
 		g_snprintf(buf, BUF_LEN, "WHOIS %s\n", who+1);
 	else
 		g_snprintf(buf, BUF_LEN, "WHOIS %s\n", who);
