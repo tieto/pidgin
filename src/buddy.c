@@ -894,11 +894,38 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 		}
 
 		if(tmp) {
+			char *temp;
+
 			g_strdelimit(tmp, "\n", ' ');
-			if(strlen(tmp) > 20)
+
+			if(strlen(tmp) > 20) {
+				char *c1, *c2;
+
 				statustext = g_strdup_printf("%.20s... ", tmp);
+
+				if ((c1 = strrchr(statustext, '&')) != NULL) {
+					if ((c2 = strrchr(statustext, ';')) == NULL ||
+						c2 < c1) {
+
+						char *new_statustext;
+
+						/* We must escape this broken entity. */
+						new_statustext = g_new0(char, strlen(statustext) + 5);
+
+						strncpy(new_statustext, statustext, c1 - statustext);
+						sprintf(new_statustext + (c1 - statustext),
+								"&amp;%s", c1 + 1);
+
+						g_free(statustext);
+
+						statustext = new_statustext;
+					}
+				}
+					
+			}
 			else
 				statustext = g_strdup_printf("%s ", tmp);
+
 			g_free(tmp);
 		}
 	}
