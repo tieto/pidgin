@@ -49,6 +49,8 @@ typedef enum
 #define GAIM_PRIORITY_HIGHEST  9999
 #define GAIM_PRIORITY_LOWEST  -9999
 
+#define GAIM_PLUGIN_FLAG_INVISIBLE 0x01
+
 /**
  * Detailed information about a plugin.
  *

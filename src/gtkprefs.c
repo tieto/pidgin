@@ -1,4 +1,4 @@
-/***
+/**
  * @file gtkprefs.c GTK+ Preferences
  * @ingroup gtkui
  *
@@ -1611,14 +1611,14 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	GaimPlugin *plug;
 	gchar buf[1024];
 	gchar *name = NULL, *description = NULL;
-	
+
 	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
 	gdk_window_set_cursor(prefs->window, wait);
 	gdk_cursor_unref(wait);
-  
+
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter, 2, &plug, -1);
-	
+
 	if (!gaim_plugin_is_loaded(plug)) {
 		gaim_plugin_load(plug);
 
@@ -1651,7 +1651,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 
 					/* Expand the tree for the first plugin added */
 					GtkTreePath *path2;
-					
+
 					path2 = gtk_tree_model_get_path(GTK_TREE_MODEL(prefstree),
 													&plugin_iter);
 					gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v),
@@ -1700,7 +1700,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0,
 						gaim_plugin_is_loaded(plug), -1);
-	
+
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	gtk_tree_path_free(path);
 
@@ -1719,17 +1719,20 @@ update_plugin_list(void *data)
 
 	for (probes = gaim_plugins_get_all();
 		 probes != NULL;
-		 probes = probes->next) {
-
+		 probes = probes->next)
+	{
 		plug = probes->data;
 
-		if (plug->info->type != GAIM_PLUGIN_STANDARD)
+		if (plug->info->type != GAIM_PLUGIN_STANDARD ||
+			(plug->info->flags & GAIM_PLUGIN_INVISIBLE))
+		{
 			continue;
+		}
 
 		gtk_list_store_append (ls, &iter);
 		gtk_list_store_set(ls, &iter,
 				   0, gaim_plugin_is_loaded(plug),
-				   1, plug->info->name ? _(plug->info->name) : plug->path, 
+				   1, plug->info->name ? _(plug->info->name) : plug->path,
 				   2, plug, -1);
 	}
 }
