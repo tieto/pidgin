@@ -1351,6 +1351,39 @@ gaim_escape_html(const char *html) {
 
 }
 
+char *
+gaim_unescape_html(const char *html) {
+	char *unescaped = NULL;
+
+	if (html != NULL) {
+		const char *c = html;
+		GString *ret = g_string_new("");
+		while (*c) {
+			if (!strncmp(c, "&amp;", 5)) {
+				ret = g_string_append_c(ret, '&');
+				c += 5;
+			} else if (!strncmp(c, "&lt;", 4)) {
+				ret = g_string_append_c(ret, '<');
+				c += 4;
+			} else if (!strncmp(c, "&gt;", 4)) {
+				ret = g_string_append_c(ret, '>');
+				c += 4;
+			} else if (!strncmp(c, "&quot;", 6)) {
+				ret = g_string_append_c(ret, '"');
+				c += 6;
+			} else {
+				ret = g_string_append_c(ret, *c);
+				c++;
+			}
+		}
+
+		unescaped = ret->str;
+		g_string_free(ret, FALSE);
+	}
+	return unescaped;
+
+}
+
 /**************************************************************************
  * Path/Filename Functions
  **************************************************************************/

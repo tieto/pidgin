@@ -329,7 +329,7 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	char *body;
 	const char *value;
 
-	body = g_strdup(msn_message_get_body(msg));
+	body = gaim_escape_html(msn_message_get_body(msg));
 
 	if (!strcmp(servconn->msg_passport, "messenger@microsoft.com") &&
 		strstr(body, "immediate security update"))

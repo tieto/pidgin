@@ -276,6 +276,18 @@ char *gaim_markup_linkify(const char *str);
  */
 char *gaim_escape_html(const char *html);
 
+/**
+ * Unescapes HTML entities to their literal characters.
+ * For example "&amp;" is replaced by '&' and so on.
+ * Actually only "&amp;", "&quot;", "&lt;" and "&gt;" are currently
+ * supported.
+ *
+ * @param html The string in which to unescape any HTML entities
+ *
+ * @return the text with HTML entities literalized
+ */
+char *gaim_unescape_html(const char *html);
+
 /*@}*/
 
 

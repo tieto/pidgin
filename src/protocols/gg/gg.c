@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 8883 2004-01-25 22:15:42Z faceprint $
+ * $Id: gg.c 9172 2004-03-14 05:42:56Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -304,6 +304,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	case GG_EVENT_MSG:
 		{
 			gchar *imsg;
+			gchar *jmsg;
 			gchar user[20];
 
 			g_snprintf(user, sizeof(user), "%lu", e->event.msg.sender);
@@ -311,9 +312,11 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 				break;
 			imsg = charset_convert(e->event.msg.message, "CP1250", "UTF-8");
 			gaim_str_strip_cr(imsg);
+			jmsg = gaim_escape_html(imsg);
 			/* e->event.msg.time - we don't know what this time is for */
-			serv_got_im(gc, user, imsg, 0, time(NULL));
+			serv_got_im(gc, user, jmsg, 0, time(NULL));
 			g_free(imsg);
+			g_free(jmsg);
 		}
 		break;
 	case GG_EVENT_NOTIFY:

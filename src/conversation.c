@@ -236,8 +236,15 @@ common_send(GaimConversation *conv, const char *message)
 				msgflags |= GAIM_MESSAGE_IMAGES;
 			}
 
-			err = serv_send_im(gc, gaim_conversation_get_name(conv),
-							    sent, imflags);
+			if (gc && gc->flags & GAIM_CONNECTION_HTML) {
+				err = serv_send_im(gc, gaim_conversation_get_name(conv),
+				                   sent, imflags);
+			} else {
+				gchar *tmp = gaim_unescape_html(sent);
+				err = serv_send_im(gc, gaim_conversation_get_name(conv),
+				                   tmp, imflags);
+				g_free(tmp);
+			}
 
 			if ((err > 0) && (displayed != NULL))
 				gaim_conv_im_write(im, NULL, displayed, msgflags, time(NULL));
@@ -269,7 +276,13 @@ common_send(GaimConversation *conv, const char *message)
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 
 		if (sent != NULL && sent[0] != '\0') {
-			err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), sent);
+			if (gc && gc->flags & GAIM_CONNECTION_HTML) {
+				err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), sent);
+			} else {
+				gchar *tmp = gaim_unescape_html(sent);
+				err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), tmp);
+				g_free(tmp);
+			}
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-chat-msg",
 							 gaim_conversation_get_account(conv), sent,

@@ -286,10 +286,8 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (gc && gc->flags & GAIM_CONNECTION_HTML)
-		buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
-	else
-		buf = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry));
+
+	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 
 	/*	set_toggle(gtkconv->toolbar.bold,        FALSE);
 	set_toggle(gtkconv->toolbar.italic,      FALSE);
