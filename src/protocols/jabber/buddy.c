@@ -530,8 +530,10 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	JabberBuddyResource *jbr;
 	GString *info_text;
 	char *resource_name;
+	char *bare_jid;
 	char *title;
 	xmlnode *vcard;
+	GaimBuddy *b;
 
 	if(!from)
 		return;
@@ -539,6 +541,9 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	/* XXX: make this handle handle errors */
 
 	resource_name = jabber_get_resource(from);
+	bare_jid = jabber_get_bare_jid(from);
+
+	b = gaim_find_buddy(js->gc->account, bare_jid);
 
 	jb = jabber_buddy_find(js, from, TRUE);
 	info_text = g_string_new("");
@@ -580,6 +585,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 
 	g_free(resource_name);
+	g_free(bare_jid);
 
 	if((vcard = xmlnode_get_child(packet, "vCard"))) {
 		xmlnode *child;
@@ -621,6 +627,10 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				}
 			} else if(text && !strcmp(child->name, "NICKNAME")) {
 				serv_got_alias(js->gc, from, text);
+				if(b) {
+					gaim_blist_node_set_string((GaimBlistNode*)b, "servernick", text);
+					gaim_blist_save();
+				}
 				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
 						_("Nickname"), text);
 			} else if(text && !strcmp(child->name, "BDAY")) {

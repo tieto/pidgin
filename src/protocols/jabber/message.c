@@ -483,6 +483,8 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	if(!strcmp(msg, "/configure") || !strcmp(msg, "/config")) {
 		jabber_chat_request_room_configure(chat);
 		return 1;
+	} else if(!strcmp(msg, "/register")) {
+		jabber_chat_register(chat);
 	}
 
 	jm = g_new0(JabberMessage, 1);

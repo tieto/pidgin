@@ -367,6 +367,12 @@ void jabber_chat_request_room_configure(JabberChat *chat) {
 	if(!chat)
 		return;
 
+	if(!chat->muc) {
+		gaim_notify_error(chat->js->gc, _("Room Configuration Error"), _("Room Configuration Error"),
+				_("This room is not capable of being configured"));
+		return;
+	}
+
 	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
 			"http://jabber.org/protocol/muc#owner");
 	query = xmlnode_get_child(iq->node, "query");
@@ -403,3 +409,126 @@ void jabber_chat_create_instant_room(JabberChat *chat) {
 
 	g_free(room_jid);
 }
+
+static void jabber_chat_register_x_data_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	const char *type = xmlnode_get_attrib(packet, "type");
+
+	if(type && !strcmp(type, "error")) {
+		/* XXX: handle an error (you'll get a 409 if the nick is already registered) */
+	}
+}
+
+static void jabber_chat_register_x_data_cb(JabberStream *js, xmlnode *result, gpointer data)
+{
+	JabberChat *chat = data;
+	xmlnode *query;
+	JabberIq *iq;
+	char *to = g_strdup_printf("%s@%s", chat->room, chat->server);
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
+	xmlnode_set_attrib(iq->node, "to", to);
+	g_free(to);
+
+	query = xmlnode_get_child(iq->node, "query");
+
+	xmlnode_insert_child(query, result);
+
+	jabber_iq_set_callback(iq, jabber_chat_register_x_data_result_cb, NULL);
+
+	jabber_iq_send(iq);
+}
+
+static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *query, *x;
+	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *from = xmlnode_get_attrib(packet, "from");
+	char *msg;
+	JabberChat *chat;
+	JabberID *jid;
+
+	if(!type || !from)
+		return;
+
+	if(!strcmp(type, "result")) {
+		jid = jabber_id_new(from);
+
+		if(!jid)
+			return;
+
+		chat = jabber_chat_find(js, jid->node, jid->domain);
+		jabber_id_free(jid);
+
+		if(!chat)
+			return;
+
+		if(!(query = xmlnode_get_child(packet, "query")))
+			return;
+
+		for(x = query->child; x; x = x->next) {
+			const char *xmlns;
+			if(strcmp(x->name, "x"))
+				continue;
+
+			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
+				continue;
+
+			if(!strcmp(xmlns, "jabber:x:data")) {
+				jabber_x_data_request(js, x, jabber_chat_register_x_data_cb, chat);
+				return;
+			}
+		}
+	} else if(!strcmp(type, "error")) {
+		/* XXX: how many places is this code duplicated?  Fix it, immediately */
+		xmlnode *errnode = xmlnode_get_child(packet, "error");
+		const char *code = NULL;
+		char *code_txt = NULL;
+		char *msg;
+		char *text = NULL;
+
+		if(errnode) {
+			code = xmlnode_get_attrib(errnode, "code");
+			text = xmlnode_get_data(errnode);
+		}
+
+		if(code)
+			code_txt = g_strdup_printf(_(" (Code %s)"), code);
+
+		msg = g_strdup_printf("%s%s", text ? text : "", code_txt ? code_txt : "");
+		gaim_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
+
+		g_free(msg);
+		if(code_txt)
+			g_free(code_txt);
+
+		return;
+	}
+
+	msg = g_strdup_printf("Unable to configure room %s", from);
+
+	gaim_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
+	g_free(msg);
+
+}
+
+void jabber_chat_register(JabberChat *chat)
+{
+	JabberIq *iq;
+	char *room_jid;
+
+	if(!chat)
+		return;
+
+	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET, "jabber:iq:register");
+	xmlnode_set_attrib(iq->node, "to", room_jid);
+	g_free(room_jid);
+
+	jabber_iq_set_callback(iq, jabber_chat_register_cb, NULL);
+
+	jabber_iq_send(iq);
+}
+
+

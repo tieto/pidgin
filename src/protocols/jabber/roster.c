@@ -55,7 +55,7 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
 	GSList *buddies, *g2, *l;
-	int present =0, idle=0, signon=0, state=0;
+	int present =0, idle=0, state=0;
 
 	buddies = gaim_find_buddies(js->gc->account, jid);
 
@@ -70,7 +70,6 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 
 	if(buddies) {
 		present = ((GaimBuddy*)buddies->data)->present;
-		signon = ((GaimBuddy*)buddies->data)->signon;
 		idle = ((GaimBuddy*)buddies->data)->idle;
 		state = ((GaimBuddy*)buddies->data)->uc;
 	}
@@ -82,6 +81,11 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		buddies = g_slist_remove(buddies, b);
 
 		if((l = g_slist_find_custom(g2, g->name, (GCompareFunc)strcmp))) {
+			const char *servernick;
+
+			if((servernick = gaim_blist_node_get_string((GaimBlistNode*)b, "servernick")))
+				serv_got_alias(js->gc, jid, servernick);
+
 			if(alias && (!b->alias || strcmp(b->alias, alias)))
 				gaim_blist_alias_buddy(b, alias);
 			g_free(l->data);
@@ -101,11 +105,11 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		}
 
 		b->present = present;
-		b->signon = signon;
 		b->idle = idle;
 		b->uc = state;
 
 		gaim_blist_add_buddy(b, NULL, g, NULL);
+		gaim_blist_alias_buddy(b, alias);
 		g_free(g2->data);
 		g2 = g_slist_delete_link(g2, g2);
 	}
