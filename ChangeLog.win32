@@ -1,10 +1,12 @@
-version 0.60
+version 0.60 (4/5/03)
 	* Fixed oscar protocol high cpu usage bug.
 	* Separated aspell from Gaim, and switched to aspell.net windows
 	  installer.  Gaim will function with or without aspell installation.
 	* Gaim installer no longer installs GTK+ runtime dlls. Gaim now
  	  requires gtk-win installation (http://www.sf.net/projects/gtk-win)
 	* Updated Gaim installer to use modern UI.
+	* Drag and Drop Smiley theme installation works now.
+	* Fixed bug where TOC buddies where not showing up in the list.
 
 version 0.60 alpha 5 (2/8/03)
 	* Buddy Icons no longer corrupted.
