@@ -123,11 +123,16 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 {
 	GaimXferType type;
 
-	if (xfer == NULL || filename == NULL) {
+	if (xfer == NULL)
 		return;
-	}
 
 	type = gaim_xfer_get_type(xfer);
+
+	if (!filename && type == GAIM_XFER_RECEIVE) {
+		xfer->status = GAIM_XFER_STATUS_ACCEPTED;
+		xfer->ops.init(xfer);
+		return;
+	}
 
 	if (type == GAIM_XFER_SEND) {
 		struct stat sb;
@@ -324,7 +329,6 @@ gaim_xfer_set_completed(GaimXfer *xfer, gboolean completed)
 
 	if (ui_ops != NULL && ui_ops->update_progress != NULL)
 		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
-
 }
 
 void
@@ -672,6 +676,19 @@ gaim_xfer_end(GaimXfer *xfer)
 }
 
 void
+gaim_xfer_add(GaimXfer *xfer)
+{
+	GaimXferUiOps *ui_ops;
+
+	g_return_if_fail(xfer != NULL);
+
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
+
+	if (ui_ops != NULL && ui_ops->add_xfer != NULL)
+		ui_ops->add_xfer(xfer);
+}
+
+void
 gaim_xfer_cancel_local(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
@@ -775,6 +792,19 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 	g_free(title);
 }
 
+void
+gaim_xfer_update_progress(GaimXfer *xfer)
+{
+	GaimXferUiOps *ui_ops;
+
+	g_return_if_fail(xfer != NULL);
+
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
+	if (ui_ops != NULL && ui_ops->update_progress != NULL)
+		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
+}
+
+
 /**************************************************************************
  * File Transfer Subsystem API
  **************************************************************************/
@@ -790,4 +820,3 @@ gaim_xfers_get_ui_ops(void)
 {
 	return xfer_ui_ops;
 }
-

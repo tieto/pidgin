@@ -1174,29 +1174,71 @@ gaim_gtkxfer_ask_recv(GaimXfer *xfer)
 	char *buf, *size_buf;
 	size_t size;
 
-	size = gaim_xfer_get_size(xfer);
+	/* If we have already accepted the request, ask the destination file
+	   name directly */
+	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_ACCEPTED) {
+		size = gaim_xfer_get_size(xfer);
+		size_buf = gaim_str_size_to_units(size);
 
-	size_buf = gaim_str_size_to_units(size);
+		buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
+				      xfer->who, gaim_xfer_get_filename(xfer),
+				      size_buf);
+		g_free(size_buf);
 
-	buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
-						  xfer->who, gaim_xfer_get_filename(xfer), size_buf);
+		gaim_request_accept_cancel(NULL, NULL, buf, NULL, 0, xfer,
+					   G_CALLBACK(choose_file),
+					   G_CALLBACK(cancel_recv_cb));
+		g_free(buf);
+	} else
+		choose_file(xfer);
+}
 
-	g_free(size_buf);
+static int
+ask_accept_ok(GaimXfer *xfer)
+{
+	gaim_xfer_request_accepted(xfer, NULL);
+	return 0;
+}
 
-	gaim_request_accept_cancel(NULL, NULL, buf, NULL, 0, xfer,
-							   G_CALLBACK(choose_file),
-							   G_CALLBACK(cancel_recv_cb));
+static int
+ask_accept_cancel(GaimXfer *xfer)
+{
+	gaim_xfer_request_denied(xfer);
+	gaim_xfer_unref(xfer);
+	return 0;
+}
 
+static void
+gaim_gtkxfer_ask_accept(GaimXfer *xfer)
+{
+	char *buf, *buf2 = NULL;
+
+	buf = g_strdup_printf(_("Accept file transfer request from %s?"),
+			      xfer->who);
+	if (gaim_xfer_get_remote_ip(xfer) &&
+	    gaim_xfer_get_remote_port(xfer))
+		buf2 = g_strdup_printf(_("A file is available for download from:\n"
+					 "Remote host: %s\nRemote port: %d"),
+				       gaim_xfer_get_remote_ip(xfer),
+				       gaim_xfer_get_remote_port(xfer));
+	gaim_request_accept_cancel(NULL, NULL, buf, buf2, 0, xfer,
+				   G_CALLBACK(ask_accept_ok),
+				   G_CALLBACK(ask_accept_cancel));
 	g_free(buf);
+	g_free(buf2);
 }
 
 static void
 gaim_gtkxfer_request_file(GaimXfer *xfer)
 {
 	gaim_xfer_ref(xfer);
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
-		gaim_gtkxfer_ask_recv(xfer);
-	else
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		if (gaim_xfer_get_filename(xfer) ||
+		    gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_ACCEPTED)
+			gaim_gtkxfer_ask_recv(xfer);
+		else
+			gaim_gtkxfer_ask_accept(xfer);
+	} else
 		choose_file(xfer);
 }
 

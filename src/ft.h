@@ -50,6 +50,7 @@ typedef enum
 {
 	GAIM_XFER_STATUS_UNKNOWN = 0,   /**< Unknown, the xfer may be null. */
 	GAIM_XFER_STATUS_NOT_STARTED,   /**< It hasn't started yet. */
+	GAIM_XFER_STATUS_ACCEPTED,      /**< Receive accepted, but destination file not selected yet */
 	GAIM_XFER_STATUS_STARTED,       /**< gaim_xfer_start has been called. */
 	GAIM_XFER_STATUS_DONE,          /**< The xfer completed successfully. */
 	GAIM_XFER_STATUS_CANCEL_LOCAL,  /**< The xfer was canceled by us. */
@@ -172,7 +173,11 @@ void gaim_xfer_ref(GaimXfer *xfer);
 void gaim_xfer_unref(GaimXfer *xfer);
 
 /**
- * Requests confirmation for a file transfer from the user.
+ * Requests confirmation for a file transfer from the user. If receiving
+ * a file which is known at this point, this requests user to accept and
+ * save the file. If the filename is unknown (not set) this only requests user
+ * to accept the file transfer. In this case protocol must call this function
+ * again once the filename is available.
  *
  * @param xfer The file transfer to request confirmation on.
  */
@@ -485,6 +490,14 @@ void gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 void gaim_xfer_end(GaimXfer *xfer);
 
 /**
+ * Adds a new file transfer to the list of file transfers. Call this only
+ * if you are not using gaim_xfer_start.
+ *
+ * @param xfer The file transfer.
+ */
+void gaim_xfer_add(GaimXfer *xfer);
+
+/**
  * Cancels a file transfer on the local end.
  *
  * @param xfer The file transfer.
@@ -510,6 +523,13 @@ void gaim_xfer_cancel_remote(GaimXfer *xfer);
  * @param msg  The message to display.
  */
 void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
+
+/**
+ * Updates file transfer progress.
+ *
+ * @param xfer      The file transfer.
+ */
+void gaim_xfer_update_progress(GaimXfer *xfer);
 
 /*@}*/
 
