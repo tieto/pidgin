@@ -402,8 +402,13 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 static void nap_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct nap_data *ndata = gc->proto_data;
+	struct nap_data *ndata;
 	char buf[NAP_BUF_LEN];
+
+	if (!g_slist_find(connections, gc)) {
+		close(source);
+		return;
+	}
 
 	if (source < 0) {
 		hide_login_progress(gc, "Unable to connect");
@@ -411,6 +416,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
+	ndata = gc->proto_data;
 	if (ndata->fd != source)
 		ndata->fd = source;
 
