@@ -563,7 +563,7 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		handle_005(gc, word, word_eol);
 		break;
 	case 301:
-		irc_got_im(gc, word[4], word[5], IM_FLAG_AWAY, time(NULL));
+		irc_got_im(gc, word[4], word_eol[5], IM_FLAG_AWAY, time(NULL));
 		break;
 	case 303:
 		handle_list(gc, &word_eol[4][1]);
