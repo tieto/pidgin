@@ -25,6 +25,9 @@
 
 #include "prpl.h"
 
+#define YAHOO_PAGER_HOST "scs.yahoo.com"
+#define YAHOO_PAGER_PORT 5050
+#define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
 #define YAHOO_XFER_PORT 80
 
@@ -192,5 +195,29 @@ void yahoo_init_colorht();
 void yahoo_dest_colorht();
 char *yahoo_codes_to_html(const char *x);
 char *yahoo_html_to_codes(const char *src);
+
+/**
+ * Encode some text to send to the yahoo server.
+ *
+ * @param gc The connection handle.
+ * @param str The null terminated utf8 string to encode.
+ * @param utf8 If not @c NULL, whether utf8 is okay or not.
+ *             Even if it is okay, we may not use it. If we
+ *             used it, we set this to @c TRUE, else to
+ *             @c FALSE. If @c NULL, false is assumed, and
+ *             it is not dereferenced.
+ * @return The g_malloced string in the appropriate encoding.
+ */
+char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8);
+
+/**
+ * Decode some text received from the server.
+ *
+ * @param gc The gc handle.
+ * @param str The null terminated string to decode.
+ * @param utf8 Did the server tell us it was supposed to be utf8?
+ * @return The decoded, utf-8 string, which must be g_free()'d.
+ */
+char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8);
 
 #endif /* _YAHOO_H_ */

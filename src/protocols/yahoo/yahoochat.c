@@ -130,7 +130,7 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 		case 1: /* us, but we already know who we are */
 			break;
 		case 57:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 50: /* inviter */
 			who = pair->value;
@@ -140,7 +140,7 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 			g_string_append_printf(members, "%s\n", pair->value);
 			break;
 		case 58:
-			msg = pair->value;
+			msg = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 13: /* ? */
 			break;
@@ -153,9 +153,9 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 	}
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	g_hash_table_replace(components, g_strdup("room"), g_strdup(room));
+	g_hash_table_replace(components, g_strdup("room"), room);
 	if (msg)
-		g_hash_table_replace(components, g_strdup("topic"), g_strdup(msg));
+		g_hash_table_replace(components, g_strdup("topic"), msg);
 	g_hash_table_replace(components, g_strdup("type"), g_strdup("Conference"));
 	if (members) {
 		g_hash_table_replace(components, g_strdup("members"), g_strdup(members->str));
@@ -177,13 +177,13 @@ void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *p
 
 		switch (pair->key) {
 		case 57:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 54:
 			who = pair->value;
 			break;
 		case 14:
-			msg = pair->value;
+			msg = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		}
 	}
@@ -195,6 +195,9 @@ void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *p
 						who, room, msg?msg:"");
 		gaim_notify_info(gc, NULL, _("Invitation Rejected"), tmp);
 		g_free(tmp);
+		g_free(room);
+		if (msg)
+			g_free(msg);
 	}
 }
 
@@ -210,7 +213,7 @@ void yahoo_process_conference_logon(GaimConnection *gc, struct yahoo_packet *pkt
 
 		switch (pair->key) {
 		case 57:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 53:
 			who = pair->value;
@@ -222,6 +225,7 @@ void yahoo_process_conference_logon(GaimConnection *gc, struct yahoo_packet *pkt
 		c = yahoo_find_conference(gc, room);
 		if (c)
 			yahoo_chat_add_user(GAIM_CONV_CHAT(c), who, NULL);
+		g_free(room);
 	}
 }
 
@@ -237,7 +241,7 @@ void yahoo_process_conference_logoff(GaimConnection *gc, struct yahoo_packet *pk
 
 		switch (pair->key) {
 		case 57:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 56:
 			who = pair->value;
@@ -249,6 +253,7 @@ void yahoo_process_conference_logoff(GaimConnection *gc, struct yahoo_packet *pk
 		c = yahoo_find_conference(gc, room);
 		if (c)
 			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
+		g_free(room);
 	}
 }
 
@@ -258,6 +263,8 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 	char *room = NULL;
 	char *who = NULL;
 	char *msg = NULL;
+	char *msg2;
+	int utf8 = 0;
 	GaimConversation *c;
 
 	for (l = pkt->hash; l; l = l->next) {
@@ -265,7 +272,7 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 
 		switch (pair->key) {
 		case 57:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 3:
 			who = pair->value;
@@ -273,18 +280,24 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 		case 14:
 			msg = pair->value;
 			break;
+		case 97:
+			utf8 = strtol(pair->value, NULL, 10);
+			break;
 		}
 	}
 
 		if (room && who && msg) {
+			msg2 = yahoo_string_decode(gc, msg, utf8);
 			c = yahoo_find_conference(gc, room);
 			if (!c)
 				return;
-			msg = yahoo_codes_to_html(msg);
+			msg = yahoo_codes_to_html(msg2);
 			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)), who, 0, msg, time(NULL));
 			g_free(msg);
+			g_free(msg2);
 		}
-
+		if (room)
+			g_free(room);
 }
 
 
@@ -302,7 +315,7 @@ void yahoo_process_chat_logout(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 	GSList *l;
-	
+
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
 
@@ -311,7 +324,7 @@ void yahoo_process_chat_logout(GaimConnection *gc, struct yahoo_packet *pkt)
 					gaim_connection_get_display_name(gc)))
 				return;
 	}
-	
+
 	if (pkt->status == 1) {
 		yd->chat_online = 0;
 		if (yd->in_chat)
@@ -340,10 +353,10 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		switch (pair->key) {
 
 		case 104:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 105:
-			topic = pair->value;
+			topic = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 128:
 			someid = pair->value;
@@ -404,6 +417,9 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	g_list_free(members);
+	g_free(room);
+	if (topic)
+		g_free(topic);
 }
 
 void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -419,7 +435,7 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = l->data;
 
 		if (pair->key == 104)
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 		if (pair->key == 109)
 			who = pair->value;
 	}
@@ -431,12 +447,14 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
 
 	}
+	if (room)
+		g_free(room);
 }
 
 void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 {
-	char *room = NULL, *who = NULL, *msg = NULL;
-	int msgtype = 1;
+	char *room = NULL, *who = NULL, *msg = NULL, *msg2;
+	int msgtype = 1, utf8 = 0;
 	GaimConversation *c = NULL;
 	GSList *l;
 
@@ -445,8 +463,11 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		switch (pair->key) {
 
+		case 97:
+			utf8 = strtol(pair->value, NULL, 10);
+			break;
 		case 104:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 109:
 			who = pair->value;
@@ -460,11 +481,11 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
-	if (!who)
-		return;
 
 	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
-	if (!c) {
+	if (!who || !c) {
+		if (room)
+			g_free(room);
 		/* we still get messages after we part, funny that */
 		return;
 	}
@@ -473,7 +494,9 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		gaim_debug(GAIM_DEBUG_MISC, "yahoo", "Got a message packet with no message.\nThis probably means something important, but we're ignoring it.\n");
 		return;
 	}
-	msg = yahoo_codes_to_html(msg);
+	msg2 = yahoo_string_decode(gc, msg, utf8);
+	msg = yahoo_codes_to_html(msg2);
+	g_free(msg2);
 
 	if (msgtype == 2 || msgtype == 3) {
 		char *tmp;
@@ -499,14 +522,14 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		switch (pair->key) {
 		case 104:
-			room = pair->value;
+			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 129: /* room id? */
 			break;
 		case 126: /* ??? */
 			break;
 		case 117:
-			msg = pair->value;
+			msg = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 119:
 			who = pair->value;
@@ -523,6 +546,10 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 		g_hash_table_replace(components, g_strdup("room"), g_strdup(room));
 		serv_got_chat_invite(gc, room, who, msg, components);
 	}
+	if (room)
+		g_free(room);
+	if (msg)
+		g_free(msg);
 }
 
 void yahoo_process_chat_goto(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -535,6 +562,7 @@ void yahoo_process_chat_goto(GaimConnection *gc, struct yahoo_packet *pkt)
 
 /*
  * Functions dealing with conferences
+ * I think conference names are always ascii.
  */
 
 static void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, GList *who)
@@ -557,14 +585,18 @@ static void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char
 	yahoo_packet_free(pkt);
 }
 
-static int yahoo_conf_send(struct yahoo_data *yd, const char *dn, const char *room,
+static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
 							GList *members, const char *what)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	GList *who;
-	char *msg;
+	char *msg, *msg2;
+	int utf8 = 1;
 
 	msg = yahoo_html_to_codes(what);
+	msg2 = yahoo_string_encode(gc, msg, &utf8);
+
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -572,13 +604,15 @@ static int yahoo_conf_send(struct yahoo_data *yd, const char *dn, const char *ro
 	for (who = members; who; who = who->next)
 		yahoo_packet_hash(pkt, 53, (char *)who->data);
 	yahoo_packet_hash(pkt, 57, room);
-	yahoo_packet_hash(pkt, 14, msg);
-	yahoo_packet_hash(pkt, 97, "1"); /* utf-8 */
+	yahoo_packet_hash(pkt, 14, msg2);
+	if (utf8)
+		yahoo_packet_hash(pkt, 97, "1"); /* utf-8 */
 
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
 	g_free(msg);
+	g_free(msg2);
 
 	return 0;
 }
@@ -615,11 +649,16 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 		g_strfreev(memarr);
 }
 
-static void yahoo_conf_invite(struct yahoo_data *yd, GaimConversation *c,
+static void yahoo_conf_invite(GaimConnection *gc, GaimConversation *c,
 		const char *dn, const char *buddy, const char *room, const char *msg)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	GList *members;
+	char *msg2 = NULL;
+
+	if (msg)
+		msg2 = yahoo_string_encode(gc, msg, NULL);
 
 	members = gaim_conv_chat_get_users(GAIM_CONV_CHAT(c));
 
@@ -628,7 +667,7 @@ static void yahoo_conf_invite(struct yahoo_data *yd, GaimConversation *c,
 	yahoo_packet_hash(pkt, 1, dn);
 	yahoo_packet_hash(pkt, 51, buddy);
 	yahoo_packet_hash(pkt, 57, room);
-	yahoo_packet_hash(pkt, 58, msg?msg:"");
+	yahoo_packet_hash(pkt, 58, msg?msg2:"");
 	yahoo_packet_hash(pkt, 13, "0");
 	for(; members; members = members->next) {
 		if (!strcmp(members->data, dn))
@@ -639,6 +678,8 @@ static void yahoo_conf_invite(struct yahoo_data *yd, GaimConversation *c,
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
+	if (msg)
+		g_free(msg2);
 }
 
 /*
@@ -650,10 +691,13 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	GaimConversation *c;
+	char *eroom;
+
+	eroom = yahoo_string_encode(gc, room, NULL);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 104, room);
+	yahoo_packet_hash(pkt, 104, eroom);
 	yahoo_packet_hash(pkt, 109, dn);
 	yahoo_packet_hash(pkt, 108, "1");
 	yahoo_packet_hash(pkt, 112, "0"); /* what does this one mean? */
@@ -681,6 +725,7 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	yahoo_packet_free(pkt);
 
 	yd->chat_online = 0;
+	g_free(eroom);
 }
 
 /* borrowed from gtkconv.c */
@@ -722,11 +767,13 @@ meify(char *message, size_t len)
 	return FALSE;
 }
 
-static int yahoo_chat_send(struct yahoo_data *yd, const char *dn, const char *room, const char *what)
+static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room, const char *what)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	int me = 0;
-	char *msg1, *msg2;
+	char *msg1, *msg2, *room2;
+	gboolean utf8 = TRUE;
 
 	msg1 = g_strdup(what);
 
@@ -735,55 +782,75 @@ static int yahoo_chat_send(struct yahoo_data *yd, const char *dn, const char *ro
 
 	msg2 = yahoo_html_to_codes(msg1);
 	g_free(msg1);
+	msg1 = yahoo_string_encode(gc, msg2, &utf8);
+	g_free(msg2);
+	room2 = yahoo_string_encode(gc, room, NULL);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_COMMENT, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, 1, dn);
-	yahoo_packet_hash(pkt, 104, room);
-	yahoo_packet_hash(pkt, 117, msg2);
+	yahoo_packet_hash(pkt, 104, room2);
+	yahoo_packet_hash(pkt, 117, msg1);
 	if (me)
 		yahoo_packet_hash(pkt, 124, "2");
 	else
 		yahoo_packet_hash(pkt, 124, "1");
 	/* fixme: what about /think? (124=3) */
+	if (utf8)
+		yahoo_packet_hash(pkt, 97, "1");
 
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
-	g_free(msg2);
+	g_free(msg1);
+	g_free(room2);
 
 	return 0;
 }
 
-static void yahoo_chat_join(struct yahoo_data *yd, const char *dn, const char *room, const char *topic)
+static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room, const char *topic)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
+	char *room2;
+
+	room2 = yahoo_string_encode(gc, room, NULL);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, 62, "2");
-	yahoo_packet_hash(pkt, 104, room);
+	yahoo_packet_hash(pkt, 104, room2);
 	yahoo_packet_hash(pkt, 129, "0");
 
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
+	g_free(room2);
 }
 
-static void yahoo_chat_invite(struct yahoo_data *yd, const char *dn, const char *buddy,
+static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *buddy,
 							const char *room, const char *msg)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
+	char *room2, *msg2 = NULL;
 
+	room2 = yahoo_string_encode(gc, room, NULL);
+	if (msg)
+		msg2 = yahoo_string_encode(gc, msg, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, 1, dn);
 	yahoo_packet_hash(pkt, 118, buddy);
-	yahoo_packet_hash(pkt, 104, room);
-	yahoo_packet_hash(pkt, 117, (msg?msg:""));
+	yahoo_packet_hash(pkt, 104, room2);
+	yahoo_packet_hash(pkt, 117, (msg2?msg2:""));
 	yahoo_packet_hash(pkt, 129, "0");
 
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+
+	g_free(room2);
+	if (msg2)
+		g_free(msg2);
 }
 
 void yahoo_chat_goto(GaimConnection *gc, const char *name)
@@ -849,10 +916,10 @@ int yahoo_c_send(GaimConnection *gc, int id, const char *what)
 		return -1;
 
 	if (id != YAHOO_CHAT_ID) {
-		ret = yahoo_conf_send(yd, gaim_connection_get_display_name(gc),
+		ret = yahoo_conf_send(gc, gaim_connection_get_display_name(gc),
 				gaim_conversation_get_name(c), gaim_conv_chat_get_users(GAIM_CONV_CHAT(c)), what);
 	} else {
-		ret = yahoo_chat_send(yd, gaim_connection_get_display_name(gc),
+		ret = yahoo_chat_send(gc, gaim_connection_get_display_name(gc),
 						gaim_conversation_get_name(c), what);
 		if (!ret)
 			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)),
@@ -910,14 +977,13 @@ void yahoo_c_join(GaimConnection *gc, GHashTable *data)
 					FALSE);
 		if (!yd->chat_online)
 			yahoo_chat_online(gc);
-		yahoo_chat_join(yd, gaim_connection_get_display_name(gc), room, topic);
+		yahoo_chat_join(gc, gaim_connection_get_display_name(gc), room, topic);
 		return;
 	}
 }
 
 void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *name)
 {
-	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 	GaimConversation *c;
 
 	c = gaim_find_chat(gc, id);
@@ -925,10 +991,10 @@ void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *nam
 		return;
 
 	if (id != YAHOO_CHAT_ID) {
-		yahoo_conf_invite(yd, c, gaim_connection_get_display_name(gc), name,
+		yahoo_conf_invite(gc, c, gaim_connection_get_display_name(gc), name,
 							gaim_conversation_get_name(c), msg);
 	} else {
-		yahoo_chat_invite(yd, gaim_connection_get_display_name(gc), name,
+		yahoo_chat_invite(gc, gaim_connection_get_display_name(gc), name,
 							gaim_conversation_get_name(c), msg);
 	}
 }

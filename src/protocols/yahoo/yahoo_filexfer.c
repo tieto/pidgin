@@ -189,9 +189,11 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 	struct yahoo_xfer_data *xfer_data;
 	GaimConnection *gc;
 	GaimAccount *account;
+	struct yahoo_data *yd;
 
 	xfer_data = xfer->data;
 	gc = xfer_data->gc;
+	yd = gc->proto_data;
 	account = gaim_connection_get_account(gc);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
@@ -200,10 +202,9 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 		                       yahoo_sendfile_connected, xfer) == -1)
 		{
 			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
-			             _("Unable to establish file descriptor."));
+			                 _("Unable to establish file descriptor."));
 			gaim_xfer_cancel_remote(xfer);
 		}
-
 	} else {
 		xfer->fd = gaim_proxy_connect(account, xfer_data->host, xfer_data->port,
 		                              yahoo_receivefile_connected, xfer);

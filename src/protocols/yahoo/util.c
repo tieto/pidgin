@@ -26,8 +26,67 @@
 
 #include "prpl.h"
 #include "debug.h"
+#include "yahoo.h"
 
 #include <string.h>
+
+/**
+ * Encode some text to send to the yahoo server.
+ *
+ * @param gc The connection handle.
+ * @param str The null terminated utf8 string to encode.
+ * @param utf8 If not @c NULL, whether utf8 is okay or not.
+ *             Even if it is okay, we may not use it. If we
+ *             used it, we set this to @c TRUE, else to
+ *             @c FALSE. If @c NULL, false is assumed, and
+ *             it is not dereferenced.
+ * @return The g_malloced string in the appropriate encoding.
+ */
+char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
+{
+	char *ret;
+	char *to_codeset;
+
+	if (utf8 && *utf8) /* FIXME: maybe don't use utf8 if it'll fit in latin1 */
+		return g_strdup(str);
+
+	to_codeset = "ISO-8859-1";
+
+	ret = g_convert_with_fallback(str, strlen(str), to_codeset, "UTF-8", NULL, NULL, NULL, NULL);
+	if (ret)
+		return ret;
+	else
+		return g_strdup("");
+}
+
+/**
+ * Decode some text received from the server.
+ *
+ * @param gc The gc handle.
+ * @param str The null terminated string to decode.
+ * @param utf8 Did the server tell us it was supposed to be utf8?
+ * @return The decoded, utf-8 string, which must be g_free()'d.
+ */
+char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
+{
+	char *ret;
+	char *from_codeset;
+
+	if (utf8) {
+		if (g_utf8_validate(str, -1, NULL))
+			return g_strdup(str);
+	}
+
+	from_codeset = "ISO-8859-1";
+
+	ret = g_convert_with_fallback(str, strlen(str), "UTF-8", from_codeset, NULL, NULL, NULL, NULL);
+
+	if (ret)
+		return ret;
+	else
+		return g_strdup("");
+}
+
 
 
 /*

@@ -51,13 +51,6 @@ typedef struct
 
 /* #define YAHOO_DEBUG */
 
-#define USEROPT_MAIL 0
-
-#define YAHOO_PAGER_HOST "scs.yahoo.com"
-#define YAHOO_PAGER_PORT 5050
-#define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
-
-
 static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *);
 
 static struct yahoo_friend *yahoo_friend_new(void)
@@ -361,7 +354,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (f) {
 				if (f->msg)
 					g_free(f->msg);
-				f->msg = g_strdup(pair->value);
+				f->msg = yahoo_string_decode(gc, pair->value, FALSE);
 			}
 			break;
 		case 11: /* this is the buddy's session id */
@@ -407,7 +400,11 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			}
 			break;
 		case 16: /* Custom error message */
-			gaim_notify_error(gc, NULL, pair->value, NULL);
+			{
+				char *tmp = yahoo_string_decode(gc, pair->value, TRUE);
+				gaim_notify_error(gc, NULL, tmp, NULL);
+				g_free(tmp);
+			}
 			break;
 		default:
 			gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
@@ -533,6 +530,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	char **split;
 	char **buddies;
 	char **tmp, **bud, *norm_bud;
+	char *grp = NULL;
 
 	if (pkt->id)
 		yd->session_id = pkt->id;
@@ -575,6 +573,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 				g_strfreev(split);
 				continue;
 			}
+			grp = yahoo_string_decode(gc, split[0], FALSE);
 			buddies = g_strsplit(split[1], ",", -1);
 			for (bud = buddies; bud && *bud; bud++) {
 				norm_bud = g_strdup(gaim_normalize(account, *bud));
@@ -582,9 +581,9 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 					f = yahoo_friend_new();
 					g_hash_table_insert(yd->friends, g_strdup(norm_bud), f);
 				}
-				if (!(b = gaim_find_buddy(account,  norm_bud))) {
-					if (!(g = gaim_find_group(split[0]))) {
-						g = gaim_group_new(split[0]);
+				if (!(b = gaim_find_buddy(account, norm_bud))) {
+					if (!(g = gaim_find_group(grp))) {
+						g = gaim_group_new(grp);
 						gaim_blist_add_group(g, NULL);
 					}
 					b = gaim_buddy_new(account, norm_bud, NULL);
@@ -592,11 +591,12 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 					export = TRUE;
 				}
 
-				yahoo_do_group_check(account, ht, norm_bud, split[0], &export);
+				yahoo_do_group_check(account, ht, norm_bud, grp, &export);
 				g_free(norm_bud);
 			}
 			g_strfreev(buddies);
 			g_strfreev(split);
+			g_free(grp);
 		}
 		g_strfreev(lines);
 
@@ -686,31 +686,38 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+
+struct _yahoo_im {
+	char *from;
+	int time;
+	int utf8;
+	char *msg;
+};
+
 static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 {
-	char *msg = NULL;
-	char *from = NULL;
-	time_t tm = time(NULL);
 	GSList *l = pkt->hash;
+	GSList *list = NULL;
+	struct _yahoo_im *im = NULL;
 
 	if (pkt->status <= 1 || pkt->status == 5) {
 		while (l) {
 			struct yahoo_pair *pair = l->data;
-			if (pair->key == 4)
-				from = pair->value;
+			if (pair->key == 4) {
+				im = g_new0(struct _yahoo_im, 1);
+				list = g_slist_append(list, im);
+				im->from = pair->value;
+				im->time = time(NULL);
+			}
+			if (pair->key == 97)
+				if (im)
+					im->utf8 = strtol(pair->value, NULL, 10);
 			if (pair->key == 15)
-				tm = strtol(pair->value, NULL, 10);
+				if (im)
+					im->time = strtol(pair->value, NULL, 10);
 			if (pair->key == 14) {
-				char *m;
-
-				msg = pair->value;
-
-				gaim_str_strip_cr(msg);
-				m = yahoo_codes_to_html(msg);
-				serv_got_im(gc, from, m, 0, tm);
-				g_free(m);
-
-				tm = time(NULL);
+				if (im)
+					im->msg = pair->value;
 			}
 			l = l->next;
 		}
@@ -718,12 +725,31 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		gaim_notify_error(gc, NULL,
 						  _("Your Yahoo! message did not get sent."), NULL);
 	}
+
+	for (l = list; l; l = l->next) {
+		char *m, *m2;
+		im = l->data;
+
+		if (!im->from || !im->msg) {
+			g_free(im);
+			continue;
+		}
+
+		m = yahoo_string_decode(gc, im->msg, im->utf8);
+		gaim_str_strip_cr(m);
+		m2 = yahoo_codes_to_html(m);
+		g_free(m);
+		serv_got_im(gc, im->from, m2, 0, im->time);
+		g_free(m2);
+		g_free(im);
+	}
+	g_slist_free(list);
 }
 
 static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	char *id = NULL;
 	char *who = NULL;
-	char *msg = NULL;
+	char *msg = NULL, *tmpmsg = NULL;
 	GSList *l = pkt->hash;
 
 	while (l) {
@@ -745,8 +771,13 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 		l = l->next;
 	}
 
-	if (id)
-		gaim_account_notify_added(gc->account, id, who, NULL, msg);
+	if (id) {
+		if (msg)
+			tmpmsg = yahoo_string_decode(gc, msg, FALSE);
+		gaim_account_notify_added(gc->account, id, who, NULL, tmpmsg);
+		if (tmpmsg)
+			g_free(tmpmsg);
+	}
 }
 
 static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -772,11 +803,15 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 	}
 
 	if (who) {
+		char *msg2;
 		buf = g_string_sized_new(0);
-		if (!msg)
+		if (!msg) {
 			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list."), who);
-		else
-			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg);
+		} else {
+			msg2 = yahoo_string_decode(gc, msg, FALSE);
+			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg2);
+			g_free(msg2);
+		}
 		gaim_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
 		g_string_free(buf, TRUE);
 		g_hash_table_remove(yd->friends, who);
@@ -1551,6 +1586,7 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 	int err = 0;
 	char *who = NULL;
 	char *group = NULL;
+	char *decoded_group;
 	char *buf;
 	struct yahoo_friend *f;
 	struct yahoo_data *yd = gc->proto_data;
@@ -1588,10 +1624,12 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 		return;
 	}
 
+	decoded_group = yahoo_string_decode(gc, group, FALSE);
 	buf = g_strdup_printf(_("Could not add buddy %s to group %s to the server list on account %s."),
-				who, group, gaim_connection_get_display_name(gc));
+				who, decoded_group, gaim_connection_get_display_name(gc));
 	gaim_notify_error(gc, NULL, _("Could not add buddy to server list"), buf);
 	g_free(buf);
+	g_free(decoded_group);
 }
 
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -1981,12 +2019,16 @@ static void yahoo_login(GaimAccount *account) {
 	yd->conf_id = 2;
 
 #ifndef YAHOO_WEBMESSENGER
-	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
-			  gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
-			  yahoo_got_connected, gc) != 0) {
+
+	if (gaim_proxy_connect(account,
+	                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
+	                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+	                       yahoo_got_connected, gc) != 0)
+	{
 		gaim_connection_error(gc, _("Connection problem"));
 		return;
 	}
+
 #else
 	gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
 	               yahoo_login_page_cb, gc);
@@ -2314,17 +2356,24 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
 	char *msg = yahoo_html_to_codes(what);
+	char *msg2;
+	gboolean utf8 = TRUE;
+
+	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 5, who);
-	yahoo_packet_hash(pkt, 14, msg);
-	yahoo_packet_hash(pkt, 97, "1");
+	if (utf8)
+		yahoo_packet_hash(pkt, 97, "1");
+	yahoo_packet_hash(pkt, 14, msg2);
+
 
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
 
 	g_free(msg);
+	g_free(msg2);
 
 	return 1;
 }
@@ -2353,6 +2402,7 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	struct yahoo_packet *pkt;
 	int service;
 	char s[4];
+	char *conv_msg = NULL;
 
 	if (gc->away) {
 		g_free(gc->away);
@@ -2408,8 +2458,10 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	g_snprintf(s, sizeof(s), "%d", yd->current_status);
 	yahoo_packet_hash(pkt, 10, s);
 
-	if ((yd->current_status == YAHOO_STATUS_CUSTOM) && gc->away)
-		yahoo_packet_hash(pkt, 19, gc->away);
+	if ((yd->current_status == YAHOO_STATUS_CUSTOM) && gc->away) {
+		conv_msg = yahoo_string_encode(gc, gc->away, NULL);
+		yahoo_packet_hash(pkt, 19, conv_msg);
+	}
 
 	if ((yd->current_status != YAHOO_STATUS_AVAILABLE) &&
 	    (yd->current_status != YAHOO_STATUS_IDLE)) {
@@ -2421,12 +2473,15 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+	if (conv_msg)
+		g_free(conv_msg);
 }
 
 static void yahoo_set_idle(GaimConnection *gc, int idle)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
+	char *msg = NULL;
 
 	if (idle && yd->current_status == YAHOO_STATUS_AVAILABLE) {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_AVAILABLE, 0);
@@ -2443,7 +2498,8 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		g_snprintf(buf, sizeof(buf), "%d", yd->current_status);
 		yahoo_packet_hash(pkt, 10, buf);
 		if (gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
-			yahoo_packet_hash(pkt, 19, gc->away);
+			msg = yahoo_string_encode(gc, gc->away, NULL);
+			yahoo_packet_hash(pkt, 19, msg);
 			if (idle)
 				yahoo_packet_hash(pkt, 47, "2");
 			else
@@ -2459,6 +2515,8 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		yahoo_send_packet(yd, pkt);
 		yahoo_packet_free(pkt);
 	}
+	if (msg)
+		g_free(msg);
 }
 
 static GList *yahoo_away_states(GaimConnection *gc)
@@ -2503,6 +2561,7 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *foo)
 	struct yahoo_packet *pkt;
 	GaimGroup *g;
 	char *group = NULL;
+	char *grp2 = NULL;
 
 	if (!yd->logged_in)
 		return;
@@ -2517,13 +2576,15 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *foo)
 			group = "Buddies";
 	}
 
+	grp2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 65, group);
+	yahoo_packet_hash(pkt, 65, grp2);
 	yahoo_packet_hash(pkt, 14, "");
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+	g_free(grp2);
 }
 
 static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *group)
@@ -2534,6 +2595,7 @@ static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *
 	GSList *buddies, *l;
 	GaimGroup *g;
 	gboolean remove = TRUE;
+	char *cg;
 
 	if (!(f = g_hash_table_lookup(yd->friends, who)))
 		return;
@@ -2552,12 +2614,14 @@ static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *
 	if (remove)
 		g_hash_table_remove(yd->friends, who);
 
+	cg = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 65, group);
+	yahoo_packet_hash(pkt, 65, cg);
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+	g_free(cg);
 }
 
 static void yahoo_add_deny(GaimConnection *gc, const char *who) {
@@ -2884,6 +2948,7 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
+	char *gpn, *gpo;
 
 	/* Step 0:  If they aren't on the server list anyway,
 	 *          don't bother letting the server know.
@@ -2891,11 +2956,23 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 	if (!g_hash_table_lookup(yd->friends, who))
 		return;
 
+	/* If old and new are the same, we would probably
+	 * end up deleting the buddy, which would be bad.
+	 * This might happen because of the charset conversation.
+	 */
+	gpn = yahoo_string_encode(gc, new_group, NULL);
+	gpo = yahoo_string_encode(gc, old_group, NULL);
+	if (!strcmp(gpn, gpo)) {
+		g_free(gpn);
+		g_free(gpo);
+		return;
+	}
+
 	/* Step 1:  Add buddy to new group. */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 65, new_group);
+	yahoo_packet_hash(pkt, 65, gpn);
 	yahoo_packet_hash(pkt, 14, "");
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
@@ -2904,9 +2981,11 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 65, old_group);
+	yahoo_packet_hash(pkt, 65, gpo);
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+	g_free(gpn);
+	g_free(gpo);
 }
 
 static void yahoo_rename_group(GaimConnection *gc, const char *old_group,
@@ -2914,13 +2993,24 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_group,
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
+	char *gpn, *gpo;
+
+	gpn = yahoo_string_encode(gc, new_group, NULL);
+	gpo = yahoo_string_encode(gc, old_group, NULL);
+	if (!strcmp(gpn, gpo)) {
+		g_free(gpn);
+		g_free(gpo);
+		return;
+	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_GROUPRENAME, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 65, old_group);
-	yahoo_packet_hash(pkt, 67, new_group);
+	yahoo_packet_hash(pkt, 65, gpo);
+	yahoo_packet_hash(pkt, 67, gpn);
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+	g_free(gpn);
+	g_free(gpo);
 }
 
 #if 0
@@ -3026,15 +3116,11 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Pager host"), "server",
-											YAHOO_PAGER_HOST);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
+	option = gaim_account_option_string_new(_("Pager host"), "server", YAHOO_PAGER_HOST);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("Pager port"), "port",
-										 YAHOO_PAGER_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
+	option = gaim_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("File transfer host"), "xfer_host", YAHOO_XFER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
