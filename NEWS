@@ -11,6 +11,14 @@
 	number of bugs including the troubles with signing on icq (thanks
     to Mark). Enjoy!
 
+	Christian: Last release brought forward a lot of bug reports, such
+	as the ICQ bug, and also trouble with installing SSL. I can't count
+	how many people were confused as to why their MSN plugin wasn't
+	loading. Now, it'll load regardless, and when you try to connect,
+	it'll give you an error dialog saying to install SSL (if you don't
+	have it installed, of course). I didn't do a whole lot this release,
+	but that'll change with the next. There are some fun things coming.
+
 0.71 (10/09/2003):
 	Rob: It's been a while since I've commited some news.  I've had a
 	very hectic few weeks/months.  Thing are finally coming together
