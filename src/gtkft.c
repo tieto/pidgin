@@ -29,7 +29,7 @@
 #include "gtkcellrendererprogress.h"
 #include "gaim-disclosure.h"
 
-#define GAIM_GTKXFER_UI_DATA(xfer) \
+#define GAIM_GTKXFER(xfer) \
 	(struct gaim_gtkxfer_ui_data *)(xfer)->ui_data
 
 struct gaim_gtkxfer_dialog
@@ -127,7 +127,7 @@ get_xfer_info_strings(struct gaim_xfer *xfer,
 	double kbps = 0.0;
 	time_t elapsed, now;
 
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	now = time(NULL);
 
@@ -189,7 +189,7 @@ update_detailed_info(struct gaim_gtkxfer_dialog *dialog,
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	get_xfer_info_strings(xfer, &kbsec, &time_elapsed, &time_remaining);
 
@@ -637,9 +637,8 @@ gaim_gtkxfer_dialog_new(void)
 
 	/* Now the button box for the buttons */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 8);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox),
-							  GTK_BUTTONBOX_END);
+	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
 
@@ -736,7 +735,7 @@ gaim_gtkxfer_dialog_add_xfer(struct gaim_gtkxfer_dialog *dialog,
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	gaim_gtkxfer_dialog_show(dialog);
 
@@ -784,7 +783,7 @@ gaim_gtkxfer_dialog_remove_xfer(struct gaim_gtkxfer_dialog *dialog,
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	if (data == NULL)
 		return;
@@ -816,7 +815,7 @@ gaim_gtkxfer_dialog_cancel_xfer(struct gaim_gtkxfer_dialog *dialog,
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	if (data == NULL)
 		return;
@@ -834,7 +833,7 @@ gaim_gtkxfer_dialog_cancel_xfer(struct gaim_gtkxfer_dialog *dialog,
 		gaim_gtkxfer_dialog_hide(dialog);
 
 #if 0
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
 									GAIM_STOCK_FILE_CANCELED,
@@ -859,7 +858,7 @@ gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	size_str      = get_size_string(gaim_xfer_get_size(xfer));
 	remaining_str = get_size_string(gaim_xfer_get_bytes_remaining(xfer));
@@ -904,7 +903,7 @@ choose_file_cancel_cb(GtkButton *button, gpointer user_data)
 	struct gaim_xfer *xfer = (struct gaim_xfer *)user_data;
 	struct gaim_gtkxfer_ui_data *data;
 
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	gaim_xfer_request_denied(xfer);
 
@@ -917,7 +916,7 @@ do_overwrite_cb(struct gaim_xfer *xfer)
 {
 	struct gaim_gtkxfer_ui_data *data;
 	
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	gaim_xfer_request_accepted(xfer, data->name);
 
@@ -935,7 +934,7 @@ dont_overwrite_cb(struct gaim_xfer *xfer)
 {
 	struct gaim_gtkxfer_ui_data *data;
 	
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	g_free(data->name);
 	data->name = NULL;
@@ -954,7 +953,7 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 	const char *name;
 
 	xfer = (struct gaim_xfer *)user_data;
-	data = GAIM_GTKXFER_UI_DATA(xfer);
+	data = GAIM_GTKXFER(xfer);
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->filesel));
 
