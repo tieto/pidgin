@@ -817,6 +817,7 @@ static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, 0);
 
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 62, "2");
 	yahoo_packet_hash(pkt, 104, room2);
 	yahoo_packet_hash(pkt, 129, "0");
