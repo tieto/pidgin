@@ -58,12 +58,12 @@ typedef enum
 typedef struct
 {
 	GtkWidget *window;
+	GtkWidget *treeview;
 
 	GtkListStore *model;
+	GtkTreeIter drag_iter;
 
 	GtkTreeViewColumn *screenname_col;
-
-	GtkTreeIter drag_iter;
 
 } AccountsDialog;
 
@@ -71,10 +71,10 @@ typedef struct
 {
 	AccountPrefsDialogType type;
 
+	GaimAccount *account;
+
 	GtkWidget *window;
-
 	GtkWidget *login_frame;
-
 	GtkWidget *protocol_menu;
 	GtkWidget *screenname_entry;
 
@@ -131,9 +131,15 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
 	GtkWidget *vbox;
+	GaimProtocol protocol;
 
 	if (dialog->login_frame != NULL)
 		gtk_widget_destroy(dialog->login_frame);
+
+	if (dialog->account == NULL)
+		protocol = GAIM_PROTO_OSCAR;
+	else
+		protocol = gaim_account_get_protocol(dialog->account);
 
 	frame = gaim_gtk_make_frame(parent, _("Login Options"));
 
@@ -148,18 +154,30 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(vbox);
 
 	/* Protocol */
-	dialog->protocol_menu = gaim_gtk_protocol_option_menu_new(-1,
-			G_CALLBACK(__set_account_protocol), dialog);
+	dialog->protocol_menu = gaim_gtk_protocol_option_menu_new(
+			protocol, G_CALLBACK(__set_account_protocol), dialog);
 
 	__add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
 
 	/* Screen Name */
 	dialog->screenname_entry = gtk_entry_new();
+
+	if (dialog->account != NULL)
+		gtk_entry_set_text(GTK_ENTRY(dialog->screenname_entry),
+						   gaim_account_get_username(dialog->account));
+
 	__add_pref_box(dialog, vbox, _("Screenname:"), dialog->screenname_entry);
+
+#if 0
+	if (dialog->user_splits != NULL) {
+		g_list_free(dialog->user_splits);
+		dialog->user_splits = NULL;
+	}
+#endif
 }
 
 static void
-__show_account_prefs(AccountPrefsDialogType type)
+__show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
@@ -170,8 +188,9 @@ __show_account_prefs(AccountPrefsDialogType type)
 
 	dialog = g_new0(AccountPrefsDialog, 1);
 
-	dialog->type = type;
-	dialog->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	dialog->account = account;
+	dialog->type    = type;
+	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	GAIM_DIALOG(win);
 	dialog->window = win;
@@ -385,13 +404,29 @@ __configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsDialog *dialog)
 static void
 __add_account_cb(GtkWidget *w, AccountsDialog *dialog)
 {
-	__show_account_prefs(ADD_ACCOUNT_DIALOG);
+	__show_account_prefs(ADD_ACCOUNT_DIALOG, NULL);
+}
+
+static void
+__modify_account_sel(GtkTreeModel *model, GtkTreePath *path,
+					 GtkTreeIter *iter, gpointer data)
+{
+	GaimAccount *account;
+
+	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
+
+	if (account != NULL)
+		__show_account_prefs(MODIFY_ACCOUNT_DIALOG, account);
 }
 
 static void
 __modify_account_cb(GtkWidget *w, AccountsDialog *dialog)
 {
-	__show_account_prefs(MODIFY_ACCOUNT_DIALOG);
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+
+	gtk_tree_selection_selected_foreach(selection, __modify_account_sel, NULL);
 }
 
 static void
@@ -559,6 +594,7 @@ __create_accounts_list(AccountsDialog *dialog)
 
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
+	dialog->treeview = treeview;
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 	gtk_tree_selection_set_mode(
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
