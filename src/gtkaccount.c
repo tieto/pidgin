@@ -1608,10 +1608,7 @@ gaim_gtk_account_dialog_show(void)
 	width  = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
 	height = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/height");
 
-	GAIM_DIALOG(win);
-
-	dialog->window = win;
-
+	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "accounts");
 	gtk_window_set_title(GTK_WINDOW(win), _("Accounts"));
