@@ -1507,6 +1507,19 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				unlink(md->passport);
 				g_free(md->passport);
 			}
+#ifdef _WIN32
+			else {
+				/* Renaming file with .html extension, so that win32 open_url will work */
+				char* tmp;
+				if((tmp=g_strdup_printf("%s.html", md->passport)) != NULL) {
+					if(rename(md->passport, tmp) == 0) {
+						g_free(md->passport);
+						md->passport = tmp;
+					} else
+						g_free(tmp);
+				}
+			}
+#endif
 		}
 	} else if (!g_strncasecmp(buf, "SYN", 3)) {
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
