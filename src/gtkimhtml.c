@@ -962,6 +962,11 @@ static gboolean imhtml_message_send(GtkIMHtml *imhtml)
 
 static void imhtml_toggle_format(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
 {
+	/* since this function is the handler for the formatting keystrokes,
+	   we need to check here that the formatting attempted is permitted */
+	if (!(imhtml->format_functions & buttons))
+		return;
+
 	switch (buttons) {
 	case GTK_IMHTML_BOLD:
 		gtk_imhtml_toggle_bold(imhtml);
