@@ -342,41 +342,45 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	GtkTextIter iter;
 	GdkWindow *win = event->window;
 	int x, y;
+	char *tip = NULL;
 	GSList *tags = NULL, *templist = NULL;
-
 	gdk_window_get_pointer(GTK_WIDGET(imhtml)->window, NULL, NULL, NULL);
-
 	gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(imhtml), GTK_TEXT_WINDOW_WIDGET,
 										  event->x, event->y, &x, &y);
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(imhtml), &iter, x, y);
-
-	if (GTK_IMHTML(imhtml)->tip_window) {
-		gtk_widget_destroy (GTK_IMHTML(imhtml)->tip_window);
-		GTK_IMHTML(imhtml)->tip_window = NULL;
-	}
-	if (GTK_IMHTML(imhtml)->tip_timer) {
-		gtk_timeout_remove (GTK_IMHTML(imhtml)->tip_timer);
-		GTK_IMHTML(imhtml)->tip_timer = 0;
-	}
-
-	GTK_IMHTML(imhtml)->tip = NULL;
-
 	tags = gtk_text_iter_get_tags(&iter);
 
-	for(templist = tags; !GTK_IMHTML(imhtml)->tip && templist; templist = templist->next){
+	templist = tags;
+	while (templist) {
 		GtkTextTag *tag = templist->data;
-		GTK_IMHTML(imhtml)->tip = g_object_get_data(G_OBJECT(tag), "link_url");
+		tip = g_object_get_data(G_OBJECT(tag), "link_url");
+		if (tip)
+			break;
+		templist = templist->next;
 	}
-
-	if(GTK_IMHTML(imhtml)->tip){
-		gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
-		GTK_IMHTML(imhtml)->tip_timer = gtk_timeout_add (TOOLTIP_TIMEOUT, 
-														 gtk_imhtml_tip, imhtml);
-	}
-	else{
+		
+	if (GTK_IMHTML(imhtml)->tip) {
+		if ((tip == GTK_IMHTML(imhtml)->tip)) {
+			return FALSE;
+		}
+		/* We've left the cell.  Remove the timeout and create a new one below */
+		if (GTK_IMHTML(imhtml)->tip_window) {
+			gtk_widget_destroy(GTK_IMHTML(imhtml)->tip_window);
+			GTK_IMHTML(imhtml)->tip_window = NULL;
+		}
 		gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->arrow_cursor);
+		if (GTK_IMHTML(imhtml)->tip_timer)
+			g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
+		GTK_IMHTML(imhtml)->tip_timer = 0;
 	}
-
+	
+	if(tip){
+		gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
+		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT, 
+							       gtk_imhtml_tip, imhtml);
+	}
+	
+	GTK_IMHTML(imhtml)->tip = tip;
 	g_slist_free(tags);
 	return FALSE;
 }

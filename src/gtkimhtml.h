@@ -60,6 +60,7 @@ struct _GtkIMHtml {
 	GtkWidget *tip_window;
 	char *tip;
 	guint tip_timer;
+	GdkRectangle rect;
 };
 
 struct _GtkIMHtmlClass {
