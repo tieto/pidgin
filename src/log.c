@@ -706,9 +706,8 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	char buf[BUF_LONG];
 	struct tm tm;
 	struct old_logger_data *data = NULL;
-	char day[4], month[4], year[5];
+	char month[4];
 	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, sn));
-	char *date;
 	char *path = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
 	char *newlog;
 
@@ -726,7 +725,6 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 		if ((newlog = strstr(buf, "---- New C"))) {
 			int length;
 			int offset;
-			GDate gdate;
 			char convostart[32];
 			char *temp = strchr(buf, '@');
 
@@ -769,16 +767,36 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 
 
 			g_snprintf(convostart, length, "%s", temp);
-			sscanf(convostart, "%*s %s %s %d:%d:%d %s",
-			       month, day, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, year);
-			date = g_strdup_printf("%s %s %s", month, day, year);
-			g_date_set_parse(&gdate, date);
-			tm.tm_mday = g_date_get_day(&gdate);
-			tm.tm_mon =  g_date_get_month(&gdate) - 1;
-			tm.tm_year = g_date_get_year(&gdate) - 1900;
+			sscanf(convostart, "%*s %s %d %d:%d:%d %d",
+			       month, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &tm.tm_year);
+			/* Ugly hack, in case current locale is not English */
+			if (strcmp(month, "Jan") == 0) {
+				tm.tm_mon= 0;
+			} else if (strcmp(month, "Feb") == 0) {
+				tm.tm_mon = 1;
+			} else if (strcmp(month, "Mar") == 0) {
+				tm.tm_mon = 2;
+			} else if (strcmp(month, "Apr") == 0) {
+				tm.tm_mon = 3;
+			} else if (strcmp(month, "May") == 0) {
+				tm.tm_mon = 4;
+			} else if (strcmp(month, "Jun") == 0) {
+				tm.tm_mon = 5;
+			} else if (strcmp(month, "Jul") == 0) {
+				tm.tm_mon = 6;
+			} else if (strcmp(month, "Aug") == 0) {
+				tm.tm_mon = 7;
+			} else if (strcmp(month, "Sep") == 0) {
+				tm.tm_mon = 8;
+			} else if (strcmp(month, "Oct") == 0) {
+				tm.tm_mon = 9;
+			} else if (strcmp(month, "Nov") == 0) {
+				tm.tm_mon = 10;
+			} else if (strcmp(month, "Dec") == 0) {
+				tm.tm_mon = 11;
+			}
+			tm.tm_year -= 1900;
 			log->time = mktime(&tm);
-			g_free(date);
-
 		}
 	}
 

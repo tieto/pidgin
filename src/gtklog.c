@@ -92,7 +92,11 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 			GtkTreeIter iter;
 			GaimLog *log = logs->data;
 			char title[64];
+			char *title_utf8; /* temporary variable for utf8 conversion */
 			strftime(title, sizeof(title), "%c", localtime(&log->time));
+			title_utf8 = gaim_utf8_try_convert(title);
+			strncpy(title, title_utf8, sizeof(title));
+			g_free(title_utf8);
 			gtk_tree_store_append (lv->treestore, &iter, NULL);
 			gtk_tree_store_set(lv->treestore, &iter,
 					   0, title,
@@ -139,6 +143,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	char time[64];
 
 	char *title;
+	char *title_utf8; /* temporary variable for utf8 conversion */
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
@@ -153,6 +158,9 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	viewer->flags = flags;
 	strftime(time, sizeof(time), "%c", localtime(&log->time));
 	title = g_strdup_printf("%s - %s", log->name, time);
+	title_utf8 = gaim_utf8_try_convert(title);
+	g_free(title);
+	title = title_utf8;
 	gtk_window_set_title(GTK_WINDOW(viewer->window), title);
 	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
        	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read, 
@@ -177,11 +185,15 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
         This is a tree made from logs */
 {
 	char title[64];
+	char *title_utf8; /* temporary variable for utf8 conversion */
 	GtkTreeIter iter;
 	GList *logs = lv->logs;
 	while (logs) {
 		GaimLog *log = logs->data;
 		strftime(title, sizeof(title), "%c", localtime(&log->time));
+		title_utf8 = gaim_utf8_try_convert(title);
+		strncpy(title, title_utf8, sizeof(title));
+		g_free(title_utf8);
 		gtk_tree_store_append (lv->treestore, &iter, NULL);
 		gtk_tree_store_set(lv->treestore, &iter,
 				   0, title,
