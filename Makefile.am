@@ -14,6 +14,7 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		README.mingw \
 		VERSION \
+		VERSION.in \
 		plugins/win32/transparency/Makefile.mingw \
 		plugins/win32/transparency/win2ktrans.c \
 		plugins/win32/winprefs/gtkappbar.c \

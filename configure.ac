@@ -1131,6 +1131,7 @@ AC_VAR_TIMEZONE_EXTERNALS
 
 AC_OUTPUT([Makefile
 		   Doxyfile
+		   VERSION
 		   doc/Makefile
 		   doc/gaim.1
 		   doc/gaim-remote.1
