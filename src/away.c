@@ -37,25 +37,18 @@ static GtkWidget *imaway=NULL;
 GtkWidget *awaymenu;
 struct away_message *awaymessage = NULL;
 
-#ifndef USE_APPLET
 static void destroy_im_away()
 {
 	if (imaway)
 		gtk_widget_destroy(imaway);
 	imaway=NULL;
 }
-#endif /* USE_APPLET */
 
 void do_im_back(GtkWidget *w, GtkWidget *x)
 {
 #ifdef USE_APPLET
-  applet_widget_unregister_callback(APPLET_WIDGET(applet),"away");
   if(!blist) applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
-  applet_widget_register_callback(APPLET_WIDGET(applet),
-                "away",
-                _("Away Message"),
-                show_away_mess,
-                NULL);
+  applet_widget_unregister_callback(APPLET_WIDGET(applet),"away");
 	if(!blist) {
 	        applet_widget_register_callback(APPLET_WIDGET(applet),
         	        "buddy",
@@ -63,6 +56,7 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
       		        (AppletCallbackFunc)make_buddy,
                 	NULL);
 	}
+  insert_applet_away();
 #endif /* USE_APPLET */
 	if (imaway) {
 		gtk_widget_destroy(imaway);
@@ -75,21 +69,6 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 
 void do_away_message(GtkWidget *w, struct away_message *a)
 {
-#ifdef USE_APPLET
-        applet_widget_unregister_callback(APPLET_WIDGET(applet),"away");
-        if(!blist) applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
-        applet_widget_register_callback(APPLET_WIDGET(applet),
-                                        "away",
-                                        _("Back"),
-                                        (AppletCallbackFunc) do_im_back,
-                                        NULL);
-        if(!blist) applet_widget_register_callback(APPLET_WIDGET(applet),
-                                                   "buddy",
-                                                   _("Buddy List"),
-                                                   (AppletCallbackFunc)make_buddy,
-                                                   NULL);
-#else
-
 	GtkWidget *back;
 	GtkWidget *awaytext;
         GtkWidget *vscrollbar;
@@ -100,6 +79,21 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         char buf[BUF_LONG];
         GList *cnv = conversations;
         struct conversation *c;
+
+#ifdef USE_APPLET
+        if(!blist) applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
+	remove_applet_away();
+        if(!blist) applet_widget_register_callback(APPLET_WIDGET(applet),
+                                                   "buddy",
+                                                   _("Buddy List"),
+                                                   (AppletCallbackFunc)make_buddy,
+                                                   NULL);
+        applet_widget_register_callback(APPLET_WIDGET(applet),
+                                        "away",
+                                        _("Back"),
+                                        (AppletCallbackFunc) do_im_back,
+                                        NULL);
+#endif
 
 	if (!imaway) {
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -165,11 +159,18 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         serv_set_away(buf2);
         // g_free(buf2);
 	gtk_widget_show(imaway);
-#endif /* USE_APPLET */
 }
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)
 {
+#ifdef USE_APPLET
+	char *awayname;
+	awayname = malloc(sizeof *awayname * (6 + strlen(a->name)));
+	awayname[0] = '\0';
+	strcat(awayname, "away/");
+	strcat(awayname, a->name);
+	applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
+#endif
         away_messages = g_list_remove(away_messages, a);
         g_free(a);
         do_away_menu();
@@ -188,6 +189,17 @@ void do_away_menu()
         GList *awy = away_messages;
         struct away_message *a;
 
+#ifdef USE_APPLET
+	remove_applet_away();
+	if (imaway)
+		applet_widget_register_callback(APPLET_WIDGET(applet),
+			"away",
+			_("Back"),
+			(AppletCallbackFunc)do_im_back,
+			NULL);
+	else
+		insert_applet_away();
+#endif
 
 	if (pd != NULL) {
                 gtk_list_clear_items(GTK_LIST(pd->away_list), 0, -1);

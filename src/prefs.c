@@ -103,7 +103,7 @@ void set_display_option(GtkWidget *w, int *option)
 {
         display_options = display_options ^ (int)option;
 
-	update_button_pix();
+	if (blist) update_button_pix();
 
 	save_prefs();
 }
@@ -138,7 +138,7 @@ void set_general_option(GtkWidget *w, int *option)
 		update_num_groups();
 	if (data == &showidle || data == &showpix)
 		update_show_idlepix();
-	if (data == &button_pix)
+	if (data == &button_pix && blist)
                 update_button_pix();
         if (data == &transparent)
                 update_transparency();
@@ -1006,7 +1006,7 @@ void do_chat_page(GtkWidget *page)
 
 void debug_print(char *chars)
 {
-	if(general_options & OPT_GEN_DEBUG)
+	if(general_options & OPT_GEN_DEBUG && dw)
             gtk_text_insert(GTK_TEXT(dw->entry),NULL, NULL, NULL, chars, strlen(chars));
 #ifdef DEBUG
         printf("%s\n", chars);

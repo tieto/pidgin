@@ -249,16 +249,65 @@ void applet_show_login(AppletWidget *widget, gpointer data) {
                 _("Signoff"),
                 signoff,
                 NULL);
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-		"away",
-		_("Away Message"),
-		show_away_mess,
-		NULL);
+	insert_applet_away();
         applet_widget_register_callback(APPLET_WIDGET(applet),
                 "buddy",
                 _("Buddy List"),
                 (AppletCallbackFunc)make_buddy,
                 NULL);
+}
+
+void insert_applet_away() {
+	GList *awy = away_messages;
+	struct away_message *a;
+	char  *awayname;
+
+	applet_widget_register_callback_dir(APPLET_WIDGET(applet),
+		"away",
+		_("Away"));
+	applet_widget_register_callback(APPLET_WIDGET(applet),
+		"away/new",
+		_("New Away Message"),
+		(AppletCallbackFunc)create_away_mess,
+		NULL);
+
+	while(awy) {
+		a = (struct away_message *)awy->data;
+
+		awayname = malloc(sizeof *awayname * (6 + strlen(a->name)));
+		awayname[0] = '\0';
+		strcat(awayname, "away/");
+		strcat(awayname, a->name);
+		applet_widget_register_callback(APPLET_WIDGET(applet),
+			awayname,
+			a->name,
+			(AppletCallbackFunc)do_away_message,
+			a);
+
+		awy = awy->next;
+	}
+}
+
+void remove_applet_away() {
+	GList *awy = away_messages;
+	struct away_message *a;
+	char  *awayname;
+
+	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away/new");
+
+	while (awy) {
+		a = (struct away_message *)awy->data;
+
+		awayname = malloc(sizeof *awayname * (5 + strlen(a->name)));
+		awayname[0] = '\0';
+		strcat(awayname, "away/");
+		strcat(awayname, a->name);
+		applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
+
+		awy = awy->next;
+	}
+	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away");
+	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
 }
 
 /***************************************************************
@@ -409,15 +458,6 @@ void closePendingPopup(){
 
 void closeAwayPopup(){
      applet_draw_open = FALSE;
-}
-
-/**************************************************
-**
-**  Dummy function to fix compiles for gnome
-**  Feel free to implement an away message
-**
-***************************************************/ 
-void show_away_mess( AppletWidget *widget, gpointer data ) {
 }
 
 void AppletClicked( GtkWidget *sender, gpointer data ){

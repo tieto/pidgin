@@ -318,7 +318,7 @@ void signoff()
 #ifdef USE_APPLET
         set_applet_draw_closed();
         applet_widget_unregister_callback(APPLET_WIDGET(applet),"signoff");
-	applet_widget_unregister_callback(APPLET_WIDGET(applet),"away");
+	remove_applet_away();
 	applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
         applet_widget_register_callback(APPLET_WIDGET(applet),
                 "signon",

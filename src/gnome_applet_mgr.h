@@ -88,7 +88,8 @@ void set_applet_draw_open();								/* Indicates that the code has a window open
 
 void set_applet_draw_closed();								/* indicates that the code has closed the window that is controled by clicking on the applet */
 
-void show_away_mess( AppletWidget *widget, gpointer data );
+void insert_applet_away();
+void remove_applet_away();
 
 
 
