@@ -1521,8 +1521,6 @@ gaim_gtk_blist_update_refresh_timeout()
 	struct gaim_buddy_list *blist;
 	struct gaim_gtk_buddy_list *gtkblist;
 
-	gaim_debug(GAIM_DEBUG_INFO, "update_refresh_timeout", "called\n");
-
 	blist = gaim_get_blist();
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
