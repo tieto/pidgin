@@ -92,6 +92,7 @@ struct _GaimGtkWindow
 		GtkWidget *sounds;
 		GtkWidget *show_formatting_toolbar;
 		GtkWidget *show_timestamps;
+		GtkWidget *show_icon;
 
 		GtkWidget *send_as;
 

@@ -2500,9 +2500,14 @@ toggle_icon_animate_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static void
-remove_icon(GaimGtkConversation *gtkconv)
+remove_icon(GaimConversation *conv)
 {
-	g_return_if_fail(gtkconv != NULL);
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
+
+	g_return_if_fail(conv != NULL);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtkconv->u.im->icon_container != NULL)
 		gtk_widget_destroy(gtkconv->u.im->icon_container);
@@ -2520,7 +2525,11 @@ remove_icon(GaimGtkConversation *gtkconv)
 	gtkconv->u.im->icon = NULL;
 	gtkconv->u.im->anim = NULL;
 	gtkconv->u.im->iter = NULL;
+	gtkconv->u.im->icon_container = NULL;
 	gtkconv->u.im->show_icon = FALSE;
+
+	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.show_icon), FALSE);
 }
 
 static void
@@ -2599,7 +2608,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 
 	button = gtk_menu_item_new_with_label(_("Hide Icon"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate",
-							 G_CALLBACK(remove_icon), gtkconv);
+							 G_CALLBACK(remove_icon), conv);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
@@ -2611,6 +2620,32 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 
 	return TRUE;
 }
+
+static void
+menu_buddyicon_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	gboolean active;
+
+	conv = gaim_conv_window_get_active_conversation(win);
+
+	if (!conv)
+		return;
+
+	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_IM);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	active = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+	gtkconv->u.im->show_icon = active;
+	if (active)
+		gaim_gtkconv_update_buddy_icon(conv);
+	else
+		remove_icon(conv);
+}
+
 /**************************************************************************
  * End of the bunch of buddy icon functions
  **************************************************************************/
@@ -2675,6 +2710,7 @@ gray_stuff_out(GaimConversation *conv)
 
 		gtk_widget_show(gtkwin->menu.insert_link);
 		gtk_widget_show(gtkwin->menu.insert_image);
+		gtk_widget_show(gtkwin->menu.show_icon);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
 
@@ -2687,6 +2723,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkwin->menu.invite);
 		gtk_widget_show(gtkwin->menu.alias);
 		gtk_widget_hide(gtkwin->menu.block);
+		gtk_widget_hide(gtkwin->menu.show_icon);
 
 		if (gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) == NULL) {
 			/* If the chat is NOT in the buddy list */
@@ -2846,6 +2883,9 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.show_timestamps),
 				       gtkconv->show_timestamps);
 
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.show_icon),
+								       gtkconv->u.im->show_icon);
 	/*
 	 * We pause icons when they are not visible.  If this icon should
 	 * be animated then start it back up again.
@@ -3527,6 +3567,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Show T_imestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>" },
+	{ N_("/Options/Show Buddy _Icon"), NULL, menu_buddyicon_cb, 0, "<CheckItem>" },
 };
 
 static const int menu_item_count =
@@ -3637,6 +3678,9 @@ setup_menubar(GaimConvWindow *win)
 	gtkwin->menu.show_timestamps =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Options/Show Timestamps"));
+	gtkwin->menu.show_icon =
+		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
+									N_("/Options/Show Buddy Icon"));
 
 	generate_send_as_items(win, NULL);
 
