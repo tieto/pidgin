@@ -369,8 +369,10 @@ void do_away_menu()
 				GList *msgs, *tmp;
 				gc = con->data;
 
-				if (!gc->prpl->away_states || !gc->prpl->set_away)
+				if (!gc->prpl->away_states || !gc->prpl->set_away) {
+					con = con->next;
 					continue;
+				}
 
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
 					   gc->username, (*gc->prpl->name)());
