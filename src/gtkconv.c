@@ -5449,4 +5449,3 @@ gaim_gtk_conversation_init(void)
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/chat/button_type",
 								chat_button_type_pref_cb, NULL);
 }
-
