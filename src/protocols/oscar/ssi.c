@@ -1224,14 +1224,6 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	fu16_t revision;
 	fu32_t timestamp;
 
-	/* When you set the version for the SSI family to 2-4, the beginning of this changes.
-	 * Instead of the version and then the revision, there is "0x0006" and then a type 
-	 * 0x0001 TLV containing the 2 byte SSI family version that you sent earlier.  Also, 
-	 * the SNAC flags go from 0x0000 to 0x8000.  I guess the 0x0006 is the length of the 
-	 * TLV(s) that follow.  The rights SNAC does the same thing, with the differing flag 
-	 * and everything.
-	 */
-
 	fmtver = aimbs_get8(bs); /* Version of ssi data.  Should be 0x00 */
 	revision = aimbs_get16(bs); /* # of times ssi data has been modified */
 	if (revision != 0)
@@ -1430,9 +1422,9 @@ faim_internal int ssi_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = AIM_CB_FAM_SSI;
-	mod->version = 0x0001;
+	mod->version = 0x0003;
 	mod->toolid = 0x0110;
-	mod->toolversion = 0x047b;
+	mod->toolversion = 0x0629;
 	mod->flags = 0;
 	strncpy(mod->name, "ssi", sizeof(mod->name));
 	mod->snachandler = snachandler;

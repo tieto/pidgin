@@ -702,8 +702,8 @@ faim_internal int chat_modfirst(aim_session_t *sess, aim_module_t *mod)
 
 	mod->family = 0x000e;
 	mod->version = 0x0001;
-	mod->toolid = 0x0004; /* XXX this doesn't look right */
-	mod->toolversion = 0x0001; /* nor does this */
+	mod->toolid = 0x0010;
+	mod->toolversion = 0x0629;
 	mod->flags = 0;
 	strncpy(mod->name, "chat", sizeof(mod->name));
 	mod->snachandler = snachandler;

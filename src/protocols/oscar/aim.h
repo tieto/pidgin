@@ -218,7 +218,7 @@ struct client_info_s {
 	"us", "en", \
 }
 
-#define CLIENTINFO_ICQ_5_45_1_3777_85 { \
+#define CLIENTINFO_ICQ_5_45_3777 { \
 	"ICQ Inc. - Product of ICQ (TM).2003a.5.45.1.3777.85", \
 	0x010a, \
 	0x0005, 0x002d, \
@@ -236,9 +236,8 @@ struct client_info_s {
 	"us", "en", \
 }
 
-#define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_3_5_1670
-/* define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036 */
-#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_4_65_3281
+#define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
+#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_5_45_3777
 
 #ifndef TRUE
 #define TRUE 1

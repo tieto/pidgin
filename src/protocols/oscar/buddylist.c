@@ -269,7 +269,7 @@ faim_internal int buddylist_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->family = 0x0003;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
-	mod->toolversion = 0x047b;
+	mod->toolversion = 0x0629;
 	mod->flags = 0;
 	strncpy(mod->name, "buddylist", sizeof(mod->name));
 	mod->snachandler = snachandler;

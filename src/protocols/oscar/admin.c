@@ -3,7 +3,7 @@
  *
  * Used for stuff like changing the formating of your screen name, changing your 
  * email address, requesting an account confirmation email, getting account info, 
- * 
+ *
  */
 
 #define FAIM_INTERNAL
@@ -227,8 +227,8 @@ faim_internal int admin_modfirst(aim_session_t *sess, aim_module_t *mod)
 
 	mod->family = 0x0007;
 	mod->version = 0x0001;
-	mod->toolid = AIM_TOOL_NEWWIN;
-	mod->toolversion = 0x0361; /* XXX this and above aren't right */
+	mod->toolid = 0x0010;
+	mod->toolversion = 0x0629;
 	mod->flags = 0;
 	strncpy(mod->name, "admin", sizeof(mod->name));
 	mod->snachandler = snachandler;

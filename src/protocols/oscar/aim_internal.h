@@ -149,21 +149,6 @@ struct chatsnacinfo {
 	fu16_t instance;
 };
 
-/* these are used by aim_*_clientready */
-#define AIM_TOOL_JAVA   0x0001
-#define AIM_TOOL_MAC    0x0002
-#define AIM_TOOL_WIN16  0x0003
-#define AIM_TOOL_WIN32  0x0004
-#define AIM_TOOL_MAC68K 0x0005
-#define AIM_TOOL_MACPPC 0x0006
-#define AIM_TOOL_NEWWIN 0x0010
-struct aim_tool_version {
-	fu16_t group;
-	fu16_t version;
-	fu16_t tool;
-	fu16_t toolversion;
-};
-
 /* 
  * In SNACland, the terms 'family' and 'group' are synonymous -- the former
  * is my term, the latter is AOL's.
