@@ -311,6 +311,8 @@ struct _GaimPluginProtocolInfo
 	void (*set_buddy_icon)(GaimConnection *, const char *filename);
 
 	void (*remove_group)(GaimConnection *gc, const char *group);
+
+	char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

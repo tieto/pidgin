@@ -1086,7 +1086,10 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roster_group_rename,
 	NULL,
 	NULL, /* convo_closed */ /* XXX: thread_ids */
-	jabber_normalize /* normalize */
+	jabber_normalize,
+	NULL, /* set_buddy_icon */
+	NULL, /* remove_group */
+	jabber_chat_buddy_real_name
 };
 
 static GaimPluginInfo info =

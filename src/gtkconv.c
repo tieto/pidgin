@@ -1043,22 +1043,43 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static void
-menu_chat_im_cb(GtkWidget *w, GaimConversation *conv)
+chat_do_im(GaimConversation *conv, const char *who)
 {
-	const char *who;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	char *real_who;
 	GaimConversation *conv2;
 	GaimAccount *account;
 
-	who = g_object_get_data(G_OBJECT(w), "user_data");
-
 	account = gaim_conversation_get_account(conv);
 
-	conv2 = gaim_find_conversation_with_account(who, account);
+	if(account && account->gc)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+
+	if(prpl_info && prpl_info->get_cb_real_name)
+		real_who = prpl_info->get_cb_real_name(account->gc,
+				gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), who);
+	else
+		real_who = g_strdup(who);
+
+	if(!real_who)
+		return;
+
+	conv2 = gaim_find_conversation_with_account(real_who, account);
 
 	if (conv2 != NULL)
 		gaim_conv_window_show(gaim_conversation_get_window(conv2));
 	else
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, who);
+		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, real_who);
+
+	g_free(real_who);
+}
+
+static void
+menu_chat_im_cb(GtkWidget *w, GaimConversation *conv)
+{
+	const char *who = g_object_get_data(G_OBJECT(w), "user_data");
+
+	chat_do_im(conv, who);
 }
 
 static void
@@ -1169,14 +1190,8 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	if (*who == '+') who++;
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
-		GaimConversation *c;
-
-		if ((c = gaim_find_conversation_with_account(who, account)) == NULL)
-			c = gaim_conversation_new(GAIM_CONV_IM, account, who);
-		else
-			gaim_conversation_set_account(c, account);
-	}
-	else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
+		chat_do_im(conv, who);
+	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		static GtkWidget *menu = NULL;
 		GtkWidget *button;
 

@@ -268,3 +268,15 @@ gboolean jabber_chat_find_buddy(GaimConversation *conv, const char *name)
 	return FALSE;
 }
 
+char *jabber_chat_buddy_real_name(GaimConnection *gc, int id, const char *who)
+{
+	JabberStream *js = gc->proto_data;
+	JabberChat *chat;
+
+	chat = jabber_chat_find_by_id(js, id);
+
+	if(!chat)
+		return NULL;
+
+	return g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
+}
