@@ -1,0 +1,7 @@
+Makefile.in
+Makefile
+tcl.so
+tcl.la
+.deps
+.libs
+*.lo

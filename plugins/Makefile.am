@@ -1,10 +1,14 @@
-DIST_SUBDIRS = docklet gaim-remote gestures perl ticker
+DIST_SUBDIRS = docklet gaim-remote gestures perl tcl ticker
 
 if USE_PERL
 PERL_DIR = perl
 endif
 
-SUBDIRS = docklet gaim-remote gestures $(PERL_DIR) ticker
+if USE_TCL
+TCL_DIR = tcl
+endif
+
+SUBDIRS = docklet gaim-remote gestures $(PERL_DIR) $(TCL_DIR) ticker
 
 plugindir = $(libdir)/gaim
 

@@ -125,6 +125,10 @@ AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudio
 AC_ARG_ENABLE(nas,     [  --enable-nas            enable NAS (Network Audio System) support],,enable_nas=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
+AC_ARG_ENABLE(tcl,     [  --disable-tcl	          compile without Tcl scripting],,enable_tcl=yes)
+AC_ARG_WITH(tclconfig, [  --with-tclconfig=DIR    directory containing tclConfig.sh])
+AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support for Tk],,enable_tk=yes)
+AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])
 AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
@@ -330,6 +334,75 @@ else
 	AM_CONDITIONAL(USE_PERL, false)
 fi
 
+dnl Check for Tcl
+if test "$enable_tcl" = yes; then
+	AC_MSG_CHECKING([for tclConfig.sh])
+        TCLCONFIG=no
+	for dir in $with_tclconfig /usr/lib /usr/local/lib; do
+		if test -f $dir/tclConfig.sh; then
+			TCLCONFIG=$dir/tclConfig.sh
+			AC_MSG_RESULT([yes ($TCLCONFIG)])
+		fi
+	done
+	if test "$TCLONFIG" = "no"; then
+		AC_MSG_RESULT([no])
+		enable_tcl=no
+	else
+		. $TCLCONFIG
+		eval "TCL_LIB_SPEC=\"$TCL_LIB_SPEC\""
+		AC_MSG_CHECKING([for Tcl linkability])
+		oldLIBS=$LIBS
+		LIBS="$LIBS $TCL_LIB_SPEC"
+		AC_TRY_LINK([#include <tcl.h>], [Tcl_Interp *interp; Tcl_Init(interp)],
+			    [AC_MSG_RESULT([yes]);enable_tcl=yes],
+			    [AC_MSG_RESULT([no]);enable_tcl=no])
+		LIBS="$oldLIBS"
+	fi
+fi
+
+if test "$enable_tcl" = yes; then
+	AM_CONDITIONAL(USE_TCL, true)
+	TCL_LIBS=$TCL_LIB_SPEC
+	AC_SUBST(TCL_LIBS)
+else
+	AM_CONDITIONAL(USE_TCL, false)
+fi
+
+dnl Check for Tk
+if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
+	AC_MSG_CHECKING([for tkConfig.sh])
+	TKCONFIG=no
+	for dir in $with_tkconfig /usr/lib /usr/local/lib; do
+		if test -f $dir/tkConfig.sh; then
+			TKCONFIG=$dir/tkConfig.sh
+			AC_MSG_RESULT([yes ($TKCONFIG)])
+		fi
+	done
+	if test "$TKCONFIG" = "no"; then
+		AC_MSG_RESULT([no])
+		enable_tk=no
+	else
+		. $TKCONFIG
+		eval "TK_LIB_SPEC=\"$TK_LIB_SPEC\""
+		AC_MSG_CHECKING([for Tk linkability])
+		oldLIBS=$LIBS
+		LIBS="$LIBS $TCL_LIB_SPEC $TK_LIB_SPEC"
+		AC_TRY_LINK([#include <tk.h>], [Tcl_Interp *interp; Tcl_Init(interp); Tk_Init(interp);],
+			    [AC_MSG_RESULT([yes]);enable_tk=yes],
+			    [AC_MSG_RESULT([no]);enable_tk=no])
+		LIBS="$oldLIBS"
+	fi
+fi
+
+if test "$enable_tk" = yes; then
+	AM_CONDITIONAL(USE_TK, true)
+	AC_DEFINE(HAVE_TK, [1], [Compile with support for the Tk toolkit])
+	TK_LIBS=$TK_LIB_SPEC
+	AC_SUBST(TK_LIBS)
+else
+	AM_CONDITIONAL(USE_TK, false)
+fi
+
 dnl Thanks, Evan.
 if test "$enable_gtkspell" = yes ; then
 	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , enable_gtkspell=no)
@@ -463,6 +536,7 @@ AC_OUTPUT([Makefile
 	   plugins/gestures/Makefile
 	   plugins/perl/Makefile
 	   plugins/perl/common/Makefile.PL
+	   plugins/tcl/Makefile
 	   plugins/ticker/Makefile
 	   po/Makefile.in
            sounds/Makefile
@@ -492,6 +566,8 @@ echo UI Library.................... : GTK 2.x
 echo
 echo Build with Plugin support..... : $enable_plugins
 echo Build with Perl support....... : $enable_perl
+echo Build with Tcl support........ : $enable_tcl
+echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
