@@ -1,6 +1,5 @@
-version 0.60 alpha 4:
+version 0.60 alpha 4: (12/29/02)
 	* Feature improvements for transparency plugin.
-	* Using GTK 2.0.9 (stalling on signon bug fix)
 	* Font properly set in gtkrc
 	* Gaim systray icon permanantly parked in systray, with different
 	  icons for connected, disconnected and away.
