@@ -86,6 +86,7 @@ void destroy_mail_list()
                 w = (GtkWidget *)list->data;
                 if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, "Mail Server")) {
                         gtk_tree_remove_items(GTK_TREE(buddies), list);
+			list = GTK_TREE(buddies)->children;
                         if (!list)
                                 break;
                 }
@@ -108,6 +109,7 @@ void setup_mail_list()
 		w = (GtkWidget *)list->data;
 		if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, "Mail Server")) {
 			gtk_tree_remove_items(GTK_TREE(buddies), list);
+			list = GTK_TREE(buddies)->children;
 			if (!list)
 				break;
 		}
