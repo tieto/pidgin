@@ -329,8 +329,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	struct sockaddr_in sin;
 	guint32 rcv;
 	char *c;
-	GtkWidget *fw = NULL, *fbar = NULL, *label;
 	struct stat st;
+	struct tm *fortime;
 
 	stat(file, &st);
 	if (!(ft->f = fopen(file, "r"))) {
@@ -449,48 +449,28 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	sprintf(debug_buff, "Sending file\n");
 	debug_print(debug_buff);
 	rcv = 0;
-	buf = g_malloc(2048);
-	fw = gtk_dialog_new();
-	snprintf(buf, 2048, "Sendin %s to %s (%ld bytes)", fhdr->name,
-			ft->user, fhdr->size);
-	label = gtk_label_new(buf);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
-	gtk_widget_show(label);
-	fbar = gtk_progress_bar_new();
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), fbar, 0, 0, 5);
-	gtk_widget_show(fbar);
-	gtk_window_set_title(GTK_WINDOW(fw), "File Transfer");
-	gtk_widget_realize(fw);
-	aol_icon(fw->window);
-	gtk_widget_show(fw);
-
-	sprintf(debug_buff, "Sending %s to %s (%d bytes)\n", fhdr->name,
-			ft->user, ntohl(fhdr->size));
+	buf = g_malloc(ft->size + 1);
+	fortime = localtime(&st.st_ctime);
+	snprintf(buf, ft->size + 1, "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
+			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
+			fortime->tm_hour + 1, fortime->tm_min + 1,
+			st.st_size, c);
+	sprintf(debug_buff, "Sending listing.txt to %s\n", ft->user);
 	debug_print(debug_buff);
 
-	while (rcv != st.st_size) {
-		int i;
+	while (rcv != ft->size) {
 		int remain = st.st_size - rcv > 1024 ? 1024 : st.st_size - rcv;
-		for (i = 0; i < remain; i++)
-			fscanf(ft->f, "%c", &buf[i]);
-		read_rv = write(ft->fd, buf, remain);
+		read_rv = write(ft->fd, buf + rcv, remain);
 		if (read_rv <= -1) {
 			sprintf(debug_buff, "Could not send file, wrote %d\n", rcv);
 			debug_print(debug_buff);
 			close(ft->fd);
-			gtk_widget_destroy(fw);
 			return;
 		}
 		rcv += read_rv;
-		snprintf(buf, 2048, "Sending %s to %s (%d / %ld bytes)",
-				fhdr->name, ft->user, rcv, st.st_size);
-		gtk_label_set_text(GTK_LABEL(label), buf);
-		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar),
-				(float)(rcv)/(float)(ft->size));
 		while(gtk_events_pending())
 			gtk_main_iteration();
 	}
-	gtk_widget_destroy(fw);
 
 	/* 4. receive header */
 	sprintf(debug_buff, "Receiving closing header\n");
