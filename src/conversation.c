@@ -53,6 +53,7 @@
 #include "pixmaps/wood.xpm"
 #include "pixmaps/save_small.xpm"
 #include "pixmaps/speaker.xpm"
+#include "pixmaps/image_icon.xpm"
 
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
@@ -405,6 +406,68 @@ void save_convo(GtkWidget *save, struct conversation *c)
 				  "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)window);
 	gtk_widget_show(window);
 }
+
+static void do_insert_image(GtkObject *obj, GtkWidget *wid)
+{
+	struct conversation *c = gtk_object_get_user_data(obj);
+	char *name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
+	char *filename;
+	int pos;
+	char buf[512];
+	struct stat st;
+	int id = g_slist_length(c->images) + 1;
+	
+	if (file_is_dir(name, wid))
+		return;
+	if ((!c->is_chat && g_list_find(conversations, c)))
+		name = g_strdup(name);
+	else
+		name = NULL;
+	gtk_widget_destroy(wid);
+	if (!name)
+		return;
+
+	if (stat(name, &st) != 0) {
+		debug_printf("Could not stat %s\n", name);
+		return;
+	}
+	
+	filename = name;
+	while (strchr(filename, '/')) 
+		filename = strchr(filename, '/') + 1;
+		
+	g_snprintf(buf, sizeof(buf),
+		   "<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
+		   filename, id, (int)st.st_size);
+	
+	c->images = g_slist_append(c->images, g_strdup(name));
+
+	if (GTK_OLD_EDITABLE(c->entry)->has_selection) {
+		int finish = GTK_OLD_EDITABLE(c->entry)->selection_end_pos;
+		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
+					 buf, strlen(buf), &finish);
+	} else {
+		pos = GTK_OLD_EDITABLE(c->entry)->current_pos;
+		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
+					 buf, strlen(buf), &pos);
+	}
+	g_free(name);
+}
+
+void insert_image(GtkWidget *save, struct conversation *c)
+{
+	char buf[BUF_LONG];
+	GtkWidget *window = gtk_file_selection_new(_("Gaim - Insert Image"));
+	g_snprintf(buf, sizeof(buf), "%s/", g_get_home_dir());
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
+	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), c);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+			   "clicked", GTK_SIGNAL_FUNC(do_insert_image), window);
+	gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+				  "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)window);
+	gtk_widget_show(window);
+}
+
 
 void insert_smiley(GtkWidget *smiley, struct conversation *c)
 {
@@ -931,7 +994,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 void send_callback(GtkWidget *widget, struct conversation *c)
 {
 	char *buf, *buf2;
-	int limit, length=0;
+	int limit;
+	gulong length=0;
 	int err = 0;
 
 	if (!c->gc)
@@ -1045,52 +1109,79 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 				id = 1;
 				length = strlen(buffy) + strlen("<BINARY></BINARY>");
 				bigbuf = g_malloc(length);
-				g_snprintf(bigbuf, strlen(buffy)+strlen("<BINARY> "), "%s<BINARY>", buffy);
+				g_snprintf(bigbuf, strlen(buffy)+strlen("<BINARY> ") + 1, "%s<BINARY>", buffy);
 				offset = strlen(buffy) + strlen("<BINARY>");
 				while (tmplist) {
-				  FILE *imgfile;
-				  struct stat st;
+					FILE *imgfile;
+					char *filename;
+					struct stat st;
 					char imgtag[1024];
 					if (stat(tmplist->data, &st) != 0) {
 						debug_printf("Could not stat %s\n", tmplist->data);
 						break;
 					}
+								
+					/* Here we check to make sure the user still wants to send the
+					 * image.  He may have deleted the <img> tag in which case we
+					 * don't want to send the binary data. */
+					filename = tmplist->data;
+					while (strchr(filename, '/')) 
+						filename = strchr(filename, '/') + 1;
+					g_snprintf(imgtag, sizeof(imgtag),
+						   "<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
+						   filename, id, (int)st.st_size);
+				       	if (!strstr(buffy, imgtag)) {
+						tmplist = tmplist->next;
+						continue;
+					}
 					g_snprintf(imgtag, sizeof(imgtag),
 						   "<DATA ID=\"%d\" SIZE=\"%d\">",
-						   id, st.st_size);
-					length = length + strlen(imgtag) + st.st_size;
-					bigbuf = realloc(bigbuf, length);
-					if (!(imgfile = fopen(c->images->data, "r"))) {
+						   id, (int)st.st_size);
+					
+					length = length + strlen(imgtag) + st.st_size + strlen("</DATA>");;
+					bigbuf = g_realloc(bigbuf, length);
+					if (!(imgfile = fopen(tmplist->data, "r"))) {
 						debug_printf("Could not open %s\n", tmplist->data);
-						break;
+						continue;
 					}
 					g_snprintf(bigbuf + offset, strlen(imgtag) + 1, "%s", imgtag);
 					offset = offset + strlen(imgtag);
-					fread(bigbuf + offset, 1, st.st_size, imgfile);
-					offset = offset + st.st_size;
-					g_snprintf(bigbuf + offset, strlen("</DATA>"), "</DATA>");
+					offset = offset + fread(bigbuf + offset, 1, st.st_size, imgfile);
+					fclose(imgfile);
+					g_snprintf(bigbuf + offset, strlen("</DATA>") + 1, "</DATA>");
 					offset= offset + strlen("</DATA>");
 					id++;
 					tmplist = tmplist->next;
 				}
 				
-				g_snprintf(bigbuf + offset, strlen("</BINARY>"), "</BINARY>");   
-				if (serv_send_im(c->gc, c->name, bigbuf, length, imflags) > 0) {
+				g_snprintf(bigbuf + offset, strlen("</BINARY>") + 1, "</BINARY>"); 
+				err =serv_send_im(c->gc, c->name, bigbuf, length, imflags);
+				if (err > 0) {
+					GSList *tempy = c->images;
+					while (tempy) {
+						g_free(tempy->data);
+						tempy = tempy->next;
+					}
+					g_slist_free(tempy);
+					c->images = NULL;
 					write_to_conv(c, bigbuf, WFLAG_SEND, NULL, time(NULL), length);
 					if (c->makesound && (sound_options & OPT_SOUND_SEND))
 						play_sound(SEND);
 					if (im_options & OPT_IM_POPDOWN)
 						gtk_widget_hide(c->window);
 					
+					
 				}
 				g_free(bigbuf);
 			} else {
-				if (serv_send_im(c->gc, c->name, buffy, -1, imflags) > 0)
+				err =serv_send_im(c->gc, c->name, buffy, -1, imflags);
+				if (err > 0) { 
 					write_to_conv(c, buf, WFLAG_SEND, NULL, time(NULL), -1);
-				if (c->makesound && (sound_options & OPT_SOUND_SEND))
-					play_sound(SEND);
-				if (im_options & OPT_IM_POPDOWN)
-					gtk_widget_hide(c->window);
+					if (c->makesound && (sound_options & OPT_SOUND_SEND))
+						play_sound(SEND);
+					if (im_options & OPT_IM_POPDOWN)
+						gtk_widget_hide(c->window);
+				}
 			}
 			g_free(buffy);
 		}
@@ -1107,6 +1198,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	if (err < 0) {
 		if (err == -E2BIG)
 			do_error_dialog(_("Unable to send message: too large"), _("Message Error"));
+		else if (err == -ENOTCONN)
+			debug_printf("Not yet connected\n");
 		else
 			do_error_dialog(_("Unable to send message: Unknown reason"), _("Message Error"));
 	} else {
@@ -1813,9 +1906,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 }
 
 void update_progress(struct conversation *c, float percent) {
-       while (gtk_events_pending())
-               gtk_main_iteration();
-       
+            
        if (percent >= 1 && !(c->progress))
 	       return;
 
@@ -1840,11 +1931,11 @@ void update_progress(struct conversation *c, float percent) {
 GtkWidget *build_conv_toolbar(struct conversation *c)
 {
 	GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i,
-	    *wood_i, *fgcolor_i, *bgcolor_i, *link_i, *font_i, *smiley_i, *save_i;
+	    *wood_i, *fgcolor_i, *bgcolor_i, *link_i, *font_i, *smiley_i, *save_i, *image_i;
 	GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p,
-	    *wood_p, *fgcolor_p, *bgcolor_p, *link_p, *font_p, *smiley_p, *save_p;
+	    *wood_p, *fgcolor_p, *bgcolor_p, *link_p, *font_p, *smiley_p, *save_p, *image_p;
 	GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood,
-	    *fgcolorbtn, *bgcolorbtn, *link, *font, *smiley, *save;
+	    *fgcolorbtn, *bgcolorbtn, *link, *font, *smiley, *save, *image;
 	GdkBitmap *mask;
 	GtkWidget *toolbar;
 	GtkWidget *win;
@@ -1913,6 +2004,11 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, smile_icon_xpm);
 	smiley_p = gtk_pixmap_new(smiley_i, mask);
 	gtk_widget_show(smiley_p);
+	gdk_bitmap_unref(mask);
+
+	image_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, image_icon_xpm);
+	image_p = gtk_pixmap_new(image_i, mask);
+	gtk_widget_show(image_p);
 	gdk_bitmap_unref(mask);
 
 	wood_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, wood_xpm);
@@ -1987,7 +2083,10 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, NULL, _("Insert smiley face"), _("Smiley"),
 					    smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
-
+	image = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
+					    NULL, _("Insert IM Image"), _("Image"),
+					    image_p, GTK_SIGNAL_FUNC(insert_image), c);
+	
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 
 	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
@@ -2027,6 +2126,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		gtk_button_set_relief(GTK_BUTTON(bgcolorbtn), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(link), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(smiley), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(image), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(wood), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(save), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(speaker), GTK_RELIEF_NONE);
@@ -2049,6 +2149,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	gdk_pixmap_unref(wood_i);
 	gdk_pixmap_unref(save_i);
 	gdk_pixmap_unref(speaker_i);
+	gdk_pixmap_unref(image_i);
 
 	c->bold = bold;
 	c->strike = strike;
@@ -2061,9 +2162,9 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	c->wood = wood;
 	c->font = font;
 	c->smiley = smiley;
+	c->imagebtn = image;
 
 	gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_ALL)) ? FALSE : TRUE);
-
 	gtk_widget_set_sensitive(c->bold, ((font_options & OPT_FONT_BOLD)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->italic, ((font_options & OPT_FONT_ITALIC)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->underline, ((font_options & OPT_FONT_UNDERLINE)) ? FALSE : TRUE);
@@ -2240,7 +2341,6 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 	c->gc = gc;
 
 	set_convo_title(c);
-		
 	update_buttons_by_protocol(c);
 
 	update_icon(c);
@@ -2264,7 +2364,6 @@ void update_buttons_by_protocol(struct conversation *c)
 			gtk_widget_set_sensitive(c->whisper, FALSE);
 		if (c->invite)
 			gtk_widget_set_sensitive(c->invite, FALSE);
-
 		return;
 	}
 
@@ -2278,11 +2377,16 @@ void update_buttons_by_protocol(struct conversation *c)
 			gtk_widget_set_sensitive(c->send, FALSE);
 		else
 			gtk_widget_set_sensitive(c->send, TRUE);
+		gtk_widget_set_sensitive(c->imagebtn, FALSE);
 	} else {
 		if (c->gc->prpl->send_im == NULL && c->send)
 			gtk_widget_set_sensitive(c->send, FALSE);
 		else
 			gtk_widget_set_sensitive(c->send, TRUE);
+		if (c->gc->prpl->options & OPT_PROTO_IM_IMAGE)
+			gtk_widget_set_sensitive(c->imagebtn, TRUE);
+		else
+			gtk_widget_set_sensitive(c->imagebtn, FALSE);
 	}
 
 	if (c->gc->prpl->warn == NULL && c->warn)

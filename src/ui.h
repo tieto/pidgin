@@ -122,6 +122,7 @@ struct conversation {
 	GtkWidget *strike;
 	GtkWidget *font;
 	GtkWidget *smiley;
+	GtkWidget *imagebtn;
 	GtkWidget *fg_color_dialog;
 	GtkWidget *bg_color_dialog;
 	GtkWidget *font_dialog;

@@ -41,7 +41,7 @@
 #define PROTO_NAPSTER	9
 #define PROTO_ZEPHYR   10
 #define PROTO_GADUGADU 11
-/* DON'T TAKE AN UNASSIGNED NUMBER! Talk to Eric or Rob if you'd like
+/* DON'T TAKE AN UNASSIGNED NUMBER! Talk to Rob or Sean if you'd like
  * to create a new PRPL. */
 
 #define PRPL_DESC(x)	"Allows gaim to use the " x " protocol.\n\n" \
@@ -70,6 +70,8 @@
 #define OPT_PROTO_MAIL_CHECK      0x00000020
 /* Oscar and Jabber have buddy icons */
 #define OPT_PROTO_BUDDY_ICON      0x00000040
+/* Oscar lets you send images in direct IMs */
+#define OPT_PROTO_IM_IMAGE        0x00000080
 
 #define GAIM_AWAY_CUSTOM "Custom"
 

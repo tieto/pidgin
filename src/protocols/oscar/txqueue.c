@@ -230,15 +230,34 @@ static int aim_send(int fd, const void *buf, size_t count)
 static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 {
 	int wrote = 0;
-
 	if (!bs || !conn || (count < 0))
 		return -EINVAL;
 
 	if (count > aim_bstream_empty(bs))
 		count = aim_bstream_empty(bs); /* truncate to remaining space */
 
-	if (count)
-		wrote = aim_send(conn->fd, bs->data + bs->offset, count);
+	if (count) {
+		if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) && 
+		    (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
+			/* I strongly suspect that this is a horrible thing to do
+			 * and I feel really guilty doing it. */
+			char *sn = aim_directim_getsn(conn);
+			aim_rxcallback_t userfunc;
+			while (count - wrote > 1024) {
+				wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, 1024);
+				if ((userfunc=aim_callhandler(conn->sessv, conn, 
+							      AIM_CB_FAM_SPECIAL, 
+							      AIM_CB_SPECIAL_IMAGETRANSFER)))
+				  userfunc(conn->sessv, NULL, sn, 
+					   count-wrote>1024 ? ((double)wrote / count) : 1);
+			}
+		}
+		if (count - wrote) {
+			wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, count - wrote);
+		}
+		
+	}
+	
 
 	if (((aim_session_t *)conn->sessv)->debug >= 2) {
 		int i;
@@ -284,7 +303,6 @@ static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
 
 	obslen = aim_bstream_curpos(&obs);
 	aim_bstream_rewind(&obs);
-
 	if (aim_bstream_send(&obs, fr->conn, obslen) != obslen)
 		err = -errno;
 	
@@ -302,9 +320,8 @@ static int sendframe_oft(aim_session_t *sess, aim_frame_t *fr)
 	fu8_t *hbs_raw;
 	int hbslen;
 	int err = 0;
-
+	
 	hbslen = 8 + fr->hdr.oft.hdr2len;
-
 	if (!(hbs_raw = malloc(hbslen)))
 		return -1;
 
@@ -316,6 +333,7 @@ static int sendframe_oft(aim_session_t *sess, aim_frame_t *fr)
 	aimbs_putraw(&hbs, fr->hdr.oft.hdr2, fr->hdr.oft.hdr2len);
 
 	aim_bstream_rewind(&hbs);
+	
 	
 	if (aim_bstream_send(&hbs, fr->conn, hbslen) != hbslen) {
 
@@ -338,6 +356,8 @@ static int sendframe_oft(aim_session_t *sess, aim_frame_t *fr)
 
 
 	return err;
+
+
 }
 
 faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *fr)

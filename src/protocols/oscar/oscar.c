@@ -2436,7 +2436,11 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			else return ret;
 		}
 		debug_printf("Direct IM pending, but not connected; sending through server\n");
-		}
+	} else if (len != -1) {
+		/* Trying to send an IM image outside of a direct connection. */
+		oscar_ask_direct_im(gc, name);
+		return -ENOTCONN;
+	}
 	if (imflags & IM_FLAG_AWAY) {
 		ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
 	} else {
@@ -3168,6 +3172,9 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!(dim = find_direct_im(od, sn)))
 		return 1;
 	gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
+	while (gtk_events_pending())
+		gtk_main_iteration();
+	
 	if ((c = find_conversation(sn)))
 		update_progress(c, percent);
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
@@ -3554,7 +3561,7 @@ static struct prpl *my_protocol = NULL;
 
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
-	ret->options = OPT_PROTO_BUDDY_ICON;
+	ret->options = OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;
