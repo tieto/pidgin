@@ -442,9 +442,10 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 static void html_logger_finalize(GaimLog *log)
 {
-	fprintf(log->logger_data, "</body></html>");
-	if (log->logger_data)
+	if (log->logger_data) {
+		fprintf(log->logger_data, "</body></html>");
 		fclose(log->logger_data);
+	}
 }
 
 static GList *html_logger_list(const char *sn, GaimAccount *account)
