@@ -8,6 +8,8 @@ version 0.78cvs
 	Bug Fixes:
 	* Gadu-Gadu updates (Andrew Wellington)
 	* Compiles again with gcc 2.96 (Ignacio J. Elia)
+	* Dialogs opened from a conversation window are now closed when
+	  the conversation window is closed, preventing a crash (Kevin Stange)
 
 version 0.77 (04/22/2004):
 	New Features:
