@@ -112,7 +112,8 @@ gint gaim_input_add(gint source, GaimInputCondition condition, GaimInputFunction
 void gaim_input_remove(gint tag)
 {
 	debug_printf("CLOSURE: removing input watcher %d\n", tag);
-	g_source_remove(tag);
+	if (tag > 0)
+		g_source_remove(tag);
 }
 
 static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
