@@ -1,7 +1,7 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for idletracker
+# Description: Makefile for idletrack
 #
 
 #
@@ -15,7 +15,7 @@ GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 ## VARIABLE DEFINITIONS
 ##
 
-TARGET = idletracker
+TARGET = idletrack
 
 # Compiler Options
 
@@ -41,7 +41,7 @@ LIB_PATHS =
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			idletracker.c
+C_SRC =			idletrack.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
