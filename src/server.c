@@ -771,6 +771,9 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			set_convo_name(cnv, name);
 			
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
+#ifdef _WIN32
+			wgaim_im_blink(cnv->window);
+#endif
 		}
 	}
 	plugin_event(event_im_displayed_rcvd, gc, name, message, flags, mtime);
