@@ -61,6 +61,11 @@ typedef struct _GaimIOClosure {
 	gpointer data;
 } GaimIOClosure;
 
+static void gaim_io_destroy(gpointer data)
+{
+	g_free(data);
+}
+
 static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	GaimIOClosure *closure = data;
@@ -93,7 +98,8 @@ gint gaim_input_add(gint source, GaimInputCondition condition,
 		cond |= GAIM_WRITE_COND;
 
 	channel = g_io_channel_unix_new(source);
-	result = g_io_add_watch(channel, cond, gaim_io_invoke, closure);
+	result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
+				     gaim_io_invoke, closure, gaim_io_destroy);
 	g_io_channel_unref(channel);
 	return result;
 }
