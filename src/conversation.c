@@ -2261,7 +2261,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 
 	speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					     GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					     NULL, NULL, _("Sound"),
+					     NULL, NULL, _("Toggle Sound"),
 					     _("Sound"), speaker_p, GTK_SIGNAL_FUNC(toggle_sound), c);
 	c->makesound = 1;
 
