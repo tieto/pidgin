@@ -649,7 +649,10 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				g_free(stripped_sender);
 			} else {
 				zephyr_triple *zt1, *zt2;
-
+                                GList *gltmp;
+                                int found = 0;
+                                gchar *send_inst_utf8;
+                                
 				zt1 = new_triple(notice.z_class, notice.z_class_inst, notice.z_recipient);
 				zt2 = find_sub_by_triple(zt1);
 				if (!zt2) {
@@ -657,53 +660,47 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					subscrips = g_slist_append(subscrips, zt1);
 					zt2 = find_sub_by_triple(zt1);
 				} 
-				/*else { */
-					GList *gltmp;
-					int found = 0;
-                                        gchar *send_inst_utf8;
-                                        /*                                        GError *err; */
                                         
-					if (!zt2->open) {
-						zt2->open = TRUE;
-						serv_got_joined_chat(zgc, zt2->id, zt2->name);
-                                                zephyr_chat_set_topic(zgc,zt2->id,notice.z_class_inst);
-					}
-					g_free(sendertmp); /* fix memory leak? */
-					/* If the person is in the default Realm, then strip the 
-					   Realm from the sender field */
-					sendertmp = zephyr_strip_foreign_realm(notice.z_sender);
-					send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
-                                        send_inst_utf8 = zephyr_recv_convert(send_inst, strlen(send_inst));
-                                        if (!send_inst_utf8) {
-                                                fprintf(stderr, "zephyr: send_inst %s became null\n",send_inst);
-                                                gaim_debug(GAIM_DEBUG_ERROR, "zephyr","send_inst %s became null\n", send_inst);
-                                                send_inst_utf8 = "malformed instance";
-                                        }
-
-					serv_got_chat_in(zgc, zt2->id, send_inst_utf8, FALSE, buf3, time(NULL));
-                                        g_free(send_inst);
-					gconv1 = gaim_find_conversation_with_account(zt2->name, zgc->account);
-					gcc = gaim_conversation_get_chat_data(gconv1);
-
-					for (gltmp = gaim_conv_chat_get_users(gcc); gltmp; gltmp = gltmp->next) {
-						if (!g_ascii_strcasecmp(gltmp->data, sendertmp))
-							found = 1;
-					}
-					if (!found) {
-						/* force interpretation in network byte order */
-						unsigned char *addrs = (unsigned char *)&(notice.z_sender_addr.s_addr);
-						gchar* ipaddr = g_strdup_printf("%hhd.%hhd.%hhd.%hhd", (unsigned char)addrs[0], 
-										(unsigned char)addrs[1], (unsigned char)addrs[2], 
-										(unsigned char) addrs[3]);
-
-						gaim_conv_chat_add_user(gcc, sendertmp, ipaddr);
-						g_free(ipaddr); /* fix memory leak? */
-
-					}
-					g_free(sendertmp);
-					g_free(send_inst_utf8);
-                                                                             
-			/*	} */
+                                if (!zt2->open) {
+                                        zt2->open = TRUE;
+                                        serv_got_joined_chat(zgc, zt2->id, zt2->name);
+                                        zephyr_chat_set_topic(zgc,zt2->id,notice.z_class_inst);
+                                }
+                                g_free(sendertmp); /* fix memory leak? */
+                                /* If the person is in the default Realm, then strip the 
+                                   Realm from the sender field */
+                                sendertmp = zephyr_strip_foreign_realm(notice.z_sender);
+                                send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
+                                send_inst_utf8 = zephyr_recv_convert(send_inst, strlen(send_inst));
+                                if (!send_inst_utf8) {
+                                        fprintf(stderr, "zephyr: send_inst %s became null\n",send_inst);
+                                        gaim_debug(GAIM_DEBUG_ERROR, "zephyr","send_inst %s became null\n", send_inst);
+                                        send_inst_utf8 = "malformed instance";
+                                }
+                                
+                                serv_got_chat_in(zgc, zt2->id, send_inst_utf8, FALSE, buf3, time(NULL));
+                                g_free(send_inst);
+                                gconv1 = gaim_find_conversation_with_account(zt2->name, zgc->account);
+                                gcc = gaim_conversation_get_chat_data(gconv1);
+                                
+                                for (gltmp = gaim_conv_chat_get_users(gcc); gltmp; gltmp = gltmp->next) {
+                                        if (!g_ascii_strcasecmp(gltmp->data, sendertmp))
+                                                found = 1;
+                                }
+                                if (!found) {
+                                        /* force interpretation in network byte order */
+                                        unsigned char *addrs = (unsigned char *)&(notice.z_sender_addr.s_addr);
+                                        gchar* ipaddr = g_strdup_printf("%hhd.%hhd.%hhd.%hhd", (unsigned char)addrs[0], 
+                                                                        (unsigned char)addrs[1], (unsigned char)addrs[2], 
+                                                                        (unsigned char) addrs[3]);
+                                        
+                                        gaim_conv_chat_add_user(gcc, sendertmp, ipaddr);
+                                        g_free(ipaddr); /* fix memory leak? */
+                                        
+                                }
+                                g_free(sendertmp);
+                                g_free(send_inst_utf8);
+                                
 				free_triple(zt1);
 			}
 			g_free(buf3);
@@ -1476,12 +1473,12 @@ static void zephyr_register_slash_commands()
         gaim_cmd_register("instance","s", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"));
+                          zephyr_gaim_cmd_instance, _("instance &lt;instance&gt;: Set the instance to be used on this class"));
 
         gaim_cmd_register("inst","s", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
                           "prpl-zephyr",
-                          zephyr_gaim_cmd_instance, _("instance &lt;instance&gt;: Set the instance to be used on this class"));
+                          zephyr_gaim_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"));
 
         gaim_cmd_register("sub", "www", GAIM_CMD_P_PRPL,
                           GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
