@@ -1264,7 +1264,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		}
 	}
 
-	if (gc->login_time_official && gc->login_time)
+	if (gc->login_time_official && gc->login_time && signon > 0)
 		signon += gc->login_time_official - gc->login_time;
 	gaim_blist_update_buddy_signon(b, signon);
 	gaim_blist_update_buddy_idle(b, idle);
