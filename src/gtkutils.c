@@ -209,23 +209,12 @@ gaim_gtk_get_dispstyle(GaimConversationType type)
 	int dispstyle = 2;
 	int value;
 
-	if (type == GAIM_CONV_CHAT) {
-		value = gaim_prefs_get_int("/gaim/gtk/conversations/chat/button_type");
+	value = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
 
-		switch (value) {
-			case GAIM_BUTTON_TEXT:  dispstyle = 1; break;
-			case GAIM_BUTTON_IMAGE: dispstyle = 0; break;
-			default:                dispstyle = 2; break; /* both/neither */
-		}
-	}
-	else if (type == GAIM_CONV_IM) {
-		value = gaim_prefs_get_int("/gaim/gtk/conversations/im/button_type");
-
-		switch (value) {
-			case GAIM_BUTTON_TEXT:  dispstyle = 1; break;
-			case GAIM_BUTTON_IMAGE: dispstyle = 0; break;
-			default:                dispstyle = 2; break; /* both/neither */
-		}
+	switch (value) {
+	case GAIM_BUTTON_TEXT:  dispstyle = 1; break;
+	case GAIM_BUTTON_IMAGE: dispstyle = 0; break;
+	default:                dispstyle = 2; break; /* both/neither */
 	}
 
 	return dispstyle;
