@@ -138,7 +138,7 @@ static int can_play_audio()
 ** Z-note -- this is from libaudiofile.  Thanks guys!
 */
 
-int _af_ulaw2linear(unsigned char ulawbyte)
+static int _af_ulaw2linear(unsigned char ulawbyte)
 {
 	static int exp_lut[8] = { 0, 132, 396, 924, 1980, 4092, 8316, 16764 };
 	int sign, exponent, mantissa, sample;
