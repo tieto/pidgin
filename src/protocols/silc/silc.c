@@ -123,7 +123,7 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
 	SilcGaim sg = gc->proto_data;
-	SilcClient client = sg->client;
+	SilcClient client;
 	SilcClientConnection conn;
 	GaimAccount *account = sg->account;
 	SilcClientConnectionParams params;
@@ -133,6 +133,12 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 		gaim_connection_error(gc, _("Connection failed"));
 		return;
 	}
+
+	if (sg == NULL)
+		return;
+
+	client = sg->client;
+
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		g_source_remove(sg->scheduler);
