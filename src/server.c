@@ -297,7 +297,6 @@ void serv_chat_send(struct gaim_connection *g, int id, char *message)
 void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away)
 {
 	struct conversation *cnv;
-	int is_idle = -1;
 	int new_conv = 0;
 
 	char *buffy = g_strdup(message);
@@ -377,23 +376,10 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 		cnv->sent_away = t;
 
-		if (is_idle)
-			is_idle = -1;
-
 		/* apply default fonts and colors */
 		tmpmsg = stylize(awaymessage->message, MSG_LEN);
 
-		/* PRPL */
-		if (gc->protocol == PROTO_TOC) {
-			escape_text(tmpmsg);
-			escape_message(tmpmsg);
-		}
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
-		g_free(tmpmsg);
-		tmpmsg = stylize(awaymessage->message, MSG_LEN);
-
-		if (is_idle == -1)
-			is_idle = 1;
 
 		if (cnv != NULL)
 			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL);
