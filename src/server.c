@@ -380,11 +380,7 @@ void serv_set_permit_deny()
 	if (!USE_OSCAR) {
 		char buf[MSG_LEN];
 		int at;
-		int cnt;
 		GList *list;
-		GList *mem;
-		struct buddy *b;
-		struct group *g;
 
 		switch (permdeny) {
 		case PERMIT_ALL:
@@ -437,40 +433,11 @@ void serv_set_permit_deny()
 				sflap_send(buf, -1, TYPE_DATA);
 			}
 			break;
-		case PERMIT_BUDDY:
-			/* toc_add_permit <bud> */
-			/* if there are no buddies this is the same as PERMIT_NONE */
-			at = g_snprintf(buf, sizeof(buf), "toc_add_permit");
-			list = groups;
-			cnt = 0;
-			while (list) {
-				g = (struct group *)list->data;
-				mem = g->members;
-				while (mem) {
-					b = (struct buddy *)mem->data;
-					at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(b->name));
-					cnt++;
-					mem = mem->next;
-				}
-				list = list->next;
-			}
-			if (cnt) {
-				sflap_send(buf, -1, TYPE_DATA);
-			} else {
-				sprintf(buf, "toc_add_deny %s", current_user->username);
-				sflap_send(buf, -1, TYPE_DATA);
-				sprintf(buf, "toc_add_permit");
-				sflap_send(buf, -1, TYPE_DATA);
-			}
 		}
 	} else {
 		int at;
 		GList *list;
-		GList *mem;
-		struct buddy *b;
-		struct group *g;
 		char buf[MSG_LEN];
-		int cnt;
 
 		switch (permdeny) {
 		/* aim_bos_changevisibility(gaim_sess, gaim_conn, type, list) */
@@ -487,21 +454,15 @@ void serv_set_permit_deny()
 		case PERMIT_SOME:
 			/* PERMIT <permit> */
 			/* if permit is empty this is the same as PERMIT_NONE */
-			if (permit) {
-				at = 0;
-				list = permit;
-				while (list) {
-					at += g_snprintf(&buf[at], sizeof(buf) - at, "%s", list->data);
-					list = list->next;
-					if (list)
-						at += g_snprintf(&buf[at], sizeof(buf) - at, "&");
-				}
-				aim_bos_changevisibility(gaim_sess, gaim_conn,
-				   AIM_VISIBILITYCHANGE_PERMITADD, buf);
-			} else {
-				aim_bos_changevisibility(gaim_sess, gaim_conn,
-				   AIM_VISIBILITYCHANGE_PERMITADD, current_user->username);
+			at = g_snprintf(buf, sizeof(buf), "%s", current_user->username);
+			list = permit;
+			while (list) {
+				at += g_snprintf(&buf[at], sizeof(buf) - at, "&");
+				at += g_snprintf(&buf[at], sizeof(buf) - at, "%s", list->data);
+				list = list->next;
 			}
+			aim_bos_changevisibility(gaim_sess, gaim_conn,
+			   AIM_VISIBILITYCHANGE_PERMITADD, buf);
 			break;
 		case DENY_SOME:
 			/* DENY <deny> */
@@ -520,33 +481,6 @@ void serv_set_permit_deny()
 			} else {
 				aim_bos_changevisibility(gaim_sess, gaim_conn,
 				   AIM_VISIBILITYCHANGE_DENYADD, current_user->username);
-			}
-			break;
-		case PERMIT_BUDDY:
-			/* PERMIT <bud> */
-			/* if there are no buddies this is the same as PERMIT_NONE */
-			at = 0;
-			list = groups;
-			cnt = 0;
-			while (list) {
-				g = (struct group *)list->data;
-				mem = g->members;
-				while (mem) {
-					b = (struct buddy *)mem->data;
-					if (at)
-						at += g_snprintf(&buf[at], sizeof(buf) - at, "&");
-					at += g_snprintf(&buf[at], sizeof(buf) - at, "%s", b->name);
-					cnt++;
-					mem = mem->next;
-				}
-				list = list->next;
-			}
-			if (cnt) {
-				aim_bos_changevisibility(gaim_sess, gaim_conn,
-				   AIM_VISIBILITYCHANGE_PERMITADD, buf);
-			} else {
-				aim_bos_changevisibility(gaim_sess, gaim_conn,
-				   AIM_VISIBILITYCHANGE_PERMITADD, current_user->username);
 			}
 			break;
 		}

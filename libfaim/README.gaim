@@ -69,8 +69,8 @@ KNOWN ISSUES
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
-- The permit list stuff is really warped. It works, but if you change it while
-you're signed on, you'll probably get kicked off. Don't ask me why.
+- The permit/deny list stuff is really warped. I'm probably going to comment it
+out soon and try to figure out what's going on.
 
 - "Allow anyone" and "Deny some" serve the same function. That's not a bug. But
 "Allow anyone" works all the time (?) and "Deny some" doesn't work some of the

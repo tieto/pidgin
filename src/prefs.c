@@ -335,7 +335,7 @@ static void buddy_page()
 
 static GtkWidget *permtree = NULL;
 
-void build_permit_tree()
+static void build_deny_tree()
 {
 	GtkWidget *ti;
         GtkWidget *sub;
@@ -548,7 +548,7 @@ static void deny_page()
 	gtk_widget_show(xbox);
 
 	permtree = gtk_tree_new();
-	build_permit_tree();
+	build_deny_tree();
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(xbox), permtree);
 	gtk_signal_connect(GTK_OBJECT(permtree), "destroy", GTK_SIGNAL_FUNC(permdest), 0);
 	gtk_widget_show(permtree);
@@ -566,6 +566,12 @@ static void deny_page()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_del_perm), permtree);
 
 	gtk_widget_show(prefdialog);
+}
+
+void build_permit_tree()
+{
+	if (permtree)
+		deny_page();
 }
 
 static void convo_page()
