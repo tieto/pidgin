@@ -67,6 +67,9 @@ msn_user_destroy(MsnUser *user)
 	if (user->group_ids != NULL)
 		g_list_free(user->group_ids);
 
+	if (user->msnobj != NULL)
+		msn_object_destroy(user->msnobj);
+
 	if (user->passport != NULL) g_free(user->passport);
 	if (user->name     != NULL) g_free(user->name);
 

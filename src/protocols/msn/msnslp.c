@@ -27,9 +27,7 @@ send_ack(MsnSlpSession *slpsession, MsnMessage *acked_msg)
 {
 	MsnMessage *msg;
 
-	msg = msn_message_new();
-
-	msg->msnslp_message = TRUE;
+	msg = msn_message_new_msnslp();
 
 	msg->msnslp_header.length = acked_msg->msnslp_header.length;
 	msg->msnslp_header.flags = 0x02;
@@ -110,7 +108,9 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 
 	msg->msnslp_header.id = slpsession->prev_msg_id;
 	msg->msnslp_header.ack_session_id = rand() % 0xFFFFFF00;
-	msg->msnslp_header.total_size = strlen(msn_message_get_body(msg));
+
+	if (msn_message_get_body(msg) != NULL)
+		msg->msnslp_header.total_size = strlen(msn_message_get_body(msg));
 
 	msn_message_set_charset(msg, NULL);
 
@@ -124,24 +124,28 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 
 void
 msn_slp_session_request_user_display(MsnSlpSession *slpsession,
-									 const MsnUser *localUser,
-									 const MsnUser *remoteUser,
+									 MsnUser *local_user,
+									 MsnUser *remote_user,
 									 const MsnObject *obj)
 {
 	MsnMessage *invite_msg;
 	char *msnobj_data;
 	char *msnobj_base64;
 	char *content;
-	char *header;
+	char *body;
+	char *c;
 
-	g_return_if_fail(slpsession != NULL);
-	g_return_if_fail(localUser  != NULL);
-	g_return_if_fail(remoteUser != NULL);
-	g_return_if_fail(obj        != NULL);
+	g_return_if_fail(slpsession  != NULL);
+	g_return_if_fail(local_user  != NULL);
+	g_return_if_fail(remote_user != NULL);
+	g_return_if_fail(obj         != NULL);
 
 	msnobj_data = msn_object_to_string(obj);
 	msnobj_base64 = tobase64(msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
+
+	if ((c = strchr(msnobj_base64, '=')) != NULL)
+		*c = '\0';
 
 	if (slpsession->session_id == 0)
 		slpsession->session_id = rand() % 0xFFFFFF00;
@@ -156,7 +160,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 
 	g_free(msnobj_base64);
 
-	header = g_strdup_printf(
+	body = g_strdup_printf(
 		"INVITE MSNMSGR:%s MSNSLP/1.0\r\n"
 		"To: <msnmsgr:%s>\r\n"
 		"From: <msnmsgr:%s>\r\n"
@@ -169,13 +173,24 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 		"\r\n"
 		"%s"
 		"\r\n\r\n",
-		msn_user_get_passport(remoteUser),
-		msn_user_get_passport(localUser),
-		msn_user_get_passport(remoteUser),
+		msn_user_get_passport(remote_user),
+		msn_user_get_passport(remote_user),
+		msn_user_get_passport(local_user),
 		strlen(content) + 5,
 		content);
 
-	invite_msg = msn_message_new();
+	g_free(content);
+
+	gaim_debug_misc("msn", "Message = {%s}\n", body);
+
+	invite_msg = msn_message_new_msnslp();
+
+	msn_message_set_sender(invite_msg, local_user);
+	msn_message_set_receiver(invite_msg, remote_user);
+
+	msn_message_set_body(invite_msg, body);
+
+	g_free(body);
 
 	msn_slp_session_send_msg(slpsession, invite_msg);
 
@@ -189,7 +204,7 @@ msn_p2p_msg(MsnServConn *servconn, MsnMessage *msg)
 	gboolean session_ended = FALSE;
 
 	if (swboard->slp_session == NULL)
-		swboard->slp_session = msn_slp_session_new(swboard, TRUE);
+		swboard->slp_session = msn_slp_session_new(swboard, FALSE);
 
 	session_ended = msn_slp_session_msg_received(swboard->slp_session, msg);
 

@@ -86,8 +86,31 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 size_t param_count)
 {
 	MsnSwitchBoard *swboard = servconn->data;
+	MsnSession *session = servconn->session;
 
-	return send_clientcaps(swboard);
+	send_clientcaps(swboard);
+
+#if 0
+	if (session->protocol_ver >= 9)
+	{
+		MsnUser *local_user, *remote_user;
+
+		remote_user = msn_user_new(session,
+				msn_user_get_passport(msn_switchboard_get_user(swboard)),
+				NULL);
+		local_user = msn_user_new(session,
+								  gaim_account_get_username(session->account),
+								  NULL);
+
+		swboard->slp_session = msn_slp_session_new(swboard, TRUE);
+
+		msn_slp_session_request_user_display(swboard->slp_session,
+											 local_user, remote_user,
+											 msn_user_get_object(remote_user));
+	}
+#endif
+
+	return FALSE;
 }
 
 static gboolean
@@ -614,10 +637,12 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	int ret;
 
 	g_return_val_if_fail(swboard != NULL, FALSE);
-	g_return_val_if_fail(msg != NULL, FALSE);
+	g_return_val_if_fail(msg     != NULL, FALSE);
 
 	msn_message_set_transaction_id(msg, ++swboard->trId);
 	buf = msn_message_build_string(msg);
+
+	g_return_val_if_fail(buf != NULL, FALSE);
 
 	if (swboard->servconn->txqueue != NULL || !swboard->in_use) {
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "Appending message to queue.\n");
@@ -628,7 +653,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 		return TRUE;
 	}
 
-	ret = msn_servconn_write(swboard->servconn, buf, strlen(buf));
+	ret = msn_servconn_write(swboard->servconn, buf, msg->size);
 
 	g_free(buf);
 

@@ -88,8 +88,8 @@ void msn_slp_session_send_msg(MsnSlpSession *session, MsnMessage *msg);
  * @param obj        The MSNObject representing the user display info.
  */
 void msn_slp_session_request_user_display(MsnSlpSession *session,
-										  const MsnUser *localUser,
-										  const MsnUser *remoteUser,
+										  MsnUser *localUser,
+										  MsnUser *remoteUser,
 										  const MsnObject *obj);
 
 /**

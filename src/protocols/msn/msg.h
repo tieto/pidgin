@@ -87,6 +87,13 @@ struct _MsnMessage
 MsnMessage *msn_message_new(void);
 
 /**
+ * Creates a new, empty MSNSLP message.
+ *
+ * @return A new MSNSLP message.
+ */
+MsnMessage *msn_message_new_msnslp(void);
+
+/**
  * Creates a new message based off a string.
  *
  * @param session The MSN session.

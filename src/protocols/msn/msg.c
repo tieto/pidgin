@@ -69,6 +69,21 @@ msn_message_new(void)
 }
 
 MsnMessage *
+msn_message_new_msnslp(void)
+{
+	MsnMessage *msg;
+
+	msg = msn_message_new();
+
+	msn_message_set_attr(msg, "User-Agent", NULL);
+
+	msg->msnslp_message = TRUE;
+	msg->size += 52;
+
+	return msg;
+}
+
+MsnMessage *
 msn_message_new_from_str(MsnSession *session, const char *str)
 {
 	MsnMessage *msg;
@@ -357,7 +372,9 @@ msn_message_build_string(const MsnMessage *msg)
 		long session_id, id, offset, total_size, length, flags;
 		long ack_session_id, ack_unique_id, ack_length;
 
-		memcpy(blank, 0, 4);
+		blank[0] = blank[1] = blank[2] = blank[3] = 0;
+
+		g_strlcat(str, "\r\n", 3);
 
 		c = str + strlen(str);
 
@@ -388,20 +405,33 @@ msn_message_build_string(const MsnMessage *msg)
 
 		c += strlen(msn_message_get_body(msg));
 
-		memcpy(c, blank,                      1); c++;
+		if (strlen(msn_message_get_body(msg)) > 0)
+			*c++ = '\0';
+
 		memcpy(c, &msg->msnslp_footer.app_id, 4); c += 4;
+		*c = '\0';
+
+		gaim_debug_misc("msn", "cur size = %d\n", (c - str));
+		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
+
+		if (msg->size != (c - str))
+		{
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Outgoing message size (%d) and string length (%d) "
+					   "do not match!\n", msg->size, (c - str));
+		}
 	}
 	else
 	{
 		g_snprintf(buf, sizeof(buf), "\r\n%s", msn_message_get_body(msg));
 
 		g_strlcat(str, buf, len);
-	}
 
-	if (msg->size != strlen(msg_start)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "Outgoing message size (%d) and string length (%d) "
-				   "do not match!\n", msg->size, strlen(msg_start));
+		if (msg->size != strlen(msg_start)) {
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Outgoing message size (%d) and string length (%d) "
+					   "do not match!\n", msg->size, strlen(msg_start));
+		}
 	}
 
 	return str;
@@ -430,7 +460,7 @@ msn_message_set_sender(MsnMessage *msg, MsnUser *user)
 	g_return_if_fail(user != NULL);
 
 	msg->sender = user;
-	
+
 	msn_user_ref(msg->sender);
 }
 
@@ -449,7 +479,7 @@ msn_message_set_receiver(MsnMessage *msg, MsnUser *user)
 	g_return_if_fail(user != NULL);
 
 	msg->receiver = user;
-	
+
 	msn_user_ref(msg->receiver);
 }
 
@@ -509,6 +539,9 @@ msn_message_set_body(MsnMessage *msg, const char *body)
 	if (msg->body != NULL) {
 		msg->size -= strlen(msg->body);
 		g_free(msg->body);
+
+		if (msg->msnslp_message)
+			msg->size--;
 	}
 
 	for (c = body; *c != '\0'; c++) {
@@ -532,6 +565,9 @@ msn_message_set_body(MsnMessage *msg, const char *body)
 	msg->body = buf;
 
 	msg->size += new_len;
+
+	if (msg->msnslp_message)
+		msg->size++;
 }
 
 const char *

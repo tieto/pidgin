@@ -1033,7 +1033,10 @@ static gboolean
 iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	MsnSession *session = servconn->session;
+	GaimConnection *gc = session->account->gc;
+	MsnUser *user;
+	MsnObject *msnobj;
 	int status = 0;
 	const char *state, *passport, *friend;
 	GaimBuddy *b;
@@ -1041,6 +1044,14 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	state    = params[1];
 	passport = params[2];
 	friend   = msn_url_decode(params[3]);
+
+	if (session->protocol_ver >= 9 && param_count == 6)
+	{
+		user = msn_users_find_with_passport(session->users, passport);
+
+		msnobj = msn_object_new_from_string(msn_url_decode(params[5]));
+		msn_user_set_object(user, msnobj);
+	}
 
 	serv_got_alias(gc, (char *)passport, (char *)friend);
 
