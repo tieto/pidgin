@@ -40,6 +40,9 @@
 #include "gaim.h"
 #include "gtkhtml.h"
 
+#include "pixmaps/cancel.xpm"
+#include "pixmaps/save.xpm"
+
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
 char *fontface;
@@ -362,6 +365,7 @@ void show_warn_dialog(char *who)
 	GtkWidget *label;
 	GtkWidget *vbox;
         GtkWidget *bbox;
+
         struct warning *w = g_new0(struct warning, 1);
         
         char *buf = g_malloc(128);
@@ -2385,15 +2389,21 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	GtkWidget *create;
 	GtkWidget *sw;
 	GtkWidget *label;
-	GtkWidget *cancel;
 	GtkWidget *frame;
 	GtkWidget *fbox;
+	GtkWidget *button_box;
+	GtkWidget *button;
+	GdkPixmap *icon;
+	GdkBitmap *mask;
+	GtkWidget *icon_i;
 
         struct create_away *ca = g_new0(struct create_away, 1);
         
 	/* Set up window */
 	ca->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_container_border_width(GTK_CONTAINER(ca->window), 10);
+ 	gtk_widget_set_usize(ca->window, 275, 200); 
+	gtk_widget_show(ca->window);
+	gtk_container_border_width(GTK_CONTAINER(ca->window), 5);
 	gtk_window_set_policy(GTK_WINDOW(ca->window), FALSE, FALSE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
 	gtk_signal_connect(GTK_OBJECT(ca->window),"delete_event",
@@ -2413,6 +2423,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	/* Make a label for away entry */
 	label = gtk_label_new(_("Away title: "));
 	gtk_box_pack_start(GTK_BOX(titlebox), label, TRUE, TRUE, 5);
+	gtk_widget_show(label);
 
 	/* make away title entry */
 	ca->entry = gtk_entry_new();
@@ -2432,15 +2443,51 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_show(ca->text);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 5);   
 
-	/* make create button */
-	create = gtk_button_new_with_label (_("Create new message"));
-	gtk_box_pack_start(GTK_BOX(hbox), create, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(create), "clicked", GTK_SIGNAL_FUNC(create_mess), ca);
+	/* create 'create' button */
 	
+	button_box = gtk_hbox_new(TRUE, 5);
+
+	icon = gdk_pixmap_create_from_xpm_d( ca->window->window , &mask, NULL, save_xpm);
+	icon_i = gtk_pixmap_new ( icon, mask );
+	label = gtk_label_new(_("Save"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+	gtk_widget_show(icon_i);
+	gtk_widget_show(label);
+
+	button = gtk_button_new();
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_mess), ca);
+	gtk_widget_show(button_box);
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+	gtk_widget_show(button);
+
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+
+	/* End of our create button code */
+
 	/* create cancel button */
-	cancel = gtk_button_new_with_label(_("Cancel"));
-	gtk_box_pack_end(GTK_BOX(hbox), cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
+
+	button_box = gtk_hbox_new(TRUE, 5);
+
+	icon = gdk_pixmap_create_from_xpm_d( ca->window->window , &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new ( icon, mask );
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+	gtk_widget_show(icon_i);
+	gtk_widget_show(label);
+
+	button = gtk_button_new();
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
+	gtk_widget_show(button_box);
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+	gtk_widget_show(button);
+
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+
+	/* End of our cancel button code */
 
 	/* Checkbox for showing away msg */
 	ca->checkbx = gtk_check_button_new_with_label(_("Make away now"));
@@ -2453,14 +2500,12 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_container_add(GTK_CONTAINER(frame), fbox);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
 	gtk_box_pack_start(GTK_BOX(tbox), frame, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(tbox), hbox, TRUE, FALSE, 0);
 	
 	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
 
 	/* let the world see what we have done. */
 	gtk_widget_show(label);
-	gtk_widget_show(create);
-	gtk_widget_show(cancel);
 	gtk_widget_show(ca->checkbx);
 	gtk_widget_show(ca->entry);
 	gtk_widget_show(titlebox);
@@ -2472,8 +2517,4 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
         gtk_widget_realize(ca->window);
         aol_icon(ca->window->window);
-
-	gtk_widget_show(ca->window);
-
-
 }
