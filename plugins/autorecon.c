@@ -11,6 +11,8 @@
 #include "win32dep.h"
 #endif
 
+G_MODULE_IMPORT GSList *gaim_accounts;
+
 #define INITIAL 8000
 #define MAXTIME 1024000
 
@@ -20,9 +22,13 @@ static guint tim = 0;
 
 static gboolean do_signon(gpointer data) {
 	struct gaim_account *account = data;
+	debug_printf("do_signon called\n");
+
 	if (g_slist_index(gaim_accounts, account) < 0)
 		return FALSE;
+	debug_printf("calling serv_login\n");
 	serv_login(account);
+	debug_printf("done calling serv_login\n");
 	tim = 0;
 	return FALSE;
 }
