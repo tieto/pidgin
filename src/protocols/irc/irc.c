@@ -569,7 +569,7 @@ static void
 handle_list(struct gaim_connection *gc, char *list)
 {
 	struct irc_data *id = gc->proto_data;
-	GSList *gr, *gr1;
+	GaimBlistNode *gnode, *bnode;
 
 	id->str = g_string_append_c(id->str, ' ');
 	id->str = g_string_append(id->str, list);
@@ -578,13 +578,14 @@ handle_list(struct gaim_connection *gc, char *list)
 		return;
 
 	g_strdown(id->str->str);
-	gr = gaim_blist_groups();
-	gr1 = gr;
-	while (gr1) {
-		GSList *m = gaim_blist_members((struct group *)gr1->data);
-		GSList *m1 = m;
-		while (m1) {
-			struct buddy *b = m->data;
+
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(bnode = gnode->child; bnode; bnode = bnode->next) {
+			struct buddy *b = (struct buddy *)bnode;
+			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				continue;
 			if(b->account->gc == gc) {
 				char *tmp = g_strdup(b->name);
 				char *x, *l;
@@ -599,12 +600,8 @@ handle_list(struct gaim_connection *gc, char *list)
 					serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
 				g_free(tmp);
 			}
-			m1 = m1->next;
 		}
-		g_slist_free(m);
-		gr1 = gr1->next;
 	}
-	g_slist_free(gr);
 	g_string_free(id->str, TRUE);
 	id->str = g_string_new("");
 }
@@ -618,17 +615,18 @@ irc_request_buddy_update(gpointer data)
 	int n = g_snprintf(buf, sizeof(buf), "ISON");
 	gboolean found = FALSE;
 
-	GSList *gr = gaim_blist_groups();
-	GSList *gr1 = gr;
-	if (!gr || id->bc)
+	GaimBlistNode *gnode, *bnode;
+
+	if (id->bc)
 		return TRUE;
 
-	while (gr1) {
-		struct group *g = gr->data;
-		GSList *m = gaim_blist_members(g);
-		GSList *m1 = m;
-		while (m1) {
-			struct buddy *b = m->data;
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(bnode = gnode->child; bnode; bnode = bnode->next) {
+			struct buddy *b = (struct buddy *)bnode;
+			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				continue;
 			if(b->account->gc == gc) {
 				if (n + strlen(b->name) + 2 > sizeof(buf)) {
 					g_snprintf(buf + n, sizeof(buf) - n, "\r\n");
@@ -640,12 +638,8 @@ irc_request_buddy_update(gpointer data)
 
 				found = TRUE;
 			}
-			m1 = m1->next;
 		}
-		g_slist_free(m);
-		gr1 = gr1->next;
 	}
-	g_slist_free(gr);
 
 	if (found) {
 		g_snprintf(buf + n, sizeof(buf) - n, "\r\n");

@@ -440,21 +440,20 @@ static gint check_notify(gpointer data)
 
 static gint check_loc(gpointer data)
 {
-	GSList *gr, *gr1, *m, *m1;
+	GaimBlistNode *gnode,*bnode;
 	ZAsyncLocateData_t ald;
 
 	ald.user = NULL;
 	memset(&(ald.uid), 0, sizeof(ZUnique_Id_t));
 	ald.version = NULL;
 
-	gr = gaim_blist_groups();
-        gr1 = gr;
-	while (gr1) {
-		struct group *g = gr1->data;
-		m = gaim_blist_members(g);
-                m1 = m;
-		while (m1) {
-			struct buddy *b = m1->data;
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(bnode = gnode->child; bnode; bnode = bnode->next) {
+			struct buddy *b = (struct buddy *)bnode;
+			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				continue;
 			if(b->account->gc == zgc) {
 				char *chk;
 				chk = zephyr_normalize(b->name);
@@ -463,12 +462,8 @@ static gint check_loc(gpointer data)
 				free(ald.user);
 				free(ald.version);
 			}
-			m1 = m1->next;
 		}
-                g_slist_free(m);
-		gr1 = gr1->next;
 	}
-        g_slist_free(gr1);
 
 	return TRUE;
 }
@@ -669,8 +664,7 @@ static void write_zsubs()
 
 static void write_anyone()
 {
-	GSList *gr, *gr1, *m, *m1;
-	struct group *g;
+	GaimBlistNode *gnode,*bnode;
 	struct buddy *b;
 	char *ptr, *fname, *ptr2;
 	FILE *fd;
@@ -682,14 +676,13 @@ static void write_anyone()
 		return;
 	}
 
-	gr = gaim_blist_groups();
-	gr1 = gr;
-        while (gr1) {
-		g = gr1->data;
-		m = gaim_blist_members(g);
-                m1 = m;
-		while (m1) {
-			b = m1->data;
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(bnode = gnode->child; bnode; bnode = bnode->next) {
+			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				continue;
+			b = (struct buddy *)bnode;
 			if(b->account->gc == zgc) {
 				if ((ptr = strchr(b->name, '@')) != NULL) {
 					ptr2 = ptr + 1;
@@ -704,12 +697,8 @@ static void write_anyone()
 				if (ptr)
 					*ptr = '@';
 			}
-			m1 = m1->next;
 		}
-                g_slist_free(m);
-		gr1 = gr1->next;
 	}
-        g_slist_free(gr);
 
 	fclose(fd);
 	g_free(fname);

@@ -267,9 +267,7 @@ static void toc_close(struct gaim_connection *gc)
 
 static void toc_build_config(struct gaim_account *account, char *s, int len, gboolean show)
 {
-	GSList *grp = gaim_blist_groups();
-	GSList *grp1 = grp;
-	GSList *mem, *mem1;
+	GaimBlistNode *gnode,*bnode;
 	struct group *g;
 	struct buddy *b;
 	GSList *plist = account->permit;
@@ -281,26 +279,24 @@ static void toc_build_config(struct gaim_account *account, char *s, int len, gbo
 		account->permdeny = 1;
 
 	pos += g_snprintf(&s[pos], len - pos, "m %d\n", account->permdeny);
-	while (len > pos && grp1) {
-		g = (struct group *)grp1->data;
+	for(gnode = gaim_get_blist()->root; gnode && len > pos; gnode = gnode->next) {
+		g = (struct group *)gnode;
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
 		if(gaim_group_on_account(g, account)) {
 			pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
-			mem = gaim_blist_members(g);
-			mem1 = mem;
-			while (len > pos && mem1) {
-				b = (struct buddy *)mem1->data;
+			for(bnode = gnode->child; bnode && len > pos; bnode = bnode->next) {
+				b = (struct buddy *)bnode;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
 				if(b->account == account) {
 					pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
 							(show && b->alias) ? ":" : "",
 							(show && b->alias) ? b->alias : "");
 				}
-				mem1 = mem1->next;
 			}
-			g_slist_free(mem);
 		}
-		grp1 = g_slist_next(grp1);
 	}
-	g_slist_free(grp);
 
 	while (len > pos && plist) {
 		pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);

@@ -111,33 +111,10 @@ struct gaim_blist_ui_ops
 	void (*remove)(struct gaim_buddy_list *list,
 		       GaimBlistNode *node);            /**< This removes a node from the list */
 	void (*destroy)(struct gaim_buddy_list *list);  /**< When the list gets destroyed, this gets called to destroy the UI. */
-	void (*set_visible)(struct gaim_buddy_list *list, 
+	void (*set_visible)(struct gaim_buddy_list *list,
 			    gboolean show);             /**< Hides or unhides the buddy list */
-	
-}; 
 
-/**************************************************************************/
-/** Public Utility Functions                                              */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Returns a GSList of the groups
- */
-GSList *gaim_blist_groups();
-
-/**
- *  Returns a GSList of the members of a group node.
- *
- * It's obviously much faster to recurse the GaimBlistNode linked list
- * then using this function.  You should try to avoid using it.  Only use it
- * when you're about to make a milestone release in a few hours and are desperately
- * trying to add a critical feature
- *
- * @param group The group
- */
-GSList *gaim_blist_members(struct group *group);
-/*@}*/
+};
 
 /**************************************************************************/
 /** @name Buddy List API                                                  */

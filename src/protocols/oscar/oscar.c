@@ -4544,20 +4544,19 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} /* end adding buddies from local list to server list */
 
 	{ /* Check for maximum number of buddies */
-		GSList *groups = gaim_blist_groups(), *cur;
-		for (cur=groups, tmp=0; cur; cur=g_slist_next(cur)) {
-			struct group* gr = (struct group*)cur->data;
-			GSList *buds = gaim_blist_members(gr);
-			GSList *buds1 = buds;
-			while(buds1) {
-				struct buddy *b = buds1->data;
+		GaimBlistNode *gnode,*bnode;
+		tmp = 0;
+		for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+				continue;
+			for(bnode = gnode->child; bnode; bnode = bnode->next) {
+				struct buddy *b = (struct buddy *)bnode;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
 				if(b->account == gc->account)
 					tmp++;
-				buds1 = buds1->next;
 			}
-			g_slist_free(buds);
 		}
-		g_slist_free(groups);
 
 		if (tmp > od->rights.maxbuddies) {
 			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
@@ -4567,7 +4566,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(dialog_msg);
 		}
 	}
-		
+
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
 	/* Make sure your privacy setting/invisibility is set how you want it before this! */
@@ -5417,16 +5416,19 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
 	gchar *nombre, *text, *tmp;
-	GSList *curg = gaim_blist_groups(), *curg1;
+	GaimBlistNode *gnode,*bnode;
 	int num=0;
 
 	text = g_strdup(_("You are awaiting authorization from the following buddies:<BR>"));
 
-	for (curg1 = curg; curg1; curg1=g_slist_next(curg1)) {
-		struct group *group = curg1->data;
-		GSList *curb = gaim_blist_members(group), *curb1;
-		for (curb1=curb; curb1; curb1=g_slist_next(curb1)) {
-			struct buddy *buddy = curb1->data;
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		struct group *group = (struct group *)gnode;
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for (bnode = gnode->child; bnode; bnode = bnode->next) {
+			struct buddy *buddy = (struct buddy *)bnode;
+			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				continue;
 			if (buddy->account == gc->account && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
 				if (gaim_get_buddy_alias_only(buddy))
 					nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_get_buddy_alias_only(buddy));
@@ -5439,9 +5441,7 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 				num++;
 			}
 		}
-		g_slist_free(curb);
 	}
-	g_slist_free(curg);
 
 	if (!num) {
 		tmp = g_strdup_printf("%s<BR>%s", text, _("<i>you are not waiting for authorization</i>"));

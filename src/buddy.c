@@ -263,16 +263,6 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 #endif
 }
 
-static void gaim_gtk_blist_reordered_cb(GtkTreeModel *model,
-					GtkTreePath *path,
-					GtkTreeIter *iter,
-					gint        *neworder,
-					gpointer    null)
-{
-	debug_printf("This doesn't work because GTK is broken\n");
-
-}
-
 /* This is called 10 seconds after the buddy logs in.  It removes the "logged in" icon and replaces it with
  * the normal status icon */
 

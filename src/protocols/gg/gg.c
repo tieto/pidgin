@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5095 2003-03-14 17:06:00Z thekingant $
+ * $Id: gg.c 5105 2003-03-15 03:23:30Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1006,8 +1006,7 @@ static void export_buddies_server(struct gaim_connection *gc)
 	gchar *u = gg_urlencode(gc->username);
 	gchar *p = gg_urlencode(gc->password);
 
-	GSList *gr = gaim_blist_groups();
-	GSList *gr1 = gr;
+	GaimBlistNode *gnode, *bnode;
 
 	he->gc = gc;
 	he->type = AGG_HTTP_USERLIST_EXPORT;
@@ -1018,13 +1017,16 @@ static void export_buddies_server(struct gaim_connection *gc)
 	g_free(u);
 	g_free(p);
 
-	while (gr1) {
-		struct group *g = gr1->data;
-		GSList *m = gaim_blist_members(g);
-		GSList *m1 = m;
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		struct group *g = (struct group *)gnode;
 		int num_added=0;
-		while (m1) {
-			struct buddy *b = m1->data;
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(bnode = gnode->child; bnode; bnode = bnode->next) {
+			struct buddy *b = (struct buddy *)bnode;
+
+			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				continue;
 
 			if(b->account == gc->account) {
 				gchar *newdata;
@@ -1053,12 +1055,8 @@ static void export_buddies_server(struct gaim_connection *gc)
 				g_free(show);
 				g_free(name);
 			}
-			m1 = g_slist_next(m1);
 		}
-		g_slist_free(m);
-		gr = g_slist_next(gr1);
 	}
-	g_slist_free(gr);
 
 	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		do_error_dialog(_("Couldn't export buddy list"), 

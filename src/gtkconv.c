@@ -2202,8 +2202,7 @@ generate_send_as_items(struct gaim_window *win,
 static GList *
 generate_invite_user_names(struct gaim_connection *gc)
 {
-	GSList *grp = gaim_blist_groups(), *grp1;
-	GSList *bl, *bl1;
+	GaimBlistNode *gnode,*bnode;
 	struct group *g;
 	struct buddy *buddy;
 	static GList *tmp = NULL;
@@ -2214,18 +2213,19 @@ generate_invite_user_names(struct gaim_connection *gc)
 	tmp = g_list_append(NULL, "");
 
 	if (gc != NULL) {
-		for (grp1 = grp; grp1 != NULL; grp1 = grp1->next) {
-			g = (struct group *)grp1->data;
-			bl = gaim_blist_members(g);
-			for (bl1 = bl; bl1 != NULL; bl1 = bl1->next) {
-				buddy = (struct buddy *)bl1->data;
+		for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+				continue;
+			g = (struct group *)gnode;
+			for(bnode = gnode->child; bnode; bnode = bnode->next) {
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				buddy = (struct buddy *)bnode;
 
-				if (buddy->present)
+				if (buddy->account == gc->account && buddy->present)
 					tmp = g_list_append(tmp, buddy->name);
 			}
-			g_slist_free(bl);
 		}
-		g_slist_free(grp);
 	}
 
 	return tmp;

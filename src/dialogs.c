@@ -935,20 +935,21 @@ static GList *groups_tree(struct gaim_connection *gc)
 	GList *tmp = NULL;
 	char *tmp2;
 	struct group *g;
-	GSList *grp = gaim_blist_groups();
-	GSList *grp1 = grp;
 
-	if (!grp) {
+	GaimBlistNode *gnode = gaim_get_blist()->root;
+
+	if (!gnode) {
 		tmp2 = g_strdup(_("Buddies"));
 		tmp = g_list_append(tmp, tmp2);
 	} else {
-		while (grp1) {
-			g = (struct group *)grp1->data;
-			tmp2 = g->name;
-			tmp = g_list_append(tmp, tmp2);
-			grp1 = g_slist_next(grp1);
+		while (gnode) {
+			if(GAIM_BLIST_NODE_IS_GROUP(gnode)) {
+				g = (struct group *)gnode;
+				tmp2 = g->name;
+				tmp = g_list_append(tmp, tmp2);
+			}
+			gnode = gnode->next;
 		}
-		g_slist_free(grp);
 	}
 	return tmp;
 }
@@ -3997,7 +3998,6 @@ static void do_rename_buddy(GObject *obj, GtkWidget *entry)
 {
 	const char *new_name;
 	struct buddy *b;
-	GSList *gr, *gr1;
 
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	b = g_object_get_data(obj, "buddy");
@@ -4007,27 +4007,12 @@ static void do_rename_buddy(GObject *obj, GtkWidget *entry)
 		return;
 	}
 
-	gr = gaim_blist_groups();
-	gr1 = gr;
-	while (gr1) {
-		GSList *mem = gaim_blist_members((struct group*)gr->data);
-		if (g_slist_find(mem, b))
-			break;
-		gr1 = gr1->next;
-		g_slist_free(mem);
-	}
-	g_slist_free(gr);
-	if (!gr) {
-		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
-		return;
-	}
-
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, b->name)) {
 		struct group *g = gaim_find_buddys_group(b);
-		char *prevname = g_strdup(b->name);
+		char *prevname = b->name;
 		if (g)
 			serv_remove_buddy(b->account->gc, b->name, g->name);
-		g_snprintf(b->name, sizeof(b->name), "%s", new_name);
+		b->name = g_strdup(new_name);
 		serv_add_buddy(b->account->gc, b->name);
 		gaim_blist_rename_buddy(b, prevname);
 		gaim_blist_save();
