@@ -198,7 +198,8 @@ gint linkify_text(char *text)
                                 t++;
 
                         }
-                } else if (!strncasecmp(c, "ftp.", 4)) {
+                } else if (!strncasecmp(c, "ftp.", 4) ) {
+			if (strncasecmp(c, "ftp..", 5)) {
                         t = c;
                         while(1) {
                                 if (badchar(*t)) {
@@ -218,6 +219,7 @@ gint linkify_text(char *text)
                                         break;
                                 t++;
                         }
+			}
                 } else if (!strncasecmp(c, "mailto:", 7)) {
                         t = c;
                         while(1) {
@@ -240,9 +242,10 @@ gint linkify_text(char *text)
                         char *tmp;
                         int flag;
                         int len=0;
+			char illegal_chars[] = "!@#$%^&*()[]{}/\\<>\":;\0";
                         url_buf[0] = 0;
 
-                        if (*(c-1) == ' ' || *(c+1) == ' ')
+                        if (*(c-1) == ' ' || *(c+1) == ' ' || rindex(illegal_chars, *(c+1))) 
                                 flag = 0;
                         else
                                 flag = 1;
