@@ -3379,6 +3379,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 						alltext++;
 					alltext = alltext + strlen("<DATA ID=\"\" SIZE=\"\">") + strlen(id) + strlen(datasize);
 					g_free(tmp);
+					if (atoi(datasize) > len - pos)
+						break;
 					imagedata = g_malloc(atoi(datasize));
 					memcpy(imagedata, alltext, atoi(datasize));
 					
