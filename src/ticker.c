@@ -224,6 +224,8 @@ BuddyTickerMessageRemove( gpointer data )
 {
 	if ( userclose == TRUE )
 		return FALSE;
+	if ( tickerwindow == NULL )
+		return FALSE;
 	gtk_ticker_remove( GTK_TICKER( ticker ), msgw );
 	return FALSE;
 }
@@ -259,7 +261,8 @@ BuddyTickerSignoff( void )
 		p = tickerbuds;
 	}
 	userclose = FALSE;
-	gtk_widget_hide( tickerwindow );
+	if ( tickerwindow )
+		gtk_widget_hide( tickerwindow );
 }
 
 void
