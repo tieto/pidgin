@@ -7,7 +7,6 @@ plugins/filectl.c
 plugins/gaim-remote/remote.c
 plugins/gaiminc.c
 plugins/gestures/gestures.c
-plugins/gtik.c
 plugins/history.c
 plugins/iconaway.c
 plugins/idle.c
