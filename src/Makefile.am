@@ -36,8 +36,7 @@ CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" -DLIBDIR=\"$(libdir)/gaim/\" $(DEBUG
 
 LIBS = @LIBS@ $(GTK_LIBS) $(SOUND_LIBS) $(STATIC_LINK_LIBS) $(PERL_LIBS) $(XSS_LIBS) $(INTLLIBS) $(DEBUG_LIBS)
 
-EXTRA_DIST =	applet.h \
-		convo.h \
+EXTRA_DIST =	convo.h \
 		core.h \
 		gaim.h \
 		getopt.c \
