@@ -53,7 +53,7 @@ enum docklet_status {
 static void docklet_create();
 
 /* globals */
-static EggTrayIcon *docklet;
+static EggTrayIcon *docklet = NULL;
 static GtkWidget *icon;
 static enum docklet_status status;
 
@@ -98,7 +98,7 @@ static void docklet_toggle() {
 }
 
 static void docklet_menu(GdkEventButton *event) {
-	static GtkWidget *menu;
+	static GtkWidget *menu = NULL;
 	GtkWidget *entry;
 
 	if (menu) {
