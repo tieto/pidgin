@@ -667,13 +667,9 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
-static void html_logger_create(GaimLog *log)
-{
-}
-
 static GaimLogLogger html_logger = {
 	N_("HTML"), "html",
-	html_logger_create,
+	NULL,
 	html_logger_write,
 	html_logger_finalize,
 	html_logger_list,
@@ -803,13 +799,9 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
-static void txt_logger_create(GaimLog *log)
-{
-}
-
 static GaimLogLogger txt_logger = {
 	N_("Plain text"), "txt",
-	txt_logger_create,
+	NULL,
 	txt_logger_write,
 	txt_logger_finalize,
 	txt_logger_list,
