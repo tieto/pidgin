@@ -209,7 +209,7 @@ set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 	add_user_options(dialog,     dialog->top_vbox);
 	add_protocol_options(dialog, dialog->bottom_vbox);
 
-	if (dialog->prpl_info->register_user == NULL)
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user)
 		gtk_widget_hide(dialog->register_button);
 	else
 		gtk_widget_show(dialog->register_button);
@@ -989,7 +989,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* Buddy Icon */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_icon_entry));
 
-	if ((dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON) && *value != '\0')
+	if (dialog->prpl_info &&
+			(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON) &&
+			*value != '\0')
 		gaim_account_set_buddy_icon(dialog->account, value);
 	else
 		gaim_account_set_buddy_icon(dialog->account, NULL);
@@ -1000,7 +1002,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
 
 	/* Check Mail */
-	if (dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
+	if (dialog->prpl_info && dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
 		gaim_account_set_check_mail(dialog->account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
@@ -1022,25 +1024,27 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	username =
 		g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
 
-	for (l = dialog->prpl_info->user_splits, l2 = dialog->user_split_entries;
-		 l != NULL && l2 != NULL;
-		 l = l->next, l2 = l2->next) {
+	if(dialog->prpl_info) {
+		for (l = dialog->prpl_info->user_splits, l2 = dialog->user_split_entries;
+				l != NULL && l2 != NULL;
+				l = l->next, l2 = l2->next) {
 
-		GaimAccountUserSplit *split = l->data;
-		GtkEntry *entry = l2->data;
-		char sep[2] = " ";
+			GaimAccountUserSplit *split = l->data;
+			GtkEntry *entry = l2->data;
+			char sep[2] = " ";
 
-		value = gtk_entry_get_text(entry);
+			value = gtk_entry_get_text(entry);
 
-		*sep = gaim_account_user_split_get_separator(split);
+			*sep = gaim_account_user_split_get_separator(split);
 
-		tmp = g_strconcat(username, sep,
-						  (*value ? value :
-						   gaim_account_user_split_get_default_value(split)),
-						  NULL);
+			tmp = g_strconcat(username, sep,
+					(*value ? value :
+					 gaim_account_user_split_get_default_value(split)),
+					NULL);
 
-		g_free(username);
-		username = tmp;
+			g_free(username);
+			username = tmp;
+		}
 	}
 
 	gaim_account_set_username(dialog->account, username);
@@ -1048,41 +1052,43 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* Add the protocol settings */
 
-	for (l = dialog->prpl_info->protocol_options,
-		 l2 = dialog->protocol_opt_entries;
-		 l != NULL && l2 != NULL;
-		 l = l->next, l2 = l2->next) {
+	if(dialog->prpl_info) {
+		for (l = dialog->prpl_info->protocol_options,
+				l2 = dialog->protocol_opt_entries;
+				l != NULL && l2 != NULL;
+				l = l->next, l2 = l2->next) {
 
-		GaimPrefType type;
-		GaimAccountOption *option = l->data;
-		GtkWidget *widget = l2->data;
-		const char *setting;
-		int int_value;
-		gboolean bool_value;
+			GaimPrefType type;
+			GaimAccountOption *option = l->data;
+			GtkWidget *widget = l2->data;
+			const char *setting;
+			int int_value;
+			gboolean bool_value;
 
-		type = gaim_account_option_get_type(option);
+			type = gaim_account_option_get_type(option);
 
-		setting = gaim_account_option_get_setting(option);
+			setting = gaim_account_option_get_setting(option);
 
-		switch (type) {
-			case GAIM_PREF_STRING:
-				value = gtk_entry_get_text(GTK_ENTRY(widget));
-				gaim_account_set_string(dialog->account, setting, value);
-				break;
+			switch (type) {
+				case GAIM_PREF_STRING:
+					value = gtk_entry_get_text(GTK_ENTRY(widget));
+					gaim_account_set_string(dialog->account, setting, value);
+					break;
 
-			case GAIM_PREF_INT:
-				int_value = atoi(gtk_entry_get_text(GTK_ENTRY(widget)));
-				gaim_account_set_int(dialog->account, setting, int_value);
-				break;
+				case GAIM_PREF_INT:
+					int_value = atoi(gtk_entry_get_text(GTK_ENTRY(widget)));
+					gaim_account_set_int(dialog->account, setting, int_value);
+					break;
 
-			case GAIM_PREF_BOOLEAN:
-				bool_value =
-					gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-				gaim_account_set_bool(dialog->account, setting, bool_value);
-				break;
+				case GAIM_PREF_BOOLEAN:
+					bool_value =
+						gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+					gaim_account_set_bool(dialog->account, setting, bool_value);
+					break;
 
-			default:
-				break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -1272,7 +1278,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	if (dialog->account == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
 
-	if (dialog->prpl_info->register_user == NULL)
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user)
 		gtk_widget_hide(button);
 
 	/* Cancel button */
