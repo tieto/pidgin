@@ -628,6 +628,22 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
 
         b->idle = idle;
         b->evil = evil;
+#ifdef GAIM_PLUGINS
+	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
+		GList *c = callbacks;
+		struct gaim_callback *g;
+		void (*function)(char *, void *);
+		while (c) {
+			g = (struct gaim_callback *)c->data;
+			if (g->event == event_buddy_back &&
+					g->function != NULL) { 
+				function = g->function;
+				(*function)(b->name, g->data);
+			}
+			c = c->next;
+		}
+	}
+#endif
         b->uc = type;
         
         b->signon = signon;

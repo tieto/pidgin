@@ -69,12 +69,27 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 
         serv_set_away(NULL);
 	awaymessage = NULL;
+#ifdef GAIM_PLUGINS
+	{
+		GList *c = callbacks;
+		struct gaim_callback *g;
+		void (*function)(void *);
+		while (c) {
+			g = (struct gaim_callback *)c->data;
+			if (g->event == event_back && g->function != NULL) { 
+				function = g->function;
+				(*function)(g->data);
+			}
+			c = c->next;
+		}
+	}
+#endif
 }
 
 void do_away_message(GtkWidget *w, struct away_message *a)
 {
 	GtkWidget *back;
-	GtkWidget *awaytext;
+ 	GtkWidget *awaytext;
         GtkWidget *vscrollbar;
 	GtkWidget *bbox;
 	GtkWidget *vbox;
