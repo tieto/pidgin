@@ -3909,11 +3909,11 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 			if (fd) {
 				if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 					fprintf(fd,
-							"<HR><BR><H3 Align=Center> "
-							"---- New Conversation @ %s ----</H3><BR>\n",
+							_("<HR><BR><H3 Align=Center> "
+							"---- New Conversation @ %s ----</H3><BR>\n"),
 							full_date());
 				else
-					fprintf(fd, "---- New Conversation @ %s ----\n",
+					fprintf(fd, _("---- New Conversation @ %s ----\n"),
 							full_date());
 
 				fclose(fd);

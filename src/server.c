@@ -1295,10 +1295,10 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 		if (fd) {
 			if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 				fprintf(fd,
-					"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
+					_("<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"),
 					full_date());
 			else
-				fprintf(fd, "---- New Conversation @ %s ----\n", full_date());
+				fprintf(fd, _("---- New Conversation @ %s ----\n"), full_date());
 
 			fclose(fd);
 		}
