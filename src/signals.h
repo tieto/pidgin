@@ -237,6 +237,8 @@ void gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER_POINTER(
 		GaimCallback cb, va_list args, void *data, void **return_val);
 void gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT(
 		GaimCallback cb, va_list args, void *data, void **return_val);
+void gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT(
+		GaimCallback cb, va_list args, void *data, void **return_val);
 void gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT(
 		GaimCallback cb, va_list args, void *data, void **return_val);
 

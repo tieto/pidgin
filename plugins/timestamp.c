@@ -93,14 +93,11 @@ timestamp_displaying_conv_msg(GaimAccount *account, GaimConversation *conv,
 
 static gboolean
 timestamp_receiving_msg(GaimAccount *account, char **sender, char **buffer,
-				   int *flags, void *data)
+						GaimConversation *conv, int *flags, void *data)
 {
-	GaimConversation* conv;
-	
-	conv = gaim_find_conversation_with_account(*sender, account);
-	if (conv != NULL)
-		return timestamp_displaying_conv_msg(account, conv, buffer, data);
-	return FALSE;
+	g_return_val_if_fail(conv != NULL, FALSE);
+
+	return timestamp_displaying_conv_msg(account, conv, buffer, data);
 }
 
 

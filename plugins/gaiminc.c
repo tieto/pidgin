@@ -20,7 +20,8 @@ echo_hi(GaimConnection *gc)
 }
 
 static gboolean
-reverse(GaimAccount *account, char **who, char **message, int *flags)
+reverse(GaimAccount *account, char **who, char **message,
+		GaimConversation *conv, int *flags)
 {
 	/* this will drive you insane. whenever you receive a message,
 	 * the text of the message (HTML and all) will be reversed. */

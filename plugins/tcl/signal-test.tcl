@@ -46,22 +46,22 @@ gaim::signal connect [gaim::core handle] quitting {} {
 	gaim::debug -info "tcl signal" "quitting"
 }
 
-gaim::signal connect [gaim::conversation handle] receiving-chat-msg { account who what id } {
-	gaim::debug -info "tcl signal" "receiving-chat-msg [gaim::account username $account] $id $who \"$what\""
+gaim::signal connect [gaim::conversation handle] receiving-chat-msg { account who what id flags } {
+	gaim::debug -info "tcl signal" "receiving-chat-msg [gaim::account username $account] $id $flags $who \"$what\""
 	return 0
 }
 
-gaim::signal connect [gaim::conversation handle] receiving-im-msg { account who what flags } {
-	gaim::debug -info "tcl signal" "receiving-im-msg [gaim::account username $account] $flags $who \"$what\""
+gaim::signal connect [gaim::conversation handle] receiving-im-msg { account who what id flags } {
+	gaim::debug -info "tcl signal" "receiving-im-msg [gaim::account username $account] $id $flags $who \"$what\""
 	return 0
 }
 
-gaim::signal connect [gaim::conversation handle] received-chat-msg { account who what id } {
-	gaim::debug -info "tcl signal" "received-chat-msg [gaim::account username $account] $id $who \"$what\""
+gaim::signal connect [gaim::conversation handle] received-chat-msg { account who what id flags } {
+	gaim::debug -info "tcl signal" "received-chat-msg [gaim::account username $account] $id $flags $who \"$what\""
 }
 
-gaim::signal connect [gaim::conversation handle] received-im-msg { account who what flags } {
-	gaim::debug -info "tcl signal" "received-im-msg [gaim::account username $account] $flags $who \"$what\""
+gaim::signal connect [gaim::conversation handle] received-im-msg { account who what id flags } {
+	gaim::debug -info "tcl signal" "received-im-msg [gaim::account username $account] $id $flags $who \"$what\""
 }
 
 gaim::signal connect [gaim::conversation handle] sending-chat-msg { account what id } {

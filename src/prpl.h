@@ -47,8 +47,8 @@ typedef enum
 typedef enum
 {
 	GAIM_CONV_CHAT_WHISPER = 0x0001,    /**< Whispered message.*/
-	GAIM_CONV_CHAT_DELAYED = 0x0002     /**< Delayed message.  */
-
+	GAIM_CONV_CHAT_DELAYED = 0x0002,    /**< Delayed message.  */
+	GAIM_CONV_CHAT_ALERT   = 0x0004     /**< Alert message.    */
 } GaimConvChatFlags;
 
 typedef enum {

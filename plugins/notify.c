@@ -213,10 +213,8 @@ unnotify_cb(GtkWidget *widget, gpointer data, GaimConversation *conv)
 
 static gboolean
 im_recv_im(GaimAccount *account, char *sender, char *message,
-           int *flags)
+           GaimConversation *conv, int *flags)
 {
-	GaimConversation *conv = gaim_find_conversation_with_account(sender, account);
-
 	notify(conv, TRUE);
 
 	return FALSE;
@@ -224,7 +222,7 @@ im_recv_im(GaimAccount *account, char *sender, char *message,
 
 static gboolean
 chat_recv_im(GaimAccount *account, char *sender, char *message,
-             GaimConversation *conv)
+             GaimConversation *conv, int *flags)
 {
 	notify(conv, TRUE);
 

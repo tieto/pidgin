@@ -9,6 +9,12 @@ version 2.0.0cvs:
 	* Changed: gtk_imhtml_toolbar now descends from GtkHBox making it
 		   easier to add your own widgets to it
 
+	Signals:
+	* Changed: "received-im-msg and "received-chat-msg" to match, both
+		   now pass a conversation pointer and flags
+	* Changed: "receiving-im-msg" and "receving-chat-msg" to match, both
+		   now pass a conversation pointer and a pointer to the flags.
+
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
 	* Changed: gaim_blist_update_buddy_presence(), presence changed to

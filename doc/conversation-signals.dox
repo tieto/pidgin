@@ -124,7 +124,7 @@ void (*sent_im_msg)(GaimAccount *account, const char *receiver,
  @signaldef receiving-im-msg
   @signalproto
 gboolean (*receiving_im_msg)(GaimAccount *account, char **sender,
-                            char **message, int *flags);
+                            char **message, GaimConversation *conv, int *flags);
   @endsignalproto
   @signaldesc
    Emitted when an IM is received. The callback can replace the name of the
@@ -137,20 +137,22 @@ gboolean (*receiving_im_msg)(GaimAccount *account, char **sender,
   @param account The account the message was received on.
   @param sender  A pointer to the username of the sender.
   @param message A pointer to the message that was sent.
-  @param flags   The message flags.
+  @param conv    The IM conversation.
+  @param flags   A pointer to the IM message flags.
  @endsignaldef
 
  @signaldef received-im-msg
   @signalproto
-void (*received_im_msg)(GaimAccount *account, char *sender,
-                            char *message, int flags);
+void (*received_im_msg)(GaimAccount *account, char *sender, char *message,
+                            GaimConversation *conv, int flags);
   @endsignalproto
   @signaldesc
    Emitted after an IM is received.
   @param account The account the message was received on.
   @param sender  The username of the sender.
   @param message The message that was sent.
-  @param flags   The message flags.
+  @param conv    The IM conversation.
+  @param flags   The IM message flags.
  @endsignaldef
 
  @signaldef writing-chat-msg
@@ -241,11 +243,11 @@ void (*sent_chat_msg)(GaimAccount *account, const char *message, int id);
  @signaldef receiving-chat-msg
   @signalproto
 gboolean (*receiving_chat_msg)(GaimAccount *account, char **sender,
-                              char **message, GaimConversation *conv);
+                              char **message, GaimConversation *conv, int *flags);
   @endsignalproto
   @signaldesc
    Emitted when a chat message is received. The callback can replace the
-   name of the sender or the messageby modifying the pointer to the
+   name of the sender, the message, or the flags by modifying the pointer to the
    strings. This can also be used to cancel displaying a message by
    returning @c TRUE.
   @note
@@ -255,12 +257,13 @@ gboolean (*receiving_chat_msg)(GaimAccount *account, char **sender,
   @param sender  A pointer to the username of the sender.
   @param message A pointer to the message that was sent.
   @param conv    The chat conversation.
+  @param flags   A pointer to the chat message flags
  @endsignaldef
 
  @signaldef received-chat-msg
   @signalproto
-void (*received_chat_msg)(GaimAccount *account, char *sender,
-                              char *message, GaimConversation *conv);
+void (*received_chat_msg)(GaimAccount *account, char *sender, char *message,
+                              GaimConversation *conv, int flags);
   @endsignalproto
   @signaldesc
    Emitted after a chat message is received.
@@ -268,6 +271,7 @@ void (*received_chat_msg)(GaimAccount *account, char *sender,
   @param sender  The username of the sender.
   @param message The message that was sent.
   @param conv    The chat conversation.
+  @param flags   The chat message flags.
  @endsignaldef
 
  @signaldef conversation-switching

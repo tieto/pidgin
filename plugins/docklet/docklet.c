@@ -426,8 +426,8 @@ gaim_away(GaimAccount *account, char *state, char *message, void *data)
 }
 
 static gboolean
-gaim_conv_im_recv(GaimAccount *account, char *sender,
-			 char *message, int flags, void *data)
+gaim_conv_im_recv(GaimAccount *account, char *sender, char *message, 
+			 GaimConversation *conv, int flags, void *data)
 {
 	/* if message queuing while away is enabled, this event could be the first
 	   message so we need to see if the status (and hence icon) needs changing.

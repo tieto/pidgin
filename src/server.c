@@ -807,7 +807,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	plugin_return = GPOINTER_TO_INT(
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
 								  "receiving-im-msg", gc->account,
-								  &angel, &buffy, &imflags));
+								  &angel, &buffy, cnv, &imflags));
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -821,7 +821,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	message = buffy;
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "received-im-msg", gc->account,
-					 name, message, imflags);
+					 name, message, cnv, imflags);
 
 	/* Make sure URLs are clickable */
 	buffy = gaim_markup_linkify(message);
@@ -1277,7 +1277,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	plugin_return = GPOINTER_TO_INT(
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
 								  "receiving-chat-msg", g->account,
-								  &angel, &buffy, conv));
+								  &angel, &buffy, conv, &chatflags));
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -1290,7 +1290,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	message = buffy;
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "received-chat-msg", g->account,
-					 who, message, conv);
+					 who, message, conv, chatflags);
 
 	/* Make sure URLs are clickable */
 	buf = gaim_markup_linkify(message);
@@ -1299,6 +1299,8 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 		msgflags |= GAIM_MESSAGE_WHISPER;
 	if (chatflags & GAIM_CONV_CHAT_DELAYED)
 		msgflags |= GAIM_MESSAGE_DELAYED;
+	if (chatflags & GAIM_CONV_CHAT_ALERT)
+		msgflags |= GAIM_MESSAGE_NICK;
 
 	gaim_conv_chat_write(chat, who, buf, msgflags, mtime);
 
