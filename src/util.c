@@ -1240,7 +1240,7 @@ int do_auto_login(char *name)
 }
 
 
-int file_is_dir(char *path, GtkWidget *w)
+int file_is_dir(const char *path, GtkWidget *w)
 {
 	struct stat st;
 	char *name;
