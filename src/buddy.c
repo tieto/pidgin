@@ -66,6 +66,7 @@
 #include "pixmaps/daemon-permdel.xpm"
 
 #include "pixmaps/add_small.xpm"
+#include "pixmaps/import_small.xpm"
 
 static GtkTooltips *tips;
 static GtkWidget *editpane;
@@ -1723,13 +1724,7 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 	gtk_widget_show(menuitem);
 
 	/* Create our container */
-	hbox = gtk_hbox_new(FALSE, 5);
-
-	/* Create our label and pack it */
-	label = gtk_label_new(str);
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-
+	hbox = gtk_hbox_new(FALSE, 2);
 
 	/* Create our pixmap and pack it */
 	pm = gdk_pixmap_create_from_xpm_d(menu->parent->window, &mask, NULL, xpm);
@@ -1737,9 +1732,14 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 	pixmap = gtk_pixmap_new(pm, mask);
 	gtk_widget_show(pixmap);
 
-	gtk_box_pack_end(GTK_BOX(hbox), pixmap, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), pixmap, FALSE, FALSE, 2);
 
-	
+	/* Create our label and pack it */
+
+	label = gtk_label_new(str);
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+
 	/* And finally, pack our box within our menu item */
 
 	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
@@ -1844,22 +1844,22 @@ void show_buddy_list()
 
 	// gaim_new_item(menu, _("Add A Buddy"), GTK_SIGNAL_FUNC(add_buddy_callback));
 	gaim_new_item_with_pixmap(menu, _("Add A Buddy"), add_small_xpm, GTK_SIGNAL_FUNC(add_buddy_callback));
-	gaim_new_item(menu, _("Join A Chat"), GTK_SIGNAL_FUNC(chat_callback));
+	gaim_new_item_with_pixmap(menu, _("Join A Chat"), add_small_xpm, GTK_SIGNAL_FUNC(chat_callback));
         gaim_seperator(menu);
-        gaim_new_item(menu, _("Import Buddy List"), GTK_SIGNAL_FUNC(import_callback));
-        gaim_new_item(menu, _("Export Buddy List"), GTK_SIGNAL_FUNC(export_callback));
+        gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm, GTK_SIGNAL_FUNC(import_callback));
+        gaim_new_item_with_pixmap(menu, _("Export Buddy List"), add_small_xpm,GTK_SIGNAL_FUNC(export_callback));
 	if (!(general_options & OPT_GEN_REGISTERED))
 	{
         	gaim_seperator(menu);
-		gaim_new_item(menu, _("Register"), GTK_SIGNAL_FUNC(gaimreg_callback));
+		gaim_new_item_with_pixmap(menu, _("Register"), add_small_xpm, GTK_SIGNAL_FUNC(gaimreg_callback));
 	}
 	gaim_seperator(menu);
-	gaim_new_item(menu, _("Signoff"), GTK_SIGNAL_FUNC(signoff));
+	gaim_new_item_with_pixmap(menu, _("Signoff"), add_small_xpm, GTK_SIGNAL_FUNC(signoff));
 
 #ifndef USE_APPLET
-	gaim_new_item(menu, _("Quit"), GTK_SIGNAL_FUNC(do_quit));
+	gaim_new_item_with_pixmap(menu, _("Quit"), add_small_xpm, GTK_SIGNAL_FUNC(do_quit));
 #else
-	gaim_new_item(menu, _("Close"), GTK_SIGNAL_FUNC(applet_destroy_buddy));
+	gaim_new_item_with_pixmap(menu, _("Close"), add_small_xpm, GTK_SIGNAL_FUNC(applet_destroy_buddy));
 #endif
 
 	menu = gtk_menu_new();
