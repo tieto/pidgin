@@ -36,6 +36,9 @@ version 0.79cvs:
 	* The disconnected UI op was called twice on connection errors. Now
 	  it is only called once. (Evan Schoenberg)
 	* Dragging into conversation windows works better
+	* Protocol-specific settings for accounts were being removed whenever the
+	  account was modified. Now they're only removed when the protocol type
+	  changes, as it should be.
 
 version 0.78 (05/30/2004):
 	New Features:

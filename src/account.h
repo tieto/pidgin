@@ -72,7 +72,7 @@ struct _GaimAccount
 	GSList *deny;               /**< Deny list.                           */
 	int perm_deny;              /**< The permit/deny setting.             */
 	GaimLog *system_log;        /**< The system log                       */
-	
+
 	void *ui_data;             /**< The UI can put data here.			  */
 };
 
@@ -541,7 +541,7 @@ GaimLog *gaim_account_get_log(GaimAccount *account);
  *
  * @param account The account.
  */
-	void gaim_account_destroy_log(GaimAccount *account);
+void gaim_account_destroy_log(GaimAccount *account);
 
 /*@}*/
 

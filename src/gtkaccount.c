@@ -201,7 +201,17 @@ static void
 set_account_protocol_cb(GtkWidget *item, const char *id,
 						AccountPrefsDialog *dialog)
 {
-	if ((dialog->plugin = gaim_find_prpl(id)) != NULL) {
+	GaimPlugin *new_plugin;
+
+	new_plugin = gaim_find_prpl(id);
+
+	if (new_plugin == dialog->plugin)
+		return;
+
+	dialog->plugin = new_plugin;
+
+	if (dialog->plugin != NULL)
+	{
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
 		if (dialog->protocol_id != NULL)
@@ -209,6 +219,9 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 		dialog->protocol_id = g_strdup(dialog->plugin->info->id);
 	}
+
+	if (dialog->account != NULL)
+		gaim_account_clear_settings(dialog->account);
 
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
@@ -1076,9 +1089,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		/* Protocol */
 		gaim_account_set_protocol_id(dialog->account, dialog->protocol_id);
 	}
-
-	/* Clear the existing settings. */
-	gaim_account_clear_settings(dialog->account);
 
 	/* Alias */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry));
