@@ -388,6 +388,16 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	return window;
 }
 
+static void *
+gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
+						 const char *title, const char *primary,
+						 const char *secondary, const char *text,
+						 GCallback cb, void *user_data)
+{
+	return (gaim_gtk_notify_formatted(title, primary, secondary,
+									  text, cb, user_data));
+}
+
 static void
 gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 {
@@ -622,6 +632,7 @@ static GaimNotifyUiOps ops =
 	gaim_gtk_notify_email,
 	gaim_gtk_notify_emails,
 	gaim_gtk_notify_formatted,
+	gaim_gtk_notify_userinfo,
 	gaim_gtk_notify_uri,
 	gaim_gtk_close_notify
 };

@@ -1476,8 +1476,9 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 		}
 	}
 
-	gaim_notify_formatted(NULL, NULL, _("User Properties"),
-						  NULL, info_text->str, NULL, NULL);
+	gaim_notify_userinfo(gc, nm_user_record_get_userid(user_record), NULL,
+						 _("User Properties"), NULL, info_text->str,
+						 NULL, NULL);
 
 	g_string_free(info_text, TRUE);
 }

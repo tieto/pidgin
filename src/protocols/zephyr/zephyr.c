@@ -640,7 +640,8 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
 					ZGetLocations(&locs, &one);
 					g_string_append_printf(str, _("<br>At %s since %s"), locs.host, locs.time);
 				}
-				gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, str->str, NULL, NULL);
+				gaim_notify_userinfo(gc, b ? b->name : user, NULL, _("Buddy Information"), NULL, 
+									 str->str, NULL, NULL);
 				g_string_free(str, TRUE);
 			} else
 				serv_got_update(gc, b->name, nlocs, 0, 0, 0, 0);

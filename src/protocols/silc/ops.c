@@ -1082,6 +1082,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("More..."), G_CALLBACK(silcgaim_whois_more));
 			else
 #endif
+				/* XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who' */
 				gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, buf, NULL, NULL);
 			g_free(buf);
 		}
@@ -1143,6 +1144,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			}
 
 			buf = g_string_free(s, FALSE);
+			/* XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who' */
 			gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, buf, NULL, NULL);
 			g_free(buf);
 		}

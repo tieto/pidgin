@@ -155,6 +155,33 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 	return NULL;
 }
 
+void *gaim_notify_userinfo(GaimConnection *gc, const char *who, const char *title,
+						   const char *primary, const char *secondary, 
+						   const char *text, GCallback cb, void *user_data)
+{
+	GaimNotifyUiOps *ops;
+
+	g_return_val_if_fail(primary != NULL, NULL);
+
+	ops = gaim_notify_get_ui_ops();
+
+	if (ops != NULL && ops->notify_userinfo != NULL) {
+		GaimNotifyInfo *info;
+
+		info            = g_new0(GaimNotifyInfo, 1);
+		info->type      = GAIM_NOTIFY_USERINFO;
+		info->handle    = gc;
+		info->ui_handle = ops->notify_userinfo(gc, who, title, primary,
+											   secondary, text, cb, user_data);
+
+		handles = g_list_append(handles, info);
+
+		return info->ui_handle;
+	}
+
+	return NULL;
+}
+
 void *
 gaim_notify_uri(void *handle, const char *uri)
 {

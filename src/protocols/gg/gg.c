@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10621 2004-08-15 19:34:20Z lschiere $
+ * $Id: gg.c 10665 2004-08-20 22:05:18Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -240,7 +240,7 @@ static void agg_get_away(GaimConnection *gc, const char *who)
 		splitmsg = g_strsplit(buddy->proto_data, "\r\n", 0);
     
 		dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, (char *)buddy->proto_data, g_strjoinv("<BR>", splitmsg));
-		gaim_notify_formatted(gc, NULL, _("Buddy Information"), buddy->proto_data, dialog_msg, NULL, (char *)who);
+		gaim_notify_userinfo(gc, who, NULL, _("Buddy Information"), buddy->proto_data, dialog_msg, NULL, NULL);
     }
 }
 #endif

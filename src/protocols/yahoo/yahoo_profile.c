@@ -760,8 +760,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
 				tooltip_text, _("Error retrieving profile"));
 
-		gaim_notify_formatted(info_data->gc, NULL, title, NULL,
-				buf, NULL, NULL);
+		gaim_notify_userinfo(info_data->gc, info_data->name, NULL, title,
+			NULL, buf, NULL, NULL);
 
 		g_free(profile_url_text);
 		g_free(tooltip_text);
@@ -797,8 +797,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 				  "you will need to visit this link in your web browser"),
 				profile_url_text, profile_url_text);
 
-		gaim_notify_formatted(info_data->gc, NULL, title, NULL,
-				buf, NULL, NULL);
+		gaim_notify_userinfo(info_data->gc, info_data->name, NULL, title, 
+				NULL, buf, NULL, NULL);
 
 		g_free(profile_url_text);
 		g_free(tooltip_text);
@@ -1180,8 +1180,8 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	g_string_prepend(s, "<html><body>\n");
 
 	/* show it to the user */
-	gaim_notify_formatted(info_data->gc, NULL, title, NULL,
-						  s->str, NULL, NULL);
+	gaim_notify_userinfo(info_data->gc, info_data->name, NULL, title,
+						  NULL, s->str, NULL, NULL);
 
 	g_free(last_updated_utf8_string);
 	g_free(url_buffer);

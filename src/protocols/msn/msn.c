@@ -1246,7 +1246,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
 				tooltip_text, _("Error retrieving profile"));
 
-		gaim_notify_formatted(info_data->gc, NULL,
+		gaim_notify_userinfo(info_data->gc, info_data->name, NULL,
 				title, NULL, buf, NULL, NULL);
 
 		g_free(tooltip_text);
@@ -1575,8 +1575,8 @@ static void msn_got_photo(void *data, const char *url_text, size_t len)
 #endif
 
 	g_string_prepend(s, tooltip_text);
-	gaim_notify_formatted(info_data->gc, NULL, title,
-						  NULL, s->str, NULL, NULL);
+	gaim_notify_userinfo(info_data->gc, info_data->name, NULL, 
+						 title, NULL, s->str, NULL, NULL);
 
 	g_free(stripped);
 	g_free(url_buffer);
