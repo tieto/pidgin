@@ -136,6 +136,7 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	MsnMessage *msg;
 	char *command_header;
 	char *tmp_base, *msg_base, *tmp, *field1, *field2, *c;
+	const char *content_type;
 	const char *c2;
 
 	g_return_val_if_fail(str != NULL, NULL);
@@ -244,7 +245,10 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	tmp += 2;
 
 	/* Now we *should* be at the body. */
-	if (!strcmp(msn_message_get_content_type(msg), "application/x-msnmsgrp2p"))
+	content_type = msn_message_get_content_type(msg);
+
+	if (content_type != NULL &&
+		!strcmp(content_type, "application/x-msnmsgrp2p"))
 	{
 		char header[48];
 		char footer[4];
