@@ -754,43 +754,45 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 
 static gboolean
 gtk_imhtml_is_amp_escape (const gchar *string,
-			  gchar       *replace,
+			  gchar       **replace,
 			  gint        *length)
 {
+	static char buf[3];
 	g_return_val_if_fail (string != NULL, FALSE);
 	g_return_val_if_fail (replace != NULL, FALSE);
 	g_return_val_if_fail (length != NULL, FALSE);
 
 	if (!g_ascii_strncasecmp (string, "&amp;", 5)) {
-		*replace = '&';
+		*replace = "&";
 		*length = 5;
 	} else if (!g_ascii_strncasecmp (string, "&lt;", 4)) {
-		*replace = '<';
+		*replace = "<";
 		*length = 4;
 	} else if (!g_ascii_strncasecmp (string, "&gt;", 4)) {
-		*replace = '>';
+		*replace = ">";
 		*length = 4;
 	} else if (!g_ascii_strncasecmp (string, "&nbsp;", 6)) {
-		*replace = ' ';
+		*replace = " ";
 		*length = 6;
 	} else if (!g_ascii_strncasecmp (string, "&copy;", 6)) {
-		*replace = '�'; /* was: '©' */
+		*replace = "©";
 		*length = 6;
 	} else if (!g_ascii_strncasecmp (string, "&quot;", 6)) {
-		*replace = '\"';
+		*replace = "\"";
 		*length = 6;
 	} else if (!g_ascii_strncasecmp (string, "&reg;", 5)) {
-		*replace = '�'; /* was: '®' */
+		*replace = "®";
 		*length = 5;
 	} else if (!g_ascii_strncasecmp (string, "&apos;", 6)) {
-		*replace = '\'';
+		*replace = "\'";
 		*length = 6;
 	} else if (*(string + 1) == '#') {
 		guint pound = 0;
 		if ((sscanf (string, "&#%u;", &pound) == 1) && pound != 0) {
 			if (*(string + 3 + (gint)log10 (pound)) != ';')
 				return FALSE;
-			*replace = (gchar)pound;
+			g_snprintf(buf, sizeof(buf), "%c", (gchar)pound);
+			*replace = buf;
 			*length = 2;
 			while (isdigit ((gint) string [*length])) (*length)++;
 			if (string [*length] == ';') (*length)++;
@@ -898,7 +900,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	gchar *e, *a;
 	gchar *val;
 	gint len;
-	gchar c;
+	gchar *c;
 	GString *ret;
 
 	while (g_ascii_strncasecmp (t, opt, strlen (opt))) {
@@ -935,7 +937,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	e = val;
 	while(*e) {
 		if(gtk_imhtml_is_amp_escape(e, &c, &len)) {
-			ret = g_string_append_c(ret, c);
+			ret = g_string_append(ret, c);
 			e += len;
 		} else {
 			ret = g_string_append_c(ret, *e);
@@ -1037,7 +1039,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	gint tlen, smilelen, wpos=0;
 	gint type;
 	const gchar *c;
-	gchar amp;
+	gchar *amp;
 
 	guint	bold = 0,
 		italics = 0,
@@ -1347,7 +1349,9 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			if(tag)
 				g_free(tag); /* This was allocated back in VALID_TAG() */
 		} else if (*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
-			ws [wpos++] = amp;
+			while(*amp) {
+				ws [wpos++] = *amp++;
+			}
 			c += tlen;
 			pos += tlen;
 		} else if (*c == '\n') {

@@ -154,6 +154,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 	jb = jabber_buddy_find(js, from, TRUE);
 
+	if(!jb)
+		return;
+
 	if(jb->error_msg) {
 		g_free(jb->error_msg);
 		jb->error_msg = NULL;
