@@ -1467,6 +1467,8 @@ new_line (GtkIMHtml *imhtml)
 
 	imhtml->x = BORDER_SIZE;
 	imhtml->y += imhtml->llheight;
+	imhtml->llheight = 0;
+	imhtml->llascent = 0;
 }
 
 static void
@@ -1624,8 +1626,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 				pos = 0;
 			seenspace = FALSE;
 			new_line (imhtml);
-			imhtml->llheight = 0;
-			imhtml->llascent = 0;
 		}
 
 		backwards_update (imhtml, bit, height, bit->font->ascent);
@@ -1650,6 +1650,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 				tmp = g_strndup (copy + pos, newpos);
 				pos += newpos;
 
+				backwards_update (imhtml, bit, height, bit->font->ascent);
 				add_text_renderer (imhtml, bit, tmp);
 
 				seenspace = FALSE;
@@ -1657,6 +1658,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 			} else {
 				tmp = g_strdup (copy + pos);
 
+				backwards_update (imhtml, bit, height, bit->font->ascent);
 				add_text_renderer (imhtml, bit, tmp);
 
 				pos = strlen (bit->text);
@@ -1670,26 +1672,19 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		gdk_window_get_size (bit->pm, &width, &height);
 
 		if ((imhtml->x != BORDER_SIZE) &&
-				((imhtml->x + width + BORDER_SIZE + BORDER_SIZE + 5) > imhtml->xsize)) {
+				((imhtml->x + width + BORDER_SIZE + BORDER_SIZE + 5) > imhtml->xsize))
 			new_line (imhtml);
-			imhtml->llheight = 0;
-			imhtml->llascent = 0;
-		} else
+		else
 			backwards_update (imhtml, bit, height, 0);
 
 		add_img_renderer (imhtml, bit);
 	} else if (bit->type == TYPE_BR) {
 		new_line (imhtml);
-		imhtml->llheight = 0;
-		imhtml->llascent = 0;
 		add_text_renderer (imhtml, bit, NULL);
 	} else if (bit->type == TYPE_SEP) {
 		struct line_info *li;
-		if (imhtml->llheight) {
+		if (imhtml->llheight)
 			new_line (imhtml);
-			imhtml->llheight = 0;
-			imhtml->llascent = 0;
-		}
 
 		li = g_new0 (struct line_info, 1);
 		li->x = imhtml->x;
@@ -1704,8 +1699,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 
 		imhtml->llheight = HR_HEIGHT * 2;
 		new_line (imhtml);
-		imhtml->llheight = 0;
-		imhtml->llascent = 0;
 		add_text_renderer (imhtml, bit, NULL);
 	}
 
