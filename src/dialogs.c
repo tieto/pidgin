@@ -476,7 +476,7 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 
 	gtk_widget_realize(b->window);
 
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(b->window), vbox);
 	gtk_widget_show(vbox);
 
