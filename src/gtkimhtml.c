@@ -73,7 +73,7 @@ static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, g
 static gdouble _point_sizes [] = { .69444444, .8333333, 1, 1.2, 1.44, 1.728, 2.0736};
 
 enum {
-	TARGET_HTML,
+/*	TARGET_HTML,  */
 	TARGET_UTF8_STRING,
 	TARGET_COMPOUND_TEXT,
 	TARGET_STRING,
