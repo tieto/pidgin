@@ -18,7 +18,7 @@ msgstr ""
 #: src/about.c:59
 #, c-format
 msgid "About GAIM v%s"
-msgstr "GAIM에 대하여"
+msgstr "GAIM v%s 에 대하여"
 
 #. color = gtk_button_new_with_label("Color");
 #: src/about.c:93 src/buddy.c:1766 src/buddy_chat.c:711
@@ -917,7 +917,7 @@ msgstr "g003: 연결 오류.\n"
 #: src/html.c:154
 #, c-format
 msgid "Getting %d bytes from %s"
-msgstr "%s 에서 %d 바이트를 가져옴"
+msgstr "%d 바이트를 %s 에서 가져옴"
 
 #: src/html.c:167
 msgid "Getting Data"
@@ -1310,7 +1310,7 @@ msgstr "Gaim - 새 이름으로 저장"
 #: src/rvous.c:269
 #, c-format
 msgid "Receiving %s from %s"
-msgstr "%s 에서 %s 를 받음"
+msgstr "%s 를 %s 에서 받음"
 
 #: src/rvous.c:283 src/rvous.c:418
 msgid "Gaim - File Transfer"
