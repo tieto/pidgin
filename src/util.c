@@ -2475,6 +2475,7 @@ char *gaim_text_strip_mnemonic(const char *in)
 {
 	char *out;
 	char *a;
+	char *a0;
 	const char *b;
 
 	g_return_val_if_fail(in != NULL, NULL);
@@ -2483,16 +2484,47 @@ char *gaim_text_strip_mnemonic(const char *in)
 	a = out;
 	b = in;
 
+	a0 = a; /* The last non-space char seen so far, or the first char */
+
 	while(*b) {
 		if(*b == '_') {
-			if(*(b+1) == '_') {
+			if(a > out && b > in && *(b-1) == '(' && *(b+1) && !(*(b+1) & 0x80) && *(b+2) == ')') {
+				/* Detected CJK style shortcut (Bug 875311) */
+				a = a0;	/* undo the left parenthesis */
+				b += 3;	/* and skip the whole mess */
+			} else if(*(b+1) == '_') {
 				*(a++) = '_';
 				b += 2;
+				a0 = a;
 			} else {
 				b++;
 			}
-		} else {
+		/* We don't want to corrupt the middle of UTF-8 characters */
+		} else if (!(*b & 0x80)) {	/* other 1-byte char */
+			if (*b != ' ')
+				a0 = a;
 			*(a++) = *(b++);
+		} else {
+			/* Multibyte utf8 char, don't look for _ inside these */
+			int n = 0;
+			int i;
+			if ((*b & 0xe0) == 0xc0) {
+				n = 2;
+			} else if ((*b & 0xf0) == 0xe0) {
+				n = 3;
+			} else if ((*b & 0xf8) == 0xf0) {
+				n = 4;
+			} else if ((*b & 0xfc) == 0xf8) {
+				n = 5;
+			} else if ((*b & 0xfe) == 0xfc) {
+				n = 6;
+			} else {		/* Illegal utf8 */
+				n = 1;
+			}
+			a0 = a; /* unless we want to delete CJK spaces too */
+			for (i = 0; i < n && *b; i += 1) {
+				*(a++) = *(b++);
+			}
 		}
 	}
 	*a = '\0';
