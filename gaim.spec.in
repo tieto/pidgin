@@ -99,6 +99,22 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Mar 14 2002 Rob Flynn <rob@marko.net> (0.54 release)
+- Compiles without GdkPixbuf again
+- GtkIMHtml will refresh when you set a new GTK+ theme
+- Improved Yahoo! typing notification (thanks Brian Macke)
+- Prompt to authorize MSN buddies who added you while you were offline (Thanks Jason Willis)
+- Option to globally disable Buddy Icon animation (Thanks Luke Schierer)
+- Numerous bugfixes
+- Yahoo! will tell you when your buddies are playing Yahoo! games and give you the ability to join them
+- Yahoo! can receive offline messages
+- IRC can do DCC chat.
+- IRC will convert HTML formatting to mIRC formatting.
+- Buddylist tab placement option (Thanks Jason Willis)
+- Protocol specific smiley faces
+- Italian translation added
+- IM Image sending
+
 * Fri Feb 28 2002 Rob Flynn <rob@marko.net> (0.53 release)
 - Updated Polish Translation (thanks Przemyslaw Sulek)
 - Slovak translation added (Thanks Daniel Rezny)
