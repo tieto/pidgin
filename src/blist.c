@@ -279,7 +279,6 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimPresence *presence;
 	GaimStatus *status;
-	gboolean did_something = FALSE;
 
 	g_return_if_fail(buddy != NULL);
 
@@ -301,7 +300,6 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 		if (buddy->timer > 0)
 			gaim_timeout_remove(buddy->timer);
 		buddy->timer = gaim_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
-		did_something = TRUE;
 
 	} else if (!gaim_status_is_online(status) &&
 				gaim_status_is_online(old_status)) {
@@ -310,25 +308,30 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 		if (buddy->timer > 0)
 			gaim_timeout_remove(buddy->timer);
 		buddy->timer = gaim_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
-		did_something = TRUE;
 
 	} else if (gaim_status_is_available(status) &&
 			   !gaim_status_is_available(old_status)) {
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-back", buddy);
-		did_something = TRUE;
 
 	} else if (!gaim_status_is_available(status) &&
 			   gaim_status_is_available(old_status)) {
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-away", buddy);
-		did_something = TRUE;
 
 	}
 
-	if (did_something) {
-		gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
-		if (ops && ops->update)
-			ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
-	}
+	/*
+	 * This function used to only call the following two functions if one of
+	 * the above signals had been triggered, but that's not good, because
+	 * if someone's away message changes and they don't go from away to back
+	 * to away then no signal is triggered.
+	 *
+	 * It's a safe assumption that SOMETHING called this function.  PROBABLY
+	 * because something, somewhere changed.  Calling the stuff below
+	 * certainly won't hurt anything.  Unless you're on a K6-2 300.
+	 */
+	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+	if (ops && ops->update)
+		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 }
 
 void gaim_blist_update_buddy_signon(GaimBuddy *buddy, time_t signon)
