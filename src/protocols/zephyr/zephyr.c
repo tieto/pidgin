@@ -578,7 +578,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		GaimConversation *gconv1;
 		GaimConvChat *gcc;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
-		int len = notice.z_message_len - ((int)ptr - (int)notice.z_message);
+		int len = notice.z_message_len - (strlen(notice.z_message) +1);
 		char *sendertmp = g_strdup_printf("%s", gaim_zephyr_get_sender());
 		GaimConvImFlags flags = 0;
 

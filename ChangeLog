@@ -25,6 +25,7 @@ version 0.78cvs
 	* Copy/paste encoding fixes (Joe Marcus Clarke)
 	* IRC disconnect crash fix (Luciano Miguel Ferreira Rocha)
 	* Novell prpl works on big endian machines (Novell)
+	* Zephyr works on 64 bit machines (Arun A Tharuvai)
 
 version 0.77 (04/22/2004):
 	New Features:
