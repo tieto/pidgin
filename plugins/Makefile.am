@@ -8,7 +8,7 @@ if USE_TCL
 TCL_DIR = tcl
 endif
 
-SUBDIRS = docklet gaim-remote gestures $(PERL_DIR) $(TCL_DIR) ticker
+SUBDIRS = docklet gaim-remote gestures $(PERL_DIR) $(TCL_DIR) ssl ticker
 
 plugindir = $(libdir)/gaim
 
