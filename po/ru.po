@@ -10,7 +10,7 @@ msgstr ""
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: RUSSIAN <RU@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=KOI8-R\n"
+"Content-Type: text/plain; charset=ISO-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: plugins/icq/gaim_icq.c:457
