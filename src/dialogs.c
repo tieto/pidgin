@@ -1162,8 +1162,10 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 	GtkWidget *opt;
 	GSList *u = aim_users;
 	struct aim_user *a;
+	struct prpl *p;
 	int count = 0;
 	int place = 0;
+	char buf[2048];
 
 	optmenu = gtk_option_menu_new();
 
@@ -1171,7 +1173,9 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 
 	while (u) {
 		a = (struct aim_user *)u->data;
-		opt = gtk_menu_item_new_with_label(a->username);
+		p = (struct prpl *)find_prpl(a->protocol);
+		g_snprintf(buf, sizeof buf, "%s (%s)", a->username, (p && p->name)?p->name():"Unknown");
+		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), a);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(pounce_choose), b);
 		gtk_menu_append(GTK_MENU(menu), opt);
