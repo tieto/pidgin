@@ -764,7 +764,7 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 	if (!op)
 		return;
 
-	g_snprintf(buf, sizeof(buf), "%s Options", p->name);
+	g_snprintf(buf, sizeof(buf), _("%s Options"), p->name);
 	frame = make_frame(box, buf);
 
 	/* BLEH */
@@ -1021,7 +1021,7 @@ static void do_pass_dlg(struct aim_user *u)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	g_snprintf(buf, sizeof(buf), "Password for %s:", u->username);
+	g_snprintf(buf, sizeof(buf), _("Password for %s:"), u->username);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
@@ -1305,7 +1305,7 @@ void kill_meter(struct signon_meter *meter) {
 	gtk_widget_set_sensitive (meter->button, FALSE);
 	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), 1);
 	gtk_statusbar_pop(GTK_STATUSBAR(meter->status), 1);
-	gtk_statusbar_push(GTK_STATUSBAR(meter->status), 1, "Done.");
+	gtk_statusbar_push(GTK_STATUSBAR(meter->status), 1, _("Done."));
 	meter_win->active_count--;
 	if (meter_win->active_count == 0) {
 		gtk_widget_destroy(meter_win->window);
@@ -1445,7 +1445,7 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	
 	nest_vbox = gtk_vbox_new (FALSE, 0);
 	
-	name_to_print = g_string_prepend(name_to_print, "Signon: ");
+	name_to_print = g_string_prepend(name_to_print, _("Signon: "));
 	label = gtk_label_new (name_to_print->str);
 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 		
@@ -1502,7 +1502,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_window_set_policy(GTK_WINDOW(meter_win->window), 0, 0, 1);
 		gtk_window_set_role(GTK_WINDOW(meter_win->window), "signon");
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
-		gtk_window_set_title (GTK_WINDOW (meter_win->window), "Gaim Account Signon");
+		gtk_window_set_title (GTK_WINDOW (meter_win->window), _("Gaim Account Signon"));
 		gtk_widget_realize(meter_win->window);
 		
 		vbox = gtk_vbox_new (FALSE, 0);
