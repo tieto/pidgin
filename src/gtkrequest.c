@@ -170,6 +170,7 @@ text_to_stock(const char *text)
 	STOCK_ITEMIZE(_("Delete"), GTK_STOCK_DELETE);
 	STOCK_ITEMIZE(_("Add"),    GTK_STOCK_ADD);
 	STOCK_ITEMIZE(_("Remove"), GTK_STOCK_REMOVE);
+	STOCK_ITEMIZE(_("Save"),   GTK_STOCK_SAVE);
 
 	return text;
 }
