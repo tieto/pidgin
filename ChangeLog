@@ -4,7 +4,9 @@ version 0.11.0-pre7 (03/16/2001):
 	* Can build RPMs as non-root
 	* New yahoo library (can use HTTP proxy)
 	* Command-line arg to specify config file (thanks Jason Boerner)
-	* Can view all conversations in one tabbed window
+	* Can view all conversations in one tabbed window (Control-[ and
+	  Control-] move left and right respectively; Control-Tab moves
+	  to the next unread, or the next tab if there are no unread tabs)
 	* Tooltips on links work again
 	* Can log system notices: signons/signoffs, awayness and idleness
 	  (thanks Andrew Echols)
