@@ -79,7 +79,7 @@ EXTRA_DIST =	about_menu.png \
 		think.png			\
 		tmp_send.xpm			\
 		tongue.png			\
-		warn.png			\
+		warn.xpm			\
 		wink.png			\
 		yell.png			
 
