@@ -538,7 +538,7 @@ void parse_toc_buddy_list(struct gaim_account *account, char *config)
 					struct buddy *b = gaim_buddy_new(account, nm, sw);
 					struct group *g = gaim_find_group(current);
 					gaim_blist_add_buddy(b, g, NULL);
-					bud = g_list_append(bud, nm);
+					bud = g_list_append(bud, g_strdup(nm));
 				}
 			} else if (*c == 'p') {
 				gaim_privacy_permit_add(account, c + 2);
@@ -558,8 +558,14 @@ void parse_toc_buddy_list(struct gaim_account *account, char *config)
 		} while ((c = strtok(NULL, "\n")));
 
 		if(account->gc) {
-			if(bud)
+			if(bud) {
+				GList *node = bud;
 				serv_add_buddies(account->gc, bud);
+				while(node) {
+					g_free(node->data);
+					node = node->next;
+				}
+			}
 			serv_set_permit_deny(account->gc);
 		}
 		g_list_free(bud);
