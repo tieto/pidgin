@@ -63,6 +63,7 @@ struct _MsnSlpCall
 	void *xfer;
 
 	MsnSlpCb cb;
+	void (*end_cb)(MsnSlpCall *slpcall);
 	gboolean wasted;
 	gboolean started;
 };

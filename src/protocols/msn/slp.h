@@ -39,8 +39,8 @@ MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
 
 void send_bye(MsnSlpCall *slpcall, const char *type);
 
-void msn_xfer_finish_cb(MsnSlpCall *slpcall,
-						const char *body, long long size);
+void msn_xfer_completed_cb(MsnSlpCall *slpcall,
+						   const char *body, long long size);
 
 void msn_xfer_cancel(GaimXfer *xfer);
 

@@ -213,23 +213,6 @@ void t_ack(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	slpmsg = cmd->trans->data;
 
-#if 0
-	if (slpmsg->wasted)
-	{
-		gaim_debug_info("msn", "slpmsg cancelled %p\n", slpmsg);
-
-		if (slpmsg->slpcall != NULL)
-		{
-			if (slpmsg->slpcall->cb != NULL)
-				slpmsg->slpcall->cb(slpmsg->slpcall, NULL, -1);
-
-			msn_slpcall_destroy(slpmsg->slpcall);
-		}
-
-		msn_slpmsg_destroy(slpmsg);
-	}
-#endif
-
 	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
 
 	if (slpmsg->offset < real_size)
@@ -648,7 +631,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer)
 
 	slpcall->session_init_cb = send_file;
 	slpcall->progress_cb = msn_xfer_progress_cb;
-	slpcall->cb = msn_xfer_finish_cb;
+	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
 
 	gaim_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);

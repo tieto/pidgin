@@ -138,16 +138,19 @@ msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize o
 }
 
 void
-msn_xfer_finish_cb(MsnSlpCall *slpcall,
-				   const char *body, long long size)
+msn_xfer_end_cb(MsnSlpCall *slpcall)
 {
 	if (gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_DONE)
 	{
-		if (size < 0)
-			gaim_xfer_cancel_remote(slpcall->xfer);
-		else
-			gaim_xfer_set_completed(slpcall->xfer, TRUE);
+		gaim_xfer_cancel_remote(slpcall->xfer);
 	}
+}
+
+void
+msn_xfer_completed_cb(MsnSlpCall *slpcall, const char *body,
+					  long long size)
+{
+	gaim_xfer_set_completed(slpcall->xfer, TRUE);
 }
 
 /**************************************************************************
@@ -307,7 +310,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		account = slpcall->slplink->session->account;
 
-		slpcall->cb = msn_xfer_finish_cb;
+		slpcall->cb = msn_xfer_completed_cb;
+		slpcall->end_cb = msn_xfer_end_cb;
 		slpcall->progress_cb = msn_xfer_progress_cb;
 		slpcall->branch = g_strdup(branch);
 

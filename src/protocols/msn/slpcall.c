@@ -122,8 +122,8 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 		}
 	}
 
-	if (slpcall->cb != NULL)
-		slpcall->cb(slpcall, NULL, -1);
+	if (slpcall->end_cb != NULL)
+		slpcall->end_cb(slpcall);
 
 	g_free(slpcall);
 }
