@@ -624,7 +624,7 @@ static void jabber_si_xfer_init(GaimXfer *xfer)
 
 		x = xmlnode_new_child(feature, "x");
 		xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
-		xmlnode_set_attrib(x, "type", "form");
+		xmlnode_set_attrib(x, "type", "submit");
 
 		field = xmlnode_new_child(x, "field");
 		xmlnode_set_attrib(field, "var", "stream-method");
