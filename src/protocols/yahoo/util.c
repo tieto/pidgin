@@ -136,7 +136,6 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "x2", "</I>");
 	g_hash_table_insert(ht,  "4",  "<U>");
 	g_hash_table_insert(ht, "x4", "</U>");
-	g_hash_table_insert(ht, "</font>", "</font>");
 
 	/* these just tell us the text they surround is supposed
 	 * to be a link. gaim figures that out on its own so we
@@ -184,6 +183,7 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "</b>", "</b>");
 	g_hash_table_insert(ht, "</i>", "</i>");
 	g_hash_table_insert(ht, "</u>", "</u>");
+	g_hash_table_insert(ht, "</font>", "</font>");
 }
 
 void yahoo_dest_colorht()
@@ -315,6 +315,10 @@ char *yahoo_codes_to_html(const char *x)
 				g_string_append(s, "&lt;");
 			else if (x[i] == '>')
 				g_string_append(s, "&gt;");
+			else if (x[i] == '&')
+				g_string_append(s, "&amp;");
+			else if (x[i] == '"')
+				g_string_append(s, "&quot;");
 			else
 				g_string_append_c(s, x[i]);
 		}
@@ -537,6 +541,7 @@ char *yahoo_html_to_codes(const char *src)
 	char *ret, *esc;
 	GQueue *colors, *tags;
 	GQueue *ftattr = NULL;
+	gboolean no_more_specials = FALSE;
 
 
 	colors = g_queue_new();
@@ -546,20 +551,23 @@ char *yahoo_html_to_codes(const char *src)
 
 	for (i = 0, len = strlen(src); i < len; i++) {
 
-		if (src[i] == '<') {
+		if (!no_more_specials && src[i] == '<') {
 			j = i;
 
 			while (1) {
 				j++;
 
 				if (j >= len) { /* no '>' */
-					g_string_append_len(dest, &src[i], len - i);
-					i = len;
-
+					g_string_append_c(dest, src[i]);
+					no_more_specials = TRUE;
 					break;
 				}
 
 				if (src[j] == '<') {
+					/* FIXME: This doesn't convert outgoing entities.
+					 *        However, I suspect this case may never
+					 *        happen anymore because of the entities.
+					 */
 					g_string_append_len(dest, &src[i], j - i);
 					i = j - 1;
 					if (ftattr) {
@@ -605,6 +613,10 @@ char *yahoo_html_to_codes(const char *src)
 				}
 
 				if (src[j] == '>') {
+					/* This has some problems like the FIXME for the
+					 * '<' case. and like that case, I suspect the case
+					 * that this has problems is won't happen anymore anyway.
+					 */
 					int sublen = j - i - 1;
 
 					if (sublen) {
@@ -649,7 +661,21 @@ char *yahoo_html_to_codes(const char *src)
 			}
 
 		} else {
-			g_string_append_c(dest, src[i]);
+			if (((len - i) >= 4) && !strncmp(&src[i], "&lt;", 4)) {
+				g_string_append_c(dest, '<');
+				i += 3;
+			} else if (((len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
+				g_string_append_c(dest, '>');
+				i += 3;
+			} else if (((len - i) >= 5) && !strncmp(&src[i], "&amp;", 4)) {
+				g_string_append_c(dest, '&');
+				i += 4;
+			} else if (((len - i) >= 6) && !strncmp(&src[i], "&quot;", 4)) {
+				g_string_append_c(dest, '"');
+				i += 5;
+			} else {
+				g_string_append_c(dest, src[i]);
+			}
 		}
 	}
 
