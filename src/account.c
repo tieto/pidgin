@@ -1,4 +1,4 @@
-/*
+/**
  * @file account.c Account API
  * @ingroup core
  *
