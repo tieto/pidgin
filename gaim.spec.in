@@ -6,6 +6,7 @@ Epoch:      1
 License:    GPL
 Group:      Applications/Internet
 URL:        http://gaim.sourceforge.net/
+Packager:	%{packager}
 Source:     %{name}-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
