@@ -1,5 +1,5 @@
 /**
- * @file gtkstatus.h GTK+ Status Editor UI
+ * @file gtksavedstatus.h GTK+ Saved Status Editor UI
  * @ingroup gtkui
  *
  * gaim
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKSTATUS_H_
-#define _GAIM_GTKSTATUS_H_
+#ifndef _GAIM_GTKSAVEDSTATUSES_H_
+#define _GAIM_GTKSAVEDSTATUSES_H_
 
 #include "status.h"
 
@@ -54,4 +54,4 @@ void gaim_gtk_status_init(void);
  */
 void gaim_gtk_status_uninit(void);
 
-#endif /* _GAIM_GTKSTATUS_H_ */
+#endif /* _GAIM_GTKSAVEDSTATUSES_H_ */

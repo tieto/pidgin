@@ -111,9 +111,9 @@ DLL_C_SRC =	\
 			gtkprivacy.c \
 			gtkrequest.c \
 			gtkroomlist.c \
+			gtksavedstatuses.c \
 			gtksound.c \
 			gtksourceiter.c \
-			gtkstatus.c \
 			gtkstatusselector.c \
 			gtkstock.c \
 			gtkthemes.c \
@@ -133,6 +133,7 @@ DLL_C_SRC =	\
 			prpl.c \
 			request.c \
 			roomlist.c \
+			savedstatuses.c \
 			server.c \
 			sha.c \
 			signals.c \

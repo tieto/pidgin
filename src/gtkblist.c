@@ -51,8 +51,8 @@
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
+#include "gtksavedstatuses.h"
 #include "gtksound.h"
-#include "gtkstatus.h"
 #include "gtkstatusselector.h"
 #include "gtkutils.h"
 

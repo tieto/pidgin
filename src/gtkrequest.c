@@ -604,8 +604,8 @@ gaim_gtk_request_action(const char *title, const char *primary,
 
 
     if (default_action == GAIM_DEFAULT_ACTION_NONE) {
-		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_DEFAULT);		
-		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_FOCUS);		
+		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_DEFAULT);
+		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_FOCUS);
 		gtk_widget_grab_focus(img);
 		gtk_widget_grab_default(img);
     } else

@@ -29,8 +29,6 @@ typedef struct _GaimStatusType      GaimStatusType;
 typedef struct _GaimStatusAttr      GaimStatusAttr;
 typedef struct _GaimPresence        GaimPresence;
 typedef struct _GaimStatus          GaimStatus;
-typedef struct _GaimStatusSavedSub  GaimStatusSavedSub;
-typedef struct _GaimStatusSaved     GaimStatusSaved;
 
 /**
  * A context for a presence.
@@ -900,74 +898,21 @@ gint gaim_presence_compare(const GaimPresence *presence1,
 /*@{*/
 
 /**
- * Returns all saved statuses.
- *
- * @return A list of saved statuses.
- */
-const GList *gaim_statuses_get_saved(void);
-
-/**
- * Finds a saved status with the specified title.
- *
- * @param title The name of the saved status.
- *
- * @return The saved status if found, or NULL.
- */
-GaimStatusSaved *gaim_statuses_find_saved(const char *title);
-
-/**
- * Return the name of a given saved status.
- *
- * @param saved_status The saved status.
- *
- * @return The title.
- */
-const char *gaim_statuses_saved_get_title(const GaimStatusSaved *saved_status);
-
-/**
- * Return the name of a given saved status.
- *
- * @param saved_status The saved status.
- *
- * @return The name.
- */
-GaimStatusPrimitive gaim_statuses_saved_get_type(const GaimStatusSaved *saved_status);
-
-/**
- * Return the name of a given saved status.
- *
- * @param saved_status The saved status.
- *
- * @return The name.
- */
-const char *gaim_statuses_saved_get_message(const GaimStatusSaved *saved_status);
-
-/**
  * Get the handle for the status subsystem.
  *
  * @return the handle to the status subsystem
  */
-void *gaim_statuses_get_handle();
+void *gaim_status_get_handle();
 
 /**
  * Initializes the status subsystem.
  */
-void gaim_statuses_init(void);
+void gaim_status_init(void);
 
 /**
  * Uninitializes the status subsystem.
  */
-void gaim_statuses_uninit(void);
-
-/**
- * Syncs status information from a file.
- */
-void gaim_statuses_load(void);
-
-/**
- * Syncs status information to the file.
- */
-void gaim_statuses_sync(void);
+void gaim_status_uninit(void);
 
 /*@}*/
 

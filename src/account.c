@@ -463,7 +463,7 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 	account->buddy_icon = (icon == NULL ? NULL : g_strdup(icon));
 	if (account->gc)
 		serv_set_buddyicon(account->gc, icon);
-	
+
 	schedule_accounts_save();
 }
 

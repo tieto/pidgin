@@ -178,13 +178,12 @@ gaim_pounce_destroy_all_by_account(GaimAccount *account)
 	GaimPounce *pounce;
 	GList *l, *l_next;
 
-	
 	g_return_if_fail(account != NULL);
-	
+
 	for (l = gaim_pounces_get_all(); l != NULL; l = l_next) {
 		pounce = (GaimPounce *)l->data;
 		l_next = l->next;
-		
+
 		pouncer = gaim_pounce_get_pouncer(pounce);
 		if (pouncer == account)
 			gaim_pounce_destroy(pounce);

@@ -2164,9 +2164,11 @@ create_accounts_list(AccountsWindow *dialog)
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
 	dialog->treeview = treeview;
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
-	gtk_tree_selection_set_mode(
-			gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
-			GTK_SELECTION_MULTIPLE);
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(account_selected_cb), dialog);
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);
@@ -2174,10 +2176,6 @@ create_accounts_list(AccountsWindow *dialog)
 	add_columns(treeview, dialog);
 
 	populate_accounts_list(dialog);
-
-	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
-	g_signal_connect(G_OBJECT(sel), "changed",
-					 G_CALLBACK(account_selected_cb), dialog);
 
 	/* Setup DND. I wanna be an orc! */
 	gtk_tree_view_enable_model_drag_source(

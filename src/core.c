@@ -33,6 +33,7 @@
 #include "prefs.h"
 #include "privacy.h"
 #include "proxy.h"
+#include "savedstatuses.h"
 #include "signals.h"
 #include "sslconn.h"
 #include "status.h"
@@ -86,7 +87,8 @@ gaim_core_init(const char *ui)
 			ops->debug_ui_init();
 	}
 
-	gaim_statuses_init();
+	gaim_status_init();
+	gaim_savedstatuses_init();
 	gaim_accounts_init();
 	gaim_connections_init();
 	gaim_conversations_init();
@@ -129,7 +131,8 @@ gaim_core_quit(void)
 	gaim_connections_uninit();
 	gaim_buddy_icons_uninit();
 	gaim_accounts_uninit();
-	gaim_statuses_uninit();
+	gaim_savedstatuses_uninit();
+	gaim_status_uninit();
 	gaim_prefs_uninit();
 	gaim_sound_uninit();
 

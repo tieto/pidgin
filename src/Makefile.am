@@ -88,6 +88,7 @@ gaim_coresources = \
 	prpl.c \
 	request.c \
 	roomlist.c \
+	savedstatuses.c \
 	server.c \
 	sha.c \
 	signals.c \
@@ -127,6 +128,7 @@ gaim_coreheaders = \
 	prpl.h \
 	request.h \
 	roomlist.h \
+	savedstatuses.h \
 	server.h \
 	sha.h \
 	signals.h \
@@ -166,9 +168,9 @@ gaim_SOURCES = \
 	gtkpounce.c \
 	gtkrequest.c \
 	gtkroomlist.c \
+	gtksavedstatuses.c \
 	gtksound.c \
 	gtksourceiter.c \
-	gtkstatus.c \
 	gtkstatusselector.c \
 	gtkstock.c \
 	gtkthemes.c \
@@ -201,9 +203,9 @@ gaim_headers = \
 	gtkpounce.h \
 	gtkrequest.h \
 	gtkroomlist.h \
+	gtksavedstatuses.h \
 	gtksound.h \
 	gtksourceiter.h \
-	gtkstatus.h \
 	gtkstatusselector.h \
 	gtkstock.h \
 	gtkutils.h \
