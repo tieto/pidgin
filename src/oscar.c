@@ -243,6 +243,7 @@ static int gaim_parse_msgerr     (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_buddyrights(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_locerr     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_genericerr (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_memrequest       (struct aim_session_t *, struct command_rx_struct *, ...);
 
 static int gaim_directim_initiate  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_directim_incoming  (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -593,12 +594,94 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0003, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0001, 0x001f, gaim_memrequest, 0);
 
 	aim_auth_sendcookie(sess, bosconn, cookie);
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
 	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, bosconn);
 	set_login_progress(gc, 4, _("Connection established, cookie sent"));
+	return 1;
+}
+
+struct pieceofcrap {
+	struct gaim_connection *gc;
+	unsigned long offset;
+	unsigned long len;
+	char *modname;
+	struct aim_conn_t *conn;
+	struct aim_conn_t *mainconn;
+	unsigned int inpa;
+};
+
+void damn_you(gpointer data, gint source, GdkInputCondition c)
+{
+	struct pieceofcrap *pos = data;
+	struct oscar_data *od = pos->gc->proto_data;
+	char in;
+	int x = 0;
+	char m[17];
+	if (c == GDK_INPUT_WRITE) {
+		char buf[BUF_LONG];
+		aim_conn_completeconnect(od->sess, pos->conn);
+		g_snprintf(buf, sizeof(buf), "GET http://gaim.sourceforge.net/aim_data.php3?"
+				"offset=%d&len=%d&modname=%s HTTP/1.0\n\n",
+				pos->offset, pos->len, pos->modname ? pos->modname : "");
+		write(pos->conn->fd, buf, strlen(buf));
+		if (pos->modname)
+			g_free(pos->modname);
+		gdk_input_remove(pos->inpa);
+		pos->inpa = gdk_input_add(pos->conn->fd, GDK_INPUT_READ, damn_you, pos);
+		return;
+	}
+
+	while (read(pos->conn->fd, &in, 1) == 1) {
+		if (in == '\n')
+			x++;
+		else if (in != '\r')
+			x = 0;
+		if (x == 2)
+			break;
+	}
+	read(pos->conn->fd, m, 16);
+	m[16] = '\0';
+	gdk_input_remove(pos->inpa);
+	close(pos->conn->fd);
+	aim_conn_kill(od->sess, &pos->conn);
+	aim_sendmemblock(od->sess, pos->mainconn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
+	g_free(pos);
+}
+
+int gaim_memrequest(struct aim_session_t *sess,
+		    struct command_rx_struct *command, ...) {
+	va_list ap;
+	struct pieceofcrap *pos;
+	unsigned long offset, len;
+	char *modname;
+
+	va_start(ap, command);
+	offset = va_arg(ap, unsigned long);
+	len = va_arg(ap, unsigned long);
+	modname = va_arg(ap, char *);
+	va_end(ap);
+
+	if (len == 0) {
+		aim_sendmemblock(sess, command->conn, offset, len, NULL,
+				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
+		return;
+	}
+
+	pos = g_new0(struct pieceofcrap, 1);
+	pos->gc = sess->aux_data;
+	pos->mainconn = command->conn;
+
+	pos->offset = offset;
+	pos->len = len;
+	pos->modname = modname ? g_strdup(modname) : NULL;
+
+	pos->conn = aim_newconn(sess, 0, "gaim.sourceforge.net:80");
+	pos->inpa = gdk_input_add(pos->conn->fd, GDK_INPUT_WRITE, damn_you, pos);
+
 	return 1;
 }
 
@@ -1448,8 +1531,6 @@ int gaim_parse_motd(struct aim_session_t *sess,
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
 
-	aim_0001_0020(sess, command->conn);
-
 	return 1;
 }
 
@@ -1893,9 +1974,11 @@ static void oscar_send_im(struct gaim_connection *gc, char *name, char *message,
 		aim_send_im_direct(odata->sess, dim->conn, message);
 	} else {
 		if (away)
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
+			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message,
+					strlen(message));
 		else
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message);
+			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message,
+					strlen(message));
 	}
 }
 
@@ -2069,7 +2152,7 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 		return;
 
 	cn = aim_chat_getconn(odata->sess, b->name);
-	aim_chat_send_im(odata->sess, cn, message);
+	aim_chat_send_im(odata->sess, cn, 0, message, strlen(message));
 }
 
 static char **oscar_list_icon(int uc) {

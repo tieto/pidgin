@@ -75,18 +75,18 @@ faim_export unsigned short aim_fingerprintclient(unsigned char *msghdr, int len)
  *                        when the message is received (of type 0x0004/0x000c)
  *
  */
-faim_export unsigned long aim_send_im(struct aim_session_t *sess,
-				      struct aim_conn_t *conn, 
-				      char *destsn, u_int flags, char *msg)
-{   
-
+faim_export unsigned long aim_send_im(struct aim_session_t *sess, struct aim_conn_t *conn, const char *destsn, unsigned short flags, const char *msg, int msglen)
+{
   int curbyte,i;
   struct command_tx_struct *newpacket;
-  
-  if (strlen(msg) >= MAXMSGLEN)
+
+  if (!msg || (msglen <= 0))
     return -1;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, strlen(msg)+256)))
+  if (msglen >= MAXMSGLEN)
+    return -1;
+
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, msglen+256)))
     return -1;
 
   newpacket->lock = 1; /* lock struct */
@@ -122,7 +122,7 @@ faim_export unsigned long aim_send_im(struct aim_session_t *sess,
    * metaTLV start.
    */
   curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
-  curbyte += aimutil_put16(newpacket->data+curbyte, strlen(msg) + 0x10);
+  curbyte += aimutil_put16(newpacket->data+curbyte, msglen + 0x10);
 
   /*
    * Flag data / ICBM Parameters?
@@ -145,7 +145,7 @@ faim_export unsigned long aim_send_im(struct aim_session_t *sess,
   /* 
    * Message block length.
    */
-  curbyte += aimutil_put16(newpacket->data+curbyte, strlen(msg) + 0x04);
+  curbyte += aimutil_put16(newpacket->data+curbyte, msglen + 0x04);
 
   /*
    * Character set data? 
@@ -156,7 +156,7 @@ faim_export unsigned long aim_send_im(struct aim_session_t *sess,
   /*
    * Message.  Not terminated.
    */
-  curbyte += aimutil_putstr(newpacket->data+curbyte,msg, strlen(msg));
+  curbyte += aimutil_putstr(newpacket->data+curbyte,msg, msglen);
 
   /*
    * Set the Request Acknowledge flag.  

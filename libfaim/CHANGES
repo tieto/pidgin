@@ -1,6 +1,33 @@
 
 No release numbers
 ------------------
+ - Tue Apr 24 17:36:03 PDT 2001
+  - Let Eric generate the hash if he wants.
+
+ - Mon Apr 23 15:58:11 PDT 2001
+  - On a clear day, you can see forever.
+
+ - Thu Mar 29 13:05:50 PST 2001
+  - Less leaks.
+
+ - Thu Mar 29 14:45:22 CST 2001 (jbm)
+  - Add module capability to the 0001/001f stuff (jbm)
+
+ - Wed Mar 28 21:20:08 PST 2001
+  - Add flags arg to aim_chat_send_im()
+  - Add msglen arg to aim_send_im and aim_chat_send_im
+     - This will make more sense when I make the UNICODE commit (tomorrow?)
+
+ - Wed Mar 28 16:51:25 PST 2001
+  - I decided it was a good day while I was figuring out that it was a bad day.
+  - See faimtest and login.c::memrequest().
+  - Hopefully I'm done for a while.
+
+ - Tue Mar 27 19:15:10 PST 2001
+  - I haven't decided yet whether today is a good day or a bad day.
+  - Probably both.
+  - More later.
+
  -  Mon Mar 26 16:08:45 PST 2001
   - Why didn't anyone tell me buddy-offgoing wasn't working?
     - *** REQUIRES CLIENT CHANGES... buddy-offgoing now passes a userinfo

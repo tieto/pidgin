@@ -51,17 +51,30 @@ faim_export int aim_chat_attachname(struct aim_conn_t *conn, char *roomname)
   return 0;
 }
 
-/* XXX convert this to use tlvchains */
+/*
+ * Send a Chat Message.
+ *
+ * Possible flags:
+ *   AIM_CHATFLAGS_NOREFLECT   --  Unset the flag that requests messages
+ *                                 should be sent to their sender.
+ *   AIM_CHATFLAGS_AWAY        --  Mark the message as an autoresponse
+ *                                 (Note that WinAIM does not honor this,
+ *                                 and displays the message as normal.)
+ *
+ * XXX convert this to use tlvchains 
+ */
 faim_export unsigned long aim_chat_send_im(struct aim_session_t *sess,
 					   struct aim_conn_t *conn, 
-					   char *msg)
+					   unsigned short flags,
+					   const char *msg,
+					   int msglen)
 {   
 
   int curbyte,i;
   struct command_tx_struct *newpacket;
   struct aim_msgcookie_t *cookie;
 
-  if (!sess || !conn || !msg)
+  if (!sess || !conn || !msg || (msglen <= 0))
     return 0;
   
   if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
@@ -90,16 +103,26 @@ faim_export unsigned long aim_chat_send_im(struct aim_session_t *sess,
   curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
 
   /*
-   * Type 1: Unknown.  Blank.
+   * Type 1: Flag meaning this message is destined to the room.
    */
   curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
   curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
   
   /*
-   * Type 6: Unknown.  Blank.
+   * Type 6: Reflect
    */
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0006);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
+  if (!(flags & AIM_CHATFLAGS_NOREFLECT)) {
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0006);
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
+  }
+
+  /*
+   * Type 7: Autoresponse
+   */
+  if (flags & AIM_CHATFLAGS_AWAY) {
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0007);
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
+  }
 
   /*
    * Type 5: Message block.  Contains more TLVs.

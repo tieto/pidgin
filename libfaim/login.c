@@ -121,9 +121,9 @@ faim_export int aim_request_login(struct aim_session_t *sess,
  *  
  * This is the initial login request packet.
  *
- * The password is encoded before transmition, as per
- * encode_password().  See that function for their
- * stupid method of doing it.
+ * NOTE!! If you want/need to make use of the aim_sendmemblock() function,
+ * then the client information you send here must exactly match the
+ * executable that you're pulling the data from.
  *
  * Latest WinAIM:
  *   clientstring = "AOL Instant Messenger (SM), version 4.3.2188/WIN32"
@@ -138,6 +138,15 @@ faim_export int aim_request_login(struct aim_session_t *sess,
  *   unknown4a = 0x01
  *
  * Latest WinAIM that libfaim can emulate without server-side buddylists:
+ *   clientstring = "AOL Instant Messenger (SM), version 4.1.2010/WIN32"
+ *   major2 = 0x0004
+ *   major  = 0x0004
+ *   minor  = 0x0001
+ *   minor2 = 0x0000
+ *   build  = 0x07da
+ *   unknown= 0x0000004b
+ *
+ * WinAIM 3.5.1670:
  *   clientstring = "AOL Instant Messenger (SM), version 3.5.1670/WIN32"
  *   major2 = 0x0004
  *   major =  0x0003
@@ -145,6 +154,25 @@ faim_export int aim_request_login(struct aim_session_t *sess,
  *   minor2 = 0x0000
  *   build =  0x0686
  *   unknown =0x0000002a
+ *
+ * Java AIM 1.1.19:
+ *   clientstring = "AOL Instant Messenger (TM) version 1.1.19 for Java built 03/24/98, freeMem 215871 totalMem 1048567, i686, Linus, #2 SMP Sun Feb 11 03:41:17 UTC 2001 2.4.1-ac9, IBM Corporation, 1.1.8, 45.3, Tue Mar 27 12:09:17 PST 2001"
+ *   major2 = 0x0001
+ *   major  = 0x0001
+ *   minor  = 0x0001
+ *   minor2 = (not sent)
+ *   build  = 0x0013
+ *   unknown= (not sent)
+ *   
+ * AIM for Linux 1.1.112:
+ *   clientstring = "AOL Instant Messenger (SM)"
+ *   major2 = 0x1d09
+ *   major  = 0x0001
+ *   minor  = 0x0001
+ *   minor2 = 0x0001
+ *   build  = 0x0070
+ *   unknown= 0x0000008b
+ *   serverstore = 0x01
  *
  */
 faim_export int aim_send_login (struct aim_session_t *sess,
@@ -646,6 +674,164 @@ static int hostversions(struct aim_session_t *sess, aim_module_t *mod, struct co
   return 0;
 }
 
+/*
+ * Starting this past week (26 Mar 2001, say), AOL has started sending
+ * this nice little extra SNAC.  AFAIK, it has never been used until now.
+ *
+ * The request contains eight bytes.  The first four are an offset, the
+ * second four are a length.
+ *
+ * The offset is an offset into aim.exe when it is mapped during execution
+ * on Win32.  So far, AOL has only been requesting bytes in static regions
+ * of memory.  (I won't put it past them to start requesting data in
+ * less static regions -- regions that are initialized at run time, but still
+ * before the client recieves this request.)
+ *
+ * When the client recieves the request, it adds it to the current ds
+ * (0x00400000) and dereferences it, copying the data into a buffer which
+ * it then runs directly through the MD5 hasher.  The 16 byte output of
+ * the hash is then sent back to the server.
+ *
+ * If the client does not send any data back, or the data does not match
+ * the data that the specific client should have, the client will get the
+ * following message from "AOL Instant Messenger":
+ *    "You have been disconnected from the AOL Instant Message Service (SM) 
+ *     for accessing the AOL network using unauthorized software.  You can
+ *     download a FREE, fully featured, and authorized client, here 
+ *     http://www.aol.com/aim/download2.html"
+ * The connection is then closed, recieving disconnect code 1, URL
+ * http://www.aim.aol.com/errors/USER_LOGGED_OFF_NEW_LOGIN.html.  
+ *
+ * Note, however, that numerous inconsistencies can cause the above error, 
+ * not just sending back a bad hash.  Do not immediatly suspect this code
+ * if you get disconnected.  AOL and the open/free software community have
+ * played this game for a couple years now, generating the above message
+ * on numerous ocassions.
+ *
+ * Anyway, neener.  We win again.
+ *
+ */
+static int memrequest(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+{
+  rxcallback_t userfunc;
+  unsigned long offset, len;
+  int i = 0;
+  struct aim_tlvlist_t *list;
+  char *modname = NULL;
+
+  offset = aimutil_get32(data);
+  i += 4;
+
+  len = aimutil_get32(data+4);
+  i += 4;
+
+  list = aim_readtlvchain(data+i, datalen-i);
+
+  if (aim_gettlv(list, 0x0001, 1))
+    modname = aim_gettlv_str(list, 0x0001, 1);
+
+  faimdprintf(sess, 1, "data at 0x%08lx (%d bytes) of requested\n", offset, len, modname?modname:"aim.exe");
+
+  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+    return userfunc(sess, rx, offset, len, modname);
+
+  free(modname);
+  aim_freetlvchain(&list);
+
+  return 0;
+}
+
+static void dumpbox(struct aim_session_t *sess, unsigned char *buf, int len)
+{
+  int i = 0;
+
+  if (!sess || !buf || !len)
+    return;
+
+  faimdprintf(sess, 1, "\nDump of %d bytes at %p:", len, buf);
+
+  for (i = 0; i < len; i++)
+    {
+      if ((i % 8) == 0)
+	faimdprintf(sess, 1, "\n\t");
+
+      faimdprintf(sess, 1, "0x%2x ", buf[i]);
+    }
+  
+  faimdprintf(sess, 1, "\n\n");
+
+  return;
+}
+
+faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned long offset, unsigned long len, const unsigned char *buf, unsigned char flag)
+{
+  struct command_tx_struct *tx;
+  int i = 0;
+
+  if (!sess || !conn || ((offset == 0) && !buf))
+    return 0;
+
+  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+2+16)))
+    return -1;
+
+  tx->lock = 1;
+
+  i = aim_putsnac(tx->data, 0x0001, 0x0020, 0x0000, sess->snac_nextid++);
+  i += aimutil_put16(tx->data+i, 0x0010); /* md5 is always 16 bytes */
+
+  if ((flag == AIM_SENDMEMBLOCK_FLAG_ISHASH) &&
+      buf && (len == 0x10)) { /* we're getting a hash */
+
+    memcpy(tx->data+i, buf, 0x10);
+    i += 0x10;
+
+  } else if (buf && (len > 0)) { /* use input buffer */
+    md5_state_t state;
+
+    md5_init(&state);	
+    md5_append(&state, (const md5_byte_t *)buf, len);
+    md5_finish(&state, (md5_byte_t *)(tx->data+i));
+    i += 0x10;
+
+  } else if (len == 0) { /* no length, just hash NULL (buf is optional) */
+    md5_state_t state;
+    unsigned char nil = '\0';
+
+    /*
+     * These MD5 routines are stupid in that you have to have
+     * at least one append.  So thats why this doesn't look 
+     * real logical.
+     */
+    md5_init(&state);
+    md5_append(&state, (const md5_byte_t *)&nil, 0);
+    md5_finish(&state, (md5_byte_t *)(tx->data+i));
+    i += 0x10;
+
+  } else {
+
+    if ((offset != 0x00001004) || (len != 0x00000004))
+      faimdprintf(sess, 0, "sendmemblock: WARNING: sending bad hash... you will be disconnected soon...\n");
+
+    /* 
+     * This data is correct for AIM 3.5.1670, offset 0x1004, length 4 
+     *
+     * Using this block is as close to "legal" as you can get without
+     * using an AIM binary.
+     */
+    i += aimutil_put32(tx->data+i, 0x92bd6757);
+    i += aimutil_put32(tx->data+i, 0x3722cbd3);
+    i += aimutil_put32(tx->data+i, 0x2b048ab9);
+    i += aimutil_put32(tx->data+i, 0xd0b1e4ab);
+
+  }
+
+  tx->commandlen = i;
+  tx->lock = 0;
+  aim_tx_enqueue(sess, tx);
+
+  return 0;
+}
+
 static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
 
@@ -665,6 +851,8 @@ static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct com
     return motd(sess, mod, rx, snac, data, datalen);
   else if (snac->subtype == 0x0018)
     return hostversions(sess, mod, rx, snac, data, datalen);
+  else if (snac->subtype == 0x001f)
+    return memrequest(sess, mod, rx, snac, data, datalen);
 
   return 0;
 }

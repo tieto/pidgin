@@ -19,34 +19,6 @@ faim_export unsigned long aim_bos_setgroupperm(struct aim_session_t *sess,
   return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
 }
 
-faim_export int aim_0001_0020(struct aim_session_t *sess, struct aim_conn_t *conn)
-{
-    struct command_tx_struct *tx;
-  int i = 0;
-
-  if (!sess || !conn)
-    return 0;
-
-  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+2+16)))
-    return -1;
-
-  tx->lock = 1;
-
-  /* Hummm.... */
-  i = aim_putsnac(tx->data, 0x0001, 0x0020, 0x0000, sess->snac_nextid++);
-  i += aimutil_put16(tx->data+i, 0x0010);
-  i += aimutil_put32(tx->data+i, 0xd41d8cd9);
-  i += aimutil_put32(tx->data+i, 0x8f00b204);
-  i += aimutil_put32(tx->data+i, 0xe9800998);
-  i += aimutil_put32(tx->data+i, 0xecf8427e);
-  
-  tx->commandlen = i;
-  tx->lock = 0;
-  aim_tx_enqueue(sess, tx);
-
-  return 0;
-}
-
 static int rights(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   rxcallback_t userfunc;
