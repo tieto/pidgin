@@ -90,5 +90,7 @@ void yahoo_friend_free(gpointer p)
 		g_free(f->msg);
 	if (f->game)
 		g_free(f->game);
+	if (f->ip)
+		g_free(f->ip);
 	g_free(f);
 }
