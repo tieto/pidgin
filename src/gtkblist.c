@@ -3045,6 +3045,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
 	gtk_widget_set_size_request(gtkblist->treeview, -1, 200);
+	gtk_widget_set_name(gtkblist->treeview, "gaim_gtkblist_treeview");
 
 	/* Set up selection stuff */
 
