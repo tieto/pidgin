@@ -255,14 +255,6 @@ static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 	GList *cnvs;
-	void *conv_handle = gaim_conversations_get_handle();
-
-	gaim_signal_disconnect(conv_handle, "conversation-created",
-					plugin, GAIM_CALLBACK(timestamp_new_convo));
-	gaim_signal_disconnect(conv_handle, "receiving-im-msg",
-					plugin, GAIM_CALLBACK(timestamp_receiving_msg));
-	gaim_signal_disconnect(conv_handle, "displaying-im-msg",
-					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg));
 
 	destroy_timer_list();
 

@@ -265,12 +265,6 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-off",
-			plugin, GAIM_CALLBACK(reconnect));
-
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on",
-			plugin, GAIM_CALLBACK(reconnected));
-
 	g_hash_table_destroy(hash);
 	hash = NULL;
 
