@@ -34,10 +34,6 @@
 
 #ifdef USE_PERL
 
-#ifndef call_pv
-# define call_pv(i,j) perl_call_pv(i,j)
-#endif
-
 #define group perl_group
 #ifdef _WIN32
 /* This took me an age to figure out.. without this __declspec(dllimport)
@@ -86,6 +82,10 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "gaim.h"
 #include "prpl.h"
 #include "sound.h"
+
+#ifndef call_pv
+# define call_pv(i,j) perl_call_pv(i,j)
+#endif
 
 struct perlscript {
 	char *name;
