@@ -1715,6 +1715,7 @@ void do_pounce(char *name, int when)
 			if (b->options & OPT_POUNCE_POPUP) {
 				c = find_conversation(name);
 				if (c == NULL)
+                                	c = new_conversation(name);
 
 				c->gc = u->gc;
 				gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
