@@ -631,6 +631,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 	char *text = NULL;
 	struct prpl* prpl = find_prpl(b->account->protocol);
 	char *statustext = NULL;
+	char *aliastext = NULL, *nicktext = NULL;
 	char *warning = NULL, *idletime = NULL;
 
 	if (prpl->tooltip_text) {
@@ -657,6 +658,12 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			idletime = g_strdup_printf(_("%dm"), imin);
 	}
 
+	if(b->alias)
+		aliastext = g_markup_escape_text(b->alias, -1);
+
+	if(b->server_alias)
+		nicktext = g_markup_escape_text(b->server_alias, -1);
+
 	if (b->evil > 0)
 		warning = g_strdup_printf(_("%d%%"), b->evil);
 
@@ -667,9 +674,9 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       "%s %s"     /* Warning */
 			       "%s%s",    /* Status */
 			       b->name,
-			       b->alias && b->alias[0] ? _("\n<b>Alias:</b>") : "", b->alias ? b->alias : "", 
-			       b->server_alias ? _("\n<b>Nickname:</b>") : "", b->server_alias ? b->server_alias : "", 
-			       b->idle ? _("\n<b>Idle:</b>") : "", b->idle ? idletime : "", 
+			       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
+			       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
+			       b->idle ? _("\n<b>Idle:</b>") : "", b->idle ? idletime : "",
 			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 			       statustext ? "\n" : "", statustext ? statustext : "");
 	if(warning)
@@ -678,6 +685,10 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 		g_free(idletime);
 	if(statustext)
 		g_free(statustext);
+	if(nicktext)
+		g_free(nicktext);
+	if(aliastext)
+		g_free(aliastext);
 
 	return text;
 
@@ -1186,6 +1197,7 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
 }
 
 static gboolean get_iter_from_node_helper(GaimBlistNode *node, GtkTreeIter *iter, GtkTreeIter *root) {
+
 	do {
 		GaimBlistNode *n;
 		GtkTreeIter child;
@@ -1335,8 +1347,9 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				}
 
 				oldersibling = node->prev;
-				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter))
+				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter)) {
 					oldersibling = oldersibling->prev;
+				}
 
 				gtk_tree_store_insert_after(gtkblist->treemodel, &iter, &groupiter, oldersibling ? &oldersiblingiter : NULL);
 
