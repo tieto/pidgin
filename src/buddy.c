@@ -601,6 +601,7 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 		set_convo_gc(c, b->connlist->data);
 		if (im_options & OPT_IM_ONE_WINDOW)
 			raise_convo_tab(c);
+		gtk_widget_grab_focus(c->entry);
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
 		static GtkWidget *menu = NULL;
 		static GList *mo_top = NULL;
