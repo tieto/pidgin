@@ -68,7 +68,7 @@
 #define MIME_HEADER	"MIME-Version: 1.0\r\n" \
 			"Content-Type: text/plain; charset=UTF-8\r\n" \
 			"User-Agent: Gaim/" VERSION "\r\n" \
-			"X-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; PF=0\r\n\r\n"
+			"X-MMS-IM-Format: FN=Arial; EF=; CO=0; PF=0\r\n\r\n"
 
 #define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"
 #define PASSPORT_URL "http://lc1.law13.hotmail.passport.com/cgi-bin/dologin?login="
@@ -222,128 +222,128 @@ static char *handle_errcode(char *buf, gboolean show)
 
 	switch (errcode) {
 		case 200:
-			g_snprintf(msg, sizeof(msg), "Syntax Error (probably a Gaim bug)");
+			g_snprintf(msg, sizeof(msg), _("Syntax Error (probably a Gaim bug)"));
 			break;
 		case 201:
-			g_snprintf(msg, sizeof(msg), "Invalid Parameter (probably a Gaim bug)");
+			g_snprintf(msg, sizeof(msg), _("Invalid Parameter (probably a Gaim bug)"));
 			break;
 		case 205:
-			g_snprintf(msg, sizeof(msg), "Invalid User");
+			g_snprintf(msg, sizeof(msg), _("Invalid User"));
 			break;
 		case 206:
-			g_snprintf(msg, sizeof(msg), "Fully Qualified Domain Name missing");
+			g_snprintf(msg, sizeof(msg), _("Fully Qualified Domain Name missing"));
 			break;
 		case 207:
-			g_snprintf(msg, sizeof(msg), "Already Login");
+			g_snprintf(msg, sizeof(msg), _("Already Login"));
 			break;
 		case 208:
-			g_snprintf(msg, sizeof(msg), "Invalid Username");
+			g_snprintf(msg, sizeof(msg), _("Invalid Username"));
 			break;
 		case 209:
-			g_snprintf(msg, sizeof(msg), "Invalid Friendly Name");
+			g_snprintf(msg, sizeof(msg), _("Invalid Friendly Name"));
 			break;
 		case 210:
-			g_snprintf(msg, sizeof(msg), "List Full");
+			g_snprintf(msg, sizeof(msg), _("List Full"));
 			break;
 		case 215:
-			g_snprintf(msg, sizeof(msg), "Already there");
+			g_snprintf(msg, sizeof(msg), _("Already there"));
 			break;
 		case 216:
-			g_snprintf(msg, sizeof(msg), "Not on list");
+			g_snprintf(msg, sizeof(msg), _("Not on list"));
 			break;
 		case 217:
-			g_snprintf(msg, sizeof(msg), "User is offline");
+			g_snprintf(msg, sizeof(msg), _("User is offline"));
 			break;
 		case 218:
-			g_snprintf(msg, sizeof(msg), "Already in the mode");
+			g_snprintf(msg, sizeof(msg), _("Already in the mode"));
 			break;
 		case 219:
-			g_snprintf(msg, sizeof(msg), "Already in opposite list");
+			g_snprintf(msg, sizeof(msg), _("Already in opposite list"));
 			break;
 		case 280:
-			g_snprintf(msg, sizeof(msg), "Switchboard failed");
+			g_snprintf(msg, sizeof(msg), _("Switchboard failed"));
 			break;
 		case 281:
-			g_snprintf(msg, sizeof(msg), "Notify Transfer failed");
+			g_snprintf(msg, sizeof(msg), _("Notify Transfer failed"));
 			break;
 
 		case 300:
-			g_snprintf(msg, sizeof(msg), "Required fields missing");
+			g_snprintf(msg, sizeof(msg), _("Required fields missing"));
 			break;
 		case 302:
-			g_snprintf(msg, sizeof(msg), "Not logged in");
+			g_snprintf(msg, sizeof(msg), _("Not logged in"));
 			break;
 
 		case 500:
-			g_snprintf(msg, sizeof(msg), "Internal server error");
+			g_snprintf(msg, sizeof(msg), _("Internal server error"));
 			break;
 		case 501:
-			g_snprintf(msg, sizeof(msg), "Database server error");
+			g_snprintf(msg, sizeof(msg), _("Database server error"));
 			break;
 		case 510:
-			g_snprintf(msg, sizeof(msg), "File operation error");
+			g_snprintf(msg, sizeof(msg), _("File operation error"));
 			break;
 		case 520:
-			g_snprintf(msg, sizeof(msg), "Memory allocation error");
+			g_snprintf(msg, sizeof(msg), _("Memory allocation error"));
 			break;
 
 		case 600:
-			g_snprintf(msg, sizeof(msg), "Server busy");
+			g_snprintf(msg, sizeof(msg), _("Server busy"));
 			break;
 		case 601:
-			g_snprintf(msg, sizeof(msg), "Server unavailable");
+			g_snprintf(msg, sizeof(msg), _("Server unavailable"));
 			break;
 		case 602:
-			g_snprintf(msg, sizeof(msg), "Peer Notification server down");
+			g_snprintf(msg, sizeof(msg), _("Peer Notification server down"));
 			break;
 		case 603:
-			g_snprintf(msg, sizeof(msg), "Database connect error");
+			g_snprintf(msg, sizeof(msg), _("Database connect error"));
 			break;
 		case 604:
-			g_snprintf(msg, sizeof(msg), "Server is going down (abandon ship)");
+			g_snprintf(msg, sizeof(msg), _("Server is going down (abandon ship)"));
 			break;
 
 		case 707:
-			g_snprintf(msg, sizeof(msg), "Error creating connection");
+			g_snprintf(msg, sizeof(msg), _("Error creating connection"));
 			break;
 		case 711:
-			g_snprintf(msg, sizeof(msg), "Unable to write");
+			g_snprintf(msg, sizeof(msg), _("Unable to write"));
 			break;
 		case 712:
-			g_snprintf(msg, sizeof(msg), "Session overload");
+			g_snprintf(msg, sizeof(msg), _("Session overload"));
 			break;
 		case 713:
-			g_snprintf(msg, sizeof(msg), "User is too active");
+			g_snprintf(msg, sizeof(msg), _("User is too active"));
 			break;
 		case 714:
-			g_snprintf(msg, sizeof(msg), "Too many sessions");
+			g_snprintf(msg, sizeof(msg), _("Too many sessions"));
 			break;
 		case 715:
-			g_snprintf(msg, sizeof(msg), "Not expected");
+			g_snprintf(msg, sizeof(msg), _("Not expected"));
 			break;
 		case 717:
-			g_snprintf(msg, sizeof(msg), "Bad friend file");
+			g_snprintf(msg, sizeof(msg), _("Bad friend file"));
 			break;
 
 		case 911:
-			g_snprintf(msg, sizeof(msg), "Authentication failed");
+			g_snprintf(msg, sizeof(msg), _("Authentication failed"));
 			break;
 		case 913:
-			g_snprintf(msg, sizeof(msg), "Not allowed when offline");
+			g_snprintf(msg, sizeof(msg), _("Not allowed when offline"));
 			break;
 	        case 920:
-			g_snprintf(msg, sizeof(msg), "Not accepting new users");
+			g_snprintf(msg, sizeof(msg), _("Not accepting new users"));
 			break;
 	        case 924:
-			g_snprintf(msg, sizeof(msg), "User unverified");
+			g_snprintf(msg, sizeof(msg), _("User unverified"));
 			break;
 		default:
-			g_snprintf(msg, sizeof(msg), "Unknown Error Code");
+			g_snprintf(msg, sizeof(msg), _("Unknown Error Code"));
 			break;
 	}
 
 	if (show)
-		do_error_dialog(msg, "MSN Error");
+		do_error_dialog(msg, _("MSN Error"));
 
 	return msg;
 }
@@ -544,7 +544,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		ms->msguser = g_strdup(user);
 		ms->msglen = length;
 	} else if (!g_strncasecmp(buf, "NAK", 3)) {
-		do_error_dialog("A message may not have been received.", "MSN Error");
+		do_error_dialog(_("A message may not have been received."), _("MSN Error"));
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 		if (ms->chat)
@@ -921,7 +921,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		ap->friend = g_strdup(url_decode(friend));
 		ap->gc = gc;
 
-		g_snprintf(msg, sizeof(msg), "The user %s (%s) wants to add you to their buddy list.",
+		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list."),
 				ap->user, url_decode(ap->friend));
 
 		do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
@@ -1072,7 +1072,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				ap->friend = g_strdup(friend);
 				ap->gc = gc;
                          
-		                g_snprintf(msg, sizeof(msg), "The user %s (%s) wants to add you to their buddy list",ap->user, url_decode(ap->friend));
+		                g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, url_decode(ap->friend));
 				do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
 			}
 		    }
@@ -1108,7 +1108,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				struct buddy *b;
 				md->fl = g_slist_remove(md->fl, mb);
 				if (!(b = find_buddy(gc, mb->user)))
-					add_buddy(gc, "Buddies", mb->user, mb->friend);
+					add_buddy(gc, _("Buddies"), mb->user, mb->friend);
 				else if (!g_strcasecmp(b->name, b->show)) {
 					g_snprintf(b->show, sizeof(b->show), "%s", mb->friend);
 					handle_buddy_rename(b, b->name);
@@ -1433,7 +1433,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	len = read(md->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		hide_login_progress_error(gc, "Error reading from server");
+		hide_login_progress_error(gc, _("Error reading from server"));
 		signoff(gc);
 		return;
 	}
@@ -1566,7 +1566,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			return 0;
 		}
 
-		set_login_progress(gc, 3, "Requesting to send password");
+		set_login_progress(gc, 3, _("Requesting to send password"));
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
 		char *resp, *friend, *tmp = buf;
 
@@ -1613,12 +1613,12 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			strcat(sendbuf, "\n");
 
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
-				hide_login_progress(gc, "Unable to send password");
+				hide_login_progress(gc, _("Unable to send password"));
 				signoff(gc);
 				return 0;
 			}
 
-			set_login_progress(gc, 4, "Password sent");
+			set_login_progress(gc, 4, _("Password sent"));
 		}
 	} else if (!g_strncasecmp(buf, "XFR", 3)) {
 		char *host = strstr(buf, "NS");
@@ -1674,7 +1674,7 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 	len = read(md->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		hide_login_progress(gc, "Error reading from server");
+		hide_login_progress(gc, _("Error reading from server"));
 		signoff(gc);
 		return;
 	}
@@ -1736,20 +1736,20 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 		md->fd = source;
 
 	if (md->fd == -1) {
-		hide_login_progress(gc, "Unable to connect");
+		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 		return;
 	}
 
 	g_snprintf(buf, sizeof(buf), "VER %d MSNP5\r\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Unable to write to server");
+		hide_login_progress(gc, _("Unable to write to server"));
 		signoff(gc);
 		return;
 	}
 
 	md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_login_callback, gc);
-	set_login_progress(gc, 2, "Synching with server");
+	set_login_progress(gc, 2,_("Synching with server"));
 }
 
 static void msn_login(struct aim_user *user)
@@ -1757,13 +1757,13 @@ static void msn_login(struct aim_user *user)
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct msn_data *md = gc->proto_data = g_new0(struct msn_data, 1);
 
-	set_login_progress(gc, 1, "Connecting");
+	set_login_progress(gc, 1, _("Connecting"));
 
 	g_snprintf(gc->username, sizeof(gc->username), "%s", msn_normalize(gc->username));
 
 	md->fd = proxy_connect("messenger.hotmail.com", 1863, msn_login_connect, gc);
 	if (md->fd < 0) {
-		hide_login_progress(gc, "Unable to connect");
+		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 	}
 }
@@ -1912,13 +1912,13 @@ static GList *msn_away_states(struct gaim_connection *gc)
 {
 	GList *m = NULL;
 
-	m = g_list_append(m, "Available");
-	m = g_list_append(m, "Away From Computer");
-	m = g_list_append(m, "Be Right Back");
-	m = g_list_append(m, "Busy");
-	m = g_list_append(m, "On The Phone");
-	m = g_list_append(m, "Out To Lunch");
-	m = g_list_append(m, "Hidden");
+	m = g_list_append(m, _("Available"));
+	m = g_list_append(m, _("Away From Computer"));
+	m = g_list_append(m, _("Be Right Back"));
+	m = g_list_append(m, _("Busy"));
+	m = g_list_append(m, _("On The Phone"));
+	m = g_list_append(m, _("Out To Lunch"));
+	m = g_list_append(m, _("Hidden"));
 
 	return m;
 }
@@ -2034,7 +2034,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 	static char buf[MSN_BUF_LEN];
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = "Reset friendly name";
+	pbm->label = _("Reset friendly name");
 	pbm->callback = msn_reset_friend;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
@@ -2043,7 +2043,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 		return m;
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
-	g_snprintf(buf, sizeof(buf), "Status: %s", msn_get_away_text(b->uc >> 1));
+	g_snprintf(buf, sizeof(buf), _("Status: %s"), msn_get_away_text(b->uc >> 1));
 	pbm->label = buf;
 	pbm->callback = NULL;
 	pbm->gc = gc;
@@ -2104,7 +2104,7 @@ static void msn_act_id(gpointer data, char *entry)
 	char buf[MSN_BUF_LEN];
 
 	if (strlen(url_encode(entry)) >= BUDDY_ALIAS_MAXLEN) {
-		do_error_dialog("Friendly name too long.", "MSN Error");
+		do_error_dialog(_("Friendly name too long."), _("MSN Error"));
 		return;
 	}
 	
@@ -2118,9 +2118,9 @@ static void msn_act_id(gpointer data, char *entry)
 
 static void msn_do_action(struct gaim_connection *gc, char *act)
 {
-	if (!strcmp(act, "Set Friendly Name")) {
-		do_prompt_dialog("Set Friendly Name:", gc->displayname, gc, msn_act_id, NULL);
-	} else if (!strcmp(act, "Reset All Friendly Names")) {
+	if (!strcmp(act, _("Set Friendly Name"))) {
+		do_prompt_dialog(_("Set Friendly Name:"), gc->displayname, gc, msn_act_id, NULL);
+	} else if (!strcmp(act, _("Reset All Friendly Names"))) {
 		GSList *g = gc->groups;
 		while (g) {
 			GSList *m = ((struct group *)g->data)->members;
@@ -2139,7 +2139,7 @@ static GList *msn_actions()
 {
 	GList *m = NULL;
 
-	m = g_list_append(m, "Set Friendly Name");
+	m = g_list_append(m, _("Set Friendly Name"));
 	m = g_list_append(m, "Reset All Friendly Names");
 
 	return m;

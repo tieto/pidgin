@@ -1,13 +1,14 @@
 # translation of PACKAGE.
 # Copyright (C) 2002 Free Software Foundation, Inc.
 # Amaya Rodrigo <amaya@debian.org>, March 2002.
+# Alejandro G Villar <alx5000@terra.es>, April 2002
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2002-04-11 22:46-0700\n"
 "PO-Revision-Date: 2002-02-23 18:05+0100\n"
-"Last-Translator: Amaya Rodrigo <amaya@debian.org>\n"
+"Last-Translator: Alex Villar <alx5000@terra.es>\n"
 "Language-Team:  <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-15\n"
@@ -553,22 +554,216 @@ msgstr ""
 msgid "Set User Info"
 msgstr "Información de Usuario"
 
-#: src/protocols/msn/msn.c:719 src/protocols/msn/msn.c:2041
-#: src/protocols/msn/msn.c:2074
+#: src/protocols/msn/msn.c:826 src/protocols/msn/msn.c:2107
+#: src/protocols/msn/msn.c:2264 src/protocols/msn/msn.c:2297
+#: src/protocols/msn/msn.c:346 src/protocols/msn/msn.c:547
 msgid "MSN Error"
 msgstr "Error de MSN"
 
-#: src/protocols/msn/msn.c:719
+#: src/protocols/msn/msn.c:547
+msgid "A message may not have been received."
+msgstr "Puede que no se haya recibido un mensaje"
+
+#: src/protocols/msn/msn.c:826
 msgid "Gaim was unable to send a message"
 msgstr "Gaim no pudo envíar el mensaje"
 
-#: src/protocols/msn/msn.c:1069
+#: src/protocols/msn/msn.c:1176
 msgid "You have been disconnected. You have signed on from another location."
-msgstr "Has sido desconectado. Has conectado desde otra ubicación"
+msgstr "Ha sido desconectado al conectar desde otra ubicación"
 
-#: src/protocols/msn/msn.c:2041 src/protocols/msn/msn.c:2074
+#: src/protocols/msn/msn.c:2264 src/protocols/msn/msn.c:2297
 msgid "Invalid name"
-msgstr "Nombre inválido"
+msgstr "Nombre no válido"
+
+#: src/protocols/msn/msn.c:1915 src/protocols/msn/msn.c:2016
+msgid "Available"
+msgstr "En línea"
+
+#: src/protocols/msn/msn.c:1916
+msgid "Away From Computer"
+msgstr "Ausente"
+
+#: src/protocols/msn/msn.c:2008
+msgid "Away from the computer"
+msgstr "Ausente"
+
+#: src/protocols/msn/msn.c:2014
+msgid "Idle"
+msgstr "Ausente"
+
+#: src/protocols/msn/msn.c:1917
+msgid "Be Right Back"
+msgstr "Vuelvo enseguida"
+
+#: src/protocols/msn/msn.c:2006
+msgid "Be right back"
+msgstr "Vuelvo enseguida"
+
+#: src/protocols/msn/msn.c:1918 src/protocols/msn/msn.c:2004
+msgid "Busy"
+msgstr "No Disponible"
+
+#: src/protocols/msn/msn.c:1919
+msgid "On The Phone"
+msgstr "Al teléfono"
+
+#: src/protocols/msn/msn.c:2010
+msgid "On the phone"
+msgstr "Al teléfono"
+
+#: src/protocols/msn/msn.c:1920
+msgid "Out To Lunch"
+msgstr "Salí a comer"
+
+#: src/protocols/msn/msn.c:2012
+msgid "Out to lunch"
+msgstr "Salí a comer"
+
+#: src/protocols/msn/msn.c:1921
+msgid "Hidden"
+msgstr "Sin conexión"
+
+#: src/protocols/msn/msn.c:2037
+msgid "Reset friendly name"
+msgstr "Actualizar nombre"
+
+#: src/protocols/msn/msn.c:2121 src/protocols/msn/msn.c:2122
+#: src/protocols/msn/msn.c:2142
+msgid "Set Friendly Name"
+msgstr "Establecer nombre"
+
+#: src/protocols/msn/msn.c:924 src/protocols/msn/msn.c:1075
+msgid "The user %s (%s) wants to add you to their buddy list"
+msgstr "El usuario %s (%s) quiere añadirle a su lista de amigos"
+
+#: src/protocols/msn/msn.c:2107
+msgid "Friendly name too long."
+msgstr "Nombre demasiado largo"
+
+#: src/protocols/msn/msn.c:1111
+msgid "Buddies"
+msgstr "Amigos"
+
+#: src/protocols/msn/msn.c:1739 src/protocols/msn/msn.c:1766
+msgid "Unable to connect"
+msgstr "No se puede conectar"
+
+#: src/protocols/msn/msn.c:1746
+msgid "Unable to write to server"
+msgstr "No se puede escribir al servidor"
+
+#: src/protocols/msn/msn.c:1752
+msgid "Synching with server"
+msgstr "Redirigiendo al servidor"
+
+#: src/protocols/msn/msn.c:1436 src/protocols/msn/msn.c:1677
+msgid "Error reading from server"
+msgstr "Error al leer del servidor"
+
+#: src/protocols/msn/msn.c:1621
+msgid "Password sent"
+msgstr "Contraseña enviada"
+
+#: src/protocols/msn/msn.c:1616
+msgid "Unable to send password"
+msgstr "No se puede enviar la contraseña"
+
+#: src/protocols/msn/msn.c:1760
+msgid "Connecting"
+msgstr "Conectando"
+
+#: src/protocols/msn/msn.c:1569
+msgid "Requesting to send password"
+msgstr "Enviando contraseña"
+
+#: src/protocols/msn/msn.c:2046
+msgid "Status: %s"
+msgstr "Estado: %s"
+ 
+#: src/protocols/msn/msn.c:2123 src/protocols/msn/msn.c:2143
+msgid "Reset All Friendly Names"
+msgstr "Actualizar todos los nombres"
+
+#: src/protocols/msn/msn.c:225
+msgid "Syntax Error (probably a Gaim bug)"
+msgstr "Error de sintaxis (problabemente un bug de Gaim)"
+
+#: src/protocols/msn/msn.c:228
+msgid "Invalid Parameter (probably a Gaim bug)"
+msgstr "Parámetro inválido (problabemente un bug de Gaim)"
+
+#: src/protocols/msn/msn.c:231
+msgid "Invalid User"
+msgstr "Usuario no válido"
+
+#: src/protocols/msn/msn.c:240
+msgid "Invalid Username"
+msgstr "Nombre de usuario no válido"
+
+#: src/protocols/msn/msn.c:243
+msgid "Invalid Friendly Name"
+msgstr "Nombre no válido"
+
+#: src/protocols/msn/msn.c:246
+msgid "List Full"
+msgstr "Lista llena"
+
+#: src/protocols/msn/msn.c:249
+msgid "Already there"
+msgstr "Ya en lista"
+
+#: src/protocols/msn/msn.c:252
+msgid "Not on list"
+msgstr "No está en la lista"
+
+#: src/protocols/msn/msn.c:255
+msgid "User is offline"
+msgstr "El usuario no está conectado"
+
+#: src/protocols/msn/msn.c:261
+msgid "Already in opposite list"
+msgstr "Ya está en la lista contraria"
+
+#: src/protocols/msn/msn.c:264
+msgid "Switchboard failed"
+msgstr "Falló el servidor Switchboard"
+
+#: src/protocols/msn/msn.c:274
+msgid "Not logged in"
+msgstr "No ha iniciado sesión"
+
+#: src/protocols/msn/msn.c:278
+msgid "Internal server error"
+msgstr "Error interno del servidor"
+
+#: src/protocols/msn/msn.c:291
+msgid "Server busy"
+msgstr "Servidor ocupado"
+
+#: src/protocols/msn/msn.c:294
+msgid "Server unavailable"
+msgstr "Servidor no disponible"
+
+#: src/protocols/msn/msn.c:303
+msgid "Server is going down (abandon ship)"
+msgstr "El servidor está apagándose (Sálvese quien pueda)"
+
+#: src/protocols/msn/msn.c:307
+msgid "Error creating connection"
+msgstr "Error al crear la conexión"
+
+#: src/protocols/msn/msn.c:329
+msgid "Authentication failed"
+msgstr "Falló la autentificación.Compruebe\nnombre de usuario y contraseña"
+
+#: src/protocols/msn/msn.c:332
+msgid "Not allowed when offline"
+msgstr "No puede mandar mensajes fuera de línea"
+
+#: src/protocols/msn/msn.c:341
+msgid "Unknown error code"
+msgstr "Código de error desconocido"
 
 #: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:3075
 #: src/protocols/toc/toc.c:1101
@@ -1181,7 +1376,7 @@ msgstr "Destinatario:"
 #: src/about.c:93
 #, c-format
 msgid "About Gaim v%s"
-msgstr "Sobre Gaim v%s"
+msgstr "Acerca de Gaim v%s"
 
 #: src/about.c:126
 msgid ""
@@ -1286,7 +1481,7 @@ msgstr "Conectar"
 
 #: src/aim.c:355
 msgid "About"
-msgstr "Sobre"
+msgstr "Acerca de..."
 
 #: src/aim.c:356 src/prefs.c:1619 src/prefs.c:1893
 msgid "Options"
@@ -1294,7 +1489,7 @@ msgstr "Opciones"
 
 #: src/aim.c:358 src/aim.c:822 src/buddy.c:2674
 msgid "Plugins"
-msgstr "Añadidos"
+msgstr "Plugins"
 
 #: src/aim.c:816 src/buddy.c:2666
 msgid "Preferences"
@@ -1327,7 +1522,7 @@ msgstr "No pudo crearse el programa Gaim"
 
 #: src/applet.c:465
 msgid "About..."
-msgstr "Sobre..."
+msgstr "Acerca de..."
 
 #: src/away.c:202
 msgid "Gaim - Away!"
@@ -1528,7 +1723,7 @@ msgstr "Ayuda"
 
 #: src/buddy.c:2704
 msgid "About Gaim"
-msgstr "Sobre Gaim"
+msgstr "Acerca de Gaim"
 
 #: src/buddy.c:2721 src/prefs.c:2891
 msgid "Buddy List"
@@ -2377,17 +2572,16 @@ msgstr "Scripts de Perl"
 
 #: src/plugins.c:113
 msgid "Gaim - Plugin List"
-msgstr "Gaim - Lista de Añadidos"
+msgstr "Gaim - Lista de Plugins"
 
 #: src/plugins.c:178
 msgid "Gaim - Plugins"
-msgstr "Gaim - Añadidos"
+msgstr "Gaim - Plugins"
 
 #. Left side: frame with list of plugin file names
 #: src/plugins.c:192
-#, fuzzy
 msgid "Loaded Plugins"
-msgstr "Usar Añadido"
+msgstr "Plugins cargados"
 
 #: src/plugins.c:238
 msgid "Filepath:"
