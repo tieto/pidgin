@@ -156,6 +156,11 @@ struct _menu_cb_info {
 };
 
 static void
+join_button_data_change_cb(gpointer data) {
+	g_free(data);
+}
+
+static void
 selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 	GtkTreeIter iter;
 	GValue val = { 0, };
@@ -177,7 +182,8 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 		info->list = dialog->roomlist;
 		info->room = room;
 
-		g_object_set_data(G_OBJECT(dialog->join_button), "room-info", info);
+		g_object_set_data_full(G_OBJECT(dialog->join_button), "room-info",
+							   info, join_button_data_change_cb);
 
 		gtk_widget_set_sensitive(dialog->join_button, TRUE);
 	} else {
@@ -198,8 +204,8 @@ static void join_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 		
 	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
 	
-	do_join_cb(grl->tree, info);
-	g_free(info);
+	if(info != NULL)
+		do_join_cb(grl->tree, info);
 }
 
 static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *arg2,
