@@ -65,6 +65,7 @@ typedef struct
 
 	char *id;
 	char *label;
+	char *type_hint;
 
 	gboolean visible;
 
@@ -364,10 +365,22 @@ void gaim_request_field_set_label(GaimRequestField *field, const char *label);
 /**
  * Sets whether or not a field is visible.
  *
- * @param field  The field.
+ * @param field   The field.
  * @param visible TRUE if visible, or FALSE if not.
  */
 void gaim_request_field_set_visible(GaimRequestField *field, gboolean visible);
+
+/**
+ * Sets the type hint for the field.
+ *
+ * This is optionally used by the UIs to provide such features as
+ * auto-completion for type hints like "screenname."
+ *
+ * @param field     The field.
+ * @param type_hint The type hint.
+ */
+void gaim_request_field_set_type_hint(GaimRequestField *field,
+									  const char *type_hint);
 
 /**
  * Returns the type of a field.
@@ -404,6 +417,15 @@ const char *gaim_request_field_get_label(const GaimRequestField *field);
  * @return TRUE if the field is visible. FALSE otherwise.
  */
 gboolean gaim_request_field_is_visible(const GaimRequestField *field);
+
+/**
+ * Returns the field's type hint.
+ *
+ * @param field The field.
+ *
+ * @return The field's type hint.
+ */
+const char *gaim_request_field_get_type_hint(const GaimRequestField *field);
 
 /*@}*/
 

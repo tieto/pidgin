@@ -273,6 +273,9 @@ gaim_request_field_destroy(GaimRequestField *field)
 	if (field->label != NULL)
 		g_free(field->label);
 
+	if (field->type_hint != NULL)
+		g_free(field->type_hint);
+
 	if (field->type == GAIM_REQUEST_FIELD_STRING)
 	{
 		if (field->u.string.default_value != NULL)
@@ -329,6 +332,18 @@ gaim_request_field_set_visible(GaimRequestField *field, gboolean visible)
 	field->visible = visible;
 }
 
+void
+gaim_request_field_set_type_hint(GaimRequestField *field,
+								 const char *type_hint)
+{
+	g_return_if_fail(field != NULL);
+
+	if (field->type_hint != NULL)
+		g_free(field->type_hint);
+
+	field->type_hint = (type_hint == NULL ? NULL : g_strdup(type_hint));
+}
+
 GaimRequestFieldType
 gaim_request_field_get_type(const GaimRequestField *field)
 {
@@ -359,6 +374,14 @@ gaim_request_field_is_visible(const GaimRequestField *field)
 	g_return_val_if_fail(field != NULL, FALSE);
 
 	return field->visible;
+}
+
+const char *
+gaim_request_field_get_type_hint(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+
+	return field->type_hint;
 }
 
 GaimRequestField *
