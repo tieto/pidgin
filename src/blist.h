@@ -96,6 +96,9 @@ struct buddy {
 struct group {
 	GaimBlistNode node;                    /**< The node that this group inherits from */
 	char *name;                            /**< The name of this group. */
+	int totalsize;			       /**< The number of buddies in this group */
+	int currentsize;		       /**< The number of buddies in this group corresponding to online accounts */
+	int online;			       /**< The number of buddies in this group who are currently online */
 	GHashTable *settings;                  /**< per-group settings from the XML buddy list, set by plugins and the likes. */
 };
 
