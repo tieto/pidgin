@@ -2531,12 +2531,7 @@ static GtkWidget *
 setup_menubar(struct gaim_window *win)
 {
 	struct gaim_gtk_window *gtkwin;
-	GtkWidget *hb;
-
 	gtkwin = GAIM_GTK_WINDOW(win);
-
-	/* Create the handle box. */
-	hb = gtk_handle_box_new();
 
 	gtkwin->menu.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
 			"<main>", NULL);
@@ -2563,12 +2558,9 @@ setup_menubar(struct gaim_window *win)
 
 	generate_send_as_items(win, NULL);
 
-	gtk_container_add(GTK_CONTAINER(hb), gtkwin->menu.menubar);
-
 	gtk_widget_show(gtkwin->menu.menubar);
-	gtk_widget_show(hb);
 
-	return hb;
+	return gtkwin->menu.menubar;
 }
 
 static void
