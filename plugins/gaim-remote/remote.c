@@ -157,7 +157,7 @@ gaim_remote_handle_uri(const char *uri)
 		}
 
 		gaim_debug(GAIM_DEBUG_MISC, "gaim_remote_handle_uri", "who: %s\n", who);
-		show_add_buddy(gc, who, group, NULL);
+		gaim_blist_request_add_buddy(gc->account, who, group, NULL);
 		g_free(who);
 		if (group)
 			g_free(group);

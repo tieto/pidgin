@@ -185,7 +185,7 @@ static void buddy_ticker_remove_buddy(GaimBuddy *b) {
 
 static void buddy_ticker_show()
 {
-	struct gaim_buddy_list *list = gaim_get_blist();
+	GaimBuddyList *list = gaim_get_blist();
 	GaimBlistNode *gnode, *cnode, *bnode;
 	GaimBuddy *b;
 

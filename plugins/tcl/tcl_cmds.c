@@ -257,7 +257,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	Tcl_Obj *list, *tclgroup, *tclgrouplist, *tclcontact, *tclcontactlist, *tclbud, **elems, *result;
 	char *cmds[] = { "alias", "handle", "info", "list", NULL };
 	enum { CMD_BUDDY_ALIAS, CMD_BUDDY_HANDLE, CMD_BUDDY_INFO, CMD_BUDDY_LIST } cmd;
-	struct gaim_buddy_list *blist;
+	GaimBuddyList *blist;
 	GaimBlistNode *node, *gnode, *bnode;
 	GaimAccount *account;
 	GaimBuddy *bud;
