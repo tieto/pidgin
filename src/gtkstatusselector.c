@@ -508,7 +508,7 @@ rebuild_list(GaimGtkStatusSelector *selector)
 	gboolean enabled = FALSE;
 	GaimAccount *first_account = NULL;
 	const char *first_prpl_type = NULL;
-	GList *l;
+	const GList *l;
 
 	g_return_if_fail(selector != NULL);
 	g_return_if_fail(GAIM_GTK_IS_STATUS_SELECTOR(selector));
@@ -578,8 +578,6 @@ rebuild_list(GaimGtkStatusSelector *selector)
 
 	if (single_prpl)
 	{
-		const GList *l;
-
 		for (l = gaim_account_get_status_types(first_account);
 			 l != NULL;
 			 l = l->next)
@@ -605,10 +603,50 @@ rebuild_list(GaimGtkStatusSelector *selector)
 	}
 	else
 	{
-		/* TODO: Add "online" and "offline" here? */
-		add_item(selector, "available", _("Available"),
-				 load_icon("online.png"));
-		add_item(selector, "away", _("Away"), load_icon("away.png"));
+		/* what follows is either really ugly, or brilliant depending on
+		 * how you look at it, and how much you've had to drink */
+		int i;
+		int num_accounts = 0;
+		int options[GAIM_STATUS_NUM_PRIMITIVES];
+		GaimAccount *acct_options[GAIM_STATUS_NUM_PRIMITIVES];
+
+		for(i=0; i<GAIM_STATUS_NUM_PRIMITIVES; i++) {
+			options[i] = 0;
+			acct_options[i] = NULL;
+		}
+
+		for(accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+			GaimAccount *account = accounts->data;
+
+			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
+				continue;
+
+			num_accounts++;
+
+			for(l = gaim_account_get_status_types(account); l != NULL; l = l->next) {
+				GaimStatusType *status_type = l->data;
+
+				if (!gaim_status_type_is_user_settable(status_type))
+					continue;
+
+				acct_options[gaim_status_type_get_primitive(status_type)] = account;
+			}
+
+			for(i=0; i<GAIM_STATUS_NUM_PRIMITIVES; i++) {
+				gaim_debug_misc("gtkstatusselector", "account=%p, acct_options[%d]=%p\n", account, i, acct_options[i]);
+				if(acct_options[i] == account)
+					options[i]++;
+			}
+		}
+
+		for(i=0; i<GAIM_STATUS_NUM_PRIMITIVES; i++) {
+			gaim_debug_misc("gtkstatusselector", "%s has %d accounts\n", gaim_primitive_get_name_from_type(i), options[i]);
+			if(options[i] == num_accounts) {
+				char *filename = g_strdup_printf("%s.png", gaim_primitive_get_id_from_type(i));
+				add_item(selector, gaim_primitive_get_id_from_type(i), gaim_primitive_get_name_from_type(i), load_icon(filename));
+				g_free(filename);
+			}
+		}
 	}
 
 	/* TODO: Add saved statuses here? */

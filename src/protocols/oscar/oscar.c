@@ -16,7 +16,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -5796,6 +5796,9 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimStatusType *type = gaim_status_get_type(status);
 	int primitive = gaim_status_type_get_primitive(type);
+
+	if(!gaim_status_is_active(status))
+		return;
 
 	if (primitive == !GAIM_STATUS_OFFLINE && !gc) {
 		gaim_account_connect(account, status);
