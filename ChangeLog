@@ -17,6 +17,8 @@ version 0.11.0-pre11:
 	  op, deop, voice, devoice, mode, raw, quote, and kick (thanks
 	  to Sean Egan)
 	* MSN Properly handles URL decoding of 'friendly' names
+	* Redesigned Preferences pages (design by DennisR)
+	* Can select where tabs are for tabbed IM/Chat windows
 
 version 0.11.0-pre10 (04/13/2001):
 	* Many, many bug fixes

@@ -487,6 +487,10 @@ extern int display_options;
 #define OPT_DISP_IGNORE_SIZES     0x00800000
 #define OPT_DISP_ONE_WINDOW       0x01000000
 #define OPT_DISP_ONE_CHAT_WINDOW  0x02000000
+#define OPT_DISP_CONV_SIDE_TAB    0x04000000
+#define OPT_DISP_CONV_BR_TAB      0x08000000
+#define OPT_DISP_CHAT_SIDE_TAB    0x10000000
+#define OPT_DISP_CHAT_BR_TAB      0x20000000
 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001
@@ -552,6 +556,8 @@ extern void build_imchat_box(gboolean);
 extern void do_quit();
 extern void update_chat_button_pix();
 extern void update_im_button_pix();
+extern void update_chat_tabs();
+extern void update_im_tabs();
 extern void update_idle_times();
 
 /* Functions in html.c */

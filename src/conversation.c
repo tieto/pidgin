@@ -398,6 +398,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 					gtk_widget_destroy(c->window);
 				c->window = NULL;
 				all_convos = NULL;
+				convo_notebook = NULL;
 			}
 		} else {
 			if (c->window)
@@ -414,6 +415,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 					gtk_widget_destroy(c->window);
 				c->window = NULL;
 				all_chats = NULL;
+				chat_notebook = NULL;
 			}
 		} else {
 			if (c->window)
@@ -1967,6 +1969,23 @@ void show_conv(struct conversation *c)
 					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
 
 			convo_notebook = gtk_notebook_new();
+			if (display_options & OPT_DISP_CONV_SIDE_TAB) {
+				if (display_options & OPT_DISP_CONV_BR_TAB) {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+							GTK_POS_RIGHT);
+				} else {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+							GTK_POS_LEFT);
+				}
+			} else  {
+				if (display_options & OPT_DISP_CONV_BR_TAB) {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+							GTK_POS_BOTTOM);
+				} else {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+							GTK_POS_TOP);
+				}
+			}
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(convo_notebook), TRUE);
 			gtk_notebook_popup_enable(GTK_NOTEBOOK(convo_notebook));
 			gtk_container_add(GTK_CONTAINER(win), convo_notebook);
@@ -2271,6 +2290,7 @@ void tabize()
 		if (all_convos)
 			gtk_widget_destroy(all_convos);
 		all_convos = NULL;
+		convo_notebook = NULL;
 		conversations = m;
 	}
 }
@@ -2286,4 +2306,48 @@ void raise_convo_tab(struct conversation *c)
 {
 	gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook), g_list_index(conversations, c));
 	gdk_window_show(c->window->window);
+}
+
+void update_im_tabs() {
+	if (!convo_notebook || !all_convos)
+		return;
+	if (display_options & OPT_DISP_CONV_SIDE_TAB) {
+		if (display_options & OPT_DISP_CONV_BR_TAB) {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+					GTK_POS_RIGHT);
+		} else {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+					GTK_POS_LEFT);
+		}
+	} else  {
+		if (display_options & OPT_DISP_CONV_BR_TAB) {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+					GTK_POS_BOTTOM);
+		} else {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
+					GTK_POS_TOP);
+		}
+	}
+}
+
+void update_chat_tabs() {
+	if (!chat_notebook || !all_chats)
+		return;
+	if (display_options & OPT_DISP_CHAT_SIDE_TAB) {
+		if (display_options & OPT_DISP_CHAT_BR_TAB) {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
+					GTK_POS_RIGHT);
+		} else {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
+					GTK_POS_LEFT);
+		}
+	} else {
+		if (display_options & OPT_DISP_CHAT_BR_TAB) {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
+					GTK_POS_BOTTOM);
+		} else {
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
+					GTK_POS_TOP);
+		}
+	}
 }

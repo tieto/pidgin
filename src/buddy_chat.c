@@ -779,6 +779,23 @@ void show_new_buddy_chat(struct conversation *b)
 					   GTK_SIGNAL_FUNC(delete_all_chats), NULL);
 
 			chat_notebook = gtk_notebook_new();
+			if (display_options & OPT_DISP_CHAT_SIDE_TAB) {
+				if (display_options & OPT_DISP_CHAT_BR_TAB) {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
+							GTK_POS_RIGHT);
+				} else {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
+							GTK_POS_LEFT);
+				}
+			} else {
+				if (display_options & OPT_DISP_CHAT_BR_TAB) {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
+							GTK_POS_BOTTOM);
+				} else {
+					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
+							GTK_POS_TOP);
+				}
+			}
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(chat_notebook), TRUE);
 			gtk_notebook_popup_enable(GTK_NOTEBOOK(chat_notebook));
 			gtk_container_add(GTK_CONTAINER(win), chat_notebook);
@@ -1143,6 +1160,7 @@ void chat_tabize()
 		if (all_chats)
 			gtk_widget_destroy(all_chats);
 		all_chats = NULL;
+		chat_notebook = NULL;
 		chats = m;
 	}
 }

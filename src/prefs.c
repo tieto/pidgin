@@ -459,6 +459,8 @@ static void set_buttons_opt(GtkWidget *w, int data)
 		update_chat_button_pix();
 	else
 		update_im_button_pix();
+
+	save_prefs();
 }
 
 /* i like everclear */
@@ -512,6 +514,52 @@ static GtkWidget *am_radio(char *label, int which, GtkWidget *box, GtkWidget *se
 	return opt;
 }
 
+static void set_tab_opt(GtkWidget *w, int data)
+{
+	int mask;
+	if (data & 0x1)		/* set the first bit if we're affecting chat buttons */
+		mask = (OPT_DISP_CHAT_SIDE_TAB | OPT_DISP_CHAT_BR_TAB);
+	else
+		mask = (OPT_DISP_CONV_SIDE_TAB | OPT_DISP_CONV_BR_TAB);
+	display_options &= ~(mask);
+	display_options |= (data & mask);
+
+	if (data & 0x1)
+		update_chat_tabs();
+	else
+		update_im_tabs();
+
+	save_prefs();
+}
+
+static GtkWidget *tab_radio(char *label, int which, GtkWidget *box, GtkWidget *set)
+{
+	GtkWidget *opt;
+
+	if (!set)
+		opt = gtk_radio_button_new_with_label(NULL, label);
+	else
+		opt =
+		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
+						    label);
+	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_tab_opt), (void *)which);
+	gtk_widget_show(opt);
+	if (which & 1) {
+		if ((display_options & (OPT_DISP_CHAT_SIDE_TAB | OPT_DISP_CHAT_BR_TAB)) == (which ^ 1))
+			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+		if (!(display_options & OPT_DISP_ONE_CHAT_WINDOW))
+			gtk_widget_set_sensitive(opt, FALSE);
+	} else {
+		if ((display_options & (OPT_DISP_CONV_SIDE_TAB | OPT_DISP_CONV_BR_TAB)) == which)
+			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+		if (!(display_options & OPT_DISP_ONE_WINDOW))
+			gtk_widget_set_sensitive(opt, FALSE);
+	}
+
+	return opt;
+}
+
 static void im_page()
 {
 	GtkWidget *parent;
@@ -522,6 +570,10 @@ static void im_page()
 	GtkWidget *vbox;
 	GtkWidget *opt;
 	GtkWidget *sep;
+	GtkWidget *button;
+	GtkWidget *button2;
+	GtkWidget *hbox2;
+	GtkWidget *vbox2;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -566,7 +618,7 @@ static void im_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	gaim_button(_("Show all conversations in one tabbed window"), &display_options, OPT_DISP_ONE_WINDOW, vbox);
+	button = gaim_button(_("Show all conversations in one tabbed window"), &display_options, OPT_DISP_ONE_WINDOW, vbox);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_WINDOWS, vbox);
 	gaim_button(_("Show logins in window"), &display_options, OPT_DISP_SHOW_LOGON, vbox);
 	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CONV_BIG_ENTRY, vbox);
@@ -599,10 +651,82 @@ static void im_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	gaim_button(_("Show all chats in one tabbed window"), &display_options, OPT_DISP_ONE_CHAT_WINDOW, vbox);
+	button2 = gaim_button(_("Show all chats in one tabbed window"), &display_options, OPT_DISP_ONE_CHAT_WINDOW, vbox);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_CHAT, vbox);
 	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON, vbox);
 	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CHAT_BIG_ENTRY, vbox);
+
+	frame = gtk_frame_new(_("Tabbed Window Options"));
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
+	gtk_widget_show(frame);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), hbox);
+	gtk_widget_show(hbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	label = gtk_label_new(_("IM Tab Placement:"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	hbox2 = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox2, TRUE, TRUE, 5);
+	gtk_widget_show(hbox2);
+
+	vbox2 = gtk_vbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 5);
+	gtk_widget_show(vbox2);
+
+	opt = tab_radio(_("Top"), 0, vbox2, NULL);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+	opt = tab_radio(_("Bottom"), OPT_DISP_CONV_BR_TAB, vbox2, opt);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+
+	vbox2 = gtk_vbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 5);
+	gtk_widget_show(vbox2);
+
+	opt = tab_radio(_("Left"), OPT_DISP_CONV_SIDE_TAB, vbox2, opt);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+	opt = tab_radio(_("Right"), OPT_DISP_CONV_SIDE_TAB | OPT_DISP_CONV_BR_TAB, vbox2, opt);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+
+	sep = gtk_vseparator_new();
+	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	label = gtk_label_new(_("Chat Tab Placement:"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	hbox2 = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox2, TRUE, TRUE, 5);
+	gtk_widget_show(hbox2);
+
+	vbox2 = gtk_vbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 5);
+	gtk_widget_show(vbox2);
+
+	opt = tab_radio(_("Top"), 1, vbox2, NULL);
+	gtk_signal_connect(GTK_OBJECT(button2), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+	opt = tab_radio(_("Bottom"), OPT_DISP_CHAT_BR_TAB | 1, vbox2, opt);
+	gtk_signal_connect(GTK_OBJECT(button2), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+
+	vbox2 = gtk_vbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 5);
+	gtk_widget_show(vbox2);
+
+	opt = tab_radio(_("Left"), OPT_DISP_CHAT_SIDE_TAB | 1, vbox2, opt);
+	gtk_signal_connect(GTK_OBJECT(button2), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+	opt = tab_radio(_("Right"), OPT_DISP_CHAT_SIDE_TAB | OPT_DISP_CHAT_BR_TAB | 1, vbox2, opt);
+	gtk_signal_connect(GTK_OBJECT(button2), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
 
 	gtk_widget_show(prefdialog);
 }
