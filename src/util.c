@@ -259,7 +259,7 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (!strncasecmp(c, "@", 1)) {
+		} else if (c != cpy && !strncasecmp(c, "@", 1)) {
 			char *tmp;
 			int flag;
 			int len = 0;
