@@ -128,6 +128,8 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, new, havenewmail);
 
+	aim_freetlvchain(&tlvlist);
+
 	return ret;
 }
 

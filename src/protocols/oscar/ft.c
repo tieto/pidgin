@@ -399,7 +399,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS) || !msg)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, len)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, 0)))
 		return -ENOMEM;
 
 	memcpy(fr->hdr.rend.magic, "ODC2", 4);
