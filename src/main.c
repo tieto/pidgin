@@ -377,11 +377,11 @@ void sighandler(int sig)
 			"It is possible that this bug is already fixed in CVS.\n"
 			"If you can reproduce the crash, please notify the gaim\n" 
 			"maintainers by reporting a bug at\n"
-			WEBSITE "bug.php\n\n"
+			GAIM_WEBSITE "bug.php\n\n"
 			"Please make sure to specify what you were doing at the time,\n"
 			"and post the backtrace from the core file. If you do not know\n"
 			"how to get the backtrace, please get instructions at\n"
-			WEBSITE "gdb.php. If you need further\n"
+			GAIM_WEBSITE "gdb.php. If you need further\n"
 			"assistance, please IM either RobFlynn or SeanEgn and\n"
 			"they can help you.\n");
 #else
