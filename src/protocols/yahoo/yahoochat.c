@@ -132,7 +132,8 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 			who = pair->value;
 			g_string_append_printf(members, "%s\n", who);
 			break;
-		case 52: /* members */
+		case 52: /* invitee (me) */
+		case 53: /* members */
 			g_string_append_printf(members, "%s\n", pair->value);
 			break;
 		case 58:

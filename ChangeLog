@@ -22,6 +22,7 @@ version 0.82:
 	* Buddy list tooltips display in more appropriate positions when
 	  using multiple monitors (Dave West)
 	* Better parsing of URLs containing special characters
+	* All users are shown when joining a Yahoo! conference (Bleeter Yaluser)
 
 version 0.81 (08/05/2004):
 	New Features:
