@@ -815,6 +815,8 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(ca->text));
 	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(ca->toolbar), ca->text);
+	gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(ca->toolbar), "default");
+	gaim_setup_imhtml(ca->text);
 
 	gtk_container_add(GTK_CONTAINER(sw), ca->text);
 
