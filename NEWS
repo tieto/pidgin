@@ -2,6 +2,19 @@
 0.71 (10/09/2003):
 	Sean: I can't wait for everything to be core/ui split!
 
+	Christian: This is a good release, and I don't think people will have
+	too many problems. There are a lot of little nice feature additions,
+	and much progress has been made on the core/UI split. We should be
+	done in a couple of releases, assuming we can get the remaining two or
+	three parts core/UI-split. Oh, and plugin authors are going to hate me
+	again, as a lot of code (specifically, the conversations code and utility
+	functions) changed names. This is a Good Thing (TM), as always, but
+	may require modifications to some plugins. Not all, fortunately, but
+	some :) Many SSL problems were fixed, though we still have some to go.
+	If you don't have SSL, you now need it for MSN. MSN won't even load
+	without it. Starting October 15th, the old protocol won't be supported
+	anymore, so there's no reason to support the old one anymore.
+
 0.70 (9/28/2003):
 	Sean: Yahoo! works (for now).  That's good NEWS if I've ever heard it.  
 	Huge thanks to our dear friends over at Cerulean Studios, creators of
