@@ -99,7 +99,6 @@ struct chat_connection {
 struct direct_im {
 	struct gaim_connection *gc;
 	char name[80];
-	struct conversation *cnv;
 	int watcher;
 	struct aim_conn_t *conn;
 };
@@ -1141,19 +1140,11 @@ static void cancel_direct_im(gpointer w, struct ask_direct *d) {
 	g_free(d);
 }
 
-static void delete_direct_im(gpointer w, struct direct_im *d) {
-	struct oscar_data *od = (struct oscar_data *)d->gc->proto_data;
-
-	od->direct_ims = g_slist_remove(od->direct_ims, d);
-	gaim_input_remove(d->watcher);
-	aim_conn_kill(od->sess, &d->conn);
-	g_free(d);
-}
-
 static void oscar_directim_callback(gpointer data, gint source, GaimInputCondition condition) {
 	struct direct_im *dim = data;
 	struct gaim_connection *gc = dim->gc;
 	struct oscar_data *od = gc->proto_data;
+	struct conversation *cnv;
 	char buf[256];
 
 	if (!g_slist_find(connections, gc)) {
@@ -1167,14 +1158,11 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 	}
 
 	aim_conn_completeconnect(od->sess, dim->conn);
-	if (!(dim->cnv = find_conversation(dim->name))) dim->cnv = new_conversation(dim->name);
+	if (!(cnv = find_conversation(dim->name))) cnv = new_conversation(dim->name);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
-	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
-
-	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
-			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
 
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 					oscar_callback, dim->conn);
@@ -2365,6 +2353,7 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct aim_directim_priv *priv;
 	struct aim_conn_t *newconn;
+	struct conversation *cnv;
 	struct direct_im *dim;
 	char buf[256];
 
@@ -2377,16 +2366,14 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 	debug_printf("DirectIM: initiate success to %s\n", priv->sn);
 	dim = find_direct_im(od, priv->sn);
 
-	dim->cnv = find_conversation(priv->sn);
-	if (!dim->cnv) dim->cnv = new_conversation(priv->sn);
-	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
-			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
+	if (!(cnv = find_conversation(priv->sn)))
+		cnv = new_conversation(priv->sn);
 	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 					oscar_callback, dim->conn);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), priv->sn);
-	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
 				gaim_directim_incoming, 0);
@@ -2427,6 +2414,7 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 	char *sn;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct conversation *cnv;
 	struct direct_im *dim;
 	char buf[256];
 
@@ -2440,11 +2428,10 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 	dim = find_direct_im(od, sn);
 	od->direct_ims = g_slist_remove(od->direct_ims, dim);
 	gaim_input_remove(dim->watcher);
-	gtk_signal_disconnect_by_data(GTK_OBJECT(dim->cnv->window), dim);
 
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
-	if (dim->cnv)
-		write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+	if ((cnv = find_conversation(sn)) != NULL)
+		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 
 	aim_conn_kill(sess, &conn);
 
@@ -2475,11 +2462,11 @@ struct ask_do_dir_im {
 	struct gaim_connection *gc;
 };
 
-static void oscar_cancel_direct_im(GtkObject *obj, struct ask_do_dir_im *data) {
+static void oscar_cancel_direct_im(gpointer obj, struct ask_do_dir_im *data) {
 	g_free(data);
 }
 
-static void oscar_direct_im(GtkObject *obj, struct ask_do_dir_im *data) {
+static void oscar_direct_im(gpointer obj, struct ask_do_dir_im *data) {
 	struct gaim_connection *gc = data->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
