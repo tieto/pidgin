@@ -313,6 +313,8 @@ struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *
 	if(alias && strlen(alias))
 		chat->alias = g_strdup(alias);
 	chat->components = components;
+	chat->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
 
 	((GaimBlistNode*)chat)->type = GAIM_BLIST_CHAT_NODE;
 
@@ -1244,6 +1246,7 @@ static char *blist_parser_buddy_alias = NULL;
 static char *blist_parser_setting_name = NULL;
 static char *blist_parser_setting_value = NULL;
 static GHashTable *blist_parser_buddy_settings = NULL;
+static GHashTable *blist_parser_chat_settings = NULL;
 static GHashTable *blist_parser_group_settings = NULL;
 static GHashTable *blist_parser_chat_components = NULL;
 static int blist_parser_privacy_mode = 0;
@@ -1386,12 +1389,17 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 			struct group *g = gaim_find_group(blist_parser_group_name);
 			gaim_blist_add_chat(chat,g,
 					gaim_blist_get_last_child((GaimBlistNode*)g));
+			if(blist_parser_chat_settings) {
+				g_hash_table_destroy(chat->settings);
+				chat->settings = blist_parser_chat_settings;
+			}
 		}
 		g_free(blist_parser_chat_alias);
 		blist_parser_chat_alias = NULL;
 		g_free(blist_parser_account_name);
 		blist_parser_account_name = NULL;
 		blist_parser_chat_components = NULL;
+		blist_parser_chat_settings = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "person")) {
 		g_free(blist_parser_person_name);
@@ -1440,6 +1448,15 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_BUDDY) {
 			if(!blist_parser_buddy_settings)
 				blist_parser_buddy_settings = g_hash_table_new_full(g_str_hash,
+						g_str_equal, g_free, g_free);
+			if(blist_parser_setting_name && blist_parser_setting_value) {
+				g_hash_table_replace(blist_parser_buddy_settings,
+						g_strdup(blist_parser_setting_name),
+						g_strdup(blist_parser_setting_value));
+			}
+		} else if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_CHAT) {
+			if(!blist_parser_chat_settings)
+				blist_parser_chat_settings = g_hash_table_new_full(g_str_hash,
 						g_str_equal, g_free, g_free);
 			if(blist_parser_setting_name && blist_parser_setting_value) {
 				g_hash_table_replace(blist_parser_buddy_settings,
@@ -1738,6 +1755,9 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 						}
 						g_hash_table_foreach(chat->components,
 								blist_print_chat_components, file);
+						/* works for chats too, I don't feel like renaming */
+						g_hash_table_foreach(chat->settings,
+								blist_print_buddy_settings, file);
 						fprintf(file, "\t\t\t</chat>\n");
 						g_free(acct_name);
 					}
@@ -1900,6 +1920,21 @@ char *gaim_group_get_setting(struct group *g, const char *key) {
 	if(!g)
 		return NULL;
 	return g_strdup(g_hash_table_lookup(g->settings, key));
+}
+
+void gaim_chat_set_setting(struct chat *c, const char *key,
+		const char *value)
+{
+	if(!c)
+		return;
+	g_hash_table_replace(c->settings, g_strdup(key), g_strdup(value));
+}
+
+char *gaim_chat_get_setting(struct chat *c, const char *key)
+{
+	if(!c)
+		return NULL;
+	return g_strdup(g_hash_table_lookup(c->settings, key));
 }
 
 void gaim_buddy_set_setting(struct buddy *b, const char *key,

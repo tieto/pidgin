@@ -3598,7 +3598,7 @@ void alias_dialog_chat(struct chat *chat) {
 	GtkWidget *label;
 	GtkWidget *alias_entry;
 
-	dialog = gtk_dialog_new_with_buttons(_("Alias Buddy"), NULL,
+	dialog = gtk_dialog_new_with_buttons(_("Alias Chat"), NULL,
 			GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OK, GTK_RESPONSE_OK,

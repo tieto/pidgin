@@ -131,7 +131,21 @@ void gaim_separator(GtkWidget *menu);
  *
  * @return The newly created menu item.
  */
-GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);  
+GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);
+
+/**
+ * Creates a check menu item.
+ *
+ * @param menu     The menu to which to append the check menu item.
+ * @param str      The title to use for the newly created menu item.
+ * @param sf       A function to call when the menu item is activated.
+ * @param data     Data to pass to the signal function.
+ * @param checked  The initial state of the check item
+ *
+ * @return The newly created menu item.
+ */
+GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
+		GtkSignalFunc sf, gpointer data, gboolean checked);
 
 /**
  * Creates a menu item.

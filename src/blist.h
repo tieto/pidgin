@@ -118,6 +118,7 @@ struct chat {
 	char *alias;             /**< The display name of this chat. */
 	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
 	GaimAccount *account; /**< The account this chat is attached to */
+	GHashTable *settings;    /**< per-chat settings from the XML buddy list, set by plugins and the likes. */
 };
 
 
@@ -504,6 +505,23 @@ void gaim_group_set_setting(struct group *g, const char *key, const char *value)
  */
 char *gaim_group_get_setting(struct group *g, const char *key);
 
+/**
+ * Associates some data with the chat in the xml buddy list
+ *
+ * @param b      The chat the data is associated with
+ * @param key    The key used to retrieve the data
+ * @param value  The data to set
+ */
+void gaim_chat_set_setting(struct chat *c, const char *key, const char *value);
+
+/**
+ * Retrieves data from the XML buddy list set by gaim_chat_set_setting())
+ *
+ * @param b      The chat to retrieve data from
+ * @param key    The key to retrieve the data with
+ * @return       The associated data or NULL if no data is associated
+ */
+char *gaim_chat_get_setting(struct chat *c, const char *key);
 
 /**
  * Associates some data with the buddy in the xml buddy list

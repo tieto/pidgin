@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Sean Egan <sean.egan@binghamton.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -82,6 +82,12 @@ struct gaim_gtk_buddy_list {
 /**************************************************************************
  * @name GTK+ Buddy List API
  **************************************************************************/
+
+/**
+ * Initializes the GTK+ blist system.
+ */
+void gaim_gtk_blist_init(void);
+
 /**
  * Returns the UI operations structure for the buddy list.
  *

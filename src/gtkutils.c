@@ -444,6 +444,25 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	return menuitem;
 }
 
+GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
+		GtkSignalFunc sf, gpointer data, gboolean checked)
+{
+	GtkWidget *menuitem;
+	menuitem = gtk_check_menu_item_new_with_mnemonic(str);
+
+	if(menu)
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+	if (sf)
+		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
+
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), checked);
+
+	gtk_widget_show_all(menuitem);
+
+	return menuitem;
+}
+
 GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
