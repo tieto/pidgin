@@ -105,45 +105,6 @@ gchar* gtk_text_view_get_text(GtkTextView *text, gboolean include_hidden_chars)
 /*  Destroys                                                              */
 /*------------------------------------------------------------------------*/
 
-static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-	gchar *object_data;
-
-	object_data = g_object_get_data(G_OBJECT(w), "dialog_type");
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	/*if (GTK_IS_COLOR_SELECTION_DIALOG(w)) {
-		if (w == gtkconv->dialogs.fg_color) {
-			gtk_toggle_button_set_active(
-				GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor), FALSE);
-			gtkconv->dialogs.fg_color = NULL;
-		} else {
-			gtk_toggle_button_set_active(
-				GTK_TOGGLE_BUTTON(gtkconv->toolbar.bgcolor), FALSE);
-			gtkconv->dialogs.bg_color = NULL;
-		}
-	} else if (GTK_IS_FONT_SELECTION_DIALOG(w)) {
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(gtkconv->toolbar.font), FALSE);
-		gtkconv->dialogs.font = NULL;
-	} else if (!g_ascii_strcasecmp(object_data, "smiley dialog")) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
-									FALSE);
-		gtkconv->dialogs.smiley = NULL;
-	} else if (!g_ascii_strcasecmp(object_data, "log dialog")) {
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->toolbar.log),
-									   FALSE);
-		gtkconv->dialogs.log = NULL;
-		}*/
-
-	dialogwindows = g_list_remove(dialogwindows, w);
-	gtk_widget_destroy(w);
-
-	return FALSE;
-}
-
 static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 {
 	GtkWidget *dest;
@@ -579,7 +540,6 @@ GtkWidget *bgcseld = NULL;
 void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color)
 {
 	GaimGtkConversation *gtkconv;
-	GtkWidget *colorsel;
 	GdkColor fgcolor;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
@@ -608,7 +568,6 @@ void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color)
 void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color)
 {
 	GaimGtkConversation *gtkconv;
-	GtkWidget *colorsel;
 	GdkColor bgcolor;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
@@ -835,7 +794,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 	ca->text = gtk_imhtml_new(NULL, NULL);
-	gtk_imhtml_set_editable(ca->text, TRUE);
+	gtk_imhtml_set_editable(GTK_IMHTML(ca->text), TRUE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
@@ -847,12 +806,9 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	if (dummy) {
 		struct away_message *amt;
 		GtkTreeIter iter;
-		int pos = 0;
 		GtkListStore *ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(dummy)));
 		GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(dummy));
 		GValue val = { 0, };
-		GtkTextIter start;
-		GtkTextBuffer *buffer;
 
 		if (! gtk_tree_selection_get_selected (sel, (GtkTreeModel**)&ls, &iter))
 			return;

@@ -45,11 +45,11 @@ struct _GtkIMHtmlToolbar {
 	GtkWidget *imhtml;
 
 	GtkTooltips *tooltips;
-	
+
 	GtkWidget *bold;
 	GtkWidget *italic;
 	GtkWidget *underline;
-	
+
 	GtkWidget *larger_size;
 	GtkWidget *normal_size;
 	GtkWidget *smaller_size;
@@ -76,7 +76,7 @@ struct _GtkIMHtmlToolbarClass {
 
 };
 
-GtkType    gtk_imhtmltoolbar_get_type         (void);
+GType      gtk_imhtmltoolbar_get_type         (void);
 GtkWidget* gtk_imhtmltoolbar_new              (void);
 
 void gtk_imhtmltoolbar_attach    (GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml);

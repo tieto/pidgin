@@ -139,7 +139,6 @@ extern void dialog_link_destroy(GaimConversation *);
 extern void set_smiley_array(GtkWidget *widget, int smiley_type);
 extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
-extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
 
 /* Functions in server.c */

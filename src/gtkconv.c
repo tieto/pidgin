@@ -2281,20 +2281,22 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		/* Deal with the toolbar */
-		/*gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
+#if 0
+		gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
 		gtk_widget_set_sensitive(gtkconv->toolbar.image,
 								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 		gtk_widget_set_sensitive(gtkconv->toolbar.bgcolor,
 								 !(gc->flags & GAIM_CONNECTION_NO_BGCOLOR));
 
-		/* Deal with menu items 
+		/* Deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.warn, (prpl_info->warn != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.invite,
 								 (prpl_info->chat_invite != NULL));
-*/
+#endif
+
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			if (gaim_find_buddy(gaim_conversation_get_account(conv),
 					    gaim_conversation_get_name(conv)) == NULL)
@@ -3740,7 +3742,8 @@ setup_im_pane(GaimConversation *conv)
 
 	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
-	gtk_imhtmltoolbar_attach(gtkconv->toolbar, gtkconv->entry);
+	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(gtkconv->toolbar),
+							 gtkconv->entry);
 
 	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->bbox, FALSE, FALSE, 0);

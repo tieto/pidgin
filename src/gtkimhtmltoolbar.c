@@ -20,16 +20,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "gtkinternal.h"
 
-#include <gtk/gtk.h>
-#include <gtk/gtkvbox.h>
 #include "gtkimhtmltoolbar.h"
 #include "gtkutils.h"
+
+#include "imgstore.h"
 #include "notify.h"
 #include "request.h"
 #include "stock.h"
-#include "internal.h"
 #include "ui.h"
+#include "util.h"
 
 static GtkVBoxClass *parent_class = NULL;
 
@@ -111,16 +112,18 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 static void
 toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 {
+#if 0
 	char fonttif[128];
 	const char *fontface;
-	
+#endif
+
 	g_return_if_fail(toolbar);
-	
+
 	if (!toolbar->font_dialog) {
 		toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
 		g_object_set_data(G_OBJECT(toolbar->font_dialog), "gaim_toolbar", toolbar);
-		
+
 		/*	if (gtkconv->fontface[0]) {
 		  g_snprintf(fonttif, sizeof(fonttif), "%s 12", gtkconv->fontface);
 		  gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(gtkconv->dialogs.font),
@@ -130,15 +133,15 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 		  DEFAULT_FONT_FACE);
 		  }
 		*/
-		
+
 		g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
 				 G_CALLBACK(toolbar_cancel_font), toolbar);
 		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->ok_button),
 				 "clicked", G_CALLBACK(apply_font), toolbar->font_dialog);
 		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button),
 				 "clicked", G_CALLBACK(toolbar_cancel_font), toolbar);
-		
-		
+
+
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
 		toolbar_cancel_font(NULL, toolbar);
@@ -148,7 +151,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 
 static void cancel_toolbar_fgcolor(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
-       	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->fgcolor), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->fgcolor), FALSE);
 	gtk_widget_destroy(toolbar->fgcolor_dialog);
 	toolbar->fgcolor_dialog = NULL;
 }
@@ -176,17 +179,17 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
-		GdkColor fgcolor;
-		
+		/* GdkColor fgcolor; */
+
 		/*gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
 		  &fgcolor);*/
 		if (!toolbar->fgcolor_dialog) {
-			
+
 			toolbar->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->colorsel;
 			//gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
-			
+
 			g_signal_connect(G_OBJECT(toolbar->fgcolor_dialog), "delete_event",
 					 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
 			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->ok_button),
@@ -194,9 +197,9 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 			g_signal_connect(G_OBJECT
 					 (GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->cancel_button),
 					 "clicked", G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
-			
+
 		}
-		gtk_window_present(toolbar->fgcolor_dialog);
+		gtk_window_present(GTK_WINDOW(toolbar->fgcolor_dialog));
 	} else if (toolbar->fgcolor_dialog != NULL) {
 		cancel_toolbar_fgcolor(color, toolbar);
 	} else {
@@ -235,17 +238,17 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
-		GdkColor bgcolor;
-		
+		/* GdkColor bgcolor; */
+
 		/*gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
 		  &bgcolor);*/
 		if (!toolbar->bgcolor_dialog) {
-			
+
 			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->colorsel;
 			//gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
-			
+
 			g_signal_connect(G_OBJECT(toolbar->bgcolor_dialog), "delete_event",
 					 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
 			g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->ok_button),
@@ -253,9 +256,9 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 			g_signal_connect(G_OBJECT
 					 (GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->cancel_button),
 					 "clicked", G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
-			
+
 		}
-		gtk_window_present(toolbar->bgcolor_dialog);
+		gtk_window_present(GTK_WINDOW(toolbar->bgcolor_dialog));
 	} else if (toolbar->bgcolor_dialog != NULL) {
 		cancel_toolbar_bgcolor(color, toolbar);
 	} else {
@@ -267,7 +270,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 static void
 cancel_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);	
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
 	toolbar->link_dialog = NULL;
 }
 
@@ -293,7 +296,7 @@ do_insert_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
 		description = url;
 
 	gtk_imhtml_insert_link(GTK_IMHTML(toolbar->imhtml), url, description);
-	
+
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
 
 	toolbar->link_dialog = NULL;
@@ -306,20 +309,20 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		GaimRequestFields *fields;
 		GaimRequestFieldGroup *group;
 		GaimRequestField *field;
-		
+
 		fields = gaim_request_fields_new();
-		
+
 		group = gaim_request_field_group_new(NULL);
 		gaim_request_fields_add_group(fields, group);
-		
+
 		field = gaim_request_field_string_new("url", _("_URL"), NULL, FALSE);
 		gaim_request_field_set_required(field, TRUE);
 		gaim_request_field_group_add_field(group, field);
-		
+
 		field = gaim_request_field_string_new("description", _("_Description"),
 						      NULL, FALSE);
 		gaim_request_field_group_add_field(group, field);
-		
+
 		toolbar->link_dialog =
 			gaim_request_fields(toolbar, _("Insert Link"),
 					    NULL,
@@ -433,7 +436,7 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 void close_smiley_dialog(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
-	
+
 	if (toolbar->smiley_dialog) {
 		gtk_widget_destroy(toolbar->smiley_dialog);
 		toolbar->smiley_dialog = NULL;
@@ -489,27 +492,27 @@ static void
 insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
-	
+
 		GtkWidget *dialog;
 		GtkWidget *smiley_table = NULL;
 		GSList *smileys, *unique_smileys = NULL;
 		int width;
 		int row = 0, col = 0;
-		
+
 		if (toolbar->smiley_dialog) {
 			gtk_widget_grab_focus(toolbar->imhtml);
 			return;
 		}
-		
+
 		/*
 		  if(c->account)
 		  smileys = get_proto_smileys(
 		  gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
 		  else
 		*/
-		
+
 		smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
-		
+
 		while(smileys) {
 			GtkIMHtmlSmiley *smiley = smileys->data;
 			if(!smiley->hidden) {
@@ -518,19 +521,19 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			}
 			smileys = smileys->next;
 		}
-		
-		
+
+
 		width = floor(sqrt(g_slist_length(unique_smileys)));
-		
+
 		GAIM_DIALOG(dialog);
 		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 		gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 		gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-		
+
 		smiley_table = gtk_table_new(width, width, TRUE);
-		
+
 		/* pack buttons */
-		
+
 		while(unique_smileys) {
 			GtkIMHtmlSmiley *smiley = unique_smileys->data;
 			if(!smiley->hidden) {
@@ -542,24 +545,24 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			}
 			unique_smileys = unique_smileys->next;
 		}
-		
+
 		gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
-		
+
 		gtk_widget_show(smiley_table);
-		
+
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
-		
+
 		/* connect signals */
 		g_object_set_data(G_OBJECT(dialog), "dialog_type", "smiley dialog");
 		g_signal_connect(G_OBJECT(dialog), "delete_event",
 				 G_CALLBACK(close_smiley_dialog), toolbar);
-		
+
 		/* show everything */
 		gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 		gtk_widget_show_all(dialog);
-		
+
 		toolbar->smiley_dialog = dialog;
-		
+
 	} else if (toolbar->smiley_dialog) {
 		close_smiley_dialog(smiley, toolbar);
 	}
@@ -756,7 +759,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert link"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
 				 G_CALLBACK(insert_link_cb), toolbar);
-	
+
 	toolbar->link = button;
 
 	/* Insert IM Image */
@@ -815,7 +818,7 @@ GType gtk_imhtmltoolbar_get_type()
 			(GInstanceInitFunc) gtk_imhtmltoolbar_init
 		};
 
-		imhtmltoolbar_type = g_type_register_static(gtk_vbox_get_type(),
+		imhtmltoolbar_type = g_type_register_static(GTK_TYPE_VBOX,
 				"GtkIMHtmlToolbar", &imhtmltoolbar_info, 0);
 	}
 
