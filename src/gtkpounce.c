@@ -758,27 +758,10 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		g_object_unref(G_OBJECT(pixbuf));
 
 		/* Build the menu item */
-		item = gtk_menu_item_new_with_label(buddy);
+		item = gtk_image_menu_item_new_with_label(buddy);
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
-
-		/* Do some evil, see some evil, speak some evil, continued. */
-		box = gtk_hbox_new(FALSE, 0);
-
-		label = gtk_bin_get_child(GTK_BIN(item));
-		g_object_ref(label);
-		gtk_container_remove(GTK_CONTAINER(item), label);
-
-		gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
-
-		g_object_unref(label);
-
-		gtk_container_add(GTK_CONTAINER(item), box);
-
-		gtk_widget_show(label);
-		gtk_widget_show(image);
-		gtk_widget_show(box);
 
 		/* Set our callbacks. */
 		g_signal_connect(G_OBJECT(item), "activate", cb, pounce);
