@@ -111,34 +111,36 @@ gaim_connection_disconnect(GaimConnection *gc)
 	GList *wins;
 
 	g_return_if_fail(gc != NULL);
-	g_return_if_fail(gaim_connection_get_state(gc) != GAIM_DISCONNECTED);
 
-	if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
-		gaim_blist_remove_account(gaim_connection_get_account(gc));
+	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
+		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
+			gaim_blist_remove_account(gaim_connection_get_account(gc));
 
-	serv_close(gc);
+		serv_close(gc);
 
-	gaim_connection_set_state(gc, GAIM_DISCONNECTED);
+		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
 
-	connections = g_list_remove(connections, gc);
+		connections = g_list_remove(connections, gc);
 
-	gaim_event_broadcast(event_signoff, gc);
-	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
+		gaim_event_broadcast(event_signoff, gc);
+		system_log(log_signoff, gc, NULL,
+				   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
-	/*
-	 * XXX This is a hack! Remove this and replace it with a better event
-	 *     notification system.
-	 */
-	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-		GaimWindow *win = (GaimWindow *)wins->data;
-		gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
-								 GAIM_CONV_ACCOUNT_OFFLINE);
+		/*
+		 * XXX This is a hack! Remove this and replace it with a better event
+		 *     notification system.
+		 */
+		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+			GaimWindow *win = (GaimWindow *)wins->data;
+			gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
+									 GAIM_CONV_ACCOUNT_OFFLINE);
+		}
+
+		gaim_request_close_with_handle(gc);
+		gaim_notify_close_with_handle(gc);
+
+		update_privacy_connections();
 	}
-
-	gaim_request_close_with_handle(gc);
-	gaim_notify_close_with_handle(gc);
-
-	update_privacy_connections();
 
 	gaim_connection_destroy(gc);
 
