@@ -2006,6 +2006,7 @@ static void away_page()
 	gtk_widget_show(prefdialog);
 }
 
+static GtkWidget *deny_type = NULL;
 static GtkWidget *deny_conn_hbox = NULL;
 static GtkWidget *deny_opt_menu = NULL;
 static struct gaim_connection *current_deny_gc = NULL;
@@ -2044,10 +2045,32 @@ static void des_deny_opt(GtkWidget *d, gpointer e)
 	gtk_widget_destroy(d);
 	current_deny_gc = NULL;
 	deny_conn_hbox = NULL;
+	deny_type = NULL;
 	deny_opt_menu = NULL;
 	current_is_deny = FALSE;
 	allow_list = NULL;
 	block_list = NULL;
+}
+
+static void set_deny_type()
+{
+	GSList *bg = gtk_radio_button_group(GTK_RADIO_BUTTON(deny_type));
+
+	switch (current_deny_gc->permdeny) {
+	case 4:
+		break;
+	case 3:
+		bg = bg->next->next;
+		break;
+	case 2:
+		bg = bg->next;
+		break;
+	case 1:
+		bg = bg->next->next->next;
+		break;
+	}
+
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(bg->data), TRUE);
 }
 
 void build_allow_list()
@@ -2103,6 +2126,7 @@ void build_block_list()
 static void deny_gc_opt(GtkWidget *opt, struct gaim_connection *gc)
 {
 	current_deny_gc = gc;
+	set_deny_type();
 	build_allow_list();
 	build_block_list();
 }
@@ -2197,7 +2221,6 @@ static void deny_page()
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *vbox;
-	GtkWidget *opt;
 	GtkWidget *sw;
 	GtkWidget *bbox;
 	GtkWidget *button;
@@ -2244,8 +2267,8 @@ static void deny_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	opt = deny_opt(_("Allow all users to contact me"), 1, vbox, NULL);
-	opt = deny_opt(_("Allow only the users below"), 3, vbox, opt);
+	deny_type = deny_opt(_("Allow all users to contact me"), 1, vbox, NULL);
+	deny_type = deny_opt(_("Allow only the users below"), 3, vbox, deny_type);
 
 	label = gtk_label_new(_("Allow List"));
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
@@ -2278,8 +2301,8 @@ static void deny_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	opt = deny_opt(_("Deny all users"), 2, vbox, opt);
-	opt = deny_opt(_("Block the users below"), 4, vbox, opt);
+	deny_type = deny_opt(_("Deny all users"), 2, vbox, deny_type);
+	deny_type = deny_opt(_("Block the users below"), 4, vbox, deny_type);
 
 	label = gtk_label_new(_("Block List"));
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
