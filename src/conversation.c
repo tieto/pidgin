@@ -1129,20 +1129,31 @@ void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
 	char *buf2 = g_strdup(what);
 	int i;
 	GdkPixmap *face;
+	gboolean in_tag = FALSE;
 
 	for (i = 0; i < strlen(what); i++)
 	{
-		int len;
-		if ((face = is_smiley(window, &what[i], &len)) != NULL) {
-			buf2[y] = 0;
-			gtk_html_append_text(GTK_HTML(html), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
-			gtk_html_add_pixmap(GTK_HTML(html), face, 0, 0);
-			y = 0;
-			i += len - 1;
+		if (!in_tag) {
+			int len;
+			if (what[i] == '<') {
+				buf2[y] = what[i];
+				y++;
+				in_tag = TRUE;
+			} else if ((face = is_smiley(window, &what[i], &len)) != NULL) {
+				buf2[y] = 0;
+				gtk_html_append_text(GTK_HTML(html), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+				gtk_html_add_pixmap(GTK_HTML(html), face, 0, 0);
+				y = 0;
+				i += len - 1;
+			} else {
+				buf2[y] = what[i];
+				y++;
+			}
 		} else {
 			buf2[y] = what[i];
 			y++;
-
+			if (what[i] == '>')
+				in_tag = FALSE;
 		}
 	}
 
