@@ -8,6 +8,7 @@ version 0.53:
 	* Ability to change formatting of Oscar screen name
 	* Better selection in HTML widget (Thanks BMiller)
 	* New icons for ICQ (Thanks Kevin Miller)
+	* Editable buddy pounces (Thanks Jason Willis)
 
 version 0.52 (02/17/2002):
 	* Better buddy icon transparency (thanks SeanEgan)
