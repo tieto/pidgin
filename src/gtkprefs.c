@@ -829,7 +829,7 @@ GtkWidget *messages_page() {
 	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
 	gtk_container_add(GTK_CONTAINER(sw), imhtml);
 
-	button = gtk_button_new_with_mnemonic("_Clear Formatting");
+	button = gtk_button_new_with_mnemonic(_("_Clear Formatting"));
 	gtk_box_pack_start(GTK_BOX(fontvbox), button, FALSE, FALSE, 0);
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/send_formatting"))
