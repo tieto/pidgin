@@ -23,6 +23,8 @@ CORESOURCES = \
 	event.h \
 	ft.c \
 	ft.h \
+	html.c \
+	html.h \
 	md5.c \
 	md5.h \
 	multi.h \
@@ -94,7 +96,6 @@ gaim_SOURCES = \
 	gtksound.h \
 	gtkutils.c \
 	gtkutils.h \
-	html.c \
 	idle.c \
 	internal.h \
 	log.c \
