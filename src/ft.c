@@ -570,7 +570,7 @@ static void ft_callback(gpointer data, gint source,
 		GaimInputCondition condition)
 {
 	struct file_transfer *xfer = (struct file_transfer *)data;
-	int rt, i;
+	int rt;
 	char *buf = NULL;
 
 	if (condition & GAIM_INPUT_READ) {

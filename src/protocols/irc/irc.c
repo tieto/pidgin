@@ -1445,143 +1445,146 @@ irc_parse(struct gaim_connection *gc, char *buf)
 /* CTCP by jonas@birme.se */
 static void
 irc_parse_notice(struct gaim_connection *gc, char *nick, char *ex,
-                            char *word[], char *word_eol[])
+                 char *word[], char *word_eol[])
 {
-       char buf[IRC_BUF_LEN];
+	char buf[IRC_BUF_LEN];
 
-       if (!g_strcasecmp(word[4], ":\001CLIENTINFO")) {
-               char *p = g_strrstr(word_eol[5], "\001");
-               *p = 0;
-               g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
-                          word_eol[5]);
-               do_error_dialog(buf, _("CTCP ClientInfo"), GAIM_INFO);
-       } else if (!g_strcasecmp(word[4], ":\001USERINFO")) {
-               char *p = g_strrstr(word_eol[5], "\001");
-               *p = 0;
-               g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
-                          word_eol[5]);
-               do_error_dialog(buf, _("CTCP UserInfo"), GAIM_INFO);
-       } else if (!g_strcasecmp(word[4], ":\001VERSION")) {
-               char *p = g_strrstr(word_eol[5], "\001");
-               *p = 0;
-               g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
-                          word_eol[5]);
-               do_error_dialog(buf, _("CTCP Version"), GAIM_INFO);
-       } else if (!g_strcasecmp(word[4], ":\001PING")) {
-               char *p = g_strrstr(word_eol[5], "\001");
-               struct timeval ping_time;
-               struct timeval now;
-               gchar **vector;
-               if (p)
-                       *p = 0;
-               vector = g_strsplit(word_eol[5], " ", 2);
-               if (gettimeofday(&now, NULL) == 0 && vector != NULL) {
-                       if (now.tv_usec - atol(vector[1]) < 0) {
-                               ping_time.tv_sec = now.tv_sec - atol(vector[0]) - 1;
-                               ping_time.tv_usec = now.tv_usec - atol(vector[1]) + 1000000;
-                       } else {
-                               ping_time.tv_sec = now.tv_sec - atol(vector[0]);
-                               ping_time.tv_usec = now.tv_usec - atol(vector[1]);
-                       }
-                       g_snprintf(buf, sizeof(buf),
-                                  "CTCP Ping reply from %s: %lu.%.03lu seconds",
-                                  nick, ping_time.tv_sec, (ping_time.tv_usec/1000));
-                       do_error_dialog(buf, _("CTCP Ping"), GAIM_INFO);
-                       g_strfreev(vector);
-               }
-       } else {
-               if (*word_eol[4] == ':') word_eol[4]++;
-               if (ex)
-                       irc_got_im(gc, nick, word_eol[4], 0,
-                                  time(NULL));
-       }
+	if (!g_strcasecmp(word[4], ":\001CLIENTINFO")) {
+		char *p = g_strrstr(word_eol[5], "\001");
+		*p = 0;
+		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
+		do_error_dialog(buf, _("CTCP ClientInfo"), GAIM_INFO);
 
+	} else if (!g_strcasecmp(word[4], ":\001USERINFO")) {
+		char *p = g_strrstr(word_eol[5], "\001");
+		*p = 0;
+		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
+		do_error_dialog(buf, _("CTCP UserInfo"), GAIM_INFO);
+
+	} else if (!g_strcasecmp(word[4], ":\001VERSION")) {
+		char *p = g_strrstr(word_eol[5], "\001");
+		*p = 0;
+		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
+		do_error_dialog(buf, _("CTCP Version"), GAIM_INFO);
+
+	} else if (!g_strcasecmp(word[4], ":\001PING")) {
+		char *p = g_strrstr(word_eol[5], "\001");
+		struct timeval ping_time;
+		struct timeval now;
+		gchar **vector;
+
+		if (p)
+			*p = 0;
+
+		vector = g_strsplit(word_eol[5], " ", 2);
+
+		if (gettimeofday(&now, NULL) == 0 && vector != NULL) {
+			if (now.tv_usec - atol(vector[1]) < 0) {
+				ping_time.tv_sec = now.tv_sec - atol(vector[0]) - 1;
+				ping_time.tv_usec = now.tv_usec - atol(vector[1]) + 1000000;
+
+			} else {
+				ping_time.tv_sec = now.tv_sec - atol(vector[0]);
+				ping_time.tv_usec = now.tv_usec - atol(vector[1]);
+			}
+
+			g_snprintf(buf, sizeof(buf),
+					   "CTCP Ping reply from %s: %lu.%.03lu seconds",
+					   nick, ping_time.tv_sec, (ping_time.tv_usec/1000));
+
+			do_error_dialog(buf, _("CTCP Ping"), GAIM_INFO);
+			g_strfreev(vector);
+		}
+	} else {
+		if (*word_eol[4] == ':') word_eol[4]++;
+		if (ex)
+			irc_got_im(gc, nick, word_eol[4], 0, time(NULL));
+	}
 }
 
 static void
-irc_parse_join(struct gaim_connection *gc, char *nick,  
-              char *word[], char *word_eol[])
-{
-       char *chan = *word[3] == ':' ? word[3] + 1 : word[3];
-       static int id = 1;
-       struct conversation *c;
-       char *hostmask, *p;
-               
-       if (!g_strcasecmp(gc->displayname, nick)) {
-               serv_got_joined_chat(gc, id++, chan);
-       } else {
-               c = irc_find_chat(gc, chan);
-               if (c) {
-                       hostmask = g_strdup(word[1]);
-                       p = strchr(hostmask, '!');
-                       if (p) {
-                               char *pend = strchr(p, ' ');
-                               if (pend) {
-                                       *pend = 0;
-                               }
-                               add_chat_buddy(c, nick, p+1);
-                               g_free(hostmask);
-                       }
-               }
-       }
-}
-       
-static void
-irc_parse_topic(struct gaim_connection *gc, char *nick,
+irc_parse_join(struct gaim_connection *gc, char *nick,
                char *word[], char *word_eol[])
 {
-       struct conversation *c = irc_find_chat(gc, word[3]);
-       char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
-       char buf[IRC_BUF_LEN];
+	char *chan = *word[3] == ':' ? word[3] + 1 : word[3];
+	static int id = 1;
+	struct conversation *c;
+	char *hostmask, *p;
+		
+	if (!g_strcasecmp(gc->displayname, nick)) {
+		serv_got_joined_chat(gc, id++, chan);
+	} else {
+		c = irc_find_chat(gc, chan);
+		if (c) {
+			hostmask = g_strdup(word[1]);
+			p = strchr(hostmask, '!');
+			if (p) {
+				char *pend = strchr(p, ' ');
+				if (pend) {
+					*pend = 0;
+				}
+				add_chat_buddy(c, nick, p+1);
+				g_free(hostmask);
+			}
+		}
+	}
+}
+	
+static void
+irc_parse_topic(struct gaim_connection *gc, char *nick,
+                char *word[], char *word_eol[])
+{
+	struct conversation *c = irc_find_chat(gc, word[3]);
+	char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
+	char buf[IRC_BUF_LEN];
 
-       if (c) {
-               chat_set_topic(c, nick, topic);
-               g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
-                          nick, topic);
-               write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
-       }
+	if (c) {
+		chat_set_topic(c, nick, topic);
+		g_snprintf(buf, sizeof(buf),
+				   _("<B>%s has changed the topic to: %s</B>"), nick, topic);
+		write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+	}
 }
 
 static gboolean
 irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
-              char *word[], char *word_eol[])
+               char *word[], char *word_eol[])
 {
-       char *chan = cmd + 5;
-       struct conversation *c;
-       char *reason = word_eol[4];
-       GList *r;
+	char *chan = cmd + 5;
+	struct conversation *c;
+	char *reason = word_eol[4];
+	GList *r;
 
-       if (*chan == ':')
-               chan++;
-       if (*reason == ':')
-               reason++;
-       if (!(c = irc_find_chat(gc, chan)))
-               return FALSE;
-       if (!strcmp(nick, gc->displayname)) {
-               serv_got_chat_left(gc, c->id);
-               return FALSE;
-       }
-       r = c->in_room;
-       while (r) {
-               char *who = r->data;
-               if (*who == '@')
-                       who++;
-               if (*who == '+')
-                       who++;
-               if (!g_strcasecmp(who, nick)) {
-                       char *tmp = g_strdup(r->data);
-                       remove_chat_buddy(c, tmp, reason);
-                       g_free(tmp);
-                       break;
-               }
-               r = r->next;
-       }
+	if (*chan == ':')
+		chan++;
+	if (*reason == ':')
+		reason++;
+	if (!(c = irc_find_chat(gc, chan)))
+		return FALSE;
+	if (!strcmp(nick, gc->displayname)) {
+		serv_got_chat_left(gc, c->id);
+		return FALSE;
+	}
+	r = c->in_room;
+	while (r) {
+		char *who = r->data;
+		if (*who == '@')
+			who++;
+		if (*who == '+')
+			who++;
+		if (!g_strcasecmp(who, nick)) {
+			char *tmp = g_strdup(r->data);
+			remove_chat_buddy(c, tmp, reason);
+			g_free(tmp);
+			break;
+		}
+		r = r->next;
+	}
 	   return TRUE;
 }
 
 static void 
-irc_callback(gpointer data, gint source, 
-GaimInputCondition condition)
+irc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct irc_data *idata = gc->proto_data;

@@ -903,7 +903,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 			debug_printf("English translation of RVOUS_PROPOSE: %s requests Send File (i.e."
 				" send a file to you); %s:%d (verified_ip:port), %d files at"
-				" total size of %ld bytes.\n", user, vip, port, files, totalsize);
+				" total size of %d bytes.\n", user, vip, port, files, totalsize);
 			accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* they want us to send a file */
@@ -1529,8 +1529,8 @@ static void debug_header(struct file_transfer *ft) {
 	debug_printf("TOC FT HEADER:\n"
 			"\t%s %d 0x%04x\n"
 			"\t%s %d %d\n"
-			"\t%d %d %d %d %ld %ld\n"
-			"\t%ld %ld %ld %ld %ld %ld %ld %ld\n"
+			"\t%d %d %d %d %d %d\n"
+			"\t%d %d %d %d %d %d %d %d\n"
 			"\t%s\n"
 			"\t0x%02x, 0x%02x, 0x%02x\n"
 			"\t%s %s\n"

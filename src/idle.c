@@ -51,7 +51,7 @@ gint check_idle(gpointer data)
 	static XScreenSaverInfo *mit_info = NULL;
 #endif
 #endif
-	time_t idle_time;
+	int idle_time;
 
 	/* Not idle, really...  :) */
 	update_idle_times();

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4326 2002-12-21 19:33:54Z chipx86 $
+ * $Id: gg.c 4432 2003-01-04 21:01:32Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -399,7 +399,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 		}
 		break;
 	case GG_EVENT_ACK:
-		debug_printf("main_callback: message %d to %u sent with status %d\n",
+		debug_printf("main_callback: message %d to %lu sent with status %d\n",
 			     e->event.ack.seq, e->event.ack.recipient, e->event.ack.status);
 		break;
 	default:

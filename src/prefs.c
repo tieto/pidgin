@@ -1553,7 +1553,6 @@ static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 static void build_debug()
 {
 	GtkWidget *sw;
-	GtkWidget *box;
 	GtkTextBuffer *buffer;
 	GtkTextIter end;
 

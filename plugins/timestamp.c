@@ -11,8 +11,9 @@
 GModule *handle;
 GSList *timestamp_timeouts;
 
-gboolean do_timestamp (struct conversation *c)
+gboolean do_timestamp (gpointer data)
 {
+	struct conversation *c = data;
 	char *buf;
 	char mdate[6];
 	time_t tim = time(NULL);

@@ -1203,7 +1203,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 					char imgtag[1024];
 	
 					if (stat(tmplist->data, &st) != 0) {
-						debug_printf("Could not stat %s\n", tmplist->data);
+						debug_printf("Could not stat %s\n", (char *)tmplist->data);
 						tmplist = tmplist->next;
 						continue;
 					}
@@ -1219,7 +1219,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 						   filename, id, (int)st.st_size);
 				       	
 					if (strstr(buffy, imgtag) == 0) {
-						debug_printf("Not sending image: %s\n", tmplist->data);
+						debug_printf("Not sending image: %s\n", (char *)tmplist->data);
 						tmplist = tmplist->next;
 						continue;
 					}
@@ -1238,7 +1238,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 					length = length + strlen(imgtag) + st.st_size + strlen("</DATA>");;
 					bigbuf = g_realloc(bigbuf, length + 1);
 					if (!(imgfile = fopen(tmplist->data, "r"))) {
-						debug_printf("Could not open %s\n", tmplist->data);
+						debug_printf("Could not open %s\n", (char *)tmplist->data);
 						tmplist = tmplist->next;
 						continue;
 					}

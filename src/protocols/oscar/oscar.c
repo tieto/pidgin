@@ -3974,7 +3974,7 @@ static void oscar_remove_buddies(struct gaim_connection *g, GList *buddies, cons
 				tmp = 0;
 				for (cur=buddies; cur; cur=cur->next)
 					if (aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, cur->data, 0x0000)) {
-						debug_printf("ssi: deleting buddy %s from group %s\n", cur->data, group);
+						debug_printf("ssi: deleting buddy %s from group %s\n", (char *)cur->data, group);
 						sns[tmp] = cur->data;
 						tmp++;
 					}
@@ -4142,7 +4142,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				tmp = 0;
 				for (cur=gc->permit; cur; cur=cur->next)
 					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0002)) {
-						debug_printf("ssi: adding permit %s from local list to server list\n", cur->data);
+						debug_printf("ssi: adding permit %s from local list to server list\n", (char *)cur->data);
 						sns[tmp] = cur->data;
 						tmp++;
 					}
@@ -4162,7 +4162,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				tmp = 0;
 				for (cur=gc->deny; cur; cur=cur->next)
 					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0003)) {
-						debug_printf("ssi: adding deny %s from local list to server list\n", cur->data);
+						debug_printf("ssi: adding deny %s from local list to server list\n", (char *)cur->data);
 						sns[tmp] = cur->data;
 						tmp++;
 					}

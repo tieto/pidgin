@@ -628,7 +628,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			 * something to store the message, and add it to our queue. Then we update
 			 * the away dialog to indicate that we've queued something. */
 			struct queued_message *qm;
-			struct buddy *b;
 
 			qm = g_new0(struct queued_message, 1);
 				g_snprintf(qm->name, sizeof(qm->name), "%s", name);

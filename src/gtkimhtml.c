@@ -641,10 +641,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	GString *str = NULL;
 	GtkTextIter iter, siter;
 	GtkTextMark *mark, *mark2;
-	GtkTextChildAnchor *anchor;
 	GtkTextTag *texttag;
-	GtkWidget *sep;
-	GtkRequisition req;
 	gchar *ws;
 	gchar *tag;
 	gchar *url = NULL;

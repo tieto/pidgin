@@ -522,8 +522,8 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 	} else if (!g_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		struct buddy *bud = find_buddy(gc, from);
 		void *free1=NULL, *free2=NULL;
-		if (!bud) 
-			debug_printf("%s is playing a game, and doesn't want you to know.\n");
+		if (!bud)
+			debug_printf("%s is playing a game, and doesn't want you to know.\n", from);
 		if (*stat == '1') {
 			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
 				g_free(free1);

@@ -163,7 +163,7 @@ static char *msn_normalize(const char *s)
 
 static int msn_write(int fd, void *data, int len)
 {
-	debug_printf("MSN C: %s", data);
+	debug_printf("MSN C: %s", (char *)data);
 	return write(fd, data, len);
 }
 
@@ -2113,7 +2113,6 @@ static void msn_file_transfer_cancel(struct gaim_connection *gc,
 static void msn_file_transfer_in(struct gaim_connection *gc,
 								 struct file_transfer *xfer, int offset)
 {
-	struct msn_data *md = gc->proto_data;
 	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
 	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
 	char header[MSN_BUF_LEN];
@@ -2194,7 +2193,6 @@ static void msn_file_transfer_done(struct gaim_connection *gc,
 {
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
 	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
-	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
 	char buf[MSN_BUF_LEN];
 
 	g_snprintf(buf, sizeof(buf), "BYE 16777989\r\n");

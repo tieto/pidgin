@@ -59,8 +59,6 @@
 #include "pixmaps/ok.xpm"
 #include "pixmaps/add.xpm"
 #include "pixmaps/close.xpm"
-#include "pixmaps/gnome_add.xpm"
-#include "pixmaps/gnome_remove.xpm"
 
 #include "pixmaps/protocols/oscar/aol_icon.xpm"
 #include "pixmaps/protocols/oscar/free_icon.xpm"
@@ -1054,12 +1052,7 @@ static void create_online_user_names(struct addbuddy *b)
 
 void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *alias)
 {
-	GtkWidget *mainbox;
-	GtkWidget *frame;
 	GtkWidget *table;
-	GtkWidget *bbox;
-	GtkWidget *cancel;
-	GtkWidget *add;
 	GtkWidget *label;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -1370,7 +1363,6 @@ gchar *find_permdeny_by_name(GSList *l, char *who) {
 
 static void pref_deny_rem(GtkWidget *button, gboolean permit)
 {
-	GList *i;
 	gchar *who;
 	GtkTreeIter iter;
 	GtkTreeModel *mod;
@@ -1455,7 +1447,6 @@ void show_privacy_options() {
 	GtkWidget *box;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *vbox;
 	GtkWidget *sw;
 	GtkWidget *bbox;
 	GtkWidget *button;
@@ -1463,8 +1454,6 @@ void show_privacy_options() {
 	GtkWidget *close_button;
 	GtkSizeGroup *sg1 = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	GtkSizeGroup *sg2 = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
-	GtkListStore *ls;
-	GtkWidget *list;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkWidget *table;
@@ -2507,8 +2496,6 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 
 	const char *who;
 	char *name;
-	GtkTreeIter iter;
-	GtkListStore *ls;
 
 	who = gtk_entry_get_text(GTK_ENTRY(p->entry));
 
@@ -4335,7 +4322,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 	GtkWidget *label;
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
-	GtkWidget *name_entry;
+	GtkWidget *name_entry = NULL;
 
 	g_free(filename);
 
@@ -4382,7 +4369,8 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 	}
 
 	gtk_widget_show_all(rename_dialog);
-	gtk_widget_grab_focus(GTK_WIDGET(name_entry));
+	if(name_entry)
+		gtk_widget_grab_focus(GTK_WIDGET(name_entry));
 }
 
 

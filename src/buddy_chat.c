@@ -42,12 +42,6 @@
 #include "pixmaps/join.xpm"
 /*#include "pixmaps/close.xpm"*/
 #include "pixmaps/cancel.xpm"
-#include "pixmaps/tmp_send.xpm"
-#include "pixmaps/gnome_add.xpm"
-#include "pixmaps/gnome_remove.xpm"
-#include "pixmaps/block.xpm"
-#include "pixmaps/warn.xpm"
-#include "pixmaps/tb_search.xpm"
 
 GtkWidget *joinchat;
 static struct gaim_connection *joinchatgc;
@@ -1507,7 +1501,6 @@ void delete_chat(struct conversation *b)
 static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char *stock, int chat)
 {
 	int dispstyle = set_dispstyle(chat);
-	GtkWidget *parent = button->parent;
 	gtk_widget_destroy(button);
 	/* XXX button = picture_button2(win, text, xpm, dispstyle); */
 	button = gaim_pixbuf_button_from_stock((dispstyle == 0 ? NULL : text),
@@ -1570,7 +1563,6 @@ void update_im_button_pix()
 	struct conversation *c;
 	GtkWidget *parent;
 	int opt = 0;
-	int dispstyle = set_dispstyle(0);
 
 	while (bcs) {
 		c = (struct conversation *)bcs->data;
