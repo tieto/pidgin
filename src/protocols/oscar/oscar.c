@@ -5702,8 +5702,6 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	}
 
 	g_free(text_html);
-
-	return;
 }
 
 static void
@@ -5724,8 +5722,6 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 	primitive = gaim_status_type_get_primitive(status_type);
 	status_id = gaim_status_get_id(status);
 	presence = gaim_account_get_presence(account);
-
-	gaim_debug_info("oscar", "Setting status to %s\n", status_id);
 
 	if (gc)
 		od = (OscarData *)gc->proto_data;
@@ -5840,25 +5836,27 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-
-	return;
 }
 
 static void
 oscar_set_status(GaimAccount *account, GaimStatus *status)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
+	gboolean connected = gaim_account_is_connected(account);
 	GaimStatusType *type = gaim_status_get_type(status);
 	int primitive = gaim_status_type_get_primitive(type);
+
+	gaim_debug_info("oscar", "Set status to %s\n", gaim_status_get_name(status));
 
 	if (!gaim_status_is_active(status))
 		return;
 
-	if (primitive == !GAIM_STATUS_OFFLINE && !gc) {
+	if (primitive == !GAIM_STATUS_OFFLINE && !connected) {
 		gaim_account_connect(account);
-	} else if (primitive == GAIM_STATUS_OFFLINE && gc) {
+	} else if (primitive == GAIM_STATUS_OFFLINE && connected) {
 		gaim_account_disconnect(account);
 	} else {
+		if (!connected)
+			return;
 
 		if (aim_sn_is_icq(gaim_account_get_username(account)))
 			oscar_set_status_icq(account, status);
@@ -5866,7 +5864,6 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 			/* QQQ - Should probably also set this for ICQ */
 			oscar_set_status_aim(account, status);
 	}
-	return;
 }
 
 static void
@@ -5875,7 +5872,8 @@ oscar_warn(GaimConnection *gc, const char *name, gboolean anonymous) {
 	aim_im_warn(od->sess, od->conn, name, anonymous ? AIM_WARN_ANON : 0);
 }
 
-static void oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
+static void
+oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (!aim_snvalid(buddy->name)) {
