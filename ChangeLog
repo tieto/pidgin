@@ -20,6 +20,7 @@ version 0.69
 	* Fixed the text replacement plugin.
 	* The right-click menu for conversation tabs now shows the tab icon
 	  and status, if tab icons are enabled. (Jesse Farmer)
+	* Chinese (Simplified) translation updated (Funda Wang)
 	* Korean translation updated (Kyung-uk Son)
 	* Portuguese (Portugal) added (Duarte Henriques)
 	* Swedish translation updated (Tore Lundqvist (luntor))
