@@ -276,6 +276,7 @@ buddy_icon_filesel_choose(GtkWidget *w, AccountPrefsDialog *dialog)
 		g_free(dialog->buddy_icon_path);
 	dialog->buddy_icon_path = g_strdup(filename);
 	gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), filename);
+	gtk_widget_show(dialog->buddy_icon_entry);
 	gtk_widget_destroy(dialog->buddy_icon_filesel);
 }
 
@@ -368,6 +369,8 @@ buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 
 	gtk_widget_show_all(GTK_WIDGET(dialog->buddy_icon_filesel));
 
+	/*
+	  The user doesn't know where his buddy icon is located anymore 
 	if (dialog->account &&
 		(gaim_account_get_buddy_icon(dialog->account) != NULL))
 	{
@@ -377,7 +380,7 @@ buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 
 		buddy_icon_preview_change_cb(NULL, dialog);
 	}
-
+	*/
 }
 
 static void
@@ -386,7 +389,8 @@ buddy_icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	if (dialog->buddy_icon_path)
 		g_free(dialog->buddy_icon_path);
 	dialog->buddy_icon_path = NULL;
-	gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), "");
+	gtk_widget_hide(dialog->buddy_icon_entry);
+	/*gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), "");*/
 }
 
 #if GTK_CHECK_VERSION(2,4,0)
@@ -406,15 +410,17 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 {
 #if GTK_CHECK_VERSION(2,4,0)
 	int width, height;
-	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
 	char **pixbuf_formats;
 	GdkPixbufFormat *format;
 	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(account->protocol_id));
-	
+	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
+      
 	format = gdk_pixbuf_get_file_info (path, &width, &height);
 	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
-	if (str_array_match(pixbuf_formats, prpl_formats)) {
+	if (str_array_match(pixbuf_formats, prpl_formats) &&                                 /* This is an acceptable format AND */
+	    ((prpl_info->icon_spec.width > 0 && prpl_info->icon_spec.height > 0) ||            /* The prpl doesn't care about size OR*/
+	     (prpl_info->icon_spec.width == width && prpl_info->icon_spec.height == height))) { /* The icon is the correct size */
 #endif
 		gaim_account_set_buddy_icon(account, path);
 #if GTK_CHECK_VERSION(2,4,0)
@@ -648,7 +654,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new(_("Buddy icon file:"));
+	label = gtk_label_new(_("Buddy icon:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -1177,7 +1183,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	
 	if (dialog->prpl_info &&
 	    (dialog->prpl_info->icon_spec.format) &&
-	    *value != '\0') {
+	    value != NULL) {
 		convert_and_set_buddy_icon(dialog->account, value);
 	} else {
 		gaim_account_set_buddy_icon(dialog->account, NULL);
