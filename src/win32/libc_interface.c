@@ -34,9 +34,12 @@
 #include <glib.h>
 #include "debug.h"
 #include "libc_internal.h"
-
-#if !GLIB_CHECK_VERSION(2,6,0)
-#	define g_remove remove
+#if GLIB_CHECK_VERSION(2,6,0)
+# include <glib/gstdio.h>
+#else
+#define g_remove remove
+#define g_rename rename
+#define g_stat stat
 #endif
 /*
  *  PROTOS
@@ -312,17 +315,16 @@ int wgaim_gettimeofday(struct timeval *p, struct timezone *z) {
 
 /* stdio.h */
 
-#if !GLIB_CHECK_VERSION(2,6,0)
 int wgaim_rename (const char *oldname, const char *newname) {
-	struct _stat oldstat, newstat;
+	struct stat oldstat, newstat;
 
-	if(_stat(oldname, &oldstat) == 0) {
+	if(g_stat(oldname, &oldstat) == 0) {
 		/* newname exists */
-		if(_stat(newname, &newstat) == 0) {
+		if(g_stat(newname, &newstat) == 0) {
 			/* oldname is a dir */
 			if(_S_ISDIR(oldstat.st_mode)) {
 				if(!_S_ISDIR(newstat.st_mode)) {
-					return rename(oldname, newname);
+					return g_rename(oldname, newname);
 				}
 				/* newname is a dir */
 				else {
@@ -331,7 +333,7 @@ int wgaim_rename (const char *oldname, const char *newname) {
 					   deleted and oldname should be renamed.
 					*/
 					gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "wgaim_rename does not behave here as it should\n");
-					return rename(oldname, newname);
+					return g_rename(oldname, newname);
 				}
 			}
 			/* oldname is not a dir */
@@ -344,13 +346,13 @@ int wgaim_rename (const char *oldname, const char *newname) {
 				/* newname is not a dir */
 				else {
 					g_remove(newname);
-					return rename(oldname, newname);
+					return g_rename(oldname, newname);
 				}
 			}
 		}
 		/* newname doesn't exist */
 		else
-			return rename(oldname, newname);
+			return g_rename(oldname, newname);
 	}
 	else {
 		/* oldname doesn't exist */
@@ -359,7 +361,6 @@ int wgaim_rename (const char *oldname, const char *newname) {
 	}
 
 }
-#endif
 
 /* time.h */
 
