@@ -72,8 +72,13 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
 	int ret;
 
-	if (source < 0)
+	if (source < 0) {
+		if(gsc->error_cb != NULL)
+			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);
+
+		gaim_ssl_close(gsc);
 		return;
+	}
 
 	gsc->fd = source;
 

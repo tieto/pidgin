@@ -359,6 +359,9 @@ jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 	JabberStream *js = gc->proto_data;
 
 	switch(error) {
+		case GAIM_SSL_CONNECT_FAILED:
+			gaim_connection_error(gc, _("Connection Failed"));
+			break;
 		case GAIM_SSL_HANDSHAKE_FAILED:
 			gaim_connection_error(gc, _("SSL Handshake Failed"));
 			break;

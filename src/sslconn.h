@@ -31,8 +31,8 @@
 
 typedef enum
 {
-	GAIM_SSL_HANDSHAKE_FAILED = 1
-
+	GAIM_SSL_HANDSHAKE_FAILED = 1,
+	GAIM_SSL_CONNECT_FAILED = 2
 } GaimSslErrorType;
 
 typedef struct _GaimSslConnection GaimSslConnection;

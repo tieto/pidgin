@@ -4,8 +4,6 @@
 	In-Band Bytestreams
 0060: NEED
 	Pub-Sub
-0065: IN PROGRESS
-	SOCKS5 Bytestreams
 0071: AWAITING FINAL SPEC
 	XHTML-IM
 0073: NEED
@@ -20,10 +18,6 @@
 	Generic Alerts
 0093: NEED
 	Roster Item Exchange
-0095: IN PROGRESS
-	Stream Initiation
-0096: IN PROGRESS
-	File Transfer Stream Initiation Profile
 0100: NEED
 	Gateway Interaction (Transports)
 0115: WATCH

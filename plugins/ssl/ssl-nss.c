@@ -170,6 +170,9 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		gaim_debug_error("nss", "nss_data->fd == NULL!\n");
 
+		if (gsc->error_cb != NULL)
+			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);
+
 		gaim_ssl_close((GaimSslConnection *)gsc);
 
 		return;
@@ -185,6 +188,9 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (nss_data->in == NULL)
 	{
 		gaim_debug_error("nss", "nss_data->in == NUL!\n");
+
+		if (gsc->error_cb != NULL)
+			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);
 
 		gaim_ssl_close((GaimSslConnection *)gsc);
 
