@@ -431,7 +431,7 @@ trepia_tooltip_text(struct buddy *b)
 	last_name  = trepia_profile_get_last_name(profile);
 
 	if (first_name != NULL || last_name != NULL) {
-		tmp = g_strdup_printf("<b>Name:</b> %s%s%s\n",
+	    tmp = g_strdup_printf("<b>%s:</b> %s%s%s\n",_("Name"),
 							  (first_name == NULL ? "" : first_name),
 							  (first_name == NULL ? "" : " "),
 							  (last_name == NULL ? "" : last_name));
@@ -443,7 +443,7 @@ trepia_tooltip_text(struct buddy *b)
 	}
 
 	if ((int_value = trepia_profile_get_age(profile)) != 0) {
-		tmp = g_strdup_printf("<b>Age:</b> %d\n", int_value);
+		tmp = g_strdup_printf("<b>%s:</b> %d\n", _("Age"),int_value);
 
 		tmp2 = g_strconcat(text, tmp, NULL);
 		g_free(tmp);
@@ -451,8 +451,8 @@ trepia_tooltip_text(struct buddy *b)
 		text = tmp2;
 	}
 
-	tmp = g_strdup_printf("<b>Gender:</b> %s\n",
-			(trepia_profile_get_sex(profile) == 'F' ? "Female" : "Male"));
+	tmp = g_strdup_printf("<b>%s:</b> %s\n",_("Gender"),
+			(trepia_profile_get_sex(profile) == 'F' ? _("Female") : _("Male")));
 
 	tmp2 = g_strconcat(text, tmp, NULL);
 	g_free(tmp);
@@ -460,7 +460,7 @@ trepia_tooltip_text(struct buddy *b)
 	text = tmp2;
 
 	if ((value = trepia_profile_get_city(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>City:</b> %s\n", value);
+		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("City"), value);
 
 		tmp2 = g_strconcat(text, tmp, NULL);
 		g_free(tmp);
@@ -469,7 +469,7 @@ trepia_tooltip_text(struct buddy *b)
 	}
 
 	if ((value = trepia_profile_get_state(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>State:</b> %s\n", value);
+		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("State"), value);
 
 		tmp2 = g_strconcat(text, tmp, NULL);
 		g_free(tmp);
@@ -478,7 +478,7 @@ trepia_tooltip_text(struct buddy *b)
 	}
 
 	if ((value = trepia_profile_get_country(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>Country:</b> %s\n", value);
+		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("Country"), value);
 
 		tmp2 = g_strconcat(text, tmp, NULL);
 		g_free(tmp);
@@ -487,7 +487,7 @@ trepia_tooltip_text(struct buddy *b)
 	}
 
 	if ((value = trepia_profile_get_homepage(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>Homepage:</b> %s\n", value);
+		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("Homepage"), value);
 
 		tmp2 = g_strconcat(text, tmp, NULL);
 		g_free(tmp);
@@ -498,7 +498,7 @@ trepia_tooltip_text(struct buddy *b)
 	if ((value = trepia_profile_get_profile(profile)) != NULL) {
 		char *escaped_val = g_markup_escape_text(value, -1);
 
-		tmp = g_strdup_printf("<b>Profile:</b> %s\n", escaped_val);
+		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("Profile"), escaped_val);
 
 		g_free(escaped_val);
 
