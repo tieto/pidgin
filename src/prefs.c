@@ -935,7 +935,7 @@ void do_select_sound(GtkWidget *w, int snd)
 
 	if (last_sound_dir)
 		g_free(last_sound_dir);
-	last_sound_dir = g_dirname(sound_file[snd]);
+	last_sound_dir = g_dirname(sound_file_new[snd]);
 }
 
 static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
