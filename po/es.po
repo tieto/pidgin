@@ -3,7 +3,6 @@
 # Amaya Rodrigo <amaya@debian.org>, March 2002.
 # Alejandro G Villar <alx5000@terra.es>, April 2002
 # Updated by Javier Fernández-Sanguino Peña <jfs@debian.org> June 2002.
-# (changes did not make it upstream, shame on you robot101)
 # Nicolás Lichtmaier <nick@technisys.com.ar>, November 2002 - January 2003
 # JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>, April 2003
 # Rechecked by Javier Fernández-Sanguino Peña <jfs@debian.org> April 2003
