@@ -23,3 +23,5 @@
 #undef STATIC_PROTO_INIT
 #endif
 #undef socklen_t
+#undef HAVE_TM_GMTOFF
+#undef HAVE_TIMEZONE
