@@ -313,7 +313,8 @@ struct group *gaim_group_new(const char *name)
 void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 {
 	struct gaim_blist_ui_ops *ops;
-
+	gboolean save;
+	
 	if (!gaimbuddylist)
 		gaimbuddylist = gaim_blist_new();
 	ops = gaimbuddylist->ui_ops;
@@ -323,18 +324,32 @@ void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 		return;
 	}
 	
-	if (gaim_find_group(group->name))
-		return;
-
+	
 	if (!node) 
 		node = gaim_blist_get_last_sibling(gaimbuddylist->root);
+	
+	if (gaim_find_group(group->name)) {
+		/* This is just being moved */
+		GaimBlistNode *node2 = ((GaimBlistNode*)group)->next;
+		GaimBlistNode *node3 = ((GaimBlistNode*)group)->prev;
 
+		ops->remove(gaimbuddylist, (GaimBlistNode*)group);
+
+		if (node2)
+			node2->prev = node3;
+		if (node3)
+			node3->next = node2;
+		save = TRUE;
+	}
+	
 	((GaimBlistNode*)group)->next = node ? node->next : NULL;
 	((GaimBlistNode*)group)->prev = node;
 	node->next = (GaimBlistNode*)group;
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)group);
+	if (save) 
+		gaim_blist_save();
 }
 
 void  gaim_blist_remove_buddy (struct buddy *buddy)

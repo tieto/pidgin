@@ -3258,12 +3258,17 @@ move_next_tab(struct gaim_conversation *conv)
 
 static void
 conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
-			  GtkSelectionData *sd, guint info, guint t)
+			  GtkSelectionData *sd, guint info, guint t, struct gaim_conversation *conv)
 {
-	if (sd->target == gdk_atom_intern("GAIM_BUDDY", FALSE)) {
-		struct buddy *b = NULL;
-		memcpy(&b, sd->data, sizeof(b));
-		gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
+	struct gaim_window *win = conv->window;
+	struct gaim_conversation *c;
+       	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
+		GaimBlistNode *n = NULL;
+		memcpy(&n, sd->data, sizeof(n));
+		if (!GAIM_BLIST_NODE_IS_BUDDY(n))
+			return;
+		c = gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)n)->account, ((struct buddy*)n)->name);
+		gaim_window_add_conversation (win, c);
 	}
 
 		/* do_error_dialog("MWAHAHAHA! I AM A TROLL! I AM GOING TO EAT YOU!",
@@ -3402,7 +3407,7 @@ static const GtkTargetEntry te[] =
 {
 	{"text/plain", 0, 0},
 	{"text/uri-list", 0, 1},
-	{"GAIM_BUDDY", 0, 2},
+	{"GAIM_BLIST_NODE", 0, 2},
 	{"STRING", 0, 3}
 };
 

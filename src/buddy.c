@@ -319,7 +319,7 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 					     guint time,
 					     gpointer *null)
 {
-	if (data->target == gdk_atom_intern("GAIM_BUDDY", FALSE)) {
+	if (data->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
 		GtkTreeRowReference *ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
 		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
 		GtkTreeIter iter;
@@ -328,26 +328,25 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, sourcerow);
 		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 		node = g_value_get_pointer(&val);
-		if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
-			gtk_selection_data_set (data,
-						gdk_atom_intern ("GAIM_BUDDY", FALSE),
-						8, /* bits */
-						(void*)&node,
-						sizeof (node));
-
+		gtk_selection_data_set (data,
+					gdk_atom_intern ("GAIM_BLIST_NODE", FALSE),
+					8, /* bits */
+					(void*)&node,
+					sizeof (node));
+		
 		gtk_tree_path_free(sourcerow);
 	}
-
+	
 }
 
 static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			  GtkSelectionData *sd, guint info, guint t)
 {	
-	if (sd->target == gdk_atom_intern("GAIM_BUDDY", FALSE)) {
-		struct buddy *b = NULL;
+	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE) && sd->data) {
+		GaimBlistNode *n = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
-		memcpy(&b, sd->data, sizeof(b));
+		memcpy(&n, sd->data, sizeof(n));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
 			/* if we're here, I think it means the drop is ok */
 			GtkTreeIter iter;
@@ -356,15 +355,36 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 			node = g_value_get_pointer(&val);
-			if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-				if (position == GTK_TREE_VIEW_DROP_AFTER) {
-					gaim_blist_add_buddy(b, (struct group *)node->parent, node);
-				} else if (position == GTK_TREE_VIEW_DROP_BEFORE) {
-					gaim_blist_add_buddy(b, (struct group *)node->parent, node->prev);
+
+			if (GAIM_BLIST_NODE_IS_BUDDY(n)) {
+				struct buddy *b = (struct buddy*)n;
+				if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
+					if (position == GTK_TREE_VIEW_DROP_AFTER) {
+						gaim_blist_add_buddy(b, (struct group*)node->parent, node);
+					} else if (position == GTK_TREE_VIEW_DROP_BEFORE) {
+						gaim_blist_add_buddy(b, (struct group*)node->parent, node->prev);
+					}
+				} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+					gaim_blist_add_buddy(b, (struct group*)node, NULL);
+				}	
+			} else if (GAIM_BLIST_NODE_IS_GROUP(n)) {
+				struct group *g = (struct group*)n;
+				if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+					switch (position) {
+					case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
+					case GTK_TREE_VIEW_DROP_AFTER:
+						gaim_blist_add_group(g, node);
+						break;
+					case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
+					case GTK_TREE_VIEW_DROP_BEFORE:
+						gaim_blist_add_group(g, node->prev);
+						break;
+					}
+
 				}
-			} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-				gaim_blist_add_buddy(b, (struct group *)node, NULL);
+
 			}
+
 			gtk_tree_path_free(path);
 		}
 	}
@@ -883,7 +903,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkWidget *sw;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
-	GtkTargetEntry gte[] = {{"GAIM_BUDDY", GTK_TARGET_SAME_APP, DRAG_ROW},
+	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY}};
 
 	if (gtkblist && gtkblist->window) {
@@ -1231,6 +1251,12 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		gaim_gtk_blist_remove(list, node);
 		if (blist_options & OPT_BLIST_POPUP)
 			gtk_window_present(GTK_WINDOW(gtkblist->window));
+	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		GaimBlistNode *afsad = node->child;
+		while (afsad) {
+			gaim_gtk_blist_update(list, afsad);
+			afsad = afsad->next;
+		}
 	}
 }
 
