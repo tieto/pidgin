@@ -969,8 +969,6 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 {
 	struct conversation *b;
 
-	plugin_event(event_chat_join, gc, id, name);
-
 	b = (struct conversation *)g_new0(struct conversation, 1);
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
 	chats = g_list_append(chats, b);
@@ -1006,6 +1004,8 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 	}
 
 	show_new_buddy_chat(b);
+
+	plugin_event(event_chat_join, gc, id, name);
 
 	return b;
 }
