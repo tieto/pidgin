@@ -1132,7 +1132,9 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 					/* This buddy's group has not yet been added.  We do that here */
 					GdkPixbuf *groupicon = gtk_widget_render_icon(gtkblist->treeview,
 							GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
-					char *mark = g_strdup_printf("<span weight='bold'>%s</span>",  ((struct group*)node->parent)->name);
+					char *esc = g_markup_escape_text(((struct group*)node->parent)->name, -1);
+					char *mark = g_strdup_printf("<span weight='bold'>%s</span>", esc);
+					g_free(esc);
 					oldersibling = node->parent->prev;
 
 					/* We traverse backwards through the buddy list to find the node in the tree to insert it after */
