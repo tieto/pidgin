@@ -74,8 +74,6 @@ void gaim_log_free(GaimLog *log)
 void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 		    const char *from, time_t time, const char *message)
 {
-	struct _gaim_logsize_user lu;
-
 	g_return_if_fail(log);
 	g_return_if_fail(log->logger);
 	g_return_if_fail(log->logger->write);
@@ -86,11 +84,16 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 			 gaim_prefs_get_bool("/core/logging/log_chats")) ||
 			(log->type == GAIM_LOG_SYSTEM &&
 			 gaim_prefs_get_bool("/core/logging/log_system"))) {
+		struct _gaim_logsize_user *lu;
 		(log->logger->write)(log, type, from, time, message);
-		lu.name = g_strdup(gaim_normalize(log->account, log->name));
-		lu.account = log->account;
-		g_hash_table_remove(logsize_users, &lu);
-		g_free(lu.name);
+
+		lu = g_new(struct _gaim_logsize_user, 1);
+
+		lu->name = g_strdup(gaim_normalize(log->account, log->name));
+		lu->account = log->account;
+		g_hash_table_remove(logsize_users, lu);
+		g_free(lu->name);
+		g_free(lu);
 	}
 }
 
@@ -343,14 +346,14 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 		/* This log is new */
 		char *ud = gaim_user_dir();
 		char *acct_name = g_strdup(gaim_normalize(log->account,
-												  gaim_account_get_username(log->account)));
+					gaim_account_get_username(log->account)));
 		char *target;
 		char *dir;
 		char *filename, *path;
 
 		if (log->type == GAIM_LOG_CHAT) {
 			target = g_strdup_printf("%s.chat", gaim_normalize(log->account,
-															   log->name));
+						log->name));
 		} else if(log->type == GAIM_LOG_SYSTEM) {
 			target = g_strdup(".system");
 		} else {
@@ -376,7 +379,7 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 		data->file = fopen(path, "a");
 		if (!data->file) {
 			gaim_debug(GAIM_DEBUG_ERROR, "log",
-					"Could not create log file %s\n", filename);
+					"Could not create log file %s\n", path);
 			g_free(path);
 			return;
 		}
@@ -584,6 +587,10 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 			log->name, date, gaim_account_get_username(log->account), prpl);
 
 	}
+
+	/* if we can't write to the file, give up before we hurt ourselves */
+	if(!data->file)
+		return;
 
 	gaim_markup_html_to_xhtml(message, &msg_fixed, NULL);
 
