@@ -70,8 +70,6 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	GSList *lst = smiley_themes;
 	char *dirname;
 	gboolean old=FALSE;
-	const char *locale;
-	char language[3];
 
 	while (lst) {
 		struct smiley_theme *thm = lst->data;
@@ -116,17 +114,9 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 		}
 		current_smiley_theme = theme;
 	}
-	
-	locale = setlocale(LC_MESSAGES, NULL);
-	if(locale[0] && locale[1]) {
-		language[0] = locale[0];
-		language[1] = locale[1];
-		language[2] = '\0';
-	} else
-		language[0] = '\0';
-	
+
+
 	while (!feof(f)) {
-		char *p;
 		if (!fgets(buf, sizeof(buf), f)) {
 			break;
 		}
@@ -138,58 +128,27 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 		while (isspace(*i))
 			i++;
 
-		if (*i == '[' && (p=strchr(i, ']')) && load) {
+		if (*i == '[' && strchr(i, ']') && load) {
 			struct smiley_list *child = g_new0(struct smiley_list, 1);
-			child->sml = g_strndup(i+1, (p - i) - 1);
-			if (theme->list) 
+			child->sml = g_strndup(i+1, (int)strchr(i, ']') - (int)i - 1);
+			if (theme->list)
 				list->next = child;
 			else
 				theme->list = child;
 			list = child;
-			continue;
-		}
-		if(!list) {
-			char key[256], *open_bracket;
-			p = strchr(i, '=');
-			if(!p)
-				continue;
-			strncpy(key, i, (p-i));
-			key[p-i] = '\0';
-			
-			open_bracket = strchr(key, '[');
-			if(open_bracket) {
-				if(strncmp(open_bracket+1,locale,strlen(locale)) &&
-						strncmp(open_bracket+1,language,2))
-					continue;
-				*open_bracket = '\0';
-			}
-
-			do p++; while(isspace(*p));
-
-			if (!g_ascii_strncasecmp(key, "Name", 4)) {
-				if(theme->name)
-					g_free(theme->name);
-				theme->name = g_strdup(p);
-				theme->name[strlen(theme->name)-1] = '\0';
-			} else if (!g_ascii_strcasecmp(key, "Description")) {
-				if(theme->desc)
-					g_free(theme->desc);
-				theme->desc = g_strdup(p);
-				theme->desc[strlen(theme->desc)-1] = '\0';
-			} else if (!g_ascii_strcasecmp(key, "Icon")) {
-				if(theme->icon)
-					g_free(theme->icon);
-				theme->icon = g_build_filename(dirname, p, NULL);
-				theme->icon[strlen(theme->icon)-1] = '\0';
-			} else if (!g_ascii_strcasecmp(key, "Author")) {
-				if(theme->author)
-					g_free(theme->author);
-				theme->author = g_strdup(p);
-				theme->author[strlen(theme->author)-1] = '\0';
-			}
-			continue;
-		}
-		if (load) {
+		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
+			theme->name = g_strdup(i+ strlen("Name="));
+			theme->name[strlen(theme->name)-1] = 0;
+		} else if (!g_ascii_strncasecmp(i, "Description=", strlen("Description="))) {
+			theme->desc = g_strdup(i + strlen("Description="));
+			theme->desc[strlen(theme->desc)-1] = 0;
+		} else if (!g_ascii_strncasecmp(i, "Icon=", strlen("Icon="))) {
+			theme->icon = g_build_filename(dirname, i + strlen("Icon="), NULL);
+			theme->icon[strlen(theme->icon)-1] = 0;
+		} else if (!g_ascii_strncasecmp(i, "Author=", strlen("Author="))) {
+			theme->author = g_strdup(i + strlen("Author="));
+			theme->author[strlen(theme->author)-1] = 0;
+		} else if (load && list) {
 			gboolean hidden = FALSE;
 			char *sfile = NULL;
 
