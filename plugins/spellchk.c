@@ -266,6 +266,8 @@ static void list_add_new()
 		-1);
 	gtk_editable_select_region(GTK_EDITABLE(bad_entry), 0, -1);
 	gtk_widget_grab_focus(bad_entry);
+
+	save_list();
 }
 
 static void add_selected_row_to_list(GtkTreeModel *model, GtkTreePath *path,
@@ -295,6 +297,8 @@ static void list_delete()
 
 	g_slist_foreach(list, remove_row, NULL);
 	g_slist_free(list);
+
+	save_list();
 }
 
 static void save_list()
