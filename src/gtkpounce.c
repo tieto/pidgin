@@ -109,7 +109,7 @@ cancel_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 }
 
 static void
-pounce_update_entryfields(GtkWidget *w, gpointer data)
+pounce_update_entry_fields(GtkWidget *w, gpointer data)
 {
 	const char *filename;
 	GHashTable *args;
@@ -152,7 +152,7 @@ filesel(GtkWidget *w, gpointer data)
 
 	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
 					 "clicked",
-					 G_CALLBACK(pounce_update_entryfields), args);
+					 G_CALLBACK(pounce_update_entry_fields), args);
 	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
 							 "clicked",
 							 G_CALLBACK(g_hash_table_destroy), args);
@@ -685,7 +685,7 @@ edit_pounce_cb(GtkWidget *w, GaimPounce *pounce)
 	gaim_gtkpounce_dialog_show(NULL, NULL, pounce);
 }
 
-static void
+static gboolean
 fill_menu(GtkWidget *menu, GCallback cb)
 {
 	GtkWidget *image;
@@ -693,6 +693,7 @@ fill_menu(GtkWidget *menu, GCallback cb)
 	GdkPixbuf *pixbuf, *scale;
 	GaimPounce *pounce;
 	const char *buddy;
+	gboolean has_items = FALSE;
 	GList *bp;
 
 	for (bp = gaim_pounces_get_all(); bp != NULL; bp = bp->next) {
@@ -700,9 +701,11 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		buddy = gaim_pounce_get_pouncee(pounce);
 
 		/* Check if account is online, if not skip it */
-		if(!gaim_account_is_connected(pounce->pouncer))
+		if (!gaim_account_is_connected(pounce->pouncer))
 			continue;
-		
+
+		has_items = TRUE;
+
 		/* Build the menu item */
 		item = gtk_image_menu_item_new_with_label(buddy);
 
@@ -727,6 +730,8 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		/* Set our callbacks. */
 		g_signal_connect(G_OBJECT(item), "activate", cb, pounce);
 	}
+
+	return has_items;
 }
 
 void
@@ -734,18 +739,18 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 {
 	GtkWidget *remmenu;
 	GtkWidget *item;
-	GList *l;
+	GList *children, *l;
+	gboolean has_items;
 
-	if(!menu)
-		return;
+	g_return_if_fail(menu != NULL);
 
-	for (l = gtk_container_get_children(GTK_CONTAINER(menu));
-		 l != NULL;
-		 l = l->next) {
+	if ((children = gtk_container_get_children(GTK_CONTAINER(menu))) != NULL)
+	{
+		for (l = children; l != NULL; l = l->next)
+			gtk_widget_destroy(GTK_WIDGET(l->data));
 
-		gtk_widget_destroy(GTK_WIDGET(l->data));
+		g_list_free(children);
 	}
-	g_list_free(l);
 
 	/* "New Buddy Pounce" */
 	item = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
@@ -761,7 +766,10 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 	/* "Remove Buddy Pounce" menu */
 	remmenu = gtk_menu_new();
 
-	fill_menu(remmenu, G_CALLBACK(delete_pounce_cb));
+	has_items = fill_menu(remmenu, G_CALLBACK(delete_pounce_cb));
+
+	if (!has_items)
+		gtk_widget_set_sensitive(item, FALSE);
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), remmenu);
 	gtk_widget_show(remmenu);

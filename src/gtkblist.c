@@ -2518,8 +2518,8 @@ static void gaim_gtk_blist_hide_node(GaimBuddyList *list, GaimBlistNode *node)
 static void
 signed_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 {
-	GaimGtkBuddyList *gtkblist = blist->ui_data;
-	
+	GaimGtkBuddyList *gtkblist = GAIM_GTK_BLIST(blist);
+
 	gaim_gtk_blist_update_protocol_actions();
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 }
@@ -2549,12 +2549,6 @@ static void gaim_gtk_blist_new_list(GaimBuddyList *blist)
 
 	gtkblist = g_new0(GaimGtkBuddyList, 1);
 	blist->ui_data = gtkblist;
-
-	/* Setup some gaim signal handlers. */
-	gaim_signal_connect(gaim_connections_get_handle(), "signing-on",
-						gtkblist, GAIM_CALLBACK(signed_on_off_cb), blist);
-	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
-						gtkblist, GAIM_CALLBACK(signed_on_off_cb), blist);
 
 	/* Register some of our own. */
 	gaim_signal_register(gtkblist, "drawing-menu",
@@ -2890,6 +2884,12 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			GINT_TO_POINTER(
 				gaim_prefs_connect_callback("/gaim/gtk/blist/show_warning_level",
 					gaim_gtk_blist_update_columns, NULL)));
+
+	/* Setup some gaim signal handlers. */
+	gaim_signal_connect(gaim_connections_get_handle(), "signing-on",
+						gtkblist, GAIM_CALLBACK(signed_on_off_cb), list);
+	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
+						gtkblist, GAIM_CALLBACK(signed_on_off_cb), list);
 }
 
 /* XXX: does this need fixing? */
@@ -3375,6 +3375,11 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 {
 	if (!gtkblist)
 		return;
+
+	gaim_signal_disconnect(gaim_connections_get_handle(), "signing-on",
+						   gtkblist, GAIM_CALLBACK(signed_on_off_cb));
+	gaim_signal_disconnect(gaim_connections_get_handle(), "signing-off",
+						   gtkblist, GAIM_CALLBACK(signed_on_off_cb));
 
 	gtk_widget_destroy(gtkblist->window);
 

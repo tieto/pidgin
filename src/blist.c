@@ -207,6 +207,7 @@ void  gaim_blist_show ()
 void gaim_blist_destroy()
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+	gaim_debug(GAIM_DEBUG_INFO, "blist", "Destroying\n");
 	if (ops)
 		ops->destroy(gaimbuddylist);
 }
