@@ -249,15 +249,14 @@ show_send_to_mobile_cb(GaimBlistNode *node, gpointer ignored)
 {
 	GaimBuddy *buddy;
 	GaimConnection *gc;
+	MsnUser *user;
+	MsnSession *session;
+	MsnMobileData *data;
 	
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (GaimBuddy *) node;
 	gc = gaim_account_get_connection(buddy->account);
-
-	MsnUser *user;
-	MsnSession *session;
-	MsnMobileData *data;
 
 	session = gc->proto_data;
 	user = msn_users_find_with_passport(session->users, buddy->name);
