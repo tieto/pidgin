@@ -3,6 +3,7 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.11.0-pre14:
 	* Fixed a segfault with Oscar's account confirmation
 	  (Thanks, Adam)
+	* Updated the German translation (Thanks, Dominik)
 
 version 0.11.0-pre13 (06/06/2001):
 	* Can view/set chat topic in Jabber (thanks faceprint)
