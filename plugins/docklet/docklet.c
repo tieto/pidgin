@@ -98,7 +98,8 @@ static void docklet_toggle() {
 }
 
 static void docklet_menu(GdkEventButton *event) {
-	GtkWidget *menu, *entry;
+	static GtkWidget *menu;
+	GtkWidget *entry;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
@@ -137,7 +138,7 @@ static void docklet_menu(GdkEventButton *event) {
 			gtk_menu_append(GTK_MENU(docklet_awaymenu), entry);
 
 			entry = gtk_menu_item_new_with_label(_("Away"));
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(entry), awaymenu);
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(entry), docklet_awaymenu);
 			gtk_menu_append(GTK_MENU(menu), entry);
 		} else {
 			entry = gtk_menu_item_new_with_label(_("Back"));
