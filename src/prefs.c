@@ -1964,7 +1964,7 @@ void debug_printf(char *fmt, ...)
 
 		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, s, -1);
 #ifdef DEBUG
-		printf("%s", chars);
+		printf("%s", s);
 #endif
 		g_free(s);
 	}
