@@ -1312,9 +1312,9 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
 {
 	/* Should this be ASCII -> UNICODE -> Custom */
 	static const fu16_t charsetpri[] = {
-		AIM_IMCHARSET_ASCII, /* ASCII first */
-		AIM_IMCHARSET_CUSTOM, /* then ISO-8859-1 */
-		AIM_IMCHARSET_UNICODE, /* UNICODE as last resort */
+		AIM_CHARSET_ASCII, /* ASCII first */
+		AIM_CHARSET_CUSTOM, /* then ISO-8859-1 */
+		AIM_CHARSET_UNICODE, /* UNICODE as last resort */
 	};
 	static const int charsetpricount = 3;
 	int i;

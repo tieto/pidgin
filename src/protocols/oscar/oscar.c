@@ -310,7 +310,7 @@ static void oscar_free_buddyinfo(void *data) {
 static fu32_t oscar_charset_check(const char *utf8)
 {
 	int i = 0;
-	int charset = AIM_IMCHARSET_ASCII;
+	int charset = AIM_CHARSET_ASCII;
 
 	/* Determine how we can send this message.  Per the warnings elsewhere 
 	 * in this file, these little checks determine the simplest encoding 
@@ -318,7 +318,7 @@ static fu32_t oscar_charset_check(const char *utf8)
 	while (utf8[i]) {
 		if ((unsigned char)utf8[i] > 0x7f) {
 			/* not ASCII! */
-			charset = AIM_IMCHARSET_CUSTOM;
+			charset = AIM_CHARSET_CUSTOM;
 			break;
 		}
 		i++;
@@ -334,7 +334,7 @@ static fu32_t oscar_charset_check(const char *utf8)
 			i += 2;
 			continue;
 		}
-		charset = AIM_IMCHARSET_UNICODE;
+		charset = AIM_CHARSET_UNICODE;
 		break;
 	}
 
@@ -3038,7 +3038,7 @@ gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, 
 		return NULL;
 
 	switch (charset) {
-		case AIM_IMCHARSET_UNICODE: /* UCS-2BE */
+		case AIM_CHARSET_UNICODE: /* UCS-2BE */
 			ret = g_convert(data, datalen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
 			if (err != NULL) {
 				gaim_debug_warning("oscar",
@@ -3048,7 +3048,7 @@ gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, 
 			}
 		break;
 
-		case AIM_IMCHARSET_CUSTOM: /* Use the value specified for this account */
+		case AIM_CHARSET_CUSTOM: /* Use the value specified for this account */
 			/* XXX - Make the encoding user customizable */
 			ret = g_convert(data, datalen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
 			if (err != NULL) {
@@ -3059,7 +3059,7 @@ gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, 
 			}
 		break;
 
-		case AIM_IMCHARSET_ASCII:
+		case AIM_CHARSET_ASCII:
 		case 0x000d: /* Mobile AIM client on a Nokia 3100 and an LG VX6000 */
 		default: /* Unknown, hope for valid UTF-8... */
 			if (g_utf8_validate(data, datalen, NULL)) {
@@ -3940,13 +3940,15 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 #endif
 
 	/* Data is assumed to be the destination sn */
-	if (!gaim_conv_present_error(data, gaim_connection_get_account(gc), 
-				     (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Your message did not get sent."))) {
-		buf = g_strdup_printf(_("Your message to %s did not get sent:"), data ? data : "(null)");
-		gaim_notify_error(sess->aux_data, NULL, buf,
-				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
+	buf = g_strdup_printf(_("Unable to send message: %s"), (reason < msgerrreasonlen) ? msgerrreason[reason] : _("Unknown reason."));
+	if (!gaim_conv_present_error(data, gaim_connection_get_account(gc), buf)) {
 		g_free(buf);
+		buf = g_strdup_printf(_("Unable to send message to %s:"), data ? data : "(unknown)");
+		gaim_notify_error(sess->aux_data, NULL, buf,
+				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
 	}
+	g_free(buf);
+
 	return 1;
 }
 
@@ -3988,7 +3990,7 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
  * happens when you request info of someone who is offline.
  */
 static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
-	gchar *buf, *cbuf;
+	gchar *buf;
 	va_list ap;
 	fu16_t reason;
 	char *destn;
@@ -4001,14 +4003,13 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (destn == NULL)
 		return 1;
 	
-	cbuf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
-	if (!gaim_conv_present_error(destn, gaim_connection_get_account((GaimConnection*)sess->aux_data), cbuf)) {
-		buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
-		gaim_notify_error(sess->aux_data, NULL, buf,
-				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
+	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
+	if (!gaim_conv_present_error(destn, gaim_connection_get_account((GaimConnection*)sess->aux_data), buf)) {
 		g_free(buf);
+		buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
+		gaim_notify_error(sess->aux_data, NULL, buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
 	}
-	g_free(cbuf);
+	g_free(buf);
 
 	return 1;
 }
@@ -5298,7 +5299,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		len = strlen(tmpmsg);
 
 		args.charset = oscar_charset_check(tmpmsg);
-		if (args.charset == AIM_IMCHARSET_UNICODE) {
+		if (args.charset == AIM_CHARSET_UNICODE) {
 			gaim_debug_info("oscar", "Sending Unicode IM\n");
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
@@ -5311,7 +5312,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 				 * IM now, but I'm not sure what to do */
 				g_error_free(err);
 			}
-		} else if (args.charset == AIM_IMCHARSET_CUSTOM) {
+		} else if (args.charset == AIM_CHARSET_CUSTOM) {
 			gaim_debug_info("oscar", "Sending ISO-8859-1 IM\n");
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
@@ -5392,11 +5393,11 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 		
 	text_html = gaim_strdup_withhtml(text);
 	charset = oscar_charset_check(text_html);
-	if (charset == AIM_IMCHARSET_UNICODE) {
+	if (charset == AIM_CHARSET_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
 		g_free(msg);
-	} else if (charset == AIM_IMCHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_CUSTOM) {
 		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
 		g_free(msg);
@@ -5465,13 +5466,13 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *st
 
 	text_html = gaim_strdup_withhtml(text);
 	charset = oscar_charset_check(text_html);
-	if (charset == AIM_IMCHARSET_UNICODE) {
+	if (charset == AIM_CHARSET_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
 		g_free(msg);
 		gc->away = g_strndup(text, od->rights.maxawaymsglen/2);
-	} else if (charset == AIM_IMCHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_CUSTOM) {
 		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
@@ -6368,7 +6369,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 		                        GAIM_MESSAGE_ERROR, time(NULL));
 
 	charset = oscar_charset_check(buf);
-	if (charset == AIM_IMCHARSET_UNICODE) {
+	if (charset == AIM_CHARSET_UNICODE) {
 		gaim_debug_info("oscar", "Sending Unicode chat\n");
 		charsetstr = "unicode-2-0";
 		buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
@@ -6377,7 +6378,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 					   "Error converting to unicode-2-0: %s\n", err->message);
 			g_error_free(err);
 		}
-	} else if (charset == AIM_IMCHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_CUSTOM) {
 		gaim_debug_info("oscar", "Sending ISO-8859-1 chat\n");
 		charsetstr = "iso-8859-1";
 		buf2 = g_convert(buf, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);

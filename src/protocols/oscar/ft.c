@@ -322,7 +322,7 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
  * @param conn The already-connected ODC connection.
  * @param msg Null-terminated string to send.
  * @param len The length of the message to send, including binary data.
- * @param encoding 0 for ascii, 2 for Unicode, 3 for ISO 8859-1.
+ * @param encoding See the AIM_CHARSET_* defines in aim.h
  * @param isawaymsg 0 if this is not an auto-response, 1 if it is.
  * @return Return 0 if no errors, otherwise return the error number.
  */
@@ -876,9 +876,7 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_
 	fh->lnameoffset = 0x1a;
 	fh->lsizeoffset = 0x10;
 
-	/* apparently 0 is ASCII, 2 is UCS-2 */
-	/* it is likely that 3 is ISO 8859-1 */
-	/* I think "nlanguage" might be the same thing as "subenc" in im.c */
+	/* These should be the same as charset and charsubset in ICBMs */
 	fh->nencode = 0x0000;
 	fh->nlanguage = 0x0000;
 #endif
