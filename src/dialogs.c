@@ -862,57 +862,6 @@ show_add_group(GaimConnection *gc)
 					   NULL, FALSE, FALSE,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL, gc);
-
-#if 0
-	GtkWidget *hbox, *vbox;
-	GtkWidget *label;
-	struct gaim_gtk_buddy_list *gtkblist;
-	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-	struct addbuddy *a = g_new0(struct addbuddy, 1);
-
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-
-	a->gc = gc;
-
-	a->window =  gtk_dialog_new_with_buttons(_("Add Group"), GTK_WINDOW(gtkblist->window), 0, 
-						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG(a->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width (GTK_CONTAINER(a->window), 6);
-	gtk_window_set_resizable(GTK_WINDOW(a->window), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(a->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(a->window)->vbox), 12);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), 6);
-		
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), hbox);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(hbox), vbox);
-		
-	label = gtk_label_new(_("Please enter the name of the group to be added.\n"));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-		
-	hbox = gtk_hbox_new(FALSE, 6);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Group:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-		
-	a->entry = gtk_entry_new();
-	gtk_entry_set_activates_default (GTK_ENTRY(a->entry), TRUE);
-	gtk_box_pack_start(GTK_BOX(hbox), a->entry, FALSE, FALSE, 0);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->entry));
-
-	g_signal_connect(G_OBJECT(a->window), "response", G_CALLBACK(do_add_group), a);
-
-	gtk_widget_show_all(a->window);
-	gtk_widget_grab_focus(GTK_WIDGET(a->entry));
-#endif
 }
 
 static void
