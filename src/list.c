@@ -163,11 +163,21 @@ void  gaim_blist_rename_buddy (struct buddy *buddy, const char *name)
 void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	struct gaim_conversation *conv;
+
 	g_free(buddy->alias);
+
 	buddy->alias = g_strdup(alias);
+
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+
+	conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
+
+	if (conv)
+		gaim_conversation_autoset_title(conv);
 }
+
 void gaim_blist_rename_group(struct group *group, const char *name)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
