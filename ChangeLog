@@ -16,6 +16,8 @@ version 0.46:
 	* Can pass an argument to timeout_handlers in perl
 	  (thanks Artem Litvinovich)
 	* Redesigned Modify Account window (thanks Sean Egan)
+	* Add buddy dialog now lets you select which protocol
+	  to add the buddy to
 
 version 0.45 (10/04/2001):
 	* New plugin event: event_chat_send_invite
