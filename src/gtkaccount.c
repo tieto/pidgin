@@ -83,7 +83,7 @@ typedef struct
 
 	GaimAccount *account;
 	GaimProtocol protocol;
-	const char *protocol_id;
+	char *protocol_id;
 	GaimPlugin *plugin;
 	GaimPluginProtocolInfo *prpl_info;
 
@@ -186,10 +186,13 @@ set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 {
 	if ((dialog->plugin = gaim_find_prpl(protocol)) != NULL) {
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
-		dialog->protocol = dialog->prpl_info->protocol;
-	}
+		dialog->protocol    = dialog->prpl_info->protocol;
 
-	dialog->protocol_id = dialog->plugin->info->id;
+		if (dialog->protocol_id != NULL)
+			g_free(dialog->protocol_id);
+
+		dialog->protocol_id = g_strdup(dialog->plugin->info->id);
+	}
 
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
@@ -902,6 +905,9 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	if (dialog->protocol_opt_entries != NULL)
 		g_list_free(dialog->protocol_opt_entries);
 
+	if (dialog->protocol_id != NULL)
+		g_free(dialog->protocol_id);
+
 	if (dialog->buddy_icon_filesel)
 		gtk_widget_destroy(dialog->buddy_icon_filesel);
 
@@ -1138,10 +1144,15 @@ show_account_prefs(AccountPrefsDialogType type,
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	if (dialog->account == NULL)
+	if (dialog->account == NULL) {
+		dialog->protocol_id = g_strdup("prpl-oscar");
 		dialog->protocol = GAIM_PROTO_OSCAR;
-	else
+	}
+	else {
+		dialog->protocol_id =
+			g_strdup(gaim_account_get_protocol_id(dialog->account));
 		dialog->protocol = gaim_account_get_protocol(dialog->account);
+	}
 
 	if ((dialog->plugin = gaim_find_prpl(dialog->protocol)) != NULL)
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
@@ -1637,10 +1648,6 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 
 	if (pixbuf != NULL)
 		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-
-	gaim_debug(GAIM_DEBUG_MISC, "gtkaccount", "auto-login for %s: %d\n",
-			   gaim_account_get_username(account),
-			   gaim_account_get_auto_login(account, GAIM_GTK_UI));
 
 	gtk_list_store_set(store, iter,
 			COLUMN_ICON, scale,
