@@ -42,7 +42,7 @@ make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
 %files
 %defattr(-,root,root)
 %attr(755,root,root) %{prefix}/bin/gaim
-%doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README ChangeLog
+%doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog
 
 %clean
 rm -r $RPM_BUILD_ROOT
