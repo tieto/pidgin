@@ -367,7 +367,6 @@ static GaimGtkPrivacyDialog *
 privacy_dialog_new(void)
 {
 	GaimGtkPrivacyDialog *dialog;
-	GaimConnection *gc;
 	GtkWidget *bbox;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -380,9 +379,6 @@ privacy_dialog_new(void)
 	int i;
 
 	dialog = g_new0(GaimGtkPrivacyDialog, 1);
-
-	gc = (GaimConnection *)gaim_connections_get_all()->data;
-	dialog->account = gaim_connection_get_account(gc);
 
 	dialog->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog->win), FALSE);
@@ -419,12 +415,13 @@ privacy_dialog_new(void)
 	gtk_widget_show(label);
 
 	/* Accounts drop-down */
-	dropdown = gaim_gtk_account_option_menu_new(dialog->account, FALSE,
+	dropdown = gaim_gtk_account_option_menu_new(NULL, FALSE,
 												G_CALLBACK(select_account_cb),
 												check_account_func, dialog);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
 	gaim_set_accessible_label (dropdown, label);
+	dialog->account = gaim_gtk_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
 	dialog->type_menu = gtk_option_menu_new();

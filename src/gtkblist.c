@@ -647,6 +647,22 @@ do_join_chat(GaimGtkJoinChatData *data)
 }
 
 static void
+do_joinchat(GtkWidget *dialog, int id, GaimGtkJoinChatData *info)
+{
+	switch(id)
+	{
+		case GTK_RESPONSE_OK:
+			do_join_chat(info);
+
+		break;
+	}
+
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+	g_list_free(info->entries);
+	g_free(info);
+}
+
+static void
 rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 {
 	GaimConnection *gc;
@@ -734,7 +750,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 }
 
 static void
-join_chat_select_account_cb(GObject *w, GaimAccount *account,
+joinchat_select_account_cb(GObject *w, GaimAccount *account,
 							GaimGtkJoinChatData *data)
 {
 	if (gaim_account_get_protocol(data->account) ==
@@ -750,60 +766,41 @@ join_chat_select_account_cb(GObject *w, GaimAccount *account,
 }
 
 static gboolean
-join_chat_check_account_func(GaimAccount *account)
+joinchat_account_filter_func(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	return (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	return (prpl_info->chat_info != NULL);
 }
 
-static void
-do_joinchat(GtkWidget *dialog, int id, GaimGtkJoinChatData *info)
+gboolean
+gaim_gtk_blist_joinchat_is_showable()
 {
-	switch(id)
-	{
-		case GTK_RESPONSE_OK:
-			do_join_chat(info);
+	GList *c;
+	GaimConnection *gc;
 
-		break;
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+		gc = c->data;
+
+		if (joinchat_account_filter_func(gaim_connection_get_account(gc)))
+			return TRUE;
 	}
 
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-	g_list_free(info->entries);
-	g_free(info);
+	return FALSE;
 }
 
 void
-gaim_gtk_blist_show_join_chat(void)
+gaim_gtk_blist_joinchat_show(void)
 {
 	GtkWidget *hbox, *vbox;
 	GtkWidget *rowbox;
 	GtkWidget *label;
-	GList *c;
 	GaimGtkBuddyList *gtkblist;
 	GtkWidget *img = NULL;
-	GaimConnection *gc = NULL;
 	GaimGtkJoinChatData *data = NULL;
-	int numaccounts = 0;
-
-	/* Count how many protocols support chat */
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next)
-	{
-		gc = c->data;
-
-		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat)
-			numaccounts++;
-	}
-
-	if (numaccounts <= 0)
-	{
-		gaim_notify_error(NULL, NULL,
-						  _("You are not currently signed on with any "
-							"protocols that have the ability to chat."),
-						  NULL);
-
-		return;
-	}
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
@@ -843,34 +840,25 @@ gaim_gtk_blist_show_join_chat(void)
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	if (numaccounts > 1)
-	{
-		label = gtk_label_new_with_mnemonic(_("_Account:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-		gtk_size_group_add_widget(data->sg, label);
+	label = gtk_label_new_with_mnemonic(_("_Account:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(data->sg, label);
 
-		data->account_menu = gaim_gtk_account_option_menu_new(NULL, FALSE,
-				G_CALLBACK(join_chat_select_account_cb),
-				join_chat_check_account_func, data);
-		gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label),
-									  GTK_WIDGET(data->account_menu));
-		gaim_set_accessible_label (data->account_menu, label);
-	}
+	data->account_menu = gaim_gtk_account_option_menu_new(NULL, FALSE,
+			G_CALLBACK(joinchat_select_account_cb),
+			joinchat_account_filter_func, data);
+	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label),
+								  GTK_WIDGET(data->account_menu));
+	gaim_set_accessible_label (data->account_menu, label);
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), data->entries_box);
 	gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
 
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next)
-	{
-		gc = c->data;
+	data->account =	gaim_gtk_account_option_menu_get_selected(data->account_menu);
 
-		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat)
-			break;
-	}
-	data->account =	gaim_connection_get_account(gc);
 	rebuild_joinchat_entries(data);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
@@ -896,7 +884,7 @@ static void gtk_blist_button_chat_cb(GtkWidget *w, GtkTreeView *tv)
 			return;
 		}
 	}
-	gaim_gtk_blist_show_join_chat();
+	gaim_gtk_blist_joinchat_show();
 }
 
 static void gtk_blist_button_away_cb(GtkWidget *w, gpointer data)
@@ -2311,7 +2299,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
-	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", gaim_gtk_blist_show_join_chat, 0, "<StockItem>", GAIM_STOCK_CHAT },
+	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", gaim_gtk_blist_joinchat_show, 0, "<StockItem>", GAIM_STOCK_CHAT },
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", show_info_dialog, 0, "<StockItem>", GAIM_STOCK_INFO },
 	{ N_("/Buddies/View User _Log..."), "<CTL>L", show_log_dialog, 0, "<StockItem>" },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
@@ -2889,6 +2877,10 @@ sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 
 	gaim_gtk_blist_update_protocol_actions();
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
+
+	/* Make menu items sensitive/insensitive where appropriate */
+	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Join a Chat..."));
+	gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
 	gtk_widget_set_sensitive(widget, gaim_gtk_roomlist_is_showable());

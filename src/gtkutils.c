@@ -594,6 +594,14 @@ gaim_gtk_protocol_option_menu_new(const char *id, GCallback cb,
 	return optmenu;
 }
 
+GaimAccount *
+gaim_gtk_account_option_menu_get_selected(GtkWidget *optmenu)
+{
+	GtkWidget *menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
+	GtkWidget *item = gtk_menu_get_active(GTK_MENU(menu));
+	return g_object_get_data(G_OBJECT(item), "account");
+}
+
 static void
 account_menu_cb(GtkWidget *optmenu, GCallback cb)
 {

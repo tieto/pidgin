@@ -288,9 +288,6 @@ static gboolean account_filter_func(GaimAccount *account)
 	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-//	if (!gc)
-//		return FALSE;
-
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	return (prpl_info->roomlist_get_list != NULL);

@@ -209,8 +209,16 @@ void gaim_gtk_blist_setup_sort_methods();
 void gaim_gtk_blist_update_protocol_actions();
 
 /**
- * Shows the join chat dialog
+ * Determines if showing the join chat dialog is a valid action.
+ *
+ * @return Returns TRUE if there are accounts online capable of
+ *         joining chat rooms.  Otherwise returns FALSE.
  */
-void gaim_gtk_blist_show_join_chat(void);
+gboolean gaim_gtk_blist_joinchat_is_showable(void);
+
+/**
+ * Shows the join chat dialog.
+ */
+void gaim_gtk_blist_joinchat_show(void);
 
 #endif /* _GAIM_GTK_LIST_H_ */

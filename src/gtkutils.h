@@ -248,6 +248,15 @@ GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 		GaimFilterAccountFunc filter_func, gpointer user_data);
 
 /**
+ * Gets the currently selected account from an account drop down box.
+ *
+ * @param optmenu The GtkOptionMenu created by
+ *        gaim_gtk_account_option_menu_new.
+ * @return Returns the GaimAccount that is currently selected.
+ */
+GaimAccount *gaim_gtk_account_option_menu_get_selected(GtkWidget *optmenu);
+
+/**
  * Check if the given path is a directory or not.  If it is, then modify
  * the given GtkFileSelection dialog so that it displays the given path.
  * If the given path is not a directory, then do nothing.
