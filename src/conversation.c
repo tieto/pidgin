@@ -2232,4 +2232,5 @@ void set_convo_tab_label(struct conversation *c, char *text)
 void raise_convo_tab(struct conversation *c)
 {
 	gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook), g_list_index(conversations, c));
+	gdk_window_show(c->window->window);
 }
