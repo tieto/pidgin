@@ -262,13 +262,13 @@ void perl_unload_file(struct gaim_plugin *plug) {
 			perl_list = g_list_remove(perl_list, scp);
 			if (scp->shutdowncallback[0])
 				execute_perl(scp->shutdowncallback, atmp);
-			perl_list = g_list_remove(perl_list, scp);
 			g_free(scp->name);
 			g_free(scp->version);
 			g_free(scp->shutdowncallback);
 			g_free(scp);	
 			break;
 		}
+		pl = pl->next;
 	}
 
 	pl = perl_timeout_handlers;
