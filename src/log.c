@@ -716,7 +716,7 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	int logfound = 0;
 	int lastoff = 0;
 	int newlen;
-	time_t lasttime;
+	time_t lasttime = 0;
 
 	GaimLog *log = NULL;
 	GList *list = NULL;
