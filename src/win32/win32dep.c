@@ -481,8 +481,8 @@ void wgaim_pre_plugin_init(void) {
                         }
                         g_free(new_home);
                         g_free(old_home);
-                        g_dir_close(dir_old);
-                        g_dir_close(dir_new);
+                        if(dir_old) g_dir_close(dir_old);
+                        if(dir_new) g_dir_close(dir_new);
                 }
         }
         else {

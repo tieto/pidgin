@@ -83,9 +83,6 @@ int docklet_count = 0;
 char *opt_away_arg = NULL;
 char *opt_rcfile_arg = NULL;
 int opt_debug = 0;
-#ifdef _WIN32
-int opt_gdebug = 0;
-#endif
 
 #if HAVE_SIGNAL_H
 /*
@@ -770,7 +767,7 @@ int main(int argc, char *argv[])
 #ifndef _WIN32
 				  "adhu:f:vns:", 
 #else
-				  "adghu:f:vn", 
+				  "adhu:f:vn", 
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -799,11 +796,6 @@ int main(int argc, char *argv[])
 		case 'n':       /* don't autologin */
 			opt_nologin = 1;
 			break;
-#ifdef _WIN32
-		case 'g':       /* debug GTK and GLIB */
-			opt_gdebug = 1;
-			break;
-#endif
 		case '?':
 		default:
 			show_usage(1, argv[0]);
