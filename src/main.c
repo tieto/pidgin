@@ -540,7 +540,7 @@ gaim_get_gtk_core_ui_ops(void)
 
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
-int gaim_main(int argc, char *argv[])
+int gaim_main(HINSTANCE hint, int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
 #endif
@@ -806,6 +806,7 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef _WIN32
+        wgaim_set_hinstance(hint);
         wgaim_pre_plugin_init();
 #endif
 

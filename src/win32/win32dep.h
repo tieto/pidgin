@@ -37,6 +37,7 @@
  ** win32dep.c
  **/
 /* Windows helper functions */
+void wgaim_set_hinstance(HINSTANCE);
 HINSTANCE wgaim_hinstance(void);
 FARPROC wgaim_find_and_loadproc(char*, char*);
 gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len);

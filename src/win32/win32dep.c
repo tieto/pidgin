@@ -109,6 +109,10 @@ static void load_winver_specific_procs(void) {
  *  PUBLIC CODE
  */
 
+void wgaim_set_hinstance(HINSTANCE hint) {
+	gaimexe_hInstance = hint;
+}
+
 HINSTANCE wgaim_hinstance(void) {
 	return gaimexe_hInstance;
 }
