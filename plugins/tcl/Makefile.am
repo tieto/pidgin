@@ -6,6 +6,8 @@ plugin_LTLIBRARIES = tcl.la
 
 tcl_la_SOURCES = tcl.c tcl_glib.c tcl_glib.h tcl_cmds.c tcl_signals.c tcl_gaim.h
 
+EXTRA_DIST = signal-test.tcl
+
 AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
