@@ -1,7 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.75cvs :
-	* WYSIWYG text input
+	* WYSIWYG text input (with scrollbars, too!)
 	* Yahoo! file transfer (Tim Ringenbach)
 	* Yahoo! chat joining fixes (Tim Ringenbach)
 	* Improved i18n support for MSN email notification (Felipe Contreras)

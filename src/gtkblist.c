@@ -1796,7 +1796,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		char *statustext = NULL;
 		char *contactaliastext = NULL;
 		char *aliastext = NULL, *nicktext = NULL;
-		char *warning = NULL, *idletime = NULL;
+		char *loggedin = NULL, *idletime = NULL;
+		char *warning = NULL;
 		char *accounttext = NULL;
 
 		if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
@@ -1826,6 +1827,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		if (!statustext && !GAIM_BUDDY_IS_ONLINE(b))
 			statustext = g_strdup(_("<b>Status:</b> Offline"));
 
+		if (b->signon > 0)
+			loggedin = gaim_str_seconds_to_string(time(NULL) - b->signon);
+
 		if (b->idle > 0)
 			idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
 
@@ -1846,6 +1850,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				       "%s %s"  /* Contact Alias */
 				       "%s %s"  /* Alias */
 				       "%s %s"  /* Nickname */
+				       "%s %s"     /* Logged In */
 				       "%s %s"     /* Idle */
 				       "%s %s"     /* Warning */
 				       "%s%s"     /* Status */
@@ -1855,6 +1860,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 					   contactaliastext ? _("\n<b>Contact Alias:</b>") : "", contactaliastext ? contactaliastext : "",
 				       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
 				       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
+				       loggedin ? _("\n<b>Logged In:</b>") : "", loggedin ? loggedin : "",
 				       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
 				       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 				       statustext ? "\n" : "", statustext ? statustext : "",
@@ -1864,6 +1870,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 
 		if(warning)
 			g_free(warning);
+		if(loggedin)
+			g_free(loggedin);
 		if(idletime)
 			g_free(idletime);
 		if(statustext)

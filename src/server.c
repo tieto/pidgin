@@ -1124,6 +1124,9 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
 	}
 
+	if (gc->login_time_official && gc->login_time)
+		signon += gc->login_time_official - gc->login_time;
+	gaim_blist_update_buddy_signon(b, signon);
 	gaim_blist_update_buddy_idle(b, idle);
 	gaim_blist_update_buddy_evil(b, evil);
 /* LOG

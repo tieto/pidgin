@@ -5458,9 +5458,8 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			g_free(status);
 		}
 
+		/* XXX REMOVE THIS WHOLE CHUNCK OF CODE WHEN WE FIGURE THIS OUT */
 		if (userinfo != NULL) {
-			char *tstr = gaim_str_seconds_to_string(time(NULL) - userinfo->onlinesince +
-				(gc->login_time_official ? gc->login_time_official - gc->login_time : 0));
 			/* maybe this will help us figure out the rediculous online times */
 			gaim_debug_info("oscar", "time(NULL): %u\n"
 					"user->onlinesince: %u\n"
@@ -5468,11 +5467,6 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 					"gc->login_time: %u\n",
 					time(NULL), userinfo->onlinesince, gc->login_time_official,
 					gc->login_time);
-
-			tmp = ret;
-			ret = g_strconcat(tmp, _("<b>Logged In:</b> "), tstr, "\n", NULL);
-			g_free(tmp);
-			g_free(tstr);
 		}
 
 		if ((bi != NULL) && (bi->ipaddr)) {

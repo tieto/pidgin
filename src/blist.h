@@ -247,6 +247,13 @@ void gaim_blist_update_buddy_status(GaimBuddy *buddy, int status);
  */
 void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence);
 
+/**
+ * Updates a buddy's signon time.
+ *
+ * @param buddy  The buddy whose idle time has changed.
+ * @param signon The buddy's signon time since the dawn of the UNIX epoch.
+ */
+void gaim_blist_update_buddy_signon(GaimBuddy *buddy, time_t signon);
 
 /**
  * Updates a buddy's idle time.

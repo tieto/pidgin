@@ -302,6 +302,16 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 	}
 }
 
+void  gaim_blist_update_buddy_signon (GaimBuddy *buddy, time_t signon)
+{
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+	if(buddy->signon == signon)
+		return;
+
+	buddy->signon = signon;
+	if (ops)
+		ops->update(gaimbuddylist,(GaimBlistNode*)buddy);
+}
 
 void  gaim_blist_update_buddy_idle (GaimBuddy *buddy, int idle)
 {
