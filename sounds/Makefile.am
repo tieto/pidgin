@@ -6,6 +6,9 @@ EXTRA_DIST = BuddyArrive.au BuddyLeave.au Send.au Receive.au
 
 all: BuddyArrive.h BuddyLeave.h Send.h Receive.h
 
+clean distclean:
+	rm -f BuddyArrive.h BuddyLeave.h Send.h Receive.h
+
 BuddyArrive.h: au2h BuddyArrive.au
 	./au2h BuddyArrive.au BuddyArrive.h
 
