@@ -371,7 +371,7 @@ if test "$enable_sm" = "yes"; then
 fi
 
 
-AC_DEFUN(GC_TM_GMTOFF,
+AC_DEFUN([GC_TM_GMTOFF],
 [AC_REQUIRE([AC_STRUCT_TM])dnl
 AC_CACHE_CHECK([for tm_gmtoff in struct tm], ac_cv_struct_tm_gmtoff,
 [AC_TRY_COMPILE([#include <sys/types.h>

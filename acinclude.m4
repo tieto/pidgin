@@ -9,7 +9,7 @@ dnl AM_PATH_GLIB_2_0([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [
 dnl Test for GLIB, and define GLIB_CFLAGS and GLIB_LIBS, if gmodule, gobject or 
 dnl gthread is specified in MODULES, pass to pkg-config
 dnl
-AC_DEFUN(AM_PATH_GLIB_2_0,
+AC_DEFUN([AM_PATH_GLIB_2_0],
 [dnl 
 dnl Get the cflags and libraries from pkg-config
 dnl
@@ -221,7 +221,7 @@ dnl AM_PATH_GTK_2_0([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [,
 dnl Test for GTK+, and define GTK_CFLAGS and GTK_LIBS, if gthread is specified in MODULES, 
 dnl pass to pkg-config
 dnl
-AC_DEFUN(AM_PATH_GTK_2_0,
+AC_DEFUN([AM_PATH_GTK_2_0],
 [dnl 
 dnl Get the cflags and libraries from pkg-config
 dnl
@@ -422,7 +422,7 @@ dnl It's a long story.  --elb
 dnl GAIM_PATH_AO([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for libao, and define AO_CFLAGS and AO_LIBS
 dnl
-AC_DEFUN(GAIM_PATH_AO,
+AC_DEFUN([GAIM_PATH_AO],
 [dnl 
 dnl Get the cflags and libraries
 dnl
@@ -541,7 +541,7 @@ dnl installed but would like to build CVS.
 dnl AM_PATH_AUDIOFILE([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
 dnl Test for Audio File Library, and define AUDIOFILE_CFLAGS and AUDIOFILE_LIBS.
 dnl
-AC_DEFUN(AM_PATH_AUDIOFILE,
+AC_DEFUN([AM_PATH_AUDIOFILE],
 [dnl 
 dnl Get compiler flags and libraries from the audiofile-config script.
 dnl
