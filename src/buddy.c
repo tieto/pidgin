@@ -369,6 +369,11 @@ void pressed_im(GtkWidget *widget, struct buddy_show *b)
 	}
 }
 
+void pressed_log (GtkWidget *widget, char *name)
+{
+	show_log(name);
+}
+
 void pressed_ticker(char *buddy)
 {
 	struct conversation *c;
@@ -437,6 +442,12 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(new_bp_callback), b->name);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+
+		button = gtk_menu_item_new_with_label(_("View Log"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(pressed_log), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -545,6 +556,12 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(new_bp_callback), b->name);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+
+		button = gtk_menu_item_new_with_label(_("View Log"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(pressed_log), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 

@@ -1836,6 +1836,8 @@ void g_show_info_text(char *info)
 		options ^= GTK_IMHTML_NO_COLOURS;
 	if (display_options & OPT_DISP_IGNORE_FONTS)
 		options ^= GTK_IMHTML_NO_FONTS;
+	if (display_options & OPT_DISP_IGNORE_SIZES)
+		options ^= GTK_IMHTML_NO_SIZES;
 	options ^= GTK_IMHTML_NO_COMMENTS;
 	options ^= GTK_IMHTML_NO_TITLE;
 	options ^= GTK_IMHTML_NO_NEWLINE;
@@ -3637,4 +3639,100 @@ void alias_dialog_bud(struct buddy *b)
         aol_icon(aliasdlg->window);
 
 	gtk_widget_show(aliasdlg);
+}
+
+
+static gboolean dont_destroy(gpointer a, gpointer b, gpointer c) {
+	return TRUE;
+}
+
+void
+show_log (char *name)
+{
+	gchar filename[256];
+	gchar buf[BUF_LONG];
+	GString *string;
+	FILE *fp;
+	GtkWidget *window;
+	GtkWidget *box;
+	GtkWidget *sw;
+	GtkWidget *layout;
+	int options;
+	guint block;
+
+	string = g_string_new("");
+
+	g_snprintf(filename, 256, "%s/logs/%s.log", 
+		   gaim_user_dir(), normalize(name));
+	if ((fp = fopen(filename, "r")) == NULL) {
+		g_snprintf(buf, BUF_LONG, "Unable to open log file %s",
+			   filename);
+		do_error_dialog(buf, "Error!");
+		return;
+	}
+
+	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
+	if (display_options & OPT_DISP_IGNORE_COLOUR)
+		options ^= GTK_IMHTML_NO_COLOURS;
+	if (display_options & OPT_DISP_IGNORE_FONTS)
+		options ^= GTK_IMHTML_NO_FONTS;
+	if (display_options & OPT_DISP_IGNORE_SIZES)
+		options ^= GTK_IMHTML_NO_SIZES;
+
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	dialogwindows = g_list_prepend(dialogwindows, window);
+	gtk_window_set_wmclass(GTK_WINDOW(window), "log", "Gaim");
+	g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
+	gtk_window_set_title(GTK_WINDOW(window), buf);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 15);
+	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
+	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event",
+				   GTK_SIGNAL_FUNC(dont_destroy), window);
+	gtk_widget_realize(window);
+	aol_icon(window->window);
+
+	box = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(window), box);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+	gtk_widget_set_usize(sw, 390, 220);
+
+	layout = gtk_imhtml_new(NULL, NULL);
+	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", open_url_nw, NULL);
+	gtk_container_add(GTK_CONTAINER(sw), layout);
+	gtk_imhtml_show_comments(GTK_IMHTML(layout), TRUE);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:-)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "O-)", oneeye_xpm);
+
+	gtk_widget_show_all(window);
+
+	while (fgets (buf, BUF_LONG, fp)) {
+		if (strlen (buf) >= 5 && 
+		    (!strncmp (buf+strlen(buf)-5, "<BR>\n", 5)))
+			/* take off the \n */
+			buf[strlen(buf)-1] = '\0';
+		if (strlen (buf) >= 21 &&
+		    strstr (buf, "---- New C")) {
+			gtk_imhtml_append_text (GTK_IMHTML(layout), string->str, options);
+			g_string_free (string, TRUE);
+			string = g_string_new (buf);
+		} else {
+			string = g_string_append (string, buf);
+		}
+		while (gtk_events_pending())
+			gtk_main_iteration();
+	}
+	gtk_imhtml_append_text (GTK_IMHTML(layout), string->str, options);
+
+	gtk_signal_disconnect(GTK_OBJECT(window), block);
+	gtk_signal_connect(GTK_OBJECT(window), "delete_event",
+			   GTK_SIGNAL_FUNC(destroy_dialog), window);
+
+	fclose(fp);
+	g_string_free (string, TRUE);
+
+	return;
 }
