@@ -20,3 +20,5 @@ config.cache
 Makefile
 stamp-h
 gaim.spec
+depcomp
+stamp-h1
