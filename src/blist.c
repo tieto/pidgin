@@ -1023,7 +1023,7 @@ GaimBuddy *gaim_contact_get_priority_buddy(GaimContact *contact) {
 		if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 			continue;
 		buddy = (GaimBuddy*)bnode;
-		if(!top) {
+		if(!top && gaim_account_is_connected(buddy->account)) {
 			top = buddy;
 		} else if(GAIM_BUDDY_IS_ONLINE(buddy)) {
 			if(!GAIM_BUDDY_IS_ONLINE(top)) {
