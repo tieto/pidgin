@@ -1,7 +1,22 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
-0.11.0:
+0.11.0-pre4:
 	Rob: HOORAY FOR DISNEYLAND!
+
+	Eric: One more prerelease. I'm actually starting to think these
+	prereleases are a good idea; a lot of people reported a lot of
+	bugs in pre3 and most of them are fixed now. Also, it helps with
+	the whole release early-release often philosophy.
+
+	The big news in this prerelease is two more protocols: Jabber and
+	Napster. Both of them don't have any of the features that make
+	these services cool, yet. You can't use the transports in Jabber
+	and you can't download file in Napster. But you will be able to,
+	soon :)
+
+	Rob and I are going on vacation starting today until after New
+	Year's, which is a lot of the reason we wanted to get this release
+	out; it's much improved over pre3. Happy Holidays everyone.
 
 0.11.0-pre3 (12/15/2000):
 	Rob: Well, I hadn't initially planned on an 0.11.0pre3 but it 

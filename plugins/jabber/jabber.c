@@ -110,6 +110,7 @@ static char *gjab_auth(gjconn j);
 
 struct jabber_data {
 	gjconn jc;
+	gboolean did_import;
 };
 
 static char *jabber_name()
@@ -422,6 +423,7 @@ static void jabber_callback(gpointer data, gint source, GdkInputCondition condit
 static void jabber_handlemessage(gjconn j, jpacket p)
 {
 	xmlnode y;
+	gboolean same = TRUE;
 
 	char *from = NULL, *msg = NULL;
 
@@ -434,11 +436,15 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		return;
 	}
 
-	from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
+	if (jid_cmp(p->from, jid_new(j->p, GJ_GC(j)->username))) {
+		from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
+		same = FALSE;
+	}
 
 	serv_got_im(GJ_GC(j), from, msg, 0);
 
-	g_free(from);
+	if (!same)
+		g_free(from);
 
 	return;
 }
@@ -523,8 +529,10 @@ static void jabber_handles10n(gjconn j, jpacket p)
 	xmlnode_put_attrib(g, "to", Jid);
 	if (!strcmp(ask, "subscribe"))
 		xmlnode_put_attrib(g, "type", "subscribed");
-	else
+	else if (!strcmp(ask, "unsubscribe"))
 		xmlnode_put_attrib(g, "type", "unsubscribed");
+	else
+		return;
 
 	gjab_send(j, g);
 }
@@ -544,15 +552,6 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 		sub = xmlnode_get_attrib(x, "subscription");
 		ask = xmlnode_get_attrib(x, "ask");
 		who = jid_new(j->p, Jid);
-
-		if (ask) {
-			g = xmlnode_new_tag("presence");
-			xmlnode_put_attrib(g, "to", Jid);
-			if (!strcmp(ask, "subscribe"))
-				xmlnode_put_attrib(g, "type", "subscribed");
-			else
-				xmlnode_put_attrib(g, "type", "unsubscribed");
-		}
 
 		if ((g = xmlnode_get_firstchild(x))) {
 			while (g) {
@@ -625,21 +624,22 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 		if (jpacket_subtype(p) == JPACKET__SET) {
 		} else if (jpacket_subtype(p) == JPACKET__RESULT) {
 			xmlnode querynode;
-			char *xmlns;
+			char *xmlns, *from;
 
+			from = xmlnode_get_attrib(p->x, "from");
 			querynode = xmlnode_get_tag(p->x, "query");
 			xmlns = xmlnode_get_attrib(querynode, "xmlns");
 
-			if (!xmlns || NSCHECK(querynode, NS_AUTH)) {
+			if ((!xmlns && !from) || NSCHECK(querynode, NS_AUTH)) {
 				debug_printf("auth success\n");
 
 				account_online(GJ_GC(j));
 				serv_finish_login(GJ_GC(j));
 
-				/*
 				if (bud_list_cache_exists(GJ_GC(j)))
 					do_import(NULL, GJ_GC(j));
-				*/
+
+				((struct jabber_data *)GJ_GC(j)->proto_data)->did_import = TRUE;
 
 				gjab_reqroster(j);
 
@@ -762,6 +762,9 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 	xmlnode x, y;
 	char *realwho;
 	gjconn j = ((struct jabber_data *)gc->proto_data)->jc;
+
+	if (!((struct jabber_data *)gc->proto_data)->did_import)
+		return;
 
 	if (!name)
 		return;
