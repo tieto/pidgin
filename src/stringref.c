@@ -25,6 +25,7 @@
 #include "internal.h"
 
 #include <string.h>
+#include <stdarg.h>
 
 #include "stringref.h"
 
@@ -35,6 +36,22 @@ GaimStringref *gaim_stringref_new(const char *value)
 	newref = g_malloc(sizeof(GaimStringref) + strlen(value) + 1);
 	strcpy(newref->value, value);
 	newref->ref = 1;
+
+	return newref;
+}
+
+GaimStringref *gaim_stringref_printf(const char *format, ...)
+{
+	GaimStringref *newref;
+	va_list ap;
+
+	if (format == NULL)
+		return NULL;
+
+	va_start(ap, format);
+	newref = g_malloc(sizeof(GaimStringref) + g_printf_string_upper_bound(format, ap));
+	vsprintf(newref->value, format, ap);
+	va_end(ap);
 
 	return newref;
 }

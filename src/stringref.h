@@ -42,9 +42,22 @@ typedef struct _GaimStringref {
  * @param value This will be the value of the string; it will be
  *              duplicated.
  *
- * @return A newly allocated string reference object.
+ * @return A newly allocated string reference object with a refcount
+ *         of 1.
  */
 GaimStringref *gaim_stringref_new(const char *value);
+
+/**
+ * Creates an immutable reference-counted string object from a printf
+ * format specification and arguments.  The created object will have a
+ * reference count of 1.
+ *
+ * @param format A printf-style format specification.
+ *
+ * @return A newly allocated string reference object with a refcount
+ *         of 1.
+ */
+GaimStringref *gaim_stringref_printf(const char *format, ...);
 
 /**
  * Increase the reference count of the given stringref.
