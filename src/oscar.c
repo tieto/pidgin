@@ -249,17 +249,16 @@ static void oscar_callback(gpointer data, gint source,
 	}
 }
 
-struct gaim_connection *oscar_login(char *username, char *password) {
+void oscar_login(struct aim_user *user) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
-	struct aim_user *u;
 	char buf[256];
 	struct gaim_connection *gc;
 
-	sprintf(debug_buff, _("Logging in %s\n"), username);
+	sprintf(debug_buff, _("Logging in %s\n"), user->username);
 	debug_print(debug_buff);
 
-	gc = new_gaim_conn(PROTO_OSCAR, username, password);
+	gc = new_gaim_conn(PROTO_OSCAR, user->username, user->password);
 	sess = g_new0(struct aim_session_t, 1);
 	aim_session_init(sess);
 	/* we need an immediate queue because we don't use a while-loop to
@@ -274,7 +273,7 @@ struct gaim_connection *oscar_login(char *username, char *password) {
 		debug_print(_("internal connection error\n"));
 		hide_login_progress(gc->username, _("Unable to login to AIM"));
 		destroy_gaim_conn(gc);
-		return NULL;
+		return;
 	} else if (conn->fd == -1) {
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
 			sprintf(debug_buff, _("couldn't resolve host"));
@@ -286,26 +285,23 @@ struct gaim_connection *oscar_login(char *username, char *password) {
 			hide_login_progress(gc->username, debug_buff);
 		}
 		destroy_gaim_conn(gc);
-		return NULL;
+		return;
 	}
-	g_snprintf(buf, sizeof(buf), _("Signon: %s"), username);
+	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
 
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
 	aim_sendconnack(sess, conn);
-	aim_request_login(sess, conn, username);
+	aim_request_login(sess, conn, gc->username);
 
 	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, conn);
 
-	u = find_user(username);
-	sprintf(gc->user_info, "%s", u->user_info);
-	gc->options = u->options;
-	save_prefs();
+	sprintf(gc->user_info, "%s", user->user_info);
+	gc->options = user->options;
+	save_prefs(); /* is this necessary anymore? */
 
 	debug_print(_("Password sent, waiting for response\n"));
-
-	return gc;
 }
 
 void oscar_close(struct gaim_connection *gc) {

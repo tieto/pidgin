@@ -624,11 +624,11 @@ extern int set_dispstyle (int);
 
 /* Functions in server.c */
 /* input to serv */
-extern struct gaim_connection *serv_login(char *, char *);
+extern void serv_login(struct aim_user *);
 extern void serv_close(struct gaim_connection *);
 extern void serv_touch_idle(struct gaim_connection *);
 extern void serv_finish_login();
-extern void serv_send_im(char *, char *, int);
+extern void serv_send_im(struct gaim_connection *, char *, char *, int);
 extern void serv_get_info(char *);
 extern void serv_get_away_msg(char *);
 extern void serv_get_dir(char *);
@@ -700,7 +700,7 @@ extern unsigned int *get_address(char *);
 extern int connect_address(unsigned int, unsigned short);
 
 /* Functions in oscar.c */
-extern struct gaim_connection *oscar_login(char *, char *);
+extern void oscar_login(struct aim_user *);
 extern void oscar_close(struct gaim_connection *);
 extern struct chat_connection *find_oscar_chat(struct gaim_connection *, char *name);
 extern void oscar_do_directim(struct gaim_connection *, char *);
@@ -708,7 +708,7 @@ extern void update_keepalive(struct gaim_connection *, gboolean);
 
 /* Functions in toc.c */
 extern void toc_close();
-extern struct gaim_connection *toc_login(char *, char *);
+extern void toc_login(struct aim_user *);
 extern int toc_wait_signon(struct gaim_connection *);
 extern char *toc_wait_config(struct gaim_connection *);
 extern int sflap_send(struct gaim_connection *, char *, int , int );

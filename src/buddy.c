@@ -1176,6 +1176,7 @@ void do_pounce(char *name)
         
 	who = g_strdup(normalize(name));
 
+	/* FIXME: we should decide somewhere who we're pouncing as */
 	while(bp) {
 		b = (struct buddy_pounce *)bp->data;;
 		bp = bp->next; /* increment the list here because rem_bp can make our handle bad */
@@ -1195,7 +1196,7 @@ void do_pounce(char *name)
 
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL);
 
-                                serv_send_im(name, b->message, 0);
+                                serv_send_im(c->gc, name, b->message, 0);
 			}
                         
                         rem_bp(NULL, b);

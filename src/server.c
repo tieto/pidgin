@@ -40,18 +40,13 @@ extern int gaim_caps;
 
 int correction_time = 0;
 
-struct gaim_connection *serv_login(char *username, char *password)
+void serv_login(struct aim_user *user)
 {
-	struct aim_user *u = find_user(username);
-
-	if (u->protocol == PROTO_TOC) {
-	        return toc_login(username, password);
-	} else if (u->protocol == PROTO_OSCAR) {
+	if (user->protocol == PROTO_TOC) {
+	        toc_login(user);
+	} else if (user->protocol == PROTO_OSCAR) {
 		debug_print("Logging in using Oscar. Expect problems.\n");
-		return oscar_login(username, password);
-	} else {
-		/* PRPL */
-		return NULL;
+		oscar_login(user);
 	}
 }
 
@@ -61,7 +56,6 @@ void serv_close(struct gaim_connection *gc)
 		toc_close(gc);
 	else if (gc->protocol == PROTO_OSCAR)
 		oscar_close(gc);
-	else /* PRPL */ ;
 
 	account_offline(gc);
 	destroy_gaim_conn(gc);
@@ -137,35 +131,31 @@ void serv_finish_login(struct gaim_connection *gc)
 
 
 
-void serv_send_im(char *name, char *message, int away)
+void serv_send_im(struct gaim_connection *gc, char *name, char *message, int away)
 {
 	struct conversation *cnv = find_conversation(name);
-	if (cnv && cnv->is_direct) {
-		if (cnv->gc->protocol == PROTO_OSCAR) {
+	if (cnv && cnv->is_direct && (gc->protocol == PROTO_OSCAR)) {
 			debug_printf("Sending DirectIM to %s\n", name);
-			aim_send_im_direct(cnv->gc->oscar_sess, cnv->conn, message);
-		} else {
-			/* Direct IM TOC FIXME */
-		}
+			aim_send_im_direct(gc->oscar_sess, cnv->conn, message);
 	} else {
-		if (cnv->gc->protocol == PROTO_TOC) {
+		if (gc->protocol == PROTO_TOC) {
 			char buf[MSG_LEN - 7];
 
 			escape_text(message);
 		        g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
 		                   message, ((away) ? " auto" : ""));
-			sflap_send(cnv->gc, buf, -1, TYPE_DATA);
-		} else if (cnv->gc->protocol == PROTO_OSCAR) {
+			sflap_send(gc, buf, -1, TYPE_DATA);
+		} else if (gc->protocol == PROTO_OSCAR) {
 			if (away)
-				aim_send_im(cnv->gc->oscar_sess, cnv->gc->oscar_conn,
+				aim_send_im(gc->oscar_sess, gc->oscar_conn,
 						name, AIM_IMFLAGS_AWAY, message);
 			else
-				aim_send_im(cnv->gc->oscar_sess, cnv->gc->oscar_conn,
+				aim_send_im(gc->oscar_sess, gc->oscar_conn,
 						name, AIM_IMFLAGS_ACK, message);
 		}
 	}
         if (!away)
-                serv_touch_idle(cnv->gc);
+                serv_touch_idle(gc);
 }
 
 void serv_get_info(char *name)
@@ -702,7 +692,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<"))
 	{
 		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
-	    	serv_send_im(name, tmpmsg, 1);
+	    	serv_send_im(gc, name, tmpmsg, 1);
 		g_free(tmpmsg);
 	    	return;
 	}
@@ -772,7 +762,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			escape_text(tmpmsg);
 			escape_message(tmpmsg);
 		}
-		serv_send_im(name, away_subs(tmpmsg, alias), 1);
+		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
 		g_free(tmpmsg);
 		tmpmsg = stylize(awaymessage->message, MSG_LEN);
 
@@ -972,8 +962,6 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, int id, char *w
 	} else if (g->protocol == PROTO_OSCAR) {
 		gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
 		gtk_object_set_user_data(GTK_OBJECT(yesbtn), (void *)id);
-	} else {
-		/* PRPL */
 	}
 
 

@@ -34,7 +34,7 @@ on in the preferences) whether or not --enable-debug was selected. Most
 of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
-This file was last modified by $Author: warmenhoven $ on $Date: 2000-10-12 05:02:56 -0400 (Thu, 12 Oct 2000) $.
+This file was last modified by $Author: warmenhoven $ on $Date: 2000-10-12 14:59:36 -0400 (Thu, 12 Oct 2000) $.
 
 
 PROGRAM FLOW
@@ -52,9 +52,8 @@ When the "Sign on/off" button is clicked, serv_login is passed the
 username and the password for the account. If the password length is
 zero (the password field is a character array rather than pointer so
 it will not be NULL) then the Signon callback will prompt for the
-password before calling serv_login. serv_login then finds the user,
-and signs in using the specified protocol. (This is a bad way of doing
-things and should be fixed.) We'll assume TOC for the rest of this
+password before calling serv_login. serv_login then signs in the user
+using the appropriate protocol. We'll assume TOC for the rest of this
 discussion; Oscar has a lot of bad hacks to get it working that I don't
 even want to think about.
 

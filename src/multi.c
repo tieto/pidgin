@@ -82,15 +82,6 @@ struct gaim_connection *new_gaim_conn(int proto, char *username, char *password)
 
 void destroy_gaim_conn(struct gaim_connection *gc)
 {
-	switch (gc->protocol) {
-		case PROTO_TOC:
-			break;
-		case PROTO_OSCAR:
-			break;
-		default:
-			/* PRPL */
-			break;
-	}
 	connections = g_slist_remove(connections, gc);
 	g_free(gc);
 	redo_convo_menus();
@@ -454,17 +445,13 @@ static void pass_cancel(GtkWidget *w, struct aim_user *u)
 static void pass_signon(GtkWidget *w, struct aim_user *u)
 {
 	char *txt = gtk_entry_get_text(GTK_ENTRY(u->passentry));
-	char *un, *ps;
+	g_snprintf(u->password, sizeof(u->password), "%s", txt);
 #ifdef USE_APPLET
 	set_user_state(signing_on);
 #endif
-	un = g_strdup(u->username);
-	ps = g_strdup(txt);
 	gtk_widget_destroy(u->passprmt);
 	u->passprmt = NULL;
-	serv_login(un, ps);
-	g_free(un);
-	g_free(ps);
+	serv_login(u);
 }
 
 static void do_pass_dlg(struct aim_user *u)
@@ -537,19 +524,13 @@ static void acct_signin(GtkWidget *w, gpointer d)
 		u = find_user(name);
 		gc = find_gaim_conn_by_name(name);
 		if (!gc) {
-			char *un, *ps;
 			if (!u->password[0]) {
 				do_pass_dlg(u);
 			} else {
 #ifdef USE_APPLET
 				set_user_state(signing_on);
 #endif /* USE_APPLET */
-
-				un = g_strdup(u->username);
-				ps = g_strdup(u->password);
-				gc = serv_login(un, ps);
-				g_free(un);
-				g_free(ps);
+				serv_login(u);
 			}
 		} else {
 			signoff(gc);
@@ -660,7 +641,6 @@ void auto_login()
 {
 	GList *u = aim_users;
 	struct aim_user *a = NULL;
-	char *un, *ps;
 
 	while (u) {
 		a = (struct aim_user *)u->data;
@@ -668,12 +648,7 @@ void auto_login()
 #ifdef USE_APPLET
 			set_user_state(signing_on);
 #endif /* USE_APPLET */
-
-			un = g_strdup(a->username);
-			ps = g_strdup(a->password);
-			serv_login(un, ps);
-			g_free(un);
-			g_free(ps);
+			serv_login(a);
 		}
 		u = u->next;
 	}

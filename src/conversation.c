@@ -696,7 +696,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		write_to_conv(c, buf3, WFLAG_SEND, NULL);
 		g_free(buf3);
 
-	        serv_send_im(c->name, buf, 0);
+	        serv_send_im(c->gc, c->name, buf, 0);
 
 		if (c->makesound && (sound_options & OPT_SOUND_SEND))
 			play_sound(SEND);

@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 988 $"
+#define REVISION "gaim:$Revision: 990 $"
 
 
 static unsigned int peer_ver=0;
@@ -54,11 +54,10 @@ static int toc_signon(struct gaim_connection *);
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
  * on success. */
-struct gaim_connection *toc_login(char *username, char *password)
+void toc_login(struct aim_user *user)
 {
 	char *config;
         struct in_addr *sin;
-        struct aim_user *u;
 	struct gaim_connection *gc;
 	char buf[80];
 	char buf2[2048];
@@ -68,8 +67,8 @@ struct gaim_connection *toc_login(char *username, char *password)
 	sin = (struct in_addr *)get_address(aim_host);
 	if (!sin) {
 		g_snprintf(buf, sizeof(buf), "Unable to lookup %s", aim_host);
-		hide_login_progress(username, buf);
-		return NULL;
+		hide_login_progress(user->username, buf);
+		return;
 	}
 	
 	g_snprintf(toc_addy, sizeof(toc_addy), "%s", inet_ntoa(*sin));
@@ -77,7 +76,7 @@ struct gaim_connection *toc_login(char *username, char *password)
 	
 
 
-	gc = new_gaim_conn(PROTO_TOC, username, password);
+	gc = new_gaim_conn(PROTO_TOC, user->username, user->password);
 	
 	gc->toc_fd = connect_address(sin->s_addr, aim_port);
 
@@ -86,29 +85,28 @@ struct gaim_connection *toc_login(char *username, char *password)
 			 inet_ntoa(*sin));
 		hide_login_progress(gc->username, buf);
 		destroy_gaim_conn(gc);
-		return NULL;
+		return;
         }
 
         g_free(sin);
 	
-	g_snprintf(buf, sizeof(buf), "Signon: %s",username);
+	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
 	
 	if (toc_signon(gc) < 0) {
 		hide_login_progress(gc->username, "Disconnected.");
 		destroy_gaim_conn(gc);
-		return NULL;
+		return;
 	}
 
 	g_snprintf(buf, sizeof(buf), "Waiting for reply...");
 	if (toc_wait_signon(gc) < 0) {
 		hide_login_progress(gc->username, "Authentication Failed");
 		destroy_gaim_conn(gc);
-		return NULL;
+		return;
 	}
 
-        u = find_user(username);
-	sprintf(gc->user_info, "%s", u->user_info);
-	gc->options = u->options;
+	sprintf(gc->user_info, "%s", user->user_info);
+	gc->options = user->options;
 	save_prefs();
 
 	g_snprintf(buf, sizeof(buf), "Retrieving config...");
@@ -152,7 +150,6 @@ struct gaim_connection *toc_login(char *username, char *password)
 
 	serv_finish_login(gc);
 	gaim_setup(gc);
-	return 0;
 }
 
 void toc_close(struct gaim_connection *gc)

@@ -461,6 +461,7 @@ XS (XS_AIM_user_info)
 
 XS (XS_AIM_print_to_conv)
 {
+	/* FIXME
 	char *nick, *what;
 	struct conversation *c;
 	int junk;
@@ -474,6 +475,7 @@ XS (XS_AIM_print_to_conv)
 		c = new_conversation(nick);
 	write_to_conv(c, what, WFLAG_SEND, NULL);
 	serv_send_im(nick, what, 0);
+	*/
 }
 
 XS (XS_AIM_print_to_chat)
