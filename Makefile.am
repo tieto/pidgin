@@ -6,7 +6,7 @@ gaimgnorbadir  = $(sysconfdir)/CORBA/servers
 gaimgnorba_DATA = $(gaim_GNORBA)
 
 gaim_DESKTOP = gaim_applet.desktop
-gaimdesktopdir = $(datadir)/applets/Amusements
+gaimdesktopdir = $(datadir)/applets/Network
 gaimdesktop_DATA = $(gaim_DESKTOP)
 
 

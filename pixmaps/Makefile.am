@@ -15,3 +15,9 @@ EXTRA_DIST = admin_icon.xpm aimicon.xpm \
 	gnome/devil-online.png gnome/penguin-connect.png \
 	gnome/penguin-offline.png gnome/penguin-online.png
 	
+if APPLET
+gaim_PIXMAP = aimicon.xpm gnome/penguin-connect.png \
+	gnome/penguin-offline.png gnome/penguin-online.png
+gaimpixmapdir = $(datadir)/pixmaps/gaim
+gaimpixmap_DATA = $(gaim_PIXMAP)
+endif

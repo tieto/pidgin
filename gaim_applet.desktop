@@ -2,6 +2,6 @@
 Name=Gaim
 Comment=Client for AOL IM
 Exec=gaim_applet --activate-goad-server=gaim_applet
-Icon=gaim.xpm
+Icon=gaim/aimicon.xpm
 Terminal=0
 Type=Application
