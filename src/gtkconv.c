@@ -1,6 +1,8 @@
 /**
- * @file gtkconv.h GTK+ Conversation API
+ * @file gtkconv.c GTK+ Conversation API
  * @ingroup gtkui
+ *
+ * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -49,7 +51,7 @@
 #include "sound.h"
 #include "util.h"
 
-#include "dnd-hints.h"
+#include "gtkdnd-hints.h"
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkdialogs.h"
@@ -59,7 +61,7 @@
 #include "gtkpounce.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 
 /* XXX */
 #include "gaim.h"

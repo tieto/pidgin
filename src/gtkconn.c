@@ -1,4 +1,7 @@
 /*
+ * @file gtkconn.c GTK+ Connection API
+ * @ingroup gtkui
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -26,7 +29,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
-#include "stock.h"
+#include "gtkstock.h"
 #include "util.h"
 
 #include "gtkblist.h"

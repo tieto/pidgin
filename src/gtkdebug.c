@@ -34,7 +34,7 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 
 extern int opt_debug;
 

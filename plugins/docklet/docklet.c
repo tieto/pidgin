@@ -47,7 +47,7 @@
 #include "gtkprefs.h"
 #include "gtksound.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 #include "docklet.h"
 
 #include "gaim.h"

@@ -1,4 +1,7 @@
 /*
+ * @file gtkblist.c GTK+ BuddyList API
+ * @ingroup gtkui
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -34,7 +37,7 @@
 #include "request.h"
 #include "signals.h"
 #include "sound.h"
-#include "stock.h"
+#include "gtkstock.h"
 #include "util.h"
 
 #include "gtkaccount.h"

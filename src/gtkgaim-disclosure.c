@@ -1,5 +1,10 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * @file gtkgaim-disclosure.c GTK+ Gaim Disclosure
+ * @ingroup gtkui
+ *
+ * gaim
+ *
  *  Gaim is the legal property of its developers, whose names are too numerous
  *  to list here.  Please refer to the COPYRIGHT file distributed with this
  *  source distribution.
@@ -26,7 +31,7 @@
 
 #include <gtk/gtktogglebutton.h>
 
-#include "gaim-disclosure.h"
+#include "gtkgaim-disclosure.h"
 
 #ifdef ENABLE_NLS
 #  include <libintl.h>

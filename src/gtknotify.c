@@ -30,7 +30,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "prefs.h"
-#include "stock.h"
+#include "gtkstock.h"
 #include "util.h"
 
 #include "gtkimhtml.h"

@@ -1,4 +1,7 @@
 /*
+ * @file gtkdialogs.c GTK+ Dialogs
+ * @ingroup gtkui
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -33,7 +36,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 
 static GList *dialogwindows = NULL;
 

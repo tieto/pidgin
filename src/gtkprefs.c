@@ -47,7 +47,7 @@
 #include "gtkprefs.h"
 #include "gtksound.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 
 #define PROXYHOST 0
 #define PROXYPORT 1

@@ -1,4 +1,7 @@
 /**
+ * @file gtkpluginpref.c GTK+ Plugin preferences
+ * @ingroup gtkui
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous

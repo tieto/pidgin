@@ -1,5 +1,5 @@
 /**
- * @file gtkstatusselector.c Status selector widget
+ * @file gtkstatusselector.c GTK+ Status selector widget
  * @ingroup gtkui
  *
  * gaim

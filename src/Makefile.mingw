@@ -86,10 +86,8 @@ DLL_C_SRC =	\
 			conversation.c \
 			core.c \
 			debug.c \
-			dnd-hints.c \
 			eventloop.c \
 			ft.c \
-			gaim-disclosure.c \
 			gtkaccount.c \
 			gtkblist.c \
 			gtkconn.c \
@@ -97,8 +95,10 @@ DLL_C_SRC =	\
 			gtkcellrendererprogress.c \
 			gtkdebug.c \
 			gtkdialogs.c \
+			gtkdnd-hints.c \
 			gtkeventloop.c \
 			gtkft.c \
+			gtkgaim-disclosure.c \
 			gtkimhtml.c \
 			gtkimhtmltoolbar.c \
 			gtklog.c \
@@ -113,6 +113,7 @@ DLL_C_SRC =	\
 			gtksound.c \
 			gtksourceiter.c \
 			gtkstatusselector.c \
+			gtkstock.c \
 			gtkthemes.c \
 			gtkutils.c \
 			idle.c \
@@ -137,7 +138,6 @@ DLL_C_SRC =	\
 			sound.c \
 			sslconn.c \
 			status.c \
-			stock.c \
 			stringref.c \
 			util.c \
 			value.c \

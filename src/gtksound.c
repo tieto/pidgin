@@ -1,4 +1,7 @@
 /*
+ * @file gtksound.h GTK+ Sound
+ * @ingroup gtkui
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous

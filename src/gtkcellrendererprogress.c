@@ -1,4 +1,9 @@
-/* gtkcellrendererprogress.c
+/*
+ * @file gtkcellrendererprogress.c GTK+ Cell Renderer Progress
+ * @ingroup gtkui
+ *
+ * gaim
+ *
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.

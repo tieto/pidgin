@@ -143,8 +143,6 @@ bin_PROGRAMS = gaim gaim-remote
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
-	dnd-hints.c \
-	gaim-disclosure.c \
 	gtkaccount.c \
 	gtkcellrendererprogress.c \
 	gtkblist.c \
@@ -152,6 +150,8 @@ gaim_SOURCES = \
 	gtkconv.c \
 	gtkdebug.c \
 	gtkdialogs.c \
+	gtkdnd-hints.c \
+	gtkgaim-disclosure.c \
 	gtkeventloop.c \
 	gtkft.c \
 	gtkimhtml.c \
@@ -168,18 +168,16 @@ gaim_SOURCES = \
 	gtksound.c \
 	gtksourceiter.c \
 	gtkstatusselector.c \
+	gtkstock.c \
 	gtkthemes.c \
 	gtkutils.c \
 	idle.c \
 	main.c \
-	session.c \
-	stock.c 
+	session.c
 
 gaim_headers = \
 	$(gaim_coreheaders) \
-	dnd-hints.h \
 	gaim.h \
-	gaim-disclosure.h \
 	gtkaccount.h \
 	gtkcellrendererprogress.h \
 	gtkblist.h \
@@ -187,9 +185,11 @@ gaim_headers = \
 	gtkconv.h \
 	gtkdebug.h \
 	gtkdialogs.h \
+	gtkdnd-hints.h \
 	gtkeventloop.h \
 	gtkft.h \
 	gtkgaim.h \
+	gtkgaim-disclosure.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \
@@ -204,9 +204,9 @@ gaim_headers = \
 	gtksound.h \
 	gtksourceiter.h \
 	gtkstatusselector.h \
+	gtkstock.h \
 	gtkutils.h \
-	internal.h \
-	stock.h
+	internal.h
 
 gaimincludedir=$(includedir)/gaim
 gaiminclude_HEADERS = \

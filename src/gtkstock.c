@@ -1,5 +1,6 @@
 /**
- * @file stock.c GTK+ Stock resources
+ * @file gtkstock.c GTK+ Stock resources
+ * @ingroup gtkui
  *
  * gaim
  *
@@ -25,7 +26,7 @@
 #include "internal.h"
 #include "gtkgaim.h"
 
-#include "stock.h"
+#include "gtkstock.h"
 
 static struct StockIcon
 {

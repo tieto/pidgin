@@ -1,5 +1,5 @@
 /**
- * @file stock.h GTK+ Stock resources
+ * @file gtkstock.h GTK+ Stock resources
  * @ingroup gtkui
  *
  * gaim

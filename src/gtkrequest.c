@@ -31,7 +31,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtkrequest.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 
 #include <gdk/gdkkeysyms.h>
 
