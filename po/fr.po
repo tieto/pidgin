@@ -343,12 +343,12 @@ msgid "Raw"
 msgstr "Brut"
 
 #: plugins/raw.c:154
-msgid "Lets you send raw input to text-vased protocols."
+msgid "Lets you send raw input to text-based protocols."
 msgstr "Permet d'envoyer des données brutes à un protocole en mode texte."
 
 #: plugins/raw.c:155
 msgid ""
-"Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Permet d'envoyer des données bruts aux protocoles en mode texte (Jabber, "

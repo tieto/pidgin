@@ -151,8 +151,8 @@ static GaimPluginInfo info =
 	RAW_PLUGIN_ID,
 	N_("Raw"),
 	VERSION,
-	N_("Lets you send raw input to text-vased protocols."),
-	N_("Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, "
+	N_("Lets you send raw input to text-based protocols."),
+	N_("Lets you send raw input to text-based protocols (Jabber, MSN, IRC, "
 	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
 	WEBSITE,

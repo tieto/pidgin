@@ -408,12 +408,12 @@ msgid "Raw"
 msgstr "Raw"
 
 #: plugins/raw.c:154
-msgid "Lets you send raw input to text-vased protocols."
+msgid "Lets you send raw input to text-based protocols."
 msgstr "允许您发送原样输入基于文本的协议。"
 
 #: plugins/raw.c:155
 msgid ""
-"Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "允许您将输入原样发送给基于文本的协议(Jabber，MSN，IRC，TOC)。在输入框中按回车"

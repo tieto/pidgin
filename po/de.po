@@ -432,13 +432,13 @@ msgid "Raw"
 msgstr "Raw"
 
 #: plugins/raw.c:154
-msgid "Lets you send raw input to text-vased protocols."
+msgid "Lets you send raw input to text-based protocols."
 msgstr ""
 "Erlaubt Ihnen rohe Eingaben (raw input) an textbasierte Protokolle zu senden."
 
 #: plugins/raw.c:155
 msgid ""
-"Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Erlaubt Ihnen rohe Eingaben (raw input) an textbasierte Protokolle (Jabber, "
