@@ -619,12 +619,16 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
 		/* XXX: error msg */
 		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
+		gaim_roomlist_unref(js->roomlist);
+		js->roomlist = NULL;
 		return;
 	}
 
 	if(!(query = xmlnode_get_child(packet, "query"))) {
 		/* XXX: error msg */
 		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
+		gaim_roomlist_unref(js->roomlist);
+		js->roomlist = NULL;
 		return;
 	}
 

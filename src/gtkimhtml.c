@@ -1650,7 +1650,10 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 							"font-family: ");
 						size = gtk_imhtml_get_css_opt (style, "font-size: ");
 
-						if (!(color || family || size)) break;
+						if (!(color || family || size)) {
+							g_free(style);
+							break;
+						}
 
 						if (url)
 							gtk_imhtml_insert_link(imhtml, url, ws);

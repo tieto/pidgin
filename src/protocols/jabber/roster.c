@@ -225,7 +225,8 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 		}
 	}
 
-	b = gaim_find_buddy(js->gc->account, name);
+	if(!(b = gaim_find_buddy(js->gc->account, name)))
+		return;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
 
