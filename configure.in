@@ -3,7 +3,7 @@ AC_INIT(src/aim.c)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([gaim], [0.57])
 
-AC_PREREQ([2.50])
+
 
 AC_PATH_PROG(sedpath, sed)
 
@@ -36,10 +36,8 @@ AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(socket strdup strstr atexit getaddrinfo)
 
 dnl Checks for getopt in standard library
-AC_CHECK_FUNCS(getopt_long , ,
-AC_LIBOBJ(getopt)
-AC_LIBOBJ(getopt1)) 
- 
+AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] ) 
+AC_SUBST(LIBOBJS)
 
 dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
