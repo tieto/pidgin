@@ -1022,7 +1022,7 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd)
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(reset_sound), (void *)snd);
 	gtk_widget_show(button);
 
-	button = gtk_button_new_with_label(_("Choose"));
+	button = gtk_button_new_with_label(_("Choose..."));
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(sel_sound), (void *)snd);
 	gtk_widget_show(button);
