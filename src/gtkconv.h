@@ -117,6 +117,7 @@ struct _GaimGtkChatPane
 	GtkWidget *list;
 	GtkWidget *invite;
 	GtkWidget *topic_text;
+	GtkWidget *sep;
 };
 
 /**
