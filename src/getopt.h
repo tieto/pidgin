@@ -1,5 +1,9 @@
 /* Declarations for getopt.
 
+   NOTE: getopt is now part of the C library, so if you don't know what
+   "Keep this file name-space clean" means, talk to roland@gnu.ai.mit.edu
+   before changing it!
+
    Gaim is the legal property of its developers, whose names are too numerous
    to list here.  Please refer to the COPYRIGHT file distributed with this
    source distribution.
@@ -18,8 +22,8 @@
    along with this program; if not, write to the Free Software
    Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-#ifndef _GAIM_GETOPT_H_
-#define _GAIM_GETOPT_H_
+#ifndef _GETOPT_H_
+#define _GETOPT_H_ 1
 
 #ifdef	__cplusplus
 extern "C" {
@@ -129,4 +133,4 @@ extern int _getopt_internal ();
 }
 #endif
 
-#endif /* _GAIM_GETOPT_H_ */
+#endif /* _GETOPT_H_ */
