@@ -3,5 +3,5 @@
 # Windows gaim gtkrc file
 #
 
-gtk-font-name = "Tahoma 8"
+gtk-font-name = "sans 8"
 
