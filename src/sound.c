@@ -247,33 +247,39 @@ static int artsc_play_file(char *file)
 	int result = 0;
 	int fd = -1;
 
+	if (!can_play_artsc())
+		return 0;
+
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
-		goto out;
+		return 0;
 
-	if (!can_play_artsc())
-		goto out;
+	if (fstat(fd, &stat_buf)) {
+		close(fd);
+		return 0;
+	}
 
-	if (fstat(fd, &stat_buf))
-		goto out;
-
-	if (!stat_buf.st_size)
-		goto out;
+	if (!stat_buf.st_size) {
+		close(fd);
+		return 0;
+	}
 
 	buf = g_malloc(stat_buf.st_size);
-	if (!buf)
-		goto out;
+	if (!buf) {
+		close(fd);
+		return 0;
+	}
 
-	if (read(fd, buf, stat_buf.st_size) < 0)
-		goto out;
+	if (read(fd, buf, stat_buf.st_size) < 0) {
+		g_free(buf);
+		close(fd);
+		return 0;
+	}
 
 	result = play_artsc(buf, stat_buf.st_size);
 
-      out:
-	if (buf)
-		g_free(buf);
-	if (fd != -1)
-		close(fd);
+	g_free(buf);
+	close(fd);
 	return result;
 }
 
