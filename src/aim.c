@@ -73,6 +73,7 @@ GList *conversations = NULL;
 GList *chat_rooms = NULL;
 
 GtkWidget *mainwindow = NULL;
+GtkWidget *remember = NULL;
 
 void BuddyTickerCreateWindow( void );
 
@@ -329,7 +330,6 @@ void show_login()
 	GtkWidget *sbox;
 	GtkWidget *label;
 	GtkWidget *table;
-        GtkWidget *remember;
 
 #ifndef USE_APPLET
 	GtkWidget *pmw;
@@ -340,6 +340,8 @@ void show_login()
 
         if (mainwindow) {
                 gtk_widget_show(mainwindow);
+		if (!(general_options & OPT_GEN_REMEMBER_PASS))
+			gtk_entry_set_text(GTK_ENTRY(pass), "");
                 return;
         }
        

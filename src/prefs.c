@@ -57,12 +57,19 @@ static gint handle_delete(GtkWidget *, GdkEvent *, void *);
 
 static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
+static GtkWidget *prefrem = NULL;
 GtkWidget *prefs_away_list = NULL;
 
 static void destdeb(GtkWidget *m, gpointer n)
 {
 	gtk_widget_destroy(debugbutton);
 	debugbutton = NULL;
+}
+
+static void remdes(GtkWidget *m, gpointer n)
+{
+	gtk_widget_destroy(prefrem);
+	prefrem = NULL;
 }
 
 static void general_page()
@@ -87,7 +94,8 @@ static void general_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	gaim_button(_("Remember password"), &general_options, OPT_GEN_REMEMBER_PASS, box);
+	prefrem = gaim_button(_("Remember password"), &general_options, OPT_GEN_REMEMBER_PASS, box);
+	gtk_signal_connect(GTK_OBJECT(prefrem), "destroy", GTK_SIGNAL_FUNC(remdes), 0);
 	gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box);
 
 	sep = gtk_hseparator_new();
@@ -1521,6 +1529,22 @@ void set_general_option(GtkWidget *w, int *option)
 
        	if ((int)option == OPT_GEN_LOG_ALL)
        		update_log_convs();
+
+	if (prefrem)
+		gtk_signal_handler_block_by_data(GTK_OBJECT(prefrem), (int *)OPT_GEN_REMEMBER_PASS);
+	if (remember)
+		gtk_signal_handler_block_by_data(GTK_OBJECT(remember), (int *)OPT_GEN_REMEMBER_PASS);
+	if (prefrem)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(prefrem),
+			(general_options & OPT_GEN_REMEMBER_PASS));
+	if (remember)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(remember),
+			(general_options & OPT_GEN_REMEMBER_PASS));
+	if (prefrem)
+		gtk_signal_handler_unblock_by_data(GTK_OBJECT(prefrem), (int *)OPT_GEN_REMEMBER_PASS);
+	if (remember)
+		gtk_signal_handler_unblock_by_data(GTK_OBJECT(remember), (int *)OPT_GEN_REMEMBER_PASS);
+
 	save_prefs();
 }
 
