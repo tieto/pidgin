@@ -2333,51 +2333,44 @@ gaim_str_size_to_units(size_t size)
 }
 
 char *
-gaim_str_seconds_to_string(guint sec)
+gaim_str_seconds_to_string(guint secs)
 {
-	guint daze, hrs, min;
-	char *ret = NULL;
+	GString *gstr;
+	const char *prefix = "";
+	guint days, hrs, mins;
 
-	daze = sec / (60 * 60 * 24);
-	hrs = (sec % (60 * 60 * 24)) / (60 * 60);
-	min = (sec % (60 * 60)) / 60;
-	sec = min % 60;
+	days = secs / (60 * 60 * 24);
+	secs = secs % (60 * 60 * 24);
+	hrs  = secs / (60 * 60);
+	secs = secs % (60 * 60);
+	mins = secs / 60;
+	secs = secs % 60;
 
-	if (daze) {
-		if (hrs || min) {
-			if (hrs) {
-				if (min) {
-					ret = g_strdup_printf(
-						   "%d %s, %d %s, %d %s.",
-						   daze, ngettext("day","days",daze),
-						   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
-				} else {
-					ret = g_strdup_printf(
-						   "%d %s, %d %s.",
-						   daze, ngettext("day","days",daze), hrs, ngettext("hour","hours",hrs));
-				}
-			} else {
-				ret = g_strdup_printf(
-					   "%d %s, %d %s.",
-					   daze, ngettext("day","days",daze), min, ngettext("minute","minutes",min));
-			}
-		} else
-			ret = g_strdup_printf("%d %s.", daze, ngettext("day","days",daze));
-	} else {
-		if (hrs) {
-			if (min) {
-				ret = g_strdup_printf(
-					   "%d %s, %d %s.",
-					   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
-			} else {
-				ret = g_strdup_printf("%d %s.", hrs, ngettext("hour","hours",hrs));
-			}
-		} else {
-			ret = g_strdup_printf("%d %s.", min, ngettext("minute","minutes",min));
-		}
+	gstr = g_string_new("");
+
+	if (days > 0)
+	{
+		g_string_append_printf(gstr, "%d %s", days,
+							   ngettext("day", "days", days));
+
+		prefix = ", ";
 	}
 
-	return ret;
+	if (hrs > 0)
+	{
+		g_string_append_printf(gstr, "%s%d %s", prefix, hrs,
+							   ngettext("hour", "hours", hrs));
+
+		prefix = ", ";
+	}
+
+	if (mins > 0)
+	{
+		g_string_append_printf(gstr, "%s%d %s", prefix, mins,
+							   ngettext("minute", "minutes", mins));
+	}
+
+	return g_string_free(gstr, FALSE);
 }
 
 /**************************************************************************
@@ -2415,7 +2408,7 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 	}
 
 	/* parse out authentication information if supplied */
-	if (at = strchr(url, '@')) {
+	if ((at = strchr(url, '@')) != NULL) {
 		g_snprintf(scan_info, sizeof(scan_info),
 					"%%255[%s]:%%255[%s]^@", user_ctrl, passwd_ctrl);
 		f = sscanf(url, scan_info, user, passwd);
