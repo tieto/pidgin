@@ -324,7 +324,6 @@ XS (XS_GAIM_get_info)
 	case 2:
 		{
 			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
 				XST_mIV(i++, gc->protocol);
 			else
@@ -334,7 +333,6 @@ XS (XS_GAIM_get_info)
 	case 3:
 		{
 			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
 				XST_mPV(i++, gc->username);
 			else
@@ -344,7 +342,6 @@ XS (XS_GAIM_get_info)
 	case 4:
 		{
 			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
 				XST_mIV(i++, g_slist_index(aim_users, gc->user));
 			else
@@ -374,7 +371,6 @@ XS (XS_GAIM_get_info)
 	case 7:
 		{
 			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
 				XST_mPV(i++, (*gc->prpl->name)());
 			else
@@ -609,6 +605,7 @@ XS (XS_GAIM_print_to_conv)
 	c = find_conversation(nick);
 	if (!c)
 		c = new_conversation(nick);
+	set_convo_gc(c, gc);
 	write_to_conv(c, what, WFLAG_SEND, NULL, time((time_t)NULL));
 	serv_send_im(c->gc, nick, what, isauto ? IM_FLAG_AWAY : 0);
 	XSRETURN(0);
