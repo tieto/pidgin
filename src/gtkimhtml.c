@@ -129,6 +129,7 @@ clipboard_win32_to_html(char *clipboard) {
 	while(*begin++ != '>');
 	end = strstr(clipboard, "<!--EndFragment");
 	html = g_strstrip(g_strndup(begin, (end ? (end - begin) : strlen(begin))));
+	return html;
 }
 
 static gchar *
