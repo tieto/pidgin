@@ -545,12 +545,14 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 {
 	char *name = gaim_get_buddy_alias(b);
 	char *esc = g_markup_escape_text(name, strlen(name)), *text = NULL;
+	struct prpl* prpl = find_prpl(b->account->protocol);
+
 	/* XXX Clean up this crap */
 
 	int ihrs, imin;
-	char *idletime = "";
-	char *warning = idletime;
-	time_t t;
+	char *idletime = NULL, *warning = NULL;
+	const char *statustext = NULL;
+       	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
 		if (b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS) {
@@ -567,27 +569,39 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	ihrs = (t - b->idle) / 3600;
 	imin = ((t - b->idle) / 60) % 60;
 
+	if (prpl->status_text) {
+		char *tmp = prpl->status_text(b);
+		if (tmp)
+			statustext = g_markup_escape_text(tmp, strlen(tmp));
+	}
+	
 	if (b->idle) {
 		if (ihrs)
 			idletime = g_strdup_printf(_("Idle (%dh%02dm)"), ihrs, imin);
 		else
 			idletime = g_strdup_printf(_("Idle (%dm)"), imin);
 	}
-
+	
 	if (b->evil > 0)
 		warning = g_strdup_printf(_("Warned (%d%%)"), b->evil);
-
+	
 	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
-		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n<span color='dim grey' size='smaller'>%s %s</span>",
+		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n<span color='dim grey' size='smaller'>%s %s %s</span>",
 					esc,
-					idletime, warning);
+					statustext != NULL ? statustext : "",
+					idletime != NULL ? idletime : "", 
+					warning != NULL ? warning : "");
 	else
-		text = g_strdup_printf("%s\n<span color='dim grey' size='smaller'>%s %s</span>", esc, idletime, warning);
-
-	if (idletime[0])
+		text = g_strdup_printf("%s\n<span color='dim grey' size='smaller'>%s %s %s</span>", esc, 
+				       statustext != NULL ? statustext :  "",
+				       idletime != NULL ? idletime : "", 
+				       warning != NULL ? warning : "");
+	if (idletime)
 		g_free(idletime);
-	if (warning[0])
+	if (warning)
 		g_free(warning);
+	if (statustext)
+		g_free(statustext);
 
 	return text;
 }

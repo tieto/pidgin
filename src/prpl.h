@@ -190,6 +190,12 @@ struct prpl
 	 * interpret and display as relevant
 	 */
 	void (* list_emblems)(struct buddy *buddy, char **se, char **sw, char **nw, char **ne);
+
+	/**
+	 * Gets a short string representing this buddy's status.  This will be shown
+	 * on the buddy list.
+	 */
+	const char *(* status_text)(struct buddy *buddy);
 	
 	GList *(* away_states)(struct gaim_connection *gc);
 	GList *(* actions)(struct gaim_connection *gc);
