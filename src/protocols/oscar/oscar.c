@@ -222,7 +222,12 @@ static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) 
 static char *extract_name(const char *name) {
 	char *tmp;
 	int i, j;
-	char *x = strchr(name, '-');
+	char *x;
+
+	if (!name)
+			return NULL;
+
+	x = strchr(name, '-');
 	if (!x) return NULL;
 	x = strchr(++x, '-');
 	if (!x) return NULL;
@@ -1877,7 +1882,15 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
 		char *name = extract_name(args->info.chat.roominfo.name);
-		int *exch = g_new0(int, 1);
+		int *exch;
+
+		if (!name) {
+				/* Well, something weird must've happened here, let's run to church */
+				debug_printf("somebody tried to kick you in the balls.\n");
+				return 0;
+		}
+		
+		exch = g_new0(int, 1);
 		GList *m = NULL;
 		m = g_list_append(m, g_strdup(name ? name : args->info.chat.roominfo.name));
 		*exch = args->info.chat.roominfo.exchange;

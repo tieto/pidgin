@@ -104,6 +104,8 @@ version 0.60:
 	  window (Thanks, Christian Hammond)
 	* Ability to add screenname@mac.com people to AIM buddy lists
 	  (Thanks, Graham Booker)
+	* Fixed crashbug on empty rvous requests, thanks Brandon Scott (Xeon) for
+	  being the first to point this out
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
