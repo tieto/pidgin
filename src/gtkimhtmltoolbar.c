@@ -621,7 +621,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		if (toolbar->sml)
 			smileys = get_proto_smileys(toolbar->sml);
 		else
-			smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
+			smileys = get_proto_smileys(NULL);
 
 		while(smileys) {
 			GtkIMHtmlSmiley *smiley = smileys->data;

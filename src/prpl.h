@@ -45,9 +45,6 @@ typedef struct _GaimPluginProtocolInfo GaimPluginProtocolInfo;
 		"the \"Accounts\" button on the login window or "   \
 		"in the \"Tools\" menu in the buddy list window."
 
-/** Default protocol */
-#define GAIM_PROTO_DEFAULT "prpl-oscar"
-
 /*@}*/
 
 /**

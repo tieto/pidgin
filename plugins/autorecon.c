@@ -227,7 +227,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none(AUTORECON_OPT);
 	gaim_prefs_add_bool(OPT_HIDE_CONNECTED, FALSE);
 	gaim_prefs_add_bool(OPT_HIDE_CONNECTING, FALSE);
-	gaim_prefs_remove_bool(OPT_RESTORE_STATE);
+	gaim_prefs_remove(OPT_RESTORE_STATE);
 }
 
 GAIM_INIT_PLUGIN(autorecon, init_plugin, info)

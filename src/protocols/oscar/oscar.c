@@ -91,7 +91,7 @@ struct _OscarData {
 	gboolean chpass;
 	char *oldp;
 	char *newp;
-	
+
 	GSList *oscar_chats;
 	GSList *direct_ims;
 	GSList *file_transfers;
@@ -103,6 +103,7 @@ struct _OscarData {
 	guint icontimer;
 	guint getblisttimer;
 	guint getinfotimer;
+	guint recentbuddies_cbid;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -1721,7 +1722,7 @@ static void oscar_login(GaimAccount *account) {
 	sess->aux_data = gc;
 
 	/* Connect to core Gaim signals */
-	gaim_prefs_connect_callback("/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
+	od->recentbuddies_cbid = gaim_prefs_connect_callback("/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
 
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 	if (conn == NULL) {
@@ -1803,6 +1804,8 @@ static void oscar_close(GaimConnection *gc) {
 		gaim_timeout_remove(od->getblisttimer);
 	if (od->getinfotimer > 0)
 		gaim_timeout_remove(od->getinfotimer);
+	gaim_prefs_disconnect_callback(od->recentbuddies->cbid);
+
 	aim_session_kill(od->sess);
 	g_free(od->sess);
 	od->sess = NULL;
@@ -7310,10 +7313,12 @@ recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer 
 	presence = aim_ssi_getpresence(sess->ssi.local);
 
 	if (value) {
-		presence |= 0x00400000;
+//		presence |= 0x00400000;
+		presence &= ~0x00020000;
 		aim_ssi_setpresence(sess, presence);
 	} else {
-		presence &= ~0x00400000;
+//		presence &= ~0x00400000;
+		presence |= 0x00020000;
 		aim_ssi_setpresence(sess, presence);
 	}
 }

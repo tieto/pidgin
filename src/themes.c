@@ -239,21 +239,23 @@ void smiley_theme_probe()
 }
 
 GSList *get_proto_smileys(const char *id) {
-	GaimPlugin *proto = gaim_find_prpl(id);
+	GaimPlugin *proto;
 	struct smiley_list *list, *def;
 
-	if(!current_smiley_theme)
-		return NULL;
-
-	if(!current_smiley_theme->list)
+	if ((current_smiley_theme == NULL) || (current_smiley_theme->list == NULL))
 		return NULL;
 
 	def = list = current_smiley_theme->list;
 
-	while(list) {
-		if(!strcmp(list->sml, "default"))
+	if (id == NULL)
+		return def->smileys;
+
+	proto = gaim_find_prpl(id);
+
+	while (list) {
+		if (!strcmp(list->sml, "default"))
 			def = list;
-		else if(proto && !strcmp(proto->info->name, list->sml))
+		else if (proto && !strcmp(proto->info->name, list->sml))
 			break;
 
 		list = list->next;

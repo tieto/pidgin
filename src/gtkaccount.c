@@ -1566,8 +1566,12 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	if (dialog->account == NULL)
-		dialog->protocol_id = g_strdup(GAIM_PROTO_DEFAULT);
+	if (dialog->account == NULL) {
+		/* Select the first prpl in the list*/
+		GList *prpl_list = gaim_plugins_get_protocols();
+		if (prpl_list != NULL)
+			dialog->protocol_id = ((GaimPlugin *) prpl_list->data)->info->id;
+	}
 	else
 	{
 		dialog->protocol_id =

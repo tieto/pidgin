@@ -425,19 +425,15 @@ static int ui_main()
 	return 0;
 }
 
-static void set_first_user(char *name)
+static void set_first_user(const char *name)
 {
 	GaimAccount *account;
 
 	account = gaim_accounts_find(name, NULL);
 
-	if (account == NULL) { /* new user */
-		account = gaim_account_new(name, GAIM_PROTO_DEFAULT);
-		gaim_accounts_add(account);
-	}
-
 	/* Place it as the first user. */
-	gaim_accounts_reorder(account, 0);
+	if (account != NULL)
+		gaim_accounts_reorder(account, 0);
 }
 
 static void

@@ -128,9 +128,9 @@ gaim_account_new(const char *username, const char *protocol_id)
 	GaimAccount *account = NULL;
 
 	g_return_val_if_fail(username != NULL, NULL);
+	g_return_val_if_fail(protocol_id != NULL, NULL);
 
-	if (protocol_id != NULL)
-		account = gaim_accounts_find(username, protocol_id);
+	account = gaim_accounts_find(username, protocol_id);
 
 	if (account != NULL)
 		return account;
@@ -139,8 +139,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 
 	gaim_account_set_username(account, username);
 
-	gaim_account_set_protocol_id(account,
-		(protocol_id ? protocol_id : GAIM_PROTO_DEFAULT));
+	gaim_account_set_protocol_id(account, protocol_id);
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, delete_setting);
