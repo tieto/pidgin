@@ -645,7 +645,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *class)
 					      G_STRUCT_OFFSET(GtkIMHtmlClass, clear_format),
 					      NULL,
 					      0,
-					      g_cclosure_marshal_VOID__POINTER,
+					      g_cclosure_marshal_VOID__VOID,
 					     G_TYPE_NONE, 0);
 	gobject_class->finalize = gtk_imhtml_finalize;
 }
