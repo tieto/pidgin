@@ -121,15 +121,20 @@ rm -rf %{buildroot}
 %doc plugins/HOWTO
 %doc HACKING PROGRAMMING_NOTES
 
+%attr(755, root, root) %{_libdir}/libgaim-remote.so
 %attr(755, root, root) %{_libdir}/libgaim-remote.la
 %dir %{_includedir}/gaim
 %{_includedir}/gaim/*.h
 %{_libdir}/pkgconfig/gaim.pc
 
 %changelog
+* Thu Jun 24 2004 Mark Doliner <thekingant@users.sourceforge.net>
+- Add --with silc rebuild option for compiling a separate gaim-silc
+  RPM containing the silc protocol plugin (Stu Tomlinson).
+
 * Wed Jun 23 2004 Ethan Blanton <eblanton@cs.ohiou.edu>
 - Moved gaim headers and a pkgconfig configuration file into the
-  gaim-devel RPM (Stu Tomlinson)
+  gaim-devel RPM (Stu Tomlinson).
 
 * Thu Jan 15 2004 Ethan Blanton <eblanton@cs.ohiou.edu>
 - Removed the manual strip command, as it seems to be unwarranted if
