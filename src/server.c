@@ -178,10 +178,7 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 
 		(*gc->prpl->set_away)(gc, state, buf);
 
-		if (message)
-			plugin_event(event_away, gc, state, buf, 0);
-		else
-			plugin_event(event_back, gc, state, buf, 0);
+		plugin_event(event_away, gc, state, buf, 0);
 
 		if(buf)
 			g_free(buf);
