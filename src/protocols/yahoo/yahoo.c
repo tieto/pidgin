@@ -1956,6 +1956,7 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_GAMELOGOFF:
 	case YAHOO_SERVICE_CHATLOGON:
 	case YAHOO_SERVICE_CHATLOGOFF:
+	case YAHOO_SERVICE_YAHOO6_STATUS_UPDATE:
 		yahoo_process_status(gc, pkt);
 		break;
 	case YAHOO_SERVICE_NOTIFY:
